@@ -117,17 +117,20 @@ int      oyraFilter_ImageScaleRun    ( oyFilterPlug_s    * requestor_plug,
       /* start_xy is defined relative to the tickets output image width */
       double start_x_src_pixel = oyPixelAccess_GetStart( ticket, 0 ) * output_image_width,
              start_y_src_pixel = oyPixelAccess_GetStart( ticket, 1 ) * output_image_width;
-      int channels = oyToChannels_m( oyImage_GetPixelLayout( image, oyLAYOUT ) ),
-          a_width_dest = oyArray2d_GetWidth( a_dest ) / channels;
+      int layout_src = oyImage_GetPixelLayout( image, oyLAYOUT ),
+          layout_dst = oyImage_GetPixelLayout( output_image, oyLAYOUT );
+      int channels_src = oyToChannels_m( layout_src );
+      int channels_dst = oyToChannels_m( layout_dst );
+      int a_width_dest = oyArray2d_GetWidth( a_dest ) / channels_dst;
 
       new_ticket = oyPixelAccess_Copy( ticket, ticket->oy_ );
       oyPixelAccess_SetArray( new_ticket, 0 );
 
       if(oy_debug)
         oyra_msg( oyMSG_WARN, (oyStruct_s*)ticket, OY_DBG_FORMAT_
-             "output_image [%d](%d) image [%d](%d)\n",
-             OY_DBG_ARGS_,oyStruct_GetId((oyStruct_s*)output_image),oyImage_GetWidth(output_image),
-                          oyStruct_GetId((oyStruct_s*)image),oyImage_GetWidth(image) );
+             "output_image [%d](%d*%d)-array[%d](w%d) image [%d](%d*%d)\n", OY_DBG_ARGS_,
+             oyStruct_GetId((oyStruct_s*)output_image),oyImage_GetWidth(output_image),channels_dst, oyStruct_GetId((oyStruct_s*)a_dest), a_width_dest,
+             oyStruct_GetId((oyStruct_s*)image),oyImage_GetWidth(image),channels_src );
 
       new_ticket_array_roi = oyPixelAccess_GetArrayROI( new_ticket );
 
@@ -139,12 +142,21 @@ int      oyraFilter_ImageScaleRun    ( oyFilterPlug_s    * requestor_plug,
       /* ... and use the available source image area */
         /* convert to old array pixel */
       oyRectangle_Scale( new_ticket_array_roi, a_width_dest );
+
+      if(oy_debug)
+        oyMessageFunc_p( oy_debug?oyMSG_DBG:oyMSG_WARN, (oyStruct_s*)ticket, OY_DBG_FORMAT_
+              "start_xy %f|%f ROI: %s image[%d](%d) -> [%d](%d) scale_ %f\n",OY_DBG_ARGS_,
+                   start_x_src_pixel, start_y_src_pixel,
+                   oyRectangle_Show(new_ticket_array_roi),
+                   oyStruct_GetId((oyStruct_s*)image),oyImage_GetWidth(image),
+                   oyStruct_GetId((oyStruct_s*)output_image),oyImage_GetWidth(output_image), scale );
+
         /* scale */
       oyRectangle_Scale( new_ticket_array_roi, 1.0/scale );
         /* divide by new array size (implicitely defined by source image) */
       oyRectangle_Scale( new_ticket_array_roi, 1.0/image_width );
 
-      if(oy_debug > 2)
+      if(oy_debug)
       {
         char * troi;
         oyRectangle_Scale( ticket_roi, a_width_dest );
@@ -174,9 +186,10 @@ int      oyraFilter_ImageScaleRun    ( oyFilterPlug_s    * requestor_plug,
         uint8_t ** array_in_data,
                 ** array_out_data;
         /* get pixel layout infos for copying */
-        oyDATATYPE_e data_type_in = oyToDataType_m( oyImage_GetPixelLayout( image, oyLAYOUT ) );
-        int bps_in = oyDataTypeGetSize( data_type_in );
-        int channels = oyToChannels_m( oyImage_GetPixelLayout( image, oyLAYOUT ) );
+        oyDATATYPE_e data_type_in = oyToDataType_m( layout_src ),
+                     data_type_out = oyToDataType_m( layout_dst );
+        int bps_in = oyDataTypeGetSize( data_type_in ),
+            bps_out = oyDataTypeGetSize( data_type_out );
         int issue = 0;
 
         /* get the source pixels */
@@ -197,9 +210,9 @@ int      oyraFilter_ImageScaleRun    ( oyFilterPlug_s    * requestor_plug,
         array_out = oyPixelAccess_GetArray( ticket );
         array_in_data  = oyArray2d_GetData( array_in );
         array_out_data = oyArray2d_GetData( array_out );
-        w = oyArray2d_GetWidth( array_out )/channels;
+        w = oyArray2d_GetWidth( array_out ) / channels_dst;
         h = oyArray2d_GetHeight( array_out );
-        nw = oyArray2d_GetWidth( array_in )/channels;
+        nw = oyArray2d_GetWidth( array_in ) / channels_src;
         nh = oyArray2d_GetHeight( array_in );
 
         /* do the scaling while copying the channels */
@@ -214,8 +227,8 @@ int      oyraFilter_ImageScaleRun    ( oyFilterPlug_s    * requestor_plug,
           {
             xs = x/scale;
             if(xs >= nw) { continue; }
-            memcpy( &array_out_data[y][x*channels*bps_in],
-                    &array_in_data [ys][xs*channels*bps_in], channels*bps_in );
+            memcpy( &array_out_data[y][x*channels_dst*bps_out],
+                    &array_in_data [ys][xs*channels_src*bps_in], channels_src*bps_in );
           }
         }
 
@@ -230,11 +243,13 @@ int      oyraFilter_ImageScaleRun    ( oyFilterPlug_s    * requestor_plug,
           b = strdup(oyRectangle_Show( image_pix ));
           c = strdup(oyRectangle_Show( new_ticket_array_roi ));
           oyra_msg( issue?oyMSG_ERROR:oyMSG_DBG, (oyStruct_s*)ticket, OY_DBG_FORMAT_
-                     "node [%d] scale: %.02f old roi %s/%s(image) -> new roi %s array %dx%d -> (out array widthxheight / scale %dx%d) %dx%d %f<1 %f<1%s%s%s",OY_DBG_ARGS_,
+                     "node [%d] scale: %.02f old roi %s/%s(image) -> new roi %s array %d*%dx%d -> (out array widthxheight / scale %dx%d) %d*%dx%d "
+                     "%f<1 %f<1%s%s%s",OY_DBG_ARGS_,
                      oyStruct_GetId( (oyStruct_s*)node ), scale,
-                     a,b,c, nw,nh, OY_ROUND(w/scale), OY_ROUND(h/scale), w,h, nw - w/scale, nh - h/scale,
-                     issue?" found issue(s): too":"", issue & 1 ? " wide":"",
-                     issue & 2 ? " heigh":""  );
+                     a,b,c, nw,channels_src,nh, OY_ROUND(w/scale), OY_ROUND(h/scale), w,channels_dst,h, nw - w/scale, nh - h/scale,
+                     issue?" found issue(s): too":"",
+                     issue & 1 ? " wide":"",
+                     issue & 2 ? " heigh":"" );
           if(a) free(a); if(b) free(b); if(c) free(c);
           oyRectangle_Scale( ticket_roi, 1.0/image_width );
           oyRectangle_Scale( new_ticket_array_roi, 1.0/image_width );
