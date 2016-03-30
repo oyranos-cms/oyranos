@@ -107,12 +107,15 @@ int      oyFilterPlug_ImageRootRun   ( oyFilterPlug_s    * requestor_plug,
                         oyRectangle_GetGeo1((oyRectangle_s*)&image_roi,2),
                         oyRectangle_GetGeo1((oyRectangle_s*)&image_roi,3) );
     STRING_ADD( t, oyRectangle_Show( (oyRectangle_s*)&image_roi ) );
-    DBGs_PROG4_S( ticket, "%s[%d] image_roi: %s output_array_roi%s", "Fill ticket->array from image",
-                 oyStruct_GetId( (oyStruct_s*)image ),
-                 oyRectangle_Show( (oyRectangle_s*)output_array_roi ),
-                 t );
+    DBGs_PROG6_S( ticket, "%s[%d] image_roi: %s output_array_roi:%s array(%dx%d)", "Fill ticket->array from image",
+                  oyStruct_GetId( (oyStruct_s*)image ), t,
+                  oyRectangle_Show( (oyRectangle_s*)output_array_roi ),
+                  oyArray2d_GetWidth(array),oyArray2d_GetHeight(array) );
     error = oyImage_FillArray( image, (oyRectangle_s*)&image_roi, 1,
                                &array, (oyRectangle_s*)&output_array_roi_, 0 );
+    DBGs_PROG4_S( ticket, "%s[%d] output_array: %dx%d", "filled ticket->array",
+                  oyStruct_GetId( (oyStruct_s*)array ),
+                  oyArray2d_GetWidth(array),oyArray2d_GetHeight(array) );
     oyPixelAccess_SetArray( ticket, array );
     oyArray2d_Release( &array );
     if(error)
