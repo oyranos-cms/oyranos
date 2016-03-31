@@ -53,6 +53,8 @@
     OY_DEBUG_SIGNALS sets the internal ::oy_debug_signals variable on and
     helps in tracing signals. This variable is dangerous and 
     should not to be run for production use. \n
+    OY_DEBUG_WRITE together with OY_DEBUG is used to tell, that a file output
+    is appreciated. Writing files will usually slow down debugging.
     OY_BACKTRACE can be set to a debug message string and will then place
     a backtrace text from gdb into the console. That needs the debug message
     to be visible.

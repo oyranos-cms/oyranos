@@ -637,7 +637,7 @@ int      lrawFilterPlug_ImageInputRAWRun (
   }
   oyConfig_Release( &device );
 
-  if(oy_debug && image_in)
+  if(oy_debug && image_in && getenv("OY_DEBUG_WRITE"))
   {
     oyArray2d_s * a = (oyArray2d_s*)oyImage_GetPixelData( image_in );
     oyArray2d_ToPPM_( a, "test_oy_dbg_lraw.ppm" );

@@ -1198,7 +1198,7 @@ cmsHPROFILE  lcmsGamutCheckAbstract  ( oyProfile_s       * proof,
       lcmsAddTag( gmt, icSigMediaWhitePointTag, lcmsD50_XYZ() );
       lcmsAddTag( gmt, icSigAToB0Tag, gmt_lut );
 
-  if(oy_debug)
+  if(oy_debug && getenv("OY_DEBUG_WRITE"))
   {
       l_cmsSaveProfileToMem( gmt, 0, &size );
       data = oyAllocateFunc_( size );

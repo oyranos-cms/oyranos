@@ -1779,7 +1779,7 @@ cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
       if(oy_debug) printPipeline(gmt_pl16);
 #undef E
 
-  if(oy_debug)
+  if(oy_debug && getenv("OY_DEBUG_WRITE"))
   {
       lcmsSaveProfileToMem( gmt, 0, &size );
       data = oyAllocateFunc_( size );

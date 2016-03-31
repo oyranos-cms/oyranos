@@ -464,7 +464,7 @@ int  oyDrawScreenImage               ( oyConversion_s    * context,
         /* convert the image data */
         oyConversion_RunPixels( context, ticket );
 
-        if(oy_debug)
+        if(oy_debug && getenv("OY_DEBUG_WRITE"))
         {
           oyImage_s * out = oyConversion_GetImage( context, OY_OUTPUT );
           oyImage_WritePPM( out, "debug_image_out.ppm", "image_display output image");
