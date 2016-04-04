@@ -628,7 +628,7 @@ int            oyImage_FillArray     ( oyImage_s         * image,
   int error;
   oyArray2d_s_ * a = (oyArray2d_s_*) *array;
   oyImage_s_ * s = (oyImage_s_*)image;
-  oyRectangle_s_ image_roi_pix = {oyOBJECT_RECTANGLE_S,0,0,0, 0,0,0,0},
+  oyRectangle_s_ image_roi_chan = {oyOBJECT_RECTANGLE_S,0,0,0, 0,0,0,0},
                 r = {oyOBJECT_RECTANGLE_S,0,0,0, 0,0,0,0};
   oyDATATYPE_e data_type = oyUINT8;
   int is_allocated = 0;
@@ -637,7 +637,7 @@ int            oyImage_FillArray     ( oyImage_s         * image,
   int array_width, array_height;
   oyAlloc_f allocateFunc_ = 0;
   unsigned char * line_data = 0;
-  int i,j, height;
+  int i,j, height, channels_n;
   size_t wlen;
 
   if(!image)
@@ -654,7 +654,7 @@ int            oyImage_FillArray     ( oyImage_s         * image,
   data_type = oyToDataType_m( s->layout_[oyLAYOUT] );
   data_size = oyDataTypeGetSize( data_type );
   error = oyImage_PixelsToSamples( image, rectangle,
-                                   (oyRectangle_s*)&image_roi_pix );
+                                   (oyRectangle_s*)&image_roi_chan );
 
   if(!error && array_rectangle)
     error = oyImage_PixelsToSamples( image, array_rectangle,
@@ -675,9 +675,9 @@ int            oyImage_FillArray     ( oyImage_s         * image,
   {
     char * t = NULL;
     STRING_ADD( t, oyRectangle_Show( (oyRectangle_s*)&array_roi_pix ) );
-    DBGs_PROG4_S( image, "image_roi_pix: %s array_roi_pix: %s array_width: %d array_height: %d",
-                 oyRectangle_Show( (oyRectangle_s*)&image_roi_pix ),
-                 t, array_width, array_height );
+    DBGs_PROG5_S( image, "image_roi_chan: %s array_roi_pix: %s array[%d] array_width: %d array_height: %d",
+                 oyRectangle_Show( (oyRectangle_s*)&image_roi_chan ),
+                 t, oyStruct_GetId((oyStruct_s*)*array), array_width, array_height );
     oyFree_m_(t);
   }
 
@@ -699,7 +699,14 @@ int            oyImage_FillArray     ( oyImage_s         * image,
         a = oyArray2d_Create_( array_width, array_height, data_type, obj );
       
       } else
+      {
+        oyMessageFunc_p( oyMSG_WARN, (oyStruct_s*)image,
+                 OY_DBG_FORMAT_ "array[%d](%dx%d) is too small: setting to %dx%d",
+                 OY_DBG_ARGS_,
+                 oyStruct_GetId( (oyStruct_s*) a ),
+                 a->width, a->height, array_width, array_height );
         error = oyArray2d_Reset( *array, array_width, array_height, data_type );
+      }
     }
 
     if(!error)
@@ -765,39 +772,57 @@ int            oyImage_FillArray     ( oyImage_s         * image,
     oyArray2d_SetFocus( (oyArray2d_s*)a, (oyRectangle_s*)&array_roi_pix );
 
     /* change intermediately */
-    if(a && a->width > image_roi_pix.width)
+    if(a && a->width > image_roi_chan.width)
     {
-      a->width = image_roi_pix.width;
+      a->width = image_roi_chan.width;
     }
-    if(a && a->height > image_roi_pix.height)
+    if(a && a->height > image_roi_chan.height)
     {
-      a->height = image_roi_pix.height;
+      a->height = image_roi_chan.height;
     }
   }
 
+  channels_n = oyToChannels_m( s->layout_[oyLAYOUT] );
   if(a && !error)
   {
   if(s->getLine)
   {
     oyPointer src, dst;
+    int image_roi_chan_width = image_roi_chan.x + image_roi_chan.width,
+        roi_pix_width = OY_MIN( image_roi_chan_width, array_roi_pix.width ) / channels_n,
+        roi_pix_height = OY_MIN( image_roi_chan.y + image_roi_chan.height, array_roi_pix.height );
 
-    wlen = image_roi_pix.width * data_size;
+    wlen = roi_pix_width * data_size * channels_n;
 
     if(oy_debug > 2)
     {
       char * t = NULL;
       STRING_ADD( t, oyRectangle_Show( (oyRectangle_s*)&array_roi_pix ) );
-      DBGs_PROG4_S( image, "image_roi_pix: %s array_roi_pix: %s wlen(size_t): %lu image-hook:\"%s\"",
-                 oyRectangle_Show( (oyRectangle_s*)&image_roi_pix ),
+      DBGs_PROG4_S( image, "image_roi_chan: %s array_roi_pix: %s wlen(size_t): %lu image-hook:\"%s\"",
+                 oyRectangle_Show( (oyRectangle_s*)&image_roi_chan ),
                  t, wlen, oyStructTypeToText( s->pixel_data->type_ ) );
       oyFree_m_(t);
     }
 
-    if(allocate_method != 2)
-    for( i = 0; i < image_roi_pix.height; )
+    if(roi_pix_width  > s->width ||
+       roi_pix_height > s->height)
+    {
+      oyMessageFunc_p( oyMSG_ERROR, (oyStruct_s*)image,
+                 OY_DBG_FORMAT_ "image request is exceeding available memory:%dx%d img_roi: %.0fx%.0f+%.0f+%.0f rectangle: %.gx%.g+%.g+%.g image:\n%s\narray[%d](%dx%d)",
+                 OY_DBG_ARGS_, s->width,s->height,
+                 image_roi_chan.width/channels_n,image_roi_chan.height,image_roi_chan.x/channels_n,image_roi_chan.y,
+                 oyRectangle_GetGeo1(rectangle, 2),oyRectangle_GetGeo1(rectangle, 3),oyRectangle_GetGeo1(rectangle, 0),oyRectangle_GetGeo1(rectangle, 1),
+                 oyObject_GetName( image->oy_, oyNAME_NICK ),
+                 oyStruct_GetId( (oyStruct_s*) a ),
+                 a->width, a->height );
+      error = 1;
+    }
+
+    if(allocate_method != 2 && !error)
+    for( i = 0; i < roi_pix_height; )
     {
       height = is_allocated = 0;
-      line_data = s->getLine( image, image_roi_pix.y + i, &height, -1,
+      line_data = s->getLine( image, image_roi_chan.y + i, &height, -1,
                              &is_allocated );
 
       if(!line_data)
@@ -813,7 +838,7 @@ int            oyImage_FillArray     ( oyImage_s         * image,
         dst = &a->array2d[ay][0];
         src = &line_data[(j
                        * OY_ROUND(s->width * s->layout_[oyCHANS])
-                       + OY_ROUND(image_roi_pix.x))
+                       + OY_ROUND(image_roi_chan.x))
                       * data_size];
 
         if(dst && src && dst != src)
@@ -866,7 +891,7 @@ int            oyImage_ReadArray     ( oyImage_s         * image,
   oyImage_s_ * s = (oyImage_s_*)image;
   oyArray2d_s_ * array_ = (oyArray2d_s_*)array;
   int error = !image || !array;
-  oyRectangle_s_ image_roi_pix = {oyOBJECT_RECTANGLE_S,0,0,0,0,0,0,0},
+  oyRectangle_s_ image_roi_chan = {oyOBJECT_RECTANGLE_S,0,0,0,0,0,0,0},
                  array_rect_pix = {oyOBJECT_RECTANGLE_S,0,0,0,0,0,0,0};
   oyDATATYPE_e data_type = oyUINT8;
   int bps = 0, channel_n, i, offset, width, height;
@@ -881,14 +906,14 @@ int            oyImage_ReadArray     ( oyImage_s         * image,
   channel_n = s->layout_[oyCHANS];
 
   error = oyImage_PixelsToSamples( image, image_rectangle,
-                                   (oyRectangle_s*)&image_roi_pix );
+                                   (oyRectangle_s*)&image_roi_chan );
   /* We want to check if the array is big enough to hold the pixels */
-  if(array_->data_area.width < image_roi_pix.width ||
-     array_->data_area.height < image_roi_pix.height)
+  if(array_->data_area.width < image_roi_chan.width ||
+     array_->data_area.height < image_roi_chan.height)
   {
     WARNcc3_S( image, "array (%dx%d) is too small for rectangle %s",
                (int)array_->width, (int)array_->height,
-               oyRectangle_Show( (oyRectangle_s*)&image_roi_pix ) );
+               oyRectangle_Show( (oyRectangle_s*)&image_roi_chan ) );
     error = 1;
   }
 
@@ -915,25 +940,25 @@ int            oyImage_ReadArray     ( oyImage_s         * image,
   }
 
   if(!error &&
-     (array_rect_pix.width != image_roi_pix.width ||
-      array_rect_pix.height != image_roi_pix.height))
+     (array_rect_pix.width != image_roi_chan.width ||
+      array_rect_pix.height != image_roi_chan.height))
   {
     WARNcc4_S( image, "array %dx%d does not fit image rectangle %dx%d",
                (int)array_rect_pix.width, (int)array_rect_pix.height,
-               (int)image_roi_pix.width, (int)image_roi_pix.height
+               (int)image_roi_chan.width, (int)image_roi_chan.height
                 );
   }
 
   if(!error)
   {
-    offset = image_roi_pix.x / channel_n * bps;
-    width = OY_MIN(image_roi_pix.width, array_rect_pix.width);
+    offset = image_roi_chan.x / channel_n * bps;
+    width = OY_MIN(image_roi_chan.width, array_rect_pix.width);
     width /= channel_n;
-    height = OY_MIN( array_rect_pix.y + array_rect_pix.height, image_roi_pix.height );
+    height = OY_MIN( array_rect_pix.y + array_rect_pix.height, image_roi_chan.height );
 
     for(i = array_rect_pix.y; i < height; ++i)
     {
-      s->setLine( image, offset, image_roi_pix.y + i, width, -1,
+      s->setLine( image, offset, image_roi_chan.y + i, width, -1,
                       &array_->array2d
                               [i][OY_ROUND(array_rect_pix.x) * bps] );
     }
