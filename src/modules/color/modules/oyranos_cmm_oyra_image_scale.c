@@ -99,15 +99,8 @@ int      oyraFilter_ImageScaleRun    ( oyFilterPlug_s    * requestor_plug,
     oyOptions_Release( &node_opts );
 
     if(oy_debug > 2)
-    {
-      oyArray2d_s * a = oyPixelAccess_GetArray( ticket );
       oyra_msg( oyMSG_WARN, (oyStruct_s*)ticket, OY_DBG_FORMAT_
-                "ticket_roi: %s img.w: %d arr[%d].w %d start_x: %.02f",OY_DBG_ARGS_,
-                oyRectangle_Show(ticket_roi), image_width,
-                oyStruct_GetId((oyStruct_s*)a),oyArray2d_GetWidth(a),
-                oyPixelAccess_GetStart( ticket, 0 )*image_width );
-      oyArray2d_Release( &a );
-    }
+                "%s",OY_DBG_ARGS_, oyPixelAccess_Show(ticket));
 
     if(scale != 1.0)
     {
@@ -130,6 +123,7 @@ int      oyraFilter_ImageScaleRun    ( oyFilterPlug_s    * requestor_plug,
 
       new_ticket = oyPixelAccess_Copy( ticket, ticket->oy_ );
       oyPixelAccess_SetArray( new_ticket, 0 );
+      oyPixelAccess_SetOutputImage( new_ticket, image );
 
       if(oy_debug)
         oyra_msg( oyMSG_WARN, (oyStruct_s*)ticket, OY_DBG_FORMAT_
@@ -198,16 +192,11 @@ int      oyraFilter_ImageScaleRun    ( oyFilterPlug_s    * requestor_plug,
         int issue = 0;
 
         /* get the source pixels */
-        if(oy_debug > 2)
-        {
-          oyRectangle_Scale( new_ticket_array_roi, image_width );
-          oyra_msg( oyMSG_DBG, (oyStruct_s*)ticket, OY_DBG_FORMAT_
-                     "%s[%d] %s",OY_DBG_ARGS_,
-                     "Run new_ticket through filter in node",
-                     oyStruct_GetId( (oyStruct_s*)node ),
-                     oyRectangle_Show( new_ticket_array_roi ) );
-          oyRectangle_Scale( new_ticket_array_roi, 1.0/image_width );
-        }
+          if(oy_debug > 2)
+            oyra_msg( oyMSG_DBG, (oyStruct_s*)ticket, OY_DBG_FORMAT_
+                     "%s %s",OY_DBG_ARGS_,
+                     "Run new_ticket",
+                     oyPixelAccess_Show( new_ticket ) );
         result = oyFilterNode_Run( input_node, plug, new_ticket );
 
         /* get the channel buffers */

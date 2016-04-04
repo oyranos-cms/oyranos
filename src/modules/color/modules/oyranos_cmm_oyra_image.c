@@ -873,6 +873,8 @@ int      oyraFilterPlug_ImageRectanglesRun (
                              "//" OY_TYPE_STD "/rectangles/rectangle",
                              oyOBJECT_RECTANGLE_S );
 
+      DBGs_PROG2_S( ticket, "n: %d %s", n, oyPixelAccess_Show( ticket ) );
+
     /* rectangles stuff */
     for(i = 0; i < n; ++i)
     {
@@ -885,9 +887,6 @@ int      oyraFilterPlug_ImageRectanglesRun (
       /* Map each matching plug to a new ticket with a corrected rectangle. */
       new_ticket = oyPixelAccess_Copy( ticket, ticket->oy_ );
       oyPixelAccess_SetArray( new_ticket, 0 );
-      DBGs_PROG3_S( ticket, "%s[%d] %s", "Created new_ticket",
-                   oyStruct_GetId( (oyStruct_s*)new_ticket ),
-                   oyRectangle_Show( r ) );
 
       new_ticket_roi = oyPixelAccess_GetArrayROI( new_ticket );
       if(r)
@@ -905,6 +904,9 @@ int      oyraFilterPlug_ImageRectanglesRun (
                                      oyPixelAccess_GetStart( new_ticket, 1 )
                                      + oyRectangle_GetGeo1( new_ticket_roi, 1 ),
                                      new_ticket_roi );
+
+        DBGs_PROG3_S( ticket, "[%d] %s %s", i, "Created new_ticket",
+                      oyPixelAccess_Show( new_ticket ) );
 
       if(oyRectangle_CountPoints(  new_ticket_roi ) > 0)
       {
