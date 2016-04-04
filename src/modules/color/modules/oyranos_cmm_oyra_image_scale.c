@@ -99,10 +99,15 @@ int      oyraFilter_ImageScaleRun    ( oyFilterPlug_s    * requestor_plug,
     oyOptions_Release( &node_opts );
 
     if(oy_debug > 2)
+    {
+      oyArray2d_s * a = oyPixelAccess_GetArray( ticket );
       oyra_msg( oyMSG_WARN, (oyStruct_s*)ticket, OY_DBG_FORMAT_
-                "ticket_roi: %s w: %d start_x: %.02f",OY_DBG_ARGS_,
+                "ticket_roi: %s img.w: %d arr[%d].w %d start_x: %.02f",OY_DBG_ARGS_,
                 oyRectangle_Show(ticket_roi), image_width,
+                oyStruct_GetId((oyStruct_s*)a),oyArray2d_GetWidth(a),
                 oyPixelAccess_GetStart( ticket, 0 )*image_width );
+      oyArray2d_Release( &a );
+    }
 
     if(scale != 1.0)
     {

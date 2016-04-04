@@ -2670,13 +2670,13 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
   array_in = oyPixelAccess_GetArray( new_ticket );
   array_out = oyPixelAccess_GetArray( ticket );
   if(oy_debug > 2)
-    lcm2_msg( oyMSG_DBG, (oyStruct_s*)new_ticket, OY_DBG_FORMAT_"%s %d %dx%d (%s %d)",
-              OY_DBG_ARGS_,"Read from new_ticket->array",
+    lcm2_msg( oyMSG_DBG, (oyStruct_s*)new_ticket, OY_DBG_FORMAT_"%s new_ticket->array[%d](%dx%d) %s[%d]",
+              OY_DBG_ARGS_,_("Read from"),
               oyStruct_GetId( (oyStruct_s*)array_in ), oyArray2d_GetWidth(array_in), oyArray2d_GetHeight(array_in),
               _("Image"), oyStruct_GetId( (oyStruct_s*)image_input ) );
   if(oy_debug > 2)
-    lcm2_msg( oyMSG_DBG, (oyStruct_s*)ticket, OY_DBG_FORMAT_"%s %d %dx%d (%s %d)",
-              OY_DBG_ARGS_,"Write to ticket->array",
+    lcm2_msg( oyMSG_DBG, (oyStruct_s*)ticket, OY_DBG_FORMAT_"%s ticket->array[%d](%dx%d) %s[%d]",
+              OY_DBG_ARGS_,_("Write to"),
               oyStruct_GetId( (oyStruct_s*)array_out ), oyArray2d_GetWidth(array_out), oyArray2d_GetHeight(array_out),
               _("Image"), oyStruct_GetId( (oyStruct_s*)image_output ) );
 
