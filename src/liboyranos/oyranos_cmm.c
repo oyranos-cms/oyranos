@@ -57,7 +57,7 @@ int      oyFilterPlug_ImageRootRun   ( oyFilterPlug_s    * requestor_plug,
   oyFilterSocket_s * socket = oyFilterPlug_GetSocket( requestor_plug );
   oyImage_s * image = (oyImage_s*)oyFilterSocket_GetData( socket ),
             * output_image;
-  int width;
+  int width, output_width;
   oyRectangle_s * output_array_roi;
 
   DBGs_PROG2_S( ticket, "%s[%d]", "Work on remote socket image",
@@ -87,13 +87,16 @@ int      oyFilterPlug_ImageRootRun   ( oyFilterPlug_s    * requestor_plug,
   }
 
   width = oyImage_GetWidth(image);
+  output_width = oyImage_GetWidth(output_image);
 
-  x_pix = oyPixelAccess_GetStart(ticket,0) * width;
-  y_pix = oyPixelAccess_GetStart(ticket,1) * width;
+  x_pix = oyPixelAccess_GetStart(ticket,0) * output_width;
+  y_pix = oyPixelAccess_GetStart(ticket,1) * output_width;
 
   {
     char * t = 0;
     oyArray2d_s * array = oyPixelAccess_GetArray( ticket );
+    int channels = oyToChannels_m( oyImage_GetPixelLayout(image, oyLAYOUT) );
+    int array_pix_width = oyArray2d_GetWidth(array)/channels;
 
     /* adapt the rectangle of interesst to the new image dimensions */
     oyRectangle_s_ image_roi = {oyOBJECT_RECTANGLE_S,0,0,0, 0,0,0,0},
@@ -102,15 +105,21 @@ int      oyFilterPlug_ImageRootRun   ( oyFilterPlug_s    * requestor_plug,
     oyRectangle_SetByRectangle( (oyRectangle_s*)&output_array_roi_, output_array_roi );
     /* x and y source image offset */
     oyRectangle_SetGeo( (oyRectangle_s*)&image_roi,
-                        x_pix / (double) oyImage_GetWidth(image),
-                        y_pix / (double) oyImage_GetWidth(image),
+                        x_pix / (double) width,
+                        y_pix / (double) width,
                         oyRectangle_GetGeo1((oyRectangle_s*)&image_roi,2),
                         oyRectangle_GetGeo1((oyRectangle_s*)&image_roi,3) );
     STRING_ADD( t, oyRectangle_Show( (oyRectangle_s*)&image_roi ) );
-    DBGs_PROG6_S( ticket, "%s[%d] image_roi: %s output_array_roi:%s array(%dx%d)", "Fill ticket->array from image",
+    DBGs_PROG8_S( ticket, "%s %s[%d] image_roi: %s output_array_roi:%s array[%d](%dx%d)",
+                  "Fill ticket->array from", _("Image"),
                   oyStruct_GetId( (oyStruct_s*)image ), t,
                   oyRectangle_Show( (oyRectangle_s*)output_array_roi ),
-                  oyArray2d_GetWidth(array),oyArray2d_GetHeight(array) );
+                  oyStruct_GetId((oyStruct_s*)array),oyArray2d_GetWidth(array),oyArray2d_GetHeight(array) );
+    /* the array rectangle passed to oyImage_FillArray() is by definition relative to image units */
+    DBGs_PROG2_S( ticket, "array_pix_width: %d / width: %d", array_pix_width, width);
+    if(array_pix_width)
+      oyRectangle_Scale( (oyRectangle_s*)&output_array_roi_, array_pix_width/(double)width );
+    DBGs_PROG1_S( ticket, "after array/image scaling output_array_roi_: %s", oyRectangle_Show((oyRectangle_s*)&output_array_roi_));
     error = oyImage_FillArray( image, (oyRectangle_s*)&image_roi, 1,
                                &array, (oyRectangle_s*)&output_array_roi_, 0 );
     DBGs_PROG4_S( ticket, "%s[%d] output_array: %dx%d", "filled ticket->array",
