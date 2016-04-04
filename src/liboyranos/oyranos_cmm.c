@@ -60,8 +60,9 @@ int      oyFilterPlug_ImageRootRun   ( oyFilterPlug_s    * requestor_plug,
   int width, output_width;
   oyRectangle_s * output_array_roi;
 
-  DBGs_PROG2_S( ticket, "%s[%d]", "Work on remote socket image",
-               oyStruct_GetId( (oyStruct_s*)image ) );
+  DBGs_PROG3_S( ticket, "%s[%d] %s", "Work on remote socket image",
+                oyStruct_GetId( (oyStruct_s*)image ),
+                oyPixelAccess_Show(ticket) );
 
   oyFilterSocket_Release( &socket );
 
@@ -109,20 +110,23 @@ int      oyFilterPlug_ImageRootRun   ( oyFilterPlug_s    * requestor_plug,
                         y_pix / (double) width,
                         oyRectangle_GetGeo1((oyRectangle_s*)&image_roi,2),
                         oyRectangle_GetGeo1((oyRectangle_s*)&image_roi,3) );
+
     STRING_ADD( t, oyRectangle_Show( (oyRectangle_s*)&image_roi ) );
     DBGs_PROG8_S( ticket, "%s %s[%d] image_roi: %s output_array_roi:%s array[%d](%dx%d)",
                   "Fill ticket->array from", _("Image"),
                   oyStruct_GetId( (oyStruct_s*)image ), t,
                   oyRectangle_Show( (oyRectangle_s*)output_array_roi ),
                   oyStruct_GetId((oyStruct_s*)array),oyArray2d_GetWidth(array),oyArray2d_GetHeight(array) );
+
     /* the array rectangle passed to oyImage_FillArray() is by definition relative to image units */
-    DBGs_PROG2_S( ticket, "array_pix_width: %d / width: %d", array_pix_width, width);
+      DBGs_PROG2_S( ticket, "array_pix_width: %d / width: %d", array_pix_width, width);
     if(array_pix_width)
       oyRectangle_Scale( (oyRectangle_s*)&output_array_roi_, array_pix_width/(double)width );
-    DBGs_PROG1_S( ticket, "after array/image scaling output_array_roi_: %s", oyRectangle_Show((oyRectangle_s*)&output_array_roi_));
+      DBGs_PROG1_S( ticket, "after array/image scaling output_array_roi_: %s", oyRectangle_Show((oyRectangle_s*)&output_array_roi_));
+
     error = oyImage_FillArray( image, (oyRectangle_s*)&image_roi, 1,
                                &array, (oyRectangle_s*)&output_array_roi_, 0 );
-    DBGs_PROG4_S( ticket, "%s[%d] output_array: %dx%d", "filled ticket->array",
+      DBGs_PROG4_S( ticket, "%s[%d] output_array: %dx%d", "filled ticket->array",
                   oyStruct_GetId( (oyStruct_s*)array ),
                   oyArray2d_GetWidth(array),oyArray2d_GetHeight(array) );
     oyPixelAccess_SetArray( ticket, array );
