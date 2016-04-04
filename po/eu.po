@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cinepaint_icc-examin_eu\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2016-03-30 19:55+0200\n"
+"POT-Creation-Date: 2016-04-04 12:25+0200\n"
 "PO-Revision-Date: 2007-11-07 11:11+0100\n"
 "Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@zundan.com>\n"
 "Language-Team: Basque <itzulpena@euskalgnu.org>\n"
@@ -349,7 +349,7 @@ msgstr "Oyranos-en ezarpenak"
 msgid "Apple CMM"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1122
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1124
 msgid "Apply regions of interesst in form of simple rectangles."
 msgstr ""
 
@@ -915,7 +915,7 @@ msgstr ""
 msgid "Copyright (c) 2005-2010 Kai-Uwe Behrmann; newBSD"
 msgstr ""
 
-#: liboyranos/oyranos_cmm.c:204
+#: liboyranos/oyranos_cmm.c:217
 msgid "Copyright (c) 2005-2014 Kai-Uwe Behrmann; newBSD"
 msgstr ""
 
@@ -1065,7 +1065,7 @@ msgstr "Kalibrazio-data"
 msgid "Creation Time in UTC"
 msgstr ""
 
-#: liboyranos/oyranos_cmm.c:159 examples/devices/test_device.c:434
+#: liboyranos/oyranos_cmm.c:172 examples/devices/test_device.c:434
 msgid "Creation of rank_map filed from"
 msgstr ""
 
@@ -1419,7 +1419,7 @@ msgstr "Fitxategi-sistema"
 msgid "File name is missed"
 msgstr "Fitxategi-sistema"
 
-#: liboyranos/oyranos_cmm.c:153 examples/devices/test_device.c:274
+#: liboyranos/oyranos_cmm.c:166 examples/devices/test_device.c:274
 msgid "File not loaded!"
 msgstr "Fitxategia ez da kargatu."
 
@@ -1771,7 +1771,8 @@ msgstr "Iluminatzailea E energia berdinarekin"
 msgid "Illuminant:      "
 msgstr "Iluminatzailea: "
 
-#: liboyranos/oyranos_cmm.c:229 liboyranos/oyranos_cmm.c:253
+#: API_generated/oyPixelAccess_s.c:428 liboyranos/oyranos_cmm.c:116
+#: liboyranos/oyranos_cmm.c:242 liboyranos/oyranos_cmm.c:266
 #: modules/color/modules/oyranos_cmm_lcm2.c:2676
 #: modules/color/modules/oyranos_cmm_lcm2.c:2681
 #: modules/color/modules/oyranos_cmm_oPNG.c:1101
@@ -1782,11 +1783,11 @@ msgstr ""
 msgid "Image PNG Socket"
 msgstr ""
 
-#: liboyranos/oyranos_cmm.c:231
+#: liboyranos/oyranos_cmm.c:244
 msgid "Image Plug"
 msgstr ""
 
-#: liboyranos/oyranos_cmm.c:255
+#: liboyranos/oyranos_cmm.c:268
 msgid "Image Socket"
 msgstr ""
 
@@ -1795,7 +1796,7 @@ msgid ""
 "Image has no color space embedded. What default action shall be performed?"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:402
+#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:396
 msgid "Image/Simple Image[scale]"
 msgstr ""
 
@@ -1815,11 +1816,11 @@ msgstr ""
 msgid "Image[my_filter]"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1513
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1515
 msgid "Image[out]"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:357
+#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:351
 msgid "Image[scale]"
 msgstr ""
 
@@ -1831,7 +1832,7 @@ msgstr ""
 msgid "Image[write_ppm]"
 msgstr ""
 
-#: liboyranos/oyranos_cmm.c:227 liboyranos/oyranos_cmm.c:251
+#: liboyranos/oyranos_cmm.c:240 liboyranos/oyranos_cmm.c:264
 #: modules/color/modules/oyranos_cmm_oPNG.c:1099
 msgid "Img"
 msgstr ""
@@ -2402,7 +2403,7 @@ msgstr ""
 msgid "No monitor gamma curves by profile:"
 msgstr ""
 
-#: liboyranos/oyranos_cmm.c:186
+#: liboyranos/oyranos_cmm.c:199
 msgid "NoNo"
 msgstr ""
 
@@ -2465,7 +2466,7 @@ msgstr "Irteera"
 msgid "Output Color Space"
 msgstr "Kolore-espazioa"
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1515
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1517
 msgid "Output Image Filter Object"
 msgstr ""
 
@@ -2558,7 +2559,7 @@ msgid ""
 "and various devices with their respective physical color behaviours."
 msgstr ""
 
-#: liboyranos/oyranos_cmm.c:188 modules/color/modules/oyranos_cmm_oyra.c:129
+#: liboyranos/oyranos_cmm.c:201 modules/color/modules/oyranos_cmm_oyra.c:129
 #, fuzzy
 msgid "Oyranos modules"
 msgstr "Oyranos-en ezarpenak"
@@ -2577,7 +2578,7 @@ msgid ""
 "sources: http://www.oyranos.com/wiki/index.php?title=Oyranos/Download"
 msgstr ""
 
-#: liboyranos/oyranos_cmm.c:198
+#: liboyranos/oyranos_cmm.c:211
 msgid ""
 "Oyranos project; www: http://www.oyranos.org; support/email: ku.b@gmx.de; "
 "sources: http://www.oyranos.org/downloads/"
@@ -2590,7 +2591,7 @@ msgid ""
 "local computer. The settings can be per user and per system."
 msgstr ""
 
-#: liboyranos/oyranos_cmm.c:190 modules/color/modules/oyranos_cmm_oyra.c:131
+#: liboyranos/oyranos_cmm.c:203 modules/color/modules/oyranos_cmm_oyra.c:131
 #, fuzzy
 msgid "Oyranos supplied modules"
 msgstr "Oyranos-en ezarpenak"
@@ -2935,11 +2936,16 @@ msgstr "Prest"
 msgid "Read PPM"
 msgstr "Prest"
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1114
+#: modules/color/modules/oyranos_cmm_lcm2.c:2674
+#, fuzzy
+msgid "Read from"
+msgstr "profilik ez"
+
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1116
 msgid "Rectangles"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1116
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1118
 msgid "Rectangles Splitter Object"
 msgstr ""
 
@@ -2960,7 +2966,7 @@ msgstr "Tonu gorriaren erreprodukzio-kurba"
 msgid "Reflective scanner"
 msgstr "Eskaner islatzailea"
 
-#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:390
+#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:384
 msgid "Relation of positional parameters:"
 msgstr ""
 
@@ -3001,11 +3007,11 @@ msgstr ""
 msgid "Rgb"
 msgstr "Gbu"
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1322
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1324
 msgid "Root Image"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1324
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1326
 msgid "Root Image Filter Object"
 msgstr ""
 
@@ -3036,7 +3042,7 @@ msgstr ""
 msgid "Save to a new policy:"
 msgstr "profilik ez"
 
-#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:359
+#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:353
 msgid "Scale Image Filter Object"
 msgstr ""
 
@@ -3361,7 +3367,7 @@ msgstr ""
 msgid "The dummy useless module of Oyranos."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1523
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1525
 msgid ""
 "The filter can query pixels from its successors in a graph. The results are "
 "stored in the internal buffer."
@@ -3376,12 +3382,12 @@ msgid ""
 "\"=string."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1521
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1523
 msgid "The filter is a possible pixel target in a graph."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:365
-#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:404
+#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:359
+#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:398
 msgid "The filter is used to reduce pixels."
 msgstr ""
 
@@ -3409,7 +3415,7 @@ msgstr ""
 msgid "The filter obtains a image from libraw."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1330
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1332
 msgid "The filter provides a generic image source."
 msgstr ""
 
@@ -3419,13 +3425,13 @@ msgid ""
 "graph through the user function oyConversion_Correct()."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1124
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1126
 msgid ""
 "The filter will expect a \"rectangle\" option and will create, fill and "
 "process a according rectangle with a new job ticket."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:389
+#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:383
 msgid ""
 "The filter will expect a \"scale\" double option and will create, fill and "
 "process a according data version with a new job ticket. The new job tickets "
@@ -3623,7 +3629,7 @@ msgstr ""
 msgid "The raw image backend of Oyranos."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1332
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1334
 msgid "The root image filter can hold pixel data for processing in a graph."
 msgstr ""
 
@@ -3824,6 +3830,11 @@ msgstr "Puntua"
 #: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:261
 msgid "Write PPM Image Filter Object"
 msgstr ""
+
+#: modules/color/modules/oyranos_cmm_lcm2.c:2679
+#, fuzzy
+msgid "Write to"
+msgstr "Puntua"
 
 #: tools/oyranos_profile_tool.c:104 tools/oyranos_profile_tool.c:321
 #, fuzzy
@@ -4044,9 +4055,9 @@ msgstr ""
 
 #: API_generated/oyranos_devices.c:2592 API_generated/oyranos_devices.c:2603
 #: modules/color/modules/oyranos_cmm_oyra_image_scale.c:97
-#: modules/color/modules/oyranos_cmm_oyra_image.c:962
-#: modules/color/modules/oyranos_cmm_oyra_image.c:973
-#: modules/color/modules/oyranos_cmm_oyra_image.c:993
+#: modules/color/modules/oyranos_cmm_oyra_image.c:964
+#: modules/color/modules/oyranos_cmm_oyra_image.c:975
+#: modules/color/modules/oyranos_cmm_oyra_image.c:995
 #: modules/color/modules/oyranos_cmm_lcm2.c:3280
 #: modules/color/modules/oyranos_cmm_lcms.c:2380
 #: modules/color/modules/oyranos_cmm_oPNG.c:946
@@ -4244,7 +4255,7 @@ msgstr ""
 msgid "named color class"
 msgstr "Kolore izendunen izenak"
 
-#: liboyranos/oyranos_cmm.c:206 modules/color/modules/oyranos_cmm_oyra.c:147
+#: liboyranos/oyranos_cmm.c:219 modules/color/modules/oyranos_cmm_oyra.c:147
 #: modules/color/modules/oyranos_cmm_oydi.c:1148
 #: modules/color/modules/oyranos_cmm_oicc.c:1064
 #: modules/color/modules/devices/oyranos_cmm_disp.c:1320
@@ -4326,13 +4337,13 @@ msgstr "huts egin du X pantaila irekitzean"
 msgid "output class"
 msgstr "Abstraktua"
 
-#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:394
+#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:388
 #, fuzzy
 msgid "output image"
 msgstr "Abstraktua"
 
 #. output image region of interesst
-#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:392
+#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:386
 msgid "output_array_roi"
 msgstr ""
 
@@ -4511,7 +4522,7 @@ msgstr ""
 msgid "skip repair of profile ID"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:393
+#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:387
 msgid "source image"
 msgstr ""
 
