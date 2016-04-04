@@ -376,15 +376,15 @@ OYAPI double *  OYEXPORT
  *  @memberof oyRectangle_s
  *  @brief    Debug text
  *
- *  Not so threadsafe
+ *  This function is not not thread safe.
  *
- *  @version Oyranos: 0.1.8
+ *  @version Oyranos: 0.9.6
+ *  @date    2016/04/04
  *  @since   2007/12/04 (Oyranos: 0.1.8)
- *  @date    2007/12/04
  */
 const char*    oyRectangle_Show      ( oyRectangle_s     * rect )
 {
-  static oyChar *text = 0;
+  static char *text = 0;
   oyRectangle_s_ * s = (oyRectangle_s_*)rect;
 
   if(!s)
@@ -393,11 +393,11 @@ const char*    oyRectangle_Show      ( oyRectangle_s     * rect )
   if(!text)
     text = oyAllocateFunc_(sizeof(char) * 512);
 
-  if(s)
-    oySprintf_(text, "%.02fx%.02f%s%.02f%s%.02f", s->width,s->height,
+  if(text)
+    oySprintf_(text, "%gx%g%s%g%s%g", s->width,s->height,
                      s->x<0?"":"+", s->x, s->y<0?"":"+", s->y);
   else
-    oySprintf_(text, "no rectangle");
+    return "failed allocation";
 
   return text;
 
