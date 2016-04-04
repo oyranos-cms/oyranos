@@ -192,7 +192,7 @@ int                oyPixelAccess_SetOutputImage (
  *  function convinently changes the ROI and start_xy dimensions after such
  *  critical changes.
  *
- *  @param[in,out] pixel_access_new    tp be modified pixel iterator configuration
+ *  @param[in,out] pixel_access_new    to be modified pixel iterator configuration
  *  @param[in]     pixel_access_src    pixel iterator configuration pattern
  *  @return                            0 on success, else error
  *
@@ -253,7 +253,8 @@ int                oyPixelAccess_SynchroniseROI (
       oyRectangle_Scale( roi, a_width_dst );
       t = oyStringCopy( oyRectangle_Show( roi ), oyAllocateFunc_ );
       oyMessageFunc_p( oy_debug?oyMSG_DBG:oyMSG_WARN, (oyStruct_s*)ticket, OY_DBG_FORMAT_
-              "start_xy %f|%f ROI: image[%d](%s)%dc a[%d](%dx%d) <- [%d](%s)%dc a[%d](%dx%d)\n",OY_DBG_ARGS_,
+              "new_ticket[%d] start_xy %f|%f ROI: image[%d](%s)%dc a[%d](%dx%d) <- [%d](%s)%dc a[%d](%dx%d)\n",OY_DBG_ARGS_,
+                   oyStruct_GetId((oyStruct_s*)new_ticket),
                    start_x_dst_pixel, start_y_dst_pixel,
                    oyStruct_GetId((oyStruct_s*)image_dst),t,channels_dst,
                    oyStruct_GetId((oyStruct_s*)a_dst),oyArray2d_GetWidth(a_dst),oyArray2d_GetHeight(a_dst),
@@ -275,6 +276,64 @@ int                oyPixelAccess_SynchroniseROI (
   }
 
   return error;
+}
+
+/** Function  oyPixelAccess_Show
+ *  @memberof oyPixelAccess_s
+ *  @brief    Print ticket geometries
+ *
+ *  This function is not thread safe.
+ *
+ *  @param[in]     pixel_access        pixel iterator configuration
+ *  @return                            0 on success, else error
+ *
+ *  @version Oyranos: 0.9.6
+ *  @date    2016/04/04
+ *  @since   2016/04/04 (Oyranos: 0.9.6)
+ */
+const char *       oyPixelAccess_Show( oyPixelAccess_s   * pixel_access )
+{
+  int error = 0;
+  static char * t = NULL;
+
+  if(!t) t = malloc(1024);
+
+  if(!pixel_access || !t)
+    error = 1;
+
+  if(!error)
+  {
+    oyPixelAccess_s * ticket = pixel_access;
+    oyImage_s * image = oyPixelAccess_GetOutputImage( ticket );
+    int image_width = oyImage_GetWidth( image );
+    oyRectangle_s * ticket_array_roi = oyPixelAccess_GetArrayROI( ticket );
+    oyArray2d_s * a = oyPixelAccess_GetArray( ticket );
+    oyRectangle_s_  r = {oyOBJECT_RECTANGLE_S, 0,0,0, 0,0,0,0};
+    oyRectangle_s * roi = (oyRectangle_s*)&r;
+
+    /* start_xy is defined relative to the tickets output image width */
+    double start_x_pixel = oyPixelAccess_GetStart( ticket, 0 ) * image_width,
+           start_y_pixel = oyPixelAccess_GetStart( ticket, 1 ) * image_width;
+    int layout = oyImage_GetPixelLayout( image, oyLAYOUT );
+    int channels = oyToChannels_m( layout );
+    int a_width = oyArray2d_GetWidth( a ) / channels;
+
+    oyRectangle_SetByRectangle( roi, ticket_array_roi );
+    oyRectangle_Scale( roi, a_width );
+    oySprintf_( t,
+                "ticket[%d] start_xy %g|%g %s[%d](%dx%d)%dc ROI: %s a[%d](%dx%d)",
+                oyStruct_GetId((oyStruct_s*)ticket),
+                start_x_pixel, start_y_pixel, _("Image"),
+                oyStruct_GetId((oyStruct_s*)image),image_width,oyImage_GetHeight(image),channels,
+                oyRectangle_Show( roi ),
+                oyStruct_GetId((oyStruct_s*)a),oyArray2d_GetWidth(a),oyArray2d_GetHeight(a));
+
+    oyImage_Release( &image );
+    oyArray2d_Release( &a );
+    oyRectangle_Release( &ticket_array_roi );
+  }
+
+  return t?t:"----";
 }
 
 /** Function  oyPixelAccess_GetArrayROI

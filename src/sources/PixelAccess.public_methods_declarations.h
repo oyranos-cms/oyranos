@@ -48,3 +48,4 @@ int                oyPixelAccess_SetOldStart (
                                        oyPixelAccess_s   * pixel_access,
                                        int                 vertical,
                                        double              start );
+const char *       oyPixelAccess_Show( oyPixelAccess_s   * pixel_access );
