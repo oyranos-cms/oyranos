@@ -911,7 +911,10 @@ int      oyraFilterPlug_ImageRectanglesRun (
       oyRectangle_Scale( newt_roi, ticket_array_pix_width );
       oyRectangle_SetByRectangle( roi, newt_roi );
       if(r)
+      {
         oyRectangle_SetByRectangle( roi, rect );
+        oyRectangle_Release( &r );
+      }
 
       /* select node */
       input_node = oyFilterNode_GetPlugNode( node, i );
@@ -1026,10 +1029,12 @@ int      oyraFilterPlug_ImageRectanglesRun (
         oyArray2d_Release( &new_ticket_array );
         oyFilterPlug_Release( &plug );
       }
+
       oyPixelAccess_Release( &new_ticket );
       oyImage_Release( &new_ticket_image );
 
       oyOption_Release( &o );
+      oyRectangle_Release( &new_ticket_roi );
     }
 
     oyRectangle_SetGeo( (oyRectangle_s*)&array_pix, 0,0,
@@ -1041,8 +1046,12 @@ int      oyraFilterPlug_ImageRectanglesRun (
     oyRectangle_Release( &ticket_roi );
     oyArray2d_Release( &ticket_array );
     oyFilterNode_Release( &input_node );
-    oyFilterNode_Release( &input_node );
+    oyOptions_Release( &node_opts );
   }
+
+  oyImage_Release( &image );
+  oyFilterNode_Release( &node );
+  oyFilterSocket_Release( &socket );
 
   return result;
 }
