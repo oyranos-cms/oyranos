@@ -319,7 +319,7 @@ const char *       oyPixelAccess_Show( oyPixelAccess_s   * pixel_access )
     int a_width = oyArray2d_GetWidth( a ) / channels;
 
     oyRectangle_SetByRectangle( roi, ticket_array_roi );
-    oyRectangle_Scale( roi, a_width );
+    oyRectangle_Scale( roi, a_width?a_width:image_width );
     oySprintf_( t,
                 "ticket[%d] start_xy %g|%g %s[%d](%dx%d)%dc ROI: %s a[%d](%dx%d)",
                 oyStruct_GetId((oyStruct_s*)ticket),
