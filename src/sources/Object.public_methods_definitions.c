@@ -25,11 +25,71 @@ static oyObject_s oy_object_pool_[100] = {
  *  @since   2007/11/00 (Oyranos: 0.1.8)
  *  @date    2009/06/02
  */
-oyObject_s
-oyObject_New  ( void )
+oyObject_s         oyObject_New      ( void )
 {
   return oyObject_NewWithAllocators( oyAllocateFunc_, oyDeAllocateFunc_ );
 }
+
+#define MAX_OBJECTS_TRACKED 1000000
+/* private tracking API's start */
+static oyObject_s * oy_obj_track_list = 0;
+void               oyObject_Track    ( oyObject_s          obj )
+{
+  if(!oy_obj_track_list)
+  {
+    oy_obj_track_list = oyAllocateFunc_( sizeof(oyObject_s) * (MAX_OBJECTS_TRACKED + 1) );
+    if(oy_obj_track_list)
+      memset( oy_obj_track_list, 0, sizeof(oyObject_s) * (MAX_OBJECTS_TRACKED + 1) );
+  }
+  if(oy_obj_track_list && obj->id_ < MAX_OBJECTS_TRACKED)
+    oy_obj_track_list[obj->id_] = obj;
+}
+void               oyObject_UnTrack    ( oyObject_s          obj )
+{
+  if(oy_obj_track_list && obj->id_ < MAX_OBJECTS_TRACKED)
+    oy_obj_track_list[obj->id_] = NULL;
+}
+/* private tracking API's end */
+
+int *              oyObjectGetCurrentObjectIdList( void )
+{
+  int * id_list = oyAllocateFunc_( sizeof(int) * MAX_OBJECTS_TRACKED );
+  int i;
+
+  if(id_list)
+    for(i = 0; i < MAX_OBJECTS_TRACKED; ++i)
+    {
+      if(oy_obj_track_list[i] && oy_obj_track_list[i]->parent_)
+        id_list[i] = oy_obj_track_list[i]->parent_->type_;
+      else
+        id_list[i] = -1;
+    }
+  return id_list;
+}
+
+const oyObject_s * oyObjectGetList   ( int               * max_count )
+{ if(max_count) *max_count = MAX_OBJECTS_TRACKED; return oy_obj_track_list; }
+
+int *              oyObjectFindNewIds( int               * old,
+                                       int               * new )
+{
+  int * id_list = oyAllocateFunc_( sizeof(int) * MAX_OBJECTS_TRACKED );
+  int i;
+
+  if(id_list)
+    for(i = 0; i < MAX_OBJECTS_TRACKED; ++i)
+    {
+      if(old[i] == -1 && new[i] != -1)
+        id_list[i] = new[i];
+      else
+        id_list[i] = -1;
+    }
+  return id_list;
+}
+void               oyObjectReleaseCurrentObjectIdList(
+                                       int              ** id_list )
+{ oyDeAllocateFunc_(*id_list); *id_list = NULL; }
+
 
 /** @brief   object management 
  *  @ingroup  objects_generic
@@ -38,9 +98,9 @@ oyObject_New  ( void )
  *  @since   2007/11/00 (Oyranos: 0.1.8)
  *  @date    2009/06/02
  */
-oyObject_s
-oyObject_NewWithAllocators  ( oyAlloc_f         allocateFunc,
-                              oyDeAlloc_f       deallocateFunc )
+oyObject_s         oyObject_NewWithAllocators (
+                                       oyAlloc_f           allocateFunc,
+                                       oyDeAlloc_f         deallocateFunc )
 {
   oyObject_s o = 0;
   int error = 0;
@@ -75,7 +135,7 @@ oyObject_NewWithAllocators  ( oyAlloc_f         allocateFunc,
   o->copy = (oyStruct_Copy_f) oyObject_Copy;
   o->release = (oyStruct_Release_f) oyObject_Release;
   o->ref_ = 1;
-    
+ 
 #if OY_USE_OBJECT_POOL_
   if(old_obj)
     return o;
@@ -89,13 +149,16 @@ oyObject_NewWithAllocators  ( oyAlloc_f         allocateFunc,
   o->parent_types_ = o->allocateFunc_(sizeof(oyOBJECT_e)*2);
   memset(o->parent_types_,0,sizeof(oyOBJECT_e)*2);
 
+  if(oy_debug_objects)
+    oyObject_Track(o);
+
   return o;
 }
 
 /** @brief   object management 
  *  @ingroup  objects_generic
  *
- *  @param[in]    object         the object
+ *  @param[in]     object              the object
  *
  *  @since Oyranos: version 0.1.8
  *  @date  17 december 2007 (API 0.1.8)
@@ -177,6 +240,9 @@ int          oyObject_Release         ( oyObject_s      * obj )
   if(oyObject_UnRef(s))
     return 0;
   /* ---- end of common object destructor ------- */
+
+  if(oy_debug_objects)
+    oyObject_UnTrack( s );
 
   oyName_release_( &s->name_, s->deallocateFunc_ );
 
@@ -552,6 +618,10 @@ int          oyObject_UnRef          ( oyObject_s          obj )
   if(error <= 0)
   {
     oyObject_Lock( s, __FILE__, __LINE__ );
+
+    if(oy_debug)
+      /* track object */
+      oyObject_GetId( obj );
 
     if(s->ref_ < 0)
       ref = 0;

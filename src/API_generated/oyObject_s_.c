@@ -79,6 +79,10 @@ int          oyObject_Ref            ( oyObject_s          obj )
   if(error <= 0)
   {
     ++s->ref_;
+
+    if(oy_debug)
+      /* track object */
+      oyObject_GetId( obj );
   }
 #   if DEBUG_OBJECT
     WARNc3_S("%s   ID: %d refs: %d",

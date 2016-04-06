@@ -8,3 +8,13 @@ int          oyObject_HashSet          ( oyObject_s        s,
 int          oyObject_HashEqual        ( oyObject_s        s1,
                                          oyObject_s        s2 );
 int          oyGetNewObjectID        ( );
+
+/* object tracking */
+int *              oyObjectGetCurrentObjectIdList( void );
+int *              oyObjectFindNewIds( int               * old_ids,
+                                       int               * new_ids );
+void               oyObjectReleaseCurrentObjectIdList(
+                                       int              ** id_list );
+const oyObject_s * oyObjectGetList   ( int               * max_count );
+
+
