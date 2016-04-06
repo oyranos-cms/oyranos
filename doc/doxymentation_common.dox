@@ -50,11 +50,17 @@
     OY_DEBUG_MEMORY sets the internal ::oy_debug_memory variable on and
     helps somewhat in detecting memory leaks. This variable is dangerous and 
     should not to be run for production use. \n
+    OY_DEBUG_OBJECTS is used to frequently print infos 
+    about objects on stderr. The value of OY_DEBUG_OBJECTS can be a
+    - Object ID or a
+    - type name like "oyImage_s","Image" to track all oyImage_s type objects or
+    - "1" to print track informations about all trackable objects.
+ 
     OY_DEBUG_SIGNALS sets the internal ::oy_debug_signals variable on and
     helps in tracing signals. This variable is dangerous and 
     should not to be run for production use. \n
     OY_DEBUG_WRITE together with OY_DEBUG is used to tell, that a file output
-    is appreciated. Writing files will usually slow down debugging.
+    is appreciated. Writing files will usually slow down debugging. \n
     OY_BACKTRACE can be set to a debug message string and will then place
     a backtrace text from gdb into the console. That needs the debug message
     to be visible.

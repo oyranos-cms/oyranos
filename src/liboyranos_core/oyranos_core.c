@@ -227,17 +227,38 @@ const char *     oyStructTypeToText  ( oyOBJECT_e          type )
  *  @memberof oyObject_s
  *  @brief   get the identification number of a object 
  *
- *  @version Oyranos: 0.1.8
+ *  @version Oyranos: 0.9.6
+ *  @date    2016/04/06
  *  @since   2008/07/10 (Oyranos: 0.1.8)
- *  @date    2008/07/10
  */
 int            oyObject_GetId        ( oyObject_s          object )
 {
   struct oyObject_s_* obj = (struct oyObject_s_*)object;
+  oyStruct_s * st = NULL;
+
+  if(obj)
+    st = obj->parent_;
+
+  if(st && oy_debug_objects)
+  {
+    const char * t = getenv(OY_DEBUG_OBJECTS);
+    int id_ = -1;
+    if(t)
+      id_ = atoi(t);
+
+    if((id_ >= 0 && obj->id_ == id_) ||
+       (t && strstr(oyStructTypeToText(st->type_), t) != 0) ||
+       id_ == 1)
+    {
+      fprintf(stderr, "\"%s\"[%d] refs: %d\n", oyStructTypeToText(st->type_), obj->id_, obj->ref_);
+      fflush( stderr );
+    }
+  }
+
   if(obj)
     return obj->id_;
-
-  return -1;
+  else
+    return -1;
 }
 
 

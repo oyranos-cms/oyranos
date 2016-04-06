@@ -112,9 +112,9 @@ int      oyFilterPlug_ImageRootRun   ( oyFilterPlug_s    * requestor_plug,
                         oyRectangle_GetGeo1((oyRectangle_s*)&image_roi,3) );
 
     STRING_ADD( t, oyRectangle_Show( (oyRectangle_s*)&image_roi ) );
-    DBGs_PROG8_S( ticket, "%s %s[%d] image_roi: %s output_array_roi:%s array[%d](%dx%d)",
-                  "Fill ticket->array from", _("Image"),
-                  oyStruct_GetId( (oyStruct_s*)image ), t,
+    DBGs_PROG8_S( ticket, "Fill ticket->array[%d] from %s[%d] image_roi: %s output_array_roi:%s array[%d](%dx%d)",
+                  oyStruct_GetId( (oyStruct_s*)array ),
+                  _("Image"), oyStruct_GetId( (oyStruct_s*)image ), t,
                   oyRectangle_Show( (oyRectangle_s*)output_array_roi ),
                   oyStruct_GetId((oyStruct_s*)array),oyArray2d_GetWidth(array),oyArray2d_GetHeight(array) );
 

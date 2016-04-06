@@ -48,6 +48,11 @@
 #define OY_DEBUG_MEMORY                "OY_DEBUG_MEMORY"
 /** @brief Oyranos debug environment variable
  *
+ *  @since 0.9.6
+ */
+#define OY_DEBUG_OBJECTS               "OY_DEBUG_OBJECTS"
+/** @brief Oyranos debug environment variable
+ *
  *  @since 0.9.0
  */
 #define OY_DEBUG_SIGNALS               "OY_DEBUG_SIGNALS"
