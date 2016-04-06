@@ -911,7 +911,8 @@ int            oyImage_ReadArray     ( oyImage_s         * image,
   if(array_->data_area.width < image_roi_chan.width ||
      array_->data_area.height < image_roi_chan.height)
   {
-    WARNcc3_S( image, "array (%dx%d) is too small for rectangle %s",
+    WARNcc4_S( image, "array[%d](%dx%d) is too small for image rectangle %s",
+               oyStruct_GetId( (oyStruct_s*)array_ ),
                (int)array_->width, (int)array_->height,
                oyRectangle_Show( (oyRectangle_s*)&image_roi_chan ) );
     error = 1;
@@ -919,8 +920,7 @@ int            oyImage_ReadArray     ( oyImage_s         * image,
 
   if(!error & !s->setLine)
   {
-    WARNcc1_S( image, "only the setLine() interface is yet supported; image[%d]",
-              oyObject_GetId( image->oy_ ) );
+    WARNcc_S( image, "setLine() missed! (Only this interface is yet supported.)" );
     error = 1;
   }
 
@@ -943,9 +943,11 @@ int            oyImage_ReadArray     ( oyImage_s         * image,
      (array_rect_pix.width != image_roi_chan.width ||
       array_rect_pix.height != image_roi_chan.height))
   {
-    WARNcc4_S( image, "array %dx%d does not fit image rectangle %dx%d",
-               (int)array_rect_pix.width, (int)array_rect_pix.height,
-               (int)image_roi_chan.width, (int)image_roi_chan.height
+    WARNcc6_S( image, "array[%d] %gx%g does not fit image[%d] rectangle %gx%g",
+               oyStruct_GetId( (oyStruct_s*)array_ ),
+               array_rect_pix.width, array_rect_pix.height,
+               oyStruct_GetId( (oyStruct_s*)image ),
+               image_roi_chan.width, image_roi_chan.height
                 );
   }
 
