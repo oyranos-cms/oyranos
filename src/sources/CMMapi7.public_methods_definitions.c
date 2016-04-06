@@ -88,6 +88,7 @@ OYAPI int OYEXPORT
 {
   oyCMMapi7_s_ * s = (oyCMMapi7_s_*)api7;
   int error = !plug;
+  int * ids_old;
 
   if(!api7)
     return -1;
@@ -100,17 +101,41 @@ OYAPI int OYEXPORT
     return error;
   }
 
+  if(oy_debug_objects)
+    ids_old = oyObjectGetCurrentObjectIdList();
+
   if(oy_debug)
   {
-    DBGs_NUM2_S( ticket,"calling %s[%s]->oyCMMFilterPlug_Run()",
+    DBGs_NUM2_S( ticket,"CALLING %s[%s]->oyCMMFilterPlug_Run()",
                  oyNoEmptyString_m_(s->id_),s->registration );
   }
 
   error = s->oyCMMFilterPlug_Run( plug, ticket );
 
+  if(oy_debug_objects)
+  {
+    int * ids_new = oyObjectGetCurrentObjectIdList(),
+        * ids_remaining_new = oyObjectFindNewIds( ids_old, ids_new ),
+        max_count,i;
+    const oyObject_s * obs = oyObjectGetList( &max_count );
+
+    fprintf( stderr, "new allocated objects inside %s:\n", s->registration );
+    for(i = 0; i < max_count; ++i)
+      if(ids_remaining_new[i] != -1)
+      {
+        fprintf(stderr, "\"%s\"[%d] refs: %d\n", oyStructTypeToText(ids_remaining_new[i]), i, obs[i]->ref_);
+      }
+    fprintf( stderr, "... end new allocated objects inside %s:\n", s->registration );
+    fflush( stderr );
+
+    oyObjectReleaseCurrentObjectIdList( &ids_old );
+    oyObjectReleaseCurrentObjectIdList( &ids_new );
+    oyObjectReleaseCurrentObjectIdList( &ids_remaining_new );
+  }
+
   if(oy_debug)
   {
-    DBGs_NUM2_S( ticket,"done %s[%s]->oyCMMFilterPlug_Run()",
+    DBGs_NUM2_S( ticket,"DONE %s[%s]->oyCMMFilterPlug_Run()",
                  oyNoEmptyString_m_(s->id_),s->registration );
   }
 

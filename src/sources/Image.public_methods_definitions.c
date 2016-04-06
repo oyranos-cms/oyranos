@@ -765,7 +765,8 @@ int            oyImage_FillArray     ( oyImage_s         * image,
   }
   }
 
-  DBGs_PROG1_S( image, "error: %d", error );
+  DBGs_PROG4_S( image, "array[%d](%dx%d) error: %d",
+                oyStruct_GetId( (oyStruct_s*) a), a->width, a->height, error );
 
   if(error)
     oyArray2d_Release( (oyArray2d_s**)&a );
