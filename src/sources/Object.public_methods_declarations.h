@@ -47,3 +47,5 @@ OYAPI oyAlloc_f  OYEXPORT
                  oyObject_GetAlloc   ( oyObject_s        object );
 OYAPI oyDeAlloc_f  OYEXPORT
                  oyObject_GetDeAlloc ( oyObject_s        object );
+OYAPI const char * OYEXPORT  oyObject_Show (
+                                       oyObject_s          object );

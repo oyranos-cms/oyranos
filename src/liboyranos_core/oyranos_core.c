@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2004-2011 (C) Kai-Uwe Behrmann
+ *            2004-2016 (C) Kai-Uwe Behrmann
  *
  *  @brief    public Oyranos API's
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
@@ -42,6 +42,9 @@
 #include "oyStruct_s.h"
 #include "oyObject_s_.h"
 #include "oyName_s_.h"
+
+#include "oyArray2d_s_.h"
+#include "oyRectangle_s_.h"
 
 static oyStruct_RegisterStaticMessageFunc_f * oy_static_msg_funcs_ = 0;
 static int oy_msg_func_n_ = 0;
@@ -250,7 +253,7 @@ int            oyObject_GetId        ( oyObject_s          object )
        (t && strstr(oyStructTypeToText(st->type_), t) != 0) ||
        id_ == 1)
     {
-      fprintf(stderr, "\"%s\"[%d] refs: %d\n", oyStructTypeToText(st->type_), obj->id_, obj->ref_);
+      fprintf(stderr, oyObject_Show( obj ));
       fflush( stderr );
     }
   }
@@ -259,6 +262,59 @@ int            oyObject_GetId        ( oyObject_s          object )
     return obj->id_;
   else
     return -1;
+}
+
+/** Function oyObject_Show
+ *  @memberof oyObject_s
+ *  @brief   Print object informations
+ *
+ *  @version Oyranos: 0.9.6
+ *  @date    2016/04/06
+ *  @since   2016/04/06 (Oyranos: 0.9.6)
+ */
+OYAPI const char * OYEXPORT  oyObject_Show (
+                                       oyObject_s          object )
+{
+  struct oyObject_s_* obj = (struct oyObject_s_*)object;
+  oyStruct_s * st = NULL;
+  static char * t = NULL;
+
+  if(obj)
+    st = obj->parent_;
+
+  if(st)
+  {
+    if(!t)
+      t = malloc(1024);
+
+    if(t)
+    {
+      sprintf( t, "\"%s\"[%d] refs: %d", oyStruct_GetInfo(st,0), obj->id_, obj->ref_);
+      switch(st->type_)
+      {
+      case oyOBJECT_ARRAY2D_S:
+        {
+          oyArray2d_s_ * s = (oyArray2d_s_ *)st;
+          sprintf( &t[strlen(t)], " %dx%d", s->width, s->height);
+          break;
+        }
+      case oyOBJECT_RECTANGLE_S:
+        {
+          oyRectangle_s_ * s = (oyRectangle_s_ *)st;
+          sprintf( &t[strlen(t)], " %gx%g+%g+%g", s->width, s->height, s->x, s->y);
+          break;
+        }
+      default:
+          break;
+      }
+      sprintf( &t[strlen(t)], "\n");
+    }
+  }
+
+  if(t)
+    return t;
+  else
+    return "----";
 }
 
 
