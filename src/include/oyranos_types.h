@@ -47,6 +47,12 @@
 #endif
 #endif
 
+#define OY_IEEE16BIT_FLOAT_ZERO 0
+#define OY_IEEE16BIT_FLOAT_HALF 14336
+#define OY_IEEE16BIT_FLOAT_ONE 15360
+#define OY_F2I(flt_number_) (*((uint32_t*)&flt_number_))
+#define OY_FLOAT2HALF(int_number_) (((OY_F2I(int_number_)>>16)&0x8000)|((((OY_F2I(int_number_)&0x7f800000)-0x38000000)>>13)&0x7c00)|((OY_F2I(int_number_)>>13)&0x03ff))
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
