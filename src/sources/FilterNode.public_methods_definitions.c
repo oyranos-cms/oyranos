@@ -731,7 +731,7 @@ OYAPI oyFilterSocket_s * OYEXPORT
   oyFilterNode_s_ * node_ = (oyFilterNode_s_*)node;
 
   if(node_ && node_->type_ == oyOBJECT_FILTER_NODE_S &&
-     pos == 0 || (pos < oyFilterNode_EdgeCount( (oyFilterNode_s*)node_, 0, 0 )))
+     (pos == 0 || (pos < oyFilterNode_EdgeCount( (oyFilterNode_s*)node_, 0, 0 ))))
   {
     oyAlloc_f allocateFunc_ = node_->oy_->allocateFunc_;
 
@@ -879,7 +879,11 @@ OYAPI oyFilterNode_s * OYEXPORT
 
   oyCheckType__m( oyOBJECT_FILTER_NODE_S, return 0 )
 
-  remote = s->plugs[pos]->remote_socket_->node;
+  if(s->plugs[pos] && s->plugs[pos]->remote_socket_)
+    remote = s->plugs[pos]->remote_socket_->node;
+  else
+    WARNcc3_S( node, "%s: %s  plug: %d", oyFilterNode_GetRegistration( node ),
+      _("Remote filter or plug not available."), pos );
 
   return oyFilterNode_Copy((oyFilterNode_s*)remote,0);
 }
