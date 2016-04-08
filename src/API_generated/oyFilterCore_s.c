@@ -251,7 +251,7 @@ oyFilterCore_s * oyFilterCore_NewWith( const char        * registration,
   if(error && s)
   {
     oyFilterCore_Release( &s );
-    WARNc1_S("could not create filter: \"%s\"", oyNoEmptyName_m_(registration));
+    WARNc2_S("%s: \"%s\"", _("Could not create filter"), oyNoEmptyName_m_(registration));
   }
 
   return s;
