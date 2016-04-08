@@ -1222,11 +1222,11 @@ OYAPI int  OYEXPORT oyRankMapFromJSON( const char        * json_text,
 #if 0
           if( v->u.array.len >= 1)
           {
-            if( v->u.array.values[0]->type == oyjl_t_number &&
-                v->u.array.values[0]->u.number.flags & OYJL_NUMBER_INT_VALID )
+            if( OYJL_IS_NUMBER(v->u.array.values[0]) &&
+                OYJL_IS_DOUBLE(v->u.array.values[0]) )
               map[i].match_value = v->u.array.values[0]->u.number.i;
-            else if( v->u.array.values[0]->type == oyjl_t_string )
-              map[i].match_value = atoi(v->u.array.values[0]->u.string);
+            else if( OYJL_IS_STRING(v->u.array.values[0]) )
+              map[i].match_value = atoi(OYJL_GET_STRING(v->u.array.values[0]));
           }
 #else
         ma( map[i].match_value, 0 )
