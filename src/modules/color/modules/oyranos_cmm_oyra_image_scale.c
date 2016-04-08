@@ -45,19 +45,19 @@
 /** @func    oyraFilter_ImageScaleRun
  *  @brief   implement oyCMMFilter_GetNext_f()
  *
- *  @version Oyranos: 0.9.5
- *  @date    2013/07/25
+ *  @version Oyranos: 0.9.6
+ *  @date    2016/04/04
  *  @since   2013/06/10 (Oyranos: 0.9.5)
  */
 int      oyraFilter_ImageScaleRun    ( oyFilterPlug_s    * requestor_plug,
                                        oyPixelAccess_s   * ticket )
 {
   int result = 0, error = 0;
-  oyFilterSocket_s * socket;
+  oyFilterSocket_s * socket = 0;
   oyFilterNode_s * input_node = 0,
-                 * node;
-  oyFilterPlug_s * plug;
-  oyImage_s * image;
+                 * node = 0;
+  oyFilterPlug_s * plug = 0;
+  oyImage_s * image = 0;
   int image_width;
 
   int dirty = 0;
@@ -67,7 +67,10 @@ int      oyraFilter_ImageScaleRun    ( oyFilterPlug_s    * requestor_plug,
 
   image = (oyImage_s*)oyFilterSocket_GetData( socket );
   if(!image)
-    return 1;
+  {
+    result = 1;
+    goto clean_scale1;
+  }
 
   image_width = oyImage_GetWidth(image);
   if(oy_debug)
@@ -83,7 +86,10 @@ int      oyraFilter_ImageScaleRun    ( oyFilterPlug_s    * requestor_plug,
       dirty = 1;
 
     if(dirty)
-      return dirty;
+    {
+      result = dirty;
+      goto clean_scale2;
+    }
 
     plug = oyFilterNode_GetPlug( node, 0 );
 
@@ -96,7 +102,6 @@ int      oyraFilter_ImageScaleRun    ( oyFilterPlug_s    * requestor_plug,
                                   0, &scale );
     if(error) WARNc2_S("%s %d", _("found issues"),error);
 
-    oyOptions_Release( &node_opts );
 
     if(oy_debug > 2)
       oyra_msg( oyMSG_WARN, (oyStruct_s*)ticket, OY_DBG_FORMAT_
@@ -237,10 +242,12 @@ int      oyraFilter_ImageScaleRun    ( oyFilterPlug_s    * requestor_plug,
           b = strdup(oyRectangle_Show( image_pix ));
           c = strdup(oyRectangle_Show( new_ticket_array_roi ));
           oyra_msg( issue?oyMSG_ERROR:oyMSG_DBG, (oyStruct_s*)ticket, OY_DBG_FORMAT_
-                     "node [%d] scale: %.02f old roi %s/%s(image) -> new roi %s array %d*%dx%d -> (out array widthxheight / scale %dx%d) %d*%dx%d "
+                     "node [%d] scale: %.02f old roi %s/%s(image) -> new roi %s array[%d] %d*%dx%d -> (out array[%d] widthxheight / scale %dx%d) %d*%dx%d "
                      "%f<1 %f<1%s%s%s",OY_DBG_ARGS_,
                      oyStruct_GetId( (oyStruct_s*)node ), scale,
-                     a,b,c, nw,channels_src,nh, OY_ROUND(w/scale), OY_ROUND(h/scale), w,channels_dst,h, nw - w/scale, nh - h/scale,
+                     a,b,c,
+                     oyStruct_GetId( (oyStruct_s*)array_in ), nw,channels_src,nh, OY_ROUND(w/scale), OY_ROUND(h/scale),
+                     oyStruct_GetId( (oyStruct_s*)array_out ), w,channels_dst,h, nw - w/scale, nh - h/scale,
                      issue?" found issue(s): too":"",
                      issue & 1 ? " wide":"",
                      issue & 2 ? " heigh":"" );
@@ -252,18 +259,29 @@ int      oyraFilter_ImageScaleRun    ( oyFilterPlug_s    * requestor_plug,
         oyPixelAccess_Release( &new_ticket );
         oyArray2d_Release( &array_in );
         oyArray2d_Release( &array_out );
-        oyRectangle_Release( &new_ticket_array_roi );
       }
+
+      oyArray2d_Release( &a_dest );
+      oyRectangle_Release( &new_ticket_array_roi );
+      oyRectangle_Release( &image_pix );
 
     } else /* scale == 1.0 */
     {
       result = oyFilterNode_Run( input_node, plug, ticket );
     }
+
+    clean_scale2:
+    oyOptions_Release( &node_opts );
     oyFilterPlug_Release( &plug );
 
     oyRectangle_Release( &ticket_roi );
     oyFilterNode_Release( &input_node );
   }
+
+  clean_scale1:
+  oyImage_Release( &image );
+  oyFilterSocket_Release( &socket );
+  oyFilterNode_Release( &node );
 
   return result;
 }
