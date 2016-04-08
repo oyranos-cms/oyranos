@@ -78,5 +78,7 @@ extern oyCMMapi4_s_   oyra_api4_image_root;
 extern oyCMMapi7_s_   oyra_api7_image_root;
 oyCMMapi_s * oyraApi4ImageScaleCreate(void);
 oyCMMapi_s * oyraApi7ImageScaleCreate(void);
+oyCMMapi_s * oyraApi4ImageChannelCreate(void);
+oyCMMapi_s * oyraApi7ImageChannelCreate(void);
 
 #endif /* OYRANOS_CMM_OYRA_H */
