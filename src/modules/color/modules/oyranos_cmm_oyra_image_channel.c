@@ -37,6 +37,7 @@
 #ifdef HAVE_POSIX
 #include <stdint.h>  /* UINT32_MAX */
 #endif
+#include <locale.h>
 
 /* OY_IMAGE_CHANNEL_REGISTRATION */
 
@@ -126,6 +127,11 @@ int      oyraFilter_ImageChannelRun  ( oyFilterPlug_s    * requestor_plug,
 
     if(!error && strlen(channels_json))
     {
+      char * save_locale = 0;
+      /* sensible parsing */
+      save_locale = oyStringCopy_( setlocale( LC_NUMERIC, 0 ),
+                                         oyAllocateFunc_ );
+      setlocale( LC_NUMERIC, "C" );
       t = oyAllocateFunc_(256);
       json = oyjl_tree_parse( channels_json, t, 256 );
       if(t[0])
@@ -134,6 +140,10 @@ int      oyraFilter_ImageChannelRun  ( oyFilterPlug_s    * requestor_plug,
         error = 1;
       }
       oyFree_m_(t);
+
+      setlocale(LC_NUMERIC, save_locale);
+      if(save_locale)
+        oyFree_m_( save_locale );
     }
 
     if(oy_debug > 2)
@@ -154,26 +164,30 @@ int      oyraFilter_ImageChannelRun  ( oyFilterPlug_s    * requestor_plug,
       double  channel[max_channels+1];
       int channel_pos[max_channels+1];
 
-      if(count >= channels_dst)
+      memset( channel, 0, sizeof(double) * (max_channels+1) );
+      memset( channel_pos, 0, sizeof(int) * (max_channels+1) );
+
+      if(count > channels_dst)
       {
         WARNc3_S( "\"channel=%s\" option channel count %d exceeds destination image %d", channels_json, count, channels_dst );
         error = 1;
       }
 
+      /* parse the "channel" option as JSON string */
       if(!error)
       for(i = 0; i < count && !error; ++i)
       {
         oyjl_val v = oyjl_value_pos_get( json, i );
-        if( OYJL_IS_NUMBER(v->u.array.values[0]) &&
-            OYJL_IS_DOUBLE(v->u.array.values[0]) )
+        if( OYJL_IS_NUMBER(v) ||
+            OYJL_IS_DOUBLE(v) )
         {
-          channel[i] = OYJL_GET_DOUBLE( v->u.array.values[0] );
+          channel[i] = OYJL_GET_DOUBLE( v );
           if(channel[i] == -1)
             channel[i] = 0.5;
           channel_pos[i] = -1;
-        } else if( OYJL_IS_STRING( v->u.array.values[0]) )
+        } else if( OYJL_IS_STRING( v ) )
         {
-          const char * p = OYJL_GET_STRING( v->u.array.values[0] );
+          const char * p = OYJL_GET_STRING( v );
           channel_pos[i] = p[0] - 'a';
           if(channel_pos[i] >= channels_src)
           {
@@ -184,6 +198,7 @@ int      oyraFilter_ImageChannelRun  ( oyFilterPlug_s    * requestor_plug,
       }
       oyjl_tree_free( json );
 
+      if(!error)
       {
         int w,h,x,y, start_x,start_y, max_value;
         oyRectangle_s * ticket_roi = oyPixelAccess_GetArrayROI( ticket );
@@ -228,39 +243,70 @@ int      oyraFilter_ImageChannelRun  ( oyFilterPlug_s    * requestor_plug,
 
         /* copy the channels */
 #if defined(USE_OPENMP)
-#pragma omp parallel for private(x)
+#pragma omp parallel for private(x,pos,u8421,flt)
 #endif
         for(y = start_y; y < h; ++y)
         {
           for(x = start_x; x < w; ++x)
           {
-            union u8421 { uint64_t u8; uint32_t u4; uint16_t u2; uint8_t u1; };
+            union u8421 { uint32_t u4; uint16_t u2; uint8_t u1; float f; double d; };
             union u8421 cache[max_channels];
             float flt;
             
+            /* fill the intermediate pixel cache;
+             * It is not known which channels are needed and in which order.
+             * Thus all channels are stored outside the main buffer.
+             */
             for(i = 0; i < count; ++i)
             {
               int pos = (channel_pos[i] == -1) ? i : channel_pos[i];
               switch(data_type_out)
               {
               case oyUINT8:
-                cache[pos].u1 = (channel_pos[i] == -1) ? OY_ROUND(channel[i] * max_value) : array_out_data[y][x*channels_dst*bps_out + i*bps_out];
+                cache[i].u1 = (channel_pos[i] == -1) ? OY_ROUND(channel[i] * max_value) : array_out_data[y][x*channels_dst*bps_out + pos*bps_out];
                 break;
               case oyUINT16:
-                cache[pos].u2 = (channel_pos[i] == -1) ? OY_ROUND(channel[i] * max_value) : *((uint16_t*)&array_out_data[y][x*channels_dst*bps_out + i*bps_out]);
+                cache[i].u2 = (channel_pos[i] == -1) ? OY_ROUND(channel[i] * max_value) : *((uint16_t*)&array_out_data[y][x*channels_dst*bps_out + pos*bps_out]);
                 break;
               case oyUINT32:
-                cache[pos].u4 = (channel_pos[i] == -1) ? OY_ROUND(channel[i] * max_value) : *((uint32_t*)&array_out_data[y][x*channels_dst*bps_out + i*bps_out]);
+                cache[i].u4 = (channel_pos[i] == -1) ? OY_ROUND(channel[i] * max_value) : *((uint32_t*)&array_out_data[y][x*channels_dst*bps_out + pos*bps_out]);
                 break;
               case oyHALF:
                 flt = channel[i] * max_value;
-                cache[pos].u2 = (channel_pos[i] == -1) ? OY_FLOAT2HALF(flt) : *((uint32_t*)&array_out_data[y][x*channels_dst*bps_out + i*bps_out]);
+                cache[i].u2 = (channel_pos[i] == -1) ? OY_FLOAT2HALF(flt) : *((uint16_t*)&array_out_data[y][x*channels_dst*bps_out + i*bps_out]);
                 break;
               case oyFLOAT:
-                cache[pos].u4 = (channel_pos[i] == -1) ? channel[i] * max_value : *((uint32_t*)&array_out_data[y][x*channels_dst*bps_out + i*bps_out]);
+                cache[i].f = (channel_pos[i] == -1) ? channel[i] * max_value : *((float*)&array_out_data[y][x*channels_dst*bps_out + i*bps_out]);
                 break;
               case oyDOUBLE:
-                cache[pos].u8 = (channel_pos[i] == -1) ? channel[i] * max_value : *((uint32_t*)&array_out_data[y][x*channels_dst*bps_out + i*bps_out]);
+                cache[i].d = (channel_pos[i] == -1) ? channel[i] * max_value : *((double*)&array_out_data[y][x*channels_dst*bps_out + i*bps_out]);
+                break;
+              }
+            }
+
+            /* read back all scattered channels */
+            for(i = 0; i < count; ++i)
+            {
+              int pos = i;
+              switch(data_type_out)
+              {
+              case oyUINT8:
+                array_out_data[y][x*channels_dst*bps_out + i*bps_out] = cache[pos].u1;
+                break;
+              case oyUINT16:
+                *((uint16_t*)&array_out_data[y][x*channels_dst*bps_out + i*bps_out]) = cache[pos].u2;
+                break;
+              case oyUINT32:
+                *((uint32_t*)&array_out_data[y][x*channels_dst*bps_out + i*bps_out]) = cache[pos].u4;
+                break;
+              case oyHALF:
+                 *((uint16_t*)&array_out_data[y][x*channels_dst*bps_out + i*bps_out]) = cache[pos].u2;
+                break;
+              case oyFLOAT:
+                *((float*)&array_out_data[y][x*channels_dst*bps_out + i*bps_out]) = cache[pos].f;
+                break;
+              case oyDOUBLE:
+                *((double*)&array_out_data[y][x*channels_dst*bps_out + i*bps_out]) = cache[pos].d;
                 break;
               }
             }
