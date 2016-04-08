@@ -576,6 +576,53 @@ oyOptions_s * findOpts( const char * filter_name )
   return opts;
 }
 
+/* Prepare a JSON complying string for the channel filter.
+ * The string describes the source of the output channels.
+ * e.g.: '["b", "b", "b"]'
+ */
+void setChannel( oyProfile_s * p, int channel_pos )
+{
+  oyOptions_s * opts = findOpts( "//" OY_TYPE_STD "/channel" );
+  char * channels = NULL;
+  icColorSpaceSignature cs = (icColorSpaceSignature) oyProfile_GetSignature( p, oySIGNATURE_COLOR_SPACE );
+  int count = oyICCColorSpaceGetChannelCount( cs ), i;
+
+
+  if(channel_pos == 0 ||
+     channel_pos > count)
+    oyStringAddPrintf( &channels, 0,0, "" );
+  else
+  {
+    oyStringAddPrintf( &channels, 0,0, "[" );
+    for(i = 0; i < count; ++i)
+    {
+      if(i > 0)
+        oyStringAddPrintf( &channels, 0,0, ", " );
+      switch(cs)
+      {
+      case icSigLabData:
+      case icSigLuvData:
+      case icSigYCbCrData:
+      case icSigYxyData:
+      case icSigHsvData:
+      case icSigHlsData:
+        if(channel_pos-1 == i)
+          oyStringAddPrintf( &channels, 0,0, "\"%c\"", 'a' + channel_pos - 1 );
+        else
+          oyStringAddPrintf( &channels, 0,0, "0.5" );
+        break;
+      default:
+        oyStringAddPrintf( &channels, 0,0, "\"%c\"", 'a' + channel_pos - 1 );
+      }
+    }
+    oyStringAddPrintf( &channels, 0,0, "]" );
+  }
+
+  oyOptions_SetFromText( &opts, "//" OY_TYPE_STD "/channel/channel", channels, OY_CREATE_NEW );
+  oyDeAllocateFunc_( channels );
+  oyOptions_Release( &opts );
+}
+
 int
 event_handler(int e)
 {
@@ -585,6 +632,7 @@ event_handler(int e)
   switch (e)
   {
   case FL_SHORTCUT:
+    {
       if(Fl::event_key() == FL_Escape)
       {
         exit(0);
@@ -592,10 +640,11 @@ event_handler(int e)
       } else
       if(Fl::event_key() == 'q'
        && Fl::event_state() == FL_CTRL)
-     {
+      {
         exit(0);
         found = 1;
       }
+    }
     case FL_KEYBOARD:
     {
       int k = ((char*)Fl::event_text())[0];
@@ -681,7 +730,8 @@ event_handler(int e)
                                    scale, 0, OY_CREATE_NEW );
         oyOptions_Release( &opts );
         break;
-      case '0':
+      case '=': /* image ==> window size */
+      case 'f': /* fit window */
         {
           oyConversion_s * cc = oy_widget->conversion();
           oyImage_s * image = oyConversion_GetImage( cc, OY_INPUT );
@@ -696,6 +746,7 @@ event_handler(int e)
           /* reset position to zero */
           oy_widget->px = 0;
           oy_widget->py = 0;
+          oyImage_Release( &image );
         }
         found = 1;
         opts = findOpts( "//" OY_TYPE_STD "/scale" );
@@ -704,7 +755,7 @@ event_handler(int e)
                                    scale, 0, OY_CREATE_NEW );
         oyOptions_Release( &opts );
         break;
-      case '1':
+      case '.': /* pixel size */
         scale = 1.0;
         found = 1;
         opts = findOpts( "//" OY_TYPE_STD "/scale" );
@@ -716,6 +767,26 @@ event_handler(int e)
                                    "//" OY_TYPE_STD "/scale/scale",
                                    scale, 0, OY_CREATE_NEW );
         oyOptions_Release( &opts );
+        break;
+      case '0':
+      case '1':
+      case '2':
+      case '3':
+      case '4':
+      case '5':
+      case '6':
+      case '7':
+      case '8':
+      case '9':
+        {
+          oyConversion_s * cc = oy_widget->conversion();
+          oyImage_s * image = oyConversion_GetImage( cc, OY_INPUT );
+          oyProfile_s * profile = oyImage_GetProfile( image );
+          setChannel( profile, k - '0' );
+          oyImage_Release( &image );
+          oyProfile_Release( &profile );
+        }
+        found = 1;
         break;
       default:
         break;
