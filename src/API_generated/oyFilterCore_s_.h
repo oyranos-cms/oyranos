@@ -66,7 +66,7 @@ oyObject_s           oy_;            /**< Features name and hash. Do not change 
 
 
 /* Include "FilterCore.members.h" { */
-  char               * registration_;  /**< @private a registration name, e.g. "shared/oyranos.org/imaging/scale", see as well @ref registration */
+  char               * registration_;  /**< @private a registration name, e.g. "org/oyranos/imaging/scale", see as well @ref registration */
 
   char               * category_;      /**< @private the ui menue category for this filter, to be specified */
 

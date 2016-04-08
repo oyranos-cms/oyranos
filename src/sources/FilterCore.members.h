@@ -1,4 +1,4 @@
-  char               * registration_;  /**< @private a registration name, e.g. "shared/oyranos.org/imaging/scale", see as well @ref registration */
+  char               * registration_;  /**< @private a registration name, e.g. "org/oyranos/imaging/scale", see as well @ref registration */
 
   char               * category_;      /**< @private the ui menue category for this filter, to be specified */
 
