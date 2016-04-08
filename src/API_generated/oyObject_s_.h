@@ -87,6 +87,7 @@ void               oyObjectReleaseCurrentObjectIdList(
 const oyObject_s * oyObjectGetList   ( int               * max_count );
 
 
+
 /* } Include "Object.private_methods_declarations.h" */
 
 

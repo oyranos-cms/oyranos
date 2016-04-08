@@ -229,14 +229,19 @@ int                oyPixelAccess_SynchroniseROI (
         layout_dst = oyImage_GetPixelLayout( image_dst, oyLAYOUT );
     int channels_src = oyToChannels_m( layout_src );
     int channels_dst = oyToChannels_m( layout_dst );
-    int a_width_dst = oyArray2d_GetWidth( a_dst ) / channels_dst,
-        a_width_src = oyArray2d_GetWidth( a_src ) / channels_src;
+    int a_width_dst = 0, a_width_src = 0;
+
+    if(channels_dst)
+      a_width_dst = oyArray2d_GetWidth( a_dst ) / channels_dst;
+    if(channels_src)
+      a_width_src = oyArray2d_GetWidth( a_src ) / channels_src;
 
     /** 1. Ignore any changes from previous edits of the new pixel access ticket. */
     oyRectangle_SetByRectangle( ticket_array_roi_src, ticket_array_roi_dst );
 
     /** 2. Adapt the access start and write relative to new tickets image width. */
-    oyPixelAccess_ChangeRectangle( new_ticket,
+    if(image_width_src)
+      oyPixelAccess_ChangeRectangle( new_ticket,
                           start_x_dst_pixel / image_width_src,
                           start_y_dst_pixel / image_width_src, 0 );
 
@@ -265,7 +270,8 @@ int                oyPixelAccess_SynchroniseROI (
     }
 
       /** 3.2. Divide ROI by new array size. */
-    oyRectangle_Scale( ticket_array_roi_src, 1.0/a_width_src );
+    if(a_width_src)
+      oyRectangle_Scale( ticket_array_roi_src, 1.0/a_width_src );
 
     oyImage_Release( &image_src );
     oyImage_Release( &image_dst );
