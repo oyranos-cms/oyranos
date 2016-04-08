@@ -69,6 +69,22 @@ oyConversion_s * oyConversion_FromImageForDisplay_ (
   in = out;
 
 
+  /* add a channel node */
+  out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/channel", 0, obj );
+  options = oyFilterNode_GetOptions( out, OY_SELECT_FILTER );
+  /* channel option*/
+  error = oyOptions_SetFromText( &options,
+                                   "//" OY_TYPE_STD "/channel/channel",
+                                   "", OY_CREATE_NEW );
+  oyOptions_Release( &options );
+  /* append the node */
+  error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
+                                out, "//" OY_TYPE_STD "/data", 0 );
+  if(error > 0)
+    fprintf( stderr, "could not add  filter: %s\n", "//" OY_TYPE_STD "/channel" );
+  in = out;
+
+
   /* create a new filter node */
   {
     icc = out = oyFilterNode_FromOptions( OY_CMM_STD, "//" OY_TYPE_STD "/icc_color",

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Oyranos 0.9\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2016-04-04 12:25+0200\n"
+"POT-Creation-Date: 2016-04-08 11:09+0200\n"
 "PO-Revision-Date: 2015-02-20 17:32+0100\n"
 "Last-Translator: Kai-Uwe Behrmann <ku.b@gmx.de>\n"
 "Language-Team: russian <ru@li.org>\n"
@@ -21,7 +21,7 @@ msgstr ""
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Language: ru_RU\n"
 
-#: liboyranos_core/oyranos_core.c:310 tools/qcmsevents/qcmsevents.cpp:191
+#: liboyranos_core/oyranos_core.c:387 tools/qcmsevents/qcmsevents.cpp:191
 #: examples/devices/test_device.c:367 examples/devices/test_device.c:382
 #: examples/devices/test_device.c:396 examples/devices/test_device.c:417
 #: examples/devices/test_device.c:439 examples/devices/test_device.c:798
@@ -327,7 +327,7 @@ msgstr ""
 msgid "Apple CMM"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1124
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1178
 msgid "Apply regions of interesst in form of simple rectangles."
 msgstr ""
 
@@ -609,6 +609,10 @@ msgstr ""
 #. CRT
 #: liboyranos_config/oyranos_icc.c:790
 msgid "Cathode ray tube display"
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_oyra_image_channel.c:366
+msgid "Channel Image Filter Object"
 msgstr ""
 
 #: modules/color/modules/oyranos_cmm_lcm2.c:3383
@@ -894,6 +898,10 @@ msgstr ""
 
 #: API_generated/oyranos_module.c:2023
 msgid "Could not allocate memory for:"
+msgstr ""
+
+#: API_generated/oyFilterCore_s.c:254
+msgid "Could not create filter"
 msgstr ""
 
 #: liboyranos_core/oyranos_io_core.c:335
@@ -1654,7 +1662,7 @@ msgstr ""
 msgid "Illuminant:      "
 msgstr ""
 
-#: API_generated/oyPixelAccess_s.c:428 liboyranos/oyranos_cmm.c:116
+#: API_generated/oyPixelAccess_s.c:434 liboyranos/oyranos_cmm.c:117
 #: liboyranos/oyranos_cmm.c:242 liboyranos/oyranos_cmm.c:266
 #: modules/color/modules/oyranos_cmm_lcm2.c:2676
 #: modules/color/modules/oyranos_cmm_lcm2.c:2681
@@ -1679,8 +1687,16 @@ msgid ""
 "Image has no color space embedded. What default action shall be performed?"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:396
+#: modules/color/modules/oyranos_cmm_oyra_image_channel.c:386
+msgid "Image/Simple Image[channel]"
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:414
 msgid "Image/Simple Image[scale]"
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_oyra_image_channel.c:364
+msgid "Image[channel]"
 msgstr ""
 
 #: modules/color/modules/oyranos_cmm_oPNG.c:1159
@@ -1699,11 +1715,11 @@ msgstr ""
 msgid "Image[my_filter]"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1515
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1569
 msgid "Image[out]"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:351
+#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:369
 msgid "Image[scale]"
 msgstr ""
 
@@ -2307,7 +2323,7 @@ msgstr ""
 msgid "Output Color Space"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1517
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1571
 msgid "Output Image Filter Object"
 msgstr ""
 
@@ -2726,11 +2742,11 @@ msgstr ""
 msgid "Read from"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1116
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1170
 msgid "Rectangles"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1118
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1172
 msgid "Rectangles Splitter Object"
 msgstr ""
 
@@ -2751,13 +2767,17 @@ msgstr ""
 msgid "Reflective scanner"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:384
+#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:402
 msgid "Relation of positional parameters:"
 msgstr ""
 
 #. choices
 #: liboyranos_config/oyranos_texts.c:556 liboyranos_config/oyranos_texts.c:576
 msgid "Relative Colorimetric"
+msgstr ""
+
+#: API_generated/oyFilterNode_s.c:998
+msgid "Remote filter or plug not available."
 msgstr ""
 
 #: tools/oyranos_profile_tool.c:89
@@ -2791,11 +2811,11 @@ msgstr ""
 msgid "Rgb"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1324
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1378
 msgid "Root Image"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1326
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1380
 msgid "Root Image Filter Object"
 msgstr ""
 
@@ -2825,7 +2845,7 @@ msgstr ""
 msgid "Save to a new policy:"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:353
+#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:371
 msgid "Scale Image Filter Object"
 msgstr ""
 
@@ -3133,7 +3153,7 @@ msgstr ""
 msgid "The dummy useless module of Oyranos."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1525
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1579
 msgid ""
 "The filter can query pixels from its successors in a graph. The results are "
 "stored in the internal buffer."
@@ -3148,12 +3168,14 @@ msgid ""
 "\"=string."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1523
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1577
 msgid "The filter is a possible pixel target in a graph."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:359
-#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:398
+#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:377
+#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:416
+#: modules/color/modules/oyranos_cmm_oyra_image_channel.c:372
+#: modules/color/modules/oyranos_cmm_oyra_image_channel.c:388
 msgid "The filter is used to reduce pixels."
 msgstr ""
 
@@ -3181,7 +3203,7 @@ msgstr ""
 msgid "The filter obtains a image from libraw."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1332
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1386
 msgid "The filter provides a generic image source."
 msgstr ""
 
@@ -3191,13 +3213,22 @@ msgid ""
 "graph through the user function oyConversion_Correct()."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1126
+#: modules/color/modules/oyranos_cmm_oyra_image_channel.c:378
+msgid ""
+"The filter will expect a \"channel\" double option and will create, fill and "
+"process a according data version with a new job ticket. The new job tickets "
+"image, array and output_array_roi will be divided by the supplied \"channel"
+"\" factor. It's plug will request the divided image sizes from the source "
+"socket."
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1180
 msgid ""
 "The filter will expect a \"rectangle\" option and will create, fill and "
 "process a according rectangle with a new job ticket."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:383
+#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:401
 msgid ""
 "The filter will expect a \"scale\" double option and will create, fill and "
 "process a according data version with a new job ticket. The new job tickets "
@@ -3390,7 +3421,7 @@ msgstr ""
 msgid "The raw image backend of Oyranos."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1334
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1388
 msgid "The root image filter can hold pixel data for processing in a graph."
 msgstr ""
 
@@ -3550,7 +3581,7 @@ msgstr ""
 msgid "Viewing conditions description"
 msgstr ""
 
-#: liboyranos_core/oyranos_core.c:307 tools/qcmsevents/qcmsevents.cpp:188
+#: liboyranos_core/oyranos_core.c:384 tools/qcmsevents/qcmsevents.cpp:188
 #: examples/devices/test_device.c:434
 #, c-format
 msgid "WARNING"
@@ -3659,7 +3690,7 @@ msgstr ""
 #. *  @date    2008/02/06
 #. *  @since   2008/02/06 (Oyranos: 0.1.8)
 #.
-#: include/oyranos_definitions.h:92
+#: include/oyranos_definitions.h:97
 #: modules/color/modules/oyranos_cmm_lcm2.c:3085
 #: modules/color/modules/oyranos_cmm_lcm2.c:3143
 msgid "[none]"
@@ -3790,10 +3821,10 @@ msgid "failed!"
 msgstr ""
 
 #: API_generated/oyranos_devices.c:2592 API_generated/oyranos_devices.c:2603
-#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:97
-#: modules/color/modules/oyranos_cmm_oyra_image.c:964
-#: modules/color/modules/oyranos_cmm_oyra_image.c:975
-#: modules/color/modules/oyranos_cmm_oyra_image.c:995
+#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:103
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1010
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1022
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1044
 #: modules/color/modules/oyranos_cmm_lcm2.c:3280
 #: modules/color/modules/oyranos_cmm_lcms.c:2380
 #: modules/color/modules/oyranos_cmm_oPNG.c:946
@@ -3819,6 +3850,7 @@ msgstr ""
 
 #: API_generated/oyConfig_s.c:1189 API_generated/oyranos_devices.c:1387
 #: API_generated/oyranos_devices.c:1764 API_generated/oyranos_devices.c:1848
+#: modules/color/modules/oyranos_cmm_oyra_image_channel.c:133
 #: examples/taxi.c:230 examples/taxi.c:320 examples/devices/test_device.c:1080
 #: examples/devices/test_device.c:1106
 msgid "found issues parsing JSON"
@@ -4049,12 +4081,12 @@ msgstr ""
 msgid "output class"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:388
+#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:406
 msgid "output image"
 msgstr ""
 
 #. output image region of interesst
-#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:386
+#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:404
 msgid "output_array_roi"
 msgstr ""
 
@@ -4216,7 +4248,7 @@ msgstr ""
 msgid "skip repair of profile ID"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:387
+#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:405
 msgid "source image"
 msgstr ""
 
