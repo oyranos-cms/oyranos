@@ -86,6 +86,8 @@ int     oyRecursivePaths_      (int (*doInPath) (oyFileList_s *,
                                 struct oyFileList_s        * data,
                                 const char ** path_names,
                                 int           path_count);
+char **            oyGetFiles_       ( const char        * path,
+                                       int               * size );
 
 int oyIsDir_      (const char* path);
 int oyIsFile_     (const char* fileName);

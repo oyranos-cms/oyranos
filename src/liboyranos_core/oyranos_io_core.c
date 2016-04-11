@@ -1715,6 +1715,48 @@ oyFileListGet_                  (const char * subpath,
   return l.names;
 }
 
+/** @internal
+ *  @brief get files out of the Oyranos default paths
+ *
+ *  @version Oyranos: 0.9.6
+ *  @date    2016/04/08
+ *  @since   2016/04/08 (Oyranos: 0.9.6)
+ */
+char **            oyGetFiles_       ( const char        * path,
+                                       int               * size )
+{
+  oyFileList_s l = {oyOBJECT_FILE_LIST_S_, 128, NULL, 0, 128, 0, NULL};
+  int count = 0;
+  const char * path_names[] = {NULL,NULL};
+ 
+  DBG_PROG_START
+ 
+  path_names[0] = path;
+  count = 1;
+
+  oy_warn_ = 0;
+
+  l.names = 0;
+  l.mem_count = l.hopp;
+  l.count_files = 0;
+
+  oyAllocHelper_m_(l.names, char*, l.mem_count, oyAllocateFunc_, return 0);
+
+  oyRecursivePaths_(oyFileListCb_, &l, (const char**)path_names, count);
+
+  *size = l.count_files;
+
+  if(!l.count_files && l.names)
+  {
+    oyDeAllocateFunc_(l.names);
+    l.names = 0;
+  }
+
+  oy_warn_ = 1;
+  DBG_PROG_ENDE
+  return l.names;
+}
+
 
 
 /* Oyranos text handling */
