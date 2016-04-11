@@ -61,8 +61,10 @@ private:
       draw_image = oyConversion_GetImage( conversion(), OY_INPUT );
       pt = oyImage_GetPixelLayout( draw_image, oyLAYOUT );
       data_type = oyToDataType_m( pt );
-      if(data_type == oyUINT8)
+      if(data_type == oyUINT8) /* avoid ICC conversion quantisation */
         data_type = oyUINT16;
+      if(data_type == oyDOUBLE) /* OpenGL appears to support only <= float buffers */
+        data_type = oyFLOAT;
       sample_size = oyDataTypeGetSize( data_type );
       oyImage_Release( &draw_image );
 
@@ -149,6 +151,11 @@ private:
       else if(data_type == oyHALF)
         glDrawPixels( frame_width, frame_height, gl_type,
                       GL_HALF_FLOAT, frame_data );
+      else
+        fprintf(stdout, "%s:%d unsupported data type %s %dx%d %dx%d\n",
+                    strrchr(__FILE__,'/')?strrchr(__FILE__,'/')+1:__FILE__,
+                    __LINE__, oyDataTypeToText( data_type ),
+                    frame_width,frame_height,W,H);
 
       glGetIntegerv( GL_CURRENT_RASTER_POSITION, &pos[0] );
 
@@ -251,6 +258,8 @@ public:
     data_type = oyToDataType_m( pt );
     if(data_type == oyUINT8)
       data_type = oyUINT16;
+    if(data_type == oyDOUBLE)
+      data_type = oyFLOAT;
 
     oyImage_s * display_image = oyImage_Create( oyImage_GetWidth( image ), oyImage_GetHeight( image ),
                          0,
