@@ -1487,6 +1487,16 @@ int            oyImage_PixelsToSamples(oyImage_s         * image,
  *  @memberof oyImage_s
  *  @brief   generate a Oyranos image from a file name
  *
+ *  The file name will be stored inside the image's tags.
+ *  @verbatim
+    
+  oyOptions_s * tags = oyImage_GetTags( image );
+  const char * filename = oyOptions_FindString( tags,
+                                       "//" OY_TYPE_STD "/file_read/filename",
+                                                0 );
+  oyOptions_Release( &tags );
+    @endverbatim
+ *
  *  @param[in]     file_name           input
  *  @param[in]     icc_profile_flags   profile selection flags, see oyProfile_FromFile()
  *  @param[out]    image               output
