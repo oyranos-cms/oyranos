@@ -295,7 +295,7 @@ OYAPI const char * OYEXPORT  oyObject_Show (
       case oyOBJECT_ARRAY2D_S:
         {
           oyArray2d_s_ * s = (oyArray2d_s_ *)st;
-          sprintf( &t[strlen(t)], " %dx%d", s->width, s->height);
+          sprintf( &t[strlen(t)], " %dx%d data_type: %d", s->width, s->height, s->t);
           break;
         }
       case oyOBJECT_RECTANGLE_S:
