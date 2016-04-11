@@ -2,7 +2,7 @@
  *  Oyranos is an open source Color Management System 
  * 
  *  @par Copyright:
- *            2009-2014 (C) Kai-Uwe Behrmann
+ *            2009-2016 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
@@ -49,6 +49,7 @@ extern "C" {
 
 oyConversion_s * idcc = 0;
 Oy_Fl_Image_Widget * oy_widget = 0;
+Oy_Fl_Double_Window * win = 0;
 
 extern "C" {
 /* forward declaration of oyranos_alpha.c */
@@ -182,7 +183,7 @@ main(int argc, char** argv)
   Oy_Fl_Shader_Box * oy_shader_box = 0;
   Oy_Fl_GL_Box * oy_gl_box = 0;
   Oy_Fl_Image_Box * oy_box = 0;
-  Oy_Fl_Double_Window * win = createWindow( &oy_widget, gl_box | logo );
+  win = createWindow( &oy_widget, gl_box | logo );
   int error = 0;
   if(oy_widget)
   {
@@ -623,6 +624,82 @@ void setChannel( oyProfile_s * p, int channel_pos )
   oyOptions_Release( &opts );
 }
 
+
+
+char ** getFileList(const char * path, int * count, const char * file, int * pos )
+{
+  int i;
+  char ** files = oyGetFiles_( path, count );
+  if(file && pos)
+  for(i = 0; i < *count; ++i)
+  {
+    if(strcmp( files[i], file ) == 0)
+    {
+      *pos = i;
+      break;
+    }
+  }
+
+  return files;
+}
+
+char * path = 0;
+void               openNextImage     ( Oy_Fl_Image_Widget* oy_widget,
+                                       int                 increment )
+{
+  int pos = 0, count = 0;
+  oyConversion_s * cc = oy_widget->conversion();
+  oyImage_s * image = oyConversion_GetImage( cc, OY_INPUT );
+  oyOptions_s * tags = oyImage_GetTags( image );
+  const char * filename = oyOptions_FindString( tags,
+                                       "//" OY_TYPE_STD "/file_read/filename",
+                                                        0 );
+  if(!path)
+    path  = oyExtractPathFromFileName_( filename );
+  oyOptions_Release( &tags );
+
+  char ** files = getFileList( path, &count, filename, &pos );
+
+  oyImage_Release( &image );
+  oyOptions_s * module_options = oyFilterNode_GetOptions( icc, 0 );
+
+  Oy_Fl_GL_Box * oy_box = dynamic_cast<Oy_Fl_GL_Box*> (oy_widget);
+  if(oy_box)
+  {
+    oyFilterNode_Release( &icc );
+    for(int i = 0; i < count; ++i)
+    {
+      pos += increment;
+      if(pos >= count)
+        pos = 0;
+      else if(pos < 0)
+        pos = count - 1;
+
+      if(strstr(files[pos],".xvpics") != NULL ||
+         strstr(files[pos],".thumbnails") != NULL)
+        continue;
+
+      fprintf( stderr, "open image %s %d/%d\n", files[pos], i, count  );
+      icc = oy_box->setImage( files[pos], module_options );
+      if(icc)
+      {
+        setWindowMenue( win, oy_widget, icc  );
+        /* observe the node */
+        oy_widget->observeICC( icc, conversionObserve );
+        win->label( files[pos] );
+        break;
+      } else
+        fprintf( stderr, "could not open image %s; continuing with next. %d/%d\n", files[pos], i, count  );
+      fflush( stderr );
+      Fl::wait(0);
+    }
+  } else
+    fprintf(stderr, "need a GL box; skipping image change ...\n");
+
+  oyOptions_Release( &module_options );
+  oyStringListRelease_( &files, count, oyDeAllocateFunc_ );
+}
+
 int
 event_handler(int e)
 {
@@ -633,15 +710,37 @@ event_handler(int e)
   {
   case FL_SHORTCUT:
     {
+      int k = Fl::event_key();
       if(Fl::event_key() == FL_Escape)
       {
         exit(0);
         found = 1;
-      } else
-      if(Fl::event_key() == 'q'
-       && Fl::event_state() == FL_CTRL)
+      }
+
+      if(Fl::event_state() & FL_ALT ||
+         Fl::event_state() & FL_META)
+      switch (k)
       {
+      case 'q':
         exit(0);
+      case '0':
+      case '1':
+      case '2':
+      case '3':
+      case '4':
+      case '5':
+      case '6':
+      case '7':
+      case '8':
+      case '9':
+        {
+          oyConversion_s * cc = oy_widget->conversion();
+          oyImage_s * image = oyConversion_GetImage( cc, OY_INPUT );
+          oyProfile_s * profile = oyImage_GetProfile( image );
+          setChannel( profile, k - '0' );
+          oyImage_Release( &image );
+          oyProfile_Release( &profile );
+        }
         found = 1;
       }
     }
@@ -650,6 +749,8 @@ event_handler(int e)
       int k = ((char*)Fl::event_text())[0];
       double scale = 1.0;
 
+      if(!(Fl::event_state() & FL_ALT ||
+           Fl::event_state() & FL_META))
       switch (k)
       {
       case '-':
@@ -730,7 +831,7 @@ event_handler(int e)
                                    scale, 0, OY_CREATE_NEW );
         oyOptions_Release( &opts );
         break;
-      case '=': /* image ==> window size */
+      case '0': /* image ==> window size */
       case 'f': /* fit window */
         {
           oyConversion_s * cc = oy_widget->conversion();
@@ -755,7 +856,7 @@ event_handler(int e)
                                    scale, 0, OY_CREATE_NEW );
         oyOptions_Release( &opts );
         break;
-      case '.': /* pixel size */
+      case '1': /* pixel size */
         scale = 1.0;
         found = 1;
         opts = findOpts( "//" OY_TYPE_STD "/scale" );
@@ -768,24 +869,12 @@ event_handler(int e)
                                    scale, 0, OY_CREATE_NEW );
         oyOptions_Release( &opts );
         break;
-      case '0':
-      case '1':
-      case '2':
-      case '3':
-      case '4':
-      case '5':
-      case '6':
-      case '7':
-      case '8':
-      case '9':
-        {
-          oyConversion_s * cc = oy_widget->conversion();
-          oyImage_s * image = oyConversion_GetImage( cc, OY_INPUT );
-          oyProfile_s * profile = oyImage_GetProfile( image );
-          setChannel( profile, k - '0' );
-          oyImage_Release( &image );
-          oyProfile_Release( &profile );
-        }
+      case '<':
+        openNextImage(oy_widget, -1);
+        found = 1;
+        break;
+      case '>':
+        openNextImage(oy_widget, +1);
         found = 1;
         break;
       default:
