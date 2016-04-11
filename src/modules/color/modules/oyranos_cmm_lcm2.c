@@ -673,6 +673,8 @@ int        oyPixelToLcm2PixelLayout_ ( oyPixel_t           pixel_layout,
     cmm_pixel |= BYTES_SH(2);
   else if(data_type == oyFLOAT)
     cmm_pixel |= BYTES_SH(4);
+  else if(data_type == oyDOUBLE)
+    cmm_pixel |= BYTES_SH(0);
   if(data_type == oyDOUBLE || data_type == oyFLOAT || data_type == oyHALF)
     cmm_pixel |= FLOAT_SH(1);
   if(oyToSwapColorChannels_m (pixel_layout))
@@ -1173,7 +1175,7 @@ oyWIDGET_EVENT_e   lcm2WidgetEvent   ( oyOptions_s       * options,
 {return 0;}
 
 
-oyDATATYPE_e lcm2_cmmIcc_data_types[7] = {oyUINT8, oyUINT16, oyFLOAT, oyDOUBLE, 0};
+oyDATATYPE_e lcm2_cmmIcc_data_types[7] = {oyUINT8, oyUINT16, oyHALF, oyFLOAT, oyDOUBLE, 0};
 
 oyConnectorImaging_s_ lcm2_cmmIccSocket_connector = {
   oyOBJECT_CONNECTOR_IMAGING_S,0,0,
