@@ -253,7 +253,7 @@ int            oyObject_GetId        ( oyObject_s          object )
        (t && strstr(oyStructTypeToText(st->type_), t) != 0) ||
        id_ == 1)
     {
-      fprintf(stderr, oyObject_Show( obj ));
+      fputs( oyObject_Show( obj ), stderr );
       fflush( stderr );
     }
   }

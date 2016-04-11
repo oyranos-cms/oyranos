@@ -122,7 +122,7 @@ OYAPI int OYEXPORT
     fprintf( stderr, "new allocated objects inside %s:\n", s->registration );
     for(i = 0; i < max_count; ++i)
       if(ids_remaining_new[i] != -1)
-        fprintf(stderr, oyObject_Show( obs[i] ));
+        fputs( oyObject_Show( obs[i] ), stderr );
     fprintf( stderr, "... end new allocated objects inside %s:\n", s->registration );
     fflush( stderr );
 
