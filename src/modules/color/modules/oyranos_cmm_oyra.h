@@ -80,5 +80,7 @@ oyCMMapi_s * oyraApi4ImageScaleCreate(void);
 oyCMMapi_s * oyraApi7ImageScaleCreate(void);
 oyCMMapi_s * oyraApi4ImageChannelCreate(void);
 oyCMMapi_s * oyraApi7ImageChannelCreate(void);
+oyCMMapi_s * oyraApi4ImageExposeCreate(void);
+oyCMMapi_s * oyraApi7ImageExposeCreate(void);
 
 #endif /* OYRANOS_CMM_OYRA_H */

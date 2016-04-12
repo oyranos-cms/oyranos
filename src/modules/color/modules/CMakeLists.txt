@@ -85,6 +85,7 @@ ADD_LIBRARY( ${OY_MODULE_LIB}
              ${PACKAGE_NAME}_cmm_${OY_MODULE}.c
              ${PACKAGE_NAME}_cmm_${OY_MODULE}_image.c
              ${PACKAGE_NAME}_cmm_${OY_MODULE}_image_channel.c
+             ${PACKAGE_NAME}_cmm_${OY_MODULE}_image_expose.c
              ${PACKAGE_NAME}_cmm_${OY_MODULE}_image_scale.c
              ${PACKAGE_NAME}_cmm_${OY_MODULE}_image_ppm.c
            )

@@ -168,6 +168,11 @@ int  oyraInit                        ( oyStruct_s        * module_info )
   m = oyraApi7ImageChannelCreate();
   oyCMMapi_SetNext( a, m ); a = m;
 
+  m = oyraApi4ImageExposeCreate();
+  oyCMMapi_SetNext( a, m ); a = m;
+  m = oyraApi7ImageExposeCreate();
+  oyCMMapi_SetNext( a, m ); a = m;
+
   m = oyraApi4ImageScaleCreate();
   oyCMMapi_SetNext( a, m ); a = m;
   m = oyraApi7ImageScaleCreate();
