@@ -459,6 +459,66 @@ void help_cb ( Fl_Widget*, void* )
   int is_html = 1;
   make_help( _("Oyranos Help"), oyDescriptionToHTML(oyGROUP_ALL, opts,0), is_html );
 }
+void shortcuts_cb ( Fl_Widget*, void* )
+{
+  char * html = NULL;
+  oyStringAddPrintf( &html,0,0,
+  "<html><body>"
+  "<h4>%s</h4>"
+  "<ul>"
+  "<li>%s</li>"
+  "<li>%s</li>"
+  "<li>%s</li>"
+  "<li>%s</li>"
+  "<li>%s</li>"
+  "<li>%s</li>"
+  "</ul>"
+  "<h4>%s</h4>"
+  "<ul>"
+  "<li>%s</li>"
+  "<li>%s</li>"
+  "<li>%s</li>"
+  "</ul>"
+  "<h4>%s</h4>"
+  "<ul>"
+  "<li>%s</li>"
+  "<li>%s</li>"
+  "<li>%s</li>"
+  "<li>%s</li>"
+  "</ul>"
+  "<h4>%s</h4>"
+  "<ul>"
+  "<li>%s</li>"
+  "<li>%s</li>"
+  "</ul>"
+  "</body></html>",
+  _("Zoom:"),
+  _("f - fit to window"),
+  _("1 - map one image pixel to one screen pixel"),
+  _("w - fit to window width"),
+  _("h - fit to window height"),
+  _("+ - zoom in"),
+  _("- - zoom out"),
+  _("Exposure:"),
+  _("Alt + - brighter"),
+  _("Alt - - darker"),
+  _("Alt . - reset to normal values"),
+  _("Channels:"),
+  _("Alt 1 - first channel"),
+  _("Alt 2 - second channel"),
+  _("Alt n - n-th channel"),
+  _("Alt 0 - all channels"),
+  _("Navigation:"),
+  /* '>' */
+  _("&gt; - next image"),
+  /* '<' */
+  _("&lt; - previous image")
+  );
+  int is_html = 1;
+  make_help( _("Oyranos Image Display Help"),
+  html,
+  is_html );
+}
 
 void info_cb ( Fl_Widget* w, void* daten )
 {
@@ -698,6 +758,8 @@ void               openNextImage     ( Oy_Fl_Image_Widget* oy_widget,
 
   oyOptions_Release( &module_options );
   oyStringListRelease_( &files, count, oyDeAllocateFunc_ );
+
+  oy_widget->damage( FL_DAMAGE_USER1 );
 }
 
 int
@@ -711,6 +773,7 @@ event_handler(int e)
   case FL_SHORTCUT:
     {
       int k = Fl::event_key();
+      double expose = 1.0;
       if(Fl::event_key() == FL_Escape)
       {
         exit(0);
@@ -742,6 +805,46 @@ event_handler(int e)
           oyProfile_Release( &profile );
         }
         found = 1;
+        break;
+      case '-':
+        found = 1;
+        opts = findOpts( "//" OY_TYPE_STD "/expose" );
+        oyOptions_FindDouble( opts,
+                                   "expose",
+                                   0, &expose );
+        expose /= M_SQRT2;
+        oyOptions_SetFromDouble( &opts,
+                                   "//" OY_TYPE_STD "/expose/expose",
+                                   expose, 0, OY_CREATE_NEW );
+        oyOptions_Release( &opts );
+        oy_widget->damage( FL_DAMAGE_USER1 );
+        break;
+      case '+': // 43
+        found = 1;
+        opts = findOpts( "//" OY_TYPE_STD "/expose" );
+        oyOptions_FindDouble( opts,
+                                   "expose",
+                                   0, &expose );
+        expose *= M_SQRT2;
+        oyOptions_SetFromDouble( &opts,
+                                   "//" OY_TYPE_STD "/expose/expose",
+                                   expose, 0, OY_CREATE_NEW );
+        oyOptions_Release( &opts );
+        oy_widget->damage( FL_DAMAGE_USER1 );
+        break;
+      case '.':
+        found = 1;
+        opts = findOpts( "//" OY_TYPE_STD "/expose" );
+        oyOptions_FindDouble( opts,
+                                   "expose",
+                                   0, &expose );
+        expose = 1.0;
+        oyOptions_SetFromDouble( &opts,
+                                   "//" OY_TYPE_STD "/expose/expose",
+                                   expose, 0, OY_CREATE_NEW );
+        oyOptions_Release( &opts );
+        oy_widget->damage( FL_DAMAGE_USER1 );
+        break;
       }
     }
     case FL_KEYBOARD:
@@ -917,6 +1020,8 @@ void setWindowMenue                  ( Oy_Fl_Double_Window * win,
         menue_->add( _("Show Infos"),
                    FL_CTRL + 'f', info_cb, (void*)arg, 0 );
       }
+      menue_->add( _("Help Shortcuts"),
+                   FL_CTRL + 'h', shortcuts_cb, (void*)arg, 0 );
       menue_->add( _("Help"),
                    FL_F + 1, help_cb, (void*)arg, 0 );
       menue_->add( _("Quit"),
