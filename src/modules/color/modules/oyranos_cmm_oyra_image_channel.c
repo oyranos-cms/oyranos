@@ -323,6 +323,8 @@ int      oyraFilter_ImageChannelRun  ( oyFilterPlug_s    * requestor_plug,
     oyFilterNode_Release( &input_node );
   }
   oyImage_Release( &image );
+  oyFilterSocket_Release( &socket );
+  oyFilterNode_Release( &node );
 
   return result;
 }
