@@ -66,19 +66,6 @@ public:
   }
   virtual oyPixelAccess_s * ticket() { return pixel_access; }
 
-  oyFilterNode_s * setImageType( const char * file_name, oyDATATYPE_e data_type, oyOptions_s * cc_options )
-  {
-    oyFilterNode_s * icc = 0;
-    oyConversion_s * c = oyConversion_FromImageFileNameForDisplay( 
-                             file_name, &icc, oyOPTIONATTRIBUTE_ADVANCED,
-                             data_type, cc_options, 0 );
-
-    conversion( c );
-
-    oyConversion_Release( &c );
-
-    return icc;
-  }
   oyFilterNode_s * setImageType( oyImage_s * image, oyImage_s * display_image, oyDATATYPE_e data_type, oyOptions_s * cc_options )
   {
     oyFilterNode_s * icc = 0;

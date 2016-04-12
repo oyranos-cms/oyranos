@@ -26,8 +26,24 @@ public:
   oyFilterNode_s * setImage          ( const char        * file_name,
                                        oyOptions_s       * cc_options )
   {
-    oyFilterNode_s * icc = setImageType( file_name, oyUINT8,
+    int icc_profile_flags = oyICCProfileSelectionFlagsFromOptions( OY_CMM_STD,
+                                "//" OY_TYPE_STD "/icc_color", cc_options, 0 );
+
+    oyImage_s * image = 0;
+    oyImage_FromFile( file_name, icc_profile_flags, &image, 0 );
+
+    oyDATATYPE_e data_type = oyUINT8;
+    oyImage_s * display_image = oyImage_Create( oyImage_GetWidth( image ), oyImage_GetHeight( image ),
+                         0,
+                         oyChannels_m(3) | oyDataType_m(data_type),
+                         oyImage_GetProfile( image ),
+                         0 );
+
+    oyFilterNode_s * icc = setImageType( image, display_image, data_type,
                                          cc_options );
+    oyImage_Release( &image );
+    oyImage_Release( &display_image );
+
     return icc;
   }
 

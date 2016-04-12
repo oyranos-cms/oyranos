@@ -69,6 +69,22 @@ oyConversion_s * oyConversion_FromImageForDisplay_ (
   in = out;
 
 
+  /* add a expose node */
+  out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/expose", 0, obj );
+  options = oyFilterNode_GetOptions( out, OY_SELECT_FILTER );
+  /* expose factor */
+  error = oyOptions_SetFromDouble( &options,
+                                   "//" OY_TYPE_STD "/expose/expose",
+                                   1.0, 0, OY_CREATE_NEW );
+  oyOptions_Release( &options );
+  /* append the node */
+  error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
+                                out, "//" OY_TYPE_STD "/data", 0 );
+  if(error > 0)
+    fprintf( stderr, "could not add  filter: %s\n", "//" OY_TYPE_STD "/expose" );
+  in = out;
+
+
   /* add a channel node */
   out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/channel", 0, obj );
   options = oyFilterNode_GetOptions( out, OY_SELECT_FILTER );
@@ -185,151 +201,6 @@ oyConversion_s * oyConversion_FromImageForDisplay  (
 {
   oyConversion_s * conversion =
      oyConversion_FromImageForDisplay_( image_in, image_out, cc_node, flags,
-                                        data_type, cc_options, obj );
-
-  return conversion;
-}
-oyConversion_s * oyConversion_FromImageFileNameForDisplay_ (
-                                       const char        * file_name,
-                                       oyFilterNode_s   ** cc_node,
-                                       uint32_t            flags,
-                                       oyDATATYPE_e        data_type,
-                                       oyOptions_s       * cc_options,
-                                       oyObject_s          obj )
-{
-  oyFilterNode_s * in, * out, * icc;
-  int error = 0;
-  oyConversion_s * conversion = 0;
-  oyOptions_s * options = 0;
-  oyImage_s * image_in = 0;
-
-  if(!file_name)
-    return NULL;
-
-  /* start with an empty conversion object */
-  conversion = oyConversion_New( obj );
-  /* create a filter node */
-  in = oyFilterNode_NewWith( "//" OY_TYPE_STD "/file_read.meta", 0, obj );
-  /* set the above filter node as the input */
-  oyConversion_Set( conversion, in, 0 );
-
-  /* add a file name argument */
-  /* get the options of the input node */
-  if(in)
-  options = oyFilterNode_GetOptions( in, OY_SELECT_FILTER );
-  /* add a new option with the appropriate value */
-  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/file_read/filename",
-                                 file_name, OY_CREATE_NEW );
-  /* release the options object, this means its not any more refered from here*/
-  oyOptions_Release( &options );
-
-  /* create a new filter node */
-  icc = out = oyFilterNode_FromOptions( OY_CMM_STD, "//" OY_TYPE_STD "/icc_color",
-                                        cc_options, obj );
-  /* append the new to the previous one */
-  error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
-                                out, "//" OY_TYPE_STD "/data", 0 );
-  if(error > 0)
-    fprintf( stderr, "could not add  filter: %s\n", OY_CMM_STD );
-
-  /* Set the image to the first/only socket of the filter node.
-   * oyFilterNode_Connect() has now no chance to copy it it the other nodes.
-   * We rely on resolving the image later.
-   */
-  oyFilterNode_SetData( in, (oyStruct_s*)image_in, 0, 0 );
-
-  /* swap in and out */
-  if(out)
-    in = out;
-
-
-  /* create a node for preparing the image for displaying */
-  if(icc)
-  {
-    out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/display", 0, obj );
-    options = oyFilterNode_GetOptions( out, OY_SELECT_FILTER );
-    /* data type for display */
-    error = oyOptions_SetFromInt( &options,
-                                  "//" OY_TYPE_STD "/display/datatype",
-                                  data_type, 0, OY_CREATE_NEW );
-    /* alpha might be support once by FLTK? */
-    error = oyOptions_SetFromInt( &options,
-                                  "//" OY_TYPE_STD "/display/preserve_alpha",
-                                  1, 0, OY_CREATE_NEW );
-    oyOptions_Release( &options );
-    /* append the node */
-    error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
-                                  out, "//" OY_TYPE_STD "/data", 0 );
-    if(error > 0)
-      fprintf( stderr, "could not add  filter: %s\n", "//" OY_TYPE_STD "/display" );
-    in = out;
-  }
-
-
-  /* add a scale node */
-  out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/scale", 0, obj );
-  options = oyFilterNode_GetOptions( out, OY_SELECT_FILTER );
-  /* scale factor */
-  error = oyOptions_SetFromDouble( &options,
-                                   "//" OY_TYPE_STD "/scale/scale",
-                                   0.2, 0, OY_CREATE_NEW );
-  oyOptions_Release( &options );
-  /* append the node */
-  error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
-                                out, "//" OY_TYPE_STD "/data", 0 );
-  if(error > 0)
-    fprintf( stderr, "could not add  filter: %s\n", "//" OY_TYPE_STD "/display" );
-  in = out;
-
-
-  /* add a closing node */
-  out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/output", 0, obj );
-  error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
-                                out, "//" OY_TYPE_STD "/data", 0 );
-  /* set the output node of the conversion */
-  oyConversion_Set( conversion, 0, out );
-
-  /* apply policies */
-  /*error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "//verbose",
-                                 "true", OY_CREATE_NEW );*/
-  oyConversion_Correct( conversion, "//" OY_TYPE_STD "/icc_color", flags,
-                        options );
-  oyOptions_Release( &options );
-
-
-  *cc_node = icc;
-
-  return conversion;
-}
-/** Function oyConversion_FromImageFileNameForDisplay
- *  @brief   generate a Oyranos graph from a image file name
- *
- *  @param[in]     file_name           name of image file
- *  @param[out]    cc_node             used icc node, owned by caller
- *  @param[in]     flags               for inbuild defaults |
- *                                     oyOPTIONSOURCE_FILTER;
- *                                     for options marked as advanced |
- *                                     oyOPTIONATTRIBUTE_ADVANCED |
- *                                     OY_SELECT_FILTER |
- *                                     OY_SELECT_COMMON
- *  @param[in]     data_type           the desired data type for output
- *  @param[in]     obj                 Oyranos object (optional)
- *  @return                            generated new graph, owned by caller
- *
- *  @version Oyranos: 0.9.6
- *  @since   2010/09/05 (Oyranos: 0.1.11)
- *  @date    2014/05/16
- */
-oyConversion_s * oyConversion_FromImageFileNameForDisplay  (
-                                       const char        * file_name,
-                                       oyFilterNode_s   ** cc_node,
-                                       uint32_t            flags,
-                                       oyDATATYPE_e        data_type,
-                                       oyOptions_s       * cc_options,
-                                       oyObject_s          obj )
-{
-  oyConversion_s * conversion =
-     oyConversion_FromImageFileNameForDisplay_( file_name, cc_node, flags,
                                         data_type, cc_options, obj );
 
   return conversion;
