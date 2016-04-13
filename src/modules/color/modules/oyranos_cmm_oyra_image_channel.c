@@ -273,13 +273,13 @@ int      oyraFilter_ImageChannelRun  ( oyFilterPlug_s    * requestor_plug,
                 break;
               case oyHALF:
                 flt = channel[i] * max_value;
-                cache[i].u2 = (channel_pos[i] == -1) ? OY_FLOAT2HALF(flt) : *((uint16_t*)&array_out_data[y][x*channels_dst*bps_out + i*bps_out]);
+                cache[i].u2 = (channel_pos[i] == -1) ? OY_FLOAT2HALF(flt) : *((uint16_t*)&array_out_data[y][x*channels_dst*bps_out + pos*bps_out]);
                 break;
               case oyFLOAT:
-                cache[i].f = (channel_pos[i] == -1) ? channel[i] * max_value : *((float*)&array_out_data[y][x*channels_dst*bps_out + i*bps_out]);
+                cache[i].f = (channel_pos[i] == -1) ? channel[i] * max_value : *((float*)&array_out_data[y][x*channels_dst*bps_out + pos*bps_out]);
                 break;
               case oyDOUBLE:
-                cache[i].d = (channel_pos[i] == -1) ? channel[i] * max_value : *((double*)&array_out_data[y][x*channels_dst*bps_out + i*bps_out]);
+                cache[i].d = (channel_pos[i] == -1) ? channel[i] * max_value : *((double*)&array_out_data[y][x*channels_dst*bps_out + pos*bps_out]);
                 break;
               }
             }
