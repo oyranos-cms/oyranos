@@ -637,6 +637,19 @@ oyOptions_s * findOpts( const char * filter_name )
   return opts;
 }
 
+oyOption_s * findOpt( const char * filter_name, const char * key_name )
+{
+  oyFilterGraph_s * g = oyFilterGraph_FromNode( icc, 0 );
+  oyFilterNode_s * n = oyFilterGraph_GetNode( g, -1, filter_name, NULL );
+  oyOptions_s * opts = oyFilterNode_GetOptions( n, 0 );
+  oyOption_s * opt = oyOptions_Find( opts, key_name, oyNAME_PATTERN );
+  oyOptions_Release( &opts );
+  oyFilterGraph_Release( &g );
+  oyFilterNode_Release( &n );
+
+  return opt;
+}
+
 /* Prepare a JSON complying string for the channel filter.
  * The string describes the source of the output channels.
  * e.g.: '["b", "b", "b"]'
@@ -703,6 +716,8 @@ char ** getFileList(const char * path, int * count, const char * file, int * pos
   return files;
 }
 
+const char * scale_reg = OY_INTERNAL OY_SLASH "scale/scale";
+const char * scales_reg = OY_INTERNAL OY_SLASH "scale";
 char * path = 0;
 void               openNextImage     ( Oy_Fl_Image_Widget* oy_widget,
                                        int                 increment )
@@ -851,6 +866,7 @@ event_handler(int e)
     {
       int k = ((char*)Fl::event_text())[0];
       double scale = 1.0;
+      oyOption_s * opt = 0;
 
       if(!(Fl::event_state() & FL_ALT ||
            Fl::event_state() & FL_META))
@@ -858,33 +874,25 @@ event_handler(int e)
       {
       case '-':
         found = 1;
-        opts = findOpts( "//" OY_TYPE_STD "/scale" );
-        oyOptions_FindDouble( opts,
-                                   "scale",
-                                   0, &scale );
+        opt = findOpt( scales_reg, scale_reg );
+        scale = oyOption_GetValueDouble( opt, 0 );
         scale /= oy_widget->scale_changer;
         // scale relative to the middle of the image
         oy_widget->px = int((double)(oy_widget->px - oy_widget->w()/2) / oy_widget->scale_changer) + oy_widget->w()/2;
         oy_widget->py = int((double)(oy_widget->py - oy_widget->h()/2) / oy_widget->scale_changer) + oy_widget->h()/2;
-        oyOptions_SetFromDouble( &opts,
-                                   "//" OY_TYPE_STD "/scale/scale",
-                                   scale, 0, OY_CREATE_NEW );
-        oyOptions_Release( &opts );
+        oy_widget->resetScale();
+        oyOption_SetFromDouble( opt, scale, 0,0 );
         break;
       case '+': // 43
         found = 1;
-        opts = findOpts( "//" OY_TYPE_STD "/scale" );
-        oyOptions_FindDouble( opts,
-                                   "scale",
-                                   0, &scale );
+        opt = findOpt( scales_reg, scale_reg );
+        scale = oyOption_GetValueDouble( opt, 0 );
         scale *= oy_widget->scale_changer;
         // scale relative to the middle of the image
         oy_widget->px = int((double)(oy_widget->px - oy_widget->w()/2) * oy_widget->scale_changer) + oy_widget->w()/2;
         oy_widget->py = int((double)(oy_widget->py - oy_widget->h()/2) * oy_widget->scale_changer) + oy_widget->h()/2;
-        oyOptions_SetFromDouble( &opts,
-                                   "//" OY_TYPE_STD "/scale/scale",
-                                   scale, 0, OY_CREATE_NEW );
-        oyOptions_Release( &opts );
+        oy_widget->resetScale();
+        oyOption_SetFromDouble( opt, scale, 0,0 );
         break;
       case '*':
         found = 1;
@@ -895,44 +903,40 @@ event_handler(int e)
         oy_widget->scale_changer -= (oy_widget->scale_changer-1.0)*.2;
         break;
       case 'h':
-        opts = findOpts( "//" OY_TYPE_STD "/scale" );
+        opt = findOpt( scales_reg, scale_reg );
         {
           oyConversion_s * cc = oy_widget->conversion();
           oyImage_s * image = oyConversion_GetImage( cc, OY_INPUT );
           double widget_height = oy_widget->h(),
                  image_height = oyImage_GetHeight( image ),
                  old_scale = scale;
-          oyOptions_FindDouble( opts, "//" OY_TYPE_STD "/scale/scale", 0, &old_scale );
+          old_scale = oyOption_GetValueDouble( opt, 0 );
           scale = widget_height/image_height;
           /* reset position to zero */
           oy_widget->px = int((double)oy_widget->px / old_scale * scale);
           oy_widget->py = 0;
         }
         found = 1;
-        oyOptions_SetFromDouble( &opts,
-                                   "//" OY_TYPE_STD "/scale/scale",
-                                   scale, 0, OY_CREATE_NEW );
-        oyOptions_Release( &opts );
+        oy_widget->resetScale();
+        oyOption_SetFromDouble( opt, scale, 0,0 );
         break;
       case 'w':
-        opts = findOpts( "//" OY_TYPE_STD "/scale" );
+        opt = findOpt( scales_reg, scale_reg );
         {
           oyConversion_s * cc = oy_widget->conversion();
           oyImage_s * image = oyConversion_GetImage( cc, OY_INPUT );
           double widget_width = oy_widget->w(),
                  image_width = oyImage_GetWidth( image ),
                  old_scale = scale;
-          oyOptions_FindDouble( opts, "//" OY_TYPE_STD "/scale/scale", 0, &old_scale );
+          old_scale = oyOption_GetValueDouble( opt, 0 );
           scale = widget_width/image_width;
           /* reset position to zero */
           oy_widget->px = int((double)oy_widget->px / old_scale * scale);
           oy_widget->py = 0;
         }
         found = 1;
-        oyOptions_SetFromDouble( &opts,
-                                   "//" OY_TYPE_STD "/scale/scale",
-                                   scale, 0, OY_CREATE_NEW );
-        oyOptions_Release( &opts );
+        oy_widget->resetScale();
+        oyOption_SetFromDouble( opt, scale, 0,0 );
         break;
       case '0': /* image ==> window size */
       case 'f': /* fit window */
@@ -953,24 +957,16 @@ event_handler(int e)
           oyImage_Release( &image );
         }
         found = 1;
-        opts = findOpts( "//" OY_TYPE_STD "/scale" );
-        oyOptions_SetFromDouble( &opts,
-                                   "//" OY_TYPE_STD "/scale/scale",
-                                   scale, 0, OY_CREATE_NEW );
-        oyOptions_Release( &opts );
+        opt = findOpt( scales_reg, scale_reg );
+        oy_widget->resetScale();
+        oyOption_SetFromDouble( opt, scale, 0,0 );
         break;
       case '1': /* pixel size */
         scale = 1.0;
         found = 1;
-        opts = findOpts( "//" OY_TYPE_STD "/scale" );
-        oyOptions_FindDouble( opts,
-                                   "scale",
-                                   0, &scale );
-        scale = 1.0;
-        oyOptions_SetFromDouble( &opts,
-                                   "//" OY_TYPE_STD "/scale/scale",
-                                   scale, 0, OY_CREATE_NEW );
-        oyOptions_Release( &opts );
+        opt = findOpt( scales_reg, scale_reg );
+        oy_widget->resetScale();
+        oyOption_SetFromDouble( opt, scale, 0,0 );
         break;
       case '<':
         openNextImage(oy_widget, -1);
@@ -982,6 +978,25 @@ event_handler(int e)
         break;
       default:
         break;
+      }
+
+      if(opt)
+      /* store to DB */
+      {
+        char * d  = 0;
+        int error;
+        double dv = scale;
+        if(k == 'f' || k == '0')
+          dv = -1;
+        else if(k == 'w')
+          dv = -2;
+        else if(k == 'h')
+          dv = -3;
+        oyStringAddPrintf( &d, 0,0, "%g", dv );
+        error = oySetPersistentString( scale_reg, oySCOPE_USER, d, 0 );
+        printf("%d saved key to DB\n", error);
+        oyOption_Release( &opt );
+        oyFree_m_( d );
       }
     }
     break;

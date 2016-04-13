@@ -35,7 +35,9 @@ oyOptions_s * findOpts( oyFilterNode_s * node, const char * filter_name )
 class Oy_Fl_Image_Widget : public Fl_Widget, public Oy_Widget
 {
   int e, ox, oy;
+  double scale_;
 public:
+  void resetScale( ) { scale_ = 1; }
   double scale_changer;
   int px, py, mx, my;
   int handle(int event)
@@ -141,7 +143,6 @@ public:
 
       oyOptions_FindDouble( opts, "scale",
                                    0, &scale );
-      oyOptions_Release( &opts );
 
 #if defined(XCM_HAVE_X11)
       /* add X11 window and display identifiers to output image */
@@ -153,6 +154,26 @@ public:
       image_input = oyConversion_GetImage( conversion(), OY_INPUT );
       width_input = oyImage_GetWidth( image_input );
       height_input = oyImage_GetHeight( image_input );
+
+      /* Handle automatic scaling */
+      if(scale <= 0)
+        scale_ = scale;
+      if(scale_ <= 0)
+      {
+        double widget_width = W,
+               widget_height = H;
+        if(((scale_ == -1) && widget_width/width_input < widget_height/height_input) ||
+            scale_ == -2)
+          scale = widget_width/width_input;
+        else /* scale_ == -1 || scale_ == -3 */
+          scale = widget_height/height_input;
+        oyOption_s * opt = oyOptions_Find( opts, "scale", oyNAME_PATTERN );
+        oyOption_SetFromDouble( opt, scale, 0,0 );
+        oyOption_Release( &opt );
+        if(oy_debug)
+          printf("found negative scale: %g ==> %g\n", scale_, scale);
+      }
+      oyOptions_Release( &opts );
 
       width_scale = width_roi = width_input * scale;
       height_scale = height_roi = height_input * scale;
@@ -296,6 +317,7 @@ public:
   {
     px=py=ox=oy=0;
     scale_changer = 1.2;
+    scale_ = 1;
   };
 
   ~Oy_Fl_Image_Widget(void)

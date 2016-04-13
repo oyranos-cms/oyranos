@@ -39,6 +39,9 @@ oyConversion_s * oyConversion_FromImageForDisplay_ (
   int error = 0;
   oyConversion_s * conversion = 0;
   oyOptions_s * options = 0;
+  oyOption_s * option = 0;
+  const char * sv = 0;
+  double scale = 0;
 
   if(!image_in || !image_out)
     return NULL;
@@ -56,10 +59,21 @@ oyConversion_s * oyConversion_FromImageForDisplay_ (
   /* add a scale node */
   out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/scale", 0, obj );
   options = oyFilterNode_GetOptions( out, OY_SELECT_FILTER );
-  /* scale factor */
+  /* scale factor from DB */
+  option = oyOption_FromRegistration( OY_INTERNAL "/scale/scale", 0 );
+  error = oyOption_SetFromText( option, 0, 0 );
+  error = oyOption_SetValueFromDB( option );
+  scale = 1.0;
+  if(!error)
+  {
+    sv = oyOption_GetValueString( option, 0 );
+    if(sv)
+      scale = strtod( sv, 0 );
+  }
+  oyOption_Release( &option );
   error = oyOptions_SetFromDouble( &options,
-                                   "//" OY_TYPE_STD "/scale/scale",
-                                   1.0, 0, OY_CREATE_NEW );
+                                   OY_INTERNAL "/scale/scale",
+                                   scale, 0, OY_CREATE_NEW );
   oyOptions_Release( &options );
   /* append the node */
   error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",

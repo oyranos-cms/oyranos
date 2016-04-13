@@ -107,7 +107,7 @@ int      oyraFilter_ImageScaleRun    ( oyFilterPlug_s    * requestor_plug,
       oyra_msg( oyMSG_WARN, (oyStruct_s*)ticket, OY_DBG_FORMAT_
                 "%s",OY_DBG_ARGS_, oyPixelAccess_Show(ticket));
 
-    if(scale != 1.0)
+    if(scale != 1.0 && scale > 0)
     {
       oyImage_s * output_image = oyPixelAccess_GetOutputImage( ticket );
       int output_image_width = oyImage_GetWidth( output_image );
@@ -149,7 +149,7 @@ int      oyraFilter_ImageScaleRun    ( oyFilterPlug_s    * requestor_plug,
 
       if(oy_debug)
         oyMessageFunc_p( oy_debug?oyMSG_DBG:oyMSG_WARN, (oyStruct_s*)ticket, OY_DBG_FORMAT_
-              "start_xy %f|%f ROI: %s image[%d](%d) -> [%d](%d) scale_ %f\n",OY_DBG_ARGS_,
+              "start_xy %f|%f ROI: %s image[%d](%d) -> [%d](%d) scale %f\n",OY_DBG_ARGS_,
                    start_x_src_pixel, start_y_src_pixel,
                    oyRectangle_Show(new_ticket_array_roi),
                    oyStruct_GetId((oyStruct_s*)image),oyImage_GetWidth(image),
