@@ -50,6 +50,7 @@ extern "C" {
 oyConversion_s * idcc = 0;
 Oy_Fl_Image_Widget * oy_widget = 0;
 Oy_Fl_Double_Window * win = 0;
+Oy_Fl_Group * lg = 0;
 
 extern "C" {
 /* forward declaration of oyranos_alpha.c */
@@ -468,6 +469,11 @@ void shortcuts_cb ( Fl_Widget*, void* )
   "<ul>"
   "<li>%s</li>"
   "<li>%s</li>"
+  "</ul>"
+  "<h4>%s</h4>"
+  "<ul>"
+  "<li>%s</li>"
+  "<li>%s</li>"
   "<li>%s</li>"
   "<li>%s</li>"
   "<li>%s</li>"
@@ -488,10 +494,14 @@ void shortcuts_cb ( Fl_Widget*, void* )
   "</ul>"
   "<h4>%s</h4>"
   "<ul>"
-  "<li>%s</li>"
   "<li>%s</li>"
   "</ul>"
   "</body></html>",
+  _("Navigation:"),
+  /* '>' */
+  _("&gt; - next image"),
+  /* '<' */
+  _("&lt; - previous image"),
   _("Zoom:"),
   _("f - fit to window"),
   _("1 - map one image pixel to one screen pixel"),
@@ -508,11 +518,8 @@ void shortcuts_cb ( Fl_Widget*, void* )
   _("Alt 2 - second channel"),
   _("Alt n - n-th channel"),
   _("Alt 0 - all channels"),
-  _("Navigation:"),
-  /* '>' */
-  _("&gt; - next image"),
-  /* '<' */
-  _("&lt; - previous image")
+  _("View:"),
+  _("Alt v - set window fullscreen")
   );
   int is_html = 1;
   make_help( _("Oyranos Image Display Help"),
@@ -574,7 +581,7 @@ Oy_Fl_Double_Window * createWindow (Oy_Fl_Image_Widget ** oy_box, uint32_t flags
 {
   int w = 640,
       h = 480,
-      lh = 0;
+      lh = 1;
 
   if(flags & 0x02)
     lh = 100;
@@ -582,25 +589,30 @@ Oy_Fl_Double_Window * createWindow (Oy_Fl_Image_Widget ** oy_box, uint32_t flags
 
   Fl::get_system_colors();
   Oy_Fl_Double_Window *win = new Oy_Fl_Double_Window( w, h+lh, "Oyranos" );
-  { Fl_Tile* t = new Fl_Tile(0,0, w, h+lh);
-      if(flags & 0x04)
-        *oy_box = new Oy_Fl_Shader_Box(0,0,w,h);
-      else if(flags & 0x01)
-        *oy_box = new Oy_Fl_GL_Box(0,0,w,h);
-      else
-        *oy_box = new Oy_Fl_Image_Box(0,0,w,h);
-      (*oy_box)->box(FL_FLAT_BOX);
-      t->resizable(*oy_box);
+  Fl_Tile* t;
 
-      {
-        oyProfile_s * e = NULL; /* default: sRGB */
-        Oy_Fl_Group * og = new Oy_Fl_Group(0, h, w, lh, e);
-        int gh = h;
-        oyProfile_Release( &e );
-        if(flags & 0x02)
-        {
-          /* add some text */
-          Fl_Box *box = new Fl_Box(0,0+gh,w,100, "Oyranos");
+  if(flags & 0x02)
+    t = new Fl_Tile(0,0, w, h+lh);
+
+  if(flags & 0x04)
+    *oy_box = new Oy_Fl_Shader_Box(0,0,w,h);
+  else if(flags & 0x01)
+    *oy_box = new Oy_Fl_GL_Box(0,0,w,h);
+  else
+    *oy_box = new Oy_Fl_Image_Box(0,0,w,h);
+  (*oy_box)->box(FL_FLAT_BOX);
+
+  if(flags & 0x02)
+  {
+    t->resizable(*oy_box);
+    oyProfile_s * e = NULL; /* default: sRGB */
+    Oy_Fl_Group * og = lg = new Oy_Fl_Group(0, h, w, lh, e);
+    int gh = h;
+    oyProfile_Release( &e );
+    if(flags & 0x02)
+    {
+      /* add some text */
+      Fl_Box *box = new Fl_Box(0,0+gh,w,100, "Oyranos");
             box->labeltype(FL_ENGRAVED_LABEL);
             box->labelfont(0);
             box->labelsize(48);
@@ -608,19 +620,21 @@ Oy_Fl_Double_Window * createWindow (Oy_Fl_Image_Widget ** oy_box, uint32_t flags
             box->align(FL_ALIGN_CENTER|FL_ALIGN_INSIDE);
           box->box(FL_FLAT_BOX);
           og->resizable(box);
-        }
+    }
         /* place the color managed logo */
-        {
+    {
           Fl_Box* o = new Fl_Box(16, 16+gh, 64, 64);
             o->image(image_oyranos_logo);
             o->color(FL_RED);
             o->align(FL_ALIGN_CENTER|FL_ALIGN_INSIDE);
-        }
-        og->end();
-      }
+    }
+    og->end();
     t->end();
     Fl_Group::current()->resizable(t);
   }
+  else
+    win->resizable(*oy_box);
+
   win->end();
 
   return win;
@@ -859,6 +873,29 @@ event_handler(int e)
                                    expose, 0, OY_CREATE_NEW );
         oyOptions_Release( &opts );
         oy_widget->damage( FL_DAMAGE_USER1 );
+        break;
+      case 'v':
+        found = 1;
+        {
+          static int fullscreen = 0, x,y,w,h;
+          if(fullscreen)
+          {
+            oy_widget->window()->fullscreen_off(x,y,w,h);
+            fullscreen = 0;
+            //lg->size(lg->w(),100);
+            //oy_widget->size( oy_widget->w(), oy_widget->window()->h() - 100 );
+          } else
+          {
+            x = oy_widget->window()->x();
+            y = oy_widget->window()->y();
+            w = oy_widget->window()->w();
+            h = oy_widget->window()->h();
+            oy_widget->window()->fullscreen();
+            fullscreen = 1;
+            //lg->size(lg->w(),0);
+            //oy_widget->size( oy_widget->w(), oy_widget->window()->h() );
+          }
+        }
         break;
       }
     }
