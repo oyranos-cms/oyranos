@@ -91,7 +91,10 @@ int      oyraFilter_ImageChannelRun  ( oyFilterPlug_s    * requestor_plug,
 
   image = (oyImage_s*)oyFilterSocket_GetData( socket );
   if(!image)
-    return 1;
+  {
+    result = 1;
+    goto oyraFilter_ImageChannelRun_clean;
+  }
 
   if(oy_debug)
     oyra_msg( oyMSG_WARN, (oyStruct_s*)ticket, OY_DBG_FORMAT_
@@ -107,7 +110,10 @@ int      oyraFilter_ImageChannelRun  ( oyFilterPlug_s    * requestor_plug,
       dirty = 1;
 
     if(dirty)
-      return dirty;
+    {
+      goto oyraFilter_ImageChannelRun_clean2;
+      result = dirty;
+    }
 
     plug = oyFilterNode_GetPlug( node, 0 );
 
@@ -319,9 +325,11 @@ int      oyraFilter_ImageChannelRun  ( oyFilterPlug_s    * requestor_plug,
     } else /* nothing to do */
       result = oyFilterNode_Run( input_node, plug, ticket );
 
+    oyraFilter_ImageChannelRun_clean2:
     oyFilterPlug_Release( &plug );
     oyFilterNode_Release( &input_node );
   }
+  oyraFilter_ImageChannelRun_clean:
   oyImage_Release( &image );
   oyFilterSocket_Release( &socket );
   oyFilterNode_Release( &node );
