@@ -791,6 +791,24 @@ void               openNextImage     ( Oy_Fl_Image_Widget* oy_widget,
   oy_widget->damage( FL_DAMAGE_USER1 );
 }
 
+void setFullscreen()
+{
+  static int fullscreen = 0, x,y,w,h;
+  if(fullscreen)
+  {
+    oy_widget->window()->fullscreen_off(x,y,w,h);
+    fullscreen = 0;
+  } else
+  {
+    x = oy_widget->window()->x();
+    y = oy_widget->window()->y();
+    w = oy_widget->window()->w();
+    h = oy_widget->window()->h();
+    oy_widget->window()->fullscreen();
+    fullscreen = 1;
+  }
+}
+
 int
 event_handler(int e)
 {
@@ -808,7 +826,9 @@ event_handler(int e)
         exit(0);
         found = 1;
       }
-
+      if(k == FL_F + 11)
+        setFullscreen();
+ 
       if(Fl::event_state() & FL_ALT ||
          Fl::event_state() & FL_META)
       switch (k)
@@ -875,27 +895,8 @@ event_handler(int e)
         oy_widget->damage( FL_DAMAGE_USER1 );
         break;
       case 'v':
+        setFullscreen();
         found = 1;
-        {
-          static int fullscreen = 0, x,y,w,h;
-          if(fullscreen)
-          {
-            oy_widget->window()->fullscreen_off(x,y,w,h);
-            fullscreen = 0;
-            //lg->size(lg->w(),100);
-            //oy_widget->size( oy_widget->w(), oy_widget->window()->h() - 100 );
-          } else
-          {
-            x = oy_widget->window()->x();
-            y = oy_widget->window()->y();
-            w = oy_widget->window()->w();
-            h = oy_widget->window()->h();
-            oy_widget->window()->fullscreen();
-            fullscreen = 1;
-            //lg->size(lg->w(),0);
-            //oy_widget->size( oy_widget->w(), oy_widget->window()->h() );
-          }
-        }
         break;
       }
     }
