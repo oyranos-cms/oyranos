@@ -59,7 +59,10 @@ void oyInit_()
     oy_debug_memory = atoi(getenv(OY_DEBUG_MEMORY));
 
   if(getenv(OY_DEBUG_OBJECTS))
-    oy_debug_objects = 1;
+  {
+    oy_debug_objects = atoi(getenv(OY_DEBUG_OBJECTS));
+    if(!oy_debug_objects) oy_debug_objects = 1;
+  }
 
   if(getenv(OY_DEBUG_SIGNALS))
     oy_debug_signals = atoi(getenv(OY_DEBUG_SIGNALS));
