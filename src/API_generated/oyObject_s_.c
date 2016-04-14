@@ -205,6 +205,94 @@ int oyGetNewObjectID()
   return val;
 }
 
+#define MAX_OBJECTS_TRACKED 1000000
+/* private tracking API's start */
+static oyObject_s * oy_obj_track_list = 0;
+void               oyObject_Track    ( oyObject_s          obj )
+{
+  if(!oy_obj_track_list)
+  {
+    oy_obj_track_list = oyAllocateFunc_( sizeof(oyObject_s) * (MAX_OBJECTS_TRACKED + 1) );
+    if(oy_obj_track_list)
+      memset( oy_obj_track_list, 0, sizeof(oyObject_s) * (MAX_OBJECTS_TRACKED + 1) );
+  }
+  if(oy_obj_track_list && obj->id_ < MAX_OBJECTS_TRACKED)
+    oy_obj_track_list[obj->id_] = obj;
+}
+void               oyObject_UnTrack    ( oyObject_s          obj )
+{
+  if(oy_obj_track_list && obj->id_ < MAX_OBJECTS_TRACKED)
+    oy_obj_track_list[obj->id_] = NULL;
+}
+/* private tracking API's end */
+
+int *              oyObjectGetCurrentObjectIdList( void )
+{
+  int * id_list = oyAllocateFunc_( sizeof(int) * MAX_OBJECTS_TRACKED );
+  int i;
+
+  if(id_list)
+    for(i = 0; i < MAX_OBJECTS_TRACKED; ++i)
+    {
+      if(oy_obj_track_list[i] && oy_obj_track_list[i]->parent_)
+        id_list[i] = oy_obj_track_list[i]->parent_->type_;
+      else
+        id_list[i] = -1;
+    }
+  return id_list;
+}
+
+const oyObject_s * oyObjectGetList   ( int               * max_count )
+{ if(max_count) *max_count = MAX_OBJECTS_TRACKED; return oy_obj_track_list; }
+
+int *              oyObjectFindNewIds( int               * old,
+                                       int               * new )
+{
+  int * id_list = oyAllocateFunc_( sizeof(int) * MAX_OBJECTS_TRACKED );
+  int i;
+
+  if(id_list)
+    for(i = 0; i < MAX_OBJECTS_TRACKED; ++i)
+    {
+      if(old[i] == -1 && new[i] != -1)
+        id_list[i] = new[i];
+      else
+        id_list[i] = -1;
+    }
+  return id_list;
+}
+void               oyObjectReleaseCurrentObjectIdList(
+                                       int              ** id_list )
+{ oyDeAllocateFunc_(*id_list); *id_list = NULL; }
+int                oyObjectIdListShowDiffAndRelease (
+                                       int              ** ids_old,
+                                       const char        * location )
+{
+  int * ids_new = oyObjectGetCurrentObjectIdList(),
+      * ids_remaining_new = oyObjectFindNewIds( *ids_old, ids_new ),
+      max_count,i, count = 0;
+  const oyObject_s * obs = oyObjectGetList( &max_count );
+
+  for(i = 0; i < max_count; ++i)
+    if(ids_remaining_new[i] != -1)
+      ++count;
+  if(count)
+  {
+    fprintf( stderr, "new allocated objects inside %s: %d\n", location, count );
+    for(i = 0; i < max_count; ++i)
+      if(ids_remaining_new[i] != -1)
+        fputs( oyObject_Show( obs[i] ), stderr );
+    fprintf( stderr, "... end new allocated objects inside %s\n", location );
+    fflush( stderr );
+  }
+
+  oyObjectReleaseCurrentObjectIdList( ids_old );
+  oyObjectReleaseCurrentObjectIdList( &ids_new );
+  oyObjectReleaseCurrentObjectIdList( &ids_remaining_new );
+
+  return count;
+}
+
 
 /* } Include "Object.private_methods_definitions.c" */
 
