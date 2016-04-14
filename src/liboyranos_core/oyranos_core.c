@@ -242,7 +242,7 @@ int            oyObject_GetId        ( oyObject_s          object )
   if(obj)
     st = obj->parent_;
 
-  if(st && oy_debug_objects)
+  if(st && oy_debug_objects && oy_debug)
   {
     const char * t = getenv(OY_DEBUG_OBJECTS);
     int id_ = -1;
