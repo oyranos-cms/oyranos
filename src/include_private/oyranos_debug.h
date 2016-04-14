@@ -182,6 +182,14 @@ double             oySeconds         ( );
 
 void oy_backtrace_();
 
+
+/* object tracing */
+#define OY_TRACE_       int * ids_old = 0;
+#define OY_TRACE_START_ if(oy_debug_objects) \
+    ids_old = oyObjectGetCurrentObjectIdList();
+#define OY_TRACE_END_( t )   if(oy_debug_objects) \
+    oyObjectIdListShowDiffAndRelease( &ids_old, t );
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

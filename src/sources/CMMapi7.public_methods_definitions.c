@@ -88,7 +88,7 @@ OYAPI int OYEXPORT
 {
   oyCMMapi7_s_ * s = (oyCMMapi7_s_*)api7;
   int error = !plug;
-  int * ids_old;
+  OY_TRACE_
 
   if(!api7)
     return -1;
@@ -101,9 +101,7 @@ OYAPI int OYEXPORT
     return error;
   }
 
-  if(oy_debug_objects)
-    ids_old = oyObjectGetCurrentObjectIdList();
-
+  OY_TRACE_START_
   if(oy_debug)
   {
     DBGs_NUM2_S( ticket,"CALLING %s[%s]->oyCMMFilterPlug_Run()",
@@ -112,25 +110,7 @@ OYAPI int OYEXPORT
 
   error = s->oyCMMFilterPlug_Run( plug, ticket );
 
-  if(oy_debug_objects)
-  {
-    int * ids_new = oyObjectGetCurrentObjectIdList(),
-        * ids_remaining_new = oyObjectFindNewIds( ids_old, ids_new ),
-        max_count,i;
-    const oyObject_s * obs = oyObjectGetList( &max_count );
-
-    fprintf( stderr, "new allocated objects inside %s:\n", s->registration );
-    for(i = 0; i < max_count; ++i)
-      if(ids_remaining_new[i] != -1)
-        fputs( oyObject_Show( obs[i] ), stderr );
-    fprintf( stderr, "... end new allocated objects inside %s:\n", s->registration );
-    fflush( stderr );
-
-    oyObjectReleaseCurrentObjectIdList( &ids_old );
-    oyObjectReleaseCurrentObjectIdList( &ids_new );
-    oyObjectReleaseCurrentObjectIdList( &ids_remaining_new );
-  }
-
+  OY_TRACE_END_(s->registration)
   if(oy_debug)
   {
     DBGs_NUM2_S( ticket,"DONE %s[%s]->oyCMMFilterPlug_Run()",
