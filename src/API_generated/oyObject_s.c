@@ -114,6 +114,34 @@ int *              oyObjectFindNewIds( int               * old,
 void               oyObjectReleaseCurrentObjectIdList(
                                        int              ** id_list )
 { oyDeAllocateFunc_(*id_list); *id_list = NULL; }
+int                oyObjectIdListShowDiffAndRelease (
+                                       int              ** ids_old,
+                                       const char        * location )
+{
+  int * ids_new = oyObjectGetCurrentObjectIdList(),
+      * ids_remaining_new = oyObjectFindNewIds( *ids_old, ids_new ),
+      max_count,i, count = 0;
+  const oyObject_s * obs = oyObjectGetList( &max_count );
+
+  for(i = 0; i < max_count; ++i)
+    if(ids_remaining_new[i] != -1)
+      ++count;
+  if(count)
+  {
+    fprintf( stderr, "new allocated objects inside %s: %d\n", location, count );
+    for(i = 0; i < max_count; ++i)
+      if(ids_remaining_new[i] != -1)
+        fputs( oyObject_Show( obs[i] ), stderr );
+    fprintf( stderr, "... end new allocated objects inside %s\n", location );
+    fflush( stderr );
+  }
+
+  oyObjectReleaseCurrentObjectIdList( ids_old );
+  oyObjectReleaseCurrentObjectIdList( &ids_new );
+  oyObjectReleaseCurrentObjectIdList( &ids_remaining_new );
+
+  return count;
+}
 
 
 /** @brief   object management 

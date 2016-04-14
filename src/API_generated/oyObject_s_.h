@@ -85,6 +85,9 @@ int *              oyObjectFindNewIds( int               * old_ids,
 void               oyObjectReleaseCurrentObjectIdList(
                                        int              ** id_list );
 const oyObject_s * oyObjectGetList   ( int               * max_count );
+int                oyObjectIdListShowDiffAndRelease (
+                                       int              ** ids_old,
+                                       const char        * location );
 
 
 
