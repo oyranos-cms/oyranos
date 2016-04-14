@@ -575,7 +575,12 @@ void info_cb ( Fl_Widget* w, void* daten )
     printf("could not find a suitable program structure\n");
 }
 
-void exit_cb ( Fl_Widget* w, void* daten ) {exit(0);}
+void exit_cb ( Fl_Widget* w, void* daten )
+{
+  oy_widget->conversion(NULL);
+  oyFilterNode_Release( &icc );
+  exit(0);
+}
 
 Oy_Fl_Double_Window * createWindow (Oy_Fl_Image_Widget ** oy_box, uint32_t flags)
 {
@@ -953,6 +958,7 @@ event_handler(int e)
           /* reset position to zero */
           oy_widget->px = int((double)oy_widget->px / old_scale * scale);
           oy_widget->py = 0;
+          oyImage_Release( &image );
         }
         found = 1;
         oy_widget->resetScale();
@@ -971,6 +977,7 @@ event_handler(int e)
           /* reset position to zero */
           oy_widget->px = int((double)oy_widget->px / old_scale * scale);
           oy_widget->py = 0;
+          oyImage_Release( &image );
         }
         found = 1;
         oy_widget->resetScale();
