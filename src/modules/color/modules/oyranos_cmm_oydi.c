@@ -503,8 +503,10 @@ int  oydiFilterSocket_ImageDisplayInit(oyPixelAccess_s   * ticket,
 
   oyFilterNode_Release( &node );
   oyFilterNode_Release( &input_node );
+  oyFilterNode_Release( &rectangles );
   oyOptions_Release( &node_options );
   oyOptions_Release( &rectangles_options );
+  oyOptions_Release( &image_tags );
 
   return error;
 }
@@ -681,7 +683,9 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
         oyFilterPlug_Release( &plug );
         oyFilterNode_Release( &input_node );
         oyImage_Release( &image );
-        return result;
+        oyOptions_Release( &node_options );
+        oyOptions_Release( &tags );
+        goto clean2;
       }
       oyOptions_Release( &tags );
       oyBlob_Release( &display_id );
@@ -717,7 +721,10 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
 
     n = oyConfigs_Count( devices );
     if(!n || oyFilterNode_EdgeCount( rectangles, 1, OY_FILTEREDGE_CONNECTED ) < n)
-      return 1;
+    {
+      dirty = 1;
+      goto clean2;
+    }
 
     /* process all display rectangles */
     if(error <= 0)
@@ -735,6 +742,7 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
         oydi_msg( oyMSG_WARN, (oyStruct_s*)ticket,
         OY_DBG_FORMAT_"device %d: Could not obtain \"device_rectangle\" option",
                  OY_DBG_ARGS_, i);
+        oyConfig_Release( &c );
         continue;
       }
 
@@ -748,9 +756,11 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
       o = oyOptions_Find( image_tags, "display_rectangle", oyNAME_PATTERN );
       display_rectangle = (oyRectangle_s *) oyOption_GetStruct( o, oyOBJECT_RECTANGLE_S );
       oyOption_Release( &o );
+      oyOptions_Release( &image_tags );
 
       /* trim and adapt the work rectangle */
       oyRectangle_SetByRectangle( (oyRectangle_s*)&roi_pix, display_rectangle );
+      oyRectangle_Release( &display_rectangle );
       display_pos_x = roi_pix.x;
       display_pos_y = roi_pix.y;
       oyRectangle_Trim( (oyRectangle_s*)&roi_pix, device_rectangle );
@@ -822,13 +832,16 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
 
         oyProfile_Release( &p );
         oyProfile_Release( &image_input_profile );
+        oyRectangle_Release( &r );
       }
 
       oyConfig_Release( &c );
       oyImage_Release( &image_input );
     }
 
+    clean2:
     oyConfigs_Release( &devices );
+    oyOptions_Release( &rectangles_options );
 
     /* stop here and request an update */
     if(dirty > 0)
@@ -840,14 +853,20 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
 
 
     /* make the graph flow: process the upstream "rectangles" node */
-    plug = oyFilterNode_GetPlug( node, 0 );
-    l_result = oyFilterNode_Run( rectangles, plug, ticket );
-    if(l_result > 0 || result == 0) result = l_result;
+    if(!dirty)
+    {
+      plug = oyFilterNode_GetPlug( node, 0 );
+      l_result = oyFilterNode_Run( rectangles, plug, ticket );
+      if(l_result > 0 || result == 0) result = l_result;
+      oyFilterPlug_Release( &plug );
+    }
   }
 
   clean:
   oyFilterNode_Release( &rectangles );
   oyFilterPlug_Release( &plug );
+  oyFilterSocket_Release( &socket );
+  oyFilterNode_Release( &node );
   oyImage_Release( &image );
   if(ID) free(ID);    
 

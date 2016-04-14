@@ -864,7 +864,10 @@ int      oyraFilterPlug_ImageRectanglesRun (
 
   image = (oyImage_s*)oyFilterSocket_GetData( socket );
   if(!image)
-    return 1;
+  {
+    goto oyraFilterPlug_ImageRectanglesRun_clean;
+    result = 1;
+  }
 
   {
     oyRectangle_s * ticket_roi = oyPixelAccess_GetArrayROI( ticket );
@@ -877,7 +880,10 @@ int      oyraFilterPlug_ImageRectanglesRun (
       dirty = 1;
 
     if(dirty)
-      return dirty;
+    {
+      goto oyraFilterPlug_ImageRectanglesRun_clean2;
+      result = dirty;
+    }
 
     oyRectangle_SetByRectangle( t_roi, ticket_roi );
     oyRectangle_Scale( t_roi, ticket_array_pix_width );
@@ -1043,12 +1049,14 @@ int      oyraFilterPlug_ImageRectanglesRun (
     error = oyArray2d_SetFocus( ticket_array, (oyRectangle_s*)&array_pix );
     if(error) WARNc2_S("%s %d", _("found issues"),error);
 
+    oyraFilterPlug_ImageRectanglesRun_clean2:
     oyRectangle_Release( &ticket_roi );
     oyArray2d_Release( &ticket_array );
     oyFilterNode_Release( &input_node );
     oyOptions_Release( &node_opts );
   }
 
+  oyraFilterPlug_ImageRectanglesRun_clean:
   oyImage_Release( &image );
   oyFilterNode_Release( &node );
   oyFilterSocket_Release( &socket );

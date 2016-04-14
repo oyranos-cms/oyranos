@@ -2426,6 +2426,8 @@ char * lcm2FilterNode_GetText        ( oyFilterNode_s    * node,
   oyFilterPlug_Release( &plug );
   oyFilterSocket_Release( &socket );
   oyFilterSocket_Release( &remote_socket );
+  oyImage_Release( &in_image );
+  oyImage_Release( &out_image );
 
   return oyStringCopy_( hash_text, allocateFunc );
 #endif

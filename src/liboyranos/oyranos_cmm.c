@@ -69,7 +69,7 @@ int      oyFilterPlug_ImageRootRun   ( oyFilterPlug_s    * requestor_plug,
   /* Do not work on non existent data. */
   output_image = oyPixelAccess_GetOutputImage( ticket );
   if(!image || !output_image)
-    return result;
+    goto oyFilterPlug_ImageRootRun_clean;
 
   output_array_roi = oyPixelAccess_GetArrayROI( ticket );
 
@@ -135,6 +135,11 @@ int      oyFilterPlug_ImageRootRun   ( oyFilterPlug_s    * requestor_plug,
       result = error;
     oyFree_m_( t );
   }
+
+  oyFilterPlug_ImageRootRun_clean:
+  oyImage_Release( &output_image );
+  oyImage_Release( &image );
+  oyRectangle_Release( &output_array_roi );
 
   return result;
 }
