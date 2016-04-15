@@ -156,13 +156,19 @@ int                oyStruct_GetChildren (
          oyFilterNode_s_ * s = (oyFilterNode_s_*)obj;
          if(s->plugs && s->plugs_n_)
          {
-           memcpy(&c[n], s->plugs, sizeof(oyStruct_s*)*s->plugs_n_);
-           n += s->plugs_n_;
+           i = 0;
+           while(s->plugs[i]) ++i;
+           if(i)
+             memcpy(&c[n], s->plugs, sizeof(oyStruct_s*) * i);
+           n += i;
          }
          if(s->sockets && s->sockets_n_)
          {
-           memcpy(&c[n], s->sockets, sizeof(oyStruct_s*)*s->sockets_n_);
-           n += s->sockets_n_;
+           i = 0;
+           while(s->sockets[i]) ++i;
+           if(i)
+             memcpy(&c[n], s->sockets, sizeof(oyStruct_s*) * i);
+           n += i;
          }
          CHECK_ASSIGN_STRUCT( core )
          CHECK_ASSIGN_STRUCT( tags )
@@ -199,7 +205,6 @@ int                oyStruct_GetChildren (
        {
          oyCMMhandle_s * s = (oyCMMhandle_s*)obj;
          CHECK_ASSIGN_STRUCT( info )
-         CHECK_ASSIGN_STRUCT( dso_handle )
        }
        break;
     case oyOBJECT_POINTER_S:
@@ -333,34 +338,118 @@ int                oyStruct_GetChildren (
 
 typedef struct leave_s leave_s;
 struct leave_s {
+  /* top down */
   int n;
   leave_s ** children;
   oyStruct_s ** list;
+  /* current */
+  oyStruct_s * obj;
+  int id;
+  /* upper level */
+  leave_s * parent;
 };
 
+int                oyObjectStructTreeContains (
+                                       leave_s           * l,
+                                       int                 id,
+                                       int                 direction )
+{
+  int i;
+
+  if(l)
+  {
+    /* check this leave upward */
+    if(direction <= 0 && l->parent)
+    {
+      if(l->parent->id == id)
+        return 1;
+      if(l->parent &&
+         oyObjectStructTreeContains(l->parent, id, -1))
+        return 1;
+    }
+
+    /* check this leave downward */
+    if(direction >= 0)
+    {
+      for(i = 0; i < l->n; ++i)
+      {
+        if(!l->children[i])
+          continue;
+        if(l->children[i]->id == id)
+          return 1;
+        if(oyObjectStructTreeContains(l->children[i], id, 1))
+          return 1;
+      }
+    }
+  }
+
+  return 0;
+}
+
+static const int oy_object_list_max_count_ = 1000000;
 leave_s *          oyObjectIdListGetStructTree (
+                                       leave_s           * parent,
                                        int               * ids,
-                                       int                 id )
+                                       int                 id,
+                                       int                 level )
 {
   int max_count = 0, i;
-  const oyObject_s * obs = oyObjectGetList( &max_count );
-  oyStruct_s * obj = obs[id]->parent_;
+  const oyObject_s * obs;
+  oyStruct_s * obj,
+            ** slist;
   leave_s * l = calloc( sizeof(leave_s), 1 );
-  l->n = oyStruct_GetChildren( obj, &l->list );
-  l->children = calloc( sizeof( leave_s* ), l->n + 1 );
-  for(i = 0; i < l->n; ++i)
-    l->children[i] = oyObjectIdListGetStructTree( ids, oyStruct_GetId(l->list[i]) );
+
+  if(id < 0) /* possibly static objects without oyObject part */
+    return l;
+
+  obs = oyObjectGetList( &max_count );
+  obj = obs[id]->parent_;
+  l = calloc( sizeof(leave_s), 1 );
+  l->obj = obj;
+  l->id = id;
+  l->parent = parent;
+
+  if(oyObjectStructTreeContains(l, id, -1))
+  {
+    free(l);
+    l  = NULL;
+    return l;
+  }
+
+  l->n = oyStruct_GetChildren( obj, &slist );
+  if(l->n)
+  {
+    l->list = calloc( sizeof(oyStruct_s*), l->n + 1 );
+    memcpy( l->list, slist, sizeof(oyStruct_s*) * l->n );
+    l->children = calloc( sizeof( leave_s* ), l->n + 1 );
+    for(i = 0; i < l->n; ++i)
+    {
+      int i_id = oyStruct_GetId(l->list[i]);
+
+      l->children[i] = oyObjectIdListGetStructTree( l, ids, i_id, level+1 );
+      /* remember the parent to traverse the actual tree */
+      if(l->children[i])
+      {
+        //int k;
+        l->children[i]->parent = l;
+        for(k = 0; k < level; ++k)
+          printf("- ");
+        printf("%s[%d] -> %s[%d]\n", oyStructTypeToText(obj->type_), id, oyStruct_GetText(l->list[i], oyNAME_NICK, 1), i_id);
+      }
+    }
+  }
   return l;
 }
+
 int                oyObjectIdListGetStructTrees (
                                        int               * ids,
                                        leave_s         *** trees )
 {
-  int max_count = 0, i, n = 0;
-  leave_s ** ts = calloc( sizeof( leave_s* ), max_count );
-  for(i = 0; i < max_count; ++i)
-    if(ids[i])
-      ts[n++] = oyObjectIdListGetStructTree( ids, i );
+  int i, n = 0;
+  leave_s ** ts = calloc( sizeof( leave_s* ), oy_object_list_max_count_ );
+  for(i = 0; i < oy_object_list_max_count_; ++i)
+    if(ids[i] > 0)
+      ts[n++] = oyObjectIdListGetStructTree( 0, ids, i, 0 );
 
   *trees = ts;
   return n;
