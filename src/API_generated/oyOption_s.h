@@ -67,12 +67,12 @@ typedef enum {
  *  @date    2008/02/16
  */
 typedef enum {
-  oyVAL_INT,
-  oyVAL_INT_LIST,
-  oyVAL_DOUBLE,    /*!< IEEE double precission floating point number */
-  oyVAL_DOUBLE_LIST,
-  oyVAL_STRING,
-  oyVAL_STRING_LIST,
+  oyVAL_INT,       /**< integer number */
+  oyVAL_INT_LIST,  /**< integer numbers */
+  oyVAL_DOUBLE,    /**< IEEE double precission floating point number */
+  oyVAL_DOUBLE_LIST,  /**< double numbers */
+  oyVAL_STRING,    /**< char array */
+  oyVAL_STRING_LIST,  /**< array of char arrays */
   oyVAL_STRUCT     /**< for pure data blobs use oyBlob_s herein */
 } oyVALUETYPE_e;
 
