@@ -430,7 +430,7 @@ leave_s *          oyObjectIdListGetStructTree (
       /* remember the parent to traverse the actual tree */
       if(l->children[i])
       {
-        //int k;
+        int k;
         l->children[i]->parent = l;
         for(k = 0; k < level; ++k)
           printf("- ");
