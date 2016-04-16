@@ -4,6 +4,7 @@ LINK_DIRECTORIES( ${LINK_DIRECTORIES} ${LIBXML2_LIBRARY_DIRS} )
 
 
 SET ( CFILES_OBJECT_PUBLIC
+	oyranos_tree.c
 	${GENDIR}oyBlob_s.c
 	${GENDIR}oyPointer_s.c
 	${GENDIR}oyRectangle_s.c
@@ -19,7 +20,6 @@ SET ( CFILES_OBJECT_PUBLIC
     )
 SET( CFILES_OBJECT_PUBLIC ${CFILES_OBJECT_PUBLIC} PARENT_SCOPE )
 SET ( CFILES_OBJECT  ${CFILES_OBJECT_PUBLIC}
-	oyranos_tree.c
 	${GENDIR}oyBlob_s_.c
 	${GENDIR}oyPointer_s_.c
 	${GENDIR}oyHash_s_.c
