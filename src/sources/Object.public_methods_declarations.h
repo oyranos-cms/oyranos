@@ -49,3 +49,26 @@ OYAPI oyDeAlloc_f  OYEXPORT
                  oyObject_GetDeAlloc ( oyObject_s        object );
 OYAPI const char * OYEXPORT  oyObject_Show (
                                        oyObject_s          object );
+
+/* debug API's */
+int *              oyObjectGetCurrentObjectIdList( void );
+void               oyObjectReleaseCurrentObjectIdList(
+                                       int              ** id_list );
+typedef struct oyLeave_s oyLeave_s;
+typedef void (*oyObjectTreeCallback_f)(void              * user_data,
+                                       int                 top_id,
+                                       oyLeave_s         * tree,
+                                       oyStruct_s        * parent,
+                                       oyStruct_s        * current,
+                                       oyStruct_s       ** children,
+                                       int                 children_n,
+                                       int                 level );
+int                oyObjectIdListTraverseStructTrees (
+                                       int               * id_list,
+                                       oyObjectTreeCallback_f func,
+                                       void              * user_data );
+int                oyObjectStructTreeContains (
+                                       oyLeave_s         * l,
+                                       int                 id,
+                                       int                 direction_minusIsUp_plusIsDown_zeroIsBoth );
+void               oyObjectTreePrint ( void );

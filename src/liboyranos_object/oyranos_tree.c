@@ -336,21 +336,21 @@ int                oyStruct_GetChildren (
   return n;
 }
 
-typedef struct leave_s leave_s;
-struct leave_s {
-  /* top down */
+typedef struct oyLeave_s oyLeave_s;
+struct oyLeave_s {
+  /* downward */
   int n;
-  leave_s ** children;
+  oyLeave_s ** children;
   oyStruct_s ** list;
   /* current */
   oyStruct_s * obj;
   int id;
   /* upper level */
-  leave_s * parent;
+  oyLeave_s * parent;
 };
 
 int                oyObjectStructTreeContains (
-                                       leave_s           * l,
+                                       oyLeave_s         * l,
                                        int                 id,
                                        int                 direction )
 {
@@ -385,26 +385,37 @@ int                oyObjectStructTreeContains (
 
   return 0;
 }
+typedef void (*oyObjectTreeCallback_f)(void              * user_data,
+                                       int                 top,
+                                       oyLeave_s         * tree,
+                                       oyStruct_s        * parent,
+                                       oyStruct_s        * current,
+                                       oyStruct_s       ** children,
+                                       int                 children_n,
+                                       int                 level );
 
 static const int oy_object_list_max_count_ = 1000000;
-leave_s *          oyObjectIdListGetStructTree (
-                                       leave_s           * parent,
+oyLeave_s *          oyObjectIdListGetStructTree (
+                                       int                 top,
+                                       oyLeave_s         * parent,
                                        int               * ids,
                                        int                 id,
-                                       int                 level )
+                                       int                 level,
+                                       oyObjectTreeCallback_f func,
+                                       void              * user_data )
 {
   int max_count = 0, i;
   const oyObject_s * obs;
   oyStruct_s * obj,
             ** slist;
-  leave_s * l = calloc( sizeof(leave_s), 1 );
+  oyLeave_s * l = calloc( sizeof(oyLeave_s), 1 );
 
   if(id < 0) /* possibly static objects without oyObject part */
     return l;
 
   obs = oyObjectGetList( &max_count );
   obj = obs[id]->parent_;
-  l = calloc( sizeof(leave_s), 1 );
+  l = calloc( sizeof(oyLeave_s), 1 );
   l->obj = obj;
   l->id = id;
   l->parent = parent;
@@ -421,38 +432,108 @@ leave_s *          oyObjectIdListGetStructTree (
   {
     l->list = calloc( sizeof(oyStruct_s*), l->n + 1 );
     memcpy( l->list, slist, sizeof(oyStruct_s*) * l->n );
-    l->children = calloc( sizeof( leave_s* ), l->n + 1 );
+    l->children = calloc( sizeof( oyLeave_s* ), l->n + 1 );
     for(i = 0; i < l->n; ++i)
     {
       int i_id = oyStruct_GetId(l->list[i]);
 
-      l->children[i] = oyObjectIdListGetStructTree( l, ids, i_id, level+1 );
+      l->children[i] = oyObjectIdListGetStructTree( top, l, ids, i_id, level+1, func, user_data );
       /* remember the parent to traverse the actual tree */
       if(l->children[i])
-      {
-        int k;
         l->children[i]->parent = l;
-        for(k = 0; k < level; ++k)
-          printf("- ");
-        printf("%s[%d] -> %s[%d]\n", oyStructTypeToText(obj->type_), id, oyStruct_GetText(l->list[i], oyNAME_NICK, 1), i_id);
-      }
     }
   }
+  if(func) func( user_data, top, l, l->parent?l->parent->obj:NULL, l->obj, l->list, l->n, level );
   return l;
 }
 
-int                oyObjectIdListGetStructTrees (
+int                oyObjectIdListTraverseStructTrees (
                                        int               * ids,
-                                       leave_s         *** trees )
+                                       oyObjectTreeCallback_f func,
+                                       void              * user_data )
 {
   int i, n = 0;
-  leave_s ** ts = calloc( sizeof( leave_s* ), oy_object_list_max_count_ );
+  oyLeave_s ** ts = calloc( sizeof( oyLeave_s* ), oy_object_list_max_count_ );
   for(i = 0; i < oy_object_list_max_count_; ++i)
     if(ids[i] > 0)
-      ts[n++] = oyObjectIdListGetStructTree( 0, ids, i, 0 );
+      ts[n++] = oyObjectIdListGetStructTree( i, 0, ids, i, 0, func, user_data );
 
-  *trees = ts;
+  /* TODO: release trees */
+
   return n;
 }
 
 
+typedef struct oyTreeData_s {
+  oyLeave_s * l;
+  char * text;
+} oyTreeData_s;
+void objectTreeCallback              ( void              * user_data,
+                                       int                 top,
+                                       oyLeave_s         * tree,
+                                       oyStruct_s        * parent,
+                                       oyStruct_s        * current,
+                                       oyStruct_s       ** children,
+                                       int                 children_n,
+                                       int                 level )
+{
+  oyTreeData_s * graphs = (oyTreeData_s*) user_data;
+  int id = oyStruct_GetId(current), i,k;
+
+  if(id < 0)
+
+  if(!parent && oyObjectStructTreeContains( tree, id, -1 ))
+    /* skip */
+    return;
+
+  for(i = 0; i < children_n; ++i)
+  {
+    if(!children[i])
+      continue;
+    for(k = 0; k < level; ++k)
+      oyStringAddPrintf( &graphs[top].text, 0,0, "- ");
+    oyStringAddPrintf( &graphs[top].text, 0,0, "%s[%d] -> %s[%d]\n",
+                       oyStructTypeToText(current->type_), id, 
+                       oyStruct_GetText( children[i], oyNAME_NICK, 1 ),
+                       oyStruct_GetId( children[i] ) );
+    graphs[top].l = tree;
+  }
+}
+
+/** @brief    Print the current object trees to stderr.
+ *  @ingroup  objects_generic
+ * 
+ *  Probably the most simple and still useful function from the Object tree debug APIs.
+ *  It prints to stderr with OY_DEBUG_OBJECTS set.
+ *
+ *  @version  Oyranos: 0.9.6
+ *  @date     2016/04/16
+ *  @since    2016/04/16 (Oyranos: 0.9.6)
+ */
+void oyObjectTreePrint( )
+{
+  if(oy_debug_objects)
+  {
+    int * ids_old = oyObjectGetCurrentObjectIdList( );
+    oyTreeData_s * trees = (oyTreeData_s*) calloc( sizeof( oyTreeData_s ), oy_object_list_max_count_ + 1 );
+    int n = oyObjectIdListTraverseStructTrees( ids_old, objectTreeCallback, trees ),
+        i, count = 0;
+    for(i = 0; i < oy_object_list_max_count_; ++i)
+      if(trees[i].text)
+      {
+        int found = 0, j;
+        for(j = 0; j < oy_object_list_max_count_; ++j)
+        {
+          if(trees[j].text)
+            found = oyObjectStructTreeContains( trees[j].l, i, 0 );
+          if(found) break;
+        }
+        if(found == 0)
+        {
+          fprintf(stderr, "%d: %s\n", i, trees[i].text);
+          ++count;
+        }
+      }
+    fprintf( stderr, "found/printed trees: %d/%d\n", n, count);
+  }
+}
