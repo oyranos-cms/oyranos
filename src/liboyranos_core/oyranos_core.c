@@ -227,7 +227,7 @@ const char *     oyStructTypeToText  ( oyOBJECT_e          type )
 
 
 /** Function oyObject_GetId
- *  @memberof oyObject_s
+ *  @ingroup  objects_generic
  *  @brief   get the identification number of a object 
  *
  *  @version Oyranos: 0.9.6
@@ -265,7 +265,7 @@ int            oyObject_GetId        ( oyObject_s          object )
 }
 
 /** Function oyObject_Show
- *  @memberof oyObject_s
+ *  @ingroup  objects_generic
  *  @brief   Print object informations
  *
  *  @version Oyranos: 0.9.6
