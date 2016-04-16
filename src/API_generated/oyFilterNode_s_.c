@@ -155,6 +155,9 @@ int oyFilterNode_Copy__Members( oyFilterNode_s_ * dst, oyFilterNode_s_ * src)
   if(src->backend_data && src->backend_data->copy)
     dst->backend_data = (oyPointer_s*) src->backend_data->copy( (oyStruct_s*)
                                                 src->backend_data , dst->oy_ );
+  if(oy_debug_objects && dst->backend_data)
+    oyObjectDebugMessage_( dst->backend_data->oy_, __func__,
+                           oyStructTypeToText(dst->backend_data->type_) );
 
   return error;
 }
@@ -194,7 +197,7 @@ oyFilterNode_s_ * oyFilterNode_New_ ( oyObject_s object )
     WARNc_S( "memset failed" );
 
   memcpy( s, &type, sizeof(oyOBJECT_e) );
-  s->copy = (oyStruct_Copy_f) oyFilterNode_Copy;
+  s->copy = (oyStruct_Copy_f) oyFilterNode_Copy_x;
   s->release = (oyStruct_Release_f) oyFilterNode_Release;
 
   s->oy_ = s_obj;
@@ -896,8 +899,12 @@ oyStructList_s * oyFilterNode_GetData_(oyFilterNode_s_    * node,
           {
             data = 0;
             if(node->plugs[i]->remote_socket_->data)
+            {
               data = node->plugs[i]->remote_socket_->data->copy( node->plugs[i]->remote_socket_->data, 0 );
-            else
+              if(oy_debug_objects && data)
+                oyObjectDebugMessage_( data->oy_, __func__,
+                                       oyStructTypeToText(data->type_) );
+            } else
               data = (oyStruct_s*) oyOption_New(0);
             error = oyStructList_MoveIn( datas, &data, -1, 0 );
             ++i;
@@ -911,8 +918,12 @@ oyStructList_s * oyFilterNode_GetData_(oyFilterNode_s_    * node,
           {
             data = 0;
             if(node->sockets[i]->data)
+            {
               data = node->sockets[i]->data->copy( node->sockets[i]->data, 0 );
-            else
+              if(oy_debug_objects && data)
+                oyObjectDebugMessage_( data->oy_, __func__,
+                                       oyStructTypeToText(data->type_) );
+            } else
               data = (oyStruct_s*) oyOption_New(0);
             error = oyStructList_MoveIn( datas, &data, -1, 0 );
             ++i;

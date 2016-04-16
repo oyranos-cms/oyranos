@@ -224,7 +224,7 @@ oyConnectorImaging_s_ * oyConnectorImaging_New_ ( oyObject_s object )
     WARNc_S( "memset failed" );
 
   memcpy( s, &type, sizeof(oyOBJECT_e) );
-  s->copy = (oyStruct_Copy_f) oyConnectorImaging_Copy;
+  s->copy = (oyStruct_Copy_f) oyConnectorImaging_Copy_x;
   s->release = (oyStruct_Release_f) oyConnectorImaging_Release;
 
   s->oy_ = s_obj;

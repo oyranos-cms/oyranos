@@ -323,7 +323,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
 
          /*Handle "driver_version" option [OUT] */
          if (version_opt) {
-            oyOption_s *tmp = oyOption_Copy(version_opt, 0);
+            oyOption_s * tmp = oyOption_Copy(version_opt, 0);
             oyOptions_MoveIn(*oyConfig_GetOptions(device,"backend_core"), &tmp, -1);
          }
 

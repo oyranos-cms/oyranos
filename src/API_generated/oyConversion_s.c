@@ -56,9 +56,9 @@ OYAPI oyConversion_s * OYEXPORT
   return (oyConversion_s*) conversion;
 }
 
-/** Function oyConversion_Copy
+/** @fn       oyConversion_Copy 
  *  @memberof oyConversion_s
- *  @brief   copy or reference a Conversion object
+ *  @brief    Copy or Reference a Conversion object
  *
  *  The function is for copying and for referencing. The reference is the most
  *  often used way, which saves resourcs and time.
@@ -68,7 +68,7 @@ OYAPI oyConversion_s * OYEXPORT
  *                                     the optional object triggers a real copy
  */
 OYAPI oyConversion_s* OYEXPORT
-  oyConversion_Copy( oyConversion_s *conversion, oyObject_s object )
+  oyConversion_Copy_x( oyConversion_s *conversion, oyObject_s object )
 {
   oyConversion_s_ * s = (oyConversion_s_*) conversion;
 
@@ -586,9 +586,9 @@ oyFilterNode_s   * oyConversion_GetNode (
   if(!error)
   {
     if(oyToInput_m(flags))
+    {
       node = oyFilterNode_Copy( (oyFilterNode_s*)s->input, 0 );
-
-    else
+    } else
     if(oyToOutput_m(flags))
       node = oyFilterNode_Copy( (oyFilterNode_s*)s->out_, 0 );
   }

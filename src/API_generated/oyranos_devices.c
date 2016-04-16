@@ -2583,8 +2583,9 @@ oyOptions_s* oyFilterNode_GetOptions ( oyFilterNode_s    * node,
   {
     options = oyOptions_ForFilter_( node_->core, node_, flags, node_->core->oy_ );
     if(!node_->core->options_)
+    {
       node_->core->options_ = oyOptions_Copy( options, 0 );
-    else if(options)
+    } else if(options)
       error = oyOptions_Filter( &node_->core->options_, 0, 0,
                                 oyBOOLEAN_UNION,
                                 0, options );

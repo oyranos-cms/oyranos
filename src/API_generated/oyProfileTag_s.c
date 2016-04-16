@@ -50,9 +50,9 @@ OYAPI oyProfileTag_s * OYEXPORT
   return (oyProfileTag_s*) profiletag;
 }
 
-/** Function oyProfileTag_Copy
+/** @fn       oyProfileTag_Copy 
  *  @memberof oyProfileTag_s
- *  @brief   copy or reference a ProfileTag object
+ *  @brief    Copy or Reference a ProfileTag object
  *
  *  The function is for copying and for referencing. The reference is the most
  *  often used way, which saves resourcs and time.
@@ -62,7 +62,7 @@ OYAPI oyProfileTag_s * OYEXPORT
  *                                     the optional object triggers a real copy
  */
 OYAPI oyProfileTag_s* OYEXPORT
-  oyProfileTag_Copy( oyProfileTag_s *profiletag, oyObject_s object )
+  oyProfileTag_Copy_x( oyProfileTag_s *profiletag, oyObject_s object )
 {
   oyProfileTag_s_ * s = (oyProfileTag_s_*) profiletag;
 

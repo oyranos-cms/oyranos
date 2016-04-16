@@ -45,9 +45,9 @@ OYAPI oyBlob_s * OYEXPORT
   return (oyBlob_s*) blob;
 }
 
-/** Function oyBlob_Copy
+/** @fn       oyBlob_Copy 
  *  @memberof oyBlob_s
- *  @brief   copy or reference a Blob object
+ *  @brief    Copy or Reference a Blob object
  *
  *  The function is for copying and for referencing. The reference is the most
  *  often used way, which saves resourcs and time.
@@ -57,7 +57,7 @@ OYAPI oyBlob_s * OYEXPORT
  *                                     the optional object triggers a real copy
  */
 OYAPI oyBlob_s* OYEXPORT
-  oyBlob_Copy( oyBlob_s *blob, oyObject_s object )
+  oyBlob_Copy_x( oyBlob_s *blob, oyObject_s object )
 {
   oyBlob_s_ * s = (oyBlob_s_*) blob;
 

@@ -24,9 +24,9 @@ OYAPI {{ class.name }} * OYEXPORT
   return ({{ class.name }}*) {{ class.baseName|lower }};
 }
 
-/** Function oy{{ class.baseName }}_Copy
+/** @fn       oy{{ class.baseName }}_Copy 
  *  @memberof {{ class.name }}
- *  @brief   copy or reference a {{ class.baseName }} object
+ *  @brief    Copy or Reference a {{ class.baseName }} object
  *
  *  The function is for copying and for referencing. The reference is the most
  *  often used way, which saves resourcs and time.
@@ -36,7 +36,7 @@ OYAPI {{ class.name }} * OYEXPORT
  *                                     the optional object triggers a real copy
  */
 OYAPI {{ class.name }}* OYEXPORT
-  oy{{ class.baseName }}_Copy( {{ class.name }} *{{ class.baseName|lower }}, oyObject_s object )
+  oy{{ class.baseName }}_Copy_x( {{ class.name }} *{{ class.baseName|lower }}, oyObject_s object )
 {
   {{ class.privName }} * s = ({{ class.privName }}*) {{ class.baseName|lower }};
 

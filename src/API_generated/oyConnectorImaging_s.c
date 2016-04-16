@@ -53,9 +53,9 @@ OYAPI oyConnectorImaging_s * OYEXPORT
   return (oyConnectorImaging_s*) connectorimaging;
 }
 
-/** Function oyConnectorImaging_Copy
+/** @fn       oyConnectorImaging_Copy 
  *  @memberof oyConnectorImaging_s
- *  @brief   copy or reference a ConnectorImaging object
+ *  @brief    Copy or Reference a ConnectorImaging object
  *
  *  The function is for copying and for referencing. The reference is the most
  *  often used way, which saves resourcs and time.
@@ -65,7 +65,7 @@ OYAPI oyConnectorImaging_s * OYEXPORT
  *                                     the optional object triggers a real copy
  */
 OYAPI oyConnectorImaging_s* OYEXPORT
-  oyConnectorImaging_Copy( oyConnectorImaging_s *connectorimaging, oyObject_s object )
+  oyConnectorImaging_Copy_x( oyConnectorImaging_s *connectorimaging, oyObject_s object )
 {
   oyConnectorImaging_s_ * s = (oyConnectorImaging_s_*) connectorimaging;
 

@@ -48,9 +48,9 @@ OYAPI oyPointer_s * OYEXPORT
   return (oyPointer_s*) pointer;
 }
 
-/** Function oyPointer_Copy
+/** @fn       oyPointer_Copy 
  *  @memberof oyPointer_s
- *  @brief   copy or reference a Pointer object
+ *  @brief    Copy or Reference a Pointer object
  *
  *  The function is for copying and for referencing. The reference is the most
  *  often used way, which saves resourcs and time.
@@ -60,7 +60,7 @@ OYAPI oyPointer_s * OYEXPORT
  *                                     the optional object triggers a real copy
  */
 OYAPI oyPointer_s* OYEXPORT
-  oyPointer_Copy( oyPointer_s *pointer, oyObject_s object )
+  oyPointer_Copy_x( oyPointer_s *pointer, oyObject_s object )
 {
   oyPointer_s_ * s = (oyPointer_s_*) pointer;
 

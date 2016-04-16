@@ -84,8 +84,19 @@ oyObject_s           oy_;            /**< Features name and hash. Do not change 
 
 OYAPI oyConnectorImaging_s* OYEXPORT
   oyConnectorImaging_New( oyObject_s object );
+/** @memberof oyConnectorImaging_s
+ *  @brief    Copy or Reference a ConnectorImaging object
+ *
+ *  The macro is for copying and for referencing. The reference is the most
+ *  often used way, which saves resourcs and time.
+ *
+ *  @param[in]     connectorimaging                 ConnectorImaging struct object
+ *  @param         object              NULL - means reference,
+ *                                     the optional object triggers a real copy
+ */
+#define oyConnectorImaging_Copy(connectorimaging,object) oyConnectorImaging_Copy_x(connectorimaging,object); if(oy_debug_objects) oyObjectDebugMessage_( connectorimaging?connectorimaging->oy_:NULL, __func__, "oyConnectorImaging_s" );
 OYAPI oyConnectorImaging_s* OYEXPORT
-  oyConnectorImaging_Copy( oyConnectorImaging_s *connectorimaging, oyObject_s obj );
+  oyConnectorImaging_Copy_x( oyConnectorImaging_s *connectorimaging, oyObject_s obj );
 OYAPI int OYEXPORT
   oyConnectorImaging_Release( oyConnectorImaging_s **connectorimaging );
 

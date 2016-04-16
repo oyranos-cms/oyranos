@@ -143,9 +143,12 @@ int main (int argc, char ** argv)
 
     /* build the color context */
     if( to_moni )
+    {
       output = oyProfile_Copy( monitor, 0 );
-    else
+    } else
+    {
       output = oyProfile_Copy( print, 0 );
+    }
     out   = oyImage_Create( w, h,
                          image_data,
                          oyChannels_m(oyProfile_GetChannelsCount(output)+1) |

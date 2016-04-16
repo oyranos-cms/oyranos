@@ -48,9 +48,9 @@ OYAPI oyFilterSocket_s * OYEXPORT
   return (oyFilterSocket_s*) filtersocket;
 }
 
-/** Function oyFilterSocket_Copy
+/** @fn       oyFilterSocket_Copy 
  *  @memberof oyFilterSocket_s
- *  @brief   copy or reference a FilterSocket object
+ *  @brief    Copy or Reference a FilterSocket object
  *
  *  The function is for copying and for referencing. The reference is the most
  *  often used way, which saves resourcs and time.
@@ -60,7 +60,7 @@ OYAPI oyFilterSocket_s * OYEXPORT
  *                                     the optional object triggers a real copy
  */
 OYAPI oyFilterSocket_s* OYEXPORT
-  oyFilterSocket_Copy( oyFilterSocket_s *filtersocket, oyObject_s object )
+  oyFilterSocket_Copy_x( oyFilterSocket_s *filtersocket, oyObject_s object )
 {
   oyFilterSocket_s_ * s = (oyFilterSocket_s_*) filtersocket;
 
@@ -300,9 +300,14 @@ OYAPI oyStruct_s * OYEXPORT
   oyCheckType__m( oyOBJECT_FILTER_SOCKET_S, return 0 )
 
   if(s->data && s->data->copy)
-    return s->data->copy(s->data, 0);
-  else
-    return s->data;
+  {
+    s->data = s->data->copy(s->data, 0);
+    if(oy_debug_objects && s->data)
+      oyObjectDebugMessage_( s->data->oy_, __func__,
+                             oyStructTypeToText(s->data->type_) );
+  }
+
+  return s->data;
 }
 /** Function  oyFilterSocket_SetData
  *  @memberof oyFilterSocket_s
@@ -327,8 +332,16 @@ OYAPI int OYEXPORT
 
   oyCheckType__m( oyOBJECT_FILTER_SOCKET_S, return 1 )
 
+  if(s->data && s->data->release)
+    s->data->release( &s->data );
+
   if(data && data->copy)
+  {
     s->data = data->copy(data, 0);
+    if(oy_debug_objects && s->data)
+      oyObjectDebugMessage_( s->data->oy_, __func__,
+                             oyStructTypeToText(s->data->type_) );
+  }
   else
     s->data = data;
 

@@ -105,8 +105,19 @@ oyObject_s           oy_;            /**< Features name and hash. Do not change 
 
 OYAPI oyProfile_s* OYEXPORT
   oyProfile_New( oyObject_s object );
+/** @memberof oyProfile_s
+ *  @brief    Copy or Reference a Profile object
+ *
+ *  The macro is for copying and for referencing. The reference is the most
+ *  often used way, which saves resourcs and time.
+ *
+ *  @param[in]     profile                 Profile struct object
+ *  @param         object              NULL - means reference,
+ *                                     the optional object triggers a real copy
+ */
+#define oyProfile_Copy(profile,object) oyProfile_Copy_x(profile,object); if(oy_debug_objects) oyObjectDebugMessage_( profile?profile->oy_:NULL, __func__, "oyProfile_s" );
 OYAPI oyProfile_s* OYEXPORT
-  oyProfile_Copy( oyProfile_s *profile, oyObject_s obj );
+  oyProfile_Copy_x( oyProfile_s *profile, oyObject_s obj );
 OYAPI int OYEXPORT
   oyProfile_Release( oyProfile_s **profile );
 

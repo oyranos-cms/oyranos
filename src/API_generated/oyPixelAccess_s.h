@@ -218,8 +218,19 @@ oyObject_s           oy_;            /**< Features name and hash. Do not change 
 
 OYAPI oyPixelAccess_s* OYEXPORT
   oyPixelAccess_New( oyObject_s object );
+/** @memberof oyPixelAccess_s
+ *  @brief    Copy or Reference a PixelAccess object
+ *
+ *  The macro is for copying and for referencing. The reference is the most
+ *  often used way, which saves resourcs and time.
+ *
+ *  @param[in]     pixelaccess                 PixelAccess struct object
+ *  @param         object              NULL - means reference,
+ *                                     the optional object triggers a real copy
+ */
+#define oyPixelAccess_Copy(pixelaccess,object) oyPixelAccess_Copy_x(pixelaccess,object); if(oy_debug_objects) oyObjectDebugMessage_( pixelaccess?pixelaccess->oy_:NULL, __func__, "oyPixelAccess_s" );
 OYAPI oyPixelAccess_s* OYEXPORT
-  oyPixelAccess_Copy( oyPixelAccess_s *pixelaccess, oyObject_s obj );
+  oyPixelAccess_Copy_x( oyPixelAccess_s *pixelaccess, oyObject_s obj );
 OYAPI int OYEXPORT
   oyPixelAccess_Release( oyPixelAccess_s **pixelaccess );
 

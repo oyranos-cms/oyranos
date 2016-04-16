@@ -68,6 +68,18 @@ oyObserver_s * oyObserver_Copy_      ( oyObserver_s      * obj,
     s->observer = obj->observer->copy( obj->observer, object );
     s->model = obj->model->copy( obj->model, object );
     s->user_data = obj->user_data->copy( obj->user_data, object );
+    if(oy_debug_objects)
+    {
+      if(s->observer)
+        oyObjectDebugMessage_( s->observer->oy_, __func__,
+                               oyStructTypeToText(s->observer->type_) );
+      if(s->model)
+        oyObjectDebugMessage_( s->model->oy_, __func__,
+                               oyStructTypeToText(s->model->type_) );
+      if(s->user_data)
+        oyObjectDebugMessage_( s->user_data->oy_, __func__,
+                               oyStructTypeToText(s->user_data->type_) );
+    }
     s->disable_ref = obj->disable_ref;
   }
 

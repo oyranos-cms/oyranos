@@ -45,9 +45,9 @@ OYAPI oyCMMui_s * OYEXPORT
   return (oyCMMui_s*) cmmui;
 }
 
-/** Function oyCMMui_Copy
+/** @fn       oyCMMui_Copy 
  *  @memberof oyCMMui_s
- *  @brief   copy or reference a CMMui object
+ *  @brief    Copy or Reference a CMMui object
  *
  *  The function is for copying and for referencing. The reference is the most
  *  often used way, which saves resourcs and time.
@@ -57,7 +57,7 @@ OYAPI oyCMMui_s * OYEXPORT
  *                                     the optional object triggers a real copy
  */
 OYAPI oyCMMui_s* OYEXPORT
-  oyCMMui_Copy( oyCMMui_s *cmmui, oyObject_s object )
+  oyCMMui_Copy_x( oyCMMui_s *cmmui, oyObject_s object )
 {
   oyCMMui_s_ * s = (oyCMMui_s_*) cmmui;
 

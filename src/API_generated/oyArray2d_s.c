@@ -45,9 +45,9 @@ OYAPI oyArray2d_s * OYEXPORT
   return (oyArray2d_s*) array2d;
 }
 
-/** Function oyArray2d_Copy
+/** @fn       oyArray2d_Copy 
  *  @memberof oyArray2d_s
- *  @brief   copy or reference a Array2d object
+ *  @brief    Copy or Reference a Array2d object
  *
  *  The function is for copying and for referencing. The reference is the most
  *  often used way, which saves resourcs and time.
@@ -57,7 +57,7 @@ OYAPI oyArray2d_s * OYEXPORT
  *                                     the optional object triggers a real copy
  */
 OYAPI oyArray2d_s* OYEXPORT
-  oyArray2d_Copy( oyArray2d_s *array2d, oyObject_s object )
+  oyArray2d_Copy_x( oyArray2d_s *array2d, oyObject_s object )
 {
   oyArray2d_s_ * s = (oyArray2d_s_*) array2d;
 

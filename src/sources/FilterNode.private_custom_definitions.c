@@ -115,6 +115,9 @@ int oyFilterNode_Copy__Members( oyFilterNode_s_ * dst, oyFilterNode_s_ * src)
   if(src->backend_data && src->backend_data->copy)
     dst->backend_data = (oyPointer_s*) src->backend_data->copy( (oyStruct_s*)
                                                 src->backend_data , dst->oy_ );
+  if(oy_debug_objects && dst->backend_data)
+    oyObjectDebugMessage_( dst->backend_data->oy_, __func__,
+                           oyStructTypeToText(dst->backend_data->type_) );
 
   return error;
 }

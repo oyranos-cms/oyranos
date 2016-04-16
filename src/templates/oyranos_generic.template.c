@@ -159,8 +159,9 @@ oyHash_s *   oyCacheListGetEntry_    ( oyStructList_s    * cache_list,
 
 
   if(entry)
+  {
     return oyHash_Copy( entry, 0 );
-  else
+  } else
     return 0;
 }
 

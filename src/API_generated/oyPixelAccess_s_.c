@@ -192,7 +192,7 @@ oyPixelAccess_s_ * oyPixelAccess_New_ ( oyObject_s object )
     WARNc_S( "memset failed" );
 
   memcpy( s, &type, sizeof(oyOBJECT_e) );
-  s->copy = (oyStruct_Copy_f) oyPixelAccess_Copy;
+  s->copy = (oyStruct_Copy_f) oyPixelAccess_Copy_x;
   s->release = (oyStruct_Release_f) oyPixelAccess_Release;
 
   s->oy_ = s_obj;

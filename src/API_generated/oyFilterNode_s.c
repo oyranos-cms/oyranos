@@ -60,9 +60,9 @@ OYAPI oyFilterNode_s * OYEXPORT
   return (oyFilterNode_s*) filternode;
 }
 
-/** Function oyFilterNode_Copy
+/** @fn       oyFilterNode_Copy 
  *  @memberof oyFilterNode_s
- *  @brief   copy or reference a FilterNode object
+ *  @brief    Copy or Reference a FilterNode object
  *
  *  The function is for copying and for referencing. The reference is the most
  *  often used way, which saves resourcs and time.
@@ -72,7 +72,7 @@ OYAPI oyFilterNode_s * OYEXPORT
  *                                     the optional object triggers a real copy
  */
 OYAPI oyFilterNode_s* OYEXPORT
-  oyFilterNode_Copy( oyFilterNode_s *filternode, oyObject_s object )
+  oyFilterNode_Copy_x( oyFilterNode_s *filternode, oyObject_s object )
 {
   oyFilterNode_s_ * s = (oyFilterNode_s_*) filternode;
 
@@ -201,9 +201,14 @@ int            oyFilterNode_Connect  ( oyFilterNode_s    * input,
 
       if(error <= 0 && output_socket && !oyFilterSocketPriv_m(output_socket)->data &&
          in_socket && oyFilterSocketPriv_m(in_socket)->data)
+      {
         oyFilterSocketPriv_m(output_socket)->data = oyFilterSocketPriv_m(in_socket)->data->copy(
                                                       oyFilterSocketPriv_m(in_socket)->data,
                                                       0 );
+        if(oy_debug_objects)
+          oyObjectDebugMessage_( oyFilterSocketPriv_m(output_socket)->data->oy_, __func__,
+                                 oyStructTypeToText(oyFilterSocketPriv_m(output_socket)->data->type_) );
+      }
 
       if(error <= 0)
         oyFilterPlug_ConnectIntoSocket( &out_plug, &in_socket );
@@ -390,10 +395,15 @@ oyStruct_s *   oyFilterNode_GetData  ( oyFilterNode_s    * node,
     data = oyFilterSocketPriv_m(socket)->data;
 
   oyFilterSocket_Release( &socket );
+
   if(data->copy)
-    return data->copy( data, 0 );
-  else
-    return data;
+  {
+    data = data->copy( data, 0 );
+    if(oy_debug_objects)
+      oyObjectDebugMessage_( data->oy_, __func__, oyStructTypeToText(data->type_) );
+  }
+
+  return data;
 }
 
 /** Function  oyFilterNode_SetData
@@ -431,8 +441,11 @@ int            oyFilterNode_SetData  ( oyFilterNode_s    * node,
       socket->data->release( &socket->data );
 
     if(data && data->copy)
+    {
       socket->data = data->copy( data, object );
-    else
+      if(oy_debug_objects)
+        oyObjectDebugMessage_( socket->data->oy_, __func__, oyStructTypeToText(socket->data->type_) );
+    } else
       socket->data = data;
 
     oyFilterSocket_Release( (oyFilterSocket_s **) &socket );
@@ -1153,8 +1166,12 @@ OYAPI oyConnector_s * OYEXPORT
     if((*node_)->api7_->plugs_n > as_pos)
     {
       if((*node_)->api7_->plugs[as_pos] && (*node_)->api7_->plugs[as_pos]->copy)
+      {
         pattern = (oyConnector_s*) (*node_)->api7_->plugs[as_pos]->copy( (oyStruct_s*) (*node_)->api7_->plugs[as_pos], object );
-      else
+        if(oy_debug_objects)
+          oyObjectDebugMessage_( (*node_)->api7_->plugs[as_pos]->oy_, __func__,
+                                 oyStructTypeToText((*node_)->api7_->plugs[as_pos]->type_) );
+      } else
         pattern = oyConnector_Copy( (*node_)->api7_->plugs[as_pos], object );
     }
   } else {
@@ -1165,8 +1182,12 @@ OYAPI oyConnector_s * OYEXPORT
     if((*node_)->api7_->sockets_n > as_pos)
     {
       if((*node_)->api7_->sockets[as_pos] && (*node_)->api7_->sockets[as_pos]->copy)
+      {
         pattern = (oyConnector_s*) (*node_)->api7_->sockets[as_pos]->copy( (oyStruct_s*) (*node_)->api7_->sockets[as_pos], object );
-      else
+        if(oy_debug_objects)
+          oyObjectDebugMessage_( (*node_)->api7_->sockets[as_pos]->oy_, __func__,
+                                 oyStructTypeToText((*node_)->api7_->sockets[as_pos]->type_) );
+      } else
         pattern = oyConnector_Copy( (*node_)->api7_->sockets[as_pos], object );
     }
   }

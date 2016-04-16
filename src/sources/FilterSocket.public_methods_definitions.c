@@ -200,9 +200,14 @@ OYAPI oyStruct_s * OYEXPORT
   oyCheckType__m( oyOBJECT_FILTER_SOCKET_S, return 0 )
 
   if(s->data && s->data->copy)
-    return s->data->copy(s->data, 0);
-  else
-    return s->data;
+  {
+    s->data = s->data->copy(s->data, 0);
+    if(oy_debug_objects && s->data)
+      oyObjectDebugMessage_( s->data->oy_, __func__,
+                             oyStructTypeToText(s->data->type_) );
+  }
+
+  return s->data;
 }
 /** Function  oyFilterSocket_SetData
  *  @memberof oyFilterSocket_s
@@ -227,8 +232,16 @@ OYAPI int OYEXPORT
 
   oyCheckType__m( oyOBJECT_FILTER_SOCKET_S, return 1 )
 
+  if(s->data && s->data->release)
+    s->data->release( &s->data );
+
   if(data && data->copy)
+  {
     s->data = data->copy(data, 0);
+    if(oy_debug_objects && s->data)
+      oyObjectDebugMessage_( s->data->oy_, __func__,
+                             oyStructTypeToText(s->data->type_) );
+  }
   else
     s->data = data;
 

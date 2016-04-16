@@ -583,7 +583,8 @@ int          lcm2CMMData_Open        ( oyStruct_s        * data,
     s->lcm2 = CMMProfileOpen_M( data, block, size );
 #else
     {
-      cmsContext tc = lcmsCreateContext( NULL, oyProfile_Copy( p, NULL ) ); /* threading context */
+      oyProfile_s * p2 = oyProfile_Copy( p, NULL );
+      cmsContext tc = lcmsCreateContext( NULL, p2 ); /* threading context */
       lcmsSetLogErrorHandlerTHR( tc, lcm2ErrorHandlerFunction );
       s->lcm2 = CMMProfileOpen_M( tc, block, size );
     }
@@ -1329,7 +1330,8 @@ cmsHPROFILE  lcm2AddProofProfile     ( oyProfile_s       * proof,
     s->lcm2 = CMMProfileOpen_M( proof, block, size );
 #else
     {
-      cmsContext tc = lcmsCreateContext( NULL, oyProfile_Copy( proof, NULL ) ); /* threading context */
+      oyProfile_s * proof2 = oyProfile_Copy( proof, NULL );
+      cmsContext tc = lcmsCreateContext( NULL, proof2 ); /* threading context */
       lcmsSetLogErrorHandlerTHR( tc, lcm2ErrorHandlerFunction );
       s->lcm2 = CMMProfileOpen_M( tc, block, size );
     }
@@ -2516,7 +2518,8 @@ int  lcm2ModuleData_Convert          ( oyPointer_s       * data_in,
                                oyPointer_GetSize( cmm_ptr_in) );
 #else
     {
-      cmsContext tc = lcmsCreateContext( NULL, oyFilterNode_Copy( node, NULL ) ); /* threading context */
+      oyFilterNode_s * node2 = oyFilterNode_Copy( node, NULL );
+      cmsContext tc = lcmsCreateContext( NULL, node2 ); /* threading context */
       lcmsSetLogErrorHandlerTHR( tc, lcm2ErrorHandlerFunction );
       lps[0] = CMMProfileOpen_M( tc, oyPointer_GetPointer(cmm_ptr_in),
                                  oyPointer_GetSize( cmm_ptr_in) );

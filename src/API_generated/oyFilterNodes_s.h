@@ -77,8 +77,19 @@ oyObject_s           oy_;            /**< Features name and hash. Do not change 
 
 OYAPI oyFilterNodes_s* OYEXPORT
   oyFilterNodes_New( oyObject_s object );
+/** @memberof oyFilterNodes_s
+ *  @brief    Copy or Reference a FilterNodes object
+ *
+ *  The macro is for copying and for referencing. The reference is the most
+ *  often used way, which saves resourcs and time.
+ *
+ *  @param[in]     filternodes                 FilterNodes struct object
+ *  @param         object              NULL - means reference,
+ *                                     the optional object triggers a real copy
+ */
+#define oyFilterNodes_Copy(filternodes,object) oyFilterNodes_Copy_x(filternodes,object); if(oy_debug_objects) oyObjectDebugMessage_( filternodes?filternodes->oy_:NULL, __func__, "oyFilterNodes_s" );
 OYAPI oyFilterNodes_s* OYEXPORT
-  oyFilterNodes_Copy( oyFilterNodes_s *filternodes, oyObject_s obj );
+  oyFilterNodes_Copy_x( oyFilterNodes_s *filternodes, oyObject_s obj );
 OYAPI int OYEXPORT
   oyFilterNodes_Release( oyFilterNodes_s **filternodes );
 

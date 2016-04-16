@@ -51,9 +51,9 @@ OYAPI oyFilterNodes_s * OYEXPORT
   return (oyFilterNodes_s*) filternodes;
 }
 
-/** Function oyFilterNodes_Copy
+/** @fn       oyFilterNodes_Copy 
  *  @memberof oyFilterNodes_s
- *  @brief   copy or reference a FilterNodes object
+ *  @brief    Copy or Reference a FilterNodes object
  *
  *  The function is for copying and for referencing. The reference is the most
  *  often used way, which saves resourcs and time.
@@ -63,7 +63,7 @@ OYAPI oyFilterNodes_s * OYEXPORT
  *                                     the optional object triggers a real copy
  */
 OYAPI oyFilterNodes_s* OYEXPORT
-  oyFilterNodes_Copy( oyFilterNodes_s *filternodes, oyObject_s object )
+  oyFilterNodes_Copy_x( oyFilterNodes_s *filternodes, oyObject_s object )
 {
   oyFilterNodes_s_ * s = (oyFilterNodes_s_*) filternodes;
 

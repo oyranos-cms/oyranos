@@ -76,8 +76,19 @@ oyObject_s           oy_;            /**< Features name and hash. Do not change 
 
 OYAPI oyFilterPlugs_s* OYEXPORT
   oyFilterPlugs_New( oyObject_s object );
+/** @memberof oyFilterPlugs_s
+ *  @brief    Copy or Reference a FilterPlugs object
+ *
+ *  The macro is for copying and for referencing. The reference is the most
+ *  often used way, which saves resourcs and time.
+ *
+ *  @param[in]     filterplugs                 FilterPlugs struct object
+ *  @param         object              NULL - means reference,
+ *                                     the optional object triggers a real copy
+ */
+#define oyFilterPlugs_Copy(filterplugs,object) oyFilterPlugs_Copy_x(filterplugs,object); if(oy_debug_objects) oyObjectDebugMessage_( filterplugs?filterplugs->oy_:NULL, __func__, "oyFilterPlugs_s" );
 OYAPI oyFilterPlugs_s* OYEXPORT
-  oyFilterPlugs_Copy( oyFilterPlugs_s *filterplugs, oyObject_s obj );
+  oyFilterPlugs_Copy_x( oyFilterPlugs_s *filterplugs, oyObject_s obj );
 OYAPI int OYEXPORT
   oyFilterPlugs_Release( oyFilterPlugs_s **filterplugs );
 

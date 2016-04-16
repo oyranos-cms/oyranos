@@ -79,8 +79,19 @@ oyObject_s           oy_;            /**< Features name and hash. Do not change 
 
 OYAPI oyConnector_s* OYEXPORT
   oyConnector_New( oyObject_s object );
+/** @memberof oyConnector_s
+ *  @brief    Copy or Reference a Connector object
+ *
+ *  The macro is for copying and for referencing. The reference is the most
+ *  often used way, which saves resourcs and time.
+ *
+ *  @param[in]     connector                 Connector struct object
+ *  @param         object              NULL - means reference,
+ *                                     the optional object triggers a real copy
+ */
+#define oyConnector_Copy(connector,object) oyConnector_Copy_x(connector,object); if(oy_debug_objects) oyObjectDebugMessage_( connector?connector->oy_:NULL, __func__, "oyConnector_s" );
 OYAPI oyConnector_s* OYEXPORT
-  oyConnector_Copy( oyConnector_s *connector, oyObject_s obj );
+  oyConnector_Copy_x( oyConnector_s *connector, oyObject_s obj );
 OYAPI int OYEXPORT
   oyConnector_Release( oyConnector_s **connector );
 

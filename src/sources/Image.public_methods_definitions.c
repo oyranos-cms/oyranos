@@ -259,7 +259,7 @@ oyImage_s *    oyImage_Create         ( int               width,
   error = !memset( s, 0, sizeof(STRUCT_TYPE) );
 
   memcpy( s, &type, sizeof(oyOBJECT_e) );
-  s->copy = (oyStruct_Copy_f) oyImage_Copy;
+  s->copy = (oyStruct_Copy_f) oyImage_Copy_x;
   s->release = (oyStruct_Release_f) oyImage_Release;
 
   s->oy_ = s_obj;
@@ -313,6 +313,9 @@ oyImage_s *    oyImage_Create         ( int               width,
                               "//imaging/output/display_rectangle",
                               (oyStruct_s**)&display_rectangle, OY_CREATE_NEW );
   }
+
+  if(oy_debug_objects)
+    oyObjectDebugMessage_( s?s->oy_:NULL, __func__, oyStructTypeToText(s->type_) );
 
   return (oyImage_s*) s;
 }
@@ -1292,13 +1295,15 @@ int            oyImage_GetSubPositioning (
 oyProfile_s *  oyImage_GetProfile    ( oyImage_s         * image )
 {
   oyImage_s_ * s = (oyImage_s_*)image;
+  oyProfile_s * p;
 
   if(!s)
     return 0;
 
   oyCheckType__m( oyOBJECT_IMAGE_S, return 0 )
 
-  return oyProfile_Copy( s->profile_, 0 );
+  p = oyProfile_Copy( s->profile_, 0 );
+  return p;
 }
 
 /** Function oyImage_GetTags
@@ -1312,13 +1317,15 @@ oyProfile_s *  oyImage_GetProfile    ( oyImage_s         * image )
 oyOptions_s *  oyImage_GetTags       ( oyImage_s         * image )
 {
   oyImage_s_ * s = (oyImage_s_*)image;
+  oyOptions_s * opts;
 
   if(!s)
     return 0;
 
   oyCheckType__m( oyOBJECT_IMAGE_S, return 0 )
 
-  return oyOptions_Copy( s->tags, 0 );
+  opts = oyOptions_Copy( s->tags, 0 );
+  return opts;
 }
 /** Function  oyImage_GetPixelData
  *  @memberof oyImage_s

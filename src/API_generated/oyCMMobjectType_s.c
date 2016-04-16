@@ -45,9 +45,9 @@ OYAPI oyCMMobjectType_s * OYEXPORT
   return (oyCMMobjectType_s*) cmmobjecttype;
 }
 
-/** Function oyCMMobjectType_Copy
+/** @fn       oyCMMobjectType_Copy 
  *  @memberof oyCMMobjectType_s
- *  @brief   copy or reference a CMMobjectType object
+ *  @brief    Copy or Reference a CMMobjectType object
  *
  *  The function is for copying and for referencing. The reference is the most
  *  often used way, which saves resourcs and time.
@@ -57,7 +57,7 @@ OYAPI oyCMMobjectType_s * OYEXPORT
  *                                     the optional object triggers a real copy
  */
 OYAPI oyCMMobjectType_s* OYEXPORT
-  oyCMMobjectType_Copy( oyCMMobjectType_s *cmmobjecttype, oyObject_s object )
+  oyCMMobjectType_Copy_x( oyCMMobjectType_s *cmmobjecttype, oyObject_s object )
 {
   oyCMMobjectType_s_ * s = (oyCMMobjectType_s_*) cmmobjecttype;
 

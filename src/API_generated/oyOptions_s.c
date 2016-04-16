@@ -54,9 +54,9 @@ OYAPI oyOptions_s * OYEXPORT
   return (oyOptions_s*) options;
 }
 
-/** Function oyOptions_Copy
+/** @fn       oyOptions_Copy 
  *  @memberof oyOptions_s
- *  @brief   copy or reference a Options object
+ *  @brief    Copy or Reference a Options object
  *
  *  The function is for copying and for referencing. The reference is the most
  *  often used way, which saves resourcs and time.
@@ -66,7 +66,7 @@ OYAPI oyOptions_s * OYEXPORT
  *                                     the optional object triggers a real copy
  */
 OYAPI oyOptions_s* OYEXPORT
-  oyOptions_Copy( oyOptions_s *options, oyObject_s object )
+  oyOptions_Copy_x( oyOptions_s *options, oyObject_s object )
 {
   oyOptions_s_ * s = (oyOptions_s_*) options;
 
@@ -1639,8 +1639,12 @@ oyStruct_s *   oyOptions_GetType     ( oyOptions_s       * options,
       if(pos == -1 || ++m == pos)
       {
         if(o->value->oy_struct->copy)
+        {
           st = o->value->oy_struct->copy( o->value->oy_struct, 0 );
-        else
+          if(oy_debug_objects && st)
+            oyObjectDebugMessage_( st->oy_, __func__,
+                                   oyStructTypeToText(st->type_) );
+        } else
           st = o->value->oy_struct;
 
         oyOption_Release( (oyOption_s**)&o );

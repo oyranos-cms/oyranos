@@ -54,9 +54,9 @@ OYAPI oyCMMapiFilters_s * OYEXPORT
   return (oyCMMapiFilters_s*) cmmapifilters;
 }
 
-/** Function oyCMMapiFilters_Copy
+/** @fn       oyCMMapiFilters_Copy 
  *  @memberof oyCMMapiFilters_s
- *  @brief   copy or reference a CMMapiFilters object
+ *  @brief    Copy or Reference a CMMapiFilters object
  *
  *  The function is for copying and for referencing. The reference is the most
  *  often used way, which saves resourcs and time.
@@ -66,7 +66,7 @@ OYAPI oyCMMapiFilters_s * OYEXPORT
  *                                     the optional object triggers a real copy
  */
 OYAPI oyCMMapiFilters_s* OYEXPORT
-  oyCMMapiFilters_Copy( oyCMMapiFilters_s *cmmapifilters, oyObject_s object )
+  oyCMMapiFilters_Copy_x( oyCMMapiFilters_s *cmmapifilters, oyObject_s object )
 {
   oyCMMapiFilters_s_ * s = (oyCMMapiFilters_s_*) cmmapifilters;
 

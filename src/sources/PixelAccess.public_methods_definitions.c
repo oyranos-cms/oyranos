@@ -470,9 +470,13 @@ oyStruct_s *       oyPixelAccess_GetUserData (
 
   oyCheckType__m( oyOBJECT_PIXEL_ACCESS_S, return 0 )
 
-  if(s->user_data->copy)
-    return s->user_data->copy( s->user_data, 0 );
-  else 
+  if(s->user_data && s->user_data->copy)
+  {
+    s->user_data = s->user_data->copy( s->user_data, 0 );
+    if(oy_debug_objects && s->user_data)
+      oyObjectDebugMessage_( s->user_data->oy_, __func__,
+                             oyStructTypeToText(s->user_data->type_) );
+  } else 
     return s->user_data;
 }
 /** Function  oyPixelAccess_SetUserData
@@ -494,9 +498,16 @@ int                oyPixelAccess_SetUserData (
 
   oyCheckType__m( oyOBJECT_PIXEL_ACCESS_S, return 1 )
 
-  if(user_data->copy)
+  if(s->user_data && s->user_data->release)
+    s->user_data->release( &s->user_data );
+
+  if(user_data && user_data->copy)
+  {
     s->user_data = user_data->copy( user_data, 0 );
-  else 
+    if(oy_debug_objects && s->user_data)
+      oyObjectDebugMessage_( s->user_data->oy_, __func__,
+                             oyStructTypeToText(s->user_data->type_) );
+  } else 
     s->user_data = user_data;
 
   return 0;

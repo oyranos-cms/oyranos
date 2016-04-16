@@ -169,7 +169,7 @@ oyCMMapi9_s_ * oyCMMapi9_New_ ( oyObject_s object )
     WARNc_S( "memset failed" );
 
   memcpy( s, &type, sizeof(oyOBJECT_e) );
-  s->copy = (oyStruct_Copy_f) oyCMMapi9_Copy;
+  s->copy = (oyStruct_Copy_f) oyCMMapi9_Copy_x;
   s->release = (oyStruct_Release_f) oyCMMapi9_Release;
 
   s->oy_ = s_obj;

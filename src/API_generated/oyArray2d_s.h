@@ -119,8 +119,19 @@ oyObject_s           oy_;            /**< Features name and hash. Do not change 
 
 OYAPI oyArray2d_s* OYEXPORT
   oyArray2d_New( oyObject_s object );
+/** @memberof oyArray2d_s
+ *  @brief    Copy or Reference a Array2d object
+ *
+ *  The macro is for copying and for referencing. The reference is the most
+ *  often used way, which saves resourcs and time.
+ *
+ *  @param[in]     array2d                 Array2d struct object
+ *  @param         object              NULL - means reference,
+ *                                     the optional object triggers a real copy
+ */
+#define oyArray2d_Copy(array2d,object) oyArray2d_Copy_x(array2d,object); if(oy_debug_objects) oyObjectDebugMessage_( array2d?array2d->oy_:NULL, __func__, "oyArray2d_s" );
 OYAPI oyArray2d_s* OYEXPORT
-  oyArray2d_Copy( oyArray2d_s *array2d, oyObject_s obj );
+  oyArray2d_Copy_x( oyArray2d_s *array2d, oyObject_s obj );
 OYAPI int OYEXPORT
   oyArray2d_Release( oyArray2d_s **array2d );
 

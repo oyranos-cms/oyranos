@@ -1347,8 +1347,12 @@ oyStruct_s *   oyOptions_GetType     ( oyOptions_s       * options,
       if(pos == -1 || ++m == pos)
       {
         if(o->value->oy_struct->copy)
+        {
           st = o->value->oy_struct->copy( o->value->oy_struct, 0 );
-        else
+          if(oy_debug_objects && st)
+            oyObjectDebugMessage_( st->oy_, __func__,
+                                   oyStructTypeToText(st->type_) );
+        } else
           st = o->value->oy_struct;
 
         oyOption_Release( (oyOption_s**)&o );

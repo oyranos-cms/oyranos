@@ -168,7 +168,7 @@ oyStructList_s_ * oyStructList_New_ ( oyObject_s object )
     WARNc_S( "memset failed" );
 
   memcpy( s, &type, sizeof(oyOBJECT_e) );
-  s->copy = (oyStruct_Copy_f) oyStructList_Copy;
+  s->copy = (oyStruct_Copy_f) oyStructList_Copy_x;
   s->release = (oyStruct_Release_f) oyStructList_Release;
 
   s->oy_ = s_obj;
@@ -421,7 +421,11 @@ int              oyStructList_ReferenceAt_(oyStructList_s_ * list,
     error = !(p && p->copy);
 
     if(error <= 0)
+    {
       p = p->copy( p, 0 );
+      if(oy_debug_objects)
+        oyObjectDebugMessage_( p->oy_, __func__, oyStructTypeToText(p->type_) );
+    }
   }
 
   return !p;

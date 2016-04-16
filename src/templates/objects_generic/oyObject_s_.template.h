@@ -4,6 +4,8 @@
 #ifndef {{ file_name|underscores|upper|tr:". _" }}
 #define {{ file_name|underscores|upper|tr:". _" }}
 
+{% include "cpp_begin.h" %}
+
 #include <oyranos_object.h>
 #include <oyName_s_.h>
 
@@ -41,4 +43,5 @@ struct oyObject_s_ {
 /* } Include "{{ class.private_methods_declarations_h }}" */
 {% endblock %}
 
+{% include "cpp_end.h" %}
 #endif /* {{ file_name|underscores|upper|tr:". _" }} */

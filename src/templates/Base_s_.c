@@ -62,7 +62,7 @@
     WARNc_S( "memset failed" );
 
   memcpy( s, &type, sizeof(oyOBJECT_e) );
-  s->copy = (oyStruct_Copy_f) oy{{ class.baseName }}_Copy;
+  s->copy = (oyStruct_Copy_f) oy{{ class.baseName }}_Copy_x;
   s->release = (oyStruct_Release_f) oy{{ class.baseName }}_Release;
 
   s->oy_ = s_obj;

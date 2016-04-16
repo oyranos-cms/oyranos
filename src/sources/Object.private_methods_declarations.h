@@ -20,4 +20,3 @@ int                oyObjectIdListShowDiffAndRelease (
                                        int              ** ids_old,
                                        const char        * location );
 
-

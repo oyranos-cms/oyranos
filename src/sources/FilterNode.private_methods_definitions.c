@@ -515,8 +515,12 @@ oyStructList_s * oyFilterNode_GetData_(oyFilterNode_s_    * node,
           {
             data = 0;
             if(node->plugs[i]->remote_socket_->data)
+            {
               data = node->plugs[i]->remote_socket_->data->copy( node->plugs[i]->remote_socket_->data, 0 );
-            else
+              if(oy_debug_objects && data)
+                oyObjectDebugMessage_( data->oy_, __func__,
+                                       oyStructTypeToText(data->type_) );
+            } else
               data = (oyStruct_s*) oyOption_New(0);
             error = oyStructList_MoveIn( datas, &data, -1, 0 );
             ++i;
@@ -530,8 +534,12 @@ oyStructList_s * oyFilterNode_GetData_(oyFilterNode_s_    * node,
           {
             data = 0;
             if(node->sockets[i]->data)
+            {
               data = node->sockets[i]->data->copy( node->sockets[i]->data, 0 );
-            else
+              if(oy_debug_objects && data)
+                oyObjectDebugMessage_( data->oy_, __func__,
+                                       oyStructTypeToText(data->type_) );
+            } else
               data = (oyStruct_s*) oyOption_New(0);
             error = oyStructList_MoveIn( datas, &data, -1, 0 );
             ++i;

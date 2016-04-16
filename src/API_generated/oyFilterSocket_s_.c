@@ -145,7 +145,12 @@ int oyFilterSocket_Copy__Members( oyFilterSocket_s_ * dst, oyFilterSocket_s_ * s
   dst->pattern = oyConnector_Copy( src->pattern, dst->oy_ );
   dst->node = (oyFilterNode_s_*)oyFilterNode_Copy( (oyFilterNode_s*)src->node, 0 );
   if(src->data && src->data->copy)
+  {
     dst->data = src->data->copy( src->data, dst->oy_ );
+    if(oy_debug_objects && dst->data)
+      oyObjectDebugMessage_( dst->data->oy_, __func__,
+                             oyStructTypeToText(dst->data->type_) );
+  }
 
   return error;
 }
@@ -185,7 +190,7 @@ oyFilterSocket_s_ * oyFilterSocket_New_ ( oyObject_s object )
     WARNc_S( "memset failed" );
 
   memcpy( s, &type, sizeof(oyOBJECT_e) );
-  s->copy = (oyStruct_Copy_f) oyFilterSocket_Copy;
+  s->copy = (oyStruct_Copy_f) oyFilterSocket_Copy_x;
   s->release = (oyStruct_Release_f) oyFilterSocket_Release;
 
   s->oy_ = s_obj;

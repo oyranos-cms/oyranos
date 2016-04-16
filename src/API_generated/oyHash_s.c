@@ -45,9 +45,9 @@ OYAPI oyHash_s * OYEXPORT
   return (oyHash_s*) hash;
 }
 
-/** Function oyHash_Copy
+/** @fn       oyHash_Copy 
  *  @memberof oyHash_s
- *  @brief   copy or reference a Hash object
+ *  @brief    Copy or Reference a Hash object
  *
  *  The function is for copying and for referencing. The reference is the most
  *  often used way, which saves resourcs and time.
@@ -57,7 +57,7 @@ OYAPI oyHash_s * OYEXPORT
  *                                     the optional object triggers a real copy
  */
 OYAPI oyHash_s* OYEXPORT
-  oyHash_Copy( oyHash_s *hash, oyObject_s object )
+  oyHash_Copy_x( oyHash_s *hash, oyObject_s object )
 {
   oyHash_s_ * s = (oyHash_s_*) hash;
 

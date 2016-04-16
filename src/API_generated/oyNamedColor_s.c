@@ -45,9 +45,9 @@ OYAPI oyNamedColor_s * OYEXPORT
   return (oyNamedColor_s*) namedcolor;
 }
 
-/** Function oyNamedColor_Copy
+/** @fn       oyNamedColor_Copy 
  *  @memberof oyNamedColor_s
- *  @brief   copy or reference a NamedColor object
+ *  @brief    Copy or Reference a NamedColor object
  *
  *  The function is for copying and for referencing. The reference is the most
  *  often used way, which saves resourcs and time.
@@ -57,7 +57,7 @@ OYAPI oyNamedColor_s * OYEXPORT
  *                                     the optional object triggers a real copy
  */
 OYAPI oyNamedColor_s* OYEXPORT
-  oyNamedColor_Copy( oyNamedColor_s *namedcolor, oyObject_s object )
+  oyNamedColor_Copy_x( oyNamedColor_s *namedcolor, oyObject_s object )
 {
   oyNamedColor_s_ * s = (oyNamedColor_s_*) namedcolor;
 

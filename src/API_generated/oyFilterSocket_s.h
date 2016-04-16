@@ -103,8 +103,19 @@ oyObject_s           oy_;            /**< Features name and hash. Do not change 
 
 OYAPI oyFilterSocket_s* OYEXPORT
   oyFilterSocket_New( oyObject_s object );
+/** @memberof oyFilterSocket_s
+ *  @brief    Copy or Reference a FilterSocket object
+ *
+ *  The macro is for copying and for referencing. The reference is the most
+ *  often used way, which saves resourcs and time.
+ *
+ *  @param[in]     filtersocket                 FilterSocket struct object
+ *  @param         object              NULL - means reference,
+ *                                     the optional object triggers a real copy
+ */
+#define oyFilterSocket_Copy(filtersocket,object) oyFilterSocket_Copy_x(filtersocket,object); if(oy_debug_objects) oyObjectDebugMessage_( filtersocket?filtersocket->oy_:NULL, __func__, "oyFilterSocket_s" );
 OYAPI oyFilterSocket_s* OYEXPORT
-  oyFilterSocket_Copy( oyFilterSocket_s *filtersocket, oyObject_s obj );
+  oyFilterSocket_Copy_x( oyFilterSocket_s *filtersocket, oyObject_s obj );
 OYAPI int OYEXPORT
   oyFilterSocket_Release( oyFilterSocket_s **filtersocket );
 

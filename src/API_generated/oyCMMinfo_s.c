@@ -45,9 +45,9 @@ OYAPI oyCMMinfo_s * OYEXPORT
   return (oyCMMinfo_s*) cmminfo;
 }
 
-/** Function oyCMMinfo_Copy
+/** @fn       oyCMMinfo_Copy 
  *  @memberof oyCMMinfo_s
- *  @brief   copy or reference a CMMinfo object
+ *  @brief    Copy or Reference a CMMinfo object
  *
  *  The function is for copying and for referencing. The reference is the most
  *  often used way, which saves resourcs and time.
@@ -57,7 +57,7 @@ OYAPI oyCMMinfo_s * OYEXPORT
  *                                     the optional object triggers a real copy
  */
 OYAPI oyCMMinfo_s* OYEXPORT
-  oyCMMinfo_Copy( oyCMMinfo_s *cmminfo, oyObject_s object )
+  oyCMMinfo_Copy_x( oyCMMinfo_s *cmminfo, oyObject_s object )
 {
   oyCMMinfo_s_ * s = (oyCMMinfo_s_*) cmminfo;
 

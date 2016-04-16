@@ -247,7 +247,7 @@ oyProfile_s_ * oyProfile_New_ ( oyObject_s object )
     WARNc_S( "memset failed" );
 
   memcpy( s, &type, sizeof(oyOBJECT_e) );
-  s->copy = (oyStruct_Copy_f) oyProfile_Copy;
+  s->copy = (oyStruct_Copy_f) oyProfile_Copy_x;
   s->release = (oyStruct_Release_f) oyProfile_Release;
 
   s->oy_ = s_obj;

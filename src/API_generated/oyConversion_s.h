@@ -194,8 +194,19 @@ oyObject_s           oy_;            /**< Features name and hash. Do not change 
 
 OYAPI oyConversion_s* OYEXPORT
   oyConversion_New( oyObject_s object );
+/** @memberof oyConversion_s
+ *  @brief    Copy or Reference a Conversion object
+ *
+ *  The macro is for copying and for referencing. The reference is the most
+ *  often used way, which saves resourcs and time.
+ *
+ *  @param[in]     conversion                 Conversion struct object
+ *  @param         object              NULL - means reference,
+ *                                     the optional object triggers a real copy
+ */
+#define oyConversion_Copy(conversion,object) oyConversion_Copy_x(conversion,object); if(oy_debug_objects) oyObjectDebugMessage_( conversion?conversion->oy_:NULL, __func__, "oyConversion_s" );
 OYAPI oyConversion_s* OYEXPORT
-  oyConversion_Copy( oyConversion_s *conversion, oyObject_s obj );
+  oyConversion_Copy_x( oyConversion_s *conversion, oyObject_s obj );
 OYAPI int OYEXPORT
   oyConversion_Release( oyConversion_s **conversion );
 

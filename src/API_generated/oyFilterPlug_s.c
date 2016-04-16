@@ -50,9 +50,9 @@ OYAPI oyFilterPlug_s * OYEXPORT
   return (oyFilterPlug_s*) filterplug;
 }
 
-/** Function oyFilterPlug_Copy
+/** @fn       oyFilterPlug_Copy 
  *  @memberof oyFilterPlug_s
- *  @brief   copy or reference a FilterPlug object
+ *  @brief    Copy or Reference a FilterPlug object
  *
  *  The function is for copying and for referencing. The reference is the most
  *  often used way, which saves resourcs and time.
@@ -62,7 +62,7 @@ OYAPI oyFilterPlug_s * OYEXPORT
  *                                     the optional object triggers a real copy
  */
 OYAPI oyFilterPlug_s* OYEXPORT
-  oyFilterPlug_Copy( oyFilterPlug_s *filterplug, oyObject_s object )
+  oyFilterPlug_Copy_x( oyFilterPlug_s *filterplug, oyObject_s object )
 {
   oyFilterPlug_s_ * s = (oyFilterPlug_s_*) filterplug;
 

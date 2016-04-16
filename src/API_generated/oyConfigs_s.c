@@ -54,9 +54,9 @@ OYAPI oyConfigs_s * OYEXPORT
   return (oyConfigs_s*) configs;
 }
 
-/** Function oyConfigs_Copy
+/** @fn       oyConfigs_Copy 
  *  @memberof oyConfigs_s
- *  @brief   copy or reference a Configs object
+ *  @brief    Copy or Reference a Configs object
  *
  *  The function is for copying and for referencing. The reference is the most
  *  often used way, which saves resourcs and time.
@@ -66,7 +66,7 @@ OYAPI oyConfigs_s * OYEXPORT
  *                                     the optional object triggers a real copy
  */
 OYAPI oyConfigs_s* OYEXPORT
-  oyConfigs_Copy( oyConfigs_s *configs, oyObject_s object )
+  oyConfigs_Copy_x( oyConfigs_s *configs, oyObject_s object )
 {
   oyConfigs_s_ * s = (oyConfigs_s_*) configs;
 

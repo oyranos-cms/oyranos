@@ -384,18 +384,24 @@ OYAPI oyImage_s * OYEXPORT
                                 image_input_->profile_, node->oy_ );
 
       } else
+      {
         image = oyImage_Copy( (oyImage_s*) image_input_, node->oy_ );
+      }
 
 
     } else
+    {
       image = oyImage_Copy( (oyImage_s*) image_input_, 0 );
+    }
 
     error = oyFilterNode_SetData( (oyFilterNode_s*)node, (oyStruct_s*)image, 0, 0 );
     oyImage_Release( &image );
   }
 
   if(!(*ticket_)->output_image)
+  {
     (*ticket_)->output_image = oyImage_Copy( (oyImage_s*) (*socket_)->data, 0 );
+  }
 
   oyOptions_Release( &requests );
 

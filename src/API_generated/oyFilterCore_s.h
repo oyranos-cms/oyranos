@@ -87,8 +87,19 @@ oyObject_s           oy_;            /**< Features name and hash. Do not change 
 
 OYAPI oyFilterCore_s* OYEXPORT
   oyFilterCore_New( oyObject_s object );
+/** @memberof oyFilterCore_s
+ *  @brief    Copy or Reference a FilterCore object
+ *
+ *  The macro is for copying and for referencing. The reference is the most
+ *  often used way, which saves resourcs and time.
+ *
+ *  @param[in]     filtercore                 FilterCore struct object
+ *  @param         object              NULL - means reference,
+ *                                     the optional object triggers a real copy
+ */
+#define oyFilterCore_Copy(filtercore,object) oyFilterCore_Copy_x(filtercore,object); if(oy_debug_objects) oyObjectDebugMessage_( filtercore?filtercore->oy_:NULL, __func__, "oyFilterCore_s" );
 OYAPI oyFilterCore_s* OYEXPORT
-  oyFilterCore_Copy( oyFilterCore_s *filtercore, oyObject_s obj );
+  oyFilterCore_Copy_x( oyFilterCore_s *filtercore, oyObject_s obj );
 OYAPI int OYEXPORT
   oyFilterCore_Release( oyFilterCore_s **filtercore );
 

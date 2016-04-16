@@ -80,8 +80,19 @@ oyObject_s           oy_;            /**< Features name and hash. Do not change 
 
 OYAPI oyConfigs_s* OYEXPORT
   oyConfigs_New( oyObject_s object );
+/** @memberof oyConfigs_s
+ *  @brief    Copy or Reference a Configs object
+ *
+ *  The macro is for copying and for referencing. The reference is the most
+ *  often used way, which saves resourcs and time.
+ *
+ *  @param[in]     configs                 Configs struct object
+ *  @param         object              NULL - means reference,
+ *                                     the optional object triggers a real copy
+ */
+#define oyConfigs_Copy(configs,object) oyConfigs_Copy_x(configs,object); if(oy_debug_objects) oyObjectDebugMessage_( configs?configs->oy_:NULL, __func__, "oyConfigs_s" );
 OYAPI oyConfigs_s* OYEXPORT
-  oyConfigs_Copy( oyConfigs_s *configs, oyObject_s obj );
+  oyConfigs_Copy_x( oyConfigs_s *configs, oyObject_s obj );
 OYAPI int OYEXPORT
   oyConfigs_Release( oyConfigs_s **configs );
 

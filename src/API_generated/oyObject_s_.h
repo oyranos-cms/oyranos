@@ -18,6 +18,12 @@
 #ifndef OY_OBJECT_S__H
 #define OY_OBJECT_S__H
 
+#ifdef __cplusplus
+/*namespace oyranos {*/
+  extern "C" {
+#endif /* __cplusplus */
+
+
 #include <oyranos_object.h>
 #include <oyName_s_.h>
 
@@ -90,8 +96,12 @@ int                oyObjectIdListShowDiffAndRelease (
                                        const char        * location );
 
 
-
 /* } Include "Object.private_methods_declarations.h" */
 
+
+#ifdef __cplusplus
+} /* extern "C" */
+/*}*/ /* namespace oyranos */
+#endif /* __cplusplus */
 
 #endif /* OY_OBJECT_S__H */

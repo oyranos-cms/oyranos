@@ -49,9 +49,9 @@ OYAPI oyList_s * OYEXPORT
   return (oyList_s*) list;
 }
 
-/** Function oyList_Copy
+/** @fn       oyList_Copy 
  *  @memberof oyList_s
- *  @brief   copy or reference a List object
+ *  @brief    Copy or Reference a List object
  *
  *  The function is for copying and for referencing. The reference is the most
  *  often used way, which saves resourcs and time.
@@ -61,7 +61,7 @@ OYAPI oyList_s * OYEXPORT
  *                                     the optional object triggers a real copy
  */
 OYAPI oyList_s* OYEXPORT
-  oyList_Copy( oyList_s *list, oyObject_s object )
+  oyList_Copy_x( oyList_s *list, oyObject_s object )
 {
   oyList_s_ * s = (oyList_s_*) list;
 

@@ -159,7 +159,7 @@ oyHash_s_ * oyHash_New_ ( oyObject_s object )
     WARNc_S( "memset failed" );
 
   memcpy( s, &type, sizeof(oyOBJECT_e) );
-  s->copy = (oyStruct_Copy_f) oyHash_Copy;
+  s->copy = (oyStruct_Copy_f) oyHash_Copy_x;
   s->release = (oyStruct_Release_f) oyHash_Release;
 
   s->oy_ = s_obj;
@@ -393,8 +393,11 @@ int                oyHash_SetPointer_( oyHash_s_         * hash,
   if(hash)
   {
     if(obj && obj->copy)
+    {
       hash->entry = obj->copy( obj, 0 );
-    else
+      if(oy_debug_objects)
+        oyObjectDebugMessage_( obj?obj->oy_:NULL, __func__, oyStructTypeToText(obj->type_) );
+    } else
       hash->entry = obj;
     return 0;
   } else

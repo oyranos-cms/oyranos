@@ -222,6 +222,18 @@ OYAPI int  OYEXPORT
       if(user_data)
         s->user_data = user_data->copy( user_data, 0 );
       s->signal = signalFunc;
+      if(oy_debug_objects)
+      {
+        if(s->observer)
+          oyObjectDebugMessage_( s->observer->oy_, __func__,
+                                 oyStructTypeToText(s->observer->type_) );
+        if(s->model)
+          oyObjectDebugMessage_( s->model->oy_, __func__,
+                                 oyStructTypeToText(s->model->type_) );
+        if(s->user_data)
+          oyObjectDebugMessage_( s->user_data->oy_, __func__,
+                                 oyStructTypeToText(s->user_data->type_) );
+      }
 
       oyStructList_MoveIn( list, (oyStruct_s**)&s, -1, 0 );
     }

@@ -265,8 +265,9 @@ public:
   void setProfile( oyProfile_s * p )
   {
     if(p)
+    {
       editing = oyProfile_Copy( p, NULL );
-    else
+    } else
     {
       oyFilterNode_s * node = icc ? icc : oyFilterNode_FromOptions( OY_CMM_STD, "//" OY_TYPE_STD "/icc_color", NULL, NULL );
       const char * reg = oyFilterNode_GetRegistration( node );

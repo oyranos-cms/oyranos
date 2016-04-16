@@ -51,9 +51,9 @@ OYAPI oyConnector_s * OYEXPORT
   return (oyConnector_s*) connector;
 }
 
-/** Function oyConnector_Copy
+/** @fn       oyConnector_Copy 
  *  @memberof oyConnector_s
- *  @brief   copy or reference a Connector object
+ *  @brief    Copy or Reference a Connector object
  *
  *  The function is for copying and for referencing. The reference is the most
  *  often used way, which saves resourcs and time.
@@ -63,7 +63,7 @@ OYAPI oyConnector_s * OYEXPORT
  *                                     the optional object triggers a real copy
  */
 OYAPI oyConnector_s* OYEXPORT
-  oyConnector_Copy( oyConnector_s *connector, oyObject_s object )
+  oyConnector_Copy_x( oyConnector_s *connector, oyObject_s object )
 {
   oyConnector_s_ * s = (oyConnector_s_*) connector;
 

@@ -50,9 +50,9 @@ OYAPI oyCMMapi6_s * OYEXPORT
   return (oyCMMapi6_s*) cmmapi6;
 }
 
-/** Function oyCMMapi6_Copy
+/** @fn       oyCMMapi6_Copy 
  *  @memberof oyCMMapi6_s
- *  @brief   copy or reference a CMMapi6 object
+ *  @brief    Copy or Reference a CMMapi6 object
  *
  *  The function is for copying and for referencing. The reference is the most
  *  often used way, which saves resourcs and time.
@@ -62,7 +62,7 @@ OYAPI oyCMMapi6_s * OYEXPORT
  *                                     the optional object triggers a real copy
  */
 OYAPI oyCMMapi6_s* OYEXPORT
-  oyCMMapi6_Copy( oyCMMapi6_s *cmmapi6, oyObject_s object )
+  oyCMMapi6_Copy_x( oyCMMapi6_s *cmmapi6, oyObject_s object )
 {
   oyCMMapi6_s_ * s = (oyCMMapi6_s_*) cmmapi6;
 

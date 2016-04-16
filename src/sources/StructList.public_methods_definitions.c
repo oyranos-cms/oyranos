@@ -378,6 +378,9 @@ int              oyStructList_CopyFrom(oyStructList_s    * list,
     {
       o = oyStructList_Get_( (oyStructList_s_*)from, i );
       o = o->copy( o, object );
+      if(oy_debug_objects && o)
+        oyObjectDebugMessage_( o->oy_, __func__,
+                               oyStructTypeToText(o->type_) );
       error = !o;
       if(!error)
         error = oyStructList_MoveIn( s, &o, -1, 0 );

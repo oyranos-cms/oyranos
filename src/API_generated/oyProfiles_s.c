@@ -51,9 +51,9 @@ OYAPI oyProfiles_s * OYEXPORT
   return (oyProfiles_s*) profiles;
 }
 
-/** Function oyProfiles_Copy
+/** @fn       oyProfiles_Copy 
  *  @memberof oyProfiles_s
- *  @brief   copy or reference a Profiles object
+ *  @brief    Copy or Reference a Profiles object
  *
  *  The function is for copying and for referencing. The reference is the most
  *  often used way, which saves resourcs and time.
@@ -63,7 +63,7 @@ OYAPI oyProfiles_s * OYEXPORT
  *                                     the optional object triggers a real copy
  */
 OYAPI oyProfiles_s* OYEXPORT
-  oyProfiles_Copy( oyProfiles_s *profiles, oyObject_s object )
+  oyProfiles_Copy_x( oyProfiles_s *profiles, oyObject_s object )
 {
   oyProfiles_s_ * s = (oyProfiles_s_*) profiles;
 

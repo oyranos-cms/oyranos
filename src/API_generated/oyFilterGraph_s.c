@@ -52,9 +52,9 @@ OYAPI oyFilterGraph_s * OYEXPORT
   return (oyFilterGraph_s*) filtergraph;
 }
 
-/** Function oyFilterGraph_Copy
+/** @fn       oyFilterGraph_Copy 
  *  @memberof oyFilterGraph_s
- *  @brief   copy or reference a FilterGraph object
+ *  @brief    Copy or Reference a FilterGraph object
  *
  *  The function is for copying and for referencing. The reference is the most
  *  often used way, which saves resourcs and time.
@@ -64,7 +64,7 @@ OYAPI oyFilterGraph_s * OYEXPORT
  *                                     the optional object triggers a real copy
  */
 OYAPI oyFilterGraph_s* OYEXPORT
-  oyFilterGraph_Copy( oyFilterGraph_s *filtergraph, oyObject_s object )
+  oyFilterGraph_Copy_x( oyFilterGraph_s *filtergraph, oyObject_s object )
 {
   oyFilterGraph_s_ * s = (oyFilterGraph_s_*) filtergraph;
 

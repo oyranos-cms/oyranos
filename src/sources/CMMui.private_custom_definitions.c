@@ -88,8 +88,12 @@ int oyCMMui_Copy__Members( oyCMMui_s_ * dst, oyCMMui_s_ * src)
 
   /* Copy each value of src to dst here */
   if(src->parent && src->parent->copy)
+  {
     dst->parent = (oyCMMapiFilter_s*) src->parent->copy( (oyStruct_s*) src->parent, src->oy_ );
-  else
+    if(oy_debug_objects && dst->parent)
+        oyObjectDebugMessage_( dst->parent->oy_, __func__,
+                               oyStructTypeToText(dst->parent->type_) );
+  } else
     dst->parent = src->parent;
 
   return 0;

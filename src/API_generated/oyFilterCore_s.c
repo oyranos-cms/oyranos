@@ -48,9 +48,9 @@ OYAPI oyFilterCore_s * OYEXPORT
   return (oyFilterCore_s*) filtercore;
 }
 
-/** Function oyFilterCore_Copy
+/** @fn       oyFilterCore_Copy 
  *  @memberof oyFilterCore_s
- *  @brief   copy or reference a FilterCore object
+ *  @brief    Copy or Reference a FilterCore object
  *
  *  The function is for copying and for referencing. The reference is the most
  *  often used way, which saves resourcs and time.
@@ -60,7 +60,7 @@ OYAPI oyFilterCore_s * OYEXPORT
  *                                     the optional object triggers a real copy
  */
 OYAPI oyFilterCore_s* OYEXPORT
-  oyFilterCore_Copy( oyFilterCore_s *filtercore, oyObject_s object )
+  oyFilterCore_Copy_x( oyFilterCore_s *filtercore, oyObject_s object )
 {
   oyFilterCore_s_ * s = (oyFilterCore_s_*) filtercore;
 
