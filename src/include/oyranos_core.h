@@ -28,6 +28,7 @@ extern "C" {
 typedef char oyChar;
 
 extern int oy_debug;
+extern int oy_debug_objects;
 
 typedef enum {
   oyMSG_ERROR = 300,
@@ -68,7 +69,10 @@ char *         oyVersionString       ( int                 type,
 char *         oyDescriptionToHTML   ( int                 group,
                                        const char       ** options,
                                        oyAlloc_f           allocateFunc );
-
+void           oyObjectDebugMessage_ ( void              * object,
+                                       const char        * function_name,
+                                       const char        * struct_name );
+                                       
 
 
 /** @brief codeset for Oyranos

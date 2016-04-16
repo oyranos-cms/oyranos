@@ -642,6 +642,40 @@ int            oyMessageFuncSet      ( oyMessage_f         message_func )
   return 0;
 }
 
+/** @func    oyObjectDebugMessage_
+ *  @internal for debugging objects
+ *  @brief   used with _Copy() macros
+ *
+ *  @version Oyranos: 0.9.6
+ *  @date    2016/04/16
+ *  @since   2016/04/16 (Oyranos: 0.9.6)
+ */
+void         oyObjectDebugMessage_   ( void              * object,
+                                       const char        * function_name,
+                                       const char        * struct_name )
+{
+  struct oyObject_s_* obj = (struct oyObject_s_*)object;
+  oyStruct_s * st = NULL;
+
+  if(obj)
+    st = obj->parent_;
+
+  if(st && oy_debug_objects)
+  {
+    const char * t = getenv(OY_DEBUG_OBJECTS);
+    int id_ = -1;
+    if(t)
+      id_ = atoi(t);
+
+    if((id_ >= 0 && obj->id_ == id_) ||
+       (t && strstr(struct_name, t) != 0) ||
+       id_ == 1)
+    {
+      fprintf(stderr, "copied %s[%d](%d) in %s()\n", struct_name, obj->id_, obj->ref_, function_name );
+      fflush( stderr );
+    }
+  }
+}
 
 /* --- internal API decoupling --- */
 
