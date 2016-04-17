@@ -1489,7 +1489,8 @@ oyTESTRESULT_e testProfile ()
     fclose(fp); fp = 0;
     remove( ICC_TEST_NAME".icc" );
   }
-  
+
+  size = 0;
   data = oyProfile_GetMem( p, &size, 0, malloc );
   int error = oyWriteMemToFile_( ICC_TEST_NAME".icc", data, size );
   if(!error )
@@ -5055,7 +5056,7 @@ oyTESTRESULT_e testConversion()
   oyOptions_s * node_opts = oyFilterNode_GetOptions( icc, oyOPTIONATTRIBUTE_ADVANCED );
   oyOption_s * ct = oyOptions_Find( node_opts, "////context", oyNAME_PATTERN );
   oyOptions_Release( &node_opts );
-  fprintf( zout, "context global: %s\ncontext node: %s\n", config_cmm, strrchr( reg, '/')+1 );
+  fprintf( zout, "context global: %s\ncontext node: %s\n", config_cmm, reg?strrchr( reg, '/')+1:"----" );
   reg = oyOption_GetValueString( ct, 0 );
   if((reg = strrchr( reg, '/')) != NULL) ++reg;
   fprintf( zout, "context option: %s\n", oyNoEmptyString_m_(reg) );
