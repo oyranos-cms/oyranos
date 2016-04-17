@@ -450,13 +450,14 @@ oyLeave_s *          oyObjectIdListGetStructTree (
 int                oyObjectIdListTraverseStructTrees (
                                        int               * ids,
                                        oyObjectTreeCallback_f func,
-                                       void              * user_data )
+                                       void              * user_data,
+                                       int                 flags )
 {
   int i, n = 0;
   oyLeave_s ** ts = calloc( sizeof( oyLeave_s* ), oy_object_list_max_count_ );
   for(i = 0; i < oy_object_list_max_count_; ++i)
     if(ids[i] > 0)
-      ts[n++] = oyObjectIdListGetStructTree( i, 0, ids, i, 0, func, user_data );
+      ts[n++] = oyObjectIdListGetStructTree( i, 0, ids, i, flags & 0x01 ? -oy_object_list_max_count_ : 0, func, user_data );
 
   /* TODO: release trees */
 
@@ -467,8 +468,11 @@ int                oyObjectIdListTraverseStructTrees (
 typedef struct oyTreeData_s {
   oyLeave_s * l;
   char * text;
+  char * text2;
+  int flags;
 } oyTreeData_s;
-void objectTreeCallback              ( void              * user_data,
+
+void oyObjectTreePrintCallback       ( void              * user_data,
                                        int                 top,
                                        oyLeave_s         * tree,
                                        oyStruct_s        * parent,
@@ -499,6 +503,73 @@ void objectTreeCallback              ( void              * user_data,
     graphs[top].l = tree;
   }
 }
+char * oyObjectTreeDotGraphCallbackGetDescription( oyStruct_s * s )
+{
+  const char * nick = oyStructTypeToText( s->type_ ),
+             * text = oyStruct_GetText( s, oyNAME_NICK, 1 );
+  char * t, *t2, *t3, *desc = NULL;
+
+  if(strcmp(nick,text) == 0)
+    return desc;
+  t = oyStringReplace_( text, "\"", "'", 0 );
+  t2 = oyStringReplace_( t, "\n", "\\n", 0 );
+  t3 = oyStringReplace_( t2, "<", "\\<", 0 );
+  desc = oyStringReplace_( t3, ">", "\\>", 0 );
+  oyFree_m_( t );
+  oyFree_m_( t2 );
+  oyFree_m_( t3 );
+  return desc;
+}
+void oyObjectTreeDotGraphCallback    ( void              * user_data,
+                                       int                 top,
+                                       oyLeave_s         * tree,
+                                       oyStruct_s        * parent,
+                                       oyStruct_s        * current,
+                                       oyStruct_s       ** children,
+                                       int                 children_n,
+                                       int                 level )
+{
+  oyTreeData_s * graphs = (oyTreeData_s*) user_data;
+  int id = oyStruct_GetId(current), i,k;
+  char * desc = 0;
+
+  /* Non identifyable objects map to different trees, which is ambiguous. */
+  if(id < 0)
+    return;
+
+  if(!parent && oyObjectStructTreeContains( tree, id, -1 ))
+    /* skip */
+    return;
+
+  if(graphs->flags & 0x02)
+    desc = oyObjectTreeDotGraphCallbackGetDescription( current );
+  oyStringAddPrintf( &graphs[top].text2, 0,0, "%d [label=\"%s id=%d refs=%d%s%s%s\"];\n",
+                     id, oyStructTypeToText( current->type_ ), id, oyObject_GetRefCount(current->oy_), desc?"\\n\\\"":"", desc?desc:"", desc?"\\\"":"" );
+  if(desc) oyFree_m_( desc );
+
+  for(i = 0; i < children_n; ++i)
+  {
+    int i_id;
+    if(!children[i])
+      continue;
+
+    i_id = oyStruct_GetId( children[i] );
+    if(i_id < 0)
+      continue;
+
+    for(k = 0; k < level; ++k)
+      oyStringAddPrintf( &graphs[top].text, 0,0, "- ");
+    oyStringAddPrintf( &graphs[top].text, 0,0, "%d -> %d;\n",
+                       id, i_id );
+    if(graphs->flags & 0x02)
+      desc = oyObjectTreeDotGraphCallbackGetDescription( children[i] );
+    oyStringAddPrintf( &graphs[top].text2, 0,0, "%d [label=\"%s id=%d refs=%d%s%s%s\"];\n",
+                       i_id, oyStructTypeToText( children[i]->type_ ), i_id, oyObject_GetRefCount(children[i]->oy_), desc?"\\n\\\"":"", desc?desc:"", desc?"\\\"":"" );
+    if(desc) oyFree_m_( desc );
+    graphs[top].l = tree;
+  }
+}
+
 
 /** @brief    Print the current object trees to stderr.
  *  @ingroup  objects_generic
@@ -506,18 +577,31 @@ void objectTreeCallback              ( void              * user_data,
  *  Probably the most simple and still useful function from the Object tree debug APIs.
  *  It prints to stderr with OY_DEBUG_OBJECTS set.
  *
+ *  @params       flags               - 0x01 show a graph
+ *                                    - 0x02 include more object details
+ *
  *  @version  Oyranos: 0.9.6
- *  @date     2016/04/16
+ *  @date     2016/04/17
  *  @since    2016/04/16 (Oyranos: 0.9.6)
  */
-void oyObjectTreePrint( )
+void               oyObjectTreePrint ( int                 flags )
 {
   if(oy_debug_objects)
   {
     int * ids_old = oyObjectGetCurrentObjectIdList( );
     oyTreeData_s * trees = (oyTreeData_s*) calloc( sizeof( oyTreeData_s ), oy_object_list_max_count_ + 1 );
-    int n = oyObjectIdListTraverseStructTrees( ids_old, objectTreeCallback, trees ),
-        i, count = 0;
+    int n, i, count = 0;
+    char * dot = 0, * dot_edges = 0;
+
+    if(flags)
+      for(i = 0; i < oy_object_list_max_count_; ++i)
+        trees[i].flags = flags;
+
+    if(flags & 0x01)
+      n = oyObjectIdListTraverseStructTrees( ids_old, oyObjectTreeDotGraphCallback, trees, flags );
+    else
+      n = oyObjectIdListTraverseStructTrees( ids_old, oyObjectTreePrintCallback, trees, flags );
+
     for(i = 0; i < oy_object_list_max_count_; ++i)
       if(trees[i].text)
       {
@@ -530,10 +614,47 @@ void oyObjectTreePrint( )
         }
         if(found == 0)
         {
-          fprintf(stderr, "%d: %s\n", i, trees[i].text);
+          if(flags & 0x01)
+          {
+            oyStringAddPrintf( &dot, 0,0, "    %s", trees[i].text2 );
+            oyStringAddPrintf( &dot_edges, 0,0, "    %s", trees[i].text );
+          } else
+            fprintf(stderr, "%d: %s\n", i, trees[i].text);
           ++count;
         }
       }
     fprintf( stderr, "found/printed trees: %d/%d\n", n, count);
+    if(flags & 0x01)
+    {
+      char * graph = 0;
+      oyStringAddPrintf( &graph,0,0,
+                        "\
+digraph G {\n\
+bgcolor=\"transparent\"\n\
+  rankdir=LR\n\
+  graph [fontname=Helvetica, fontsize=12];\n\
+  node [shape=record, fontname=Helvetica, fontsize=10, style=\"filled,rounded\"];\n\
+  edge [fontname=Helvetica, fontsize=10];\n\
+\n");
+
+      oyStringAddPrintf( &graph,0,0, "%s\n", dot);
+      oyStringAddPrintf( &graph,0,0,"\
+  subgraph cluster_0 {\n\
+    label=\"Oyranos Object Trees Graph\"\n\
+    color=gray;\n");
+      oyStringAddPrintf( &graph,0,0,"%s", dot_edges);
+      oyStringAddPrintf( &graph,0,0,"  }\n");
+      oyStringAddPrintf( &graph,0,0,"}\n");
+
+      oyWriteMemToFile_( "oyranos_tree.dot", graph, strlen(graph)+1 );
+      if(flags & 0x02)
+        system("dot -Tsvg oyranos_tree.dot -o oyranos_tree.svg && firefox oyranos_tree.svg &");
+      else
+        system("fdp -Tsvg oyranos_tree.dot -o oyranos_tree.svg && firefox oyranos_tree.svg &");
+
+      oyFree_m_( graph );
+      oyFree_m_( dot );
+      oyFree_m_( dot_edges );
+    }
   }
 }

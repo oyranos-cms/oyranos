@@ -114,12 +114,13 @@ typedef void (*oyObjectTreeCallback_f)(void              * user_data,
 int                oyObjectIdListTraverseStructTrees (
                                        int               * id_list,
                                        oyObjectTreeCallback_f func,
-                                       void              * user_data );
+                                       void              * user_data,
+                                       int                 flags );
 int                oyObjectStructTreeContains (
                                        oyLeave_s         * l,
                                        int                 id,
                                        int                 direction_minusIsUp_plusIsDown_zeroIsBoth );
-void               oyObjectTreePrint ( void );
+void               oyObjectTreePrint ( int                 flags );
 
 /* } Include "Object.public_methods_declarations.h" */
 
