@@ -5247,10 +5247,10 @@ oyTESTRESULT_e testConversion()
       error = 1;
   if(error == 0)
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "fallback rendering %s %s", context, strrchr(reg,'/')+1 );
+    "fallback rendering %s %s", oyNoEmptyString_m_(context), reg?strrchr(reg,'/')+1:"----" );
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
-    "fallback rendering %s %s", context, strrchr(reg,'/')+1 );
+    "fallback rendering %s %s", oyNoEmptyString_m_(context), reg?strrchr(reg,'/')+1:"----" );
   }
 
   ct = oyOptions_Find( node_opts, "////context", oyNAME_PATTERN );
