@@ -5058,7 +5058,7 @@ oyTESTRESULT_e testConversion()
   oyOptions_Release( &node_opts );
   fprintf( zout, "context global: %s\ncontext node: %s\n", config_cmm, reg?strrchr( reg, '/')+1:"----" );
   reg = oyOption_GetValueString( ct, 0 );
-  if((reg = strrchr( reg, '/')) != NULL) ++reg;
+  if(reg && (reg = strrchr( reg, '/')) != NULL) ++reg;
   fprintf( zout, "context option: %s\n", oyNoEmptyString_m_(reg) );
 
   if(ct)
@@ -5255,7 +5255,7 @@ oyTESTRESULT_e testConversion()
 
   ct = oyOptions_Find( node_opts, "////context", oyNAME_PATTERN );
   reg = oyOption_GetValueString( ct, 0 );
-  if((reg = strrchr( reg, '/')) != NULL) ++reg;
+  if(reg && (reg = strrchr( reg, '/')) != NULL) ++reg;
   if(ct)
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "oyOptions_Find( node_opts, \"////context\" ) %s", oyNoEmptyString_m_(reg) );
@@ -5285,10 +5285,10 @@ oyTESTRESULT_e testConversion()
   ct = oyOptions_Find( node_opts, "////context", oyNAME_PATTERN );
   if(!icc || (oyOption_GetFlags( ct ) & oyOPTIONATTRIBUTE_EDIT) != 0)
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "\"////context\" is touched oyOPTIONATTRIBUTE_EDIT %s", reg );
+    "\"////context\" is touched oyOPTIONATTRIBUTE_EDIT %s", oyNoEmptyString_m_(reg) );
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
-    "\"////context\" is touched oyOPTIONATTRIBUTE_EDIT %s", reg );
+    "\"////context\" is touched oyOPTIONATTRIBUTE_EDIT %s", oyNoEmptyString_m_(reg) );
   }
   oyOption_Release( &ct );
   oyOptions_Release( &options );
@@ -5335,10 +5335,10 @@ oyTESTRESULT_e testConversion()
   ct = oyOptions_Find( node_opts, "////renderer", oyNAME_PATTERN );
   if(!icc || (oyOption_GetFlags( ct ) & oyOPTIONATTRIBUTE_EDIT) != 0)
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "\"////renderer\" is touched oyOPTIONATTRIBUTE_EDIT %s", reg );
+    "\"////renderer\" is touched oyOPTIONATTRIBUTE_EDIT %s", oyNoEmptyString_m_(reg) );
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
-    "\"////renderer\" is touched oyOPTIONATTRIBUTE_EDIT %s", reg );
+    "\"////renderer\" is touched oyOPTIONATTRIBUTE_EDIT %s", oyNoEmptyString_m_(reg) );
   }
   oyOption_Release( &ct );
   oyOptions_Release( &options );
