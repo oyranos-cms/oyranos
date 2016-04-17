@@ -135,6 +135,9 @@ oyTESTRESULT_e testVersion()
   fprintf(zout, "compiled version:     %d\n", OYRANOS_VERSION );
   fprintf(zout, " runtime version:     %d\n", oyVersion(0) );
 
+  fprintf(zout, " XDG_DATA_DIRS: %s\n", oyNoEmptyString_m_(getenv("XDG_DATA_DIRS")));
+  fprintf(zout, " OY_MODULE_PATH: %s\n", oyNoEmptyString_m_(getenv("OY_MODULE_PATH")));
+
   if(OYRANOS_VERSION == oyVersion(0))
     result = oyTESTRESULT_SUCCESS;
   else
