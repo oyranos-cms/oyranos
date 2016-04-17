@@ -16,7 +16,7 @@ IF( X11_FOUND )
                ${XINERAMA_LIBRARIES} ${XRANDR_LIBRARIES} ${XCM_LIBRARIES}
                ${XFIXES_LIBRARIES} ${XXF86VM_LIBRARIES} ${X11_LIBRARIES} )
   INSTALL (TARGETS ${OY_MODULE_LIB} DESTINATION lib${LIB_SUFFIX}/${OY_CMMSUBPATH})
-  INSTALL( FILES       config.icc_profile.monitor.oyX1.qarz.json
+  INSTALL( FILES       ${CMAKE_SOURCE_DIR}/color/rank-map/config.icc_profile.monitor.oyX1.qarz.json
            DESTINATION ${CMAKE_INSTALL_PREFIX}/share/color/rank-map/
          )
 ENDIF()
@@ -38,7 +38,7 @@ IF( ${PLATFORM} STREQUAL "OSX" )
                ${XINERAMA_LIBRARIES} ${XRANDR_LIBRARIES} ${XCM_LIBRARIES}
                ${XFIXES_LIBRARIES} ${X11_LIBRARIES} )
   INSTALL (TARGETS ${OY_MODULE_LIB} DESTINATION lib${LIB_SUFFIX}/${OY_CMMSUBPATH})
-  INSTALL( FILES       config.icc_profile.monitor.oyX1.qarz.json
+  INSTALL( FILES       ${CMAKE_SOURCE_DIR}/color/rank-map/config.icc_profile.monitor.oyX1.qarz.json
            DESTINATION ${CMAKE_INSTALL_PREFIX}/share/color/rank-map/
          )
 ENDIF()
@@ -51,7 +51,7 @@ IF( HAVE_LIBRAW_PLUGIN )
   TARGET_LINK_LIBRARIES ( ${OY_MODULE_LIB} ${PROJECT_NAME} ${EXTRA_LIBS} ${LIBRAW_LIBRARIES} ${EXIV2_LIBRARIES} )
   INSTALL (TARGETS ${OY_MODULE_LIB} DESTINATION lib${LIB_SUFFIX}/${OY_CMMSUBPATH})
   SET( OY_MODULE_LIBRARIES ${OY_MODULE_LIBRARIES} ${EXIV2_LIBRARIES} )
-  INSTALL( FILES       config.icc_profile.raw-image.${OY_MODULE}.json
+  INSTALL( FILES       ${CMAKE_SOURCE_DIR}/color/rank-map/config.icc_profile.raw-image.${OY_MODULE}.json
            DESTINATION ${CMAKE_INSTALL_PREFIX}/share/color/rank-map/
          )
 ENDIF()
@@ -63,7 +63,7 @@ IF( CUPS_FOUND )
                SHARED ${PACKAGE_NAME}_cmm_${OY_MODULE}.c )
   TARGET_LINK_LIBRARIES ( ${OY_MODULE_LIB} ${PROJECT_NAME} ${EXTRA_LIBS} ${CUPS_LIBRARIES})
   INSTALL (TARGETS ${OY_MODULE_LIB} DESTINATION lib${LIB_SUFFIX}/${OY_CMMSUBPATH})
-  INSTALL( FILES       config.icc_profile.printer.${OY_MODULE}.json
+  INSTALL( FILES       ${CMAKE_SOURCE_DIR}/color/rank-map/config.icc_profile.printer.${OY_MODULE}.json
            DESTINATION ${CMAKE_INSTALL_PREFIX}/share/color/rank-map/
          )
 ENDIF()
@@ -76,7 +76,7 @@ IF(SANE_FOUND)
                SHARED ${PACKAGE_NAME}_cmm_${OY_MODULE}.c )
   TARGET_LINK_LIBRARIES ( ${OY_MODULE_LIB} ${PROJECT_NAME} ${EXTRA_LIBS} ${SANE_LIBRARY})
   INSTALL (TARGETS ${OY_MODULE_LIB} DESTINATION lib${LIB_SUFFIX}/${OY_CMMSUBPATH})
-  INSTALL( FILES       config.icc_profile.scanner.${OY_MODULE}.json
+  INSTALL( FILES       ${CMAKE_SOURCE_DIR}/color/rank-map/config.icc_profile.scanner.${OY_MODULE}.json
            DESTINATION ${CMAKE_INSTALL_PREFIX}/share/color/rank-map/
          )
 ENDIF(SANE_FOUND)
