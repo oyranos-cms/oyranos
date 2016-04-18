@@ -709,6 +709,33 @@ void               oyObjectTreePrint ( int                 flags )
         }
       }
     fprintf( stderr, "found/printed trees: %d/%d\n", n, count);
+
+    /* remove double lines */
+    {
+      int lines_n = 0;
+      char ** lines = oyStringSplit_( dot, '\n', &lines_n, 0 );
+      char * tmp = 0;
+      fprintf(stderr, "dot has number of lines %d\n", lines_n);
+      oyStringListFreeDoubles_( lines, &lines_n, 0 );
+      fprintf(stderr, "dot has number of unique lines %d\n", lines_n);
+      for(i = 0; i < lines_n; ++i)
+        oyStringAdd_( &tmp, lines[i], 0,0 );
+      oyFree_m_(dot);
+      oyStringListRelease_( &lines, lines_n, 0 );
+      dot = tmp; tmp = 0;
+
+      lines_n = 0;
+      lines = oyStringSplit_( dot_edges, '\n', &lines_n, 0 );
+      fprintf(stderr, "dot_edges has number of lines %d\n", lines_n);
+      oyStringListFreeDoubles_( lines, &lines_n, 0 );
+      fprintf(stderr, "dot_edges has number of unique lines %d\n", lines_n);
+      for(i = 0; i < lines_n; ++i)
+        oyStringAdd_( &tmp, lines[i], 0,0 );
+      oyFree_m_(dot_edges);
+      oyStringListRelease_( &lines, lines_n, 0 );
+      dot_edges = tmp; tmp = 0;
+    }
+
     if(flags & 0x01)
     {
       char * graph = 0;
