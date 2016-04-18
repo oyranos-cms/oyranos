@@ -50,6 +50,7 @@ static oyStruct_RegisterStaticMessageFunc_f * oy_static_msg_funcs_ = 0;
 static int oy_msg_func_n_ = 0;
 
 /** @func    oyStruct_RegisterStaticMessageFunc
+ *  @memberof oyStruct_s
  *  @brief   register a function for verbosity
  *
  *  @param[in]     type                the object oyOBJECT_e type 
@@ -95,11 +96,14 @@ int oyStruct_RegisterStaticMessageFunc (
 }
                                        
 /** @func    oyStruct_GetInfo
+ *  @memberof oyStruct_s
  *  @brief   get a additional string from a object
  *
  *  The content can be provided by object authors by using
  *  oyStruct_RegisterStaticMessageFunc() typical at the first time of object
  *  creation.
+ *
+ *  Note: this function is a very low level version of oyStruct_GetText().
  *
  *  @param[in]     context_object      the object to get informations about
  *  @param[in]     flags               0x01 - skip trivial struct type name
@@ -135,6 +139,7 @@ const char *   oyStruct_GetInfo      ( oyPointer           context_object,
 
 
 /** Function oyStructTypeToText
+ *  @memberof oyStruct_s
  *  @brief   Objects type to small string
  *
  *  Give a basic description of inbuild object types.
