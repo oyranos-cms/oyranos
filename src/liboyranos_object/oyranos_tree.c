@@ -32,12 +32,19 @@
 #include "oyCMMapi8_s_.h"
 #include "oyCMMapi9_s_.h"
 #include "oyCMMapi10_s_.h"
+#include "oyCMMapiFilter_s_.h"
+#include "oyCMMapiFilters_s_.h"
+#include "oyCMMui_s_.h"
+#include "oyHash_s_.h"
+#include "oyStructList_s_.h"
+
 /* get a objects directly owned references */
 int                oyStruct_GetChildren (
                                        oyStruct_s        * obj,
                                        oyStruct_s      *** list )
 {
-  static oyStruct_s * c[32];
+  #define oy_c_max 32
+  static oyStruct_s * c[oy_c_max];
   int n = 0, i = 0;
 
   if(list) *list = c;
@@ -303,9 +310,25 @@ int                oyStruct_GetChildren (
        }
        break;
     case oyOBJECT_CMM_DATA_TYPES_S:
+       break;
     case oyOBJECT_CMM_API_FILTER_S:
+       {
+         oyCMMapiFilter_s_ * s = (oyCMMapiFilter_s_*)obj;
+         CHECK_ASSIGN_STRUCT( next )
+       }
+       break;
     case oyOBJECT_CMM_API_FILTERS_S:
+       {
+         oyCMMapiFilters_s_ * s = (oyCMMapiFilters_s_*)obj;
+         CHECK_ASSIGN_STRUCT( list_ )
+       }
+       break;
     case oyOBJECT_CMM_UI_S:
+       {
+         oyCMMui_s_ * s = (oyCMMui_s_*)obj;
+         CHECK_ASSIGN_STRUCT( parent )
+       }
+       break;
     case oyOBJECT_CMM_OBJECT_TYPE_S:
     case oyOBJECT_CMM_API_MAX:
     case oyOBJECT_ICON_S:
@@ -314,8 +337,24 @@ int                oyStruct_GetChildren (
     case oyOBJECT_NAME_S:
     case oyOBJECT_COMP_S_:
     case oyOBJECT_FILE_LIST_S_:
+       break;
     case oyOBJECT_HASH_S:
+       {
+         oyHash_s_ * s = (oyHash_s_*)obj;
+         CHECK_ASSIGN_STRUCT( entry )
+       }
+       break;
     case oyOBJECT_STRUCT_LIST_S:
+       {
+         oyStructList_s_ * s = (oyStructList_s_*)obj;
+         int n_max = (s->n_ > oy_c_max) ? oy_c_max : s->n_;
+         if(s->ptr_ && s->n_)
+         {
+           memcpy(&c[n], s->ptr_, sizeof(oyStruct_s*)*n_max);
+           n += n_max;
+         }
+       }
+       break;
     case oyOBJECT_BLOB_S:
     case oyOBJECT_CONFIG_S:
     case oyOBJECT_CONFIGS_S:
@@ -393,8 +432,15 @@ typedef void (*oyObjectTreeCallback_f)(void              * user_data,
                                        oyStruct_s       ** children,
                                        int                 children_n,
                                        int                 level );
-
+#define myCalloc(x,n) myCalloc_(x,n); if(oy_debug_memory) printf(OY_DBG_FORMAT_" %lu * %d bytes\n",OY_DBG_ARGS_, x,n);
+static void * myCalloc_( size_t size, size_t n )
+{ void * mem = oyAllocateFunc_( size*n );
+  memset(mem,0,size*n);
+  return mem;
+}
 static const int oy_object_list_max_count_ = 1000000;
+static int cntx = 0;
+static int cntx_mem = 0;
 oyLeave_s *          oyObjectIdListGetStructTree (
                                        int                 top,
                                        oyLeave_s         * parent,
@@ -408,21 +454,24 @@ oyLeave_s *          oyObjectIdListGetStructTree (
   const oyObject_s * obs;
   oyStruct_s * obj,
             ** slist;
-  oyLeave_s * l = calloc( sizeof(oyLeave_s), 1 );
+  oyLeave_s * l = 0;
 
   if(id < 0) /* possibly static objects without oyObject part */
     return l;
 
   obs = oyObjectGetList( &max_count );
   obj = obs[id]->parent_;
-  l = calloc( sizeof(oyLeave_s), 1 );
+  l = myCalloc( sizeof(oyLeave_s), 1 );
   l->obj = obj;
   l->id = id;
   l->parent = parent;
 
+  cntx_mem += sizeof(oyLeave_s);
+  if(oy_debug_memory) printf("%d %d mem: %d\n", cntx++, level, cntx_mem);
+
   if(oyObjectStructTreeContains(l, id, -1))
   {
-    free(l);
+    oyDeAllocateFunc_(l);
     l  = NULL;
     return l;
   }
@@ -430,9 +479,10 @@ oyLeave_s *          oyObjectIdListGetStructTree (
   l->n = oyStruct_GetChildren( obj, &slist );
   if(l->n)
   {
-    l->list = calloc( sizeof(oyStruct_s*), l->n + 1 );
+    l->list = myCalloc( sizeof(oyStruct_s*), l->n + 1 );
     memcpy( l->list, slist, sizeof(oyStruct_s*) * l->n );
-    l->children = calloc( sizeof( oyLeave_s* ), l->n + 1 );
+    cntx_mem += sizeof(oyLeave_s) * l->n;
+    l->children = myCalloc( sizeof( oyLeave_s* ), l->n + 1 );
     for(i = 0; i < l->n; ++i)
     {
       int i_id = oyStruct_GetId(l->list[i]);
@@ -454,7 +504,7 @@ int                oyObjectIdListTraverseStructTrees (
                                        int                 flags )
 {
   int i, n = 0;
-  oyLeave_s ** ts = calloc( sizeof( oyLeave_s* ), oy_object_list_max_count_ );
+  oyLeave_s ** ts = myCalloc( sizeof( oyLeave_s* ), oy_object_list_max_count_ );
   for(i = 0; i < oy_object_list_max_count_; ++i)
     if(ids[i] > 0)
       ts[n++] = oyObjectIdListGetStructTree( i, 0, ids, i, flags & 0x01 ? -oy_object_list_max_count_ : 0, func, user_data );
@@ -485,6 +535,7 @@ void oyObjectTreePrintCallback       ( void              * user_data,
   int id = oyStruct_GetId(current), i,k;
 
   if(id < 0)
+    return;
 
   if(!parent && oyObjectStructTreeContains( tree, id, -1 ))
     /* skip */
@@ -495,8 +546,14 @@ void oyObjectTreePrintCallback       ( void              * user_data,
     if(!children[i])
       continue;
     for(k = 0; k < level; ++k)
+#if 0
       oyStringAddPrintf( &graphs[top].text, 0,0, "- ");
     oyStringAddPrintf( &graphs[top].text, 0,0, "%s[%d] -> %s[%d]\n",
+#else
+    /* printf is much faster */
+      printf("- ");
+    printf( "%s[%d] -> %s[%d]\n",
+#endif
                        oyStructTypeToText(current->type_), id, 
                        oyStruct_GetText( children[i], oyNAME_NICK, 1 ),
                        oyStruct_GetId( children[i] ) );
@@ -509,8 +566,16 @@ char * oyObjectTreeDotGraphCallbackGetDescription( oyStruct_s * s )
              * text = oyStruct_GetText( s, oyNAME_NICK, 1 );
   char * t, *t2, *t3, *desc = NULL;
 
+  if(strstr(nick,"Conversion"))
+    /* make it *big* */
+    oyStringAddPrintf( &desc, 0,0, "\\n\\n"
+                                   "############################\\n"
+                                   "########## Start ###########\\n"
+                                   "############################\\n" );
+
   if(strcmp(nick,text) == 0)
     return desc;
+
   t = oyStringReplace_( text, "\"", "'", 0 );
   t2 = oyStringReplace_( t, "\n", "\\n", 0 );
   t3 = oyStringReplace_( t2, "<", "\\<", 0 );
@@ -518,6 +583,7 @@ char * oyObjectTreeDotGraphCallbackGetDescription( oyStruct_s * s )
   oyFree_m_( t );
   oyFree_m_( t2 );
   oyFree_m_( t3 );
+
   return desc;
 }
 void oyObjectTreeDotGraphCallback    ( void              * user_data,
@@ -532,6 +598,7 @@ void oyObjectTreeDotGraphCallback    ( void              * user_data,
   oyTreeData_s * graphs = (oyTreeData_s*) user_data;
   int id = oyStruct_GetId(current), i,k;
   char * desc = 0;
+  const char * color = "";
 
   /* Non identifyable objects map to different trees, which is ambiguous. */
   if(id < 0)
@@ -543,8 +610,13 @@ void oyObjectTreeDotGraphCallback    ( void              * user_data,
 
   if(graphs->flags & 0x02)
     desc = oyObjectTreeDotGraphCallbackGetDescription( current );
-  oyStringAddPrintf( &graphs[top].text2, 0,0, "%d [label=\"%s id=%d refs=%d%s%s%s\"];\n",
-                     id, oyStructTypeToText( current->type_ ), id, oyObject_GetRefCount(current->oy_), desc?"\\n\\\"":"", desc?desc:"", desc?"\\\"":"" );
+
+  /* emphasise with color */
+  if(current->type_ == oyOBJECT_CONVERSION_S)
+    color = " color=\"white\"";
+
+  oyStringAddPrintf( &graphs[top].text2, 0,0, "%d [label=\"%s id=%d refs=%d%s%s\"%s];\n",
+                     id, oyStructTypeToText( current->type_ ), id, oyObject_GetRefCount(current->oy_), desc?"\\n":"", desc?desc:"", color );
   if(desc) oyFree_m_( desc );
 
   for(i = 0; i < children_n; ++i)
@@ -589,13 +661,12 @@ void               oyObjectTreePrint ( int                 flags )
   if(oy_debug_objects)
   {
     int * ids_old = oyObjectGetCurrentObjectIdList( );
-    oyTreeData_s * trees = (oyTreeData_s*) calloc( sizeof( oyTreeData_s ), oy_object_list_max_count_ + 1 );
+    oyTreeData_s * trees = (oyTreeData_s*) myCalloc( sizeof( oyTreeData_s ), oy_object_list_max_count_ + 1 );
     int n, i, count = 0;
     char * dot = 0, * dot_edges = 0;
 
     if(flags)
-      for(i = 0; i < oy_object_list_max_count_; ++i)
-        trees[i].flags = flags;
+      for(i = 0; i < oy_object_list_max_count_; ++i) trees[i].flags = flags;
 
     if(flags & 0x01)
       n = oyObjectIdListTraverseStructTrees( ids_old, oyObjectTreeDotGraphCallback, trees, flags );
@@ -646,7 +717,10 @@ bgcolor=\"transparent\"\n\
       oyStringAddPrintf( &graph,0,0,"  }\n");
       oyStringAddPrintf( &graph,0,0,"}\n");
 
+      /* write a dot file to disc */
       oyWriteMemToFile_( "oyranos_tree.dot", graph, strlen(graph)+1 );
+
+      /* generate a SVG and send to firefox */
       if(flags & 0x02)
         system("dot -Tsvg oyranos_tree.dot -o oyranos_tree.svg && firefox oyranos_tree.svg &");
       else
