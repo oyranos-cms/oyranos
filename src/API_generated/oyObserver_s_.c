@@ -141,7 +141,7 @@ oyStructList_s * oyStruct_ObserverListGet_(
 
   if(!o)
   {
-    list = oyStructList_New( 0 );
+    list = oyStructList_Create( 0, oyStruct_GetText(obj, oyNAME_NAME, 0), 0 );
     o = oyOption_FromRegistration( reg, obj->oy_ );
     error = oyOption_MoveInStruct( o, (oyStruct_s**)&list );
     if(!error)

@@ -1818,7 +1818,7 @@ OYAPI int OYEXPORT
 
   name = oyName_set_ ( name, text, oyNAME_NAME,
                        oyAllocateFunc_, oyDeAllocateFunc_ );
-  list = oyStructList_New(0);
+  list = oyStructList_Create( oyOBJECT_NONE, "oyProfile_AddTagText", 0);
   error = oyStructList_MoveIn( list, (oyStruct_s**) &name, 0, 0 );
 
   if(!error)
@@ -2194,7 +2194,7 @@ int                oyProfile_AddDevice(oyProfile_s       * profile,
       {
         oyStructList_s * list = 0;
 
-        list = oyStructList_New(0);
+        list = oyStructList_Create( oyOBJECT_NONE, "oyProfile_AddDevice", 0);
         error = oyStructList_MoveIn( list, (oyStruct_s**) &device, 0,
                                      OY_OBSERVE_AS_WELL );
 

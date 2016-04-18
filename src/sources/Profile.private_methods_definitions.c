@@ -243,7 +243,7 @@ oyProfile_s_ *  oyProfile_FromFile_  ( const char        * name,
   if(!oyToNoCacheRead_m(flags) || !oyToNoCacheWrite_m(flags))
   {
     if(!oy_profile_s_file_cache_)
-      oy_profile_s_file_cache_ = oyStructList_New_( 0 );
+      oy_profile_s_file_cache_ = (oyStructList_s_*)oyStructList_Create( oyOBJECT_NONE, "oy_profile_s_file_cache_", 0 );
 
     if(!object)
     {

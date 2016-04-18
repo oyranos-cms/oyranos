@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Oyranos 0.9\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2016-04-16 22:05+0200\n"
+"POT-Creation-Date: 2016-04-18 14:48+0200\n"
 "PO-Revision-Date: 2015-02-20 17:32+0100\n"
 "Last-Translator: Kai-Uwe Behrmann <ku.b@gmx.de>\n"
 "Language-Team: russian <ru@li.org>\n"
@@ -21,7 +21,7 @@ msgstr ""
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Language: ru_RU\n"
 
-#: liboyranos_core/oyranos_core.c:387 tools/qcmsevents/qcmsevents.cpp:191
+#: liboyranos_core/oyranos_core.c:392 tools/qcmsevents/qcmsevents.cpp:191
 #: examples/devices/test_device.c:367 examples/devices/test_device.c:382
 #: examples/devices/test_device.c:396 examples/devices/test_device.c:417
 #: examples/devices/test_device.c:439 examples/devices/test_device.c:798
@@ -3682,7 +3682,7 @@ msgstr ""
 msgid "Viewing conditions description"
 msgstr ""
 
-#: liboyranos_core/oyranos_core.c:384 tools/qcmsevents/qcmsevents.cpp:188
+#: liboyranos_core/oyranos_core.c:389 tools/qcmsevents/qcmsevents.cpp:188
 #: examples/devices/test_device.c:434
 #, c-format
 msgid "WARNING"

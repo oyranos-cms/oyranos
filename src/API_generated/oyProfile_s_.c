@@ -123,7 +123,7 @@ static int oy_profile_first = 0;
  */
 int oyProfile_Init__Members( oyProfile_s_ * profile )
 {
-  profile->tags_ = oyStructList_Create( profile->type_, 0, 0 );
+  profile->tags_ = oyStructList_Create( profile->type_, "Profile tags", 0 );
   profile->tags_modified_ = 0;
 
   if(oy_profile_first)
@@ -655,7 +655,7 @@ oyProfile_s_ *  oyProfile_FromFile_  ( const char        * name,
   if(!oyToNoCacheRead_m(flags) || !oyToNoCacheWrite_m(flags))
   {
     if(!oy_profile_s_file_cache_)
-      oy_profile_s_file_cache_ = oyStructList_New_( 0 );
+      oy_profile_s_file_cache_ = (oyStructList_s_*)oyStructList_Create( oyOBJECT_NONE, "oy_profile_s_file_cache_", 0 );
 
     if(!object)
     {

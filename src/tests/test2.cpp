@@ -1895,7 +1895,7 @@ static oyStructList_s * oy_test_cache_ = NULL;
 oyStructList_s *   pluginGetPrivatesCache ( )
 {
   if(!oy_test_cache_)
-    oy_test_cache_ = oyStructList_New( 0 );
+    oy_test_cache_ = oyStructList_Create( oyOBJECT_NONE, "oy_test_cache_ p", 0 );
 
   return oy_test_cache_;
 }
@@ -5798,7 +5798,7 @@ oyTESTRESULT_e testICCsCheck()
 oyHash_s *   oyTestCacheListGetEntry_ ( const char        * hash_text)
 {
   if(!oy_test_cache_)
-    oy_test_cache_ = oyStructList_New( 0 );
+    oy_test_cache_ = oyStructList_Create( oyOBJECT_NONE, "oy_test_cache_", 0 );
 
   return oyCacheListGetEntry_(oy_test_cache_, 0, hash_text);
 }

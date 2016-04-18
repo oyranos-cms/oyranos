@@ -710,7 +710,10 @@ oyStructList_s * oyStructList_Create ( oyOBJECT_e          parent_type,
 
   s->parent_type_ = parent_type;
   if(list_name)
+  {
     s->list_name = oyStringAppend_(0, list_name, s->oy_->allocateFunc_);
+    oyObject_SetNames( s->oy_, list_name,list_name,list_name );
+  }
 
   return (oyStructList_s*)s;
 }

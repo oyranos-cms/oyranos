@@ -78,7 +78,7 @@ static int oy_profile_first = 0;
  */
 int oyProfile_Init__Members( oyProfile_s_ * profile )
 {
-  profile->tags_ = oyStructList_Create( profile->type_, 0, 0 );
+  profile->tags_ = oyStructList_Create( profile->type_, "Profile tags", 0 );
   profile->tags_modified_ = 0;
 
   if(oy_profile_first)

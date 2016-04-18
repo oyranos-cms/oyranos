@@ -653,7 +653,7 @@ oyStructList_s * oy_cmm_cache_ = 0;
 oyHash_s *   oyCMMCacheListGetEntry_ ( const char        * hash_text)
 {
   if(!oy_cmm_cache_)
-    oy_cmm_cache_ = oyStructList_New( 0 );
+    oy_cmm_cache_ = oyStructList_Create( 0, "oy_cmm_cache_", 0 );
 
   if(oy_debug > 3)
     DBGs1_S(oy_cmm_cache_,"%s", hash_text)
@@ -932,7 +932,7 @@ oyCMMhandle_s *  oyCMMFromCache_     ( const char        * lib_name )
 
   if(error <= 0 && !oy_cmm_infos_)
   {
-    oy_cmm_infos_ = oyStructList_New( 0 );
+    oy_cmm_infos_ = oyStructList_Create( 0, "oy_cmm_infos_", 0 );
     error = !oy_cmm_infos_;
   }
 
@@ -1250,7 +1250,7 @@ int          oyCMMdsoReference_    ( const char        * lib_name,
 
   if(!oy_cmm_handles_)
   {
-    oy_cmm_handles_ = oyStructList_New( 0 );
+    oy_cmm_handles_ = oyStructList_Create( 0, "oy_cmm_handles_", 0 );
     error = !oy_cmm_handles_;
   }
 

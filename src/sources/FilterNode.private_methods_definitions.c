@@ -504,7 +504,7 @@ oyStructList_s * oyFilterNode_GetData_(oyFilterNode_s_    * node,
 
   if(error <= 0)
   {
-    datas = oyStructList_New(0);
+    datas = oyStructList_Create(0, "oyFilterNode_GetData_", 0);
 
     if(get_plug)
     {

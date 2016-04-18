@@ -336,6 +336,7 @@ OYAPI oyProfiles_s * OYEXPORT
 {
   oyProfiles_s * s = oyProfiles_New( object ),
                * tmps = oyProfiles_New( object );
+  const char * name = "profile cache from oyProfiles_Create()";
   int error = 0;
 
   oyProfile_s * tmp = 0, * pattern = 0;
@@ -396,6 +397,7 @@ OYAPI oyProfiles_s * OYEXPORT
 #endif
       }
       oyProfiles_Release(&oy_profile_list_cache_);
+      oyObject_SetNames( tmps->oy_, name,name,name );
       oy_profile_list_cache_ = tmps;
       oyFree_m_(sort);
     }

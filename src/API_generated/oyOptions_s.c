@@ -710,9 +710,9 @@ int            oyOptions_CopyFrom    ( oyOptions_s      ** list,
       if(oyOptionsPriv_m(s)->list_ || oyOptionsPriv_m(from)->list_)
       {
         if(!oyOptionsPriv_m(s)->list_)
-          oyOptionsPriv_m(s)->list_ = oyStructList_New( 0 );
+          oyOptionsPriv_m(s)->list_ = oyStructList_Create( oyOBJECT_OPTIONS_S, "oyOptions_CopyFrom", 0 );
         if(!oyOptionsPriv_m(from)->list_)
-          oyOptionsPriv_m(from)->list_ = oyStructList_New( 0 );
+          oyOptionsPriv_m(from)->list_ = oyStructList_Create( oyOBJECT_OPTIONS_S, "oyOptions_CopyFrom", 0 );
       }
       error = oyOptions_SetOpts( s, from );
 

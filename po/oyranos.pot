@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Oyranos 0.9\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2016-04-17 22:52+0200\n"
+"POT-Creation-Date: 2016-04-18 14:48+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -465,13 +465,13 @@ msgstr ""
 msgid "Image Socket"
 msgstr ""
 
-#: liboyranos_core/oyranos_core.c:384 tools/qcmsevents/qcmsevents.cpp:188
+#: liboyranos_core/oyranos_core.c:389 tools/qcmsevents/qcmsevents.cpp:188
 #: examples/devices/test_device.c:434
 #, c-format
 msgid "WARNING"
 msgstr ""
 
-#: liboyranos_core/oyranos_core.c:387 tools/qcmsevents/qcmsevents.cpp:191
+#: liboyranos_core/oyranos_core.c:392 tools/qcmsevents/qcmsevents.cpp:191
 #: examples/devices/test_device.c:367 examples/devices/test_device.c:382
 #: examples/devices/test_device.c:396 examples/devices/test_device.c:417
 #: examples/devices/test_device.c:439 examples/devices/test_device.c:798
