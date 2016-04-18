@@ -309,6 +309,9 @@ int                oyStringAddPrintf ( char             ** string,
   {
     text_copy = oyStringAppend_(*string, text, allocateFunc);
 
+    if(!deallocFunc)
+      deallocFunc = oyDeAllocateFunc_;
+
     if(deallocFunc)
       deallocFunc(*string);
     *string = text_copy;
