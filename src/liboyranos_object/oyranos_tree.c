@@ -1,3 +1,17 @@
+/** @file oyranos_tree.c
+ *
+ *  Oyranos is an open source Color Management System 
+ *
+ *  @par Copyright:
+ *            2004-2016 (C) Kai-Uwe Behrmann
+ *
+ *  @brief    public Oyranos API's
+ *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
+ *  @par License:
+ *            new BSD <http://www.opensource.org/licenses/BSD-3-Clause>
+ *  @since    2016/04/14
+ */
+
 #include <oyranos_object_internal.h>
 
 #include "oyObject_s.h"
