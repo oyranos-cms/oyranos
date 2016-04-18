@@ -265,6 +265,8 @@ void               oyStringAdd_      ( char             ** text,
 
   text_copy = oyStringAppend_(*text, append, allocateFunc);
 
+  if(!deallocFunc) deallocFunc = oyDeAllocateFunc_;
+
   if(text && *text && deallocFunc)
     deallocFunc(*text);
 
@@ -850,6 +852,8 @@ void oyStringListFreeDoubles_        ( char         ** list,
       i,
       pos = n ? 1 : 0;
 
+  if(!deallocateFunc) deallocateFunc = oyDeAllocateFunc_;
+
   for(i = pos; i < n; ++i)
   {
     int k, found = 0;
@@ -879,6 +883,8 @@ void          oyStringListRelease_    ( char          *** l,
   char *** list = l;
 
   DBG_MEM_START
+
+  if(!deallocFunc) deallocFunc = oyDeAllocateFunc_;
 
   if( l )
   {
