@@ -11,7 +11,7 @@ const char * (*oyStruct_GetTextFromModule_p) (
 
 /** Function oyStruct_GetText
  *  @memberof oyStruct_s
- *  @brief   get a text dump
+ *  @brief   Get a text dump
  *
  *  Ask the object type module for text informations.
  *
@@ -20,11 +20,12 @@ const char * (*oyStruct_GetTextFromModule_p) (
  *  @param         flags
  *                                     - 0: get object infos
  *                                     - 1: get object type infos
+ *                                     - 2: skip object type infos
  *  @return                            the text
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.9.6
+ *  @date    2016/04/18
  *  @since   2009/09/14 (Oyranos: 0.1.10)
- *  @date    2009/09/15
  */
 const char * oyStruct_GetText        ( oyStruct_s        * obj,
                                        oyNAME_e            name_type,
@@ -81,6 +82,13 @@ const char * oyStruct_GetText        ( oyStruct_s        * obj,
   }
 
   if(!error && !text)
+  {
+    text = oyStruct_GetInfo( obj, (flags&0x02) ? 0x01 : 0 );
+    if(text && !text[0])
+      text = 0;
+  }
+
+  if(!error && !text && !(flags & 0x02))
     text = oyStructTypeToText( obj->type_ );
 
   return text;

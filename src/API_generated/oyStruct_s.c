@@ -108,7 +108,11 @@ const char * oyStruct_GetText        ( oyStruct_s        * obj,
   }
 
   if(!error && !text)
+  {
     text = oyStruct_GetInfo( obj, (flags&0x02) ? 0x01 : 0 );
+    if(text && !text[0])
+      text = 0;
+  }
 
   if(!error && !text && !(flags & 0x02))
     text = oyStructTypeToText( obj->type_ );
