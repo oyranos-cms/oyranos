@@ -111,7 +111,7 @@ int oyStruct_RegisterStaticMessageFunc (
  *                                     become invalid after further using the
  *                                     object pointed to by context.
  *  @version Oyranos: 0.9.6
- *  @date    2016/03/30
+ *  @date    2016/04/18
  *  @since   2011/01/15 (Oyranos: 0.2.1)
  */
 const char *   oyStruct_GetInfo      ( oyPointer           context_object,
@@ -128,7 +128,7 @@ const char *   oyStruct_GetInfo      ( oyPointer           context_object,
   {
     f = oy_static_msg_funcs_[c->type_];
     if(f)
-      text = f( c, 0 );
+      text = f( c, flags );
   }
 
   if(text == NULL && !(flags & 0x01) )
