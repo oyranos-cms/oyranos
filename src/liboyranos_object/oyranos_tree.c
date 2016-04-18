@@ -43,7 +43,7 @@ int                oyStruct_GetChildren (
                                        oyStruct_s        * obj,
                                        oyStruct_s      *** list )
 {
-  #define oy_c_max 32
+  #define oy_c_max 120
   static oyStruct_s * c[oy_c_max];
   int n = 0, i = 0;
 
