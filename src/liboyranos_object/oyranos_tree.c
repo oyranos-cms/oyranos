@@ -580,13 +580,6 @@ char * oyObjectTreeDotGraphCallbackGetDescription( oyStruct_s * s )
              * text = oyStruct_GetText( s, oyNAME_NICK, 1 );
   char * t, *t2, *t3, *desc = NULL;
 
-  if(strstr(nick,"Conversion"))
-    /* make it *big* */
-    oyStringAddPrintf( &desc, 0,0, "\\n\\n"
-                                   "############################\\n"
-                                   "########## Start ###########\\n"
-                                   "############################\\n" );
-
   if(strcmp(nick,text) == 0)
     return desc;
 
@@ -627,7 +620,22 @@ void oyObjectTreeDotGraphCallback    ( void              * user_data,
 
   /* emphasise with color */
   if(current->type_ == oyOBJECT_CONVERSION_S)
-    color = " color=\"white\"";
+    color = " color=\"RoyalBlue2\"";
+  else
+  if(current->type_ == oyOBJECT_FILTER_NODE_S)
+    color = " color=\"MediumSeaGreen\"";
+  else
+  if(current->type_ == oyOBJECT_FILTER_PLUG_S)
+    color = " color=\"LightBlue\"";
+  else
+  if(current->type_ == oyOBJECT_FILTER_SOCKET_S)
+    color = " color=\"brown2\"";
+  else
+  if(current->type_ == oyOBJECT_PIXEL_ACCESS_S)
+    color = " color=\"RoyalBlue3\"";
+  else
+  if(current->type_ == oyOBJECT_PROFILE_S)
+    color = " color=\"SlateBlue\"";
 
   oyStringAddPrintf( &graphs[top].text2, 0,0, "%d [label=\"%s id=%d refs=%d%s%s\"%s];\n",
                      id, oyStructTypeToText( current->type_ ), id, oyObject_GetRefCount(current->oy_), desc?"\\n":"", desc?desc:"", color );
