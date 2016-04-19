@@ -1084,7 +1084,7 @@ oyProfile_GetChannelName           ( oyProfile_s   * profile,
  *  @memberof oyProfile_s
  *  @brief    Get unique name
  *
- *  the returned string is identical to oyNAME_ID
+ *  the returned string is identical to oyNAME_NICK
  *
  *  @since Oyranos: version 0.1.8
  *  @date  26 november 2007 (API 0.1.8)

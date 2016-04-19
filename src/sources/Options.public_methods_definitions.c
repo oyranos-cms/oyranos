@@ -766,7 +766,7 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
           STRING_ADD ( text, "\n" );
           for(k = 0; k < indent+j_n-1; ++k)
             STRING_ADD ( text, " " );
-          STRING_ADD ( text, oyOption_GetText( o, oyNAME_XML_VALUE ) );
+          STRING_ADD ( text, oyOption_GetText( o, oyNAME_NAME ) );
           close_oy_struct = 1;
         }
         else

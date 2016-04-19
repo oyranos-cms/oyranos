@@ -54,13 +54,38 @@ int            oyGuiMessageFunc      ( int                 code,
 int            oyMessageFuncSet      ( oyMessage_f         message_func );
 extern         oyMessage_f             oyMessageFunc_p;
 
+/** @enum    oyNAME_e
+ *  @brief   Information level
+ *  @ingroup objects_generic
+ *
+ *  Messages consist of text, which contains information depending on the
+ *  purpose. The information provider obtains with this enum a brief request,
+ *  what to put into a information request.
+ *
+ *  @version Oyranos: 0.1.8
+ *  @since   2007/10/00 (Oyranos: 0.1.8)
+ *  @date    2007/10/00
+ */
+typedef enum {
+  oyNAME_NAME,                         /**< a short text describing the object
+                                            or information in some few words;
+                                            e.g. "ICC Color Profile" */
+  oyNAME_NICK,                         /**< a very short text of few letters,
+                                            very likely one word; e.g. "ICC" */
+  oyNAME_DESCRIPTION                   /**< Some sentences as useful in help
+                                            texts and other richer
+                                            representations. */
+} oyNAME_e;
+
 typedef const char * (*oyStruct_RegisterStaticMessageFunc_f)
                                      ( oyPointer           context,
+                                       oyNAME_e            type,
                                        int                 flags );
 int            oyStruct_RegisterStaticMessageFunc (
                                        int                 type,
                                        oyStruct_RegisterStaticMessageFunc_f f);
 const char *   oyStruct_GetInfo      ( oyPointer           context,
+                                       oyNAME_e            type,
                                        int                 flags );
 
 int            oyVersion             ( int                 type );

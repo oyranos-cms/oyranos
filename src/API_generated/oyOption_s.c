@@ -221,8 +221,7 @@ const char *   oyOption_GetText      ( oyOption_s        * obj,
     }
 
   if(error <= 0 &&
-     ( type == oyNAME_NICK || type == oyNAME_NAME ||
-       type == oyNAME_XML_VALUE ))
+     ( type == oyNAME_NICK || type == oyNAME_NAME ))
   {
     int n = 1, i = 0, j;
     char * tmp = 0,
