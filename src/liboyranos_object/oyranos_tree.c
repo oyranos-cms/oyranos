@@ -400,6 +400,7 @@ struct oyLeave_s {
   int id;
   /* upper level */
   oyLeave_s * parent;
+  oyLeave_s * grandparent;
 };
 
 int                oyObjectStructTreeContains (
@@ -441,6 +442,7 @@ int                oyObjectStructTreeContains (
 typedef void (*oyObjectTreeCallback_f)(void              * user_data,
                                        int                 top,
                                        oyLeave_s         * tree,
+                                       oyStruct_s        * grandparent,
                                        oyStruct_s        * parent,
                                        oyStruct_s        * current,
                                        oyStruct_s       ** children,
@@ -457,6 +459,7 @@ static int cntx = 0;
 static int cntx_mem = 0;
 oyLeave_s *          oyObjectIdListGetStructTree (
                                        int                 top,
+                                       oyLeave_s         * grandparent,
                                        oyLeave_s         * parent,
                                        int               * ids,
                                        int                 id,
@@ -479,6 +482,7 @@ oyLeave_s *          oyObjectIdListGetStructTree (
   l->obj = obj;
   l->id = id;
   l->parent = parent;
+  l->grandparent = grandparent;
 
   cntx_mem += sizeof(oyLeave_s);
   if(oy_debug_memory) printf("%d %d mem: %d\n", cntx++, level, cntx_mem);
@@ -501,13 +505,16 @@ oyLeave_s *          oyObjectIdListGetStructTree (
     {
       int i_id = oyStruct_GetId(l->list[i]);
 
-      l->children[i] = oyObjectIdListGetStructTree( top, l, ids, i_id, level+1, func, user_data );
+      l->children[i] = oyObjectIdListGetStructTree( top, parent, l, ids, i_id, level+1, func, user_data );
       /* remember the parent to traverse the actual tree */
       if(l->children[i])
+      {
         l->children[i]->parent = l;
+        l->children[i]->grandparent = parent;
+      }
     }
   }
-  if(func) func( user_data, top, l, l->parent?l->parent->obj:NULL, l->obj, l->list, l->n, level );
+  if(func) func( user_data, top, l, l->grandparent?l->grandparent->obj:NULL, l->parent?l->parent->obj:NULL, l->obj, l->list, l->n, level );
   return l;
 }
 
@@ -521,7 +528,7 @@ int                oyObjectIdListTraverseStructTrees (
   oyLeave_s ** ts = myCalloc( sizeof( oyLeave_s* ), oy_object_list_max_count_ );
   for(i = 0; i < oy_object_list_max_count_; ++i)
     if(ids[i] > 0)
-      ts[n++] = oyObjectIdListGetStructTree( i, 0, ids, i, flags & 0x01 ? -oy_object_list_max_count_ : 0, func, user_data );
+      ts[n++] = oyObjectIdListGetStructTree( i, 0, 0, ids, i, flags & 0x01 ? -oy_object_list_max_count_ : 0, func, user_data );
 
   /* TODO: release trees */
 
@@ -539,6 +546,7 @@ typedef struct oyTreeData_s {
 void oyObjectTreePrintCallback       ( void              * user_data,
                                        int                 top,
                                        oyLeave_s         * tree,
+                                       oyStruct_s        * grandparent,
                                        oyStruct_s        * parent,
                                        oyStruct_s        * current,
                                        oyStruct_s       ** children,
@@ -596,6 +604,7 @@ char * oyObjectTreeDotGraphCallbackGetDescription( oyStruct_s * s )
 void oyObjectTreeDotGraphCallback    ( void              * user_data,
                                        int                 top,
                                        oyLeave_s         * tree,
+                                       oyStruct_s        * grandparent,
                                        oyStruct_s        * parent,
                                        oyStruct_s        * current,
                                        oyStruct_s       ** children,
@@ -605,7 +614,7 @@ void oyObjectTreeDotGraphCallback    ( void              * user_data,
   oyTreeData_s * graphs = (oyTreeData_s*) user_data;
   int id = oyStruct_GetId(current), i,k;
   char * desc = 0;
-  const char * color = "";
+  const char * node = "";
 
   /* Non identifyable objects map to different trees, which is ambiguous. */
   if(id < 0)
@@ -620,30 +629,48 @@ void oyObjectTreeDotGraphCallback    ( void              * user_data,
 
   /* emphasise with color */
   if(current->type_ == oyOBJECT_CONVERSION_S)
-    color = " color=\"RoyalBlue2\"";
+    node = " fillcolor=\"RoyalBlue2\"";
   else
-  if(current->type_ == oyOBJECT_FILTER_NODE_S)
-    color = " color=\"MediumSeaGreen\"";
+  if(current->type_ == oyOBJECT_FILTER_NODE_S ||
+     current->type_ == oyOBJECT_FILTER_CORE_S)
+    node = " fillcolor=\"MediumSeaGreen\"";
   else
-  if(current->type_ == oyOBJECT_FILTER_PLUG_S)
-    color = " color=\"LightBlue\"";
+  if(current->type_ == oyOBJECT_CMM_API6_S ||
+     current->type_ == oyOBJECT_CMM_API4_S ||
+     current->type_ == oyOBJECT_CMM_API7_S)
+    node = " fillcolor=\"white\" color=\"MediumSeaGreen\" style=\"filled,rounded,bold\"";
+  else
+  if(current->type_ == oyOBJECT_FILTER_PLUG_S ||
+     current->type_ == oyOBJECT_FILTER_PLUGS_S ||
+     (current->type_ == oyOBJECT_STRUCT_LIST_S &&
+      desc && strstr(desc,"FilterPlug") != NULL))
+    node = " fillcolor=\"LightBlue\"";
   else
   if(current->type_ == oyOBJECT_FILTER_SOCKET_S)
-    color = " color=\"brown2\"";
+    node = " fillcolor=\"brown2\"";
   else
   if(current->type_ == oyOBJECT_PIXEL_ACCESS_S)
-    color = " color=\"RoyalBlue3\"";
+    node = " fillcolor=\"RoyalBlue3\"";
   else
-  if(current->type_ == oyOBJECT_PROFILE_S)
-    color = " color=\"SlateBlue\"";
+  if(current->type_ == oyOBJECT_PROFILE_S ||
+     current->type_ == oyOBJECT_PROFILES_S ||
+     current->type_ == oyOBJECT_PROFILE_TAG_S ||
+     (current->type_ == oyOBJECT_STRUCT_LIST_S &&
+     desc && strstr(desc,"ProfileTag") != NULL))
+    node = " fillcolor=\"SlateBlue\"";
+  else
+  if(current->type_ == oyOBJECT_IMAGE_S ||
+     current->type_ == oyOBJECT_ARRAY2D_S)
+    node = " fillcolor=\"orange\"";
 
   oyStringAddPrintf( &graphs[top].text2, 0,0, "%d [label=\"%s id=%d refs=%d%s%s\"%s];\n",
-                     id, oyStructTypeToText( current->type_ ), id, oyObject_GetRefCount(current->oy_), desc?"\\n":"", desc?desc:"", color );
+                     id, oyStructTypeToText( current->type_ ), id, oyObject_GetRefCount(current->oy_), desc?"\\n":"", desc?desc:"", node );
   if(desc) oyFree_m_( desc );
 
   for(i = 0; i < children_n; ++i)
   {
     int i_id;
+    const char * edge = "";
     if(!children[i])
       continue;
 
@@ -651,10 +678,27 @@ void oyObjectTreeDotGraphCallback    ( void              * user_data,
     if(i_id < 0)
       continue;
 
+#define IS_EDGE_TYPES( t1,t2 ) ((current->type_ == t1 && children[i]->type_ == t2) || (current->type_ == t2 && children[i]->type_ == t1))
+    if IS_EDGE_TYPES(oyOBJECT_PIXEL_ACCESS_S,oyOBJECT_FILTER_PLUG_S)
+      edge = " [weight=\"3\" color=\"RoyalBlue4\" penwidth=\"3.0\"]"; else
+    if IS_EDGE_TYPES(oyOBJECT_CONVERSION_S,oyOBJECT_FILTER_NODE_S)
+      edge = " [color=\"RoyalBlue4\" penwidth=\"3.0\"]"; else
+    if IS_EDGE_TYPES(oyOBJECT_FILTER_NODE_S,oyOBJECT_FILTER_SOCKET_S)
+      edge = " [weight=\"5\" color=\"RoyalBlue4\" penwidth=\"3.0\"]"; else
+    if IS_EDGE_TYPES(oyOBJECT_FILTER_SOCKET_S,oyOBJECT_FILTER_PLUGS_S)
+      edge = " [weight=\"5\" color=\"RoyalBlue4\" penwidth=\"3.0\"]"; else
+    if IS_EDGE_TYPES(oyOBJECT_FILTER_SOCKET_S,oyOBJECT_FILTER_PLUG_S)
+      edge = " [weight=\"0\"]"; else
+    if IS_EDGE_TYPES(oyOBJECT_FILTER_PLUGS_S,oyOBJECT_STRUCT_LIST_S)
+      edge = " [weight=\"5\" color=\"RoyalBlue4\" penwidth=\"3.0\"]"; else
+    if (IS_EDGE_TYPES(oyOBJECT_STRUCT_LIST_S,oyOBJECT_FILTER_PLUG_S) && parent && parent->type_ == oyOBJECT_FILTER_PLUGS_S && grandparent && grandparent->type_ == oyOBJECT_FILTER_SOCKET_S)
+      edge = " [weight=\"5\" color=\"RoyalBlue4\" penwidth=\"3.0\"]"; else
+    if IS_EDGE_TYPES(oyOBJECT_FILTER_PLUG_S,oyOBJECT_FILTER_NODE_S)
+      edge = " [weight=\"5\" color=\"RoyalBlue4\" penwidth=\"3.0\"]";
     for(k = 0; k < level; ++k)
       oyStringAddPrintf( &graphs[top].text, 0,0, "- ");
-    oyStringAddPrintf( &graphs[top].text, 0,0, "%d -> %d;\n",
-                       id, i_id );
+    oyStringAddPrintf( &graphs[top].text, 0,0, "%d -> %d%s;\n",
+                       id, i_id, edge );
     if(graphs->flags & 0x02)
       desc = oyObjectTreeDotGraphCallbackGetDescription( children[i] );
     oyStringAddPrintf( &graphs[top].text2, 0,0, "%d [label=\"%s id=%d refs=%d%s%s%s\"];\n",

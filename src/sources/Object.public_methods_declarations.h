@@ -58,6 +58,7 @@ typedef struct oyLeave_s oyLeave_s;
 typedef void (*oyObjectTreeCallback_f)(void              * user_data,
                                        int                 top_id,
                                        oyLeave_s         * tree,
+                                       oyStruct_s        * grandparent,
                                        oyStruct_s        * parent,
                                        oyStruct_s        * current,
                                        oyStruct_s       ** children,
