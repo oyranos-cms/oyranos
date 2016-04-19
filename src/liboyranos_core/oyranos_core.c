@@ -78,6 +78,9 @@ int oyStruct_RegisterStaticMessageFunc (
 
 
     tmp = oyAllocateFunc_(sizeof(oyStruct_RegisterStaticMessageFunc_f) * n);
+    if(tmp)
+      memset( tmp, 0, sizeof(oyStruct_RegisterStaticMessageFunc_f) * n );
+
     if(tmp && oy_msg_func_n_)
       memcpy( tmp, oy_static_msg_funcs_, sizeof(oyStruct_RegisterStaticMessageFunc_f) * oy_msg_func_n_ );
     else if(!tmp)
