@@ -179,7 +179,24 @@ static const char * oyFilterCore_StaticMessageFunc_ (
     sprintf(text, "%s%s", oyStructTypeToText( s->type_ ), type != oyNAME_NICK?" ":"");
 
   
+
   
+  if(type == oyNAME_NICK && (flags & 0x01))
+  {
+    sprintf( &text[strlen(text)], "%s",
+             s->category_
+           );
+  } else
+  if(type == oyNAME_NAME)
+    sprintf( &text[strlen(text)], "%s %s",
+             s->category_, s->registration_
+           );
+  else
+  if((int)type >= oyNAME_DESCRIPTION)
+    sprintf( &text[strlen(text)], "category: %s\nreg: %s",
+             s->category_, s->registration_
+           );
+
 
   return text;
 }

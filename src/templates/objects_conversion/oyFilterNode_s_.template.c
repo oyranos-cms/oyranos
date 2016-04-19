@@ -34,3 +34,23 @@
   oyObject_Ref(s->oy_);
   }
 {% endblock %}
+
+{% block customStaticMessage %}
+{{ block.super }}
+  if(type == oyNAME_NICK && (flags & 0x01))
+  {
+    sprintf( &text[strlen(text)], "%s",
+             s->api7_->registration
+           );
+  } else
+  if(type == oyNAME_NAME)
+    sprintf( &text[strlen(text)], "%s %d/%d",
+             s->api7_->registration, s->plugs_n_, s->sockets_n_
+           );
+  else
+  if((int)type >= oyNAME_DESCRIPTION)
+    sprintf( &text[strlen(text)], "reg: %s\nrelatives: %s\nplugs: %d sockets: %d context: %s",
+             s->api7_->registration, s->relatives_,
+             s->plugs_n_, s->sockets_n_, s->api7_->context_type
+           );
+{% endblock %}

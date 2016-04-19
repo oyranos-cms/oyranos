@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Oyranos 0.9\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2016-04-19 11:51+0200\n"
+"POT-Creation-Date: 2016-04-19 16:16+0200\n"
 "PO-Revision-Date: 2015-02-20 17:32+0100\n"
 "Last-Translator: Kai-Uwe Behrmann <ku.b@gmx.de>\n"
 "Language-Team: russian <ru@li.org>\n"
@@ -2089,17 +2089,17 @@ msgstr ""
 #: API_generated/oyFilterPlugs_s_.c:195 API_generated/oyNamedColor_s_.c:221
 #: API_generated/oyFilterGraph_s_.c:201 API_generated/oyImage_s.c:352
 #: API_generated/oyCMMinfo_s_.c:202 API_generated/oyPixelAccess_s_.c:225
-#: API_generated/oyBlob_s_.c:210 API_generated/oyHash_s_.c:192
+#: API_generated/oyBlob_s_.c:210 API_generated/oyHash_s_.c:229
 #: API_generated/oyCMMapi6_s_.c:202 API_generated/oyCMMapi9_s_.c:202
 #: API_generated/oyranos_module.c:1561 API_generated/oyOptions_s_.c:196
-#: API_generated/oyCMMapi7_s_.c:202 API_generated/oyCMMapi_s_.c:195
+#: API_generated/oyCMMapi7_s_.c:252 API_generated/oyCMMapi_s_.c:195
 #: API_generated/oyConfigs_s_.c:195 API_generated/oyProfileTag_s_.c:171
 #: API_generated/oyCMMapi5_s_.c:189 API_generated/oyConfig_s_.c:212
 #: API_generated/oyList_s_.c:165 API_generated/oyCMMobjectType_s_.c:192
 #: API_generated/oyStructList_s_.c:239 API_generated/oyName_s_.c:47
-#: API_generated/oyName_s_.c:55 API_generated/oyFilterNode_s_.c:230
+#: API_generated/oyName_s_.c:55 API_generated/oyFilterNode_s_.c:248
 #: API_generated/oyConnector_s_.c:201 API_generated/oyCMMapi3_s_.c:189
-#: API_generated/oyOption_s_.c:218 API_generated/oyFilterCore_s.c:200
+#: API_generated/oyOption_s_.c:258 API_generated/oyFilterCore_s.c:200
 #: API_generated/oyCMMapi8_s_.c:202 API_generated/oyCMMapiFilters_s_.c:195
 #: API_generated/oyCMMapi10_s_.c:198 API_generated/oyArray2d_s_.c:215
 #: API_generated/oyCMMapis_s_.c:195 API_generated/oyFilterNodes_s_.c:195
@@ -2110,7 +2110,7 @@ msgstr ""
 #: API_generated/oyProfile_s_.c:287 API_generated/oyConnectorImaging_s_.c:257
 #: API_generated/oyCMMapiFilter_s_.c:199 API_generated/oyProfiles_s_.c:195
 #: API_generated/oyRectangle_s_.c:191 API_generated/oyCMMapi4_s.c:223
-#: API_generated/oyLis_s_.c:187 API_generated/oyFilterCore_s_.c:208
+#: API_generated/oyLis_s_.c:187 API_generated/oyFilterCore_s_.c:225
 #: API_generated/oyranos_devices.c:3599 API_generated/oyNamedColors_s_.c:186
 #: liboyranos/oyranos_alpha.c:278 liboyranos_modules/oyranos_forms.c:57
 msgid "MEM Error."
@@ -3050,7 +3050,7 @@ msgstr ""
 msgid "Show which policy matches by combining all involved settings."
 msgstr ""
 
-#: API_generated/oyFilterNode_s_.c:1181 API_generated/oyObserver_s.c:360
+#: API_generated/oyFilterNode_s_.c:1199 API_generated/oyObserver_s.c:360
 #: API_generated/oyObserver_s.c:371 API_generated/oyObserver_s.c:572
 #: API_generated/oyObserver_s.c:650 API_generated/oyObserver_s_.c:53
 #: examples/image_display/oyranos_display_helper_classes_fltk.cpp:47
@@ -3912,7 +3912,7 @@ msgid "enable simple defaults"
 msgstr ""
 
 #: API_generated/oyranos_module.c:2011 API_generated/oyConversion_s.c:187
-#: API_generated/oyFilterNode_s_.c:567 API_generated/oyranos_devices.c:2676
+#: API_generated/oyFilterNode_s_.c:585 API_generated/oyranos_devices.c:2676
 #: API_generated/oyranos_devices.c:3182
 msgid "error in module:"
 msgstr ""
