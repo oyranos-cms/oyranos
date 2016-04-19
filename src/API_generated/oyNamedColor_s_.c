@@ -157,6 +157,45 @@ int oyNamedColor_Copy__Members( oyNamedColor_s_ * dst, oyNamedColor_s_ * src)
 
 
 
+static int oy_namedcolor_init_ = 0;
+static const char * oyNamedColor_StaticMessageFunc_ (
+                                       oyPointer           obj,
+                                       oyNAME_e            type,
+                                       int                 flags )
+{
+  oyNamedColor_s_ * s = (oyNamedColor_s_*) obj;
+  static char * text = 0;
+  static int text_n = 0;
+  oyAlloc_f alloc = oyAllocateFunc_;
+
+  /* silently fail */
+  if(!s)
+   return "";
+
+  if(s->oy_ && s->oy_->allocateFunc_)
+    alloc = s->oy_->allocateFunc_;
+
+  if( text == NULL || text_n == 0 )
+  {
+    text_n = 128;
+    text = (char*) alloc( text_n );
+    if(text)
+      memset( text, 0, text_n );
+  }
+
+  if( text == NULL || text_n == 0 )
+    return "Memory problem";
+
+  text[0] = '\000';
+
+  if(!(flags & 0x01))
+    sprintf(text, "%s%s", oyStructTypeToText( s->type_ ), type != oyNAME_NICK?" ":"");
+
+  
+  
+
+  return text;
+}
 /** @internal
  *  Function oyNamedColor_New_
  *  @memberof oyNamedColor_s_
@@ -217,6 +256,13 @@ oyNamedColor_s_ * oyNamedColor_New_ ( oyObject_s object )
   
   
   
+
+  if(!oy_namedcolor_init_)
+  {
+    oy_namedcolor_init_ = 1;
+    oyStruct_RegisterStaticMessageFunc( type,
+                                        oyNamedColor_StaticMessageFunc_ );
+  }
 
   if(error)
     WARNc1_S("%d", error);

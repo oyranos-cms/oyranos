@@ -31,6 +31,45 @@
 {% endblock CustomPrivateMethodsDefinitions %}
 
 {% block GeneralPrivateMethodsDefinitions %}
+static int oy_{{ class.baseName|lower }}_init_ = 0;
+static const char * oy{{ class.baseName }}_StaticMessageFunc_ (
+                                       oyPointer           obj,
+                                       oyNAME_e            type,
+                                       int                 flags )
+{
+  {{ class.privName }} * s = ({{ class.privName }}*) obj;
+  static char * text = 0;
+  static int text_n = 0;
+  oyAlloc_f alloc = oyAllocateFunc_;
+
+  /* silently fail */
+  if(!s)
+   return "";
+
+  if(s->oy_ && s->oy_->allocateFunc_)
+    alloc = s->oy_->allocateFunc_;
+
+  if( text == NULL || text_n == 0 )
+  {
+    text_n = 128;
+    text = (char*) alloc( text_n );
+    if(text)
+      memset( text, 0, text_n );
+  }
+
+  if( text == NULL || text_n == 0 )
+    return "Memory problem";
+
+  text[0] = '\000';
+
+  if(!(flags & 0x01))
+    sprintf(text, "%s%s", oyStructTypeToText( s->type_ ), type != oyNAME_NICK?" ":"");
+
+  {% block customStaticMessage %}
+  {% endblock customStaticMessage %}
+
+  return text;
+}
 /** @internal
  *  Function oy{{ class.baseName }}_New_
  *  @memberof {{ class.privName }}
@@ -151,6 +190,13 @@
   error += oy{{ class.baseName }}_Init__Members( s );
   /* ---- end of custom {{ class.baseName }} constructor ------- */
   {% endifequal %}
+
+  if(!oy_{{ class.baseName|lower }}_init_)
+  {
+    oy_{{ class.baseName|lower }}_init_ = 1;
+    oyStruct_RegisterStaticMessageFunc( type,
+                                        oy{{ class.baseName }}_StaticMessageFunc_ );
+  }
 
   if(error)
     WARNc1_S("%d", error);

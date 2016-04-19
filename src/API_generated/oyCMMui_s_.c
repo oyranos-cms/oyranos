@@ -138,6 +138,45 @@ int oyCMMui_Copy__Members( oyCMMui_s_ * dst, oyCMMui_s_ * src)
 
 
 
+static int oy_cmmui_init_ = 0;
+static const char * oyCMMui_StaticMessageFunc_ (
+                                       oyPointer           obj,
+                                       oyNAME_e            type,
+                                       int                 flags )
+{
+  oyCMMui_s_ * s = (oyCMMui_s_*) obj;
+  static char * text = 0;
+  static int text_n = 0;
+  oyAlloc_f alloc = oyAllocateFunc_;
+
+  /* silently fail */
+  if(!s)
+   return "";
+
+  if(s->oy_ && s->oy_->allocateFunc_)
+    alloc = s->oy_->allocateFunc_;
+
+  if( text == NULL || text_n == 0 )
+  {
+    text_n = 128;
+    text = (char*) alloc( text_n );
+    if(text)
+      memset( text, 0, text_n );
+  }
+
+  if( text == NULL || text_n == 0 )
+    return "Memory problem";
+
+  text[0] = '\000';
+
+  if(!(flags & 0x01))
+    sprintf(text, "%s%s", oyStructTypeToText( s->type_ ), type != oyNAME_NICK?" ":"");
+
+  
+  
+
+  return text;
+}
 /** @internal
  *  Function oyCMMui_New_
  *  @memberof oyCMMui_s_
@@ -198,6 +237,13 @@ oyCMMui_s_ * oyCMMui_New_ ( oyObject_s object )
   
   
   
+
+  if(!oy_cmmui_init_)
+  {
+    oy_cmmui_init_ = 1;
+    oyStruct_RegisterStaticMessageFunc( type,
+                                        oyCMMui_StaticMessageFunc_ );
+  }
 
   if(error)
     WARNc1_S("%d", error);

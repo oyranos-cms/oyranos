@@ -1196,16 +1196,12 @@ oyCMMinfo_s *    oyCMMinfoFromLibName_(const char        * lib_name )
   oyCMMinfo_s * cmm_info = 0;
   oyCMMhandle_s * cmm_handle = 0;
   int error = !lib_name;
-  int found = 0;
 
   if(error <= 0)
   {
     cmm_handle = oyCMMFromCache_( lib_name );
     if(cmm_handle && cmm_handle->info && oyCMMinfo_GetApi( cmm_handle->info ))
-    {
       cmm_info = cmm_handle->info;
-      found = 1;
-    }
   }
 
   if(error <= 0 && !cmm_handle)
@@ -1482,7 +1478,7 @@ const char * oyStruct_GetTextFromModule (
     }
   }
 
-  if(!error && !text)
+  if(!error && !text && !(flags & 0x02))
     text = oyStructTypeToText( obj->type_ );
 
   return text;

@@ -137,6 +137,83 @@ int oyStructList_Copy__Members( oyStructList_s_ * dst, oyStructList_s_ * src)
 
 
 
+static int oy_structlist_init_ = 0;
+static const char * oyStructList_StaticMessageFunc_ (
+                                       oyPointer           obj,
+                                       oyNAME_e            type,
+                                       int                 flags )
+{
+  oyStructList_s_ * s = (oyStructList_s_*) obj;
+  static char * text = 0;
+  static int text_n = 0;
+  oyAlloc_f alloc = oyAllocateFunc_;
+
+  /* silently fail */
+  if(!s)
+   return "";
+
+  if(s->oy_ && s->oy_->allocateFunc_)
+    alloc = s->oy_->allocateFunc_;
+
+  if( text == NULL || text_n == 0 )
+  {
+    text_n = 128;
+    text = (char*) alloc( text_n );
+    if(text)
+      memset( text, 0, text_n );
+  }
+
+  if( text == NULL || text_n == 0 )
+    return "Memory problem";
+
+  text[0] = '\000';
+
+  if(!(flags & 0x01))
+    sprintf(text, "%s%s", oyStructTypeToText( s->type_ ), type != oyNAME_NICK?" ":"");
+
+  
+
+  
+  /* allocate enough space */
+  if(text_n < 1000)
+  {
+    oyDeAlloc_f dealloc = oyDeAllocateFunc_;
+    if(s->oy_ && s->oy_->deallocateFunc_)
+      dealloc = s->oy_->deallocateFunc_;
+    if(text && text_n)
+      dealloc( text );
+    text_n = 1024;
+    text = alloc(text_n);
+    if(text)
+      text[0] = '\000';
+    else
+      return "Memory Error";
+
+    if(!(flags & 0x01))
+      sprintf(text, "%s%s", oyStructTypeToText( s->type_ ), type != oyNAME_NICK?" ":"");
+  }
+
+  if(type == oyNAME_NICK && (flags & 0x01))
+    sprintf( &text[strlen(text)], "%s%d",
+             s->n_?"n: ":"", s->n_
+           );
+  else
+  if(type == oyNAME_NAME)
+    sprintf( &text[strlen(text)], "%s%s%s%d",
+             s->list_name?s->list_name:"", s->list_name?"\n":"",
+             s->n_?" n: ":"", s->n_
+           );
+  else
+  if((int)type >= oyNAME_DESCRIPTION)
+    sprintf( &text[strlen(text)], "%s%s%s%s%s%d",
+             s->list_name?s->list_name:"", s->list_name?"\n":"",
+             s->parent_type_?"parent: ":"", s->parent_type_?oyStructTypeToText(s->parent_type_):"",
+             " n: ", s->n_
+           );
+
+
+  return text;
+}
 /** @internal
  *  Function oyStructList_New_
  *  @memberof oyStructList_s_
@@ -197,6 +274,13 @@ oyStructList_s_ * oyStructList_New_ ( oyObject_s object )
   
   
   
+
+  if(!oy_structlist_init_)
+  {
+    oy_structlist_init_ = 1;
+    oyStruct_RegisterStaticMessageFunc( type,
+                                        oyStructList_StaticMessageFunc_ );
+  }
 
   if(error)
     WARNc1_S("%d", error);

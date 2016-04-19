@@ -141,6 +141,55 @@ int oyArray2d_Copy__Members( oyArray2d_s_ * dst, oyArray2d_s_ * src)
 
 
 
+static int oy_array2d_init_ = 0;
+static const char * oyArray2d_StaticMessageFunc_ (
+                                       oyPointer           obj,
+                                       oyNAME_e            type,
+                                       int                 flags )
+{
+  oyArray2d_s_ * s = (oyArray2d_s_*) obj;
+  static char * text = 0;
+  static int text_n = 0;
+  oyAlloc_f alloc = oyAllocateFunc_;
+
+  /* silently fail */
+  if(!s)
+   return "";
+
+  if(s->oy_ && s->oy_->allocateFunc_)
+    alloc = s->oy_->allocateFunc_;
+
+  if( text == NULL || text_n == 0 )
+  {
+    text_n = 128;
+    text = (char*) alloc( text_n );
+    if(text)
+      memset( text, 0, text_n );
+  }
+
+  if( text == NULL || text_n == 0 )
+    return "Memory problem";
+
+  text[0] = '\000';
+
+  if(!(flags & 0x01))
+    sprintf(text, "%s%s", oyStructTypeToText( s->type_ ), type != oyNAME_NICK?" ":"");
+
+  
+
+  
+  if(type == oyNAME_NICK && (flags & 0x01))
+    sprintf( &text[strlen(text)], "%dx%d", s->width, s->height);
+  else
+  if(type == oyNAME_NAME)
+    sprintf( &text[strlen(text)], "%dx%d data_type: %d", s->width, s->height, s->t);
+  else
+  if((int)type >= oyNAME_DESCRIPTION)
+    sprintf( &text[strlen(text)], "%dx%d data_type: %s", s->width, s->height, oyDataTypeToText(s->t));
+
+
+  return text;
+}
 /** @internal
  *  Function oyArray2d_New_
  *  @memberof oyArray2d_s_
@@ -201,6 +250,13 @@ oyArray2d_s_ * oyArray2d_New_ ( oyObject_s object )
   
   
   
+
+  if(!oy_array2d_init_)
+  {
+    oy_array2d_init_ = 1;
+    oyStruct_RegisterStaticMessageFunc( type,
+                                        oyArray2d_StaticMessageFunc_ );
+  }
 
   if(error)
     WARNc1_S("%d", error);

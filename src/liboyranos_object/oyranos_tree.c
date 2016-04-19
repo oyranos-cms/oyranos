@@ -577,10 +577,10 @@ void oyObjectTreePrintCallback       ( void              * user_data,
 char * oyObjectTreeDotGraphCallbackGetDescription( oyStruct_s * s )
 {
   const char * nick = oyStructTypeToText( s->type_ ),
-             * text = oyStruct_GetText( s, oyNAME_NICK, 1 );
+             * text = oyStruct_GetText( s, oyNAME_DESCRIPTION, 2 );
   char * t, *t2, *t3, *desc = NULL;
 
-  if(strcmp(nick,text) == 0)
+  if(!text || strcmp(nick,text) == 0)
     return desc;
 
   t = oyStringReplace_( text, "\"", "'", 0 );

@@ -144,6 +144,45 @@ int oyFilterCore_Copy__Members( oyFilterCore_s_ * dst, oyFilterCore_s_ * src)
 
 
 
+static int oy_filtercore_init_ = 0;
+static const char * oyFilterCore_StaticMessageFunc_ (
+                                       oyPointer           obj,
+                                       oyNAME_e            type,
+                                       int                 flags )
+{
+  oyFilterCore_s_ * s = (oyFilterCore_s_*) obj;
+  static char * text = 0;
+  static int text_n = 0;
+  oyAlloc_f alloc = oyAllocateFunc_;
+
+  /* silently fail */
+  if(!s)
+   return "";
+
+  if(s->oy_ && s->oy_->allocateFunc_)
+    alloc = s->oy_->allocateFunc_;
+
+  if( text == NULL || text_n == 0 )
+  {
+    text_n = 128;
+    text = (char*) alloc( text_n );
+    if(text)
+      memset( text, 0, text_n );
+  }
+
+  if( text == NULL || text_n == 0 )
+    return "Memory problem";
+
+  text[0] = '\000';
+
+  if(!(flags & 0x01))
+    sprintf(text, "%s%s", oyStructTypeToText( s->type_ ), type != oyNAME_NICK?" ":"");
+
+  
+  
+
+  return text;
+}
 /** @internal
  *  Function oyFilterCore_New_
  *  @memberof oyFilterCore_s_
@@ -204,6 +243,13 @@ oyFilterCore_s_ * oyFilterCore_New_ ( oyObject_s object )
   
   
   
+
+  if(!oy_filtercore_init_)
+  {
+    oy_filtercore_init_ = 1;
+    oyStruct_RegisterStaticMessageFunc( type,
+                                        oyFilterCore_StaticMessageFunc_ );
+  }
 
   if(error)
     WARNc1_S("%d", error);

@@ -710,7 +710,7 @@ void     oiccFilterNode_OptionsPrint ( oyFilterNode_s    * node,
               {
                 oicc_msg( oyMSG_DBG,(oyStruct_s*)node,OY_DBG_FORMAT_
                            "filter node options %s[%d]",OY_DBG_ARGS_,
-                           oyStruct_GetInfo( (oyStruct_s*)f_options, 0 ),
+                           oyStruct_GetInfo( (oyStruct_s*)f_options, oyNAME_NAME, 0 ),
                            oyObject_GetId( f_options->oy_ ));
                 for(k = 0; k < os_n; k++)
                 {
@@ -731,7 +731,7 @@ void     oiccFilterNode_OptionsPrint ( oyFilterNode_s    * node,
               {
                 oicc_msg( oyMSG_DBG,(oyStruct_s*)node,OY_DBG_FORMAT_
                            "DB options for filter %s[%d]",OY_DBG_ARGS_,
-                           oyStruct_GetInfo( (oyStruct_s*)db_options, 0 ),
+                           oyStruct_GetInfo( (oyStruct_s*)db_options, oyNAME_NAME, 0 ),
                            oyObject_GetId( db_options->oy_ ));
                 for(k = 0; k < os_n; k++)
                 {
@@ -880,7 +880,7 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
                                  strrchr(__FILE__,'/') + 1 : __FILE__ ,__LINE__,
                            val?val:"empty profile text", 
                            display_mode ? "for displaying" : "for hard copy",
-                           oyStruct_GetInfo( (oyStruct_s*)f_options, 0 ),
+                           oyStruct_GetInfo( (oyStruct_s*)f_options, oyNAME_NAME, 0 ),
                            oyObject_GetId( f_options->oy_ ));
               } else if(verbose)
                 oicc_msg( oyMSG_DBG,(oyStruct_s*)node,
@@ -908,7 +908,7 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
                                  strrchr(__FILE__,'/') + 1 : __FILE__ ,__LINE__,
                            val?val:"empty profile text", 
                            display_mode ? "for displaying" : "for hard copy",
-                           oyStruct_GetInfo( (oyStruct_s*)f_options, 0 ),
+                           oyStruct_GetInfo( (oyStruct_s*)f_options, oyNAME_NAME, 0 ),
                            oyObject_GetId( f_options->oy_ ));
               } else if(verbose)
                 oicc_msg( oyMSG_DBG,(oyStruct_s*)node,

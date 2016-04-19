@@ -578,8 +578,9 @@ oyStruct_s *       oyPixelAccess_GetUserData (
     if(oy_debug_objects && s->user_data)
       oyObjectDebugMessage_( s->user_data->oy_, __func__,
                              oyStructTypeToText(s->user_data->type_) );
-  } else 
-    return s->user_data;
+  }
+
+  return s->user_data;
 }
 /** Function  oyPixelAccess_SetUserData
  *  @memberof oyPixelAccess_s

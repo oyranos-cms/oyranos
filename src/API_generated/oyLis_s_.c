@@ -123,6 +123,45 @@ int oyLis_Copy__Members( oyLis_s_ * dst, oyLis_s_ * src)
 
 
 
+static int oy_lis_init_ = 0;
+static const char * oyLis_StaticMessageFunc_ (
+                                       oyPointer           obj,
+                                       oyNAME_e            type,
+                                       int                 flags )
+{
+  oyLis_s_ * s = (oyLis_s_*) obj;
+  static char * text = 0;
+  static int text_n = 0;
+  oyAlloc_f alloc = oyAllocateFunc_;
+
+  /* silently fail */
+  if(!s)
+   return "";
+
+  if(s->oy_ && s->oy_->allocateFunc_)
+    alloc = s->oy_->allocateFunc_;
+
+  if( text == NULL || text_n == 0 )
+  {
+    text_n = 128;
+    text = (char*) alloc( text_n );
+    if(text)
+      memset( text, 0, text_n );
+  }
+
+  if( text == NULL || text_n == 0 )
+    return "Memory problem";
+
+  text[0] = '\000';
+
+  if(!(flags & 0x01))
+    sprintf(text, "%s%s", oyStructTypeToText( s->type_ ), type != oyNAME_NICK?" ":"");
+
+  
+  
+
+  return text;
+}
 /** @internal
  *  Function oyLis_New_
  *  @memberof oyLis_s_
@@ -183,6 +222,13 @@ oyLis_s_ * oyLis_New_ ( oyObject_s object )
   
   
   
+
+  if(!oy_lis_init_)
+  {
+    oy_lis_init_ = 1;
+    oyStruct_RegisterStaticMessageFunc( type,
+                                        oyLis_StaticMessageFunc_ );
+  }
 
   if(error)
     WARNc1_S("%d", error);

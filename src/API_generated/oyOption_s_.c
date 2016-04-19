@@ -154,6 +154,45 @@ int oyOption_Copy__Members( oyOption_s_ * dst, oyOption_s_ * src)
 
 
 
+static int oy_option_init_ = 0;
+static const char * oyOption_StaticMessageFunc_ (
+                                       oyPointer           obj,
+                                       oyNAME_e            type,
+                                       int                 flags )
+{
+  oyOption_s_ * s = (oyOption_s_*) obj;
+  static char * text = 0;
+  static int text_n = 0;
+  oyAlloc_f alloc = oyAllocateFunc_;
+
+  /* silently fail */
+  if(!s)
+   return "";
+
+  if(s->oy_ && s->oy_->allocateFunc_)
+    alloc = s->oy_->allocateFunc_;
+
+  if( text == NULL || text_n == 0 )
+  {
+    text_n = 128;
+    text = (char*) alloc( text_n );
+    if(text)
+      memset( text, 0, text_n );
+  }
+
+  if( text == NULL || text_n == 0 )
+    return "Memory problem";
+
+  text[0] = '\000';
+
+  if(!(flags & 0x01))
+    sprintf(text, "%s%s", oyStructTypeToText( s->type_ ), type != oyNAME_NICK?" ":"");
+
+  
+  
+
+  return text;
+}
 /** @internal
  *  Function oyOption_New_
  *  @memberof oyOption_s_
@@ -214,6 +253,13 @@ oyOption_s_ * oyOption_New_ ( oyObject_s object )
   
   
   
+
+  if(!oy_option_init_)
+  {
+    oy_option_init_ = 1;
+    oyStruct_RegisterStaticMessageFunc( type,
+                                        oyOption_StaticMessageFunc_ );
+  }
 
   if(error)
     WARNc1_S("%d", error);

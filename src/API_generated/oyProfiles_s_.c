@@ -131,6 +131,45 @@ int oyProfiles_Copy__Members( oyProfiles_s_ * dst, oyProfiles_s_ * src)
 
 
 
+static int oy_profiles_init_ = 0;
+static const char * oyProfiles_StaticMessageFunc_ (
+                                       oyPointer           obj,
+                                       oyNAME_e            type,
+                                       int                 flags )
+{
+  oyProfiles_s_ * s = (oyProfiles_s_*) obj;
+  static char * text = 0;
+  static int text_n = 0;
+  oyAlloc_f alloc = oyAllocateFunc_;
+
+  /* silently fail */
+  if(!s)
+   return "";
+
+  if(s->oy_ && s->oy_->allocateFunc_)
+    alloc = s->oy_->allocateFunc_;
+
+  if( text == NULL || text_n == 0 )
+  {
+    text_n = 128;
+    text = (char*) alloc( text_n );
+    if(text)
+      memset( text, 0, text_n );
+  }
+
+  if( text == NULL || text_n == 0 )
+    return "Memory problem";
+
+  text[0] = '\000';
+
+  if(!(flags & 0x01))
+    sprintf(text, "%s%s", oyStructTypeToText( s->type_ ), type != oyNAME_NICK?" ":"");
+
+  
+  
+
+  return text;
+}
 /** @internal
  *  Function oyProfiles_New_
  *  @memberof oyProfiles_s_
@@ -192,6 +231,13 @@ oyProfiles_s_ * oyProfiles_New_ ( oyObject_s object )
   
   
   
+
+  if(!oy_profiles_init_)
+  {
+    oy_profiles_init_ = 1;
+    oyStruct_RegisterStaticMessageFunc( type,
+                                        oyProfiles_StaticMessageFunc_ );
+  }
 
   if(error)
     WARNc1_S("%d", error);

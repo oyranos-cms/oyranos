@@ -89,9 +89,11 @@ int oyStruct_RegisterStaticMessageFunc (
     oyDeAllocateFunc_(oy_static_msg_funcs_);
     oy_static_msg_funcs_ = tmp;
     tmp = 0;
-    oy_static_msg_funcs_[type] = f;
     oy_msg_func_n_ = n;
   }
+
+  oy_static_msg_funcs_[type] = f;
+
   return error;
 }
                                        
@@ -106,6 +108,7 @@ int oyStruct_RegisterStaticMessageFunc (
  *  Note: this function is a very low level version of oyStruct_GetText().
  *
  *  @param[in]     context_object      the object to get informations about
+ *  @param[in]     type                request a suitable format
  *  @param[in]     flags               0x01 - skip trivial struct type name
  *  @return                            a string or NULL; The pointer might
  *                                     become invalid after further using the
@@ -115,6 +118,7 @@ int oyStruct_RegisterStaticMessageFunc (
  *  @since   2011/01/15 (Oyranos: 0.2.1)
  */
 const char *   oyStruct_GetInfo      ( oyPointer           context_object,
+                                       oyNAME_e            type,
                                        int                 flags )
 {
   const char * text = NULL;
@@ -128,7 +132,7 @@ const char *   oyStruct_GetInfo      ( oyPointer           context_object,
   {
     f = oy_static_msg_funcs_[c->type_];
     if(f)
-      text = f( c, flags );
+      text = f( c, type, flags );
   }
 
   if(text == NULL && !(flags & 0x01) )
@@ -294,7 +298,7 @@ OYAPI const char * OYEXPORT  oyObject_Show (
 
     if(t)
     {
-      sprintf( t, "\"%s\"[%d] refs: %d", oyStruct_GetInfo(st,0), obj->id_, obj->ref_);
+      sprintf( t, "\"%s\"[%d] refs: %d", oyStruct_GetInfo(st,oyNAME_NAME,0), obj->id_, obj->ref_);
       switch(st->type_)
       {
       case oyOBJECT_ARRAY2D_S:
@@ -363,7 +367,7 @@ int                oyMessageFormat   ( char             ** message_text,
   {
     type_name = oyStructTypeToText( c->type_ );
     id = oyObject_GetId( c->oy_ );
-    id_text = oyStruct_GetInfo( (oyStruct_s*)c, 0x01 );
+    id_text = oyStruct_GetInfo( (oyStruct_s*)c, oyNAME_NAME, 0x01 );
     if(id_text)
       id_text_tmp = strdup(id_text);
     id_text = id_text_tmp;

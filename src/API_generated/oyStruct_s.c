@@ -109,7 +109,7 @@ const char * oyStruct_GetText        ( oyStruct_s        * obj,
 
   if(!error && !text)
   {
-    text = oyStruct_GetInfo( obj, (flags&0x02) ? 0x01 : 0 );
+    text = oyStruct_GetInfo( obj, name_type, (flags&0x02) ? 0x01 : 0 );
     if(text && !text[0])
       text = 0;
   }
@@ -277,7 +277,7 @@ int          oyStruct_CheckType      ( oyStruct_s        * obj,
       if((uintptr_t)inheritance < (uintptr_t)oyOBJECT_MAX)
       {
         WARNc1_S( "non plausible inheritance pointer: %s", 
-                  oyStruct_GetInfo(obj,0) );
+                  oyStruct_GetInfo(obj, oyNAME_NAME,0) );
         return 2;
       }
 

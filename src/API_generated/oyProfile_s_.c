@@ -96,15 +96,6 @@ void oyProfile_Release__Members( oyProfile_s_ * profile )
   }
 }
 
-static
-const char * oyProfile_Message_      ( oyPointer           profile,
-                                       int                 flags )
-{
-  oyStruct_s*s = profile;
-  return oyProfile_GetText( (oyProfile_s*)s, oyNAME_DESCRIPTION );
-}
-
-static int oy_profile_first = 0;
 
 /** @internal
  *  Function    oyProfile_Init__Members
@@ -125,13 +116,6 @@ int oyProfile_Init__Members( oyProfile_s_ * profile )
 {
   profile->tags_ = oyStructList_Create( profile->type_, "Profile tags", 0 );
   profile->tags_modified_ = 0;
-
-  if(oy_profile_first)
-  {
-    oy_profile_first = 1;
-    oyStruct_RegisterStaticMessageFunc( oyOBJECT_PROFILE_S,
-                                        oyProfile_Message_ );
-  }
 
   return 0;
 }
@@ -216,6 +200,68 @@ int oyProfile_Copy__Members( oyProfile_s_ * dst, oyProfile_s_ * src)
 
 
 
+static int oy_profile_init_ = 0;
+static const char * oyProfile_StaticMessageFunc_ (
+                                       oyPointer           obj,
+                                       oyNAME_e            type,
+                                       int                 flags )
+{
+  oyProfile_s_ * s = (oyProfile_s_*) obj;
+  static char * text = 0;
+  static int text_n = 0;
+  oyAlloc_f alloc = oyAllocateFunc_;
+
+  /* silently fail */
+  if(!s)
+   return "";
+
+  if(s->oy_ && s->oy_->allocateFunc_)
+    alloc = s->oy_->allocateFunc_;
+
+  if( text == NULL || text_n == 0 )
+  {
+    text_n = 128;
+    text = (char*) alloc( text_n );
+    if(text)
+      memset( text, 0, text_n );
+  }
+
+  if( text == NULL || text_n == 0 )
+    return "Memory problem";
+
+  text[0] = '\000';
+
+  if(!(flags & 0x01))
+    sprintf(text, "%s%s", oyStructTypeToText( s->type_ ), type != oyNAME_NICK?" ":"");
+
+  
+
+  
+  /* allocate enough space */
+  if(text_n < 1000)
+  {
+    oyDeAlloc_f dealloc = oyDeAllocateFunc_;
+    if(s->oy_ && s->oy_->deallocateFunc_)
+      dealloc = s->oy_->deallocateFunc_;
+    if(text && text_n)
+      dealloc( text );
+    text_n = 1024;
+    text = alloc(text_n);
+    if(text)
+      text[0] = '\000';
+    else
+      return "Memory Error";
+
+    if(!(flags & 0x01))
+      sprintf(text, "%s%s", oyStructTypeToText( s->type_ ), type != oyNAME_NICK?" ":"");
+  }
+
+  if(type != oyNAME_NICK || (flags & 0x01))
+    sprintf( &text[strlen(text)], "%s", oyProfile_GetText( (oyProfile_s*)s, type ));
+
+
+  return text;
+}
 /** @internal
  *  Function oyProfile_New_
  *  @memberof oyProfile_s_
@@ -276,6 +322,13 @@ oyProfile_s_ * oyProfile_New_ ( oyObject_s object )
   
   
   
+
+  if(!oy_profile_init_)
+  {
+    oy_profile_init_ = 1;
+    oyStruct_RegisterStaticMessageFunc( type,
+                                        oyProfile_StaticMessageFunc_ );
+  }
 
   if(error)
     WARNc1_S("%d", error);

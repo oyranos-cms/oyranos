@@ -146,6 +146,45 @@ int oyBlob_Copy__Members( oyBlob_s_ * dst, oyBlob_s_ * src)
 
 
 
+static int oy_blob_init_ = 0;
+static const char * oyBlob_StaticMessageFunc_ (
+                                       oyPointer           obj,
+                                       oyNAME_e            type,
+                                       int                 flags )
+{
+  oyBlob_s_ * s = (oyBlob_s_*) obj;
+  static char * text = 0;
+  static int text_n = 0;
+  oyAlloc_f alloc = oyAllocateFunc_;
+
+  /* silently fail */
+  if(!s)
+   return "";
+
+  if(s->oy_ && s->oy_->allocateFunc_)
+    alloc = s->oy_->allocateFunc_;
+
+  if( text == NULL || text_n == 0 )
+  {
+    text_n = 128;
+    text = (char*) alloc( text_n );
+    if(text)
+      memset( text, 0, text_n );
+  }
+
+  if( text == NULL || text_n == 0 )
+    return "Memory problem";
+
+  text[0] = '\000';
+
+  if(!(flags & 0x01))
+    sprintf(text, "%s%s", oyStructTypeToText( s->type_ ), type != oyNAME_NICK?" ":"");
+
+  
+  
+
+  return text;
+}
 /** @internal
  *  Function oyBlob_New_
  *  @memberof oyBlob_s_
@@ -206,6 +245,13 @@ oyBlob_s_ * oyBlob_New_ ( oyObject_s object )
   
   
   
+
+  if(!oy_blob_init_)
+  {
+    oy_blob_init_ = 1;
+    oyStruct_RegisterStaticMessageFunc( type,
+                                        oyBlob_StaticMessageFunc_ );
+  }
 
   if(error)
     WARNc1_S("%d", error);

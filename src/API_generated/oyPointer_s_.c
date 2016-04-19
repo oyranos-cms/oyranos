@@ -160,6 +160,98 @@ int oyPointer_Copy__Members( oyPointer_s_ * dst, oyPointer_s_ * src)
 
 
 
+static int oy_pointer_init_ = 0;
+static const char * oyPointer_StaticMessageFunc_ (
+                                       oyPointer           obj,
+                                       oyNAME_e            type,
+                                       int                 flags )
+{
+  oyPointer_s_ * s = (oyPointer_s_*) obj;
+  static char * text = 0;
+  static int text_n = 0;
+  oyAlloc_f alloc = oyAllocateFunc_;
+
+  /* silently fail */
+  if(!s)
+   return "";
+
+  if(s->oy_ && s->oy_->allocateFunc_)
+    alloc = s->oy_->allocateFunc_;
+
+  if( text == NULL || text_n == 0 )
+  {
+    text_n = 128;
+    text = (char*) alloc( text_n );
+    if(text)
+      memset( text, 0, text_n );
+  }
+
+  if( text == NULL || text_n == 0 )
+    return "Memory problem";
+
+  text[0] = '\000';
+
+  if(!(flags & 0x01))
+    sprintf(text, "%s%s", oyStructTypeToText( s->type_ ), type != oyNAME_NICK?" ":"");
+
+  
+
+  
+  /* allocate enough space */
+  if(text_n < 1000)
+  {
+    oyDeAlloc_f dealloc = oyDeAllocateFunc_;
+    if(s->oy_ && s->oy_->deallocateFunc_)
+      dealloc = s->oy_->deallocateFunc_;
+    if(text && text_n)
+      dealloc( text );
+    text_n = 1024;
+    text = alloc(text_n);
+    if(text)
+      text[0] = '\000';
+    else
+      return "Memory Error";
+
+    if(!(flags & 0x01))
+      sprintf(text, "%s%s", oyStructTypeToText( s->type_ ), type != oyNAME_NICK?" ":"");
+  }
+
+  if(type == oyNAME_NICK && (flags & 0x01))
+  {
+    if(s->lib_name)
+      sprintf( &text[strlen(text)], "%s",
+               strchr(s->lib_name,'/') ? strchr(s->lib_name,'/') + 1: s->lib_name
+         );
+    else
+    if(s->func_name)
+      sprintf( &text[strlen(text)], "%s",
+               s->func_name
+         );
+    else
+    if(s->id)
+      sprintf( &text[strlen(text)], "%s",
+               s->id
+         );
+  } else
+  if(type == oyNAME_NAME)
+    sprintf( &text[strlen(text)], "%s%s%s%s%s%s%s%d",
+             s->lib_name?(strchr(s->lib_name,'/') ? strchr(s->lib_name,'/') + 1: s->lib_name):"", s->lib_name?"\n":"",
+             s->func_name?s->func_name:"", s->func_name?"\n":"",
+             s->id?s->id:"", s->id?" ":"",
+             s->size?"size: ":"", s->size?s->size:-1
+         );
+  else
+  if((int)type >= oyNAME_DESCRIPTION)
+    sprintf( &text[strlen(text)], "%s%s%s%s%s%s%s%d",
+             s->lib_name?s->lib_name:"", s->lib_name?"\n":"",
+             s->func_name?s->func_name:"", s->func_name?"\n":"",
+             s->id?s->id:"", s->id?" ":"",
+             s->size?"size: ":"", s->size?s->size:-1
+         );
+
+
+  return text;
+}
 /** @internal
  *  Function oyPointer_New_
  *  @memberof oyPointer_s_
@@ -220,6 +312,13 @@ oyPointer_s_ * oyPointer_New_ ( oyObject_s object )
   
   
   
+
+  if(!oy_pointer_init_)
+  {
+    oy_pointer_init_ = 1;
+    oyStruct_RegisterStaticMessageFunc( type,
+                                        oyPointer_StaticMessageFunc_ );
+  }
 
   if(error)
     WARNc1_S("%d", error);

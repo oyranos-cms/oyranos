@@ -123,6 +123,49 @@ int oyRectangle_Copy__Members( oyRectangle_s_ * dst, oyRectangle_s_ * src)
 
 
 
+static int oy_rectangle_init_ = 0;
+static const char * oyRectangle_StaticMessageFunc_ (
+                                       oyPointer           obj,
+                                       oyNAME_e            type,
+                                       int                 flags )
+{
+  oyRectangle_s_ * s = (oyRectangle_s_*) obj;
+  static char * text = 0;
+  static int text_n = 0;
+  oyAlloc_f alloc = oyAllocateFunc_;
+
+  /* silently fail */
+  if(!s)
+   return "";
+
+  if(s->oy_ && s->oy_->allocateFunc_)
+    alloc = s->oy_->allocateFunc_;
+
+  if( text == NULL || text_n == 0 )
+  {
+    text_n = 128;
+    text = (char*) alloc( text_n );
+    if(text)
+      memset( text, 0, text_n );
+  }
+
+  if( text == NULL || text_n == 0 )
+    return "Memory problem";
+
+  text[0] = '\000';
+
+  if(!(flags & 0x01))
+    sprintf(text, "%s%s", oyStructTypeToText( s->type_ ), type != oyNAME_NICK?" ":"");
+
+  
+
+  
+  if(type != oyNAME_NICK || (flags & 0x01))
+    sprintf( &text[strlen(text)], "%gx%g+%g+%g", s->width, s->height, s->x, s->y);
+
+
+  return text;
+}
 /** @internal
  *  Function oyRectangle_New_
  *  @memberof oyRectangle_s_
@@ -183,6 +226,13 @@ oyRectangle_s_ * oyRectangle_New_ ( oyObject_s object )
   
   
   
+
+  if(!oy_rectangle_init_)
+  {
+    oy_rectangle_init_ = 1;
+    oyStruct_RegisterStaticMessageFunc( type,
+                                        oyRectangle_StaticMessageFunc_ );
+  }
 
   if(error)
     WARNc1_S("%d", error);

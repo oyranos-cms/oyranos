@@ -161,6 +161,45 @@ int oyPixelAccess_Copy__Members( oyPixelAccess_s_ * dst, oyPixelAccess_s_ * src)
 
 
 
+static int oy_pixelaccess_init_ = 0;
+static const char * oyPixelAccess_StaticMessageFunc_ (
+                                       oyPointer           obj,
+                                       oyNAME_e            type,
+                                       int                 flags )
+{
+  oyPixelAccess_s_ * s = (oyPixelAccess_s_*) obj;
+  static char * text = 0;
+  static int text_n = 0;
+  oyAlloc_f alloc = oyAllocateFunc_;
+
+  /* silently fail */
+  if(!s)
+   return "";
+
+  if(s->oy_ && s->oy_->allocateFunc_)
+    alloc = s->oy_->allocateFunc_;
+
+  if( text == NULL || text_n == 0 )
+  {
+    text_n = 128;
+    text = (char*) alloc( text_n );
+    if(text)
+      memset( text, 0, text_n );
+  }
+
+  if( text == NULL || text_n == 0 )
+    return "Memory problem";
+
+  text[0] = '\000';
+
+  if(!(flags & 0x01))
+    sprintf(text, "%s%s", oyStructTypeToText( s->type_ ), type != oyNAME_NICK?" ":"");
+
+  
+  
+
+  return text;
+}
 /** @internal
  *  Function oyPixelAccess_New_
  *  @memberof oyPixelAccess_s_
@@ -221,6 +260,13 @@ oyPixelAccess_s_ * oyPixelAccess_New_ ( oyObject_s object )
   
   
   
+
+  if(!oy_pixelaccess_init_)
+  {
+    oy_pixelaccess_init_ = 1;
+    oyStruct_RegisterStaticMessageFunc( type,
+                                        oyPixelAccess_StaticMessageFunc_ );
+  }
 
   if(error)
     WARNc1_S("%d", error);

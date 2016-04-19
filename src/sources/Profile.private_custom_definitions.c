@@ -51,15 +51,6 @@ void oyProfile_Release__Members( oyProfile_s_ * profile )
   }
 }
 
-static
-const char * oyProfile_Message_      ( oyPointer           profile,
-                                       int                 flags )
-{
-  oyStruct_s*s = profile;
-  return oyProfile_GetText( (oyProfile_s*)s, oyNAME_DESCRIPTION );
-}
-
-static int oy_profile_first = 0;
 
 /** @internal
  *  Function    oyProfile_Init__Members
@@ -80,13 +71,6 @@ int oyProfile_Init__Members( oyProfile_s_ * profile )
 {
   profile->tags_ = oyStructList_Create( profile->type_, "Profile tags", 0 );
   profile->tags_modified_ = 0;
-
-  if(oy_profile_first)
-  {
-    oy_profile_first = 1;
-    oyStruct_RegisterStaticMessageFunc( oyOBJECT_PROFILE_S,
-                                        oyProfile_Message_ );
-  }
 
   return 0;
 }

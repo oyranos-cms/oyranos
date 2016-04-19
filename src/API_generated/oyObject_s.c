@@ -606,7 +606,7 @@ int          oyObject_UnRef          ( oyObject_s          obj )
     if((uintptr_t)obj->parent_types_ < (uintptr_t)oyOBJECT_MAX)
     {
       WARNc1_S( "non plausible inheritance pointer: %s", 
-                oyStruct_GetInfo(obj,0) );
+                oyStruct_GetInfo(obj,oyNAME_NAME,0) );
       return -1;
     }
 

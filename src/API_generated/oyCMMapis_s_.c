@@ -131,6 +131,45 @@ int oyCMMapis_Copy__Members( oyCMMapis_s_ * dst, oyCMMapis_s_ * src)
 
 
 
+static int oy_cmmapis_init_ = 0;
+static const char * oyCMMapis_StaticMessageFunc_ (
+                                       oyPointer           obj,
+                                       oyNAME_e            type,
+                                       int                 flags )
+{
+  oyCMMapis_s_ * s = (oyCMMapis_s_*) obj;
+  static char * text = 0;
+  static int text_n = 0;
+  oyAlloc_f alloc = oyAllocateFunc_;
+
+  /* silently fail */
+  if(!s)
+   return "";
+
+  if(s->oy_ && s->oy_->allocateFunc_)
+    alloc = s->oy_->allocateFunc_;
+
+  if( text == NULL || text_n == 0 )
+  {
+    text_n = 128;
+    text = (char*) alloc( text_n );
+    if(text)
+      memset( text, 0, text_n );
+  }
+
+  if( text == NULL || text_n == 0 )
+    return "Memory problem";
+
+  text[0] = '\000';
+
+  if(!(flags & 0x01))
+    sprintf(text, "%s%s", oyStructTypeToText( s->type_ ), type != oyNAME_NICK?" ":"");
+
+  
+  
+
+  return text;
+}
 /** @internal
  *  Function oyCMMapis_New_
  *  @memberof oyCMMapis_s_
@@ -192,6 +231,13 @@ oyCMMapis_s_ * oyCMMapis_New_ ( oyObject_s object )
   
   
   
+
+  if(!oy_cmmapis_init_)
+  {
+    oy_cmmapis_init_ = 1;
+    oyStruct_RegisterStaticMessageFunc( type,
+                                        oyCMMapis_StaticMessageFunc_ );
+  }
 
   if(error)
     WARNc1_S("%d", error);
