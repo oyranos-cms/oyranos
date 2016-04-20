@@ -88,10 +88,17 @@ int oyExportReset_(int export_check)
   return action;
 }
 
-void     oyFinish_                   ( int                 unused )
+/* @param          flags               - 0x01 keep caches
+ *                                     - 0x02 keep i18n
+ */
+void     oyFinish_                   ( int                 flags )
 {
-  oyI18Nreset_();
-  oyAlphaFinish_( unused );
+  if(!(flags & 0x01))
+    oyI18Nreset_();
+  if(!(flags & 0x02))
+    oyAlphaFinish_( 0 );
+  if(oy_debug_objects)
+    oyObjectTreePrint( 0x01 | 0x02 );
 }
 
 #include "oyProfiles_s.h"

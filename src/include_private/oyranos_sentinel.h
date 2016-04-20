@@ -31,7 +31,6 @@ int   oyExportStart_        (int export_check);
 int   oyExportReset_        (int export_check);
 void  oyExportResetSentinel_(void);
 int   oyExportEnd_          (void);
-void  oyFinish_             (int unused);
 
 #define EXPORT_CHECK_NO 0x000000
 #define EXPORT_SETTING  0x000001
@@ -40,6 +39,10 @@ void  oyFinish_             (int unused);
 #define EXPORT_CMM      0x000008
 #define EXPORT_CMMS     0x00000a
 #define EXPORT_I18N     0x000010
+
+#define FINISH_IGNORE_I18N 0x01
+#define FINISH_IGNORE_CACHES 0x02
+void  oyFinish_             (int flags);
 
 #ifdef __cplusplus
 } /* extern "C" */
