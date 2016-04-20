@@ -256,8 +256,39 @@ static const char * oyProfile_StaticMessageFunc_ (
       sprintf(text, "%s%s", oyStructTypeToText( s->type_ ), type != oyNAME_NICK?" ":"");
   }
 
-  if(type != oyNAME_NICK || (flags & 0x01))
-    sprintf( &text[strlen(text)], "%s", oyProfile_GetText( (oyProfile_s*)s, type ));
+  if((type == oyNAME_NICK && (flags & 0x01)) ||
+      type == oyNAME_NAME)
+  {
+    if(s->file_name_)
+      sprintf( &text[strlen(text)], "%s",
+               s->file_name_
+             );
+    else if(s->use_default_)
+      sprintf( &text[strlen(text)], "%d",
+               s->use_default_
+             );
+    else
+      sprintf( &text[strlen(text)], "%lu",
+               s->size_
+             );
+  } else
+  if((int)type >= oyNAME_DESCRIPTION)
+  {
+    uint32_t * h = (uint32_t*)s->oy_->hash_ptr_;
+    if(s->file_name_)
+      sprintf( &text[strlen(text)], "%s\n",
+               s->file_name_
+             );
+    if(h)
+      oySprintf_( &text[strlen(text)], "%08x%08x%08x%08x", h[0], h[1], h[2], h[3]);
+    if(s->use_default_)
+      oySprintf_( &text[strlen(text)], " default: %d",
+                  s->use_default_
+                );
+    oySprintf_( &text[strlen(text)], " %s channels: %d modified: %d",
+                oyICCColorSpaceGetName(s->sig_), s->channels_n_, s->tags_modified_
+              );
+  }
 
 
   return text;
@@ -332,6 +363,9 @@ oyProfile_s_ * oyProfile_New_ ( oyObject_s object )
 
   if(error)
     WARNc1_S("%d", error);
+
+  if(oy_debug)
+    oyObject_GetId( s->oy_ );
 
   return s;
 }
