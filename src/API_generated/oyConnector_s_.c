@@ -247,6 +247,9 @@ oyConnector_s_ * oyConnector_New_ ( oyObject_s object )
   if(error)
     WARNc1_S("%d", error);
 
+  if(oy_debug)
+    oyObject_GetId( s->oy_ );
+
   return s;
 }
 
