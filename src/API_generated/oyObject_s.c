@@ -55,6 +55,8 @@ oyObject_s         oyObject_New      ( void )
   return oyObject_NewWithAllocators( oyAllocateFunc_, oyDeAllocateFunc_ );
 }
 
+void               oyObject_Track    ( oyObject_s          obj );
+void               oyObject_UnTrack    ( oyObject_s          obj );
 
 /** @brief   object management 
  *  @ingroup  objects_generic
