@@ -411,5 +411,7 @@ int main( int argc, char ** argv )
         if(device_db) oyDeAllocateFunc_(device_db); device_db = 0;
   }
 
+  oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
+
   return error;
 }

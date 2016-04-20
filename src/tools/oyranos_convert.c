@@ -725,6 +725,8 @@ int main( int argc , char** argv )
                         exit (0);
   }
 
+  oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
+
   return error;
 }
 

@@ -44,6 +44,7 @@
 #include "oyranos_config.h"
 #include "oyranos_conversion.h"
 #include "oyranos_version.h"
+#include "oyranos_sentinel.h"
 #include "oyranos_string.h"
 #include "oyranos_texts.h"
 
@@ -903,6 +904,8 @@ int main( int argc , char** argv )
   if(daemon)
     fprintf( stderr, "daemon mode not supported on your OS\n" );
 #endif
+
+  oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
 
   return error;
 }

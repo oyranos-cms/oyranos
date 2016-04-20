@@ -406,6 +406,7 @@ void dbg_cb ( Fl_Widget* w, void* daten )
     oyImage_s * image = oyConversion_GetImage( idcc, OY_INPUT );
     oyImage_WritePPM( image, "debug_image.ppm", "image_display input image");
     oyImage_Release( &image );
+    oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
   }
 }
 Oy_Fl_Double_Window * make_help(const char * title, const char * text, int is_html)

@@ -21,6 +21,7 @@
 #include "oyranos_helper.h"
 #include "oyranos_helper_macros_cli.h"
 #include "oyranos_i18n.h"
+#include "oyranos_sentinel.h"
 #include "oyranos_string.h"
 
 #include <stdio.h>
@@ -483,6 +484,8 @@ int main(int argc, char ** argv)
   oyOptions_Release( &image_tags );
 
   oyImage_Release( &image );
+
+  oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
 
   return 0;
 }

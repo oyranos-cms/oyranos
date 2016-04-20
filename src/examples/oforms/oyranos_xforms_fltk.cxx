@@ -16,6 +16,7 @@
 /* gcc -Wall -g `pkg-config oyranos libxml-2.0 --libs --cflags` oy_filter_node.c -o oy_filter_node */
 #include <oyranos_helper.h>
 #include <oyranos_i18n.h>
+#include <oyranos_sentinel.h>
 #include "oyranos_string.h"
 #include <oyranos_texts.h>
 #include <libxml/parser.h>
@@ -306,6 +307,8 @@ int main (int argc, char ** argv)
   oyFormsArgs_Release( &forms_args );
 
   if(text) free(text); text = 0;
+
+  oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
 
   return error;
 }

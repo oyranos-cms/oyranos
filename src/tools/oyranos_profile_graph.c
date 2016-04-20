@@ -60,6 +60,7 @@ int  oyColorConvert_ ( oyProfile_s       * p_in,
 #include "oyranos_internal.h"
 #include "oyranos_config.h"
 #include "oyranos_version.h"
+#include "oyranos_sentinel.h"
 #include "oyranos_string.h"
 #include "oyranos_texts.h"
 
@@ -590,6 +591,8 @@ int main( int argc , char** argv )
   oyProfile_Release( &p_lab );
   oyProfile_Release( &p_xyz );
 
+
+  oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
 
   return 0;
 }

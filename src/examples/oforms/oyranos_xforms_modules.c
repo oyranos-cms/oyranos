@@ -273,6 +273,8 @@ int main (int argc, char ** argv)
         }
         oyCMMapiFilters_Release( &apis );
       }
+      oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
+
       return 0;
     }
 
@@ -383,6 +385,8 @@ int main (int argc, char ** argv)
       oyCMMapiFilters_Release( &apis );
     }
 
+    oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
+
     return 0;
   }
 
@@ -397,6 +401,8 @@ int main (int argc, char ** argv)
 
 
   if(text) free(text); text = 0;
+
+  oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
 
   return error;
 }

@@ -28,6 +28,7 @@
 #include "oyranos_i18n.h"
 #include "oyranos_icc.h"
 #include "oyranos_module_internal.h"
+#include "oyranos_sentinel.h"
 #include "oyranos_string.h"
 #include "oyranos_texts.h"
 #include "oyranos_config_internal.h"
@@ -1388,6 +1389,8 @@ int main(int argc, char *argv[])
       oyProfile_Release( &prof );
     }
   }
+
+  oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
 
   return 0;
 }
