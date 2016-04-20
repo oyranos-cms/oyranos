@@ -234,7 +234,7 @@ int *              oyObjectGetCurrentObjectIdList( void )
   if(id_list)
     for(i = 0; i < MAX_OBJECTS_TRACKED; ++i)
     {
-      if(oy_obj_track_list[i] && oy_obj_track_list[i]->parent_)
+      if(oy_obj_track_list && oy_obj_track_list[i] && oy_obj_track_list[i]->parent_)
         id_list[i] = oy_obj_track_list[i]->parent_->type_;
       else
         id_list[i] = -1;
