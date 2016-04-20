@@ -268,6 +268,10 @@ int            oyObject_GetId        ( oyObject_s          object )
       fputs( oyObject_Show( obj ), stderr );
       fflush( stderr );
     }
+  } else if(obj && oy_debug && oy_debug_objects == obj->id_)
+  {
+    fprintf( stderr, "id[%d] refs: %d\n", obj->id_, obj->ref_ );
+    fflush( stderr );
   }
 
   if(obj)
