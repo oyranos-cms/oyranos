@@ -801,12 +801,14 @@ bgcolor=\"transparent\"\n\
   edge [fontname=Helvetica, fontsize=10];\n\
 \n");
 
-      oyStringAddPrintf( &graph,0,0, "%s\n", dot);
+      if(dot)
+        oyStringAddPrintf( &graph,0,0, "%s\n", dot);
       oyStringAddPrintf( &graph,0,0,"\
   subgraph cluster_0 {\n\
     label=\"Oyranos Object Trees Graph\"\n\
     color=gray;\n");
-      oyStringAddPrintf( &graph,0,0,"%s", dot_edges);
+      if(dot_edges)
+        oyStringAddPrintf( &graph,0,0,"%s", dot_edges);
       oyStringAddPrintf( &graph,0,0,"  }\n");
       oyStringAddPrintf( &graph,0,0,"}\n");
 
