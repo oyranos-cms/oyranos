@@ -76,6 +76,7 @@ OYAPI oyProfiles_s * OYEXPORT
 
     if(oyProfiles_Count( oy_profile_list_cache_ ) != names_n)
     {
+      oyProfiles_s * l = oyProfiles_New(0);
       sorts = names_n;
       sort = oyAllocateFunc_(sorts*sizeof(const char*)*2);
       for(i = 0; i < names_n; ++i)
@@ -99,6 +100,7 @@ OYAPI oyProfiles_s * OYEXPORT
             sort[i*2] = oyProfile_GetText(tmp, oyNAME_DESCRIPTION);
 #endif
             sort[i*2+1] = names[i];
+            oyProfiles_MoveIn( l, &tmp, -1 );
           }
         }
       }
@@ -112,6 +114,7 @@ OYAPI oyProfiles_s * OYEXPORT
         oyFree_m_(t);
 #endif
       }
+      oyProfiles_Release(&l);
       oyProfiles_Release(&oy_profile_list_cache_);
       oyObject_SetNames( tmps->oy_, name,name,name );
       oy_profile_list_cache_ = tmps;
