@@ -963,6 +963,7 @@ int            Configs_Modify        ( oyConfigs_s       * devices,
             STRING_ADD( text, "\"" );
 
             oyProfile_Release( &prof );
+            oyOption_Release( &o );
           }
 
           if(error <= 0)
