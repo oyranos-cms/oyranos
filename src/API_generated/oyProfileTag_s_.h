@@ -34,6 +34,7 @@ typedef struct oyProfileTag_s_ oyProfileTag_s_;
 
 
 #include <icc34.h>
+#include <oyranos_icc.h>
   
 
 #include "oyProfileTag_s.h"

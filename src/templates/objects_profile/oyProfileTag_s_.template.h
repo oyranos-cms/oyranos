@@ -3,6 +3,7 @@
 {%block LocalIncludeFiles %}
 {{ block.super }}
 #include <icc34.h>
+#include <oyranos_icc.h>
 {% endblock %}
 
 {% block ChildMembers %}

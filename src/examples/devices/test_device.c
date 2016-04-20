@@ -301,6 +301,8 @@ int main(int argc, char *argv[])
          fprintf(stdout, "%s\n", path_names[i] );
 
        oyStringListRelease_( &path_names, path_names_n, free );
+
+       oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
        exit( 0 );
      }
 
@@ -332,6 +334,7 @@ int main(int argc, char *argv[])
            break;
        }
      }
+     oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
      exit(0);
   }
 
@@ -368,6 +371,7 @@ int main(int argc, char *argv[])
       fprintf( stderr, "%s %s\n  device_class: \"%s\" device_pos: \"%d\"  %s: %d\n", _("!!! ERROR"), _("Could not resolve device."),
                device_class?device_class:"????", device_pos,
                _("Available devices"), n);
+      oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
       exit(1);
     }
   }
@@ -383,6 +387,7 @@ int main(int argc, char *argv[])
       fprintf( stderr, "%s %s\n  device_class: \"%s\" device_pos: \"%d\"  %s: %d\n", _("!!! ERROR"), _("Could not resolve device."),
                device_class?device_class:"????", device_pos,
                _("Available devices"), n);
+      oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
       exit(1);
     }
 
@@ -397,6 +402,7 @@ int main(int argc, char *argv[])
       fprintf( stderr, "%s %s: %s %d. %s: %d\n", _("!!! ERROR"), _("Could not resolve device_name"),
                device_class?device_class:"????", device_pos,
                _("Available devices"), n);
+      oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
       exit(1);
     }
   }
@@ -417,6 +423,7 @@ int main(int argc, char *argv[])
     {
       fprintf( stderr, "%s %s: %s  %d\n", _("!!! ERROR"), _("Could not resolve device_json"),
                device_json, error);
+      oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
       exit(1);
     }
     device_class = oyStringCopy_( oyConfig_FindString( c, "device_class", 0 ), NULL );
@@ -566,6 +573,7 @@ int main(int argc, char *argv[])
     oyConfigs_Release( &devices );
     oyOptions_Release( &options );
 
+    oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
     exit(0);
 
   } else
@@ -633,6 +641,7 @@ int main(int argc, char *argv[])
       free(temp);
     }
 
+    oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
     exit(0);
 
   } else
@@ -744,6 +753,7 @@ int main(int argc, char *argv[])
       oyConfig_EraseFromDB( c, scope );
 
     oyConfig_Release( &c );
+    oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
     exit(0);
 
   } else
@@ -909,6 +919,7 @@ int main(int argc, char *argv[])
     }
 
     oyConfig_Release( &c );
+    oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
     exit(0);
 
   } else
@@ -1004,6 +1015,7 @@ int main(int argc, char *argv[])
     }
 
     oyConfig_Release( &oy_device );
+    oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
     exit(0);
 
   } else if(format && c)
@@ -1072,6 +1084,7 @@ int main(int argc, char *argv[])
         if(!json)
         {
           fprintf( stderr, "no DB data available\n" );
+          oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
           exit(0);
         }
 
@@ -1270,6 +1283,7 @@ int main(int argc, char *argv[])
     if(out_name) oyDeAllocFunc(out_name); out_name = 0;
     oyConfDomain_Release( &d );
 
+    oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
     exit(0);
   }
 

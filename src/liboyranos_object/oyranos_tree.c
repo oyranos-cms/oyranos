@@ -51,6 +51,8 @@
 #include "oyCMMui_s_.h"
 #include "oyHash_s_.h"
 #include "oyStructList_s_.h"
+#include "oyConfig_s_.h"
+#include "oyConfigs_s_.h"
 
 /* get a objects directly owned references */
 int                oyStruct_GetChildren (
@@ -370,12 +372,32 @@ int                oyStruct_GetChildren (
        }
        break;
     case oyOBJECT_BLOB_S:
+       break;
     case oyOBJECT_CONFIG_S:
+       {
+         oyConfig_s_ * s = (oyConfig_s_*)obj;
+         CHECK_ASSIGN_STRUCT( db )
+         CHECK_ASSIGN_STRUCT( backend_core )
+         CHECK_ASSIGN_STRUCT( data )
+       }
+       break;
     case oyOBJECT_CONFIGS_S:
+       {
+         oyConfigs_s_ * s = (oyConfigs_s_*)obj;
+         CHECK_ASSIGN_STRUCT( list_ )
+       }
+       break;
     case oyOBJECT_UI_HANDLER_S:
     case oyOBJECT_FORMS_ARGS_S:
     case oyOBJECT_CALLBACK_S:
     case oyOBJECT_OBSERVER_S:
+       {
+         oyObserver_s * s = (oyObserver_s*)obj;
+         CHECK_ASSIGN_STRUCT( observer )
+         CHECK_ASSIGN_STRUCT( model )
+         CHECK_ASSIGN_STRUCT( user_data )
+       }
+       break;
     case oyOBJECT_CONF_DOMAIN_S:
     case oyOBJECT_INFO_STATIC_S:
     case oyOBJECT_LIST_S:
