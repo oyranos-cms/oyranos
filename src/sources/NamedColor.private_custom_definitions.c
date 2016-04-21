@@ -95,7 +95,9 @@ int oyNamedColor_Copy__Members( oyNamedColor_s_ * dst, oyNamedColor_s_ * src)
 
   /* Copy each value of src to dst here */
   if(error <= 0)
+  {
     s->profile_  = oyProfile_Copy( ref, 0 );
+  }
 
   n = oyProfile_GetChannelsCount( s->profile_ );
   if(n)

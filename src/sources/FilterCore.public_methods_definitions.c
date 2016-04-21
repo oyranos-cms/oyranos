@@ -146,7 +146,9 @@ oyFilterCore_s * oyFilterCore_NewWith( const char        * registration,
   }
 
   if(error <= 0 && options)
+  {
     oyFilterCorePriv_m(s)->options_ = oyOptions_Copy( options, 0 );
+  }
 
   if(error && s)
   {

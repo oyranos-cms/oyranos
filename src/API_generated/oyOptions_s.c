@@ -366,10 +366,14 @@ oyOptions_s *  oyOptions_FromBoolean ( oyOptions_s       * set_a,
 
     if(!set_an && set_bn &&
        (type == oyBOOLEAN_UNION || type == oyBOOLEAN_DIFFERENZ))
+    {
       options = oyOptions_Copy( set_b, object );
+    }
     if(set_an && !set_bn &&
        (type == oyBOOLEAN_UNION))
+    {
       options = oyOptions_Copy( set_a, object );
+    }
   }
 
   return options;

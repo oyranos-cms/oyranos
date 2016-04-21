@@ -213,7 +213,10 @@ int          oyIMFilterScan          ( oyPointer           data,
                                                      (oyStruct_s*)api4->ui),
                                    allocateFunc );
           if(info)
-            *info = oyCMMinfo_Copy( (oyCMMinfo_s*)cmm_info, object );
+          {
+            oyCMMinfo_s * ci = oyCMMinfo_Copy( (oyCMMinfo_s*)cmm_info, object );
+            *info = ci;
+          }
           ret = 0;
         } else
           ret = -1;

@@ -119,7 +119,9 @@ oyNamedColor_s *   oyNamedColor_Create ( const double    * chan,
   int error = !s;
 
   if(error <= 0)
+  {
     s->profile_  = oyProfile_Copy( ref, 0 );
+  }
 
   n = oyProfile_GetChannelsCount( s->profile_ );
   if(n)
@@ -208,7 +210,8 @@ oyProfile_s *     oyNamedColor_GetSpaceRef ( oyNamedColor_s  * color )
   if(!color)
     return 0;
 
-  return oyProfile_Copy( s->profile_, 0 );
+  oyProfile_Copy( s->profile_, 0 );
+  return s->profile_;
 }
 
 

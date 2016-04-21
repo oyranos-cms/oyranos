@@ -73,6 +73,7 @@ OYAPI oyPointer_s * OYEXPORT
   /* slightly fragile but inheritable */
   oyCheckTypeRange_m( oyOBJECT_{{ class.baseName|underscores|upper }}_S, oyOBJECT_CMM_API_MAX, return NULL )
 
-  return oyPointer_Copy( s->runtime_context, NULL );
+  oyPointer_Copy( s->runtime_context, NULL );
+  return s->runtime_context;
 }
 {% endblock GeneralPublicMethodsDefinitions %}

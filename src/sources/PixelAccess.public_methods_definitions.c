@@ -157,7 +157,8 @@ oyImage_s *        oyPixelAccess_GetOutputImage (
 
   oyCheckType__m( oyOBJECT_PIXEL_ACCESS_S, return 0 )
 
-  return oyImage_Copy( s->output_image, 0 );
+  oyImage_Copy( s->output_image, 0 );
+  return s->output_image;
 }
 /** Function  oyPixelAccess_SetOutputImage
  *  @memberof oyPixelAccess_s
@@ -362,7 +363,8 @@ oyRectangle_s *    oyPixelAccess_GetArrayROI (
 
   oyCheckType__m( oyOBJECT_PIXEL_ACCESS_S, return 0 )
 
-  return oyRectangle_Copy( (oyRectangle_s*)s->output_array_roi, 0 );
+  oyRectangle_Copy( (oyRectangle_s*)s->output_array_roi, 0 );
+  return (oyRectangle_s*)s->output_array_roi;
 }
 /** Function  oyPixelAccess_GetGraph
  *  @memberof oyPixelAccess_s
@@ -382,7 +384,8 @@ oyFilterGraph_s *  oyPixelAccess_GetGraph (
 
   oyCheckType__m( oyOBJECT_PIXEL_ACCESS_S, return 0 )
 
-  return oyFilterGraph_Copy( (oyFilterGraph_s*)s->graph, 0 );
+  oyFilterGraph_Copy( (oyFilterGraph_s*)s->graph, 0 );
+  return (oyFilterGraph_s*)s->graph;
 }
 /** Function  oyPixelAccess_GetRequestQueue
  *  @memberof oyPixelAccess_s
@@ -402,7 +405,8 @@ oyOptions_s *      oyPixelAccess_GetRequestQueue (
 
   oyCheckType__m( oyOBJECT_PIXEL_ACCESS_S, return 0 )
 
-  return oyOptions_Copy( s->request_queue, 0 );
+  oyOptions_Copy( s->request_queue, 0 );
+  return s->request_queue;
 }
 /** Function  oyPixelAccess_GetArray
  *  @memberof oyPixelAccess_s
@@ -422,7 +426,8 @@ oyArray2d_s *      oyPixelAccess_GetArray (
 
   oyCheckType__m( oyOBJECT_PIXEL_ACCESS_S, return 0 )
 
-  return oyArray2d_Copy( s->array, 0 );
+  oyArray2d_Copy( s->array, 0 );
+  return s->array;
 }
 /** Function  oyPixelAccess_SetArray
  *  @memberof oyPixelAccess_s

@@ -165,7 +165,8 @@ OYAPI oyPointer_s * OYEXPORT
   /* slightly fragile but inheritable */
   oyCheckTypeRange_m( oyOBJECT_CMM_API_FILTER_S, oyOBJECT_CMM_API_MAX, return NULL )
 
-  return oyPointer_Copy( s->runtime_context, NULL );
+  oyPointer_Copy( s->runtime_context, NULL );
+  return s->runtime_context;
 }
 
 

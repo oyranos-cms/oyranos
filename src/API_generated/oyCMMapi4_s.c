@@ -167,7 +167,8 @@ OYAPI oyPointer_s * OYEXPORT
   /* slightly fragile but inheritable */
   oyCheckTypeRange_m( oyOBJECT_CMM_API4_S, oyOBJECT_CMM_API_MAX, return NULL )
 
-  return oyPointer_Copy( s->runtime_context, NULL );
+  oyPointer_Copy( s->runtime_context, NULL );
+  return s->runtime_context;
 }
 
 
@@ -233,7 +234,9 @@ OYAPI oyCMMapi4_s*  OYEXPORT
   api4->oyCMMFilterNode_GetText = getText;
   api4->ui = (oyCMMui_s_*) oyCMMui_Copy( ui, object );
   if(api4->ui)
+  {
     api4->ui->parent = (oyCMMapiFilter_s*) oyCMMapi4_Copy( (oyCMMapi4_s*) api4, NULL );
+  }
 
   return (oyCMMapi4_s*) api4;
 }

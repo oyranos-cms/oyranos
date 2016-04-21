@@ -83,7 +83,7 @@ int oyX1Monitor_height_( oyX1Monitor_s *disp ) { return disp->geo[5]; }
 int   oyX1Monitor_getGeometryIdentifier_(oyX1Monitor_s       * disp );
 Display* oyX1Monitor_device_( oyX1Monitor_s *disp ) { return disp->display; }
 const char* oyX1Monitor_systemPort_( oyX1Monitor_s *disp ) { return disp->system_port; }
-oyBlob_s *  oyX1Monitor_edid_( oyX1Monitor_s * disp ) { return oyBlob_Copy( disp->edid, 0 ); }
+oyBlob_s *  oyX1Monitor_edid_( oyX1Monitor_s * disp ) { oyBlob_Copy( disp->edid, 0 ); return disp->edid; }
 
 oyX11INFO_SOURCE_e
     oyX1Monitor_infoSource_( oyX1Monitor_s *disp ) { return disp->info_source; }

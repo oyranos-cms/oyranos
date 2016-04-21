@@ -95,7 +95,8 @@ OYAPI oyFilterNode_s * OYEXPORT
 
   oyCheckType__m( oyOBJECT_FILTER_PLUG_S, return 0 )
 
-  return oyFilterNode_Copy( (oyFilterNode_s*)(s->node), 0 );
+  oyFilterNode_Copy( (oyFilterNode_s*)(s->node), 0 );
+  return (oyFilterNode_s*)(s->node);
 }
 /** Function  oyFilterPlug_GetRemoteNode
  *  @memberof oyFilterPlug_s
@@ -142,7 +143,8 @@ OYAPI oyFilterSocket_s * OYEXPORT
 
   oyCheckType__m( oyOBJECT_FILTER_PLUG_S, return 0 )
 
-  return oyFilterSocket_Copy( (oyFilterSocket_s*)(s->remote_socket_), 0 );
+  oyFilterSocket_Copy( (oyFilterSocket_s*)(s->remote_socket_), 0 );
+  return (oyFilterSocket_s*)(s->remote_socket_);
 }
 /** Function  oyFilterPlug_GetPattern
  *  @memberof oyFilterPlug_s
@@ -165,7 +167,8 @@ OYAPI oyConnector_s * OYEXPORT
 
   oyCheckType__m( oyOBJECT_FILTER_PLUG_S, return 0 )
 
-  return oyConnector_Copy( s->pattern, 0 );
+  oyConnector_Copy( s->pattern, 0 );
+  return s->pattern;
 }
 /** Function  oyFilterPlug_GetRelatives
  *  @memberof oyFilterPlug_s

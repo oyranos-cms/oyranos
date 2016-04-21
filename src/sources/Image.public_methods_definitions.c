@@ -1606,7 +1606,9 @@ int    oyImage_ToFile                ( oyImage_s         * image,
   if(in)
   options = oyFilterNode_GetOptions( in, OY_SELECT_FILTER );
   if(opts)
+  {
     oyOptions_CopyFrom( &options, opts, oyBOOLEAN_UNION, 0,0);
+  }
   /* add a new option with the appropriate value */
   error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/file_write/filename",
                                  file_name, OY_CREATE_NEW );

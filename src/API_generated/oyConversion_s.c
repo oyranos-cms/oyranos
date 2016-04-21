@@ -590,7 +590,9 @@ oyFilterNode_s   * oyConversion_GetNode (
       node = oyFilterNode_Copy( (oyFilterNode_s*)s->input, 0 );
     } else
     if(oyToOutput_m(flags))
+    {
       node = oyFilterNode_Copy( (oyFilterNode_s*)s->out_, 0 );
+    }
   }
 
   return node;

@@ -678,7 +678,9 @@ oyProfileTag_s * oyProfile_GetTagByPos_( oyProfile_s_    * profile,
         error = !memcpy( tag_->profile_cmm_, profile_cmm, 4 );
 
       if(0 == pos)
+      {
         tag = oyProfileTag_Copy( (oyProfileTag_s*)tag_, 0 );
+      }
       error = oyProfile_TagMoveIn_( s, (oyProfileTag_s**)&tag_, -1 );
 
 
@@ -741,7 +743,9 @@ oyProfileTag_s * oyProfile_GetTagByPos_( oyProfile_s_    * profile,
         }
 
         if(i == pos-1)
+        {
           tag = oyProfileTag_Copy( tag_, 0 );
+        }
 
         if(error <= 0)
           error = oyProfile_TagMoveIn_( s, &tag_, -1 );

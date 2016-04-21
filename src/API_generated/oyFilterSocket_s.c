@@ -276,7 +276,8 @@ OYAPI oyFilterNode_s * OYEXPORT
 
   oyCheckType__m( oyOBJECT_FILTER_SOCKET_S, return 0 )
 
-  return oyFilterNode_Copy( (oyFilterNode_s*)s->node, 0 );
+  oyFilterNode_Copy( (oyFilterNode_s*)s->node, 0 );
+  return (oyFilterNode_s*)s->node;
 }
 /** Function  oyFilterSocket_GetData
  *  @memberof oyFilterSocket_s
@@ -368,7 +369,8 @@ OYAPI oyFilterPlugs_s * OYEXPORT
 
   oyCheckType__m( oyOBJECT_FILTER_SOCKET_S, return 0 )
 
-  return oyFilterPlugs_Copy( s->requesting_plugs_, 0 );
+  oyFilterPlugs_Copy( s->requesting_plugs_, 0 );
+  return s->requesting_plugs_;
 }
 /** Function  oyFilterPlug_GetPattern
  *  @memberof oyFilterPlug_s
@@ -391,7 +393,8 @@ OYAPI oyConnector_s * OYEXPORT
 
   oyCheckType__m( oyOBJECT_FILTER_SOCKET_S, return 0 )
 
-  return oyConnector_Copy( s->pattern, 0 );
+  oyConnector_Copy( s->pattern, 0 );
+  return s->pattern;
 }
 /** Function  oyFilterSocket_GetRelatives
  *  @memberof oyFilterSocket_s

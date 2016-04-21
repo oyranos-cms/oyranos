@@ -287,5 +287,6 @@ OYAPI oyOptions_s * OYEXPORT
 
   oyCheckType__m( oyOBJECT_FILTER_GRAPH_S, return 0 )
 
-  return oyOptions_Copy( s->options, 0 );
+  oyOptions_Copy( s->options, 0 );
+  return s->options;
 }

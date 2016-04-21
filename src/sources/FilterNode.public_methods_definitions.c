@@ -676,7 +676,8 @@ OYAPI oyFilterPlug_s * OYEXPORT
     s = node_->plugs[pos];
   }
 
-  return oyFilterPlug_Copy((oyFilterPlug_s*)s,0);
+  oyFilterPlug_Copy((oyFilterPlug_s*)s,0);
+  return (oyFilterPlug_s*)s;
 }
 
 /** Function  oyFilterNode_Run
@@ -768,7 +769,8 @@ OYAPI oyFilterSocket_s * OYEXPORT
     s = node_->sockets[pos];
   }
 
-  return oyFilterSocket_Copy((oyFilterSocket_s*)s, 0);
+  oyFilterSocket_Copy((oyFilterSocket_s*)s, 0);
+  return (oyFilterSocket_s*)s;
 }
 
 /** Function  oyFilterNode_GetSocketNode
@@ -806,7 +808,8 @@ OYAPI oyFilterNode_s * OYEXPORT
 
   oyFilterPlug_Release( (oyFilterPlug_s**)&remote_plug );
 
-  return oyFilterNode_Copy((oyFilterNode_s*)remote,0);
+  oyFilterNode_Copy((oyFilterNode_s*)remote,0);
+  return (oyFilterNode_s*)remote;
 }
 
 /** Function  oyFilterNode_CountSocketNodes
@@ -898,7 +901,8 @@ OYAPI oyFilterNode_s * OYEXPORT
     WARNcc3_S( node, "%s: %s  plug: %d", oyFilterNode_GetRegistration( node ),
       _("Remote filter or plug not available."), pos );
 
-  return oyFilterNode_Copy((oyFilterNode_s*)remote,0);
+  oyFilterNode_Copy((oyFilterNode_s*)remote,0);
+  return (oyFilterNode_s*)remote;
 }
 
 
@@ -1060,7 +1064,9 @@ OYAPI oyConnector_s * OYEXPORT
           oyObjectDebugMessage_( (*node_)->api7_->plugs[as_pos]->oy_, __func__,
                                  oyStructTypeToText((*node_)->api7_->plugs[as_pos]->type_) );
       } else
+      {
         pattern = oyConnector_Copy( (*node_)->api7_->plugs[as_pos], object );
+      }
     }
   } else {
     if((*node_)->api7_->sockets_n <= as_pos &&
@@ -1076,7 +1082,9 @@ OYAPI oyConnector_s * OYEXPORT
           oyObjectDebugMessage_( (*node_)->api7_->sockets[as_pos]->oy_, __func__,
                                  oyStructTypeToText((*node_)->api7_->sockets[as_pos]->type_) );
       } else
+      {
         pattern = oyConnector_Copy( (*node_)->api7_->sockets[as_pos], object );
+      }
     }
   }
 
@@ -1106,7 +1114,8 @@ OYAPI oyFilterCore_s *  OYEXPORT
 
   oyCheckType__m( oyOBJECT_FILTER_NODE_S, return NULL )
 
-  return oyFilterCore_Copy( (oyFilterCore_s*)s->core, 0 );
+  oyFilterCore_Copy( (oyFilterCore_s*)s->core, 0 );
+  return (oyFilterCore_s*)s->core;
 }
 /** Function  oyFilterNode_GetRegistration
  *  @memberof oyFilterNode_s
@@ -1229,7 +1238,8 @@ OYAPI oyPointer_s *  OYEXPORT
 
   oyCheckType__m( oyOBJECT_FILTER_NODE_S, return NULL )
 
-  return oyPointer_Copy( s->backend_data, 0 );
+  oyPointer_Copy( s->backend_data, 0 );
+  return s->backend_data;
 }
 /**
  *  @memberof oyFilterNode_s
@@ -1334,7 +1344,8 @@ OYAPI oyOptions_s *  OYEXPORT
   if(!s->tags)
     s->tags = oyOptions_New( 0 );
 
-  return oyOptions_Copy( s->tags, 0 );
+  oyOptions_Copy( s->tags, 0 );
+  return s->tags;
 }
 
 /**

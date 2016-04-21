@@ -136,7 +136,8 @@ oyHash_s *   oyCacheListGetEntry_    ( oyStructList_s    * cache_list,
     if(memcmp(search_ptr, compare->oy_->hash_ptr_, OY_HASH_SIZE*2) == 0)
     {
       entry = compare;
-      return oyHash_Copy( entry, 0 );
+      oyHash_Copy( entry, 0 );
+      return entry;
     }
   }
 
@@ -160,7 +161,8 @@ oyHash_s *   oyCacheListGetEntry_    ( oyStructList_s    * cache_list,
 
   if(entry)
   {
-    return oyHash_Copy( entry, 0 );
+    oyHash_Copy( entry, 0 );
+    return entry;
   } else
     return 0;
 }

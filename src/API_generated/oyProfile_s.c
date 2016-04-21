@@ -149,7 +149,8 @@ OYAPI oyProfile_s * OYEXPORT
         object->deallocateFunc_( name );
       else
         oyDeAllocateFunc_( name );
-      return oyProfile_Copy( (oyProfile_s*)oy_profile_s_std_cache_[pos], 0 );
+      oyProfile_Copy( (oyProfile_s*)oy_profile_s_std_cache_[pos], 0 );
+      return (oyProfile_s*)oy_profile_s_std_cache_[pos];
     }
 
   s = oyProfile_FromFile_( name, flags, object );
@@ -216,7 +217,9 @@ OYAPI oyProfile_s * OYEXPORT
   }
 
   if(oyDEFAULT_PROFILE_START < type && type < oyDEFAULT_PROFILE_END)
+  {
     oy_profile_s_std_cache_[pos] = (oyProfile_s_*)oyProfile_Copy( (oyProfile_s*)s, 0 );
+  }
 
   oyProfile_GetID( (oyProfile_s*)s );
 
@@ -1089,7 +1092,9 @@ oyProfile_SetChannelNames            ( oyProfile_s       * profile,
     s->names_chan_[ n ] = NULL;
     for( ; i < n; ++i )
       if(names_chan[i])
+      {
         s->names_chan_[i] = oyObject_Copy( names_chan[i] );
+      }
   }
 }
 
