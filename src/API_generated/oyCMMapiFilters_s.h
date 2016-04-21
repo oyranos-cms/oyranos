@@ -77,19 +77,8 @@ oyObject_s           oy_;            /**< Features name and hash. Do not change 
 
 OYAPI oyCMMapiFilters_s* OYEXPORT
   oyCMMapiFilters_New( oyObject_s object );
-/** @memberof oyCMMapiFilters_s
- *  @brief    Copy or Reference a CMMapiFilters object
- *
- *  The macro is for copying and for referencing. The reference is the most
- *  often used way, which saves resourcs and time.
- *
- *  @param[in]     cmmapifilters                 CMMapiFilters struct object
- *  @param         object              NULL - means reference,
- *                                     the optional object triggers a real copy
- */
-#define oyCMMapiFilters_Copy(cmmapifilters,object) oyCMMapiFilters_Copy_x(cmmapifilters,object); if(oy_debug_objects) oyObjectDebugMessage_( cmmapifilters?cmmapifilters->oy_:NULL, __func__, "oyCMMapiFilters_s" );
 OYAPI oyCMMapiFilters_s* OYEXPORT
-  oyCMMapiFilters_Copy_x( oyCMMapiFilters_s *cmmapifilters, oyObject_s obj );
+  oyCMMapiFilters_Copy( oyCMMapiFilters_s *cmmapifilters, oyObject_s obj );
 OYAPI int OYEXPORT
   oyCMMapiFilters_Release( oyCMMapiFilters_s **cmmapifilters );
 

@@ -259,7 +259,7 @@ oyImage_s *    oyImage_Create         ( int               width,
   error = !memset( s, 0, sizeof(STRUCT_TYPE) );
 
   memcpy( s, &type, sizeof(oyOBJECT_e) );
-  s->copy = (oyStruct_Copy_f) oyImage_Copy_x;
+  s->copy = (oyStruct_Copy_f) oyImage_Copy;
   s->release = (oyStruct_Release_f) oyImage_Release;
 
   s->oy_ = s_obj;

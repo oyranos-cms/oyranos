@@ -45,7 +45,7 @@ OYAPI oyLis_s * OYEXPORT
   return (oyLis_s*) lis;
 }
 
-/** @fn       oyLis_Copy 
+/** @fn       oyLis_Copy
  *  @memberof oyLis_s
  *  @brief    Copy or Reference a Lis object
  *
@@ -57,7 +57,7 @@ OYAPI oyLis_s * OYEXPORT
  *                                     the optional object triggers a real copy
  */
 OYAPI oyLis_s* OYEXPORT
-  oyLis_Copy_x( oyLis_s *lis, oyObject_s object )
+  oyLis_Copy( oyLis_s *lis, oyObject_s object )
 {
   oyLis_s_ * s = (oyLis_s_*) lis;
 
@@ -65,6 +65,9 @@ OYAPI oyLis_s* OYEXPORT
     oyCheckType__m( oyOBJECT_LIS_S, return 0 )
 
   s = oyLis_Copy_( s, object );
+
+  if(oy_debug_objects)
+    oyObjectDebugMessage_( s?s->oy_:NULL, __func__, "oyLis_s" );
 
   return (oyLis_s*) s;
 }

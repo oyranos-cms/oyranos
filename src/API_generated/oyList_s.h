@@ -73,19 +73,8 @@ oyObject_s           oy_;            /**< Features name and hash. Do not change 
 
 OYAPI oyList_s* OYEXPORT
   oyList_New( oyObject_s object );
-/** @memberof oyList_s
- *  @brief    Copy or Reference a List object
- *
- *  The macro is for copying and for referencing. The reference is the most
- *  often used way, which saves resourcs and time.
- *
- *  @param[in]     list                 List struct object
- *  @param         object              NULL - means reference,
- *                                     the optional object triggers a real copy
- */
-#define oyList_Copy(list,object) oyList_Copy_x(list,object); if(oy_debug_objects) oyObjectDebugMessage_( list?list->oy_:NULL, __func__, "oyList_s" );
 OYAPI oyList_s* OYEXPORT
-  oyList_Copy_x( oyList_s *list, oyObject_s obj );
+  oyList_Copy( oyList_s *list, oyObject_s obj );
 OYAPI int OYEXPORT
   oyList_Release( oyList_s **list );
 

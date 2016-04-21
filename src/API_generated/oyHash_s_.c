@@ -235,7 +235,7 @@ oyHash_s_ * oyHash_New_ ( oyObject_s object )
     WARNc_S( "memset failed" );
 
   memcpy( s, &type, sizeof(oyOBJECT_e) );
-  s->copy = (oyStruct_Copy_f) oyHash_Copy_x;
+  s->copy = (oyStruct_Copy_f) oyHash_Copy;
   s->release = (oyStruct_Release_f) oyHash_Release;
 
   s->oy_ = s_obj;

@@ -73,19 +73,8 @@ oyObject_s           oy_;            /**< Features name and hash. Do not change 
 
 OYAPI oyHash_s* OYEXPORT
   oyHash_New( oyObject_s object );
-/** @memberof oyHash_s
- *  @brief    Copy or Reference a Hash object
- *
- *  The macro is for copying and for referencing. The reference is the most
- *  often used way, which saves resourcs and time.
- *
- *  @param[in]     hash                 Hash struct object
- *  @param         object              NULL - means reference,
- *                                     the optional object triggers a real copy
- */
-#define oyHash_Copy(hash,object) oyHash_Copy_x(hash,object); if(oy_debug_objects) oyObjectDebugMessage_( hash?hash->oy_:NULL, __func__, "oyHash_s" );
 OYAPI oyHash_s* OYEXPORT
-  oyHash_Copy_x( oyHash_s *hash, oyObject_s obj );
+  oyHash_Copy( oyHash_s *hash, oyObject_s obj );
 OYAPI int OYEXPORT
   oyHash_Release( oyHash_s **hash );
 

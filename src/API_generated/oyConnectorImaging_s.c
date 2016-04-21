@@ -53,7 +53,7 @@ OYAPI oyConnectorImaging_s * OYEXPORT
   return (oyConnectorImaging_s*) connectorimaging;
 }
 
-/** @fn       oyConnectorImaging_Copy 
+/** @fn       oyConnectorImaging_Copy
  *  @memberof oyConnectorImaging_s
  *  @brief    Copy or Reference a ConnectorImaging object
  *
@@ -65,7 +65,7 @@ OYAPI oyConnectorImaging_s * OYEXPORT
  *                                     the optional object triggers a real copy
  */
 OYAPI oyConnectorImaging_s* OYEXPORT
-  oyConnectorImaging_Copy_x( oyConnectorImaging_s *connectorimaging, oyObject_s object )
+  oyConnectorImaging_Copy( oyConnectorImaging_s *connectorimaging, oyObject_s object )
 {
   oyConnectorImaging_s_ * s = (oyConnectorImaging_s_*) connectorimaging;
 
@@ -73,6 +73,9 @@ OYAPI oyConnectorImaging_s* OYEXPORT
     oyCheckCType__m( oyOBJECT_CONNECTOR_IMAGING_S, return 0 )
 
   s = oyConnectorImaging_Copy_( s, object );
+
+  if(oy_debug_objects)
+    oyObjectDebugMessage_( s?s->oy_:NULL, __func__, "oyConnectorImaging_s" );
 
   return (oyConnectorImaging_s*) s;
 }

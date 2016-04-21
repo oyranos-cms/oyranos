@@ -45,7 +45,7 @@ OYAPI oyCMMinfo_s * OYEXPORT
   return (oyCMMinfo_s*) cmminfo;
 }
 
-/** @fn       oyCMMinfo_Copy 
+/** @fn       oyCMMinfo_Copy
  *  @memberof oyCMMinfo_s
  *  @brief    Copy or Reference a CMMinfo object
  *
@@ -57,7 +57,7 @@ OYAPI oyCMMinfo_s * OYEXPORT
  *                                     the optional object triggers a real copy
  */
 OYAPI oyCMMinfo_s* OYEXPORT
-  oyCMMinfo_Copy_x( oyCMMinfo_s *cmminfo, oyObject_s object )
+  oyCMMinfo_Copy( oyCMMinfo_s *cmminfo, oyObject_s object )
 {
   oyCMMinfo_s_ * s = (oyCMMinfo_s_*) cmminfo;
 
@@ -65,6 +65,9 @@ OYAPI oyCMMinfo_s* OYEXPORT
     oyCheckType__m( oyOBJECT_CMM_INFO_S, return 0 )
 
   s = oyCMMinfo_Copy_( s, object );
+
+  if(oy_debug_objects)
+    oyObjectDebugMessage_( s?s->oy_:NULL, __func__, "oyCMMinfo_s" );
 
   return (oyCMMinfo_s*) s;
 }

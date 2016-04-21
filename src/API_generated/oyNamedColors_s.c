@@ -51,7 +51,7 @@ OYAPI oyNamedColors_s * OYEXPORT
   return (oyNamedColors_s*) namedcolors;
 }
 
-/** @fn       oyNamedColors_Copy 
+/** @fn       oyNamedColors_Copy
  *  @memberof oyNamedColors_s
  *  @brief    Copy or Reference a NamedColors object
  *
@@ -63,7 +63,7 @@ OYAPI oyNamedColors_s * OYEXPORT
  *                                     the optional object triggers a real copy
  */
 OYAPI oyNamedColors_s* OYEXPORT
-  oyNamedColors_Copy_x( oyNamedColors_s *namedcolors, oyObject_s object )
+  oyNamedColors_Copy( oyNamedColors_s *namedcolors, oyObject_s object )
 {
   oyNamedColors_s_ * s = (oyNamedColors_s_*) namedcolors;
 
@@ -71,6 +71,9 @@ OYAPI oyNamedColors_s* OYEXPORT
     oyCheckType__m( oyOBJECT_NAMED_COLORS_S, return 0 )
 
   s = oyNamedColors_Copy_( s, object );
+
+  if(oy_debug_objects)
+    oyObjectDebugMessage_( s?s->oy_:NULL, __func__, "oyNamedColors_s" );
 
   return (oyNamedColors_s*) s;
 }

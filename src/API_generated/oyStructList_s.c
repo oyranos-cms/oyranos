@@ -48,7 +48,7 @@ OYAPI oyStructList_s * OYEXPORT
   return (oyStructList_s*) structlist;
 }
 
-/** @fn       oyStructList_Copy 
+/** @fn       oyStructList_Copy
  *  @memberof oyStructList_s
  *  @brief    Copy or Reference a StructList object
  *
@@ -60,7 +60,7 @@ OYAPI oyStructList_s * OYEXPORT
  *                                     the optional object triggers a real copy
  */
 OYAPI oyStructList_s* OYEXPORT
-  oyStructList_Copy_x( oyStructList_s *structlist, oyObject_s object )
+  oyStructList_Copy( oyStructList_s *structlist, oyObject_s object )
 {
   oyStructList_s_ * s = (oyStructList_s_*) structlist;
 
@@ -68,6 +68,9 @@ OYAPI oyStructList_s* OYEXPORT
     oyCheckType__m( oyOBJECT_STRUCT_LIST_S, return 0 )
 
   s = oyStructList_Copy_( s, object );
+
+  if(oy_debug_objects)
+    oyObjectDebugMessage_( s?s->oy_:NULL, __func__, "oyStructList_s" );
 
   return (oyStructList_s*) s;
 }

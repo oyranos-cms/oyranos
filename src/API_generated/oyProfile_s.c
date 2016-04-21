@@ -52,7 +52,7 @@ OYAPI oyProfile_s * OYEXPORT
   return (oyProfile_s*) profile;
 }
 
-/** @fn       oyProfile_Copy 
+/** @fn       oyProfile_Copy
  *  @memberof oyProfile_s
  *  @brief    Copy or Reference a Profile object
  *
@@ -64,7 +64,7 @@ OYAPI oyProfile_s * OYEXPORT
  *                                     the optional object triggers a real copy
  */
 OYAPI oyProfile_s* OYEXPORT
-  oyProfile_Copy_x( oyProfile_s *profile, oyObject_s object )
+  oyProfile_Copy( oyProfile_s *profile, oyObject_s object )
 {
   oyProfile_s_ * s = (oyProfile_s_*) profile;
 
@@ -72,6 +72,9 @@ OYAPI oyProfile_s* OYEXPORT
     oyCheckType__m( oyOBJECT_PROFILE_S, return 0 )
 
   s = oyProfile_Copy_( s, object );
+
+  if(oy_debug_objects)
+    oyObjectDebugMessage_( s?s->oy_:NULL, __func__, "oyProfile_s" );
 
   return (oyProfile_s*) s;
 }

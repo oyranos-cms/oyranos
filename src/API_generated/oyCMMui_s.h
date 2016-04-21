@@ -94,19 +94,8 @@ oyObject_s           oy_;            /**< Features name and hash. Do not change 
 
 OYAPI oyCMMui_s* OYEXPORT
   oyCMMui_New( oyObject_s object );
-/** @memberof oyCMMui_s
- *  @brief    Copy or Reference a CMMui object
- *
- *  The macro is for copying and for referencing. The reference is the most
- *  often used way, which saves resourcs and time.
- *
- *  @param[in]     cmmui                 CMMui struct object
- *  @param         object              NULL - means reference,
- *                                     the optional object triggers a real copy
- */
-#define oyCMMui_Copy(cmmui,object) oyCMMui_Copy_x(cmmui,object); if(oy_debug_objects) oyObjectDebugMessage_( cmmui?cmmui->oy_:NULL, __func__, "oyCMMui_s" );
 OYAPI oyCMMui_s* OYEXPORT
-  oyCMMui_Copy_x( oyCMMui_s *cmmui, oyObject_s obj );
+  oyCMMui_Copy( oyCMMui_s *cmmui, oyObject_s obj );
 OYAPI int OYEXPORT
   oyCMMui_Release( oyCMMui_s **cmmui );
 

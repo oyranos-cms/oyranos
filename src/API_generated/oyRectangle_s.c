@@ -49,7 +49,7 @@ OYAPI oyRectangle_s * OYEXPORT
   return (oyRectangle_s*) rectangle;
 }
 
-/** @fn       oyRectangle_Copy 
+/** @fn       oyRectangle_Copy
  *  @memberof oyRectangle_s
  *  @brief    Copy or Reference a Rectangle object
  *
@@ -61,7 +61,7 @@ OYAPI oyRectangle_s * OYEXPORT
  *                                     the optional object triggers a real copy
  */
 OYAPI oyRectangle_s* OYEXPORT
-  oyRectangle_Copy_x( oyRectangle_s *rectangle, oyObject_s object )
+  oyRectangle_Copy( oyRectangle_s *rectangle, oyObject_s object )
 {
   oyRectangle_s_ * s = (oyRectangle_s_*) rectangle;
 
@@ -69,6 +69,9 @@ OYAPI oyRectangle_s* OYEXPORT
     oyCheckType__m( oyOBJECT_RECTANGLE_S, return 0 )
 
   s = oyRectangle_Copy_( s, object );
+
+  if(oy_debug_objects)
+    oyObjectDebugMessage_( s?s->oy_:NULL, __func__, "oyRectangle_s" );
 
   return (oyRectangle_s*) s;
 }

@@ -225,19 +225,8 @@ oyObject_s           oy_;            /**< Features name and hash. Do not change 
 
 OYAPI oyImage_s* OYEXPORT
   oyImage_New( oyObject_s object );
-/** @memberof oyImage_s
- *  @brief    Copy or Reference a Image object
- *
- *  The macro is for copying and for referencing. The reference is the most
- *  often used way, which saves resourcs and time.
- *
- *  @param[in]     image                 Image struct object
- *  @param         object              NULL - means reference,
- *                                     the optional object triggers a real copy
- */
-#define oyImage_Copy(image,object) oyImage_Copy_x(image,object); if(oy_debug_objects) oyObjectDebugMessage_( image?image->oy_:NULL, __func__, "oyImage_s" );
 OYAPI oyImage_s* OYEXPORT
-  oyImage_Copy_x( oyImage_s *image, oyObject_s obj );
+  oyImage_Copy( oyImage_s *image, oyObject_s obj );
 OYAPI int OYEXPORT
   oyImage_Release( oyImage_s **image );
 

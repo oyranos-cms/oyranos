@@ -51,7 +51,7 @@ OYAPI oyConnector_s * OYEXPORT
   return (oyConnector_s*) connector;
 }
 
-/** @fn       oyConnector_Copy 
+/** @fn       oyConnector_Copy
  *  @memberof oyConnector_s
  *  @brief    Copy or Reference a Connector object
  *
@@ -63,7 +63,7 @@ OYAPI oyConnector_s * OYEXPORT
  *                                     the optional object triggers a real copy
  */
 OYAPI oyConnector_s* OYEXPORT
-  oyConnector_Copy_x( oyConnector_s *connector, oyObject_s object )
+  oyConnector_Copy( oyConnector_s *connector, oyObject_s object )
 {
   oyConnector_s_ * s = (oyConnector_s_*) connector;
 
@@ -71,6 +71,9 @@ OYAPI oyConnector_s* OYEXPORT
     oyCheckCType__m( oyOBJECT_CONNECTOR_S, return 0 )
 
   s = oyConnector_Copy_( s, object );
+
+  if(oy_debug_objects)
+    oyObjectDebugMessage_( s?s->oy_:NULL, __func__, "oyConnector_s" );
 
   return (oyConnector_s*) s;
 }

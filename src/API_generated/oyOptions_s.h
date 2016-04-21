@@ -91,19 +91,8 @@ oyObject_s           oy_;            /**< Features name and hash. Do not change 
 
 OYAPI oyOptions_s* OYEXPORT
   oyOptions_New( oyObject_s object );
-/** @memberof oyOptions_s
- *  @brief    Copy or Reference a Options object
- *
- *  The macro is for copying and for referencing. The reference is the most
- *  often used way, which saves resourcs and time.
- *
- *  @param[in]     options                 Options struct object
- *  @param         object              NULL - means reference,
- *                                     the optional object triggers a real copy
- */
-#define oyOptions_Copy(options,object) oyOptions_Copy_x(options,object); if(oy_debug_objects) oyObjectDebugMessage_( options?options->oy_:NULL, __func__, "oyOptions_s" );
 OYAPI oyOptions_s* OYEXPORT
-  oyOptions_Copy_x( oyOptions_s *options, oyObject_s obj );
+  oyOptions_Copy( oyOptions_s *options, oyObject_s obj );
 OYAPI int OYEXPORT
   oyOptions_Release( oyOptions_s **options );
 

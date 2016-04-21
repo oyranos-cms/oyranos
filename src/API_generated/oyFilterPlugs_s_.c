@@ -201,7 +201,7 @@ oyFilterPlugs_s_ * oyFilterPlugs_New_ ( oyObject_s object )
     WARNc_S( "memset failed" );
 
   memcpy( s, &type, sizeof(oyOBJECT_e) );
-  s->copy = (oyStruct_Copy_f) oyFilterPlugs_Copy_x;
+  s->copy = (oyStruct_Copy_f) oyFilterPlugs_Copy;
   s->release = (oyStruct_Release_f) oyFilterPlugs_Release;
 
   s->oy_ = s_obj;

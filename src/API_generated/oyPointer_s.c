@@ -48,7 +48,7 @@ OYAPI oyPointer_s * OYEXPORT
   return (oyPointer_s*) pointer;
 }
 
-/** @fn       oyPointer_Copy 
+/** @fn       oyPointer_Copy
  *  @memberof oyPointer_s
  *  @brief    Copy or Reference a Pointer object
  *
@@ -60,7 +60,7 @@ OYAPI oyPointer_s * OYEXPORT
  *                                     the optional object triggers a real copy
  */
 OYAPI oyPointer_s* OYEXPORT
-  oyPointer_Copy_x( oyPointer_s *pointer, oyObject_s object )
+  oyPointer_Copy( oyPointer_s *pointer, oyObject_s object )
 {
   oyPointer_s_ * s = (oyPointer_s_*) pointer;
 
@@ -68,6 +68,9 @@ OYAPI oyPointer_s* OYEXPORT
     oyCheckType__m( oyOBJECT_POINTER_S, return 0 )
 
   s = oyPointer_Copy_( s, object );
+
+  if(oy_debug_objects)
+    oyObjectDebugMessage_( s?s->oy_:NULL, __func__, "oyPointer_s" );
 
   return (oyPointer_s*) s;
 }

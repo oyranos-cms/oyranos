@@ -45,7 +45,7 @@ OYAPI oyCMMobjectType_s * OYEXPORT
   return (oyCMMobjectType_s*) cmmobjecttype;
 }
 
-/** @fn       oyCMMobjectType_Copy 
+/** @fn       oyCMMobjectType_Copy
  *  @memberof oyCMMobjectType_s
  *  @brief    Copy or Reference a CMMobjectType object
  *
@@ -57,7 +57,7 @@ OYAPI oyCMMobjectType_s * OYEXPORT
  *                                     the optional object triggers a real copy
  */
 OYAPI oyCMMobjectType_s* OYEXPORT
-  oyCMMobjectType_Copy_x( oyCMMobjectType_s *cmmobjecttype, oyObject_s object )
+  oyCMMobjectType_Copy( oyCMMobjectType_s *cmmobjecttype, oyObject_s object )
 {
   oyCMMobjectType_s_ * s = (oyCMMobjectType_s_*) cmmobjecttype;
 
@@ -65,6 +65,9 @@ OYAPI oyCMMobjectType_s* OYEXPORT
     oyCheckType__m( oyOBJECT_CMM_OBJECT_TYPE_S, return 0 )
 
   s = oyCMMobjectType_Copy_( s, object );
+
+  if(oy_debug_objects)
+    oyObjectDebugMessage_( s?s->oy_:NULL, __func__, "oyCMMobjectType_s" );
 
   return (oyCMMobjectType_s*) s;
 }

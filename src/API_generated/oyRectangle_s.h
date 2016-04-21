@@ -72,19 +72,8 @@ oyObject_s           oy_;            /**< Features name and hash. Do not change 
 
 OYAPI oyRectangle_s* OYEXPORT
   oyRectangle_New( oyObject_s object );
-/** @memberof oyRectangle_s
- *  @brief    Copy or Reference a Rectangle object
- *
- *  The macro is for copying and for referencing. The reference is the most
- *  often used way, which saves resourcs and time.
- *
- *  @param[in]     rectangle                 Rectangle struct object
- *  @param         object              NULL - means reference,
- *                                     the optional object triggers a real copy
- */
-#define oyRectangle_Copy(rectangle,object) oyRectangle_Copy_x(rectangle,object); if(oy_debug_objects) oyObjectDebugMessage_( rectangle?rectangle->oy_:NULL, __func__, "oyRectangle_s" );
 OYAPI oyRectangle_s* OYEXPORT
-  oyRectangle_Copy_x( oyRectangle_s *rectangle, oyObject_s obj );
+  oyRectangle_Copy( oyRectangle_s *rectangle, oyObject_s obj );
 OYAPI int OYEXPORT
   oyRectangle_Release( oyRectangle_s **rectangle );
 

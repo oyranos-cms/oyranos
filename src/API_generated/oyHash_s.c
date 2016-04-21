@@ -45,7 +45,7 @@ OYAPI oyHash_s * OYEXPORT
   return (oyHash_s*) hash;
 }
 
-/** @fn       oyHash_Copy 
+/** @fn       oyHash_Copy
  *  @memberof oyHash_s
  *  @brief    Copy or Reference a Hash object
  *
@@ -57,7 +57,7 @@ OYAPI oyHash_s * OYEXPORT
  *                                     the optional object triggers a real copy
  */
 OYAPI oyHash_s* OYEXPORT
-  oyHash_Copy_x( oyHash_s *hash, oyObject_s object )
+  oyHash_Copy( oyHash_s *hash, oyObject_s object )
 {
   oyHash_s_ * s = (oyHash_s_*) hash;
 
@@ -65,6 +65,9 @@ OYAPI oyHash_s* OYEXPORT
     oyCheckType__m( oyOBJECT_HASH_S, return 0 )
 
   s = oyHash_Copy_( s, object );
+
+  if(oy_debug_objects)
+    oyObjectDebugMessage_( s?s->oy_:NULL, __func__, "oyHash_s" );
 
   return (oyHash_s*) s;
 }

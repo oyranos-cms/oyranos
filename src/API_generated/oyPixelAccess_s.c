@@ -50,7 +50,7 @@ OYAPI oyPixelAccess_s * OYEXPORT
   return (oyPixelAccess_s*) pixelaccess;
 }
 
-/** @fn       oyPixelAccess_Copy 
+/** @fn       oyPixelAccess_Copy
  *  @memberof oyPixelAccess_s
  *  @brief    Copy or Reference a PixelAccess object
  *
@@ -62,7 +62,7 @@ OYAPI oyPixelAccess_s * OYEXPORT
  *                                     the optional object triggers a real copy
  */
 OYAPI oyPixelAccess_s* OYEXPORT
-  oyPixelAccess_Copy_x( oyPixelAccess_s *pixelaccess, oyObject_s object )
+  oyPixelAccess_Copy( oyPixelAccess_s *pixelaccess, oyObject_s object )
 {
   oyPixelAccess_s_ * s = (oyPixelAccess_s_*) pixelaccess;
 
@@ -70,6 +70,9 @@ OYAPI oyPixelAccess_s* OYEXPORT
     oyCheckType__m( oyOBJECT_PIXEL_ACCESS_S, return 0 )
 
   s = oyPixelAccess_Copy_( s, object );
+
+  if(oy_debug_objects)
+    oyObjectDebugMessage_( s?s->oy_:NULL, __func__, "oyPixelAccess_s" );
 
   return (oyPixelAccess_s*) s;
 }

@@ -56,7 +56,7 @@ OYAPI oyConversion_s * OYEXPORT
   return (oyConversion_s*) conversion;
 }
 
-/** @fn       oyConversion_Copy 
+/** @fn       oyConversion_Copy
  *  @memberof oyConversion_s
  *  @brief    Copy or Reference a Conversion object
  *
@@ -68,7 +68,7 @@ OYAPI oyConversion_s * OYEXPORT
  *                                     the optional object triggers a real copy
  */
 OYAPI oyConversion_s* OYEXPORT
-  oyConversion_Copy_x( oyConversion_s *conversion, oyObject_s object )
+  oyConversion_Copy( oyConversion_s *conversion, oyObject_s object )
 {
   oyConversion_s_ * s = (oyConversion_s_*) conversion;
 
@@ -76,6 +76,9 @@ OYAPI oyConversion_s* OYEXPORT
     oyCheckType__m( oyOBJECT_CONVERSION_S, return 0 )
 
   s = oyConversion_Copy_( s, object );
+
+  if(oy_debug_objects)
+    oyObjectDebugMessage_( s?s->oy_:NULL, __func__, "oyConversion_s" );
 
   return (oyConversion_s*) s;
 }

@@ -52,7 +52,7 @@ OYAPI oyFilterGraph_s * OYEXPORT
   return (oyFilterGraph_s*) filtergraph;
 }
 
-/** @fn       oyFilterGraph_Copy 
+/** @fn       oyFilterGraph_Copy
  *  @memberof oyFilterGraph_s
  *  @brief    Copy or Reference a FilterGraph object
  *
@@ -64,7 +64,7 @@ OYAPI oyFilterGraph_s * OYEXPORT
  *                                     the optional object triggers a real copy
  */
 OYAPI oyFilterGraph_s* OYEXPORT
-  oyFilterGraph_Copy_x( oyFilterGraph_s *filtergraph, oyObject_s object )
+  oyFilterGraph_Copy( oyFilterGraph_s *filtergraph, oyObject_s object )
 {
   oyFilterGraph_s_ * s = (oyFilterGraph_s_*) filtergraph;
 
@@ -72,6 +72,9 @@ OYAPI oyFilterGraph_s* OYEXPORT
     oyCheckType__m( oyOBJECT_FILTER_GRAPH_S, return 0 )
 
   s = oyFilterGraph_Copy_( s, object );
+
+  if(oy_debug_objects)
+    oyObjectDebugMessage_( s?s->oy_:NULL, __func__, "oyFilterGraph_s" );
 
   return (oyFilterGraph_s*) s;
 }

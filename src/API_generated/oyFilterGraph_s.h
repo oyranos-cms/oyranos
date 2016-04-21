@@ -71,19 +71,8 @@ oyObject_s           oy_;            /**< Features name and hash. Do not change 
 
 OYAPI oyFilterGraph_s* OYEXPORT
   oyFilterGraph_New( oyObject_s object );
-/** @memberof oyFilterGraph_s
- *  @brief    Copy or Reference a FilterGraph object
- *
- *  The macro is for copying and for referencing. The reference is the most
- *  often used way, which saves resourcs and time.
- *
- *  @param[in]     filtergraph                 FilterGraph struct object
- *  @param         object              NULL - means reference,
- *                                     the optional object triggers a real copy
- */
-#define oyFilterGraph_Copy(filtergraph,object) oyFilterGraph_Copy_x(filtergraph,object); if(oy_debug_objects) oyObjectDebugMessage_( filtergraph?filtergraph->oy_:NULL, __func__, "oyFilterGraph_s" );
 OYAPI oyFilterGraph_s* OYEXPORT
-  oyFilterGraph_Copy_x( oyFilterGraph_s *filtergraph, oyObject_s obj );
+  oyFilterGraph_Copy( oyFilterGraph_s *filtergraph, oyObject_s obj );
 OYAPI int OYEXPORT
   oyFilterGraph_Release( oyFilterGraph_s **filtergraph );
 

@@ -51,7 +51,7 @@ OYAPI oyFilterNodes_s * OYEXPORT
   return (oyFilterNodes_s*) filternodes;
 }
 
-/** @fn       oyFilterNodes_Copy 
+/** @fn       oyFilterNodes_Copy
  *  @memberof oyFilterNodes_s
  *  @brief    Copy or Reference a FilterNodes object
  *
@@ -63,7 +63,7 @@ OYAPI oyFilterNodes_s * OYEXPORT
  *                                     the optional object triggers a real copy
  */
 OYAPI oyFilterNodes_s* OYEXPORT
-  oyFilterNodes_Copy_x( oyFilterNodes_s *filternodes, oyObject_s object )
+  oyFilterNodes_Copy( oyFilterNodes_s *filternodes, oyObject_s object )
 {
   oyFilterNodes_s_ * s = (oyFilterNodes_s_*) filternodes;
 
@@ -71,6 +71,9 @@ OYAPI oyFilterNodes_s* OYEXPORT
     oyCheckType__m( oyOBJECT_FILTER_NODES_S, return 0 )
 
   s = oyFilterNodes_Copy_( s, object );
+
+  if(oy_debug_objects)
+    oyObjectDebugMessage_( s?s->oy_:NULL, __func__, "oyFilterNodes_s" );
 
   return (oyFilterNodes_s*) s;
 }

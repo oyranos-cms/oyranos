@@ -45,7 +45,7 @@ OYAPI oyArray2d_s * OYEXPORT
   return (oyArray2d_s*) array2d;
 }
 
-/** @fn       oyArray2d_Copy 
+/** @fn       oyArray2d_Copy
  *  @memberof oyArray2d_s
  *  @brief    Copy or Reference a Array2d object
  *
@@ -57,7 +57,7 @@ OYAPI oyArray2d_s * OYEXPORT
  *                                     the optional object triggers a real copy
  */
 OYAPI oyArray2d_s* OYEXPORT
-  oyArray2d_Copy_x( oyArray2d_s *array2d, oyObject_s object )
+  oyArray2d_Copy( oyArray2d_s *array2d, oyObject_s object )
 {
   oyArray2d_s_ * s = (oyArray2d_s_*) array2d;
 
@@ -65,6 +65,9 @@ OYAPI oyArray2d_s* OYEXPORT
     oyCheckType__m( oyOBJECT_ARRAY2D_S, return 0 )
 
   s = oyArray2d_Copy_( s, object );
+
+  if(oy_debug_objects)
+    oyObjectDebugMessage_( s?s->oy_:NULL, __func__, "oyArray2d_s" );
 
   return (oyArray2d_s*) s;
 }

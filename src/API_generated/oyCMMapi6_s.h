@@ -123,19 +123,8 @@ oyObject_s           oy_;            /**< Features name and hash. Do not change 
 
 OYAPI oyCMMapi6_s* OYEXPORT
   oyCMMapi6_New( oyObject_s object );
-/** @memberof oyCMMapi6_s
- *  @brief    Copy or Reference a CMMapi6 object
- *
- *  The macro is for copying and for referencing. The reference is the most
- *  often used way, which saves resourcs and time.
- *
- *  @param[in]     cmmapi6                 CMMapi6 struct object
- *  @param         object              NULL - means reference,
- *                                     the optional object triggers a real copy
- */
-#define oyCMMapi6_Copy(cmmapi6,object) oyCMMapi6_Copy_x(cmmapi6,object); if(oy_debug_objects) oyObjectDebugMessage_( cmmapi6?cmmapi6->oy_:NULL, __func__, "oyCMMapi6_s" );
 OYAPI oyCMMapi6_s* OYEXPORT
-  oyCMMapi6_Copy_x( oyCMMapi6_s *cmmapi6, oyObject_s obj );
+  oyCMMapi6_Copy( oyCMMapi6_s *cmmapi6, oyObject_s obj );
 OYAPI int OYEXPORT
   oyCMMapi6_Release( oyCMMapi6_s **cmmapi6 );
 

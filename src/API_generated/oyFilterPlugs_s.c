@@ -51,7 +51,7 @@ OYAPI oyFilterPlugs_s * OYEXPORT
   return (oyFilterPlugs_s*) filterplugs;
 }
 
-/** @fn       oyFilterPlugs_Copy 
+/** @fn       oyFilterPlugs_Copy
  *  @memberof oyFilterPlugs_s
  *  @brief    Copy or Reference a FilterPlugs object
  *
@@ -63,7 +63,7 @@ OYAPI oyFilterPlugs_s * OYEXPORT
  *                                     the optional object triggers a real copy
  */
 OYAPI oyFilterPlugs_s* OYEXPORT
-  oyFilterPlugs_Copy_x( oyFilterPlugs_s *filterplugs, oyObject_s object )
+  oyFilterPlugs_Copy( oyFilterPlugs_s *filterplugs, oyObject_s object )
 {
   oyFilterPlugs_s_ * s = (oyFilterPlugs_s_*) filterplugs;
 
@@ -71,6 +71,9 @@ OYAPI oyFilterPlugs_s* OYEXPORT
     oyCheckType__m( oyOBJECT_FILTER_PLUGS_S, return 0 )
 
   s = oyFilterPlugs_Copy_( s, object );
+
+  if(oy_debug_objects)
+    oyObjectDebugMessage_( s?s->oy_:NULL, __func__, "oyFilterPlugs_s" );
 
   return (oyFilterPlugs_s*) s;
 }

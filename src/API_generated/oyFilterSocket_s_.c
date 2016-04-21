@@ -229,7 +229,7 @@ oyFilterSocket_s_ * oyFilterSocket_New_ ( oyObject_s object )
     WARNc_S( "memset failed" );
 
   memcpy( s, &type, sizeof(oyOBJECT_e) );
-  s->copy = (oyStruct_Copy_f) oyFilterSocket_Copy_x;
+  s->copy = (oyStruct_Copy_f) oyFilterSocket_Copy;
   s->release = (oyStruct_Release_f) oyFilterSocket_Release;
 
   s->oy_ = s_obj;

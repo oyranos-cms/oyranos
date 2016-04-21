@@ -229,7 +229,7 @@ oyNamedColor_s_ * oyNamedColor_New_ ( oyObject_s object )
     WARNc_S( "memset failed" );
 
   memcpy( s, &type, sizeof(oyOBJECT_e) );
-  s->copy = (oyStruct_Copy_f) oyNamedColor_Copy_x;
+  s->copy = (oyStruct_Copy_f) oyNamedColor_Copy;
   s->release = (oyStruct_Release_f) oyNamedColor_Release;
 
   s->oy_ = s_obj;

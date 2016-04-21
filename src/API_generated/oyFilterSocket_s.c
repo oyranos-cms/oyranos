@@ -48,7 +48,7 @@ OYAPI oyFilterSocket_s * OYEXPORT
   return (oyFilterSocket_s*) filtersocket;
 }
 
-/** @fn       oyFilterSocket_Copy 
+/** @fn       oyFilterSocket_Copy
  *  @memberof oyFilterSocket_s
  *  @brief    Copy or Reference a FilterSocket object
  *
@@ -60,7 +60,7 @@ OYAPI oyFilterSocket_s * OYEXPORT
  *                                     the optional object triggers a real copy
  */
 OYAPI oyFilterSocket_s* OYEXPORT
-  oyFilterSocket_Copy_x( oyFilterSocket_s *filtersocket, oyObject_s object )
+  oyFilterSocket_Copy( oyFilterSocket_s *filtersocket, oyObject_s object )
 {
   oyFilterSocket_s_ * s = (oyFilterSocket_s_*) filtersocket;
 
@@ -68,6 +68,9 @@ OYAPI oyFilterSocket_s* OYEXPORT
     oyCheckType__m( oyOBJECT_FILTER_SOCKET_S, return 0 )
 
   s = oyFilterSocket_Copy_( s, object );
+
+  if(oy_debug_objects)
+    oyObjectDebugMessage_( s?s->oy_:NULL, __func__, "oyFilterSocket_s" );
 
   return (oyFilterSocket_s*) s;
 }

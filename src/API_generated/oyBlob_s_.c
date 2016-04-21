@@ -233,7 +233,7 @@ oyBlob_s_ * oyBlob_New_ ( oyObject_s object )
     WARNc_S( "memset failed" );
 
   memcpy( s, &type, sizeof(oyOBJECT_e) );
-  s->copy = (oyStruct_Copy_f) oyBlob_Copy_x;
+  s->copy = (oyStruct_Copy_f) oyBlob_Copy;
   s->release = (oyStruct_Release_f) oyBlob_Release;
 
   s->oy_ = s_obj;

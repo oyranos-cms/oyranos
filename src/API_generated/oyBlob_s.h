@@ -69,19 +69,8 @@ oyObject_s           oy_;            /**< Features name and hash. Do not change 
 
 OYAPI oyBlob_s* OYEXPORT
   oyBlob_New( oyObject_s object );
-/** @memberof oyBlob_s
- *  @brief    Copy or Reference a Blob object
- *
- *  The macro is for copying and for referencing. The reference is the most
- *  often used way, which saves resourcs and time.
- *
- *  @param[in]     blob                 Blob struct object
- *  @param         object              NULL - means reference,
- *                                     the optional object triggers a real copy
- */
-#define oyBlob_Copy(blob,object) oyBlob_Copy_x(blob,object); if(oy_debug_objects) oyObjectDebugMessage_( blob?blob->oy_:NULL, __func__, "oyBlob_s" );
 OYAPI oyBlob_s* OYEXPORT
-  oyBlob_Copy_x( oyBlob_s *blob, oyObject_s obj );
+  oyBlob_Copy( oyBlob_s *blob, oyObject_s obj );
 OYAPI int OYEXPORT
   oyBlob_Release( oyBlob_s **blob );
 

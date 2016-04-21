@@ -78,19 +78,8 @@ oyObject_s           oy_;            /**< Features name and hash. Do not change 
 
 OYAPI oyPointer_s* OYEXPORT
   oyPointer_New( oyObject_s object );
-/** @memberof oyPointer_s
- *  @brief    Copy or Reference a Pointer object
- *
- *  The macro is for copying and for referencing. The reference is the most
- *  often used way, which saves resourcs and time.
- *
- *  @param[in]     pointer                 Pointer struct object
- *  @param         object              NULL - means reference,
- *                                     the optional object triggers a real copy
- */
-#define oyPointer_Copy(pointer,object) oyPointer_Copy_x(pointer,object); if(oy_debug_objects) oyObjectDebugMessage_( pointer?pointer->oy_:NULL, __func__, "oyPointer_s" );
 OYAPI oyPointer_s* OYEXPORT
-  oyPointer_Copy_x( oyPointer_s *pointer, oyObject_s obj );
+  oyPointer_Copy( oyPointer_s *pointer, oyObject_s obj );
 OYAPI int OYEXPORT
   oyPointer_Release( oyPointer_s **pointer );
 

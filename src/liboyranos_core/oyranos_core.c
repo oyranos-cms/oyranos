@@ -687,7 +687,8 @@ void         oyObjectDebugMessage_   ( void              * object,
        (t && strstr(struct_name, t) != 0) ||
        id_ == 1)
     {
-      fprintf(stderr, "copied %s[%d](%d) in %s()\n", struct_name, obj->id_, obj->ref_, function_name );
+      if(oy_debug)
+        fprintf(stderr, "copied %s[%d] refs: %d\n", struct_name, obj->id_, obj->ref_ );
       fflush( stderr );
     }
   }

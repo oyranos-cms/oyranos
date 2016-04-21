@@ -45,7 +45,7 @@ OYAPI oyBlob_s * OYEXPORT
   return (oyBlob_s*) blob;
 }
 
-/** @fn       oyBlob_Copy 
+/** @fn       oyBlob_Copy
  *  @memberof oyBlob_s
  *  @brief    Copy or Reference a Blob object
  *
@@ -57,7 +57,7 @@ OYAPI oyBlob_s * OYEXPORT
  *                                     the optional object triggers a real copy
  */
 OYAPI oyBlob_s* OYEXPORT
-  oyBlob_Copy_x( oyBlob_s *blob, oyObject_s object )
+  oyBlob_Copy( oyBlob_s *blob, oyObject_s object )
 {
   oyBlob_s_ * s = (oyBlob_s_*) blob;
 
@@ -65,6 +65,9 @@ OYAPI oyBlob_s* OYEXPORT
     oyCheckType__m( oyOBJECT_BLOB_S, return 0 )
 
   s = oyBlob_Copy_( s, object );
+
+  if(oy_debug_objects)
+    oyObjectDebugMessage_( s?s->oy_:NULL, __func__, "oyBlob_s" );
 
   return (oyBlob_s*) s;
 }

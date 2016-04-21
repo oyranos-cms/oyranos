@@ -24,7 +24,7 @@ OYAPI {{ class.name }} * OYEXPORT
   return ({{ class.name }}*) {{ class.baseName|lower }};
 }
 
-/** @fn       oy{{ class.baseName }}_Copy 
+/** @fn       oy{{ class.baseName }}_Copy
  *  @memberof {{ class.name }}
  *  @brief    Copy or Reference a {{ class.baseName }} object
  *
@@ -36,7 +36,7 @@ OYAPI {{ class.name }} * OYEXPORT
  *                                     the optional object triggers a real copy
  */
 OYAPI {{ class.name }}* OYEXPORT
-  oy{{ class.baseName }}_Copy_x( {{ class.name }} *{{ class.baseName|lower }}, oyObject_s object )
+  oy{{ class.baseName }}_Copy( {{ class.name }} *{{ class.baseName|lower }}, oyObject_s object )
 {
   {{ class.privName }} * s = ({{ class.privName }}*) {{ class.baseName|lower }};
 
@@ -44,6 +44,9 @@ OYAPI {{ class.name }}* OYEXPORT
     {% block Copy_CheckType %}oyCheckType__m{% endblock %}( oyOBJECT_{{ class.baseName|underscores|upper }}_S, return 0 )
 
   s = oy{{ class.baseName }}_Copy_( s, object );
+
+  if(oy_debug_objects)
+    oyObjectDebugMessage_( s?s->oy_:NULL, __func__, "{{ class.name }}" );
 
   return ({{ class.name }}*) s;
 }

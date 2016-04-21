@@ -50,7 +50,7 @@ OYAPI oyCMMapi7_s * OYEXPORT
   return (oyCMMapi7_s*) cmmapi7;
 }
 
-/** @fn       oyCMMapi7_Copy 
+/** @fn       oyCMMapi7_Copy
  *  @memberof oyCMMapi7_s
  *  @brief    Copy or Reference a CMMapi7 object
  *
@@ -62,7 +62,7 @@ OYAPI oyCMMapi7_s * OYEXPORT
  *                                     the optional object triggers a real copy
  */
 OYAPI oyCMMapi7_s* OYEXPORT
-  oyCMMapi7_Copy_x( oyCMMapi7_s *cmmapi7, oyObject_s object )
+  oyCMMapi7_Copy( oyCMMapi7_s *cmmapi7, oyObject_s object )
 {
   oyCMMapi7_s_ * s = (oyCMMapi7_s_*) cmmapi7;
 
@@ -70,6 +70,9 @@ OYAPI oyCMMapi7_s* OYEXPORT
     oyCheckType__m( oyOBJECT_CMM_API7_S, return 0 )
 
   s = oyCMMapi7_Copy_( s, object );
+
+  if(oy_debug_objects)
+    oyObjectDebugMessage_( s?s->oy_:NULL, __func__, "oyCMMapi7_s" );
 
   return (oyCMMapi7_s*) s;
 }

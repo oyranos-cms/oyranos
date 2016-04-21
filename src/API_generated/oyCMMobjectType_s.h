@@ -106,19 +106,8 @@ oyObject_s           oy_;            /**< Features name and hash. Do not change 
 
 OYAPI oyCMMobjectType_s* OYEXPORT
   oyCMMobjectType_New( oyObject_s object );
-/** @memberof oyCMMobjectType_s
- *  @brief    Copy or Reference a CMMobjectType object
- *
- *  The macro is for copying and for referencing. The reference is the most
- *  often used way, which saves resourcs and time.
- *
- *  @param[in]     cmmobjecttype                 CMMobjectType struct object
- *  @param         object              NULL - means reference,
- *                                     the optional object triggers a real copy
- */
-#define oyCMMobjectType_Copy(cmmobjecttype,object) oyCMMobjectType_Copy_x(cmmobjecttype,object); if(oy_debug_objects) oyObjectDebugMessage_( cmmobjecttype?cmmobjecttype->oy_:NULL, __func__, "oyCMMobjectType_s" );
 OYAPI oyCMMobjectType_s* OYEXPORT
-  oyCMMobjectType_Copy_x( oyCMMobjectType_s *cmmobjecttype, oyObject_s obj );
+  oyCMMobjectType_Copy( oyCMMobjectType_s *cmmobjecttype, oyObject_s obj );
 OYAPI int OYEXPORT
   oyCMMobjectType_Release( oyCMMobjectType_s **cmmobjecttype );
 

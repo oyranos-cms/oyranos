@@ -51,7 +51,7 @@ OYAPI oyOption_s * OYEXPORT
   return (oyOption_s*) option;
 }
 
-/** @fn       oyOption_Copy 
+/** @fn       oyOption_Copy
  *  @memberof oyOption_s
  *  @brief    Copy or Reference a Option object
  *
@@ -63,7 +63,7 @@ OYAPI oyOption_s * OYEXPORT
  *                                     the optional object triggers a real copy
  */
 OYAPI oyOption_s* OYEXPORT
-  oyOption_Copy_x( oyOption_s *option, oyObject_s object )
+  oyOption_Copy( oyOption_s *option, oyObject_s object )
 {
   oyOption_s_ * s = (oyOption_s_*) option;
 
@@ -71,6 +71,9 @@ OYAPI oyOption_s* OYEXPORT
     oyCheckType__m( oyOBJECT_OPTION_S, return 0 )
 
   s = oyOption_Copy_( s, object );
+
+  if(oy_debug_objects)
+    oyObjectDebugMessage_( s?s->oy_:NULL, __func__, "oyOption_s" );
 
   return (oyOption_s*) s;
 }

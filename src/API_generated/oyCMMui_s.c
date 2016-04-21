@@ -45,7 +45,7 @@ OYAPI oyCMMui_s * OYEXPORT
   return (oyCMMui_s*) cmmui;
 }
 
-/** @fn       oyCMMui_Copy 
+/** @fn       oyCMMui_Copy
  *  @memberof oyCMMui_s
  *  @brief    Copy or Reference a CMMui object
  *
@@ -57,7 +57,7 @@ OYAPI oyCMMui_s * OYEXPORT
  *                                     the optional object triggers a real copy
  */
 OYAPI oyCMMui_s* OYEXPORT
-  oyCMMui_Copy_x( oyCMMui_s *cmmui, oyObject_s object )
+  oyCMMui_Copy( oyCMMui_s *cmmui, oyObject_s object )
 {
   oyCMMui_s_ * s = (oyCMMui_s_*) cmmui;
 
@@ -65,6 +65,9 @@ OYAPI oyCMMui_s* OYEXPORT
     oyCheckType__m( oyOBJECT_CMM_UI_S, return 0 )
 
   s = oyCMMui_Copy_( s, object );
+
+  if(oy_debug_objects)
+    oyObjectDebugMessage_( s?s->oy_:NULL, __func__, "oyCMMui_s" );
 
   return (oyCMMui_s*) s;
 }

@@ -54,7 +54,7 @@ OYAPI oyCMMapiFilters_s * OYEXPORT
   return (oyCMMapiFilters_s*) cmmapifilters;
 }
 
-/** @fn       oyCMMapiFilters_Copy 
+/** @fn       oyCMMapiFilters_Copy
  *  @memberof oyCMMapiFilters_s
  *  @brief    Copy or Reference a CMMapiFilters object
  *
@@ -66,7 +66,7 @@ OYAPI oyCMMapiFilters_s * OYEXPORT
  *                                     the optional object triggers a real copy
  */
 OYAPI oyCMMapiFilters_s* OYEXPORT
-  oyCMMapiFilters_Copy_x( oyCMMapiFilters_s *cmmapifilters, oyObject_s object )
+  oyCMMapiFilters_Copy( oyCMMapiFilters_s *cmmapifilters, oyObject_s object )
 {
   oyCMMapiFilters_s_ * s = (oyCMMapiFilters_s_*) cmmapifilters;
 
@@ -74,6 +74,9 @@ OYAPI oyCMMapiFilters_s* OYEXPORT
     oyCheckType__m( oyOBJECT_CMM_API_FILTERS_S, return 0 )
 
   s = oyCMMapiFilters_Copy_( s, object );
+
+  if(oy_debug_objects)
+    oyObjectDebugMessage_( s?s->oy_:NULL, __func__, "oyCMMapiFilters_s" );
 
   return (oyCMMapiFilters_s*) s;
 }

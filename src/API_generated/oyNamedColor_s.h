@@ -72,19 +72,8 @@ oyObject_s           oy_;            /**< Features name and hash. Do not change 
 
 OYAPI oyNamedColor_s* OYEXPORT
   oyNamedColor_New( oyObject_s object );
-/** @memberof oyNamedColor_s
- *  @brief    Copy or Reference a NamedColor object
- *
- *  The macro is for copying and for referencing. The reference is the most
- *  often used way, which saves resourcs and time.
- *
- *  @param[in]     namedcolor                 NamedColor struct object
- *  @param         object              NULL - means reference,
- *                                     the optional object triggers a real copy
- */
-#define oyNamedColor_Copy(namedcolor,object) oyNamedColor_Copy_x(namedcolor,object); if(oy_debug_objects) oyObjectDebugMessage_( namedcolor?namedcolor->oy_:NULL, __func__, "oyNamedColor_s" );
 OYAPI oyNamedColor_s* OYEXPORT
-  oyNamedColor_Copy_x( oyNamedColor_s *namedcolor, oyObject_s obj );
+  oyNamedColor_Copy( oyNamedColor_s *namedcolor, oyObject_s obj );
 OYAPI int OYEXPORT
   oyNamedColor_Release( oyNamedColor_s **namedcolor );
 

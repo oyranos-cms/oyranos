@@ -201,7 +201,7 @@ oyFilterNodes_s_ * oyFilterNodes_New_ ( oyObject_s object )
     WARNc_S( "memset failed" );
 
   memcpy( s, &type, sizeof(oyOBJECT_e) );
-  s->copy = (oyStruct_Copy_f) oyFilterNodes_Copy_x;
+  s->copy = (oyStruct_Copy_f) oyFilterNodes_Copy;
   s->release = (oyStruct_Release_f) oyFilterNodes_Release;
 
   s->oy_ = s_obj;

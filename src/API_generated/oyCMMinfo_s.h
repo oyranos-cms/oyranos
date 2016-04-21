@@ -100,19 +100,8 @@ oyObject_s           oy_;            /**< Features name and hash. Do not change 
 
 OYAPI oyCMMinfo_s* OYEXPORT
   oyCMMinfo_New( oyObject_s object );
-/** @memberof oyCMMinfo_s
- *  @brief    Copy or Reference a CMMinfo object
- *
- *  The macro is for copying and for referencing. The reference is the most
- *  often used way, which saves resourcs and time.
- *
- *  @param[in]     cmminfo                 CMMinfo struct object
- *  @param         object              NULL - means reference,
- *                                     the optional object triggers a real copy
- */
-#define oyCMMinfo_Copy(cmminfo,object) oyCMMinfo_Copy_x(cmminfo,object); if(oy_debug_objects) oyObjectDebugMessage_( cmminfo?cmminfo->oy_:NULL, __func__, "oyCMMinfo_s" );
 OYAPI oyCMMinfo_s* OYEXPORT
-  oyCMMinfo_Copy_x( oyCMMinfo_s *cmminfo, oyObject_s obj );
+  oyCMMinfo_Copy( oyCMMinfo_s *cmminfo, oyObject_s obj );
 OYAPI int OYEXPORT
   oyCMMinfo_Release( oyCMMinfo_s **cmminfo );
 

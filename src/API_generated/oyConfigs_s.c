@@ -54,7 +54,7 @@ OYAPI oyConfigs_s * OYEXPORT
   return (oyConfigs_s*) configs;
 }
 
-/** @fn       oyConfigs_Copy 
+/** @fn       oyConfigs_Copy
  *  @memberof oyConfigs_s
  *  @brief    Copy or Reference a Configs object
  *
@@ -66,7 +66,7 @@ OYAPI oyConfigs_s * OYEXPORT
  *                                     the optional object triggers a real copy
  */
 OYAPI oyConfigs_s* OYEXPORT
-  oyConfigs_Copy_x( oyConfigs_s *configs, oyObject_s object )
+  oyConfigs_Copy( oyConfigs_s *configs, oyObject_s object )
 {
   oyConfigs_s_ * s = (oyConfigs_s_*) configs;
 
@@ -74,6 +74,9 @@ OYAPI oyConfigs_s* OYEXPORT
     oyCheckType__m( oyOBJECT_CONFIGS_S, return 0 )
 
   s = oyConfigs_Copy_( s, object );
+
+  if(oy_debug_objects)
+    oyObjectDebugMessage_( s?s->oy_:NULL, __func__, "oyConfigs_s" );
 
   return (oyConfigs_s*) s;
 }

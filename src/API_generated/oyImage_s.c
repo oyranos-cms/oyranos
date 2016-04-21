@@ -45,7 +45,7 @@ OYAPI oyImage_s * OYEXPORT
   return (oyImage_s*) image;
 }
 
-/** @fn       oyImage_Copy 
+/** @fn       oyImage_Copy
  *  @memberof oyImage_s
  *  @brief    Copy or Reference a Image object
  *
@@ -57,7 +57,7 @@ OYAPI oyImage_s * OYEXPORT
  *                                     the optional object triggers a real copy
  */
 OYAPI oyImage_s* OYEXPORT
-  oyImage_Copy_x( oyImage_s *image, oyObject_s object )
+  oyImage_Copy( oyImage_s *image, oyObject_s object )
 {
   oyImage_s_ * s = (oyImage_s_*) image;
 
@@ -65,6 +65,9 @@ OYAPI oyImage_s* OYEXPORT
     oyCheckType__m( oyOBJECT_IMAGE_S, return 0 )
 
   s = oyImage_Copy_( s, object );
+
+  if(oy_debug_objects)
+    oyObjectDebugMessage_( s?s->oy_:NULL, __func__, "oyImage_s" );
 
   return (oyImage_s*) s;
 }
@@ -356,7 +359,7 @@ oyImage_s *    oyImage_Create         ( int               width,
   error = !memset( s, 0, sizeof(STRUCT_TYPE) );
 
   memcpy( s, &type, sizeof(oyOBJECT_e) );
-  s->copy = (oyStruct_Copy_f) oyImage_Copy_x;
+  s->copy = (oyStruct_Copy_f) oyImage_Copy;
   s->release = (oyStruct_Release_f) oyImage_Release;
 
   s->oy_ = s_obj;

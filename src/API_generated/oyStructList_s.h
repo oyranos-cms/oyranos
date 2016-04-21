@@ -77,19 +77,8 @@ oyObject_s           oy_;            /**< Features name and hash. Do not change 
 
 OYAPI oyStructList_s* OYEXPORT
   oyStructList_New( oyObject_s object );
-/** @memberof oyStructList_s
- *  @brief    Copy or Reference a StructList object
- *
- *  The macro is for copying and for referencing. The reference is the most
- *  often used way, which saves resourcs and time.
- *
- *  @param[in]     structlist                 StructList struct object
- *  @param         object              NULL - means reference,
- *                                     the optional object triggers a real copy
- */
-#define oyStructList_Copy(structlist,object) oyStructList_Copy_x(structlist,object); if(oy_debug_objects) oyObjectDebugMessage_( structlist?structlist->oy_:NULL, __func__, "oyStructList_s" );
 OYAPI oyStructList_s* OYEXPORT
-  oyStructList_Copy_x( oyStructList_s *structlist, oyObject_s obj );
+  oyStructList_Copy( oyStructList_s *structlist, oyObject_s obj );
 OYAPI int OYEXPORT
   oyStructList_Release( oyStructList_s **structlist );
 
