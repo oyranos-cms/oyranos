@@ -89,7 +89,8 @@ int oyStruct_RegisterStaticMessageFunc (
       return error;
     }
 
-    oyDeAllocateFunc_(oy_static_msg_funcs_);
+    if(oy_static_msg_funcs_)
+      oyDeAllocateFunc_(oy_static_msg_funcs_);
     oy_static_msg_funcs_ = tmp;
     tmp = 0;
     oy_msg_func_n_ = n;
