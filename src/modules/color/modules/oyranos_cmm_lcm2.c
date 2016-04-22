@@ -2077,7 +2077,7 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
                                            profiles, profiles_simulation_n, proof,
                                 oyImage_GetPixelLayout( image_input, oyLAYOUT ),
                                 oyImage_GetPixelLayout( image_output, oyLAYOUT ),
-                                           node_options, 0, 0);
+                                           node_options, 0, 0 );
   if(oy_debug > 3)
     lcm2_msg( oyMSG_DBG, (oyStruct_s*)node, OY_DBG_FORMAT_"\n%s",
               OY_DBG_ARGS_,
@@ -2234,6 +2234,7 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
   oyProfile_Release( &image_input_profile );
   oyProfile_Release( &image_output_profile );
   oyOptions_Release( &node_options );
+  oyProfiles_Release( &profs );
   oyProfiles_Release( &profiles );
 
   return block;

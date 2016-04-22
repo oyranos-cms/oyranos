@@ -2779,7 +2779,9 @@ int          oyIMProfileTag_Create   ( oyProfileTag_s    * tag,
 
            if(error <= 0)
              *((uint32_t*)&mem[8]) = oyValueUInt32( n );
+
          }
+         oyStructList_Release( &tag_list );
        }
        break;
 

@@ -1781,6 +1781,7 @@ OYAPI const char * OYEXPORT oyProfile_GetFileName (
     {
       psid = oyProfile_GetTagById( (oyProfile_s*)s, icSigProfileSequenceIdentifierTag );
       texts = oyProfileTag_GetText( psid, &texts_n, 0,0,0,0);
+      oyProfileTag_Release( &psid );
 
       if(texts && texts_n > 1+dl_pos*5+2)
       {
@@ -1815,13 +1816,15 @@ OYAPI const char * OYEXPORT oyProfile_GetFileName (
                 oySprintf_(tmp_hash, "                " );
               if(memcmp( hash, tmp_hash, 2*OY_HASH_SIZE ) == 0 )
               {
-               name = names[i];
+                name = names[i];
+                oyProfile_Release( &tmp );
                 break;
               }
             } else
             if(oyProfile_Equal( (oyProfile_s*)s, tmp ))
             {
               name = names[i];
+              oyProfile_Release( &tmp );
               break;
             }
 
