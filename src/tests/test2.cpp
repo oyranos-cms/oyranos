@@ -6313,6 +6313,7 @@ int main(int argc, char** argv)
 
     fprintf( stdout, "\n    Hint: the '-l' option will list all test names\n" );
 
+    oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
   }
 
   return error;
