@@ -451,9 +451,9 @@ oyOptions_s *  oyOptions_FromText    ( const char        * text,
  *  (oyFILTER_REG_TOP)
  *
  *  Adding a new element without any checks is as simple as following code:
- *  @verbatim
+ *  @code
  *     tmp = oyOption_Copy( option, object );
- *     oyOptions_MoveIn( options, &tmp, -1 ); @endverbatim
+ *     oyOptions_MoveIn( options, &tmp, -1 ); @endcode
  *
  *  @param[in,out] options             options to manipulate
  *  @param[in]     option              the option to eventually add
@@ -562,9 +562,9 @@ int            oyOptions_Add         ( oyOptions_s       * options,
  *  the existing set will be referenced if no object argument is given.
  *
  *  Adding a new element without any checks is as simple as following code:
- *  @verbatim
+ *  @code
  *     tmp = oyOption_Copy( option, object );
- *     oyOptions_MoveIn( options, &tmp, -1 ); @endverbatim
+ *     oyOptions_MoveIn( options, &tmp, -1 ); @endcode
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/10/25 (Oyranos: 0.1.10)

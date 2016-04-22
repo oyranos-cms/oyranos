@@ -59,10 +59,10 @@ typedef struct oyCMMapi7_s oyCMMapi7_s;
  *  passed oyPixelAccess_s object. The filters internal precalculated data
  *  are passed by the filter object.
  *
- *  @verbatim
+ *  @code
     while (
     error = oyCMMFilterSocket_GetNext( filter_plug, pixel_access ) == 0
-    ) {}; @endverbatim
+    ) {}; @endcode
  *
  *  @param[in]     plug                including the CMM's private data, connector is the requesting plug to obtain a handle for calling back
  *  @param[in]     pixel_access        processing order instructions

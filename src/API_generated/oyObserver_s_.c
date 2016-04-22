@@ -33,10 +33,10 @@
  *  This function is useful to forward signals and fill holes in a chain.
  *  Implements oyObserver_Signal_f.
  *
- *  @verbatim
+ *  @code
     error = oyStruct_ObserverAdd( (oyStruct_s*)model, (oyStruct_s*)observer,
                                   0, oyStructSignalForward_ );
-    @endverbatim
+    @endcode
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/10/28 (Oyranos: 0.1.10)

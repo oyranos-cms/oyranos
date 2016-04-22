@@ -163,7 +163,7 @@
     \n
     To test the device module use oyDeviceAskProfile(), oyDeviceGetInfo() and
     oyDeviceGet():
-    @verbatim
+    @code
     oyConfig_s * device = 0; /* initialise with zero to avoid errors */
     oyProfile_s * profile = 0;
     oyOptions_s * options = 0;  /* not used in this example */
@@ -189,7 +189,7 @@
      * kdb ls user/org/freedesktop/openicc/device/config.icc_profile.*
      */
     error = oyDeviceAskProfile( device, &profile );
-    @endverbatim
+    @endcode
     It is useful to step through the code. Oyranos provides the --enable-debug
     configure option to aid debugging and stepping through. To build the module
     add the -g compiler option.

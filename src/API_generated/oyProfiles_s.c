@@ -312,7 +312,7 @@ int oyLowerStrcmpWrap (const void * a_, const void * b_)
  *  @param         object              the optional object
  *  @return                            the found and selected profiles
  *
- *  @verbatim
+ *  @code
     // Put all ICC Display Class profiles in "profiles"
     icSignature profile_class = icSigDisplayClass;
     oyProfile_s * pattern = 0;
@@ -326,7 +326,7 @@ int oyLowerStrcmpWrap (const void * a_, const void * b_)
     oyProfiles_MoveIn( patterns, &pattern, -1 );
 
     profiles = oyProfiles_Create( patterns, icc_profile_flags, 0 );
-    oyProfiles_Release( &patterns );@endverbatim
+    oyProfiles_Release( &patterns );@endcode
  *
  *  @version Oyranos: 0.9.6
  *  @date    2014/08/31
@@ -480,7 +480,7 @@ OYAPI oyProfiles_s * OYEXPORT
  *  @return                            the profile list
  *
  *  @par Example - get all standard RGB profiles:
- *  @verbatim
+ *  @code
     // Get all ICC profiles, which can be used as assumed RGB profile
     oyPROFILE_e type = oyEDITING_RGB;
     int current = 0,
@@ -502,7 +502,7 @@ OYAPI oyProfiles_s * OYEXPORT
              oyProfile_GetText( temp_prof, oyNAME_DESCRIPTION ),
              oyProfile_GetFileName(temp_prof, -1));
       oyProfile_Release( &temp_prof );
-    } @endverbatim
+    } @endcode
  *
  *  @version Oyranos: 0.9.6
  *  @date    2016/02/25
@@ -734,7 +734,7 @@ OYAPI oyProfiles_s * OYEXPORT oyProfiles_ForStd
  *  Profiles which match the device will placed according to a rank value on 
  *  top of the list followed by the zero ranked profiles.
  *
- *  @verbatim
+ *  @code
     // Get all ICC profiles, which can be used as assumed RGB profile
     uint32_t icc_profile_flags = oyICCProfileSelectionFlagsFromOptions( 
                                       OY_CMM_STD, "//" OY_TYPE_STD "/icc_color",
@@ -755,7 +755,7 @@ OYAPI oyProfiles_s * OYEXPORT oyProfiles_ForStd
              oyProfile_GetText( temp_prof, oyNAME_DESCRIPTION ),
              oyProfile_GetFileName(temp_prof, 0));
       oyProfile_Release( &temp_prof );
-    } @endverbatim
+    } @endcode
  *
  *  @param[in,out] list                the to be sorted profile list
  *  @param[in]     device              filter pattern

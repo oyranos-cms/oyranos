@@ -531,7 +531,7 @@ int          oyConversion_GetOnePixel( oyConversion_s    * conversion,
  *  @memberof oyConversion_s
  *  @brief    Iterate over a conversion graph
  *
- *  @verbatim
+ *  @code
     // use the output
     oyConversion_RunPixels( context, NULL );
     oyImage_s * image = oyConversion_GetImage( context, OY_OUTPUT );
@@ -544,7 +544,7 @@ int          oyConversion_GetOnePixel( oyConversion_s    * conversion,
 
       if(is_allocated)
         free( image_data );
-    } @endverbatim
+    } @endcode
  
  *  @param[in,out] conversion          conversion object
  *  @param[in,out] pixel_access        optional pixel iterator configuration

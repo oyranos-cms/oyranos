@@ -856,14 +856,14 @@ char *   oyGetMonitorProfileNameFromDB(const char        * display_name,
  *  With a profile name given the function will lookup the monitor in the 
  *  Oyranos device database and stores the given profile there. \n
  *  To sum up, to set a new profile please call the following sequence:
- *  @verbatim
+ *  @code
     // store new settings in the Oyranos data base
     oySetMonitorProfile( display_name, profile_name );
     // remove the server entries
     oySetMonitorProfile( display_name, 0 );
     // update the window server from the newly Oyranos data base settings
     oyActivateMonitorProfiles( display_name );
-    @endverbatim
+    @endcode
  *
  *  @param      display_name  the display string
  *  @param      profile_name  the file to use as monitor profile or 0 to unset

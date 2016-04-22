@@ -46,7 +46,7 @@ int                oyPixelAccess_ChangeRectangle (
  *  @memberof oyPixelAccess_s
  *  @brief    Allocate iand initialise a basic oyPixelAccess_s object
  *
- *  @verbatim
+ *  @code
   // conversion->out_ has to be linear, so we access only the first plug
   node = oyConversion_GetNode( conversion, OY_OUTPUT );
   plug = oyFilterNode_GetPlug( node, 0 );
@@ -56,7 +56,7 @@ int                oyPixelAccess_ChangeRectangle (
   if(plug)
     pixel_access = oyPixelAccess_Create( 0,0, plug,
                                          oyPIXEL_ACCESS_IMAGE, 0 );
-@endverbatim
+@endcode
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/07/07 (Oyranos: 0.1.8)

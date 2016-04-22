@@ -801,13 +801,13 @@ void         oyWriteOptionToHTML_    ( oyGROUP_e           group,
  *  Function oyDescriptionToHTML
  *  @brief   write a HTML description page
  *
- *  @verbatim
+ *  @code
     const char * opts[] = {"add_html_header","1",
                            "add_oyranos_title","1",
                            "add_oyranos_copyright","1",
                            NULL};
     char * html = oyDescriptionToHTML( oyGROUP_ALL, opts, malloc );
-    @endverbatim
+    @endcode
  *
  *  @param         group               currently only oyGROUP_ALL
  *  @param         options             zero terminated paired key/value strings

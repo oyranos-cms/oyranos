@@ -69,14 +69,14 @@
 
     @subsection api_tutorial Programming Tutorial
     Frist you have to put a
-    @verbatim
-    #include <oyranos.h> @endverbatim
+    @code
+    #include <oyranos.h> @endcode
     in your source text, in order to use Oyranos. 
-    @verbatim
+    @code
     int main( int argc, char ** argv ) {
       int oyranos_version = oyVersion( 0 );
       return 0;
-    }@endverbatim
+    }@endcode
     \b oyranos-config \b --cflags delivers the compiler flags and \b oyranos-config \b --ldflags the linker flags.
 
     Then you can put Oyranos functions in your code and compile with:
@@ -85,7 +85,7 @@
     to link Oyranos into your application.
 
     The second code sample will be more useful and handle obtaining a monitor profile:
-    @verbatim
+    @code
 #include <oyranos.h>
 #include <oyranos_devices.h>
 #include <oyConversion_s.h>
@@ -127,7 +127,7 @@ int main( int argc, char ** argv ) {
 
   return 0;
 }
-  @endverbatim
+  @endcode
 
     Writing of filters and modules for Oyranos is covered in the @ref
     extending_oyranos page.

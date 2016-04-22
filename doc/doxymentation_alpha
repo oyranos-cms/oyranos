@@ -72,14 +72,14 @@
 
     @subsection api_tutorial Programming Tutorial
     Frist you have to put a
-    @verbatim
+    @code
     #include <oyranos.h> @endverbatim
     in your source text, in order to use Oyranos. 
-    @verbatim
+    @code
     int main( int argc, char ** argv ) {
       int oyranos_version = oyVersion( 0 );
       return 0;
-    }@endverbatim
+    }@endcode
     \b oyranos-config \b --cflags delivers the compiler flags and \b oyranos-config \b --ldflags the linker flags.
 
     Then you can put Oyranos functions in your code and compile with:

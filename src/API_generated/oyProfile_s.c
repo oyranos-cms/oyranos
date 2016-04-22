@@ -270,14 +270,14 @@ OYAPI oyProfile_s * OYEXPORT
  *
  *  @see oyProfile_FromFile() and oyProfile_FromMD5()
  *
- *  \verbatim
+ *  @code
     // get editing "rgb" profile for selected / configured CMM
     oyOptions_s * options = NULL; // the selection options can come from command line
     uint32_t icc_profile_flags = oyICCProfileSelectionFlagsFromOptions( OY_CMM_STD,
                                                                         "//" OY_TYPE_STD "/icc_color",
                                                                         options, 0 );
     oyProfile_s * p = oyProfile_FromName( "rgb", icc_profile_flags, NULL );
-    \endverbatim
+    @endcode
  *
  *  @version Oyranos: 0.9.6
  *  @date    2014/05/06
@@ -836,7 +836,7 @@ oyProfile_GetChannelsCount( oyProfile_s * profile )
  *  @memberof oyProfile_s
  *  @brief    Get ICC color space signature
  *
- *  \verbatim
+ *  @code
     // show some profile properties
     oyProfile_s * p = ...; // get from somewhere
     icSignature vs = oyValueUInt32( oyProfile_GetSignature(p,oySIGNATURE_VERSION) );      
@@ -856,7 +856,7 @@ oyProfile_GetChannelsCount( oyProfile_s * profile )
                          oyProfile_GetSignature(p,oySIGNATURE_COLOR_SPACE) ),
           (int)v[0], (int)v[1]/16, (int)v[1]%16
           );
-    \endverbatim
+    @endcode
  *
  *  @since Oyranos: version 0.1.8
  *  @date  november 2007 (API 0.1.8)
@@ -1986,9 +1986,9 @@ OYAPI const char * OYEXPORT oyProfile_GetFileName (
  *  @memberof oyProfile_s
  *  @brief    Obtain device information from a profile
  *
- *  @verbatim
+ *  @code
     oyConfig_s * device = oyConfig_FromRegistration( "//" OY_TYPE_STD "/config", object );
-    oyProfile_GetDevice( profile, device ); @endverbatim
+    oyProfile_GetDevice( profile, device ); @endcode
  *
  *  @param[in]     profile             the profile
  *  @param[in,out] device              the device description

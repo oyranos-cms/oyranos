@@ -53,7 +53,7 @@ char *       oyGetFilterNodeKey      ( const char        * base_key,
 /** Function oyDevicesGet
  *  @brief   get all devices matching to a device class and type
  *
- *  @verbatim
+ *  @code
     // "list" all monitors
     oyConfigs_s * monitors = 0;
     int error = oyDevicesGet( 0, "monitor", 0, &monitors );
@@ -61,11 +61,11 @@ char *       oyGetFilterNodeKey      ( const char        * base_key,
     int n = oyConfigs_Count( monitors );
     // release them
     oyConfigs_Release( &monitors );
-    @endverbatim
+    @endcode
  *
  *  For obtaining expensive "properties" informations at once, add the according
  *  option.
- *  @verbatim
+ *  @code
     // get all monitors the expensive way
     oyConfigs_s * monitors = 0;
     oyOptions_s * options = oyOptions_New( 0 );
@@ -81,7 +81,7 @@ char *       oyGetFilterNodeKey      ( const char        * base_key,
 
     // release them
     oyConfigs_Release( &monitors );
-    @endverbatim
+    @endcode
  *
  *  @param[in]     device_type         the device type ::oyFILTER_REG_TYPE,
  *                                     defaults to OY_TYPE_STD (optional)
@@ -135,17 +135,17 @@ OYAPI int  OYEXPORT
 /** Function oyDeviceGet
  *  @brief   ask a module for device informations or other direct calls
  *
- *  @verbatim
+ *  @code
     oyConfig_s * device = 0;
     int error = oyDeviceGet( 0, "monitor", ":0.0", 0, &device );
     oyConfig_Release( &device );
-    @endverbatim
+    @endcode
  *
- *  @verbatim
+ *  @code
     // pass empty options to the module to get a usage message
     oyOptions_s * options = oyOptions_New( 0 );
     oyDeviceGet( OY_TYPE_STD, "monitor", ":0.0", options, 0 );
-    @endverbatim
+    @endcode
  *
  *  @param[in]     device_type         the device type, e.g. OY_TYPE_STD,
  *                                     defaults to OY_TYPE_STD (optional)
@@ -551,7 +551,7 @@ int      oyDeviceUnset               ( oyConfig_s        * device )
 /** Function oyDeviceGetInfo
  *  @brief   get all devices matching to a device class and type
  *
- *  @verbatim
+ *  @code
     // print all properties
     int error = oyDeviceGetInfo( device, oyNAME_DESCRIPTION, 0, &text,
                                      malloc );
@@ -578,11 +578,11 @@ int      oyDeviceUnset               ( oyConfig_s        * device )
 
     if(line) free(line);
     if(text) free(text);
-    @endverbatim
+    @endcode
  *
  *  To obtain a certain single pice of information you do not need 
  *  oyDeviceGetInfo. See the following example:
- *  @verbatim
+ *  @code
     char * device_name = ":0.0"; // a typical device
     char * text = 0;
     oyConfig_s * device = 0;
@@ -596,7 +596,7 @@ int      oyDeviceUnset               ( oyConfig_s        * device )
 
     oyDeviceGet( OY_TYPE_STD, "monitor", device_name, options, &device );
     text = oyConfig_FindString( device, "manufacturer", 0 );
-    @endverbatim
+    @endcode
  *
  *  @param[in]     device          the device
  *  @param[in]     type                influences the info_text output
@@ -902,14 +902,14 @@ OYAPI int  OYEXPORT
  *
  *  To set a new profile und update the device please call the following
  *  sequence:
- *  @verbatim
+ *  @code
     // store new settings in the Oyranos data base
     oyDeviceSetProfile( device, profile );
     // remove any device entries
     oyDeviceUnset( device );
     // update the device from the newly added Oyranos data base settings
     oyDeviceSetup( device );
-    @endverbatim
+    @endcode
  *
  *  @param         device              the device
  *  @param         scope               oySCOPE_USER and oySCOPE_SYS are possible
@@ -1614,7 +1614,7 @@ int   oyCompareRanks_                ( const void       * rank1,
  *  oyProfile_Install() helps installing it, while doing some consistency
  *  checks.
  *
- *  @verbatim
+ *  @code
     // get a device
     oyConfig_s * device = 0;
     oyDeviceGet( 0, "monitor", ":0.0", 0, &device );
@@ -1697,7 +1697,7 @@ int   oyCompareRanks_                ( const void       * rank1,
 
     // release data
     oyConfigs_Release( &taxi_devices );
-    @endverbatim
+    @endcode
  *
  *  @param[in]     device              the device
  *  @param[in]     options             not used
@@ -1956,10 +1956,10 @@ OYAPI int  OYEXPORT
  *  oyOPTIONSOURCE_FILTER passed as flags argument.
  *  The key names map to the registration and XML syntax.
  *
- *  To obtain all advanced front end options from a meta module use:@verbatim
+ *  To obtain all advanced front end options from a meta module use:@code
  *  flags = oyOPTIONATTRIBUTE_ADVANCED |
  *          oyOPTIONATTRIBUTE_FRONT |
- *          OY_SELECT_COMMON @endverbatim
+ *          OY_SELECT_COMMON @endcode
  *
  *  @see OY_SELECT_FILTER OY_SELECT_COMMON oyOPTIONATTRIBUTE_e
  *
@@ -2024,10 +2024,10 @@ oyOptions_s *  oyOptions_ForFilter   ( const char        * registration,
  *  oyOPTIONSOURCE_FILTER passed as flags argument.
  *  The key names map to the registration and XML syntax.
  *
- *  To obtain all front end options from a meta module use: @verbatim
+ *  To obtain all front end options from a meta module use: @code
     flags = oyOPTIONATTRIBUTE_ADVANCED |
             oyOPTIONATTRIBUTE_FRONT |
-            OY_SELECT_COMMON @endverbatim
+            OY_SELECT_COMMON @endcode
  *
  *  @param[in]     core                the filter core
  *  @param[in]     node                the filter node; optional

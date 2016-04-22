@@ -103,12 +103,12 @@ OYAPI int OYEXPORT oyConfigs_FromDomain (
  *  @param[in]     object              the optional object
  *  @return                            0 - good, >= 1 - error
  *
- *  @verbatim
+ *  @code
     // pass empty options to the module to get a usage message
     oyOptions_s * options = 0;
     int error = oyConfigs_FromDeviceClass( OY_TYPE_STD, "monitor",
                                               options, 0, 0 );
-    @endverbatim
+    @endcode
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/01/28 (Oyranos: 0.1.10)
@@ -240,7 +240,7 @@ OYAPI int  OYEXPORT oyConfigs_FromDeviceClass (
  *  This is a simple convenience function to select from a list existing 
  *  configurations.
  *
- *  @verbatim
+ *  @code
     const char * pattern[][2] = {{"device_name",0},
                                  {"manufacturer",0},
                                  {"model",0},
@@ -249,7 +249,7 @@ OYAPI int  OYEXPORT oyConfigs_FromDeviceClass (
     oyConfigs_s * devices = 0, * filtered = 0;
     int error = oyConfigs_FromDB( registration, NULL, &devices, 0 );
     error = oyConfigs_SelectSimilars( devices, pattern, &filtered )
- *  @endverbatim
+ *  @endcode
  *
  *  @param[in]     list                the list
  *  @param[in]     pattern             user supplied zero terminated pattern
@@ -601,7 +601,7 @@ OYAPI int OYEXPORT oyConfigs_Modify  ( oyConfigs_s       * configs,
  *  @memberof oyConfigs_s
  *  @brief    Count and show the global oyConfigs_s suppliers
  *
- *  @verbatim
+ *  @code
     uint32_t count = 0,
            * rank_list = 0;
     char ** texts = 0,
@@ -640,7 +640,7 @@ OYAPI int OYEXPORT oyConfigs_Modify  ( oyConfigs_s       * configs,
       free (device_class);
       free(temp);
     }
-    @endverbatim
+    @endcode
  *
  *  @param[in]     registration_pattern a optional filter
  *  @param[out]    list                the list with full filter registrations
