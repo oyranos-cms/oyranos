@@ -499,6 +499,8 @@ oyLeave_s *          oyObjectIdListGetStructTree (
     return l;
 
   obs = oyObjectGetList( &max_count );
+  if(!obs || !obs[id])
+    return l;
   obj = obs[id]->parent_;
   l = myCalloc( sizeof(oyLeave_s), 1 );
   l->obj = obj;
