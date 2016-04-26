@@ -10,6 +10,9 @@
     @ref api_tutorial |
     @ref extending_oyranos
 
+ *  @par License:
+ *          new BSD http://www.opensource.org/licenses/BSD-3-Clause
+
     @author Kai-Uwe Behrmann and others
     @since  March 2004
 

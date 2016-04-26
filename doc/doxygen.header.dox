@@ -11,6 +11,6 @@
 <table class="title">
 <tr>
 <td class='logo' rowspan="2"><a href='http://www.oyranos.org'><img src='oyranos_logo.png' alt="Oyranos Icon linux/BSD/Unix/osX" border="0"/></a></td>
-<td>Oyranos Color Management System API</td>
+<td>Oyranos Color Management System API - Version $projectnumber</td>
 </tr>
 </table>
