@@ -456,7 +456,7 @@ lcm2ProfileWrap_s * lcm2CMMProfile_GetWrap_( oyPointer_s* cmm_ptr )
   {
     lcm2_msg( oyMSG_WARN, (oyStruct_s*)cmm_ptr,
               OY_DBG_FORMAT_" profile size: %d %s cmm_ptr: %d",
-              OY_DBG_ARGS_, s->size, s->dbg_profile?oyProfile_GetFileName( s->dbg_profile,-1 ):"????",
+              OY_DBG_ARGS_, s->size, s->dbg_profile?oyNoEmptyString_m_(oyProfile_GetFileName( s->dbg_profile,-1 )):"????",
               oyStruct_GetId((oyStruct_s*)cmm_ptr) );
   }
 
@@ -1903,7 +1903,7 @@ oyProfiles_s * lcm2ProfilesFromOptions( oyFilterNode_s * node, oyFilterPlug_s * 
   if(o)
   {
     profiles = (oyProfiles_s*) oyOption_GetStruct( o, oyOBJECT_PROFILES_S );
-    if(!profiles_switch && (oy_debug || verbose))
+    if((oy_debug || verbose))
     {
       lcm2_msg( oyMSG_WARN, (oyStruct_s*)node, OY_DBG_FORMAT_
                " found \"%s\" %d  switch %d",
@@ -1918,6 +1918,9 @@ oyProfiles_s * lcm2ProfilesFromOptions( oyFilterNode_s * node, oyFilterPlug_s * 
     }
     oyOption_Release( &o );
   }
+
+  if(!profiles_switch)
+    oyProfiles_Release( &profiles );
 
   return profiles;
 }
