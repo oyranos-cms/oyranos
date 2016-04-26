@@ -295,6 +295,7 @@ OYAPI const char * OYEXPORT  oyObject_Show (
   struct oyObject_s_* obj = (struct oyObject_s_*)object;
   oyStruct_s * st = NULL;
   static char * t = NULL;
+  static int t_len = 1024;
 
   if(obj)
     st = obj->parent_;
@@ -302,11 +303,18 @@ OYAPI const char * OYEXPORT  oyObject_Show (
   if(st)
   {
     if(!t)
-      t = malloc(1024);
+      t = malloc(t_len);
 
     if(t)
     {
-      sprintf( t, "\"%s\"[%d] refs: %d", oyStruct_GetInfo(st,oyNAME_NAME,0), obj->id_, obj->ref_);
+      const char * tmp = oyStruct_GetInfo(st,oyNAME_NAME,0);
+      int len = tmp?strlen(tmp):0;
+      if(len > t_len + 1)
+      {
+        free(t);
+        t = malloc(len*2);
+      }
+      sprintf( t, "\"%s\"[%d] refs: %d", tmp, obj->id_, obj->ref_);
       switch(st->type_)
       {
       case oyOBJECT_ARRAY2D_S:
