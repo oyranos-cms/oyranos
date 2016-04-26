@@ -72,7 +72,7 @@ OYAPI oyNamedColors_s* OYEXPORT
 
   s = oyNamedColors_Copy_( s, object );
 
-  if(oy_debug_objects)
+  if(oy_debug_objects >= 0)
     oyObjectDebugMessage_( s?s->oy_:NULL, __func__, "oyNamedColors_s" );
 
   return (oyNamedColors_s*) s;

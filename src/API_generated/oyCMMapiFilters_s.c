@@ -75,7 +75,7 @@ OYAPI oyCMMapiFilters_s* OYEXPORT
 
   s = oyCMMapiFilters_Copy_( s, object );
 
-  if(oy_debug_objects)
+  if(oy_debug_objects >= 0)
     oyObjectDebugMessage_( s?s->oy_:NULL, __func__, "oyCMMapiFilters_s" );
 
   return (oyCMMapiFilters_s*) s;

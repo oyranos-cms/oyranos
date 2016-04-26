@@ -66,7 +66,7 @@ OYAPI oyLis_s* OYEXPORT
 
   s = oyLis_Copy_( s, object );
 
-  if(oy_debug_objects)
+  if(oy_debug_objects >= 0)
     oyObjectDebugMessage_( s?s->oy_:NULL, __func__, "oyLis_s" );
 
   return (oyLis_s*) s;

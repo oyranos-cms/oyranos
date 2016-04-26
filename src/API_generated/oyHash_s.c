@@ -66,7 +66,7 @@ OYAPI oyHash_s* OYEXPORT
 
   s = oyHash_Copy_( s, object );
 
-  if(oy_debug_objects)
+  if(oy_debug_objects >= 0)
     oyObjectDebugMessage_( s?s->oy_:NULL, __func__, "oyHash_s" );
 
   return (oyHash_s*) s;

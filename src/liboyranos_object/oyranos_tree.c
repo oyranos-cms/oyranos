@@ -748,7 +748,7 @@ void oyObjectTreeDotGraphCallback    ( void              * user_data,
  */
 void               oyObjectTreePrint ( int                 flags )
 {
-  if(oy_debug_objects)
+  if(oy_debug_objects >= 0)
   {
     int * ids_old = oyObjectGetCurrentObjectIdList( );
     oyTreeData_s * trees = (oyTreeData_s*) myCalloc( sizeof( oyTreeData_s ), oy_object_list_max_count_ + 1 );

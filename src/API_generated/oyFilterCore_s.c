@@ -69,7 +69,7 @@ OYAPI oyFilterCore_s* OYEXPORT
 
   s = oyFilterCore_Copy_( s, object );
 
-  if(oy_debug_objects)
+  if(oy_debug_objects >= 0)
     oyObjectDebugMessage_( s?s->oy_:NULL, __func__, "oyFilterCore_s" );
 
   return (oyFilterCore_s*) s;

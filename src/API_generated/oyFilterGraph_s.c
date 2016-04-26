@@ -73,7 +73,7 @@ OYAPI oyFilterGraph_s* OYEXPORT
 
   s = oyFilterGraph_Copy_( s, object );
 
-  if(oy_debug_objects)
+  if(oy_debug_objects >= 0)
     oyObjectDebugMessage_( s?s->oy_:NULL, __func__, "oyFilterGraph_s" );
 
   return (oyFilterGraph_s*) s;

@@ -71,7 +71,7 @@ OYAPI oyCMMapi6_s* OYEXPORT
 
   s = oyCMMapi6_Copy_( s, object );
 
-  if(oy_debug_objects)
+  if(oy_debug_objects >= 0)
     oyObjectDebugMessage_( s?s->oy_:NULL, __func__, "oyCMMapi6_s" );
 
   return (oyCMMapi6_s*) s;

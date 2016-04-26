@@ -66,7 +66,7 @@ OYAPI oyCMMobjectType_s* OYEXPORT
 
   s = oyCMMobjectType_Copy_( s, object );
 
-  if(oy_debug_objects)
+  if(oy_debug_objects >= 0)
     oyObjectDebugMessage_( s?s->oy_:NULL, __func__, "oyCMMobjectType_s" );
 
   return (oyCMMobjectType_s*) s;

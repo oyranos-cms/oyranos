@@ -90,7 +90,7 @@ int              oyStructList_ReferenceAt_(oyStructList_s_ * list,
     if(error <= 0)
     {
       p = p->copy( p, 0 );
-      if(oy_debug_objects)
+      if(oy_debug_objects >= 0)
         oyObjectDebugMessage_( p->oy_, __func__, oyStructTypeToText(p->type_) );
     }
   }

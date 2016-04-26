@@ -93,7 +93,7 @@ int            oyFilterNode_Connect  ( oyFilterNode_s    * input,
         oyFilterSocketPriv_m(output_socket)->data = oyFilterSocketPriv_m(in_socket)->data->copy(
                                                       oyFilterSocketPriv_m(in_socket)->data,
                                                       0 );
-        if(oy_debug_objects)
+        if(oy_debug_objects >= 0)
           oyObjectDebugMessage_( oyFilterSocketPriv_m(output_socket)->data->oy_, __func__,
                                  oyStructTypeToText(oyFilterSocketPriv_m(output_socket)->data->type_) );
       }
@@ -287,7 +287,7 @@ oyStruct_s *   oyFilterNode_GetData  ( oyFilterNode_s    * node,
   if(data->copy)
   {
     data = data->copy( data, 0 );
-    if(oy_debug_objects)
+    if(oy_debug_objects >= 0)
       oyObjectDebugMessage_( data->oy_, __func__, oyStructTypeToText(data->type_) );
   }
 
@@ -331,7 +331,7 @@ int            oyFilterNode_SetData  ( oyFilterNode_s    * node,
     if(data && data->copy)
     {
       socket->data = data->copy( data, object );
-      if(oy_debug_objects)
+      if(oy_debug_objects >= 0)
         oyObjectDebugMessage_( socket->data->oy_, __func__, oyStructTypeToText(socket->data->type_) );
     } else
       socket->data = data;
@@ -1060,7 +1060,7 @@ OYAPI oyConnector_s * OYEXPORT
       if((*node_)->api7_->plugs[as_pos] && (*node_)->api7_->plugs[as_pos]->copy)
       {
         pattern = (oyConnector_s*) (*node_)->api7_->plugs[as_pos]->copy( (oyStruct_s*) (*node_)->api7_->plugs[as_pos], object );
-        if(oy_debug_objects)
+        if(oy_debug_objects >= 0)
           oyObjectDebugMessage_( (*node_)->api7_->plugs[as_pos]->oy_, __func__,
                                  oyStructTypeToText((*node_)->api7_->plugs[as_pos]->type_) );
       } else
@@ -1078,7 +1078,7 @@ OYAPI oyConnector_s * OYEXPORT
       if((*node_)->api7_->sockets[as_pos] && (*node_)->api7_->sockets[as_pos]->copy)
       {
         pattern = (oyConnector_s*) (*node_)->api7_->sockets[as_pos]->copy( (oyStruct_s*) (*node_)->api7_->sockets[as_pos], object );
-        if(oy_debug_objects)
+        if(oy_debug_objects >= 0)
           oyObjectDebugMessage_( (*node_)->api7_->sockets[as_pos]->oy_, __func__,
                                  oyStructTypeToText((*node_)->api7_->sockets[as_pos]->type_) );
       } else

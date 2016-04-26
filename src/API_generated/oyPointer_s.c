@@ -69,7 +69,7 @@ OYAPI oyPointer_s* OYEXPORT
 
   s = oyPointer_Copy_( s, object );
 
-  if(oy_debug_objects)
+  if(oy_debug_objects >= 0)
     oyObjectDebugMessage_( s?s->oy_:NULL, __func__, "oyPointer_s" );
 
   return (oyPointer_s*) s;

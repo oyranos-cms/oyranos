@@ -69,7 +69,7 @@ OYAPI oyFilterSocket_s* OYEXPORT
 
   s = oyFilterSocket_Copy_( s, object );
 
-  if(oy_debug_objects)
+  if(oy_debug_objects >= 0)
     oyObjectDebugMessage_( s?s->oy_:NULL, __func__, "oyFilterSocket_s" );
 
   return (oyFilterSocket_s*) s;
@@ -306,7 +306,7 @@ OYAPI oyStruct_s * OYEXPORT
   if(s->data && s->data->copy)
   {
     s->data = s->data->copy(s->data, 0);
-    if(oy_debug_objects && s->data)
+    if(oy_debug_objects >= 0 && s->data)
       oyObjectDebugMessage_( s->data->oy_, __func__,
                              oyStructTypeToText(s->data->type_) );
   }
@@ -342,7 +342,7 @@ OYAPI int OYEXPORT
   if(data && data->copy)
   {
     s->data = data->copy(data, 0);
-    if(oy_debug_objects && s->data)
+    if(oy_debug_objects >= 0 && s->data)
       oyObjectDebugMessage_( s->data->oy_, __func__,
                              oyStructTypeToText(s->data->type_) );
   }

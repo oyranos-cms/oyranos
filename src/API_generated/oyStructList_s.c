@@ -69,7 +69,7 @@ OYAPI oyStructList_s* OYEXPORT
 
   s = oyStructList_Copy_( s, object );
 
-  if(oy_debug_objects)
+  if(oy_debug_objects >= 0)
     oyObjectDebugMessage_( s?s->oy_:NULL, __func__, "oyStructList_s" );
 
   return (oyStructList_s*) s;
@@ -481,7 +481,7 @@ int              oyStructList_CopyFrom(oyStructList_s    * list,
     {
       o = oyStructList_Get_( (oyStructList_s_*)from, i );
       o = o->copy( o, object );
-      if(oy_debug_objects && o)
+      if(oy_debug_objects >= 0 && o)
         oyObjectDebugMessage_( o->oy_, __func__,
                                oyStructTypeToText(o->type_) );
       error = !o;

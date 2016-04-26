@@ -68,7 +68,7 @@ int                oyHash_SetPointer_( oyHash_s_         * hash,
     if(obj && obj->copy)
     {
       hash->entry = obj->copy( obj, 0 );
-      if(oy_debug_objects)
+      if(oy_debug_objects >= 0)
         oyObjectDebugMessage_( obj?obj->oy_:NULL, __func__, oyStructTypeToText(obj->type_) );
     } else
       hash->entry = obj;

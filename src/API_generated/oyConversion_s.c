@@ -77,7 +77,7 @@ OYAPI oyConversion_s* OYEXPORT
 
   s = oyConversion_Copy_( s, object );
 
-  if(oy_debug_objects)
+  if(oy_debug_objects >= 0)
     oyObjectDebugMessage_( s?s->oy_:NULL, __func__, "oyConversion_s" );
 
   return (oyConversion_s*) s;

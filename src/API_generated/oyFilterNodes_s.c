@@ -72,7 +72,7 @@ OYAPI oyFilterNodes_s* OYEXPORT
 
   s = oyFilterNodes_Copy_( s, object );
 
-  if(oy_debug_objects)
+  if(oy_debug_objects >= 0)
     oyObjectDebugMessage_( s?s->oy_:NULL, __func__, "oyFilterNodes_s" );
 
   return (oyFilterNodes_s*) s;

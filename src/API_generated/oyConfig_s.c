@@ -79,7 +79,7 @@ OYAPI oyConfig_s* OYEXPORT
 
   s = oyConfig_Copy_( s, object );
 
-  if(oy_debug_objects)
+  if(oy_debug_objects >= 0)
     oyObjectDebugMessage_( s?s->oy_:NULL, __func__, "oyConfig_s" );
 
   return (oyConfig_s*) s;

@@ -75,7 +75,7 @@ OYAPI oyOptions_s* OYEXPORT
 
   s = oyOptions_Copy_( s, object );
 
-  if(oy_debug_objects)
+  if(oy_debug_objects >= 0)
     oyObjectDebugMessage_( s?s->oy_:NULL, __func__, "oyOptions_s" );
 
   return (oyOptions_s*) s;
@@ -1648,7 +1648,7 @@ oyStruct_s *   oyOptions_GetType     ( oyOptions_s       * options,
         if(o->value->oy_struct->copy)
         {
           st = o->value->oy_struct->copy( o->value->oy_struct, 0 );
-          if(oy_debug_objects && st)
+          if(oy_debug_objects >= 0 && st)
             oyObjectDebugMessage_( st->oy_, __func__,
                                    oyStructTypeToText(st->type_) );
         } else

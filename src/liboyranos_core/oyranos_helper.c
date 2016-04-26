@@ -31,7 +31,7 @@ intptr_t oy_observe_pointer_ = 0;
 /* --- internal API definition --- */
 static int oy_allocs_count_ = 0;
 int oy_debug_memory = 0;
-int oy_debug_objects = 0;
+signed int oy_debug_objects = -1;
 int oy_debug_signals = 0;
 const char * oy_backtrace = 0;
 #ifndef NO_OPT

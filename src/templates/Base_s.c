@@ -45,7 +45,7 @@ OYAPI {{ class.name }}* OYEXPORT
 
   s = oy{{ class.baseName }}_Copy_( s, object );
 
-  if(oy_debug_objects)
+  if(oy_debug_objects >= 0)
     oyObjectDebugMessage_( s?s->oy_:NULL, __func__, "{{ class.name }}" );
 
   return ({{ class.name }}*) s;

@@ -73,7 +73,7 @@ OYAPI oyProfile_s* OYEXPORT
 
   s = oyProfile_Copy_( s, object );
 
-  if(oy_debug_objects)
+  if(oy_debug_objects >= 0)
     oyObjectDebugMessage_( s?s->oy_:NULL, __func__, "oyProfile_s" );
 
   return (oyProfile_s*) s;

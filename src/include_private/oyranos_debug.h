@@ -185,9 +185,9 @@ void oy_backtrace_();
 
 /* object tracing */
 #define OY_TRACE_       int * ids_old = 0;
-#define OY_TRACE_START_ if(oy_debug_objects) \
+#define OY_TRACE_START_ if(oy_debug_objects >= 0) \
     ids_old = oyObjectGetCurrentObjectIdList();
-#define OY_TRACE_END_( t )   if(oy_debug_objects) \
+#define OY_TRACE_END_( t )   if(oy_debug_objects >= 0) \
     oyObjectIdListShowDiffAndRelease( &ids_old, t );
 
 #ifdef __cplusplus

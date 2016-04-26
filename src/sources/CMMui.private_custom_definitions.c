@@ -90,7 +90,7 @@ int oyCMMui_Copy__Members( oyCMMui_s_ * dst, oyCMMui_s_ * src)
   if(src->parent && src->parent->copy)
   {
     dst->parent = (oyCMMapiFilter_s*) src->parent->copy( (oyStruct_s*) src->parent, src->oy_ );
-    if(oy_debug_objects && dst->parent)
+    if(oy_debug_objects >= 0 && dst->parent)
         oyObjectDebugMessage_( dst->parent->oy_, __func__,
                                oyStructTypeToText(dst->parent->type_) );
   } else

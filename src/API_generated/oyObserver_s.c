@@ -222,7 +222,7 @@ OYAPI int  OYEXPORT
       if(user_data)
         s->user_data = user_data->copy( user_data, 0 );
       s->signal = signalFunc;
-      if(oy_debug_objects)
+      if(oy_debug_objects >= 0)
       {
         if(s->observer)
           oyObjectDebugMessage_( s->observer->oy_, __func__,

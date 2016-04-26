@@ -147,7 +147,7 @@ int oyFilterSocket_Copy__Members( oyFilterSocket_s_ * dst, oyFilterSocket_s_ * s
   if(src->data && src->data->copy)
   {
     dst->data = src->data->copy( src->data, dst->oy_ );
-    if(oy_debug_objects && dst->data)
+    if(oy_debug_objects >= 0 && dst->data)
       oyObjectDebugMessage_( dst->data->oy_, __func__,
                              oyStructTypeToText(dst->data->type_) );
   }

@@ -71,7 +71,7 @@ OYAPI oyPixelAccess_s* OYEXPORT
 
   s = oyPixelAccess_Copy_( s, object );
 
-  if(oy_debug_objects)
+  if(oy_debug_objects >= 0)
     oyObjectDebugMessage_( s?s->oy_:NULL, __func__, "oyPixelAccess_s" );
 
   return (oyPixelAccess_s*) s;
@@ -583,7 +583,7 @@ oyStruct_s *       oyPixelAccess_GetUserData (
   if(s->user_data && s->user_data->copy)
   {
     s->user_data = s->user_data->copy( s->user_data, 0 );
-    if(oy_debug_objects && s->user_data)
+    if(oy_debug_objects >= 0 && s->user_data)
       oyObjectDebugMessage_( s->user_data->oy_, __func__,
                              oyStructTypeToText(s->user_data->type_) );
   }
@@ -615,7 +615,7 @@ int                oyPixelAccess_SetUserData (
   if(user_data && user_data->copy)
   {
     s->user_data = user_data->copy( user_data, 0 );
-    if(oy_debug_objects && s->user_data)
+    if(oy_debug_objects >= 0 && s->user_data)
       oyObjectDebugMessage_( s->user_data->oy_, __func__,
                              oyStructTypeToText(s->user_data->type_) );
   } else 

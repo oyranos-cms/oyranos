@@ -580,7 +580,7 @@ void exit_cb ( Fl_Widget* w, void* daten )
 {
   oy_widget->conversion(NULL);
   oyFilterNode_Release( &icc );
-  if(oy_debug_objects)
+  if(oy_debug_objects >= 0)
     oyObjectTreePrint( 0x01 | 0x02 );
   exit(0);
 }

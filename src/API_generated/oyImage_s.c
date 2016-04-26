@@ -66,7 +66,7 @@ OYAPI oyImage_s* OYEXPORT
 
   s = oyImage_Copy_( s, object );
 
-  if(oy_debug_objects)
+  if(oy_debug_objects >= 0)
     oyObjectDebugMessage_( s?s->oy_:NULL, __func__, "oyImage_s" );
 
   return (oyImage_s*) s;
@@ -414,7 +414,7 @@ oyImage_s *    oyImage_Create         ( int               width,
                               (oyStruct_s**)&display_rectangle, OY_CREATE_NEW );
   }
 
-  if(oy_debug_objects)
+  if(oy_debug_objects >= 0)
     oyObjectDebugMessage_( s?s->oy_:NULL, __func__, oyStructTypeToText(s->type_) );
 
   return (oyImage_s*) s;
