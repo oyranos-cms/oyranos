@@ -94,6 +94,12 @@ oyHash_s *   oyFilterNode_GetHash_   ( oyFilterNode_s_   * node,
   /* query in cache for api7 */
   hash = oyCMMCacheListGetEntry_( hash_text );
 
+  if(oy_debug >= 2)
+    oyMessageFunc_p( oyMSG_DBG, (oyStruct_s*) node,
+                     OY_DBG_FORMAT_ "api: %d hash_text: \"%s\"",
+                     OY_DBG_ARGS_,
+                     api, hash_text );
+
   if(hash_temp) oyDeAllocateFunc_(hash_temp);
   if(hash_text) oyDeAllocateFunc_(hash_text);
 
@@ -517,7 +523,7 @@ oyStructList_s * oyFilterNode_GetData_(oyFilterNode_s_    * node,
             if(node->plugs[i]->remote_socket_->data)
             {
               data = node->plugs[i]->remote_socket_->data->copy( node->plugs[i]->remote_socket_->data, 0 );
-              if(oy_debug_objects && data)
+              if(oy_debug_objects >= 0 && data)
                 oyObjectDebugMessage_( data->oy_, __func__,
                                        oyStructTypeToText(data->type_) );
             } else
@@ -536,7 +542,7 @@ oyStructList_s * oyFilterNode_GetData_(oyFilterNode_s_    * node,
             if(node->sockets[i]->data)
             {
               data = node->sockets[i]->data->copy( node->sockets[i]->data, 0 );
-              if(oy_debug_objects && data)
+              if(oy_debug_objects >= 0 && data)
                 oyObjectDebugMessage_( data->oy_, __func__,
                                        oyStructTypeToText(data->type_) );
             } else
