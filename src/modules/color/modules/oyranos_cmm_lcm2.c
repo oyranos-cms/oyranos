@@ -1867,7 +1867,7 @@ int          lcm2MOptions_Handle2    ( oyOptions_s       * options,
       cmsUInt32Number size = 0;
       char * block = 0;
 
-      cmsHPROFILE hp = lcm2AddProofProfile( p, flags | cmsFLAGS_GAMUTCHECK,
+      cmsHPROFILE hp = lcm2AddProofProfile( p, flags | cmsFLAGS_SOFTPROOFING,
                                             intent, intent_proof, icc_profile_flags );
       oyProfile_Release( &p );
       if(hp)
