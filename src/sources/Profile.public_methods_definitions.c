@@ -1996,9 +1996,10 @@ OYAPI int OYEXPORT
  *  OY_FROM_PROFILE flags until writing of the profile.
  *
  *  @param[in,out] profile             the profile
- *  @param[in]     flags               OY_COMPUTE will calculate the hash
- *                                     OY_FROM_PROFILE - original profile ID
- *  @param[out]    md5                 the the ICC md5 based profile ID
+ *  @param[in]     flags
+ *                                     - OY_COMPUTE - calculate the hash
+ *                                     - OY_FROM_PROFILE - original profile ID
+ *  @param[out]    md5                 the ICC md5 based profile ID
  *  @return                            0 - good, 1 >= error, -1 <= issue(s)
  *
  *  @version Oyranos: 0.3.0
