@@ -158,7 +158,8 @@ char * lcm2FlagsToText               ( int                 flags );
 cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
                                        cmsUInt32Number     flags,
                                        int                 intent,
-                                       int                 intent_proof );
+                                       int                 intent_proof,
+                                       uint32_t            icc_profile_flags );
 oyPointer  lcm2CMMColorConversion_ToMem_ (
                                        cmsHTRANSFORM     * xform,
                                        oyOptions_s       * opts,
@@ -173,7 +174,8 @@ cmsHPROFILE  lcm2AddProfile          ( oyProfile_s       * p );
 cmsHPROFILE  lcm2AddProofProfile     ( oyProfile_s       * proof,
                                        cmsUInt32Number     flags,
                                        int                 intent,
-                                       int                 intent_proof );
+                                       int                 intent_proof,
+                                       uint32_t            icc_profile_flags );
 oyPointer lcm2FilterNode_CmmIccContextToMem (
                                        oyFilterNode_s    * node,
                                        size_t            * size,
@@ -979,7 +981,7 @@ cmsHTRANSFORM  lcm2CMMConversionContextCreate_ (
         for(i = 0; i < proof_n; ++i)
           merge[profiles_n-1 + i] = lcm2AddProofProfile( 
                                              oyProfiles_Get(simulation,i),flags,
-                                             intent, intent_proof);
+                                             intent, intent_proof, 0);
 
         merge[profiles_n + proof_n -1] = lps[profiles_n - 1];
 
@@ -1252,7 +1254,8 @@ oyConnectorImaging_s_* lcm2_cmmIccPlug_connectors[2]={&lcm2_cmmIccPlug_connector
 cmsHPROFILE  lcm2AddProofProfile     ( oyProfile_s       * proof,
                                        cmsUInt32Number     flags,
                                        int                 intent,
-                                       int                 intent_proof )
+                                       int                 intent_proof,
+                                       uint32_t            icc_profile_flags )
 {
   int error = 0;
   cmsHPROFILE * hp = 0;
@@ -1308,7 +1311,7 @@ cmsHPROFILE  lcm2AddProofProfile     ( oyProfile_s       * proof,
              OY_DBG_ARGS_, hash_text );
  
     /* create */
-    hp = lcm2GamutCheckAbstract( proof, flags, intent, intent_proof );
+    hp = lcm2GamutCheckAbstract( proof, flags, intent, intent_proof, icc_profile_flags );
     if(hp)
     {
       /* save to memory */
@@ -1559,7 +1562,8 @@ void printPipeline( cmsPipeline * lut )
 cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
                                        cmsUInt32Number     flags,
                                        int                 intent,
-                                       int                 intent_proof )
+                                       int                 intent_proof,
+                                       uint32_t            icc_profile_flags )
 {
   cmsUInt16Number OldAlarm[cmsMAXCHANNELS];
 #if LCMS_VERSION >= 2060
@@ -1711,7 +1715,10 @@ cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
       }
 
       gmt = lcmsCreateProfilePlaceholder( tc ); if(!gmt) goto clean;
-      lcmsSetProfileVersion( gmt, 4.2 );
+      if(icc_profile_flags & OY_ICC_VERSION_2)
+        lcmsSetProfileVersion( gmt, 2.4 );
+      else
+        lcmsSetProfileVersion( gmt, 4.2 );
       lcmsSetDeviceClass( gmt, icSigAbstractClass );
       lcmsSetColorSpace( gmt, icSigLabData );
       lcmsSetPCS( gmt, icSigLabData );
@@ -1846,6 +1853,9 @@ int          lcm2MOptions_Handle2    ( oyOptions_s       * options,
   }
   else if(oyFilterRegistrationMatch(command,"create_profile", 0))
   {
+    int32_t icc_profile_flags = 0;
+    oyOptions_FindInt( options, "icc_profile_flags", 0, &icc_profile_flags ); 
+
     p = (oyProfile_s*) oyOptions_GetType( options,-1, "proofing_profile",
                                           oyOBJECT_PROFILE_S );
     if(p)
@@ -1858,16 +1868,20 @@ int          lcm2MOptions_Handle2    ( oyOptions_s       * options,
       char * block = 0;
 
       cmsHPROFILE hp = lcm2AddProofProfile( p, flags | cmsFLAGS_GAMUTCHECK,
-                                            intent, intent_proof );
+                                            intent, intent_proof, icc_profile_flags );
       oyProfile_Release( &p );
       if(hp)
       {
+        if(icc_profile_flags & OY_ICC_VERSION_2)
+          lcmsSetProfileVersion(hp, 2.4);
+
         lcmsSaveProfileToMem( hp, 0, &size );
         if(!size)
           lcm2_msg( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_
              "lcmsSaveProfileToMem failed with command: %s",
              OY_DBG_ARGS_, command );
         block = oyAllocateFunc_( size );
+
         lcmsSaveProfileToMem( hp, block, &size );
         lcmsCloseProfile( hp ); hp = 0;
       }
@@ -3271,7 +3285,7 @@ oyProfile_s *      lcm2CreateICCMatrixProfile (
   lp = lcmsCreateRGBProfile( &wtpt_xyY, &p, g);
 
   if(icc_profile_flags & OY_ICC_VERSION_2)
-    lcmsSetProfileVersion(lp, 2.1);
+    lcmsSetProfileVersion(lp, 2.4);
 
   lcmsSaveProfileToMem( lp, 0, &size );
   if(!size)
