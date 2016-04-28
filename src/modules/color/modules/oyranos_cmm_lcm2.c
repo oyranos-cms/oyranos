@@ -1031,7 +1031,7 @@ cmsHTRANSFORM  lcm2CMMConversionContextCreate_ (
           size_t size = 0;
           char * block = oyProfile_GetMem( p, &size, 0, oyAllocateFunc_ );
           oyFree_m_(block);
-          fprintf( stdout, " -> \"%s\"[%lu]", fn?fn:"----", size );
+          fprintf( stdout, " -> \"%s\"[%lu]", fn?fn:"----", (long unsigned int)size );
         }
         fprintf(stdout, "\n");
 #endif
@@ -1486,6 +1486,7 @@ int  gamutCheckSamplerFloat          ( const cmsFloat32Number In[],
 
 const char *       oyICCMpeDescription(cmsStageSignature sig, int type )
 {
+#if LCMS_VERSION >= 2060
   switch ((unsigned int)sig)
   {
     // Multi process elements types
@@ -1510,15 +1511,20 @@ const char *       oyICCMpeDescription(cmsStageSignature sig, int type )
     case cmsSigLab2FloatPCS:       return type ? "d2l '" : _("Lab2FloatPCS");
     case cmsSigFloatPCS2Lab:       return type ? "l2d '" : _("FloatPCS2Lab");
     case cmsSigXYZ2FloatPCS:       return type ? "d2x '" : _("XYZ2FloatPCS");
+#if LCMS_VERSION >= 2070
     case cmsSigFloatPCS2XYZ:       return type ? "x2d '" : _("FloatPCS2XYZ");
     case cmsSigClipNegativesElemType: return type ? "clp '" : _("Clip Negatives");
-
+#endif /* >= 2070 */
     case 0: return _("----");
-    default: { static union { char c[8]; cmsStageSignature sig; } stage_sig = { .c[4] = 0 };
+    default:
+#endif /* >= 2060 */
+             { static union { char c[8]; cmsStageSignature sig; } stage_sig = { .c[4] = 0 };
                stage_sig.sig = (cmsStageSignature)oyValueUInt32( sig );
                return stage_sig.c;
              }
+#if LCMS_VERSION >= 2060
   }
+#endif
 }
 
 // A single stage
