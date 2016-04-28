@@ -50,11 +50,7 @@ typedef struct oyRectangle_s oyRectangle_s;
 /** @struct  oyRectangle_s 
  *  @ingroup objects_image
  *  @extends oyStruct_s
- *  @brief   Start with a simple rectangle
- *
- *  @version Oyranos: x.x.x
- *  @since   YYYY/MM/DD (Oyranos: x.x.x)
- *  @date    YYYY/MM/DD
+ *  @brief   A simple rectangle of double values
  */
 
 /* } Include "Rectangle.dox" */

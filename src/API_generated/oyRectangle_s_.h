@@ -41,7 +41,7 @@ typedef struct oyRectangle_s_ oyRectangle_s_;
 
 /** @internal
  *  @struct   oyRectangle_s_
- *  @brief      Start with a simple rectangle
+ *  @brief      A simple rectangle of double values
  *  @ingroup  objects_image
  *  @extends  oyStruct_s
  */
