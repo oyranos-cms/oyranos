@@ -334,7 +334,7 @@ int          oyFilterNode_SetContext_( oyFilterNode_s_    * node,
 
             if(!(cmm_ptr7 && oyPointer_GetPointer(cmm_ptr7)) || blob)
             {
-              /* write the context to memory */
+              /* write the cmm4 context to memory */
               if(blob)
               {
                 error = oyOptions_SetFromText( &node->tags, "////verbose",
@@ -409,6 +409,7 @@ int          oyFilterNode_SetContext_( oyFilterNode_s_    * node,
                       OY_DBG_FORMAT_ "no device link for caching\n%s",
                       OY_DBG_ARGS_,
                       oyFilterNode_GetText( (oyFilterNode_s*)node,oyNAME_NICK));
+
                     error = 1;
                     oyPointer_Release( &cmm_ptr4 );
 
@@ -436,7 +437,7 @@ int          oyFilterNode_SetContext_( oyFilterNode_s_    * node,
                                     ptr, "oyPointerRelease", oyPointerRelease);
                   oyPointer_SetSize( cmm_ptr4, size );
 
-                  /* 3b.2. update cache entry */
+                  /* 3b.2. update cmm4 cache entry */
                   error = oyHash_SetPointer( hash4, (oyStruct_s*) cmm_ptr4);
                 }
               }
@@ -454,11 +455,11 @@ int          oyFilterNode_SetContext_( oyFilterNode_s_    * node,
                   error = oyPointer_Set( cmm_ptr7, node->api7_->id_,
                                          node->api7_->context_type, 0, 0, 0);
 
-                  /* search for a convertor and convert */
+                  /* 3b.3. search for a convertor and convert */
                   oyPointer_ConvertData( cmm_ptr4, cmm_ptr7,
                                          (oyFilterNode_s*)node );
                   node->backend_data = cmm_ptr7;
-                  /* 3b.1. update cache entry */
+                  /* 3b.4. update cmm7 cache entry */
                   error = oyHash_SetPointer( hash7,
                                               (oyStruct_s*) cmm_ptr7);
 
