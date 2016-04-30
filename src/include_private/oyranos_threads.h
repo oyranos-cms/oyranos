@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2014 (C) Kai-Uwe Behrmann
+ *            2014-2016 (C) Kai-Uwe Behrmann
  *
  *  @brief    thread methods
  *  @internal
@@ -23,35 +23,6 @@
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-
-#if defined(_WIN32) && !defined(__GNU__)
-# include <process.h>
-typedef unsigned long oyThread_t;
-# define oyThreadSelf  GetCurrentThreadId
-# define oyThreadEqual(a,b) ((a) == (b))
-typedef CRITICAL_SECTION oyMutex_t;
-# define oyMutexInit_m(m,a) InitializeCriticalSection(m)
-# define oyMutexLock_m(m) EnterCriticalSection(m)
-# define oyMutexUnLock_m(m) LeaveCriticalSection(m)
-# define oyMutexDestroy_m(m) DeleteCriticalSection(m)
-#else
-# include <pthread.h>
-typedef pthread_t oyThread_t;
-# define oyThreadSelf  pthread_self
-# define oyThreadEqual(a,b) pthread_equal((a),(b))
-typedef struct {
-  pthread_mutex_t mutex;
-  pthread_cond_t cond;
-} oyMutex_t;
-# define oyMutexInit_m(m,a) { pthread_mutex_init(m.mutex, a); pthread_cond_init(m.cond, NULL); }
-# define oyMutexLock_m(m) pthread_mutex_lock(m.mutex)
-# define oyMutexUnLock_m(m) pthread_mutex_unlock(m.mutex)
-# define oyMutexDestroy_m(m) { pthread_mutex_destroy(m.mutex); pthread_cond_destroy(m.cond); }
-#endif 
-
-int oyThreadCreate                   ( void             *(*func) (void * data),
-                                       void              * data,
-                                       oyThread_t        * thread );
 
 typedef void (*oyJobCallback_f)      ( double              progress_zero_till_one,
                                        char              * status_text,
@@ -73,15 +44,20 @@ struct oyJob_s {
   int thread_id_;                      /**< Oyranos provided ID; keep read only */
   int status_done_;                    /**< Oyranos internal variable */
 };
-int                oyJob_Add         ( oyJob_s           * job,
+typedef int      (*oyJob_Add_f)      ( oyJob_s           * job,
                                        int                 finished );
-int                oyJob_Get         ( oyJob_s          ** job,
+typedef int      (*oyJob_Get_f)      ( oyJob_s          ** job,
                                        int                 finished );
-int                oyMsg_Add         ( oyJob_s           * job,
+typedef int      (*oyMsg_Add_f)      ( oyJob_s           * job,
                                        double              progress_zero_till_one,
                                        char              * status_text );
-void *             oyJobWorker       ( void              * data );
-void               oyJobResult       ( void );
+typedef void     (*oyJobResult_f)    ( void );
+
+extern oyJob_Add_f oyJob_Add;
+extern oyJob_Get_f oyJob_Get;
+extern oyMsg_Add_f oyMsg_Add;
+extern oyJobResult_f oyJobResult;
+
 #ifdef __cplusplus
 } /* extern "C" */
 #endif /* __cplusplus */
