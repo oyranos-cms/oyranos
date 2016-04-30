@@ -1,0 +1,713 @@
+/** @file oyranos_cmm_trds.c
+ *
+ *  Oyranos is an open source Color Management System 
+ *
+ *  @par Copyright:
+ *            2014-2016 (C) Kai-Uwe Behrmann
+ *
+ *  @brief    threads module for Oyranos
+ *  @internal
+ *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
+ *  @par License:
+ *            new BSD <http://www.opensource.org/licenses/BSD-3-Clause>
+ *  @since    2014/01/24
+ */
+
+/**
+ *  Why threading?
+ *    Some expensive workload is good to load off to a background job
+ *    and continue in the foreground for non interupted user interaction.
+ *    E.g. the user should be able to continue interacting with the 
+ *    image/movie, even while changed options need computing of the current
+ *    DAG contexts.
+ *
+ *  Why threading inside Oyranos?
+ *    The background jobs tend to be related to tasks inside the Oyranos
+ *    DAG and can not easily be handled outside the DAG. For instance it is 
+ *    not easy to replace a expensive DAG while performing a expensive 
+ *    option change - big image or movie + switching on/off proofing/effects.
+ *
+ *  Why a modular approach?
+ *    Threading models can very easily conflict and linking
+ *    can become a night mare. Thus threading must be replaceable
+ *    and on the descretion of users.
+ *
+ *  The main goal of this module is to provide a means to replace 
+ *  threading / job functionality and switch to pthreads/windows/whatever
+ *  model as the main application needs it. The implementation provides a
+ *  reasonable set of functions for objects of type oyJob_s.
+ */
+
+// TODO * clean up the object and function creation dates and API numbers
+//      * provide dummies for oyJob_Add/Get and friends from oyranos_threads.h in oyStruct_s.c
+//      * move typedef's from src/include_private/oyranos_threads.h to oyStruct_s.h
+//      * add a equivalent to oyThreadLockingSet() for the oyJob/Msg_XXX() functions
+//      * document inside the doymentation_common.dox::threads section
+//      * let the dummies automatically setup threading if not previously done by checking a oyThreadLockingReady() equivalent
+//      * replace the strings and descriptions here
+//      * check if oy-image-display works as previously with the changed / moved APIs
+//      * add oyJob_s::type and forbid copy, as copy is dangerous in crossing threads.
+//      * move some of the Why questions above to the doxygen docu.
+
+#include "oyCMM_s.h"
+#include "oyCMMapi10_s_.h"
+
+#include "oyranos_cmm.h"         /* the API's this CMM implements */
+#include "oyranos_i18n.h"
+#include "oyranos_string.h"
+#include "oyranos_threads.h"
+
+/*
+oyCMM_s         trds_cmm_module;
+oyCMMapi10_s    trds_api10_cmm;
+*/
+
+
+/* --- internal definitions --- */
+
+#define CMM_NICK "trds"
+
+#define CMM_VERSION {0,1,0}
+
+#if defined(_WIN32) && !defined(__GNU__)
+# include <process.h>
+typedef unsigned long oyThread_t;
+# define oyThreadSelf  GetCurrentThreadId
+# define oyThreadEqual(a,b) ((a) == (b))
+typedef CRITICAL_SECTION oyMutex_t;
+# define oyMutexInit_m(m,a) InitializeCriticalSection(m)
+# define oyMutexLock_m(m) EnterCriticalSection(m)
+# define oyMutexUnLock_m(m) LeaveCriticalSection(m)
+# define oyMutexDestroy_m(m) DeleteCriticalSection(m)
+#else
+# include <pthread.h>
+typedef pthread_t oyThread_t;
+# define oyThreadSelf  pthread_self
+# define oyThreadEqual(a,b) pthread_equal((a),(b))
+typedef struct {
+  pthread_mutex_t mutex;
+  pthread_cond_t cond;
+} oyMutex_t;
+# define oyMutexInit_m(m,a) { pthread_mutex_init(m.mutex, a); pthread_cond_init(m.cond, NULL); }
+# define oyMutexLock_m(m) pthread_mutex_lock(m.mutex)
+# define oyMutexUnLock_m(m) pthread_mutex_unlock(m.mutex)
+# define oyMutexDestroy_m(m) { pthread_mutex_destroy(m.mutex); pthread_cond_destroy(m.cond); }
+#endif 
+
+int oyThreadCreate                   ( void             *(*func) (void * data),
+                                       void              * data,
+                                       oyThread_t        * thread );
+
+void *             oyJobWorker       ( void              * data );
+
+int                oyJob_Add_         ( oyJob_s           * job,
+                                       int                 finished );
+int                oyJob_Get_         ( oyJob_s          ** job,
+                                       int                 finished );
+int                oyMsg_Add_         ( oyJob_s           * job,
+                                       double              progress_zero_till_one,
+                                       char              * status_text );
+void               oyJobResult_       ( void );
+
+oyMessage_f trds_msg = oyMessageFunc;
+
+int            trdsCMMMessageFuncSet ( oyMessage_f         trds_msg_func );
+int                trdsCMMInit       ( );
+
+
+#include <unistd.h> /* usleep() */
+#ifdef _OPENMP
+#define USE_OPENMP 1
+#include <omp.h> /* omp_get_num_procs() */
+#endif
+
+
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
+oyThread_t * oy_threads_ = NULL;
+int oy_thread_count_ = 0;
+
+/**
+ *  @brief   start a thread with a given function
+ *
+ *  @version Oyranos: 0.9.5
+ *  @date    2014/01/25
+ *  @since   2014/01/25 (Oyranos: 0.9.5)
+ */
+int oyThreadCreate                   ( void             *(*func) (void * ptr),
+                                       void              * data,
+                                       oyThread_t        * thread )
+{
+  int error = !thread || !func;
+
+  if(!error)
+  {
+#if defined(_WIN32) && !defined(__GNU__)
+    *thread = (oyThread_t) _beginthread( (void(*)(void*)) func, 0, data );
+    if(!(*thread))
+      error = 1;
+#else
+    pthread_attr_t attr;
+
+    error = pthread_attr_init( &attr );
+    error = pthread_create( thread, &attr, func, data );
+    error = pthread_attr_destroy( &attr );
+#endif
+  }
+
+  return error;
+}
+
+typedef struct {
+  oyMutex_t m;
+  oyThread_t t;
+  int ref;
+} oyMutex_s;
+
+/* define our own mutex based locking */
+oyPointer  oyStruct_LockCreate_        ( oyStruct_s      * obj )
+{
+  oyMutex_s * ms = (oyMutex_s*) calloc(sizeof(oyMutex_s),1);
+
+#if defined(_WIN32) && !defined(__GNU__)
+  int mattr = 0;
+#else
+  pthread_mutexattr_t mattr_local;
+  pthread_mutexattr_t * mattr = &mattr_local;
+  pthread_mutexattr_init( mattr );
+  pthread_mutexattr_settype( mattr, PTHREAD_MUTEX_RECURSIVE );
+#endif
+  oyMutexInit_m( &ms->m, mattr );
+  ms->t = oyThreadSelf();
+  ms->ref = 0;
+  return ms;
+}
+void       oyLockRelease_              ( oyPointer         lock,
+                                         const char      * marker,
+                                         int               line )
+{
+  oyMutex_s * ms = (oyMutex_s*)lock;
+  if(ms->ref != 0)
+    WARNc3_S("%s %d ref counter=%d", marker, line, ms->ref);
+    
+  oyMutexDestroy_m( &ms->m );
+  /* paranoid */
+  ms->ref = -10000;
+  free(ms);
+}
+
+int oyGetThreadID( oyThread_t t )
+{
+  int i;
+  for(i = 0; i < oy_thread_count_; ++i)
+    if      (oyThreadEqual( oy_threads_[i], t ))
+      break;
+  return i;
+}
+
+void       oyLock_                     ( oyPointer         lock,
+                                         const char      * marker,
+                                         int               line )
+{ 
+  oyMutex_s * ms = (oyMutex_s*)lock;
+  oyThread_t t = oyThreadSelf();
+
+  {
+    if(oy_debug > 5)
+      DBG_PROG4_S("%s %d thread[%d] ref:%d", marker, line, oyGetThreadID( t ), ms->ref );
+    /* Get the resource, and probably wait for it. */
+    oyMutexLock_m( &ms->m );
+    /* As soon as we are able to lock, the mutex is owned by us. */
+    ms->t = t;
+    /* This is the first lock call to the resource, mark the oyMutex_s accordingly. */
+    ms->ref++;
+
+  }
+}
+void       oyUnLock_                   ( oyPointer         lock,
+                                         const char      * marker,
+                                         int               line )
+{
+  oyMutex_s * ms = (oyMutex_s*)lock;
+
+  {
+    if(oy_debug > 5)
+      DBG_PROG4_S("%s %d thread[%d] ref:%d", marker, line, oyGetThreadID( oyThreadSelf()), ms->ref );
+    /* Lessen the reference counter one level. */
+    ms->ref--;
+    oyMutexUnLock_m( &ms->m );
+  }
+  /* Discussion:
+   * Several conditions are thinkable and would indicate errors in the system.
+   * 1. a different thread unlocks this resource - strikes mutex definition.
+   * 2. ms->ref < 0
+   */
+}
+
+
+/* forward declaration from src/API_generated/oyStruct_s.c */
+
+//oyStructList_s * oy_thread_cache_ = NULL;
+oyStructList_s * oy_job_list_ = NULL;
+oyStructList_s * oy_job_message_list_ = NULL;
+void oyThreadsInit_(void)
+{
+  static int * thread_ids;
+  int i;
+
+  /* initialise threadsafe job and message queues */
+  if(!oy_job_list_)
+  {
+    /* check threading */
+    if(!oyThreadLockingReady())
+      /* initialise our locking */
+      oyThreadLockingSet( oyStruct_LockCreate_, oyLockRelease_,
+                          oyLock_, oyUnLock_ );
+
+    oy_job_list_ = oyStructList_Create( oyOBJECT_NONE, "oy_job_list_", NULL );
+    oy_job_message_list_ = oyStructList_Create( oyOBJECT_NONE,
+                                                "oy_job_message_list_", NULL );
+
+    /* setup mutexes */
+    oyObject_Lock( oy_job_list_->oy_, __func__, __LINE__ );
+    oyObject_UnLock( oy_job_list_->oy_, __func__, __LINE__ );
+    oyObject_Lock( oy_job_message_list_->oy_, __func__, __LINE__ );
+    oyObject_UnLock( oy_job_message_list_->oy_, __func__, __LINE__ );
+
+#if defined(_OPENMP) && defined(USE_OPENMP)
+    if((omp_get_num_procs() - 1) >= 1)
+      oy_thread_count_ = omp_get_num_procs() - 1;
+    else
+#endif
+      oy_thread_count_ = 1;
+
+    oy_threads_ = (oyThread_t*)calloc(sizeof(oyThread_t),oy_thread_count_+1);
+    thread_ids = (int*)calloc(sizeof(int),oy_thread_count_+1);
+
+    oy_threads_[0] = oyThreadSelf();
+
+    for(i = 0; i < oy_thread_count_; ++i)
+    {
+      oyThread_t background_thread;
+
+      thread_ids[i+1] = i+1;
+
+      oyThreadCreate( oyJobWorker, &thread_ids[i+1], &background_thread );
+      printf("thread created [%ld]\n", background_thread);
+
+      oy_threads_[i+1] = background_thread;
+    }
+  }
+}
+
+/**
+ *  @brief   Add and run a job
+ *
+ *  @version Oyranos: 0.9.5
+ *  @date    2014/01/27
+ *  @since   2014/01/27 (Oyranos: 0.9.5)
+ */
+int                oyJob_Add_        ( oyJob_s           * job,
+                                       int                 finished )
+{
+  oyBlob_s * blob;
+  static int job_count = 0;
+  int job_id = 0;
+  int error = 0;
+
+  oyThreadsInit_();
+
+  /* set status */
+  if(finished)
+    job->status_done_ = 1;
+  else
+  {
+    job->id_ = ++job_count;
+    job->status_done_ = 0;
+  }
+
+  job_id = job->id_;
+
+  /* setup container */
+  blob = oyBlob_New(NULL);
+  oyBlob_SetFromStatic( blob, job, 0, "oyJob_s" );
+
+  /* add container to queue threadsafe */
+  error = oyStructList_MoveIn( oy_job_list_, (oyStruct_s**) &blob, -1, 0 );
+  if(error)
+    WARNc2_S("error=%d %d", error, finished);
+
+#if defined(_WIN32) && !defined(__GNU__)
+#else
+  if(finished == 0)
+  {
+    oyMutex_t * m = (oyMutex_t*) oy_job_list_->oy_->lock_;
+    oyObject_Lock( oy_job_list_->oy_, __func__, __LINE__ );
+    pthread_cond_signal( &m->cond );
+    oyObject_UnLock( oy_job_list_->oy_, __func__, __LINE__ );
+  }
+#endif
+
+  return job_id;
+}
+int                oyJob_Get_        ( oyJob_s          ** job,
+                                       int                 finished )
+{
+  /* FIFO */
+  *job = 0;
+  if(!oy_job_list_) return -1;
+
+  /* queue manipulation needs mutex */
+  if(oy_debug >= 2)
+  {
+    char * t = NULL;
+    oyStringAddPrintf_(&t, oyAllocateFunc_, oyDeAllocateFunc_, "%s() finished:%d", __func__, finished);
+    oyObject_Lock( oy_job_list_->oy_, t, __LINE__ );
+    oyFree_m_(t);
+  } else
+    oyObject_Lock( oy_job_list_->oy_, __func__, __LINE__ );
+
+  int n = oyStructList_Count( oy_job_list_ );
+  if(n)
+  {
+    oyBlob_s * blob = (oyBlob_s*) oyStructList_GetRefType( oy_job_list_, n-1, oyOBJECT_BLOB_S );
+    oyJob_s * j = (oyJob_s*) oyBlob_GetPointer( blob );
+    if((j->status_done_ > 0 && finished > 0) ||
+       (j->status_done_ == 0 && finished == 0))
+    {
+      oyStructList_ReleaseAt( oy_job_list_, n-1 );
+      *job = j;
+    }
+    oyBlob_Release( &blob );
+  }
+#if defined(_WIN32) && !defined(__GNU__)
+#else
+  else if(finished == 0)
+  {
+    oyMutex_t * m = (oyMutex_t*) oy_job_list_->oy_->lock_;
+    pthread_cond_wait( &m->cond, &m->mutex );
+  }
+#endif
+
+  if(oy_debug >= 2)
+  {
+    char * t = NULL;
+    oyStringAddPrintf_(&t, oyAllocateFunc_, oyDeAllocateFunc_, "%s() finished:%d", __func__, finished);
+    oyObject_UnLock( oy_job_list_->oy_, t, __LINE__ );
+    oyFree_m_(t);
+  } else
+    oyObject_UnLock( oy_job_list_->oy_, __func__, __LINE__ );
+
+  return 0;
+}
+
+typedef struct {
+  oyJobCallback_f     cb_progress;
+  oyStruct_s        * cb_progress_context;
+  double              progress_zero_till_one;
+  char              * status_text;
+  int                 job_id;
+  int                 thread_id_;
+} oyMsg_s;
+int                oyMsg_Add_        ( oyJob_s           * job,
+                                       double              progress_zero_till_one,
+                                       char              * status_text )
+{
+  oyMsg_s * m = (oyMsg_s*) calloc(sizeof(oyMsg_s),1);
+  oyBlob_s * blob;
+  int error;
+
+  m->cb_progress = job->cb_progress;
+  m->cb_progress_context = job->cb_progress_context;
+  m->progress_zero_till_one = progress_zero_till_one;
+  m->status_text = status_text;
+  m->thread_id_ = job->thread_id_;
+  m->job_id = job->id_;
+  blob = oyBlob_New(NULL);
+  oyBlob_SetFromStatic( blob, m, 0, "oyJob_s" );
+  error = oyStructList_MoveIn( oy_job_message_list_, (oyStruct_s**) &blob, -1, 0 );
+  if(error)
+    WARNc2_S("error=%d %g", error, progress_zero_till_one);
+
+  return 0;
+}
+int                oyMsg_Get         ( oyMsg_s          ** msg )
+{
+  /* FIFO */
+  *msg = 0;
+  if(!oy_job_message_list_) return -1;
+  oyObject_Lock( oy_job_message_list_->oy_, __FILE__, __LINE__ );
+  int n = oyStructList_Count( oy_job_message_list_ );
+  if(n)
+  {
+    oyBlob_s * blob = (oyBlob_s*) oyStructList_GetRefType( oy_job_message_list_, 0, oyOBJECT_BLOB_S );
+    oyMsg_s * m = (oyMsg_s*) oyBlob_GetPointer( blob );
+    oyStructList_ReleaseAt( oy_job_message_list_, 0 );
+    *msg = m;
+    oyBlob_Release( &blob );
+  }
+  oyObject_UnLock( oy_job_message_list_->oy_, __FILE__, __LINE__ );
+  return 0;
+}
+
+void               oySleep           ( double              seconds )
+{
+  usleep((useconds_t)(seconds*(double)1000));
+}
+
+void *             oyJobWorker       ( void              * data )
+{
+  int thread_id = *((int*)data);
+
+  while(1)
+  {
+    oyJob_s * job = NULL;
+    oyJob_Get_( &job, 0 );
+    if(job)
+    {
+      int finished = 1;
+      job->thread_id_ = thread_id;
+      if(job->cb_progress)
+        oyMsg_Add_(job, 0.0, strdup("start"));
+      job->status_work_return = job->work(job);
+      if(job->cb_progress)
+        oyMsg_Add_(job, 1.0, strdup("done"));
+      oyJob_Add_( job, finished );
+    }
+    oySleep(0.02);
+  }
+  return NULL;
+}
+void               oyJobResult_      ( void )
+{ 
+  oyMsg_s * msg = NULL;
+  oyJob_s * job = NULL;
+  while(!oyMsg_Get( &msg ) && msg != NULL)
+  {
+    if(msg->cb_progress)
+      msg->cb_progress( msg->progress_zero_till_one, msg->status_text, msg->thread_id_, msg->job_id );
+
+    if(msg->status_text)
+      free(msg->status_text); msg->status_text = NULL;
+    free(msg); msg = NULL;
+  }
+
+  oyJob_Get_( &job, 1 );
+  if(job)
+    if(job->finish)
+      job->finish(job);
+}
+
+#ifdef __cplusplus
+} /* extern "C" */
+#endif /* __cplusplus */
+
+
+/** Function trdsCMMInit
+ *  @brief   API requirement
+ *
+ *  @version Oyranos: 0.9.6
+ *  @date    2016/04/29
+ *  @since   2016/04/29 (Oyranos: 0.9.6)
+ */
+int                trdsCMMInit       ( oyStruct_s        * filter )
+{
+  int error = 0;
+  return error;
+}
+
+
+
+/** Function trdsCMMMessageFuncSet
+ *  @brief
+ *
+ *  @version Oyranos: 0.1.8
+ *  @date    2007/11/00
+ *  @since   2007/11/00 (Oyranos: 0.1.8)
+ */
+int            trdsCMMMessageFuncSet ( oyMessage_f         message_func )
+{
+  trds_msg = message_func;
+  return 0;
+}
+
+
+/**
+ *  This function implements oyMOptions_Handle_f.
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/12/11 (Oyranos: 0.1.10)
+ *  @date    2009/12/11
+ */
+int          lcm2MOptions_Handle     ( oyOptions_s       * options,
+                                       const char        * command,
+                                       oyOptions_s      ** result )
+{
+  oyOption_s * o = 0;
+  int error = 0;
+
+  if(oyFilterRegistrationMatch(command,"can_handle", 0))
+  {
+    return error;
+  }
+  else if(oyFilterRegistrationMatch(command,"threads_handler", 0))
+  {
+    if(!*result)
+      *result = oyOptions_New(0);
+    oyOptions_MoveIn( *result, &o, -1 );
+  }
+
+  return 0;
+}
+
+const char *trds_texts_profile_create[4] = {"can_handle","threads_handler","help",0};
+
+/**
+ *  This function implements oyCMMinfoGetText_f.
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/12/11 (Oyranos: 0.1.10)
+ *  @date    2009/12/11
+ */
+const char * trdsInfoGetTextProfileC ( const char        * select,
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context )
+{
+         if(strcmp(select, "can_handle")==0)
+  {
+         if(type == oyNAME_NICK)
+      return "check";
+    else if(type == oyNAME_NAME)
+      return _("check");
+    else
+      return _("Check if LittleCMS can handle a certain command.");
+  } else if(strcmp(select, "threads_handler")==0)
+  {
+         if(type == oyNAME_NICK)
+      return "create_profile";
+    else if(type == oyNAME_NAME)
+      return _("Create a ICC matrix profile.");
+    else
+      return _("The littleCMS \"create_profile.color_matrix\" command lets you create ICC profiles from some given colorimetric coordinates. The filter expects a oyOption_s object with name \"color_matrix.redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma\" containing 9 floats in the order of CIE*x for red, CIE*y for red, CIE*x for green, CIE*y for green, CIE*x for blue, CIE*y for blue, CIE*x for white, CIE*y for white and a gamma value.");
+  } else if(strcmp(select, "help")==0)
+  {
+         if(type == oyNAME_NICK)
+      return "help";
+    else if(type == oyNAME_NAME)
+      return _("Create a ICC matrix profile.");
+    else
+      return _("The littleCMS \"create_profile.color_matrix\" command lets you create ICC profiles from some given colorimetric coordinates. See the \"create_profile\" info item.");
+  }
+  return 0;
+}
+
+/** @instance trds_api10_cmm
+ *  @brief    trdsead oyCMMapi10_s implementation
+ *
+ *  handlers for threading
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/12/11 (Oyranos: 0.1.10)
+ *  @date    2009/12/11
+ */
+oyCMMapi10_s_    trds_api10_cmm = {
+
+  oyOBJECT_CMM_API10_S,
+  0,0,0,
+  (oyCMMapi_s*) NULL,
+
+  trdsCMMInit,
+  trdsCMMMessageFuncSet,
+
+  OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
+  "threads_handler._" CMM_NICK,
+
+  CMM_VERSION,
+  CMM_API_VERSION,                  /**< int32_t module_api[3] */
+  0,   /* id_; keep empty */
+  0,   /* api5_; keep empty */
+  0,   /* runtime_context */
+ 
+  trdsInfoGetTextProfileC,             /**< getText */
+  (char**)trds_texts_profile_create,   /**<texts; list of arguments to getText*/
+ 
+  lcm2MOptions_Handle                  /**< oyMOptions_Handle_f oyMOptions_Handle */
+};
+
+
+
+
+/**
+ *  This function implements oyCMMinfoGetText_f.
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2008/12/23 (Oyranos: 0.1.10)
+ *  @date    2008/12/30
+ */
+const char * trdsInfoGetText         ( const char        * select,
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context )
+{
+         if(strcmp(select, "name")==0)
+  {
+         if(type == oyNAME_NICK)
+      return CMM_NICK;
+    else if(type == oyNAME_NAME)
+      return _("Little CMS 2");
+    else
+      return _("LittleCMS 2 is a CMM, a color management engine; it implements fast transforms between ICC profiles. \"Little\" stands for its small overhead. With a typical footprint of about 100K including C runtime, you can color-enable your application without the pain of ActiveX, OCX, redistributables or binaries of any kind. We are using little cms in several commercial projects, however, we are offering lcms library free for anybody under an extremely liberal open source license.");
+  } else if(strcmp(select, "manufacturer")==0)
+  {
+         if(type == oyNAME_NICK)
+      return "Marti";
+    else if(type == oyNAME_NAME)
+      return "Marti Maria";
+    else
+      return _("littleCMS 2 project; www: http://www.littlecms.com; support/email: support@littlecms.com; sources: http://www.littlecms.com/downloads.htm; Oyranos wrapper: Kai-Uwe Behrmann for the Oyranos project");
+  } else if(strcmp(select, "copyright")==0)
+  {
+         if(type == oyNAME_NICK)
+      return "MIT";
+    else if(type == oyNAME_NAME)
+      return _("Copyright (c) 1998-2013 Marti Maria Saguer; MIT");
+    else
+      return _("MIT license: http://www.opensource.org/licenses/mit-license.php");
+  } else if(strcmp(select, "help")==0)
+  {
+         if(type == oyNAME_NICK)
+      return "help";
+    else if(type == oyNAME_NAME)
+      return _("The lcms \"color_icc\" filter is a one dimensional color conversion filter. It can both create a color conversion context, some precalculated for processing speed up, and the color conversion with the help of that context. The adaption part of this filter transforms the Oyranos color context, which is ICC device link based, to the internal lcms format.");
+    else
+      return _("The following options are available to create color contexts:\n \"profiles_simulation\", a option of type oyProfiles_s, can contain device profiles for proofing.\n \"profiles_effect\", a option of type oyProfiles_s, can contain abstract color profiles.\n The following Oyranos options are supported: \"rendering_gamut_warning\", \"rendering_intent_proof\", \"rendering_bpc\", \"rendering_intent\", \"proof_soft\" and \"proof_hard\".\n The additional lcms option is supported \"cmyk_cmyk_black_preservation\" [0 - none; 1 - LCMS_PRESERVE_PURE_K; 2 - LCMS_PRESERVE_K_PLANE], \"precalculation\": [0 - normal; 1 - cmsFLAGS_NOOPTIMIZE; 2 - cmsFLAGS_HIGHRESPRECALC, 3 - cmsFLAGS_LOWRESPRECALC], \"precalculation_curves\": [0 - none; 1 - cmsFLAGS_CLUT_POST_LINEARIZATION + cmsFLAGS_CLUT_PRE_LINEARIZATION], \"adaption_state\": [0.0 - not adapted to screen, 1.0 - full adapted to screen] and \"no_white_on_white_fixup\": [0 - force white on white, 1 - keep as is]." );
+  }
+  return 0;
+}
+const char *trds_texts[5] = {"name","copyright","manufacturer","help",0};
+oyIcon_s trds_icon = {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"};
+
+/** @instance trds_cmm_module
+ *  @brief    trds module infos
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2007/11/00 (Oyranos: 0.1.8)
+ *  @date    2008/12/30
+ */
+oyCMM_s trds_cmm_module = {
+
+  oyOBJECT_CMM_INFO_S,                 /**< type, struct type */
+  0,0,0,                               /**< ,dynamic object functions */
+  CMM_NICK,                            /**< cmm, ICC signature */
+  "0.6",                               /**< backend_version */
+  trdsInfoGetText,                     /**< getText */
+  (char**)trds_texts,                  /**<texts; list of arguments to getText*/
+  OYRANOS_VERSION,                     /**< oy_compatibility */
+
+  (oyCMMapi_s*) & trds_api10_cmm,       /**< api */
+
+  &trds_icon, /**< icon */
+  trdsCMMInit                          /**< oyCMMinfoInit_f */
+};
+
