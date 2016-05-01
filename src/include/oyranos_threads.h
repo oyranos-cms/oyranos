@@ -28,7 +28,8 @@ typedef void (*oyJobCallback_f)      ( double              progress_zero_till_on
                                        char              * status_text,
                                        int                 thread_id_,
                                        int                 job_id );
-/*  A job is user allocated and added to the single job queue with oyJob_Add().
+
+/** A job is user allocated and added to the single job queue with oyJob_Add().
  *  The job queue is worked on by a internal maintained thead.
  */
 typedef struct oyJob_s oyJob_s;
@@ -39,6 +40,7 @@ struct oyJob_s {
   int (*finish) (oyJob_s * job);       /**< the observating thread callback */
   oyJobCallback_f cb_progress;         /**< the progress callback, called by observating thread */
   oyStruct_s * cb_progress_context;    /**< the progress callback context */
+
   /* Oyranos maintained fields */
   int id_;                             /**< Oyranos provided work ID, keep read only */
   int thread_id_;                      /**< Oyranos provided ID; keep read only */
@@ -57,6 +59,11 @@ extern oyJob_Add_f oyJob_Add;
 extern oyJob_Get_f oyJob_Get;
 extern oyMsg_Add_f oyMsg_Add;
 extern oyJobResult_f oyJobResult;
+
+void              oyJobHandlingSet   ( oyJob_Add_f         jadd,
+                                       oyJob_Get_f         jget,
+                                       oyMsg_Add_f         madd,
+                                       oyJobResult_f       result );
 
 #ifdef __cplusplus
 } /* extern "C" */
