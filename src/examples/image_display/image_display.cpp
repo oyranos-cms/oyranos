@@ -24,6 +24,8 @@
 #include <oyranos.h>
 #include <oyranos_cmm.h>   /* for hacking into module API */
 #include <oyranos_io.h>    /* oyFindApplication() */
+#include "oyranos_string.h"
+#include "oyranos_threads.h"
 
 #include <oyConversion_s.h>
 #include <oyProfiles_s.h>
@@ -234,7 +236,6 @@ struct box_n_opts {
   Oy_Fl_Image_Widget * box;
 };
 
-#include "../../liboyranos_core/oyranos_threads.c"
 int changeIccOptionsUpdate ( oyJob_s * job )
 {
   struct box_n_opts * arg = (box_n_opts*) job->context;
