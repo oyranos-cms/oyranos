@@ -39,14 +39,9 @@
  */
 
 // TODO * clean up the object and function creation dates and API numbers
-//      * provide dummies for oyJob_Add/Get and friends from oyranos_threads.h in oyStruct_s.c
-//      * move typedef's from src/include_private/oyranos_threads.h to oyStruct_s.h
-//      * add a equivalent to oyThreadLockingSet() for the oyJob/Msg_XXX() functions
 //      * document inside the doymentation_common.dox::threads section
-//      * let the dummies automatically setup threading if not previously done by checking a oyThreadLockingReady() equivalent
 //      * replace the strings and descriptions here
 //      * check if oy-image-display works as previously with the changed / moved APIs
-//      * add oyJob_s::type and forbid copy, as copy is dangerous in crossing threads.
 //      * move some of the Why questions above to the doxygen docu.
 
 #include "oyCMM_s.h"
@@ -523,9 +518,9 @@ int                trdsCMMInit       ( oyStruct_s        * filter )
 /** Function trdsCMMMessageFuncSet
  *  @brief
  *
- *  @version Oyranos: 0.1.8
- *  @date    2007/11/00
- *  @since   2007/11/00 (Oyranos: 0.1.8)
+ *  @version Oyranos: 0.9.6
+ *  @since   2016/05/01 (Oyranos: 0.9.6)
+ *  @date    2016/05/01
  */
 int            trdsCMMMessageFuncSet ( oyMessage_f         message_func )
 {
@@ -537,26 +532,28 @@ int            trdsCMMMessageFuncSet ( oyMessage_f         message_func )
 /**
  *  This function implements oyMOptions_Handle_f.
  *
- *  @version Oyranos: 0.1.10
- *  @since   2009/12/11 (Oyranos: 0.1.10)
- *  @date    2009/12/11
+ *  @version Oyranos: 0.9.6
+ *  @since   2016/05/01 (Oyranos: 0.9.6)
+ *  @date    2016/05/01
  */
-int          lcm2MOptions_Handle     ( oyOptions_s       * options,
+int          trdsMOptions_Handle     ( oyOptions_s       * options,
                                        const char        * command,
                                        oyOptions_s      ** result )
 {
-  oyOption_s * o = 0;
   int error = 0;
 
   if(oyFilterRegistrationMatch(command,"can_handle", 0))
   {
+    trds_msg( oyMSG_DBG, 0, "called %s()::can_handle", __func__ );
     return error;
   }
   else if(oyFilterRegistrationMatch(command,"threads_handler", 0))
   {
-    if(!*result)
-      *result = oyOptions_New(0);
-    oyOptions_MoveIn( *result, &o, -1 );
+    oyJobHandlingSet( oyJob_Add_,
+                      oyJob_Get_,
+                      oyMsg_Add_,
+                      oyJobResult_ );
+    trds_msg( oyMSG_DBG, 0, "called %s()::threads_handler", __func__ );
   }
 
   return 0;
@@ -567,9 +564,9 @@ const char *trds_texts_profile_create[4] = {"can_handle","threads_handler","help
 /**
  *  This function implements oyCMMinfoGetText_f.
  *
- *  @version Oyranos: 0.1.10
- *  @since   2009/12/11 (Oyranos: 0.1.10)
- *  @date    2009/12/11
+ *  @version Oyranos: 0.9.6
+ *  @since   2016/05/01 (Oyranos: 0.9.6)
+ *  @date    2016/05/01
  */
 const char * trdsInfoGetTextProfileC ( const char        * select,
                                        oyNAME_e            type,
@@ -608,9 +605,9 @@ const char * trdsInfoGetTextProfileC ( const char        * select,
  *
  *  handlers for threading
  *
- *  @version Oyranos: 0.1.10
- *  @since   2009/12/11 (Oyranos: 0.1.10)
- *  @date    2009/12/11
+ *  @version Oyranos: 0.9.6
+ *  @since   2016/05/01 (Oyranos: 0.9.6)
+ *  @date    2016/05/01
  */
 oyCMMapi10_s_    trds_api10_cmm = {
 
@@ -633,7 +630,7 @@ oyCMMapi10_s_    trds_api10_cmm = {
   trdsInfoGetTextProfileC,             /**< getText */
   (char**)trds_texts_profile_create,   /**<texts; list of arguments to getText*/
  
-  lcm2MOptions_Handle                  /**< oyMOptions_Handle_f oyMOptions_Handle */
+  trdsMOptions_Handle                  /**< oyMOptions_Handle_f oyMOptions_Handle */
 };
 
 
@@ -642,9 +639,9 @@ oyCMMapi10_s_    trds_api10_cmm = {
 /**
  *  This function implements oyCMMinfoGetText_f.
  *
- *  @version Oyranos: 0.1.10
- *  @since   2008/12/23 (Oyranos: 0.1.10)
- *  @date    2008/12/30
+ *  @version Oyranos: 0.9.6
+ *  @since   2016/05/01 (Oyranos: 0.9.6)
+ *  @date    2016/05/01
  */
 const char * trdsInfoGetText         ( const char        * select,
                                        oyNAME_e            type,
@@ -691,9 +688,9 @@ oyIcon_s trds_icon = {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"};
 /** @instance trds_cmm_module
  *  @brief    trds module infos
  *
- *  @version Oyranos: 0.1.10
- *  @since   2007/11/00 (Oyranos: 0.1.8)
- *  @date    2008/12/30
+ *  @version Oyranos: 0.9.6
+ *  @since   2016/05/01 (Oyranos: 0.9.6)
+ *  @date    2016/05/01
  */
 oyCMM_s trds_cmm_module = {
 
