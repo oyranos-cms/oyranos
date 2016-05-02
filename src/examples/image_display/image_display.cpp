@@ -238,7 +238,8 @@ struct box_n_opts {
 
 int changeIccOptionsUpdate ( oyJob_s * job )
 {
-  struct box_n_opts * arg = (box_n_opts*) job->context;
+  oyBlob_s * context = (oyBlob_s *) job->context;
+  struct box_n_opts * arg = (box_n_opts*) oyBlob_GetPointer( context );
 
 #if 0
   ((Fl_Widget*)arg->box)->damage(FL_DAMAGE_ALL,arg->box->x(),arg->box->y(),arg->box->w(),arg->box->h());
@@ -253,7 +254,8 @@ int changeIccOptionsUpdate ( oyJob_s * job )
 extern "C" {
 int changeIccOptions ( oyJob_s * job )
 {
-  struct box_n_opts * arg = (box_n_opts*) job->context;
+  oyBlob_s * context = (oyBlob_s *) job->context;
+  struct box_n_opts * arg = (box_n_opts*) oyBlob_GetPointer( context );
   oyStruct_s * object = (oyStruct_s*) arg->node;
 
   {
@@ -313,7 +315,8 @@ int changeIccOptions ( oyJob_s * job )
 void jobCallback                     ( double              progress_zero_till_one,
                                        char              * status_text,
                                        int                 thread_id_,
-                                       int                 job_id )
+                                       int                 job_id,
+                                       oyStruct_s        * cb_progress_context )
 { printf( "%s():%d %02f %s %d/%d\n",__func__,__LINE__,progress_zero_till_one,
           status_text?status_text:"",thread_id_,job_id); }
 }
@@ -322,6 +325,8 @@ void callback ( Fl_Widget* w, void* daten )
 {
   struct box_n_opts * arg = (box_n_opts*) daten;
   oyStruct_s * object = (oyStruct_s*) arg->node;
+  oyBlob_s * context = oyBlob_New(0);
+  oyBlob_SetFromStatic( context, arg, 0, "struct box_n_opts" );
 
   if(!w->parent())
     printf("Could not find parents.\n");
@@ -331,10 +336,10 @@ void callback ( Fl_Widget* w, void* daten )
   else
   if(object && object->type_ == oyOBJECT_FILTER_NODE_S)
   {
-    oyJob_s * job = (oyJob_s*) calloc(sizeof(oyJob_s),1);
+    oyJob_s * job = oyJob_New(0);
     job->work = changeIccOptions;
     job->finish = changeIccOptionsUpdate;
-    job->context = (oyStruct_s*)daten;
+    job->context = (oyStruct_s*)context;
     job->cb_progress = jobCallback;
     oyJob_Add(job, 0);
     job = NULL;
