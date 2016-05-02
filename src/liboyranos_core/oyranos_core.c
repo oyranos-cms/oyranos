@@ -226,6 +226,7 @@ const char *     oyStructTypeToText  ( oyOBJECT_e          type )
     case oyOBJECT_INFO_STATIC_S: text = "oyObjectInfoStatic_s"; break;
     case oyOBJECT_LIST_S: text = "(oyList_s)"; break;
     case oyOBJECT_LIS_S: text = "(oyLis_s)"; break;
+    case oyOBJECT_JOB_S: text = "(oyJob_s)"; break;
     case oyOBJECT_MAX: text = "MAX - not defined"; break;
     default: { icUInt32Number i = oyValueUInt32(type);
                static char t[8];

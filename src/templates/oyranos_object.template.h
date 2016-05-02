@@ -154,8 +154,9 @@ typedef enum {
   oyOBJECT_OBSERVER_S,                /**< oyObserver_s */
   oyOBJECT_CONF_DOMAIN_S,             /**< oyConfDomain_s */
   oyOBJECT_INFO_STATIC_S,             /**< oyObjectInfoStatic_s */
-  oyOBJECT_LIST_S,                   /**< oyList_s */
-  oyOBJECT_LIS_S,                   /**< oyLis_s dummy */
+  oyOBJECT_LIST_S,                    /**< oyList_s */
+  oyOBJECT_LIS_S,                     /**< oyLis_s dummy */
+  oyOBJECT_JOB_S,                     /**< oyJob_s dummy */
   oyOBJECT_MAX
 } oyOBJECT_e;
 #endif
