@@ -24,16 +24,41 @@
 extern "C" {
 #endif /* __cplusplus */
 
+/** @typedef oyJobCallback_f
+ *  @ingroup module_api
+ *  @extends oyStruct_s
+ *  @memberof oyJob_s
+ *  @brief   Progress callback for parallel job processing
+ *
+ *  @version Oyranos: 0.9.6
+ *  @date    2016/05/02
+ *  @since   2014/01/27 (Oyranos: 0.9.5)
+ */
 typedef void (*oyJobCallback_f)      ( double              progress_zero_till_one,
                                        char              * status_text,
                                        int                 thread_id_,
-                                       int                 job_id );
+                                       int                 job_id,
+                                       oyStruct_s        * cb_progress_context );
 
-/** A job is user allocated and added to the single job queue with oyJob_Add().
- *  The job queue is worked on by a internal maintained thead.
- */
 typedef struct oyJob_s oyJob_s;
+/** @struct  oyJob_s
+ *  @ingroup module_api
+ *  @extends oyStruct_s
+ *  @brief   Asynchron job ticket
+ *
+ *  A generic job is added to the single job queue with oyJob_Add().
+ *  The job queue is worked on by an internal maintained thead.
+ *
+ *  @version Oyranos: 0.9.6
+ *  @date    2016/05/01
+ *  @since   2014/01/27 (Oyranos: 0.9.5)
+ */
 struct oyJob_s {
+  oyOBJECT_e type_;                    /**< @brief oyOBJECT_JOB_S */
+  oyStruct_Copy_f      copy_not;       /**< @brief keep to zero; as it is dangerous in a threaded context */
+  oyStruct_Release_f   release;        /**< @brief Release function; optional */
+  oyObject_s           oy_;            /**< @brief Oyranos internal object; not needed, keep to zero */
+  
   oyStruct_s * context;                /**< the workload */
   int (*work) (oyJob_s * job);         /**< the working thread callback */
   int status_work_return;              /**< return value of the work() function */
@@ -46,13 +71,16 @@ struct oyJob_s {
   int thread_id_;                      /**< Oyranos provided ID; keep read only */
   int status_done_;                    /**< Oyranos internal variable */
 };
+oyJob_s *         oyJob_New          ( oyObject_s          object );
+void              oyJob_Release      ( oyJob_s          ** job );
+
 typedef int      (*oyJob_Add_f)      ( oyJob_s           * job,
                                        int                 finished );
 typedef int      (*oyJob_Get_f)      ( oyJob_s          ** job,
                                        int                 finished );
 typedef int      (*oyMsg_Add_f)      ( oyJob_s           * job,
                                        double              progress_zero_till_one,
-                                       char              * status_text );
+                                       char             ** status_text );
 typedef void     (*oyJobResult_f)    ( void );
 
 extern oyJob_Add_f oyJob_Add;
