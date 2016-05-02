@@ -517,10 +517,11 @@ const char * oiccProfilesGetText     ( oyStruct_s        * obj,
       if(type == oyNAME_NAME)
         STRING_ADD( tmp, "</oyProfiles_s>" );
 
-      if(error <= 0)
+      if(tmp && error <= 0)
         error = oyObject_SetName( profiles->oy_, tmp, type );
 
-      oyFree_m_( tmp );
+      if(tmp)
+        oyFree_m_( tmp );
 
       if(error <= 0)
         text = oyObject_GetName( profiles->oy_, type );
