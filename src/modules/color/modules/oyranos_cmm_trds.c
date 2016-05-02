@@ -95,14 +95,14 @@ int oyThreadCreate                   ( void             *(*func) (void * data),
 
 void *             oyJobWorker       ( void              * data );
 
-int                oyJob_Add_         ( oyJob_s           * job,
+int                oyJob_Add_        ( oyJob_s           * job,
                                        int                 finished );
-int                oyJob_Get_         ( oyJob_s          ** job,
+int                oyJob_Get_        ( oyJob_s          ** job,
                                        int                 finished );
-int                oyMsg_Add_         ( oyJob_s           * job,
+int                oyMsg_Add_        ( oyJob_s           * job,
                                        double              progress_zero_till_one,
-                                       char              * status_text );
-void               oyJobResult_       ( void );
+                                       char             ** status_text );
+void               oyJobResult_      ( void );
 
 oyMessage_f trds_msg = oyMessageFunc;
 
@@ -408,21 +408,27 @@ typedef struct {
 } oyMsg_s;
 int                oyMsg_Add_        ( oyJob_s           * job,
                                        double              progress_zero_till_one,
-                                       char              * status_text )
+                                       char             ** status_text )
 {
   oyMsg_s * m = (oyMsg_s*) calloc(sizeof(oyMsg_s),1);
   oyBlob_s * blob;
   int error;
 
   m->cb_progress = job->cb_progress;
-  m->cb_progress_context = job->cb_progress_context;
+  if(job->cb_progress_context && job->cb_progress_context->copy)
+    m->cb_progress_context = job->cb_progress_context->copy(job->cb_progress_context, 0);
+  else
+    m->cb_progress_context = job->cb_progress_context;
   m->progress_zero_till_one = progress_zero_till_one;
-  m->status_text = status_text;
+  m->status_text = *status_text;
+  *status_text = NULL;
   m->thread_id_ = job->thread_id_;
   m->job_id = job->id_;
   blob = oyBlob_New(NULL);
   oyBlob_SetFromStatic( blob, m, 0, "oyJob_s" );
+  oyObject_Lock( oy_job_message_list_->oy_, __FILE__, __LINE__ );
   error = oyStructList_MoveIn( oy_job_message_list_, (oyStruct_s**) &blob, -1, 0 );
+  oyObject_UnLock( oy_job_message_list_->oy_, __FILE__, __LINE__ );
   if(error)
     WARNc2_S("error=%d %g", error, progress_zero_till_one);
 
@@ -463,12 +469,19 @@ void *             oyJobWorker       ( void              * data )
     if(job)
     {
       int finished = 1;
+      char * t;
       job->thread_id_ = thread_id;
       if(job->cb_progress)
-        oyMsg_Add_(job, 0.0, strdup("start"));
+      {
+        t = strdup("start");
+        oyMsg_Add_(job, 0.0, &t);
+      }
       job->status_work_return = job->work(job);
       if(job->cb_progress)
-        oyMsg_Add_(job, 1.0, strdup("done"));
+      {
+        t = strdup("done");
+        oyMsg_Add_(job, 1.0, &t);
+      }
       oyJob_Add_( job, finished );
     }
     oySleep(0.02);
@@ -482,7 +495,11 @@ void               oyJobResult_      ( void )
   while(!oyMsg_Get( &msg ) && msg != NULL)
   {
     if(msg->cb_progress)
-      msg->cb_progress( msg->progress_zero_till_one, msg->status_text, msg->thread_id_, msg->job_id );
+    {
+      if(msg->cb_progress_context && msg->cb_progress_context->copy)
+        msg->cb_progress_context = msg->cb_progress_context->copy(msg->cb_progress_context, 0);
+      msg->cb_progress( msg->progress_zero_till_one, msg->status_text, msg->thread_id_, msg->job_id, msg->cb_progress_context );
+    }
 
     if(msg->status_text)
       free(msg->status_text); msg->status_text = NULL;
@@ -491,8 +508,11 @@ void               oyJobResult_      ( void )
 
   oyJob_Get_( &job, 1 );
   if(job)
+  {
     if(job->finish)
       job->finish(job);
+    oyJob_Release( &job );
+  }
 }
 
 #ifdef __cplusplus
@@ -568,7 +588,7 @@ const char *trds_texts_profile_create[4] = {"can_handle","threads_handler","help
  *  @since   2016/05/01 (Oyranos: 0.9.6)
  *  @date    2016/05/01
  */
-const char * trdsInfoGetTextProfileC ( const char        * select,
+const char * trdsInfoGetTextThreadsC ( const char        * select,
                                        oyNAME_e            type,
                                        oyStruct_s        * context )
 {
@@ -627,7 +647,7 @@ oyCMMapi10_s_    trds_api10_cmm = {
   0,   /* api5_; keep empty */
   0,   /* runtime_context */
  
-  trdsInfoGetTextProfileC,             /**< getText */
+  trdsInfoGetTextThreadsC,             /**< getText */
   (char**)trds_texts_profile_create,   /**<texts; list of arguments to getText*/
  
   trdsMOptions_Handle                  /**< oyMOptions_Handle_f oyMOptions_Handle */
@@ -666,11 +686,11 @@ const char * trdsInfoGetText         ( const char        * select,
   } else if(strcmp(select, "copyright")==0)
   {
          if(type == oyNAME_NICK)
-      return "MIT";
+      return "BSD-3-Clause";
     else if(type == oyNAME_NAME)
-      return _("Copyright (c) 1998-2013 Marti Maria Saguer; MIT");
+      return _("Copyright (c) 2014-2016 Kai-Uwe Behrmann; new BSD");
     else
-      return _("MIT license: http://www.opensource.org/licenses/mit-license.php");
+      return _("new BSD license: http://www.opensource.org/licenses/BSD-3-Clause");
   } else if(strcmp(select, "help")==0)
   {
          if(type == oyNAME_NICK)
