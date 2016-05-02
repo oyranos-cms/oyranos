@@ -201,7 +201,7 @@ private:
         sprintf( t, "%s():%d --->\n%s", __func__,__LINE__,
                  oyOption_GetText((oyOption_s*)job->context,oyNAME_NICK));
       }
-      oyMsg_Add(job, .1, t);
+      oyMsg_Add(job, .1, &t);
     }
     return 0;
   }
@@ -217,16 +217,15 @@ private:
         sprintf( t, "%s():%d --->\n%s\n<--- finished", __func__,__LINE__,
                  oyOption_GetText((oyOption_s*)job->context,oyNAME_NICK));
       }
-      oyMsg_Add(job, 1., t);
+      oyMsg_Add(job, 1., &t);
     }
-    job->context->release( &job->context );
-    free(job); job = NULL;
     return 0;
   }
   static void jobCallback            ( double              progress_zero_till_one,
                                        char              * status_text,
                                        int                 thread_id_,
-                                       int                 job_id )
+                                       int                 job_id,
+                                       oyStruct_s        * cb_progress_context )
   { printf("%s():%d %02f %s %d/%d\n",__func__,__LINE__,progress_zero_till_one,
            status_text?status_text:"",thread_id_,job_id); }
 
@@ -236,7 +235,7 @@ public:
   {
     int icc_profile_flags = 0;
     oyImage_s * image = 0;
-    oyJob_s * job = (oyJob_s*) calloc(sizeof(oyJob_s),1);
+    oyJob_s * job = oyJob_New(0);
 
     icc_profile_flags = oyICCProfileSelectionFlagsFromOptions( OY_CMM_STD,
                                 "//" OY_TYPE_STD "/icc_color", cc_options, 0 );
