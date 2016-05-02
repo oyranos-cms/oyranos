@@ -171,7 +171,8 @@ oyOptions_s* lcm2Filter_CmmIccValidateOptions
                                        int                 statical,
                                        uint32_t          * result );
 cmsHPROFILE  lcm2AddProfile          ( oyProfile_s       * p );
-cmsHPROFILE  lcm2AddProofProfile     ( oyProfile_s       * proof,
+lcm2ProfileWrap_s * lcm2AddProofProfile
+                                     ( oyProfile_s       * proof,
                                        cmsUInt32Number     flags,
                                        int                 intent,
                                        int                 intent_proof,
@@ -979,9 +980,12 @@ cmsHTRANSFORM  lcm2CMMConversionContextCreate_ (
         memcpy( merge, lps, sizeof(cmsHPROFILE) * (profiles_n - 1) );
 
         for(i = 0; i < proof_n; ++i)
-          merge[profiles_n-1 + i] = lcm2AddProofProfile( 
+        {
+          lcm2ProfileWrap_s * wrap = lcm2AddProofProfile( 
                                              oyProfiles_Get(simulation,i),flags,
                                              intent, intent_proof, 0);
+          merge[profiles_n-1 + i] = wrap->lcm2;
+        }
 
         merge[profiles_n + proof_n -1] = lps[profiles_n - 1];
 
@@ -1247,11 +1251,11 @@ oyConnectorImaging_s_* lcm2_cmmIccPlug_connectors[2]={&lcm2_cmmIccPlug_connector
  *  new abstract profile containing the proofing profiles changes. This can be
  *  a proofing color space simulation or out of gamut marking.
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.9.6
+ *  @date    2016/05/02
  *  @since   2009/11/05 (Oyranos: 0.1.10)
- *  @date    2009/11/05
  */
-cmsHPROFILE  lcm2AddProofProfile     ( oyProfile_s       * proof,
+lcm2ProfileWrap_s*lcm2AddProofProfile( oyProfile_s       * proof,
                                        cmsUInt32Number     flags,
                                        int                 intent,
                                        int                 intent_proof,
@@ -1350,15 +1354,12 @@ cmsHPROFILE  lcm2AddProofProfile     ( oyProfile_s       * proof,
     error = !s;
   }
 
-  if(!error)
-    hp = s->lcm2;
-
   oyPointer_Release( &cmm_ptr );
   if(hash_text)
     oyFree_m_(hash_text);
 
   if(!error)
-    return hp;
+    return s;
   else
     return 0;
 }
@@ -1870,31 +1871,12 @@ int          lcm2MOptions_Handle2    ( oyOptions_s       * options,
       intent_proof = lcm2IntentFromOptions( options,1 ),
       flags = lcm2FlagsFromOptions( options );
       oyOption_s * o;
-      cmsUInt32Number size = 0;
-      char * block = 0;
 
-      cmsHPROFILE hp = lcm2AddProofProfile( p, flags | cmsFLAGS_SOFTPROOFING,
+      lcm2ProfileWrap_s * wrap = lcm2AddProofProfile( p, flags | cmsFLAGS_SOFTPROOFING,
                                             intent, intent_proof, icc_profile_flags );
       oyProfile_Release( &p );
-      if(hp)
-      {
-        if(icc_profile_flags & OY_ICC_VERSION_2)
-          lcmsSetProfileVersion(hp, 2.4);
 
-        lcmsSaveProfileToMem( hp, 0, &size );
-        if(!size)
-          lcm2_msg( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_
-             "lcmsSaveProfileToMem failed with command: %s",
-             OY_DBG_ARGS_, command );
-        block = oyAllocateFunc_( size );
-
-        lcmsSaveProfileToMem( hp, block, &size );
-        lcmsCloseProfile( hp ); hp = 0;
-      }
-
-      prof = oyProfile_FromMem( size, block, 0, 0 );
-      if(block && size)
-        free(block); block = 0; size = 0;
+      prof = oyProfile_FromMem( wrap->size, wrap->block, 0, 0 );
 
       o = oyOption_FromRegistration( OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "icc_profile.create_profile.proofing_effect._" CMM_NICK,
                         0 );
