@@ -22,11 +22,43 @@
 #include "oyranos_debug.h"
 #include "oyranos_string.h"
 
-static int oy_job_initialised = 0;
+/** @addtogroup misc
+ *
+ *  @{
+ */
+
+/** @addtogroup threads Threading
+ *  @brief      Asynchron processing support
+ *
+    @section basics Concept
+    Threading support in Oyranos is kept intentionally simple. Object level locking is available.
+    Eigther avoid Oyranos locking by encapsulating it into a own locking model.
+    Or provide locking functions in oyThreadLockingSet(), which can 
+    detect recursive lock conditions. Recursive locks might not be a problem
+    with POSIX systems and pthreads PTHREAD_MUTEX_RECURSIVE.
+
+    Job handling is more complex. A version is provided in the "trds" module
+    and will be initialised by default during first use of the APIs. This 
+    version used a threading model as is available during compilation. 
+    In case you want a own threading model you can provide it through 
+    oyJobHandlingSet().
+
+    @section init Initialisation
+    Call oyThreadLockingSet() in order to use own thread locking functions.
+    Call oyJobHandlingSet() to replace by own Job handling functions.
+    The functions must be used before any call to Oyranos.
+ *
+ *  @{
+ */
+
+
 /**
  *  @brief   Initialise the oyJob_s APIs
  *  @extends oyStruct_s
  *  @memberof oyJob_s
+ *
+ *  Be careful to set the APIs only before any call to the oyJob_s functions.
+ *  Otherwise the behaviour is undefined.
  *
  *  @version Oyranos: 0.9.6
  *  @since   2016/05/01 (Oyranos: 0.9.6)
@@ -50,7 +82,6 @@ int                oyJobInitialise_  ( void )
   oyOptions_s * opts = 0,
               * result_opts = 0;
 
-  oy_job_initialised = 1;
   opts = oyOptions_New(0);
   int error = oyOptions_Handle( "//"OY_TYPE_STD"/threads_handler",
                                 opts,"threads_handler",
@@ -90,38 +121,68 @@ void               oyJobResultInit   ( void )
 }
 
 
+/** @typedef oyJob_Add_f
+ *  @brief   Add one unique oyJob_s to the job qeue
+ *
+ *  @version Oyranos: 0.9.6
+ *  @date    2016/05/01
+ *  @since   2016/05/01 (Oyranos: 0.9.6)
+ */
 /**
  *  @brief   Add one unique oyJob_s to the job qeue
- *  @extends oyStruct_s
  *  @memberof oyJob_s
+ *  @see     oyJob_Add_f
  *
  *  @version Oyranos: 0.9.6
  *  @since   2016/05/01 (Oyranos: 0.9.6)
  *  @date    2016/05/01
  */
 oyJob_Add_f oyJob_Add = oyJob_AddInit;
+/** @typedef oyJob_Get_f
+ *  @brief   Get one unique oyJob_s from the job qeue
+ *
+ *  @version Oyranos: 0.9.6
+ *  @date    2016/05/01
+ *  @since   2016/05/01 (Oyranos: 0.9.6)
+ */
 /**
  *  @brief   Get one unique oyJob_s from the job qeue
- *  @extends oyStruct_s
  *  @memberof oyJob_s
+ *  @see     oyJob_Get_f
  *
  *  @version Oyranos: 0.9.6
  *  @since   2016/05/01 (Oyranos: 0.9.6)
  *  @date    2016/05/01
  */
 oyJob_Get_f oyJob_Get = oyJob_GetInit;
+/** @typedef oyMsg_Add_f
+ *  @brief   Add one unique message from the message qeue
+ *
+ *  @version Oyranos: 0.9.6
+ *  @date    2016/05/01
+ *  @since   2016/05/01 (Oyranos: 0.9.6)
+ */
 /**
  *  @brief   Add one unique message from the message qeue
  *  @memberof oyJob_s
+ *  @see     oyMsg_Add_f
  *
  *  @version Oyranos: 0.9.6
  *  @since   2016/05/01 (Oyranos: 0.9.6)
  *  @date    2016/05/01
  */
 oyMsg_Add_f oyMsg_Add = oyMsg_AddInit;
+/** @typedef oyJobResult_f
+ *  @brief   Poll for new Jobs
+ *
+ *  @version Oyranos: 0.9.6
+ *  @date    2016/05/01
+ *  @since   2016/05/01 (Oyranos: 0.9.6)
+ */
 /**
  *  @brief   Poll for new Jobs
  *  @memberof oyJob_s
+ *  @see     oyJobResult_f
  *
  *  @version Oyranos: 0.9.6
  *  @since   2016/05/01 (Oyranos: 0.9.6)
@@ -129,6 +190,13 @@ oyMsg_Add_f oyMsg_Add = oyMsg_AddInit;
  */
 oyJobResult_f oyJobResult = oyJobResultInit;
 
+/** @typedef oyJobCallback_f
+ *  @brief   Progress callback for parallel job processing
+ *
+ *  @version Oyranos: 0.9.6
+ *  @date    2016/05/02
+ *  @since   2014/01/27 (Oyranos: 0.9.5)
+ */
 
 static void jobPrintfCallback        ( double              progress_zero_till_one,
                                        char              * status_text,
@@ -196,3 +264,6 @@ void              oyJob_Release      ( oyJob_s          ** job )
     *job = NULL;
   }
 }
+
+/** }@ */ /* addtogroup threads */
+/** }@ */ /* addtogroup misc */

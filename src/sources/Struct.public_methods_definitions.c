@@ -183,6 +183,7 @@ oyLock_f                oyLockFunc_        = oyLockDummy_;
 oyUnLock_f              oyUnLockFunc_      = oyUnLockDummy_;
 
 /** Function: oyThreadLockingSet
+ *  @ingroup threads
  *  @brief set locking functions for threaded applications
  *
  *  @since Oyranos: version 0.1.8
@@ -210,6 +211,7 @@ void         oyThreadLockingSet        ( oyStruct_LockCreate_f  createLockFunc,
 
 /**
  *  @brief tell if thread locking is ready
+ *  @ingroup threads
  *
  *  @version Oyranos: 0.9.5
  *  @date    2014/02/04
