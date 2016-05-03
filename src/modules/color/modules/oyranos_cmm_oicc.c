@@ -1060,7 +1060,7 @@ const char * oiccInfoGetText         ( const char        * select,
          if(type == oyNAME_NICK)
       return "newBSD";
     else if(type == oyNAME_NAME)
-      return _("Copyright (c) 2005-2009 Kai-Uwe Behrmann; newBSD");
+      return _("Copyright (c) 2005-2016 Kai-Uwe Behrmann; newBSD");
     else
       return _("new BSD license: http://www.opensource.org/licenses/BSD-3-Clause");
   } else if(strcmp(select, "help")==0)

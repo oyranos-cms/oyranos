@@ -30,23 +30,41 @@
 /** @addtogroup threads Threading
  *  @brief      Asynchron processing support
  *
-    @section basics Concept
-    Threading support in Oyranos is kept intentionally simple. Object level locking is available.
-    Eigther avoid Oyranos locking by encapsulating it into a own locking model.
-    Or provide locking functions in oyThreadLockingSet(), which can 
-    detect recursive lock conditions. Recursive locks might not be a problem
-    with POSIX systems and pthreads PTHREAD_MUTEX_RECURSIVE.
-
-    Job handling is more complex. A version is provided in the "trds" module
-    and will be initialised by default during first use of the APIs. This 
-    version used a threading model as is available during compilation. 
-    In case you want a own threading model you can provide it through 
-    oyJobHandlingSet().
-
-    @section init Initialisation
-    Call oyThreadLockingSet() in order to use own thread locking functions.
-    Call oyJobHandlingSet() to replace by own Job handling functions.
-    The functions must be used before any call to Oyranos.
+ *  @section basics Concept
+ *  Threading support in Oyranos is kept intentionally simple. Object level locking is available.
+ *  Eigther avoid Oyranos locking by encapsulating it into a own locking model.
+ *  Or provide locking functions in oyThreadLockingSet(), which can 
+ *  detect recursive lock conditions. Recursive locks might not be a problem
+ *  with POSIX systems and pthreads PTHREAD_MUTEX_RECURSIVE.
+ *
+ *  Job handling is more complex. A version is provided in the "trds" module
+ *  and will be initialised by default during first use of the APIs. This 
+ *  version used a threading model as is available during compilation. 
+ *  In case you want a own threading model you can provide it through 
+ *  oyJobHandlingSet().
+ *
+ *  @subsection why_threads Why asynchronous processing?
+ *    Some expensive workload is good to load off to a background job
+ *    and continue in the foreground for non interupted user interaction.
+ *    E.g. the user should be able to continue interacting with the 
+ *    image/movie, even while changed options need computing of the current
+ *    DAG contexts.
+ *
+ *  @subsection why_threads_inside Why threading inside Oyranos?
+ *    The background jobs tend to be related to tasks inside the Oyranos
+ *    DAG and can not easily be handled outside the DAG. For instance it is 
+ *    not easy to replace a expensive DAG while performing a expensive 
+ *    option change - big image or movie + switching on/off proofing/effects.
+ *
+ *  @subsection why_threads_modules Why a modular approach?
+ *    Threading models can very easily conflict and linking
+ *    can become a night mare. Thus threading from "trds" must be replaceable
+ *    on the descretion of users.
+ *
+ *  @section init Initialisation
+ *  Call oyThreadLockingSet() in order to use own thread locking functions.
+ *  Call oyJobHandlingSet() to replace by own Job handling functions.
+ *  The functions must be used before any call to Oyranos.
  *
  *  @{
  */

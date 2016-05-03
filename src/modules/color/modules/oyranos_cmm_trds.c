@@ -14,23 +14,6 @@
  */
 
 /**
- *  Why threading?
- *    Some expensive workload is good to load off to a background job
- *    and continue in the foreground for non interupted user interaction.
- *    E.g. the user should be able to continue interacting with the 
- *    image/movie, even while changed options need computing of the current
- *    DAG contexts.
- *
- *  Why threading inside Oyranos?
- *    The background jobs tend to be related to tasks inside the Oyranos
- *    DAG and can not easily be handled outside the DAG. For instance it is 
- *    not easy to replace a expensive DAG while performing a expensive 
- *    option change - big image or movie + switching on/off proofing/effects.
- *
- *  Why a modular approach?
- *    Threading models can very easily conflict and linking
- *    can become a night mare. Thus threading must be replaceable
- *    and on the descretion of users.
  *
  *  The main goal of this module is to provide a means to replace 
  *  threading / job functionality and switch to pthreads/windows/whatever
@@ -38,10 +21,6 @@
  *  reasonable set of functions for objects of type oyJob_s.
  */
 
-// TODO * clean up the object and function creation dates and API numbers
-//      * document inside the doymentation_common.dox::threads section
-//      * replace the strings and descriptions here
-//      * check if oy-image-display works as previously with the changed / moved APIs
 //      * move some of the Why questions above to the doxygen docu.
 
 #include "oyCMM_s.h"
@@ -599,23 +578,23 @@ const char * trdsInfoGetTextThreadsC ( const char        * select,
     else if(type == oyNAME_NAME)
       return _("check");
     else
-      return _("Check if LittleCMS can handle a certain command.");
+      return _("Check if Oyranos Threads can handle a certain command.");
   } else if(strcmp(select, "threads_handler")==0)
   {
          if(type == oyNAME_NICK)
       return "create_profile";
     else if(type == oyNAME_NAME)
-      return _("Create a ICC matrix profile.");
+      return _("Initialise the oyJob_s APIs.");
     else
-      return _("The littleCMS \"create_profile.color_matrix\" command lets you create ICC profiles from some given colorimetric coordinates. The filter expects a oyOption_s object with name \"color_matrix.redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma\" containing 9 floats in the order of CIE*x for red, CIE*y for red, CIE*x for green, CIE*y for green, CIE*x for blue, CIE*y for blue, CIE*x for white, CIE*y for white and a gamma value.");
+      return _("The Oyranos \"threads_handler\" command will initialise the oyJob_s APIs with a available threading model.");
   } else if(strcmp(select, "help")==0)
   {
          if(type == oyNAME_NICK)
       return "help";
     else if(type == oyNAME_NAME)
-      return _("Create a ICC matrix profile.");
+      return _("Initialise the oyJob_s APIs.");
     else
-      return _("The littleCMS \"create_profile.color_matrix\" command lets you create ICC profiles from some given colorimetric coordinates. See the \"create_profile\" info item.");
+      return _("The Oyranos \"threads_handler\" command will initialise the oyJob_s APIs with a available threading model.");
   }
   return 0;
 }
@@ -672,17 +651,17 @@ const char * trdsInfoGetText         ( const char        * select,
          if(type == oyNAME_NICK)
       return CMM_NICK;
     else if(type == oyNAME_NAME)
-      return _("Little CMS 2");
+      return _("Oyranos Threads");
     else
-      return _("LittleCMS 2 is a CMM, a color management engine; it implements fast transforms between ICC profiles. \"Little\" stands for its small overhead. With a typical footprint of about 100K including C runtime, you can color-enable your application without the pain of ActiveX, OCX, redistributables or binaries of any kind. We are using little cms in several commercial projects, however, we are offering lcms library free for anybody under an extremely liberal open source license.");
+      return _("Oyranos Threads default Handling");
   } else if(strcmp(select, "manufacturer")==0)
   {
          if(type == oyNAME_NICK)
-      return "Marti";
+      return "Kai-Uwe";
     else if(type == oyNAME_NAME)
-      return "Marti Maria";
+      return "Kai-Uwe Behrmann";
     else
-      return _("littleCMS 2 project; www: http://www.littlecms.com; support/email: support@littlecms.com; sources: http://www.littlecms.com/downloads.htm; Oyranos wrapper: Kai-Uwe Behrmann for the Oyranos project");
+      return _("Oyranos project; www: http://www.oyranos.com; support/email: ku.b@gmx.de; sources: http://www.oyranos.com/wiki/index.php?title=Oyranos/Download");
   } else if(strcmp(select, "copyright")==0)
   {
          if(type == oyNAME_NICK)
@@ -696,9 +675,9 @@ const char * trdsInfoGetText         ( const char        * select,
          if(type == oyNAME_NICK)
       return "help";
     else if(type == oyNAME_NAME)
-      return _("The lcms \"color_icc\" filter is a one dimensional color conversion filter. It can both create a color conversion context, some precalculated for processing speed up, and the color conversion with the help of that context. The adaption part of this filter transforms the Oyranos color context, which is ICC device link based, to the internal lcms format.");
+      return _("The filter provides a default oyJob_s handling mechanism for asynchronous processing.");
     else
-      return _("The following options are available to create color contexts:\n \"profiles_simulation\", a option of type oyProfiles_s, can contain device profiles for proofing.\n \"profiles_effect\", a option of type oyProfiles_s, can contain abstract color profiles.\n The following Oyranos options are supported: \"rendering_gamut_warning\", \"rendering_intent_proof\", \"rendering_bpc\", \"rendering_intent\", \"proof_soft\" and \"proof_hard\".\n The additional lcms option is supported \"cmyk_cmyk_black_preservation\" [0 - none; 1 - LCMS_PRESERVE_PURE_K; 2 - LCMS_PRESERVE_K_PLANE], \"precalculation\": [0 - normal; 1 - cmsFLAGS_NOOPTIMIZE; 2 - cmsFLAGS_HIGHRESPRECALC, 3 - cmsFLAGS_LOWRESPRECALC], \"precalculation_curves\": [0 - none; 1 - cmsFLAGS_CLUT_POST_LINEARIZATION + cmsFLAGS_CLUT_PRE_LINEARIZATION], \"adaption_state\": [0.0 - not adapted to screen, 1.0 - full adapted to screen] and \"no_white_on_white_fixup\": [0 - force white on white, 1 - keep as is]." );
+      return _("The filter provides a default oyJob_s handling mechanism for asynchronous processing." );
   }
   return 0;
 }
