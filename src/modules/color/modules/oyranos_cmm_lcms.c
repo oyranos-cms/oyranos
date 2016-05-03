@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2007-2015 (C) Kai-Uwe Behrmann
+ *            2007-2016 (C) Kai-Uwe Behrmann
  *
  *  @brief    littleCMS CMM module for Oyranos
  *  @internal
@@ -2487,7 +2487,7 @@ const char * lcmsInfoGetTextProfileC2( const char        * select,
     else if(type == oyNAME_NAME)
       return _("check");
     else
-      return _("Check if LittleCMS can handle a certain command.");
+      return _("Check if this module can handle a certain command.");
   } else if(strcmp(select, "create_profile")==0)
   {
          if(type == oyNAME_NICK)
@@ -2560,7 +2560,7 @@ const char * lcmsInfoGetTextProfileC ( const char        * select,
     else if(type == oyNAME_NAME)
       return _("check");
     else
-      return _("Check if LittleCMS can handle a certain command.");
+      return _("Check if this module can handle a certain command.");
   } else if(strcmp(select, "create_profile")==0)
   {
          if(type == oyNAME_NICK)

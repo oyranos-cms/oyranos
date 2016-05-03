@@ -578,7 +578,7 @@ const char * trdsInfoGetTextThreadsC ( const char        * select,
     else if(type == oyNAME_NAME)
       return _("check");
     else
-      return _("Check if Oyranos Threads can handle a certain command.");
+      return _("Check if this module can handle a certain command.");
   } else if(strcmp(select, "threads_handler")==0)
   {
          if(type == oyNAME_NICK)
