@@ -121,7 +121,7 @@ int                oyJob_AddInit     ( oyJob_s           * job,
 int                oyJob_GetInit     ( oyJob_s          ** job,
                                        int                 finished )
 { if(oyJobInitialise_() == 0)
-    return oyJob_GetInit( job, finished );
+    return oyJob_Get( job, finished );
   else
     return 1;
 }
@@ -129,13 +129,13 @@ int                oyMsg_AddInit     ( oyJob_s           * job,
                                        double              progress_zero_till_one,
                                        char             ** status_text )
 { if(oyJobInitialise_() == 0)
-    return oyMsg_AddInit( job, progress_zero_till_one, status_text );
+    return oyMsg_Add( job, progress_zero_till_one, status_text );
   else
     return 1;
 }
 void               oyJobResultInit   ( void )
 { if(oyJobInitialise_() == 0)
-    oyJobResultInit();
+    oyJobResult();
 }
 
 
