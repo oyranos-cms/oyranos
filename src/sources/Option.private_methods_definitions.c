@@ -207,6 +207,9 @@ char *         oyOption_GetValueText_( oyOption_s_       * obj,
     case oyVAL_STRING:
     case oyVAL_STRUCT:
          n = 1; break;
+    case oyVAL_NONE:
+    case oyVAL_MAX:
+         n = 0; break;
     }
 
     if(obj->value_type == oyVAL_STRUCT)
@@ -244,7 +247,9 @@ char *         oyOption_GetValueText_( oyOption_s_       * obj,
       case oyVAL_DOUBLE_LIST: STRING_ADD( text, tmp ); break;
       case oyVAL_STRING:      STRING_ADD( text, v->string ); break;
       case oyVAL_STRING_LIST: STRING_ADD( text, v->string_list[i] ); break;
-      case oyVAL_STRUCT:      break;
+      case oyVAL_STRUCT:
+      case oyVAL_NONE:
+      case oyVAL_MAX:         break;
       }
       if(obj->value_type == oyVAL_STRUCT)
       {

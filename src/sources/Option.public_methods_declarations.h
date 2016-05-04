@@ -71,6 +71,8 @@ OYAPI int  OYEXPORT
 OYAPI int  OYEXPORT
                  oyOption_SetFlags   ( oyOption_s        * object,
                                        uint32_t            flags );
+OYAPI oyVALUETYPE_e OYEXPORT
+                 oyOption_GetValueType(oyOption_s        * object );
 
 const char *     oyValueTypeText     ( oyVALUETYPE_e       type );
 

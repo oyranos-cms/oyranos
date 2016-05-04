@@ -62,18 +62,20 @@ typedef enum {
  *
     @see     oyValue_u
  *
- *  @version Oyranos: 0.1.8
+ *  @version Oyranos: 0.9.6
+ *  @date    2016/05/04
  *  @since   2008/02/16 (Oyranos: 0.1.x)
- *  @date    2008/02/16
  */
 typedef enum {
+  oyVAL_NONE,      /* for programming */
   oyVAL_INT,       /**< integer number */
   oyVAL_INT_LIST,  /**< integer numbers */
   oyVAL_DOUBLE,    /**< IEEE double precission floating point number */
   oyVAL_DOUBLE_LIST,  /**< double numbers */
   oyVAL_STRING,    /**< char array */
   oyVAL_STRING_LIST,  /**< array of char arrays */
-  oyVAL_STRUCT     /**< for pure data blobs use oyBlob_s herein */
+  oyVAL_STRUCT,    /**< for pure data blobs use oyBlob_s herein */
+  oyVAL_MAX        /* for programming */
 } oyVALUETYPE_e;
 
 /** @union   oyValue_u
@@ -237,6 +239,8 @@ OYAPI int  OYEXPORT
 OYAPI int  OYEXPORT
                  oyOption_SetFlags   ( oyOption_s        * object,
                                        uint32_t            flags );
+OYAPI oyVALUETYPE_e OYEXPORT
+                 oyOption_GetValueType(oyOption_s        * object );
 
 const char *     oyValueTypeText     ( oyVALUETYPE_e       type );
 

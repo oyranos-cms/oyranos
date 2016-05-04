@@ -633,7 +633,7 @@ int            oyOption_Clear        ( oyOption_s        * obj )
 
     oyValueRelease( &s->value, s->value_type, deallocateFunc );
 
-    s->value_type = 0;
+    s->value_type = oyVAL_NONE;
 
     if(s->registration)
       deallocateFunc( s->registration );
@@ -1065,6 +1065,8 @@ void           oyValueCopy           ( oyValue_u         * to,
          to->oy_struct = from->oy_struct->copy( from->oy_struct,
                                                 from->oy_struct->oy_ );
        break;
+  case oyVAL_NONE:
+  case oyVAL_MAX: break;
   }
 }
 
@@ -1192,6 +1194,8 @@ int            oyValueEqual          ( oyValue_u         * a,
            oyPointer_GetPointer((oyPointer_s*)(a->oy_struct)) == oyPointer_GetPointer((oyPointer_s*)(b->oy_struct)))
           return 1;
       break;
+  case oyVAL_NONE:
+  case oyVAL_MAX: break;
   }
 
   return equal;
@@ -1252,6 +1256,8 @@ void           oyValueClear          ( oyValue_u         * v,
        if(v->oy_struct->release)
          v->oy_struct->release( &v->oy_struct );
        break;
+  case oyVAL_NONE:
+  case oyVAL_MAX: break;
   }
 }
 /** Function oyValueRelease
@@ -1297,6 +1303,8 @@ const char *   oyValueTypeText       ( oyVALUETYPE_e       type )
   case oyVAL_STRING:      return "xs:string";
   case oyVAL_STRING_LIST: return "xs:string";
   case oyVAL_STRUCT:      return "struct";
+  case oyVAL_NONE:        return "none";
+  case oyVAL_MAX:         return "max";
   }
   return 0;
 }

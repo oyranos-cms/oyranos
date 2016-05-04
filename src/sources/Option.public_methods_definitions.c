@@ -844,6 +844,27 @@ int            oyOption_SetFlags     ( oyOption_s        * object,
   return 0;
 }
 
+/** Function oyOption_GetValueType
+ *  @memberof oyOption_s
+ *  @brief   Ask for the type of the value
+ *
+ *  @param         option              the option
+ *  @return                            value type enum
+ *
+ *  @version  Oyranos: 0.9.6
+ *  @date     2016/05/04
+ *  @since    2016/05/04 (Oyranos: 0.9.6)
+ */
+oyVALUETYPE_e  oyOption_GetValueType ( oyOption_s        * option )
+{
+  oyOption_s_ * o = (oyOption_s_*)option;
+
+  if( o )
+    return o->value_type;
+
+  return oyVAL_NONE;
+}
+
 
 /** Function oyValueCopy
  *  @memberof oyValue_u
@@ -959,6 +980,8 @@ void           oyValueCopy           ( oyValue_u         * to,
          to->oy_struct = from->oy_struct->copy( from->oy_struct,
                                                 from->oy_struct->oy_ );
        break;
+  case oyVAL_NONE:
+  case oyVAL_MAX: break;
   }
 }
 
@@ -1086,6 +1109,8 @@ int            oyValueEqual          ( oyValue_u         * a,
            oyPointer_GetPointer((oyPointer_s*)(a->oy_struct)) == oyPointer_GetPointer((oyPointer_s*)(b->oy_struct)))
           return 1;
       break;
+  case oyVAL_NONE:
+  case oyVAL_MAX: break;
   }
 
   return equal;
@@ -1146,6 +1171,8 @@ void           oyValueClear          ( oyValue_u         * v,
        if(v->oy_struct->release)
          v->oy_struct->release( &v->oy_struct );
        break;
+  case oyVAL_NONE:
+  case oyVAL_MAX: break;
   }
 }
 /** Function oyValueRelease
@@ -1191,6 +1218,8 @@ const char *   oyValueTypeText       ( oyVALUETYPE_e       type )
   case oyVAL_STRING:      return "xs:string";
   case oyVAL_STRING_LIST: return "xs:string";
   case oyVAL_STRUCT:      return "struct";
+  case oyVAL_NONE:        return "none";
+  case oyVAL_MAX:         return "max";
   }
   return 0;
 }
