@@ -74,7 +74,7 @@ int oyThreadCreate                   ( void             *(*func) (void * data),
 
 void *             oyJobWorker       ( void              * data );
 
-int                oyJob_Add_        ( oyJob_s           * job,
+int                oyJob_Add_        ( oyJob_s          ** job,
                                        int                 finished );
 int                oyJob_Get_        ( oyJob_s          ** job,
                                        int                 finished );
@@ -279,17 +279,20 @@ void oyThreadsInit_(void)
 /**
  *  @brief   Add and run a job
  *
- *  @version Oyranos: 0.9.5
- *  @date    2014/01/27
+ *  @version Oyranos: 0.9.6
+ *  @date    2016/05/06
  *  @since   2014/01/27 (Oyranos: 0.9.5)
  */
-int                oyJob_Add_        ( oyJob_s           * job,
+int                oyJob_Add_        ( oyJob_s          ** job_,
                                        int                 finished )
 {
   oyBlob_s * blob;
   static int job_count = 0;
   int job_id = 0;
   int error = 0;
+  oyJob_s * job = *job_;
+
+  *job_ = NULL;
 
   oyThreadsInit_();
 
@@ -461,7 +464,7 @@ void *             oyJobWorker       ( void              * data )
         t = strdup("done");
         oyMsg_Add_(job, 1.0, &t);
       }
-      oyJob_Add_( job, finished );
+      oyJob_Add_( &job, finished );
     }
     oySleep(0.02);
   }

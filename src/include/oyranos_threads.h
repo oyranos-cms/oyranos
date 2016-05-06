@@ -64,7 +64,7 @@ struct oyJob_s {
 oyJob_s *         oyJob_New          ( oyObject_s          object );
 void              oyJob_Release      ( oyJob_s          ** job );
 
-typedef int      (*oyJob_Add_f)      ( oyJob_s           * job,
+typedef int      (*oyJob_Add_f)      ( oyJob_s          ** job,
                                        int                 finished );
 typedef int      (*oyJob_Get_f)      ( oyJob_s          ** job,
                                        int                 finished );

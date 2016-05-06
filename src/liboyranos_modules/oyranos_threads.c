@@ -93,7 +93,7 @@ void               oyJobHandlingSet  ( oyJob_Add_f         jadd,
   oyJobResult = result;
 }
 
-int                oyJob_AddInit     ( oyJob_s           * job,
+int                oyJob_AddInit     ( oyJob_s          ** job,
                                        int                 finished );
 int                oyJobInitialise_  ( void )
 {
@@ -111,7 +111,7 @@ int                oyJobInitialise_  ( void )
   return error;
 }
 
-int                oyJob_AddInit     ( oyJob_s           * job,
+int                oyJob_AddInit     ( oyJob_s          ** job,
                                        int                 finished )
 { if(oyJobInitialise_() == 0)
     return oyJob_Add( job, finished );

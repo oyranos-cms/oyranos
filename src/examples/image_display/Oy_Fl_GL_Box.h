@@ -246,8 +246,7 @@ public:
     oyOption_SetFromText( o, file_name, 0 );
     job->context = (oyStruct_s*)o;
     job->cb_progress = jobCallback;
-    oyJob_Add(job, 0);
-    job = NULL;
+    oyJob_Add(&job, 0);
 
     oyImage_FromFile( file_name, icc_profile_flags, &image, 0 );
     oyPixel_t pt;
