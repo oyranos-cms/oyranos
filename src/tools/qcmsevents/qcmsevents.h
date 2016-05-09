@@ -47,15 +47,19 @@ class QcmseDialog : public QDialog
     QSystemTrayIcon * icon;
     void createIcon();
   private:
-    QMenu * iconMenu;
+    QMenu * systrayIconMenu;
     QAction * quitA;
     QAction * showA;
 
     QListWidget * log_list;
     QComboBox * icons;
+    int index_;
   public:
     void log( const char * text, int code );
     int init;
+    int index() { return index_; }
+private slots:
+    void onAction(QAction*a);
 };
 
 extern QcmseDialog * dialog;

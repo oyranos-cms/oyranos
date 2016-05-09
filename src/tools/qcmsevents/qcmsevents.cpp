@@ -3,7 +3,7 @@
  *  Qt based X11 color management event observer
  *
  *  License: newBSD
- *  Copyright: (c)2009-2010 - Kai-Uwe Behrmann <ku.b@gmx.de>
+ *  Copyright: (c)2009-2016 - Kai-Uwe Behrmann <ku.b@gmx.de>
  *
  */
 
@@ -11,12 +11,16 @@
 
 #define TARGET "X Color Management Events"
 #include "qcmsevents.h"
-#include "oyranos_alpha.h"
+#include "oyranos.h"
+#include "oyranos_debug.h"
 #include "oyranos_i18n.h"
+#include "oyProfile_s.h"
+#include "oyObject_s.h"
 
 #include <X11/Xcm/Xcm.h>
 
 #include <QAction>
+#include <QActionGroup>
 #include <QVBoxLayout>
 #include <QMenu>
 
@@ -51,23 +55,98 @@ QcmseDialog::QcmseDialog()
 
 void QcmseDialog::createIcon()
 {
-  iconMenu = new QMenu(this);
-  iconMenu->addAction( showA );
-  iconMenu->addAction( quitA );
+  systrayIconMenu = new QMenu(this);
+
+  QActionGroup * actions = new QActionGroup(this);
+  const char ** names = NULL;
+  int count = 0, i, current = -1;
+  oyOptionChoicesGet( oyWIDGET_POLICY, &count, &names, &current );
+  for(i = 0; i < count; ++i)
+  {
+    QAction * a = new QAction(QString(names[i]),this);
+    systrayIconMenu->addAction( a );
+    actions->addAction(a);
+  }
+  connect(actions,SIGNAL(triggered(QAction*)),this,SLOT(onAction(QAction*)));
+  oyOptionChoicesFree( oyWIDGET_POLICY,&names, count );
+
+  systrayIconMenu->addSeparator();
+
+  systrayIconMenu->addAction( showA );
+  systrayIconMenu->addAction( quitA );
 
   /* set a first icon */
   QIcon ic(":/plugin-compicc_gray.png");
   icon = new QSystemTrayIcon( this );
   icon->setIcon(ic);
-  icon->setContextMenu( iconMenu );
+  icon->setContextMenu( systrayIconMenu );
   icon->show();
   icons->setCurrentIndex(0);
 }
 
+void SendNativeUpdate(const char * func)
+{
+    // e.g. send native (e.g. X11) reload event
+    oyOptions_s * opts = oyOptions_New(NULL), * results = 0;
+    int error = oyOptions_Handle( "//"OY_TYPE_STD"/send_native_update_event",
+                      opts,"send_native_update_event",
+                      &results );
+    oyOptions_Release( &opts );
+
+    if(oy_debug)
+      fprintf(stderr, "send_native_update_event %s()\n", func);
+    if(error)
+      fprintf(stderr, "send_native_update_event failed\n");
+}
+
+void QcmseDialog::onAction(QAction*a)
+{
+    oyPolicySet(a->text().toLocal8Bit().data(),NULL);
+    setIcon(index_);
+    SendNativeUpdate(__func__);
+}
+
+QString actualPolicy()
+{
+  QString policy;
+  // clear the Oyranos settings cache
+  oyGetPersistentStrings( NULL );
+
+  const char ** names = NULL;
+  int count = 0, current = -1;
+  oyOptionChoicesGet( oyWIDGET_POLICY, &count, &names, &current );
+  if(current >= 0)
+    policy = QString(names[current]);
+  oyOptionChoicesFree( oyWIDGET_POLICY,&names, count );
+  return policy;
+}
+
 void QcmseDialog::setIcon(int index)
 {
-  QIcon ic = icons->itemIcon(index);
-  icon->setIcon(ic);
+  index_ = index;
+  QIcon ic = icons->itemIcon(index_);
+  QPixmap pm = ic.pixmap(ic.availableSizes().last());
+  QPainter p;
+  QString t = actualPolicy();
+  p.begin(&pm);
+  QFont font = p.font();
+  font.setPixelSize(pm.width()/4);
+  p.setFont(font);
+
+  const QRect rectangle = QRect(0, 0, pm.width(), pm.height());
+  QRect boundingRect;
+  p.drawText(rectangle, Qt::AlignCenter, t, &boundingRect);
+  p.fillRect(boundingRect,QColor(255,255,255,185));
+  if(boundingRect.width() >= pm.width())
+    p.drawText(rectangle, Qt::AlignLeft|Qt::AlignVCenter, t);
+  else
+    p.drawText(rectangle, Qt::AlignCenter, t);
+
+  p.end();
+
+  QIcon ict = pm;
+  icon->setIcon(ict);
+
   setWindowIcon(ic);
 
   icon->setToolTip(icons->itemText(index));
@@ -104,7 +183,7 @@ void QcmseDialog::log( const char * text, int code )
     if(pid == 0)
     {
       color.setHsvF( 0.6, 0.4, 0.9 );
-      icon->setIcon( icons->itemIcon(0) );
+      setIcon( 0 );
     } else
     /*  base color server should support opt-out (ICR)
      *  through _ICC_COLOR_MANAGEMENT - ICM in _ICC_COLOR_DESKTOP
@@ -112,8 +191,10 @@ void QcmseDialog::log( const char * text, int code )
     if(pid > 0 && strstr(text, "|ICM|") != 0)
     {
       color.setHsvF( 0.41, 0.5, 0.9 );
-      icon->setIcon( icons->itemIcon(1) );
-    }
+      setIcon( 1 );
+    } else
+    if(strstr(text, "_ICC_COLOR_DISPLAY_ADVANCED"))
+      setIcon( index() );
     item->setBackground( QBrush( color ) );
   }
   else if(code == XCME_MSG_DISPLAY_ERROR)
@@ -142,7 +223,7 @@ void QcmseDialog::log( const char * text, int code )
     if(pid == 0)
     {
       color.setHsvF( 0.6, 0.4, 0.9 );
-      icon->setIcon( icons->itemIcon(0) );
+      setIcon( 0 );
       setWindowIcon( icons->itemIcon(0) );
     } else
     /*  base color server should support opt-out (ICR)
@@ -151,7 +232,7 @@ void QcmseDialog::log( const char * text, int code )
     if(pid > 0 && strstr(text, "|ICM|") != 0)
     {
       color.setHsvF( 0.41, 0.5, 0.9 );
-      icon->setIcon( icons->itemIcon(1) );
+      setIcon( 1 );
       setWindowIcon( icons->itemIcon(1) );
     }
   }
