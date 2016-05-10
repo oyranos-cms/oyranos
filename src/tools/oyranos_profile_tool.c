@@ -565,7 +565,8 @@ int main( int argc , char** argv )
                 if(texts[j])
                 {
                   fprintf( stdout, "%s", texts[j] );
-                  fprintf( stdout, "\n" );
+                  if(texts_n != 1)
+                    fprintf( stdout, "\n" );
                 }
           } else
           {
