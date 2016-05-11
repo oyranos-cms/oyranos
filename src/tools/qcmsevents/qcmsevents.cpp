@@ -24,7 +24,7 @@
 #include <QVBoxLayout>
 #include <QMenu>
 
-QcmseDialog * dialog = 0;
+QcmseDialog * dialog = NULL;
 
 QcmseDialog::QcmseDialog()
 {
@@ -33,7 +33,9 @@ QcmseDialog::QcmseDialog()
   showA = new QAction( tr("&Show Window"), this );
   connect( showA, SIGNAL(triggered()), this, SLOT(showNormal()) );
 
-  icon = 0;
+  icon = NULL;
+  systrayIconMenu = NULL;
+  index_ = 0;
   init = 1;
   icons = new QComboBox;
   icons->addItem(QIcon(":/plugin-compicc_gray.png"), tr("none"));
@@ -101,9 +103,9 @@ void SendNativeUpdate(const char * func)
 
 void QcmseDialog::onAction(QAction*a)
 {
-    oyPolicySet(a->text().toLocal8Bit().data(),NULL);
-    setIcon(index_);
-    SendNativeUpdate(__func__);
+  oyPolicySet(a->text().toLocal8Bit().data(),NULL);
+  setIcon(index_);
+  SendNativeUpdate(__func__);
 }
 
 QString actualPolicy()
@@ -117,7 +119,7 @@ QString actualPolicy()
   oyOptionChoicesGet( oyWIDGET_POLICY, &count, &names, &current );
   if(current >= 0)
     policy = QString(names[current]);
-  oyOptionChoicesFree( oyWIDGET_POLICY,&names, count );
+  oyOptionChoicesFree( oyWIDGET_POLICY, &names, count );
   return policy;
 }
 
