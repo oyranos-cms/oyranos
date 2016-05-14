@@ -85,13 +85,43 @@ public:
                                        oySIGNAL_e          signal_type,
                                        oyStruct_s        * signal_data ) )
   {
+    oyPointer_s * oy_ptr = oyPointer_New(0);
+    oyPointer_Set( oy_ptr,
+                   __FILE__,
+                   "Oy_Widget*",
+                   this, 0, 0 );
+    /* add a asynchronous oyJob_s for expensive transforms */
+    oyOptions_s * module_options = oyFilterNode_GetOptions( icc, 0 );
+    oyJob_s * job = oyJob_New(0);
+    job->cb_progress = iccProgressCallback;
+    job->cb_progress_context = (oyStruct_s*) oyPointer_Copy( oy_ptr, 0 );
+    oyOptions_MoveInStruct( &module_options, OY_BEHAVIOUR_STD "/expensive_callback", (oyStruct_s**)&job, OY_CREATE_NEW );
+    /* wait no longer than approximately 2 seconds */
+    oyOptions_SetFromText( &module_options, OY_BEHAVIOUR_STD "/expensive", "11", OY_CREATE_NEW );
+
     /* observe the icc node */
-    oyBlob_s * b = oyBlob_New(0);
-    oyBlob_SetFromStatic( b, this, 0, 0 );
     oyStruct_ObserverAdd( (oyStruct_s*)icc, (oyStruct_s*)conversion(),
-                          (oyStruct_s*)b,
+                          (oyStruct_s*)oy_ptr,
                           observator );
-    oyBlob_Release( &b );
+    oyPointer_Release( &oy_ptr );
+  }
+
+  virtual void markDirty() { dirty = 1; }
+
+  static void iccProgressCallback (    double              progress_zero_till_one,
+                                       char              * status_text,
+                                       int                 thread_id_,
+                                       int                 job_id,
+                                       oyStruct_s        * cb_progress_context )
+  {
+    oyPointer_s * context = (oyPointer_s *) cb_progress_context;
+    Oy_Widget * oy_widget = (Oy_Widget*) oyPointer_GetPointer( context );
+    printf( "%s() job_id: %d thread: %d %g\n", __func__, job_id, thread_id_,
+            progress_zero_till_one );
+    if(progress_zero_till_one >= 1.0)
+    {
+      oy_widget->markDirty();
+    }
   }
 };
 
