@@ -55,10 +55,20 @@ int      conversionObserve           ( oyObserver_s      * observer,
                           "//" OY_TYPE_STD "/icc_color",
                           oyOPTIONATTRIBUTE_ADVANCED, 0 );
 
-    Oy_Fl_Image_Widget * oy_widget = (Oy_Fl_Image_Widget*) oyPointer_GetPointer(
+    Oy_Widget * oy_widget = (Oy_Widget*) oyPointer_GetPointer(
                                              (oyPointer_s*)observer->user_data);
-    oy_widget->damage( FL_DAMAGE_USER1 );
+    if(!oy_widget)
+      fprintf( stderr, "INFO: %s:%d found no Oy_Widget object: %s\n",
+                    strrchr(__FILE__,'/')?strrchr(__FILE__,'/')+1:__FILE__,
+                    __LINE__, oyPointer_GetResourceName( (oyPointer_s*)observer->user_data));
+    Oy_Fl_Image_Widget * oy_image_widget = dynamic_cast<Oy_Fl_Image_Widget*>(oy_widget);
 
+    if(!oy_image_widget)
+      fprintf( stderr, "INFO: %s:%d found no Oy_Fl_Image_Widget object\n",
+                    strrchr(__FILE__,'/')?strrchr(__FILE__,'/')+1:__FILE__,
+                    __LINE__);
+    else
+      oy_image_widget->damage( FL_DAMAGE_USER1 );
   }
 
   return handled;
