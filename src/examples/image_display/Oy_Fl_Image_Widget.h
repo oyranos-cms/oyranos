@@ -312,6 +312,13 @@ public:
       dirty = 1;
     Fl_Widget::damage( c );
   }
+  /* implement Oy_Widget::markDirty() */
+  void markDirty()
+  {
+    damage( FL_DAMAGE_USER1 | FL_DAMAGE_ALL );
+    deactivate();
+    activate();
+  }
 
   Oy_Fl_Image_Widget(int x, int y, int w, int h) : Fl_Widget(x,y,w,h)
   {
@@ -323,23 +330,6 @@ public:
   ~Oy_Fl_Image_Widget(void)
   {
   };
-
-  void observeICC(                     oyFilterNode_s * icc,
-                     int(*observator)( oyObserver_s      * observer,
-                                       oySIGNAL_e          signal_type,
-                                       oyStruct_s        * signal_data ) )
-  {
-    /* observe the icc node */
-    oyPointer_s * oy_box_ptr = oyPointer_New(0);
-    oyPointer_Set( oy_box_ptr,
-                   __FILE__,
-                   "Oy_Fl_Image_Widget",
-                   this, 0, 0 );
-    oyStruct_ObserverAdd( (oyStruct_s*)icc, (oyStruct_s*)conversion(),
-                          (oyStruct_s*)oy_box_ptr,
-                          observator );
-    oyPointer_Release( &oy_box_ptr );
-  }
 };
 
 #endif /* Oy_Fl_Image_Widget_H */
