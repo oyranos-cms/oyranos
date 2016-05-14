@@ -22,9 +22,9 @@
 
 #          if defined(__GNUC__) || defined(LINUX) || defined(APPLE) || defined(SOLARIS)
 # include <sys/time.h>
-# define   ZEIT_TEILER 10000
+# define   TIME_DIVIDER 10000
 #          else /* WINDOWS TODO */
-# define   ZEIT_TEILER CLOCKS_PER_SEC;
+# define   TIME_DIVIDER CLOCKS_PER_SEC
 #          endif
 
 #ifndef _WIN32
@@ -73,7 +73,7 @@ void oy_backtrace_()
 time_t             oyTime            ( )
 {
            time_t zeit_;
-           double teiler = ZEIT_TEILER;
+           double teiler = TIME_DIVIDER;
 #          if defined(__GNUC__) || defined(APPLE) || defined(SOLARIS) || defined(BSD)
            struct timeval tv;
            double tmp_d;
@@ -89,7 +89,7 @@ time_t             oyTime            ( )
 double             oySeconds         ( )
 {
            time_t zeit_ = oyTime();
-           double teiler = ZEIT_TEILER;
+           double teiler = TIME_DIVIDER;
            double dzeit = zeit_ / teiler;
     return dzeit;
 }
