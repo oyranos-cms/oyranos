@@ -209,6 +209,18 @@ int          oyFilterNode_SetFromPattern_ (
   return 1;
 }
 
+void *       oyFilterNode_ContextToMem_
+                                     ( oyFilterNode_s_   * node,
+                                       size_t            * size,
+                                       oyAlloc_f           alloc )
+{
+  oyFilterCore_s_ * core_ = node->core;
+  oyPointer ptr = core_->api4_->oyCMMFilterNode_ContextToMem(
+                                                    (oyFilterNode_s*)node, size,
+                                                              alloc );
+  return ptr;
+}
+
 /** Function  oyFilterNode_SetContext_
  *  @memberof oyFilterNode_s
  *  @brief    Set module context in a filter
@@ -341,9 +353,7 @@ int          oyFilterNode_SetContext_( oyFilterNode_s_    * node,
                                                "true", OY_CREATE_NEW );
 
                 /* oy_debug is used to obtain a complete data set */
-                ptr = core_->api4_->oyCMMFilterNode_ContextToMem(
-                                                   (oyFilterNode_s*)node, &size,
-                                                              oyAllocateFunc_ );
+                ptr = oyFilterNode_ContextToMem_( node, &size, oyAllocateFunc_);
                 oyBlob_SetFromData( (oyBlob_s*)blob, ptr, size,
                                     core_->api4_->context_type );
                 error = oyOptions_SetFromText( &node->tags, "////verbose",
@@ -366,9 +376,7 @@ int          oyFilterNode_SetContext_( oyFilterNode_s_    * node,
               {
                 size = 0;
                 /* 3b. ask CMM */
-                ptr = core_->api4_->oyCMMFilterNode_ContextToMem(
-                                                   (oyFilterNode_s*)node, &size,
-                                                              oyAllocateFunc_ );
+                ptr = oyFilterNode_ContextToMem_( node, &size, oyAllocateFunc_);
 
                 if(!ptr || !size)
                 {
@@ -397,9 +405,8 @@ int          oyFilterNode_SetContext_( oyFilterNode_s_    * node,
                     } else
                       core_ = node->core;
                     
-                    ptr = core_->api4_->oyCMMFilterNode_ContextToMem(
-                                                   (oyFilterNode_s*)node, &size,
-                                                    oyAllocateFunc_ );
+                    ptr = oyFilterNode_ContextToMem_( node,
+                                                      &size, oyAllocateFunc_ );
                     oyFree_m_( pattern );
                   }
 
