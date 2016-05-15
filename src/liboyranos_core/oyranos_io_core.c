@@ -628,9 +628,21 @@ oyWriteMemToFile_(const char* name, const void* mem, size_t size)
 char *     oyGetTempName_            ( const char        * end_part )
 {
   char * name = NULL;
+  const char * path_ = tmpnam(NULL);
+  char * path = strdup( path_ ), * t = NULL;
+  char * file = NULL;
+
+  t = strrchr(path,'/');
+  if(t)
+  {
+    file = strdup(t+1);
+    t[0] = 0;
+  }
   oyStringAddPrintf( &name, 0,0,
-                     "%s-time%ld-pid%d%s%s", tmpnam(0), oyTime(), OY_GETPID(),
-                     end_part?"-":"", end_part?end_part:"" );
+                     "%s%spid%d-time%ld%s%s%s%s", path, file?"/":"-", OY_GETPID(), oyTime(),
+                     file?"-":"", file?file:"", end_part?"-":"", end_part?end_part:"" );
+  free(path);
+  if(file) free(file); file = NULL;
   return name;
 }
 
