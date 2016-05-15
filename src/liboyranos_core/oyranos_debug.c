@@ -4,7 +4,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2005-2009 (C) Kai-Uwe Behrmann
+ *            2005-2016 (C) Kai-Uwe Behrmann
  *
  *  @brief    internal helpers
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
@@ -16,23 +16,47 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>  /* system() */
-#ifdef HAVE_POSIX
-#include <unistd.h>  /* getpid() */
-#endif
 
-#          if defined(__GNUC__) || defined(LINUX) || defined(APPLE) || defined(SOLARIS)
+#if defined(_WIN32) && !defined(__GNU__)
+#define WIN32_LEAN_AND_MEAN
+#include <Windows.h>
+#include <stdint.h> // portable: uint64_t   MSVC: __int64 
+
+// MSVC defines this in winsock2.h!?
+typedef struct timeval {
+    long tv_sec;
+    long tv_usec;
+} timeval;
+
+int gettimeofday(struct timeval * tp, struct timezone * tzp)
+{
+    // Note: some broken versions only have 8 trailing zero's, the correct epoch has 9 trailing zero's
+    static const uint64_t EPOCH = ((uint64_t) 116444736000000000ULL);
+
+    SYSTEMTIME  system_time;
+    FILETIME    file_time;
+    uint64_t    time;
+
+    GetSystemTime( &system_time );
+    SystemTimeToFileTime( &system_time, &file_time );
+    time =  ((uint64_t)file_time.dwLowDateTime )      ;
+    time += ((uint64_t)file_time.dwHighDateTime) << 32;
+
+    tp->tv_sec  = (long) ((time - EPOCH) / 10000000L);
+    tp->tv_usec = (long) (system_time.wMilliseconds * 1000);
+    return 0;
+}
+# define   TIME_DIVIDER CLOCKS_PER_SEC
+# define   OY_GETPID() _getpid()
+#else
+# include <time.h>
 # include <sys/time.h>
 # define   TIME_DIVIDER 10000
-#          else /* WINDOWS TODO */
-# define   TIME_DIVIDER CLOCKS_PER_SEC
-#          endif
-
-#ifndef _WIN32
 # include <unistd.h>
+# define   OY_GETPID() getpid()
 #endif
 
 #include <math.h>
-#include <time.h>
 
 #include "oyranos_debug.h"
 
@@ -50,11 +74,7 @@ int oy_debug = 0;
 void oy_backtrace_()
 {
 #   define TMP_FILE "/tmp/oyranos_gdb_temp.txt"
-#ifdef __POAIX__
-    pid_t pid = (int)getpid();
-#else
-    int pid = 0;
-#endif
+    int pid = (int)OY_GETPID();
     FILE * fp = fopen( TMP_FILE, "w" );
 
     if(fp)
@@ -72,19 +92,15 @@ void oy_backtrace_()
 
 time_t             oyTime            ( )
 {
-           time_t zeit_;
-           double teiler = TIME_DIVIDER;
-#          if defined(__GNUC__) || defined(APPLE) || defined(SOLARIS) || defined(BSD)
-           struct timeval tv;
-           double tmp_d;
-           gettimeofday( &tv, NULL );
-           zeit_ = tv.tv_usec/(1000000/(time_t)teiler)
-                   + (time_t)(modf( (double)tv.tv_sec / teiler,&tmp_d )
-                     * teiler*teiler);
-#          else /* WINDOWS TODO */
-           zeit_ = clock();
-#          endif
-    return zeit_;
+  time_t time_;
+  double divider = TIME_DIVIDER;
+  struct timeval tv;
+  double tmp_d;
+  gettimeofday( &tv, NULL );
+  time_ = tv.tv_usec/(1000000/(time_t)divider)
+                   + (time_t)(modf( (double)tv.tv_sec / divider,&tmp_d )
+                     * divider*divider);
+  return time_;
 }
 double             oySeconds         ( )
 {
