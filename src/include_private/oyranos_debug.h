@@ -38,6 +38,7 @@ extern int level_PROG;
 
 double             oyClock           ( );
 double             oySeconds         ( );
+time_t             oyTime            ( );
 
 #if defined(__GNUC__)
 # define  OY_DBG_FORMAT_ "%s:%d %s() "
