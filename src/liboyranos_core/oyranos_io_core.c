@@ -624,7 +624,18 @@ oyWriteMemToFile_(const char* name, const void* mem, size_t size)
   return r;
 }
 
+/* tmpnam() enrichment */
+char *     oyGetTempName_            ( const char        * end_part )
+{
+  char * name = NULL;
+  oyStringAddPrintf( &name, 0,0,
+                     "%s-time%ld-pid%d%s%s", tmpnam(0), oyTime(), OY_GETPID(),
+                     end_part?"-":"", end_part?end_part:"" );
+  return name;
+}
+
 char * oyGetTempFileName_            ( const char        * name,
+                                       const char        * end_part,
                                        uint32_t            flags,
                                        oyAlloc_f           allocateFunc )
 {
@@ -639,7 +650,7 @@ char * oyGetTempFileName_            ( const char        * name,
 
   if(!name)
   {
-    filename = tmpnam(NULL);
+    filename = oyGetTempName_(end_part);
     flags &= ~OY_FILE_TEMP_DIR;
   }
 
@@ -749,7 +760,7 @@ int  oyWriteMemToFile2_              ( const char        * name,
   if(!name)
     return 1;
 
-  filename = oyGetTempFileName_( name, flags, allocateFunc );
+  filename = oyGetTempFileName_( name, NULL, flags, allocateFunc );
 
   error = !filename;
 
