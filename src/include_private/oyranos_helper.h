@@ -102,6 +102,7 @@ int   oyWriteMemToFile_ (const char* name, const void* mem, size_t size);
 #define OY_FILE_NAME_SEARCH 0x02
 #define OY_FILE_TEMP_DIR 0x04
 char * oyGetTempFileName_            ( const char        * name,
+                                       const char        * end_part,
                                        uint32_t            flags,
                                        oyAlloc_f           allocateFunc );
 int  oyWriteMemToFile2_              ( const char        * name,
@@ -200,11 +201,17 @@ int                oyMiscBlobGetHash_( void              * buffer,
                                        unsigned char     * md5_return );
 
 
+#if defined(_WIN32)
+#include <windows.h>
+#define OY_GETPID() _getpid()
+#else
+#define OY_GETPID() getpid()
+#endif
+
 #ifdef HAVE_DL
 #include <dlfcn.h> /* dlopen() */
 #define dlinit() 0
 #elif defined(_WIN32)
-#include <windows.h>
 #define dlinit() 0
 #define dlopen(a,b)  LoadLibrary(a)
 #define dlsym   GetProcAddress
@@ -222,7 +229,6 @@ int                oyMiscBlobGetHash_( void              * buffer,
 #else
 #error "need dlfcn.h or ltdl to open modules. STOP"
 #endif
-
 
 #ifdef __cplusplus
 } /* extern "C" */
