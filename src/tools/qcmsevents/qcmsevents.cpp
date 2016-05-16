@@ -240,6 +240,10 @@ void QcmseDialog::log( const char * text, int code )
   }
   item->setText( text );
 
+  if(dialog->log_list->count() > 500)
+    // expecting 11 head lines
+    delete (dialog->log_list->takeItem(11));
+
   dialog->log_list->insertItem( dialog->log_list->count(), item );
   if(!dialog->init)
     dialog->log_list->scrollToItem( item );
