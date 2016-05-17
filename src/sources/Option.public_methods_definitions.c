@@ -527,7 +527,7 @@ int            oyOption_Clear        ( oyOption_s        * obj )
 
     oyValueRelease( &s->value, s->value_type, deallocateFunc );
 
-    s->value_type = 0;
+    s->value_type = oyVAL_NONE;
 
     if(s->registration)
       deallocateFunc( s->registration );

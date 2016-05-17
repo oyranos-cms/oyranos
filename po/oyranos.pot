@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Oyranos 0.9\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2016-05-03 14:28+0200\n"
+"POT-Creation-Date: 2016-05-17 09:14+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -109,7 +109,7 @@ msgstr ""
 msgid "Found no node in conversion. give up"
 msgstr ""
 
-#: API_generated/oyFilterNode_s_.c:1209 API_generated/oyObserver_s.c:360
+#: API_generated/oyFilterNode_s_.c:1216 API_generated/oyObserver_s.c:360
 #: API_generated/oyObserver_s.c:371 API_generated/oyObserver_s.c:572
 #: API_generated/oyObserver_s.c:650 API_generated/oyObserver_s_.c:53
 #: examples/image_display/oyranos_display_helper_classes_fltk.cpp:47
@@ -443,7 +443,7 @@ msgstr ""
 msgid "Copyright (c) 2005-2014 Kai-Uwe Behrmann; newBSD"
 msgstr ""
 
-#: liboyranos/oyranos_cmm.c:224 modules/color/modules/oyranos_cmm_trds.c:672
+#: liboyranos/oyranos_cmm.c:224 modules/color/modules/oyranos_cmm_trds.c:675
 #: modules/color/modules/oyranos_cmm_oyra.c:147
 #: modules/color/modules/oyranos_cmm_oydi.c:1167
 #: modules/color/modules/oyranos_cmm_oicc.c:1065
@@ -466,13 +466,13 @@ msgstr ""
 msgid "Image Socket"
 msgstr ""
 
-#: liboyranos_core/oyranos_core.c:410 tools/qcmsevents/qcmsevents.cpp:188
+#: liboyranos_core/oyranos_core.c:410 tools/qcmsevents/qcmsevents.cpp:275
 #: examples/devices/test_device.c:442
 #, c-format
 msgid "WARNING"
 msgstr ""
 
-#: liboyranos_core/oyranos_core.c:413 tools/qcmsevents/qcmsevents.cpp:191
+#: liboyranos_core/oyranos_core.c:413 tools/qcmsevents/qcmsevents.cpp:278
 #: examples/devices/test_device.c:371 examples/devices/test_device.c:387
 #: examples/devices/test_device.c:402 examples/devices/test_device.c:424
 #: examples/devices/test_device.c:447 examples/devices/test_device.c:809
@@ -490,20 +490,20 @@ msgstr ""
 msgid "Program not found"
 msgstr ""
 
-#: liboyranos_core/oyranos_io_core.c:673 liboyranos_core/oyranos_io_core.c:718
+#: liboyranos_core/oyranos_io_core.c:696 liboyranos_core/oyranos_io_core.c:741
 msgid "File exists"
 msgstr ""
 
-#: liboyranos_core/oyranos_io_core.c:1275
+#: liboyranos_core/oyranos_io_core.c:1298
 msgid "path is not a directory"
 msgstr ""
 
-#: liboyranos_core/oyranos_io_core.c:1279
+#: liboyranos_core/oyranos_io_core.c:1302
 msgid "path is a link: ignored"
 msgstr ""
 
-#: liboyranos_core/oyranos_io_core.c:1284
-#: liboyranos_core/oyranos_io_core.c:1856
+#: liboyranos_core/oyranos_io_core.c:1307
+#: liboyranos_core/oyranos_io_core.c:1879
 msgid "path is not readable"
 msgstr ""
 
@@ -2480,7 +2480,7 @@ msgstr ""
 
 #: modules/color/modules/oyranos_cmm_lcm2.c:3394
 #: modules/color/modules/oyranos_cmm_lcm2.c:3467
-#: modules/color/modules/oyranos_cmm_trds.c:579
+#: modules/color/modules/oyranos_cmm_trds.c:582
 #: modules/color/modules/oyranos_cmm_lcms.c:2488
 #: modules/color/modules/oyranos_cmm_lcms.c:2561
 #: modules/color/modules/devices/oyranos_monitor_x11.c:1782
@@ -2491,7 +2491,7 @@ msgstr ""
 
 #: modules/color/modules/oyranos_cmm_lcm2.c:3396
 #: modules/color/modules/oyranos_cmm_lcm2.c:3469
-#: modules/color/modules/oyranos_cmm_trds.c:581
+#: modules/color/modules/oyranos_cmm_trds.c:584
 #: modules/color/modules/oyranos_cmm_lcms.c:2490
 #: modules/color/modules/oyranos_cmm_lcms.c:2563
 #: modules/color/modules/devices/oyranos_monitor_x11.c:1784
@@ -2652,27 +2652,27 @@ msgid ""
 "force white on white, 1 - keep as is]."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_trds.c:587
-#: modules/color/modules/oyranos_cmm_trds.c:595
+#: modules/color/modules/oyranos_cmm_trds.c:590
+#: modules/color/modules/oyranos_cmm_trds.c:598
 msgid "Initialise the oyJob_s APIs."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_trds.c:589
-#: modules/color/modules/oyranos_cmm_trds.c:597
+#: modules/color/modules/oyranos_cmm_trds.c:592
+#: modules/color/modules/oyranos_cmm_trds.c:600
 msgid ""
 "The Oyranos \"threads_handler\" command will initialise the oyJob_s APIs "
 "with a available threading model."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_trds.c:654
+#: modules/color/modules/oyranos_cmm_trds.c:657
 msgid "Oyranos Threads"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_trds.c:656
+#: modules/color/modules/oyranos_cmm_trds.c:659
 msgid "Oyranos Threads default Handling"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_trds.c:664
+#: modules/color/modules/oyranos_cmm_trds.c:667
 #: modules/color/modules/oyranos_cmm_oyra.c:139
 #: modules/color/modules/oyranos_cmm_oydi.c:1159
 #: modules/color/modules/oyranos_cmm_oicc.c:1057
@@ -2687,12 +2687,12 @@ msgid ""
 "sources: http://www.oyranos.com/wiki/index.php?title=Oyranos/Download"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_trds.c:670
+#: modules/color/modules/oyranos_cmm_trds.c:673
 msgid "Copyright (c) 2014-2016 Kai-Uwe Behrmann; new BSD"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_trds.c:678
-#: modules/color/modules/oyranos_cmm_trds.c:680
+#: modules/color/modules/oyranos_cmm_trds.c:681
+#: modules/color/modules/oyranos_cmm_trds.c:683
 msgid ""
 "The filter provides a default oyJob_s handling mechanism for asynchronous "
 "processing."
@@ -3209,7 +3209,7 @@ msgstr ""
 
 #: modules/color/modules/devices/oyranos_monitor_x11.c:1798
 #: modules/color/modules/devices/oyranos_monitor_x11.c:2066
-#: examples/image_display/image_display.cpp:1094
+#: examples/image_display/image_display.cpp:1093
 msgid "Help"
 msgstr ""
 
@@ -3503,8 +3503,8 @@ msgstr ""
 
 #: tools/oyranos_profile_tool.c:252 tools/oyranos_profile_tool.c:267
 #: tools/oyranos_profile_tool.c:275 tools/oyranos_profile_tool.c:290
-#: tools/oyranos_profile_tool.c:353 tools/oyranos_profile_tool.c:593
-#: tools/oyranos_profile_tool.c:728
+#: tools/oyranos_profile_tool.c:353 tools/oyranos_profile_tool.c:594
+#: tools/oyranos_profile_tool.c:729
 msgid "Exit!"
 msgstr ""
 
@@ -3625,11 +3625,11 @@ msgstr ""
 msgid "Profile Tags"
 msgstr ""
 
-#: tools/oyranos_profile_tool.c:592
+#: tools/oyranos_profile_tool.c:593
 msgid "Allowed option values are -f openicc and -f xml. unknown format:"
 msgstr ""
 
-#: tools/oyranos_profile_tool.c:728
+#: tools/oyranos_profile_tool.c:729
 msgid "RGB primaries missed"
 msgstr ""
 
@@ -4401,128 +4401,128 @@ msgstr ""
 msgid "Embedd device meta tag from image device into given device profile"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:423
+#: examples/image_display/image_display.cpp:422
 msgid "Information:"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:468
+#: examples/image_display/image_display.cpp:467
 msgid "Oyranos Help"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:507
+#: examples/image_display/image_display.cpp:506
 msgid "Navigation:"
 msgstr ""
 
 #. '>'
-#: examples/image_display/image_display.cpp:509
+#: examples/image_display/image_display.cpp:508
 msgid "&gt; - next image"
 msgstr ""
 
 #. '<'
-#: examples/image_display/image_display.cpp:511
+#: examples/image_display/image_display.cpp:510
 msgid "&lt; - previous image"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:512
+#: examples/image_display/image_display.cpp:511
 msgid "Zoom:"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:513
+#: examples/image_display/image_display.cpp:512
 msgid "f - fit to window"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:514
+#: examples/image_display/image_display.cpp:513
 msgid "1 - map one image pixel to one screen pixel"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:515
+#: examples/image_display/image_display.cpp:514
 msgid "w - fit to window width"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:516
+#: examples/image_display/image_display.cpp:515
 msgid "h - fit to window height"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:517
+#: examples/image_display/image_display.cpp:516
 msgid "+ - zoom in"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:518
+#: examples/image_display/image_display.cpp:517
 msgid "- - zoom out"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:519
+#: examples/image_display/image_display.cpp:518
 msgid "Exposure:"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:520
+#: examples/image_display/image_display.cpp:519
 msgid "Alt + - brighter"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:521
+#: examples/image_display/image_display.cpp:520
 msgid "Alt - - darker"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:522
+#: examples/image_display/image_display.cpp:521
 msgid "Alt . - reset to normal values"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:523
+#: examples/image_display/image_display.cpp:522
 msgid "Channels:"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:524
+#: examples/image_display/image_display.cpp:523
 msgid "Alt 1 - first channel"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:525
+#: examples/image_display/image_display.cpp:524
 msgid "Alt 2 - second channel"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:526
+#: examples/image_display/image_display.cpp:525
 msgid "Alt n - n-th channel"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:527
+#: examples/image_display/image_display.cpp:526
 msgid "Alt 0 - all channels"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:528
+#: examples/image_display/image_display.cpp:527
 msgid "View:"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:529
+#: examples/image_display/image_display.cpp:528
 msgid "Alt v - set window fullscreen"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:532
+#: examples/image_display/image_display.cpp:531
 msgid "Oyranos Image Display Help"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:579
+#: examples/image_display/image_display.cpp:578
 msgid "Oyranos Image Display Info"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:1083
+#: examples/image_display/image_display.cpp:1082
 msgid "Edit Options ..."
 msgstr ""
 
-#: examples/image_display/image_display.cpp:1085
+#: examples/image_display/image_display.cpp:1084
 msgid "Examine ICC Profile ..."
 msgstr ""
 
-#: examples/image_display/image_display.cpp:1087
+#: examples/image_display/image_display.cpp:1086
 msgid "Debug"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:1089
+#: examples/image_display/image_display.cpp:1088
 msgid "Show Infos"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:1092
+#: examples/image_display/image_display.cpp:1091
 msgid "Help Shortcuts"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:1096
+#: examples/image_display/image_display.cpp:1095
 msgid "Quit"
 msgstr ""

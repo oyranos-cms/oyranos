@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2016-05-03 14:28+0200\n"
+"POT-Creation-Date: 2016-05-16 07:59+0200\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -19,7 +19,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: vim 6.0\n"
 
-#: liboyranos_core/oyranos_core.c:413 tools/qcmsevents/qcmsevents.cpp:191
+#: liboyranos_core/oyranos_core.c:413 tools/qcmsevents/qcmsevents.cpp:278
 #: examples/devices/test_device.c:371 examples/devices/test_device.c:387
 #: examples/devices/test_device.c:402 examples/devices/test_device.c:424
 #: examples/devices/test_device.c:447 examples/devices/test_device.c:809
@@ -30,12 +30,12 @@ msgid "!!! ERROR"
 msgstr "!!! Fehler"
 
 #. '>'
-#: examples/image_display/image_display.cpp:509
+#: examples/image_display/image_display.cpp:508
 msgid "&gt; - next image"
 msgstr "&gt; - nächstes Bild"
 
 #. '<'
-#: examples/image_display/image_display.cpp:511
+#: examples/image_display/image_display.cpp:510
 msgid "&lt; - previous image"
 msgstr "&lt; - vorheriges Bild"
 
@@ -43,11 +43,11 @@ msgstr "&lt; - vorheriges Bild"
 msgid "(device) link class"
 msgstr "(Geräte) Farbraumverknüpfung"
 
-#: examples/image_display/image_display.cpp:517
+#: examples/image_display/image_display.cpp:516
 msgid "+ - zoom in"
 msgstr "+ - Vergrößere Ansicht"
 
-#: examples/image_display/image_display.cpp:518
+#: examples/image_display/image_display.cpp:517
 msgid "- - zoom out"
 msgstr "- - Verkleinere Ansicht"
 
@@ -97,7 +97,7 @@ msgstr "0/45, 45/0"
 msgid "0/d or d/0"
 msgstr "0/d oder d/0"
 
-#: examples/image_display/image_display.cpp:514
+#: examples/image_display/image_display.cpp:513
 msgid "1 - map one image pixel to one screen pixel"
 msgstr "1 - zeige einen Bildpunkt auf einem Bildschirmpunkt"
 
@@ -333,7 +333,7 @@ msgstr ""
 msgid "All the small details for using this module."
 msgstr "All die kleinen Details für dieses Modul"
 
-#: tools/oyranos_profile_tool.c:592
+#: tools/oyranos_profile_tool.c:593
 msgid "Allowed option values are -f openicc and -f xml. unknown format:"
 msgstr "Erlaubte Werte sind -f openicc und -f xml. Unbekanntes Format:"
 
@@ -341,35 +341,35 @@ msgstr "Erlaubte Werte sind -f openicc und -f xml. Unbekanntes Format:"
 msgid "Already enabled"
 msgstr "Bereits eingeschalten"
 
-#: examples/image_display/image_display.cpp:520
+#: examples/image_display/image_display.cpp:519
 msgid "Alt + - brighter"
 msgstr "Alt + - Heller"
 
-#: examples/image_display/image_display.cpp:521
+#: examples/image_display/image_display.cpp:520
 msgid "Alt - - darker"
 msgstr "Alt - - Dunkler"
 
-#: examples/image_display/image_display.cpp:522
+#: examples/image_display/image_display.cpp:521
 msgid "Alt . - reset to normal values"
 msgstr "Alt . - Setzt Helligkeit zurück"
 
-#: examples/image_display/image_display.cpp:527
+#: examples/image_display/image_display.cpp:526
 msgid "Alt 0 - all channels"
 msgstr "Alt 0 - Zeige all Farbkanäle"
 
-#: examples/image_display/image_display.cpp:524
+#: examples/image_display/image_display.cpp:523
 msgid "Alt 1 - first channel"
 msgstr "Alt 1 - Zeige ersten Farbkanal"
 
-#: examples/image_display/image_display.cpp:525
+#: examples/image_display/image_display.cpp:524
 msgid "Alt 2 - second channel"
 msgstr "Alt 2 - Zeige zweiten Farbkanal"
 
-#: examples/image_display/image_display.cpp:526
+#: examples/image_display/image_display.cpp:525
 msgid "Alt n - n-th channel"
 msgstr "Alt n - Zeige n-ten Farbkanal"
 
-#: examples/image_display/image_display.cpp:529
+#: examples/image_display/image_display.cpp:528
 msgid "Alt v - set window fullscreen"
 msgstr "Alt v - Setze Fenstergröße auf Vollbild"
 
@@ -684,13 +684,13 @@ msgstr "Kathodenstrahlmonitor"
 msgid "Channel Image Filter Object"
 msgstr "Kanalfilterobjekt"
 
-#: examples/image_display/image_display.cpp:523
+#: examples/image_display/image_display.cpp:522
 msgid "Channels:"
 msgstr "Kanäle:"
 
 #: modules/color/modules/oyranos_cmm_lcm2.c:3396
 #: modules/color/modules/oyranos_cmm_lcm2.c:3469
-#: modules/color/modules/oyranos_cmm_trds.c:581
+#: modules/color/modules/oyranos_cmm_trds.c:584
 #: modules/color/modules/oyranos_cmm_lcms.c:2490
 #: modules/color/modules/oyranos_cmm_lcms.c:2563
 #: modules/color/modules/devices/oyranos_monitor_x11.c:1784
@@ -986,7 +986,7 @@ msgstr ""
 msgid "Copyright (c) 2009 My Name; newBSD"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_trds.c:670
+#: modules/color/modules/oyranos_cmm_trds.c:673
 msgid "Copyright (c) 2014-2016 Kai-Uwe Behrmann; new BSD"
 msgstr ""
 
@@ -1146,7 +1146,7 @@ msgstr "Farbraum:        "
 msgid "Date"
 msgstr "Datum"
 
-#: examples/image_display/image_display.cpp:1087
+#: examples/image_display/image_display.cpp:1086
 msgid "Debug"
 msgstr "Fehlersuche"
 
@@ -1275,7 +1275,7 @@ msgstr "EBU Tech.3213-E"
 msgid "EFI CMM"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:1083
+#: examples/image_display/image_display.cpp:1082
 msgid "Edit Options ..."
 msgstr "Editiere Optionen ..."
 
@@ -1377,7 +1377,7 @@ msgstr "Fehler beim Erhalten des Profiles"
 msgid "Error setting up atom"
 msgstr "Fehler beim Setzen eines Xatoms"
 
-#: examples/image_display/image_display.cpp:1085
+#: examples/image_display/image_display.cpp:1084
 msgid "Examine ICC Profile ..."
 msgstr "Untersuche ICC Profil ..."
 
@@ -1398,8 +1398,8 @@ msgstr "Beispielgerät, nur zum Testen."
 
 #: tools/oyranos_profile_tool.c:252 tools/oyranos_profile_tool.c:267
 #: tools/oyranos_profile_tool.c:275 tools/oyranos_profile_tool.c:290
-#: tools/oyranos_profile_tool.c:353 tools/oyranos_profile_tool.c:593
-#: tools/oyranos_profile_tool.c:728
+#: tools/oyranos_profile_tool.c:353 tools/oyranos_profile_tool.c:594
+#: tools/oyranos_profile_tool.c:729
 msgid "Exit!"
 msgstr "Beenden!"
 
@@ -1407,7 +1407,7 @@ msgstr "Beenden!"
 msgid "Expose Image Filter Object"
 msgstr "FilterObjekt zur Belichtung"
 
-#: examples/image_display/image_display.cpp:519
+#: examples/image_display/image_display.cpp:518
 msgid "Exposure:"
 msgstr "Belichtung:"
 
@@ -1444,7 +1444,7 @@ msgstr "FORMAT"
 msgid "File Magic"
 msgstr "Dateisignatur"
 
-#: liboyranos_core/oyranos_io_core.c:673 liboyranos_core/oyranos_io_core.c:718
+#: liboyranos_core/oyranos_io_core.c:696 liboyranos_core/oyranos_io_core.c:741
 msgid "File exists"
 msgstr "Datei existiert"
 
@@ -1640,11 +1640,11 @@ msgstr ""
 
 #: modules/color/modules/devices/oyranos_monitor_x11.c:1798
 #: modules/color/modules/devices/oyranos_monitor_x11.c:2066
-#: examples/image_display/image_display.cpp:1094
+#: examples/image_display/image_display.cpp:1093
 msgid "Help"
 msgstr "Hilfe"
 
-#: examples/image_display/image_display.cpp:1092
+#: examples/image_display/image_display.cpp:1091
 msgid "Help Shortcuts"
 msgstr "Hilfe zur Tastatur"
 
@@ -1907,12 +1907,12 @@ msgstr ""
 msgid "Information"
 msgstr "Informationen"
 
-#: examples/image_display/image_display.cpp:423
+#: examples/image_display/image_display.cpp:422
 msgid "Information:"
 msgstr "Informationen:"
 
-#: modules/color/modules/oyranos_cmm_trds.c:587
-#: modules/color/modules/oyranos_cmm_trds.c:595
+#: modules/color/modules/oyranos_cmm_trds.c:590
+#: modules/color/modules/oyranos_cmm_trds.c:598
 msgid "Initialise the oyJob_s APIs."
 msgstr ""
 
@@ -2404,7 +2404,7 @@ msgstr "Einzelarben"
 msgid "Named Color 2"
 msgstr "Einzelfarben 2"
 
-#: examples/image_display/image_display.cpp:507
+#: examples/image_display/image_display.cpp:506
 msgid "Navigation:"
 msgstr "Navigation"
 
@@ -2519,7 +2519,7 @@ msgstr "Oyranos CUPS"
 msgid "Oyranos Dummy"
 msgstr "Oyranos Beispiel"
 
-#: examples/image_display/image_display.cpp:468
+#: examples/image_display/image_display.cpp:467
 msgid "Oyranos Help"
 msgstr "Oyranos Hilfe"
 
@@ -2531,11 +2531,11 @@ msgstr "Oyranos ICC Richtlinie"
 msgid "Oyranos ICC policy module"
 msgstr "Oyranos ICC Richtlinien Modul"
 
-#: examples/image_display/image_display.cpp:532
+#: examples/image_display/image_display.cpp:531
 msgid "Oyranos Image Display Help"
 msgstr "Oyranos Bildanzeige Hilfe"
 
-#: examples/image_display/image_display.cpp:579
+#: examples/image_display/image_display.cpp:578
 msgid "Oyranos Image Display Info"
 msgstr "Oyranos Bildanzeige Info"
 
@@ -2556,11 +2556,11 @@ msgstr "Oyranos Einstellungen"
 msgid "Oyranos Settings Group"
 msgstr "Oyranos Einstellungen"
 
-#: modules/color/modules/oyranos_cmm_trds.c:654
+#: modules/color/modules/oyranos_cmm_trds.c:657
 msgid "Oyranos Threads"
 msgstr "Oyranos Programmfäden"
 
-#: modules/color/modules/oyranos_cmm_trds.c:656
+#: modules/color/modules/oyranos_cmm_trds.c:659
 msgid "Oyranos Threads default Handling"
 msgstr ""
 
@@ -2610,7 +2610,7 @@ msgstr ""
 msgid "Oyranos modules"
 msgstr "Oyranos Module"
 
-#: modules/color/modules/oyranos_cmm_trds.c:664
+#: modules/color/modules/oyranos_cmm_trds.c:667
 #: modules/color/modules/oyranos_cmm_oyra.c:139
 #: modules/color/modules/oyranos_cmm_oydi.c:1159
 #: modules/color/modules/oyranos_cmm_oicc.c:1057
@@ -2924,11 +2924,11 @@ msgstr ""
 "Simulationseinstellungen erlauben die Simulation eines zusätzlichen "
 "Farbraumes."
 
-#: examples/image_display/image_display.cpp:1096
+#: examples/image_display/image_display.cpp:1095
 msgid "Quit"
 msgstr "Beenden"
 
-#: tools/oyranos_profile_tool.c:728
+#: tools/oyranos_profile_tool.c:729
 msgid "RGB primaries missed"
 msgstr "RGB Primärfarben nicht gefunden"
 
@@ -3160,7 +3160,7 @@ msgstr "Zeige CIE*xy Primärfarben"
 msgid "Show Help:"
 msgstr "Zeige Hilfe:"
 
-#: examples/image_display/image_display.cpp:1089
+#: examples/image_display/image_display.cpp:1088
 msgid "Show Infos"
 msgstr "Zeige Infos"
 
@@ -3189,7 +3189,7 @@ msgstr "Zeige nur zum Gerät passende ICC Profile"
 msgid "Show which policy matches by combining all involved settings."
 msgstr "Zeige an, welche Richtlinie zur Kombination aller Einstellungen passt."
 
-#: API_generated/oyFilterNode_s_.c:1209 API_generated/oyObserver_s.c:360
+#: API_generated/oyFilterNode_s_.c:1216 API_generated/oyObserver_s.c:360
 #: API_generated/oyObserver_s.c:371 API_generated/oyObserver_s.c:572
 #: API_generated/oyObserver_s.c:650 API_generated/oyObserver_s_.c:53
 #: examples/image_display/oyranos_display_helper_classes_fltk.cpp:47
@@ -3368,8 +3368,8 @@ msgstr ""
 "PPM Bildes enthalten. Eine existierende Datei wird ohne Warnung "
 "überschrieben."
 
-#: modules/color/modules/oyranos_cmm_trds.c:589
-#: modules/color/modules/oyranos_cmm_trds.c:597
+#: modules/color/modules/oyranos_cmm_trds.c:592
+#: modules/color/modules/oyranos_cmm_trds.c:600
 msgid ""
 "The Oyranos \"threads_handler\" command will initialise the oyJob_s APIs "
 "with a available threading model."
@@ -3515,8 +3515,8 @@ msgstr ""
 msgid "The filter obtains a image from libraw."
 msgstr "Der Filter erhält Bilder von libraw."
 
-#: modules/color/modules/oyranos_cmm_trds.c:678
-#: modules/color/modules/oyranos_cmm_trds.c:680
+#: modules/color/modules/oyranos_cmm_trds.c:681
+#: modules/color/modules/oyranos_cmm_trds.c:683
 msgid ""
 "The filter provides a default oyJob_s handling mechanism for asynchronous "
 "processing."
@@ -4018,7 +4018,7 @@ msgstr "Video Kamera"
 msgid "VideoCardGammaTable"
 msgstr "Grafik Karten Gamma Tabelle (vcgt)"
 
-#: examples/image_display/image_display.cpp:528
+#: examples/image_display/image_display.cpp:527
 msgid "View:"
 msgstr "Ansicht:"
 
@@ -4030,7 +4030,7 @@ msgstr "Betrachtungsbedingungen"
 msgid "Viewing conditions description"
 msgstr "Beschreibung der Betrachtungbedingungen"
 
-#: liboyranos_core/oyranos_core.c:410 tools/qcmsevents/qcmsevents.cpp:188
+#: liboyranos_core/oyranos_core.c:410 tools/qcmsevents/qcmsevents.cpp:275
 #: examples/devices/test_device.c:442
 #, c-format
 msgid "WARNING"
@@ -4126,7 +4126,7 @@ msgstr "Yxy"
 msgid "Zero profiles found in Taxi ICC DB"
 msgstr "Keine Profile in Taxi ICC DB gefunden"
 
-#: examples/image_display/image_display.cpp:512
+#: examples/image_display/image_display.cpp:511
 msgid "Zoom:"
 msgstr "Vergrößern:"
 
@@ -4185,7 +4185,7 @@ msgstr ""
 
 #: modules/color/modules/oyranos_cmm_lcm2.c:3394
 #: modules/color/modules/oyranos_cmm_lcm2.c:3467
-#: modules/color/modules/oyranos_cmm_trds.c:579
+#: modules/color/modules/oyranos_cmm_trds.c:582
 #: modules/color/modules/oyranos_cmm_lcms.c:2488
 #: modules/color/modules/oyranos_cmm_lcms.c:2561
 #: modules/color/modules/devices/oyranos_monitor_x11.c:1782
@@ -4275,7 +4275,7 @@ msgstr "Fehler in Modul:"
 msgid "extract ICC color profile"
 msgstr "extrahiere ICC Farbprofil"
 
-#: examples/image_display/image_display.cpp:513
+#: examples/image_display/image_display.cpp:512
 msgid "f - fit to window"
 msgstr "f - Passe Bild ins Fenster ein"
 
@@ -4350,7 +4350,7 @@ msgstr "Farbumfang"
 msgid "generate OpenICC device color reproduction JSON"
 msgstr "erzeuge OpenICC JSON zu Gerätefarbeinstellungen"
 
-#: examples/image_display/image_display.cpp:516
+#: examples/image_display/image_display.cpp:515
 msgid "h - fit to window height"
 msgstr "h - Passe Bildhöhe in Fenster ein"
 
@@ -4481,7 +4481,7 @@ msgstr "Name ist länger als"
 msgid "named color class"
 msgstr "Einzelfarben 2"
 
-#: liboyranos/oyranos_cmm.c:224 modules/color/modules/oyranos_cmm_trds.c:672
+#: liboyranos/oyranos_cmm.c:224 modules/color/modules/oyranos_cmm_trds.c:675
 #: modules/color/modules/oyranos_cmm_oyra.c:147
 #: modules/color/modules/oyranos_cmm_oydi.c:1167
 #: modules/color/modules/oyranos_cmm_oicc.c:1065
@@ -4569,16 +4569,16 @@ msgstr "Ausgabedatenregion"
 msgid "oyranos install path"
 msgstr "Oyranos Installationspfad"
 
-#: liboyranos_core/oyranos_io_core.c:1279
+#: liboyranos_core/oyranos_io_core.c:1302
 msgid "path is a link: ignored"
 msgstr "Pfad ist eine Verknüpfung: ignoriert"
 
-#: liboyranos_core/oyranos_io_core.c:1275
+#: liboyranos_core/oyranos_io_core.c:1298
 msgid "path is not a directory"
 msgstr "Pfad ist kein Verzeichnis"
 
-#: liboyranos_core/oyranos_io_core.c:1284
-#: liboyranos_core/oyranos_io_core.c:1856
+#: liboyranos_core/oyranos_io_core.c:1307
+#: liboyranos_core/oyranos_io_core.c:1879
 msgid "path is not readable"
 msgstr "Pfad ist nicht lesbar"
 
@@ -4813,7 +4813,7 @@ msgstr "Benutzerpfad"
 msgid "verbose"
 msgstr "plaudernd"
 
-#: examples/image_display/image_display.cpp:515
+#: examples/image_display/image_display.cpp:514
 msgid "w - fit to window width"
 msgstr "w - Passe Bildbreite in Fenster ein"
 

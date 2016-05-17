@@ -43,15 +43,13 @@ typedef struct oyHash_s oyHash_s;
 
 
 /* Include "Hash.dox" { */
-/** @internal
- *  @struct  oyHash_s
+/** @struct  oyHash_s
  *  @ingroup objects_generic
  *  @extends oyStruct_s
  *  @brief   A cache entry
  *
  *  Combine hash, description and oyPointer to one searchable struct. The struct
  *  can be used in a oyStructList_s for a hash map or searchable cache.
- *  @see oyCacheListNew_ oyHashGet_
  *  Memory management is done by Oyranos' oyAllocateFunc_ and oyDeallocateFunc_.
  *
  *  @since Oyranos: version 0.1.8

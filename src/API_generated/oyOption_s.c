@@ -950,6 +950,26 @@ int            oyOption_SetFlags     ( oyOption_s        * object,
   return 0;
 }
 
+/** Function oyOption_GetValueType
+ *  @memberof oyOption_s
+ *  @brief   Ask for the type of the value
+ *
+ *  @param         option              the option
+ *  @return                            value type enum
+ *
+ *  @version  Oyranos: 0.9.6
+ *  @date     2016/05/04
+ *  @since    2016/05/04 (Oyranos: 0.9.6)
+ */
+oyVALUETYPE_e  oyOption_GetValueType ( oyOption_s        * option )
+{
+  oyOption_s_ * o = (oyOption_s_*)option;
+
+  if( o )
+    return o->value_type;
+
+  return oyVAL_NONE;
+}
 
 
 /** Function oyValueCopy
@@ -1071,29 +1091,7 @@ void           oyValueCopy           ( oyValue_u         * to,
   }
 }
 
-/** Function oyOption_GetValueType
- *  @memberof oyOption_s
- *  @brief   Ask for the type of the value
- *
- *  @param         option              the option
- *  @return                            value type enum
- *
- *  @version  Oyranos: 0.9.6
- *  @date     2016/05/04
- *  @since    2016/05/04 (Oyranos: 0.9.6)
- */
-oyVALUETYPE_e  oyOption_GetValueType ( oyOption_s        * option )
-{
-  oyOption_s_ * o = (oyOption_s_*)option;
-
-  if( o )
-    return o->value_type;
-
-  return oyVAL_NONE;
-}
-
-
-/** Function  oyValueEquao
+/** Function  oyValueEqual
  *  @memberof oyValue_u
  *  @brief    compare a oyValue_u union
  *
