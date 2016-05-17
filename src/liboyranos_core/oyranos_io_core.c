@@ -92,7 +92,19 @@ oyReadFileSize_(const char* name)
     {
       /* get size */
       fseek(fp,0L,SEEK_END); 
-      size = ftell (fp);
+      {
+        int sz = ftell (fp);
+        if(sz == -1)
+        {
+          switch(errno)
+          {
+            case EBADF:        WARNc1_S("Not a seekable stream: %s", name); break;
+            case EINVAL:       WARNc1_S("Wrong argument: %s", name); break;
+            default:           WARNc2_S("%s: %s", strerror(errno), name); break;
+          }
+        } else
+          size = sz;
+      }
       fclose (fp);
 
     } else
@@ -167,11 +179,24 @@ char *       oyReadFilepToMem_       ( FILE              * fp,
   {
     if (fp)
     {
+      int sz;
       /* get size */
       fseek(fp,0L,SEEK_END); 
+      sz = ftell (fp);
+      if(sz == -1)
+      {
+        switch(errno)
+        {
+          case EBADF:        WARNc_S("Not a seekable stream"); break;
+          case EINVAL:       WARNc_S("Wrong argument"); break;
+          default:           WARNc1_S("%s", strerror(errno)); break;
+        }
+        *size = 0;
+        return NULL;
+      }
       /* read file possibly partitial */
       if(!*size || *size > ftell(fp))
-        *size = ftell (fp);
+        *size = sz;
       rewind(fp);
 
       DBG_MEM1_S("%u\n",((unsigned int)((size_t)size)));
