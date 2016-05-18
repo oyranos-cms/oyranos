@@ -286,7 +286,13 @@ int changeIccOptions ( oyJob_s * job )
     in_text = 0; command[0] = 0;
 
     /* render the options to the UI */
-    sprintf(command, "oyranos-xforms-fltk " );
+    {
+      const char * uiRenderer = getenv("OY_OFORMS_RENDERER");
+      if(uiRenderer && uiRenderer[0])
+        sprintf(command, "%s ", uiRenderer );
+      else
+        sprintf(command, "oyranos-xforms-fltk " );
+    }
     sprintf(&command[strlen(command)],
             " -i %s/image_display_in_tmp.xml -o %s/image_display_tmp.xml",
             tmp_dir, tmp_dir );
