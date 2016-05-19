@@ -806,6 +806,14 @@ cmsHTRANSFORM  lcmsCMMConversionContextCreate_ (
     }
   }
 
+  if(oy_debug)
+    lcms_msg( oyMSG_WARN,0, OY_DBG_FORMAT_"\n"
+              "  format: %d|%d  intent: %d|%d flags: %d csp: %d|%d\n",
+              OY_DBG_ARGS_,
+                 lcms_pixel_layout_in,lcms_pixel_layout_out, intent,intent_proof, flags,
+                 (int)T_COLORSPACE(lcms_pixel_layout_in), (int)T_COLORSPACE(lcms_pixel_layout_out)
+            );
+
   /* reset */
   lcmsSetCMYKPreservationStrategy( LCMS_PRESERVE_PURE_K );
 
@@ -1262,7 +1270,7 @@ int          lcmsMOptions_Handle2    ( oyOptions_s       * options,
       size_t size = 0;
       char * block = 0;
 
-      cmsHPROFILE hp = lcmsAddProofProfile( p, flags | cmsFLAGS_GAMUTCHECK,
+      cmsHPROFILE hp = lcmsAddProofProfile( p, flags | cmsFLAGS_SOFTPROOFING,
                                             intent, intent_proof );
       oyProfile_Release( &p );
       if(hp)
@@ -1292,6 +1300,40 @@ int          lcmsMOptions_Handle2    ( oyOptions_s       * options,
   return 0;
 }
 
+oyProfiles_s * lcmsProfilesFromOptions( oyFilterNode_s * node, oyFilterPlug_s * plug,
+                                        oyOptions_s * node_options,
+                                        const char * key, int profiles_switch, int verbose )
+{
+  oyProfiles_s * profiles = NULL;
+  oyOption_s * o = NULL;
+  
+  if(profiles_switch || oy_debug || verbose)
+    o = oyOptions_Find( node_options, key, oyNAME_PATTERN );
+  if(o)
+  {
+    profiles = (oyProfiles_s*) oyOption_GetStruct( o, oyOBJECT_PROFILES_S );
+    if((oy_debug || verbose))
+    {
+      lcms_msg( oyMSG_WARN, (oyStruct_s*)node, OY_DBG_FORMAT_
+               " found \"%s\" %d  switch %d",
+               OY_DBG_ARGS_, key, oyProfiles_Count( profiles ), profiles_switch );
+    } else
+    if( !profiles )
+    {
+      oyFilterSocket_Callback( plug, oyCONNECTOR_EVENT_INCOMPATIBLE_OPTION );
+      lcms_msg( oyMSG_WARN, (oyStruct_s*)node, OY_DBG_FORMAT_
+               " incompatible \"%s\"", OY_DBG_ARGS_, key );
+      
+    }
+    oyOption_Release( &o );
+  }
+
+  if(!profiles_switch)
+    oyProfiles_Release( &profiles );
+
+  return profiles;
+}
+
 
 /** Function lcmsFilterNode_CmmIccContextToMem
  *  @brief   implement oyCMMFilterNode_CreateContext_f()
@@ -1318,7 +1360,6 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
             * image_output = 0;
   cmsHPROFILE * lps = 0;
   cmsHTRANSFORM xform = 0;
-  oyOption_s * o = 0;
   oyOptions_s * node_tags = oyFilterNode_GetTags( node ),
               * node_options = oyFilterNode_GetOptions( node, 0 );
   oyProfile_s * p = 0,
@@ -1335,7 +1376,6 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
       proof = 0,
       effect_switch = 0;
   int verbose = oyOptions_FindString( node_tags, "verbose", "true" ) ? 1 : 0;
-  const char * o_txt = 0;
 
   image_input = (oyImage_s*)oyFilterSocket_GetData( remote_socket );
   image_output = (oyImage_s*)oyFilterSocket_GetData( socket );
@@ -1385,93 +1425,52 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
   profs = oyProfiles_New( 0 );
   oyProfiles_MoveIn( profs, &p, -1 );
 
-  o_txt = oyOptions_FindString  ( node_options, "effect_switch", 0 );
-  if(o_txt && oyStrlen_(o_txt)/* && profile_class_out== icSigDisplayClass*/)
-    effect_switch = atoi( o_txt );
   /* effect profiles */
-  if(effect_switch || oy_debug || verbose)
-    o = oyOptions_Find( node_options, "profiles_effect", oyNAME_PATTERN );
-  if(o)
-  {
-    profiles = (oyProfiles_s*) oyOption_GetStruct( o, oyOBJECT_PROFILES_S );
-    if(!effect_switch && (oy_debug || verbose))
+  effect_switch = oyOptions_FindString  ( node_options, "effect_switch", "1" ) ? 1 : 0;
+  profiles = lcmsProfilesFromOptions( node, plug, node_options,
+                                      "profiles_effect", effect_switch, verbose );
+  n = oyProfiles_Count( profiles );
+  if(n)
+    for(i = 0; i < n; ++i)
     {
-      lcms_msg( oyMSG_WARN, (oyStruct_s*)node, OY_DBG_FORMAT_
-               " found \"profiles_effect\" %d  \"effect_switch\" %d",
-               OY_DBG_ARGS_, oyProfiles_Count( profiles ), effect_switch );
-    } else
-    if( !profiles )
-    {
-      oyFilterSocket_Callback( plug, oyCONNECTOR_EVENT_INCOMPATIBLE_OPTION );
-      lcms_msg( oyMSG_WARN, (oyStruct_s*)node, OY_DBG_FORMAT_
-               " incompatible \"profiles_effect\"", OY_DBG_ARGS_ );
-      
-    } else
-    {
-      n = oyProfiles_Count( profiles );
-      for(i = 0; i < n; ++i)
-      {
         p = oyProfiles_Get( profiles, i );
 
         /* Look in the Oyranos cache for a CMM internal representation */
         lps[ profiles_n++ ] = lcmsAddProfile( p );
-        oyProfiles_MoveIn( profs, &p, -1 );
-      }
+        error = oyProfiles_MoveIn( profs, &p, -1 );
     }
-    oyOption_Release( &o );
-    oyProfiles_Release( &profiles );
-  }
+  oyProfiles_Release( &profiles );
 
   /* simulation profile */
-  o = oyOptions_Find( node_options, "profiles_simulation", oyNAME_PATTERN );
-  o_txt = oyOptions_FindString  ( node_options, "proof_soft", 0 );
-  if(o_txt && oyStrlen_(o_txt)/* && profile_class_out== icSigDisplayClass*/)
-    proof = atoi( o_txt );
+  proof = oyOptions_FindString  ( node_options, "proof_soft", "1" ) ? 1 : 0;
+  proof += oyOptions_FindString  ( node_options, "proof_hard", "1" ) ? 1 : 0;
 
-  o_txt = oyOptions_FindString  ( node_options, "proof_hard", 0 );
-  if(o_txt && oyStrlen_(o_txt)/* && profile_class_out== icSigOutputClass*/)
-    proof = atoi( o_txt ) ? atoi(o_txt) : proof;
-
-  if(oy_debug && proof)
+  if(oy_debug  > 2 && proof)
       lcms_msg( oyMSG_DBG, (oyStruct_s*)node, OY_DBG_FORMAT_
                " proof requested",OY_DBG_ARGS_);
 
-  if(o)
-  {
-    profiles = (oyProfiles_s*) oyOption_GetStruct( o, oyOBJECT_PROFILES_S );
-    if( !profiles )
+  profiles = lcmsProfilesFromOptions( node, plug, node_options,
+                                      "profiles_simulation", proof, verbose );
+  n = oyProfiles_Count( profiles );
+  if(n)
+    for(i = 0; i < n; ++i)
     {
-      oyFilterSocket_Callback( plug, oyCONNECTOR_EVENT_INCOMPATIBLE_OPTION );
-      lcms_msg( oyMSG_WARN, (oyStruct_s*)node, OY_DBG_FORMAT_
-               " incompatible \"profiles_simulation\"",OY_DBG_ARGS_);
-      
-    } else
-    {
-      n = oyProfiles_Count( profiles );
+      p = oyProfiles_Get( profiles, i );
 
-      lcms_msg( oyMSG_DBG,(oyStruct_s*)node, OY_DBG_FORMAT_
-               " %d simulation profile(s) found \"%s\"",
-               OY_DBG_ARGS_, n,
-               profiles?oyStruct_TypeToText((oyStruct_s*)profiles):"????");
-
-      for(i = 0; i < n; ++i)
-      {
-        p = oyProfiles_Get( profiles, i );
-
+      if(oy_debug)
         lcms_msg( oyMSG_DBG,(oyStruct_s*)node, OY_DBG_FORMAT_
-                 " found profile: %s",
-                 OY_DBG_ARGS_, p?oyProfile_GetFileName( p,-1 ):"????");
+                  " found profile: %s",
+                  OY_DBG_ARGS_, p?oyProfile_GetFileName( p,-1 ):"????");
 
-        oyProfiles_MoveIn( profs, &p, -1 );
-        ++profiles_simulation_n;
+      error = oyProfiles_MoveIn( profs, &p, -1 );
+      ++profiles_simulation_n;
 
-        oyProfile_Release( &p );
-      }
+      oyProfile_Release( &p );
     }
-    oyOption_Release( &o );
-  } else if(verbose || oy_debug)
-    lcms_msg( oyMSG_DBG,(oyStruct_s*)node, OY_DBG_FORMAT_
-             " no simulation profile found", OY_DBG_ARGS_);
+  else
+    if(verbose || oy_debug > 2)
+      lcms_msg( oyMSG_DBG,(oyStruct_s*)node, OY_DBG_FORMAT_
+                " no simulation profile found", OY_DBG_ARGS_);
 
 
   /* output profile */
@@ -1618,6 +1617,28 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
   return block;
 }
 
+void   lcmsTextFromFlags             ( char             ** text,
+                                       int                 flags );
+void   lcmsTextFromCmmLayout         ( char             ** text,
+                                       int                 cmm_pixel_layout )
+{
+  int f = cmm_pixel_layout;
+  oyStringAddPrintf( text, 0,0,
+    "    <cmm_pixel_layout cmm=\"%s\" value=\"%d\" dither=\"%d\" colorspace=\"%d\" swapfirst=\"%d\" flavor=\"%d\" planar=\"%d\" endian16=\"%d\" doswap=\"%d\" extra=\"%d\" channels=\"%d\" bytes=\"%d\" />\n",
+    CMM_NICK, f,
+    T_DITHER(f),
+    T_COLORSPACE(f),
+    T_SWAPFIRST(f),
+    T_FLAVOR(f),
+    T_PLANAR(f),
+    T_ENDIAN16(f),
+    T_DOSWAP(f),
+    T_EXTRA(f),
+    T_CHANNELS(f),
+    T_BYTES(f)
+  );
+}
+
 char * lcmsImage_GetText             ( oyImage_s         * image,
                                        int                 verbose,
                                        oyAlloc_f           allocateFunc )
@@ -1664,12 +1685,19 @@ char * lcmsImage_GetText             ( oyImage_s         * image,
 
   if( oyToFlavor_m( pixel_layout ) )
   {
-    oySprintf_( text, "    <flawor value=\"yes\" />\n" );
+    oySprintf_( text, "    <flavor value=\"yes\" />\n" );
     hashTextAdd_m( text );
   }
   oySprintf_( text,   "    <sample_type value=\"%s[%dByte]\" />\n",
                     oyDataTypeToText(t), so );
   hashTextAdd_m( text );
+  {
+    icColorSpaceSignature color_space = oyProfile_GetSignature(
+                                            profile, oySIGNATURE_COLOR_SPACE );
+    int lcms_pixel_layout = oyPixelToCMMPixelLayout_( pixel_layout,
+                                                      color_space );
+    lcmsTextFromCmmLayout( &hash_text, lcms_pixel_layout );
+  }
   oySprintf_( text,   "  </oyImage_s>");
   hashTextAdd_m( text );
 
@@ -1759,10 +1787,24 @@ char * lcmsFilterNode_GetText        ( oyFilterNode_s    * node,
     oyOptions_Release( &opts_tmp );
 
     /* options -> xforms */
-    hashTextAdd_m(   " <oyOptions_s>\n" );
-    model = oyOptions_GetText( opts, oyNAME_NAME );
-    hashTextAdd_m( model );
-    hashTextAdd_m( "\n </oyOptions_s>\n" );
+    if(type != oyNAME_NICK)
+    {
+      hashTextAdd_m(   " <oyOptions_s>\n" );
+      model = oyOptions_GetText( opts, oyNAME_NAME );
+      hashTextAdd_m( model );
+      hashTextAdd_m( "\n </oyOptions_s>\n" );
+    }
+
+    /* cmm options */
+    {
+      int intent = lcmsIntentFromOptions( options,0 ),
+          intent_proof = lcmsIntentFromOptions( options,1 ),
+          flags = lcmsFlagsFromOptions( options );
+      oyStringAddPrintf( &hash_text, 0,0,
+                         " <cmm_options intent=\"%d\" intent_proof=\"%d\" flags=\"%d\" />\n",
+                         intent,intent_proof, flags
+                       );
+    }
 
     /* output data */
     hashTextAdd_m(   " <data_out>\n" );
