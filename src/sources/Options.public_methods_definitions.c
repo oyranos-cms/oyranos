@@ -118,8 +118,25 @@ oyOptions_s *  oyOptions_FromText    ( const char        * text,
   if(error <= 0)
   {
     /* add a root level node - <top> */
-    tmp = oyStringAppend_( root_start, text, oyAllocateFunc_ );
-    STRING_ADD( tmp, root_end );
+    if(strlen(text) > 5 && memcmp( text, "<?xml", 5 ) == 0)
+    {
+      /* cut off xf:model xf:instance tags and place a simple <top> instead */
+      const char * t = strstr(text,"xf:instance");
+      char * tx;
+      if(t)
+        t = strstr(t,">");
+      if(t)
+        tmp = oyStringAppend_( root_start, t+1, oyAllocateFunc_ );
+      if(tmp)
+        tx = strstr(tmp, "</xf:instance>");
+      if(tx)
+        /* there should be enough bytes in the array */
+        sprintf(tx, root_end);
+    } else
+    {
+      tmp = oyStringAppend_( root_start, text, oyAllocateFunc_ );
+      STRING_ADD( tmp, root_end );
+    }
 
     doc = xmlParseMemory( tmp, oyStrlen_( tmp ) );
     error = !doc;
