@@ -291,6 +291,9 @@ int changeIccOptions ( oyJob_s * job )
       if(uiRenderer && uiRenderer[0])
         sprintf(command, "%s ", uiRenderer );
       else
+      if((uiRenderer = getenv("OY_XFORMS_RENDERER")) != NULL && uiRenderer[0])
+        sprintf(command, "%s ", uiRenderer );
+      else
         sprintf(command, "oyranos-xforms-fltk " );
     }
     sprintf(&command[strlen(command)],
