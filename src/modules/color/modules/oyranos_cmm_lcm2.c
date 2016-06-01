@@ -950,8 +950,9 @@ cmsHTRANSFORM  lcm2CMMConversionContextCreate_ (
         lcm2_pixel_layout_out &= (~COLORSPACE_SH( csp ));
 #endif
         xform = lcmsCreateTransform( lps[0], lcm2_pixel_layout_in,
-                                    0, lcm2_pixel_layout_out,
-                                    intent, flags | cmsFLAGS_KEEP_SEQUENCE );
+                                     0, lcm2_pixel_layout_out,
+                                     (intent > 3)?0:intent,
+                                     flags | cmsFLAGS_KEEP_SEQUENCE );
     }
     else if(profiles_n == 2 && (!proof_n || (!proof && !gamut_warning)))
     {
