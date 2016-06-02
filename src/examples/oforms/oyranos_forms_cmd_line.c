@@ -60,6 +60,7 @@ int        oyXML2XFORMsCmdLineSelect1Handler( xmlNodePtr          cur,
              * tmp,
              * label,
              * value,
+             * help,
              * xpath = 0;
   char * default_key = 0, *key = 0;
   oyFormsArgs_s * forms_args = user_data;
@@ -101,7 +102,7 @@ int        oyXML2XFORMsCmdLineSelect1Handler( xmlNodePtr          cur,
 
       while(choices)
       {
-        label = tmp = value = 0;
+        label = tmp = value = help = 0;
         is_default = 0;
 
         if(oyXMLNodeNameIs( choices, "xf:item"))
@@ -114,6 +115,8 @@ int        oyXML2XFORMsCmdLineSelect1Handler( xmlNodePtr          cur,
             label = oyXML2NodeValue( items );
           if(oyXMLNodeNameIs( items, "xf:value") && print)
             value = oyXML2NodeValue( items );
+          if(oyXMLNodeNameIs( items, "xf:help") && print)
+            help = oyXML2NodeValue( items );
 
           items = items->next;
         }
@@ -136,9 +139,10 @@ int        oyXML2XFORMsCmdLineSelect1Handler( xmlNodePtr          cur,
               tmp = 0;
               if(print & 0x02)
                 tmp = label;
-              printf( "      --%s=\"%s\"%s%s%s%s\n",
+              help = tmp?help? (strstr(help,tmp) ? &help[strlen(tmp)] : help):"":"";
+              printf( "      --%s=\"%s\"%s%s%s%s%s%s\n",
                       xpath+1, oyNoEmptyString_m_(value), is_default ? " *":"",
-                      tmp ? " [" : "", tmp?tmp:"", tmp?"]":"" );
+                      tmp ? " [" : "", tmp?tmp:"", (help && strlen(help))?" ":"", help, tmp?"]":"" );
             }
 
             if( !(print & 0x02) && !(print & 0x04) &&
@@ -169,7 +173,7 @@ int        oyXML2XFORMsCmdLineSelect1Handler( xmlNodePtr          cur,
 
 const char * oy_ui_cmd_line_handler_xf_select1_element_searches_[]
  = {
- "xf:select1/xf:choices/xf:item/xf:label.xf:value",
+ "xf:select1/xf:choices/xf:item/xf:label.xf:value.xf:help",
  "xf:select1/xf:label",
  "xf:select1/xf:help",
  0
