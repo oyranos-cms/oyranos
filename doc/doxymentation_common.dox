@@ -193,7 +193,7 @@
     - cross platform color information exchange standard, called ICC - http://www.color.org
     - OpenICC: http://www.freedesktop.org/wiki/OpenIcc
     - Email list: https://lists.sourceforge.net/lists/listinfo/oyranos-devel
-    - Bug reports: https://sourceforge.net/tracker/?group_id=177017&atid=879553
+    - Bug reports: https://github.com/oyranos-cms/oyranos/issues
     - Oyranos project page: http://www.oyranos.org/wiki/index.php?title=Oyranos
     - ColourWiki: http://www.oyranos.org/wiki
     - Elektra, configuration engine used on Linux - http://freedesktop.org/wiki/Software/Elektra
