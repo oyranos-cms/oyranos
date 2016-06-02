@@ -142,7 +142,7 @@ int        oyXML2XFORMsCmdLineSelect1Handler( xmlNodePtr          cur,
               help = tmp?help? (strstr(help,tmp) ? &help[strlen(tmp)] : help):"":"";
               printf( "      --%s=\"%s\"%s%s%s%s%s%s\n",
                       xpath+1, oyNoEmptyString_m_(value), is_default ? " *":"",
-                      tmp ? " [" : "", tmp?tmp:"", (help && strlen(help))?" ":"", help, tmp?"]":"" );
+                      tmp ? " [" : "", tmp?tmp:"", (help && strlen(help))?": ":"", help, tmp?"]":"" );
             }
 
             if( !(print & 0x02) && !(print & 0x04) &&
