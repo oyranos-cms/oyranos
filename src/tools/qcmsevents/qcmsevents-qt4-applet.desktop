@@ -1,0 +1,15 @@
+[Desktop Entry]
+Type=Application
+Exec=qcmsevents-qt4 %U
+Icon=qcmsevents
+Name=QCmsEvents
+Name[de]=QCmsEvents
+GenericName=Xorg Color Management Events
+GenericName[de]=Xorg Farbmanagement Ereignisse
+Comment=Show State of Color Server
+Comment[de]=Statusanzeige für Farbserver
+Categories=System;TrayIcon;
+OnlyShowIn=KDE;GNOME;ROX;XFCE;
+StartupNotify=false
+Terminal=false
+TryExec=qcmsevents-qt4
