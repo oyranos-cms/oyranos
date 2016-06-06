@@ -426,7 +426,7 @@ oyOptions_s *  oyOptions_FromText    ( const char        * text,
         tx = strstr(tmp, "</xf:instance>");
       if(tx)
         /* there should be enough bytes in the array */
-        sprintf(tx, root_end);
+        sprintf(tx, "%s", root_end);
     } else
     {
       tmp = oyStringAppend_( root_start, text, oyAllocateFunc_ );
