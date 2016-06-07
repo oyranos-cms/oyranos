@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Oyranos 0.9\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2016-05-17 09:14+0200\n"
+"POT-Creation-Date: 2016-06-07 10:18+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,39 +26,156 @@ msgstr ""
 #. *  @since   2008/02/06 (Oyranos: 0.1.8)
 #.
 #: include/oyranos_definitions.h:97
-#: modules/color/modules/oyranos_cmm_lcm2.c:3098
-#: modules/color/modules/oyranos_cmm_lcm2.c:3156
+#: modules/color/modules/oyranos_cmm_lcm2.c:3099
+#: modules/color/modules/oyranos_cmm_lcm2.c:3157
 msgid "[none]"
 msgstr ""
 
-#: API_generated/oyFilterPlugs_s_.c:195 API_generated/oyNamedColor_s_.c:223
-#: API_generated/oyFilterGraph_s_.c:201 API_generated/oyImage_s.c:355
-#: API_generated/oyCMMinfo_s_.c:202 API_generated/oyPixelAccess_s_.c:225
-#: API_generated/oyBlob_s_.c:227 API_generated/oyHash_s_.c:229
-#: API_generated/oyCMMapi6_s_.c:202 API_generated/oyCMMapi9_s_.c:202
-#: API_generated/oyranos_module.c:1561 API_generated/oyOptions_s_.c:196
-#: API_generated/oyCMMapi7_s_.c:252 API_generated/oyCMMapi_s_.c:195
-#: API_generated/oyConfigs_s_.c:195 API_generated/oyProfileTag_s_.c:208
-#: API_generated/oyCMMapi5_s_.c:189 API_generated/oyConfig_s_.c:229
-#: API_generated/oyList_s_.c:165 API_generated/oyCMMobjectType_s_.c:192
-#: API_generated/oyStructList_s_.c:239 API_generated/oyName_s_.c:47
-#: API_generated/oyName_s_.c:55 API_generated/oyFilterNode_s_.c:248
-#: API_generated/oyConnector_s_.c:201 API_generated/oyCMMapi3_s_.c:189
-#: API_generated/oyOption_s_.c:258 API_generated/oyFilterCore_s.c:203
-#: API_generated/oyCMMapi8_s_.c:202 API_generated/oyCMMapiFilters_s_.c:195
-#: API_generated/oyCMMapi10_s_.c:198 API_generated/oyArray2d_s_.c:215
-#: API_generated/oyCMMapis_s_.c:195 API_generated/oyFilterNodes_s_.c:195
-#: API_generated/oyObserver_s.c:50 API_generated/oyCMMapi4_s_.c:236
-#: API_generated/oyPointer_s_.c:277 API_generated/oyImage_s_.c:210
-#: API_generated/oyConversion_s_.c:196 API_generated/oyFilterSocket_s_.c:223
-#: API_generated/oyFilterPlug_s_.c:202 API_generated/oyCMMui_s_.c:202
-#: API_generated/oyProfile_s_.c:318 API_generated/oyConnectorImaging_s_.c:257
-#: API_generated/oyCMMapiFilter_s_.c:199 API_generated/oyProfiles_s_.c:195
-#: API_generated/oyRectangle_s_.c:191 API_generated/oyCMMapi4_s.c:227
-#: API_generated/oyLis_s_.c:187 API_generated/oyFilterCore_s_.c:225
-#: API_generated/oyranos_devices.c:3599 API_generated/oyNamedColors_s_.c:186
+#: API_generated/oyProfile_s_.c:318 API_generated/oyranos_devices.c:3599
+#: API_generated/oyranos_module.c:1561 API_generated/oyFilterNode_s_.c:248
+#: API_generated/oyImage_s.c:355 API_generated/oyArray2d_s_.c:215
+#: API_generated/oyBlob_s_.c:227 API_generated/oyCMMapi10_s_.c:198
+#: API_generated/oyCMMapi3_s_.c:189 API_generated/oyCMMapi4_s.c:227
+#: API_generated/oyCMMapi4_s_.c:236 API_generated/oyCMMapi5_s_.c:189
+#: API_generated/oyCMMapi6_s_.c:202 API_generated/oyCMMapi7_s_.c:252
+#: API_generated/oyCMMapi8_s_.c:202 API_generated/oyCMMapi9_s_.c:202
+#: API_generated/oyCMMapiFilter_s_.c:199
+#: API_generated/oyCMMapiFilters_s_.c:195 API_generated/oyCMMapi_s_.c:195
+#: API_generated/oyCMMapis_s_.c:195 API_generated/oyCMMinfo_s_.c:202
+#: API_generated/oyCMMobjectType_s_.c:192 API_generated/oyCMMui_s_.c:202
+#: API_generated/oyConfig_s_.c:229 API_generated/oyConfigs_s_.c:195
+#: API_generated/oyConnectorImaging_s_.c:257
+#: API_generated/oyConnector_s_.c:201 API_generated/oyConversion_s_.c:196
+#: API_generated/oyFilterCore_s.c:203 API_generated/oyFilterCore_s_.c:225
+#: API_generated/oyFilterGraph_s_.c:201 API_generated/oyFilterNodes_s_.c:195
+#: API_generated/oyFilterPlug_s_.c:202 API_generated/oyFilterPlugs_s_.c:195
+#: API_generated/oyFilterSocket_s_.c:223 API_generated/oyLis_s_.c:187
+#: API_generated/oyList_s_.c:165 API_generated/oyName_s_.c:47
+#: API_generated/oyName_s_.c:55 API_generated/oyNamedColor_s_.c:223
+#: API_generated/oyNamedColors_s_.c:186 API_generated/oyObserver_s.c:50
+#: API_generated/oyOption_s_.c:258 API_generated/oyHash_s_.c:229
+#: API_generated/oyImage_s_.c:210 API_generated/oyOptions_s_.c:196
+#: API_generated/oyPixelAccess_s_.c:225 API_generated/oyPointer_s_.c:277
+#: API_generated/oyProfileTag_s_.c:208 API_generated/oyProfiles_s_.c:195
+#: API_generated/oyRectangle_s_.c:191 API_generated/oyStructList_s_.c:239
 #: liboyranos/oyranos_alpha.c:278 liboyranos_modules/oyranos_forms.c:57
 msgid "MEM Error."
+msgstr ""
+
+#: API_generated/oyProfile_s_.c:792
+msgid "Wrong ICC profile id detected"
+msgstr ""
+
+#: API_generated/oyProfile_s_.c:800
+msgid "No ICC profile id detected"
+msgstr ""
+
+#: API_generated/oyProfile_s_.c:815
+msgid "ICC profile id written"
+msgstr ""
+
+#: API_generated/oyranos_devices.c:230 API_generated/oyranos_devices.c:993
+#: liboyranos/oyranos_alpha.c:823 liboyranos/oyranos_alpha.c:906
+msgid "Could not open device"
+msgstr ""
+
+#: API_generated/oyranos_devices.c:449
+msgid "Could not write to file"
+msgstr ""
+
+#: API_generated/oyranos_devices.c:494
+msgid "Could not open ICC profile"
+msgstr ""
+
+#: API_generated/oyranos_devices.c:495 API_generated/oyProfile_s.c:214
+#: API_generated/oyProfile_s.c:219
+msgid "install in the OpenIccDirectory icc path"
+msgstr ""
+
+#: API_generated/oyranos_devices.c:1004 API_generated/oyProfile_s.c:796
+#: liboyranos_core/oyranos_io_core.c:111 liboyranos_core/oyranos_io_core.c:269
+msgid "Could not open profile"
+msgstr ""
+
+#: API_generated/oyranos_devices.c:1387 API_generated/oyranos_devices.c:1764
+#: API_generated/oyranos_devices.c:1848 API_generated/oyConfig_s.c:1192
+#: modules/color/modules/oyranos_cmm_oyra_image_channel.c:145
+#: examples/taxi.c:230 examples/taxi.c:320 examples/devices/test_device.c:1094
+#: examples/devices/test_device.c:1120
+msgid "found issues parsing JSON"
+msgstr ""
+
+#: API_generated/oyranos_devices.c:1404
+msgid "device_class not found:"
+msgstr ""
+
+#: API_generated/oyranos_devices.c:1413 liboyranos_config/oyranos_check.c:76
+msgid "not found:"
+msgstr ""
+
+#: API_generated/oyranos_devices.c:2593 API_generated/oyranos_devices.c:2604
+#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:103
+#: modules/color/modules/oyranos_cmm_lcm2.c:3294
+#: modules/color/modules/oyranos_cmm_lcms.c:2422
+#: modules/color/modules/oyranos_cmm_oPNG.c:946
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1016
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1028
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1050
+#: modules/color/modules/oyranos_cmm_oyra_image_expose.c:102
+#: modules/color/modules/devices/oyranos_monitor_wcs.c:173
+#: modules/color/modules/devices/oyranos_monitor_x11.c:167
+#: modules/color/modules/devices/oyranos_monitor_x11.c:197
+#: modules/color/modules/devices/oyranos_monitor_x11.c:323
+#: modules/color/modules/devices/oyranos_monitor_x11.c:874
+#: modules/color/modules/devices/oyranos_monitor_x11.c:893
+#: modules/color/modules/devices/oyranos_monitor_x11.c:902
+#: modules/color/modules/devices/oyranos_monitor_x11.c:1000
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:900
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:906
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:918
+#: tools/oyranos_gamma.c:630 tools/oyranos_gamma.c:808
+#: tools/oyranos_gamma.c:933 tools/oyranos_gamma.c:952
+#: tools/oyranos_gamma.c:963 tools/oyranos_gamma.c:967
+#: tools/oyranos_gamma.c:969 tools/oyranos_gamma.c:983
+#: tools/oyranos_gamma.c:990 tools/oyranos_gamma.c:994
+#: tools/oyranos_gamma.c:1107 tools/oyranos_gamma.c:1110
+#: tools/oyranos_gamma.c:1112 tools/oyranos_gamma.c:1125
+msgid "found issues"
+msgstr ""
+
+#: API_generated/oyranos_devices.c:2676 API_generated/oyranos_devices.c:3182
+#: API_generated/oyranos_module.c:2011 API_generated/oyFilterNode_s_.c:594
+#: API_generated/oyConversion_s.c:190
+msgid "error in module:"
+msgstr ""
+
+#: API_generated/oyProfile_s.c:212 API_generated/oyProfile_s.c:218
+msgid "Could not open default ICC profile"
+msgstr ""
+
+#: API_generated/oyProfile_s.c:213
+msgid "You can get them from http://sf.net/projects/openicc"
+msgstr ""
+
+#: API_generated/oyProfile_s.c:382 liboyranos_config/oyranos_io.c:209
+msgid "profile not found:"
+msgstr ""
+
+#: API_generated/oyProfile_s.c:737
+msgid "Profile contains no description"
+msgstr ""
+
+#: API_generated/oyProfile_s.c:750 API_generated/oyProfile_s.c:756
+#: tools/oyranos_profiles.c:501
+msgid "Profile already installed"
+msgstr ""
+
+#: API_generated/oyProfile_s.c:772 tools/oyranos_profile_tool.c:353
+msgid "Profile exists already"
+msgstr ""
+
+#: API_generated/oyProfile_s.c:785
+msgid "Can not write profile"
 msgstr ""
 
 #: API_generated/oyranos_module.c:174
@@ -83,14 +200,23 @@ msgstr ""
 msgid "Copyright"
 msgstr ""
 
-#: API_generated/oyranos_module.c:2011 API_generated/oyConversion_s.c:190
-#: API_generated/oyFilterNode_s_.c:594 API_generated/oyranos_devices.c:2676
-#: API_generated/oyranos_devices.c:3182
-msgid "error in module:"
-msgstr ""
-
 #: API_generated/oyranos_module.c:2019
 msgid "Could not allocate memory for:"
+msgstr ""
+
+#: API_generated/oyFilterNode_s_.c:1216 API_generated/oyObserver_s.c:360
+#: API_generated/oyObserver_s.c:371 API_generated/oyObserver_s.c:572
+#: API_generated/oyObserver_s.c:650 API_generated/oyObserver_s_.c:53
+#: examples/image_display/oyranos_display_helper_classes_fltk.cpp:47
+msgid "Signal"
+msgstr ""
+
+#: API_generated/oyConversion_s.c:160
+msgid "Found no node in conversion. give up"
+msgstr ""
+
+#: API_generated/oyFilterCore_s.c:259
+msgid "Could not create filter"
 msgstr ""
 
 #: API_generated/oyFilterNode_s.c:156
@@ -103,118 +229,6 @@ msgstr ""
 
 #: API_generated/oyFilterNode_s.c:1017
 msgid "Remote filter or plug not available."
-msgstr ""
-
-#: API_generated/oyConversion_s.c:160
-msgid "Found no node in conversion. give up"
-msgstr ""
-
-#: API_generated/oyFilterNode_s_.c:1216 API_generated/oyObserver_s.c:360
-#: API_generated/oyObserver_s.c:371 API_generated/oyObserver_s.c:572
-#: API_generated/oyObserver_s.c:650 API_generated/oyObserver_s_.c:53
-#: examples/image_display/oyranos_display_helper_classes_fltk.cpp:47
-msgid "Signal"
-msgstr ""
-
-#: API_generated/oyFilterCore_s.c:259
-msgid "Could not create filter"
-msgstr ""
-
-#: API_generated/oyObserver_s.c:382 API_generated/oyObserver_s.c:587
-#: API_generated/oyObserver_s.c:665
-msgid "found observer of wrong type"
-msgstr ""
-
-#: API_generated/oyObserver_s.c:390 API_generated/oyObserver_s.c:595
-#: API_generated/oyObserver_s.c:673
-msgid "found no observer"
-msgstr ""
-
-#: API_generated/oyObserver_s.c:488
-msgid "Already enabled"
-msgstr ""
-
-#: API_generated/oyNamedColor_s.c:608 API_generated/oyranos_profile.c:55
-#: API_generated/oyranos_profile.c:91 liboyranos_config/oyranos_icc.c:516
-#: modules/color/modules/oyranos_cmm_lcm2.c:1519
-#: modules/color/modules/oyranos_cmm_oicc.c:223
-msgid "----"
-msgstr ""
-
-#: API_generated/oyOptions_s.c:1355 tools/oyranos_profile_tool.c:234
-#: tools/oyranos_profile_graph.c:264 tools/oyranos_convert.c:270
-#: tools/oyranos_policy.c:142 tools/oyranos_profiles.c:240
-#: tools/oyranos_gamma.c:253 examples/taxi.c:207
-#: examples/devices/test_device.c:254 examples/libraw/oyranos_file.cpp:236
-msgid "wrong argument to option:"
-msgstr ""
-
-#: API_generated/oyObserver_s_.c:165
-msgid "found list of wrong type"
-msgstr ""
-
-#: API_generated/oyranos_object.c:159 API_generated/oyranos_object.c:177
-#: API_generated/oyranos_object.c:279 API_generated/oyranos_object.c:295
-msgid "with '.' is not allowed"
-msgstr ""
-
-#: API_generated/oyProfile_s_.c:792
-msgid "Wrong ICC profile id detected"
-msgstr ""
-
-#: API_generated/oyProfile_s_.c:800
-msgid "No ICC profile id detected"
-msgstr ""
-
-#: API_generated/oyProfile_s_.c:815
-msgid "ICC profile id written"
-msgstr ""
-
-#: API_generated/oyConfig_s.c:1192 API_generated/oyranos_devices.c:1387
-#: API_generated/oyranos_devices.c:1764 API_generated/oyranos_devices.c:1848
-#: modules/color/modules/oyranos_cmm_oyra_image_channel.c:145
-#: examples/taxi.c:230 examples/taxi.c:320 examples/devices/test_device.c:1094
-#: examples/devices/test_device.c:1120
-msgid "found issues parsing JSON"
-msgstr ""
-
-#: API_generated/oyProfile_s.c:212 API_generated/oyProfile_s.c:218
-msgid "Could not open default ICC profile"
-msgstr ""
-
-#: API_generated/oyProfile_s.c:213
-msgid "You can get them from http://sf.net/projects/openicc"
-msgstr ""
-
-#: API_generated/oyProfile_s.c:214 API_generated/oyProfile_s.c:219
-#: API_generated/oyranos_devices.c:495
-msgid "install in the OpenIccDirectory icc path"
-msgstr ""
-
-#: API_generated/oyProfile_s.c:382 liboyranos_config/oyranos_io.c:209
-msgid "profile not found:"
-msgstr ""
-
-#: API_generated/oyProfile_s.c:737
-msgid "Profile contains no description"
-msgstr ""
-
-#: API_generated/oyProfile_s.c:750 API_generated/oyProfile_s.c:756
-#: tools/oyranos_profiles.c:501
-msgid "Profile already installed"
-msgstr ""
-
-#: API_generated/oyProfile_s.c:772 tools/oyranos_profile_tool.c:353
-msgid "Profile exists already"
-msgstr ""
-
-#: API_generated/oyProfile_s.c:785
-msgid "Can not write profile"
-msgstr ""
-
-#: API_generated/oyProfile_s.c:796 API_generated/oyranos_devices.c:1004
-#: liboyranos_core/oyranos_io_core.c:99 liboyranos_core/oyranos_io_core.c:244
-msgid "Could not open profile"
 msgstr ""
 
 #. spac
@@ -233,8 +247,8 @@ msgstr ""
 
 #. CMM: abbreviation for Color Matching Module
 #: API_generated/oyranos_profile.c:38 liboyranos_config/oyranos_texts.c:263
-#: modules/color/modules/oyranos_cmm_lcm2.c:3620
-#: modules/color/modules/oyranos_cmm_lcms.c:2714
+#: modules/color/modules/oyranos_cmm_lcm2.c:3621
+#: modules/color/modules/oyranos_cmm_lcms.c:2756
 msgid "CMM"
 msgstr ""
 
@@ -278,6 +292,13 @@ msgstr ""
 #: API_generated/oyranos_profile.c:51 API_generated/oyranos_profile.c:52
 #: API_generated/oyranos_profile.c:53 API_generated/oyranos_profile.c:54
 msgid "Date"
+msgstr ""
+
+#: API_generated/oyranos_profile.c:55 API_generated/oyranos_profile.c:91
+#: API_generated/oyNamedColor_s.c:608 liboyranos_config/oyranos_icc.c:516
+#: modules/color/modules/oyranos_cmm_lcm2.c:1520
+#: modules/color/modules/oyranos_cmm_oicc.c:223
+msgid "----"
 msgstr ""
 
 #. case icMaxEnumIluminant: return _("Illuminant ---"); break;
@@ -349,62 +370,43 @@ msgstr ""
 msgid "Creation Time in UTC"
 msgstr ""
 
+#: API_generated/oyObserver_s.c:382 API_generated/oyObserver_s.c:587
+#: API_generated/oyObserver_s.c:665
+msgid "found observer of wrong type"
+msgstr ""
+
+#: API_generated/oyObserver_s.c:390 API_generated/oyObserver_s.c:595
+#: API_generated/oyObserver_s.c:673
+msgid "found no observer"
+msgstr ""
+
+#: API_generated/oyObserver_s.c:488
+msgid "Already enabled"
+msgstr ""
+
+#: API_generated/oyObserver_s_.c:165
+msgid "found list of wrong type"
+msgstr ""
+
+#: API_generated/oyOptions_s.c:1372 tools/oyranos_profile_graph.c:264
+#: tools/oyranos_convert.c:270 tools/oyranos_gamma.c:253
+#: tools/oyranos_policy.c:148 tools/oyranos_profiles.c:240
+#: tools/oyranos_profile_tool.c:234 examples/taxi.c:207
+#: examples/devices/test_device.c:254 examples/libraw/oyranos_file.cpp:236
+msgid "wrong argument to option:"
+msgstr ""
+
 #: API_generated/oyPixelAccess_s.c:438 liboyranos/oyranos_cmm.c:117
 #: liboyranos/oyranos_cmm.c:247 liboyranos/oyranos_cmm.c:271
-#: modules/color/modules/oyranos_cmm_lcm2.c:2689
-#: modules/color/modules/oyranos_cmm_lcm2.c:2694
+#: modules/color/modules/oyranos_cmm_lcm2.c:2690
+#: modules/color/modules/oyranos_cmm_lcm2.c:2695
 #: modules/color/modules/oyranos_cmm_oPNG.c:1101
 msgid "Image"
 msgstr ""
 
-#: API_generated/oyranos_devices.c:230 API_generated/oyranos_devices.c:993
-#: liboyranos/oyranos_alpha.c:823 liboyranos/oyranos_alpha.c:906
-msgid "Could not open device"
-msgstr ""
-
-#: API_generated/oyranos_devices.c:449
-msgid "Could not write to file"
-msgstr ""
-
-#: API_generated/oyranos_devices.c:494
-msgid "Could not open ICC profile"
-msgstr ""
-
-#: API_generated/oyranos_devices.c:1404
-msgid "device_class not found:"
-msgstr ""
-
-#: API_generated/oyranos_devices.c:1413 liboyranos_config/oyranos_check.c:76
-msgid "not found:"
-msgstr ""
-
-#: API_generated/oyranos_devices.c:2593 API_generated/oyranos_devices.c:2604
-#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:103
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1016
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1028
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1050
-#: modules/color/modules/oyranos_cmm_oyra_image_expose.c:102
-#: modules/color/modules/oyranos_cmm_lcm2.c:3293
-#: modules/color/modules/oyranos_cmm_lcms.c:2380
-#: modules/color/modules/oyranos_cmm_oPNG.c:946
-#: modules/color/modules/devices/oyranos_monitor_x11.c:167
-#: modules/color/modules/devices/oyranos_monitor_x11.c:197
-#: modules/color/modules/devices/oyranos_monitor_x11.c:323
-#: modules/color/modules/devices/oyranos_monitor_x11.c:874
-#: modules/color/modules/devices/oyranos_monitor_x11.c:893
-#: modules/color/modules/devices/oyranos_monitor_x11.c:902
-#: modules/color/modules/devices/oyranos_monitor_x11.c:1000
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:900
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:906
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:918
-#: tools/oyranos_gamma.c:630 tools/oyranos_gamma.c:808
-#: tools/oyranos_gamma.c:933 tools/oyranos_gamma.c:952
-#: tools/oyranos_gamma.c:963 tools/oyranos_gamma.c:967
-#: tools/oyranos_gamma.c:969 tools/oyranos_gamma.c:983
-#: tools/oyranos_gamma.c:990 tools/oyranos_gamma.c:994
-#: tools/oyranos_gamma.c:1107 tools/oyranos_gamma.c:1110
-#: tools/oyranos_gamma.c:1112 tools/oyranos_gamma.c:1125
-msgid "found issues"
+#: API_generated/oyranos_object.c:159 API_generated/oyranos_object.c:177
+#: API_generated/oyranos_object.c:279 API_generated/oyranos_object.c:295
+msgid "with '.' is not allowed"
 msgstr ""
 
 #: API_generated/oyranos_object_internal.h:42
@@ -443,10 +445,10 @@ msgstr ""
 msgid "Copyright (c) 2005-2014 Kai-Uwe Behrmann; newBSD"
 msgstr ""
 
-#: liboyranos/oyranos_cmm.c:224 modules/color/modules/oyranos_cmm_trds.c:675
-#: modules/color/modules/oyranos_cmm_oyra.c:147
-#: modules/color/modules/oyranos_cmm_oydi.c:1167
+#: liboyranos/oyranos_cmm.c:224 modules/color/modules/oyranos_cmm_oydi.c:1167
 #: modules/color/modules/oyranos_cmm_oicc.c:1065
+#: modules/color/modules/oyranos_cmm_oyra.c:147
+#: modules/color/modules/oyranos_cmm_trds.c:675
 #: modules/color/modules/devices/oyranos_cmm_disp.c:1321
 #: modules/color/modules/oyranos_cmm_lraw.cpp:239
 #: examples/oyranos_cmm_dFil.c:164
@@ -482,93 +484,29 @@ msgstr ""
 msgid "!!! ERROR"
 msgstr ""
 
-#: liboyranos_core/oyranos_io_core.c:335
+#: liboyranos_core/oyranos_io_core.c:360
 msgid "Could not download from WWW. Please install curl or wget."
 msgstr ""
 
-#: liboyranos_core/oyranos_io_core.c:470 liboyranos_core/oyranos_io_core.c:472
+#: liboyranos_core/oyranos_io_core.c:495 liboyranos_core/oyranos_io_core.c:497
 msgid "Program not found"
 msgstr ""
 
-#: liboyranos_core/oyranos_io_core.c:696 liboyranos_core/oyranos_io_core.c:741
+#: liboyranos_core/oyranos_io_core.c:721 liboyranos_core/oyranos_io_core.c:766
 msgid "File exists"
 msgstr ""
 
-#: liboyranos_core/oyranos_io_core.c:1298
+#: liboyranos_core/oyranos_io_core.c:1323
 msgid "path is not a directory"
 msgstr ""
 
-#: liboyranos_core/oyranos_io_core.c:1302
+#: liboyranos_core/oyranos_io_core.c:1327
 msgid "path is a link: ignored"
 msgstr ""
 
-#: liboyranos_core/oyranos_io_core.c:1307
-#: liboyranos_core/oyranos_io_core.c:1879
+#: liboyranos_core/oyranos_io_core.c:1332
+#: liboyranos_core/oyranos_io_core.c:1904
 msgid "path is not readable"
-msgstr ""
-
-#. HTML
-#: liboyranos_config/oyranos_xml.c:703
-msgid "About Oyranos"
-msgstr ""
-
-#. HTML
-#: liboyranos_config/oyranos_xml.c:869
-msgid "Oyranos Version"
-msgstr ""
-
-#. HTML
-#: liboyranos_config/oyranos_xml.c:879
-msgid "Copyright &copy;"
-msgstr ""
-
-#: liboyranos_config/oyranos_xml.c:1017
-msgid "Internet: <a href=\"http://www.oyranos.org\">www.oyranos.org</a><br>"
-msgstr ""
-
-#. HTML
-#: liboyranos_config/oyranos_xml.c:1024
-msgid ""
-"Oyranos is a Color Management System (CMS), which relies one the ICC file "
-"format standard (<a href=\"http://www.color.org\">www.color.org</a>) for "
-"color space definitions. The use of ICC color profiles shall enable a "
-"flawless and automated color data exchange between different color spaces "
-"and various devices with their respective physical color behaviours."
-msgstr ""
-
-#. HTML
-#: liboyranos_config/oyranos_xml.c:1036
-msgid ""
-"Color matching between different devices is possible, provided that the "
-"color characteristics of the involved devices are known. The quality of a "
-"color transform for devices from one color space to an other depends "
-"particularly on the quality of the color measurement and the profiling "
-"algorithm used during ICC profile creation. Each color space definition "
-"happens in reference to a Profile Connection Spaces (PCS). The PCS is a well "
-"known color space, based on the average \"human observer\" as defined by CIE."
-msgstr ""
-
-#. HTML
-#: liboyranos_config/oyranos_xml.c:1051
-msgid ""
-"Color profiles are often available from manufacturers of imaging devices as "
-"digital cameras, monitors and printers. In Oyranos, ICC profiles are "
-"assigned to calibration states of color devices, to get close to the device "
-"behaviour as was present during ICC profile creation."
-msgstr ""
-
-#. HTML
-#: liboyranos_config/oyranos_xml.c:1061
-msgid ""
-"Oyranos allowes detailed settings like preferred editing color spaces and "
-"the behaviour of color conversions or simulation. Oyranos reduces the work "
-"involved in all color management related decisions through automation, "
-"useful defaults and grouping of settings in selectable policies."
-msgstr ""
-
-#: liboyranos_config/oyranos_elektra.c:909
-#: liboyranos_config/oyranos_elektra.c:927
-msgid "default profile type does not exist:"
 msgstr ""
 
 #: liboyranos_config/oyranos_texts.c:155
@@ -1192,14 +1130,14 @@ msgstr ""
 #: liboyranos_config/oyranos_texts.c:566 liboyranos_config/oyranos_texts.c:586
 #: liboyranos_config/oyranos_texts.c:596 liboyranos_config/oyranos_texts.c:606
 #: liboyranos_config/oyranos_texts.c:616
-#: modules/color/modules/oyranos_cmm_lcm2.c:3202
+#: modules/color/modules/oyranos_cmm_lcm2.c:3203
 msgid "No"
 msgstr ""
 
 #: liboyranos_config/oyranos_texts.c:566 liboyranos_config/oyranos_texts.c:586
 #: liboyranos_config/oyranos_texts.c:596 liboyranos_config/oyranos_texts.c:606
 #: liboyranos_config/oyranos_texts.c:616
-#: modules/color/modules/oyranos_cmm_lcm2.c:3208
+#: modules/color/modules/oyranos_cmm_lcm2.c:3209
 msgid "Yes"
 msgstr ""
 
@@ -1314,16 +1252,75 @@ msgstr ""
 msgid "CMM Renderer Fallback"
 msgstr ""
 
-#: liboyranos_config/oyranos_io.c:108
-msgid "not a profile:"
+#: liboyranos_config/oyranos.c:92
+msgid "wrong profile for static web color space selected, need sRGB"
 msgstr ""
 
-#: liboyranos_config/oyranos_io.c:153
-msgid "name longer than"
+#: liboyranos_config/oyranos.c:126 liboyranos_config/oyranos.c:156
+msgid "Option not supported type:"
 msgstr ""
 
-#: liboyranos_config/oyranos_io.c:181
-msgid "profile not found in color path:"
+#: liboyranos_config/oyranos.c:529
+msgid "will overwrite policy file"
+msgstr ""
+
+#. HTML
+#: liboyranos_config/oyranos_xml.c:703
+msgid "About Oyranos"
+msgstr ""
+
+#. HTML
+#: liboyranos_config/oyranos_xml.c:869
+msgid "Oyranos Version"
+msgstr ""
+
+#. HTML
+#: liboyranos_config/oyranos_xml.c:879
+msgid "Copyright &copy;"
+msgstr ""
+
+#: liboyranos_config/oyranos_xml.c:1017
+msgid "Internet: <a href=\"http://www.oyranos.org\">www.oyranos.org</a><br>"
+msgstr ""
+
+#. HTML
+#: liboyranos_config/oyranos_xml.c:1024
+msgid ""
+"Oyranos is a Color Management System (CMS), which relies one the ICC file "
+"format standard (<a href=\"http://www.color.org\">www.color.org</a>) for "
+"color space definitions. The use of ICC color profiles shall enable a "
+"flawless and automated color data exchange between different color spaces "
+"and various devices with their respective physical color behaviours."
+msgstr ""
+
+#. HTML
+#: liboyranos_config/oyranos_xml.c:1036
+msgid ""
+"Color matching between different devices is possible, provided that the "
+"color characteristics of the involved devices are known. The quality of a "
+"color transform for devices from one color space to an other depends "
+"particularly on the quality of the color measurement and the profiling "
+"algorithm used during ICC profile creation. Each color space definition "
+"happens in reference to a Profile Connection Spaces (PCS). The PCS is a well "
+"known color space, based on the average \"human observer\" as defined by CIE."
+msgstr ""
+
+#. HTML
+#: liboyranos_config/oyranos_xml.c:1051
+msgid ""
+"Color profiles are often available from manufacturers of imaging devices as "
+"digital cameras, monitors and printers. In Oyranos, ICC profiles are "
+"assigned to calibration states of color devices, to get close to the device "
+"behaviour as was present during ICC profile creation."
+msgstr ""
+
+#. HTML
+#: liboyranos_config/oyranos_xml.c:1061
+msgid ""
+"Oyranos allowes detailed settings like preferred editing color spaces and "
+"the behaviour of color conversions or simulation. Oyranos reduces the work "
+"involved in all color management related decisions through automation, "
+"useful defaults and grouping of settings in selectable policies."
 msgstr ""
 
 #: liboyranos_config/oyranos_icc.c:194
@@ -1676,7 +1673,7 @@ msgstr ""
 
 #. nmcl
 #: liboyranos_config/oyranos_icc.c:474 liboyranos_config/oyranos_icc.c:628
-#: modules/color/modules/oyranos_cmm_lcm2.c:1504
+#: modules/color/modules/oyranos_cmm_lcm2.c:1505
 msgid "Named Color"
 msgstr ""
 
@@ -2158,682 +2155,21 @@ msgstr ""
 msgid "100"
 msgstr ""
 
-#: liboyranos_config/oyranos.c:92
-msgid "wrong profile for static web color space selected, need sRGB"
+#: liboyranos_config/oyranos_io.c:108
+msgid "not a profile:"
 msgstr ""
 
-#: liboyranos_config/oyranos.c:126 liboyranos_config/oyranos.c:156
-msgid "Option not supported type:"
+#: liboyranos_config/oyranos_io.c:153
+msgid "name longer than"
 msgstr ""
 
-#: liboyranos_config/oyranos.c:529
-msgid "will overwrite policy file"
+#: liboyranos_config/oyranos_io.c:181
+msgid "profile not found in color path:"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:369
-msgid "Image[scale]"
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:371
-msgid "Scale Image Filter Object"
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:377
-#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:416
-#: modules/color/modules/oyranos_cmm_oyra_image_expose.c:310
-#: modules/color/modules/oyranos_cmm_oyra_image_channel.c:428
-#: modules/color/modules/oyranos_cmm_oyra_image_channel.c:444
-msgid "The filter is used to reduce pixels."
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:401
-msgid ""
-"The filter will expect a \"scale\" double option and will create, fill and "
-"process a according data version with a new job ticket. The new job tickets "
-"image, array and output_array_roi will be divided by the supplied \"scale\" "
-"factor. It's plug will request the divided image sizes from the source "
-"socket."
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:402
-msgid "Relation of positional parameters:"
-msgstr ""
-
-#. output image region of interesst
-#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:404
-msgid "output_array_roi"
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:405
-msgid "source image"
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:406
-msgid "output image"
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:414
-msgid "Image/Simple Image[scale]"
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_oyra_image.c:331
-msgid "Write"
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_oyra_image.c:333
-#: modules/color/modules/oyranos_cmm_oyra_image.c:732
-#: modules/color/modules/oyranos_cmm_oJPG.c:757
-msgid "Load Image File Object"
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_oyra_image.c:339
-#: modules/color/modules/oyranos_cmm_oyra_image.c:341
-#: modules/color/modules/oyranos_cmm_oyra_image.c:738
-#: modules/color/modules/oyranos_cmm_oyra_image.c:740
-msgid "unfinished"
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_oyra_image.c:730
-msgid "Load"
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1178
-msgid "Rectangles"
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1180
-msgid "Rectangles Splitter Object"
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1186
-msgid "Apply regions of interesst in form of simple rectangles."
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1188
-msgid ""
-"The filter will expect a \"rectangle\" option and will create, fill and "
-"process a according rectangle with a new job ticket."
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1386
-msgid "Root Image"
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1388
-msgid "Root Image Filter Object"
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1394
-msgid "The filter provides a generic image source."
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1396
-msgid "The root image filter can hold pixel data for processing in a graph."
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1577
-msgid "Image[out]"
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1579
-msgid "Output Image Filter Object"
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1585
-msgid "The filter is a possible pixel target in a graph."
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1587
-msgid ""
-"The filter can query pixels from its successors in a graph. The results are "
-"stored in the internal buffer."
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_oyra_image_expose.c:285
-msgid "Image[expose]"
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_oyra_image_expose.c:287
-msgid "Expose Image Filter Object"
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_oyra_image_expose.c:293
-msgid "The filter adapts pixel brightness."
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_oyra_image_expose.c:299
-msgid ""
-"The filter expects a \"expose\" double option and will process the data "
-"accordingly."
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_oyra_image_expose.c:308
-msgid "Image/Simple Image[expose]"
-msgstr ""
-
-#. Multi process elements types
-#: modules/color/modules/oyranos_cmm_lcm2.c:1494
-msgid "Curve Set"
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_lcm2.c:1495
-msgid "Matrix"
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_lcm2.c:1496
-msgid "Look Up Table"
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_lcm2.c:1498
-msgid "BAcs"
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_lcm2.c:1499
-msgid "EAcs"
-msgstr ""
-
-#. Custom from here, not in the ICC Spec
-#: modules/color/modules/oyranos_cmm_lcm2.c:1502
-msgid "XYZ2Lab"
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_lcm2.c:1503
-msgid "Lab2XYZ"
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_lcm2.c:1505
-msgid "V2toV4"
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_lcm2.c:1506
-msgid "V4toV2"
-msgstr ""
-
-#. Identities
-#: modules/color/modules/oyranos_cmm_lcm2.c:1509
-msgid "Identity"
-msgstr ""
-
-#. Float to floatPCS
-#: modules/color/modules/oyranos_cmm_lcm2.c:1512
-msgid "Lab2FloatPCS"
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_lcm2.c:1513
-msgid "FloatPCS2Lab"
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_lcm2.c:1514
-msgid "XYZ2FloatPCS"
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_lcm2.c:1516
-msgid "FloatPCS2XYZ"
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_lcm2.c:1517
-msgid "Clip Negatives"
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_lcm2.c:2678
-msgid "running new ticket failed"
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_lcm2.c:2687
-msgid "Read from"
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_lcm2.c:2692
-msgid "Write to"
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_lcm2.c:3081
-#: modules/color/modules/oyranos_cmm_lcms.c:2253
-msgid "Extended Options"
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_lcm2.c:3086
-#: modules/color/modules/oyranos_cmm_lcms.c:2258
-msgid "Black Preservation"
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_lcm2.c:3089
-#: modules/color/modules/oyranos_cmm_lcms.c:2261
-msgid "Decide how to preserve the black channel for Cmyk to Cmyk transforms"
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_lcm2.c:3092
-msgid ""
-"Cmyk to Cmyk transforms can provide various strategies to preserve the black "
-"only channel. None means, black might change to Cmy and thus text prints not "
-"very well. LittleCMS 2 has added two different modes to deal with that: "
-"Black-ink-only preservation and black-plane preservation. The first is "
-"simple and effective: do all the colorimetric transforms but keep only K "
-"(preserving L*) where the source image is only black. The second mode is "
-"fair more complex and tries to preserve the WHOLE K plane."
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_lcm2.c:3114
-#: modules/color/modules/oyranos_cmm_lcms.c:2284
-msgid "Optimization"
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_lcm2.c:3117
-#: modules/color/modules/oyranos_cmm_lcms.c:2287
-msgid "Color Transforms can be differently stored internally"
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_lcm2.c:3120
-#: modules/color/modules/oyranos_cmm_lcms.c:2290
-msgid ""
-"Little CMS tries to optimize profile chains whatever possible. There are "
-"some built-in optimization schemes, and you can add new schemas by using a "
-"plug-in. This generally improves the performance of the transform, but may "
-"introduce a small delay of 1-2 seconds when creating the transform. If you "
-"are going to transform just few colors, you don't need this precalculations. "
-"Then, the flag cmsFLAGS_NOOPTIMIZE in cmsCreateTransform() can be used to "
-"inhibit the optimization process. See the API reference for a more detailed "
-"discussion of the flags."
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_lcm2.c:3144
-msgid "Curves for Optimization"
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_lcm2.c:3147
-msgid "Color Transform CLUT's can additionally use curves for special cases"
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_lcm2.c:3150
-msgid ""
-"Little CMS can use curves before and after CLUT's for special cases like "
-"gamma encoded values to and from linear gamma values. Performance will "
-"suffer."
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_lcm2.c:3168
-msgid "Adaptation State"
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_lcm2.c:3171
-msgid "Adaptation state for absolute colorimetric intent"
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_lcm2.c:3174
-msgid ""
-"The adaption state should be between 0 and 1.0 and will apply to the "
-"absolute colorimetric intent."
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_lcm2.c:3190
-msgid "No White on White Fix"
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_lcm2.c:3193
-msgid "Skip White Point on White point alignment"
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_lcm2.c:3196
-msgid ""
-"Avoid force of White on White mapping. Default for absolute rendering intent."
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_lcm2.c:3394
-#: modules/color/modules/oyranos_cmm_lcm2.c:3467
-#: modules/color/modules/oyranos_cmm_trds.c:582
-#: modules/color/modules/oyranos_cmm_lcms.c:2488
-#: modules/color/modules/oyranos_cmm_lcms.c:2561
-#: modules/color/modules/devices/oyranos_monitor_x11.c:1782
-#: modules/color/modules/devices/oyranos_monitor_x11.c:2040
-#: examples/oyranos_cmm_dFil.c:610
-msgid "check"
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_lcm2.c:3396
-#: modules/color/modules/oyranos_cmm_lcm2.c:3469
-#: modules/color/modules/oyranos_cmm_trds.c:584
-#: modules/color/modules/oyranos_cmm_lcms.c:2490
-#: modules/color/modules/oyranos_cmm_lcms.c:2563
-#: modules/color/modules/devices/oyranos_monitor_x11.c:1784
-#: modules/color/modules/devices/oyranos_monitor_x11.c:2042
-#: examples/oyranos_cmm_dFil.c:612
-msgid "Check if this module can handle a certain command."
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_lcm2.c:3402
-#: modules/color/modules/oyranos_cmm_lcms.c:2496
-msgid "Create a ICC abstract proofing profile."
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_lcm2.c:3404
-msgid ""
-"The littleCMS \"create_profile.proofing_effect\" command lets you create ICC "
-"abstract profiles from a given ICC profile for proofing. The filter expects "
-"a oyOption_s object with name \"proofing_profile\" containing a oyProfile_s "
-"as value. The options \"rendering_intent\", \"rendering_intent_proof\", "
-"\"rendering_bpc\", \"rendering_gamut_warning\", \"precalculation\", "
-"\"precalculation_curves\", \"cmyk_cmyk_black_preservation\", \"adaption_state"
-"\"  and \"no_white_on_white_fixup\" are honoured. The result will appear in "
-"\"icc_profile\" with the additional attributes \"create_profile."
-"proofing_effect\" as a oyProfile_s object."
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_lcm2.c:3410
-#: modules/color/modules/oyranos_cmm_lcms.c:2504
-msgid "Create a ICC proofing profile."
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_lcm2.c:3412
-#: modules/color/modules/oyranos_cmm_lcms.c:2506
-msgid ""
-"The littleCMS \"create_profile.proofing_effect\" command lets you create ICC "
-"abstract profiles from some given ICC profile. See the \"proofing_effect\" "
-"info item."
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_lcm2.c:3475
-#: modules/color/modules/oyranos_cmm_lcm2.c:3483
-#: modules/color/modules/oyranos_cmm_lcms.c:2569
-#: modules/color/modules/oyranos_cmm_lcms.c:2577
-msgid "Create a ICC matrix profile."
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_lcm2.c:3477
-msgid ""
-"The littleCMS \"create_profile.color_matrix\" command lets you create ICC "
-"profiles from some given colorimetric coordinates. The filter expects a "
-"oyOption_s object with name \"color_matrix."
-"redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma\" containing 9 "
-"floats in the order of CIE*x for red, CIE*y for red, CIE*x for green, CIE*y "
-"for green, CIE*x for blue, CIE*y for blue, CIE*x for white, CIE*y for white "
-"and a gamma value."
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_lcm2.c:3485
-#: modules/color/modules/oyranos_cmm_lcms.c:2579
-msgid ""
-"The littleCMS \"create_profile.color_matrix\" command lets you create ICC "
-"profiles from some given colorimetric coordinates. See the \"create_profile"
-"\" info item."
-msgstr ""
-
-#. The following strings must match the categories for a menu entry.
-#: modules/color/modules/oyranos_cmm_lcm2.c:3617
-#: modules/color/modules/oyranos_cmm_lcms.c:2711
-#: modules/color/modules/devices/oyranos_cmm_SANE.c:833
-#: modules/color/modules/devices/oyranos_cmm_CUPS.c:872
-#: modules/color/modules/devices/oyranos_cmm_disp.c:1174
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1227
-#: examples/oyranos_cmm_dFil.c:411 examples/oyranos_cmm_dDev.c:714
-msgid "Color"
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_lcm2.c:3618
-#: modules/color/modules/oyranos_cmm_lcm2.c:3621
-#: modules/color/modules/oyranos_cmm_lcms.c:2712
-#: modules/color/modules/oyranos_cmm_lcms.c:2715
-#: modules/color/modules/oyranos_cmm_oPNG.c:553
-#: modules/color/modules/oyranos_cmm_oPNG.c:1168
-#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:268
-#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1159
-#: modules/color/modules/devices/oyranos_cmm_CUPS.c:873
-#: modules/color/modules/devices/oyranos_cmm_CUPS.c:876
-#: modules/color/modules/devices/oyranos_cmm_disp.c:1175
-#: modules/color/modules/devices/oyranos_cmm_disp.c:1178
-msgid "/"
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_lcm2.c:3622
-#: modules/color/modules/oyranos_cmm_lcms.c:2716
-msgid "littleCMS"
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_lcm2.c:3713
-msgid "Little CMS 2"
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_lcm2.c:3715
-msgid ""
-"LittleCMS 2 is a CMM, a color management engine; it implements fast "
-"transforms between ICC profiles. \"Little\" stands for its small overhead. "
-"With a typical footprint of about 100K including C runtime, you can color-"
-"enable your application without the pain of ActiveX, OCX, redistributables "
-"or binaries of any kind. We are using little cms in several commercial "
-"projects, however, we are offering lcms library free for anybody under an "
-"extremely liberal open source license."
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_lcm2.c:3723
-msgid ""
-"littleCMS 2 project; www: http://www.littlecms.com; support/email: "
-"support@littlecms.com; sources: http://www.littlecms.com/downloads.htm; "
-"Oyranos wrapper: Kai-Uwe Behrmann for the Oyranos project"
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_lcm2.c:3729
-msgid "Copyright (c) 1998-2016 Marti Maria Saguer; MIT"
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_lcm2.c:3731
-#: modules/color/modules/oyranos_cmm_lcms.c:2825
-#: modules/color/modules/devices/oyranos_cmm_SANE.c:947
-#: modules/color/modules/devices/oyranos_cmm_CUPS.c:990
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1341
-#: examples/oyranos_cmm_dDev.c:836
-msgid "MIT license: http://www.opensource.org/licenses/mit-license.php"
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_lcm2.c:3737
-msgid ""
-"The lcms \"color_icc\" filter is a one dimensional color conversion filter. "
-"It can both create a color conversion context, some precalculated for "
-"processing speed up, and the color conversion with the help of that context. "
-"The adaption part of this filter transforms the Oyranos color context, which "
-"is ICC device link based, to the internal lcms format."
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_lcm2.c:3739
-msgid ""
-"The following options are available to create color contexts:\n"
-" \"profiles_simulation\", a option of type oyProfiles_s, can contain device "
-"profiles for proofing.\n"
-" \"profiles_effect\", a option of type oyProfiles_s, can contain abstract "
-"color profiles.\n"
-" The following Oyranos options are supported: \"rendering_gamut_warning\", "
-"\"rendering_intent_proof\", \"rendering_bpc\", \"rendering_intent\", "
-"\"proof_soft\" and \"proof_hard\".\n"
-" The additional lcms option is supported \"cmyk_cmyk_black_preservation\" [0 "
-"- none; 1 - LCMS_PRESERVE_PURE_K; 2 - LCMS_PRESERVE_K_PLANE], "
-"\"precalculation\": [0 - normal; 1 - cmsFLAGS_NOOPTIMIZE; 2 - "
-"cmsFLAGS_HIGHRESPRECALC, 3 - cmsFLAGS_LOWRESPRECALC], \"precalculation_curves"
-"\": [0 - none; 1 - cmsFLAGS_CLUT_POST_LINEARIZATION + "
-"cmsFLAGS_CLUT_PRE_LINEARIZATION], \"adaption_state\": [0.0 - not adapted to "
-"screen, 1.0 - full adapted to screen] and \"no_white_on_white_fixup\": [0 - "
-"force white on white, 1 - keep as is]."
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_trds.c:590
-#: modules/color/modules/oyranos_cmm_trds.c:598
-msgid "Initialise the oyJob_s APIs."
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_trds.c:592
-#: modules/color/modules/oyranos_cmm_trds.c:600
-msgid ""
-"The Oyranos \"threads_handler\" command will initialise the oyJob_s APIs "
-"with a available threading model."
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_trds.c:657
-msgid "Oyranos Threads"
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_trds.c:659
-msgid "Oyranos Threads default Handling"
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_trds.c:667
-#: modules/color/modules/oyranos_cmm_oyra.c:139
-#: modules/color/modules/oyranos_cmm_oydi.c:1159
-#: modules/color/modules/oyranos_cmm_oicc.c:1057
-#: modules/color/modules/devices/oyranos_cmm_SANE.c:940
-#: modules/color/modules/devices/oyranos_cmm_CUPS.c:981
-#: modules/color/modules/devices/oyranos_cmm_disp.c:1313
-#: modules/color/modules/oyranos_cmm_lraw.cpp:231
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1334
-#: examples/oyranos_cmm_dDev.c:828
-msgid ""
-"Oyranos project; www: http://www.oyranos.com; support/email: ku.b@gmx.de; "
-"sources: http://www.oyranos.com/wiki/index.php?title=Oyranos/Download"
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_trds.c:673
-msgid "Copyright (c) 2014-2016 Kai-Uwe Behrmann; new BSD"
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_trds.c:681
-#: modules/color/modules/oyranos_cmm_trds.c:683
-msgid ""
-"The filter provides a default oyJob_s handling mechanism for asynchronous "
-"processing."
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_lcms.c:2264
-msgid ""
-"Cmyk to Cmyk transforms can provide various strategies to preserve the black "
-"only channel. None means, black might change to Cmy and thus text prints not "
-"very well. LittleCMS has added two different modes to deal with that: Black-"
-"ink-only preservation and black-plane preservation. The first is simple and "
-"effective: do all the colorimetric transforms but keep only K (preserving "
-"L*) where the source image is only black. The second mode is fair more "
-"complex and tries to preserve the WHOLE K plane."
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_lcms.c:2498
-msgid ""
-"The littleCMS \"create_profile.proofing_effect\" command lets you create ICC "
-"abstract profiles from a given ICC profile for proofing. The filter expects "
-"a oyOption_s object with name \"proofing_profile\" containing a oyProfile_s "
-"as value. The options \"rendering_intent\", \"rendering_intent_proof\", "
-"\"rendering_bpc\", \"rendering_gamut_warning\", \"precalculation\" and "
-"\"cmyk_cmyk_black_preservation\" are honoured. The result will appear in "
-"\"icc_profile\" with the additional attributes \"create_profile."
-"proofing_effect\" as a oyProfile_s object."
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_lcms.c:2571
-msgid ""
-"The littleCMS \"create_profile.color_matrix\" command lets you create ICC "
-"profiles from some given colorimetric coordinates. The filter expects a "
-"oyOption_s object with name \"color_matrix."
-"redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma\" containing 9 "
-"floats in the order of CIE*x for red, CIE*y for red, CIE*x for green, CIE*y "
-"for green, CIE*x for blue, CIE*y for blue, CIE*x for white, CIE*y for white "
-"and a gamma value. The result will appear in \"icc_profile\" with the "
-"additional attributes \"create_profile.color_matrix\"."
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_lcms.c:2807
-msgid "Little CMS"
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_lcms.c:2809
-msgid ""
-"LittleCMS is a CMM, a color management engine; it implements fast transforms "
-"between ICC profiles. \"Little\" stands for its small overhead. With a "
-"typical footprint of about 100K including C runtime, you can color-enable "
-"your application without the pain of ActiveX, OCX, redistributables or "
-"binaries of any kind. We are using little cms in several commercial "
-"projects, however, we are offering lcms library free for anybody under an "
-"extremely liberal open source license."
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_lcms.c:2817
-msgid ""
-"littleCMS project; www: http://www.littlecms.com; support/email: "
-"support@littlecms.com; sources: http://www.littlecms.com/downloads.htm; "
-"Oyranos wrapper: Kai-Uwe Behrmann for the Oyranos project"
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_lcms.c:2823
-msgid "Copyright (c) 1998-2008 Marti Maria Saguer; MIT"
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_lcms.c:2831
-msgid ""
-"The lcms \"color.icc\" filter is a one dimensional color conversion filter. "
-"It can both create a color conversion context, some precalculated for "
-"processing speed up, and the color conversion with the help of that context. "
-"The adaption part of this filter transforms the Oyranos color context, which "
-"is ICC device link based, to the internal lcms format."
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_lcms.c:2833
-msgid ""
-"The following options are available to create color contexts:\n"
-" \"profiles_simulation\", a option of type oyProfiles_s, can contain device "
-"profiles for proofing.\n"
-" \"profiles_effect\", a option of type oyProfiles_s, can contain abstract "
-"color profiles.\n"
-" The following Oyranos options are supported: \"rendering_gamut_warning\", "
-"\"rendering_intent_proof\", \"rendering_bpc\", \"rendering_intent\", "
-"\"proof_soft\" and \"proof_hard\".\n"
-" The additional lcms options are supported \"cmyk_cmyk_black_preservation"
-"\" [0 - none; 1 - LCMS_PRESERVE_PURE_K; 2 - LCMS_PRESERVE_K_PLANE] and "
-"\"precalculation\"."
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_oyra.c:145
-#: modules/color/modules/devices/oyranos_cmm_disp.c:1319
-msgid "Copyright (c) 2005-2010 Kai-Uwe Behrmann; newBSD"
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_oyra_image_channel.c:420
-msgid "Image[channel]"
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_oyra_image_channel.c:422
-msgid "Channel Image Filter Object"
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_oyra_image_channel.c:434
-msgid ""
-"The filter will expect a \"channel\" double option and will create, fill and "
-"process a according data version with a new job ticket. The new job tickets "
-"image, array and output_array_roi will be divided by the supplied \"channel"
-"\" factor. It's plug will request the divided image sizes from the source "
-"socket."
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_oyra_image_channel.c:442
-msgid "Image/Simple Image[channel]"
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_oJPG.c:755
-msgid "read"
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_oJPG.c:763
-msgid "Option \"filename\", a valid filename of a existing image"
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_oJPG.c:765
-msgid ""
-"The Option \"filename\" should contain a valid filename to read the image "
-"data from. If the file does not exist, a error will occure."
-msgstr ""
-
-#. The following strings must match the categories for a menu entry.
-#: modules/color/modules/oyranos_cmm_oJPG.c:772
-#: modules/color/modules/oyranos_cmm_oPNG.c:552
-#: modules/color/modules/oyranos_cmm_oPNG.c:1167
-#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:267
-#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1158
-msgid "Files"
-msgstr ""
-
-#: modules/color/modules/oyranos_cmm_oJPG.c:772
-msgid "Read"
+#: liboyranos_config/oyranos_elektra.c:909
+#: liboyranos_config/oyranos_elektra.c:927
+msgid "default profile type does not exist:"
 msgstr ""
 
 #: modules/color/modules/oyranos_cmm_oydi.c:1149
@@ -2842,6 +2178,22 @@ msgstr ""
 
 #: modules/color/modules/oyranos_cmm_oydi.c:1151
 msgid "The client side window data handler of Oyranos."
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_oydi.c:1159
+#: modules/color/modules/oyranos_cmm_oicc.c:1057
+#: modules/color/modules/oyranos_cmm_oyra.c:139
+#: modules/color/modules/oyranos_cmm_trds.c:667
+#: modules/color/modules/devices/oyranos_cmm_CUPS.c:981
+#: modules/color/modules/devices/oyranos_cmm_SANE_150826.235129.c:940
+#: modules/color/modules/devices/oyranos_cmm_SANE.c:940
+#: modules/color/modules/devices/oyranos_cmm_disp.c:1313
+#: modules/color/modules/oyranos_cmm_lraw.cpp:231
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1334
+#: examples/oyranos_cmm_dDev.c:828
+msgid ""
+"Oyranos project; www: http://www.oyranos.com; support/email: ku.b@gmx.de; "
+"sources: http://www.oyranos.com/wiki/index.php?title=Oyranos/Download"
 msgstr ""
 
 #: modules/color/modules/oyranos_cmm_oydi.c:1165
@@ -2878,6 +2230,575 @@ msgid ""
 "will be stored as processing data in the socket.\n"
 " \"preserve_alpha\" is a integer option to keep a given alpha in a not yet "
 "allocated output image. "
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_oyra_image_channel.c:420
+msgid "Image[channel]"
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_oyra_image_channel.c:422
+msgid "Channel Image Filter Object"
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_oyra_image_channel.c:428
+#: modules/color/modules/oyranos_cmm_oyra_image_channel.c:444
+#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:377
+#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:416
+#: modules/color/modules/oyranos_cmm_oyra_image_expose.c:310
+msgid "The filter is used to reduce pixels."
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_oyra_image_channel.c:434
+msgid ""
+"The filter will expect a \"channel\" double option and will create, fill and "
+"process a according data version with a new job ticket. The new job tickets "
+"image, array and output_array_roi will be divided by the supplied \"channel"
+"\" factor. It's plug will request the divided image sizes from the source "
+"socket."
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_oyra_image_channel.c:442
+msgid "Image/Simple Image[channel]"
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:369
+msgid "Image[scale]"
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:371
+msgid "Scale Image Filter Object"
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:401
+msgid ""
+"The filter will expect a \"scale\" double option and will create, fill and "
+"process a according data version with a new job ticket. The new job tickets "
+"image, array and output_array_roi will be divided by the supplied \"scale\" "
+"factor. It's plug will request the divided image sizes from the source "
+"socket."
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:402
+msgid "Relation of positional parameters:"
+msgstr ""
+
+#. output image region of interesst
+#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:404
+msgid "output_array_roi"
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:405
+msgid "source image"
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:406
+msgid "output image"
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_oyra_image_scale.c:414
+msgid "Image/Simple Image[scale]"
+msgstr ""
+
+#. Multi process elements types
+#: modules/color/modules/oyranos_cmm_lcm2.c:1495
+msgid "Curve Set"
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_lcm2.c:1496
+msgid "Matrix"
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_lcm2.c:1497
+msgid "Look Up Table"
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_lcm2.c:1499
+msgid "BAcs"
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_lcm2.c:1500
+msgid "EAcs"
+msgstr ""
+
+#. Custom from here, not in the ICC Spec
+#: modules/color/modules/oyranos_cmm_lcm2.c:1503
+msgid "XYZ2Lab"
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_lcm2.c:1504
+msgid "Lab2XYZ"
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_lcm2.c:1506
+msgid "V2toV4"
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_lcm2.c:1507
+msgid "V4toV2"
+msgstr ""
+
+#. Identities
+#: modules/color/modules/oyranos_cmm_lcm2.c:1510
+msgid "Identity"
+msgstr ""
+
+#. Float to floatPCS
+#: modules/color/modules/oyranos_cmm_lcm2.c:1513
+msgid "Lab2FloatPCS"
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_lcm2.c:1514
+msgid "FloatPCS2Lab"
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_lcm2.c:1515
+msgid "XYZ2FloatPCS"
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_lcm2.c:1517
+msgid "FloatPCS2XYZ"
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_lcm2.c:1518
+msgid "Clip Negatives"
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_lcm2.c:2679
+msgid "running new ticket failed"
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_lcm2.c:2688
+msgid "Read from"
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_lcm2.c:2693
+msgid "Write to"
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_lcm2.c:3082
+#: modules/color/modules/oyranos_cmm_lcms.c:2295
+msgid "Extended Options"
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_lcm2.c:3087
+#: modules/color/modules/oyranos_cmm_lcms.c:2300
+msgid "Black Preservation"
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_lcm2.c:3090
+#: modules/color/modules/oyranos_cmm_lcms.c:2303
+msgid "Decide how to preserve the black channel for Cmyk to Cmyk transforms"
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_lcm2.c:3093
+msgid ""
+"Cmyk to Cmyk transforms can provide various strategies to preserve the black "
+"only channel. None means, black might change to Cmy and thus text prints not "
+"very well. LittleCMS 2 has added two different modes to deal with that: "
+"Black-ink-only preservation and black-plane preservation. The first is "
+"simple and effective: do all the colorimetric transforms but keep only K "
+"(preserving L*) where the source image is only black. The second mode is "
+"fair more complex and tries to preserve the WHOLE K plane."
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_lcm2.c:3115
+#: modules/color/modules/oyranos_cmm_lcms.c:2326
+msgid "Optimization"
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_lcm2.c:3118
+#: modules/color/modules/oyranos_cmm_lcms.c:2329
+msgid "Color Transforms can be differently stored internally"
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_lcm2.c:3121
+#: modules/color/modules/oyranos_cmm_lcms.c:2332
+msgid ""
+"Little CMS tries to optimize profile chains whatever possible. There are "
+"some built-in optimization schemes, and you can add new schemas by using a "
+"plug-in. This generally improves the performance of the transform, but may "
+"introduce a small delay of 1-2 seconds when creating the transform. If you "
+"are going to transform just few colors, you don't need this precalculations. "
+"Then, the flag cmsFLAGS_NOOPTIMIZE in cmsCreateTransform() can be used to "
+"inhibit the optimization process. See the API reference for a more detailed "
+"discussion of the flags."
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_lcm2.c:3145
+msgid "Curves for Optimization"
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_lcm2.c:3148
+msgid "Color Transform CLUT's can additionally use curves for special cases"
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_lcm2.c:3151
+msgid ""
+"Little CMS can use curves before and after CLUT's for special cases like "
+"gamma encoded values to and from linear gamma values. Performance will "
+"suffer."
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_lcm2.c:3169
+msgid "Adaptation State"
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_lcm2.c:3172
+msgid "Adaptation state for absolute colorimetric intent"
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_lcm2.c:3175
+msgid ""
+"The adaption state should be between 0 and 1.0 and will apply to the "
+"absolute colorimetric intent."
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_lcm2.c:3191
+msgid "No White on White Fix"
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_lcm2.c:3194
+msgid "Skip White Point on White point alignment"
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_lcm2.c:3197
+msgid ""
+"Avoid force of White on White mapping. Default for absolute rendering intent."
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_lcm2.c:3395
+#: modules/color/modules/oyranos_cmm_lcm2.c:3468
+#: modules/color/modules/oyranos_cmm_lcms.c:2530
+#: modules/color/modules/oyranos_cmm_lcms.c:2603
+#: modules/color/modules/oyranos_cmm_trds.c:582
+#: modules/color/modules/devices/oyranos_monitor_x11.c:1782
+#: modules/color/modules/devices/oyranos_monitor_x11.c:2040
+#: examples/oyranos_cmm_dFil.c:610
+msgid "check"
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_lcm2.c:3397
+#: modules/color/modules/oyranos_cmm_lcm2.c:3470
+#: modules/color/modules/oyranos_cmm_lcms.c:2532
+#: modules/color/modules/oyranos_cmm_lcms.c:2605
+#: modules/color/modules/oyranos_cmm_trds.c:584
+#: modules/color/modules/devices/oyranos_monitor_x11.c:1784
+#: modules/color/modules/devices/oyranos_monitor_x11.c:2042
+#: examples/oyranos_cmm_dFil.c:612
+msgid "Check if this module can handle a certain command."
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_lcm2.c:3403
+#: modules/color/modules/oyranos_cmm_lcms.c:2538
+msgid "Create a ICC abstract proofing profile."
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_lcm2.c:3405
+msgid ""
+"The littleCMS \"create_profile.proofing_effect\" command lets you create ICC "
+"abstract profiles from a given ICC profile for proofing. The filter expects "
+"a oyOption_s object with name \"proofing_profile\" containing a oyProfile_s "
+"as value. The options \"rendering_intent\", \"rendering_intent_proof\", "
+"\"rendering_bpc\", \"rendering_gamut_warning\", \"precalculation\", "
+"\"precalculation_curves\", \"cmyk_cmyk_black_preservation\", \"adaption_state"
+"\"  and \"no_white_on_white_fixup\" are honoured. The result will appear in "
+"\"icc_profile\" with the additional attributes \"create_profile."
+"proofing_effect\" as a oyProfile_s object."
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_lcm2.c:3411
+#: modules/color/modules/oyranos_cmm_lcms.c:2546
+msgid "Create a ICC proofing profile."
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_lcm2.c:3413
+#: modules/color/modules/oyranos_cmm_lcms.c:2548
+msgid ""
+"The littleCMS \"create_profile.proofing_effect\" command lets you create ICC "
+"abstract profiles from some given ICC profile. See the \"proofing_effect\" "
+"info item."
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_lcm2.c:3476
+#: modules/color/modules/oyranos_cmm_lcm2.c:3484
+#: modules/color/modules/oyranos_cmm_lcms.c:2611
+#: modules/color/modules/oyranos_cmm_lcms.c:2619
+msgid "Create a ICC matrix profile."
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_lcm2.c:3478
+msgid ""
+"The littleCMS \"create_profile.color_matrix\" command lets you create ICC "
+"profiles from some given colorimetric coordinates. The filter expects a "
+"oyOption_s object with name \"color_matrix."
+"redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma\" containing 9 "
+"floats in the order of CIE*x for red, CIE*y for red, CIE*x for green, CIE*y "
+"for green, CIE*x for blue, CIE*y for blue, CIE*x for white, CIE*y for white "
+"and a gamma value."
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_lcm2.c:3486
+#: modules/color/modules/oyranos_cmm_lcms.c:2621
+msgid ""
+"The littleCMS \"create_profile.color_matrix\" command lets you create ICC "
+"profiles from some given colorimetric coordinates. See the \"create_profile"
+"\" info item."
+msgstr ""
+
+#. The following strings must match the categories for a menu entry.
+#: modules/color/modules/oyranos_cmm_lcm2.c:3618
+#: modules/color/modules/oyranos_cmm_lcms.c:2753
+#: modules/color/modules/devices/oyranos_cmm_CUPS.c:872
+#: modules/color/modules/devices/oyranos_cmm_SANE_150826.235129.c:833
+#: modules/color/modules/devices/oyranos_cmm_SANE.c:833
+#: modules/color/modules/devices/oyranos_cmm_disp.c:1174
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1227
+#: examples/oyranos_cmm_dDev.c:714 examples/oyranos_cmm_dFil.c:411
+msgid "Color"
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_lcm2.c:3619
+#: modules/color/modules/oyranos_cmm_lcm2.c:3622
+#: modules/color/modules/oyranos_cmm_lcms.c:2754
+#: modules/color/modules/oyranos_cmm_lcms.c:2757
+#: modules/color/modules/oyranos_cmm_oPNG.c:553
+#: modules/color/modules/oyranos_cmm_oPNG.c:1168
+#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:268
+#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1159
+#: modules/color/modules/devices/oyranos_cmm_CUPS.c:873
+#: modules/color/modules/devices/oyranos_cmm_CUPS.c:876
+#: modules/color/modules/devices/oyranos_cmm_disp.c:1175
+#: modules/color/modules/devices/oyranos_cmm_disp.c:1178
+msgid "/"
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_lcm2.c:3623
+#: modules/color/modules/oyranos_cmm_lcms.c:2758
+msgid "littleCMS"
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_lcm2.c:3714
+msgid "Little CMS 2"
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_lcm2.c:3716
+msgid ""
+"LittleCMS 2 is a CMM, a color management engine; it implements fast "
+"transforms between ICC profiles. \"Little\" stands for its small overhead. "
+"With a typical footprint of about 100K including C runtime, you can color-"
+"enable your application without the pain of ActiveX, OCX, redistributables "
+"or binaries of any kind. We are using little cms in several commercial "
+"projects, however, we are offering lcms library free for anybody under an "
+"extremely liberal open source license."
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_lcm2.c:3724
+msgid ""
+"littleCMS 2 project; www: http://www.littlecms.com; support/email: "
+"support@littlecms.com; sources: http://www.littlecms.com/downloads.htm; "
+"Oyranos wrapper: Kai-Uwe Behrmann for the Oyranos project"
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_lcm2.c:3730
+msgid "Copyright (c) 1998-2016 Marti Maria Saguer; MIT"
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_lcm2.c:3732
+#: modules/color/modules/oyranos_cmm_lcms.c:2867
+#: modules/color/modules/devices/oyranos_cmm_CUPS.c:990
+#: modules/color/modules/devices/oyranos_cmm_SANE_150826.235129.c:947
+#: modules/color/modules/devices/oyranos_cmm_SANE.c:947
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1341
+#: examples/oyranos_cmm_dDev.c:836
+msgid "MIT license: http://www.opensource.org/licenses/mit-license.php"
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_lcm2.c:3738
+msgid ""
+"The lcms \"color_icc\" filter is a one dimensional color conversion filter. "
+"It can both create a color conversion context, some precalculated for "
+"processing speed up, and the color conversion with the help of that context. "
+"The adaption part of this filter transforms the Oyranos color context, which "
+"is ICC device link based, to the internal lcms format."
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_lcm2.c:3740
+msgid ""
+"The following options are available to create color contexts:\n"
+" \"profiles_simulation\", a option of type oyProfiles_s, can contain device "
+"profiles for proofing.\n"
+" \"profiles_effect\", a option of type oyProfiles_s, can contain abstract "
+"color profiles.\n"
+" The following Oyranos options are supported: \"rendering_gamut_warning\", "
+"\"rendering_intent_proof\", \"rendering_bpc\", \"rendering_intent\", "
+"\"proof_soft\" and \"proof_hard\".\n"
+" The additional lcms option is supported \"cmyk_cmyk_black_preservation\" [0 "
+"- none; 1 - LCMS_PRESERVE_PURE_K; 2 - LCMS_PRESERVE_K_PLANE], "
+"\"precalculation\": [0 - normal; 1 - cmsFLAGS_NOOPTIMIZE; 2 - "
+"cmsFLAGS_HIGHRESPRECALC, 3 - cmsFLAGS_LOWRESPRECALC], \"precalculation_curves"
+"\": [0 - none; 1 - cmsFLAGS_CLUT_POST_LINEARIZATION + "
+"cmsFLAGS_CLUT_PRE_LINEARIZATION], \"adaption_state\": [0.0 - not adapted to "
+"screen, 1.0 - full adapted to screen] and \"no_white_on_white_fixup\": [0 - "
+"force white on white, 1 - keep as is]."
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_oicc.c:452
+msgid "ICC profile"
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_oicc.c:454
+msgid "ICC color profile for color transformations"
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_oicc.c:492 tools/oyranos_profiles.c:283
+msgid "ICC profiles"
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_oicc.c:494
+msgid "ICC color profiles for color transformations"
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_oicc.c:1047
+msgid "Oyranos ICC policy"
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_oicc.c:1049
+msgid "Oyranos ICC policy module"
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_oicc.c:1063
+msgid "Copyright (c) 2005-2016 Kai-Uwe Behrmann; newBSD"
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_oicc.c:1071
+msgid ""
+"The filter provides policy settings. These settings can be applied to a "
+"graph through the user function oyConversion_Correct()."
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_oicc.c:1073
+msgid ""
+"The module is responsible for many settings in the Oyranos color management "
+"settings panel. If applied the module care about rendering intents, "
+"simulation, mixed color documents and default profiles."
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_lcms.c:2306
+msgid ""
+"Cmyk to Cmyk transforms can provide various strategies to preserve the black "
+"only channel. None means, black might change to Cmy and thus text prints not "
+"very well. LittleCMS has added two different modes to deal with that: Black-"
+"ink-only preservation and black-plane preservation. The first is simple and "
+"effective: do all the colorimetric transforms but keep only K (preserving "
+"L*) where the source image is only black. The second mode is fair more "
+"complex and tries to preserve the WHOLE K plane."
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_lcms.c:2540
+msgid ""
+"The littleCMS \"create_profile.proofing_effect\" command lets you create ICC "
+"abstract profiles from a given ICC profile for proofing. The filter expects "
+"a oyOption_s object with name \"proofing_profile\" containing a oyProfile_s "
+"as value. The options \"rendering_intent\", \"rendering_intent_proof\", "
+"\"rendering_bpc\", \"rendering_gamut_warning\", \"precalculation\" and "
+"\"cmyk_cmyk_black_preservation\" are honoured. The result will appear in "
+"\"icc_profile\" with the additional attributes \"create_profile."
+"proofing_effect\" as a oyProfile_s object."
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_lcms.c:2613
+msgid ""
+"The littleCMS \"create_profile.color_matrix\" command lets you create ICC "
+"profiles from some given colorimetric coordinates. The filter expects a "
+"oyOption_s object with name \"color_matrix."
+"redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma\" containing 9 "
+"floats in the order of CIE*x for red, CIE*y for red, CIE*x for green, CIE*y "
+"for green, CIE*x for blue, CIE*y for blue, CIE*x for white, CIE*y for white "
+"and a gamma value. The result will appear in \"icc_profile\" with the "
+"additional attributes \"create_profile.color_matrix\"."
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_lcms.c:2849
+msgid "Little CMS"
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_lcms.c:2851
+msgid ""
+"LittleCMS is a CMM, a color management engine; it implements fast transforms "
+"between ICC profiles. \"Little\" stands for its small overhead. With a "
+"typical footprint of about 100K including C runtime, you can color-enable "
+"your application without the pain of ActiveX, OCX, redistributables or "
+"binaries of any kind. We are using little cms in several commercial "
+"projects, however, we are offering lcms library free for anybody under an "
+"extremely liberal open source license."
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_lcms.c:2859
+msgid ""
+"littleCMS project; www: http://www.littlecms.com; support/email: "
+"support@littlecms.com; sources: http://www.littlecms.com/downloads.htm; "
+"Oyranos wrapper: Kai-Uwe Behrmann for the Oyranos project"
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_lcms.c:2865
+msgid "Copyright (c) 1998-2008 Marti Maria Saguer; MIT"
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_lcms.c:2873
+msgid ""
+"The lcms \"color.icc\" filter is a one dimensional color conversion filter. "
+"It can both create a color conversion context, some precalculated for "
+"processing speed up, and the color conversion with the help of that context. "
+"The adaption part of this filter transforms the Oyranos color context, which "
+"is ICC device link based, to the internal lcms format."
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_lcms.c:2875
+msgid ""
+"The following options are available to create color contexts:\n"
+" \"profiles_simulation\", a option of type oyProfiles_s, can contain device "
+"profiles for proofing.\n"
+" \"profiles_effect\", a option of type oyProfiles_s, can contain abstract "
+"color profiles.\n"
+" The following Oyranos options are supported: \"rendering_gamut_warning\", "
+"\"rendering_intent_proof\", \"rendering_bpc\", \"rendering_intent\", "
+"\"proof_soft\" and \"proof_hard\".\n"
+" The additional lcms options are supported \"cmyk_cmyk_black_preservation"
+"\" [0 - none; 1 - LCMS_PRESERVE_PURE_K; 2 - LCMS_PRESERVE_K_PLANE] and "
+"\"precalculation\"."
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_oJPG.c:755
+msgid "read"
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_oJPG.c:757
+#: modules/color/modules/oyranos_cmm_oyra_image.c:333
+#: modules/color/modules/oyranos_cmm_oyra_image.c:732
+msgid "Load Image File Object"
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_oJPG.c:763
+msgid "Option \"filename\", a valid filename of a existing image"
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_oJPG.c:765
+msgid ""
+"The Option \"filename\" should contain a valid filename to read the image "
+"data from. If the file does not exist, a error will occure."
+msgstr ""
+
+#. The following strings must match the categories for a menu entry.
+#: modules/color/modules/oyranos_cmm_oJPG.c:772
+#: modules/color/modules/oyranos_cmm_oPNG.c:552
+#: modules/color/modules/oyranos_cmm_oPNG.c:1167
+#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:267
+#: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1158
+msgid "Files"
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_oJPG.c:772
+msgid "Read"
 msgstr ""
 
 #: modules/color/modules/oyranos_cmm_oPNG.c:544
@@ -2973,89 +2894,162 @@ msgid ""
 "The oyEDITING_RGB ICC profile is attached."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oicc.c:452
-msgid "ICC profile"
+#: modules/color/modules/oyranos_cmm_oyra.c:145
+#: modules/color/modules/devices/oyranos_cmm_disp.c:1319
+msgid "Copyright (c) 2005-2010 Kai-Uwe Behrmann; newBSD"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oicc.c:454
-msgid "ICC color profile for color transformations"
+#: modules/color/modules/oyranos_cmm_oyra_image.c:331
+msgid "Write"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oicc.c:492 tools/oyranos_profiles.c:283
-msgid "ICC profiles"
+#: modules/color/modules/oyranos_cmm_oyra_image.c:339
+#: modules/color/modules/oyranos_cmm_oyra_image.c:341
+#: modules/color/modules/oyranos_cmm_oyra_image.c:738
+#: modules/color/modules/oyranos_cmm_oyra_image.c:740
+msgid "unfinished"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oicc.c:494
-msgid "ICC color profiles for color transformations"
+#: modules/color/modules/oyranos_cmm_oyra_image.c:730
+msgid "Load"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oicc.c:1047
-msgid "Oyranos ICC policy"
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1178
+msgid "Rectangles"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oicc.c:1049
-msgid "Oyranos ICC policy module"
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1180
+msgid "Rectangles Splitter Object"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oicc.c:1063
-msgid "Copyright (c) 2005-2016 Kai-Uwe Behrmann; newBSD"
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1186
+msgid "Apply regions of interesst in form of simple rectangles."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oicc.c:1071
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1188
 msgid ""
-"The filter provides policy settings. These settings can be applied to a "
-"graph through the user function oyConversion_Correct()."
+"The filter will expect a \"rectangle\" option and will create, fill and "
+"process a according rectangle with a new job ticket."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oicc.c:1073
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1386
+msgid "Root Image"
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1388
+msgid "Root Image Filter Object"
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1394
+msgid "The filter provides a generic image source."
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1396
+msgid "The root image filter can hold pixel data for processing in a graph."
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1577
+msgid "Image[out]"
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1579
+msgid "Output Image Filter Object"
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1585
+msgid "The filter is a possible pixel target in a graph."
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1587
 msgid ""
-"The module is responsible for many settings in the Oyranos color management "
-"settings panel. If applied the module care about rendering intents, "
-"simulation, mixed color documents and default profiles."
+"The filter can query pixels from its successors in a graph. The results are "
+"stored in the internal buffer."
 msgstr ""
 
-#: modules/color/modules/devices/oyranos_cmm_SANE.c:818
-#: modules/color/modules/devices/oyranos_cmm_SANE.c:835
-msgid "Scanner"
+#: modules/color/modules/oyranos_cmm_oyra_image_expose.c:285
+msgid "Image[expose]"
 msgstr ""
 
-#: modules/color/modules/devices/oyranos_cmm_SANE.c:820
-msgid "Scanner data, which come from SANE library."
+#: modules/color/modules/oyranos_cmm_oyra_image_expose.c:287
+msgid "Expose Image Filter Object"
 msgstr ""
 
-#. CMM: abbreviation for Color Matching Module
-#: modules/color/modules/devices/oyranos_cmm_SANE.c:834
-#: modules/color/modules/devices/oyranos_cmm_CUPS.c:875
-#: modules/color/modules/devices/oyranos_cmm_disp.c:1177
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1227
-#: examples/oyranos_cmm_dDev.c:714
-msgid "Device"
+#: modules/color/modules/oyranos_cmm_oyra_image_expose.c:293
+msgid "The filter adapts pixel brightness."
 msgstr ""
 
-#: modules/color/modules/devices/oyranos_cmm_SANE.c:929
-msgid "Oyranos Scanner"
+#: modules/color/modules/oyranos_cmm_oyra_image_expose.c:299
+msgid ""
+"The filter expects a \"expose\" double option and will process the data "
+"accordingly."
 msgstr ""
 
-#: modules/color/modules/devices/oyranos_cmm_SANE.c:931
-msgid "The scanner (hopefully)usefull backend of Oyranos."
+#: modules/color/modules/oyranos_cmm_oyra_image_expose.c:308
+msgid "Image/Simple Image[expose]"
 msgstr ""
 
-#: modules/color/modules/devices/oyranos_cmm_SANE.c:945
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1339
-#: examples/oyranos_cmm_dDev.c:834
-msgid "Copyright (c) 2009 Kai-Uwe Behrmann; MIT"
+#: modules/color/modules/oyranos_cmm_trds.c:590
+#: modules/color/modules/oyranos_cmm_trds.c:598
+msgid "Initialise the oyJob_s APIs."
 msgstr ""
 
-#: modules/color/modules/devices/oyranos_cmm_SANE.c:952
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1346
-#: examples/oyranos_cmm_dFil.c:170 examples/oyranos_cmm_dDev.c:842
-msgid "My filter introduction."
+#: modules/color/modules/oyranos_cmm_trds.c:592
+#: modules/color/modules/oyranos_cmm_trds.c:600
+msgid ""
+"The Oyranos \"threads_handler\" command will initialise the oyJob_s APIs "
+"with a available threading model."
 msgstr ""
 
-#: modules/color/modules/devices/oyranos_cmm_SANE.c:954
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1348
-#: examples/oyranos_cmm_dFil.c:172 examples/oyranos_cmm_dDev.c:844
-msgid "All the small details for using this module."
+#: modules/color/modules/oyranos_cmm_trds.c:657
+msgid "Oyranos Threads"
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_trds.c:659
+msgid "Oyranos Threads default Handling"
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_trds.c:673
+msgid "Copyright (c) 2014-2016 Kai-Uwe Behrmann; new BSD"
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_trds.c:681
+#: modules/color/modules/oyranos_cmm_trds.c:683
+msgid ""
+"The filter provides a default oyJob_s handling mechanism for asynchronous "
+"processing."
+msgstr ""
+
+#: modules/color/modules/devices/oyranos_monitor_wcs.c:127
+#: modules/color/modules/devices/oyranos_monitor_x11.c:259
+msgid "unexpected user_data type"
+msgstr ""
+
+#: modules/color/modules/devices/oyranos_monitor_wcs.c:161
+#: modules/color/modules/devices/oyranos_monitor_x11.c:311
+msgid "unexpected EDID lenght"
+msgstr ""
+
+#: modules/color/modules/devices/oyranos_monitor_wcs.c:164
+#: modules/color/modules/devices/oyranos_monitor_cs.c:637
+#: modules/color/modules/devices/oyranos_monitor_cs.c:643
+#: modules/color/modules/devices/oyranos_monitor_cs.c:654
+#: modules/color/modules/devices/oyranos_monitor_cs.c:672
+#: modules/color/modules/devices/oyranos_monitor_x11.c:314
+msgid "Cant read hardware information from device."
+msgstr ""
+
+#: modules/color/modules/devices/oyranos_monitor_wcs.c:297
+#: modules/color/modules/devices/oyranos_monitor_x11.c:447
+msgid "Can not read hardware information from device."
+msgstr ""
+
+#: modules/color/modules/devices/oyranos_monitor_wcs.c:307
+#: modules/color/modules/devices/oyranos_monitor_x11.c:457
+msgid "no EDID available from X properties"
+msgstr ""
+
+#: modules/color/modules/devices/oyranos_monitor_wcs.c:788
+msgid "no wcsDMonitor_s created"
 msgstr ""
 
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:860
@@ -3064,6 +3058,16 @@ msgstr ""
 
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:862
 msgid "Printers, which are accessible through the CUPS spooling system."
+msgstr ""
+
+#. CMM: abbreviation for Color Matching Module
+#: modules/color/modules/devices/oyranos_cmm_CUPS.c:875
+#: modules/color/modules/devices/oyranos_cmm_SANE_150826.235129.c:834
+#: modules/color/modules/devices/oyranos_cmm_SANE.c:834
+#: modules/color/modules/devices/oyranos_cmm_disp.c:1177
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1227
+#: examples/oyranos_cmm_dDev.c:714
+msgid "Device"
 msgstr ""
 
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:877
@@ -3084,6 +3088,66 @@ msgstr ""
 
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:998
 msgid "The CUPS module supports the generic device protocol."
+msgstr ""
+
+#: modules/color/modules/devices/oyranos_monitor_cs.c:131
+#: modules/color/modules/devices/oyranos_monitor_cs.c:252
+#: modules/color/modules/devices/oyranos_monitor_x11.c:778
+#: modules/color/modules/devices/oyranos_monitor_x11.c:1331
+msgid "open X Display failed"
+msgstr ""
+
+#: modules/color/modules/devices/oyranos_monitor_cs.c:635
+#: modules/color/modules/devices/oyranos_monitor_cs.c:641
+#: modules/color/modules/devices/oyranos_monitor_cs.c:652
+msgid "no EDID available from"
+msgstr ""
+
+#: modules/color/modules/devices/oyranos_monitor_cs.c:670
+msgid "no qarzMonitor_s from"
+msgstr ""
+
+#: modules/color/modules/devices/oyranos_cmm_SANE_150826.235129.c:818
+#: modules/color/modules/devices/oyranos_cmm_SANE_150826.235129.c:835
+#: modules/color/modules/devices/oyranos_cmm_SANE.c:818
+#: modules/color/modules/devices/oyranos_cmm_SANE.c:835
+msgid "Scanner"
+msgstr ""
+
+#: modules/color/modules/devices/oyranos_cmm_SANE_150826.235129.c:820
+#: modules/color/modules/devices/oyranos_cmm_SANE.c:820
+msgid "Scanner data, which come from SANE library."
+msgstr ""
+
+#: modules/color/modules/devices/oyranos_cmm_SANE_150826.235129.c:929
+#: modules/color/modules/devices/oyranos_cmm_SANE.c:929
+msgid "Oyranos Scanner"
+msgstr ""
+
+#: modules/color/modules/devices/oyranos_cmm_SANE_150826.235129.c:931
+#: modules/color/modules/devices/oyranos_cmm_SANE.c:931
+msgid "The scanner (hopefully)usefull backend of Oyranos."
+msgstr ""
+
+#: modules/color/modules/devices/oyranos_cmm_SANE_150826.235129.c:945
+#: modules/color/modules/devices/oyranos_cmm_SANE.c:945
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1339
+#: examples/oyranos_cmm_dDev.c:834
+msgid "Copyright (c) 2009 Kai-Uwe Behrmann; MIT"
+msgstr ""
+
+#: modules/color/modules/devices/oyranos_cmm_SANE_150826.235129.c:952
+#: modules/color/modules/devices/oyranos_cmm_SANE.c:952
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1346
+#: examples/oyranos_cmm_dDev.c:842 examples/oyranos_cmm_dFil.c:170
+msgid "My filter introduction."
+msgstr ""
+
+#: modules/color/modules/devices/oyranos_cmm_SANE_150826.235129.c:954
+#: modules/color/modules/devices/oyranos_cmm_SANE.c:954
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1348
+#: examples/oyranos_cmm_dDev.c:844 examples/oyranos_cmm_dFil.c:172
+msgid "All the small details for using this module."
 msgstr ""
 
 #: modules/color/modules/devices/oyranos_cmm_disp.c:1158
@@ -3108,37 +3172,6 @@ msgstr ""
 #. "The " CMM_NICK " module supports the generic device protocol."
 #: modules/color/modules/devices/oyranos_cmm_disp.c:1289
 msgid "The "
-msgstr ""
-
-#: modules/color/modules/devices/oyranos_monitor_x11.c:259
-msgid "unexpected user_data type"
-msgstr ""
-
-#: modules/color/modules/devices/oyranos_monitor_x11.c:311
-msgid "unexpected EDID lenght"
-msgstr ""
-
-#: modules/color/modules/devices/oyranos_monitor_x11.c:314
-#: modules/color/modules/devices/oyranos_monitor_cs.c:637
-#: modules/color/modules/devices/oyranos_monitor_cs.c:643
-#: modules/color/modules/devices/oyranos_monitor_cs.c:654
-#: modules/color/modules/devices/oyranos_monitor_cs.c:672
-msgid "Cant read hardware information from device."
-msgstr ""
-
-#: modules/color/modules/devices/oyranos_monitor_x11.c:447
-msgid "Can not read hardware information from device."
-msgstr ""
-
-#: modules/color/modules/devices/oyranos_monitor_x11.c:457
-msgid "no EDID available from X properties"
-msgstr ""
-
-#: modules/color/modules/devices/oyranos_monitor_x11.c:778
-#: modules/color/modules/devices/oyranos_monitor_x11.c:1331
-#: modules/color/modules/devices/oyranos_monitor_cs.c:131
-#: modules/color/modules/devices/oyranos_monitor_cs.c:252
-msgid "open X Display failed"
 msgstr ""
 
 #: modules/color/modules/devices/oyranos_monitor_x11.c:808
@@ -3202,14 +3235,14 @@ msgstr ""
 
 #: modules/color/modules/devices/oyranos_monitor_x11.c:1796
 #: modules/color/modules/devices/oyranos_monitor_x11.c:2064
+#: examples/oyranos_cmm_iemn.c:268 examples/oyranos_cmm_dDev.c:840
 #: examples/oyranos_cmm_dFil.c:168 examples/oyranos_cmm_dFil.c:624
-#: examples/oyranos_cmm_dDev.c:840
 msgid "help"
 msgstr ""
 
 #: modules/color/modules/devices/oyranos_monitor_x11.c:1798
 #: modules/color/modules/devices/oyranos_monitor_x11.c:2066
-#: examples/image_display/image_display.cpp:1093
+#: examples/image_display/image_display.cpp:1102
 msgid "Help"
 msgstr ""
 
@@ -3241,16 +3274,6 @@ msgid ""
 "The oyX1 modules \"set_xcm_region\" handler lets you set X Color Management "
 "compatible client side color regions. The implementation uses libXcm and "
 "Oyranos."
-msgstr ""
-
-#: modules/color/modules/devices/oyranos_monitor_cs.c:635
-#: modules/color/modules/devices/oyranos_monitor_cs.c:641
-#: modules/color/modules/devices/oyranos_monitor_cs.c:652
-msgid "no EDID available from"
-msgstr ""
-
-#: modules/color/modules/devices/oyranos_monitor_cs.c:670
-msgid "no qarzMonitor_s from"
 msgstr ""
 
 #: modules/color/modules/oyranos_cmm_lraw.cpp:221
@@ -3322,31 +3345,154 @@ msgstr ""
 msgid "The raw image backend of Oyranos."
 msgstr ""
 
-#: tools/oyranos_profile_tool.c:73 tools/oyranos_profiles.c:53
-msgid "is a ICC profile information tool"
+#: tools/oyranos_profile_graph.c:104
+msgid "is a ICC color profile grapher"
 msgstr ""
 
-#: tools/oyranos_profile_tool.c:81 tools/oyranos_convert.c:59
-#: tools/oyranos_policy.c:53 tools/oyranos_profiles.c:61 examples/taxi.c:48
+#: tools/oyranos_profile_graph.c:105 tools/oyranos_convert.c:61
+#: tools/oyranos_gamma.c:207 tools/oyranos_policy.c:55
+#: tools/oyranos_profiles.c:63 tools/oyranos_profile_tool.c:83
+#: examples/taxi.c:50 examples/devices/test_device.c:51
+#: examples/libraw/oyranos_file.cpp:45
+msgid "Usage"
+msgstr ""
+
+#: tools/oyranos_profile_graph.c:106
+msgid "2D Graph from profiles:"
+msgstr ""
+
+#: tools/oyranos_profile_graph.c:108 tools/oyranos_profile_graph.c:135
+#: examples/devices/test_device.c:54 examples/devices/test_device.c:94
+#: examples/devices/test_device.c:95 examples/libraw/oyranos_file.cpp:67
+#: examples/libraw/oyranos_file.cpp:68
+msgid "FILE"
+msgstr ""
+
+#: tools/oyranos_profile_graph.c:108
+msgid "PROFILENAMES"
+msgstr ""
+
+#: tools/oyranos_profile_graph.c:109
+msgid "use CIE*xyY *x*y plane for saturation line projection"
+msgstr ""
+
+#: tools/oyranos_profile_graph.c:110
+msgid "omit white line of lambert light emitters"
+msgstr ""
+
+#: tools/oyranos_profile_graph.c:111
+msgid "omit the spectral line"
+msgstr ""
+
+#: tools/oyranos_profile_graph.c:112 tools/oyranos_profile_graph.c:123
+#: tools/oyranos_profile_graph.c:134 tools/oyranos_profile_graph.c:138
+#: tools/oyranos_convert.c:97 tools/oyranos_profile_tool.c:86
+#: tools/oyranos_profile_tool.c:90 examples/devices/test_device.c:72
+#: examples/devices/test_device.c:104
+msgid "NUMBER"
+msgstr ""
+
+#: tools/oyranos_profile_graph.c:112
+msgid "specify incemental increase of the thickness of the graph lines"
+msgstr ""
+
+#: tools/oyranos_profile_graph.c:114
+msgid "Standard Observer 1931 2° Graph:"
+msgstr ""
+
+#: tools/oyranos_profile_graph.c:116 tools/oyranos_profile_graph.c:120
+#: tools/oyranos_profile_graph.c:124 tools/oyranos_profile_graph.c:130
+msgid "draw gray"
+msgstr ""
+
+#: tools/oyranos_profile_graph.c:118
+msgid "1964 10° Observer Graph:"
+msgstr ""
+
+#: tools/oyranos_profile_graph.c:122
+msgid "Blackbody Radiator Spectrum Graph:"
+msgstr ""
+
+#: tools/oyranos_profile_graph.c:126
+msgid "Illuminant Spectrum Graph:"
+msgstr ""
+
+#: tools/oyranos_profile_graph.c:128
+msgid "CIE A spectral power distribution"
+msgstr ""
+
+#: tools/oyranos_profile_graph.c:129
+msgid "CIE D65 spectral power distribution"
+msgstr ""
+
+#: tools/oyranos_profile_graph.c:132 tools/oyranos_convert.c:102
+#: tools/oyranos_gamma.c:234 tools/oyranos_profiles.c:101
+#: tools/oyranos_profile_tool.c:113 examples/taxi.c:67
+#: examples/devices/test_device.c:101 examples/libraw/oyranos_file.cpp:66
+msgid "General options:"
+msgstr ""
+
+#: tools/oyranos_profile_graph.c:133 tools/oyranos_convert.c:103
+#: tools/oyranos_profiles.c:102 tools/oyranos_profile_tool.c:117
+#: examples/devices/test_device.c:102 examples/libraw/oyranos_file.cpp:69
+msgid "verbose"
+msgstr ""
+
+#: tools/oyranos_profile_graph.c:134
+msgid "specify output image width in pixel"
+msgstr ""
+
+#: tools/oyranos_profile_graph.c:135
+msgid "specify output file name, default is output.png"
+msgstr ""
+
+#: tools/oyranos_profile_graph.c:136 tools/oyranos_convert.c:78
+#: tools/oyranos_convert.c:83
+msgid "FORMAT"
+msgstr ""
+
+#: tools/oyranos_profile_graph.c:136
+msgid "specify output file format png or svg, default is png"
+msgstr ""
+
+#: tools/oyranos_profile_graph.c:137
+msgid "omit border"
+msgstr ""
+
+#: tools/oyranos_profile_graph.c:138
+msgid "specify increase of the thickness of the graph lines"
+msgstr ""
+
+#: tools/oyranos_profile_graph.c:139 tools/oyranos_profile_tool.c:119
+msgid "select a ICC v2 profile"
+msgstr ""
+
+#: tools/oyranos_profile_graph.c:140 tools/oyranos_profile_tool.c:120
+msgid "select a ICC v4 profile"
+msgstr ""
+
+#: tools/oyranos_profile_graph.c:142 tools/oyranos_gamma.c:239
+#: tools/oyranos_profile_tool.c:132 examples/devices/test_device.c:110
+#: examples/libraw/oyranos_file.cpp:78
+#, c-format
+msgid "For more informations read the man page:"
+msgstr ""
+
+#: tools/oyranos_convert.c:51
+msgid "is a ICC color conversion tool"
+msgstr ""
+
+#: tools/oyranos_convert.c:59 tools/oyranos_policy.c:53
+#: tools/oyranos_profiles.c:61 tools/oyranos_profile_tool.c:81
+#: examples/taxi.c:48
 msgid ""
 "Hint: search paths are influenced by the XDG_CONFIG_HOME shell variable."
 msgstr ""
 
-#: tools/oyranos_profile_tool.c:83 tools/oyranos_profile_graph.c:105
-#: tools/oyranos_convert.c:61 tools/oyranos_policy.c:55
-#: tools/oyranos_profiles.c:63 tools/oyranos_gamma.c:207 examples/taxi.c:50
-#: examples/devices/test_device.c:51 examples/libraw/oyranos_file.cpp:45
-msgid "Usage"
+#: tools/oyranos_convert.c:62
+msgid "Convert Image:"
 msgstr ""
 
-#: tools/oyranos_profile_tool.c:84
-msgid "List included ICC tags:"
-msgstr ""
-
-#: tools/oyranos_profile_tool.c:85 tools/oyranos_profile_tool.c:90
-#: tools/oyranos_profile_tool.c:93 tools/oyranos_profile_tool.c:98
-#: tools/oyranos_profile_tool.c:99 tools/oyranos_profile_tool.c:102
-#: tools/oyranos_profile_tool.c:105 tools/oyranos_profile_tool.c:114
 #: tools/oyranos_convert.c:63 tools/oyranos_convert.c:65
 #: tools/oyranos_convert.c:66 tools/oyranos_convert.c:67
 #: tools/oyranos_convert.c:68 tools/oyranos_convert.c:72
@@ -3354,16 +3500,441 @@ msgstr ""
 #: tools/oyranos_convert.c:75 tools/oyranos_convert.c:76
 #: tools/oyranos_convert.c:82 tools/oyranos_convert.c:91
 #: tools/oyranos_convert.c:92 tools/oyranos_profiles.c:88
+#: tools/oyranos_profile_tool.c:85 tools/oyranos_profile_tool.c:90
+#: tools/oyranos_profile_tool.c:93 tools/oyranos_profile_tool.c:98
+#: tools/oyranos_profile_tool.c:99 tools/oyranos_profile_tool.c:102
+#: tools/oyranos_profile_tool.c:105 tools/oyranos_profile_tool.c:114
 #: examples/libraw/oyranos_file.cpp:60 examples/libraw/oyranos_file.cpp:61
 msgid "ICC_FILE_NAME"
 msgstr ""
 
-#: tools/oyranos_profile_tool.c:86 tools/oyranos_profile_tool.c:90
-#: tools/oyranos_profile_graph.c:112 tools/oyranos_profile_graph.c:123
-#: tools/oyranos_profile_graph.c:134 tools/oyranos_profile_graph.c:138
-#: tools/oyranos_convert.c:97 examples/devices/test_device.c:72
-#: examples/devices/test_device.c:104
-msgid "NUMBER"
+#: tools/oyranos_convert.c:63 tools/oyranos_convert.c:64
+#: tools/oyranos_convert.c:69 tools/oyranos_convert.c:72
+#: tools/oyranos_convert.c:77 tools/oyranos_convert.c:91
+#: tools/oyranos_convert.c:95 tools/oyranos_convert.c:96
+#: tools/oyranos_profile_tool.c:105 tools/oyranos_profile_tool.c:107
+msgid "FILE_NAME"
+msgstr ""
+
+#: tools/oyranos_convert.c:64
+msgid "read from file"
+msgstr ""
+
+#: tools/oyranos_convert.c:65
+msgid "Conversion"
+msgstr ""
+
+#: tools/oyranos_convert.c:66 tools/oyranos_convert.c:74
+msgid "Output Color Space"
+msgstr ""
+
+#: tools/oyranos_convert.c:67 tools/oyranos_convert.c:75
+msgid "Simulation/Proof Color Space"
+msgstr ""
+
+#: tools/oyranos_convert.c:68 tools/oyranos_convert.c:76
+msgid "Effect abtract Color Space"
+msgstr ""
+
+#: tools/oyranos_convert.c:69
+msgid "write to file, currently only PPM and PNG formats"
+msgstr ""
+
+#: tools/oyranos_convert.c:71
+msgid "Generate CLUT Image:"
+msgstr ""
+
+#: tools/oyranos_convert.c:72 tools/oyranos_convert.c:82
+#: tools/oyranos_convert.c:91 tools/oyranos_convert.c:100
+#: tools/oyranos_convert.c:104
+msgid "MODULE_NAME"
+msgstr ""
+
+#: tools/oyranos_convert.c:73
+msgid "Input Color Space"
+msgstr ""
+
+#: tools/oyranos_convert.c:77
+msgid "write to file, currently only PPM format"
+msgstr ""
+
+#: tools/oyranos_convert.c:78
+msgid "select format, currently only clut"
+msgstr ""
+
+#: tools/oyranos_convert.c:79
+msgid ""
+"CLUT is a levels x levels*levels sized PPM, --levels defaults for clut to 64"
+msgstr ""
+
+#: tools/oyranos_convert.c:81
+msgid "Generate Device Link Profile:"
+msgstr ""
+
+#: tools/oyranos_convert.c:83
+msgid "select format, currently only icc"
+msgstr ""
+
+#: tools/oyranos_convert.c:84
+msgid "select unsigned integer 8-bit precision data format"
+msgstr ""
+
+#: tools/oyranos_convert.c:85
+msgid "select unsigned integer 16-bit precision data format"
+msgstr ""
+
+#: tools/oyranos_convert.c:86
+msgid "select floating point 16-bit precision data format"
+msgstr ""
+
+#: tools/oyranos_convert.c:87
+msgid "select floating point 32-bit precision data format"
+msgstr ""
+
+#: tools/oyranos_convert.c:88
+msgid "select floating point 64-bit precision data format"
+msgstr ""
+
+#: tools/oyranos_convert.c:90
+msgid "Extract ICC profile:"
+msgstr ""
+
+#: tools/oyranos_convert.c:92 tools/oyranos_convert.c:96
+msgid "write to file"
+msgstr ""
+
+#: tools/oyranos_convert.c:94
+msgid "Generate Image:"
+msgstr ""
+
+#: tools/oyranos_convert.c:97
+msgid "levels from 4-16 make sense"
+msgstr ""
+
+#: tools/oyranos_convert.c:99 tools/oyranos_policy.c:70
+#: tools/oyranos_profiles.c:98 tools/oyranos_profile_tool.c:110
+#: examples/taxi.c:64
+msgid "Print a help text:"
+msgstr ""
+
+#: tools/oyranos_convert.c:104
+msgid "module name"
+msgstr ""
+
+#: tools/oyranos_convert.c:105
+msgid "enable simple defaults"
+msgstr ""
+
+#: tools/oyranos_convert.c:107 tools/oyranos_profiles.c:104
+#: tools/oyranos_profile_tool.c:124 examples/oyranos_cmm_dDev.c:703
+#: examples/oyranos_cmm_dDev.c:714 examples/taxi.c:70
+#: examples/libraw/oyranos_file.cpp:71
+msgid "Example"
+msgstr ""
+
+#: tools/oyranos_convert.c:108
+msgid "Get ICC profile"
+msgstr ""
+
+#: tools/oyranos_convert.c:111
+msgid "Convert image to ICC Color Space"
+msgstr ""
+
+#: tools/oyranos_convert.c:114
+msgid "Convert image through ICC device link profile"
+msgstr ""
+
+#: tools/oyranos_convert.c:117
+msgid "Get Conversion"
+msgstr ""
+
+#: tools/oyranos_convert.c:120
+msgid "Create 3D CLUT"
+msgstr ""
+
+#: tools/oyranos_convert.c:359
+msgid "Option"
+msgstr ""
+
+#: tools/oyranos_gamma.c:206 tools/oyranos_gamma.c:264
+msgid "is a color profile administration tool for monitors"
+msgstr ""
+
+#: tools/oyranos_gamma.c:208
+msgid "Set new profile:"
+msgstr ""
+
+#: tools/oyranos_gamma.c:210
+msgid "profile name"
+msgstr ""
+
+#: tools/oyranos_gamma.c:212
+msgid "Erase profile:"
+msgstr ""
+
+#: tools/oyranos_gamma.c:215
+msgid "Activate profiles:"
+msgstr ""
+
+#: tools/oyranos_gamma.c:218 examples/devices/test_device.c:71
+msgid "List devices:"
+msgstr ""
+
+#. --short argument
+#: tools/oyranos_gamma.c:221 tools/oyranos_profile_tool.c:121
+msgid "print only the file name"
+msgstr ""
+
+#. --path argument
+#: tools/oyranos_gamma.c:223 tools/oyranos_profile_tool.c:122
+#: examples/devices/test_device.c:76
+msgid "print the full file name"
+msgstr ""
+
+#: tools/oyranos_gamma.c:225 examples/devices/test_device.c:82
+msgid "List Taxi DB profiles for selected device:"
+msgstr ""
+
+#: tools/oyranos_gamma.c:228
+msgid "List modules:"
+msgstr ""
+
+#: tools/oyranos_gamma.c:231 examples/libraw/oyranos_file.cpp:49
+msgid "Dump data:"
+msgstr ""
+
+#: tools/oyranos_gamma.c:235 examples/taxi.c:68
+msgid "-v verbose"
+msgstr ""
+
+#: tools/oyranos_gamma.c:236
+msgid "--module name"
+msgstr ""
+
+#: tools/oyranos_gamma.c:237
+msgid "-d device_position_start_from_zero"
+msgstr ""
+
+#: tools/oyranos_gamma.c:272
+msgid "DISPLAY variable not set: giving up."
+msgstr ""
+
+#: tools/oyranos_gamma.c:355
+msgid "Could not resolve device"
+msgstr ""
+
+#: tools/oyranos_gamma.c:356 examples/devices/test_device.c:373
+#: examples/devices/test_device.c:389 examples/devices/test_device.c:404
+#: examples/devices/test_device.c:811 examples/devices/test_device.c:1055
+msgid "Available devices"
+msgstr ""
+
+#: tools/oyranos_gamma.c:389
+msgid "Please specify a monitor with the -d option."
+msgstr ""
+
+#: tools/oyranos_gamma.c:402
+msgid "Zero profiles found in Taxi ICC DB"
+msgstr ""
+
+#: tools/oyranos_gamma.c:446
+msgid "Taxi DB entries for device"
+msgstr ""
+
+#: tools/oyranos_gamma.c:449 examples/devices/test_device.c:970
+msgid "Taxi ID"
+msgstr ""
+
+#: tools/oyranos_gamma.c:450 examples/devices/test_device.c:971
+msgid "match value"
+msgstr ""
+
+#: tools/oyranos_gamma.c:450 examples/devices/test_device.c:971
+msgid "description"
+msgstr ""
+
+#: tools/oyranos_policy.c:45
+msgid "is a policy administration tool"
+msgstr ""
+
+#: tools/oyranos_policy.c:56
+msgid "Dump out the actual settings:"
+msgstr ""
+
+#: tools/oyranos_policy.c:58
+msgid "Select active policy:"
+msgstr ""
+
+#: tools/oyranos_policy.c:59
+msgid "policy or filename"
+msgstr ""
+
+#: tools/oyranos_policy.c:60
+msgid "List available policies:"
+msgstr ""
+
+#: tools/oyranos_policy.c:62 tools/oyranos_policy.c:227
+msgid "Currently active policy:"
+msgstr ""
+
+#: tools/oyranos_policy.c:64 tools/oyranos_profiles.c:66
+msgid "full path and file name"
+msgstr ""
+
+#: tools/oyranos_policy.c:65
+msgid "display name"
+msgstr ""
+
+#: tools/oyranos_policy.c:66 tools/oyranos_profiles.c:80
+msgid "List search paths:"
+msgstr ""
+
+#: tools/oyranos_policy.c:68
+msgid "Save to a new policy:"
+msgstr ""
+
+#: tools/oyranos_policy.c:69
+msgid "policy name"
+msgstr ""
+
+#: tools/oyranos_policy.c:195
+msgid "installed new policy"
+msgstr ""
+
+#: tools/oyranos_policy.c:198
+msgid "installation of new policy file failed with error:"
+msgstr ""
+
+#: tools/oyranos_policy.c:247
+msgid "Policy search paths"
+msgstr ""
+
+#: tools/oyranos_profiles.c:53 tools/oyranos_profile_tool.c:73
+msgid "is a ICC profile information tool"
+msgstr ""
+
+#: tools/oyranos_profiles.c:64
+msgid "List available ICC profiles:"
+msgstr ""
+
+#: tools/oyranos_profiles.c:67
+msgid "internal name"
+msgstr ""
+
+#: tools/oyranos_profiles.c:68
+msgid "abstract class"
+msgstr ""
+
+#: tools/oyranos_profiles.c:69
+msgid "color space class"
+msgstr ""
+
+#: tools/oyranos_profiles.c:70
+msgid "display class"
+msgstr ""
+
+#: tools/oyranos_profiles.c:71
+msgid "(device) link class"
+msgstr ""
+
+#: tools/oyranos_profiles.c:72
+msgid "named color class"
+msgstr ""
+
+#: tools/oyranos_profiles.c:73
+msgid "output class"
+msgstr ""
+
+#: tools/oyranos_profiles.c:74
+msgid "input class"
+msgstr ""
+
+#: tools/oyranos_profiles.c:75 examples/devices/test_device.c:107
+msgid "select ICC v2 profiles"
+msgstr ""
+
+#: tools/oyranos_profiles.c:76 examples/devices/test_device.c:108
+msgid "select ICC v4 profiles"
+msgstr ""
+
+#: tools/oyranos_profiles.c:77
+msgid "show profiles with duplicate profile ID"
+msgstr ""
+
+#: tools/oyranos_profiles.c:78
+msgid "skip repair of profile ID"
+msgstr ""
+
+#: tools/oyranos_profiles.c:82 tools/oyranos_profiles.c:91
+msgid "user path"
+msgstr ""
+
+#: tools/oyranos_profiles.c:83
+msgid "linux system path"
+msgstr ""
+
+#: tools/oyranos_profiles.c:84 tools/oyranos_profiles.c:93
+msgid "oyranos install path"
+msgstr ""
+
+#: tools/oyranos_profiles.c:85 tools/oyranos_profiles.c:94
+msgid "machine specific path"
+msgstr ""
+
+#: tools/oyranos_profiles.c:87
+msgid "Install ICC profile:"
+msgstr ""
+
+#: tools/oyranos_profiles.c:90
+msgid "use device sub path"
+msgstr ""
+
+#: tools/oyranos_profiles.c:92
+msgid "system path"
+msgstr ""
+
+#: tools/oyranos_profiles.c:95
+msgid "show hints and question GUI"
+msgstr ""
+
+#: tools/oyranos_profiles.c:96
+msgid "download ID from Taxi data base"
+msgstr ""
+
+#: tools/oyranos_profiles.c:192
+msgid "A single path option is required"
+msgstr ""
+
+#: tools/oyranos_profiles.c:205
+msgid "File name is missed"
+msgstr ""
+
+#: tools/oyranos_profiles.c:393
+msgid "ICC profile search paths"
+msgstr ""
+
+#: tools/oyranos_profiles.c:424
+msgid "Could not open: "
+msgstr ""
+
+#: tools/oyranos_profiles.c:461
+msgid "Could not open or invalid data: "
+msgstr ""
+
+#: tools/oyranos_profiles.c:513
+msgid "Path can not be written"
+msgstr ""
+
+#: tools/oyranos_profiles.c:525
+msgid "Profile not useable"
+msgstr ""
+
+#: tools/oyranos_profiles.c:535
+msgid "Internal Error"
+msgstr ""
+
+#: tools/oyranos_profile_tool.c:84
+msgid "List included ICC tags:"
 msgstr ""
 
 #: tools/oyranos_profile_tool.c:86 tools/oyranos_profile_tool.c:87
@@ -3408,14 +3979,6 @@ msgstr ""
 msgid "Write to ICC profile:"
 msgstr ""
 
-#: tools/oyranos_profile_tool.c:105 tools/oyranos_profile_tool.c:107
-#: tools/oyranos_convert.c:63 tools/oyranos_convert.c:64
-#: tools/oyranos_convert.c:69 tools/oyranos_convert.c:72
-#: tools/oyranos_convert.c:77 tools/oyranos_convert.c:91
-#: tools/oyranos_convert.c:95 tools/oyranos_convert.c:96
-msgid "FILE_NAME"
-msgstr ""
-
 #: tools/oyranos_profile_tool.c:106
 msgid "use new name"
 msgstr ""
@@ -3428,18 +3991,6 @@ msgstr ""
 msgid "add prefix"
 msgstr ""
 
-#: tools/oyranos_profile_tool.c:110 tools/oyranos_convert.c:99
-#: tools/oyranos_policy.c:68 tools/oyranos_profiles.c:98 examples/taxi.c:64
-msgid "Print a help text:"
-msgstr ""
-
-#: tools/oyranos_profile_tool.c:113 tools/oyranos_profile_graph.c:132
-#: tools/oyranos_convert.c:102 tools/oyranos_profiles.c:101
-#: tools/oyranos_gamma.c:234 examples/taxi.c:67
-#: examples/devices/test_device.c:101 examples/libraw/oyranos_file.cpp:66
-msgid "General options:"
-msgstr ""
-
 #: tools/oyranos_profile_tool.c:114
 msgid ""
 "can be file name, internal description string, ICC profile ID or wildcard "
@@ -3449,52 +4000,13 @@ msgid ""
 "profiles."
 msgstr ""
 
-#: tools/oyranos_profile_tool.c:117 tools/oyranos_profile_graph.c:133
-#: tools/oyranos_convert.c:103 tools/oyranos_profiles.c:102
-#: examples/devices/test_device.c:102 examples/libraw/oyranos_file.cpp:69
-msgid "verbose"
-msgstr ""
-
 #: tools/oyranos_profile_tool.c:118 tools/oyranos_profile_tool.c:263
 #: tools/oyranos_profile_tool.c:267
 msgid "read input stream"
 msgstr ""
 
-#: tools/oyranos_profile_tool.c:119 tools/oyranos_profile_graph.c:139
-msgid "select a ICC v2 profile"
-msgstr ""
-
-#: tools/oyranos_profile_tool.c:120 tools/oyranos_profile_graph.c:140
-msgid "select a ICC v4 profile"
-msgstr ""
-
-#. --short argument
-#: tools/oyranos_profile_tool.c:121 tools/oyranos_gamma.c:221
-msgid "print only the file name"
-msgstr ""
-
-#. --path argument
-#: tools/oyranos_profile_tool.c:122 tools/oyranos_gamma.c:223
-#: examples/devices/test_device.c:76
-msgid "print the full file name"
-msgstr ""
-
-#: tools/oyranos_profile_tool.c:124 tools/oyranos_convert.c:107
-#: tools/oyranos_profiles.c:104 examples/taxi.c:70
-#: examples/oyranos_cmm_dDev.c:703 examples/oyranos_cmm_dDev.c:714
-#: examples/libraw/oyranos_file.cpp:71
-msgid "Example"
-msgstr ""
-
 #: tools/oyranos_profile_tool.c:129
 msgid "Count all profiles with Lab PCS"
-msgstr ""
-
-#: tools/oyranos_profile_tool.c:132 tools/oyranos_profile_graph.c:142
-#: tools/oyranos_gamma.c:239 examples/devices/test_device.c:110
-#: examples/libraw/oyranos_file.cpp:78
-#, c-format
-msgid "For more informations read the man page:"
 msgstr ""
 
 #: tools/oyranos_profile_tool.c:252
@@ -3633,486 +4145,136 @@ msgstr ""
 msgid "RGB primaries missed"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:104
-msgid "is a ICC color profile grapher"
+#: examples/oyranos_cmm_iemn.c:246 examples/oyranos_cmm_iemn.c:248
+msgid "ICC Examin output filter"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:106
-msgid "2D Graph from profiles:"
+#: examples/oyranos_cmm_iemn.c:252 examples/oyranos_cmm_dFil.c:152
+msgid "Me"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:108 tools/oyranos_profile_graph.c:135
-#: examples/devices/test_device.c:54 examples/devices/test_device.c:94
-#: examples/devices/test_device.c:95 examples/libraw/oyranos_file.cpp:67
-#: examples/libraw/oyranos_file.cpp:68
-msgid "FILE"
+#: examples/oyranos_cmm_iemn.c:254 examples/oyranos_cmm_dDev.c:826
+msgid "Kai-Uwe Behrmann"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:108
-msgid "PROFILENAMES"
-msgstr ""
-
-#: tools/oyranos_profile_graph.c:109
-msgid "use CIE*xyY *x*y plane for saturation line projection"
-msgstr ""
-
-#: tools/oyranos_profile_graph.c:110
-msgid "omit white line of lambert light emitters"
-msgstr ""
-
-#: tools/oyranos_profile_graph.c:111
-msgid "omit the spectral line"
-msgstr ""
-
-#: tools/oyranos_profile_graph.c:112
-msgid "specify incemental increase of the thickness of the graph lines"
-msgstr ""
-
-#: tools/oyranos_profile_graph.c:114
-msgid "Standard Observer 1931 2° Graph:"
-msgstr ""
-
-#: tools/oyranos_profile_graph.c:116 tools/oyranos_profile_graph.c:120
-#: tools/oyranos_profile_graph.c:124 tools/oyranos_profile_graph.c:130
-msgid "draw gray"
-msgstr ""
-
-#: tools/oyranos_profile_graph.c:118
-msgid "1964 10° Observer Graph:"
-msgstr ""
-
-#: tools/oyranos_profile_graph.c:122
-msgid "Blackbody Radiator Spectrum Graph:"
-msgstr ""
-
-#: tools/oyranos_profile_graph.c:126
-msgid "Illuminant Spectrum Graph:"
-msgstr ""
-
-#: tools/oyranos_profile_graph.c:128
-msgid "CIE A spectral power distribution"
-msgstr ""
-
-#: tools/oyranos_profile_graph.c:129
-msgid "CIE D65 spectral power distribution"
-msgstr ""
-
-#: tools/oyranos_profile_graph.c:134
-msgid "specify output image width in pixel"
-msgstr ""
-
-#: tools/oyranos_profile_graph.c:135
-msgid "specify output file name, default is output.png"
-msgstr ""
-
-#: tools/oyranos_profile_graph.c:136 tools/oyranos_convert.c:78
-#: tools/oyranos_convert.c:83
-msgid "FORMAT"
-msgstr ""
-
-#: tools/oyranos_profile_graph.c:136
-msgid "specify output file format png or svg, default is png"
-msgstr ""
-
-#: tools/oyranos_profile_graph.c:137
-msgid "omit border"
-msgstr ""
-
-#: tools/oyranos_profile_graph.c:138
-msgid "specify increase of the thickness of the graph lines"
-msgstr ""
-
-#: tools/oyranos_convert.c:51
-msgid "is a ICC color conversion tool"
-msgstr ""
-
-#: tools/oyranos_convert.c:62
-msgid "Convert Image:"
-msgstr ""
-
-#: tools/oyranos_convert.c:64
-msgid "read from file"
-msgstr ""
-
-#: tools/oyranos_convert.c:65
-msgid "Conversion"
-msgstr ""
-
-#: tools/oyranos_convert.c:66 tools/oyranos_convert.c:74
-msgid "Output Color Space"
-msgstr ""
-
-#: tools/oyranos_convert.c:67 tools/oyranos_convert.c:75
-msgid "Simulation/Proof Color Space"
-msgstr ""
-
-#: tools/oyranos_convert.c:68 tools/oyranos_convert.c:76
-msgid "Effect abtract Color Space"
-msgstr ""
-
-#: tools/oyranos_convert.c:69
-msgid "write to file, currently only PPM and PNG formats"
-msgstr ""
-
-#: tools/oyranos_convert.c:71
-msgid "Generate CLUT Image:"
-msgstr ""
-
-#: tools/oyranos_convert.c:72 tools/oyranos_convert.c:82
-#: tools/oyranos_convert.c:91 tools/oyranos_convert.c:100
-#: tools/oyranos_convert.c:104
-msgid "MODULE_NAME"
-msgstr ""
-
-#: tools/oyranos_convert.c:73
-msgid "Input Color Space"
-msgstr ""
-
-#: tools/oyranos_convert.c:77
-msgid "write to file, currently only PPM format"
-msgstr ""
-
-#: tools/oyranos_convert.c:78
-msgid "select format, currently only clut"
-msgstr ""
-
-#: tools/oyranos_convert.c:79
+#: examples/oyranos_cmm_iemn.c:256
 msgid ""
-"CLUT is a levels x levels*levels sized PPM, --levels defaults for clut to 64"
+"My project; www: http://www.oyranos.org; support/email: ku.b@gmx.de; "
+"sources: http://www.oyranos.org/wiki/index.php?title=Oyranos/Download"
 msgstr ""
 
-#: tools/oyranos_convert.c:81
-msgid "Generate Device Link Profile:"
+#: examples/oyranos_cmm_iemn.c:260 examples/oyranos_cmm_dFil.c:160
+msgid "newBSD"
 msgstr ""
 
-#: tools/oyranos_convert.c:83
-msgid "select format, currently only icc"
+#: examples/oyranos_cmm_iemn.c:262
+msgid "Copyright (c) 2010 Kai-Uwe Behrmann; newBSD"
 msgstr ""
 
-#: tools/oyranos_convert.c:84
-msgid "select unsigned integer 8-bit precision data format"
+#: examples/oyranos_cmm_iemn.c:264
+msgid "new BSD license: http://www.opensource.org/licenses/bsd-license.php"
 msgstr ""
 
-#: tools/oyranos_convert.c:85
-msgid "select unsigned integer 16-bit precision data format"
+#: examples/oyranos_cmm_iemn.c:270
+msgid "The filter allows to visually observe a images colours."
 msgstr ""
 
-#: tools/oyranos_convert.c:86
-msgid "select floating point 16-bit precision data format"
+#: examples/oyranos_cmm_iemn.c:272
+msgid ""
+"The 3D view uses OpenGL to project the image colours into a 3D view "
+"representing the CIE*Lab colour space. The filter needs a running window "
+"system."
 msgstr ""
 
-#: tools/oyranos_convert.c:87
-msgid "select floating point 32-bit precision data format"
+#: examples/oyranos_cmm_iemn.c:484
+msgid "Image[iemn_filter]"
 msgstr ""
 
-#: tools/oyranos_convert.c:88
-msgid "select floating point 64-bit precision data format"
+#: examples/oyranos_cmm_iemn.c:486
+msgid "ICC Examin Object"
 msgstr ""
 
-#: tools/oyranos_convert.c:90
-msgid "Extract ICC profile:"
+#: examples/oyranos_cmm_iemn.c:493 examples/oyranos_cmm_dFil.c:402
+msgid "Some help for My example filter."
 msgstr ""
 
-#: tools/oyranos_convert.c:92 tools/oyranos_convert.c:96
-msgid "write to file"
+#: examples/oyranos_cmm_iemn.c:495 examples/oyranos_cmm_dFil.c:404
+msgid "More indepth help  for My example filter."
 msgstr ""
 
-#: tools/oyranos_convert.c:94
-msgid "Generate Image:"
+#. The following strings must match the categories for a menu entry.
+#: examples/oyranos_cmm_iemn.c:502
+msgid "Colour"
 msgstr ""
 
-#: tools/oyranos_convert.c:97
-msgid "levels from 4-16 make sense"
+#: examples/oyranos_cmm_iemn.c:502
+msgid "ICC Examin"
 msgstr ""
 
-#: tools/oyranos_convert.c:104
-msgid "module name"
+#: examples/oyranos_cmm_dDev.c:705
+msgid "Example Device"
 msgstr ""
 
-#: tools/oyranos_convert.c:105
-msgid "enable simple defaults"
+#: examples/oyranos_cmm_dDev.c:707
+msgid "Example Devices, for testing and learning purposes only."
 msgstr ""
 
-#: tools/oyranos_convert.c:108
-msgid "Get ICC profile"
+#: examples/oyranos_cmm_dDev.c:818
+msgid "Oyranos Dummy"
 msgstr ""
 
-#: tools/oyranos_convert.c:111
-msgid "Convert image to ICC Color Space"
+#: examples/oyranos_cmm_dDev.c:820
+msgid "The dummy useless module of Oyranos."
 msgstr ""
 
-#: tools/oyranos_convert.c:114
-msgid "Convert image through ICC device link profile"
+#: examples/oyranos_cmm_dDev.c:824
+msgid "Kai-Uwe"
 msgstr ""
 
-#: tools/oyranos_convert.c:117
-msgid "Get Conversion"
+#: examples/oyranos_cmm_dDev.c:832
+msgid "MIT"
 msgstr ""
 
-#: tools/oyranos_convert.c:120
-msgid "Create 3D CLUT"
+#: examples/oyranos_cmm_dFil.c:154
+msgid "My Name"
 msgstr ""
 
-#: tools/oyranos_convert.c:359
-msgid "Option"
+#: examples/oyranos_cmm_dFil.c:156
+msgid ""
+"My project; www: http://www.my-adress.com; support/email: my@adress.com; "
+"sources: http://www.my-adress.com/download"
 msgstr ""
 
-#: tools/oyranos_policy.c:45
-msgid "is a policy administration tool"
+#: examples/oyranos_cmm_dFil.c:162
+msgid "Copyright (c) 2009 My Name; newBSD"
 msgstr ""
 
-#: tools/oyranos_policy.c:56
-msgid "Dump out the actual settings:"
+#: examples/oyranos_cmm_dFil.c:393
+msgid "Image[my_filter]"
 msgstr ""
 
-#: tools/oyranos_policy.c:58
-msgid "Select active policy:"
+#: examples/oyranos_cmm_dFil.c:395
+msgid "My Filter Object"
 msgstr ""
 
-#: tools/oyranos_policy.c:59
-msgid "policy or filename"
+#: examples/oyranos_cmm_dFil.c:411
+msgid "My Filter"
 msgstr ""
 
-#: tools/oyranos_policy.c:60
-msgid "List available policies:"
+#: examples/oyranos_cmm_dFil.c:618
+msgid "So something with options."
 msgstr ""
 
-#: tools/oyranos_policy.c:62 tools/oyranos_policy.c:207
-msgid "Currently active policy:"
+#: examples/oyranos_cmm_dFil.c:620
+msgid "The my_handler takes a option with key name \"print\" and prints it."
 msgstr ""
 
-#: tools/oyranos_policy.c:64 tools/oyranos_profiles.c:80
-msgid "List search paths:"
+#: examples/oyranos_cmm_dFil.c:626
+msgid "Handle options."
 msgstr ""
 
-#: tools/oyranos_policy.c:66
-msgid "Save to a new policy:"
-msgstr ""
-
-#: tools/oyranos_policy.c:67
-msgid "policy name"
-msgstr ""
-
-#: tools/oyranos_policy.c:189
-msgid "installed new policy"
-msgstr ""
-
-#: tools/oyranos_policy.c:192
-msgid "installation of new policy file failed with error:"
-msgstr ""
-
-#: tools/oyranos_policy.c:216
-msgid "Policy search paths"
-msgstr ""
-
-#: tools/oyranos_profiles.c:64
-msgid "List available ICC profiles:"
-msgstr ""
-
-#: tools/oyranos_profiles.c:66
-msgid "full path and file name"
-msgstr ""
-
-#: tools/oyranos_profiles.c:67
-msgid "internal name"
-msgstr ""
-
-#: tools/oyranos_profiles.c:68
-msgid "abstract class"
-msgstr ""
-
-#: tools/oyranos_profiles.c:69
-msgid "color space class"
-msgstr ""
-
-#: tools/oyranos_profiles.c:70
-msgid "display class"
-msgstr ""
-
-#: tools/oyranos_profiles.c:71
-msgid "(device) link class"
-msgstr ""
-
-#: tools/oyranos_profiles.c:72
-msgid "named color class"
-msgstr ""
-
-#: tools/oyranos_profiles.c:73
-msgid "output class"
-msgstr ""
-
-#: tools/oyranos_profiles.c:74
-msgid "input class"
-msgstr ""
-
-#: tools/oyranos_profiles.c:75 examples/devices/test_device.c:107
-msgid "select ICC v2 profiles"
-msgstr ""
-
-#: tools/oyranos_profiles.c:76 examples/devices/test_device.c:108
-msgid "select ICC v4 profiles"
-msgstr ""
-
-#: tools/oyranos_profiles.c:77
-msgid "show profiles with duplicate profile ID"
-msgstr ""
-
-#: tools/oyranos_profiles.c:78
-msgid "skip repair of profile ID"
-msgstr ""
-
-#: tools/oyranos_profiles.c:82 tools/oyranos_profiles.c:91
-msgid "user path"
-msgstr ""
-
-#: tools/oyranos_profiles.c:83
-msgid "linux system path"
-msgstr ""
-
-#: tools/oyranos_profiles.c:84 tools/oyranos_profiles.c:93
-msgid "oyranos install path"
-msgstr ""
-
-#: tools/oyranos_profiles.c:85 tools/oyranos_profiles.c:94
-msgid "machine specific path"
-msgstr ""
-
-#: tools/oyranos_profiles.c:87
-msgid "Install ICC profile:"
-msgstr ""
-
-#: tools/oyranos_profiles.c:90
-msgid "use device sub path"
-msgstr ""
-
-#: tools/oyranos_profiles.c:92
-msgid "system path"
-msgstr ""
-
-#: tools/oyranos_profiles.c:95
-msgid "show hints and question GUI"
-msgstr ""
-
-#: tools/oyranos_profiles.c:96
-msgid "download ID from Taxi data base"
-msgstr ""
-
-#: tools/oyranos_profiles.c:192
-msgid "A single path option is required"
-msgstr ""
-
-#: tools/oyranos_profiles.c:205
-msgid "File name is missed"
-msgstr ""
-
-#: tools/oyranos_profiles.c:393
-msgid "ICC profile search paths"
-msgstr ""
-
-#: tools/oyranos_profiles.c:424
-msgid "Could not open: "
-msgstr ""
-
-#: tools/oyranos_profiles.c:461
-msgid "Could not open or invalid data: "
-msgstr ""
-
-#: tools/oyranos_profiles.c:513
-msgid "Path can not be written"
-msgstr ""
-
-#: tools/oyranos_profiles.c:525
-msgid "Profile not useable"
-msgstr ""
-
-#: tools/oyranos_profiles.c:535
-msgid "Internal Error"
-msgstr ""
-
-#: tools/oyranos_gamma.c:206 tools/oyranos_gamma.c:264
-msgid "is a color profile administration tool for monitors"
-msgstr ""
-
-#: tools/oyranos_gamma.c:208
-msgid "Set new profile:"
-msgstr ""
-
-#: tools/oyranos_gamma.c:210
-msgid "profile name"
-msgstr ""
-
-#: tools/oyranos_gamma.c:212
-msgid "Erase profile:"
-msgstr ""
-
-#: tools/oyranos_gamma.c:215
-msgid "Activate profiles:"
-msgstr ""
-
-#: tools/oyranos_gamma.c:218 examples/devices/test_device.c:71
-msgid "List devices:"
-msgstr ""
-
-#: tools/oyranos_gamma.c:225 examples/devices/test_device.c:82
-msgid "List Taxi DB profiles for selected device:"
-msgstr ""
-
-#: tools/oyranos_gamma.c:228
-msgid "List modules:"
-msgstr ""
-
-#: tools/oyranos_gamma.c:231 examples/libraw/oyranos_file.cpp:49
-msgid "Dump data:"
-msgstr ""
-
-#: tools/oyranos_gamma.c:235 examples/taxi.c:68
-msgid "-v verbose"
-msgstr ""
-
-#: tools/oyranos_gamma.c:236
-msgid "--module name"
-msgstr ""
-
-#: tools/oyranos_gamma.c:237
-msgid "-d device_position_start_from_zero"
-msgstr ""
-
-#: tools/oyranos_gamma.c:272
-msgid "DISPLAY variable not set: giving up."
-msgstr ""
-
-#: tools/oyranos_gamma.c:355
-msgid "Could not resolve device"
-msgstr ""
-
-#: tools/oyranos_gamma.c:356 examples/devices/test_device.c:373
-#: examples/devices/test_device.c:389 examples/devices/test_device.c:404
-#: examples/devices/test_device.c:811 examples/devices/test_device.c:1055
-msgid "Available devices"
-msgstr ""
-
-#: tools/oyranos_gamma.c:389
-msgid "Please specify a monitor with the -d option."
-msgstr ""
-
-#: tools/oyranos_gamma.c:402
-msgid "Zero profiles found in Taxi ICC DB"
-msgstr ""
-
-#: tools/oyranos_gamma.c:446
-msgid "Taxi DB entries for device"
-msgstr ""
-
-#: tools/oyranos_gamma.c:449 examples/devices/test_device.c:970
-msgid "Taxi ID"
-msgstr ""
-
-#: tools/oyranos_gamma.c:450 examples/devices/test_device.c:971
-msgid "match value"
-msgstr ""
-
-#: tools/oyranos_gamma.c:450 examples/devices/test_device.c:971
-msgid "description"
+#: examples/oyranos_cmm_dFil.c:628
+msgid "This example module \"my_handler\" lets you print a option."
 msgstr ""
 
 #: examples/taxi.c:40
@@ -4137,92 +4299,6 @@ msgstr ""
 
 #: examples/taxi.c:409
 msgid "Did you specify a 3 letter manufacturer code?"
-msgstr ""
-
-#: examples/oyranos_cmm_dFil.c:152
-msgid "Me"
-msgstr ""
-
-#: examples/oyranos_cmm_dFil.c:154
-msgid "My Name"
-msgstr ""
-
-#: examples/oyranos_cmm_dFil.c:156
-msgid ""
-"My project; www: http://www.my-adress.com; support/email: my@adress.com; "
-"sources: http://www.my-adress.com/download"
-msgstr ""
-
-#: examples/oyranos_cmm_dFil.c:160
-msgid "newBSD"
-msgstr ""
-
-#: examples/oyranos_cmm_dFil.c:162
-msgid "Copyright (c) 2009 My Name; newBSD"
-msgstr ""
-
-#: examples/oyranos_cmm_dFil.c:393
-msgid "Image[my_filter]"
-msgstr ""
-
-#: examples/oyranos_cmm_dFil.c:395
-msgid "My Filter Object"
-msgstr ""
-
-#: examples/oyranos_cmm_dFil.c:402
-msgid "Some help for My example filter."
-msgstr ""
-
-#: examples/oyranos_cmm_dFil.c:404
-msgid "More indepth help  for My example filter."
-msgstr ""
-
-#: examples/oyranos_cmm_dFil.c:411
-msgid "My Filter"
-msgstr ""
-
-#: examples/oyranos_cmm_dFil.c:618
-msgid "So something with options."
-msgstr ""
-
-#: examples/oyranos_cmm_dFil.c:620
-msgid "The my_handler takes a option with key name \"print\" and prints it."
-msgstr ""
-
-#: examples/oyranos_cmm_dFil.c:626
-msgid "Handle options."
-msgstr ""
-
-#: examples/oyranos_cmm_dFil.c:628
-msgid "This example module \"my_handler\" lets you print a option."
-msgstr ""
-
-#: examples/oyranos_cmm_dDev.c:705
-msgid "Example Device"
-msgstr ""
-
-#: examples/oyranos_cmm_dDev.c:707
-msgid "Example Devices, for testing and learning purposes only."
-msgstr ""
-
-#: examples/oyranos_cmm_dDev.c:818
-msgid "Oyranos Dummy"
-msgstr ""
-
-#: examples/oyranos_cmm_dDev.c:820
-msgid "The dummy useless module of Oyranos."
-msgstr ""
-
-#: examples/oyranos_cmm_dDev.c:824
-msgid "Kai-Uwe"
-msgstr ""
-
-#: examples/oyranos_cmm_dDev.c:826
-msgid "Kai-Uwe Behrmann"
-msgstr ""
-
-#: examples/oyranos_cmm_dDev.c:832
-msgid "MIT"
 msgstr ""
 
 #: examples/devices/test_device.c:50
@@ -4401,128 +4477,132 @@ msgstr ""
 msgid "Embedd device meta tag from image device into given device profile"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:422
+#: examples/image_display/image_display_gl.cpp:789
+msgid "Edit Options"
+msgstr ""
+
+#: examples/image_display/image_display.cpp:431
 msgid "Information:"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:467
+#: examples/image_display/image_display.cpp:476
 msgid "Oyranos Help"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:506
+#: examples/image_display/image_display.cpp:515
 msgid "Navigation:"
 msgstr ""
 
 #. '>'
-#: examples/image_display/image_display.cpp:508
+#: examples/image_display/image_display.cpp:517
 msgid "&gt; - next image"
 msgstr ""
 
 #. '<'
-#: examples/image_display/image_display.cpp:510
+#: examples/image_display/image_display.cpp:519
 msgid "&lt; - previous image"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:511
+#: examples/image_display/image_display.cpp:520
 msgid "Zoom:"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:512
+#: examples/image_display/image_display.cpp:521
 msgid "f - fit to window"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:513
+#: examples/image_display/image_display.cpp:522
 msgid "1 - map one image pixel to one screen pixel"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:514
+#: examples/image_display/image_display.cpp:523
 msgid "w - fit to window width"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:515
+#: examples/image_display/image_display.cpp:524
 msgid "h - fit to window height"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:516
+#: examples/image_display/image_display.cpp:525
 msgid "+ - zoom in"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:517
+#: examples/image_display/image_display.cpp:526
 msgid "- - zoom out"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:518
+#: examples/image_display/image_display.cpp:527
 msgid "Exposure:"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:519
+#: examples/image_display/image_display.cpp:528
 msgid "Alt + - brighter"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:520
+#: examples/image_display/image_display.cpp:529
 msgid "Alt - - darker"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:521
+#: examples/image_display/image_display.cpp:530
 msgid "Alt . - reset to normal values"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:522
+#: examples/image_display/image_display.cpp:531
 msgid "Channels:"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:523
+#: examples/image_display/image_display.cpp:532
 msgid "Alt 1 - first channel"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:524
+#: examples/image_display/image_display.cpp:533
 msgid "Alt 2 - second channel"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:525
+#: examples/image_display/image_display.cpp:534
 msgid "Alt n - n-th channel"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:526
+#: examples/image_display/image_display.cpp:535
 msgid "Alt 0 - all channels"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:527
+#: examples/image_display/image_display.cpp:536
 msgid "View:"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:528
+#: examples/image_display/image_display.cpp:537
 msgid "Alt v - set window fullscreen"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:531
+#: examples/image_display/image_display.cpp:540
 msgid "Oyranos Image Display Help"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:578
+#: examples/image_display/image_display.cpp:587
 msgid "Oyranos Image Display Info"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:1082
+#: examples/image_display/image_display.cpp:1091
 msgid "Edit Options ..."
 msgstr ""
 
-#: examples/image_display/image_display.cpp:1084
+#: examples/image_display/image_display.cpp:1093
 msgid "Examine ICC Profile ..."
 msgstr ""
 
-#: examples/image_display/image_display.cpp:1086
+#: examples/image_display/image_display.cpp:1095
 msgid "Debug"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:1088
+#: examples/image_display/image_display.cpp:1097
 msgid "Show Infos"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:1091
+#: examples/image_display/image_display.cpp:1100
 msgid "Help Shortcuts"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:1095
+#: examples/image_display/image_display.cpp:1104
 msgid "Quit"
 msgstr ""

@@ -2,13 +2,13 @@
 .SH NAME
 oyranos-policy \- Oyranos CMS policy tool
 .SH SYNOPSIS
-\fBoyranos-policy\fR -c [-v]
+\fBoyranos-policy\fR -c [-f] [-e] [-v]
+.fi
+\fBoyranos-policy\fR -l [-f] [-e] [-v]
 .fi
 \fBoyranos-policy\fR -d [-v]
 .fi
 \fBoyranos-policy\fR -i \fIFILENAME\fR [-v]
-.fi
-\fBoyranos-policy\fR -l [-f] [-e] [-v]
 .fi
 \fBoyranos-policy\fR -p [-v]
 .fi
@@ -22,13 +22,6 @@ The tool dumps out / read a configuration of the Oyranos color management system
 .B \-c
 show current active policy name
 .TP
-.B \-d
-dump out all settings in Oyranos' own xml-ish text format
-.TP
-.B \-i \fIFILENAME\fR
-import;
-FILENAME must be in Oyranos' own xml-ish text format
-.TP
 .B \-l
 list available policies
 .sp
@@ -37,6 +30,13 @@ list available policies
 .br
 \fB-e\fR show display name.
 .br
+.TP
+.B \-d
+dump out all settings in Oyranos' own xml-ish text format
+.TP
+.B \-i \fIFILENAME\fR
+import;
+FILENAME must be in Oyranos' own xml-ish text format
 .TP
 .B \-p
 list search paths
@@ -71,8 +71,8 @@ Set new policy:
 List available policies:
 .B oyranos-policy -l
 .TP
-Currently active policy:
-.B oyranos-policy -c
+Currently active policy including its file name:
+.B oyranos-policy -cfe
 .TP
 Save and install to a new policy:
 .B oyranos-policy -s policy_name

@@ -59,10 +59,10 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "      %s -i %s\n",     argv[0], _("policy or filename"));
   fprintf( stderr, "  %s\n",               _("List available policies:"));
   fprintf( stderr, "      %s -l [-f] [-e]\n",        argv[0]);
-  fprintf( stderr, "             -f %s\n", _("full path and file name"));
-  fprintf( stderr, "             -e %s\n", _("internal name"));
   fprintf( stderr, "  %s\n",               _("Currently active policy:"));
-  fprintf( stderr, "      %s -c\n",        argv[0]);
+  fprintf( stderr, "      %s -c [-f] [-e]\n",        argv[0]);
+  fprintf( stderr, "             -f %s\n", _("full path and file name"));
+  fprintf( stderr, "             -e %s\n", _("display name"));
   fprintf( stderr, "  %s\n",               _("List search paths:"));
   fprintf( stderr, "      %s -p\n",        argv[0]);
   fprintf( stderr, "  %s\n",               _("Save to a new policy:"));
@@ -225,7 +225,18 @@ int main( int argc , char** argv )
     if(current_policy)
     {
       fprintf( stderr, "%s\n", _("Currently active policy:"));
-      fprintf( stdout, "%s\n", current>=0?names[current]:"---");
+      if(current >= 0 && file_name)
+      {
+        char * full_name = NULL;
+        int error = oyPolicyFileNameGet_( names[current], &full_name,
+                                          oyAllocateFunc_ );
+        if(internal_name)
+          fprintf(stdout, "%s (%s)\n", names[current], full_name);
+        else
+          fprintf(stdout, "%s\n", full_name);
+        oyFree_m_( full_name );
+      } else
+        fprintf( stdout, "%s\n", current>=0?names[current]:"---");
     }
 
     if(list_paths)
