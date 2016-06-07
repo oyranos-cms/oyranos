@@ -1,4 +1,4 @@
-usr/bin/qcmsevents
-usr/share/applications/qcmsevents-applet.desktop
+usr/bin/qcmsevents*
+usr/share/applications/qcmsevents-*applet.desktop
 usr/share/man/man1/qcmsevents.1*
 usr/share/pixmaps/qcmsevents.svg
