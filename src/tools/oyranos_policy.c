@@ -58,7 +58,9 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "  %s\n",               _("Select active policy:"));
   fprintf( stderr, "      %s -i %s\n",     argv[0], _("policy or filename"));
   fprintf( stderr, "  %s\n",               _("List available policies:"));
-  fprintf( stderr, "      %s -l\n",        argv[0]);
+  fprintf( stderr, "      %s -l [-f] [-e]\n",        argv[0]);
+  fprintf( stderr, "             -f %s\n", _("full path and file name"));
+  fprintf( stderr, "             -e %s\n", _("internal name"));
   fprintf( stderr, "  %s\n",               _("Currently active policy:"));
   fprintf( stderr, "      %s -c\n",        argv[0]);
   fprintf( stderr, "  %s\n",               _("List search paths:"));
@@ -83,11 +85,13 @@ int main( int argc , char** argv )
             * import_policy = NULL;
   oySCOPE_e scope = oySCOPE_USER;
   size_t size = 0;
-  char *xml = NULL;
+  char * xml = NULL;
   char * import_policy_fn = NULL;
   int current_policy = 0, list_policies = 0, list_paths = 0,
       dump_policy = 0;
-  int long_help = 0;
+  int long_help = 0,
+      internal_name = 0,
+      file_name = 0;
   int verbose = 0;
 
 #ifdef USE_GETTEXT
@@ -110,6 +114,8 @@ int main( int argc , char** argv )
             {
               case 'c': current_policy = 1; break;
               case 'd': dump_policy = 1; break;
+              case 'e': internal_name = 1; break;
+              case 'f': file_name = 1; break;
               case 'i': OY_PARSE_STRING_ARG(import_policy); break;
               case 'l': list_policies = 1; break;
               case 'p': list_paths = 1; break;
@@ -200,7 +206,21 @@ int main( int argc , char** argv )
 
     if(list_policies)
       for(i = 0; i < count; ++i)
-        fprintf(stdout, "%s\n", names[i]);
+        if(file_name)
+        {
+          char * full_name = NULL;
+          int error = oyPolicyFileNameGet_( names[i],
+                                            &full_name,
+                                            oyAllocateFunc_ );
+          if(error)
+            fprintf(stderr, "%s error: %d\n", names[i], error);
+          if(internal_name)
+            fprintf(stdout, "%s (%s)\n", names[i], full_name);
+          else
+            fprintf(stdout, "%s\n", full_name);
+          oyFree_m_( full_name );
+        } else
+          fprintf(stdout, "%s\n", names[i]);
 
     if(current_policy)
     {
