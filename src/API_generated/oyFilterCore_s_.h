@@ -40,9 +40,6 @@ typedef struct oyFilterCore_s_ oyFilterCore_s_;
 #include "oyFilterCore_s.h"
 
 /* Include "FilterCore.private.h" { */
-#ifndef OY_FILTER_NODE_S__H
-typedef struct oyFilterNode_s_ oyFilterNode_s_;
-#endif
 
 
 /* } Include "FilterCore.private.h" */
@@ -91,10 +88,6 @@ int
 
 
 /* Include "FilterCore.private_methods_declarations.h" { */
-oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s_   * filter,
-                                       oyFilterNode_s_   * node,
-                                       uint32_t            flags,
-                                       oyObject_s          object );
 int          oyFilterCore_SetCMMapi4_( oyFilterCore_s_   * s,
                                        oyCMMapi4_s_      * cmm_api4 );
 

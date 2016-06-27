@@ -17,3 +17,7 @@ oyPointer    oyFilterNode_TextToInfo_( oyFilterNode_s_    * node,
 int      oyFilterNode_Observe_       ( oyObserver_s      * observer,
                                        oySIGNAL_e          signal_type,
                                        oyStruct_s        * signal_data );
+oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s_   * filter,
+                                       oyFilterNode_s_   * node,
+                                       uint32_t            flags,
+                                       oyObject_s          object );
