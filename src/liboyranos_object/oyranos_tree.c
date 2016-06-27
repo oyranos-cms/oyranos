@@ -461,15 +461,6 @@ int                oyObjectStructTreeContains (
 
   return 0;
 }
-typedef void (*oyObjectTreeCallback_f)(void              * user_data,
-                                       int                 top,
-                                       oyLeave_s         * tree,
-                                       oyStruct_s        * grandparent,
-                                       oyStruct_s        * parent,
-                                       oyStruct_s        * current,
-                                       oyStruct_s       ** children,
-                                       int                 children_n,
-                                       int                 level );
 #define myCalloc(x,n) myCalloc_(x,n); if(oy_debug_memory) printf(OY_DBG_FORMAT_" %lu * %d bytes\n",OY_DBG_ARGS_, x,n);
 static void * myCalloc_( size_t size, size_t n )
 { void * mem = oyAllocateFunc_( size*n );
