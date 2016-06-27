@@ -411,7 +411,6 @@ int                oyStruct_GetChildren (
   return n;
 }
 
-typedef struct oyLeave_s oyLeave_s;
 struct oyLeave_s {
   /* downward */
   int n;
