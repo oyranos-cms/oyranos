@@ -53,9 +53,9 @@ class Oy_Fl_Window_Base
     {
       oywin->scale_ = getWinScale( win );
       float scale_ = oywin->scale();
+      oywin->init = 1;
       win->size(OY_ROUND(scale_ * win->w()), OY_ROUND(scale_ * win->h()));
     }
-    oywin->init = 1;
     /* osX virtualises window placement, but we need exact positioning */
     if(oywin->pos_x != win->x() || oywin->pos_y != win->y())
     {
