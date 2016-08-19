@@ -84,6 +84,9 @@ private:
                     __LINE__,
                     pt, oyImage_GetWidth( draw_image ), oyToChannels_m(pt) );
 
+      if(!context_valid())
+        return;
+
       if(!valid() ||
          W_ != W || H_ != H || !frame_data)
       {
