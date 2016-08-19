@@ -995,7 +995,7 @@ GLEE_EXTERN GLboolean _GLEE_IBM_static_data;
 #endif
 
 #ifndef GL_ARB_shader_objects
-	typedef int GLhandleARB;
+	typedef void* GLhandleARB;
 	typedef char GLcharARB;
 #endif
 
