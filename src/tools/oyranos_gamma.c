@@ -267,12 +267,15 @@ int main( int argc , char** argv )
   if(module_name && strstr(module_name, "oyX1"))
   {
 #endif
+
+#ifndef __APPLE__
     if(!display_name)
     {
       WARNc_S( _("DISPLAY variable not set: giving up.") );
       error = 1;
       return error;
     }
+#endif
 
     /* cut off the screen information */
     if(display_name &&
