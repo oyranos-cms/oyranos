@@ -250,9 +250,10 @@ private:
     }
 # endif
 #else
-    float x,y
+    float x,y;
     Fl::screen_dpi(x,y);
-    scale = x;
+    // looks fine on __APPLE__
+    scale = x/90.0;
 #endif
     return scale;
   }
