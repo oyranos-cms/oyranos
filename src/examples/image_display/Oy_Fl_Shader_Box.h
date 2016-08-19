@@ -2,8 +2,13 @@
 #define Oy_Fl_Shader_Box_H
 
 
-#include <GL/gl.h>
-#include <GL/glu.h>
+#if defined(__APPLE__)
+#  include <OpenGL/gl.h>
+#  include <OpenGL/glu.h>
+#else
+#  include <GL/gl.h>
+#  include <GL/glu.h>
+#endif
 
 #include <FL/Fl_Gl_Window.H>
 #include <FL/Fl.H>
@@ -412,7 +417,7 @@ private:
 
     if(oy_display_verbose)
       fprintf( stderr, _DBG_FORMAT_"w_ %d h_ %d  parent:%dx%d\n"
-               "img:%d clut:%d scale:%f offset:%f prog:%d shader:%d %gx%g\n",
+               "img:%d clut:%d scale:%f offset:%f prog:%tx shader:%tx %gx%g\n",
                _DBG_ARGS_, w_,h_,
                Oy_Fl_Image_Widget::parent()->w(),
                Oy_Fl_Image_Widget::parent()->h(),
