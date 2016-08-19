@@ -116,6 +116,10 @@ private:
         --need_redraw;
       }
 
+#ifdef __APPLE__
+      glDrawBuffer(GL_FRONT_AND_BACK);
+#endif // !MESA
+
       glClear(GL_COLOR_BUFFER_BIT);
       glColor3f(1.0, 1.0, 1.0);
       glBegin(GL_LINE_STRIP); glVertex2f(W, H); glVertex2f(-W,-H); glEnd();
@@ -161,6 +165,10 @@ private:
                     frame_width,frame_height,W,H);
 
       glGetIntegerv( GL_CURRENT_RASTER_POSITION, &pos[0] );
+
+#ifndef __APPLE__
+      glDrawBuffer(GL_BACK);
+#endif // !MESA
 
       if(0&&oy_display_verbose)
         fprintf(stdout, "%s:%d draw %dx%d %dx%d\n",
