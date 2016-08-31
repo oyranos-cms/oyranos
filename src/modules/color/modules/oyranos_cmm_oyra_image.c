@@ -969,7 +969,9 @@ int      oyraFilterPlug_ImageRectanglesRun (
           *oyRectangle_SetGeo1( roi, 0 ) = 0.0;
           *oyRectangle_SetGeo1( roi, 1 ) = 0.0;
           oyRectangle_SetByRectangle( newt_roi, roi );
-          oyRectangle_Scale( roi, 1.0 / (double)(oyArray2d_GetWidth( new_ticket_array )/channels) );
+          { double aw = (double)oyArray2d_GetWidth( new_ticket_array );
+            oyRectangle_Scale( roi, 1.0 / aw * (double)channels );
+          }
           oyRectangle_SetByRectangle( new_ticket_roi, roi );
 
           oyPixelAccess_SetArray( new_ticket, new_ticket_array );
@@ -988,11 +990,15 @@ int      oyraFilterPlug_ImageRectanglesRun (
         /* start new call into branch */
         if(oy_debug)
         {
+          oyRectangle_s_ nt_roi = {oyOBJECT_RECTANGLE_S,0,0,0, 0,0,0,0};
+          double aw = (double)oyArray2d_GetWidth( new_ticket_array );
+          oyRectangle_SetByRectangle( (oyRectangle_s*)&nt_roi, roi );
+          oyRectangle_Scale( (oyRectangle_s*)&nt_roi, aw/(double)channels );
           DBGs_PROG4_S( new_ticket, "%s[%d] new_ticket_array[%d](%s)",
                      "Run new_ticket through filter in node",
                      oyStruct_GetId( (oyStruct_s*)node ),
                      oyStruct_GetId( (oyStruct_s*)new_ticket_array ),
-                     oyRectangle_Show( roi ) );
+                     oyRectangle_Show( (oyRectangle_s*)&nt_roi ) );
         }
 
         plug = oyFilterNode_GetPlug( node, i );
