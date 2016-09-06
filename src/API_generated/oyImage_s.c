@@ -639,7 +639,7 @@ int            oyImage_FillArray     ( oyImage_s         * image,
   oyDATATYPE_e data_type = oyUINT8;
   int is_allocated = 0;
   int data_size, ay;
-  oyRectangle_s_ array_roi_pix = {oyOBJECT_RECTANGLE_S,0,0,0, 0,0,0,0};
+  oyRectangle_s_ array_roi_chan = {oyOBJECT_RECTANGLE_S,0,0,0, 0,0,0,0};
   int array_width, array_height;
   oyAlloc_f allocateFunc_ = 0;
   unsigned char * line_data = 0;
@@ -664,24 +664,24 @@ int            oyImage_FillArray     ( oyImage_s         * image,
 
   if(!error && array_rectangle)
     error = oyImage_PixelsToSamples( image, array_rectangle,
-                                     (oyRectangle_s*)&array_roi_pix );
+                                     (oyRectangle_s*)&array_roi_chan );
   else
   {
     oyRectangle_SetGeo( (oyRectangle_s*)&r, 0,0,
                                  oyRectanglePriv_m(rectangle)->width,
                                  oyRectanglePriv_m(rectangle)->height );
     error = oyImage_PixelsToSamples( image, (oyRectangle_s*)&r,
-                                     (oyRectangle_s*)&array_roi_pix );
+                                     (oyRectangle_s*)&array_roi_chan );
   }
 
-  array_width = array_roi_pix.x + array_roi_pix.width;
-  array_height = array_roi_pix.y + array_roi_pix.height;
+  array_width = array_roi_chan.x + array_roi_chan.width;
+  array_height = array_roi_chan.y + array_roi_chan.height;
 
   if(oy_debug > 2)
   {
     char * t = NULL;
-    STRING_ADD( t, oyRectangle_Show( (oyRectangle_s*)&array_roi_pix ) );
-    DBGs_PROG5_S( image, "image_roi_chan: %s array_roi_pix: %s array[%d] array_width: %d array_height: %d",
+    STRING_ADD( t, oyRectangle_Show( (oyRectangle_s*)&array_roi_chan ) );
+    DBGs_PROG5_S( image, "image_roi_chan: %s array_roi_chan: %s array[%d] array_width: %d array_height: %d",
                  oyRectangle_Show( (oyRectangle_s*)&image_roi_chan ),
                  t, oyStruct_GetId((oyStruct_s*)*array), array_width, array_height );
     oyFree_m_(t);
@@ -694,7 +694,7 @@ int            oyImage_FillArray     ( oyImage_s         * image,
      array_width > 0 && array_height > 0
     )
   {
-    if(!(array_roi_pix.width && array_roi_pix.height))
+    if(!(array_roi_chan.width && array_roi_chan.height))
       /* array creation is not possible */
       error = -1;
 
@@ -766,7 +766,7 @@ int            oyImage_FillArray     ( oyImage_s         * image,
   }
 
   /* a array should have been created */
-  if( !a && array_roi_pix.width && array_roi_pix.height )
+  if( !a && array_roi_chan.width && array_roi_chan.height )
   {
     WARNcc_S(image, "Could not create array.")
     if(error <= 0) error = -1;
@@ -774,8 +774,11 @@ int            oyImage_FillArray     ( oyImage_s         * image,
 
   if( !error && a )
   {
+    array_roi_chan.x += oyArray2d_GetDataGeo1( (oyArray2d_s*)a, 0 );
+    array_roi_chan.y += oyArray2d_GetDataGeo1( (oyArray2d_s*)a, 1 );
+
     /* shift array focus to requested region */
-    oyArray2d_SetFocus( (oyArray2d_s*)a, (oyRectangle_s*)&array_roi_pix );
+    oyArray2d_SetFocus( (oyArray2d_s*)a, (oyRectangle_s*)&array_roi_chan );
 
     /* change intermediately */
     if(a && a->width > image_roi_chan.width)
@@ -795,16 +798,16 @@ int            oyImage_FillArray     ( oyImage_s         * image,
   {
     oyPointer src, dst;
     int image_roi_chan_width = image_roi_chan.x + image_roi_chan.width,
-        roi_pix_width = OY_MIN( image_roi_chan_width, array_roi_pix.width ) / channels_n,
-        roi_pix_height = OY_MIN( image_roi_chan.y + image_roi_chan.height, array_roi_pix.height );
+        roi_pix_width = OY_MIN( image_roi_chan_width, array_roi_chan.width ) / channels_n,
+        roi_pix_height = OY_MIN( image_roi_chan.y + image_roi_chan.height, array_roi_chan.height );
 
     wlen = roi_pix_width * data_size * channels_n;
 
     if(oy_debug > 2)
     {
       char * t = NULL;
-      STRING_ADD( t, oyRectangle_Show( (oyRectangle_s*)&array_roi_pix ) );
-      DBGs_PROG4_S( image, "image_roi_chan: %s array_roi_pix: %s wlen(size_t): %lu image-hook:\"%s\"",
+      STRING_ADD( t, oyRectangle_Show( (oyRectangle_s*)&array_roi_chan ) );
+      DBGs_PROG4_S( image, "image_roi_chan: %s array_roi_chan: %s wlen(size_t): %lu image-hook:\"%s\"",
                  oyRectangle_Show( (oyRectangle_s*)&image_roi_chan ),
                  t, wlen, oyStructTypeToText( s->pixel_data->type_ ) );
       oyFree_m_(t);
@@ -836,7 +839,7 @@ int            oyImage_FillArray     ( oyImage_s         * image,
       else
       for( j = 0; j < height; ++j )
       {
-        if( i + j >= array_roi_pix.height )
+        if( i + j >= array_roi_chan.height )
           break;
 
         ay = i + j;

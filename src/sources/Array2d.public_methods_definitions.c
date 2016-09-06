@@ -279,6 +279,10 @@ OYAPI int  OYEXPORT
  *  @memberof oyArray2d_s
  *  @brief    Move a arrays active area to a given rectangle
  *
+ *  The array works in absolute coordinates.
+ *  For working in relative coordinates get first the current data_area by 
+ *  oyArray2d_GetDataGeo1().
+ *
  *  @param[in,out] array               the pixel array
  *  @param[in]     rectangle           the new region in the array's wholes data
  *  @return                            error
@@ -290,7 +294,7 @@ OYAPI int  OYEXPORT
 int          oyArray2d_SetFocus      ( oyArray2d_s       * array,
                                        oyRectangle_s     * rectangle )
 {
-  oyRectangle_s_ * array_roi_pix = (oyRectangle_s_*)rectangle;
+  oyRectangle_s_ * array_roi_chan = (oyRectangle_s_*)rectangle;
   oyArray2d_s_ * a = (oyArray2d_s_*)array;
   int error = 0;
   int y;
@@ -299,21 +303,27 @@ int          oyArray2d_SetFocus      ( oyArray2d_s       * array,
   {
     /* shift array focus to requested region */
     int bps = oyDataTypeGetSize( a->t );
-    if(a->data_area.x != OY_ROUND(array_roi_pix->x))
+    if(a->data_area.x != OY_ROUND(array_roi_chan->x))
     {
       int height = a->data_area.height + a->data_area.y;
-      int shift = (OY_ROUND(array_roi_pix->x) + OY_ROUND(a->data_area.x)) * bps;
+      int shift = (OY_ROUND(array_roi_chan->x) + OY_ROUND(a->data_area.x)) * bps;
       for(y = a->data_area.y; y < height; ++y)
         a->array2d[y] += shift;
-      a->data_area.x = -OY_ROUND(array_roi_pix->x);
+      a->data_area.x = -OY_ROUND(array_roi_chan->x);
     }
-    if(a->data_area.y != OY_ROUND(array_roi_pix->y))
+    if(a->data_area.y != OY_ROUND(array_roi_chan->y))
     {
-      a->array2d += OY_ROUND(array_roi_pix->y + a->data_area.y);
-      a->data_area.y = -array_roi_pix->y;
+      a->array2d += OY_ROUND(array_roi_chan->y + a->data_area.y);
+      a->data_area.y = -array_roi_chan->y;
     }
-    a->width = array_roi_pix->width;
-    a->height = array_roi_pix->height;
+    a->width = array_roi_chan->width;
+    a->height = array_roi_chan->height;
+
+    if(oy_debug > 3)
+      oyMessageFunc_p( oyMSG_DBG, (oyStruct_s*)a,
+                       OY_DBG_FORMAT_ "a->data_area: %s", OY_DBG_ARGS_,
+                       oyRectangle_Show((oyRectangle_s*)&a->data_area) );
+
   } else
     error = 1;
 

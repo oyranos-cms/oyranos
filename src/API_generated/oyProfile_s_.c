@@ -532,7 +532,7 @@ int oyProfile_HasID_          ( oyProfile_s_      * s )
  *  @since   2007/11/0 (Oyranos: 0.1.8)
  *  @date    2011/04/10
  */
-int oyProfile_GetHash_        ( oyProfile_s_      * s,
+int oyProfile_GetHash_               ( oyProfile_s_      * s,
                                        int                 flags )
 {
   int error = 1;
