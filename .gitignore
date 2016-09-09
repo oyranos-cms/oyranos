@@ -5,6 +5,7 @@ git.spec
 *.exe
 *.[aos]
 *.py[co]
+/build/
 config.mak
 iccexamin
 icc_examin_cp
@@ -41,6 +42,7 @@ rpmdir
 temp
 wwwsite
 *.edit*
+*.pro.user
 diff*
 *.po_*.*
 *.po~
@@ -50,6 +52,7 @@ diff*
 *.icc
 *.avi
 *.png
+*.ps
 *.jpg
 *.wrl*
 *.xml
