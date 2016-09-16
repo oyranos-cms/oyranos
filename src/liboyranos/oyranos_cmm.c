@@ -45,9 +45,9 @@
 /** @func    oyFilterPlug_ImageRootRun
  *  @brief   implement oyCMMFilter_GetNext_f()
  *
- *  @version Oyranos: 0.1.8
+ *  @version Oyranos: 0.9.6
+ *  @date    2016/09/09
  *  @since   2008/07/10 (Oyranos: 0.1.8)
- *  @date    2009/05/01
  */
 int      oyFilterPlug_ImageRootRun   ( oyFilterPlug_s    * requestor_plug,
                                        oyPixelAccess_s   * ticket )
@@ -80,7 +80,7 @@ int      oyFilterPlug_ImageRootRun   ( oyFilterPlug_s    * requestor_plug,
                  "Set dimensions on ticket->output_image",
                  oyStruct_GetId( (oyStruct_s*)output_image ),
                  oyRectangle_Show( output_array_roi ),
-                 oyImage_GetWidth(output_image), oyImage_GetHeight(output_image),
+                 oyImage_GetWidth(output_image),oyImage_GetHeight(output_image),
                  oyImage_GetWidth(image), oyImage_GetHeight(image) );
     oyImage_SetCritical( output_image,
                          oyImage_GetPixelLayout(image, oyLAYOUT), 0, 0,
@@ -96,14 +96,19 @@ int      oyFilterPlug_ImageRootRun   ( oyFilterPlug_s    * requestor_plug,
   {
     char * t = 0;
     oyArray2d_s * array = oyPixelAccess_GetArray( ticket );
-    int channels = oyToChannels_m( oyImage_GetPixelLayout(image, oyLAYOUT) );
-    int array_pix_width = oyArray2d_GetWidth(array)/channels;
+    int array_is_focussed = 0;
+
+    if(array)
+    {
+      oyPixelAccess_SetArrayFocus( ticket, 0 );
+      array_is_focussed = oyPixelAccess_ArrayIsFocussed( ticket );
+    }
 
     /* adapt the rectangle of interesst to the new image dimensions */
     oyRectangle_s_ image_roi = {oyOBJECT_RECTANGLE_S,0,0,0, 0,0,0,0},
-                   output_array_roi_ = {oyOBJECT_RECTANGLE_S,0,0,0, 0,0,0,0};
+                   array_roi = {oyOBJECT_RECTANGLE_S,0,0,0, 0,0,0,0};
     oyRectangle_SetByRectangle( (oyRectangle_s*)&image_roi, output_array_roi );
-    oyRectangle_SetByRectangle( (oyRectangle_s*)&output_array_roi_, output_array_roi );
+    oyRectangle_SetByRectangle( (oyRectangle_s*)&array_roi, output_array_roi );
     /* x and y source image offset */
     oyRectangle_SetGeo( (oyRectangle_s*)&image_roi,
                         x_pix / (double) width,
@@ -112,24 +117,27 @@ int      oyFilterPlug_ImageRootRun   ( oyFilterPlug_s    * requestor_plug,
                         oyRectangle_GetGeo1((oyRectangle_s*)&image_roi,3) );
 
     STRING_ADD( t, oyRectangle_Show( (oyRectangle_s*)&image_roi ) );
-    DBGs_PROG8_S( ticket, "Fill ticket->array[%d] from %s[%d] image_roi: %s output_array_roi:%s array[%d](%dx%d)",
+    DBGs_PROG8_S( ticket, "Fill ticket->array[%d] from %s[%d] "
+                          "image_roi: %s output_array_roi:%s array[%d](%dx%d)",
                   oyStruct_GetId( (oyStruct_s*)array ),
                   _("Image"), oyStruct_GetId( (oyStruct_s*)image ), t,
                   oyRectangle_Show( (oyRectangle_s*)output_array_roi ),
-                  oyStruct_GetId((oyStruct_s*)array),oyArray2d_GetWidth(array),oyArray2d_GetHeight(array) );
-
-    /* the array rectangle passed to oyImage_FillArray() is by definition relative to image units */
-      DBGs_PROG2_S( ticket, "array_pix_width: %d / width: %d", array_pix_width, width);
-    if(array_pix_width)
-      oyRectangle_Scale( (oyRectangle_s*)&output_array_roi_, array_pix_width/(double)width );
-      DBGs_PROG1_S( ticket, "after array/image scaling output_array_roi_: %s", oyRectangle_Show((oyRectangle_s*)&output_array_roi_));
+                  oyStruct_GetId((oyStruct_s*)array),
+                  oyArray2d_GetWidth(array),oyArray2d_GetHeight(array) );
 
     error = oyImage_FillArray( image, (oyRectangle_s*)&image_roi, 1,
-                               &array, (oyRectangle_s*)&output_array_roi_, 0 );
-      DBGs_PROG4_S( ticket, "%s[%d] output_array: %dx%d", "filled ticket->array",
-                  oyStruct_GetId( (oyStruct_s*)array ),
-                  oyArray2d_GetWidth(array),oyArray2d_GetHeight(array) );
-    oyPixelAccess_SetArray( ticket, array );
+                               /* The array should be already focussed. Then
+                                * the array_roi.
+                                * Without a array, use array_roi to generate a
+                                * sufficient big array to fit array_roi. */
+                               &array, array_is_focussed ? NULL:(oyRectangle_s*)&array_roi, 0 );
+      DBGs_PROG4_S( ticket, "%s[%d] output_array: %dx%d",
+                    "filled ticket->array",
+                    oyStruct_GetId( (oyStruct_s*)array ),
+                    oyArray2d_GetWidth(array),oyArray2d_GetHeight(array) );
+
+    oyPixelAccess_SetArray( ticket, array, array_is_focussed );
+
     oyArray2d_Release( &array );
     if(error)
       result = error;
