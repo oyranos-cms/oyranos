@@ -4598,7 +4598,7 @@ oyTESTRESULT_e testImagePixel()
   buf_16in2x2[3]=buf_16in2x2[4]=buf_16in2x2[5]=10000;
   buf_16in2x2[6]=buf_16in2x2[7]=buf_16in2x2[8]=0;
   buf_16in2x2[9]=buf_16in2x2[10]=buf_16in2x2[11]=65535;
-  memset( buf_16out2x2, 0, sizeof(uint16_t)*12 );
+  memset( buf_16out2x2, 0, sizeof(buf_16out2x2) );
   if(pixel_access)
   {
     oyRectangle_s * r = oyPixelAccess_GetArrayROI( pixel_access );
@@ -4685,7 +4685,7 @@ oyTESTRESULT_e testImagePixel()
   }
 
   if(!error &&
-     output_u16[0] == 65535 && output_u16[1] == 65535 && output_u16[2] == 65535)
+     output_u16[9] == 65535 && output_u16[10] == 65535 && output_u16[11] == 65535)
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "oyImage_FillArray() place array data                " );
   } else
@@ -4693,14 +4693,14 @@ oyTESTRESULT_e testImagePixel()
     "oyImage_FillArray() place array data                " );
   }
 
-  /* set lower right pixel */
-  output_u16[0] = output_u16[1] = output_u16[2] = 2;
-
   fprintf(zout, "output: %d,%d,%d %d,%d,%d\n        %d,%d,%d %d,%d,%d\n",
                   buf_16out2x2[0], buf_16out2x2[1], buf_16out2x2[2],
                   buf_16out2x2[3], buf_16out2x2[4], buf_16out2x2[5],
                   buf_16out2x2[6], buf_16out2x2[7], buf_16out2x2[8],
                   buf_16out2x2[9], buf_16out2x2[10], buf_16out2x2[11] );
+
+  /* set lower right pixel */
+  output_u16[0] = output_u16[1] = output_u16[2] = 2;
 
   oyRectangle_SetGeo( a_roi, 0.0,0.0,0.5,0.5 );
   error = oyImage_ReadArray( output, roi,
@@ -4741,8 +4741,8 @@ oyTESTRESULT_e testImagePixel()
                   buf_16out2x2[6], buf_16out2x2[7], buf_16out2x2[8],
                   buf_16out2x2[9], buf_16out2x2[10], buf_16out2x2[11] );
 
-  /* move the focus to the top left */
-  oyRectangle_s_ array_roi_pix = {oyOBJECT_RECTANGLE_S,0,0,0, 0,0,3,1};
+  /* move the focus to the lower left */
+  oyRectangle_s_ array_roi_pix = {oyOBJECT_RECTANGLE_S,0,0,0, 0,1,3,1};
   oyArray2d_SetFocus( a, (oyRectangle_s*)&array_roi_pix );
 
 
@@ -4783,7 +4783,7 @@ oyTESTRESULT_e testImagePixel()
 
   rows_u16 = (uint16_t**)oyArray2d_GetData(a);
   if(!error &&
-     rows_u16[0] == &buf_16out2x2[9])
+     rows_u16[0] == &buf_16out2x2[0])
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "oyImage_FillArray() assigment                       " );
   } else
