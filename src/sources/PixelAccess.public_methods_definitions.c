@@ -10,9 +10,13 @@
  *  @param[in]     output_rectangle    the region in the output image, optional
  *  @return                            0 on success, else error
  *
- *  @version Oyranos: 0.3.0
+ *  The output_rectangle is absolute to oyPixelAccess_GetArray().
+ *  A passed in output_rectangle will call
+ *  oyPixelAccess_SetArrayFocus( pixel_access(::array), undo=1 ).
+ *
+ *  @version Oyranos: 0.9.6
+ *  @date    2016/09/14
  *  @since   2011/04/17 (Oyranos: 0.3.0)
- *  @date    2011/05/05
  */
 int                oyPixelAccess_ChangeRectangle (
                                        oyPixelAccess_s   * pixel_access,
@@ -20,7 +24,7 @@ int                oyPixelAccess_ChangeRectangle (
                                        double              start_y,
                                        oyRectangle_s     * output_rectangle )
 {
-  oyPixelAccess_s_ ** pixel_access_ = (oyPixelAccess_s_**)&pixel_access;
+  oyPixelAccess_s_ * pixel_access_ = (oyPixelAccess_s_*)pixel_access;
   int error = 0;
   oyRectangle_s_ * roi = (oyRectangle_s_*)oyRectangle_New(0);
 
@@ -28,19 +32,46 @@ int                oyPixelAccess_ChangeRectangle (
     error = 1;
 
   if(error <= 0 && output_rectangle)
-    oyRectangle_SetByRectangle( (oyRectangle_s*)(*pixel_access_)->output_array_roi,
+  {
+    oyRectangle_SetByRectangle( (oyRectangle_s*)pixel_access_->output_array_roi,
                                 output_rectangle );
+    oyPixelAccess_SetArrayFocus( pixel_access, 1 );
+  }
 
   if(error <= 0)
   {
-    oyRectangle_SetByRectangle( (oyRectangle_s*)roi, (oyRectangle_s*)(*pixel_access_)->output_array_roi );
-    (*pixel_access_)->start_xy[0] = roi->x = start_x;
-    (*pixel_access_)->start_xy[1] = roi->y = start_y;
+    oyRectangle_SetByRectangle( (oyRectangle_s*)roi, (oyRectangle_s*)pixel_access_->output_array_roi );
+    pixel_access_->start_xy[0] = roi->x = start_x;
+    pixel_access_->start_xy[1] = roi->y = start_y;
   }
   oyRectangle_Release( (oyRectangle_s**)&roi );
 
   return error;
 }
+
+/** Function  oyPixelAccess_ArrayIsFocussed
+ *  @memberof oyPixelAccess_s
+ *  @brief    Tell if array has changed focus as of changed output_rectangle
+ *
+ *  @param[in]     pixel_access        pixel iterator configuration
+ *  @return                            0 - array needs focusing
+ *                                     1 - array has focus set from array_roi
+ *
+ *  @version Oyranos: 0.9.6
+ *  @date    2016/09/14
+ *  @since   2016/09/14 (Oyranos: 0.9.6)
+ */
+int                oyPixelAccess_ArrayIsFocussed (
+                                       oyPixelAccess_s   * pixel_access )
+{
+  oyPixelAccess_s_ * pixel_access_ = (oyPixelAccess_s_*)pixel_access;
+
+  if(!pixel_access)
+    return 0;
+
+  return pixel_access_->output_array_is_focussed;
+}
+
 
 /** Function  oyPixelAccess_Create
  *  @memberof oyPixelAccess_s
@@ -198,8 +229,8 @@ int                oyPixelAccess_SetOutputImage (
  *  @return                            0 on success, else error
  *
  *  @version Oyranos: 0.9.6
- *  @since   2016/03/29 (Oyranos: 0.9.6)
  *  @date    2016/03/29
+ *  @since   2016/03/29 (Oyranos: 0.9.6)
  */
 int                oyPixelAccess_SynchroniseROI (
                                        oyPixelAccess_s   * pixel_access_new,
@@ -233,9 +264,9 @@ int                oyPixelAccess_SynchroniseROI (
     int a_width_dst = 0, a_width_src = 0;
 
     if(channels_dst)
-      a_width_dst = oyArray2d_GetWidth( a_dst ) / channels_dst;
+      a_width_dst = oyArray2d_GetDataGeo1( a_dst, 2 ) / channels_dst;
     if(channels_src)
-      a_width_src = oyArray2d_GetWidth( a_src ) / channels_src;
+      a_width_src = oyArray2d_GetDataGeo1( a_src,2 ) / channels_src;
 
     /** 1. Ignore any changes from previous edits of the new pixel access ticket. */
     oyRectangle_SetByRectangle( ticket_array_roi_src, ticket_array_roi_dst );
@@ -285,6 +316,135 @@ int                oyPixelAccess_SynchroniseROI (
   return error;
 }
 
+/** Function  oyPixelAccess_ChannelRectFromROI
+ *  @memberof oyPixelAccess_s
+ *  @brief    Obtain channel geometry from output ROI
+ *
+ *  @param[in]     pixel_access        pixel iterator configuration
+ *  @return                            rectangle
+ *
+ *  @version Oyranos: 0.9.6
+ *  @date    2016/09/14
+ *  @since   2016/03/14 (Oyranos: 0.9.6)
+ */
+oyRectangle_s *    oyPixelAccess_ChannelRectFromROI (
+                                       oyPixelAccess_s   * pixel_access )
+{
+  int error = 0;
+  oyRectangle_s * output_channel_roi = NULL;
+
+  if(!pixel_access)
+    error = 1;
+
+  if(!error)
+  {
+    oyPixelAccess_s * ticket = pixel_access;
+    oyImage_s * image = oyPixelAccess_GetOutputImage( ticket );
+    int image_width = oyImage_GetWidth( image );
+    oyRectangle_s * ticket_array_roi = oyPixelAccess_GetArrayROI( ticket );
+    oyArray2d_s * a = oyPixelAccess_GetArray( ticket );
+    oyRectangle_s_  r = {oyOBJECT_RECTANGLE_S, 0,0,0, 0,0,0,0};
+    oyRectangle_s * roi = (oyRectangle_s*)&r;
+
+    int layout = oyImage_GetPixelLayout( image, oyLAYOUT );
+    int channels = oyToChannels_m( layout );
+    int a_width = oyArray2d_GetDataGeo1( a, 2 ) / channels;
+
+    oyRectangle_SetByRectangle( roi, ticket_array_roi );
+    oyRectangle_Scale( roi, a_width?a_width:image_width );
+
+    output_channel_roi = oyRectangle_NewFrom( roi, NULL );
+
+    oyImage_Release( &image );
+    oyArray2d_Release( &a );
+    oyRectangle_Release( &ticket_array_roi );
+  }
+
+  return output_channel_roi;
+}
+
+/** Function  oyPixelAccess_SetArrayFocus
+ *  @memberof oyPixelAccess_s
+ *  @brief    Ensure that the array is in output ROI focus
+ *
+ *  The output_array_roi is a absolute rectangle. The unit is relative
+ *  to a existing oyPixelAccess_GetArray() or to the output image.
+ *  Undoing will change the oyPixelAccess_GetArray() back to it's data
+ *  area (oyArray2d_GetDataGeo1()).
+ *
+ *  After calling this function the oyPixelAccess_GetArray() obtained
+ *  array might be changed through oyArray2d_SetFocus().
+ *
+ *  @param[in,out] pixel_access        pixel iterator configuration
+ *  @param         undo                undo a previously possibly set focus
+ *  @return                            0 - no action, -1 - focus changed, 1 - error
+ *
+ *  @version Oyranos: 0.9.6
+ *  @date    2016/09/14
+ *  @since   2016/03/14 (Oyranos: 0.9.6)
+ */
+int                oyPixelAccess_SetArrayFocus (
+                                       oyPixelAccess_s   * pixel_access,
+                                       int                 undo )
+{
+  int error = 0;
+
+  if(pixel_access)
+  {
+    oyArray2d_s * array = oyPixelAccess_GetArray( pixel_access );
+
+    if(array)
+    {
+      oyRectangle_s_ r_ = {oyOBJECT_RECTANGLE_S,0,0,0, 0,0,0,0};
+      oyRectangle_s * r = (oyRectangle_s *) &r_;
+
+      if(undo == 0 && !oyPixelAccess_ArrayIsFocussed(pixel_access))
+      {
+        /* set array focus for simple plug-ins */
+        oyImage_s * image = oyPixelAccess_GetOutputImage( pixel_access );
+        oyRectangle_s * ticket_array_roi = oyPixelAccess_GetArrayROI(
+                                                          pixel_access );
+
+        int layout = oyImage_GetPixelLayout( image, oyLAYOUT );
+        int channels = oyToChannels_m( layout );
+
+        int array_pix_width = oyArray2d_GetDataGeo1( array, 2 ) / channels;
+
+        /* convert roi to channel units */
+        oyRectangle_SetByRectangle( r, ticket_array_roi );
+        oyRectangle_Scale( r, array_pix_width );
+        /* scale horicontal for pixel -> channels */
+        *oyRectangle_SetGeo1( r, 0 ) *= channels;
+        *oyRectangle_SetGeo1( r, 2 ) *= channels;
+        /* finally set the focus for simple plug-ins */
+        error = oyArray2d_SetFocus( array, r );
+        ((oyPixelAccess_s_*)pixel_access)->output_array_is_focussed = 1;
+
+        DBGs_PROG2_S( pixel_access, "%cset focus: %s", error == -1?'*':' ',
+                      oyRectangle_Show(r));
+
+        oyImage_Release( &image );
+        oyRectangle_Release( &ticket_array_roi );
+
+      } else
+      if(undo && oyPixelAccess_ArrayIsFocussed(pixel_access))
+      {
+        r_.width = oyArray2d_GetDataGeo1( array, 2 );
+        r_.height = oyArray2d_GetDataGeo1( array, 3 );
+        error = oyArray2d_SetFocus( array, r );
+        ((oyPixelAccess_s_*)pixel_access)->output_array_is_focussed = 0;
+
+        DBGs_PROG2_S( pixel_access, "%cunset focus to: %s", error == -1?'*':' ',
+                      oyRectangle_Show(r));
+      }
+    }
+
+    oyArray2d_Release( &array );
+  }
+
+  return error;
+}
+
 /** Function  oyPixelAccess_Show
  *  @memberof oyPixelAccess_s
  *  @brief    Print ticket geometries
@@ -323,7 +483,7 @@ const char *       oyPixelAccess_Show( oyPixelAccess_s   * pixel_access )
            start_y_pixel = oyPixelAccess_GetStart( ticket, 1 ) * image_width;
     int layout = oyImage_GetPixelLayout( image, oyLAYOUT );
     int channels = oyToChannels_m( layout );
-    int a_width = oyArray2d_GetWidth( a ) / channels;
+    int a_width = oyArray2d_GetDataGeo1( a, 2 ) / channels;
 
     oyRectangle_SetByRectangle( roi, ticket_array_roi );
     oyRectangle_Scale( roi, a_width?a_width:image_width );
@@ -433,13 +593,19 @@ oyArray2d_s *      oyPixelAccess_GetArray (
  *  @memberof oyPixelAccess_s
  *  @brief    Set oyPixelAccess_s::array
  *
- *  @version  Oyranos: 0.5.0
- *  @date     2012/09/06
+ *  @param[in,out] pixel_access        pixel iterator configuration; optional
+ *  @param[in]     array               channel data
+ *  @param[in]     has_roi_focus       0 - the supplied array is not yet focused for the pixel_access::output_array_roi
+ *                                     1 - the array is already in focus for pixel_access::output_array_roi
+ *
+ *  @version  Oyranos: 0.9.6
+ *  @date     2016/09/14
  *  @since    2012/09/06 (Oyranos: 0.5.0)
  */
 int                oyPixelAccess_SetArray (
                                        oyPixelAccess_s   * pixel_access,
-                                       oyArray2d_s       * array )
+                                       oyArray2d_s       * array,
+                                       int                 has_roi_focus )
 {
   oyPixelAccess_s_ * s = (oyPixelAccess_s_*)pixel_access;
 
@@ -454,6 +620,8 @@ int                oyPixelAccess_SetArray (
       oyArray2d_Release( &s->array );
     s->array = oyArray2d_Copy( array, 0 );
   }
+
+  s->output_array_is_focussed = has_roi_focus;
 
   return 0;
 }
