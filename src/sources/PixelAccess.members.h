@@ -15,6 +15,9 @@
                                             rectangle is to be seen in relation
                                             to the tickets array::width/channels
                                             .*/
+  int              output_array_is_focussed; /**< remember if
+                                            oyArray2d_SetFocus() needs to be applied 
+                                            from output_array_roi to array */
   oyImage_s      * output_image;       /**< the image which issued the request*/
   oyFilterGraph_s_ * graph;            /**< the graph to process */
   oyOptions_s    * request_queue;      /**< messaging; requests to resolve */
