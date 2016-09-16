@@ -1948,7 +1948,7 @@ int      lcmsFilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
                 * old_a = oyPixelAccess_GetArray( new_ticket );
     new_ticket = oyPixelAccess_Copy( ticket, ticket->oy_ );
     /* remove old array as it's layout does not fit */
-    oyPixelAccess_SetArray( new_ticket, 0 );
+    oyPixelAccess_SetArray( new_ticket, 0, 0 );
     /* should be empty */
     a = oyPixelAccess_GetArray( new_ticket );
     if(!a)
@@ -1958,7 +1958,7 @@ int      lcmsFilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
       a = oyArray2d_Create( NULL, w,h, oyToDataType_m( oyImage_GetPixelLayout( image_input, oyLAYOUT ) ), ticket->oy_ );
     }
     oyArray2d_Release( &old_a );
-    oyPixelAccess_SetArray( new_ticket, a );
+    oyPixelAccess_SetArray( new_ticket, a, 0 );
     oyArray2d_Release( &a );
   }
 

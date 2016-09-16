@@ -2649,7 +2649,7 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
     oyPixelAccess_SetOutputImage( new_ticket, image_input );
 
     /* remove old array as it's layout does not fit */
-    oyPixelAccess_SetArray( new_ticket, 0 );
+    oyPixelAccess_SetArray( new_ticket, 0, 0 );
     /* should be empty */
     a = oyPixelAccess_GetArray( new_ticket );
     if(!a)
@@ -2665,7 +2665,7 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
       }
     }
     oyArray2d_Release( &old_a );
-    oyPixelAccess_SetArray( new_ticket, a );
+    oyPixelAccess_SetArray( new_ticket, a, 0 );
     oyArray2d_Release( &a );
 
     oyPixelAccess_SynchroniseROI( new_ticket, ticket );

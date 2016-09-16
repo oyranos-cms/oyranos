@@ -910,7 +910,7 @@ int      oyraFilterPlug_ImageRectanglesRun (
 
       /* Map each matching plug to a new ticket with a corrected rectangle. */
       new_ticket = oyPixelAccess_Copy( ticket, ticket->oy_ );
-      oyPixelAccess_SetArray( new_ticket, 0 );
+      oyPixelAccess_SetArray( new_ticket, 0, 0 );
 
       new_ticket_roi = oyPixelAccess_GetArrayROI( new_ticket );
       oyRectangle_SetByRectangle( newt_roi, new_ticket_roi );
@@ -974,7 +974,7 @@ int      oyraFilterPlug_ImageRectanglesRun (
           }
           oyRectangle_SetByRectangle( new_ticket_roi, roi );
 
-          oyPixelAccess_SetArray( new_ticket, new_ticket_array );
+          oyPixelAccess_SetArray( new_ticket, new_ticket_array, 1 );
           if(oy_debug)
             oyra_msg( oy_debug?oyMSG_DBG:oyMSG_WARN, (oyStruct_s*)ticket,
                       OY_DBG_FORMAT_ "[%d] %s",

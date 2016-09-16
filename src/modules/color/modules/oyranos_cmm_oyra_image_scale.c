@@ -127,7 +127,7 @@ int      oyraFilter_ImageScaleRun    ( oyFilterPlug_s    * requestor_plug,
       int a_width_dest = oyArray2d_GetWidth( a_dest ) / channels_dst;
 
       new_ticket = oyPixelAccess_Copy( ticket, ticket->oy_ );
-      oyPixelAccess_SetArray( new_ticket, 0 );
+      oyPixelAccess_SetArray( new_ticket, 0, 0 );
       oyPixelAccess_SetOutputImage( new_ticket, image );
 
       if(oy_debug)

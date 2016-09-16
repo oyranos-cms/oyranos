@@ -208,7 +208,7 @@ public:
           if(oy_debug > 2)
             printf(" output_image [%d](%d)", oyStruct_GetId((oyStruct_s*)output_image),oyImage_GetWidth(output_image) );
           oyImage_Release( &output_image );
-          oyPixelAccess_SetArray( ticket(), NULL );
+          oyPixelAccess_SetArray( ticket(), NULL, 0 );
         }
         if(oy_debug > 2) printf("\n");
       }
