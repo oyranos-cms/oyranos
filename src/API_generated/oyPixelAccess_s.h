@@ -195,12 +195,14 @@ typedef struct oyPixelAccess_s oyPixelAccess_s;
  *
  *  Rectangles are passed in relative units.
  *  start_xy and output_array_roi are of type oyRectangle_s and are defined in
- *  relative units to the enclosing images/array width. start_xy::x 0.1 means
- *  0.1 x original_image::width .
+ *  relative units to the enclosing images/array data width. start_xy::x 0.1
+ *  means 0.1 x original_image::width .
+ *  output_roi::0.3333,0.0,0.333,0.333 in a array of data size 9x3 / 3 channels
+ *  means the upper middle pixel.
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.9.6
+ *  @date    2016/09/15
  *  @since   2008/07/04 (Oyranos: 0.1.8)
- *  @date    2009/05/05
  */
 
 /* } Include "PixelAccess.dox" */
@@ -234,6 +236,8 @@ int                oyPixelAccess_ChangeRectangle (
                                        double              start_x,
                                        double              start_y,
                                        oyRectangle_s     * output_rectangle );
+int                oyPixelAccess_ArrayIsFocussed (
+                                       oyPixelAccess_s   * pixel_access );
 oyPixelAccess_s *  oyPixelAccess_Create (
                                        int32_t             start_x,
                                        int32_t             start_y,
@@ -253,8 +257,14 @@ oyArray2d_s *      oyPixelAccess_GetArray (
                                        oyPixelAccess_s   * pixel_access );
 int                oyPixelAccess_SetArray (
                                        oyPixelAccess_s   * pixel_access,
-                                       oyArray2d_s       * array );
+                                       oyArray2d_s       * array,
+                                       int                 has_roi_focus );
+int                oyPixelAccess_SetArrayFocus (
+                                       oyPixelAccess_s   * pixel_access,
+                                       int                 undo );
 oyRectangle_s *    oyPixelAccess_GetArrayROI (
+                                       oyPixelAccess_s   * pixel_access );
+oyRectangle_s *    oyPixelAccess_ChannelRectFromROI (
                                        oyPixelAccess_s   * pixel_access );
 oyStruct_s *       oyPixelAccess_GetUserData (
                                        oyPixelAccess_s   * pixel_access );
