@@ -383,13 +383,13 @@ OYAPI int  OYEXPORT
  *  For working in relative coordinates get first the current data_area by 
  *  oyArray2d_GetDataGeo1().
  *
- *  @param[in,out] array               the pixel array
+ *  @param[in,out] array               the channels array
  *  @param[in]     rectangle           the new region in the array's wholes data
- *  @return                            error
+ *  @return                            0 - success, 1 - error, -1 - focus changed
  *
- *  @version Oyranos: 0.3.0
+ *  @version Oyranos: 0.9.6
+ *  @date    2016/09/15
  *  @since   2011/04/19 (Oyranos: 0.3.0)
- *  @date    2011/04/19
  */
 int          oyArray2d_SetFocus      ( oyArray2d_s       * array,
                                        oyRectangle_s     * rectangle )
@@ -410,11 +410,13 @@ int          oyArray2d_SetFocus      ( oyArray2d_s       * array,
       for(y = a->data_area.y; y < height; ++y)
         a->array2d[y] += shift;
       a->data_area.x = -OY_ROUND(array_roi_chan->x);
+      error = -1;
     }
     if(a->data_area.y != OY_ROUND(array_roi_chan->y))
     {
       a->array2d += OY_ROUND(array_roi_chan->y + a->data_area.y);
       a->data_area.y = -array_roi_chan->y;
+      error = -1;
     }
     a->width = array_roi_chan->width;
     a->height = array_roi_chan->height;
@@ -481,7 +483,7 @@ OYAPI int OYEXPORT
  *
  *  The function informs about reserves and possible offsets.
  *
- *  @param[in,out] array               the pixel array
+ *  @param[in,out] array               the channels array
  *  @return                            the position or dimension
  *
  *  @version  Oyranos: 0.5.0
@@ -502,7 +504,7 @@ OYAPI double  OYEXPORT
  *  @memberof oyArray2d_s
  *  @brief    Get data Width
  *
- *  @param[in,out] array               the pixel array
+ *  @param[in,out] array               the channels array
  *  @return                            the width
  *
  *  @version  Oyranos: 0.5.0
@@ -522,7 +524,7 @@ OYAPI int  OYEXPORT
  *  @memberof oyArray2d_s
  *  @brief    Get data Height
  *
- *  @param[in,out] array               the pixel array
+ *  @param[in,out] array               the channels array
  *  @return                            the height
  *
  *  @version  Oyranos: 0.5.0
@@ -542,7 +544,7 @@ OYAPI int  OYEXPORT
  *  @memberof oyArray2d_s
  *  @brief    Get data Type
  *
- *  @param[in,out] array               the pixel array
+ *  @param[in,out] array               the channels array
  *  @return                            the data type
  *
  *  @version  Oyranos: 0.9.0
