@@ -611,6 +611,9 @@ int            oyImage_SetCritical   ( oyImage_s         * image,
  *                                     - 2 allocate empty rows
  *  @param[out]    array               array to fill; If array is empty, it is
  *                                     allocated as per allocate_method
+ *                                     During function execution the array
+ *                                     might have a changed focus. Focus is
+ *                                     restored before return.
  *  @param[in]     array_rectangle     the array rectangle in samples
  *                                     For NULL the image rectangle will be
  *                                     placed to the top left corner in array.
@@ -620,8 +623,8 @@ int            oyImage_SetCritical   ( oyImage_s         * image,
  *                                     The unit is relative to the image.
  *  @param[in]     obj                 the optional user object
  *
- *  @version Oyranos: 0.9.0
- *  @date    2012/10/20
+ *  @version Oyranos: 0.9.6
+ *  @date    2016/09/06
  *  @since   2008/10/02 (Oyranos: 0.1.8)
  */
 int            oyImage_FillArray     ( oyImage_s         * image,
@@ -635,7 +638,9 @@ int            oyImage_FillArray     ( oyImage_s         * image,
   oyArray2d_s_ * a = (oyArray2d_s_*) *array;
   oyImage_s_ * s = (oyImage_s_*)image;
   oyRectangle_s_ image_roi_chan = {oyOBJECT_RECTANGLE_S,0,0,0, 0,0,0,0},
-                r = {oyOBJECT_RECTANGLE_S,0,0,0, 0,0,0,0};
+                 r = {oyOBJECT_RECTANGLE_S,0,0,0, 0,0,0,0},
+                 array_roi_old = {oyOBJECT_RECTANGLE_S,0,0,0, 0,0,0,0};
+  int array_roi_old_read = 0;
   oyDATATYPE_e data_type = oyUINT8;
   int is_allocated = 0;
   int data_size, ay;
@@ -774,11 +779,17 @@ int            oyImage_FillArray     ( oyImage_s         * image,
 
   if( !error && a )
   {
-    array_roi_chan.x += oyArray2d_GetDataGeo1( (oyArray2d_s*)a, 0 );
-    array_roi_chan.y += oyArray2d_GetDataGeo1( (oyArray2d_s*)a, 1 );
+    for(i = 0; i<4; ++i)
+      *oyRectangle_SetGeo1( (oyRectangle_s*)&array_roi_old, i ) = oyArray2d_GetDataGeo1( (oyArray2d_s*)a, i ) ;
+    array_roi_old_read = 1;
+
+    /* set region relative to current data area offsets */
+    array_roi_chan.x += array_roi_old.x;
+    array_roi_chan.y += array_roi_old.y;
 
     /* shift array focus to requested region */
-    oyArray2d_SetFocus( (oyArray2d_s*)a, (oyRectangle_s*)&array_roi_chan );
+    if(array_rectangle)
+      oyArray2d_SetFocus( (oyArray2d_s*)a, (oyRectangle_s*)&array_roi_chan );
 
     /* change intermediately */
     if(a && a->width > image_roi_chan.width)
@@ -798,10 +809,10 @@ int            oyImage_FillArray     ( oyImage_s         * image,
   {
     oyPointer src, dst;
     int image_roi_chan_width = image_roi_chan.x + image_roi_chan.width,
-        roi_pix_width = OY_MIN( image_roi_chan_width, array_roi_chan.width ) / channels_n,
-        roi_pix_height = OY_MIN( image_roi_chan.y + image_roi_chan.height, array_roi_chan.height );
+        roi_chan_width = OY_MIN( image_roi_chan_width, array_roi_chan.width ) / channels_n,
+        roi_chan_height = OY_MIN( image_roi_chan.y + image_roi_chan.height, array_roi_chan.height );
 
-    wlen = roi_pix_width * data_size * channels_n;
+    wlen = roi_chan_width * data_size * channels_n;
 
     if(oy_debug > 2)
     {
@@ -813,8 +824,8 @@ int            oyImage_FillArray     ( oyImage_s         * image,
       oyFree_m_(t);
     }
 
-    if(roi_pix_width  > s->width ||
-       roi_pix_height > s->height)
+    if(roi_chan_width  > s->width ||
+       roi_chan_height > s->height)
     {
       oyMessageFunc_p( oyMSG_ERROR, (oyStruct_s*)image,
                  OY_DBG_FORMAT_ "image request is exceeding available memory:%dx%d img_roi: %.0fx%.0f+%.0f+%.0f rectangle: %.gx%.g+%.g+%.g image:\n%s\narray[%d](%dx%d)",
@@ -828,7 +839,7 @@ int            oyImage_FillArray     ( oyImage_s         * image,
     }
 
     if(allocate_method != 2 && !error)
-    for( i = 0; i < roi_pix_height; )
+    for( i = 0; i < roi_chan_height; )
     {
       height = is_allocated = 0;
       line_data = s->getLine( image, image_roi_chan.y + i, &height, -1,
@@ -874,6 +885,12 @@ int            oyImage_FillArray     ( oyImage_s         * image,
   DBGs_PROG4_S( image, "array[%d](%dx%d) error: %d",
                 oyStruct_GetId( (oyStruct_s*) a), a?a->width:-1, a?a->height:-1, error );
 
+
+  /* shift array focus back */
+  if(a && array_roi_old_read && array_rectangle &&
+     !oyRectangle_IsEqual( (oyRectangle_s*)&array_roi_chan, (oyRectangle_s*)&array_roi_old ))
+    oyArray2d_SetFocus( (oyArray2d_s*)a, (oyRectangle_s*)&array_roi_old );
+
   if(error)
     oyArray2d_Release( (oyArray2d_s**)&a );
 
@@ -902,7 +919,7 @@ int            oyImage_ReadArray     ( oyImage_s         * image,
   oyArray2d_s_ * array_ = (oyArray2d_s_*)array;
   int error = !image || !array;
   oyRectangle_s_ image_roi_chan = {oyOBJECT_RECTANGLE_S,0,0,0,0,0,0,0},
-                 array_rect_pix = {oyOBJECT_RECTANGLE_S,0,0,0,0,0,0,0};
+                 array_rect_chan = {oyOBJECT_RECTANGLE_S,0,0,0,0,0,0,0};
   oyDATATYPE_e data_type = oyUINT8;
   int bps = 0, channel_n, i, offset, width, height;
 
@@ -938,24 +955,24 @@ int            oyImage_ReadArray     ( oyImage_s         * image,
   {
     if(array_rectangle)
     {
-      oyRectangle_SetByRectangle( (oyRectangle_s*)&array_rect_pix, array_rectangle );
-      oyRectangle_Scale( (oyRectangle_s*)&array_rect_pix, s->width );
-      array_rect_pix.x *= channel_n;
-      array_rect_pix.width *= channel_n;
+      oyRectangle_SetByRectangle( (oyRectangle_s*)&array_rect_chan, array_rectangle );
+      oyRectangle_Scale( (oyRectangle_s*)&array_rect_chan, s->width );
+      array_rect_chan.x *= channel_n;
+      array_rect_chan.width *= channel_n;
     } else
     {
-      oyRectangle_SetGeo( (oyRectangle_s*)&array_rect_pix, 
+      oyRectangle_SetGeo( (oyRectangle_s*)&array_rect_chan, 
                           0,0, array_->width, array_->height );
     }
   }
 
-  if(!error &&
-     (array_rect_pix.width != image_roi_chan.width ||
-      array_rect_pix.height != image_roi_chan.height))
+  if(!error && array_rectangle &&
+     (array_rect_chan.width != image_roi_chan.width ||
+      array_rect_chan.height != image_roi_chan.height))
   {
     WARNcc6_S( image, "array[%d] %gx%g does not fit image[%d] rectangle %gx%g",
                oyStruct_GetId( (oyStruct_s*)array_ ),
-               array_rect_pix.width, array_rect_pix.height,
+               array_rect_chan.width, array_rect_chan.height,
                oyStruct_GetId( (oyStruct_s*)image ),
                image_roi_chan.width, image_roi_chan.height
                 );
@@ -964,15 +981,15 @@ int            oyImage_ReadArray     ( oyImage_s         * image,
   if(!error)
   {
     offset = image_roi_chan.x / channel_n * bps;
-    width = OY_MIN(image_roi_chan.width, array_rect_pix.width);
+    width = OY_MIN(image_roi_chan.width, array_rect_chan.width);
     width /= channel_n;
-    height = OY_MIN( array_rect_pix.y + array_rect_pix.height, image_roi_chan.height );
+    height = OY_MIN( array_rect_chan.y + array_rect_chan.height, image_roi_chan.height );
 
-    for(i = array_rect_pix.y; i < height; ++i)
+    for(i = array_rect_chan.y; i < height; ++i)
     {
       s->setLine( image, offset, image_roi_chan.y + i, width, -1,
                       &array_->array2d
-                              [i][OY_ROUND(array_rect_pix.x) * bps] );
+                              [i][OY_ROUND(array_rect_chan.x) * bps] );
     }
   }
 
