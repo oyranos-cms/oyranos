@@ -6,6 +6,8 @@ int                oyPixelAccess_ChangeRectangle (
                                        double              start_x,
                                        double              start_y,
                                        oyRectangle_s     * output_rectangle );
+int                oyPixelAccess_ArrayIsFocussed (
+                                       oyPixelAccess_s   * pixel_access );
 oyPixelAccess_s *  oyPixelAccess_Create (
                                        int32_t             start_x,
                                        int32_t             start_y,
@@ -25,8 +27,14 @@ oyArray2d_s *      oyPixelAccess_GetArray (
                                        oyPixelAccess_s   * pixel_access );
 int                oyPixelAccess_SetArray (
                                        oyPixelAccess_s   * pixel_access,
-                                       oyArray2d_s       * array );
+                                       oyArray2d_s       * array,
+                                       int                 has_roi_focus );
+int                oyPixelAccess_SetArrayFocus (
+                                       oyPixelAccess_s   * pixel_access,
+                                       int                 undo );
 oyRectangle_s *    oyPixelAccess_GetArrayROI (
+                                       oyPixelAccess_s   * pixel_access );
+oyRectangle_s *    oyPixelAccess_ChannelRectFromROI (
                                        oyPixelAccess_s   * pixel_access );
 oyStruct_s *       oyPixelAccess_GetUserData (
                                        oyPixelAccess_s   * pixel_access );
