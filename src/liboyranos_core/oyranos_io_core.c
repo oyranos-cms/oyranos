@@ -1155,8 +1155,7 @@ char * oyResolveDirFileName_ (const char* name)
   return newName;
 }
 
-char*
-oyExtractPathFromFileName_ (const char* file_name)
+char * oyExtractPathFromFileName_ (const char* file_name)
 {
   char *path_name = 0;
   char *ptr;
@@ -1169,7 +1168,10 @@ oyExtractPathFromFileName_ (const char* file_name)
   oySprintf_( path_name, "%s", file_name );
   DBG_MEM1_S ("path_name = %s", path_name)
   ptr = strrchr (path_name, '/');
-  ptr[0] = 0;
+  if(ptr)
+    ptr[0] = 0;
+  else
+    oySprintf_( path_name, "." );
   DBG_MEM1_S ("path_name = %s", path_name)
   DBG_MEM1_S ("ptr = %s", ptr)
   DBG_MEM_ENDE
