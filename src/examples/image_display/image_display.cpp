@@ -738,11 +738,20 @@ void setChannel( oyProfile_s * p, int channel_pos )
 char ** getFileList(const char * path, int * count, const char * file, int * pos )
 {
   int i;
+  char * fn = NULL;
+
+  // Special case for file name with path. Then search in local "./" place.
+  if(!path || path[0] == 0)
+    path = ".";
+  if(strlen(path) == 1 && path[0] == '.' &&
+     strchr(file,OY_SLASH_C) == NULL && strchr(file,'\\') == NULL)
+    oyStringAddPrintf( &fn, 0,0, "./%s", file );
+
   char ** files = oyGetFiles_( path, count );
   if(file && pos)
   for(i = 0; i < *count; ++i)
   {
-    if(strcmp( files[i], file ) == 0)
+    if(strcmp( files[i], fn?fn:file ) == 0)
     {
       *pos = i;
       break;
