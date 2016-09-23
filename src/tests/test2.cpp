@@ -2908,10 +2908,10 @@ oyTESTRESULT_e testCMMRankMap ()
 
   if( count )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "monitor(s) found               %d     ", (int)count );
+    "monitor(s) found               %d (%d)", (int)count, error );
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
-    "no monitor found               %d     ", (int)count );
+    "no monitor found               %d (%d)", (int)count, error );
   }
 
   for(i = 0; i < count; ++i)
@@ -4799,6 +4799,140 @@ oyTESTRESULT_e testImagePixel()
   return result;
 }
 
+#include "../examples/image_display/oyranos_display_helpers.h"
+oyTESTRESULT_e testScreenPixel()
+{
+  oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
+  uint32_t icc_profile_flags =oyICCProfileSelectionFlagsFromOptions( OY_CMM_STD,
+                                       "//" OY_TYPE_STD "/icc_color", NULL, 0 );
+  oyProfile_s * p_rgb = oyProfile_FromStd( oyEDITING_RGB, icc_profile_flags, NULL );
+  oyProfile_s * p_web = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, NULL );
+  oyProfile_s * p_in, * p_out;
+  int error = 0,
+      i,n = 10;
+  int src_width = 4*1024,
+      src_height = 512,
+      dst_width = 2*1024,
+      dst_height = 256,
+      x,y;
+  uint16_t * buf_16in = (uint16_t*) calloc(sizeof(uint16_t),  src_width * src_height * 3);
+  uint16_t * buf_16out = (uint16_t*) calloc(sizeof(uint16_t), dst_width * dst_height * 3);
+  oyDATATYPE_e buf_type_in = oyUINT16,
+               data_type_request = oyUINT16;
+  oyImage_s *input, *output;
+
+  fprintf(stdout, "\n" );
+
+  double clck = oyClock();
+  for(y = 0; y < src_height; ++y)
+    for(x = 0; x < src_width; ++x)
+    {
+      buf_16in[y*src_width*3 + x*3 + 0] = (y / (double)(src_height-1)) * 65535;
+      buf_16in[y*src_width*3 + x*3 + 1] = (1.0 - (y / (double)(src_height-1))) * 65535;
+      buf_16in[y*src_width*3 + x*3 + 2] = 65535/2;
+    }
+
+  p_in = p_web;
+  p_out = p_rgb;
+  input =oyImage_Create( src_width,src_height, 
+                         buf_16in,
+                         oyChannels_m(oyProfile_GetChannelsCount(p_in)) |
+                          oyDataType_m(buf_type_in),
+                         p_in,
+                         0 );
+  output=oyImage_Create( dst_width,dst_height, 
+                         buf_16out,
+                         oyChannels_m(oyProfile_GetChannelsCount(p_out)) |
+                          oyDataType_m(data_type_request),
+                         p_out,
+                         0 );
+  clck = oyClock() - clck;
+  fprintf( zout, "Preparation finished                     %s\n",
+                 oyProfilingToString(1,clck/(double)CLOCKS_PER_SEC, "in+out-images"));
+
+  oyFilterPlug_s * plug = 0;
+  oyPixelAccess_s * pixel_access = 0;
+  oyConversion_s * cc;
+  oyFilterNode_s * icc = NULL;
+  memset( buf_16out, 0, sizeof(*buf_16out) );
+  clck = oyClock();
+  cc = oyConversion_FromImageForDisplay( input, output,
+                                         &icc, oyOPTIONATTRIBUTE_ADVANCED,
+                                         oyUINT16, NULL, NULL );
+  clck = oyClock() - clck;
+  fprintf( zout, "Preparation finished                 %s\n",
+                 oyProfilingToString(1,clck/(double)CLOCKS_PER_SEC, "context"));
+
+  oyFilterNode_s * out = oyConversion_GetNode( cc, OY_OUTPUT );
+  if(cc && out)
+    plug = oyFilterNode_GetPlug( oyConversion_GetNode( cc, OY_OUTPUT), 0 );
+  else
+    error = 1;
+  pixel_access = oyPixelAccess_Create( 0,0, plug,
+                                           oyPIXEL_ACCESS_IMAGE, 0 );
+  oyFilterPlug_Release( &plug );
+
+  oyRectangle_s_ display_rectangle_ = {oyOBJECT_RECTANGLE_S,0,0,0, 0,0,2*1024,256};
+  oyRectangle_s_ old_display_rectangle_ = {oyOBJECT_RECTANGLE_S,0,0,0, 0,0,0,0};
+  oyRectangle_s * display_rectangle = (oyRectangle_s *) &display_rectangle_;
+  oyRectangle_s * old_display_rectangle = (oyRectangle_s *) &old_display_rectangle_;
+  int dirty = 1;
+  clck = oyClock();
+  dirty = oyDrawScreenImage( cc, pixel_access, display_rectangle,
+                                old_display_rectangle,
+                                NULL, "oy-test",
+                                data_type_request,
+                                NULL, NULL, dirty,
+                                output );
+  clck = oyClock() - clck;
+  fprintf( zout, "First draw finished               %s\n",
+                 oyProfilingToString(1,clck/(double)CLOCKS_PER_SEC, "draw"));
+
+  clck = oyClock();
+  for(i = 0; i < n; ++i)
+  {
+    display_rectangle_.x = i*256;
+    dirty = oyDrawScreenImage( cc, pixel_access, display_rectangle,
+                                old_display_rectangle,
+                                NULL, "oy-test",
+                                data_type_request,
+                                NULL, NULL, dirty,
+                                output );
+    if(getenv("OY_DEBUG_WRITE"))
+    {
+      char fn[256], num[4];
+      sprintf( num, "%d", i );
+      sprintf( fn, "test2-oyDrawScreenImage-%s.ppm", num );
+      fprintf( zout, "wrote PPM               %s\n", fn );
+      oyImage_WritePPM( output, fn, num );
+    }
+  }
+  clck = oyClock() - clck;
+
+  if( !error &&
+      !dirty
+      )
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyDrawScreenImage                  %s",
+                 oyProfilingToString(n,clck/(double)CLOCKS_PER_SEC, "draws"));
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyDrawScreenImage                                  " );
+  }
+
+
+  oyConversion_Release ( &cc );
+  oyPixelAccess_Release( &pixel_access );
+  oyProfile_Release( &p_rgb );
+  oyProfile_Release( &p_web );
+  oyImage_Release( &input );
+  oyImage_Release( &output );
+  free(buf_16in);
+  free(buf_16out);
+
+  return result;
+}
+
 oyTESTRESULT_e testFilterNodeCMM( oyTESTRESULT_e result_,
                                   const char * reg_pattern )
 {
@@ -6275,6 +6409,7 @@ int main(int argc, char** argv)
   TEST_RUN( testCMMsShow, "CMMs show" );
   TEST_RUN( testCMMnmRun, "CMM named color run" );
   TEST_RUN( testImagePixel, "CMM Image Pixel run" );
+  TEST_RUN( testScreenPixel, "Draw Screen Pixel run" );
   TEST_RUN( testFilterNode, "FilterNode Options" );
   TEST_RUN( testConversion, "CMM selection" );
   TEST_RUN( testCMMlists, "CMMs listing" );
