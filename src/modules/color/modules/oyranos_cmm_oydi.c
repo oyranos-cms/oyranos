@@ -894,7 +894,7 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
         int active;
         oyBlob_s * display_id = (oyBlob_s*) oyOptions_GetType( tags, -1, "display_id",
                                           oyOBJECT_BLOB_S );
-        if(!display_id)
+        if(!display_id && test == 0)
           oydi_msg( oyMSG_ERROR, (oyStruct_s*)image,
             OY_DBG_FORMAT_"no display_id", OY_DBG_ARGS_ );
         if(test == 0)
@@ -960,6 +960,9 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
   oyFilterSocket_Release( &socket );
   oyFilterNode_Release( &node );
   oyImage_Release( &image );
+  oyOptions_Release( &node_options );
+  oyFilterGraph_Release( &display_graph );
+  oyRectangle_Release( &device_rectangle );
   if(ID) free(ID);    
 
   return result;
