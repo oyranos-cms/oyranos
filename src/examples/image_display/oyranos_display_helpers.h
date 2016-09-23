@@ -22,6 +22,10 @@
 #include <X11/Xcm/Xcm.h>             /* check for proper X11/XCM support */
 #endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
 extern int oy_display_verbose;
 
 oyConversion_s * oyConversion_FromImageForDisplay  (
@@ -62,4 +66,7 @@ oyProfile_s * getEditingProfile      ( );
 #endif
 
 
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
 #endif /* oyranos_display_helpers_h */
