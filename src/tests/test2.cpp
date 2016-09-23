@@ -4810,12 +4810,12 @@ oyTESTRESULT_e testScreenPixel()
   oyProfile_s * p_in, * p_out;
   int error = 0,
       i,n = 10;
-  int src_width = 4*1024,
-      src_height = 512,
-      dst_width = 2*1024,
-      dst_height = 256,
+  int src_width  = 4 * 1024,
+      src_height =     512,
+      dst_width  =     1024,
+      dst_height =     256,
       x,y;
-  uint16_t * buf_16in = (uint16_t*) calloc(sizeof(uint16_t),  src_width * src_height * 3);
+  uint16_t * buf_16in  = (uint16_t*) calloc(sizeof(uint16_t), src_width * src_height * 3);
   uint16_t * buf_16out = (uint16_t*) calloc(sizeof(uint16_t), dst_width * dst_height * 3);
   oyDATATYPE_e buf_type_in = oyUINT16,
                data_type_request = oyUINT16;
@@ -4850,6 +4850,13 @@ oyTESTRESULT_e testScreenPixel()
   fprintf( zout, "Preparation finished                     %s\n",
                  oyProfilingToString(1,clck/(double)CLOCKS_PER_SEC, "in+out-images"));
 
+  if(getenv("OY_DEBUG_WRITE"))
+  {
+    const char * fn = "test2-oyDrawScreenImage-src.ppm";
+    fprintf( zout, "wrote PPM               %s\n", fn );
+    oyImage_WritePPM( input, fn, "test2::screen source image" );
+  }
+
   oyFilterPlug_s * plug = 0;
   oyPixelAccess_s * pixel_access = 0;
   oyConversion_s * cc;
@@ -4872,7 +4879,7 @@ oyTESTRESULT_e testScreenPixel()
                                            oyPIXEL_ACCESS_IMAGE, 0 );
   oyFilterPlug_Release( &plug );
 
-  oyRectangle_s_ display_rectangle_ = {oyOBJECT_RECTANGLE_S,0,0,0, 0,0,2*1024,256};
+  oyRectangle_s_ display_rectangle_ = {oyOBJECT_RECTANGLE_S,0,0,0, 0,0,1024,256};
   oyRectangle_s_ old_display_rectangle_ = {oyOBJECT_RECTANGLE_S,0,0,0, 0,0,0,0};
   oyRectangle_s * display_rectangle = (oyRectangle_s *) &display_rectangle_;
   oyRectangle_s * old_display_rectangle = (oyRectangle_s *) &old_display_rectangle_;
@@ -4891,6 +4898,8 @@ oyTESTRESULT_e testScreenPixel()
   clck = oyClock();
   for(i = 0; i < n; ++i)
   {
+    // clear the output buffer to make changes visible
+    memset( buf_16out, 0, sizeof(*buf_16out) );
     display_rectangle_.x = i*256;
     dirty = oyDrawScreenImage( cc, pixel_access, display_rectangle,
                                 old_display_rectangle,
