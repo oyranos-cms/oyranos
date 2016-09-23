@@ -2,7 +2,7 @@
  *  Oyranos is an open source Color Management System 
  * 
  *  @par Copyright:
- *            2009-2013 (C) Kai-Uwe Behrmann
+ *            2009-2016 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
@@ -17,6 +17,7 @@
 #include <oyObject_s.h>
 #include "oyranos_display_helpers.h"
 #include <oyranos_image.h>
+#include <oyranos_types.h>
 
 #ifndef _DBG_FORMAT_
 #define _DBG_UHR_ (double)clock()/(double)CLOCKS_PER_SEC
@@ -24,7 +25,16 @@
 #define _DBG_ARGS_ _DBG_UHR_,(strrchr(__FILE__,'/') ? strrchr(__FILE__,'/')+1 : __FILE__),__LINE__,__func__
 #endif
 int oy_display_verbose = 0;
-extern "C" { int oyWriteMemToFile_(const char* name, const void* mem, size_t size); }
+#ifdef __cplusplus
+#include <cstdio>
+extern "C" {
+#else
+#include <stdio.h>
+#endif /* __cplusplus */
+int oyWriteMemToFile_(const char* name, const void* mem, size_t size);
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
 
 oyConversion_s * oyConversion_FromImageForDisplay_ (
                                        oyImage_s         * image_in,
@@ -201,8 +211,8 @@ oyConversion_s * oyConversion_FromImageForDisplay_ (
  *  @return                            generated new graph, owned by caller
  *
  *  @version Oyranos: 0.9.6
+ *  @date    2016/04/13
  *  @since   2012/01/21 (Oyranos: 0.4.0)
- *  @date    2014/05/16
  */
 oyConversion_s * oyConversion_FromImageForDisplay  (
                                        oyImage_s         * image_in,
@@ -228,12 +238,17 @@ oyConversion_s * oyConversion_FromImageForDisplay  (
  *  oyImage_s from a prepared oyConversion_s context.
  *
  *  @param[in]     context             the Oyranos graph
+ *  @param[in,out] ticket              rendering context for tracking
+ *                                     rectangles
  *  @param[in]     display_rectangle   absolute coordinates of visible image
  *                                     in relation to display
  *  @param[in,out] old_display_rectangle
  *                                     rembering of display_rectangle
  +  @param[in,out] old_roi_rectangle   remembering of ticket's ROI (optional)
  *  @param[in]     system_type         the system dependent type specification
+ *                                     - "X11" is well supported
+ *                                     - "oy-test" for internal tests
+ *  @param[in]     data_type_request   oyUINT8 or oyUINT16
  *  @param[in]     display             the system display with system_type:
  *                                     - "X11": a Display object
  *  @param[in]     window              the system window with system_type:
@@ -242,9 +257,9 @@ oyConversion_s * oyConversion_FromImageForDisplay  (
  *  @param[out]    image               the image from graph to display
  *  @return                            0 - success, -1 - issue, >=  1 - error
  *
- *  @version Oyranos: 0.4.0
+ *  @version Oyranos: 0.9.6
+ *  @date    2016/09/22
  *  @since   2010/09/05 (Oyranos: 0.1.11)
- *  @date    2012/01/24
  */
 int  oyDrawScreenImage               ( oyConversion_s    * context,
                                        oyPixelAccess_s   * ticket,
@@ -318,7 +333,12 @@ int  oyDrawScreenImage               ( oyConversion_s    * context,
 
       }
 #endif
-   }
+    } else
+      if(strcmp("oy-test", system_type) == 0)
+        oyOptions_SetFromText( &image_tags,
+                               "//" OY_TYPE_STD "/display/display_name",
+                               system_type, OY_CREATE_NEW );
+
       /* check if the actual data can be displayed */
       pt = oyImage_GetPixelLayout( image, oyLAYOUT );
       data_type = oyToDataType_m( pt );
