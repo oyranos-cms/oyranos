@@ -44,9 +44,15 @@ ADD_CUSTOM_TARGET(test-config
         COMMENT "Test basic linking against liboyranos_config." VERBATIM )
 
 LINK_DIRECTORIES( ${LINK_DIRECTORIES} "${CMAKE_BINARY_DIR}/src/liboyranos/" ${ELEKTRA_LIBRARY_DIRS} )
-ADD_EXECUTABLE( test2 "${CMAKE_CURRENT_SOURCE_DIR}/test2.cpp" )
+ADD_EXECUTABLE( test2
+                "${CMAKE_CURRENT_SOURCE_DIR}/test2.cpp"
+                "${CMAKE_SOURCE_DIR}/src/examples/image_display/oyranos_display_helpers.c"
+              )
 TARGET_LINK_LIBRARIES( test2 Oyranos )
-ADD_EXECUTABLE( test2-static "${CMAKE_CURRENT_SOURCE_DIR}/test2.cpp" )
+ADD_EXECUTABLE( test2-static
+                "${CMAKE_CURRENT_SOURCE_DIR}/test2.cpp"
+                "${CMAKE_SOURCE_DIR}/src/examples/image_display/oyranos_display_helpers.c"
+              )
 TARGET_LINK_LIBRARIES( test2-static oyranos-static )
 ADD_CUSTOM_TARGET(test-2
 	"echo"
