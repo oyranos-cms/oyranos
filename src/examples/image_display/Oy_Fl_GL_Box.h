@@ -15,7 +15,7 @@ int              oyArray2d_ToPPM_    ( oyArray2d_s       * array,
 #include "oyranos_threads.h"
 
 class Oy_Fl_GL_Box : public Fl_Gl_Window,
-                         public Oy_Fl_Image_Widget
+                     public Oy_Fl_Image_Widget
 {
   char * frame_data;
   int W,H;

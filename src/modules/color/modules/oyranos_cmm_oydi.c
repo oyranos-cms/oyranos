@@ -141,12 +141,16 @@ int oydiFilterSocket_SetWindowRegion ( oyPixelAccess_s   * ticket,
   int error = 0;
   oyBlob_s * win_id, * display_id;
   oyOptions_s * tags = oyImage_GetTags( image );
+  const char * display_name = oyOptions_FindString( tags, "display_name", 0 );
 
   win_id = (oyBlob_s*) oyOptions_GetType( tags, -1, "window_id",
                                           oyOBJECT_BLOB_S );
   display_id = (oyBlob_s*) oyOptions_GetType( tags, -1, "display_id",
                                           oyOBJECT_BLOB_S );
 
+  if(display_name && strcmp(display_name,"oy-test") == 0)
+  {
+  } else
 # if defined(XCM_HAVE_X11) && defined (HAVE_XCM)
   if(win_id && display_id)
   {
@@ -154,8 +158,6 @@ int oydiFilterSocket_SetWindowRegion ( oyPixelAccess_s   * ticket,
     Atom xColorTarget;
     Window w = (Window) oyBlob_GetPointer(win_id), w_return;
     XWindowAttributes attr;
-    const char * display_name = oyOptions_FindString( tags,
-                                                      "display_name", 0 );
     Display * display = 
 #if 0
                          XOpenDisplay( display_name ); /* + XCloseDisplay() */
@@ -305,11 +307,17 @@ int oydiFilterSocket_SetWindowRegion ( oyPixelAccess_s   * ticket,
     oyRectangle_Release( &window_rectangle );
     oyRectangle_Release( &old_window_rectangle );
   } else if(oy_debug > 2)
+  {
     oydi_msg( oyMSG_DBG, (oyStruct_s*)ticket,
               OY_DBG_FORMAT_"no window_id/display_id image tags found image:%d",
               OY_DBG_ARGS_,
               oyStruct_GetId((oyStruct_s*)image) );
+  } else
 # endif
+    oydi_msg( oyMSG_DBG, (oyStruct_s*)ticket,
+              OY_DBG_FORMAT_"display_name: %s",
+              OY_DBG_ARGS_,
+              oyNoEmptyString_m_(display_name) );
 
   return error;
 }
@@ -337,6 +345,7 @@ int  oydiFilterSocket_ImageDisplayInit(oyPixelAccess_s   * ticket,
   char * tmp = 0,
        * ID = 0;
   int icc_profile_flags = 0;
+  const char * display_name = oyOptions_FindString( image_tags, "display_name", 0 );
 
   input_node = oyFilterPlug_GetRemoteNode( plug );
   oyFilterPlug_Release( &plug );
@@ -375,7 +384,78 @@ int  oydiFilterSocket_ImageDisplayInit(oyPixelAccess_s   * ticket,
                                  "true", OY_CREATE_NEW );
   o = oyOptions_Find( image_tags, "display_name", oyNAME_PATTERN );
   oyOptions_MoveIn( options, &o, -1 );
-  error = oyDevicesGet( OY_TYPE_STD, "monitor", options, &devices );
+
+  /* create 3 test devices in a row */
+  if(display_name && strcmp(display_name,"oy-test") == 0)
+  {
+    const char * json_dev = "\
+{\n\
+  \"org\": {\n\
+    \"freedesktop\": {\n\
+      \"openicc\": {\n\
+        \"device\": {\n\
+          \"monitor\": [{\n\
+              \"device_name\": \":0.0\",\n\
+              \"prefix\": \"EDID_\",\n\
+              \"EDID_manufacturer\": \"Oyranos CMS\",\n\
+              \"manufacturer\": \"Oyranos CMS\",\n\
+              \"EDID_mnft\": \"OYR\",\n\
+              \"EDID_model\": \"Test Monitor\",\n\
+              \"model\": \"Test Monitor\",\n\
+              \"display_geometry\": \"1024x768+0+0\",\n\
+              \"system_port\": \"eDP1\",\n\
+              \"host\": \"myhost\",\n\
+              \"EDID_date\": \"2013-T50\",\n\
+              \"EDID_mnft_id\": \"1234\",\n\
+              \"EDID_model_id\": \"5678\",\n\
+              \"EDID_red_x\": \"0.65332\",\n\
+              \"EDID_red_y\": \"0.333984\",\n\
+              \"EDID_green_x\": \"0.299805\",\n\
+              \"EDID_green_y\": \"0.620117\",\n\
+              \"EDID_blue_x\": \"0.146484\",\n\
+              \"EDID_blue_y\": \"0.0498047\",\n\
+              \"EDID_white_x\": \"0.3125\",\n\
+              \"EDID_white_y\": \"0.329102\",\n\
+              \"EDID_gamma\": \"2.2\",\n\
+              \"color_matrix.from_edid.redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma\": \"0.65332,0.333984,0.299805,0.620117,0.146484,0.0498047,0.3125,0.329102,2.2\"\n\
+            }\n\
+          ]\n\
+        }\n\
+      }\n\
+    }\n\
+  }\n\
+}\
+";
+    oyConfig_s * device = NULL;
+    oyOptions_s * options = NULL;
+    uint32_t icc_profile_flags = oyICCProfileSelectionFlagsFromOptions( OY_CMM_STD,
+                                                                    "//" OY_TYPE_STD "/icc_color",
+                                                                    options, 0 );
+
+    devices = oyConfigs_New(0);
+    for( i = 0; i < 3; ++i )
+    {
+#define MONITOR_REGISTRATION_BASE OY_TOP_SHARED OY_SLASH OY_DOMAIN_STD OY_SLASH OY_TYPE_STD OY_SLASH "device" OY_SLASH "config.icc_profile.monitor."
+#define MONITOR_REGISTRATION MONITOR_REGISTRATION_BASE "oyMo"
+      oyRectangle_s * rect = oyRectangle_NewWith( i*1024,0,1024,768, 0 );
+      oyProfile_s * p = oyProfile_FromName( i==0?"compatibleWithAdobeRGB1998.icc":i==1?"lab":"xyz", icc_profile_flags, NULL );
+      oyDeviceFromJSON( json_dev, 0, &device );
+
+      o = oyOption_FromRegistration( MONITOR_REGISTRATION OY_SLASH
+                                                  "device_rectangle", 0 );
+      error = oyOption_MoveInStruct( o, (oyStruct_s**) &rect );
+      oyOptions_MoveIn( *oyConfig_GetOptions(device,"data"), &o, -1 );
+      
+      o = oyOption_FromRegistration( MONITOR_REGISTRATION OY_SLASH
+                                                  "icc_profile", 0 );
+      error = oyOption_MoveInStruct( o, (oyStruct_s**) &p );
+      oyOptions_MoveIn( *oyConfig_GetOptions(device,"data"), &o, -1 );
+
+      oyConfigs_MoveIn( devices, &device, -1 );
+    }
+
+  } else
+    error = oyDevicesGet( OY_TYPE_STD, "monitor", options, &devices );
   oyOptions_Release( &options );
   n = oyConfigs_Count( devices );
   o = oyOptions_Find( node_options, "devices", oyNAME_PATTERN );
@@ -553,8 +633,8 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
   oyFilterNode_s * node = oyFilterSocket_GetNode(socket),
                  * rectangles = 0;
   oyOptions_s * node_options = oyFilterNode_GetOptions( node, 0 ),
-              * rectangles_options,
-              * image_tags;
+              * rectangles_options = NULL,
+              * image_tags = NULL;
   oyFilterPlug_s * plug = oyFilterNode_GetPlug( node, 0 );
   oyImage_s * image = 0,
             * image_input = 0;
@@ -567,7 +647,8 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
   int display_pos_x,
       display_pos_y;
   int dirty = 0,
-      init = 0;
+      init = 0,
+      test = 0;
   char * ID = 0;
   int icc_profile_flags = 0;
 
@@ -667,29 +748,39 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
 
     if(!display_graph)
     {
-# if defined(XCM_HAVE_X11) && defined (HAVE_XCM)
       oyOptions_s * tags = oyImage_GetTags( image );
-      oyBlob_s * display_id = (oyBlob_s*) oyOptions_GetType( tags, -1, "display_id",
-                                          oyOBJECT_BLOB_S );
-      if(!display_id)
-      {
-        oyFilterNode_s * input_node = oyFilterNode_GetPlugNode( node, 0 );
-        oydi_msg( oyMSG_DBG, (oyStruct_s*)image,
-            OY_DBG_FORMAT_"no display_id", OY_DBG_ARGS_ );
-        /* make the graph flow: process the upstream node */
-        l_result = oyFilterNode_Run( input_node, plug, ticket );
-        if(l_result > 0 || result == 0) result = l_result;
+      const char * display_name = oyOptions_FindString( tags,
+                                                        "display_name", 0 );
+      if(display_name && strcmp(display_name,"oy-test") == 0)
+        test = 1;
 
-        oyFilterPlug_Release( &plug );
-        oyFilterNode_Release( &input_node );
-        oyImage_Release( &image );
-        oyOptions_Release( &node_options );
-        oyOptions_Release( &tags );
-        goto clean2;
+
+# if defined(XCM_HAVE_X11) && defined (HAVE_XCM)
+      if(test == 0)
+      {
+        oyBlob_s * display_id = (oyBlob_s*) oyOptions_GetType( tags, -1,
+                                              "display_id",
+                                              oyOBJECT_BLOB_S );
+        if(!display_id)
+        {
+          oyFilterNode_s * input_node = oyFilterNode_GetPlugNode( node, 0 );
+          oydi_msg( oyMSG_DBG, (oyStruct_s*)image,
+                    OY_DBG_FORMAT_"no display_id", OY_DBG_ARGS_ );
+          /* make the graph flow: process the upstream node */
+          l_result = oyFilterNode_Run( input_node, plug, ticket );
+          if(l_result > 0 || result == 0) result = l_result;
+
+          oyFilterPlug_Release( &plug );
+          oyFilterNode_Release( &input_node );
+          oyImage_Release( &image );
+          oyOptions_Release( &node_options );
+          oyOptions_Release( &tags );
+          goto clean2;
+        }
+        oyBlob_Release( &display_id );
       }
-      oyOptions_Release( &tags );
-      oyBlob_Release( &display_id );
 #endif
+      oyOptions_Release( &tags );
 
       init = 1;
 
@@ -806,7 +897,8 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
         if(!display_id)
           oydi_msg( oyMSG_ERROR, (oyStruct_s*)image,
             OY_DBG_FORMAT_"no display_id", OY_DBG_ARGS_ );
-        active = oydiColorServerActive( display_id );
+        if(test == 0)
+          active = oydiColorServerActive( display_id );
         oyOptions_Release( &tags );
         oyBlob_Release( &display_id );
         if(active & XCM_COLOR_SERVER_REGIONS)
