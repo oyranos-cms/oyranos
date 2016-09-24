@@ -101,7 +101,7 @@ public:
       if(ticket)
       {
         oyRectangle_s * output_rectangle = oyRectangle_New(0);
-        oyImage_PixelsToSamples( image, 0, output_rectangle );
+        oyImage_RoiToSamples( image, 0, &output_rectangle );
         *oyRectangle_SetGeo1(output_rectangle,2) = OY_MIN( W, oyImage_GetWidth( image ) );
         *oyRectangle_SetGeo1(output_rectangle,3) = OY_MIN( H, oyImage_GetHeight( image ) );
         oyRectangle_Scale( output_rectangle, 1.0/oyImage_GetWidth( image ) );

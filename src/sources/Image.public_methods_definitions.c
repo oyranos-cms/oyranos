@@ -540,13 +540,15 @@ int            oyImage_FillArray     ( oyImage_s         * image,
   oyArray2d_s_ * a = (oyArray2d_s_*) *array;
   oyImage_s_ * s = (oyImage_s_*)image;
   oyRectangle_s_ image_roi_chan = {oyOBJECT_RECTANGLE_S,0,0,0, 0,0,0,0},
+                 * irc = &image_roi_chan,
                  r = {oyOBJECT_RECTANGLE_S,0,0,0, 0,0,0,0},
                  array_roi_old = {oyOBJECT_RECTANGLE_S,0,0,0, 0,0,0,0};
   int array_roi_old_read = 0;
   oyDATATYPE_e data_type = oyUINT8;
   int is_allocated = 0;
   int data_size, ay;
-  oyRectangle_s_ array_roi_chan = {oyOBJECT_RECTANGLE_S,0,0,0, 0,0,0,0};
+  oyRectangle_s_ array_roi_chan = {oyOBJECT_RECTANGLE_S,0,0,0, 0,0,0,0},
+                 * arc = &array_roi_chan;
   int array_width, array_height;
   oyAlloc_f allocateFunc_ = 0;
   unsigned char * line_data = 0;
@@ -566,19 +568,19 @@ int            oyImage_FillArray     ( oyImage_s         * image,
 
   data_type = oyToDataType_m( s->layout_[oyLAYOUT] );
   data_size = oyDataTypeGetSize( data_type );
-  error = oyImage_PixelsToSamples( image, rectangle,
-                                   (oyRectangle_s*)&image_roi_chan );
+  error = oyImage_RoiToSamples( image, rectangle,
+                                (oyRectangle_s**)&irc );
 
   if(!error && array_rectangle)
-    error = oyImage_PixelsToSamples( image, array_rectangle,
-                                     (oyRectangle_s*)&array_roi_chan );
+    error = oyImage_RoiToSamples( image, array_rectangle,
+                                  (oyRectangle_s**)&arc );
   else
   {
     oyRectangle_SetGeo( (oyRectangle_s*)&r, 0,0,
                                  oyRectanglePriv_m(rectangle)->width,
                                  oyRectanglePriv_m(rectangle)->height );
-    error = oyImage_PixelsToSamples( image, (oyRectangle_s*)&r,
-                                     (oyRectangle_s*)&array_roi_chan );
+    error = oyImage_RoiToSamples( image, (oyRectangle_s*)&r,
+                                  (oyRectangle_s**)&arc );
   }
 
   array_width = array_roi_chan.x + array_roi_chan.width;
@@ -829,7 +831,8 @@ int            oyImage_ReadArray     ( oyImage_s         * image,
   oyArray2d_s_ * array_ = (oyArray2d_s_*)array;
   int error = !image || !array;
   oyRectangle_s_ image_roi_chan = {oyOBJECT_RECTANGLE_S,0,0,0,0,0,0,0},
-                 array_rect_chan = {oyOBJECT_RECTANGLE_S,0,0,0,0,0,0,0};
+                 array_rect_chan = {oyOBJECT_RECTANGLE_S,0,0,0,0,0,0,0},
+                 * irc = &image_roi_chan;
   oyDATATYPE_e data_type = oyUINT8;
   int bps = 0, channel_n, i, offset, width, height;
 
@@ -842,8 +845,8 @@ int            oyImage_ReadArray     ( oyImage_s         * image,
   bps = oyDataTypeGetSize( data_type );
   channel_n = s->layout_[oyCHANS];
 
-  error = oyImage_PixelsToSamples( image, image_rectangle,
-                                   (oyRectangle_s*)&image_roi_chan );
+  error = oyImage_RoiToSamples( image, image_rectangle,
+                                (oyRectangle_s**)&irc );
   /* We want to check if the array is big enough to hold the pixels */
   if(array_->data_area.width < image_roi_chan.width ||
      array_->data_area.height < image_roi_chan.height)
@@ -1472,7 +1475,7 @@ oyStruct_s *   oyImage_GetUserData ( oyImage_s         * image )
   return s->user_data->copy( s->user_data, 0 );
 }
 
-/** Function  oyImage_PixelsToSamples
+/** Function  oyImage_RoiToSamples
  *  @memberof oyImage_s
  *  @brief    Set sample rectangle from image rectangle
  *
@@ -1484,39 +1487,42 @@ oyStruct_s *   oyImage_GetUserData ( oyImage_s         * image )
  *                                     pixel for y,height
  *  @return                            error
  *
- *  @version  Oyranos: 0.5.0
- *  @date     2012/10/05
+ *  @version  Oyranos: 0.9.6
+ *  @date     2016/09/24
  *  @since    2009/03/13 (Oyranos: 0.1.10)
  */
-int            oyImage_PixelsToSamples(oyImage_s         * image,
+int            oyImage_RoiToSamples  ( oyImage_s         * image,
                                        oyRectangle_s     * image_rectangle,
-                                       oyRectangle_s     * sample_rectangle )
+                                       oyRectangle_s    ** sample_rectangle )
 {
   int error = !image,
       channel_n = 0;
 
-  oyRectangle_s_ ** sample_rectangle_ = (oyRectangle_s_**)&sample_rectangle;
+  oyRectangle_s_ ** sample_rectangle_ = (oyRectangle_s_**)sample_rectangle;
 
   if(!error && image->type_ != oyOBJECT_IMAGE_S)
     return 0;
 
   if(!error)
   {
+    if(!*sample_rectangle)
+      *sample_rectangle = oyRectangle_New(0);
+
     channel_n = oyImage_GetPixelLayout( image, oyCHANS );
 
     if(!image_rectangle)
     {
-      oyRectangle_SetGeo( sample_rectangle, 0,0, oyImage_GetWidth(image),
+      oyRectangle_SetGeo( *sample_rectangle, 0,0, oyImage_GetWidth(image),
                                                 oyImage_GetHeight(image) );
       (*sample_rectangle_)->width *= channel_n;
 
     } else
     {
-      oyRectangle_SetByRectangle( sample_rectangle, image_rectangle );
-      oyRectangle_Scale( sample_rectangle, oyImage_GetWidth(image) );
+      oyRectangle_SetByRectangle( *sample_rectangle, image_rectangle );
+      oyRectangle_Scale( *sample_rectangle, oyImage_GetWidth(image) );
       (*sample_rectangle_)->x *= channel_n;
       (*sample_rectangle_)->width *= channel_n;
-      oyRectangle_Round( sample_rectangle );
+      oyRectangle_Round( *sample_rectangle );
     }
   }
 
