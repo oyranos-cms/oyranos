@@ -603,18 +603,20 @@ int            oyImage_SetCritical   ( oyImage_s         * image,
  *  needed.
  *
  *  @param[in]     image               the image
- *  @param[in]     rectangle           the image rectangle in a relative unit
- *                                     a rectangle in the source image
+ *  @param[in]     rectangle           The image rectangle in a
+ *                                     oyImage_GetWidth(image) == 1.0 unit.
+ *                                     The rectangle is in the source image.
  *  @param[in]     allocate_method
  *                                     - 0 assign the rows without copy
  *                                     - 1 do copy into the array
  *                                     - 2 allocate empty rows
  *  @param[out]    array               array to fill; If array is empty, it is
- *                                     allocated as per allocate_method
+ *                                     allocated as per allocate_method.
  *                                     During function execution the array
  *                                     might have a changed focus. Focus is
  *                                     restored before return.
- *  @param[in]     array_rectangle     the array rectangle in samples
+ *  @param[in]     array_rectangle     The array rectangle in
+ *                                     oyImage_GetWidth(image) == 1.0 unit.
  *                                     For NULL the image rectangle will be
  *                                     placed to the top left corner in array.
  *                                     If array_rectangle is provided, image
@@ -905,6 +907,14 @@ int            oyImage_FillArray     ( oyImage_s         * image,
  *
  *  The rectangle will be considered relative to the image.
  *  The given array should match that rectangle.
+ *
+ *  @param[in]     image               a image
+ *  @param[in]     image_rectangle     rectangle from image in
+ *                                     oyImage_GetWidth() == 1.0 unit; optional
+ *  @param[in,out] array               the to be filled array
+ *  @param[in]     array_rectangle     rectangle for array in
+ *                                     oyImage_GetWidth() == 1.0 unit; optional
+ *  @return                            error
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/02/28 (Oyranos: 0.1.10)
@@ -1567,8 +1577,11 @@ oyStruct_s *   oyImage_GetUserData ( oyImage_s         * image )
  *  @brief    Set sample rectangle from image rectangle
  *
  *  @param[in]     image               a image
- *  @param[in]     image_rectangle     rectangle from image, optional
- *  @param[in,out] pixel_rectangle     rectangle for pixel results
+ *  @param[in]     image_rectangle     rectangle from image in
+ *                                     oyImage_GetWidth() == 1.0 unit; optional
+ *  @param[in,out] sample_rectangle    rectangle for sample results in
+ *                                     samples for x,width and
+ *                                     pixel for y,height
  *  @return                            error
  *
  *  @version  Oyranos: 0.5.0
@@ -1577,12 +1590,12 @@ oyStruct_s *   oyImage_GetUserData ( oyImage_s         * image )
  */
 int            oyImage_PixelsToSamples(oyImage_s         * image,
                                        oyRectangle_s     * image_rectangle,
-                                       oyRectangle_s     * pixel_rectangle )
+                                       oyRectangle_s     * sample_rectangle )
 {
   int error = !image,
       channel_n = 0;
 
-  oyRectangle_s_ ** pixel_rectangle_ = (oyRectangle_s_**)&pixel_rectangle;
+  oyRectangle_s_ ** sample_rectangle_ = (oyRectangle_s_**)&sample_rectangle;
 
   if(!error && image->type_ != oyOBJECT_IMAGE_S)
     return 0;
@@ -1593,17 +1606,17 @@ int            oyImage_PixelsToSamples(oyImage_s         * image,
 
     if(!image_rectangle)
     {
-      oyRectangle_SetGeo( pixel_rectangle, 0,0, oyImage_GetWidth(image),
+      oyRectangle_SetGeo( sample_rectangle, 0,0, oyImage_GetWidth(image),
                                                 oyImage_GetHeight(image) );
-      (*pixel_rectangle_)->width *= channel_n;
+      (*sample_rectangle_)->width *= channel_n;
 
     } else
     {
-      oyRectangle_SetByRectangle( pixel_rectangle, image_rectangle );
-      oyRectangle_Scale( pixel_rectangle, oyImage_GetWidth(image) );
-      (*pixel_rectangle_)->x *= channel_n;
-      (*pixel_rectangle_)->width *= channel_n;
-      oyRectangle_Round( pixel_rectangle );
+      oyRectangle_SetByRectangle( sample_rectangle, image_rectangle );
+      oyRectangle_Scale( sample_rectangle, oyImage_GetWidth(image) );
+      (*sample_rectangle_)->x *= channel_n;
+      (*sample_rectangle_)->width *= channel_n;
+      oyRectangle_Round( sample_rectangle );
     }
   }
 

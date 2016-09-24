@@ -66,7 +66,7 @@ int            oyImage_ReadArray     ( oyImage_s         * image,
                                        oyRectangle_s     * array_rectangle );
 int            oyImage_PixelsToSamples(oyImage_s         * image,
                                        oyRectangle_s     * image_rectangle,
-                                       oyRectangle_s     * pixel_rectangle );
+                                       oyRectangle_s     * sample_rectangle );
 int            oyImage_WritePPM      ( oyImage_s         * image,
                                        const char        * file_name,
                                        const char        * comment );
