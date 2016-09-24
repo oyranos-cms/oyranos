@@ -4895,8 +4895,14 @@ oyTESTRESULT_e testScreenPixel()
   fprintf( zout, "First draw finished               %s\n",
                  oyProfilingToString(1,clck/(double)CLOCKS_PER_SEC, "draw"));
 
+  if(getenv("OY_DEBUG_WRITE"))
+  {
+    const char * fn = "test2-oyDrawScreenImage-00.ppm";
+    fprintf( zout, "wrote PPM               %s\n", fn );
+    oyImage_WritePPM( input, fn, "test2::screen 00 image" );
+  }
   clck = oyClock();
-  for(i = 0; i < n; ++i)
+  for(i = 1; i <= n; ++i)
   {
     // clear the output buffer to make changes visible
     memset( buf_16out, 0, sizeof(*buf_16out) );
@@ -4910,7 +4916,7 @@ oyTESTRESULT_e testScreenPixel()
     if(getenv("OY_DEBUG_WRITE"))
     {
       char fn[256], num[4];
-      sprintf( num, "%d", i );
+      sprintf( num, "%02d", i );
       sprintf( fn, "test2-oyDrawScreenImage-%s.ppm", num );
       fprintf( zout, "wrote PPM               %s\n", fn );
       oyImage_WritePPM( output, fn, num );
