@@ -494,6 +494,133 @@ int            oyImage_SetCritical   ( oyImage_s         * image,
   return error;
 }
 
+static int oyImage_CreateFillArray_  ( oyImage_s         * image,
+                                       oyRectangle_s     * rectangle,
+                                       int                 allocate_method,
+                                       oyArray2d_s      ** array,
+                                       oyRectangle_s     * array_rectangle,
+                                       oyObject_s          obj,
+                                       oyRectangle_s_    * arc )
+{
+  int error = 0;
+  oyArray2d_s_ * a = (oyArray2d_s_*) *array;
+  oyImage_s_ * s = (oyImage_s_*)image;
+  oyDATATYPE_e data_type = oyUINT8;
+  int is_allocated = 0;
+  int data_size, ay;
+  int array_width, array_height;
+  oyAlloc_f allocateFunc_ = 0;
+  unsigned char * line_data = 0;
+  int i,j, height;
+
+  if(!image)
+    return 1;
+
+  oyCheckType__m( oyOBJECT_IMAGE_S, return 1 )
+
+  if( allocate_method < 0 || allocate_method > 2 )
+  {
+    WARNcc1_S(image, "allocate_method not allowed: %d", allocate_method )
+    error = 1;
+  }
+
+  data_type = oyToDataType_m( s->layout_[oyLAYOUT] );
+  data_size = oyDataTypeGetSize( data_type );
+
+  array_width = arc->x + arc->width;
+  array_height = arc->y + arc->height;
+
+
+  if(!error &&
+     (!a ||
+      (a && ( array_width > oyRectanglePriv_m(&a->data_area)->width ||
+              array_height > oyRectanglePriv_m(&a->data_area)->height ))) &&
+     array_width > 0 && array_height > 0
+    )
+  {
+    if(!(arc->width && arc->height))
+      /* array creation is not possible */
+      error = -1;
+
+    if(!error)
+    {
+      if(!a)
+      {
+        a = oyArray2d_Create_( array_width, array_height, data_type, obj );
+      
+      } else
+      {
+        oyMessageFunc_p( oyMSG_WARN, (oyStruct_s*)image,
+                 OY_DBG_FORMAT_ "array[%d](%dx%d) is too small: setting to %dx%d",
+                 OY_DBG_ARGS_,
+                 oyStruct_GetId( (oyStruct_s*) a ),
+                 a->width, a->height, array_width, array_height );
+        error = oyArray2d_Reset( *array, array_width, array_height, data_type );
+      }
+    }
+
+    if(!error)
+    {
+      *array = (oyArray2d_s*) a;
+
+      if(a->oy_)
+        allocateFunc_ = a->oy_->allocateFunc_;
+
+      error = !a;
+      if(!error)
+      {
+        /* allocate each single line */
+        if(allocate_method == 1 || allocate_method == 2)
+        {
+          a->own_lines = 2;
+
+          for(ay = 0; ay < array_height; ++ay)
+            if(!a->array2d[ay])
+              oyAllocHelper_m_( a->array2d[ay], 
+                              unsigned char,
+                              array_width * data_size,
+                              allocateFunc_,
+                              error = 1; break );
+        } else if(allocate_method == 0)
+        {
+          for( i = 0; i < array_height; )
+          {
+            if(!a->array2d[i])
+            {
+              height = is_allocated = 0;
+              line_data = s->getLine( image, i, &height, -1,
+                             &is_allocated );
+              for( j = 0; j < height; ++j )
+              {
+                if( i + j >= array_height )
+                  break;
+
+                ay = i + j;
+
+                a->array2d[ay] = 
+                    &line_data[j*data_size * array_width];
+              }
+            }
+
+            i += height;
+
+            if(error) break;
+          }
+        }
+      }
+    }
+  }
+
+  /* a array should have been created */
+  if( !a && arc->width && arc->height )
+  {
+    WARNcc_S(image, "Could not create array.")
+    if(error <= 0) error = -1;
+  }
+
+  return error;
+}
+
 /** Function oyImage_FillArray
  *  @memberof oyImage_s
  *  @brief   creata a array from a image and fill with data
@@ -550,7 +677,6 @@ int            oyImage_FillArray     ( oyImage_s         * image,
   oyRectangle_s_ array_roi_chan = {oyOBJECT_RECTANGLE_S,0,0,0, 0,0,0,0},
                  * arc = &array_roi_chan;
   int array_width, array_height;
-  oyAlloc_f allocateFunc_ = 0;
   unsigned char * line_data = 0;
   int i,j, height, channels_n;
   size_t wlen;
@@ -568,6 +694,7 @@ int            oyImage_FillArray     ( oyImage_s         * image,
 
   data_type = oyToDataType_m( s->layout_[oyLAYOUT] );
   data_size = oyDataTypeGetSize( data_type );
+
   error = oyImage_RoiToSamples( image, rectangle,
                                 (oyRectangle_s**)&irc );
 
@@ -583,8 +710,8 @@ int            oyImage_FillArray     ( oyImage_s         * image,
                                   (oyRectangle_s**)&arc );
   }
 
-  array_width = array_roi_chan.x + array_roi_chan.width;
-  array_height = array_roi_chan.y + array_roi_chan.height;
+  array_width = arc->x + arc->width;
+  array_height = arc->y + arc->height;
 
   if(oy_debug > 2)
   {
@@ -603,82 +730,9 @@ int            oyImage_FillArray     ( oyImage_s         * image,
      array_width > 0 && array_height > 0
     )
   {
-    if(!(array_roi_chan.width && array_roi_chan.height))
-      /* array creation is not possible */
-      error = -1;
-
-    if(!error)
-    {
-      if(!a)
-      {
-        a = oyArray2d_Create_( array_width, array_height, data_type, obj );
-      
-      } else
-      {
-        oyMessageFunc_p( oyMSG_WARN, (oyStruct_s*)image,
-                 OY_DBG_FORMAT_ "array[%d](%dx%d) is too small: setting to %dx%d",
-                 OY_DBG_ARGS_,
-                 oyStruct_GetId( (oyStruct_s*) a ),
-                 a->width, a->height, array_width, array_height );
-        error = oyArray2d_Reset( *array, array_width, array_height, data_type );
-      }
-    }
-
-    if(!error)
-    {
-      if(a->oy_)
-        allocateFunc_ = a->oy_->allocateFunc_;
-
-      error = !a;
-      if(!error)
-      {
-        /* allocate each single line */
-        if(allocate_method == 1 || allocate_method == 2)
-        {
-          a->own_lines = 2;
-
-          for(ay = 0; ay < array_height; ++ay)
-            if(!a->array2d[ay])
-              oyAllocHelper_m_( a->array2d[ay], 
-                              unsigned char,
-                              array_width * data_size,
-                              allocateFunc_,
-                              error = 1; break );
-        } else if(allocate_method == 0)
-        {
-          for( i = 0; i < array_height; )
-          {
-            if(!a->array2d[i])
-            {
-              height = is_allocated = 0;
-              line_data = s->getLine( image, i, &height, -1,
-                             &is_allocated );
-              for( j = 0; j < height; ++j )
-              {
-                if( i + j >= array_height )
-                  break;
-
-                ay = i + j;
-
-                a->array2d[ay] = 
-                    &line_data[j*data_size * array_width];
-              }
-            }
-
-            i += height;
-
-            if(error) break;
-          }
-        }
-      }
-    }
-  }
-
-  /* a array should have been created */
-  if( !a && array_roi_chan.width && array_roi_chan.height )
-  {
-    WARNcc_S(image, "Could not create array.")
-    if(error <= 0) error = -1;
+    error = oyImage_CreateFillArray_( image, rectangle, allocate_method,
+                                      array, array_rectangle, obj, arc );
+    a = (oyArray2d_s_*) *array;
   }
 
   if( !error && a )
