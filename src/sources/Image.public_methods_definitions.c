@@ -1534,7 +1534,7 @@ oyStruct_s *   oyImage_GetUserData ( oyImage_s         * image )
  *  @brief    Set sample rectangle from image rectangle
  *
  *  @param[in]     image               a image
- *  @param[in]     image_rectangle     rectangle from image in
+ *  @param[in]     roi                 rectangle from image in
  *                                     oyImage_GetWidth() == 1.0 unit; optional
  *  @param[in,out] sample_rectangle    rectangle for sample results in
  *                                     samples for x,width and
@@ -1546,7 +1546,7 @@ oyStruct_s *   oyImage_GetUserData ( oyImage_s         * image )
  *  @since    2009/03/13 (Oyranos: 0.1.10)
  */
 int            oyImage_RoiToSamples  ( oyImage_s         * image,
-                                       oyRectangle_s     * image_rectangle,
+                                       oyRectangle_s     * roi,
                                        oyRectangle_s    ** sample_rectangle )
 {
   int error = !image,
@@ -1564,7 +1564,7 @@ int            oyImage_RoiToSamples  ( oyImage_s         * image,
 
     channel_n = oyImage_GetPixelLayout( image, oyCHANS );
 
-    if(!image_rectangle)
+    if(!roi)
     {
       oyRectangle_SetGeo( *sample_rectangle, 0,0, oyImage_GetWidth(image),
                                                 oyImage_GetHeight(image) );
@@ -1572,12 +1572,147 @@ int            oyImage_RoiToSamples  ( oyImage_s         * image,
 
     } else
     {
-      oyRectangle_SetByRectangle( *sample_rectangle, image_rectangle );
+      oyRectangle_SetByRectangle( *sample_rectangle, roi );
       oyRectangle_Scale( *sample_rectangle, oyImage_GetWidth(image) );
       (*sample_rectangle_)->x *= channel_n;
       (*sample_rectangle_)->width *= channel_n;
       oyRectangle_Round( *sample_rectangle );
     }
+  }
+
+  return error;
+}
+
+/** Function  oyImage_SamplesToRoi
+ *  @memberof oyImage_s
+ *  @brief    Set rectangle in image dimension from samples
+ *
+ *  @param[in]     image               a image
+ *  @param[in]     sample_rectangle    rectangle in
+ *                                     samples for x,width and
+ *                                     pixel for y,height; optional
+ *  @param[in,out] roi                 rectangle result of image in
+ *                                     oyImage_GetWidth() == 1.0 unit
+ *  @return                            error
+ *
+ *  @version  Oyranos: 0.9.6
+ *  @date     2016/09/25
+ *  @since    2016/09/25 (Oyranos: 0.9.6)
+ */
+int            oyImage_SamplesToRoi  ( oyImage_s         * image,
+                                       oyRectangle_s     * sample_rectangle,
+                                       oyRectangle_s    ** roi )
+{
+  int error = !image,
+      channel_n = 0;
+  oyRectangle_s_ * roi_;
+
+  if(!error && image->type_ != oyOBJECT_IMAGE_S)
+    return 0;
+
+  if(!error)
+  {
+    double width = oyImage_GetWidth(image);
+
+    if(!*roi)
+      *roi = oyRectangle_New(0);
+ 
+    roi_ = (oyRectangle_s_*)*roi;
+
+    if(!sample_rectangle)
+    {
+      oyRectangle_SetGeo( *roi, 0,0, 1.0,
+                                     oyImage_GetHeight(image)/width );
+
+    } else
+    {
+      channel_n = oyImage_GetPixelLayout( image, oyCHANS );
+      oyRectangle_SetByRectangle( *roi, sample_rectangle );
+      roi_->x /= channel_n;
+      roi_->width /= channel_n;
+      oyRectangle_Scale( *roi, 1.0/width );
+    }
+  }
+
+  return error;
+}
+
+/** Function  oyImage_SamplesToPixels
+ *  @memberof oyImage_s
+ *  @brief    Set rectangle in pixel dimension from samples
+ *
+ *  @param[in]     image               a image
+ *  @param[in]     sample_rectangle    rectangle in
+ *                                     samples for x,width and
+ *                                     pixel for y,height; optional
+ *  @param[in,out] pixel_rectangle     rectangle result of image in
+ *                                     pixel unit
+ *  @return                            error
+ *
+ *  @version  Oyranos: 0.9.6
+ *  @date     2016/09/25
+ *  @since    2016/09/25 (Oyranos: 0.9.6)
+ */
+int            oyImage_SamplesToPixels(oyImage_s         * image,
+                                       oyRectangle_s     * sample_rectangle,
+                                       oyRectangle_s     * pixel_rectangle )
+{
+  int error = !image || !sample_rectangle || !pixel_rectangle;
+  oyRectangle_s_ * in_, * out_;
+
+  if(!error && image->type_ != oyOBJECT_IMAGE_S)
+    return 0;
+
+  if(!error)
+  {
+    double channel_n = oyImage_GetPixelLayout( image, oyCHANS );
+
+    in_ = (oyRectangle_s_*)sample_rectangle;
+    out_ = (oyRectangle_s_*)pixel_rectangle;
+
+    oyRectangle_SetByRectangle( pixel_rectangle, sample_rectangle );
+    out_->x = in_->x / channel_n;
+    out_->width = in_->width / channel_n;
+  }
+
+  return error;
+}
+
+/** Function  oyImage_PixelsToSamples
+ *  @memberof oyImage_s
+ *  @brief    Set rectangle in sample dimension from pixels
+ *
+ *  @param[in]     image               a image
+ *  @param[in]     pixel_rectangle     rectangle in pixel unit; optional
+ *  @param[in,out] sample_rectangle    rectangle result of image in
+ *                                     samples for x,width and
+ *                                     pixel for y,height
+ *  @return                            error
+ *
+ *  @version  Oyranos: 0.9.6
+ *  @date     2016/09/25
+ *  @since    2016/09/25 (Oyranos: 0.9.6)
+ */
+int            oyImage_PixelsToSamples(oyImage_s         * image,
+                                       oyRectangle_s     * pixel_rectangle,
+                                       oyRectangle_s     * sample_rectangle )
+{
+  int error = !image || !sample_rectangle || !pixel_rectangle;
+  oyRectangle_s_ * in_, * out_;
+
+  if(!error && image->type_ != oyOBJECT_IMAGE_S)
+    return 0;
+
+  if(!error)
+  {
+    double channel_n = oyImage_GetPixelLayout( image, oyCHANS );
+
+    in_ = (oyRectangle_s_*)pixel_rectangle;
+    out_ = (oyRectangle_s_*)sample_rectangle;
+
+    oyRectangle_SetByRectangle( sample_rectangle, pixel_rectangle );
+    out_->x = in_->x * channel_n;
+    out_->width = in_->width * channel_n;
   }
 
   return error;

@@ -65,8 +65,17 @@ int            oyImage_ReadArray     ( oyImage_s         * image,
                                        oyArray2d_s       * array,
                                        oyRectangle_s     * array_rectangle );
 int            oyImage_RoiToSamples  ( oyImage_s         * image,
-                                       oyRectangle_s     * image_rectangle,
+                                       oyRectangle_s     * roi,
                                        oyRectangle_s    ** sample_rectangle );
+int            oyImage_SamplesToRoi  ( oyImage_s         * image,
+                                       oyRectangle_s     * sample_rectangle,
+                                       oyRectangle_s    ** roi );
+int            oyImage_SamplesToPixels(oyImage_s         * image,
+                                       oyRectangle_s     * sample_rectangle,
+                                       oyRectangle_s     * pixel_rectangle );
+int            oyImage_PixelsToSamples(oyImage_s         * image,
+                                       oyRectangle_s     * pixel_rectangle,
+                                       oyRectangle_s     * sample_rectangle );
 int            oyImage_WritePPM      ( oyImage_s         * image,
                                        const char        * file_name,
                                        const char        * comment );
