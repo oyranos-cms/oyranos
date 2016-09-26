@@ -112,7 +112,7 @@ OYAPI int OYEXPORT
  *                                     image
  *  @param[in]     start_y             y position relative to virtual source
  *                                     image
- *  @param[in]     output_rectangle    the region in the output image, optional
+ *  @param[in]     output_rectangle    the region in the output image; optional
  *  @return                            0 on success, else error
  *
  *  The output_rectangle is absolute to oyPixelAccess_GetArray().
@@ -120,7 +120,7 @@ OYAPI int OYEXPORT
  *  oyPixelAccess_SetArrayFocus( pixel_access(::array), undo=1 ).
  *
  *  @version Oyranos: 0.9.6
- *  @date    2016/09/14
+ *  @date    2016/09/26
  *  @since   2011/04/17 (Oyranos: 0.3.0)
  */
 int                oyPixelAccess_ChangeRectangle (
@@ -131,7 +131,6 @@ int                oyPixelAccess_ChangeRectangle (
 {
   oyPixelAccess_s_ * pixel_access_ = (oyPixelAccess_s_*)pixel_access;
   int error = 0;
-  oyRectangle_s_ * roi = (oyRectangle_s_*)oyRectangle_New(0);
 
   if(!pixel_access)
     error = 1;
@@ -145,11 +144,9 @@ int                oyPixelAccess_ChangeRectangle (
 
   if(error <= 0)
   {
-    oyRectangle_SetByRectangle( (oyRectangle_s*)roi, (oyRectangle_s*)pixel_access_->output_array_roi );
-    pixel_access_->start_xy[0] = roi->x = start_x;
-    pixel_access_->start_xy[1] = roi->y = start_y;
+    pixel_access_->start_xy[0] = start_x;
+    pixel_access_->start_xy[1] = start_y;
   }
-  oyRectangle_Release( (oyRectangle_s**)&roi );
 
   return error;
 }
