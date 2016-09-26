@@ -4799,6 +4799,126 @@ oyTESTRESULT_e testImagePixel()
   return result;
 }
 
+oyTESTRESULT_e testRectangles()
+{
+  oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
+  uint32_t icc_profile_flags =oyICCProfileSelectionFlagsFromOptions( OY_CMM_STD,
+                                       "//" OY_TYPE_STD "/icc_color", NULL, 0 );
+  oyProfile_s * p_web = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, NULL );
+  int error = 0;
+  uint16_t buf_16_3x3[27] = {
+  20000,20000,20000, 10000,10000,10000, 5000,5000,5000,
+  0,0,0,             65535,65535,65535, 32768,32768,32768,
+  1,1,1,             100,100,100,       1000,1000,1000
+  };
+  oyDATATYPE_e buf_type = oyUINT16;
+  oyImage_s *image;
+  oyRectangle_s * sample_rectangle = oyRectangle_New(0),
+                * pixel_rectangle = oyRectangle_New(0),
+                * roi = oyRectangle_New(0);
+
+  fprintf(stdout, "\n" );
+
+  image =oyImage_Create( 3,3, 
+                         buf_16_3x3,
+                         oyChannels_m(oyProfile_GetChannelsCount(p_web)) |
+                          oyDataType_m(buf_type),
+                         p_web,
+                         0 );
+  error = (image == NULL);
+  oyProfile_Release( &p_web );
+
+
+  oyImage_RoiToSamples( image, NULL, &sample_rectangle );
+  double x,y,w,h;
+  oyRectangle_GetGeo( sample_rectangle, &x,&y,&w,&h );
+
+  if(!error &&
+     x==0 && y == 0 && w == 9 && h == 3)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyImage_RoiToSamples( NULL )                        " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyImage_RoiToSamples( NULL )                        " );
+  }
+
+
+  oyImage_SamplesToRoi( image, NULL, &roi );
+  oyRectangle_GetGeo( roi, &x,&y,&w,&h );
+
+  if(!error &&
+     x==0 && y == 0 && w == 1.0 && h == 1.0)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyImage_SamplesToRoi( NULL )                        " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyImage_SamplesToRoi( NULL )                        " );
+  }
+
+
+  oyRectangle_SetGeo( roi, 1.0/3.0, 1.0/3.0, 1.0/3.0, 2.0/3.0 );
+  oyImage_RoiToSamples( image, roi, &sample_rectangle );
+  oyRectangle_GetGeo( sample_rectangle, &x,&y,&w,&h );
+
+  if(!error &&
+     x==3 && y == 1 && w == 3 && h == 2)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyImage_RoiToSamples( roi )                         " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyImage_RoiToSamples( roi )                         " );
+  }
+
+
+  oyRectangle_SetGeo( sample_rectangle, 6,2, 3,1 );
+  oyImage_SamplesToRoi( image, sample_rectangle, &roi );
+  oyRectangle_GetGeo( roi, &x,&y,&w,&h );
+
+  if(!error &&
+     x==2.0/3.0 && y == 2.0/3.0 && w == 1.0/3.0 && h == 1.0/3.0)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyImage_SamplesToRoi( sample_rectangle )            " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyImage_SamplesToRoi( sample_rectangle )            " );
+  }
+
+
+  oyRectangle_SetGeo( sample_rectangle, 3, 1, 3, 2 );
+  oyImage_SamplesToPixels( image, sample_rectangle, pixel_rectangle );
+  oyRectangle_GetGeo( pixel_rectangle, &x,&y,&w,&h );
+
+  if(!error &&
+     x==1 && y == 1 && w == 1 && h == 2)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyImage_SamplesToPixels( )                          " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyImage_SamplesToPixels( )                          " );
+  }
+
+  oyRectangle_SetGeo( pixel_rectangle, 1, 1, 2, 2 );
+  oyImage_PixelsToSamples( image, pixel_rectangle, sample_rectangle );
+  oyRectangle_GetGeo( sample_rectangle, &x,&y,&w,&h );
+
+  if(!error &&
+     x==3 && y == 1 && w == 6 && h == 2)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyImage_PixelsToSamples( )                          " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyImage_PixelsToSamples( )                          " );
+  }
+
+
+  oyImage_Release( &image );
+  oyRectangle_Release( &sample_rectangle );
+  oyRectangle_Release( &pixel_rectangle );
+  oyRectangle_Release( &roi );
+
+  return result;
+}
+
 #include "../examples/image_display/oyranos_display_helpers.h"
 oyTESTRESULT_e testScreenPixel()
 {
@@ -6424,6 +6544,7 @@ int main(int argc, char** argv)
   TEST_RUN( testCMMsShow, "CMMs show" );
   TEST_RUN( testCMMnmRun, "CMM named color run" );
   TEST_RUN( testImagePixel, "CMM Image Pixel run" );
+  TEST_RUN( testRectangles, "Image Rectangles" );
   TEST_RUN( testScreenPixel, "Draw Screen Pixel run" );
   TEST_RUN( testFilterNode, "FilterNode Options" );
   TEST_RUN( testConversion, "CMM selection" );
