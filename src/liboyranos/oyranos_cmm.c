@@ -100,6 +100,8 @@ int      oyFilterPlug_ImageRootRun   ( oyFilterPlug_s    * requestor_plug,
 
     if(array)
     {
+      int32_t channels = oyImage_GetPixelLayout( output_image, oyCHANS );
+      output_width = oyArray2d_GetDataGeo1( array, 2 ) / channels;
       oyPixelAccess_SetArrayFocus( ticket, 0 );
       array_is_focussed = oyPixelAccess_ArrayIsFocussed( ticket );
     }
@@ -113,8 +115,8 @@ int      oyFilterPlug_ImageRootRun   ( oyFilterPlug_s    * requestor_plug,
     oyRectangle_SetGeo( (oyRectangle_s*)&image_roi,
                         x_pix / (double) width,
                         y_pix / (double) width,
-                        oyRectangle_GetGeo1((oyRectangle_s*)&image_roi,2),
-                        oyRectangle_GetGeo1((oyRectangle_s*)&image_roi,3) );
+                        oyRectangle_GetGeo1((oyRectangle_s*)&image_roi,2) * output_width / (double) width,
+                        oyRectangle_GetGeo1((oyRectangle_s*)&image_roi,3) * output_width / (double) width );
 
     STRING_ADD( t, oyRectangle_Show( (oyRectangle_s*)&image_roi ) );
     DBGs_PROG8_S( ticket, "Fill ticket->array[%d] from %s[%d] "
