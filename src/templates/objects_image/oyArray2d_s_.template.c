@@ -8,8 +8,8 @@
     sprintf( &text[strlen(text)], "%dx%d", s->width, s->height);
   else
   if(type == oyNAME_NAME)
-    sprintf( &text[strlen(text)], "%dx%d data_type: %d", s->width, s->height, s->t);
+    sprintf( &text[strlen(text)], "(%dx%d)%dt", s->width, s->height, s->t);
   else
   if((int)type >= oyNAME_DESCRIPTION)
-    sprintf( &text[strlen(text)], "%dx%d data_type: %s", s->width, s->height, oyDataTypeToText(s->t));
+    sprintf( &text[strlen(text)], "(%dx%d)%s", s->width, s->height, oyDataTypeToText(s->t));
 {% endblock %}
