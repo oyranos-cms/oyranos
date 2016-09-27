@@ -189,7 +189,7 @@ int                oyPixelAccess_ArrayIsFocussed (
   if(plug)
     pixel_access = oyPixelAccess_Create( 0,0, plug,
                                          oyPIXEL_ACCESS_IMAGE, 0 );
-@endcode
+    @endcode
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/07/07 (Oyranos: 0.1.8)
@@ -382,6 +382,7 @@ int                oyPixelAccess_SynchroniseROI (
     /** 3. And use the available source image area */
       /** 3.1. Convert ROI to old array pixel. */
     oyRectangle_Scale( ticket_array_roi_src, a_width_dst );
+    oyRectangle_Round( ticket_array_roi_src );
 
     if(oy_debug)
     {
@@ -454,6 +455,7 @@ oyRectangle_s *    oyPixelAccess_ChannelRectFromROI (
 
     oyRectangle_SetByRectangle( roi, ticket_array_roi );
     oyRectangle_Scale( roi, a_width?a_width:image_width );
+    oyRectangle_Round( roi );
 
     output_channel_roi = oyRectangle_NewFrom( roi, NULL );
 
@@ -515,6 +517,7 @@ int                oyPixelAccess_SetArrayFocus (
         /* convert roi to channel units */
         oyRectangle_SetByRectangle( r, ticket_array_roi );
         oyRectangle_Scale( r, array_pix_width );
+        oyRectangle_Round( r );
         /* scale horicontal for pixel -> channels */
         *oyRectangle_SetGeo1( r, 0 ) *= channels;
         *oyRectangle_SetGeo1( r, 2 ) *= channels;
@@ -590,12 +593,12 @@ const char *       oyPixelAccess_Show( oyPixelAccess_s   * pixel_access )
     oyRectangle_SetByRectangle( roi, ticket_array_roi );
     oyRectangle_Scale( roi, a_width?a_width:image_width );
     oySprintf_( t,
-                "ticket[%d] start_xy %g|%g %s[%d](%dx%d)%dc ROI: %s a[%d](%dx%d)",
+                "ticket[%d] start_xy %g|%g %s[%d](%dx%d)%dc ROI: %s %s",
                 oyStruct_GetId((oyStruct_s*)ticket),
                 start_x_pixel, start_y_pixel, _("Image"),
                 oyStruct_GetId((oyStruct_s*)image),image_width,oyImage_GetHeight(image),channels,
                 oyRectangle_Show( roi ),
-                oyStruct_GetId((oyStruct_s*)a),oyArray2d_GetWidth(a),oyArray2d_GetHeight(a));
+                oyArray2d_Show(a));
 
     oyImage_Release( &image );
     oyArray2d_Release( &a );
@@ -710,17 +713,41 @@ int                oyPixelAccess_SetArray (
                                        int                 has_roi_focus )
 {
   oyPixelAccess_s_ * s = (oyPixelAccess_s_*)pixel_access;
+  double old_array_pix_width,
+         array_pix_width;
+  int channels;
 
   if(!s)
     return 0;
 
   oyCheckType__m( oyOBJECT_PIXEL_ACCESS_S, return 1 )
 
+
   if(s->array != array)
   {
     if(s->array)
       oyArray2d_Release( &s->array );
     s->array = oyArray2d_Copy( array, 0 );
+  }
+
+  /* adapt to eventually new ROI base unit, which is
+   * s->array::data:width/channels */
+  channels = oyImage_GetPixelLayout( s->output_image, oyCHANS );
+
+  if(s->array)
+    old_array_pix_width = oyArray2d_GetDataGeo1( s->array, 2 ) / channels;
+  else
+    old_array_pix_width = oyImage_GetWidth( s->output_image );
+  if(array)
+    array_pix_width = oyArray2d_GetDataGeo1( array, 2 ) / channels;
+  else
+    array_pix_width = oyImage_GetWidth( s->output_image );
+
+  if(old_array_pix_width != array_pix_width)
+  {
+    oyRectangle_Scale( (oyRectangle_s*)s->output_array_roi, old_array_pix_width );
+    oyRectangle_Round( (oyRectangle_s*)s->output_array_roi );
+    oyRectangle_Scale( (oyRectangle_s*)s->output_array_roi, 1.0/array_pix_width );
   }
 
   s->output_array_is_focussed = has_roi_focus;
