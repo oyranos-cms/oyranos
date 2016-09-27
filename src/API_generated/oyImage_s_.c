@@ -181,7 +181,19 @@ static const char * oyImage_StaticMessageFunc_ (
     sprintf(text, "%s%s", oyStructTypeToText( s->type_ ), type != oyNAME_NICK?" ":"");
 
   
+
   
+  if(type == oyNAME_NICK && (flags & 0x01))
+    sprintf( &text[strlen(text)], "%dx%d", s->width, s->height);
+  else
+  if(type == oyNAME_NAME)
+    sprintf( &text[strlen(text)], "(%dx%d)%dc", s->width, s->height,
+             s->layout_[oyCHANS]);
+  else
+  if((int)type >= oyNAME_DESCRIPTION)
+    sprintf( &text[strlen(text)], "(%dx%d)%dc%s", s->width, s->height,
+             oyDataTypeToText( oyToDataType_m( s->layout_[oyLAYOUT] )));
+
 
   return text;
 }
