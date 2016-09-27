@@ -340,33 +340,9 @@ oyImage_s *    oyImage_Create         ( int               width,
                                         oyObject_s        object)
 {
   oyRectangle_s * display_rectangle = 0;
-  /* ---- start of common object constructor ----- */
-  oyOBJECT_e type = oyOBJECT_IMAGE_S;
-# define STRUCT_TYPE oyImage_s_
+  oyImage_s_ * s = oyImage_New_(object);
   int error = 0;
-  oyObject_s    s_obj = oyObject_NewFrom( object );
-  STRUCT_TYPE * s = 0;
-  
-  if(s_obj)
-    s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
 
-  if(!s || !s_obj)
-  {
-    WARNc_S(_("MEM Error."));
-    return NULL;
-  }
-
-  error = !memset( s, 0, sizeof(STRUCT_TYPE) );
-
-  memcpy( s, &type, sizeof(oyOBJECT_e) );
-  s->copy = (oyStruct_Copy_f) oyImage_Copy;
-  s->release = (oyStruct_Release_f) oyImage_Release;
-
-  s->oy_ = s_obj;
-
-  error = !oyObject_SetParent( s_obj, type, (oyPointer)s );
-# undef STRUCT_TYPE
-  /* ---- end of common object constructor ------- */
 
   if(!profile)
   {
@@ -384,7 +360,7 @@ oyImage_s *    oyImage_Create         ( int               width,
                                         s->width * channels_n,
                                         s->height,
                                         oyToDataType_m(pixel_layout),
-                                        s_obj );
+                                        s->oy_ );
     oyImage_SetData ( (oyImage_s*)s, (oyStruct_s**) &a, 0,0,0,0,0,0 );
   }
   s->profile_ = oyProfile_Copy( profile, 0 );
