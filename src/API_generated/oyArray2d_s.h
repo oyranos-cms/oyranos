@@ -159,6 +159,8 @@ OYAPI int  OYEXPORT
                  oyArray2d_GetHeight ( oyArray2d_s       * obj );
 OYAPI oyDATATYPE_e  OYEXPORT
                  oyArray2d_GetType   ( oyArray2d_s       * array );
+OYAPI const char *  OYEXPORT
+                 oyArray2d_Show      ( oyArray2d_s       * array );
 
 /* } Include "Array2d.public_methods_declarations.h" */
 

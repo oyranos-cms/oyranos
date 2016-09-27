@@ -560,6 +560,44 @@ OYAPI oyDATATYPE_e  OYEXPORT
   return s->t;
 }
 
+/** Function  oyArray2d_Show
+ *  @memberof oyArray2d_s
+ *  @brief    Print array geometries
+ *
+ *  This function is not thread safe.
+ *
+ *  @param[in]     array               the channel array
+ *  @return                            a description string
+ *
+ *  @version Oyranos: 0.9.6
+ *  @date    2016/09/26
+ *  @since   2016/09/26 (Oyranos: 0.9.6)
+ */
+OYAPI const char* OYEXPORT oyArray2d_Show (
+                                       oyArray2d_s       * array )
+{
+  int error = 0;
+  static char * t = NULL;
+
+  if(!t) t = malloc(1024);
+
+  if(t)
+    t[0] = 0;
+
+  if(!array || !t)
+    error = 1;
+
+  if(!error)
+  {
+    oySprintf_( t,
+                "a[%d](%dx%d)",
+                oyStruct_GetId((oyStruct_s*)array),
+                oyArray2d_GetWidth(array),
+                oyArray2d_GetHeight(array) );
+  }
+
+  return (t&&t[0])?t:"----";
+}
 
 
 /* } Include "Array2d.public_methods_definitions.c" */
