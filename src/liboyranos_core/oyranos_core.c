@@ -315,19 +315,22 @@ OYAPI const char * OYEXPORT  oyObject_Show (
         free(t);
         t = malloc(len*2);
       }
+      t[0] = 0;
       sprintf( t, "\"%s\"[%d] refs: %d", tmp, obj->id_, obj->ref_);
       switch(st->type_)
       {
       case oyOBJECT_ARRAY2D_S:
         {
           oyArray2d_s_ * s = (oyArray2d_s_ *)st;
-          sprintf( &t[strlen(t)], " %dx%d data_type: %d", s->width, s->height, s->t);
+          sprintf( &t[strlen(t)], " %dx%d data_type: %d",
+                   s->width, s->height, s->t);
           break;
         }
       case oyOBJECT_RECTANGLE_S:
         {
           oyRectangle_s_ * s = (oyRectangle_s_ *)st;
-          sprintf( &t[strlen(t)], " %gx%g+%g+%g", s->width, s->height, s->x, s->y);
+          sprintf( &t[strlen(t)], " %gx%g+%g+%g",
+                   s->width, s->height, s->x, s->y);
           break;
         }
       default:
@@ -337,7 +340,7 @@ OYAPI const char * OYEXPORT  oyObject_Show (
     }
   }
 
-  if(t)
+  if(t && t[0])
     return t;
   else
     return "----";
