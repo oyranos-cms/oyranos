@@ -34,8 +34,14 @@ int                oyPixelAccess_SetArrayFocus (
                                        int                 undo );
 oyRectangle_s *    oyPixelAccess_GetArrayROI (
                                        oyPixelAccess_s   * pixel_access );
-oyRectangle_s *    oyPixelAccess_ChannelRectFromROI (
-                                       oyPixelAccess_s   * pixel_access );
+int                oyPixelAccess_RoiToPixels (
+                                       oyPixelAccess_s   * pixel_access,
+                                       oyRectangle_s     * roi,
+                                       oyRectangle_s    ** pixel_rectangle );
+int                oyPixelAccess_PixelsToRoi (
+                                       oyPixelAccess_s   * pixel_access,
+                                       oyRectangle_s     * pixel_rectangle,
+                                       oyRectangle_s    ** roi );
 oyStruct_s *       oyPixelAccess_GetUserData (
                                        oyPixelAccess_s   * pixel_access );
 int                oyPixelAccess_SetUserData (

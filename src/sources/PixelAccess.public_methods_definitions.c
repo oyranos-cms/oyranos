@@ -314,54 +314,6 @@ int                oyPixelAccess_SynchroniseROI (
   return error;
 }
 
-/** Function  oyPixelAccess_ChannelRectFromROI
- *  @memberof oyPixelAccess_s
- *  @brief    Obtain channel geometry from output ROI
- *
- *  @param[in]     pixel_access        pixel iterator configuration
- *  @return                            rectangle
- *
- *  @version Oyranos: 0.9.6
- *  @date    2016/09/14
- *  @since   2016/03/14 (Oyranos: 0.9.6)
- */
-oyRectangle_s *    oyPixelAccess_ChannelRectFromROI (
-                                       oyPixelAccess_s   * pixel_access )
-{
-  int error = 0;
-  oyRectangle_s * output_channel_roi = NULL;
-
-  if(!pixel_access)
-    error = 1;
-
-  if(!error)
-  {
-    oyPixelAccess_s * ticket = pixel_access;
-    oyImage_s * image = oyPixelAccess_GetOutputImage( ticket );
-    int image_width = oyImage_GetWidth( image );
-    oyRectangle_s * ticket_array_roi = oyPixelAccess_GetArrayROI( ticket );
-    oyArray2d_s * a = oyPixelAccess_GetArray( ticket );
-    oyRectangle_s_  r = {oyOBJECT_RECTANGLE_S, 0,0,0, 0,0,0,0};
-    oyRectangle_s * roi = (oyRectangle_s*)&r;
-
-    int layout = oyImage_GetPixelLayout( image, oyLAYOUT );
-    int channels = oyToChannels_m( layout );
-    int a_width = oyArray2d_GetDataGeo1( a, 2 ) / channels;
-
-    oyRectangle_SetByRectangle( roi, ticket_array_roi );
-    oyRectangle_Scale( roi, a_width?a_width:image_width );
-    oyRectangle_Round( roi );
-
-    output_channel_roi = oyRectangle_NewFrom( roi, NULL );
-
-    oyImage_Release( &image );
-    oyArray2d_Release( &a );
-    oyRectangle_Release( &ticket_array_roi );
-  }
-
-  return output_channel_roi;
-}
-
 /** Function  oyPixelAccess_SetArrayFocus
  *  @memberof oyPixelAccess_s
  *  @brief    Ensure that the array is in output ROI focus
@@ -526,6 +478,144 @@ oyRectangle_s *    oyPixelAccess_GetArrayROI (
   oyRectangle_Copy( (oyRectangle_s*)s->output_array_roi, 0 );
   return (oyRectangle_s*)s->output_array_roi;
 }
+
+/** Function  oyPixelAccess_RoiToPixels
+ *  @memberof oyPixelAccess_s
+ *  @brief    Calculate pixel rectangle from ROI
+ *
+ *  @see oyPixelAccess_PixelsToRoi()
+ *
+ *  @param[in]     pixel_access        pixel iterator configuration
+ *  @param[in]     roi                 alternative ROI in 
+ *                                     array::width/channels == 1.0 unit;
+ *                                     optional,
+ *                                     default: is pixel_access::output_array_roi
+ *  @param[in,out] pixel_rectangle     rectangle for pixel results in pixels
+ *  @return                            error
+ *
+ *  @version  Oyranos: 0.9.6
+ *  @date     2016/09/27
+ *  @since    2016/09/27 (Oyranos: 0.9.6)
+ */
+int                oyPixelAccess_RoiToPixels (
+                                       oyPixelAccess_s   * pixel_access,
+                                       oyRectangle_s     * roi,
+                                       oyRectangle_s    ** pixel_rectangle )
+{
+  int error = !pixel_access;
+  oyPixelAccess_s_ * s = (oyPixelAccess_s_*)pixel_access;
+
+  if(!error && pixel_access->type_ != oyOBJECT_PIXEL_ACCESS_S)
+    return 0;
+
+  if(!error)
+  {
+    if(!*pixel_rectangle)
+      *pixel_rectangle = oyRectangle_New(0);
+
+    if(!roi)
+      roi = (oyRectangle_s*)s->output_array_roi;
+
+    if(oyRectangle_CountPoints( roi ) == 0 )
+    {
+      oyRectangle_SetGeo( *pixel_rectangle, 0,0, oyImage_GetWidth(s->output_image),
+                                                oyImage_GetHeight(s->output_image) );
+
+    } else
+    {
+      int channels = oyImage_GetPixelLayout( s->output_image, oyCHANS );
+      int pixel_width;
+
+      oyRectangle_SetByRectangle( *pixel_rectangle, roi );
+
+      if(s->array)
+        pixel_width = oyArray2d_GetDataGeo1( s->array, 2 ) / channels;
+      else
+        pixel_width = oyImage_GetWidth( s->output_image );
+
+      oyRectangle_Scale( *pixel_rectangle, pixel_width );
+      oyRectangle_Round( *pixel_rectangle );
+    }
+  }
+
+  return error;
+}
+
+/** Function  oyPixelAccess_PixelsToRoi
+ *  @memberof oyPixelAccess_s
+ *  @brief    Calculate ROI rectangle from pixel rectangle
+ *
+ *  For obtaining the oyPixelAccess_s::output_array_roi see
+ *  oyPixelAccess_GetArrayROI().
+ *
+ *  @see oyPixelAccess_RoiToPixels()
+ *
+ *  @param[in]     pixel_access        pixel iterator configuration
+ *  @param[in]     pixel_rectangle     pixel rectangle; optional 
+ *                                     - scale pixel_rectangle -> roi or
+ *                                     - use output_array_roi > 0 or
+ *                                     - fall back to scaled
+ *                                       (array::data_area -> pixel)
+ *                                     - fall back to scaled output_image size
+ *  @param[in,out] roi                 returns a rectangle with ROI 
+ *  @return                            error
+ *
+ *  @version  Oyranos: 0.9.6
+ *  @date     2016/09/27
+ *  @since    2016/09/27 (Oyranos: 0.9.6)
+ */
+int                oyPixelAccess_PixelsToRoi (
+                                       oyPixelAccess_s   * pixel_access,
+                                       oyRectangle_s     * pixel_rectangle,
+                                       oyRectangle_s    ** roi )
+{
+  int error = !pixel_access;
+  oyPixelAccess_s_ * s = (oyPixelAccess_s_*)pixel_access;
+
+  if(!error && pixel_access->type_ != oyOBJECT_PIXEL_ACCESS_S)
+    return 0;
+
+  if(!error)
+  {
+    int channels = oyImage_GetPixelLayout( s->output_image, oyCHANS );
+    int pixel_width;
+
+    if(s->array)
+      pixel_width = oyArray2d_GetDataGeo1( s->array, 2 ) / channels;
+    else
+      pixel_width = oyImage_GetWidth( s->output_image );
+
+    if(!*roi)
+      *roi = oyRectangle_New(0);
+
+    if( pixel_rectangle == NULL )
+    {
+      if(s->output_array_roi &&
+         oyRectangle_CountPoints( (oyRectangle_s*)s->output_array_roi ) > 0)
+        oyRectangle_SetByRectangle( *roi, (oyRectangle_s*)s->output_array_roi );
+      else
+      if(s->array)
+        oyRectangle_SetGeo( *roi,
+                            oyArray2d_GetDataGeo1( s->array, 0 ) / channels,
+                            oyArray2d_GetDataGeo1( s->array, 1 ),
+                            oyArray2d_GetDataGeo1( s->array, 2 ) / channels,
+                            oyArray2d_GetDataGeo1( s->array, 3 ) );
+      else
+        oyRectangle_SetGeo( *roi, 0,0, oyImage_GetWidth(s->output_image),
+                                      oyImage_GetHeight(s->output_image) );
+
+    } else
+    {
+      oyRectangle_SetByRectangle( *roi, pixel_rectangle );
+      oyRectangle_Round( *roi );
+
+      oyRectangle_Scale( *roi, 1.0/pixel_width );
+    }
+  }
+
+  return error;
+}
+
 /** Function  oyPixelAccess_GetGraph
  *  @memberof oyPixelAccess_s
  *  @brief    Access oyPixelAccess_s::graph
