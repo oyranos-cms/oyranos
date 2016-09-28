@@ -1953,9 +1953,12 @@ int      lcmsFilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
     a = oyPixelAccess_GetArray( new_ticket );
     if(!a)
     {
-      int w = oyArray2d_GetWidth( old_a );
-      int h = oyArray2d_GetHeight( old_a );
-      a = oyArray2d_Create( NULL, w,h, oyToDataType_m( oyImage_GetPixelLayout( image_input, oyLAYOUT ) ), ticket->oy_ );
+      int channels_out = oyImage_GetPixelLayout( image_output, oyCHANS );
+      int channels_in = oyImage_GetPixelLayout( image_input, oyCHANS );
+      /* Use original pixel size for being save and do not fiddle with ROI's */
+      int w = oyArray2d_GetDataGeo1( old_a, 2 ) / channels_out;
+      int h = oyArray2d_GetDataGeo1( old_a, 3 );
+      a = oyArray2d_Create( NULL, w * channels_in,h, oyToDataType_m( oyImage_GetPixelLayout( image_input, oyLAYOUT ) ), ticket->oy_ );
     }
     oyArray2d_Release( &old_a );
     oyPixelAccess_SetArray( new_ticket, a, 0 );

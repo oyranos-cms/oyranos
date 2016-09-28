@@ -2654,8 +2654,9 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
     a = oyPixelAccess_GetArray( new_ticket );
     if(!a)
     {
-      int w = oyArray2d_GetWidth( old_a ) / channels_out;
-      int h = oyArray2d_GetHeight( old_a );
+      /* Use original pixel size for being save and do not fiddle with ROI's */
+      int w = oyArray2d_GetDataGeo1( old_a, 2 ) / channels_out;
+      int h = oyArray2d_GetDataGeo1( old_a, 3 );
       a = oyArray2d_Create( NULL, w * channels_in,h, oyToDataType_m( pixel_layout_in ), ticket->oy_ );
       if(oy_debug)
       {
