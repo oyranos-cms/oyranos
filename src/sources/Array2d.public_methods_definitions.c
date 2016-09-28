@@ -318,13 +318,17 @@ int          oyArray2d_SetFocus      ( oyArray2d_s       * array,
       a->data_area.y = -array_roi_chan->y;
       error = -1;
     }
+    if(array_roi_chan->x+array_roi_chan->width > a->width) error = 1;
+    if(array_roi_chan->y+array_roi_chan->height > a->height) error = 1;
     a->width = array_roi_chan->width;
     a->height = array_roi_chan->height;
 
-    if(oy_debug > 3)
-      oyMessageFunc_p( oyMSG_DBG, (oyStruct_s*)a,
-                       OY_DBG_FORMAT_ "a->data_area: %s", OY_DBG_ARGS_,
-                       oyRectangle_Show((oyRectangle_s*)&a->data_area) );
+    if(error > 0 || oy_debug > 3)
+      oyMessageFunc_p( error ? oyMSG_WARN:oyMSG_DBG, (oyStruct_s*)a,
+                       OY_DBG_FORMAT_ "a->data_area: %s rect: %gx%g+%g+%g", OY_DBG_ARGS_,
+                       oyRectangle_Show((oyRectangle_s*)&a->data_area),
+                       array_roi_chan->width,array_roi_chan->height,
+                       array_roi_chan->x,array_roi_chan->y );
 
   } else
     error = 1;

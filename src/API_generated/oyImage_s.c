@@ -603,7 +603,7 @@ static int oyImage_CreateFillArray_  ( oyImage_s         * image,
   data_type = oyToDataType_m( s->layout_[oyLAYOUT] );
   data_size = oyDataTypeGetSize( data_type );
 
-  array_width = arc->x + arc->width;
+  array_width  = arc->x + arc->width;
   array_height = arc->y + arc->height;
 
 
@@ -779,15 +779,25 @@ int            oyImage_FillArray     ( oyImage_s         * image,
                                   (oyRectangle_s**)&arc );
   else
   {
-    oyRectangle_SetGeo( (oyRectangle_s*)&r, 0,0,
-                                 oyRectanglePriv_m(rectangle)->width,
-                                 oyRectanglePriv_m(rectangle)->height );
-    error = oyImage_RoiToSamples( image, (oyRectangle_s*)&r,
-                                  (oyRectangle_s**)&arc );
+    oyRectangle_SetGeo (           (oyRectangle_s*) &r, 0,0,
+                                   oyRectanglePriv_m(rectangle)->width,
+                                   oyRectanglePriv_m(rectangle)->height );
+    error = oyImage_RoiToSamples ( image, (oyRectangle_s*)&r,
+                                   (oyRectangle_s**) &arc );
   }
 
-  array_width = arc->x + arc->width;
+  array_width  = arc->x + arc->width;
   array_height = arc->y + arc->height;
+
+  channels_n = s->layout_[oyCHANS];
+  if(array_width > (s->width * channels_n) ||
+     array_height > s->height)
+  {
+    error = 1;
+    WARNcc5_S( image, "image ROI %s is too big for image (%d(%d)x%d)%dc",
+               oyRectangle_Show( (oyRectangle_s*)arc ),
+               s->width, s->width * channels_n, s->height, channels_n );
+  }
 
   if(oy_debug > 2)
   {
@@ -836,17 +846,16 @@ int            oyImage_FillArray     ( oyImage_s         * image,
     }
   }
 
-  channels_n = oyToChannels_m( s->layout_[oyLAYOUT] );
   if(a && !error)
   {
   if(s->getLine)
   {
     oyPointer src, dst;
     int image_roi_chan_width = image_roi_chan.x + image_roi_chan.width,
-        roi_chan_width = OY_MIN( image_roi_chan_width, array_roi_chan.width ) / channels_n,
+        roi_chan_width = OY_MIN( image_roi_chan_width, array_roi_chan.width ),
         roi_chan_height = OY_MIN( image_roi_chan.y + image_roi_chan.height, array_roi_chan.height );
 
-    wlen = roi_chan_width * data_size * channels_n;
+    wlen = roi_chan_width * data_size;
 
     if(oy_debug > 2)
     {
@@ -858,7 +867,7 @@ int            oyImage_FillArray     ( oyImage_s         * image,
       oyFree_m_(t);
     }
 
-    if(roi_chan_width  > s->width ||
+    if(roi_chan_width  > (s->width * channels_n ) ||
        roi_chan_height > s->height)
     {
       oyMessageFunc_p( oyMSG_ERROR, (oyStruct_s*)image,
