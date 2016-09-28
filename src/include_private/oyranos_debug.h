@@ -169,6 +169,7 @@ time_t             oyTime            ( );
 #define WARNcc4_S(ptr,format,arg,arg2,arg3,arg4) oyMessageFunc_p( oyMSG_WARN,ptr,OY_DBG_FORMAT_ format, OY_DBG_ARGS_,arg,arg2,arg3,arg4);
 #define WARNcc5_S(ptr,format,arg,arg2,arg3,arg4,arg5) oyMessageFunc_p( oyMSG_WARN,ptr,OY_DBG_FORMAT_ format, OY_DBG_ARGS_,arg,arg2,arg3,arg4,arg5);
 #define WARNcc6_S(ptr,format,arg,arg2,arg3,arg4,arg5,arg6) oyMessageFunc_p( oyMSG_WARN,ptr,OY_DBG_FORMAT_ format, OY_DBG_ARGS_,arg,arg2,arg3,arg4,arg5,arg6);
+#define WARNcc7_S(ptr,format,arg,arg2,arg3,arg4,arg5,arg6,arg7) oyMessageFunc_p( oyMSG_WARN,ptr,OY_DBG_FORMAT_ format, OY_DBG_ARGS_,arg,arg2,arg3,arg4,arg5,arg6,arg7);
 
 #define WARNc          oyMessageFunc_p( oyMSG_WARN,0,OY_DBG_FORMAT_, OY_DBG_ARGS_ );
 #define WARNc_S(txt)   oyMessageFunc_p( oyMSG_WARN,0,OY_DBG_FORMAT_ "%s", OY_DBG_ARGS_,txt);
