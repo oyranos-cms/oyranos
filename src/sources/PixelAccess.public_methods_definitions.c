@@ -34,7 +34,7 @@ int                oyPixelAccess_ChangeRectangle (
   {
     oyRectangle_SetByRectangle( (oyRectangle_s*)pixel_access_->output_array_roi,
                                 output_rectangle );
-    oyPixelAccess_SetArrayFocus( pixel_access, 1 );
+    error = oyPixelAccess_SetArrayFocus( pixel_access, 1 );
   }
 
   if(error <= 0)
@@ -353,30 +353,21 @@ int                oyPixelAccess_SetArrayFocus (
       {
         /* set array focus for simple plug-ins */
         oyImage_s * image = oyPixelAccess_GetOutputImage( pixel_access );
-        oyRectangle_s * ticket_array_roi = oyPixelAccess_GetArrayROI(
-                                                          pixel_access );
-
-        int layout = oyImage_GetPixelLayout( image, oyLAYOUT );
-        int channels = oyToChannels_m( layout );
-
-        int array_pix_width = oyArray2d_GetDataGeo1( array, 2 ) / channels;
 
         /* convert roi to channel units */
-        oyRectangle_SetByRectangle( r, ticket_array_roi );
-        oyRectangle_Scale( r, array_pix_width );
-        oyRectangle_Round( r );
+        oyPixelAccess_RoiToPixels( pixel_access, 0, &r );
         /* scale horicontal for pixel -> channels */
-        *oyRectangle_SetGeo1( r, 0 ) *= channels;
-        *oyRectangle_SetGeo1( r, 2 ) *= channels;
+        oyImage_PixelsToSamples( image, r, r );
         /* finally set the focus for simple plug-ins */
         error = oyArray2d_SetFocus( array, r );
         ((oyPixelAccess_s_*)pixel_access)->output_array_is_focussed = 1;
 
-        DBGs_PROG2_S( pixel_access, "%cset focus: %s", error == -1?'*':' ',
-                      oyRectangle_Show(r));
+        if(oy_debug >=3 || error > 0)
+          oyMessageFunc_p( error ? oyMSG_WARN:oyMSG_DBG, (oyStruct_s*)pixel_access,
+                           OY_DBG_FORMAT_ "%cset focus: %s", OY_DBG_ARGS_,
+                           error == -1?'*':' ', oyRectangle_Show(r) );
 
         oyImage_Release( &image );
-        oyRectangle_Release( &ticket_array_roi );
 
       } else
       if(undo && oyPixelAccess_ArrayIsFocussed(pixel_access))
@@ -386,8 +377,10 @@ int                oyPixelAccess_SetArrayFocus (
         error = oyArray2d_SetFocus( array, r );
         ((oyPixelAccess_s_*)pixel_access)->output_array_is_focussed = 0;
 
-        DBGs_PROG2_S( pixel_access, "%cunset focus to: %s", error == -1?'*':' ',
-                      oyRectangle_Show(r));
+        if(oy_debug >=3 || error > 0)
+          oyMessageFunc_p( error ? oyMSG_WARN:oyMSG_DBG, (oyStruct_s*)pixel_access,
+                           OY_DBG_FORMAT_ "%cunset focus to: %s", OY_DBG_ARGS_,
+                           error == -1?'*':' ', oyRectangle_Show(r) );
       }
     }
 
