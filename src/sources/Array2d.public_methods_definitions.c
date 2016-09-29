@@ -318,17 +318,22 @@ int          oyArray2d_SetFocus      ( oyArray2d_s       * array,
       a->data_area.y = -array_roi_chan->y;
       error = -1;
     }
-    if(array_roi_chan->x+array_roi_chan->width > a->width) error = 1;
-    if(array_roi_chan->y+array_roi_chan->height > a->height) error = 1;
     a->width = array_roi_chan->width;
     a->height = array_roi_chan->height;
 
+    if(array_roi_chan->x + array_roi_chan->width  > a->data_area.width) error = 1;
+    if(array_roi_chan->y + array_roi_chan->height > a->data_area.height) error = 2;
+
     if(error > 0 || oy_debug > 3)
+    {
+      int32_t channels = 1;
+      oyOptions_FindInt( a->oy_->handles_, "channels", 0, &channels );
       oyMessageFunc_p( error ? oyMSG_WARN:oyMSG_DBG, (oyStruct_s*)a,
-                       OY_DBG_FORMAT_ "a->data_area: %s rect: %gx%g+%g+%g", OY_DBG_ARGS_,
-                       oyRectangle_Show((oyRectangle_s*)&a->data_area),
-                       array_roi_chan->width,array_roi_chan->height,
-                       array_roi_chan->x,array_roi_chan->y );
+                       OY_DBG_FORMAT_ "%s rect: %gx%g+%g+%g (err:%d)", OY_DBG_ARGS_,
+                       oyArray2d_Show( (oyArray2d_s*)a, channels ),
+                       array_roi_chan->width, array_roi_chan->height,
+                       array_roi_chan->x, array_roi_chan->y, error );
+    }
 
   } else
     error = 1;
@@ -474,14 +479,17 @@ OYAPI oyDATATYPE_e  OYEXPORT
  *  @return                            a description string
  *
  *  @version Oyranos: 0.9.6
- *  @date    2016/09/26
+ *  @date    2016/09/29
  *  @since   2016/09/26 (Oyranos: 0.9.6)
  */
 OYAPI const char* OYEXPORT oyArray2d_Show (
-                                       oyArray2d_s       * array )
+                                       oyArray2d_s       * array,
+                                       int                 channels )
 {
   int error = 0;
   static char * t = NULL;
+  oyArray2d_s_ * a = (oyArray2d_s_*) array;
+  double c = channels;
 
   if(!t) t = malloc(1024);
 
@@ -493,11 +501,19 @@ OYAPI const char* OYEXPORT oyArray2d_Show (
 
   if(!error)
   {
-    oySprintf_( t,
-                "a[%d](%dx%d)",
-                oyStruct_GetId((oyStruct_s*)array),
-                oyArray2d_GetWidth(array),
-                oyArray2d_GetHeight(array) );
+    const char * key = "///channels";
+
+    sprintf( t, "a[%d](%gx%d/%gx%g+%g+%g)%dc",
+             oyStruct_GetId((oyStruct_s*)a),
+             a->width / c, a->height,
+             a->data_area.width / c, a->data_area.height,
+             a->data_area.x / c, a->data_area.y,
+             channels );
+
+    /* store for debugging */
+    error = oyOptions_SetFromInt( &a->oy_->handles_,
+                                  key,
+                                  channels, 0, OY_CREATE_NEW );
   }
 
   return (t&&t[0])?t:"----";

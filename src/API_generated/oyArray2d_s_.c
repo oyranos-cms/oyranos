@@ -479,9 +479,13 @@ int          oyArray2d_ReleaseArray_ ( oyArray2d_s       * obj )
     size_t dsize = oyDataTypeGetSize( s->t );
 
     if(oy_debug > 3)
+    {
+      int32_t channels = 1;
+      oyOptions_FindInt( s->oy_->handles_, "channels", 0, &channels );
       oyMessageFunc_p( oyMSG_DBG, (oyStruct_s*)s,
-                       OY_DBG_FORMAT_ "s->data_area: %s", OY_DBG_ARGS_,
-                       oyRectangle_Show((oyRectangle_s*)&s->data_area) );
+                       OY_DBG_FORMAT_ "%s", OY_DBG_ARGS_,
+                       oyArray2d_Show( (oyArray2d_s*)s, channels) );
+    }
 
     for( y = s->data_area.y; y < y_max; ++y )
     {

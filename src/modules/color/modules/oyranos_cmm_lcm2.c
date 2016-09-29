@@ -2660,7 +2660,7 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
       a = oyArray2d_Create( NULL, w * channels_in,h, oyToDataType_m( pixel_layout_in ), ticket->oy_ );
       if(oy_debug)
       {
-        lcm2_msg( oyMSG_DBG, (oyStruct_s*)ticket, OY_DBG_FORMAT_"layout_out(%d) != layout_in(%d) created array[%d](%dx%d)%dc",
+        lcm2_msg( oy_debug?oyMSG_WARN:oyMSG_DBG, (oyStruct_s*)ticket, OY_DBG_FORMAT_"layout_out(%d) != layout_in(%d) created array[%d](%dx%d)%dc",
                 OY_DBG_ARGS_, layout_out, pixel_layout_in,
                 oyStruct_GetId( (oyStruct_s*)a ), w * channels_in, h, channels_in );
       }
@@ -2676,23 +2676,23 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
   error = oyFilterNode_Run( input_node, plug, new_ticket );
   if(error != 0)
   {
-    lcm2_msg( oyMSG_ERROR, (oyStruct_s*)input_node, OY_DBG_FORMAT_"%s %d",
+    lcm2_msg( oyMSG_ERROR, (oyStruct_s*)input_node, OY_DBG_FORMAT_"%s %d err:%d",
                 OY_DBG_ARGS_, _("running new ticket failed"),
-                oyStruct_GetId( (oyStruct_s*)new_ticket ) );
+                oyStruct_GetId( (oyStruct_s*)new_ticket ), error );
     return error;
   }
 
   array_in = oyPixelAccess_GetArray( new_ticket );
   array_out = oyPixelAccess_GetArray( ticket );
   if(oy_debug > 2)
-    lcm2_msg( oyMSG_DBG, (oyStruct_s*)new_ticket, OY_DBG_FORMAT_"%s new_ticket->array[%d](%dx%d) %s[%d]",
+    lcm2_msg( oyMSG_DBG, (oyStruct_s*)new_ticket, OY_DBG_FORMAT_"%s new_ticket->array:%s %s[%d]",
               OY_DBG_ARGS_,_("Read from"),
-              oyStruct_GetId( (oyStruct_s*)array_in ), oyArray2d_GetWidth(array_in), oyArray2d_GetHeight(array_in),
+              oyArray2d_Show( array_in, channels_in ),
               _("Image"), oyStruct_GetId( (oyStruct_s*)image_input ) );
   if(oy_debug > 2)
-    lcm2_msg( oyMSG_DBG, (oyStruct_s*)ticket, OY_DBG_FORMAT_"%s ticket->array[%d](%dx%d) %s[%d]",
+    lcm2_msg( oyMSG_DBG, (oyStruct_s*)ticket, OY_DBG_FORMAT_"%s ticket->array:%s %s[%d]",
               OY_DBG_ARGS_,_("Write to"),
-              oyStruct_GetId( (oyStruct_s*)array_out ), oyArray2d_GetWidth(array_out), oyArray2d_GetHeight(array_out),
+              oyArray2d_Show( array_out, channels_out ),
               _("Image"), oyStruct_GetId( (oyStruct_s*)image_output ) );
 
   data_type_in = oyToDataType_m( oyImage_GetPixelLayout( image_input, oyLAYOUT ) );

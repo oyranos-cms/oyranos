@@ -144,6 +144,22 @@ int                oyPixelAccess_ChangeRectangle (
 
   if(error <= 0)
   {
+    {
+      oyImage_s * image = pixel_access_->output_image;
+      int channels = oyImage_GetPixelLayout( image, oyCHANS );
+      double pixels = start_x * oyImage_GetWidth( image );
+      int val = OY_ROUND( pixels );
+      double diff = (pixels - val) * channels;
+      if(diff > 0.5)
+      {
+        error = -1;
+        oyMessageFunc_p( oyMSG_WARN, (oyStruct_s*)pixel_access,
+                         OY_DBG_FORMAT_ "sub pixel access is pretty uncommon: %s x:%d/%g diff:%g %dc", OY_DBG_ARGS_,
+                         oyPixelAccess_Show(pixel_access), val, pixels, diff, channels );
+      }
+      oyImage_Release( &image );
+    }
+
     pixel_access_->start_xy[0] = start_x;
     pixel_access_->start_xy[1] = start_y;
   }
@@ -336,29 +352,29 @@ int                oyPixelAccess_SetOutputImage (
  */
 int                oyPixelAccess_SynchroniseROI (
                                        oyPixelAccess_s   * pixel_access_new,
-                                       oyPixelAccess_s   * pixel_access_dst )
+                                       oyPixelAccess_s   * pixel_access_src )
 {
   int error = 0;
 
-  if(!pixel_access_dst || !pixel_access_new)
+  if(!pixel_access_src || !pixel_access_new)
     error = 1;
 
   if(!error)
   {
-    oyPixelAccess_s * ticket = pixel_access_dst,
+    oyPixelAccess_s * ticket = pixel_access_src,
                     * new_ticket = pixel_access_new;
-    oyImage_s * image_src = oyPixelAccess_GetOutputImage( new_ticket ),
-              * image_dst = oyPixelAccess_GetOutputImage( ticket );
+    oyImage_s * image_src = oyPixelAccess_GetOutputImage( ticket ),
+              * image_dst = oyPixelAccess_GetOutputImage( new_ticket );
     int image_width_src = oyImage_GetWidth( image_src ),
         image_width_dst = oyImage_GetWidth( image_dst );
-    oyRectangle_s * ticket_array_roi_src = oyPixelAccess_GetArrayROI( new_ticket ),
-                  * ticket_array_roi_dst = oyPixelAccess_GetArrayROI( ticket );
-    oyArray2d_s * a_dst = oyPixelAccess_GetArray( ticket ),
-                * a_src = oyPixelAccess_GetArray( new_ticket );
+    oyRectangle_s * ticket_array_roi_src = oyPixelAccess_GetArrayROI( ticket ),
+                  * ticket_array_roi_dst = oyPixelAccess_GetArrayROI( new_ticket );
+    oyArray2d_s * a_src = oyPixelAccess_GetArray( ticket ),
+                * a_dst = oyPixelAccess_GetArray( new_ticket );
 
     /* start_xy is defined relative to the tickets output image width */
-    double start_x_dst_pixel = oyPixelAccess_GetStart( ticket, 0 ) * image_width_dst,
-           start_y_dst_pixel = oyPixelAccess_GetStart( ticket, 1 ) * image_width_dst;
+    double start_x_pixel = oyPixelAccess_GetStart( ticket, 0 ) * image_width_src,
+           start_y_pixel = oyPixelAccess_GetStart( ticket, 1 ) * image_width_src;
     int layout_src = oyImage_GetPixelLayout( image_src, oyLAYOUT ),
         layout_dst = oyImage_GetPixelLayout( image_dst, oyLAYOUT );
     int channels_src = oyToChannels_m( layout_src );
@@ -376,8 +392,8 @@ int                oyPixelAccess_SynchroniseROI (
     /** 2. Adapt the access start and write relative to new tickets image width. */
     if(image_width_src)
       oyPixelAccess_ChangeRectangle( new_ticket,
-                          start_x_dst_pixel / image_width_src,
-                          start_y_dst_pixel / image_width_src, 0 );
+                          start_x_pixel / image_width_dst,
+                          start_y_pixel / image_width_dst, 0 );
 
     /** 3. And use the available source image area */
       /** 3.1. Convert ROI to old array pixel. */
@@ -388,20 +404,22 @@ int                oyPixelAccess_SynchroniseROI (
     {
       oyRectangle_s_  r = {oyOBJECT_RECTANGLE_S, 0,0,0, 0,0,0,0};
       oyRectangle_s * roi = (oyRectangle_s*)&r;
-      char * t;
+      char * t, * t2;
       oyRectangle_SetByRectangle( roi, ticket_array_roi_dst );
       oyRectangle_Scale( roi, a_width_dst );
       t = oyStringCopy( oyRectangle_Show( roi ), oyAllocateFunc_ );
+      t2 = oyStringCopy( oyArray2d_Show( a_dst, channels_dst), oyAllocateFunc_ );
       oyMessageFunc_p( oy_debug?oyMSG_DBG:oyMSG_WARN, (oyStruct_s*)ticket, OY_DBG_FORMAT_
-              "new_ticket[%d] start_xy %f|%f ROI: image[%d](%s)%dc a[%d](%dx%d) <- [%d](%s)%dc a[%d](%dx%d)\n",OY_DBG_ARGS_,
+              "new_ticket[%d] start_xy %g|%g ROI: %s[%d](%s)%dc %s <- %s[%d](%s)%dc %s\n",OY_DBG_ARGS_,
                    oyStruct_GetId((oyStruct_s*)new_ticket),
-                   start_x_dst_pixel, start_y_dst_pixel,
-                   oyStruct_GetId((oyStruct_s*)image_dst),t,channels_dst,
-                   oyStruct_GetId((oyStruct_s*)a_dst),oyArray2d_GetWidth(a_dst),oyArray2d_GetHeight(a_dst),
-                   oyStruct_GetId((oyStruct_s*)image_src),
-                   oyRectangle_Show(roi),channels_src,
-                   oyStruct_GetId((oyStruct_s*)a_src),oyArray2d_GetWidth(a_src),oyArray2d_GetHeight(a_src) );
+                   start_x_pixel, start_y_pixel,
+                   _("Image"), oyStruct_GetId((oyStruct_s*)image_dst),
+                   t, channels_dst, t2,
+                   _("Image"), oyStruct_GetId((oyStruct_s*)image_src),
+                   oyRectangle_Show(roi), channels_src,
+                   oyArray2d_Show( a_src, channels_src ) );
       oyFree_m_(t);
+      oyFree_m_(t2);
     }
 
       /** 3.2. Divide ROI by new array size. */
@@ -452,25 +470,45 @@ int                oyPixelAccess_SetArrayFocus (
     if(array)
     {
       oyRectangle_s_ r_ = {oyOBJECT_RECTANGLE_S,0,0,0, 0,0,0,0};
-      oyRectangle_s * r = (oyRectangle_s *) &r_;
+      oyRectangle_s * r = (oyRectangle_s *) &r_,
+                    * r_samples = oyRectangle_New(0);
 
       if(undo == 0 && !oyPixelAccess_ArrayIsFocussed(pixel_access))
       {
         /* set array focus for simple plug-ins */
         oyImage_s * image = oyPixelAccess_GetOutputImage( pixel_access );
+        int channels = oyImage_GetPixelLayout( image, oyCHANS );
 
         /* convert roi to channel units */
         oyPixelAccess_RoiToPixels( pixel_access, 0, &r );
         /* scale horicontal for pixel -> channels */
-        oyImage_PixelsToSamples( image, r, r );
+        oyImage_PixelsToSamples( image, r, r_samples );
         /* finally set the focus for simple plug-ins */
-        error = oyArray2d_SetFocus( array, r );
+        error = oyArray2d_SetFocus( array, r_samples );
         ((oyPixelAccess_s_*)pixel_access)->output_array_is_focussed = 1;
 
         if(oy_debug >=3 || error > 0)
+        {
+          char * t = NULL; 
+          t = oyStringCopy( oyRectangle_Show( r ), oyAllocateFunc_ );
           oyMessageFunc_p( error ? oyMSG_WARN:oyMSG_DBG, (oyStruct_s*)pixel_access,
-                           OY_DBG_FORMAT_ "%cset focus: %s", OY_DBG_ARGS_,
-                           error == -1?'*':' ', oyRectangle_Show(r) );
+                           OY_DBG_FORMAT_ "%cset focus: %s %s", OY_DBG_ARGS_,
+                           error == -1?'*':' ', t, oyArray2d_Show(array,channels) );
+          oyFree_m_(t);
+        }
+
+        {
+          double pixels = r_.x;
+          int val = pixels;
+          double diff = (pixels - val) * channels;
+          if(diff > 0.5)
+          {
+            error = -1;
+        oyMessageFunc_p( oyMSG_WARN, (oyStruct_s*)pixel_access,
+                         OY_DBG_FORMAT_ "sub pixel access is pretty uncommon: %s x:%d/%g diff:%g %dc", OY_DBG_ARGS_,
+                         oyPixelAccess_Show(pixel_access), val, pixels, diff, channels );
+          }
+        }
 
         oyImage_Release( &image );
 
@@ -479,7 +517,7 @@ int                oyPixelAccess_SetArrayFocus (
       {
         r_.width = oyArray2d_GetDataGeo1( array, 2 );
         r_.height = oyArray2d_GetDataGeo1( array, 3 );
-        error = oyArray2d_SetFocus( array, r );
+        error = oyArray2d_SetFocus( array, r_samples );
         ((oyPixelAccess_s_*)pixel_access)->output_array_is_focussed = 0;
 
         if(oy_debug >=3 || error > 0)
@@ -525,12 +563,13 @@ const char *       oyPixelAccess_Show( oyPixelAccess_s   * pixel_access )
     int image_width = oyImage_GetWidth( image );
     oyRectangle_s * ticket_array_roi = oyPixelAccess_GetArrayROI( ticket );
     oyArray2d_s * a = oyPixelAccess_GetArray( ticket );
+    int a_is_focussed = oyPixelAccess_ArrayIsFocussed( ticket );
     oyRectangle_s_  r = {oyOBJECT_RECTANGLE_S, 0,0,0, 0,0,0,0};
     oyRectangle_s * roi = (oyRectangle_s*)&r;
 
     /* start_xy is defined relative to the tickets output image width */
-    double start_x_pixel = oyPixelAccess_GetStart( ticket, 0 ) * image_width,
-           start_y_pixel = oyPixelAccess_GetStart( ticket, 1 ) * image_width;
+    double start_x_pixel = oyPixelAccess_GetStart( ticket, 0 ) * (double)image_width,
+           start_y_pixel = oyPixelAccess_GetStart( ticket, 1 ) * (double)image_width;
     int layout = oyImage_GetPixelLayout( image, oyLAYOUT );
     int channels = oyToChannels_m( layout );
     int a_width = oyArray2d_GetDataGeo1( a, 2 ) / channels;
@@ -538,12 +577,12 @@ const char *       oyPixelAccess_Show( oyPixelAccess_s   * pixel_access )
     oyRectangle_SetByRectangle( roi, ticket_array_roi );
     oyRectangle_Scale( roi, a_width?a_width:image_width );
     oySprintf_( t,
-                "ticket[%d] start_xy %g|%g %s[%d](%dx%d)%dc ROI: %s %s",
+                "ticket[%d] start_xy %g|%g %s[%d](%dx%d)%dc ROI: %s %c%s",
                 oyStruct_GetId((oyStruct_s*)ticket),
                 start_x_pixel, start_y_pixel, _("Image"),
                 oyStruct_GetId((oyStruct_s*)image),image_width,oyImage_GetHeight(image),channels,
                 oyRectangle_Show( roi ),
-                oyArray2d_Show(a));
+                a_is_focussed?' ':'~', oyArray2d_Show( a, channels ) );
 
     oyImage_Release( &image );
     oyArray2d_Release( &a );

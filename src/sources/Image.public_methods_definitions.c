@@ -701,12 +701,20 @@ int            oyImage_FillArray     ( oyImage_s         * image,
 
   if(oy_debug > 2)
   {
-    char * t = NULL;
-    STRING_ADD( t, oyRectangle_Show( (oyRectangle_s*)&array_roi_chan ) );
-    DBGs_PROG5_S( image, "image_roi_chan: %s array_roi_chan: %s array[%d] array_width: %d array_height: %d",
-                 oyRectangle_Show( (oyRectangle_s*)&image_roi_chan ),
-                 t, oyStruct_GetId((oyStruct_s*)*array), array_width, array_height );
+    char * t = NULL, * ta = NULL;
+    oyRectangle_s * ipix = oyRectangle_New(0),
+                  * apix = oyRectangle_New(0);
+    oyImage_SamplesToPixels( image, (oyRectangle_s*)&image_roi_chan, ipix );
+    oyImage_SamplesToPixels( image, (oyRectangle_s*)&array_roi_chan, apix );
+    STRING_ADD( t, oyRectangle_Show( (oyRectangle_s*)ipix ) );
+    STRING_ADD( ta, oyRectangle_Show( (oyRectangle_s*)apix ) );
+    DBGs_PROG3_S( image, "image_roi: %s array_roi: %s %s",
+                  t, ta,
+                  oyArray2d_Show( *array, oyImage_GetPixelLayout( image, oyCHANS ) ) );
     oyFree_m_(t);
+    oyFree_m_(ta);
+    oyRectangle_Release( &ipix );
+    oyRectangle_Release( &apix );
   }
 
   if(!error &&
@@ -760,10 +768,16 @@ int            oyImage_FillArray     ( oyImage_s         * image,
     if(oy_debug > 2)
     {
       char * t = NULL;
-      STRING_ADD( t, oyRectangle_Show( (oyRectangle_s*)&array_roi_chan ) );
-      DBGs_PROG4_S( image, "image_roi_chan: %s array_roi_chan: %s wlen(size_t): %lu image-hook:\"%s\"",
-                 oyRectangle_Show( (oyRectangle_s*)&image_roi_chan ),
-                 t, wlen, oyStructTypeToText( s->pixel_data->type_ ) );
+      oyRectangle_s * ipix = oyRectangle_New(0),
+                    * apix = oyRectangle_New(0);
+      oyImage_SamplesToPixels( image, (oyRectangle_s*)&image_roi_chan, ipix );
+      oyImage_SamplesToPixels( image, (oyRectangle_s*)&array_roi_chan, apix );
+      STRING_ADD( t, oyRectangle_Show( apix ) );
+      DBGs_PROG4_S( image, "image_roi: %s array_roi: %s wlen(size_t): %lu image-hook:\"%s\"",
+                    oyRectangle_Show( ipix ),
+                    t, wlen, oyStructTypeToText( s->pixel_data->type_ ) );
+      oyRectangle_Release( &apix );
+      oyRectangle_Release( &ipix );
       oyFree_m_(t);
     }
 
@@ -825,8 +839,8 @@ int            oyImage_FillArray     ( oyImage_s         * image,
   }
   }
 
-  DBGs_PROG4_S( image, "array[%d](%dx%d) error: %d",
-                oyStruct_GetId( (oyStruct_s*) a), a?a->width:-1, a?a->height:-1, error );
+  DBGs_PROG2_S( image, "%s error: %d",
+                oyArray2d_Show((oyArray2d_s*)a, channels_n), error );
 
 
   /* shift array focus back */
