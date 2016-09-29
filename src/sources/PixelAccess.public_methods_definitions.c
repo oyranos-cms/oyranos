@@ -52,7 +52,6 @@ int                oyPixelAccess_ChangeRectangle (
                          OY_DBG_FORMAT_ "sub pixel access is pretty uncommon: %s x:%d/%g diff:%g %dc", OY_DBG_ARGS_,
                          oyPixelAccess_Show(pixel_access), val, pixels, diff, channels );
       }
-      oyImage_Release( &image );
     }
 
     pixel_access_->start_xy[0] = start_x;
