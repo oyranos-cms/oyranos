@@ -830,7 +830,7 @@ oyOptions_s* oyraFilter_ImageRectanglesValidateOptions
  *  @brief   implement oyCMMFilter_GetNext_f()
  *
  *  @version Oyranos: 0.9.6
- *  @date    2016/04/05
+ *  @date    2016/09/26
  *  @since   2009/02/23 (Oyranos: 0.1.10)
  */
 int      oyraFilterPlug_ImageRectanglesRun (
@@ -838,7 +838,7 @@ int      oyraFilterPlug_ImageRectanglesRun (
                                        oyPixelAccess_s   * ticket )
 {
   int n = 0, i;
-  int result = 0, l_result = 0, error = 0;
+  int result = 0, l_result = 0;
   oyFilterSocket_s * socket;
   oyFilterNode_s * input_node = 0,
                  * node;
@@ -846,17 +846,7 @@ int      oyraFilterPlug_ImageRectanglesRun (
   oyOption_s * o = 0;
   oyOptions_s * node_opts = 0;
   oyRectangle_s * r;
-  oyRectangle_s_ array_pix = {oyOBJECT_RECTANGLE_S,0,0,0, 0,0,0,0};
-  oyRectangle_s_ roi_ = {oyOBJECT_RECTANGLE_S,0,0,0, 0,0,0,0},
-                 rect_ = {oyOBJECT_RECTANGLE_S,0,0,0, 0,0,0,0},
-                 newt_roi_ = {oyOBJECT_RECTANGLE_S,0,0,0, 0,0,0,0},
-                 t_roi_ = {oyOBJECT_RECTANGLE_S,0,0,0, 0,0,0,0};
-  oyRectangle_s * roi = (oyRectangle_s*)&roi_,
-                * rect = (oyRectangle_s*)&rect_,
-                * newt_roi = (oyRectangle_s*)&newt_roi_,
-                * t_roi = (oyRectangle_s*)&t_roi_;
 
-  oyPixelAccess_s * new_ticket = 0;
   int dirty = 0;
 
   socket = oyFilterPlug_GetSocket( requestor_plug );
@@ -871,9 +861,9 @@ int      oyraFilterPlug_ImageRectanglesRun (
 
   {
     oyRectangle_s * ticket_roi = oyPixelAccess_GetArrayROI( ticket );
-    oyArray2d_s * ticket_array = oyPixelAccess_GetArray( ticket );
-    int channels = oyToChannels_m( oyImage_GetPixelLayout( image, oyLAYOUT ) );
-    int ticket_array_pix_width = oyArray2d_GetWidth( ticket_array )/channels;
+    oyRectangle_s_  t_roi_pix_ = {oyOBJECT_RECTANGLE_S,0,0,0, 0,0,0,0};
+    oyRectangle_s * t_roi_pix = (oyRectangle_s*)&t_roi_pix_;
+    oyArray2d_s   * ticket_array = oyPixelAccess_GetArray( ticket );
 
     node_opts = oyFilterNode_GetOptions( node, 0 );
     if(!node_opts)
@@ -885,8 +875,7 @@ int      oyraFilterPlug_ImageRectanglesRun (
       result = dirty;
     }
 
-    oyRectangle_SetByRectangle( t_roi, ticket_roi );
-    oyRectangle_Scale( t_roi, ticket_array_pix_width );
+    oyPixelAccess_RoiToPixels( ticket, NULL, &t_roi_pix );
 
     n = oyOptions_CountType( node_opts,
                              "//" OY_TYPE_STD "/rectangles/rectangle",
@@ -899,47 +888,39 @@ int      oyraFilterPlug_ImageRectanglesRun (
     /* rectangles stuff */
     for(i = 0; i < n; ++i)
     {
-      oyImage_s * new_ticket_image;
-      oyRectangle_s * new_ticket_roi;
+      oyPixelAccess_s * new_ticket = oyPixelAccess_Copy( ticket, ticket->oy_ );
+      oyArray2d_s     * new_ticket_array = NULL;
+      oyImage_s       * new_ticket_image = oyPixelAccess_GetOutputImage( new_ticket );
+      oyRectangle_s_  rect_       = {oyOBJECT_RECTANGLE_S,0,0,0, 0,0,0,0},
+                      newt_roi_pix_={oyOBJECT_RECTANGLE_S,0,0,0, 0,0,0,0};
+      oyRectangle_s * rect = (oyRectangle_s*)&rect_,
+                    * newt_roi_pix = (oyRectangle_s*)&newt_roi_pix_,
+                    * newt_roi = NULL;
+      int    nti_width = oyImage_GetWidth( new_ticket_image );
+      double ntx = oyPixelAccess_GetStart( new_ticket, 0 ) * nti_width,
+             nty = oyPixelAccess_GetStart( new_ticket, 1 ) * nti_width;
+
       /* select current rectangle */
       r = (oyRectangle_s*)oyOptions_GetType( node_opts, i,
                                        "//" OY_TYPE_STD "/rectangles/rectangle",
                                              oyOBJECT_RECTANGLE_S );
       oyRectangle_SetByRectangle( rect, r );
-      oyRectangle_Scale( rect, ticket_array_pix_width );
+      oyRectangle_Release( &r );
 
-      /* Map each matching plug to a new ticket with a corrected rectangle. */
-      new_ticket = oyPixelAccess_Copy( ticket, ticket->oy_ );
-      oyPixelAccess_SetArray( new_ticket, 0, 0 );
+      ntx += rect_.x;
+      nty += rect_.y;
 
-      new_ticket_roi = oyPixelAccess_GetArrayROI( new_ticket );
-      oyRectangle_SetByRectangle( newt_roi, new_ticket_roi );
-      oyRectangle_Scale( newt_roi, ticket_array_pix_width );
-      oyRectangle_SetByRectangle( roi, newt_roi );
-      if(r)
-      {
-        oyRectangle_SetByRectangle( roi, rect );
-        oyRectangle_Release( &r );
-      }
-
-      /* select node */
-      input_node = oyFilterNode_GetPlugNode( node, i );
-      /* adapt the rectangle of interesst to the new image dimensions */
-      oyRectangle_Trim( roi, t_roi );
+      newt_roi_pix_.x      = t_roi_pix_.x + rect_.x;
+      newt_roi_pix_.y      = t_roi_pix_.y + rect_.y;
+      newt_roi_pix_.width  = rect_.width;
+      newt_roi_pix_.height = rect_.height;
+      oyPixelAccess_PixelsToRoi( new_ticket, newt_roi_pix, &newt_roi );
 
       /* use the correct source pixels */
       oyPixelAccess_ChangeRectangle( new_ticket,
-                                     oyPixelAccess_GetStart( new_ticket, 0 )
-                                     + oyRectangle_GetGeo1( roi, 0 ) / ticket_array_pix_width,
-                                     oyPixelAccess_GetStart( new_ticket, 1 )
-                                     + oyRectangle_GetGeo1( roi, 1 ) / ticket_array_pix_width,
-                                     roi );
-
-      /* scale roi from old array width to expected new one */
-      new_ticket_image = oyPixelAccess_GetOutputImage( new_ticket );
-      oyRectangle_SetByRectangle( newt_roi, roi );
-      oyRectangle_Scale( roi, 1.0 / (double)oyImage_GetWidth( new_ticket_image ) );
-      oyRectangle_SetByRectangle( new_ticket_roi, roi );
+                                     ntx / (double)nti_width,
+                                     nty / (double)nti_width,
+                                     newt_roi );
 
         if(oy_debug)
           oyra_msg( oy_debug?oyMSG_DBG:oyMSG_WARN, (oyStruct_s*)ticket,
@@ -948,57 +929,27 @@ int      oyraFilterPlug_ImageRectanglesRun (
 
       if(oyRectangle_CountPoints(  newt_roi ) > 0)
       {
-        oyArray2d_s * new_ticket_array = oyPixelAccess_GetArray( new_ticket );
         oyFilterPlug_s * plug;
-        double xy[2] = {0.0, 0.0};
 
-        /* fill the array rectangle for the following filter */
-        if(!new_ticket_array)
-        {
-          oyRectangle_SetByRectangle( roi, newt_roi );
-          oyRectangle_Scale( roi, 1.0 / (double)oyImage_GetWidth(new_ticket_image) );
+        /* keep old ticket array */
+        oyPixelAccess_SetArray( new_ticket, ticket_array, 0 );
+        oyPixelAccess_SetArrayFocus( new_ticket, 0 );
+        new_ticket_array = oyPixelAccess_GetArray( new_ticket );
 
-          oyImage_FillArray( new_ticket_image,
-                             roi, 0,
-                             &new_ticket_array, roi,
-                             0 );
-
-          oyRectangle_SetByRectangle( roi, newt_roi );
-          xy[0] = oyRectangle_GetGeo1( roi, 0 );
-          xy[1] = oyRectangle_GetGeo1( roi, 1 );
-          *oyRectangle_SetGeo1( roi, 0 ) = 0.0;
-          *oyRectangle_SetGeo1( roi, 1 ) = 0.0;
-          oyRectangle_SetByRectangle( newt_roi, roi );
-          { double aw = (double)oyArray2d_GetWidth( new_ticket_array );
-            oyRectangle_Scale( roi, 1.0 / aw * (double)channels );
-          }
-          oyRectangle_SetByRectangle( new_ticket_roi, roi );
-
-          oyPixelAccess_SetArray( new_ticket, new_ticket_array, 1 );
-          if(oy_debug)
-            oyra_msg( oy_debug?oyMSG_DBG:oyMSG_WARN, (oyStruct_s*)ticket,
-                      OY_DBG_FORMAT_ "[%d] %s",
-                      OY_DBG_ARGS_, i, oyPixelAccess_Show( new_ticket ) );
-
-        } else
-        {
-          oyRectangle_SetByRectangle( roi, newt_roi );
-          xy[0] = oyRectangle_GetGeo1( roi, 0 );
-          xy[1] = oyRectangle_GetGeo1( roi, 1 );
-        }
+        /* select node */
+        input_node = oyFilterNode_GetPlugNode( node, i );
 
         /* start new call into branch */
         if(oy_debug)
         {
-          oyRectangle_s_ nt_roi = {oyOBJECT_RECTANGLE_S,0,0,0, 0,0,0,0};
-          double aw = (double)oyArray2d_GetWidth( new_ticket_array );
-          oyRectangle_SetByRectangle( (oyRectangle_s*)&nt_roi, roi );
-          oyRectangle_Scale( (oyRectangle_s*)&nt_roi, aw/(double)channels );
+          oyRectangle_s_ nt_roi_ = {oyOBJECT_RECTANGLE_S,0,0,0, 0,0,0,0},
+                        *nt_roi = &nt_roi_;
+          oyPixelAccess_RoiToPixels( new_ticket, NULL, (oyRectangle_s**)&nt_roi );
           DBGs_PROG4_S( new_ticket, "%s[%d] new_ticket_array[%d](%s)",
                      "Run new_ticket through filter in node",
                      oyStruct_GetId( (oyStruct_s*)node ),
                      oyStruct_GetId( (oyStruct_s*)new_ticket_array ),
-                     oyRectangle_Show( (oyRectangle_s*)&nt_roi ) );
+                     oyRectangle_Show( (oyRectangle_s*)nt_roi ) );
         }
 
         plug = oyFilterNode_GetPlug( node, i );
@@ -1006,54 +957,16 @@ int      oyraFilterPlug_ImageRectanglesRun (
         if(l_result != 0 && (result <= 0 || l_result > 0))
           result = l_result;
 
-        /* The image is used as intermediate cache between the forward and
-           backward array. @todo use direct array copy oyArray2d_DataCopy() */
-        DBGs_PROG2_S( new_ticket,"%s[%d]","Read new_ticket->array into image",
-                     oyStruct_GetId( (oyStruct_s*)image ) );
-        
-        oyRectangle_SetByRectangle( roi, newt_roi );
-        *oyRectangle_SetGeo1( roi, 0 ) = xy[0];
-        *oyRectangle_SetGeo1( roi, 1 ) = xy[1];
-        oyRectangle_Scale( roi, 1.0 /*(oyArray2d_GetWidth( new_ticket_array )/channels)*/ / (double)oyImage_GetWidth(new_ticket_image) );
-        error = oyImage_ReadArray( new_ticket_image,
-                                   roi,
-                                   new_ticket_array, 0 );
-
-        if(error) WARNc2_S("%s %d", _("found issues"),error);
-        DBGs_PROG5_S( ticket, "Read into new_ticket_array[%d](%dx%d)\n%s[%d]",
-                    oyStruct_GetId( (oyStruct_s*)new_ticket_array ),
-                    oyArray2d_GetWidth(new_ticket_array),
-                    oyArray2d_GetHeight(new_ticket_array),
-                     "Fill ticket->array from new_ticket->output_image",
-                    oyStruct_GetId( (oyStruct_s*)new_ticket_image ) );
-
-        error = oyImage_FillArray( new_ticket_image,
-                                   roi, 1,
-                                   &ticket_array, roi,
-                                   0 );
-        if(error) WARNc2_S("%s %d", _("found issues"),error);
-        DBGs_PROG4_S( ticket, "%s [%d](%dx%d)",
-                     "Filled ticket->array",
-                    oyStruct_GetId( (oyStruct_s*)ticket_array ),
-                    oyArray2d_GetWidth(ticket_array),
-                    oyArray2d_GetHeight(ticket_array) );
-
-        oyArray2d_Release( &new_ticket_array );
         oyFilterPlug_Release( &plug );
       }
 
       oyPixelAccess_Release( &new_ticket );
+      oyArray2d_Release( &new_ticket_array );
       oyImage_Release( &new_ticket_image );
+      oyRectangle_Release( &newt_roi );
 
       oyOption_Release( &o );
-      oyRectangle_Release( &new_ticket_roi );
     }
-
-    oyRectangle_SetGeo( (oyRectangle_s*)&array_pix, 0,0,
-                        oyArray2d_GetDataGeo1( ticket_array, 2 ),
-                        oyArray2d_GetDataGeo1( ticket_array, 3 ) );
-    error = oyArray2d_SetFocus( ticket_array, (oyRectangle_s*)&array_pix );
-    if(error) WARNc2_S("%s %d", _("found issues"),error);
 
     oyraFilterPlug_ImageRectanglesRun_clean2:
     oyRectangle_Release( &ticket_roi );
@@ -1191,7 +1104,7 @@ const char * oyraApi4UiImageRectanglesGetText (
     else if(type == oyNAME_NAME)
       return _("Apply regions of interesst in form of simple rectangles.");
     else if(type == oyNAME_DESCRIPTION)
-      return _("The filter will expect a \"rectangle\" option and will create, fill and process a according rectangle with a new job ticket.");
+      return _("The filter will expect a \"rectangle\" option containing a list of oyRectangle_s objects and will create, fill and process a according rectangle within a list of new job tickets. Each rectangle shall be in pixel coordinates. It describes a individual ROI inside the source image and the output array ROI.");
   }
   return 0;
 }
