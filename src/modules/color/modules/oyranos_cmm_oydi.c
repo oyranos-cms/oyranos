@@ -527,9 +527,10 @@ int  oydiFilterSocket_ImageDisplayInit(oyPixelAccess_s   * ticket,
 
           /* clone into a new image */
           {
+            int width = oyImage_GetWidth(image),
+                height = oyImage_GetHeight(image);
             oyImage_s * display_image = oyImage_CreateForDisplay (
-                                                oyImage_GetWidth(image),
-                                                oyImage_GetHeight(image), 0,
+                                                width, height, 0,
                                         oyImage_GetPixelLayout(image, oyLAYOUT),
                                                 0, 0,0,0,0,
                                                 icc_profile_flags, 0 );
@@ -651,6 +652,7 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
       test = 0;
   char * ID = 0;
   int icc_profile_flags = 0;
+  int width = 0, height = 0;
 
   image = (oyImage_s*)oyFilterSocket_GetData( socket );
   image_input = oyFilterPlug_ResolveImage( plug, socket, ticket );
@@ -677,6 +679,9 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
     /* fixed RGB? */
     int32_t channels_out = 3 + extra_in;
     oyFilterNode_s * input_node = oyFilterPlug_GetRemoteNode( plug );
+
+    width = oyImage_GetWidth( image_input );
+    height = oyImage_GetHeight( image_input );
 
     oyProfile_Release( &p_in );
 
@@ -715,8 +720,8 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
 
     /* eigther copy the input image with a oyObject_s argument or
      * create it as follows */
-    image = oyImage_CreateForDisplay( oyImage_GetWidth(image_input),
-                                      oyImage_GetHeight(image_input),
+    image = oyImage_CreateForDisplay( width,
+                                      height,
                                       0, pixel_layout,
                                       0, 0,0,0,0,
                                       icc_profile_flags, 0 );
@@ -862,9 +867,10 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
             OY_DBG_FORMAT_"image %d: roi_pix:%s", OY_DBG_ARGS_,
             i, oyRectangle_Show((oyRectangle_s*)&roi_pix));
 
-      /* all rectangles are relative to image dimensions */
-      if(image && oyImage_GetWidth(image) != 0)
-        oyRectangle_Scale( (oyRectangle_s*)&roi_pix, 1./oyImage_GetWidth(image) );
+      /* the rectangles are in pixel dimension */
+      width = oyImage_GetWidth(image);
+      if(image && width != 0)
+        oyRectangle_SetByRectangle( r, (oyRectangle_s*)&roi_pix );
 
       /* select actual image from the according input node */
       {
@@ -881,8 +887,6 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
                  OY_DBG_FORMAT_"image %d: is missed roi_pix:%s",
                  OY_DBG_ARGS_, i, oyRectangle_Show( (oyRectangle_s*)&roi_pix ) );
       }
-
-      oyRectangle_SetByRectangle( r, (oyRectangle_s*)&roi_pix );
 
       /* set the device profile of all CMM's image data */
       if(init)
