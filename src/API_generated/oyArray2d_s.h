@@ -160,7 +160,8 @@ OYAPI int  OYEXPORT
 OYAPI oyDATATYPE_e  OYEXPORT
                  oyArray2d_GetType   ( oyArray2d_s       * array );
 OYAPI const char *  OYEXPORT
-                 oyArray2d_Show      ( oyArray2d_s       * array );
+                 oyArray2d_Show      ( oyArray2d_s       * array,
+                                       int                 channels );
 
 /* } Include "Array2d.public_methods_declarations.h" */
 
