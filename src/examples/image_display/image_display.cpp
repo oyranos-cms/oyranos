@@ -743,7 +743,7 @@ char ** getFileList(const char * path, int * count, const char * file, int * pos
   // Special case for file name with path. Then search in local "./" place.
   if(!path || path[0] == 0)
     path = ".";
-  if(strlen(path) == 1 && path[0] == '.' &&
+  if(path && file && strlen(path) == 1 && path[0] == '.' &&
      strchr(file,OY_SLASH_C) == NULL && strchr(file,'\\') == NULL)
     oyStringAddPrintf( &fn, 0,0, "./%s", file );
 
