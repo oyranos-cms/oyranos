@@ -383,8 +383,7 @@ int                oyPixelAccess_SetArrayFocus (
 
         if(oy_debug >=3 || error > 0)
         {
-          char * t = NULL; 
-          t = oyStringCopy( oyRectangle_Show( r ), oyAllocateFunc_ );
+          char *  t = oyStringCopy( oyRectangle_Show( r ), oyAllocateFunc_ );
           oyMessageFunc_p( error ? oyMSG_WARN:oyMSG_DBG, (oyStruct_s*)pixel_access,
                            OY_DBG_FORMAT_ "%cset focus: %s %s", OY_DBG_ARGS_,
                            error == -1?'*':' ', t, oyArray2d_Show(array,channels) );

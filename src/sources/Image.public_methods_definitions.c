@@ -656,6 +656,7 @@ int            oyImage_FillArray     ( oyImage_s         * image,
   unsigned char * line_data = 0;
   int i,j, height, channels_n;
   size_t wlen;
+  static int id = 0;
 
   if(!image)
     return 1;
@@ -825,6 +826,18 @@ int            oyImage_FillArray     ( oyImage_s         * image,
       i += height;
 
       if(error) break;
+    }
+
+    if(getenv("OY_DEBUG_WRITE"))
+    {
+      char * t = 0; oyStringAddPrintf( &t, 0,0,
+      "oyImage_FillArray-%04d-%d+%d.ppm", id++, oyStruct_GetId((oyStruct_s*) image),
+                    oyStruct_GetId((oyStruct_s*) a));
+      oyArray2d_ToPPM_( a, t );
+      oyMessageFunc_p( oyMSG_DBG, (oyStruct_s*)image,
+                 OY_DBG_FORMAT_ "wrote debug image to: %s",
+                 OY_DBG_ARGS_, t );
+      oyFree_m_(t);
     }
 
   } else
