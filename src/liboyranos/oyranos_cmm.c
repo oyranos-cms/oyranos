@@ -134,7 +134,7 @@ int      oyFilterPlug_ImageRootRun   ( oyFilterPlug_s    * requestor_plug,
       oyRectangle_s * output_array_roi_pix = NULL;
 
       STRING_ADD( t, oyRectangle_Show( (oyRectangle_s*)&image_roi_pix ) );
-      oyPixelAccess_RoiToPixels( ticket, output_array_roi, &output_array_roi ); 
+      oyPixelAccess_RoiToPixels( ticket, output_array_roi, &output_array_roi_pix ); 
       oyMessageFunc_p( error?oyMSG_WARN:oyMSG_DBG, (oyStruct_s*)ticket,
                        OY_DBG_FORMAT_ "Fill ticket->array[%d] from %s[%d] "
                        "image_roi_pix: %s output_array_roi:%s %s err:%d",
