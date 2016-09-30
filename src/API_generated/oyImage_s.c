@@ -697,6 +697,7 @@ static int oyImage_CreateFillArray_  ( oyImage_s         * image,
   return error;
 }
 
+static int id = 0; /* debug write image ID */
 /** Function oyImage_FillArray
  *  @memberof oyImage_s
  *  @brief   creata a array from a image and fill with data
@@ -756,7 +757,6 @@ int            oyImage_FillArray     ( oyImage_s         * image,
   unsigned char * line_data = 0;
   int i,j, height, channels_n;
   size_t wlen;
-  static int id = 0;
 
   if(!image)
     return 1;
@@ -931,9 +931,14 @@ int            oyImage_FillArray     ( oyImage_s         * image,
     if(getenv("OY_DEBUG_WRITE"))
     {
       char * t = 0; oyStringAddPrintf( &t, 0,0,
-      "oyImage_FillArray-%04d-%d+%d.ppm", id++, oyStruct_GetId((oyStruct_s*) image),
-                    oyStruct_GetId((oyStruct_s*) a));
+      "%04d-oyImage_FillArray-array[%d].ppm", ++id, oyStruct_GetId((oyStruct_s*) a) );
       oyArray2d_ToPPM_( a, t );
+      oyMessageFunc_p( oyMSG_DBG, (oyStruct_s*)image,
+                 OY_DBG_FORMAT_ "wrote debug image to: %s",
+                 OY_DBG_ARGS_, t );
+      t[0] = '\000'; oyStringAddPrintf( &t, 0,0,
+      "%04d-oyImage_FillArray-image[%d].ppm", id, oyStruct_GetId((oyStruct_s*) image) );
+      oyImage_WritePPM( image, t, "oyImage_FillArray image" );
       oyMessageFunc_p( oyMSG_DBG, (oyStruct_s*)image,
                  OY_DBG_FORMAT_ "wrote debug image to: %s",
                  OY_DBG_ARGS_, t );
@@ -1069,6 +1074,23 @@ int            oyImage_ReadArray     ( oyImage_s         * image,
       s->setLine( image, offset, image_roi_chan.y + i, width, -1,
                       &array_->array2d
                               [i][OY_ROUND(array_rect_chan.x) * bps] );
+    }
+
+    if(getenv("OY_DEBUG_WRITE"))
+    {
+      char * t = 0; oyStringAddPrintf( &t, 0,0,
+      "%04d-oyImage_ReadArray-array[%d].ppm", ++id,oyStruct_GetId((oyStruct_s*)array));
+      oyArray2d_ToPPM_( array_, t );
+      oyMessageFunc_p( oyMSG_DBG, (oyStruct_s*)image,
+                 OY_DBG_FORMAT_ "wrote debug image to: %s",
+                 OY_DBG_ARGS_, t );
+      t[0] = '\000'; oyStringAddPrintf( &t, 0,0,
+      "%04d-oyImage_ReadArray-image[%d].ppm", id, oyStruct_GetId((oyStruct_s*) image));
+      oyImage_WritePPM( image, t, "oyImage_ReadArray image" );
+      oyMessageFunc_p( oyMSG_DBG, (oyStruct_s*)image,
+                 OY_DBG_FORMAT_ "wrote debug image to: %s",
+                 OY_DBG_ARGS_, t );
+      oyFree_m_(t);
     }
   }
 
