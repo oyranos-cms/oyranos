@@ -18,6 +18,7 @@
 #include <lcms2.h>
 #include <stdarg.h>
 
+#include "oyArray2d_s_.h"
 #include "oyCMM_s.h"
 #include "oyCMMapi4_s.h"
 #include "oyCMMapi4_s_.h"
@@ -2685,13 +2686,13 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
   array_in = oyPixelAccess_GetArray( new_ticket );
   array_out = oyPixelAccess_GetArray( ticket );
   if(oy_debug > 2)
-    lcm2_msg( oyMSG_DBG, (oyStruct_s*)new_ticket, OY_DBG_FORMAT_"%s new_ticket->array:%s %s[%d]",
-              OY_DBG_ARGS_,_("Read from"),
+    lcm2_msg( oyMSG_DBG, (oyStruct_s*)new_ticket, OY_DBG_FORMAT_"%s %cnew_ticket->array:%s %s[%d]",
+              OY_DBG_ARGS_,_("Read from"), oyPixelAccess_ArrayIsFocussed( new_ticket )?' ':'~',
               oyArray2d_Show( array_in, channels_in ),
               _("Image"), oyStruct_GetId( (oyStruct_s*)image_input ) );
   if(oy_debug > 2)
-    lcm2_msg( oyMSG_DBG, (oyStruct_s*)ticket, OY_DBG_FORMAT_"%s ticket->array:%s %s[%d]",
-              OY_DBG_ARGS_,_("Write to"),
+    lcm2_msg( oyMSG_DBG, (oyStruct_s*)ticket, OY_DBG_FORMAT_"%s %cticket->array:%s %s[%d]",
+              OY_DBG_ARGS_,_("Write to"), oyPixelAccess_ArrayIsFocussed( ticket )?' ':'~',
               oyArray2d_Show( array_out, channels_out ),
               _("Image"), oyStruct_GetId( (oyStruct_s*)image_output ) );
 
@@ -2951,6 +2952,23 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
     if(array_in_tmp)
       oyDeAllocateFunc_( array_in_tmp );
 
+    if(getenv("OY_DEBUG_WRITE"))
+    {
+      static int id = 0;
+      char * t = 0; oyStringAddPrintf( &t, 0,0,
+      "%04d-%s-array_in[%d].ppm", ++oy_debug_write_id,CMM_NICK,oyStruct_GetId((oyStruct_s*)array_in));
+      oyArray2d_ToPPM_( (oyArray2d_s_*)array_in, t );
+      lcm2_msg( oyMSG_DBG, (oyStruct_s*)ticket,
+                 OY_DBG_FORMAT_ "wrote debug image to: %s",
+                 OY_DBG_ARGS_, t );
+      t[0] = '\000'; oyStringAddPrintf( &t, 0,0,
+      "%04d-%s-array_out[%d].ppm", oy_debug_write_id,CMM_NICK,oyStruct_GetId((oyStruct_s*)array_out));
+      oyArray2d_ToPPM_( (oyArray2d_s_*)array_out, t );
+      lcm2_msg( oyMSG_DBG, (oyStruct_s*)ticket,
+                 OY_DBG_FORMAT_ "wrote debug image to: %s",
+                 OY_DBG_ARGS_, t );
+      oyFree_m_(t);
+    }
   } else
   {
     oyFilterGraph_s * ticket_graph = oyPixelAccess_GetGraph( ticket );
