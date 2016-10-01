@@ -1044,6 +1044,24 @@ int            oyImage_ReadArray     ( oyImage_s         * image,
                           0,0, array_->width, array_->height );
   }
 
+  if(oy_debug > 2)
+  {
+    char * t = NULL, * ta = NULL;
+    oyRectangle_s * ipix = oyRectangle_New(0),
+                  * apix = oyRectangle_New(0);
+    oyImage_SamplesToPixels( image, (oyRectangle_s*)&image_roi_chan, ipix );
+    oyImage_SamplesToPixels( image, (oyRectangle_s*)&array_rect_chan, apix );
+    STRING_ADD( t, oyRectangle_Show( (oyRectangle_s*)ipix ) );
+    STRING_ADD( ta, oyRectangle_Show( (oyRectangle_s*)apix ) );
+    DBGs_PROG3_S( image, "image_roi: %s array_roi: %s %s",
+                  t, ta,
+                  oyArray2d_Show( array, oyImage_GetPixelLayout( image, oyCHANS ) ) );
+    oyFree_m_(t);
+    oyFree_m_(ta);
+    oyRectangle_Release( &ipix );
+    oyRectangle_Release( &apix );
+  }
+
   if(!error && array_rectangle &&
      (array_rect_chan.width != image_roi_chan.width ||
       array_rect_chan.height != image_roi_chan.height))
