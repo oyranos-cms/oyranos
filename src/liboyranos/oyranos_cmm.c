@@ -155,7 +155,8 @@ int      oyFilterPlug_ImageRootRun   ( oyFilterPlug_s    * requestor_plug,
                                &array, array_is_focussed ? NULL:output_array_roi, 0 );
     if(oy_debug || error > 0 || result > 0)
       oyMessageFunc_p( error?oyMSG_WARN:oyMSG_DBG, (oyStruct_s*)ticket,
-                       OY_DBG_FORMAT_"array: %s", OY_DBG_ARGS_,
+                       OY_DBG_FORMAT_"%carray: %s", OY_DBG_ARGS_,
+                       oyPixelAccess_ArrayIsFocussed(ticket)?' ':'~',
                        "filled ticket->array",
                        oyArray2d_Show( array, channels ) );
 
