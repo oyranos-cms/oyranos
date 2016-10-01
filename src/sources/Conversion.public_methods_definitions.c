@@ -690,6 +690,19 @@ int                oyConversion_RunPixels (
     }
   }
 
+  oyPixelAccess_SetArrayFocus( (oyPixelAccess_s*)pixel_access_, 0 );
+  if(oy_debug)
+  {
+    oyRectangle_s * pix = NULL; oyImage_RoiToSamples( image_out,
+                                (oyRectangle_s*)&roi, &pix );
+    oyImage_SamplesToPixels( image_out, pix, pix );
+    char * t = NULL; STRING_ADD( t, oyRectangle_Show( pix ) );
+    oyRectangle_Release( &pix );
+    DBGs_PROG2_S( pixel_access_,
+          "roi:%s %s", t,
+          oyPixelAccess_Show( (oyPixelAccess_s*)pixel_access_ ) );
+  }
+
   /* Write the data to the output image.
    *
    * The oyPixelAccess_s job ticket contains a oyArray2d_s object called array

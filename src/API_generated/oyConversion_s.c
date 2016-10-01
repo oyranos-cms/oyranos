@@ -801,6 +801,7 @@ int                oyConversion_RunPixels (
     }
   }
 
+  oyPixelAccess_SetArrayFocus( (oyPixelAccess_s*)pixel_access_, 0 );
   if(oy_debug)
   {
     oyRectangle_s * pix = NULL; oyImage_RoiToSamples( image_out,
