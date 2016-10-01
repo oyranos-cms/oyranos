@@ -269,7 +269,8 @@ void oyThreadsInit_(void)
       thread_ids[i+1] = i+1;
 
       oyThreadCreate( oyJobWorker, &thread_ids[i+1], &background_thread );
-      printf("thread created [%ld]\n", background_thread);
+      if(oy_debug)
+        trds_msg( oyMSG_DBG, 0, "thread created [%ld]\n", background_thread);
 
       oy_threads_[i+1] = background_thread;
     }

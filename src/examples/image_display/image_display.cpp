@@ -799,7 +799,8 @@ void               openNextImage     ( Oy_Fl_Image_Widget* oy_widget,
          strstr(files[pos],".thumbnails") != NULL)
         continue;
 
-      fprintf( stderr, "open image %s %d/%d\n", files[pos], i, count  );
+      if(oy_display_verbose)
+        fprintf( stderr, "open image %s %d/%d\n", files[pos], i, count  );
       icc = oy_box->setImage( files[pos], module_options );
       if(icc)
       {
@@ -808,7 +809,7 @@ void               openNextImage     ( Oy_Fl_Image_Widget* oy_widget,
         oy_widget->observeICC( icc, conversionObserve );
         win->label( files[pos] );
         break;
-      } else
+      } else if(oy_display_verbose)
         fprintf( stderr, "could not open image %s; continuing with next. %d/%d\n", files[pos], i, count  );
       fflush( stderr );
       Fl::wait(0);

@@ -207,7 +207,8 @@ private:
       if(xft)
       {
         sscanf( xft, "Xft.dpi:\t%f", &xft_dpi );
-        fprintf( stdout, "XResource Xft.dpi: %.02f\n", xft_dpi );
+        if(oy_debug)
+          fprintf( stderr, "XResource Xft.dpi: %.02f\n", xft_dpi );
         if(xft_dpi > 30.0f)
           scale = xft_dpi / 96.0f;
       }
