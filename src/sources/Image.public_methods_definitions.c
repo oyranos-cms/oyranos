@@ -597,7 +597,6 @@ static int oyImage_CreateFillArray_  ( oyImage_s         * image,
   return error;
 }
 
-static int id = 0; /* debug write image ID */
 /** Function oyImage_FillArray
  *  @memberof oyImage_s
  *  @brief   creata a array from a image and fill with data
@@ -831,13 +830,13 @@ int            oyImage_FillArray     ( oyImage_s         * image,
     if(getenv("OY_DEBUG_WRITE"))
     {
       char * t = 0; oyStringAddPrintf( &t, 0,0,
-      "%04d-oyImage_FillArray-array[%d].ppm", ++id, oyStruct_GetId((oyStruct_s*) a) );
+      "%04d-oyImage_FillArray-array[%d].ppm", ++oy_debug_write_id, oyStruct_GetId((oyStruct_s*) a) );
       oyArray2d_ToPPM_( a, t );
       oyMessageFunc_p( oyMSG_DBG, (oyStruct_s*)image,
                  OY_DBG_FORMAT_ "wrote debug image to: %s",
                  OY_DBG_ARGS_, t );
       t[0] = '\000'; oyStringAddPrintf( &t, 0,0,
-      "%04d-oyImage_FillArray-image[%d].ppm", id, oyStruct_GetId((oyStruct_s*) image) );
+      "%04d-oyImage_FillArray-image[%d].ppm", oy_debug_write_id, oyStruct_GetId((oyStruct_s*) image) );
       oyImage_WritePPM( image, t, "oyImage_FillArray image" );
       oyMessageFunc_p( oyMSG_DBG, (oyStruct_s*)image,
                  OY_DBG_FORMAT_ "wrote debug image to: %s",
@@ -882,10 +881,10 @@ int            oyImage_FillArray     ( oyImage_s         * image,
  *  The given array should match that rectangle.
  *
  *  @param[in]     image               a image
- *  @param[in]     image_rectangle     rectangle from image in
+ *  @param[in]     image_rectangle     rectangle from image, in
  *                                     oyImage_GetWidth() == 1.0 unit; optional
- *  @param[in,out] array               the to be filled array
- *  @param[in]     array_rectangle     rectangle for array in
+ *  @param[in,out] array               the array to read from
+ *  @param[in]     array_rectangle     rectangle for array, in
  *                                     oyImage_GetWidth() == 1.0 unit; optional
  *  @return                            error
  *
@@ -903,7 +902,8 @@ int            oyImage_ReadArray     ( oyImage_s         * image,
   int error = !image || !array;
   oyRectangle_s_ image_roi_chan = {oyOBJECT_RECTANGLE_S,0,0,0,0,0,0,0},
                  array_rect_chan = {oyOBJECT_RECTANGLE_S,0,0,0,0,0,0,0},
-                 * irc = &image_roi_chan;
+                 * irc = &image_roi_chan,
+                 * arc = &array_rect_chan;
   oyDATATYPE_e data_type = oyUINT8;
   int bps = 0, channel_n, i, offset, width, height;
 
@@ -938,16 +938,10 @@ int            oyImage_ReadArray     ( oyImage_s         * image,
   if(!error)
   {
     if(array_rectangle)
-    {
-      oyRectangle_SetByRectangle( (oyRectangle_s*)&array_rect_chan, array_rectangle );
-      oyRectangle_Scale( (oyRectangle_s*)&array_rect_chan, s->width );
-      array_rect_chan.x *= channel_n;
-      array_rect_chan.width *= channel_n;
-    } else
-    {
+      oyImage_RoiToSamples( image, array_rectangle, (oyRectangle_s**) &arc );
+    else
       oyRectangle_SetGeo( (oyRectangle_s*)&array_rect_chan, 
                           0,0, array_->width, array_->height );
-    }
   }
 
   if(!error && array_rectangle &&
@@ -979,13 +973,13 @@ int            oyImage_ReadArray     ( oyImage_s         * image,
     if(getenv("OY_DEBUG_WRITE"))
     {
       char * t = 0; oyStringAddPrintf( &t, 0,0,
-      "%04d-oyImage_ReadArray-array[%d].ppm", ++id,oyStruct_GetId((oyStruct_s*)array));
+      "%04d-oyImage_ReadArray-array[%d].ppm", ++oy_debug_write_id,oyStruct_GetId((oyStruct_s*)array));
       oyArray2d_ToPPM_( array_, t );
       oyMessageFunc_p( oyMSG_DBG, (oyStruct_s*)image,
                  OY_DBG_FORMAT_ "wrote debug image to: %s",
                  OY_DBG_ARGS_, t );
       t[0] = '\000'; oyStringAddPrintf( &t, 0,0,
-      "%04d-oyImage_ReadArray-image[%d].ppm", id, oyStruct_GetId((oyStruct_s*) image));
+      "%04d-oyImage_ReadArray-image[%d].ppm", oy_debug_write_id, oyStruct_GetId((oyStruct_s*) image));
       oyImage_WritePPM( image, t, "oyImage_ReadArray image" );
       oyMessageFunc_p( oyMSG_DBG, (oyStruct_s*)image,
                  OY_DBG_FORMAT_ "wrote debug image to: %s",
