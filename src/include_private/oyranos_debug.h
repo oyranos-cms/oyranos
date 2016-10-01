@@ -35,6 +35,7 @@ extern "C" {
  *  debugging variable - set 0 to off (default), set 1 to switch debugging on */
 extern clock_t oyranos_clock_;
 extern int level_PROG;
+extern int oy_debug_write_id;
 
 double             oyClock           ( );
 double             oySeconds         ( );

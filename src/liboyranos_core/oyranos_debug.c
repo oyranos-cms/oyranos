@@ -71,6 +71,8 @@ clock_t oyranos_clock_ = 0;
  */
 int oy_debug = 0;
 
+int oy_debug_write_id = 0; /* debug write image ID */
+
 void oy_backtrace_()
 {
 #   define TMP_FILE "/tmp/oyranos_gdb_temp.txt"
