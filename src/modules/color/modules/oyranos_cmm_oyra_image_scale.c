@@ -18,6 +18,7 @@
 #include "oyCMMui_s.h"
 #include "oyConnectorImaging_s.h"
 #include "oyRectangle_s.h"
+#include "oyRectangle_s_.h"
 
 #include "oyranos_cmm.h"
 #include "oyranos_cmm_oyra.h"
@@ -78,8 +79,8 @@ int      oyraFilter_ImageScaleRun    ( oyFilterPlug_s    * requestor_plug,
               "image [%d](%d)\n",OY_DBG_ARGS_,oyStruct_GetId((oyStruct_s*)image),oyImage_GetWidth(image) );
 
   {
-    oyRectangle_s * ticket_roi = oyPixelAccess_GetArrayROI( ticket );
-    oyRectangle_s * ticket_roi_pix = NULL;
+    oyRectangle_s_  ticket_roi_pix_ = {oyOBJECT_RECTANGLE_S,0,0,0, 0,0,0,0};
+    oyRectangle_s * ticket_roi_pix = (oyRectangle_s*)&ticket_roi_pix_;
     double  scale = 1.0;
     oyOptions_s * node_opts = oyFilterNode_GetOptions( node, 0 );
 
@@ -114,30 +115,33 @@ int      oyraFilter_ImageScaleRun    ( oyFilterPlug_s    * requestor_plug,
     {
       oyImage_s * output_image = oyPixelAccess_GetOutputImage( ticket );
       int output_image_width = oyImage_GetWidth( output_image );
+      oyRectangle_s_  new_ticket_array_roi_pix_ = {oyOBJECT_RECTANGLE_S,0,0,0, 0,0,0,0};
       oyRectangle_s * new_ticket_array_roi = NULL,
-                    * new_ticket_array_roi_pix = NULL,
+                    * new_ticket_array_roi_pix = (oyRectangle_s*)&new_ticket_array_roi_pix_,
                     * image_pix = oyRectangle_NewWith( 0,0,+
                                      oyImage_GetWidth(image),
                                      oyImage_GetHeight(image), 0);
       oyPixelAccess_s * new_ticket = 0;
-      oyArray2d_s * a_dest = oyPixelAccess_GetArray( ticket );
       /* start_xy is defined relative to the tickets output image width */
       double start_x_src_pixel = oyPixelAccess_GetStart( ticket, 0 )
                                  * output_image_width,
              start_y_src_pixel = oyPixelAccess_GetStart( ticket, 1 )
-                                 * output_image_width;
+                                 * output_image_width,
+             start_x_dst_pixel,start_y_dst_pixel;
       int layout_src = oyImage_GetPixelLayout( image, oyLAYOUT ),
           layout_dst = oyImage_GetPixelLayout( output_image, oyLAYOUT );
       int channels_src = oyToChannels_m( layout_src );
       int channels_dst = oyToChannels_m( layout_dst );
-      int a_width_dest = oyArray2d_GetWidth( a_dest ) / channels_dst;
 
       new_ticket = oyPixelAccess_Copy( ticket, ticket->oy_ );
       oyPixelAccess_SetArray( new_ticket, 0, 0 );
       oyPixelAccess_SetOutputImage( new_ticket, image );
 
       if(oy_debug)
-        oyra_msg( oyMSG_WARN, (oyStruct_s*)ticket, OY_DBG_FORMAT_
+      {
+        oyArray2d_s * a_dest = oyPixelAccess_GetArray( ticket );
+        int a_width_dest = oyArray2d_GetWidth( a_dest ) / channels_dst;
+        oyra_msg( oyMSG_DBG, (oyStruct_s*)ticket, OY_DBG_FORMAT_
              "output_image [%d](%d*%d)-array[%d](w%d) image [%d](%d*%d)\n",
              OY_DBG_ARGS_,
              oyStruct_GetId((oyStruct_s*)output_image),
@@ -145,19 +149,24 @@ int      oyraFilter_ImageScaleRun    ( oyFilterPlug_s    * requestor_plug,
              oyStruct_GetId((oyStruct_s*)a_dest), a_width_dest,
              oyStruct_GetId((oyStruct_s*)image),
              oyImage_GetWidth(image), channels_src );
+        oyArray2d_Release( &a_dest );
+      }
 
       oyPixelAccess_RoiToPixels( ticket, NULL, &new_ticket_array_roi_pix );
 
         /* scale */
       oyRectangle_Scale( new_ticket_array_roi_pix, 1.0/scale );
+      oyRectangle_Round( new_ticket_array_roi_pix );
         /* convert to new_ticket relative dimensions */
       oyPixelAccess_PixelsToRoi( new_ticket, new_ticket_array_roi_pix,
                                  &new_ticket_array_roi );
 
       /* adapt the access start and write relative to new tickets image width */
+      start_x_dst_pixel = OY_ROUND(start_x_src_pixel / scale);
+      start_y_dst_pixel = OY_ROUND(start_y_src_pixel / scale);
       oyPixelAccess_ChangeRectangle( new_ticket,
-                          start_x_src_pixel / scale / image_width,
-                          start_y_src_pixel / scale / image_width,
+                                     start_x_dst_pixel / image_width,
+                                     start_y_dst_pixel / image_width,
                                      new_ticket_array_roi );
 
       if(oy_debug)
@@ -171,7 +180,6 @@ int      oyraFilter_ImageScaleRun    ( oyFilterPlug_s    * requestor_plug,
       {
         char * troi;
         troi = strdup( oyRectangle_Show(ticket_roi_pix) );
-        oyRectangle_Release( &ticket_roi_pix );
         oyra_msg( oyMSG_WARN, (oyStruct_s*)ticket, OY_DBG_FORMAT_
                   "ticket_roi_pix: %s  %s %f  new_ticket_array_roi_pix: %s",OY_DBG_ARGS_,
                   troi, "scale factor:", scale,
@@ -208,15 +216,46 @@ int      oyraFilter_ImageScaleRun    ( oyFilterPlug_s    * requestor_plug,
                      oyPixelAccess_Show( new_ticket ) );
         result = oyFilterNode_Run( input_node, plug, new_ticket );
 
+        /* prepare the current ticket */
+        oyPixelAccess_SetArrayFocus( ticket, 0 );
+
         /* get the channel buffers */
         array_in = oyPixelAccess_GetArray( new_ticket );
         array_out = oyPixelAccess_GetArray( ticket );
         array_in_data  = oyArray2d_GetData( array_in );
         array_out_data = oyArray2d_GetData( array_out );
-        w = oyArray2d_GetWidth( array_out ) / channels_dst;
-        h = oyArray2d_GetHeight( array_out );
-        nw = oyArray2d_GetWidth( array_in ) / channels_src;
+        w  = oyArray2d_GetWidth ( array_out ) / channels_dst;
+        h  = oyArray2d_GetHeight( array_out );
+        nw = oyArray2d_GetWidth ( array_in ) / channels_src;
         nh = oyArray2d_GetHeight( array_in );
+
+        if(nw < (int)OY_ROUND(w/scale)) issue |= 1;
+        if(nh < (int)OY_ROUND(h/scale)) issue |= 2;
+        if(issue || oy_debug > 2)
+        {
+          oyra_msg( oyMSG_WARN, (oyStruct_s*)ticket, OY_DBG_FORMAT_
+                "ticket: %s",OY_DBG_ARGS_, oyPixelAccess_Show(ticket));
+          oyra_msg( oyMSG_WARN, (oyStruct_s*)ticket, OY_DBG_FORMAT_
+                "new_ti: %s",OY_DBG_ARGS_, oyPixelAccess_Show(new_ticket));
+        }
+        if(issue || oy_debug)
+        {
+          char *a,*b,*c;
+          a = strdup(oyRectangle_Show( ticket_roi_pix ));
+          b = strdup(oyRectangle_Show( image_pix ));
+          c = strdup(oyRectangle_Show( new_ticket_array_roi_pix ));
+          oyra_msg( issue?oyMSG_ERROR:oyMSG_DBG, (oyStruct_s*)ticket, OY_DBG_FORMAT_
+                     "node [%d] scale: %.02f old roi %s/%s(image) -> new roi %s array_in[%d](%dx%d)%dc w/scale=%g h/scale=%g-> array_out[%d](%dx%d)%dc"
+                     "%s%s%s",OY_DBG_ARGS_,
+                     oyStruct_GetId( (oyStruct_s*)node ), scale,
+                     a,b,c,
+                     oyStruct_GetId( (oyStruct_s*)array_in ), nw,nh,channels_src, w/scale, h/scale,
+                     oyStruct_GetId( (oyStruct_s*)array_out ), w,h, channels_dst,
+                     issue?" found issue(s): too":"",
+                     issue & 1 ? " wide":"",
+                     issue & 2 ? " heigh":"" );
+          if(a) free(a); if(b) free(b); if(c) free(c);
+        }
 
         /* do the scaling while copying the channels */
 #if defined(USE_OPENMP)
@@ -225,35 +264,16 @@ int      oyraFilter_ImageScaleRun    ( oyFilterPlug_s    * requestor_plug,
         for(y = 0; y < h; ++y)
         {
           ys = y/scale;
-          if(ys >= nh) { break; }
+          if((int)OY_ROUND(ys) >= nh) { oyra_msg( oyMSG_ERROR, (oyStruct_s*)ticket,
+                         OY_DBG_FORMAT_"scale:%g y:%d h:%d ys:%d/%g nh:%d\n",
+                         OY_DBG_ARGS_, scale, y,h,ys,y/scale,nh); break; }
           for(x = 0; x < w; ++x)
           {
             xs = x/scale;
-            if(xs >= nw) { continue; }
-            memcpy( &array_out_data[y][x*channels_dst*bps_out],
-                    &array_in_data [ys][xs*channels_src*bps_in], channels_src*bps_in );
+            if((int)OY_ROUND(xs) >= nw) { continue; }
+            memcpy( &array_out_data[y] [x  *channels_dst*bps_out],
+                    &array_in_data [ys][xs *channels_src*bps_in], channels_src*bps_in );
           }
-        }
-
-        if(nw - w/scale > 1) issue |= 1;
-        if(nh - h/scale > 1) issue |= 2;
-        if(/*issue || */oy_debug)
-        {
-          char *a,*b,*c;
-          a = strdup(oyRectangle_Show( ticket_roi_pix ));
-          b = strdup(oyRectangle_Show( image_pix ));
-          c = strdup(oyRectangle_Show( new_ticket_array_roi_pix ));
-          oyra_msg( issue?oyMSG_ERROR:oyMSG_DBG, (oyStruct_s*)ticket, OY_DBG_FORMAT_
-                     "node [%d] scale: %.02f old roi %s/%s(image) -> new roi %s array[%d] %d*%dx%d -> (out array[%d] widthxheight / scale %dx%d) %d*%dx%d "
-                     "%f<1 %f<1%s%s%s",OY_DBG_ARGS_,
-                     oyStruct_GetId( (oyStruct_s*)node ), scale,
-                     a,b,c,
-                     oyStruct_GetId( (oyStruct_s*)array_in ), nw,channels_src,nh, OY_ROUND(w/scale), OY_ROUND(h/scale),
-                     oyStruct_GetId( (oyStruct_s*)array_out ), w,channels_dst,h, nw - w/scale, nh - h/scale,
-                     issue?" found issue(s): too":"",
-                     issue & 1 ? " wide":"",
-                     issue & 2 ? " heigh":"" );
-          if(a) free(a); if(b) free(b); if(c) free(c);
         }
 
         oyPixelAccess_Release( &new_ticket );
@@ -261,9 +281,8 @@ int      oyraFilter_ImageScaleRun    ( oyFilterPlug_s    * requestor_plug,
         oyArray2d_Release( &array_out );
       }
 
-      oyArray2d_Release( &a_dest );
       oyRectangle_Release( &new_ticket_array_roi );
-      oyRectangle_Release( &new_ticket_array_roi_pix );
+      //oyRectangle_Release( &new_ticket_array_roi_pix );
       oyRectangle_Release( &image_pix );
 
     } else /* scale == 1.0 */
@@ -275,8 +294,7 @@ int      oyraFilter_ImageScaleRun    ( oyFilterPlug_s    * requestor_plug,
     oyOptions_Release( &node_opts );
     oyFilterPlug_Release( &plug );
 
-    oyRectangle_Release( &ticket_roi );
-    oyRectangle_Release( &ticket_roi_pix );
+    //oyRectangle_Release( &ticket_roi_pix );
     oyFilterNode_Release( &input_node );
   }
 
