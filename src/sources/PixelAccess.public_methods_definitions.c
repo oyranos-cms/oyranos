@@ -241,7 +241,7 @@ int                oyPixelAccess_SetOutputImage (
  *  @return                            0 on success, else error
  *
  *  @version Oyranos: 0.9.6
- *  @date    2016/03/29
+ *  @date    2016/10/03
  *  @since   2016/03/29 (Oyranos: 0.9.6)
  */
 int                oyPixelAccess_SynchroniseROI (
@@ -255,77 +255,37 @@ int                oyPixelAccess_SynchroniseROI (
 
   if(!error)
   {
-    oyPixelAccess_s * ticket = pixel_access_src,
-                    * new_ticket = pixel_access_new;
-    oyImage_s * image_src = oyPixelAccess_GetOutputImage( ticket ),
-              * image_dst = oyPixelAccess_GetOutputImage( new_ticket );
+    oyImage_s * image_src = oyPixelAccess_GetOutputImage( pixel_access_src ),
+              * image_dst = oyPixelAccess_GetOutputImage( pixel_access_new );
     int image_width_src = oyImage_GetWidth( image_src ),
         image_width_dst = oyImage_GetWidth( image_dst );
-    oyRectangle_s * ticket_array_roi_src = oyPixelAccess_GetArrayROI( ticket ),
-                  * ticket_array_roi_dst = oyPixelAccess_GetArrayROI( new_ticket );
-    oyArray2d_s * a_src = oyPixelAccess_GetArray( ticket ),
-                * a_dst = oyPixelAccess_GetArray( new_ticket );
 
     /* start_xy is defined relative to the tickets output image width */
-    double start_x_pixel = oyPixelAccess_GetStart( ticket, 0 ) * image_width_src,
-           start_y_pixel = oyPixelAccess_GetStart( ticket, 1 ) * image_width_src;
-    int layout_src = oyImage_GetPixelLayout( image_src, oyLAYOUT ),
-        layout_dst = oyImage_GetPixelLayout( image_dst, oyLAYOUT );
-    int channels_src = oyToChannels_m( layout_src );
-    int channels_dst = oyToChannels_m( layout_dst );
-    int a_width_dst = 0, a_width_src = 0;
+    double start_x_pixel = oyPixelAccess_GetStart( pixel_access_src, 0 ) * image_width_src,
+           start_y_pixel = oyPixelAccess_GetStart( pixel_access_src, 1 ) * image_width_src;
 
-    if(channels_dst)
-      a_width_dst = oyArray2d_GetDataGeo1( a_dst, 2 ) / channels_dst;
-    if(channels_src)
-      a_width_src = oyArray2d_GetDataGeo1( a_src,2 ) / channels_src;
+    oyRectangle_s * roi_pix = NULL, * roi = NULL;
 
-    /** 1. Ignore any changes from previous edits of the new pixel access ticket. */
-    oyRectangle_SetByRectangle( ticket_array_roi_src, ticket_array_roi_dst );
+    oyPixelAccess_RoiToPixels( pixel_access_src, NULL, &roi_pix );
+    oyPixelAccess_PixelsToRoi( pixel_access_new, roi_pix, &roi );
+    
+    if(oy_debug)
+      oyMessageFunc_p( oy_debug?oyMSG_DBG:oyMSG_WARN, (oyStruct_s*)pixel_access_src, OY_DBG_FORMAT_
+                       "pixel_access_src: %s",OY_DBG_ARGS_,
+                       oyPixelAccess_Show(pixel_access_src));
 
-    /** 2. Adapt the access start and write relative to new tickets image width. */
-    if(image_width_src)
-      oyPixelAccess_ChangeRectangle( new_ticket,
+    oyPixelAccess_ChangeRectangle( pixel_access_new,
                           start_x_pixel / image_width_dst,
-                          start_y_pixel / image_width_dst, 0 );
+                          start_y_pixel / image_width_dst, roi );
 
-    /** 3. And use the available source image area */
-      /** 3.1. Convert ROI to old array pixel. */
-    oyRectangle_Scale( ticket_array_roi_src, a_width_dst );
-    oyRectangle_Round( ticket_array_roi_src );
 
     if(oy_debug)
-    {
-      oyRectangle_s_  r = {oyOBJECT_RECTANGLE_S, 0,0,0, 0,0,0,0};
-      oyRectangle_s * roi = (oyRectangle_s*)&r;
-      char * t, * t2;
-      oyRectangle_SetByRectangle( roi, ticket_array_roi_dst );
-      oyRectangle_Scale( roi, a_width_dst );
-      t = oyStringCopy( oyRectangle_Show( roi ), oyAllocateFunc_ );
-      t2 = oyStringCopy( oyArray2d_Show( a_dst, channels_dst), oyAllocateFunc_ );
-      oyMessageFunc_p( oy_debug?oyMSG_DBG:oyMSG_WARN, (oyStruct_s*)ticket, OY_DBG_FORMAT_
-              "new_ticket[%d] start_xy %g|%g ROI: %s[%d](%s)%dc %s <- %s[%d](%s)%dc %s\n",OY_DBG_ARGS_,
-                   oyStruct_GetId((oyStruct_s*)new_ticket),
-                   start_x_pixel, start_y_pixel,
-                   _("Image"), oyStruct_GetId((oyStruct_s*)image_dst),
-                   t, channels_dst, t2,
-                   _("Image"), oyStruct_GetId((oyStruct_s*)image_src),
-                   oyRectangle_Show(roi), channels_src,
-                   oyArray2d_Show( a_src, channels_src ) );
-      oyFree_m_(t);
-      oyFree_m_(t2);
-    }
+      oyMessageFunc_p( oy_debug?oyMSG_DBG:oyMSG_WARN, (oyStruct_s*)pixel_access_src, OY_DBG_FORMAT_
+                       "pixel_access_new: %s",OY_DBG_ARGS_,
+                       oyPixelAccess_Show(pixel_access_new));
 
-      /** 3.2. Divide ROI by new array size. */
-    if(a_width_src)
-      oyRectangle_Scale( ticket_array_roi_src, 1.0/a_width_src );
-
-    oyImage_Release( &image_src );
-    oyImage_Release( &image_dst );
-    oyArray2d_Release( &a_src );
-    oyArray2d_Release( &a_dst );
-    oyRectangle_Release( &ticket_array_roi_dst );
-    oyRectangle_Release( &ticket_array_roi_src );
+    oyRectangle_Release( &roi ); oyRectangle_Release( &roi_pix );
+    oyImage_Release( &image_src ); oyImage_Release( &image_dst );
   }
 
   return error;
@@ -719,7 +679,7 @@ oyArray2d_s *      oyPixelAccess_GetArray (
  *                                     1 - the array is already in focus for pixel_access::output_array_roi
  *
  *  @version  Oyranos: 0.9.6
- *  @date     2016/09/14
+ *  @date     2016/10/01
  *  @since    2012/09/06 (Oyranos: 0.5.0)
  */
 int                oyPixelAccess_SetArray (
@@ -738,13 +698,6 @@ int                oyPixelAccess_SetArray (
   oyCheckType__m( oyOBJECT_PIXEL_ACCESS_S, return 1 )
 
 
-  if(s->array != array)
-  {
-    if(s->array)
-      oyArray2d_Release( &s->array );
-    s->array = oyArray2d_Copy( array, 0 );
-  }
-
   /* adapt to eventually new ROI base unit, which is
    * s->array::data:width/channels */
   channels = oyImage_GetPixelLayout( s->output_image, oyCHANS );
@@ -753,6 +706,7 @@ int                oyPixelAccess_SetArray (
     old_array_pix_width = oyArray2d_GetDataGeo1( s->array, 2 ) / channels;
   else
     old_array_pix_width = oyImage_GetWidth( s->output_image );
+
   if(array)
     array_pix_width = oyArray2d_GetDataGeo1( array, 2 ) / channels;
   else
@@ -765,7 +719,17 @@ int                oyPixelAccess_SetArray (
     oyRectangle_Scale( (oyRectangle_s*)s->output_array_roi, 1.0/array_pix_width );
   }
 
-  s->output_array_is_focussed = has_roi_focus;
+  if(s->array != array)
+  {
+    if(s->array)
+      oyArray2d_Release( &s->array );
+    s->array = oyArray2d_Copy( array, 0 );
+  }
+
+  if(has_roi_focus)
+    s->output_array_is_focussed = has_roi_focus;
+  else
+    oyPixelAccess_SetArrayFocus( pixel_access, has_roi_focus );
 
   return 0;
 }
