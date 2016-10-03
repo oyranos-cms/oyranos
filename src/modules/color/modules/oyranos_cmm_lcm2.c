@@ -2661,9 +2661,9 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
       a = oyArray2d_Create( NULL, w * channels_in,h, oyToDataType_m( pixel_layout_in ), ticket->oy_ );
       if(oy_debug)
       {
-        lcm2_msg( oy_debug?oyMSG_WARN:oyMSG_DBG, (oyStruct_s*)ticket, OY_DBG_FORMAT_"layout_out(%d) != layout_in(%d) created array[%d](%dx%d)%dc",
+        lcm2_msg( oy_debug?oyMSG_WARN:oyMSG_DBG, (oyStruct_s*)ticket, OY_DBG_FORMAT_"layout_out(%d) != layout_in(%d) created %s",
                 OY_DBG_ARGS_, layout_out, pixel_layout_in,
-                oyStruct_GetId( (oyStruct_s*)a ), w * channels_in, h, channels_in );
+                oyArray2d_Show( a, channels_in ));
       }
     }
     oyArray2d_Release( &old_a );
@@ -2671,6 +2671,11 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
     oyArray2d_Release( &a );
 
     oyPixelAccess_SynchroniseROI( new_ticket, ticket );
+
+    if(oy_debug)
+      lcm2_msg( oy_debug?oyMSG_WARN:oyMSG_DBG, (oyStruct_s*)ticket, OY_DBG_FORMAT_"new_ticket %s",
+                OY_DBG_ARGS_,
+                oyPixelAccess_Show( new_ticket ));
   }
 
   /* We let the input filter do its processing first. */
