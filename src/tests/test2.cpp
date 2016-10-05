@@ -5024,8 +5024,9 @@ oyTESTRESULT_e testScreenPixel()
     oyImage_WritePPM( input, fn, "test2::screen 00 image" );
   }
   clck = oyClock();
-  //for(i = 1; i <= n; ++i)
+  for(i = 1; i <= n; ++i)
   {
+    int err = 0;
     oy_debug_write_id = 100*i;
     // clear the output buffer to make changes visible
     memset( buf_16out, 0, sizeof(*buf_16out) );
@@ -5046,6 +5047,27 @@ oyTESTRESULT_e testScreenPixel()
       fprintf( zout, "wrote PPM               %s\n", fn );
       oyImage_WritePPM( output, fn, num );
     }
+
+    y = 128;
+    for(x = 0; x < dst_width; ++x)
+    {
+      if( buf_16out[y*dst_width*channels + x*channels + 3] &&
+          buf_16out[y*dst_width*channels + x*channels + 3] != x )
+      {
+        err = buf_16out[y*dst_width*channels + x*channels + 3];
+        break;
+      }
+    }
+    
+    if( err == 0 )
+    { PRINT_SUB( oyTESTRESULT_SUCCESS,
+      "oyDrawScreenImage   fills correct positions        " );
+    } else
+    { PRINT_SUB( oyTESTRESULT_FAIL,
+      "oyDrawScreenImage   fills correct positions  %d/%d", x,err );
+    }
+
+
     if(oy_debug)
     fprintf( zout, "\nDONE [%d] ##################################### %s\n\n", i, oyRectangle_Show(display_rectangle) );
   }
@@ -5061,6 +5083,7 @@ oyTESTRESULT_e testScreenPixel()
   { PRINT_SUB( oyTESTRESULT_FAIL,
     "oyDrawScreenImage                                  " );
   }
+
 
 
   oyConversion_Release ( &cc );
