@@ -508,10 +508,13 @@ int            oyImage_SetCritical   ( oyImage_s         * image,
     char * pl = oyPixelPrint( pixel_layout, oyAllocateFunc_ );
     const char * pt = oyProfile_GetText(profile,oyNAME_NAME),
                * tt = oyOptions_GetText( tags, oyNAME_NAME );
-    DBGs6_S( image, "pixel_layout: %d=(\"%s\") profile = %s tags = %s\t%dx%d",
+    double channel_n = oyImage_GetPixelLayout( image, oyCHANS );
+    oyMessageFunc_p( oy_debug?oyMSG_DBG:oyMSG_WARN, (oyStruct_s*)image,
+                 OY_DBG_FORMAT_ "pixel_layout:%d=(\"%s\") profile:%s tags:%s\t(%dx%d)%dc",
+                 OY_DBG_ARGS_,
                  pixel_layout, pixel_layout?pl:oyNoEmptyString_m_( NULL ),
                  oyNoEmptyString_m_( pt ), oyNoEmptyString_m_( tt ),
-                 width, height );
+                 width, height, channel_n );
     oyFree_m_(pl);
   }
 
