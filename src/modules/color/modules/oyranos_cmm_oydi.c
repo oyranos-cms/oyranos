@@ -862,8 +862,8 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
       oyRectangle_Trim( (oyRectangle_s*)&roi_pix, device_rectangle );
       roi_pix.x -= display_pos_x;
       roi_pix.y -= display_pos_y;
-      if(oy_debug > 2)
-        oydi_msg( oyMSG_DBG, (oyStruct_s*)image,
+      if(oy_debug)
+        oydi_msg( oyMSG_DBG, (oyStruct_s*)ticket,
             OY_DBG_FORMAT_"image %d: roi_pix:%s", OY_DBG_ARGS_,
             i, oyRectangle_Show((oyRectangle_s*)&roi_pix));
 
@@ -924,7 +924,12 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
           oyFilterGraph_Release( &ticket_graph );
           oyOptions_Release( &ticket_graph_opts );
           ++dirty;
-        }
+        } else if(oy_debug)
+          oydi_msg( oyMSG_DBG, (oyStruct_s*)ticket,
+             OY_DBG_FORMAT_"%s[%d](%s) profile already set: %s", OY_DBG_ARGS_,
+             _("Image"), oyStruct_GetId((oyStruct_s*)image_input),
+             oyStruct_GetInfo((oyStruct_s*)image_input,0,0),
+             oyProfile_GetText(p,oyNAME_NAME) );
 
         oyProfile_Release( &p );
         oyProfile_Release( &image_input_profile );
