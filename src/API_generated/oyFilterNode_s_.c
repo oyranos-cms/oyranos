@@ -714,7 +714,7 @@ int          oyFilterNode_SetContext_( oyFilterNode_s_    * node,
            */
 
 
-          if(oy_debug == 1 && getenv("OY_DEBUG_WRITE"))
+          if(oy_debug && getenv("OY_DEBUG_WRITE"))
           {
             size = 0;
             ptr = oyFilterNode_TextToInfo_( node, &size, oyAllocateFunc_ );
@@ -925,12 +925,12 @@ int          oyFilterNode_SetContext_( oyFilterNode_s_    * node,
                   node->backend_data = oyPointer_Copy( cmm_ptr4, 0 );
               }
 
-              if(oy_debug == 1 && getenv("OY_DEBUG_WRITE"))
+              if(oy_debug && getenv("OY_DEBUG_WRITE"))
               {
                 int id = oyFilterNode_GetId( (oyFilterNode_s*)node );
                 char * file_name = 0;
                 oyAllocHelper_m_( file_name, char, 80, 0, return 1 );
-                sprintf( file_name, "test_dbg_color_dl-%d.icc", id );
+                sprintf( file_name, "dbg_color_dl-node[%d].icc", id );
                 if(ptr && size && node->backend_data)
                   oyWriteMemToFile_( file_name, ptr, size );
                 oyFree_m_(file_name);
