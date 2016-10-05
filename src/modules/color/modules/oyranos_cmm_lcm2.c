@@ -1801,11 +1801,14 @@ cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
 
   if(oy_debug && getenv("OY_DEBUG_WRITE"))
   {
+      char * t = 0; oyStringAddPrintf( &t, 0,0,
+      "%04d-%s-abstract-proof[%d].ppm", ++oy_debug_write_id,CMM_NICK,oyStruct_GetId((oyStruct_s*)proof));
       lcmsSaveProfileToMem( gmt, 0, &size );
       data = oyAllocateFunc_( size );
       lcmsSaveProfileToMem( gmt, data, &size );
-      oyWriteMemToFile_( "dbg_abstract_proof.icc", data, size );
+      oyWriteMemToFile_( t, data, size );
       if(data) oyDeAllocateFunc_( data ); data = 0;
+      oyFree_m_(t);
   }
 
   lcmsGetAlarmCodes(OldAlarm);
@@ -2817,11 +2820,15 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
 
     n = OY_MIN(w_in/channels_in, w_out/channels_out);
 
-    if(oy_debug > 2)
+    if(oy_debug)
       lcm2_msg( oyMSG_DBG,(oyStruct_s*)ticket, OY_DBG_FORMAT_
-             " threads_n: %d array_in_data: "OY_PRINT_POINTER
-             " array_out_data: "OY_PRINT_POINTER" convert pixel: %d",
-             OY_DBG_ARGS_, threads_n, array_in_data, array_out_data,n );
+             " %s[%d]=\"%s\" threads_n: %d %s "OY_PRINT_POINTER
+             " -> %s "OY_PRINT_POINTER" convert pixel: %d",
+             OY_DBG_ARGS_,
+             _("Node"),oyStruct_GetId((oyStruct_s*)node),oyStruct_GetInfo((oyStruct_s*)node,0,0),
+             threads_n,
+             oyArray2d_Show(array_in,channels_in),array_in_data,
+             oyArray2d_Show(array_out,channels_out),array_out_data,n );
 
     if(!(data_type_in == oyUINT8 ||
          data_type_in == oyUINT16 ||
@@ -2959,7 +2966,6 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
 
     if(getenv("OY_DEBUG_WRITE"))
     {
-      static int id = 0;
       char * t = 0; oyStringAddPrintf( &t, 0,0,
       "%04d-%s-array_in[%d].ppm", ++oy_debug_write_id,CMM_NICK,oyStruct_GetId((oyStruct_s*)array_in));
       oyArray2d_ToPPM_( (oyArray2d_s_*)array_in, t );
@@ -2969,6 +2975,20 @@ int      lcm2FilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
       t[0] = '\000'; oyStringAddPrintf( &t, 0,0,
       "%04d-%s-array_out[%d].ppm", oy_debug_write_id,CMM_NICK,oyStruct_GetId((oyStruct_s*)array_out));
       oyArray2d_ToPPM_( (oyArray2d_s_*)array_out, t );
+      lcm2_msg( oyMSG_DBG, (oyStruct_s*)ticket,
+                 OY_DBG_FORMAT_ "wrote debug image to: %s",
+                 OY_DBG_ARGS_, t );
+      t[0] = '\000'; oyStringAddPrintf( &t, 0,0,
+      "%04d-%s-node[%d]-array_out[%d]%dc.ppm", oy_debug_write_id,CMM_NICK,oyStruct_GetId((oyStruct_s*)node),oyStruct_GetId((oyStruct_s*)array_out),channels_out);
+      {
+        oyProfile_s * p = oyImage_GetProfile( image_output );
+        oyImage_s * img = oyImage_Create( oyArray2d_GetWidth(array_out)/channels_out, oyArray2d_GetHeight(array_out),NULL,
+                                          oyImage_GetPixelLayout( image_output, oyLAYOUT ), p, NULL );
+        oyImage_ReadArray( img, NULL, array_out, NULL );
+        oyImage_WritePPM( img, t, t );
+        oyProfile_Release( &p );
+        oyImage_Release( &img );
+      }
       lcm2_msg( oyMSG_DBG, (oyStruct_s*)ticket,
                  OY_DBG_FORMAT_ "wrote debug image to: %s",
                  OY_DBG_ARGS_, t );
