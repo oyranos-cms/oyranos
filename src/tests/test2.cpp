@@ -4929,14 +4929,15 @@ oyTESTRESULT_e testScreenPixel()
   oyProfile_s * p_web = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, NULL );
   oyProfile_s * p_in, * p_out;
   int error = 0,
-      i,n = 10;
-  int src_width  = 4 * 1024,
+      i = 2,n = 10;
+  const int src_width  = 4 * 1024,
       src_height =     512,
-      dst_width  =     1024,
+      dst_width  = 2 * 1024,
       dst_height =     256,
-      x,y;
-  uint16_t * buf_16in  = (uint16_t*) calloc(sizeof(uint16_t), src_width * src_height * 3);
-  uint16_t * buf_16out = (uint16_t*) calloc(sizeof(uint16_t), dst_width * dst_height * 3);
+      channels = 4;
+  int x,y;
+  uint16_t * buf_16in  = (uint16_t*) calloc(sizeof(uint16_t), src_width * src_height * channels);
+  uint16_t * buf_16out = (uint16_t*) calloc(sizeof(uint16_t), dst_width * dst_height * channels);
   oyDATATYPE_e buf_type_in = oyUINT16,
                data_type_request = oyUINT16;
   oyImage_s *input, *output;
@@ -4947,22 +4948,23 @@ oyTESTRESULT_e testScreenPixel()
   for(y = 0; y < src_height; ++y)
     for(x = 0; x < src_width; ++x)
     {
-      buf_16in[y*src_width*3 + x*3 + 0] = (y / (double)(src_height-1)) * 65535;
-      buf_16in[y*src_width*3 + x*3 + 1] = (1.0 - (y / (double)(src_height-1))) * 65535;
-      buf_16in[y*src_width*3 + x*3 + 2] = 65535/2;
+      buf_16in[y*src_width*channels + x*channels + 0] = (y / (double)(src_height-1)) * 65535;
+      buf_16in[y*src_width*channels + x*channels + 1] = (1.0 - (y / (double)(src_height-1))) * 65535;
+      buf_16in[y*src_width*channels + x*channels + 2] = y;
+      buf_16in[y*src_width*channels + x*channels + 3] = x;
     }
 
   p_in = p_web;
   p_out = p_rgb;
   input =oyImage_Create( src_width,src_height, 
                          buf_16in,
-                         oyChannels_m(oyProfile_GetChannelsCount(p_in)) |
+                         oyChannels_m(oyProfile_GetChannelsCount(p_in)+1) |
                           oyDataType_m(buf_type_in),
                          p_in,
                          0 );
   output=oyImage_Create( dst_width,dst_height, 
                          buf_16out,
-                         oyChannels_m(oyProfile_GetChannelsCount(p_out)) |
+                         oyChannels_m(oyProfile_GetChannelsCount(p_out)+1) |
                           oyDataType_m(data_type_request),
                          p_out,
                          0 );
@@ -4999,7 +5001,7 @@ oyTESTRESULT_e testScreenPixel()
                                            oyPIXEL_ACCESS_IMAGE, 0 );
   oyFilterPlug_Release( &plug );
 
-  oyRectangle_s_ display_rectangle_ = {oyOBJECT_RECTANGLE_S,0,0,0, 0,0,1024,256};
+  oyRectangle_s_ display_rectangle_ = {oyOBJECT_RECTANGLE_S,0,0,0, 0,0,dst_width,dst_height};
   oyRectangle_s_ old_display_rectangle_ = {oyOBJECT_RECTANGLE_S,0,0,0, 0,0,0,0};
   oyRectangle_s * display_rectangle = (oyRectangle_s *) &display_rectangle_;
   oyRectangle_s * old_display_rectangle = (oyRectangle_s *) &old_display_rectangle_;
@@ -5022,8 +5024,9 @@ oyTESTRESULT_e testScreenPixel()
     oyImage_WritePPM( input, fn, "test2::screen 00 image" );
   }
   clck = oyClock();
-  for(i = 1; i <= n; ++i)
+  //for(i = 1; i <= n; ++i)
   {
+    oy_debug_write_id = 100*i;
     // clear the output buffer to make changes visible
     memset( buf_16out, 0, sizeof(*buf_16out) );
     display_rectangle_.x = i*256;
@@ -5035,12 +5038,16 @@ oyTESTRESULT_e testScreenPixel()
                                 output );
     if(getenv("OY_DEBUG_WRITE"))
     {
-      char fn[256], num[4];
-      sprintf( num, "%02d", i );
-      sprintf( fn, "test2-oyDrawScreenImage-%s.ppm", num );
+      char fn[256], num[256];
+      sprintf( num, "%04d image[%d] display: %s", oy_debug_write_id,
+               oyStruct_GetId((oyStruct_s*)output),
+               oyRectangle_Show(display_rectangle) );
+      sprintf( fn, "test2-oyDrawScreenImage-%04d.ppm", oy_debug_write_id );
       fprintf( zout, "wrote PPM               %s\n", fn );
       oyImage_WritePPM( output, fn, num );
     }
+    if(oy_debug)
+    fprintf( zout, "\nDONE [%d] ##################################### %s\n\n", i, oyRectangle_Show(display_rectangle) );
   }
   clck = oyClock() - clck;
 
