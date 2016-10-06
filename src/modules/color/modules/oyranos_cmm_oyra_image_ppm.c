@@ -483,7 +483,6 @@ int      oyraFilterPlug_ImageInputPPMRun (
   int height = 0;
   int spp = 0;         /* samples per pixel */
   int byteps = 1;      /* byte per sample */
-  int bitps = 0;       /* bits per sample, not standard and in case it is needed */
   double maxval = 0; 
     
   size_t start, end;
@@ -934,7 +933,7 @@ int      oyraFilterPlug_ImageInputPPMRun (
       }
     }
 
-    maxval = abs(maxval);
+    maxval = fabs(maxval);
 
     for(h = 0; h < height; ++h)
     {

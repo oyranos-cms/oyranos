@@ -27,9 +27,11 @@
 int oy_display_verbose = 0;
 #ifdef __cplusplus
 #include <cstdio>
+#include <cstring>
 extern "C" {
 #else
 #include <stdio.h>
+#include <string.h>
 #endif /* __cplusplus */
 int oyWriteMemToFile_(const char* name, const void* mem, size_t size);
 #ifdef __cplusplus

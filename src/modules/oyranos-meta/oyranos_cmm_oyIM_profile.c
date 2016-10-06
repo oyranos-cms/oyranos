@@ -634,7 +634,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
   icTagTypeSignature  sig = 0;
   int32_t size_ = -1;
   oyStructList_s * list = 0;
-  icTagTypeSignature tag_sig = (icTagSignature)0;
+  icTagTypeSignature tag_sig = (icTagTypeSignature)0;
   char num[32];
   oyName_s * name = 0;
   oyBlob_s * o = 0;
@@ -2596,7 +2596,7 @@ int          oyIMProfileTag_Create   ( oyProfileTag_s    * tag,
              error = !tmp_len;
              
              if(i)
-               error = !string->lang;
+               error = !string->lang[0];
 
              len = tmp_len * 2 + 4;
              mluc_len += len + (len%4 ? len%4 : 0);
@@ -2630,12 +2630,12 @@ int          oyIMProfileTag_Create   ( oyProfileTag_s    * tag,
              error = !tmp_len;
 
              if(i)
-               error = !string->lang;
+               error = !string->lang[0];
            }
 
            if(!error)
            {
-               if(string->lang && oyStrlen_(string->lang))
+               if(string->lang[0] && oyStrlen_(string->lang))
                {
                  if(strlen(string->lang) >= 2)
                    memcpy( &mem[16+i*12 + 0], string->lang, 2 );
@@ -3143,7 +3143,7 @@ int                oySizeOfMluc      ( const char        * mem,
 
   int error = max_tag_size < 24 + count * size;
 
-  icTagTypeSignature tag_sig = (icTagSignature)0;
+  icTagTypeSignature tag_sig = (icTagTypeSignature)0;
   tag_sig = *(icUInt32Number*)(mem);
   tag_sig = oyValueUInt32( tag_sig );
 

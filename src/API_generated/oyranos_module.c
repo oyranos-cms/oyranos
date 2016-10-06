@@ -604,7 +604,7 @@ oyCMMapi_s *     oyCMMsGetApi_       ( oyOBJECT_e          type,
       oyCMMinfo_Release( &cmm_info );
     }
 
-    if(max_rank >= 0 && lib_used)
+    if(max_rank > 0 && lib_used)
     {
       if(*lib_used)
         oyFree_m_(*lib_used);

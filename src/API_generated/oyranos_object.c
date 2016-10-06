@@ -27,7 +27,7 @@ int          oyTextboolean_          ( const char        * text_a,
 {
   int erg = -1;
   int error = !text_a || !text_b ||
-              0 > type || type > oyBOOLEAN_UNION;
+              type > oyBOOLEAN_UNION;
 
   if(error <= 0)
   {

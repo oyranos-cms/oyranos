@@ -905,7 +905,7 @@ int      oySetProfile_               ( const char        * name,
   {
     const char* config_name = 0;
     DBG_PROG2_S("set fileName = %s as %d profile\n",fileName, type)
-    if ( type < 0 )
+    if ( type < oyDEFAULT_PROFILE_START || oyDEFAULT_PROFILE_END < type )
       WARNc2_S( "%s %d", _("default profile type does not exist:"), type  );
 
     if(oyWidgetTitleGet_( (oyWIDGET_e)type, 0,0,0,0 ) ==

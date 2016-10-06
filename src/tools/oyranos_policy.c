@@ -206,10 +206,11 @@ int main( int argc , char** argv )
 
     if(list_policies)
       for(i = 0; i < count; ++i)
+      {
         if(file_name)
         {
           char * full_name = NULL;
-          int error = oyPolicyFileNameGet_( names[i],
+          error = oyPolicyFileNameGet_( names[i],
                                             &full_name,
                                             oyAllocateFunc_ );
           if(error)
@@ -221,6 +222,7 @@ int main( int argc , char** argv )
           oyFree_m_( full_name );
         } else
           fprintf(stdout, "%s\n", names[i]);
+      }
 
     if(current_policy)
     {
@@ -228,7 +230,7 @@ int main( int argc , char** argv )
       if(current >= 0 && file_name)
       {
         char * full_name = NULL;
-        int error = oyPolicyFileNameGet_( names[current], &full_name,
+        error = oyPolicyFileNameGet_( names[current], &full_name,
                                           oyAllocateFunc_ );
         if(internal_name)
           fprintf(stdout, "%s (%s)\n", names[current], full_name);

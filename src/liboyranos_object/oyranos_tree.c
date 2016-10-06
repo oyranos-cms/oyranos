@@ -348,6 +348,7 @@ int                oyStruct_GetChildren (
     case oyOBJECT_CMM_OBJECT_TYPE_S:
     case oyOBJECT_CMM_API_MAX:
     case oyOBJECT_ICON_S:
+    case oyOBJECT_JOB_S:
     case oyOBJECT_MODULE_S:
     case oyOBJECT_EXTERNFUNC_S:
     case oyOBJECT_NAME_S:

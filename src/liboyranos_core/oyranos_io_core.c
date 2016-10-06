@@ -1360,13 +1360,13 @@ oyRecursivePaths_  ( pathSelect_f_ doInPath,
       STRING_ADD( name, path );
       for (k=0; k <= l; ++k) {
 
-        if(!(entry[k] && entry[k]->d_name))
+        if(!(entry[k] && entry[k]->d_name[0]))
 	{
           DBG_MEM3_S("%d. skip empty entry[%d]->d_name in %s", l, k, path)
           goto cont;
 	}
 
-        assert(entry[k] && entry[k]->d_name);
+        assert(entry[k] && entry[k]->d_name[0]);
 
         oyStringAddPrintf( &name, AD, "/%s", entry[k]->d_name );
         DBG_MEM4_S("%d. %s %s/%s", l, oyNoEmptyString_m(name), path, entry[k]->d_name)

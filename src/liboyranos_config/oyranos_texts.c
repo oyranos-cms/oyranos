@@ -1339,16 +1339,16 @@ int          oyOptionChoicesGet_     ( oyWIDGET_e          type,
       type == oyWIDGET_CMM_RENDERER)
   {
     int count = 0;
-    char ** list = oyGetCMMs( type, name_type, flags, oyAllocateFunc_ );
+    char ** list = oyGetCMMs( (oyCMM_e)type, name_type, flags, oyAllocateFunc_ );
     int c = -1;
-    char * cu = oyGetCMMPattern( type, 0, oyAllocateFunc_ );
+    char * cu = oyGetCMMPattern( (oyCMM_e)type, 0, oyAllocateFunc_ );
 
     if( !list )
       return 1;
 
     while(list[count])
     {
-      char * t = oyCMMNameToRegistration( list[count], type, name_type, 0,
+      char * t = oyCMMNameToRegistration( list[count], (oyCMM_e)type, name_type, 0,
                                           oyAllocateFunc_ );
       if(oyFilterRegistrationMatch( t, cu, 0))
         c = count;
@@ -1848,7 +1848,7 @@ oyCMMapiFilter_s * oyGetCMM_         ( oyCMM_e             type,
 
   apis = oyCMMsGetFilterApis_( "///icc_color", otype, 0,
                                &rank_list, &apis_n );
-  n = oyCMMapiFilters_Count( apis ), i;
+  n = oyCMMapiFilters_Count( apis );
   for(i = 0; i < n; ++i)
   {
     oyCMMapiFilter_s * f = oyCMMapiFilters_Get( apis, i );

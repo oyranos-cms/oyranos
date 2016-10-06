@@ -140,13 +140,12 @@ int      oyraFilter_ImageExposeRun    ( oyFilterPlug_s    * requestor_plug,
 
         /* expose the samples */
 #if defined(USE_OPENMP)
-#pragma omp parallel for private(x,flt)
+#pragma omp parallel for private(x)
 #endif
         for(y = start_y; y < h; ++y)
         {
           for(x = start_x; x < w; ++x)
           {
-            float flt;
             int i;
             
             for(i = 0; i < channels_dst; ++i)

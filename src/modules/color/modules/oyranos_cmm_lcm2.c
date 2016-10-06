@@ -658,8 +658,8 @@ int        oyPixelToLcm2PixelLayout_ ( oyPixel_t           pixel_layout,
   oyDATATYPE_e data_type = oyToDataType_m (pixel_layout);
   int planar = oyToPlanar_m (pixel_layout);
   int flavour = oyToFlavor_m (pixel_layout);
-  int cchans = lcmsChannelsOf( color_space );
-  int lcm2_color_space = l_cmsLCMScolorSpace( color_space );
+  unsigned int cchans = lcmsChannelsOf( (cmsColorSpaceSignature)color_space );
+  unsigned int lcm2_color_space = l_cmsLCMScolorSpace( color_space );
   int extra = chan_n - cchans;
 
   if(chan_n > CMMMaxChannels_M)
@@ -1474,7 +1474,7 @@ int  gamutCheckSamplerFloat          ( const cmsFloat32Number In[],
   Lab2.L = o[0]; Lab2.a = o[1]; Lab2.b = o[2];
 
   d = lcmsDeltaE( &Lab1, &Lab2 );
-  if((abs(d) > 10) && ptr[1] != NULL)
+  if((fabs(d) > 10) && ptr[1] != NULL)
   {
     Lab2.L = 50.0;
     Lab2.a = Lab2.b = 0.0;
@@ -1738,10 +1738,10 @@ cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
       mlu[0] = lcmsMLUalloc(tc,1);
       mlu[1] = lcmsMLUalloc(tc,1);
       r = lcmsMLUsetASCII(mlu[0], "EN", "us", "proofing"); E
-      r = lcmsWriteTag( gmt, icSigProfileDescriptionTag, mlu[0] ); E
+      r = lcmsWriteTag( gmt, (cmsTagSignature)icSigProfileDescriptionTag, mlu[0] ); E
       r = lcmsMLUsetASCII(mlu[1], "EN", "us", "no copyright; use freely"); E
-      r = lcmsWriteTag( gmt, icSigCopyrightTag, mlu[1]); E
-      r = lcmsWriteTag( gmt, icSigMediaWhitePointTag, lcmsD50_XYZ() ); E
+      r = lcmsWriteTag( gmt, (cmsTagSignature)icSigCopyrightTag, mlu[1]); E
+      r = lcmsWriteTag( gmt, (cmsTagSignature)icSigMediaWhitePointTag, lcmsD50_XYZ() ); E
 
 #if ENABLE_MPE
       /* set parametric unbound curve, type 6: (aX + b) ^ y + c */

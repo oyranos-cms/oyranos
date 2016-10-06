@@ -1231,7 +1231,7 @@ int      oyFilterNode_Observe_       ( oyObserver_s      * observer,
     {
       socket = oyFilterNode_GetSocket( (oyFilterNode_s*)node, i );
       /* forward to the downward graph */
-      oyFilterSocket_SignalToGraph( socket, signal_type );
+      oyFilterSocket_SignalToGraph( socket, (oyCONNECTOR_EVENT_e)signal_type );
       oyFilterSocket_Release( &socket );
     }
   }
