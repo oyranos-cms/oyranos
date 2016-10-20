@@ -1,4 +1,4 @@
-# Oyranos (gr. sky)
+# Oyranos (gr. sky) </a> <a href="https://codedocs.xyz/oyranos-cms/oyranos/"><img src="https://codedocs.xyz/oyranos-cms/oyranos.svg"/></a>
 
 The Color Management System (CMS) Oyranos allows the coordination of
 device specific Informations (ICC profiles) und system wide settings.
