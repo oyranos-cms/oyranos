@@ -773,8 +773,7 @@ oyjl_val   oyjl_tree_get_value       ( oyjl_val            v,
 {
   oyjl_val level = 0;
   int n = 0, i, found = 0;
-  char ** list = oyjl_string_split(xpath, &n),
-        * ttmp = 0;
+  char ** list = oyjl_string_split(xpath, &n);
 
   /* follow the search path term */
   level = v;
@@ -782,7 +781,8 @@ oyjl_val   oyjl_tree_get_value       ( oyjl_val            v,
   for(i = 0; i < n; ++i)
   {
     char * term = list[i],
-         * tindex = strrchr(term,'[');
+         * tindex = strrchr(term,'['),
+         * ttmp = NULL;
     int count = oyjl_value_count( level );
     int j;
     int pos = -1;
@@ -828,6 +828,9 @@ oyjl_val   oyjl_tree_get_value       ( oyjl_val            v,
           }
         }
     }
+
+    if(ttmp)
+      free( ttmp );
   }
 
   /* clean up temorary memory */
@@ -835,9 +838,6 @@ oyjl_val   oyjl_tree_get_value       ( oyjl_val            v,
     free(list[i]);
   if(list)
     free(list);
-
-  if(ttmp)
-    free( ttmp );
 
   if(found && level)
     return level;
