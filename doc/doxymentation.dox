@@ -13,12 +13,14 @@
 
  *  @par License:
  *          new BSD http://www.opensource.org/licenses/BSD-3-Clause
-
     @author Kai-Uwe Behrmann and others
     @since  March 2004
 
     @par Internet:
-          http://www.oyranos.org
+          http://www.oyranos.org/about
+
+    @par Development Sources:
+          https://github.com/oyranos-cms/oyranos
 
     @n@n
     @section intro Introduction
