@@ -180,7 +180,7 @@ ADD_CUSTOM_TARGET( rpm
                 COMMAND mkdir -p rpmdir/BUILD rpmdir/SPECS rpmdir/SOURCES rpmdir/SRPMS rpmdir/RPMS/${RPMARCH}
                 COMMAND cp -f ${PACKAGE_NAME}-${OYRANOS_VERSION}.tar.bz2 rpmdir/SOURCES
                 COMMAND cp -f ${CMAKE_SOURCE_DIR}/extras/oyranos-rpmlintrc rpmdir/SOURCES
-                COMMAND rpmbuild --clean -ba extras/${PACKAGE_NAME}.spec --define "_topdir ${CMAKE_CURRENT_BINARY_DIR}/rpmdir"
+                COMMAND rpmbuild --nodeps --clean -ba extras/${PACKAGE_NAME}.spec --define "_topdir ${CMAKE_CURRENT_BINARY_DIR}/rpmdir"
                 DEPENDS dist
 		COMMENT Make a oyranos RPM package
 		VERBATIM
