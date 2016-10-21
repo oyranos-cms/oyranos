@@ -1,3 +1,5 @@
+# BSD LICENSE
+
 This file is valid to at least all files prefixed with "oyranos" in the top level directory. All other directories may contain own license files, which apply. See for instance the FL directory. Files released under the 
 public domain license are released under the new BSD license only in case if
 actual jurisdiction requires that.
