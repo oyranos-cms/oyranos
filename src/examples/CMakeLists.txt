@@ -106,3 +106,7 @@ TARGET_LINK_LIBRARIES( oyranos-xforms-modules
              ${PROJECT_NAME} ${OY_OFORMS_LIB} ${EXTRA_LIBS} )
 INSTALL (TARGETS oyranos-xforms-modules DESTINATION bin)
 
+# Tutorial 1
+ADD_EXECUTABLE( tutorial1 tutorial1.c )
+TARGET_LINK_LIBRARIES( tutorial1
+             ${PROJECT_NAME} ${EXTRA_LIBS} )
