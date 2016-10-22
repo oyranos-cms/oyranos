@@ -100,14 +100,20 @@
 /*    - @ref device_profiles - profiles which characterise devices */
 
 /** @example tutorial1.c
- *  Show how to obtain and use a monitor profile.
+ *  @brief   Show how to obtain and use a monitor profile.
+ */
+/** @example tutorial_taxi.c
+ *  @brief   Obtain a profile for the first monitor from Online Taxi DB.
  */
 /** @example image2pdf.c
- *  Combine images into a PDF using Cairo.
+ *  @brief   Combine images into a PDF using Cairo.
  */
 /** @example oymd5icc.c
- *  Read and set the ICC profile ID.
+ *  @brief   Read and set the ICC profile ID.
  */
 /** @example oyranos_cmm_oJPG.c
- *  Module example.
+ *  @brief   Module example.
+ */
+/** @example image_display.cpp
+ *  @brief   Image viewer example.
  */
