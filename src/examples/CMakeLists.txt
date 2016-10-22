@@ -110,3 +110,7 @@ INSTALL (TARGETS oyranos-xforms-modules DESTINATION bin)
 ADD_EXECUTABLE( tutorial1 tutorial1.c )
 TARGET_LINK_LIBRARIES( tutorial1
              ${PROJECT_NAME} ${EXTRA_LIBS} )
+# Tutorial Taxi
+ADD_EXECUTABLE( tutorial-taxi tutorial_taxi.c )
+TARGET_LINK_LIBRARIES( tutorial-taxi
+             ${PROJECT_NAME} ${EXTRA_LIBS} )
