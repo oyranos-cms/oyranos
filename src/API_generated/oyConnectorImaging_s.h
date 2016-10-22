@@ -117,19 +117,19 @@ OYAPI int  OYEXPORT
  *  @date    2012/09/06
  */
 typedef enum {
-  oyCONNECTOR_IMAGING_CAP_IS_PLUG,
-  oyCONNECTOR_IMAGING_CAP_MAX_COLOR_OFFSET,
-  oyCONNECTOR_IMAGING_CAP_MIN_CHANNELS_COUNT,
-  oyCONNECTOR_IMAGING_CAP_MAX_CHANNELS_COUNT,
-  oyCONNECTOR_IMAGING_CAP_MIN_COLOR_COUNT,
-  oyCONNECTOR_IMAGING_CAP_MAX_COLOR_COUNT,
+  oyCONNECTOR_IMAGING_CAP_IS_PLUG,           /**< is not a socket */
+  oyCONNECTOR_IMAGING_CAP_MAX_COLOR_OFFSET,  /**< offset to first color sample */
+  oyCONNECTOR_IMAGING_CAP_MIN_CHANNELS_COUNT,/**< minimal possible channels */
+  oyCONNECTOR_IMAGING_CAP_MAX_CHANNELS_COUNT,/**< maximal count of possible channels */
+  oyCONNECTOR_IMAGING_CAP_MIN_COLOR_COUNT,   /**< minimal count of possible color channels */
+  oyCONNECTOR_IMAGING_CAP_MAX_COLOR_COUNT,   /**< maximal count of possible color channels */
   oyCONNECTOR_IMAGING_CAP_CAN_PLANAR,        /**< can read separated channels */
   oyCONNECTOR_IMAGING_CAP_CAN_INTERWOVEN,    /**< can read continuous channels */
   oyCONNECTOR_IMAGING_CAP_CAN_SWAP,          /**< can swap color channels (BGR)*/
   oyCONNECTOR_IMAGING_CAP_CAN_SWAP_BYTES,    /**< non host byte order */
   oyCONNECTOR_IMAGING_CAP_CAN_REVERT,        /**< revert 1 -> 0 and 0 -> 1 */
-  oyCONNECTOR_IMAGING_CAP_CAN_PREMULTIPLIED_ALPHA,
-  oyCONNECTOR_IMAGING_CAP_CAN_NONPREMULTIPLIED_ALPHA,
+  oyCONNECTOR_IMAGING_CAP_CAN_PREMULTIPLIED_ALPHA, /**< can handle premultiplied alpha channels */
+  oyCONNECTOR_IMAGING_CAP_CAN_NONPREMULTIPLIED_ALPHA, /**< can handle non premultiplied alpha channels */
   oyCONNECTOR_IMAGING_CAP_CAN_SUBPIXEL,      /**< understand subpixel order */
   oyCONNECTOR_IMAGING_CAP_ID,                /**< relative to oyFilterCore_s, e.g. 1*/
   /**< connector is mandatory or optional, important for modules */
