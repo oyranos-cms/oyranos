@@ -102,4 +102,12 @@
 /** @example tutorial1.c
  *  Show how to obtain and use a monitor profile.
  */
-
+/** @example image2pdf.c
+ *  Combine images into a PDF using Cairo.
+ */
+/** @example oymd5icc.c
+ *  Read and set the ICC profile ID.
+ */
+/** @example oyranos_cmm_oJPG.c
+ *  Module example.
+ */
