@@ -14,11 +14,10 @@
  */
 
 /**
- *  The module provides a drop in replacement of the OpenICC Configuration DB
- *  access functions.
+ *  The module provides a drop in replacement for the configuration DB
+ *  access functions using libOpenICC.
  */
 
-//      * move some of the Why questions above to the doxygen docu.
 
 #include "oyCMM_s.h"
 #include "oyCMMapi10_s_.h"
@@ -203,6 +202,27 @@ char **  oiDB_getKeyNamesOneLevel    ( oyDB_s            * db,
   return keys; 
 }
 
+int oiDBSetString                    ( const char        * key_name,
+                                       oySCOPE_e           scope,
+                                       const char        * value,
+                                       const char        * comment)
+{
+  oiDB_msg( oyMSG_ERROR, 0, OY_DBG_FORMAT_ "%s", OY_DBG_ARGS_, _("not implemented") );
+  return 1;
+}
+char*    oiDBSearchEmptyKeyname        ( const char      * key_parent_name,
+                                         oySCOPE_e         scope )
+{
+  oiDB_msg( oyMSG_ERROR, 0, OY_DBG_FORMAT_ "%s", OY_DBG_ARGS_, _("not implemented") );
+  return 0;
+}
+int      oiDBEraseKey                ( const char        * key_name,
+                                       oySCOPE_e           scope )
+{
+  oiDB_msg( oyMSG_ERROR, 0, OY_DBG_FORMAT_ "%s", OY_DBG_ARGS_, _("not implemented") );
+  return 1;
+}
+
 /** Function oiDBInit
  *  @brief   API requirement
  *
@@ -231,7 +251,7 @@ int            oiDBMessageFuncSet ( oyMessage_f         message_func )
   return 0;
 }
 
-oyDbAPI_s openiccDbAPI = {
+oyDbAPI_s oiDBopeniccDbAPI = {
   /* newFrom */ oiDB_newFrom,
   /* release */ oiDB_release,
   /* getString */ oiDB_getString,
@@ -239,17 +259,17 @@ oyDbAPI_s openiccDbAPI = {
   /* getKeyNames */ oiDB_getKeyNames,
   /* getKeyNamesOneLevel */ oiDB_getKeyNamesOneLevel,
 
-  /* setString */ NULL,
-  /* searchEmptyKeyname */ NULL,
-  /* eraseKey */ NULL
+  /* setString */ oiDBSetString,
+  /* searchEmptyKeyname */ oiDBSearchEmptyKeyname,
+  /* eraseKey */ oiDBEraseKey
 };
 
 /**
  *  This function implements oyMOptions_Handle_f.
  *
  *  @version Oyranos: 0.9.6
+ *  @date    2016/10/23
  *  @since   2016/05/01 (Oyranos: 0.9.6)
- *  @date    2016/05/01
  */
 int          oiDBMOptions_Handle     ( oyOptions_s       * options,
                                        const char        * command,
@@ -264,8 +284,8 @@ int          oiDBMOptions_Handle     ( oyOptions_s       * options,
   }
   else if(oyFilterRegistrationMatch(command,"db_handler", 0))
   {
-    oyDbHandlingSet( &openiccDbAPI );
-    oiDB_msg( oyMSG_DBG, 0, "called %s()::db_handler", __func__ );
+    error = oyDbHandlingSet( &oiDBopeniccDbAPI );
+    oiDB_msg( error?oyMSG_WARN:oyMSG_DBG, 0, "called %s()::db_handler", __func__ );
   }
 
   return 0;
@@ -352,8 +372,8 @@ oyCMMapi10_s_    oiDB_api10_cmm = {
  *  This function implements oyCMMinfoGetText_f.
  *
  *  @version Oyranos: 0.9.6
+ *  @date    2016/10/23
  *  @since   2016/05/01 (Oyranos: 0.9.6)
- *  @date    2016/05/01
  */
 const char * oiDBInfoGetText         ( const char        * select,
                                        oyNAME_e            type,
@@ -401,8 +421,8 @@ oyIcon_s oiDB_icon = {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"};
  *  @brief    oiDB module infos
  *
  *  @version Oyranos: 0.9.6
+ *  @date    2016/10/23
  *  @since   2016/05/01 (Oyranos: 0.9.6)
- *  @date    2016/05/01
  */
 oyCMM_s oiDB_cmm_module = {
 
