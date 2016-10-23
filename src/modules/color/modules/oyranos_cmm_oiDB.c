@@ -126,7 +126,7 @@ void     oiDB_release                ( oyDB_s           ** db )
     oyDB_s * s = *db;
     oyDeAlloc_f deAlloc = s->deAlloc;
 
-    if(strcmp( s->type, CMM_NICK ) != 0)
+    if(!db || strcmp( s->type, CMM_NICK ) != 0)
       oiDB_msg( oyMSG_ERROR, 0, OY_DBG_FORMAT_ "wrong object type: %s - expected %s", OY_DBG_ARGS_, s->type, CMM_NICK );
     if(s->top_key_name) deAlloc(s->top_key_name); s->top_key_name = NULL;
     memset( s->type, 0, 8 );
@@ -141,7 +141,11 @@ char *   oiDB_getString              ( oyDB_s            * db,
                                        const char        * key_name )
 {
   const char * value = NULL;
-  int error = openiccDB_GetString( db->db, key_name, &value);
+  int error;
+
+  if(!db || strcmp( db->type, CMM_NICK ) != 0)
+    oiDB_msg( oyMSG_ERROR, 0, OY_DBG_FORMAT_ "wrong object type: %s - expected %s", OY_DBG_ARGS_, db->type, CMM_NICK );
+  error = openiccDB_GetString( db->db, key_name, &value);
   if( error > 0 )
     oiDB_msg( oyMSG_ERROR, 0, OY_DBG_FORMAT_ "%s", OY_DBG_ARGS_, db->type );
 
@@ -157,6 +161,8 @@ int      oiDB_getStrings             ( oyDB_s            * db,
   int i;
   int error = 0;
 
+  if(!db || strcmp( db->type, CMM_NICK ) != 0)
+    oiDB_msg( oyMSG_ERROR, 0, OY_DBG_FORMAT_ "wrong object type: %s - expected %s", OY_DBG_ARGS_, db->type, CMM_NICK );
   for(i = 0; i < key_names_n; ++i)
   {
     key = key_names[i];
@@ -186,7 +192,11 @@ char **  oiDB_getKeyNames            ( oyDB_s            * db,
                                        int               * n )
 {
   char ** keys = NULL;
-  int error = openiccDB_GetKeyNames( db->db, key_name, 0, oyAllocateFunc_, oyDeAllocateFunc_, &keys, n );
+  int error;
+
+  if(!db || strcmp( db->type, CMM_NICK ) != 0)
+    oiDB_msg( oyMSG_ERROR, 0, OY_DBG_FORMAT_ "wrong object type: %s - expected %s", OY_DBG_ARGS_, db->type, CMM_NICK );
+  error = openiccDB_GetKeyNames( db->db, key_name, 0, oyAllocateFunc_, oyDeAllocateFunc_, &keys, n );
   if( error > 0 )
     oiDB_msg( oyMSG_ERROR, 0, OY_DBG_FORMAT_ "%s", OY_DBG_ARGS_, db->type );
   return keys; 
@@ -196,7 +206,12 @@ char **  oiDB_getKeyNamesOneLevel    ( oyDB_s            * db,
                                        int               * n )
 {
   char ** keys = NULL;
-  int error = openiccDB_GetKeyNames( db->db, key_name, 1, oyAllocateFunc_, oyDeAllocateFunc_, &keys, n );
+  int error;
+
+  if(!db || strcmp( db->type, CMM_NICK ) != 0)
+    oiDB_msg( oyMSG_ERROR, 0, OY_DBG_FORMAT_ "wrong object type: %s - expected %s", OY_DBG_ARGS_, db->type, CMM_NICK );
+
+  error = openiccDB_GetKeyNames( db->db, key_name, 1, oyAllocateFunc_, oyDeAllocateFunc_, &keys, n );
   if( error > 0 )
     oiDB_msg( oyMSG_ERROR, 0, OY_DBG_FORMAT_ "%s", OY_DBG_ARGS_, db->type );
   return keys; 
