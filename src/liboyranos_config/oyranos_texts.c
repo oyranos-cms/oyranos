@@ -2177,7 +2177,7 @@ int          oyGetPersistentStrings  ( const char        * top_key_name )
   }
   else
   {
-    db = oyDB_newFrom( top_key_name, oySCOPE_USER_SYS, oyAllocateFunc_ );
+    db = oyDB_newFrom( top_key_name, oySCOPE_USER_SYS, oyAllocateFunc_, oyDeAllocateFunc_ );
 
     key_names = oyDB_getKeyNames( db, top_key_name, &key_names_n );
 
@@ -2238,7 +2238,7 @@ char *       oyGetPersistentString   ( const char        * key_name,
     } else
       /* fallback */
     {
-      oyDB_s * db = oyDB_newFrom( key_name, scope, alloc_func );
+      oyDB_s * db = oyDB_newFrom( key_name, scope, oyAllocateFunc_, oyDeAllocateFunc_ );
       value = oyDB_getString(db, key_name);
       oyDB_release( &db );
       oyOptions_SetRegFromText( &oy_db_cache_, key_name,

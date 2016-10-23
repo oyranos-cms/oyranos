@@ -278,14 +278,19 @@ int      oyRemoveFromDB              ( const char        * name,
 /* --- function definitions --- */
 
 
+/* our object type */
 struct oyDB_s {
+  char       type[8];                  /* 4 chars long ID string + zero terminated */
+  oySCOPE_e  scope;
+  char     * top_key_name;
+  oyAlloc_f  alloc;
+  oyDeAlloc_f deAlloc;
+
+  /* private members */
   KDB      * h;
   Key      * error;
   int        err;
   KeySet   * ks;
-  char     * top_key_name;
-  oyAlloc_f  alloc;
-  oySCOPE_e  scope;
 };
 
 void     oyDB_printWarn              ( oyDB_s            * db )
@@ -375,12 +380,14 @@ int      oyDB_GetChildren            ( oyDB_s            * db )
 
 oyDB_s * oyDB_newFrom                ( const char        * top_key_name,
                                        oySCOPE_e           scope,
-                                       oyAlloc_f           allocFunc )
+                                       oyAlloc_f           allocFunc,
+                                       oyDeAlloc_f         deAllocFunc )
 {
   oyDB_s * db = calloc( sizeof(oyDB_s), 1 );
 
   if(db)
   {
+    sprintf( db->type, "elDB" );
     db->error = keyNew(KEY_END);
 #if KDB_VERSION_NUM >= 800
     db->h = kdbOpen(db->error);
@@ -396,6 +403,7 @@ oyDB_s * oyDB_newFrom                ( const char        * top_key_name,
     db->top_key_name = oyStringCopy( top_key_name, oyAllocateFunc_ );
     db->ks = NULL;
     db->alloc = allocFunc;
+    db->deAlloc = deAllocFunc;
     db->scope = scope;
   }
 

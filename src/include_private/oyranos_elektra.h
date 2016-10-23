@@ -35,7 +35,8 @@ void oyCloseReal__(void);
 typedef struct oyDB_s oyDB_s;
 oyDB_s * oyDB_newFrom                ( const char        * top_key_name,
                                        oySCOPE_e           scope,
-                                       oyAlloc_f           allocFunc );
+                                       oyAlloc_f           allocFunc,
+                                       oyDeAlloc_f         deAllocFunc );
 void     oyDB_release                ( oyDB_s           ** db );
 char *   oyDB_getString              ( oyDB_s            * db,
                                        const char        * key_name );

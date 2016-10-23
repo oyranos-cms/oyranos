@@ -639,7 +639,7 @@ oyRankMap * oyGetRankMapFromDB       ( const char        * registration )
 
   oyStringListRelease_( &regs, regs_n, oyDeAllocateFunc_ );
 
-  db = oyDB_newFrom( new_reg, oySCOPE_USER_SYS, oyAllocateFunc_ );
+  db = oyDB_newFrom( new_reg, oySCOPE_USER_SYS, oyAllocateFunc_, oyDeAllocateFunc_ );
   key_names = oyDB_getKeyNamesOneLevel( db, new_reg, &key_names_n );
 
   DBG_PROG2_S("%s %d", new_reg, key_names_n);
@@ -735,7 +735,7 @@ OYAPI int OYEXPORT oyConfigs_FromDB  ( const char        * registration,
       t[0] = 0;
     }
       
-    db = oyDB_newFrom( db_registration, oySCOPE_USER_SYS, oyAllocateFunc_ );
+    db = oyDB_newFrom( db_registration, oySCOPE_USER_SYS, oyAllocateFunc_, oyDeAllocateFunc_ );
 
     {
       char * key = NULL;

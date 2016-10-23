@@ -300,7 +300,7 @@ oyTESTRESULT_e testElektra()
     PRINT_SUB( oyTESTRESULT_SUCCESS,
     "oyDBEraseKey_(%s)", TEST_DOMAIN TEST_KEY );
   }
-  oyDB_s * db = oyDB_newFrom( TEST_DOMAIN, oySCOPE_USER_SYS, oyAllocateFunc_ );
+  oyDB_s * db = oyDB_newFrom( TEST_DOMAIN, oySCOPE_USER_SYS, oyAllocateFunc_, oyDeAllocateFunc_ );
   value = oyDB_getString(db, TEST_DOMAIN TEST_KEY);
   oyDB_release( &db );
   if(value && strlen(value))
@@ -3922,7 +3922,7 @@ oyTESTRESULT_e testCMMnmRun ()
   clck = oyClock();
   for(i = 0; i < n*3; ++i)
   {
-    oyDB_s * db = oyDB_newFrom( key_domain, oySCOPE_USER_SYS, oyAllocateFunc_ );
+    oyDB_s * db = oyDB_newFrom( key_domain, oySCOPE_USER_SYS, oyAllocateFunc_, oyDeAllocateFunc_ );
     char * value = oyDB_getString(db, key_name);
     if(!value)
       break;
@@ -3942,7 +3942,7 @@ oyTESTRESULT_e testCMMnmRun ()
 
 
   clck = oyClock();
-  oyDB_s * db = oyDB_newFrom( key_domain, oySCOPE_USER_SYS, oyAllocateFunc_ );
+  oyDB_s * db = oyDB_newFrom( key_domain, oySCOPE_USER_SYS, oyAllocateFunc_, oyDeAllocateFunc_ );
   for(i = 0; i < n*3; ++i)
   {
     char * value = oyDB_getString(db, key_name);
