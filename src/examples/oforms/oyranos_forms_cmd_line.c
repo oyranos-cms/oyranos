@@ -25,8 +25,8 @@
 
 #include "oyranos_config_internal.h"
 #include "oyranos.h"
+#include "oyranos_db.h"
 #include "oyranos_debug.h"
-#include "oyranos_elektra.h"
 #include "oyranos_forms.h"
 #include "oyranos_helper.h"
 #include "oyranos_internal.h"

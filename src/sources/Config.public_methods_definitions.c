@@ -1,4 +1,4 @@
-#include "oyranos_elektra.h"
+#include "oyranos_db.h"
 #include "oyranos_devices.h"
 #include "oyranos_devices_internal.h"
 
@@ -321,7 +321,7 @@ OYAPI int  OYEXPORT oyConfig_EraseFromDB (
     if(t)
       t[0] = 0;
 
-    error = oyDBEraseKey_( text, scope );
+    error = oyDBEraseKey( text, scope );
 
     if(tmp)
       oyFree_m_( tmp );

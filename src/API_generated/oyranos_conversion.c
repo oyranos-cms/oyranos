@@ -23,7 +23,6 @@
 #include "oyPixelAccess_s_.h"
 
 #include "oyranos_conversion.h"
-#include "oyranos_elektra.h"
 #include "oyranos_debug.h"
 #include "oyranos_helper.h"
 #include "oyranos_io.h"

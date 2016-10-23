@@ -90,48 +90,6 @@ BuildRequires: elektra-devel" )
   INCLUDE_DIRECTORIES( ${ELEKTRA_INCLUDE_DIRS} )
   LINK_DIRECTORIES( ${ELEKTRA_LIBRARY_DIRS} )
   STRING(REPLACE ";" " " ELEKTRA_PC_LDFLAGS "${ELEKTRA_STATIC_LDFLAGS}")
-ELSE(HAVE_ELEKTRA)
-  SET( ELEKTRA_VERSION elektra-0.7.1 )
-  MESSAGE( "-- Using internal Elektra: ${ELEKTRA_VERSION}" )
-  INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/${ELEKTRA_VERSION}/src/include
-       ${CMAKE_BINARY_DIR}/${ELEKTRA_VERSION}/src/include )
-  SET( ELEKTRA_LIBRARIES_STATIC
-       ${CMAKE_BINARY_DIR}/${ELEKTRA_VERSION}/src/libelektra/libelektra_a-kdb.o
-       ${CMAKE_BINARY_DIR}/${ELEKTRA_VERSION}/src/libelektra/libelektra_a-kdbhandle.o
-       ${CMAKE_BINARY_DIR}/${ELEKTRA_VERSION}/src/libelektra/libelektra_a-key.o
-       ${CMAKE_BINARY_DIR}/${ELEKTRA_VERSION}/src/libelektra/libelektra_a-keyset.o
-       ${CMAKE_BINARY_DIR}/${ELEKTRA_VERSION}/src/libelektra/libelektra_a-trie.o
-       ${CMAKE_BINARY_DIR}/${ELEKTRA_VERSION}/src/libelektra/libelektra_a-kdbhighlevel.o
-       ${CMAKE_BINARY_DIR}/${ELEKTRA_VERSION}/src/libelektra/libelektra_a-kdbcapability.o
-       ${CMAKE_BINARY_DIR}/${ELEKTRA_VERSION}/src/libelektra/libelektra_a-keyhelpers.o
-       ${CMAKE_BINARY_DIR}/${ELEKTRA_VERSION}/src/libelektra/libelektra_a-keymeta.o
-       ${CMAKE_BINARY_DIR}/${ELEKTRA_VERSION}/src/libelektra/libelektra_a-keyname.o
-       ${CMAKE_BINARY_DIR}/${ELEKTRA_VERSION}/src/libelektra/libelektra_a-keytest.o
-       ${CMAKE_BINARY_DIR}/${ELEKTRA_VERSION}/src/libelektra/libelektra_a-keyvalue.o
-       ${CMAKE_BINARY_DIR}/${ELEKTRA_VERSION}/src/libelektra/libelektra_a-serialize.o
-       ${CMAKE_BINARY_DIR}/${ELEKTRA_VERSION}/src/libelektra/libelektra_a-split.o
-       ${CMAKE_BINARY_DIR}/${ELEKTRA_VERSION}/src/libelektra/libelektra_a-exported_symbols.o
-       ${CMAKE_BINARY_DIR}/${ELEKTRA_VERSION}/src/libloader/libloader_static_a-kdbLibLoader.o
-       ${CMAKE_BINARY_DIR}/${ELEKTRA_VERSION}/src/libhelper/libhelper_static_a-internal.o
-       ${CMAKE_BINARY_DIR}/${ELEKTRA_VERSION}/src/libhelper/libhelper_static_a-helper.o
-       ${CMAKE_BINARY_DIR}/${ELEKTRA_VERSION}/src/backends/filesys/libelektra_filesys_a-filesys.o
-       ${CMAKE_BINARY_DIR}/${ELEKTRA_VERSION}/src/libelektratools/libelektratools_a-kdbtools.o
-       ${CMAKE_BINARY_DIR}/${ELEKTRA_VERSION}/src/libelektratools/libelektratools_a-stream.o
-     )
-  SET( ELEKTRA_LIBRARIES 
-       ${LIBXML2_LIBRARIES}
-     )
-  IF(CMAKE_VERSION VERSION_GREATER 2.8.0)
-    include(ExternalProject)
-    ExternalProject_Add( ${ELEKTRA_VERSION}
-    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${ELEKTRA_VERSION}
-    # GCC flags (-fPIC) will fail on Windows, without we get relocation R_X86_64_32 errors
-    CONFIGURE_COMMAND CFLAGS=-fPIC ${CMAKE_CURRENT_SOURCE_DIR}/${ELEKTRA_VERSION}/configure --enable-static --enable-shared=false
-    BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/${ELEKTRA_VERSION}
-    BUILD_COMMAND ${MAKE}
-    # skip installation
-    INSTALL_COMMAND echo )
-  ENDIF()
 ENDIF(HAVE_ELEKTRA)
 
 #now add all directories

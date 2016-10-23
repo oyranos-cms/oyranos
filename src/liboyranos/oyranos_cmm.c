@@ -16,7 +16,6 @@
 
 
 #include "oyranos_cmm.h"
-#include "oyranos_elektra.h"
 #include "oyranos_generic.h"
 #include "oyranos_helper.h"
 #include "oyranos_i18n.h"

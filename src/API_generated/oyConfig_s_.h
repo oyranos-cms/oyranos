@@ -38,7 +38,6 @@ typedef struct oyConfig_s_ oyConfig_s_;
 #include "oyCMMapiFilters_s.h"
 #include "oyOptions_s_.h"
 
-#include "oyranos_elektra.h"
 #include "oyranos_module_internal.h"
   
 

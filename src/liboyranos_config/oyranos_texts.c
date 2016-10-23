@@ -23,10 +23,10 @@
 #include "oyCMMapi4_s.h"
 #include "oyCMMapiFilter_s_.h"
 
+#include "oyranos_db.h"
 #include "oyranos_config_internal.h"
 #include "oyranos.h"
 #include "oyranos_debug.h"
-#include "oyranos_elektra.h"
 #include "oyranos_helper.h"
 #include "oyranos_internal.h"
 #include "oyranos_io.h"
@@ -2177,7 +2177,7 @@ int          oyGetPersistentStrings  ( const char        * top_key_name )
   }
   else
   {
-    db = oyDB_newFrom( top_key_name, oySCOPE_USER_SYS, oyAllocateFunc_ );
+    db = oyDB_newFrom( top_key_name, oySCOPE_USER_SYS, oyAllocateFunc_, oyDeAllocateFunc_ );
 
     key_names = oyDB_getKeyNames( db, top_key_name, &key_names_n );
 
@@ -2238,7 +2238,7 @@ char *       oyGetPersistentString   ( const char        * key_name,
     } else
       /* fallback */
     {
-      oyDB_s * db = oyDB_newFrom( key_name, scope, alloc_func );
+      oyDB_s * db = oyDB_newFrom( key_name, scope, oyAllocateFunc_, oyDeAllocateFunc_ );
       value = oyDB_getString(db, key_name);
       oyDB_release( &db );
       oyOptions_SetRegFromText( &oy_db_cache_, key_name,
@@ -2286,7 +2286,7 @@ int          oySetPersistentString   ( const char        * key_name,
                                        const char        * value,
                                        const char        * comment )
 {
-  int rc = oyDBSetString_( key_name, scope, value, comment );
+  int rc = oyDBSetString( key_name, scope, value, comment );
   const char * key = key_name;
   int error = 0;
 

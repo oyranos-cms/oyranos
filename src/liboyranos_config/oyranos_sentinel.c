@@ -21,7 +21,6 @@
 #include "oyranos.h"
 #include "oyranos_alpha_internal.h"
 #include "oyranos_debug.h"
-#include "oyranos_elektra.h"
 #include "oyranos_helper.h"
 #include "oyranos_i18n.h"
 #include "oyranos_internal.h"
@@ -47,7 +46,7 @@ int oyExportStart_(int export_check)
     start = 1; \
   }
 
-  EXPORT_( EXPORT_SETTING, export_setting, oyDBOpen() )
+  EXPORT_( EXPORT_SETTING, export_setting, export_setting = 0 )
   /* Currently the monitor API is a link time module and outside the basic API.
      So we cant rely on it on runtime here. 
      This will change when Monitor support will be a runtime link in module.
@@ -65,7 +64,6 @@ int oyExportReset_(int export_check)
   {
     if(!export_setting) action = 1;
     export_setting = 1;
-    oyCloseReal__();
   }
   
   if(export_check & EXPORT_MONITOR)
