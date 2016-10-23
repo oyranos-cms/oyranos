@@ -27,7 +27,6 @@
 #include "oyOption_s_.h"
 
 #include "oyranos_sentinel.h"
-#include "oyranos_elektra.h"
 #include "oyObserver_s.h"
 #include "oyBlob_s_.h"
   

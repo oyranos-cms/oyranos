@@ -32,7 +32,7 @@ ADD_CUSTOM_TARGET(test-modules
         DEPENDS test_modules test_modules-static test-object
         COMMENT "Test basic linking against liboyranos_modules." VERBATIM )
 
-LINK_DIRECTORIES( ${LINK_DIRECTORIES} "${CMAKE_BINARY_DIR}/src/liboyranos_config/" ${ELEKTRA_LIBRARY_DIRS} )
+LINK_DIRECTORIES( ${LINK_DIRECTORIES} "${CMAKE_BINARY_DIR}/src/liboyranos_config/" )
 ADD_EXECUTABLE( test_config "${CMAKE_CURRENT_SOURCE_DIR}/test_config.c" )
 TARGET_LINK_LIBRARIES( test_config OyranosConfig )
 ADD_EXECUTABLE( test_config-static "${CMAKE_CURRENT_SOURCE_DIR}/test_config.c" )
@@ -43,7 +43,7 @@ ADD_CUSTOM_TARGET(test-config
         DEPENDS test_config test-modules
         COMMENT "Test basic linking against liboyranos_config." VERBATIM )
 
-LINK_DIRECTORIES( ${LINK_DIRECTORIES} "${CMAKE_BINARY_DIR}/src/liboyranos/" ${ELEKTRA_LIBRARY_DIRS} )
+LINK_DIRECTORIES( ${LINK_DIRECTORIES} "${CMAKE_BINARY_DIR}/src/liboyranos/" )
 ADD_EXECUTABLE( test2
                 "${CMAKE_CURRENT_SOURCE_DIR}/test2.cpp"
                 "${CMAKE_SOURCE_DIR}/src/examples/image_display/oyranos_display_helpers.c"
@@ -75,7 +75,7 @@ IF(USE_GCOV)
 ENDIF(USE_GCOV)
 
 
-LINK_DIRECTORIES( ${LINK_DIRECTORIES} "${CMAKE_BINARY_DIR}/src/liboyranos/" ${ELEKTRA_LIBRARY_DIRS} )
+LINK_DIRECTORIES( ${LINK_DIRECTORIES} "${CMAKE_BINARY_DIR}/src/liboyranos/" )
 ADD_EXECUTABLE( test_oyranos "${CMAKE_CURRENT_SOURCE_DIR}/test_oyranos.c" )
 TARGET_LINK_LIBRARIES( test_oyranos Oyranos )
 ADD_EXECUTABLE( test_oyranos-static "${CMAKE_CURRENT_SOURCE_DIR}/test_oyranos.c" )

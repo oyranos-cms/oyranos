@@ -26,6 +26,7 @@
 #include "oyranos_icc.h"
 #include "oyranos_texts.h"
 
+#include "oyranos_db.h"
 #include "oyranos_devices.h"
 #include "oyranos_devices_internal.h"
 #include "oyranos_object_internal.h"
@@ -2222,7 +2223,7 @@ OYAPI int OYEXPORT oyOptions_SaveToDB( oyOptions_s       * options,
 
   if(error <= 0)
   {
-    key_base_name = oyDBSearchEmptyKeyname_( registration, scope );
+    key_base_name = oyDBSearchEmptyKeyname( registration, scope );
     error = !key_base_name;
     if(error <= 0)
     {

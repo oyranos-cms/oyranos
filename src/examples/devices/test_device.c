@@ -21,8 +21,8 @@
 #include <string.h>
 
 #include "oyranos.h"
+#include "oyranos_db.h"
 #include "oyranos_devices.h"
-#include "oyranos_elektra.h"
 #include "oyranos_helper.h"
 #include "oyranos_helper_macros_cli.h"
 #include "oyranos_i18n.h"

@@ -23,10 +23,10 @@
 #include "oyCMMapi4_s.h"
 #include "oyCMMapiFilter_s_.h"
 
+#include "oyranos_db.h"
 #include "oyranos_config_internal.h"
 #include "oyranos.h"
 #include "oyranos_debug.h"
-#include "oyranos_elektra.h"
 #include "oyranos_helper.h"
 #include "oyranos_internal.h"
 #include "oyranos_io.h"
@@ -2286,7 +2286,7 @@ int          oySetPersistentString   ( const char        * key_name,
                                        const char        * value,
                                        const char        * comment )
 {
-  int rc = oyDBSetString_( key_name, scope, value, comment );
+  int rc = oyDBSetString( key_name, scope, value, comment );
   const char * key = key_name;
   int error = 0;
 

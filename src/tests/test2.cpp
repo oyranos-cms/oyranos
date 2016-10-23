@@ -185,7 +185,7 @@ oyTESTRESULT_e testI18N()
 #define TEST_DOMAIN "sw/Oyranos/Tests"
 #define TEST_KEY "/test_key"
 
-#include "oyranos_elektra.h"
+#include "oyranos_db.h"
 oyTESTRESULT_e testElektra()
 {
   int error = 0;
@@ -290,15 +290,15 @@ oyTESTRESULT_e testElektra()
   oyFree_m_( start );
   oyFree_m_( value );
 
-  error = oyDBEraseKey_( TEST_DOMAIN TEST_KEY, oySCOPE_USER );
+  error = oyDBEraseKey( TEST_DOMAIN TEST_KEY, oySCOPE_USER );
   if(error)
   {
     PRINT_SUB( oyTESTRESULT_FAIL, 
-    "oyDBEraseKey_(%s)", TEST_DOMAIN TEST_KEY );
+    "oyDBEraseKey(%s)", TEST_DOMAIN TEST_KEY );
   } else
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyDBEraseKey_(%s)", TEST_DOMAIN TEST_KEY );
+    "oyDBEraseKey(%s)", TEST_DOMAIN TEST_KEY );
   }
   oyDB_s * db = oyDB_newFrom( TEST_DOMAIN, oySCOPE_USER_SYS, oyAllocateFunc_, oyDeAllocateFunc_ );
   value = oyDB_getString(db, TEST_DOMAIN TEST_KEY);
@@ -323,29 +323,29 @@ oyTESTRESULT_e testElektra()
                                  "SomeValue", "SomeComment" );
   error = oySetPersistentString( OY_STD "/device" TEST_KEY "/#1/key-02", oySCOPE_USER,
                                  "SomeValue", "SomeComment" );
-  value = oyDBSearchEmptyKeyname_(OY_STD "/device" TEST_KEY, oySCOPE_USER);
+  value = oyDBSearchEmptyKeyname(OY_STD "/device" TEST_KEY, oySCOPE_USER);
   if(value && strcmp( "user/" OY_STD "/device" TEST_KEY "/#2",value) == 0 )
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS, 
-    "oyDBSearchEmptyKeyname_()=%s", value );
+    "oyDBSearchEmptyKeyname()=%s", value );
   } else
   {
     PRINT_SUB( oyTESTRESULT_FAIL,
-    "oyDBSearchEmptyKeyname_(%s)", OY_STD "/device" TEST_KEY );
+    "oyDBSearchEmptyKeyname(%s)", OY_STD "/device" TEST_KEY );
   }
   if(value)
     oyFree_m_( value );
 
-  error = oyDBEraseKey_( OY_STD "/device" TEST_KEY, oySCOPE_USER );
-  value = oyDBSearchEmptyKeyname_(OY_STD "/device" TEST_KEY, oySCOPE_USER);
+  error = oyDBEraseKey( OY_STD "/device" TEST_KEY, oySCOPE_USER );
+  value = oyDBSearchEmptyKeyname(OY_STD "/device" TEST_KEY, oySCOPE_USER);
   if(value && strcmp( "user/" OY_STD "/device" TEST_KEY "/#0",value) == 0 )
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS, 
-    "oyDBSearchEmptyKeyname_()=%s", value );
+    "oyDBSearchEmptyKeyname()=%s", value );
   } else
   {
     PRINT_SUB( oyTESTRESULT_FAIL,
-    "oyDBSearchEmptyKeyname_(%s)", OY_STD "/device" TEST_KEY );
+    "oyDBSearchEmptyKeyname(%s)", OY_STD "/device" TEST_KEY );
   }
   oyFree_m_( value );
 
@@ -357,28 +357,28 @@ oyTESTRESULT_e testElektra()
                                  "SomeValue", "SomeComment" );
   error = oySetPersistentString( TEST_DOMAIN "/device" TEST_KEY "/#1/key-02", oySCOPE_USER,
                                  "SomeValue", "SomeComment" );
-  value = oyDBSearchEmptyKeyname_(TEST_DOMAIN "/device" TEST_KEY, oySCOPE_USER);
+  value = oyDBSearchEmptyKeyname(TEST_DOMAIN "/device" TEST_KEY, oySCOPE_USER);
   if(value && strcmp( "user/" TEST_DOMAIN "/device" TEST_KEY "/#2",value) == 0 )
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS, 
-    "oyDBSearchEmptyKeyname_()=%s", value );
+    "oyDBSearchEmptyKeyname()=%s", value );
   } else
   {
     PRINT_SUB( oyTESTRESULT_FAIL,
-    "oyDBSearchEmptyKeyname_()=%s", value );
+    "oyDBSearchEmptyKeyname()=%s", value );
   }
   oyFree_m_( value );
 
-  error = oyDBEraseKey_( TEST_DOMAIN "/device" TEST_KEY, oySCOPE_USER );
-  value = oyDBSearchEmptyKeyname_(TEST_DOMAIN "/device" TEST_KEY, oySCOPE_USER);
+  error = oyDBEraseKey( TEST_DOMAIN "/device" TEST_KEY, oySCOPE_USER );
+  value = oyDBSearchEmptyKeyname(TEST_DOMAIN "/device" TEST_KEY, oySCOPE_USER);
   if(value && strcmp( "user/" TEST_DOMAIN "/device" TEST_KEY "/#0",value) == 0 )
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS, 
-    "oyDBSearchEmptyKeyname_()=%s", value );
+    "oyDBSearchEmptyKeyname()=%s", value );
   } else
   {
     PRINT_SUB( oyTESTRESULT_FAIL,
-    "oyDBSearchEmptyKeyname_()=%s", TEST_DOMAIN "/device" TEST_KEY );
+    "oyDBSearchEmptyKeyname()=%s", TEST_DOMAIN "/device" TEST_KEY );
   }
 
   char * key = 0;
@@ -404,8 +404,8 @@ oyTESTRESULT_e testElektra()
   int old_effect_switch = oyGetBehaviour( oyBEHAVIOUR_EFFECT );
   oyStringAddPrintf( &value, oyAllocateFunc_, oyDeAllocateFunc_,
                      "%d", old_effect_switch >= 1 ? 0 : 1 );
-  oyDBSetString_( OY_DEFAULT_EFFECT, oySCOPE_USER, value,
-                  "testing");
+  oyDBSetString( OY_DEFAULT_EFFECT, oySCOPE_USER, value,
+                 "testing");
   /* clear the DB cache */
   oyGetPersistentStrings( NULL );
   int effect_switch = oyGetBehaviour( oyBEHAVIOUR_EFFECT );
@@ -2179,8 +2179,8 @@ oyTESTRESULT_e testClut ()
   char * value = NULL;
   oyStringAddPrintf( &value, oyAllocateFunc_, oyDeAllocateFunc_,
                      "%d", old_effect_switch >= 1 ? 0 : 1 );
-  oyDBSetString_( OY_DEFAULT_EFFECT, oySCOPE_USER, value,
-                  "testing");
+  oyDBSetString( OY_DEFAULT_EFFECT, oySCOPE_USER, value,
+                 "testing");
   /* clear the DB cache */
   oyGetPersistentStrings( NULL );
   int effect_switch = oyGetBehaviour( oyBEHAVIOUR_EFFECT );
@@ -3516,7 +3516,7 @@ oyTESTRESULT_e testCMMmonitorDBmatch ()
     }
   }
 
-  error = oyDBEraseKey_( reg, oySCOPE_USER );
+  error = oyDBEraseKey( reg, oySCOPE_USER );
 
   return result;
 }

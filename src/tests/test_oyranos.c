@@ -176,7 +176,7 @@ oyTESTRESULT_e testI18N()
   return result;
 }
 
-#include "oyranos_elektra.h"
+#include "oyranos_db.h"
 #include "oyranos_texts.h"
 oyTESTRESULT_e testElektra()
 {

@@ -317,7 +317,7 @@ const char * oiDBInfoGetTextDBC      ( const char        * select,
          if(type == oyNAME_NICK)
       return "create_profile";
     else if(type == oyNAME_NAME)
-      return _("Initialise the oyJob_s APIs.");
+      return _("Initialise the oyDB_s APIs.");
     else
       return _("The Oyranos \"db_handler\" command will initialise the oyDB hooks with the OpenICC Configuration API.");
   } else if(strcmp(select, "help")==0)
@@ -325,7 +325,7 @@ const char * oiDBInfoGetTextDBC      ( const char        * select,
          if(type == oyNAME_NICK)
       return "help";
     else if(type == oyNAME_NAME)
-      return _("Initialise the oyJob_s APIs.");
+      return _("Initialise the oyDB_s APIs.");
     else
       return _("The Oyranos \"db_handler\" command will initialise the oyDB hooks with the OpenICC Configuration API.");
   }

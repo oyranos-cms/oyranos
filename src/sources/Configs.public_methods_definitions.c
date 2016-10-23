@@ -1,3 +1,4 @@
+#include "oyranos_db.h"
 #include "oyranos_sentinel.h"
 
 /** Function  oyConfigs_FromDomain

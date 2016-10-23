@@ -288,6 +288,7 @@ OYAPI int  OYEXPORT
 
 
 /* Include "Configs.public_methods_definitions.c" { */
+#include "oyranos_db.h"
 #include "oyranos_sentinel.h"
 
 /** Function  oyConfigs_FromDomain
