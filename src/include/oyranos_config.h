@@ -99,7 +99,9 @@ typedef struct {
   oyDBEraseKey_f eraseKey;
 } oyDbAPI_s;
 
-void               oyDbHandlingSet   ( const oyDbAPI_s   * db_api );
+int                oyDbHandlingReady ( void );
+int                oyDbHandlingSet   ( const oyDbAPI_s   * db_api );
+
 
 #ifdef __cplusplus
 } /* extern "C" */
