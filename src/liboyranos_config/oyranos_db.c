@@ -174,12 +174,16 @@ int                oyDbInitialise_  ( void )
     oyMessageFunc_p( oyMSG_DBG, NULL, OY_DBG_FORMAT_
                      " can't initialise Elektra \"db_handler\"",OY_DBG_ARGS_);
 
-    int error = oyOptions_Handle( "//"OY_TYPE_STD"/db_handler",
-                                  opts,"db_handler",
-                                  &result_opts );
+    error = oyOptions_Handle( "//"OY_TYPE_STD"/db_handler",
+                              opts,"db_handler",
+                              &result_opts );
     if(error || oyDB_newFrom == oyDB_newFromInit)
+    {
       oyMessageFunc_p( oyMSG_WARN, NULL, OY_DBG_FORMAT_
                        " can't properly call \"db_handler\"",OY_DBG_ARGS_);
+      if(oyDB_newFrom == oyDB_newFromInit)
+        error = 1;
+    }
   }
 
   oyOptions_Release( &opts );
@@ -203,20 +207,20 @@ oyDB_s * oyDB_newFromInit            ( const char        * top_key_name,
                                        oyAlloc_f           allocFunc,
                                        oyDeAlloc_f         deAllocFunc )
 { 
-  if(oyDbHandlingInit() == 0)
+  if(oyDbHandlingInit() <= 0)
     return oyDB_newFrom(top_key_name,scope,allocFunc,deAllocFunc);
   else
     return 0;
 }
 void     oyDB_releaseInit            ( oyDB_s           ** db )
 {
-  if(oyDbHandlingInit() == 0)
+  if(oyDbHandlingInit() <= 0)
     oyDB_release( db );
 }
 char *   oyDB_getStringInit          ( oyDB_s            * db,
                                        const char        * key_name )
 { 
-  if(oyDbHandlingInit() == 0)
+  if(oyDbHandlingInit() <= 0)
     return oyDB_getString(db,key_name);
   else
     return 0;
@@ -226,7 +230,7 @@ int      oyDB_getStringsInit         ( oyDB_s            * db,
                                        const char       ** key_names,
                                        int                 key_names_n )
 { 
-  if(oyDbHandlingInit() == 0)
+  if(oyDbHandlingInit() <= 0)
     return oyDB_getStrings(db,options,key_names,key_names_n);
   else
     return 1;
@@ -235,7 +239,7 @@ char **  oyDB_getKeyNamesInit        ( oyDB_s            * db,
                                        const char        * key_name,
                                        int               * n )
 { 
-  if(oyDbHandlingInit() == 0)
+  if(oyDbHandlingInit() <= 0)
     return oyDB_getKeyNames(db,key_name,n);
   else
     return 0;
@@ -244,7 +248,7 @@ char **  oyDB_getKeyNamesOneLevelInit (oyDB_s            * db,
                                        const char        * key_name,
                                        int               * n )
 { 
-  if(oyDbHandlingInit() == 0)
+  if(oyDbHandlingInit() <= 0)
     return oyDB_getKeyNamesOneLevel(db,key_name,n);
   else
     return 0;
@@ -255,7 +259,7 @@ int      oyDBSetStringInit           ( const char        * keyName,
                                        const char        * value,
                                        const char        * comment )
 { 
-  if(oyDbHandlingInit() == 0)
+  if(oyDbHandlingInit() <= 0)
     return oyDBSetString(keyName,scope,value,comment);
   else
     return 1;
@@ -263,7 +267,7 @@ int      oyDBSetStringInit           ( const char        * keyName,
 char*    oyDBSearchEmptyKeynameInit    ( const char      * key_parent_name,
                                          oySCOPE_e         scope )
 { 
-  if(oyDbHandlingInit() == 0)
+  if(oyDbHandlingInit() <= 0)
     return oyDBSearchEmptyKeyname(key_parent_name,scope);
   else
     return 0;
@@ -271,7 +275,7 @@ char*    oyDBSearchEmptyKeynameInit    ( const char      * key_parent_name,
 int      oyDBEraseKeyInit            ( const char        * key_name,
                                        oySCOPE_e           scope )
 { 
-  if(oyDbHandlingInit() == 0)
+  if(oyDbHandlingInit() <= 0)
     return oyDBEraseKey(key_name,scope);
   else
     return 1;
