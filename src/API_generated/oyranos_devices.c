@@ -2242,7 +2242,7 @@ OYAPI int OYEXPORT oyOptions_SaveToDB( oyOptions_s       * options,
       STRING_ADD( key_name, key_top );
       if(oyOption_GetValueString(o,0))
         error = oySetPersistentString( key_name,
-        /* The key_name is already scope'd by oyDBSearchEmptyKeyname_().
+        /* The key_name is already scope'd by oyDBSearchEmptyKeyname().
          * So we skip creating again a scope prefix. */
                                        oySCOPE_USER_SYS, 
                                        oyOption_GetValueString(o,0), 0 );

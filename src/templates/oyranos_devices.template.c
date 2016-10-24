@@ -12,6 +12,7 @@
 #include "oyranos_icc.h"
 #include "oyranos_texts.h"
 
+#include "oyranos_db.h"
 #include "oyranos_devices.h"
 #include "oyranos_devices_internal.h"
 #include "oyranos_object_internal.h"
@@ -2208,7 +2209,7 @@ OYAPI int OYEXPORT oyOptions_SaveToDB( oyOptions_s       * options,
 
   if(error <= 0)
   {
-    key_base_name = oyDBSearchEmptyKeyname_( registration, scope );
+    key_base_name = oyDBSearchEmptyKeyname( registration, scope );
     error = !key_base_name;
     if(error <= 0)
     {
@@ -2227,7 +2228,7 @@ OYAPI int OYEXPORT oyOptions_SaveToDB( oyOptions_s       * options,
       STRING_ADD( key_name, key_top );
       if(oyOption_GetValueString(o,0))
         error = oySetPersistentString( key_name,
-        /* The key_name is already scope'd by oyDBSearchEmptyKeyname_().
+        /* The key_name is already scope'd by oyDBSearchEmptyKeyname().
          * So we skip creating again a scope prefix. */
                                        oySCOPE_USER_SYS, 
                                        oyOption_GetValueString(o,0), 0 );

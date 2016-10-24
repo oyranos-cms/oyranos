@@ -102,7 +102,7 @@ oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s         * api_ )
                  oyStructTypeToText(api->type_),
                  oyNoEmptyString_m_(api->registration));
       }
-      if(s->context_type && s->context_type[0] &&
+      if(s->context_type[0] &&
          !s->oyCMMFilterNode_ContextToMem)
       {
         error = 1;

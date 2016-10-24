@@ -576,7 +576,7 @@ OYAPI int  OYEXPORT
 
   oyCMMapiFilters_Release( &apis );
 
-  if(error && max_rank >= 0)
+  if(error && max_rank > 0)
     rank = -1;
   else
     rank = max_rank;

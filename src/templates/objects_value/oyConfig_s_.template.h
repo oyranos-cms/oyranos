@@ -14,6 +14,5 @@
 #include "oyCMMapiFilters_s.h"
 #include "oyOptions_s_.h"
 
-#include "oyranos_db.h"
 #include "oyranos_module_internal.h"
 {% endblock %}
