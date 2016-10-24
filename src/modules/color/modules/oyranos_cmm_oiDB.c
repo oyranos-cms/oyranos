@@ -228,8 +228,7 @@ int oiDBSetString                    ( const char        * key_name,
 char*    oiDBSearchEmptyKeyname        ( const char      * key_parent_name,
                                          oySCOPE_e         scope )
 {
-  oiDB_msg( oyMSG_ERROR, 0, OY_DBG_FORMAT_ "%s", OY_DBG_ARGS_, _("not implemented") );
-  return 0;
+  return openiccDBSearEmptyKeyname( key_parent_name, (openiccSCOPE_e) scope );
 }
 int      oiDBEraseKey                ( const char        * key_name,
                                        oySCOPE_e           scope )
