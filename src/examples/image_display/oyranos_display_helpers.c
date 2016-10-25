@@ -297,46 +297,45 @@ int  oyDrawScreenImage               ( oyConversion_s    * context,
 
       image_tags = oyImage_GetTags( image );
 
-    if(window && strcmp("X11", system_type) == 0)
-    {
-#if defined(XCM_HAVE_X11)
-      /* add X11 window and display identifiers to output image */
-      oyOption_s * o = 0;
-      Display *disp = (Display*) display;
-      Window  w = (Window) window;
-      int count = oyOptions_CountType( image_tags,
-                                       "//" OY_TYPE_STD "/display/window_id",
-                                       oyOBJECT_BLOB_S );
-      if(!count && w)
+      if(window && strcmp("X11", system_type) == 0)
       {
-        oyBlob_s * win_id = oyBlob_New(0),
-                 * display_id = oyBlob_New(0);
-        if(win_id)
+#if defined(XCM_HAVE_X11)
+        /* add X11 window and display identifiers to output image */
+        oyOption_s * o = 0;
+        Display *disp = (Display*) display;
+        Window  w = (Window) window;
+        int count = oyOptions_CountType( image_tags,
+                                         "//" OY_TYPE_STD "/display/window_id",
+                                         oyOBJECT_BLOB_S );
+        if(!count && w)
         {
-          oyBlob_SetFromStatic( win_id, (oyPointer)w, 0, 0 );
-          o = oyOption_FromRegistration( "//" OY_TYPE_STD "/display/window_id",
-                                         0 );
-          oyOption_MoveInStruct( o, (oyStruct_s**)&win_id );
-          oyOptions_MoveIn( image_tags, &o, -1 );
+          oyBlob_s * win_id = oyBlob_New(0),
+                   * display_id = oyBlob_New(0);
+          if(win_id)
+          {
+            oyBlob_SetFromStatic( win_id, (oyPointer)w, 0, 0 );
+            o = oyOption_FromRegistration( "//" OY_TYPE_STD "/display/window_id",
+                                           0 );
+            oyOption_MoveInStruct( o, (oyStruct_s**)&win_id );
+            oyOptions_MoveIn( image_tags, &o, -1 );
 
-          oyBlob_SetFromStatic( display_id, (oyPointer)disp, 0, 0 );
-          o = oyOption_FromRegistration( "//" OY_TYPE_STD "/display/display_id",
-                                         0 );
-          oyOption_MoveInStruct( o, (oyStruct_s**)&display_id );
-          oyOptions_MoveIn( image_tags, &o, -1 );
+            oyBlob_SetFromStatic( display_id, (oyPointer)disp, 0, 0 );
+            o = oyOption_FromRegistration( "//" OY_TYPE_STD "/display/display_id",
+                                           0 );
+            oyOption_MoveInStruct( o, (oyStruct_s**)&display_id );
+            oyOptions_MoveIn( image_tags, &o, -1 );
 
-          oyOptions_SetFromText( &image_tags,
-                                 "//" OY_TYPE_STD "/display/display_name",
-                                 DisplayString(disp), OY_CREATE_NEW );
+            oyOptions_SetFromText( &image_tags,
+                                   "//" OY_TYPE_STD "/display/display_name",
+                                   DisplayString(disp), OY_CREATE_NEW );
 
-        } else
-          printf("%s:%d WARNING: no X11 Window obtained or\n"
-                 "   no oyBlob_s allocateable\n", __FILE__,__LINE__);
+          } else
+            printf("%s:%d WARNING: no X11 Window obtained or\n"
+                   "   no oyBlob_s allocateable\n", __FILE__,__LINE__);
 
-      }
+        }
 #endif
-    } else
-      if(strcmp("oy-test", system_type) == 0)
+      } else if(strcmp("oy-test", system_type) == 0)
         oyOptions_SetFromText( &image_tags,
                                "//" OY_TYPE_STD "/display/display_name",
                                system_type, OY_CREATE_NEW );

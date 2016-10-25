@@ -598,7 +598,7 @@ int      lrawFilterPlug_ImageInputRAWRun (
       oyConfig_Release( &device );
 
       error = oyOptions_SetFromText( &options,
-                   "//"OY_TYPE_STD"/config/icc_profile.fallback",
+                   "//" OY_TYPE_STD "/config/icc_profile.fallback",
                          "yes", OY_CREATE_NEW | OY_MATCH_KEY );
       error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
                                      "properties", OY_CREATE_NEW | OY_MATCH_KEY );  

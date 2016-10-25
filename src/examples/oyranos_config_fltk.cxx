@@ -741,7 +741,7 @@ void updateUI() {
     // ping X11 observers about option change
     // ... by setting a known property again to its old value
     oyOptions_s * opts = oyOptions_New(NULL), * results = 0;
-    int error = oyOptions_Handle( "//"OY_TYPE_STD"/send_native_update_event",
+    int error = oyOptions_Handle( "//" OY_TYPE_STD "/send_native_update_event",
                       opts,"send_native_update_event",
                       &results );
     oyOptions_Release( &opts );

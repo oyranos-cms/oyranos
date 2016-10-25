@@ -266,11 +266,11 @@ int main(int argc, char ** argv)
     oyOptions_s * options = NULL;
     if(strcmp(format,"fallback-icc") == 0)
       oyOptions_SetFromText( &options,
-                   "//"OY_TYPE_STD"/config/icc_profile.fallback",
+                   "//" OY_TYPE_STD "/config/icc_profile.fallback",
                              "yes", OY_CREATE_NEW );
     else
       oyOptions_SetFromText( &options,
-                   "//"OY_TYPE_STD"/config/icc_profile",
+                   "//" OY_TYPE_STD "/config/icc_profile",
                              "yes", OY_CREATE_NEW );
     error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
                                    "properties", OY_CREATE_NEW );  

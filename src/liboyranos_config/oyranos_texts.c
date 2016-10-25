@@ -808,7 +808,7 @@ oyPolicyWidgetListGet_( oyGROUP_e       group,
   return list;
 }
 
-/** @func    oyPoliciesEqual
+/** @fn      oyPoliciesEqual
  *  @brief   compare between two policy texts
  *
  *  Do the comparision according to policy typical (oyGROUP_ALL) xml keys.
@@ -836,7 +836,7 @@ int                oyPoliciesEqual   ( const char        * policyA,
   if( !policyA || !policyB )
     return -1;
 
-    {
+  {
       const char * key = NULL;
       char       * value = NULL,
                  * value2 = NULL;
@@ -886,7 +886,7 @@ int                oyPoliciesEqual   ( const char        * policyA,
         if(value2) oyFree_m_(value2);
 
       }
-    }
+  }
 
   if( list ) oyFree_m_( list );
 
@@ -895,7 +895,7 @@ int                oyPoliciesEqual   ( const char        * policyA,
 }
 
 /** @internal
- *  @func    oyPolicyNameGet_
+ *  @fn      oyPolicyNameGet_
  *  @brief   get the name of a actual policy file
  *
  *  @version Oyranos: 0.1.8
@@ -954,7 +954,7 @@ oyPolicyNameGet_()
 }
 
 /** @internal
- *  @func    oyPolicyFileNameGet_
+ *  @fn      oyPolicyFileNameGet_
  *  @brief   resolve the file name of a policy
  *
  *  @param[in]     policy_name         the selected policy

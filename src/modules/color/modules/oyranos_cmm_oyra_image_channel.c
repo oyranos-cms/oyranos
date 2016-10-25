@@ -206,7 +206,7 @@ int      oyraFilter_ImageChannelRun  ( oyFilterPlug_s    * requestor_plug,
 
       if(!error)
       {
-        int w,h,x,y, start_x,start_y, max_value;
+        int w,h,x,y, start_x,start_y, max_value = -1;
         oyRectangle_s * ticket_roi = oyPixelAccess_GetArrayROI( ticket );
         oyRectangle_s_  roi_= {oyOBJECT_RECTANGLE_S,0,0,0, 0,0,0,0};
         oyRectangle_s * roi = (oyRectangle_s*)&roi_;

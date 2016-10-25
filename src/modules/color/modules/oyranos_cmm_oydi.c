@@ -895,7 +895,7 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
         oyOptions_s * options = 0;
 # if defined(XCM_HAVE_X11) && defined (HAVE_XCM)
         oyOptions_s * tags = oyImage_GetTags( image );
-        int active;
+        int active = 0;
         oyBlob_s * display_id = (oyBlob_s*) oyOptions_GetType( tags, -1, "display_id",
                                           oyOBJECT_BLOB_S );
         if(!display_id && test == 0)

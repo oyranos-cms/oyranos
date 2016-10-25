@@ -1113,7 +1113,7 @@ int            oyImage_ReadArray     ( oyImage_s         * image,
 }
 
 /**
- *  @func    oyImage_WritePPM
+ *  @fn      oyImage_WritePPM
  *  @memberof oyImage_s
  *  @brief   write buffer to portable pix map format
  *

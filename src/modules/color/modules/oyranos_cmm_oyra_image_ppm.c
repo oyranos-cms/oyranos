@@ -852,8 +852,8 @@ int      oyraFilterPlug_ImageInputPPMRun (
            info_good = 0;
     }
 
-    switch(spp)
-    {
+  switch(spp)
+  {
       case 1:
            profile_type = oyASSUMED_GRAY;
            break;
@@ -866,7 +866,7 @@ int      oyraFilterPlug_ImageInputPPMRun (
       case 4:
            profile_type = oyASSUMED_RGB;
            break;
-    }
+  }
 
   if( !info_good )
   {

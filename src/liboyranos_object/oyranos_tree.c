@@ -730,7 +730,7 @@ void oyObjectTreeDotGraphCallback    ( void              * user_data,
  *  Probably the most simple and still useful function from the Object tree debug APIs.
  *  It prints to stderr with OY_DEBUG_OBJECTS set.
  *
- *  @params       flags               - 0x01 show a graph
+ *  @param        flags               - 0x01 show a graph
  *                                    - 0x02 include more object details
  *
  *  @version  Oyranos: 0.9.6

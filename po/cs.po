@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: oyranos\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2016-10-24 00:56+0200\n"
+"POT-Creation-Date: 2016-10-24 23:47+0200\n"
 "PO-Revision-Date: 2012-10-19 15:10+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -700,7 +700,7 @@ msgstr "Kanály"
 #: modules/color/modules/oyranos_cmm_lcms.c:2535
 #: modules/color/modules/oyranos_cmm_lcms.c:2608
 #: modules/color/modules/oyranos_cmm_elDB.c:857
-#: modules/color/modules/oyranos_cmm_oiDB.c:314
+#: modules/color/modules/oyranos_cmm_oiDB.c:328
 #: modules/color/modules/devices/oyranos_monitor_x11.c:1784
 #: modules/color/modules/devices/oyranos_monitor_x11.c:2042
 #: examples/oyranos_cmm_dFil.c:612
@@ -1019,7 +1019,7 @@ msgid "Copyright (c) 2014-2016 Kai-Uwe Behrmann; new BSD"
 msgstr "Copyright (c) 2009 Kai-Uwe Behrmann; newBSD"
 
 #: modules/color/modules/oyranos_cmm_elDB.c:946
-#: modules/color/modules/oyranos_cmm_oiDB.c:403
+#: modules/color/modules/oyranos_cmm_oiDB.c:417
 #, fuzzy
 msgid "Copyright (c) 2016 Kai-Uwe Behrmann; new BSD"
 msgstr "Copyright (c) 2009 Kai-Uwe Behrmann; newBSD"
@@ -1172,7 +1172,7 @@ msgstr "Křivky pro optimalizaci"
 msgid "Cyan"
 msgstr "Azurová"
 
-#: liboyranos_config/oyranos_db.c:137 liboyranos_config/oyranos_db.c:192
+#: liboyranos_config/oyranos_db.c:137 liboyranos_config/oyranos_db.c:196
 msgid "DB handling is already set"
 msgstr ""
 
@@ -2009,8 +2009,8 @@ msgstr "Informace:"
 
 #: modules/color/modules/oyranos_cmm_elDB.c:863
 #: modules/color/modules/oyranos_cmm_elDB.c:871
-#: modules/color/modules/oyranos_cmm_oiDB.c:320
-#: modules/color/modules/oyranos_cmm_oiDB.c:328
+#: modules/color/modules/oyranos_cmm_oiDB.c:334
+#: modules/color/modules/oyranos_cmm_oiDB.c:342
 msgid "Initialise the oyDB_s APIs."
 msgstr ""
 
@@ -2609,13 +2609,13 @@ msgstr "V případě nesouladu CMYK"
 msgid "On Rgb Mismatch"
 msgstr "V případě nesouladu RGB"
 
-#: modules/color/modules/oyranos_cmm_oiDB.c:387
-#: modules/color/modules/oyranos_cmm_oiDB.c:389
+#: modules/color/modules/oyranos_cmm_oiDB.c:401
+#: modules/color/modules/oyranos_cmm_oiDB.c:403
 #, fuzzy
 msgid "OpenICC Configuration API"
 msgstr "Konfigurace Oyranosu"
 
-#: modules/color/modules/oyranos_cmm_oiDB.c:397
+#: modules/color/modules/oyranos_cmm_oiDB.c:411
 msgid "OpenICC project; www/support: http://github.com/OpenICC/config"
 msgstr ""
 
@@ -3587,8 +3587,8 @@ msgid ""
 "Elektra Configuration API."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oiDB.c:322
-#: modules/color/modules/oyranos_cmm_oiDB.c:330
+#: modules/color/modules/oyranos_cmm_oiDB.c:336
+#: modules/color/modules/oyranos_cmm_oiDB.c:344
 msgid ""
 "The Oyranos \"db_handler\" command will initialise the oyDB hooks with the "
 "OpenICC Configuration API."
@@ -3771,8 +3771,8 @@ msgstr ""
 msgid "The filter provides the Elektra Configuration API to Oyranos DB hooks."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oiDB.c:411
-#: modules/color/modules/oyranos_cmm_oiDB.c:413
+#: modules/color/modules/oyranos_cmm_oiDB.c:425
+#: modules/color/modules/oyranos_cmm_oiDB.c:427
 msgid ""
 "The filter provides the libOpenICC Configuration API to Oyranos DB hooks."
 msgstr ""
@@ -4428,7 +4428,7 @@ msgstr ""
 #: modules/color/modules/oyranos_cmm_lcms.c:2533
 #: modules/color/modules/oyranos_cmm_lcms.c:2606
 #: modules/color/modules/oyranos_cmm_elDB.c:855
-#: modules/color/modules/oyranos_cmm_oiDB.c:312
+#: modules/color/modules/oyranos_cmm_oiDB.c:326
 #: modules/color/modules/devices/oyranos_monitor_x11.c:1782
 #: modules/color/modules/devices/oyranos_monitor_x11.c:2040
 #: examples/oyranos_cmm_dFil.c:610
@@ -4741,7 +4741,7 @@ msgstr "třída pojmenovaných barev"
 #: modules/color/modules/oyranos_cmm_elDB.c:948
 #: modules/color/modules/oyranos_cmm_oyra.c:147
 #: modules/color/modules/oyranos_cmm_oydi.c:1271
-#: modules/color/modules/oyranos_cmm_oiDB.c:405
+#: modules/color/modules/oyranos_cmm_oiDB.c:419
 #: modules/color/modules/oyranos_cmm_oicc.c:1065
 #: modules/color/modules/devices/oyranos_cmm_disp.c:1321
 #: modules/color/modules/oyranos_cmm_lraw.cpp:239
@@ -4783,9 +4783,8 @@ msgstr "není profil:"
 msgid "not found:"
 msgstr "nenalezeno:"
 
-#: modules/color/modules/oyranos_cmm_oiDB.c:210
-#: modules/color/modules/oyranos_cmm_oiDB.c:216
-#: modules/color/modules/oyranos_cmm_oiDB.c:222
+#: modules/color/modules/oyranos_cmm_oiDB.c:225
+#: modules/color/modules/oyranos_cmm_oiDB.c:236
 msgid "not implemented"
 msgstr ""
 

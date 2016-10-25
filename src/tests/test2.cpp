@@ -1449,7 +1449,7 @@ oyTESTRESULT_e testProfile ()
 
   oyOptions_SetFromInt( &opts, "///icc_profile_flags", icc_profile_flags, 0, OY_CREATE_NEW );
   oyOptions_MoveIn( opts, &matrix, -1 );
-  const char * reg = "//"OY_TYPE_STD"/create_profile.color_matrix.icc";
+  const char * reg = "//" OY_TYPE_STD "/create_profile.color_matrix.icc";
   oyOptions_Handle( reg, opts, "create_profile.icc_profile.color_matrix",
                     &r );
 
@@ -1747,9 +1747,9 @@ oyTESTRESULT_e testProofingEffect ()
 
   fprintf(stdout, "\n" );
 
-  error = oyOptions_MoveInStruct( &opts, "//"OY_TYPE_STD"/icc_profile.proofing_profile",
+  error = oyOptions_MoveInStruct( &opts, "//" OY_TYPE_STD "/icc_profile.proofing_profile",
                                   (oyStruct_s**) &prof, OY_CREATE_NEW );
-  error = oyOptions_Handle( "//"OY_TYPE_STD"/create_profile.proofing_effect",
+  error = oyOptions_Handle( "//" OY_TYPE_STD "/create_profile.proofing_effect",
                             opts,"create_profile.proofing_effect",
                             &result_opts );
   abstract = (oyProfile_s*)oyOptions_GetType( result_opts, -1, "icc_profile",
@@ -1990,7 +1990,7 @@ static int     setupColourTable      ( PrivColorContext  * ccontext,
       oyOptions_Release( &options );
 
       error = oyOptions_SetFromText( &options,
-                                     "//"OY_TYPE_STD"/config/display_mode", "1",
+                                     "//" OY_TYPE_STD "/config/display_mode", "1",
                                      OY_CREATE_NEW );
       error = oyConversion_Correct(cc, "//" OY_TYPE_STD "/icc_color", flags, options);
       if(error)
@@ -2022,7 +2022,7 @@ static int     setupColourTable      ( PrivColorContext  * ccontext,
         }
         oyOptions_Release( &options );
         error = oyOptions_SetFromText( &options,
-                                     "//"OY_TYPE_STD"/config/display_mode", "1",
+                                     "//" OY_TYPE_STD "/config/display_mode", "1",
                                      OY_CREATE_NEW );
         error = oyConversion_Correct(cc, "//" OY_TYPE_STD "/icc_color", flags, options);
         icc = oyFilterGraph_GetNode( cc_graph, -1, "///icc_color", 0 );
@@ -2542,7 +2542,7 @@ oyTESTRESULT_e testCMMDevicesListing ()
 #endif
 
   /* get all configuration filters */
-  oyConfigDomainList( "//"OY_TYPE_STD"/device/config.icc_profile",
+  oyConfigDomainList( "//" OY_TYPE_STD "/device/config.icc_profile",
                       &texts, &count, &rank_list ,0 );
 
   if( count )
@@ -2612,7 +2612,7 @@ oyTESTRESULT_e testCMMDevicesListing ()
         oyOptions_s * options = 0;
         const char * t = 0;
         oyOptions_SetFromText( &options,
-                   "//"OY_TYPE_STD"/config/icc_profile.x_color_region_target",
+                   "//" OY_TYPE_STD "/config/icc_profile.x_color_region_target",
                          "yes", OY_CREATE_NEW );
         error = oyDeviceGetProfile( config, options, &p );
         oyOptions_Release( &options );
@@ -2736,7 +2736,7 @@ oyTESTRESULT_e testCMMDevicesDetails ()
 #endif
 
   /* get all configuration filters */
-  oyConfigDomainList( "//"OY_TYPE_STD"/device/config.icc_profile",
+  oyConfigDomainList( "//" OY_TYPE_STD "/device/config.icc_profile",
                       &texts, &count, &rank_list ,0 );
 
   if( count )
@@ -2896,7 +2896,7 @@ oyTESTRESULT_e testCMMRankMap ()
   oyConfigs_s * devices = 0;
 
   oyOptions_SetFromText( &options,
-                   "//"OY_TYPE_STD"/config/icc_profile.x_color_region_target",
+                   "//" OY_TYPE_STD "/config/icc_profile.x_color_region_target",
                          "yes", OY_CREATE_NEW );
   error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
                                    "properties", OY_CREATE_NEW );  
@@ -3103,7 +3103,7 @@ oyTESTRESULT_e testCMMMonitorJSON ()
                   "//" OY_TYPE_STD "/config/command",
                            "list", OY_CREATE_NEW );
     oyOptions_SetFromText( &options,
-                   "//"OY_TYPE_STD"/config/icc_profile.x_color_region_target",
+                   "//" OY_TYPE_STD "/config/icc_profile.x_color_region_target",
                           "yes", OY_CREATE_NEW );
     error = oyDeviceGetProfile( config, options, &p );
     if( p )
@@ -3121,7 +3121,7 @@ oyTESTRESULT_e testCMMMonitorJSON ()
 #   endif
 
     oyOptions_SetFromText( &options,
-                   "//"OY_TYPE_STD"/config/icc_profile.fallback",
+                   "//" OY_TYPE_STD "/config/icc_profile.fallback",
                           "yes", OY_CREATE_NEW );
     error = oyDeviceGetProfile( config, options, &p );
     if( p )
@@ -3142,7 +3142,7 @@ oyTESTRESULT_e testCMMMonitorJSON ()
                   "//" OY_TYPE_STD "/config/command",
                            "properties", OY_CREATE_NEW );
     oyOptions_SetFromText( &options,
-                   "//"OY_TYPE_STD"/config/icc_profile.x_color_region_target",
+                   "//" OY_TYPE_STD "/config/icc_profile.x_color_region_target",
                           "yes", OY_CREATE_NEW );
     error = oyDeviceGetProfile( config, options, &p );
     if( !error && p )
@@ -3166,7 +3166,7 @@ oyTESTRESULT_e testCMMMonitorJSON ()
 
 
     oyOptions_SetFromText( &options,
-                   "//"OY_TYPE_STD"/config/icc_profile.fallback",
+                   "//" OY_TYPE_STD "/config/icc_profile.fallback",
                           "yes", OY_CREATE_NEW );
     error = oyDeviceGetProfile( config, options, &p );
     if( p )
@@ -3385,7 +3385,7 @@ oyTESTRESULT_e testCMMMonitorModule ()
                                  t, OY_CREATE_NEW );
   /* clean up */
   error = oyOptions_SetFromText( &options,
-                                 "//"OY_TYPE_STD"/config/command",
+                                 "//" OY_TYPE_STD "/config/command",
                                  "unset", OY_CREATE_NEW );
   error = oyDevicesGet( OY_TYPE_STD, "monitor", options, &devices );
   oyConfigs_Release( &devices );
@@ -6002,7 +6002,7 @@ oyTESTRESULT_e testICCsCheck()
                               p_out, buf_f32out2x2, oyDataType_m(buf_type_out),
                                                     options, 4 );
     error = oyOptions_SetFromText( &options,
-                                     "//"OY_TYPE_STD"/config/display_mode", "1",
+                                     "//" OY_TYPE_STD "/config/display_mode", "1",
                                      OY_CREATE_NEW );
     /* activate policy */
     error = oyConversion_Correct( cc, "//" OY_TYPE_STD "/icc_color", oyOPTIONATTRIBUTE_ADVANCED, options);
