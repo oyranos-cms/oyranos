@@ -2424,7 +2424,7 @@ int          oyOptions_DoFilter      ( oyOptions_s       * opts,
            /* skip already edited options by default */
            !(oyOption_GetFlags(o) & oyOPTIONATTRIBUTE_EDIT))
           /* remember the DB requests */
-          oyStringListAddStaticString_ ( &db_keys,
+          oyStringListAddStaticString( &db_keys,
                                          &db_keys_n,
                                          oyOption_GetText( o,oyNAME_DESCRIPTION),
                                          oyAllocateFunc_,

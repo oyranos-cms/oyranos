@@ -401,7 +401,7 @@ int          DeviceAttributes_       ( ppd_file_t        * ppd,
 
         if(tmp)
         {
-          color_key_words = oyStringSplit_( tmp, ';', &color_key_words_n,
+          color_key_words = oyStringSplit( tmp, ';', &color_key_words_n,
                                              oyAllocateFunc_);
           oyDeAllocateFunc_( tmp ); tmp = 0;
         }
@@ -1123,7 +1123,7 @@ int CUPSgetProfiles                  ( const char        * device_name,
       if(!profile_name || !profile_name[0])
         continue;
 
-      texts = oyStringSplit_( ppd_file->attrs[i]->spec, '.', &count,
+      texts = oyStringSplit( ppd_file->attrs[i]->spec, '.', &count,
                               oyAllocateFunc_);
       if(count != 3)
       {

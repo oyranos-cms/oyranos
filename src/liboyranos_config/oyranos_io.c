@@ -241,7 +241,7 @@ char **  oyProfilePathsGet_          ( int               * count,
   if(oyIsDir_( path )) \
   { \
     char * path_full = oyResolveDirFileName_(path); \
-    oyStringListAddStaticString_ ( &path_names, count, path_full, oyAllocateFunc_, \
+    oyStringListAddStaticString( &path_names, count, path_full, oyAllocateFunc_, \
                                    oyDeAllocateFunc_ ); \
     oyFree_m_(path_full); \
   }

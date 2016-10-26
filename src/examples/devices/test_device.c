@@ -597,7 +597,7 @@ int main(int argc, char *argv[])
       /* pick the filters name and remove the common config part */
       temp = oyFilterRegistrationToText( texts[i], oyFILTER_REG_APPLICATION,
                                          malloc );
-      attributes = oyStringSplit_( temp, '.', &attributes_n, malloc );
+      attributes = oyStringSplit( temp, '.', &attributes_n, malloc );
       free(temp);
       temp = malloc(1024); temp[0] = 0;
       for(j = 0; j < attributes_n; ++j)

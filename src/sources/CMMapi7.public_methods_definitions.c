@@ -73,7 +73,7 @@ OYAPI oyCMMapi7_s *  OYEXPORT
   s->sockets_n = sockets_n;
   s->sockets_last_add = sockets_last_add;
   while(properties && properties[n]) ++n;
-  oyStringListAdd_( &s->properties, 0, properties, n,
+  oyStringListAdd( &s->properties, 0, properties, n,
                     oyObject_GetAlloc( s->oy_ ),
                     oyObject_GetDeAlloc( s->oy_ ) );
 

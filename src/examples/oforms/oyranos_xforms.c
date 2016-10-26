@@ -28,7 +28,6 @@
 #include "oyranos_forms.h"
 
 
-
 void usage(int argc, char ** argv)
 {
   fprintf(stderr, "\n");
@@ -112,18 +111,18 @@ int main (int argc, char ** argv)
                           /* get the key only */
                           if(text)
                             text[0] = 0;
-                          oyStringListAddStaticString_( &other_args,&other_args_n,
+                          oyStringListAddStaticString( &other_args,&other_args_n,
                                                         t,
                                             oyAllocateFunc_,oyDeAllocateFunc_ );
                           if(text)
-                            oyStringListAddStaticString_(
+                            oyStringListAddStaticString(
                                             &other_args,&other_args_n,
                                             oyStrrchr_(&argv[pos][2], '=') + 1,
                                             oyAllocateFunc_,oyDeAllocateFunc_ );
                           else {
                             if(argv[pos+1])
                             {
-                              oyStringListAddStaticString_( &other_args,
+                              oyStringListAddStaticString( &other_args,
                                                             &other_args_n,
                                                             argv[pos+1],
                                             oyAllocateFunc_,oyDeAllocateFunc_ );

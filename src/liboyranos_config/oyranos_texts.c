@@ -1220,7 +1220,7 @@ char **            oyGetCMMs         ( oyCMM_e             type,
       {
         char * t = oyGetCMMName_( (oyCMMapiFilter_s *) f, type, name_type, allocate_func );
 
-        oyStringListAddStaticString_( &texts, &texts_n, t,
+        oyStringListAddStaticString( &texts, &texts_n, t,
                                       oyAllocateFunc_, oyDeAllocateFunc_);
 
         if(oy_debug > 1)
@@ -1296,7 +1296,7 @@ int          oyOptionChoicesGet_     ( oyWIDGET_e          type,
       else
         temp = text;
 
-      oyStringListAddStaticString_( &texts, &count, temp,
+      oyStringListAddStaticString( &texts, &count, temp,
                                     oyAllocateFunc_, oyDeAllocateFunc_);
 
       oyProfile_Release( &temp_prof );

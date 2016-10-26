@@ -59,6 +59,7 @@ int                oyStringAddPrintf ( char             ** text,
                                        const char        * format,
                                                            ... );
 
+#define oyStringSplit_ oyStringSplit
 char**             oyStringSplit_    ( const char        * text,
                                        const char          delimiter,
                                        int               * count,
@@ -90,13 +91,15 @@ char*              oyStringReplace_  ( const char        * text,
                                        const char        * search,
                                        const char        * replacement,
                                        oyAlloc_f           allocateFunc );
-char**             oyStringListAppend_(const char       ** list,
+#define oyStringListAppend_ oyStringListCat
+char**             oyStringListCat   ( const char       ** list,
                                        int                 n_alt,
                                        const char       ** append,
                                        int                 n_app,
                                        int               * count,
                                        oyAlloc_f           allocateFunc );
-void               oyStringListAdd_  ( char            *** list,
+#define oyStringListAdd_ oyStringListAdd
+void               oyStringListAdd   ( char            *** list,
                                        int               * n,
                                        const char       ** append,
                                        int                 n_app,
@@ -107,12 +110,14 @@ void               oyStringListAddString_ ( char       *** list,
                                        char             ** string,
                                        oyAlloc_f           allocateFunc,
                                        oyDeAlloc_f         deallocateFunc );
-void               oyStringListAddStaticString_ ( char *** list,
+#define oyStringListAddStaticString_ oyStringListAddStaticString
+void               oyStringListAddStaticString ( char *** list,
                                        int               * n,
                                        const char        * string,
                                        oyAlloc_f           allocateFunc,
                                        oyDeAlloc_f         deallocateFunc );
-void               oyStringListRelease_(char           *** l,
+#define oyStringListRelease_ oyStringListRelease
+void               oyStringListRelease(char            *** l,
                                        int                 size,
                                        oyDeAlloc_f         deallocFunc );
 int                oyStringListHas_  ( const char       ** list,
@@ -125,7 +130,8 @@ char**             oyStringListFilter_(const char       ** list,
                                        const char        * suffix,
                                        int               * count,
                                        oyAlloc_f           allocateFunc );
-void     oyStringListFreeDoubles_    ( char         ** list,
+#define oyStringListFreeDoubles_ oyStringListFreeDoubles
+void     oyStringListFreeDoubles     ( char         ** list,
                                        int           * list_n,
                                        oyDeAlloc_f     deallocateFunc );
 

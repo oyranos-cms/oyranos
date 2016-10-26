@@ -31,8 +31,6 @@
 #include "oyranos_object_internal.h"
 
 
-  
-
 
 /* Include "Options.private_custom_definitions.c" { */
 /** Function    oyOptions_Release__Members
@@ -404,7 +402,7 @@ void           oyOptions_ParseXML_   ( oyOptions_s_      * s,
   while (cur != NULL)
   {
     if(cur->type == XML_ELEMENT_NODE)
-      oyStringListAddStaticString_( texts, texts_n, (const char*)cur->name,
+      oyStringListAddStaticString( texts, texts_n, (const char*)cur->name,
                                     oyAllocateFunc_, oyDeAllocateFunc_ );
 
     if(cur->xmlChildrenNode)

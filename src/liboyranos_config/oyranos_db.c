@@ -291,3 +291,14 @@ oyDBSetString_f            oyDBSetString = oyDBSetStringInit;
 oyDBSearchEmptyKeyname_f   oyDBSearchEmptyKeyname = oyDBSearchEmptyKeynameInit;
 oyDBEraseKey_f             oyDBEraseKey = oyDBEraseKeyInit;
 
+
+#define oyjl_string_add                oyStringAddPrintf
+#define oyjl_string_copy               oyStringCopy
+#define oyjl_string_split              oyStringSplit
+#define oyjl_string_list_add_list      oyStringListAdd
+#define oyjl_string_list_cat_list      oyStringListCat
+#define oyjl_string_list_release       oyStringListRelease_
+#define oyjl_string_list_free_doubles  oyStringListFreeDoubles
+#define oyjl_string_list_add_static_string oyStringListAddStaticString
+#include "../oyjl/oyjl_tree.c"
+

@@ -264,7 +264,7 @@ char *         oyFilterRegistrationToText (
     else if(fields & oyFILTER_REG_MAX)
       pos = 6;
 
-    char ** texts = oyStringSplit_( registration, OY_SLASH_C, &texts_n,oyAllocateFunc_);
+    char ** texts = oyStringSplit( registration, OY_SLASH_C, &texts_n,oyAllocateFunc_);
     if(texts_n >= pos && fields == oyFILTER_REG_TOP)
     {
       text = oyStringCopy_( texts[0], allocateFunc );
@@ -453,9 +453,9 @@ int    oyFilterRegistrationMatch     ( const char        * registration,
   {
     api_num = oyCMMapiNumberToChar(api_number);
     match_tmp = 1;
-    reg_texts = oyStringSplit_( registration, OY_SLASH_C, &reg_texts_n,
+    reg_texts = oyStringSplit( registration, OY_SLASH_C, &reg_texts_n,
                                 oyAllocateFunc_);
-    p_texts = oyStringSplit_( pattern, OY_SLASH_C, &p_texts_n, oyAllocateFunc_);
+    p_texts = oyStringSplit( pattern, OY_SLASH_C, &p_texts_n, oyAllocateFunc_);
 
     for( i = 0; i < reg_texts_n && i < p_texts_n; ++i)
     {
@@ -465,20 +465,20 @@ int    oyFilterRegistrationMatch     ( const char        * registration,
       if(p_texts_n == 1)
       {
         key_tmp = oyFilterRegistrationToText( registration, oyFILTER_REG_MAX,0);
-        regc_texts = oyStringSplit_( key_tmp,'.',&regc_texts_n,
+        regc_texts = oyStringSplit( key_tmp,'.',&regc_texts_n,
                                      oyAllocateFunc_);
         /*if(oyStringSegment_(key_tmp, '.', &regc_texts_n, &regc_texts_pos,
                             &max_segment ))
           return 0;*/
         oyFree_m_( key_tmp );
-        pc_texts = oyStringSplit_( p_texts[i],'.',&pc_texts_n, oyAllocateFunc_);
+        pc_texts = oyStringSplit( p_texts[i],'.',&pc_texts_n, oyAllocateFunc_);
         i = reg_texts_n;
       } else
       /* level by level comparision */
       {
-        regc_texts = oyStringSplit_( reg_texts[i],'.',&regc_texts_n,
+        regc_texts = oyStringSplit( reg_texts[i],'.',&regc_texts_n,
                                      oyAllocateFunc_);
-        pc_texts = oyStringSplit_( p_texts[i],'.',&pc_texts_n, oyAllocateFunc_);
+        pc_texts = oyStringSplit( p_texts[i],'.',&pc_texts_n, oyAllocateFunc_);
       }
 
       if(match_tmp && pc_texts_n && regc_texts_n)
@@ -801,8 +801,8 @@ int    oyTextIccDictMatch            ( const char        * text,
 
   if(text && pattern)
   {
-    texts = oyStringSplit_(text, ',', &n, oyAllocateFunc_ );
-    patterns = oyStringSplit_(pattern, ',', &p_n, oyAllocateFunc_ );
+    texts = oyStringSplit(text, ',', &n, oyAllocateFunc_ );
+    patterns = oyStringSplit(pattern, ',', &p_n, oyAllocateFunc_ );
 
     for( i = 0; i < n; ++i)
     {

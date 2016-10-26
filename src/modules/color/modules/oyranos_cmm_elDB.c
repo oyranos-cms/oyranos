@@ -520,7 +520,7 @@ char **  elDB_getKeyNames            ( oyDB_s            * db,
 
         if(strlen(t) > name_len &&
            !oyStringListHas_( (const char **)texts, *n, t ) )
-          oyStringListAddStaticString_( &texts, n, t,
+          oyStringListAddStaticString( &texts, n, t,
                                         oyAllocateFunc_, oyDeAllocateFunc_);
       }
     }
@@ -580,7 +580,7 @@ char **  elDB_getKeyNamesOneLevel    ( oyDB_s            * db,
 
         if(strlen(t) > name_len &&
            !oyStringListHas_( (const char **)texts, *n, t ) )
-          oyStringListAddStaticString_( &texts, n, t,
+          oyStringListAddStaticString( &texts, n, t,
                                         oyAllocateFunc_, oyDeAllocateFunc_);
 
         if(txt) oyFree_m_(txt);

@@ -691,7 +691,7 @@ OYAPI int OYEXPORT oyConfigDomainList( const char        * registration_pattern,
     {
       api = (oyCMMapiFilter_s_*)oyCMMapiFilters_Get( apis, i );
       if(rank_list[0][i])
-        oyStringListAddStaticString_( &reg_lists, &reg_list_n,
+        oyStringListAddStaticString( &reg_lists, &reg_list_n,
                                       oyNoEmptyString_m_( api->registration ),
                                       oyAllocateFunc_, oyDeAllocateFunc_ );
 

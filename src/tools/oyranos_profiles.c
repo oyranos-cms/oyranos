@@ -33,6 +33,7 @@
 #include <stdio.h>
 #include <string.h>
 
+
 int    installProfile                ( oyProfile_s       * ip,
                                        const char        * path,
                                        int                 is_device_profile,
@@ -195,7 +196,7 @@ int main( int argc , char** argv )
                           /* use all following arguments as profiles */
                           while(pos < argc)
                           {
-                            oyStringListAddStaticString_(&install, &install_n,
+                            oyStringListAddStaticString(&install, &install_n,
                                 argv[pos], oyAllocateFunc_, oyDeAllocateFunc_ );
                             ++pos;
                           }

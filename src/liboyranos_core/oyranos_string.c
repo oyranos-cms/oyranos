@@ -95,20 +95,6 @@ int          oyStringToDouble        ( const char        * text,
 
 /* string manipulation */
 
-char* oyStringCopy ( const char    * text,
-                     oyAlloc_f       allocateFunc )
-{
-  char * text_copy = NULL;
-    
-  if(text)
-  {
-      oyAllocHelper_m_( text_copy, char, oyStrlen_(text) + 1,
-                        allocateFunc, return 0 );
-      oyStrcpy_( text_copy, text );
-  }
-  return text_copy;
-}
-
 void               oyStringFree_     ( char             ** text,
                                        oyDeAlloc_f         deallocFunc )
 {
@@ -272,127 +258,6 @@ void               oyStringAdd_      ( char             ** text,
   *text = text_copy;
 
   return;
-}
-
-/**
- *  @brief   printf style string add
- *
- *  The deallocFunc can be omited in case the user provides no string.
- *
- *  @version Oyranos: 0.9.6
- *  @date    2014/03/28
- *  @since   2009/02/07 (Oyranos: 0.1.10)
- */
-int                oyStringAddPrintf ( char             ** string,
-                                       oyAlloc_f           allocateFunc,
-                                       oyDeAlloc_f         deallocFunc,
-                                       const char        * format,
-                                                           ... )
-{
-  char * text_copy = NULL;
-  char * text = 0;
-  va_list list;
-  int len;
-  size_t sz = 0;
-
-  va_start( list, format);
-  len = vsnprintf( text, sz, format, list );
-  va_end  ( list );
-
-  {
-    oyAllocHelper_m_(text, char, len + 1, allocateFunc, return 1);
-    va_start( list, format);
-    len = vsnprintf( text, len+1, format, list );
-    va_end  ( list );
-  }
-
-  if(string && *string)
-  {
-    text_copy = oyStringAppend_(*string, text, allocateFunc);
-
-    if(!deallocFunc)
-      deallocFunc = oyDeAllocateFunc_;
-
-    if(deallocFunc)
-      deallocFunc(*string);
-    *string = text_copy;
-
-    if(deallocFunc)
-      deallocFunc(text);
-    else
-      oyDeAllocateFunc_(text);
-
-  } else
-    *string = text;
-
-  return 0;
-}
-
-
-/** @brief split a string by one character */
-char**             oyStringSplit     ( const char    * text,
-                                       const char      delimiter,
-                                       int           * count,
-                                       oyAlloc_f       allocateFunc )
-{
-  return oyStringSplit_(text, delimiter,count,allocateFunc);
-}
-
-char**             oyStringSplit_    ( const char    * text,
-                                       const char      delimiter,
-                                       int           * count,
-                                       oyAlloc_f       allocateFunc )
-{
-  char ** list = 0;
-  int n = 0;
-
-  if(text && text[0] && delimiter)
-  {
-    int i;
-    const char * tmp = text;
-
-    if(!allocateFunc)
-      allocateFunc = oyAllocateFunc_;
-
-    if(tmp[0] == delimiter) ++n;
-    do { ++n;
-    } while( (tmp = oyStrchr_(tmp + 1, delimiter)) );
-
-    tmp = 0;
-
-    if((list = allocateFunc( (n+1) * sizeof(char*) )) == 0) return 0;
-    memset( list, 0, (n+1) * sizeof(char*) );
-
-    {
-      const char * start = text;
-      for(i = 0; i < n; ++i)
-      {
-        ptrdiff_t len = 0;
-        char * end = oyStrchr_(start, delimiter);
-
-        if(end > start)
-          len = end - start;
-        else if (end == start)
-          len = 0;
-        else
-          len = oyStrlen_(start);
-
-        if((list[i] = allocateFunc( len+1 )) == 0) return 0;
-
-        memcpy( list[i], start, len );
-        list[i][len] = 0;
-        if(0 && oy_debug_memory)
-          printf( OY_DBG_FORMAT_""OY_PRINT_POINTER" %s %ld\n",
-                  OY_DBG_ARGS_,(intptr_t)list[i], list[i], (long int)len+1 );
-        start += len + 1;
-      }
-    }
-  }
-
-  if(count)
-    *count = n;
-
-  return list;
 }
 
 
@@ -641,41 +506,6 @@ char*              oyStringReplace_  ( const char        * text,
   return t;
 }
 
-void               oyStringListAdd_  ( char            *** list,
-                                       int               * n,
-                                       const char       ** append,
-                                       int                 n_app,
-                                       oyAlloc_f           allocateFunc,
-                                       oyDeAlloc_f         deallocateFunc )
-{
-  int alt_n = 0;
-  char ** tmp;
-
-  if(n) alt_n = *n;
-  tmp = oyStringListAppend_((const char**)*list, alt_n, append, n_app,
-                                     n, allocateFunc);
-
-  oyStringListRelease_(list, alt_n, deallocateFunc);
-
-  *list = tmp;
-}
-
-void               oyStringListAddStaticString_ ( char *** list,
-                                       int               * n,
-                                       const char        * string,
-                                       oyAlloc_f           allocateFunc,
-                                       oyDeAlloc_f         deallocateFunc )
-{
-  int alt_n = *n;
-  char ** tmp = oyStringListAppend_((const char**)*list, alt_n,
-                                    (const char**)&string, 1,
-                                     n, allocateFunc);
-
-  oyStringListRelease_(list, alt_n, deallocateFunc);
-
-  *list = tmp;
-}
-
 void               oyStringListAddString_ ( char       *** list,
                                        int               * n,
                                        char             ** string,
@@ -683,51 +513,14 @@ void               oyStringListAddString_ ( char       *** list,
                                        oyDeAlloc_f         deallocateFunc )
 {
   int alt_n = *n;
-  char ** tmp = oyStringListAppend_((const char**)*list, alt_n,
+  char ** tmp = oyStringListCat((const char**)*list, alt_n,
                                     (const char**)string, 1,
                                      n, allocateFunc);
 
   deallocateFunc(*string); *string = 0;
-  oyStringListRelease_(list, alt_n, deallocateFunc);
+  oyStringListRelease(list, alt_n, deallocateFunc);
 
   *list = tmp;
-}
-
-char**             oyStringListAppend_( const char   ** list,
-                                        int             n_alt,
-                                        const char   ** append,
-                                        int             n_app,
-                                        int           * count,
-                                        oyAlloc_f       allocateFunc )
-{
-  char ** nlist = 0;
-
-  {
-    int i = 0;
-    int n = 0;
-
-    if(n_alt || n_app)
-      oyAllocHelper_m_(nlist, char*, n_alt + n_app +1, allocateFunc, return NULL);
-
-    for(i = 0; i < n_alt; ++i)
-    {
-      if(list[i] /*&& oyStrlen_(list[i])*/)
-        nlist[n] = oyStringCopy_( list[i], allocateFunc );
-      n++;
-    }
-
-    for(i = 0; i < n_app; ++i)
-    {
-      if(1/*oyStrlen_( append[i] )*/)
-        nlist[n] = oyStringCopy_( append[i], allocateFunc );
-      n++;
-    }
-
-    if(count)
-      *count = n;
-  }
-
-  return nlist;
 }
 
 
@@ -836,69 +629,16 @@ char**             oyStringListFilter_(const char   ** list,
   return nl;
 }
 
-/** @internal
- *  @brief filter doubles out
- *
- *  @version Oyranos: 0.9.6
- *  @date    2015/08/04
- *  @since   2015/08/04 (Oyranos: 0.9.6)
- */
-void oyStringListFreeDoubles_        ( char         ** list,
-                                       int           * list_n,
-                                       oyDeAlloc_f     deallocateFunc )
-{
-  int n = *list_n,
-      i,
-      pos = n ? 1 : 0;
-
-  if(!deallocateFunc) deallocateFunc = oyDeAllocateFunc_;
-
-  for(i = pos; i < n; ++i)
-  {
-    int k, found = 0;
-    for( k = 0; k < i; ++k )
-      if(list[i] && list[k] && strcmp(list[i], list[k]) == 0)
-      {
-        deallocateFunc( list[i] );
-        list[i] = NULL;
-        found = 1;
-        continue;
-      }
-
-    if(found == 0)
-    {
-      list[pos] = list[i];
-      ++pos;
-    }
-  }
-
-  *list_n = pos;
-}
-
-void          oyStringListRelease_    ( char          *** l,
-                                        int               size,
-                                        oyDeAlloc_f       deallocFunc )
-{
-  char *** list = l;
-
-  DBG_MEM_START
-
-  if(!deallocFunc) deallocFunc = oyDeAllocateFunc_;
-
-  if( l )
-  {
-    size_t i;
-
-    for(i = 0; i < size; ++i)
-      if((*list)[i])
-        deallocFunc( (*list)[i] );
-    if(*list)
-      deallocFunc( *list );
-    *list = NULL;
-  }
-
-  DBG_MEM_ENDE
-}
+/* rename some symbols */
+#define oyjl_string_add                oyStringAddPrintf
+#define oyjl_string_copy               oyStringCopy
+#define oyjl_string_split              oyStringSplit
+#define oyjl_string_list_add_list      oyStringListAdd
+#define oyjl_string_list_cat_list      oyStringListCat
+#define oyjl_string_list_release       oyStringListRelease
+#define oyjl_string_list_free_doubles  oyStringListFreeDoubles
+#define oyjl_string_list_add_static_string oyStringListAddStaticString
+#include "../oyjl/oyjl_core.c"
 
 int     oyStrlen_( const char * str_ )
 {

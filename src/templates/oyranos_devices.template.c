@@ -22,8 +22,6 @@
 #include "oyOptions_s_.h"
 #include "oyProfiles_s.h"
 
-#include "oyjl/oyjl_tree.h"
-
 
 /** \addtogroup devices_handling Device API
  *  @brief Color device meta data and profile handling
@@ -1536,7 +1534,7 @@ OYAPI int OYEXPORT oyDeviceToJSON    ( oyConfig_s        * device,
             else
             {
               /* split into a array with a useful delimiter */
-              vals = oyStringSplit_( value, '?', &vals_n, malloc );
+              vals = oyStringSplit( value, '?', &vals_n, malloc );
               if(vals_n > 1)
               {
                 STRING_ADD( val, "              \"");
@@ -2410,7 +2408,7 @@ int          oyOptions_DoFilter      ( oyOptions_s       * opts,
            /* skip already edited options by default */
            !(oyOption_GetFlags(o) & oyOPTIONATTRIBUTE_EDIT))
           /* remember the DB requests */
-          oyStringListAddStaticString_ ( &db_keys,
+          oyStringListAddStaticString ( &db_keys,
                                          &db_keys_n,
                                          oyOption_GetText( o,oyNAME_DESCRIPTION),
                                          oyAllocateFunc_,

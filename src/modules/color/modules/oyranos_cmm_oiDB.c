@@ -27,6 +27,8 @@
 #include "oyranos_i18n.h"
 #include "oyranos_string.h"
 
+#include "oyjl/oyjl_tree.h"
+
 /*
 oyCMM_s         oiDB_cmm_module;
 oyCMMapi10_s    oiDB_api10_cmm;
@@ -228,7 +230,7 @@ int oiDBSetString                    ( const char        * key_name,
 char*    oiDBSearchEmptyKeyname        ( const char      * key_parent_name,
                                          oySCOPE_e         scope )
 {
-  return openiccDBSearEmptyKeyname( key_parent_name, (openiccSCOPE_e) scope );
+  return openiccDBSearchEmptyKeyname( key_parent_name, (openiccSCOPE_e) scope );
 }
 int      oiDBEraseKey                ( const char        * key_name,
                                        oySCOPE_e           scope )

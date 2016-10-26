@@ -33,7 +33,7 @@
 
 #include "oyranos_devices_internal.h"
   
-
+ 
 
 
 /** Function oyConfigs_New
@@ -290,6 +290,7 @@ OYAPI int  OYEXPORT
 /* Include "Configs.public_methods_definitions.c" { */
 #include "oyranos_db.h"
 #include "oyranos_sentinel.h"
+#include "oyranos_string.h"
 
 /** Function  oyConfigs_FromDomain
  *  @memberof oyConfigs_s
@@ -981,7 +982,7 @@ OYAPI int OYEXPORT oyConfigDomainList( const char        * registration_pattern,
     {
       api = (oyCMMapiFilter_s_*)oyCMMapiFilters_Get( apis, i );
       if(rank_list[0][i])
-        oyStringListAddStaticString_( &reg_lists, &reg_list_n,
+        oyStringListAddStaticString( &reg_lists, &reg_list_n,
                                       oyNoEmptyString_m_( api->registration ),
                                       oyAllocateFunc_, oyDeAllocateFunc_ );
 

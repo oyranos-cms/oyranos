@@ -15,7 +15,8 @@
  */
 
 /**
- * \file oyjl_tree.h
+ *  @internal
+ *   * \file oyjl_tree.h
  *
  * Parses JSON data and returns the data in tree form.
  *
@@ -43,7 +44,8 @@
 extern "C" {
 #endif
 
-/** possible data types that a oyjl_val_s can hold */
+/** @internal
+ *  possible data types that a oyjl_val_s can hold */
 typedef enum {
     oyjl_t_string = 1,
     oyjl_t_number = 2,
@@ -52,7 +54,8 @@ typedef enum {
     oyjl_t_true = 5,
     oyjl_t_false = 6,
     oyjl_t_null = 7,
-    /** The any type isn't valid for oyjl_val_s.type, but can be
+    /** @internal
+     *  The any type isn't valid for oyjl_val_s.type, but can be
      *  used as an argument to routines like oyjl_tree_get().
      */
     oyjl_t_any = 8
@@ -65,6 +68,7 @@ typedef enum {
 typedef struct oyjl_val_s * oyjl_val;
 
 /**
+ * @internal
  * A JSON value representation capable of holding one of the seven
  * types above. For "string", "number", "object", and "array"
  * additional data is available in the union.  The "OYJL_IS_*"
@@ -73,10 +77,12 @@ typedef struct oyjl_val_s * oyjl_val;
  */
 struct oyjl_val_s
 {
-    /** Type of the value contained. Use the "OYJL_IS_*" macors to check for a
+    /** @internal
+     *  Type of the value contained. Use the "OYJL_IS_*" macros to check for a
      * specific type. */
     oyjl_type type;
-    /** Type-specific data. You may use the "OYJL_GET_*" macros to access these
+    /** @internal
+     *  Type-specific data. You may use the "OYJL_GET_*" macros to access these
      * members. */
     union
     {
@@ -84,10 +90,10 @@ struct oyjl_val_s
         struct {
             long long i; /*< integer value, if representable. */
             double  d;   /*< double value, if representable. */
+            char   *r;   /*< unparsed number in string form. */
             /** Signals whether the \em i and \em d members are
              * valid. See \c OYJL_NUMBER_INT_VALID and
              * \c OYJL_NUMBER_DOUBLE_VALID. */
-            char   *r;   /*< unparsed number in string form. */
             unsigned int flags;
         } number;
         struct {
@@ -103,6 +109,7 @@ struct oyjl_val_s
 };
 
 /**
+ * @internal
  * Parse a string.
  *
  * Parses an null-terminated string containing JSON data and returns a pointer
@@ -128,6 +135,7 @@ OYJL_API oyjl_val oyjl_tree_parse (const char *input,
                                    char *error_buffer, size_t error_buffer_size);
 
 /**
+ * @internal
  * Free a parse tree returned by "oyjl_tree_parse".
  *
  * \param v Pointer to a JSON value returned by "oyjl_tree_parse". Passing NULL
@@ -136,6 +144,7 @@ OYJL_API oyjl_val oyjl_tree_parse (const char *input,
 OYJL_API void oyjl_tree_free (oyjl_val v);
 
 /**
+ * @internal
  * Access a nested value inside a tree.
  *
  * \param parent the node under which you'd like to extract values.
@@ -143,7 +152,7 @@ OYJL_API void oyjl_tree_free (oyjl_val v);
  * \param type the oyjl_type of the object you seek, or oyjl_t_any if any will do.
  *
  * \returns a pointer to the found value, or NULL if we came up empty.
- * 
+ *
  * Future Ideas:  it'd be nice to move path to a string and implement support for
  * a teeny tiny micro language here, so you can extract array elements, do things
  * like .first and .last, even .length.  Inspiration from JSONPath and css selectors?
@@ -162,33 +171,42 @@ OYJL_API oyjl_val oyjl_tree_get(oyjl_val parent, const char ** path, oyjl_type t
 #define OYJL_IS_FALSE(v)  (((v) != NULL) && ((v)->type == oyjl_t_false ))
 #define OYJL_IS_NULL(v)   (((v) != NULL) && ((v)->type == oyjl_t_null  ))
 
-/** Given a oyjl_val_string return a ptr to the bare string it contains,
+/** @internal
+ *  Given a oyjl_val_string return a ptr to the bare string it contains,
  *  or NULL if the value is not a string. */
 #define OYJL_GET_STRING(v) (OYJL_IS_STRING(v) ? (v)->u.string : NULL)
 
-/** Get the string representation of a number.  You should check type first,
+/** @internal
+ *  Get the string representation of a number.  You should check type first,
  *  perhaps using OYJL_IS_NUMBER */
 #define OYJL_GET_NUMBER(v) ((v)->u.number.r)
 
-/** Get the double representation of a number.  You should check type first,
+/** @internal
+ *  Get the double representation of a number.  You should check type first,
  *  perhaps using OYJL_IS_DOUBLE */
 #define OYJL_GET_DOUBLE(v) ((v)->u.number.d)
 
-/** Get the 64bit (long long) integer representation of a number.  You should
+/** @internal
+ *  Get the 64bit (long long) integer representation of a number.  You should
  *  check type first, perhaps using OYJL_IS_INTEGER */
 #define OYJL_GET_INTEGER(v) ((v)->u.number.i)
 
-/** Get a pointer to a oyjl_val_object or NULL if the value is not an object. */
+/** @internal
+ *  Get a pointer to a oyjl_val_object or NULL if the value is not an object. */
 #define OYJL_GET_OBJECT(v) (OYJL_IS_OBJECT(v) ? &(v)->u.object : NULL)
 
-/** Get a pointer to a oyjl_val_array or NULL if the value is not an object. */
+/** @internal
+ *  Get a pointer to a oyjl_val_array or NULL if the value is not an object. */
 #define OYJL_GET_ARRAY(v)  (OYJL_IS_ARRAY(v)  ? &(v)->u.array  : NULL)
 
 void       oyjl_tree_to_json         ( oyjl_val            v,
                                        int               * level,
                                        char             ** json );
+void       oyjl_tree_to_xpath        ( oyjl_val            v,
+                                       int                 child_levels,
+                                       char            *** xpaths );
 char *     oyjl_value_text           ( oyjl_val            v,
-                                       void*             (*alloc)(size_t size));
+                                       void*             (*alloc)(size_t));
 oyjl_val   oyjl_tree_get_value       ( oyjl_val            v,
                                        const char        * xpath );
 oyjl_val   oyjl_tree_get_valuef      ( oyjl_val            v,
@@ -197,6 +215,43 @@ oyjl_val   oyjl_tree_get_valuef      ( oyjl_val            v,
 int            oyjl_value_count      ( oyjl_val            v );
 oyjl_val       oyjl_value_pos_get    ( oyjl_val            v,
                                        int                 pos );
+
+char **    oyjl_string_split         ( const char        * text,
+                                       const char          delimiter,
+                                       int               * count,
+                                       void*            (* alloc)(size_t));
+char *     oyjl_string_copy          ( const char        * string,
+                                       void*            (* alloc)(size_t));
+int        oyjl_string_add           ( char             ** string,
+                                       void*            (* alloc)(size_t),
+                                       void             (* deAlloc)(void*),
+                                       const char        * format,
+                                                           ... );
+void       oyjl_string_list_release  ( char            *** l,
+                                       int                 size,
+                                       void             (* deAlloc)(void*) );
+void       oyjl_string_list_free_doubles (
+                                       char             ** list,
+                                       int               * list_n,
+                                       void             (* deAlloc)(void*) );
+void       oyjl_string_list_add_list ( char            *** list,
+                                       int               * n,
+                                       const char       ** append,
+                                       int                 n_app,
+                                       void*            (* alloc)(size_t),
+                                       void             (* deAlloc)(void*) );
+char **    oyjl_string_list_cat_list ( const char       ** list,
+                                       int                 n_alt,
+                                       const char       ** append,
+                                       int                 n_app,
+                                       int               * count,
+                                       void*            (* alloc)(size_t) );
+void       oyjl_string_list_add_static_string (
+                                       char            *** list,
+                                       int               * n,
+                                       const char        * string,
+                                       void*            (* alloc)(size_t),
+                                       void             (* deAlloc)(void*) );
 
 typedef enum {
   oyjl_message_info = 400 + yajl_status_ok,

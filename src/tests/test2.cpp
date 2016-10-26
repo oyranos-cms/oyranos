@@ -5162,7 +5162,7 @@ oyTESTRESULT_e testFilterNodeCMM( oyTESTRESULT_e result_,
   if(texts_n == 1)
   {
     int n = 0;
-    char ** ts = oyStringSplit_( texts[0], '\n', &n, oyAllocateFunc_ );
+    char ** ts = oyStringSplit( texts[0], '\n', &n, oyAllocateFunc_ );
     oyStringListRelease_( &texts, texts_n, oyDeAllocateFunc_ );
     texts_n = n;
     texts = ts;

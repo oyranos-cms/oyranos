@@ -1546,24 +1546,24 @@ char**  oyXDGPathsGet_( int             * count,
       } else
       {
         if(i == 0)
-          oyStringListAddStaticString_( &paths, &n, "~/.local/share",
+          oyStringListAddStaticString( &paths, &n, "~/.local/share",
                                         oyAllocateFunc_, oyDeAllocateFunc_ );
         if(i == 1)
-          oyStringListAddStaticString_( &paths, &n, "~/.config",
+          oyStringListAddStaticString( &paths, &n, "~/.config",
                                         oyAllocateFunc_, oyDeAllocateFunc_ );
         if(i == 4)
-          oyStringListAddStaticString_( &paths, &n, "/etc/xdg",
+          oyStringListAddStaticString( &paths, &n, "/etc/xdg",
                                         oyAllocateFunc_, oyDeAllocateFunc_ );
       }
 
       /* add the OpenIccDirectoryProposal default paths */
       if(i == 0)
       {
-          oyStringListAddStaticString_( &paths, &n, "/usr/share",
+          oyStringListAddStaticString( &paths, &n, "/usr/share",
                                         oyAllocateFunc_, oyDeAllocateFunc_ );
-          oyStringListAddStaticString_( &paths, &n, "/usr/local/share",
+          oyStringListAddStaticString( &paths, &n, "/usr/local/share",
                                         oyAllocateFunc_, oyDeAllocateFunc_ );
-          oyStringListAddStaticString_( &paths, &n, "/var/lib",
+          oyStringListAddStaticString( &paths, &n, "/var/lib",
                                         oyAllocateFunc_, oyDeAllocateFunc_ );
       }
     }
@@ -1704,7 +1704,7 @@ char** oyDataPathsGet_(int             * count,
         }
 
       if(!has)
-        oyStringListAddStaticString_( &paths, &ndp, text,
+        oyStringListAddStaticString( &paths, &ndp, text,
                                       oyAllocateFunc_, oyDeAllocateFunc_ );
     }
 
@@ -1875,7 +1875,7 @@ char**  oyLibPathsGet_( int             * count,
   fix_paths[fix_paths_n++] = oyResolveDirFileName_( fp );
   oyFree_m_(fp);
 
-  oyStringListAdd_( &paths, &n, (const char**)fix_paths, fix_paths_n,
+  oyStringListAdd( &paths, &n, (const char**)fix_paths, fix_paths_n,
                     oyAllocateFunc_, oyDeAllocateFunc_ );
 
   for(i = 0; i < vars_n; ++i)

@@ -518,7 +518,7 @@ char **        oyProfileTag_GetText  ( oyProfileTag_s    * tag,
 
               } else {
                 /* pure string -> "Licht" */
-                oyStringListAddStaticString_( &texts, &texts_n, text,
+                oyStringListAddStaticString( &texts, &texts_n, text,
                                             oyAllocateFunc_, oyDeAllocateFunc_);
                 /* no selection for best i18n match and no lang: take all */
                 if(k == 3 && implicite_i18n)
