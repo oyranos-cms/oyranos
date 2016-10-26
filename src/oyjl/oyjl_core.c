@@ -126,7 +126,7 @@ int        oyjl_string_add           ( char             ** string,
   va_end  ( list );
 
   {
-    oyAllocHelper_m_(text, char, len + 1, allocate, return 1);
+    oyjlAllocHelper_m_(text, char, len + 1, allocate, return 1);
     va_start( list, format);
     len = vsnprintf( text, len+1, format, list );
     va_end  ( list );
