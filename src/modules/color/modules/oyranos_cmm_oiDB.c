@@ -247,7 +247,6 @@ int      oiDBEraseKey                ( const char        * key_name,
 int                oiDBInit       ( oyStruct_s        * filter )
 {
   int error = 0;
-  oiDB_msg( oyMSG_WARN, 0, OY_DBG_FORMAT_ "", OY_DBG_ARGS_ );
   return error;
 }
 
@@ -287,7 +286,6 @@ int            oiDBMessageFuncSet ( oyMessage_f         message_func )
                                       oiDBopeniccStaticMessageFunc );
   oyStruct_RegisterStaticMessageFunc( openiccOBJECT_DB,
                                       oiDBopeniccStaticMessageFunc );
-  oiDB_msg( oyMSG_WARN, 0, OY_DBG_FORMAT_ "", OY_DBG_ARGS_ );
   return 0;
 }
 
