@@ -386,7 +386,8 @@ int                oyMessageFormat   ( char             ** message_text,
   if(c && oyOBJECT_NONE < c->type_)
   {
     type_name = oyStructTypeToText( c->type_ );
-    id = oyObject_GetId( c->oy_ );
+    if(c->type_ < oyOBJECT_MAX)
+      id = oyObject_GetId( c->oy_ );
     id_text = oyStruct_GetInfo( (oyStruct_s*)c, oyNAME_NAME, 0x01 );
     if(id_text)
       id_text_tmp = strdup(id_text);
