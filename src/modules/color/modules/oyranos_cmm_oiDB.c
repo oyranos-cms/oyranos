@@ -224,8 +224,7 @@ int oiDBSetString                    ( const char        * key_name,
                                        const char        * value,
                                        const char        * comment)
 {
-  oiDB_msg( oyMSG_ERROR, 0, OY_DBG_FORMAT_ "%s", OY_DBG_ARGS_, _("not implemented") );
-  return 1;
+  return openiccDBSetString( key_name, scope, value, comment );
 }
 char*    oiDBSearchEmptyKeyname        ( const char      * key_parent_name,
                                          oySCOPE_e         scope )
@@ -235,8 +234,7 @@ char*    oiDBSearchEmptyKeyname        ( const char      * key_parent_name,
 int      oiDBEraseKey                ( const char        * key_name,
                                        oySCOPE_e           scope )
 {
-  oiDB_msg( oyMSG_ERROR, 0, OY_DBG_FORMAT_ "%s", OY_DBG_ARGS_, _("not implemented") );
-  return 1;
+  return openiccDBSetString( key_name, scope, NULL, "delete" );
 }
 
 /** Function oiDBInit
@@ -249,9 +247,29 @@ int      oiDBEraseKey                ( const char        * key_name,
 int                oiDBInit       ( oyStruct_s        * filter )
 {
   int error = 0;
+  oiDB_msg( oyMSG_WARN, 0, OY_DBG_FORMAT_ "", OY_DBG_ARGS_ );
   return error;
 }
 
+const char*oiDBopeniccStaticMessageFunc (
+                                       oyPointer           obj,
+                                       oyNAME_e            type,
+                                       int                 flags )
+{
+  typedef struct {
+    openiccOBJECT_e type;
+  } openicc_struct;
+  openicc_struct * o = (openicc_struct *) obj;
+
+  if(obj)
+  {
+    if(o->type == openiccOBJECT_CONFIG)
+      return "openiccConfig_s";
+    if(o->type == openiccOBJECT_DB)
+      return "openiccDB_s";
+  }
+  return "unknown";
+}
 
 
 /** Function oiDBMessageFuncSet
@@ -264,6 +282,12 @@ int                oiDBInit       ( oyStruct_s        * filter )
 int            oiDBMessageFuncSet ( oyMessage_f         message_func )
 {
   oiDB_msg = message_func;
+  openiccMessageFuncSet( message_func );
+  oyStruct_RegisterStaticMessageFunc( openiccOBJECT_CONFIG,
+                                      oiDBopeniccStaticMessageFunc );
+  oyStruct_RegisterStaticMessageFunc( openiccOBJECT_DB,
+                                      oiDBopeniccStaticMessageFunc );
+  oiDB_msg( oyMSG_WARN, 0, OY_DBG_FORMAT_ "", OY_DBG_ARGS_ );
   return 0;
 }
 
