@@ -7,6 +7,7 @@ LDFLAGS = -L$(prefix)/lib64
 TARGET = oyjl_tree_test
 CFLAGS=$(DEBUG) $(INCL) -fPIC
 SOURCES = \
+	oyjl_core.c \
 	oyjl_tree.c \
 	$(TARGET).c
 OBJECTS = $(SOURCES:.c=.o)

@@ -28,11 +28,9 @@
 #include <yajl/yajl_version.h>
 #endif
 #include "oyjl_tree.h"
+#include "oyjl_tree_internal.h"
 #define YA_FREE(afs, ptr) (afs)->free((afs)->ctx, (ptr))
 
-#if defined(_MSC_VER) 
-#define snprintf sprintf_s
-#endif
 
 #define STATUS_CONTINUE 1
 #define STATUS_ABORT    0
@@ -81,15 +79,22 @@ static void oyjl_object_free (oyjl_val v)
 
     for (i = 0; i < v->u.object.len; i++)
     {
-        free((char *) v->u.object.keys[i]);
-        v->u.object.keys[i] = NULL;
-        oyjl_tree_free (v->u.object.values[i]);
-        v->u.object.values[i] = NULL;
+        if(v->u.object.keys && v->u.object.keys[i])
+        {
+          free((char *) v->u.object.keys[i]);
+          v->u.object.keys[i] = NULL;
+        }
+        if(v->u.object.values && v->u.object.values[i])
+        {
+          oyjl_tree_free (v->u.object.values[i]);
+          v->u.object.values[i] = NULL;
+        }
     }
 
-    free((void*) v->u.object.keys);
-    free(v->u.object.values);
-    free(v);
+    if(v->u.object.keys)
+      free((void*) v->u.object.keys);
+    if(v->u.object.values)
+      free(v->u.object.values);
 }
 
 static void oyjl_array_free (oyjl_val v)
@@ -100,12 +105,15 @@ static void oyjl_array_free (oyjl_val v)
 
     for (i = 0; i < v->u.array.len; i++)
     {
-        oyjl_tree_free (v->u.array.values[i]);
-        v->u.array.values[i] = NULL;
+        if(v->u.array.values && v->u.array.values[i])
+        {
+          oyjl_tree_free (v->u.array.values[i]);
+          v->u.array.values[i] = NULL;
+        }
     }
 
-    free(v->u.array.values);
-    free(v);
+    if(v->u.array.values)
+      free(v->u.array.values);
 }
 
 /*
@@ -157,7 +165,7 @@ static oyjl_val context_pop(context_t *ctx)
 static int object_add_keyval(context_t *ctx,
                              oyjl_val obj, char *key, oyjl_val value)
 {
-    const char **tmpk;
+    char **tmpk;
     oyjl_val *tmpv;
 
     /* We're checking for NULL in "context_add_value" or its callers. */
@@ -551,7 +559,7 @@ char * oyjl_value_text (oyjl_val v, void*(*alloc)(size_t size))
     case oyjl_t_object:
          break;
     default:
-         fprintf( stderr, "unknown type: %d\n", v->type );
+         oyjl_message_p( oyjl_message_error, 0, OYJL_DBG_FORMAT_"unknown type: %d", OYJL_DBG_ARGS_, v->type );
          break;
   }
 
@@ -564,7 +572,7 @@ char * oyjl_value_text (oyjl_val v, void*(*alloc)(size_t size))
   return text;
 }
 
-void       oyjl_tree_to_xpath        ( oyjl_val            v,
+void       oyjl_tree_to_paths        ( oyjl_val            v,
                                        int                 levels,
                                        char            *** xpaths )
 {
@@ -600,7 +608,7 @@ void       oyjl_tree_to_xpath        ( oyjl_val            v,
              free(xpath);
              if(levels != 1)
              {
-               oyjl_tree_to_xpath( v->u.array.values[i], levels-1, xpaths );
+               oyjl_tree_to_paths( v->u.array.values[i], levels-1, xpaths );
                while(xpaths && *xpaths && (*xpaths)[n]) ++n;
              }
            }
@@ -621,14 +629,14 @@ void       oyjl_tree_to_xpath        ( oyjl_val            v,
              free(xpath);
              if(levels != 1)
              {
-               oyjl_tree_to_xpath( v->u.object.values[i], levels-1, xpaths );
+               oyjl_tree_to_paths( v->u.object.values[i], levels-1, xpaths );
                while(xpaths && *xpaths && (*xpaths)[n]) ++n;
              }
            }
          }
          break;
     default:
-         fprintf( stderr, "unknown type: %d\n", v->type );
+         oyjl_message_p( oyjl_message_error, 0, OYJL_DBG_FORMAT_"unknown type: %d", OYJL_DBG_ARGS_, v->type );
          break;
   }
 
@@ -691,6 +699,13 @@ void oyjl_tree_to_json (oyjl_val v, int * level, char ** json)
            {
              oyjl_string_add( json, 0,0, "\n");
              n = *level; while(n--) oyjl_string_add(json, 0,0, " ");
+             if(!v->u.object.keys || !v->u.object.keys[i])
+             {
+               oyjl_message_p( oyjl_message_error, 0, OYJL_DBG_FORMAT_"missing key", OYJL_DBG_ARGS_ );
+               if(json && *json) free(*json);
+               *json = NULL;
+               return;
+             }
              oyjl_string_add( json, 0,0, "\"%s\": ", v->u.object.keys[i] );
              oyjl_tree_to_json( v->u.object.values[i], level, json );
              if(count > 1)
@@ -707,7 +722,7 @@ void oyjl_tree_to_json (oyjl_val v, int * level, char ** json)
          }
          break;
     default:
-         fprintf( stderr, "unknown type: %d\n", v->type );
+         oyjl_message_p( oyjl_message_error, 0, OYJL_DBG_FORMAT_"unknown type: %d", OYJL_DBG_ARGS_, v->type );
          break;
   }
   return;
@@ -742,70 +757,162 @@ oyjl_val       oyjl_value_pos_get    ( oyjl_val            v,
   return NULL;
 }
 
+int        oyjl_tree_paths_get_index ( const char        * term,
+                                       int               * index )
+{
+  char * tindex = strrchr(term,'['),
+       * ttmp = NULL;
+  int pos = -1;
+  int error = -1;
+
+  if(tindex != NULL)
+  {
+    ptrdiff_t size;
+    ++tindex;
+    size = strrchr(term,']') - tindex;
+    if(size > 0)
+    {
+      long signed int num = 0;
+      ttmp = malloc(size + 1);
+      memcpy( ttmp, tindex, size );
+      ttmp[size] = '\000';
+
+      error = oyjl_string_to_long( ttmp, &num );
+      if(!error)
+        pos = num;
+    }
+  }
+
+  *index = pos;
+
+  if(ttmp)
+    free( ttmp );
+
+  return error;
+}
 
 oyjl_val   oyjl_tree_get_value       ( oyjl_val            v,
+                                       int                 flags,
                                        const char        * xpath )
 {
-  oyjl_val level = 0;
+  oyjl_val level = 0, parent = v;
   int n = 0, i, found = 0;
   char ** list = oyjl_string_split(xpath, '/', &n, malloc);
 
   /* follow the search path term */
-  level = v;
-  found = n;
   for(i = 0; i < n; ++i)
   {
-    char * term = list[i],
-         * tindex = strrchr(term,'['),
-         * ttmp = NULL;
-    int count = oyjl_value_count( level );
+    char * term = list[i];
+    /* is object or array */
+    int count = oyjl_value_count( parent );
     int j;
     int pos = -1;
 
-    
-    if(tindex != NULL)
-    {
-      ptrdiff_t size;
-      ++tindex;
-      size = strrchr(term,']') - tindex;
-      if(size > 0)
-      {
-        ttmp = malloc(size + 1);
-        memcpy( ttmp, tindex, size );
-        ttmp[size] = '\000';
-        pos = atoi(ttmp);
-        size = strrchr(term,'[') - term;
-        memcpy( ttmp, term, size );
-        ttmp[size] = '\000';
-        term = ttmp;
-      }
-    }
-
-    if(found == 0) break;
     found = 0;
 
-    if(!(term && term[0]) && pos != -1)
+    /* requests index in object or array */
+    if((oyjl_tree_paths_get_index( term, &pos ) == 0 && pos != -1) ||
+       /* request a empty index together with OYJL_CREATE_NEW */
+       strcmp(term,"[]") == 0)
     {
-      level = oyjl_value_pos_get( level, pos );
+      if(count > pos)
+        level = oyjl_value_pos_get( parent, pos );
+      else
+        level = NULL;
+
+      /* add new leave */
+      if(!level &&
+         flags & OYJL_CREATE_NEW)
+      {
+        level = value_alloc( oyjl_t_null );
+
+        if(parent)
+        {
+          if(parent->type != oyjl_t_array)
+          {
+            oyjl_tree_free_content( parent );
+            parent->type = oyjl_t_array;
+            oyjlAllocHelper_m_( parent->u.array.values, oyjl_val, 2, malloc, return NULL );
+          } else
+          {
+            oyjl_val *tmp;
+
+            tmp = realloc(parent->u.array.values,
+                    sizeof(*(parent->u.array.values)) * (parent->u.array.len + 1));
+            if (tmp == NULL)
+            {
+              oyjl_message_p( oyjl_message_error, 0, OYJL_DBG_FORMAT_"could not allocate memory", OYJL_DBG_ARGS_ );
+              return NULL;
+            }
+            parent->u.array.values = tmp;
+          }
+          parent->u.array.values[parent->u.array.len] = level;
+          parent->u.array.len++;
+        }
+      }
+
       found = 1;
     } else
-    for(j = 0; j < count; ++j)
     {
+      /* search for name in object */
+      for(j = 0; j < count; ++j)
+      {
         if(term &&
-           strcmp( level->u.object.keys[j], term ) == 0)
+           strcmp( parent->u.object.keys[j], term ) == 0)
         {
-          ++found;
-          if(pos == -1 ||
-             (found-1) == pos)
-          {
-            level = level->u.object.values[j];
-            break;
-          }
+          found = 1;
+          level = parent->u.object.values[j];
+          break;
         }
-    }
+      }
 
-    if(ttmp)
-      free( ttmp );
+      /* add new leave */
+      if(!level &&
+         flags & OYJL_CREATE_NEW)
+      {
+        level = value_alloc( oyjl_t_null );
+
+        if(parent)
+        {
+          if(parent->type != oyjl_t_object)
+          {
+            oyjl_tree_free_content( parent );
+            parent->type = oyjl_t_object;
+            oyjlAllocHelper_m_( parent->u.object.values, oyjl_val, 2, malloc, return NULL );
+            oyjlAllocHelper_m_( parent->u.object.keys, char*, 2, malloc, return NULL );
+          } else
+          {
+            oyjl_val *tmp;
+            char ** keys;
+
+            tmp = realloc(parent->u.object.values,
+                    sizeof(*(parent->u.object.values)) * (parent->u.object.len + 1));
+            if (tmp == NULL)
+            {
+              oyjl_message_p( oyjl_message_error, 0, OYJL_DBG_FORMAT_"could not allocate memory", OYJL_DBG_ARGS_ );
+              return NULL;
+            }
+            parent->u.object.values = tmp;
+
+            keys = realloc(parent->u.object.keys,
+                    sizeof(*(parent->u.object.keys)) * (parent->u.object.len + 1));
+            if (keys == NULL)
+            {
+              oyjl_message_p( oyjl_message_error, 0, OYJL_DBG_FORMAT_"could not allocate memory", OYJL_DBG_ARGS_ );
+              return NULL;
+            }
+            parent->u.object.keys = keys;
+          }
+          parent->u.object.keys[parent->u.object.len] = oyjl_string_copy( term, malloc );
+          parent->u.object.values[parent->u.object.len] = level;
+          parent->u.object.len++;
+        }
+      }
+
+      found = 1;
+    }
+    parent = level;
+    level = NULL;
   }
 
   /* clean up temorary memory */
@@ -814,8 +921,8 @@ oyjl_val   oyjl_tree_get_value       ( oyjl_val            v,
   if(list)
     free(list);
 
-  if(found && level)
-    return level;
+  if(found && parent)
+    return parent;
   else
     return NULL;
 }
@@ -824,16 +931,38 @@ oyjl_val   oyjl_tree_get_value       ( oyjl_val            v,
  *  Function oyjl_tree_get_valuef
  *  @brief   get a child node
  *
- *  @param[in]     v                   the oyjl node
- *  @param[in]     format              the xpath format
- *  @param[in]     ...                 the variable argument list
- *  @return                            the childs text value
+ *  A path string is constructed of terms and the slash delimiter '/'.
+ *  Understood terms are object names or the squared brackets index operator [].
+ *  Example: "foo/[3]/bar" will return the "bar" node with the "found" string.
+ *  @verbatim
+    {
+      "foo": [
+        { "ignore": 0 },
+        { "ignore_too": 0 },
+        { "ignore_it": 0 },
+        { "bar": "found" }
+      ]
+    }
+    @endverbatim
  *
- *  @version Oyranos: 0.9.5
+ *  Creating a new node inside a existing tree needs just a root node - v.
+ *  The flags should contain OYJL_CREATE_NEW.
+ *  Example: "foo/[]/bar" will append a node to the foo array and create
+ *  the bar node, which is empty.
+ *
+ *  @param[in]     v                   the oyjl node
+ *  @param[in]     flags               OYJL_CREATE_NEW - returns nodes even
+ *                                     if they did not yet exist
+ *  @param[in]     format              the format for the slashed path string
+ *  @param[in]     ...                 the variable argument list; optional
+ *  @return                            the requested node or zero
+ *
+ *  @version Oyranos: 0.9.6
+ *  @date    2016/10/28
  *  @since   2011/09/24 (Oyranos: 0.3.3)
- *  @date    2013/02/24
  */
 oyjl_val   oyjl_tree_get_valuef      ( oyjl_val            v,
+                                       int                 flags,
                                        const char        * format,
                                                            ... )
 {
@@ -847,7 +976,7 @@ oyjl_val   oyjl_tree_get_valuef      ( oyjl_val            v,
   text = malloc( sz );
   if(!text)
   {
-    fprintf( stderr, "!!! ERROR: could not allocate memory\n" );
+    oyjl_message_p( oyjl_message_error, 0, OYJL_DBG_FORMAT_"could not allocate memory", OYJL_DBG_ARGS_ );
     return 0;
   }
 
@@ -865,39 +994,140 @@ oyjl_val   oyjl_tree_get_valuef      ( oyjl_val            v,
     va_end  ( list );
   }
 
-  value = oyjl_tree_get_value( v, text );
+  value = oyjl_tree_get_value( v, flags, text );
 
   if(text) free(text);
 
   return value;
 }
 
+int        oyjl_value_set_string     ( oyjl_val            v,
+                                       const char        * string )
+{
+  int error = -1;
+  if(v)
+  {
+    oyjl_tree_free_content( v );
+    v->type = oyjl_t_string;
+    error = oyjl_string_add( &v->u.string, 0,0, "%s", string );
+  }
+  return error;
+}
+
+void oyjl_tree_free_content (oyjl_val v)
+{
+    if (v == NULL) return;
+
+    if (OYJL_IS_STRING(v)) {
+        if(v->u.string) free(v->u.string);
+        v->u.string = NULL;
+    } else if (OYJL_IS_NUMBER(v)) {
+        if(v->u.number.r) free(v->u.number.r);
+        v->u.number.r = NULL;
+    } else if (OYJL_GET_OBJECT(v))
+        oyjl_object_free(v);
+    else if (OYJL_GET_ARRAY(v))
+        oyjl_array_free(v);
+
+    v->type = oyjl_t_null;
+}
+
+void oyjl_tree_free_node             ( oyjl_val            root,
+                                       const char        * xpath )
+{
+  int n = 0, i, pos, count;
+  char ** list = oyjl_string_split(xpath, '/', &n, malloc);
+  char * path = oyjl_string_copy( xpath, malloc );
+
+  for(pos = 0; pos < (n-1); ++pos)
+  {
+    oyjl_val p; /* parent */
+    oyjl_val o = oyjl_tree_get_value( root, 0, path );
+    int delete_parent = 0;
+
+    char * parent_path = oyjl_string_copy( path, malloc ),
+         * t = strrchr(parent_path, '/');
+    if(t)
+      t[0] = '\000';
+
+    p = oyjl_tree_get_value( root, 0, parent_path );
+    if(p)
+    {
+      switch(p->type)
+      {
+      case oyjl_t_array:
+         {
+           count = p->u.array.len;
+
+           for(i = 0; i < count; ++i)
+           {
+             if( p->u.array.values[i] == o )
+             {
+               oyjl_tree_free( o );
+               p->u.array.values[i] = NULL;
+
+               if(count > 1)
+                 memmove( &p->u.array.values[i], &p->u.array.values[i+1],
+                          sizeof(oyjl_val *) * (count - i - 1) );
+               else
+                 delete_parent = 1;
+
+               --p->u.array.len;
+               break;
+             }
+           }
+         }
+         break;
+      case oyjl_t_object:
+         {
+           count = p->u.object.len;
+
+           for(i = 0; i < count; ++i)
+           {
+             if( p->u.object.values[i] == o )
+             {
+               oyjl_tree_free( o );
+               p->u.object.keys[i] = NULL;
+               p->u.object.values[i] = NULL;
+
+               if(count > 1)
+               {
+                 memmove( &p->u.object.keys[i], &p->u.object.keys[i+1],
+                          sizeof(char *) * (count - i - 1) );
+                 memmove( &p->u.object.values[i], &p->u.object.values[i+1],
+                          sizeof(oyjl_val *) * (count - i - 1) );
+               }
+               else
+                 delete_parent = 1;
+
+               --p->u.object.len;
+               break;
+             }
+           }
+         }
+         break;
+      default: break; /* ok */
+      }
+    }
+
+    if(path) free(path);
+    path = parent_path;
+    parent_path = NULL;
+
+    if(delete_parent == 0)
+      break;
+  }
+
+  for(i = 0; i < n; ++i) free(list[i]);
+  if(list) free(list);
+  if(path) free(path);
+}
 
 void oyjl_tree_free (oyjl_val v)
 {
     if (v == NULL) return;
 
-    if (OYJL_IS_STRING(v))
-    {
-        free(v->u.string);
-        free(v);
-    }
-    else if (OYJL_IS_NUMBER(v))
-    {
-        free(v->u.number.r);
-        free(v);
-    }
-    else if (OYJL_GET_OBJECT(v))
-    {
-        oyjl_object_free(v);
-    }
-    else if (OYJL_GET_ARRAY(v))
-    {
-        oyjl_array_free(v);
-    }
-    else /* if (oyjl_t_true or oyjl_t_false or oyjl_t_null) */
-    {
-        free(v);
-    }
+    oyjl_tree_free_content (v);
+    free(v);
 }
 

@@ -21,21 +21,68 @@
 #include <string.h>
 #include <unistd.h>
 
-#if defined(_MSC_VER) 
-#define snprintf sprintf_s
-#endif
-#define oyjlAllocHelper_m_(ptr_, type, size_, alloc_func, action) { \
-  if ((size_) <= 0) {                                       \
-      fprintf( stderr, "Nothing to allocate\n"); \
-  } else {                                                  \
-      void*(*a)(size_t size) = alloc_func?alloc_func:malloc;         \
-      ptr_ = (type*) a(sizeof (type) * (size_t)(size_));    \
-      memset( ptr_, 0, sizeof (type) * (size_t)(size_) );   \
-  }                                                         \
-  if (ptr_ == NULL) {                                       \
-      fprintf( stderr, "Out of memory\n"); \
-    action;                                                 \
-  }                                                         \
+#include "oyjl_tree_internal.h"
+
+yajl_status  oyjl_message_func       ( oyjl_message_e      error_code,
+                                       const void        * context_object,
+                                       const char        * format,
+                                       ... )
+{
+  char * text = 0;
+  int error = 0;
+  va_list list;
+  size_t sz = 0;
+  int len = 0;
+  const char * status_text = NULL;
+
+
+  va_start( list, format);
+  len = vsnprintf( text, sz, format, list);
+  va_end  ( list );
+
+  {
+    text = calloc( sizeof(char), len+2 );
+    if(!text)
+    {
+      fprintf(stderr,
+      OYJL_DBG_FORMAT_"Could not allocate 256 byte of memory.\n",OYJL_DBG_ARGS_);
+      return 1;
+    }
+    va_start( list, format);
+    len = vsnprintf( text, len+1, format, list);
+    va_end  ( list );
+  }
+
+  if(error_code == oyjl_message_info) status_text = "Info: ";
+  if(error_code == oyjl_message_client_canceled) status_text = "Client Canceled: ";
+  if(error_code == oyjl_message_insufficient_data) status_text = "Insufficient data: ";
+  if(error_code == oyjl_message_error) status_text = "!!! ERROR: ";
+
+  if(status_text)
+    fprintf( stderr, "%s", status_text );
+  if(text)
+    fprintf( stderr, "%s\n", text );
+  fflush( stderr );
+
+  free( text ); text = 0;
+
+  return error;
+}
+
+oyjl_message_f     oyjl_message_p = oyjl_message_func;
+
+/** @fn      openiccMessageFuncSet
+ *  @brief   set a custom message listener
+ *
+ *  @version OpenICC: 0.1.0
+ *  @date    2011/10/21
+ *  @since   2008/04/03 (OpenICC: 0.1.0)
+ */
+yajl_status    oyjl_message_func_set ( oyjl_message_f    message_func )
+{
+  if(message_func)
+    oyjl_message_p = message_func;
+  return 0;
 }
 
 char **        oyjl_string_split     ( const char        * text,
@@ -281,5 +328,18 @@ void     oyjl_string_list_add_list   ( char            *** list,
   oyjl_string_list_release(list, alt_n, deAlloc);
 
   *list = tmp;
+}
+
+
+/* show better const behaviour and return instant error status */
+int      oyjl_string_to_long         ( const char        * text,
+                                       long              * value )
+{
+  char * end = 0;
+  *value = strtol( text, &end, 0 );
+  if(end && end != text && end[0] == '\000' )
+    return 0;
+  else
+    return 1;
 }
 

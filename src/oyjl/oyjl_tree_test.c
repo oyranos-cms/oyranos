@@ -45,7 +45,7 @@ int main( int argc, char** argv )
 
     if(xpath)
     {
-      value = oyjl_tree_get_value( root, xpath );
+      value = oyjl_tree_get_value( root, 0, xpath );
       printf("%s xpath \"%s\"\n", value?"found":"found not", xpath);
     }
     if(value)

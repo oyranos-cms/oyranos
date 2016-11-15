@@ -97,7 +97,7 @@ struct oyjl_val_s
             unsigned int flags;
         } number;
         struct {
-            const char **keys; /*< Array of keys */
+            char **keys; /*< Array of keys */
             oyjl_val *values; /*< Array of values. */
             size_t len; /*< Number of key-value-pairs. */
         } object;
@@ -199,22 +199,31 @@ OYJL_API oyjl_val oyjl_tree_get(oyjl_val parent, const char ** path, oyjl_type t
  *  Get a pointer to a oyjl_val_array or NULL if the value is not an object. */
 #define OYJL_GET_ARRAY(v)  (OYJL_IS_ARRAY(v)  ? &(v)->u.array  : NULL)
 
+OYJL_API void oyjl_tree_free_content ( oyjl_val            v );
+void oyjl_tree_free_node             ( oyjl_val            root,
+                                       const char        * xpath );
 void       oyjl_tree_to_json         ( oyjl_val            v,
                                        int               * level,
                                        char             ** json );
-void       oyjl_tree_to_xpath        ( oyjl_val            v,
+void       oyjl_tree_to_paths        ( oyjl_val            v,
                                        int                 child_levels,
-                                       char            *** xpaths );
+                                       char            *** paths );
 char *     oyjl_value_text           ( oyjl_val            v,
                                        void*             (*alloc)(size_t));
+#define    OYJL_CREATE_NEW             0x02
 oyjl_val   oyjl_tree_get_value       ( oyjl_val            v,
-                                       const char        * xpath );
+                                       int                 flags,
+                                       const char        * path );
 oyjl_val   oyjl_tree_get_valuef      ( oyjl_val            v,
+                                       int                 flags,
                                        const char        * format,
                                                            ... );
-int            oyjl_value_count      ( oyjl_val            v );
-oyjl_val       oyjl_value_pos_get    ( oyjl_val            v,
+int        oyjl_value_count          ( oyjl_val            v );
+oyjl_val   oyjl_value_pos_get        ( oyjl_val            v,
                                        int                 pos );
+int        oyjl_value_set_string     ( oyjl_val            v,
+                                       const char        * string );
+
 
 char **    oyjl_string_split         ( const char        * text,
                                        const char          delimiter,
@@ -252,6 +261,8 @@ void       oyjl_string_list_add_static_string (
                                        const char        * string,
                                        void*            (* alloc)(size_t),
                                        void             (* deAlloc)(void*) );
+int        oyjl_string_to_long       ( const char        * text,
+                                       long              * value );
 
 typedef enum {
   oyjl_message_info = 400 + yajl_status_ok,
