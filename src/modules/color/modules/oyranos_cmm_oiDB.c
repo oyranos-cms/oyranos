@@ -76,7 +76,10 @@ oyMessage_f oiDB_msg = oyMessageFunc;
 
 int            oiDBMessageFuncSet ( oyMessage_f         oiDB_msg_func );
 int                oiDBInit       ( );
-
+char *   oiOyranosToOpenicc          ( const char        * key_name,
+                                       oyAlloc_f           alloc );
+char *   oiOpeniccToOyranos          ( const char        * key_name,
+                                       oyAlloc_f           alloc );
 
 /* implementation */
 #include <openicc_config.h>
@@ -144,13 +147,15 @@ char *   oiDB_getString              ( oyDB_s            * db,
 {
   const char * value = NULL;
   int error;
+  char * key = oiOyranosToOpenicc( key_name, 0 );
 
   if(!db || strcmp( db->type, CMM_NICK ) != 0)
     oiDB_msg( oyMSG_ERROR, 0, OY_DBG_FORMAT_ "wrong object type: %s - expected %s", OY_DBG_ARGS_, db->type, CMM_NICK );
-  error = openiccDB_GetString( db->db, key_name, &value);
+  error = openiccDB_GetString( db->db, key, &value);
   if( error > 0 )
     oiDB_msg( oyMSG_ERROR, 0, OY_DBG_FORMAT_ "%s", OY_DBG_ARGS_, db->type );
 
+  if(key) oyFree_m_(key);
   return oyStringCopy( value, db->alloc );
 }
 int      oiDB_getStrings             ( oyDB_s            * db,
@@ -159,7 +164,7 @@ int      oiDB_getStrings             ( oyDB_s            * db,
                                        int                 key_names_n )
 {
   const char * value;
-  const char * key;
+  char * key;
   int i;
   int error = 0;
 
@@ -167,7 +172,7 @@ int      oiDB_getStrings             ( oyDB_s            * db,
     oiDB_msg( oyMSG_ERROR, 0, OY_DBG_FORMAT_ "wrong object type: %s - expected %s", OY_DBG_ARGS_, db->type, CMM_NICK );
   for(i = 0; i < key_names_n; ++i)
   {
-    key = key_names[i];
+    key = oiOyranosToOpenicc( key_names[i], 0 );
     value = NULL;
     error = openiccDB_GetString( db->db, key, &value);
     if(value)
@@ -185,6 +190,7 @@ int      oiDB_getStrings             ( oyDB_s            * db,
         ++error;
     } else
       ++error;
+    if(key) oyFree_m_(key);
   }
 
   return error;
@@ -195,12 +201,18 @@ char **  oiDB_getKeyNames            ( oyDB_s            * db,
 {
   char ** keys = NULL;
   int error;
+  char * key = oiOyranosToOpenicc( key_name, 0 );
 
   if(!db || strcmp( db->type, CMM_NICK ) != 0)
     oiDB_msg( oyMSG_ERROR, 0, OY_DBG_FORMAT_ "wrong object type: %s - expected %s", OY_DBG_ARGS_, db->type, CMM_NICK );
-  error = openiccDB_GetKeyNames( db->db, key_name, 0, oyAllocateFunc_, oyDeAllocateFunc_, &keys, n );
+
+  error = openiccDB_GetKeyNames( db->db, key, 0, oyAllocateFunc_, oyDeAllocateFunc_, &keys, n );
+
+  oyStringListReplaceBy( keys, *n, oiOpeniccToOyranos, 0,0 );
+
   if( error > 0 )
     oiDB_msg( oyMSG_ERROR, 0, OY_DBG_FORMAT_ "%s", OY_DBG_ARGS_, db->type );
+  if(key) oyFree_m_(key);
   return keys; 
 }
 char **  oiDB_getKeyNamesOneLevel    ( oyDB_s            * db,
@@ -209,13 +221,18 @@ char **  oiDB_getKeyNamesOneLevel    ( oyDB_s            * db,
 {
   char ** keys = NULL;
   int error;
+  char * key = oiOyranosToOpenicc( key_name, 0 );
 
   if(!db || strcmp( db->type, CMM_NICK ) != 0)
     oiDB_msg( oyMSG_ERROR, 0, OY_DBG_FORMAT_ "wrong object type: %s - expected %s", OY_DBG_ARGS_, db->type, CMM_NICK );
 
-  error = openiccDB_GetKeyNames( db->db, key_name, 1, oyAllocateFunc_, oyDeAllocateFunc_, &keys, n );
+  error = openiccDB_GetKeyNames( db->db, key, 1, oyAllocateFunc_, oyDeAllocateFunc_, &keys, n );
+
+  oyStringListReplaceBy( keys, *n, oiOpeniccToOyranos, 0,0 );
+
   if( error > 0 )
     oiDB_msg( oyMSG_ERROR, 0, OY_DBG_FORMAT_ "%s", OY_DBG_ARGS_, db->type );
+  if(key) oyFree_m_(key);
   return keys; 
 }
 
@@ -224,17 +241,99 @@ int oiDBSetString                    ( const char        * key_name,
                                        const char        * value,
                                        const char        * comment)
 {
-  return openiccDBSetString( key_name, scope, value, comment );
+  char * oi = oiOyranosToOpenicc( key_name, 0 );
+  int error = openiccDBSetString( oi, scope, value, comment );
+  if(oi) oyFree_m_(oi);
+  return error;
 }
 char*    oiDBSearchEmptyKeyname        ( const char      * key_parent_name,
                                          oySCOPE_e         scope )
 {
-  return openiccDBSearchEmptyKeyname( key_parent_name, (openiccSCOPE_e) scope );
+  char * oi = oiOyranosToOpenicc( key_parent_name, 0 ),
+       * key = openiccDBSearchEmptyKeyname( oi, (openiccSCOPE_e) scope ),
+       * oy = oiOpeniccToOyranos( key, 0 );
+  if(oi) oyFree_m_(oi);
+  if(key) free(key);
+  return oy;
 }
 int      oiDBEraseKey                ( const char        * key_name,
                                        oySCOPE_e           scope )
 {
-  return openiccDBSetString( key_name, scope, NULL, "delete" );
+  char * oi = oiOyranosToOpenicc( key_name, 0 );
+  int error = openiccDBSetString( oi, scope, NULL, "delete" );
+  if(oi) oyFree_m_(oi);
+  return error;
+}
+
+char *   oiOyranosToOpenicc          ( const char        * key_name,
+                                       oyAlloc_f           alloc )
+{
+  int count = 0, i;
+  char** list;
+  char * key = NULL;
+
+  if(!key_name || !*key_name) return NULL;
+
+  list = oyStringSplit( key_name, '/', &count, 0 );
+
+  for(i = 0; i < count; ++i)
+  {
+    char * k = list[i];
+    if(k[0] == '#')
+      oyStringAddPrintf( &key, 0,0, "%s[%s]", i && i < count ? "/":"", k+1 );
+    else
+      oyStringAddPrintf( &key, 0,0, "%s%s", i && i < count ? "/":"", k );
+  }
+
+  if(alloc && alloc != oyAllocateFunc_)
+  {
+    char * r = oyStringCopy( key, alloc );
+    oyFree_m_( key );
+    key = r;
+  }
+
+  oyStringListRelease( &list, count, 0 );
+
+  return key;
+}
+
+char *   oiOpeniccToOyranos          ( const char        * key_name,
+                                       oyAlloc_f           alloc )
+{
+  int count = 0, i;
+  char** list;
+  char * key = NULL, *r;
+
+  if(!key_name || !*key_name) return NULL;
+
+  list = oyStringSplit( key_name, '/', &count, 0 );
+
+  for(i = 0; i < count; ++i)
+  {
+    char * k = list[i];
+    if(k[0] == '[')
+    {
+      char * t = oyStringCopy( k, 0 ), * t2 = strrchr( t, ']' );
+
+      if(t2)
+        t2[0] = '\000';
+      oyStringAddPrintf( &key, 0,0, "%s#%s", i && i < count ? "/":"", t+1 );
+      oyFree_m_(t);
+    }
+    else
+      oyStringAddPrintf( &key, 0,0, "%s%s", i && i < count ? "/":"", k );
+  }
+
+  if(alloc && alloc != oyAllocateFunc_)
+  {
+    r = oyStringCopy( key, alloc );
+    oyFree_m_( key );
+    key = r;
+  }
+
+  oyStringListRelease( &list, count, 0 );
+
+  return key;
 }
 
 /** Function oiDBInit
