@@ -72,7 +72,7 @@ int oyStruct_RegisterStaticMessageFunc (
     oyStruct_RegisterStaticMessageFunc_f * tmp = 0;
 
     if(oy_msg_func_n_)
-      n *= 2;
+      n = type * 2;
     else
       n = (int) oyOBJECT_MAX;
 
