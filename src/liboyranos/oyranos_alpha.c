@@ -47,8 +47,6 @@
 #include "oyranos_string.h"
 #include "oyranos_texts.h"
 
-#include "oyjl/oyjl_tree.h"
-
 #include <math.h>
 #include <locale.h>   /* LC_NUMERIC */
 #include <limits.h>

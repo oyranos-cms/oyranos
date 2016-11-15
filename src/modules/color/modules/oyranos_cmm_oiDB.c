@@ -30,10 +30,9 @@
 
 #include "oyranos_cmm.h"         /* the API's this CMM implements */
 #include "oyranos_config.h"            /* oyDB_s stuff */
+#include "oyranos_db.h"
 #include "oyranos_i18n.h"
 #include "oyranos_string.h"
-
-#include "oyjl/oyjl_tree.h"
 
 /*
 oyCMM_s         oiDB_cmm_module;

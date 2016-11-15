@@ -1374,7 +1374,7 @@ OYAPI int  OYEXPORT oyDeviceFromJSON ( const char        * json_text,
 
   oyOptions_FindInt( options, "pos", 0, &pos );
 
-  json_class = oyjl_tree_get_value( json, "org/freedesktop/openicc/device" );
+  json_class = oyjl_tree_get_value( json, 0, "org/freedesktop/openicc/device" );
   if(json_class && json_class->type == oyjl_t_object)
     device_class = json_class->u.object.keys[0];
 
@@ -1392,7 +1392,7 @@ OYAPI int  OYEXPORT oyDeviceFromJSON ( const char        * json_text,
 
   oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
                       xpath, device_class, pos );
-  json_device = oyjl_tree_get_value( json, t );
+  json_device = oyjl_tree_get_value( json, 0, t );
 
   if(!json_device)
     WARNc2_S( "\"%s\" %s\n", t,_("not found:") );
@@ -1696,10 +1696,10 @@ OYAPI int  OYEXPORT
       for(i = 0; i < count; ++i)
       {
         if(short_name)
-          v = oyjl_tree_get_valuef( root, 
+          v = oyjl_tree_get_valuef( root, 0,
                               "[%d]/short_name", i );
         else if(long_name)
-          v = oyjl_tree_get_valuef( root, 
+          v = oyjl_tree_get_valuef( root, 0, 
                               "[%d]/long_name", i );
 
         val = oyjl_value_text( v, oyAllocateFunc_ );
@@ -1754,7 +1754,7 @@ OYAPI int  OYEXPORT
                                  "//" OY_TYPE_STD "/argv/underline_key_suffix",
                                  "TAXI", OY_CREATE_NEW );
 
-        tv = oyjl_tree_get_valuef( root, "org/freedesktop/openicc/device/[0]" );
+        tv = oyjl_tree_get_valuef( root, 0, "org/freedesktop/openicc/device/[0]" );
         count = oyjl_value_count(tv);
         for(i = 0; i < count; ++i)
         {
@@ -1762,7 +1762,7 @@ OYAPI int  OYEXPORT
                                  "//" OY_TYPE_STD "/argv/pos",
                                  i, 0, OY_CREATE_NEW );
 
-          v = oyjl_tree_get_valuef( root, "org/freedesktop/openicc/device/[0]/[%d]/_id/$oid", i );
+          v = oyjl_tree_get_valuef( root, 0, "org/freedesktop/openicc/device/[0]/[%d]/_id/$oid", i );
           val = oyjl_value_text( v, oyAllocateFunc_ );
           error = oyDeviceFromJSON( device_db, opts, &dev );
 
@@ -1772,11 +1772,11 @@ OYAPI int  OYEXPORT
             oyConfig_AddDBData( dev, "TAXI_id", val, OY_CREATE_NEW );
             if(val) oyDeAllocateFunc_(val); val = 0;
 
-            v = oyjl_tree_get_valuef( root, "org/freedesktop/openicc/device/[0]/[%d]/profile_description", i );
+            v = oyjl_tree_get_valuef( root, 0, "org/freedesktop/openicc/device/[0]/[%d]/profile_description", i );
             n = oyjl_value_count(v);
             for(j = 0; j < n; ++j)
             {
-              v = oyjl_tree_get_valuef( root, "org/freedesktop/openicc/device/[0]/[%d]/profile_description/[%d]", i, j );
+              v = oyjl_tree_get_valuef( root, 0, "org/freedesktop/openicc/device/[0]/[%d]/profile_description/[%d]", i, j );
               val = oyjl_value_text( v, oyAllocateFunc_ );
               oyConfig_AddDBData( dev, "TAXI_profile_description", val, OY_CREATE_NEW );
               if(val) oyDeAllocateFunc_(val); val = 0;

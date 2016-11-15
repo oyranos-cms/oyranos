@@ -2,8 +2,6 @@
 #include "oyranos_devices.h"
 #include "oyranos_devices_internal.h"
 
-#include "oyjl/oyjl_tree.h"
-
 /** Function oyConfig_AddDBData
  *  @memberof oyConfig_s
  *  @brief   add a key value pair to a oyConfig_s::db
@@ -1082,7 +1080,7 @@ OYAPI int  OYEXPORT oyRankMapFromJSON( const char        * json_text,
     oyFree_m_(t);
 
     oyOptions_FindInt( options, "pos", 0, &pos );
-    json_rankm = oyjl_tree_get_valuef( json, xpath, pos );
+    json_rankm = oyjl_tree_get_valuef( json, 0, xpath, pos );
 
     count = oyjl_value_count( json_rankm );
     oyAllocHelper_m_( map, oyRankMap, count + 1, allocateFunc, error = 1 );

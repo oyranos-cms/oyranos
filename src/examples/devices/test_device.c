@@ -34,8 +34,6 @@
 #include "oyranos_config_internal.h"
 #include "oyProfiles_s.h"
 
-#include "oyjl/oyjl_tree.h"
-
 #include <locale.h>
 
 void* oyAllocFunc(size_t size) {return malloc (size);}
@@ -1127,16 +1125,16 @@ int main(int argc, char *argv[])
 
         /*oyjl_message_func_set( (oyjl_message_f)oyMessageFunc );*/
 
-        rank_map = oyjl_tree_get_value( rank_root, xpath );
+        rank_map = oyjl_tree_get_value( rank_root, 0, xpath );
         if(rank_map && rank_map->type == oyjl_t_object)
         {
-          oyjl_val openicc = oyjl_tree_get_value( device, "org/freedesktop/openicc" );
+          oyjl_val openicc = oyjl_tree_get_value( device, 0, "org/freedesktop/openicc" );
           /* copy the rank_map into the openicc node */
           if(openicc && openicc->type == oyjl_t_object)
           {
             oyjl_val * values;
             int level = 0;
-            const char ** keys;
+            char ** keys;
 
             oyDeAllocFunc( json ); json = 0;
             oyjl_tree_to_json( rank_map, &level, &json );

@@ -8,14 +8,13 @@
 #include <oyProfile_s.h>
 
 #include "oyranos_config_internal.h"
+#include <oyranos_db.h>
 #include <oyranos_devices.h>
 #include "oyranos_helper_macros_cli.h"
 #include "oyranos_helper.h"
 #include "oyranos_i18n.h"
 #include "oyranos_sentinel.h"
 #include "oyranos_string.h"
-
-#include "oyjl/oyjl_tree.h"
 
 #define TAXI_URL "http://icc.opensuse.org"
 
@@ -238,13 +237,13 @@ int main( int argc, char ** argv )
       for(i = 0; i < count; ++i)
       {
         v = oyjl_value_pos_get    ( root, i );
-        v = oyjl_tree_get_valuef( root, 
+        v = oyjl_tree_get_valuef( root, 0, 
                               "[%d]/short_name", i );
         short_name = oyjl_value_text( v, oyAllocateFunc_ );
-        v = oyjl_tree_get_valuef( root, 
+        v = oyjl_tree_get_valuef( root, 0, 
                               "[%d]/long_name", i );
         long_name = oyjl_value_text( v, oyAllocateFunc_ );
-        v = oyjl_tree_get_valuef( root, 
+        v = oyjl_tree_get_valuef( root, 0, 
                               "[%d]/count", i );
         count_name = oyjl_value_text( v, oyAllocateFunc_ );
         sort[i*3+0] = short_name;
@@ -321,14 +320,14 @@ int main( int argc, char ** argv )
         oyFree_m_(t);
 
 
-        tv = oyjl_tree_get_valuef( root, "org/freedesktop/openicc/device/[0]" );
+        tv = oyjl_tree_get_valuef( root, 0, "org/freedesktop/openicc/device/[0]" );
         count = oyjl_value_count(tv);
         for(i = 0; i < count; ++i)
         {
           char * id = 0,
                * id_full = 0;
 
-          v = oyjl_tree_get_valuef( root, "org/freedesktop/openicc/device/[0]/[%d]/_id/$oid", i );
+          v = oyjl_tree_get_valuef( root, 0, "org/freedesktop/openicc/device/[0]/[%d]/_id/$oid", i );
           val = oyjl_value_text( v, oyAllocateFunc_ );
           oyStringAddPrintf_( &id_full, oyAllocateFunc_, oyDeAllocateFunc_,
                               "%s/0", val );
@@ -344,11 +343,11 @@ int main( int argc, char ** argv )
 
             if(val) oyDeAllocateFunc_(val); val = 0;
 
-            v = oyjl_tree_get_valuef( root, "org/freedesktop/openicc/device/[0]/[%d]/profile_description", i );
+            v = oyjl_tree_get_valuef( root, 0, "org/freedesktop/openicc/device/[0]/[%d]/profile_description", i );
             n = oyjl_value_count(v);
             for(j = 0; j < n; ++j)
             {
-              v = oyjl_tree_get_valuef( root, "org/freedesktop/openicc/device/[0]/[%d]/profile_description/[%d]", i, j );
+              v = oyjl_tree_get_valuef( root, 0, "org/freedesktop/openicc/device/[0]/[%d]/profile_description/[%d]", i, j );
               val = oyjl_value_text( v, oyAllocateFunc_ );
               if(verbose && !taxi_id)
                 printf("%s",val);
@@ -360,7 +359,7 @@ int main( int argc, char ** argv )
                 oyStringAddPrintf_( &fn, oyAllocateFunc_, oyDeAllocateFunc_,
                             "%s/%s.json", mnft, profile_name ? profile_name : id );
 
-                v = oyjl_tree_get_valuef( root, "org/freedesktop/openicc/device/[0]/[%d]", i );
+                v = oyjl_tree_get_valuef( root, 0, "org/freedesktop/openicc/device/[0]/[%d]", i );
                 val = oyjl_value_text( v, oyAllocateFunc_ );
 
                 oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,

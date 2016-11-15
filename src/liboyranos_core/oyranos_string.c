@@ -40,20 +40,6 @@
 
 /* separate from the external functions */
 
-int          oyStringToLong          ( const char        * text,
-                                       long              * value )
-{
-  char * p = 0;
-  *value = strtol( text, &p, 0 );
-  if(p && p != text && p[0] == '\000' )
-    return 0;
-#if 0
-  else if(errno)
-    return errno;
-#endif
-  else
-    return 1;
-}
 
 int          oyStringToDouble        ( const char        * text,
                                        double            * value )
@@ -647,14 +633,7 @@ char**             oyStringListFilter_(const char   ** list,
 }
 
 /* rename some symbols */
-#define oyjl_string_add                oyStringAddPrintf
-#define oyjl_string_copy               oyStringCopy
-#define oyjl_string_split              oyStringSplit
-#define oyjl_string_list_add_list      oyStringListAdd
-#define oyjl_string_list_cat_list      oyStringListCat
-#define oyjl_string_list_release       oyStringListRelease
-#define oyjl_string_list_free_doubles  oyStringListFreeDoubles
-#define oyjl_string_list_add_static_string oyStringListAddStaticString
+#include "oyranos_db.h"
 #include "../oyjl/oyjl_core.c"
 
 int     oyStrlen_( const char * str_ )

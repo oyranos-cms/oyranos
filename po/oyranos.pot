@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Oyranos 0.9\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2016-11-15 10:19+0100\n"
+"POT-Creation-Date: 2016-11-15 11:48+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -56,8 +56,8 @@ msgstr ""
 #: API_generated/oyCMMapiFilter_s_.c:199 API_generated/oyProfiles_s_.c:195
 #: API_generated/oyRectangle_s_.c:191 API_generated/oyCMMapi4_s.c:227
 #: API_generated/oyLis_s_.c:187 API_generated/oyFilterCore_s_.c:225
-#: API_generated/oyranos_devices.c:3517 API_generated/oyNamedColors_s_.c:186
-#: liboyranos/oyranos_alpha.c:278 liboyranos_modules/oyranos_forms.c:56
+#: API_generated/oyranos_devices.c:3515 API_generated/oyNamedColors_s_.c:186
+#: liboyranos/oyranos_alpha.c:276 liboyranos_modules/oyranos_forms.c:56
 msgid "MEM Error."
 msgstr ""
 
@@ -84,8 +84,8 @@ msgid "Copyright"
 msgstr ""
 
 #: API_generated/oyranos_module.c:2011 API_generated/oyConversion_s.c:190
-#: API_generated/oyFilterNode_s_.c:594 API_generated/oyranos_devices.c:2594
-#: API_generated/oyranos_devices.c:3100
+#: API_generated/oyFilterNode_s_.c:594 API_generated/oyranos_devices.c:2592
+#: API_generated/oyranos_devices.c:3098
 msgid "error in module:"
 msgstr ""
 
@@ -144,8 +144,8 @@ msgstr ""
 #: API_generated/oyOptions_s.c:1372 tools/oyranos_profile_tool.c:233
 #: tools/oyranos_profile_graph.c:264 tools/oyranos_convert.c:270
 #: tools/oyranos_policy.c:147 tools/oyranos_profiles.c:240
-#: tools/oyranos_gamma.c:253 examples/taxi.c:207
-#: examples/devices/test_device.c:254 examples/libraw/oyranos_file.cpp:236
+#: tools/oyranos_gamma.c:253 examples/taxi.c:206
+#: examples/devices/test_device.c:252 examples/libraw/oyranos_file.cpp:236
 msgid "wrong argument to option:"
 msgstr ""
 
@@ -170,11 +170,11 @@ msgstr ""
 msgid "ICC profile id written"
 msgstr ""
 
-#: API_generated/oyConfig_s.c:1192 API_generated/oyranos_devices.c:1388
-#: API_generated/oyranos_devices.c:1682 API_generated/oyranos_devices.c:1766
+#: API_generated/oyConfig_s.c:1190 API_generated/oyranos_devices.c:1386
+#: API_generated/oyranos_devices.c:1680 API_generated/oyranos_devices.c:1764
 #: modules/color/modules/oyranos_cmm_oyra_image_channel.c:145
-#: examples/taxi.c:230 examples/taxi.c:320 examples/devices/test_device.c:1094
-#: examples/devices/test_device.c:1120
+#: examples/taxi.c:229 examples/taxi.c:319 examples/devices/test_device.c:1092
+#: examples/devices/test_device.c:1118
 msgid "found issues parsing JSON"
 msgstr ""
 
@@ -187,7 +187,7 @@ msgid "You can get them from http://sf.net/projects/openicc"
 msgstr ""
 
 #: API_generated/oyProfile_s.c:214 API_generated/oyProfile_s.c:219
-#: API_generated/oyranos_devices.c:496
+#: API_generated/oyranos_devices.c:494
 msgid "install in the OpenIccDirectory icc path"
 msgstr ""
 
@@ -212,7 +212,7 @@ msgstr ""
 msgid "Can not write profile"
 msgstr ""
 
-#: API_generated/oyProfile_s.c:796 API_generated/oyranos_devices.c:1005
+#: API_generated/oyProfile_s.c:796 API_generated/oyranos_devices.c:1003
 #: liboyranos_core/oyranos_io_core.c:111 liboyranos_core/oyranos_io_core.c:269
 msgid "Could not open profile"
 msgstr ""
@@ -358,28 +358,28 @@ msgstr ""
 msgid "Image"
 msgstr ""
 
-#: API_generated/oyranos_devices.c:231 API_generated/oyranos_devices.c:994
-#: liboyranos/oyranos_alpha.c:823 liboyranos/oyranos_alpha.c:906
+#: API_generated/oyranos_devices.c:229 API_generated/oyranos_devices.c:992
+#: liboyranos/oyranos_alpha.c:821 liboyranos/oyranos_alpha.c:904
 msgid "Could not open device"
 msgstr ""
 
-#: API_generated/oyranos_devices.c:450
+#: API_generated/oyranos_devices.c:448
 msgid "Could not write to file"
 msgstr ""
 
-#: API_generated/oyranos_devices.c:495
+#: API_generated/oyranos_devices.c:493
 msgid "Could not open ICC profile"
 msgstr ""
 
-#: API_generated/oyranos_devices.c:1405
+#: API_generated/oyranos_devices.c:1403
 msgid "device_class not found:"
 msgstr ""
 
-#: API_generated/oyranos_devices.c:1414 liboyranos_config/oyranos_check.c:76
+#: API_generated/oyranos_devices.c:1412 liboyranos_config/oyranos_check.c:76
 msgid "not found:"
 msgstr ""
 
-#: API_generated/oyranos_devices.c:2511 API_generated/oyranos_devices.c:2522
+#: API_generated/oyranos_devices.c:2509 API_generated/oyranos_devices.c:2520
 #: modules/color/modules/oyranos_cmm_oyra_image_scale.c:105
 #: modules/color/modules/oyranos_cmm_oyra_image_expose.c:102
 #: modules/color/modules/oyranos_cmm_lcm2.c:3338
@@ -411,11 +411,11 @@ msgstr ""
 msgid "Unexpected object type:"
 msgstr ""
 
-#: liboyranos/oyranos_cmm.c:202 examples/devices/test_device.c:275
+#: liboyranos/oyranos_cmm.c:202 examples/devices/test_device.c:273
 msgid "File not loaded!"
 msgstr ""
 
-#: liboyranos/oyranos_cmm.c:208 examples/devices/test_device.c:442
+#: liboyranos/oyranos_cmm.c:208 examples/devices/test_device.c:440
 msgid "Creation of rank_map filed from"
 msgstr ""
 
@@ -445,7 +445,7 @@ msgstr ""
 #: modules/color/modules/oyranos_cmm_elDB.c:948
 #: modules/color/modules/oyranos_cmm_oyra.c:147
 #: modules/color/modules/oyranos_cmm_oydi.c:1271
-#: modules/color/modules/oyranos_cmm_oiDB.c:548
+#: modules/color/modules/oyranos_cmm_oiDB.c:547
 #: modules/color/modules/oyranos_cmm_oicc.c:1065
 #: modules/color/modules/devices/oyranos_cmm_disp.c:1321
 #: modules/color/modules/oyranos_cmm_lraw.cpp:239
@@ -467,17 +467,17 @@ msgid "Image Socket"
 msgstr ""
 
 #: liboyranos_core/oyranos_core.c:414 tools/qcmsevents/qcmsevents.cpp:275
-#: examples/devices/test_device.c:442
+#: examples/devices/test_device.c:440
 #, c-format
 msgid "WARNING"
 msgstr ""
 
 #: liboyranos_core/oyranos_core.c:417 tools/qcmsevents/qcmsevents.cpp:278
-#: examples/devices/test_device.c:371 examples/devices/test_device.c:387
-#: examples/devices/test_device.c:402 examples/devices/test_device.c:424
-#: examples/devices/test_device.c:447 examples/devices/test_device.c:809
-#: examples/devices/test_device.c:965 examples/devices/test_device.c:1053
-#: examples/devices/test_device.c:1275
+#: examples/devices/test_device.c:369 examples/devices/test_device.c:385
+#: examples/devices/test_device.c:400 examples/devices/test_device.c:422
+#: examples/devices/test_device.c:445 examples/devices/test_device.c:807
+#: examples/devices/test_device.c:963 examples/devices/test_device.c:1051
+#: examples/devices/test_device.c:1273
 #, c-format
 msgid "!!! ERROR"
 msgstr ""
@@ -2494,7 +2494,7 @@ msgstr ""
 #: modules/color/modules/oyranos_cmm_lcms.c:2533
 #: modules/color/modules/oyranos_cmm_lcms.c:2606
 #: modules/color/modules/oyranos_cmm_elDB.c:855
-#: modules/color/modules/oyranos_cmm_oiDB.c:455
+#: modules/color/modules/oyranos_cmm_oiDB.c:454
 #: modules/color/modules/devices/oyranos_monitor_x11.c:1782
 #: modules/color/modules/devices/oyranos_monitor_x11.c:2040
 #: examples/oyranos_cmm_dFil.c:610
@@ -2507,7 +2507,7 @@ msgstr ""
 #: modules/color/modules/oyranos_cmm_lcms.c:2535
 #: modules/color/modules/oyranos_cmm_lcms.c:2608
 #: modules/color/modules/oyranos_cmm_elDB.c:857
-#: modules/color/modules/oyranos_cmm_oiDB.c:457
+#: modules/color/modules/oyranos_cmm_oiDB.c:456
 #: modules/color/modules/devices/oyranos_monitor_x11.c:1784
 #: modules/color/modules/devices/oyranos_monitor_x11.c:2042
 #: examples/oyranos_cmm_dFil.c:612
@@ -2799,8 +2799,8 @@ msgstr ""
 
 #: modules/color/modules/oyranos_cmm_elDB.c:863
 #: modules/color/modules/oyranos_cmm_elDB.c:871
-#: modules/color/modules/oyranos_cmm_oiDB.c:463
-#: modules/color/modules/oyranos_cmm_oiDB.c:471
+#: modules/color/modules/oyranos_cmm_oiDB.c:462
+#: modules/color/modules/oyranos_cmm_oiDB.c:470
 msgid "Initialise the oyDB_s APIs."
 msgstr ""
 
@@ -2822,7 +2822,7 @@ msgid ""
 msgstr ""
 
 #: modules/color/modules/oyranos_cmm_elDB.c:946
-#: modules/color/modules/oyranos_cmm_oiDB.c:546
+#: modules/color/modules/oyranos_cmm_oiDB.c:545
 msgid "Copyright (c) 2016 Kai-Uwe Behrmann; new BSD"
 msgstr ""
 
@@ -2928,24 +2928,24 @@ msgid ""
 "allocated output image. "
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oiDB.c:465
-#: modules/color/modules/oyranos_cmm_oiDB.c:473
+#: modules/color/modules/oyranos_cmm_oiDB.c:464
+#: modules/color/modules/oyranos_cmm_oiDB.c:472
 msgid ""
 "The Oyranos \"db_handler\" command will initialise the oyDB hooks with the "
 "OpenICC Configuration API."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oiDB.c:530
-#: modules/color/modules/oyranos_cmm_oiDB.c:532
+#: modules/color/modules/oyranos_cmm_oiDB.c:529
+#: modules/color/modules/oyranos_cmm_oiDB.c:531
 msgid "OpenICC Configuration API"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oiDB.c:540
+#: modules/color/modules/oyranos_cmm_oiDB.c:539
 msgid "OpenICC project; www/support: http://github.com/OpenICC/config"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oiDB.c:554
-#: modules/color/modules/oyranos_cmm_oiDB.c:556
+#: modules/color/modules/oyranos_cmm_oiDB.c:553
+#: modules/color/modules/oyranos_cmm_oiDB.c:555
 msgid ""
 "The filter provides the libOpenICC Configuration API to Oyranos DB hooks."
 msgstr ""
@@ -3397,15 +3397,15 @@ msgid "is a ICC profile information tool"
 msgstr ""
 
 #: tools/oyranos_profile_tool.c:80 tools/oyranos_convert.c:59
-#: tools/oyranos_policy.c:52 tools/oyranos_profiles.c:61 examples/taxi.c:48
+#: tools/oyranos_policy.c:52 tools/oyranos_profiles.c:61 examples/taxi.c:47
 msgid ""
 "Hint: search paths are influenced by the XDG_CONFIG_HOME shell variable."
 msgstr ""
 
 #: tools/oyranos_profile_tool.c:82 tools/oyranos_profile_graph.c:105
 #: tools/oyranos_convert.c:61 tools/oyranos_policy.c:54
-#: tools/oyranos_profiles.c:63 tools/oyranos_gamma.c:207 examples/taxi.c:50
-#: examples/devices/test_device.c:51 examples/libraw/oyranos_file.cpp:45
+#: tools/oyranos_profiles.c:63 tools/oyranos_gamma.c:207 examples/taxi.c:49
+#: examples/devices/test_device.c:49 examples/libraw/oyranos_file.cpp:45
 msgid "Usage"
 msgstr ""
 
@@ -3431,8 +3431,8 @@ msgstr ""
 #: tools/oyranos_profile_tool.c:85 tools/oyranos_profile_tool.c:89
 #: tools/oyranos_profile_graph.c:112 tools/oyranos_profile_graph.c:123
 #: tools/oyranos_profile_graph.c:134 tools/oyranos_profile_graph.c:138
-#: tools/oyranos_convert.c:97 examples/devices/test_device.c:72
-#: examples/devices/test_device.c:104
+#: tools/oyranos_convert.c:97 examples/devices/test_device.c:70
+#: examples/devices/test_device.c:102
 msgid "NUMBER"
 msgstr ""
 
@@ -3442,7 +3442,7 @@ msgstr ""
 
 #: tools/oyranos_profile_tool.c:86 tools/oyranos_profile_tool.c:104
 #: tools/oyranos_profile_tool.c:105 tools/oyranos_profile_tool.c:107
-#: examples/devices/test_device.c:72 examples/devices/test_device.c:105
+#: examples/devices/test_device.c:70 examples/devices/test_device.c:103
 msgid "NAME"
 msgstr ""
 
@@ -3499,14 +3499,14 @@ msgid "add prefix"
 msgstr ""
 
 #: tools/oyranos_profile_tool.c:109 tools/oyranos_convert.c:99
-#: tools/oyranos_policy.c:69 tools/oyranos_profiles.c:98 examples/taxi.c:64
+#: tools/oyranos_policy.c:69 tools/oyranos_profiles.c:98 examples/taxi.c:63
 msgid "Print a help text:"
 msgstr ""
 
 #: tools/oyranos_profile_tool.c:112 tools/oyranos_profile_graph.c:132
 #: tools/oyranos_convert.c:102 tools/oyranos_profiles.c:101
-#: tools/oyranos_gamma.c:234 examples/taxi.c:67
-#: examples/devices/test_device.c:101 examples/libraw/oyranos_file.cpp:66
+#: tools/oyranos_gamma.c:234 examples/taxi.c:66
+#: examples/devices/test_device.c:99 examples/libraw/oyranos_file.cpp:66
 msgid "General options:"
 msgstr ""
 
@@ -3521,7 +3521,7 @@ msgstr ""
 
 #: tools/oyranos_profile_tool.c:116 tools/oyranos_profile_graph.c:133
 #: tools/oyranos_convert.c:103 tools/oyranos_profiles.c:102
-#: examples/devices/test_device.c:102 examples/libraw/oyranos_file.cpp:69
+#: examples/devices/test_device.c:100 examples/libraw/oyranos_file.cpp:69
 msgid "verbose"
 msgstr ""
 
@@ -3545,12 +3545,12 @@ msgstr ""
 
 #. --path argument
 #: tools/oyranos_profile_tool.c:121 tools/oyranos_gamma.c:223
-#: examples/devices/test_device.c:76
+#: examples/devices/test_device.c:74
 msgid "print the full file name"
 msgstr ""
 
 #: tools/oyranos_profile_tool.c:123 tools/oyranos_convert.c:107
-#: tools/oyranos_profiles.c:104 examples/taxi.c:70
+#: tools/oyranos_profiles.c:104 examples/taxi.c:69
 #: examples/oyranos_cmm_dDev.c:703 examples/oyranos_cmm_dDev.c:714
 #: examples/libraw/oyranos_file.cpp:71
 msgid "Example"
@@ -3561,7 +3561,7 @@ msgid "Count all profiles with Lab PCS"
 msgstr ""
 
 #: tools/oyranos_profile_tool.c:131 tools/oyranos_profile_graph.c:142
-#: tools/oyranos_gamma.c:239 examples/devices/test_device.c:110
+#: tools/oyranos_gamma.c:239 examples/devices/test_device.c:108
 #: examples/libraw/oyranos_file.cpp:78
 #, c-format
 msgid "For more informations read the man page:"
@@ -3712,8 +3712,8 @@ msgid "2D Graph from profiles:"
 msgstr ""
 
 #: tools/oyranos_profile_graph.c:108 tools/oyranos_profile_graph.c:135
-#: examples/devices/test_device.c:54 examples/devices/test_device.c:94
-#: examples/devices/test_device.c:95 examples/libraw/oyranos_file.cpp:67
+#: examples/devices/test_device.c:52 examples/devices/test_device.c:92
+#: examples/devices/test_device.c:93 examples/libraw/oyranos_file.cpp:67
 #: examples/libraw/oyranos_file.cpp:68
 msgid "FILE"
 msgstr ""
@@ -4019,11 +4019,11 @@ msgstr ""
 msgid "input class"
 msgstr ""
 
-#: tools/oyranos_profiles.c:75 examples/devices/test_device.c:107
+#: tools/oyranos_profiles.c:75 examples/devices/test_device.c:105
 msgid "select ICC v2 profiles"
 msgstr ""
 
-#: tools/oyranos_profiles.c:76 examples/devices/test_device.c:108
+#: tools/oyranos_profiles.c:76 examples/devices/test_device.c:106
 msgid "select ICC v4 profiles"
 msgstr ""
 
@@ -4123,11 +4123,11 @@ msgstr ""
 msgid "Activate profiles:"
 msgstr ""
 
-#: tools/oyranos_gamma.c:218 examples/devices/test_device.c:71
+#: tools/oyranos_gamma.c:218 examples/devices/test_device.c:69
 msgid "List devices:"
 msgstr ""
 
-#: tools/oyranos_gamma.c:225 examples/devices/test_device.c:82
+#: tools/oyranos_gamma.c:225 examples/devices/test_device.c:80
 msgid "List Taxi DB profiles for selected device:"
 msgstr ""
 
@@ -4139,7 +4139,7 @@ msgstr ""
 msgid "Dump data:"
 msgstr ""
 
-#: tools/oyranos_gamma.c:235 examples/taxi.c:68
+#: tools/oyranos_gamma.c:235 examples/taxi.c:67
 msgid "-v verbose"
 msgstr ""
 
@@ -4159,9 +4159,9 @@ msgstr ""
 msgid "Could not resolve device"
 msgstr ""
 
-#: tools/oyranos_gamma.c:359 examples/devices/test_device.c:373
-#: examples/devices/test_device.c:389 examples/devices/test_device.c:404
-#: examples/devices/test_device.c:811 examples/devices/test_device.c:1055
+#: tools/oyranos_gamma.c:359 examples/devices/test_device.c:371
+#: examples/devices/test_device.c:387 examples/devices/test_device.c:402
+#: examples/devices/test_device.c:809 examples/devices/test_device.c:1053
 msgid "Available devices"
 msgstr ""
 
@@ -4177,39 +4177,39 @@ msgstr ""
 msgid "Taxi DB entries for device"
 msgstr ""
 
-#: tools/oyranos_gamma.c:452 examples/devices/test_device.c:970
+#: tools/oyranos_gamma.c:452 examples/devices/test_device.c:968
 msgid "Taxi ID"
 msgstr ""
 
-#: tools/oyranos_gamma.c:453 examples/devices/test_device.c:971
+#: tools/oyranos_gamma.c:453 examples/devices/test_device.c:969
 msgid "match value"
 msgstr ""
 
-#: tools/oyranos_gamma.c:453 examples/devices/test_device.c:971
+#: tools/oyranos_gamma.c:453 examples/devices/test_device.c:969
 msgid "description"
 msgstr ""
 
-#: examples/taxi.c:40
+#: examples/taxi.c:39
 msgid "is a Taxi DB tool"
 msgstr ""
 
-#: examples/taxi.c:51
+#: examples/taxi.c:50
 msgid "List available device manufacturers:"
 msgstr ""
 
-#: examples/taxi.c:54
+#: examples/taxi.c:53
 msgid "List search URL:"
 msgstr ""
 
-#: examples/taxi.c:57
+#: examples/taxi.c:56
 msgid "List ICC Profiles:"
 msgstr ""
 
-#: examples/taxi.c:60
+#: examples/taxi.c:59
 msgid "Get ICC Profile:"
 msgstr ""
 
-#: examples/taxi.c:409
+#: examples/taxi.c:408
 msgid "Did you specify a 3 letter manufacturer code?"
 msgstr ""
 
@@ -4299,146 +4299,146 @@ msgstr ""
 msgid "MIT"
 msgstr ""
 
-#: examples/devices/test_device.c:50
+#: examples/devices/test_device.c:48
 msgid "is a color profile administration tool for color devices"
 msgstr ""
 
-#: examples/devices/test_device.c:52
+#: examples/devices/test_device.c:50
 msgid "Assign profile to device:"
 msgstr ""
 
-#: examples/devices/test_device.c:54
+#: examples/devices/test_device.c:52
 msgid "profile file name"
 msgstr ""
 
-#: examples/devices/test_device.c:56
+#: examples/devices/test_device.c:54
 msgid "Unassign profile from device:"
 msgstr ""
 
-#: examples/devices/test_device.c:59
+#: examples/devices/test_device.c:57
 msgid "Setup device:"
 msgstr ""
 
-#: examples/devices/test_device.c:62
+#: examples/devices/test_device.c:60
 msgid "Unset device:"
 msgstr ""
 
-#: examples/devices/test_device.c:65
+#: examples/devices/test_device.c:63
 msgid "List device classes:"
 msgstr ""
 
-#: examples/devices/test_device.c:67
+#: examples/devices/test_device.c:65
 msgid "print the full module name"
 msgstr ""
 
-#: examples/devices/test_device.c:68
+#: examples/devices/test_device.c:66
 msgid "print the module ID"
 msgstr ""
 
-#: examples/devices/test_device.c:69
+#: examples/devices/test_device.c:67
 msgid "print the modules device class"
 msgstr ""
 
 #. --short argument
-#: examples/devices/test_device.c:74
+#: examples/devices/test_device.c:72
 msgid "print only the profile name"
 msgstr ""
 
-#: examples/devices/test_device.c:78
+#: examples/devices/test_device.c:76
 msgid "List local DB profiles for selected device:"
 msgstr ""
 
-#: examples/devices/test_device.c:80 examples/devices/test_device.c:84
+#: examples/devices/test_device.c:78 examples/devices/test_device.c:82
 msgid "show as well non matching profiles"
 msgstr ""
 
-#: examples/devices/test_device.c:86
+#: examples/devices/test_device.c:84
 msgid "Dump device color state:"
 msgstr ""
 
-#: examples/devices/test_device.c:88
+#: examples/devices/test_device.c:86
 msgid "write assigned ICC profile"
 msgstr ""
 
-#: examples/devices/test_device.c:89 examples/libraw/oyranos_file.cpp:52
+#: examples/devices/test_device.c:87 examples/libraw/oyranos_file.cpp:52
 msgid "create fallback ICC profile"
 msgstr ""
 
-#: examples/devices/test_device.c:90
+#: examples/devices/test_device.c:88
 msgid "create OpenICC device color state JSON including the rank map"
 msgstr ""
 
-#: examples/devices/test_device.c:91
+#: examples/devices/test_device.c:89
 msgid "create OpenICC device color state JSON"
 msgstr ""
 
-#: examples/devices/test_device.c:92 examples/libraw/oyranos_file.cpp:56
+#: examples/devices/test_device.c:90 examples/libraw/oyranos_file.cpp:56
 msgid "use only DB keys for -f=openicc"
 msgstr ""
 
-#: examples/devices/test_device.c:93
+#: examples/devices/test_device.c:91
 msgid "create OpenICC device color state rank map JSON"
 msgstr ""
 
-#: examples/devices/test_device.c:94 examples/libraw/oyranos_file.cpp:61
+#: examples/devices/test_device.c:92 examples/libraw/oyranos_file.cpp:61
 #: examples/libraw/oyranos_file.cpp:68
 msgid "write to specified file"
 msgstr ""
 
-#: examples/devices/test_device.c:95
+#: examples/devices/test_device.c:93
 msgid "use device JSON alternatively to -c and -d options"
 msgstr ""
 
-#: examples/devices/test_device.c:96 examples/libraw/oyranos_file.cpp:60
+#: examples/devices/test_device.c:94 examples/libraw/oyranos_file.cpp:60
 msgid "embedd device and driver information into ICC meta tag"
 msgstr ""
 
-#: examples/devices/test_device.c:98 examples/libraw/oyranos_file.cpp:63
+#: examples/devices/test_device.c:96 examples/libraw/oyranos_file.cpp:63
 msgid "Show Help:"
 msgstr ""
 
-#: examples/devices/test_device.c:103
+#: examples/devices/test_device.c:101
 msgid "CLASS"
 msgstr ""
 
-#: examples/devices/test_device.c:103
+#: examples/devices/test_device.c:101
 msgid "device class"
 msgstr ""
 
-#: examples/devices/test_device.c:104
+#: examples/devices/test_device.c:102
 msgid "device position start from zero"
 msgstr ""
 
-#: examples/devices/test_device.c:105
+#: examples/devices/test_device.c:103
 msgid "alternatively specify the name of a device"
 msgstr ""
 
-#: examples/devices/test_device.c:106
+#: examples/devices/test_device.c:104
 msgid "skip X Color Management device profile"
 msgstr ""
 
-#: examples/devices/test_device.c:371 examples/devices/test_device.c:387
-#: examples/devices/test_device.c:809 examples/devices/test_device.c:1053
+#: examples/devices/test_device.c:369 examples/devices/test_device.c:385
+#: examples/devices/test_device.c:807 examples/devices/test_device.c:1051
 msgid "Could not resolve device."
 msgstr ""
 
-#: examples/devices/test_device.c:402
+#: examples/devices/test_device.c:400
 msgid "Could not resolve device_name"
 msgstr ""
 
-#: examples/devices/test_device.c:424
+#: examples/devices/test_device.c:422
 msgid "Could not resolve device_json"
 msgstr ""
 
-#: examples/devices/test_device.c:448
+#: examples/devices/test_device.c:446
 msgid "Could not resolve rank_json"
 msgstr ""
 
-#: examples/devices/test_device.c:455
+#: examples/devices/test_device.c:453
 msgid "Using JSON"
 msgstr ""
 
-#: examples/devices/test_device.c:855
+#: examples/devices/test_device.c:853
 msgid "found profiles for device class"
 msgstr ""
 
