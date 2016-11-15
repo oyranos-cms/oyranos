@@ -324,7 +324,7 @@ oyTESTRESULT_e testElektra()
   error = oySetPersistentString( OY_STD "/device" TEST_KEY "/#1/key-02", oySCOPE_USER,
                                  "SomeValue", "SomeComment" );
   value = oyDBSearchEmptyKeyname(OY_STD "/device" TEST_KEY, oySCOPE_USER);
-  if(value && strcmp( "user/" OY_STD "/device" TEST_KEY "/#2",value) == 0 )
+  if(value && strstr( value, OY_STD "/device" TEST_KEY "/#2" ) )
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS, 
     "oyDBSearchEmptyKeyname()=%s", value );
@@ -338,7 +338,7 @@ oyTESTRESULT_e testElektra()
 
   error = oyDBEraseKey( OY_STD "/device" TEST_KEY, oySCOPE_USER );
   value = oyDBSearchEmptyKeyname(OY_STD "/device" TEST_KEY, oySCOPE_USER);
-  if(value && strcmp( "user/" OY_STD "/device" TEST_KEY "/#0",value) == 0 )
+  if(value && strstr( value, OY_STD "/device" TEST_KEY "/#0" ) )
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS, 
     "oyDBSearchEmptyKeyname()=%s", value );
@@ -358,7 +358,7 @@ oyTESTRESULT_e testElektra()
   error = oySetPersistentString( TEST_DOMAIN "/device" TEST_KEY "/#1/key-02", oySCOPE_USER,
                                  "SomeValue", "SomeComment" );
   value = oyDBSearchEmptyKeyname(TEST_DOMAIN "/device" TEST_KEY, oySCOPE_USER);
-  if(value && strcmp( "user/" TEST_DOMAIN "/device" TEST_KEY "/#2",value) == 0 )
+  if(value && strstr( value, TEST_DOMAIN "/device" TEST_KEY "/#2" ) )
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS, 
     "oyDBSearchEmptyKeyname()=%s", value );
@@ -371,7 +371,7 @@ oyTESTRESULT_e testElektra()
 
   error = oyDBEraseKey( TEST_DOMAIN "/device" TEST_KEY, oySCOPE_USER );
   value = oyDBSearchEmptyKeyname(TEST_DOMAIN "/device" TEST_KEY, oySCOPE_USER);
-  if(value && strcmp( "user/" TEST_DOMAIN "/device" TEST_KEY "/#0",value) == 0 )
+  if(value && strstr( value, TEST_DOMAIN "/device" TEST_KEY "/#0" ) )
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS, 
     "oyDBSearchEmptyKeyname()=%s", value );
@@ -397,6 +397,7 @@ oyTESTRESULT_e testElektra()
     PRINT_SUB( oyTESTRESULT_FAIL,
     "oySetPersistentString(%s, oySCOPE_USER_SYS)", key );
   }
+  error = oyDBEraseKey( key, oySCOPE_USER );
   oyFree_m_( key );
   oyFree_m_( value );
 

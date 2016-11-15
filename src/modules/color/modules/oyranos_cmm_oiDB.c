@@ -16,6 +16,12 @@
 /**
  *  The module provides a drop in replacement for the configuration DB
  *  access functions using libOpenICC.
+ *
+ *  Oyranos uses the Elektra convention of indexing arrays with a '#'
+ *  like in "root/#2/some_key",
+ *  while libOpenICC uses squared bracket syntax as in "root/[2]/some_key".
+ *
+ *  They have to be converted on the fly during calling into libOpenICC APIs.
  */
 
 
