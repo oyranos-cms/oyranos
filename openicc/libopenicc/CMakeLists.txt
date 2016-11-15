@@ -41,9 +41,9 @@ TARGET_LINK_LIBRARIES (
    openicc-static
    ${EXTRA_LIBS} ${EXTRA_LIBS_CS} )
 
-INSTALL( TARGETS openicc-static
-         RUNTIME DESTINATION bin
-         LIBRARY DESTINATION lib${LIB_SUFFIX}
-         ARCHIVE DESTINATION lib${LIB_SUFFIX} )
+#INSTALL( TARGETS openicc-static
+#         RUNTIME DESTINATION bin
+#         LIBRARY DESTINATION lib${LIB_SUFFIX}
+#         ARCHIVE DESTINATION lib${LIB_SUFFIX} )
 
 
