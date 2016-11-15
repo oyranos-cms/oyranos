@@ -1,0 +1,26 @@
+#ifndef OPENICC_CONF_H
+#define OPENICC_CONF_H
+
+#cmakedefine UNIX 
+#cmakedefine APPLE
+#cmakedefine BSD 
+/* #cmakedefine _WIN32 */ /* already defined by the system */
+#cmakedefine HAVE_OPENMP
+#cmakedefine HAVE_C
+#cmakedefine HAVE_LTDL
+#cmakedefine HAVE_DL
+#cmakedefine HAVE_M
+#cmakedefine HAVE_YAJL
+#cmakedefine HAVE_LCMS
+#cmakedefine HAVE_LCMS2
+#cmakedefine USE_GETTEXT
+#cmakedefine HAVE_DIRENT_H
+#cmakedefine HAVE_LANGINFO_H
+#cmakedefine HAVE_LOCALE_H
+#cmakedefine HAVE_INTTYPES_H
+#cmakedefine HAVE_STDINT_H
+#ifndef DEBUG 
+#cmakedefine01 DEBUG
+#endif
+
+#endif /* OPENICC_CONF_H */
