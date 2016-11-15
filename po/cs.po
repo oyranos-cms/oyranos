@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: oyranos\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2016-11-14 18:20+0100\n"
+"POT-Creation-Date: 2016-11-15 09:39+0100\n"
 "PO-Revision-Date: 2012-10-19 15:10+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -700,7 +700,7 @@ msgstr "Kanály"
 #: modules/color/modules/oyranos_cmm_lcms.c:2535
 #: modules/color/modules/oyranos_cmm_lcms.c:2608
 #: modules/color/modules/oyranos_cmm_elDB.c:857
-#: modules/color/modules/oyranos_cmm_oiDB.c:354
+#: modules/color/modules/oyranos_cmm_oiDB.c:457
 #: modules/color/modules/devices/oyranos_monitor_x11.c:1784
 #: modules/color/modules/devices/oyranos_monitor_x11.c:2042
 #: examples/oyranos_cmm_dFil.c:612
@@ -1019,7 +1019,7 @@ msgid "Copyright (c) 2014-2016 Kai-Uwe Behrmann; new BSD"
 msgstr "Copyright (c) 2009 Kai-Uwe Behrmann; newBSD"
 
 #: modules/color/modules/oyranos_cmm_elDB.c:946
-#: modules/color/modules/oyranos_cmm_oiDB.c:443
+#: modules/color/modules/oyranos_cmm_oiDB.c:546
 #, fuzzy
 msgid "Copyright (c) 2016 Kai-Uwe Behrmann; new BSD"
 msgstr "Copyright (c) 2009 Kai-Uwe Behrmann; newBSD"
@@ -2009,8 +2009,8 @@ msgstr "Informace:"
 
 #: modules/color/modules/oyranos_cmm_elDB.c:863
 #: modules/color/modules/oyranos_cmm_elDB.c:871
-#: modules/color/modules/oyranos_cmm_oiDB.c:360
-#: modules/color/modules/oyranos_cmm_oiDB.c:368
+#: modules/color/modules/oyranos_cmm_oiDB.c:463
+#: modules/color/modules/oyranos_cmm_oiDB.c:471
 msgid "Initialise the oyDB_s APIs."
 msgstr ""
 
@@ -2609,13 +2609,13 @@ msgstr "V případě nesouladu CMYK"
 msgid "On Rgb Mismatch"
 msgstr "V případě nesouladu RGB"
 
-#: modules/color/modules/oyranos_cmm_oiDB.c:427
-#: modules/color/modules/oyranos_cmm_oiDB.c:429
+#: modules/color/modules/oyranos_cmm_oiDB.c:530
+#: modules/color/modules/oyranos_cmm_oiDB.c:532
 #, fuzzy
 msgid "OpenICC Configuration API"
 msgstr "Konfigurace Oyranosu"
 
-#: modules/color/modules/oyranos_cmm_oiDB.c:437
+#: modules/color/modules/oyranos_cmm_oiDB.c:540
 msgid "OpenICC project; www/support: http://github.com/OpenICC/config"
 msgstr ""
 
@@ -3587,8 +3587,8 @@ msgid ""
 "Elektra Configuration API."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oiDB.c:362
-#: modules/color/modules/oyranos_cmm_oiDB.c:370
+#: modules/color/modules/oyranos_cmm_oiDB.c:465
+#: modules/color/modules/oyranos_cmm_oiDB.c:473
 msgid ""
 "The Oyranos \"db_handler\" command will initialise the oyDB hooks with the "
 "OpenICC Configuration API."
@@ -3771,8 +3771,8 @@ msgstr ""
 msgid "The filter provides the Elektra Configuration API to Oyranos DB hooks."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oiDB.c:451
-#: modules/color/modules/oyranos_cmm_oiDB.c:453
+#: modules/color/modules/oyranos_cmm_oiDB.c:554
+#: modules/color/modules/oyranos_cmm_oiDB.c:556
 msgid ""
 "The filter provides the libOpenICC Configuration API to Oyranos DB hooks."
 msgstr ""
@@ -4428,7 +4428,7 @@ msgstr ""
 #: modules/color/modules/oyranos_cmm_lcms.c:2533
 #: modules/color/modules/oyranos_cmm_lcms.c:2606
 #: modules/color/modules/oyranos_cmm_elDB.c:855
-#: modules/color/modules/oyranos_cmm_oiDB.c:352
+#: modules/color/modules/oyranos_cmm_oiDB.c:455
 #: modules/color/modules/devices/oyranos_monitor_x11.c:1782
 #: modules/color/modules/devices/oyranos_monitor_x11.c:2040
 #: examples/oyranos_cmm_dFil.c:610
@@ -4741,7 +4741,7 @@ msgstr "třída pojmenovaných barev"
 #: modules/color/modules/oyranos_cmm_elDB.c:948
 #: modules/color/modules/oyranos_cmm_oyra.c:147
 #: modules/color/modules/oyranos_cmm_oydi.c:1271
-#: modules/color/modules/oyranos_cmm_oiDB.c:445
+#: modules/color/modules/oyranos_cmm_oiDB.c:548
 #: modules/color/modules/oyranos_cmm_oicc.c:1065
 #: modules/color/modules/devices/oyranos_cmm_disp.c:1321
 #: modules/color/modules/oyranos_cmm_lraw.cpp:239

@@ -134,6 +134,9 @@ char**             oyStringSplit     ( const char        * text,
                                        const char          delimiter,
                                        int               * count,
                                        oyAlloc_f           allocateFunc );
+void               oyStringListRelease(char            *** l,
+                                       int                 size,
+                                       oyDeAlloc_f         deallocFunc );
 char*              oyStringCopy      ( const char        * text,
                                        oyAlloc_f           allocateFunc );
 
