@@ -130,6 +130,12 @@ char**             oyStringListFilter_(const char       ** list,
                                        const char        * suffix,
                                        int               * count,
                                        oyAlloc_f           allocateFunc );
+void               oyStringListReplaceBy (
+                                       char             ** list,
+                                       int                 list_n,
+                                       char *           (* replacer)(const char*, oyAlloc_f),
+                                       oyAlloc_f           allocateFunc,
+                                       oyDeAlloc_f         deAllocateFunc );
 #define oyStringListFreeDoubles_ oyStringListFreeDoubles
 void     oyStringListFreeDoubles     ( char         ** list,
                                        int           * list_n,

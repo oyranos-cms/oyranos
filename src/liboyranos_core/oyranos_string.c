@@ -554,6 +554,23 @@ int                oyStringListHas_  ( const char       ** list,
   return n;
 }
 
+void               oyStringListReplaceBy (
+                                       char             ** list,
+                                       int                 list_n,
+                                       char *           (* replacer)(const char*, oyAlloc_f),
+                                       oyAlloc_f           allocateFunc,
+                                       oyDeAlloc_f         deAllocateFunc )
+{
+  int i;
+  if(!deAllocateFunc) deAllocateFunc = oyDeAllocateFunc_;
+  for(i =  0; i < list_n; ++i)
+  {
+    char * t = replacer(list[i], allocateFunc);
+    if(list[i]) deAllocateFunc(list[i]);
+    list[i] = t;
+  }
+}
+
 /** @internal
  *  @brief reducing filter
  *
