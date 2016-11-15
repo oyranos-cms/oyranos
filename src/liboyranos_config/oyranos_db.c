@@ -18,7 +18,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <kdb.h>
 
 #include "oyOptions_s.h"
 #include "oyranos_config.h"
