@@ -39,6 +39,7 @@ void* myAllocFunc(size_t size) { return calloc(size,1); }
 
 #include <cmath>
 
+double d[6] = {0.5,0.5,0.5,0,0,0};
 
 /* --- general test routines --- */
 
@@ -3854,30 +3855,6 @@ oyTESTRESULT_e testCMMsShow ()
 
   return result;
 }
-
-#include <kdb.h>
-#ifndef KDB_VERSION_MAJOR
-#define KDB_VERSION_MAJOR 0
-#endif
-#ifndef KDB_VERSION_MINOR
-#define KDB_VERSION_MINOR 0
-#endif
-#define KDB_VERSION_NUM (KDB_VERSION_MAJOR*10000 + KDB_VERSION_MINOR*100)
-#ifdef __cplusplus
-#define ckdb ckdb::
-#else
-#define ckdb
-#endif
-extern ckdb KDB * oy_handle_;
-
-double d[6] = {0.5,0.5,0.5,0,0,0};
-
-#if KDB_VERSION_NUM >= 800
-extern "C" {int oyGetKey(ckdb Key*);}
-#define dbGetKey(a,b) oyGetKey(b)
-#else
-#define dbGetKey(a,b) ckdb kdbGetKey(a,b)
-#endif
 
 #include "oyFilterCore_s_.h"
 #include "oyNamedColor_s.h"
