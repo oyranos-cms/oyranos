@@ -27,6 +27,7 @@
 
 #include "oyConfig_s_.h"
 #include "oyranos.h"
+#include "oyranos_helper_macros.h"
 #include "oyranos_internal.h"
 #include "oyranos_monitor.h"
 #include "oyranos_monitor_internal.h"
@@ -238,10 +239,11 @@ int            oyDeviceFillEdid      ( const char        * registration,
            * EDID_serial=0, * EDID_vendor = 0;
       double colors[9] = {0,0,0,0,0,0,0,0,0};
       uint32_t week=0, year=0, EDID_mnft_id=0, EDID_model_id=0;
-      unsigned char hash[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-      uint32_t * i = (uint32_t*)&hash;
-      char hash_txt[64];
-      char* t = 0;
+      unsigned char hash[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                  * e = (unsigned char*) edi;
+      uint32_t * h = (uint32_t*)&hash;
+      char * t = NULL, * edid_text = NULL;
+      int i;
       oyConfig_s_ ** device = (oyConfig_s_**)device_;
 
       error = oyUnrollEdid1_( edi, &EDID_manufacturer, &EDID_mnft,
@@ -258,13 +260,23 @@ int            oyDeviceFillEdid      ( const char        * registration,
                                    EDID_mnft_id, EDID_model_id,
                                    colors, options );
 
+      oyAllocHelper_m_( edid_text, char, OY_MAX(edi_size, 64) * 4, 0, return 1 );
+
       error = oyMiscBlobGetMD5_(edi, edi_size, hash);
-      oySprintf_( hash_txt, "%08x%08x%08x%08x", i[0], i[1], i[2], i[3] );
-      STRING_ADD(t, registration);
-      STRING_ADD(t, OY_SLASH );
-      STRING_ADD(t, "EDID_md5");
+      oySprintf_( edid_text, "%08x%08x%08x%08x", h[0], h[1], h[2], h[3] );
+      oyStringAddPrintf( &t, 0,0, "%s/EDID_md5", registration );
       error = oyOptions_SetFromText( &(*device)->backend_core, t,
-                                     hash_txt, OY_CREATE_NEW );
+                                     edid_text, OY_CREATE_NEW );
+
+      t[0] = edid_text[0] = '\000';
+      sprintf( edid_text, "0x" );
+      for(i = 0; i < edi_size; ++i)
+        sprintf( &edid_text[2+i*2], "%02X", e[i]);
+      oyStringAddPrintf( &t, 0,0, "%s/EDID", registration );
+      error = oyOptions_SetFromText( &(*device)->backend_core, t,
+                                     edid_text, OY_CREATE_NEW );
+      oyFree_m_( t );
+      oyFree_m_( edid_text );
   }
 
   return error;
