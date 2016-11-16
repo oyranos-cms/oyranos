@@ -35,6 +35,7 @@ SET( MAN1_PAGES
      man/oyranos-profile-install.1
      man/oyranos-profiles.1
      man/qcmsevents.1
+     man/qcmsevents-qt4.1
    )
 SET( MAN3_PAGES
      man/oyranos.3
