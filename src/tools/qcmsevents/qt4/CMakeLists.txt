@@ -25,7 +25,7 @@ IF( HAVE_QT AND UNIX AND NOT APPLE )
     INSTALL( TARGETS qcmsevents-qt4
              RUNTIME DESTINATION bin )
     INSTALL( FILES ../qcmsevents-qt4-applet.desktop DESTINATION share/applications )
-    INSTALL( FILES ../qcmsevents.svg DESTINATION share/pixmaps )
+    INSTALL( FILES ../qcmsevents.svg DESTINATION share/pixmaps/qcmsevents-qt4.svg )
   ENDIF()
 ENDIF()
 

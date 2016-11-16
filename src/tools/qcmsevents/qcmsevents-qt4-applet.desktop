@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Application
 Exec=qcmsevents-qt4 %U
-Icon=qcmsevents
+Icon=qcmsevents-qt4
 Name=QCmsEvents
 Name[de]=QCmsEvents
 GenericName=Xorg Color Management Events
