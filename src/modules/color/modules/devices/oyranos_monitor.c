@@ -221,7 +221,7 @@ int            oyDeviceFillInfos     ( const char        * registration,
 }
 
 int            oyDeviceFillEdid      ( const char        * registration,
-                                       oyConfig_s       ** device,
+                                       oyConfig_s       ** device_,
                                        oyPointer           edi,
                                        size_t              edi_size,
                                        const char        * device_name,
@@ -230,7 +230,7 @@ int            oyDeviceFillEdid      ( const char        * registration,
                                        const char        * system_port,
                                        oyOptions_s       * options )
 {
-  int error = !device || !edi;
+  int error = !device_ || !edi;
 
   if(error <= 0)
   {
@@ -238,13 +238,18 @@ int            oyDeviceFillEdid      ( const char        * registration,
            * EDID_serial=0, * EDID_vendor = 0;
       double colors[9] = {0,0,0,0,0,0,0,0,0};
       uint32_t week=0, year=0, EDID_mnft_id=0, EDID_model_id=0;
+      unsigned char hash[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+      uint32_t * i = (uint32_t*)&hash;
+      char hash_txt[64];
+      char* t = 0;
+      oyConfig_s_ ** device = (oyConfig_s_**)device_;
 
       error = oyUnrollEdid1_( edi, &EDID_manufacturer, &EDID_mnft,
                       &EDID_model, &EDID_serial, &EDID_vendor,
                       &week, &year, &EDID_mnft_id, &EDID_model_id, colors,
                       oyAllocateFunc_);
 
-      error = oyDeviceFillInfos( registration, device,
+      error = oyDeviceFillInfos( registration, device_,
                                    device_name, host, display_geometry,
                                    system_port,
                                    EDID_manufacturer, EDID_mnft, EDID_model,
@@ -252,6 +257,14 @@ int            oyDeviceFillEdid      ( const char        * registration,
                                    week, year,
                                    EDID_mnft_id, EDID_model_id,
                                    colors, options );
+
+      error = oyMiscBlobGetMD5_(edi, edi_size, hash);
+      oySprintf_( hash_txt, "%08x%08x%08x%08x", i[0], i[1], i[2], i[3] );
+      STRING_ADD(t, registration);
+      STRING_ADD(t, OY_SLASH );
+      STRING_ADD(t, "EDID_md5");
+      error = oyOptions_SetFromText( &(*device)->backend_core, t,
+                                     hash_txt, OY_CREATE_NEW );
   }
 
   return error;
