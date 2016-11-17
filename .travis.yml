@@ -11,7 +11,7 @@ script:
   - make
   - OY_MODULE_PATH=$PWD/oyranos/src/modules XDG_DATA_DIRS=$PWD/oyranos make check
   - if [[ "$CC" == "gcc" ]]; then
-      make coverage;
+      OY_MODULE_PATH=$PWD/oyranos/src/modules XDG_DATA_DIRS=$PWD/oyranos make coverage;
       bash <(curl -s https://codecov.io/bash) -f coverage.info -R $TRAVIS_BUILD_DIR -X gcov;
     fi
 
