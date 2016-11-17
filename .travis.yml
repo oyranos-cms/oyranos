@@ -9,7 +9,7 @@ before_script:
   - cmake -DBUILD_STATIC=OFF -DUSE_GCOV=ON -DCMAKE_INSTALL_PREFIX=$TRAVIS_BUILD_DIR/../install $TRAVIS_BUILD_DIR
 script:
   - make
-  - make check
+  - OY_MODULE_PATH=$PWD/oyranos/src/modules XDG_DATA_DIRS=$PWD/oyranos make check
   - if [[ "$CC" == "gcc" ]]; then
       make coverage;
       bash <(curl -s https://codecov.io/bash) -f coverage.info -R $TRAVIS_BUILD_DIR -X gcov;
