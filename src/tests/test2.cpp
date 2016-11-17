@@ -917,6 +917,68 @@ oyTESTRESULT_e testOptionsSet ()
 
   oyOptions_Release( &setA );
 
+  const char * json = "{\"org\":{\"free\":[{\"s1key_a\":\"val_a\",\"s1key_b\":\"val_b\"},{\"s2key_c\":\"val_c\",\"s2key_d\":\"val_d\"}],\"key_e\":\"val_e\"}}";
+  oyOptions_s * options = NULL;
+  error = oyOptions_FromJSON( json, options, NULL, &setA, "org" );
+  int count = oyOptions_Count(setA);
+  if(count == 1)
+  {
+    PRINT_SUB( oyTESTRESULT_SUCCESS, 
+    "oyOptions_FromJSON() simple first               %d", count );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyOptions_FromJSON() simple first               %d", count );
+  }
+  t = oyOptions_GetText( setA, oyNAME_NICK );
+  fprintf( zout, "%s\n", t?t:0 );
+
+  const char * json2 = "{\"org\":{\"free\":[{\"s1key_a\":\"val_a\",\"s1key_b\":\"val_b\"},{\"s2key_c\":\"val_c\",\"s2key_d\":\"val_d\"}],\"key_e\":\"val_e_xxx\"}}";
+  error = oyOptions_FromJSON( json2, options, NULL, &setA, "org" );
+  count = oyOptions_Count(setA);
+  if(count == 1 && strcmp(oyOptions_FindString(setA, "key_e",0),"val_e_xxx") == 0)
+  {
+    PRINT_SUB( oyTESTRESULT_SUCCESS, 
+    "oyOptions_FromJSON() simple second              %d", count );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyOptions_FromJSON() simple second              %d", count );
+  }
+  t = oyOptions_GetText( setA, oyNAME_NICK );
+  fprintf( zout, "%s\n", t?t:0 );
+
+  const char * json3 = "{\"org\":{\"free\":[{\"s1key_a\":\"val_a\",\"s1key_b\":\"val_b\"},{\"s2key_c\":\"val_c\",\"s2key_d\":\"val_d\"}],\"key_e\":\"val_e_yyy\",\"key_f\":\"val_f\"}}";
+  error = oyOptions_FromJSON( json3, options, NULL, &setA, "org" );
+  count = oyOptions_Count(setA);
+  if(count == 2 && strcmp(oyOptions_FindString(setA, "key_e",0),"val_e_yyy") == 0)
+  {
+    PRINT_SUB( oyTESTRESULT_SUCCESS, 
+    "oyOptions_FromJSON() simple thierd              %d", count );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyOptions_FromJSON() simple thierd              %d", count );
+  }
+  t = oyOptions_GetText( setA, oyNAME_NICK );
+  fprintf( zout, "%s\n", t?t:0 );
+
+  oyOptions_SetFromText( &options, OY_STD "/key_path", 
+                                   "net/host/path", OY_CREATE_NEW);
+  error = oyOptions_FromJSON( json3, options, NULL, &setA, "org/free/[1]" );
+  count = oyOptions_Count(setA);
+  if(count == 4 && strcmp(oyOptions_FindString(setA, "net/host/path/s2key_c",0),"val_c") == 0)
+  {
+    PRINT_SUB( oyTESTRESULT_SUCCESS, 
+    "oyOptions_FromJSON() key_path                   %d", count );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyOptions_FromJSON() key_path                   %d", count );
+  }
+  t = oyOptions_GetText( setA, oyNAME_NICK );
+  fprintf( zout, "%s\n", t?t:0 );
+
+  oyOptions_Release( &options );
+
+  oyOptions_Release( &setA );
+
   return result;
 }
 
