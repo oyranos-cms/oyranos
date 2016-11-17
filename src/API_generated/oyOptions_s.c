@@ -294,6 +294,7 @@ OYAPI int  OYEXPORT
 
 /* Include "Options.public_methods_definitions.c" { */
 #include "oyranos_definitions.h"
+#include "oyranos_db.h" /* oyjl API */
 
 /** Function oyOptions_FromBoolean
  *  @memberof oyOptions_s
@@ -380,6 +381,124 @@ oyOptions_s *  oyOptions_FromBoolean ( oyOptions_s       * set_a,
   }
 
   return options;
+}
+
+/** @fn       oyOptions_FromJSON
+ *  @memberof oyOptions_s
+ *  @brief    deserialise a text file to oyOptions_s data
+ *
+ *  This function is based on oyjl. Arrays are ignored except
+ *  the index is specified in the xpath with the xformat + ... arguments.
+ *  The xpath is build from xformat + optional following printf style
+ *  arguments.
+ *
+ *  @param[in]     json_text           the text to process
+ *  @param[in]     options             optional
+ *                                     - "underline_key_suffix" will be used as
+ *                                       suffix for keys starting with underline
+ *                                       '_'
+ *                                     - "key_path" will be used as suffix to
+ *                                       the parsed keys below xpath.
+ *                                     - "count" will be set to the number of
+ *                                       elements in xpath.
+ *  @param[in]     object              the optional object
+ *  @param[out]    result              the result; A existing object will be
+ *                                     merged.
+ *  @param[in]     xformat             the xpath format string
+ *  @param[in]     ...                 variable argument list for xpath
+ *  @return                            error
+ *
+ *  @version Oyranos: 0.9.6
+ *  @since   2016/11/17 (Oyranos: 0.9.6)
+ *  @date    2016/11/17
+ */
+int          oyOptions_FromJSON      ( const char        * json_text,
+                                       oyOptions_s       * options,
+                                       oyObject_s          object,
+                                       oyOptions_s      ** result,
+                                       const char        * xformat,
+                                       ... )
+{
+  int error = !json_text || !result;
+  oyjl_val json = 0, v = 0, xv = 0;
+  char * val, * key = NULL, * t = NULL;
+  int count, i;
+  oyOptions_s * opts = NULL;
+  const char * underline_key_suffix = oyOptions_FindString( options,
+                                                    "underline_key_suffix", 0 ),
+             * key_path = oyOptions_FindString( options, "key_path", 0 );
+  oyOption_s * co = oyOptions_Find( options, "count", oyNAME_PATTERN );
+  char * xpath = 0;
+
+  if(!json_text)
+  { WARNc_S( "missed json_text argument" );
+    return error;
+  }
+  if(!result)
+  { WARNc_S( "missed result argument" );
+    return error;
+  }
+
+  if(!xformat) xformat = "";
+
+  {
+    va_list list;
+    size_t sz = 0;
+    int len = 0,
+        l;
+
+    va_start( list, xformat);
+    len = vsnprintf( xpath, sz, xformat, list);
+    va_end  ( list );
+
+    oyAllocHelper_m_(xpath, char, len + 1, oyAllocateFunc_, return 1);
+    va_start( list, xformat);
+    l = vsnprintf( xpath, len+1, xformat, list);
+    if(l != len)
+      fprintf(stderr, "vsnprintf lengths differ: %d %d\n", l,len );
+    va_end  ( list );
+  }
+
+  t = oyAllocateFunc_(256);
+  json = oyjl_tree_parse( json_text, t, 256 );
+  if(t[0])
+    WARNc3_S( "%s: %s\n%s", _("found issues parsing JSON"), t, json_text );
+  oyFree_m_(t);
+
+  opts = *result;
+
+  xv = oyjl_tree_get_value( json, 0, xpath );
+  count = oyjl_value_count( xv );
+  if(co) oyOption_SetFromInt( co, count, 0, 0 );
+  for(i = 0; i < count; ++i)
+  {
+    char * k = NULL;
+    if(xv->type == oyjl_t_object)
+      key = oyStringCopy_( xv->u.object.keys[i], oyAllocateFunc_ );
+    v = oyjl_value_pos_get( xv, i );
+    val = oyjl_value_text( v, oyAllocateFunc_ );
+
+    if(key && key[0] && key[0] == '_' && underline_key_suffix)
+      oyStringAddPrintf( &k, 0,0, "%s/%s%s", key_path ? key_path : xpath,
+                                  underline_key_suffix, key );
+    else
+      oyStringAddPrintf( &k, 0,0, "%s/%s", key_path ? key_path : xpath, key );
+
+    /* ignore empty keys or values */
+    if(k && val)
+      oyOptions_SetFromText( &opts, k, val, OY_CREATE_NEW );
+
+    if(k) oyDeAllocateFunc_(k);
+    if(key) oyDeAllocateFunc_(key);
+    if(val) oyDeAllocateFunc_(val);
+  }
+
+  *result = opts;
+  opts = NULL;
+
+  oyDeAllocateFunc_( xpath ); xpath = 0;
+
+  return error;
 }
 
 /** Function oyOptions_FromText

@@ -128,6 +128,13 @@ OYAPI oyOptions_s *  OYEXPORT
                 oyOptions_FromText   ( const char        * text,
                                        uint32_t            flags,
                                        oyObject_s          object );
+OYAPI int  OYEXPORT
+                oyOptions_FromJSON   ( const char        * json_text,
+                                       oyOptions_s       * options,
+                                       oyObject_s          object,
+                                       oyOptions_s      ** result,
+                                       const char        * xformat,
+                                       ... );
 
 OYAPI int  OYEXPORT
                  oyOptions_Add       ( oyOptions_s       * options,
