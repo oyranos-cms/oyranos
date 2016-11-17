@@ -776,6 +776,7 @@ int            oyOptions_Filter      ( oyOptions_s      ** add_list,
  *  - oyNAME_NAME - a readable XFORMS data model
  *  - oyNAME_NICK - the hash ID
  *  - oyNAME_DESCRIPTION - option registration name with key and without value
+ *  - oyNAME_JSON - readable JSON
  *
  *  @todo streamline output and group, avoid writing all levels for each key
  *
@@ -795,7 +796,7 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
   char * text = 0;
   oyOption_s * o = 0, *o2 = 0;
   int i, n, ti, c, j,j_n,k, min_level;
-  int indent = 6; /* base indentation for better looking XFORMS documents */
+  int indent = (type == oyNAME_JSON)?1:6; /* base indentation for better looking XFORMS documents */
   int * sort, changed;
   char ** old_levels = 0;
   int old_levels_n = 0;
@@ -810,8 +811,12 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
     for( i = 0; i < n; ++i )
       sort[i]=i;
 
+    if(type == oyNAME_JSON && n)
+      STRING_ADD ( text, "{\n" );
+
     /* sort the options alphabetical */
-    if(type == oyNAME_NAME)
+    if(type == oyNAME_NAME ||
+       type == oyNAME_JSON)
     do
     {
       changed = 0;
@@ -855,7 +860,8 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
 
       /* Omit redundant XML level closes and opens based on alphabetical input.
        */
-      if(type == oyNAME_NAME)
+      if(type == oyNAME_NAME ||
+         type == oyNAME_JSON)
       {
         char * tmp = 0, **list = 0;
 
@@ -879,9 +885,9 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
 
         /* close old levels */
         if(old_levels)
-        for( j = j_n-1; j >= min_level; --j )
+        for( j = old_levels_n-1; j >= min_level; --j )
         {
-          if(j+1 < j_n)
+          if(j+1 < old_levels_n)
             for(k = 0; k < indent+j; ++k)
               STRING_ADD ( text, " " );
           if(old_levels_n > j)
@@ -892,12 +898,29 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
                 STRING_ADD ( text, " " );
               close_oy_struct = 0;
             }
-            STRING_ADD ( text, "</" );
-            STRING_ADD ( text, old_levels[j] );
-            if(j)
-              STRING_ADD ( text, ">\n" );
-            else
+            if(type == oyNAME_NAME)
+            {
+              STRING_ADD ( text, "</" );
+              STRING_ADD ( text, old_levels[j] );
               STRING_ADD ( text, ">" );
+            }
+            else
+            {
+              const char * old_level = old_levels[j-1],
+                         * level = old_levels_n == j_n ? list[j-1] : NULL;
+              if(old_levels_n == j_n &&
+                 ((j >= 1 && strcmp(old_level,level) == 0) ||
+                  j_n == 1))
+                STRING_ADD ( text, "\"," );
+              else if(j == old_levels_n-1)
+                STRING_ADD ( text, "\"" );
+              else if(j == min_level)
+                STRING_ADD ( text, "}," );
+              else
+                STRING_ADD ( text, "}" );
+            }
+            if(j)
+              STRING_ADD ( text, "\n" );
           }
         }
 
@@ -906,12 +929,24 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
         {
           for(k = 0; k < indent+j; ++k)
             STRING_ADD ( text, " " );
-          STRING_ADD ( text, "<" );
+          if(type == oyNAME_NAME)
+            STRING_ADD ( text, "<" );
+          else
+            STRING_ADD ( text, "\"" );
           STRING_ADD ( text, list[j] );
           if(j+1==j_n)
-            STRING_ADD ( text, ">" );
-          else
-            STRING_ADD ( text, ">\n" );
+          {
+            if(type == oyNAME_NAME)
+              STRING_ADD ( text, ">" );
+            else
+              STRING_ADD ( text, "\": \"" );
+          } else
+          {
+            if(type == oyNAME_NAME)
+              STRING_ADD ( text, ">\n" );
+            else
+              STRING_ADD ( text, "\": {\n" );
+          }
         }
 
         if( o_->value_type == oyVAL_STRUCT )
@@ -952,17 +987,27 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
             STRING_ADD ( text, " " );
         if(old_levels_n > j)
         {
-          STRING_ADD ( text, "</" );
-          STRING_ADD ( text, old_levels[j] );
-          if(j)
-            STRING_ADD ( text, ">\n" );
-          else
+          if(type == oyNAME_NAME)
+          {
+            STRING_ADD ( text, "</" );
+            STRING_ADD ( text, old_levels[j] );
             STRING_ADD ( text, ">" );
+          }
+          else if(j == j_n - 1)
+            STRING_ADD ( text, "\"" );
+          else
+            STRING_ADD ( text, "}" );
+
+          if(j)
+            STRING_ADD ( text, "\n" );
         }
       }
 
     if(old_levels)
       oyStringListRelease_( &old_levels, old_levels_n, oyDeAllocateFunc_ );
+
+    if(type == oyNAME_JSON && n)
+      STRING_ADD ( text, "\n}" );
 
     error = oyObject_SetName( options->oy_, text, type );
 
