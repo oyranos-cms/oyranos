@@ -383,6 +383,7 @@ oyOptions_s *  oyOptions_FromBoolean ( oyOptions_s       * set_a,
   return options;
 }
 
+/** @example tutorial_json_options.c Shows the oyOptions_s API for JSON handling */
 /** @fn       oyOptions_FromJSON
  *  @memberof oyOptions_s
  *  @brief    deserialise a text file to oyOptions_s data
@@ -391,6 +392,18 @@ oyOptions_s *  oyOptions_FromBoolean ( oyOptions_s       * set_a,
  *  the index is specified in the xpath with the xformat + ... arguments.
  *  The xpath is build from xformat + optional following printf style
  *  arguments.
+ *
+ *  The following code sample comes from @ref tutorial_json_options.c.
+ *  @dontinclude   tutorial_json_options.c
+    The "key_path" options is here set to demostrate path substitution:
+    @skipline key_path
+    Then the JSON text is parsed and the second array member of org/free is
+    picked:
+    @skip json
+    @until oyOptions_FromJSON
+    The result options shall contain net/host/path/s2key_c:val_c and
+    net/host/path/s2key_d:val_d with the path substitution applied and the
+    selected array members taked each into a string option.
  *
  *  @param[in]     json_text           the text to process
  *  @param[in]     options             optional
