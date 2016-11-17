@@ -147,6 +147,8 @@ int          oySetCMMPattern         ( oyCMM_e             type,
 #define oyNAME_REGISTRATION (oyNAME_DESCRIPTION + 3)
 /** @brief a logical name for registration search */
 #define oyNAME_PATTERN (oyNAME_DESCRIPTION + 4)
+/** @brief a logical name for registration search */
+#define oyNAME_JSON (oyNAME_DESCRIPTION + 5)
 /** @brief use inbuild values */
 #define oySOURCE_FILTER 0x02
 /** @brief use persistenly stored DB values */
