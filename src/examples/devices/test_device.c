@@ -1066,18 +1066,31 @@ int main(int argc, char *argv[])
       if(strcmp(format,"openicc") == 0 ||
          strcmp(format,"openicc+rank-map") == 0)
       {
+        oyOptions_s * parsed = NULL;
+        char * path = NULL;
+        oyStringAddPrintf( &path, 0,0, "org/freedesktop/openicc/device/%s", device_class );
         error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/options/source",
                                    "db", OY_CREATE_NEW );  
+        error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/key_path",
+                                       path, OY_CREATE_NEW );  
         error = oyDeviceToJSON( c, options, &json, oyAllocFunc );
+        if(oyOptions_FromJSON( json, options, NULL, &parsed, "org/freedesktop/openicc/device/%s/[0]", device_class ))
+          WARNc1_S( "%s\n", _("found issues parsing JSON") );
+        if(json) oyFree_m_( json );
 
         /* it is possible that no DB keys are available; use all others */
-        if(!json && !only_db)
+        if(!only_db)
         {
           error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/options/source",
                                          "backend_core", OY_CREATE_NEW );
           error = oyDeviceToJSON( c, options, &json, oyAllocFunc );
+          if(oyOptions_FromJSON( json, options, NULL, &parsed, "org/freedesktop/openicc/device/%s/[0]", device_class ))
+            WARNc1_S( "%s\n", _("found issues parsing JSON") );
+          if(json) oyFree_m_( json );
         }
         oyOptions_Release( &options );
+
+        json = oyStringCopy( oyOptions_GetText( parsed, oyNAME_JSON ), 0 );
 
         if(!json)
         {
