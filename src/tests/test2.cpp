@@ -1852,7 +1852,7 @@ oyTESTRESULT_e testProofingEffect ()
     "oyOptions_Handle(\"create_profile\"): %s", text );
   } else if(error == -1)
   {
-    PRINT_SUB( oyTESTRESULT_FAIL,
+    PRINT_SUB( oyTESTRESULT_XFAIL,
     "oyOptions_Handle(\"create_profile\") no" );
   } else
   {
