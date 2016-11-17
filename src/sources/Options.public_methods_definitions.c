@@ -784,9 +784,9 @@ int            oyOptions_Filter      ( oyOptions_s      ** add_list,
  *  @param         type                oyNAME_NICK is equal to an ID
  *  @return                            the text
  *
- *  @version Oyranos: 0.3.3
+ *  @version Oyranos: 0.9.6
  *  @since   2008/11/25 (Oyranos: 0.1.9)
- *  @date    2011/10/31
+ *  @date    2016/11/17
  */
 const char *   oyOptions_GetText     ( oyOptions_s       * options,
                                        oyNAME_e            type )
