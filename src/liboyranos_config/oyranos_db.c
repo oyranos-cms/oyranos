@@ -291,5 +291,3 @@ oyDBSearchEmptyKeyname_f   oyDBSearchEmptyKeyname = oyDBSearchEmptyKeynameInit;
 oyDBEraseKey_f             oyDBEraseKey = oyDBEraseKeyInit;
 
 
-#include "../oyjl/oyjl_tree.c"
-
