@@ -1,5 +1,7 @@
 # Oyranos README
 [![Documentation](https://codedocs.xyz/oyranos-cms/oyranos.svg)](https://codedocs.xyz/oyranos-cms/oyranos/)
+[![issues](https://img.shields.io/github/issues-raw/oyranos-cms/oyranos.svg?style=flat-square)](https://github.com/oyranos-cms/oyranos/issues)
+[![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
 The Color Management System (CMS) Oyranos allows the coordination of
 device specific Informations (ICC profiles) und system wide settings.
@@ -28,10 +30,10 @@ device specific Informations (ICC profiles) und system wide settings.
 * [Xcalib](http://www.etg.e-technik.uni-erlangen.de/web/doe/xcalib/) - a vcgt/calibration loader, required on X11/Windows 
 * [lcms and/or lcms2](http://www.littlecms.com) - CMM for color conversion
 * [libxml2](http://www.xmlsoft.org/) - for XML parsing
-* [Yajl](http://lloyd.github.com/yajl) - for JSON parsing
-* [Elektra](http://www.libelektra.org) - DB API
+* [Yajl](http://lloyd.github.com/yajl) - JSON DB API
 
 #####Optional
+* [Elektra](http://www.libelektra.org) - DB API
 * [FLTK](http://www.fltk.org) - (--enable-threads) is needed for the example Gui
 * For the documentation use doxygen, graphviz and graphviz-gd packages.
   * [Doxygen v1.5.8 or higher is recommended](http://www.doxygen.org)
