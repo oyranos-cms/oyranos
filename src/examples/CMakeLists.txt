@@ -114,3 +114,8 @@ TARGET_LINK_LIBRARIES( tutorial1
 ADD_EXECUTABLE( tutorial-taxi tutorial_taxi.c )
 TARGET_LINK_LIBRARIES( tutorial-taxi
              ${PROJECT_NAME} ${EXTRA_LIBS} )
+
+# Tutorial JSON Options
+ADD_EXECUTABLE( tutorial-json-options tutorial_json_options.c )
+TARGET_LINK_LIBRARIES( tutorial-json-options
+             ${PROJECT_NAME} ${EXTRA_LIBS} )
