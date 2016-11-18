@@ -1145,7 +1145,12 @@ oyPointer  lcm2CMMColorConversion_ToMem_ (
     }
 #endif
 
-    lcmsSaveProfileToMem( dl, 0, &size_ );
+    if(dl)
+      lcmsSaveProfileToMem( dl, 0, &size_ );
+    else
+      lcm2_msg( oyMSG_WARN, (oyStruct_s*)opts,
+                OY_DBG_FORMAT_"no DL from transform",
+                OY_DBG_ARGS_ );
     if(size_)
     {
       data = allocateFunc( size_ );
