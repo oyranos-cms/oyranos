@@ -1958,6 +1958,8 @@ oyTESTRESULT_e testDeviceLinkProfile ()
   error = oyImage_Release( &out );
   error = oyProfile_Release( &prof );
   error = oyProfile_Release( &dl );
+  error = oyOptions_Release( &options );
+  error = oyFilterGraph_Release( &graph );
 
 
   return result;
