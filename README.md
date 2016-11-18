@@ -1,5 +1,4 @@
 # Oyranos README
-[![Build Status](https://travis-ci.org/oyranos-cms/oyranos.svg?branch=master)](https://travis-ci.org/oyranos-cms/oyranos)
 [![Documentation](https://codedocs.xyz/oyranos-cms/oyranos.svg)](https://codedocs.xyz/oyranos-cms/oyranos/)
 [![issues](https://img.shields.io/github/issues-raw/oyranos-cms/oyranos.svg?style=flat-square)](https://github.com/oyranos-cms/oyranos/issues)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
