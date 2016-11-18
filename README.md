@@ -3,6 +3,8 @@
 [![issues](https://img.shields.io/github/issues-raw/oyranos-cms/oyranos.svg?style=flat-square)](https://github.com/oyranos-cms/oyranos/issues)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
+![](extras/icons/oyranos_logo.svg)
+
 The Color Management System (CMS) Oyranos allows the coordination of
 device specific Informations (ICC profiles) und system wide settings.
 
