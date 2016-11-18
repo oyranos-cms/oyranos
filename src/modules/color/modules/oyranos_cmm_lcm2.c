@@ -425,6 +425,11 @@ int                lcm2CMMInit       ( oyStruct_s        * filter )
         lcms_initialised = -1;
       else
         lcms_initialised = 1;
+
+      if(error)
+        lcm2_msg( oyMSG_WARN,0, OY_DBG_FORMAT_" "
+               "init \"%s\" issue(s): v%d",
+                OY_DBG_ARGS_, fn, lcmsGetEncodedCMMversion() );
     }
     oyFree_m_( fn );
 
