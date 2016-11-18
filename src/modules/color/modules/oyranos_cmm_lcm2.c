@@ -317,6 +317,7 @@ static int dummyGetEncodedCMMversion() {return LCMS_VERSION;}
                  { \
                    error = 1; \
                  } \
+                 report = 1; \
                  lcm2_msg( type,0, OY_DBG_FORMAT_" " \
                                       "dlsym failed: %s", \
                                       OY_DBG_ARGS_, dlerror() ); \
@@ -334,6 +335,7 @@ int                lcm2CMMInit       ( oyStruct_s        * filter )
   int error = 0;
   if(!lcms_initialised)
   {
+    int report = 0;
     char * fn = oyLibNameCreate_( "lcms2", 2 );
     lcms_handle = dlopen(fn, RTLD_LAZY);
 
@@ -426,7 +428,7 @@ int                lcm2CMMInit       ( oyStruct_s        * filter )
       else
         lcms_initialised = 1;
 
-      if(error)
+      if(report)
         lcm2_msg( oyMSG_WARN,0, OY_DBG_FORMAT_" "
                "init \"%s\" issue(s): v%d",
                 OY_DBG_ARGS_, fn, lcmsGetEncodedCMMversion() );
