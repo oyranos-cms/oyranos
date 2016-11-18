@@ -67,7 +67,7 @@ IF(USE_GCOV)
   INCLUDE(CodeCoverage)
   SETUP_TARGET_FOR_COVERAGE(
 				coverage  # Name for custom target.
-				test2         # Name of the test driver executable that runs the tests.
+				valgrind test2         # Name of the test driver executable that runs the tests.
 									# NOTE! This should always have a ZERO as exit code
 									# otherwise the coverage generation will not complete.
 				coverage            # Name of output directory.
