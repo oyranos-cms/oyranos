@@ -47,6 +47,26 @@ ENDIF()
 
 FIND_PROGRAM(CMAKE_AR_TMP NAMES ar)
 
+IF(CMAKE_C_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  SET(CMAKE_COMPILER_IS_CLANG 1)
+ENDIF()
+
+# if our static code lands inside a shared lib, we need -fPIC
+IF(UNIX)
+  IF(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_CLANG)
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
+    # coverage testing
+    IF(USE_GCOV)
+      SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -O0 -fprofile-arcs -ftest-coverage")
+      SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -fprofile-arcs -ftest-coverage")
+      SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -g -O0 -fprofile-arcs -ftest-coverage")
+      SET(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -g -O0 -fprofile-arcs -ftest-coverage")
+    ENDIF(USE_GCOV)
+  ENDIF(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_CLANG)
+ENDIF(UNIX)
+
+
 # detect top level projects
 IF(USE_SYSTEM_YAJL)
   FIND_PACKAGE(Yajl REQUIRED)
@@ -156,10 +176,6 @@ ELSE( HAVE_XCM )
     SET( XCM_LIBRARIES xcm-static )
   ENDIF()
 ENDIF( HAVE_XCM )
-
-IF(CMAKE_C_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  SET(CMAKE_COMPILER_IS_CLANG 1)
-ENDIF()
 
 #now add all directories
 ADD_SUBDIRECTORY( color )

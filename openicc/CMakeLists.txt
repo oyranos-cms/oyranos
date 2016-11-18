@@ -5,20 +5,6 @@ INCLUDE_DIRECTORIES(
                     "${CMAKE_CURRENT_SOURCE_DIR}/libopenicc"
 )
 
-# if our static code lands inside a shared lib, we need -fPIC
-IF(UNIX)
-  IF(CMAKE_COMPILER_IS_GNUCC)
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
-    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
-    # coverage testing
-    IF(USE_GCOV)
-      SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -O0 -fprofile-arcs -ftest-coverage")
-      SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -fprofile-arcs -ftest-coverage")
-      SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -g -O0 -fprofile-arcs -ftest-coverage")
-      SET(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -g -O0 -fprofile-arcs -ftest-coverage")
-    ENDIF(USE_GCOV)
-  ENDIF(CMAKE_COMPILER_IS_GNUCC)
-ENDIF(UNIX)
 
 # dependencies
 INCLUDE(CheckLibraryExists)
