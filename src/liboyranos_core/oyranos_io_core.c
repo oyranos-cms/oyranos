@@ -986,6 +986,11 @@ oyIsFileFull_ (const char* fullFileName, const char * read_mode)
 
   DBG_MEM_START
 
+  if(!fullFileName)
+  {
+    WARNc_S("parameter missed: fullFileName");
+    return 0;
+  }
   DBG_MEM1_S("fullFileName = \"%s\"", fullFileName)
   memset(&status,0,sizeof(struct stat));
   r = stat (name, &status);
