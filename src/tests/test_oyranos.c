@@ -550,7 +550,7 @@ oyTESTRESULT_e testProfiles ()
     countB += count;
     if(!count)
     {
-      PRINT_SUB( oyTESTRESULT_FAIL, 
+      PRINT_SUB( oyTESTRESULT_XFAIL, 
       "No profiles found for oyPROFILE_e %d             ", i );
     } else
     {
