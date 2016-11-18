@@ -11,6 +11,7 @@ script:
   - make -j 4
   - OY_MODULE_PATH=$TRAVIS_BUILD_DIR/../build/src/modules XDG_DATA_DIRS=$TRAVIS_BUILD_DIR make check
   - if [[ "$CC" == "gcc" ]]; then
+      OY_MODULE_PATH=$TRAVIS_BUILD_DIR/../build/src/modules XDG_DATA_DIRS=$TRAVIS_BUILD_DIR make test-2;
       OY_MODULE_PATH=$TRAVIS_BUILD_DIR/../build/src/modules XDG_DATA_DIRS=$TRAVIS_BUILD_DIR make coverage;
       bash <(curl -s https://codecov.io/bash) -f coverage.info -R $TRAVIS_BUILD_DIR -X gcov;
     fi
