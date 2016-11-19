@@ -821,6 +821,7 @@ uint32_t       lcm2FlagsFromOptions  ( oyOptions_s       * opts )
       no_white_on_white_fixup = 1,
       flags = 0;
   const char * o_txt = 0;
+  static int precalculation_curves_warn = 0;
 
       o_txt = oyOptions_FindString  ( opts, "rendering_bpc", 0 );
       if(o_txt && oyStrlen_(o_txt))
@@ -858,11 +859,18 @@ uint32_t       lcm2FlagsFromOptions  ( oyOptions_s       * opts )
       case 3: flags |= cmsFLAGS_LOWRESPRECALC; break;
       }
 
-      switch(precalculation_curves)
+      if(lcmsGetEncodedCMMversion() >= 2070)
       {
-      case 0: flags |= 0; break;
-      case 1: flags |= cmsFLAGS_CLUT_POST_LINEARIZATION | cmsFLAGS_CLUT_PRE_LINEARIZATION; break;
-      }
+        switch(precalculation_curves)
+        {
+        case 0: flags |= 0; break;
+        case 1: flags |= cmsFLAGS_CLUT_POST_LINEARIZATION | cmsFLAGS_CLUT_PRE_LINEARIZATION; break;
+        }
+      } else
+        if(precalculation_curves_warn++ == 0)
+          lcm2_msg( oyMSG_WARN, (oyStruct_s*)opts, OY_DBG_FORMAT_
+              "Skipping cmsFLAGS_CLUT_POST_LINEARIZATION! Can not handle flag for DL creation. v%d\n",
+              OY_DBG_ARGS_, lcmsGetEncodedCMMversion() );
 
   if(oy_debug > 2)
     lcm2_msg( oyMSG_DBG, (oyStruct_s*)opts, OY_DBG_FORMAT_"\n"
@@ -1127,7 +1135,7 @@ oyPointer  lcm2CMMColorConversion_ToMem_ (
 
   if(!error)
   {
-    cmsHPROFILE dl= lcmsTransform2DeviceLink( xform,4.3,
+    cmsHPROFILE dl= lcmsTransform2DeviceLink( xform, 4.3,
                                               flags | cmsFLAGS_KEEP_SEQUENCE );
 
     *size = 0;
@@ -1156,8 +1164,8 @@ oyPointer  lcm2CMMColorConversion_ToMem_ (
       lcmsSaveProfileToMem( dl, 0, &size_ );
     else
       lcm2_msg( oyMSG_WARN, (oyStruct_s*)opts,
-                OY_DBG_FORMAT_"no DL from transform",
-                OY_DBG_ARGS_ );
+                OY_DBG_FORMAT_"no DL from transform. flags: %s",
+                OY_DBG_ARGS_, lcm2FlagsToText(flags) );
     if(size_)
     {
       data = allocateFunc( size_ );
