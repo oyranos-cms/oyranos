@@ -125,6 +125,18 @@ int oy_test_sub_count = 0;
   ++oy_test_sub_count; \
 }
 
+oyTESTRESULT_e displayFail()
+{
+  oyTESTRESULT_e fail_type = oyTESTRESULT_XFAIL;
+
+#if !defined(__APPLE__)
+  const char * disp_env = getenv("DISPLAY");
+  if(disp_env && disp_env[0])
+    fail_type = oyTESTRESULT_FAIL;
+#endif
+
+  return fail_type;
+}
 
 /* --- actual tests --- */
 
@@ -1717,7 +1729,7 @@ oyTESTRESULT_e testProfiles ()
     countB += count;
     if(!count)
     {
-      PRINT_SUB( oyTESTRESULT_FAIL, 
+      PRINT_SUB( i == oyEDITING_CMYK ? oyTESTRESULT_XFAIL : oyTESTRESULT_FAIL, 
       "No profiles found for oyPROFILE_e %d             ", i );
     } else
     {
@@ -2999,7 +3011,7 @@ oyTESTRESULT_e testCMMRankMap ()
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "monitor(s) found               %d (%d)", (int)count, error );
   } else
-  { PRINT_SUB( oyTESTRESULT_FAIL,
+  { PRINT_SUB( displayFail(),
     "no monitor found               %d (%d)", (int)count, error );
   }
 
@@ -3137,7 +3149,7 @@ oyTESTRESULT_e testCMMMonitorJSON ()
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "oyDeviceGet() \"monitor\"          " );
   } else
-  { PRINT_SUB( oyTESTRESULT_FAIL,
+  { PRINT_SUB( displayFail(),
     "oyDeviceGet() \"monitor\"          " );
   }
 
@@ -3348,7 +3360,7 @@ oyTESTRESULT_e testCMMMonitorListing ()
     "oyDevicesGet() \"monitor\": %d                      %s", devices_n,
                    oyProfilingToString(1,clck/(double)CLOCKS_PER_SEC,"Obj."));
   } else
-  { PRINT_SUB( oyTESTRESULT_FAIL,
+  { PRINT_SUB( displayFail(),
     "oyDevicesGet() \"monitor\": %d     ", devices_n );
   }
   for( i = 0; i < devices_n; ++i )
@@ -3532,7 +3544,7 @@ oyTESTRESULT_e testCMMmonitorDBmatch ()
     "oyDeviceGet(..\"monitor\" \"%s\".. &device) %d %s", device_name, k_n,
                    oyProfilingToString(1,clck/(double)CLOCKS_PER_SEC,"Obj."));
   } else
-  { PRINT_SUB( oyTESTRESULT_FAIL,
+  { PRINT_SUB( displayFail(),
     "oyDeviceGet(..\"monitor\" \"%s\".. &device) %d", device_name, k_n );
   }
 
