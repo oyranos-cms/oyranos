@@ -30,13 +30,13 @@ device specific Informations (ICC profiles) und system wide settings.
 #####Mandatory
 * [icc-profiles-openicc and icc-profiles-basiccolor](http://sourceforge.net/projects/openicc/files/) - default ICC profiles
 * [libXinerama, libXrandr, libXfixes and libXxf86vm](http:/www.x.org) - for X11 support
-* [libXcm >= 0.5.3] (http://www.oyranos.org/libxcm) - for monitor support
 * [Xcalib](http://www.etg.e-technik.uni-erlangen.de/web/doe/xcalib/) - a vcgt/calibration loader, required on X11/Windows 
 * [lcms and/or lcms2](http://www.littlecms.com) - CMM for color conversion
 * [libxml2](http://www.xmlsoft.org/) - for XML parsing
-* [Yajl](http://lloyd.github.com/yajl) - JSON DB API
 
 #####Optional
+* [libXcm >= 0.5.3] (http://www.oyranos.org/libxcm) - for monitor support (or internal fallback)
+* [Yajl](http://lloyd.github.com/yajl) - JSON DB API (or internall fallback)
 * [Elektra](http://www.libelektra.org) - DB API
 * [FLTK](http://www.fltk.org) - (--enable-threads) is needed for the example Gui
 * For the documentation use doxygen, graphviz and graphviz-gd packages.
