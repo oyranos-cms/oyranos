@@ -873,6 +873,33 @@ int      oyX1MonitorProfileSetup     ( const char        * display_name,
                        8, PropModeReplace, moni_profile, (int)size );
       if(result == 0) WARNc2_S("%s %d", _("found issues"),result);
 
+# if defined(HAVE_XRANDR)
+      if( oyX1Monitor_infoSource_( disp ) == oyX11INFO_SOURCE_XRANDR )
+      {
+#if defined(XCM_HAVE_X11) && defined(HAVE_XCM)
+        atom = XInternAtom( display, XCM_ICC_V0_3_TARGET_PROFILE_IN_X_BASE, True );
+#else   
+        atom = XInternAtom( display, "_ICC_PROFILE", True );
+#endif
+        DBG_NUM1_S("atom: %ld", atom)
+
+        if(atom)
+        {
+          XRRChangeOutputProperty( display, oyX1Monitor_xrrOutput_( disp ),
+			           atom, XA_CARDINAL, 8, PropModeReplace,
+			           (unsigned char *)moni_profile, (int)size );
+
+          if(oy_debug)
+            atom_name = XGetAtomName(display, atom);
+          DBG_NUM3_S( "output: \"%s\" crtc: %d atom_name: %s",
+               oyNoEmptyString_m_(oyX1Monitor_xrrOutputInfo_(disp)->name),
+               oyX1Monitor_xrrOutputInfo_(disp)->crtc, atom_name );
+        }
+      }
+#else
+      DBG_NUM_S("!HAVE_XRANDR");
+# endif
+
       /* claim to be compatible with 0.4 
        * http://www.freedesktop.org/wiki/OpenIcc/ICC_Profiles_in_X_Specification_0.4
        */
@@ -973,6 +1000,28 @@ int      oyX1MonitorProfileUnset     ( const char        * display_name )
         WARNc2_S("%s \"%s\"", _("Error getting atom"), atom_name);
         error = -1;
       }
+# if defined(HAVE_XRANDR)
+      if( oyX1Monitor_infoSource_( disp ) == oyX11INFO_SOURCE_XRANDR )
+      {
+#if defined(XCM_HAVE_X11) && defined(HAVE_XCM)
+        atom = XInternAtom( display, XCM_ICC_V0_3_TARGET_PROFILE_IN_X_BASE, True );
+#else   
+        atom = XInternAtom( display, "_ICC_PROFILE", True );
+#endif
+
+        if(atom)
+        {
+          XRRDeleteOutputProperty( display, oyX1Monitor_xrrOutput_( disp ), atom );
+          if(oy_debug)
+            atom_name = XGetAtomName(display, atom);
+          DBG_NUM3_S( "output: \"%s\" crtc: %d atom_name: %s",
+               oyNoEmptyString_m_(oyX1Monitor_xrrOutputInfo_(disp)->name),
+               oyX1Monitor_xrrOutputInfo_(disp)->crtc, atom_name );
+        }
+      }
+#else
+      DBG_NUM_S("!HAVE_XRANDR");
+# endif
 
       {
         char *dpy_name = oyStringCopy_( oyNoEmptyString_m_(display_name), oyAllocateFunc_ );
