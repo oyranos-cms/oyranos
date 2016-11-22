@@ -1008,9 +1008,12 @@ int      oyX1MonitorProfileUnset     ( const char        * display_name )
 #else   
         atom = XInternAtom( display, "_ICC_PROFILE", True );
 #endif
-
-        if(atom)
+        if(atom != None)
         {
+          /* need a existing profperty to remove; sorry for the noice */
+          XRRChangeOutputProperty( display, oyX1Monitor_xrrOutput_( disp ),
+			           atom, XA_CARDINAL, 8, PropModeReplace,
+			           (unsigned char *)NULL, (int)0 );
           XRRDeleteOutputProperty( display, oyX1Monitor_xrrOutput_( disp ), atom );
           if(oy_debug)
             atom_name = XGetAtomName(display, atom);
