@@ -14,6 +14,7 @@
 #include "oyranos.h"
 #include "oyranos_debug.h"
 #include "oyranos_i18n.h"
+#include "oyranos_io.h"
 #include "oyProfile_s.h"
 #include "oyObject_s.h"
 
@@ -32,6 +33,8 @@ QcmseDialog::QcmseDialog()
   connect( quitA, SIGNAL(triggered()), this, SLOT(quit()) );
   showA = new QAction( tr("&Show Window"), this );
   connect( showA, SIGNAL(triggered()), this, SLOT(showNormal()) );
+  showC = new QAction( tr("&Configure"), this );
+  connect( showC, SIGNAL(triggered()), this, SLOT(showConfig()) );
 
   icon = NULL;
   systrayIconMenu = NULL;
@@ -75,6 +78,7 @@ void QcmseDialog::createIcon()
   systrayIconMenu->addSeparator();
 
   systrayIconMenu->addAction( showA );
+  systrayIconMenu->addAction( showC );
   systrayIconMenu->addAction( quitA );
 
   /* set a first icon */
@@ -152,6 +156,36 @@ void QcmseDialog::setIcon(int index)
   setWindowIcon(ic);
 
   icon->setToolTip(icons->itemText(index));
+}
+
+void QcmseDialog::showConfig()
+{
+  const char * oyranos_settings_gui_app = getenv("OYRANOS_SETTINGS_GUI");
+  char * app = NULL;
+  const char * synnefo_bins[] = {"oyranos-config-synnefo",
+                                 "oyranos-config-synnefo-qt4",
+                                 "synnefo",
+                                 "Synnefo",
+                                 "oyranos-config-fltk",
+                                 NULL};
+  int i = 0;
+#if 0
+  const char * xdg_desktop = getenv("XDG_CURRENT_DESKTOP");
+  if(xdg_desktop && strcmp(xdg_desktop,"KDE"))
+    app = strdup("systemsettings5 settings-kolor-management");
+#endif
+  if(oyranos_settings_gui_app)
+    app = strdup(oyranos_settings_gui_app);
+  while(!app && synnefo_bins[i])
+    app = oyFindApplication( synnefo_bins[i++] );
+
+  if(app)
+  { char * command = (char*) malloc(strlen(app) + 128);
+    sprintf(command, "%s&", app);
+    system(command);
+    free(command);
+    free(app); app = 0;
+  } 
 }
 
 void QcmseDialog::log( const char * text, int code )

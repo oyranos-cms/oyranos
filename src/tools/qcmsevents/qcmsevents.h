@@ -42,6 +42,7 @@ class QcmseDialog : public QDialog
   public slots:
     void quit() { exit(0); }
     void setIcon(int index);
+    void showConfig();
 
   public:
     QSystemTrayIcon * icon;
@@ -50,6 +51,7 @@ class QcmseDialog : public QDialog
     QMenu * systrayIconMenu;
     QAction * quitA;
     QAction * showA;
+    QAction * showC;
 
     QListWidget * log_list;
     QComboBox * icons;
