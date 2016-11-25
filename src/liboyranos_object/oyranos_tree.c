@@ -403,6 +403,7 @@ int                oyStruct_GetChildren (
     case oyOBJECT_INFO_STATIC_S:
     case oyOBJECT_LIST_S:
     case oyOBJECT_LIS_S:
+    case oyOBJECT_MONITOR_HOOKS_S:
     case oyOBJECT_MAX:
          break;
   }
