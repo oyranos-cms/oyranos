@@ -106,9 +106,11 @@ typedef int  (*oyGetMonitorInfo_f)   ( const char        * display,
                                        oyStruct_s        * user_data );
 
 typedef struct {
-  const char *   help_system_specific;
-  oyRankMap * rank_map;
-  oyCMMapi_s *   next_api;
+  uint32_t         type;               /**< set to 120 for ABI compatibility with the actual used header version */
+  char             nick[8];            /**< four byte nick name of module */
+  uint32_t         version;            /**< set to module version; Major * 10000 + Minor * 100 + Micro */
+  const char *     help_system_specific;
+  oyRankMap *      rank_map;
   oySetupMonitorProfile_f setupProfile;
   oyUnsetMonitorProfile_f unsetProfile;
   oyGetRectangleFromDevice_f getRectangle;

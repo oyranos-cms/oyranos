@@ -1714,6 +1714,13 @@ oyX1GetMonitorInfo_lib            (const char* display_name,
 }
 
 
+int  oyMoveColorServerProfiles       ( const char        * display_name,
+                                       int                 screen,
+                                       int                 setup )
+{
+  return 1;
+}
+
 
 
 #if defined(XCM_HAVE_X11) && defined(HAVE_XCM)
@@ -2168,9 +2175,11 @@ oyCMMapi10_s_    oyX1_api10_set_xcm_region_handler = {
       " Informations are stored in the returned oyConfig_s::backend_core member."
 
 oyMonitorDeviceHooks_s oyX1MonitorHooks_ = {
+  oyOBJECT_MONITOR_HOOKS_S,
+  {CMM_NICK},
+  10000, /* 1.0.0 */
   oyX1_help_system_specific,
   NULL,
-  (oyCMMapi_s*) &oyX1_api10_set_xcm_region_handler,
   oyX1MonitorProfileSetup,
   oyX1MonitorProfileUnset,
   oyX1Rectangle_FromDevice,

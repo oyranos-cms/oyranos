@@ -775,9 +775,11 @@ char * printCFDictionary( CFDictionaryRef dict )
       " Informations are stored in the returned oyConfig_s::backend_core member."
 
 oyMonitorDeviceHooks_s qarzMonitorHooks_ = {
+  oyOBJECT_MONITOR_HOOKS_S,
+  {CMM_NICK},
+  10000, /* 1.0.0 */
   qarz_help_system_specific,
   NULL,
-  (oyCMMapi_s*) NULL,
   qarzMonitorProfileSetup,
   qarzMonitorProfileUnset,
   qarzRectangle_FromDevice,

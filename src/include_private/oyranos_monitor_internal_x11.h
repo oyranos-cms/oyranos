@@ -51,12 +51,12 @@ extern "C" {
 
 extern oyMonitorDeviceHooks_s * oyX1MonitorHooks;
 oyCMMapi10_s_      oyX1_api10_set_xcm_region_handler;
+#define next_api (oyCMMapi_s*) & oyX1_api10_set_xcm_region_handler
 
 #define CMMInit                 catCMMfunc( oyX1, CMMInit )
 #define _initialised            catCMMfunc( oyX1, _initialised )
 #define CMMMessageFuncSet       catCMMfunc( oyX1, CMMMessageFuncSet )
 #define _msg                    catCMMfunc( oyX1, _msg )
-#define _api8                   catCMMfunc( oyX1, _api8 )
 #define DeviceFromName_         catCMMfunc( oyX1, DeviceFromName_ )
 #define Configs_Modify          catCMMfunc( oyX1, Configs_Modify )
 #define GetText                 catCMMfunc( oyX1, GetText )
@@ -75,14 +75,16 @@ oyCMMapi10_s_      oyX1_api10_set_xcm_region_handler;
 #define _api8_ui_texts          catCMMfunc( oyX1, _api8_ui_texts )
 #define _api8_ui                catCMMfunc( oyX1, _api8_ui )
 #define _api8_icon              catCMMfunc( oyX1, _api8_icon )
+#define _api8                   catCMMfunc( oyX1, _api8 )
 #define _cmm_module             catCMMfunc( oyX1, _cmm_module )
 #define _texts                  catCMMfunc( oyX1, _texts )
 #define GetMonitorInfo_lib      catCMMstruct( oyX1, getInfo )
 #define GetAllScreenNames       catCMMstruct( oyX1, getAllScreenNames )
 #define MonitorProfileSetup     catCMMstruct( oyX1, setupProfile )
 #define MonitorProfileUnset     catCMMstruct( oyX1, unsetProfile )
-#define GetRectangleFromDevice    catCMMstruct( oyX1, getRectangle )
+#define GetRectangleFromDevice  catCMMstruct( oyX1, getRectangle )
 #define GetMonitorProfile       catCMMstruct( oyX1, getProfile )
+#define MoveColorServerProfiles catCMMstruct( oyX1, moveColorServerProfiles )
 
 int                CMMInit           ( );
 int                CMMMessageFuncSet ( oyMessage_f         message_func );
@@ -163,6 +165,9 @@ char *       oyX1GetMonitorProfile   ( const char        * device_name,
 int      oyX1GetAllScreenNames       ( const char        * display_name,
                                        char            *** display_names,
                                        oyAlloc_f           allocateFunc );
+int      oyX1MoveColorServerProfiles ( const char        * display_name,
+                                       int                 screen,
+                                       int                 setup );
 
 
 int      oyX1GetMonitorInfo_lib      ( const char        * display,

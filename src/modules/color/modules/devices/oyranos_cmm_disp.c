@@ -1230,11 +1230,7 @@ oyIcon_s _api8_icon = {
 oyCMMapi8_s_ _api8 = {
   oyOBJECT_CMM_API8_S,
   0,0,0,
-#ifdef oyX1
-  (oyCMMapi_s*) & oyX1_api10_set_xcm_region_handler, /**< next */
-#else
-  (oyCMMapi_s*) NULL, /**< next */
-#endif
+  next_api,                  /**< next API */
 
   CMMInit,                   /**< oyCMMInit_f      oyCMMInit */
   CMMMessageFuncSet,         /**< oyCMMMessageFuncSet_f oyCMMMessageFuncSet */
