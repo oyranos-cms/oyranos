@@ -14,28 +14,34 @@
  */
 
 #include "oyranos_monitor_base.h"
-#include "oyranos_config_internal.h"
 #include "oyranos_monitor_base_x11.h"
 
 
-#include "oyranos.h"
-#include "oyranos_io.h"
-#include "oyranos_monitor_internal.h"
-#include "oyranos_monitor_internal_x11.h"
-#include "oyranos_debug.h"
-#include "oyranos_helper.h"
-#include "oyranos_sentinel.h"
-#include "oyranos_string.h"
-
+#include <ctype.h> /* isdigit() */
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 #include <limits.h>
+#include <locale.h>
+
+#ifndef CMM_NICK
+warning("CMM_NICK macro not defined")
+#endif
 
 /* ---  Helpers  --- */
 
-/* --- internal API definition --- */
+#define noE( string ) ((string)?(string):"")
+extern int oy_debug; /* print debug infos on stderr */
+enum {
+  oyOBJECT_MONITOR_S = 2,
+  oyOBJECT_MONITOR_HOOKS_S = 120
+};
 
-extern oyMessage_f oyX1_msg;
+#ifndef MAX_PATH
+#define MAX_PATH 2048
+#endif
+
+/* --- internal API definition --- */
 
 /** @internal Display functions */
 const char* oyX1Monitor_name_( oyX1Monitor_s *disp ) { return disp->name; }
@@ -45,7 +51,7 @@ const char* oyX1Monitor_identifier_( oyX1Monitor_s *disp ) { return disp->identi
 char*       oyX1Monitor_screenIdentifier_( oyX1Monitor_s *disp )
 { char *number = 0;
 
-  oyAllocHelper_m_( number, char, 24, 0, return "");
+  number = malloc( 24 ); if(!number) return "";
   number[0] = 0;
   if( disp->geo[1] >= 1 && !disp->screen ) sprintf( number,"_%d", disp->geo[1]);
   return number;
@@ -129,7 +135,6 @@ char *   oyX1Monitor_getProperty_    ( oyX1Monitor_s     * disp,
                               True );
       else
         atom = XInternAtom( display, prop_name, True );
-      DBG_NUM1_S("atom: %ld", atom)
 
       if(atom)
       {
@@ -141,17 +146,17 @@ char *   oyX1Monitor_getProperty_    ( oyX1Monitor_s     * disp,
                       &bytes_after_return, &prop_return );
 
         if(error != Success)
-          WARNc4_S("%s nitems_return: %lu, bytes_after_return: %lu %d",
-                   _("found issues"), nitems_return, bytes_after_return,
+          fprintf( stderr,"%s nitems_return: %lu, bytes_after_return: %lu %d",
+                   "found issues", nitems_return, bytes_after_return,
                    error );
         if(oy_debug)
           atom_name = XGetAtomName(display, atom);
-        DBG_NUM6_S( "root: %d atom: %ld atom_name: %s prop_name: %s %d %d",
-                  w, atom, atom_name, prop_name, nitems_return,bytes_after_return );
+        if(oy_debug) fprintf( stderr, "root: %d atom: %ld atom_name: %s prop_name: %s %lu %lu",
+                  (int)w, atom, atom_name, prop_name, nitems_return,bytes_after_return );
       }
     }
 #else
-    DBG_NUM_S("!HAVE_XRANDR");
+    if(oy_debug) fprintf( stderr,"!HAVE_XRANDR");
 # endif
     atom = 0;
 
@@ -171,12 +176,12 @@ char *   oyX1Monitor_getProperty_    ( oyX1Monitor_s     * disp,
                      AnyPropertyType,
                      &a, &actual_format_return, &nitems_return, 
                      &bytes_after_return, &prop_return );
-        if(bytes_after_return != 0) WARNc2_S("%s bytes_after_return: %d",
-                                          _("found issues"),bytes_after_return);
-      DBG_NUM6_S( "root: %d atom: %ld atom_name: %s prop_name: %s %d %d",
-                  w, atom, atom_name, prop_name, nitems_return,bytes_after_return );
+        if(bytes_after_return != 0) fprintf( stderr,"%s bytes_after_return: %lu",
+                                          "found issues",bytes_after_return);
+      if(oy_debug) fprintf( stderr, "root: %d atom: %ld atom_name: %s prop_name: %s %lu %lu",
+                  (int)w, atom, atom_name, prop_name, nitems_return,bytes_after_return );
       if(atom_name)
-        oyFree_m_( atom_name )
+        free( atom_name );
     }
   }
 
@@ -231,10 +236,8 @@ int      oyX1GetMonitorInfo_         ( const char        * display_name,
   size_t prop_size = 0;
   int error = 0;
 
-  DBG_PROG_START
-
   if(display_name)
-    DBG_PROG1_S("display_name %s",display_name);
+    if(oy_debug) fprintf( stderr,"display_name %s",display_name);
 
   disp = oyX1Monitor_newFrom_( display_name, 1 );
   if(!disp)
@@ -243,9 +246,9 @@ int      oyX1GetMonitorInfo_         ( const char        * display_name,
   {
     t = 0;
     if( oyX1Monitor_systemPort_( disp ) &&
-        oyStrlen_(oyX1Monitor_systemPort_( disp )) )
+        strlen(oyX1Monitor_systemPort_( disp )) )
     {
-      len = oyStrlen_(oyX1Monitor_systemPort_( disp ));
+      len = strlen(oyX1Monitor_systemPort_( disp ));
       ++len;
       t = (char*)malloc( len );
       strcpy(t, oyX1Monitor_systemPort_( disp ));
@@ -267,7 +270,7 @@ int      oyX1GetMonitorInfo_         ( const char        * display_name,
   prop = oyX1Monitor_getProperty_( disp, "XFree86_DDC_EDID1_RAWDATA",
                                    xrandr_edids, &prop_size );
 #else
-    DBG_NUM_S("IGNORE_EDID");
+    if(oy_debug) fprintf( stderr,"IGNORE_EDID");
 #endif
 
   if( oyX1Monitor_infoSource_( disp ) == oyX11INFO_SOURCE_XINERAMA &&
@@ -278,7 +281,7 @@ int      oyX1GetMonitorInfo_         ( const char        * display_name,
     prop = oyX1Monitor_getProperty_( disp, "XFree86_DDC_EDID1_RAWDATA",
                                          xrandr_edids, &prop_size );
 #else
-    DBG_NUM_S("IGNORE_EDID");
+    if(oy_debug) fprintf( stderr,"IGNORE_EDID");
 #endif
   }
 
@@ -286,10 +289,10 @@ int      oyX1GetMonitorInfo_         ( const char        * display_name,
   {
     if( prop_size%128 )
     {
-      WARNc4_S( "\n\t  %s %d; %s %s",_("unexpected EDID lenght"),
+      fprintf( stderr, "\n\t  %s %d; %s %s","unexpected EDID lenght",
                (int)prop_size,
                "\"XFree86_DDC_EDID1_RAWDATA\"/\"EDID_DATA\"",
-               _("Cant read hardware information from device."))
+               "Cant read hardware information from device.");
       error = -1;
     }
   }
@@ -297,23 +300,24 @@ int      oyX1GetMonitorInfo_         ( const char        * display_name,
   if( !prop )
   /* as a last means try Xorg.log for at least some informations */
   {
-    char * log_file = 0;
+    char * log_file = malloc(256);
     char * log_text = 0;
-    size_t log_size = 0;
     int screen = oyX1Monitor_screen_( disp ), i;
 
-    {
 #define X_LOG_PATH  "/var/log/"
-      char num[12];
-      sprintf( num, "%d", oyX1Monitor_number_(disp) );
-      STRING_ADD( log_file, X_LOG_PATH "Xorg." );
-      STRING_ADD( log_file, num );
-      STRING_ADD( log_file, ".log" );
-    }
+    sprintf( log_file, X_LOG_PATH "Xorg.%d.log", oyX1Monitor_number_(disp) );
 
     if(log_file)
     {
-      log_text = oyReadFileToMem_( log_file, &log_size, oyAllocateFunc_);
+      FILE* fp = fopen(log_file,"r");
+      int sz, s;
+      /* get size */
+      fseek(fp,0L,SEEK_END); 
+      sz = ftell (fp);
+      log_text = calloc( sizeof(char), sz+1 );
+      s = fread( log_text, sizeof(char), sz, fp);
+      if(s != sz) log_text = NULL;
+      fclose(fp);
     }
 
     if(log_text)
@@ -384,13 +388,13 @@ int      oyX1GetMonitorInfo_         ( const char        * display_name,
         colors[8] = g;
         *year = year_;
         *week = week_;
-        WARNc5_S(  "found %s in \"%s\": %s %d %s",
+        fprintf( stderr,  "found %s in \"%s\": %s %d %s",
                    log_file, display_name, mnft_, model_id_,
-                   display_geometry?oyNoEmptyString_m_(*display_geometry):geo);
+                   display_geometry?noE(*display_geometry):geo);
 
         setlocale(LC_NUMERIC, save_locale);
         if(save_locale)
-          oyFree_m_( save_locale );
+          free( save_locale );
       }
     }
   }
@@ -403,15 +407,14 @@ int      oyX1GetMonitorInfo_         ( const char        * display_name,
   }
 
   oyX1Monitor_release_( &disp );
-  if(geo) oyFree_m_(geo);
+  if(geo) free(geo);
 
   if(prop || (edid && *edid))
   {
     if(prop_size && prop) free( prop );
-    DBG_PROG_ENDE
     return error;
   } else {
-    const char * log = _("Can not read hardware information from device.");
+    const char * log = "Can not read hardware information from device.";
     int r = -1;
 
     if(*mnft && (*mnft)[0])
@@ -420,11 +423,10 @@ int      oyX1GetMonitorInfo_         ( const char        * display_name,
       r = 0;
     }
 
-    WARNc3_S(  "\n  %s:\n  %s\n  %s",
-               _("no EDID available from X properties"),
+    fprintf( stderr,  "\n  %s:\n  %s\n  %s",
+               "no EDID available from X properties",
                "\"XFree86_DDC_EDID1_RAWDATA\"/\"EDID_DATA\"",
-               oyNoEmptyString_m_(log))
-    DBG_PROG_ENDE
+               noE(log));
     return r;
   }
 }
@@ -443,10 +445,8 @@ char *       oyX1GetMonitorProfile   ( const char        * device_name,
   char * prop = 0;
   size_t prop_size = 0;
 
-  DBG_PROG_START
-
   if(device_name)
-    DBG_PROG1_S("device_name %s",device_name);
+    if(oy_debug) fprintf( stderr,"device_name %s",device_name);
 
   disp = oyX1Monitor_newFrom_( device_name, 0 );
   if(!disp)
@@ -477,12 +477,11 @@ char *       oyX1GetMonitorProfile   ( const char        * device_name,
       *size = prop_size;
     }
   } /*else
-    WARNc1_S("\n  %s",
+    fprintf( stderr,"\n  %s",
          _("Could not get Xatom, probably your monitor profile is not set:"));*/
 
   oyX1Monitor_release_( &disp );
 
-  DBG_PROG_ENDE
   if(!error)
     return moni_profile;
   else
@@ -515,8 +514,7 @@ oyX1GetAllScreenNames_          (const char *display_name,
 
   if(!display_name || !display_name[0])
   {
-    oyX1_msg( oyMSG_WARN, NULL, OY_DBG_FORMAT_
-              "No display_name", OY_DBG_ARGS_ );
+    fprintf( stderr, "No display_name" );
     return 0;
   }
 
@@ -526,8 +524,7 @@ oyX1GetAllScreenNames_          (const char *display_name,
 #ifdef __APPLE__
     if(oy_debug)
 #endif
-    oyX1_msg( oyMSG_WARN, NULL, OY_DBG_FORMAT_
-              "No disp object", OY_DBG_ARGS_ );
+    fprintf( stderr, "No disp object" );
     return 0;
   }
 
@@ -536,12 +533,9 @@ oyX1GetAllScreenNames_          (const char *display_name,
   if( !display || (len = ScreenCount( display )) == 0 )
   {
     if(!display)
-      oyX1_msg( oyMSG_WARN, NULL, OY_DBG_FORMAT_
-                "No display struct", OY_DBG_ARGS_ );
+      fprintf( stderr, "No display struct" );
     else
-      oyX1_msg( oyMSG_WARN, NULL, OY_DBG_FORMAT_
-                "No ScreenCount %d", OY_DBG_ARGS_,
-                len );
+      fprintf( stderr, "No ScreenCount %d", len );
     return 0;
   }
 
@@ -556,7 +550,7 @@ oyX1GetAllScreenNames_          (const char *display_name,
     {
       int n_scr_info = 0;
       XineramaScreenInfo *scr_info = XineramaQueryScreens( display, &n_scr_info );
-      oyPostAllocHelper_m_(scr_info, n_scr_info, return 0 )
+      if(!scr_info || !n_scr_info) return 0;
 
       if( n_scr_info >= 1 )
         len = n_scr_info;
@@ -565,14 +559,14 @@ oyX1GetAllScreenNames_          (const char *display_name,
     }
 # endif
 
-  oyAllocHelper_m_( list, char*, len, 0, return NULL )
+  list = malloc( sizeof(char*) * len );
+  if(!list) return NULL;
 
   for (i = 0; i < len; ++i)
     if( (list[i] = oyChangeScreenName_( display_name, i )) == 0 )
     {
-      oyX1_msg( oyMSG_WARN, NULL, OY_DBG_FORMAT_
-                "oyChangeScreenName_failed %s %d", OY_DBG_ARGS_,
-                oyNoEmptyString_m_(display_name), i );
+      fprintf( stderr, "oyChangeScreenName_failed %s %d",
+               noE(display_name), i );
       return NULL;
     }
 
@@ -633,9 +627,10 @@ oyX1Monitor_getGeometryIdentifier_         (oyX1Monitor_s  *disp)
 {
   int len = 64;
 
-  oyAllocHelper_m_( disp->identifier, char, len, 0, return 1 )
+  disp->identifier = malloc(len);
+  if(!disp->identifier) return 1;
 
-  oySnprintf4_( disp->identifier, len, "%dx%d+%d+%d", 
+  snprintf( disp->identifier, len, "%dx%d+%d+%d", 
             oyX1Monitor_width_(disp), oyX1Monitor_height_(disp),
             oyX1Monitor_x_(disp), oyX1Monitor_y_(disp) );
 
@@ -646,35 +641,30 @@ char* oyX1Monitor_getAtomName_         ( oyX1Monitor_s       * disp,
                                        const char        * base )
 {
   int len = 64;
-  char *atom_name = 0;
+  char *atom_name = malloc(len);
   char *screen_number = oyX1Monitor_screenIdentifier_( disp );
 
-  oyPostAllocHelper_m_( screen_number, 1, return 0 )
-  oyAllocHelper_m_( atom_name, char, len, 0, return 0 )
+  if(!screen_number) return 0;
+  if(!atom_name) return 0;
 
-  oySnprintf2_( atom_name, len, "%s%s", base, screen_number );
+  snprintf( atom_name, len, "%s%s", base, screen_number );
 
-  oyFree_m_( screen_number );
+  free( screen_number );
 
   return atom_name;
 }
 
 
 int      oyX1MonitorProfileSetup     ( const char        * display_name,
-                                       const char        * profil_name,
+                                       const char        * profile_name,
                                        const char        * profile_data,
                                        size_t              profile_data_size )
 {
   int error = 0;
-  const char * profile_fullname = 0;
-  const char * profil_basename = 0;
-  char* profile_name_ = 0;
-  oyProfile_s * prof = 0;
   oyX1Monitor_s * disp = 0;
   char       *dpy_name = NULL;
   char *text = 0;
 
-  DBG_PROG_START
   /* XRandR needs a expensive initialisation */
   disp = oyX1Monitor_newFrom_( display_name, 1 );
   if(!disp)
@@ -682,33 +672,16 @@ int      oyX1MonitorProfileSetup     ( const char        * display_name,
 
   dpy_name = calloc( sizeof(char), MAX_PATH );
   if( display_name && !strstr( disp->host, display_name ) )
-    oySnprintf1_( dpy_name, MAX_PATH, ":%d", disp->geo[0] );
+    snprintf( dpy_name, MAX_PATH, ":%d", disp->geo[0] );
   else
-    oySnprintf2_( dpy_name, MAX_PATH, "%s:%d", disp->host, disp->geo[0] );
+    snprintf( dpy_name, MAX_PATH, "%s:%d", disp->host, disp->geo[0] );
 
-  if(profil_name)
+  if(oy_debug) fprintf( stderr, "profile_name = %s", profile_name?profile_name:"" );
+
+  if( profile_name && profile_name[0] )
   {
-    DBG_PROG1_S( "profil_name = %s", profil_name );
-    prof = oyProfile_FromName( profil_name, 0, 0 );
-    profile_fullname = oyProfile_GetFileName( prof, -1 );
-  }
-
-  if( profile_fullname && profile_fullname[0] )
-  {
-
-    if(profil_name && strrchr(profil_name,OY_SLASH_C))
-      profil_basename = strrchr(profil_name,OY_SLASH_C)+1;
-    else
-    {
-      if(profil_name)
-        profil_basename = profil_name;
-      else if( profile_fullname && strrchr(profile_fullname,OY_SLASH_C))
-        profil_basename = strrchr( profile_fullname, OY_SLASH_C)+1;
-    }
-
-
-    oyAllocHelper_m_( text, char, MAX_PATH, 0, error = 1; goto Clean )
-    DBG_PROG1_S( "profile_fullname %s", profile_fullname );
+    text = malloc(MAX_PATH);
+    if(!text) goto Clean;
 
     /** set vcgt tag with xcalib
        not useable with multihead Xinerama at one screen
@@ -716,18 +689,18 @@ int      oyX1MonitorProfileSetup     ( const char        * display_name,
        @todo TODO xcalib should be configurable as a module
      */
     sprintf(text,"xcalib -d %s -s %d %s \'%s\'", dpy_name, disp->geo[1],
-                 oy_debug?"-v":"", profile_fullname);
+                 oy_debug?"-v":"", profile_name);
     if(oyX1Monitor_infoSource_( disp ) == oyX11INFO_SOURCE_XRANDR)
 #if defined(HAVE_XRANDR)
       sprintf(text,"xcalib -d %s -s %d %s \'%s\'", dpy_name, oyX1Monitor_rrScreen_(disp),
-              oy_debug?"-v":"", profile_fullname);
+              oy_debug?"-v":"", profile_name);
 #else
       sprintf(text,"xcalib -d %s -s %d %s \'%s\'", dpy_name, 0,
-              oy_debug?"-v":"", profile_fullname);
+              oy_debug?"-v":"", profile_name);
 #endif
     else
       sprintf(text,"xcalib -d %s -s %d %s \'%s\'", dpy_name, disp->geo[1],
-              oy_debug?"-v":"", profile_fullname);
+              oy_debug?"-v":"", profile_name);
 
     {
       Display * display = oyX1Monitor_device_( disp );
@@ -738,7 +711,7 @@ int      oyX1MonitorProfileSetup     ( const char        * display_name,
 
       if(!display)
       {
-        WARNc3_S("%s %s %s", _("open X Display failed"), dpy_name, display_name)
+        fprintf( stderr,"%s %s %s", "open X Display failed", dpy_name, display_name);
         return 1;
       }
 
@@ -761,33 +734,28 @@ int      oyX1MonitorProfileSetup     ( const char        * display_name,
       /* Check for incapabilities of X gamma table access */
       if(can_gamma || oyX1Monitor_screen_( disp ) == 0 || oyX1Monitor_infoSource_( disp ) == oyX11INFO_SOURCE_XRANDR )
       {
-        char * xcalib = oyFindApplication( "xcalib" );
-        if(xcalib)
-          error = system(text);
       /* OS X handles VGCT fine, no need for xcalib */
 #if !defined(__APPLE__)
-        else
-          oyMessageFunc_p( oyMSG_ERROR, NULL,"xcalib (calibration loader): %s",
-            _("program is not properly installed or missed") );
+        error = system(text);
 #endif
       }
       if(error &&
          error != 65280)
       { /* hack */
-        WARNc3_S("%s %s %d", _("No monitor gamma curves by profile:"),
-                oyNoEmptyName_m_(profil_basename), error )
+        fprintf( stderr,"%s %s %d", "No monitor gamma curves by profile:",
+                noE(profile_name), error );
         error = -1;
       } else
       {
         /* take xcalib error not serious, turn into a issue */
         if(oy_debug)
-          DBG1_S("xcalib returned %d", error)
+          if(oy_debug) fprintf( stderr,"xcalib returned %d", error);
         error = -1;
       }
     }
 
     if(oy_debug)
-      DBG1_S( "system: %s", text )
+      if(oy_debug) fprintf( stderr, "system: %s", text );
 
     /* set XCM_ICC_V0_3_TARGET_PROFILE_IN_X_BASE atom in X */
     {
@@ -796,27 +764,20 @@ int      oyX1MonitorProfileSetup     ( const char        * display_name,
       int screen = 0;
       Window w;
 
-      unsigned char *moni_profile=0;
-      size_t      size=0;
       char       *atom_name=0;
       int         result = 0;
 
       if(display_name)
-        DBG_PROG1_S("display_name %s",display_name);
+        if(oy_debug) fprintf( stderr,"display_name %s",display_name);
 
       display = oyX1Monitor_device_( disp );
 
       screen = oyX1Monitor_deviceScreen_( disp );
-      DBG_PROG_V((screen))
-      w = RootWindow(display, screen); DBG_PROG1_S("w: %ld", w)
+      if(oy_debug) fprintf( stderr, "screen: %d", screen);
+      w = RootWindow(display, screen); if(oy_debug) fprintf( stderr,"w: %ld", w);
 
-      if(profile_fullname)
-        moni_profile = oyGetProfileBlock( profile_fullname, &size, oyAllocateFunc_ );
-      else if(profil_name)
-        moni_profile = oyGetProfileBlock( profil_name, &size, oyAllocateFunc_ );
-
-      if(!size || !moni_profile)
-        WARNc_S(_("Error obtaining profile"));
+      if(!profile_data_size || !profile_data)
+        fprintf( stderr,"Error obtaining profile");
 
 #if defined(XCM_HAVE_X11) && defined(HAVE_XCM)
       atom_name = oyX1Monitor_getAtomName_( disp, XCM_ICC_V0_3_TARGET_PROFILE_IN_X_BASE );
@@ -827,14 +788,14 @@ int      oyX1MonitorProfileSetup     ( const char        * display_name,
       {
         atom = XInternAtom (display, atom_name, False);
         if (atom == None) {
-          WARNc2_S("%s \"%s\"", _("Error setting up atom"), atom_name);
+          fprintf( stderr,"%s \"%s\"", "Error setting up atom", atom_name);
         }
-      } else WARNc_S(_("Error setting up atom"));
+      } else fprintf( stderr,"Error setting up atom");
 
-      if( atom && moni_profile)
+      if( atom && profile_data)
       result = XChangeProperty( display, w, atom, XA_CARDINAL,
-                       8, PropModeReplace, moni_profile, (int)size );
-      if(result == 0) WARNc2_S("%s %d", _("found issues"),result);
+                       8, PropModeReplace, (unsigned char*)profile_data, (int)profile_data_size );
+      if(result == 0) fprintf( stderr,"%s %d", "found issues",result);
 
 # if defined(HAVE_XRANDR)
       if( oyX1Monitor_infoSource_( disp ) == oyX11INFO_SOURCE_XRANDR )
@@ -844,23 +805,22 @@ int      oyX1MonitorProfileSetup     ( const char        * display_name,
 #else   
         atom = XInternAtom( display, "_ICC_PROFILE", True );
 #endif
-        DBG_NUM1_S("atom: %ld", atom)
 
         if(atom)
         {
           XRRChangeOutputProperty( display, oyX1Monitor_xrrOutput_( disp ),
 			           atom, XA_CARDINAL, 8, PropModeReplace,
-			           (unsigned char *)moni_profile, (int)size );
+			           (unsigned char *)profile_data, (int)profile_data_size );
 
           if(oy_debug)
             atom_name = XGetAtomName(display, atom);
-          DBG_NUM3_S( "output: \"%s\" crtc: %d atom_name: %s",
-               oyNoEmptyString_m_(oyX1Monitor_xrrOutputInfo_(disp)->name),
-               oyX1Monitor_xrrOutputInfo_(disp)->crtc, atom_name );
+          if(oy_debug) fprintf( stderr, "output: \"%s\" crtc: %d atom_name: %s",
+               noE(oyX1Monitor_xrrOutputInfo_(disp)->name),
+               (int)oyX1Monitor_xrrOutputInfo_(disp)->crtc, atom_name );
         }
       }
 #else
-      DBG_NUM_S("!HAVE_XRANDR");
+      if(oy_debug) fprintf( stderr,"!HAVE_XRANDR");
 # endif
 
       /* claim to be compatible with 0.4 
@@ -879,8 +839,8 @@ int      oyX1MonitorProfileSetup     ( const char        * display_name,
         XGetWindowProperty( display, w, atom, 0, INT_MAX, False, XA_STRING,
                      &a, &actual_format_return, &nitems_return, 
                      &bytes_after_return, &prop_return );
-        if(bytes_after_return != 0) WARNc2_S("%s bytes_after_return: %d",
-                                          _("found issues"),bytes_after_return);
+        if(bytes_after_return != 0) fprintf( stderr,"%s bytes_after_return: %lu",
+                                          "found issues",bytes_after_return);
         /* check if the old value is the same as our intented */
         if(actual_format_return != XA_STRING ||
            nitems_return == 0)
@@ -889,25 +849,20 @@ int      oyX1MonitorProfileSetup     ( const char        * display_name,
           result = XChangeProperty( display, w, atom, XA_STRING,
                                     8, PropModeReplace,
                                     value, 4 );
-          if(result == 0) WARNc2_S("%s %d", _("found issues"),result);
+          if(result == 0) fprintf( stderr,"%s %d", "found issues",result);
         }
       }
 
-      if(moni_profile)
-        oyFree_m_( moni_profile )
-      oyFree_m_( atom_name )
+      free( atom_name );
     }
 
-    oyFree_m_( text );
+    free( text );
   }
 
   Clean:
   oyX1Monitor_release_( &disp );
-  oyProfile_Release( &prof );
-  if(profile_name_) oyFree_m_( profile_name_ );
-  if(dpy_name) oyFree_m_( dpy_name );
+  if(dpy_name) free( dpy_name );
 
-  DBG_PROG_ENDE
   return error;
 }
 
@@ -918,15 +873,11 @@ int      oyX1MonitorProfileUnset     ( const char        * display_name )
 
 
   oyX1Monitor_s * disp = 0;
-  oyProfile_s * prof = 0;
-
-  DBG_PROG_START
 
   /* XRandR needs a expensive initialisation */
   disp = oyX1Monitor_newFrom_( display_name, 1 );
   if(!disp)
   {
-    DBG_PROG_ENDE
     return -1;
   }
 
@@ -939,16 +890,15 @@ int      oyX1MonitorProfileUnset     ( const char        * display_name )
       Window w;
       char *atom_name = 0;
 
-      if(display_name)
-        DBG_PROG1_S("display_name %s",display_name);
+      if(display_name && oy_debug)
+        if(oy_debug) fprintf( stderr,"display_name %s",display_name);
 
       display = oyX1Monitor_device_( disp );
 
       screen = oyX1Monitor_deviceScreen_( disp );
-      DBG_PROG_V((screen))
-      w = RootWindow(display, screen); DBG_PROG1_S("w: %ld", w)
+      if(oy_debug) fprintf( stderr, "screen: %d", screen);
+      w = RootWindow(display, screen); if(oy_debug) fprintf( stderr,"w: %ld", w);
 
-      DBG_PROG
 
 #if defined(XCM_HAVE_X11) && defined(HAVE_XCM)
       atom_name = oyX1Monitor_getAtomName_( disp, XCM_ICC_V0_3_TARGET_PROFILE_IN_X_BASE );
@@ -960,7 +910,7 @@ int      oyX1MonitorProfileUnset     ( const char        * display_name )
         XDeleteProperty( display, w, atom );
       else
       {
-        WARNc2_S("%s \"%s\"", _("Error getting atom"), atom_name);
+        fprintf( stderr,"%s \"%s\"", "Error getting atom", atom_name);
         error = -1;
       }
 # if defined(HAVE_XRANDR)
@@ -980,54 +930,51 @@ int      oyX1MonitorProfileUnset     ( const char        * display_name )
           XRRDeleteOutputProperty( display, oyX1Monitor_xrrOutput_( disp ), atom );
           if(oy_debug)
             atom_name = XGetAtomName(display, atom);
-          DBG_NUM3_S( "output: \"%s\" crtc: %d atom_name: %s",
-               oyNoEmptyString_m_(oyX1Monitor_xrrOutputInfo_(disp)->name),
-               oyX1Monitor_xrrOutputInfo_(disp)->crtc, atom_name );
+          if(oy_debug) fprintf( stderr, "output: \"%s\" crtc: %d atom_name: %s",
+               noE(oyX1Monitor_xrrOutputInfo_(disp)->name),
+               (int)oyX1Monitor_xrrOutputInfo_(disp)->crtc, atom_name );
         }
       }
 #else
-      DBG_NUM_S("!HAVE_XRANDR");
+      if(oy_debug) fprintf(stderr,"!HAVE_XRANDR");
 # endif
 
       {
-        char *dpy_name = strdup( oyNoEmptyString_m_(display_name) );
-        char * command = 0;
+        char *dpy_name = strdup( noE(display_name) );
+        char * command = malloc(1048);
         char *ptr = NULL;
         int r = 0;
 
-        oyAllocHelper_m_( command, char, 1048, 0 , goto finish );
+        if(!command) goto finish;
 
         if( (ptr = strchr(dpy_name,':')) != 0 )
           if( (ptr = strchr(ptr,'.')) != 0 )
             ptr[0] = '\000';
 
         if(oyX1Monitor_infoSource_( disp ) == oyX11INFO_SOURCE_XRANDR)
-          oySnprintf2_(command, 1024, "xrandr -display %s --output %s --gamma .999999:.999999:.999999",
+          snprintf(command, 1024, "xrandr -display %s --output %s --gamma .999999:.999999:.999999",
                  dpy_name, oyX1Monitor_systemPort_(disp));
         else
-          oySnprintf2_(command, 1024, "xgamma -gamma 1.0 -screen %d -display %s",
+          snprintf(command, 1024, "xgamma -gamma 1.0 -screen %d -display %s",
                  disp->geo[1], dpy_name);
 
         if(oy_debug)
-          DBG3_S( "%d %d system: %s", screen, disp->geo[1], command )
+          if(oy_debug) fprintf( stderr, "%d %d system: %s", screen, disp->geo[1], command );
         if(screen == disp->geo[1] || oyX1Monitor_infoSource_( disp ) == oyX11INFO_SOURCE_XRANDR)
           r = system( command );
-        if(r) WARNc2_S("%s %d", _("found issues"),r);
+        if(r) fprintf( stderr,"%s %d", "found issues",r);
 
-        oyFree_m_( command )
+        free( command );
       }
 
-      oyFree_m_( atom_name )
-      DBG_PROG
+      free( atom_name );
     goto finish;
   }
 
 
   finish:
-  oyProfile_Release( &prof );
   oyX1Monitor_release_( &disp );
 
-  DBG_PROG_ENDE
   return error;
 }
 
@@ -1037,7 +984,6 @@ oyGetDisplayNumber_        (oyX1Monitor_s *disp)
   int dpy_nummer = 0;
   const char *display_name = oyX1Monitor_name_(disp);
 
-  DBG_PROG_START
 
   if( display_name )
   {
@@ -1045,7 +991,7 @@ oyGetDisplayNumber_        (oyX1Monitor_s *disp)
     const char *txt = strchr( display_name, ':' );
     
     if( !txt )
-    { WARNc1_S( "invalid display name: %s", display_name )
+    { fprintf( stderr, "invalid display name: %s", display_name );
       return -1;
     }
 
@@ -1060,7 +1006,6 @@ oyGetDisplayNumber_        (oyX1Monitor_s *disp)
     dpy_nummer = atoi( ds );
   }
 
-  DBG_PROG_ENDE
   return dpy_nummer;
 }
 
@@ -1069,15 +1014,13 @@ int   oyX1Monitor_getScreenFromDisplayName_( oyX1Monitor_s   * disp )
   int scr_nummer = 0;
   const char *display_name = oyX1Monitor_name_(disp);
 
-  DBG_PROG_START
-
   if( display_name )
   {
     char ds[8];             /* display.screen*/
     const char *txt = strchr( display_name, ':' );
     
     if( !txt )
-    { WARNc1_S( "invalid display name: %s", display_name )
+    { fprintf( stderr, "invalid display name: %s", display_name );
       return -1;
     }
 
@@ -1090,7 +1033,6 @@ int   oyX1Monitor_getScreenFromDisplayName_( oyX1Monitor_s   * disp )
     }
   }
 
-  DBG_PROG_ENDE
   return scr_nummer;
 }
 
@@ -1101,11 +1043,9 @@ int   oyX1Monitor_getScreenFromDisplayName_( oyX1Monitor_s   * disp )
 char*
 oyExtractHostName_           (const char* display_name)
 {
-  char* host_name = 0;
+  char* host_name = malloc(strlen( display_name ) + 48);
 
-  DBG_PROG_START
-
-  oyAllocHelper_m_( host_name, char, strlen( display_name ) + 48,0,return NULL);
+  if(!host_name) return NULL;
 
   /* Is this X server identifyable? */
   if(!display_name)
@@ -1130,9 +1070,8 @@ oyExtractHostName_           (const char* display_name)
     ptr[0] = 0;
   }
 
-  DBG_PROG1_S( "host_name = %s", host_name )
+  if(oy_debug) fprintf( stderr, "host_name = %s", host_name );
 
-  DBG_PROG_ENDE
   return host_name;
 }
 
@@ -1143,16 +1082,14 @@ char*
 oyChangeScreenName_                (const char* display_name,
                                     int         screen)
 {
-  char* host_name = 0;
-
-  DBG_PROG_START
+  char* host_name = malloc(strlen( display_name ) + 48);
 
   /* Is this X server identifyable? */
   if(!display_name)
     display_name = ":0.0";
 
 
-  oyAllocHelper_m_( host_name, char, strlen( display_name ) + 48,0,return NULL);
+  if(!host_name) return NULL;
 
   strcpy( host_name, display_name );
 
@@ -1162,7 +1099,7 @@ oyChangeScreenName_                (const char* display_name,
 
     /* fail if no display was given */
     if( !txt )
-    { WARNc1_S( "invalid display name: %s", display_name )
+    { fprintf( stderr, "invalid display name: %s", display_name );
       host_name[0] = 0;
       return host_name;
     }
@@ -1178,9 +1115,8 @@ oyChangeScreenName_                (const char* display_name,
     }
   }
 
-  DBG_PROG1_S( "host_name = %s", host_name )
+  if(oy_debug) fprintf( stderr, "host_name = %s", host_name );
 
-  DBG_PROG_ENDE
   return host_name;
 }
 
@@ -1219,10 +1155,10 @@ oyX1Monitor_getScreenGeometry_            (oyX1Monitor_s *disp)
       XRRFreeCrtcInfo( crtc_info );
     } else
     {
-      WARNc3_S( "%s output: \"%s\" crtc: %d",
-               _("XRandR CrtcInfo request failed"), 
-               oyNoEmptyString_m_(disp->output_info->name),
-               disp->output_info->crtc)
+      fprintf( stderr, "%s output: \"%s\" crtc: %d",
+               "XRandR CrtcInfo request failed", 
+               noE(disp->output_info->name),
+               (int)disp->output_info->crtc);
     }
   }
 # endif /* HAVE_XRANDR */
@@ -1234,16 +1170,16 @@ oyX1Monitor_getScreenGeometry_            (oyX1Monitor_s *disp)
 
     XineramaScreenInfo *scr_info = XineramaQueryScreens( disp->display,
                                                          &n_scr_info );
-    oyPostAllocHelper_m_(scr_info, n_scr_info, return 1 )
+    if(!scr_info || !n_scr_info) return 1;
 
     if( !scr_info )
     {
-      WARNc_S(_("Xinerama request failed"))
+      fprintf( stderr,"Xinerama request failed");
       return 1;
     }
     if( n_scr_info <= screen )
     {
-      WARNc_S(_("Xinerama request failed"))
+      fprintf( stderr,"Xinerama request failed");
       return -1;
     }
     {
@@ -1259,7 +1195,7 @@ oyX1Monitor_getScreenGeometry_            (oyX1Monitor_s *disp)
   if( oyX1Monitor_infoSource_( disp ) == oyX11INFO_SOURCE_SCREEN )
   {
     Screen *scr = XScreenOfDisplay( disp->display, screen );
-    oyPostAllocHelper_m_(scr, 1, WARNc_S(_("open X Screen failed")); return 1;)
+    if(scr) { fprintf( stderr,"open X Screen failed"); return 1; }
     {
         disp->geo[2] = 0;
         disp->geo[3] = 0;
@@ -1290,16 +1226,13 @@ oyX1Monitor_s* oyX1Monitor_newFrom_      ( const char        * display_name,
   int i = 0;
   oyX1Monitor_s * disp = 0;
 
-  DBG_PROG_START
-	
   if(display_name && 
      (isdigit(display_name[0]) || strchr(display_name, ':') == NULL))
   {
-      DBG_PROG_ENDE
       return disp;
   }
 	  
-  disp = oyAllocateFunc_( sizeof(oyX1Monitor_s) );
+  disp = malloc( sizeof(oyX1Monitor_s) );
   error = !disp;
   if(error <= 0)
   {
@@ -1335,18 +1268,19 @@ oyX1Monitor_s* oyX1Monitor_newFrom_      ( const char        * display_name,
   /* switch to Xinerama mode */
   if( !disp->display ) {
     char *text = oyChangeScreenName_( disp->name, 0 );
-    oyPostAllocHelper_m_( text, 1,
-                          WARNc_S(_("allocation failed"));return 0 )
+    if(!text) return 0;
 
     disp->display = XOpenDisplay( text );
-    oyFree_m_( text );
+    free( text );
 
     if( !disp->display )
-      oyPostAllocHelper_m_( disp->display, 1,
-                            WARNc4_S("%s: %s %s %s", _("open X Display failed"),
-                            oyNoEmptyString_m_(display_name),
-                            oyNoEmptyString_m_(disp->name),
-                            oyNoEmptyString_m_(text)); return 0 )
+    {
+      fprintf( stderr,"%s: %s %s %s", "open X Display failed",
+                            noE(display_name),
+                            noE(disp->name),
+                            noE(text));
+      return 0;
+    }
 
     disp->screen = 0;
   }
@@ -1354,8 +1288,8 @@ oyX1Monitor_s* oyX1Monitor_newFrom_      ( const char        * display_name,
 
   if( !display || (len = ScreenCount( display )) <= 0 )
   {
-    WARNc2_S("%s: \"%s\"", _("no Screen found"),
-                           oyNoEmptyString_m_(disp->name));
+    fprintf( stderr,"%s: \"%s\"", "no Screen found",
+                           noE(disp->name));
     return 0;
   }
 
@@ -1407,7 +1341,8 @@ oyX1Monitor_s* oyX1Monitor_newFrom_      ( const char        * display_name,
         geo[1] = scr_info[selected_screen].y_org;
         geo[2] = scr_info[selected_screen].width;
         geo[3] = scr_info[selected_screen].height;
-        oyPostAllocHelper_m_(scr_info, n_scr_info, return 0 )
+        if(!scr_info || !n_scr_info)
+          return 0;
 
         XFree( scr_info );
 
@@ -1423,9 +1358,9 @@ oyX1Monitor_s* oyX1Monitor_newFrom_      ( const char        * display_name,
       if(expensive)
       {
         /* a havily expensive call */
-        DBG_NUM_S("going to call XRRGetScreenResources()");
+        if(oy_debug) fprintf( stderr,"going to call XRRGetScreenResources()");
         res = XRRGetScreenResources(display, w);
-        DBG_NUM_S("end of call XRRGetScreenResources()");
+        if(oy_debug) fprintf( stderr,"end of call XRRGetScreenResources()");
         if(res)
           n = res->noutput;
       }
@@ -1481,7 +1416,7 @@ oyX1Monitor_s* oyX1Monitor_newFrom_      ( const char        * display_name,
             if(res) /* only needed for a second geo matching monitor */
               disp->res = res;
             res = 0;
-            if(disp->output_info->name && oyStrlen_(disp->output_info->name))
+            if(disp->output_info->name && strlen(disp->output_info->name))
               disp->system_port = strdup( disp->output_info->name );
             disp->rr_version = major_versionp*100 + minor_versionp;
             disp->rr_screen = xrand_screen;
@@ -1518,14 +1453,15 @@ oyX1Monitor_s* oyX1Monitor_newFrom_      ( const char        * display_name,
         int n_scr_info = 0;
         XineramaScreenInfo *scr_info = XineramaQueryScreens( display,
                                                              &n_scr_info );
-        oyPostAllocHelper_m_(scr_info, n_scr_info, return 0 )
+        if(!scr_info || !n_scr_info)
+          return 0;
 
         if( n_scr_info >= 1 )
           len = n_scr_info;
 
         if(n_scr_info < monitors)
         {
-          WARNc3_S( "%s: %d < %d", _("less Xinerama monitors than XRandR ones"),
+          fprintf( stderr, "%s: %d < %d", "less Xinerama monitors than XRandR ones",
                     n_scr_info, monitors );
         } else
           disp->info_source = oyX11INFO_SOURCE_XINERAMA;
@@ -1550,20 +1486,19 @@ oyX1Monitor_s* oyX1Monitor_newFrom_      ( const char        * display_name,
     if(t_err) error = t_err;
   }
 
-  if( !disp->system_port || !oyStrlen_( disp->system_port ) )
+  if( !disp->system_port || !strlen( disp->system_port ) )
   if( 0 <= oyX1Monitor_screen_( disp ) && oyX1Monitor_screen_( disp ) < 10000 )
   {
-    disp->system_port = (char*)oyAllocateWrapFunc_( 12, oyAllocateFunc_ );
-    oySprintf_( disp->system_port, "%d", oyX1Monitor_screen_( disp ) );
+    disp->system_port = (char*)malloc( 12 );
+    sprintf( disp->system_port, "%d", oyX1Monitor_screen_( disp ) );
   }
 
   if(error > 0)
   {
-    WARNc3_S("%s: %s %d", _("no oyX1Monitor_s created"), display_name, error);
+    fprintf( stderr,"%s: %s %d", "no oyX1Monitor_s created", display_name, error);
     oyX1Monitor_release_( &disp );
   }
 
-  DBG_PROG_ENDE
   return disp;
 }
 
@@ -1588,14 +1523,14 @@ int          oyX1Monitor_release_      ( oyX1Monitor_s      ** obj )
   
   if( s->type_ != oyOBJECT_MONITOR_S)
   { 
-    WARNc_S("Attempt to release a non oyX1Monitor_s object.")
+    fprintf( stderr,"Attempt to release a non oyX1Monitor_s object.");
     return 1;
   }
   /* ---- end of common object destructor ------- */
 
-  if(s->name) oyDeAllocateFunc_( s->name );
-  if(s->host) oyDeAllocateFunc_( s->host );
-  if(s->identifier) oyDeAllocateFunc_( s->identifier );
+  if(s->name) free( s->name );
+  if(s->host) free( s->host );
+  if(s->identifier) free( s->identifier );
 
 
   s->geo[0] = s->geo[1] = -1;
@@ -1612,7 +1547,7 @@ int          oyX1Monitor_release_      ( oyX1Monitor_s      ** obj )
     s->display=0;
   }
 
-  oyDeAllocateFunc_( s );
+  free( s );
   s = 0;
 
   *obj = 0;

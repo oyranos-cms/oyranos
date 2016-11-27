@@ -19,6 +19,10 @@
 
 #include "oyranos_monitor_base.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
 
 /* shared platform API's */
 #include <X11/Xlib.h>
@@ -145,5 +149,9 @@ int      oyX1GetMonitorInfo_         ( const char        * display,
 int   oyX1Monitor_getScreenFromDisplayName_( oyX1Monitor_s   * disp );
 char**oyX1GetAllScreenNames_        (const char *display_name, int *n_scr );
 int   oyX1Monitor_getScreenGeometry_   ( oyX1Monitor_s       * disp );
+
+#ifdef __cplusplus
+} /* extern "C" */
+#endif /* __cplusplus */
 
 #endif /* OYRANOS_MONITOR_BASE_X11_X11_H */
