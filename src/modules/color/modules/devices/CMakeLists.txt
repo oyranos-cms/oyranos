@@ -10,6 +10,7 @@ IF( X11_FOUND )
                ${PACKAGE_NAME}_cmm_disp.c
                ${PACKAGE_NAME}_monitor.c
                ${PACKAGE_NAME}_monitor_x11.c
+               ${PACKAGE_NAME}_monitor_x11_extend.c
              )
   SET_TARGET_PROPERTIES( ${OY_MODULE_LIB} PROPERTIES COMPILE_DEFINITIONS "${OY_MODULE}=${OY_MODULE}")
   TARGET_LINK_LIBRARIES ( ${OY_MODULE_LIB} ${PROJECT_NAME} ${EXTRA_LIBS}

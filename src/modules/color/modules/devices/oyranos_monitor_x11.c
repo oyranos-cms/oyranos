@@ -13,42 +13,23 @@
  *  @since    2005/01/31
  */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <ctype.h>
-#include <math.h>
-#include <limits.h>
-#include <unistd.h>  /* intptr_t */
-#include <locale.h>
-
+#include "oyranos_monitor_base.h"
 #include "oyranos_config_internal.h"
+#include "oyranos_monitor_base_x11.h"
 
-# include <X11/Xlib.h>
-# include <X11/Xutil.h>
-# include <X11/Xatom.h>
-# include <X11/Xcm/XcmEdidParse.h>
-# include <X11/Xcm/XcmEvents.h>
-# include <X11/Xcm/Xcm.h>
-# if defined(HAVE_XINERAMA)
-#  include <X11/extensions/Xinerama.h>
-# endif
-# ifdef HAVE_XXF86VM
-#  include <X11/extensions/xf86vmode.h>
-# endif
-#include <X11/extensions/Xfixes.h>
 
 #include "oyranos.h"
-#include "oyranos_cmm.h"
-#include "oyranos_internal.h"
 #include "oyranos_io.h"
-#include "oyranos_monitor.h"
-#include "oyranos_monitor_internal_x11.h"
 #include "oyranos_monitor_internal.h"
+#include "oyranos_monitor_internal_x11.h"
 #include "oyranos_debug.h"
 #include "oyranos_helper.h"
 #include "oyranos_sentinel.h"
 #include "oyranos_string.h"
+
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
 
 /* ---  Helpers  --- */
 
@@ -56,10 +37,6 @@
 
 extern oyMessage_f oyX1_msg;
 
-
-int   oyX1Monitor_getScreenFromDisplayName_( oyX1Monitor_s   * disp );
-char**oyX1GetAllScreenNames_        (const char *display_name, int *n_scr );
-int   oyX1Monitor_getScreenGeometry_   ( oyX1Monitor_s       * disp );
 /** @internal Display functions */
 const char* oyX1Monitor_name_( oyX1Monitor_s *disp ) { return disp->name; }
 const char* oyX1Monitor_hostName_( oyX1Monitor_s *disp ) { return disp->host; }
@@ -83,7 +60,6 @@ int oyX1Monitor_height_( oyX1Monitor_s *disp ) { return disp->geo[5]; }
 int   oyX1Monitor_getGeometryIdentifier_(oyX1Monitor_s       * disp );
 Display* oyX1Monitor_device_( oyX1Monitor_s *disp ) { return disp->display; }
 const char* oyX1Monitor_systemPort_( oyX1Monitor_s *disp ) { return disp->system_port; }
-oyBlob_s *  oyX1Monitor_edid_( oyX1Monitor_s * disp ) { oyBlob_Copy( disp->edid, 0 ); return disp->edid; }
 
 oyX11INFO_SOURCE_e
     oyX1Monitor_infoSource_( oyX1Monitor_s *disp ) { return disp->info_source; }
@@ -103,9 +79,10 @@ int oyX1Monitor_rrScreen_     ( oyX1Monitor_s * disp ) { return disp->rr_screen;
 
 char* oyX1Monitor_getAtomName_         ( oyX1Monitor_s       * disp,
                                        const char        * base );
-oyBlob_s *   oyX1Monitor_getProperty_  ( oyX1Monitor_s       * disp,
+char *   oyX1Monitor_getProperty_    ( oyX1Monitor_s       * disp,
                                        const char        * prop_name,
-                                       const char       ** prop_name_xrandr );
+                                       const char       ** prop_name_xrandr,
+                                       size_t            * prop_size );
 char* oyChangeScreenName_            ( const char        * display_name,
                                        int                 screen );
 const char *xrandr_edids[] = {"EDID","EDID_DATA",0};
@@ -119,15 +96,16 @@ const char *xrandr_edids[] = {"EDID","EDID_DATA",0};
  *  Function oyX1Monitor_getProperty_
  *  @brief   obtain X property
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.9.6
+ *  @date    2016/11/25
  *  @since   2009/01/17 (Oyranos: 0.1.10)
- *  @date    2009/08/18
  */
-oyBlob_s *   oyX1Monitor_getProperty_  ( oyX1Monitor_s       * disp,
+char *   oyX1Monitor_getProperty_    ( oyX1Monitor_s     * disp,
                                        const char        * prop_name,
-                                       const char       ** prop_name_xrandr )
+                                       const char       ** prop_name_xrandr,
+                                       size_t            * prop_size )
 {
-  oyBlob_s * prop = 0;
+  char * prop = 0;
   Display *display = 0;
   Window w = 0;
   Atom atom = 0, a;
@@ -204,8 +182,11 @@ oyBlob_s *   oyX1Monitor_getProperty_  ( oyX1Monitor_s       * disp,
 
   if(nitems_return && prop_return)
   {
-    prop = oyBlob_New( 0 );
-    oyBlob_SetFromData( prop, prop_return, nitems_return, 0);
+    prop = malloc( nitems_return );
+    if(!prop)
+      return prop;
+    memcpy( prop, prop_return, nitems_return );
+    *prop_size = nitems_return;
     XFree( prop_return ); prop_return = 0;
   }
 
@@ -214,31 +195,40 @@ oyBlob_s *   oyX1Monitor_getProperty_  ( oyX1Monitor_s       * disp,
 
 /*#define IGNORE_EDID 1*/
 
-int
-oyX1GetMonitorInfo_               (const char* display_name,
-                                   char**      manufacturer,
-                                   char**      mnft,
-                                   char**      model,
-                                   char**      serial,
+/** @brief pick up monitor information with Xlib
+ *  @deprecated because sometimes is no ddc information available
+ *  @todo include connection information - grafic cart
+ *
+ *  @param      display_name  the display string
+ *  @param[out] manufacturer  the manufacturer of the monitor device
+ *  @param[out] model         the model of the monitor device
+ *  @param[out] serial        the serial number of the monitor device
+ *  @return     error
+ *
+ */
+int      oyX1GetMonitorInfo_         ( const char        * display_name,
+                                       char             ** manufacturer,
+                                       char             ** mnft,
+                                       char             ** model,
+                                       char             ** serial,
                                        char             ** vendor,
-                                   char**      display_geometry,
+                                       char             ** display_geometry,
                                        char             ** system_port,
                                        char             ** host,
-                                       uint32_t          * week,
-                                       uint32_t          * year,
-                                       uint32_t          * mnft_id,
-                                       uint32_t          * model_id,
+                                       int               * week,
+                                       int               * year,
+                                       int               * mnft_id,
+                                       int               * model_id,
                                        double            * colors,
-                                       oyBlob_s         ** edid,
-                                   oyAlloc_f     allocate_func,
-                                       oyStruct_s        * user_data )
+                                       char             ** edid,
+                                       size_t            * edid_size,
+                                       int                 refresh_edid )
 {
   int len;
-  char * edi=0;
   char *t, * port = 0, * geo = 0;
   oyX1Monitor_s * disp = 0;
-  oyBlob_s * prop = 0;
-  oyOptions_s * options = (oyOptions_s*) user_data;
+  char * prop = 0;
+  size_t prop_size = 0;
   int error = 0;
 
   DBG_PROG_START
@@ -250,16 +240,6 @@ oyX1GetMonitorInfo_               (const char* display_name,
   if(!disp)
     return -1;
 
-  if(!allocate_func)
-    allocate_func = oyAllocateFunc_;
-
-  if(options && options->type_ != oyOBJECT_OPTIONS_S)
-  {
-    options = 0;
-    WARNcc2_S(user_data, "\n\t  ",_("unexpected user_data type"),
-                                  oyStructTypeToText( user_data->type_ ));
-  }
-
   {
     t = 0;
     if( oyX1Monitor_systemPort_( disp ) &&
@@ -267,7 +247,7 @@ oyX1GetMonitorInfo_               (const char* display_name,
     {
       len = oyStrlen_(oyX1Monitor_systemPort_( disp ));
       ++len;
-      t = (char*)oyAllocateWrapFunc_( len, allocate_func );
+      t = (char*)malloc( len );
       strcpy(t, oyX1Monitor_systemPort_( disp ));
     }
     port = t;
@@ -277,28 +257,26 @@ oyX1GetMonitorInfo_               (const char* display_name,
   }
 
   if( display_geometry )
-    *display_geometry = oyStringCopy_( oyX1Monitor_identifier_( disp ),
-                                       allocate_func );
+    *display_geometry = strdup( oyX1Monitor_identifier_( disp ) );
   else
-    geo = oyStringCopy_( oyX1Monitor_identifier_( disp ),
-                                       oyAllocateFunc_ );
+    geo = strdup( oyX1Monitor_identifier_( disp ) );
   if( host )
-    *host = oyStringCopy_( oyX1Monitor_hostName_( disp ), allocate_func );
+    *host = strdup( oyX1Monitor_hostName_( disp ) );
 
 #if !defined(IGNORE_EDID)
   prop = oyX1Monitor_getProperty_( disp, "XFree86_DDC_EDID1_RAWDATA",
-                                       xrandr_edids );
+                                   xrandr_edids, &prop_size );
 #else
     DBG_NUM_S("IGNORE_EDID");
 #endif
 
   if( oyX1Monitor_infoSource_( disp ) == oyX11INFO_SOURCE_XINERAMA &&
-      ((!prop || (prop && oyBlob_GetSize(prop)%128)) ||
-       oyOptions_FindString( options, "edid", "refresh" )) )
+      ((!prop || (prop && prop_size%128)) ||
+       refresh_edid ) )
   {
 #if !defined(IGNORE_EDID)
     prop = oyX1Monitor_getProperty_( disp, "XFree86_DDC_EDID1_RAWDATA",
-                                         xrandr_edids );
+                                         xrandr_edids, &prop_size );
 #else
     DBG_NUM_S("IGNORE_EDID");
 #endif
@@ -306,24 +284,13 @@ oyX1GetMonitorInfo_               (const char* display_name,
 
   if( prop )
   {
-    if( oyBlob_GetSize(prop)%128 )
+    if( prop_size%128 )
     {
-      WARNcc4_S(user_data, "\n\t  %s %d; %s %s",_("unexpected EDID lenght"),
-               (int)oyBlob_GetSize(prop),
+      WARNc4_S( "\n\t  %s %d; %s %s",_("unexpected EDID lenght"),
+               (int)prop_size,
                "\"XFree86_DDC_EDID1_RAWDATA\"/\"EDID_DATA\"",
                _("Cant read hardware information from device."))
       error = -1;
-    } else
-    {
-      /* convert to an deployable struct */
-      edi = oyBlob_GetPointer(prop);
-
-      error = oyUnrollEdid1_( edi, manufacturer, mnft, model, serial, vendor,
-                      week, year, mnft_id, model_id, colors, allocate_func);
-      if(error) WARNc2_S("%s %d", _("found issues"),error);
-
-      if(edid && error != XCM_EDID_OK)
-        oyBlob_Release( &prop );
     }
   }
 
@@ -359,8 +326,7 @@ oyX1GetMonitorInfo_               (const char* display_name,
 
       char * save_locale = 0;
       /* sensible parsing */
-      save_locale = oyStringCopy_( setlocale( LC_NUMERIC, 0 ),
-                                         oyAllocateFunc_ );
+      save_locale = strdup( setlocale( LC_NUMERIC, 0 ) );
       setlocale( LC_NUMERIC, "C" );
 
       t = strstr( log_text, "Connected Display" );
@@ -405,7 +371,7 @@ oyX1GetMonitorInfo_               (const char* display_name,
 
       if(mnft_[0])
       {
-        *mnft = oyStringCopy_( mnft_, oyAllocateFunc_ );
+        *mnft = strdup( mnft_ );
         *model_id = model_id_;
         colors[0] = rx;
         colors[1] = ry;
@@ -418,7 +384,7 @@ oyX1GetMonitorInfo_               (const char* display_name,
         colors[8] = g;
         *year = year_;
         *week = week_;
-        WARNcc5_S( user_data, "found %s in \"%s\": %s %d %s",
+        WARNc5_S(  "found %s in \"%s\": %s %d %s",
                    log_file, display_name, mnft_, model_id_,
                    display_geometry?oyNoEmptyString_m_(*display_geometry):geo);
 
@@ -432,6 +398,7 @@ oyX1GetMonitorInfo_               (const char* display_name,
   if(edid)
   {
     *edid = prop;
+    *edid_size = prop_size;
     prop = 0;
   }
 
@@ -440,9 +407,9 @@ oyX1GetMonitorInfo_               (const char* display_name,
 
   if(prop || (edid && *edid))
   {
-    oyBlob_Release( &prop );
+    if(prop_size && prop) free( prop );
     DBG_PROG_ENDE
-    return 0;
+    return error;
   } else {
     const char * log = _("Can not read hardware information from device.");
     int r = -1;
@@ -453,7 +420,7 @@ oyX1GetMonitorInfo_               (const char* display_name,
       r = 0;
     }
 
-    WARNcc3_S( user_data, "\n  %s:\n  %s\n  %s",
+    WARNc3_S(  "\n  %s:\n  %s\n  %s",
                _("no EDID available from X properties"),
                "\"XFree86_DDC_EDID1_RAWDATA\"/\"EDID_DATA\"",
                oyNoEmptyString_m_(log))
@@ -465,16 +432,16 @@ oyX1GetMonitorInfo_               (const char* display_name,
 
 
 char *       oyX1GetMonitorProfile   ( const char        * device_name,
-                                       uint32_t            flags,
-                                       size_t            * size,
-                                       oyAlloc_f           allocate_func )
+                                       int                 flags,
+                                       size_t            * size )
 {
   char       *moni_profile=0;
   int error = 0;
 
 
   oyX1Monitor_s * disp = 0;
-  oyBlob_s * prop = 0;
+  char * prop = 0;
+  size_t prop_size = 0;
 
   DBG_PROG_START
 
@@ -489,26 +456,26 @@ char *       oyX1GetMonitorProfile   ( const char        * device_name,
   /* support the color server device profile */
   if(flags & 0x01)
     prop = oyX1Monitor_getProperty_( disp,
-                             XCM_ICC_COLOUR_SERVER_TARGET_PROFILE_IN_X_BASE, 0 );
+                             XCM_ICC_COLOUR_SERVER_TARGET_PROFILE_IN_X_BASE, 0, &prop_size );
 #endif
 
   /* alternatively fall back to the non color server or pre v0.4 atom */
   if(!prop)
 #if defined(XCM_HAVE_X11) && defined(HAVE_XCM)
-    prop = oyX1Monitor_getProperty_( disp, XCM_ICC_V0_3_TARGET_PROFILE_IN_X_BASE, 0 );
+    prop = oyX1Monitor_getProperty_( disp, XCM_ICC_V0_3_TARGET_PROFILE_IN_X_BASE, 0, &prop_size );
 #else
-    prop = oyX1Monitor_getProperty_( disp, "_ICC_PROFILE", 0 );
+    prop = oyX1Monitor_getProperty_( disp, "_ICC_PROFILE", 0, &prop_size );
 #endif
 
   if(prop)
   {
-    oyAllocHelper_m_( moni_profile, char, oyBlob_GetSize(prop), allocate_func, error = 1 )
-    if(!error)
-      error = !memcpy( moni_profile, oyBlob_GetPointer(prop),
-                       oyBlob_GetSize(prop) );
-    if(!error)
-      *size = oyBlob_GetSize(prop);
-    oyBlob_Release( &prop );
+    moni_profile = malloc( prop_size );
+    if(moni_profile)
+    {
+      error = !memcpy( moni_profile, prop,
+                       prop_size );
+      *size = prop_size;
+    }
   } /*else
     WARNc1_S("\n  %s",
          _("Could not get Xatom, probably your monitor profile is not set:"));*/
@@ -524,22 +491,11 @@ char *       oyX1GetMonitorProfile   ( const char        * device_name,
 
 
 int      oyX1GetAllScreenNames       ( const char        * display_name,
-                                       char            *** display_names,
-                                       oyAlloc_f           allocateFunc )
+                                       char            *** display_names )
 {
   int i = 0;
-  char** list = 0;
 
-  list = oyX1GetAllScreenNames_( display_name, &i );
-
-  *display_names = 0;
-
-  if(list && i)
-  {
-    *display_names = oyStringListAppend_( 0, 0, (const char**)list, i, &i,
-                                          allocateFunc );
-    oyStringListRelease_( &list, i, oyDeAllocateFunc_ );
-  }
+  *display_names = oyX1GetAllScreenNames_( display_name, &i );
 
   return i; 
 }
@@ -640,9 +596,12 @@ oyX1GetAllScreenNames_          (const char *display_name,
  *  @since   2009/01/28 (Oyranos: 0.1.10)
  *  @date    2009/01/28
  */
-oyRectangle_s* oyX1Rectangle_FromDevice ( const char        * device_name )
+int          oyX1Rectangle_FromDevice( const char        * device_name,
+                                       double            * x,
+                                       double            * y,
+                                       double            * width,
+                                       double            * height )
 {
-  oyRectangle_s * rectangle = 0;
   int error = !device_name;
 
   if(!error)
@@ -651,15 +610,17 @@ oyRectangle_s* oyX1Rectangle_FromDevice ( const char        * device_name )
 
     disp = oyX1Monitor_newFrom_( device_name, 0 );
     if(!disp)
-      return 0;
+      return 1;
 
-    rectangle = oyRectangle_NewWith( oyX1Monitor_x_(disp), oyX1Monitor_y_(disp),
-                           oyX1Monitor_width_(disp), oyX1Monitor_height_(disp), 0 );
+    *x = oyX1Monitor_x_(disp);
+    *y = oyX1Monitor_y_(disp);
+    *width = oyX1Monitor_width_(disp);
+    *height = oyX1Monitor_height_(disp);
 
     oyX1Monitor_release_( &disp );
   }
 
-  return rectangle;
+  return 0;
 }
 
 
@@ -700,7 +661,9 @@ char* oyX1Monitor_getAtomName_         ( oyX1Monitor_s       * disp,
 
 
 int      oyX1MonitorProfileSetup     ( const char        * display_name,
-                                       const char        * profil_name )
+                                       const char        * profil_name,
+                                       const char        * profile_data,
+                                       size_t              profile_data_size )
 {
   int error = 0;
   const char * profile_fullname = 0;
@@ -1027,7 +990,7 @@ int      oyX1MonitorProfileUnset     ( const char        * display_name )
 # endif
 
       {
-        char *dpy_name = oyStringCopy_( oyNoEmptyString_m_(display_name), oyAllocateFunc_ );
+        char *dpy_name = strdup( oyNoEmptyString_m_(display_name) );
         char * command = 0;
         char *ptr = NULL;
         int r = 0;
@@ -1349,13 +1312,13 @@ oyX1Monitor_s* oyX1Monitor_newFrom_      ( const char        * display_name,
   if( display_name )
   {
     if( display_name[0] )
-      disp->name = oyStringCopy_( display_name, oyAllocateFunc_ );
+      disp->name = strdup( display_name );
   } else
   {
     if(getenv("DISPLAY") && strlen(getenv("DISPLAY")))
-      disp->name = oyStringCopy_( getenv("DISPLAY"), oyAllocateFunc_ );
+      disp->name = strdup( getenv("DISPLAY") );
     else
-      disp->name = oyStringCopy_( ":0", oyAllocateFunc_ );
+      disp->name = strdup( ":0" );
   }
 
   if( error <= 0 &&
@@ -1519,8 +1482,7 @@ oyX1Monitor_s* oyX1Monitor_newFrom_      ( const char        * display_name,
               disp->res = res;
             res = 0;
             if(disp->output_info->name && oyStrlen_(disp->output_info->name))
-              disp->system_port = oyStringCopy_( disp->output_info->name,
-                                                 oyAllocateFunc_ );
+              disp->system_port = strdup( disp->output_info->name );
             disp->rr_version = major_versionp*100 + minor_versionp;
             disp->rr_screen = xrand_screen;
             disp->mm_width = disp->output_info->mm_width;
@@ -1661,509 +1623,7 @@ int          oyX1Monitor_release_      ( oyX1Monitor_s      ** obj )
 
 /* separate from the internal functions */
 
-/** @brief pick up monitor information with Xlib
- *  @deprecated because sometimes is no ddc information available
- *  @todo include connection information - grafic cart
- *
- *  @param      display_name  the display string
- *  @param[out] manufacturer  the manufacturer of the monitor device
- *  @param[out] model         the model of the monitor device
- *  @param[out] serial        the serial number of the monitor device
- *  @param      allocate_func the allocator for the above strings
- *  @return     error
- *
- */
-int
-oyX1GetMonitorInfo_lib            (const char* display_name,
-                                   char**      manufacturer,
-                                       char             ** mnft,
-                                   char**      model,
-                                   char**      serial,
-                                       char             ** vendor,
-                                       char             ** display_geometry,
-                                       char             ** system_port,
-                                       char             ** host,
-                                       uint32_t          * week,
-                                       uint32_t          * year,
-                                       uint32_t          * mnft_id,
-                                       uint32_t          * model_id,
-                                       double            * colors,
-                                       oyBlob_s         ** edid,
-                                   oyAlloc_f     allocate_func,
-                                       oyStruct_s        * user_data)
-{
-  int err = 0;
 
-  DBG_PROG_START
-
-  err = oyX1GetMonitorInfo_(display_name, manufacturer, mnft, model, serial,
-                           vendor,
-                           display_geometry, system_port, host, week, year,
-                           mnft_id, model_id, colors, edid,
-                           allocate_func, user_data );
-
-  if(*manufacturer)
-    DBG_PROG_S( *manufacturer );
-  if(*model)
-    DBG_PROG_S( *model );
-  if(*serial)
-    DBG_PROG_S( *serial );
-
-  DBG_PROG_ENDE
-  return err;
-}
-
-
-int  oyMoveColorServerProfiles       ( const char        * display_name,
-                                       int                 screen,
-                                       int                 setup )
-{
-  return 1;
-}
-
-
-
-#if defined(XCM_HAVE_X11) && defined(HAVE_XCM)
-int XcolorRegionFind(XcolorRegion * old_regions, unsigned long old_regions_n, Display * dpy, Window win, XRectangle * rectangle)
-{   
-  XRectangle * rect = 0;
-  int nRect = 0;
-  int pos = -1;
-  unsigned long i;
-  int j;
-    
-  /* get old regions */ 
-  old_regions = XcolorRegionFetch( dpy, win, &old_regions_n );
-  /* search region */
-  for(i = 0; i < old_regions_n; ++i) 
-  {     
-                 
-    if(!old_regions[i].region || pos >= 0)
-      break;                    
-
-    rect = XFixesFetchRegion( dpy, ntohl(old_regions[i].region),
-                              &nRect );
-
-    for(j = 0; j < nRect; ++j)
-    {
-      if(oy_debug) 
-        printf( "reg[%lu]: %dx%d+%d+%d %dx%d+%d+%d\n",
-                   i,
-                   rectangle->width, rectangle->height,
-                   rectangle->x, rectangle->y,
-                   rect[j].width, rect[j].height, rect[j].x, rect[j].y
-                  );
-      if(rectangle->x == rect[j].x &&
-         rectangle->y == rect[j].y &&
-         rectangle->width == rect[j].width &&
-         rectangle->height == rect[j].height )
-      {
-        pos = i;
-        break;
-      }
-    }
-  }
-
-  return pos;
-}
-#endif
-
-/**
- *  This function implements oyMOptions_Handle_f.
- *
- *  @version Oyranos: 0.9.6
- *  @since   2016/03/10 (Oyranos: 0.9.6)
- *  @date    2016/03/10
- */
-int          oyX1UpdateOptions_Handle( oyOptions_s       * options,
-                                       const char        * command,
-                                       oyOptions_s      ** result )
-{
-  if(oyFilterRegistrationMatch(command,"can_handle", 0))
-  {
-    if(oyFilterRegistrationMatch(command,"send_native_update_event", 0))
-    {
-    }
-    else
-      return 1;
-  }
-  else if(oyFilterRegistrationMatch(command,"send_native_update_event", 0))
-  {
-    // ping X11 observers about option change
-    // ... by setting a known property again to its old value
-    Display * display = XOpenDisplay(NULL);
-    Atom atom = XInternAtom(display, XCM_COLOUR_DESKTOP_ADVANCED, False); // "_ICC_COLOR_DISPLAY_ADVANCED"
-    Window root = RootWindow( display, 0 );
-  
-    XFlush( display );
-  
-    Atom actual;
-    int format;
-    int advanced = -1;
-    unsigned long left;
-    unsigned long size;
-    unsigned char *data;
-    int result = XGetWindowProperty( display, root, atom, 0, ~0, 0, XA_STRING, &actual,
-                                     &format, &size, &left, &data );
-    if(data && size && atoi((const char*)data) > 0)
-      advanced = atoi((const char*)data);
-    _msg( oyMSG_DBG, (oyStruct_s*)options,
-          OY_DBG_FORMAT_ "desktop uses advanced settings: %d\n", OY_DBG_ARGS_,
-          advanced );
-    XChangeProperty( display, root,
-                       atom, XA_STRING, 8, PropModeReplace,
-                       data, size );
-    if(result == Success && data)
-      XFree( data ); data = 0;
-    if(display)
-      XCloseDisplay(display);
-  }
-
-  return 0;
-}
-
-/**
- *  This function implements oyCMMinfoGetText_f.
- *
- *  @version Oyranos: 0.9.6
- *  @since   2016/03/10 (Oyranos: 0.9.6)
- *  @date    2016/03/10
- */
-const char * oyX1InfoGetTextMyHandlerU(const char        * select,
-                                       oyNAME_e            type,
-                                       oyStruct_s        * context )
-{
-         if(strcmp(select, "can_handle")==0)
-  {
-         if(type == oyNAME_NICK)
-      return "check";
-    else if(type == oyNAME_NAME)
-      return _("check");
-    else
-      return _("Check if this module can handle a certain command.");
-  } else if(strcmp(select, "send_native_update_event")==0)
-  {
-         if(type == oyNAME_NICK)
-      return "send_native_update_event";
-    else if(type == oyNAME_NAME)
-      return _("Set a X Color Management update toggle.");
-    else
-      return _("Ping the XCM_COLOUR_DESKTOP_ADVANCED X11 atom.");
-  } else if(strcmp(select, "help")==0)
-  {
-         if(type == oyNAME_NICK)
-      return _("help");
-    else if(type == oyNAME_NAME)
-      return _("Help");
-    else
-      return _("The oyX1 modules \"send_native_update_event\" handler lets you ping "
-               "X Color Management advanced X11 atom. "
-               "The implementation uses Xlib.");
-  }
-  return 0;
-}
-const char *oyX1_texts_send_native_update_event[4] = {"can_handle","send_native_update_event","help",0};
-
-/** @instance oyX1_api10_send_native_update_event_handler
- *  @brief    oyX1 oyCMMapi10_s implementation
- *
- *  X Color Management desktop advanced toogle
- *
- *  @version Oyranos: 0.9.6
- *  @since   2016/03/10 (Oyranos: 0.9.6)
- *  @date    2016/03/10
- */
-oyCMMapi10_s_    oyX1_api10_send_native_update_event_handler = {
-
-  oyOBJECT_CMM_API10_S,
-  0,0,0,
-  (oyCMMapi_s*) NULL,
-
-  CMMInit,
-  CMMMessageFuncSet,
-
-  OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
-  "send_native_update_event._" CMM_NICK,
-
-  {OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C},/**< version[3] */
-  CMM_API_VERSION,                     /**< int32_t module_api[3] */
-  0,   /* id_; keep empty */
-  0,   /* api5_; keep empty */
-  0,                         /**< oyPointer_s * runtime_context */
- 
-  oyX1InfoGetTextMyHandlerU,             /**< getText */
-  (char**)oyX1_texts_send_native_update_event, /**<texts; list of arguments to getText*/
- 
-  oyX1UpdateOptions_Handle               /**< oyMOptions_Handle_f oyMOptions_Handle */
-};
-
-
-/**
- *  This function implements oyMOptions_Handle_f.
- *
- *  @version Oyranos: 0.4.0
- *  @since   2012/01/11 (Oyranos: 0.4.0)
- *  @date    2012/01/11
- */
-int          oyX1MOptions_Handle     ( oyOptions_s       * options,
-                                       const char        * command,
-                                       oyOptions_s      ** result )
-{
-  oyOption_s * o = 0;
-  int error = 0;
-
-  if(oyFilterRegistrationMatch(command,"can_handle", 0))
-  {
-    if(oyFilterRegistrationMatch(command,"set_xcm_region", 0))
-    {
-      o = oyOptions_Find( options, "window_rectangle", oyNAME_PATTERN );
-      if(!o)
-      {
-        _msg( oyMSG_WARN, (oyStruct_s*)options,
-                 "no option window_rectangle found");
-        error = 1;
-      }
-      oyOption_Release( &o );
-      o = oyOptions_Find( options, "window_id", oyNAME_PATTERN );
-      if(!o)
-      {
-        _msg( oyMSG_WARN, (oyStruct_s*)options,
-                 "no option window_id found");
-        error = 1;
-      }
-      oyOption_Release( &o );
-      o = oyOptions_Find( options, "display_id", oyNAME_PATTERN );
-      if(!o)
-      {
-        _msg( oyMSG_WARN, (oyStruct_s*)options,
-                 "no option display_id found");
-        error = 1;
-      }
-      oyOption_Release( &o );
-
-      return error;
-    }
-    else
-      return 1;
-  }
-  else if(oyFilterRegistrationMatch(command,"set_xcm_region", 0))
-  {
-#if defined(XCM_HAVE_X11) && defined(HAVE_XCM)
-    oyProfile_s * p = NULL;
-    oyRectangle_s * win_rect = NULL;
-    oyRectangle_s * old_rect = NULL;
-
-    Display * dpy = NULL;
-    Window win = 0;
-    char * blob = 0;
-    size_t size = 0;
-    XcolorProfile * profile = 0;
-    XserverRegion reg = 0;
-    XcolorRegion region;
-    int error;
-    XRectangle rec[2] = { { 0,0,0,0 }, { 0,0,0,0 } };
-    double rect[4];
-
-    oyBlob_s * win_id, * display_id;
-
-    win_id = (oyBlob_s*) oyOptions_GetType( options, -1, "window_id",
-                                          oyOBJECT_BLOB_S );
-    display_id = (oyBlob_s*) oyOptions_GetType( options, -1, "display_id",
-                                          oyOBJECT_BLOB_S );
-    win = (Window) oyBlob_GetPointer(win_id);
-    dpy = (Display *) oyBlob_GetPointer(display_id);
-
-    oyBlob_Release( &win_id );
-    oyBlob_Release( &display_id );
-
-    /* now handle the options */
-    win_rect = (oyRectangle_s*) oyOptions_GetType( options, -1, "window_rectangle",
-                                          oyOBJECT_RECTANGLE_S );
-    old_rect = (oyRectangle_s*) oyOptions_GetType( options, -1,
-                                 "old_window_rectangle", oyOBJECT_RECTANGLE_S );
-    o = oyOptions_Find( options, "icc_profile", oyNAME_PATTERN );
-    p = (oyProfile_s*) oyOptions_GetType( options, -1, "icc_profile",
-                                          oyOBJECT_PROFILE_S );
-    if(!win || !dpy)
-      _msg( oyMSG_WARN, (oyStruct_s*)options,
-                "options display_id or window_id not found");
-    if(!win_rect)
-      _msg( oyMSG_WARN, (oyStruct_s*)options,
-                "option window_rectangle not found");
-
-
-    if(old_rect)
-    {
-      XcolorRegion *old_regions = 0;
-      unsigned long old_regions_n = 0;
-      int pos = -1;
-
-      oyRectangle_GetGeo( old_rect, &rect[0], &rect[1], &rect[2], &rect[3] );
-
-      rec[0].x = rect[0];
-      rec[0].y = rect[1];
-      rec[0].width = rect[2];
-      rec[0].height = rect[3];
-
-      /* get old regions */
-      old_regions = XcolorRegionFetch( dpy, win, &old_regions_n );
-      /* remove specified region */
-      pos = XcolorRegionFind( old_regions, old_regions_n, dpy, win, rec );
-      XFree( old_regions );
-      if(pos >= 0)
-      {
-        int undeleted_n = old_regions_n;
-        XcolorRegionDelete( dpy, win, pos, 1 );
-        old_regions = XcolorRegionFetch( dpy, win, &old_regions_n );
-        if(undeleted_n - old_regions_n != 1)
-          _msg( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "removed %d; have still %d",
-             OY_DBG_ARGS_, pos, (int)old_regions_n );
-      } else
-        _msg( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_
-                  "region not found in %lu\n",OY_DBG_ARGS_, old_regions_n );
-
-      XFlush( dpy );
-
-    }
-
-    oyRectangle_GetGeo( win_rect, &rect[0], &rect[1], &rect[2], &rect[3] );
-
-    rec[0].x = rect[0];
-    rec[0].y = rect[1];
-    rec[0].width = rect[2];
-    rec[0].height = rect[3];
-
-    if(p)
-    {
-        blob = (char*)oyProfile_GetMem( p, &size, 0,0 );
-
-        if(blob && size)
-        {
-          int result;
-        /* Create a XcolorProfile object that will be uploaded to the display.*/
-          profile = (XcolorProfile*)malloc(sizeof(XcolorProfile) + size);
-
-          oyProfile_GetMD5(p, 0, (uint32_t*)profile->md5);
-
-          profile->length = htonl(size);
-          memcpy(profile + 1, blob, size);
-
-          result = XcolorProfileUpload( dpy, profile );
-          if(result)
-            _msg( oyMSG_WARN, (oyStruct_s*)options,
-                "XcolorProfileUpload: %d\n", result);
-
-          XFlush( dpy );
-        }
-    }
-
-    if( rect[0] || rect[1] || rect[2] || rect[3] )
-    {
-      reg = XFixesCreateRegion( dpy, rec, 1);
-
-      region.region = htonl(reg);
-      if(blob && size)
-        memcpy(region.md5, profile->md5, 16);
-      else
-        memset( region.md5, 0, 16 );
-
-      /* upload the new or changed region to the X server */
-      error = XcolorRegionInsert( dpy, win, 0, &region, 1 );
-      if(error)
-          _msg( oyMSG_WARN, (oyStruct_s*)options,
-                    "XcolorRegionInsert failed %d\n", error );
-      XFlush( dpy );
-    }
-#endif
-  }
-
-  return 0;
-}
-
-/**
- *  This function implements oyCMMinfoGetText_f.
- *
- *  @version Oyranos: 0.4.0
- *  @since   2012/01/11 (Oyranos: 0.4.0)
- *  @date    2012/01/11
- */
-const char * oyX1InfoGetTextMyHandler( const char        * select,
-                                       oyNAME_e            type,
-                                       oyStruct_s        * context )
-{
-         if(strcmp(select, "can_handle")==0)
-  {
-         if(type == oyNAME_NICK)
-      return "check";
-    else if(type == oyNAME_NAME)
-      return _("check");
-    else
-      return _("Check if this module can handle a certain command.");
-  } else if(strcmp(select, "set_xcm_region")==0)
-  {
-         if(type == oyNAME_NICK)
-      return "set_xcm_region";
-    else if(type == oyNAME_NAME)
-      return _("Set a X Color Management region.");
-    else
-      return _("The set_xcm_region takes minimal three options. The key name "
-               "\"window_rectangle\" specifies in a oyRectangle_s object the "
-               "requested window region in coordinates relative to the window. "
-               "If its parameters are all set to zero, then the rectangle is "
-               "ignored. The \"old_window_rectangle\" is similiar to the "
-               "\"window_rectangle\" "
-               "option but optionally specifies to remove a old rectangle. "
-               "The \"window_id\" specifies a X11 window id as oyBlob_s. "
-               "The \"display_id\" specifies a X11 Display struct as oyBlob_s. "
-               "The " "\"icc_profile\" option of type oyProfile_s optionally "
-               "provides a ICC profile to upload to the server.");
-  } else if(strcmp(select, "help")==0)
-  {
-         if(type == oyNAME_NICK)
-      return _("help");
-    else if(type == oyNAME_NAME)
-      return _("Help");
-    else
-      return _("The oyX1 modules \"set_xcm_region\" handler lets you set "
-               "X Color Management compatible client side color regions. "
-               "The implementation uses libXcm and Oyranos.");
-  }
-  return 0;
-}
-const char *oyX1_texts_set_xcm_region[4] = {"can_handle","set_xcm_region","help",0};
-
-/** @instance oyX1_api10_set_xcm_region_handler
- *  @brief    oyX1 oyCMMapi10_s implementation
- *
- *  X Color Management server side regions setup
- *
- *  @version Oyranos: 0.4.0
- *  @since   2012/01/11 (Oyranos: 0.4.0)
- *  @date    2012/01/11
- */
-oyCMMapi10_s_    oyX1_api10_set_xcm_region_handler = {
-
-  oyOBJECT_CMM_API10_S,
-  0,0,0,
-  (oyCMMapi_s*) &oyX1_api10_send_native_update_event_handler,
-
-  CMMInit,
-  CMMMessageFuncSet,
-
-  OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
-  "set_xcm_region._" CMM_NICK,
-
-  {OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C},/**< version[3] */
-  CMM_API_VERSION,                     /**< int32_t module_api[3] */
-  0,   /* id_; keep empty */
-  0,   /* api5_; keep empty */
-  0,                         /**< oyPointer_s * runtime_context */
- 
-  oyX1InfoGetTextMyHandler,             /**< getText */
-  (char**)oyX1_texts_set_xcm_region,       /**<texts; list of arguments to getText*/
- 
-  oyX1MOptions_Handle                  /**< oyMOptions_Handle_f oyMOptions_Handle */
-};
 
 #define oyX1_help_system_specific \
       " One option \"device_name\" will select the according X display.\n" \
@@ -2185,7 +1645,7 @@ oyMonitorDeviceHooks_s oyX1MonitorHooks_ = {
   oyX1Rectangle_FromDevice,
   oyX1GetMonitorProfile,
   oyX1GetAllScreenNames,
-  oyX1GetMonitorInfo_lib
+  oyX1GetMonitorInfo_
 };
 
 oyMonitorDeviceHooks_s * oyX1MonitorHooks = &oyX1MonitorHooks_;
