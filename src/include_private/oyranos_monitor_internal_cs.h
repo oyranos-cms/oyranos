@@ -22,6 +22,7 @@
 #include "oyranos_internal.h"
 #include "oyranos_monitor.h"
 #include "oyranos_monitor_internal.h"
+#include "oyranos_monitor_hooks.h"
 
 #include "oyRectangle_s.h"
 
@@ -33,8 +34,8 @@ extern "C" {
 
 #define CMM_NICK "qarz"
 
-extern oyMonitorDeviceHooks_s * qarzMonitorHooks;
-#define next_api (oyCMMapi_s*) & NULL
+extern oyMonitorHooks_s * qarzMonitorHooks;
+#define next_api (oyCMMapi_s*) NULL
 
 #define CMMInit                 catCMMfunc( qarz, CMMInit )
 #define _initialised            catCMMfunc( qarz, _initialised )
@@ -62,7 +63,7 @@ extern oyMonitorDeviceHooks_s * qarzMonitorHooks;
 #define _cmm_module             catCMMfunc( qarz, _cmm_module )
 #define _texts                  catCMMfunc( qarz, _texts )
 #define GetMonitorInfo_lib      catCMMstruct( qarz, getInfo )
-#define GetAllScreenNames       catCMMstruct( qarz, getAllScreenNames )
+#define GetAllScreenNames       catCMMstruct( qarz, getAllMonitorNames )
 #define MonitorProfileSetup     catCMMstruct( qarz, setupProfile )
 #define MonitorProfileUnset     catCMMstruct( qarz, unsetProfile )
 #define GetRectangleFromDevice    catCMMstruct( qarz, getRectangle )
@@ -106,36 +107,39 @@ int          qarzMonitor_height_       ( qarzMonitor_s       * disp );
 
 CGDirectDisplayID  qarzMonitor_device_ ( qarzMonitor_s       * disp );
 
-int          qarzMonitorProfileSetup ( const char        * display_name,
-                                       const char        * profil_name );
-int          qarzMonitorProfileUnset ( const char        * display_name );
-oyRectangle_s * qarzRectangle_FromDevice (
-                                       const char        * device_name );
-char *       qarzGetMonitorProfile   ( const char        * device_name,
-                                       uint32_t            flags,
-                                       size_t            * size,
-                                       oyAlloc_f           allocate_func );
+int          qarzMonitorProfileSetup ( const char        * monitor_name,
+                                       const char        * profil_name,
+                                       const char        * profile_data,
+                                       size_t              profile_data_size );
+int          qarzMonitorProfileUnset ( const char        * monitor_name );
+int          qarzRectangle_FromDevice( const char        * monitor_name,
+                                       double            * x,
+                                       double            * y,
+                                       double            * width,
+                                       double            * height );
+char *       qarzGetMonitorProfile   ( const char        * monitor_name,
+                                       int                 flags,
+                                       size_t            * size );
 int      qarzGetAllScreenNames       ( const char        * display_name,
-                                       char            *** display_names,
-                                       oyAlloc_f           allocateFunc );
+                                       char            *** monitor_names );
 
-int   qarzGetMonitorInfo_lib      (const char* display,
-                                   char**      manufacturer,
+int   qarzGetMonitorInfo_lib         ( const char        * monitor_name,
+                                       char             ** manufacturer,
                                        char             ** mnft,
-                                   char**      model,
-                                   char**      serial,
+                                       char             ** model,
+                                       char             ** serial,
                                        char             ** vendor,
-                                       char             ** display_geometry,
+                                       char             ** device_geometry,
                                        char             ** system_port,
                                        char             ** host,
-                                       uint32_t          * week,
-                                       uint32_t          * year,
-                                       uint32_t          * mnft_id,
-                                       uint32_t          * model_id,
+                                       int               * week,
+                                       int               * year,
+                                       int               * mnft_id,
+                                       int               * model_id,
                                        double            * colors,
-                                       oyBlob_s         ** edid,
-                                   oyAlloc_f     allocate_func,
-                                       oyStruct_s        * user_data );
+                                       char             ** edid,
+                                       size_t            * edid_size,
+                                       int                 refresh_edid );
 
 
 #ifdef __cplusplus
