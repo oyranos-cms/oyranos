@@ -1,4 +1,4 @@
-/** @file oyranos_monitor_internal_x11.h
+/** @file oyranos_monitor_hooks_x11.h
  *
  *  Oyranos is an open source Color Management System 
  *
@@ -14,10 +14,10 @@
  *  @since    2005/02/01
  */
 
-#ifndef OYRANOS_MONITOR_BASE_X11_X11_H
-#define OYRANOS_MONITOR_BASE_X11_X11_H
+#ifndef OYRANOS_MONITOR_HOOKS_X11_H
+#define OYRANOS_MONITOR_HOOKS_X11_H
 
-#include "oyranos_monitor_base.h"
+#include "oyranos_monitor_hooks.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -154,4 +154,4 @@ int   oyX1Monitor_getScreenGeometry_   ( oyX1Monitor_s       * disp );
 } /* extern "C" */
 #endif /* __cplusplus */
 
-#endif /* OYRANOS_MONITOR_BASE_X11_X11_H */
+#endif /* OYRANOS_MONITOR_HOOKS_X11_H */

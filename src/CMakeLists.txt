@@ -324,6 +324,7 @@ SET( DOC_SOURCES
 	doxymentation_common
         ${CMAKE_SOURCE_DIR}/src/include/*.h
         ${CMAKE_BINARY_DIR}/src/include/*.h
+        oyranos_monitor_hooks.h
 	${CFILES_CORE_PUBLIC}
 	${CHEADERS_CORE_PUBLIC}
 	${CFILES_OBJECT_PUBLIC}

@@ -17,7 +17,7 @@
 #ifndef OYRANOS_MONITOR_INTERNAL_X11_H
 #define OYRANOS_MONITOR_INTERNAL_X11_H
 
-#include "oyranos_monitor_base.h"
+#include "oyranos_monitor_hooks.h"
 #include "oyranos_monitor_internal.h"
 #include "oyCMMapi10_s_.h"
 
@@ -28,7 +28,7 @@ extern "C" {
 
 #define CMM_NICK "oyX1"
 
-extern oyMonitorDeviceHooks_s * oyX1MonitorHooks;
+extern oyMonitorHooks_s * oyX1MonitorHooks;
 extern oyCMMapi10_s_      oyX1_api10_set_xcm_region_handler;
 #define next_api (oyCMMapi_s*) & oyX1_api10_set_xcm_region_handler
 
@@ -58,7 +58,7 @@ extern oyCMMapi10_s_      oyX1_api10_set_xcm_region_handler;
 #define _cmm_module             catCMMfunc( oyX1, _cmm_module )
 #define _texts                  catCMMfunc( oyX1, _texts )
 #define GetMonitorInfo_lib      catCMMstruct( oyX1, getInfo )
-#define GetAllScreenNames       catCMMstruct( oyX1, getAllScreenNames )
+#define GetAllScreenNames       catCMMstruct( oyX1, getAllMonitorNames )
 #define MonitorProfileSetup     catCMMstruct( oyX1, setupProfile )
 #define MonitorProfileUnset     catCMMstruct( oyX1, unsetProfile )
 #define GetRectangleFromDevice  catCMMstruct( oyX1, getRectangle )

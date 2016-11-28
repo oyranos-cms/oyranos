@@ -13,8 +13,8 @@
  *  @since    2005/01/31
  */
 
-#include "oyranos_monitor_base.h"
-#include "oyranos_monitor_base_x11.h"
+#include "oyranos_monitor_hooks.h"
+#include "oyranos_monitor_hooks_x11.h"
 
 
 #include <ctype.h> /* isdigit() */
@@ -1569,7 +1569,7 @@ int          oyX1Monitor_release_      ( oyX1Monitor_s      ** obj )
       " The \"properties\" call might be a expensive one.\n" \
       " Informations are stored in the returned oyConfig_s::backend_core member."
 
-oyMonitorDeviceHooks_s oyX1MonitorHooks_ = {
+oyMonitorHooks_s oyX1MonitorHooks_ = {
   oyOBJECT_MONITOR_HOOKS_S,
   {CMM_NICK},
   10000, /* 1.0.0 */
@@ -1583,5 +1583,5 @@ oyMonitorDeviceHooks_s oyX1MonitorHooks_ = {
   oyX1GetMonitorInfo_
 };
 
-oyMonitorDeviceHooks_s * oyX1MonitorHooks = &oyX1MonitorHooks_;
+oyMonitorHooks_s * oyX1MonitorHooks = &oyX1MonitorHooks_;
 

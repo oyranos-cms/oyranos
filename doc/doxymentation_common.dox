@@ -126,6 +126,9 @@
     utility in the future. As external checker use oyranos-xforms-modules -l.
 
     @subsection write_device_modules Writing Device Modules for Oyranos
+    For monitor devices exist a simple abstraction layer to hook a display
+    system in. Please read @ref monitor_hooks_api.
+
     To start with a module use the src/examples/oyranos_cmm_dDev.c 
     file and modify it. Please follow the @ref write_modules subsection.
     The parts which differ are that instead of oyCMMapi4_s the oyCMMapi8_s
@@ -269,6 +272,21 @@
  */
 
 /** \addtogroup devices_handling Device Handling
+ *
+ *  Device Handling inside Oyranos is based on a key/value set, which
+ *  describes a device and the associated profile. An additional matching set,
+ *  allows Oyranos to compare different device configurations with a given
+ *  devices key/value set. If accepted a new device will be added to the proper
+ *  device key namespace and is permanently stored on disk in a config DB. 
+ *  In case of erasure the key set is removed from the config DB.
+ *
+ *  The soft matching approach is used in order to compare devices across
+ *  different ports and computers. The highest match wins and it's profile
+ *  is assigned. This approach allows to match oven remote profiles like
+ *  ones from online DB's.
+ *
+ *  For direct work with the low level key/value matching use oyDeviceFromJSON(),
+ *  oyRankMapFromJSON() and oyConfig_SetRankMap() API's.
  *
  *  Include the oyranos_devices.h header file to use the interfaces.
  *
@@ -511,6 +529,7 @@ digraph G {
  *
  * Oyranos C modules provide support for data formats, data processing and
  *  process control, as well as configuration.
+ *
  *  The module architecture covers three basic layers. There are the Module 
  *  APIs for the real stuff, the Meta Module APIs for language support and the
  *  final Oyranos objects with their User APIs.\n
@@ -797,6 +816,24 @@ digraph Anatomy_A {
  *  @{
  */
 
+/** @addtogroup monitor_hooks_api Monitor Backend Modules
+ *  @brief      Simple way to hook a display system into a Oyranos device config module
+ *
+ *  The motivation for this API is to interface with Oyranos device
+ *  configuration module system. The abstraction layer allows to code
+ *  independently from Oyranos API's with a fairly simple API set.
+ *  Additionally the resulting code can be used elsewehere independently.
+ *
+ *  The set of hooks is used by the oyranos_cmm_disp.c module family with
+ *  some additional headers. As a example take the oyX1 module with its
+ *  oyranos_monitor_hooks_x11.h header and the implementation in
+ *  oyranos_monitor_x11.c . The oyX1 CMakeLists.txt section gives
+ *  more details on how to build the according module in the source tree.
+ *  Please do not hesitate to contact the developers on github or the mailing
+ *  list for further help.
+ *
+ *  @{
+ */
+/** @} *//* monitor_hooks_api */
 /** @} *//* module_api */
-
 
