@@ -500,6 +500,15 @@ OYAPI int  OYEXPORT
       oyProfile_Release( &p );
     }
 
+    /* 4. ping the DB */
+    {
+      char * v = oyGetPersistentString( OY_STD OY_SLASH "ping", oySOURCE_DATA,
+                                        oySCOPE_USER, oyAllocateFunc_ );
+      oySetPersistentString( OY_STD OY_SLASH "ping", oySCOPE_USER, 
+                             (v && strcmp( v, "1" ) == 0) ? "0" : "1", 0 );
+      if(v) oyFree_m_(v);
+    }
+
     if(profile_name_temp)
       oyRemoveFile_( profile_name_temp );
     profile_name_temp = 0;
@@ -535,13 +544,13 @@ int      oyDeviceUnset               ( oyConfig_s        * device )
   oyCheckType__m( oyOBJECT_CONFIG_S, return 1 )
 
   {
-    /* 1. query the full device information */
+    /** 1. query the full device information */
     error = oyDeviceProfileFromDB( device, &profile_name, 0 );
 
-    /* 1.1 get device_name */
+    /** 1.1 get device_name */
     device_name = oyConfig_FindString( device, "device_name", 0);
 
-    /* 2. unset the device through the module */
+    /** 2. unset the device through the module */
     /** 2.1 set a general request */
     error = oyOptions_SetRegistrationTextKey_( &options,
                                                oyConfigPriv_m(device)->registration,
@@ -552,6 +561,15 @@ int      oyDeviceUnset               ( oyConfig_s        * device )
 
     /** 2.2 send the query to a module */
     error = oyConfigs_FromDomain( oyConfigPriv_m(device)->registration, options, 0, 0 );
+
+    /** 3. ping the DB */
+    {
+      char * v = oyGetPersistentString( OY_STD OY_SLASH "ping", oySOURCE_DATA,
+                                        oySCOPE_USER, oyAllocateFunc_ );
+      oySetPersistentString( OY_STD OY_SLASH "ping", oySCOPE_USER, 
+                             (v && strcmp( v, "1" ) == 0) ? "0" : "1", 0 );
+      if(v) oyFree_m_(v);
+    }
 
     oyOptions_Release( &options );
     if(profile_name)
