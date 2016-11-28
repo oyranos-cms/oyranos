@@ -23,9 +23,10 @@
 #include <stdio.h>
 #include <limits.h>
 #include <locale.h>
+#include <errno.h>
 
 #ifndef CMM_NICK
-warning("CMM_NICK macro not defined")
+#warning( "CMM_NICK macro not defined" )
 #endif
 
 /* ---  Helpers  --- */
@@ -85,10 +86,6 @@ int oyX1Monitor_rrScreen_     ( oyX1Monitor_s * disp ) { return disp->rr_screen;
 
 char* oyX1Monitor_getAtomName_         ( oyX1Monitor_s       * disp,
                                        const char        * base );
-char *   oyX1Monitor_getProperty_    ( oyX1Monitor_s       * disp,
-                                       const char        * prop_name,
-                                       const char       ** prop_name_xrandr,
-                                       size_t            * prop_size );
 char* oyChangeScreenName_            ( const char        * display_name,
                                        int                 screen );
 const char *xrandr_edids[] = {"EDID","EDID_DATA",0};
@@ -200,6 +197,58 @@ char *   oyX1Monitor_getProperty_    ( oyX1Monitor_s     * disp,
 
 /*#define IGNORE_EDID 1*/
 
+int      oyX1GetMonitorEdid          ( oyX1Monitor_s     * disp,
+                                       char             ** edid,
+                                       size_t            * edid_size,
+                                       int                 refresh_edid )
+{
+  char * prop = 0;
+  size_t prop_size = 0;
+  int error = 0;
+ 
+#if !defined(IGNORE_EDID)
+  prop = oyX1Monitor_getProperty_( disp, "XFree86_DDC_EDID1_RAWDATA",
+                                   xrandr_edids, &prop_size );
+#else
+    if(oy_debug) fprintf( stderr,"IGNORE_EDID");
+#endif
+
+  if( oyX1Monitor_infoSource_( disp ) == oyX11INFO_SOURCE_XINERAMA &&
+      ((!prop || (prop && prop_size%128)) ||
+       refresh_edid ) )
+  {
+#if !defined(IGNORE_EDID)
+    prop = oyX1Monitor_getProperty_( disp, "XFree86_DDC_EDID1_RAWDATA",
+                                         xrandr_edids, &prop_size );
+#else
+    if(oy_debug) fprintf( stderr,"IGNORE_EDID");
+#endif
+  }
+
+  if( prop )
+  {
+    if( prop_size%128 )
+    {
+      fprintf( stderr, "\n\t  %s %d; %s %s","unexpected EDID lenght",
+               (int)prop_size,
+               "\"XFree86_DDC_EDID1_RAWDATA\"/\"EDID_DATA\"",
+               "Cant read hardware information from device.");
+      error = -1;
+    }
+  }
+
+  if(edid)
+  {
+    *edid = prop;
+    *edid_size = prop_size;
+    prop = 0;
+  }
+
+  if(prop_size && prop) free( prop );
+
+  return error;
+}
+
 /** @brief pick up monitor information with Xlib
  *  @deprecated because sometimes is no ddc information available
  *  @todo include connection information - grafic cart
@@ -211,7 +260,7 @@ char *   oyX1Monitor_getProperty_    ( oyX1Monitor_s     * disp,
  *  @return     error
  *
  */
-int      oyX1GetMonitorInfo_         ( const char        * display_name,
+int      oyX1GetMonitorInfo          ( const char        * display_name,
                                        char             ** manufacturer,
                                        char             ** mnft,
                                        char             ** model,
@@ -266,36 +315,7 @@ int      oyX1GetMonitorInfo_         ( const char        * display_name,
   if( host )
     *host = strdup( oyX1Monitor_hostName_( disp ) );
 
-#if !defined(IGNORE_EDID)
-  prop = oyX1Monitor_getProperty_( disp, "XFree86_DDC_EDID1_RAWDATA",
-                                   xrandr_edids, &prop_size );
-#else
-    if(oy_debug) fprintf( stderr,"IGNORE_EDID");
-#endif
-
-  if( oyX1Monitor_infoSource_( disp ) == oyX11INFO_SOURCE_XINERAMA &&
-      ((!prop || (prop && prop_size%128)) ||
-       refresh_edid ) )
-  {
-#if !defined(IGNORE_EDID)
-    prop = oyX1Monitor_getProperty_( disp, "XFree86_DDC_EDID1_RAWDATA",
-                                         xrandr_edids, &prop_size );
-#else
-    if(oy_debug) fprintf( stderr,"IGNORE_EDID");
-#endif
-  }
-
-  if( prop )
-  {
-    if( prop_size%128 )
-    {
-      fprintf( stderr, "\n\t  %s %d; %s %s","unexpected EDID lenght",
-               (int)prop_size,
-               "\"XFree86_DDC_EDID1_RAWDATA\"/\"EDID_DATA\"",
-               "Cant read hardware information from device.");
-      error = -1;
-    }
-  }
+  error = oyX1GetMonitorEdid( disp, &prop, &prop_size, refresh_edid );
 
   if( !prop )
   /* as a last means try Xorg.log for at least some informations */
@@ -854,6 +874,33 @@ int      oyX1MonitorProfileSetup     ( const char        * display_name,
       }
 
       free( atom_name );
+
+      {
+        char * prop = 0;
+        size_t prop_size = 0;
+        int refresh_edid = 1;
+        char * command = malloc(4096);
+
+        error = oyX1GetMonitorEdid( disp, &prop, &prop_size, refresh_edid );
+
+        sprintf( command, "oyranos-compat-gnome -a -i - -p \"%s\"", profile_name );
+
+        if(prop && prop_size)
+        {
+          FILE * s = popen( command, "w" );
+
+          if(s)
+          {
+            fwrite( prop, sizeof(char), prop_size, s );
+
+            pclose(s); s = 0;
+          } else
+            fprintf( stderr, "fwrite(%s) : %s\n", command, strerror(errno));
+        }
+
+        if(prop && prop_size) free(prop);
+        if(command) free(command);
+      }
     }
 
     free( text );
@@ -889,6 +936,7 @@ int      oyX1MonitorProfileUnset     ( const char        * display_name )
       int screen = 0;
       Window w;
       char *atom_name = 0;
+      char * command = 0;
 
       if(display_name && oy_debug)
         if(oy_debug) fprintf( stderr,"display_name %s",display_name);
@@ -941,10 +989,10 @@ int      oyX1MonitorProfileUnset     ( const char        * display_name )
 
       {
         char *dpy_name = strdup( noE(display_name) );
-        char * command = malloc(1048);
         char *ptr = NULL;
         int r = 0;
 
+        command = malloc(1048);
         if(!command) goto finish;
 
         if( (ptr = strchr(dpy_name,':')) != 0 )
@@ -965,6 +1013,33 @@ int      oyX1MonitorProfileUnset     ( const char        * display_name )
         if(r) fprintf( stderr,"%s %d", "found issues",r);
 
         free( command );
+      }
+
+      {
+        char * prop = 0;
+        size_t prop_size = 0;
+        int refresh_edid = 1;
+
+        command = malloc(256);
+        error = oyX1GetMonitorEdid( disp, &prop, &prop_size, refresh_edid );
+
+        sprintf( command, "oyranos-compat-gnome -e -i -" );
+
+        if(prop && prop_size)
+        {
+          FILE * s = popen( command, "w" );
+
+          if(s)
+          {
+            fwrite( prop, sizeof(char), prop_size, s );
+
+            pclose(s); s = 0;
+          } else
+            fprintf( stderr, "fwrite(%s) : %s\n", command, strerror(errno));
+        }
+
+        if(prop && prop_size) free(prop);
+        if(command) free(command);
       }
 
       free( atom_name );
@@ -1580,7 +1655,7 @@ oyMonitorHooks_s oyX1MonitorHooks_ = {
   oyX1Rectangle_FromDevice,
   oyX1GetMonitorProfile,
   oyX1GetAllScreenNames,
-  oyX1GetMonitorInfo_
+  oyX1GetMonitorInfo
 };
 
 oyMonitorHooks_s * oyX1MonitorHooks = &oyX1MonitorHooks_;

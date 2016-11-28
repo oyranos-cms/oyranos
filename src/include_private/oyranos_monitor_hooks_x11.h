@@ -127,7 +127,7 @@ int      oyX1MoveColorServerProfiles ( const char        * display_name,
                                        int                 setup );
 
 
-int      oyX1GetMonitorInfo_         ( const char        * display,
+int      oyX1GetMonitorInfo          ( const char        * display,
                                        char             ** manufacturer,
                                        char             ** mnft,
                                        char             ** model,
@@ -146,6 +146,14 @@ int      oyX1GetMonitorInfo_         ( const char        * display,
                                        int                 refresh_edid );
 
 
+char *   oyX1Monitor_getProperty_    ( oyX1Monitor_s       * disp,
+                                       const char        * prop_name,
+                                       const char       ** prop_name_xrandr,
+                                       size_t            * prop_size );
+int      oyX1GetMonitorEdid          ( oyX1Monitor_s     * disp,
+                                       char             ** edid,
+                                       size_t            * edid_size,
+                                       int                 refresh_edid );
 int   oyX1Monitor_getScreenFromDisplayName_( oyX1Monitor_s   * disp );
 char**oyX1GetAllScreenNames_        (const char *display_name, int *n_scr );
 int   oyX1Monitor_getScreenGeometry_   ( oyX1Monitor_s       * disp );
