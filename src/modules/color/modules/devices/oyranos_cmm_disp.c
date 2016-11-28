@@ -229,7 +229,7 @@ int              DeviceFromName_     ( const char        * device_name,
            * host=0, * display_geometry=0, * system_port=0;
       double colors[9] = {0,0,0,0,0,0,0,0,0};
       oyBlob_s * edid = 0;
-      uint32_t week=0, year=0, EDID_mnft_id=0, EDID_model_id=0;
+      int week=0, year=0, EDID_mnft_id=0, EDID_model_id=0;
 
       if(!device_name)
       {
@@ -241,13 +241,22 @@ int              DeviceFromName_     ( const char        * device_name,
       }
 
       if(error <= 0)
+      {
+        char * edid_data = NULL;
+        size_t edid_size = 0;
         error = GetMonitorInfo_lib( device_name,
                       &EDID_manufacturer, &EDID_mnft, &EDID_model, &EDID_serial,
                       &EDID_vendor, &display_geometry, &system_port, &host,
                       &week, &year, &EDID_mnft_id, &EDID_model_id,
                                         colors,
-                                        &edid, oyAllocateFunc_,
-                                        (oyStruct_s*)options );
+                                        &edid_data, &edid_size,
+                                        oyOptions_FindString( options, "edid", "refresh" ) ? 1 : 0 );
+        if(edid_data && edid_size)
+        {
+          edid = oyBlob_New(0);
+          oyBlob_SetFromData( edid, edid_data, edid_size, 0 );
+        }
+      }
 
       if(error != 0)
         _msg( oyMSG_WARN, (oyStruct_s*)options, 
@@ -354,7 +363,6 @@ int                Configs_FromPattern (
              * device_name = 0;
   int rank = oyFilterRegistrationMatch( _api8.registration, registration,
                                         oyOBJECT_CMM_API8_S );
-  oyAlloc_f allocateFunc = malloc;
 
 
   /** 1. In case no option is provided or something fails, show a message. */
@@ -409,7 +417,7 @@ int                Configs_FromPattern (
     if(oyOptions_FindString( options, "command", "list" ) ||
        oyOptions_FindString( options, "command", "properties" ))
     {
-      texts_n = GetAllScreenNames( device_name, &texts, allocateFunc );
+      texts_n = GetAllScreenNames( device_name, &texts );
 
       /** 3.1.1 iterate over all requested devices */
       for( i = 0; i < texts_n; ++i )
@@ -465,10 +473,17 @@ int                Configs_FromPattern (
                 );
       else
       {
+        oyProfile_s * p = oyProfile_FromName( oprofile_name, 0, 0 );
+        size_t size = oyProfile_GetSize( p, 0 );
+        char * data = oyProfile_GetMem( p, &size, 0, oyAllocateFunc_ );
+        const char * profile_fullname = oyProfile_GetFileName( p, -1 );
+
         _msg(oyMSG_DBG, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n "
-                  "command: setup on device_name: %s \"%s\" ",
-                  OY_DBG_ARGS_, odevice_name, oprofile_name );
-        error = MonitorProfileSetup( odevice_name, oprofile_name );
+                  "command: setup on device_name: %s \"%s\" %ul",
+                  OY_DBG_ARGS_, odevice_name, oprofile_name, size );
+
+        error = MonitorProfileSetup( odevice_name, profile_fullname, data, size );
+        oyProfile_Release( &p );
       }
 
       goto cleanup;
@@ -606,7 +621,6 @@ int            Configs_Modify        ( oyConfigs_s       * devices,
   const char * oprofile_name = 0,
              * device_name = 0;
   int rank = 0;
-  oyAlloc_f allocateFunc = malloc;
   const char * tmp = 0;
 
 
@@ -657,9 +671,9 @@ int            Configs_Modify        ( oyConfigs_s       * devices,
         if(oyOptions_FindString( options, "device_rectangle", 0 ) ||
            oyOptions_FindString( options, "oyNAME_NAME", 0 ))
         {
+          double x,y,w,h;
           has = 0;
-          rect = GetRectangleFromDevice( device_name );
-          if(!rect)
+          if(GetRectangleFromDevice( device_name, &x,&y,&w,&h))
           {
 #if defined(__APPLE__) && !defined(qarz)
             if(oy_debug)
@@ -668,6 +682,7 @@ int            Configs_Modify        ( oyConfigs_s       * devices,
                       device_name );
           } else
           {
+            rect = oyRectangle_NewWith( x,y,w,h, NULL );
             o = oyConfig_Find( device, "device_rectangle" );
             if(o)
               has = 1;
@@ -731,18 +746,20 @@ int            Configs_Modify        ( oyConfigs_s       * devices,
           {
             icHeader * header = 0;
             /* fallback: try to get EDID to build a profile */
-            o_tmp = oyConfig_Find( device, "color_matrix."
-                     "redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma");
+            o_tmp = oyOptions_Find( *oyConfig_GetOptions(device,"data"), "color_matrix."
+                     "redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma",
+                                    oyNAME_PATTERN );
+            if(!o_tmp)
             {
               oyOptions_SetFromText( &options,
                                      MONITOR_REGISTRATION OY_SLASH
                                      "edid",
                                      "yes", OY_CREATE_NEW );
               error = DeviceFromName_( device_name, options, &device );
+              o_tmp = oyOptions_Find( *oyConfig_GetOptions(device,"data"), "color_matrix."
+                     "redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma",
+                                    oyNAME_PATTERN);
             }
-            if(!o_tmp)
-              o_tmp = oyConfig_Find( device, "color_matrix."
-                     "redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma");
 
             if(o_tmp)
             {
@@ -861,8 +878,7 @@ int            Configs_Modify        ( oyConfigs_s       * devices,
             error = -1;
           } else if(!has)
           {
-            data = GetMonitorProfile( device_name, flags, &size,
-                                          allocateFunc );
+            data = GetMonitorProfile( device_name, flags, &size );
 
             if(data && size)
             {
@@ -1027,10 +1043,16 @@ int            Configs_Modify        ( oyConfigs_s       * devices,
                   );
         else
         {
+          oyProfile_s * p = oyProfile_FromName( oprofile_name, 0, 0 );
+          size_t size = oyProfile_GetSize( p, 0 );
+          char * data = oyProfile_GetMem( p, &size, 0, oyAllocateFunc_ );
+
           _msg(oyMSG_DBG, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n "
-                  "command: setup on device_name: %s \"%s\" ",
-                  OY_DBG_ARGS_, device_name, oprofile_name );
-          error = MonitorProfileSetup( device_name, oprofile_name );
+                  "command: setup on device_name: %s \"%s\" %ul",
+                  OY_DBG_ARGS_, device_name, oprofile_name, size );
+
+          error = MonitorProfileSetup( device_name, oprofile_name, data, size );
+          oyProfile_Release( &p );
         }
         oyConfig_Release( &device );
       }
@@ -1230,11 +1252,7 @@ oyIcon_s _api8_icon = {
 oyCMMapi8_s_ _api8 = {
   oyOBJECT_CMM_API8_S,
   0,0,0,
-#ifdef oyX1
-  (oyCMMapi_s*) & oyX1_api10_set_xcm_region_handler, /**< next */
-#else
-  (oyCMMapi_s*) NULL, /**< next */
-#endif
+  next_api,                  /**< next API */
 
   CMMInit,                   /**< oyCMMInit_f      oyCMMInit */
   CMMMessageFuncSet,         /**< oyCMMMessageFuncSet_f oyCMMMessageFuncSet */

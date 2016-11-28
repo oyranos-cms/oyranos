@@ -155,9 +155,8 @@ CGDirectDisplayID qarzMonitor_nameToOsxID ( const char        * display_name )
 
 
 char *       qarzGetMonitorProfile   ( const char        * device_name,
-                                       uint32_t            flags,
-                                       size_t            * size,
-                                       oyAlloc_f           allocate_func )
+                                       int                 flags,
+                                       size_t            * size )
 {
   char       *moni_profile=0;
 
@@ -180,7 +179,7 @@ char *       qarzGetMonitorProfile   ( const char        * device_name,
     CMGetProfileByAVID( (CMDisplayIDType)screenID, &prof );
     NCMGetProfileLocation(prof, &loc, &locationSize );
 
-    err = oyGetProfileBlockOSX (prof, &moni_profile, size, allocate_func);
+    err = oyGetProfileBlockOSX (prof, &moni_profile, size, malloc);
     if (prof) CMCloseProfile(prof);
 
   } else if(version >= 100600)
@@ -209,8 +208,7 @@ char *       qarzGetMonitorProfile   ( const char        * device_name,
 
 
 int      qarzGetAllScreenNames       ( const char        * display_name,
-                                       char            *** display_names,
-                                       oyAlloc_f           allocateFunc )
+                                       char            *** display_names )
 {
   int i = 0;
   char** list = 0;
@@ -222,7 +220,7 @@ int      qarzGetAllScreenNames       ( const char        * display_name,
   if(list && i)
   {
     *display_names = oyStringListAppend_( 0, 0, (const char**)list, i, &i,
-                                          allocateFunc );
+                                          malloc );
     oyStringListRelease_( &list, i, oyDeAllocateFunc_ );
   }
 
@@ -288,9 +286,13 @@ qarzGetAllScreenNames_          (const char *display_name,
  *  @since   2009/01/28 (Oyranos: 0.1.10)
  *  @date    2009/01/28
  */
-oyRectangle_s* qarzRectangle_FromDevice ( const char        * device_name )
+int          qarzRectangle_FromDevice (
+                                       const char        * device_name,
+                                       double            * x,
+                                       double            * y,
+                                       double            * width,
+                                       double            * height )
 {
-  oyRectangle_s * rectangle = 0;
   int error = !device_name;
 
   if(!error)
@@ -301,13 +303,15 @@ oyRectangle_s* qarzRectangle_FromDevice ( const char        * device_name )
     if(!disp)
       return 0;
 
-    rectangle = oyRectangle_NewWith( qarzMonitor_x_(disp), qarzMonitor_y_(disp),
-                           qarzMonitor_width_(disp), qarzMonitor_height_(disp), 0 );
+    *x = qarzMonitor_x_(disp);
+    *y =  qarzMonitor_y_(disp);
+    *width = qarzMonitor_width_(disp);
+    *height = qarzMonitor_height_(disp);
 
     qarzMonitor_release_( &disp );
   }
 
-  return rectangle;
+  return error;
 }
 
 
@@ -332,7 +336,9 @@ qarzMonitor_getGeometryIdentifier_         (qarzMonitor_s  *disp)
 
 
 int      qarzMonitorProfileSetup     ( const char        * display_name,
-                                       const char        * profil_name )
+                                       const char        * profil_name,
+                                       const char        * profile_data,
+                                       size_t              profile_data_size )
 {
   int error = 0;
   const char * profile_fullname = 0;
@@ -571,28 +577,26 @@ int          qarzMonitor_release_      ( qarzMonitor_s      ** obj )
  *  @param[out] manufacturer  the manufacturer of the monitor device
  *  @param[out] model         the model of the monitor device
  *  @param[out] serial        the serial number of the monitor device
- *  @param      allocate_func the allocator for the above strings
  *  @return     error
  *
  */
-int
-qarzGetMonitorInfo_lib            (const char* display_name,
-                                   char**      manufacturer,
+int   qarzGetMonitorInfo_lib         ( const char        * display_name,
+                                       char             ** manufacturer,
                                        char             ** mnft,
-                                   char**      model,
-                                   char**      serial,
+                                       char             ** model,
+                                       char             ** serial,
                                        char             ** vendor,
-                                       char             ** display_geometry,
+                                       char             ** device_geometry,
                                        char             ** system_port,
                                        char             ** host,
-                                       uint32_t          * week,
-                                       uint32_t          * year,
-                                       uint32_t          * mnft_id,
-                                       uint32_t          * model_id,
+                                       int               * week,
+                                       int               * year,
+                                       int               * mnft_id,
+                                       int               * model_id,
                                        double            * colors,
-                                       oyBlob_s         ** edid,
-                                   oyAlloc_f     allocate_func,
-                                       oyStruct_s        * user_data)
+                                       char             ** edid,
+                                       size_t            * edid_size,
+                                       int                 refresh_edid )
 {
   int err = 0;
 
@@ -606,8 +610,6 @@ qarzGetMonitorInfo_lib            (const char* display_name,
     disp = qarzMonitor_newFrom_( display_name, 0 );
     if(!disp)
       return 1;
-    if(!allocate_func)
-      allocate_func = oyAllocateFunc_;
 
     if( disp ) 
     {
@@ -631,13 +633,13 @@ qarzGetMonitorInfo_lib            (const char* display_name,
           if(cf_value)
             CFDataGetBytes( cf_value, cf_range, edi_ );
           else
-            WARNcc3_S( user_data, "\n  %s:\n  %s\n  %s",
+            WARNc3_S( "\n  %s:\n  %s\n  %s",
                _("no EDID available from"),
                "\"CFDictionaryGetValue\"",
                _("Cant read hardware information from device."))
 
         } else
-          WARNcc3_S( user_data, "\n  %s:\n  %s\n  %s",
+          WARNc3_S( "\n  %s:\n  %s\n  %s",
                _("no EDID available from"),
                "\"CFDictionaryGetCountOfKey\"",
                _("Cant read hardware information from device."))
@@ -648,33 +650,30 @@ qarzGetMonitorInfo_lib            (const char* display_name,
         CFRelease( dict ); dict = 0;
       }
       else
-        WARNcc3_S( user_data, "\n  %s:\n  %s\n  %s",
+        WARNc3_S( "\n  %s:\n  %s\n  %s",
                _("no EDID available from"),
                "\"IODisplayCreateInfoDictionary\"",
-               _("Cant read hardware information from device."))
-
-      if(edi_[0] || edi_[1])
-        oyUnrollEdid1_( edi_, manufacturer, mnft, model, serial, vendor,
-                        week, year, mnft_id, model_id, colors, allocate_func);
+               _("Cant read hardware information from device.") )
 
       if(edid)
       {
-        *edid = oyBlob_New( 0 );
-        oyBlob_SetFromData( *edid, edi_, 128, 0 );
+        *edid = malloc(128);
+        memcpy( *edid, edi_, 128 );
+        *edid_size = 128;
       }
 
       *system_port = t; t = 0;
     }
     else
-      WARNcc3_S( user_data, "\n  %s: \"%s\"\n  %s",
+      WARNc3_S( "\n  %s: \"%s\"\n  %s",
                _("no qarzMonitor_s from"),
                display_name,
                _("Cant read hardware information from device."))
 
 
-    if( display_geometry )
-      *display_geometry = oyStringCopy_( qarzMonitor_identifier_( disp ),
-                                         allocate_func );
+    if( device_geometry )
+      *device_geometry = oyStringCopy_( qarzMonitor_identifier_( disp ),
+                                         malloc );
 
 
     err = 0;
@@ -774,10 +773,12 @@ char * printCFDictionary( CFDictionaryRef dict )
       " The \"properties\" call might be a expensive one.\n" \
       " Informations are stored in the returned oyConfig_s::backend_core member."
 
-oyMonitorDeviceHooks_s qarzMonitorHooks_ = {
+oyMonitorHooks_s qarzMonitorHooks_ = {
+  oyOBJECT_MONITOR_HOOKS_S,
+  {CMM_NICK},
+  10000, /* 1.0.0 */
   qarz_help_system_specific,
   NULL,
-  (oyCMMapi_s*) NULL,
   qarzMonitorProfileSetup,
   qarzMonitorProfileUnset,
   qarzRectangle_FromDevice,
@@ -786,4 +787,4 @@ oyMonitorDeviceHooks_s qarzMonitorHooks_ = {
   qarzGetMonitorInfo_lib
 };
 
-oyMonitorDeviceHooks_s * qarzMonitorHooks = &qarzMonitorHooks_;
+oyMonitorHooks_s * qarzMonitorHooks = &qarzMonitorHooks_;

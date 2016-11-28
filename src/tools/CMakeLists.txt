@@ -33,4 +33,11 @@ ADD_EXECUTABLE( oyranos-icc "${CMAKE_CURRENT_SOURCE_DIR}/oyranos_convert.c" )
 TARGET_LINK_LIBRARIES( oyranos-icc ${PROJECT_NAME} ${EXTRA_LIBS} oyranos_forms_cmd_line-static )
 INSTALL (TARGETS oyranos-icc DESTINATION bin)
 
+# compatibility tools
+IF( ${PLATFORM} MATCHES Linux )
+#  ADD_EXECUTABLE( oyranos-compat-gnome "${CMAKE_CURRENT_SOURCE_DIR}/oyranos-compat-gnome.c" )
+#  TARGET_LINK_LIBRARIES( oyranos-compat-gnome dl )
+#  INSTALL (TARGETS oyranos-compat-gnome DESTINATION bin)
+ENDIF()
+
 ADD_SUBDIRECTORY (qcmsevents)

@@ -137,7 +137,7 @@ typedef enum {
   oyOBJECT_CMM_OBJECT_TYPE_S,         /**< oyCMMobjectType_s */
   oyOBJECT_CMM_API_FILTERS_S,         /**< oyCMMapiFilters_s */
   oyOBJECT_CMM_API_MAX,               /**< not defined */
-  oyOBJECT_ICON_S      = 80,          /*!< oyIcon_s */
+  oyOBJECT_ICON_S            = 80,    /*!< oyIcon_s */
   oyOBJECT_MODULE_S,                  /*!< oyModule_s */
   oyOBJECT_EXTERNFUNC_S,              /*!< oyExternFunc_s */
   oyOBJECT_NAME_S,                    /*!< oyName_s */
@@ -157,6 +157,7 @@ typedef enum {
   oyOBJECT_LIST_S,                    /**< oyList_s */
   oyOBJECT_LIS_S,                     /**< oyLis_s dummy */
   oyOBJECT_JOB_S,                     /**< oyJob_s dummy */
+  oyOBJECT_MONITOR_HOOKS_S   = 120,   /**< oyMonitorHooks_s */
   oyOBJECT_MAX
 } oyOBJECT_e;
 #endif

@@ -9,6 +9,8 @@ INSTALL( PROGRAMS "${CMAKE_CURRENT_SOURCE_DIR}/oyranos-profile-install" DESTINAT
 INSTALL( PROGRAMS "${CMAKE_CURRENT_SOURCE_DIR}/oyranos-monitor-daemon" DESTINATION bin )
 INSTALL( FILES oyranos-profile-install.desktop DESTINATION share/applications)
 INSTALL( FILES icons/oyranos_logo.png DESTINATION share/pixmaps )
+# KDE has problems rendering SVG blur
+#INSTALL( FILES icons/oyranos_logo.svg DESTINATION share/icons/hicolor/scalable/apps )
 INSTALL( FILES icons/lcms_logo2.png DESTINATION share/pixmaps )
 
 # needs to go to the autostart directory - hack hack hack

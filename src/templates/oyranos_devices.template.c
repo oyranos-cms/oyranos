@@ -675,7 +675,7 @@ OYAPI int  OYEXPORT
         
         STRING_ADD( text, oyStrrchr_( oyOption_GetRegistration(o),
                           OY_SLASH_C ) + 1 );
-        STRING_ADD( text, ":\n" );
+        STRING_ADD( text, ":" );
         t = oyOption_GetValueText(o,oyAllocateFunc_);
         if(t)
         {
