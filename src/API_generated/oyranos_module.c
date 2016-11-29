@@ -1945,6 +1945,7 @@ oyPointer_s * oyPointer_LookUpFromText( const char        * text,
 
 /** 
  *  @brief    Handle a request by a module
+ *  @memberof oyOptions_s
  *
  *  @param[in]     registration        the module selector
  *  @param[in]     options             options
