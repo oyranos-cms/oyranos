@@ -150,13 +150,22 @@ char *   oyX1Monitor_getProperty_    ( oyX1Monitor_s       * disp,
                                        const char        * prop_name,
                                        const char       ** prop_name_xrandr,
                                        size_t            * prop_size );
+int      oyX1Monitor_setProperty_    ( oyX1Monitor_s     * disp,
+                                       const char        * prop_name,
+                                       char              * prop,
+                                       size_t              prop_size );
 int      oyX1GetMonitorEdid          ( oyX1Monitor_s     * disp,
                                        char             ** edid,
                                        size_t            * edid_size,
                                        int                 refresh_edid );
+void  oyX1Monitor_setCompatibility   ( oyX1Monitor_s     * disp,
+                                       const char        * profile_name );
 int   oyX1Monitor_getScreenFromDisplayName_( oyX1Monitor_s   * disp );
-char**oyX1GetAllScreenNames_        (const char *display_name, int *n_scr );
-int   oyX1Monitor_getScreenGeometry_   ( oyX1Monitor_s       * disp );
+char** oyX1GetAllScreenNames_        ( const char        * display_name,
+                                       int               * n_scr );
+int    oyX1Monitor_getScreenGeometry_( oyX1Monitor_s     * disp );
+char * oyX1ChangeScreenName_         ( const char        * display_name,
+                                       int                 screen );
 
 #ifdef __cplusplus
 } /* extern "C" */

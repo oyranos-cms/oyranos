@@ -21,6 +21,7 @@
 #include <limits.h>
 #include <unistd.h>  /* intptr_t */
 #include <locale.h>
+#include <errno.h>
 
 #include "oyranos_config_internal.h"
 
@@ -39,12 +40,14 @@
 #include <X11/extensions/Xfixes.h>
 
 #include "oyranos.h"
+#include "oyranos_devices.h"
 #include "oyranos_cmm.h"
 #include "oyranos_internal.h"
 #include "oyranos_io.h"
 #include "oyranos_monitor.h"
 #include "oyranos_monitor_internal_x11.h"
 #include "oyranos_monitor_internal.h"
+#include "oyranos_monitor_hooks_x11.h"
 #include "oyranos_debug.h"
 #include "oyranos_helper.h"
 #include "oyranos_sentinel.h"
@@ -63,9 +66,184 @@ int  oyMoveColorServerProfiles       ( const char        * display_name,
                                        int                 screen,
                                        int                 setup )
 {
+  char * screen_name = oyX1ChangeScreenName_( display_name, screen );
+  oyX1Monitor_s * disp = oyX1Monitor_newFrom_( screen_name, 1 );
+  char * dev_prof;
+  size_t dev_prof_size = 0;
+  /* select profiles matching actual capabilities */
+  int icc_profile_flags = oyICCProfileSelectionFlagsFromOptions( OY_CMM_STD, "//" OY_TYPE_STD "/icc_color", NULL, 0 );
+  oyConfigs_s * devices = NULL;
+  oyConfig_s * monitor = NULL;
+  oyOptions_s * options = NULL;
+  oyProfile_s * monitor_icc = NULL;
+  const char * monitor_icc_dscr = NULL;
+
+  if(!disp)
+    return -1;
+
+  // get all monitors
+  oyDevicesGet( NULL, "monitor", NULL, &devices );
+  // just pick the first monitor
+  monitor = oyConfigs_Get( devices, screen );
+  oyConfigs_Release( &devices );
+  /* get XCM_ICC_COLOUR_SERVER_TARGET_PROFILE_IN_X_BASE */
+  oyOptions_SetFromText( &options,
+              "//"OY_TYPE_STD"/config/icc_profile.x_color_region_target", "yes", OY_CREATE_NEW );
+  oyDeviceGetProfile( monitor, options, &monitor_icc );
+  oyConfig_Release( &monitor );
+  oyOptions_Release( &options );
+  dev_prof = oyProfile_GetMem( monitor_icc, &dev_prof_size, 0,0 );
+  // get the profiles internal name
+  monitor_icc_dscr = oyProfile_GetText( monitor_icc, oyNAME_DESCRIPTION );
+  //fprintf( stderr, "monitor[%s] has profile: \"%s\"\n", screen_name, monitor_icc_dscr );
+  _msg( oyMSG_DBG, (oyStruct_s*)options,
+        OY_DBG_FORMAT_ "monitor[%d] has profile: \"%s\"", OY_DBG_ARGS_,
+        screen, monitor_icc_dscr );
+
+  if(setup)
+  {
+    size_t size = 0;
+    oyProfile_s * screen_document_profile = oyProfile_FromStd( oyASSUMED_WEB,
+                                                        icc_profile_flags, 0 );
+
+    char * docp = oyProfile_GetMem( screen_document_profile, &size, 0, oyAllocateFunc_ );
+    oyProfile_Release( &screen_document_profile );
+
+    oyX1Monitor_setProperty_( disp, XCM_ICC_COLOUR_SERVER_TARGET_PROFILE_IN_X_BASE, dev_prof, dev_prof_size );
+    oyX1Monitor_setProperty_( disp, XCM_ICC_V0_3_TARGET_PROFILE_IN_X_BASE, docp, size );
+    oyFree_m_( docp );
+
+    oyX1Monitor_setCompatibility( disp, NULL );
+  }
+  else
+  {
+    const char * filename = oyProfile_GetFileName( monitor_icc, -1 );
+    oyX1Monitor_setProperty_( disp, XCM_ICC_COLOUR_SERVER_TARGET_PROFILE_IN_X_BASE, NULL, 0 );
+    oyX1Monitor_setProperty_( disp, XCM_ICC_V0_3_TARGET_PROFILE_IN_X_BASE, dev_prof, dev_prof_size );
+    if(filename)
+      oyX1Monitor_setCompatibility( disp, filename );
+  }
+
+  oyProfile_Release( &monitor_icc );
+  if(screen_name) free( screen_name );
   return 1;
 }
 
+/**
+ *  This function implements oyMOptions_Handle_f.
+ *
+ *  @version Oyranos: 0.9.6
+ *  @since   2016/11/28 (Oyranos: 0.9.6)
+ *  @date    2016/11/28
+ */
+int          oyX1MoveOptions_Handle  ( oyOptions_s       * options,
+                                       const char        * command,
+                                       oyOptions_s      ** result )
+{
+  if(oyFilterRegistrationMatch(command,"can_handle", 0))
+  {
+    if(oyFilterRegistrationMatch(command,"move_color_server_profiles", 0))
+    {
+    }
+    else
+      return 1;
+  }
+  else if(oyFilterRegistrationMatch(command,"move_color_server_profiles", 0))
+  {
+    const char * display_name = oyOptions_FindString( options, "display_name", 0 );
+    int screen = 0;
+    int setup = 0;
+    oyOptions_FindInt( options, "screen", 0, &screen );
+    oyOptions_FindInt( options, "setup", 0, &setup );
+    _msg( oyMSG_DBG, (oyStruct_s*)options,
+          OY_DBG_FORMAT_ "move_color_server_profiles: display_name: %s screen: %d setup: %d", OY_DBG_ARGS_,
+          display_name, screen, setup );
+    //fprintf(stderr, "display_name: %s screen: %d setup: %d\n", display_name, screen, setup );
+    oyMoveColorServerProfiles( display_name, screen, setup );
+  }
+
+  return 0;
+}
+
+/**
+ *  This function implements oyCMMinfoGetText_f.
+ *
+ *  @version Oyranos: 0.9.6
+ *  @since   2016/11/28 (Oyranos: 0.9.6)
+ *  @date    2016/11/28
+ */
+const char * oyX1InfoGetTextMyHandlerM(const char        * select,
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context )
+{
+         if(strcmp(select, "can_handle")==0)
+  {
+         if(type == oyNAME_NICK)
+      return "check";
+    else if(type == oyNAME_NAME)
+      return _("check");
+    else
+      return _("Check if this module can handle a certain command.");
+  } else if(strcmp(select, "move_color_server_profiles")==0)
+  {
+         if(type == oyNAME_NICK)
+      return "move_color_server_profiles";
+    else if(type == oyNAME_NAME)
+      return _("Set all X Color Management device profiles.");
+    else
+      return _("Handle naive and XCM aware CM apps device profiles.");
+  } else if(strcmp(select, "help")==0)
+  {
+         if(type == oyNAME_NICK)
+      return _("help");
+    else if(type == oyNAME_NAME)
+      return _("Help");
+    else
+      return _("The oyX1 modules \"move_color_server_profiles\" handler sets up "
+               "X Color Management device profile and screen document profile properties. "
+               "The handler should only be called by desktop XCM compatible color servers. "
+               "The handler expects a \"display_name\" option with a string containing "
+               "the X11 display name, a \"screen\" option containing the selected screen "
+               "as integer (Xlib/Xinerama/XRandR) and a \"setup\" integer option telling "
+               "with 0 no/revert setup and with 1 setup profiles. "
+               "The implementation uses Xlib.");
+  }
+  return 0;
+}
+const char *oyX1_texts_move_color_server_profiles[4] = {"can_handle","move_color_server_profiles","help",0};
+
+/** @instance oyX1_api10_move_color_server_profiles_handler
+ *  @brief    oyX1 oyCMMapi10_s implementation
+ *
+ *  X Color Management desktop device profile handler
+ *
+ *  @version Oyranos: 0.9.6
+ *  @since   2016/11/28 (Oyranos: 0.9.6)
+ *  @date    2016/11/28
+ */
+oyCMMapi10_s_    oyX1_api10_move_color_server_profiles_handler = {
+
+  oyOBJECT_CMM_API10_S,
+  0,0,0,
+  (oyCMMapi_s*) NULL,
+
+  CMMInit,
+  CMMMessageFuncSet,
+
+  OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
+  "move_color_server_profiles._" CMM_NICK,
+
+  {OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C},/**< version[3] */
+  CMM_API_VERSION,                     /**< int32_t module_api[3] */
+  0,   /* id_; keep empty */
+  0,   /* api5_; keep empty */
+  0,                         /**< oyPointer_s * runtime_context */
+ 
+  oyX1InfoGetTextMyHandlerM,             /**< getText */
+  (char**)oyX1_texts_move_color_server_profiles, /**<texts; list of arguments to getText*/
+ 
+  oyX1MoveOptions_Handle               /**< oyMOptions_Handle_f oyMOptions_Handle */
+};
 
 
 #if defined(XCM_HAVE_X11) && defined(HAVE_XCM)
@@ -222,7 +400,7 @@ oyCMMapi10_s_    oyX1_api10_send_native_update_event_handler = {
 
   oyOBJECT_CMM_API10_S,
   0,0,0,
-  (oyCMMapi_s*) NULL,
+  (oyCMMapi_s*) & oyX1_api10_move_color_server_profiles_handler,
 
   CMMInit,
   CMMMessageFuncSet,

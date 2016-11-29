@@ -86,8 +86,6 @@ int oyX1Monitor_rrScreen_     ( oyX1Monitor_s * disp ) { return disp->rr_screen;
 
 char* oyX1Monitor_getAtomName_         ( oyX1Monitor_s       * disp,
                                        const char        * base );
-char* oyChangeScreenName_            ( const char        * display_name,
-                                       int                 screen );
 const char *xrandr_edids[] = {"EDID","EDID_DATA",0};
 
 
@@ -193,6 +191,65 @@ char *   oyX1Monitor_getProperty_    ( oyX1Monitor_s     * disp,
   }
 
   return prop;
+}
+
+int      oyX1Monitor_setProperty_    ( oyX1Monitor_s     * disp,
+                                       const char        * prop_name,
+                                       char              * prop,
+                                       size_t              prop_size )
+{
+  Display *display = 0;
+  Window w = 0;
+  Atom atom = 0;
+  char *atom_name = 0;
+  int error = !disp;
+
+  if(!error)
+  {
+    display = oyX1Monitor_device_( disp );
+# if defined(HAVE_XRANDR)
+    if( oyX1Monitor_infoSource_( disp ) == oyX11INFO_SOURCE_XRANDR )
+    {
+      atom = XInternAtom( display, prop_name, True );
+
+      if(atom)
+      {
+        if( oyX1Monitor_infoSource_( disp ) == oyX11INFO_SOURCE_XRANDR )
+        {
+          XRRChangeOutputProperty( display, oyX1Monitor_xrrOutput_( disp ),
+			           atom, XA_CARDINAL, 8, PropModeReplace,
+			           (unsigned char *)prop, (int)prop_size );
+          fprintf( stderr,"XRRChangeOutputProperty[%s] = %lu\n", prop_name, prop_size);
+          if(prop_size == 0)
+          XRRDeleteOutputProperty( display, oyX1Monitor_xrrOutput_( disp ), atom );
+        }
+      }
+    }
+#else
+    if(oy_debug) fprintf( stderr,"!HAVE_XRANDR");
+# endif
+    atom = 0;
+
+    if( oyX1Monitor_infoSource_( disp ) == oyX11INFO_SOURCE_XINERAMA ||
+        oyX1Monitor_infoSource_( disp ) == oyX11INFO_SOURCE_SCREEN ||
+        oyX1Monitor_infoSource_( disp ) == oyX11INFO_SOURCE_XRANDR )
+    {
+      atom_name = oyX1Monitor_getAtomName_( disp, prop_name );
+      if(atom_name)
+        atom = XInternAtom(display, atom_name, True);
+      if(atom)
+        w = RootWindow( display, oyX1Monitor_deviceScreen_( disp ) );
+      if(w)
+        /* AnyPropertyType does not work for XCM_ICC_V0_3_TARGET_PROFILE_IN_X_BASE ---vvvvvvvvvv */
+        error = XChangeProperty( display, w, atom, XA_CARDINAL,
+                       8, PropModeReplace, (unsigned char*)prop, (int)prop_size );
+      fprintf( stderr,"XChangeProperty[%s] = %lu\n", atom_name, prop_size);
+      if(atom_name)
+        free( atom_name );
+    }
+  }
+
+  return error;
 }
 
 /*#define IGNORE_EDID 1*/
@@ -583,7 +640,7 @@ oyX1GetAllScreenNames_          (const char *display_name,
   if(!list) return NULL;
 
   for (i = 0; i < len; ++i)
-    if( (list[i] = oyChangeScreenName_( display_name, i )) == 0 )
+    if( (list[i] = oyX1ChangeScreenName_( display_name, i )) == 0 )
     {
       fprintf( stderr, "oyChangeScreenName_failed %s %d",
                noE(display_name), i );
@@ -674,6 +731,34 @@ char* oyX1Monitor_getAtomName_         ( oyX1Monitor_s       * disp,
   return atom_name;
 }
 
+void  oyX1Monitor_setCompatibility   ( oyX1Monitor_s     * disp,
+                                       const char        * profile_name )
+{
+  char * prop = 0;
+  size_t prop_size = 0;
+  int refresh_edid = 1;
+  char * command = malloc(4096);
+
+  oyX1GetMonitorEdid( disp, &prop, &prop_size, refresh_edid );
+
+  sprintf( command, "oyranos-compat-gnome %s -i -", profile_name?"-a":"-e" );
+  if(profile_name)
+    sprintf( &command[strlen(command)], " -p \"%s\"", profile_name );
+
+  fprintf( stderr, "%s\n", command );
+  if(prop && prop_size)
+  {
+    FILE * s = popen( command, "w" );
+
+    if(s)
+    {
+      fwrite( prop, sizeof(char), prop_size, s );
+
+      pclose(s); s = 0;
+    } else
+      fprintf( stderr, "fwrite(%s) : %s\n", command, strerror(errno));
+  }
+}
 
 int      oyX1MonitorProfileSetup     ( const char        * display_name,
                                        const char        * profile_name,
@@ -875,32 +960,7 @@ int      oyX1MonitorProfileSetup     ( const char        * display_name,
 
       free( atom_name );
 
-      {
-        char * prop = 0;
-        size_t prop_size = 0;
-        int refresh_edid = 1;
-        char * command = malloc(4096);
-
-        error = oyX1GetMonitorEdid( disp, &prop, &prop_size, refresh_edid );
-
-        sprintf( command, "oyranos-compat-gnome -a -i - -p \"%s\"", profile_name );
-
-        if(prop && prop_size)
-        {
-          FILE * s = popen( command, "w" );
-
-          if(s)
-          {
-            fwrite( prop, sizeof(char), prop_size, s );
-
-            pclose(s); s = 0;
-          } else
-            fprintf( stderr, "fwrite(%s) : %s\n", command, strerror(errno));
-        }
-
-        if(prop && prop_size) free(prop);
-        if(command) free(command);
-      }
+      oyX1Monitor_setCompatibility( disp, profile_name );
     }
 
     free( text );
@@ -971,7 +1031,7 @@ int      oyX1MonitorProfileUnset     ( const char        * display_name )
 #endif
         if(atom != None)
         {
-          /* need a existing profperty to remove; sorry for the noice */
+          /* need a existing property to remove; sorry for the noice */
           XRRChangeOutputProperty( display, oyX1Monitor_xrrOutput_( disp ),
 			           atom, XA_CARDINAL, 8, PropModeReplace,
 			           (unsigned char *)NULL, (int)0 );
@@ -1015,32 +1075,7 @@ int      oyX1MonitorProfileUnset     ( const char        * display_name )
         free( command );
       }
 
-      {
-        char * prop = 0;
-        size_t prop_size = 0;
-        int refresh_edid = 1;
-
-        command = malloc(256);
-        error = oyX1GetMonitorEdid( disp, &prop, &prop_size, refresh_edid );
-
-        sprintf( command, "oyranos-compat-gnome -e -i -" );
-
-        if(prop && prop_size)
-        {
-          FILE * s = popen( command, "w" );
-
-          if(s)
-          {
-            fwrite( prop, sizeof(char), prop_size, s );
-
-            pclose(s); s = 0;
-          } else
-            fprintf( stderr, "fwrite(%s) : %s\n", command, strerror(errno));
-        }
-
-        if(prop && prop_size) free(prop);
-        if(command) free(command);
-      }
+      oyX1Monitor_setCompatibility( disp, NULL );
 
       free( atom_name );
     goto finish;
@@ -1153,9 +1188,8 @@ oyExtractHostName_           (const char* display_name)
 /** @internal Do a full check and change the screen name,
  *  if the screen arg is appropriate. Dont care about the host part
  */
-char*
-oyChangeScreenName_                (const char* display_name,
-                                    int         screen)
+char * oyX1ChangeScreenName_         ( const char        * display_name,
+                                       int                 screen )
 {
   char* host_name = malloc(strlen( display_name ) + 48);
 
@@ -1342,7 +1376,7 @@ oyX1Monitor_s* oyX1Monitor_newFrom_      ( const char        * display_name,
 
   /* switch to Xinerama mode */
   if( !disp->display ) {
-    char *text = oyChangeScreenName_( disp->name, 0 );
+    char *text = oyX1ChangeScreenName_( disp->name, 0 );
     if(!text) return 0;
 
     disp->display = XOpenDisplay( text );
