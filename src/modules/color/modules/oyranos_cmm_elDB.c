@@ -295,8 +295,8 @@ int      oyDB_GetChildren            ( oyDB_s            * db )
     ksDel( list_sys );
   }
 
-  oyFree_m_( list_name_user )
-  oyFree_m_( list_name_sys )
+  if(list_name_user) oyFree_m_( list_name_user )
+  if(list_name_sys) oyFree_m_( list_name_sys )
 
   DBG_PROG_ENDE
   return rc;
