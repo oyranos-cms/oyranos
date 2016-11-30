@@ -745,7 +745,8 @@ void  oyX1Monitor_setCompatibility   ( oyX1Monitor_s     * disp,
   if(profile_name)
     sprintf( &command[strlen(command)], " -p \"%s\"", profile_name );
 
-  fprintf( stderr, "%s\n", command );
+  if(oy_debug)
+    fprintf( stderr, "%s\n", command );
   if(prop && prop_size)
   {
     FILE * s = popen( command, "w" );

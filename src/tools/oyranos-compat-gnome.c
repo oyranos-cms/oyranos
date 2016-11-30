@@ -212,7 +212,7 @@ int main(int argc, char **argv_)
                    error = 1; \
                  } \
                  report = 1; \
-                 fprintf( stderr, "dlsym failed: %s\n", \
+                 if(verbose) fprintf( stderr, "dlsym failed: %s\n", \
                                        dlerror() ); \
                }
     char * type = argv[1],
@@ -225,7 +225,7 @@ int main(int argc, char **argv_)
     LOAD_FUNC( cd_edid_remove_profile, 0 )
     LOAD_FUNC( cd_edid_get_profile, 0 )
 
-    if(report)
+    if(report && verbose)
       fprintf(stderr, "can not load symbols from libcolordcompat.so\n");
 
     if(strcmp(edid_fn,"-") == 0)
@@ -267,7 +267,8 @@ int main(int argc, char **argv_)
       do {
         profile_fn = NULL;
         error = lcd_edid_get_profile( edid, size, &profile_fn );
-        fprintf( stdout, "profile to erase: %s\n", profile_fn );
+        if(verbose)
+          fprintf( stdout, "profile to erase: %s\n", profile_fn );
         if(profile_fn)
           error = lcd_edid_remove_profile( edid, size, profile_fn );
       } while (profile_fn);
@@ -277,11 +278,13 @@ int main(int argc, char **argv_)
     if(strcmp( type, "-l" ) == 0 && argc == 4)
     {
       error = lcd_edid_get_profile( edid, size, &profile_fn );
-      fprintf( stdout, "%s", profile_fn );
+      if(verbose)
+        fprintf( stdout, "%s", profile_fn );
       if(!error)
         return 0;
     } 
-    fprintf( stderr, "type: %s EDID_FILENAME: %s ICC_FILENAME: %s status: %s\n", type, edid_fn, profile_fn, getUcmmError(error));
+    if(verbose)
+      fprintf( stderr, "type: %s EDID_FILENAME: %s ICC_FILENAME: %s status: %s\n", type, edid_fn, profile_fn, getUcmmError(error));
   }
 
   if(verbose)
