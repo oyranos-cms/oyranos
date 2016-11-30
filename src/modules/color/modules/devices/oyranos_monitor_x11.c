@@ -741,7 +741,7 @@ void  oyX1Monitor_setCompatibility   ( oyX1Monitor_s     * disp,
 
   oyX1GetMonitorEdid( disp, &prop, &prop_size, refresh_edid );
 
-  sprintf( command, "oyranos-compat-gnome %s -i -", profile_name?"-a":"-e" );
+  sprintf( command, "oyranos-compat-gnome -q %s -i -", profile_name?"-a":"-e" );
   if(profile_name)
     sprintf( &command[strlen(command)], " -p \"%s\"", profile_name );
 
