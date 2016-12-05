@@ -197,6 +197,7 @@ typedef enum {
   oyOBJECT_LIST_S,                    /**< oyList_s */
   oyOBJECT_LIS_S,                     /**< oyLis_s dummy */
   oyOBJECT_JOB_S,                     /**< oyJob_s dummy */
+  oyOBJECT_DB_API_S,                  /**< oyDbAPI_s */
   oyOBJECT_MONITOR_HOOKS_S   = 120,   /**< oyMonitorHooks_s */
   oyOBJECT_MAX
 } oyOBJECT_e;
