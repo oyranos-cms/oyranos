@@ -254,7 +254,7 @@ int      oyraFilter_ImageScaleRun    ( oyFilterPlug_s    * requestor_plug,
                      issue?" found issue(s): too":"",
                      issue & 1 ? " wide":"",
                      issue & 2 ? " heigh":"" );
-          if(a) free(a); if(b) free(b); if(c) free(c);
+          if(a) {free(a);} if(b) {free(b);} if(c) {free(c);}
         }
 
         /* do the scaling while copying the channels */

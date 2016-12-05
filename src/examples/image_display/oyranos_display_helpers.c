@@ -438,7 +438,7 @@ oyProfile_s * getEditingProfile      ( )
                 * result = 0;
 
     oyOptions_MoveIn( opts, &matrix, -1 );
-    oyOptions_Handle( "//"OY_TYPE_STD"/create_profile.icc",
+    oyOptions_Handle( "//" OY_TYPE_STD "/create_profile.icc",
                                 opts,"create_profile.icc_profile.color_matrix",
                                 &result );
 

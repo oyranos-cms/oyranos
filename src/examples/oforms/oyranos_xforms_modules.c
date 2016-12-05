@@ -357,7 +357,7 @@ int main (int argc, char ** argv)
       }
       free(namespaces);
     }
-    if(ui_text) free(ui_text); ui_text = 0;
+    if(ui_text){ free(ui_text); ui_text = 0; }
 
   } else if(list)
   {
@@ -400,7 +400,7 @@ int main (int argc, char ** argv)
     printf("%s\n", oyNoEmptyString_m_(text));
 
 
-  if(text) free(text); text = 0;
+  if(text){ free(text); text = 0; }
 
   oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
 

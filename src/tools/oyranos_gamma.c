@@ -182,7 +182,7 @@ int main( int argc , char** argv )
                         { OY_PARSE_STRING_ARG2(prof_name, "profile"); break; }
                         else if(OY_IS_ARG("display"))
                         { const char * t=0; OY_PARSE_STRING_ARG2(t, "display");
-                          if(t) display_name = strdup(t); break; }
+                          if(t) {display_name = strdup(t);} break; }
                         else if(OY_IS_ARG("modules"))
                         { list_modules = 1; i=100; break; }
                         else if(OY_IS_ARG("module"))
@@ -196,7 +196,7 @@ int main( int argc , char** argv )
                         else if(OY_IS_ARG("short"))
                         { simple = 1; i=100; break;}
                         else if(OY_IS_ARG("verbose"))
-                        { if(verbose) oy_debug += 1; verbose = 1; i=100; break;}
+                        { if(verbose) {oy_debug += 1;} verbose = 1; i=100; break;}
                         else if(OY_IS_ARG("system-wide"))
                         { scope = oySCOPE_SYSTEM; i=100; break; }
                         }
@@ -624,7 +624,7 @@ int main( int argc , char** argv )
           else
             printf( "Could not write %d bytes to %s\n",
                     (int)size, out_name?out_name:format);
-          if(out_name) oyDeAllocFunc(out_name); out_name = 0;
+          if(out_name){ oyDeAllocFunc(out_name); out_name = 0; }
 
           oyProfile_Release( &prof );
           oyOption_Release( &o );

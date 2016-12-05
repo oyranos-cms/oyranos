@@ -1057,7 +1057,7 @@ int main(int argc, char *argv[])
 
     /* query the full device information from DB */
     error = oyDeviceProfileFromDB( c, &profile_name, oyAllocFunc );
-    if(profile_name) oyDeAllocFunc( profile_name ); profile_name = 0;
+    if(profile_name) { oyDeAllocFunc( profile_name ); profile_name = 0; }
 
     if(strcmp(format,"openicc") == 0 ||
        strcmp(format,"openicc+rank-map") == 0 ||
@@ -1152,7 +1152,7 @@ int main(int argc, char *argv[])
             oyDeAllocFunc( json ); json = 0;
             oyjl_tree_to_json( rank_map, &level, &json );
             rank_map = oyjl_tree_parse( json, 0,0 );
-            if(json) free(json); json = 0;
+            if(json){ free(json); json = 0; }
 
             keys = openicc->u.object.keys;
             values = openicc->u.object.values;
@@ -1291,7 +1291,7 @@ int main(int argc, char *argv[])
       fprintf( stderr, "  written %d bytes to %s\n", (int)size,
                out_name ? out_name : "stdout" );
 
-    if(out_name) oyDeAllocFunc(out_name); out_name = 0;
+    if(out_name){ oyDeAllocFunc(out_name); out_name = 0; }
     oyConfDomain_Release( &d );
 
     oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );

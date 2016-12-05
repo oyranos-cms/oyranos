@@ -249,7 +249,7 @@ int      oyraFilter_ImageChannelRun  ( oyFilterPlug_s    * requestor_plug,
 
         /* copy the channels */
 #if defined(USE_OPENMP)
-#pragma omp parallel for private(x,pos,u8421,flt)
+#pragma omp parallel for private(x,pos,u8421,flt,u4)
 #endif
         for(y = start_y; y < h; ++y)
         {
@@ -258,6 +258,7 @@ int      oyraFilter_ImageChannelRun  ( oyFilterPlug_s    * requestor_plug,
             union u8421 { uint32_t u4; uint16_t u2; uint8_t u1; float f; double d; };
             union u8421 cache[max_channels];
             float flt;
+            uint32_t u4;
             
             /* fill the intermediate pixel cache;
              * It is not known which channels are needed and in which order.
@@ -279,7 +280,8 @@ int      oyraFilter_ImageChannelRun  ( oyFilterPlug_s    * requestor_plug,
                 break;
               case oyHALF:
                 flt = channel[i] * max_value;
-                cache[i].u2 = (channel_pos[i] == -1) ? OY_FLOAT2HALF(flt) : *((uint16_t*)&array_out_data[y][x*channels_dst*bps_out + pos*bps_out]);
+                memcpy( &u4, &flt, 4 );
+                cache[i].u2 = (channel_pos[i] == -1) ? OY_FLOAT2HALF(u4) : *((uint16_t*)&array_out_data[y][x*channels_dst*bps_out + pos*bps_out]);
                 break;
               case oyFLOAT:
                 cache[i].f = (channel_pos[i] == -1) ? channel[i] * max_value : *((float*)&array_out_data[y][x*channels_dst*bps_out + pos*bps_out]);
