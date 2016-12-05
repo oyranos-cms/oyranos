@@ -75,7 +75,7 @@ struct XcmeContext_s_ {
   Window * Windows;
   Window w;
   pid_t old_pid;
-  Atom aProfile, aOutputs, aCM, aRegion, aDesktop, aAdvanced;
+  Atom aProfile, aOutputs, aCM, aRegion, aDesktop, aAdvanced, aNetDesktopGeometry;
 };
 
 static inline XcolorProfile *
@@ -669,6 +669,7 @@ int      XcmeContext_Setup2          ( XcmeContext_s     * c,
   c->aRegion = XInternAtom( c->display, XCM_COLOR_REGIONS, False );
   c->aDesktop = XInternAtom( c->display, XCM_COLOR_DESKTOP, False );
   c->aAdvanced = XInternAtom(c->display, XCM_COLOUR_DESKTOP_ADVANCED,False);
+  c->aNetDesktopGeometry = XInternAtom( c->display, "_NET_DESKTOP_GEOMETRY", False );
 
   if(!has_display)
   {
@@ -1012,6 +1013,7 @@ int      XcmeContext_InLoop          ( XcmeContext_s    * c,
            event->xproperty.atom == c->aCM ||
            event->xproperty.atom == c->aRegion ||
            event->xproperty.atom == c->aDesktop ||
+           event->xproperty.atom == c->aNetDesktopGeometry ||
            strstr( actual_name, XCM_ICC_COLOUR_SERVER_TARGET_PROFILE_IN_X_BASE) != 0 ||
            strstr( actual_name, XCM_ICC_V0_3_TARGET_PROFILE_IN_X_BASE) != 0 ||
            strstr( actual_name, "EDID") != 0)
@@ -1131,6 +1133,13 @@ int      XcmeContext_InLoop          ( XcmeContext_s    * c,
           DE( "PropertyNotify : %s   %s   %s",
                actual_name,
                data, XcmePrintWindowName( display, event->xany.window ) );
+        } else if( event->xproperty.atom == c->aNetDesktopGeometry )
+        {
+          unsigned long * geo = (unsigned long*) data;
+          DE( "PropertyNotify : %s   %lux%lu  %s",
+               actual_name,
+               geo[0], geo[1],
+               XcmePrintWindowName( display, event->xany.window ) );
         }
 
         if(data) XFree(data);
