@@ -102,8 +102,15 @@ int      oySetProfile_               ( const char        * name,
 }
 
 /* public API implementation */
-
+static const oyDbAPI_s * oy_db_handling_api = NULL;
 static int oy_db_handling_ready_ = 0;
+
+/* private helper */
+
+oyDB_s * oyDB_newFromInit            ( const char        * top_key_name,
+                                       oySCOPE_e           scope,
+                                       oyAlloc_f           allocFunc,
+                                       oyDeAlloc_f         deAllocFunc );
 
 /**
  *  @brief tell if DB handling is ready
@@ -131,9 +138,10 @@ int                oyDbHandlingReady ( void )
  */
 int                oyDbHandlingSet   ( const oyDbAPI_s   * db_api )
 {
+  int error = 0;
   if(oy_db_handling_ready_)
   {
-    WARNc1_S( "%s", _("DB handling is already set") );
+    WARNc2_S( "%s: %s", _("DB handling is already set"), oy_db_handling_api->nick );
     return 1;
   } else
   {
@@ -148,16 +156,18 @@ int                oyDbHandlingSet   ( const oyDbAPI_s   * db_api )
                  oyDBEraseKey = db_api->eraseKey;
 
     oy_db_handling_ready_ = 1;
-    return 0;
+    oy_db_handling_api = db_api;
+
+    if(oyDB_newFrom == oyDB_newFromInit)
+    {
+      error = 1;
+      WARNc2_S( "%s %s", _("DB handling failed"), db_api->nick );
+    }
+
+    return error;
   }
 }
 
-/* private helper */
-
-oyDB_s * oyDB_newFromInit            ( const char        * top_key_name,
-                                       oySCOPE_e           scope,
-                                       oyAlloc_f           allocFunc,
-                                       oyDeAlloc_f         deAllocFunc );
 /* First try Elektra then any other "db_handler".  */
 int                oyDbInitialise_  ( void )
 {
@@ -171,7 +181,7 @@ int                oyDbInitialise_  ( void )
   if(error || oyDB_newFrom == oyDB_newFromInit)
   {
     oyMessageFunc_p( oyMSG_DBG, NULL, OY_DBG_FORMAT_
-                     " can't initialise Elektra \"db_handler\"",OY_DBG_ARGS_);
+                     " can't initialise Elektra \"db_handler\" e:%d",OY_DBG_ARGS_, error);
 
     error = oyOptions_Handle( "//"OY_TYPE_STD"/db_handler",
                               opts,"db_handler",
@@ -179,7 +189,7 @@ int                oyDbInitialise_  ( void )
     if(error || oyDB_newFrom == oyDB_newFromInit)
     {
       oyMessageFunc_p( oyMSG_WARN, NULL, OY_DBG_FORMAT_
-                       " can't properly call \"db_handler\"",OY_DBG_ARGS_);
+                       " can't properly call \"db_handler\" e:%d",OY_DBG_ARGS_, error);
       if(oyDB_newFrom == oyDB_newFromInit)
         error = 1;
     }
@@ -192,7 +202,7 @@ int                oyDbHandlingInit  ( void )
 {
   if(oy_db_handling_ready_)
   {
-    WARNc1_S( "%s", _("DB handling is already set") );
+    WARNc2_S( "%s: %s", _("DB handling is already set"), oy_db_handling_api->nick );
     return 1;
   } else
   {

@@ -69,6 +69,7 @@
  *  @{
  */
 
+static const char * oy_thread_api_nick = "dumy";
 
 /**
  *  @brief   Initialise the oyJob_s APIs
@@ -85,12 +86,14 @@
 void               oyJobHandlingSet  ( oyJob_Add_f         jadd,
                                        oyJob_Get_f         jget,
                                        oyMsg_Add_f         madd,
-                                       oyJobResult_f       result )
+                                       oyJobResult_f       result,
+                                       const char        * nick )
 {
   oyJob_Add = jadd;
   oyJob_Get = jget;
   oyMsg_Add = madd;
   oyJobResult = result;
+  oy_thread_api_nick = nick;
 }
 
 int                oyJob_AddInit     ( oyJob_s          ** job,

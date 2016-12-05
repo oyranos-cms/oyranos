@@ -36,7 +36,7 @@ oyCMMapi10_s    elDB_api10_cmm;
 
 #define CMM_NICK "elDB"
 
-#define CMM_VERSION {0,1,0}
+#define CMM_VERSION {0,6,0}
 
 
 /* declarations */
@@ -795,6 +795,11 @@ int            elDBMessageFuncSet ( oyMessage_f         message_func )
 }
 
 oyDbAPI_s elDBopeniccDbAPI = {
+  oyOBJECT_DB_API_S,               /**< type set to oyOBJECT_DB_API_S for ABI compatibility with the actual used header version */
+  CMM_NICK,                        /**< four byte nick name of module + terminating zero */
+  CMM_VERSION,                     /**< set to module version; Major, Minor, Micro */
+  {KDB_VERSION_MAJOR, KDB_VERSION_MINOR, KDB_VERSION_MICRO}, /**< lib_version */
+
   /* newFrom */ elDB_newFrom,
   /* release */ elDB_release,
   /* getString */ elDB_getString,
@@ -828,7 +833,7 @@ int          elDBMOptions_Handle     ( oyOptions_s       * options,
   else if(oyFilterRegistrationMatch(command,"db_handler", 0))
   {
     error = oyDbHandlingSet( &elDBopeniccDbAPI );
-    elDB_msg( error?oyMSG_WARN:oyMSG_DBG, 0, "called %s()::db_handler", __func__ );
+    elDB_msg( error?oyMSG_WARN:oyMSG_DBG, 0, "called %s()::db_handler e:%d", __func__, error );
   }
 
   return 0;

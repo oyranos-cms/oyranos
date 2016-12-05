@@ -87,6 +87,18 @@ typedef  char*  (* oyDBSearchEmptyKeyname_f) (
 typedef  int    (* oyDBEraseKey_f)   ( const char        * key_name,
                                        oySCOPE_e           scope );
 typedef struct {
+  uint32_t         type;               /**< set to oyOBJECT_DB_API_S for ABI compatibility with the actual used header version */
+  char             nick[8];            /**< four byte nick name of module + terminating zero */
+  /** 0: major - should be stable for the live time of a filter, \n
+      1: minor - mark new features, \n
+      2: patch version - correct errors */
+  int32_t          version[3];
+  /** the version of the used library during compile time
+      0: major - should be stable for the live time of a filter, \n
+      1: minor - mark new features, \n
+      2: patch version - correct errors */
+  int32_t          lib_version[3];
+
   oyDB_newFrom_f newFrom;
   oyDB_release_f release;
   oyDB_getString_f getString;

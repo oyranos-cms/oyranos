@@ -224,7 +224,7 @@ typedef int  (*oyGetMonitorInfo_f)   ( const char        * monitor_name,
  */
 typedef struct {
   int              type;               /**< set to 120 for ABI compatibility with the actual used header version */
-  char             nick[8];            /**< four byte nick name of module */
+  char             nick[8];            /**< four byte nick name of module + terminating zero */
   int              version;            /**< set to module version; Major * 10000 + Minor * 100 + Micro */
   const char *     help_system_specific; /**< System specific description for developers. E.g. how monitor_name's are build etc. */
   const char *     rank_map;           /**< optional JSON rank map */

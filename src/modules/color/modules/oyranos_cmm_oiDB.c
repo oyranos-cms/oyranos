@@ -44,7 +44,7 @@ oyCMMapi10_s    oiDB_api10_cmm;
 
 #define CMM_NICK "oiDB"
 
-#define CMM_VERSION {0,1,0}
+#define CMM_VERSION {0,6,0}
 
 
 /* declarations */
@@ -89,6 +89,7 @@ char *   oiOpeniccToOyranos          ( const char        * key_name,
 /* implementation */
 #include <openicc_config.h>
 #include <openicc_db.h>
+#include <openicc_version.h>
 
 /* our object type */
 struct oyDB_s {
@@ -247,7 +248,7 @@ int oiDBSetString                    ( const char        * key_name,
                                        const char        * comment)
 {
   char * oi = oiOyranosToOpenicc( key_name, 0 );
-  int error = openiccDBSetString( oi, scope, value, comment );
+  int error = openiccDBSetString( oi, (openiccSCOPE_e)scope, value, comment );
   if(oi) oyFree_m_(oi);
   return error;
 }
@@ -265,7 +266,7 @@ int      oiDBEraseKey                ( const char        * key_name,
                                        oySCOPE_e           scope )
 {
   char * oi = oiOyranosToOpenicc( key_name, 0 );
-  int error = openiccDBSetString( oi, scope, NULL, "delete" );
+  int error = openiccDBSetString( oi, (openiccSCOPE_e)scope, NULL, "delete" );
   if(oi) oyFree_m_(oi);
   return error;
 }
@@ -394,6 +395,11 @@ int            oiDBMessageFuncSet ( oyMessage_f         message_func )
 }
 
 oyDbAPI_s oiDBopeniccDbAPI = {
+  oyOBJECT_DB_API_S,               /**< type set to oyOBJECT_DB_API_S for ABI compatibility with the actual used header version */
+  CMM_NICK,                        /**< four byte nick name of module + terminating zero */
+  CMM_VERSION,                     /**< set to module version; Major, Minor, Micro */
+  {OPENICC_VERSION_A, OPENICC_VERSION_B, OPENICC_VERSION_C}, /**< lib_version */
+
   /* newFrom */ oiDB_newFrom,
   /* release */ oiDB_release,
   /* getString */ oiDB_getString,

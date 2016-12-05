@@ -555,7 +555,8 @@ int          trdsMOptions_Handle     ( oyOptions_s       * options,
     oyJobHandlingSet( oyJob_Add_,
                       oyJob_Get_,
                       oyMsg_Add_,
-                      oyJobResult_ );
+                      oyJobResult_,
+                      CMM_NICK );
     trds_msg( oyMSG_DBG, 0, "called %s()::threads_handler", __func__ );
   }
 

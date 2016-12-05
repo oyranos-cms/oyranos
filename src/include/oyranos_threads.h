@@ -81,7 +81,8 @@ extern oyJobResult_f oyJobResult;
 void              oyJobHandlingSet   ( oyJob_Add_f         jadd,
                                        oyJob_Get_f         jget,
                                        oyMsg_Add_f         madd,
-                                       oyJobResult_f       result );
+                                       oyJobResult_f       result,
+                                       const char        * nick );
 
 #ifdef __cplusplus
 } /* extern "C" */
