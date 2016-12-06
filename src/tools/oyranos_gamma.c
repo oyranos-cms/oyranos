@@ -915,6 +915,7 @@ int main( int argc , char** argv )
 }
 
 #ifdef XCM_HAVE_X11
+
 void cleanDisplay                    ( Display           * display,
                                        int                 n )
 {
@@ -932,7 +933,7 @@ void cleanDisplay                    ( Display           * display,
 
   atom_name = malloc( 1024 );
 
-  for(i = n; i < 20; ++i)
+  for(i = 0; i < 20; ++i)
   {
     sprintf( atom_name, "_ICC_PROFILE" );
     if(i)
@@ -973,13 +974,15 @@ int            getDeviceProfile      ( Display           * display,
   return error;
 }
 
+oyConfigs_s * old_devices = NULL;
+
 int updateOutputConfiguration( Display * display )
 {
   int error = 0,
-      i, n;
+      i, n, update = 0;
   oyOptions_s * options = 0;
   oyConfigs_s * devices = 0;
-  oyConfig_s * device = 0;
+  oyConfig_s * device = 0, * old_device = 0;
 
   fprintf( stderr,"%s:%d %s()\n", __FILE__, __LINE__, __func__);
 
@@ -994,12 +997,39 @@ int updateOutputConfiguration( Display * display )
   error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/device_rectangle",
                                  "true", OY_CREATE_NEW );
   if(error) WARNc2_S("%s %d", _("found issues"),error);
+  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/edid",
+                                 "refresh", OY_CREATE_NEW );
   error = oyDevicesGet( OY_TYPE_STD, "monitor", options, &devices );
   if(error) WARNc2_S("%s %d", _("found issues"),error);
   n = oyOptions_Count( options );
   oyOptions_Release( &options );
 
   n = oyConfigs_Count( devices );
+  /* find out if monitors have changed at all
+   * care only about EDID's and enumeration, no dimension */
+  if(n != oyConfigs_Count( old_devices ))
+    update = 1;
+  else
+  for(i = 0; i < n; ++i)
+  {
+    const char * edid, * old_edid;
+    device = oyConfigs_Get( devices, i );
+    old_device = oyConfigs_Get( old_devices, i );
+    edid = oyOptions_FindString( *oyConfig_GetOptions(device,"backend_core"),"EDID",0 );
+    old_edid = oyOptions_FindString( *oyConfig_GetOptions(old_device,"backend_core"),"EDID",0 );
+
+    if(edid && old_edid && strcmp(edid,old_edid)==0)
+      update = 0;
+    else
+      update = 1;
+
+    oyConfig_Release( &device );
+    oyConfig_Release( &old_device );
+    if(update) break;
+  }
+
+  if(!update)
+    goto clean_update;
 
   cleanDisplay( display, n );
 
@@ -1012,7 +1042,10 @@ int updateOutputConfiguration( Display * display )
 
     oyConfig_Release( &device );
   }
-  oyConfigs_Release( &devices );
+
+  clean_update:
+  oyConfigs_Release( &old_devices );
+  old_devices = devices;
 
   return 0;
 }
