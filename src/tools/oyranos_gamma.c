@@ -59,6 +59,7 @@ int            getDeviceProfile      ( Display           * display,
                                        int                 screen );
 void  cleanDisplay                   ( Display           * display,
                                        int                 n );
+void cleanDisplayXRR                 ( Display           * display );
 int  runDaemon                       ( const char        * display_name );
 #endif
 
@@ -915,6 +916,32 @@ int main( int argc , char** argv )
 }
 
 #ifdef XCM_HAVE_X11
+#ifdef HAVE_XRANDR
+void cleanDisplayXRR                 ( Display           * display )
+{
+  int n = 0, i;
+  Window root = RootWindow( display, DefaultScreen( display ) );
+  XRRScreenResources * res = XRRGetScreenResources(display, root);
+  Atom atom = XInternAtom( display, "_ICC_PROFILE", True );
+
+  if(res)
+    n = res->noutput;
+  if(atom)
+  for(i = 0; i < n; ++i)
+  {
+    XRROutputInfo * output = XRRGetOutputInfo( display, res, res->outputs[i] );
+    if(!output) continue;
+
+    XRRChangeOutputProperty( display, res->outputs[i],
+                             atom, XA_CARDINAL, 8, PropModeReplace, NULL, 0 );
+    XRRDeleteOutputProperty( display, res->outputs[i], atom );
+    XRRFreeOutputInfo( output );
+  }
+
+  if(res)
+  { XRRFreeScreenResources(res); res = 0; }
+}
+#endif
 
 void cleanDisplay                    ( Display           * display,
                                        int                 n )
@@ -928,6 +955,10 @@ void cleanDisplay                    ( Display           * display,
     return;
 
   root = RootWindow( display, DefaultScreen( display ) );
+
+#ifdef HAVE_XRANDR
+  cleanDisplayXRR( display );
+#endif
 
   /* clean up to 20 displays */
 
