@@ -37,6 +37,9 @@
 # ifdef HAVE_XXF86VM
 #  include <X11/extensions/xf86vmode.h>
 # endif
+# ifdef HAVE_XRANDR
+#  include <X11/extensions/Xrandr.h>
+# endif
 #include <X11/extensions/Xfixes.h>
 
 #include "oyranos.h"
@@ -60,6 +63,187 @@
 
 extern oyMessage_f oyX1_msg;
 
+#ifdef HAVE_XRANDR
+void oyCleanDisplayXRR                 ( Display           * display )
+{
+  int n = 0, i;
+  Window root = RootWindow( display, DefaultScreen( display ) );
+  XRRScreenResources * res = XRRGetScreenResources(display, root);
+  Atom atom = XInternAtom( display, "_ICC_PROFILE", True );
+  Atom atom2 = XInternAtom( display, "_ICC_DEVICE_PROFILE", True );
+
+  if(res)
+    n = res->noutput;
+  if(atom)
+  for(i = 0; i < n; ++i)
+  {
+    XRROutputInfo * output = XRRGetOutputInfo( display, res, res->outputs[i] );
+    if(!output) continue;
+
+    XRRChangeOutputProperty( display, res->outputs[i],
+                             atom, XA_CARDINAL, 8, PropModeReplace, NULL, 0 );
+    XRRDeleteOutputProperty( display, res->outputs[i], atom );
+
+    XRRChangeOutputProperty( display, res->outputs[i],
+                             atom2, XA_CARDINAL, 8, PropModeReplace, NULL, 0 );
+    XRRDeleteOutputProperty( display, res->outputs[i], atom2 );
+    XRRFreeOutputInfo( output );
+  }
+
+  if(res)
+  { XRRFreeScreenResources(res); res = 0; }
+}
+#endif
+
+void oyCleanProfiles                 ( Display           * display )
+{
+  char * atom_name;
+  int i;
+  Atom atom;
+  Window root;
+
+  if(!display)
+    return;
+
+  root = RootWindow( display, DefaultScreen( display ) );
+
+#ifdef HAVE_XRANDR
+  oyCleanDisplayXRR( display );
+#endif
+
+  /* clean up to 20 displays */
+
+  atom_name = malloc( 1024 );
+
+  for(i = 0; i < 20; ++i)
+  {
+    sprintf( atom_name, "_ICC_PROFILE" );
+    if(i)
+      sprintf( &atom_name[strlen(atom_name)], "_%d", i );
+    atom = XInternAtom (display, atom_name, True);
+    if (atom != None)
+      XDeleteProperty( display, root, atom );
+  }
+
+  free(atom_name); atom_name = 0;
+}
+
+/**
+ *  This function implements oyMOptions_Handle_f.
+ *
+ *  @version Oyranos: 0.9.6
+ *  @since   2016/12/06 (Oyranos: 0.9.6)
+ *  @date    2016/12/06
+ */
+int          oyX1CleanOptions_Handle ( oyOptions_s       * options,
+                                       const char        * command,
+                                       oyOptions_s      ** result )
+{
+  int error = 0;
+  if(oyFilterRegistrationMatch(command,"can_handle", 0))
+  {
+    if(oyFilterRegistrationMatch(command,"clean_profiles", 0))
+    {
+    }
+    else
+      return 1;
+  }
+  else if(oyFilterRegistrationMatch(command,"clean_profiles", 0))
+  {
+    const char * display_name = oyOptions_FindString( options, "display_name", 0 );
+    Display * display = XOpenDisplay( display_name );
+    oyMSG_e mtype = !display ? oyMSG_ERROR:oyMSG_DBG;
+
+    error = !display;
+    _msg( mtype, (oyStruct_s*)options,
+          OY_DBG_FORMAT_ "clean_profiles: display_name: %s", OY_DBG_ARGS_,
+          display_name?display_name:"----" );
+    if(!error)
+    {
+      oyCleanProfiles( display );
+      XCloseDisplay( display );
+    }
+  }
+
+  return error;
+}
+
+/**
+ *  This function implements oyCMMinfoGetText_f.
+ *
+ *  @version Oyranos: 0.9.6
+ *  @since   2016/12/06 (Oyranos: 0.9.6)
+ *  @date    2016/12/06
+ */
+const char * oyX1InfoGetTextMyHandlerC(const char        * select,
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context )
+{
+         if(strcmp(select, "can_handle")==0)
+  {
+         if(type == oyNAME_NICK)
+      return "check";
+    else if(type == oyNAME_NAME)
+      return _("check");
+    else
+      return _("Check if this module can handle a certain command.");
+  } else if(strcmp(select, "clean_profiles")==0)
+  {
+         if(type == oyNAME_NICK)
+      return "clean_profiles";
+    else if(type == oyNAME_NAME)
+      return _("Remove all X Color Management profiles.");
+    else
+      return _("Remove naive and XCM aware CM apps profiles.");
+  } else if(strcmp(select, "help")==0)
+  {
+         if(type == oyNAME_NICK)
+      return _("help");
+    else if(type == oyNAME_NAME)
+      return _("Help");
+    else
+      return _("The oyX1 modules \"clean_profiles\" handler removes "
+               "X Color Management device profile and screen document profile properties. "
+               "The handler expects a \"display_name\" option with a string containing "
+               "the X11 display name. "
+               "The implementation uses Xlib and the XRandR extension.");
+  }
+  return 0;
+}
+const char *oyX1_texts_clean_profiles[4] = {"can_handle","clean_profiles","help",0};
+
+/** @instance oyX1_api10_clean_profiles_handler
+ *  @brief    oyX1 oyCMMapi10_s implementation
+ *
+ *  X Color Management desktop device profile handler
+ *
+ *  @version Oyranos: 0.9.6
+ *  @since   2016/12/06 (Oyranos: 0.9.6)
+ *  @date    2016/12/06
+ */
+oyCMMapi10_s_    oyX1_api10_clean_profiles_handler = {
+
+  oyOBJECT_CMM_API10_S,
+  0,0,0,
+  (oyCMMapi_s*) NULL,
+
+  CMMInit,
+  CMMMessageFuncSet,
+
+  OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
+  "clean_profiles._" CMM_NICK,
+
+  {OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C},/**< version[3] */
+  CMM_API_VERSION,                     /**< int32_t module_api[3] */
+  0,   /* id_; keep empty */
+  0,   /* api5_; keep empty */
+  0,                         /**< oyPointer_s * runtime_context */
+ 
+  oyX1InfoGetTextMyHandlerC,             /**< getText */
+  (char**)oyX1_texts_clean_profiles, /**<texts; list of arguments to getText*/
+ 
+  oyX1CleanOptions_Handle               /**< oyMOptions_Handle_f oyMOptions_Handle */
+};
 
 
 int  oyMoveColorServerProfiles       ( const char        * display_name,
@@ -225,7 +409,7 @@ oyCMMapi10_s_    oyX1_api10_move_color_server_profiles_handler = {
 
   oyOBJECT_CMM_API10_S,
   0,0,0,
-  (oyCMMapi_s*) NULL,
+  (oyCMMapi_s*) &oyX1_api10_clean_profiles_handler,
 
   CMMInit,
   CMMMessageFuncSet,
