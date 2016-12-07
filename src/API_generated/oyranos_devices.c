@@ -449,6 +449,7 @@ OYAPI int  OYEXPORT
                       oyNoEmptyString_m_(profile_name_temp) );
           }
         }
+        oyProfile_Release( &p );
       }
 
       if(!profile_name)
@@ -471,12 +472,18 @@ OYAPI int  OYEXPORT
     /* 3.1 send the query to a module */
     error = oyDeviceBackendCall( device, options );
 
+    o = oyConfig_Find( device, "icc_profile" );
+    p = (oyProfile_s*) oyOption_GetStruct( o, oyOBJECT_PROFILE_S );
+    oyOption_Release( &o );
+
     /* 3.2 check if the module has used that profile and complete do that if needed */
-    if(!oyConfig_Has( device, "icc_profile" ))
+    if(!p)
     {
       int has = 0;
 #define OY_DOMAIN OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD
-      o = oyOption_FromRegistration( OY_DOMAIN OY_SLASH "icc_profile", 0 );
+      o = oyConfig_Find( device, "icc_profile" );
+      if(!o)
+        o = oyOption_FromRegistration( OY_DOMAIN OY_SLASH "icc_profile", 0 );
 
       p = oyProfile_FromName( profile_name, icc_profile_flags, 0 );
 
@@ -802,6 +809,8 @@ OYAPI int  OYEXPORT
   int error = !device,
       l_error = 0;
   oyConfig_s * s = device;
+  oyProfile_s * p;
+  oyOption_s * o = NULL;
 
   oyCheckType__m( oyOBJECT_CONFIG_S, return 1 )
 
@@ -816,6 +825,18 @@ OYAPI int  OYEXPORT
                      "calling oyDeviceSetup()\n", OY_DBG_ARGS_ );
     error = oyDeviceSetup( device, options );
   }
+
+  /* The backend shows with the existence of the "icc_profile" response that it
+   * can handle device profiles through the driver. */
+  if(error <= 0)
+    o = oyConfig_Find( device, "icc_profile" );
+
+  p = (oyProfile_s*) oyOption_GetStruct( o, oyOBJECT_PROFILE_S );
+  if(oyProfile_GetSignature( p, oySIGNATURE_MAGIC ) == icMagicNumber)
+    *profile = p;
+  else if(!error)
+    error = -1;
+  p = 0;
 
   if(error <= 0) 
     l_error = oyDeviceAskProfile2( device, options, profile ); OY_ERR
