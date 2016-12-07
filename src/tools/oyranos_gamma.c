@@ -1015,8 +1015,6 @@ int updateOutputConfiguration( Display * display )
   oyConfigs_s * devices = 0;
   oyConfig_s * device = 0, * old_device = 0;
 
-  fprintf( stderr,"%s:%d %s()\n", __FILE__, __LINE__, __func__);
-
   /* allow Oyranos to see modifications made to the compiz Xlib context */
   XFlush( display );
 
