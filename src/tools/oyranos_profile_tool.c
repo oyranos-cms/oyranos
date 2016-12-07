@@ -564,7 +564,7 @@ int main( int argc , char** argv )
                 if(texts[j])
                 {
                   fprintf( stdout, "%s", texts[j] );
-                  if(texts_n != 1)
+                  if(!(tag_name && texts_n == 1))
                     fprintf( stdout, "\n" );
                 }
           } else
