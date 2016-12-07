@@ -489,7 +489,7 @@ OYAPI int  OYEXPORT
       /** Warn on not found profile. */
       {
         oyMessageFunc_p( oyMSG_ERROR,(oyStruct_s*)device,
-                       OY_DBG_FORMAT_"\n\t%s: \"%s\"\n\t%s\n", OY_DBG_ARGS_,
+                       OY_DBG_FORMAT_ "\n\t%s: \"%s\"\n\t%s\n", OY_DBG_ARGS_,
                 _("Could not open ICC profile"), profile_name,
                 _("install in the OpenIccDirectory icc path") );
       }
@@ -811,7 +811,11 @@ OYAPI int  OYEXPORT
   /** This function does a device setup in case no profile is delivered
    *  by the according module. */
   if(error != 0 && !*profile)
+  {
+    oyMessageFunc_p( oyMSG_DBG,(oyStruct_s*)device, OY_DBG_FORMAT_
+                     "calling oyDeviceSetup()\n", OY_DBG_ARGS_ );
     error = oyDeviceSetup( device, options );
+  }
 
   if(error <= 0) 
     l_error = oyDeviceAskProfile2( device, options, profile ); OY_ERR
