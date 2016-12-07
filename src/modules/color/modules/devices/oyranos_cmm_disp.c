@@ -765,6 +765,9 @@ int            Configs_Modify        ( oyConfigs_s       * devices,
             {
               oyOptions_s * opts = oyOptions_New(0),
                           * result = 0;
+              int32_t icc_profile_flags = 0;
+              oyOptions_FindInt( options, "icc_profile_flags", 0, &icc_profile_flags );
+              oyOptions_SetFromInt( &opts, "///icc_profile_flags", icc_profile_flags, 0, OY_CREATE_NEW );
               error = oyOptions_MoveIn( opts, &o_tmp, -1 );
               oyOptions_Handle( "//"OY_TYPE_STD"/create_profile.icc",
                                 opts,"create_profile.icc_profile.color_matrix",
