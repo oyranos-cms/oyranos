@@ -219,7 +219,7 @@ int      oyX1Monitor_setProperty_    ( oyX1Monitor_s     * disp,
           XRRChangeOutputProperty( display, oyX1Monitor_xrrOutput_( disp ),
 			           atom, XA_CARDINAL, 8, PropModeReplace,
 			           (unsigned char *)prop, (int)prop_size );
-          fprintf( stderr,"XRRChangeOutputProperty[%s] = %lu\n", prop_name, prop_size);
+          if(oy_debug) fprintf( stderr,"XRRChangeOutputProperty[%s] = %lu\n", prop_name, prop_size);
           if(prop_size == 0)
           XRRDeleteOutputProperty( display, oyX1Monitor_xrrOutput_( disp ), atom );
         }
@@ -243,7 +243,7 @@ int      oyX1Monitor_setProperty_    ( oyX1Monitor_s     * disp,
         /* AnyPropertyType does not work for XCM_ICC_V0_3_TARGET_PROFILE_IN_X_BASE ---vvvvvvvvvv */
         error = XChangeProperty( display, w, atom, XA_CARDINAL,
                        8, PropModeReplace, (unsigned char*)prop, (int)prop_size );
-      fprintf( stderr,"XChangeProperty[%s] = %lu\n", atom_name, prop_size);
+      if(oy_debug) fprintf( stderr,"XChangeProperty[%s] = %lu\n", atom_name, prop_size);
       if(atom_name)
         free( atom_name );
     }
