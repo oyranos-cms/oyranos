@@ -918,7 +918,7 @@ int            Configs_Modify        ( oyConfigs_s       * devices,
 # ifdef qarz
                      "ColorSync" : "Base",
 # else
-                     "no XCM_X11 device":"no XCM_X11",
+                     "XCM_X11 device" : "XCM_X11 target",
 # endif
 #endif
                      device_name );
