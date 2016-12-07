@@ -995,9 +995,9 @@ void           oyValueCopy           ( oyValue_u         * to,
  *  @param         pos                 position in list; -1 compare all
  *  return                             0 - not equal; 1 - equal
  *
- *  @version  Oyranos: 0.1.10
+ *  @version  Oyranos: 0.9.6
+ *  @date     2016/12/07
  *  @since    2010/04/11 (Oyranos: 0.1.10)
- *  @date     2010/04/11
  */
 int            oyValueEqual          ( oyValue_u         * a,
                                        oyValue_u         * b,
@@ -1100,6 +1100,8 @@ int            oyValueEqual          ( oyValue_u         * a,
           return 1;
         if(!a->oy_struct || !b->oy_struct)
           return 0;
+        if(a->oy_struct == b->oy_struct)
+          return 1;
         if(a->oy_struct->type_ == oyOBJECT_BLOB_S &&
            b->oy_struct->type_ == oyOBJECT_BLOB_S &&
            oyBlob_GetPointer((oyBlob_s*)(a->oy_struct)) == oyBlob_GetPointer((oyBlob_s*)(b->oy_struct)) )
