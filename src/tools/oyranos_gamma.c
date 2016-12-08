@@ -59,7 +59,6 @@ int            getDeviceProfile      ( Display           * display,
                                        int                 screen );
 void  cleanDisplay                   ( Display           * display,
                                        int                 n );
-void cleanDisplayXRR                 ( Display           * display );
 int  runDaemon                       ( const char        * display_name );
 #endif
 
@@ -916,65 +915,19 @@ int main( int argc , char** argv )
 }
 
 #ifdef XCM_HAVE_X11
-#ifdef HAVE_XRANDR
-void cleanDisplayXRR                 ( Display           * display )
-{
-  int n = 0, i;
-  Window root = RootWindow( display, DefaultScreen( display ) );
-  XRRScreenResources * res = XRRGetScreenResources(display, root);
-  Atom atom = XInternAtom( display, "_ICC_PROFILE", True );
-
-  if(res)
-    n = res->noutput;
-  if(atom)
-  for(i = 0; i < n; ++i)
-  {
-    XRROutputInfo * output = XRRGetOutputInfo( display, res, res->outputs[i] );
-    if(!output) continue;
-
-    XRRChangeOutputProperty( display, res->outputs[i],
-                             atom, XA_CARDINAL, 8, PropModeReplace, NULL, 0 );
-    XRRDeleteOutputProperty( display, res->outputs[i], atom );
-    XRRFreeOutputInfo( output );
-  }
-
-  if(res)
-  { XRRFreeScreenResources(res); res = 0; }
-}
-#endif
-
 void cleanDisplay                    ( Display           * display,
                                        int                 n )
 {
-  char * atom_name;
-  int i;
-  Atom atom;
-  Window root;
+  oyOptions_s * opts = 0,
+              * result = 0;
 
-  if(!display)
-    return;
+  const char * display_name = strdup(XDisplayString(display));
 
-  root = RootWindow( display, DefaultScreen( display ) );
-
-#ifdef HAVE_XRANDR
-  cleanDisplayXRR( display );
-#endif
-
-  /* clean up to 20 displays */
-
-  atom_name = malloc( 1024 );
-
-  for(i = 0; i < 20; ++i)
-  {
-    sprintf( atom_name, "_ICC_PROFILE" );
-    if(i)
-      sprintf( &atom_name[strlen(atom_name)], "_%d", i );
-    atom = XInternAtom (display, atom_name, True);
-    if (atom != None)
-      XDeleteProperty( display, root, atom );
-  }
-
-  free(atom_name); atom_name = 0;
+  oyOptions_SetFromText( &opts, "////display_name",
+                         display_name, OY_CREATE_NEW );
+  oyOptions_Handle( "//" OY_TYPE_STD "/clean_profiles",
+                                 opts,"clean_profiles",
+                                 &result );
 }
 
 int            getDeviceProfile      ( Display           * display,
