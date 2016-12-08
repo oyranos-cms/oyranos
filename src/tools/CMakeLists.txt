@@ -20,6 +20,11 @@ TARGET_LINK_LIBRARIES ( oyranos-monitor ${PROJECT_NAME} ${EXTRA_LIBS}
                ${XFIXES_LIBRARIES} ${X11_LIBRARIES} )
 INSTALL (TARGETS oyranos-monitor DESTINATION bin)
 
+# Device listing
+ADD_EXECUTABLE( oyranos-device "${CMAKE_CURRENT_SOURCE_DIR}/oyranos-device.c" )
+TARGET_LINK_LIBRARIES( oyranos-device ${PROJECT_NAME} ${EXTRA_LIBS} )
+INSTALL (TARGETS oyranos-device DESTINATION bin)
+
 # 2D grapher for ICC profiles
 IF( CAIRO_FOUND )
   ADD_EXECUTABLE( oyranos-profile-graph "${CMAKE_CURRENT_SOURCE_DIR}/oyranos_profile_graph.c" )

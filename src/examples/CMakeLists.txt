@@ -18,11 +18,6 @@ TARGET_LINK_LIBRARIES ( ${OY_MODULE_LIB} ${PROJECT_NAME} ${EXTRA_LIBS} )
 ADD_EXECUTABLE( oymd5icc oymd5icc.c )
 TARGET_LINK_LIBRARIES( oymd5icc ${PROJECT_NAME} ${EXTRA_LIBS} )
 
-# Device listing
-ADD_EXECUTABLE( oyranos-test-device "${CMAKE_CURRENT_SOURCE_DIR}/devices/test_device.c" )
-TARGET_LINK_LIBRARIES( oyranos-test-device ${PROJECT_NAME} ${EXTRA_LIBS} )
-#INSTALL (TARGETS oyranos-test-device DESTINATION bin)
-
 # CamerRaw file handling
 ADD_EXECUTABLE( oyranos-file "${CMAKE_CURRENT_SOURCE_DIR}/libraw/oyranos_file.cpp" )
 TARGET_LINK_LIBRARIES( oyranos-file ${PROJECT_NAME} ${EXTRA_LIBS} )
