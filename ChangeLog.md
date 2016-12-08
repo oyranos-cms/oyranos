@@ -1,5 +1,1272 @@
 #ChangeLog
 
+#Version 0.9.6
+
+###Andreas Sturmlechner (4):
+* [docu] Append version number to install path
+* Rename URI: bsd-license.php -> BSD-3-Clause
+* [build] Be able to force system-elektra and -yajl
+* [build] Use cmake-provided FindCups.cmake
+
+###Boris Samorodov (1):
+* [core]: fix clang (no OPENMP) error
+
+###Casian Andrei (1):
+* Fix a warning about invalid suffix on literal concerning C++11
+
+###Kai-Uwe Behrmann (1248):
+* [build]: do not install oy-device
+* [docu]: first draft of oy-device man page
+* [tool]: add oy-device tool from examples
+* [tool]: switch to "clean_profiles" hander in oy-monitor-daemon
+* [tool]: fix oy-profile -lv print out 2
+* [disp]: fix wrong version of fallback profile
+* [sources]: fix test2 "JSON" timeouts during device setup
+* [sources]: fix comparision of equal oyOption_s objects
+* [oyX1]: set new line for debug output
+* [tool]: remove debug printf in oy-monitor
+* [disp]: fix warning message text
+* [oyX1]: print outs only with oy_debug
+* [oyX1]: add "clean_profiles" options handler
+* [tool]: clean XRandR _ICC_PROFILE properties in oy-monitor-daemon
+* [tool]: fix double updates in oy-monitor-deamon
+* [core]: fix some compile warnings
+* [core]: add more info for thread and DB handlers
+* [sources]: add DB to object type enum
+* [tool]: simplify oyranos-monitor-daemon events handling
+* [core]: fix security warning
+* [build]: omit elektra copying
+* [build]: sync libXcm
+* [oyX1]: silence warning about missing gnome libs
+* [oyX1]: run oy-compat-gnome without help text
+* [build]: oy-compat-gnome
+* [elDB]: remove sys key list warning
+* [oyX1]: add move_color_server_profiles handler
+* [docu]: place oyOptions_Handle() into oyOptions_s group
+* [sources]: ping DB on oyDeviceSetup/-Unset
+* [tools]: add oy-compat-gnome helper tool
+* [oyX1]: use the oy-compat-gnome tool
+* [qarz]: fix OS X compilation for oyMonitorHooks_s changes
+* [docu]: finish the oyMonitorHooks_s description
+* [oyX1]: build oyMonitorHooks_s without any Oyranos deps
+* [tools]: disable non ready tool build
+* [disp]: more abstraction of monitor basic hooks
+* [test]: skip valgrind to allow for faster testing
+* [disp]: change the oyMonitorDeviceHooks_s declaration
+* [core]: register oyOBJECT_MONITOR_HOOKS_S
+* [conf]: explain why we do not install the SVG version of the logo
+* [tools]: add "Configure" menu item to qcmsevents
+* [docu]: switch logo to a more readable idea
+* [oyX1]: fix unset of empty property XRandR output
+* [sources]: set device keys and values on one line in oy-moniotr -lv
+* [docu]: switch logo to a more readable idea
+* [disp]: set XRandR per output profile for compatibility
+* [docu]: move hard internal dependencies to optional section
+* [conf]: skip libraries in lib path
+* [docu]: update png logo
+* [docu]: new oy logo
+* [dicu]: add links to CI and code coverage
+* [test]: relax fail status for display test on headless systems
+* [lcm2]: fix DL creation for v2020
+* [test]: fix coverage target
+* [conf]: clang fix
+* [conf]: move up -fPIC flag to affect all static libs
+* [conf]: fix clang detection
+* [lcm2]: report dlsym issue in any case
+* [conf]: add -fPIC fal to clang
+* [core]: check for arg in oyIsFileFull_()
+* [lcm2]: show version if a symbol was missed
+* [CI]: use single thread build
+* [build]: add proper XMU_LIBRARIES dependency variable
+* [docu]: hide travis as it was not yet ready
+* [conf]: check for Xmu
+* [CI]: use Debug build type
+* [test]: release objects from DL test
+* [lcm2]: place warning for failed transform to device link creation
+* [test]: readd valgrind to test-2
+* [CI]: run extra valgrind teest-2
+* [docu]: use online logo for github
+* [test]: use valgrind for test-2
+* [docu]: add logo to README
+* [docu]: add SVG logo
+* [teest]: run test-2 under valgrind
+* [build]: keep coverage info around
+* [test]: relax proofing effect
+* [CI]: set XDG_DATA_DIRS for travis
+* [CI]: fix relative paths
+* [CI]: add paths to make coverage
+* [CI]: add path variables to config
+* [test]: fix path variable
+* [test]: set XDG_DATA_DIRS correctly
+* [test]: make test-2 env relocatable
+* [test]: relax draw screen pixel to XFAIL
+* [CI]: remove libxcm-dev dep
+* [build]: add libXcm and new USE_SYSTEM_LIBXCM switch
+* [CI]: more deps
+* [CI]: first version
+* [docu]: add badges to README
+* [docu]: update function date
+* [exmpl]: show db + backend_core keys in oy-test-device -f openicc
+* [test]: check JSON output and validity
+* [sources]: support oyNAME_JSON in oyOptions_GetText()
+* [core]: add oyNAME_JSON for JSON output
+* [docu]: embedd oyOptions_FromJSON example in doxygen
+* [test]: oyOptions_FromJSON
+* [exmpl]: add tutorial_json_options.c
+* [sources]: add oyOptions_FromJSON()
+* [core]: move oyjl into oy_json.h / libOyranosObject
+* [disp]: add "EDID" key
+* [disp]: add "EDID_md5" key
+* [build]: fix debian packages
+* [build]: install qcmsevents-qt4 man page and icon
+* [tool]: add onw qt4 icon
+* [core]: remove kdb.h include
+* [oiDB]: do not install libOpenICC files
+* [build]: oiDB with internal libOpenICC fallback
+* [oiDB]: add libOpenICC as fallback
+* [oyjl]: add missed include
+* [core]: move all oyjl renamings into oy_db.h
+* [oyjl]: add more libOpenICC stuff for use in oiDB
+* [test]: remove Elektra symbols
+* [core]: export oyStringListReleasse()
+* [test]: fix DB tests for oiDB and elDB
+* [oiDB]: convert between Oyranos and OpenICC keys
+* [core]: add oyStringListReplaceBy()
+* [core]: fix crash in oyStruct_RegisterStaticMessageFunc()
+* [oiDB]: skip debug messages
+* [oiDB]: register OpenICC object infos and messaging
+* [core]: fix crash for non Oyranos object message
+* [oyjl]: fix macro name
+* [core]: move some string functions to oyjl
+* [core]: fix some compiler warnings
+* [oiDB]: use new implemented function
+* [templates]: sync with source edits
+* [core]: fix hooking in oiDB without elDB
+* [oiDB]: add warnings for wrong calling without object
+* [core]: hook in Elektra by elDB db_handler
+* [core]: add oyDbHandlingReady()
+* [conf]: remove in tree Elektra builds
+* [core]: remove old DB API from sentinel
+* [oiDB]: provide write dummies to not crash the DB API
+* [oiDB]: free DB object
+* [oiDB]: add a libOpenICC based DB handler
+* [conf]: detect libOpenICC
+* [core]: define some basic DB types
+* [core]: fix oyDB_newFrom API
+* [docu]: show examples in life doxy
+* [docu]: fix the inline example for oyDevicesFromTaxiDB
+* [docu]: show more examples in doxygen
+* [exmpl]: move tutorial from inline oyDevicesFromTaxiDB to separate file
+* [docu]: add more examples
+* [docu]: describe all of oyCONNECTOR_IMAGING_e
+* [docu]: set main section to reflec .md file
+* [code]: improve the life doc title
+* [docu]: improve life docu
+* [build]: relax requirements for make rpm
+* [docu]: include tutorial1.c from the main page
+* [exmpl]: add a tutorial as source file
+* [docu]: fix README for life doxy
+* [docu]: rename github link in doxy to Development
+* [docu]: add link to devel sources in doxy
+* [docu]: add link to live docu in README.md
+* [core]: fix leak in oyjl
+* [docu]: link to i18n dependency in README.md
+* [docu]: add links to docu and sources to README.md
+* [test]: check pixel positioning in Screen test
+* [i18n]: update Deutsch
+* [test]: add x position into image alpha channel
+* [oydi]: add debug message if no profile is substituted
+* [lcm2]: print early node info during Run()
+* [sources]: print early debug info oyImage_SetCritical()
+* [sources]: mention node in device link debug file name
+* [sources]: fix oyPixelAccess_SynchroniseROI() + oyPixelAccess_SetArray()
+* [oyra]: fix sub pixel access error in scale filter
+* [lcm2]: improve debug output
+* [sources]: set ticket focus in oyConversion_RunPixels()
+* [sources]: show ticket in oyConversion_RunPixels()
+* [sources]: add debug output for oyImage_ReadArray()
+* [exmpl]: silence some status messages from normal operation
+* [core]: show focus status of ticket array
+* [lcm2]: write array to PPM during debugging
+* [sources]: use oy_debug_write_id variable for PPM write
+* [core]: add internal oy_debug_write_id variable
+* [sources]: write debug PPM from oyImage_ReadArray()
+* [exmpl]: fix crash in oy-image-display while changing images
+* [sources]: write debug images from oyImage_FillArray()
+* [core]: fix scaling of wrong rectangle with OY_DEBUG
+* [oyra]: switch to pixel based rectangles in "scale" plugin
+* [sources]: fix release of non referenced object
+* [oydi]: use pixel based rectangles
+* [oyra]: switch to pixel based rectangle in "rectangles" filter
+* [sources]: switch to pixel rectangle print in oyArray2d_ReleaseArray_()
+* [sources]: detect sub pixel access in oyPixelAccess_s
+* [sources]: switch debug output to pixels oyImage_FillArray()
+* [core]: detect sub pixel access in oyFilterPlug_ImageRootRun()
+* [lcm2]: print rectangle dimensions in pixels
+* [sources]: change oyArray2d_Show() API
+* [templates]: fix Image info string
+* [sources]: simplify ROI/sample handling in oyPixelAccess_SetArrayFocus()
+* [sources]: add error messages for non plausible array sizes
+* [core]: add WARNcc7_S macro
+* [lcms]: fix fiddling with array sizes and ROI
+* [sources]: add oyPixelAccess_RoiToPixels() and inverse
+* [core]: set newly allocated string to '\000'
+* [templates]: shorten the customStaticMessage for oyArray2d_s
+* [templates]: implement customStaticMessage for oyImage_s
+* [sources]: use the default object allocator oyImage_New_()
+* [sources]: adapt ROI dimension in oyPixelAccess_SetArray()
+* [sources]: add oyArray2d_Show() debug helper
+* [sources]: remove non needed object in oyPixelAccess_ChangeRectangle()
+* [cmms]: fix image to array ratio in oyFilterPlug_ImageRootRun()
+* [test]: add "Image Rectangles" for the new Samples/Pixel/ROI APIs
+* [sourses]: add oyImage_SamplesToRoi() oyImage_Samples<->Pixel APIs
+* [sources]: split oyImage_FillArray() internally
+* [sources]: rename oyImage_PixelsToSamples to oyImage_RoiToSamples API
+* [test]: write complete screen images
+* [docu]: remove oyImage_PixelsToSamples() ambiguity
+* [test]: set screen output to screen width
+* [oydi]: clear more memory
+* [test]: add a first version of a multi monitor test
+* [build]: include multi monitor functions in test2
+* [oydi]: support "oy-test" device_name
+* [exmpl]: support oyDrawScreenImage(system_type="oy-test")
+* [exmpl]: add C++ guards for internal multi-monitor API
+* [exmpl]: special case pathless file names in oy-image-display
+* [core]: fix crash in oyExtractPathFromFileName_()
+* [test]: adapt to changed PixelAccess oyImage_FillArray behaviour
+* [cmms]: adapt to API changes and fix compilation
+* [core]: set array focus before filling from image
+* [sources]: implement the new/changed PixelAccess-Focus API
+* [sources]: API oyPixelAccess_SetArray() adds has_roi_focus parameter
+* [docu]: clearify the PixelAccess::output_roi relation
+* [sources]: add oyPixelAccess_s::output_array_is_focussed member
+* [sources]: API oyImage_FillArray() change to restore ROI
+* [sources]: return oyArray2d_SetFocus()=-1 for changed ROI
+* [conf]: allow for lower dependency builds
+* [conf]: hide some file types from git status
+* [sources]: fix multi monitor is broken for oy-image-display
+* [oyra]: improve debug output
+* [exmpl]: fix flickering in GL on OS X
+* [exmpl]: Fix check for valid GL context
+* [exmpl]: fix wrong variable asssert on OS X
+* [exmpl]: guard libintl.h include
+* [conf]: propagate HAVE_LIBINTL_H in private header
+* [conf]: use ELEKTRA_LDFLAGS for additional paths
+* [exmpl]: fix scaling of non X11 Oy_Fl_Window_Base
+* [tools]: omit return for oyX1 in oy-monitor on OS X
+* [build]: add rank-map to Oyranos.framework
+* [exmpl]: include correct GL headers on OS X
+* [conf]: fix rank-map paths
+* [exmpl]: sync GL definition with OS X
+* [conf]: bump month
+* [core]: fix compile error about double define of oyLeave_s
+* [sources]: fix double typedef of oyFilterNode_s_
+* [core]: omit redundant typedef
+* [conf]: fix debian desktop file install
+* [tools]: add oy-policy -cef options
+* [tools]: add oy-policy -l -e -f options
+* [tools]: add qcmsevents-qt4-applet.desktop
+* [source]: fix compiler warning
+* [docu]: fix bug report link
+* [oforms]: print a double point between label and help text
+* [oforms]: support xf:select1/xf:choices/xf:item/xf:help in cli
+* [lcm2]: limit to useful intents for device link
+* [exmpl]: use OY_XFORMS_RENDERER in oy-image-display
+* [lcms]: use flags for hash text
+* [sources]: cut off xf:model and xf:instance tags before parsing
+* [exmpl]: use OY_OFORMS_RENDERER environment var
+* [core]: fix crash in oy-profile tool
+* [docu]: add oyHash_s to user API inline docs
+* [tools]: reduce shown lines in qcmsevents log window
+* [core]: set temp file name order to first pid, time ...
+* [core]: improve oyGetTempFileName_()
+* [core]: add gettimeofday implementation for oyTime under windows
+* [core]: make oyTime() internally visible
+* [core]: add OY_GETPID macro
+* [exmpl]: forward dirty signal from DAG to FLTK in oy-image-display
+* [exampl]: add oyJob_s for potential asynchron expensive DL creation
+* [exmpl]: implement Oy_Fl_Image_Widget::markDirty()
+* [sources]: use one function to call oyCMMFilterNode_ContextToMem
+* [core]: translate macro to english
+* [tools]: fix uninitialised variable crash in qcmsevents
+* [tools]: fix oy-profile -lvn correct print
+* [tools]: add policy entries to qcmsevents menu
+* [core]: change oyJob_Add_f declaration
+* [sources]: implement oyOption_GetValueType()
+* [API]: change oyVALUE_e and add oyOption_GetValueType()
+* [core]: fix oyJob_XXX initialisers
+* [i18n]: update deutsch
+* [docu]: describe the trds module
+* [docu]: create a threads group and describe Jobs
+* [trds]: fix crashes with oyJob_s::cb_progress_context
+* [lcm2]: fix crashes with opening multiple proofing_effect profiles
+* [oicc]: fix warnings of freeing empty pointers
+* [core]: add default progress callback in oyJob_New()
+* [exmpl]: pass message context to oyMsg_s function
+* [exmpl]: use oyBlob_s for context pointer in oy-image-display
+* [core]: add oyJob_New/Release() APIs
+* [core]: register oyOBJECT_JOB_S type
+* [exmpl]: fix building of oy-image-display after threads changes
+* [trds]: use oyJobHandlingSet() just set the APIs
+* [build]: install oy_threads.h
+* [core]: provide dummies for oyJob_Add/Get and friends
+* [core]: export oyJob_s API
+* [docu]: improve context setup descriptions
+* [core]: sort threading API
+* [conf]: detect threads library
+* [trds]: add a default threads module
+* [conf]: set devel date
+* [docu]: link threads from main page
+* [docu]: improve Rectangle description
+* [lcm2]: fix compiling with LCMS_VERSION 2060 (2.6)
+* [docu]: fix flag list for oyProfile_GetMD5()
+* [lcm2]: fix gamut warn flag for "create_profile.proofing_effect"
+* [lcm2]: pass icc_profile_flags to lcmsSetProfileVersion()
+* [docu]: show version info prominently in html files
+* [templates]: fix wrong struct access in oyFilterNode_StaticMessageFunc_()
+* [lcm2]: fix effect_switch applying from oy-image-display
+* [core]: fix string size in oyObject_Show()
+* [templates]: track with OY_DEBUG_OBJECTS default >= 0
+* [sources]: show hash text for node context caching
+* [docu]: improve display of code examples in inline html
+* [cmms]: unref some unused objects
+* [test]: add OY_DEBUG_OBJECTS support to test2
+* [core]: fix crash for some OY_DEBUG_OBJECTS uses
+* [core]: fix warning about dealloc of null pointer
+* [templates]: revert _Copy macro
+* [sources]: fix usage of xxx_Copy macros
+* [templates]: show object during object_New()
+* [templates]: make static profile message independent
+* [sources]: fix compile warning
+* [sources]: fix object dereference in oyProfiles_Create()
+* [core]: show pure objects in oyObject_GetId()
+* [disp]: fix object dereference
+* [templates]: hook in more static message functions
+* [tools]: open graph window after tools exit
+* [core]: write correct dot file for zero objects
+* [core]: add flags to oyFinish_() to skip clean up tasks
+* [sources]: fix crash in object id list code for zero objects
+* [core]: color tree paths
+* [core]: initialise pointer array
+* [templates]: hook in more static message functions
+* [templates]: add default oyStruct_StaticMessageFunc_f
+* [core]: move oyNAME_e enum to oyranos_core.h
+* [sources]: ignore empty strings from objects static message func
+* [core]: use oyStruct_GetInfo from oyStruct_GetText()
+* [core]: emphasise object tree with color
+* [core]: use default deallocator in more string functions
+* [core]: speed up the dot object graph
+* [core]: add license stuff
+* [sources]: name the source of some oyStructList_s objects
+* [docu]: add more functions to oyStruct_s
+* [core]: increase static struct field to cover all profiles
+* [core]: fix memory leak, which killed tree view
+* [core]: add more struct types to tree view
+* [core]: show object tree as SVG in firefox
+* [build]: move config files into searchable path for test-2
+* [test]: add rank-map and settings files variable
+* [test]: show some essential environment variables
+* [test]: fix crash in test2
+* [test]: fix more test bugs
+* [test]: fix some crashes for non installed test-2 target
+* [exmpl]: print object trees on Ctrl-q in oy-image-display
+* [docu]: integrate new file into doxygen
+* [core]: export some debug APIs for the object tree
+* [docu]: add two functions to objects_generic group
+* [core]: compile fix
+* [templates]: replace _Copy member function by macro
+* [core]: add oyObjectDebugMessage_() debug helper
+* [core]: detect circular object references in tree parser
+* [core]: add some internal object tree stuff
+* [docu]: describe all oyValue_u members
+* [sources]: move tracking functions from públic sources to private
+* [i18n]: update deutsch
+* [exmpl]: reduce object reference leak
+* [cmms]: fix object reference leak by releasing more objects
+* [core]: relax object print outs without oy_debug
+* [core]: add internal OY_TRACE_xxx macros
+* [sources]: add the internal oyObjectIdListShowDiffAndRelease()
+* [core]: set oy_debug_objects to provided int if possible
+* [oyra]: avoid early non cleaned return in channel filter
+* [exmpl]: add F11 key for full screen triggering
+* [exmpl]: support full screen of oy-image-display
+* [oyra]: fix channel filter for float images
+* [sources]: fix debug variable crash
+* [exmpl]: persistently store scale factor and reload
+* [exmpl]: add expose shortcuts to oy-image-display
+* [oyra]: add expose filter
+* [oyra]: fix small mem leak in channel filter
+* [exmpl]: remove oyConversion_FromImageFileNameForDisplay()
+* [core]: fix compile error for wrong fprintf format
+* [docu]: code example for getting file name from a oyImage_s
+* [exmpl]: support double data tye in oy-image-display
+* [exmpl]: support '<' and '>' keys for next image in oy-image-display
+* [core]: add internal oyGetFiles_()
+* [core]: improve array object debug output
+* [lcm2]: explicite set double bytes
+* [exmpl]: use 0-9 keys for single channel selection in oy-image-display
+* [oyra]: sett channels correctly
+* [exmpl]: place channel filter into DAG in oy-image-display
+* [oyra]: add channel filter stub
+* [sources]: fix floating point exception in oyPixelAccess_SynchroniseROI()
+* [sources]: fix crash from missed remote filter
+* [sources]: improve error message for creating non existent filter
+* [docu]: fix registration key naming in oyFilterCore_s_
+* [oyra]: fix memory leak by cleaning up objects in scale filter
+* [sources]: use oyjl macros to access JSON
+* [core]: add IEEE half float primitives
+* [sources]: let oyCMMapi7_Run() use oyObject_Show()
+* [core]: add oyObject_Show() API
+* [cmms]: print newly allocated and not released objects
+* [sources]: add internal object tracking API
+* [core]: * [core]: add the OY_DEBUG_OBJECTS env variable
+* [sources]: add fallback for missed array in oyPixelAccess_Show()
+* [sources]: improve debug output in oyImage_ReadArray()
+* [core]: add WARNcc6_S macro
+* [oyra]: clean up more memory
+* [oyra]: use pixel coordinates inside the rectangles filter
+* [oyra]: scale rectangle rois relative to original ticket
+* [i18n]: update deutsch
+* [sources]: fix buffer overrun in oyImage_FillArray()
+* [oyra]: fix scaled offsets
+* [core]: add more debug output
+* [sources]: add oyPixelAccess_Show()
+* [sources]: use %g formatter in oyRect_Show() for more precise print
+* [core]: Fix roi scaling for array!=image in oyFilterPlug_ImageRootRun()
+* [cmms]: improve debug output
+* [core]: add extended arg debug macro
+* [core]: support OY_DEBUG_WRITE env
+* [sources]: add oyPixelAccess_SynchroniseROI()
+* [sources]: show object in debug output
+* [sources]: relax error to warning in oyImage_ReadArray()
+* [sources]: improvde filter tracking
+* [core]: improve debugging infos
+* [oyra]: improve debug output in root module
+* [oyra]: improve debug output in scale module
+* [lcm2]: fix intermediate array allocation
+* [core]: reduce deplicated object type name on debug text
+* [i18n]: update deutsch
+* [exmpl]: add scale up of image dimensions in oy-image-display
+* [oyra]: correctly generate new ticket dimensions in scale filter
+* [docu]: adapt oyPixelAccess_s dimensions to changed definitions
+* [sources]: replace oyPixelAccess_GetOutputROI() by _GetArrayROI()
+* [lcm2]: create new ticket array with unalterd dimensions
+* [core]: do not priorise ticket image dimensions over ROI
+* [exmpl]: fix compiler warning in Oy_Fl_Image_Widget.h
+* [sources]: fix debug output in oyImage_SetCritical()
+* [oyra]: improve scale area exceed warnings
+* [i18n]: update deutsch
+* [oyra]: fix the scale image exceeding test
+* [sources]: add array if needed in oyImage_SetCritical
+* [exampl]: add clock to oy-image-display debug output
+* [core]: fix start_xy relative scaling toward outer image dimensions
+* [docu]: clearify oyPixelAccess_s rectangele meanings
+* [docu]: fix oyPixelAccess_ChangeRectangle() group
+* [oicc]: move showing graph only in debug level 5
+* [exmpl]: reduce debug output on mouse events in oy-image-display
+* [core]: return absolute paths in oyGetInstallPath()
+* [sources]: improve debug output in oyImage_s
+* [lcm2]: fix buffer overruns
+* [exmpl]: show fltk signal with oy_debug_signals
+* [exmpl]: remove debug key printout
+* [lcm2]: fix oforms option translations
+* [lcm2]: add no_white_on_white_fixup option
+* [core]: accept zero lenght option value for policy xml
+* [core]: check oyOption_t_::id for oyProfile_e existence
+* [core]: add effect settings to policy files
+* [exmpl]: use send_native_update_event command
+* [oyX1]: add send_native_update_event custom command
+* [oyIM]: turn strlen into strnlen() style while loop desc reading
+* [oyIM]: add more checks and debug info for desc tag
+* [oyIM]: fix parsing of malformed pseq tag
+* [oyIM]: give warning about malformed desc tag
+* [oyIM]: add debug output for lcms desc bug
+* [exampl]: manually update to outside changes in oy-config-fltk
+* [tools]: qcmsevents switch icon format to PNG
+* [tools]: let libXcm decide if a color server runs
+* [lcm2]: add lots of debug output
+* [templates]: add debug output to oyPointer_LookUpFromObject()
+* [sources]: make oyProfile_GetID() unique for default profiles
+* [lcm2]: add effect and simulation profiles to hash text
+* [test]: test2::Elektra/clut fix effect_switch inversion
+* [lcm2]: reduce repated code parts
+* [test]: check test2 clut for DB change
+* [test]: detected value change in Elektra DB
+* [core]: export oyGetPersistentStrings() API
+* [core]: allow oyGetPersistentStrings(NULL /*arg*/)
+* [core]: minor code formatting
+* [exmpl]: ping X11 observers about option change in oy-config-fltk
+* [oicc]: set correct attribute for effect_switch key
+* [sources]: preserve automatic / DB settings in oyOptions_Add()
+* [test]: check non gray color in "CMM clut"
+* [exmpl]: scale button height in oy-config-fltk
+* [oicc]: make the effect_switch a basic setting
+* [cmms]: fix string informations selection
+* [exmpl]: add module informations to oy-xforms-modules
+* [docu]: refere to module selection
+* [docu]: add MODULE SELECTION section to oy-xforms-modules man page
+* [docu]: add some references to Registration docu
+* [templates]: handle no options in oyFilterNode_GetOptions()
+* [sources]: fix zero allocation issue
+* [oicc]: update module version
+* [tools]: set icc_profile_flags immediately i oy-icc
+* [exmpl]: add oy-image-display --effect option
+* [templates]: improve oyFilterGraph_ToText() debug output
+* [sources]: support "proof" and "effect" profile tookens
+* [core]: place oyGROUP_BEHAVIOUR_EFFECT into policy XML
+* [lcms]: support effect_switch key
+* [lcm2]: support effect_switch
+* [oicc]: add effect keys to policy module
+* [core]: change effect behaviour key name to "effect_switch"
+* [core]: add oyBEHAVIOUR_EFFECT and OY_DEFAULT_EFFECT
+* [sources]: support oyProfiles_FromStd( oyPROFILE_EFFECT )
+* [docu]: (re-)add basic include files to inline docu
+* [core]: add oyGROUP_BEHAVIOUR_EFFECT + OY_DEFAULT_EFFECT_PROFILE
+* [API]: remove unused widget group oyGROUP_DEFAULT_PROFILES_PROOF
+* [lcm2]: omit mpe float lut, fixes bug #24
+* [lcm2]: debug stage pipeline with printPipeline()
+* [lcm2]: use different mpet parametric curve API
+* [lcm2]: set context specific error log handler
+* [lcm2]: fix warning message format
+* [lcm2]: add warnings to failed lcmsSaveProfileToMem()
+* [lcm2]: fix potential crash by zero pointer usage
+* [lcm2]: create the psid tag always
+* [test]: add sub test for profiles_simulation
+* [tools]: fix simulations key name in oy-icc
+* [lcm2]: change some variable names to better match key
+* [API]: add key name macros for simulation and effect profiles
+* [test]: check for difference with simulation profile
+* [test]: use default key macros for intent +
+* [test]: split test "CMMs ICC" error printout
+* [test]: fix profile flags for [36] CMMs ICC conversion check
+* [core]: fix non needed deallocate call
+* [test]: fix meta tag key duplication
+* [oJPG]: fix size of gray scale jpegs
+* [oyra]: add the image loader filter to the graph
+* [oyra]: scale filter - improve debug message
+* [lcm2]: fix passing a data type argument
+* [lcm2]: fix the intermediate arrays with
+* [lcm2]: add more debug output to area conversion code
+* [core]: add print for unknown oyStruct_s::type-s
+* [core]: decrease thread debug messages
+* [core]: be more specific in oyFilterPlug_ImageRootRun() debug message
+* [sources]: add debig output to oyImage_FillArray()
+* [core]: print error message for zero alloc
+* [sources]: reduce signal printout in normal operation
+* [oyra]: parallelise core in scale filter
+* [exmpl]: reduce debug output for normal operation
+* [sources]: use a abbreviation for a common case
+* [core]: fix public API macro name to match the reverse one
+* [lcm2]: setup small intermediate ticket
+* [docu]: fix verbatim formatting
+* [docu]: improve oyImage_s description
+* [exmpl]: fix a valgrind report for uninitialised memory
+* [conf]: update devel period
+* [core]: avoid crash for not proper returning image API
+* [docu]: fix verbatim style in html intro
+* [sources]: update to new year
+* [core]: remove debug printfs
+* [exmpl]: scroll to zoom in oy-image-display
+* [core]: minor compile fix for c++
+* [exmpl]: rename oy-image-display --use-no-gl to --use-pixel
+* [exmpl]: adjust the scale change ration in oy-image-display
+* [exmpl]: use whole scaled image area in oy-image-display
+* [exmpl]: keep middle position '+' or '-' in oy-image-display
+* [oyra]: parse the PAM TUPLTYPE and do some guesswork
+* [sources]: write the PAM TUPLETYPE better
+* [core]: make Oy_Fl_Window_Base more silent
+* [oyra]: add COLORSPACE as fallback environment var to PPM
+* [oyra]: make the PPM reader pam and raw aware
+* [exmpl]: add oyImage to oy-image-display Ctrl-F info
+* [i18n]: add more example files to cover oy-image-display
+* [exmpl]: fix oy-image-display html view
+* [exmpl]: switch random text view widget for better displaying
+* [exmpl]: relax nbsp insertion to html from tiffinfo
+* [i18n]: update Deutsch
+* [exmpl]: add F1 and info menu entry to oy-image-display
+* [core]: add oyReadCmdToMemf_() internal API
+* [exmpl]: use Oy_Fl_Double_Window for fltk windows
+* [exmpl]: support per output font scaling in oy-image-display
+* [exmpl]: detect DPI with XRandR in Oy_Fl_Window_Base.h
+* [oJPG]: simplify string getter
+* [docu]: update openSUSE Leap 42.1 build instructions
+* [oyX1]: detect XRandR output dimensions
+* [core]: fix returned list count for zero input in oyStringListFreeDoubles_()
+* [core]: build Qt4 and Qt5 in one go
+* [core]: move Qt detection to src/tools/qcmsevents path
+* [tools]: add svg format to oy-profile-graph
+* [core]: fix potential crash
+* [docu]: fix include in the tutorial2
+* [core]: remove non needed include
+* [docu]: add a more detailed tutorial
+* [build]: update debian doc file section
+* [SANE]: fix locale of floating point values
+* [SANE]: fix printout of options
+* [SANE]: skip lcms calls + add prefix
+* [oJPG]: clean unused oiio stuff
+* [SANE]: remove SANE_CAP_COLOUR flag
+* [SANE]: build module again
+* [conf]: add FindSane.cmake
+* [conf]: detect sane
+* [SANE]: add device rank map
+* [core]: check pointer before access in new oyStringListDoubleFree()
+* [oyRE]: switch to dynamic rank map init
+* [disp]: use oyDeviceCMMInit()
+* [CUPS]: switch to dynamic rank map init
+* [CUPS]: add comments to rank map
+* [core]: add oyDeviceCMMInit() helper
+* [test]: oyRankMapList()
+* [disp]: remove static rank maps
+* [disp]: load rank map on filter init time
+* [sources]: add oyRankMapList() API
+* [soources]: skip rank map check at module load time
+* [disp]: add comments to JSON rank map
+* [core]: beautivy function text
+* [core]: reset freed pointer in oyStringListFreeDoubles_()
+* [cmms]: add and install device rank-maps
+* [exmpl]: show installed JSON rank map and paths
+* [core]: fix double listing of profile paths
+* [core]: fix double listing of data paths
+* [core]: add internal oyStringListFreeDoubles_()
+* [tools]: add --path option to oy-profiles and oy-policy
+* [exmpl]: support rank map JSON with oy-test-device -k
+* [templates]: relax about filter detection and allow db options
+* [sources]: relax about device filter requirement in Configs functions
+* [source]: relax about filter requirement in oyConfig_Compare()
+* [sources]: fix automatic repair of profiles
+* [exmpl]: fix crash in oy-modules-xforms -n
+* [tools]: allow to override autimatic device class in oy-profile -c -o
+* [exmpl]: print table header for oy-test-device --profiles -v
+* [exmpl]: show profile count in taxi -lvv
+* [docu]: new cmake config options
+* [build]: export FLTK variable to doc/CMake file
+* [build]: avoid install of unused fltk files
+* [conf]: split cmake vars into libraries and extras
+* [core]: fix some elektra-0.7 bugs
+* [test]: parent key needs to be one level above key name
+* [test]: fix deallocate warning in test2 Elektra
+* [docu]: update docu year
+* [docu]: write version number into html
+* [API]: change oyOptionChoicesFree() to match oyOptionChoicesGet2()
+* [test]: add test2 Widgets
+* [build]: skip linking against libtiff
+* [lcm2]: add cmsFLAGS_KEEP_SEQUENCE flag to all transforms
+* [spec]: add oJPG module
+* [oJPG]: fix some macro names
+* [oJPG]: add jpeg reader
+* [sources]: uncrease minimum version check for all filter types
+* [conf]: improve LibRaw detection
+* [conf]: detect JPEG and TIFF
+* [build]: update debian files
+* [build]: relax on debian requires for local packages
+* [spec]: add oy-image-viewer, oy-xforms and fix lib names
+* [spec]: place oyranos-rpmlintrc into SOURCES
+* [spec]: fix requirements on oS-13.2
+* [spec]: change %doc names to XXX.md
+* [spec]: fix dates
+* [docu]: fix some chars in ChangeLog
+* [docu]: update dependencies
+* [test]: report xfail tests
+* [test]: add sub test for explicite renderer selection fallback
+* [templates]: oyFilterNode_FromOptions skip fallback for explicite reg
+* [test]: fix and add sub tests to "CMM selection"
+* [templates]: fix EDIT flags in oyOptions_ForFilter_ +
+* [sources]: be more careful with fallbacks in oyFilterNode_SetContext_()
+* [docu]: improve oyOptions_SetFromText doxy linking
+* [sources]: use oyOption_UpdateFlags_() in more setter funcs
+* [sources]: add EDIT flag in oyOption_UpdateFlags_()
+* [docu]: fix OY_STRING_LIST doxy description
+* [build]: fix Qt4 build
+* [build]: link qcmsevents against libX11 for XNextEvent()
+* [tools]: use Xcm Xlib based event loop
+* [build]: qcmsevents with Qt5
+* [docu]: fix/finish doxyfile rename
+* [build]: fix linking of qcmsevents
+* [test]: fix options check in case of fallback CMM
+* [test]: add check for fallback CMM
+* [test]: fix test2 "CMMs listing" no default CMM
+* [alpha]: remove image API prototype
+* [alpha]: remove unused function and declarations
+* [alpha]: remove unused declarations
+* [alpha]: remove some compatibility macros for v0.3.1
+* [alpha]: remove unused declaration
+* [alpha]: remove unused macro
+* [alpha]: remove unused declaration
+* [alpha]: move some internal low level APIs out
+* [alpha]: remove double macro OY_OBSERVE_AS_WELL
+* [alpha]: remove double macro
+* [alpha]: remove unused prototype
+* [alpha]: remove double declaration
+* [alpha]: remove double macro
+* [test]: add 0.5 float conversion testing
+* [tools]: sync oy-icc -f descriptions
+* [alpha]: remove unused declaration
+* [alpha]: remove unused declaration
+* [docu]: update cmake flags for coverage
+* [conf]: fix cmake warning about test target
+* [build]: add coverage target using lcov
+* [core]: fix linux build after path changes
+* [core]: fix install variables for Linux
+* [core]: support OS X specific settings and other paths
+* [test]: fix test2 "CMM monitor DB match" on OS X
+* [test]: update context key for test2 clut
+* [lcm2]: use cmsGetEncodedCMMversion() if available
+* [lcm2]: add omp barrier warning
+* [templates]: reduce warnings in oyFilterNode_GetOptions()
+* [sources]: pass oyOptions_Add() state in oyOptions_Filter()
+* [sources]: honour edited value in oyOptions_Add()
+* [sources]: return -2 on failed adding in oyOptions_Add()
+* [docu]: describe oyOptions_Add() params
+* [sources]: make variables more transparent in oyOptions_Add()
+* [sources]: show properties in oyOptions_Filter()
+* [test]: fix test2 "CMM devices details" device class
+* [sources]: fix member access in oyProfile_FromMemMove_()
+* [sources]: fix mem leak in oyProfile_FromName()
+* [sources]: fix oyProfile_FromMemMove_() error handling
+* [test]: fix some mem leaks in test2 "default oyOptions_s settings"
+* [templ]: fix mem leak in oyOptions_ForFilter_()
+* [test]: fix mem leak in test2 "Elektra"
+* [core]: fix mem leak in oyDBSearchEmptyKeyname_()
+* [test]: fix mem leak in test2 "String handling"
+* [test]: fix mem leak in test2 "basic oyOption_s"
+* [test]: fix mem leak in test2 "Set oyOptions_s"
+* [sources]: fix leak in oyOptions_GetText()
+* [templ]: fix memory leak in oyFilterRegistrationMatchKey()
+* [test]: fix leak in test2 "oyBlob_s"
+* [sources]: check for name arg in oyProfile_FromName
+* [conf]: fill in the OY_MODULE_LIBRARIES variable
+* [conf]: export the OYRANOS_MODULE_LIBRARIES variable
+* [templates]: improve the OY_MODULE_PATH warning
+* [conf]: install translations into OyranosCore.framework
+* [conf]: install profiles and settings into OS X framework
+* [conf]: minor formating
+* [conf]: set LINGUAS other i18n variables
+* [conf]: just export settings file names
+* [conf]: add lots of cmake configure variables
+* [conf]: add OY_ICC_DIR cmake variable
+* [conf]: sync pkg-config script with other config tools
+* [conf]: sync oy-config with framework installation
+* [conf]: add OYRANOS_LIBRARY_DIRS macro to OyranosConfig.cmake
+* [conf]: use more of the new config variables
+* [build]: use new names for all other core libs
+* [conf]: fix linking of test binaries with new lib names
+* [build]: do not install headers from within src/include
+* [conf]: add some variables for syncing config files
+* [build]: a first version of Oyranos Framework
+* [build]: rename OY_METASUBPATH from oyranos to oyranos-meta
+* [conf]: set devel month
+* [conf]: install cmake file to lib/cmake/oyranos
+* [i18n]: fix translation comments
+* [test]: show oyPATH_CACHE values
+* [core]: support oyPATH_CACHE in oyGetInstallPath()
+* [core]: add oyPATH_CACHE enum
+* [tools]: update to oyProfile_Install() change
+* [sources]: add scope arg to oyProfile_Install()
+* [cmms]: use oyProfile_FromName in device modules
+* [templates]: use oyProfile_FromName in Device APIs
+* [disp]: give better debug output on Setup and Unset commands
+* [qarz]: skip monitor unset
+* [core]: show debug info about profile paths
+* [core]: fix OS X CS User profile path search
+* [core]: support messages o OS X using AppleScript
+* [conf]: add dependencies to link flags in OyConfig.cmake
+* [conf]: pass configure --enable-debug to cmake
+* [core]: reduce debug level for not found directories
+* [build]: restrict OS X examples to x86_64
+* [core]: add oyICCCmmDescription() API
+* [sources]: preferer dscm over dscr tag
+* [i18n]: fix typo in deutsch
+* [sources]: set correct options for oyDeviceSetup()
+* [docu]: replace plain POSIX DB key check with kdb tool
+* [docu]: update code sample to reflect changed device reg
+* [sources]: support the version flags from higher level APIs
+* [sources]: omit useless warning in oyProfileFrmName()
+* [test]: check for correct version in testProfile()
+* [exmpl]: update oy-test-device -l to API changes
+* [exmpl]: add --path option to oy-test-device
+* [exmpl]: set skip_ask_for_profile option for oyDeviceSetup in oy-test-device
+* [sources]: skip attributes from config reg in oyConfig_EraseFromDB()
+* [templates]: fix warning args in oyFilterNode_FromOptions()
+* [tools]: check every time for module name in oy-monitor
+* [oyX1]: reduce some warnings on APPLE
+* [tools]: use "skip_ask_for_profile" on assignment in oy-monitor
+* [templates]: add "skip_ask_for_profile" option to oyDeviceSetup
+* [disp]: do not overwrite a found profile
+* [qarz]: show CS error on ProfileSetup
+* [sources]: reduce module options for DB registration string
+* [templates]: remove double module call in oyDeviceUnset()
+* [tools]: put DISPLAY related code into ifdef oyX1 in oy-monitor
+* [templates]: sort the modules by their rank value
+* [qarz]: mark as "native" module
+* [tools]: fix the -2 switch in oy-monitor
+* [tools]: prefer native module in oy-monitor
+* [qarz]: use the general oy_cmm_disp.c code
+* [oyX1]: xcalib is not needed on OS X
+* [oyX1]: avoid improper DISPLAY name
+* [test]: add checks to avoid crashing
+* [test]: fix test command under Xcode
+* [oyX1]: fix crash under OS X
+* [qarz]: update to API changes
+* [templates]: relax oyFilterNode_FromOptions
+* [sources]: relax oyConversion_GetGraph()
+* [test]: oyFilterNode_s::options equal DL::Info
+* [test]: reorder status enum
+* [test]: check options in FilterNode handling
+* [test]: get color difference of int/float comparision
+* [test]: write test-dl-* profiles for integer equal float xfail
+* [test]: success status can not over write xfail
+* [lraw]: skip gamma_linear image tag option
+* [lcm2]: use prelinearisation curves by default
+* [lraw]: fix recent commit which results in no profile
+* [sources]: support OY_MATCH_KEY flag in oyOptions_s setters
+* [templates]: add oyGetKeyFromRegistration()
+* [sources]: add OY_MATCH_KEY flag
+* [conf]: bump month
+* [sources]: support oyHALF in oyImage_WritePPM()
+* [exmpl]: propagate HDR, OpenEXR, PFM and STI/NEF for oy-image-display
+* [exmpl]: support IEEE Half float in oy-image-display
+* [oyra]: add PPM Half read support
+* [i18n]: rearrange --path and --short option translation
+* [tools]: add oy-profile --path and --short options
+* [docu]: describe --path in man page
+* [tools]: add oy-monitor --path options
+* Update PACKAGING.md
+* [test]: add comparison of cached and DB key
+* [core]: properly reset init switch for oy_db_cache_
+* [core]: use exact string search for cache
+* [core]: unexport internal oyGetPersistentStrings
+* [sources]: return empty strings from oyOptions_FindString()
+* [API]: add type argument to oyOptions_Find()
+* [templates]: remove DB cacheng from oyOptions_DoFilter()
+* [core]: replace oyDB_getKeyNames()
+* [core]: add internal oyDB_getKeyNamesOneLevel()
+* [core]: print oy_db_cache_ from oyAlphaPrint_()
+* [test]: add first version of color conversion checks
+* [docu]: fix AUTHORS.md linebreak
+* [docu]: improve AUTHORS.md
+* [docu]: convert plain text documentation to markdown format
+* [qarz]: adapt to API changes
+* [core]: fix compile error for oyDB_s struct declaration
+* [templates]: fix newly added oyGetFilterNodeRegFromOptions()
+* [test]: merge "named color serialisation" into "CMM named color run"
+* [tools]: add icc_profile_flags option to oy-monitor -s
+* [templates]: more key path fixes
+* [templates]: change oyOptions_SetDeviceTextKey_/_SetRegistrationTextKey_
+* [core]: fix unrequested calling of gdb
+* [test]: add performance meassure for clut
+* [oicc]: fix wrong warning about missed options in oyConversion_Correct()
+* [test]: add clut check
+* [docu]: fix doxygen issues with OY_CREATE_NEW
+* [test]: oyDeviceGetProfile() returns an issue if profile is not setup
+* [templates]: fix adding new path while key already exists
+* [docu]: fix doxygen param tags for oyProfileTag_s functions
+* [templates]: cache set of keys in oyOptions_DoFilter()
+* [core]: add internal oyGetPersistentStrings()
+* [test]: add sub test for non initialised X11 monitor
+* [test]: adjust oyGetPersistentString() values
+* [core]: remove some non shared DB functions
+* [core]: use static key name version
+* [test]: show reason for error
+* [core]: fix test2 27 repeated oyDB_getString() calls
+* [core]: warn about failed key fetches in oyDB_getStrings()
+* [sources]: use some of the oyDB_s functions
+* [core]: add oyDB_getKeyNames( key_name ) option
+* [core]: add internal oyDB_s object
+* [sources]: add internal oyGetRankMapFromDB()
+* [test]: create synthetic "test" device in DB
+* [API]: add options arg to oyConfigs_FromDB/oyConfig_GetDB
+* [i18n]: fix po files
+* [i18n]: add ru po file
+* [docu]: add oy-image-display man page
+* [API]: rename oyConfig_GetFromDB to oyConfig_SelectDB
+* [build]: add oyranos-image-display.desktop
+* [build]: install oyranos-xforms[-fltk] and oy-image-display
+* [docu]: install oyranos-xforms[-fltk] man pages
+* [exmpl]: remove oy-taxi script II
+* [test]: remove temporary DB device
+* [test]: oyConfigs_FromDB() sub test
+* [test]: fix test "CMM monitor DB match" X11 device name
+* [templates]: fix oyOptions_SaveToDB() test
+* [templates]: skip error from optional oyOptions_FindInt()
+* [core]: allow for already scope key names in oySetPersistentString()
+* [test]: test for setting scoped key name
+* [core]: let oyDBSearchEmptyKeyname_ a array key name
+* [tools]: initialise variable
+* [test]: add tests for searching empty arrays
+* [tools]: add oy-policy --system-wide option
+* [API]: add oyPolicySaveActual(scope) option
+* [docu]: fix oy-policy man page typo
+* [templates]: fix key path names in oyDeviceFromJSON()
+* [docu]: link oyProfile_Install() to path_names group
+* [docu]: describe arg combinations for oyGetInstallPath
+* [tools]: use oyGetInstallPath() in oy_profiles
+* [test]: add Paths test for oyGetInstallPath()
+* [core]: implement oyGetInstallPath()
+* [API]: change oyPATH_NON_SPECIFIC to oyPATH_NONE
+* [core]: export oyProfilePathsGet()
+* [docu]: move oyG/SetPersistentString into objects_value group
+* [docu]: add dates to some macros
+* [docu]: open path_names group
+* [docu]: simplify module names
+* [core]: remove unused internal declaration
+* [docu]: fix objects_conversion dot graph arrows
+* [docu]: remove unused internal section label
+* [docu]: fix docu glitch for oyProfile_Install
+* [lcm2]: fix type=frame attribute for forms
+* [sourcse]: reduce DB calls in oyOptions_DoFilter
+* [core]: add DB values to oyOptions_s in oyDBGetStrings_()
+* [templates]: omit date header entry
+* [docu]: fix FilterNode arrows
+* [core]: implement oySCOPE_e argument through the stack
+* [API]: add scope arg to oyDeviceSetProfile()
+* [API]: add scope arg to oyConfig_SaveToDB() and oyConfig_EraseFromDB()
+* [tools]: add oy-monitor --system-wide option
+* [API]: remove oySetBehaviour() from oy_config.h
+* [core]: add internal oyDBGetStrings_()
+* [core]: declare all DB APIs with oySCOPE_e argument
+* [API]: change oySCOPE to oySCOPE_e
+* [sources]: export oyOptions_SaveToDB() API
+* [docu]: oyOPTIONSOURCE_USER marks session data
+* [core]: detection of admin is flacky on windows
+* [core]: move oyG/SetBehaviour_ APIs out of oy_elektra.c
+* [test]: fix speed sub test labeling
+* [test]: rearrange "CMM named color run" test
+* [core]: replace oyDBGetKeyString_() by oyGetPersistentString()
+* [core]: add oyGetPersistentString()
+* [core]: replace internal oyDBGetKeyString_ by oyDBGetString_
+* [sources]: akip duplicate keys in oyProfile_AddDevice()
+* [test]: check for oyDeviceFromJSON key duplication
+* [test]: display number of sub tests
+* [sources]: fix oyProfile_AddDevice key name parsing
+* [test]: add test for getting profile from JSON device
+* [oyRE]: skip device duplication
+* [tools]: update to oyDeviceSetup() API change
+* [API]: add options argument to oyDeviceSetup()
+* [sources]: use icc_profile_flags in oyProfile_FromName()
+* [oyX1]: fix XCM header inclusion
+* [sources]: remove oyOPTIONATTRIBUTE_EDIT in oyOptions_ForFilter_()
+* [test]: check correctly the previously test condition
+* [test]: test for untouched node options
+* [test]: check edit status of node option
+* [docu]: add missing options to oy-profiles man page
+* [tools]: add oy-profiles --no-repair option
+* [sources]: repair wrong profile ID by default
+* [API]: add flags option to oyProfile_FromMD5()
+* [sources]: skip memcpy in oyProfile_HasID_()
+* [sources]: fix argument changes in oyProfileTag_Create()
+* [test]: add Cache test
+* [core]: declare oyAlphaPrint_ internally
+* [core]: remove printfs from oyAlphaPrint_()
+* [exmpl]: use oyInit() instead of only i18n init
+* [core]: make oyStringAddPrintf(deAlloc arg) optional
+* [templates]: C++ guards to oy_generic_internal.h
+* [template]: shorten the hash string for module lookup
+* [templates]: always cache oyCMMhandle_s
+* [oyIM]: skip reporting of failed library loading
+* [core]: add internal oyAlphaPrint_()
+* [core]: remove cmm parameter from internal module APIs
+* [core]: allow early break in oyCMMdsoSearch_()
+* [docu]: fix doxygen file name extension
+* [conf]: fix source link in make dist command
+* [conf]: set date
+* [disp]: speed up oy-monitor -l(c)
+* [templates]: fix long key name matching
+* [sources]: fix memory leak in oyConfigs_FromDeviceClass()
+* [test]: add new longer device key name tests
+* [docu]: decribe oyObserver_Signal_f
+* [cmms]: use new key path name scheme for devices
+* [core]: check strlen() before using in oyDBKeySetGetNames_()
+* [templates]: use new key name path for device keys
+* [templates]: use JSON in oyDeviceSetProfile()
+* [sources]: set oyConfig_s::registration from oyDeviceRegistrationCreate_()
+* [API]: return error from oyOption_FromDB()
+* [tools]: set correct prefix for oy-monitor -mf edid_icc
+* [tools]: fix oy-monitor -f edid_icc automatic status
+* [core]: simplify ranking for OPENICC_automatic_generated meta key
+* [docu]: update PACKAGING file
+* [exmpl]: remove oy-taxi script
+* [exmpl]: attempt to check for device class from taxi
+* [core]: fix oyMakeDir_ usage in oyWriteMemToFile_()
+* [sources]: fix failed test from previous commit
+* [sources]: fix "key_set_name" key in config::db part
+* [exmpl]: add --class option to oy-test-device
+* [utils]: add oy-profile -r option
+* [oyIM]: fix pseq reading
+* [tools]: fix data_format switch
+* [tools]: be specific about mandatory arguments in oy-icc
+* [tools]: update oy-icc docu
+* [tools]: support oy-icc -f icc --float option
+* [tools]: add warning to oy-icc -f icc about missed node
+* [tools]: use icc_color for node lookup in oy-icc -f icc
+* [core]: export oySCOPE enum
+* [exmpl]: adjust macro for mkdir args on Windows
+* [conf]: prefere elektra-full library on Windows
+* [core]: add internal oyIsAmin_() API
+* [core]: simplify HAVE_POSIX definition
+* [core]: check HAVE_LANGINFO_H to use nl_langinfo()
+* [conf]: detect langinfo.h
+* [conf]: make dlfcn.h libdl detection more fine grained
+* [core]: fix some missing stat macros on _WIN32
+* [core]: fix missing errno defines for windows
+* [core]: omit obsolete keySync() call
+* [tools]: add warning for missed profile argument in oy-profile
+* [core]: better detect POSIX environment in oy_types.h
+* [core]: check for successful kdbOpen()
+* [build]: install core libs into runtime path on WIN32
+* [core]: remove unneeded section in oyDBAddKey_()
+* [test]: cover oyDBSearchEmptyKeyname_ in Elektra
+* [test]: define TEST_KEY macro
+* [test]: print more details on Elektra test
+* [conf]: update devel month
+* [core]: fix writing of JSON with empty value as last
+* [core]: use dynamic string allocators in elektra code
+* [core]: skip trailing slash in directory names
+* [core]: rename missed symbol from recent DB prefixing
+* [oPNG]: compile again with libpng12
+* [core]: remove define stat _stat
+* [core]: remove double definition of dlopen
+* [exmpl]: fix compiler warning for wrong formatter
+* [oPNG]: fix compiler warning on MinGW
+* [yajl]: fix redefinition warning of math types on MinGW
+* [core]: fix compile warnings about wrong argument types
+* [core]: prefix DB functions with DB
+* [tools]: omit X11 variable check on Windows
+* [core]: fix error messages
+* [test]: use lcm2 as it is more wide spread
+* [core]: add warning to stat() return
+* [core]: check stat() errors in oyIsDir_()
+* [templates]: fix messages in oyOptions_ForFilter_()
+* [test]: fix crash due to missed result from oyDeviceToJSON()
+* [templates]: more verbose error message in oyDeviceFromJSON()
+* [test]: correct printf formatters
+* [test]: fix printf format descriptors in test2
+* [test]: use lcm2 for "[9] default oyOptions_s settings" in test2
+* [sources]: exchange oyFilterCore/Node include order
+* [sources]: avoid duplicate typedef struct oyFilterNode_s_
+* [core]: fix recent oyConfig -> DB storage bug II
+* [templates]: preserve "context" and "renderer" keys
+* [test]: relax the oyOptionChoicesGet2(oyWIDGET_CMM_CONTEXT) test
+* [templates]: set node options according to current state
+* [sources]: add optional node arg to oyOptions_ForFilter_()
+* [oicc]: set key_base to OY_CMM_STD
+* [sources]: add oyCMMapi9_s::key_base member
+* [core]: fix recent oyConfig -> DB storage bug
+* [docu]: add separate alpha file list
+* [docu]: fix missed files
+* [docu]: fix doxygen grouping for image API
+* [oPNG]: select fitting libpng header
+* [conf]: HAVE_DIRENT_H needs to be visible in sources
+* [docu]: update README to oS-13.2
+* [core]: fix warning "not enough variable arguments to fit a sentinel"
+* [core]: actualise some cmm strings
+* [oyX1]: move specific code out of main module file
+* [core]: define monitor device hooks
+* [oyX1]: prefix non X11 specific functions and data
+* [conf]: define CMM_NICK for monitor modules in cmake
+* [sources]: improve debug output of DAG
+* [exmpl]: write output PPM from image-display
+* [core]: limit thread messages to oy_debug < 5
+* [oPNG]: fix opening of files on WIN32
+* [core]: support win32 library names
+* [lcm2]: improve dlopen error message
+* [core]: use LoadLibrary API for _WIN32
+* [templates]: check return value of dlinit()
+* [core]: filter out .a and .o files for library lists
+* [templates]: use dlinit macro for ltdl
+* [core]: use dynamic string allocation in oyMakeFullFileDirName_()
+* [core]: use full file name for profile in PWD
+* [core]: implement oyGetCurrentDir_()
+* [core]: define lt_dlinit
+* [templates]: use dlopen wrapper in oyCMMsGetNames_()
+* [core]: fix printf of NULL pointer in i18n function
+* [exmpl]: fix crash for empty result in oy-config-fltk
+* [core]: compile dirent functions if needed
+* [conf]: detect dirent header
+* [core]: use _WIN32 macro instead of WIN32
+* [core]: use dynamic path strings
+* [oyjl]: properly detect MSVC for sprintf_s
+* [lcm2]: skip non checked header include
+* [core]: make dlopen macros public to modules
+* [conf]: define macros for stdint.h and inttypes.h
+* [core]: detect MSVC and define some int types
+* [core]: cast function arg to satisfy _beginthread()
+* [core]: declare functions as non inline for MSysGit
+* [exmpl]: S_IRWXU is not defined for mkdir on MSysGit
+* [conf]: detect libz for oPNG
+* [conf]: detect intl, iconv, ltdl, stdint.h and gomp
+* [templates]: use HAVE_DL macro for ltdl detection
+* [build]: yajl as subdirectory
+* [conf]: detect libs in FindLCMS.cmake on win
+* [conf]: use liblcms2-dev in debian builds
+* [conf]: fix for elder cmake >= 2.6.2
+* [tools]: print only current policy to stdout for oy-policy -c
+* [cmms]: fix compile error for elder gcc
+* [docu]: update oy-profiles usage and man page
+* [i18n]: update Deutsch
+* [tools]: let oy-profiles use oyShowMessage()
+* [API]: add oyGuiMessageFunc() to use notify-send
+* [core]: add internal oyShowMessage()
+* [oyX1]: emit error message for not found xcalib
+* [sources]: keep profile cache with different flags
+* [sources]: clean commented out code snippets
+* [docu]: describe oyProfileSignatureName()
+* [API]: provide more translation strings for GUIs
+* [docu]: point oyOptionChoicesGet() to docu of new flag
+* [tools]: add --duplicate option to oy-profiles
+* [sources]: support OY_ALLOW_DUPLICATES in oyProfiles_Create()
+* [API]: add OY_ALLOW_DUPLICATES profiles selection flag
+* [docu]: update AUTHORS
+* [core]: adapt to leading dot in file names
+* [core]: omit double slashes in file names
+* [exmpl]: adapt to API changes in key macro
+* [docu]: improve help text in oy-profile-graph
+* [exmpl]: support 'w' and 'h' scale key shortcut in image-display
+* [CUPS]: support version matching for device profile selection
+* [sources]: support version matching for fallback device profile selection
+* [test]: test api7 module switching
+* [sources]: add oyFilterNode_GetRendererRegistration()
+* [source]: support CMM renderer selection during context creation
+* [core]: initialise variables after argument checks
+* [templates]: sync recent changes
+* [docu]: update code examples in inline docu
+* [tools]: reduce biolerplate
+* [sources]: add oyICCProfileSelectionFlagsFromOptions()
+* [docu]: describe oyProfile_FromName() by code example
+* [i18n]: update Deutsch
+* [tools]: use icc node creation oyFilterNode_FromOptions()
+* [test]: update to new API and key name
+* [cmms]: switch from icc to icc_color key in registration strings
+* [exmpl]: use oyFilterNode_FromOptions() in oy-file
+* [exmpl]: remove module args and use options instead
+* [exmpl]: use new oyFilterNode_FromOpts in image2pdf
+* [core]: check arg in oyICCProfileSelectionFlagsFromRegistration()
+* [API]: change key macros let them not end in a slash
+* [sources]: implement oyFilterNode_FromOptions()
+* [sources]: use core options to detect a explicite node pattern
+* [sources]: declare oyFilterNode_FromOptions()
+* [sources]: remove oyFilterNode_CMMFromOptions()
+* [sources]: add oyCMMGetDefaultPattern_f to oyCMMapi9_s
+* [core]: change ICC key name from icc.color to icc_color
+* [docu]: update on cmake build dependency
+* [test]: adapt key name for node creation
+* [tools]: convert the node_name passing to options in oy-icc
+* [templates]: adapt to API changes
+* [API]: add registration argument to oyFilterNode_Create()
+* [API]: condense oyConversion_CreateFromImage()
+* [sources]: support module4/7 selection from options
+* [oicc]: adapt to OY_DEFAULT_CMM_CONTEXT*/R* key changes
+* [core]: rename OY_DEFAULT_CMM_CONTEXT*/R* keys
+* [templates]: fix code generation for cmm_handling group
+* [sources]: rename oyFilterNode_SetCore_()
+* [exmpl]: support explicite node core pattern tagging
+* [templates]: skip advanced options
+* [oicc]: use OY_DEFAULT_CMM_* pattern as value if possible
+* [core]: add OY_DEFAULT_CMM_CONTEXT_FALLBACK + DB keys
+* [sources]: use default cmm for icc conversion nodes
+* [sources]: use fallback in case of failed context creation
+* [sources]: add OY_DEFAULT_CMM_CONTEXT to node options
+* [core]: add static options for CMM_*_FALLBACKs
+* [docu]: complete oyCMMapi9_s description
+* [sources]: add fallback and name functions to api9 domain plugin
+* [docu]: fix objects_generic group
+* [oicc]: use default CMM pattern as value if possible
+* [i18n]: update Deutsch
+* [docu]: add OY_NO_REPAIR to oyProfile_FromName()
+* [source]: add OY_NO_REPAIR flag to oyProfile_FromFile()
+* [test]: add "CMMs listing" test
+* [exmpl]: support static CMM options properly in oy-config-fltk
+* [oicc]: add static CMM options and defaults
+* [core]: add oyWIDGET_CMM_CONTEXT and oyWIDGET_CMM_RENDERER
+* [core]: extent oyOptionChoicesGet2() name types
+* [API]: add oyCMM_e and configuration functions
+* [docu]: fix data struct doc grouping
+* [build]: check for state of DEBUG variable
+* [core]: add DB keys
+* [sources]: add oyCMMapi4_GetUi() member
+* [conf]: add oy-config --builddir and --sourcedir options
+* [oicc]: improve module description
+* [core]: print Oyranos verion in debug mode
+* [sources]: substitute slash from profile description
+* [cmms]: update to CMM_API_VERSION
+* [core]: add internal CMM_API_VERSION macro
+* [docu]: describe briefly API break coding
+* [API]: require module_api versions >= 0.9.6
+* [docu]: fix oyWIDGET_TYPE_e description
+* [sources]: add oyProfile_FromName()
+* [oPNG]: request interleaved pixels for PNG
+* [exmpl]: fix oy-file -f openicc and -f fallback-icc
+* [docu]: make oyImage_XXFile part of oyImage_s class
+* [exmpl]: fix oy-file -i xxx -o yyy
+* [exmpl]: add .icc to writenn profile name in oy-file
+* [exmpl]: properly support embedding of meta tag in oy-camera-raw
+* [tools]: detect oy-icc --device-link output profile from psid
+* [test]: add oyCheckProfileMem() check
+* [tools]: oy-profile -i check input stream
+* [test]: test oyProfile_Install()
+* [tools]: add oy-profiles --install -d option
+* [sources]: fix crash for warning in oyProfile_Install()
+* [core]: reduce verbosity level in Elektra code
+* [core]: fix oyReadFileSToMem_() size
+* [core]: add OY_SKIP_NON_DEFAULT_PATH flag for oyProfile_FromFile()
+* [test]: check psid order
+* [sources]: support "icc_module" option in oyConversion_CreateBasicPixels()
+* [lcms]: fix profile order in psid
+* [API]: support and pass through of OY_ICC_VERISON flags
+* [core]: support binary stream reading
+* [tools]: fix oy-profile -lv print out
+* [core]: add oyICCProfileSelectionFlagsFromRegistration()
+* [API]: add flags args to oyProfiles_Create() and oyProfiles_ForStd()
+* [API]: add flags arg to oyProfile_FromStd()
+* [API]: fix flags in oyNamedColor_GetChannelsConst() oyNamedColor_GetColorStd()
+* [API]: add icc_profile_flags arg oyImage_CreateForDisplay() and oyImage_FromFile()
+* [oyRE]: install fallback profiles
+* [lcm2]: support OY_ICC_VERSION_2 in create_profile.color_matrix
+* [tools]: support oy-profiles -2 and -4 options
+* [tools]: support oy-profile -2 and -4 options
+* [core]: support OY_ICC_VERSION_2 and OY_ICC_VERSION_4
+* [docu]: include oyLab2XYZ() and oyXYZ2Lab()
+* [core]: fix internal backward compatibility macros
+* [conf]: export OYRANOS_CMMSUBPATH
+* [core]: export oyStringCopy()
+* [core]: export oyFilterPlug_ImageRootRun()
+* [core]: export oyCMMgetImageConnectorPlugText()
+* [core]: export oyStringAddPrintf() and oyStringSplit()
+* [exmpl]: fix compile warning about double DEBUG definition
+* [core]: add oyCMM_s.h header
+* [lcm2]: mark as supporting oyHALF
+* [oyra]: mark ppm as supporting ICC profiles
+* [cmms]: correct text usage to obtain texts
+* [build]: install oy_version.h from appropriate path
+* [docu]: doxygenise oy_version.h
+* [docu]: add misc/internationalisation(i18n) section
+* [docu]: move the extending_oyranos page to common
+* [i18n]: update i18n file paths
+* [docu]: remove obsolete C namespace description
+* [conf]: set DEBUG macro in oy_config_internal.h
+* [conf]: mv oy_version.h to src/include
+* [conf]: enable DEBUG dependent macros through CMAKE_BUILD_TYPE="debug"
+* [cmms]: fix properties file= comment
+* [oyra]: switch registration string order
+* [oPNG]: switch registration string order
+* [docu]: XDG_CONFIG_DIR cmake variable
+* [core]: replace OY_MODULE_PATH string with define
+* [test]: adapt OY_MODULE_PATH to new module paths
+* [build]: * [build]: restructure module paths II
+* [build]: restructure module paths I
+* [docu]: fix OY_MODULE_PATH hint
+* [i18n]: fix translation
+* [sources]: fix null string for none OY_MODULE_PATH
+* [core]: fix macro compile warning
+* [core]: warn about wrong module path variable content
+* [tools]: oy-profiles install into ColorSync paths on osX
+* [core]: move CS paths into private header
+* [core]: accept USE_OPENMP define
+* [docu]: fix dependency version of libXcm
+* [conf]: bump version
+
+###dcb314 (1):
+* [oyIM]: fix compiler warning
+
 #Version 0.9.5
 
 ###Andreas Sturmlechner (3):
