@@ -73,12 +73,6 @@
  *  @{
  */
 
-/** \addtogroup misc Miscellaneous
-
- *  @{
- */
-
-
 #define PT_ANY       0    /* Don't check colorspace */
                           /* 1 & 2 are reserved */
 #define PT_GRAY      3
@@ -226,21 +220,14 @@ oyChar *     oyDumpColorToCGATS     ( const double      * channels,
   return text;
 }
 
-
-
-/** @} *//* misc */
-
+/** @} *//*alpha
+ */
 
 
 
 
 /* --- Object handling API's start ------------------------------------ */
 
-
-/** \addtogroup misc Miscellaneous
-
- *  @{
- */
 
 
 /** \addtogroup objects_generic Generic Objects
@@ -417,10 +404,6 @@ OYAPI int  OYEXPORT
  *  @} *//* objects_generic
  */
 
-/** @} *//* misc */
-
-
-
 
 
 
@@ -451,9 +434,6 @@ void             oyCMMProgress_      ( int                 ID,
 /** @} objects_conversion */
 
 
-
-/** @} *//*alpha
- */
 
 
 
