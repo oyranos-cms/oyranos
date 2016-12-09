@@ -37,7 +37,7 @@ device specific Informations (ICC profiles) und system wide settings.
 #####Optional
 * [libXcm >= 0.5.3] (http://www.oyranos.org/libxcm) - for monitor support (or internal fallback)
 * [Yajl](http://lloyd.github.com/yajl) - JSON DB API (or internall fallback)
-* [Elektra](http://www.libelektra.org) - DB API
+* [Elektra](http://www.libelektra.org) - DB API and D-Bus messaging
 * [FLTK](http://www.fltk.org) - (--enable-threads) is needed for the example Gui
 * For the documentation use doxygen, graphviz and graphviz-gd packages.
   * [Doxygen v1.5.8 or higher is recommended](http://www.doxygen.org)
@@ -147,5 +147,7 @@ device specific Informations (ICC profiles) und system wide settings.
   LIB\_SUFFIX=64 for 64bit RedHat style Linux systems.
 * XDG\_CONFIG\_DIR - path to install oyranos-monitor-setup.desktop; defaults to /etc/xdg/autostart/
 * USE\_GCOV - enable gcov/lcov compiler flags on the Unix platform and the coverage target
+* USE\_SYSTEM\_ELEKTRA - fail if not found
+* USE\_SYSTEM\_LIBXCM - fail if not found; default is shipped fallback version
+* USE\_SYSTEM\_OPENICC - fail if not found; default is shipped fallback version
 * USE\_SYSTEM\_YAJL - fail if not found; default is shipped fallback version
-* USE\_SYSTEM\_ELEKTRA - fail if not found; default is shipped fallback version
