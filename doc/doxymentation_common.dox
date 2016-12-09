@@ -8,13 +8,15 @@
     <li> icc-profiles-openicc s needed as default ICC profiles - http://sourceforge.net/projects/openicc/files/OpenICC-Profiles/i </li>
     <li> icc-profiles-basiccolor-printing is needed as default ICC profiles - http://sourceforge.net/projects/openicc/files/basICColor-Profiles/ </li>
     <li> libXinerama, libXrandr, libXfixes and libXxf86vm for X11 support - http://www.x.org </li>
-    <li> libXcm for X11 and Quarz monitor support - http://www.oyranos.org/libxcm </li>
     <li> littleCMS lcms2 API and optionally lcms1 for color conversions - http://www.littlecms.com </li>
     <li> libpng for PNG image support - http://sourceforge.net/projects/libpng/files/ </li>
     </ul>
     Optional:
     <ul>
-    <li> Elektra is the configuration module, currently version 0.7.+ is required and included. A externaly installed version is detected automatically. - http://freedesktop.org/wiki/Software/Elektra </li>
+    <li> Yajl, a JSON parser, is required and included. A externaly installed version is detected automatically. - http://lloyd.github.com/yajl </li>
+    <li> libOpenICC, a JSON configuration DB API, is required and included. A externaly installed version is detected automatically. - https://github.com/OpenICC/config </li>
+    <li> Elektra is a configuration DB API emitting D-Bus messages, currently version 0.8.+ - http://freedesktop.org/wiki/Software/Elektra </li>
+    <li> libXcm for X11 and Quarz monitor support, is required and included. A externaly installed version is detected automatically. - http://www.oyranos.org/libxcm </li>
     <li> FLTK for various example code, version >= 1.3.0 is recommended - http://www.fltk.org </li>
     <li> Qt for QCmsEvents - http://qt-project.org/ </li>
     <li> Xcalib for loading a given  VideoCardGammaTag from profile to a running XFree86/Xorg session (optionally) - http://www.etg.e-technik.uni-erlangen.de/web/doe/xcalib/ </li>
