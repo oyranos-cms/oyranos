@@ -125,9 +125,8 @@ int                oyDbHandlingReady ( void )
   return oy_db_handling_ready_;
 }
 
-/** @fn      oyDbHandlingSet
+/** @brief set DB functions for persistent settings
  *  @ingroup objects_value
- *  @brief set DB functions for persistent settings
  *
  *  Be careful to set the APIs only before any call to the oyDB_s functions.
  *  Otherwise the behaviour is undefined.
