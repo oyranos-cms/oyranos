@@ -28,16 +28,29 @@ void printfHelp(int argc, char ** argv)
                                 _("is a JSON parse tool"));
   fprintf( stderr, "\n");
   fprintf( stderr, "%s\n",                 _("Usage"));
-  fprintf( stderr, "  %s\n",               _("Print JSON:"));
-  fprintf( stderr, "      %s -j [-v] [-i FILE_NAME]\n",        argv[0]);
+  fprintf( stderr, "  %s\n",               _("Print:"));
+  fprintf( stderr, "      %s [-j|-c|-k] [-v] [-i FILE_NAME] [-x PATH]\n",        argv[0]);
+  fprintf( stderr, "        -j\tprint JSON - default mode\n");
+  fprintf( stderr, "        -c\tprint node count\n");
+  fprintf( stderr, "        -k\tprint key name\n");
   fprintf( stderr, "        -i FILE_NAME  %s\n", _("JSON file"));
-  fprintf( stderr, "        -x PATH | --xpath PATH\n");
+  fprintf( stderr, "        -x PATH\tpath expression, indexing is in edged brackets \"[NUMBER]\"\n");
   fprintf( stderr, "\n");
   fprintf( stderr, "  %s\n",               _("Print a help text:"));
   fprintf( stderr, "      %s -h\n",        argv[0]);
   fprintf( stderr, "\n");
   fprintf( stderr, "  %s\n",               _("General options:"));
   fprintf( stderr, "        -v              %s\n", _("verbose"));
+  fprintf( stderr, "\n");
+  fprintf( stderr, "%s\n",                 _("Example"));
+  fprintf( stderr, "  %s\n",               _("Print JSON:"));
+  fprintf( stderr, "      %s -j -i example.json -x [0]\n",        argv[0]);
+  fprintf( stderr, "\n");
+  fprintf( stderr, "  %s\n",               _("Print count:"));
+  fprintf( stderr, "      %s -c -i example.json -x [0]/[0]\n",        argv[0]);
+  fprintf( stderr, "\n");
+  fprintf( stderr, "  %s\n",               _("Print key name:"));
+  fprintf( stderr, "      %s -k -i example.json -x [0]/[0]\n",        argv[0]);
   fprintf( stderr, "\n");
   fprintf( stderr, "\n");
 }
@@ -57,7 +70,6 @@ int main(int argc, char ** argv)
   size_t size = 0;
   char * text = NULL;
   const char * input_file_name = NULL,
-             * output_file_name = NULL,
              * xpath = 0;
   oyjl_val root = NULL,
            value = NULL;
@@ -80,7 +92,6 @@ int main(int argc, char ** argv)
             switch (argv[pos][i])
             {
               case 'i': OY_PARSE_STRING_ARG(input_file_name); break;
-              case 'o': OY_PARSE_STRING_ARG(output_file_name); break;
               case 'x': OY_PARSE_STRING_ARG(xpath); break;
               case 'c': show = COUNT; break;
               case 'j': show = JSON; break;
