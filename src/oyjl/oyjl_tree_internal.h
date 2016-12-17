@@ -51,6 +51,9 @@ extern "C" {
 
 extern oyjl_message_f oyjl_message_p;
 
+int        oyjl_tree_paths_get_index ( const char        * term,
+                                       int               * index );
+
 #ifdef __cplusplus
 }
 #endif
