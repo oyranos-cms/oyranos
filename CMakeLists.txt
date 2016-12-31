@@ -34,7 +34,12 @@ SET( OYRANOS_VERSION_MAJORMINOR "${OYRANOS_VERSION_MAJOR}.${OYRANOS_VERSION_MINO
 include(GNUInstallDirs)
 
 option(ENABLE_EXAMPLES "Build example applications" ON)
+option(ENABLE_STATIC_LIBS "Build static libs" ON)
 option(ENABLE_TESTS "Build tests (requires static libs)" ON)
+
+IF( ENABLE_TESTS )
+  SET(ENABLE_STATIC_LIBS ON)
+ENDIF()
 
 IF( ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
   SET(PLATFORM "OSX")
