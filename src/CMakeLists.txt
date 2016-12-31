@@ -307,7 +307,9 @@ ENDIF()
 
 ADD_SUBDIRECTORY( tools )
 
-ADD_SUBDIRECTORY( examples )
+IF(ENABLE_EXAMPLES)
+  ADD_SUBDIRECTORY( examples )
+ENDIF()
 
 
 # versions for libraries
