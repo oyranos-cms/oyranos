@@ -4,7 +4,7 @@ SET( OY_MODULE_LIB ${PACKAGE_NAME}_${OY_MODULE}${OY_MODULE_NAME} )
 ADD_LIBRARY( ${OY_MODULE_LIB}
              SHARED ${PACKAGE_NAME}_cmm_${OY_MODULE}.c )
 TARGET_LINK_LIBRARIES ( ${OY_MODULE_LIB} ${PROJECT_NAME} ${EXTRA_LIBS} )
-#INSTALL (TARGETS ${OY_MODULE_LIB} DESTINATION lib${LIB_SUFFIX}/${OY_CMMSUBPATH})
+#INSTALL (TARGETS ${OY_MODULE_LIB} DESTINATION ${CMAKE_INSTALL_LIBDIR}/${OY_CMMSUBPATH})
 
 # example device module
 SET( OY_MODULE dDev )
@@ -12,7 +12,7 @@ SET( OY_MODULE_LIB ${PACKAGE_NAME}_${OY_MODULE}${OY_MODULE_NAME} )
 ADD_LIBRARY( ${OY_MODULE_LIB}
              SHARED ${PACKAGE_NAME}_cmm_${OY_MODULE}.c )
 TARGET_LINK_LIBRARIES ( ${OY_MODULE_LIB} ${PROJECT_NAME} ${EXTRA_LIBS} )
-#INSTALL (TARGETS ${OY_MODULE_LIB} DESTINATION lib${LIB_SUFFIX}/${OY_CMMSUBPATH})
+#INSTALL (TARGETS ${OY_MODULE_LIB} DESTINATION ${CMAKE_INSTALL_LIBDIR}/${OY_CMMSUBPATH})
 
 # ICC profile hash calculation
 ADD_EXECUTABLE( oymd5icc oymd5icc.c )
@@ -21,12 +21,12 @@ TARGET_LINK_LIBRARIES( oymd5icc ${PROJECT_NAME} ${EXTRA_LIBS} )
 # CamerRaw file handling
 ADD_EXECUTABLE( oyranos-file "${CMAKE_CURRENT_SOURCE_DIR}/libraw/oyranos_file.cpp" )
 TARGET_LINK_LIBRARIES( oyranos-file ${PROJECT_NAME} ${EXTRA_LIBS} )
-#INSTALL (TARGETS oyranos-file DESTINATION bin)
+#INSTALL (TARGETS oyranos-file DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 # Taxi DB tool for central hosted ICC profile distribution
 ADD_EXECUTABLE( taxi taxi.c )
 TARGET_LINK_LIBRARIES( taxi ${PROJECT_NAME} ${EXTRA_LIBS} )
-#INSTALL (TARGETS taxi DESTINATION bin)
+#INSTALL (TARGETS taxi DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 # primitive picture montage with ICC support
 IF( CAIRO_FOUND )
@@ -59,9 +59,9 @@ IF( FLTK_FOUND )
   SET_PROPERTY(TARGET oyranos-image-display PROPERTY OSX_ARCHITECTURES_DEBUG x86_64)
   TARGET_LINK_LIBRARIES ( oyranos-image-display ${PROJECT_NAME} ${EXTRA_LIBS}
                  ${FLTK_LIBRARIES} ${XRANDR_LIBRARIES} )
-  INSTALL (TARGETS oyranos-image-display DESTINATION bin)
-  INSTALL( FILES ${CMAKE_CURRENT_SOURCE_DIR}/image_display/oyranos-image-display.desktop DESTINATION share/applications )
-  INSTALL( FILES ${CMAKE_CURRENT_SOURCE_DIR}/image_display/oyranos-image-display.1 DESTINATION share/man/man1 )
+  INSTALL (TARGETS oyranos-image-display DESTINATION ${CMAKE_INSTALL_BINDIR})
+  INSTALL( FILES ${CMAKE_CURRENT_SOURCE_DIR}/image_display/oyranos-image-display.desktop DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications )
+  INSTALL( FILES ${CMAKE_CURRENT_SOURCE_DIR}/image_display/oyranos-image-display.1 DESTINATION ${CMAKE_INSTALL_MANDIR}/man1 )
 
   ADD_EXECUTABLE( oyranos-config-fltk
                   oyranos_config_fltk.cxx
@@ -71,7 +71,7 @@ IF( FLTK_FOUND )
   SET_PROPERTY(TARGET oyranos-config-fltk PROPERTY OSX_ARCHITECTURES_DEBUG x86_64)
   TARGET_LINK_LIBRARIES ( oyranos-config-fltk ${PROJECT_NAME} ${EXTRA_LIBS}
                  ${FLTK_LIBRARIES} ${XRANDR_LIBRARIES} )
-  INSTALL (TARGETS oyranos-config-fltk DESTINATION bin)
+  INSTALL (TARGETS oyranos-config-fltk DESTINATION ${CMAKE_INSTALL_BINDIR})
 ENDIF()
 
 
@@ -81,7 +81,7 @@ ADD_SUBDIRECTORY( oforms )
 ADD_EXECUTABLE( oyranos-xforms oforms/oyranos_xforms.c )
 TARGET_LINK_LIBRARIES( oyranos-xforms
                   ${OY_OFORMS_LIB} ${PROJECT_NAME} ${EXTRA_LIBS} )
-INSTALL (TARGETS oyranos-xforms DESTINATION bin)
+INSTALL (TARGETS oyranos-xforms DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 # oFORMS for a Oyranos FLTK renderer and parser
 IF( FLTK_FOUND )
@@ -92,14 +92,14 @@ IF( FLTK_FOUND )
                 )
   TARGET_LINK_LIBRARIES ( oyranos-xforms-fltk ${PROJECT_NAME} ${EXTRA_LIBS}
                   ${OY_OFORMS_LIB} ${FLTK_LIBRARIES} ${XRANDR_LIBRARIES} )
-  INSTALL (TARGETS oyranos-xforms-fltk DESTINATION bin)
+  INSTALL (TARGETS oyranos-xforms-fltk DESTINATION ${CMAKE_INSTALL_BINDIR})
 ENDIF()
 
 # oFORMS for a Oyranos module generation
 ADD_EXECUTABLE( oyranos-xforms-modules oforms/oyranos_xforms_modules.c )
 TARGET_LINK_LIBRARIES( oyranos-xforms-modules
              ${PROJECT_NAME} ${OY_OFORMS_LIB} ${EXTRA_LIBS} )
-INSTALL (TARGETS oyranos-xforms-modules DESTINATION bin)
+INSTALL (TARGETS oyranos-xforms-modules DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 # Tutorial 1
 ADD_EXECUTABLE( tutorial1 tutorial1.c )

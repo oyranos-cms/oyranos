@@ -7,10 +7,10 @@ TARGET_LINK_LIBRARIES ( ${OY_OFORMS_LIB} ${PROJECT_NAME} ${EXTRA_LIBS} )
 
 MESSAGE( "-- OY_OFORMS_LIB: ${OY_OFORMS_LIB}" )
 
-INSTALL (FILES ./oyranos-xforms.1 DESTINATION share/man/man1 )
-INSTALL (FILES ./oyranos-xforms-modules.1 DESTINATION share/man/man1 )
+INSTALL (FILES ./oyranos-xforms.1 DESTINATION ${CMAKE_INSTALL_MANDIR}/man1 )
+INSTALL (FILES ./oyranos-xforms-modules.1 DESTINATION ${CMAKE_INSTALL_MANDIR}/man1 )
 IF( FLTK_FOUND )
-  INSTALL (FILES ./oyranos-xforms-fltk.1 DESTINATION share/man/man1 )
+  INSTALL (FILES ./oyranos-xforms-fltk.1 DESTINATION ${CMAKE_INSTALL_MANDIR}/man1 )
 ENDIF()
 
 
