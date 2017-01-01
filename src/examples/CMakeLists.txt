@@ -74,33 +74,6 @@ IF( FLTK_FOUND )
   INSTALL (TARGETS oyranos-config-fltk DESTINATION ${CMAKE_INSTALL_BINDIR})
 ENDIF()
 
-
-ADD_SUBDIRECTORY( oforms )
-
-# oFORMS for a Oyranos CLI renderer and parser
-ADD_EXECUTABLE( oyranos-xforms oforms/oyranos_xforms.c )
-TARGET_LINK_LIBRARIES( oyranos-xforms
-                  ${OY_OFORMS_LIB} ${PROJECT_NAME} ${EXTRA_LIBS} )
-INSTALL (TARGETS oyranos-xforms DESTINATION ${CMAKE_INSTALL_BINDIR})
-
-# oFORMS for a Oyranos FLTK renderer and parser
-IF( FLTK_FOUND )
-  ADD_EXECUTABLE( oyranos-xforms-fltk
-                  oforms/oyranos_forms_fltk.cxx
-                  oforms/oyranos_widgets_fltk.cxx
-                  oforms/oyranos_xforms_fltk.cxx
-                )
-  TARGET_LINK_LIBRARIES ( oyranos-xforms-fltk ${PROJECT_NAME} ${EXTRA_LIBS}
-                  ${OY_OFORMS_LIB} ${FLTK_LIBRARIES} ${XRANDR_LIBRARIES} )
-  INSTALL (TARGETS oyranos-xforms-fltk DESTINATION ${CMAKE_INSTALL_BINDIR})
-ENDIF()
-
-# oFORMS for a Oyranos module generation
-ADD_EXECUTABLE( oyranos-xforms-modules oforms/oyranos_xforms_modules.c )
-TARGET_LINK_LIBRARIES( oyranos-xforms-modules
-             ${PROJECT_NAME} ${OY_OFORMS_LIB} ${EXTRA_LIBS} )
-INSTALL (TARGETS oyranos-xforms-modules DESTINATION ${CMAKE_INSTALL_BINDIR})
-
 # Tutorial 1
 ADD_EXECUTABLE( tutorial1 tutorial1.c )
 TARGET_LINK_LIBRARIES( tutorial1
