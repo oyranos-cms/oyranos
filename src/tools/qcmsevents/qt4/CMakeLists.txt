@@ -23,9 +23,9 @@ IF( HAVE_QT AND UNIX AND NOT APPLE )
     TARGET_LINK_LIBRARIES ( qcmsevents-qt4 Oyranos ${EXTRA_LIBS}
                     ${QT_LIBRARIES} ${XCM_LIBRARIES} )
     INSTALL( TARGETS qcmsevents-qt4
-             RUNTIME DESTINATION bin )
-    INSTALL( FILES ../qcmsevents-qt4-applet.desktop DESTINATION share/applications )
-    INSTALL( FILES ../qcmsevents-qt4.svg DESTINATION share/pixmaps )
+             RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} )
+    INSTALL( FILES ../qcmsevents-qt4-applet.desktop DESTINATION ${CMAKE_INSTALL_FULL_DATAROOTDIR}/applications )
+    INSTALL( FILES ../qcmsevents-qt4.svg DESTINATION ${CMAKE_INSTALL_FULL_DATAROOTDIR}/pixmaps )
   ENDIF()
 ENDIF()
 

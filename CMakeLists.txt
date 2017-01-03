@@ -1,4 +1,4 @@
-CMAKE_MINIMUM_REQUIRED (VERSION 2.6.2)
+CMAKE_MINIMUM_REQUIRED (VERSION 2.8.5)
 
 PROJECT (Oyranos)
 
@@ -14,7 +14,7 @@ SET (PACKAGE_DESCRIPTION "Oyranos is a Color Management System (CMS) on operatin
 
 SET( OY_CMMSUBPATH     "color/modules" )
 SET( OY_METASUBPATH    "${PACKAGE_NAME}-meta" )
-SET( OY_ICC_DIR        "${CMAKE_INSTALL_PREFIX}/share/color/icc" )
+SET( OY_ICC_DIR        "${CMAKE_INSTALL_FULL_DATAROOTDIR}/color/icc" )
 
 #additional cmake modules for loading libraries
 SET (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
@@ -30,6 +30,16 @@ SET( REVERSE_DOMAIN org.oyranos )
 
 SET( OYRANOS_VERSION "${OYRANOS_VERSION_MAJOR}.${OYRANOS_VERSION_MINOR}.${OYRANOS_VERSION_MICRO}" )
 SET( OYRANOS_VERSION_MAJORMINOR "${OYRANOS_VERSION_MAJOR}.${OYRANOS_VERSION_MINOR}" )
+
+include(GNUInstallDirs)
+
+option(ENABLE_EXAMPLES "Build example applications" ON)
+option(ENABLE_STATIC_LIBS "Build static libs" ON)
+option(ENABLE_TESTS "Build tests (requires static libs)" ON)
+
+IF( ENABLE_TESTS )
+  SET(ENABLE_STATIC_LIBS ON)
+ENDIF()
 
 IF( ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
   SET(PLATFORM "OSX")

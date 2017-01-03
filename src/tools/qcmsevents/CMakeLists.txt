@@ -28,7 +28,7 @@ IF( HAVE_QT AND UNIX AND NOT APPLE AND Qt5Widgets_FOUND)
                  ${XCM_LIBRARIES}
                  ${X11_LIBRARIES} )
   INSTALL( TARGETS qcmsevents
-           RUNTIME DESTINATION bin )
-  INSTALL( FILES qcmsevents-applet.desktop DESTINATION share/applications )
-  INSTALL( FILES qcmsevents.svg DESTINATION share/pixmaps )
+           RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} )
+  INSTALL( FILES qcmsevents-applet.desktop DESTINATION ${CMAKE_INSTALL_FULL_DATAROOTDIR}/applications )
+  INSTALL( FILES qcmsevents.svg DESTINATION ${CMAKE_INSTALL_FULL_DATAROOTDIR}/pixmaps )
 ENDIF()

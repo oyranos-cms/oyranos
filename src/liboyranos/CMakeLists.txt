@@ -68,10 +68,6 @@ ADD_LIBRARY( ${PROJECT_NAME} SHARED ${SOURCES} ${CHEADERS_OBJECT_IMAGING_PUBLIC}
 TARGET_LINK_LIBRARIES (
    ${PROJECT_NAME}
    ${PROJECT_NAME}Config ${PROJECT_NAME}Modules ${PROJECT_NAME}Object ${PROJECT_NAME}Core ${EXTRA_LIBS} )
-ADD_LIBRARY( oyranos-static STATIC ${SOURCES} ${CHEADERS_OBJECT_IMAGING_PUBLIC} )
-TARGET_LINK_LIBRARIES (
-   oyranos-static
-   oyranos_config-static oyranos_modules-static oyranos_object-static oyranos_core-static ${EXTRA_LIBS} )
 
 # OS X Framework
 FOREACH( policy ${SETTINGS_PUBLIC} )
@@ -95,17 +91,33 @@ SET_TARGET_PROPERTIES( ${PROJECT_NAME} PROPERTIES
 #  DEBUG_POSTFIX -d
 )
 
-INSTALL( TARGETS       ${PROJECT_NAME} oyranos-static
-         RUNTIME       DESTINATION bin
+INSTALL( TARGETS       ${PROJECT_NAME}
+         RUNTIME       DESTINATION ${CMAKE_INSTALL_BINDIR}
          FRAMEWORK     DESTINATION ${FRAMEWORK_DIR}
-         LIBRARY       DESTINATION ${LIB_DIR}
-         ARCHIVE       DESTINATION lib${LIB_SUFFIX}
-         PUBLIC_HEADER DESTINATION include/${PACKAGE_NAME}
-         RESOURCE      DESTINATION share/color/settings
+         LIBRARY       DESTINATION ${CMAKE_INSTALL_LIBDIR}
+         ARCHIVE       DESTINATION ${CMAKE_INSTALL_LIBDIR}
+         PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PACKAGE_NAME}
+         RESOURCE      DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/color/settings
        )
+
+IF(ENABLE_STATIC_LIBS)
+  ADD_LIBRARY( oyranos-static STATIC ${SOURCES} ${CHEADERS_OBJECT_IMAGING_PUBLIC} )
+  TARGET_LINK_LIBRARIES (
+    oyranos-static
+    oyranos_config-static oyranos_modules-static oyranos_object-static oyranos_core-static ${EXTRA_LIBS} )
+
+  INSTALL(TARGETS       oyranos-static
+          RUNTIME       DESTINATION ${CMAKE_INSTALL_BINDIR}
+          FRAMEWORK     DESTINATION ${FRAMEWORK_DIR}
+          LIBRARY       DESTINATION ${CMAKE_INSTALL_LIBDIR}
+          ARCHIVE       DESTINATION ${CMAKE_INSTALL_LIBDIR}
+          PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PACKAGE_NAME}
+          RESOURCE      DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/color/settings
+        )
+ENDIF()
 
 # install for all but app bundles
 INSTALL( FILES       ${SETTINGS_PUBLIC}
-         DESTINATION ${CMAKE_INSTALL_PREFIX}/share/color/settings
+         DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/color/settings
        )
 

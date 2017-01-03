@@ -19,9 +19,9 @@
 #define OYEXPORT
 
 #define OY_PREFIX         "@CMAKE_INSTALL_PREFIX@"	/**< install variable */
-#define OY_BINDIR         "@CMAKE_INSTALL_PREFIX@/bin"	/**< install variable */
-#define OY_DATADIR        "@CMAKE_INSTALL_PREFIX@/share"	/**< install variable */
-#define OY_LIBDIR         "@CMAKE_INSTALL_PREFIX@/lib@LIB_SUFFIX@"	/**< install variable */
+#define OY_BINDIR         "@CMAKE_INSTALL_FULL_BINDIR@"	/**< install variable */
+#define OY_DATADIR        "@CMAKE_INSTALL_FULL_DATAROOTDIR@"	/**< install variable */
+#define OY_LIBDIR         "@CMAKE_INSTALL_FULL_LIBDIR@"	/**< install variable */
 #define OY_CMMSUBPATH     "@OY_CMMSUBPATH@"	/**< install variable */
 #define OY_METASUBPATH    "@OY_METASUBPATH@"	/**< install variable */
 #define OY_CMMDIR         OY_LIBDIR "/" OY_CMMSUBPATH	/**< install variable */

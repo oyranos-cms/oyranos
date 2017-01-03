@@ -16,13 +16,13 @@ SET (TARGET_CMAKE_FOLDER
 
 SET (TARGET_PLUGIN_FOLDER "oyranos"
 		CACHE STRING
-		"Optional folder below system library folder where to install oyranos plugins. LIB_SUFFIX is honored."
+		"Optional folder below system library folder where to install oyranos plugins."
     )
 
 SET (TARGET_PKGCONFIG_FOLDER
 		"pkgconfig"
 		CACHE STRING
-		"The folder below system library folder where to install pkgconfig files. LIB_SUFFIX is honored."
+		"The folder below system library folder where to install pkgconfig files."
     )
 
 SET (TARGET_DOCUMENTATION_FOLDER
@@ -36,10 +36,6 @@ SET (TARGET_DOCUMENTATION_FOLDER
 # Misc.
 #
 
-SET (LIB_SUFFIX ""
-		CACHE STRING
-		"Optional suffix to use on lib folders (e.g. 64 for lib64)"
-    )
 #cmake settings for use by find_package
 CONFIGURE_FILE (
 		"${CMAKE_CURRENT_SOURCE_DIR}/OyranosConfig.cmake.in"
@@ -49,6 +45,6 @@ CONFIGURE_FILE (
 
 INSTALL ( FILES
 		"${CMAKE_CURRENT_BINARY_DIR}/OyranosConfig.cmake"
-		DESTINATION lib${LIB_SUFFIX}/cmake/oyranos COMPONENT dev
+		DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/oyranos COMPONENT dev
 	)
 
