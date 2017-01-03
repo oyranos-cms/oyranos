@@ -144,8 +144,6 @@ device specific Informations (ICC profiles) und system wide settings.
 
 * CMAKE\_INSTALL\_PREFIX to install into paths and so on. Use on the command 
   line through -DCMAKE\_INSTALL\_PREFIX=/my/path .
-* LIB\_SUFFIX - allows to append a architecture specific suffix like 
-  LIB\_SUFFIX=64 for 64bit RedHat style Linux systems.
 * XDG\_CONFIG\_DIR - path to install oyranos-monitor-setup.desktop; defaults to /etc/xdg/autostart/
 * USE\_GCOV - enable gcov/lcov compiler flags on the Unix platform and the coverage target
 * USE\_SYSTEM\_ELEKTRA - fail if not found
