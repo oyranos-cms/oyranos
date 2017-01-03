@@ -76,6 +76,10 @@ IF(UNIX)
   ENDIF(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_CLANG)
 ENDIF(UNIX)
 
+# Add /usr/local/include to search path
+IF(CMAKE_SYSTEM_NAME MATCHES "FreeBSD")
+  SET(CMAKE_REQUIRED_INCLUDES "/usr/local/include" "/usr/include")
+ENDIF(CMAKE_SYSTEM_NAME MATCHES "FreeBSD")
 
 # detect top level projects
 IF(USE_SYSTEM_YAJL)
