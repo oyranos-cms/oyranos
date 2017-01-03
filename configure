@@ -512,7 +512,7 @@ if [ "$debug" = "1" ]; then
   debug_flags=CFLAGS="\"$CFLAGS\""
 fi
 
-echo "$debug_flags cmake -DCMAKE_INSTALL_PREFIX=$prefix -DXDG_CONFIG_DIR=$xdgsysdir -DLIB_SUFFIX=$BARCH $ROOT_DIR"
-cmake -DCMAKE_INSTALL_PREFIX=$prefix -DXDG_CONFIG_DIR=$xdgsysdir -DLIB_SUFFIX=$BARCH $cmake_build_type  $ROOT_DIR
+echo "$debug_flags cmake -DCMAKE_INSTALL_PREFIX=$prefix -DXDG_CONFIG_DIR=$xdgsysdir -DCMAKE_INSTALL_FULL_LIBDIR=$libdir $ROOT_DIR"
+cmake -DCMAKE_INSTALL_PREFIX=$prefix -DXDG_CONFIG_DIR=$xdgsysdir -DCMAKE_INSTALL_FULL_LIBDIR=$libdir $cmake_build_type  $ROOT_DIR
 
 exit 0
