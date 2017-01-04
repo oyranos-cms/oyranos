@@ -57,7 +57,7 @@
 /* profile check API */
 
 /** @internal
- *  supported flags are OY_ICC_PROFILE_2 and OY_ICC_VERSION_4
+ *  supported flags are OY_ICC_VERSION_2 and OY_ICC_VERSION_4
  */
 int      oyCheckProfile_             ( const char        * name,
                                        const char        * colorsig,
