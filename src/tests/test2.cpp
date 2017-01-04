@@ -1658,6 +1658,7 @@ oyTESTRESULT_e testProfile ()
 }
 
 #include "oyProfiles_s.h"
+#include "oyranos_conversion.h"
 
 oyTESTRESULT_e testProfiles ()
 {
@@ -1744,13 +1745,55 @@ oyTESTRESULT_e testProfiles ()
   if((int)size < countB)
   {
     PRINT_SUB( oyTESTRESULT_FAIL, 
-    "oyProfileListGet() returned less than oyPROFILE_e %u|%d", (unsigned int)size, count );
+    "oyProfileListGet() returned less than oyPROFILE_e %u|%d", (unsigned int)size, countB );
   } else
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS,
     "oyProfileListGet and oyPROFILE_e ok %u|%d", (unsigned int)size, countB );
   }
 
+
+  oyProfile_s * pattern = oyProfile_FromFile( "sRGB", OY_NO_LOAD, NULL );
+  oyProfiles_s* patterns = oyProfiles_New(NULL);
+  oyProfiles_MoveIn( patterns, &pattern, -1 );
+  uint32_t icc_profile_flags =oyICCProfileSelectionFlagsFromOptions( OY_CMM_STD,
+                                       "//" OY_TYPE_STD "/icc_color", NULL, 0 );
+  profs = oyProfiles_Create( patterns, icc_profile_flags, NULL );
+  count = oyProfiles_Count( profs );
+  if((int)size > count && count)
+  {
+    PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyProfiles_Create( pattern = \"sRGB\" )     ok %u|%d", (unsigned int)size, count );
+  } else
+  {
+    PRINT_SUB( oyTESTRESULT_FAIL, 
+    "oyProfiles_Create( pattern = \"sRGB\" )        %u|%d", (unsigned int)size, count );
+  }
+  oyProfiles_Release( &profs );
+  oyProfile_Release( &pattern );
+  oyProfiles_Release( &patterns );
+
+
+  char * text = oyGetInstallPath( oyPATH_ICC, oySCOPE_SYSTEM, oyAllocateFunc_ );
+  pattern = oyProfile_FromFile( text, OY_NO_LOAD, NULL );
+  fprintf( zout, "oyPATH_ICC::oySCOPE_SYSTEM=%s\n", text );
+  oyFree_m_(text);
+  patterns = oyProfiles_New(NULL);
+  oyProfiles_MoveIn( patterns, &pattern, -1 );
+  profs = oyProfiles_Create( patterns, icc_profile_flags, NULL );
+  count = oyProfiles_Count( profs );
+  if((int)size > count && count)
+  {
+    PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyProfiles_Create( pattern = system/icc ) ok %u|%d", (unsigned int)size, count );
+  } else
+  {
+    PRINT_SUB( oyTESTRESULT_FAIL, 
+    "oyProfiles_Create( pattern = system/icc )    %u|%d", (unsigned int)size, count );
+  }
+  oyProfiles_Release( &profs );
+  oyProfile_Release( &pattern );
+  oyProfiles_Release( &patterns );
 
   return result;
 }
