@@ -208,13 +208,13 @@ OYAPI oyProfile_s * OYEXPORT
       )
     {
       oyMessageFunc_p( oyMSG_ERROR,(oyStruct_s*)object,
-                       OY_DBG_FORMAT_"\n\t%s: \"%s\"\n\t%s\n\t%s\n%s", OY_DBG_ARGS_,
+                       OY_DBG_FORMAT_ "\n\t%s: \"%s\"\n\t%s\n\t%s\n%s", OY_DBG_ARGS_,
                 _("Could not open default ICC profile"),name,
                 _("You can get them from http://sf.net/projects/openicc"),
                 _("install in the OpenIccDirectory icc path"), text );
     } else
       oyMessageFunc_p( oyMSG_ERROR,(oyStruct_s*)object,
-                       OY_DBG_FORMAT_"\n\t%s: \"%s\"\n\t%s\n%s", OY_DBG_ARGS_,
+                       OY_DBG_FORMAT_ "\n\t%s: \"%s\"\n\t%s\n%s", OY_DBG_ARGS_,
                 _("Could not open default ICC profile"), name,
                 _("install in the OpenIccDirectory icc path"), text );
   }
@@ -295,7 +295,7 @@ OYAPI oyProfile_s * OYEXPORT oyProfile_FromName (
   if(!name)
   {
     oyMessageFunc_p( oyMSG_WARN,(oyStruct_s*)NULL,
-                     OY_DBG_FORMAT_"\"name\" arg missed", OY_DBG_ARGS_ );
+                     OY_DBG_FORMAT_ "\"name\" arg missed", OY_DBG_ARGS_ );
     return NULL;
   }
 
@@ -404,10 +404,11 @@ OYAPI oyProfile_s * OYEXPORT oyProfile_FromName (
  *  - ::OY_ICC_VERSION_2 and ::OY_ICC_VERSION_4 let select version 2 and 4 profiles separately.
  *  - ::OY_NO_REPAIR skip automatic adding a ID hash if missed, useful for pure analysis
  *  - ::OY_SKIP_NON_DEFAULT_PATH ignore profiles outside of default paths
+ *  - ::OY_NO_LOAD do not load profile, create path name fragment
  *
- *  @version Oyranos: 0.9.6
+ *  @version Oyranos: 0.9.7
+ *  @date    2017/01/02
  *  @since   2007/11/0 (Oyranos: 0.1.9)
- *  @date    2014/04/16
  */
 OYAPI oyProfile_s * OYEXPORT
 oyProfile_FromFile            ( const char      * name,
@@ -415,8 +416,29 @@ oyProfile_FromFile            ( const char      * name,
                                 oyObject_s        object)
 {
   oyProfile_s_ * s = 0;
+  char * fn;
 
-  char * fn = oyFindProfile_( name, flags );
+  if(flags & OY_NO_LOAD)
+  {
+    if(!name)
+    {
+      oyMessageFunc_p( oyMSG_ERROR,(oyStruct_s*)object,
+                       OY_DBG_FORMAT_ "\"name\" arg missed",OY_DBG_ARGS_);
+      return NULL;
+    }
+
+    s = (oyProfile_s_*) oyProfile_New(object);
+    if(s)
+      s->file_name_ = oyStringCopy_( name, s->oy_->allocateFunc_ );
+
+    if(oy_debug)
+      oyMessageFunc_p( oyMSG_DBG,(oyStruct_s*)object,
+                       OY_DBG_FORMAT_ "path only profile: %s %d",
+                       OY_DBG_ARGS_, name, flags );
+    return (oyProfile_s*)s;
+  }
+
+  fn = oyFindProfile_( name, flags );
   if(fn)
     s = oyProfile_FromFile_( name, flags, object );
 

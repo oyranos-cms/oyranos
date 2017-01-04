@@ -967,14 +967,25 @@ int          oyProfile_ToFile_       ( oyProfile_s_      * profile,
 int32_t      oyProfile_Match_        ( oyProfile_s_      * pattern,
                                        oyProfile_s_      * profile )
 {
-  int32_t match = 0;
+  int32_t match = 1;
   int i;
   icSignature pattern_sig, profile_sig;
 
   if(pattern && profile)
   {
     /*match = oyProfile_Equal_(pattern, profile);*/ /* too expensive */
-    if(!match)
+
+    /** support file name patterns */
+    if(pattern->file_name_)
+    {
+      const char * p_fn = profile->file_name_ ?
+                          profile->file_name_ :
+                          oyProfile_GetFileName( (oyProfile_s*) profile, -1);
+      if(strstr(p_fn, pattern->file_name_) == NULL)
+        match = 0;
+    } else
+    if(match)
+    /** support signature patterns */
     {
       match = 1;
       for( i = 0; i < (int)oySIGNATURE_MAX; ++i)
@@ -983,7 +994,10 @@ int32_t      oyProfile_Match_        ( oyProfile_s_      * pattern,
         profile_sig = oyProfile_GetSignature( (oyProfile_s*)profile, (oySIGNATURE_TYPE_e) i );
 
         if(pattern_sig && profile_sig && pattern_sig != profile_sig)
+        {
           match = 0;
+          break;
+        }
       }
     }
   }
