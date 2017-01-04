@@ -35,7 +35,13 @@ int oyLowerStrcmpWrap (const void * a_, const void * b_)
                                       OY_CMM_STD, "//" OY_TYPE_STD "/icc_color",
                                                                      NULL, 0 );
 
+    // only display profiles
     pattern = oyProfile_FromSignature( profile_class, oySIGNATURE_CLASS, 0 );
+    oyProfiles_MoveIn( patterns, &pattern, -1 );
+
+    // ... and only profiles installed in system paths
+    char * text = oyGetInstallPath( oyPATH_ICC, oySCOPE_SYSTEM, oyAllocateFunc_ );
+    pattern = oyProfile_FromFile( text, OY_NO_LOAD, NULL );
     oyProfiles_MoveIn( patterns, &pattern, -1 );
 
     profiles = oyProfiles_Create( patterns, icc_profile_flags, 0 );
