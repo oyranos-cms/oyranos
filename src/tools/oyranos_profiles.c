@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2010-2014 (C) Kai-Uwe Behrmann
+ *            2010-2016 (C) Kai-Uwe Behrmann
  *
  *  @brief    ICC profile informations - on the command line
  *  @internal
@@ -62,7 +62,7 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "\n");
   fprintf( stderr, "%s\n",                 _("Usage"));
   fprintf( stderr, "  %s\n",               _("List available ICC profiles:"));
-  fprintf( stderr, "      %s -l [-f] [-e] [-acdknoi] [-24] [--duplicates|--no-repair] \n",        argv[0]);
+  fprintf( stderr, "      %s -l [-f] [-e] [-acdknoi] [-u|-s|-y|-m] [-24] [--duplicates|--no-repair] \n",        argv[0]);
   fprintf( stderr, "      -f  %s\n",       _("full path and file name"));
   fprintf( stderr, "      -e  %s\n",       _("internal name"));
   fprintf( stderr, "      -a  %s\n",       _("abstract class"));
@@ -78,20 +78,12 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "      --no-repair   %s\n",_("skip repair of profile ID"));
   fprintf( stderr, "\n");
   fprintf( stderr, "  %s\n",               _("List search paths:"));
-  fprintf( stderr, "      %s -p [-usym]\n",        argv[0]);
-  fprintf( stderr, "      -u  %s\n",       _("user path"));
-  fprintf( stderr, "      -s  %s\n",       _("linux system path"));
-  fprintf( stderr, "      -y  %s\n",       _("oyranos install path"));
-  fprintf( stderr, "      -m  %s\n",       _("machine specific path"));
+  fprintf( stderr, "      %s -p [-u|-s|-y|-m]\n",        argv[0]);
   fprintf( stderr, "\n");
   fprintf( stderr, "  %s\n",               _("Install ICC profile:"));
   fprintf( stderr, "      %s [--gui] --install -u|-s|-y|-m [-d] %s\n", argv[0], _("ICC_FILE_NAME"));
   fprintf( stderr, "      %s --taxi=ID [--gui] [-d] --install -u|-s|-y|-m\n", argv[0]);
   fprintf( stderr, "      -d  %s\n",       _("use device sub path"));
-  fprintf( stderr, "      -u  %s\n",       _("user path"));
-  fprintf( stderr, "      -s  %s\n",       _("system path"));
-  fprintf( stderr, "      -y  %s\n",       _("oyranos install path"));
-  fprintf( stderr, "      -m  %s\n",       _("machine specific path"));
   fprintf( stderr, "      --gui %s\n",     _("show hints and question GUI"));
   fprintf( stderr, "      --taxi=ID %s\n", _("download ID from Taxi data base"));
   fprintf( stderr, "\n");
@@ -100,6 +92,10 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "\n");
   fprintf( stderr, "  %s\n",               _("General options:"));
   fprintf( stderr, "      -v  %s\n",       _("verbose"));
+  fprintf( stderr, "      -u  %s\n",       _("user path"));
+  fprintf( stderr, "      -s  %s\n",       _("linux system path"));
+  fprintf( stderr, "      -y  %s\n",       _("oyranos install path"));
+  fprintf( stderr, "      -m  %s\n",       _("machine specific path"));
   fprintf( stderr, "\n");
   fprintf( stderr, "  %s:\n",               _("Example"));
   fprintf( stderr, "      SAVEIFS=$IFS ; IFS=$'\\n\\b'; profiles=(`oyranos-profiles -ldf`); IFS=$SAVEIFS; for file in \"${profiles[@]}\"; do ls \"$file\"; done");
@@ -276,6 +272,9 @@ int main( int argc , char** argv )
           path = oyGetInstallPath( oyPATH_ICC, oySCOPE_OYRANOS, oyAllocateFunc_ );
         if(machine_path)
           path = oyGetInstallPath( oyPATH_ICC, oySCOPE_MACHINE, oyAllocateFunc_ );
+
+      if(oy_debug)
+        fprintf( stderr, "%s: %s\n", _("Search path"), path );
     }
 
     if(list_profiles)
@@ -291,6 +290,8 @@ int main( int argc , char** argv )
       for(i = 0; i < (int)count; ++i)
         {
           const char * sfn = names[i];
+          if(path && strstr(sfn, path) == NULL)
+            continue;
           if(strrchr(sfn, OY_SLASH_C))
             sfn = strrchr(sfn, OY_SLASH_C) + 1;
           fprintf(stdout, "%s\n", sfn);
@@ -349,6 +350,12 @@ int main( int argc , char** argv )
             accept = 0;
         }
 
+        if(path)
+        {
+          const char * sfn = oyProfile_GetFileName(p, -1);
+          if(strstr(sfn, path) == NULL)
+          accept = 0;
+        }
 
         if(!list_profile_full_names && !list_profile_internal_names &&
            accept)

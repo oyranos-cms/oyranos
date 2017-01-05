@@ -2,9 +2,9 @@
 .SH NAME
 oyranos-profiles \- Oyranos CMS ICC profiles tool
 .SH SYNOPSIS
-\fBoyranos-profiles\fR -l [-f] [-e] [-acdknoi] [-24] [--duplicates|--no-repair]
+\fBoyranos-profiles\fR -l [-f] [-e] [-acdknoi] [-u|-s|-y|-m] [-24] [--duplicates|--no-repair]
 .fi
-\fBoyranos-profiles\fR -p [-usym]
+\fBoyranos-profiles\fR -p [-u|-s|-y|-m]
 .fi
 \fBoyranos-profiles\fR --install [-u|-s|-y|-m] \fIPROFILENAME\fR
 .fi
@@ -49,14 +49,6 @@ Following options are filters and can be added to each other.
 .TP
 \fB\-p\fR
 show search paths according to the OS color management system and to the actual OpenICC profile search paths.
-.br
-\fB-u\fR user path
-.br
-\fB-s\fR Linux system path
-.br
-\fB-y\fR Oyranos path
-.br
-\fB-m\fR machine specific path
 .TP
 \fB\-\-install\fR
 install a ICC profile into one of the following OpenICC paths.
@@ -83,6 +75,14 @@ The following options must be specified before the \fB--install\fR option.
 .TP
 .B \-v, \-\-verbose
 increase verbosity
+.TP
+.B \-u user path
+.TP
+.B \-s Linux system path
+.TP
+.B \-y Oyranos path
+.TP
+.B \-m machine specific path
 .SH ENVIRONMENT
 .TP
 .B OY_DEBUG
