@@ -984,7 +984,7 @@ int main(int argc, char *argv[])
       {
          oyConfig_s * taxi_dev = oyConfigs_Get( taxi_devices, i );
          int32_t rank = 0;
-         error = oyConfig_Compare( device, taxi_dev, &rank );
+         error = oyDeviceCompare( device, taxi_dev, &rank );
          
          current_tmp = -1;
          

@@ -409,7 +409,7 @@ int main( int argc , char** argv )
       {
         taxi_dev = oyConfigs_Get( devices, i );
         ranks[2*i+0] = i;
-        error = oyConfig_Compare( device, taxi_dev, &ranks[2*i+1] );
+        error = oyDeviceCompare( device, taxi_dev, &ranks[2*i+1] );
 
         oyConfig_Release( &taxi_dev );
       }
@@ -687,7 +687,7 @@ int main( int argc , char** argv )
         /*p_device->db = oyOptions_Copy( p_device->backend_core, 0 );
         device->db = oyOptions_Copy( device->backend_core, 0 );*/
         if(oy_debug < 2) oy_debug = 2;
-        error = oyConfig_Compare( p_device, device, &rank );
+        error = oyDeviceCompare( p_device, device, &rank );
         oy_debug = old_oy_debug;
         fprintf(stderr, "rank of edid to previous profile %d\n", rank);
       }
