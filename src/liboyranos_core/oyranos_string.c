@@ -668,6 +668,31 @@ int     oyStrcmp_( const char * str1_, const char * str2_ )
   return strcmp(str1_,str2_); }
 char    oyToupper_( char c_ ) { return toupper(c_); }
 
+void *   oyMemMem                    ( const void        * haystack,
+                                       size_t              haystacklen,
+                                       const void        * needle,
+                                       size_t              needlelen )
+{
+  char * hay_buf = (char*) haystack,
+       * needle_buf = (char*) needle,
+       * pos = hay_buf;
+  size_t len = haystacklen;
+
+  do
+  {
+    pos = memchr( pos, needle_buf[0], len );
+    len = hay_buf + haystacklen - pos;
+
+    if(pos && len > needlelen &&
+       memcmp( pos, needle, needlelen ) == 0)
+      return pos;
+
+  } while( pos++ && len > needlelen );
+
+  return NULL;
+}
+
+
 
 /** @internal returns the binary lenth of a string */
 size_t oyStrblen_            (const char * start)

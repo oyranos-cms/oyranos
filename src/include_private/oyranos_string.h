@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2004-2010 (C) Kai-Uwe Behrmann
+ *            2004-2017 (C) Kai-Uwe Behrmann
  *
  *  @brief    string handling functions
  *  @internal
@@ -73,6 +73,10 @@ char *             oyStrnchrN_       ( char              * text,
                                        int               * end );
 int                oyStringCaseCmp_  ( const char        * a,
                                        const char        * b );
+void *             oyMemMem          ( const void        * haystack,
+                                       size_t              haystacklen,
+                                       const void        * needle,
+                                       size_t              needlelen );
 int                oyStringSegments_ ( const char        * text,
                                        char                delimiter );
 int                oyStringSegmentsN_( const char        * text,
