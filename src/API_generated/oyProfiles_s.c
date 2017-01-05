@@ -775,6 +775,59 @@ int              oyProfiles_DeviceRank ( oyProfiles_s    * list,
                                          oyConfig_s      * device,
                                          int32_t         * rank_list )
 {
+  return oyProfiles_Rank( list, device, OY_SLASH_C, '.', 0, rank_list );
+}
+
+/** Function  oyProfiles_Rank
+ *  @memberof oyProfiles_s
+ *  @brief    Sort a profile list according to a given pattern
+ *
+ *  Profiles which match the patern will placed according to a rank value on 
+ *  top of the list followed by the zero ranked profiles.
+ *
+ *  @code
+    // Get all ICC profiles, which can be used as assumed RGB profile
+    uint32_t icc_profile_flags = oyICCProfileSelectionFlagsFromOptions( 
+                                      OY_CMM_STD, "//" OY_TYPE_STD "/icc_color",
+                                                                     NULL, 0 );
+    oyProfiles_s * p_list = oyProfiles_ForStd( oyASSUMED_RGB,
+                                               icc_profile_flags, 0,0 );
+    int32_t * rank_list = (int32_t*) malloc( oyProfiles_Count(p_list) *
+                                             sizeof(int32_t) );
+    // Sort the profiles according to eaches match to a given device
+    oyProfiles_Rank( p_list, config, '/', ',', OY_MATCH_SUB_STRING, rank_list );
+
+    n = oyProfiles_Count( p_list );
+    for(i = 0; i < n; ++i)
+    {
+      temp_prof = oyProfiles_Get( p_list, i );
+      // Show the rank value, the profile internal and file names on the command line
+      printf("%d %d: \"%s\" %s\n", rank_list[i], i,
+             oyProfile_GetText( temp_prof, oyNAME_DESCRIPTION ),
+             oyProfile_GetFileName(temp_prof, 0));
+      oyProfile_Release( &temp_prof );
+    } @endcode
+ *
+ *  @param[in,out] list                the to be sorted profile list
+ *  @param[in]     device              filter pattern
+ *  @param         path_separator      a char to split into hierarchical levels
+ *  @param         key_separator       a char to split key strings
+ *  @param         flags               options:
+ *                                     - OY_MATCH_SUB_STRING - find sub string;
+ *                                       default is whole word match
+ *  @param[in,out] rank_list           list of rank levels for the profile list
+ *
+ *  @version Oyranos: 0.9.7
+ *  @date    2017/01/05
+ *  @since   2017/01/05 (Oyranos: 0.9.7)
+ */
+OYAPI int OYEXPORT oyProfiles_Rank   ( oyProfiles_s      * list,
+                                       oyConfig_s        * device,
+                                       char                path_separator,
+                                       char                key_separator,
+                                       int                 flags,
+                                       int32_t           * rank_list )
+{
   int error = !list || !device || !rank_list;
   oyProfiles_s_ * s = (oyProfiles_s_*)list;
   int i,n;
@@ -797,7 +850,7 @@ int              oyProfiles_DeviceRank ( oyProfiles_s    * list,
 
   error = !memset( rank_list, 0, sizeof(int32_t) * n );
 
-  /* oyConfig_Compare assumes its options in device->db, so it is filled here.*/
+  /* oyConfig_Match assumes its options in device->db, so it is filled here.*/
   if(!oyOptions_Count( d->db ))
   {
     old_db = d->db;
@@ -811,7 +864,7 @@ int              oyProfiles_DeviceRank ( oyProfiles_s    * list,
     oyProfile_GetDevice( p, p_device );
     rank = 0;
 
-    error = oyConfig_Compare( p_device, device, &rank );
+    error = oyConfig_Match( p_device, device, path_separator, key_separator, flags, &rank );
     if(oyConfig_FindString( p_device, "OYRANOS_automatic_generated", "1" ) ||
        oyConfig_FindString( p_device, "OPENICC_automatic_generated", "1" ))
     {
