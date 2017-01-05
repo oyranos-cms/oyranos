@@ -444,7 +444,7 @@ OYAPI int  OYEXPORT oyConfig_EraseFromDB (
   return error;
 }
 
-/** Function  oyConfig_Compare
+/**
  *  @memberof oyConfig_s
  *  @brief    Check for matching to a given pattern
  *
@@ -462,7 +462,7 @@ OYAPI int  OYEXPORT oyConfig_EraseFromDB (
  *  @date    2015/08/03
  *  @since   2009/01/26 (Oyranos: 0.1.10)
  */
-int            oyConfig_Compare      ( oyConfig_s        * module_device,
+OYAPI int OYEXPORT oyConfig_Compare  ( oyConfig_s        * module_device,
                                        oyConfig_s        * db_pattern,
                                        int32_t           * rank_value )
 {
@@ -536,11 +536,10 @@ int            oyConfig_Compare      ( oyConfig_s        * module_device,
       if(d_val && d_opt)
       for( j = 0; j < pattern_n; ++j )
       {
+        const char * pr;
         p = oyOptions_Get( pattern->db, j );
-
-        p_opt = oyFilterRegistrationToText( oyOption_GetRegistration(p),
-                                            oyFILTER_REG_MAX,
-                                            0 );
+        pr = oyOption_GetRegistration(p);
+        p_opt = oyFilterRegistrationToText( pr, oyFILTER_REG_MAX, 0 );
 
         if(p_opt && oyStrstr_(p_opt, d_opt))
         {
@@ -562,6 +561,11 @@ int            oyConfig_Compare      ( oyConfig_s        * module_device,
               {
                 if(oyStrcmp_(rank_map[k].key, d_opt) == 0)
                 {
+                  if(oy_debug)
+                    DBG_NUM5_S( "match_value[%s]: %s - %s %d+%d\n",
+                                oyNoEmptyString_m_(d_opt), oyNoEmptyString_m_(d_val),
+                                oyNoEmptyString_m_(p_val),
+                                rank, rank_map[k].match_value );
                   rank += rank_map[k].match_value;
                   break;
                 }
@@ -578,6 +582,11 @@ int            oyConfig_Compare      ( oyConfig_s        * module_device,
             {
               if(oyStrcmp_(rank_map[k].key, d_opt) == 0)
               {
+                if(oy_debug)
+                    DBG_NUM5_S( "none_match_value[%s]: %s - %s %d+%d\n",
+                                oyNoEmptyString_m_(d_opt), oyNoEmptyString_m_(d_val),
+                                oyNoEmptyString_m_(p_val),
+                                rank, rank_map[k].none_match_value );
                 rank += rank_map[k].none_match_value;
                 break;
               }
@@ -589,6 +598,11 @@ int            oyConfig_Compare      ( oyConfig_s        * module_device,
         /*
         rank += oyFilterRegistrationMatch( d->registration, p->registration,
                                            oyOBJECT_CMM_API8_S); */
+
+        if(oy_debug)
+          DBG_NUM4_S( "[%s]: %s/%s %d\n",
+                      oyNoEmptyString_m_(d_opt), oyNoEmptyString_m_(d_val),
+                      oyNoEmptyString_m_(p_val), rank );
 
         oyOption_Release( &p );
         if(p_opt) oyFree_m_( p_opt );
@@ -602,11 +616,12 @@ int            oyConfig_Compare      ( oyConfig_s        * module_device,
           {
             if(oyStrcmp_(rank_map[k].key, d_opt) == 0)
             {
+              if(oy_debug)
+                    DBG_NUM5_S( "not_found_value[%s]: %s/%s %d+%d\n",
+                                oyNoEmptyString_m_(d_opt), oyNoEmptyString_m_(d_val),
+                                oyNoEmptyString_m_(p_val),
+                                rank, rank_map[k].not_found_value );
               rank += rank_map[k].not_found_value;
-              DBG_NUM4_S( "%s %s/%s -> %d",
-                          oyNoEmptyString_m_(d_opt),
-                          oyNoEmptyString_m_(d_val),
-                          oyNoEmptyString_m_(p_val), rank); 
               break;
             }
             ++k;
