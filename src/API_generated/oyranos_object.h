@@ -304,6 +304,16 @@ int    oyFilterRegistrationMatchKey  ( const char        * registration1,
                                        const char        * registration2,
                                        oyOBJECT_e          api_number );
 const char * oyGetKeyFromRegistration( const char        * registration );
+/** @brief 
+ *  @since 0.9.7
+ */
+#define OY_MATCH_SUB_STRING 0x100
+int    oyFilterStringMatch           ( const char        * registration,
+                                       const char        * pattern,
+                                       oyOBJECT_e          api_number,
+                                       char                path_separator,
+                                       char                key_separator,
+                                       int                 flags );
 
 
 /** @internal
