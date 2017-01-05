@@ -2448,12 +2448,20 @@ oyTESTRESULT_e testRegistrationMatch ()
     "long device key match                 " );
   }
 
+  if( oyFilterStringMatch( "abc-def-ghi",
+                           "+def._ghi.-jkl", oyOBJECT_NONE, '/', '.',
+                           OY_MATCH_SUB_STRING ))
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "sub string match                      " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "sub string match                      " );
+  }
+
   return result;
 }
 
-extern "C" {
-int oyTextIccDictMatch( const char *, const char *, double delta ); }
-
+#include "oyranos_object_internal.h"
 oyTESTRESULT_e test_oyTextIccDictMatch ()
 {
   oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
@@ -2461,7 +2469,7 @@ oyTESTRESULT_e test_oyTextIccDictMatch ()
   fprintf(stdout, "\n" );
 
   if( oyTextIccDictMatch("ABC",
-                         "ABC", 0))
+                         "ABC", 0, '/', ','))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "simple text matching                  " );
   } else
@@ -2470,7 +2478,7 @@ oyTESTRESULT_e test_oyTextIccDictMatch ()
   }
 
   if(!oyTextIccDictMatch("ABC",
-                         "ABCD", 0))
+                         "ABCD", 0, '/', ','))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "simple text mismatching               " );
   } else
@@ -2479,7 +2487,7 @@ oyTESTRESULT_e test_oyTextIccDictMatch ()
   }
 
   if( oyTextIccDictMatch("abcd,ABC,efgh",
-                         "abcdef,12345,ABC", 0))
+                         "abcdef,12345,ABC", 0, '/', ','))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "multiple text matching                " );
   } else
@@ -2488,7 +2496,7 @@ oyTESTRESULT_e test_oyTextIccDictMatch ()
   }
 
   if( oyTextIccDictMatch("abcd,ABC,efgh,12345",
-                         "abcdef,12345,ABCD", 0.0005))
+                         "abcdef,12345,ABCD", 0.0005, '/', ','))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "multiple integer matching             " );
   } else
@@ -2497,7 +2505,7 @@ oyTESTRESULT_e test_oyTextIccDictMatch ()
   }
 
   if(!oyTextIccDictMatch("abcd,ABC,efgh,12345",
-                         "abcdef,12345ABCD", 0.0005))
+                         "abcdef,12345ABCD", 0.0005, '/', ','))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "multiple integer mismatching          " );
   } else
@@ -2506,7 +2514,7 @@ oyTESTRESULT_e test_oyTextIccDictMatch ()
   }
 
   if( oyTextIccDictMatch("abcd,ABC,efgh,123.45001",
-                         "abcdef,123.45,ABCD", 0.0005))
+                         "abcdef,123.45,ABCD", 0.0005, '/', ','))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "multiple float matching               " );
   } else
@@ -2515,7 +2523,7 @@ oyTESTRESULT_e test_oyTextIccDictMatch ()
   }
 
   if(!oyTextIccDictMatch("abcd,ABC,efgh,123.45",
-                         "abcdef,123", 0.0005))
+                         "abcdef,123", 0.0005, '/', ','))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "multiple float mismatching            " );
   } else
