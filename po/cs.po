@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: oyranos\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2016-11-15 11:48+0100\n"
+"POT-Creation-Date: 2017-01-05 21:47+0100\n"
 "PO-Revision-Date: 2012-10-19 15:10+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -15,12 +15,12 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: liboyranos_core/oyranos_core.c:417 tools/qcmsevents/qcmsevents.cpp:278
-#: examples/devices/test_device.c:369 examples/devices/test_device.c:385
-#: examples/devices/test_device.c:400 examples/devices/test_device.c:422
-#: examples/devices/test_device.c:445 examples/devices/test_device.c:807
-#: examples/devices/test_device.c:963 examples/devices/test_device.c:1051
-#: examples/devices/test_device.c:1273
+#: liboyranos_core/oyranos_core.c:418 tools/oyranos-device.c:369
+#: tools/oyranos-device.c:385 tools/oyranos-device.c:400
+#: tools/oyranos-device.c:422 tools/oyranos-device.c:445
+#: tools/oyranos-device.c:807 tools/oyranos-device.c:963
+#: tools/oyranos-device.c:1051 tools/oyranos-device.c:1286
+#: tools/qcmsevents/qcmsevents.cpp:312
 #, c-format
 msgid "!!! ERROR"
 msgstr "!!! CHYBA"
@@ -49,25 +49,25 @@ msgstr ""
 
 #: API_generated/oyNamedColor_s.c:608 API_generated/oyranos_profile.c:55
 #: API_generated/oyranos_profile.c:91 liboyranos_config/oyranos_icc.c:516
-#: modules/color/modules/oyranos_cmm_lcm2.c:1521
+#: modules/color/modules/oyranos_cmm_lcm2.c:1541
 #: modules/color/modules/oyranos_cmm_oicc.c:223
 msgid "----"
 msgstr "----"
 
-#: tools/oyranos_gamma.c:236
+#: tools/oyranos_gamma.c:237
 msgid "--module name"
 msgstr "--module jméno"
 
-#: tools/oyranos_gamma.c:237
+#: tools/oyranos_gamma.c:238
 msgid "-d device_position_start_from_zero"
 msgstr "-d device_position_start_from_zero"
 
-#: tools/oyranos_gamma.c:235 examples/taxi.c:67
+#: tools/oyranos_gamma.c:236 examples/taxi.c:67
 msgid "-v verbose"
 msgstr "-v upovídaný výstup"
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:3663
-#: modules/color/modules/oyranos_cmm_lcm2.c:3666
+#: modules/color/modules/oyranos_cmm_lcm2.c:3683
+#: modules/color/modules/oyranos_cmm_lcm2.c:3686
 #: modules/color/modules/oyranos_cmm_lcms.c:2757
 #: modules/color/modules/oyranos_cmm_lcms.c:2760
 #: modules/color/modules/oyranos_cmm_oPNG.c:553
@@ -76,8 +76,8 @@ msgstr "-v upovídaný výstup"
 #: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1158
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:873
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:876
-#: modules/color/modules/devices/oyranos_cmm_disp.c:1175
-#: modules/color/modules/devices/oyranos_cmm_disp.c:1178
+#: modules/color/modules/devices/oyranos_cmm_disp.c:1200
+#: modules/color/modules/devices/oyranos_cmm_disp.c:1203
 msgid "/"
 msgstr "/"
 
@@ -268,7 +268,7 @@ msgid ""
 "speed or resource overhead."
 msgstr ""
 
-#: tools/oyranos_profiles.c:192
+#: tools/oyranos_profiles.c:188
 msgid "A single path option is required"
 msgstr "Volba vyžaduje pouze jednu cestu"
 
@@ -290,7 +290,7 @@ msgstr "Abstraktní"
 msgid "Action for Image profile and Editing profile mismatches."
 msgstr "Akce v případě nesouladu profilu obrázku a editace."
 
-#: tools/oyranos_gamma.c:215
+#: tools/oyranos_gamma.c:216
 msgid "Activate profiles:"
 msgstr "Aktivovat profily:"
 
@@ -303,11 +303,11 @@ msgstr "Aktivní politika:"
 msgid "Active matrix monitor"
 msgstr "Monitor s aktivní maticí"
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:3213
+#: modules/color/modules/oyranos_cmm_lcm2.c:3233
 msgid "Adaptation State"
 msgstr "Stav adaptace"
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:3216
+#: modules/color/modules/oyranos_cmm_lcm2.c:3236
 msgid "Adaptation state for absolute colorimetric intent"
 msgstr "Adaptační stav pro absolutní kolorimetrický záměr"
 
@@ -396,7 +396,7 @@ msgstr "Přiřadit předpokládaný profil"
 msgid "Assign No Profile"
 msgstr "Nepřiřadit žádný profil"
 
-#: examples/devices/test_device.c:50
+#: tools/oyranos-device.c:50
 #, fuzzy
 msgid "Assign profile to device:"
 msgstr "Vypsat profil Taxi pro vybrané zařízení:"
@@ -488,18 +488,18 @@ msgstr ""
 msgid "Available Device Profiles:"
 msgstr "Dostupná zařízení"
 
-#: tools/oyranos_gamma.c:359 examples/devices/test_device.c:371
-#: examples/devices/test_device.c:387 examples/devices/test_device.c:402
-#: examples/devices/test_device.c:809 examples/devices/test_device.c:1053
+#: tools/oyranos-device.c:371 tools/oyranos-device.c:387
+#: tools/oyranos-device.c:402 tools/oyranos-device.c:809
+#: tools/oyranos-device.c:1053 tools/oyranos_gamma.c:360
 msgid "Available devices"
 msgstr "Dostupná zařízení"
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:3241
+#: modules/color/modules/oyranos_cmm_lcm2.c:3261
 msgid ""
 "Avoid force of White on White mapping. Default for absolute rendering intent."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:1500
+#: modules/color/modules/oyranos_cmm_lcm2.c:1520
 msgid "BAcs"
 msgstr ""
 
@@ -541,7 +541,7 @@ msgstr "Bitů ve vzorku"
 msgid "Black"
 msgstr "Černá"
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:3131
+#: modules/color/modules/oyranos_cmm_lcm2.c:3151
 #: modules/color/modules/oyranos_cmm_lcms.c:2303
 msgid "Black Preservation"
 msgstr "Zachování černé"
@@ -610,7 +610,7 @@ msgstr "CIE x"
 msgid "CIE y"
 msgstr "CIE y"
 
-#: examples/devices/test_device.c:101
+#: tools/oyranos-device.c:101
 msgid "CLASS"
 msgstr ""
 
@@ -623,7 +623,7 @@ msgstr ""
 
 #. CMM: abbreviation for Color Matching Module
 #: API_generated/oyranos_profile.c:38 liboyranos_config/oyranos_texts.c:263
-#: modules/color/modules/oyranos_cmm_lcm2.c:3665
+#: modules/color/modules/oyranos_cmm_lcm2.c:3685
 #: modules/color/modules/oyranos_cmm_lcms.c:2759
 msgid "CMM"
 msgstr "CMM"
@@ -662,20 +662,15 @@ msgstr "CameraRaw"
 msgid "CameraRaw image"
 msgstr "CameraRaw"
 
-#: modules/color/modules/devices/oyranos_monitor_x11.c:447
-msgid "Can not read hardware information from device."
-msgstr "Ze zařízení nelze přečíst informaci o hardware."
-
-#: API_generated/oyProfile_s.c:785
+#: API_generated/oyProfile_s.c:807
 #, fuzzy
 msgid "Can not write profile"
 msgstr "Nelze zapisovat do souboru"
 
-#: modules/color/modules/devices/oyranos_monitor_x11.c:314
-#: modules/color/modules/devices/oyranos_monitor_cs.c:637
-#: modules/color/modules/devices/oyranos_monitor_cs.c:643
-#: modules/color/modules/devices/oyranos_monitor_cs.c:654
-#: modules/color/modules/devices/oyranos_monitor_cs.c:672
+#: modules/color/modules/devices/oyranos_monitor_cs.c:639
+#: modules/color/modules/devices/oyranos_monitor_cs.c:645
+#: modules/color/modules/devices/oyranos_monitor_cs.c:656
+#: modules/color/modules/devices/oyranos_monitor_cs.c:671
 msgid "Cant read hardware information from device."
 msgstr "Ze zařízení nelze přečíst informaci o hardware."
 
@@ -684,7 +679,7 @@ msgstr "Ze zařízení nelze přečíst informaci o hardware."
 msgid "Cathode ray tube display"
 msgstr "Obrazovka CRT"
 
-#: modules/color/modules/oyranos_cmm_oyra_image_channel.c:422
+#: modules/color/modules/oyranos_cmm_oyra_image_channel.c:424
 #, fuzzy
 msgid "Channel Image Filter Object"
 msgstr "Root Image Filter Object"
@@ -694,15 +689,17 @@ msgstr "Root Image Filter Object"
 msgid "Channels:"
 msgstr "Kanály"
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:3441
-#: modules/color/modules/oyranos_cmm_lcm2.c:3514
-#: modules/color/modules/oyranos_cmm_trds.c:585
+#: modules/color/modules/oyranos_cmm_lcm2.c:3461
+#: modules/color/modules/oyranos_cmm_lcm2.c:3534
+#: modules/color/modules/oyranos_cmm_trds.c:586
 #: modules/color/modules/oyranos_cmm_lcms.c:2535
 #: modules/color/modules/oyranos_cmm_lcms.c:2608
-#: modules/color/modules/oyranos_cmm_elDB.c:857
-#: modules/color/modules/oyranos_cmm_oiDB.c:456
-#: modules/color/modules/devices/oyranos_monitor_x11.c:1784
-#: modules/color/modules/devices/oyranos_monitor_x11.c:2042
+#: modules/color/modules/oyranos_cmm_elDB.c:862
+#: modules/color/modules/oyranos_cmm_oiDB.c:462
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:189
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:370
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:550
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:808
 #: examples/oyranos_cmm_dFil.c:612
 msgid "Check if this module can handle a certain command."
 msgstr "Ověřit, zda tento modul zvládne určitý příkaz."
@@ -716,7 +713,7 @@ msgstr "Chromaticita"
 msgid "Class"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:1519
+#: modules/color/modules/oyranos_cmm_lcm2.c:1539
 msgid "Clip Negatives"
 msgstr ""
 
@@ -734,7 +731,7 @@ msgstr "Cmy"
 msgid "Cmyk"
 msgstr "Cmyk"
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:3137
+#: modules/color/modules/oyranos_cmm_lcm2.c:3157
 msgid ""
 "Cmyk to Cmyk transforms can provide various strategies to preserve the black "
 "only channel. None means, black might change to Cmy and thus text prints not "
@@ -775,11 +772,11 @@ msgid "Collections of settings in Oyranos"
 msgstr "Sbírky nastavení Oyranosu"
 
 #. The following strings must match the categories for a menu entry.
-#: modules/color/modules/oyranos_cmm_lcm2.c:3662
+#: modules/color/modules/oyranos_cmm_lcm2.c:3682
 #: modules/color/modules/oyranos_cmm_lcms.c:2756
 #: modules/color/modules/devices/oyranos_cmm_SANE.c:833
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:872
-#: modules/color/modules/devices/oyranos_cmm_disp.c:1174
+#: modules/color/modules/devices/oyranos_cmm_disp.c:1199
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1227
 #: examples/oyranos_cmm_dFil.c:411 examples/oyranos_cmm_dDev.c:714
 msgid "Color"
@@ -795,12 +792,12 @@ msgstr ""
 msgid "Color Space"
 msgstr "Barvový prostor"
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:3192
+#: modules/color/modules/oyranos_cmm_lcm2.c:3212
 msgid "Color Transform CLUT's can additionally use curves for special cases"
 msgstr ""
 "Transformace barev typu CLUT může ve zvláštních případech využít i křivky."
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:3162
+#: modules/color/modules/oyranos_cmm_lcm2.c:3182
 #: modules/color/modules/oyranos_cmm_lcms.c:2332
 msgid "Color Transforms can be differently stored internally"
 msgstr "Transformace barev mohou být interně uloženy různými způsoby"
@@ -974,13 +971,13 @@ msgstr "Copyright &copy;"
 msgid "Copyright (c) 1998-2008 Marti Maria Saguer; MIT"
 msgstr "Copyright (c) 1998-2008 Marti Maria Saguer; MIT"
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:3774
+#: modules/color/modules/oyranos_cmm_lcm2.c:3794
 #, fuzzy
 msgid "Copyright (c) 1998-2016 Marti Maria Saguer; MIT"
 msgstr "Copyright (c) 1998-2013 Marti Maria Saguer; MIT"
 
 #: modules/color/modules/oyranos_cmm_oyra.c:145
-#: modules/color/modules/devices/oyranos_cmm_disp.c:1319
+#: modules/color/modules/devices/oyranos_cmm_disp.c:1340
 msgid "Copyright (c) 2005-2010 Kai-Uwe Behrmann; newBSD"
 msgstr "Copyright (c) 2005-2010 Kai-Uwe Behrmann; newBSD"
 
@@ -1013,13 +1010,13 @@ msgstr "Copyright (c) 2009 Kai-Uwe Behrmann; newBSD"
 msgid "Copyright (c) 2009 My Name; newBSD"
 msgstr "Copyright (c) 2009 Mé Jméno; newBSD"
 
-#: modules/color/modules/oyranos_cmm_trds.c:674
+#: modules/color/modules/oyranos_cmm_trds.c:675
 #, fuzzy
 msgid "Copyright (c) 2014-2016 Kai-Uwe Behrmann; new BSD"
 msgstr "Copyright (c) 2009 Kai-Uwe Behrmann; newBSD"
 
-#: modules/color/modules/oyranos_cmm_elDB.c:946
-#: modules/color/modules/oyranos_cmm_oiDB.c:545
+#: modules/color/modules/oyranos_cmm_elDB.c:951
+#: modules/color/modules/oyranos_cmm_oiDB.c:551
 #, fuzzy
 msgid "Copyright (c) 2016 Kai-Uwe Behrmann; new BSD"
 msgstr "Copyright (c) 2009 Kai-Uwe Behrmann; newBSD"
@@ -1028,7 +1025,7 @@ msgstr "Copyright (c) 2009 Kai-Uwe Behrmann; newBSD"
 msgid "Copyright:       "
 msgstr "Copyright:       "
 
-#: API_generated/oyranos_module.c:2019
+#: API_generated/oyranos_module.c:2020
 msgid "Could not allocate memory for:"
 msgstr "Nelze alokovat paměť pro:"
 
@@ -1049,7 +1046,7 @@ msgstr ""
 "Nenalezen žádný meta modul. Nastavili jste proměnnou OY_MODULE_PATH, aby "
 "odkazovala na knihovnu zavaděče modulu Oyranos?"
 
-#: API_generated/oyranos_devices.c:493
+#: API_generated/oyranos_devices.c:500
 msgid "Could not open ICC profile"
 msgstr "Nelze otevřít profil ICC"
 
@@ -1057,8 +1054,8 @@ msgstr "Nelze otevřít profil ICC"
 msgid "Could not open default ICC profile"
 msgstr "Nelze otevřít výchozí profil ICC"
 
-#: API_generated/oyranos_devices.c:229 API_generated/oyranos_devices.c:992
-#: liboyranos/oyranos_alpha.c:821 liboyranos/oyranos_alpha.c:904
+#: API_generated/oyranos_devices.c:229 API_generated/oyranos_devices.c:1035
+#: liboyranos/oyranos_alpha.c:798 liboyranos/oyranos_alpha.c:881
 msgid "Could not open device"
 msgstr "Nelze otevřít zařízení"
 
@@ -1066,41 +1063,41 @@ msgstr "Nelze otevřít zařízení"
 msgid "Could not open meta module API"
 msgstr "Nelze otevřít meta modul API"
 
-#: tools/oyranos_profiles.c:461
+#: tools/oyranos_profiles.c:468
 #, fuzzy
 msgid "Could not open or invalid data: "
 msgstr "Nelze otevřít profil"
 
-#: API_generated/oyProfile_s.c:796 API_generated/oyranos_devices.c:1003
+#: API_generated/oyProfile_s.c:818 API_generated/oyranos_devices.c:1046
 #: liboyranos_core/oyranos_io_core.c:111 liboyranos_core/oyranos_io_core.c:269
 msgid "Could not open profile"
 msgstr "Nelze otevřít profil"
 
-#: tools/oyranos_profiles.c:424
+#: tools/oyranos_profiles.c:431
 msgid "Could not open: "
 msgstr "Nelze otevřít:"
 
-#: tools/oyranos_gamma.c:358
+#: tools/oyranos_gamma.c:359
 msgid "Could not resolve device"
 msgstr "Nelze rozpoznat zařízení"
 
-#: examples/devices/test_device.c:369 examples/devices/test_device.c:385
-#: examples/devices/test_device.c:807 examples/devices/test_device.c:1051
+#: tools/oyranos-device.c:369 tools/oyranos-device.c:385
+#: tools/oyranos-device.c:807 tools/oyranos-device.c:1051
 #, fuzzy
 msgid "Could not resolve device."
 msgstr "Nelze rozpoznat zařízení"
 
-#: examples/devices/test_device.c:422
+#: tools/oyranos-device.c:422
 #, fuzzy
 msgid "Could not resolve device_json"
 msgstr "Nelze rozpoznat zařízení"
 
-#: examples/devices/test_device.c:400
+#: tools/oyranos-device.c:400
 #, fuzzy
 msgid "Could not resolve device_name"
 msgstr "Nelze rozpoznat zařízení"
 
-#: examples/devices/test_device.c:446
+#: tools/oyranos-device.c:446
 #, fuzzy
 msgid "Could not resolve rank_json"
 msgstr "Nelze rozpoznat zařízení"
@@ -1117,19 +1114,19 @@ msgstr ""
 msgid "Create 3D CLUT"
 msgstr "Vytvořit 3D CLUT"
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:3447
+#: modules/color/modules/oyranos_cmm_lcm2.c:3467
 #: modules/color/modules/oyranos_cmm_lcms.c:2541
 msgid "Create a ICC abstract proofing profile."
 msgstr "Vytvořit abstraktní profil ICC pro simulaci."
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:3520
-#: modules/color/modules/oyranos_cmm_lcm2.c:3528
+#: modules/color/modules/oyranos_cmm_lcm2.c:3540
+#: modules/color/modules/oyranos_cmm_lcm2.c:3548
 #: modules/color/modules/oyranos_cmm_lcms.c:2614
 #: modules/color/modules/oyranos_cmm_lcms.c:2622
 msgid "Create a ICC matrix profile."
 msgstr "Vytvořit maticový profil ICC."
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:3455
+#: modules/color/modules/oyranos_cmm_lcm2.c:3475
 #: modules/color/modules/oyranos_cmm_lcms.c:2549
 msgid "Create a ICC proofing profile."
 msgstr "Vytvořit profil simulace."
@@ -1146,7 +1143,7 @@ msgstr "Datum kalibrace"
 msgid "Creation Time in UTC"
 msgstr ""
 
-#: liboyranos/oyranos_cmm.c:208 examples/devices/test_device.c:440
+#: liboyranos/oyranos_cmm.c:208 tools/oyranos-device.c:440
 msgid "Creation of rank_map filed from"
 msgstr ""
 
@@ -1159,12 +1156,12 @@ msgid "Currently active policy:"
 msgstr "Aktuálně aktivní politika:"
 
 #. Multi process elements types
-#: modules/color/modules/oyranos_cmm_lcm2.c:1496
+#: modules/color/modules/oyranos_cmm_lcm2.c:1516
 #, fuzzy
 msgid "Curve Set"
 msgstr "Segmenty křivky:"
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:3189
+#: modules/color/modules/oyranos_cmm_lcm2.c:3209
 msgid "Curves for Optimization"
 msgstr "Křivky pro optimalizaci"
 
@@ -1172,11 +1169,16 @@ msgstr "Křivky pro optimalizaci"
 msgid "Cyan"
 msgstr "Azurová"
 
-#: liboyranos_config/oyranos_db.c:137 liboyranos_config/oyranos_db.c:196
+#: liboyranos_config/oyranos_db.c:163
+#, fuzzy
+msgid "DB handling failed"
+msgstr "alokace selhala"
+
+#: liboyranos_config/oyranos_db.c:143 liboyranos_config/oyranos_db.c:204
 msgid "DB handling is already set"
 msgstr ""
 
-#: tools/oyranos_gamma.c:274
+#: tools/oyranos_gamma.c:275
 msgid "DISPLAY variable not set: giving up."
 msgstr "Proměnná DISPLAY není nastavena: ukončeno."
 
@@ -1196,7 +1198,7 @@ msgstr "Datum"
 msgid "Debug"
 msgstr "Ladění"
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:3134
+#: modules/color/modules/oyranos_cmm_lcm2.c:3154
 #: modules/color/modules/oyranos_cmm_lcms.c:2306
 msgid "Decide how to preserve the black channel for Cmyk to Cmyk transforms"
 msgstr ""
@@ -1229,7 +1231,7 @@ msgstr "popis"
 #. CMM: abbreviation for Color Matching Module
 #: modules/color/modules/devices/oyranos_cmm_SANE.c:834
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:875
-#: modules/color/modules/devices/oyranos_cmm_disp.c:1177
+#: modules/color/modules/devices/oyranos_cmm_disp.c:1202
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1227
 #: examples/oyranos_cmm_dDev.c:714
 msgid "Device"
@@ -1296,11 +1298,11 @@ msgstr "Displej"
 msgid "Dump Device Infos to OpenICC device JSON:"
 msgstr "Vypsat informace o zařízení do JSON OpenICC:"
 
-#: tools/oyranos_gamma.c:231 examples/libraw/oyranos_file.cpp:49
+#: tools/oyranos_gamma.c:232 examples/libraw/oyranos_file.cpp:49
 msgid "Dump data:"
 msgstr "Vypsat data:"
 
-#: examples/devices/test_device.c:84
+#: tools/oyranos-device.c:84
 #, fuzzy
 msgid "Dump device color state:"
 msgstr "Barvy zařízení"
@@ -1314,7 +1316,7 @@ msgstr "Vypsat aktuální nastavení:"
 msgid "Dye sublimation printer"
 msgstr "Sublimační tiskárna"
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:1501
+#: modules/color/modules/oyranos_cmm_lcm2.c:1521
 msgid "EAcs"
 msgstr ""
 
@@ -1386,13 +1388,13 @@ msgstr "Elektrofotografická tiskárna"
 msgid "Electrostatic printer"
 msgstr "Elektrostatická tiskárna"
 
-#: modules/color/modules/oyranos_cmm_elDB.c:930
-#: modules/color/modules/oyranos_cmm_elDB.c:932
+#: modules/color/modules/oyranos_cmm_elDB.c:935
+#: modules/color/modules/oyranos_cmm_elDB.c:937
 #, fuzzy
 msgid "Elektra Configuration API"
 msgstr "Konfigurace Oyranosu"
 
-#: modules/color/modules/oyranos_cmm_elDB.c:940
+#: modules/color/modules/oyranos_cmm_elDB.c:945
 msgid ""
 "Elektra project; www/support: http://github.com/ElektraInitiative/libelektra"
 msgstr ""
@@ -1426,29 +1428,16 @@ msgstr ""
 "s preferencí konkrétního média (papíru, inkoustu) a ponechá zpracování na "
 "systému. Tzn., že nepotřebují simulaci."
 
-#: tools/oyranos_gamma.c:212
+#: tools/oyranos_gamma.c:213
 msgid "Erase profile:"
 msgstr "Smazat profil:"
-
-#: modules/color/modules/devices/oyranos_monitor_x11.c:973
-msgid "Error getting atom"
-msgstr "Chyba při získávání atomu"
-
-#: modules/color/modules/devices/oyranos_monitor_x11.c:856
-msgid "Error obtaining profile"
-msgstr "Chyba při získávání profilu"
-
-#: modules/color/modules/devices/oyranos_monitor_x11.c:867
-#: modules/color/modules/devices/oyranos_monitor_x11.c:869
-msgid "Error setting up atom"
-msgstr "Chyba při nastavování atomu"
 
 #: examples/image_display/image_display.cpp:1103
 msgid "Examine ICC Profile ..."
 msgstr "Prozkoumat profil ICC ..."
 
 #: tools/oyranos_profile_tool.c:123 tools/oyranos_convert.c:107
-#: tools/oyranos_profiles.c:104 examples/taxi.c:69
+#: tools/oyranos_profiles.c:100 examples/taxi.c:69
 #: examples/oyranos_cmm_dDev.c:703 examples/oyranos_cmm_dDev.c:714
 #: examples/libraw/oyranos_file.cpp:71
 msgid "Example"
@@ -1478,7 +1467,7 @@ msgstr "Root Image Filter Object"
 msgid "Exposure:"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:3126
+#: modules/color/modules/oyranos_cmm_lcm2.c:3146
 #: modules/color/modules/oyranos_cmm_lcms.c:2298
 msgid "Extended Options"
 msgstr "Rozšířené volby:"
@@ -1488,8 +1477,8 @@ msgid "Extract ICC profile:"
 msgstr "Extrahovat profil ICC:"
 
 #: tools/oyranos_profile_graph.c:108 tools/oyranos_profile_graph.c:135
-#: examples/devices/test_device.c:52 examples/devices/test_device.c:92
-#: examples/devices/test_device.c:93 examples/libraw/oyranos_file.cpp:67
+#: tools/oyranos-device.c:52 tools/oyranos-device.c:92
+#: tools/oyranos-device.c:93 examples/libraw/oyranos_file.cpp:67
 #: examples/libraw/oyranos_file.cpp:68
 msgid "FILE"
 msgstr ""
@@ -1515,11 +1504,11 @@ msgstr ""
 msgid "File exists"
 msgstr "Soubor existuje"
 
-#: tools/oyranos_profiles.c:205
+#: tools/oyranos_profiles.c:201
 msgid "File name is missed"
 msgstr "Chybí soubor"
 
-#: liboyranos/oyranos_cmm.c:202 examples/devices/test_device.c:273
+#: liboyranos/oyranos_cmm.c:202 tools/oyranos-device.c:273
 msgid "File not loaded!"
 msgstr "Soubor nenacten!"
 
@@ -1558,11 +1547,11 @@ msgstr "Priznaky:    "
 msgid "Flexography"
 msgstr "Flexografie"
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:1515
+#: modules/color/modules/oyranos_cmm_lcm2.c:1535
 msgid "FloatPCS2Lab"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:1518
+#: modules/color/modules/oyranos_cmm_lcm2.c:1538
 msgid "FloatPCS2XYZ"
 msgstr ""
 
@@ -1575,7 +1564,7 @@ msgid "For Screen"
 msgstr "Pro obrazovku"
 
 #: tools/oyranos_profile_tool.c:131 tools/oyranos_profile_graph.c:142
-#: tools/oyranos_gamma.c:239 examples/devices/test_device.c:108
+#: tools/oyranos-device.c:108 tools/oyranos_gamma.c:240
 #: examples/libraw/oyranos_file.cpp:78
 #, c-format
 msgid "For more informations read the man page:"
@@ -1595,9 +1584,9 @@ msgid "Gamut Warning"
 msgstr "Varování gamutu"
 
 #: tools/oyranos_profile_tool.c:112 tools/oyranos_profile_graph.c:132
-#: tools/oyranos_convert.c:102 tools/oyranos_profiles.c:101
-#: tools/oyranos_gamma.c:234 examples/taxi.c:66
-#: examples/devices/test_device.c:99 examples/libraw/oyranos_file.cpp:66
+#: tools/oyranos_convert.c:102 tools/oyranos-device.c:99
+#: tools/oyranos_profiles.c:93 tools/oyranos_gamma.c:235 examples/taxi.c:66
+#: examples/libraw/oyranos_file.cpp:66
 msgid "General options:"
 msgstr "Obecné volby:"
 
@@ -1684,6 +1673,10 @@ msgstr ""
 "na obrazovku. Většina uživatelů použije transformaci do sRGB (vhodné pro "
 "snadnou výměnu dat)."
 
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:378
+msgid "Handle naive and XCM aware CM apps device profiles."
+msgstr ""
+
 #: examples/oyranos_cmm_dFil.c:626
 msgid "Handle options."
 msgstr "Volby obslužné rutiny."
@@ -1711,8 +1704,10 @@ msgstr ""
 msgid "Heidelberg CMM"
 msgstr ""
 
-#: modules/color/modules/devices/oyranos_monitor_x11.c:1798
-#: modules/color/modules/devices/oyranos_monitor_x11.c:2066
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:203
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:384
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:564
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:832
 #: examples/image_display/image_display.cpp:1112
 msgid "Help"
 msgstr ""
@@ -1771,11 +1766,11 @@ msgstr "profil ICC"
 msgid "ICC profile id written"
 msgstr "ID profilu ICC zapsáno"
 
-#: tools/oyranos_profiles.c:393
+#: tools/oyranos_profiles.c:400
 msgid "ICC profile search paths"
 msgstr "prohledávaná cesta pro profily ICC"
 
-#: modules/color/modules/oyranos_cmm_oicc.c:492 tools/oyranos_profiles.c:283
+#: modules/color/modules/oyranos_cmm_oicc.c:492 tools/oyranos_profiles.c:282
 msgid "ICC profiles"
 msgstr "Profily ICC"
 
@@ -1822,7 +1817,7 @@ msgstr ""
 #: tools/oyranos_convert.c:73 tools/oyranos_convert.c:74
 #: tools/oyranos_convert.c:75 tools/oyranos_convert.c:76
 #: tools/oyranos_convert.c:82 tools/oyranos_convert.c:91
-#: tools/oyranos_convert.c:92 tools/oyranos_profiles.c:88
+#: tools/oyranos_convert.c:92 tools/oyranos_profiles.c:84
 #: examples/libraw/oyranos_file.cpp:60 examples/libraw/oyranos_file.cpp:61
 msgid "ICC_FILE_NAME"
 msgstr ""
@@ -1832,7 +1827,7 @@ msgid "ITU-R BT.709"
 msgstr "ITU-R BT.709"
 
 #. Identities
-#: modules/color/modules/oyranos_cmm_lcm2.c:1511
+#: modules/color/modules/oyranos_cmm_lcm2.c:1531
 #, fuzzy
 msgid "Identity"
 msgstr "Identita"
@@ -1890,8 +1885,8 @@ msgstr "Osvetleni:   "
 
 #: API_generated/oyPixelAccess_s.c:540 liboyranos/oyranos_cmm.c:142
 #: liboyranos/oyranos_cmm.c:278 liboyranos/oyranos_cmm.c:302
-#: modules/color/modules/oyranos_cmm_lcm2.c:2700
-#: modules/color/modules/oyranos_cmm_lcm2.c:2705
+#: modules/color/modules/oyranos_cmm_lcm2.c:2720
+#: modules/color/modules/oyranos_cmm_lcm2.c:2725
 #: modules/color/modules/oyranos_cmm_oydi.c:930
 #: modules/color/modules/oyranos_cmm_oPNG.c:1101
 msgid "Image"
@@ -1917,7 +1912,7 @@ msgid ""
 msgstr ""
 "Obrázek nemá vložený barvový prostor. Jaká výchozí akce má být provedena?"
 
-#: modules/color/modules/oyranos_cmm_oyra_image_channel.c:442
+#: modules/color/modules/oyranos_cmm_oyra_image_channel.c:444
 #, fuzzy
 msgid "Image/Simple Image[channel]"
 msgstr "Image[lraw]"
@@ -1932,7 +1927,7 @@ msgstr "Image[lraw]"
 msgid "Image/Simple Image[scale]"
 msgstr "Image[lraw]"
 
-#: modules/color/modules/oyranos_cmm_oyra_image_channel.c:420
+#: modules/color/modules/oyranos_cmm_oyra_image_channel.c:422
 #, fuzzy
 msgid "Image[channel]"
 msgstr "Image[lraw]"
@@ -2007,15 +2002,15 @@ msgstr "Informace:"
 msgid "Information:"
 msgstr "Informace:"
 
-#: modules/color/modules/oyranos_cmm_elDB.c:863
-#: modules/color/modules/oyranos_cmm_elDB.c:871
-#: modules/color/modules/oyranos_cmm_oiDB.c:462
-#: modules/color/modules/oyranos_cmm_oiDB.c:470
+#: modules/color/modules/oyranos_cmm_elDB.c:868
+#: modules/color/modules/oyranos_cmm_elDB.c:876
+#: modules/color/modules/oyranos_cmm_oiDB.c:468
+#: modules/color/modules/oyranos_cmm_oiDB.c:476
 msgid "Initialise the oyDB_s APIs."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_trds.c:591
-#: modules/color/modules/oyranos_cmm_trds.c:599
+#: modules/color/modules/oyranos_cmm_trds.c:592
+#: modules/color/modules/oyranos_cmm_trds.c:600
 msgid "Initialise the oyJob_s APIs."
 msgstr ""
 
@@ -2049,7 +2044,7 @@ msgstr "Input PPM Image Filter Object"
 msgid "Input libraw Image Filter Object"
 msgstr "Input libraw Image Filter Object"
 
-#: tools/oyranos_profiles.c:87
+#: tools/oyranos_profiles.c:83
 msgid "Install ICC profile:"
 msgstr "Instalovat profil ICC:"
 
@@ -2073,7 +2068,7 @@ msgstr "Instalovat profil ICC:"
 msgid "Intent"
 msgstr "Záměr:"
 
-#: tools/oyranos_profiles.c:535
+#: tools/oyranos_profiles.c:542
 msgid "Internal Error"
 msgstr ""
 
@@ -2108,11 +2103,11 @@ msgid "Lab"
 msgstr "Lab"
 
 #. Float to floatPCS
-#: modules/color/modules/oyranos_cmm_lcm2.c:1514
+#: modules/color/modules/oyranos_cmm_lcm2.c:1534
 msgid "Lab2FloatPCS"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:1505
+#: modules/color/modules/oyranos_cmm_lcm2.c:1525
 msgid "Lab2XYZ"
 msgstr ""
 
@@ -2130,7 +2125,7 @@ msgstr "Spojovací"
 msgid "List ICC Profiles:"
 msgstr "Vypsat dostupné profily ICC:"
 
-#: tools/oyranos_gamma.c:225 examples/devices/test_device.c:80
+#: tools/oyranos-device.c:80 tools/oyranos_gamma.c:226
 #, fuzzy
 msgid "List Taxi DB profiles for selected device:"
 msgstr "Vypsat profil Taxi pro vybrané zařízení:"
@@ -2148,12 +2143,12 @@ msgstr "Vypsat dostupné politiky:"
 msgid "List available policies:"
 msgstr "Vypsat dostupné politiky:"
 
-#: examples/devices/test_device.c:63
+#: tools/oyranos-device.c:63
 #, fuzzy
 msgid "List device classes:"
 msgstr "Vypsat zařízení:"
 
-#: tools/oyranos_gamma.c:218 examples/devices/test_device.c:69
+#: tools/oyranos-device.c:69 tools/oyranos_gamma.c:219
 msgid "List devices:"
 msgstr "Vypsat zařízení:"
 
@@ -2161,12 +2156,12 @@ msgstr "Vypsat zařízení:"
 msgid "List included ICC tags:"
 msgstr "Vypsat zahrnuté štítky ICC:"
 
-#: examples/devices/test_device.c:76
+#: tools/oyranos-device.c:76
 #, fuzzy
 msgid "List local DB profiles for selected device:"
 msgstr "Vypsat profil Taxi pro vybrané zařízení:"
 
-#: tools/oyranos_gamma.c:228
+#: tools/oyranos_gamma.c:229
 msgid "List modules:"
 msgstr "Vypsat moduly:"
 
@@ -2183,7 +2178,7 @@ msgstr "Vypsat prohledávané cesty:"
 msgid "Little CMS"
 msgstr "Little CMS"
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:3758
+#: modules/color/modules/oyranos_cmm_lcm2.c:3778
 msgid "Little CMS 2"
 msgstr "Little CMS 2"
 
@@ -2193,7 +2188,7 @@ msgstr "Little CMS 2"
 msgid "Little CMS CMM"
 msgstr "Little CMS 2"
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:3195
+#: modules/color/modules/oyranos_cmm_lcm2.c:3215
 msgid ""
 "Little CMS can use curves before and after CLUT's for special cases like "
 "gamma encoded values to and from linear gamma values. Performance will "
@@ -2202,7 +2197,7 @@ msgstr ""
 "Ve zvláštních případech jako hodnoty kódované v gama do a z lineárních "
 "hodnot může Little CMS využít křivky před a po CLUT. Výkon však poklesne."
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:3165
+#: modules/color/modules/oyranos_cmm_lcm2.c:3185
 #: modules/color/modules/oyranos_cmm_lcms.c:2335
 msgid ""
 "Little CMS tries to optimize profile chains whatever possible. There are "
@@ -2223,7 +2218,7 @@ msgstr ""
 "cmsCreateTransform() k zabránění procesu optimalizace. Viz reference API pro "
 "detailnější diskuzi ohledně příznaků."
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:3760
+#: modules/color/modules/oyranos_cmm_lcm2.c:3780
 msgid ""
 "LittleCMS 2 is a CMM, a color management engine; it implements fast "
 "transforms between ICC profiles. \"Little\" stands for its small overhead. "
@@ -2274,7 +2269,7 @@ msgstr "Načíst objekt obrázkového souboru"
 msgid "LogoSync CMM"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:1498
+#: modules/color/modules/oyranos_cmm_lcm2.c:1518
 msgid "Look Up Table"
 msgstr ""
 
@@ -2339,8 +2334,8 @@ msgstr "Luv"
 #: API_generated/oyCMMapiFilter_s_.c:199 API_generated/oyProfiles_s_.c:195
 #: API_generated/oyRectangle_s_.c:191 API_generated/oyCMMapi4_s.c:227
 #: API_generated/oyLis_s_.c:187 API_generated/oyFilterCore_s_.c:225
-#: API_generated/oyranos_devices.c:3515 API_generated/oyNamedColors_s_.c:186
-#: liboyranos/oyranos_alpha.c:276 liboyranos_modules/oyranos_forms.c:56
+#: API_generated/oyranos_devices.c:3583 API_generated/oyNamedColors_s_.c:186
+#: liboyranos/oyranos_alpha.c:260 liboyranos_modules/oyranos_forms.c:56
 msgid "MEM Error."
 msgstr ""
 
@@ -2348,7 +2343,7 @@ msgstr ""
 msgid "MIT"
 msgstr "MIT"
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:3776
+#: modules/color/modules/oyranos_cmm_lcm2.c:3796
 #: modules/color/modules/oyranos_cmm_lcms.c:2870
 #: modules/color/modules/devices/oyranos_cmm_SANE.c:947
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:990
@@ -2395,7 +2390,7 @@ msgstr "Vyrobce:      "
 msgid "Mark Out Of Gamut colors"
 msgstr "Označit barvy mimo gamut"
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:1497
+#: modules/color/modules/oyranos_cmm_lcm2.c:1517
 msgid "Matrix"
 msgstr "Matice"
 
@@ -2462,12 +2457,12 @@ msgstr "Profil monitoru"
 msgid "Module Options"
 msgstr "Volby modulu:"
 
-#: modules/color/modules/devices/oyranos_cmm_disp.c:1158
-#: modules/color/modules/devices/oyranos_cmm_disp.c:1179
+#: modules/color/modules/devices/oyranos_cmm_disp.c:1183
+#: modules/color/modules/devices/oyranos_cmm_disp.c:1204
 msgid "Monitor"
 msgstr "Monitor"
 
-#: modules/color/modules/devices/oyranos_cmm_disp.c:1160
+#: modules/color/modules/devices/oyranos_cmm_disp.c:1185
 msgid ""
 "Monitors, which can be detected through the video card driver and windowing "
 "system."
@@ -2524,15 +2519,15 @@ msgstr ""
 
 #: tools/oyranos_profile_tool.c:86 tools/oyranos_profile_tool.c:104
 #: tools/oyranos_profile_tool.c:105 tools/oyranos_profile_tool.c:107
-#: examples/devices/test_device.c:70 examples/devices/test_device.c:103
+#: tools/oyranos-device.c:70 tools/oyranos-device.c:103
 msgid "NAME"
 msgstr ""
 
 #: tools/oyranos_profile_tool.c:85 tools/oyranos_profile_tool.c:89
 #: tools/oyranos_profile_graph.c:112 tools/oyranos_profile_graph.c:123
 #: tools/oyranos_profile_graph.c:134 tools/oyranos_profile_graph.c:138
-#: tools/oyranos_convert.c:97 examples/devices/test_device.c:70
-#: examples/devices/test_device.c:102
+#: tools/oyranos_convert.c:97 tools/oyranos-device.c:70
+#: tools/oyranos-device.c:102
 msgid "NUMBER"
 msgstr ""
 
@@ -2542,7 +2537,7 @@ msgstr "Jméno"
 
 #. nmcl
 #: liboyranos_config/oyranos_icc.c:474 liboyranos_config/oyranos_icc.c:628
-#: modules/color/modules/oyranos_cmm_lcm2.c:1506
+#: modules/color/modules/oyranos_cmm_lcm2.c:1526
 msgid "Named Color"
 msgstr "Pojmenovaná barva"
 
@@ -2567,7 +2562,7 @@ msgstr "Pro úpravu je třeba profil ICC."
 #: liboyranos_config/oyranos_texts.c:566 liboyranos_config/oyranos_texts.c:586
 #: liboyranos_config/oyranos_texts.c:596 liboyranos_config/oyranos_texts.c:606
 #: liboyranos_config/oyranos_texts.c:616
-#: modules/color/modules/oyranos_cmm_lcm2.c:3247
+#: modules/color/modules/oyranos_cmm_lcm2.c:3267
 msgid "No"
 msgstr "Ne"
 
@@ -2579,20 +2574,15 @@ msgstr "Nedetekován žádný profil ICC"
 msgid "No Image profile"
 msgstr "Žádný profil obrázku"
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:3235
+#: modules/color/modules/oyranos_cmm_lcm2.c:3255
 msgid "No White on White Fix"
 msgstr ""
-
-#. hack
-#: modules/color/modules/devices/oyranos_monitor_x11.c:814
-msgid "No monitor gamma curves by profile:"
-msgstr "Žádné gama křivky monitoru v profilu:"
 
 #: liboyranos/oyranos_cmm.c:235
 msgid "NoNo"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:2828
+#: modules/color/modules/oyranos_cmm_lcm2.c:2848
 msgid "Node"
 msgstr ""
 
@@ -2609,13 +2599,13 @@ msgstr "V případě nesouladu CMYK"
 msgid "On Rgb Mismatch"
 msgstr "V případě nesouladu RGB"
 
-#: modules/color/modules/oyranos_cmm_oiDB.c:529
-#: modules/color/modules/oyranos_cmm_oiDB.c:531
+#: modules/color/modules/oyranos_cmm_oiDB.c:535
+#: modules/color/modules/oyranos_cmm_oiDB.c:537
 #, fuzzy
 msgid "OpenICC Configuration API"
 msgstr "Konfigurace Oyranosu"
 
-#: modules/color/modules/oyranos_cmm_oiDB.c:539
+#: modules/color/modules/oyranos_cmm_oiDB.c:545
 msgid "OpenICC project; www/support: http://github.com/OpenICC/config"
 msgstr ""
 
@@ -2623,7 +2613,7 @@ msgstr ""
 msgid "Operating System"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:3159
+#: modules/color/modules/oyranos_cmm_lcm2.c:3179
 #: modules/color/modules/oyranos_cmm_lcms.c:2329
 msgid "Optimization"
 msgstr "Optimalizace"
@@ -2668,7 +2658,7 @@ msgstr "Výstupní barvový prostor"
 msgid "Output Image Filter Object"
 msgstr "Output Image Filter Object"
 
-#: modules/color/modules/devices/oyranos_cmm_disp.c:1279
+#: modules/color/modules/devices/oyranos_cmm_disp.c:1300
 #, fuzzy
 msgid "Oyranos "
 msgstr "Oyranos X11"
@@ -2721,12 +2711,12 @@ msgstr "Nastavení Oyranosu"
 msgid "Oyranos Settings Group"
 msgstr "Skupina nastavení Oyranosu"
 
-#: modules/color/modules/oyranos_cmm_trds.c:658
+#: modules/color/modules/oyranos_cmm_trds.c:659
 #, fuzzy
 msgid "Oyranos Threads"
 msgstr "Oyranos X11"
 
-#: modules/color/modules/oyranos_cmm_trds.c:660
+#: modules/color/modules/oyranos_cmm_trds.c:661
 msgid "Oyranos Threads default Handling"
 msgstr ""
 
@@ -2777,13 +2767,13 @@ msgstr ""
 msgid "Oyranos modules"
 msgstr "Moduly Oyranosu"
 
-#: modules/color/modules/oyranos_cmm_trds.c:668
+#: modules/color/modules/oyranos_cmm_trds.c:669
 #: modules/color/modules/oyranos_cmm_oyra.c:139
 #: modules/color/modules/oyranos_cmm_oydi.c:1263
 #: modules/color/modules/oyranos_cmm_oicc.c:1057
 #: modules/color/modules/devices/oyranos_cmm_SANE.c:940
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:981
-#: modules/color/modules/devices/oyranos_cmm_disp.c:1313
+#: modules/color/modules/devices/oyranos_cmm_disp.c:1334
 #: modules/color/modules/oyranos_cmm_lraw.cpp:231
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1334
 #: examples/oyranos_cmm_dDev.c:828
@@ -2842,7 +2832,7 @@ msgstr ""
 msgid "Passive matrix monitor"
 msgstr "Monitor s pasívní maticí"
 
-#: tools/oyranos_profiles.c:513
+#: tools/oyranos_profiles.c:520
 #, fuzzy
 msgid "Path can not be written"
 msgstr "Profil neni ulozen."
@@ -2875,7 +2865,7 @@ msgstr "PhotoImageSetter"
 msgid "Photographic paper printer"
 msgstr "Tiskárna na fotografický papír"
 
-#: modules/color/modules/devices/oyranos_monitor_x11.c:1792
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:558
 msgid "Ping the XCM_COLOUR_DESKTOP_ADVANCED X11 atom."
 msgstr ""
 
@@ -2890,7 +2880,7 @@ msgstr "Platforma:   "
 msgid "Platform:        "
 msgstr "Datum:       "
 
-#: tools/oyranos_gamma.c:392
+#: tools/oyranos_gamma.c:393
 msgid "Please specify a monitor with the -d option."
 msgstr "Prosím specifikujte monitor pomocí volby -d."
 
@@ -2989,7 +2979,7 @@ msgid "Preview, saturated"
 msgstr "Náhled, saturace"
 
 #: tools/oyranos_profile_tool.c:109 tools/oyranos_convert.c:99
-#: tools/oyranos_policy.c:69 tools/oyranos_profiles.c:98 examples/taxi.c:63
+#: tools/oyranos_policy.c:69 tools/oyranos_profiles.c:90 examples/taxi.c:63
 msgid "Print a help text:"
 msgstr "Vytisknout nápovědu:"
 
@@ -3035,12 +3025,12 @@ msgstr "Informace:"
 msgid "Profile Tags"
 msgstr "jméno profilu"
 
-#: API_generated/oyProfile_s.c:750 API_generated/oyProfile_s.c:756
-#: tools/oyranos_profiles.c:501
+#: API_generated/oyProfile_s.c:772 API_generated/oyProfile_s.c:778
+#: tools/oyranos_profiles.c:508
 msgid "Profile already installed"
 msgstr "Profil je již nainstalován"
 
-#: API_generated/oyProfile_s.c:737
+#: API_generated/oyProfile_s.c:759
 #, fuzzy
 msgid "Profile contains no description"
 msgstr "Popis profilu"
@@ -3055,11 +3045,11 @@ msgstr "Popis sekvence profilu"
 msgid "Profile description, multilingual"
 msgstr "Popis profilu, vícejazyčný"
 
-#: API_generated/oyProfile_s.c:772 tools/oyranos_profile_tool.c:352
+#: API_generated/oyProfile_s.c:794 tools/oyranos_profile_tool.c:352
 msgid "Profile exists already"
 msgstr "Profil již existuje"
 
-#: tools/oyranos_profiles.c:525
+#: tools/oyranos_profiles.c:532
 #, fuzzy
 msgid "Profile not useable"
 msgstr "profil nenalezen:"
@@ -3147,7 +3137,7 @@ msgstr "Číst PNG"
 msgid "Read PPM"
 msgstr "Načíst PPM"
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:2698
+#: modules/color/modules/oyranos_cmm_lcm2.c:2718
 #, fuzzy
 msgid "Read from"
 msgstr "číst ze souboru"
@@ -3193,10 +3183,18 @@ msgstr "Relativní kolorimetrický"
 msgid "Remote filter or plug not available."
 msgstr "RGB vysledek neni k dispozici"
 
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:195
+msgid "Remove all X Color Management profiles."
+msgstr ""
+
 #: tools/oyranos_profile_tool.c:88
 #, fuzzy
 msgid "Remove included ICC tag:"
 msgstr "Vypsat zahrnuté štítky ICC:"
+
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:197
+msgid "Remove naive and XCM aware CM apps profiles."
+msgstr ""
 
 #: liboyranos_config/oyranos_texts.c:218
 msgid "Rendering"
@@ -3288,6 +3286,11 @@ msgstr "Pro obrazovku"
 msgid "Screening Description"
 msgstr "Popis sekvence profilu"
 
+#: tools/oyranos_profiles.c:277
+#, fuzzy
+msgid "Search path"
+msgstr "Vypsat prohledávané cesty:"
+
 #: API_generated/oyranos_profile.c:82
 msgid "Seldom used Profile claimed Intent"
 msgstr ""
@@ -3324,15 +3327,19 @@ msgstr ""
 msgid "Set ICC profiles in Oyranos for device Color Management."
 msgstr ""
 
-#: modules/color/modules/devices/oyranos_monitor_x11.c:2048
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:814
 msgid "Set a X Color Management region."
 msgstr ""
 
-#: modules/color/modules/devices/oyranos_monitor_x11.c:1790
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:556
 msgid "Set a X Color Management update toggle."
 msgstr ""
 
-#: tools/oyranos_gamma.c:208
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:376
+msgid "Set all X Color Management device profiles."
+msgstr ""
+
+#: tools/oyranos_gamma.c:209
 msgid "Set new profile:"
 msgstr "Nastavit nový profil:"
 
@@ -3353,7 +3360,7 @@ msgstr ""
 "Pro snadnější přizpůsobení požadavkům, zapamatování a synchronizaci mezi "
 "systému mohou být nastavení seskupena dle politik Oyranosu."
 
-#: examples/devices/test_device.c:57
+#: tools/oyranos-device.c:57
 #, fuzzy
 msgid "Setup device:"
 msgstr "Vypsat zařízení:"
@@ -3362,7 +3369,7 @@ msgstr "Vypsat zařízení:"
 msgid "Show CIE*xy chromaticities:"
 msgstr ""
 
-#: examples/devices/test_device.c:96 examples/libraw/oyranos_file.cpp:63
+#: tools/oyranos-device.c:96 examples/libraw/oyranos_file.cpp:63
 #, fuzzy
 msgid "Show Help:"
 msgstr "Ukázat model:"
@@ -3427,7 +3434,7 @@ msgstr "Velikost:"
 msgid "Size:            "
 msgstr "Velikost:    "
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:3238
+#: modules/color/modules/oyranos_cmm_lcm2.c:3258
 msgid "Skip White Point on White point alignment"
 msgstr ""
 
@@ -3474,11 +3481,11 @@ msgstr "Taligent"
 msgid "Taxi DB Profiles"
 msgstr "Výchozí profily"
 
-#: tools/oyranos_gamma.c:449
+#: tools/oyranos_gamma.c:450
 msgid "Taxi DB entries for device"
 msgstr "Záznamy pro zařízení v Taxi DB"
 
-#: tools/oyranos_gamma.c:452 examples/devices/test_device.c:968
+#: tools/oyranos-device.c:968 tools/oyranos_gamma.c:453
 msgid "Taxi ID"
 msgstr "Taxi ID"
 
@@ -3487,7 +3494,7 @@ msgid "Technologie"
 msgstr "Technologie"
 
 #. "The " CMM_NICK " module supports the generic device protocol."
-#: modules/color/modules/devices/oyranos_cmm_disp.c:1289
+#: modules/color/modules/devices/oyranos_cmm_disp.c:1310
 msgid "The "
 msgstr ""
 
@@ -3580,28 +3587,28 @@ msgstr ""
 "Volba \"filename\" by měla obsahovat platné jméno souboru k zápisu dat PPM. "
 "Existující soubor bude přepsán bez výstrahy."
 
-#: modules/color/modules/oyranos_cmm_elDB.c:865
-#: modules/color/modules/oyranos_cmm_elDB.c:873
+#: modules/color/modules/oyranos_cmm_elDB.c:870
+#: modules/color/modules/oyranos_cmm_elDB.c:878
 msgid ""
 "The Oyranos \"db_handler\" command will initialise the oyDB hooks with the "
 "Elektra Configuration API."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oiDB.c:464
-#: modules/color/modules/oyranos_cmm_oiDB.c:472
+#: modules/color/modules/oyranos_cmm_oiDB.c:470
+#: modules/color/modules/oyranos_cmm_oiDB.c:478
 msgid ""
 "The Oyranos \"db_handler\" command will initialise the oyDB hooks with the "
 "OpenICC Configuration API."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_trds.c:593
-#: modules/color/modules/oyranos_cmm_trds.c:601
+#: modules/color/modules/oyranos_cmm_trds.c:594
+#: modules/color/modules/oyranos_cmm_trds.c:602
 msgid ""
 "The Oyranos \"threads_handler\" command will initialise the oyJob_s APIs "
 "with a available threading model."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:3219
+#: modules/color/modules/oyranos_cmm_lcm2.c:3239
 msgid ""
 "The adaption state should be between 0 and 1.0 and will apply to the "
 "absolute colorimetric intent."
@@ -3699,8 +3706,8 @@ msgstr "The filter is a possible pixel target in a graph."
 #: modules/color/modules/oyranos_cmm_oyra_image_scale.c:397
 #: modules/color/modules/oyranos_cmm_oyra_image_scale.c:436
 #: modules/color/modules/oyranos_cmm_oyra_image_expose.c:309
-#: modules/color/modules/oyranos_cmm_oyra_image_channel.c:428
-#: modules/color/modules/oyranos_cmm_oyra_image_channel.c:444
+#: modules/color/modules/oyranos_cmm_oyra_image_channel.c:430
+#: modules/color/modules/oyranos_cmm_oyra_image_channel.c:446
 msgid "The filter is used to reduce pixels."
 msgstr ""
 
@@ -3745,8 +3752,8 @@ msgstr ""
 msgid "The filter obtains a image from libraw."
 msgstr "Filtr získá obrázek z libraw."
 
-#: modules/color/modules/oyranos_cmm_trds.c:682
-#: modules/color/modules/oyranos_cmm_trds.c:684
+#: modules/color/modules/oyranos_cmm_trds.c:683
+#: modules/color/modules/oyranos_cmm_trds.c:685
 msgid ""
 "The filter provides a default oyJob_s handling mechanism for asynchronous "
 "processing."
@@ -3766,18 +3773,18 @@ msgstr ""
 "Filtr poskytuje nastavení politiky. Tato nastavení mohou být použita v grafu "
 "pomocí uživatelské funkce oyConversion_Correct()."
 
-#: modules/color/modules/oyranos_cmm_elDB.c:954
-#: modules/color/modules/oyranos_cmm_elDB.c:956
+#: modules/color/modules/oyranos_cmm_elDB.c:959
+#: modules/color/modules/oyranos_cmm_elDB.c:961
 msgid "The filter provides the Elektra Configuration API to Oyranos DB hooks."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oiDB.c:553
-#: modules/color/modules/oyranos_cmm_oiDB.c:555
+#: modules/color/modules/oyranos_cmm_oiDB.c:559
+#: modules/color/modules/oyranos_cmm_oiDB.c:561
 msgid ""
 "The filter provides the libOpenICC Configuration API to Oyranos DB hooks."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image_channel.c:434
+#: modules/color/modules/oyranos_cmm_oyra_image_channel.c:436
 msgid ""
 "The filter will expect a \"channel\" double option and will create, fill and "
 "process a according data version with a new job ticket. The new job tickets "
@@ -3804,7 +3811,7 @@ msgid ""
 "socket."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:3784
+#: modules/color/modules/oyranos_cmm_lcm2.c:3804
 #, fuzzy
 msgid ""
 "The following options are available to create color contexts:\n"
@@ -3888,7 +3895,7 @@ msgstr ""
 "Adaptační část filtru transformuje barvový kontext Oyranosu, který je "
 "založen na tzv. spojovacích profilech ICC, do interního formátu lcms."
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:3782
+#: modules/color/modules/oyranos_cmm_lcm2.c:3802
 #, fuzzy
 msgid ""
 "The lcms \"color_icc\" filter is a one dimensional color conversion filter. "
@@ -3903,7 +3910,7 @@ msgstr ""
 "Adaptační část filtru transformuje barvový kontext Oyranosu, který je "
 "založen na tzv. spojovacích profilech ICC, do interního formátu lcms."
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:3530
+#: modules/color/modules/oyranos_cmm_lcm2.c:3550
 #: modules/color/modules/oyranos_cmm_lcms.c:2624
 msgid ""
 "The littleCMS \"create_profile.color_matrix\" command lets you create ICC "
@@ -3913,7 +3920,7 @@ msgstr ""
 "Příkaz Little CMS \"create_profile.color_matrix\" umožňuje vytvořit profily "
 "ICC z určených kolorimetrických souřadnic. Viz položka \"create_profile\"."
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:3522
+#: modules/color/modules/oyranos_cmm_lcm2.c:3542
 msgid ""
 "The littleCMS \"create_profile.color_matrix\" command lets you create ICC "
 "profiles from some given colorimetric coordinates. The filter expects a "
@@ -3970,7 +3977,7 @@ msgstr ""
 "\"icc_profile\" s dodatečnými atributy \"create_profile.proofing_effect\" "
 "jako objekt oyProfile_s."
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:3449
+#: modules/color/modules/oyranos_cmm_lcm2.c:3469
 #, fuzzy
 msgid ""
 "The littleCMS \"create_profile.proofing_effect\" command lets you create ICC "
@@ -3993,7 +4000,7 @@ msgstr ""
 "dodatečnými atributy \"create_profile.proofing_effect\" jako objekt "
 "oyProfile_s."
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:3457
+#: modules/color/modules/oyranos_cmm_lcm2.c:3477
 #: modules/color/modules/oyranos_cmm_lcms.c:2551
 msgid ""
 "The littleCMS \"create_profile.proofing_effect\" command lets you create ICC "
@@ -4017,7 +4024,29 @@ msgstr ""
 msgid "The my_handler takes a option with key name \"print\" and prints it."
 msgstr "my_handler akceptuje volbu se jménem klíče \"print\" a vytiskne ji."
 
-#: modules/color/modules/devices/oyranos_monitor_x11.c:1800
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:205
+#, fuzzy
+msgid ""
+"The oyX1 modules \"clean_profiles\" handler removes X Color Management "
+"device profile and screen document profile properties. The handler expects a "
+"\"display_name\" option with a string containing the X11 display name. The "
+"implementation uses Xlib and the XRandR extension."
+msgstr ""
+"Obslužná rutina \"set_xcm_region\" modulů Oyranosu umožňuje nastavit regiony "
+"barev pro klientskou stranu kompatibilní se správou barev v X."
+
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:386
+msgid ""
+"The oyX1 modules \"move_color_server_profiles\" handler sets up X Color "
+"Management device profile and screen document profile properties. The "
+"handler should only be called by desktop XCM compatible color servers. The "
+"handler expects a \"display_name\" option with a string containing the X11 "
+"display name, a \"screen\" option containing the selected screen as integer "
+"(Xlib/Xinerama/XRandR) and a \"setup\" integer option telling with 0 no/"
+"revert setup and with 1 setup profiles. The implementation uses Xlib."
+msgstr ""
+
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:566
 #, fuzzy
 msgid ""
 "The oyX1 modules \"send_native_update_event\" handler lets you ping X Color "
@@ -4026,7 +4055,7 @@ msgstr ""
 "Obslužná rutina \"set_xcm_region\" modulů Oyranosu umožňuje nastavit regiony "
 "barev pro klientskou stranu kompatibilní se správou barev v X."
 
-#: modules/color/modules/devices/oyranos_monitor_x11.c:2068
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:834
 msgid ""
 "The oyX1 modules \"set_xcm_region\" handler lets you set X Color Management "
 "compatible client side color regions. The implementation uses libXcm and "
@@ -4128,7 +4157,7 @@ msgstr ""
 "Vybraný barvový prostor bude přiřazen k neoznačeným barvám modelu XYZ a "
 "definuje barvy pro další zpracování."
 
-#: modules/color/modules/devices/oyranos_monitor_x11.c:2050
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:816
 msgid ""
 "The set_xcm_region takes minimal three options. The key name "
 "\"window_rectangle\" specifies in a oyRectangle_s object the requested "
@@ -4149,7 +4178,7 @@ msgstr ""
 "Display struct jako oyBlob_s. Volba \"icc_profile\" typu oyProfile_s "
 "volitelně poskytuje profil ICC, který má být nahrán na server."
 
-#: modules/color/modules/devices/oyranos_cmm_disp.c:1281
+#: modules/color/modules/devices/oyranos_cmm_disp.c:1302
 msgid "The window support module of Oyranos."
 msgstr "Okenní podpůrný modul Oyranosu."
 
@@ -4177,7 +4206,7 @@ msgstr ""
 msgid "Type:            "
 msgstr "Datum:       "
 
-#: examples/devices/test_device.c:54
+#: tools/oyranos-device.c:54
 #, fuzzy
 msgid "Unassign profile from device:"
 msgstr "Vypsat profil Taxi pro vybrané zařízení:"
@@ -4186,9 +4215,9 @@ msgstr "Vypsat profil Taxi pro vybrané zařízení:"
 msgid "Under Color Removal (UCR)"
 msgstr ""
 
-#: API_generated/oyranos_object_internal.h:42
-#: API_generated/oyranos_object_internal.h:50
-#: API_generated/oyranos_object_internal.h:58
+#: API_generated/oyranos_object_internal.h:46
+#: API_generated/oyranos_object_internal.h:54
+#: API_generated/oyranos_object_internal.h:62
 msgid "Unexpected object type:"
 msgstr "Neočekávaný typ objektu:"
 
@@ -4196,15 +4225,16 @@ msgstr "Neočekávaný typ objektu:"
 msgid "Unix and derivatives"
 msgstr "Unix a deriváty"
 
-#: examples/devices/test_device.c:60
+#: tools/oyranos-device.c:60
 #, fuzzy
 msgid "Unset device:"
 msgstr "Vypsat zařízení:"
 
 #: tools/oyranos_profile_tool.c:82 tools/oyranos_profile_graph.c:105
 #: tools/oyranos_convert.c:61 tools/oyranos_policy.c:54
-#: tools/oyranos_profiles.c:63 tools/oyranos_gamma.c:207 examples/taxi.c:49
-#: examples/devices/test_device.c:49 examples/libraw/oyranos_file.cpp:45
+#: tools/oyranos-device.c:49 tools/oyranos_profiles.c:63
+#: tools/oyranos_gamma.c:208 examples/taxi.c:49
+#: examples/libraw/oyranos_file.cpp:45
 msgid "Usage"
 msgstr "Použití"
 
@@ -4216,15 +4246,15 @@ msgstr "Použít kompenzaci černého bodu (BPC)"
 msgid "Use Effect"
 msgstr ""
 
-#: examples/devices/test_device.c:453
+#: tools/oyranos-device.c:453
 msgid "Using JSON"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:1507
+#: modules/color/modules/oyranos_cmm_lcm2.c:1527
 msgid "V2toV4"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:1508
+#: modules/color/modules/oyranos_cmm_lcm2.c:1528
 msgid "V4toV2"
 msgstr ""
 
@@ -4271,8 +4301,8 @@ msgstr "Pozorovací podmínky"
 msgid "Viewing conditions description"
 msgstr "Popis pozorovacích podmínek"
 
-#: liboyranos_core/oyranos_core.c:414 tools/qcmsevents/qcmsevents.cpp:275
-#: examples/devices/test_device.c:440
+#: liboyranos_core/oyranos_core.c:415 tools/oyranos-device.c:440
+#: tools/qcmsevents/qcmsevents.cpp:309
 #, c-format
 msgid "WARNING"
 msgstr "VAROVÁNÍ"
@@ -4308,7 +4338,7 @@ msgstr "Zapsat PPM"
 msgid "Write PPM Image Filter Object"
 msgstr "Write PPM Image Filter Object"
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:2703
+#: modules/color/modules/oyranos_cmm_lcm2.c:2723
 #, fuzzy
 msgid "Write to"
 msgstr "Zapsat"
@@ -4321,27 +4351,18 @@ msgstr "Zapsat do profilu ICC:"
 msgid "Wrong ICC profile id detected"
 msgstr "Zjištěno chybné ID profilu ICC"
 
-#: modules/color/modules/devices/oyranos_monitor_x11.c:1208
-msgid "XRandR CrtcInfo request failed"
-msgstr "Požadavek XRandR CrtcInfo selhal"
-
 #: liboyranos_config/oyranos_icc.c:194
 msgid "XYZ"
 msgstr "XYZ"
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:1516
+#: modules/color/modules/oyranos_cmm_lcm2.c:1536
 msgid "XYZ2FloatPCS"
 msgstr ""
 
 #. Custom from here, not in the ICC Spec
-#: modules/color/modules/oyranos_cmm_lcm2.c:1504
+#: modules/color/modules/oyranos_cmm_lcm2.c:1524
 msgid "XYZ2Lab"
 msgstr ""
-
-#: modules/color/modules/devices/oyranos_monitor_x11.c:1226
-#: modules/color/modules/devices/oyranos_monitor_x11.c:1231
-msgid "Xinerama request failed"
-msgstr "Požadavek Xinerama selhal"
 
 #: liboyranos_config/oyranos_icc.c:197
 msgid "YCbCr"
@@ -4354,7 +4375,7 @@ msgstr "Žlutá"
 #: liboyranos_config/oyranos_texts.c:566 liboyranos_config/oyranos_texts.c:586
 #: liboyranos_config/oyranos_texts.c:596 liboyranos_config/oyranos_texts.c:606
 #: liboyranos_config/oyranos_texts.c:616
-#: modules/color/modules/oyranos_cmm_lcm2.c:3253
+#: modules/color/modules/oyranos_cmm_lcm2.c:3273
 msgid "Yes"
 msgstr "Ano"
 
@@ -4366,7 +4387,7 @@ msgstr "Můžete je získat na http://sf.net/projects/openicc"
 msgid "Yxy"
 msgstr "Yxy"
 
-#: tools/oyranos_gamma.c:405
+#: tools/oyranos_gamma.c:406
 msgid "Zero profiles found in Taxi ICC DB"
 msgstr "V Taxi ICC DB nebyly nalezeny žádné profily"
 
@@ -4388,8 +4409,8 @@ msgstr ""
 #. *  @since   2008/02/06 (Oyranos: 0.1.8)
 #.
 #: include/oyranos_definitions.h:97
-#: modules/color/modules/oyranos_cmm_lcm2.c:3143
-#: modules/color/modules/oyranos_cmm_lcm2.c:3201
+#: modules/color/modules/oyranos_cmm_lcm2.c:3163
+#: modules/color/modules/oyranos_cmm_lcm2.c:3221
 msgid "[none]"
 msgstr "[žádný]"
 
@@ -4401,11 +4422,7 @@ msgstr "třída abstrakce"
 msgid "add prefix"
 msgstr "přidat prefix"
 
-#: modules/color/modules/devices/oyranos_monitor_x11.c:1324
-msgid "allocation failed"
-msgstr "alokace selhala"
-
-#: examples/devices/test_device.c:103
+#: tools/oyranos-device.c:103
 msgid "alternatively specify the name of a device"
 msgstr ""
 
@@ -4422,15 +4439,17 @@ msgid ""
 "profiles."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:3439
-#: modules/color/modules/oyranos_cmm_lcm2.c:3512
-#: modules/color/modules/oyranos_cmm_trds.c:583
+#: modules/color/modules/oyranos_cmm_lcm2.c:3459
+#: modules/color/modules/oyranos_cmm_lcm2.c:3532
+#: modules/color/modules/oyranos_cmm_trds.c:584
 #: modules/color/modules/oyranos_cmm_lcms.c:2533
 #: modules/color/modules/oyranos_cmm_lcms.c:2606
-#: modules/color/modules/oyranos_cmm_elDB.c:855
-#: modules/color/modules/oyranos_cmm_oiDB.c:454
-#: modules/color/modules/devices/oyranos_monitor_x11.c:1782
-#: modules/color/modules/devices/oyranos_monitor_x11.c:2040
+#: modules/color/modules/oyranos_cmm_elDB.c:860
+#: modules/color/modules/oyranos_cmm_oiDB.c:460
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:187
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:368
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:548
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:806
 #: examples/oyranos_cmm_dFil.c:610
 msgid "check"
 msgstr "kontrola"
@@ -4439,45 +4458,45 @@ msgstr "kontrola"
 msgid "color space class"
 msgstr "třída barvového prostoru"
 
-#: examples/devices/test_device.c:89
+#: tools/oyranos-device.c:89
 #, fuzzy
 msgid "create OpenICC device color state JSON"
 msgstr "vložit JSON OpenICC ze souboru"
 
-#: examples/devices/test_device.c:88
+#: tools/oyranos-device.c:88
 #, fuzzy
 msgid "create OpenICC device color state JSON including the rank map"
 msgstr "vložit JSON OpenICC ze souboru"
 
-#: examples/devices/test_device.c:91
+#: tools/oyranos-device.c:91
 #, fuzzy
 msgid "create OpenICC device color state rank map JSON"
 msgstr "vložit JSON OpenICC ze souboru"
 
-#: examples/devices/test_device.c:87 examples/libraw/oyranos_file.cpp:52
+#: tools/oyranos-device.c:87 examples/libraw/oyranos_file.cpp:52
 #, fuzzy
 msgid "create fallback ICC profile"
 msgstr "profil ICC"
 
-#: liboyranos_config/oyranos_db.c:69 liboyranos_config/oyranos_db.c:87
+#: liboyranos_config/oyranos_db.c:68 liboyranos_config/oyranos_db.c:86
 msgid "default profile type does not exist:"
 msgstr "výchozí typ profilu neexistuje:"
 
-#: tools/oyranos_gamma.c:453 examples/devices/test_device.c:969
+#: tools/oyranos-device.c:969 tools/oyranos_gamma.c:454
 msgid "description"
 msgstr "popis"
 
-#: examples/devices/test_device.c:101
+#: tools/oyranos-device.c:101
 #, fuzzy
 msgid "device class"
 msgstr "použít třídu zařízení"
 
-#: examples/devices/test_device.c:102
+#: tools/oyranos-device.c:102
 #, fuzzy
 msgid "device position start from zero"
 msgstr "-d device_position_start_from_zero"
 
-#: API_generated/oyranos_devices.c:1403
+#: API_generated/oyranos_devices.c:1446
 #, fuzzy
 msgid "device_class not found:"
 msgstr "profil nenalezen:"
@@ -4491,7 +4510,7 @@ msgstr "třída displeje"
 msgid "display name"
 msgstr "třída displeje"
 
-#: tools/oyranos_profiles.c:96
+#: tools/oyranos_profiles.c:88
 msgid "download ID from Taxi data base"
 msgstr "stáhnout ID z databáze Taxi"
 
@@ -4511,7 +4530,7 @@ msgstr "vložit JSON OpenICC ze souboru"
 msgid "embed OpenICC device JSON from file"
 msgstr "vložit JSON OpenICC ze souboru"
 
-#: examples/devices/test_device.c:94 examples/libraw/oyranos_file.cpp:60
+#: tools/oyranos-device.c:94 examples/libraw/oyranos_file.cpp:60
 msgid "embedd device and driver information into ICC meta tag"
 msgstr ""
 
@@ -4519,9 +4538,9 @@ msgstr ""
 msgid "enable simple defaults"
 msgstr "aktivovat jednoduché výchozí hodnoty"
 
-#: API_generated/oyranos_module.c:2011 API_generated/oyConversion_s.c:190
-#: API_generated/oyFilterNode_s_.c:594 API_generated/oyranos_devices.c:2592
-#: API_generated/oyranos_devices.c:3098
+#: API_generated/oyranos_module.c:2012 API_generated/oyConversion_s.c:190
+#: API_generated/oyFilterNode_s_.c:594 API_generated/oyranos_devices.c:2660
+#: API_generated/oyranos_devices.c:3166
 msgid "error in module:"
 msgstr "chyba v modulu:"
 
@@ -4538,37 +4557,28 @@ msgstr ""
 msgid "failed!"
 msgstr "selhalo!"
 
-#: API_generated/oyranos_devices.c:2509 API_generated/oyranos_devices.c:2520
+#: API_generated/oyranos_devices.c:2577 API_generated/oyranos_devices.c:2588
 #: modules/color/modules/oyranos_cmm_oyra_image_scale.c:105
 #: modules/color/modules/oyranos_cmm_oyra_image_expose.c:102
-#: modules/color/modules/oyranos_cmm_lcm2.c:3338
+#: modules/color/modules/oyranos_cmm_lcm2.c:3358
 #: modules/color/modules/oyranos_cmm_lcms.c:2425
 #: modules/color/modules/oyranos_cmm_oPNG.c:946
-#: modules/color/modules/devices/oyranos_monitor_x11.c:167
-#: modules/color/modules/devices/oyranos_monitor_x11.c:197
-#: modules/color/modules/devices/oyranos_monitor_x11.c:323
-#: modules/color/modules/devices/oyranos_monitor_x11.c:874
-#: modules/color/modules/devices/oyranos_monitor_x11.c:893
-#: modules/color/modules/devices/oyranos_monitor_x11.c:902
-#: modules/color/modules/devices/oyranos_monitor_x11.c:1000
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:900
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:906
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:918
-#: tools/oyranos_gamma.c:633 tools/oyranos_gamma.c:811
-#: tools/oyranos_gamma.c:936 tools/oyranos_gamma.c:955
-#: tools/oyranos_gamma.c:966 tools/oyranos_gamma.c:970
-#: tools/oyranos_gamma.c:972 tools/oyranos_gamma.c:986
-#: tools/oyranos_gamma.c:993 tools/oyranos_gamma.c:997
-#: tools/oyranos_gamma.c:1110 tools/oyranos_gamma.c:1113
-#: tools/oyranos_gamma.c:1115 tools/oyranos_gamma.c:1128
+#: tools/oyranos_gamma.c:634 tools/oyranos_gamma.c:812
+#: tools/oyranos_gamma.c:978 tools/oyranos_gamma.c:981
+#: tools/oyranos_gamma.c:985 tools/oyranos_gamma.c:1023
 msgid "found issues"
 msgstr "nalezené problémy"
 
-#: API_generated/oyConfig_s.c:1190 API_generated/oyranos_devices.c:1386
-#: API_generated/oyranos_devices.c:1680 API_generated/oyranos_devices.c:1764
+#: API_generated/oyOptions_s.c:478 API_generated/oyConfig_s.c:1219
+#: API_generated/oyranos_devices.c:1429 API_generated/oyranos_devices.c:1748
+#: API_generated/oyranos_devices.c:1832
 #: modules/color/modules/oyranos_cmm_oyra_image_channel.c:145
-#: examples/taxi.c:229 examples/taxi.c:319 examples/devices/test_device.c:1092
-#: examples/devices/test_device.c:1118
+#: tools/oyranos-device.c:1078 tools/oyranos-device.c:1088
+#: tools/oyranos-device.c:1105 tools/oyranos-device.c:1131 examples/taxi.c:229
+#: examples/taxi.c:319
 msgid "found issues parsing JSON"
 msgstr "zjištěny problémy při analýze JSON"
 
@@ -4586,7 +4596,7 @@ msgstr "nenalezen žádný pozorovatel"
 msgid "found observer of wrong type"
 msgstr "zjištěn pozorovatel chybného typu"
 
-#: examples/devices/test_device.c:853
+#: tools/oyranos-device.c:853
 #, fuzzy
 msgid "found profiles for device class"
 msgstr "Vypsat profil Taxi pro vybrané zařízení:"
@@ -4607,8 +4617,10 @@ msgstr ""
 msgid "h - fit to window height"
 msgstr ""
 
-#: modules/color/modules/devices/oyranos_monitor_x11.c:1796
-#: modules/color/modules/devices/oyranos_monitor_x11.c:2064
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:201
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:382
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:562
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:830
 #: examples/oyranos_cmm_dFil.c:168 examples/oyranos_cmm_dFil.c:624
 #: examples/oyranos_cmm_dDev.c:840
 msgid "help"
@@ -4619,7 +4631,7 @@ msgid "input class"
 msgstr "třída vstupu"
 
 #: API_generated/oyProfile_s.c:214 API_generated/oyProfile_s.c:219
-#: API_generated/oyranos_devices.c:494
+#: API_generated/oyranos_devices.c:501
 msgid "install in the OpenIccDirectory icc path"
 msgstr "Nainstalujte do cesty \"OpenIccDirectory\""
 
@@ -4657,22 +4669,18 @@ msgstr "umí zobrazit informace o profilu ICC"
 msgid "is a Taxi DB tool"
 msgstr "Výchozí profily"
 
-#: examples/devices/test_device.c:48
+#: tools/oyranos-device.c:48
 #, fuzzy
 msgid "is a color profile administration tool for color devices"
 msgstr "je nástroj pro barvové profily monitorů"
 
-#: tools/oyranos_gamma.c:206 tools/oyranos_gamma.c:264
+#: tools/oyranos_gamma.c:207 tools/oyranos_gamma.c:265
 msgid "is a color profile administration tool for monitors"
 msgstr "je nástroj pro barvové profily monitorů"
 
 #: tools/oyranos_policy.c:44
 msgid "is a policy administration tool"
 msgstr "je nástroj pro správu politik"
-
-#: modules/color/modules/devices/oyranos_monitor_x11.c:1514
-msgid "less Xinerama monitors than XRandR ones"
-msgstr "Xinerama hlásí méně monitorů než XRandR"
 
 #: tools/oyranos_convert.c:97
 msgid "levels from 4-16 make sense"
@@ -4684,16 +4692,16 @@ msgstr "rozumné jsou úrovně od 4 - 16"
 msgid "libraw input filter"
 msgstr "vstupní filtr libraw"
 
-#: tools/oyranos_profiles.c:83
+#: tools/oyranos_profiles.c:96
 msgid "linux system path"
 msgstr "linuxová systémová cesta"
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:3667
+#: modules/color/modules/oyranos_cmm_lcm2.c:3687
 #: modules/color/modules/oyranos_cmm_lcms.c:2761
 msgid "littleCMS"
 msgstr "littleCMS"
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:3768
+#: modules/color/modules/oyranos_cmm_lcm2.c:3788
 msgid ""
 "littleCMS 2 project; www: http://www.littlecms.com; support/email: "
 "support@littlecms.com; sources: http://www.littlecms.com/downloads.htm; "
@@ -4713,11 +4721,11 @@ msgstr ""
 "support@littlecms.com; zdrojové kódy: http://www.littlecms.com/downloads."
 "htm; Oyranos wrapper: Kai-Uwe Behrmann pro projekt Oyranos"
 
-#: tools/oyranos_profiles.c:85 tools/oyranos_profiles.c:94
+#: tools/oyranos_profiles.c:98
 msgid "machine specific path"
 msgstr "cesta příslušného počítače"
 
-#: tools/oyranos_gamma.c:453 examples/devices/test_device.c:969
+#: tools/oyranos-device.c:969 tools/oyranos_gamma.c:454
 msgid "match value"
 msgstr "hledat hodnotu"
 
@@ -4737,13 +4745,13 @@ msgstr "jméno delší než"
 msgid "named color class"
 msgstr "třída pojmenovaných barev"
 
-#: liboyranos/oyranos_cmm.c:255 modules/color/modules/oyranos_cmm_trds.c:676
-#: modules/color/modules/oyranos_cmm_elDB.c:948
+#: liboyranos/oyranos_cmm.c:255 modules/color/modules/oyranos_cmm_trds.c:677
+#: modules/color/modules/oyranos_cmm_elDB.c:953
 #: modules/color/modules/oyranos_cmm_oyra.c:147
 #: modules/color/modules/oyranos_cmm_oydi.c:1271
-#: modules/color/modules/oyranos_cmm_oiDB.c:547
+#: modules/color/modules/oyranos_cmm_oiDB.c:553
 #: modules/color/modules/oyranos_cmm_oicc.c:1065
-#: modules/color/modules/devices/oyranos_cmm_disp.c:1321
+#: modules/color/modules/devices/oyranos_cmm_disp.c:1342
 #: modules/color/modules/oyranos_cmm_lraw.cpp:239
 #: examples/oyranos_cmm_dFil.c:164
 msgid "new BSD license: http://www.opensource.org/licenses/BSD-3-Clause"
@@ -4753,25 +4761,13 @@ msgstr "Licence new BSD: http://www.opensource.org/licenses/BSD-3-Clause"
 msgid "newBSD"
 msgstr "newBSD"
 
-#: modules/color/modules/devices/oyranos_monitor_cs.c:635
-#: modules/color/modules/devices/oyranos_monitor_cs.c:641
-#: modules/color/modules/devices/oyranos_monitor_cs.c:652
+#: modules/color/modules/devices/oyranos_monitor_cs.c:637
+#: modules/color/modules/devices/oyranos_monitor_cs.c:643
+#: modules/color/modules/devices/oyranos_monitor_cs.c:654
 msgid "no EDID available from"
 msgstr "EDID není k dispozici z"
 
-#: modules/color/modules/devices/oyranos_monitor_x11.c:457
-msgid "no EDID available from X properties"
-msgstr "z X vlastností není dostupné EDID."
-
-#: modules/color/modules/devices/oyranos_monitor_x11.c:1342
-msgid "no Screen found"
-msgstr "nenalezena žádná obrazovka"
-
-#: modules/color/modules/devices/oyranos_monitor_x11.c:1548
-msgid "no oyX1Monitor_s created"
-msgstr "oyX1Monitor_s nebyl vytvořen"
-
-#: modules/color/modules/devices/oyranos_monitor_cs.c:670
+#: modules/color/modules/devices/oyranos_monitor_cs.c:669
 msgid "no qarzMonitor_s from"
 msgstr "žádný qarzMonitor_s z"
 
@@ -4779,7 +4775,7 @@ msgstr "žádný qarzMonitor_s z"
 msgid "not a profile:"
 msgstr "není profil:"
 
-#: API_generated/oyranos_devices.c:1412 liboyranos_config/oyranos_check.c:76
+#: API_generated/oyranos_devices.c:1455 liboyranos_config/oyranos_check.c:76
 msgid "not found:"
 msgstr "nenalezeno:"
 
@@ -4799,16 +4795,10 @@ msgstr "vynechat spektrální linii"
 msgid "omit white line of lambert light emitters"
 msgstr ""
 
-#: modules/color/modules/devices/oyranos_monitor_x11.c:778
-#: modules/color/modules/devices/oyranos_monitor_x11.c:1331
 #: modules/color/modules/devices/oyranos_monitor_cs.c:131
-#: modules/color/modules/devices/oyranos_monitor_cs.c:252
+#: modules/color/modules/devices/oyranos_monitor_cs.c:250
 msgid "open X Display failed"
 msgstr "selhalo otevření X displeje"
-
-#: modules/color/modules/devices/oyranos_monitor_x11.c:1247
-msgid "open X Screen failed"
-msgstr "selhalo otevření X obrazovky"
 
 #: tools/oyranos_profiles.c:73
 msgid "output class"
@@ -4824,20 +4814,20 @@ msgstr "třída výstupu"
 msgid "output_array_roi"
 msgstr ""
 
-#: tools/oyranos_profiles.c:84 tools/oyranos_profiles.c:93
+#: tools/oyranos_profiles.c:97
 msgid "oyranos install path"
 msgstr "cesta instalace Oyranosu"
 
-#: liboyranos_core/oyranos_io_core.c:1329
+#: liboyranos_core/oyranos_io_core.c:1334
 msgid "path is a link: ignored"
 msgstr "cesta je odkaz: ignorováno"
 
-#: liboyranos_core/oyranos_io_core.c:1325
+#: liboyranos_core/oyranos_io_core.c:1330
 msgid "path is not a directory"
 msgstr "cesta není adresář"
 
-#: liboyranos_core/oyranos_io_core.c:1334
-#: liboyranos_core/oyranos_io_core.c:1906
+#: liboyranos_core/oyranos_io_core.c:1339
+#: liboyranos_core/oyranos_io_core.c:1911
 msgid "path is not readable"
 msgstr "nelze číst cestu"
 
@@ -4850,43 +4840,43 @@ msgid "policy or filename"
 msgstr "politika nebo jméno souboru"
 
 #. --short argument
-#: tools/oyranos_profile_tool.c:120 tools/oyranos_gamma.c:221
+#: tools/oyranos_profile_tool.c:120 tools/oyranos_gamma.c:222
 msgid "print only the file name"
 msgstr "vytisknout pouze název souboru"
 
 #. --short argument
-#: examples/devices/test_device.c:72
+#: tools/oyranos-device.c:72
 #, fuzzy
 msgid "print only the profile name"
 msgstr "--short vytisknout pouze název souboru"
 
 #. --path argument
-#: tools/oyranos_profile_tool.c:121 tools/oyranos_gamma.c:223
-#: examples/devices/test_device.c:74
+#: tools/oyranos_profile_tool.c:121 tools/oyranos-device.c:74
+#: tools/oyranos_gamma.c:224
 #, fuzzy
 msgid "print the full file name"
 msgstr "--short vytisknout pouze název souboru"
 
-#: examples/devices/test_device.c:65
+#: tools/oyranos-device.c:65
 #, fuzzy
 msgid "print the full module name"
 msgstr "--short vytisknout pouze název souboru"
 
-#: examples/devices/test_device.c:66
+#: tools/oyranos-device.c:66
 msgid "print the module ID"
 msgstr ""
 
-#: examples/devices/test_device.c:67
+#: tools/oyranos-device.c:67
 #, fuzzy
 msgid "print the modules device class"
 msgstr "použít třídu zařízení"
 
-#: examples/devices/test_device.c:52
+#: tools/oyranos-device.c:52
 #, fuzzy
 msgid "profile file name"
 msgstr "jméno profilu"
 
-#: tools/oyranos_gamma.c:210
+#: tools/oyranos_gamma.c:211
 msgid "profile name"
 msgstr "jméno profilu"
 
@@ -4897,10 +4887,6 @@ msgstr "profil nenalezen v předdefinovaném adresáři:"
 #: API_generated/oyProfile_s.c:382 liboyranos_config/oyranos_io.c:208
 msgid "profile not found:"
 msgstr "profil nenalezen:"
-
-#: modules/color/modules/devices/oyranos_monitor_x11.c:808
-msgid "program is not properly installed or missed"
-msgstr ""
 
 #: modules/color/modules/oyranos_cmm_oJPG.c:755
 msgid "read"
@@ -4916,16 +4902,16 @@ msgstr "číst ze souboru"
 msgid "read input stream"
 msgstr "Linearni vstupni křivka"
 
-#: modules/color/modules/oyranos_cmm_lcm2.c:2689
+#: modules/color/modules/oyranos_cmm_lcm2.c:2709
 msgid "running new ticket failed"
 msgstr ""
 
-#: tools/oyranos_profiles.c:75 examples/devices/test_device.c:105
+#: tools/oyranos-device.c:105 tools/oyranos_profiles.c:75
 #, fuzzy
 msgid "select ICC v2 profiles"
 msgstr "Získat profil ICC"
 
-#: tools/oyranos_profiles.c:76 examples/devices/test_device.c:106
+#: tools/oyranos-device.c:106 tools/oyranos_profiles.c:76
 #, fuzzy
 msgid "select ICC v4 profiles"
 msgstr "Získat profil ICC"
@@ -4973,12 +4959,12 @@ msgstr ""
 msgid "select unsigned integer 8-bit precision data format"
 msgstr ""
 
-#: examples/devices/test_device.c:78 examples/devices/test_device.c:82
+#: tools/oyranos-device.c:78 tools/oyranos-device.c:82
 #, fuzzy
 msgid "show as well non matching profiles"
 msgstr "Žádný profil obrázku"
 
-#: tools/oyranos_profiles.c:95
+#: tools/oyranos_profiles.c:87
 msgid "show hints and question GUI"
 msgstr "ukázat GUI nápovědy a otázek"
 
@@ -4986,7 +4972,7 @@ msgstr "ukázat GUI nápovědy a otázek"
 msgid "show profiles with duplicate profile ID"
 msgstr ""
 
-#: examples/devices/test_device.c:104
+#: tools/oyranos-device.c:104
 msgid "skip X Color Management device profile"
 msgstr ""
 
@@ -5019,22 +5005,10 @@ msgstr "specifikujte výstupní jméno souboru, výchozí je output.png"
 msgid "specify output image width in pixel"
 msgstr "specifikujte šířku výstupního obrázku v pixelech"
 
-#: tools/oyranos_profiles.c:92
-msgid "system path"
-msgstr "systémová cesta"
-
 #. 32BT
 #: liboyranos_config/oyranos_icc.c:690
 msgid "the imaging factory CMM"
 msgstr ""
-
-#: modules/color/modules/devices/oyranos_monitor_x11.c:311
-msgid "unexpected EDID lenght"
-msgstr "neočekávaná délka EDID"
-
-#: modules/color/modules/devices/oyranos_monitor_x11.c:259
-msgid "unexpected user_data type"
-msgstr "neočekávaný typ user_data"
 
 #: modules/color/modules/oyranos_cmm_oyra_image.c:339
 #: modules/color/modules/oyranos_cmm_oyra_image.c:341
@@ -5055,7 +5029,7 @@ msgstr "použít rovinu CIE*xyY *x*y pro projekci saturační linie"
 msgid "use IccXML format"
 msgstr ""
 
-#: examples/devices/test_device.c:93
+#: tools/oyranos-device.c:93
 msgid "use device JSON alternatively to -c and -d options"
 msgstr ""
 
@@ -5063,7 +5037,7 @@ msgstr ""
 msgid "use device class"
 msgstr "použít třídu zařízení"
 
-#: tools/oyranos_profiles.c:90
+#: tools/oyranos_profiles.c:86
 #, fuzzy
 msgid "use device sub path"
 msgstr "použít třídu zařízení"
@@ -5072,17 +5046,17 @@ msgstr "použít třídu zařízení"
 msgid "use new name"
 msgstr "použít nové jméno"
 
-#: examples/devices/test_device.c:90 examples/libraw/oyranos_file.cpp:56
+#: tools/oyranos-device.c:90 examples/libraw/oyranos_file.cpp:56
 msgid "use only DB keys for -f=openicc"
 msgstr ""
 
-#: tools/oyranos_profiles.c:82 tools/oyranos_profiles.c:91
+#: tools/oyranos_profiles.c:95
 msgid "user path"
 msgstr "uživatelská cesta"
 
 #: tools/oyranos_profile_tool.c:116 tools/oyranos_profile_graph.c:133
-#: tools/oyranos_convert.c:103 tools/oyranos_profiles.c:102
-#: examples/devices/test_device.c:100 examples/libraw/oyranos_file.cpp:69
+#: tools/oyranos_convert.c:103 tools/oyranos-device.c:100
+#: tools/oyranos_profiles.c:94 examples/libraw/oyranos_file.cpp:69
 msgid "verbose"
 msgstr "upovídaný výstup"
 
@@ -5095,11 +5069,10 @@ msgid "will overwrite policy file"
 msgstr "přepíše soubor politiky"
 
 #: API_generated/oyranos_object.c:159 API_generated/oyranos_object.c:177
-#: API_generated/oyranos_object.c:279 API_generated/oyranos_object.c:295
 msgid "with '.' is not allowed"
 msgstr "s '.' není povoleno"
 
-#: examples/devices/test_device.c:86
+#: tools/oyranos-device.c:86
 #, fuzzy
 msgid "write assigned ICC profile"
 msgstr "Zapsat do profilu ICC:"
@@ -5121,17 +5094,17 @@ msgstr "zapsat do souboru, v současnosti pouze ve formátu PPM"
 msgid "write to file, currently only PPM format"
 msgstr "zapsat do souboru, v současnosti pouze ve formátu PPM"
 
-#: examples/devices/test_device.c:92 examples/libraw/oyranos_file.cpp:61
+#: tools/oyranos-device.c:92 examples/libraw/oyranos_file.cpp:61
 #: examples/libraw/oyranos_file.cpp:68
 #, fuzzy
 msgid "write to specified file"
 msgstr "zapsat do souboru"
 
-#: API_generated/oyOptions_s.c:1372 tools/oyranos_profile_tool.c:233
+#: API_generated/oyOptions_s.c:1549 tools/oyranos_profile_tool.c:233
 #: tools/oyranos_profile_graph.c:264 tools/oyranos_convert.c:270
-#: tools/oyranos_policy.c:147 tools/oyranos_profiles.c:240
-#: tools/oyranos_gamma.c:253 examples/taxi.c:206
-#: examples/devices/test_device.c:252 examples/libraw/oyranos_file.cpp:236
+#: tools/oyranos_policy.c:147 tools/oyranos-device.c:252
+#: tools/oyranos_profiles.c:236 tools/oyranos_gamma.c:254 examples/taxi.c:206
+#: examples/libraw/oyranos_file.cpp:236
 msgid "wrong argument to option:"
 msgstr "chybný argument pro volbu:"
 
@@ -5296,6 +5269,9 @@ msgstr "špatný profil pro statický barvový prostor webu, vyžadováno sRGB"
 #~ msgid "Can not allocate memory for:"
 #~ msgstr "Nelze alokovat paměť pro:"
 
+#~ msgid "Can not read hardware information from device."
+#~ msgstr "Ze zařízení nelze přečíst informaci o hardware."
+
 #~ msgid "Cancel"
 #~ msgstr "Cancel"
 
@@ -5409,8 +5385,17 @@ msgstr "špatný profil pro statický barvový prostor webu, vyžadováno sRGB"
 #~ msgid "Error"
 #~ msgstr "Chyba"
 
+#~ msgid "Error getting atom"
+#~ msgstr "Chyba při získávání atomu"
+
 #~ msgid "Error in ICC profile tag found!"
 #~ msgstr "Nalezena chyba ve štítku profilu ICC!"
+
+#~ msgid "Error obtaining profile"
+#~ msgstr "Chyba při získávání profilu"
+
+#~ msgid "Error setting up atom"
+#~ msgstr "Chyba při nastavování atomu"
 
 #~ msgid "Exclude this path"
 #~ msgstr "Vyloucit tuto cestu"
@@ -5687,6 +5672,9 @@ msgstr "špatný profil pro statický barvový prostor webu, vyžadováno sRGB"
 
 #~ msgid "No active drawable found."
 #~ msgstr "Nenalezen zadny aktivni obrazek."
+
+#~ msgid "No monitor gamma curves by profile:"
+#~ msgstr "Žádné gama křivky monitoru v profilu:"
 
 #, fuzzy
 #~ msgid "No plug or remote filter"
@@ -6048,6 +6036,12 @@ msgstr "špatný profil pro statický barvový prostor webu, vyžadováno sRGB"
 #~ msgid "XFORMS in FLTK"
 #~ msgstr "XFORMS ve FLTK"
 
+#~ msgid "XRandR CrtcInfo request failed"
+#~ msgstr "Požadavek XRandR CrtcInfo selhal"
+
+#~ msgid "Xinerama request failed"
+#~ msgstr "Požadavek Xinerama selhal"
+
 #~ msgid "XineramaScreen:"
 #~ msgstr "Xinerama obrazovka:"
 
@@ -6228,6 +6222,9 @@ msgstr "špatný profil pro statický barvový prostor webu, vyžadováno sRGB"
 #~ msgid "left-/middle-/right mouse button -> rotate/cut/menu"
 #~ msgstr "leve/prostredni/prave tlacitko mysi -> rotovat/vystrihnout/menu"
 
+#~ msgid "less Xinerama monitors than XRandR ones"
+#~ msgstr "Xinerama hlásí méně monitorů než XRandR"
+
 #~ msgid "lineare entrance curve with 256 steps"
 #~ msgstr "linearni vstupni křivka s 256 kroky"
 
@@ -6260,6 +6257,12 @@ msgstr "špatný profil pro statický barvový prostor webu, vyžadováno sRGB"
 #~ msgid "new BSD license: http://www.opensource.org/licenses/bsd-license.php"
 #~ msgstr "Licence MIT: http://www.opensource.org/licenses/mit-license.php"
 
+#~ msgid "no EDID available from X properties"
+#~ msgstr "z X vlastností není dostupné EDID."
+
+#~ msgid "no Screen found"
+#~ msgstr "nenalezena žádná obrazovka"
+
 #~ msgid "no gammagradient information obtained"
 #~ msgstr "nenalezena informace o gama prechodu"
 
@@ -6271,6 +6274,9 @@ msgstr "špatný profil pro statický barvový prostor webu, vyžadováno sRGB"
 
 #~ msgid "no net found. Is Argyll installed?"
 #~ msgstr "nenalezena zadna sit. Je nainstalovan Argyll?"
+
+#~ msgid "no oyX1Monitor_s created"
+#~ msgstr "oyX1Monitor_s nebyl vytvořen"
 
 #, fuzzy
 #~ msgid "no wcsDMonitor_s created"
@@ -6293,6 +6299,9 @@ msgstr "špatný profil pro statický barvový prostor webu, vyžadováno sRGB"
 
 #~ msgid "o'clock"
 #~ msgstr "hodin"
+
+#~ msgid "open X Screen failed"
+#~ msgstr "selhalo otevření X obrazovky"
 
 #~ msgid "orionas"
 #~ msgstr "orionas"
@@ -6351,10 +6360,6 @@ msgstr "špatný profil pro statický barvový prostor webu, vyžadováno sRGB"
 #~ msgid "scrn"
 #~ msgstr "scrn"
 
-#, fuzzy
-#~ msgid "search paths"
-#~ msgstr "Vypsat prohledávané cesty:"
-
 #~ msgid "seconds"
 #~ msgstr "vterin"
 
@@ -6373,11 +6378,20 @@ msgstr "špatný profil pro statický barvový prostor webu, vyžadováno sRGB"
 #~ msgid "steps"
 #~ msgstr "kroky"
 
+#~ msgid "system path"
+#~ msgstr "systémová cesta"
+
 #~ msgid "tag list is corrupted for tag"
 #~ msgstr "Seznam tagu je poskozen u tagu"
 
 #~ msgid "tag_browser_invisible"
 #~ msgstr "tag_prohlizec_neviditelny"
+
+#~ msgid "unexpected EDID lenght"
+#~ msgstr "neočekávaná délka EDID"
+
+#~ msgid "unexpected user_data type"
+#~ msgstr "neočekávaný typ user_data"
 
 #~ msgid "unknown Color"
 #~ msgstr "neznama barva"
