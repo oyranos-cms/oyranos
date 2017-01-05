@@ -623,12 +623,13 @@ int    oyFilterRegistrationMatchKey  ( const char        * registration_a,
  *  @param         pattern             pattern to compare with
  *  @param         delta               say how far a difference can drift
  *  @param         path_separator      ignored
- *  @param         key_separator       split text and pattern by a char
+ *  @param         key_separator       split text and pattern by a char;
+ *                                     usually comma - ','
  *  @return                            match, useable for ranking
  *
- *  @version Oyranos: 0.3.3
+ *  @version Oyranos: 0.9.7
+ *  @date    2017/01/05
  *  @since   2010/11/21 (Oyranos: 0.1.3)
- *  @date    2011/12/29
  */
 int    oyTextIccDictMatch            ( const char        * text,
                                        const char        * pattern,

@@ -1640,6 +1640,31 @@ OYAPI int OYEXPORT oyDeviceToJSON    ( oyConfig_s        * device,
   return error;
 }
 
+/**
+ *  @brief    Check for matching to a given pattern
+ *
+ *  @param[in]     module_device       the to be checked configuration from
+ *                                     oyConfigs_FromPattern_f;
+ *                                     Additional allowed are DB configs.
+ *  @param[in]     db_pattern          the to be compared configuration from
+ *                                     elsewhere, e.g. ICC dict tag
+ *  @param[out]    rank_value          the number of matches between config and
+ *                                     pattern, -1 means invalid
+ *  @return                            0 - good, >= 1 - error + a message should
+ *                                     be sent
+ *
+ *  @version Oyranos: 0.9.7
+ *  @date    2017/01/05
+ *  @since   2009/01/26 (Oyranos: 0.1.10)
+ */
+OYAPI int OYEXPORT oyDeviceCompare   ( oyConfig_s        * module_device,
+                                       oyConfig_s        * db_pattern,
+                                       int32_t           * rank_value )
+{
+  return oyConfig_Match( module_device, db_pattern, '/', ',', 0, rank_value );
+}
+
+
 #define OPENICC_DEVICE_JSON_HEADER_BASE \
   "{\n" \
   "  \"org\": {\n" \
@@ -1884,7 +1909,7 @@ OYAPI int  OYEXPORT
       {
         taxi_dev = oyConfigs_Get( configs_, i );
         ranks[2*i+0] = i;
-        error = oyConfig_Compare( device, taxi_dev, &ranks[2*i+1] );
+        error = oyDeviceCompare( device, taxi_dev, &ranks[2*i+1] );
 
         oyConfig_Release( &taxi_dev );
       }
