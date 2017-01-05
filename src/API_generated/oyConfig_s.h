@@ -114,9 +114,12 @@ OYAPI int  OYEXPORT
 OYAPI int  OYEXPORT
                oyConfig_EraseFromDB  ( oyConfig_s        * config,
                                        oySCOPE_e           scope );
-OYAPI int  OYEXPORT
-               oyConfig_Compare      ( oyConfig_s        * device,
-                                       oyConfig_s        * pattern,
+OYAPI int OYEXPORT
+               oyConfig_Match        ( oyConfig_s        * module_device,
+                                       oyConfig_s        * db_pattern,
+                                       char                path_separator,
+                                       char                key_separator,
+                                       int                 flags,
                                        int32_t           * rank_value );
 OYAPI int  OYEXPORT
                oyConfig_DomainRank   ( oyConfig_s        * config );

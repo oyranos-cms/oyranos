@@ -281,8 +281,8 @@ OYAPI int  OYEXPORT
     {
       config = oyConfigs_Get( configs, i );
 
-      /** 2. oyConfig_Compare() with the provided device */
-      error = oyConfig_Compare( device, config, &rank );
+      /** 2. oyDeviceCompare() with the provided device */
+      error = oyDeviceCompare( device, config, &rank );
       DBG_PROG1_S("rank: %d\n", rank);
       /** 3. store the biggest rank_value */
       if(max_rank < rank)
@@ -446,24 +446,32 @@ OYAPI int  OYEXPORT oyConfig_EraseFromDB (
 
 /**
  *  @memberof oyConfig_s
- *  @brief    Check for matching to a given pattern
+ *  @brief    Check for fine grained matching to a given pattern
  *
  *  @param[in]     module_device       the to be checked configuration from
  *                                     oyConfigs_FromPattern_f;
  *                                     Additional allowed are DB configs.
  *  @param[in]     db_pattern          the to be compared configuration from
  *                                     elsewhere, e.g. ICC dict tag
+ *  @param         path_separator      a char to split into hierarchical levels
+ *  @param         key_separator       a char to split key strings
+ *  @param         flags               options:
+ *                                     - OY_MATCH_SUB_STRING - find sub string;
+ *                                       default is whole word match
  *  @param[out]    rank_value          the number of matches between config and
  *                                     pattern, -1 means invalid
  *  @return                            0 - good, >= 1 - error + a message should
  *                                     be sent
  *
- *  @version Oyranos: 0.9.6
- *  @date    2015/08/03
- *  @since   2009/01/26 (Oyranos: 0.1.10)
+ *  @version Oyranos: 0.9.7
+ *  @date    2017/01/05
+ *  @since   2017/01/05 (Oyranos: 0.9.7)
  */
-OYAPI int OYEXPORT oyConfig_Compare  ( oyConfig_s        * module_device,
+OYAPI int OYEXPORT oyConfig_Match    ( oyConfig_s        * module_device,
                                        oyConfig_s        * db_pattern,
+                                       char                path_separator,
+                                       char                key_separator,
+                                       int                 flags,
                                        int32_t           * rank_value )
 {
   int error = !module_device || !db_pattern;
@@ -552,7 +560,12 @@ OYAPI int OYEXPORT oyConfig_Compare  ( oyConfig_s        * module_device,
            *        should be expandable to several values.
            *        Do we need more than the ICC dict style syntax here?
            */
-          if(p_val && oyTextIccDictMatch( d_val, p_val, 0.0005 ))
+          if(p_val && (flags & OY_MATCH_SUB_STRING) ?
+                      oyFilterStringMatch( d_val, p_val, oyOBJECT_NONE,
+                                           path_separator, key_separator,
+                                           OY_MATCH_SUB_STRING ) :
+                      oyTextIccDictMatch( d_val, p_val, 0.0005,
+                                          path_separator, key_separator ))
           {
             if(rank_map)
             {
@@ -641,6 +654,7 @@ OYAPI int OYEXPORT oyConfig_Compare  ( oyConfig_s        * module_device,
 
   return error;
 }
+
 
 /** Function  oyConfig_DomainRank
  *  @memberof oyConfig_s
