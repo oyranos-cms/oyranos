@@ -785,28 +785,10 @@ int              oyProfiles_DeviceRank ( oyProfiles_s    * list,
  *  Profiles which match the patern will placed according to a rank value on 
  *  top of the list followed by the zero ranked profiles.
  *
- *  @code
-    // Get all ICC profiles, which can be used as assumed RGB profile
-    uint32_t icc_profile_flags = oyICCProfileSelectionFlagsFromOptions( 
-                                      OY_CMM_STD, "//" OY_TYPE_STD "/icc_color",
-                                                                     NULL, 0 );
-    oyProfiles_s * p_list = oyProfiles_ForStd( oyASSUMED_RGB,
-                                               icc_profile_flags, 0,0 );
-    int32_t * rank_list = (int32_t*) malloc( oyProfiles_Count(p_list) *
-                                             sizeof(int32_t) );
-    // Sort the profiles according to eaches match to a given device
-    oyProfiles_Rank( p_list, config, '/', ',', OY_MATCH_SUB_STRING, rank_list );
-
-    n = oyProfiles_Count( p_list );
-    for(i = 0; i < n; ++i)
-    {
-      temp_prof = oyProfiles_Get( p_list, i );
-      // Show the rank value, the profile internal and file names on the command line
-      printf("%d %d: \"%s\" %s\n", rank_list[i], i,
-             oyProfile_GetText( temp_prof, oyNAME_DESCRIPTION ),
-             oyProfile_GetFileName(temp_prof, 0));
-      oyProfile_Release( &temp_prof );
-    } @endcode
+ *  Get all ICC profiles, which can be used as assumed RGB profile:
+ *  @dontinclude test2.cpp
+    @skip icSignature profile_class
+    @until oyProfiles_Release
  *
  *  @param[in,out] list                the to be sorted profile list
  *  @param[in]     device              filter pattern
