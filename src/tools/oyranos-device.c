@@ -838,139 +838,135 @@ int main(int argc, char *argv[])
 
     if(list_profiles)
     {
-    int size, i, current = -1, current_tmp = 0, pos = 0;
-    oyProfile_s * profile = 0, * temp_profile = 0;
-    oyProfiles_s * patterns = 0, * iccs = 0;
-    const char * profile_file_name = 0;
-    int32_t * rank_list;
-    int empty_added;
- 
-    profile = oyProfile_FromSignature( profile_class, oySIGNATURE_CLASS, 0 );
-    patterns = oyProfiles_New( 0 );
-    oyProfiles_MoveIn( patterns, &profile, -1 );
- 
-    iccs = oyProfiles_Create( patterns, flags, 0 );
-    oyProfiles_Release( &patterns );
- 
- 
-    size = oyProfiles_Count(iccs);
-    if(verbose)
-      fprintf( stderr, "%s %s: %d\n",
-               _("found profiles for device class"), device_class, size );
-    rank_list = (int32_t*) malloc( size * sizeof(int32_t) );
-    oyProfiles_DeviceRank( iccs, c, rank_list );
- 
-    size = oyProfiles_Count(iccs);
- 
-    error = oyDeviceGetProfile( c, options, &profile );
-    profile_file_name = oyProfile_GetFileName( profile, 0 );
+      int size, i, current = -1, current_tmp = 0, pos = 0;
+      oyProfile_s * profile = 0, * temp_profile = 0;
+      oyProfiles_s * patterns = 0, * iccs = 0;
+      const char * profile_file_name = 0;
+      int32_t * rank_list;
+      int empty_added;
 
-    empty_added = -1;
- 
-    for( i = 0; i < size; ++i)
-    {
-      const char * temp_profile_file_name, * description;
+      profile = oyProfile_FromSignature( profile_class, oySIGNATURE_CLASS, 0 );
+      patterns = oyProfiles_New( 0 );
+      oyProfiles_MoveIn( patterns, &profile, -1 );
+
+      iccs = oyProfiles_Create( patterns, flags, 0 );
+      oyProfiles_Release( &patterns );
+
+
+      size = oyProfiles_Count(iccs);
+      if(verbose)
+        fprintf( stderr, "%s %s: %d\n",
+                 _("found profiles for device class"), device_class, size );
+      rank_list = (int32_t*) malloc( size * sizeof(int32_t) );
+      oyProfiles_DeviceRank( iccs, c, rank_list );
+
+      size = oyProfiles_Count(iccs);
+
+      error = oyDeviceGetProfile( c, options, &profile );
+      profile_file_name = oyProfile_GetFileName( profile, 0 );
+
+      empty_added = -1;
+
+      for( i = 0; i < size; ++i)
       {
-         temp_profile = oyProfiles_Get( iccs, i );
-         description = oyProfile_GetText( temp_profile, oyNAME_DESCRIPTION );
-         temp_profile_file_name = oyProfile_GetFileName( temp_profile, 0);
- 
-         current_tmp = -1;
+        const char * temp_profile_file_name, * description;
+        {
+           temp_profile = oyProfiles_Get( iccs, i );
+           description = oyProfile_GetText( temp_profile, oyNAME_DESCRIPTION );
+           temp_profile_file_name = oyProfile_GetFileName( temp_profile, 0);
 
-         if(profile_file_name && temp_profile_file_name &&
-            strcmp( profile_file_name, temp_profile_file_name ) == 0)
-           current_tmp = pos;
- 
-         if(current == -1 && current_tmp != -1)
-           current = current_tmp;
- 
-         if(empty_added == -1 &&
-            rank_list[i] < 1)
-         {
-           fprintf(stdout, "automatic\n");
-           empty_added = pos;
-           if(current != -1 &&
-              current == pos)
-             ++current;
-           ++pos;
-         }
+           current_tmp = -1;
 
-         if(show_non_device_related == 1 ||
-            rank_list[i] > 0 ||
-            current_tmp != -1)
-         {
-           fprintf( stdout, "[%d] %s (%s)\n",
+           if(profile_file_name && temp_profile_file_name &&
+              strcmp( profile_file_name, temp_profile_file_name ) == 0)
+             current_tmp = pos;
+
+           if(current == -1 && current_tmp != -1)
+             current = current_tmp;
+
+           if(empty_added == -1 &&
+              rank_list[i] < 1)
+           {
+             fprintf(stdout, "automatic\n");
+             empty_added = pos;
+             if(current != -1 &&
+                current == pos)
+               ++current;
+             ++pos;
+           }
+
+           if(show_non_device_related == 1 ||
+              rank_list[i] > 0 ||
+              current_tmp != -1)
+           {
+             fprintf( stdout, "[%d] %s (%s)\n",
                   rank_list[i], description, temp_profile_file_name);
  
-           ++pos;
-         }
+             ++pos;
+           }
+        }
+        oyProfile_Release( &temp_profile );
       }
-      oyProfile_Release( &temp_profile );
-    }
-    if(empty_added == -1)
-    {
-      ++pos;
-      if(current == -1 && current_tmp != -1)
-        current = pos;
-    }
-    if(verbose)
-      fprintf( stderr, "current: %d\n", current );
-
-    oyProfile_Release( &profile );
-    oyProfiles_Release( &iccs );
-    oyOptions_Release( &options );
-
-    } else
-    {
-    if(verbose)
-      fprintf( stderr, "%s [%s] \"%s\"\n", _("Taxi ID"),
-               _("match value"), _("description") );
-
-    {
-    int size, i, current = -1, current_tmp = 0, pos = 0;
-    oyProfile_s * profile = 0;
-    oyConfigs_s * taxi_devices = 0;
-    oyConfig_s * device = c;
-    
-    oyDevicesFromTaxiDB( device, 0, &taxi_devices, 0 );
-    
-    size = oyConfigs_Count( taxi_devices );
-    
-    error = oyDeviceGetProfile( device, options, &profile );
-    
-    for( i = 0; i < size; ++i)
-    {
+      if(empty_added == -1)
       {
-         oyConfig_s * taxi_dev = oyConfigs_Get( taxi_devices, i );
-         int32_t rank = 0;
-         error = oyDeviceCompare( device, taxi_dev, &rank );
-         
-         current_tmp = -1;
-         
-         if(current == -1 && current_tmp != -1)
-           current = current_tmp;
-           
-         
-         if(show_non_device_related == 1 ||
-            rank > 0 ||
-            current_tmp != -1)
-         {
-           fprintf(stdout, "%s/0 [%d] ", oyNoEmptyString_m_(
-                  oyConfig_FindString(taxi_dev, "TAXI_id", 0)), rank);
-           fprintf(stdout, "\"%s\"\n", oyNoEmptyString_m_(
-                  oyConfig_FindString(taxi_dev, "TAXI_profile_description", 0)));
-           ++pos;
-         }
+        ++pos;
+        if(current == -1 && current_tmp != -1)
+          current = pos;
+      }
+      if(verbose)
+        fprintf( stderr, "current: %d\n", current );
 
-         oyConfig_Release( &taxi_dev );
-      }  
-    } 
-    oyProfile_Release( &profile );                                                
-    oyConfigs_Release( &taxi_devices );
-    oyOptions_Release( &options );
+      oyProfile_Release( &profile );
+      oyProfiles_Release( &iccs );
+      oyOptions_Release( &options );
 
-    }
+    } else if(list_taxi_profiles)
+    {
+      int size, i, current = -1, current_tmp = 0, pos = 0;
+      oyProfile_s * profile = 0;
+      oyConfigs_s * taxi_devices = 0;
+      oyConfig_s * device = c;
 
+      if(verbose)
+        fprintf( stderr, "%s [%s] \"%s\"\n", _("Taxi ID"),
+                 _("match value"), _("description") );
+
+      oyDevicesFromTaxiDB( device, 0, &taxi_devices, 0 );
+
+      size = oyConfigs_Count( taxi_devices );
+
+      error = oyDeviceGetProfile( device, options, &profile );
+
+      for( i = 0; i < size; ++i)
+      {
+        {
+           oyConfig_s * taxi_dev = oyConfigs_Get( taxi_devices, i );
+           int32_t rank = 0;
+           error = oyDeviceCompare( device, taxi_dev, &rank );
+
+           current_tmp = -1;
+
+           if(current == -1 && current_tmp != -1)
+             current = current_tmp;
+
+
+           if(show_non_device_related == 1 ||
+              rank > 0 ||
+              current_tmp != -1)
+           {
+             fprintf(stdout, "%s/0 [%d] ", oyNoEmptyString_m_(
+                    oyConfig_FindString(taxi_dev, "TAXI_id", 0)), rank);
+             fprintf(stdout, "\"%s\"\n", oyNoEmptyString_m_(
+                    oyConfig_FindString(taxi_dev, "TAXI_profile_description", 0)));
+             ++pos;
+           }
+
+           oyConfig_Release( &taxi_dev );
+        }  
+      } 
+      oyProfile_Release( &profile );                                                
+      oyConfigs_Release( &taxi_devices );
+      oyOptions_Release( &options );
     }
 
     oyConfig_Release( &c );
