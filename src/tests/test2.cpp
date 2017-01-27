@@ -1795,6 +1795,41 @@ oyTESTRESULT_e testProfiles ()
   oyProfile_Release( &pattern );
   oyProfiles_Release( &patterns );
 
+  {
+    // Put all ICC Display Class profiles in "profiles"
+    icSignature profile_class = icSigDisplayClass;
+    oyProfile_s * pattern = 0;
+    oyProfiles_s * patterns = oyProfiles_New( 0 ),
+                 * profiles = 0;
+    uint32_t icc_profile_flags = oyICCProfileSelectionFlagsFromOptions( 
+                                      OY_CMM_STD, "//" OY_TYPE_STD "/icc_color",
+                                                                     NULL, 0 );
+
+    // only display profiles
+    pattern = oyProfile_FromSignature( profile_class, oySIGNATURE_CLASS, 0 );
+    oyProfiles_MoveIn( patterns, &pattern, -1 );
+
+    // ... and only profiles installed in system paths
+    char * text = oyGetInstallPath( oyPATH_ICC, oySCOPE_SYSTEM, oyAllocateFunc_ );
+    pattern = oyProfile_FromFile( text, OY_NO_LOAD, NULL );
+    oyProfiles_MoveIn( patterns, &pattern, -1 );
+
+    profiles = oyProfiles_Create( patterns, icc_profile_flags, 0 );
+    oyProfiles_Release( &patterns );
+
+    count = oyProfiles_Count( profiles );
+    if((int)size > count && count)
+    {
+      PRINT_SUB( oyTESTRESULT_SUCCESS,
+      "oyProfiles_Create( pattern = system/icc ) ok %u|%d", (unsigned int)size, count );
+    } else
+    {
+      PRINT_SUB( oyTESTRESULT_FAIL, 
+      "oyProfiles_Create( pattern = system/icc )    %u|%d", (unsigned int)size, count );
+    }
+    oyProfiles_Release( &profiles );
+  }
+
   return result;
 }
 
@@ -2452,10 +2487,10 @@ oyTESTRESULT_e testRegistrationMatch ()
                            "+def._ghi.-jkl", oyOBJECT_NONE, '/', '.',
                            OY_MATCH_SUB_STRING ))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "sub string match                      " );
+    "oyFilterStringMatch(sub string match) " );
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
-    "sub string match                      " );
+    "oyFilterStringMatch(sub string match) " );
   }
 
   return result;
@@ -6685,8 +6720,6 @@ int main(int argc, char** argv)
   TEST_RUN( testProofingEffect, "proofing_effect" );
   TEST_RUN( testDeviceLinkProfile, "CMM deviceLink" );
   TEST_RUN( testClut, "CMM clut" );
-  //TEST_RUN( testMonitor,  "Monitor profiles" );
-  //TEST_RUN( testDevices,  "Devices listing" );
   TEST_RUN( testRegistrationMatch,  "Registration matching" );
   TEST_RUN( test_oyTextIccDictMatch,  "IccDict matching" );
   TEST_RUN( testPolicy, "Policy handling" );
