@@ -1830,6 +1830,43 @@ oyTESTRESULT_e testProfiles ()
     oyProfiles_Release( &profiles );
   }
 
+  {
+    // Get all ICC profiles, which can be used as assumed RGB profile
+    uint32_t icc_profile_flags = oyICCProfileSelectionFlagsFromOptions( 
+                                      OY_CMM_STD, "//" OY_TYPE_STD "/icc_color",
+                                                                     NULL, 0 );
+    oyProfiles_s * p_list = oyProfiles_ForStd( oyASSUMED_RGB,
+                                               icc_profile_flags, 0,0 );
+    int32_t * rank_list = (int32_t*) malloc( oyProfiles_Count(p_list) *
+                                             sizeof(int32_t) );
+    oyRankMap * rank_map = 0;
+    const char * rank_map_text = "{\"org\":{\"freedesktop\":{\"openicc\":{\"rank_map\":{\"meta\":[{\"STANDARD_space\": [2,-1,0,\"matching\",\"not matching\",\"key not found\"]}]}}}}}";
+    int error = oyRankMapFromJSON( rank_map_text, NULL, &rank_map, malloc );
+
+    const char * filter_text = "{\"org\":{\"freedesktop\":{\"openicc\":{\"config\":{\"meta\":[{\"STANDARD_space\": \"rgb\"}]}}}}}",
+               * filter_registration = "org/freedesktop/openicc/config/meta";
+    oyConfig_s * config = NULL;
+    oyConfig_FromJSON( filter_registration, filter_text, 0,0, &config );
+    oyConfig_SetRankMap( config, rank_map );
+    oyRankMapRelease( &rank_map, free );
+
+    // Sort the profiles according to eaches match to a given device
+    oyProfiles_Rank( p_list, config, '/', ',', OY_MATCH_SUB_STRING |
+		     OY_SYNTAX_SKIP_PATTERN | OY_SYNTAX_SKIP_REG, rank_list );
+
+    int n = oyProfiles_Count( p_list );
+    for(i = 0; i < n; ++i)
+    {
+      oyProfile_s * temp_prof = oyProfiles_Get( p_list, i );
+      // Show the rank value, the profile internal and file names on the command line
+      printf("%d %d: \"%s\" %s\n", rank_list[i], i,
+             oyProfile_GetText( temp_prof, oyNAME_DESCRIPTION ),
+             oyProfile_GetFileName(temp_prof, 0));
+      oyProfile_Release( &temp_prof );
+    }
+    oyProfiles_Release( &p_list );
+  }
+
   return result;
 }
 
