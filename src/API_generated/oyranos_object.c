@@ -367,6 +367,10 @@ int  oyMemCmp( const void * a, size_t an, const void * b, size_t bn )
  *  @param         flags               options:
  *                                     - OY_MATCH_SUB_STRING - find sub string;
  *                                       default is whole word match
+ *                                     - OY_SYNTAX_SKIP_REG - avoid "-,_,+"
+ *                                       syntax checking in registration
+ *                                     - OY_SYNTAX_SKIP_PATTERN - avoid "-,_,+"
+ *                                       syntax checking in pattern
  *  @return                            match, useable for ranking
  *
  *  @version Oyranos: 0.9.7
@@ -449,13 +453,18 @@ int    oyFilterStringMatch           ( const char        * registration,
           {
             pc_api_num = pc_text[0];
             ++ pc_text;
-            pc_match_type = pc_text[0];
-            ++ pc_text;
-            pc_len -= 2;
+            pc_len --;
+            if(!(flags & OY_SYNTAX_SKIP_PATTERN))
+            {
+              pc_match_type = pc_text[0];
+              ++ pc_text;
+              pc_len --;
+            }
           } else
-          if(pc_text[0] == '_' ||
+          if(!(flags & OY_SYNTAX_SKIP_PATTERN) && (
+             pc_text[0] == '_' ||
              pc_text[0] == '-' ||
-             pc_text[0] == '+')
+             pc_text[0] == '+'))
           {
             pc_match_type = pc_text[0];
             ++ pc_text;
@@ -477,8 +486,9 @@ int    oyFilterStringMatch           ( const char        * registration,
               ++ regc_text;
               regc_len -= 2;
             } else
-            if(regc_text[0] == '_' ||
-               regc_text[0] == '-')
+            if(!(flags & OY_SYNTAX_SKIP_REG) && (
+               regc_text[0] == '_' ||
+               regc_text[0] == '-'))
             {
               ++ regc_text;
               -- regc_len;
