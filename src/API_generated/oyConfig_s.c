@@ -563,7 +563,7 @@ OYAPI int OYEXPORT oyConfig_Match    ( oyConfig_s        * module_device,
           if(p_val && (flags & OY_MATCH_SUB_STRING) ?
                       oyFilterStringMatch( d_val, p_val, oyOBJECT_NONE,
                                            path_separator, key_separator,
-                                           OY_MATCH_SUB_STRING ) :
+                                           flags ) :
                       oyTextIccDictMatch( d_val, p_val, 0.0005,
                                           path_separator, key_separator ))
           {
@@ -972,6 +972,110 @@ OYAPI oyOptions_s ** OYEXPORT
   return &dummy;
 }
 
+/** Function  oyConfig_FromJSON
+ *  @memberof oyConfig_s
+ *  @brief    Create a config object from JSON
+ *
+ *  Get all ICC profiles, which can be used as assumed RGB profile:
+ *  @dontinclude test2.cpp
+    @skip // Get all ICC profiles, which can be used as assumed RGB profile
+    @until oyProfiles_Release
+ *
+ *  @see oyProfiles_Rank()
+ *
+ *  @param         registration        full qualified registration
+ *  @param[in]     json_text           the JSON containing the config keys
+ *                                     under the registration path
+ *  @param[in]     options             optional
+ *                                     - "underline_key_suffix" will be used as
+ *                                       suffix for keys starting with underline
+ *                                       '_'
+ *                                     - "pos" integer selects position in
+ *                                       array; defaults to: 0
+ *                                     - "xpath" replaces xpath; defaults to:
+ *                                       registration + "/[%d]"
+ *  @param         object              the optional object
+ *  @param[out]    config              the result
+ *  @return                            error
+ *
+ *  @version Oyranos: 0.9.7
+ *  @date    2017/01/28
+ *  @since   2011/08/21 (Oyranos: 0.3.2)
+ */
+OYAPI int OYEXPORT oyConfig_FromJSON ( const char        * registration,
+                                       const char        * json_text,
+                                       oyOptions_s       * options,
+                                       oyObject_s          object,
+                                       oyConfig_s       ** config )
+{
+  int error = !json_text || !config;
+  oyConfig_s * config_ = NULL;
+  oyjl_val json = 0,
+           json_config;
+  char * val, * key = NULL, * t = NULL;
+  const char * xpath = oyOptions_FindString( options,
+                                                    "xpath", 0 );
+  int count, i;
+  int32_t pos = 0;
+  const char * underline_key_suffix = oyOptions_FindString( options,
+                                                    "underline_key_suffix", 0 );
+  oyjl_val v;
+
+  t = oyAllocateFunc_(256);
+  json = oyjl_tree_parse( json_text, t, 256 );
+  if(t[0])
+    WARNc3_S( "%s: %s\n%s", _("found issues parsing JSON"), t, json_text );
+  oyFree_m_(t);
+
+  /* set the registration string */
+  config_ = oyConfig_FromRegistration( registration, 0 );
+
+  if(!xpath)
+    xpath = registration;
+  oyOptions_FindInt( options, "pos", 0, &pos );
+
+  oyStringAddPrintf( &t, oyAllocateFunc_, oyDeAllocateFunc_, "%s/[%d]",
+		     xpath, pos );
+
+  json_config = oyjl_tree_get_value( json, 0, t );
+
+  if(!json_config)
+    WARNc2_S( "\"%s\" %s\n", t,_("not found:") );
+  oyFree_m_( t );
+      
+  count = oyjl_value_count(json_config);
+  if(config_)
+  for(i = 0; i < count; ++i)
+  {
+    if(json_config->type == oyjl_t_object)
+      key = oyStringCopy_(json_config->u.object.keys[i], oyAllocateFunc_ );
+    v = oyjl_value_pos_get( json_config, i );
+    val = oyjl_value_text( v, oyAllocateFunc_ );
+
+    if(key && key[0] && key[0] == '_' && underline_key_suffix)
+    {
+      t = 0;
+      STRING_ADD( t, underline_key_suffix );
+      STRING_ADD( t, key );
+      oyFree_m_( key );
+      key = t; t = 0;
+    }
+
+    /* ignore empty keys or values */
+    if(key && val)
+      oyConfig_AddDBData( config_, key, val, OY_CREATE_NEW );
+
+    if(key) oyDeAllocateFunc_(key);
+    if(val) oyDeAllocateFunc_(val);
+  }
+
+  *config = config_;
+  config_ = NULL;
+
+  return error;
+}
+
+
 /** Function  oyConfig_SetRankMap
  *  @memberof oyConfig_s
  *  @brief    Set the ranking table
@@ -1179,6 +1283,11 @@ OYAPI int  OYEXPORT oyRankMapAppend  ( oyRankMap        ** rank_map,
  *  @memberof oyConfig_s
  *  @brief    Create a Rank Map
  *
+ *  @code
+    const char * rank_map_text = "{\"org\":{\"freedesktop\":{\"openicc\":{\"rank_map\":{\"my_type\":[{\"key\": [2,-1,0,\"matching\",\"not matching\",\"key not found\"]}]}}}}}";
+    oyRankMap * rank_map = NULL;
+    int error = oyRankMapFromJSON( rank_map_text, NULL, &rank_map, malloc ); @endcode
+ *
  *  @param[in]     json_text           the rank map definition
  *  @param[in]     options             optional
  *                                     - "pos" integer selects position in array
@@ -1186,7 +1295,6 @@ OYAPI int  OYEXPORT oyRankMapAppend  ( oyRankMap        ** rank_map,
  *  @param[in]     allocateFunc        the memory allocate function
  *  @return                            0 - good, >= 1 - error + a message should
  *                                     be sent, < 0 - an issue
- *
  *  @version  Oyranos: 0.9.5
  *  @date     2013/02/13
  *  @since    2013/02/13 (Oyranos: 0.9.5)

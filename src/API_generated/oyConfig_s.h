@@ -141,6 +141,11 @@ OYAPI oyOption_s * OYEXPORT
 OYAPI oyOptions_s ** OYEXPORT
                oyConfig_GetOptions   ( oyConfig_s        * config,
                                        const char        * source );
+OYAPI int OYEXPORT oyConfig_FromJSON ( const char        * registration,
+                                       const char        * json_text,
+                                       oyOptions_s       * options,
+                                       oyObject_s          object,
+                                       oyConfig_s       ** device );
 OYAPI oyConfig_s * OYEXPORT
                oyConfig_FromRegistration
                                      ( const char        * registration,
