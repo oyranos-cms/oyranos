@@ -787,11 +787,11 @@ int              oyProfiles_DeviceRank ( oyProfiles_s    * list,
  *
  *  Get all ICC profiles, which can be used as assumed RGB profile:
  *  @dontinclude test2.cpp
-    @skip icSignature profile_class
+    @skip Get all ICC profiles, which can be used as assumed RGB profile
     @until oyProfiles_Release
  *
  *  @param[in,out] list                the to be sorted profile list
- *  @param[in]     device              filter pattern
+ *  @param[in]     device              filter pattern with rank_map
  *  @param         path_separator      a char to split into hierarchical levels
  *  @param         key_separator       a char to split key strings
  *  @param         flags               options:
