@@ -30,6 +30,10 @@
 #include "oyranos_object.h"
 /*#include "oyCMMapiFilters_s.h"*/
 
+#ifdef __cplusplus
+  extern "C" {
+#endif /* __cplusplus */
+
 #define hashTextAdd_m( text_ ) \
   oyStringAdd_( &hash_text, text_, s->oy_->allocateFunc_, \
                             s->oy_->deallocateFunc_ );
@@ -65,7 +69,13 @@ int oyCheckType_( oyOBJECT_e type1, oyOBJECT_e type2 );
 
 int    oyTextIccDictMatch            ( const char        * text,
                                        const char        * pattern,
-                                       double              delta );
+                                       double              delta,
+                                       char                path_separator,
+                                       char                key_separator );
 int    oyPointerRelease              ( oyPointer         * ptr );
+
+#ifdef __cplusplus
+} /* extern "C" */
+#endif /* __cplusplus */
 
 #endif /* OYRANOS_OBJECT_INTERNAL_H */

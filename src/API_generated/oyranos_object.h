@@ -304,6 +304,28 @@ int    oyFilterRegistrationMatchKey  ( const char        * registration1,
                                        const char        * registration2,
                                        oyOBJECT_e          api_number );
 const char * oyGetKeyFromRegistration( const char        * registration );
+/** @brief 
+ *  @since 0.9.7
+ */
+#define OY_MATCH_SUB_STRING    0x100
+/** @brief 
+ *  @since 0.9.7
+ *
+ *  avoid "-,_,+" syntax checking in registration strings
+ */
+#define OY_SYNTAX_SKIP_REG     0x200
+/** @brief 
+ *  @since 0.9.7
+ *
+ *  avoid "-,_,+" syntax checking in search patterns
+ */
+#define OY_SYNTAX_SKIP_PATTERN 0x400
+int    oyFilterStringMatch           ( const char        * registration,
+                                       const char        * pattern,
+                                       oyOBJECT_e          api_number,
+                                       char                path_separator,
+                                       char                key_separator,
+                                       int                 flags );
 
 
 /** @internal

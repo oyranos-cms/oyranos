@@ -26,7 +26,7 @@ int main ( int argc, char ** argv )
     oyOptions_s * options = NULL;
     oyProfile_s * ip;
     oyConfig_s * taxi_device = oyConfigs_Get( taxi_devices, i );
-    error = oyConfig_Compare( device, taxi_device, &rank );
+    error = oyDeviceCompare( device, taxi_device, &rank );
     // get first profile from Taxi DB
     if(i == 0)
     {

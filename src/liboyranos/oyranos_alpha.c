@@ -57,10 +57,7 @@
 #define DEBUG_OBJECT 1
 #endif
 
-#ifdef NO_OPT
-/* speed comparision test */
-#define USE_OLD_STRING_API 1
-#else
+#ifndef NO_OPT
 #define OY_USE_OBJECT_POOL_ 0
 #endif
 

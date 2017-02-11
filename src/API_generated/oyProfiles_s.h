@@ -116,9 +116,15 @@ OYAPI oyProfiles_s * OYEXPORT
                                        int               * current,
                                        oyObject_s          object);
 OYAPI int  OYEXPORT
-                 oyProfiles_DeviceRank ( oyProfiles_s    * list,
-                                         oyConfig_s      * device,
-                                         int32_t         * rank_list );
+                 oyProfiles_DeviceRank(oyProfiles_s      * list,
+                                       oyConfig_s        * device,
+                                       int32_t           * rank_list );
+OYAPI int OYEXPORT oyProfiles_Rank   ( oyProfiles_s      * list,
+                                       oyConfig_s        * device,
+                                       char                path_separator,
+                                       char                key_separator,
+                                       int                 flags,
+                                       int32_t           * rank_list );
 
 /* } Include "Profiles.public_methods_declarations.h" */
 

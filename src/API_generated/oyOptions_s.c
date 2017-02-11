@@ -395,7 +395,7 @@ oyOptions_s *  oyOptions_FromBoolean ( oyOptions_s       * set_a,
  *
  *  The following code sample comes from @ref tutorial_json_options.c.
  *  @dontinclude   tutorial_json_options.c
-    The "key_path" options is here set to demostrate path substitution:
+    The "key_path" options is here set to demonstrate path substitution:
     @skipline key_path
     Then the JSON text is parsed and the second array member of org/free is
     picked:

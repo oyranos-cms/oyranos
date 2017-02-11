@@ -88,6 +88,9 @@ OYAPI int OYEXPORT oyDeviceToJSON    ( oyConfig_s        * device,
                                        oyOptions_s       * options,
                                        char             ** json_text,
                                        oyAlloc_f           allocateFunc );
+OYAPI int OYEXPORT oyDeviceCompare   ( oyConfig_s        * module_device,
+                                       oyConfig_s        * db_pattern,
+                                       int32_t           * rank_value );
 
 
 /** @struct  oyConfDomain_s

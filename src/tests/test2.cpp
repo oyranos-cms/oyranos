@@ -1795,6 +1795,78 @@ oyTESTRESULT_e testProfiles ()
   oyProfile_Release( &pattern );
   oyProfiles_Release( &patterns );
 
+  {
+    // Put all ICC Display Class profiles in "profiles"
+    icSignature profile_class = icSigDisplayClass;
+    oyProfile_s * pattern = 0;
+    oyProfiles_s * patterns = oyProfiles_New( 0 ),
+                 * profiles = 0;
+    uint32_t icc_profile_flags = oyICCProfileSelectionFlagsFromOptions( 
+                                      OY_CMM_STD, "//" OY_TYPE_STD "/icc_color",
+                                                                     NULL, 0 );
+
+    // only display profiles
+    pattern = oyProfile_FromSignature( profile_class, oySIGNATURE_CLASS, 0 );
+    oyProfiles_MoveIn( patterns, &pattern, -1 );
+
+    // ... and only profiles installed in system paths
+    char * text = oyGetInstallPath( oyPATH_ICC, oySCOPE_SYSTEM, oyAllocateFunc_ );
+    pattern = oyProfile_FromFile( text, OY_NO_LOAD, NULL );
+    oyProfiles_MoveIn( patterns, &pattern, -1 );
+
+    profiles = oyProfiles_Create( patterns, icc_profile_flags, 0 );
+    oyProfiles_Release( &patterns );
+
+    count = oyProfiles_Count( profiles );
+    if((int)size > count && count)
+    {
+      PRINT_SUB( oyTESTRESULT_SUCCESS,
+      "oyProfiles_Create( pattern = system/icc ) ok %u|%d", (unsigned int)size, count );
+    } else
+    {
+      PRINT_SUB( oyTESTRESULT_FAIL, 
+      "oyProfiles_Create( pattern = system/icc )    %u|%d", (unsigned int)size, count );
+    }
+    oyProfiles_Release( &profiles );
+  }
+
+  {
+    // Get all ICC profiles, which can be used as assumed RGB profile
+    uint32_t icc_profile_flags = oyICCProfileSelectionFlagsFromOptions( 
+                                      OY_CMM_STD, "//" OY_TYPE_STD "/icc_color",
+                                                                     NULL, 0 );
+    oyProfiles_s * p_list = oyProfiles_ForStd( oyASSUMED_RGB,
+                                               icc_profile_flags, 0,0 );
+    int32_t * rank_list = (int32_t*) malloc( oyProfiles_Count(p_list) *
+                                             sizeof(int32_t) );
+    oyRankMap * rank_map = 0;
+    const char * rank_map_text = "{\"org\":{\"freedesktop\":{\"openicc\":{\"rank_map\":{\"meta\":[{\"STANDARD_space\": [2,-1,0,\"matching\",\"not matching\",\"key not found\"]}]}}}}}";
+    int error = oyRankMapFromJSON( rank_map_text, NULL, &rank_map, malloc );
+
+    const char * filter_text = "{\"org\":{\"freedesktop\":{\"openicc\":{\"config\":{\"meta\":[{\"STANDARD_space\": \"rgb\"}]}}}}}",
+               * filter_registration = "org/freedesktop/openicc/config/meta";
+    oyConfig_s * config = NULL;
+    oyConfig_FromJSON( filter_registration, filter_text, 0,0, &config );
+    oyConfig_SetRankMap( config, rank_map );
+    oyRankMapRelease( &rank_map, free );
+
+    // Sort the profiles according to eaches match to a given device
+    oyProfiles_Rank( p_list, config, '/', ',', OY_MATCH_SUB_STRING |
+		     OY_SYNTAX_SKIP_PATTERN | OY_SYNTAX_SKIP_REG, rank_list );
+
+    int n = oyProfiles_Count( p_list );
+    for(i = 0; i < n; ++i)
+    {
+      oyProfile_s * temp_prof = oyProfiles_Get( p_list, i );
+      // Show the rank value, the profile internal and file names on the command line
+      printf("%d %d: \"%s\" %s\n", rank_list[i], i,
+             oyProfile_GetText( temp_prof, oyNAME_DESCRIPTION ),
+             oyProfile_GetFileName(temp_prof, 0));
+      oyProfile_Release( &temp_prof );
+    }
+    oyProfiles_Release( &p_list );
+  }
+
   return result;
 }
 
@@ -2448,12 +2520,20 @@ oyTESTRESULT_e testRegistrationMatch ()
     "long device key match                 " );
   }
 
+  if( oyFilterStringMatch( "abc-def-ghi",
+                           "+def._ghi.-jkl", oyOBJECT_NONE, '/', '.',
+                           OY_MATCH_SUB_STRING ))
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyFilterStringMatch(sub string match) " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyFilterStringMatch(sub string match) " );
+  }
+
   return result;
 }
 
-extern "C" {
-int oyTextIccDictMatch( const char *, const char *, double delta ); }
-
+#include "oyranos_object_internal.h"
 oyTESTRESULT_e test_oyTextIccDictMatch ()
 {
   oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
@@ -2461,7 +2541,7 @@ oyTESTRESULT_e test_oyTextIccDictMatch ()
   fprintf(stdout, "\n" );
 
   if( oyTextIccDictMatch("ABC",
-                         "ABC", 0))
+                         "ABC", 0, '/', ','))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "simple text matching                  " );
   } else
@@ -2470,7 +2550,7 @@ oyTESTRESULT_e test_oyTextIccDictMatch ()
   }
 
   if(!oyTextIccDictMatch("ABC",
-                         "ABCD", 0))
+                         "ABCD", 0, '/', ','))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "simple text mismatching               " );
   } else
@@ -2479,7 +2559,7 @@ oyTESTRESULT_e test_oyTextIccDictMatch ()
   }
 
   if( oyTextIccDictMatch("abcd,ABC,efgh",
-                         "abcdef,12345,ABC", 0))
+                         "abcdef,12345,ABC", 0, '/', ','))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "multiple text matching                " );
   } else
@@ -2488,7 +2568,7 @@ oyTESTRESULT_e test_oyTextIccDictMatch ()
   }
 
   if( oyTextIccDictMatch("abcd,ABC,efgh,12345",
-                         "abcdef,12345,ABCD", 0.0005))
+                         "abcdef,12345,ABCD", 0.0005, '/', ','))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "multiple integer matching             " );
   } else
@@ -2497,7 +2577,7 @@ oyTESTRESULT_e test_oyTextIccDictMatch ()
   }
 
   if(!oyTextIccDictMatch("abcd,ABC,efgh,12345",
-                         "abcdef,12345ABCD", 0.0005))
+                         "abcdef,12345ABCD", 0.0005, '/', ','))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "multiple integer mismatching          " );
   } else
@@ -2506,7 +2586,7 @@ oyTESTRESULT_e test_oyTextIccDictMatch ()
   }
 
   if( oyTextIccDictMatch("abcd,ABC,efgh,123.45001",
-                         "abcdef,123.45,ABCD", 0.0005))
+                         "abcdef,123.45,ABCD", 0.0005, '/', ','))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "multiple float matching               " );
   } else
@@ -2515,7 +2595,7 @@ oyTESTRESULT_e test_oyTextIccDictMatch ()
   }
 
   if(!oyTextIccDictMatch("abcd,ABC,efgh,123.45",
-                         "abcdef,123", 0.0005))
+                         "abcdef,123", 0.0005, '/', ','))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "multiple float mismatching            " );
   } else
@@ -6677,8 +6757,6 @@ int main(int argc, char** argv)
   TEST_RUN( testProofingEffect, "proofing_effect" );
   TEST_RUN( testDeviceLinkProfile, "CMM deviceLink" );
   TEST_RUN( testClut, "CMM clut" );
-  //TEST_RUN( testMonitor,  "Monitor profiles" );
-  //TEST_RUN( testDevices,  "Devices listing" );
   TEST_RUN( testRegistrationMatch,  "Registration matching" );
   TEST_RUN( test_oyTextIccDictMatch,  "IccDict matching" );
   TEST_RUN( testPolicy, "Policy handling" );

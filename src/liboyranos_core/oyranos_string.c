@@ -683,7 +683,7 @@ void *   oyMemMem                    ( const void        * haystack,
     pos = memchr( pos, needle_buf[0], len );
     len = hay_buf + haystacklen - pos;
 
-    if(pos && len > needlelen &&
+    if(pos && len >= needlelen &&
        memcmp( pos, needle, needlelen ) == 0)
       return pos;
 

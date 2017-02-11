@@ -155,7 +155,7 @@ void QcmseDialog::setIcon(int index)
 
   setWindowIcon(ic);
 
-  icon->setToolTip(icons->itemText(index));
+  icon->setToolTip( t );
 }
 
 void QcmseDialog::showConfig()
