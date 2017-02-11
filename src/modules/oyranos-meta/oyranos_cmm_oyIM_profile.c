@@ -1119,7 +1119,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
 
                 /* add value */
                if( value_offset && value_offset >= 16+entry_size*count-1 &&
-                   value_offset + value_size < tag_size )
+                   value_offset + value_size <= tag_size )
                {
                  tmp = oyAllocateFunc_( value_size * 2 + 2 );
                  error = oyIMIconv( &mem[value_offset], value_size, tmp,
