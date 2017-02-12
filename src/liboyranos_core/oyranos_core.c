@@ -451,7 +451,7 @@ int                oyMessageFormat   ( char             ** message_text,
   }
 
   free( text ); text = 0;
-  if(id_text_tmp) free(id_text_tmp); id_text_tmp = 0;
+  if(id_text_tmp){ free(id_text_tmp); } id_text_tmp = 0;
 
   *message_text = t;
 
@@ -504,7 +504,7 @@ int oyMessageFunc( int code, const oyPointer context_object, const char * format
     fprintf( stderr, "%s\n", msg );
 
   oyDeAllocateFunc_( text ); text = 0;
-  if(msg) oyDeAllocateFunc_( msg ); msg = 0;
+  if(msg){ oyDeAllocateFunc_( msg ); } msg = 0;
 
   return error;
 }

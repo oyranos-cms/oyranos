@@ -667,7 +667,7 @@ char *     oyGetTempName_            ( const char        * end_part )
                      "%s%spid%d-time%ld%s%s%s%s", path, file?"/":"-", OY_GETPID(), oyTime(),
                      file?"-":"", file?file:"", end_part?"-":"", end_part?end_part:"" );
   free(path);
-  if(file) free(file); file = NULL;
+  if(file){ free(file); } file = NULL;
   return name;
 }
 
