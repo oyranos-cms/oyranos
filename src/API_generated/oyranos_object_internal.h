@@ -7,7 +7,7 @@
  *  Oyranos is an open source Color Management System
  *
  *  @par Copyright:
- *            2004-2016 (C) Kai-Uwe Behrmann
+ *            2004-2017 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
@@ -31,8 +31,10 @@
 /*#include "oyCMMapiFilters_s.h"*/
 
 #ifdef __cplusplus
+/*namespace oyranos {*/
   extern "C" {
 #endif /* __cplusplus */
+
 
 #define hashTextAdd_m( text_ ) \
   oyStringAdd_( &hash_text, text_, s->oy_->allocateFunc_, \
@@ -76,6 +78,8 @@ int    oyPointerRelease              ( oyPointer         * ptr );
 
 #ifdef __cplusplus
 } /* extern "C" */
+/*}*/ /* namespace oyranos */
 #endif /* __cplusplus */
+
 
 #endif /* OYRANOS_OBJECT_INTERNAL_H */

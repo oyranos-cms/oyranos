@@ -1,9 +1,9 @@
 #include "oyranos_definitions.h"
 #include "oyranos_db.h" /* oyjl API */
 
-/** Function oyOptions_FromBoolean
- *  @memberof oyOptions_s
- *  @brief   boolean operations on two sets of option
+/** @fn        oyOptions_FromBoolean
+ *  @memberof  oyOptions_s
+ *  @brief     boolean operations on two sets of option
  *
  *  @see oyOptions_Add
  *
@@ -89,9 +89,9 @@ oyOptions_s *  oyOptions_FromBoolean ( oyOptions_s       * set_a,
 }
 
 /** @example tutorial_json_options.c Shows the oyOptions_s API for JSON handling */
-/** @fn       oyOptions_FromJSON
- *  @memberof oyOptions_s
- *  @brief    deserialise a text file to oyOptions_s data
+/** @fn         oyOptions_FromJSON
+ *  @memberof   oyOptions_s
+ *  @brief      deserialise a text file to oyOptions_s data
  *
  *  This function is based on oyjl. Arrays are ignored except
  *  the index is specified in the xpath with the xformat + ... arguments.

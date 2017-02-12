@@ -482,7 +482,7 @@ OYAPI int  OYEXPORT
       /** Warn on not found profile. */
       {
         oyMessageFunc_p( oyMSG_ERROR,(oyStruct_s*)device,
-                       OY_DBG_FORMAT_"\n\t%s: \"%s\"\n\t%s\n", OY_DBG_ARGS_,
+                       OY_DBG_FORMAT_ "\n\t%s: \"%s\"\n\t%s\n", OY_DBG_ARGS_,
                 _("Could not open ICC profile"), profile_name,
                 _("install in the OpenIccDirectory icc path") );
       }
@@ -806,7 +806,11 @@ OYAPI int  OYEXPORT
   /** This function does a device setup in case no profile is delivered
    *  by the according module. */
   if(error != 0 && !*profile)
+  {
+    oyMessageFunc_p( oyMSG_DBG,(oyStruct_s*)device, OY_DBG_FORMAT_
+                     "calling oyDeviceSetup()\n", OY_DBG_ARGS_ );
     error = oyDeviceSetup( device, options );
+  }
 
   /* The backend shows with the existence of the "icc_profile" response that it
    * can handle device profiles through the driver. */
@@ -1573,7 +1577,7 @@ OYAPI int OYEXPORT oyDeviceToJSON    ( oyConfig_s        * device,
             else
             {
               /* split into a array with a useful delimiter */
-              vals = oyStringSplit( value, '?', &vals_n, malloc );
+              vals = oyStringSplit_( value, '?', &vals_n, malloc );
               if(vals_n > 1)
               {
                 STRING_ADD( val, "              \"");
@@ -1621,6 +1625,31 @@ OYAPI int OYEXPORT oyDeviceToJSON    ( oyConfig_s        * device,
 
   return error;
 }
+
+/**
+ *  @brief    Check for matching to a given pattern
+ *
+ *  @param[in]     module_device       the to be checked configuration from
+ *                                     oyConfigs_FromPattern_f;
+ *                                     Additional allowed are DB configs.
+ *  @param[in]     db_pattern          the to be compared configuration from
+ *                                     elsewhere, e.g. ICC dict tag
+ *  @param[out]    rank_value          the number of matches between config and
+ *                                     pattern, -1 means invalid
+ *  @return                            0 - good, >= 1 - error + a message should
+ *                                     be sent
+ *
+ *  @version Oyranos: 0.9.7
+ *  @date    2017/01/05
+ *  @since   2009/01/26 (Oyranos: 0.1.10)
+ */
+OYAPI int OYEXPORT oyDeviceCompare   ( oyConfig_s        * module_device,
+                                       oyConfig_s        * db_pattern,
+                                       int32_t           * rank_value )
+{
+  return oyConfig_Match( module_device, db_pattern, '/', ',', 0, rank_value );
+}
+
 
 #define OPENICC_DEVICE_JSON_HEADER_BASE \
   "{\n" \
@@ -1866,7 +1895,7 @@ OYAPI int  OYEXPORT
       {
         taxi_dev = oyConfigs_Get( configs_, i );
         ranks[2*i+0] = i;
-        error = oyConfig_Compare( device, taxi_dev, &ranks[2*i+1] );
+        error = oyDeviceCompare( device, taxi_dev, &ranks[2*i+1] );
 
         oyConfig_Release( &taxi_dev );
       }
@@ -2447,7 +2476,7 @@ int          oyOptions_DoFilter      ( oyOptions_s       * opts,
            /* skip already edited options by default */
            !(oyOption_GetFlags(o) & oyOPTIONATTRIBUTE_EDIT))
           /* remember the DB requests */
-          oyStringListAddStaticString ( &db_keys,
+          oyStringListAddStaticString( &db_keys,
                                          &db_keys_n,
                                          oyOption_GetText( o,oyNAME_DESCRIPTION),
                                          oyAllocateFunc_,

@@ -1033,7 +1033,7 @@ char **          oyCMMsGetNames_     ( uint32_t          * n,
     lib_string[0] = 0;
     oySprintf_( lib_string, "%s", OY_MODULE_NAME );
 
-    sub_paths = oyStringSplit( sub_path, ':', &sub_paths_n, 0 );
+    sub_paths = oyStringSplit_( sub_path, ':', &sub_paths_n, 0 );
 
     /* search for a matching module file */
     for(i = 0; i < sub_paths_n; ++i)
@@ -2196,7 +2196,7 @@ char   oyFilterRegistrationModify    ( const char        * registration,
     char  * reg_text = 0;
     int     i,j;
  
-    reg_texts = oyStringSplit( registration, OY_SLASH_C, &reg_texts_n,
+    reg_texts = oyStringSplit_( registration, OY_SLASH_C, &reg_texts_n,
                                 oyAllocateFunc_);
 
     for( i = 0; i < reg_texts_n; ++i)
@@ -2204,7 +2204,7 @@ char   oyFilterRegistrationModify    ( const char        * registration,
       regc_texts_n = 0;
 
       /* level by level */
-      regc_texts = oyStringSplit( reg_texts[i],'.',&regc_texts_n,
+      regc_texts = oyStringSplit_( reg_texts[i],'.',&regc_texts_n,
                                    oyAllocateFunc_);
 
       if(i > 0)

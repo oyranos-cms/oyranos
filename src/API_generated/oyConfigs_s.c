@@ -12,7 +12,7 @@
  *  Oyranos is an open source Color Management System
  *
  *  @par Copyright:
- *            2004-2016 (C) Kai-Uwe Behrmann
+ *            2004-2017 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
@@ -33,7 +33,7 @@
 
 #include "oyranos_devices_internal.h"
   
- 
+
 
 
 /** Function oyConfigs_New
@@ -290,7 +290,6 @@ OYAPI int  OYEXPORT
 /* Include "Configs.public_methods_definitions.c" { */
 #include "oyranos_db.h"
 #include "oyranos_sentinel.h"
-#include "oyranos_string.h"
 
 /** Function  oyConfigs_FromDomain
  *  @memberof oyConfigs_s

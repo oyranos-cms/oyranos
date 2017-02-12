@@ -28,9 +28,12 @@ OYAPI int  OYEXPORT
 OYAPI int  OYEXPORT
                oyConfig_EraseFromDB  ( oyConfig_s        * config,
                                        oySCOPE_e           scope );
-OYAPI int  OYEXPORT
-               oyConfig_Compare      ( oyConfig_s        * device,
-                                       oyConfig_s        * pattern,
+OYAPI int OYEXPORT
+               oyConfig_Match        ( oyConfig_s        * module_device,
+                                       oyConfig_s        * db_pattern,
+                                       char                path_separator,
+                                       char                key_separator,
+                                       int                 flags,
                                        int32_t           * rank_value );
 OYAPI int  OYEXPORT
                oyConfig_DomainRank   ( oyConfig_s        * config );
@@ -52,6 +55,11 @@ OYAPI oyOption_s * OYEXPORT
 OYAPI oyOptions_s ** OYEXPORT
                oyConfig_GetOptions   ( oyConfig_s        * config,
                                        const char        * source );
+OYAPI int OYEXPORT oyConfig_FromJSON ( const char        * registration,
+                                       const char        * json_text,
+                                       oyOptions_s       * options,
+                                       oyObject_s          object,
+                                       oyConfig_s       ** device );
 OYAPI oyConfig_s * OYEXPORT
                oyConfig_FromRegistration
                                      ( const char        * registration,

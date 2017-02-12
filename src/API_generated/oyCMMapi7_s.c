@@ -14,7 +14,7 @@
  *  Oyranos is an open source Color Management System
  *
  *  @par Copyright:
- *            2004-2016 (C) Kai-Uwe Behrmann
+ *            2004-2017 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
@@ -252,7 +252,7 @@ OYAPI oyCMMapi7_s *  OYEXPORT
   s->sockets_n = sockets_n;
   s->sockets_last_add = sockets_last_add;
   while(properties && properties[n]) ++n;
-  oyStringListAdd ( &s->properties, 0, properties, n,
+  oyStringListAdd( &s->properties, 0, properties, n,
                     oyObject_GetAlloc( s->oy_ ),
                     oyObject_GetDeAlloc( s->oy_ ) );
 
