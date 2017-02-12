@@ -118,11 +118,11 @@ OYAPI int  OYEXPORT
 
   /* ---- end of common object destructor ------- */
   if(s->observer)
-    s->observer->release( &s->observer ); s->observer = 0;
+  { s->observer->release( &s->observer ); s->observer = 0; }
   if(s->model)
-    s->model->release( &s->model ); s->model = 0;
+  { s->model->release( &s->model ); s->model = 0; }
   if(s->user_data)
-    s->user_data->release( &s->user_data ); s->user_data = 0;
+  { s->user_data->release( &s->user_data ); s->user_data = 0; }
 
   {
     oyDeAlloc_f deallocateFunc = oyDeAllocateFunc_;

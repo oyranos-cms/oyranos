@@ -299,13 +299,13 @@ int          oyName_releaseMembers   ( oyName_s          * obj,
   s = obj;
 
   if(s->nick)
-    deallocateFunc(s->nick); s->nick = 0;
+  { deallocateFunc(s->nick); s->nick = 0; }
 
   if(s->name)
-    deallocateFunc(s->name); s->name = 0;
+  { deallocateFunc(s->name); s->name = 0; }
 
   if(s->description)
-    deallocateFunc(s->description); s->description = 0;
+  { deallocateFunc(s->description); s->description = 0; }
 
   return error;
 }

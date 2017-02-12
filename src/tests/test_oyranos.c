@@ -751,7 +751,7 @@ oyTESTRESULT_e testMonitor ()
         PRINT_SUB( oyTESTRESULT_XFAIL, "device: ---" )
 
       if(text)
-        oyDeAllocateFunc_( text ); text = 0;
+      { oyDeAllocateFunc_( text ); text = 0; }
 
 
       /* get the old oyMonitorxxx API conforming display name */
@@ -780,7 +780,7 @@ oyTESTRESULT_e testMonitor ()
       }
 
       error = oyDeviceProfileFromDB( c, &text, malloc );
-      if(display_name) free(display_name); display_name = 0;
+      if(display_name) { free(display_name); display_name = 0; }
       if(text)
       {
         PRINT_SUB( oyTESTRESULT_SUCCESS,
@@ -810,7 +810,7 @@ oyTESTRESULT_e testMonitor ()
       if(text)
         free( text );
 
-      if(block) free(block); block = 0;
+      if(block) { free(block); block = 0; }
       oyConfig_Release( &c );
       oyProfile_Release( &p );
       fprintf(zout, "\n" );

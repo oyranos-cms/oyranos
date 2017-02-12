@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Oyranos 0.9\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2017-02-12 02:28+0100\n"
+"POT-Creation-Date: 2017-02-12 08:58+0100\n"
 "PO-Revision-Date: 2015-02-20 17:32+0100\n"
 "Last-Translator: Kai-Uwe Behrmann <ku.b@gmx.de>\n"
 "Language-Team: russian <ru@li.org>\n"
@@ -325,8 +325,8 @@ msgstr ""
 msgid "Agfa CMM"
 msgstr ""
 
-#: modules/color/modules/devices/oyranos_cmm_SANE.c:954
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1348
+#: modules/color/modules/devices/oyranos_cmm_SANE.c:953
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1345
 #: examples/oyranos_cmm_dDev.c:844 examples/oyranos_cmm_dFil.c:172
 msgid "All the small details for using this module."
 msgstr ""
@@ -635,7 +635,7 @@ msgstr ""
 msgid "Calibration date"
 msgstr ""
 
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1227
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1224
 msgid "CameraRaw"
 msgstr ""
 
@@ -738,9 +738,9 @@ msgstr ""
 #: modules/color/modules/oyranos_cmm_lcm2.c:3682
 #: modules/color/modules/oyranos_cmm_lcms.c:2756
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:872
-#: modules/color/modules/devices/oyranos_cmm_SANE.c:833
+#: modules/color/modules/devices/oyranos_cmm_SANE.c:832
 #: modules/color/modules/devices/oyranos_cmm_disp.c:1199
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1227
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1224
 #: examples/oyranos_cmm_dDev.c:714 examples/oyranos_cmm_dFil.c:411
 msgid "Color"
 msgstr ""
@@ -931,8 +931,8 @@ msgstr ""
 msgid "Copyright (c) 2009 Joseph Simon; MIT"
 msgstr ""
 
-#: modules/color/modules/devices/oyranos_cmm_SANE.c:945
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1339
+#: modules/color/modules/devices/oyranos_cmm_SANE.c:944
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1336
 #: examples/oyranos_cmm_dDev.c:834
 msgid "Copyright (c) 2009 Kai-Uwe Behrmann; MIT"
 msgstr ""
@@ -1146,9 +1146,9 @@ msgstr ""
 
 #. CMM: abbreviation for Color Matching Module
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:875
-#: modules/color/modules/devices/oyranos_cmm_SANE.c:834
+#: modules/color/modules/devices/oyranos_cmm_SANE.c:833
 #: modules/color/modules/devices/oyranos_cmm_disp.c:1202
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1227
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1224
 #: examples/oyranos_cmm_dDev.c:714
 msgid "Device"
 msgstr ""
@@ -2153,8 +2153,8 @@ msgstr ""
 #: modules/color/modules/oyranos_cmm_lcm2.c:3796
 #: modules/color/modules/oyranos_cmm_lcms.c:2870
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:990
-#: modules/color/modules/devices/oyranos_cmm_SANE.c:947
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1341
+#: modules/color/modules/devices/oyranos_cmm_SANE.c:946
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1338
 #: examples/oyranos_cmm_dDev.c:836
 msgid "MIT license: http://www.opensource.org/licenses/mit-license.php"
 msgstr ""
@@ -2298,8 +2298,8 @@ msgstr ""
 msgid "My Name"
 msgstr ""
 
-#: modules/color/modules/devices/oyranos_cmm_SANE.c:952
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1346
+#: modules/color/modules/devices/oyranos_cmm_SANE.c:951
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1343
 #: examples/oyranos_cmm_dDev.c:842 examples/oyranos_cmm_dFil.c:170
 msgid "My filter introduction."
 msgstr ""
@@ -2479,11 +2479,11 @@ msgstr ""
 msgid "Oyranos Image Display Info"
 msgstr ""
 
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1323
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1320
 msgid "Oyranos RAW Image"
 msgstr ""
 
-#: modules/color/modules/devices/oyranos_cmm_SANE.c:929
+#: modules/color/modules/devices/oyranos_cmm_SANE.c:928
 msgid "Oyranos Scanner"
 msgstr ""
 
@@ -2545,10 +2545,10 @@ msgstr ""
 #: modules/color/modules/oyranos_cmm_oyra.c:139
 #: modules/color/modules/oyranos_cmm_trds.c:669
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:981
-#: modules/color/modules/devices/oyranos_cmm_SANE.c:940
+#: modules/color/modules/devices/oyranos_cmm_SANE.c:939
 #: modules/color/modules/devices/oyranos_cmm_disp.c:1334
 #: modules/color/modules/oyranos_cmm_lraw.cpp:231
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1334
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1331
 #: examples/oyranos_cmm_dDev.c:828
 msgid ""
 "Oyranos project; www: http://www.oyranos.com; support/email: ku.b@gmx.de; "
@@ -2850,13 +2850,13 @@ msgstr ""
 msgid "RGB primaries missed"
 msgstr ""
 
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1216
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1213
 msgid ""
 "Raw camera data, which are in file containing raw sensor data from a camera "
 "still picture."
 msgstr ""
 
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1214
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1211
 msgid "RawCamera"
 msgstr ""
 
@@ -2991,12 +2991,12 @@ msgstr ""
 msgid "Scale Image Filter Object"
 msgstr ""
 
-#: modules/color/modules/devices/oyranos_cmm_SANE.c:818
-#: modules/color/modules/devices/oyranos_cmm_SANE.c:835
+#: modules/color/modules/devices/oyranos_cmm_SANE.c:817
+#: modules/color/modules/devices/oyranos_cmm_SANE.c:834
 msgid "Scanner"
 msgstr ""
 
-#: modules/color/modules/devices/oyranos_cmm_SANE.c:820
+#: modules/color/modules/devices/oyranos_cmm_SANE.c:819
 msgid "Scanner data, which come from SANE library."
 msgstr ""
 
@@ -3639,7 +3639,7 @@ msgid ""
 "resource overhead."
 msgstr ""
 
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1325
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1322
 msgid "The raw image backend of Oyranos."
 msgstr ""
 
@@ -3647,7 +3647,7 @@ msgstr ""
 msgid "The root image filter can hold pixel data for processing in a graph."
 msgstr ""
 
-#: modules/color/modules/devices/oyranos_cmm_SANE.c:931
+#: modules/color/modules/devices/oyranos_cmm_SANE.c:930
 msgid "The scanner (hopefully)usefull backend of Oyranos."
 msgstr ""
 
@@ -4056,9 +4056,9 @@ msgstr ""
 #: modules/color/modules/oyranos_cmm_oPNG.c:946
 #: modules/color/modules/oyranos_cmm_oyra_image_expose.c:102
 #: modules/color/modules/oyranos_cmm_oyra_image_scale.c:105
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:900
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:906
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:918
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:898
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:904
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:916
 #: tools/oyranos_gamma.c:634 tools/oyranos_gamma.c:812
 #: tools/oyranos_gamma.c:978 tools/oyranos_gamma.c:981
 #: tools/oyranos_gamma.c:985 tools/oyranos_gamma.c:1023

@@ -388,7 +388,6 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
       *s = devices;
    } else if (command_properties) {
       /* "properties" call section */
-      int error = 0;
       const SANE_Device *device_context = NULL;
       SANE_Device *aux_context = NULL;
       SANE_Handle device_handle = NULL;
@@ -429,7 +428,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
 
       /*1b. Use the "device_context"*/
       if (device_context)
-         error = DeviceInfoFromContext_(device_context, oyConfig_GetOptions(device,"backend_core"));
+         DeviceInfoFromContext_(device_context, oyConfig_GetOptions(device,"backend_core"));
 
       /*2a. Get the "device_handle"*/
       if (!handle_opt) {

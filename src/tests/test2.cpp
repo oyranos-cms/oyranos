@@ -1841,7 +1841,7 @@ oyTESTRESULT_e testProfiles ()
                                              sizeof(int32_t) );
     oyRankMap * rank_map = 0;
     const char * rank_map_text = "{\"org\":{\"freedesktop\":{\"openicc\":{\"rank_map\":{\"meta\":[{\"STANDARD_space\": [2,-1,0,\"matching\",\"not matching\",\"key not found\"]}]}}}}}";
-    int error = oyRankMapFromJSON( rank_map_text, NULL, &rank_map, malloc );
+    oyRankMapFromJSON( rank_map_text, NULL, &rank_map, malloc );
 
     const char * filter_text = "{\"org\":{\"freedesktop\":{\"openicc\":{\"config\":{\"meta\":[{\"STANDARD_space\": \"rgb\"}]}}}}}",
                * filter_registration = "org/freedesktop/openicc/config/meta";
@@ -2917,9 +2917,9 @@ oyTESTRESULT_e testCMMDevicesListing ()
                  oyOption_GetRegistration(o), val?val:"(nix)" );
         }
 
-        if(r) oyDeAllocateFunc_(r); r = 0;
+        if(r) { oyDeAllocateFunc_(r); r = 0; }
         if(val)
-          oyDeAllocateFunc_( val ); val = 0;
+        { oyDeAllocateFunc_( val ); val = 0; }
         oyOption_Release( &o ); oi = 0;
       }
 
@@ -3001,7 +3001,7 @@ oyTESTRESULT_e testCMMDevicesDetails ()
         fprintf(zout, "  %d::%d %s: \"%s\"\n", l,k, 
                   oyStrrchr_(oyOption_GetRegistration(o),'/')+1, val );
 
-        if(val) oyDeAllocateFunc_( val ); val = 0;
+        if(val) { oyDeAllocateFunc_( val ); val = 0; }
         oyOption_Release( &o );
       }
 
@@ -3012,7 +3012,7 @@ oyTESTRESULT_e testCMMDevicesDetails ()
         fprintf(zout, "  %d %s: \"%s\"\n", l, 
                 oyStrrchr_(oyOption_GetRegistration(o),'/')+1, val );
 
-        if(val) oyDeAllocateFunc_( val ); val = 0;
+        if(val) { oyDeAllocateFunc_( val ); val = 0; }
         oyOption_Release( &o );
       }
 
@@ -3080,7 +3080,7 @@ oyTESTRESULT_e testCMMDevicesDetails ()
   oyOption_SetRegistration( o, key );
   oyOption_Release( &o );
   if(key)
-    oyDeAllocateFunc_( key ); key = 0;
+  { oyDeAllocateFunc_( key ); key = 0; }
   error = oyConfig_EraseFromDB( config, oySCOPE_USER );
   oyConfig_Release( &config );
 
@@ -3097,7 +3097,7 @@ oyTESTRESULT_e testCMMDevicesDetails ()
   }
 
   if(registration)
-    oyDeAllocateFunc_( registration ); registration = 0;
+  { oyDeAllocateFunc_( registration ); registration = 0; }
 
   fprintf( zout, "\n");
 
@@ -3185,7 +3185,7 @@ oyTESTRESULT_e testCMMRankMap ()
 
 
     oyDeviceFromJSON( json_text, 0, &device );
-    if(json_text) free( json_text ); json_text = 0;
+    if(json_text) { free( json_text ); json_text = 0; }
     oyDeviceToJSON( device, 0, &json_text, malloc );
 
     if( json_text && strlen(json_text) )
@@ -3538,7 +3538,7 @@ oyTESTRESULT_e testCMMMonitorListing ()
 
       fprintf(zout, "  %d %s: \"%s\"\n", k, oyOption_GetRegistration(o), val );
 
-      if(val) oyDeAllocateFunc_( val ); val = 0;
+      if(val) { oyDeAllocateFunc_( val ); val = 0; }
       oyOption_Release( &o );
     }
   oyConfig_Release( &config );
@@ -3583,7 +3583,7 @@ oyTESTRESULT_e testCMMDBListing ()
       val = oyOption_GetValueText( o, oyAllocateFunc_ );
       fprintf(zout, "  %d::%d %s %s\n", j,k, oyOption_GetRegistration(o), val );
 
-      if(val) oyDeAllocateFunc_( val ); val = 0;
+      if(val) { oyDeAllocateFunc_( val ); val = 0; }
       oyOption_Release( &o );
     }
 
@@ -3697,7 +3697,7 @@ oyTESTRESULT_e testCMMmonitorDBmatch ()
       strchr(strchr(strchr(strchr(oyOption_GetRegistration(o),'/')+1,'/')+1,'/')+1,'/')+1,
               val );
 
-      if(val) oyDeAllocateFunc_( val ); val = 0;
+      if(val) { oyDeAllocateFunc_( val ); val = 0; }
       oyOption_Release( &o );
     }
     //error = oyConfig_EraseFromDB( config );
@@ -4284,7 +4284,7 @@ oyTESTRESULT_e testCMMnmRun ()
     api4 = (oyCMMapi4_s_*) oyCMMsGetFilterApi_(
                                             registration, oyOBJECT_CMM_API4_S );
     error = !api4;
-    if(!(i%30000)) fprintf(zout, "." ); fflush(zout);
+    if(!(i%30000)) { fprintf(zout, "." ); fflush(zout); }
   }
   fprintf(zout,"\n");
   clck = oyClock() - clck;

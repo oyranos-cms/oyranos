@@ -400,7 +400,7 @@ int               oyNamedColor_SetColorStd ( oyNamedColor_s * color,
     if(n > oyProfile_GetChannelsCount( s->profile_ ))
     {
       if(s->channels_)
-        deallocateFunc(s->channels_); s->channels_ = 0;
+      { deallocateFunc(s->channels_); s->channels_ = 0; }
 
       s->channels_ = s->oy_->allocateFunc_( n * sizeof(double) );
     }
@@ -410,7 +410,7 @@ int               oyNamedColor_SetColorStd ( oyNamedColor_s * color,
     s->XYZ_[0] = s->XYZ_[1] = s->XYZ_[2] = -1;
 
     if(deallocateFunc && s->blob_)
-      deallocateFunc( s->blob_ ); s->blob_ = 0; s->blob_len_ = 0;
+    { deallocateFunc( s->blob_ ); s->blob_ = 0; s->blob_len_ = 0; }
   }
 
   /* convert */

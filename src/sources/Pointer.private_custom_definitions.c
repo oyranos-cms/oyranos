@@ -45,13 +45,13 @@ void oyPointer_Release__Members( oyPointer_s_ * cmmptr )
       }
 
       if(s->lib_name)
-      deallocateFunc( s->lib_name ); s->lib_name = 0;
+      { deallocateFunc( s->lib_name ); s->lib_name = 0; }
       if(s->func_name)
-      deallocateFunc( s->func_name ); s->func_name = 0;
+      { deallocateFunc( s->func_name ); s->func_name = 0; }
       if(s->resource)
-      deallocateFunc( s->resource ); s->resource = 0;
+      { deallocateFunc( s->resource ); s->resource = 0; }
       if(s->id)
-      deallocateFunc( s->id ); s->id = 0;
+      { deallocateFunc( s->id ); s->id = 0; }
 
       /*oyCMMdsoRelease_( cmmptr->lib_name );*/
     }

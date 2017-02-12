@@ -85,13 +85,13 @@ void oyProfile_Release__Members( oyProfile_s_ * profile )
      * E.g.: deallocateFunc( profile->member );
      */
     if(profile->names_chan_)
-      deallocateFunc( profile->names_chan_ ); profile->names_chan_ = 0;
+    { deallocateFunc( profile->names_chan_ ); profile->names_chan_ = 0; }
 
     if(profile->block_)
-      deallocateFunc( profile->block_ ); profile->block_ = 0; profile->size_ = 0;
+    { deallocateFunc( profile->block_ ); profile->block_ = 0; profile->size_ = 0; }
 
     if(profile->file_name_)
-      deallocateFunc( profile->file_name_ ); profile->file_name_ = 0;
+    { deallocateFunc( profile->file_name_ ); profile->file_name_ = 0; }
 
   }
 }

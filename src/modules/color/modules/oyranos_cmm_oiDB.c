@@ -139,7 +139,7 @@ void     oiDB_release                ( oyDB_s           ** db )
 
     if(!db || strcmp( s->type, CMM_NICK ) != 0)
       oiDB_msg( oyMSG_ERROR, 0, OY_DBG_FORMAT_ "wrong object type: %s - expected %s", OY_DBG_ARGS_, s->type, CMM_NICK );
-    if(s->top_key_name) deAlloc(s->top_key_name); s->top_key_name = NULL;
+    if(s->top_key_name) { deAlloc(s->top_key_name); s->top_key_name = NULL; }
     memset( s->type, 0, 8 );
 
     openiccDB_Release( &s->db );

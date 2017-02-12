@@ -237,16 +237,16 @@ int          oyObject_Release         ( oyObject_s      * obj )
     oyPointer lock = s->lock_;
 
     if(s->hash_ptr_)
-      deallocateFunc(s->hash_ptr_); s->hash_ptr_ = 0;
+    { deallocateFunc(s->hash_ptr_); s->hash_ptr_ = 0; }
 
     if(s->parent_types_)
-      deallocateFunc( s->parent_types_ ); s->parent_types_ = 0;
+    { deallocateFunc( s->parent_types_ ); s->parent_types_ = 0; }
 
     if(s->backdoor_)
-      deallocateFunc( s->backdoor_ ); s->backdoor_ = 0;
+    { deallocateFunc( s->backdoor_ ); s->backdoor_ = 0; }
 
     if(s->handles_ && s->handles_->release)
-      s->handles_->release( (oyStruct_s**)&s->handles_ );
+    { s->handles_->release( (oyStruct_s**)&s->handles_ ); }
 
     deallocateFunc( s );
     if(lock)

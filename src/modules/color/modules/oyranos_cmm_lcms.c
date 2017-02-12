@@ -802,7 +802,7 @@ cmsHTRANSFORM  lcmsCMMConversionContextCreate_ (
                                     intent, flags );
 
 
-      if(merge) oyDeAllocateFunc_( merge ); merge = 0;
+      if(merge) { oyDeAllocateFunc_( merge ); merge = 0; }
     }
   }
 
@@ -1212,12 +1212,12 @@ cmsHPROFILE  lcmsGamutCheckAbstract  ( oyProfile_s       * proof,
       data = oyAllocateFunc_( size );
       l_cmsSaveProfileToMem( gmt, data, &size );
       oyWriteMemToFile_( "dbg_dl_proof.icc", data, size );
-      if(data) oyDeAllocateFunc_( data ); data = 0;
+      if(data) { oyDeAllocateFunc_( data ); data = 0; }
   }
 
-      if(hLab) lcmsCloseProfile( hLab ); hLab = 0;
-      if(tr1) lcmsDeleteTransform( tr1 ); tr1 = 0;
-      if(gmt_lut) lcmsFreeLUT( gmt_lut ); gmt_lut = 0;
+      if(hLab) { lcmsCloseProfile( hLab ); hLab = 0; }
+      if(tr1) { lcmsDeleteTransform( tr1 ); tr1 = 0; }
+      if(gmt_lut) { lcmsFreeLUT( gmt_lut ); gmt_lut = 0; }
 
   oyProfile_Release( &proof );
 
@@ -1283,7 +1283,7 @@ int          lcmsMOptions_Handle2    ( oyOptions_s       * options,
 
       prof = oyProfile_FromMem( size, block, 0, 0 );
       if(block && size)
-        free(block); block = 0; size = 0;
+      { free(block); block = 0; size = 0; }
 
       o = oyOption_FromRegistration( OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "icc_profile.create_profile.proofing_effect._" CMM_NICK,
                         0 );
@@ -1595,7 +1595,7 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
       }
 
       if(block)
-        oyDeAllocateFunc_( block ); block = 0; size_ = 0;
+      { oyDeAllocateFunc_( block ); block = 0; size_ = 0; }
 
       block = oyProfile_GetMem( prof, &size_, 0, allocateFunc );
 

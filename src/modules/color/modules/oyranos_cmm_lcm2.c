@@ -1827,7 +1827,7 @@ cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
       data = oyAllocateFunc_( size );
       lcmsSaveProfileToMem( gmt, data, &size );
       oyWriteMemToFile_( t, data, size );
-      if(data) oyDeAllocateFunc_( data ); data = 0;
+      if(data) oyFree_m_( data );
       oyFree_m_(t);
   }
 
@@ -1835,15 +1835,15 @@ cmsHPROFILE  lcm2GamutCheckAbstract  ( oyProfile_s       * proof,
 
   clean:
 
-      if(hLab) lcmsCloseProfile( hLab ); hLab = 0;
-      if(tr) lcmsDeleteTransform( tr ); tr = 0;
-      if(tr16) lcmsDeleteTransform( tr16 ); tr16 = 0;
-      if(t[0])  lcmsFreeToneCurve( t[0] );
-      if(g[0])  lcmsFreeToneCurve( g[0] );
+      if(hLab) { lcmsCloseProfile( hLab ); hLab = 0; }
+      if(tr) { lcmsDeleteTransform( tr ); tr = 0; }
+      if(tr16) { lcmsDeleteTransform( tr16 ); tr16 = 0; }
+      if(t[0]) lcmsFreeToneCurve( t[0] );
+      if(g[0]) lcmsFreeToneCurve( g[0] );
       if(gmt_pl) lcmsPipelineFree( gmt_pl );
       if(gmt_pl16) lcmsPipelineFree( gmt_pl16 );
-      if(mlu[0]) lcmsMLUfree( mlu[0] ); mlu[0] = 0;
-      if(mlu[1]) lcmsMLUfree( mlu[1] ); mlu[1] = 0;
+      if(mlu[0]) { lcmsMLUfree( mlu[0] ); mlu[0] = 0; }
+      if(mlu[1]) { lcmsMLUfree( mlu[1] ); mlu[1] = 0; }
 
   oyProfile_Release( &proof );
 
@@ -2246,7 +2246,7 @@ oyPointer lcm2FilterNode_CmmIccContextToMem (
       }
 
       if(block)
-        oyDeAllocateFunc_( block ); block = 0; size_ = 0;
+      { oyDeAllocateFunc_( block ); block = 0; size_ = 0; }
 
       block = oyProfile_GetMem( prof, &size_, 0, allocateFunc );
 

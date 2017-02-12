@@ -436,7 +436,7 @@ int          DeviceAttributes_       ( ppd_file_t        * ppd,
                                                OY_CREATE_NEW );
             oyRankMapAppend( &rank_map, reg_name, 2, -2, 0, 0,0 );
           }
-          if(reg_name) oyDeAllocateFunc_( reg_name ); reg_name = 0;
+          if(reg_name) { oyDeAllocateFunc_( reg_name ); reg_name = 0; }
         }
 
         if( color_key_words && color_key_words_n)
@@ -471,7 +471,7 @@ int          DeviceAttributes_       ( ppd_file_t        * ppd,
                                                 OY_CREATE_NEW );
               oyRankMapAppend( &rank_map, reg_name, 2, -2, 0, 0,0 );
             }
-            if(reg_name) oyDeAllocateFunc_( reg_name ); reg_name = 0;
+            if(reg_name) { oyDeAllocateFunc_( reg_name ); reg_name = 0; }
           }
         }
 
@@ -561,7 +561,7 @@ int            Configs_Modify    ( oyConfigs_s       * devices,
             error = oyOptions_SetFromText( oyConfig_GetOptions(device,"data"),
                                          CMM_BASE_REG OY_SLASH "oyNAME_NAME",
                                          text, OY_CREATE_NEW );
-            if(text) oyDeAllocateFunc_( text ); text = 0;
+            if(text) { oyDeAllocateFunc_( text ); text = 0; }
           }
         }
 
@@ -788,7 +788,7 @@ int            Configs_FromPattern (
             error = oyOptions_SetFromText( oyConfig_GetOptions(device,"data"),
                                          CMM_BASE_REG OY_SLASH "oyNAME_NAME",
                                          text, OY_CREATE_NEW );
-            if(text) oyDeAllocateFunc_( text ); text = 0;
+            if(text) { oyDeAllocateFunc_( text ); text = 0; }
           }
         }
         oyConfigs_MoveIn( devices, &device, -1 );
@@ -1157,7 +1157,7 @@ int CUPSgetProfiles                  ( const char        * device_name,
                                reg_name,
                                texts[0], OY_CREATE_NEW );
         oyRankMapAppend( &rank_map, selectorA, 2, -5, 0, 0,0 );
-        if(reg_name) oyDeAllocateFunc_( reg_name ); reg_name = 0;
+        if(reg_name) { oyDeAllocateFunc_( reg_name ); reg_name = 0; }
       }
       if(selectorB && texts[1] && texts[1][0])
       {
@@ -1168,7 +1168,7 @@ int CUPSgetProfiles                  ( const char        * device_name,
                                reg_name,
                                texts[1], OY_CREATE_NEW );
         oyRankMapAppend( &rank_map, selectorB, 2, -5, 0, 0,0 );
-        if(reg_name) oyDeAllocateFunc_( reg_name ); reg_name = 0;
+        if(reg_name) { oyDeAllocateFunc_( reg_name ); reg_name = 0; }
       }
       if(selectorC && texts[2] && texts[2][0])
       {
@@ -1179,7 +1179,7 @@ int CUPSgetProfiles                  ( const char        * device_name,
                                reg_name,
                                texts[2], OY_CREATE_NEW );
         oyRankMapAppend( &rank_map, selectorC, 2, -5, 0, 0,0 );
-        if(reg_name) oyDeAllocateFunc_( reg_name ); reg_name = 0;
+        if(reg_name) { oyDeAllocateFunc_( reg_name ); reg_name = 0; }
       }
       oyConfig_SetRankMap( device, rank_map );
       oyRankMapRelease( &rank_map, oyDeAllocateFunc_ );

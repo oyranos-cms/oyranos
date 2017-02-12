@@ -64,10 +64,10 @@ void oyNamedColor_Release__Members( oyNamedColor_s_ * namedcolor )
     oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
 
     if(s->channels_)
-      deallocateFunc( s->channels_ ); s->channels_ = 0;
+    { deallocateFunc( s->channels_ ); s->channels_ = 0; }
 
     if(s->blob_) /* s->blob_len */
-      deallocateFunc( s->blob_ ); s->blob_ = 0; s->blob_len_ = 0;
+    { deallocateFunc( s->blob_ ); s->blob_ = 0; s->blob_len_ = 0; }
   }
 }
 

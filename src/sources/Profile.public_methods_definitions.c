@@ -1313,7 +1313,7 @@ OYAPI const oyChar* OYEXPORT
       else
         oySprintf_( &temp[oyStrlen_(temp)], "                \" />" );
 
-      if(file_name) free(file_name); file_name = 0;
+      if(file_name) { free(file_name); file_name = 0; }
       found = 1;
     }
 
@@ -1469,7 +1469,7 @@ OYAPI size_t OYEXPORT
       data = oyProfile_GetMem( profile, &size, flag,
                                profile->oy_->allocateFunc_ );
       if(data && size)
-        profile->oy_->deallocateFunc_( data ); data = 0;
+      { profile->oy_->deallocateFunc_( data ); } data = 0;
     }
   }
 
@@ -2312,8 +2312,8 @@ int                oyProfile_AddDevice(oyProfile_s       * profile,
         key = 0;
       }
     }
-    if(key) oyDeAllocateFunc_( key ); key = 0;
-    if(val) oyDeAllocateFunc_(val); val = 0;
+    if(key) { oyDeAllocateFunc_( key ); key = 0; }
+    if(val) { oyDeAllocateFunc_(val); val = 0; }
   }
 
   count = pos;

@@ -482,7 +482,7 @@ oyProfile_s * createMatrixProfile      ( libraw_colordata_t & color,
       oyOptions_s * result = 0;
 
       oyOptions_SetFromInt( &opts, "///icc_profile_flags", icc_profile_flags, 0, OY_CREATE_NEW );
-      const char * reg = "//"OY_TYPE_STD"/create_profile.color_matrix.icc";
+      const char * reg = "//" OY_TYPE_STD "/create_profile.color_matrix.icc";
       oyOptions_Handle( reg, opts, "create_profile.icc_profile.color_matrix",
                         &result );
 
@@ -625,14 +625,13 @@ int DeviceFromHandle(oyOptions_s **options, Exiv2::Image::AutoPtr image)
  */
 int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfigs_s ** s)
 {
-   oyOption_s *context_opt = NULL, *handle_opt = NULL;
+   oyOption_s *handle_opt = NULL;
 
    int error = 0;
    const char *command_list = 0, *command_properties = 0;
 
    int rank = oyFilterRegistrationMatch(_api8.registration, registration,
                                         oyOBJECT_CMM_API8_S);
-   oyAlloc_f allocateFunc = malloc;
 
    if(oy_debug > 2)
    oyRE_msg( oyMSG_DBG, (oyStruct_s *) options, _DBG_FORMAT_ "\n "
@@ -673,7 +672,6 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
    command_list = oyOptions_FindString(options, "command", "list");
    command_properties = oyOptions_FindString(options, "command", "properties");
 
-   context_opt = oyOptions_Find(options, "device_context", oyNAME_PATTERN);
    handle_opt = oyOptions_Find(options, "device_handle", oyNAME_PATTERN);
    version_opt = oyOptions_Find(options, "driver_version", oyNAME_PATTERN);
 
@@ -842,8 +840,8 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
 int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
 {
    oyAlloc_f allocateFunc = malloc;
+   int error = 0;
 
-   
    if(oy_debug > 2)
    oyRE_msg( oyMSG_DBG,  (oyStruct_s *) options, _DBG_FORMAT_ PRFX 
             "Options:\n%s",_DBG_ARGS_, oyOptions_GetText(options, oyNAME_NICK));
@@ -934,7 +932,6 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
    } else if (command_properties) {
       /* "properties" call section */
 
-      int error = 0;
       for (int i = 0; i < num_devices; ++i) {
          oyConfig_s *device = oyConfigs_Get(devices, i);
          oyProfile_s * p = 0;
@@ -1163,7 +1160,7 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
       }
    }
 
-   return 0;
+   return error;
 }
 
 /** Function Config_Rank
@@ -1495,7 +1492,7 @@ int DeviceFromHandle_opt(oyConfig_s *device, oyOption_s *handle_opt)
          return 1;
       }
       if(filename)
-        free(filename); filename = 0;
+      { free(filename); filename = 0; }
    } else
       return 1;
 

@@ -521,7 +521,7 @@ int          oyX1UpdateOptions_Handle( oyOptions_s       * options,
                        atom, XA_STRING, 8, PropModeReplace,
                        data, size );
     if(result == Success && data)
-      XFree( data ); data = 0;
+    { XFree( data ); data = 0; }
     if(display)
       XCloseDisplay(display);
   }

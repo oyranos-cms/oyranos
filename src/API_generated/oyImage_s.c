@@ -1217,7 +1217,7 @@ int          oyImage_WritePPM        ( oyImage_s         * image,
       oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
                 " oyImage_s: %d\n",
                 oyObject_GetId( image->oy_ ) );
-      if(vs) free(vs); vs = 0;
+      if(vs) { free(vs); vs = 0; }
       len = strlen( t );
       do { fputc ( t[pt] , fp); if(t[pt] == '\n') fputc( '#', fp ); pt++; } while (--len); pt = 0;
       fputc( '\n', fp );

@@ -485,7 +485,7 @@ void               oyJobResult_      ( void )
     }
 
     if(msg->status_text)
-      free(msg->status_text); msg->status_text = NULL;
+    { free(msg->status_text); msg->status_text = NULL; }
     free(msg); msg = NULL;
   }
 

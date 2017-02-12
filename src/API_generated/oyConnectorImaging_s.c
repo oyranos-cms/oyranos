@@ -490,7 +490,7 @@ int              oyConnectorImaging_SetReg  ( oyConnectorImaging_s     * obj,
     oyAlloc_f allocateFunc = s->oy_->allocateFunc_;
 
     if(s->connector_type)
-      deallocateFunc( s->connector_type ); s->connector_type = 0;
+    { deallocateFunc( s->connector_type ); s->connector_type = 0; }
 
     s->connector_type = oyStringCopy_( type_registration, allocateFunc );
   }

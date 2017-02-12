@@ -39,10 +39,10 @@ void oyImage_Release__Members( oyImage_s_ * image )
      * E.g.: deallocateFunc( image->member );
      */
     if(image->layout_)
-      deallocateFunc( image->layout_ ); image->layout_ = 0;
+    { deallocateFunc( image->layout_ ); image->layout_ = 0; }
 
     if(image->channel_layout)
-      deallocateFunc( image->channel_layout ); image->channel_layout = 0;
+    { deallocateFunc( image->channel_layout ); image->channel_layout = 0; }
   }
 }
 

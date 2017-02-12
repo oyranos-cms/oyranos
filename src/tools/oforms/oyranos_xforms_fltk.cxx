@@ -105,7 +105,7 @@ void callback_help_view( oyPointer * ptr, const char * help_text )
       text[ti] = 0;
 
       help_view->value( (const char *)text );
-      if(string) free(string); string = 0;
+      if(string) { free(string); string = 0; }
     } else
     {
       /* Erase only if the widget needs no scrollbar. */
@@ -306,7 +306,7 @@ int main (int argc, char ** argv)
 
   oyFormsArgs_Release( &forms_args );
 
-  if(text) free(text); text = 0;
+  if(text) { free(text); text = 0; }
 
   oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
 

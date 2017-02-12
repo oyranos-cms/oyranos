@@ -1518,14 +1518,14 @@ OYAPI int OYEXPORT oyDeviceToJSON    ( oyConfig_s        * device,
 
   if(!error)
   {
-    if(oyOptions_FindString( options, "source", 0 ))
-      opts = *oyConfig_GetOptions( device,
+      if(oyOptions_FindString( options, "source", 0 ))
+        opts = *oyConfig_GetOptions( device,
                                  oyOptions_FindString( options, "source", 0 ));
 
-    if(opts)
-      count = oyOptions_Count( opts );
-    else
-      count = oyConfig_Count( device );
+      if(opts)
+        count = oyOptions_Count( opts );
+      else
+        count = oyConfig_Count( device );
 
       if(count)
       {
@@ -1778,7 +1778,7 @@ OYAPI int  OYEXPORT
                    oyNoEmptyString_m_(name), oyNoEmptyString_m_(val));
 
         if(done) break;
-        if(val) oyDeAllocateFunc_(val); val = 0;
+        if(val) { oyDeAllocateFunc_(val); val = 0; }
       }
 
       oyjl_tree_free( root ); root = 0;
@@ -1838,7 +1838,7 @@ OYAPI int  OYEXPORT
           {
             int j,n;
             oyConfig_AddDBData( dev, "TAXI_id", val, OY_CREATE_NEW );
-            if(val) oyDeAllocateFunc_(val); val = 0;
+            if(val) { oyDeAllocateFunc_(val); val = 0; }
 
             v = oyjl_tree_get_valuef( root, 0, "org/freedesktop/openicc/device/[0]/[%d]/profile_description", i );
             n = oyjl_value_count(v);
@@ -1847,7 +1847,7 @@ OYAPI int  OYEXPORT
               v = oyjl_tree_get_valuef( root, 0, "org/freedesktop/openicc/device/[0]/[%d]/profile_description/[%d]", i, j );
               val = oyjl_value_text( v, oyAllocateFunc_ );
               oyConfig_AddDBData( dev, "TAXI_profile_description", val, OY_CREATE_NEW );
-              if(val) oyDeAllocateFunc_(val); val = 0;
+              if(val) { oyDeAllocateFunc_(val); val = 0; }
               /* TODO store all profile descriptions */
               break;
             }
@@ -1857,11 +1857,11 @@ OYAPI int  OYEXPORT
             oyConfigs_MoveIn( configs_, &dev, -1 );
           }
 
-          if(val) oyDeAllocateFunc_(val); val = 0;
+          if(val) { oyDeAllocateFunc_(val); val = 0; }
           if(json_text) oyFree_m_( json_text );
         }
         oyOptions_Release( &opts );
-        if(device_db) oyDeAllocateFunc_(device_db); device_db = 0;
+        if(device_db) { oyDeAllocateFunc_(device_db); device_db = 0; }
       }
       oyjl_tree_free( root ); root = 0;
     }

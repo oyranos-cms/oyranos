@@ -258,7 +258,7 @@ int main (int argc, char ** argv)
   /* xmlParseMemory should see the level like oyOptions_FromText. */
   opts = oyOptions_FromText( data, 0,0 );
 
-  if(text) free(text); text = 0;
+  if(text) { free(text); text = 0; }
 
   oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
 

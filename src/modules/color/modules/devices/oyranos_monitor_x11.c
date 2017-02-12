@@ -171,7 +171,7 @@ char *   oyX1Monitor_getProperty_    ( oyX1Monitor_s     * disp,
                      AnyPropertyType,
                      &a, &actual_format_return, &nitems_return, 
                      &bytes_after_return, &prop_return );
-        if(bytes_after_return != 0) fprintf( stderr,"%s bytes_after_return: %lu\n",
+      if(bytes_after_return != 0) fprintf( stderr,"%s bytes_after_return: %lu\n",
                                           "found issues",bytes_after_return);
       if(oy_debug) fprintf( stderr, "root: %d atom: %ld atom_name: %s prop_name: %s %lu %lu\n",
                   (int)w, atom, atom_name, prop_name, nitems_return,bytes_after_return );
@@ -1542,7 +1542,7 @@ oyX1Monitor_s* oyX1Monitor_newFrom_      ( const char        * display_name,
       }
 
       if(res)
-        XRRFreeScreenResources(res); res = 0;
+      { XRRFreeScreenResources(res); res = 0; }
 
       if(oyX1Monitor_infoSource_( disp ) == oyX11INFO_SOURCE_XRANDR)
       {
@@ -1649,9 +1649,9 @@ int          oyX1Monitor_release_      ( oyX1Monitor_s      ** obj )
   {
 #  if defined(HAVE_XRANDR)
     if(s->output_info)
-      XRRFreeOutputInfo( s->output_info ); s->output_info = 0;
+    { XRRFreeOutputInfo( s->output_info ); s->output_info = 0; }
     if(s->res)
-      XRRFreeScreenResources( s->res ); s->res = 0;
+    { XRRFreeScreenResources( s->res ); s->res = 0; }
 #  endif
     XCloseDisplay( s->display );
     s->display=0;
