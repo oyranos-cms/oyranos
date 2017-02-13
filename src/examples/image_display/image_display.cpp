@@ -611,7 +611,7 @@ Oy_Fl_Double_Window * createWindow (Oy_Fl_Image_Widget ** oy_box, uint32_t flags
 
   Fl::get_system_colors();
   Oy_Fl_Double_Window *win = new Oy_Fl_Double_Window( w, h+lh, "Oyranos" );
-  Fl_Tile* t;
+  Fl_Tile* t = NULL;
 
   if(flags & 0x02)
     t = new Fl_Tile(0,0, w, h+lh);
