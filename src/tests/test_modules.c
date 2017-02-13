@@ -85,6 +85,8 @@ int main( int argc, char ** argv)
     } else
     {
       error = 1;
+      oy_debug = 4;
+      files = oyCMMsGetLibNames_(&files_n);
       oyMessageFunc_p(oyMSG_ERROR,NULL,"no  meta module");
     }
   }
