@@ -18,7 +18,7 @@ TARGET_LINK_LIBRARIES( test_object-static oyranos_object-static )
 ADD_CUSTOM_TARGET(test-object
 	COMMAND "${CMAKE_CURRENT_BINARY_DIR}/test_object"
 	COMMAND "${CMAKE_CURRENT_BINARY_DIR}/test_object-static"
-        DEPENDS test_object test_object-static test-core
+        DEPENDS test_object test_object-static test_core
         COMMENT "Test basic linking against liboyranos_object." VERBATIM )
 
 LINK_DIRECTORIES( ${LINK_DIRECTORIES} "${CMAKE_BINARY_DIR}/src/liboyranos_modules/" )
@@ -29,7 +29,7 @@ TARGET_LINK_LIBRARIES( test_modules OyranosModules )
 ADD_CUSTOM_TARGET(test-modules
 	COMMAND "${CMAKE_CURRENT_BINARY_DIR}/test_modules"
 	COMMAND "${CMAKE_CURRENT_BINARY_DIR}/test_modules-static"
-        DEPENDS test_modules test_modules-static test-object
+        DEPENDS test_modules test_modules-static test_object
         COMMENT "Test basic linking against liboyranos_modules." VERBATIM )
 
 LINK_DIRECTORIES( ${LINK_DIRECTORIES} "${CMAKE_BINARY_DIR}/src/liboyranos_config/" )
@@ -40,7 +40,7 @@ TARGET_LINK_LIBRARIES( test_config-static oyranos_config-static )
 ADD_CUSTOM_TARGET(test-config
 	COMMAND "${CMAKE_CURRENT_BINARY_DIR}/test_config"
 	COMMAND "${CMAKE_CURRENT_BINARY_DIR}/test_config-static"
-        DEPENDS test_config test-modules
+        DEPENDS test_config test_modules
         COMMENT "Test basic linking against liboyranos_config." VERBATIM )
 
 LINK_DIRECTORIES( ${LINK_DIRECTORIES} "${CMAKE_BINARY_DIR}/src/liboyranos/" )
@@ -56,7 +56,7 @@ ADD_EXECUTABLE( test2-static
 TARGET_LINK_LIBRARIES( test2-static oyranos-static )
 ADD_CUSTOM_TARGET(test-2
 	"echo"
-        DEPENDS test-oyranos2 test-config
+        DEPENDS test-oyranos2 test_config
         COMMENT "Test liboyranos extensive." VERBATIM )
 ADD_CUSTOM_COMMAND( OUTPUT test-oyranos2
                     DEPENDS test2
