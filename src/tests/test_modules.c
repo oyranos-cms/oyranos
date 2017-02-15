@@ -84,10 +84,11 @@ int main( int argc, char ** argv)
       }
     } else
     {
+      const char * t = getenv("OY_MODULE_PATH");
       error = 1;
       oy_debug = 4;
       files = oyCMMsGetLibNames_(&files_n);
-      oyMessageFunc_p(oyMSG_ERROR,NULL,"no  meta module");
+      oyMessageFunc_p(oyMSG_ERROR,NULL,"no  meta module (OY_MODULE_PATH=%s)", t?t:"");
     }
   }
 
