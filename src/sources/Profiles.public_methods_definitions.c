@@ -501,7 +501,7 @@ int              oyProfiles_DeviceRank ( oyProfiles_s    * list,
  *  Get all ICC profiles, which can be used as assumed RGB profile:
  *  @dontinclude test2.cpp
     @skip Get all ICC profiles, which can be used as assumed RGB profile
-    @until oyProfiles_Release
+    @until Done print
  *
  *  @param[in,out] list                the to be sorted profile list
  *  @param[in]     device              filter pattern with rank_map

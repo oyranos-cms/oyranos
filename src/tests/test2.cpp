@@ -2,7 +2,7 @@
  *
  *  Oyranos is an open source Color Management System 
  *
- *  Copyright (C) 2004-2016  Kai-Uwe Behrmann
+ *  Copyright (C) 2004-2017  Kai-Uwe Behrmann
  *
  *  @brief    Oyranos test suite
  *  @internal
@@ -1863,6 +1863,16 @@ oyTESTRESULT_e testProfiles ()
              oyProfile_GetText( temp_prof, oyNAME_DESCRIPTION ),
              oyProfile_GetFileName(temp_prof, 0));
       oyProfile_Release( &temp_prof );
+    } // Done print
+
+    if(n)
+    {
+      PRINT_SUB( oyTESTRESULT_SUCCESS,
+      "oyProfiles_Rank( rgb )                          %d", n );
+    } else
+    {
+      PRINT_SUB( oyTESTRESULT_FAIL, 
+      "oyProfiles_Rank( rgb )                          %d", n );
     }
     oyProfiles_Release( &p_list );
   }

@@ -979,7 +979,7 @@ OYAPI oyOptions_s ** OYEXPORT
  *  Get all ICC profiles, which can be used as assumed RGB profile:
  *  @dontinclude test2.cpp
     @skip // Get all ICC profiles, which can be used as assumed RGB profile
-    @until oyProfiles_Release
+    @until Done print
  *
  *  @see oyProfiles_Rank()
  *
