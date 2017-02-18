@@ -75,6 +75,7 @@ oyObject_s           oy_;            /**< Features name and hash. Do not change 
   int                  channels_n_;    /*!< @private number of channels */
   oyStructList_s     * tags_;          /**< @private list of header + tags */
   int                  tags_modified_; /**< @private note manipulation */
+  oyConfig_s         * meta_;          /**< @private parsed meta tag */
 
 /* } Include "Profile.members.h" */
 
