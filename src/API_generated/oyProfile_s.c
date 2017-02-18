@@ -448,7 +448,13 @@ oyProfile_FromFile            ( const char      * name,
         char * t = oyStringCopy( value + 1, oyAllocateFunc_ );
 	value[0] = '\000';
 	value = oyStringReplace_( t, "*", "", oyAllocateFunc_ );
-	oyFree_m_(t);
+	if(!value)
+        {
+          value = t;
+          value[0] = '\000';
+        }
+        else
+	  oyFree_m_(t);
       } else
       {
         oyMessageFunc_p( oyMSG_WARN,(oyStruct_s*)object,
