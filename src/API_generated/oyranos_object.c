@@ -514,7 +514,10 @@ int    oyFilterStringMatch           ( const char        * registration,
         }
       }
     }
-  }
+  } else
+    if((flags & OY_MATCH_SUB_STRING) &&
+       registration && !pattern)
+      match = 1;
 
   if(match_tmp == 1 && !match)
     match = 1;
