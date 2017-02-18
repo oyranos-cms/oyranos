@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ICC Examin 0.41\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2017-02-12 08:58+0100\n"
+"POT-Creation-Date: 2017-02-18 12:22+0100\n"
 "PO-Revision-Date: 2006-06-29 19:31+0200\n"
 "Last-Translator: Pascal LACROIX <lacroixpascal at vfemail.net>\n"
 "Language-Team: <fr@li.org>\n"
@@ -285,7 +285,7 @@ msgid ""
 "speed or resource overhead."
 msgstr ""
 
-#: tools/oyranos_profiles.c:188
+#: tools/oyranos_profiles.c:192
 msgid "A single path option is required"
 msgstr ""
 
@@ -673,7 +673,7 @@ msgstr ""
 msgid "CameraRaw image"
 msgstr ""
 
-#: API_generated/oyProfile_s.c:807
+#: API_generated/oyProfile_s.c:857
 #, fuzzy
 msgid "Can not write profile"
 msgstr "Ouvrir Profil"
@@ -1043,18 +1043,18 @@ msgstr "Ouvrir Profil"
 msgid "Could not open meta module API"
 msgstr "Ouvrir Profil"
 
-#: tools/oyranos_profiles.c:468
+#: tools/oyranos_profiles.c:493
 #, fuzzy
 msgid "Could not open or invalid data: "
 msgstr "Ouvrir Profil"
 
-#: API_generated/oyProfile_s.c:818 API_generated/oyranos_devices.c:1046
+#: API_generated/oyProfile_s.c:868 API_generated/oyranos_devices.c:1046
 #: liboyranos_core/oyranos_io_core.c:111 liboyranos_core/oyranos_io_core.c:269
 #, fuzzy
 msgid "Could not open profile"
 msgstr "Ouvrir Profil"
 
-#: tools/oyranos_profiles.c:431
+#: tools/oyranos_profiles.c:456
 #, fuzzy
 msgid "Could not open: "
 msgstr "Ouvrir Profil"
@@ -1419,7 +1419,7 @@ msgid "Examine ICC Profile ..."
 msgstr "ICC Profils"
 
 #: tools/oyranos_convert.c:107 tools/oyranos_profile_tool.c:123
-#: tools/oyranos_profiles.c:100 examples/oyranos_cmm_dDev.c:703
+#: tools/oyranos_profiles.c:102 examples/oyranos_cmm_dDev.c:703
 #: examples/oyranos_cmm_dDev.c:714 examples/taxi.c:69
 #: examples/libraw/oyranos_file.cpp:71
 msgid "Example"
@@ -1491,7 +1491,7 @@ msgstr ""
 msgid "File exists"
 msgstr "Fichier"
 
-#: tools/oyranos_profiles.c:201
+#: tools/oyranos_profiles.c:205
 msgid "File name is missed"
 msgstr ""
 
@@ -1574,7 +1574,7 @@ msgstr "Avertissement Gamut"
 
 #: tools/oyranos-device.c:100 tools/oyranos_convert.c:102
 #: tools/oyranos_gamma.c:235 tools/oyranos_profile_graph.c:132
-#: tools/oyranos_profile_tool.c:112 tools/oyranos_profiles.c:93
+#: tools/oyranos_profile_tool.c:112 tools/oyranos_profiles.c:95
 #: examples/taxi.c:66 examples/libraw/oyranos_file.cpp:66
 #, fuzzy
 msgid "General options:"
@@ -1743,17 +1743,17 @@ msgstr "Attributs:   "
 msgid "ICC profile"
 msgstr "ICC Profils"
 
-#: API_generated/oyProfile_s_.c:815
+#: API_generated/oyProfile_s_.c:819
 #, fuzzy
 msgid "ICC profile id written"
 msgstr "ICC Profils"
 
-#: tools/oyranos_profiles.c:400
+#: tools/oyranos_profiles.c:425
 #, fuzzy
 msgid "ICC profile search paths"
 msgstr "ICC Profils"
 
-#: modules/color/modules/oyranos_cmm_oicc.c:492 tools/oyranos_profiles.c:282
+#: modules/color/modules/oyranos_cmm_oicc.c:492 tools/oyranos_profiles.c:289
 #, fuzzy
 msgid "ICC profiles"
 msgstr "ICC Profils"
@@ -1790,7 +1790,7 @@ msgstr ""
 #: tools/oyranos_profile_tool.c:89 tools/oyranos_profile_tool.c:92
 #: tools/oyranos_profile_tool.c:97 tools/oyranos_profile_tool.c:98
 #: tools/oyranos_profile_tool.c:101 tools/oyranos_profile_tool.c:104
-#: tools/oyranos_profile_tool.c:113 tools/oyranos_profiles.c:84
+#: tools/oyranos_profile_tool.c:113 tools/oyranos_profiles.c:86
 #: examples/libraw/oyranos_file.cpp:60 examples/libraw/oyranos_file.cpp:61
 msgid "ICC_FILE_NAME"
 msgstr ""
@@ -1995,7 +1995,7 @@ msgstr ""
 msgid "Input libraw Image Filter Object"
 msgstr ""
 
-#: tools/oyranos_profiles.c:83
+#: tools/oyranos_profiles.c:85
 #, fuzzy
 msgid "Install ICC profile:"
 msgstr "ICC Profils"
@@ -2020,7 +2020,7 @@ msgstr "ICC Profils"
 msgid "Intent"
 msgstr "Intention:"
 
-#: tools/oyranos_profiles.c:542
+#: tools/oyranos_profiles.c:567
 msgid "Internal Error"
 msgstr ""
 
@@ -2123,7 +2123,7 @@ msgstr "Oyranos Préférences"
 msgid "List search URL:"
 msgstr "ICC Profils"
 
-#: tools/oyranos_policy.c:65 tools/oyranos_profiles.c:80
+#: tools/oyranos_policy.c:65 tools/oyranos_profiles.c:82
 #, fuzzy
 msgid "List search paths:"
 msgstr "ICC Profils"
@@ -2266,7 +2266,7 @@ msgstr "Luv"
 #: API_generated/oyNamedColors_s_.c:186 API_generated/oyObserver_s.c:50
 #: API_generated/oyOption_s_.c:258 API_generated/oyOptions_s_.c:196
 #: API_generated/oyPixelAccess_s_.c:225 API_generated/oyPointer_s_.c:277
-#: API_generated/oyProfileTag_s_.c:208 API_generated/oyProfile_s_.c:318
+#: API_generated/oyProfileTag_s_.c:208 API_generated/oyProfile_s_.c:322
 #: API_generated/oyProfiles_s_.c:195 API_generated/oyRectangle_s_.c:191
 #: API_generated/oyStructList_s_.c:239 API_generated/oyranos_devices.c:3583
 #: API_generated/oyranos_module.c:1561 liboyranos/oyranos_alpha.c:260
@@ -2500,7 +2500,7 @@ msgstr "Oyranos Préférences"
 msgid "No"
 msgstr ""
 
-#: API_generated/oyProfile_s_.c:800
+#: API_generated/oyProfile_s_.c:804
 #, fuzzy
 msgid "No ICC profile id detected"
 msgstr "ICC Profils"
@@ -2758,7 +2758,7 @@ msgstr ""
 msgid "Passive matrix monitor"
 msgstr ""
 
-#: tools/oyranos_profiles.c:520
+#: tools/oyranos_profiles.c:545
 msgid "Path can not be written"
 msgstr ""
 
@@ -2909,7 +2909,7 @@ msgid "Preview, saturated"
 msgstr "Aperçu, saturation"
 
 #: tools/oyranos_convert.c:99 tools/oyranos_policy.c:69
-#: tools/oyranos_profile_tool.c:109 tools/oyranos_profiles.c:90
+#: tools/oyranos_profile_tool.c:109 tools/oyranos_profiles.c:92
 #: examples/taxi.c:63
 msgid "Print a help text:"
 msgstr ""
@@ -2956,12 +2956,12 @@ msgstr "Description"
 msgid "Profile Tags"
 msgstr "Fichier"
 
-#: API_generated/oyProfile_s.c:772 API_generated/oyProfile_s.c:778
-#: tools/oyranos_profiles.c:508
+#: API_generated/oyProfile_s.c:822 API_generated/oyProfile_s.c:828
+#: tools/oyranos_profiles.c:533
 msgid "Profile already installed"
 msgstr ""
 
-#: API_generated/oyProfile_s.c:759
+#: API_generated/oyProfile_s.c:809
 msgid "Profile contains no description"
 msgstr ""
 
@@ -2975,11 +2975,11 @@ msgstr "Description"
 msgid "Profile description, multilingual"
 msgstr ""
 
-#: API_generated/oyProfile_s.c:794 tools/oyranos_profile_tool.c:352
+#: API_generated/oyProfile_s.c:844 tools/oyranos_profile_tool.c:352
 msgid "Profile exists already"
 msgstr ""
 
-#: tools/oyranos_profiles.c:532
+#: tools/oyranos_profiles.c:557
 #, fuzzy
 msgid "Profile not useable"
 msgstr "Fichier"
@@ -3206,7 +3206,7 @@ msgstr ""
 msgid "Screening Description"
 msgstr "Description"
 
-#: tools/oyranos_profiles.c:277
+#: tools/oyranos_profiles.c:284
 #, fuzzy
 msgid "Search path"
 msgstr "ICC Profils"
@@ -4077,7 +4077,7 @@ msgstr "Model:"
 msgid "Write to ICC profile:"
 msgstr "ICC Profils"
 
-#: API_generated/oyProfile_s_.c:792
+#: API_generated/oyProfile_s_.c:796
 msgid "Wrong ICC profile id detected"
 msgstr ""
 
@@ -4243,7 +4243,7 @@ msgstr "Écran"
 msgid "display name"
 msgstr "Écran"
 
-#: tools/oyranos_profiles.c:88
+#: tools/oyranos_profiles.c:90
 msgid "download ID from Taxi data base"
 msgstr ""
 
@@ -4288,6 +4288,14 @@ msgstr ""
 
 #: tools/oyranos_profile_tool.c:266
 msgid "failed!"
+msgstr ""
+
+#: tools/oyranos_profiles.c:78
+msgid "filter for meta tag key/value pair"
+msgstr ""
+
+#: tools/oyranos_profiles.c:77
+msgid "filter for string part in path"
 msgstr ""
 
 #: API_generated/oyranos_devices.c:2577 API_generated/oyranos_devices.c:2588
@@ -4434,7 +4442,7 @@ msgstr ""
 msgid "libraw input filter"
 msgstr ""
 
-#: tools/oyranos_profiles.c:96
+#: tools/oyranos_profiles.c:98
 msgid "linux system path"
 msgstr ""
 
@@ -4457,7 +4465,7 @@ msgid ""
 "Oyranos wrapper: Kai-Uwe Behrmann for the Oyranos project"
 msgstr ""
 
-#: tools/oyranos_profiles.c:98
+#: tools/oyranos_profiles.c:100
 msgid "machine specific path"
 msgstr ""
 
@@ -4555,7 +4563,7 @@ msgstr "Soustraction"
 msgid "output_array_roi"
 msgstr ""
 
-#: tools/oyranos_profiles.c:97
+#: tools/oyranos_profiles.c:99
 msgid "oyranos install path"
 msgstr ""
 
@@ -4708,11 +4716,11 @@ msgstr ""
 msgid "show as well non matching profiles"
 msgstr "ICC Profils"
 
-#: tools/oyranos_profiles.c:87
+#: tools/oyranos_profiles.c:89
 msgid "show hints and question GUI"
 msgstr ""
 
-#: tools/oyranos_profiles.c:77
+#: tools/oyranos_profiles.c:79
 msgid "show profiles with duplicate profile ID"
 msgstr ""
 
@@ -4720,7 +4728,7 @@ msgstr ""
 msgid "skip X Color Management device profile"
 msgstr ""
 
-#: tools/oyranos_profiles.c:78
+#: tools/oyranos_profiles.c:80
 msgid "skip repair of profile ID"
 msgstr ""
 
@@ -4780,7 +4788,7 @@ msgstr ""
 msgid "use device class"
 msgstr ""
 
-#: tools/oyranos_profiles.c:86
+#: tools/oyranos_profiles.c:88
 msgid "use device sub path"
 msgstr ""
 
@@ -4797,13 +4805,13 @@ msgstr ""
 msgid "use rank map JSON alternatively to -c and -d options"
 msgstr ""
 
-#: tools/oyranos_profiles.c:95
+#: tools/oyranos_profiles.c:97
 msgid "user path"
 msgstr ""
 
 #: tools/oyranos-device.c:101 tools/oyranos_convert.c:103
 #: tools/oyranos_profile_graph.c:133 tools/oyranos_profile_tool.c:116
-#: tools/oyranos_profiles.c:94 examples/libraw/oyranos_file.cpp:69
+#: tools/oyranos_profiles.c:96 examples/libraw/oyranos_file.cpp:69
 msgid "verbose"
 msgstr ""
 
@@ -4851,8 +4859,9 @@ msgstr "Ouvrir Profil"
 #: API_generated/oyOptions_s.c:1549 tools/oyranos-device.c:253
 #: tools/oyranos_convert.c:270 tools/oyranos_gamma.c:254
 #: tools/oyranos_policy.c:147 tools/oyranos_profile_graph.c:264
-#: tools/oyranos_profile_tool.c:233 tools/oyranos_profiles.c:236
-#: examples/taxi.c:206 examples/libraw/oyranos_file.cpp:236
+#: tools/oyranos_profile_tool.c:233 tools/oyranos_profiles.c:244
+#: tools/oyranos_profiles.c:317 examples/taxi.c:206
+#: examples/libraw/oyranos_file.cpp:236
 msgid "wrong argument to option:"
 msgstr ""
 
