@@ -11,9 +11,9 @@
  *
  *  @param[in]  profile  the Profile object
  *
- *  @version Oyranos: x.x.x
+ *  @version Oyranos: 0.9.7
  *  @since   YYYY/MM/DD (Oyranos: x.x.x)
- *  @date    YYYY/MM/DD
+ *  @date    2017/02/18
  */
 void oyProfile_Release__Members( oyProfile_s_ * profile )
 {
@@ -31,6 +31,7 @@ void oyProfile_Release__Members( oyProfile_s_ * profile )
   profile->sig_ = (icColorSpaceSignature)0;
 
   oyStructList_Release(&profile->tags_);
+  oyConfig_Release(&profile->meta_);
 
   if(profile->oy_->deallocateFunc_)
   {
@@ -87,9 +88,9 @@ int oyProfile_Init__Members( oyProfile_s_ * profile )
  *  @param[in]   src  the oyProfile_s_ input object
  *  @param[out]  dst  the output oyProfile_s_ object
  *
- *  @version Oyranos: x.x.x
+ *  @version Oyranos: 0.9.7
  *  @since   YYYY/MM/DD (Oyranos: x.x.x)
- *  @date    YYYY/MM/DD
+ *  @date    2017/02/18
  */
 int oyProfile_Copy__Members( oyProfile_s_ * dst, oyProfile_s_ * src)
 {
@@ -142,6 +143,9 @@ int oyProfile_Copy__Members( oyProfile_s_ * dst, oyProfile_s_ * src)
 
   if(error <= 0)
     oyProfile_SetChannelNames( (oyProfile_s*)dst, src->names_chan_ );
+
+  if(error <= 0)
+    dst->meta_ = oyConfig_Copy( src->meta_, dst->oy_ );
 
   if(error)
   {

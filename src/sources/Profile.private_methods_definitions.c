@@ -456,6 +456,7 @@ int          oyProfile_ToFile_       ( oyProfile_s_      * profile,
   return error;
 }
 
+#include "oyConfig_s_.h"
 /** @internal
  *  Function  oyProfile_Match_
  *  @memberof oyProfile_s
@@ -476,8 +477,55 @@ int32_t      oyProfile_Match_        ( oyProfile_s_      * pattern,
   {
     /*match = oyProfile_Equal_(pattern, profile);*/ /* too expensive */
 
-    /** support file name patterns */
+    if(pattern->meta_)
+    /** support meta tag patterns */
+    {
+      oyConfig_s * p_device = 0, * device = pattern->meta_;
+      oyConfig_s_ * d = (oyConfig_s_*)device;
+      oyOptions_s * old_db = 0;
+      const char path_separator = OY_SLASH_C, key_separator = ',';
+      int flags = 0;
+      int32_t rank;
+
+      p_device = oyConfig_FromRegistration( d->registration, 0 );
+
+      /* oyConfig_Match assumes its options in device->db, so it is filled here.*/
+      if(!oyOptions_Count( d->db ))
+      {
+        old_db = d->db;
+        d->db = d->backend_core;
+      }
+
+      oyProfile_GetDevice( (oyProfile_s*) profile, p_device );
+      rank = 0;
+
+      if(pattern->file_name_ && strchr(pattern->file_name_,'*'))
+        flags |= OY_MATCH_SUB_STRING;
+
+      oyConfig_Match( p_device, device, path_separator, key_separator, flags, &rank );
+      if(oyConfig_FindString( p_device, "OYRANOS_automatic_generated", "1" ) ||
+         oyConfig_FindString( p_device, "OPENICC_automatic_generated", "1" ))
+      {
+        DBG_NUM2_S( "found OPENICC_automatic_generated: %d %s",
+                    rank, strrchr(oyProfile_GetFileName((oyProfile_s*)profile,-1),'/')+1);
+        /* substract serial number and accound for possible wrong model_id */
+        if(oyConfig_FindString( p_device, "serial", 0 ))
+          rank -= 13;
+        else
+          rank -= 2;
+        DBG_NUM1_S("after serial && OPENICC_automatic_generated: %d", rank);
+      }
+
+      if(old_db)
+        d->db = old_db;
+
+      if(rank <= 0)
+        match = 0;
+      oyConfig_Release( &p_device );
+
+    } else
     if(pattern->file_name_)
+    /** support file name patterns */
     {
       const char * p_fn = profile->file_name_ ?
                           profile->file_name_ :

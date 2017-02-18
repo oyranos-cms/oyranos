@@ -56,9 +56,9 @@
  *
  *  @param[in]  profile  the Profile object
  *
- *  @version Oyranos: x.x.x
+ *  @version Oyranos: 0.9.7
  *  @since   YYYY/MM/DD (Oyranos: x.x.x)
- *  @date    YYYY/MM/DD
+ *  @date    2017/02/18
  */
 void oyProfile_Release__Members( oyProfile_s_ * profile )
 {
@@ -76,6 +76,7 @@ void oyProfile_Release__Members( oyProfile_s_ * profile )
   profile->sig_ = (icColorSpaceSignature)0;
 
   oyStructList_Release(&profile->tags_);
+  oyConfig_Release(&profile->meta_);
 
   if(profile->oy_->deallocateFunc_)
   {
@@ -132,9 +133,9 @@ int oyProfile_Init__Members( oyProfile_s_ * profile )
  *  @param[in]   src  the oyProfile_s_ input object
  *  @param[out]  dst  the output oyProfile_s_ object
  *
- *  @version Oyranos: x.x.x
+ *  @version Oyranos: 0.9.7
  *  @since   YYYY/MM/DD (Oyranos: x.x.x)
- *  @date    YYYY/MM/DD
+ *  @date    2017/02/18
  */
 int oyProfile_Copy__Members( oyProfile_s_ * dst, oyProfile_s_ * src)
 {
@@ -187,6 +188,9 @@ int oyProfile_Copy__Members( oyProfile_s_ * dst, oyProfile_s_ * src)
 
   if(error <= 0)
     oyProfile_SetChannelNames( (oyProfile_s*)dst, src->names_chan_ );
+
+  if(error <= 0)
+    dst->meta_ = oyConfig_Copy( src->meta_, dst->oy_ );
 
   if(error)
   {
@@ -955,6 +959,7 @@ int          oyProfile_ToFile_       ( oyProfile_s_      * profile,
   return error;
 }
 
+#include "oyConfig_s_.h"
 /** @internal
  *  Function  oyProfile_Match_
  *  @memberof oyProfile_s
@@ -975,8 +980,55 @@ int32_t      oyProfile_Match_        ( oyProfile_s_      * pattern,
   {
     /*match = oyProfile_Equal_(pattern, profile);*/ /* too expensive */
 
-    /** support file name patterns */
+    if(pattern->meta_)
+    /** support meta tag patterns */
+    {
+      oyConfig_s * p_device = 0, * device = pattern->meta_;
+      oyConfig_s_ * d = (oyConfig_s_*)device;
+      oyOptions_s * old_db = 0;
+      const char path_separator = OY_SLASH_C, key_separator = ',';
+      int flags = 0;
+      int32_t rank;
+
+      p_device = oyConfig_FromRegistration( d->registration, 0 );
+
+      /* oyConfig_Match assumes its options in device->db, so it is filled here.*/
+      if(!oyOptions_Count( d->db ))
+      {
+        old_db = d->db;
+        d->db = d->backend_core;
+      }
+
+      oyProfile_GetDevice( (oyProfile_s*) profile, p_device );
+      rank = 0;
+
+      if(pattern->file_name_ && strchr(pattern->file_name_,'*'))
+        flags |= OY_MATCH_SUB_STRING;
+
+      oyConfig_Match( p_device, device, path_separator, key_separator, flags, &rank );
+      if(oyConfig_FindString( p_device, "OYRANOS_automatic_generated", "1" ) ||
+         oyConfig_FindString( p_device, "OPENICC_automatic_generated", "1" ))
+      {
+        DBG_NUM2_S( "found OPENICC_automatic_generated: %d %s",
+                    rank, strrchr(oyProfile_GetFileName((oyProfile_s*)profile,-1),'/')+1);
+        /* substract serial number and accound for possible wrong model_id */
+        if(oyConfig_FindString( p_device, "serial", 0 ))
+          rank -= 13;
+        else
+          rank -= 2;
+        DBG_NUM1_S("after serial && OPENICC_automatic_generated: %d", rank);
+      }
+
+      if(old_db)
+        d->db = old_db;
+
+      if(rank <= 0)
+        match = 0;
+      oyConfig_Release( &p_device );
+
+    } else
     if(pattern->file_name_)
+    /** support file name patterns */
     {
       const char * p_fn = profile->file_name_ ?
                           profile->file_name_ :
