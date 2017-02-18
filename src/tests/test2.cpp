@@ -1878,7 +1878,6 @@ oyTESTRESULT_e testProfiles ()
   }
 
   {
-    icSignature profile_class = icSigAbstractClass;
     // Get all ICC profiles, which can be used as desaturating effect profiles
     uint32_t icc_profile_flags = oyICCProfileSelectionFlagsFromOptions( 
                                       OY_CMM_STD, "//" OY_TYPE_STD "/icc_color",
