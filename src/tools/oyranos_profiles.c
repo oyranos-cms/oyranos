@@ -298,96 +298,96 @@ int main( int argc , char** argv )
         }
       } else
       {
-      ps = oyProfiles_Create( 0, flags, 0 );
-      count = oyProfiles_Count(ps);
-      for(i = 0; i < (int)count; ++i)
+        ps = oyProfiles_Create( 0, flags, 0 );
+        count = oyProfiles_Count(ps);
+        for(i = 0; i < (int)count; ++i)
         {
-        icSignature sig_class = 0;
+          icSignature sig_class = 0;
 
-        accept = 1;
-        p = 0;
-        t = 0;
+          accept = 1;
+          p = 0;
+          t = 0;
 
-        if(list_profile_full_names || list_profile_internal_names ||
-           flags & OY_ICC_VERSION_2 || flags & OY_ICC_VERSION_4)
-        {
-          p = oyProfiles_Get( ps, i );
-        }
-
-        if( color_space || input || display || output || abstract ||
-            named_color || device_link)
-        {
-          accept = 0;
-          if(!p)
+          if(list_profile_full_names || list_profile_internal_names ||
+             flags & OY_ICC_VERSION_2 || flags & OY_ICC_VERSION_4)
+          {
             p = oyProfiles_Get( ps, i );
-          sig_class = oyProfile_GetSignature( p, oySIGNATURE_CLASS );
-        }
+          }
 
-        if(!accept)
-        {
-          if(color_space && sig_class == icSigColorSpaceClass)
-            accept = 1;
-          else if(input && sig_class == icSigInputClass)
-            accept = 1;
-          else if(display && sig_class == icSigDisplayClass)
-            accept = 1;
-          else if(output && sig_class == icSigOutputClass)
-            accept = 1;
-          else if(abstract && sig_class == icSigAbstractClass)
-            accept = 1;
-          else if(device_link && sig_class == icSigLinkClass)
-            accept = 1;
-          else if(named_color && sig_class == icSigNamedColorClass)
-            accept = 1;
-        }
-
-        if( accept && (flags & OY_ICC_VERSION_2 || flags & OY_ICC_VERSION_4) )
-        {
-          icSignature vs = oyValueUInt32( oyProfile_GetSignature(p,oySIGNATURE_VERSION) );      
-          char * v = (char*)&vs;
-          if(!((flags & OY_ICC_VERSION_2 && (int)v[0] == 2) ||
-               (flags & OY_ICC_VERSION_4 && (int)v[0] == 4)))
+          if( color_space || input || display || output || abstract ||
+              named_color || device_link)
+          {
             accept = 0;
-        }
+            if(!p)
+              p = oyProfiles_Get( ps, i );
+            sig_class = oyProfile_GetSignature( p, oySIGNATURE_CLASS );
+          }
 
-        if(path)
-        {
-          const char * sfn = oyProfile_GetFileName(p, -1);
-          if(strstr(sfn, path) == NULL)
-          accept = 0;
-        }
+          if(!accept)
+          {
+            if(color_space && sig_class == icSigColorSpaceClass)
+              accept = 1;
+            else if(input && sig_class == icSigInputClass)
+              accept = 1;
+            else if(display && sig_class == icSigDisplayClass)
+              accept = 1;
+            else if(output && sig_class == icSigOutputClass)
+              accept = 1;
+            else if(abstract && sig_class == icSigAbstractClass)
+              accept = 1;
+            else if(device_link && sig_class == icSigLinkClass)
+              accept = 1;
+            else if(named_color && sig_class == icSigNamedColorClass)
+              accept = 1;
+          }
 
-        if(!list_profile_full_names && !list_profile_internal_names &&
-           accept)
-        {
-          const char * sfn = oyProfile_GetFileName(p, -1);
-          if(strrchr(sfn, OY_SLASH_C))
-            sfn = strrchr(sfn, OY_SLASH_C) + 1;
-          fprintf(stdout, "%s", sfn);
-        }
+          if( accept && (flags & OY_ICC_VERSION_2 || flags & OY_ICC_VERSION_4) )
+          {
+            icSignature vs = oyValueUInt32( oyProfile_GetSignature(p,oySIGNATURE_VERSION) );      
+            char * v = (char*)&vs;
+            if(!((flags & OY_ICC_VERSION_2 && (int)v[0] == 2) ||
+                 (flags & OY_ICC_VERSION_4 && (int)v[0] == 4)))
+              accept = 0;
+          }
 
-        if(list_profile_internal_names && accept)
-        {
-          t = oyProfile_GetText(p, oyNAME_DESCRIPTION);
-          if(t)
-            fprintf(stdout, "%s", t);
-        }
+          if(path)
+          {
+            const char * sfn = oyProfile_GetFileName(p, -1);
+            if(strstr(sfn, path) == NULL)
+            accept = 0;
+          }
 
-        if(list_profile_full_names && accept)
-        {
-          if(list_profile_internal_names)
-            fprintf(stdout, " (");
-          t = oyProfile_GetFileName(p, -1);
-          if(t)
-            fprintf(stdout, "%s", t);
-          if(list_profile_internal_names)
-            fprintf(stdout, ")");
-        }
+          if(!list_profile_full_names && !list_profile_internal_names &&
+             accept)
+          {
+            const char * sfn = oyProfile_GetFileName(p, -1);
+            if(strrchr(sfn, OY_SLASH_C))
+              sfn = strrchr(sfn, OY_SLASH_C) + 1;
+            fprintf(stdout, "%s", sfn);
+          }
 
-        if(accept)
+          if(list_profile_internal_names && accept)
+          {
+            t = oyProfile_GetText(p, oyNAME_DESCRIPTION);
+            if(t)
+              fprintf(stdout, "%s", t);
+          }
+
+          if(list_profile_full_names && accept)
+          {
+            if(list_profile_internal_names)
+              fprintf(stdout, " (");
+            t = oyProfile_GetFileName(p, -1);
+            if(t)
+              fprintf(stdout, "%s", t);
+            if(list_profile_internal_names)
+              fprintf(stdout, ")");
+          }
+
+          if(accept)
             fprintf(stdout, "\n");
 
-        oyProfile_Release( &p );
+          oyProfile_Release( &p );
         }
         oyProfiles_Release( &ps );
       }
