@@ -1,4 +1,4 @@
-.TH oyranos-profiles 1 "January 03, 2015" "User Commands"
+.TH oyranos-profiles 1 "February 18, 2017" "User Commands"
 .SH NAME
 oyranos-profiles \- Oyranos CMS ICC profiles tool
 .SH SYNOPSIS
@@ -46,6 +46,11 @@ Following options are filters and can be added to each other.
 \fB-o\fR show profiles of the \fBoutput device\fR class
 .br
 \fB-i\fR show profiles of the \fBinput device\fR class
+.br
+\fB--path\fR \fIPATH_SUB_STRING\fR show profiles containing a string as part of their full name
+.br
+\fB--meta\fR \fIKEY;VALUE\fR show profiles containing a certain key/value pair of their meta tag.
+VALUE can contain '*' to allow for substring matching
 .TP
 \fB\-p\fR
 show search paths according to the OS color management system and to the actual OpenICC profile search paths.

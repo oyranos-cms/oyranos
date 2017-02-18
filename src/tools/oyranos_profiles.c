@@ -74,6 +74,8 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "      -i  %s\n",       _("input class"));
   fprintf( stderr, "      -2  %s\n",       _("select ICC v2 profiles"));
   fprintf( stderr, "      -4  %s\n",       _("select ICC v4 profiles"));
+  fprintf( stderr, "      --path=STRING  %s\n",       _("filter for string part in path"));
+  fprintf( stderr, "      --meta=key;value  %s\n",       _("filter for meta tag key/value pair"));
   fprintf( stderr, "      --duplicates  %s\n",_("show profiles with duplicate profile ID"));
   fprintf( stderr, "      --no-repair   %s\n",_("skip repair of profile ID"));
   fprintf( stderr, "\n");
@@ -128,6 +130,8 @@ int main( int argc , char** argv )
   int install_n = 0,
       show_gui = 0;
   const char * taxi_id = NULL;
+  char * path = NULL,
+       * meta = NULL;
 
 #ifdef USE_GETTEXT
   setlocale(LC_ALL,"");
@@ -214,7 +218,11 @@ int main( int argc , char** argv )
                         { flags |= OY_NO_REPAIR;
                           i=100; break;
                         }
+                        else if(OY_IS_ARG("meta"))
+                        { OY_PARSE_STRING_ARG2(meta, "meta"); break; }
                         else if(OY_IS_ARG("path"))
+                        { OY_PARSE_STRING_ARG2(path, "path"); break; }
+                        else if(OY_IS_ARG("paths"))
                         { list_paths = 1; i=100; break; }
                         else if(OY_IS_ARG("duplicates"))
                         { flags |= OY_ALLOW_DUPLICATES; i=100; break; }
@@ -260,7 +268,6 @@ int main( int argc , char** argv )
     uint32_t count = 0, i;
     int accept;
     const char * t = 0;
-    char * path = 0;
 
     if(user_path || oyranos_path || system_path || machine_path)
     {
@@ -284,7 +291,7 @@ int main( int argc , char** argv )
       if(!(list_profile_full_names || list_profile_internal_names ||
            color_space || input || display || output || abstract ||
            named_color || device_link || flags & OY_ICC_VERSION_2 ||
-           flags & OY_ICC_VERSION_4))
+           flags & OY_ICC_VERSION_4 || meta != NULL))
       {
       names = oyProfileListGet_ ( NULL, flags, &count );
       for(i = 0; i < (int)count; ++i)
@@ -298,7 +305,25 @@ int main( int argc , char** argv )
         }
       } else
       {
-        ps = oyProfiles_Create( 0, flags, 0 );
+        oyProfiles_s * patterns = NULL;
+        if(meta)
+        {
+          oyProfile_s * pattern;
+          char * t = NULL;
+          oyStringAddPrintf( &t, oyAllocateFunc_,oyDeAllocateFunc_, "meta:%s", meta );
+          pattern = oyProfile_FromFile( t, OY_NO_LOAD, NULL );
+	  if(!pattern)
+          {
+            fprintf(stderr, "%s %s\n", _("wrong argument to option:"), meta);
+            printfHelp(argc, argv);
+            exit(1);
+          }
+          patterns = oyProfiles_New(0);
+          oyProfiles_MoveIn( patterns, &pattern, -1 );
+        }
+
+        ps = oyProfiles_Create( patterns, flags, 0 );
+        oyProfiles_Release( &patterns );
         count = oyProfiles_Count(ps);
         for(i = 0; i < (int)count; ++i)
         {
@@ -309,7 +334,7 @@ int main( int argc , char** argv )
           t = 0;
 
           if(list_profile_full_names || list_profile_internal_names ||
-             flags & OY_ICC_VERSION_2 || flags & OY_ICC_VERSION_4)
+             flags & OY_ICC_VERSION_2 || flags & OY_ICC_VERSION_4 || meta)
           {
             p = oyProfiles_Get( ps, i );
           }
