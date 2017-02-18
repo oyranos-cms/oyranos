@@ -447,7 +447,7 @@ OYAPI int OYEXPORT oyConfig_Match    ( oyConfig_s        * module_device,
            *        should be expandable to several values.
            *        Do we need more than the ICC dict style syntax here?
            */
-          if(p_val && (flags & OY_MATCH_SUB_STRING) ?
+          if((flags & OY_MATCH_SUB_STRING) ?
                       oyFilterStringMatch( d_val, p_val, oyOBJECT_NONE,
                                            path_separator, key_separator,
                                            flags ) :
@@ -474,7 +474,7 @@ OYAPI int OYEXPORT oyConfig_Match    ( oyConfig_s        * module_device,
             } else
               ++rank;
 
-            oyFree_m_(p_val);
+            if(p_val) oyFree_m_(p_val);
           } else if(rank_map)
           {
             k = 0;
