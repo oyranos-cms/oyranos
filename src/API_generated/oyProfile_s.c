@@ -404,10 +404,13 @@ OYAPI oyProfile_s * OYEXPORT oyProfile_FromName (
  *  - ::OY_ICC_VERSION_2 and ::OY_ICC_VERSION_4 let select version 2 and 4 profiles separately.
  *  - ::OY_NO_REPAIR skip automatic adding a ID hash if missed, useful for pure analysis
  *  - ::OY_SKIP_NON_DEFAULT_PATH ignore profiles outside of default paths
- *  - ::OY_NO_LOAD do not load profile, create path name fragment
+ *  - ::OY_NO_LOAD do not load profile, create path name fragment; with a given "meta:" prefix, 
+ *    the string is parsed right after the prefix as key until the semicolon ';' sign appears.
+ *    after that the string is taken as value. A star '*', at begin or end, is kept in the profile
+ *    name property for following sub string matching, but it is removed from the value string.
  *
  *  @version Oyranos: 0.9.7
- *  @date    2017/01/02
+ *  @date    2017/02/17
  *  @since   2007/11/0 (Oyranos: 0.1.9)
  */
 OYAPI oyProfile_s * OYEXPORT
@@ -430,6 +433,47 @@ oyProfile_FromFile            ( const char      * name,
     s = (oyProfile_s_*) oyProfile_New(object);
     if(s)
       s->file_name_ = oyStringCopy_( name, s->oy_->allocateFunc_ );
+
+    if(strstr(name,"meta:") != 0)
+    {
+      oyRankMap * rank_map = 0;
+      const char * rank_map_text = "{\"org\":{\"freedesktop\":{\"openicc\":{\"rank_map\":{\"meta\":[{\"%s\": [2,-1,0,\"matching\",\"not matching\",\"key not found\"]}]}}}}}";
+      const char * filter_text = "{\"org\":{\"freedesktop\":{\"openicc\":{\"config\":{\"meta\":[{\"%s\": \"%s\"}]}}}}}",
+                 * filter_registration = "org/freedesktop/openicc/config/meta";
+
+      char * key = oyStringCopy( strstr(name,"meta:") + 5, oyAllocateFunc_ );
+      char * value = strchr(key, ';'), * jrank = NULL, * jfilter = NULL;
+      if(value)
+      {
+        char * t = oyStringCopy( value + 1, oyAllocateFunc_ );
+	value[0] = '\000';
+	value = oyStringReplace_( t, "*", "", oyAllocateFunc_ );
+	oyFree_m_(t);
+      } else
+      {
+        oyMessageFunc_p( oyMSG_WARN,(oyStruct_s*)object,
+                       OY_DBG_FORMAT_ "could not parse value: %s %d\n"
+		       "need a string of form: \"meta:key;value\"",
+                       OY_DBG_ARGS_, name, flags );
+	oyFree_m_(key);
+	oyProfile_Release( (oyProfile_s**)&s );
+	return (oyProfile_s*)s;
+      }
+
+      oyStringAddPrintf( &jrank, oyAllocateFunc_,oyDeAllocateFunc_,
+                         rank_map_text, key );
+      oyStringAddPrintf( &jfilter, oyAllocateFunc_,oyDeAllocateFunc_,
+                         filter_text, key, value );
+
+      oyConfig_FromJSON( filter_registration, jfilter, 0,0, &s->meta_ );
+      oyRankMapFromJSON( jrank, NULL, &rank_map, malloc );
+      oyConfig_SetRankMap( s->meta_, rank_map );
+      oyRankMapRelease( &rank_map, free );
+      oyFree_m_(jfilter);
+      oyFree_m_(jrank );
+      oyFree_m_(key);
+      oyFree_m_(value);
+    }
 
     if(oy_debug)
       oyMessageFunc_p( oyMSG_DBG,(oyStruct_s*)object,
