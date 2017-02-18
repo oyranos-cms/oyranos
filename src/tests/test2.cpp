@@ -1871,11 +1871,41 @@ oyTESTRESULT_e testProfiles ()
       "oyProfiles_Rank( rgb )                          %d", n );
     } else
     {
-      PRINT_SUB( oyTESTRESULT_FAIL, 
+      PRINT_SUB( oyTESTRESULT_XFAIL, 
       "oyProfiles_Rank( rgb )                          %d", n );
     }
     oyProfiles_Release( &p_list );
   }
+
+  {
+    icSignature profile_class = icSigAbstractClass;
+    // Get all ICC profiles, which can be used as desaturating effect profiles
+    uint32_t icc_profile_flags = oyICCProfileSelectionFlagsFromOptions( 
+                                      OY_CMM_STD, "//" OY_TYPE_STD "/icc_color",
+                                                                     NULL, 0 );
+    oyProfiles_s * patterns = oyProfiles_New( 0 ),
+                 * profiles = 0;
+
+    // only desaturation effects
+    oyProfile_s * pattern = oyProfile_FromFile( "meta:EFFECT_desaturate;yes", OY_NO_LOAD, NULL );
+    oyProfiles_MoveIn( patterns, &pattern, -1 );
+
+    profiles = oyProfiles_Create( patterns, icc_profile_flags, 0 );
+    oyProfiles_Release( &patterns );
+
+    count = oyProfiles_Count( profiles );
+    if((int)size > count && count)
+    {
+      PRINT_SUB( oyTESTRESULT_SUCCESS,
+      "oyProfiles_Create( meta:EFFECT_desat.;yes )  %u|%d", (unsigned int)size, count );
+    } else
+    {
+      PRINT_SUB( oyTESTRESULT_XFAIL, 
+      "oyProfiles_Create( meta:EFFECT_desat.;yes )  %u|%d", (unsigned int)size, count );
+    }
+    oyProfiles_Release( &profiles );
+  }
+
 
   return result;
 }
