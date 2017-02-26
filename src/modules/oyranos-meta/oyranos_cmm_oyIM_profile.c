@@ -103,6 +103,7 @@ int        oyIMProfileCanHandle      ( oyCMMQUERY_e      type,
          switch(value) {
          case icSigColorantOrderType:
          case icSigColorantTableType:
+         case 0x74726C63:
          case icSigCurveType:
          case icSigDeviceSettingsType:
          case icSigDescriptiveNameValueMuArrayType_:
@@ -1024,12 +1025,14 @@ oyStructList_s * oyIMProfileTag_GetValues(
 
            break;
       case icSigColorantTableType:
+      case 0x74726C63: /* trlc */
            if (tag_size <= 12)
            { return texts; }
            else
            {
              count = *(icUInt32Number*)(mem+8);
-             count = oyValueUInt32( count );
+             if(sig != 0x74726C63)
+               count = oyValueUInt32( count );
 
              oySprintf_( num, "%d", count );
              oyStructList_AddName( texts, num, -1);
