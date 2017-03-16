@@ -35,7 +35,8 @@ FIND_PATH(EXIV2_INCLUDE_DIR exiv2/exiv2.hpp
    ${PC_EXIV2_INCLUDEDIR}
    ${PC_EXIF2_INCLUDE_DIRS}
    PATH_SUFFIXES exiv2
-)
+   ONLY_CMAKE_FIND_ROOT_PATH
+ )
 
 
 # handle the QUIETLY and REQUIRED arguments and set EXIV2_FOUND to TRUE if 

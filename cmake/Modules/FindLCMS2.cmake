@@ -31,7 +31,8 @@ find_path(LCMS2_INCLUDE_DIR lcms2.h
    ${LCMS2_INCLUDEDIR}
    ${LCMS2_INCLUDE_DIRS}
    PATH_SUFFIXES lcms2 liblcms2
-)
+   ONLY_CMAKE_FIND_ROOT_PATH
+ )
 
 if(NOT LCMS2_FOUND)
   find_library(LCMS2_LIBRARIES NAMES lcms2 liblcms2 liblcms2-2 lcms-2 liblcms-2

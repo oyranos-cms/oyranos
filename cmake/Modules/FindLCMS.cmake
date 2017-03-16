@@ -30,7 +30,8 @@ find_path(LCMS_INCLUDE_DIR lcms.h
    ${PC_LCMS_INCLUDEDIR}
    ${PC_LCMS_INCLUDE_DIRS}
    PATH_SUFFIXES lcms liblcms1
-)
+   ONLY_CMAKE_FIND_ROOT_PATH
+ )
 
 find_library(LCMS_LIBRARIES NAMES lcms liblcms lcms-1 liblcms-1
    HINTS
