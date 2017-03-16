@@ -119,7 +119,7 @@ IF( HAVE_ELEKTRA )
   SET( OY_MODULE_LIB ${PACKAGE_NAME}_${OY_MODULE}${OY_MODULE_NAME} )
   ADD_LIBRARY( ${OY_MODULE_LIB}
                SHARED ${PACKAGE_NAME}_cmm_${OY_MODULE}.c )
-  IF( ${PLATFORM} MATCHES Windows)
+  IF( ${CMAKE_SYSTEM_NAME} MATCHES Windows)
     # currently (Elektra-0.8.9) only a statically linked elektra works for Oyranos
     TARGET_LINK_LIBRARIES ( ${OY_MODULE_LIB} ${PROJECT_NAME} ${EXTRA_LIBS} ${ELEKTRA_LDFLAGS} elektra-full )
   ELSE()
