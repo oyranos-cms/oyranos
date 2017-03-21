@@ -11,6 +11,7 @@
 /* #cmakedefine _WIN32 */ /* already defined by the system */
 #cmakedefine HAVE_OPENMP
 #cmakedefine HAVE_C
+#cmakedefine HAVE_ICONV
 #cmakedefine HAVE_LTDL
 #cmakedefine HAVE_DL
 #cmakedefine HAVE_M
@@ -38,6 +39,7 @@
 #define LIBPNG_INCLUDE "@LIBPNG_INCLUDE@"
 #cmakedefine USE_GETTEXT
 #cmakedefine HAVE_DIRENT_H
+#cmakedefine HAVE_ICONV_H
 #cmakedefine HAVE_LANGINFO_H
 #cmakedefine HAVE_LIBINTL_H
 #cmakedefine HAVE_LOCALE_H
