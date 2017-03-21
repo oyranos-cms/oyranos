@@ -19,9 +19,11 @@
 #include <stdint.h>           /* uint64_t uintptr_t */
 #include <stdio.h>
 #include <string.h>
-#include <iconv.h>
-
 #include "oyranos_config_internal.h"
+#ifdef HAVE_ICONV_H
+# include <iconv.h>
+#endif
+
 #include "oyranos.h"
 #include "oyranos_debug.h"
 #include "oyranos_helper.h"
@@ -729,6 +731,7 @@ int                oyIconv           ( const char        * input,
 
   char * out_txt = output;
   char * in_txt = (char*)input;
+  const char * src = from_codeset ? from_codeset : oy_domain_codeset;
   const char * loc_env = 
 # ifdef USE_GETTEXT
   setlocale( LC_MESSAGES, 0 )
@@ -736,7 +739,9 @@ int                oyIconv           ( const char        * input,
   0
 # endif
   , *loc = to_codeset;
+#ifdef HAVE_ICONV_H
   iconv_t cd;
+#endif
   size_t size, in_left = len_in, out_left = len_out;
 
   /* application codeset */
@@ -753,14 +758,31 @@ int                oyIconv           ( const char        * input,
   if(!loc)
     loc = "UTF-8";
 
+#ifdef HAVE_ICONV_H
   if(!from_codeset && !oy_domain_codeset)
+#endif
   {
     error = !memcpy(output, input, sizeof(char) * OY_MIN(len_in,len_out));
     output[len_out] = 0;
+#ifndef HAVE_ICONV_H
+    /* cheap fallback for UTF-16 to ASCII */
+    if(strcmp(src,"UTF-16BE") == 0 ||
+       strcmp(src,"UTF-16LE") == 0)
+    {
+      int i;
+      int low_byte = strcmp(src,"UTF-16BE") == 0;
+
+      for(i = 0 ; i < len_in && i < len_out; i += 2)
+        output[i/2] = input[i+low_byte];
+
+      output[i/2] = 0;
+    }
+#endif
     return error;
   }
 
-  cd = iconv_open( loc, from_codeset ? from_codeset : oy_domain_codeset );
+#ifdef HAVE_ICONV_H
+  cd = iconv_open( loc, src );
   size = iconv( cd, &in_txt, &in_left, &out_txt, &out_left);
   iconv_close( cd );
   *out_txt = 0;
@@ -769,6 +791,7 @@ int                oyIconv           ( const char        * input,
     error = -1;
   else
     error = size;
+#endif
 
   return error;
 }
