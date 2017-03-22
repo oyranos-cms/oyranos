@@ -1,11 +1,21 @@
 IF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-	SET( XCM_X11_CFILES
+   SET( XCM_X11_CFILES
 		Xcm.c
 		XcmDDC.c
 		XcmDummy.c
 		XcmEvents.c
-	   )
+      )
+   SET(HAVE_LINUX TRUE)
 ENDIF()
+IF( X11_FOUND )
+   SET(HAVE_X11 TRUE)
+ENDIF()
+
+CONFIGURE_FILE (
+	"${CMAKE_CURRENT_SOURCE_DIR}/../include/X11/Xcm/XcmVersion.h.in"
+	"${CMAKE_BINARY_DIR}/src/include/X11/Xcm/XcmVersion.h"
+	@ONLY
+   )
 
 SET( CFILES_OBJECT_CONFIG_PUBLIC
 	XcmEdidParse.c
