@@ -150,3 +150,5 @@ device specific Informations (ICC profiles) und system wide settings.
 * USE\_SYSTEM\_LIBXCM - fail if not found; default is shipped fallback version
 * USE\_SYSTEM\_OPENICC - fail if not found; default is shipped fallback version
 * USE\_SYSTEM\_YAJL - fail if not found; default is shipped fallback version
+* SKIP\_QT - ignore Qt toolkit; default is detect Qt5 and Qt4
+* SKIP\_FLTK - ignore FLTK toolkit
