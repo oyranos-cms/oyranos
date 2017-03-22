@@ -3,14 +3,18 @@ IF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 	   XcmDDC.c
 	   XcmDummy.c
       )
-   SET(XCM_HAVE_LINUX TRUE)
+   SET(HAVE_LINUX "#define XCM_HAVE_LINUX 1")
+ELSE()
+   UNSET(HAVE_LINUX)
 ENDIF()
 IF( XMU_FOUND )
    SET( XCM_X11_CFILES
 	   Xcm.c
 	   XcmEvents.c
       )
-   SET(XCM_HAVE_X11 TRUE)
+   SET(HAVE_X11 "#define XCM_HAVE_X11 1")
+ELSE()
+   UNSET(HAVE_X11)
 ENDIF()
 
 CONFIGURE_FILE (
