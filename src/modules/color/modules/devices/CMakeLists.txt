@@ -3,7 +3,7 @@
 # --- variables ---
 
 # --- normal modules ---
-IF( X11_FOUND )
+IF( XMU_FOUND )
   SET( OY_MODULE oyX1 )
   SET( OY_MODULE_LIB ${PACKAGE_NAME}_${OY_MODULE}${OY_MODULE_NAME} )
   ADD_LIBRARY( ${OY_MODULE_LIB} SHARED
