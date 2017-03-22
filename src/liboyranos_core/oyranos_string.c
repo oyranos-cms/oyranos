@@ -765,6 +765,9 @@ int                oyIconv           ( const char        * input,
     error = !memcpy(output, input, sizeof(char) * OY_MIN(len_in,len_out));
     output[len_out] = 0;
 #ifndef HAVE_ICONV_H
+    if(!src)
+      return error;
+
     /* cheap fallback for UTF-16 to ASCII */
     if(strcmp(src,"UTF-16BE") == 0 ||
        strcmp(src,"UTF-16LE") == 0)
