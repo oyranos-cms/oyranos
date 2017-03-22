@@ -13,8 +13,8 @@ if(WIN32)
 else()
 	include(LibFindMacros)
 
-	find_path(DL_INCLUDE_DIR NAMES dlfcn.h)
-	find_library(DL_LIBRARY NAMES dl)
+	find_path(DL_INCLUDE_DIR NAMES dlfcn.h ONLY_CMAKE_FIND_ROOT_PATH)
+	find_library(DL_LIBRARY NAMES dl ONLY_CMAKE_FIND_ROOT_PATH)
 
 	set(DL_PROCESS_INCLUDES DL_INCLUDE_DIR)
 	set(DL_PROCESS_LIBS DL_LIBRARY)
