@@ -57,8 +57,6 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#include <iconv.h>
-
 int lrawCMMWarnFunc( int code, const oyPointer context, const char * format, ... );
 oyMessage_f message = lrawCMMWarnFunc;
 

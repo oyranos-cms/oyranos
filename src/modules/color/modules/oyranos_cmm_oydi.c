@@ -38,7 +38,7 @@
 #include <stdlib.h>
 
 #if defined(HAVE_XCM)
-#include <X11/Xcm/Xcm.h>
+#include <X11/Xcm/XcmVersion.h>
 #endif
 
 /* --- internal definitions --- */
@@ -80,6 +80,7 @@ extern oyCMMapi7_s_   oydi_api7_image_display;
 /* OY_IMAGE_DISPLAY_REGISTRATION ---------------------------------------------*/
 
 #if defined(XCM_HAVE_X11) && defined(HAVE_XCM)
+#include <X11/Xcm/Xcm.h>
 #include <X11/Xlib.h>
 #include <X11/extensions/Xfixes.h>
 #endif

@@ -21,14 +21,16 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <libxml/parser.h>
-
 
 #include "oyranos_config_internal.h"
 #include "oyranos.h"
 #include "oyranos_debug.h"
 #include "oyranos_helper.h"
 #include "oyranos_internal.h"
+
+#ifdef HAVE_LIBXML2
+#include <libxml/parser.h>
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -67,6 +69,7 @@ char *       oyXMLgetElement_        ( const char        * xml,
                                        const char        * xpath,
                                        const char        * key );
 
+#ifdef HAVE_LIBXML2
 const char *       oyXFORMsModelGetAttrValue (
                                        xmlNodePtr          cur,
                                        const char        * attr_name );
@@ -81,7 +84,7 @@ const char *       oyXFORMsModelGetXPathValue
 int                oyXMLNodeNameIs   ( xmlNodePtr          cur,
                                        const char        * node_name );
 const char *       oyXML2NodeValue   ( xmlNodePtr          cur );
-
+#endif
 
 #ifdef __cplusplus
 } /* extern "C" */

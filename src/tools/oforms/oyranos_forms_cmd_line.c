@@ -19,10 +19,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <libxml/parser.h>
-#include <libxml/xpath.h>
-#include <libxml/xpathInternals.h>
-
 #include "oyranos_config_internal.h"
 #include "oyranos.h"
 #include "oyranos_db.h"
@@ -32,6 +28,11 @@
 #include "oyranos_internal.h"
 #include "oyranos_string.h"
 #include "oyranos_xml.h"
+
+#ifdef HAVE_LIBXML2
+#include <libxml/parser.h>
+#include <libxml/xpath.h>
+#include <libxml/xpathInternals.h>
 
 /* ------------- cmd line XFORMS UI handlers ------------------*/
 
@@ -260,5 +261,11 @@ oyUiHandler_s * oy_ui_cmd_line_handlers[4] = {
   &oy_ui_cmd_line_handler_html_headline_,
   0
 };
+#else /* HAVE_LIBXML2 */
 
+oyUiHandler_s * oy_ui_cmd_line_handlers[4] = {
+  0
+};
+
+#endif /* HAVE_LIBXML2 */
 

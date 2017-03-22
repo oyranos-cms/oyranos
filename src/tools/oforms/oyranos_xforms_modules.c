@@ -35,9 +35,6 @@
 
 #include <oyFilterNode_s.h>
 
-#include <libxml/parser.h>
-#include <libxml/xpath.h>
-#include <libxml/xpathInternals.h>
 #include <stdio.h>
 #include <string.h>
 

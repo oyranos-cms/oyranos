@@ -28,7 +28,6 @@
 #include "oyNamedColors_s.h"
 #include "oyProfiles_s.h"
 
-#include <iconv.h>
 #include <math.h>
 #include <stdarg.h>
 #include <stdlib.h>

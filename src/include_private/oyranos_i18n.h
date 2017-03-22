@@ -28,7 +28,9 @@ extern "C" {
 #endif
 
 #ifdef USE_GETTEXT
-# include <libintl.h>
+# ifdef HAVE_LIBINTL_H
+#  include <libintl.h>
+# endif
 # define _(text) dgettext( oy_domain, text )
 #else
 # define _(text) text

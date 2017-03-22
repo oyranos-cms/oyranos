@@ -34,7 +34,6 @@
 #include "oyranos_definitions.h"
 #include "oyranos_string.h"
 #include "oyranos_texts.h"
-#include <iconv.h>
 #include <math.h>
 #include <stdarg.h>
 #include <stdlib.h>

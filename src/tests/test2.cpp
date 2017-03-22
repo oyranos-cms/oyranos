@@ -1218,8 +1218,10 @@ oyTESTRESULT_e testBlob ()
   return result;
 }
 
+#ifdef HAVE_LIBXML2
 #include <libxml/parser.h>
 #include <libxml/xmlsave.h>
+#endif
 
 oyTESTRESULT_e testSettings ()
 {
@@ -1233,7 +1235,9 @@ oyTESTRESULT_e testSettings ()
   int error = 0;
   oyOptions_s * opts = 0;
   oyOption_s * o;
+#ifdef HAVE_LIBXML2
   xmlDocPtr doc = 0;
+#endif
 
   oyExportReset_(EXPORT_SETTING);
 
@@ -1346,6 +1350,7 @@ oyTESTRESULT_e testSettings ()
   oyFree_m_( t );
   oyStringAdd_( &text, "</a>", 0, 0 );
 
+#ifdef HAVE_LIBXML2
   doc = xmlParseMemory( text, oyStrlen_( text ) );
   error = !doc;
   {
@@ -1366,6 +1371,7 @@ oyTESTRESULT_e testSettings ()
   xmlFreeDoc( doc );
   free(text);
   /*xmlSaveDoc( ptr, doc );*/
+#endif
 
   oyOptions_Release( &opts );
 

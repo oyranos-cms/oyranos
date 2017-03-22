@@ -17,7 +17,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <iconv.h>
 
 #include "oyProfiles_s.h"
 #include "oyCMMapi4_s.h"

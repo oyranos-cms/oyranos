@@ -19,9 +19,11 @@
 #include "oyranos_sentinel.h"
 #include "oyranos_string.h"
 #include <oyranos_texts.h>
+#ifdef HAVE_LIBXML2
 #include <libxml/parser.h>
 #include <libxml/xpath.h>
 #include <libxml/xpathInternals.h>
+#endif
 #include <stdio.h>
 #include <string.h>
 

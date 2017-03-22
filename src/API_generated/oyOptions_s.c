@@ -534,6 +534,7 @@ oyOptions_s *  oyOptions_FromText    ( const char        * text,
                                        oyObject_s          object )
 {
   oyOptions_s * s = 0;
+#ifdef HAVE_LIBXML2
   int error = !text;
   xmlDocPtr doc = 0;
   xmlNodePtr cur = 0;
@@ -588,6 +589,7 @@ oyOptions_s *  oyOptions_FromText    ( const char        * text,
     oyStringListRelease_( &texts, texts_n, oyDeAllocateFunc_ );
     xmlFreeDoc(doc);
   }
+#endif
 
   return s;
 }

@@ -19,11 +19,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <libxml/parser.h>
-#include <libxml/xmlmemory.h>
-#include <libxml/xpath.h>
-#include <libxml/xpathInternals.h>
-
 #include "oyranos_config_internal.h"
 #include "oyranos.h"
 #include "oyranos_alpha.h"
@@ -31,6 +26,13 @@
 #include "oyranos_helper.h"
 #include "oyranos_internal.h"
 #include "oyranos_string.h"
+
+#ifdef HAVE_LIBXML2
+#include <libxml/parser.h>
+#include <libxml/xmlmemory.h>
+#include <libxml/xpath.h>
+#include <libxml/xpathInternals.h>
+#endif
 
 
 /* gives string bordered by a xml style keyword */
@@ -45,10 +47,12 @@ char** oyXMLgetArray_  (const char       *xml,
                  const char       *key,
                  int              *count);
 
+#ifdef HAVE_LIBXML2
 void               oyParseXMLDoc_    ( xmlDocPtr           doc,
                                        xmlNodePtr          cur,
                                        oyUiHandler_s    ** ui_handlers,
                                        oyPointer           ui_handlers_context);
+#endif
 
 /* miscellaneous */
 
@@ -1127,6 +1131,7 @@ int          oyXFORMsRenderUi        ( const char        * xforms,
                                        oyPointer           user_data )
 {
   int error = !xforms || !ui_handlers;
+#ifdef HAVE_LIBXML2
   xmlDocPtr doc = 0;
   xmlNodePtr cur = 0;
   const char * text = xforms;
@@ -1143,6 +1148,7 @@ int          oyXFORMsRenderUi        ( const char        * xforms,
     xmlFreeDoc( doc );
   }
   else
+#endif
     error = 1;
 
   return error;
@@ -1273,6 +1279,7 @@ char *       oyXFORMsFromModelAndUi  ( const char        * data,
 }
 
 
+#ifdef HAVE_LIBXML2
 /** @internal
  *  Function oyXML2NodeName
  *  @brief   join namespace and node name
@@ -1570,4 +1577,5 @@ const char *       oyXML2NodeValue   ( xmlNodePtr          cur )
 
   return v;
 }
+#endif
 

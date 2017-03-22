@@ -33,7 +33,10 @@ typedef struct oyOptions_s_ oyOptions_s_;
 
 
 
+#include "oyranos_config_internal.h"
+#ifdef HAVE_LIBXML2
 #include <libxml/parser.h>
+#endif
   
 #include <oyranos_object.h>
 
@@ -99,12 +102,13 @@ int
 
 
 /* Include "Options.private_methods_declarations.h" { */
+#ifdef HAVE_LIBXML2
 void           oyOptions_ParseXML_   ( oyOptions_s_      * s,
                                        char            *** texts,
                                        int               * texts_n,
                                        xmlDocPtr           doc,
                                        xmlNodePtr          cur );
-
+#endif
 /* } Include "Options.private_methods_declarations.h" */
 
 

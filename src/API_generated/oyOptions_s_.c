@@ -378,6 +378,7 @@ int oyOptions_Release_( oyOptions_s_ **options )
 
 
 /* Include "Options.private_methods_definitions.c" { */
+#ifdef HAVE_LIBXML2
 /**
  *  @internal
  *  Function oyOptions_ParseXML_
@@ -446,6 +447,6 @@ void           oyOptions_ParseXML_   ( oyOptions_s_      * s,
     cur = cur->next;
   }
 }
-
+#endif
 /* } Include "Options.private_methods_definitions.c" */
 

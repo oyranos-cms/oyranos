@@ -26,7 +26,6 @@
 #include "oyranos_i18n.h"
 #include "oyranos_string.h"
 
-#include <iconv.h>
 #include <math.h>
 #include <stdarg.h>
 #include <stdlib.h>
