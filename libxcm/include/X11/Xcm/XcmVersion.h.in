@@ -16,8 +16,8 @@
 #ifndef __XCM_VERSION_H__
 #define __XCM_VERSION_H__
 
-@HAVE_X11@
-@HAVE_LINUX@
+#cmakedefine XCM_HAVE_X11
+#cmakedefine XCM_HAVE_LINUX
 
 #define XCM_VERSION_MAJOR @XCM_PACKAGE_MAJOR@
 #define XCM_VERSION_MINOR @XCM_PACKAGE_MINOR@
