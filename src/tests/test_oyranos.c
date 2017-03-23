@@ -336,7 +336,9 @@ oyTESTRESULT_e testOption ()
 
 #ifdef HAVE_LIBXML2
 #include <libxml/parser.h>
+#ifdef LIBXML_WRITER_ENABLED
 #include <libxml/xmlsave.h>
+#endif
 #endif
 
 oyTESTRESULT_e testSettings ()
@@ -475,7 +477,9 @@ oyTESTRESULT_e testSettings ()
   }
 
   oyDeAllocateFunc_(text); text = 0;
+#ifdef LIBXML_WRITER_ENABLED
   xmlDocDumpFormatMemory( doc, (xmlChar**)&text, &i, 1 );
+#endif
   oyDeAllocateFunc_(text); text = 0;
   /*xmlSaveDoc( ptr, doc );*/
   xmlFreeDoc( doc ); doc = 0;

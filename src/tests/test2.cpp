@@ -1220,7 +1220,9 @@ oyTESTRESULT_e testBlob ()
 
 #ifdef HAVE_LIBXML2
 #include <libxml/parser.h>
+#ifdef LIBXML_WRITER_ENABLED
 #include <libxml/xmlsave.h>
+#endif
 #endif
 
 oyTESTRESULT_e testSettings ()
@@ -1366,8 +1368,10 @@ oyTESTRESULT_e testSettings ()
   }
   oyFree_m_( text );
 
+#ifdef LIBXML_WRITER_ENABLED
   xmlDocDumpFormatMemory( doc, (xmlChar**)&text, &i, 1 );
   fprintf(zout,"xmlDocDump: %s\n", text);
+#endif
   xmlFreeDoc( doc );
   free(text);
   /*xmlSaveDoc( ptr, doc );*/
