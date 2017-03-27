@@ -22,8 +22,12 @@
 #cmakedefine HAVE_YAJL
 #cmakedefine HAVE_LCMS
 #cmakedefine HAVE_LCMS2
+#cmakedefine HAVE_JPEG
+#cmakedefine HAVE_LIBPNG
 #cmakedefine HAVE_LIBRAW
 #cmakedefine HAVE_EXIV2
+#cmakedefine HAVE_TIFF
+#cmakedefine HAVE_SANE
 #cmakedefine HAVE_XFIXES
 #cmakedefine HAVE_XCM
 #cmakedefine HAVE_XRANDR
@@ -35,7 +39,6 @@
 #cmakedefine HAVE_FLTK
 #cmakedefine HAVE_QT
 #cmakedefine HAVE_CAIRO
-#cmakedefine HAVE_LIBPNG
 #define LIBPNG_INCLUDE "@LIBPNG_INCLUDE@"
 #cmakedefine USE_GETTEXT
 #cmakedefine HAVE_DIRENT_H
