@@ -101,7 +101,7 @@ int          LoadDevice              ( oyConfig_s        * device,
                                        const char        * device_name,
                                        oyOptions_s       * options );
 
-oyMessage_f message = 0;
+oyMessage_f CUPS_msg = 0;
 
 extern oyCMMapi8_s_ _api8;
 
@@ -139,7 +139,7 @@ void CMMdeallocateFunc ( oyPointer mem )
  */
 int            CMMMessageFuncSet ( oyMessage_f message_func )
 {
-  message = message_func;
+  CUPS_msg = message_func;
   return 0;
 }
 
@@ -205,12 +205,12 @@ const char * _help_unset =
 void     ConfigsFromPatternUsage( oyStruct_s        * options )
 {
     /** oyMSG_WARN should make shure our message is visible. */
-    message( oyMSG_WARN, options, _DBG_FORMAT_ "\n %s",
+    CUPS_msg( oyMSG_WARN, options, _DBG_FORMAT_ "\n %s",
              _DBG_ARGS_, _help );
-    message( oyMSG_WARN, options, "%s()\n %s", __func__, _help_list );
-    message( oyMSG_WARN, options, "%s()\n %s", __func__, _help_properties );
-    message( oyMSG_WARN, options, "%s()\n %s", __func__, _help_setup );
-    message( oyMSG_WARN, options, "%s()\n %s", __func__, _help_unset );
+    CUPS_msg( oyMSG_WARN, options, "%s()\n %s", __func__, _help_list );
+    CUPS_msg( oyMSG_WARN, options, "%s()\n %s", __func__, _help_properties );
+    CUPS_msg( oyMSG_WARN, options, "%s()\n %s", __func__, _help_setup );
+    CUPS_msg( oyMSG_WARN, options, "%s()\n %s", __func__, _help_unset );
 
   return;
 }
@@ -299,7 +299,7 @@ int          DeviceAttributes_       ( ppd_file_t        * ppd,
 
       if(!device_name && !value3 && !ppd_file_location && !ppd)
       {
-        message(oyMSG_WARN, (oyStruct_s*)options, _DBG_FORMAT_
+        CUPS_msg(oyMSG_WARN, (oyStruct_s*)options, _DBG_FORMAT_
                 "The \"device_name\"  and \"device_context\" is\n"
                 " missed to select a appropriate device.", _DBG_ARGS_ );
         error = 1;
@@ -308,7 +308,7 @@ int          DeviceAttributes_       ( ppd_file_t        * ppd,
 
       if(!ppd)
       {
-        message( oyMSG_DBG, (oyStruct_s*)0, _DBG_FORMAT_ "\n"
+        CUPS_msg( oyMSG_DBG, (oyStruct_s*)0, _DBG_FORMAT_ "\n"
                     "No PPD obtained for ", _DBG_ARGS_, device_name );
         error = -1;
         return error;
@@ -582,7 +582,7 @@ int            Configs_Modify    ( oyConfigs_s       * devices,
       printer_name = oyOptions_FindString( options, "device_name", 0 );
       error = !printer_name || !profile_in;
       if(error >= 1)
-        message(oyMSG_WARN, (oyStruct_s*)options, _DBG_FORMAT_ "\n "
+        CUPS_msg(oyMSG_WARN, (oyStruct_s*)options, _DBG_FORMAT_ "\n "
               "The device_name/profile_name option is missed. Options:\n%s",
                 _DBG_ARGS_,
                 oyOptions_GetText( options, oyNAME_NICK )
@@ -605,7 +605,7 @@ int            Configs_Modify    ( oyConfigs_s       * devices,
 
       error = !printer_name;
       if(error >= 1)
-        message(oyMSG_WARN, (oyStruct_s*)options, _DBG_FORMAT_ "\n "
+        CUPS_msg(oyMSG_WARN, (oyStruct_s*)options, _DBG_FORMAT_ "\n "
                 "The device_name option is missed. Options:\n%s",
                 _DBG_ARGS_, oyOptions_GetText( options, oyNAME_NICK )
                 );
@@ -630,7 +630,7 @@ int            Configs_Modify    ( oyConfigs_s       * devices,
 
 
   /* not to be reached section, e.g. warning */
-  message(oyMSG_WARN, (oyStruct_s*)options, _DBG_FORMAT_ "\n "
+  CUPS_msg(oyMSG_WARN, (oyStruct_s*)options, _DBG_FORMAT_ "\n "
                 "This point should not be reached. Options:\n%s", _DBG_ARGS_,
                 oyOptions_GetText( options, oyNAME_NICK )
                 );
@@ -827,7 +827,7 @@ int   Config_Check ( oyConfig_s        * config )
 
     if(!config)
     {
-        message(oyMSG_DBG, (oyStruct_s*)config, _DBG_FORMAT_ "\n "
+        CUPS_msg(oyMSG_DBG, (oyStruct_s*)config, _DBG_FORMAT_ "\n "
                     "No config argument provided.\n", _DBG_ARGS_ );
         return 0;
     }
@@ -1063,7 +1063,7 @@ int CUPSgetProfiles                  ( const char        * device_name,
 
     if(!ppd_file)
     {
-      message( oyMSG_DBG, (oyStruct_s*)0, _DBG_FORMAT_ "\n"
+      CUPS_msg( oyMSG_DBG, (oyStruct_s*)0, _DBG_FORMAT_ "\n"
                     "No PPD obtained for ", _DBG_ARGS_, device_name );
       error = -1;
       return error;
@@ -1127,7 +1127,7 @@ int CUPSgetProfiles                  ( const char        * device_name,
                               oyAllocateFunc_);
       if(count != 3)
       {
-        message(oyMSG_WARN, 0, _DBG_FORMAT_ "\n "
+        CUPS_msg(oyMSG_WARN, 0, _DBG_FORMAT_ "\n "
                 "cupsICCProfile specifiers are non conforming: %d %s",
                 _DBG_ARGS_, count, oyNoEmptyString_m_(profile_name) );
         break;
@@ -1199,7 +1199,7 @@ int CUPSgetProfiles                  ( const char        * device_name,
             size_t size = 0;
             int tempfd = 0;
 
-            message(oyMSG_WARN, (oyStruct_s*)user_options, _DBG_FORMAT_ "\n "
+            CUPS_msg(oyMSG_WARN, (oyStruct_s*)user_options, _DBG_FORMAT_ "\n "
                 "Could not obtain profile information for %s. Downloading new profile: '%s'.",
                 _DBG_ARGS_, device_name?device_name:"???", profile_name);
            
