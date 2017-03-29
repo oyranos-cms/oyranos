@@ -9,6 +9,7 @@
 #cmakedefine HAVE_C
 #cmakedefine HAVE_LTDL
 #cmakedefine HAVE_DL
+#cmakedefine HAVE_ISSETUGID
 #cmakedefine HAVE_M
 #cmakedefine HAVE_YAJL
 #cmakedefine HAVE_LCMS
