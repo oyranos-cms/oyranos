@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2009-2015 (C) Kai-Uwe Behrmann
+ *            2009-2017 (C) Kai-Uwe Behrmann
  *
  *  @brief    libraw filter for Oyranos
  *  @internal
@@ -58,7 +58,7 @@ extern "C" {
 #endif /* __cplusplus */
 
 int lrawCMMWarnFunc( int code, const oyPointer context, const char * format, ... );
-oyMessage_f message = lrawCMMWarnFunc;
+oyMessage_f lraw_msg = lrawCMMWarnFunc;
 
 extern oyCMMapi4_s_   lraw_api4_image_input_libraw;
 extern oyCMMapi7_s_   lraw_api7_image_input_libraw;
@@ -158,7 +158,7 @@ int lrawCMMWarnFunc( int code, const oyPointer context, const char * format, ...
  */
 int            lrawCMMMessageFuncSet ( oyMessage_f         message_func )
 {
-  message = message_func;
+  lraw_msg = message_func;
   return 0;
 }
 
@@ -360,7 +360,7 @@ int      lrawFilterPlug_ImageInputRAWRun (
 
   node = oyFilterSocket_GetNode( socket );
 
-  message(oyMSG_DBG, (oyStruct_s*)node,
+  lraw_msg(oyMSG_DBG, (oyStruct_s*)node,
           OY_DBG_FORMAT_ " output_color was: %d  output_bps: %d no_auto_bright: %d\ng[0] %g g[1] %g",
           OY_DBG_ARGS_,
           params->output_color, params->output_bps, params->no_auto_bright,
@@ -396,7 +396,7 @@ int      lrawFilterPlug_ImageInputRAWRun (
 
   if(error)
   {
-    message( oyMSG_WARN, (oyStruct_s*)node,
+    lraw_msg( oyMSG_WARN, (oyStruct_s*)node,
              OY_DBG_FORMAT_ " could not open: %s",
              OY_DBG_ARGS_, oyNoEmptyString_m_( filename ) );
     return 1;
@@ -446,7 +446,7 @@ int      lrawFilterPlug_ImageInputRAWRun (
       data_type = oyUINT16;
       byteps = 2;
       maxval = 65535;
-      message( oyMSG_WARN, (oyStruct_s*)node,
+      lraw_msg( oyMSG_WARN, (oyStruct_s*)node,
              OY_DBG_FORMAT_ " maxval: %g",
              OY_DBG_ARGS_, maxval );
     }
@@ -479,7 +479,7 @@ int      lrawFilterPlug_ImageInputRAWRun (
   if( !info_good &&
       render)
   {
-    message( oyMSG_WARN, (oyStruct_s*)node,
+    lraw_msg( oyMSG_WARN, (oyStruct_s*)node,
              OY_DBG_FORMAT_ "failed to get info of %s",
              OY_DBG_ARGS_, oyNoEmptyString_m_( filename ));
     return FALSE;
@@ -617,7 +617,7 @@ int      lrawFilterPlug_ImageInputRAWRun (
   if(oy_debug)
   {
     const char * t = oyProfile_GetText( prof, oyNAME_NAME );
-    message( oyMSG_DBG, (oyStruct_s*)node,
+    lraw_msg( oyMSG_DBG, (oyStruct_s*)node,
              OY_DBG_FORMAT_ "image profile %s",
              OY_DBG_ARGS_,  t?t:"---" );
   }
@@ -646,7 +646,7 @@ int      lrawFilterPlug_ImageInputRAWRun (
 
   if (!image_in)
   {
-      message( oyMSG_WARN, (oyStruct_s*)node,
+      lraw_msg( oyMSG_WARN, (oyStruct_s*)node,
              OY_DBG_FORMAT_ "libraw can't create a new image\n%dx%d %d",
              OY_DBG_ARGS_,  width, height, pixel_type );
       oyFree_m_ (buf)
