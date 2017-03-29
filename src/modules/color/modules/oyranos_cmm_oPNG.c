@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2008-2014 (C) Kai-Uwe Behrmann
+ *            2008-2017 (C) Kai-Uwe Behrmann
  *
  *  @brief    PNG module for Oyranos
  *  @internal
@@ -45,7 +45,7 @@
 #define CMM_NICK "oPNG"
 #define CMM_VERSION {0,1,0}
 
-oyMessage_f message = oyMessageFunc;
+oyMessage_f oPNG_msg = oyMessageFunc;
 
 extern oyCMMapi4_s_   oPNG_api4_image_write_png;
 extern oyCMMapi7_s_   oPNG_api7_image_write_png;
@@ -73,7 +73,7 @@ int                oPNGCMMInit       ( oyStruct_s        * filter )
  */
 int            oPNGCMMMessageFuncSet ( oyMessage_f         message_func )
 {
-  message = message_func;
+  oPNG_msg = message_func;
   return 0;
 }
 
@@ -123,13 +123,13 @@ oyCMM_s oPNG_cmm_module = {
 
 void oPNGerror( png_structp png, const char * text )
 {
-  message( oyMSG_ERROR, (oyStruct_s*)NULL/*node*/,
+  oPNG_msg( oyMSG_ERROR, (oyStruct_s*)NULL/*node*/,
              OY_DBG_FORMAT_ "%s",
              OY_DBG_ARGS_, text );
 }
 void oPNGwarn( png_structp png, const char * text )
 {
-  message( oyMSG_WARN, (oyStruct_s*)NULL/*node*/,
+  oPNG_msg( oyMSG_WARN, (oyStruct_s*)NULL/*node*/,
              OY_DBG_FORMAT_ "%s",
              OY_DBG_ARGS_, text );
 }
@@ -315,7 +315,7 @@ int  oyImage_WritePNG                ( oyImage_s         * image,
     text_ptr[1].lang_key = NULL;
 #endif
     png_set_text(png_ptr, info_ptr, text_ptr, 2);
-    if(t) free(t); t = 0;
+    if(t) { free(t); t = 0; }
   }
 
    /* Other optional chunks like cHRM, bKGD, tRNS, tIME, oFFs, pHYs */
@@ -434,7 +434,7 @@ int      oPNGFilterPlug_ImageOutputPNGWrite (
     fp = fopen( filename, "wb" );
   else
   {
-    message( oyMSG_WARN, node,
+    oPNG_msg( oyMSG_WARN, node,
              OY_DBG_FORMAT_ "filename missed",
              OY_DBG_ARGS_ );
     if(result <= 0)
@@ -451,7 +451,7 @@ int      oPNGFilterPlug_ImageOutputPNGWrite (
     oyImage_Release( &image );
   }
   else
-    message( oyMSG_WARN, node,
+    oPNG_msg( oyMSG_WARN, node,
              OY_DBG_FORMAT_ "could not open: %s",
              OY_DBG_ARGS_, oyNoEmptyString_m_( filename ) );
 
@@ -763,7 +763,7 @@ oyImage_s *  oyImage_FromPNG         ( const char        * filename,
 
   if(!fp)
   {
-    message( oyMSG_WARN, object,
+    oPNG_msg( oyMSG_WARN, object,
              OY_DBG_FORMAT_ " could not open: %s",
              OY_DBG_ARGS_, oyNoEmptyString_m_( filename ) );
     return NULL;
@@ -780,7 +780,7 @@ oyImage_s *  oyImage_FromPNG         ( const char        * filename,
 
   fpos = fread( data, sizeof(uint8_t), size, fp );
   if( fpos < (size_t)size ) {
-    message( oyMSG_WARN, object,
+    oPNG_msg( oyMSG_WARN, object,
              OY_DBG_FORMAT_ " could not read: %s %d %d",
              OY_DBG_ARGS_, oyNoEmptyString_m_( filename ), size, (int)fpos );
     oyFree_m_( data )
@@ -870,7 +870,7 @@ oyImage_s *  oyImage_FromPNG         ( const char        * filename,
   }
   pixel_layout |= oyDataType_m(data_type);
 
-  message( oyMSG_DBG, object,
+  oPNG_msg( oyMSG_DBG, object,
              OY_DBG_FORMAT_ " color_type: %d width: %d spp:%d channels: %d",
              OY_DBG_ARGS_, color_type, width, spp,oyToChannels_m(pixel_layout));
 
@@ -889,7 +889,7 @@ oyImage_s *  oyImage_FromPNG         ( const char        * filename,
                       &profile, &proflen ) )
     {
       prof = oyProfile_FromMem( proflen, profile, 0,0 );
-      message( oyMSG_DBG, object,
+      oPNG_msg( oyMSG_DBG, object,
              OY_DBG_FORMAT_ " ICC profile (size: %d): \"%s\"",
              OY_DBG_ARGS_, proflen, oyNoEmptyString_m_( name ) );
       if(getenv("oPNG_ICC"))
@@ -929,7 +929,7 @@ oyImage_s *  oyImage_FromPNG         ( const char        * filename,
 
   if (!image_in)
   {
-      message( oyMSG_WARN, object,
+      oPNG_msg( oyMSG_WARN, object,
              OY_DBG_FORMAT_ "PNG can't create a new image\n%dx%d %d",
              OY_DBG_ARGS_,  width, height, pixel_layout );
       oyFree_m_ (data)
@@ -952,7 +952,7 @@ oyImage_s *  oyImage_FromPNG         ( const char        * filename,
   if(!info_good)
   {
     oyImage_Release( &image_in );
-    message( oyMSG_WARN, object,
+    oPNG_msg( oyMSG_WARN, object,
              OY_DBG_FORMAT_ " could not read: %s %d %d",
              OY_DBG_ARGS_, oyNoEmptyString_m_( filename ), fsize, (int)fpos );
   }
@@ -1028,7 +1028,7 @@ int      oPNGFilterPlug_ImageInputPNGRun (
 
   if(!image_in)
   {
-    message( oyMSG_WARN, (oyStruct_s*)node,
+    oPNG_msg( oyMSG_WARN, (oyStruct_s*)node,
              OY_DBG_FORMAT_ " failed: %s",
              OY_DBG_ARGS_, oyNoEmptyString_m_( filename ) );
     return error;
