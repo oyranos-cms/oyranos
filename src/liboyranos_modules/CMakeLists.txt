@@ -140,9 +140,12 @@ INSTALL( TARGETS ${PROJECT_NAME}Modules
 
 IF(ENABLE_STATIC_LIBS)
   ADD_LIBRARY( oyranos_modules-static STATIC ${SOURCES} )
-  TARGET_LINK_LIBRARIES (
-    oyranos_modules-static
-    oyranos_object-static oyranos_core-static ${EXTRA_LIBS} )
+  SET_TARGET_PROPERTIES ( oyranos_modules-static PROPERTIES COMPILE_DEFINITIONS "COMPILE_STATIC=1" )
+  TARGET_LINK_LIBRARIES ( oyranos_modules-static
+	  ${PACKAGE_NAME}_oall_cmm_module-static
+          oyranos_object-static
+          oyranos_core-static
+          ${EXTRA_LIBS} )
 
   INSTALL( TARGETS oyranos_modules-static
           RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
