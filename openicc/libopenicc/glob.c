@@ -92,8 +92,6 @@ __FBSDID("$FreeBSD: release/10.0.0/lib/libc/gen/glob.c 249381 2013-04-11 20:15:3
 #include <unistd.h>
 #include <wchar.h>
 
-#include "collate.h"
-
 /*
  * glob(3) expansion limits. Stop the expansion if any of these limits
  * is reached. This caps the runtime in the face of DoS attacks. See
@@ -392,7 +390,15 @@ globexp2(const Char *ptr, const Char *pattern, glob_t *pglob, int *rv,
 	return (0);
 }
 
-
+#if !defined(HAVE_ISSETUGID)
+#include <sys/auxv.h>
+/* from OpenBSD */
+int issetugid(void)
+{
+	errno = 0;
+	return !(getauxval(AT_SECURE) == 0 && errno != ENOENT);
+}
+#endif /* !HAVE_ISSETUGID */
 
 /*
  * expand tilde from the passwd file.
@@ -808,8 +814,6 @@ match(Char *name, Char *pat, Char *patend)
 {
 	int ok, negate_range;
 	Char c, k;
-	struct xlocale_collate *table =
-		(struct xlocale_collate*)__get_locale()->components[XLC_COLLATE];
 
 	while (pat < patend) {
 		c = *pat++;
@@ -834,11 +838,7 @@ match(Char *name, Char *pat, Char *patend)
 				++pat;
 			while (((c = *pat++) & M_MASK) != M_END)
 				if ((*pat & M_MASK) == M_RNG) {
-					if (table->__collate_load_error ?
-					    CHAR(c) <= CHAR(k) && CHAR(k) <= CHAR(pat[1]) :
-					       __collate_range_cmp(table, CHAR(c), CHAR(k)) <= 0
-					    && __collate_range_cmp(table, CHAR(k), CHAR(pat[1])) <= 0
-					   )
+					if (CHAR(c) <= CHAR(k) && CHAR(k) <= CHAR(pat[1]))
 						ok = 1;
 					pat += 2;
 				} else if (c == k)
