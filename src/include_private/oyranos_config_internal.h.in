@@ -18,6 +18,7 @@
 #cmakedefine HAVE_CUPS
 #cmakedefine HAVE_PTHREAD
 #cmakedefine HAVE_ELEKTRA
+#cmakedefine HAVE_OPENICC
 #cmakedefine HAVE_LIBXML2
 #cmakedefine HAVE_YAJL
 #cmakedefine HAVE_LCMS
@@ -25,6 +26,7 @@
 #cmakedefine HAVE_JPEG
 #cmakedefine HAVE_LIBPNG
 #cmakedefine HAVE_LIBRAW
+#cmakedefine HAVE_LIBRAW_PLUGIN
 #cmakedefine HAVE_EXIV2
 #cmakedefine HAVE_TIFF
 #cmakedefine HAVE_SANE
