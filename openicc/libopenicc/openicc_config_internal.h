@@ -33,6 +33,9 @@
 #define oyjl_string_list_add_static_string openiccStringListAddStaticString
 #define oyjl_string_to_long            openiccStringToLong
 #define oyjl_array_free                openiccJArrayFree
+#define oyjl_message_func              openiccJMessageFunc
+#define oyjl_message_func_set          openiccJMessageFuncSet
+#define oyjl_message_p                 openiccJMessage_p
 #define oyjl_object_free               openiccJObjectFree
 #define oyjl_tree_callbacks            openicc_jtree_callbacks
 #define oyjl_tree_free                 openiccJTreeFree
