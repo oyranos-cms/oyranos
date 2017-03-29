@@ -513,17 +513,18 @@ oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s         * api_ )
     case oyOBJECT_CMM_API5_S:
     {
       oyCMMapi5_s_ * s = (oyCMMapi5_s_*)api;
-      if(!(s->oyCMMInit &&
+      error = 1;
+      if(s->oyCMMInit &&
            s->oyCMMMessageFuncSet &&
            s->registration && s->registration[0] &&
            (s->version[0] || s->version[1] || s->version[2]) &&
            s->oyCMMFilterLoad &&
            s->oyCMMFilterScan
-            ) )
+            )
       {
         int module_api = 10000*s->module_api[0] + 100*s->module_api[1] + 1*s->module_api[2];
-        if(module_api < 906) /* last API break */
-          error = 1;
+        if(module_api >= 907) /* last API break */
+          error = 0;
       }
     } break;
     case oyOBJECT_CMM_API6_S:
