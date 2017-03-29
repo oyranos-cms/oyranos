@@ -4028,7 +4028,7 @@ oyTESTRESULT_e testCMMsShow ()
                               "        rank_map[#]:"
                                       " \"key\"  match,none_match,not_found\n" );
                     STRING_ADD( text, text_tmp );
-                    while(cmm_api8->rank_map[l].key)
+                    while(cmm_api8->rank_map && cmm_api8->rank_map[l].key)
                     {
                       snprintf( text_tmp, 65535,
                               "        rank_map[%d]: \"%s\"  %d,%d,%d\n", l,
