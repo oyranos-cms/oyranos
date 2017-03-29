@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: oyranos\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2017-03-21 20:44+0100\n"
+"POT-Creation-Date: 2017-03-29 06:59+0200\n"
 "PO-Revision-Date: 2012-10-19 15:10+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -957,7 +957,7 @@ msgstr "Konvertovat do WWW (sRGB)"
 msgid "Convert to untagged Cmyk, preserving Cmyk numbers"
 msgstr "Konvertovat do neoznačeného CMYK se zachováním CMYK hodnot"
 
-#: API_generated/oyranos_module.c:1399 liboyranos_config/oyranos_icc.c:460
+#: API_generated/oyranos_module.c:1413 liboyranos_config/oyranos_icc.c:460
 msgid "Copyright"
 msgstr "Copyright"
 
@@ -1024,7 +1024,7 @@ msgstr "Copyright (c) 2009 Kai-Uwe Behrmann; newBSD"
 msgid "Copyright:       "
 msgstr "Copyright:       "
 
-#: API_generated/oyranos_module.c:2020
+#: API_generated/oyranos_module.c:2034
 msgid "Could not allocate memory for:"
 msgstr "Nelze alokovat paměť pro:"
 
@@ -1037,7 +1037,12 @@ msgstr "Nelze zapisovat do souboru"
 msgid "Could not download from WWW. Please install curl or wget."
 msgstr "Nelze stáhnout z WWW. Nainstalujte prosím \"curl\" nebo \"wget\"."
 
-#: API_generated/oyranos_module.c:791
+#: API_generated/oyranos_module.c:795
+#, fuzzy
+msgid "Could not find any meta module."
+msgstr "Nelze otevřít meta modul API"
+
+#: API_generated/oyranos_module.c:799
 msgid ""
 "Could not find any meta module. Did you set the OY_MODULE_PATH variable, to "
 "point to a Oyranos module loader library?"
@@ -1058,7 +1063,7 @@ msgstr "Nelze otevřít výchozí profil ICC"
 msgid "Could not open device"
 msgstr "Nelze otevřít zařízení"
 
-#: API_generated/oyranos_module.c:174
+#: API_generated/oyranos_module.c:179
 msgid "Could not open meta module API"
 msgstr "Nelze otevřít meta modul API"
 
@@ -2334,7 +2339,7 @@ msgstr "Luv"
 #: API_generated/oyProfileTag_s_.c:208 API_generated/oyProfile_s_.c:322
 #: API_generated/oyProfiles_s_.c:195 API_generated/oyRectangle_s_.c:191
 #: API_generated/oyStructList_s_.c:239 API_generated/oyranos_devices.c:3583
-#: API_generated/oyranos_module.c:1561 liboyranos/oyranos_alpha.c:260
+#: API_generated/oyranos_module.c:1575 liboyranos/oyranos_alpha.c:260
 #: liboyranos_modules/oyranos_forms.c:56
 msgid "MEM Error."
 msgstr ""
@@ -2376,7 +2381,7 @@ msgstr ""
 msgid "Magic:           "
 msgstr "Datum:       "
 
-#: API_generated/oyranos_module.c:1398 API_generated/oyranos_profile.c:44
+#: API_generated/oyranos_module.c:1412 API_generated/oyranos_profile.c:44
 msgid "Manufacturer"
 msgstr "Výrobce"
 
@@ -2531,7 +2536,7 @@ msgstr ""
 msgid "NUMBER"
 msgstr ""
 
-#: API_generated/oyranos_module.c:1397
+#: API_generated/oyranos_module.c:1411
 msgid "Name"
 msgstr "Jméno"
 
@@ -4541,7 +4546,7 @@ msgstr "aktivovat jednoduché výchozí hodnoty"
 
 #: API_generated/oyConversion_s.c:190 API_generated/oyFilterNode_s_.c:594
 #: API_generated/oyranos_devices.c:2660 API_generated/oyranos_devices.c:3166
-#: API_generated/oyranos_module.c:2012
+#: API_generated/oyranos_module.c:2026
 msgid "error in module:"
 msgstr "chyba v modulu:"
 

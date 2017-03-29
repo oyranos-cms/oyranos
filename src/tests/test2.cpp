@@ -2786,14 +2786,6 @@ oyTESTRESULT_e testWidgets ()
   return result;
 }
 
-/* forward declaration */
-#ifdef __cplusplus
-extern "C" {
-#endif
-char ** oyCMMsGetLibNames_           ( uint32_t          * n );
-#ifdef __cplusplus
-}
-#endif
 
 #include "oyranos_devices.h"
 
@@ -3841,7 +3833,7 @@ oyTESTRESULT_e testCMMsShow ()
 
   fprintf(zout, "\n" );
 
-  texts = oyCMMsGetLibNames_( &count );
+  texts = oyCMMsGetLibNames_p( &count );
 
   /* Create a oforms style xhtml to present in a XFORMS viewer like
    * oyranos-xforms-fltk or FF with XFORMS plug-in.
@@ -3875,7 +3867,7 @@ oyTESTRESULT_e testCMMsShow ()
 
   for( i = 0; i < (int)count; ++i)
   {
-    cmm_info = (oyCMMinfo_s_*)oyCMMinfoFromLibName_( texts[i] );
+    cmm_info = (oyCMMinfo_s_*)oyCMMinfoFromLibName_p( texts[i] );
     if(cmm_info)
       tmp = (oyCMMapi_s_*)cmm_info->api;
     else
@@ -4109,10 +4101,10 @@ oyTESTRESULT_e testCMMsShow ()
 
   if( count )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyCMMsGetLibNames_( ) found %u                     ", (unsigned int)count );
+    "oyCMMsGetLibNames_p( ) found %u                    ", (unsigned int)count );
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
-    "oyCMMsGetLibNames_( ) found %u                     ", (unsigned int)count );
+    "oyCMMsGetLibNames_p( ) found %u                    ", (unsigned int)count );
   }
 
   oyDeAllocateFunc_( text_tmp );

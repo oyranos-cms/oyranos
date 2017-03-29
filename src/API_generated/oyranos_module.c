@@ -51,6 +51,7 @@ extern const char * (*oyStruct_GetTextFromModule_p) (
                                        oyNAME_e            name_type,
                                        uint32_t            flags );
 
+
 /** @internal
  *  @brief    Let a oyCMMapi5_s meta module open a set of modules
  *
@@ -167,9 +168,13 @@ oyCMMapiFilters_s * oyCMMsGetFilterApis_(const char        * registration,
         error = 1;
 
       if(error <= 0)
+#if defined(COMPILE_STATIC)
+        files = oyCMMsGetLibNames_p( &files_n );
+#else
         files = oyCMMsGetNames_(&files_n, api5->sub_paths, api5->ext,
                                 api5->data_type == 0 ? oyPATH_MODULE :
                                                        oyPATH_SCRIPT);
+#endif
       else
         WARNc2_S("%s: %s", _("Could not open meta module API"),
                  oyNoEmptyString_m_( registration ));
@@ -473,7 +478,7 @@ oyCMMapi_s *     oyCMMsGetApi__      ( oyOBJECT_e          type,
   if(error <= 0)
   {
     /* open the module */
-    oyCMMinfo_s * cmm_info = oyCMMinfoFromLibName_( lib_name );
+    oyCMMinfo_s * cmm_info = oyCMMinfoFromLibName_p( lib_name );
 
     if(cmm_info)
     {
@@ -555,12 +560,12 @@ oyCMMapi_s *     oyCMMsGetApi_       ( oyOBJECT_e          type,
              max_rank = 0;
     int max_pos = -1;
 
-    files = oyCMMsGetLibNames_(&files_n);
+    files = oyCMMsGetLibNames_p( &files_n );
 
     /* open the modules */
     for( i = 0; i < files_n; ++i)
     {
-      oyCMMinfo_s * cmm_info = oyCMMinfoFromLibName_(files[i]);
+      oyCMMinfo_s * cmm_info = oyCMMinfoFromLibName_p(files[i]);
 
       if(cmm_info)
       {
@@ -782,22 +787,26 @@ oyCMMapis_s *    oyCMMsGetMetaApis_  ( )
     uint32_t  files_n = 0;
     int i = 0;
 
-    files = oyCMMsGetLibNames_(&files_n);
+    files = oyCMMsGetLibNames_p(&files_n);
 
     if(!files_n)
     {
+#if defined(COMPILE_STATIC)
+      WARNc1_S("%s", _("Could not find any meta module."));
+#else
       const char * v = getenv(OY_MODULE_PATH);
       WARNc2_S("%s OY_MODULE_PATH: \"%s\"",
                _("Could not find any meta module. "
                 "Did you set the OY_MODULE_PATH variable,"
                 " to point to a Oyranos module loader library?"),
                 oyNoEmptyString_m_(v) );
+#endif
     }
 
     /* open the modules */
     for( i = 0; i < files_n; ++i)
     {
-      oyCMMinfo_s * cmm_info = oyCMMinfoFromLibName_(files[i]);
+      oyCMMinfo_s * cmm_info = oyCMMinfoFromLibName_p(files[i]);
 
       if(cmm_info)
       {
@@ -1084,7 +1093,7 @@ char **          oyCMMsGetNames_     ( uint32_t          * n,
  *  @date    2015/01/26
  *  @since   2007/12/12 (Oyranos: 0.1.8)
  */
-char **          oyCMMsGetLibNames_  ( uint32_t          * n )
+char **  oyCMMsGetLibNamesDynamic    ( uint32_t          * n )
 {
   return oyCMMsGetNames_(n, OY_METASUBPATH, 0, oyPATH_MODULE);
 }
@@ -1175,7 +1184,7 @@ oyCMMinfo_s *    oyCMMOpen_          ( const char        * lib_name )
 
         /* init */
         if(error <= 0)
-        error = oyCMMapi_GetInitF(api)( (oyStruct_s*) api );
+          error = oyCMMapi_GetInitF(api)( (oyStruct_s*) api );
         if(error > 0)
         {
           cmm_info = NULL;
@@ -1205,7 +1214,7 @@ oyCMMinfo_s *    oyCMMOpen_          ( const char        * lib_name )
  *  @since Oyranos: version 0.1.8
  *  @date  5 december 2007 (API 0.1.8)
  */
-oyCMMinfo_s *    oyCMMinfoFromLibName_(const char        * lib_name )
+oyCMMinfo_s *    oyCMMinfoFromLibNameDynamic(const char        * lib_name )
 {
   oyCMMinfo_s * cmm_info = 0;
   oyCMMhandle_s * cmm_handle = 0;
@@ -1225,6 +1234,11 @@ oyCMMinfo_s *    oyCMMinfoFromLibName_(const char        * lib_name )
 
   return cmm_info;
 }
+
+#if !defined(COMPILE_STATIC)
+char **  (*oyCMMsGetLibNames_p) ( uint32_t* ) = &oyCMMsGetLibNamesDynamic;
+oyCMMinfo_s* (*oyCMMinfoFromLibName_p)(const char*) = &oyCMMinfoFromLibNameDynamic;
+#endif
 
 /** @internal
  *  @brief Oyranos wrapper for dlopen

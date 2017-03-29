@@ -23,13 +23,13 @@ int main( int argc, char ** argv)
     uint32_t  files_n = 0;
     int i;
 
-    files = oyCMMsGetLibNames_(&files_n);
-    oyMessageFunc_p(oyMSG_WARN,NULL,"internal API oyCMMsGetLibNames_() = %d", files_n);
+    files = oyCMMsGetLibNames_p(&files_n);
+    oyMessageFunc_p(oyMSG_WARN,NULL,"internal API oyCMMsGetLibNames_p() = %d", files_n);
     if(files_n)
     {
       for(i = 0; i < files_n; ++i)
       {
-        oyCMMinfo_s * cmm_info = oyCMMinfoFromLibName_(files[i]);
+        oyCMMinfo_s * cmm_info = oyCMMinfoFromLibName_p(files[i]);
 
         if(cmm_info)
         {
@@ -37,7 +37,7 @@ int main( int argc, char ** argv)
           char ** files2 = NULL;
           uint32_t  files2_n = 0;
 
-          oyMessageFunc_p(oyMSG_WARN,cmm_info,"oyCMMinfoFromLibName_(file[%d]): success \"%s\"", i, files[i]);
+          oyMessageFunc_p(oyMSG_WARN,cmm_info,"oyCMMinfoFromLibName_p(file[%d]): success \"%s\"", i, files[i]);
 
           tmp = oyCMMinfo_GetApi( cmm_info );
 	  if(!tmp)
@@ -53,12 +53,18 @@ int main( int argc, char ** argv)
 	  {
             oyCMMapi5_s_ * api5 = (oyCMMapi5_s_*) tmp;
             int j;
+            oyOBJECT_e type = oyCMMapi_Check_( tmp );
+	    if(type != oyOBJECT_CMM_API5_S)
+            {
+              oyMessageFunc_p(oyMSG_ERROR,NULL,"[%d]: API check failed from \"%s\"", i, files[i]);
+              break;
+            }
             files2 = oyCMMsGetNames_(&files2_n, api5->sub_paths, api5->ext,
                                 api5->data_type == 0 ? oyPATH_MODULE :
                                                        oyPATH_SCRIPT);
             for(j = 0; j < files2_n; ++j)
             {
-              oyCMMinfo_s * cmm_info2 = oyCMMinfoFromLibName_(files2[j]);
+              oyCMMinfo_s * cmm_info2 = oyCMMinfoFromLibName_p(files2[j]);
 	      if(cmm_info2)
                 oyMessageFunc_p(oyMSG_WARN,api5,"[%d][%d]: success %s %s %d \"%s\"", i,j, oyCMMinfo_GetCMM(cmm_info2), oyCMMinfo_GetVersion(cmm_info2), oyCMMinfo_GetCompatibility(cmm_info2), files2[j]);
 	      else
@@ -87,7 +93,7 @@ int main( int argc, char ** argv)
       const char * t = getenv("OY_MODULE_PATH");
       error = 1;
       oy_debug = 4;
-      files = oyCMMsGetLibNames_(&files_n);
+      files = oyCMMsGetLibNames_p(&files_n);
       oyMessageFunc_p(oyMSG_ERROR,NULL,"no  meta module (OY_MODULE_PATH=%s)", t?t:"");
     }
   }

@@ -165,7 +165,7 @@ int          oyIMFilterScan          ( oyPointer           data,
       if(info_sym)
         oyFree_m_(info_sym);
 #else
-      cmm_info = (oyCMM_s*)oyCMMinfoFromLibName_( lib_name );
+      cmm_info = (oyCMM_s*)oyCMMinfoFromLibName_p( lib_name );
 #endif
 
       error = !cmm_info;

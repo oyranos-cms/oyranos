@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ICC Examin 0.41\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2017-03-21 20:44+0100\n"
+"POT-Creation-Date: 2017-03-29 06:59+0200\n"
 "PO-Revision-Date: 2006-06-29 19:31+0200\n"
 "Last-Translator: Pascal LACROIX <lacroixpascal at vfemail.net>\n"
 "Language-Team: <fr@li.org>\n"
@@ -938,7 +938,7 @@ msgstr ""
 msgid "Convert to untagged Cmyk, preserving Cmyk numbers"
 msgstr ""
 
-#: API_generated/oyranos_module.c:1399 liboyranos_config/oyranos_icc.c:460
+#: API_generated/oyranos_module.c:1413 liboyranos_config/oyranos_icc.c:460
 msgid "Copyright"
 msgstr "Copyright"
 
@@ -1002,7 +1002,7 @@ msgstr ""
 msgid "Copyright:       "
 msgstr "Copyright"
 
-#: API_generated/oyranos_module.c:2020
+#: API_generated/oyranos_module.c:2034
 #, fuzzy
 msgid "Could not allocate memory for:"
 msgstr "Ouvrir Profil"
@@ -1016,7 +1016,12 @@ msgstr "Ouvrir Profil"
 msgid "Could not download from WWW. Please install curl or wget."
 msgstr ""
 
-#: API_generated/oyranos_module.c:791
+#: API_generated/oyranos_module.c:795
+#, fuzzy
+msgid "Could not find any meta module."
+msgstr "Ouvrir Profil"
+
+#: API_generated/oyranos_module.c:799
 msgid ""
 "Could not find any meta module. Did you set the OY_MODULE_PATH variable, to "
 "point to a Oyranos module loader library?"
@@ -1038,7 +1043,7 @@ msgstr "Ouvrir Profil"
 msgid "Could not open device"
 msgstr "Ouvrir Profil"
 
-#: API_generated/oyranos_module.c:174
+#: API_generated/oyranos_module.c:179
 #, fuzzy
 msgid "Could not open meta module API"
 msgstr "Ouvrir Profil"
@@ -2269,7 +2274,7 @@ msgstr "Luv"
 #: API_generated/oyProfileTag_s_.c:208 API_generated/oyProfile_s_.c:322
 #: API_generated/oyProfiles_s_.c:195 API_generated/oyRectangle_s_.c:191
 #: API_generated/oyStructList_s_.c:239 API_generated/oyranos_devices.c:3583
-#: API_generated/oyranos_module.c:1561 liboyranos/oyranos_alpha.c:260
+#: API_generated/oyranos_module.c:1575 liboyranos/oyranos_alpha.c:260
 #: liboyranos_modules/oyranos_forms.c:56
 msgid "MEM Error."
 msgstr ""
@@ -2311,7 +2316,7 @@ msgstr ""
 msgid "Magic:           "
 msgstr "Taille:      "
 
-#: API_generated/oyranos_module.c:1398 API_generated/oyranos_profile.c:44
+#: API_generated/oyranos_module.c:1412 API_generated/oyranos_profile.c:44
 #, fuzzy
 msgid "Manufacturer"
 msgstr "Fabricant:   "
@@ -2464,7 +2469,7 @@ msgstr ""
 msgid "NUMBER"
 msgstr ""
 
-#: API_generated/oyranos_module.c:1397
+#: API_generated/oyranos_module.c:1411
 msgid "Name"
 msgstr "Nom"
 
@@ -4273,7 +4278,7 @@ msgstr ""
 
 #: API_generated/oyConversion_s.c:190 API_generated/oyFilterNode_s_.c:594
 #: API_generated/oyranos_devices.c:2660 API_generated/oyranos_devices.c:3166
-#: API_generated/oyranos_module.c:2012
+#: API_generated/oyranos_module.c:2026
 msgid "error in module:"
 msgstr ""
 

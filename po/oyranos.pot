@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Oyranos 0.9\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2017-03-22 15:25+0100\n"
+"POT-Creation-Date: 2017-03-29 08:45+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -56,7 +56,7 @@ msgstr ""
 #: API_generated/oyProfileTag_s_.c:208 API_generated/oyProfile_s_.c:322
 #: API_generated/oyProfiles_s_.c:195 API_generated/oyRectangle_s_.c:191
 #: API_generated/oyStructList_s_.c:239 API_generated/oyranos_devices.c:3583
-#: API_generated/oyranos_module.c:1561 liboyranos/oyranos_alpha.c:260
+#: API_generated/oyranos_module.c:1575 liboyranos/oyranos_alpha.c:260
 #: liboyranos_modules/oyranos_forms.c:56
 msgid "MEM Error."
 msgstr ""
@@ -82,7 +82,7 @@ msgstr ""
 
 #: API_generated/oyConversion_s.c:190 API_generated/oyFilterNode_s_.c:594
 #: API_generated/oyranos_devices.c:2660 API_generated/oyranos_devices.c:3166
-#: API_generated/oyranos_module.c:2012
+#: API_generated/oyranos_module.c:2026
 msgid "error in module:"
 msgstr ""
 
@@ -235,29 +235,33 @@ msgstr ""
 msgid "found issues"
 msgstr ""
 
-#: API_generated/oyranos_module.c:174
+#: API_generated/oyranos_module.c:179
 msgid "Could not open meta module API"
 msgstr ""
 
-#: API_generated/oyranos_module.c:791
+#: API_generated/oyranos_module.c:795
+msgid "Could not find any meta module."
+msgstr ""
+
+#: API_generated/oyranos_module.c:799
 msgid ""
 "Could not find any meta module. Did you set the OY_MODULE_PATH variable, to "
 "point to a Oyranos module loader library?"
 msgstr ""
 
-#: API_generated/oyranos_module.c:1397
+#: API_generated/oyranos_module.c:1411
 msgid "Name"
 msgstr ""
 
-#: API_generated/oyranos_module.c:1398 API_generated/oyranos_profile.c:44
+#: API_generated/oyranos_module.c:1412 API_generated/oyranos_profile.c:44
 msgid "Manufacturer"
 msgstr ""
 
-#: API_generated/oyranos_module.c:1399 liboyranos_config/oyranos_icc.c:460
+#: API_generated/oyranos_module.c:1413 liboyranos_config/oyranos_icc.c:460
 msgid "Copyright"
 msgstr ""
 
-#: API_generated/oyranos_module.c:2020
+#: API_generated/oyranos_module.c:2034
 msgid "Could not allocate memory for:"
 msgstr ""
 

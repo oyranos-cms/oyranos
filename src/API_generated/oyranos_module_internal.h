@@ -292,9 +292,10 @@ int    oyAdjacencyListAdd_           ( oyFilterPlug_s    * plug,
 
 
 char   oyCMMapiNumberToChar          ( oyOBJECT_e          api_number );
-oyCMMinfo_s *    oyCMMinfoFromLibName_(const char        * lib_name );
-char **          oyCMMsGetLibNames_  ( uint32_t          * n );
-oyCMMapiFilter_s *oyCMMsGetFilterApi_( const char        * registration,
+extern oyCMMinfo_s* (*oyCMMinfoFromLibName_p) (
+                                       const char        * lib_name );
+extern char**   (*oyCMMsGetLibNames_p)(uint32_t          * n );
+oyCMMapiFilter_s* oyCMMsGetFilterApi_( const char        * registration,
                                        oyOBJECT_e          type );
 
 
