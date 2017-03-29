@@ -60,10 +60,10 @@
 #define GetText                 catCMMfunc( SANE , GetText )
 #define _texts                  catCMMfunc( SANE , _texts )
 #define _cmm_module             catCMMfunc( SANE , _cmm_module )
-#define _api8_ui                catCMMfunc( oyRE, _api8_ui )
-#define Api8UiGetText           catCMMfunc( oyRE, Api8UiGetText )
-#define _api8_ui_texts          catCMMfunc( oyRE, _api8_ui_texts )
-#define _api8_icon              catCMMfunc( oyRE, _api8_icon )
+#define _api8_ui                catCMMfunc( SANE, _api8_ui )
+#define Api8UiGetText           catCMMfunc( SANE, Api8UiGetText )
+#define _api8_ui_texts          catCMMfunc( SANE, _api8_ui_texts )
+#define _api8_icon              catCMMfunc( SANE, _api8_icon )
 
 #define _DBG_FORMAT_ "%s:%d %s()"
 #define _DBG_ARGS_ __FILE__,__LINE__,__func__
@@ -76,7 +76,7 @@ const char * Api8UiGetText           ( const char        * select,
                                        oyNAME_e            type,
                                        oyStruct_s        * context );
 
-oyMessage_f message = 0;
+oyMessage_f SANE_msg = 0;
 
 extern oyCMMapi8_s_ _api8;
 
@@ -120,7 +120,7 @@ void CMMdeallocateFunc(oyPointer mem)
  */
 int CMMMessageFuncSet(oyMessage_f message_func)
 {
-   message = message_func;
+   SANE_msg = message_func;
    return 0;
 }
 
@@ -132,9 +132,9 @@ int CMMMessageFuncSet(oyMessage_f message_func)
 void ConfigsFromPatternUsage(oyStruct_s * options)
 {
     /** oyMSG_WARN should make shure our message is visible. */
-   message(oyMSG_WARN, options, _DBG_FORMAT_ "\n %s",
+   SANE_msg(oyMSG_WARN, options, _DBG_FORMAT_ "\n %s",
            _DBG_ARGS_, "The following help text informs about the communication protocol.");
-   message(oyMSG_WARN, options, "%s()\n%s", __func__, help_message);
+   SANE_msg(oyMSG_WARN, options, "%s()\n%s", __func__, help_message);
 
    return;
 }
@@ -196,7 +196,7 @@ int GetDevices(const SANE_Device *** device_list, int *size)
    fflush(NULL);
    status = sane_get_devices(&dl, SANE_FALSE);
    if (status != SANE_STATUS_GOOD) {
-      message(oyMSG_WARN, 0,
+      SANE_msg(oyMSG_WARN, 0,
               "%s()\n Cannot get sane devices: %s\n",
               __func__, sane_strstatus(status));
       fflush(NULL);
@@ -248,26 +248,26 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
 
    /* "error handling" section */
    if (rank == 0) {
-      message(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ "\n "
+      SANE_msg(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ "\n "
               "Registration match Failed. Options:\n%s", _DBG_ARGS_,
               oyOptions_GetText(options, oyNAME_NICK));
       return 1;
    }
    if (s == NULL) {
-      message(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ "\n "
+      SANE_msg(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ "\n "
               "oyConfigs_s is NULL! Options:\n%s", _DBG_ARGS_,
               oyOptions_GetText(options, oyNAME_NICK));
       return 1;
    }
    if (*s != NULL) {
-      message(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ "\n "
+      SANE_msg(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ "\n "
               "Devices struct already present! Options:\n%s", _DBG_ARGS_,
               oyOptions_GetText(options, oyNAME_NICK));
       return 1;
    }
 
    if (!device_name && command_properties) {
-      message(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ "\n "
+      SANE_msg(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ "\n "
               "Device_name is mandatory for properties command:\n%s",
               _DBG_ARGS_, oyOptions_GetText(options, oyNAME_NICK));
       return 1;
@@ -459,7 +459,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
       *s = devices;
    } else {
       /*unsupported, wrong or no command */
-      message(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ "\n "
+      SANE_msg(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ "\n "
               "No supported commands in options:\n%s", _DBG_ARGS_,
               oyOptions_GetText(options, oyNAME_NICK) );
       ConfigsFromPatternUsage((oyStruct_s *) options);
@@ -506,7 +506,7 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
 
    /* "error handling" section */
    if (!devices || !oyConfigs_Count(devices)) {
-      message(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ "\n "
+      SANE_msg(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ "\n "
               "No devices given! Options:\n%s", _DBG_ARGS_,
               oyOptions_GetText(options, oyNAME_NICK) );
       return 1;
@@ -567,7 +567,7 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
 
          /*Ignore device without a device_name*/
          if (!oyOptions_FindString(*oyConfig_GetOptions(device,"backend_core"), "device_name", NULL)) {
-            message(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ ": %s\n",
+            SANE_msg(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ ": %s\n",
                     _DBG_ARGS_, "The \"device_name\" is missing from config object!");
             oyConfig_Release(&device);
             g_error++;
@@ -587,7 +587,7 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
           * because it takes too long*/
          context_opt_dev = oyConfig_Find(device, "device_context");
          if (!context_opt_dev) {
-            message(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ ": %s\n",
+            SANE_msg(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ ": %s\n",
                     _DBG_ARGS_, "The \"device_context\" option is missing!");
             error = g_error = 1;
          }
@@ -665,7 +665,7 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
 
          /*Ignore device without a device_name*/
          if (!oyOptions_FindString(*oyConfig_GetOptions(device,"backend_core"), "device_name", NULL)) {
-            message(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ ": %s\n",
+            SANE_msg(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ ": %s\n",
                     _DBG_ARGS_, "The \"device_name\" is NULL, or missing from config object!");
             oyConfig_Release(&device);
             oyConfig_Release(&device_new);
@@ -692,13 +692,13 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
             if (device_context) {
                oyOptions_MoveIn(*oyConfig_GetOptions(device_new,"data"), &context_opt_dev, -1);
             } else {
-               message(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ ": %s\n",
+               SANE_msg(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ ": %s\n",
                        _DBG_ARGS_, "The \"device_context\" is NULL!");
                oyOption_Release(&context_opt_dev);
                g_error++;
             }
          } else {
-            message(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ ": %s\n",
+            SANE_msg(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ ": %s\n",
                     _DBG_ARGS_, "The \"device_context\" option is missing!");
             g_error++;
          }
@@ -752,7 +752,7 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
       }
    } else {
       /*unsupported, wrong or no command */
-      message(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ "\n "
+      SANE_msg(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ "\n "
               "No supported commands in options:\n%s", _DBG_ARGS_,
               oyOptions_GetText(options, oyNAME_NICK) );
       ConfigsFromPatternUsage((oyStruct_s *) options);
@@ -786,7 +786,7 @@ int Config_Rank(oyConfig_s * config)
    int error = !config, rank = 1;
 
    if (!config) {
-      message(oyMSG_DBG, (oyStruct_s *) config, _DBG_FORMAT_ "\n " "No config argument provided.\n", _DBG_ARGS_);
+      SANE_msg(oyMSG_DBG, (oyStruct_s *) config, _DBG_FORMAT_ "\n " "No config argument provided.\n", _DBG_ARGS_);
       return 0;
    }
 
@@ -837,7 +837,7 @@ const char * Api8UiGetText           ( const char        * select,
       if(category)
         sprintf( category,"%s/%s/%s", i18n[0], i18n[1], i18n[2] );
       else
-        message(oyMSG_WARN, (oyStruct_s *) 0, _DBG_FORMAT_ "\n " "Could not allocate enough memory.", _DBG_ARGS_);
+        SANE_msg(oyMSG_WARN, (oyStruct_s *) 0, _DBG_FORMAT_ "\n " "Could not allocate enough memory.", _DBG_ARGS_);
     }
          if(type == oyNAME_NICK)
       return "category";
@@ -853,7 +853,7 @@ const char * _api8_ui_texts[] = {"name", "help", "device_class", "icc_profile_cl
 /** @instance _api8_ui
  *  @brief    oydi oyCMMapi4_s::ui implementation
  *
- *  The UI parts for oyRE devices.
+ *  The UI parts for SANE devices.
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/09/06 (Oyranos: 0.1.10)
@@ -1005,7 +1005,7 @@ int ColorInfoFromHandle(const SANE_Handle device_handle, oyOptions_s **options)
    /* We got a device, find out how many options it has */
    status = sane_control_option(device_handle, 0, SANE_ACTION_GET_VALUE, &num_options, 0);
    if (status != SANE_STATUS_GOOD) {
-      message(oyMSG_WARN, 0,
+      SANE_msg(oyMSG_WARN, 0,
               "%s()\n Unable to determine option count: %s\n",
               __func__, sane_strstatus(status));
       return -1;
@@ -1125,7 +1125,7 @@ int sane_release_handle(oyPointer *handle_ptr)
    sane_close(h);
 
    printf("SANE handle deleted.\n");
-   message(oyMSG_DBG, 0,
+   SANE_msg(oyMSG_DBG, 0,
            "%s() deleting sane handle: %p\n",
            __func__, h);
 
@@ -1171,7 +1171,7 @@ int check_driver_version(oyOptions_s *options, oyOption_s **version_opt_p, int *
             oyOption_SetFromInt(*version_opt_p, driver_version, 0, 0);
          }
       } else {
-        message(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ "\n "
+        SANE_msg(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ "\n "
                 "Unable to init SANE. Giving up.[%s] Options:\n%s", _DBG_ARGS_,
                 sane_strstatus(status), oyOptions_GetText(options, oyNAME_NICK));
         return 1;
