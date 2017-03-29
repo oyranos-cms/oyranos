@@ -13,7 +13,6 @@ autom4te.cache
 annotated
 RH_Brief.txt
 config.cache
-config.h
 config.log
 config.log.h
 config.tmp.sh
