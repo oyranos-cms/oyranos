@@ -17,6 +17,7 @@
 
 int openicc_debug = 0;
 #ifndef HAVE_OPENICC
+#define level_PROG openicc_level_PROG
 int level_PROG = 0;
 #endif
 int openicc_backtrace = 0;
