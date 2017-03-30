@@ -112,6 +112,8 @@ ADD_SUBDIRECTORY( libopenicc )
 #                     )
 
 
+SET( SOURCES_STATIC ${SOURCES_STATIC} PARENT_SCOPE )
+
 SET( DOC_SOURCES
 	doxymentation.dox
 	${CFILES_OBJECT_CONFIG_PUBLIC}
