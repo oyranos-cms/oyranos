@@ -17,6 +17,7 @@
 
 #include <lcms2.h>
 #include <stdarg.h>
+#include <stdlib.h>
 
 #include "oyArray2d_s_.h"
 #include "oyCMM_s.h"
