@@ -11,7 +11,7 @@ The Color Management System (CMS) Oyranos allows the coordination of
 device specific Informations (ICC profiles) und system wide settings.
 
 
-###Links
+### Links
 * [About](http://www.oyranos.org/about)
 * [Features](http://www.oyranos.org/features)
 * [Sources & Download](http://www.oyranos.org/downloads/)
@@ -25,16 +25,16 @@ device specific Informations (ICC profiles) und system wide settings.
 * [Wiki](http://www.oyranos.org/wiki/index.php?title=Oyranos)
 
 
-###Dependencies
-####From Sources
-#####Mandatory
+### Dependencies
+#### From Sources
+##### Mandatory
 * [icc-profiles-openicc and icc-profiles-basiccolor](http://sourceforge.net/projects/openicc/files/) - default ICC profiles
 * [libXinerama, libXrandr, libXfixes and libXxf86vm](http:/www.x.org) - for X11 support
 * [Xcalib](http://www.etg.e-technik.uni-erlangen.de/web/doe/xcalib/) - a vcgt/calibration loader, required on X11/Windows 
 * [lcms and/or lcms2](http://www.littlecms.com) - CMM for color conversion
 * [libxml2](http://www.xmlsoft.org/) - for XML parsing
 
-#####Optional
+##### Optional
 * [libXcm >= 0.5.4] (http://www.oyranos.org/libxcm) - for monitor support (or internal fallback)
 * [Yajl](http://lloyd.github.com/yajl) - JSON API (or internall fallback)
 * [libOpenICC](https://github.com/OpenICC/config) - JSON/Yajl based DB API (or internall fallback)
@@ -134,12 +134,12 @@ device specific Informations (ICC profiles) und system wide settings.
     zypper install gtk2-devel libopenexr-devel gutenprint-devel     # CinePaint
     zypper install doxygen graphviz                                 # for documentation
 
-###Building
+### Building
     $ configure
     $ make
     $ make install
 
-####Build Flags
+#### Build Flags
 ... are typical cmake flags like CMAKE\_C\_FLAGS to tune compilation.
 
 * CMAKE\_INSTALL\_PREFIX to install into paths and so on. Use on the command 
