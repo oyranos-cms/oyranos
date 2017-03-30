@@ -25,10 +25,6 @@
 #include <locale.h>
 #include <errno.h>
 
-#ifndef CMM_NICK
-#warning( "CMM_NICK macro not defined" )
-#endif
-
 /* ---  Helpers  --- */
 
 #define noE( string ) ((string)?(string):"")
@@ -1681,7 +1677,7 @@ int          oyX1Monitor_release_      ( oyX1Monitor_s      ** obj )
 
 oyMonitorHooks_s oyX1MonitorHooks_ = {
   oyOBJECT_MONITOR_HOOKS_S,
-  {CMM_NICK},
+  {"oyX1"},
   10000, /* 1.0.0 */
   oyX1_help_system_specific,
   NULL,

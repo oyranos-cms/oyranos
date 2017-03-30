@@ -775,7 +775,7 @@ char * printCFDictionary( CFDictionaryRef dict )
 
 oyMonitorHooks_s qarzMonitorHooks_ = {
   oyOBJECT_MONITOR_HOOKS_S,
-  {CMM_NICK},
+  {"qarz"},
   10000, /* 1.0.0 */
   qarz_help_system_specific,
   NULL,
