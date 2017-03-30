@@ -1,8 +1,8 @@
 INCLUDE_DIRECTORIES(
-                    "${CMAKE_CURRENT_SOURCE_DIR}"
-                    "${CMAKE_CURRENT_SOURCE_DIR}/include"
-                    "${CMAKE_BINARY_DIR}/src/include"
-                    "${CMAKE_CURRENT_SOURCE_DIR}/src"
+                    ${CMAKE_CURRENT_SOURCE_DIR}
+                    ${CMAKE_CURRENT_SOURCE_DIR}/include/X11/Xcm/
+                    ${CMAKE_BINARY_DIR}/src/include
+                    ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
 # dependencies
@@ -60,4 +60,6 @@ SET( ${OPROJECT_NAME}_PACKAGE_MICRO 4)
 SET( PACKAGE_VERSION ${${OPROJECT_NAME}_PACKAGE_MAJOR}.${${OPROJECT_NAME}_PACKAGE_MINOR}.${${OPROJECT_NAME}_PACKAGE_MICRO} )
 
 ADD_SUBDIRECTORY( src )
+
+SET( SOURCES_STATIC ${SOURCES_STATIC} PARENT_SCOPE )
 
