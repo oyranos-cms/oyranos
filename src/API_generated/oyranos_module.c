@@ -876,6 +876,15 @@ int          oyCMMdsoRelease_      ( const char        * lib_name )
 }
 
 /** @internal
+ *  @brief internal Oyranos module handle list
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  6 december 2007 (API 0.1.8)
+ */
+oyStructList_s * oy_cmm_infos_ = 0;
+
+#if !defined(COMPILE_STATIC)
+/** @internal
  *  @brief get Oyranos CMM dlopen handle
  *
  *  Search the cache for a handle and return it. Or dlopen the library and 
@@ -932,14 +941,6 @@ oyPointer    oyCMMdsoGet_            ( const char        * lib_name )
 }
 
 /** @internal
- *  @brief internal Oyranos module handle list
- *
- *  @since Oyranos: version 0.1.8
- *  @date  6 december 2007 (API 0.1.8)
- */
-oyStructList_s * oy_cmm_infos_ = 0;
-
-/** @internal
  *  @brief search a Oyranos module handle in a internal list
  *
  *  a intermediate step
@@ -980,6 +981,7 @@ oyCMMhandle_s *  oyCMMFromCache_     ( const char        * lib_name )
 
   return cmm_handle;
 }
+#endif
 
 /** @internal
  *
@@ -1031,6 +1033,7 @@ int              oyCMMlibMatchesCMM  ( const char        * lib_name,
   return matches;
 }
 
+#if !defined(COMPILE_STATIC)
 /** @internal
  *  @brief get all CMM/module/script names
  *
@@ -1235,7 +1238,6 @@ oyCMMinfo_s *    oyCMMinfoFromLibNameDynamic(const char        * lib_name )
   return cmm_info;
 }
 
-#if !defined(COMPILE_STATIC)
 char **  (*oyCMMsGetLibNames_p) ( uint32_t* ) = &oyCMMsGetLibNamesDynamic;
 oyCMMinfo_s* (*oyCMMinfoFromLibName_p)(const char*) = &oyCMMinfoFromLibNameDynamic;
 #endif
@@ -1250,7 +1252,9 @@ int oyDlclose(oyPointer* handle)
 {
   if(handle && *handle)
   {
+#if !defined(COMPILE_STATIC)
     dlclose(*handle);
+#endif
     *handle = 0;
     return 0;
   }
