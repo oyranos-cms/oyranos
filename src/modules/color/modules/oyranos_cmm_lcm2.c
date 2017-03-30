@@ -203,9 +203,9 @@ static void * l2cms_handle = NULL;
 static void (*l2cmsSetLogErrorHandler)(cmsLogErrorHandlerFunction Fn) = NULL;
 static void (*l2cmsSetLogErrorHandlerTHR)(     cmsContext ContextID,
                                                cmsLogErrorHandlerFunction Fn) = NULL;
-static icColorSpaceSignature (*l2cmsGetColorSpace)(cmsHPROFILE hProfile) = NULL;
-static icColorSpaceSignature (*l2cmsGetPCS)(cmsHPROFILE hProfile) = NULL;
-static icProfileClassSignature (*l2cmsGetDeviceClass)(cmsHPROFILE hProfile) = NULL;
+static cmsColorSpaceSignature (*l2cmsGetColorSpace)(cmsHPROFILE hProfile) = NULL;
+static cmsColorSpaceSignature (*l2cmsGetPCS)(cmsHPROFILE hProfile) = NULL;
+static cmsProfileClassSignature (*l2cmsGetDeviceClass)(cmsHPROFILE hProfile) = NULL;
 static int (*l2_cmsLCMScolorSpace)(cmsColorSpaceSignature ProfileSpace) = NULL;
 static cmsUInt32Number (*l2cmsChannelsOf)(cmsColorSpaceSignature ColorSpace) = NULL;
 static cmsHTRANSFORM (*l2cmsCreateTransform)(cmsHPROFILE Input,
@@ -219,8 +219,8 @@ static cmsHTRANSFORM (*l2cmsCreateProofingTransform)(cmsHPROFILE Input,
                                                cmsHPROFILE Output,
                                                cmsUInt32Number OutputFormat,
                                                cmsHPROFILE Proofing,
-                                               int Intent,
-                                               int ProofingIntent,
+                                               cmsUInt32Number Intent,
+                                               cmsUInt32Number ProofingIntent,
                                                cmsUInt32Number dwFlags) = NULL;
 static cmsHTRANSFORM (*l2cmsCreateProofingTransformTHR)(cmsContext ContextID,
                                                   cmsHPROFILE Input,
@@ -232,10 +232,10 @@ static cmsHTRANSFORM (*l2cmsCreateProofingTransformTHR)(cmsContext ContextID,
                                                   cmsUInt32Number ProofingIntent,
                                                   cmsUInt32Number dwFlags) = NULL;
 static cmsHTRANSFORM (*l2cmsCreateMultiprofileTransform)(cmsHPROFILE hProfiles[],
-                                                                int nProfiles,
+                                                                cmsUInt32Number nProfiles,
                                                                 cmsUInt32Number InputFormat,
                                                                 cmsUInt32Number OutputFormat,
-                                                                int Intent,
+                                                                cmsUInt32Number Intent,
                                                                 cmsUInt32Number dwFlags) = NULL;
 static cmsHTRANSFORM (*l2cmsCreateExtendedTransform)(cmsContext ContextID,
                                                    cmsUInt32Number nProfiles, cmsHPROFILE hProfiles[],
@@ -262,9 +262,9 @@ static cmsHPROFILE (*l2cmsCreateProfilePlaceholder)(cmsContext ContextID) = NULL
 static cmsHPROFILE (*l2cmsCreateLab4ProfileTHR)(cmsContext ContextID, const cmsCIExyY* WhitePoint) = NULL;
 static cmsHPROFILE (*l2cmsCreateLab4Profile)(const cmsCIExyY* WhitePoint) = NULL;
 static void (*l2cmsSetProfileVersion)(cmsHPROFILE hProfile, cmsFloat64Number Version) = NULL;
-static void (*l2cmsSetDeviceClass)(cmsHPROFILE hProfile, icProfileClassSignature sig) = NULL;
-static void (*l2cmsSetColorSpace)(cmsHPROFILE hProfile, icColorSpaceSignature sig) = NULL;
-static void (*l2cmsSetPCS)(cmsHPROFILE hProfile, icColorSpaceSignature pcs) = NULL;
+static void (*l2cmsSetDeviceClass)(cmsHPROFILE hProfile, cmsProfileClassSignature sig) = NULL;
+static void (*l2cmsSetColorSpace)(cmsHPROFILE hProfile, cmsColorSpaceSignature sig) = NULL;
+static void (*l2cmsSetPCS)(cmsHPROFILE hProfile, cmsColorSpaceSignature pcs) = NULL;
 static cmsToneCurve* (*l2cmsBuildGamma)(cmsContext ContextID, cmsFloat64Number Gamma) = NULL;
 static cmsToneCurve*(*l2cmsBuildSegmentedToneCurve)(cmsContext ContextID, cmsInt32Number nSegments, const cmsCurveSegment Segments[]) = NULL;
 static cmsToneCurve*(*l2cmsBuildParametricToneCurve)(cmsContext ContextID, cmsInt32Number Type, const cmsFloat64Number Parameters[]) = NULL;
@@ -272,11 +272,11 @@ static void (*l2cmsFreeToneCurve)(cmsToneCurve* Curve) = NULL;
 static cmsPipeline*      (*l2cmsPipelineAlloc)              (cmsContext ContextID, cmsUInt32Number InputChannels, cmsUInt32Number OutputChannels) = NULL;
 static int               (*l2cmsPipelineInsertStage)        (cmsPipeline* lut, cmsStageLoc loc, cmsStage* mpe) = NULL;
 static void              (*l2cmsPipelineFree)               (cmsPipeline* lut) = NULL;
-static cmsStage*         (*l2cmsPipelineGetPtrToFirstStage) (cmsPipeline* lut ) = NULL;
-static cmsStageSignature (*l2cmsStageType) (cmsStage* stage) = NULL;
-static cmsStage*         (*l2cmsStageNext) (cmsStage* next ) = NULL;
-static int               (*l2cmsStageInputChannels)         (cmsStage* stage) = NULL;
-static int               (*l2cmsStageOutputChannels)        (cmsStage* stage) = NULL;
+static cmsStage*         (*l2cmsPipelineGetPtrToFirstStage) (const cmsPipeline* lut ) = NULL;
+static cmsStageSignature (*l2cmsStageType) (const cmsStage* stage) = NULL;
+static cmsStage*         (*l2cmsStageNext) (const cmsStage* next ) = NULL;
+static cmsUInt32Number   (*l2cmsStageInputChannels)         (const cmsStage* stage) = NULL;
+static cmsUInt32Number   (*l2cmsStageOutputChannels)        (const cmsStage* stage) = NULL;
 static cmsStage*(*l2cmsStageAllocCLut16bit)(cmsContext ContextID, cmsUInt32Number nGridPoints, cmsUInt32Number inputChan, cmsUInt32Number outputChan, const cmsUInt16Number* Table) = NULL;
 static cmsStage*(*l2cmsStageAllocCLutFloat)(cmsContext ContextID, cmsUInt32Number nGridPoints, cmsUInt32Number inputChan, cmsUInt32Number outputChan, const cmsFloat32Number* Table) = NULL;
 static cmsBool (*l2cmsStageSampleCLut16bit)(cmsStage* mpe,    cmsSAMPLER16 Sampler, void* Cargo, cmsUInt32Number dwFlags) = NULL;
@@ -290,7 +290,7 @@ static cmsBool (*l2cmsMLUsetASCII)(cmsMLU* mlu,
 static void (*l2cmsMLUfree)(cmsMLU* mlu) = NULL;
 static cmsHPROFILE (*l2cmsCreateRGBProfile)(const cmsCIExyY* WhitePoint,
                                         const cmsCIExyYTRIPLE* Primaries,
-                                        cmsToneCurve* TransferFunction[3]) = NULL;
+                                        cmsToneCurve* const TransferFunction[3]) = NULL;
 static void (*l2cmsLabEncoded2Float)(cmsCIELab* Lab, const cmsUInt16Number wLab[3]) = NULL;
 static void (*l2cmsFloat2LabEncoded)(cmsUInt16Number wLab[3], const cmsCIELab* Lab) = NULL;
 static const cmsCIEXYZ*  (*l2cmsD50_XYZ)(void);
@@ -298,14 +298,15 @@ static const cmsCIExyY*  (*l2cmsD50_xyY)(void);
 static cmsFloat64Number (*l2cmsDeltaE)(const cmsCIELab* Lab1, const cmsCIELab* Lab2) = NULL;
 static void (*l2cmsGetAlarmCodes)(cmsUInt16Number NewAlarm[cmsMAXCHANNELS]) = NULL;
 static cmsContext (*l2cmsCreateContext)(void* Plugin, void* UserData) = NULL;
-static cmsContext dummyCreateContext(void* Plugin, void* UserData) {return NULL;}
 static void* (*l2cmsGetContextUserData)(cmsContext ContextID) = NULL;
-static void* dummyGetContextUserData(cmsContext ContextID) {return NULL;}
 static cmsContext (*l2cmsGetProfileContextID)(cmsHPROFILE hProfile) = NULL;
 static cmsContext (*l2cmsGetTransformContextID)(cmsHPROFILE hProfile) = NULL;
 static int (*l2cmsGetEncodedCMMversion)(void) = NULL;
-static int dummyGetEncodedCMMversion() {return LCMS_VERSION;}
 
+#if !defined(COMPILE_STATIC)
+static cmsContext dummyCreateContext(void* Plugin, void* UserData) {return NULL;}
+static void* dummyGetContextUserData(cmsContext ContextID) {return NULL;}
+static int dummyGetEncodedCMMversion() {return LCMS_VERSION;}
 #define LOAD_FUNC( func, fallback_func ) l2##func = dlsym(l2cms_handle, #func ); \
                if(!l2##func) \
                { \
@@ -323,6 +324,10 @@ static int dummyGetEncodedCMMversion() {return LCMS_VERSION;}
                                       "dlsym failed: %s", \
                                       OY_DBG_ARGS_, dlerror() ); \
                }
+#else
+#define LOAD_FUNC( func, fallback_func ) l2##func = func; l2cms_handle = 0;
+#define dlerror() l2cms_handle = 0
+#endif
 
 /** Function l2cmsCMMInit
  *  @brief   API requirement
@@ -338,6 +343,7 @@ int                l2cmsCMMInit       ( oyStruct_s        * filter )
   {
     int report = 0;
     char * fn = oyLibNameCreate_( "lcms2", 2 );
+#if !defined(COMPILE_STATIC)
     l2cms_handle = dlopen(fn, RTLD_LAZY);
 
     if(!l2cms_handle)
@@ -348,6 +354,7 @@ int                l2cmsCMMInit       ( oyStruct_s        * filter )
       error = 1;
       l2cms_initialised = -1;
     } else
+#endif
     {
       LOAD_FUNC( cmsSetLogErrorHandler, NULL );
       LOAD_FUNC( cmsSetLogErrorHandlerTHR, NULL );
