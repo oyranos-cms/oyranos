@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Oyranos 0.9\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2017-03-30 18:27+0200\n"
+"POT-Creation-Date: 2017-03-31 11:04+0200\n"
 "PO-Revision-Date: 2015-02-20 17:32+0100\n"
 "Last-Translator: Kai-Uwe Behrmann <ku.b@gmx.de>\n"
 "Language-Team: russian <ru@li.org>\n"
@@ -2144,7 +2144,7 @@ msgstr ""
 #: API_generated/oyPixelAccess_s_.c:225 API_generated/oyPointer_s_.c:277
 #: API_generated/oyProfileTag_s_.c:208 API_generated/oyProfile_s_.c:322
 #: API_generated/oyProfiles_s_.c:195 API_generated/oyRectangle_s_.c:191
-#: API_generated/oyStructList_s_.c:239 API_generated/oyranos_devices.c:3583
+#: API_generated/oyStructList_s_.c:239 API_generated/oyranos_devices.c:3588
 #: API_generated/oyranos_module.c:1579 liboyranos/oyranos_alpha.c:260
 #: liboyranos_modules/oyranos_forms.c:56
 msgid "MEM Error."
@@ -4037,7 +4037,7 @@ msgid "enable simple defaults"
 msgstr ""
 
 #: API_generated/oyConversion_s.c:190 API_generated/oyFilterNode_s_.c:594
-#: API_generated/oyranos_devices.c:2660 API_generated/oyranos_devices.c:3166
+#: API_generated/oyranos_devices.c:2660 API_generated/oyranos_devices.c:3171
 #: API_generated/oyranos_module.c:2030
 msgid "error in module:"
 msgstr ""
