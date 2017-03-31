@@ -9,11 +9,10 @@
 # Redistribution and use is allowed according to the terms of the BSD license.
 # For details see the accompanying COPYING-CMAKE-SCRIPTS file.
 
-FIND_PATH(SANE_INCLUDE_DIR sane/sane.h ONLY_CMAKE_FIND_ROOT_PATH)
+FIND_PATH(SANE_INCLUDE_DIR sane/sane.h)
 
 FIND_LIBRARY(SANE_LIBRARY NAMES  sane libsane
    PATH_SUFFIXES sane
-   ONLY_CMAKE_FIND_ROOT_PATH
 )
 
 INCLUDE(FindPackageHandleStandardArgs)

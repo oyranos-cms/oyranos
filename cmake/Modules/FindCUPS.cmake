@@ -7,7 +7,7 @@
 FIND_PACKAGE( Cups )
 
 # fix the variable handling
-FIND_LIBRARY(CUPS_LIBRARY NAMES cups  ONLY_CMAKE_FIND_ROOT_PATH)
+FIND_LIBRARY(CUPS_LIBRARY NAMES cups)
 
 # handle the QUIETLY and REQUIRED arguments and set CUPS_FOUND to TRUE if 
 # all listed variables are TRUE
