@@ -287,7 +287,7 @@ OYAPI int  OYEXPORT
 /* Include "Profiles.public_methods_definitions.c" { */
 oyProfiles_s * oy_profile_list_cache_ = 0;
 
-int oyLowerStrcmpWrap (const void * a_, const void * b_)
+int oyLowerStrcmpWrap_ (const void * a_, const void * b_)
 {
   const char * a = *(const char **)a_,
              * b = *(const char **)b_;
@@ -397,7 +397,7 @@ OYAPI oyProfiles_s * OYEXPORT
           }
         }
       }
-      qsort( sort, sorts, sizeof(char**)*2, oyLowerStrcmpWrap );
+      qsort( sort, sorts, sizeof(char**)*2, oyLowerStrcmpWrap_ );
       for(i = 0; i < sorts; ++i)
       {
         tmp = oyProfile_FromFile( sort[i*2+1], OY_NO_CACHE_WRITE | flags, 0 );
