@@ -92,6 +92,13 @@ __FBSDID("$FreeBSD: release/10.0.0/lib/libc/gen/glob.c 249381 2013-04-11 20:15:3
 #include <unistd.h>
 #include <wchar.h>
 
+#ifndef MB_CUR_MAX
+#define MB_CUR_MAX 4
+#endif
+#ifndef MB_LEN_MAX
+#define MB_LEN_MAX 16
+#endif
+
 /*
  * glob(3) expansion limits. Stop the expansion if any of these limits
  * is reached. This caps the runtime in the face of DoS attacks. See
@@ -392,11 +399,15 @@ globexp2(const Char *ptr, const Char *pattern, glob_t *pglob, int *rv,
 
 #if !defined(HAVE_ISSETUGID)
 #include <sys/auxv.h>
-/* from OpenBSD */
+/* original from OpenBSD */
 int issetugid(void)
 {
+# if defined(HAVE_GETAUXVAL)
 	errno = 0;
 	return !(getauxval(AT_SECURE) == 0 && errno != ENOENT);
+# else
+	return 1;
+# endif
 }
 #endif /* !HAVE_ISSETUGID */
 
