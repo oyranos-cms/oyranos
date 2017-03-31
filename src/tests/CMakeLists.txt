@@ -63,7 +63,6 @@ IF(ENABLE_SHARED_LIBS)
 	COMMAND "${CMAKE_CURRENT_BINARY_DIR}/test_config"
         DEPENDS test_config test_modules
         COMMENT "Test basic linking against liboyranos_config." VERBATIM )
-  SET(TEST_CONFIG test_config)
   SET( TEST2_DEPS ${TEST2_DEPS} test-config )
 ENDIF(ENABLE_SHARED_LIBS)
 
@@ -75,6 +74,7 @@ IF(ENABLE_SHARED_LIBS)
                 "${CMAKE_SOURCE_DIR}/src/examples/image_display/oyranos_display_helpers.c"
               )
   TARGET_LINK_LIBRARIES( test2 Oyranos )
+  SET( TEST2 test2 )
   SET( TEST2_DEPS ${TEST2_DEPS} test2 )
 ENDIF(ENABLE_SHARED_LIBS)
 
@@ -84,14 +84,15 @@ IF(ENABLE_STATIC_LIBS)
                 "${CMAKE_SOURCE_DIR}/src/examples/image_display/oyranos_display_helpers.c"
               )
   TARGET_LINK_LIBRARIES( test2-static ${PACKAGE_NAME}-static )
+  SET( TEST2_STATIC test2-static )
   SET( TEST2_DEPS ${TEST2_DEPS} test2-static )
 ENDIF(ENABLE_STATIC_LIBS)
 ADD_CUSTOM_TARGET(test-2
 	"echo"
-        DEPENDS test-oyranos2 ${TEST_CONFIG} ${TEST_CONFIG}
+	DEPENDS test-oyranos2 ${TEST2} ${TEST2_STATIC}
         COMMENT "Test liboyranos extensive." VERBATIM )
 ADD_CUSTOM_COMMAND( OUTPUT test-oyranos2
-                    DEPENDS test2
+                    DEPENDS ${TEST2_DEPS}
                     COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_SOURCE_DIR}/RunTest2.cmake )
 
 IF(USE_GCOV)
