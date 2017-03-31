@@ -28,6 +28,7 @@
 #include "oyConfig_s_.h"
 #include "oyranos.h"
 #include "oyranos_helper_macros.h"
+#include "oyranos_i18n.h"
 #include "oyranos_internal.h"
 #include "oyranos_monitor.h"
 #include "oyranos_monitor_internal.h"
