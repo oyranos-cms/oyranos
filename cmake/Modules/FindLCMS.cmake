@@ -38,6 +38,7 @@ find_library(LCMS_LIBRARIES NAMES lcms liblcms lcms-1 liblcms-1
    ${PC_LCMS_LIBDIR}
    ${PC_LCMS_LIBRARY_DIRS}
    PATH_SUFFIXES lcms
+   ONLY_CMAKE_FIND_ROOT_PATH
 )
 
 # Store the LCMS version number in the cache, so we don't have to search everytime again
