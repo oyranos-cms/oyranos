@@ -31,11 +31,8 @@ include(GNUInstallDirs)
 
 option(ENABLE_EXAMPLES "Build example applications" ON)
 option(ENABLE_STATIC_LIBS "Build static libs" ON)
+option(ENABLE_SHARED_LIBS "Build shared libs" ON)
 option(ENABLE_TESTS "Build tests (requires static libs)" ON)
-
-IF( ENABLE_TESTS )
-  SET(ENABLE_STATIC_LIBS ON)
-ENDIF()
 
 MESSAGE( "-- Found CMAKE_SYSTEM_NAME: ${CMAKE_SYSTEM_NAME}" )
 

@@ -22,7 +22,7 @@
 # use pkg-config to get the directories and then use these values
 # in the FIND_PATH() and FIND_LIBRARY() calls
 find_package(PkgConfig)
-pkg_check_modules(LCMS2 lcms2)
+pkg_check_modules(PC_LCMS2 lcms2)
 set(LCMS2_DEFINITIONS ${LCMS2_CFLAGS_OTHER})
 
 find_path(LCMS2_INCLUDE_DIR lcms2.h
@@ -32,14 +32,13 @@ find_path(LCMS2_INCLUDE_DIR lcms2.h
    PATH_SUFFIXES lcms2 liblcms2
  )
 
-if(NOT LCMS2_FOUND)
-  find_library(LCMS2_LIBRARIES NAMES lcms2 liblcms2 liblcms2-2 lcms-2 liblcms-2
+find_library(LCMS2_LIBRARIES NAMES lcms2 liblcms2 liblcms2-2 lcms-2 liblcms-2
    HINTS
    ${LCMS2_LIBDIR}
    ${LCMS2_LIBRARY_DIRS}
    #PATH_SUFFIXES lcms2
-  )
-endif(NOT LCMS2_FOUND)
+)
+
 
 # Store the LCMS2 version number in the cache, so we don't have to search everytime again
 if(LCMS2_INCLUDE_DIR  AND NOT  LCMS2_VERSION)

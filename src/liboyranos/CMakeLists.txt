@@ -64,27 +64,28 @@ FOREACH(icc_sub_dir ${icc_sub_dirs} )
 ENDFOREACH(icc_sub_dir)
 MESSAGE( "OYRANOS_ALL_ICC ${OYRANOS_ALL_ICC}" )
 
-ADD_LIBRARY( ${PROJECT_NAME} SHARED ${SOURCES} ${CHEADERS_OBJECT_IMAGING_PUBLIC} ${RANK_MAPS_PUBLIC} ${SETTINGS_PUBLIC} ${OYRANOS_ALL_ICC} )
-TARGET_LINK_LIBRARIES ( ${PROJECT_NAME}
-                        ${PROJECT_NAME}Config
-                        ${PROJECT_NAME}Modules
-                        ${PROJECT_NAME}Object
-                        ${PROJECT_NAME}Core
-                        ${EXTRA_LIBS} )
+IF(ENABLE_SHARED_LIBS)
+  ADD_LIBRARY( ${PROJECT_NAME} SHARED ${SOURCES} ${CHEADERS_OBJECT_IMAGING_PUBLIC} ${RANK_MAPS_PUBLIC} ${SETTINGS_PUBLIC} ${OYRANOS_ALL_ICC} )
+  TARGET_LINK_LIBRARIES ( ${PROJECT_NAME}
+                          ${PROJECT_NAME}Config
+                          ${PROJECT_NAME}Modules
+                          ${PROJECT_NAME}Object
+                          ${PROJECT_NAME}Core
+                          ${EXTRA_LIBS} )
 
-# OS X Framework
-FOREACH( policy ${SETTINGS_PUBLIC} )
-  SET_PROPERTY( SOURCE ${policy}
-                PROPERTY MACOSX_PACKAGE_LOCATION Resources/share/color/settings
-              )
-ENDFOREACH( policy )
-FOREACH( rankmap ${RANK_MAPS_PUBLIC} )
-  SET_PROPERTY( SOURCE ${rankmap}
-                PROPERTY MACOSX_PACKAGE_LOCATION Resources/share/color/rank-map
-              )
-ENDFOREACH( rankmap )
+  # OS X Framework
+  FOREACH( policy ${SETTINGS_PUBLIC} )
+    SET_PROPERTY( SOURCE ${policy}
+                  PROPERTY MACOSX_PACKAGE_LOCATION Resources/share/color/settings
+                )
+  ENDFOREACH( policy )
+  FOREACH( rankmap ${RANK_MAPS_PUBLIC} )
+    SET_PROPERTY( SOURCE ${rankmap}
+                  PROPERTY MACOSX_PACKAGE_LOCATION Resources/share/color/rank-map
+                )
+  ENDFOREACH( rankmap )
 
-SET_TARGET_PROPERTIES( ${PROJECT_NAME} PROPERTIES
+  SET_TARGET_PROPERTIES( ${PROJECT_NAME} PROPERTIES
   FRAMEWORK TRUE
   FRAMEWORK_VERSION ${OYRANOS_VERSION}
   PRIVATE_HEADER ""
@@ -92,16 +93,17 @@ SET_TARGET_PROPERTIES( ${PROJECT_NAME} PROPERTIES
   RESOURCE ""
 #  INSTALL_NAME_DIR "@executable_path/../../../../${FRAMEWORK_DIR}"
 #  DEBUG_POSTFIX -d
-)
+  )
 
-INSTALL( TARGETS       ${PROJECT_NAME}
+  INSTALL( TARGETS       ${PROJECT_NAME}
          RUNTIME       DESTINATION ${CMAKE_INSTALL_BINDIR}
          FRAMEWORK     DESTINATION ${FRAMEWORK_DIR}
          LIBRARY       DESTINATION ${CMAKE_INSTALL_LIBDIR}
          ARCHIVE       DESTINATION ${CMAKE_INSTALL_LIBDIR}
          PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${TARGET_INCLUDE_FOLDER}
          RESOURCE      DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/color/settings
-       )
+         )
+ENDIF(ENABLE_SHARED_LIBS)
 
 IF(ENABLE_STATIC_LIBS)
   ADD_LIBRARY( ${PACKAGE_NAME}-static STATIC ${SOURCES} ${CHEADERS_OBJECT_IMAGING_PUBLIC} ${SOURCES_STATIC} )

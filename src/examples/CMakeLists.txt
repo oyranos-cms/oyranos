@@ -3,7 +3,7 @@ SET( OY_MODULE dFil )
 SET( OY_MODULE_LIB ${PACKAGE_NAME}_${OY_MODULE}${OY_MODULE_NAME} )
 ADD_LIBRARY( ${OY_MODULE_LIB}
              SHARED ${PACKAGE_NAME}_cmm_${OY_MODULE}.c )
-TARGET_LINK_LIBRARIES ( ${OY_MODULE_LIB} ${PROJECT_NAME} ${EXTRA_LIBS} )
+TARGET_LINK_LIBRARIES ( ${OY_MODULE_LIB} ${TARGET_LIB} ${EXTRA_LIBS} )
 #INSTALL (TARGETS ${OY_MODULE_LIB} DESTINATION ${CMAKE_INSTALL_LIBDIR}/${OY_CMMSUBPATH})
 
 # example device module
@@ -11,27 +11,27 @@ SET( OY_MODULE dDev )
 SET( OY_MODULE_LIB ${PACKAGE_NAME}_${OY_MODULE}${OY_MODULE_NAME} )
 ADD_LIBRARY( ${OY_MODULE_LIB}
              SHARED ${PACKAGE_NAME}_cmm_${OY_MODULE}.c )
-TARGET_LINK_LIBRARIES ( ${OY_MODULE_LIB} ${PROJECT_NAME} ${EXTRA_LIBS} )
+TARGET_LINK_LIBRARIES ( ${OY_MODULE_LIB} ${TARGET_LIB} ${EXTRA_LIBS} )
 #INSTALL (TARGETS ${OY_MODULE_LIB} DESTINATION ${CMAKE_INSTALL_LIBDIR}/${OY_CMMSUBPATH})
 
 # ICC profile hash calculation
 ADD_EXECUTABLE( oymd5icc oymd5icc.c )
-TARGET_LINK_LIBRARIES( oymd5icc ${PROJECT_NAME} ${EXTRA_LIBS} )
+TARGET_LINK_LIBRARIES( oymd5icc ${TARGET_LIB} ${EXTRA_LIBS} )
 
 # CamerRaw file handling
 ADD_EXECUTABLE( oyranos-file "${CMAKE_CURRENT_SOURCE_DIR}/libraw/oyranos_file.cpp" )
-TARGET_LINK_LIBRARIES( oyranos-file ${PROJECT_NAME} ${EXTRA_LIBS} )
+TARGET_LINK_LIBRARIES( oyranos-file ${TARGET_LIB} ${EXTRA_LIBS} )
 #INSTALL (TARGETS oyranos-file DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 # Taxi DB tool for central hosted ICC profile distribution
 ADD_EXECUTABLE( taxi taxi.c )
-TARGET_LINK_LIBRARIES( taxi ${PROJECT_NAME} ${EXTRA_LIBS} )
+TARGET_LINK_LIBRARIES( taxi ${TARGET_LIB} ${EXTRA_LIBS} )
 #INSTALL (TARGETS taxi DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 # primitive picture montage with ICC support
 IF( CAIRO_FOUND )
   ADD_EXECUTABLE( image2pdf image2pdf.c )
-  TARGET_LINK_LIBRARIES ( image2pdf ${PROJECT_NAME} ${EXTRA_LIBS}
+  TARGET_LINK_LIBRARIES ( image2pdf ${TARGET_LIB} ${EXTRA_LIBS}
                  ${CAIRO_LIBRARIES} )
 ENDIF()
 
@@ -57,7 +57,7 @@ IF( FLTK_FOUND )
                 )
   SET_PROPERTY(TARGET oyranos-image-display PROPERTY OSX_ARCHITECTURES x86_64)
   SET_PROPERTY(TARGET oyranos-image-display PROPERTY OSX_ARCHITECTURES_DEBUG x86_64)
-  TARGET_LINK_LIBRARIES ( oyranos-image-display ${PROJECT_NAME} ${EXTRA_LIBS}
+  TARGET_LINK_LIBRARIES ( oyranos-image-display ${TARGET_LIB} ${EXTRA_LIBS}
                  ${FLTK_LIBRARIES} ${XRANDR_LIBRARIES} )
   INSTALL (TARGETS oyranos-image-display DESTINATION ${CMAKE_INSTALL_BINDIR})
   INSTALL( FILES ${CMAKE_CURRENT_SOURCE_DIR}/image_display/oyranos-image-display.desktop DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications )
@@ -69,7 +69,7 @@ IF( FLTK_FOUND )
                 )
   SET_PROPERTY(TARGET oyranos-config-fltk PROPERTY OSX_ARCHITECTURES x86_64)
   SET_PROPERTY(TARGET oyranos-config-fltk PROPERTY OSX_ARCHITECTURES_DEBUG x86_64)
-  TARGET_LINK_LIBRARIES ( oyranos-config-fltk ${PROJECT_NAME} ${EXTRA_LIBS}
+  TARGET_LINK_LIBRARIES ( oyranos-config-fltk ${TARGET_LIB} ${EXTRA_LIBS}
                  ${FLTK_LIBRARIES} ${XRANDR_LIBRARIES} )
   INSTALL (TARGETS oyranos-config-fltk DESTINATION ${CMAKE_INSTALL_BINDIR})
 ENDIF()
@@ -77,13 +77,13 @@ ENDIF()
 # Tutorial 1
 ADD_EXECUTABLE( tutorial1 tutorial1.c )
 TARGET_LINK_LIBRARIES( tutorial1
-             ${PROJECT_NAME} ${EXTRA_LIBS} )
+             ${TARGET_LIB} ${EXTRA_LIBS} )
 # Tutorial Taxi
 ADD_EXECUTABLE( tutorial-taxi tutorial_taxi.c )
 TARGET_LINK_LIBRARIES( tutorial-taxi
-             ${PROJECT_NAME} ${EXTRA_LIBS} )
+             ${TARGET_LIB} ${EXTRA_LIBS} )
 
 # Tutorial JSON Options
 ADD_EXECUTABLE( tutorial-json-options tutorial_json_options.c )
 TARGET_LINK_LIBRARIES( tutorial-json-options
-             ${PROJECT_NAME} ${EXTRA_LIBS} )
+             ${TARGET_LIB} ${EXTRA_LIBS} )

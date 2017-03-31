@@ -1,56 +1,94 @@
 # Test for liboyranos_core
 LINK_DIRECTORIES( ${LINK_DIRECTORIES} "${CMAKE_BINARY_DIR}/src/liboyranos_core/" )
-ADD_EXECUTABLE( test_core "${CMAKE_CURRENT_SOURCE_DIR}/test_core.c" )
-ADD_EXECUTABLE( test_core-static "${CMAKE_CURRENT_SOURCE_DIR}/test_core.c" )
-TARGET_LINK_LIBRARIES( test_core OyranosCore )
-TARGET_LINK_LIBRARIES( test_core-static oyranos_core-static )
-ADD_CUSTOM_TARGET(test-core
+IF(ENABLE_SHARED_LIBS)
+  ADD_EXECUTABLE( test_core "${CMAKE_CURRENT_SOURCE_DIR}/test_core.c" )
+  TARGET_LINK_LIBRARIES( test_core OyranosCore )
+  ADD_CUSTOM_TARGET(test-core
 	COMMAND "${CMAKE_CURRENT_BINARY_DIR}/test_core"
-	COMMAND "${CMAKE_CURRENT_BINARY_DIR}/test_core-static"
-        DEPENDS test_core test_core-static
+        DEPENDS test_core
         COMMENT "Test basic linking against liboyranos_core." VERBATIM )
+  SET( TEST2_DEPS ${TEST2_DEPS} test-core )
+ENDIF(ENABLE_SHARED_LIBS)
+
+IF(ENABLE_STATIC_LIBS)
+  ADD_EXECUTABLE( test_core-static "${CMAKE_CURRENT_SOURCE_DIR}/test_core.c" )
+  TARGET_LINK_LIBRARIES( test_core-static oyranos_core-static )
+  ADD_CUSTOM_TARGET(test-core-static
+	COMMAND "${CMAKE_CURRENT_BINARY_DIR}/test_core-static"
+        DEPENDS test_core-static
+        COMMENT "Test basic linking against liboyranos_core." VERBATIM )
+  SET( TEST2_DEPS ${TEST2_DEPS} test-core-static )
+ENDIF(ENABLE_STATIC_LIBS)
+
 
 LINK_DIRECTORIES( ${LINK_DIRECTORIES} "${CMAKE_BINARY_DIR}/src/liboyranos_object/" )
-ADD_EXECUTABLE( test_object "${CMAKE_CURRENT_SOURCE_DIR}/test_object.c" )
-TARGET_LINK_LIBRARIES( test_object OyranosObject )
-ADD_EXECUTABLE( test_object-static "${CMAKE_CURRENT_SOURCE_DIR}/test_object.c" )
-TARGET_LINK_LIBRARIES( test_object-static oyranos_object-static )
-ADD_CUSTOM_TARGET(test-object
+IF(ENABLE_SHARED_LIBS)
+  ADD_EXECUTABLE( test_object "${CMAKE_CURRENT_SOURCE_DIR}/test_object.c" )
+  TARGET_LINK_LIBRARIES( test_object OyranosObject )
+  ADD_CUSTOM_TARGET(test-object
 	COMMAND "${CMAKE_CURRENT_BINARY_DIR}/test_object"
-	COMMAND "${CMAKE_CURRENT_BINARY_DIR}/test_object-static"
-        DEPENDS test_object test_object-static test_core
+        DEPENDS test_object test_core
         COMMENT "Test basic linking against liboyranos_object." VERBATIM )
+  SET( TEST2_DEPS ${TEST2_DEPS} test-object )
+ENDIF(ENABLE_SHARED_LIBS)
+
+IF(ENABLE_STATIC_LIBS)
+  ADD_EXECUTABLE( test_object-static "${CMAKE_CURRENT_SOURCE_DIR}/test_object.c" )
+  TARGET_LINK_LIBRARIES( test_object-static oyranos_object-static )
+  ADD_CUSTOM_TARGET(test-object-static
+	COMMAND "${CMAKE_CURRENT_BINARY_DIR}/test_object-static"
+        DEPENDS test_object-static test-core-static
+        COMMENT "Test basic linking against liboyranos_object." VERBATIM )
+  SET( TEST2_DEPS ${TEST2_DEPS} test-object-static )
+ENDIF(ENABLE_STATIC_LIBS)
+
 
 LINK_DIRECTORIES( ${LINK_DIRECTORIES} "${CMAKE_BINARY_DIR}/src/liboyranos_modules/" )
-ADD_EXECUTABLE( test_modules "${CMAKE_CURRENT_SOURCE_DIR}/test_modules.c" )
-TARGET_LINK_LIBRARIES( test_modules OyranosModules )
-ADD_CUSTOM_TARGET(test-modules
+IF(ENABLE_SHARED_LIBS)
+  ADD_EXECUTABLE( test_modules "${CMAKE_CURRENT_SOURCE_DIR}/test_modules.c" )
+  TARGET_LINK_LIBRARIES( test_modules OyranosModules )
+  ADD_CUSTOM_TARGET(test-modules
 	COMMAND "${CMAKE_CURRENT_BINARY_DIR}/test_modules"
         DEPENDS test_modules test_object
         COMMENT "Test basic linking against liboyranos_modules." VERBATIM )
+  SET( TEST2_DEPS ${TEST2_DEPS} test-modules )
+ENDIF(ENABLE_SHARED_LIBS)
+
 
 LINK_DIRECTORIES( ${LINK_DIRECTORIES} "${CMAKE_BINARY_DIR}/src/liboyranos_config/" )
-ADD_EXECUTABLE( test_config "${CMAKE_CURRENT_SOURCE_DIR}/test_config.c" )
-TARGET_LINK_LIBRARIES( test_config OyranosConfig )
-ADD_CUSTOM_TARGET(test-config
+IF(ENABLE_SHARED_LIBS)
+  ADD_EXECUTABLE( test_config "${CMAKE_CURRENT_SOURCE_DIR}/test_config.c" )
+  TARGET_LINK_LIBRARIES( test_config OyranosConfig )
+  ADD_CUSTOM_TARGET(test-config
 	COMMAND "${CMAKE_CURRENT_BINARY_DIR}/test_config"
         DEPENDS test_config test_modules
         COMMENT "Test basic linking against liboyranos_config." VERBATIM )
+  SET(TEST_CONFIG test_config)
+  SET( TEST2_DEPS ${TEST2_DEPS} test-config )
+ENDIF(ENABLE_SHARED_LIBS)
+
 
 LINK_DIRECTORIES( ${LINK_DIRECTORIES} "${CMAKE_BINARY_DIR}/src/liboyranos/" )
-ADD_EXECUTABLE( test2
+IF(ENABLE_SHARED_LIBS)
+  ADD_EXECUTABLE( test2
                 "${CMAKE_CURRENT_SOURCE_DIR}/test2.cpp"
                 "${CMAKE_SOURCE_DIR}/src/examples/image_display/oyranos_display_helpers.c"
               )
-TARGET_LINK_LIBRARIES( test2 Oyranos )
-ADD_EXECUTABLE( test2-static
+  TARGET_LINK_LIBRARIES( test2 Oyranos )
+  SET( TEST2_DEPS ${TEST2_DEPS} test2 )
+ENDIF(ENABLE_SHARED_LIBS)
+
+IF(ENABLE_STATIC_LIBS)
+  ADD_EXECUTABLE( test2-static
                 "${CMAKE_CURRENT_SOURCE_DIR}/test2.cpp"
                 "${CMAKE_SOURCE_DIR}/src/examples/image_display/oyranos_display_helpers.c"
               )
-TARGET_LINK_LIBRARIES( test2-static ${PACKAGE_NAME}-static )
+  TARGET_LINK_LIBRARIES( test2-static ${PACKAGE_NAME}-static )
+  SET( TEST2_DEPS ${TEST2_DEPS} test2-static )
+ENDIF(ENABLE_STATIC_LIBS)
 ADD_CUSTOM_TARGET(test-2
 	"echo"
-        DEPENDS test-oyranos2 test_config
+        DEPENDS test-oyranos2 ${TEST_CONFIG} ${TEST_CONFIG}
         COMMENT "Test liboyranos extensive." VERBATIM )
 ADD_CUSTOM_COMMAND( OUTPUT test-oyranos2
                     DEPENDS test2
@@ -70,15 +108,28 @@ ENDIF(USE_GCOV)
 
 
 LINK_DIRECTORIES( ${LINK_DIRECTORIES} "${CMAKE_BINARY_DIR}/src/liboyranos/" )
-ADD_EXECUTABLE( test_oyranos "${CMAKE_CURRENT_SOURCE_DIR}/test_oyranos.c" )
-TARGET_LINK_LIBRARIES( test_oyranos Oyranos )
-ADD_EXECUTABLE( test_oyranos-static "${CMAKE_CURRENT_SOURCE_DIR}/test_oyranos.c" )
-TARGET_LINK_LIBRARIES( test_oyranos-static ${PACKAGE_NAME}-static )
-ADD_CUSTOM_TARGET(check
+IF(ENABLE_SHARED_LIBS)
+  ADD_EXECUTABLE( test_oyranos "${CMAKE_CURRENT_SOURCE_DIR}/test_oyranos.c" )
+  TARGET_LINK_LIBRARIES( test_oyranos Oyranos )
+  ADD_CUSTOM_TARGET(check
 	"echo"
-        DEPENDS test-oyranos test2 test2-static
+        DEPENDS test-oyranos test2
         COMMENT "Test liboyranos." VERBATIM )
+  SET( TEST2_DEPS ${TEST2_DEPS} test_oyranos )
+ENDIF(ENABLE_SHARED_LIBS)
+
+IF(ENABLE_STATIC_LIBS)
+  ADD_EXECUTABLE( test_oyranos-static "${CMAKE_CURRENT_SOURCE_DIR}/test_oyranos.c" )
+  TARGET_LINK_LIBRARIES( test_oyranos-static ${PACKAGE_NAME}-static )
+  ADD_CUSTOM_TARGET(check-static
+	"echo"
+        DEPENDS test-oyranos test2-static
+        COMMENT "Test liboyranos." VERBATIM )
+  SET( TEST2_DEPS ${TEST2_DEPS} test_oyranos-static )
+ENDIF(ENABLE_STATIC_LIBS)
+
 
 ADD_CUSTOM_COMMAND( OUTPUT test-oyranos
-                    DEPENDS test_oyranos test_oyranos-static test_config test_modules test_object-static test_object test_core-static test_core
+                    DEPENDS ${TEST2_DEPS}
                     COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_SOURCE_DIR}/RunTest.cmake )
+
