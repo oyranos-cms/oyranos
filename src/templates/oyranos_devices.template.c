@@ -2729,7 +2729,9 @@ OYAPI char * OYEXPORT
        * temp2 = oyAllocateFunc_(4096),
        * tmp = 0, * txt = 0, * t = 0, * t2 = 0;
   oyFilterNode_s * node = 0;
+#ifdef USE_GETTEXT
   char * save_locale = 0;
+#endif
   oyFilterGraph_s_ * s = (oyFilterGraph_s_*)graph;
 
   oyFilterPlug_s_ * p = 0;
@@ -2739,8 +2741,9 @@ OYAPI char * OYEXPORT
 
   oyCheckType__m( oyOBJECT_FILTER_GRAPH_S, return 0 )
 
+#ifdef USE_GETTEXT
   save_locale = oyStringCopy_( setlocale(LC_NUMERIC, 0 ), oyAllocateFunc_);
-
+#endif
 
   STRING_ADD( text, "digraph G {\n" );
   STRING_ADD( text, "bgcolor=\"transparent\"\n" );
@@ -2965,10 +2968,12 @@ OYAPI char * OYEXPORT
   STRING_ADD( text, "}\n" );
   STRING_ADD( text, "\n" );
 
+#ifdef USE_GETTEXT
   setlocale(LC_NUMERIC, "C");
   /* sensible printing */
   setlocale(LC_NUMERIC, save_locale);
   oyFree_m_( save_locale );
+#endif
 
   STRING_ADD( text, "" );
 

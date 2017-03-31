@@ -47,11 +47,12 @@ int          oyStringToDouble        ( const char        * text,
                                        double            * value )
 {
   char * p = 0, * t;
-  char * save_locale = 0;
   int len = strlen(text);
   int found = 1;
-  save_locale = oyStringCopy_( setlocale(LC_NUMERIC, 0 ), oyAllocateFunc_);
+#ifdef USE_GETTEXT
+  char * save_locale = oyStringCopy_( setlocale(LC_NUMERIC, 0 ), oyAllocateFunc_);
   setlocale(LC_NUMERIC, "C");
+#endif
   /* avoid irritating valgrind output of "Invalid read of size 8"
    * might be a glibc error or a false positive in valgrind */
   t = oyAllocateFunc_( len + 2*sizeof(double) + 1 );
@@ -69,13 +70,15 @@ int          oyStringToDouble        ( const char        * text,
 
   *value = strtod( t, &p );
 
+#ifdef USE_GETTEXT
   setlocale(LC_NUMERIC, save_locale);
+  oyFree_m_( save_locale );
+#endif
 
   if(p && p != text && p[0] == '\000')
     found = 0;
 
   oyFree_m_( t );
-  oyFree_m_( save_locale );
 
   return found;
 }
