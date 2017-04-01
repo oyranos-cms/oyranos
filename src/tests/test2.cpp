@@ -1792,7 +1792,7 @@ oyTESTRESULT_e testProfiles ()
   oyProfiles_MoveIn( patterns, &pattern, -1 );
   profs = oyProfiles_Create( patterns, icc_profile_flags, NULL );
   count = oyProfiles_Count( profs );
-  if((int)size > count && count)
+  if((int)size >= count && count)
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS,
     "oyProfiles_Create( pattern = system/icc ) ok %u|%d", (unsigned int)size, count );
@@ -1828,7 +1828,7 @@ oyTESTRESULT_e testProfiles ()
     oyProfiles_Release( &patterns );
 
     count = oyProfiles_Count( profiles );
-    if((int)size > count && count)
+    if((int)size >= count && count)
     {
       PRINT_SUB( oyTESTRESULT_SUCCESS,
       "oyProfiles_Create( pattern = system/icc ) ok %u|%d", (unsigned int)size, count );
