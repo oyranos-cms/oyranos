@@ -298,15 +298,15 @@ static const cmsCIExyY*  (*l2cmsD50_xyY)(void);
 static cmsFloat64Number (*l2cmsDeltaE)(const cmsCIELab* Lab1, const cmsCIELab* Lab2) = NULL;
 static void (*l2cmsGetAlarmCodes)(cmsUInt16Number NewAlarm[cmsMAXCHANNELS]) = NULL;
 static cmsContext (*l2cmsCreateContext)(void* Plugin, void* UserData) = NULL;
+static cmsContext dummyCreateContext(void* Plugin, void* UserData) {return NULL;}
 static void* (*l2cmsGetContextUserData)(cmsContext ContextID) = NULL;
+static void* dummyGetContextUserData(cmsContext ContextID) {return NULL;}
 static cmsContext (*l2cmsGetProfileContextID)(cmsHPROFILE hProfile) = NULL;
 static cmsContext (*l2cmsGetTransformContextID)(cmsHPROFILE hProfile) = NULL;
 static int (*l2cmsGetEncodedCMMversion)(void) = NULL;
+static int dummyGetEncodedCMMversion() {return LCMS_VERSION;}
 
 #if !defined(COMPILE_STATIC)
-static cmsContext dummyCreateContext(void* Plugin, void* UserData) {return NULL;}
-static void* dummyGetContextUserData(cmsContext ContextID) {return NULL;}
-static int dummyGetEncodedCMMversion() {return LCMS_VERSION;}
 #define LOAD_FUNC( func, fallback_func ) l2##func = dlsym(l2cms_handle, #func ); \
                if(!l2##func) \
                { \
@@ -325,7 +325,24 @@ static int dummyGetEncodedCMMversion() {return LCMS_VERSION;}
                                       OY_DBG_ARGS_, dlerror() ); \
                }
 #else
-#define LOAD_FUNC( func, fallback_func ) l2##func = func; l2cms_handle = 0;
+#define LOAD_FUNC( func, fallback_func ) l2##func = func; \
+               if(!l2##func) \
+               { \
+                 oyMSG_e type = oyMSG_ERROR; \
+                 if(#fallback_func != NULL) \
+                 { \
+                   l2##func = fallback_func; \
+                   type = oyMSG_WARN; \
+                 } else \
+                 { \
+                   error = 1; \
+                 } \
+                 report = 1; \
+                 l2cms_msg( type,0, OY_DBG_FORMAT_" " \
+                                      "dlsym failed: %s", \
+                                      OY_DBG_ARGS_, dlerror() ); \
+               } \
+               l2cms_handle = 0;
 #define dlerror() l2cms_handle = 0
 #endif
 
