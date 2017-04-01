@@ -374,7 +374,9 @@ int                l2cmsCMMInit       ( oyStruct_s        * filter )
 #endif
     {
       LOAD_FUNC( cmsSetLogErrorHandler, NULL );
+#if LCMS_VERSION >= 2060
       LOAD_FUNC( cmsSetLogErrorHandlerTHR, NULL );
+#endif
       LOAD_FUNC( cmsGetColorSpace, NULL );
       LOAD_FUNC( cmsGetPCS, NULL );
       LOAD_FUNC( cmsGetDeviceClass, NULL );
@@ -390,7 +392,9 @@ int                l2cmsCMMInit       ( oyStruct_s        * filter )
       LOAD_FUNC( cmsTransform2DeviceLink, NULL );
       LOAD_FUNC( cmsSaveProfileToMem, NULL );
       LOAD_FUNC( cmsOpenProfileFromMemTHR, NULL );
+#if LCMS_VERSION >= 2060
       LOAD_FUNC( cmsOpenProfileFromFileTHR, NULL );
+#endif
       LOAD_FUNC( cmsCloseProfile, NULL );
       LOAD_FUNC( cmsCreateProfilePlaceholder, NULL );
       LOAD_FUNC( cmsSetProfileVersion, NULL );
