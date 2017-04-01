@@ -440,7 +440,9 @@ int                l2cmsCMMInit       ( oyStruct_s        * filter )
 #endif
       LOAD_FUNC( cmsGetProfileContextID, NULL );
       LOAD_FUNC( cmsGetTransformContextID, NULL );
+#if LCMS_VERSION >= 2060
       LOAD_FUNC( cmsGetEncodedCMMversion, dummyGetEncodedCMMversion );
+#endif
       if(l2cmsSetLogErrorHandler)
         l2cmsSetLogErrorHandler( l2cmsErrorHandlerFunction );
       else
