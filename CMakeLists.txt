@@ -29,10 +29,14 @@ SET( OYRANOS_VERSION_MAJORMINOR "${OYRANOS_VERSION_MAJOR}.${OYRANOS_VERSION_MINO
 
 include(GNUInstallDirs)
 
+
 option(ENABLE_EXAMPLES "Build example applications" ON)
+option(ENABLE_TESTS "Build tests)" ON)
 option(ENABLE_STATIC_LIBS "Build static libs" ON)
 option(ENABLE_SHARED_LIBS "Build shared libs" ON)
-option(ENABLE_TESTS "Build tests (requires static libs)" ON)
+option(ENABLE_QT "Build Qt5 and Qt4 tools" ON)
+option(ENABLE_FLTK "Build FLTK tools" ON)
+option(ENABLE_DOCU "Build HTML documentation out of sources" ON)
 
 MESSAGE( "-- Found CMAKE_SYSTEM_NAME: ${CMAKE_SYSTEM_NAME}" )
 
@@ -210,9 +214,9 @@ SET( OY_ICC_DIR        "${CMAKE_INSTALL_FULL_DATAROOTDIR}/color/icc" )
 ADD_SUBDIRECTORY( color )
 ADD_SUBDIRECTORY( src )
 ADD_SUBDIRECTORY( extras )
-IF(NOT SKIP_DOCU)
+IF(ENABLE_DOCU)
   ADD_SUBDIRECTORY( doc )
-ENDIF()
+ENDIF(ENABLE_DOCU)
 
 CONFIGURE_FILE(
     "${CMAKE_CURRENT_SOURCE_DIR}/cmake/OyranosUninstall.cmake.in"
