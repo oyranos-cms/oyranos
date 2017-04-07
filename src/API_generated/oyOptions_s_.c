@@ -448,5 +448,6 @@ void           oyOptions_ParseXML_   ( oyOptions_s_      * s,
   }
 }
 #endif
+
 /* } Include "Options.private_methods_definitions.c" */
 

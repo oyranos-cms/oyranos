@@ -109,6 +109,7 @@ void           oyOptions_ParseXML_   ( oyOptions_s_      * s,
                                        xmlDocPtr           doc,
                                        xmlNodePtr          cur );
 #endif
+
 /* } Include "Options.private_methods_declarations.h" */
 
 
