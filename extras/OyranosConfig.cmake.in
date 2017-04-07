@@ -21,6 +21,7 @@
 #  OYRANOS_FRAMEWORK_LOCALE     - OyranosCore.framework  OS X framework containing translations
 #  OYRANOS_FRAMEWORK_ICC        - Oyranos.framework      OS X framework containing ICC profiles
 #  OYRANOS_LINGUAS       - Oyranos translation languages
+#  OYRANOS_LINGUAS_FULL  - Oyranos translation languages with country code
 #
 #  OYRANOS_INCLUDE_DIR         - Include of of the Oyranos.framework Headers path
 #  OYRANOS_CONFIG_INCLUDE_DIR  - Include of of the OyranosConfig.framework Headers path
@@ -140,6 +141,7 @@ if (OYRANOS_FOUND)
         SET( OYRANOS_CONFIG_LIBRARIES_EXTRA  @EXTRA_LIBS_CONFIG@ )
         SET( OYRANOS_LIBRARIES_EXTRA         @EXTRA_LIBS@ )
         SET( OYRANOS_LINGUAS       @OY_LINGUAS@ )
+	SET( OYRANOS_LINGUAS_FULL       @OY_LINGUAS_FULL@ )
         SET( HAVE_OYRANOS          TRUE )
 	SET( OYRANOS_INCLUDE_DIRS
              ${OYRANOS_INCLUDE_DIR}
