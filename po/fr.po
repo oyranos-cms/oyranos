@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ICC Examin 0.41\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2017-04-01 14:45+0200\n"
+"POT-Creation-Date: 2017-04-07 10:55+0200\n"
 "PO-Revision-Date: 2006-06-29 19:31+0200\n"
 "Last-Translator: Pascal LACROIX <lacroixpascal at vfemail.net>\n"
 "Language-Team: <fr@li.org>\n"
@@ -292,7 +292,7 @@ msgstr ""
 #. HTML
 #: liboyranos_config/oyranos_xml.c:706
 msgid "About Oyranos"
-msgstr ""
+msgstr "À propos Oyranos"
 
 #: liboyranos_config/oyranos_texts.c:555 liboyranos_config/oyranos_texts.c:575
 msgid "Absolute Colorimetric"
@@ -843,7 +843,7 @@ msgid ""
 msgstr ""
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:1039
+#: liboyranos_config/oyranos_xml.c:1216
 msgid ""
 "Color matching between different devices is possible, provided that the "
 "color characteristics of the involved devices are known. The quality of a "
@@ -859,7 +859,7 @@ msgid "Color measurement data"
 msgstr ""
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:1054
+#: liboyranos_config/oyranos_xml.c:1231
 msgid ""
 "Color profiles are often available from manufacturers of imaging devices as "
 "digital cameras, monitors and printers. In Oyranos, ICC profiles are "
@@ -943,7 +943,7 @@ msgid "Copyright"
 msgstr "Copyright"
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:882
+#: liboyranos_config/oyranos_xml.c:818
 #, fuzzy
 msgid "Copyright &copy;"
 msgstr "Copyright"
@@ -1141,7 +1141,7 @@ msgstr ""
 msgid "Creator"
 msgstr ""
 
-#: tools/oyranos_policy.c:61 tools/oyranos_policy.c:228
+#: tools/oyranos_policy.c:61 tools/oyranos_policy.c:237
 msgid "Currently active policy:"
 msgstr ""
 
@@ -2033,8 +2033,16 @@ msgstr ""
 msgid "Internal stored Size"
 msgstr ""
 
-#: liboyranos_config/oyranos_xml.c:1020
+#: liboyranos_config/oyranos_xml.c:1183
 msgid "Internet: <a href=\"http://www.oyranos.org\">www.oyranos.org</a><br>"
+msgstr ""
+
+#: liboyranos_config/oyranos_xml.c:1195
+msgid "Internet: <ulink url=\"http://www.oyranos.org\">www.oyranos.org</ulink>"
+msgstr ""
+
+#: liboyranos_config/oyranos_xml.c:1193
+msgid "Introduction"
 msgstr ""
 
 #: examples/oyranos_cmm_dDev.c:824
@@ -2668,14 +2676,19 @@ msgstr "Oyranos Préférences"
 msgid "Oyranos Threads default Handling"
 msgstr ""
 
+#: liboyranos_config/oyranos_xml.c:891
+#, fuzzy
+msgid "Oyranos User Manual"
+msgstr "Oyranos Préférences"
+
 #. HTML
-#: liboyranos_config/oyranos_xml.c:872
+#: liboyranos_config/oyranos_xml.c:808
 #, fuzzy
 msgid "Oyranos Version"
 msgstr "Oyranos Préférences"
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:1064
+#: liboyranos_config/oyranos_xml.c:1241
 msgid ""
 "Oyranos allowes detailed settings like preferred editing color spaces and "
 "the behaviour of color conversions or simulation. Oyranos reduces the work "
@@ -2693,13 +2706,14 @@ msgid "Oyranos display filter"
 msgstr "Oyranos Préférences"
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:1027
+#: liboyranos_config/oyranos_xml.c:1203
+#, c-format
 msgid ""
 "Oyranos is a Color Management System (CMS), which relies one the ICC file "
-"format standard (<a href=\"http://www.color.org\">www.color.org</a>) for "
-"color space definitions. The use of ICC color profiles shall enable a "
-"flawless and automated color data exchange between different color spaces "
-"and various devices with their respective physical color behaviours."
+"format standard (%s) for color space definitions. The use of ICC color "
+"profiles shall enable a flawless and automated color data exchange between "
+"different color spaces and various devices with their respective physical "
+"color behaviours."
 msgstr ""
 
 #: liboyranos/oyranos_cmm.c:237 modules/color/modules/oyranos_cmm_oyra.c:128
@@ -2826,7 +2840,7 @@ msgstr ""
 msgid "Policy"
 msgstr ""
 
-#: tools/oyranos_policy.c:248
+#: tools/oyranos_policy.c:257
 #, fuzzy
 msgid "Policy search paths"
 msgstr "ICC Profils"
@@ -3929,6 +3943,13 @@ msgstr ""
 msgid "This example module \"my_handler\" lets you print a option."
 msgstr ""
 
+#. Hint for i18n: do not translate the &title; token.
+#: liboyranos_config/oyranos_xml.c:894
+msgid ""
+"This is the documentation for the &title; that configures the Oyranos Color "
+"Management System."
+msgstr ""
+
 #: liboyranos_config/oyranos_texts.c:503
 msgid ""
 "This setting decides what to do in the case that colors have no color space "
@@ -4383,11 +4404,11 @@ msgstr "Écran"
 msgid "install in the OpenIccDirectory icc path"
 msgstr ""
 
-#: tools/oyranos_policy.c:197
+#: tools/oyranos_policy.c:206
 msgid "installation of new policy file failed with error:"
 msgstr ""
 
-#: tools/oyranos_policy.c:194
+#: tools/oyranos_policy.c:203
 #, fuzzy
 msgid "installed new policy"
 msgstr "Ouvrir Profil"
@@ -4863,7 +4884,7 @@ msgstr "Ouvrir Profil"
 
 #: API_generated/oyOptions_s.c:1551 tools/oyranos-device.c:253
 #: tools/oyranos_convert.c:270 tools/oyranos_gamma.c:254
-#: tools/oyranos_policy.c:147 tools/oyranos_profile_graph.c:264
+#: tools/oyranos_policy.c:156 tools/oyranos_profile_graph.c:264
 #: tools/oyranos_profile_tool.c:233 tools/oyranos_profiles.c:244
 #: tools/oyranos_profiles.c:317 examples/taxi.c:206
 #: examples/libraw/oyranos_file.cpp:236

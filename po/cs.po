@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: oyranos\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2017-04-01 14:45+0200\n"
+"POT-Creation-Date: 2017-04-07 10:55+0200\n"
 "PO-Revision-Date: 2012-10-19 15:10+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -851,7 +851,7 @@ msgstr ""
 "uživatelé varováni - pokud si to přejí - a mohou situaci vyřešit ručně."
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:1039
+#: liboyranos_config/oyranos_xml.c:1216
 msgid ""
 "Color matching between different devices is possible, provided that the "
 "color characteristics of the involved devices are known. The quality of a "
@@ -874,7 +874,7 @@ msgid "Color measurement data"
 msgstr "Data z měření barev"
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:1054
+#: liboyranos_config/oyranos_xml.c:1231
 msgid ""
 "Color profiles are often available from manufacturers of imaging devices as "
 "digital cameras, monitors and printers. In Oyranos, ICC profiles are "
@@ -962,7 +962,7 @@ msgid "Copyright"
 msgstr "Copyright"
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:882
+#: liboyranos_config/oyranos_xml.c:818
 msgid "Copyright &copy;"
 msgstr "Copyright &copy;"
 
@@ -1155,7 +1155,7 @@ msgstr ""
 msgid "Creator"
 msgstr ""
 
-#: tools/oyranos_policy.c:61 tools/oyranos_policy.c:228
+#: tools/oyranos_policy.c:61 tools/oyranos_policy.c:237
 msgid "Currently active policy:"
 msgstr "Aktuálně aktivní politika:"
 
@@ -2069,9 +2069,8 @@ msgid "Install the selected profile."
 msgstr "Instalovat profil ICC:"
 
 #: API_generated/oyranos_profile.c:46
-#, fuzzy
 msgid "Intent"
-msgstr "Záměr:"
+msgstr "Záměr"
 
 #: tools/oyranos_profiles.c:567
 msgid "Internal Error"
@@ -2081,9 +2080,19 @@ msgstr ""
 msgid "Internal stored Size"
 msgstr ""
 
-#: liboyranos_config/oyranos_xml.c:1020
+#: liboyranos_config/oyranos_xml.c:1183
 msgid "Internet: <a href=\"http://www.oyranos.org\">www.oyranos.org</a><br>"
 msgstr "Internet: <a href=\"http://www.oyranos.org\">www.oyranos.org</a><br>"
+
+#: liboyranos_config/oyranos_xml.c:1195
+#, fuzzy
+msgid "Internet: <ulink url=\"http://www.oyranos.org\">www.oyranos.org</ulink>"
+msgstr "Internet: <a href=\"http://www.oyranos.org\">www.oyranos.org</a><br>"
+
+#: liboyranos_config/oyranos_xml.c:1193
+#, fuzzy
+msgid "Introduction"
+msgstr "Úvod k filtrům."
 
 #: examples/oyranos_cmm_dDev.c:824
 msgid "Kai-Uwe"
@@ -2725,13 +2734,18 @@ msgstr "Oyranos X11"
 msgid "Oyranos Threads default Handling"
 msgstr ""
 
+#: liboyranos_config/oyranos_xml.c:891
+#, fuzzy
+msgid "Oyranos User Manual"
+msgstr "Verze Oyranosu"
+
 #. HTML
-#: liboyranos_config/oyranos_xml.c:872
+#: liboyranos_config/oyranos_xml.c:808
 msgid "Oyranos Version"
 msgstr "Verze Oyranosu"
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:1064
+#: liboyranos_config/oyranos_xml.c:1241
 #, fuzzy
 msgid ""
 "Oyranos allowes detailed settings like preferred editing color spaces and "
@@ -2754,19 +2768,20 @@ msgid "Oyranos display filter"
 msgstr "Filter Oyranosu pro displej"
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:1027
+#: liboyranos_config/oyranos_xml.c:1203
+#, c-format
 msgid ""
 "Oyranos is a Color Management System (CMS), which relies one the ICC file "
-"format standard (<a href=\"http://www.color.org\">www.color.org</a>) for "
-"color space definitions. The use of ICC color profiles shall enable a "
-"flawless and automated color data exchange between different color spaces "
-"and various devices with their respective physical color behaviours."
+"format standard (%s) for color space definitions. The use of ICC color "
+"profiles shall enable a flawless and automated color data exchange between "
+"different color spaces and various devices with their respective physical "
+"color behaviours."
 msgstr ""
 "Oyranos je systém pro správu barev (CMS), který využívá jeden ze standardů "
-"souborového formátu ICC (<a href=\"http://www.color.org\">www.color.org</a>) "
-"pro definice barvových prostorů. Použití barvových profilů ICC má umožnit "
-"bezproblémovou a automatizovanou výměnu dat o barvách mezi různými barvovými "
-"prostory a různými zařízeními s ohledem na jejich schopnost reprodukce barev."
+"souborového formátu ICC (%s) pro definice barvových prostorů. Použití "
+"barvových profilů ICC má umožnit bezproblémovou a automatizovanou výměnu dat "
+"o barvách mezi různými barvovými prostory a různými zařízeními s ohledem na "
+"jejich schopnost reprodukce barev."
 
 #: liboyranos/oyranos_cmm.c:237 modules/color/modules/oyranos_cmm_oyra.c:128
 msgid "Oyranos modules"
@@ -2903,7 +2918,7 @@ msgstr ""
 msgid "Policy"
 msgstr "Politika"
 
-#: tools/oyranos_policy.c:248
+#: tools/oyranos_policy.c:257
 msgid "Policy search paths"
 msgstr "Prohledávané cesty pro politiky"
 
@@ -3212,9 +3227,8 @@ msgstr "Záměr transformace"
 
 #. keep total number of chars equal to original for cli print
 #: tools/oyranos_profile_tool.c:515
-#, fuzzy
 msgid "Rendering Intent:"
-msgstr "Záměr transformace"
+msgstr "Záměr transformace:"
 
 #: liboyranos_config/oyranos_texts.c:553
 msgid ""
@@ -4197,6 +4211,13 @@ msgstr "Tepelná vosková tiskárna"
 msgid "This example module \"my_handler\" lets you print a option."
 msgstr "Tento testovací modul \"my_handler\" umožní vytisknout volbu."
 
+#. Hint for i18n: do not translate the &title; token.
+#: liboyranos_config/oyranos_xml.c:894
+msgid ""
+"This is the documentation for the &title; that configures the Oyranos Color "
+"Management System."
+msgstr ""
+
 #: liboyranos_config/oyranos_texts.c:503
 msgid ""
 "This setting decides what to do in the case that colors have no color space "
@@ -4649,11 +4670,11 @@ msgstr "třída vstupu"
 msgid "install in the OpenIccDirectory icc path"
 msgstr "Nainstalujte do cesty \"OpenIccDirectory\""
 
-#: tools/oyranos_policy.c:197
+#: tools/oyranos_policy.c:206
 msgid "installation of new policy file failed with error:"
 msgstr "instalace nové politiky selhalo s chybou:"
 
-#: tools/oyranos_policy.c:194
+#: tools/oyranos_policy.c:203
 msgid "installed new policy"
 msgstr "instalována nová politika"
 
@@ -5121,7 +5142,7 @@ msgstr "zapsat do souboru"
 
 #: API_generated/oyOptions_s.c:1551 tools/oyranos-device.c:253
 #: tools/oyranos_convert.c:270 tools/oyranos_gamma.c:254
-#: tools/oyranos_policy.c:147 tools/oyranos_profile_graph.c:264
+#: tools/oyranos_policy.c:156 tools/oyranos_profile_graph.c:264
 #: tools/oyranos_profile_tool.c:233 tools/oyranos_profiles.c:244
 #: tools/oyranos_profiles.c:317 examples/taxi.c:206
 #: examples/libraw/oyranos_file.cpp:236

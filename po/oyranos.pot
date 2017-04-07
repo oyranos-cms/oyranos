@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Oyranos 0.9\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2017-04-01 14:45+0200\n"
+"POT-Creation-Date: 2017-04-07 10:55+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -136,7 +136,7 @@ msgstr ""
 
 #: API_generated/oyOptions_s.c:1551 tools/oyranos-device.c:253
 #: tools/oyranos_convert.c:270 tools/oyranos_gamma.c:254
-#: tools/oyranos_policy.c:147 tools/oyranos_profile_graph.c:264
+#: tools/oyranos_policy.c:156 tools/oyranos_profile_graph.c:264
 #: tools/oyranos_profile_tool.c:233 tools/oyranos_profiles.c:244
 #: tools/oyranos_profiles.c:317 examples/taxi.c:206
 #: examples/libraw/oyranos_file.cpp:236
@@ -2119,31 +2119,51 @@ msgid "About Oyranos"
 msgstr ""
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:872
+#: liboyranos_config/oyranos_xml.c:808
 msgid "Oyranos Version"
 msgstr ""
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:882
+#: liboyranos_config/oyranos_xml.c:818
 msgid "Copyright &copy;"
 msgstr ""
 
-#: liboyranos_config/oyranos_xml.c:1020
+#: liboyranos_config/oyranos_xml.c:891
+msgid "Oyranos User Manual"
+msgstr ""
+
+#. Hint for i18n: do not translate the &title; token.
+#: liboyranos_config/oyranos_xml.c:894
+msgid ""
+"This is the documentation for the &title; that configures the Oyranos Color "
+"Management System."
+msgstr ""
+
+#: liboyranos_config/oyranos_xml.c:1183
 msgid "Internet: <a href=\"http://www.oyranos.org\">www.oyranos.org</a><br>"
 msgstr ""
 
-#. HTML
-#: liboyranos_config/oyranos_xml.c:1027
-msgid ""
-"Oyranos is a Color Management System (CMS), which relies one the ICC file "
-"format standard (<a href=\"http://www.color.org\">www.color.org</a>) for "
-"color space definitions. The use of ICC color profiles shall enable a "
-"flawless and automated color data exchange between different color spaces "
-"and various devices with their respective physical color behaviours."
+#: liboyranos_config/oyranos_xml.c:1193
+msgid "Introduction"
+msgstr ""
+
+#: liboyranos_config/oyranos_xml.c:1195
+msgid "Internet: <ulink url=\"http://www.oyranos.org\">www.oyranos.org</ulink>"
 msgstr ""
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:1039
+#: liboyranos_config/oyranos_xml.c:1203
+#, c-format
+msgid ""
+"Oyranos is a Color Management System (CMS), which relies one the ICC file "
+"format standard (%s) for color space definitions. The use of ICC color "
+"profiles shall enable a flawless and automated color data exchange between "
+"different color spaces and various devices with their respective physical "
+"color behaviours."
+msgstr ""
+
+#. HTML
+#: liboyranos_config/oyranos_xml.c:1216
 msgid ""
 "Color matching between different devices is possible, provided that the "
 "color characteristics of the involved devices are known. The quality of a "
@@ -2155,7 +2175,7 @@ msgid ""
 msgstr ""
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:1054
+#: liboyranos_config/oyranos_xml.c:1231
 msgid ""
 "Color profiles are often available from manufacturers of imaging devices as "
 "digital cameras, monitors and printers. In Oyranos, ICC profiles are "
@@ -2164,7 +2184,7 @@ msgid ""
 msgstr ""
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:1064
+#: liboyranos_config/oyranos_xml.c:1241
 msgid ""
 "Oyranos allowes detailed settings like preferred editing color spaces and "
 "the behaviour of color conversions or simulation. Oyranos reduces the work "
@@ -3868,7 +3888,7 @@ msgstr ""
 msgid "List available policies:"
 msgstr ""
 
-#: tools/oyranos_policy.c:61 tools/oyranos_policy.c:228
+#: tools/oyranos_policy.c:61 tools/oyranos_policy.c:237
 msgid "Currently active policy:"
 msgstr ""
 
@@ -3892,15 +3912,15 @@ msgstr ""
 msgid "policy name"
 msgstr ""
 
-#: tools/oyranos_policy.c:194
+#: tools/oyranos_policy.c:203
 msgid "installed new policy"
 msgstr ""
 
-#: tools/oyranos_policy.c:197
+#: tools/oyranos_policy.c:206
 msgid "installation of new policy file failed with error:"
 msgstr ""
 
-#: tools/oyranos_policy.c:248
+#: tools/oyranos_policy.c:257
 msgid "Policy search paths"
 msgstr ""
 

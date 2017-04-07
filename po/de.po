@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2017-04-01 14:45+0200\n"
+"POT-Creation-Date: 2017-04-07 10:55+0200\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -832,7 +832,7 @@ msgstr ""
 "wünschen, und händisch eingreifen."
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:1039
+#: liboyranos_config/oyranos_xml.c:1216
 msgid ""
 "Color matching between different devices is possible, provided that the "
 "color characteristics of the involved devices are known. The quality of a "
@@ -856,7 +856,7 @@ msgid "Color measurement data"
 msgstr "Farbmessdaten"
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:1054
+#: liboyranos_config/oyranos_xml.c:1231
 msgid ""
 "Color profiles are often available from manufacturers of imaging devices as "
 "digital cameras, monitors and printers. In Oyranos, ICC profiles are "
@@ -940,7 +940,7 @@ msgid "Copyright"
 msgstr "Kopierrecht"
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:882
+#: liboyranos_config/oyranos_xml.c:818
 msgid "Copyright &copy;"
 msgstr "Kopierrecht &copy;"
 
@@ -1121,7 +1121,7 @@ msgstr "Erzeuge rank_map gefüllt von"
 msgid "Creator"
 msgstr "Ersteller"
 
-#: tools/oyranos_policy.c:61 tools/oyranos_policy.c:228
+#: tools/oyranos_policy.c:61 tools/oyranos_policy.c:237
 msgid "Currently active policy:"
 msgstr "Aktive Richtlinie:"
 
@@ -1356,6 +1356,7 @@ msgstr "Elektra Konfigurations API "
 msgid ""
 "Elektra project; www/support: http://github.com/ElektraInitiative/libelektra"
 msgstr ""
+"Elektra Projekt; WWW/Unterstützung: http://github.com/ElektraInitiative/libelektra"
 
 #: examples/libraw/oyranos_file.cpp:72
 msgid "Embedd device meta tag from image device into given device profile"
@@ -1627,6 +1628,8 @@ msgstr ""
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:378
 msgid "Handle naive and XCM aware CM apps device profiles."
 msgstr ""
+"Behandle Geräteprofile für naive und XCM kennende "
+"farbmanagementfähige Programme."
 
 #: examples/oyranos_cmm_dFil.c:626
 msgid "Handle options."
@@ -1997,9 +2000,18 @@ msgstr "Interner Fehler"
 msgid "Internal stored Size"
 msgstr "Interne Größe"
 
-#: liboyranos_config/oyranos_xml.c:1020
+#: liboyranos_config/oyranos_xml.c:1183
 msgid "Internet: <a href=\"http://www.oyranos.org\">www.oyranos.org</a><br>"
 msgstr "Internet: <a href=\"http://www.oyranos.org\">www.oyranos.org</a><br>"
+
+#: liboyranos_config/oyranos_xml.c:1195
+msgid "Internet: <ulink url=\"http://www.oyranos.org\">www.oyranos.org</ulink>"
+msgstr ""
+"Internet: <ulink url=\"http://www.oyranos.org\">www.oyranos.org</ulink>"
+
+#: liboyranos_config/oyranos_xml.c:1193
+msgid "Introduction"
+msgstr "Einführung"
 
 #: examples/oyranos_cmm_dDev.c:824
 msgid "Kai-Uwe"
@@ -2597,22 +2609,26 @@ msgstr "Oyranos Programmfäden"
 
 #: modules/color/modules/oyranos_cmm_trds.c:661
 msgid "Oyranos Threads default Handling"
-msgstr ""
+msgstr "Oyranos standard Unterstützung für Programmfäden"
+
+#: liboyranos_config/oyranos_xml.c:891
+msgid "Oyranos User Manual"
+msgstr "Oyranos Benutzerhandbuch"
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:872
+#: liboyranos_config/oyranos_xml.c:808
 msgid "Oyranos Version"
 msgstr "Oyranos Version"
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:1064
+#: liboyranos_config/oyranos_xml.c:1241
 msgid ""
 "Oyranos allowes detailed settings like preferred editing color spaces and "
 "the behaviour of color conversions or simulation. Oyranos reduces the work "
 "involved in all color management related decisions through automation, "
 "useful defaults and grouping of settings in selectable policies."
 msgstr ""
-"Oyranos erlaubt detailierte Einstellungen, wie z.B. zu bevorzugten "
+"Oyranos erlaubt detailierte Einstellungen, wie z.B. zu bevorzugende "
 "Editierfarbräumen, das Verhalten von Farbumwandlungen oder Simulation. "
 "Oyranos verringert den Aufwand für Farbmanagemententscheidungen durch "
 "Automation, sinnvolle Voreinstellungen und wählbare Richtlinien."
@@ -2626,20 +2642,20 @@ msgid "Oyranos display filter"
 msgstr "Oyranos Monitor Modul"
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:1027
+#: liboyranos_config/oyranos_xml.c:1203
+#, c-format
 msgid ""
 "Oyranos is a Color Management System (CMS), which relies one the ICC file "
-"format standard (<a href=\"http://www.color.org\">www.color.org</a>) for "
-"color space definitions. The use of ICC color profiles shall enable a "
-"flawless and automated color data exchange between different color spaces "
-"and various devices with their respective physical color behaviours."
+"format standard (%s) for color space definitions. The use of ICC color "
+"profiles shall enable a flawless and automated color data exchange between "
+"different color spaces and various devices with their respective physical "
+"color behaviours."
 msgstr ""
-"Oyranos ist ein auf dem ICC Standard (<a href=\"http://www.color.org\">www."
-"color.org</a>) für Farbraumbescheibungen beruhendes Farbmanagementsystem "
-"(CMS). Die Benutzung von ICC Farbprofilen soll einen reibungslosen und "
-"automatisierten Datenaustausch zwischen unterschiedlichen Farbräumen und den "
-"Abgleich auf verschiedenen Geräten mit ihren jeweiligen physikalischen "
-"Gegebenheiten ermöglichen."
+"Oyranos ist ein auf dem ICC Standard (%s) für Farbraumbescheibungen "
+"beruhendes Farbmanagementsystem (CMS). Die Benutzung von ICC Farbprofilen "
+"soll einen reibungslosen und automatisierten Datenaustausch zwischen "
+"unterschiedlichen Farbräumen und den Abgleich auf verschiedenen Geräten mit "
+"ihren jeweiligen physikalischen Gegebenheiten ermöglichen."
 
 #: liboyranos/oyranos_cmm.c:237 modules/color/modules/oyranos_cmm_oyra.c:128
 msgid "Oyranos modules"
@@ -2770,7 +2786,7 @@ msgstr ""
 msgid "Policy"
 msgstr "Richtlinie"
 
-#: tools/oyranos_policy.c:248
+#: tools/oyranos_policy.c:257
 msgid "Policy search paths"
 msgstr "Richtliniensuchpfade"
 
@@ -3064,6 +3080,8 @@ msgid ""
 "Rendering intent for color space transformations is typically the Relative "
 "Colorimetric intent plus Black Point Compensation or the Perceptual intent."
 msgstr ""
+"Die Übertragungsart für Farbumwandlungen ist typischerweise Fotografisch "
+"oder Relativ Farbmetrisch mit Schwarzpunktkompensation."
 
 #: liboyranos_config/oyranos_texts.c:552
 msgid "Rendering intent for color space transformations."
@@ -4038,6 +4056,15 @@ msgstr "Thermischer Wachsdrucker"
 msgid "This example module \"my_handler\" lets you print a option."
 msgstr ""
 
+#. Hint for i18n: do not translate the &title; token.
+#: liboyranos_config/oyranos_xml.c:894
+msgid ""
+"This is the documentation for the &title; that configures the Oyranos Color "
+"Management System."
+msgstr ""
+"Das ist die Dokumentation für &title; welches das Oyranos "
+"Farbmanagementsystem konfiguriert."
+
 #: liboyranos_config/oyranos_texts.c:503
 msgid ""
 "This setting decides what to do in the case that colors have no color space "
@@ -4473,11 +4500,11 @@ msgstr "Eingabefarbraum"
 msgid "install in the OpenIccDirectory icc path"
 msgstr "Installieren Sie in den OpenIccDirectory icc Pfad"
 
-#: tools/oyranos_policy.c:197
+#: tools/oyranos_policy.c:206
 msgid "installation of new policy file failed with error:"
 msgstr "Speicherung der neuen Richtline schlug fehl mit Fehler:"
 
-#: tools/oyranos_policy.c:194
+#: tools/oyranos_policy.c:203
 msgid "installed new policy"
 msgstr "neue Richtlinie erfolgreich gespeichert"
 
@@ -4925,7 +4952,7 @@ msgstr "schreibe nach Datei"
 
 #: API_generated/oyOptions_s.c:1551 tools/oyranos-device.c:253
 #: tools/oyranos_convert.c:270 tools/oyranos_gamma.c:254
-#: tools/oyranos_policy.c:147 tools/oyranos_profile_graph.c:264
+#: tools/oyranos_policy.c:156 tools/oyranos_profile_graph.c:264
 #: tools/oyranos_profile_tool.c:233 tools/oyranos_profiles.c:244
 #: tools/oyranos_profiles.c:317 examples/taxi.c:206
 #: examples/libraw/oyranos_file.cpp:236
@@ -5615,9 +5642,6 @@ msgstr "Falsches Profil für statischen WWW Farbraum, benötige sRGB"
 
 #~ msgid "Options"
 #~ msgstr "Optionen"
-
-#~ msgid "Oyranos Color Management"
-#~ msgstr "Oyranos Farbmanagement"
 
 #~ msgid "Oyranos Configuration"
 #~ msgstr "Oyranos Konfiguration"
