@@ -89,8 +89,11 @@ int main( int argc , char** argv )
   int current_policy = 0, list_policies = 0, list_paths = 0,
       dump_policy = 0;
   int long_help = 0,
+      docbook = 0,
       internal_name = 0,
       file_name = 0;
+  const char * doc_title = NULL,
+             * doc_version = NULL;
   int verbose = 0;
 
 #ifdef USE_GETTEXT
@@ -125,6 +128,12 @@ int main( int argc , char** argv )
                         {
                              if(OY_IS_ARG("help"))
                         { long_help = 1; i=100; break; }
+                        else if(OY_IS_ARG("docbook"))
+                        { docbook = 1; i=100; break; }
+                        else if(OY_IS_ARG("doc-title"))
+                        { OY_PARSE_STRING_ARG2(doc_title, "doc-title"); break; }
+                        else if(OY_IS_ARG("doc-version"))
+                        { OY_PARSE_STRING_ARG2(doc_version, "doc-version"); break; }
                         else if(OY_IS_ARG("path"))
                         { list_paths = 1; i=100; break; }
                         else if(OY_IS_ARG("system-wide"))
@@ -268,7 +277,46 @@ int main( int argc , char** argv )
     const char * opts[] = {"add_html_header","1",
                            "add_oyranos_title","1",
                            "add_oyranos_copyright","1",
+                           NULL,NULL,
+                           NULL,NULL,
                            NULL};
+    int pos = 6;
+    if(doc_title)
+    {
+      opts[pos++] = "title";
+      opts[pos++] = doc_title;
+    }
+    if(doc_version)
+    {
+      opts[pos++] = "version";
+      opts[pos++] = doc_version;
+    }
+    size = 0;
+    xml = oyDescriptionToHTML( oyGROUP_ALL, opts, oyAllocateFunc_ );
+    fprintf(stdout, "%s\n", xml);
+
+    if(xml) oyDeAllocateFunc_( xml );
+  } else
+  if(docbook)
+  {
+    const char * opts[] = {"add_html_header","1",
+                           "add_oyranos_title","1",
+                           "add_oyranos_copyright","1",
+                           "format","2",
+                           NULL,NULL,
+                           NULL,NULL,
+                           NULL};
+    int pos = 8;
+    if(doc_title)
+    {
+      opts[pos++] = "title";
+      opts[pos++] = doc_title;
+    }
+    if(doc_version)
+    {
+      opts[pos++] = "version";
+      opts[pos++] = doc_version;
+    }
     size = 0;
     xml = oyDescriptionToHTML( oyGROUP_ALL, opts, oyAllocateFunc_ );
     fprintf(stdout, "%s\n", xml);
