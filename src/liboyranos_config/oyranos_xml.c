@@ -685,18 +685,18 @@ int oyReadXMLPolicy_(oyGROUP_e           group,
 }
 
 /**
- *  Function oyGetHtmlHeader
- *  @brief   write a HTML page header
+ *  Function oyGetDocHeader
+ *  @brief   write a page header
  *
  *  @param         options             zero terminated paired key/value strings
  *  @param         allocate_func       the user allocator
  *  @return                            the string
  *
- *  @version Oyranos: 0.3.2
+ *  @version Oyranos: 0.9.7
+ *  @date    2017/04/05
  *  @since   2011/08/09 (Oyranos: 0.3.2)
- *  @date    2011/08/09
  */
-char * oyGetHtmlHeader               ( const char       ** options,
+char * oyGetDocHeader                ( const char       ** options,
                                        oyAlloc_f           allocate_func )
 {
   char * text = NULL;
@@ -705,7 +705,8 @@ char * oyGetHtmlHeader               ( const char       ** options,
          /* HTML */
   const char * title = _("About Oyranos");
   char * version = NULL;
-  int i = 0;
+  int i = 0,
+      format_type = 1;
 
   while(options && options[i])
   {
@@ -717,13 +718,21 @@ char * oyGetHtmlHeader               ( const char       ** options,
     { if(options[i+1])
        title = options[i+1];
     }
+    if( strcmp( options[i], "format" ) == 0 && options[i+1])
+      format_type = atoi(options[i+1]);
+    if( strcmp( options[i], "version" ) == 0 && options[i+1])
+      version = oyStringCopy_(options[i+1],0);
+
     if(options[i+1]) i += 2;
     else i++;
   }
 
-  version = oyVersionString(1,0);
+  if(!version)
+    version = oyVersionString(1,0);
 
-  oyStringAddPrintf_( &text,  oyAllocateFunc_, oyDeAllocateFunc_,
+  if(format_type == 1) /* HTML */
+  {
+    oyStringAddPrintf_( &text,  oyAllocateFunc_, oyDeAllocateFunc_,
     "<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">"
     "<meta http-equiv=\"Content-Type\" content=\"text/html\">\n"
     "<html>\n<head>\n"
@@ -735,10 +744,155 @@ char * oyGetHtmlHeader               ( const char       ** options,
     oyNoEmptyString_m_(title),
     version,
     SF );
+  } else if(format_type == 2) /* DocBook */
+  {
+    oyStringAddPrintf_( &text,  oyAllocateFunc_, oyDeAllocateFunc_,
+    "<?xml version=\"1.0\" ?>\n"
+    "<!DOCTYPE article PUBLIC \"-//KDE//DTD DocBook XML V4.5-Based Variant V1.1//EN\" \"dtd/kdedbx45.dtd\" [\n"
+    "<!ENTITY title \"<application>%s</application>\">\n"
+    "<!ENTITY version \"%s\">\n"
+    "<!ENTITY %% addindex \"IGNORE\">\n"
+    "<!ENTITY %% English \"INCLUDE\">\n"
+    "]>",
+    oyNoEmptyString_m_(title),
+    version/*,
+    SF*/ );
+  }
 
   oyFree_m_(version);
 
   return text;
+}
+
+void   oyGetDocTitle                 ( const char       ** options,
+                                       char             ** html )
+{
+  int i = 0;
+  int add_oyranos_copyright = 0,
+      add_oyranos_title = 0,
+      format_type = 1;
+  const char * SF = "#cccccc",
+             * title = NULL,
+             * copyright = NULL;
+  char * oyranos_title = NULL,
+       * oyranos_copyright = NULL;
+
+  while(options && options[i])
+  {
+    if( strcmp( options[i], "bgcolor" ) == 0 )
+    { if(options[i+1])
+       SF = options[i+1];
+    }
+    if( strcmp( options[i], "format" ) == 0 && options[i+1])
+      format_type = atoi(options[i+1]);
+    if( strcmp( options[i], "add_oyranos_title" ) == 0 && options[i+1])
+      add_oyranos_title = atoi(options[i+1]);
+    if( strcmp( options[i], "title" ) == 0 && options[i+1])
+      title = oyStringCopy_(options[i+1],0);
+    if( strcmp( options[i], "add_oyranos_copyright" ) == 0 && options[i+1])
+      add_oyranos_copyright = atoi(options[i+1]);
+    if( strcmp( options[i], "copyright" ) == 0 && options[i+1])
+      copyright = oyStringCopy_(options[i+1],0);
+
+    if(options[i+1]) i += 2;
+    else i++;
+  }
+
+  if(format_type == 1) /* HTML */
+  {
+    if( add_oyranos_title )
+    {
+         oyStringAddPrintf_( &oyranos_title, oyAllocateFunc_, oyDeAllocateFunc_,
+                             "%s %s",
+         /* HTML */
+                             _("Oyranos Version"), OYRANOS_VERSION_NAME );
+         title = oyranos_title;
+    }
+    if( add_oyranos_copyright )
+    {
+         /* HTML */
+         oyStringAddPrintf_( &oyranos_copyright,
+                             oyAllocateFunc_, oyDeAllocateFunc_,
+        "%s 2004-%d Kai-Uwe Behrmann<br>2009-%d Joseph Simon<br>2009-%d Yiannis Belias",
+         /* HTML */
+                             _("Copyright &copy;"), OYRANOS_DEVEL_YEAR,
+                             OYRANOS_DEVEL_YEAR, OYRANOS_DEVEL_YEAR );
+         copyright = oyranos_copyright;
+    }
+
+    /* general informations */
+      if(title || copyright)
+         oyStringAddPrintf_( html,  oyAllocateFunc_, oyDeAllocateFunc_,
+"<table cellspacing=3 cellpadding=4 width=\"100%\"> \n");
+      if(title)
+         oyStringAddPrintf_( html,  oyAllocateFunc_, oyDeAllocateFunc_, " \
+  <tr> \n\
+    <td bgcolor=\"%s\"> \n\
+    <center> \n\
+    <h2>%s\
+    </h2> \n\
+    </center><br><br><br>. \n\
+    </td> \n\
+  </tr> \n", SF, title );
+      if(copyright)
+         oyStringAddPrintf_( html,  oyAllocateFunc_, oyDeAllocateFunc_, " \
+  <tr> \n\
+    <td bgcolor=\"#9f9f9f\"> \n\
+    <b>%s\n\
+    </b> \n\
+  </tr> \n", copyright );
+      if(title || copyright)
+         oyStringAddPrintf_( html,  oyAllocateFunc_, oyDeAllocateFunc_, " \
+</table> \n\
+<br>" );
+         oyStringAddPrintf_( html,  oyAllocateFunc_, oyDeAllocateFunc_,
+" \n\
+<br> \n\
+<p>");
+  } else if(format_type == 2)
+  {
+         oyStringAddPrintf_( html,  oyAllocateFunc_, oyDeAllocateFunc_, "\n\
+<article id=\"oyranos_settings\" lang=\"&language;\"> \n\
+    <articleinfo> \n\
+    <title>%s</title> \n\
+ \n\
+    <authorgroup> \n\
+        <author> \n\
+            <firstname>Kai-Uwe</firstname> \n\
+            <surname>Behrmann</surname> \n\
+            <affiliation> \n\
+                <address><email>ku.b@gmx.de</email></address> \n\
+            </affiliation> \n\
+        </author> \n\
+        <!-- TRANS:ROLES_OF_TRANSLATORS --> \n\
+    </authorgroup> \n\
+    <copyright> \n\
+        <year>%d</year> \n\
+        <holder>Kai-Uwe Behrmann</holder> \n\
+    </copyright> \n\
+ \n\
+    <date>2017-04-05</date><!-- Date of (re)writing, or update.--> \n\
+    <releaseinfo>&version;</releaseinfo><!-- Application version number. Use the variable definitions within header to change this value.--> \n\
+ \n\
+    <abstract> \n\
+        <para>%s</para> \n\
+    </abstract> \n\
+ \n\
+    <keywordset> \n\
+        <keyword>KDE</keyword> \n\
+        <keyword>System Settings</keyword> \n\
+        <keyword>Oyranos</keyword> \n\
+        <keyword>Color Management</keyword> \n\
+        <keyword>KolorManager</keyword> \n\
+        <keyword>Synnefo</keyword> \n\
+    </keywordset> \n\
+ \n\
+    </articleinfo>\n",
+    _("Oyranos User Manual"),
+    OYRANOS_DEVEL_YEAR,
+    /* Hint for i18n: do not translate the &title; token. */
+    _("This is the documentation for the &title; that configures the Oyranos Color Management System.") );
+  }
 }
 
 /**
@@ -756,6 +910,7 @@ char * oyGetHtmlHeader               ( const char       ** options,
 void         oyWriteOptionToHTML_    ( oyGROUP_e           group,
                                        oyWIDGET_e          start,
                                        oyWIDGET_e          end, 
+                                       int                 format_type,
                                        char             ** text )
 {
   int   i = 0;
@@ -783,13 +938,25 @@ void         oyWriteOptionToHTML_    ( oyGROUP_e           group,
            if( (opt_type == oyWIDGETTYPE_BEHAVIOUR) ||
                (opt_type == oyWIDGETTYPE_DEFAULT_PROFILE))
            {
+             const char * sect2 = "%s%s<h4>%s</h4>\n",
+                        * sect2end = "",
+                        * paragraph = "%s     %s\n";
+             if(format_type == 2)
+             {
+               sect2 = "%s<sect2>\n"
+		       "%s  <title>%s</title>\n";
+               sect2end = "%s</sect2>\n";
+               paragraph = "%s  <para>%s</para>\n";
+             }
              /* write a short description */
              oyStringAddPrintf_( text,  oyAllocateFunc_, oyDeAllocateFunc_,
-                                            "%s<h4>%s</h4>\n", indent,
+                                 sect2, indent, format_type == 2 ? indent : "",
                        t->name );
              oyStringAddPrintf_( text,  oyAllocateFunc_, oyDeAllocateFunc_,
-                                            "%s     %s\n", indent,
+                                 paragraph, indent,
                        t->description);
+             oyStringAddPrintf_( text,  oyAllocateFunc_, oyDeAllocateFunc_,
+                                 sect2end, indent );
              /* write the profile name */
            }
          }
@@ -802,7 +969,9 @@ void         oyWriteOptionToHTML_    ( oyGROUP_e           group,
 
 /**
  *  Function oyDescriptionToHTML
- *  @brief   write a HTML description page
+ *  @brief   write a documentation page
+ *
+ *  Available formats are HTML and docbook.
  *
  *  @code
     const char * opts[] = {"add_html_header","1",
@@ -814,15 +983,18 @@ void         oyWriteOptionToHTML_    ( oyGROUP_e           group,
  *
  *  @param         group               currently only oyGROUP_ALL
  *  @param         options             zero terminated paired key/value strings
- *                                     - "add_html_header":"1" - adds a HTML header
- *                                     - "bgcolor":"#cccccc" - background color
- *                                     - "title":"myPage" - HTML page title
+ *                                     - "add_html_header":"1" - adds a document header
+ *                                     - "bgcolor":"#cccccc" - background color for HTML
+ *                                     - "title":"myPage" - HTML page title or
+ *                                       docbook application title
+ *                                     - "format": "1" for HTML, "2" for docbook
+ *                                     - "version": "1.0" for docbook application version
  *  @param         allocate_func       the user allocator
  *  @return                            the string
  *
- *  @version Oyranos: 0.3.2
+ *  @version Oyranos: 0.9.7
+ *  @date    2017/05/07
  *  @since   2011/08/09 (Oyranos: 0.3.2)
- *  @date    2011/08/09
  */
 char * oyDescriptionToHTML           ( int                 group,
                                        const char       ** options,
@@ -833,167 +1005,156 @@ char * oyDescriptionToHTML           ( int                 group,
   int   i = 0;
   int add_html_header = 0,
       add_oyranos_copyright = 0,
-      add_oyranos_title = 0;
-  const char * SF = "#cccccc",
-             * title = NULL,
-             * copyright = NULL;
+      add_oyranos_title = 0,
+      format_type = 1;
   char * oyranos_title = NULL,
        * oyranos_copyright = NULL;
-  const oyOption_t_ * opt = 0;
 
+  const oyOption_t_ * opt = 0;
+  const char * sect1 =                      "        <h3>%s</h3>\n",
+             * sect1end =                   "",
+             * paragraph =                  "          <p>\n",
+             * paragraphend =               "</p>\n",
+             * paragraph1 =                 "          %s\n",
+             * break1 =                     "          </ br>\n",
+             * link_color = "<a href=\"http://www.color.org\">www.color.org</a>";
   DBG_PROG_START
 
   while(options && options[i])
   {
     if( strcmp( options[i], "add_html_header" ) == 0 && options[i+1])
       add_html_header = atoi(options[i+1]);
-    if( strcmp( options[i], "bgcolor" ) == 0 && options[i+1])
-      SF = options[i+1];
+    if( strcmp( options[i], "format" ) == 0 && options[i+1])
+      format_type = atoi(options[i+1]);
     if( strcmp( options[i], "add_oyranos_title" ) == 0 && options[i+1])
       add_oyranos_title = atoi(options[i+1]);
-    if( strcmp( options[i], "title" ) == 0 && options[i+1])
-      title = oyStringCopy_(options[i+1],0);
     if( strcmp( options[i], "add_oyranos_copyright" ) == 0 && options[i+1])
       add_oyranos_copyright = atoi(options[i+1]);
-    if( strcmp( options[i], "copyright" ) == 0 && options[i+1])
-      copyright = oyStringCopy_(options[i+1],0);
 
     if(options[i+1]) i += 2;
     else i++;
   }
 
   if( add_html_header )
-         html = oyGetHtmlHeader( options, 0 ); 
-  if( add_oyranos_title )
-  {
-         oyStringAddPrintf_( &oyranos_title, oyAllocateFunc_, oyDeAllocateFunc_,
-                             "%s %s",
-         /* HTML */
-                             _("Oyranos Version"), OYRANOS_VERSION_NAME );
-         title = oyranos_title;
-  }
-  if( add_oyranos_copyright )
-  {
-         /* HTML */
-         oyStringAddPrintf_( &oyranos_copyright,
-                             oyAllocateFunc_, oyDeAllocateFunc_,
-        "%s 2004-%d Kai-Uwe Behrmann<br>2009-%d Joseph Simon<br>2009-%d Yiannis Belias",
-         /* HTML */
-                             _("Copyright &copy;"), OYRANOS_DEVEL_YEAR,
-                             OYRANOS_DEVEL_YEAR, OYRANOS_DEVEL_YEAR );
-         copyright = oyranos_copyright;
-  }
+         html = oyGetDocHeader( options, 0 ); 
 
   /* general informations */
-    if(title || copyright)
-         oyStringAddPrintf_( &html,  oyAllocateFunc_, oyDeAllocateFunc_,
-"<table cellspacing=3 cellpadding=4 width=\"100%\"> \n");
-    if(title)
-         oyStringAddPrintf_( &html,  oyAllocateFunc_, oyDeAllocateFunc_, " \
-  <tr> \n\
-    <td bgcolor=\"%s\"> \n\
-    <center> \n\
-    <h2>%s\
-    </h2> \n\
-    </center><br><br><br>. \n\
-    </td> \n\
-  </tr> \n", SF, title );
-    if(copyright)
-         oyStringAddPrintf_( &html,  oyAllocateFunc_, oyDeAllocateFunc_, " \
-  <tr> \n\
-    <td bgcolor=\"#9f9f9f\"> \n\
-    <b>%s\n\
-    </b> \n\
-  </tr> \n", copyright );
-    if(title || copyright)
-         oyStringAddPrintf_( &html,  oyAllocateFunc_, oyDeAllocateFunc_, " \
-</table> \n\
-<br>" );
-         oyStringAddPrintf_( &html,  oyAllocateFunc_, oyDeAllocateFunc_,
-" \n\
-<br> \n\
-<p>");
-  opt = oyOptionGet_( (oyWIDGET_e)group );
+  if( add_oyranos_title && add_oyranos_copyright )
+    oyGetDocTitle( options, &html );
 
+  if(format_type == 2)
+  {
+    sect1 =                                 "        <sect1>\n"
+                                            "          <title>%s</title>\n";
+    sect1end =                              "        </sect1>\n";
+    paragraph =                             "          <para>\n",
+    paragraphend =                        "\n          </para>\n",
+    paragraph1 =                            "          <para>%s</para>\n";
+    break1 =                                "",
+    link_color = "<ulink url=\"http://www.color.org\">www.color.org</ulink>";
+  }
+
+
+  opt = oyOptionGet_( (oyWIDGET_e)group );
   switch (group)
   {
     case oyGROUP_DEFAULT_PROFILES:
          oyStringAddPrintf_( &html,  oyAllocateFunc_, oyDeAllocateFunc_,
-                                            "        <h3>%s</h3>\n"
-                                            "          %s\n",
-                             opt->name,
+                             sect1,
+                             opt->name );
+         oyStringAddPrintf_( &html,  oyAllocateFunc_, oyDeAllocateFunc_,
+                             paragraph1,
                              opt->description );
          oyWriteOptionToHTML_( group,
                                     oyWIDGET_DEFAULT_PROFILE_START + 1,
                                     oyWIDGET_DEFAULT_PROFILE_END - 1,
-                                    &html );
+                                    format_type, &html );
+         oyStringAddPrintf_( &html,  oyAllocateFunc_, oyDeAllocateFunc_,
+                             sect1end );
          break;
     case oyGROUP_BEHAVIOUR_RENDERING:
          oyStringAddPrintf_( &html,  oyAllocateFunc_, oyDeAllocateFunc_,
-                                            "        <h3>%s</h3>\n"
-                                            "          %s\n",
-                             opt->name,
+                             sect1,
+                             opt->name );
+         oyStringAddPrintf_( &html,  oyAllocateFunc_, oyDeAllocateFunc_,
+                             paragraph1,
                              opt->description );
          oyWriteOptionToHTML_( group,
                                     oyWIDGET_RENDERING_INTENT,
                                     oyWIDGET_BEHAVIOUR_END,
-                                    &html );
+                                    format_type, &html );
+         oyStringAddPrintf_( &html,  oyAllocateFunc_, oyDeAllocateFunc_,
+                             sect1end );
          break;
     case oyGROUP_BEHAVIOUR_PROOF:
          oyStringAddPrintf_( &html,  oyAllocateFunc_, oyDeAllocateFunc_,
-                                            "        <h3>%s</h3>\n"
-                                            "          %s\n",
-                             opt->name,
+                             sect1,
+                             opt->name );
+         oyStringAddPrintf_( &html,  oyAllocateFunc_, oyDeAllocateFunc_,
+                             paragraph1,
                              opt->description );
          oyWriteOptionToHTML_( group,
                                     oyWIDGET_DEFAULT_PROFILE_START + 1,
                                     oyWIDGET_DEFAULT_PROFILE_END - 1,
-                                    &html );
+                                    format_type, &html );
          oyWriteOptionToHTML_( group,
                                     oyWIDGET_RENDERING_INTENT_PROOF,
                                     oyWIDGET_BEHAVIOUR_END - 1,
-                                    &html );
+                                    format_type, &html );
+         oyStringAddPrintf_( &html,  oyAllocateFunc_, oyDeAllocateFunc_,
+                             sect1end );
          break;
     case oyGROUP_BEHAVIOUR_EFFECT:
          oyStringAddPrintf_( &html,  oyAllocateFunc_, oyDeAllocateFunc_,
-                                            "        <h3>%s</h3>\n"
-                                            "          %s\n",
-                             opt->name,
+                             sect1,
+                             opt->name );
+         oyStringAddPrintf_( &html,  oyAllocateFunc_, oyDeAllocateFunc_,
+                             paragraph1,
                              opt->description );
          oyWriteOptionToHTML_( group,
                                     oyWIDGET_DEFAULT_PROFILE_START + 1,
                                     oyWIDGET_DEFAULT_PROFILE_END - 1,
-                                    &html );
+                                    format_type, &html );
          oyWriteOptionToHTML_( group,
                                     oyWIDGET_RENDERING_INTENT_PROOF,
                                     oyWIDGET_BEHAVIOUR_END - 1,
-                                    &html );
+                                    format_type, &html );
+         oyStringAddPrintf_( &html,  oyAllocateFunc_, oyDeAllocateFunc_,
+                             sect1end );
          break;
     case oyGROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS:
          oyStringAddPrintf_( &html,  oyAllocateFunc_, oyDeAllocateFunc_,
-                                            "        <h3>%s</h3>\n"
-                                            "          %s\n",
-                             opt->name,
+                             sect1,
+                             opt->name );
+         oyStringAddPrintf_( &html,  oyAllocateFunc_, oyDeAllocateFunc_,
+                             paragraph1,
                              opt->description );
          oyWriteOptionToHTML_( group,
                                     oyWIDGET_MIXED_MOD_DOCUMENTS_PRINT,
                                     oyWIDGET_MIXED_MOD_DOCUMENTS_SCREEN,
-                                    &html );
+                                    format_type, &html );
+         oyStringAddPrintf_( &html,  oyAllocateFunc_, oyDeAllocateFunc_,
+                             sect1end );
          break;
     case oyGROUP_BEHAVIOUR_MISSMATCH:
          oyStringAddPrintf_( &html,  oyAllocateFunc_, oyDeAllocateFunc_,
-                                            "        <h3>%s</h3>\n"
-                                            "          %s\n",
-                             opt->name,
+                             sect1,
+                             opt->name );
+         oyStringAddPrintf_( &html,  oyAllocateFunc_, oyDeAllocateFunc_,
+                             paragraph1,
                              opt->description );
          oyWriteOptionToHTML_( group,
                                     oyWIDGET_ACTION_UNTAGGED_ASSIGN,
                                     oyWIDGET_ACTION_OPEN_MISMATCH_CMYK,
-                                    &html );
+                                    format_type, &html );
+         oyStringAddPrintf_( &html,  oyAllocateFunc_, oyDeAllocateFunc_,
+                             sect1end );
          break;
     case oyGROUP_ALL:
          {
-           value = oyDescriptionToHTML(oyGROUP_START, 0, oyAllocateFunc_);
+           const char * opts[] = {"format", format_type == 1 ? "1" : "2",
+                           NULL};
+           value = oyDescriptionToHTML(oyGROUP_START, opts, oyAllocateFunc_);
            if(value)
            {
              oyStringAddPrintf_( &html,  oyAllocateFunc_, oyDeAllocateFunc_,
@@ -1004,7 +1165,7 @@ char * oyDescriptionToHTML           ( int                 group,
            /* travel through the group of settings and call the func itself */
            for(i = oyGROUP_START + 1; i < oyGROUP_ALL; ++i)
            {
-             value = oyDescriptionToHTML(i, 0, oyAllocateFunc_);
+             value = oyDescriptionToHTML(i, opts, oyAllocateFunc_);
              if(value)
              {
                oyStringAddPrintf_( &html,  oyAllocateFunc_, oyDeAllocateFunc_,
@@ -1016,23 +1177,39 @@ char * oyDescriptionToHTML           ( int                 group,
          break;
     case oyGROUP_START:
          /* HTML */
-         oyStringAddPrintf_( &html,  oyAllocateFunc_, oyDeAllocateFunc_, _(
+         if(format_type == 1)
+         {
+           oyStringAddPrintf_( &html,  oyAllocateFunc_, oyDeAllocateFunc_, _(
 "Internet: <a href=\"http://www.oyranos.org\">www.oyranos.org</a><br>") );
-         oyStringAddPrintf_( &html,  oyAllocateFunc_, oyDeAllocateFunc_, " \
+           oyStringAddPrintf_( &html,  oyAllocateFunc_, oyDeAllocateFunc_, " \
 </p>\n \
 <p>");
+         } else if(format_type == 2)
+         {
+           oyStringAddPrintf_( &html,  oyAllocateFunc_, oyDeAllocateFunc_,
+"           <sect1>\n"
+"             <title>%s</title>\n"
+"%s",
+           _("Introduction"), paragraph );
+           oyStringAddPrintf_( &html,  oyAllocateFunc_, oyDeAllocateFunc_, _(
+"Internet: <ulink url=\"http://www.oyranos.org\">www.oyranos.org</ulink>") );
+           oyStringAddPrintf_( &html,  oyAllocateFunc_, oyDeAllocateFunc_, " \
+%s\n \
+%s", paragraphend, paragraph );
+         }
   /* goal and means */
          oyStringAddPrintf_( &html,  oyAllocateFunc_, oyDeAllocateFunc_, _(
          /* HTML */
 "Oyranos is a Color Management System (CMS), which relies one the ICC "
-"file format standard (<a href=\"http://www.color.org\">www.color.org</a>) "
+"file format standard (%s) "
 "for color space definitions. "
 "The use of ICC color profiles shall enable a flawless and automated "
 "color data exchange between different color spaces and various "
-"devices with their respective physical color behaviours.") );
+"devices with their respective physical color behaviours."),
+           link_color );
          oyStringAddPrintf_( &html,  oyAllocateFunc_, oyDeAllocateFunc_, " \
-</p>\n \
-<p>" );
+%s\n \
+%s", paragraphend, paragraph );
   /* color conversion theory for devices */
          oyStringAddPrintf_( &html,  oyAllocateFunc_, oyDeAllocateFunc_, _(
          /* HTML */
@@ -1046,8 +1223,8 @@ char * oyDescriptionToHTML           ( int                 group,
 "Profile Connection Spaces (PCS). The PCS is a well known color space, based "
 "on the average \"human observer\" as defined by CIE.") );
          oyStringAddPrintf_( &html,  oyAllocateFunc_, oyDeAllocateFunc_, " \
-</p>\n \
-<p>" );
+%s\n \
+%s", paragraphend, paragraph );
   /* color devices in Oyranos */
          oyStringAddPrintf_( &html,  oyAllocateFunc_, oyDeAllocateFunc_, _(
          /* HTML */
@@ -1056,8 +1233,8 @@ char * oyDescriptionToHTML           ( int                 group,
 "assigned to calibration states of color devices, to get close to the device "
 "behaviour as was present during ICC profile creation." ) );
          oyStringAddPrintf_( &html,  oyAllocateFunc_, oyDeAllocateFunc_, " \
-</p>\n \
-<p>" );
+%s\n \
+%s", paragraphend, paragraph );
   /* other settings */
          oyStringAddPrintf_( &html,  oyAllocateFunc_, oyDeAllocateFunc_, _(
          /* HTML */
@@ -1067,8 +1244,10 @@ char * oyDescriptionToHTML           ( int                 group,
 "through automation, useful defaults and grouping of settings in selectable "
 "policies.") );
          oyStringAddPrintf_( &html,  oyAllocateFunc_, oyDeAllocateFunc_, " \
-<br/></p>\n");
+%s%s\n", break1, paragraphend);
 
+         oyStringAddPrintf_( &html,  oyAllocateFunc_, oyDeAllocateFunc_,
+                             sect1end );
          break;
     default:
          DBG_NUM1_S("No text for group: %d",group);
@@ -1078,6 +1257,8 @@ char * oyDescriptionToHTML           ( int                 group,
   if( add_html_header )
   {
          const char *end = "</body>";
+         if(format_type == 2)
+           end = "      </article>";
          oyStringAdd_( &html, end, oyAllocateFunc_, oyDeAllocateFunc_ );
          
   }
