@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2017-04-07 10:55+0200\n"
+"POT-Creation-Date: 2017-04-07 16:50+0200\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -832,7 +832,7 @@ msgstr ""
 "wünschen, und händisch eingreifen."
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:1216
+#: liboyranos_config/oyranos_xml.c:1217
 msgid ""
 "Color matching between different devices is possible, provided that the "
 "color characteristics of the involved devices are known. The quality of a "
@@ -856,7 +856,7 @@ msgid "Color measurement data"
 msgstr "Farbmessdaten"
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:1231
+#: liboyranos_config/oyranos_xml.c:1232
 msgid ""
 "Color profiles are often available from manufacturers of imaging devices as "
 "digital cameras, monitors and printers. In Oyranos, ICC profiles are "
@@ -1356,7 +1356,8 @@ msgstr "Elektra Konfigurations API "
 msgid ""
 "Elektra project; www/support: http://github.com/ElektraInitiative/libelektra"
 msgstr ""
-"Elektra Projekt; WWW/Unterstützung: http://github.com/ElektraInitiative/libelektra"
+"Elektra Projekt; WWW/Unterstützung: http://github.com/ElektraInitiative/"
+"libelektra"
 
 #: examples/libraw/oyranos_file.cpp:72
 msgid "Embedd device meta tag from image device into given device profile"
@@ -1628,8 +1629,8 @@ msgstr ""
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:378
 msgid "Handle naive and XCM aware CM apps device profiles."
 msgstr ""
-"Behandle Geräteprofile für naive und XCM kennende "
-"farbmanagementfähige Programme."
+"Behandle Geräteprofile für naive und XCM kennende farbmanagementfähige "
+"Programme."
 
 #: examples/oyranos_cmm_dFil.c:626
 msgid "Handle options."
@@ -2000,16 +2001,16 @@ msgstr "Interner Fehler"
 msgid "Internal stored Size"
 msgstr "Interne Größe"
 
-#: liboyranos_config/oyranos_xml.c:1183
+#: liboyranos_config/oyranos_xml.c:1184
 msgid "Internet: <a href=\"http://www.oyranos.org\">www.oyranos.org</a><br>"
 msgstr "Internet: <a href=\"http://www.oyranos.org\">www.oyranos.org</a><br>"
 
-#: liboyranos_config/oyranos_xml.c:1195
+#: liboyranos_config/oyranos_xml.c:1196
 msgid "Internet: <ulink url=\"http://www.oyranos.org\">www.oyranos.org</ulink>"
 msgstr ""
 "Internet: <ulink url=\"http://www.oyranos.org\">www.oyranos.org</ulink>"
 
-#: liboyranos_config/oyranos_xml.c:1193
+#: liboyranos_config/oyranos_xml.c:1194
 msgid "Introduction"
 msgstr "Einführung"
 
@@ -2621,7 +2622,7 @@ msgid "Oyranos Version"
 msgstr "Oyranos Version"
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:1241
+#: liboyranos_config/oyranos_xml.c:1242
 msgid ""
 "Oyranos allowes detailed settings like preferred editing color spaces and "
 "the behaviour of color conversions or simulation. Oyranos reduces the work "
@@ -2642,7 +2643,7 @@ msgid "Oyranos display filter"
 msgstr "Oyranos Monitor Modul"
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:1203
+#: liboyranos_config/oyranos_xml.c:1204
 #, c-format
 msgid ""
 "Oyranos is a Color Management System (CMS), which relies one the ICC file "

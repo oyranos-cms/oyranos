@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Oyranos 0.9\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2017-04-07 10:55+0200\n"
+"POT-Creation-Date: 2017-04-07 16:50+0200\n"
 "PO-Revision-Date: 2015-02-20 17:32+0100\n"
 "Last-Translator: Kai-Uwe Behrmann <ku.b@gmx.de>\n"
 "Language-Team: russian <ru@li.org>\n"
@@ -806,7 +806,7 @@ msgid ""
 msgstr ""
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:1216
+#: liboyranos_config/oyranos_xml.c:1217
 msgid ""
 "Color matching between different devices is possible, provided that the "
 "color characteristics of the involved devices are known. The quality of a "
@@ -822,7 +822,7 @@ msgid "Color measurement data"
 msgstr ""
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:1231
+#: liboyranos_config/oyranos_xml.c:1232
 msgid ""
 "Color profiles are often available from manufacturers of imaging devices as "
 "digital cameras, monitors and printers. In Oyranos, ICC profiles are "
@@ -1917,15 +1917,15 @@ msgstr ""
 msgid "Internal stored Size"
 msgstr ""
 
-#: liboyranos_config/oyranos_xml.c:1183
+#: liboyranos_config/oyranos_xml.c:1184
 msgid "Internet: <a href=\"http://www.oyranos.org\">www.oyranos.org</a><br>"
 msgstr ""
 
-#: liboyranos_config/oyranos_xml.c:1195
+#: liboyranos_config/oyranos_xml.c:1196
 msgid "Internet: <ulink url=\"http://www.oyranos.org\">www.oyranos.org</ulink>"
 msgstr ""
 
-#: liboyranos_config/oyranos_xml.c:1193
+#: liboyranos_config/oyranos_xml.c:1194
 msgid "Introduction"
 msgstr ""
 
@@ -2526,7 +2526,7 @@ msgid "Oyranos Version"
 msgstr ""
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:1241
+#: liboyranos_config/oyranos_xml.c:1242
 msgid ""
 "Oyranos allowes detailed settings like preferred editing color spaces and "
 "the behaviour of color conversions or simulation. Oyranos reduces the work "
@@ -2543,7 +2543,7 @@ msgid "Oyranos display filter"
 msgstr ""
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:1203
+#: liboyranos_config/oyranos_xml.c:1204
 #, c-format
 msgid ""
 "Oyranos is a Color Management System (CMS), which relies one the ICC file "

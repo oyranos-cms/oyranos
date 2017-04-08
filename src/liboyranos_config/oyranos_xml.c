@@ -943,10 +943,9 @@ void         oyWriteOptionToHTML_    ( oyGROUP_e           group,
                         * paragraph = "%s     %s\n";
              if(format_type == 2)
              {
-               sect2 = "%s<sect2>\n"
-		       "%s  <title>%s</title>\n";
-               sect2end = "%s</sect2>\n";
-               paragraph = "%s  <para>%s</para>\n";
+               sect2 = "%s<variablelist><varlistentry><term>\n%s<guilabel>%s</guilabel></term> <listitem>\n";
+               sect2end = "%s</listitem></varlistentry></variablelist>\n";
+               paragraph = "%s<para>%s</para>\n";
              }
              /* write a short description */
              oyStringAddPrintf_( text,  oyAllocateFunc_, oyDeAllocateFunc_,
