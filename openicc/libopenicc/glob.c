@@ -92,6 +92,10 @@ __FBSDID("$FreeBSD: release/10.0.0/lib/libc/gen/glob.c 249381 2013-04-11 20:15:3
 #include <unistd.h>
 #include <wchar.h>
 
+#ifndef HAVE_LOCALE_H
+/* a current MB length makes only sense with locale info */
+#undef  MB_CUR_MAX
+#endif
 #ifndef MB_CUR_MAX
 #define MB_CUR_MAX 4
 #endif
