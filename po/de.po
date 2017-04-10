@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2017-04-07 16:50+0200\n"
+"POT-Creation-Date: 2017-04-10 08:50+0200\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -832,7 +832,7 @@ msgstr ""
 "wünschen, und händisch eingreifen."
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:1217
+#: liboyranos_config/oyranos_xml.c:1215
 msgid ""
 "Color matching between different devices is possible, provided that the "
 "color characteristics of the involved devices are known. The quality of a "
@@ -856,7 +856,7 @@ msgid "Color measurement data"
 msgstr "Farbmessdaten"
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:1232
+#: liboyranos_config/oyranos_xml.c:1230
 msgid ""
 "Color profiles are often available from manufacturers of imaging devices as "
 "digital cameras, monitors and printers. In Oyranos, ICC profiles are "
@@ -2001,16 +2001,16 @@ msgstr "Interner Fehler"
 msgid "Internal stored Size"
 msgstr "Interne Größe"
 
-#: liboyranos_config/oyranos_xml.c:1184
+#: liboyranos_config/oyranos_xml.c:1182
 msgid "Internet: <a href=\"http://www.oyranos.org\">www.oyranos.org</a><br>"
 msgstr "Internet: <a href=\"http://www.oyranos.org\">www.oyranos.org</a><br>"
 
-#: liboyranos_config/oyranos_xml.c:1196
+#: liboyranos_config/oyranos_xml.c:1194
 msgid "Internet: <ulink url=\"http://www.oyranos.org\">www.oyranos.org</ulink>"
 msgstr ""
 "Internet: <ulink url=\"http://www.oyranos.org\">www.oyranos.org</ulink>"
 
-#: liboyranos_config/oyranos_xml.c:1194
+#: liboyranos_config/oyranos_xml.c:1192
 msgid "Introduction"
 msgstr "Einführung"
 
@@ -2622,7 +2622,7 @@ msgid "Oyranos Version"
 msgstr "Oyranos Version"
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:1242
+#: liboyranos_config/oyranos_xml.c:1240
 msgid ""
 "Oyranos allowes detailed settings like preferred editing color spaces and "
 "the behaviour of color conversions or simulation. Oyranos reduces the work "
@@ -2643,7 +2643,7 @@ msgid "Oyranos display filter"
 msgstr "Oyranos Monitor Modul"
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:1204
+#: liboyranos_config/oyranos_xml.c:1202
 #, c-format
 msgid ""
 "Oyranos is a Color Management System (CMS), which relies one the ICC file "

@@ -151,8 +151,8 @@ int main( int argc , char** argv )
   char * output = 0;
   int spectral = 1;
   int blackbody = 1;
-  float thickness = 1.0;
-  float change_thickness = .7;
+  double thickness = 1.0;
+  double change_thickness = 0.7;
   int border = 1;
   int standardobs = 0;
   int saturation = 1;

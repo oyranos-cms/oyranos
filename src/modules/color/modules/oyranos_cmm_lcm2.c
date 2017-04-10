@@ -980,7 +980,7 @@ cmsHTRANSFORM  l2cmsCMMConversionContextCreate_ (
 
       o_txt = oyOptions_FindString  ( opts, "adaption_state", 0 );
       if(o_txt && oyStrlen_(o_txt))
-        adaption_state = atof( o_txt );
+        oyStringToDouble( o_txt, &adaption_state );
 
   if(!error)
   {
