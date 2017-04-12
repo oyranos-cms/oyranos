@@ -67,8 +67,7 @@
 
 /** \addtogroup alpha Alpha API's
 
- *  @{
- */
+ *  @{ *//* alpha */
 
 #define PT_ANY       0    /* Don't check colorspace */
                           /* 1 & 2 are reserved */
@@ -217,8 +216,7 @@ oyChar *     oyDumpColorToCGATS     ( const double      * channels,
   return text;
 }
 
-/** @} *//*alpha
- */
+/** @} *//* alpha */
 
 
 
@@ -229,8 +227,7 @@ oyChar *     oyDumpColorToCGATS     ( const double      * channels,
 
 /** \addtogroup objects_generic Generic Objects
 
- *  @{
- */
+ *  @{ *//* objects_generic */
 
 
 
@@ -397,9 +394,7 @@ OYAPI int  OYEXPORT
 
 
 
-/**
- *  @} *//* objects_generic
- */
+/** @} *//* objects_generic */
 
 
 
@@ -410,8 +405,7 @@ OYAPI int  OYEXPORT
 
 
 /** \addtogroup objects_conversion Conversion API's
- *  @{
- */
+ *  @{ *//* objects_conversion */
 
 
 /** @internal
@@ -428,7 +422,7 @@ void             oyCMMProgress_      ( int                 ID,
 
 
 
-/** @} objects_conversion */
+/** @} *//* objects_conversion */
 
 
 
@@ -445,8 +439,7 @@ void             oyCMMProgress_      ( int                 ID,
  *  The functions can be studied by looking at the oyranos-monitor utiliy.
  *  The code for that tool is in oyranos_gamma.c .
  *
- *  @{
- */
+ *  @{ *//* monitor_api */
 
 /** Function: oyGetMonitorInfo
  *  @brief   brief pick up monitor information with Xlib

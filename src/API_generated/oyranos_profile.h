@@ -52,7 +52,7 @@
 
  *  - @ref profile_lists - provides the ICC profile search path content as string list
  *  - @ref profile_handling - low level ICC profile I/O and more
- *  @{ */
+ *  @{ *//* objects_profile */
 
 
 

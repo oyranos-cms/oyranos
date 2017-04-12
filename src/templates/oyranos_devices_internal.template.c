@@ -10,8 +10,7 @@
 
 /** \addtogroup devices_handling Device API
  *
- *  @{
- */
+ *  @{ *//* devices_handling */
 
 /** @internal
  *  Function oyDeviceRegistrationCreate_
@@ -201,6 +200,4 @@ int          oyDeviceCheckProperties ( oyConfig_s        * device )
   return error;
 }
 
-/**
- *  @} *//* devices_handling
- */
+/** @} *//* devices_handling */

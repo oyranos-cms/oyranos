@@ -12,8 +12,7 @@
 /** \addtogroup objects_image Image Containers
  *  @brief Pixel buffer abstraction
  *
- *  @{
- */
+ *  @{ *//* objects_image */
 
 /** @enum    oyDATATYPE_e
  *  @brief   Basic data types for anonymous pointers 

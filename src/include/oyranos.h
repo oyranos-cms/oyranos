@@ -29,7 +29,7 @@ extern "C" {
  *
  *  The obtained informations can be used outside Oyranos, to do system
  *  specific operations, which do not easily fit into the library.
- *  @{ */
+ *  @{ *//* path_names */
 /**
  *  @brief   data type selectors
  */
@@ -57,7 +57,7 @@ typedef enum {
 char *       oyGetInstallPath        ( oyPATH_TYPE_e       type,
                                        oySCOPE_e           scope,
                                        oyAlloc_f           allocFunc );
-/** @} */ /* path_names */
+/** @} *//* path_names */
 
 /** @brief Widget Groups 
  */
@@ -119,7 +119,7 @@ int          oySetBehaviour          ( oyBEHAVIOUR_e       type,
 /* --- CMM --- */
 
 /** \addtogroup cmm_handling
- *  @{ */
+ *  @{ *//* cmm_handling */
 /** @brief CMM Types
  */
 typedef enum {
@@ -130,7 +130,7 @@ typedef enum {
   oyCMM_RENDERER_FALLBACK,             /**< take a device link and color convert */
   oyCMM_END                            /**< just for easen Gui design */
 } oyCMM_e;
-/** @} */ /* cmm_handling */
+/** @} *//* cmm_handling */
 
 char *       oyGetCMMPattern         ( oyCMM_e             type,
                                        uint32_t            flags,
@@ -140,7 +140,7 @@ int          oySetCMMPattern         ( oyCMM_e             type,
                                        oySCOPE_e           scope,
                                        const char        * name );
 /** \addtogroup cmm_handling
- *  @{ */
+ *  @{ *//* cmm_handling */
 /** @brief the system specific module name; e.g. a library name */
 #define oyNAME_MODULE (oyNAME_DESCRIPTION + 2)
 /** @brief the logical name for selection */
@@ -153,7 +153,7 @@ int          oySetCMMPattern         ( oyCMM_e             type,
 #define oySOURCE_FILTER 0x02
 /** @brief use persistenly stored DB values */
 #define oySOURCE_DATA 0x04
-/** @} */ /* cmm_handling */
+/** @} *//* cmm_handling */
 char **      oyGetCMMs               ( oyCMM_e             type,
                                        int                 name_type,
                                        uint32_t            flags,

@@ -23,8 +23,7 @@
 
 /** \addtogroup objects_image
  *
- *  @{
- */
+ *  @{ *//* objects_image */
 
 
 char *         oyPixelLayoutPrint_   ( oyPixel_t           pixel_layout )

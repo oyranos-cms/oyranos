@@ -28,19 +28,16 @@
 
 /** \addtogroup color Color
 
- *  @{
- */
+ *  @{ *//* color */
 
 /** \addtogroup objects_profile
 
- *  @{
- */
+ *  @{ *//* objects_profile */
 
 /** \addtogroup icc_low ICC helpers
     @brief Functions to convert and interprete ICC defined enums
 
- *  @{
- */
+ *  @{ *//* icc_low */
 
 /** Function: oyICCColorSpaceGetChannelCount
  *  @brief number of channels in a color space
@@ -930,9 +927,7 @@ icValue_to_icUInt32Number_m( oyValueTagSig, icTagSignature )
 
 
 
-/**
- *  @} *//* icc_low
- */
+/** @} *//* icc_low */
 
 /** @} *//* objects_profile */
 

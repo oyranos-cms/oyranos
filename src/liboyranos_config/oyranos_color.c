@@ -21,14 +21,12 @@
 /** \addtogroup color Color
  *  @brief Color and Color Management APIs
 
- *  @{
- */
+ *  @{ *//* color */
 
 /** \addtogroup color_low Color calculations
  *  @brief Fast hardcoded color conversions
 
- *  @{
- */
+ *  @{ *//* color_low */
 
 
 /**
@@ -156,14 +154,10 @@ void         oyICCXYZrel2CIEabsXYZ   ( const double      * ICCXYZ,
 }
 
 
-/**
- *  @} *//* color_low
- */
+/** @} *//* color_low */
 
 
-/**
- *  @} *//* color
- */
+/** @} *//* color */
 
 
 

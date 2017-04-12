@@ -716,8 +716,7 @@ void         oyObjectDebugMessage_   ( void              * object,
 /** \addtogroup misc Miscellaneous
  *  @brief Miscellaneous stuff.
 
- *  @{
- */
+ *  @{ *//* misc */
 
 /** \addtogroup i18n i18n
  *  @brief      Internationalisation helpers for translating UI texts
@@ -731,8 +730,7 @@ void         oyObjectDebugMessage_   ( void              * object,
     default UTF-8. Thus a ::oy_domain_codeset variable is available and can be 
     set to match the applications needs.
 
- *  @{
- */
+ *  @{ *//* i18n */
 
 /** @brief  get language code
  *
@@ -809,7 +807,7 @@ void           oyI18Nreset           ( void )
   DBG_PROG_ENDE
 }
 
-/** @} */ /* i18n */
+/** @} *//* i18n */
 
 /** @brief  give the compiled in library version
  *
@@ -1012,7 +1010,7 @@ unsigned long oyValueUInt64 (icUInt64Number val)
 }
 
 
-/** @} */
+/** @} *//* misc */
 
 
 

@@ -42,8 +42,7 @@
  *  set the profile persistent (oyDeviceSetProfile()) or query the persistent
  *  stored profile (oyDeviceProfileFromDB()).
  *
- *  @{
- */
+ *  @{ *//* devices_handling */
 
 char *       oyGetFilterNodeKey      ( const char        * base_key,
                                        int                 select_core );
@@ -1926,9 +1925,7 @@ OYAPI int  OYEXPORT
 }
 
 
-/**
- *  @} *//* devices_handling
- */
+/** @} *//* devices_handling */
 
 
 /** Function oyOptions_ForFilter
@@ -3319,7 +3316,7 @@ oyFilterNode_s *   oyFilterNode_FromOptions (
 }
 
 /** \addtogroup cmm_handling
- *  @{ */
+ *  @{ *//* cmm_handling */
 
 /** Function  oyICCProfileSelectionFlagsFromOptions
  *  @brief    Get valid profile selection flags from node options and fallbacks
@@ -3353,35 +3350,30 @@ uint32_t     oyICCProfileSelectionFlagsFromOptions (
 
   return icc_profile_flags;
 }
-/**  @} */
+/** @} *//* cmm_handling */
 
 
 
 /** \addtogroup misc Miscellaneous
 
- *  @{
- */
+ *  @{ *//* misc */
 
 
 /** \addtogroup objects_generic Generic Objects 
  *  @brief Basic objects to make all higher level object types happy
 
- *  @{
- */
+ *  @{ *//* objects_generic */
 
 
 
-/**
- *  @} *//* objects_generic
- */
+/** @} *//* objects_generic */
 
 
 
 /** \addtogroup objects_value Values Handling
  *  @brief Manipulate and abstract values
 
- *  @{
- */
+ *  @{ *//* objects_value */
 
 
 /** @internal
@@ -3798,8 +3790,6 @@ const char **oyConfDomain_GetTexts_  ( oyConfDomain_s_   * obj )
 }
 
 
-/**
- *  @} *//* objects_value
- */
+/** @} *//* objects_value */
 
 /** @} *//* misc */

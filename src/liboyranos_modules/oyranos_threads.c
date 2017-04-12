@@ -24,8 +24,7 @@
 
 /** @addtogroup misc
  *
- *  @{
- */
+ *  @{ *//* misc */
 
 /** @addtogroup threads Threading
  *  @brief      Asynchron processing support
@@ -66,8 +65,7 @@
  *  Call oyJobHandlingSet() to replace by own Job handling functions.
  *  The functions must be used before any call to Oyranos.
  *
- *  @{
- */
+ *  @{ *//* threads */
 
 static const char * oy_thread_api_nick = "dumy";
 
@@ -286,5 +284,5 @@ void              oyJob_Release      ( oyJob_s          ** job )
   }
 }
 
-/** }@ */ /* addtogroup threads */
-/** }@ */ /* addtogroup misc */
+/** @} *//* threads */
+/** @} *//* misc */

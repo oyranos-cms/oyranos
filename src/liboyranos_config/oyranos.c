@@ -180,8 +180,7 @@ char* oyGetDefaultProfileName_   (oyPROFILE_e       type,
     oyConversion_Correct() applies settings from the above default APIs to a 
     given DAG.
 
- *  @{
- */
+ *  @{ *//* defaults_apis */
 
 /** \addtogroup options Options API
  *  @brief The idea behind this API is to provide one layout for
@@ -201,8 +200,7 @@ char* oyGetDefaultProfileName_   (oyPROFILE_e       type,
  *  Functions are provided to set and query for Options layout and
  *  UI strings in Oyranos.
 
- *  @{
- */
+ *  @{ *//* options */
 
 
 /** @brief all widgets of a group
@@ -365,7 +363,7 @@ oyOptionChoicesFree                  (oyWIDGET_e        option,
   DBG_PROG_ENDE
 }
 
-/*  @} */
+/** @} *//* options */
 
 
 /** \addtogroup behaviour Behaviour API
@@ -380,8 +378,7 @@ oyOptionChoicesFree                  (oyWIDGET_e        option,
 
  *  <a href="http://www.oyranos.com/wiki/index.php?title=Oyranos_Use_Cases">ColourWiki</a>. 
 
- *  @{
- */
+ *  @{ *//* behaviour */
 
 /** Set a special behaviour. Usual in control panel in Oyranos.\n 
  *
@@ -431,7 +428,7 @@ oyGetBehaviour         (oyBEHAVIOUR_e       type)
   return n;
 }
 
-/*  @} */
+/** @} *//* behaviour */
 
 /** \addtogroup policy Policy API
  *  @brief Set and export policies in Oyranos
@@ -455,8 +452,7 @@ oyGetBehaviour         (oyBEHAVIOUR_e       type)
  *
  *  @todo define some default policies internally
  *
- *  @{
- */
+ *  @{ *//* policy */
 
 /** @brief save a options group to a file
  *
@@ -644,15 +640,14 @@ oyPolicySet                (const char      * policy_file,
   return n;
 }
 
-/*  @} */
+/** @} *//* policy */
 
 /** \addtogroup default_profiles Default Profiles
  *  @brief Configure default profiles
 
  *  @see @ref path_names
 
- *  @{
- */
+ *  @{ *//* default_profiles */
 
 /** Sets a profile, which is available in the current configured path.
  *
@@ -702,13 +697,12 @@ oyGetDefaultProfileName    (oyPROFILE_e       type,
   DBG_PROG_ENDE
   return name;
 }
-/*  @} */
+/** @} *//* default_profiles */
 
-/*  @} *//* defaults_apis */
+/** @} *//* defaults_apis */
 
 /** \addtogroup objects_profile
- *  @{
- */
+ *  @{ *//* objects_profile  */
 
 /**
  *  @brief get Search Path names for ICC Profiles 
@@ -731,8 +725,7 @@ char **  oyProfilePathsGet           ( int               * size,
 
  *  @see @ref path_names
 
- *  @{
- */
+ *  @{ *//* profile_lists */
 
 /** @brief get a list of profile filenames
  *  @param colorsig filter as ICC 4 byte string
@@ -776,8 +769,7 @@ char **  oyProfileListGet            ( const char        * colorsig,
 /** \addtogroup profile_handling Profile Handling API
  *  @brief Basic profile helpers
 
- *  @{
- */
+ *  @{ *//* profile_handling */
 
 /** @brief check an file if it is a profile
  *
@@ -945,18 +937,16 @@ oyProfileGetMD5        ( void       *buffer,
   DBG_PROG_ENDE
   return error;
 }
-/** @} */
+/** @} *//* profile_handling */
 /** @} *//* objects_profile  */
 
 
 /** \addtogroup misc Miscellaneous
  *  @brief Miscellaneous stuff
 
- *  @{
- */
+ *  @{ *//* misc */
 /** \addtogroup i18n
- *  @{
- */
+ *  @{ *//* i18n */
 
 /** @brief  switch internationalisation of strings on or off
  *
@@ -975,12 +965,11 @@ void oyI18NSet         ( int active,
   DBG_PROG_ENDE
 }
 
-/** @} */ /* i18n */
+/** @} *//* i18n */
 
 
 /** \addtogroup path_names
- *  @{
- */
+ *  @{ *//* i18n */
 
 /**
  *  @brief get Path Name for Installation 
@@ -1095,11 +1084,11 @@ char *       oyGetInstallPath        ( oyPATH_TYPE_e       type,
   return path;
 }
 
-/*  @} *//* path_names */
+/** @} *//* i18n */
 
 
 
-/** @} */
+/** @} *//* misc */
 
 
 

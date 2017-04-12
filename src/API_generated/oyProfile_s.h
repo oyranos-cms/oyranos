@@ -49,7 +49,7 @@ typedef struct oyProfile_s oyProfile_s;
 /* Include "Profile.public.h" { */
 /** \addtogroup objects_profile ICC Profile APIs
  *
- *  @{ */
+ *  @{ *//* objects_profile */
 /** @typedef oyIO_t
     parametric type as shorthand for IO flags \n
 

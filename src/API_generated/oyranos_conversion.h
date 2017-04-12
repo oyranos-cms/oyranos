@@ -30,8 +30,7 @@
 /** \addtogroup objects_conversion DAG and Image processing API
  *  @brief Directed Acyclic Graph handling, caching and data processing
  *
- *  @{
- */
+ *  @{ *//* objects_conversion */
 
 /** @} *//* objects_conversion */ 
 

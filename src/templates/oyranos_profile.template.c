@@ -5,8 +5,7 @@
 
 /** \addtogroup icc_low ICC helpers
 
- *  @{
- */
+ *  @{ *//* icc_low */
 
 /** Function oyProfileSignatureName
  *  @brief   provide UI name for oySIGNATURE_TYPE_e
@@ -80,8 +79,6 @@ const char   * oyProfileSignatureDescription (
 }
 
 
-/**
- *  @} *//* icc_low
- */
+/** @} *//* icc_low */
 
 

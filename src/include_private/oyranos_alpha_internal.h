@@ -27,8 +27,7 @@ extern "C" {
 
 /** \addtogroup alpha Alpha API's
 
- *  @{
- */
+ *  @{ *//* alpha */
 
 
 
@@ -54,8 +53,7 @@ char *     oyAlphaPrint_             ( int                 verbose );
 
 
 
-/** @} *//*alpha
- */
+/** @} *//* alpha */
 
 #ifdef __cplusplus
 } /* extern "C" */

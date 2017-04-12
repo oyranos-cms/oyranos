@@ -1,6 +1,6 @@
 /** \addtogroup objects_profile ICC Profile APIs
  *
- *  @{ */
+ *  @{ *//* objects_profile */
 /** @typedef oyIO_t
     parametric type as shorthand for IO flags \n
 

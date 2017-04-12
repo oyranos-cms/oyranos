@@ -53,11 +53,10 @@ char *             oyGetCMMName_     ( oyCMMapiFilter_s  * cmm,
 /* separate from the external functions */
 
 /** \addtogroup defaults_apis
- *  @{ */
+ *  @{ *//* defaults_apis */
 /** \addtogroup cmm_handling
 
- *  @{
- */
+ *  @{ *//* cmm_handling */
 
 /** @brief \internal UI strings for various behaviour options 
  *
@@ -1168,11 +1167,10 @@ int          oyPolicyFilesToDisplay  ( int               * choices,
 }
 
 /** \addtogroup defaults_apis
- *  @{ */
+ *  @{ *//* defaults_apis */
 /** \addtogroup cmm_handling
 
- *  @{
- */
+ *  @{ *//* cmm_handling */
 
 /** Function oyGetCMMs
  *  @brief   Get a CMM list as strings
@@ -1747,7 +1745,7 @@ oyGetBehaviourUITitle_     (oyBEHAVIOUR_e       type,
 }
 
 /** \addtogroup defaults_apis
- *  @{ */
+ *  @{ *//* defaults_apis */
 
 /** \addtogroup cmm_handling Default CMMs
  *  @brief Provide logical and UI support for Color Matching Module selection
@@ -1762,8 +1760,7 @@ oyGetBehaviourUITitle_     (oyBEHAVIOUR_e       type,
  *  expressed as a device link for data exchange. So different core and
  *  renderer modules can easily be combined.
 
- *  @{
- */
+ *  @{ *//* cmm_handling */
 
 char *             oyGetCMMName_     ( oyCMMapiFilter_s  * cmm,
                                        oyCMM_e             type,
@@ -2110,7 +2107,7 @@ uint32_t oyICCProfileSelectionFlagsFromRegistration (
 /** @} *//* defaults_apis */
 
 /** \addtogroup objects_value
- *  @{ */
+ *  @{ *//* objects_value */
 oyOptions_s * oy_db_cache_ = NULL;
 
 int      oyOptions_SetRegFromText    ( oyOptions_s      ** options,
