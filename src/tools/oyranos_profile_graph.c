@@ -30,6 +30,7 @@
 #include "oyConversion_s.h"
 #include "oyProfile_s.h"
 #include "oyImage_s.h"
+#include "oyranos_alpha_internal.h"
 
 #ifdef __cplusplus
 #if defined(USE_CLIPPER)
@@ -38,18 +39,6 @@
 #include <cmath>
 #include <iostream>
 #endif
-extern "C" {
-#endif /* __cplusplus */
-int  oyColorConvert_ ( oyProfile_s       * p_in,
-                        oyProfile_s       * p_out,
-                        oyPointer           buf_in,
-                        oyPointer           buf_out,
-                        oyDATATYPE_e        buf_type_in,
-                        oyDATATYPE_e        buf_type_out,
-                        oyOptions_s       * options,
-                        int                 count );
-#ifdef __cplusplus
-}
 #endif /* __cplusplus */
 
 
