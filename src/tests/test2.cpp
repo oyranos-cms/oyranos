@@ -1502,7 +1502,7 @@ oyTESTRESULT_e testProfile ()
     PRINT_SUB( oyTESTRESULT_SUCCESS, 
     "found oyASSUMED_WEB                                    " );
   }
-  
+
   /* compare the usual conversion profiles with the total of profiles */
   data = oyProfile_GetMem( p_a, &size, 0, malloc );
   if(!data || ! size)
@@ -1535,6 +1535,20 @@ oyTESTRESULT_e testProfile ()
     PRINT_SUB( oyTESTRESULT_SUCCESS,
     "oyASSUMED_WEB is equal to memory loaded oyProfile_s.   " );
   }
+
+  oyProfile_Release( &p_a );
+  p_a = oyProfile_FromStd ( oyPROFILE_EFFECT, 0, NULL );
+  char * name = oyGetDefaultProfileName ( oyPROFILE_EFFECT, oyAllocateFunc_ );
+  if(!p_a)
+  {
+    PRINT_SUB( name && name[0] ? oyTESTRESULT_XFAIL : oyTESTRESULT_SUCCESS, 
+    "No default effect profile found                           " );
+  } else
+  {
+    PRINT_SUB( oyTESTRESULT_SUCCESS, 
+    "found oyPROFILE_EFFECT                                 " );
+  }
+
 
   oyOption_s * matrix = oyOption_FromRegistration("///color_matrix."
               "from_primaries."
@@ -1761,7 +1775,6 @@ oyTESTRESULT_e testProfiles ()
     PRINT_SUB( oyTESTRESULT_SUCCESS,
     "oyProfileListGet and oyPROFILE_e ok %u|%d", (unsigned int)size, countB );
   }
-
 
   oyProfile_s * pattern = oyProfile_FromFile( "sRGB", OY_NO_LOAD, NULL );
   oyProfiles_s* patterns = oyProfiles_New(NULL);
