@@ -435,11 +435,12 @@ int            oyOption_SetFromInt   ( oyOption_s        * obj,
  *
  *  @param[in,out] obj                 the option
  *  @param         pos                 position in a list
+ *                                     - -1: get the count
  *  @return                            integer
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.9.7
+ *  @date    2017/04/13
  *  @since   2009/05/04 (Oyranos: 0.1.10)
- *  @date    2009/05/04
  */
 int32_t        oyOption_GetValueInt  ( oyOption_s        * obj,
                                        int                 pos )
@@ -456,11 +457,20 @@ int32_t        oyOption_GetValueInt  ( oyOption_s        * obj,
   if(error <= 0)
   {
     if( s->value_type == oyVAL_INT_LIST &&
-        s->value->int32_list &&
-        s->value->int32_list[0] > pos )
-      result = s->value->int32_list[pos + 1];
-    else if(s->value_type == oyVAL_INT)
-      result = s->value->int32;
+        s->value->int32_list )
+    {
+      if( s->value->int32_list[0] > pos )
+        result = s->value->int32_list[pos + 1];
+      else if( pos == -1 )
+        result = s->value->int32_list[0];
+    }
+    else if( s->value_type == oyVAL_INT )
+    {
+      if( pos == -1 )
+        result = 1;
+      else
+        result = s->value->int32;
+    }
   }
 
   return result;
@@ -574,12 +584,13 @@ int            oyOption_SetFromDouble( oyOption_s        * obj,
  *  @brief   get a double
  *
  *  @param[in,out] obj                 the option
- *  @param         pos                 position in a list
+ *  @param         pos                 position in a list;
+ *                                     - -1: get the count
  *  @return                            double
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.9.7
+ *  @date    2017/04/13
  *  @since   2009/08/03 (Oyranos: 0.1.10)
- *  @date    2009/08/03
  */
 double         oyOption_GetValueDouble(oyOption_s        * obj,
                                        int                 pos )
@@ -596,11 +607,20 @@ double         oyOption_GetValueDouble(oyOption_s        * obj,
   if(error <= 0)
   {
     if( s->value_type == oyVAL_DOUBLE_LIST &&
-        s->value->dbl_list &&
-        s->value->dbl_list[0] > pos )
-      result = s->value->dbl_list[pos + 1];
+        s->value->dbl_list )
+    {
+      if( s->value->dbl_list[0] > pos )
+        result = s->value->dbl_list[pos + 1];
+      else if(pos == -1)
+        result = s->value->dbl_list[0];
+    }
     else if(s->value_type == oyVAL_DOUBLE)
-      result = s->value->dbl;
+    {
+      if(pos == -1)
+        result = 1;
+      else
+        result = s->value->dbl;
+    }
   }
 
   return result;
