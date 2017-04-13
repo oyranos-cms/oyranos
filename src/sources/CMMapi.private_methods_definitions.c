@@ -234,8 +234,10 @@ oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s         * api_ )
   if(error <= 0)
     type = api->type_;
   else
-    WARNc2_S("Found problems with: %s %s", oyStructTypeToText(api->type_),
-              oyNoEmptyString_m_(api->registration));
+    WARNc8_S("Found problems with: %s %s %d.%d.%d(%d.%d.%d)", oyStructTypeToText(api->type_),
+              oyNoEmptyString_m_(api->registration),
+	      api->version[0],api->version[1],api->version[2],
+	      api->module_api[0],api->module_api[1],api->module_api[2]);
 
 
   return type;
