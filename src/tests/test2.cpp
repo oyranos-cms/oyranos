@@ -199,7 +199,7 @@ oyTESTRESULT_e testI18N()
 #define TEST_KEY "/test_key"
 
 #include "oyranos_db.h"
-oyTESTRESULT_e testElektra()
+oyTESTRESULT_e testDB()
 {
   int error = 0;
   char * value = 0,
@@ -244,7 +244,7 @@ oyTESTRESULT_e testElektra()
     printf ("start is %s\n", start);
     
     PRINT_SUB( start?oyTESTRESULT_SUCCESS:oyTESTRESULT_XFAIL,
-    "Elektra not initialised? try oyExportStart_(EXPORT_CHECK_NO)" );
+    "DB not initialised? try oyExportStart_(EXPORT_CHECK_NO)" );
   }
   if(!start)
   {
@@ -254,7 +254,7 @@ oyTESTRESULT_e testElektra()
                                  "NULLTestValue", "NULLTestComment" );
     start = oyGetPersistentString(TEST_DOMAIN TEST_KEY, 0, oySCOPE_USER_SYS, 0);
     PRINT_SUB( start?oyTESTRESULT_SUCCESS:oyTESTRESULT_XFAIL, 
-    "Elektra not initialised? try oyExportStart_(EXPORT_SETTING)" );
+    "DB not initialised? try oyExportStart_(EXPORT_SETTING)" );
   }
   if(start)
     fprintf(zout, "start key value: %s\n", start );
@@ -270,33 +270,33 @@ oyTESTRESULT_e testElektra()
   if(error)
   {
     PRINT_SUB( oyTESTRESULT_SYSERROR, 
-    "Elektra error: %d", error );
+    "DB error: %d", error );
   } else
   /* we want "start" to be different from "value" */
   if(start && value && strcmp(start,value) == 0)
   {
     PRINT_SUB( oyTESTRESULT_FAIL, 
-    "Elektra (start!=value) failed: %s|%s", start, value );
+    "DB (start!=value) failed: %s|%s", start, value );
   } else
   if(!value)
   {
     if(!value)
       PRINT_SUB( oyTESTRESULT_FAIL, 
-      "Elektra (value) failed" );
+      "DB (value) failed" );
     if(!start)
       PRINT_SUB( oyTESTRESULT_FAIL, 
-      "Elektra (init) failed" );
+      "DB (init) failed" );
   } else
   if(value)
   {
     if(strcmp(value,"myTestValue") == 0)
     {
       PRINT_SUB( oyTESTRESULT_SUCCESS, 
-      "Elektra (value): %s", value );
+      "DB (value):                            %s", value );
     } else
     {
       PRINT_SUB( oyTESTRESULT_FAIL, 
-      "Elektra (value) wrong: %s", value );
+      "DB (value) wrong:                      %s", value );
     }
   } else
     result = oyTESTRESULT_SUCCESS;
@@ -307,11 +307,11 @@ oyTESTRESULT_e testElektra()
   if(error)
   {
     PRINT_SUB( oyTESTRESULT_FAIL, 
-    "oyDBEraseKey(%s)", TEST_DOMAIN TEST_KEY );
+    "oyDBEraseKey(%s)      ", TEST_DOMAIN TEST_KEY );
   } else
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyDBEraseKey(%s)", TEST_DOMAIN TEST_KEY );
+    "oyDBEraseKey(%s)      ", TEST_DOMAIN TEST_KEY );
   }
   oyDB_s * db = oyDB_newFrom( TEST_DOMAIN, oySCOPE_USER_SYS, oyAllocateFunc_, oyDeAllocateFunc_ );
   value = oyDB_getString(db, TEST_DOMAIN TEST_KEY);
@@ -319,11 +319,11 @@ oyTESTRESULT_e testElektra()
   if(value && strlen(value))
   {
     PRINT_SUB( oyTESTRESULT_FAIL, 
-    "Elektra key not erased                  " );
+    "DB key not erased                            " );
   } else
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "Elektra key erased                      " );
+    "DB key erased                                " );
   }
   oyFree_m_(value);
 
@@ -426,11 +426,11 @@ oyTESTRESULT_e testElektra()
   if(old_effect_switch != effect_switch)
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS, 
-    "oyGetBehaviour() detected value change %d %s %d", old_effect_switch, value, effect_switch );
+    "oyGetBehaviour() detected value change %d %s %d    ", old_effect_switch, value, effect_switch );
   } else
   {
     PRINT_SUB( oyTESTRESULT_FAIL,
-    "oyGetBehaviour() detected value change %d %s %d", old_effect_switch, value, effect_switch );
+    "oyGetBehaviour() detected value change %d %s %d    ", old_effect_switch, value, effect_switch );
   }
   oyFree_m_( value );
   // reset to old value
@@ -6795,7 +6795,7 @@ int main(int argc, char** argv)
 
   TEST_RUN( testVersion, "Version matching" );
   TEST_RUN( testI18N, "Internationalisation" );
-  TEST_RUN( testElektra, "Elektra" );
+  TEST_RUN( testDB, "DB" );
   TEST_RUN( testStringRun, "String handling" );
   TEST_RUN( testOption, "basic oyOption_s" );
   TEST_RUN( testOptionInt,  "oyOption_s integers" );
