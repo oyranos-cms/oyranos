@@ -162,23 +162,23 @@ OYAPI oyProfile_s * OYEXPORT
   {
     /* try some aliases */
     /* START Debian icc-profiles icc-profiles-icc */
-    if(strcmp("XYZ.icc",name) == 0)
+    if(name && name[0] && strcmp("XYZ.icc",name) == 0)
     {
       s = oyProfile_FromFile_( "LCMSXYZI.ICM", flags, object );
     }
-    else if(strcmp("Lab.icc",name) == 0)
+    else if(name && name[0] && strcmp("Lab.icc",name) == 0)
     {
       s = oyProfile_FromFile_( "LCMSLABI.ICM", flags, object );
     }
-    else if(strcmp("LStar-RGB.icc",name) == 0)
+    else if(name && name[0] && strcmp("LStar-RGB.icc",name) == 0)
     {
       s = oyProfile_FromFile_( "eciRGB_v2.icc", flags, object );
     }
-    else if(strcmp("sRGB.icc",name) == 0)
+    else if(name && name[0] && strcmp("sRGB.icc",name) == 0)
     {
       s = oyProfile_FromFile_( "sRGB.icm", flags, object );
     }
-    else if(strcmp("ISOcoated_v2_bas.ICC",name))
+    else if(name && name[0] && strcmp("ISOcoated_v2_bas.ICC",name))
     {
       s = oyProfile_FromFile_( "ISOcoated_v2_eci.icc", flags, object );
       if(!s)
@@ -213,10 +213,20 @@ OYAPI oyProfile_s * OYEXPORT
                 _("You can get them from http://sf.net/projects/openicc"),
                 _("install in the OpenIccDirectory icc path"), text );
     } else
-      oyMessageFunc_p( oyMSG_ERROR,(oyStruct_s*)object,
-                       OY_DBG_FORMAT_ "\n\t%s: \"%s\"\n\t%s\n%s", OY_DBG_ARGS_,
-                _("Could not open default ICC profile"), name,
-                _("install in the OpenIccDirectory icc path"), text );
+    {
+      const char * t = NULL;
+      oyMSG_e msg_type = oyMSG_ERROR;
+      if(!name || !name[0])
+        name = oyGetDefaultProfileName ( type, allocateFunc );
+      oyWidgetTitleGet( (oyWIDGET_e) type, NULL, &t, NULL, NULL );
+      /* without name from core we can ignore proof, effect and above profile types */
+      if(type >= oyPROFILE_PROOF && (!name || !name[0]))
+        msg_type = oyMSG_DBG;
+      oyMessageFunc_p( msg_type, (oyStruct_s*)object,
+                       OY_DBG_FORMAT_ "\n\t%s \"%s\": \"%s\"\n\t%s\n%s", OY_DBG_ARGS_,
+                _("Could not open default ICC profile"), t, name,
+                name&&name[0]?_("install in the OpenIccDirectory icc path"):"", name&&name[0]?text:"" );
+    }
   }
 
   if(oyDEFAULT_PROFILE_START < type && type < oyDEFAULT_PROFILE_END)
