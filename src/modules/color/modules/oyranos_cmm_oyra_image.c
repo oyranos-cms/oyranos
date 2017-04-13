@@ -290,7 +290,7 @@ oyCMMapi7_s_   oyra_api7_image_write = {
 
   oyOBJECT_CMM_API7_S, /* oyStruct_s::type oyOBJECT_CMM_API7_S */
   0,0,0, /* unused oyStruct_s fileds; keep to zero */
-  0/*(oyCMMapi_s*) & oyra_api4_image_write*/, /* oyCMMapi_s * next */
+  (oyCMMapi_s*) & oyra_api10_profile_graph2d_SaturationLine, /* oyCMMapi_s * next */
   
   oyraCMMInit, /* oyCMMInit_f */
   oyraCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */

@@ -18,6 +18,7 @@
 
 #include "oyCMMapi4_s_.h"
 #include "oyCMMapi7_s_.h"
+#include "oyCMMapi10_s_.h"
 
 #include "oyranos_config_internal.h"
 #include "oyranos_cmm.h"
@@ -82,5 +83,6 @@ oyCMMapi_s * oyraApi4ImageChannelCreate(void);
 oyCMMapi_s * oyraApi7ImageChannelCreate(void);
 oyCMMapi_s * oyraApi4ImageExposeCreate(void);
 oyCMMapi_s * oyraApi7ImageExposeCreate(void);
+extern oyCMMapi10_s_  oyra_api10_profile_graph2d_SaturationLine;
 
 #endif /* OYRANOS_CMM_OYRA_H */

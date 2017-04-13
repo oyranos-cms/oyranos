@@ -172,6 +172,7 @@ IF(ENABLE_SHARED_LIBS)
                ${PACKAGE_NAME}_cmm_${OY_MODULE}_image_expose.c
                ${PACKAGE_NAME}_cmm_${OY_MODULE}_image_scale.c
                ${PACKAGE_NAME}_cmm_${OY_MODULE}_image_ppm.c
+               ${PACKAGE_NAME}_cmm_${OY_MODULE}_profile_graph2d.c
              )
   TARGET_LINK_LIBRARIES ( ${OY_MODULE_LIB} ${PROJECT_NAME} ${MODULE_EXTRA_LIBS} )
   INSTALL (TARGETS ${OY_MODULE_LIB} DESTINATION ${CMAKE_INSTALL_LIBDIR}/${OY_CMMSUBPATH})
@@ -187,6 +188,7 @@ IF(ENABLE_STATIC_LIBS)
          ${CMAKE_CURRENT_SOURCE_DIR}/${PACKAGE_NAME}_cmm_${OY_MODULE}_image_expose.c
          ${CMAKE_CURRENT_SOURCE_DIR}/${PACKAGE_NAME}_cmm_${OY_MODULE}_image_scale.c
          ${CMAKE_CURRENT_SOURCE_DIR}/${PACKAGE_NAME}_cmm_${OY_MODULE}_image_ppm.c
+         ${CMAKE_CURRENT_SOURCE_DIR}/${PACKAGE_NAME}_cmm_${OY_MODULE}_profile_graph2d.c
        )
     #ADD_LIBRARY( ${OY_MODULE_LIB}-static STATIC ${SOURCES} )
     SET( SOURCES_STATIC ${SOURCES_STATIC} ${SOURCES} )
