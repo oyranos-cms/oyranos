@@ -681,9 +681,8 @@ int      oySetDefaultProfile         ( oyPROFILE_e         type,
                           the filename string
  *  @return filename
  */
-char*
-oyGetDefaultProfileName    (oyPROFILE_e       type,
-                            oyAlloc_f         allocate_func)
+char * oyGetDefaultProfileName       ( oyPROFILE_e         type,
+                                       oyAlloc_f           allocate_func)
 {
   char* name = NULL;
 

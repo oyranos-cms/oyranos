@@ -2,7 +2,7 @@
  *
  *  Oyranos is an open source Color Management System 
  *
- *  Copyright (C) 2012-2015  Kai-Uwe Behrmann
+ *  Copyright (C) 2012-2017  Kai-Uwe Behrmann
  *
  */
 
@@ -53,7 +53,7 @@
 #include "oyranos_string.h"
 #include "oyranos_texts.h"
 
-#include "ciexyz31_1.h"
+#include "ciexyz31_2.h"
 #include "ciexyz64_1.h"
 #include "bb_100K.h"
 #include "spd_A_5.h"
@@ -170,8 +170,8 @@ int main( int argc , char** argv )
          ys_xyz = 1.2;
 
   /* spectal variables */
-  int nano_min = 63; /* 420 nm */
-  int nano_max = 341; /* 700 nm */
+  int nano_min = 64; /* 420 nm */
+  int nano_max = 342; /* 700 nm */
 
   int tab_border_x=0;
   int tab_border_y=0;
@@ -346,8 +346,8 @@ int main( int argc , char** argv )
     cairo_set_source_rgba( cr, .0, .0, .0, 1.0);
     if(proj == p_xyz)
     {
-      cairo_move_to(cr, xToImage(bb_100K[0][0]*xs_xyz), yToImage(bb_100K[0][1]*ys_xyz));
-      for(i = 0; i<91; ++i)
+      cairo_move_to(cr, xToImage(bb_100K[1][0]*xs_xyz), yToImage(bb_100K[1][1]*ys_xyz));
+      for(i = 2; i<bb_100K[0][2]; ++i)
         cairo_line_to(cr, xToImage(bb_100K[i][0]*xs_xyz), yToImage(bb_100K[i][1]*ys_xyz));
       cairo_stroke(cr);
     }
@@ -355,7 +355,7 @@ int main( int argc , char** argv )
     if(proj == p_lab)
     {
       cairo_new_path(cr);
-      for(i = 0; i<91; ++i)
+      for(i = 1; i<bb_100K[0][2]; ++i)
       {
         double XYZ[3];
         double Lab[3];
@@ -443,7 +443,7 @@ int main( int argc , char** argv )
           double XYZ[3];
           double Lab[3];
           Lab[0] = saturation[i*3+0]*100.0;
-          Lab[1] =  saturation[i*3+1]*256.0-127.0;
+          Lab[1] = saturation[i*3+1]*256.0-127.0;
           Lab[2] = saturation[i*3+2]*256.0-127.0;
           oyLab2XYZ( Lab, XYZ);
           cairo_line_to(cr, xToImage(XYZ[0]/(XYZ[0]+XYZ[1]+XYZ[2])*xs_xyz),

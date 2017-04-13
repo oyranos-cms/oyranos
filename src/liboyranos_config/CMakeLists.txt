@@ -45,6 +45,8 @@ SET( CHEADERS_OBJECT_CONFIG_PUBLIC
 	${GENDIR}oyProfiles_s.h
 	${GENDIR}oyProfileTag_s.h
 	${GENDIR}${PACKAGE_NAME}_devices.h
+	../include/bb_100K.h
+	../include/ciexyz31_2.h
 	../include/icc34.h
 	../include/${PACKAGE_NAME}.h
 	../include/${PACKAGE_NAME}_color.h
