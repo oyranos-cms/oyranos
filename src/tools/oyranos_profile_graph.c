@@ -586,182 +586,45 @@ int main( int argc , char** argv )
   return 0;
 }
 
-float * createLabGradient_( int steps, size_t * size )
-{
-    int i, k = 3;
-    double schritte = (double)steps,
-           max = 1.;
-    float * block;
-
-    *size = (int)schritte*4 + 1;
-
-    block = (float*) calloc( *size*k, sizeof(float) );
-    for(i = 0; i < (int)*size; ++i) {
-      /*  CIE*L  */
-      block[k*i+0] = 0.5;
-      /*  CIE*a  */
-      if(i >= schritte * 1 && i < schritte * 2)
-        block[k*i+1] = (max/schritte*(i-1*schritte));
-      if(i >= schritte * 2 && i < schritte * 3)
-        block[k*i+1] = max;
-      if(i >= schritte * 3 && i < schritte * 4)
-        block[k*i+1] = (max/schritte*(4*schritte-i));
-      /*  CIE*b  */
-      if(i >= schritte * 2 && i < schritte * 3)
-        block[k*i+2] = (max/schritte*(i-2*schritte));
-      if(i >= schritte * 3 && i < schritte * 4)
-        block[k*i+2] = max;
-      if(i >= schritte * 0 && i < schritte * 1)
-        block[k*i+2] = (max/schritte*(1*schritte-i));
-    }
-
-    block[*size*3-3+0] = (max/schritte*(schritte-1/schritte));
-    block[*size*3-3+1] = 0;
-    block[*size*3-3+2] = max;
-
-
-  return block;
-}
-
-float * createRGBGradient_( int steps, size_t * size )
-{
-    int i, k = 3;
-    double schritte = (double)steps,
-           max = 1.;
-    float * block;
-
-    *size = (int)schritte*k*2 + 1;
-
-    block = (float*) calloc( *size*k, sizeof(float) );
-    for(i = 0; i < (int)*size; ++i) {
-      /*  red  */
-      if(i >= schritte * 5 && i < schritte * 6)
-        block[k*i+0] = (max/schritte*(i-5*schritte));
-      if(i >= schritte * 0 && i < schritte * 2)
-        block[k*i+0] = max;
-      if(i >= schritte * 2 && i < schritte * 3)
-        block[k*i+0] = (max/schritte*(3*schritte-i));
-      /*  green  */
-      if(i >= schritte * 1 && i < schritte * 2)
-        block[k*i+1] = (max/schritte*(i-1*schritte));
-      if(i >= schritte * 2 && i < schritte * 4)
-        block[k*i+1] = max;
-      if(i >= schritte * 4 && i < schritte * 5)
-        block[k*i+1] = (max/schritte*(5*schritte-i));
-      /*  blue  */
-      if(i >= schritte * 3 && i < schritte * 4)
-        block[k*i+2] = (max/schritte*(i-3*schritte));
-      if(i >= schritte * 4 && i < schritte * 6)
-        block[k*i+2] = max;
-      if(i >= schritte * 0 && i < schritte * 1)
-        block[k*i+2] = (max/schritte*(1*schritte-i));
-    }
-
-    block[*size*3-3+0] = (max/schritte*(schritte-1/schritte));
-    block[*size*3-3+1] = 0;
-    block[*size*3-3+2] = max;
-
-  return block;
-}
-
-float * createCMYKGradient_( int steps, size_t * size )
-{
-  int i, k = 4;
-  double schritte = (double) steps,
-         max = 1.;
-  float * block;
-
-  *size = (int)schritte*(k-1)*2 + 1;
-
-  block = (float*) calloc( *size*k, sizeof(float) );
-
-  for(i = 0; i < (int)*size*k; ++i) {
-    block[i] = 0;
-  }
-
-  for(i = 0; i < (int)*size; ++i) {
-    /*  cyan  */
-    if(i >= schritte * 5 && i < schritte * 6)
-      block[k*i+0] = (max/schritte*(i-5*schritte));
-    if(i >= schritte * 0 && i < schritte * 2)
-      block[k*i+0] = max;
-    if(i >= schritte * 2 && i < schritte * 3)
-      block[k*i+0] = (max/schritte*(3*schritte-i));
-    /*  magenta  */
-    if(i >= schritte * 1 && i < schritte * 2)
-      block[k*i+1] = (max/schritte*(i-1*schritte));
-    if(i >= schritte * 2 && i < schritte * 4)
-      block[k*i+1] = max;
-    if(i >= schritte * 4 && i < schritte * 5)
-      block[k*i+1] = (max/schritte*(5*schritte-i));
-    /*  yellow  */
-    if(i >= schritte * 3 && i < schritte * 4)
-      block[k*i+2] = (max/schritte*(i-3*schritte));
-    if(i >= schritte * 4 && i < schritte * 6)
-      block[k*i+2] = max;
-    if(i >= schritte * 0 && i < schritte * 1)
-      block[k*i+2] = (max/schritte*(1*schritte-i));
-  }
-
-  block[*size*k-k+0] = (max/schritte*(schritte-1/schritte));
-  block[*size*k-k+1] = 0;
-  block[*size*k-k+2] = max;
-
-  return block;
-}
-
-/** @brief creates a linie around the saturated colors of Cmyk and Rgb profiles */
 double * getSaturationLine_(oyProfile_s * profile, int intent, size_t * size_, oyProfile_s * outspace)
 {
-  int i;
-  double *lab_erg = 0;
+  int size,
+      precision = 20;
+  oyOption_s * o = NULL;
+  oyOptions_s * opts = oyOptions_New(0),
+              * result = NULL;
+  oyProfile_s * p = oyProfile_Copy( profile, NULL );
+  oyOptions_MoveInStruct( &opts, OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "icc_profile.input",
+                          (oyStruct_s**) &p,
+                          OY_CREATE_NEW );
+  p = oyProfile_Copy( outspace, NULL );
+  oyOptions_MoveInStruct( &opts, OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "icc_profile.output",
+                          (oyStruct_s**) &p,
+                          OY_CREATE_NEW );
+  oyOptions_SetFromInt( &opts,   OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "rendering_intent",
+                          intent, 0, OY_CREATE_NEW );
+  oyOptions_SetFromInt( &opts,   OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "precision",
+                          precision, 0, OY_CREATE_NEW );
 
-  icColorSpaceSignature csp = (icColorSpaceSignature)
-                              oyProfile_GetSignature( profile,
-                                                      oySIGNATURE_COLOR_SPACE);
+  oyOptions_Handle( "//"OY_TYPE_STD"/graph2d.saturation_line",
+                    opts,"saturation_line",
+                    &result );
 
-  if(csp == icSigRgbData || icSigXYZData ||
-     csp == icSigCmykData ||
-     csp == icSigLabData)
+  o = oyOptions_Find( result, "saturation_line.output.double",
+                                       oyNAME_PATTERN );
+  *size_ = 0;
+  size = (int) oyOption_GetValueDouble( o, -1 );
+  if(size > 1)
   {
-    float *block = 0;
-    float *lab_block = 0;
-
-    /* scan here the color space border */
-    {
-      size_t size = 0;
-      oyOptions_s * options = NULL;
-      char num[24];
-      int precision = 20;
-
-      if(csp == icSigRgbData || csp == icSigXYZData)
-        block = createRGBGradient_( precision, &size );
-      else if(csp == icSigCmykData)
-        block = createCMYKGradient_( precision, &size );
-      else if(csp == icSigLabData)
-        block = createLabGradient_( precision, &size );
-
-      lab_block = (float*) malloc(size*4*sizeof(float));
-
-      if(!(block && lab_block))
-        return NULL;
-
-      sprintf(num,"%d", intent);
-      oyOptions_SetFromText( &options, OY_BEHAVIOUR_STD OY_SLASH "rendering_intent",
-                            num, OY_CREATE_NEW);
-
-      oyColorConvert_( profile, outspace, block, lab_block,
-                        oyFLOAT, oyFLOAT, options, size );
-      *size_ = size;
-      lab_erg =  (double*) calloc( sizeof(double), *size_ * 3);
-      for(i = 0; i < (int)(*size_ * 3); ++i) {
-        lab_erg[i] = lab_block[i];
-      }
-    }
-    if(block) free (block);
-    if(lab_block) free (lab_block);
-  }
-  return lab_erg;
+    double * values = oyAllocateFunc_( (size+1) * sizeof(double) );
+    int i;
+    for(i = 0; i < size; ++i)
+      values[i] = oyOption_GetValueDouble( o, i );
+    *size_ = size/3;
+    return values;
+  } else
+    fprintf( stderr, "saturation_line contains no lines: %d\n", size );
+  return NULL;
 }
 
 void draw_illuminant( cairo_t * cr,
