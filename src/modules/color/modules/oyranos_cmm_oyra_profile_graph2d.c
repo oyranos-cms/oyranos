@@ -180,8 +180,12 @@ double * oyraGetSaturationLine_(oyProfile_s * profile, int intent, int precision
   icColorSpaceSignature csp = (icColorSpaceSignature)
                               oyProfile_GetSignature( profile,
                                                       oySIGNATURE_COLOR_SPACE);
+  if(oy_debug)
+    oyra_msg( oyMSG_DBG, (oyStruct_s*)profile, OY_DBG_FORMAT_ "%s",
+              OY_DBG_ARGS_, oyICCColorSpaceGetName(csp) );
 
   if(csp == icSigRgbData || icSigXYZData ||
+     csp == icSigYCbCrData ||
      csp == icSigCmykData ||
      csp == icSigLabData)
   {
@@ -194,7 +198,7 @@ double * oyraGetSaturationLine_(oyProfile_s * profile, int intent, int precision
       oyOptions_s * options = NULL;
       char num[24];
 
-      if(csp == icSigRgbData || csp == icSigXYZData)
+      if(csp == icSigRgbData || csp == icSigXYZData || csp == icSigYCbCrData)
         block = oyraCreateRGBGradient_( precision, &size );
       else if(csp == icSigCmykData)
         block = oyraCreateCMYKGradient_( precision, &size );
