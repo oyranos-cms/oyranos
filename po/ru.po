@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Oyranos 0.9\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2017-04-10 08:50+0200\n"
+"POT-Creation-Date: 2017-04-15 12:12+0200\n"
 "PO-Revision-Date: 2015-02-20 17:32+0100\n"
 "Last-Translator: Kai-Uwe Behrmann <ku.b@gmx.de>\n"
 "Language-Team: russian <ru@li.org>\n"
@@ -52,8 +52,8 @@ msgstr ""
 msgid "- - zoom out"
 msgstr ""
 
-#: API_generated/oyNamedColor_s.c:608 API_generated/oyranos_profile.c:55
-#: API_generated/oyranos_profile.c:91 liboyranos_config/oyranos_icc.c:516
+#: API_generated/oyNamedColor_s.c:608 API_generated/oyranos_profile.c:54
+#: API_generated/oyranos_profile.c:90 liboyranos_config/oyranos_icc.c:513
 #: modules/color/modules/oyranos_cmm_lcm2.c:1572
 #: modules/color/modules/oyranos_cmm_oicc.c:222
 msgid "----"
@@ -86,15 +86,15 @@ msgstr ""
 msgid "/"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:907
+#: liboyranos_config/oyranos_icc.c:904
 msgid "0"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:890
+#: liboyranos_config/oyranos_icc.c:887
 msgid "0/45, 45/0"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:891
+#: liboyranos_config/oyranos_icc.c:888
 msgid "0/d or d/0"
 msgstr ""
 
@@ -102,63 +102,63 @@ msgstr ""
 msgid "1 - map one image pixel to one screen pixel"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:344
+#: liboyranos_config/oyranos_icc.c:341
 msgid "1. Channel"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:872
+#: liboyranos_config/oyranos_icc.c:869
 msgid "10 degree (1964)"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:353
+#: liboyranos_config/oyranos_icc.c:350
 msgid "10. Channel"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:908
+#: liboyranos_config/oyranos_icc.c:905
 msgid "100"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:219
+#: liboyranos_config/oyranos_icc.c:216
 msgid "10color"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:354
+#: liboyranos_config/oyranos_icc.c:351
 msgid "11. Channel"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:221
+#: liboyranos_config/oyranos_icc.c:218
 msgid "11color"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:355
+#: liboyranos_config/oyranos_icc.c:352
 msgid "12. Channel"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:223
+#: liboyranos_config/oyranos_icc.c:220
 msgid "12color"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:356
+#: liboyranos_config/oyranos_icc.c:353
 msgid "13. Channel"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:225
+#: liboyranos_config/oyranos_icc.c:222
 msgid "13color"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:357
+#: liboyranos_config/oyranos_icc.c:354
 msgid "14. Channel"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:227
+#: liboyranos_config/oyranos_icc.c:224
 msgid "14color"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:358
+#: liboyranos_config/oyranos_icc.c:355
 msgid "15. Channel"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:229
+#: liboyranos_config/oyranos_icc.c:226
 msgid "15color"
 msgstr ""
 
@@ -166,67 +166,67 @@ msgstr ""
 msgid "16-bit"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:359
+#: liboyranos_config/oyranos_icc.c:356
 msgid "16. Channel"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:118
+#: tools/oyranos_profile_graph.c:107
 msgid "1964 10° Observer Graph:"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:871
+#: liboyranos_config/oyranos_icc.c:868
 msgid "2 degree (1931)"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:345
+#: liboyranos_config/oyranos_icc.c:342
 msgid "2. Channel"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:106
+#: tools/oyranos_profile_graph.c:95
 msgid "2D Graph from profiles:"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:205
+#: liboyranos_config/oyranos_icc.c:202
 msgid "2color"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:346
+#: liboyranos_config/oyranos_icc.c:343
 msgid "3. Channel"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:206
+#: liboyranos_config/oyranos_icc.c:203
 msgid "3color"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:347
+#: liboyranos_config/oyranos_icc.c:344
 msgid "4. Channel"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:207
+#: liboyranos_config/oyranos_icc.c:204
 msgid "4color"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:348
+#: liboyranos_config/oyranos_icc.c:345
 msgid "5. Channel"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:209
+#: liboyranos_config/oyranos_icc.c:206
 msgid "5color"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:349
+#: liboyranos_config/oyranos_icc.c:346
 msgid "6. Channel"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:211
+#: liboyranos_config/oyranos_icc.c:208
 msgid "6color"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:350
+#: liboyranos_config/oyranos_icc.c:347
 msgid "7. Channel"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:213
+#: liboyranos_config/oyranos_icc.c:210
 msgid "7color"
 msgstr ""
 
@@ -234,19 +234,19 @@ msgstr ""
 msgid "8-bit"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:351
+#: liboyranos_config/oyranos_icc.c:348
 msgid "8. Channel"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:215
+#: liboyranos_config/oyranos_icc.c:212
 msgid "8color"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:352
+#: liboyranos_config/oyranos_icc.c:349
 msgid "9. Channel"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:217
+#: liboyranos_config/oyranos_icc.c:214
 msgid "9color"
 msgstr ""
 
@@ -258,14 +258,14 @@ msgstr ""
 #. case icMaxStdObs: return _("---"); break;
 #. case icMaxGeometry: return _("---");
 #. case icMaxFlare: return _("---");
-#: API_generated/oyranos_profile.c:56 API_generated/oyranos_profile.c:92
-#: liboyranos_config/oyranos_icc.c:832 liboyranos_config/oyranos_icc.c:857
-#: liboyranos_config/oyranos_icc.c:875 liboyranos_config/oyranos_icc.c:894
-#: liboyranos_config/oyranos_icc.c:911
+#: API_generated/oyranos_profile.c:55 API_generated/oyranos_profile.c:91
+#: liboyranos_config/oyranos_icc.c:829 liboyranos_config/oyranos_icc.c:854
+#: liboyranos_config/oyranos_icc.c:872 liboyranos_config/oyranos_icc.c:891
+#: liboyranos_config/oyranos_icc.c:908
 msgid "???"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:264
+#: liboyranos_config/oyranos_texts.c:263
 msgid ""
 "A Color Matching Module (CMM) does the computational work to transform "
 "colors. It can provide alternative features regarding appearance, security, "
@@ -281,16 +281,16 @@ msgstr ""
 msgid "About Oyranos"
 msgstr "О программе Oyranos"
 
-#: liboyranos_config/oyranos_texts.c:555 liboyranos_config/oyranos_texts.c:575
+#: liboyranos_config/oyranos_texts.c:554 liboyranos_config/oyranos_texts.c:574
 msgid "Absolute Colorimetric"
 msgstr ""
 
 #. abst
-#: liboyranos_config/oyranos_icc.c:624
+#: liboyranos_config/oyranos_icc.c:621
 msgid "Abstract"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:512 liboyranos_config/oyranos_texts.c:522
+#: liboyranos_config/oyranos_texts.c:511 liboyranos_config/oyranos_texts.c:521
 msgid "Action for Image profile and Editing profile mismatches."
 msgstr ""
 
@@ -298,12 +298,12 @@ msgstr ""
 msgid "Activate profiles:"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:346 liboyranos_config/oyranos_texts.c:347
+#: liboyranos_config/oyranos_texts.c:345 liboyranos_config/oyranos_texts.c:346
 msgid "Active Policy:"
 msgstr ""
 
 #. AMD
-#: liboyranos_config/oyranos_icc.c:794
+#: liboyranos_config/oyranos_icc.c:791
 msgid "Active matrix monitor"
 msgstr ""
 
@@ -316,12 +316,12 @@ msgid "Adaptation state for absolute colorimetric intent"
 msgstr ""
 
 #. ADBE
-#: liboyranos_config/oyranos_icc.c:672
+#: liboyranos_config/oyranos_icc.c:669
 msgid "Adobe CMM"
 msgstr ""
 
 #. ACMS
-#: liboyranos_config/oyranos_icc.c:673
+#: liboyranos_config/oyranos_icc.c:670
 msgid "Agfa CMM"
 msgstr ""
 
@@ -371,12 +371,12 @@ msgstr ""
 msgid "Alt v - set window fullscreen"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:327
+#: liboyranos_config/oyranos_texts.c:326
 msgid "Analyze ICC profile information on your system."
 msgstr ""
 
 #. appl
-#: liboyranos_config/oyranos_icc.c:674
+#: liboyranos_config/oyranos_icc.c:671
 msgid "Apple CMM"
 msgstr ""
 
@@ -385,16 +385,16 @@ msgid "Apply regions of interesst in form of simple rectangles."
 msgstr ""
 
 #. argl
-#: liboyranos_config/oyranos_icc.c:681
+#: liboyranos_config/oyranos_icc.c:678
 msgid "Argyll CMS CMM"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:505
+#: liboyranos_config/oyranos_texts.c:504
 msgid "Assign Assumed Profile"
 msgstr ""
 
 #. choices
-#: liboyranos_config/oyranos_texts.c:505
+#: liboyranos_config/oyranos_texts.c:504
 msgid "Assign No Profile"
 msgstr ""
 
@@ -402,69 +402,69 @@ msgstr ""
 msgid "Assign profile to device:"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:430
+#: liboyranos_config/oyranos_texts.c:429
 msgid "Assigns an untagged CIE*Lab Image this color space"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:461
+#: liboyranos_config/oyranos_texts.c:460
 msgid "Assigns an untagged Cmyk Image this color space"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:471
+#: liboyranos_config/oyranos_texts.c:470
 msgid "Assigns an untagged Gray Image this color space"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:440
+#: liboyranos_config/oyranos_texts.c:439
 msgid "Assigns an untagged Rgb Image this color space"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:450
+#: liboyranos_config/oyranos_texts.c:449
 msgid "Assigns an untagged Rgb Image with source from the WWW this color space"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:451
+#: liboyranos_config/oyranos_texts.c:450
 msgid ""
 "Assigns an untagged Rgb Image with source from the WWW this color space. "
 "This will always be sRGB as defined by W3C."
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:420
+#: liboyranos_config/oyranos_texts.c:419
 msgid "Assigns an untagged XYZ Image this color space"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:460
+#: liboyranos_config/oyranos_texts.c:459
 msgid "Assumed Cmyk source"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:181
+#: liboyranos_config/oyranos_texts.c:180
 msgid "Assumed Color Space"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:182
+#: liboyranos_config/oyranos_texts.c:181
 msgid "Assumed Color Space for untagged colors"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:470
+#: liboyranos_config/oyranos_texts.c:469
 msgid "Assumed Gray source"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:429
+#: liboyranos_config/oyranos_texts.c:428
 msgid "Assumed Lab source"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:439
+#: liboyranos_config/oyranos_texts.c:438
 msgid "Assumed Rgb source"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:449
+#: liboyranos_config/oyranos_texts.c:448
 msgid "Assumed Web source"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:419
+#: liboyranos_config/oyranos_texts.c:418
 msgid "Assumed XYZ source"
 msgstr ""
 
-#: API_generated/oyranos_profile.c:43
+#: API_generated/oyranos_profile.c:42
 msgid "Attributes"
 msgstr ""
 
@@ -473,12 +473,12 @@ msgstr ""
 msgid "Attributes:      "
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:290
+#: liboyranos_config/oyranos_texts.c:289
 msgid "Available Device Profiles from Taxi DB"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:307 liboyranos_config/oyranos_texts.c:308
-#: liboyranos_config/oyranos_texts.c:309
+#: liboyranos_config/oyranos_texts.c:306 liboyranos_config/oyranos_texts.c:307
+#: liboyranos_config/oyranos_texts.c:308
 msgid "Available Device Profiles:"
 msgstr ""
 
@@ -497,24 +497,24 @@ msgstr ""
 msgid "BAcs"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:562 liboyranos_config/oyranos_texts.c:563
+#: liboyranos_config/oyranos_texts.c:561 liboyranos_config/oyranos_texts.c:562
 msgid "BPC affects often only the Relative Colorimetric Rendering intent."
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:208
+#: liboyranos_config/oyranos_texts.c:207
 msgid "Behaviour"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:592
+#: liboyranos_config/oyranos_texts.c:591
 msgid ""
 "Behaviour for preselecting Hardproofing with a Proofing Profile at print time"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:572
+#: liboyranos_config/oyranos_texts.c:571
 msgid "Behaviour of color space transformation for proofing"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:573
+#: liboyranos_config/oyranos_texts.c:572
 msgid ""
 "Behaviour of color space transformation for proofing. Most people want a "
 "preview on screen only. The Relative Colorimetric intent is right for that. "
@@ -526,7 +526,7 @@ msgstr ""
 msgid "Bits per Sample"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:295 liboyranos_config/oyranos_icc.c:311
+#: liboyranos_config/oyranos_icc.c:292 liboyranos_config/oyranos_icc.c:308
 msgid "Black"
 msgstr ""
 
@@ -535,67 +535,67 @@ msgstr ""
 msgid "Black Preservation"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:122
+#: tools/oyranos_profile_graph.c:111
 msgid "Blackbody Radiator Spectrum Graph:"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:292
+#: liboyranos_config/oyranos_icc.c:289
 msgid "Blue"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:453
+#: liboyranos_config/oyranos_icc.c:450
 msgid "Blue Colorant"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:454
+#: liboyranos_config/oyranos_icc.c:451
 msgid "Blue tone reproduction curve"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:270 liboyranos_config/oyranos_icc.c:275
+#: liboyranos_config/oyranos_icc.c:267 liboyranos_config/oyranos_icc.c:272
 msgid "CIE *L"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:271
+#: liboyranos_config/oyranos_icc.c:268
 msgid "CIE *a"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:272
+#: liboyranos_config/oyranos_icc.c:269
 msgid "CIE *b"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:276
+#: liboyranos_config/oyranos_icc.c:273
 msgid "CIE *u"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:277
+#: liboyranos_config/oyranos_icc.c:274
 msgid "CIE *v"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:128
+#: tools/oyranos_profile_graph.c:117
 msgid "CIE A spectral power distribution"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:129
+#: tools/oyranos_profile_graph.c:118
 msgid "CIE D65 spectral power distribution"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:265
+#: liboyranos_config/oyranos_icc.c:262
 msgid "CIE X"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:266 liboyranos_config/oyranos_icc.c:285
+#: liboyranos_config/oyranos_icc.c:263 liboyranos_config/oyranos_icc.c:282
 msgid "CIE Y (Luminance)"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:267
+#: liboyranos_config/oyranos_icc.c:264
 msgid "CIE Z"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:286
+#: liboyranos_config/oyranos_icc.c:283
 msgid "CIE x"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:287
+#: liboyranos_config/oyranos_icc.c:284
 msgid "CIE y"
 msgstr ""
 
@@ -609,29 +609,29 @@ msgid ""
 msgstr ""
 
 #. CMM: abbreviation for Color Matching Module
-#: API_generated/oyranos_profile.c:38 liboyranos_config/oyranos_texts.c:262
+#: API_generated/oyranos_profile.c:37 liboyranos_config/oyranos_texts.c:261
 #: modules/color/modules/oyranos_cmm_lcm2.c:3716
 #: modules/color/modules/oyranos_cmm_lcms.c:2759
 msgid "CMM"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:621
+#: liboyranos_config/oyranos_texts.c:620
 msgid "CMM Core"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:641
+#: liboyranos_config/oyranos_texts.c:640
 msgid "CMM Core Fallback"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:631
+#: liboyranos_config/oyranos_texts.c:630
 msgid "CMM Renderer"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:651
+#: liboyranos_config/oyranos_texts.c:650
 msgid "CMM Renderer Fallback"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:458
+#: liboyranos_config/oyranos_icc.c:455
 msgid "Calibration date"
 msgstr ""
 
@@ -643,7 +643,7 @@ msgstr ""
 msgid "CameraRaw image"
 msgstr ""
 
-#: API_generated/oyProfile_s.c:857
+#: API_generated/oyProfile_s.c:867
 msgid "Can not write profile"
 msgstr ""
 
@@ -655,7 +655,7 @@ msgid "Cant read hardware information from device."
 msgstr ""
 
 #. CRT
-#: liboyranos_config/oyranos_icc.c:790
+#: liboyranos_config/oyranos_icc.c:787
 msgid "Cathode ray tube display"
 msgstr ""
 
@@ -673,6 +673,7 @@ msgstr ""
 #: modules/color/modules/oyranos_cmm_lcms.c:2535
 #: modules/color/modules/oyranos_cmm_lcms.c:2608
 #: modules/color/modules/oyranos_cmm_oiDB.c:462
+#: modules/color/modules/oyranos_cmm_oyra_profile_graph2d.c:326
 #: modules/color/modules/oyranos_cmm_trds.c:586
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:189
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:370
@@ -683,11 +684,11 @@ msgid "Check if this module can handle a certain command."
 msgstr ""
 
 #. chrm
-#: liboyranos_config/oyranos_icc.c:509
+#: liboyranos_config/oyranos_icc.c:506
 msgid "Chromaticity"
 msgstr ""
 
-#: API_generated/oyranos_profile.c:40
+#: API_generated/oyranos_profile.c:39
 msgid "Class"
 msgstr ""
 
@@ -700,11 +701,11 @@ msgstr ""
 msgid "Cmm:             "
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:204
+#: liboyranos_config/oyranos_icc.c:201
 msgid "Cmy"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:203
+#: liboyranos_config/oyranos_icc.c:200
 msgid "Cmyk"
 msgstr ""
 
@@ -730,7 +731,7 @@ msgid ""
 "complex and tries to preserve the WHOLE K plane."
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:200 liboyranos_config/oyranos_texts.c:337
+#: liboyranos_config/oyranos_texts.c:199 liboyranos_config/oyranos_texts.c:336
 msgid "Collections of settings in Oyranos"
 msgstr ""
 
@@ -745,13 +746,13 @@ msgstr ""
 msgid "Color"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:281
+#: liboyranos_config/oyranos_texts.c:280
 msgid "Color Managed Devices"
 msgstr ""
 
 #. spac
-#: API_generated/oyranos_profile.c:35 API_generated/oyranos_profile.c:71
-#: liboyranos_config/oyranos_icc.c:626
+#: API_generated/oyranos_profile.c:34 API_generated/oyranos_profile.c:70
+#: liboyranos_config/oyranos_icc.c:623
 msgid "Color Space"
 msgstr ""
 
@@ -765,30 +766,30 @@ msgid "Color Transforms can be differently stored internally"
 msgstr ""
 
 #. chad
-#: liboyranos_config/oyranos_icc.c:507
+#: liboyranos_config/oyranos_icc.c:504
 msgid "Color adaption matrix"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:281
+#: liboyranos_config/oyranos_icc.c:278
 msgid "Color b"
 msgstr ""
 
 #. clrt
-#: liboyranos_config/oyranos_icc.c:513
+#: liboyranos_config/oyranos_icc.c:510
 msgid "Color channel names"
 msgstr ""
 
 #. clro
-#: liboyranos_config/oyranos_icc.c:511
+#: liboyranos_config/oyranos_icc.c:508
 msgid "Color channel order"
 msgstr ""
 
 #. clrt
-#: liboyranos_config/oyranos_icc.c:515
+#: liboyranos_config/oyranos_icc.c:512
 msgid "Color channel output names"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:183
+#: liboyranos_config/oyranos_texts.c:182
 msgid ""
 "Color content can sometimes have no ICC profile assigned. This is a critical "
 "situation as the system can not properly convert these colors. Therefore the "
@@ -797,7 +798,7 @@ msgid ""
 "and allow proper conversion and compositing."
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:210
+#: liboyranos_config/oyranos_texts.c:209
 msgid ""
 "Color management has in some situations to resolve unclear situations. This "
 "can be done by automatic applying preselected choices or on a case to case "
@@ -817,7 +818,7 @@ msgid ""
 "known color space, based on the average \"human observer\" as defined by CIE."
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:459
+#: liboyranos_config/oyranos_icc.c:456
 msgid "Color measurement data"
 msgstr ""
 
@@ -830,31 +831,36 @@ msgid ""
 "behaviour as was present during ICC profile creation."
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:282
+#: liboyranos_config/oyranos_icc.c:279
 msgid "Color r"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:481
+#: liboyranos_config/oyranos_texts.c:480
 msgid "Color space for Simulating an Output Device"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:491
+#: liboyranos_config/oyranos_texts.c:490
 msgid "Color space for showing a effect"
 msgstr ""
 
 #. CCMS
-#: liboyranos_config/oyranos_icc.c:675
+#: liboyranos_config/oyranos_icc.c:672
 msgid "ColorGear CMM"
 msgstr ""
 
 #. UCMS
-#: liboyranos_config/oyranos_icc.c:677
+#: liboyranos_config/oyranos_icc.c:674
 msgid "ColorGear CMM C"
 msgstr ""
 
 #. UCCM
-#: liboyranos_config/oyranos_icc.c:676
+#: liboyranos_config/oyranos_icc.c:673
 msgid "ColorGear CMM Lite"
+msgstr ""
+
+#: modules/color/modules/oyranos_cmm_oyra_profile_graph2d.c:332
+#: modules/color/modules/oyranos_cmm_oyra_profile_graph2d.c:340
+msgid "Compute a saturation line."
 msgstr ""
 
 #: tools/oyranos_convert.c:65
@@ -869,7 +875,7 @@ msgstr ""
 msgid "Convert Image:"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:515 liboyranos_config/oyranos_texts.c:525
+#: liboyranos_config/oyranos_texts.c:514 liboyranos_config/oyranos_texts.c:524
 msgid "Convert automatically"
 msgstr ""
 
@@ -881,23 +887,23 @@ msgstr ""
 msgid "Convert image to ICC Color Space"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:535
+#: liboyranos_config/oyranos_texts.c:534
 msgid "Convert to Default Cmyk Editing Space"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:545
+#: liboyranos_config/oyranos_texts.c:544
 msgid "Convert to Default Rgb Editing Space"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:545
+#: liboyranos_config/oyranos_texts.c:544
 msgid "Convert to WWW (sRGB)"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:535
+#: liboyranos_config/oyranos_texts.c:534
 msgid "Convert to untagged Cmyk, preserving Cmyk numbers"
 msgstr ""
 
-#: API_generated/oyranos_module.c:1417 liboyranos_config/oyranos_icc.c:460
+#: API_generated/oyranos_module.c:1417 liboyranos_config/oyranos_icc.c:457
 msgid "Copyright"
 msgstr ""
 
@@ -981,16 +987,16 @@ msgid ""
 "point to a Oyranos module loader library?"
 msgstr ""
 
-#: API_generated/oyranos_devices.c:500
+#: API_generated/oyranos_devices.c:499
 msgid "Could not open ICC profile"
 msgstr ""
 
-#: API_generated/oyProfile_s.c:212 API_generated/oyProfile_s.c:218
+#: API_generated/oyProfile_s.c:212 API_generated/oyProfile_s.c:227
 msgid "Could not open default ICC profile"
 msgstr ""
 
-#: API_generated/oyranos_devices.c:229 API_generated/oyranos_devices.c:1035
-#: liboyranos/oyranos_alpha.c:798 liboyranos/oyranos_alpha.c:881
+#: API_generated/oyranos_devices.c:228 API_generated/oyranos_devices.c:1034
+#: liboyranos/oyranos_alpha.c:791 liboyranos/oyranos_alpha.c:874
 msgid "Could not open device"
 msgstr ""
 
@@ -1002,7 +1008,7 @@ msgstr ""
 msgid "Could not open or invalid data: "
 msgstr ""
 
-#: API_generated/oyProfile_s.c:868 API_generated/oyranos_devices.c:1046
+#: API_generated/oyProfile_s.c:878 API_generated/oyranos_devices.c:1045
 #: liboyranos_core/oyranos_io_core.c:111 liboyranos_core/oyranos_io_core.c:269
 msgid "Could not open profile"
 msgstr ""
@@ -1032,7 +1038,7 @@ msgstr ""
 msgid "Could not resolve rank_json"
 msgstr ""
 
-#: API_generated/oyranos_devices.c:448
+#: API_generated/oyranos_devices.c:447
 msgid "Could not write to file"
 msgstr ""
 
@@ -1066,9 +1072,9 @@ msgstr ""
 msgid "Creation Date:   "
 msgstr ""
 
-#: API_generated/oyranos_profile.c:85 API_generated/oyranos_profile.c:86
-#: API_generated/oyranos_profile.c:87 API_generated/oyranos_profile.c:88
-#: API_generated/oyranos_profile.c:89 API_generated/oyranos_profile.c:90
+#: API_generated/oyranos_profile.c:84 API_generated/oyranos_profile.c:85
+#: API_generated/oyranos_profile.c:86 API_generated/oyranos_profile.c:87
+#: API_generated/oyranos_profile.c:88 API_generated/oyranos_profile.c:89
 msgid "Creation Time in UTC"
 msgstr ""
 
@@ -1076,7 +1082,7 @@ msgstr ""
 msgid "Creation of rank_map filed from"
 msgstr ""
 
-#: API_generated/oyranos_profile.c:47
+#: API_generated/oyranos_profile.c:46
 msgid "Creator"
 msgstr ""
 
@@ -1093,7 +1099,7 @@ msgstr ""
 msgid "Curves for Optimization"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:308 liboyranos_config/oyranos_icc.c:314
+#: liboyranos_config/oyranos_icc.c:305 liboyranos_config/oyranos_icc.c:311
 msgid "Cyan"
 msgstr ""
 
@@ -1114,9 +1120,9 @@ msgstr ""
 msgid "Data Color Space:"
 msgstr ""
 
-#: API_generated/oyranos_profile.c:49 API_generated/oyranos_profile.c:50
-#: API_generated/oyranos_profile.c:51 API_generated/oyranos_profile.c:52
-#: API_generated/oyranos_profile.c:53 API_generated/oyranos_profile.c:54
+#: API_generated/oyranos_profile.c:48 API_generated/oyranos_profile.c:49
+#: API_generated/oyranos_profile.c:50 API_generated/oyranos_profile.c:51
+#: API_generated/oyranos_profile.c:52 API_generated/oyranos_profile.c:53
 msgid "Date"
 msgstr ""
 
@@ -1129,17 +1135,17 @@ msgstr ""
 msgid "Decide how to preserve the black channel for Cmyk to Cmyk transforms"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:237
+#: liboyranos_config/oyranos_texts.c:236
 msgid ""
 "Decide how to resolve conflicts with input color spaces and current settings."
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:236
+#: liboyranos_config/oyranos_texts.c:235
 msgid ""
 "Decide what to do when the default color spaces don't match the current ones."
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:163
+#: liboyranos_config/oyranos_texts.c:162
 msgid "Default Profiles"
 msgstr ""
 
@@ -1157,41 +1163,41 @@ msgstr ""
 msgid "Device"
 msgstr ""
 
-#: API_generated/oyranos_profile.c:80
+#: API_generated/oyranos_profile.c:79
 msgid "Device Manufacturer"
 msgstr ""
 
-#: API_generated/oyranos_profile.c:81
+#: API_generated/oyranos_profile.c:80
 msgid "Device Model"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:316
+#: liboyranos_config/oyranos_texts.c:315
 msgid "Device Related"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:464
+#: liboyranos_config/oyranos_icc.c:461
 msgid "Device Settings"
 msgstr ""
 
 #. DevD
-#: liboyranos_config/oyranos_icc.c:499
+#: liboyranos_config/oyranos_icc.c:496
 msgid "Device colors"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:462
+#: liboyranos_config/oyranos_icc.c:459
 msgid "Device manufacturerer description"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:463
+#: liboyranos_config/oyranos_icc.c:460
 msgid "Device model description"
 msgstr ""
 
 #. RGMS / Rolf Gierling Multitools
-#: liboyranos_config/oyranos_icc.c:688
+#: liboyranos_config/oyranos_icc.c:685
 msgid "DeviceLink CMM"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:280
+#: liboyranos_config/oyranos_texts.c:279
 msgid "Devices"
 msgstr ""
 
@@ -1200,12 +1206,12 @@ msgid "Did you specify a 3 letter manufacturer code?"
 msgstr ""
 
 #. dcam
-#: liboyranos_config/oyranos_icc.c:764
+#: liboyranos_config/oyranos_icc.c:761
 msgid "Digital camera"
 msgstr ""
 
 #. mntr
-#: liboyranos_config/oyranos_icc.c:618
+#: liboyranos_config/oyranos_icc.c:615
 msgid "Display"
 msgstr ""
 
@@ -1226,7 +1232,7 @@ msgid "Dump out the actual settings:"
 msgstr ""
 
 #. dsub
-#: liboyranos_config/oyranos_icc.c:778
+#: liboyranos_config/oyranos_icc.c:775
 msgid "Dye sublimation printer"
 msgstr ""
 
@@ -1234,12 +1240,12 @@ msgstr ""
 msgid "EAcs"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:829
+#: liboyranos_config/oyranos_icc.c:826
 msgid "EBU Tech.3213-E"
 msgstr ""
 
 #. EFI
-#: liboyranos_config/oyranos_icc.c:678
+#: liboyranos_config/oyranos_icc.c:675
 msgid "EFI CMM"
 msgstr ""
 
@@ -1247,39 +1253,39 @@ msgstr ""
 msgid "Edit Options ..."
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:379
+#: liboyranos_config/oyranos_texts.c:378
 msgid "Editing Cmyk"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:172
+#: liboyranos_config/oyranos_texts.c:171
 msgid "Editing Color Space"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:409
+#: liboyranos_config/oyranos_texts.c:408
 msgid "Editing Gray"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:399
+#: liboyranos_config/oyranos_texts.c:398
 msgid "Editing Lab"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:369
+#: liboyranos_config/oyranos_texts.c:368
 msgid "Editing Rgb"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:389
+#: liboyranos_config/oyranos_texts.c:388
 msgid "Editing XYZ"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:253 liboyranos_config/oyranos_texts.c:490
+#: liboyranos_config/oyranos_texts.c:252 liboyranos_config/oyranos_texts.c:489
 msgid "Effect"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:254
+#: liboyranos_config/oyranos_texts.c:253
 msgid "Effect Settings"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:255
+#: liboyranos_config/oyranos_texts.c:254
 msgid ""
 "Effect Settings allows one to decide about a abstract effect color space."
 msgstr ""
@@ -1289,12 +1295,12 @@ msgid "Effect abtract Color Space"
 msgstr ""
 
 #. epho
-#: liboyranos_config/oyranos_icc.c:774
+#: liboyranos_config/oyranos_icc.c:771
 msgid "Electrophotographic printer"
 msgstr ""
 
 #. esta
-#: liboyranos_config/oyranos_icc.c:776
+#: liboyranos_config/oyranos_icc.c:773
 msgid "Electrostatic printer"
 msgstr ""
 
@@ -1312,18 +1318,18 @@ msgstr ""
 msgid "Embedd device meta tag from image device into given device profile"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:612
+#: liboyranos_config/oyranos_texts.c:611
 msgid "Enable effect profile"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:593
+#: liboyranos_config/oyranos_texts.c:592
 msgid ""
 "Enable simulation of an output color space on a local printer. Most users do "
 "not work for a certain media and leave color handling to the system. They "
 "want no simulation."
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:583
+#: liboyranos_config/oyranos_texts.c:582
 msgid ""
 "Enable simulation of output print on the monitor. Most users do not work for "
 "a certain media and leave color handling to the system. They want no "
@@ -1380,7 +1386,7 @@ msgstr ""
 
 #: tools/oyranos-device.c:52 tools/oyranos-device.c:92
 #: tools/oyranos-device.c:93 tools/oyranos-device.c:94
-#: tools/oyranos_profile_graph.c:108 tools/oyranos_profile_graph.c:135
+#: tools/oyranos_profile_graph.c:97 tools/oyranos_profile_graph.c:124
 #: examples/libraw/oyranos_file.cpp:67 examples/libraw/oyranos_file.cpp:68
 msgid "FILE"
 msgstr ""
@@ -1394,11 +1400,11 @@ msgid "FILE_NAME"
 msgstr ""
 
 #: tools/oyranos_convert.c:78 tools/oyranos_convert.c:83
-#: tools/oyranos_profile_graph.c:136
+#: tools/oyranos_profile_graph.c:125
 msgid "FORMAT"
 msgstr ""
 
-#: API_generated/oyranos_profile.c:77
+#: API_generated/oyranos_profile.c:76
 msgid "File Magic"
 msgstr ""
 
@@ -1428,12 +1434,12 @@ msgid "Files"
 msgstr ""
 
 #. fscn
-#: liboyranos_config/oyranos_icc.c:766
+#: liboyranos_config/oyranos_icc.c:763
 msgid "Film scanner"
 msgstr ""
 
 #. fprn
-#: liboyranos_config/oyranos_icc.c:782
+#: liboyranos_config/oyranos_icc.c:779
 msgid "Film writer"
 msgstr ""
 
@@ -1443,7 +1449,7 @@ msgid "Flags:           "
 msgstr ""
 
 #. flex
-#: liboyranos_config/oyranos_icc.c:806
+#: liboyranos_config/oyranos_icc.c:803
 msgid "Flexography"
 msgstr ""
 
@@ -1455,16 +1461,16 @@ msgstr ""
 msgid "FloatPCS2XYZ"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:531
+#: liboyranos_config/oyranos_texts.c:530
 msgid "For Print"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:541
+#: liboyranos_config/oyranos_texts.c:540
 msgid "For Screen"
 msgstr ""
 
 #: tools/oyranos-device.c:109 tools/oyranos_gamma.c:240
-#: tools/oyranos_profile_graph.c:142 tools/oyranos_profile_tool.c:131
+#: tools/oyranos_profile_graph.c:131 tools/oyranos_profile_tool.c:131
 #: examples/libraw/oyranos_file.cpp:78
 #, c-format
 msgid "For more informations read the man page:"
@@ -1475,16 +1481,16 @@ msgid "Found no node in conversion. give up"
 msgstr ""
 
 #. FF
-#: liboyranos_config/oyranos_icc.c:679
+#: liboyranos_config/oyranos_icc.c:676
 msgid "Fuji Film CMM"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:601
+#: liboyranos_config/oyranos_texts.c:600
 msgid "Gamut Warning"
 msgstr ""
 
 #: tools/oyranos-device.c:100 tools/oyranos_convert.c:102
-#: tools/oyranos_gamma.c:235 tools/oyranos_profile_graph.c:132
+#: tools/oyranos_gamma.c:235 tools/oyranos_profile_graph.c:121
 #: tools/oyranos_profile_tool.c:112 tools/oyranos_profiles.c:95
 #: examples/taxi.c:66 examples/libraw/oyranos_file.cpp:66
 msgid "General options:"
@@ -1516,46 +1522,46 @@ msgid "Get ICC profile"
 msgstr ""
 
 #. grav
-#: liboyranos_config/oyranos_icc.c:800
+#: liboyranos_config/oyranos_icc.c:797
 msgid "Gravure"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:200
+#: liboyranos_config/oyranos_icc.c:197
 msgid "Gray"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:466
+#: liboyranos_config/oyranos_icc.c:463
 msgid "Gray tone reproduction curve"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:291
+#: liboyranos_config/oyranos_icc.c:288
 msgid "Green"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:467
+#: liboyranos_config/oyranos_icc.c:464
 msgid "Green Colorant"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:468
+#: liboyranos_config/oyranos_icc.c:465
 msgid "Green tone reproduction curve"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:532
+#: liboyranos_config/oyranos_texts.c:531
 msgid "Handle mixed color spaces in preparing a document for print output."
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:533
+#: liboyranos_config/oyranos_texts.c:532
 msgid ""
 "Handle mixed color spaces in preparing a document for print output. A "
 "conversion to the default editing color space is typically what most users "
 "want."
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:542
+#: liboyranos_config/oyranos_texts.c:541
 msgid "Handle mixed color spaces in preparing a document for screen output."
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:543
+#: liboyranos_config/oyranos_texts.c:542
 msgid ""
 "Handle mixed color spaces in preparing a document for screen output. A "
 "conversion to sRGB helps in easy data exchange and is what most users want."
@@ -1569,16 +1575,16 @@ msgstr ""
 msgid "Handle options."
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:227
+#: liboyranos_config/oyranos_texts.c:226
 msgid "Handling of Mixed Color Spaces inside one single Document"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:591
+#: liboyranos_config/oyranos_texts.c:590
 msgid "Hardproof"
 msgstr ""
 
 #. HCMM
-#: liboyranos_config/oyranos_icc.c:680
+#: liboyranos_config/oyranos_icc.c:677
 msgid "Harlequin RIP CMM"
 msgstr ""
 
@@ -1587,7 +1593,7 @@ msgid "Header"
 msgstr ""
 
 #. HDM
-#: liboyranos_config/oyranos_icc.c:683
+#: liboyranos_config/oyranos_icc.c:680
 msgid "Heidelberg CMM"
 msgstr ""
 
@@ -1610,23 +1616,23 @@ msgid ""
 "Hint: search paths are influenced by the XDG_CONFIG_HOME shell variable."
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:202
+#: liboyranos_config/oyranos_icc.c:199
 msgid "Hls"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:201
+#: liboyranos_config/oyranos_icc.c:198
 msgid "Hsv"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:298 liboyranos_config/oyranos_icc.c:303
+#: liboyranos_config/oyranos_icc.c:295 liboyranos_config/oyranos_icc.c:300
 msgid "Hue"
 msgstr ""
 
-#: API_generated/oyranos_profile.c:76
+#: API_generated/oyranos_profile.c:75
 msgid "ICC Class"
 msgstr ""
 
-#: API_generated/oyranos_profile.c:75
+#: API_generated/oyranos_profile.c:74
 msgid "ICC Version"
 msgstr ""
 
@@ -1638,7 +1644,7 @@ msgstr ""
 msgid "ICC color profiles for color transformations"
 msgstr ""
 
-#: API_generated/oyranos_profile.c:79
+#: API_generated/oyranos_profile.c:78
 msgid "ICC header Attributes"
 msgstr ""
 
@@ -1646,7 +1652,7 @@ msgstr ""
 msgid "ICC profile"
 msgstr "ICC-профиль"
 
-#: API_generated/oyProfile_s_.c:819
+#: API_generated/oyProfile_s_.c:893
 msgid "ICC profile id written"
 msgstr ""
 
@@ -1658,13 +1664,13 @@ msgstr ""
 msgid "ICC profiles"
 msgstr "ICC-профили"
 
-#: liboyranos_config/oyranos_texts.c:192
+#: liboyranos_config/oyranos_texts.c:191
 msgid ""
 "ICC profiles reside in known paths. They are defined by OpenICC and can be "
 "used by every complying system or application."
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:360
+#: liboyranos_config/oyranos_texts.c:359
 msgid ""
 "ICC profiles reside in known paths. They are defined by OpenICC and can be "
 "used by every complying system or application. XDG_DATA_HOME and "
@@ -1673,7 +1679,7 @@ msgid ""
 "\" appended."
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:165
+#: liboyranos_config/oyranos_texts.c:164
 msgid ""
 "ICC profiles should always be attached to all colors. In the case that "
 "colors are undefined, users can set various default ICC profiles in Oyranos "
@@ -1695,7 +1701,7 @@ msgstr ""
 msgid "ICC_FILE_NAME"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:827
+#: liboyranos_config/oyranos_icc.c:824
 msgid "ITU-R BT.709"
 msgstr ""
 
@@ -1704,47 +1710,47 @@ msgstr ""
 msgid "Identity"
 msgstr ""
 
-#: API_generated/oyranos_profile.c:48
+#: API_generated/oyranos_profile.c:47
 msgid "Illuminant"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:852
+#: liboyranos_config/oyranos_icc.c:849
 msgid "Illuminant A"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:847
+#: liboyranos_config/oyranos_icc.c:844
 msgid "Illuminant D50"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:851
+#: liboyranos_config/oyranos_icc.c:848
 msgid "Illuminant D55"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:848
+#: liboyranos_config/oyranos_icc.c:845
 msgid "Illuminant D65"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:849
+#: liboyranos_config/oyranos_icc.c:846
 msgid "Illuminant D93"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:850
+#: liboyranos_config/oyranos_icc.c:847
 msgid "Illuminant F2"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:854
+#: liboyranos_config/oyranos_icc.c:851
 msgid "Illuminant F8"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:126
+#: tools/oyranos_profile_graph.c:115
 msgid "Illuminant Spectrum Graph:"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:846
+#: liboyranos_config/oyranos_icc.c:843
 msgid "Illuminant unknown"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:853
+#: liboyranos_config/oyranos_icc.c:850
 msgid "Illuminant with equal energy E"
 msgstr ""
 
@@ -1774,7 +1780,7 @@ msgstr ""
 msgid "Image Socket"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:502
+#: liboyranos_config/oyranos_texts.c:501
 msgid ""
 "Image has no color space embedded. What default action shall be performed?"
 msgstr ""
@@ -1836,14 +1842,14 @@ msgstr ""
 msgid "Img"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:513 liboyranos_config/oyranos_texts.c:523
+#: liboyranos_config/oyranos_texts.c:512 liboyranos_config/oyranos_texts.c:522
 msgid ""
 "Incoming color spaces can differ from the default editing color space. For "
 "most users, an automatic conversion is fine. However, for more demanding "
 "work, the numbers need to be preserved."
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:325
+#: liboyranos_config/oyranos_texts.c:324
 msgid "Information"
 msgstr ""
 
@@ -1864,12 +1870,12 @@ msgid "Initialise the oyJob_s APIs."
 msgstr ""
 
 #. ijet
-#: liboyranos_config/oyranos_icc.c:770
+#: liboyranos_config/oyranos_icc.c:767
 msgid "InkJet printer"
 msgstr ""
 
 #. scnr
-#: liboyranos_config/oyranos_icc.c:616
+#: liboyranos_config/oyranos_icc.c:613
 msgid "Input"
 msgstr ""
 
@@ -1893,19 +1899,19 @@ msgstr ""
 msgid "Install ICC profile:"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:298
+#: liboyranos_config/oyranos_texts.c:297
 msgid "Install profile"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:299
+#: liboyranos_config/oyranos_texts.c:298
 msgid "Install selected profile"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:300
+#: liboyranos_config/oyranos_texts.c:299
 msgid "Install the selected profile."
 msgstr ""
 
-#: API_generated/oyranos_profile.c:46
+#: API_generated/oyranos_profile.c:45
 msgid "Intent"
 msgstr ""
 
@@ -1913,7 +1919,7 @@ msgstr ""
 msgid "Internal Error"
 msgstr ""
 
-#: API_generated/oyranos_profile.c:73
+#: API_generated/oyranos_profile.c:72
 msgid "Internal stored Size"
 msgstr ""
 
@@ -1938,16 +1944,16 @@ msgid "Kai-Uwe Behrmann"
 msgstr ""
 
 #. KCMS
-#: liboyranos_config/oyranos_icc.c:685
+#: liboyranos_config/oyranos_icc.c:682
 msgid "Kodak CMS"
 msgstr ""
 
 #. MCML
-#: liboyranos_config/oyranos_icc.c:686
+#: liboyranos_config/oyranos_icc.c:683
 msgid "Konica Minolta CMM"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:195
+#: liboyranos_config/oyranos_icc.c:192
 msgid "Lab"
 msgstr ""
 
@@ -1960,12 +1966,12 @@ msgstr ""
 msgid "Lab2XYZ"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:304
+#: liboyranos_config/oyranos_icc.c:301
 msgid "Lightness"
 msgstr ""
 
 #. link
-#: liboyranos_config/oyranos_icc.c:622
+#: liboyranos_config/oyranos_icc.c:619
 msgid "Link"
 msgstr ""
 
@@ -2027,7 +2033,7 @@ msgid "Little CMS 2"
 msgstr ""
 
 #. lcms
-#: liboyranos_config/oyranos_icc.c:684
+#: liboyranos_config/oyranos_icc.c:681
 msgid "Little CMS CMM"
 msgstr ""
 
@@ -2084,7 +2090,7 @@ msgid "Load Image File Object"
 msgstr ""
 
 #. LgoS
-#: liboyranos_config/oyranos_icc.c:682
+#: liboyranos_config/oyranos_icc.c:679
 msgid "LogoSync CMM"
 msgstr ""
 
@@ -2092,39 +2098,39 @@ msgstr ""
 msgid "Look Up Table"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:455
+#: liboyranos_config/oyranos_icc.c:452
 msgid "Lookup table, PCS to device, intent perceptual"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:456
+#: liboyranos_config/oyranos_icc.c:453
 msgid "Lookup table, PCS to device, intent relative colorimetric"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:457
+#: liboyranos_config/oyranos_icc.c:454
 msgid "Lookup table, PCS to device, intent saturation"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:450
+#: liboyranos_config/oyranos_icc.c:447
 msgid "Lookup table, device to PCS, intent perceptual"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:451
+#: liboyranos_config/oyranos_icc.c:448
 msgid "Lookup table, device to PCS, intent relative colorimetric"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:452
+#: liboyranos_config/oyranos_icc.c:449
 msgid "Lookup table, device to PCS, intent saturation"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:469
+#: liboyranos_config/oyranos_icc.c:466
 msgid "Luminance"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:280
+#: liboyranos_config/oyranos_icc.c:277
 msgid "Luminance Y"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:196
+#: liboyranos_config/oyranos_icc.c:193
 msgid "Luv"
 msgstr ""
 
@@ -2152,8 +2158,8 @@ msgstr ""
 #: API_generated/oyPixelAccess_s_.c:225 API_generated/oyPointer_s_.c:277
 #: API_generated/oyProfileTag_s_.c:208 API_generated/oyProfile_s_.c:322
 #: API_generated/oyProfiles_s_.c:195 API_generated/oyRectangle_s_.c:191
-#: API_generated/oyStructList_s_.c:239 API_generated/oyranos_devices.c:3588
-#: API_generated/oyranos_module.c:1579 liboyranos/oyranos_alpha.c:260
+#: API_generated/oyStructList_s_.c:239 API_generated/oyranos_devices.c:3580
+#: API_generated/oyranos_module.c:1579 liboyranos/oyranos_alpha.c:257
 #: liboyranos_modules/oyranos_forms.c:56
 msgid "MEM Error."
 msgstr ""
@@ -2177,15 +2183,15 @@ msgstr ""
 msgid "MODULE_NAME"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:648
+#: liboyranos_config/oyranos_icc.c:645
 msgid "Macintosh"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:309 liboyranos_config/oyranos_icc.c:315
+#: liboyranos_config/oyranos_icc.c:306 liboyranos_config/oyranos_icc.c:312
 msgid "Magenta"
 msgstr ""
 
-#: API_generated/oyranos_profile.c:41
+#: API_generated/oyranos_profile.c:40
 msgid "Magic"
 msgstr ""
 
@@ -2194,7 +2200,7 @@ msgstr ""
 msgid "Magic:           "
 msgstr ""
 
-#: API_generated/oyranos_module.c:1416 API_generated/oyranos_profile.c:44
+#: API_generated/oyranos_module.c:1416 API_generated/oyranos_profile.c:43
 msgid "Manufacturer"
 msgstr ""
 
@@ -2203,7 +2209,7 @@ msgstr ""
 msgid "Manufacturer:    "
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:602
+#: liboyranos_config/oyranos_texts.c:601
 msgid "Mark Out Of Gamut colors"
 msgstr ""
 
@@ -2216,42 +2222,42 @@ msgid "Me"
 msgstr ""
 
 #. CIED
-#: liboyranos_config/oyranos_icc.c:501
+#: liboyranos_config/oyranos_icc.c:498
 msgid "Measured colors"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:470
+#: liboyranos_config/oyranos_icc.c:467
 msgid "Measurement"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:471
+#: liboyranos_config/oyranos_icc.c:468
 msgid "Media black point"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:472
+#: liboyranos_config/oyranos_icc.c:469
 msgid "Media white point"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:473
+#: liboyranos_config/oyranos_icc.c:470
 msgid "Meta Data"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:649
+#: liboyranos_config/oyranos_icc.c:646
 msgid "Microsoft"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:235
+#: liboyranos_config/oyranos_texts.c:234
 msgid "Mismatching"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:228
+#: liboyranos_config/oyranos_texts.c:227
 msgid ""
 "Mixed color spaces inside one single document can be difficult to handle for "
 "some systems. The settings can give the option to flatten document color "
 "spaces."
 msgstr ""
 
-#: API_generated/oyranos_profile.c:45
+#: API_generated/oyranos_profile.c:44
 msgid "Model"
 msgstr ""
 
@@ -2287,14 +2293,14 @@ msgstr ""
 msgid "More indepth help  for My example filter."
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:603
+#: liboyranos_config/oyranos_texts.c:602
 msgid ""
 "Most users want a simple display of colors and will not check if colors "
 "match the simulation color space."
 msgstr ""
 
 #. SIGN
-#: liboyranos_config/oyranos_icc.c:687
+#: liboyranos_config/oyranos_icc.c:684
 msgid "Mutho CMM"
 msgstr ""
 
@@ -2329,9 +2335,9 @@ msgid "NAME"
 msgstr ""
 
 #: tools/oyranos-device.c:70 tools/oyranos-device.c:103
-#: tools/oyranos_convert.c:97 tools/oyranos_profile_graph.c:112
-#: tools/oyranos_profile_graph.c:123 tools/oyranos_profile_graph.c:134
-#: tools/oyranos_profile_graph.c:138 tools/oyranos_profile_tool.c:85
+#: tools/oyranos_convert.c:97 tools/oyranos_profile_graph.c:101
+#: tools/oyranos_profile_graph.c:112 tools/oyranos_profile_graph.c:123
+#: tools/oyranos_profile_graph.c:127 tools/oyranos_profile_tool.c:85
 #: tools/oyranos_profile_tool.c:89
 msgid "NUMBER"
 msgstr ""
@@ -2341,12 +2347,12 @@ msgid "Name"
 msgstr ""
 
 #. nmcl
-#: liboyranos_config/oyranos_icc.c:474 liboyranos_config/oyranos_icc.c:628
+#: liboyranos_config/oyranos_icc.c:471 liboyranos_config/oyranos_icc.c:625
 #: modules/color/modules/oyranos_cmm_lcm2.c:1557
 msgid "Named Color"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:475
+#: liboyranos_config/oyranos_icc.c:472
 msgid "Named Color 2"
 msgstr ""
 
@@ -2363,18 +2369,18 @@ msgid "Need a ICC profile to modify."
 msgstr ""
 
 #. choices
-#: liboyranos_config/oyranos_texts.c:565 liboyranos_config/oyranos_texts.c:585
-#: liboyranos_config/oyranos_texts.c:595 liboyranos_config/oyranos_texts.c:605
-#: liboyranos_config/oyranos_texts.c:615
+#: liboyranos_config/oyranos_texts.c:564 liboyranos_config/oyranos_texts.c:584
+#: liboyranos_config/oyranos_texts.c:594 liboyranos_config/oyranos_texts.c:604
+#: liboyranos_config/oyranos_texts.c:614
 #: modules/color/modules/oyranos_cmm_lcm2.c:3298
 msgid "No"
 msgstr ""
 
-#: API_generated/oyProfile_s_.c:804
+#: API_generated/oyProfile_s_.c:878
 msgid "No ICC profile id detected"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:501
+#: liboyranos_config/oyranos_texts.c:500
 msgid "No Image profile"
 msgstr ""
 
@@ -2391,15 +2397,15 @@ msgid "Node"
 msgstr ""
 
 #. offs
-#: liboyranos_config/oyranos_icc.c:802
+#: liboyranos_config/oyranos_icc.c:799
 msgid "Offset Lithography"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:521
+#: liboyranos_config/oyranos_texts.c:520
 msgid "On Cmyk Mismatch"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:511
+#: liboyranos_config/oyranos_texts.c:510
 msgid "On Rgb Mismatch"
 msgstr ""
 
@@ -2412,7 +2418,7 @@ msgstr ""
 msgid "OpenICC project; www/support: http://github.com/OpenICC/config"
 msgstr ""
 
-#: API_generated/oyranos_profile.c:78
+#: API_generated/oyranos_profile.c:77
 msgid "Operating System"
 msgstr ""
 
@@ -2447,7 +2453,7 @@ msgid "Option not supported type:"
 msgstr ""
 
 #. prtr
-#: liboyranos_config/oyranos_icc.c:620
+#: liboyranos_config/oyranos_icc.c:617
 msgid "Output"
 msgstr ""
 
@@ -2499,12 +2505,12 @@ msgstr ""
 msgid "Oyranos Scanner"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:272
+#: liboyranos_config/oyranos_texts.c:271
 msgid "Oyranos Settings"
 msgstr ""
 
 #. name
-#: liboyranos_config/oyranos_texts.c:155
+#: liboyranos_config/oyranos_texts.c:154
 msgid "Oyranos Settings Group"
 msgstr ""
 
@@ -2534,7 +2540,7 @@ msgid ""
 "useful defaults and grouping of settings in selectable policies."
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:273
+#: liboyranos_config/oyranos_texts.c:272
 msgid "Oyranos allows to fine tune handling of ICC color management."
 msgstr ""
 
@@ -2579,7 +2585,7 @@ msgid ""
 msgstr ""
 
 #. tooltip
-#: liboyranos_config/oyranos_texts.c:156
+#: liboyranos_config/oyranos_texts.c:155
 msgid ""
 "Oyranos settings let you configure ICC color management behaviour for a "
 "local computer. The settings can be per user and per system."
@@ -2589,11 +2595,11 @@ msgstr ""
 msgid "Oyranos supplied modules"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:830
+#: liboyranos_config/oyranos_icc.c:827
 msgid "P22"
 msgstr ""
 
-#: API_generated/oyranos_profile.c:36
+#: API_generated/oyranos_profile.c:35
 msgid "PCS"
 msgstr ""
 
@@ -2602,12 +2608,12 @@ msgstr ""
 msgid "PCS Color Space: "
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:108
+#: tools/oyranos_profile_graph.c:97
 msgid "PROFILENAMES"
 msgstr ""
 
 #. PMD
-#: liboyranos_config/oyranos_icc.c:792
+#: liboyranos_config/oyranos_icc.c:789
 msgid "Passive matrix monitor"
 msgstr ""
 
@@ -2615,31 +2621,31 @@ msgstr ""
 msgid "Path can not be written"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:190 liboyranos_config/oyranos_texts.c:358
+#: liboyranos_config/oyranos_texts.c:189 liboyranos_config/oyranos_texts.c:357
 msgid "Paths"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:191 liboyranos_config/oyranos_texts.c:359
+#: liboyranos_config/oyranos_texts.c:190 liboyranos_config/oyranos_texts.c:358
 msgid "Paths where ICC Profiles can be found"
 msgstr ""
 
 #. choices
-#: liboyranos_config/oyranos_texts.c:555
+#: liboyranos_config/oyranos_texts.c:554
 msgid "Perceptual"
 msgstr ""
 
 #. KPCD
-#: liboyranos_config/oyranos_icc.c:796
+#: liboyranos_config/oyranos_icc.c:793
 msgid "Photo CD"
 msgstr ""
 
 #. imgs
-#: liboyranos_config/oyranos_icc.c:798
+#: liboyranos_config/oyranos_icc.c:795
 msgid "PhotoImageSetter"
 msgstr ""
 
 #. rpho
-#: liboyranos_config/oyranos_icc.c:780
+#: liboyranos_config/oyranos_icc.c:777
 msgid "Photographic paper printer"
 msgstr ""
 
@@ -2647,7 +2653,7 @@ msgstr ""
 msgid "Ping the XCM_COLOUR_DESKTOP_ADVANCED X11 atom."
 msgstr ""
 
-#: API_generated/oyranos_profile.c:42
+#: API_generated/oyranos_profile.c:41
 msgid "Platform"
 msgstr ""
 
@@ -2660,14 +2666,14 @@ msgstr ""
 msgid "Please specify a monitor with the -d option."
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:201
+#: liboyranos_config/oyranos_texts.c:200
 msgid ""
 "Policies summarise common settings for different user groups. Such settings "
 "make it easy to switch back to simple defaults. Other groups can define own "
 "settings and share them accross Oyranos enabled systems."
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:199 liboyranos_config/oyranos_texts.c:336
+#: liboyranos_config/oyranos_texts.c:198 liboyranos_config/oyranos_texts.c:335
 msgid "Policy"
 msgstr ""
 
@@ -2675,73 +2681,73 @@ msgstr ""
 msgid "Policy search paths"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:487
+#: liboyranos_config/oyranos_icc.c:484
 msgid "Postscript 2 CRD, absolute colorimetric"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:484
+#: liboyranos_config/oyranos_icc.c:481
 msgid "Postscript 2 CRD, perceptual"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:485
+#: liboyranos_config/oyranos_icc.c:482
 msgid "Postscript 2 CRD, relative colorimetric"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:486
+#: liboyranos_config/oyranos_icc.c:483
 msgid "Postscript 2 CRD, saturated"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:488
+#: liboyranos_config/oyranos_icc.c:485
 msgid "Postscript 2 CSA"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:489
+#: liboyranos_config/oyranos_icc.c:486
 msgid "Postscript 2 Rendering Intent"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:461
+#: liboyranos_config/oyranos_icc.c:458
 msgid "Postscript CRD Information"
 msgstr ""
 
-#: API_generated/oyranos_profile.c:74
+#: API_generated/oyranos_profile.c:73
 msgid "Prefered CMM"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:400
+#: liboyranos_config/oyranos_texts.c:399
 msgid "Preferred CIE*Lab Editing Color Space"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:380
+#: liboyranos_config/oyranos_texts.c:379
 msgid "Preferred Cmyk Editing Color Space"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:410
+#: liboyranos_config/oyranos_texts.c:409
 msgid "Preferred Gray Editing Color Space"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:370
+#: liboyranos_config/oyranos_texts.c:369
 msgid "Preferred Rgb Editing Color Space"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:390
+#: liboyranos_config/oyranos_texts.c:389
 msgid "Preferred XYZ Editing Color Space"
 msgstr ""
 
 #. choices
-#: liboyranos_config/oyranos_texts.c:515 liboyranos_config/oyranos_texts.c:525
-#: liboyranos_config/oyranos_texts.c:535 liboyranos_config/oyranos_texts.c:545
+#: liboyranos_config/oyranos_texts.c:514 liboyranos_config/oyranos_texts.c:524
+#: liboyranos_config/oyranos_texts.c:534 liboyranos_config/oyranos_texts.c:544
 msgid "Preserve Numbers"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:476
+#: liboyranos_config/oyranos_icc.c:473
 msgid "Preview, perceptual"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:477
+#: liboyranos_config/oyranos_icc.c:474
 msgid "Preview, relative colorimetric"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:478
+#: liboyranos_config/oyranos_icc.c:475
 msgid "Preview, saturated"
 msgstr ""
 
@@ -2763,11 +2769,11 @@ msgstr ""
 msgid "Printers, which are accessible through the CUPS spooling system."
 msgstr ""
 
-#: API_generated/oyranos_profile.c:72
+#: API_generated/oyranos_profile.c:71
 msgid "Profile Connection Space"
 msgstr ""
 
-#: API_generated/oyranos_profile.c:83
+#: API_generated/oyranos_profile.c:82
 msgid "Profile Creator ID"
 msgstr ""
 
@@ -2776,11 +2782,11 @@ msgstr ""
 msgid "Profile ID:      "
 msgstr ""
 
-#: API_generated/oyranos_profile.c:84
+#: API_generated/oyranos_profile.c:83
 msgid "Profile Illuminant"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:326
+#: liboyranos_config/oyranos_texts.c:325
 msgid "Profile Information"
 msgstr ""
 
@@ -2788,25 +2794,25 @@ msgstr ""
 msgid "Profile Tags"
 msgstr ""
 
-#: API_generated/oyProfile_s.c:822 API_generated/oyProfile_s.c:828
+#: API_generated/oyProfile_s.c:832 API_generated/oyProfile_s.c:838
 #: tools/oyranos_profiles.c:533
 msgid "Profile already installed"
 msgstr ""
 
-#: API_generated/oyProfile_s.c:809
+#: API_generated/oyProfile_s.c:819
 msgid "Profile contains no description"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:479
+#: liboyranos_config/oyranos_icc.c:476
 msgid "Profile description"
 msgstr ""
 
 #. dscm
-#: liboyranos_config/oyranos_icc.c:481
+#: liboyranos_config/oyranos_icc.c:478
 msgid "Profile description, multilingual"
 msgstr ""
 
-#: API_generated/oyProfile_s.c:844 tools/oyranos_profile_tool.c:352
+#: API_generated/oyProfile_s.c:854 tools/oyranos_profile_tool.c:352
 msgid "Profile exists already"
 msgstr ""
 
@@ -2814,16 +2820,16 @@ msgstr ""
 msgid "Profile not useable"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:482
+#: liboyranos_config/oyranos_icc.c:479
 msgid "Profile sequence description"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:483
+#: liboyranos_config/oyranos_icc.c:480
 msgid "Profile sequence identification"
 msgstr ""
 
 #. Pmtr
-#: liboyranos_config/oyranos_icc.c:503
+#: liboyranos_config/oyranos_icc.c:500
 msgid "Profiling parameters"
 msgstr ""
 
@@ -2832,29 +2838,29 @@ msgid "Program not found"
 msgstr ""
 
 #. pjtv
-#: liboyranos_config/oyranos_icc.c:788
+#: liboyranos_config/oyranos_icc.c:785
 msgid "Projection Television"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:505 liboyranos_config/oyranos_texts.c:515
-#: liboyranos_config/oyranos_texts.c:525 liboyranos_config/oyranos_texts.c:535
-#: liboyranos_config/oyranos_texts.c:545
+#: liboyranos_config/oyranos_texts.c:504 liboyranos_config/oyranos_texts.c:514
+#: liboyranos_config/oyranos_texts.c:524 liboyranos_config/oyranos_texts.c:534
+#: liboyranos_config/oyranos_texts.c:544
 msgid "Prompt"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:244 liboyranos_config/oyranos_texts.c:480
+#: liboyranos_config/oyranos_texts.c:243 liboyranos_config/oyranos_texts.c:479
 msgid "Proofing"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:571
+#: liboyranos_config/oyranos_texts.c:570
 msgid "Proofing Rendering Intent"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:245
+#: liboyranos_config/oyranos_texts.c:244
 msgid "Proofing Settings"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:246
+#: liboyranos_config/oyranos_texts.c:245
 msgid ""
 "Proofing Settings allows one to decide about the simulation color space."
 msgstr ""
@@ -2901,20 +2907,20 @@ msgstr ""
 msgid "Rectangles Splitter Object"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:290
+#: liboyranos_config/oyranos_icc.c:287
 msgid "Red"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:490
+#: liboyranos_config/oyranos_icc.c:487
 msgid "Red Colorant"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:491
+#: liboyranos_config/oyranos_icc.c:488
 msgid "Red tone reproduction curve"
 msgstr ""
 
 #. rscn
-#: liboyranos_config/oyranos_icc.c:768
+#: liboyranos_config/oyranos_icc.c:765
 msgid "Reflective scanner"
 msgstr ""
 
@@ -2923,7 +2929,7 @@ msgid "Relation of positional parameters:"
 msgstr ""
 
 #. choices
-#: liboyranos_config/oyranos_texts.c:555 liboyranos_config/oyranos_texts.c:575
+#: liboyranos_config/oyranos_texts.c:554 liboyranos_config/oyranos_texts.c:574
 msgid "Relative Colorimetric"
 msgstr ""
 
@@ -2943,11 +2949,11 @@ msgstr ""
 msgid "Remove naive and XCM aware CM apps profiles."
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:217
+#: liboyranos_config/oyranos_texts.c:216
 msgid "Rendering"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:551
+#: liboyranos_config/oyranos_texts.c:550
 msgid "Rendering Intent"
 msgstr ""
 
@@ -2956,17 +2962,17 @@ msgstr ""
 msgid "Rendering Intent:"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:553
+#: liboyranos_config/oyranos_texts.c:552
 msgid ""
 "Rendering intent for color space transformations is typically the Relative "
 "Colorimetric intent plus Black Point Compensation or the Perceptual intent."
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:552
+#: liboyranos_config/oyranos_texts.c:551
 msgid "Rendering intent for color space transformations."
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:199
+#: liboyranos_config/oyranos_icc.c:196
 msgid "Rgb"
 msgstr ""
 
@@ -2978,25 +2984,25 @@ msgstr ""
 msgid "Root Image Filter Object"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:651
+#: liboyranos_config/oyranos_icc.c:648
 msgid "SGI"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:828
+#: liboyranos_config/oyranos_icc.c:825
 msgid "SMPTE RP145-1994"
 msgstr ""
 
 #. SICC
-#: liboyranos_config/oyranos_icc.c:689
+#: liboyranos_config/oyranos_icc.c:686
 msgid "SampleICC CMM"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:299 liboyranos_config/oyranos_icc.c:305
-#: liboyranos_config/oyranos_texts.c:555
+#: liboyranos_config/oyranos_icc.c:296 liboyranos_config/oyranos_icc.c:302
+#: liboyranos_config/oyranos_texts.c:554
 msgid "Saturation"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:226
+#: liboyranos_config/oyranos_texts.c:225
 msgid "Save Mixed Color Space Documents"
 msgstr ""
 
@@ -3017,11 +3023,11 @@ msgstr ""
 msgid "Scanner data, which come from SANE library."
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:493
+#: liboyranos_config/oyranos_icc.c:490
 msgid "Screening"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:492
+#: liboyranos_config/oyranos_icc.c:489
 msgid "Screening Description"
 msgstr ""
 
@@ -3029,19 +3035,19 @@ msgstr ""
 msgid "Search path"
 msgstr ""
 
-#: API_generated/oyranos_profile.c:82
+#: API_generated/oyranos_profile.c:81
 msgid "Seldom used Profile claimed Intent"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:263
+#: liboyranos_config/oyranos_texts.c:262
 msgid "Select a CMM in Oyranos"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:492
+#: liboyranos_config/oyranos_texts.c:491
 msgid "Select a color profile for adding a effect."
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:482
+#: liboyranos_config/oyranos_texts.c:481
 msgid ""
 "Select a color profile representing a device to be simulated. This profile "
 "will only be applied if proofing is enabled."
@@ -3051,15 +3057,15 @@ msgstr ""
 msgid "Select active policy:"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:622 liboyranos_config/oyranos_texts.c:642
+#: liboyranos_config/oyranos_texts.c:621 liboyranos_config/oyranos_texts.c:641
 msgid "Select the core CMM"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:632 liboyranos_config/oyranos_texts.c:652
+#: liboyranos_config/oyranos_texts.c:631 liboyranos_config/oyranos_texts.c:651
 msgid "Select the processing CMM"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:282
+#: liboyranos_config/oyranos_texts.c:281
 msgid "Set ICC profiles in Oyranos for device Color Management."
 msgstr ""
 
@@ -3079,15 +3085,15 @@ msgstr ""
 msgid "Set new profile:"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:271
+#: liboyranos_config/oyranos_texts.c:270
 msgid "Settings"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:209
+#: liboyranos_config/oyranos_texts.c:208
 msgid "Settings affecting the Behaviour in various situations"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:338
+#: liboyranos_config/oyranos_texts.c:337
 msgid ""
 "Settings can be grouped in Oyranos policies for easier adaption to demands, "
 "better remembering and synchronisation."
@@ -3113,21 +3119,21 @@ msgstr ""
 msgid "Show Profile ID:"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:291
+#: liboyranos_config/oyranos_texts.c:290
 msgid ""
 "Show available Device Profiles from remote Taxi DB for a selected device. "
 "The metadata from Taxi DB and from the device must fit."
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:318
+#: liboyranos_config/oyranos_texts.c:317
 msgid "Show only ICC profiles, which have metadata matching a given device."
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:317
+#: liboyranos_config/oyranos_texts.c:316
 msgid "Show only device related ICC profiles"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:348
+#: liboyranos_config/oyranos_texts.c:347
 msgid "Show which policy matches by combining all involved settings."
 msgstr ""
 
@@ -3139,11 +3145,11 @@ msgid "Signal"
 msgstr ""
 
 #. silk
-#: liboyranos_config/oyranos_icc.c:804
+#: liboyranos_config/oyranos_icc.c:801
 msgid "Silkscreen"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:582
+#: liboyranos_config/oyranos_texts.c:581
 msgid "Simulate the output print on the monitor"
 msgstr ""
 
@@ -3151,7 +3157,7 @@ msgstr ""
 msgid "Simulation/Proof Color Space"
 msgstr ""
 
-#: API_generated/oyranos_profile.c:37
+#: API_generated/oyranos_profile.c:36
 msgid "Size"
 msgstr "Размер"
 
@@ -3168,11 +3174,11 @@ msgstr ""
 msgid "So something with options."
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:581
+#: liboyranos_config/oyranos_texts.c:580
 msgid "SoftProof"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:650
+#: liboyranos_config/oyranos_icc.c:647
 msgid "Solaris"
 msgstr ""
 
@@ -3180,27 +3186,27 @@ msgstr ""
 msgid "Some help for My example filter."
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:164
+#: liboyranos_config/oyranos_texts.c:163
 msgid "Source and Target Profiles for various situations"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:114
+#: tools/oyranos_profile_graph.c:103
 msgid "Standard Observer 1931 2° Graph:"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:154
+#: liboyranos_config/oyranos_texts.c:153
 msgid "Start"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:613
+#: liboyranos_config/oyranos_texts.c:612
 msgid "Switch for enabling the effect profile."
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:652
+#: liboyranos_config/oyranos_icc.c:649
 msgid "Taligent"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:289
+#: liboyranos_config/oyranos_texts.c:288
 msgid "Taxi DB Profiles"
 msgstr ""
 
@@ -3212,7 +3218,7 @@ msgstr ""
 msgid "Taxi ID"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:494
+#: liboyranos_config/oyranos_icc.c:491
 msgid "Technologie"
 msgstr ""
 
@@ -3240,7 +3246,7 @@ msgstr ""
 msgid "The CUPS/printer module for Oyranos."
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:174
+#: liboyranos_config/oyranos_texts.c:173
 msgid ""
 "The Editing Color Spaces shall be well behaving in order to allow editing of "
 "per channel curves. Well behaving means for Rgb, that editing of all three "
@@ -3282,6 +3288,12 @@ msgid ""
 "data into. A existing file will be overwritten without notice."
 msgstr ""
 
+#: modules/color/modules/oyranos_cmm_oyra_profile_graph2d.c:334
+#: modules/color/modules/oyranos_cmm_oyra_profile_graph2d.c:342
+#, fuzzy
+msgid "The Oyranos \""
+msgstr "О программе Oyranos"
+
 #: modules/color/modules/oyranos_cmm_elDB.c:870
 #: modules/color/modules/oyranos_cmm_elDB.c:878
 msgid ""
@@ -3313,7 +3325,7 @@ msgstr ""
 msgid "The client side window data handler of Oyranos."
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:219
+#: liboyranos_config/oyranos_texts.c:218
 msgid ""
 "The conversion between color spaces of different shape and size can happen "
 "in various ways. The Perceptual rendering intent is usually the best choice "
@@ -3330,7 +3342,7 @@ msgid ""
 "designed by the profile vendor."
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:623 liboyranos_config/oyranos_texts.c:643
+#: liboyranos_config/oyranos_texts.c:622 liboyranos_config/oyranos_texts.c:642
 msgid ""
 "The core Color Matching Module (CMM) takes individual profiles and options "
 "and backes a device link. It can provide alternative features regarding "
@@ -3492,7 +3504,7 @@ msgid ""
 "\"precalculation\"."
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:218
+#: liboyranos_config/oyranos_texts.c:217
 msgid ""
 "The kind of ICC gamut mapping for transforming colors between differently "
 "sized color spaces"
@@ -3623,33 +3635,33 @@ msgid ""
 "Oyranos."
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:401
+#: liboyranos_config/oyranos_texts.c:400
 msgid "The preferred CIE*Lab Editing Color Space shall describe the CIE*Lab."
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:381
+#: liboyranos_config/oyranos_texts.c:380
 msgid ""
 "The preferred Cmyk Editing Color Space should represent a color space that "
 "complies to well defined printing conditions like FOGRA or SWOP."
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:411
+#: liboyranos_config/oyranos_texts.c:410
 msgid ""
 "The preferred Gray Editing Color Space shall describe a single lightness "
 "channel color space for grayscale images."
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:371
+#: liboyranos_config/oyranos_texts.c:370
 msgid ""
 "The preferred Rgb Editing Color Space should represent a well behaving color "
 "space like sRGB."
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:391
+#: liboyranos_config/oyranos_texts.c:390
 msgid "The preferred XYZ Editing Color Space shall describe CIE*XYZ."
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:633 liboyranos_config/oyranos_texts.c:653
+#: liboyranos_config/oyranos_texts.c:632 liboyranos_config/oyranos_texts.c:652
 msgid ""
 "The processing Color Matching Module (CMM) takes one device link as "
 "argument. It can provide alternative features regarding security, speed or "
@@ -3668,31 +3680,31 @@ msgstr ""
 msgid "The scanner (hopefully)usefull backend of Oyranos."
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:431
+#: liboyranos_config/oyranos_texts.c:430
 msgid ""
 "The selected color space will be assigned to untagged CIE*Lab color content "
 "and define colors for further processing."
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:462
+#: liboyranos_config/oyranos_texts.c:461
 msgid ""
 "The selected color space will be assigned to untagged Cmyk color content and "
 "define colors for further processing."
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:472
+#: liboyranos_config/oyranos_texts.c:471
 msgid ""
 "The selected color space will be assigned to untagged Gray color content and "
 "define colors for further processing."
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:441
+#: liboyranos_config/oyranos_texts.c:440
 msgid ""
 "The selected color space will be assigned to untagged Rgb color content and "
 "define colors for further processing. Typical sRGB should be assumed."
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:421
+#: liboyranos_config/oyranos_texts.c:420
 msgid ""
 "The selected color space will be assigned to untagged XYZ color content and "
 "define colors for further processing."
@@ -3716,7 +3728,7 @@ msgid "The window support module of Oyranos."
 msgstr ""
 
 #. twax
-#: liboyranos_config/oyranos_icc.c:772
+#: liboyranos_config/oyranos_icc.c:769
 msgid "Thermal wax printer"
 msgstr ""
 
@@ -3731,7 +3743,7 @@ msgid ""
 "Management System."
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:503
+#: liboyranos_config/oyranos_texts.c:502
 msgid ""
 "This setting decides what to do in the case that colors have no color space "
 "assigned. Typically the according assumed ICC profile should be assigned."
@@ -3746,7 +3758,7 @@ msgstr ""
 msgid "Unassign profile from device:"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:495
+#: liboyranos_config/oyranos_icc.c:492
 msgid "Under Color Removal (UCR)"
 msgstr ""
 
@@ -3756,7 +3768,7 @@ msgstr ""
 msgid "Unexpected object type:"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:653
+#: liboyranos_config/oyranos_icc.c:650
 msgid "Unix and derivatives"
 msgstr ""
 
@@ -3766,17 +3778,17 @@ msgstr ""
 
 #: tools/oyranos-device.c:49 tools/oyranos_convert.c:61
 #: tools/oyranos_gamma.c:208 tools/oyranos_policy.c:54
-#: tools/oyranos_profile_graph.c:105 tools/oyranos_profile_tool.c:82
+#: tools/oyranos_profile_graph.c:94 tools/oyranos_profile_tool.c:82
 #: tools/oyranos_profiles.c:63 examples/taxi.c:49
 #: examples/libraw/oyranos_file.cpp:45
 msgid "Usage"
 msgstr "по́льзование"
 
-#: liboyranos_config/oyranos_texts.c:561
+#: liboyranos_config/oyranos_texts.c:560
 msgid "Use Black Point Compensation"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:611
+#: liboyranos_config/oyranos_texts.c:610
 msgid "Use Effect"
 msgstr ""
 
@@ -3792,11 +3804,11 @@ msgstr ""
 msgid "V4toV2"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:300
+#: liboyranos_config/oyranos_icc.c:297
 msgid "Value"
 msgstr "значе́ние"
 
-#: API_generated/oyranos_profile.c:39
+#: API_generated/oyranos_profile.c:38
 msgid "Version"
 msgstr ""
 
@@ -3806,17 +3818,17 @@ msgid "Version:         "
 msgstr "ве́рсия:          "
 
 #. vidm
-#: liboyranos_config/oyranos_icc.c:784
+#: liboyranos_config/oyranos_icc.c:781
 msgid "Video Monitor"
 msgstr ""
 
 #. vidc
-#: liboyranos_config/oyranos_icc.c:786
+#: liboyranos_config/oyranos_icc.c:783
 msgid "Video camera"
 msgstr ""
 
 #. vcgt 1986226036
-#: liboyranos_config/oyranos_icc.c:505
+#: liboyranos_config/oyranos_icc.c:502
 msgid "VideoCardGammaTable"
 msgstr ""
 
@@ -3824,11 +3836,11 @@ msgstr ""
 msgid "View:"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:497
+#: liboyranos_config/oyranos_icc.c:494
 msgid "Viewing Conditions"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:496
+#: liboyranos_config/oyranos_icc.c:493
 msgid "Viewing conditions description"
 msgstr ""
 
@@ -3839,11 +3851,11 @@ msgid "WARNING"
 msgstr ""
 
 #. WTG
-#: liboyranos_config/oyranos_icc.c:691
+#: liboyranos_config/oyranos_icc.c:688
 msgid "Ware To Go CMM"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:173
+#: liboyranos_config/oyranos_texts.c:172
 msgid "Well behaving Color Space for Editing"
 msgstr ""
 
@@ -3875,11 +3887,11 @@ msgstr ""
 msgid "Write to ICC profile:"
 msgstr ""
 
-#: API_generated/oyProfile_s_.c:796
+#: API_generated/oyProfile_s_.c:870
 msgid "Wrong ICC profile id detected"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:194
+#: liboyranos_config/oyranos_icc.c:191
 msgid "XYZ"
 msgstr ""
 
@@ -3892,17 +3904,17 @@ msgstr ""
 msgid "XYZ2Lab"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:197
+#: liboyranos_config/oyranos_icc.c:194
 msgid "YCbCr"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:310 liboyranos_config/oyranos_icc.c:316
+#: liboyranos_config/oyranos_icc.c:307 liboyranos_config/oyranos_icc.c:313
 msgid "Yellow"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:565 liboyranos_config/oyranos_texts.c:585
-#: liboyranos_config/oyranos_texts.c:595 liboyranos_config/oyranos_texts.c:605
-#: liboyranos_config/oyranos_texts.c:615
+#: liboyranos_config/oyranos_texts.c:564 liboyranos_config/oyranos_texts.c:584
+#: liboyranos_config/oyranos_texts.c:594 liboyranos_config/oyranos_texts.c:604
+#: liboyranos_config/oyranos_texts.c:614
 #: modules/color/modules/oyranos_cmm_lcm2.c:3304
 msgid "Yes"
 msgstr ""
@@ -3911,7 +3923,7 @@ msgstr ""
 msgid "You can get them from http://sf.net/projects/openicc"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:198
+#: liboyranos_config/oyranos_icc.c:195
 msgid "Yxy"
 msgstr ""
 
@@ -3924,7 +3936,7 @@ msgid "Zoom:"
 msgstr ""
 
 #. zc00
-#: liboyranos_config/oyranos_icc.c:692
+#: liboyranos_config/oyranos_icc.c:689
 msgid "Zoran CMM"
 msgstr ""
 
@@ -3973,6 +3985,7 @@ msgstr ""
 #: modules/color/modules/oyranos_cmm_lcms.c:2533
 #: modules/color/modules/oyranos_cmm_lcms.c:2606
 #: modules/color/modules/oyranos_cmm_oiDB.c:460
+#: modules/color/modules/oyranos_cmm_oyra_profile_graph2d.c:324
 #: modules/color/modules/oyranos_cmm_trds.c:584
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:187
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:368
@@ -4018,7 +4031,7 @@ msgstr ""
 msgid "device position start from zero"
 msgstr ""
 
-#: API_generated/oyranos_devices.c:1446
+#: API_generated/oyranos_devices.c:1445
 msgid "device_class not found:"
 msgstr ""
 
@@ -4034,8 +4047,8 @@ msgstr ""
 msgid "download ID from Taxi data base"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:116 tools/oyranos_profile_graph.c:120
-#: tools/oyranos_profile_graph.c:124 tools/oyranos_profile_graph.c:130
+#: tools/oyranos_profile_graph.c:105 tools/oyranos_profile_graph.c:109
+#: tools/oyranos_profile_graph.c:113 tools/oyranos_profile_graph.c:119
 msgid "draw gray"
 msgstr ""
 
@@ -4057,7 +4070,7 @@ msgid "enable simple defaults"
 msgstr ""
 
 #: API_generated/oyConversion_s.c:190 API_generated/oyFilterNode_s_.c:594
-#: API_generated/oyranos_devices.c:2660 API_generated/oyranos_devices.c:3171
+#: API_generated/oyranos_devices.c:2657 API_generated/oyranos_devices.c:3168
 #: API_generated/oyranos_module.c:2030
 msgid "error in module:"
 msgstr ""
@@ -4082,7 +4095,7 @@ msgstr ""
 msgid "filter for string part in path"
 msgstr ""
 
-#: API_generated/oyranos_devices.c:2577 API_generated/oyranos_devices.c:2588
+#: API_generated/oyranos_devices.c:2574 API_generated/oyranos_devices.c:2585
 #: modules/color/modules/oyranos_cmm_lcm2.c:3389
 #: modules/color/modules/oyranos_cmm_lcms.c:2425
 #: modules/color/modules/oyranos_cmm_oPNG.c:945
@@ -4098,8 +4111,8 @@ msgid "found issues"
 msgstr ""
 
 #: API_generated/oyConfig_s.c:1027 API_generated/oyConfig_s.c:1327
-#: API_generated/oyOptions_s.c:478 API_generated/oyranos_devices.c:1429
-#: API_generated/oyranos_devices.c:1748 API_generated/oyranos_devices.c:1832
+#: API_generated/oyOptions_s.c:478 API_generated/oyranos_devices.c:1428
+#: API_generated/oyranos_devices.c:1747 API_generated/oyranos_devices.c:1831
 #: modules/color/modules/oyranos_cmm_oyra_image_channel.c:144
 #: tools/oyranos-device.c:1036 tools/oyranos-device.c:1046
 #: tools/oyranos-device.c:1063 tools/oyranos-device.c:1089 examples/taxi.c:229
@@ -4129,7 +4142,7 @@ msgstr ""
 msgid "full path and file name"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:465
+#: liboyranos_config/oyranos_icc.c:462
 msgid "gamut"
 msgstr ""
 
@@ -4154,8 +4167,8 @@ msgstr ""
 msgid "input class"
 msgstr ""
 
-#: API_generated/oyProfile_s.c:214 API_generated/oyProfile_s.c:219
-#: API_generated/oyranos_devices.c:501
+#: API_generated/oyProfile_s.c:214 API_generated/oyProfile_s.c:228
+#: API_generated/oyranos_devices.c:500
 msgid "install in the OpenIccDirectory icc path"
 msgstr ""
 
@@ -4179,7 +4192,7 @@ msgstr ""
 msgid "is a ICC color conversion tool"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:104
+#: tools/oyranos_profile_graph.c:93
 msgid "is a ICC color profile grapher"
 msgstr ""
 
@@ -4290,7 +4303,7 @@ msgstr ""
 msgid "not a profile:"
 msgstr ""
 
-#: API_generated/oyConfig_s.c:1043 API_generated/oyranos_devices.c:1455
+#: API_generated/oyConfig_s.c:1043 API_generated/oyranos_devices.c:1454
 #: liboyranos_config/oyranos_check.c:76
 msgid "not found:"
 msgstr ""
@@ -4299,15 +4312,15 @@ msgstr ""
 msgid "ok"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:137
+#: tools/oyranos_profile_graph.c:126
 msgid "omit border"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:111
+#: tools/oyranos_profile_graph.c:100
 msgid "omit the spectral line"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:110
+#: tools/oyranos_profile_graph.c:99
 msgid "omit white line of lambert light emitters"
 msgstr ""
 
@@ -4394,7 +4407,7 @@ msgstr ""
 msgid "profile not found in color path:"
 msgstr ""
 
-#: API_generated/oyProfile_s.c:382 liboyranos_config/oyranos_io.c:208
+#: API_generated/oyProfile_s.c:392 liboyranos_config/oyranos_io.c:208
 msgid "profile not found:"
 msgstr ""
 
@@ -4423,11 +4436,11 @@ msgstr ""
 msgid "select ICC v4 profiles"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:139 tools/oyranos_profile_tool.c:118
+#: tools/oyranos_profile_graph.c:128 tools/oyranos_profile_tool.c:118
 msgid "select a ICC v2 profile"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:140 tools/oyranos_profile_tool.c:119
+#: tools/oyranos_profile_graph.c:129 tools/oyranos_profile_tool.c:119
 msgid "select a ICC v4 profile"
 msgstr ""
 
@@ -4487,28 +4500,28 @@ msgstr ""
 msgid "source image"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:112
+#: tools/oyranos_profile_graph.c:101
 msgid "specify incemental increase of the thickness of the graph lines"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:138
+#: tools/oyranos_profile_graph.c:127
 msgid "specify increase of the thickness of the graph lines"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:136
+#: tools/oyranos_profile_graph.c:125
 msgid "specify output file format png or svg, default is png"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:135
+#: tools/oyranos_profile_graph.c:124
 msgid "specify output file name, default is output.png"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:134
+#: tools/oyranos_profile_graph.c:123
 msgid "specify output image width in pixel"
 msgstr ""
 
 #. 32BT
-#: liboyranos_config/oyranos_icc.c:690
+#: liboyranos_config/oyranos_icc.c:687
 msgid "the imaging factory CMM"
 msgstr ""
 
@@ -4519,11 +4532,11 @@ msgstr ""
 msgid "unfinished"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:870 liboyranos_config/oyranos_icc.c:889
+#: liboyranos_config/oyranos_icc.c:867 liboyranos_config/oyranos_icc.c:886
 msgid "unknown"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:109
+#: tools/oyranos_profile_graph.c:98
 msgid "use CIE*xyY *x*y plane for saturation line projection"
 msgstr ""
 
@@ -4560,7 +4573,7 @@ msgid "user path"
 msgstr ""
 
 #: tools/oyranos-device.c:101 tools/oyranos_convert.c:103
-#: tools/oyranos_profile_graph.c:133 tools/oyranos_profile_tool.c:116
+#: tools/oyranos_profile_graph.c:122 tools/oyranos_profile_tool.c:116
 #: tools/oyranos_profiles.c:96 examples/libraw/oyranos_file.cpp:69
 msgid "verbose"
 msgstr ""
@@ -4569,7 +4582,7 @@ msgstr ""
 msgid "w - fit to window width"
 msgstr ""
 
-#: liboyranos_config/oyranos.c:528
+#: liboyranos_config/oyranos.c:524
 msgid "will overwrite policy file"
 msgstr ""
 
@@ -4604,7 +4617,7 @@ msgstr ""
 
 #: API_generated/oyOptions_s.c:1551 tools/oyranos-device.c:253
 #: tools/oyranos_convert.c:270 tools/oyranos_gamma.c:254
-#: tools/oyranos_policy.c:156 tools/oyranos_profile_graph.c:264
+#: tools/oyranos_policy.c:156 tools/oyranos_profile_graph.c:253
 #: tools/oyranos_profile_tool.c:233 tools/oyranos_profiles.c:244
 #: tools/oyranos_profiles.c:317 examples/taxi.c:206
 #: examples/libraw/oyranos_file.cpp:236

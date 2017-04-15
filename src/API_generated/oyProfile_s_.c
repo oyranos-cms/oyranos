@@ -708,6 +708,16 @@ oyProfile_s_* oyProfile_FromMemMove_  ( size_t              size,
   return s;
 }
 
+#ifdef COMPILE_STATIC
+#include "Gray-CIE_L.h"
+#include "ISOcoated_v2_bas.h"
+#include "ITULab.h"
+#include "Lab.h"
+#include "LStar-RGB.h"
+#include "sRGB.h"
+#include "XYZ.h"
+#endif
+
 oyStructList_s_ * oy_profile_s_file_cache_ = 0;
 
 /** @internal
@@ -773,7 +783,7 @@ oyProfile_s_ *  oyProfile_FromFile_  ( const char        * name,
     }
   }
 
-  if(error <= 0 && name && !s)
+  if(name && !s)
   {
     file_name = oyFindProfile_( name, flags );
     block = oyGetProfileBlock( file_name, &size, allocateFunc );
@@ -781,13 +791,77 @@ oyProfile_s_ *  oyProfile_FromFile_  ( const char        * name,
       error = 1;
   }
 
-  if(error <= 0)
   {
     int repair = 0;
     const char * t = file_name;
     uint32_t md5[4];
 
-    s = oyProfile_FromMemMove_( size, &block, flags, &error, object );
+    if(block && size)
+      s = oyProfile_FromMemMove_( size, &block, flags, &error, object );
+#ifdef COMPILE_STATIC
+    else
+    {
+      error = 0;
+      /* START static inbuilds */
+      if(name && name[0] && strcmp("Gray_CIE_L.icc",name) == 0)
+      {
+        s = (oyProfile_s_ *) oyProfile_FromMem( _usr_share_color_icc_Oyranos_Gray_CIE_L_icc_len,
+                             (const oyPointer)_usr_share_color_icc_Oyranos_Gray_CIE_L_icc,
+                             0,NULL );
+        if(s)
+          file_name = oyStringCopy( "inbuild-Gray_CIE_L_icc", oyAllocateFunc_ );
+      }
+      else if(name && name[0] && strcmp("ISOcoated_v2_bas.ICC",name) == 0)
+      {
+        s = (oyProfile_s_ *) oyProfile_FromMem( _usr_share_color_icc_basICColor_ISOcoated_v2_bas_ICC_len,
+                             (const oyPointer)_usr_share_color_icc_basICColor_ISOcoated_v2_bas_ICC,
+                             0,NULL );
+        if(s)
+          file_name = oyStringCopy( "inbuild-ISOcoated_v2_bas_ICC", oyAllocateFunc_ );
+      }
+      else if(name && name[0] && strcmp("ITULab.icc",name) == 0)
+      {
+        s = (oyProfile_s_ *) oyProfile_FromMem( _usr_share_color_icc_Oyranos_ITULab_icc_len,
+                             (const oyPointer)_usr_share_color_icc_Oyranos_ITULab_icc,
+                             0,NULL );
+        if(s)
+          file_name = oyStringCopy( "inbuild-ITULab_icc", oyAllocateFunc_ );
+      }
+      else if(name && name[0] && strcmp("LStar_RGB.icc",name) == 0)
+      {
+        s = (oyProfile_s_ *) oyProfile_FromMem( _usr_share_color_icc_basICColor_LStar_RGB_icc_len,
+                             (const oyPointer)_usr_share_color_icc_basICColor_LStar_RGB_icc,
+                             0,NULL );
+        if(s)
+          file_name = oyStringCopy( "inbuild-LStar_RGB_icc", oyAllocateFunc_ );
+      }
+      else if(name && name[0] && (strcmp("Lab.icc",name) == 0 || strcmp("LCMSLABI.ICM",name) == 0))
+      {
+        s = (oyProfile_s_ *) oyProfile_FromMem( _usr_share_color_icc_lcms_Lab_icc_len,
+                             (const oyPointer)_usr_share_color_icc_lcms_Lab_icc,
+                             0,NULL );
+        if(s)
+          file_name = oyStringCopy( "inbuild-Lab_icc", oyAllocateFunc_ );
+      }
+      else if(name && name[0] && (strcmp("XYZ.icc",name) == 0 || strcmp("LCMSXYZI.ICM",name) == 0))
+      {
+        s = (oyProfile_s_ *) oyProfile_FromMem( _usr_share_color_icc_lcms_XYZ_icc_len,
+                             (const oyPointer)_usr_share_color_icc_lcms_XYZ_icc,
+                             0,NULL );
+        if(s)
+          file_name = oyStringCopy( "inbuild-XYZ_icc", oyAllocateFunc_ );
+      }
+      else if(name && name[0] && strcmp("sRGB.icc",name) == 0)
+      {
+        s = (oyProfile_s_ *) oyProfile_FromMem( _usr_share_color_icc_OpenICC_sRGB_icc_len,
+                             (const oyPointer)_usr_share_color_icc_OpenICC_sRGB_icc,
+                             0,NULL );
+        if(s)
+          file_name = oyStringCopy( "inbuild-sRGB_icc", oyAllocateFunc_ );
+      }
+      /* END static inbuilds */
+    }
+#endif /* COMPILE_STATIC */
 
     if(error < -1)
     {

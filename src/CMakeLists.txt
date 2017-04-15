@@ -12,6 +12,7 @@ INCLUDE_DIRECTORIES(
                     "${CMAKE_SOURCE_DIR}/src/liboyranos_modules"
                     "${CMAKE_SOURCE_DIR}/src/liboyranos_config"
                     "${CMAKE_SOURCE_DIR}/src/liboyranos"
+                    "${CMAKE_SOURCE_DIR}/extras/icc"
                     "${GENDIR}"
 )
 
