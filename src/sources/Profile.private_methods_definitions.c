@@ -300,13 +300,13 @@ oyProfile_s_ *  oyProfile_FromFile_  ( const char        * name,
     {
       error = 0;
       /* START static inbuilds */
-      if(name && name[0] && strcmp("Gray_CIE_L.icc",name) == 0)
+      if(name && name[0] && strcmp("Gray-CIE_L.icc",name) == 0)
       {
         s = (oyProfile_s_ *) oyProfile_FromMem( _usr_share_color_icc_Oyranos_Gray_CIE_L_icc_len,
                              (const oyPointer)_usr_share_color_icc_Oyranos_Gray_CIE_L_icc,
                              0,NULL );
         if(s)
-          file_name = oyStringCopy( "inbuild-Gray_CIE_L_icc", oyAllocateFunc_ );
+          file_name = oyStringCopy( "inbuild-Gray-CIE_L_icc", oyAllocateFunc_ );
       }
       else if(name && name[0] && strcmp("ISOcoated_v2_bas.ICC",name) == 0)
       {
@@ -324,7 +324,7 @@ oyProfile_s_ *  oyProfile_FromFile_  ( const char        * name,
         if(s)
           file_name = oyStringCopy( "inbuild-ITULab_icc", oyAllocateFunc_ );
       }
-      else if(name && name[0] && strcmp("LStar_RGB.icc",name) == 0)
+      else if(name && name[0] && strcmp("LStar-RGB.icc",name) == 0)
       {
         s = (oyProfile_s_ *) oyProfile_FromMem( _usr_share_color_icc_basICColor_LStar_RGB_icc_len,
                              (const oyPointer)_usr_share_color_icc_basICColor_LStar_RGB_icc,
@@ -392,7 +392,7 @@ oyProfile_s_ *  oyProfile_FromFile_  ( const char        * name,
     }
 
     /* We expect a incomplete filename attached to s and try to correct this. */
-    if(error <= 0 && !file_name && s->file_name_)
+    if(error <= 0 && !file_name && s && s->file_name_)
     {
       file_name = oyFindProfile_( s->file_name_, flags );
       if(file_name && s->oy_->deallocateFunc_)
@@ -402,13 +402,13 @@ oyProfile_s_ *  oyProfile_FromFile_  ( const char        * name,
       }
     }
 
-    if(error <= 0 && file_name)
+    if(error <= 0 && file_name && s)
     {
       s->file_name_ = oyStringCopy_( file_name, s->oy_->allocateFunc_ );
       oyDeAllocateFunc_( file_name ); file_name = 0;
     }
 
-    if(error <= 0 && !s->file_name_)
+    if(error <= 0 && s && !s->file_name_)
       error = 1;
   }
 
