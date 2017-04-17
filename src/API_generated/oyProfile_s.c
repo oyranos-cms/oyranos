@@ -429,7 +429,6 @@ oyProfile_FromFile            ( const char      * name,
                                 oyObject_s        object)
 {
   oyProfile_s_ * s = 0;
-  char * fn;
 
   if(flags & OY_NO_LOAD)
   {
@@ -498,11 +497,7 @@ oyProfile_FromFile            ( const char      * name,
     return (oyProfile_s*)s;
   }
 
-  fn = oyFindProfile_( name, flags );
-  if(fn)
-    s = oyProfile_FromFile_( name, flags, object );
-
-  if(fn) oyFree_m_(fn);
+  s = oyProfile_FromFile_( name, flags, object );
 
   if(flags & OY_COMPUTE)
     oyProfile_GetHash_( s, flags );
