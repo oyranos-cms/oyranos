@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2017-04-15 12:12+0200\n"
+"POT-Creation-Date: 2017-04-16 23:04+0200\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -658,7 +658,7 @@ msgstr "Kamerarohdaten"
 msgid "CameraRaw image"
 msgstr "Kamera Rohdaten"
 
-#: API_generated/oyProfile_s.c:867
+#: API_generated/oyProfile_s.c:862
 msgid "Can not write profile"
 msgstr "Kann Profildatei nicht schreiben"
 
@@ -1049,7 +1049,7 @@ msgstr "Konnte Meta Schnittstelle nicht öffnen"
 msgid "Could not open or invalid data: "
 msgstr "Konnte nicht öffnen oder ungültige Daten: "
 
-#: API_generated/oyProfile_s.c:878 API_generated/oyranos_devices.c:1045
+#: API_generated/oyProfile_s.c:873 API_generated/oyranos_devices.c:1045
 #: liboyranos_core/oyranos_io_core.c:111 liboyranos_core/oyranos_io_core.c:269
 msgid "Could not open profile"
 msgstr "Konnte Profil nicht laden"
@@ -2910,12 +2910,12 @@ msgstr "Profilinformation"
 msgid "Profile Tags"
 msgstr "Profilbausteine"
 
-#: API_generated/oyProfile_s.c:832 API_generated/oyProfile_s.c:838
+#: API_generated/oyProfile_s.c:827 API_generated/oyProfile_s.c:833
 #: tools/oyranos_profiles.c:533
 msgid "Profile already installed"
 msgstr "Profil ist bereits installiert"
 
-#: API_generated/oyProfile_s.c:819
+#: API_generated/oyProfile_s.c:814
 msgid "Profile contains no description"
 msgstr "Profilbeschreibung vermisst"
 
@@ -2928,7 +2928,7 @@ msgstr "Profilbeschreibung"
 msgid "Profile description, multilingual"
 msgstr "Profilbeschreibung mehrsprachig"
 
-#: API_generated/oyProfile_s.c:854 tools/oyranos_profile_tool.c:352
+#: API_generated/oyProfile_s.c:849 tools/oyranos_profile_tool.c:352
 msgid "Profile exists already"
 msgstr "Profil ist bereits installiert"
 

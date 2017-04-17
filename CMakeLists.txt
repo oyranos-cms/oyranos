@@ -30,13 +30,13 @@ SET( OYRANOS_VERSION_MAJORMINOR "${OYRANOS_VERSION_MAJOR}.${OYRANOS_VERSION_MINO
 INCLUDE(GNUInstallDirs)
 
 
-option(ENABLE_EXAMPLES "Build example applications" ON)
-option(ENABLE_TESTS "Build tests)" ON)
-option(ENABLE_STATIC_LIBS "Build static libs" ON)
-option(ENABLE_SHARED_LIBS "Build shared libs" ON)
-option(ENABLE_QT "Build Qt5 and Qt4 tools" ON)
-option(ENABLE_FLTK "Build FLTK tools" ON)
-option(ENABLE_DOCU "Build HTML documentation out of sources" ON)
+OPTION(ENABLE_EXAMPLES "Build example applications" ON)
+OPTION(ENABLE_TESTS "Build tests)" ON)
+OPTION(ENABLE_STATIC_LIBS "Build static libs" ON)
+OPTION(ENABLE_SHARED_LIBS "Build shared libs" ON)
+OPTION(ENABLE_QT "Build Qt5 and Qt4 tools" ON)
+OPTION(ENABLE_FLTK "Build FLTK tools" ON)
+OPTION(ENABLE_DOCU "Build HTML documentation out of sources" ON)
 
 MESSAGE( "-- Found CMAKE_SYSTEM_NAME: ${CMAKE_SYSTEM_NAME}" )
 
@@ -51,11 +51,17 @@ IF(CMAKE_C_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   SET(CMAKE_COMPILER_IS_CLANG 1)
 ENDIF()
 
+IF(NOT GLOBAL_PROFILE_SEARCH_PATH)
+  IF(${CMAKE_SYSTEM_NAME} MATCHES Android)
+    SET(GLOBAL_PROFILE_SEARCH_PATH -DGLOBAL_PROFILE_SEARCH_PATH="\\"/storage/sdcard0/Download\\"" CACHE STRING "Use a global path for profile search" FORCE)
+  ENDIF()
+ENDIF()
+
 # if our static code lands inside a shared lib, we need -fPIC
 IF(UNIX)
   IF(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_CLANG)
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
-    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC ${GLOBAL_PROFILE_SEARCH_PATH}")
+    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC ${GLOBAL_PROFILE_SEARCH_PATH}")
     # coverage testing
     IF(USE_GCOV AND CMAKE_COMPILER_IS_GNUCC)
       SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -O0 -fprofile-arcs -ftest-coverage")

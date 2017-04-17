@@ -1625,7 +1625,7 @@ char * oyPathContructAndTest_(char * path_, const char * subdir)
  *
  *  @param[out]    count       number of paths found
  *  @param[in]     subdir      the data directories sub path, a string 
- *                             containing one path, e.g. "color/icc""
+ *                             containing one path, e.g. "color/icc"
  *  @param[in]     data        oyYES/oyNO/oyALL data or config text
  *  @param[in]     owner       oySCOPE_USER/oySCOPE_SYSTEM/oySCOPE_USER_SYS
  *

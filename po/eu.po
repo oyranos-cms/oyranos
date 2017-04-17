@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cinepaint_icc-examin_eu\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2017-04-15 12:12+0200\n"
+"POT-Creation-Date: 2017-04-16 23:04+0200\n"
 "PO-Revision-Date: 2007-11-07 11:11+0100\n"
 "Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@zundan.com>\n"
 "Language-Team: Basque <itzulpena@euskalgnu.org>\n"
@@ -683,7 +683,7 @@ msgstr ""
 msgid "CameraRaw image"
 msgstr ""
 
-#: API_generated/oyProfile_s.c:867
+#: API_generated/oyProfile_s.c:862
 #, fuzzy
 msgid "Can not write profile"
 msgstr "Ezin izan da letra-tipoa ireki:"
@@ -1069,7 +1069,7 @@ msgstr "Ezin izan da letra-tipoa ireki:"
 msgid "Could not open or invalid data: "
 msgstr "Ezin izan da letra-tipoa ireki:"
 
-#: API_generated/oyProfile_s.c:878 API_generated/oyranos_devices.c:1045
+#: API_generated/oyProfile_s.c:873 API_generated/oyranos_devices.c:1045
 #: liboyranos_core/oyranos_io_core.c:111 liboyranos_core/oyranos_io_core.c:269
 #, fuzzy
 msgid "Could not open profile"
@@ -3003,12 +3003,12 @@ msgstr "Informazioa:"
 msgid "Profile Tags"
 msgstr "Fitxategi-izena"
 
-#: API_generated/oyProfile_s.c:832 API_generated/oyProfile_s.c:838
+#: API_generated/oyProfile_s.c:827 API_generated/oyProfile_s.c:833
 #: tools/oyranos_profiles.c:533
 msgid "Profile already installed"
 msgstr ""
 
-#: API_generated/oyProfile_s.c:819
+#: API_generated/oyProfile_s.c:814
 #, fuzzy
 msgid "Profile contains no description"
 msgstr "Profilaren azalpena"
@@ -3023,7 +3023,7 @@ msgstr "Profila-sekuentziaren azalpena"
 msgid "Profile description, multilingual"
 msgstr "Profilaren azalpena, hizkuntza anitzetan"
 
-#: API_generated/oyProfile_s.c:854 tools/oyranos_profile_tool.c:352
+#: API_generated/oyProfile_s.c:849 tools/oyranos_profile_tool.c:352
 #, fuzzy
 msgid "Profile exists already"
 msgstr "Profila kapsulatuta dago eta "
