@@ -13,7 +13,7 @@ MACRO(OY_HANDLE_DEVICE_JSON)
       SET( GJ_${OY_MODULE} generate-rank-map-${OY_MODULE} )
       ADD_CUSTOM_TARGET( generate-rank-map-${OY_MODULE}
         COMMAND cp ${CMAKE_SOURCE_DIR}/color/rank-map/${DEVICE_JSON} .
-	COMMAND xxd -i ${DEVICE_JSON} | sed "s/};/  , 0x00 };/" > ${CMAKE_BINARY_DIR}/src/include_private/${DEVICE_JSON}.h
+	COMMAND xxd -i ${DEVICE_JSON} | sed "s/};/  , 0x00 };/" > ${CMAKE_SOURCE_DIR}/src/include_private/${DEVICE_JSON}.h
         COMMAND rm ${DEVICE_JSON}
 	COMMENT "generate static compiled in ${OY_MODULE} rank map from JSON." VERBATIM )
     ENDIF(UNIX)
