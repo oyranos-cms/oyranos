@@ -1665,7 +1665,6 @@ int          oyX1Monitor_release_      ( oyX1Monitor_s      ** obj )
 /* separate from the internal functions */
 
 
-
 #define oyX1_help_system_specific \
       " One option \"device_name\" will select the according X display.\n" \
       " If not the module will try to get this information from \n" \
@@ -1674,13 +1673,13 @@ int          oyX1Monitor_release_      ( oyX1Monitor_s      ** obj )
       " returned from a \"list\" request.\n" \
       " The \"properties\" call might be a expensive one.\n" \
       " Informations are stored in the returned oyConfig_s::backend_core member."
-
+#include "config.icc_profile.monitor.oyX1.qarz.json.h"
 oyMonitorHooks_s oyX1MonitorHooks_ = {
   oyOBJECT_MONITOR_HOOKS_S,
   {"oyX1"},
   10000, /* 1.0.0 */
   oyX1_help_system_specific,
-  NULL,
+  (const char*)config_icc_profile_monitor_oyX1_qarz_json,
   oyX1MonitorProfileSetup,
   oyX1MonitorProfileUnset,
   oyX1Rectangle_FromDevice,
