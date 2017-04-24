@@ -1162,10 +1162,19 @@ char * oyResolveDirFileName_ (const char* name)
 
 char * oyExtractPathFromFileName_ (const char* file_name)
 {
-  char *path_name = 0;
+  char *path_name = NULL;
   char *ptr;
+  int len = 0;
 
   DBG_MEM_START
+
+  if(file_name)
+    len = strlen(file_name);
+  if(len == 0)
+  {
+    DBG_MEM_ENDE
+    return path_name;
+  }
 
   oyAllocString_m_( path_name, strlen(file_name)+1,
                     oyAllocateFunc_, return 0 );
