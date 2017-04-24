@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cinepaint_icc-examin_eu\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2017-04-16 23:04+0200\n"
+"POT-Creation-Date: 2017-04-24 11:14+0200\n"
 "PO-Revision-Date: 2007-11-07 11:11+0100\n"
 "Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@zundan.com>\n"
 "Language-Team: Basque <itzulpena@euskalgnu.org>\n"
@@ -4644,16 +4644,16 @@ msgstr ""
 msgid "oyranos install path"
 msgstr ""
 
-#: liboyranos_core/oyranos_io_core.c:1334
+#: liboyranos_core/oyranos_io_core.c:1343
 msgid "path is a link: ignored"
 msgstr ""
 
-#: liboyranos_core/oyranos_io_core.c:1330
+#: liboyranos_core/oyranos_io_core.c:1339
 msgid "path is not a directory"
 msgstr ""
 
-#: liboyranos_core/oyranos_io_core.c:1339
-#: liboyranos_core/oyranos_io_core.c:1911
+#: liboyranos_core/oyranos_io_core.c:1348
+#: liboyranos_core/oyranos_io_core.c:1923
 msgid "path is not readable"
 msgstr ""
 

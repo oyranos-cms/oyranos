@@ -1456,6 +1456,9 @@ int oyFileListCb_ ( oyFileList_s * data,
                             oyAllocateFunc_, return 1);
           memcpy(l->names, temp, sizeof(char*) * l->mem_count);
           l->mem_count += l->hopp;
+
+          if(temp)
+             oyDeAllocateFunc_(temp);
         }
 
         oyAllocString_m_( l->names[l->count_files], oyStrblen_(full_name),
