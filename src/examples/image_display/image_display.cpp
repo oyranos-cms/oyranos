@@ -211,9 +211,9 @@ main(int argc, char** argv)
       icc = oy_box->setImage( file_name, module_options );
     }
   }
+  setWindowMenue( win, oy_widget, icc  );
   if(icc || (gl_box & 0x04 && !error))
   {
-    setWindowMenue( win, oy_widget, icc  );
     /* observe the node */
     if(icc)
       oy_widget->observeICC( icc, conversionObserve );
