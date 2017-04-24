@@ -241,14 +241,14 @@ oyICCColorSpaceGetName ( icColorSpaceSignature sig )
  *  @since Oyranos: version 0.1.8
  *  @date  september 2007 (API 0.1.8)
  */
-const oyChar*
-oyICCColorSpaceGetChannelName ( icColorSpaceSignature sig,
+const oyChar* oyICCColorSpaceGetChannelName (
+                                       icColorSpaceSignature sig,
                                     int                   pos,
                                     int                   type )
 {
   int n = oyICCColorSpaceGetChannelCount( sig );
 
-  if( 0 <= pos && pos < n )
+  if( pos < 0 || n <= pos )
     return "-";
 
   if( type < 0 )
