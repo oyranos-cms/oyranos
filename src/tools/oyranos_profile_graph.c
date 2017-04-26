@@ -273,9 +273,9 @@ int main( int argc , char** argv )
   thickness *= pixel_w/128.0;
 
   /* create a surface to place our images on */
-  if(format == NULL || strcmp(format, "png") == 0)
+  if(format == NULL || oyStringCaseCmp_(format, "png") == 0)
     surface = cairo_image_surface_create( CAIRO_FORMAT_ARGB32, pixel_w,pixel_h);
-  else if(strcmp(format, "svg") == 0)
+  else if(oyStringCaseCmp_(format, "svg") == 0)
     surface = cairo_svg_surface_create( output?output:"output.svg",
                                         (double)pixel_w, (double)pixel_h);
 
@@ -548,13 +548,13 @@ int main( int argc , char** argv )
   }
   if(illuminant != 0)
   {
-    if(strcmp(illuminant,"A") == 0)
+    if(oyStringCaseCmp_(illuminant,"A") == 0)
       draw_illuminant( cr,
                        spd_A_5, 300, 780, 5,
                        xO, yO, width, height,
                        min_x, max_x, min_y, max_y,
                        color, flags );
-    if(strcmp(illuminant,"D65") == 0)
+    if(oyStringCaseCmp_(illuminant,"D65") == 0)
       draw_illuminant( cr,
                        spd_D65_5, 300, 830, 5,
                        xO, yO, width, height,
@@ -565,7 +565,7 @@ int main( int argc , char** argv )
 
   cairo_restore( cr );
 
-  if(format == NULL || strcmp(format, "png") == 0)
+  if(format == NULL || oyStringCaseCmp_(format, "png") == 0)
     status = cairo_surface_write_to_png( surface, output?output:"output.png" );
   if(status != CAIRO_STATUS_SUCCESS)
   {
