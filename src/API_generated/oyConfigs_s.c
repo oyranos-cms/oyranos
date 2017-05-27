@@ -994,6 +994,8 @@ OYAPI int OYEXPORT oyConfigDomainList( const char        * registration_pattern,
                                    &reg_list_n, allocateFunc );
 
     oyStringListRelease_( &reg_lists, reg_list_n, oyDeAllocateFunc_ );
+
+    oyStringListFreeDoubles( *list, &reg_list_n, oyDeAllocateFunc_ );
   }
 
   if(count)
