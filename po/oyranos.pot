@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Oyranos 0.9\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2017-05-27 16:47+0200\n"
+"POT-Creation-Date: 2017-05-31 07:25+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -3650,8 +3650,8 @@ msgstr ""
 #: tools/oyranos_convert.c:63 tools/oyranos_convert.c:65
 #: tools/oyranos_convert.c:66 tools/oyranos_convert.c:67
 #: tools/oyranos_convert.c:68 tools/oyranos_convert.c:72
-#: tools/oyranos_convert.c:73 tools/oyranos_convert.c:74
-#: tools/oyranos_convert.c:75 tools/oyranos_convert.c:76
+#: tools/oyranos_convert.c:74 tools/oyranos_convert.c:75
+#: tools/oyranos_convert.c:76 tools/oyranos_convert.c:77
 #: tools/oyranos_convert.c:82 tools/oyranos_convert.c:91
 #: tools/oyranos_convert.c:92 tools/oyranos_profile_tool.c:84
 #: tools/oyranos_profile_tool.c:89 tools/oyranos_profile_tool.c:92
@@ -3664,7 +3664,7 @@ msgstr ""
 
 #: tools/oyranos_convert.c:63 tools/oyranos_convert.c:64
 #: tools/oyranos_convert.c:69 tools/oyranos_convert.c:72
-#: tools/oyranos_convert.c:77 tools/oyranos_convert.c:91
+#: tools/oyranos_convert.c:78 tools/oyranos_convert.c:91
 #: tools/oyranos_convert.c:95 tools/oyranos_convert.c:96
 #: tools/oyranos_profile_tool.c:104 tools/oyranos_profile_tool.c:106
 msgid "FILE_NAME"
@@ -3678,15 +3678,15 @@ msgstr ""
 msgid "Conversion"
 msgstr ""
 
-#: tools/oyranos_convert.c:66 tools/oyranos_convert.c:74
+#: tools/oyranos_convert.c:66 tools/oyranos_convert.c:75
 msgid "Output Color Space"
 msgstr ""
 
-#: tools/oyranos_convert.c:67 tools/oyranos_convert.c:75
+#: tools/oyranos_convert.c:67 tools/oyranos_convert.c:76
 msgid "Simulation/Proof Color Space"
 msgstr ""
 
-#: tools/oyranos_convert.c:68 tools/oyranos_convert.c:76
+#: tools/oyranos_convert.c:68 tools/oyranos_convert.c:77
 msgid "Effect abtract Color Space"
 msgstr ""
 
@@ -3704,21 +3704,21 @@ msgstr ""
 msgid "MODULE_NAME"
 msgstr ""
 
-#: tools/oyranos_convert.c:73
-msgid "Input Color Space"
-msgstr ""
-
-#: tools/oyranos_convert.c:77
-msgid "write to file, currently only PPM format"
-msgstr ""
-
-#: tools/oyranos_convert.c:78 tools/oyranos_convert.c:83
+#: tools/oyranos_convert.c:73 tools/oyranos_convert.c:83
 #: tools/oyranos_profile_graph.c:125
 msgid "FORMAT"
 msgstr ""
 
-#: tools/oyranos_convert.c:78
+#: tools/oyranos_convert.c:73
 msgid "select format, currently only clut"
+msgstr ""
+
+#: tools/oyranos_convert.c:74
+msgid "Input Color Space"
+msgstr ""
+
+#: tools/oyranos_convert.c:78
+msgid "write to file, currently only PPM format"
 msgstr ""
 
 #: tools/oyranos_convert.c:79

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cinepaint_icc-examin_eu\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2017-04-24 11:14+0200\n"
+"POT-Creation-Date: 2017-05-31 07:25+0200\n"
 "PO-Revision-Date: 2007-11-07 11:11+0100\n"
 "Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@zundan.com>\n"
 "Language-Team: Basque <itzulpena@euskalgnu.org>\n"
@@ -1383,7 +1383,7 @@ msgid ""
 "Effect Settings allows one to decide about a abstract effect color space."
 msgstr ""
 
-#: tools/oyranos_convert.c:68 tools/oyranos_convert.c:76
+#: tools/oyranos_convert.c:68 tools/oyranos_convert.c:77
 #, fuzzy
 msgid "Effect abtract Color Space"
 msgstr "Kolore-espazioa"
@@ -1493,13 +1493,13 @@ msgstr ""
 
 #: tools/oyranos_convert.c:63 tools/oyranos_convert.c:64
 #: tools/oyranos_convert.c:69 tools/oyranos_convert.c:72
-#: tools/oyranos_convert.c:77 tools/oyranos_convert.c:91
+#: tools/oyranos_convert.c:78 tools/oyranos_convert.c:91
 #: tools/oyranos_convert.c:95 tools/oyranos_convert.c:96
 #: tools/oyranos_profile_tool.c:104 tools/oyranos_profile_tool.c:106
 msgid "FILE_NAME"
 msgstr ""
 
-#: tools/oyranos_convert.c:78 tools/oyranos_convert.c:83
+#: tools/oyranos_convert.c:73 tools/oyranos_convert.c:83
 #: tools/oyranos_profile_graph.c:125
 msgid "FORMAT"
 msgstr ""
@@ -1808,8 +1808,8 @@ msgstr ""
 #: tools/oyranos_convert.c:63 tools/oyranos_convert.c:65
 #: tools/oyranos_convert.c:66 tools/oyranos_convert.c:67
 #: tools/oyranos_convert.c:68 tools/oyranos_convert.c:72
-#: tools/oyranos_convert.c:73 tools/oyranos_convert.c:74
-#: tools/oyranos_convert.c:75 tools/oyranos_convert.c:76
+#: tools/oyranos_convert.c:74 tools/oyranos_convert.c:75
+#: tools/oyranos_convert.c:76 tools/oyranos_convert.c:77
 #: tools/oyranos_convert.c:82 tools/oyranos_convert.c:91
 #: tools/oyranos_convert.c:92 tools/oyranos_profile_tool.c:84
 #: tools/oyranos_profile_tool.c:89 tools/oyranos_profile_tool.c:92
@@ -2003,7 +2003,7 @@ msgstr "Tintazko inprimagailua"
 msgid "Input"
 msgstr "Sarrera"
 
-#: tools/oyranos_convert.c:73
+#: tools/oyranos_convert.c:74
 #, fuzzy
 msgid "Input Color Space"
 msgstr "Kolore-espazioa"
@@ -2621,7 +2621,7 @@ msgstr ""
 msgid "Output"
 msgstr "Irteera"
 
-#: tools/oyranos_convert.c:66 tools/oyranos_convert.c:74
+#: tools/oyranos_convert.c:66 tools/oyranos_convert.c:75
 #, fuzzy
 msgid "Output Color Space"
 msgstr "Kolore-espazioa"
@@ -3391,7 +3391,7 @@ msgstr "Serigrafia"
 msgid "Simulate the output print on the monitor"
 msgstr ""
 
-#: tools/oyranos_convert.c:67 tools/oyranos_convert.c:75
+#: tools/oyranos_convert.c:67 tools/oyranos_convert.c:76
 #, fuzzy
 msgid "Simulation/Proof Color Space"
 msgstr "Kolore-espazioa"
@@ -4770,7 +4770,7 @@ msgstr ""
 msgid "select floating point 64-bit precision data format"
 msgstr ""
 
-#: tools/oyranos_convert.c:78
+#: tools/oyranos_convert.c:73
 msgid "select format, currently only clut"
 msgstr ""
 
@@ -4927,7 +4927,7 @@ msgstr "Ezin izan da letra-tipoa ireki:"
 msgid "write to file, currently only PPM and PNG formats"
 msgstr ""
 
-#: tools/oyranos_convert.c:77
+#: tools/oyranos_convert.c:78
 msgid "write to file, currently only PPM format"
 msgstr ""
 

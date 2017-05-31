@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2017-04-24 11:14+0200\n"
+"POT-Creation-Date: 2017-05-31 07:25+0200\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -1339,7 +1339,7 @@ msgstr ""
 "Effektinstellungen erlauben die Benutzung eines Farbprofiles zur "
 "Farbveränderung."
 
-#: tools/oyranos_convert.c:68 tools/oyranos_convert.c:76
+#: tools/oyranos_convert.c:68 tools/oyranos_convert.c:77
 msgid "Effect abtract Color Space"
 msgstr "Effectfarbraum"
 
@@ -1449,13 +1449,13 @@ msgstr "DATEI"
 
 #: tools/oyranos_convert.c:63 tools/oyranos_convert.c:64
 #: tools/oyranos_convert.c:69 tools/oyranos_convert.c:72
-#: tools/oyranos_convert.c:77 tools/oyranos_convert.c:91
+#: tools/oyranos_convert.c:78 tools/oyranos_convert.c:91
 #: tools/oyranos_convert.c:95 tools/oyranos_convert.c:96
 #: tools/oyranos_profile_tool.c:104 tools/oyranos_profile_tool.c:106
 msgid "FILE_NAME"
 msgstr "DATEINAME"
 
-#: tools/oyranos_convert.c:78 tools/oyranos_convert.c:83
+#: tools/oyranos_convert.c:73 tools/oyranos_convert.c:83
 #: tools/oyranos_profile_graph.c:125
 msgid "FORMAT"
 msgstr "FORMAT"
@@ -1769,8 +1769,8 @@ msgstr ""
 #: tools/oyranos_convert.c:63 tools/oyranos_convert.c:65
 #: tools/oyranos_convert.c:66 tools/oyranos_convert.c:67
 #: tools/oyranos_convert.c:68 tools/oyranos_convert.c:72
-#: tools/oyranos_convert.c:73 tools/oyranos_convert.c:74
-#: tools/oyranos_convert.c:75 tools/oyranos_convert.c:76
+#: tools/oyranos_convert.c:74 tools/oyranos_convert.c:75
+#: tools/oyranos_convert.c:76 tools/oyranos_convert.c:77
 #: tools/oyranos_convert.c:82 tools/oyranos_convert.c:91
 #: tools/oyranos_convert.c:92 tools/oyranos_profile_tool.c:84
 #: tools/oyranos_profile_tool.c:89 tools/oyranos_profile_tool.c:92
@@ -1963,7 +1963,7 @@ msgstr "Tintenstrahldrucker"
 msgid "Input"
 msgstr "Eingabe"
 
-#: tools/oyranos_convert.c:73
+#: tools/oyranos_convert.c:74
 msgid "Input Color Space"
 msgstr "Eingabefarbraum"
 
@@ -2553,7 +2553,7 @@ msgstr "Option nicht unterstützten Typs:"
 msgid "Output"
 msgstr "Ausgabe"
 
-#: tools/oyranos_convert.c:66 tools/oyranos_convert.c:74
+#: tools/oyranos_convert.c:66 tools/oyranos_convert.c:75
 msgid "Output Color Space"
 msgstr "Ausgabefarbraum"
 
@@ -3282,7 +3282,7 @@ msgstr "Siebdruck"
 msgid "Simulate the output print on the monitor"
 msgstr "Bilde einen Ausdruck auf dem Bildschirm nach"
 
-#: tools/oyranos_convert.c:67 tools/oyranos_convert.c:75
+#: tools/oyranos_convert.c:67 tools/oyranos_convert.c:76
 msgid "Simulation/Proof Color Space"
 msgstr "Simulationsfarbraum"
 
@@ -4803,7 +4803,7 @@ msgstr "wähle Datenformat mit 32-bit Fließkommazahlen"
 msgid "select floating point 64-bit precision data format"
 msgstr "wähle Datenformat mit 64-bit Fließkommazahlen"
 
-#: tools/oyranos_convert.c:78
+#: tools/oyranos_convert.c:73
 msgid "select format, currently only clut"
 msgstr "wähle Format, z.Z. nur clut möglich"
 
@@ -4954,7 +4954,7 @@ msgstr "schreibe nach Datei"
 msgid "write to file, currently only PPM and PNG formats"
 msgstr "schreibe zu einer Datei, derzeit nur im Format PPM und PNG"
 
-#: tools/oyranos_convert.c:77
+#: tools/oyranos_convert.c:78
 msgid "write to file, currently only PPM format"
 msgstr "schreibe zu einer Datei, derzeit nur im Format PPM"
 

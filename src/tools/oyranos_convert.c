@@ -70,12 +70,12 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "\n");
   fprintf( stderr, "  %s\n",               _("Generate CLUT Image:"));
   fprintf( stderr, "      %s -f clut -p %s [-i %s] [-o %s] [-n %s]\n", argv[0], _("ICC_FILE_NAME"), _("ICC_FILE_NAME"), _("FILE_NAME"), _("MODULE_NAME"));
+  fprintf( stderr, "      -f %s\t%s\n", _("FORMAT"), _("select format, currently only clut"));
   fprintf( stderr, "      -i %s\t%s\n", _("ICC_FILE_NAME"), _("Input Color Space"));
   fprintf( stderr, "      -p %s\t%s\n", _("ICC_FILE_NAME"), _("Output Color Space"));
   fprintf( stderr, "      -s %s\t%s\n", _("ICC_FILE_NAME"), _("Simulation/Proof Color Space"));
   fprintf( stderr, "      -e %s\t%s\n", _("ICC_FILE_NAME"), _("Effect abtract Color Space"));
   fprintf( stderr, "      -o %s\t%s\n", _("FILE_NAME"), _("write to file, currently only PPM format"));
-  fprintf( stderr, "      -f %s\t%s\n", _("FORMAT"), _("select format, currently only clut"));
   fprintf( stderr, "      %s\n", _("CLUT is a levels x levels*levels sized PPM, --levels defaults for clut to 64"));
   fprintf( stderr, "\n");
   fprintf( stderr, "  %s\n",               _("Generate Device Link Profile:"));
@@ -118,7 +118,7 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "      oyranos-icc -f icc -i input.icc -n lcm2 -p sRGB.icc -o device_link.icc\n");
   fprintf( stderr, "\n");
   fprintf( stderr, "    %s:\n",             _("Create 3D CLUT"));
-  fprintf( stderr, "      oyranos-icc -i Lab.icc -n lcm2 -p sRGB.icc -f clut -o clut.ppm\n");
+  fprintf( stderr, "      oyranos-icc -f clut -i Lab.icc -n lcm2 -p sRGB.icc -o clut.ppm\n");
   fprintf( stderr, "\n");
   fprintf( stderr, "\n");
 
