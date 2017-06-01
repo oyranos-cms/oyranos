@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: oyranos\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2017-06-01 11:48+0200\n"
+"POT-Creation-Date: 2017-06-01 16:37+0200\n"
 "PO-Revision-Date: 2012-10-19 15:10+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -49,7 +49,7 @@ msgstr ""
 #: API_generated/oyNamedColor_s.c:608 API_generated/oyranos_profile.c:54
 #: API_generated/oyranos_profile.c:90 liboyranos_config/oyranos_icc.c:513
 #: modules/color/modules/oyranos_cmm_lcm2.c:1572
-#: modules/color/modules/oyranos_cmm_oicc.c:222
+#: modules/color/modules/oyranos_cmm_oicc.c:223
 msgid "----"
 msgstr "----"
 
@@ -998,7 +998,7 @@ msgstr "Copyright (c) 2005-2010 Kai-Uwe Behrmann; newBSD"
 msgid "Copyright (c) 2005-2014 Kai-Uwe Behrmann; newBSD"
 msgstr "Copyright (c) 2005-2010 Kai-Uwe Behrmann; newBSD"
 
-#: modules/color/modules/oyranos_cmm_oicc.c:1062
+#: modules/color/modules/oyranos_cmm_oicc.c:1065
 #, fuzzy
 msgid "Copyright (c) 2005-2016 Kai-Uwe Behrmann; newBSD"
 msgstr "Copyright (c) 2005-2010 Kai-Uwe Behrmann; newBSD"
@@ -1772,11 +1772,11 @@ msgstr ""
 msgid "ICC Version"
 msgstr "ICC Examin Verze"
 
-#: modules/color/modules/oyranos_cmm_oicc.c:453
+#: modules/color/modules/oyranos_cmm_oicc.c:454
 msgid "ICC color profile for color transformations"
 msgstr "Barvový profil ICC pro barvové transformace"
 
-#: modules/color/modules/oyranos_cmm_oicc.c:493
+#: modules/color/modules/oyranos_cmm_oicc.c:494
 msgid "ICC color profiles for color transformations"
 msgstr "Barvový profil ICC pro barvové transformace"
 
@@ -1785,7 +1785,7 @@ msgstr "Barvový profil ICC pro barvové transformace"
 msgid "ICC header Attributes"
 msgstr "Zvolte atribut"
 
-#: modules/color/modules/oyranos_cmm_oicc.c:451
+#: modules/color/modules/oyranos_cmm_oicc.c:452
 msgid "ICC profile"
 msgstr "profil ICC"
 
@@ -1797,7 +1797,7 @@ msgstr "ID profilu ICC zapsáno"
 msgid "ICC profile search paths"
 msgstr "prohledávaná cesta pro profily ICC"
 
-#: modules/color/modules/oyranos_cmm_oicc.c:491 tools/oyranos_profiles.c:289
+#: modules/color/modules/oyranos_cmm_oicc.c:492 tools/oyranos_profiles.c:289
 msgid "ICC profiles"
 msgstr "Profily ICC"
 
@@ -2716,11 +2716,11 @@ msgstr "Oyranos Dummy"
 msgid "Oyranos Help"
 msgstr "Nápověda Oyranosu"
 
-#: modules/color/modules/oyranos_cmm_oicc.c:1046
+#: modules/color/modules/oyranos_cmm_oicc.c:1049
 msgid "Oyranos ICC policy"
 msgstr "Politika Oyranosu pro ICC"
 
-#: modules/color/modules/oyranos_cmm_oicc.c:1048
+#: modules/color/modules/oyranos_cmm_oicc.c:1051
 msgid "Oyranos ICC policy module"
 msgstr "Modul politiky Oyranosu pro ICC"
 
@@ -2814,7 +2814,7 @@ msgstr ""
 msgid "Oyranos modules"
 msgstr "Moduly Oyranosu"
 
-#: modules/color/modules/oyranos_cmm_oicc.c:1056
+#: modules/color/modules/oyranos_cmm_oicc.c:1059
 #: modules/color/modules/oyranos_cmm_oydi.c:1264
 #: modules/color/modules/oyranos_cmm_oyra.c:138
 #: modules/color/modules/oyranos_cmm_trds.c:669
@@ -3821,7 +3821,7 @@ msgstr ""
 msgid "The filter provides a generic image source."
 msgstr "The filter provides a generic image source."
 
-#: modules/color/modules/oyranos_cmm_oicc.c:1070
+#: modules/color/modules/oyranos_cmm_oicc.c:1073
 #, fuzzy
 msgid ""
 "The filter provides policy settings. These settings can be applied to a "
@@ -4067,7 +4067,7 @@ msgstr ""
 "Příkaz Little CMS \"create_profile.proofing_effect\" umožňuje vytvořit "
 "abstraktní profil ICC z daného profilu ICC. Viz položka \"proofing_effect\"."
 
-#: modules/color/modules/oyranos_cmm_oicc.c:1072
+#: modules/color/modules/oyranos_cmm_oicc.c:1075
 msgid ""
 "The module is responsible for many settings in the Oyranos color management "
 "settings panel. If applied the module care about rendering intents, "
@@ -4820,7 +4820,7 @@ msgstr "třída pojmenovaných barev"
 
 #: liboyranos/oyranos_cmm.c:255 modules/color/modules/oyranos_cmm_elDB.c:953
 #: modules/color/modules/oyranos_cmm_oiDB.c:553
-#: modules/color/modules/oyranos_cmm_oicc.c:1064
+#: modules/color/modules/oyranos_cmm_oicc.c:1067
 #: modules/color/modules/oyranos_cmm_oydi.c:1272
 #: modules/color/modules/oyranos_cmm_oyra.c:146
 #: modules/color/modules/oyranos_cmm_trds.c:677

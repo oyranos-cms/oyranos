@@ -141,6 +141,7 @@ char oicc_default_color_icc_options[] = {
       <proof_hard.advanced>0</proof_hard.advanced>\n\
       <proof_soft.advanced>0</proof_soft.advanced>\n\
       <effect_switch>0</effect_switch>\n\
+      <display_white_point.advanced>0</display_white_point.advanced>\n\
       <rendering_intent>0</rendering_intent>\n\
       <rendering_bpc>1</rendering_bpc>\n\
       <rendering_intent_proof.advanced>0</rendering_intent_proof.advanced>\n\
@@ -850,6 +851,8 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
                                     "rendering_gamut_warning", s, verbose, flags, oyOPTIONATTRIBUTE_ADVANCED);
               oiccChangeNodeOption( f_options, db_options,
                                     "effect_switch", s, verbose, flags, 0 );
+              oiccChangeNodeOption( f_options, db_options,
+                                    "display_white_point", s, verbose, flags, oyOPTIONATTRIBUTE_ADVANCED );
               if(display_mode)
                 proofing = oyOptions_FindString( f_options, "proof_soft", "1" )
                            ? 1 : 0;
