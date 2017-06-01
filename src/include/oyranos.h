@@ -100,6 +100,7 @@ typedef enum  {
   oyBEHAVIOUR_PROOF_HARD,              /**< Proofing by default for printing */
   oyBEHAVIOUR_EFFECT,                  /**< Using Effect by default */
   oyBEHAVIOUR_RENDERING_GAMUT_WARNING, /**< mark out of gamut colors */
+  oyBEHAVIOUR_DISPLAY_WHITE_POINT,     /**< select a display white point */
   oyBEHAVIOUR_END                      /**< just for easen Gui design */
 } oyBEHAVIOUR_e;
 
@@ -288,8 +289,9 @@ typedef enum  {
   oyWIDGET_RENDERING_INTENT_PROOF,    /**< Proofing color transformations */
   oyWIDGET_PROOF_SOFT,                /**< Proofing by default for screen */
   oyWIDGET_PROOF_HARD,                /**< Proofing by default for printing */
-  oyWIDGET_EFFECT,                    /**< Using Effect by default */
+  oyWIDGET_EFFECT,                    /**< Using Effect profile by default */
   oyWIDGET_RENDERING_GAMUT_WARNING,   /**< mark out of gamut colors */
+  oyWIDGET_DISPLAY_WHITE_POINT,       /**< select a display white point */
   oyWIDGET_BEHAVIOUR_END,             /**< just for easen Gui design */
 
   oyWIDGET_DEFAULT_PROFILE_START = 100,

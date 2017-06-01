@@ -202,6 +202,10 @@
 #define OY_DEFAULT_PROOF_HARD          OY_BEHAVIOUR_STD OY_SLASH "proof_hard"
 /** key name for effect profile by default */
 #define OY_DEFAULT_EFFECT              OY_BEHAVIOUR_STD OY_SLASH "effect_switch"
+/** key name for common display white point
+ *  @since 0.9.7
+ */
+#define OY_DEFAULT_DISPLAY_WHITE_POINT OY_BEHAVIOUR_STD OY_SLASH "display_white_point"
 
 /** key name for context CMM
  *  @since 0.9.6

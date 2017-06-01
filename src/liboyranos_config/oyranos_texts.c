@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2004-2012 (C) Kai-Uwe Behrmann
+ *            2004-2017 (C) Kai-Uwe Behrmann
  *
  *  @brief    pure text handling functions
  *  @internal
@@ -26,6 +26,7 @@
 #include "oyranos_config_internal.h"
 #include "oyranos.h"
 #include "oyranos_debug.h"
+#include "oyranos_devices.h"
 #include "oyranos_helper.h"
 #include "oyranos_internal.h"
 #include "oyranos_io.h"
@@ -483,6 +484,20 @@ oyOptionStringsTranslate_ ()
       NULL, NULL, NULL, NULL,
       OY_DEFAULT_PROOF_PROFILE,
       "oyPROFILE_PROOF" , 0,"ISOcoated_v2_bas.ICC")
+
+    oySET_OPTIONS_M_( oyWIDGETTYPE_BEHAVIOUR, oyWIDGET_DISPLAY_WHITE_POINT, 2,
+      oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_PROOF, 0,
+      _("Display White Point"),
+      _("Display White Point for all screens"),
+      _("Select a white point target for all monitors."),
+      7, /* choices */
+      /* order is automatic, none, static ones, first monitor, second monitor, ... , last monitor */
+      _("Automatic"), _("No"), _("Illuminant D50"), _("Illuminant D55"),
+      OY_DEFAULT_DISPLAY_WHITE_POINT,
+      "oyDISPLAY_WHITE_POINT" , 0,0)
+      opt[oyWIDGET_DISPLAY_WHITE_POINT].choice_list[4] = _("Illuminant D65");
+      opt[oyWIDGET_DISPLAY_WHITE_POINT].choice_list[5] = _("Illuminant D75");
+      opt[oyWIDGET_DISPLAY_WHITE_POINT].choice_list[6] = _("Illuminant D93");
 
     oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_PROFILE_EFFECT, 2,
       oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_EFFECT, 0,
@@ -976,7 +991,7 @@ int        oyPolicyFileNameGet_      ( const char        * policy_name,
   if(!error)
   {
     int count = 0, i;
-    oyChar ** policy_list = NULL;
+    char ** policy_list = NULL;
 
     policy_list = oyPolicyListGet_( &count );
 
@@ -1108,7 +1123,7 @@ int          oyPolicyFilesToDisplay  ( int               * choices,
       char ** sort = NULL;
       int default_policy[4] = {-1,-1,-1,-1}, pos;
 
-      oyAllocHelper_m_( zl, oyChar*, count,
+      oyAllocHelper_m_( zl, char*, count,
                         oyAllocateFunc_, return 0 );
       for( i = 0; i < count; ++i )
         zl[i] = oyPolicyFileNameToDisplay( list[i] );
@@ -1247,6 +1262,57 @@ char **            oyGetCMMs         ( oyCMM_e             type,
 /** @} *//* cmm_handling */
 /** @} *//* defaults_apis */
 
+char **      oyOptionChoicesGetWtPt_ ( int               * choices )
+{
+  const oyOption_t_ *t = oyOptionGet_(oyWIDGET_DISPLAY_WHITE_POINT);
+
+  /* order is automatic, none, static ones, first monitor, second monitor, ... , last monitor */
+  int choice_list_n = 1+1+5,
+      i;
+  char ** list;
+  int devices_n;
+  oyConfigs_s * devices = NULL;
+  oyOptions_s * options = 0;
+
+  /* get XCM_ICC_COLOR_SERVER_TARGET_PROFILE_IN_X_BASE */
+  oyOptions_SetFromText( &options,
+              "//"OY_TYPE_STD"/config/icc_profile.x_color_region_target",
+              "yes", OY_CREATE_NEW );
+  oyOptions_SetFromText( &options,
+                                 "//" OY_TYPE_STD "/config/command",
+                                 "properties", OY_CREATE_NEW );
+  oyDevicesGet( 0, "monitor._native", options, &devices );
+  devices_n = oyConfigs_Count( devices );
+
+  choice_list_n = 1+1+5;
+  list = (char**) calloc( sizeof(char*), choice_list_n + devices_n + 1 );
+  for(i = 0; i < t->choices; ++i)
+    list[i] = oyStringCopy( t->choice_list[i], 0 );
+
+  choice_list_n += devices_n;
+  for(i = 0; i < devices_n; ++i)
+  {
+    oyConfig_s * c = oyConfigs_Get( devices, 0 );
+    char * text = NULL;
+    const char * mnft = oyConfig_FindString( c, "manufacturer", 0 );
+    const char * model = oyConfig_FindString( c, "model", 0 );
+    oyDeviceGetInfo( c, oyNAME_NAME, options, &text, oyAllocateFunc_ );
+    oyStringAddPrintf( &list[t->choices + i], 0,0, "%s %s %s",
+                       oyNoEmptyString_m_(mnft), oyNoEmptyString_m_(model),
+                       oyNoEmptyString_m_(text) );
+    oyDeAllocateFunc_(text);
+    oyConfig_Release( &c );
+  }
+
+  oyOptions_Release( &options );
+  oyConfigs_Release( &devices );
+
+  if( choices )
+    *choices              = choice_list_n;
+
+  return list;
+}
+
 int          oyOptionChoicesGet_     ( oyWIDGET_e          type,
                                        uint32_t            flags,
                                        int                 name_type,
@@ -1261,10 +1327,17 @@ int          oyOptionChoicesGet_     ( oyWIDGET_e          type,
 
   if( oyWIDGET_BEHAVIOUR_START < type && type < oyWIDGET_BEHAVIOUR_END )
   {
+    int choice_list_n = t->choices;
+    const char ** choice_list = (const char**) t->choice_list;
+
+    /* create dynamic choices */
+    if(type == oyWIDGET_DISPLAY_WHITE_POINT)
+      choice_list = (const char**)oyOptionChoicesGetWtPt_( &choice_list_n );
+
     if( choices )
-      *choices              = t->choices;
+      *choices              = choice_list_n;
     if( choices_string_list )
-      *choices_string_list  = (const oyChar**) t->choice_list;
+      *choices_string_list  = (const char**) choice_list;
     if( current )
       *current              = oyGetBehaviour_( (oyBEHAVIOUR_e) type );
   }
@@ -1327,7 +1400,7 @@ int          oyOptionChoicesGet_     ( oyWIDGET_e          type,
     if( choices )
       *choices              = count;
     if( choices_string_list )
-      *choices_string_list  = (const oyChar**) list;
+      *choices_string_list  = (const char**) list;
     if( current )
       *current              = c;
   }
@@ -1357,7 +1430,7 @@ int          oyOptionChoicesGet_     ( oyWIDGET_e          type,
     if( choices )
       *choices              = count;
     if( choices_string_list )
-      *choices_string_list  = (const oyChar**) list;
+      *choices_string_list  = (const char**) list;
     if( current )
       *current              = c;
   }
@@ -1377,7 +1450,8 @@ void          oyOptionChoicesFree_     (oyWIDGET_e        option,
 
   if( (oyWIDGET_DEFAULT_PROFILE_START < option &&
        option < oyWIDGET_DEFAULT_PROFILE_END ) ||
-      (option == oyWIDGET_POLICY) )
+      option == oyWIDGET_POLICY ||
+      option == oyWIDGET_DISPLAY_WHITE_POINT )
   {
     size_t i;
 
@@ -1396,8 +1470,8 @@ oyWIDGET_e    * oyWidgetListGet_         (oyGROUP_e           group,
 {
 #define oyGROUP_DEFAULT_PROFILES_LEN oyWIDGET_DEFAULT_PROFILE_END - oyWIDGET_DEFAULT_PROFILE_START + 1
 #define oyGROUP_BEHAVIOUR_RENDERING_LEN 4+1
-#define oyGROUP_BEHAVIOUR_PROOF_LEN 4+1
-#define oyGROUP_BEHAVIOUR_EFFECT_LEN 1+1
+#define oyGROUP_BEHAVIOUR_PROOF_LEN 5+1
+#define oyGROUP_BEHAVIOUR_EFFECT_LEN 2+1
 #define oyGROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS_LEN 6+1
 #define oyGROUP_BEHAVIOUR_MISSMATCH_LEN 6+1
 #define oyGROUP_CMM_LEN 2+1
@@ -1511,6 +1585,7 @@ oyWIDGET_e    * oyWidgetListGet_         (oyGROUP_e           group,
                              allocate_func, return NULL);
 
            lw[pos++] = oyWIDGET_GROUP_BEHAVIOUR_PROOF;
+           lw[pos++] = oyWIDGET_DISPLAY_WHITE_POINT;
            lw[pos++] = oyWIDGET_PROFILE_PROOF;
            lw[pos++] = oyWIDGET_RENDERING_INTENT_PROOF;
            lw[pos++] = oyWIDGET_PROOF_SOFT;
@@ -1704,6 +1779,15 @@ oyTestInsideBehaviourOptions_ (oyBEHAVIOUR_e type, int choice)
   if ( oyWidgetTypeGet_( (oyWIDGET_e)type ) == oyWIDGETTYPE_BEHAVIOUR ||
        oyWidgetTypeGet_( (oyWIDGET_e)type ) == oyWIDGETTYPE_CHOICE )
   {
+    if(type == oyBEHAVIOUR_DISPLAY_WHITE_POINT)
+    {
+      int choice_list_n = 0;
+      char ** choice_list = oyOptionChoicesGetWtPt_( &choice_list_n );
+      if(choice >= 0 &&
+         choice < choice_list_n)
+        r = 1;
+      oyStringListRelease( &choice_list, choice_list_n, 0 );
+    } else
     if ( choice >= 0 &&
          choice < t->choices )
       r = 1;
@@ -2318,17 +2402,26 @@ int      oySetBehaviour_             ( oyBEHAVIOUR_e       type,
 
     key_name = oyOptionGet_((oyWIDGET_e)type)-> config_string;
 
-      if(key_name)
+    if(key_name)
+    {
+      char val[12];
+      char * com = NULL;
+      if(type == oyBEHAVIOUR_DISPLAY_WHITE_POINT)
       {
-        char val[12];
-        const char *com =
-            oyOptionGet_((oyWIDGET_e)type)-> choice_list[ choice ];
-        snprintf(val, 12, "%d", choice);
-        r = oySetPersistentString (key_name, scope, val, com);
-        DBG_PROG4_S( "%s %d %s %s", key_name, type, val, com?com:"" )
-      }
-      else
-        WARNc1_S( "type %d behaviour not possible", type);
+        int choice_list_n = 0;
+        char ** choice_list = oyOptionChoicesGetWtPt_( &choice_list_n );
+        if(choice < choice_list_n)
+          com = oyStringCopy( choice_list[choice], 0 );
+	oyStringListRelease( &choice_list, choice_list_n, 0 );
+      } else
+        com = oyStringCopy( oyOptionGet_((oyWIDGET_e)type)-> choice_list[ choice ], 0 );
+
+      snprintf(val, 12, "%d", choice);
+      r = oySetPersistentString (key_name, scope, val, com);
+      DBG_PROG4_S( "%s %d %s %s", key_name, type, val, com?com:"" )
+    }
+    else
+      WARNc1_S( "type %d behaviour not possible", type);
   }
 
   DBG_PROG_ENDE
