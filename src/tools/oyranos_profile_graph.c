@@ -357,9 +357,9 @@ int main( int argc , char** argv )
       cairo_new_path(cr);
       for(i = 1; i<bb_100K[0][2]; ++i)
       {
-        double XYZ[3];
+        double xyz[3] = { bb_100K[i][0], bb_100K[i][1], bb_100K[i][2] };
+        double XYZ[3] = { xyz[0]/xyz[1], 1.0, xyz[2]/xyz[1] };
         double Lab[3];
-        XYZ[0] = bb_100K[i][0]; XYZ[1] = bb_100K[i][1]; XYZ[2] = bb_100K[i][2];
         oyXYZ2Lab( XYZ, Lab);
         if(i == 0)
           cairo_move_to(cr, xToImage(Lab[1]/256.0+.5),
