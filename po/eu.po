@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cinepaint_icc-examin_eu\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2017-06-01 16:37+0200\n"
+"POT-Creation-Date: 2017-06-02 09:25+0200\n"
 "PO-Revision-Date: 2007-11-07 11:11+0100\n"
 "Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@zundan.com>\n"
 "Language-Team: Basque <itzulpena@euskalgnu.org>\n"
@@ -2632,7 +2632,7 @@ msgstr ""
 msgid "Option \"filename\", a valid filename of a existing image"
 msgstr ""
 
-#: liboyranos_config/oyranos.c:125 liboyranos_config/oyranos.c:155
+#: liboyranos_config/oyranos.c:127 liboyranos_config/oyranos.c:157
 msgid "Option not supported type:"
 msgstr ""
 
@@ -4924,7 +4924,7 @@ msgstr ""
 msgid "w - fit to window width"
 msgstr ""
 
-#: liboyranos_config/oyranos.c:524
+#: liboyranos_config/oyranos.c:525
 #, fuzzy
 msgid "will overwrite policy file"
 msgstr "Ezin izan da letra-tipoa ireki:"
@@ -4970,7 +4970,7 @@ msgstr "Ezin izan da letra-tipoa ireki:"
 msgid "wrong argument to option:"
 msgstr ""
 
-#: liboyranos_config/oyranos.c:91
+#: liboyranos_config/oyranos.c:93
 msgid "wrong profile for static web color space selected, need sRGB"
 msgstr ""
 

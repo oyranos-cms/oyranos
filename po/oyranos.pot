@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Oyranos 0.9\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2017-06-01 16:37+0200\n"
+"POT-Creation-Date: 2017-06-02 10:33+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -502,15 +502,15 @@ msgstr ""
 msgid "path is not readable"
 msgstr ""
 
-#: liboyranos_config/oyranos.c:91
+#: liboyranos_config/oyranos.c:93
 msgid "wrong profile for static web color space selected, need sRGB"
 msgstr ""
 
-#: liboyranos_config/oyranos.c:125 liboyranos_config/oyranos.c:155
+#: liboyranos_config/oyranos.c:127 liboyranos_config/oyranos.c:157
 msgid "Option not supported type:"
 msgstr ""
 
-#: liboyranos_config/oyranos.c:524
+#: liboyranos_config/oyranos.c:525
 msgid "will overwrite policy file"
 msgstr ""
 

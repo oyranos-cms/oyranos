@@ -1,4 +1,4 @@
-/** @file test_oyranos.c
+/** @file test2.cpp
  *
  *  Oyranos is an open source Color Management System 
  *
@@ -1549,6 +1549,51 @@ oyTESTRESULT_e testProfile ()
     "found oyPROFILE_EFFECT                                 " );
   }
 
+  int display_white_point_mode = oyGetBehaviour( oyBEHAVIOUR_DISPLAY_WHITE_POINT );
+  /* get D50 */
+  oySetBehaviour( oyBEHAVIOUR_DISPLAY_WHITE_POINT, oySCOPE_USER, 2 );
+  double cie_a = -1.0, cie_b = -1.0;
+  int error = oyGetDisplayWhitePoint( &cie_a, &cie_b );
+  if(!error && cie_a != -1.0 && cie_b != -1.0)
+  {
+    PRINT_SUB( oyTESTRESULT_SUCCESS, 
+    "oyGetDisplayWhitePoint() = %g %g  mode = 2      ", cie_a, cie_b );
+  } else
+  {
+    PRINT_SUB( oyTESTRESULT_FAIL, 
+    "oyGetDisplayWhitePoint() = %g %g  mode = 2      ", cie_a, cie_b );
+  }
+  cie_a = cie_b = -1.0;
+
+  /* obtain first monitor white point */
+  oySetBehaviour( oyBEHAVIOUR_DISPLAY_WHITE_POINT, oySCOPE_USER, 7 );
+  error = oyGetDisplayWhitePoint( &cie_a, &cie_b );
+  if(!error && cie_a != -1.0 && cie_b != -1.0)
+  {
+    PRINT_SUB( oyTESTRESULT_SUCCESS, 
+    "oyGetDisplayWhitePoint() = %g %g  mode = 7      ", cie_a, cie_b );
+  } else
+  {
+    PRINT_SUB( oyTESTRESULT_XFAIL, 
+    "oyGetDisplayWhitePoint() = %g %g  mode = 7      ", cie_a, cie_b );
+  }
+
+  /* set a custom white point */
+  oySetDisplayWhitePoint( 0.5,0.5, oySCOPE_USER, "test white point" );
+  oySetBehaviour( oyBEHAVIOUR_DISPLAY_WHITE_POINT, oySCOPE_USER, 0 );
+  error = oyGetDisplayWhitePoint( &cie_a, &cie_b );
+  if(!error && cie_a != -1.0 && cie_b != -1.0)
+  {
+    PRINT_SUB( oyTESTRESULT_SUCCESS, 
+    "oyGetDisplayWhitePoint() = %g %g            mode = 0      ", cie_a, cie_b );
+  } else
+  {
+    PRINT_SUB( oyTESTRESULT_FAIL, 
+    "oyGetDisplayWhitePoint() = %g %g            mode = 0      ", cie_a, cie_b );
+  }
+
+  oySetBehaviour( oyBEHAVIOUR_DISPLAY_WHITE_POINT, oySCOPE_USER, display_white_point_mode );
+
 
   oyOption_s * matrix = oyOption_FromRegistration("///color_matrix."
               "from_primaries."
@@ -1618,7 +1663,7 @@ oyTESTRESULT_e testProfile ()
 
   size = 0;
   data = oyProfile_GetMem( p, &size, 0, malloc );
-  int error = oyWriteMemToFile_( ICC_TEST_NAME".icc", data, size );
+  error = oyWriteMemToFile_( ICC_TEST_NAME".icc", data, size );
   if(!error )
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS, 

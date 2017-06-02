@@ -226,6 +226,12 @@ int      oySetDefaultProfile         ( oyPROFILE_e         type,
                                        const char        * file_name );
 char*       oyGetDefaultProfileName    (oyPROFILE_e       type,
                                         oyAlloc_f         alloc_func);
+int      oyGetDisplayWhitePoint      ( double            * cie_a,
+                                       double            * cie_b );
+int      oySetDisplayWhitePoint      ( double              cie_a,
+                                       double              cie_b,
+                                       oySCOPE_e           scope,
+                                       const char        * comment );
 
 
 /* --- profile lists --- */
@@ -291,7 +297,7 @@ typedef enum  {
   oyWIDGET_PROOF_HARD,                /**< Proofing by default for printing */
   oyWIDGET_EFFECT,                    /**< Using Effect profile by default */
   oyWIDGET_RENDERING_GAMUT_WARNING,   /**< mark out of gamut colors */
-  oyWIDGET_DISPLAY_WHITE_POINT,       /**< select a display white point */
+  oyWIDGET_DISPLAY_WHITE_POINT,       /**< select a display white point mode ::OY_DEFAULT_DISPLAY_WHITE_POINT */
   oyWIDGET_BEHAVIOUR_END,             /**< just for easen Gui design */
 
   oyWIDGET_DEFAULT_PROFILE_START = 100,

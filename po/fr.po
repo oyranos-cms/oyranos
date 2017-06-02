@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ICC Examin 0.41\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2017-06-01 16:37+0200\n"
+"POT-Creation-Date: 2017-06-02 09:25+0200\n"
 "PO-Revision-Date: 2006-06-29 19:31+0200\n"
 "Last-Translator: Pascal LACROIX <lacroixpascal at vfemail.net>\n"
 "Language-Team: <fr@li.org>\n"
@@ -2615,7 +2615,7 @@ msgstr ""
 msgid "Option \"filename\", a valid filename of a existing image"
 msgstr ""
 
-#: liboyranos_config/oyranos.c:125 liboyranos_config/oyranos.c:155
+#: liboyranos_config/oyranos.c:127 liboyranos_config/oyranos.c:157
 msgid "Option not supported type:"
 msgstr ""
 
@@ -4882,7 +4882,7 @@ msgstr ""
 msgid "w - fit to window width"
 msgstr ""
 
-#: liboyranos_config/oyranos.c:524
+#: liboyranos_config/oyranos.c:525
 #, fuzzy
 msgid "will overwrite policy file"
 msgstr "Ouvrir Profil"
@@ -4928,7 +4928,7 @@ msgstr "Ouvrir Profil"
 msgid "wrong argument to option:"
 msgstr ""
 
-#: liboyranos_config/oyranos.c:91
+#: liboyranos_config/oyranos.c:93
 msgid "wrong profile for static web color space selected, need sRGB"
 msgstr ""
 

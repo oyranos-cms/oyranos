@@ -27,7 +27,9 @@
 #include "oyProfile_s.h" /* OY_ICC_VERSION_2 */
 #include "oyranos_config_internal.h"
 #include "oyranos_check.h"
+#include "oyranos_color.h"
 #include "oyranos_debug.h"
+#include "oyranos_devices.h"
 #include "oyranos_helper.h"
 #include "oyranos_internal.h"
 #include "oyranos_io.h"
@@ -159,7 +161,6 @@ char* oyGetDefaultProfileName_   (oyPROFILE_e       type,
   DBG_PROG_ENDE
   return name;
 }
-
 
 
 /* --- internal API decoupling --- */
@@ -696,6 +697,158 @@ char * oyGetDefaultProfileName       ( oyPROFILE_e         type,
   DBG_PROG_ENDE
   return name;
 }
+
+/**
+ *  @brief set the CIE*ab coordinates for display white point target
+ *
+ *  The function sets a custom white point target for the display. Note this
+ *  setting will only be active when ::OY_DEFAULT_DISPLAY_WHITE_POINT is set
+ *  to 0 - automatic.
+ *
+ *  @param[in]     cie_a               CIE*a component in 0.0 - 1.0 range
+ *  @param[in]     cie_b               CIE*b component in 0.0 - 1.0 range
+ *  @param[in]     scope               supported are:
+ *                                     - oySCOPE_USER for HOME install
+ *                                     - oySCOPE_SYSTEM for system wide install
+ *  @param[in]     comment             string
+ *
+ *  @version Oyranos: 0.9.7
+ *  @date    2017/06/01
+ *  @since   2017/06/01 (Oyranos: 0.9.7)
+ */
+int      oySetDisplayWhitePoint      ( double              cie_a,
+                                       double              cie_b,
+                                       oySCOPE_e           scope,
+                                       const char        * comment )
+{
+  int r = 1;
+  char * value = NULL;
+
+  if(cie_b != 0 || cie_b != 0)
+  {
+    oyStringAddPrintf( &value, 0,0, "%g", cie_a );
+    r = oySetPersistentString( OY_DEFAULT_DISPLAY_WHITE_POINT_A, scope, value, comment );
+    oyFree_m_( value );
+    oyStringAddPrintf( &value, 0,0, "%g", cie_b );
+    r = oySetPersistentString( OY_DEFAULT_DISPLAY_WHITE_POINT_B, scope, value, comment );
+    oyFree_m_( value );
+  }
+
+  return r;
+}
+
+/**
+ *  @brief get the CIE*ab coordinates for display white point target
+ *
+ *  The function asks for the actual white point target for the display.
+ *
+ *  @see ::OY_DEFAULT_DISPLAY_WHITE_POINT.
+ *
+ *  @param[out]    cie_a               CIE*a component in 0.0 - 1.0 range
+ *  @param[out]    cie_b               CIE*b component in 0.0 - 1.0 range
+ *  @return                            0 - success; -1 - no white point available; < 1 - error
+ *
+ *  @version Oyranos: 0.9.7
+ *  @date    2017/06/01
+ *  @since   2017/06/01 (Oyranos: 0.9.7)
+ */
+int      oyGetDisplayWhitePoint      ( double            * cie_a,
+                                       double            * cie_b )
+{
+  int error = -1;
+  int mode = oyGetBehaviour( oyBEHAVIOUR_DISPLAY_WHITE_POINT );
+  char * value = NULL;
+
+  double K_xyz[5][3] = {
+  { 0.3451, 0.3516, 0.3032 }, /* 5000 K */
+  { 0.3325, 0.3411, 0.3265 }, /* 5500 K */
+  { 0.3135, 0.3237, 0.3628 }, /* 6500 K */
+  { 0.3004, 0.3103, 0.3893 }, /* 7500 K */
+  { 0.2849, 0.2933, 0.4218 }  /* 9300 K */ };
+  double DE_xyz[5][3] = {
+  { 0.34567,0.35850,0.29583}, /* D50 */
+  { 0.33242,0.34743,0.32015}, /* D55 */
+  { 0.31271,0.32902,0.35827}, /* D65 */
+  { 0.29902,0.31485,0.38613}, /* D75 */
+  { 0.2848, 0.2932, 0.42200}  /* D93 */ };
+
+  switch(mode)
+  {
+  case 0:
+    {
+      value = oyGetPersistentString( OY_DEFAULT_DISPLAY_WHITE_POINT_A, 0,
+                                     oySCOPE_USER_SYS, oyAllocateFunc_ );
+      oyStringToDouble( value, cie_a );
+      oyFree_m_( value );
+      value = oyGetPersistentString( OY_DEFAULT_DISPLAY_WHITE_POINT_B, 0,
+                                     oySCOPE_USER_SYS, oyAllocateFunc_ );
+      oyStringToDouble( value, cie_b );
+      oyFree_m_( value );
+      error = 0;
+    }
+    break;
+  case 1: return error;
+  case 2:
+  case 3:
+  case 4:
+  case 5:
+  case 6:
+    {
+      int p = mode-2;
+      double xyz[3] = { DE_xyz[p][0], DE_xyz[p][1], DE_xyz[p][2] },
+             XYZ[3] = { xyz[0]/xyz[1], 1.0, xyz[2]/xyz[1] },
+	     Lab[3];
+      oyXYZ2Lab( XYZ, Lab );
+      *cie_a = Lab[1]/256.0 + 0.5;
+      *cie_b = Lab[2]/256.0 + 0.5;
+      error = 0;
+    }
+    break;
+  }
+  if(mode > 6)
+  {
+    int pos = mode - 7;
+    oyOptions_s * options = NULL;
+    oyConfigs_s * devices = oyGetMonitors_( &options );
+    int devices_n = oyConfigs_Count( devices );
+    oyConfig_s * monitor = oyConfigs_Get( devices, pos );
+    oyProfile_s* profile = NULL;
+    oyProfileTag_s * wtpt = NULL;
+    oyStructList_s * s = NULL;
+    int count, j;
+    oyDeviceGetProfile( monitor, options, &profile );
+    wtpt = oyProfile_GetTagById( profile, icSigMediaWhitePointTag ); 
+
+    s = oyProfileTag_Get( wtpt );
+    count = oyStructList_Count( s );
+    for(j = 0; j < count; ++j)
+    {
+      oyOption_s * opt = (oyOption_s*) oyStructList_GetType( s, j,
+                                                    oyOBJECT_OPTION_S );
+      if(opt && strstr( oyOption_GetRegistration( opt ), "icSigXYZType" ) != NULL)
+      {
+         double XYZ[3] = { oyOption_GetValueDouble( opt, 0 ),
+                           oyOption_GetValueDouble( opt, 1 ),
+                           oyOption_GetValueDouble( opt, 2 ) },
+                Lab[3];
+         oyXYZ2Lab( XYZ, Lab );
+         *cie_a = Lab[1]/256.0 + 0.5;
+         *cie_b = Lab[2]/256.0 + 0.5;
+         error = 0;
+      }
+    }
+
+    oyConfig_Release( &monitor );
+    oyOptions_Release( &options );
+    oyConfigs_Release( &devices );
+    oyProfile_Release( &profile );
+    oyProfileTag_Release( &wtpt );
+    oyStructList_Release( &s );
+  }
+
+  return error;
+}
+
 /** @} *//* default_profiles */
 
 /** @} *//* defaults_apis */

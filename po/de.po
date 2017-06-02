@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2017-06-01 16:37+0200\n"
+"POT-Creation-Date: 2017-06-02 09:25+0200\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -2562,7 +2562,7 @@ msgstr ""
 msgid "Option \"filename\", a valid filename of a existing image"
 msgstr "Option \"filename\", ein gültiger Dateiname eines existierenden Bildes"
 
-#: liboyranos_config/oyranos.c:125 liboyranos_config/oyranos.c:155
+#: liboyranos_config/oyranos.c:127 liboyranos_config/oyranos.c:157
 msgid "Option not supported type:"
 msgstr "Option nicht unterstützten Typs:"
 
@@ -4952,7 +4952,7 @@ msgstr "plaudernd"
 msgid "w - fit to window width"
 msgstr "w - Passe Bildbreite in Fenster ein"
 
-#: liboyranos_config/oyranos.c:524
+#: liboyranos_config/oyranos.c:525
 msgid "will overwrite policy file"
 msgstr "werde Richtliniendatei überschreiben"
 
@@ -4994,7 +4994,7 @@ msgstr "schreibe nach Datei"
 msgid "wrong argument to option:"
 msgstr "Falsches Argument für Option:"
 
-#: liboyranos_config/oyranos.c:91
+#: liboyranos_config/oyranos.c:93
 msgid "wrong profile for static web color space selected, need sRGB"
 msgstr "Falsches Profil für statischen WWW Farbraum, benötige sRGB"
 
