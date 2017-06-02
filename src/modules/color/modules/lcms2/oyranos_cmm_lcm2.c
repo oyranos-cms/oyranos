@@ -47,17 +47,17 @@
 #endif
 
 /*
-oyCMM_s   lcm2_cmm_module;
-oyCMMapi4_s     l2cms_api4_cmm;
-oyCMMui_s         l2cms_api4_ui;
-oyCMMapi7_s     l2cms_api7_cmm;
+oyCMM_s               lcm2_cmm_module;
+oyCMMapi4_s           l2cms_api4_cmm;
+oyCMMui_s             l2cms_api4_ui;
+oyCMMapi7_s           l2cms_api7_cmm;
 oyConnectorImaging_s* l2cms_cmmIccSocket_connectors[2];
-oyConnectorImaging_s    l2cms_cmmIccSocket_connector;
+oyConnectorImaging_s  l2cms_cmmIccSocket_connector;
 oyConnectorImaging_s* l2cms_cmmIccPlug_connectors[2];
-oyConnectorImaging_s    l2cms_cmmIccPlug_connector;
-oyCMMapi6_s     l2cms_api6_cmm;
-oyCMMapi10_s    l2cms_api10_cmm;
-oyCMMapi10_s    l2cms_api10_cmm2;
+oyConnectorImaging_s  l2cms_cmmIccPlug_connector;
+oyCMMapi6_s           l2cms_api6_cmm;
+oyCMMapi10_s          l2cms_api10_cmm;
+oyCMMapi10_s          l2cms_api10_cmm2;
 */
 
 void* oyAllocateFunc_           (size_t        size);
