@@ -202,10 +202,30 @@
 #define OY_DEFAULT_PROOF_HARD          OY_BEHAVIOUR_STD OY_SLASH "proof_hard"
 /** key name for effect profile by default */
 #define OY_DEFAULT_EFFECT              OY_BEHAVIOUR_STD OY_SLASH "effect_switch"
-/** key name for common display white point
+/** key name for common display white point mode
+ *
+ *  - 0: automatic - use target values from ::OY_DEFAULT_DISPLAY_WHITE_POINT_A and ::OY_DEFAULT_DISPLAY_WHITE_POINT_B
+ *  - 1: no white point adjustments (old behaviour)
+ *  - 2: D50
+ *  - 3: D55
+ *  - 4: D65
+ *  - 5: D75
+ *  - 6: D93
+ *  - 7: first monitors actual media white point as target for all other monitors
+ *  - 8: second monitors actual media white point as target for all other monitors
+ *  - ...
+ *
  *  @since 0.9.7
  */
 #define OY_DEFAULT_DISPLAY_WHITE_POINT OY_BEHAVIOUR_STD OY_SLASH "display_white_point"
+/** key name for common display white point CIE*ab target, the CIE*a component in 0.0 - 1.0 range
+ *  @since 0.9.7
+ */
+#define OY_DEFAULT_DISPLAY_WHITE_POINT_A OY_STD OY_SLASH "device" OY_SLASH "display_white_point_a"
+/** key name for common display white point CIE*ab target, the CIE*b component in 0.0 - 1.0 range
+ *  @since 0.9.7
+ */
+#define OY_DEFAULT_DISPLAY_WHITE_POINT_B OY_STD OY_SLASH "device" OY_SLASH "display_white_point_b"
 
 /** key name for context CMM
  *  @since 0.9.6
