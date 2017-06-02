@@ -1262,6 +1262,20 @@ char **            oyGetCMMs         ( oyCMM_e             type,
 /** @} *//* cmm_handling */
 /** @} *//* defaults_apis */
 
+oyConfigs_s *      oyGetMonitors_    ( oyOptions_s      ** options )
+{
+  oyConfigs_s * devices = NULL;
+  /* get XCM_ICC_COLOR_SERVER_TARGET_PROFILE_IN_X_BASE */
+  oyOptions_SetFromText( options,
+              "//"OY_TYPE_STD"/config/icc_profile.x_color_region_target",
+              "yes", OY_CREATE_NEW );
+  oyOptions_SetFromText( options, "//" OY_TYPE_STD "/config/command",
+                                  "properties", OY_CREATE_NEW );
+  oyDevicesGet( 0, "monitor._native", *options, &devices );
+
+  return devices;
+}
+
 char **      oyOptionChoicesGetWtPt_ ( int               * choices )
 {
   const oyOption_t_ *t = oyOptionGet_(oyWIDGET_DISPLAY_WHITE_POINT);
@@ -1270,19 +1284,10 @@ char **      oyOptionChoicesGetWtPt_ ( int               * choices )
   int choice_list_n = 1+1+5,
       i;
   char ** list;
-  int devices_n;
-  oyConfigs_s * devices = NULL;
-  oyOptions_s * options = 0;
 
-  /* get XCM_ICC_COLOR_SERVER_TARGET_PROFILE_IN_X_BASE */
-  oyOptions_SetFromText( &options,
-              "//"OY_TYPE_STD"/config/icc_profile.x_color_region_target",
-              "yes", OY_CREATE_NEW );
-  oyOptions_SetFromText( &options,
-                                 "//" OY_TYPE_STD "/config/command",
-                                 "properties", OY_CREATE_NEW );
-  oyDevicesGet( 0, "monitor._native", options, &devices );
-  devices_n = oyConfigs_Count( devices );
+  oyOptions_s * options = 0;
+  oyConfigs_s * devices = oyGetMonitors_( &options );
+  int devices_n = oyConfigs_Count( devices );
 
   choice_list_n = 1+1+5;
   list = (char**) calloc( sizeof(char*), choice_list_n + devices_n + 1 );

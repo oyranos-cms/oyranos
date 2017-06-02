@@ -137,6 +137,8 @@ char **     oyLibPathsGet_           ( int             * count,
                                        int               owner,
                                        oyAlloc_f         allocateFunc );
 
+#include "oyConfigs_s.h"
+oyConfigs_s *      oyGetMonitors_    ( oyOptions_s      ** options );
 
 
 
