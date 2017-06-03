@@ -3431,10 +3431,6 @@ oyProfile_s *      l2cmsCreateICCMatrixProfile (
                                        float wx, float wy,
                                        int icc_profile_flags )
 {
-  cmsCIExyYTRIPLE p;
-  cmsToneCurve * g[3] = {0,0,0};
-  /* 0.31271, 0.32902 D65 */
-  cmsCIExyY wtpt_xyY;
   cmsHPROFILE lp = 0;
   cmsUInt32Number size = 0;
   char * data = 0;
@@ -3442,23 +3438,7 @@ oyProfile_s *      l2cmsCreateICCMatrixProfile (
   int error = 0;
   oyProfile_s * prof = 0;
 
-  p.Red.x = rx; 
-  p.Red.y = ry;
-  p.Red.Y = 1.0;
-  p.Green.x = gx;
-  p.Green.y = gy;
-  p.Green.Y = 1.0;
-  p.Blue.x = bx;
-  p.Blue.y = by;
-  p.Blue.Y = 1.0;
-  wtpt_xyY.x = wx;
-  wtpt_xyY.y = wy;
-  wtpt_xyY.Y = 1.0;
-  g[0] = g[1] = g[2] = l2cmsBuildGamma(0, (double)gamma);
-  l2cms_msg( oyMSG_DBG,0, OY_DBG_FORMAT_
-             " red: %g %g %g green: %g %g %g blue: %g %g %g white: %g %g gamma: %g",
-             OY_DBG_ARGS_, rx,ry,p.Red.Y, gx,gy,p.Green.Y,bx,by,p.Blue.Y,wx,wy,gamma );
-  lp = l2cmsCreateRGBProfile( &wtpt_xyY, &p, g);
+  lp = lcm2CreateICCMatrixProfile2( gamma, rx,ry, gx,gy, bx,by, wx,wy );
 
   if(icc_profile_flags & OY_ICC_VERSION_2)
     l2cmsSetProfileVersion(lp, 2.4);
@@ -3466,12 +3446,11 @@ oyProfile_s *      l2cmsCreateICCMatrixProfile (
   l2cmsSaveProfileToMem( lp, 0, &size );
   if(!size)
     l2cms_msg( oyMSG_WARN,0, OY_DBG_FORMAT_
-             "l2cmsSaveProfileToMem failed for: red: %g %g %g green: %g %g %g blue: %g %g %g white: %g %g gamma: %g",
-             OY_DBG_ARGS_, rx,ry,p.Red.Y, gx,gy,p.Green.Y,bx,by,p.Blue.Y,wx,wy,gamma );
+             "l2cmsSaveProfileToMem failed for: red: %g %g green: %g %g blue: %g %g white: %g %g gamma: %g",
+             OY_DBG_ARGS_, rx,ry, gx,gy, bx,by, wx,wy, gamma );
   data = oyAllocateFunc_( size );
   l2cmsSaveProfileToMem( lp, data, &size );
   l2cmsCloseProfile( lp );
-  l2cmsFreeToneCurve( g[0] );
 
   prof = oyProfile_FromMem( size, data, 0,0 );
 
