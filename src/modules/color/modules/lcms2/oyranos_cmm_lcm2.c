@@ -206,14 +206,25 @@ static void (*l2cmsSetLogErrorHandlerTHR)(     cmsContext ContextID,
 static cmsColorSpaceSignature (*l2cmsGetColorSpace)(cmsHPROFILE hProfile) = NULL;
 static cmsColorSpaceSignature (*l2cmsGetPCS)(cmsHPROFILE hProfile) = NULL;
 static cmsProfileClassSignature (*l2cmsGetDeviceClass)(cmsHPROFILE hProfile) = NULL;
+static cmsUInt32Number (*l2cmsGetProfileInfoASCII)(cmsHPROFILE hProfile, cmsInfoType Info,
+                                                            const char LanguageCode[3], const char CountryCode[3],
+                                                            char* Buffer, cmsUInt32Number BufferSize) = NULL;
 static int (*l2_cmsLCMScolorSpace)(cmsColorSpaceSignature ProfileSpace) = NULL;
 static cmsUInt32Number (*l2cmsChannelsOf)(cmsColorSpaceSignature ColorSpace) = NULL;
+static cmsBool         (*l2cmsIsTag)(cmsHPROFILE hProfile, cmsTagSignature sig) = NULL;
 static cmsHTRANSFORM (*l2cmsCreateTransform)(cmsHPROFILE Input,
                                                cmsUInt32Number InputFormat,
                                                cmsHPROFILE Output,
                                                cmsUInt32Number OutputFormat,
                                                cmsUInt32Number Intent,
                                                cmsUInt32Number dwFlags) = NULL;
+static cmsHTRANSFORM   (*l2cmsCreateTransformTHR)(cmsContext ContextID,
+                                                  cmsHPROFILE Input,
+                                                  cmsUInt32Number InputFormat,
+                                                  cmsHPROFILE Output,
+                                                  cmsUInt32Number OutputFormat,
+                                                  cmsUInt32Number Intent,
+                                                  cmsUInt32Number dwFlags) = NULL;
 static cmsHTRANSFORM (*l2cmsCreateProofingTransform)(cmsHPROFILE Input,
                                                cmsUInt32Number InputFormat,
                                                cmsHPROFILE Output,
@@ -255,12 +266,16 @@ static void (*l2cmsDoTransform)(cmsHTRANSFORM Transform,
 static cmsHPROFILE (*l2cmsTransform2DeviceLink)(cmsHTRANSFORM hTransform, cmsFloat64Number Version, cmsUInt32Number dwFlags) = NULL;
 static cmsBool (*l2cmsSaveProfileToMem)(cmsHPROFILE hProfile, void *MemPtr, 
                                                                 cmsUInt32Number* BytesNeeded) = NULL;
+static cmsHPROFILE (*l2cmsOpenProfileFromFile)(const char *ICCProfile, const char *sAccess) = NULL;
 static cmsHPROFILE (*l2cmsOpenProfileFromMemTHR)(cmsContext ContextID, const void * MemPtr, cmsUInt32Number dwSize) = NULL;
 static cmsHPROFILE (*l2cmsOpenProfileFromFileTHR)(cmsContext ContextID, const char *ICCProfile, const char *sAccess) = NULL;
+static cmsBool     (*l2cmsSaveProfileToFile)(cmsHPROFILE hProfile, const char* FileName) = NULL;
 static cmsBool (*l2cmsCloseProfile)(cmsHPROFILE hProfile) = NULL;
 static cmsHPROFILE (*l2cmsCreateProfilePlaceholder)(cmsContext ContextID) = NULL;
 static cmsHPROFILE (*l2cmsCreateLab4ProfileTHR)(cmsContext ContextID, const cmsCIExyY* WhitePoint) = NULL;
 static cmsHPROFILE (*l2cmsCreateLab4Profile)(const cmsCIExyY* WhitePoint) = NULL;
+static cmsHPROFILE (*l2cmsCreateXYZProfile)() = NULL;
+static cmsHPROFILE (*l2cmsCreate_sRGBProfile)() = NULL;
 static void (*l2cmsSetProfileVersion)(cmsHPROFILE hProfile, cmsFloat64Number Version) = NULL;
 static void (*l2cmsSetDeviceClass)(cmsHPROFILE hProfile, cmsProfileClassSignature sig) = NULL;
 static void (*l2cmsSetColorSpace)(cmsHPROFILE hProfile, cmsColorSpaceSignature sig) = NULL;
@@ -282,12 +297,23 @@ static cmsStage*(*l2cmsStageAllocCLutFloat)(cmsContext ContextID, cmsUInt32Numbe
 static cmsBool (*l2cmsStageSampleCLut16bit)(cmsStage* mpe,    cmsSAMPLER16 Sampler, void* Cargo, cmsUInt32Number dwFlags) = NULL;
 static cmsBool (*l2cmsStageSampleCLutFloat)(cmsStage* mpe, cmsSAMPLERFLOAT Sampler, void* Cargo, cmsUInt32Number dwFlags) = NULL;
 static cmsStage*(*l2cmsStageAllocToneCurves)(cmsContext ContextID, cmsUInt32Number nChannels, cmsToneCurve* const Curves[]) = NULL;
+static void*   (*l2cmsReadTag)(cmsHPROFILE hProfile, cmsTagSignature sig) = NULL;
 static cmsBool (*l2cmsWriteTag)(cmsHPROFILE hProfile, cmsTagSignature sig, const void* data) = NULL;
 static cmsMLU*(*l2cmsMLUalloc)(cmsContext ContextID, cmsUInt32Number nItems) = NULL;
 static cmsBool (*l2cmsMLUsetASCII)(cmsMLU* mlu,
                                                   const char LanguageCode[3], const char CountryCode[3],
                                                   const char* ASCIIString) = NULL;
+static cmsBool                 (*l2cmsMLUsetWide)(cmsMLU* mlu,
+                                                  const char LanguageCode[3], const char CountryCode[3],
+                                                  const wchar_t* WideString) = NULL;
 static void (*l2cmsMLUfree)(cmsMLU* mlu) = NULL;
+static cmsHANDLE      (*l2cmsDictAlloc)(cmsContext ContextID);
+static void           (*l2cmsDictFree)(cmsHANDLE hDict);
+static cmsHANDLE      (*l2cmsDictDup)(cmsHANDLE hDict);
+
+static cmsBool        (*l2cmsDictAddEntry)(cmsHANDLE hDict, const wchar_t* Name, const wchar_t* Value, const cmsMLU *DisplayName, const cmsMLU *DisplayValue);
+static const cmsDICTentry* (*l2cmsDictGetEntryList)(cmsHANDLE hDict);
+static const cmsDICTentry* (*l2cmsDictNextEntry)(const cmsDICTentry* e);
 static cmsHPROFILE (*l2cmsCreateRGBProfile)(const cmsCIExyY* WhitePoint,
                                         const cmsCIExyYTRIPLE* Primaries,
                                         cmsToneCurve* const TransferFunction[3]) = NULL;
@@ -295,6 +321,9 @@ static void (*l2cmsLabEncoded2Float)(cmsCIELab* Lab, const cmsUInt16Number wLab[
 static void (*l2cmsFloat2LabEncoded)(cmsUInt16Number wLab[3], const cmsCIELab* Lab) = NULL;
 static const cmsCIEXYZ*  (*l2cmsD50_XYZ)(void);
 static const cmsCIExyY*  (*l2cmsD50_xyY)(void);
+static cmsBool           (*l2cmsWhitePointFromTemp)(cmsCIExyY* WhitePoint, cmsFloat64Number  TempK) = NULL;
+static void              (*l2cmsxyY2XYZ)(cmsCIEXYZ* Dest, const cmsCIExyY* Source) = NULL;
+static void              (*l2cmsXYZ2Lab)(const cmsCIEXYZ* WhitePoint, cmsCIELab* Lab, const cmsCIEXYZ* xyz) = NULL;
 static cmsFloat64Number (*l2cmsDeltaE)(const cmsCIELab* Lab1, const cmsCIELab* Lab2) = NULL;
 static void (*l2cmsGetAlarmCodes)(cmsUInt16Number NewAlarm[cmsMAXCHANNELS]) = NULL;
 static cmsContext (*l2cmsCreateContext)(void* Plugin, void* UserData) = NULL;
@@ -380,15 +409,20 @@ int                l2cmsCMMInit       ( oyStruct_s        * filter )
       LOAD_FUNC( cmsGetColorSpace, NULL );
       LOAD_FUNC( cmsGetPCS, NULL );
       LOAD_FUNC( cmsGetDeviceClass, NULL );
+      LOAD_FUNC( cmsGetProfileInfoASCII, NULL );
       LOAD_FUNC( _cmsLCMScolorSpace, NULL );
       LOAD_FUNC( cmsChannelsOf, NULL );
+      LOAD_FUNC( cmsIsTag, NULL );
       LOAD_FUNC( cmsCreateTransform, NULL );
+      LOAD_FUNC( cmsCreateTransformTHR, NULL );
       LOAD_FUNC( cmsCreateProofingTransform, NULL );
       LOAD_FUNC( cmsCreateProofingTransformTHR, NULL );
       LOAD_FUNC( cmsCreateMultiprofileTransform, NULL );
       LOAD_FUNC( cmsCreateExtendedTransform, NULL );
       LOAD_FUNC( cmsDeleteTransform, NULL );
       LOAD_FUNC( cmsDoTransform, NULL );
+      LOAD_FUNC( cmsOpenProfileFromFile, NULL );
+      LOAD_FUNC( cmsSaveProfileToFile, NULL );
       LOAD_FUNC( cmsTransform2DeviceLink, NULL );
       LOAD_FUNC( cmsSaveProfileToMem, NULL );
       LOAD_FUNC( cmsOpenProfileFromMemTHR, NULL );
@@ -400,6 +434,8 @@ int                l2cmsCMMInit       ( oyStruct_s        * filter )
       LOAD_FUNC( cmsSetProfileVersion, NULL );
       LOAD_FUNC( cmsCreateLab4ProfileTHR, NULL );
       LOAD_FUNC( cmsCreateLab4Profile, NULL );
+      LOAD_FUNC( cmsCreateXYZProfile, NULL );
+      LOAD_FUNC( cmsCreate_sRGBProfile, NULL );
       LOAD_FUNC( cmsCreateRGBProfile, NULL );
       LOAD_FUNC( cmsSetDeviceClass, NULL );
       LOAD_FUNC( cmsSetColorSpace, NULL );
@@ -421,14 +457,25 @@ int                l2cmsCMMInit       ( oyStruct_s        * filter )
       LOAD_FUNC( cmsStageSampleCLut16bit, NULL );
       LOAD_FUNC( cmsStageSampleCLutFloat, NULL );
       LOAD_FUNC( cmsStageAllocToneCurves, NULL );
+      LOAD_FUNC( cmsReadTag, NULL );
       LOAD_FUNC( cmsWriteTag, NULL );
       LOAD_FUNC( cmsMLUalloc, NULL );
       LOAD_FUNC( cmsMLUsetASCII, NULL );
+      LOAD_FUNC( cmsMLUsetWide, NULL );
       LOAD_FUNC( cmsMLUfree, NULL );
+      LOAD_FUNC( cmsDictAlloc, NULL );
+      LOAD_FUNC( cmsDictFree, NULL );
+      LOAD_FUNC( cmsDictDup, NULL );
+      LOAD_FUNC( cmsDictAddEntry, NULL );
+      LOAD_FUNC( cmsDictGetEntryList, NULL );
+      LOAD_FUNC( cmsDictNextEntry, NULL );
       LOAD_FUNC( cmsLabEncoded2Float, NULL );
       LOAD_FUNC( cmsFloat2LabEncoded, NULL );
       LOAD_FUNC( cmsD50_XYZ, NULL );
       LOAD_FUNC( cmsD50_xyY, NULL );
+      LOAD_FUNC( cmsWhitePointFromTemp, NULL );
+      LOAD_FUNC( cmsxyY2XYZ, NULL );
+      LOAD_FUNC( cmsXYZ2Lab, NULL );
       LOAD_FUNC( cmsDeltaE, NULL );
       LOAD_FUNC( cmsGetAlarmCodes, NULL );
 #if LCMS_VERSION >= 2060
@@ -471,7 +518,52 @@ int                l2cmsCMMInit       ( oyStruct_s        * filter )
   return error;
 }
 
+#define cmsDoTransform l2cmsDoTransform
+#define cmsOpenProfileFromFile l2cmsOpenProfileFromFile
+#define cmsSaveProfileToFile l2cmsSaveProfileToFile
+#define cmsBuildGamma l2cmsBuildGamma
+#define cmsFreeToneCurve l2cmsFreeToneCurve
+#define cmsPipelineAlloc l2cmsPipelineAlloc
+#define cmsCreateTransformTHR l2cmsCreateTransformTHR
+#define cmsChannelsOf l2cmsChannelsOf
+#define cmsGetColorSpace l2cmsGetColorSpace
+#define cmsStageAllocCLut16bit l2cmsStageAllocCLut16bit
+#define cmsStageSampleCLut16bit l2cmsStageSampleCLut16bit
+#define cmsStageAllocCLutFloat l2cmsStageAllocCLutFloat
+#define cmsStageSampleCLutFloat l2cmsStageSampleCLutFloat
+#define cmsPipelineInsertStage l2cmsPipelineInsertStage
+#define cmsStageAllocToneCurves l2cmsStageAllocToneCurves
+#define cmsWriteTag l2cmsWriteTag
+#define cmsCloseProfile l2cmsCloseProfile
+#define cmsDeleteTransform l2cmsDeleteTransform
+#define cmsPipelineFree l2cmsPipelineFree
+#define cmsIsTag l2cmsIsTag
+#define cmsGetProfileInfoASCII l2cmsGetProfileInfoASCII
+#define cmsReadTag l2cmsReadTag
+#define cmsWhitePointFromTemp l2cmsWhitePointFromTemp
+#define cmsxyY2XYZ l2cmsxyY2XYZ
+#define cmsXYZ2Lab l2cmsXYZ2Lab
+#define cmsBuildParametricToneCurve l2cmsBuildParametricToneCurve
+#define cmsD50_XYZ l2cmsD50_XYZ
+#define cmsCreateProfilePlaceholder l2cmsCreateProfilePlaceholder
+#define cmsSetProfileVersion l2cmsSetProfileVersion
+#define cmsSetDeviceClass l2cmsSetDeviceClass
+#define cmsSetColorSpace l2cmsSetColorSpace
+#define cmsSetPCS l2cmsSetPCS
+#define cmsMLUalloc l2cmsMLUalloc
+#define cmsMLUsetASCII l2cmsMLUsetASCII
+#define cmsMLUsetWide l2cmsMLUsetWide
+#define cmsMLUfree l2cmsMLUfree
+#define cmsCreateContext l2cmsCreateContext
+#define cmsDictAlloc l2cmsDictAlloc
+#define cmsDictFree l2cmsDictFree
+#define cmsDictDup l2cmsDictDup
+#define cmsDictAddEntry l2cmsDictAddEntry
+#define cmsDictGetEntryList l2cmsDictGetEntryList
+#define cmsDictNextEntry l2cmsDictNextEntry
+#define cmsCreateRGBProfile l2cmsCreateRGBProfile
 
+#include "lcm2_profiler.c"
 
 /** Function l2cmsCMMProfile_GetWrap_
  *  @brief   convert to l2cms profile wrapper struct
