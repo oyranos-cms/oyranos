@@ -23,6 +23,11 @@
 #include <iconv.h>
 #include <wchar.h>
 
+#if LCMS_VERSION < 2050
+/* 'dscm' */
+#define cmsSigProfileDescriptionMLTag 0x6473636d
+#endif
+
 extern lcm2Message_f lcm2msg_p;
 
 static const int max_channels = 16;
