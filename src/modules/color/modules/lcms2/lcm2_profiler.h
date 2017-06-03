@@ -153,6 +153,9 @@ void         lcm2SamplerReddish      ( const double        i[],
 void         lcm2SamplerWhitePoint   ( const double        i[],
                                        double              o[],
                                        void              * data );
+void         lcm2SamplerProof        ( const double        i[],
+                                             double        o[],
+                                       void              * data );
 
 
 
