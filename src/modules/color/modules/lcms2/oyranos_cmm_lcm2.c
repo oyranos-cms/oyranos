@@ -1717,36 +1717,19 @@ cmsHPROFILE  l2cmsGamutCheckAbstract  ( oyProfile_s       * proof,
                                        int                 intent_proof,
                                        uint32_t            icc_profile_flags )
 {
-  cmsUInt16Number OldAlarm[cmsMAXCHANNELS];
+      int error = 0;
 #if LCMS_VERSION >= 2060
       cmsContext tc = l2cmsCreateContext( NULL, NULL ); /* threading context */
       l2cmsSetLogErrorHandlerTHR( tc, l2cmsErrorHandlerFunction );
 #else
       void * tc = NULL;
 #endif
-      cmsUInt32Number size = 0;
-      char * data = 0;
       cmsHPROFILE gmt = 0,
                   hLab = 0,
                   hproof = 0;
-      cmsHTRANSFORM tr = 0, tr16 = 0;
-      cmsStage * gmt_lut = 0,
-               * gmt_lut16 = 0;
-      cmsPipeline * gmt_pl = l2cmsPipelineAlloc( 0,3,3 ),
-                  * gmt_pl16 = l2cmsPipelineAlloc( 0,3,3 );
-      cmsToneCurve * t[3] = {0,0,0},
-                   * g[3] = {0,0,0};
+      cmsHTRANSFORM tr = 0;
 
-      cmsHTRANSFORM
-#ifdef ENABLE_MPE
-                   ptr[2] = {0,0},
-#endif /* ENABLE_MPE */
-                 ptr16[2] = {0,0};
-      int r = 0, i, done = 0, done_16 = 0;
-      cmsMLU * mlu[2] = {0,0};
-#ifdef ENABLE_MPE
-      cmsFloat64Number params[4] = {0.0, 0.0, 0.0, 0.0};
-#endif /* ENABLE_MPE */
+      cmsHTRANSFORM ptr[2] = {0,0};
 
       l2cms_msg( oyMSG_DBG, (oyStruct_s*)proof, OY_DBG_FORMAT_
                 "softproofing %d gamutcheck %d intent %d intent_proof %d", OY_DBG_ARGS_,
@@ -1770,24 +1753,9 @@ cmsHPROFILE  l2cmsGamutCheckAbstract  ( oyProfile_s       * proof,
       if(!hLab || !hproof)
       { l2cms_msg( oyMSG_ERROR, (oyStruct_s*)proof, OY_DBG_FORMAT_
                  "hLab or hproof failed", OY_DBG_ARGS_);
-                 goto clean; }
+                 goto clean;
+      }
 
-#if LCMS_VERSION >= 2060 && defined(USE_OPENMP)
-#pragma omp parallel for private(i)
-#endif
-  for(i = 0; i < 2; ++i)
-  {
-    if(i)
-    {
-      /* disable float mpe as the tag appears buggy in Oyranos or lcms */
-#ifdef ENABLE_MPE
-#if LCMS_VERSION >= 2060
-      cmsContext tc = l2cmsCreateContext( NULL, NULL ); /* threading context */
-      l2cmsSetLogErrorHandlerTHR( tc, l2cmsErrorHandlerFunction );
-#else
-      void * tc = NULL;
-#endif
-      int error = 0;
       tr = l2cmsCreateProofingTransformTHR (  tc,
                                                hLab, TYPE_Lab_FLT,
                                                hLab, TYPE_Lab_FLT,
@@ -1806,167 +1774,56 @@ cmsHPROFILE  l2cmsGamutCheckAbstract  ( oyProfile_s       * proof,
       ptr[1] = flags & cmsFLAGS_GAMUTCHECK ? (oyPointer)1 : 0;
       if(!error)
       {
-        gmt_lut = l2cmsStageAllocCLutFloat( tc,l2cmsPROOF_LUT_GRID_RASTER, 3,3, 0);
-        r = l2cmsStageSampleCLutFloat( gmt_lut, gamutCheckSamplerFloat, ptr, 0 );
-        if(!r) { l2cms_msg( oyMSG_ERROR, (oyStruct_s*)proof, OY_DBG_FORMAT_
-                          "cmsStageSampleCLutFloat() failed", OY_DBG_ARGS_);
-                 error = 1; }
+        const char * proof_meta[] = {
+        "EFFECT_,CMF_",
+        "EFFECT_class", "proof,saturation,contrast,atom",
+        "EFFECT_saturation", "yes,reduce",
+        "EFFECT_lightness", "no",
+        "EFFECT_contrast", "yes,reduce",
+        "CMF_binary", "lcm2profile",
+        "CMF_version", "0.9.7",
+        "CMF_product", "Oyranos",
+        0,0
+        };
+        const char * desc = oyProfile_GetText( proof, oyNAME_DESCRIPTION );
+        lcm2CreateAbstractProfile (
+                             lcm2SamplerProof, ptr,
+                             "*lab", // CIE*Lab
+                             l2cmsPROOF_LUT_GRID_RASTER,
+                             icc_profile_flags & OY_ICC_VERSION_2 ? 2.4 : 4.2,
+                             "proofing",
+                             NULL,
+                             "proofing",
+                             "",
+                             "",
+                             ICC_2011_LICENSE,
+                             desc,
+                             "http://www.oyranos.org",
+                             proof_meta,
+                             &gmt
+                           );
+
       }
-      done = 1;
-#endif /* ENABLE_MPE */
 
-    } else
-    {
-#if LCMS_VERSION >= 2060
-      cmsContext tc = l2cmsCreateContext( NULL, NULL ); /* threading context */
-      l2cmsSetLogErrorHandlerTHR( tc, l2cmsErrorHandlerFunction );
-#else
-      void * tc = NULL;
-#endif
-      int error = 0;
-      tr16 = l2cmsCreateProofingTransformTHR( tc,
-                                               hLab, TYPE_Lab_16,
-                                               hLab, TYPE_Lab_16,
-                                               hproof,
-                                               intent,
-            /* TODO The INTENT_ABSOLUTE_COLORIMETRIC should lead to 
-               paper simulation, but does take white point into account.
-               Do we want this?
-             */
-                                               intent_proof,
-                                               flags | cmsFLAGS_KEEP_SEQUENCE);
-      if(!tr16) { l2cms_msg( oyMSG_ERROR, (oyStruct_s*)proof, OY_DBG_FORMAT_
-                          "cmsCreateProofingTransform() failed", OY_DBG_ARGS_);
-                  error = 1; }
-      ptr16[0] = tr16;
-      ptr16[1] = flags & cmsFLAGS_GAMUTCHECK ? (oyPointer)1 : 0;
-
-      if(!error)
-      {
-        gmt_lut16 = l2cmsStageAllocCLut16bit( tc, l2cmsPROOF_LUT_GRID_RASTER,3,3,0);
-        r = l2cmsStageSampleCLut16bit( gmt_lut16, gamutCheckSampler16, ptr16, 0);
-        if(!r)   { l2cms_msg( oyMSG_ERROR, (oyStruct_s*)proof, OY_DBG_FORMAT_
-                          "cmsStageSampleCLut16bit() failed", OY_DBG_ARGS_);
-                   error = 1; }
-      }
-      done_16 = 1;
-    }
-  }
-
-      if(
-#ifdef ENABLE_MPE
-         /*!gmt_lut || !done || */
-#endif /* ENABLE_MPE */
-         !gmt_lut16 || !done_16)
+      if(!gmt)
       {
         l2cms_msg( oyMSG_WARN, (oyStruct_s*)proof, OY_DBG_FORMAT_ " "
-                 "failed to build: %s %s %s %s",
-                 OY_DBG_ARGS_, gmt_lut?"lut":"", gmt_lut16?"lut16":"",
-                 done?"done":"not ready", done_16?"done":"not ready" );
+                 "failed to build proof",
+                 OY_DBG_ARGS_ );
         goto clean;
       }
-
-      gmt = l2cmsCreateProfilePlaceholder( tc ); if(!gmt) goto clean;
-      if(icc_profile_flags & OY_ICC_VERSION_2)
-        l2cmsSetProfileVersion( gmt, 2.4 );
-      else
-        l2cmsSetProfileVersion( gmt, 4.2 );
-      l2cmsSetDeviceClass( gmt, icSigAbstractClass );
-      l2cmsSetColorSpace( gmt, icSigLabData );
-      l2cmsSetPCS( gmt, icSigLabData );
-#define E if(!r) { l2cms_msg( oyMSG_ERROR, (oyStruct_s*)proof, \
-                   OY_DBG_FORMAT_ "could not write tag", OY_DBG_ARGS_); \
-                   if(gmt) l2cmsCloseProfile( gmt ); gmt = 0; \
-                   goto clean; }
-      mlu[0] = l2cmsMLUalloc(tc,1);
-      mlu[1] = l2cmsMLUalloc(tc,1);
-      r = l2cmsMLUsetASCII(mlu[0], "EN", "us", "proofing"); E
-      r = l2cmsWriteTag( gmt, (cmsTagSignature)icSigProfileDescriptionTag, mlu[0] ); E
-      r = l2cmsMLUsetASCII(mlu[1], "EN", "us", "no copyright; use freely"); E
-      r = l2cmsWriteTag( gmt, (cmsTagSignature)icSigCopyrightTag, mlu[1]); E
-      r = l2cmsWriteTag( gmt, (cmsTagSignature)icSigMediaWhitePointTag, l2cmsD50_XYZ() ); E
-
-#if ENABLE_MPE
-      /* set parametric unbound curve, type 6: (aX + b) ^ y + c */
-#if 0
-      /* Initialize segmented curve
-         Segment 0: from minus infinite */
-      cmsCurveSegment seg[2];
-      size =  sizeof(seg);
-      memset( seg, 0, size );
-      seg[0].x0 = -1.0;
-      seg[0].x1 = 1.0;
-      seg[0].Type = 6;
-
-      seg[0].Params[0] = 1;
-      seg[0].Params[1] = 1;
-      seg[0].Params[2] = 0;
-      seg[0].Params[3] = 0;
-      seg[0].Params[4] = 0;
-
-      t[0] = t[1] = t[2] = l2cmsBuildSegmentedToneCurve(tc, 2, seg);
-#else
-      params[0] = 1.0; /* y - gamma */
-      params[1] = 1.0; /* a */
-      params[2] = 0.0; /* b */
-      params[3] = 0.0; /* c */
-
-      t[0] = t[1] = t[2] = l2cmsBuildParametricToneCurve(tc, 6, params);
-#endif
-      if(!t[0])
-      {
-        l2cms_msg( oyMSG_WARN, (oyStruct_s*)proof, OY_DBG_FORMAT_ " "
-                 "failure in cmsBuildSegmentedToneCurve,  used version:%d",
-                 OY_DBG_ARGS_, l2cmsGetEncodedCMMversion() );
-        goto clean;
-      }
-      /* float */
-      /* cmsPipeline owns the cmsStage memory */
-      l2cmsPipelineInsertStage( gmt_pl, cmsAT_BEGIN,
-                              l2cmsStageAllocToneCurves( tc, 3, t ) );
-      l2cmsPipelineInsertStage( gmt_pl, cmsAT_END, gmt_lut );
-      l2cmsPipelineInsertStage( gmt_pl, cmsAT_END,
-                              l2cmsStageAllocToneCurves( tc, 3, t ) );
-      r = l2cmsWriteTag( gmt, cmsSigDToB0Tag, gmt_pl ); E
-      if(oy_debug) printPipeline(gmt_pl);
-#endif /* ENABLE_MPE */
-
-      /* 16-bit int */
-      g[0] = g[1] = g[2] = l2cmsBuildGamma(tc, 1.0);
-      l2cmsPipelineInsertStage( gmt_pl16, cmsAT_BEGIN,
-                              l2cmsStageAllocToneCurves( tc, 3, g ) );
-      l2cmsPipelineInsertStage( gmt_pl16, cmsAT_END, gmt_lut16 );
-      l2cmsPipelineInsertStage( gmt_pl16, cmsAT_END,
-                              l2cmsStageAllocToneCurves( tc, 3, g ) );
-      r = l2cmsWriteTag( gmt, cmsSigAToB0Tag, gmt_pl16 ); E
-      if(oy_debug) printPipeline(gmt_pl16);
-#undef E
 
   if(oy_debug && getenv("OY_DEBUG_WRITE"))
   {
       char * t = 0; oyStringAddPrintf( &t, 0,0,
-      "%04d-%s-abstract-proof[%d].ppm", ++oy_debug_write_id,CMM_NICK,oyStruct_GetId((oyStruct_s*)proof));
-      l2cmsSaveProfileToMem( gmt, 0, &size );
-      data = oyAllocateFunc_( size );
-      l2cmsSaveProfileToMem( gmt, data, &size );
-      oyWriteMemToFile_( t, data, size );
-      if(data) oyFree_m_( data );
+      "%04d-%s-abstract-proof[%d]", ++oy_debug_write_id,CMM_NICK,oyStruct_GetId((oyStruct_s*)proof));
+      lcm2WriteProfileToFile( gmt, t, NULL,NULL );
       oyFree_m_(t);
   }
 
-  l2cmsGetAlarmCodes(OldAlarm);
-
   clean:
-
       if(hLab) { l2cmsCloseProfile( hLab ); hLab = 0; }
       if(tr) { l2cmsDeleteTransform( tr ); tr = 0; }
-      if(tr16) { l2cmsDeleteTransform( tr16 ); tr16 = 0; }
-      if(t[0]) l2cmsFreeToneCurve( t[0] );
-      if(g[0]) l2cmsFreeToneCurve( g[0] );
-      if(gmt_pl) l2cmsPipelineFree( gmt_pl );
-      if(gmt_pl16) l2cmsPipelineFree( gmt_pl16 );
-      if(mlu[0]) { l2cmsMLUfree( mlu[0] ); mlu[0] = 0; }
-      if(mlu[1]) { l2cmsMLUfree( mlu[1] ); mlu[1] = 0; }
 
   oyProfile_Release( &proof );
 
