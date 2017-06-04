@@ -55,9 +55,9 @@ oyConnectorImaging_s* l2cms_cmmIccSocket_connectors[2];
 oyConnectorImaging_s  l2cms_cmmIccSocket_connector;
 oyConnectorImaging_s* l2cms_cmmIccPlug_connectors[2];
 oyConnectorImaging_s  l2cms_cmmIccPlug_connector;
-oyCMMapi6_s           l2cms_api6_cmm;
-oyCMMapi10_s          l2cms_api10_cmm;
-oyCMMapi10_s          l2cms_api10_cmm2;
+oyCMMapi6_s           l2cms_api6_cmm;                    OY_LCM2_DATA_CONVERT_REGISTRATION
+oyCMMapi10_s          l2cms_api10_cmm;                   OY_LCM2_CREATE_ABSTRACT_PROOFING_REGISTRATION
+oyCMMapi10_s          l2cms_api10_cmm2;                  OY_LCM2_CREATE_MATRIX_REGISTRATION
 */
 
 void* oyAllocateFunc_           (size_t        size);
@@ -1696,207 +1696,6 @@ void printPipeline( cmsPipeline * lut )
    
 }
 
-/** Function l2cmsGamutCheckAbstract
- *  @brief   convert a proofing profile into a abstract one
- *
- *  Abstract profiles can easily be merged into a multi profile transform.
- *
- *  @param         proof               the proofing profile; owned by the
- *                                     function
- *  @param         flags               the gamut check and softproof flags
- *  @param         intent              rendering intent
- *  @param         intent_proof        proof rendering intent
- *
- *  @version Oyranos: 0.1.11
- *  @since   2009/11/04 (Oyranos: 0.1.10)
- *  @date    2010/08/14
- */
-cmsHPROFILE  l2cmsGamutCheckAbstract  ( oyProfile_s       * proof,
-                                       cmsUInt32Number     flags,
-                                       int                 intent,
-                                       int                 intent_proof,
-                                       uint32_t            icc_profile_flags )
-{
-      int error = 0;
-#if LCMS_VERSION >= 2060
-      cmsContext tc = l2cmsCreateContext( NULL, NULL ); /* threading context */
-      l2cmsSetLogErrorHandlerTHR( tc, l2cmsErrorHandlerFunction );
-#else
-      void * tc = NULL;
-#endif
-      cmsHPROFILE gmt = 0,
-                  hLab = 0,
-                  hproof = 0;
-      cmsHTRANSFORM tr = 0;
-
-      cmsHTRANSFORM ptr[2] = {0,0};
-
-      l2cms_msg( oyMSG_DBG, (oyStruct_s*)proof, OY_DBG_FORMAT_
-                "softproofing %d gamutcheck %d intent %d intent_proof %d", OY_DBG_ARGS_,
-                flags & cmsFLAGS_SOFTPROOFING,
-                flags & cmsFLAGS_GAMUTCHECK,
-                intent, intent_proof );
-
-      if(!(flags & cmsFLAGS_GAMUTCHECK || flags & cmsFLAGS_SOFTPROOFING))
-        return gmt;
-
-      hLab  = l2cmsCreateLab4ProfileTHR(tc, l2cmsD50_xyY());
-#if LCMS_VERSION < 2060
-      hproof = l2cmsAddProfile( proof );
-#else
-      {
-        const char * fn = oyProfile_GetFileName( proof, -1 );
-        hproof = l2cmsOpenProfileFromFileTHR( tc, fn, "r" );
-      }
-#endif
-
-      if(!hLab || !hproof)
-      { l2cms_msg( oyMSG_ERROR, (oyStruct_s*)proof, OY_DBG_FORMAT_
-                 "hLab or hproof failed", OY_DBG_ARGS_);
-                 goto clean;
-      }
-
-      tr = l2cmsCreateProofingTransformTHR (  tc,
-                                               hLab, TYPE_Lab_FLT,
-                                               hLab, TYPE_Lab_FLT,
-                                               hproof,
-                                               intent,
-            /* TODO The INTENT_ABSOLUTE_COLORIMETRIC should lead to 
-               paper simulation, but does take white point into account.
-               Do we want this?
-             */
-                                               intent_proof,
-                                               flags | cmsFLAGS_KEEP_SEQUENCE);
-      if(!tr) { l2cms_msg( oyMSG_ERROR, (oyStruct_s*)proof, OY_DBG_FORMAT_
-                          "cmsCreateProofingTransform() failed", OY_DBG_ARGS_);
-                error = 1; }
-      ptr[0] = tr;
-      ptr[1] = flags & cmsFLAGS_GAMUTCHECK ? (oyPointer)1 : 0;
-      if(!error)
-      {
-        const char * proof_meta[] = {
-        "EFFECT_,CMF_",
-        "EFFECT_class", "proof,saturation,contrast,atom",
-        "EFFECT_saturation", "yes,reduce",
-        "EFFECT_lightness", "no",
-        "EFFECT_contrast", "yes,reduce",
-        "CMF_binary", "lcm2profile",
-        "CMF_version", "0.9.7",
-        "CMF_product", "Oyranos",
-        0,0
-        };
-        const char * desc = oyProfile_GetText( proof, oyNAME_DESCRIPTION );
-        lcm2CreateAbstractProfile (
-                             lcm2SamplerProof, ptr,
-                             "*lab", // CIE*Lab
-                             l2cmsPROOF_LUT_GRID_RASTER,
-                             icc_profile_flags & OY_ICC_VERSION_2 ? 2.4 : 4.2,
-                             "proofing",
-                             NULL,
-                             "proofing",
-                             "",
-                             "",
-                             ICC_2011_LICENSE,
-                             desc,
-                             "http://www.oyranos.org",
-                             proof_meta,
-                             &gmt
-                           );
-
-      }
-
-      if(!gmt)
-      {
-        l2cms_msg( oyMSG_WARN, (oyStruct_s*)proof, OY_DBG_FORMAT_ " "
-                 "failed to build proof",
-                 OY_DBG_ARGS_ );
-        goto clean;
-      }
-
-  if(oy_debug && getenv("OY_DEBUG_WRITE"))
-  {
-      char * t = 0; oyStringAddPrintf( &t, 0,0,
-      "%04d-%s-abstract-proof[%d]", ++oy_debug_write_id,CMM_NICK,oyStruct_GetId((oyStruct_s*)proof));
-      lcm2WriteProfileToFile( gmt, t, NULL,NULL );
-      oyFree_m_(t);
-  }
-
-  clean:
-      if(hLab) { l2cmsCloseProfile( hLab ); hLab = 0; }
-      if(tr) { l2cmsDeleteTransform( tr ); tr = 0; }
-
-  oyProfile_Release( &proof );
-
-  return gmt;
-}
-
-/**
- *  This function implements oyMOptions_Handle_f.
- *
- *  @version Oyranos: 0.3.0
- *  @since   2011/02/21 (Oyranos: 0.3.0)
- *  @date    2011/02/21
- */
-int          l2cmsMOptions_Handle2    ( oyOptions_s       * options,
-                                       const char        * command,
-                                       oyOptions_s      ** result )
-{
-  int error = 0;
-  oyProfile_s * prof = 0,
-              * p = 0;
-
-  if(oyFilterRegistrationMatch(command,"can_handle", 0))
-  {
-    if(oyFilterRegistrationMatch(command,"create_profile", 0))
-    {
-      p = (oyProfile_s*) oyOptions_GetType( options,-1, "proofing_profile",
-                                            oyOBJECT_PROFILE_S );
-      if(!p)
-      {
-        error = -1;
-      }
-
-      oyProfile_Release( &p );
-
-      return error;
-    }
-    else
-      return -1;
-  }
-  else if(oyFilterRegistrationMatch(command,"create_profile", 0))
-  {
-    int32_t icc_profile_flags = 0;
-    oyOptions_FindInt( options, "icc_profile_flags", 0, &icc_profile_flags ); 
-
-    p = (oyProfile_s*) oyOptions_GetType( options,-1, "proofing_profile",
-                                          oyOBJECT_PROFILE_S );
-    if(p)
-    {
-      int intent = l2cmsIntentFromOptions( options,0 ),
-      intent_proof = l2cmsIntentFromOptions( options,1 ),
-      flags = l2cmsFlagsFromOptions( options );
-      oyOption_s * o;
-
-      l2cmsProfileWrap_s * wrap = l2cmsAddProofProfile( p, flags | cmsFLAGS_SOFTPROOFING,
-                                            intent, intent_proof, icc_profile_flags );
-      oyProfile_Release( &p );
-
-      prof = oyProfile_FromMem( wrap->size, wrap->block, 0, 0 );
-
-      o = oyOption_FromRegistration( OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "icc_profile.create_profile.proofing_effect._" CMM_NICK,
-                        0 );
-      error = oyOption_MoveInStruct( o, (oyStruct_s**) &prof );
-      if(!*result)
-        *result = oyOptions_New(0);
-      oyOptions_MoveIn( *result, &o, -1 );
-    } else
-        l2cms_msg( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ " "
-                 "no option \"proofing_effect\" of type oyProfile_s found",
-                 OY_DBG_ARGS_ );
-  }
-
-  return 0;
-}
 
 oyProfiles_s * l2cmsProfilesFromOptions( oyFilterNode_s * node, oyFilterPlug_s * plug,
                                         oyOptions_s * node_options,
@@ -3271,6 +3070,289 @@ int l2cmsGetOptionsUI                 ( oyCMMapiFilter_s   * module,
   return 0;
 }
 
+
+/* OY_LCM2_CREATE_ABSTRACT_PROOFING_REGISTRATION -------------------------- */
+
+/** Function l2cmsGamutCheckAbstract
+ *  @brief   convert a proofing profile into a abstract one
+ *
+ *  Abstract profiles can easily be merged into a multi profile transform.
+ *
+ *  @param         proof               the proofing profile; owned by the
+ *                                     function
+ *  @param         flags               the gamut check and softproof flags
+ *  @param         intent              rendering intent
+ *  @param         intent_proof        proof rendering intent
+ *
+ *  @version Oyranos: 0.1.11
+ *  @since   2009/11/04 (Oyranos: 0.1.10)
+ *  @date    2010/08/14
+ */
+cmsHPROFILE  l2cmsGamutCheckAbstract  ( oyProfile_s       * proof,
+                                       cmsUInt32Number     flags,
+                                       int                 intent,
+                                       int                 intent_proof,
+                                       uint32_t            icc_profile_flags )
+{
+      int error = 0;
+#if LCMS_VERSION >= 2060
+      cmsContext tc = l2cmsCreateContext( NULL, NULL ); /* threading context */
+      l2cmsSetLogErrorHandlerTHR( tc, l2cmsErrorHandlerFunction );
+#else
+      void * tc = NULL;
+#endif
+      cmsHPROFILE gmt = 0,
+                  hLab = 0,
+                  hproof = 0;
+      cmsHTRANSFORM tr = 0;
+
+      cmsHTRANSFORM ptr[2] = {0,0};
+
+      l2cms_msg( oyMSG_DBG, (oyStruct_s*)proof, OY_DBG_FORMAT_
+                "softproofing %d gamutcheck %d intent %d intent_proof %d", OY_DBG_ARGS_,
+                flags & cmsFLAGS_SOFTPROOFING,
+                flags & cmsFLAGS_GAMUTCHECK,
+                intent, intent_proof );
+
+      if(!(flags & cmsFLAGS_GAMUTCHECK || flags & cmsFLAGS_SOFTPROOFING))
+        return gmt;
+
+      hLab  = l2cmsCreateLab4ProfileTHR(tc, l2cmsD50_xyY());
+#if LCMS_VERSION < 2060
+      hproof = l2cmsAddProfile( proof );
+#else
+      {
+        const char * fn = oyProfile_GetFileName( proof, -1 );
+        hproof = l2cmsOpenProfileFromFileTHR( tc, fn, "r" );
+      }
+#endif
+
+      if(!hLab || !hproof)
+      { l2cms_msg( oyMSG_ERROR, (oyStruct_s*)proof, OY_DBG_FORMAT_
+                 "hLab or hproof failed", OY_DBG_ARGS_);
+                 goto clean;
+      }
+
+      tr = l2cmsCreateProofingTransformTHR (  tc,
+                                               hLab, TYPE_Lab_FLT,
+                                               hLab, TYPE_Lab_FLT,
+                                               hproof,
+                                               intent,
+            /* TODO The INTENT_ABSOLUTE_COLORIMETRIC should lead to 
+               paper simulation, but does take white point into account.
+               Do we want this?
+             */
+                                               intent_proof,
+                                               flags | cmsFLAGS_KEEP_SEQUENCE);
+      if(!tr) { l2cms_msg( oyMSG_ERROR, (oyStruct_s*)proof, OY_DBG_FORMAT_
+                          "cmsCreateProofingTransform() failed", OY_DBG_ARGS_);
+                error = 1; }
+      ptr[0] = tr;
+      ptr[1] = flags & cmsFLAGS_GAMUTCHECK ? (oyPointer)1 : 0;
+      if(!error)
+      {
+        const char * proof_meta[] = {
+        "EFFECT_,CMF_",
+        "EFFECT_class", "proof,saturation,contrast,atom",
+        "EFFECT_saturation", "yes,reduce",
+        "EFFECT_lightness", "no",
+        "EFFECT_contrast", "yes,reduce",
+        "CMF_binary", "lcm2profile",
+        "CMF_version", "0.9.7",
+        "CMF_product", "Oyranos",
+        0,0
+        };
+        const char * desc = oyProfile_GetText( proof, oyNAME_DESCRIPTION );
+        lcm2CreateAbstractProfile (
+                             lcm2SamplerProof, ptr,
+                             "*lab", // CIE*Lab
+                             l2cmsPROOF_LUT_GRID_RASTER,
+                             icc_profile_flags & OY_ICC_VERSION_2 ? 2.4 : 4.2,
+                             "proofing",
+                             NULL,
+                             "proofing",
+                             "",
+                             "",
+                             ICC_2011_LICENSE,
+                             desc,
+                             "http://www.oyranos.org",
+                             proof_meta,
+                             &gmt
+                           );
+
+      }
+
+      if(!gmt)
+      {
+        l2cms_msg( oyMSG_WARN, (oyStruct_s*)proof, OY_DBG_FORMAT_ " "
+                 "failed to build proof",
+                 OY_DBG_ARGS_ );
+        goto clean;
+      }
+
+  if(oy_debug && getenv("OY_DEBUG_WRITE"))
+  {
+      char * t = 0; oyStringAddPrintf( &t, 0,0,
+      "%04d-%s-abstract-proof[%d]", ++oy_debug_write_id,CMM_NICK,oyStruct_GetId((oyStruct_s*)proof));
+      lcm2WriteProfileToFile( gmt, t, NULL,NULL );
+      oyFree_m_(t);
+  }
+
+  clean:
+      if(hLab) { l2cmsCloseProfile( hLab ); hLab = 0; }
+      if(tr) { l2cmsDeleteTransform( tr ); tr = 0; }
+
+  oyProfile_Release( &proof );
+
+  return gmt;
+}
+
+/**
+ *  This function implements oyMOptions_Handle_f.
+ *
+ *  @version Oyranos: 0.3.0
+ *  @since   2011/02/21 (Oyranos: 0.3.0)
+ *  @date    2011/02/21
+ */
+int          l2cmsMOptions_Handle2    ( oyOptions_s       * options,
+                                       const char        * command,
+                                       oyOptions_s      ** result )
+{
+  int error = 0;
+  oyProfile_s * prof = 0,
+              * p = 0;
+
+  if(oyFilterRegistrationMatch(command,"can_handle", 0))
+  {
+    if(oyFilterRegistrationMatch(command,"create_profile", 0))
+    {
+      p = (oyProfile_s*) oyOptions_GetType( options,-1, "proofing_profile",
+                                            oyOBJECT_PROFILE_S );
+      if(!p)
+      {
+        error = -1;
+      }
+
+      oyProfile_Release( &p );
+
+      return error;
+    }
+    else
+      return -1;
+  }
+  else if(oyFilterRegistrationMatch(command,"create_profile", 0))
+  {
+    int32_t icc_profile_flags = 0;
+    oyOptions_FindInt( options, "icc_profile_flags", 0, &icc_profile_flags ); 
+
+    p = (oyProfile_s*) oyOptions_GetType( options,-1, "proofing_profile",
+                                          oyOBJECT_PROFILE_S );
+    if(p)
+    {
+      int intent = l2cmsIntentFromOptions( options,0 ),
+      intent_proof = l2cmsIntentFromOptions( options,1 ),
+      flags = l2cmsFlagsFromOptions( options );
+      oyOption_s * o;
+
+      l2cmsProfileWrap_s * wrap = l2cmsAddProofProfile( p, flags | cmsFLAGS_SOFTPROOFING,
+                                            intent, intent_proof, icc_profile_flags );
+      oyProfile_Release( &p );
+
+      prof = oyProfile_FromMem( wrap->size, wrap->block, 0, 0 );
+
+      o = oyOption_FromRegistration( OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "icc_profile.create_profile.proofing_effect._" CMM_NICK,
+                        0 );
+      error = oyOption_MoveInStruct( o, (oyStruct_s**) &prof );
+      if(!*result)
+        *result = oyOptions_New(0);
+      oyOptions_MoveIn( *result, &o, -1 );
+    } else
+        l2cms_msg( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ " "
+                 "no option \"proofing_effect\" of type oyProfile_s found",
+                 OY_DBG_ARGS_ );
+  }
+
+  return 0;
+}
+/**
+ *  This function implements oyCMMinfoGetText_f.
+ *
+ *  @version Oyranos: 0.3.0
+ *  @since   2011/02/21 (Oyranos: 0.3.0)
+ *  @date    2011/02/21
+ */
+const char * l2cmsInfoGetTextProfileC2( const char        * select,
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context )
+{
+         if(strcmp(select, "can_handle")==0)
+  {
+         if(type == oyNAME_NICK)
+      return "check";
+    else if(type == oyNAME_NAME)
+      return _("check");
+    else
+      return _("Check if this module can handle a certain command.");
+  } else if(strcmp(select, "create_profile")==0)
+  {
+         if(type == oyNAME_NICK)
+      return "proofing_effect";
+    else if(type == oyNAME_NAME)
+      return _("Create a ICC abstract proofing profile.");
+    else
+      return _("The littleCMS \"create_profile.proofing_effect\" command lets you create ICC abstract profiles from a given ICC profile for proofing. The filter expects a oyOption_s object with name \"proofing_profile\" containing a oyProfile_s as value. The options \"rendering_intent\", \"rendering_intent_proof\", \"rendering_bpc\", \"rendering_gamut_warning\", \"precalculation\", \"precalculation_curves\", \"cmyk_cmyk_black_preservation\", \"adaption_state\"  and \"no_white_on_white_fixup\" are honoured. The result will appear in \"icc_profile\" with the additional attributes \"create_profile.proofing_effect\" as a oyProfile_s object.");
+  } else if(strcmp(select, "help")==0)
+  {
+         if(type == oyNAME_NICK)
+      return "help";
+    else if(type == oyNAME_NAME)
+      return _("Create a ICC proofing profile.");
+    else
+      return _("The littleCMS \"create_profile.proofing_effect\" command lets you create ICC abstract profiles from some given ICC profile. See the \"proofing_effect\" info item.");
+  }
+  return 0;
+}
+const char *l2cms_texts_profile_create[4] = {"can_handle","create_profile","help",0};
+
+#define OY_LCM2_CREATE_ABSTRACT_PROOFING_REGISTRATION OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH \
+  "create_profile.proofing_effect.icc._" CMM_NICK "._CPU"
+
+/** @instance l2cms_api10_cmm2
+ *  @brief    littleCMS oyCMMapi10_s implementation
+ *
+ *  a filter for proofing effect profile creation
+ *
+ *  @version Oyranos: 0.3.0
+ *  @since   2011/02/21 (Oyranos: 0.3.0)
+ *  @date    2011/02/21
+ */
+oyCMMapi10_s_    l2cms_api10_cmm2 = {
+
+  oyOBJECT_CMM_API10_S,
+  0,0,0,
+  0,
+
+  l2cmsCMMInit,
+  l2cmsCMMMessageFuncSet,
+
+  OY_LCM2_CREATE_ABSTRACT_PROOFING_REGISTRATION,
+
+  CMM_VERSION,
+  CMM_API_VERSION,                  /**< int32_t module_api[3] */
+  0,   /* id_; keep empty */
+  0,   /* api5_; keep empty */
+  0,   /* runtime_context */
+ 
+  l2cmsInfoGetTextProfileC2,            /**< getText */
+  (char**)l2cms_texts_profile_create,   /**<texts; list of arguments to getText*/
+ 
+  l2cmsMOptions_Handle2                 /**< oyMOptions_Handle_f oyMOptions_Handle */
+};
+
+/* OY_LCM2_CREATE_ABSTRACT_PROOFING_REGISTRATION -------------------------- */
+
+/* OY_LCM2_CREATE_MATRIX_REGISTRATION ------------------------------------- */
+
 /** Function l2cmsCreateICCMatrixProfile
  *  @brief   create a profile from primaries, white point and one gamma value
  *
@@ -3402,79 +3484,6 @@ int          l2cmsMOptions_Handle     ( oyOptions_s       * options,
 /**
  *  This function implements oyCMMinfoGetText_f.
  *
- *  @version Oyranos: 0.3.0
- *  @since   2011/02/21 (Oyranos: 0.3.0)
- *  @date    2011/02/21
- */
-const char * l2cmsInfoGetTextProfileC2( const char        * select,
-                                       oyNAME_e            type,
-                                       oyStruct_s        * context )
-{
-         if(strcmp(select, "can_handle")==0)
-  {
-         if(type == oyNAME_NICK)
-      return "check";
-    else if(type == oyNAME_NAME)
-      return _("check");
-    else
-      return _("Check if this module can handle a certain command.");
-  } else if(strcmp(select, "create_profile")==0)
-  {
-         if(type == oyNAME_NICK)
-      return "proofing_effect";
-    else if(type == oyNAME_NAME)
-      return _("Create a ICC abstract proofing profile.");
-    else
-      return _("The littleCMS \"create_profile.proofing_effect\" command lets you create ICC abstract profiles from a given ICC profile for proofing. The filter expects a oyOption_s object with name \"proofing_profile\" containing a oyProfile_s as value. The options \"rendering_intent\", \"rendering_intent_proof\", \"rendering_bpc\", \"rendering_gamut_warning\", \"precalculation\", \"precalculation_curves\", \"cmyk_cmyk_black_preservation\", \"adaption_state\"  and \"no_white_on_white_fixup\" are honoured. The result will appear in \"icc_profile\" with the additional attributes \"create_profile.proofing_effect\" as a oyProfile_s object.");
-  } else if(strcmp(select, "help")==0)
-  {
-         if(type == oyNAME_NICK)
-      return "help";
-    else if(type == oyNAME_NAME)
-      return _("Create a ICC proofing profile.");
-    else
-      return _("The littleCMS \"create_profile.proofing_effect\" command lets you create ICC abstract profiles from some given ICC profile. See the \"proofing_effect\" info item.");
-  }
-  return 0;
-}
-const char *l2cms_texts_profile_create[4] = {"can_handle","create_profile","help",0};
-
-/** @instance l2cms_api10_cmm2
- *  @brief    littleCMS oyCMMapi10_s implementation
- *
- *  a filter for proofing effect profile creation
- *
- *  @version Oyranos: 0.3.0
- *  @since   2011/02/21 (Oyranos: 0.3.0)
- *  @date    2011/02/21
- */
-oyCMMapi10_s_    l2cms_api10_cmm2 = {
-
-  oyOBJECT_CMM_API10_S,
-  0,0,0,
-  0,
-
-  l2cmsCMMInit,
-  l2cmsCMMMessageFuncSet,
-
-  OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
-  "create_profile.proofing_effect.icc._" CMM_NICK "._CPU",
-
-  CMM_VERSION,
-  CMM_API_VERSION,                  /**< int32_t module_api[3] */
-  0,   /* id_; keep empty */
-  0,   /* api5_; keep empty */
-  0,   /* runtime_context */
- 
-  l2cmsInfoGetTextProfileC2,            /**< getText */
-  (char**)l2cms_texts_profile_create,   /**<texts; list of arguments to getText*/
- 
-  l2cmsMOptions_Handle2                 /**< oyMOptions_Handle_f oyMOptions_Handle */
-};
-
-/**
- *  This function implements oyCMMinfoGetText_f.
- *
  *  @version Oyranos: 0.1.10
  *  @since   2009/12/11 (Oyranos: 0.1.10)
  *  @date    2009/12/11
@@ -3510,6 +3519,8 @@ const char * l2cmsInfoGetTextProfileC ( const char        * select,
   }
   return 0;
 }
+#define OY_LCM2_CREATE_MATRIX_REGISTRATION OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH \
+  "create_profile.color_matrix.icc._" CMM_NICK "._CPU"
 
 /** @instance l2cms_api10_cmm
  *  @brief    littleCMS oyCMMapi10_s implementation
@@ -3529,8 +3540,7 @@ oyCMMapi10_s_    l2cms_api10_cmm = {
   l2cmsCMMInit,
   l2cmsCMMMessageFuncSet,
 
-  OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
-  "create_profile.color_matrix.icc._" CMM_NICK "._CPU",
+  OY_LCM2_CREATE_MATRIX_REGISTRATION,
 
   CMM_VERSION,
   CMM_API_VERSION,                  /**< int32_t module_api[3] */
@@ -3544,8 +3554,12 @@ oyCMMapi10_s_    l2cms_api10_cmm = {
   l2cmsMOptions_Handle                  /**< oyMOptions_Handle_f oyMOptions_Handle */
 };
 
+/* OY_LCM2_CREATE_MATRIX_REGISTRATION ------------------------------------- */
 
-/** @instance l2cms_api6
+#define OY_LCM2_DATA_CONVERT_REGISTRATION  OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH \
+  "icc_color._" CMM_NICK "._CPU." oyCOLOR_ICC_DEVICE_LINK "_" l2cmsTRANSFORM
+
+/** @instance l2cms_api6_cmm
  *  @brief    littleCMS oyCMMapi6_s implementation
  *
  *  a filter providing CMM API's
@@ -3563,8 +3577,7 @@ oyCMMapi6_s_ l2cms_api6_cmm = {
   l2cmsCMMInit,
   l2cmsCMMMessageFuncSet,
 
-  OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
-  "icc_color._" CMM_NICK "._CPU." oyCOLOR_ICC_DEVICE_LINK "_" l2cmsTRANSFORM,
+  OY_LCM2_DATA_CONVERT_REGISTRATION,
 
   CMM_VERSION,
   CMM_API_VERSION,                  /**< int32_t module_api[3] */
