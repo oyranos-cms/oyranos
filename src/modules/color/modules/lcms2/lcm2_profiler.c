@@ -1070,44 +1070,6 @@ int          lcm2CreateAbstractTemperatureProfile (
   int i;
   cmsCIEXYZ * source_white = NULL;
 
-  const char * kelvin_i18n_format[] = {
-    "(www.oyranos.org) %dK محمر",
-    "Rötlich %dK (www.oyranos.org)",
-    "Κοκκινωπό %dK (www.oyranos.org)",
-    "Reddish %dK (www.oyranos.org)",
-    "Rojizo %dK (www.oyranos.org)",
-    "(www.oyranos.org) %dK مایل به قرمز",
-    "Rougeâtre %dK (www.oyranos.org)",
-    "लाल  %dK (www.oyranos.org)",
-    "(www.oyranos.org) %dK אדמומי",
-    "կարմրավուն %dK (www.oyranos.org)",
-    "赤みを帯びた %dK (www.oyranos.org)",
-    "Avermelhado %dK (www.oyranos.org)",
-    "красноватый %dK (www.oyranos.org)",
-    "มีสีแดง %dK (www.oyranos.org)",
-    "Kırmızımsı %dK (www.oyranos.org)",
-    "红 %dK (www.oyranos.org)",
-    0,0,0
-  };
-  const char * kelvin_i18n_desc[] = {
-    "ar","EG","محمر K (www.oyranos.org)",
-    "de","DE","Rötlich K (www.oyranos.org)",
-    "el","GR","Κοκκινωπό K (www.oyranos.org)",
-    "en","GB","Reddish K (www.oyranos.org)",
-    "es","ES","Rojizo K (www.oyranos.org)",
-    "fa","IR","مایل به قرمز K (www.oyranos.org)",
-    "fr","FR","Rougeâtre K (www.oyranos.org)",
-    "hi","IN","लाल  K (www.oyranos.org)",
-    "he","IL","אדמומי K (www.oyranos.org)",
-    "hy","AM","կարմրավուն K (www.oyranos.org)",
-    "ja","JP","赤みを帯びた K (www.oyranos.org)",
-    "pt","BR","Avermelhado K (www.oyranos.org)",
-    "ru","RU","красноватый K (www.oyranos.org)",
-    "th","TH","มีสีแดง K (www.oyranos.org)",
-    "tr","TR","Kırmızımsı K (www.oyranos.org)",
-    "zh","CN","红 K (www.oyranos.org)",
-    0,0,0
-  };
   const char * kelvin_meta[] = {
     "EFFECT_class", "reddish,white_point,atom",
     "COLORIMETRY_white_point", "yes,reddish,kelvin",
@@ -1120,14 +1082,6 @@ int          lcm2CreateAbstractTemperatureProfile (
   int error = 0;
   double icc_ab[2];
   char * desc = NULL;
-
-  char ** kelvin_i18n_name = calloc( sizeof(char*), 17 );
-  for(i = 0; i < 16; ++i)
-  {
-    kelvin_i18n_name[i] = malloc(128);
-    sprintf( kelvin_i18n_name[i], kelvin_i18n_format[i], (int)kelvin );
-    kelvin_i18n_desc[i*3+2] = kelvin_i18n_name[i];
-  }
 
   if(source_white_profile)
   {
@@ -1240,14 +1194,7 @@ int          lcm2CreateAbstractTemperatureProfile (
                                       grid_size, cmsSigAToB0Tag );
 
   lcm2AddMetaTexts ( profile, "EFFECT_,COLORIMETRY_,CMF_", kelvin_meta, cmsSigMetaTag );
-  if(!source_white_profile && kelvin < 5000)
-    lcm2AddMluDescription( profile, kelvin_i18n_desc,
-                           cmsSigProfileDescriptionMLTag
-                         );
 
-  for(i = 0; i < 16; ++i)
-    if(kelvin_i18n_name[i]) free(kelvin_i18n_name[i]);
-  if(kelvin_i18n_name) free(kelvin_i18n_name);
   if(i_curve[0]) cmsFreeToneCurve( i_curve[0] );
   if(o_curve[0]) cmsFreeToneCurve( o_curve[0] );
   if(o_curve[1]) cmsFreeToneCurve( o_curve[1] );
