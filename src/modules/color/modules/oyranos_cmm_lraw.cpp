@@ -57,7 +57,7 @@
 extern "C" {
 #endif /* __cplusplus */
 
-int lrawCMMWarnFunc( int code, const oyPointer context, const char * format, ... );
+int lrawCMMWarnFunc( int code, const void * context, const char * format, ... );
 oyMessage_f lraw_msg = lrawCMMWarnFunc;
 
 extern oyCMMapi4_s_   lraw_api4_image_input_libraw;
@@ -107,12 +107,12 @@ int                lrawCMMInit       ( oyStruct_s        * filter )
 /** Function lrawCMMWarnFunc
  *  @brief message handling
  *
- *  @version Oyranos: 0.1.10
- *  @date    2009/06/14
+ *  @version Oyranos: 0.9.7
+ *  @date    2017/06/07
  *  @since   2009/06/14 (Oyranos: 0.1.10)
  */
 extern "C" {
-int lrawCMMWarnFunc( int code, const oyPointer context, const char * format, ... )
+int lrawCMMWarnFunc( int code, const void * context, const char * format, ... )
 {
   char* text = (char*)calloc(sizeof(char), 4096);
   va_list list;
