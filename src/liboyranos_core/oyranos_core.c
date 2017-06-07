@@ -364,7 +364,7 @@ OYAPI const char * OYEXPORT  oyObject_Show (
  */
 int                oyMessageFormat   ( char             ** message_text,
                                        int                 code,
-                                       const oyPointer     context_object,
+                                       const void        * context_object,
                                        const char        * string )
 {
   char * text = 0, * t = 0;
@@ -475,7 +475,7 @@ int                oyMessageFormat   ( char             ** message_text,
  *  @since   2008/04/03 (Oyranos: 0.1.8)
  *  @date    2009/07/20
  */
-int oyMessageFunc( int code, const oyPointer context_object, const char * format, ... )
+int oyMessageFunc( int code, const void * context_object, const char * format, ... )
 {
   char * text = 0, * msg = 0;
   int error = 0;
@@ -573,7 +573,7 @@ void oyShowMessage(int type, const char * show_text, int show_gui)
 
 int oy_level_prog = 0;
 
-int oyGuiMessageFunc( int code, const oyPointer c, const char * format, ... )
+int oyGuiMessageFunc( int code, const void * c, const char * format, ... )
 {
   oyStruct_s * context = (oyStruct_s*) c;
   char* text = 0, *pos = 0;

@@ -36,19 +36,19 @@ typedef enum {
   oyMSG_DBG
 } oyMSG_e;
 typedef int  (*oyMessage_f)          ( int/*oyMSG_e*/      code, 
-                                       const oyPointer     context,
+                                       const void        * context,
                                        const char        * format,
                                        ... );
 int            oyMessageFormat       ( char             ** message_text,
                                        int                 code,
-                                       const oyPointer     context,
+                                       const void        * context,
                                        const char        * string );
 int            oyMessageFunc         ( int                 code,
-                                       const oyPointer     context_object,
+                                       const void        * context_object,
                                        const char        * format,
                                                            ... );
 int            oyGuiMessageFunc      ( int                 code,
-                                       const oyPointer     c,
+                                       const void        * c,
                                        const char        * format,
                                                            ... );
 int            oyMessageFuncSet      ( oyMessage_f         message_func );
