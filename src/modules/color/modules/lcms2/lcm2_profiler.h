@@ -77,6 +77,9 @@ char *       lcm2WriteProfileToFile  ( cmsHPROFILE         my_space_profile,
                                        const char        * my_space_profile_name,
                                        const char        * my_space_profile_version,
                                        const char        * vendor_four_bytes );
+void *       lcm2WriteProfileToMem   ( cmsHPROFILE       * profile,
+                                       size_t            * size,
+                                       void *            (*allocateFunc)(size_t size) );
 cmsHPROFILE  lcm2CreateICCMatrixProfile2 (
                                        float             gamma,
                                        float rx, float ry,

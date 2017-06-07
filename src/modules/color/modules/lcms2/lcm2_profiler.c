@@ -237,6 +237,48 @@ char *       lcm2WriteProfileToFile  ( cmsHPROFILE         my_space_profile,
   return fn;
 }
 
+/** Function lcm2WriteProfileToMem
+ *
+ *  Save a cmsHPROFILE to a in memory data blob
+ *
+ *  @version Oyranos: 0.9.7
+ *  @since   2008/12/28 (Oyranos: 0.9.7)
+ *  @date    2017/06/07
+ */
+void *       lcm2WriteProfileToMem   ( cmsHPROFILE       * profile,
+                                       size_t            * size,
+                                       void *            (*allocateFunc)(size_t size) )
+{
+  int error = !profile;
+  void * data = 0;
+  cmsUInt32Number size_ = 0;
+
+  if(!error)
+  {
+    *size = 0;
+
+    if(!l2cmsSaveProfileToMem( profile, NULL, &size_ ))
+      lcm2msg_p( 300, NULL, "l2cmsSaveProfileToMem failed" );
+
+    if(size_)
+    {
+      if(allocateFunc)
+        data = allocateFunc( size_ );
+      else
+        data = malloc( size_ );
+
+      l2cmsSaveProfileToMem( profile, data, &size_ );
+
+    } else
+      lcm2msg_p( 300, NULL, "can not convert lcms2 profile to memory" );
+
+    *size = size_;
+
+  } else
+      lcm2msg_p( 301, NULL, "no profle" );
+
+  return data;
+}
 
 /* --- CIE*Lab space familiy --- */
 
