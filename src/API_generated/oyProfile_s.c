@@ -27,6 +27,7 @@
 #include "oyProfile_s_.h"
 
 #include "oyranos_devices_internal.h"
+#include "oyranos_color.h"
 #include "oyranos_io.h"
 #include "oyranos_icc.h"
 #include "oyConfig_s_.h"
@@ -2576,6 +2577,55 @@ int                oyProfile_AddDevice(oyProfile_s       * profile,
   return error;
 }
 #endif
+
+/**
+ *  @brief get the CIE*ab coordinates of a white point
+ *
+ *  @param[out]    cie_a               CIE*a component in 0.0 - 1.0 range
+ *  @param[out]    cie_b               CIE*b component in 0.0 - 1.0 range
+ *  @return                            0 - success; -1 - no white point available; < 1 - error
+ *
+ *  @version Oyranos: 0.9.7
+ *  @date    2017/06/06
+ *  @since   2017/06/06 (Oyranos: 0.9.7)
+ */
+int      oyProfile_GetWhitePoint     ( oyProfile_s       * profile,
+                                       double            * cie_a,
+                                       double            * cie_b )
+{
+  int error = -1;
+  if(profile)
+  {
+    oyProfileTag_s * wtpt = NULL;
+    oyStructList_s * s = NULL;
+    int count, j;
+    wtpt = oyProfile_GetTagById( profile, icSigMediaWhitePointTag ); 
+
+    s = oyProfileTag_Get( wtpt );
+    count = oyStructList_Count( s );
+    for(j = 0; j < count; ++j)
+    {
+      oyOption_s * opt = (oyOption_s*) oyStructList_GetType( s, j,
+                                                    oyOBJECT_OPTION_S );
+      if(opt && strstr( oyOption_GetRegistration( opt ), "icSigXYZType" ) != NULL)
+      {
+         double XYZ[3] = { oyOption_GetValueDouble( opt, 0 ),
+                           oyOption_GetValueDouble( opt, 1 ),
+                           oyOption_GetValueDouble( opt, 2 ) },
+                Lab[3];
+         oyXYZ2Lab( XYZ, Lab );
+         *cie_a = Lab[1]/256.0 + 0.5;
+         *cie_b = Lab[2]/256.0 + 0.5;
+         error = 0;
+      }
+    }
+
+    oyProfileTag_Release( &wtpt );
+    oyStructList_Release( &s );
+  }
+
+  return error;
+}
 
 /* } Include "Profile.public_methods_definitions.c" */
 

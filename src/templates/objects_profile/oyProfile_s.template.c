@@ -3,6 +3,7 @@
 {% block LocalIncludeFiles %}
 {{ block.super }}
 #include "oyranos_devices_internal.h"
+#include "oyranos_color.h"
 #include "oyranos_io.h"
 #include "oyranos_icc.h"
 #include "oyConfig_s_.h"

@@ -211,6 +211,10 @@ OYAPI int  OYEXPORT
                                        int                 flags,
                                        uint32_t          * md5 );
 OYAPI int  OYEXPORT
+                 oyProfile_GetWhitePoint ( oyProfile_s   * profile,
+                                       double            * cie_a,
+                                       double            * cie_b );
+OYAPI int  OYEXPORT
                  oyProfile_AddDevice(oyProfile_s       * profile,
                                        oyConfig_s        * device,
                                        oyOptions_s       * options );
