@@ -2056,7 +2056,7 @@ oyTESTRESULT_e testProfileLists ()
 
 #include "oyProfile_s_.h"           /* oyProfile_ToFile_ */
 
-oyTESTRESULT_e testProofingEffect ()
+oyTESTRESULT_e testEffects ()
 {
   oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
   oyOptions_s * opts = oyOptions_New(0),
@@ -2095,6 +2095,44 @@ oyTESTRESULT_e testProofingEffect ()
   }
 
   oyProfile_ToFile_( (oyProfile_s_*)abstract, "test_proof_effect.icc" );
+  oyProfile_Release( &abstract );
+
+
+
+  double cie_a = -1, cie_b = -1;
+  prof = oyProfile_FromStd( oyASSUMED_WEB, 0, NULL );
+  oyProfile_GetWhitePoint ( prof, &cie_a, &cie_b ); 
+  oyProfile_Release( &prof );
+  error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/cie_a",
+                                   0.5 - cie_a, 0, OY_CREATE_NEW );
+  error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/cie_b",
+                                   0.5 - cie_b, 0, OY_CREATE_NEW );
+  fprintf(zout,"sourse white point cie_a %g cie_b %g\n", cie_a, cie_b );
+  error = oyOptions_Handle( "//" OY_TYPE_STD "/create_profile.white_point_adjust",
+                            opts,"create_profile.white_point_adjust",
+                            &result_opts );
+  abstract = (oyProfile_s*)oyOptions_GetType( result_opts, -1, "icc_profile",
+                                              oyOBJECT_PROFILE_S );
+  oyOptions_Release( &result_opts );
+  oyOptions_Release( &opts );
+
+  text = oyProfile_GetText( abstract, oyNAME_DESCRIPTION );
+
+  if(abstract)
+  {
+    PRINT_SUB( oyTESTRESULT_SUCCESS, 
+    "oyOptions_Handle(\"create_profile\"): %s", text );
+  } else if(error == -1)
+  {
+    PRINT_SUB( oyTESTRESULT_XFAIL,
+    "oyOptions_Handle(\"create_profile\") no" );
+  } else
+  {
+    PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyOptions_Handle(\"create_profile\") zero" );
+  }
+
+  oyProfile_ToFile_( (oyProfile_s_*)abstract, "test_wtpt_effect.icc" );
   oyProfile_Release( &abstract );
 
   return result;
@@ -6853,7 +6891,7 @@ int main(int argc, char** argv)
   TEST_RUN( testProfile, "Profile handling" );
   TEST_RUN( testProfiles, "Profiles reading" );
   TEST_RUN( testProfileLists, "Profile lists" );
-  TEST_RUN( testProofingEffect, "proofing_effect" );
+  TEST_RUN( testEffects, "Effects" );
   TEST_RUN( testDeviceLinkProfile, "CMM deviceLink" );
   TEST_RUN( testClut, "CMM clut" );
   TEST_RUN( testRegistrationMatch,  "Registration matching" );
