@@ -20,7 +20,6 @@
 #include <stdint.h>
 #include <string.h>
 #include <math.h>
-#include <iconv.h>
 #include <wchar.h>
 
 #if LCMS_VERSION < 2050
@@ -257,8 +256,8 @@ void *       lcm2WriteProfileToMem   ( cmsHPROFILE       * profile,
   {
     *size = 0;
 
-    if(!l2cmsSaveProfileToMem( profile, NULL, &size_ ))
-      lcm2msg_p( 300, NULL, "l2cmsSaveProfileToMem failed" );
+    if(!cmsSaveProfileToMem( profile, NULL, &size_ ))
+      lcm2msg_p( 300, NULL, "cmsSaveProfileToMem failed" );
 
     if(size_)
     {
@@ -267,7 +266,7 @@ void *       lcm2WriteProfileToMem   ( cmsHPROFILE       * profile,
       else
         data = malloc( size_ );
 
-      l2cmsSaveProfileToMem( profile, data, &size_ );
+      cmsSaveProfileToMem( profile, data, &size_ );
 
     } else
       lcm2msg_p( 300, NULL, "can not convert lcms2 profile to memory" );
@@ -1240,7 +1239,6 @@ int          lcm2CreateAbstractTemperatureProfile (
   if(i_curve[0]) cmsFreeToneCurve( i_curve[0] );
   if(o_curve[0]) cmsFreeToneCurve( o_curve[0] );
   if(o_curve[1]) cmsFreeToneCurve( o_curve[1] );
-  if(source_white) free( source_white );
 
   *h_profile = profile;
   *my_abstract_file_name = kelvin_name;
@@ -1483,25 +1481,194 @@ cmsHPROFILE  lcm2CreateProfileFragment(
 int isBigEndian ()
 { union { unsigned short u16; unsigned char c; } test = { .u16 = 1 }; return !test.c; }
 
-wchar_t *    lcm2WcharFromText       ( iconv_t             cd,
-                                       const char        * text )
+/* UTF-8 to WCHAR_T conversion */
+typedef uint32_t	UTF32;	/* at least 32 bits */
+typedef uint16_t	UTF16;	/* at least 16 bits */
+typedef uint8_t		UTF8;	/* typically 8 bits */
+typedef unsigned char	Boolean; /* 0 or 1 */
+
+/* Some fundamental constants */
+#define UNI_REPLACEMENT_CHAR (UTF32)0x0000FFFD
+#define UNI_MAX_BMP (UTF32)0x0000FFFF
+#define UNI_MAX_UTF16 (UTF32)0x0010FFFF
+#define UNI_MAX_UTF32 (UTF32)0x7FFFFFFF
+#define UNI_MAX_LEGAL_UTF32 (UTF32)0x0010FFFF
+
+typedef enum {
+  conversionOK, 		/* conversion successful */
+  sourceExhausted,	/* partial character in source, but hit end */
+  targetExhausted,	/* insuff. room in target for conversion */
+  sourceIllegal		/* source sequence is illegal/malformed */
+} lcm2UtfConversionResult;
+typedef enum {
+  strictConversion = 0,
+  lenientConversion
+} lcm2UtfConversionFlags;
+
+static const int halfShift  = 10; /* used for shifting by 10 bits */
+
+static const UTF32 halfBase = 0x0010000UL;
+static const UTF32 halfMask = 0x3FFUL;
+
+#define UNI_SUR_HIGH_START  (UTF32)0xD800
+#define UNI_SUR_HIGH_END    (UTF32)0xDBFF
+#define UNI_SUR_LOW_START   (UTF32)0xDC00
+#define UNI_SUR_LOW_END     (UTF32)0xDFFF
+#define false	   0
+#define true	    1
+
+/*
+* Index into the table below with the first byte of a UTF-8 sequence to
+* get the number of trailing bytes that are supposed to follow it.
+* Note that *legal* UTF-8 values can't have 4 or 5-bytes. The table is
+* left as-is for anyone who may want to do such conversion, which was
+* allowed in earlier algorithms.
+*/
+static const char trailingBytesForUTF8[256] = {
+  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1, 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+  2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2, 3,3,3,3,3,3,3,3,4,4,4,4,5,5,5,5
+};
+
+/*
+* Magic values subtracted from a buffer value during UTF8 conversion.
+* This table contains as many values as there might be trailing bytes
+* in a UTF-8 sequence.
+*/
+static const UTF32 offsetsFromUTF8[6] = { 0x00000000UL, 0x00003080UL, 0x000E2080UL, 
+0x03C82080UL, 0xFA082080UL, 0x82082080UL };
+
+/*
+* Utility routine to tell whether a sequence of bytes is legal UTF-8.
+* This must be called with the length pre-determined by the first byte.
+* If not calling this from ConvertUTF8to*, then the length can be set by:
+*  length = trailingBytesForUTF8[*source]+1;
+* and the sequence is illegal right away if there aren't that many bytes
+* available.
+* If presented with a length > 4, this returns false.  The Unicode
+* definition of UTF-8 goes up to 4-byte sequences.
+*/
+
+static Boolean isLegalUTF8(const UTF8 *source, int length)
+{
+  UTF8 a;
+  const UTF8 *srcptr = source+length;
+  switch (length) {
+    default: return false;
+      /* Everything else falls through when "true"... */
+    case 4: if ((a = (*--srcptr)) < 0x80 || a > 0xBF) return false;
+    case 3: if ((a = (*--srcptr)) < 0x80 || a > 0xBF) return false;
+    case 2: if ((a = (*--srcptr)) > 0xBF) return false;
+
+      switch (*source) {
+            /* no fall-through in this inner switch */
+        case 0xE0: if (a < 0xA0) return false; break;
+        case 0xED: if (a > 0x9F) return false; break;
+        case 0xF0: if (a < 0x90) return false; break;
+        case 0xF4: if (a > 0x8F) return false; break;
+        default:   if (a < 0x80) return false;
+      }
+
+    case 1: if (*source >= 0x80 && *source < 0xC2) return false;
+  }
+  if (*source > 0xF4) return false;
+  return true;
+}
+
+lcm2UtfConversionResult lcm2ConvertUTF8toUTF16 (const UTF8** sourceStart, const UTF8* sourceEnd, 
+                                       UTF16** targetStart, UTF16* targetEnd, lcm2UtfConversionFlags flags)
+{
+  lcm2UtfConversionResult result = conversionOK;
+  const UTF8* source = *sourceStart;
+  UTF16* target = *targetStart;
+  while (source < sourceEnd) {
+    UTF32 ch = 0;
+    unsigned short extraBytesToRead = trailingBytesForUTF8[*source];
+    if (source + extraBytesToRead >= sourceEnd) {
+      result = sourceExhausted; break;
+    }
+    /* Do this check whether lenient or strict */
+    if (! isLegalUTF8(source, extraBytesToRead+1)) {
+      result = sourceIllegal;
+      break;
+    }
+    /*
+    * The cases all fall through. See "Note A" below.
+    */
+    switch (extraBytesToRead) {
+      case 5: ch += *source++; ch <<= 6; /* remember, illegal UTF-8 */
+      case 4: ch += *source++; ch <<= 6; /* remember, illegal UTF-8 */
+      case 3: ch += *source++; ch <<= 6;
+      case 2: ch += *source++; ch <<= 6;
+      case 1: ch += *source++; ch <<= 6;
+      case 0: ch += *source++;
+    }
+    ch -= offsetsFromUTF8[extraBytesToRead];
+
+    if (target >= targetEnd) {
+      source -= (extraBytesToRead+1); /* Back up source pointer! */
+      result = targetExhausted; break;
+    }
+    if (ch <= UNI_MAX_BMP) { /* Target is a character <= 0xFFFF */
+      /* UTF-16 surrogate values are illegal in UTF-32 */
+      if (ch >= UNI_SUR_HIGH_START && ch <= UNI_SUR_LOW_END) {
+        if (flags == strictConversion) {
+          source -= (extraBytesToRead+1); /* return to the illegal value itself */
+          result = sourceIllegal;
+          break;
+        } else {
+          *target++ = UNI_REPLACEMENT_CHAR;
+        }
+      } else {
+        *target++ = (UTF16)ch; /* normal case */
+      }
+    } else if (ch > UNI_MAX_UTF16) {
+      if (flags == strictConversion) {
+        result = sourceIllegal;
+        source -= (extraBytesToRead+1); /* return to the start */
+        break; /* Bail out; shouldn't continue */
+      } else {
+        *target++ = UNI_REPLACEMENT_CHAR;
+      }
+    } else {
+      /* target is a character in range 0xFFFF - 0x10FFFF. */
+      if (target + 1 >= targetEnd) {
+        source -= (extraBytesToRead+1); /* Back up source pointer! */
+        result = targetExhausted; break;
+      }
+      ch -= halfBase;
+      *target++ = (UTF16)((ch >> halfShift) + UNI_SUR_HIGH_START);
+      *target++ = (UTF16)((ch & halfMask) + UNI_SUR_LOW_START);
+    }
+  }
+  *sourceStart = source;
+  *targetStart = target;
+  return result;
+}
+
+wchar_t *    lcm2Utf8ToWchar         ( const char        * text )
 {
   wchar_t * wchar_out, * tmp_out;
   char * in, * tmp_in;
   size_t in_len  = strlen(text),
-         out_len = in_len*sizeof(wchar_t)+sizeof(wchar_t),
-         size;
+         out_len = in_len*sizeof(wchar_t)+sizeof(wchar_t);
+  lcm2UtfConversionResult error;
 
   if(!in_len) return 0;
   else ++in_len;
 
   tmp_out = wchar_out = calloc( in_len+1, sizeof(wchar_t) );
   in = tmp_in = strdup( text );
-  size = iconv( cd, &in, &in_len, (char**) &tmp_out, &out_len );
+  error = lcm2ConvertUTF8toUTF16( (const UTF8**)&in, (const UTF8*)in+in_len, (UTF16**)&tmp_out, (UTF16*)(tmp_out+out_len), lenientConversion );
 
-  if(size == (size_t)-1)
+  if(error != conversionOK)
   {
-    lcm2msg_p( 300, NULL, "iconv error %lu %lu %s", in_len, out_len, text );
+    lcm2msg_p( 300, NULL, "error[%d] %lu %lu %s", error, in_len, out_len, text );
     free(wchar_out); wchar_out = NULL;
   }
 
@@ -1514,7 +1681,7 @@ wchar_t *    lcm2WcharFromText       ( iconv_t             cd,
  *  @brief    Add translated texts to a profile
  *
  *  Iterates over the provided string list converts from "UTF-8" input
- *  to "WCHAR_T" for lcms using iconv and 
+ *  to "WCHAR_T" for lcms and 
  *  does byteswapping on little endian machines.
  *
  *  Here a code example:
@@ -1542,7 +1709,6 @@ void         lcm2AddMluDescription   ( cmsHPROFILE         profile,
 {
   int n = 0, i;
   cmsMLU * mlu = NULL;
-  iconv_t cd;
 
   if(texts)
     while( texts[n] ) ++n;
@@ -1552,16 +1718,13 @@ void         lcm2AddMluDescription   ( cmsHPROFILE         profile,
   if(!mlu)
     return;
 
-  cd = iconv_open( "WCHAR_T", "UTF-8" );
-  if(!cd) return;
-
   for( i = 0; i < n; i += 3 )
   {
     char lang[4] = {0,0,0,0}, country[4] = {0,0,0,0};
     const char * text = texts[i+2];
     wchar_t * wchar_out;
 
-    wchar_out = lcm2WcharFromText( cd, text );
+    wchar_out = lcm2Utf8ToWchar( text );
 
     if(!wchar_out) continue;
 
@@ -1579,7 +1742,6 @@ void         lcm2AddMluDescription   ( cmsHPROFILE         profile,
   else
     lcm2msg_p( 300, NULL, "nothing to write %s", __func__ );
 
-  iconv_close( cd );
   cmsMLUfree( mlu );
 }
 
@@ -1587,7 +1749,7 @@ void         lcm2AddMluDescription   ( cmsHPROFILE         profile,
  *  @brief    Add meta data to a profile
  *
  *  Iterates over the provided string list converts from "UTF-8" input
- *  to "WCHAR_T" for lcms using iconv and 
+ *  to "WCHAR_T" for lcms and 
  *  does byteswapping on little endian machines.
  *
  *  Here a code example:
@@ -1621,7 +1783,6 @@ void         lcm2AddMetaTexts        ( cmsHPROFILE         profile,
                                        cmsTagSignature     tag_sig )
 {
   int n = 0, i;
-  iconv_t cd;
   cmsHANDLE dict = NULL;
   cmsContext contextID = cmsCreateContext( NULL,NULL );
   wchar_t * wchar_key = NULL, * wchar_val = NULL;
@@ -1634,13 +1795,10 @@ void         lcm2AddMetaTexts        ( cmsHPROFILE         profile,
   if(!dict)
     return;
 
-  cd = iconv_open( "WCHAR_T", "UTF-8" );
-  if(!cd) return;
-
   if(prefixes)
   {
-    wchar_key = lcm2WcharFromText( cd, "prefix" );
-    wchar_val = lcm2WcharFromText( cd, prefixes );
+    wchar_key = lcm2Utf8ToWchar( "prefix" );
+    wchar_val = lcm2Utf8ToWchar( prefixes );
   }
   if(wchar_val)
   {
@@ -1653,8 +1811,8 @@ void         lcm2AddMetaTexts        ( cmsHPROFILE         profile,
   {
     const char * key = key_value[i+0],
                * val = key_value[i+1];
-    wchar_t * wchar_key = lcm2WcharFromText(cd, key),
-	    * wchar_val = lcm2WcharFromText(cd, val);
+    wchar_t * wchar_key = lcm2Utf8ToWchar(key),
+	    * wchar_val = lcm2Utf8ToWchar(val);
 
     if(!wchar_key || !wchar_val) continue;
 
@@ -1669,7 +1827,6 @@ void         lcm2AddMetaTexts        ( cmsHPROFILE         profile,
   else
     lcm2msg_p( 300, NULL, "nothing to write %s", __func__ );
 
-  iconv_close( cd );
   cmsDictFree( dict );
 }
 
