@@ -58,6 +58,7 @@ oyConnectorImaging_s  l2cms_cmmIccPlug_connector;
 oyCMMapi6_s           l2cms_api6_cmm;                    OY_LCM2_DATA_CONVERT_REGISTRATION
 oyCMMapi10_s          l2cms_api10_cmm;                   OY_LCM2_CREATE_ABSTRACT_PROOFING_REGISTRATION
 oyCMMapi10_s          l2cms_api10_cmm2;                  OY_LCM2_CREATE_MATRIX_REGISTRATION
+oyCMMapi10_s          l2cms_api10_cmm3;                  OY_LCM2_CREATE_ABSTRACT_WHITE_POINT_REGISTRATION
 */
 
 void* oyAllocateFunc_           (size_t        size);
@@ -84,7 +85,7 @@ void  oyDeAllocateFunc_         (void *        data);
 #define l2cmsPROOF_LUT_GRID_RASTER 53
 /*#define ENABLE_MPE 1*/
 
-#define CMM_VERSION {0,1,0}
+#define CMM_VERSION {0,1,1}
 
 oyMessage_f l2cms_msg = oyMessageFunc;
 
@@ -518,50 +519,83 @@ int                l2cmsCMMInit       ( oyStruct_s        * filter )
   return error;
 }
 
+#define cmsSetLogErrorHandler l2cmsSetLogErrorHandler
+#define cmsSetLogErrorHandlerTHR l2cmsSetLogErrorHandlerTHR
+#define cmsGetColorSpace l2cmsGetColorSpace
+#define cmsGetPCS l2cmsGetPCS
+#define cmsGetDeviceClass l2cmsGetDeviceClass
+#define cmsGetProfileInfoASCII l2cmsGetProfileInfoASCII
+#define _cmsLCMScolorSpace l2_cmsLCMScolorSpace
+#define cmsChannelsOf l2cmsChannelsOf
+#define cmsIsTag l2cmsIsTag
+#define cmsCreateTransform l2cmsCreateTransform
+#define cmsCreateTransformTHR l2cmsCreateTransformTHR
+#define cmsCreateProofingTransform l2cmsCreateProofingTransform
+#define cmsCreateProofingTransformTHR l2cmsCreateProofingTransformTHR
+#define cmsCreateMultiprofileTransform l2cmsCreateMultiprofileTransform
+#define cmsCreateExtendedTransform l2cmsCreateExtendedTransform
+#define cmsDeleteTransform l2cmsDeleteTransform
 #define cmsDoTransform l2cmsDoTransform
 #define cmsOpenProfileFromFile l2cmsOpenProfileFromFile
 #define cmsSaveProfileToFile l2cmsSaveProfileToFile
-#define cmsBuildGamma l2cmsBuildGamma
-#define cmsFreeToneCurve l2cmsFreeToneCurve
-#define cmsPipelineAlloc l2cmsPipelineAlloc
-#define cmsCreateTransformTHR l2cmsCreateTransformTHR
-#define cmsChannelsOf l2cmsChannelsOf
-#define cmsGetColorSpace l2cmsGetColorSpace
-#define cmsStageAllocCLut16bit l2cmsStageAllocCLut16bit
-#define cmsStageSampleCLut16bit l2cmsStageSampleCLut16bit
-#define cmsStageAllocCLutFloat l2cmsStageAllocCLutFloat
-#define cmsStageSampleCLutFloat l2cmsStageSampleCLutFloat
-#define cmsPipelineInsertStage l2cmsPipelineInsertStage
-#define cmsStageAllocToneCurves l2cmsStageAllocToneCurves
-#define cmsWriteTag l2cmsWriteTag
+#define cmsTransform2DeviceLink l2cmsTransform2DeviceLink
+#define cmsSaveProfileToMem l2cmsSaveProfileToMem
+#define cmsOpenProfileFromMemTHR l2cmsOpenProfileFromMemTHR
+#define cmsOpenProfileFromFileTHR l2cmsOpenProfileFromFileTHR
 #define cmsCloseProfile l2cmsCloseProfile
-#define cmsDeleteTransform l2cmsDeleteTransform
-#define cmsPipelineFree l2cmsPipelineFree
-#define cmsIsTag l2cmsIsTag
-#define cmsGetProfileInfoASCII l2cmsGetProfileInfoASCII
-#define cmsReadTag l2cmsReadTag
-#define cmsWhitePointFromTemp l2cmsWhitePointFromTemp
-#define cmsxyY2XYZ l2cmsxyY2XYZ
-#define cmsXYZ2Lab l2cmsXYZ2Lab
-#define cmsBuildParametricToneCurve l2cmsBuildParametricToneCurve
-#define cmsD50_XYZ l2cmsD50_XYZ
 #define cmsCreateProfilePlaceholder l2cmsCreateProfilePlaceholder
 #define cmsSetProfileVersion l2cmsSetProfileVersion
+#define cmsCreateLab4ProfileTHR l2cmsCreateLab4ProfileTHR
+#define cmsCreateLab4Profile l2cmsCreateLab4Profile
+#define cmsCreateXYZProfile l2cmsCreateXYZProfile
+#define cmsCreate_sRGBProfile l2cmsCreate_sRGBProfile
+#define cmsCreateRGBProfile l2cmsCreateRGBProfile
 #define cmsSetDeviceClass l2cmsSetDeviceClass
 #define cmsSetColorSpace l2cmsSetColorSpace
 #define cmsSetPCS l2cmsSetPCS
+#define cmsBuildGamma l2cmsBuildGamma
+#define cmsBuildSegmentedToneCurve l2cmsBuildSegmentedToneCurve
+#define cmsBuildParametricToneCurve l2cmsBuildParametricToneCurve
+#define cmsFreeToneCurve l2cmsFreeToneCurve
+#define cmsPipelineAlloc l2cmsPipelineAlloc
+#define cmsPipelineFree l2cmsPipelineFree
+#define cmsPipelineInsertStage l2cmsPipelineInsertStage
+#define cmsPipelineGetPtrToFirstStage l2cmsPipelineGetPtrToFirstStage
+#define cmsStageType l2cmsStageType
+#define cmsStageNext l2cmsStageNext
+#define cmsStageInputChannels l2cmsStageInputChannels
+#define cmsStageOutputChannels l2cmsStageOutputChannels
+#define cmsStageAllocCLut16bit l2cmsStageAllocCLut16bit
+#define cmsStageAllocCLutFloat l2cmsStageAllocCLutFloat
+#define cmsStageSampleCLut16bit l2cmsStageSampleCLut16bit
+#define cmsStageSampleCLutFloat l2cmsStageSampleCLutFloat
+#define cmsStageAllocToneCurves l2cmsStageAllocToneCurves
+#define cmsReadTag l2cmsReadTag
+#define cmsWriteTag l2cmsWriteTag
 #define cmsMLUalloc l2cmsMLUalloc
 #define cmsMLUsetASCII l2cmsMLUsetASCII
 #define cmsMLUsetWide l2cmsMLUsetWide
 #define cmsMLUfree l2cmsMLUfree
-#define cmsCreateContext l2cmsCreateContext
 #define cmsDictAlloc l2cmsDictAlloc
 #define cmsDictFree l2cmsDictFree
 #define cmsDictDup l2cmsDictDup
 #define cmsDictAddEntry l2cmsDictAddEntry
 #define cmsDictGetEntryList l2cmsDictGetEntryList
 #define cmsDictNextEntry l2cmsDictNextEntry
-#define cmsCreateRGBProfile l2cmsCreateRGBProfile
+#define cmsLabEncoded2Float l2cmsLabEncoded2Float
+#define cmsFloat2LabEncoded l2cmsFloat2LabEncoded
+#define cmsD50_XYZ l2cmsD50_XYZ
+#define cmsD50_xyY l2cmsD50_xyY
+#define cmsWhitePointFromTemp l2cmsWhitePointFromTemp
+#define cmsxyY2XYZ l2cmsxyY2XYZ
+#define cmsXYZ2Lab l2cmsXYZ2Lab
+#define cmsDeltaE l2cmsDeltaE
+#define cmsGetAlarmCodes l2cmsGetAlarmCodes
+#define cmsCreateContext l2cmsCreateContext
+#define cmsGetContextUserData l2cmsGetContextUserData
+#define cmsGetProfileContextID l2cmsGetProfileContextID
+#define cmsGetTransformContextID l2cmsGetTransformContextID
+#define cmsGetEncodedCMMversion l2cmsGetEncodedCMMversion
 
 #include "lcm2_profiler.c"
 
@@ -1253,7 +1287,6 @@ oyPointer  l2cmsCMMColorConversion_ToMem_ (
 {
   int error = !xform;
   oyPointer data = 0;
-  cmsUInt32Number size_ = 0;
   int flags = l2cmsFlagsFromOptions( opts );
 
   if(!error)
@@ -1282,22 +1315,7 @@ oyPointer  l2cmsCMMColorConversion_ToMem_ (
         free(pseq);
     }
 #endif
-
-    if(dl)
-      l2cmsSaveProfileToMem( dl, 0, &size_ );
-    else
-      l2cms_msg( oyMSG_WARN, (oyStruct_s*)opts,
-                OY_DBG_FORMAT_"no DL from transform. flags: %s",
-                OY_DBG_ARGS_, l2cmsFlagsToText(flags) );
-    if(size_)
-    {
-      data = allocateFunc( size_ );
-      l2cmsSaveProfileToMem( dl, data, &size_ );
-    } else
-      l2cms_msg( oyMSG_WARN, (oyStruct_s*)opts,
-                OY_DBG_FORMAT_"can not convert CMM profile to memory",
-                OY_DBG_ARGS_ );
-    *size = size_;
+    data = lcm2WriteProfileToMem( dl, size, allocateFunc );
   }
 
   return data;
@@ -1447,7 +1465,7 @@ l2cmsProfileWrap_s*l2cmsAddProofProfile( oyProfile_s       * proof,
 
     char * type_ = l2cmsPROFILE;
     uint32_t type = *((uint32_t*)type_);
-    cmsUInt32Number size = 0;
+    size_t size = 0;
     oyPointer block = 0;
     l2cmsProfileWrap_s * s = calloc(sizeof(l2cmsProfileWrap_s), 1);
 
@@ -1464,12 +1482,7 @@ l2cmsProfileWrap_s*l2cmsAddProofProfile( oyProfile_s       * proof,
     if(hp)
     {
       /* save to memory */
-      if(!l2cmsSaveProfileToMem( hp, 0, &size ))
-        l2cms_msg( oyMSG_WARN, (oyStruct_s*)proof,
-             OY_DBG_FORMAT_"l2cmsSaveProfileToMem failed for \"%s\" %s",
-             OY_DBG_ARGS_, hash_text, oyProfile_GetFileName( proof, -1 ) );
-      block = oyAllocateFunc_( size );
-      l2cmsSaveProfileToMem( hp, block, &size );
+      block = lcm2WriteProfileToMem( hp, &size, oyAllocateFunc_ );
       l2cmsCloseProfile( hp ); hp = 0;
     }
 
@@ -2877,6 +2890,7 @@ void l2cmsErrorHandlerFunction        ( cmsContext          ContextID,
 int            l2cmsCMMMessageFuncSet ( oyMessage_f         message_func )
 {
   l2cms_msg = message_func;
+  lcm2MessageFuncSet( message_func );
   return 0;
 }
 
@@ -3070,6 +3084,198 @@ int l2cmsGetOptionsUI                 ( oyCMMapiFilter_s   * module,
   return 0;
 }
 
+
+/* OY_LCM2_CREATE_ABSTRACT_WHITE_POINT_REGISTRATION -------------------------- */
+
+/** Function lcm2AbstractWhitePoint
+ *  @brief   create a White point correction profile
+ *
+ *  Abstract profiles can easily be merged into a multi profile transform.
+ *
+ *  @param         src_profile         a profile for source white point
+ *  @param         dst_profile         a profile for target white point
+ *  @param         icc_profile_flags   profile flags
+ *
+ *  @version Oyranos: 0.9.7
+ *  @since   2017/06/05 (Oyranos: 0.9.7)
+ *  @date    2017/06/05
+ */
+oyProfile_s* lcm2AbstractWhitePoint  ( double              cie_a,
+                                       double              cie_b,
+                                       uint32_t            icc_profile_flags )
+{
+  int error = 0;
+  cmsHPROFILE abs = NULL;
+  char * my_abstract_file_name = NULL;
+  double profile_version = 2.4;
+  oyProfile_s * prof = NULL;
+
+  l2cms_msg( oyMSG_DBG, NULL, OY_DBG_FORMAT_
+             "cie_ab %g %g", OY_DBG_ARGS_, cie_a, cie_b );
+
+  if(icc_profile_flags & OY_ICC_VERSION_2)
+    profile_version = 4.3;
+
+  error = lcm2CreateAbstractWhitePointProfile ( cie_a, cie_b, 15,
+                                                profile_version,
+                                                & my_abstract_file_name,
+                                                &abs );
+
+  if(error || !abs)
+  {
+    l2cms_msg( oyMSG_WARN, (oyStruct_s*)abs, OY_DBG_FORMAT_ " "
+               "failed to build white point effect",
+               OY_DBG_ARGS_ );
+  } else
+  {
+    void * data;
+    size_t size = 0;
+    data = lcm2WriteProfileToMem( abs, &size, oyAllocateFunc_ );
+    prof = oyProfile_FromMem( size, data, 0,0 );
+    if(data && size) oyFree_m_( data );
+  }
+
+  if(oy_debug && getenv("OY_DEBUG_WRITE"))
+  {
+      char * t = 0; oyStringAddPrintf( &t, 0,0,
+      "%04d-%s-abstract-wtpt[%d]", ++oy_debug_write_id,CMM_NICK,oyStruct_GetId((oyStruct_s*)abs));
+      lcm2WriteProfileToFile( abs, t, NULL,NULL );
+      oyFree_m_(t);
+  }
+
+  if(abs)
+    l2cmsCloseProfile( abs );
+
+  return prof;
+}
+
+#define OY_LCM2_CREATE_ABSTRACT_WHITE_POINT_REGISTRATION OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH \
+  "create_profile.white_point_adjust.icc._" CMM_NICK "._CPU"
+
+/**
+ *  This function implements oyMOptions_Handle_f.
+ *
+ *  @version Oyranos: 0.9.7
+ *  @since   2017/06/05 (Oyranos: 0.9.7)
+ *  @date    2017/06/05
+ */
+int          l2cmsMOptions_Handle3   ( oyOptions_s       * options,
+                                       const char        * command,
+                                       oyOptions_s      ** result )
+{
+  int error = 0;
+  double cie_a = -1,
+         cie_b = -1;
+
+  if(oyFilterRegistrationMatch(command,"can_handle", 0))
+  {
+    if(oyFilterRegistrationMatch(command,"create_profile.white_point_adjust", 0))
+    {
+      error = oyOptions_FindDouble( options, "cie_a", 0, &cie_a ); 
+
+      return error;
+    }
+    else
+      return -1;
+  }
+  else if(oyFilterRegistrationMatch(command,"create_profile.white_point_adjust", 0))
+  {
+    int32_t icc_profile_flags = 0;
+    oyOptions_FindInt( options, "icc_profile_flags", 0, &icc_profile_flags ); 
+    oyProfile_s * p = NULL;
+
+    if( oyOptions_FindDouble( options, "cie_a", 0, &cie_a ) == 0 &&
+        oyOptions_FindDouble( options, "cie_b", 0, &cie_b ) == 0 )
+      p = lcm2AbstractWhitePoint( cie_a, cie_b, icc_profile_flags );
+
+    if(p)
+    {
+      oyOption_s * o = oyOption_FromRegistration( OY_LCM2_CREATE_ABSTRACT_WHITE_POINT_REGISTRATION".icc_profile", 0 );
+      error = oyOption_MoveInStruct( o, (oyStruct_s**) &p );
+      if(!*result)
+        *result = oyOptions_New(0);
+      oyOptions_MoveIn( *result, &o, -1 );
+    } else
+        l2cms_msg( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_
+                   "effect creation failed",
+                   OY_DBG_ARGS_ );
+  }
+
+  return 0;
+}
+/**
+ *  This function implements oyCMMinfoGetText_f.
+ *
+ *  @version Oyranos: 0.9.7
+ *  @since   2017/06/06 (Oyranos: 0.9.7)
+ *  @date    2017/06/06
+ */
+const char * l2cmsInfoGetTextProfileC3( const char        * select,
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context )
+{
+         if(strcmp(select, "can_handle")==0)
+  {
+         if(type == oyNAME_NICK)
+      return "check";
+    else if(type == oyNAME_NAME)
+      return _("check");
+    else
+      return _("Check if this module can handle a certain command.");
+  } else if(strcmp(select, "create_profile")==0)
+  {
+         if(type == oyNAME_NICK)
+      return "white_point_adjust";
+    else if(type == oyNAME_NAME)
+      return _("Create a ICC abstract white point profile.");
+    else
+      return _("The littleCMS \"create_profile.white_point_adjust\" command lets you create ICC abstract profiles from CIE*ab coordinates for white point adjustment. The filter expects a oyOption_s object with name \"cie_a\" and \"cie_b\" each containing a double value in range -0.5 - 0.5. The result will appear in \"icc_profile\" with the additional attributes \"create_profile.white_point_adjust\" as a oyProfile_s object.");
+  } else if(strcmp(select, "help")==0)
+  {
+         if(type == oyNAME_NICK)
+      return "help";
+    else if(type == oyNAME_NAME)
+      return _("Create a ICC white point effect profile.");
+    else
+      return _("The littleCMS \"create_profile.white_point_adjust\" command lets you create ICC abstract profiles from CIE*ab coordinates. See the \"white_point_adjust\" info item.");
+  }
+  return 0;
+}
+const char *l2cms_texts_profile_create[4] = {"can_handle","create_profile","help",0};
+
+/** @instance l2cms_api10_cmm3
+ *  @brief    littleCMS oyCMMapi10_s implementation
+ *
+ *  a filter for proofing effect profile creation
+ *
+ *  @version Oyranos: 0.9.7
+ *  @since   2017/06/05 (Oyranos: 0.9.7)
+ *  @date    2017/06/05
+ */
+oyCMMapi10_s_    l2cms_api10_cmm3 = {
+
+  oyOBJECT_CMM_API10_S,
+  0,0,0,
+  0,
+
+  l2cmsCMMInit,
+  l2cmsCMMMessageFuncSet,
+
+  OY_LCM2_CREATE_ABSTRACT_WHITE_POINT_REGISTRATION,
+
+  CMM_VERSION,
+  CMM_API_VERSION,                  /**< int32_t module_api[3] */
+  0,   /* id_; keep empty */
+  0,   /* api5_; keep empty */
+  0,   /* runtime_context */
+ 
+  l2cmsInfoGetTextProfileC3,            /**< getText */
+  (char**)l2cms_texts_profile_create,   /**<texts; list of arguments to getText*/
+ 
+  l2cmsMOptions_Handle3                 /**< oyMOptions_Handle_f oyMOptions_Handle */
+};
+
+/* OY_LCM2_CREATE_ABSTRACT_WHITE_POINT_REGISTRATION -------------------------- */
 
 /* OY_LCM2_CREATE_ABSTRACT_PROOFING_REGISTRATION -------------------------- */
 
@@ -3312,7 +3518,6 @@ const char * l2cmsInfoGetTextProfileC2( const char        * select,
   }
   return 0;
 }
-const char *l2cms_texts_profile_create[4] = {"can_handle","create_profile","help",0};
 
 #define OY_LCM2_CREATE_ABSTRACT_PROOFING_REGISTRATION OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH \
   "create_profile.proofing_effect.icc._" CMM_NICK "._CPU"
@@ -3330,7 +3535,7 @@ oyCMMapi10_s_    l2cms_api10_cmm2 = {
 
   oyOBJECT_CMM_API10_S,
   0,0,0,
-  0,
+  (oyCMMapi_s*) & l2cms_api10_cmm3,
 
   l2cmsCMMInit,
   l2cmsCMMMessageFuncSet,
@@ -3371,7 +3576,7 @@ oyProfile_s *      l2cmsCreateICCMatrixProfile (
                                        int icc_profile_flags )
 {
   cmsHPROFILE lp = 0;
-  cmsUInt32Number size = 0;
+  size_t size = 0;
   char * data = 0;
 
   int error = 0;
@@ -3382,13 +3587,11 @@ oyProfile_s *      l2cmsCreateICCMatrixProfile (
   if(icc_profile_flags & OY_ICC_VERSION_2)
     l2cmsSetProfileVersion(lp, 2.4);
 
-  l2cmsSaveProfileToMem( lp, 0, &size );
+  data = lcm2WriteProfileToMem( lp, &size, oyAllocateFunc_ );
   if(!size)
     l2cms_msg( oyMSG_WARN,0, OY_DBG_FORMAT_
              "l2cmsSaveProfileToMem failed for: red: %g %g green: %g %g blue: %g %g white: %g %g gamma: %g",
              OY_DBG_ARGS_, rx,ry, gx,gy, bx,by, wx,wy, gamma );
-  data = oyAllocateFunc_( size );
-  l2cmsSaveProfileToMem( lp, data, &size );
   l2cmsCloseProfile( lp );
 
   prof = oyProfile_FromMem( size, data, 0,0 );
