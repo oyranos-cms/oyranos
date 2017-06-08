@@ -759,12 +759,6 @@ int      oyGetDisplayWhitePoint      ( double            * cie_a,
   int mode = oyGetBehaviour( oyBEHAVIOUR_DISPLAY_WHITE_POINT );
   char * value = NULL;
 
-  double K_xyz[5][3] = {
-  { 0.3451, 0.3516, 0.3032 }, /* 5000 K */
-  { 0.3325, 0.3411, 0.3265 }, /* 5500 K */
-  { 0.3135, 0.3237, 0.3628 }, /* 6500 K */
-  { 0.3004, 0.3103, 0.3893 }, /* 7500 K */
-  { 0.2849, 0.2933, 0.4218 }  /* 9300 K */ };
   double DE_xyz[5][3] = {
   { 0.34567,0.35850,0.29583}, /* D50 */
   { 0.33242,0.34743,0.32015}, /* D55 */
@@ -805,45 +799,22 @@ int      oyGetDisplayWhitePoint      ( double            * cie_a,
     }
     break;
   }
+
   if(mode > 6)
   {
     int pos = mode - 7;
     oyOptions_s * options = NULL;
     oyConfigs_s * devices = oyGetMonitors_( &options );
-    int devices_n = oyConfigs_Count( devices );
     oyConfig_s * monitor = oyConfigs_Get( devices, pos );
     oyProfile_s* profile = NULL;
-    oyProfileTag_s * wtpt = NULL;
-    oyStructList_s * s = NULL;
-    int count, j;
-    oyDeviceGetProfile( monitor, options, &profile );
-    wtpt = oyProfile_GetTagById( profile, icSigMediaWhitePointTag ); 
 
-    s = oyProfileTag_Get( wtpt );
-    count = oyStructList_Count( s );
-    for(j = 0; j < count; ++j)
-    {
-      oyOption_s * opt = (oyOption_s*) oyStructList_GetType( s, j,
-                                                    oyOBJECT_OPTION_S );
-      if(opt && strstr( oyOption_GetRegistration( opt ), "icSigXYZType" ) != NULL)
-      {
-         double XYZ[3] = { oyOption_GetValueDouble( opt, 0 ),
-                           oyOption_GetValueDouble( opt, 1 ),
-                           oyOption_GetValueDouble( opt, 2 ) },
-                Lab[3];
-         oyXYZ2Lab( XYZ, Lab );
-         *cie_a = Lab[1]/256.0 + 0.5;
-         *cie_b = Lab[2]/256.0 + 0.5;
-         error = 0;
-      }
-    }
+    oyDeviceGetProfile( monitor, options, &profile );
+    oyProfile_GetWhitePoint( profile, cie_a, cie_b );
 
     oyConfig_Release( &monitor );
     oyOptions_Release( &options );
     oyConfigs_Release( &devices );
     oyProfile_Release( &profile );
-    oyProfileTag_Release( &wtpt );
-    oyStructList_Release( &s );
   }
 
   return error;
