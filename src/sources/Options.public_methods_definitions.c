@@ -1065,6 +1065,23 @@ int            oyOptions_CountType   ( oyOptions_s       * options,
   return m;
 }
 
+int          oyOptionRegistrationMatch(const char        * registration,
+                                       const char        * pattern,
+                                       uint32_t            type )
+{
+  int match = 0;
+  if(registration && pattern)
+  {
+    if(type == oyNAME_REGISTRATION &&
+       strcmp(registration, pattern) == 0)
+      match = 1;
+    else if(type == oyNAME_PATTERN &&
+       oyFilterRegistrationMatch( registration, pattern, 0 ))
+      match = 1;
+  }
+  return match;
+}
+
 /** Function oyOptions_Find
  *  @memberof oyOptions_s
  *  @brief   search for a certain option key
@@ -1111,11 +1128,7 @@ oyOption_s *   oyOptions_Find        ( oyOptions_s       * options,
 
       if(found && registration)
       {
-         if(type == oyNAME_REGISTRATION &&
-            strcmp(oyOptionPriv_m(o)->registration, registration) != 0)
-          found = 0;
-         else if(type == oyNAME_PATTERN &&
-            !oyFilterRegistrationMatch( oyOptionPriv_m(o)->registration, registration, 0 ))
+         if(!oyOptionRegistrationMatch( oyOptionPriv_m(o)->registration, registration, type ))
           found = 0;
       }
 
@@ -1503,18 +1516,35 @@ int            oyOptions_SetFromDouble(oyOptions_s      ** obj,
   return error;
 }
 
-/** Function oyOptions_GetType
+/** Function oyOptions_GetType2
  *  @memberof oyOptions_s
- *  @brief   select from options with special attribute
+ *  @brief   select from options with special attributes
  *
- *  @version Oyranos: 0.1.10
- *  @since   2009/03/04 (Oyranos: 0.1.10)
- *  @date    2009/03/04
+ *  @param[in]     options             the options to scan
+ *  @param[in]     pos                 the position if the result appears
+ *                                     multiple times
+ *  @param[in]     pattern             the registration pattern to search for;
+ *                                     optional
+ *  @param[in]     pattern_type        supported types of registration matching:
+ *                                     - oyNAME_PATTERN for a pattern match, that is what most users prefer
+ *                                     - oyNAME_REGISTRATION for a exact comparision
+ *  @param[in]     object_type         the acceptable object type
+ *  @param[out]    result              the found object; optional
+ *  @param[out]    option              the belonging option; optional
+ *  @return                            error
+ *
+ *
+ *  @version Oyranos: 0.9.7
+ *  @date    2017/06/10
+ *  @since   2017/06/10 (Oyranos: 0.9.7)
  */
-oyStruct_s *   oyOptions_GetType     ( oyOptions_s       * options,
+int            oyOptions_GetType2    ( oyOptions_s       * options,
                                        int                 pos,
-                                       const char        * registration,
-                                       oyOBJECT_e          type )
+                                       const char        * pattern,
+                                       uint32_t            pattern_type,
+                                       oyOBJECT_e          object_type,
+                                       oyStruct_s       ** result,
+                                       oyOption_s       ** option )
 {
   int error = !options;
   int i, n, m = -1, found;
@@ -1531,36 +1561,64 @@ oyStruct_s *   oyOptions_GetType     ( oyOptions_s       * options,
       o = (oyOption_s_*)oyOptions_Get( options, i );
       found = 1;
 
-      if(found && registration &&
-         !oyFilterRegistrationMatch( o->registration, registration, 0 ))
+      if(found && pattern &&
+         !oyOptionRegistrationMatch( o->registration, pattern, pattern_type ))
           found = 0;
 
       if(found && !(o->value && o->value->oy_struct))
         error = 1;
 
-      if(found && type && !error &&
+      if(found && object_type && !error &&
          (o->value_type != oyVAL_STRUCT || !o->value ||
-          o->value->oy_struct->type_ != type))
+          o->value->oy_struct->type_ != object_type))
         found = 0;
 
       if(found && !error)
       if(pos == -1 || ++m == pos)
       {
-        if(o->value->oy_struct->copy)
+        if(result)
         {
-          st = o->value->oy_struct->copy( o->value->oy_struct, 0 );
-          if(oy_debug_objects >= 0 && st)
-            oyObjectDebugMessage_( st->oy_, __func__,
-                                   oyStructTypeToText(st->type_) );
-        } else
-          st = o->value->oy_struct;
+          if(o->value->oy_struct->copy)
+          {
+            st = o->value->oy_struct->copy( o->value->oy_struct, 0 );
+            if(oy_debug_objects >= 0 && st)
+              oyObjectDebugMessage_( st->oy_, __func__,
+                                     oyStructTypeToText(st->type_) );
+          } else if(result)
+            st = o->value->oy_struct;
 
-        oyOption_Release( (oyOption_s**)&o );
+          *result = st;
+        }
+
+        if(option)
+          *option = (oyOption_s*)o;
+        else
+          oyOption_Release( (oyOption_s**)&o );
         break;
       }
 
       oyOption_Release( (oyOption_s**)&o );
     }
+
+  return error;
+}
+
+/** Function oyOptions_GetType
+ *  @memberof oyOptions_s
+ *  @brief   select from options with special attribute
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/03/04 (Oyranos: 0.1.10)
+ *  @date    2009/03/04
+ */
+oyStruct_s *   oyOptions_GetType     ( oyOptions_s       * options,
+                                       int                 pos,
+                                       const char        * pattern,
+                                       oyOBJECT_e          type )
+{
+  oyStruct_s * st = 0;
+
+  oyOptions_GetType2( options, pos, pattern, oyNAME_PATTERN, type, &st, NULL );
 
   return st;
 }
@@ -1875,6 +1933,8 @@ OYAPI int  OYEXPORT
  *  the help oyOptions_FromText().
  *  Any other pointer will be converted to a oyBlob_s object. The name of that
  *  object will come from driver_context_type.
+ *
+ *  @deprecated will be removed from v1.0; migrate to oyOptions_FromJSON().
  *
  *  @param[in,out] options             options for the device
  *  @param[in]     driver_context      driver context

@@ -94,10 +94,18 @@ OYAPI int  OYEXPORT
                                        int                 pos,
                                        uint32_t            flags );
 OYAPI oyStruct_s *  OYEXPORT
-                oyOptions_GetType    ( oyOptions_s       * options,
+                 oyOptions_GetType   ( oyOptions_s       * options,
                                        int                 pos,
                                        const char        * registration,
                                        oyOBJECT_e          type );
+OYAPI int  OYEXPORT
+                 oyOptions_GetType2  ( oyOptions_s       * options,
+                                       int                 pos,
+                                       const char        * pattern,
+                                       uint32_t            pattern_type,
+                                       oyOBJECT_e          object_type,
+                                       oyStruct_s       ** result,
+                                       oyOption_s       ** option );
 OYAPI int  OYEXPORT
                  oyOptions_MoveInStruct(
                                        oyOptions_s      ** obj,
