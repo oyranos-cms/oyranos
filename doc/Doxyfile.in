@@ -117,7 +117,6 @@ HTML_OUTPUT            = html
 HTML_FILE_EXTENSION    = .html
 HTML_HEADER            = @CMAKE_CURRENT_SOURCE_DIR@/doxygen.header.dox
 HTML_FOOTER            = @CMAKE_CURRENT_SOURCE_DIR@/doxygen.footer.dox
-#HTML_STYLESHEET        = @CMAKE_CURRENT_SOURCE_DIR@/doxygen.css
 GENERATE_HTMLHELP      = NO
 CHM_FILE               = 
 HHC_LOCATION           = 
