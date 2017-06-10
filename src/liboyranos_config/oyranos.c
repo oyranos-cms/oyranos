@@ -812,7 +812,7 @@ int      oyGetDisplayWhitePoint      ( double            * cie_a,
     oyProfile_s* profile = NULL;
 
     oyDeviceGetProfile( monitor, options, &profile );
-    oyProfile_GetWhitePoint( profile, cie_a, cie_b );
+    error = oyProfile_GetWhitePoint( profile, cie_a, cie_b );
 
     oyConfig_Release( &monitor );
     oyOptions_Release( &options );
