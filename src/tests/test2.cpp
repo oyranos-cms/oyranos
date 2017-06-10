@@ -1571,11 +1571,11 @@ oyTESTRESULT_e testProfile ()
   if(!error && cie_a != -1.0 && cie_b != -1.0)
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS, 
-    "oyGetDisplayWhitePoint() = %g %g  mode = 7      ", cie_a, cie_b );
+    "oyGetDisplayWhitePoint() = %g %g  mode = 7  %d   ", cie_a, cie_b, error );
   } else
   {
     PRINT_SUB( oyTESTRESULT_XFAIL, 
-    "oyGetDisplayWhitePoint() = %g %g  mode = 7      ", cie_a, cie_b );
+    "oyGetDisplayWhitePoint() = %g %g  mode = 7  %d   ", cie_a, cie_b, error );
   }
 
   /* set a custom white point */
