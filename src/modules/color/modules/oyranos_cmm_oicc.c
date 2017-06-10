@@ -864,6 +864,34 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
               effect_switch = oyOptions_FindString( f_options,
                                         "effect_switch", "1" ) ? 1:0;
 
+              o = oyOptions_Find( f_options, "profiles_effect", oyNAME_PATTERN );
+              if(!o && (effect_switch))
+              {
+                effp = oyProfile_FromStd( oyPROFILE_EFFECT, icc_profile_flags, 0 );
+                effps = oyProfiles_New(0);
+                val = oyProfile_GetText( effp, oyNAME_NAME );
+                oyProfiles_MoveIn( effps, &effp, -1 );
+                oyOptions_MoveInStruct( &f_options,
+                                        OY_PROFILES_EFFECT,
+                                        (oyStruct_s**)& effps,
+                                        OY_CREATE_NEW );
+                if(verbose)
+                  oicc_msg( oyMSG_DBG,(oyStruct_s*)node,
+                           "%s:%d set \"profiles_effect\": %s %s in %s[%d]",
+                           strrchr(__FILE__,'/') ?
+                                 strrchr(__FILE__,'/') + 1 : __FILE__ ,__LINE__,
+                           val?val:"empty profile text", 
+                           display_mode ? "for displaying" : "for hard copy",
+                           oyStruct_GetInfo( (oyStruct_s*)f_options, oyNAME_NAME, 0 ),
+                           oyObject_GetId( f_options->oy_ ));
+              } else if(verbose)
+                oicc_msg( oyMSG_DBG,(oyStruct_s*)node,
+                         "%s:%d \"profiles_effect\" %s, %s",
+                         strrchr(__FILE__,'/') ?
+                                 strrchr(__FILE__,'/') + 1 : __FILE__ ,__LINE__,
+                         o ? "is already set" : "no profile",
+                         effect_switch ? "effect_switch is set" :"effect_switch is not set" );
+
               /* TODO @todo add proofing profile */
               o = oyOptions_Find( f_options, "profiles_simulation", oyNAME_PATTERN );
               if(!o && (proofing || rendering_gamut_warning))
@@ -892,34 +920,6 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
                                  strrchr(__FILE__,'/') + 1 : __FILE__ ,__LINE__,
                          o ? "is already set" : "no profile",
                          proofing ? "proofing is set" :"proofing is not set" );
-
-              o = oyOptions_Find( f_options, "profiles_effect", oyNAME_PATTERN );
-              if(!o && (effect_switch))
-              {
-                effp = oyProfile_FromStd( oyPROFILE_EFFECT, icc_profile_flags, 0 );
-                effps = oyProfiles_New(0);
-                val = oyProfile_GetText( effp, oyNAME_NAME );
-                oyProfiles_MoveIn( effps, &effp, -1 );
-                oyOptions_MoveInStruct( &f_options,
-                                        OY_PROFILES_EFFECT,
-                                        (oyStruct_s**)& effps,
-                                        OY_CREATE_NEW );
-                if(verbose)
-                  oicc_msg( oyMSG_DBG,(oyStruct_s*)node,
-                           "%s:%d set \"profiles_effect\": %s %s in %s[%d]",
-                           strrchr(__FILE__,'/') ?
-                                 strrchr(__FILE__,'/') + 1 : __FILE__ ,__LINE__,
-                           val?val:"empty profile text", 
-                           display_mode ? "for displaying" : "for hard copy",
-                           oyStruct_GetInfo( (oyStruct_s*)f_options, oyNAME_NAME, 0 ),
-                           oyObject_GetId( f_options->oy_ ));
-              } else if(verbose)
-                oicc_msg( oyMSG_DBG,(oyStruct_s*)node,
-                         "%s:%d \"profiles_effect\" %s, %s",
-                         strrchr(__FILE__,'/') ?
-                                 strrchr(__FILE__,'/') + 1 : __FILE__ ,__LINE__,
-                         o ? "is already set" : "no profile",
-                         effect_switch ? "effect_switch is set" :"effect_switch is not set" );
 
               oyOption_Release( &o );
               oyOptions_Release( &db_options );
