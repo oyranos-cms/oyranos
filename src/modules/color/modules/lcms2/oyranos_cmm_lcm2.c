@@ -1858,7 +1858,7 @@ oyPointer l2cmsFilterNode_CmmIccContextToMem (
                " proof requested",OY_DBG_ARGS_);
 
   profiles = l2cmsProfilesFromOptions( node, plug, node_options,
-                                      "profiles_simulation", proof, verbose );
+                                       "profiles_simulation", proof, verbose );
   n = oyProfiles_Count( profiles );
   if(n)
     for(i = 0; i < n; ++i)
