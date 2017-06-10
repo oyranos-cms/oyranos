@@ -1,16 +1,25 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<html><head>
-<meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1"/>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta name="keywords" content="Oyranos,Color Management,Color Management,ICC,CMS,C,doxygen,API,documentation"/>
 <meta name="description" content="C source code API documentation for the Oyranos project."/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.8.13"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>$title</title>
-<link href="doxygen.css" rel="stylesheet" type="text/css"/>
-<link href="tabs.css" rel="stylesheet" type="text/css">
-</head><body>
-
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
 <table class="title">
 <tr>
 <td class='logo' rowspan="2"><a href='http://www.oyranos.org'><img src='oyranos_logo.png' alt="Oyranos Icon linux/BSD/Unix/osX" border="0"/></a></td>
 <td>Oyranos Color Management System API - Version $projectnumber</td>
 </tr>
 </table>
+</div>
