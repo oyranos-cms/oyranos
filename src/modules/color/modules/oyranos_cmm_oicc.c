@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2008-2015 (C) Kai-Uwe Behrmann
+ *            2008-2017 (C) Kai-Uwe Behrmann
  *
  *  @brief    color management policy module for Oyranos
  *  @internal
@@ -141,7 +141,7 @@ char oicc_default_color_icc_options[] = {
       <proof_hard.advanced>0</proof_hard.advanced>\n\
       <proof_soft.advanced>0</proof_soft.advanced>\n\
       <effect_switch>0</effect_switch>\n\
-      <display_white_point.advanced>0</display_white_point.advanced>\n\
+      <display_white_point.advanced>1</display_white_point.advanced>\n\
       <rendering_intent>0</rendering_intent>\n\
       <rendering_bpc>1</rendering_bpc>\n\
       <rendering_intent_proof.advanced>0</rendering_intent_proof.advanced>\n\

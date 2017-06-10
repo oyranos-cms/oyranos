@@ -703,7 +703,7 @@ char * oyGetDefaultProfileName       ( oyPROFILE_e         type,
  *
  *  The function sets a custom white point target for the display. Note this
  *  setting will only be active when ::OY_DEFAULT_DISPLAY_WHITE_POINT is set
- *  to 0 - automatic.
+ *  to 1 - automatic.
  *
  *  @param[in]     cie_a               CIE*a component in 0.0 - 1.0 range
  *  @param[in]     cie_b               CIE*b component in 0.0 - 1.0 range
@@ -746,7 +746,10 @@ int      oySetDisplayWhitePoint      ( double              cie_a,
  *
  *  @param[out]    cie_a               CIE*a component in 0.0 - 1.0 range
  *  @param[out]    cie_b               CIE*b component in 0.0 - 1.0 range
- *  @return                            0 - success; -1 - no white point available; < 1 - error
+ *  @return                            error
+ *                                     - 0: success
+ *                                     - -1: no white point available
+ *                                     - >1: error
  *
  *  @version Oyranos: 0.9.7
  *  @date    2017/06/01
@@ -768,7 +771,8 @@ int      oyGetDisplayWhitePoint      ( double            * cie_a,
 
   switch(mode)
   {
-  case 0:
+  case 0: return error;
+  case 1:
     {
       value = oyGetPersistentString( OY_DEFAULT_DISPLAY_WHITE_POINT_A, 0,
                                      oySCOPE_USER_SYS, oyAllocateFunc_ );
@@ -781,7 +785,6 @@ int      oyGetDisplayWhitePoint      ( double            * cie_a,
       error = 0;
     }
     break;
-  case 1: return error;
   case 2:
   case 3:
   case 4:

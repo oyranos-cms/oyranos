@@ -1580,16 +1580,16 @@ oyTESTRESULT_e testProfile ()
 
   /* set a custom white point */
   oySetDisplayWhitePoint( 0.5,0.5, oySCOPE_USER, "test white point" );
-  oySetBehaviour( oyBEHAVIOUR_DISPLAY_WHITE_POINT, oySCOPE_USER, 0 );
+  oySetBehaviour( oyBEHAVIOUR_DISPLAY_WHITE_POINT, oySCOPE_USER, 1 );
   error = oyGetDisplayWhitePoint( &cie_a, &cie_b );
   if(!error && cie_a != -1.0 && cie_b != -1.0)
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS, 
-    "oyGetDisplayWhitePoint() = %g %g            mode = 0      ", cie_a, cie_b );
+    "oyGetDisplayWhitePoint() = %g %g            mode = 1      ", cie_a, cie_b );
   } else
   {
     PRINT_SUB( oyTESTRESULT_FAIL, 
-    "oyGetDisplayWhitePoint() = %g %g            mode = 0      ", cie_a, cie_b );
+    "oyGetDisplayWhitePoint() = %g %g            mode = 1      ", cie_a, cie_b );
   }
 
   oySetBehaviour( oyBEHAVIOUR_DISPLAY_WHITE_POINT, oySCOPE_USER, display_white_point_mode );

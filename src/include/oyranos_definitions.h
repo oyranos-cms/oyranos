@@ -204,8 +204,8 @@
 #define OY_DEFAULT_EFFECT              OY_BEHAVIOUR_STD OY_SLASH "effect_switch"
 /** key name for common display white point mode
  *
- *  - 0: automatic - use target values from ::OY_DEFAULT_DISPLAY_WHITE_POINT_A and ::OY_DEFAULT_DISPLAY_WHITE_POINT_B
- *  - 1: no white point adjustments (old behaviour)
+ *  - 0: no white point adjustments (old behaviour)
+ *  - 1: automatic - use target values from ::OY_DEFAULT_DISPLAY_WHITE_POINT_A and ::OY_DEFAULT_DISPLAY_WHITE_POINT_B
  *  - 2: D50
  *  - 3: D55
  *  - 4: D65

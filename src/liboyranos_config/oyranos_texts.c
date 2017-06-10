@@ -492,7 +492,7 @@ oyOptionStringsTranslate_ ()
       _("Select a white point target for all monitors."),
       7, /* choices */
       /* order is automatic, none, static ones, first monitor, second monitor, ... , last monitor */
-      _("Automatic"), _("No"), _("Illuminant D50"), _("Illuminant D55"),
+      _("No"), _("Automatic"), _("Illuminant D50"), _("Illuminant D55"),
       OY_DEFAULT_DISPLAY_WHITE_POINT,
       "oyDISPLAY_WHITE_POINT" , 0,0)
       opt[oyWIDGET_DISPLAY_WHITE_POINT].choice_list[4] = _("Illuminant D65");
@@ -1280,7 +1280,7 @@ char **      oyOptionChoicesGetWtPt_ ( int               * choices )
 {
   const oyOption_t_ *t = oyOptionGet_(oyWIDGET_DISPLAY_WHITE_POINT);
 
-  /* order is automatic, none, static ones, first monitor, second monitor, ... , last monitor */
+  /* order is none, automatic, static ones, first monitor, second monitor, ... , last monitor */
   int choice_list_n = 1+1+5,
       i;
   char ** list;
