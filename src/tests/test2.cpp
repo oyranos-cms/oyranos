@@ -1476,6 +1476,51 @@ oyTESTRESULT_e testInterpolation ()
 }
 
 #include "oyProfile_s.h"
+oyTESTRESULT_e testOptionsType ()
+{
+  oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
+
+  int error = 0;
+
+  fprintf(stdout, "\n" );
+
+  oyProfile_s * p = oyProfile_FromStd( oyASSUMED_WEB, 0,0 );
+  oyOptions_s * opts = NULL;
+  oyOptions_MoveInStruct ( &opts, "///display.abstract.white_point.automatic.oicc",
+                           (oyStruct_s**)&p, OY_CREATE_NEW );
+  fprintf( zout, "opts: %s\n", oyOptions_GetText( opts, oyNAME_NICK ));
+  p = oyProfile_FromStd( oyASSUMED_WEB, 0,0 );
+  oyOptions_MoveInStruct ( &opts, "///display.abstract.environment.automatic.my_app.passive",
+                           (oyStruct_s**)&p, OY_CREATE_NEW );
+  oyOption_s * o = NULL;
+  error = oyOptions_GetType2( opts, -1, "abstract", oyNAME_PATTERN,
+                                  oyOBJECT_PROFILE_S, NULL, &o );
+  const char * reg = oyOption_GetRegistration( o );
+  char * reg_mod = oyStringReplace_( reg, ".oicc", ".my", 0 );
+  reg_mod = oyStringReplace_( reg_mod, ".automatic", "", 0 );
+  oyStringAdd_( &reg_mod, ".passive", 0,0 );
+  oyOption_SetRegistration( o, reg_mod );
+  fprintf( zout, "%s -> %s :: %s\n", reg, reg_mod, oyOption_GetRegistration(o));
+
+  if(strcmp(reg_mod, oyOption_GetRegistration(o)) == 0)
+  {
+    PRINT_SUB( oyTESTRESULT_SUCCESS, 
+    "oyOptions_GetType2() + oyOption_SetRegistration good   " );
+  } else
+  {
+    PRINT_SUB( oyTESTRESULT_FAIL, 
+    "oyOptions_GetType2() + oyOption_SetRegistration good   " );
+  }
+
+  fprintf( zout, "abstract: %d  white_point: %d\n",
+           oyOptions_CountType( opts, "abstract", oyOBJECT_PROFILE_S ),
+           oyOptions_CountType( opts, "white_point", oyOBJECT_PROFILE_S ) );
+
+  oyOptions_Release( &opts );
+
+  return result;
+}
+
 #include "oyranos_icc.h"
 
 oyTESTRESULT_e testProfile ()
@@ -6884,6 +6929,7 @@ int main(int argc, char** argv)
   TEST_RUN( testOptionInt,  "oyOption_s integers" );
   TEST_RUN( testOptionsSet,  "Set oyOptions_s" );
   TEST_RUN( testOptionsCopy,  "Copy oyOptions_s" );
+  TEST_RUN( testOptionsType,  "Objects inside oyOptions_s" );
   TEST_RUN( testBlob, "oyBlob_s" );
   TEST_RUN( testSettings, "default oyOptions_s settings" );
   TEST_RUN( testConfDomain, "oyConfDomain_s");
