@@ -607,6 +607,38 @@ oyTESTRESULT_e testStringRun ()
     "oyStringSegmentxxx()...                            " );
   }
 
+  test = OY_INTERNAL "/display.oydi/display_name";
+  test_out = oyStringReplace_( test, OY_INTERNAL, OY_STD, 0 );
+  //fprintf(zout, "test %s \"%s\"\n", test, test_out);
+  if( strstr(test_out, OY_STD ) != NULL )
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyStringReplace_(start)                            " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyStringReplace_(start)                            " );
+  }
+
+  test_out = oyStringReplace_( test, "display.", "foo.", 0 );
+  //fprintf(zout, "test %s \"%s\"\n", test, test_out);
+  if( strstr(test_out, "foo" ) != NULL )
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyStringReplace_(middle)                           " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyStringReplace_(middle)                           " );
+  }
+
+  test_out = oyStringReplace_( test, "display_name", "bar", 0 );
+  fprintf(zout, "test %s \"%s\"\n", test, test_out);
+  if( strstr(test_out, "bar" ) != NULL &&
+      strstr(test_out, "barbar" ) == NULL)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyStringReplace_(end)                           " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyStringReplace_(end)                           " );
+  }
+
   return result;
 }
 
