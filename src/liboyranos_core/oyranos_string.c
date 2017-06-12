@@ -480,7 +480,7 @@ char*              oyStringReplace_  ( const char        * text,
   {
     oyStringAddN_( &t, start, end-start, oyAllocateFunc_, oyDeAllocateFunc_ );
     oyStringAdd_( &t, replacement, oyAllocateFunc_, oyDeAllocateFunc_ );
-    if(strlen(end) > s_len)
+    if(strlen(end) >= s_len)
       start = end + s_len;
     else
     {
