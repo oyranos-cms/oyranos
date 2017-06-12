@@ -18,6 +18,9 @@
 #define OYRANOS_MONITOR_HOOKS_X11_H
 
 #include "oyranos_monitor_hooks.h"
+#if defined(EXTRA_INCLUDE)
+#include EXTRA_INCLUDE
+#endif
 
 #ifdef __cplusplus
 extern "C" {

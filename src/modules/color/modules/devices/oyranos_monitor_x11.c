@@ -16,7 +16,6 @@
 #include "oyranos_monitor_hooks.h"
 #include "oyranos_monitor_hooks_x11.h"
 
-
 #include <ctype.h> /* isdigit() */
 #include <stdlib.h>
 #include <string.h>
