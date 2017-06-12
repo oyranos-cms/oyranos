@@ -1301,7 +1301,12 @@ oyX1Monitor_getScreenGeometry_            (oyX1Monitor_s *disp)
   if( oyX1Monitor_infoSource_( disp ) == oyX11INFO_SOURCE_SCREEN )
   {
     Screen *scr = XScreenOfDisplay( disp->display, screen );
-    if(scr) { fprintf( stderr,"open X Screen failed\n"); return 1; }
+    if(scr == NULL)
+    {
+      fprintf( stderr,"open X Screen failed\n");
+      error = 1;
+
+    } else
     {
         disp->geo[2] = 0;
         disp->geo[3] = 0;
