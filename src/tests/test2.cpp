@@ -535,7 +535,7 @@ oyTESTRESULT_e testStringRun ()
 
   if( !error )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyFilterRegistrationToSTextField()          %d %.03f", i,
+    "oyFilterRegistrationToSTextField()    %d %.03f", i,
                                        (double)clck/(double)CLOCKS_PER_SEC );
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
@@ -553,7 +553,7 @@ oyTESTRESULT_e testStringRun ()
 
   if( !error )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyFilterRegistrationToText()                %d %.03f", i,
+    "oyFilterRegistrationToText()          %d %.03f", i,
                                        (double)clck/(double)CLOCKS_PER_SEC );
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
@@ -629,14 +629,14 @@ oyTESTRESULT_e testStringRun ()
   }
 
   test_out = oyStringReplace_( test, "display_name", "bar", 0 );
-  fprintf(zout, "test %s \"%s\"\n", test, test_out);
+  //fprintf(zout, "test %s \"%s\"\n", test, test_out);
   if( strstr(test_out, "bar" ) != NULL &&
       strstr(test_out, "barbar" ) == NULL)
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyStringReplace_(end)                           " );
+    "oyStringReplace_(end)                              " );
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
-    "oyStringReplace_(end)                           " );
+    "oyStringReplace_(end)                              " );
   }
 
   return result;
@@ -3484,14 +3484,22 @@ oyTESTRESULT_e testCMMMonitorJSON ()
   error = oyDevicesGet( 0, "monitor", options, &configs );
   if( error <= 0 && configs )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyDeviceGet() \"monitor\"          " );
+    "oyDevicesGet(\"monitor\")           " );
   } else
   { PRINT_SUB( displayFail(),
-    "oyDeviceGet() \"monitor\"          " );
+    "oyDevicesGet(\"monitor\")           " );
+  }
+
+  devices_n = oyConfigs_Count( configs );
+  if( error <= 0 && devices_n > 0 )
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyDevicesGet(\"monitor\") count:   %d", devices_n );
+  } else
+  { PRINT_SUB( displayFail(),
+    "oyDevicesGet(\"monitor\") count:   %d", devices_n );
   }
 
   clck = oyClock() - clck;
-  devices_n = oyConfigs_Count( configs );
   for( i = 0; i < devices_n; ++i )
   {
     char * json_text = 0;
