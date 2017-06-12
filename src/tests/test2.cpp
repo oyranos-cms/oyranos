@@ -115,11 +115,11 @@ FILE * zout = stdout;  /* printed inbetween results */
 
 int oy_test_sub_count = 0;
 #define PRINT_SUB( result_, ... ) { \
-  if(result_ < result) \
+  if((result_) < result) \
     result = result_; \
   fprintf(stdout, ## __VA_ARGS__ ); \
   fprintf(stdout, " ..\t%s", oyTestResultToString(result_)); \
-  if(result_ <= oyTESTRESULT_FAIL) \
+  if((result_) <= oyTESTRESULT_FAIL) \
     fprintf(stdout, " !!! ERROR !!!" ); \
   fprintf(stdout, "\n" ); \
   ++oy_test_sub_count; \
@@ -1534,14 +1534,15 @@ oyTESTRESULT_e testOptionsType ()
   oyOption_SetRegistration( o, reg_mod );
   fprintf( zout, "%s -> %s :: %s\n", reg, reg_mod, oyOption_GetRegistration(o));
 
-  if(strcmp(reg_mod, oyOption_GetRegistration(o)) == 0)
+  if(error == 0 &&
+     strcmp(reg_mod, oyOption_GetRegistration(o)) == 0)
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS, 
-    "oyOptions_GetType2() + oyOption_SetRegistration good   " );
+    "oyOptions_GetType2() + replace + SetRegistration   " );
   } else
   {
     PRINT_SUB( oyTESTRESULT_FAIL, 
-    "oyOptions_GetType2() + oyOption_SetRegistration good   " );
+    "oyOptions_GetType2() + replace + SetRegistration   " );
   }
 
   fprintf( zout, "abstract: %d  white_point: %d\n",
