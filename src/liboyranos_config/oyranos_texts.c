@@ -21,6 +21,7 @@
 #include "oyProfiles_s.h"
 #include "oyCMMapi4_s.h"
 #include "oyCMMapiFilter_s_.h"
+#include "oyOptions_s_.h"
 
 #include "oyranos_db.h"
 #include "oyranos_config_internal.h"
@@ -2254,6 +2255,7 @@ int          oyGetPersistentStrings  ( const char        * top_key_name )
   int error = 0;
   char ** key_names = NULL;
   int     key_names_n = 0;
+  int init = !oy_db_cache_;
 
   if(!top_key_name)
   {
@@ -2280,6 +2282,9 @@ int          oyGetPersistentStrings  ( const char        * top_key_name )
       if(value)
         oyFree_m_( value );
     }
+    if(init && oy_db_cache_)
+      oyObject_SetNames( ((oyOptions_s_*)oy_db_cache_)->list_->oy_,
+                         "oy_db_cache_","oy_db_cache_","oy_db_cache_" );
 
     oyDB_release( &db );
     oyStringListRelease_( &key_names, key_names_n, oyDeAllocateFunc_ );
