@@ -193,6 +193,8 @@ void               oyObject_Track    ( oyObject_s          obj )
   }
   if(oy_obj_track_list && obj->id_ < MAX_OBJECTS_TRACKED)
     oy_obj_track_list[obj->id_] = obj;
+  if(oy_debug_objects == obj->id_)
+    WARNc1_S("Object tracked %d\n", oy_debug_objects);
 }
 void               oyObject_UnTrack    ( oyObject_s          obj )
 {
@@ -218,7 +220,8 @@ int *              oyObjectGetCurrentObjectIdList( void )
 }
 
 const oyObject_s * oyObjectGetList   ( int               * max_count )
-{ if(max_count) *max_count = MAX_OBJECTS_TRACKED; return oy_obj_track_list; }
+{ if(max_count) *max_count = MAX_OBJECTS_TRACKED;
+  return oy_obj_track_list; }
 
 int *              oyObjectFindNewIds( int               * old,
                                        int               * new )
