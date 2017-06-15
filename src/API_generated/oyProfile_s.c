@@ -1453,6 +1453,7 @@ OYAPI const oyChar* OYEXPORT
           temp[len] = 0;
           found = 1;
         }
+	oyProfileTag_Release( &tag );
       }
     }
 
