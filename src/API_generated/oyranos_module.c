@@ -347,6 +347,8 @@ oyCMMapiFilters_s * oyCMMsGetFilterApis_(const char        * registration,
 
       if(rank_list)
         *rank_list = rank_list2_;
+      else
+        oyFree_m_(rank_list2_);
       if(rank_list_)
         oyFree_m_(rank_list_);
       if(count)
@@ -364,6 +366,7 @@ oyCMMapiFilters_s * oyCMMsGetFilterApis_(const char        * registration,
   clean:
     oyObject_Release( &object );
     oyHash_Release( &entry );
+    oyCMMapiFilters_Release( &apis );
 
   return apis2;
 }
