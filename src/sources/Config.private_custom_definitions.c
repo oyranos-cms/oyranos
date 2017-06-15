@@ -60,8 +60,14 @@ void oyConfig_Release__Members( oyConfig_s_ * config )
 int oyConfig_Init__Members( oyConfig_s_ * config )
 {
   config->db = oyOptions_New( 0 );
+  if(config->db)
+    oyObject_SetName( config->db->oy_, "db", oyNAME_NICK );
   config->backend_core = oyOptions_New( 0 );
+  if(config->backend_core)
+    oyObject_SetName( config->backend_core->oy_, "backend_core", oyNAME_NICK );
   config->data = oyOptions_New( 0 );
+  if(config->data)
+    oyObject_SetName( config->data->oy_, "data", oyNAME_NICK );
 
   return 0;
 }
