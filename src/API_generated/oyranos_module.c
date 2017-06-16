@@ -182,12 +182,13 @@ oyCMMapiFilters_s * oyCMMsGetFilterApis_(const char        * registration,
       if(files)
       for( i = 0; i < files_n; ++i)
       {
+        const char * file = files[i];
         ret = 0; j = 0;
-        ret = api5->oyCMMFilterScan( 0,0, files[i], type, j,
+        ret = api5->oyCMMFilterScan( 0,0, file, type, j,
                                      0, 0, oyAllocateFunc_, (oyCMMinfo_s**)&info, object );
         while(!ret)
         {
-          ret = api5->oyCMMFilterScan( 0,0, files[i], type, j,
+          ret = api5->oyCMMFilterScan( 0,0, file, type, j,
                                        &reg, 0, oyAllocateFunc_, 0, 0 );
           if(!ret && reg)
           {
@@ -220,12 +221,12 @@ oyCMMapiFilters_s * oyCMMsGetFilterApis_(const char        * registration,
               }
 
               rank_list_[k++] = rank;
-              api = api5->oyCMMFilterLoad( 0,0, files[i], type, j);
+              api = api5->oyCMMFilterLoad( 0,0, file, type, j);
               if(!api)
                 continue;
 
               if(!(*api_)->id_)
-                (*api_)->id_ = oyStringCopy_( files[i], oyAllocateFunc_ );
+                (*api_)->id_ = oyStringCopy_( file, oyAllocateFunc_ );
               (*api_)->api5_ = api5;
               if(!apis)
                 apis = oyCMMapiFilters_New( 0 );
