@@ -201,7 +201,7 @@ static const char * oy{{ class.baseName }}_StaticMessageFunc_ (
   if(error)
     WARNc1_S("%d", error);
 
-  if(oy_debug)
+  if(oy_debug_objects >= 0)
     oyObject_GetId( s->oy_ );
 
   return s;

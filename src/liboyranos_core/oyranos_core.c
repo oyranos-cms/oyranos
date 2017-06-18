@@ -257,7 +257,7 @@ int            oyObject_GetId        ( oyObject_s          object )
   if(obj)
     st = obj->parent_;
 
-  if(st && oy_debug_objects >= 0 && oy_debug)
+  if(st && oy_debug_objects >= 0)
   {
     const char * t = getenv(OY_DEBUG_OBJECTS);
     int id_ = -1;
@@ -271,7 +271,7 @@ int            oyObject_GetId        ( oyObject_s          object )
       fputs( oyObject_Show( obj ), stderr );
       fflush( stderr );
     }
-  } else if(obj && oy_debug && oy_debug_objects == obj->id_)
+  } else if(obj && oy_debug_objects == obj->id_)
   {
     fprintf( stderr, "id[%d] refs: %d\n", obj->id_, obj->ref_ );
     fflush( stderr );
