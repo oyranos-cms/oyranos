@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: oyranos\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2017-06-15 22:06+0200\n"
+"POT-Creation-Date: 2017-06-18 20:17+0200\n"
 "PO-Revision-Date: 2012-10-19 15:10+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -915,7 +915,7 @@ msgstr "Konvertovat do WWW (sRGB)"
 msgid "Convert to untagged Cmyk, preserving Cmyk numbers"
 msgstr "Konvertovat do neoznačeného CMYK se zachováním CMYK hodnot"
 
-#: API_generated/oyranos_module.c:1420 liboyranos_config/oyranos_icc.c:457
+#: API_generated/oyranos_module.c:1432 liboyranos_config/oyranos_icc.c:457
 msgid "Copyright"
 msgstr "Copyright"
 
@@ -953,7 +953,7 @@ msgstr "Copyright (c) 2009 Joseph Simon; MIT"
 msgid "Copyright (c) 2009 Kai-Uwe Behrmann; MIT"
 msgstr "Copyright (c) 2009 Kai-Uwe Behrmann; MIT"
 
-#: modules/color/modules/oyranos_cmm_oydi.c:1270
+#: modules/color/modules/oyranos_cmm_oydi.c:1320
 #: modules/color/modules/oyranos_cmm_lraw.cpp:235
 msgid "Copyright (c) 2009 Kai-Uwe Behrmann; newBSD"
 msgstr "Copyright (c) 2009 Kai-Uwe Behrmann; newBSD"
@@ -977,7 +977,7 @@ msgstr "Copyright (c) 2009 Kai-Uwe Behrmann; newBSD"
 msgid "Copyright:       "
 msgstr "Copyright:       "
 
-#: API_generated/oyranos_module.c:2041
+#: API_generated/oyranos_module.c:2053
 msgid "Could not allocate memory for:"
 msgstr "Nelze alokovat paměť pro:"
 
@@ -990,12 +990,12 @@ msgstr "Nelze zapisovat do souboru"
 msgid "Could not download from WWW. Please install curl or wget."
 msgstr "Nelze stáhnout z WWW. Nainstalujte prosím \"curl\" nebo \"wget\"."
 
-#: API_generated/oyranos_module.c:798
+#: API_generated/oyranos_module.c:807
 #, fuzzy
 msgid "Could not find any meta module."
 msgstr "Nelze otevřít meta modul API"
 
-#: API_generated/oyranos_module.c:802
+#: API_generated/oyranos_module.c:811
 msgid ""
 "Could not find any meta module. Did you set the OY_MODULE_PATH variable, to "
 "point to a Oyranos module loader library?"
@@ -1824,7 +1824,7 @@ msgstr "Osvetleni:   "
 #: API_generated/oyPixelAccess_s.c:540 liboyranos/oyranos_cmm.c:142
 #: liboyranos/oyranos_cmm.c:278 liboyranos/oyranos_cmm.c:302
 #: modules/color/modules/oyranos_cmm_oPNG.c:1100
-#: modules/color/modules/oyranos_cmm_oydi.c:931
+#: modules/color/modules/oyranos_cmm_oydi.c:933
 msgid "Image"
 msgstr "Obrázek"
 
@@ -2234,7 +2234,7 @@ msgstr "Luv"
 #: API_generated/oyProfileTag_s_.c:208 API_generated/oyProfile_s_.c:322
 #: API_generated/oyProfiles_s_.c:195 API_generated/oyRectangle_s_.c:191
 #: API_generated/oyStructList_s_.c:239 API_generated/oyranos_devices.c:3580
-#: API_generated/oyranos_module.c:1582 liboyranos/oyranos_alpha.c:257
+#: API_generated/oyranos_module.c:1594 liboyranos/oyranos_alpha.c:257
 #: liboyranos_modules/oyranos_forms.c:56
 msgid "MEM Error."
 msgstr ""
@@ -2275,7 +2275,7 @@ msgstr ""
 msgid "Magic:           "
 msgstr "Datum:       "
 
-#: API_generated/oyranos_module.c:1419 API_generated/oyranos_profile.c:43
+#: API_generated/oyranos_module.c:1431 API_generated/oyranos_profile.c:43
 msgid "Manufacturer"
 msgstr "Výrobce"
 
@@ -2426,7 +2426,7 @@ msgstr ""
 msgid "NUMBER"
 msgstr ""
 
-#: API_generated/oyranos_module.c:1418
+#: API_generated/oyranos_module.c:1430
 msgid "Name"
 msgstr "Jméno"
 
@@ -2635,7 +2635,7 @@ msgstr ""
 msgid "Oyranos allows to fine tune handling of ICC color management."
 msgstr "Nastavení Oyranosu umožňují doladit chování správy barev."
 
-#: modules/color/modules/oyranos_cmm_oydi.c:1254
+#: modules/color/modules/oyranos_cmm_oydi.c:1304
 msgid "Oyranos display filter"
 msgstr "Filter Oyranosu pro displej"
 
@@ -2660,7 +2660,7 @@ msgid "Oyranos modules"
 msgstr "Moduly Oyranosu"
 
 #: modules/color/modules/oyranos_cmm_oicc.c:1059
-#: modules/color/modules/oyranos_cmm_oydi.c:1264
+#: modules/color/modules/oyranos_cmm_oydi.c:1314
 #: modules/color/modules/oyranos_cmm_oyra.c:138
 #: modules/color/modules/oyranos_cmm_trds.c:669
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:981
@@ -3385,7 +3385,7 @@ msgstr "Technologie"
 msgid "The "
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oydi.c:1278
+#: modules/color/modules/oyranos_cmm_oydi.c:1328
 msgid ""
 "The \"display\" filter supports applications to show image content on single "
 "and multi monitor displays. It cares about the server communication in "
@@ -3501,7 +3501,7 @@ msgid ""
 "with a available threading model."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oydi.c:1256
+#: modules/color/modules/oyranos_cmm_oydi.c:1306
 #, fuzzy
 msgid "The client side window data handler of Oyranos."
 msgstr "The client side window data handler of Oyranos."
@@ -3596,7 +3596,7 @@ msgstr "The filter is a possible pixel target in a graph."
 msgid "The filter is used to reduce pixels."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oydi.c:1280
+#: modules/color/modules/oyranos_cmm_oydi.c:1330
 #, fuzzy
 msgid ""
 "The filter needs some informations attached to the output image tags of the "
@@ -4313,7 +4313,7 @@ msgstr "aktivovat jednoduché výchozí hodnoty"
 
 #: API_generated/oyConversion_s.c:190 API_generated/oyFilterNode_s_.c:594
 #: API_generated/oyranos_devices.c:2657 API_generated/oyranos_devices.c:3168
-#: API_generated/oyranos_module.c:2033
+#: API_generated/oyranos_module.c:2045
 msgid "error in module:"
 msgstr "chyba v modulu:"
 
@@ -4517,7 +4517,7 @@ msgstr "třída pojmenovaných barev"
 #: liboyranos/oyranos_cmm.c:255 modules/color/modules/oyranos_cmm_elDB.c:953
 #: modules/color/modules/oyranos_cmm_oiDB.c:553
 #: modules/color/modules/oyranos_cmm_oicc.c:1067
-#: modules/color/modules/oyranos_cmm_oydi.c:1272
+#: modules/color/modules/oyranos_cmm_oydi.c:1322
 #: modules/color/modules/oyranos_cmm_oyra.c:146
 #: modules/color/modules/oyranos_cmm_trds.c:677
 #: modules/color/modules/devices/oyranos_cmm_disp.c:1342

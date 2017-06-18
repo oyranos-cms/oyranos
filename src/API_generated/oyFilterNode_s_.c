@@ -294,7 +294,7 @@ oyFilterNode_s_ * oyFilterNode_New_ ( oyObject_s object )
   if(error)
     WARNc1_S("%d", error);
 
-  if(oy_debug)
+  if(oy_debug_objects >= 0)
     oyObject_GetId( s->oy_ );
 
   return s;

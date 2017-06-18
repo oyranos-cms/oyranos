@@ -213,7 +213,7 @@ OYAPI int  OYEXPORT
                                        int                 pos,
                                        uint32_t            flags );
 OYAPI oyStruct_s *  OYEXPORT
-                oyOptions_GetType    ( oyOptions_s       * options,
+                 oyOptions_GetType   ( oyOptions_s       * options,
                                        int                 pos,
                                        const char        * registration,
                                        oyOBJECT_e          type );

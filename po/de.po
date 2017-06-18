@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2017-06-15 22:06+0200\n"
+"POT-Creation-Date: 2017-06-18 20:17+0200\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -896,7 +896,7 @@ msgstr "Umwandeln für's WWW (sRGB)"
 msgid "Convert to untagged Cmyk, preserving Cmyk numbers"
 msgstr "Wandle in unspezifziertes Cmyk, erhalte Cmyk Zahlen"
 
-#: API_generated/oyranos_module.c:1420 liboyranos_config/oyranos_icc.c:457
+#: API_generated/oyranos_module.c:1432 liboyranos_config/oyranos_icc.c:457
 msgid "Copyright"
 msgstr "Kopierrecht"
 
@@ -932,7 +932,7 @@ msgstr ""
 msgid "Copyright (c) 2009 Kai-Uwe Behrmann; MIT"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oydi.c:1270
+#: modules/color/modules/oyranos_cmm_oydi.c:1320
 #: modules/color/modules/oyranos_cmm_lraw.cpp:235
 msgid "Copyright (c) 2009 Kai-Uwe Behrmann; newBSD"
 msgstr ""
@@ -954,7 +954,7 @@ msgstr ""
 msgid "Copyright:       "
 msgstr "Kopierrecht:     "
 
-#: API_generated/oyranos_module.c:2041
+#: API_generated/oyranos_module.c:2053
 msgid "Could not allocate memory for:"
 msgstr "Kann nicht reservieren für:"
 
@@ -967,11 +967,11 @@ msgid "Could not download from WWW. Please install curl or wget."
 msgstr ""
 "Konnte nicht aus dem Netz kopieren. Bitte installieren Sie curl oder wget."
 
-#: API_generated/oyranos_module.c:798
+#: API_generated/oyranos_module.c:807
 msgid "Could not find any meta module."
 msgstr "Konnte Meta Schnittstelle nicht öffnen"
 
-#: API_generated/oyranos_module.c:802
+#: API_generated/oyranos_module.c:811
 msgid ""
 "Could not find any meta module. Did you set the OY_MODULE_PATH variable, to "
 "point to a Oyranos module loader library?"
@@ -1773,7 +1773,7 @@ msgstr "Beleuchtung:     "
 #: API_generated/oyPixelAccess_s.c:540 liboyranos/oyranos_cmm.c:142
 #: liboyranos/oyranos_cmm.c:278 liboyranos/oyranos_cmm.c:302
 #: modules/color/modules/oyranos_cmm_oPNG.c:1100
-#: modules/color/modules/oyranos_cmm_oydi.c:931
+#: modules/color/modules/oyranos_cmm_oydi.c:933
 msgid "Image"
 msgstr "Bild"
 
@@ -2136,7 +2136,7 @@ msgstr "Luv"
 #: API_generated/oyProfileTag_s_.c:208 API_generated/oyProfile_s_.c:322
 #: API_generated/oyProfiles_s_.c:195 API_generated/oyRectangle_s_.c:191
 #: API_generated/oyStructList_s_.c:239 API_generated/oyranos_devices.c:3580
-#: API_generated/oyranos_module.c:1582 liboyranos/oyranos_alpha.c:257
+#: API_generated/oyranos_module.c:1594 liboyranos/oyranos_alpha.c:257
 #: liboyranos_modules/oyranos_forms.c:56
 msgid "MEM Error."
 msgstr "Speicher Fehler"
@@ -2176,7 +2176,7 @@ msgstr "Signatur"
 msgid "Magic:           "
 msgstr "Signatur:        "
 
-#: API_generated/oyranos_module.c:1419 API_generated/oyranos_profile.c:43
+#: API_generated/oyranos_module.c:1431 API_generated/oyranos_profile.c:43
 msgid "Manufacturer"
 msgstr "Hersteller"
 
@@ -2321,7 +2321,7 @@ msgstr "NAME"
 msgid "NUMBER"
 msgstr "NUMMER"
 
-#: API_generated/oyranos_module.c:1418
+#: API_generated/oyranos_module.c:1430
 msgid "Name"
 msgstr "Name"
 
@@ -2520,7 +2520,7 @@ msgstr ""
 msgid "Oyranos allows to fine tune handling of ICC color management."
 msgstr "Oyranos erlaubt detailierte ICC Farbmanagementeinstellungen."
 
-#: modules/color/modules/oyranos_cmm_oydi.c:1254
+#: modules/color/modules/oyranos_cmm_oydi.c:1304
 msgid "Oyranos display filter"
 msgstr "Oyranos Monitor Modul"
 
@@ -2545,7 +2545,7 @@ msgid "Oyranos modules"
 msgstr "Oyranos Module"
 
 #: modules/color/modules/oyranos_cmm_oicc.c:1059
-#: modules/color/modules/oyranos_cmm_oydi.c:1264
+#: modules/color/modules/oyranos_cmm_oydi.c:1314
 #: modules/color/modules/oyranos_cmm_oyra.c:138
 #: modules/color/modules/oyranos_cmm_trds.c:669
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:981
@@ -3228,7 +3228,7 @@ msgstr "Technologie"
 msgid "The "
 msgstr "Das "
 
-#: modules/color/modules/oyranos_cmm_oydi.c:1278
+#: modules/color/modules/oyranos_cmm_oydi.c:1328
 msgid ""
 "The \"display\" filter supports applications to show image content on single "
 "and multi monitor displays. It cares about the server communication in "
@@ -3349,7 +3349,7 @@ msgstr ""
 "Das Oyranos \"threads_handler\" Kommando initialisiert die oyJob_s "
 "Schnittstellen mit einem verfügbaren parallelen Verfahren."
 
-#: modules/color/modules/oyranos_cmm_oydi.c:1256
+#: modules/color/modules/oyranos_cmm_oydi.c:1306
 msgid "The client side window data handler of Oyranos."
 msgstr "Die benutzerseitige Fensterdatenagent von Oyranos."
 
@@ -3438,7 +3438,7 @@ msgstr "Der Filter ist ein mögliches Rasterbildziel in einem Graphen."
 msgid "The filter is used to reduce pixels."
 msgstr "Der Filter verringert die Pixelanzahl."
 
-#: modules/color/modules/oyranos_cmm_oydi.c:1280
+#: modules/color/modules/oyranos_cmm_oydi.c:1330
 msgid ""
 "The filter needs some informations attached to the output image tags of the "
 "\"output\" image filter. The following list describes the X11/Xorg "
@@ -4157,7 +4157,7 @@ msgstr "benutze einfache Grundeinstellungen"
 
 #: API_generated/oyConversion_s.c:190 API_generated/oyFilterNode_s_.c:594
 #: API_generated/oyranos_devices.c:2657 API_generated/oyranos_devices.c:3168
-#: API_generated/oyranos_module.c:2033
+#: API_generated/oyranos_module.c:2045
 msgid "error in module:"
 msgstr "Fehler in Modul:"
 
@@ -4356,7 +4356,7 @@ msgstr "Einzelfarben 2"
 #: liboyranos/oyranos_cmm.c:255 modules/color/modules/oyranos_cmm_elDB.c:953
 #: modules/color/modules/oyranos_cmm_oiDB.c:553
 #: modules/color/modules/oyranos_cmm_oicc.c:1067
-#: modules/color/modules/oyranos_cmm_oydi.c:1272
+#: modules/color/modules/oyranos_cmm_oydi.c:1322
 #: modules/color/modules/oyranos_cmm_oyra.c:146
 #: modules/color/modules/oyranos_cmm_trds.c:677
 #: modules/color/modules/devices/oyranos_cmm_disp.c:1342

@@ -55,7 +55,7 @@ int          oyObject_Ref            ( oyObject_s          obj )
   {
     ++s->ref_;
 
-    if(oy_debug)
+    if(oy_debug_objects >= 0)
       /* track object */
       oyObject_GetId( obj );
   }
@@ -200,6 +200,8 @@ void               oyObject_UnTrack    ( oyObject_s          obj )
 {
   if(oy_obj_track_list && obj->id_ < MAX_OBJECTS_TRACKED)
     oy_obj_track_list[obj->id_] = NULL;
+  if(oy_debug_objects == obj->id_)
+    WARNc1_S("Object untracked %d\n", oy_debug_objects);
 }
 /* private tracking API's end */
 

@@ -2628,5 +2628,6 @@ int      oyProfile_GetWhitePoint     ( oyProfile_s       * profile,
   return error;
 }
 
+
 /* } Include "Profile.public_methods_definitions.c" */
 

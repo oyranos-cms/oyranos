@@ -207,7 +207,7 @@ OYAPI int OYEXPORT
                    oyProfile_GetDevice ( oyProfile_s     * profile,
                                          oyConfig_s      * device );
 OYAPI int  OYEXPORT
-                 oyProfile_GetMD5  ( oyProfile_s       * profile,
+                 oyProfile_GetMD5    ( oyProfile_s       * profile,
                                        int                 flags,
                                        uint32_t          * md5 );
 OYAPI int  OYEXPORT
