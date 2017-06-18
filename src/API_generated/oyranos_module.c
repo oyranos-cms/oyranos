@@ -459,10 +459,11 @@ oyCMMapiFilter_s *oyCMMsGetFilterApi_( const char        * registration,
  *                                     -1 means: pick the first match, useful
  *                                     in case the API position is known or to
  *                                     iterate through all matching API's
+ *  @return                            referenced result
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.9.7
+ *  @date    2017/06/18
  *  @since   2008/12/08 (Oyranos: 0.1.9)
- *  @date    2008/12/23
  */
 oyCMMapi_s *     oyCMMsGetApi__      ( oyOBJECT_e          type,
                                        const char        * lib_name,
@@ -508,6 +509,9 @@ oyCMMapi_s *     oyCMMsGetApi__      ( oyOBJECT_e          type,
     oyCMMinfo_Release( &cmm_info );
   }
 
+  if(api->copy)
+    api = (oyCMMapi_s*)api->copy((oyStruct_s*)api,NULL);
+
   return api;
 }
 
@@ -535,9 +539,10 @@ oyCMMapi_s *     oyCMMsGetApi__      ( oyOBJECT_e          type,
  *  @param[out]  lib_used              inform about the selected CMM
  *  @param[in]   apiCheck              custom API selector
  *  @param[in]   check_pointer         data to pass to apiCheck
+ *  @return                            referenced result
  *
- *  @version Oyranos: 0.9.6
- *  @date    2015/01/26
+ *  @version Oyranos: 0.9.7
+ *  @date    2017/06/18
  *  @since   2007/12/12 (Oyranos: 0.1.9)
  */
 oyCMMapi_s *     oyCMMsGetApi_       ( oyOBJECT_e          type,
@@ -623,6 +628,9 @@ oyCMMapi_s *     oyCMMsGetApi_       ( oyOBJECT_e          type,
 
     oyStringListRelease_( &files, files_n, oyDeAllocateFunc_ );
   }
+
+  if(api->copy)
+    api = (oyCMMapi_s*)api->copy((oyStruct_s*)api,NULL); 
 
   return api;
 }
@@ -1238,6 +1246,9 @@ oyCMMinfo_s *    oyCMMinfoFromLibNameDynamic(const char        * lib_name )
   {
     cmm_info = oyCMMOpen_(lib_name);
   }
+
+  if(cmm_info->copy)
+    cmm_info = (oyCMMinfo_s*)cmm_info->copy((oyStruct_s*)cmm_info, NULL);
 
   return cmm_info;
 }
