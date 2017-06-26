@@ -300,6 +300,7 @@ int main( int argc , char** argv )
     if(XcmColorServerCapabilities( display ) & XCM_COLOR_SERVER_MANAGEMENT)
       daemon = 2;
     XCloseDisplay( display );
+    system(argv[0]);
   }
 
   /* we rely on any color server doing X11 setup by its own and do not want to interfere */
