@@ -531,6 +531,7 @@ oyLeave_s *          oyObjectIdListGetStructTree (
       {
         WARNc5_S("l(%d)->list[%d]: " OY_PRINT_POINTER " %s[%d]", l->n, i, obj, oyStruct_GetText(obj, oyNAME_DESCRIPTION, 1),
                        oyStruct_GetId( obj ) );
+        break;
       } else
         l->children[i] = oyObjectIdListGetStructTree( top, parent, l, ids, i_id, level+1, func, user_data );
       /* remember the parent to traverse the actual tree */
