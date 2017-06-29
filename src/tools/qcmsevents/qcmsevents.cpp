@@ -15,6 +15,7 @@
 #include "oyranos_debug.h"
 #include "oyranos_i18n.h"
 #include "oyranos_io.h"
+#include "oyranos_sentinel.h"
 #include "oyProfile_s.h"
 #include "oyObject_s.h"
 
@@ -376,6 +377,11 @@ char * getName                       ( const void        * data,
 
 int main(int argc, char *argv[])
 {
+#ifdef USE_GETTEXT
+  setlocale(LC_ALL,"");
+#endif
+  oyExportStart_(EXPORT_CHECK_NO);
+
   Q_INIT_RESOURCE(qcmsevents);
 
   Qcmse app(argc,argv);

@@ -28,6 +28,7 @@
 
 #include <X11/Xcm/XcmEvents.h>
 #include <X11/Xcm/Xcm.h>
+#include "oyranos_sentinel.h"
 
 class QcmseDialog : public QDialog
 {
@@ -40,7 +41,7 @@ class QcmseDialog : public QDialog
     void close( QCloseEvent * e );
 
   public slots:
-    void quit() { exit(0); }
+    void quit() { oyFinish_( 0 ); exit(0); }
     void setIcon(int index);
     void showConfig();
 
