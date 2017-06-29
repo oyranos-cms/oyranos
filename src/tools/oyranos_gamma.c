@@ -910,7 +910,7 @@ int main( int argc , char** argv )
     fprintf( stderr, "daemon mode not supported on your OS\n" );
 #endif
 
-  oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
+  oyFinish_( 0 );
 
   return error;
 }
