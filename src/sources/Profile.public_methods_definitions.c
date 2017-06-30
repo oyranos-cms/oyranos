@@ -124,6 +124,7 @@ OYAPI oyProfile_s * OYEXPORT
 
   if(oyDEFAULT_PROFILE_START < type && type < oyDEFAULT_PROFILE_END)
   {
+    oyProfile_Release( (oyProfile_s**)&oy_profile_s_std_cache_[pos] );
     oy_profile_s_std_cache_[pos] = (oyProfile_s_*)oyProfile_Copy( (oyProfile_s*)s, 0 );
   }
 
