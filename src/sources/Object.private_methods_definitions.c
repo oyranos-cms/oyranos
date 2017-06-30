@@ -193,15 +193,15 @@ void               oyObject_Track    ( oyObject_s          obj )
   }
   if(oy_obj_track_list && obj->id_ < MAX_OBJECTS_TRACKED)
     oy_obj_track_list[obj->id_] = obj;
-  if(oy_debug_objects == obj->id_)
-    WARNc1_S("Object tracked %d\n", oy_debug_objects);
+  if(oy_debug_objects == 1 || oy_debug_objects == obj->id_)
+    fprintf( stderr, "Object[%d] tracked\n", obj->id_);
 }
 void               oyObject_UnTrack    ( oyObject_s          obj )
 {
   if(oy_obj_track_list && obj->id_ < MAX_OBJECTS_TRACKED)
     oy_obj_track_list[obj->id_] = NULL;
-  if(oy_debug_objects == obj->id_)
-    WARNc1_S("Object untracked %d\n", oy_debug_objects);
+  if(oy_debug_objects == 1 || oy_debug_objects == obj->id_)
+    fprintf( stderr, "Object[%d] untracked\n", obj->id_);
 }
 /* private tracking API's end */
 
