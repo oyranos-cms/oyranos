@@ -586,15 +586,15 @@ int          oyObject_UnRef          ( oyObject_s          obj )
   {
     oyObject_Lock( s, __FILE__, __LINE__ );
 
-    if(oy_debug)
-      /* track object */
-      oyObject_GetId( obj );
-
     if(s->ref_ < 0)
       ref = 0;
 
     if(error <= 0 && --s->ref_ > 0)
       ref = s->ref_;
+
+    if(oy_debug_objects >= 0)
+      /* track object */
+      oyObject_GetId( obj );
 
 #   ifndef DEBUG_OBJECT
     if(s->ref_ < -1)
