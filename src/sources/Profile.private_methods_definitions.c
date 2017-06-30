@@ -273,9 +273,11 @@ oyProfile_s_ *  oyProfile_FromFile_  ( const char        * name,
                (flags & OY_ICC_VERSION_4 && v[0] == 4)))
             s = NULL;
         }
-        s = (oyProfile_s_*) oyProfile_Copy( (oyProfile_s*)s, 0 );
         if(s)
+        {
+          oyHash_Release_( &entry );
           return s;
+        }
       }
     }
   }
