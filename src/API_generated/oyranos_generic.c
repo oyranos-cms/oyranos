@@ -173,12 +173,7 @@ oyHash_s *   oyCacheListGetEntry_    ( oyStructList_s    * cache_list,
   }
 
 
-  if(entry)
-  {
-    oyHash_Copy( entry, 0 );
-    return entry;
-  } else
-    return 0;
+  return entry;
 }
 
 /** } Private function definitions */
