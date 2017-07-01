@@ -330,6 +330,7 @@ oyRectangle_s_ * oyRectangle_Copy_ ( oyRectangle_s_ *rectangle, oyObject_s objec
  */
 int oyRectangle_Release_( oyRectangle_s_ **rectangle )
 {
+  const char * track_name = NULL;
   /* ---- start of common object destructor ----- */
   oyRectangle_s_ *s = 0;
 
@@ -343,6 +344,23 @@ int oyRectangle_Release_( oyRectangle_s_ **rectangle )
   if(oyObject_UnRef(s->oy_))
     return 0;
   /* ---- end of common object destructor ------- */
+
+  if(oy_debug_objects >= 0)
+  {
+    const char * t = getenv(OY_DEBUG_OBJECTS);
+    int id_ = -1;
+
+    if(t)
+      id_ = atoi(t);
+
+    if((id_ >= 0 && s->oy_->id_ == id_) ||
+       (t && s && strstr(oyStructTypeToText(s->type_), t) != 0) ||
+       id_ == 1)
+    {
+      track_name = oyStructTypeToText(s->type_);
+      fprintf( stderr, "%s[%d] untracking\n", track_name, s->oy_->id_);
+    }
+  }
 
   
   /* ---- start of custom Rectangle destructor ----- */
@@ -358,8 +376,11 @@ int oyRectangle_Release_( oyRectangle_s_ **rectangle )
   if(s->oy_->deallocateFunc_)
   {
     oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
+    int id = s->oy_->id_;
 
     oyObject_Release( &s->oy_ );
+    if(track_name)
+      fprintf( stderr, "%s[%d] untracked\n", track_name, id);
 
     deallocateFunc( s );
   }

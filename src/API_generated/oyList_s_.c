@@ -306,6 +306,7 @@ oyList_s_ * oyList_Copy_ ( oyList_s_ *list, oyObject_s object )
  */
 int oyList_Release_( oyList_s_ **list )
 {
+  const char * track_name = NULL;
   /* ---- start of common object destructor ----- */
   oyList_s_ *s = 0;
 
@@ -319,6 +320,23 @@ int oyList_Release_( oyList_s_ **list )
   if(oyObject_UnRef(s->oy_))
     return 0;
   /* ---- end of common object destructor ------- */
+
+  if(oy_debug_objects >= 0)
+  {
+    const char * t = getenv(OY_DEBUG_OBJECTS);
+    int id_ = -1;
+
+    if(t)
+      id_ = atoi(t);
+
+    if((id_ >= 0 && s->oy_->id_ == id_) ||
+       (t && s && strstr(oyStructTypeToText(s->type_), t) != 0) ||
+       id_ == 1)
+    {
+      track_name = oyStructTypeToText(s->type_);
+      fprintf( stderr, "%s[%d] untracking\n", track_name, s->oy_->id_);
+    }
+  }
 
   
   /* ---- start of custom List destructor ----- */
@@ -335,8 +353,11 @@ int oyList_Release_( oyList_s_ **list )
   if(s->oy_->deallocateFunc_)
   {
     oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
+    int id = s->oy_->id_;
 
     oyObject_Release( &s->oy_ );
+    if(track_name)
+      fprintf( stderr, "%s[%d] untracked\n", track_name, id);
 
     deallocateFunc( s );
   }
