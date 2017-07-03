@@ -37,6 +37,7 @@
 #include "oyHash_s_.h"
 #include "oyProfileTag_s_.h"
 #include "oyStructList_s_.h"
+#include "oyranos_cache.h"
 #include "oyranos_io.h"
 #include "oyranos_generic_internal.h"
   
@@ -738,8 +739,6 @@ oyProfile_s_* oyProfile_FromMemMove_  ( size_t              size,
 #include "sRGB.h"
 #include "XYZ.h"
 #endif
-
-oyStructList_s_ * oy_profile_s_file_cache_ = 0;
 
 /** @internal
  *  Function  oyProfile_FromFile_

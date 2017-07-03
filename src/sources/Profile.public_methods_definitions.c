@@ -1,5 +1,3 @@
-static oyProfile_s_ ** oy_profile_s_std_cache_ = 0;
-
 /** Function  oyProfile_FromStd
  *  @memberof oyProfile_s
  *  @brief    Create from default color space settings

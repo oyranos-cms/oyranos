@@ -25,6 +25,7 @@
 #include "oyObject_s.h"
 #include "oyranos_object_internal.h"
 
+#include "oyranos_cache.h"
 #include "oyranos_io.h"
 #include "oyProfile_s_.h"
 #include "oyProfiles_s_.h"
@@ -285,8 +286,6 @@ OYAPI int  OYEXPORT
 
 
 /* Include "Profiles.public_methods_definitions.c" { */
-oyProfiles_s * oy_profile_list_cache_ = 0;
-
 int oyLowerStrcmpWrap_ (const void * a_, const void * b_)
 {
   const char * a = *(const char **)a_,

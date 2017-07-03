@@ -27,6 +27,7 @@
 #include "oyProfile_s_.h"
 
 #include "oyranos_devices_internal.h"
+#include "oyranos_cache.h"
 #include "oyranos_color.h"
 #include "oyranos_io.h"
 #include "oyranos_icc.h"
@@ -106,8 +107,6 @@ OYAPI int OYEXPORT
 
 
 /* Include "Profile.public_methods_definitions.c" { */
-static oyProfile_s_ ** oy_profile_s_std_cache_ = 0;
-
 /** Function  oyProfile_FromStd
  *  @memberof oyProfile_s
  *  @brief    Create from default color space settings

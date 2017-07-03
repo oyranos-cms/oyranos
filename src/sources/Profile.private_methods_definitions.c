@@ -215,8 +215,6 @@ oyProfile_s_* oyProfile_FromMemMove_  ( size_t              size,
 #include "XYZ.h"
 #endif
 
-oyStructList_s_ * oy_profile_s_file_cache_ = 0;
-
 /** @internal
  *  Function  oyProfile_FromFile_
  *  @memberof oyProfile_s

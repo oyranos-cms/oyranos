@@ -24,6 +24,7 @@
 #include "oyOptions_s_.h"
 
 #include "oyranos_db.h"
+#include "oyranos_cache.h"
 #include "oyranos_config_internal.h"
 #include "oyranos.h"
 #include "oyranos_debug.h"
@@ -2198,8 +2199,6 @@ uint32_t oyICCProfileSelectionFlagsFromRegistration (
 
 /** \addtogroup objects_value
  *  @{ *//* objects_value */
-oyOptions_s * oy_db_cache_ = NULL;
-
 int      oyOptions_SetRegFromText    ( oyOptions_s      ** options,
                                        const char        * registration,
                                        const char        * value,

@@ -1,5 +1,3 @@
-oyProfiles_s * oy_profile_list_cache_ = 0;
-
 int oyLowerStrcmpWrap_ (const void * a_, const void * b_)
 {
   const char * a = *(const char **)a_,

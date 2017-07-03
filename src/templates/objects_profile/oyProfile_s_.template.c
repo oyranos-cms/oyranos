@@ -5,6 +5,7 @@
 #include "oyHash_s_.h"
 #include "oyProfileTag_s_.h"
 #include "oyStructList_s_.h"
+#include "oyranos_cache.h"
 #include "oyranos_io.h"
 #include "oyranos_generic_internal.h"
 {% endblock %}

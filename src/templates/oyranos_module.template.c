@@ -1,5 +1,6 @@
 {% include "source_file_header.txt" %}
 
+#include "oyranos_cache.h"
 #include "oyranos_debug.h"
 #include "oyranos_i18n.h"
 #include "oyranos_io.h"
@@ -23,7 +24,6 @@
 #include "oyOptions_s_.h"
 #include "oyStructList_s_.h"
 
-oyStructList_s * oy_cmm_handles_ = 0;
 /* defined in sources/Struct.public_methods_definitions.c */
 /** @internal
  *  @brief    get descriptions for object types
@@ -621,44 +621,6 @@ oyCMMapi_s *     oyCMMsGetApi_       ( oyOBJECT_e          type,
   return api;
 }
 
-/** @internal
- *  The lists are allocated one time and live until the application quits
- *  It contains the various caches for faster access of CPU intentsive data.\n
- *  We'd need a 3 dimensional table to map\n
- *    A: a function or resource type\n
- *    B: a CMM\n
- *    C: a hash value specifying under which conditions the resource was build\n
- *  The resulting cache entry is the result from the above 3 arguments. With the
- *  much implementation work and expectedly small to no speed advantage it is
- *  not a good strategy. Even though argument C would be extensible.\n
- *  \n
- *  A different approach would use two values to map the search request to the
- *  cache entry. The above hash map and the hash or combination of the two other *  values.\
- *  \n
- *  One point to consider is a readable string to end not with a anonymous list
- *  full of anonymous entries, where a user can pretty much nothing know.
- *  A transparent approach has to allow for easy identifying each entry.\n
- *  A help would be a function to compute both a md5 digest and a message from
- *  the 3 arguments outlined above. Probably it would allow much more arguments
- *  to add as we can not know how many optins and other influential parameters
- *  the cache entry depends on.\n
- *  \n
- *  A final implementation would consist of a
- *  - function to convert arbitrary (string) arguments to a single string and a
- *    hash sum
- *  - a function to create a cache entry struct from above hash and a the
- *    according description string plus the oyPointer_s struct. For simplicity
- *    the cache struct can be identical to the oyPointer_s, with the disadvantage
- *    of containing additional data not understandable for a CMM. We need to
- *    mark these data (hash + description) as internal to Oyranos.
- *  - a list that hold above cache entry stucts
- *  - several functions to reference, release, maps a hash value to the
- *    cached resource
- *
- *  @since Oyranos: version 0.1.8
- *  @date  23 november 2007 (API 0.1.8)
- */
-oyStructList_s * oy_cmm_cache_ = 0;
 
 /** @internal
  *  @brief get always a Oyranos cache entry from the CMM's cache
@@ -872,14 +834,6 @@ int          oyCMMdsoRelease_      ( const char        * lib_name )
 #endif
   return error;
 }
-
-/** @internal
- *  @brief internal Oyranos module handle list
- *
- *  @since Oyranos: version 0.1.8
- *  @date  6 december 2007 (API 0.1.8)
- */
-oyStructList_s * oy_cmm_infos_ = 0;
 
 #if !defined(COMPILE_STATIC)
 /** @internal

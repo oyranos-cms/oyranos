@@ -2,6 +2,7 @@
 
 #include <math.h>
 
+#include <oyranos_cache.h>
 #include <oyranos_object_internal.h>
 
 #include "{{ class.name }}.h"
