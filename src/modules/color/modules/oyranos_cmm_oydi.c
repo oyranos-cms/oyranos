@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2009-2015 (C) Kai-Uwe Behrmann
+ *            2009-2017 (C) Kai-Uwe Behrmann
  *
  *  @brief    Oyranos X11 module for Oyranos
  *  @internal
@@ -20,6 +20,7 @@
 #include "oyConnectorImaging_s_.h"
 #include "oyFilterNode_s_.h"         /* for oyFilterNode_TextToInfo_ */
 #include "oyRectangle_s_.h"
+#include "oyProfile_s.h"
 
 #include "oyranos_config_internal.h"
 #include "oyranos_cmm.h"
@@ -654,6 +655,7 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
   char * ID = 0;
   int icc_profile_flags = 0;
   int width = 0, height = 0;
+  int display_white_point = oyGetBehaviour( oyBEHAVIOUR_DISPLAY_WHITE_POINT );
 
   image = (oyImage_s*)oyFilterSocket_GetData( socket );
   image_input = oyFilterPlug_ResolveImage( plug, socket, ticket );
@@ -935,6 +937,51 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
         oyProfile_Release( &p );
         oyProfile_Release( &image_input_profile );
         oyRectangle_Release( &r );
+      }
+
+
+      if(display_white_point) /* not "none" */
+      {
+        oyFilterPlug_s   * rectangles_plug = oyFilterNode_GetPlug( rectangles, i );
+        oyFilterSocket_s * rectangles_plug_socket = oyFilterPlug_GetSocket( rectangles_plug );
+        oyFilterNode_s   * node = oyFilterSocket_GetNode( rectangles_plug_socket );
+        int                flags = 0;
+        oyOptions_s      * f_options = oyFilterNode_GetOptions( node, flags );
+        double             src_cie_a = -1, src_cie_b = -1, dst_cie_a = -1, dst_cie_b = -1;
+        oyProfile_s      * image_input_profile = oyImage_GetProfile( image_input ),
+                         * wtpt = NULL;
+
+        int error = oyProfile_GetWhitePoint( image_input_profile,
+                                             &src_cie_a, &src_cie_b );
+        if(!error)
+          error = oyGetDisplayWhitePoint( &dst_cie_a, &dst_cie_b );
+
+        if(!error)
+        {
+          oyOptions_s * result_opts = NULL, * opts = NULL;
+          error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/cie_a",
+                                           src_cie_a - dst_cie_a, 0, OY_CREATE_NEW );
+          error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/cie_b",
+                                           src_cie_b - dst_cie_b, 0, OY_CREATE_NEW );
+          error = oyOptions_Handle( "//" OY_TYPE_STD "/create_profile.white_point_adjust",
+                                           opts,"create_profile.white_point_adjust",
+                                           &result_opts );
+          wtpt = (oyProfile_s*) oyOptions_GetType( result_opts, -1, "icc_profile",
+                                           oyOBJECT_PROFILE_S );
+          error = !wtpt;
+          oyOptions_Release( &result_opts );
+          oyOptions_Release( &opts );
+        }
+
+        oyOptions_MoveInStruct( &f_options,
+                          OY_STD "/display.icc_profile.abstract.white_point.automatic.oydi",
+                          (oyStruct_s**) &wtpt, OY_CREATE_NEW );
+
+        oyFilterSocket_Release( &rectangles_plug_socket );
+        oyFilterPlug_Release( &rectangles_plug );
+        oyFilterNode_Release( &node );
+        oyOptions_Release( &f_options );
+        oyProfile_Release( &image_input_profile );
       }
 
       oyConfig_Release( &c );

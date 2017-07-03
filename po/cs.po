@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: oyranos\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2017-06-18 20:17+0200\n"
+"POT-Creation-Date: 2017-07-03 09:54+0200\n"
 "PO-Revision-Date: 2012-10-19 15:10+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -19,7 +19,7 @@ msgstr ""
 #: tools/oyranos-device.c:386 tools/oyranos-device.c:401
 #: tools/oyranos-device.c:423 tools/oyranos-device.c:449
 #: tools/oyranos-device.c:812 tools/oyranos-device.c:1009
-#: tools/oyranos-device.c:1244 tools/qcmsevents/qcmsevents.cpp:312
+#: tools/oyranos-device.c:1244 tools/qcmsevents/qcmsevents.cpp:313
 #, c-format
 msgid "!!! ERROR"
 msgstr "!!! CHYBA"
@@ -257,7 +257,7 @@ msgstr "?? Nic k přidání ??"
 msgid "???"
 msgstr "???"
 
-#: liboyranos_config/oyranos_texts.c:265
+#: liboyranos_config/oyranos_texts.c:266
 msgid ""
 "A Color Matching Module (CMM) does the computational work to transform "
 "colors. It can provide alternative features regarding appearance, security, "
@@ -273,7 +273,7 @@ msgstr "Volba vyžaduje pouze jednu cestu"
 msgid "About Oyranos"
 msgstr "O Oyranosu"
 
-#: liboyranos_config/oyranos_texts.c:570 liboyranos_config/oyranos_texts.c:590
+#: liboyranos_config/oyranos_texts.c:571 liboyranos_config/oyranos_texts.c:591
 msgid "Absolute Colorimetric"
 msgstr "Absolutní kolorimetrický"
 
@@ -282,7 +282,7 @@ msgstr "Absolutní kolorimetrický"
 msgid "Abstract"
 msgstr "Abstraktní"
 
-#: liboyranos_config/oyranos_texts.c:527 liboyranos_config/oyranos_texts.c:537
+#: liboyranos_config/oyranos_texts.c:528 liboyranos_config/oyranos_texts.c:538
 msgid "Action for Image profile and Editing profile mismatches."
 msgstr "Akce v případě nesouladu profilu obrázku a editace."
 
@@ -290,7 +290,7 @@ msgstr "Akce v případě nesouladu profilu obrázku a editace."
 msgid "Activate profiles:"
 msgstr "Aktivovat profily:"
 
-#: liboyranos_config/oyranos_texts.c:347 liboyranos_config/oyranos_texts.c:348
+#: liboyranos_config/oyranos_texts.c:348 liboyranos_config/oyranos_texts.c:349
 msgid "Active Policy:"
 msgstr "Aktivní politika:"
 
@@ -355,7 +355,7 @@ msgstr ""
 msgid "Alt v - set window fullscreen"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:328
+#: liboyranos_config/oyranos_texts.c:329
 #, fuzzy
 msgid "Analyze ICC profile information on your system."
 msgstr "umí zobrazit informace o profilu ICC"
@@ -375,12 +375,12 @@ msgstr "Apply regions of interesst in form of simple rectangles."
 msgid "Argyll CMS CMM"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:520
+#: liboyranos_config/oyranos_texts.c:521
 msgid "Assign Assumed Profile"
 msgstr "Přiřadit předpokládaný profil"
 
 #. choices
-#: liboyranos_config/oyranos_texts.c:520
+#: liboyranos_config/oyranos_texts.c:521
 msgid "Assign No Profile"
 msgstr "Nepřiřadit žádný profil"
 
@@ -389,29 +389,29 @@ msgstr "Nepřiřadit žádný profil"
 msgid "Assign profile to device:"
 msgstr "Vypsat profil Taxi pro vybrané zařízení:"
 
-#: liboyranos_config/oyranos_texts.c:431
+#: liboyranos_config/oyranos_texts.c:432
 msgid "Assigns an untagged CIE*Lab Image this color space"
 msgstr "Přiřadí tento barvový prostor neoznačenému obrázku CIE*Lab"
 
-#: liboyranos_config/oyranos_texts.c:462
+#: liboyranos_config/oyranos_texts.c:463
 msgid "Assigns an untagged Cmyk Image this color space"
 msgstr "Přiřadí tento barvový prostor neoznačenému obrázku CMYK"
 
-#: liboyranos_config/oyranos_texts.c:472
+#: liboyranos_config/oyranos_texts.c:473
 msgid "Assigns an untagged Gray Image this color space"
 msgstr ""
 "Přiřadí tento barvový prostor neoznačenému obrázku v šedi (monochromatickému)"
 
-#: liboyranos_config/oyranos_texts.c:441
+#: liboyranos_config/oyranos_texts.c:442
 msgid "Assigns an untagged Rgb Image this color space"
 msgstr "Přiřadí tento barvový prostor neoznačenému obrázku RGB"
 
-#: liboyranos_config/oyranos_texts.c:451
+#: liboyranos_config/oyranos_texts.c:452
 msgid "Assigns an untagged Rgb Image with source from the WWW this color space"
 msgstr ""
 "Přiřadí tento barvový prostor neoznačenému obrázku RGB pocházejícího z WWW"
 
-#: liboyranos_config/oyranos_texts.c:452
+#: liboyranos_config/oyranos_texts.c:453
 msgid ""
 "Assigns an untagged Rgb Image with source from the WWW this color space. "
 "This will always be sRGB as defined by W3C."
@@ -419,39 +419,39 @@ msgstr ""
 "Přiřadí tento barvový prostor neoznačenému obrázku RGB pocházejícího z WWW. "
 "Toto bude vždy sRGB dle definice W3C."
 
-#: liboyranos_config/oyranos_texts.c:421
+#: liboyranos_config/oyranos_texts.c:422
 msgid "Assigns an untagged XYZ Image this color space"
 msgstr "Přiřadí tento barvový prostor neoznačenému obrázku XYZ"
 
-#: liboyranos_config/oyranos_texts.c:461
+#: liboyranos_config/oyranos_texts.c:462
 msgid "Assumed Cmyk source"
 msgstr "Předpokládaný vstupní CMYK"
 
-#: liboyranos_config/oyranos_texts.c:182
+#: liboyranos_config/oyranos_texts.c:183
 msgid "Assumed Color Space"
 msgstr "Předpokladaný barvový prostor"
 
-#: liboyranos_config/oyranos_texts.c:183
+#: liboyranos_config/oyranos_texts.c:184
 msgid "Assumed Color Space for untagged colors"
 msgstr "Předpokládaný barvový prostor pro neoznačené barvy"
 
-#: liboyranos_config/oyranos_texts.c:471
+#: liboyranos_config/oyranos_texts.c:472
 msgid "Assumed Gray source"
 msgstr "Předpokládaný pr. vstup. šedi"
 
-#: liboyranos_config/oyranos_texts.c:430
+#: liboyranos_config/oyranos_texts.c:431
 msgid "Assumed Lab source"
 msgstr "Předpokládaný vstupní Lab"
 
-#: liboyranos_config/oyranos_texts.c:440
+#: liboyranos_config/oyranos_texts.c:441
 msgid "Assumed Rgb source"
 msgstr "Předpokládaný vstupní RGB"
 
-#: liboyranos_config/oyranos_texts.c:450
+#: liboyranos_config/oyranos_texts.c:451
 msgid "Assumed Web source"
 msgstr "Předpokládaný vstupní Web"
 
-#: liboyranos_config/oyranos_texts.c:420
+#: liboyranos_config/oyranos_texts.c:421
 msgid "Assumed XYZ source"
 msgstr "Předpokládaný vstupní XYZ"
 
@@ -466,45 +466,45 @@ msgstr "Atributy:    "
 msgid "Attributes:      "
 msgstr "Atributy:    "
 
-#: liboyranos_config/oyranos_texts.c:496
+#: liboyranos_config/oyranos_texts.c:497
 #, fuzzy
 msgid "Automatic"
 msgstr "Automaticky konvertovat"
 
-#: liboyranos_config/oyranos_texts.c:291
+#: liboyranos_config/oyranos_texts.c:292
 msgid "Available Device Profiles from Taxi DB"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:308 liboyranos_config/oyranos_texts.c:309
-#: liboyranos_config/oyranos_texts.c:310
+#: liboyranos_config/oyranos_texts.c:309 liboyranos_config/oyranos_texts.c:310
+#: liboyranos_config/oyranos_texts.c:311
 #, fuzzy
 msgid "Available Device Profiles:"
 msgstr "Dostupná zařízení"
 
 #: tools/oyranos-device.c:372 tools/oyranos-device.c:388
 #: tools/oyranos-device.c:403 tools/oyranos-device.c:814
-#: tools/oyranos-device.c:1011 tools/oyranos_gamma.c:360
+#: tools/oyranos-device.c:1011 tools/oyranos_gamma.c:361
 msgid "Available devices"
 msgstr "Dostupná zařízení"
 
-#: liboyranos_config/oyranos_texts.c:577 liboyranos_config/oyranos_texts.c:578
+#: liboyranos_config/oyranos_texts.c:578 liboyranos_config/oyranos_texts.c:579
 msgid "BPC affects often only the Relative Colorimetric Rendering intent."
 msgstr "BPC ovlivňuje pouze relativní kolorimetrický záměr transformace."
 
-#: liboyranos_config/oyranos_texts.c:209
+#: liboyranos_config/oyranos_texts.c:210
 msgid "Behaviour"
 msgstr "Chování"
 
-#: liboyranos_config/oyranos_texts.c:607
+#: liboyranos_config/oyranos_texts.c:608
 msgid ""
 "Behaviour for preselecting Hardproofing with a Proofing Profile at print time"
 msgstr "Chování pro předvolbu Hardproofingu s profilem simulace při tisku"
 
-#: liboyranos_config/oyranos_texts.c:587
+#: liboyranos_config/oyranos_texts.c:588
 msgid "Behaviour of color space transformation for proofing"
 msgstr "Chování záměru transformace barvového prostoru pro simulaci"
 
-#: liboyranos_config/oyranos_texts.c:588
+#: liboyranos_config/oyranos_texts.c:589
 msgid ""
 "Behaviour of color space transformation for proofing. Most people want a "
 "preview on screen only. The Relative Colorimetric intent is right for that. "
@@ -605,27 +605,27 @@ msgstr ""
 "hodnotu pro CLUT rovnu 64"
 
 #. CMM: abbreviation for Color Matching Module
-#: API_generated/oyranos_profile.c:37 liboyranos_config/oyranos_texts.c:263
+#: API_generated/oyranos_profile.c:37 liboyranos_config/oyranos_texts.c:264
 #: modules/color/modules/oyranos_cmm_lcms.c:2759
 msgid "CMM"
 msgstr "CMM"
 
-#: liboyranos_config/oyranos_texts.c:636
+#: liboyranos_config/oyranos_texts.c:637
 #, fuzzy
 msgid "CMM Core"
 msgstr "nacteno"
 
-#: liboyranos_config/oyranos_texts.c:656
+#: liboyranos_config/oyranos_texts.c:657
 #, fuzzy
 msgid "CMM Core Fallback"
 msgstr "nacteno"
 
-#: liboyranos_config/oyranos_texts.c:646
+#: liboyranos_config/oyranos_texts.c:647
 #, fuzzy
 msgid "CMM Renderer"
 msgstr "nacteno"
 
-#: liboyranos_config/oyranos_texts.c:666
+#: liboyranos_config/oyranos_texts.c:667
 #, fuzzy
 msgid "CMM Renderer Fallback"
 msgstr "nacteno"
@@ -726,7 +726,7 @@ msgstr ""
 "(světlost L*) jen v případech, kdy vstupní obrázek je pouze černý. Druhý "
 "způsob je značně komplexní a snaží se zachovat celou rovinu černé (K)."
 
-#: liboyranos_config/oyranos_texts.c:201 liboyranos_config/oyranos_texts.c:338
+#: liboyranos_config/oyranos_texts.c:202 liboyranos_config/oyranos_texts.c:339
 msgid "Collections of settings in Oyranos"
 msgstr "Sbírky nastavení Oyranosu"
 
@@ -740,7 +740,7 @@ msgstr "Sbírky nastavení Oyranosu"
 msgid "Color"
 msgstr "Barva"
 
-#: liboyranos_config/oyranos_texts.c:282
+#: liboyranos_config/oyranos_texts.c:283
 msgid "Color Managed Devices"
 msgstr ""
 
@@ -778,7 +778,7 @@ msgstr "Pořadí barevných kanálů"
 msgid "Color channel output names"
 msgstr "Výstupní jména barevných kanálů"
 
-#: liboyranos_config/oyranos_texts.c:184
+#: liboyranos_config/oyranos_texts.c:185
 msgid ""
 "Color content can sometimes have no ICC profile assigned. This is a critical "
 "situation as the system can not properly convert these colors. Therefore the "
@@ -792,7 +792,7 @@ msgstr ""
 "změnit výchozí profil ICC a tím ulehčit modulu správy barev transformaci a "
 "skládání barev."
 
-#: liboyranos_config/oyranos_texts.c:211
+#: liboyranos_config/oyranos_texts.c:212
 msgid ""
 "Color management has in some situations to resolve unclear situations. This "
 "can be done by automatic applying preselected choices or on a case to case "
@@ -843,11 +843,11 @@ msgstr ""
 msgid "Color r"
 msgstr "Barva r"
 
-#: liboyranos_config/oyranos_texts.c:482
+#: liboyranos_config/oyranos_texts.c:483
 msgid "Color space for Simulating an Output Device"
 msgstr "Barvový prostor pro simulaci výstupniho zařízení"
 
-#: liboyranos_config/oyranos_texts.c:506
+#: liboyranos_config/oyranos_texts.c:507
 #, fuzzy
 msgid "Color space for showing a effect"
 msgstr "Barvový prostor pro simulaci skutečných zařízení"
@@ -886,7 +886,7 @@ msgstr ""
 msgid "Convert Image:"
 msgstr "Konvertovat obrázek:"
 
-#: liboyranos_config/oyranos_texts.c:530 liboyranos_config/oyranos_texts.c:540
+#: liboyranos_config/oyranos_texts.c:531 liboyranos_config/oyranos_texts.c:541
 msgid "Convert automatically"
 msgstr "Automaticky konvertovat"
 
@@ -899,23 +899,23 @@ msgstr "Konvertovat obrázek do barvového prostoru ICC"
 msgid "Convert image to ICC Color Space"
 msgstr "Konvertovat obrázek do barvového prostoru ICC"
 
-#: liboyranos_config/oyranos_texts.c:550
+#: liboyranos_config/oyranos_texts.c:551
 msgid "Convert to Default Cmyk Editing Space"
 msgstr "Konvertovat do výchozího barvového prostoru editace CMYK"
 
-#: liboyranos_config/oyranos_texts.c:560
+#: liboyranos_config/oyranos_texts.c:561
 msgid "Convert to Default Rgb Editing Space"
 msgstr "Konvertovat do výchozího prostoru editace RGB"
 
-#: liboyranos_config/oyranos_texts.c:560
+#: liboyranos_config/oyranos_texts.c:561
 msgid "Convert to WWW (sRGB)"
 msgstr "Konvertovat do WWW (sRGB)"
 
-#: liboyranos_config/oyranos_texts.c:550
+#: liboyranos_config/oyranos_texts.c:551
 msgid "Convert to untagged Cmyk, preserving Cmyk numbers"
 msgstr "Konvertovat do neoznačeného CMYK se zachováním CMYK hodnot"
 
-#: API_generated/oyranos_module.c:1432 liboyranos_config/oyranos_icc.c:457
+#: API_generated/oyranos_module.c:1387 liboyranos_config/oyranos_icc.c:457
 msgid "Copyright"
 msgstr "Copyright"
 
@@ -938,7 +938,7 @@ msgstr "Copyright (c) 2005-2010 Kai-Uwe Behrmann; newBSD"
 msgid "Copyright (c) 2005-2014 Kai-Uwe Behrmann; newBSD"
 msgstr "Copyright (c) 2005-2010 Kai-Uwe Behrmann; newBSD"
 
-#: modules/color/modules/oyranos_cmm_oicc.c:1065
+#: modules/color/modules/oyranos_cmm_oicc.c:1067
 #, fuzzy
 msgid "Copyright (c) 2005-2016 Kai-Uwe Behrmann; newBSD"
 msgstr "Copyright (c) 2005-2010 Kai-Uwe Behrmann; newBSD"
@@ -953,7 +953,7 @@ msgstr "Copyright (c) 2009 Joseph Simon; MIT"
 msgid "Copyright (c) 2009 Kai-Uwe Behrmann; MIT"
 msgstr "Copyright (c) 2009 Kai-Uwe Behrmann; MIT"
 
-#: modules/color/modules/oyranos_cmm_oydi.c:1320
+#: modules/color/modules/oyranos_cmm_oydi.c:1317
 #: modules/color/modules/oyranos_cmm_lraw.cpp:235
 msgid "Copyright (c) 2009 Kai-Uwe Behrmann; newBSD"
 msgstr "Copyright (c) 2009 Kai-Uwe Behrmann; newBSD"
@@ -977,7 +977,7 @@ msgstr "Copyright (c) 2009 Kai-Uwe Behrmann; newBSD"
 msgid "Copyright:       "
 msgstr "Copyright:       "
 
-#: API_generated/oyranos_module.c:2053
+#: API_generated/oyranos_module.c:2008
 msgid "Could not allocate memory for:"
 msgstr "Nelze alokovat paměť pro:"
 
@@ -990,12 +990,12 @@ msgstr "Nelze zapisovat do souboru"
 msgid "Could not download from WWW. Please install curl or wget."
 msgstr "Nelze stáhnout z WWW. Nainstalujte prosím \"curl\" nebo \"wget\"."
 
-#: API_generated/oyranos_module.c:807
+#: API_generated/oyranos_module.c:769
 #, fuzzy
 msgid "Could not find any meta module."
 msgstr "Nelze otevřít meta modul API"
 
-#: API_generated/oyranos_module.c:811
+#: API_generated/oyranos_module.c:773
 msgid ""
 "Could not find any meta module. Did you set the OY_MODULE_PATH variable, to "
 "point to a Oyranos module loader library?"
@@ -1007,7 +1007,7 @@ msgstr ""
 msgid "Could not open ICC profile"
 msgstr "Nelze otevřít profil ICC"
 
-#: API_generated/oyProfile_s.c:213 API_generated/oyProfile_s.c:228
+#: API_generated/oyProfile_s.c:212 API_generated/oyProfile_s.c:227
 msgid "Could not open default ICC profile"
 msgstr "Nelze otevřít výchozí profil ICC"
 
@@ -1034,7 +1034,7 @@ msgstr "Nelze otevřít profil"
 msgid "Could not open: "
 msgstr "Nelze otevřít:"
 
-#: tools/oyranos_gamma.c:359
+#: tools/oyranos_gamma.c:360
 msgid "Could not resolve device"
 msgstr "Nelze rozpoznat zařízení"
 
@@ -1147,20 +1147,20 @@ msgstr ""
 "Rozhodnout, jakým způsobem zachovat černý kanál při transformaci CMYK -> "
 "CMYK."
 
-#: liboyranos_config/oyranos_texts.c:238
+#: liboyranos_config/oyranos_texts.c:239
 msgid ""
 "Decide how to resolve conflicts with input color spaces and current settings."
 msgstr ""
 "Rozhodnout co dělat, když se vstupní barvový prostor nerovná aktuálnímu "
 "nastavení."
 
-#: liboyranos_config/oyranos_texts.c:237
+#: liboyranos_config/oyranos_texts.c:238
 msgid ""
 "Decide what to do when the default color spaces don't match the current ones."
 msgstr ""
 "Rozhodnout co dělat, když se výchozí barvový prostor nerovná aktuálnímu."
 
-#: liboyranos_config/oyranos_texts.c:164
+#: liboyranos_config/oyranos_texts.c:165
 msgid "Default Profiles"
 msgstr "Výchozí profily"
 
@@ -1189,7 +1189,7 @@ msgstr "Výrobce"
 msgid "Device Model"
 msgstr "Sériové číslo zař.:"
 
-#: liboyranos_config/oyranos_texts.c:317
+#: liboyranos_config/oyranos_texts.c:318
 #, fuzzy
 msgid "Device Related"
 msgstr "Sériové číslo zař.:"
@@ -1217,7 +1217,7 @@ msgstr "Popis modelu zařízení"
 msgid "DeviceLink CMM"
 msgstr "Sériové číslo zař.:"
 
-#: liboyranos_config/oyranos_texts.c:281
+#: liboyranos_config/oyranos_texts.c:282
 #, fuzzy
 msgid "Devices"
 msgstr "Zařízení"
@@ -1236,12 +1236,12 @@ msgstr "Digitálni fotoaparát"
 msgid "Display"
 msgstr "Displej"
 
-#: liboyranos_config/oyranos_texts.c:491
+#: liboyranos_config/oyranos_texts.c:492
 #, fuzzy
 msgid "Display White Point"
 msgstr "Bílý bod média"
 
-#: liboyranos_config/oyranos_texts.c:492
+#: liboyranos_config/oyranos_texts.c:493
 msgid "Display White Point for all screens"
 msgstr ""
 
@@ -1280,40 +1280,40 @@ msgstr ""
 msgid "Edit Options ..."
 msgstr "Upravit volby ..."
 
-#: liboyranos_config/oyranos_texts.c:380
+#: liboyranos_config/oyranos_texts.c:381
 msgid "Editing Cmyk"
 msgstr "Editace CMYK"
 
-#: liboyranos_config/oyranos_texts.c:173
+#: liboyranos_config/oyranos_texts.c:174
 msgid "Editing Color Space"
 msgstr "Barvový prostor pro editaci"
 
-#: liboyranos_config/oyranos_texts.c:410
+#: liboyranos_config/oyranos_texts.c:411
 msgid "Editing Gray"
 msgstr "Editace v šedi"
 
-#: liboyranos_config/oyranos_texts.c:400
+#: liboyranos_config/oyranos_texts.c:401
 msgid "Editing Lab"
 msgstr "Editace Lab"
 
-#: liboyranos_config/oyranos_texts.c:370
+#: liboyranos_config/oyranos_texts.c:371
 msgid "Editing Rgb"
 msgstr "Editace RGB"
 
-#: liboyranos_config/oyranos_texts.c:390
+#: liboyranos_config/oyranos_texts.c:391
 msgid "Editing XYZ"
 msgstr "Editace XYZ"
 
-#: liboyranos_config/oyranos_texts.c:254 liboyranos_config/oyranos_texts.c:505
+#: liboyranos_config/oyranos_texts.c:255 liboyranos_config/oyranos_texts.c:506
 msgid "Effect"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:255
+#: liboyranos_config/oyranos_texts.c:256
 #, fuzzy
 msgid "Effect Settings"
 msgstr "Nastavení zařízení"
 
-#: liboyranos_config/oyranos_texts.c:256
+#: liboyranos_config/oyranos_texts.c:257
 #, fuzzy
 msgid ""
 "Effect Settings allows one to decide about a abstract effect color space."
@@ -1350,12 +1350,12 @@ msgstr ""
 msgid "Embedd device meta tag from image device into given device profile"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:627
+#: liboyranos_config/oyranos_texts.c:628
 #, fuzzy
 msgid "Enable effect profile"
 msgstr "Instalovat profil ICC:"
 
-#: liboyranos_config/oyranos_texts.c:608
+#: liboyranos_config/oyranos_texts.c:609
 msgid ""
 "Enable simulation of an output color space on a local printer. Most users do "
 "not work for a certain media and leave color handling to the system. They "
@@ -1365,7 +1365,7 @@ msgstr ""
 "uživatelů nepracuje se záměrem výstupu na konkrétním médiu a proto ponechává "
 "správu barev na systému. Tzn., že nepotřebují použít tuto simulaci."
 
-#: liboyranos_config/oyranos_texts.c:598
+#: liboyranos_config/oyranos_texts.c:599
 msgid ""
 "Enable simulation of output print on the monitor. Most users do not work for "
 "a certain media and leave color handling to the system. They want no "
@@ -1493,11 +1493,11 @@ msgstr "Priznaky:    "
 msgid "Flexography"
 msgstr "Flexografie"
 
-#: liboyranos_config/oyranos_texts.c:546
+#: liboyranos_config/oyranos_texts.c:547
 msgid "For Print"
 msgstr "Pro tisk"
 
-#: liboyranos_config/oyranos_texts.c:556
+#: liboyranos_config/oyranos_texts.c:557
 msgid "For Screen"
 msgstr "Pro obrazovku"
 
@@ -1517,7 +1517,7 @@ msgstr "Nenalezen žádný uzel při transformaci. Ukončeno."
 msgid "Fuji Film CMM"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:616
+#: liboyranos_config/oyranos_texts.c:617
 msgid "Gamut Warning"
 msgstr "Varování gamutu"
 
@@ -1580,13 +1580,13 @@ msgstr "Zelený kolorant"
 msgid "Green tone reproduction curve"
 msgstr "Křivka reprodukce zelených tónů"
 
-#: liboyranos_config/oyranos_texts.c:547
+#: liboyranos_config/oyranos_texts.c:548
 msgid "Handle mixed color spaces in preparing a document for print output."
 msgstr ""
 "Zacházení se smíšenými barvovými prostory při přípravě dokumentu pro tiskový "
 "výstup."
 
-#: liboyranos_config/oyranos_texts.c:548
+#: liboyranos_config/oyranos_texts.c:549
 msgid ""
 "Handle mixed color spaces in preparing a document for print output. A "
 "conversion to the default editing color space is typically what most users "
@@ -1596,13 +1596,13 @@ msgstr ""
 "výstup. Většina uživatelů použije transformaci do barvového prostoru pro "
 "editaci."
 
-#: liboyranos_config/oyranos_texts.c:557
+#: liboyranos_config/oyranos_texts.c:558
 msgid "Handle mixed color spaces in preparing a document for screen output."
 msgstr ""
 "Zacházení se smíšenými barvovými prostory při přípravě dokumentu pro výstup "
 "na obrazovku."
 
-#: liboyranos_config/oyranos_texts.c:558
+#: liboyranos_config/oyranos_texts.c:559
 msgid ""
 "Handle mixed color spaces in preparing a document for screen output. A "
 "conversion to sRGB helps in easy data exchange and is what most users want."
@@ -1619,12 +1619,12 @@ msgstr ""
 msgid "Handle options."
 msgstr "Volby obslužné rutiny."
 
-#: liboyranos_config/oyranos_texts.c:228
+#: liboyranos_config/oyranos_texts.c:229
 msgid "Handling of Mixed Color Spaces inside one single Document"
 msgstr ""
 "Výchozí zacházení se smíšenými barvovými prostory v rámci jednoho dokumentu"
 
-#: liboyranos_config/oyranos_texts.c:606
+#: liboyranos_config/oyranos_texts.c:607
 msgid "Hardproof"
 msgstr "Hardproof"
 
@@ -1701,7 +1701,7 @@ msgstr "Zvolte atribut"
 msgid "ICC profile"
 msgstr "profil ICC"
 
-#: API_generated/oyProfile_s_.c:893
+#: API_generated/oyProfile_s_.c:915
 msgid "ICC profile id written"
 msgstr "ID profilu ICC zapsáno"
 
@@ -1713,7 +1713,7 @@ msgstr "prohledávaná cesta pro profily ICC"
 msgid "ICC profiles"
 msgstr "Profily ICC"
 
-#: liboyranos_config/oyranos_texts.c:193
+#: liboyranos_config/oyranos_texts.c:194
 msgid ""
 "ICC profiles reside in known paths. They are defined by OpenICC and can be "
 "used by every complying system or application."
@@ -1722,7 +1722,7 @@ msgstr ""
 "standardu OpenICC a mohou být využity každým kompatibilním systémem či "
 "aplikací."
 
-#: liboyranos_config/oyranos_texts.c:361
+#: liboyranos_config/oyranos_texts.c:362
 msgid ""
 "ICC profiles reside in known paths. They are defined by OpenICC and can be "
 "used by every complying system or application. XDG_DATA_HOME and "
@@ -1736,7 +1736,7 @@ msgstr ""
 "adresářům obsahujícím tato úložiště. Odvozené adresářové cesty pro profily "
 "ICC mají přidán apendix  \"color/icc\"."
 
-#: liboyranos_config/oyranos_texts.c:166
+#: liboyranos_config/oyranos_texts.c:167
 msgid ""
 "ICC profiles should always be attached to all colors. In the case that "
 "colors are undefined, users can set various default ICC profiles in Oyranos "
@@ -1773,24 +1773,24 @@ msgstr "Iluminant"
 msgid "Illuminant A"
 msgstr "Iluminant A"
 
-#: liboyranos_config/oyranos_icc.c:844 liboyranos_config/oyranos_texts.c:496
+#: liboyranos_config/oyranos_icc.c:844 liboyranos_config/oyranos_texts.c:497
 msgid "Illuminant D50"
 msgstr "Iluminant D50"
 
-#: liboyranos_config/oyranos_icc.c:848 liboyranos_config/oyranos_texts.c:496
+#: liboyranos_config/oyranos_icc.c:848 liboyranos_config/oyranos_texts.c:497
 msgid "Illuminant D55"
 msgstr "Iluminant D55"
 
-#: liboyranos_config/oyranos_icc.c:845 liboyranos_config/oyranos_texts.c:499
+#: liboyranos_config/oyranos_icc.c:845 liboyranos_config/oyranos_texts.c:500
 msgid "Illuminant D65"
 msgstr "Iluminant D65"
 
-#: liboyranos_config/oyranos_texts.c:500
+#: liboyranos_config/oyranos_texts.c:501
 #, fuzzy
 msgid "Illuminant D75"
 msgstr "Iluminant D50"
 
-#: liboyranos_config/oyranos_icc.c:846 liboyranos_config/oyranos_texts.c:501
+#: liboyranos_config/oyranos_icc.c:846 liboyranos_config/oyranos_texts.c:502
 msgid "Illuminant D93"
 msgstr "Iluminant D93"
 
@@ -1842,7 +1842,7 @@ msgstr "Obrázek"
 msgid "Image Socket"
 msgstr "Image[out]"
 
-#: liboyranos_config/oyranos_texts.c:517
+#: liboyranos_config/oyranos_texts.c:518
 msgid ""
 "Image has no color space embedded. What default action shall be performed?"
 msgstr ""
@@ -1918,7 +1918,7 @@ msgstr "Image[write_ppm]"
 msgid "Img"
 msgstr "Img"
 
-#: liboyranos_config/oyranos_texts.c:528 liboyranos_config/oyranos_texts.c:538
+#: liboyranos_config/oyranos_texts.c:529 liboyranos_config/oyranos_texts.c:539
 msgid ""
 "Incoming color spaces can differ from the default editing color space. For "
 "most users, an automatic conversion is fine. However, for more demanding "
@@ -1928,7 +1928,7 @@ msgstr ""
 "Pro většinu uživatelů je vhodná automatická transformace. Avšak pro "
 "náročnější práci může být vhodné zachovat hodnoty barev."
 
-#: liboyranos_config/oyranos_texts.c:326
+#: liboyranos_config/oyranos_texts.c:327
 #, fuzzy
 msgid "Information"
 msgstr "Informace:"
@@ -1984,17 +1984,17 @@ msgstr "Input libraw Image Filter Object"
 msgid "Install ICC profile:"
 msgstr "Instalovat profil ICC:"
 
-#: liboyranos_config/oyranos_texts.c:299
+#: liboyranos_config/oyranos_texts.c:300
 #, fuzzy
 msgid "Install profile"
 msgstr "Instalovat profil ICC:"
 
-#: liboyranos_config/oyranos_texts.c:300
+#: liboyranos_config/oyranos_texts.c:301
 #, fuzzy
 msgid "Install selected profile"
 msgstr "Instalovat profil ICC:"
 
-#: liboyranos_config/oyranos_texts.c:301
+#: liboyranos_config/oyranos_texts.c:302
 #, fuzzy
 msgid "Install the selected profile."
 msgstr "Instalovat profil ICC:"
@@ -2231,10 +2231,10 @@ msgstr "Luv"
 #: API_generated/oyNamedColors_s_.c:186 API_generated/oyObserver_s.c:50
 #: API_generated/oyOption_s_.c:258 API_generated/oyOptions_s_.c:196
 #: API_generated/oyPixelAccess_s_.c:225 API_generated/oyPointer_s_.c:277
-#: API_generated/oyProfileTag_s_.c:208 API_generated/oyProfile_s_.c:322
+#: API_generated/oyProfileTag_s_.c:208 API_generated/oyProfile_s_.c:323
 #: API_generated/oyProfiles_s_.c:195 API_generated/oyRectangle_s_.c:191
 #: API_generated/oyStructList_s_.c:239 API_generated/oyranos_devices.c:3580
-#: API_generated/oyranos_module.c:1594 liboyranos/oyranos_alpha.c:257
+#: API_generated/oyranos_module.c:1549 liboyranos/oyranos_alpha.c:257
 #: liboyranos_modules/oyranos_forms.c:56
 msgid "MEM Error."
 msgstr ""
@@ -2275,7 +2275,7 @@ msgstr ""
 msgid "Magic:           "
 msgstr "Datum:       "
 
-#: API_generated/oyranos_module.c:1431 API_generated/oyranos_profile.c:43
+#: API_generated/oyranos_module.c:1386 API_generated/oyranos_profile.c:43
 msgid "Manufacturer"
 msgstr "Výrobce"
 
@@ -2285,7 +2285,7 @@ msgstr "Výrobce"
 msgid "Manufacturer:    "
 msgstr "Vyrobce:      "
 
-#: liboyranos_config/oyranos_texts.c:617
+#: liboyranos_config/oyranos_texts.c:618
 msgid "Mark Out Of Gamut colors"
 msgstr "Označit barvy mimo gamut"
 
@@ -2318,11 +2318,11 @@ msgstr "Metadata"
 msgid "Microsoft"
 msgstr "Microsoft"
 
-#: liboyranos_config/oyranos_texts.c:236
+#: liboyranos_config/oyranos_texts.c:237
 msgid "Mismatching"
 msgstr "Nesoulad"
 
-#: liboyranos_config/oyranos_texts.c:229
+#: liboyranos_config/oyranos_texts.c:230
 msgid ""
 "Mixed color spaces inside one single document can be difficult to handle for "
 "some systems. The settings can give the option to flatten document color "
@@ -2373,7 +2373,7 @@ msgstr "Více bitů znamená větší přesnost při zpracování a větší vel
 msgid "More indepth help  for My example filter."
 msgstr "Detailnější nápověda pro můj testovací filtr."
 
-#: liboyranos_config/oyranos_texts.c:618
+#: liboyranos_config/oyranos_texts.c:619
 msgid ""
 "Most users want a simple display of colors and will not check if colors "
 "match the simulation color space."
@@ -2426,7 +2426,7 @@ msgstr ""
 msgid "NUMBER"
 msgstr ""
 
-#: API_generated/oyranos_module.c:1430
+#: API_generated/oyranos_module.c:1385
 msgid "Name"
 msgstr "Jméno"
 
@@ -2455,17 +2455,17 @@ msgstr "Pro úpravu je třeba profil ICC."
 #. choices
 #. order is automatic, none, static ones, first monitor, second monitor, ... , last monitor
 #. choices
-#: liboyranos_config/oyranos_texts.c:496 liboyranos_config/oyranos_texts.c:580
-#: liboyranos_config/oyranos_texts.c:600 liboyranos_config/oyranos_texts.c:610
-#: liboyranos_config/oyranos_texts.c:620 liboyranos_config/oyranos_texts.c:630
+#: liboyranos_config/oyranos_texts.c:497 liboyranos_config/oyranos_texts.c:581
+#: liboyranos_config/oyranos_texts.c:601 liboyranos_config/oyranos_texts.c:611
+#: liboyranos_config/oyranos_texts.c:621 liboyranos_config/oyranos_texts.c:631
 msgid "No"
 msgstr "Ne"
 
-#: API_generated/oyProfile_s_.c:878
+#: API_generated/oyProfile_s_.c:900
 msgid "No ICC profile id detected"
 msgstr "Nedetekován žádný profil ICC"
 
-#: liboyranos_config/oyranos_texts.c:516
+#: liboyranos_config/oyranos_texts.c:517
 msgid "No Image profile"
 msgstr "Žádný profil obrázku"
 
@@ -2478,11 +2478,11 @@ msgstr ""
 msgid "Offset Lithography"
 msgstr "Offsetová litografie"
 
-#: liboyranos_config/oyranos_texts.c:536
+#: liboyranos_config/oyranos_texts.c:537
 msgid "On Cmyk Mismatch"
 msgstr "V případě nesouladu CMYK"
 
-#: liboyranos_config/oyranos_texts.c:526
+#: liboyranos_config/oyranos_texts.c:527
 msgid "On Rgb Mismatch"
 msgstr "V případě nesouladu RGB"
 
@@ -2561,11 +2561,11 @@ msgstr "Oyranos Dummy"
 msgid "Oyranos Help"
 msgstr "Nápověda Oyranosu"
 
-#: modules/color/modules/oyranos_cmm_oicc.c:1049
+#: modules/color/modules/oyranos_cmm_oicc.c:1051
 msgid "Oyranos ICC policy"
 msgstr "Politika Oyranosu pro ICC"
 
-#: modules/color/modules/oyranos_cmm_oicc.c:1051
+#: modules/color/modules/oyranos_cmm_oicc.c:1053
 msgid "Oyranos ICC policy module"
 msgstr "Modul politiky Oyranosu pro ICC"
 
@@ -2588,12 +2588,12 @@ msgstr "Oyranos RAW Image"
 msgid "Oyranos Scanner"
 msgstr "Oyranos skener"
 
-#: liboyranos_config/oyranos_texts.c:273
+#: liboyranos_config/oyranos_texts.c:274
 msgid "Oyranos Settings"
 msgstr "Nastavení Oyranosu"
 
 #. name
-#: liboyranos_config/oyranos_texts.c:156
+#: liboyranos_config/oyranos_texts.c:157
 msgid "Oyranos Settings Group"
 msgstr "Skupina nastavení Oyranosu"
 
@@ -2630,12 +2630,12 @@ msgstr ""
 "správou barev pomocí automatizace, užitečných výchozích hodnot a seskupování "
 "nastavení do volitelných politik."
 
-#: liboyranos_config/oyranos_texts.c:274
+#: liboyranos_config/oyranos_texts.c:275
 #, fuzzy
 msgid "Oyranos allows to fine tune handling of ICC color management."
 msgstr "Nastavení Oyranosu umožňují doladit chování správy barev."
 
-#: modules/color/modules/oyranos_cmm_oydi.c:1304
+#: modules/color/modules/oyranos_cmm_oydi.c:1301
 msgid "Oyranos display filter"
 msgstr "Filter Oyranosu pro displej"
 
@@ -2659,8 +2659,8 @@ msgstr ""
 msgid "Oyranos modules"
 msgstr "Moduly Oyranosu"
 
-#: modules/color/modules/oyranos_cmm_oicc.c:1059
-#: modules/color/modules/oyranos_cmm_oydi.c:1314
+#: modules/color/modules/oyranos_cmm_oicc.c:1061
+#: modules/color/modules/oyranos_cmm_oydi.c:1311
 #: modules/color/modules/oyranos_cmm_oyra.c:138
 #: modules/color/modules/oyranos_cmm_trds.c:669
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:981
@@ -2688,7 +2688,7 @@ msgstr ""
 "Download"
 
 #. tooltip
-#: liboyranos_config/oyranos_texts.c:157
+#: liboyranos_config/oyranos_texts.c:158
 msgid ""
 "Oyranos settings let you configure ICC color management behaviour for a "
 "local computer. The settings can be per user and per system."
@@ -2729,16 +2729,16 @@ msgstr "Monitor s pasívní maticí"
 msgid "Path can not be written"
 msgstr "Profil neni ulozen."
 
-#: liboyranos_config/oyranos_texts.c:191 liboyranos_config/oyranos_texts.c:359
+#: liboyranos_config/oyranos_texts.c:192 liboyranos_config/oyranos_texts.c:360
 msgid "Paths"
 msgstr "Cesty"
 
-#: liboyranos_config/oyranos_texts.c:192 liboyranos_config/oyranos_texts.c:360
+#: liboyranos_config/oyranos_texts.c:193 liboyranos_config/oyranos_texts.c:361
 msgid "Paths where ICC Profiles can be found"
 msgstr "Cesty, kde jsou uloženy profily ICC"
 
 #. choices
-#: liboyranos_config/oyranos_texts.c:570
+#: liboyranos_config/oyranos_texts.c:571
 msgid "Perceptual"
 msgstr "Perceptuální"
 
@@ -2772,11 +2772,11 @@ msgstr "Platforma:   "
 msgid "Platform:        "
 msgstr "Datum:       "
 
-#: tools/oyranos_gamma.c:393
+#: tools/oyranos_gamma.c:394
 msgid "Please specify a monitor with the -d option."
 msgstr "Prosím specifikujte monitor pomocí volby -d."
 
-#: liboyranos_config/oyranos_texts.c:202
+#: liboyranos_config/oyranos_texts.c:203
 msgid ""
 "Policies summarise common settings for different user groups. Such settings "
 "make it easy to switch back to simple defaults. Other groups can define own "
@@ -2786,7 +2786,7 @@ msgstr ""
 "návrat k výchozímu nastavení. Jiní uživatelé mohou definovat vlastní "
 "nastavení a sdílet je napříč systémy s nainstalovaným Oyranosem."
 
-#: liboyranos_config/oyranos_texts.c:200 liboyranos_config/oyranos_texts.c:337
+#: liboyranos_config/oyranos_texts.c:201 liboyranos_config/oyranos_texts.c:338
 msgid "Policy"
 msgstr "Politika"
 
@@ -2832,29 +2832,29 @@ msgstr "Náhled, saturace"
 msgid "Prefered CMM"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:401
+#: liboyranos_config/oyranos_texts.c:402
 msgid "Preferred CIE*Lab Editing Color Space"
 msgstr "Preferovaný CIE*Lab barvový prostor pro editaci"
 
-#: liboyranos_config/oyranos_texts.c:381
+#: liboyranos_config/oyranos_texts.c:382
 msgid "Preferred Cmyk Editing Color Space"
 msgstr "Preferovaný barvový prostor CMYK pro editaci"
 
-#: liboyranos_config/oyranos_texts.c:411
+#: liboyranos_config/oyranos_texts.c:412
 msgid "Preferred Gray Editing Color Space"
 msgstr "Preferovaný barvový prostor pro editaci v šedi."
 
-#: liboyranos_config/oyranos_texts.c:371
+#: liboyranos_config/oyranos_texts.c:372
 msgid "Preferred Rgb Editing Color Space"
 msgstr "Preferovaný barvový prostor RGB pro editaci"
 
-#: liboyranos_config/oyranos_texts.c:391
+#: liboyranos_config/oyranos_texts.c:392
 msgid "Preferred XYZ Editing Color Space"
 msgstr "Preferovaný barvový prostor XYZ pro editaci"
 
 #. choices
-#: liboyranos_config/oyranos_texts.c:530 liboyranos_config/oyranos_texts.c:540
-#: liboyranos_config/oyranos_texts.c:550 liboyranos_config/oyranos_texts.c:560
+#: liboyranos_config/oyranos_texts.c:531 liboyranos_config/oyranos_texts.c:541
+#: liboyranos_config/oyranos_texts.c:551 liboyranos_config/oyranos_texts.c:561
 msgid "Preserve Numbers"
 msgstr "Zachovat hodnoty"
 
@@ -2908,7 +2908,7 @@ msgstr "Zobrazení profilu selhalo"
 msgid "Profile Illuminant"
 msgstr "Iluminant A"
 
-#: liboyranos_config/oyranos_texts.c:327
+#: liboyranos_config/oyranos_texts.c:328
 #, fuzzy
 msgid "Profile Information"
 msgstr "Informace:"
@@ -2970,25 +2970,25 @@ msgstr "profil nenalezen:"
 msgid "Projection Television"
 msgstr "Projekční televize"
 
-#: liboyranos_config/oyranos_texts.c:520 liboyranos_config/oyranos_texts.c:530
-#: liboyranos_config/oyranos_texts.c:540 liboyranos_config/oyranos_texts.c:550
-#: liboyranos_config/oyranos_texts.c:560
+#: liboyranos_config/oyranos_texts.c:521 liboyranos_config/oyranos_texts.c:531
+#: liboyranos_config/oyranos_texts.c:541 liboyranos_config/oyranos_texts.c:551
+#: liboyranos_config/oyranos_texts.c:561
 msgid "Prompt"
 msgstr "Dotázat se"
 
-#: liboyranos_config/oyranos_texts.c:245 liboyranos_config/oyranos_texts.c:481
+#: liboyranos_config/oyranos_texts.c:246 liboyranos_config/oyranos_texts.c:482
 msgid "Proofing"
 msgstr "Simulace"
 
-#: liboyranos_config/oyranos_texts.c:586
+#: liboyranos_config/oyranos_texts.c:587
 msgid "Proofing Rendering Intent"
 msgstr "Záměr transformace pro simulaci"
 
-#: liboyranos_config/oyranos_texts.c:246
+#: liboyranos_config/oyranos_texts.c:247
 msgid "Proofing Settings"
 msgstr "Nastavení simulace"
 
-#: liboyranos_config/oyranos_texts.c:247
+#: liboyranos_config/oyranos_texts.c:248
 msgid ""
 "Proofing Settings allows one to decide about the simulation color space."
 msgstr ""
@@ -3062,7 +3062,7 @@ msgid "Relation of positional parameters:"
 msgstr ""
 
 #. choices
-#: liboyranos_config/oyranos_texts.c:570 liboyranos_config/oyranos_texts.c:590
+#: liboyranos_config/oyranos_texts.c:571 liboyranos_config/oyranos_texts.c:591
 msgid "Relative Colorimetric"
 msgstr "Relativní kolorimetrický"
 
@@ -3084,11 +3084,11 @@ msgstr "Vypsat zahrnuté štítky ICC:"
 msgid "Remove naive and XCM aware CM apps profiles."
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:218
+#: liboyranos_config/oyranos_texts.c:219
 msgid "Rendering"
 msgstr "Transformace"
 
-#: liboyranos_config/oyranos_texts.c:566
+#: liboyranos_config/oyranos_texts.c:567
 msgid "Rendering Intent"
 msgstr "Záměr transformace"
 
@@ -3097,7 +3097,7 @@ msgstr "Záměr transformace"
 msgid "Rendering Intent:"
 msgstr "Záměr transformace:"
 
-#: liboyranos_config/oyranos_texts.c:568
+#: liboyranos_config/oyranos_texts.c:569
 msgid ""
 "Rendering intent for color space transformations is typically the Relative "
 "Colorimetric intent plus Black Point Compensation or the Perceptual intent."
@@ -3105,7 +3105,7 @@ msgstr ""
 "Záměr pro transformace mezi různými barvovými prostory se obvykle volí "
 "relativní kolorimetrický vč. kompenzace černého bodu nebo perceptuální."
 
-#: liboyranos_config/oyranos_texts.c:567
+#: liboyranos_config/oyranos_texts.c:568
 msgid "Rendering intent for color space transformations."
 msgstr "Záměr transformace mezi barvovými prostory."
 
@@ -3137,11 +3137,11 @@ msgid "SampleICC CMM"
 msgstr ""
 
 #: liboyranos_config/oyranos_icc.c:296 liboyranos_config/oyranos_icc.c:302
-#: liboyranos_config/oyranos_texts.c:570
+#: liboyranos_config/oyranos_texts.c:571
 msgid "Saturation"
 msgstr "Saturační"
 
-#: liboyranos_config/oyranos_texts.c:227
+#: liboyranos_config/oyranos_texts.c:228
 msgid "Save Mixed Color Space Documents"
 msgstr "Uložit dokumenty se smíšenými barvovými prostory"
 
@@ -3182,15 +3182,15 @@ msgstr "Vypsat prohledávané cesty:"
 msgid "Seldom used Profile claimed Intent"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:264
+#: liboyranos_config/oyranos_texts.c:265
 msgid "Select a CMM in Oyranos"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:507
+#: liboyranos_config/oyranos_texts.c:508
 msgid "Select a color profile for adding a effect."
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:483
+#: liboyranos_config/oyranos_texts.c:484
 msgid ""
 "Select a color profile representing a device to be simulated. This profile "
 "will only be applied if proofing is enabled."
@@ -3198,7 +3198,7 @@ msgstr ""
 "Zvolte barvový profil charakterizující zařízení, které má být simulováno. "
 "Tento profil bude použit pouze v případě použití funkce simulace."
 
-#: liboyranos_config/oyranos_texts.c:493
+#: liboyranos_config/oyranos_texts.c:494
 msgid "Select a white point target for all monitors."
 msgstr ""
 
@@ -3206,15 +3206,15 @@ msgstr ""
 msgid "Select active policy:"
 msgstr "Zvolit aktivní politiku:"
 
-#: liboyranos_config/oyranos_texts.c:637 liboyranos_config/oyranos_texts.c:657
+#: liboyranos_config/oyranos_texts.c:638 liboyranos_config/oyranos_texts.c:658
 msgid "Select the core CMM"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:647 liboyranos_config/oyranos_texts.c:667
+#: liboyranos_config/oyranos_texts.c:648 liboyranos_config/oyranos_texts.c:668
 msgid "Select the processing CMM"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:283
+#: liboyranos_config/oyranos_texts.c:284
 msgid "Set ICC profiles in Oyranos for device Color Management."
 msgstr ""
 
@@ -3234,16 +3234,16 @@ msgstr ""
 msgid "Set new profile:"
 msgstr "Nastavit nový profil:"
 
-#: liboyranos_config/oyranos_texts.c:272
+#: liboyranos_config/oyranos_texts.c:273
 #, fuzzy
 msgid "Settings"
 msgstr "nastavení"
 
-#: liboyranos_config/oyranos_texts.c:210
+#: liboyranos_config/oyranos_texts.c:211
 msgid "Settings affecting the Behaviour in various situations"
 msgstr "Nastavení ovlivňující chování v různých situacích"
 
-#: liboyranos_config/oyranos_texts.c:339
+#: liboyranos_config/oyranos_texts.c:340
 msgid ""
 "Settings can be grouped in Oyranos policies for easier adaption to demands, "
 "better remembering and synchronisation."
@@ -3275,26 +3275,26 @@ msgstr "Ukázat volby"
 msgid "Show Profile ID:"
 msgstr "Zobrazení profilu selhalo"
 
-#: liboyranos_config/oyranos_texts.c:292
+#: liboyranos_config/oyranos_texts.c:293
 msgid ""
 "Show available Device Profiles from remote Taxi DB for a selected device. "
 "The metadata from Taxi DB and from the device must fit."
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:319
+#: liboyranos_config/oyranos_texts.c:320
 msgid "Show only ICC profiles, which have metadata matching a given device."
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:318
+#: liboyranos_config/oyranos_texts.c:319
 #, fuzzy
 msgid "Show only device related ICC profiles"
 msgstr "Zapsat do profilu ICC:"
 
-#: liboyranos_config/oyranos_texts.c:349
+#: liboyranos_config/oyranos_texts.c:350
 msgid "Show which policy matches by combining all involved settings."
 msgstr ""
 
-#: API_generated/oyFilterNode_s_.c:1216 API_generated/oyObserver_s.c:360
+#: API_generated/oyFilterNode_s_.c:1237 API_generated/oyObserver_s.c:360
 #: API_generated/oyObserver_s.c:371 API_generated/oyObserver_s.c:572
 #: API_generated/oyObserver_s.c:650 API_generated/oyObserver_s_.c:53
 #: examples/image_display/oyranos_display_helper_classes_fltk.cpp:47
@@ -3306,7 +3306,7 @@ msgstr "Signál"
 msgid "Silkscreen"
 msgstr "Sítotisk"
 
-#: liboyranos_config/oyranos_texts.c:597
+#: liboyranos_config/oyranos_texts.c:598
 msgid "Simulate the output print on the monitor"
 msgstr "Simulovat tisk na monitoru"
 
@@ -3329,7 +3329,7 @@ msgstr "Velikost:    "
 msgid "So something with options."
 msgstr "Takže něco s volbami."
 
-#: liboyranos_config/oyranos_texts.c:596
+#: liboyranos_config/oyranos_texts.c:597
 msgid "SoftProof"
 msgstr "SofProof"
 
@@ -3341,7 +3341,7 @@ msgstr "Solaris"
 msgid "Some help for My example filter."
 msgstr "Nějaká nápověda pro můj testovací filtr."
 
-#: liboyranos_config/oyranos_texts.c:165
+#: liboyranos_config/oyranos_texts.c:166
 msgid "Source and Target Profiles for various situations"
 msgstr "Vstupní a výstupní profily pro různé situace"
 
@@ -3350,11 +3350,11 @@ msgstr "Vstupní a výstupní profily pro různé situace"
 msgid "Standard Observer 1931 2° Graph:"
 msgstr "Graf standardního pozorovatele:"
 
-#: liboyranos_config/oyranos_texts.c:155
+#: liboyranos_config/oyranos_texts.c:156
 msgid "Start"
 msgstr "Začátek"
 
-#: liboyranos_config/oyranos_texts.c:628
+#: liboyranos_config/oyranos_texts.c:629
 #, fuzzy
 msgid "Switch for enabling the effect profile."
 msgstr "Instalovat profil ICC:"
@@ -3363,16 +3363,16 @@ msgstr "Instalovat profil ICC:"
 msgid "Taligent"
 msgstr "Taligent"
 
-#: liboyranos_config/oyranos_texts.c:290
+#: liboyranos_config/oyranos_texts.c:291
 #, fuzzy
 msgid "Taxi DB Profiles"
 msgstr "Výchozí profily"
 
-#: tools/oyranos_gamma.c:450
+#: tools/oyranos_gamma.c:451
 msgid "Taxi DB entries for device"
 msgstr "Záznamy pro zařízení v Taxi DB"
 
-#: tools/oyranos-device.c:931 tools/oyranos_gamma.c:453
+#: tools/oyranos-device.c:931 tools/oyranos_gamma.c:454
 msgid "Taxi ID"
 msgstr "Taxi ID"
 
@@ -3385,7 +3385,7 @@ msgstr "Technologie"
 msgid "The "
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oydi.c:1328
+#: modules/color/modules/oyranos_cmm_oydi.c:1325
 msgid ""
 "The \"display\" filter supports applications to show image content on single "
 "and multi monitor displays. It cares about the server communication in "
@@ -3412,7 +3412,7 @@ msgstr "Module CUPS podporuje protokol obecného zařízení."
 msgid "The CUPS/printer module for Oyranos."
 msgstr "Tiskový/CUPS modul pro Oyranos."
 
-#: liboyranos_config/oyranos_texts.c:175
+#: liboyranos_config/oyranos_texts.c:176
 msgid ""
 "The Editing Color Spaces shall be well behaving in order to allow editing of "
 "per channel curves. Well behaving means for Rgb, that editing of all three "
@@ -3501,12 +3501,12 @@ msgid ""
 "with a available threading model."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oydi.c:1306
+#: modules/color/modules/oyranos_cmm_oydi.c:1303
 #, fuzzy
 msgid "The client side window data handler of Oyranos."
 msgstr "The client side window data handler of Oyranos."
 
-#: liboyranos_config/oyranos_texts.c:220
+#: liboyranos_config/oyranos_texts.c:221
 msgid ""
 "The conversion between color spaces of different shape and size can happen "
 "in various ways. The Perceptual rendering intent is usually the best choice "
@@ -3536,7 +3536,7 @@ msgstr ""
 "transformace kromě těch kolorimetrických závisejí na tabulkách mapování "
 "barev vložených do profilu ICC jejich tvůrcem."
 
-#: liboyranos_config/oyranos_texts.c:638 liboyranos_config/oyranos_texts.c:658
+#: liboyranos_config/oyranos_texts.c:639 liboyranos_config/oyranos_texts.c:659
 msgid ""
 "The core Color Matching Module (CMM) takes individual profiles and options "
 "and backes a device link. It can provide alternative features regarding "
@@ -3596,7 +3596,7 @@ msgstr "The filter is a possible pixel target in a graph."
 msgid "The filter is used to reduce pixels."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oydi.c:1330
+#: modules/color/modules/oyranos_cmm_oydi.c:1327
 #, fuzzy
 msgid ""
 "The filter needs some informations attached to the output image tags of the "
@@ -3649,7 +3649,7 @@ msgstr ""
 msgid "The filter provides a generic image source."
 msgstr "The filter provides a generic image source."
 
-#: modules/color/modules/oyranos_cmm_oicc.c:1073
+#: modules/color/modules/oyranos_cmm_oicc.c:1075
 #, fuzzy
 msgid ""
 "The filter provides policy settings. These settings can be applied to a "
@@ -3722,7 +3722,7 @@ msgstr ""
 "none; 1 - LCMS_PRESERVE_PURE_K; 2 - LCMS_PRESERVE_K_PLANE] a \"precalculation"
 "\"."
 
-#: liboyranos_config/oyranos_texts.c:219
+#: liboyranos_config/oyranos_texts.c:220
 msgid ""
 "The kind of ICC gamut mapping for transforming colors between differently "
 "sized color spaces"
@@ -3802,7 +3802,7 @@ msgstr ""
 "Příkaz Little CMS \"create_profile.proofing_effect\" umožňuje vytvořit "
 "abstraktní profil ICC z daného profilu ICC. Viz položka \"proofing_effect\"."
 
-#: modules/color/modules/oyranos_cmm_oicc.c:1075
+#: modules/color/modules/oyranos_cmm_oicc.c:1077
 msgid ""
 "The module is responsible for many settings in the Oyranos color management "
 "settings panel. If applied the module care about rendering intents, "
@@ -3856,11 +3856,11 @@ msgstr ""
 "Obslužná rutina \"set_xcm_region\" modulů Oyranosu umožňuje nastavit regiony "
 "barev pro klientskou stranu kompatibilní se správou barev v X."
 
-#: liboyranos_config/oyranos_texts.c:402
+#: liboyranos_config/oyranos_texts.c:403
 msgid "The preferred CIE*Lab Editing Color Space shall describe the CIE*Lab."
 msgstr "Preferovaný barvový prostor editace CIE*Lab by měl popisovat CIE*Lab."
 
-#: liboyranos_config/oyranos_texts.c:382
+#: liboyranos_config/oyranos_texts.c:383
 msgid ""
 "The preferred Cmyk Editing Color Space should represent a color space that "
 "complies to well defined printing conditions like FOGRA or SWOP."
@@ -3869,7 +3869,7 @@ msgstr ""
 "který je kompatibilní s dobře definovaným standardem jako např. FOGRA či "
 "SWOP."
 
-#: liboyranos_config/oyranos_texts.c:412
+#: liboyranos_config/oyranos_texts.c:413
 msgid ""
 "The preferred Gray Editing Color Space shall describe a single lightness "
 "channel color space for grayscale images."
@@ -3877,7 +3877,7 @@ msgstr ""
 "Preferovaný barvový prostor editace v šedi by měl popisovat barvový prostor "
 "s jedním kanálem jasu pro monochromatické obrázky."
 
-#: liboyranos_config/oyranos_texts.c:372
+#: liboyranos_config/oyranos_texts.c:373
 msgid ""
 "The preferred Rgb Editing Color Space should represent a well behaving color "
 "space like sRGB."
@@ -3885,11 +3885,11 @@ msgstr ""
 "Preferovaný barvový prostor editace RGB by měl popisovat dobře se chovající "
 "barvový prostor jako např. sRGB."
 
-#: liboyranos_config/oyranos_texts.c:392
+#: liboyranos_config/oyranos_texts.c:393
 msgid "The preferred XYZ Editing Color Space shall describe CIE*XYZ."
 msgstr "Preferovaný barvový prostor editace XYZ by měl popisovat CIE*XYZ."
 
-#: liboyranos_config/oyranos_texts.c:648 liboyranos_config/oyranos_texts.c:668
+#: liboyranos_config/oyranos_texts.c:649 liboyranos_config/oyranos_texts.c:669
 msgid ""
 "The processing Color Matching Module (CMM) takes one device link as "
 "argument. It can provide alternative features regarding security, speed or "
@@ -3909,7 +3909,7 @@ msgstr "The root image filter can hold pixel data for processing in a graph."
 msgid "The scanner (hopefully)usefull backend of Oyranos."
 msgstr "Užitečný (doufejme) backend Oyranosu pro skener."
 
-#: liboyranos_config/oyranos_texts.c:432
+#: liboyranos_config/oyranos_texts.c:433
 msgid ""
 "The selected color space will be assigned to untagged CIE*Lab color content "
 "and define colors for further processing."
@@ -3917,7 +3917,7 @@ msgstr ""
 "Vybraný barvový prostor bude přiřazen k neoznačeným barvám modelu CIE*Lab a "
 "definuje barvy pro další zpracování."
 
-#: liboyranos_config/oyranos_texts.c:463
+#: liboyranos_config/oyranos_texts.c:464
 msgid ""
 "The selected color space will be assigned to untagged Cmyk color content and "
 "define colors for further processing."
@@ -3925,7 +3925,7 @@ msgstr ""
 "Vybraný barvový prostor bude přiřazen k neoznačeným barvám CMYK a definuje "
 "barvy pro další zpracování."
 
-#: liboyranos_config/oyranos_texts.c:473
+#: liboyranos_config/oyranos_texts.c:474
 msgid ""
 "The selected color space will be assigned to untagged Gray color content and "
 "define colors for further processing."
@@ -3933,7 +3933,7 @@ msgstr ""
 "Vybraný barvový prostor bude přiřazen k neoznačeným barvám modelu Gray (šeď) "
 "a definuje odstíny pro další zpracování."
 
-#: liboyranos_config/oyranos_texts.c:442
+#: liboyranos_config/oyranos_texts.c:443
 msgid ""
 "The selected color space will be assigned to untagged Rgb color content and "
 "define colors for further processing. Typical sRGB should be assumed."
@@ -3941,7 +3941,7 @@ msgstr ""
 "Vybraný barvový prostor bude přiřazen k neoznačeným barvám RGB a definuje "
 "barvy pro další zpracování."
 
-#: liboyranos_config/oyranos_texts.c:422
+#: liboyranos_config/oyranos_texts.c:423
 msgid ""
 "The selected color space will be assigned to untagged XYZ color content and "
 "define colors for further processing."
@@ -3990,7 +3990,7 @@ msgid ""
 "Management System."
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:518
+#: liboyranos_config/oyranos_texts.c:519
 msgid ""
 "This setting decides what to do in the case that colors have no color space "
 "assigned. Typically the according assumed ICC profile should be assigned."
@@ -4037,11 +4037,11 @@ msgstr "Vypsat zařízení:"
 msgid "Usage"
 msgstr "Použití"
 
-#: liboyranos_config/oyranos_texts.c:576
+#: liboyranos_config/oyranos_texts.c:577
 msgid "Use Black Point Compensation"
 msgstr "Použít kompenzaci černého bodu (BPC)"
 
-#: liboyranos_config/oyranos_texts.c:626
+#: liboyranos_config/oyranos_texts.c:627
 msgid "Use Effect"
 msgstr ""
 
@@ -4093,7 +4093,7 @@ msgid "Viewing conditions description"
 msgstr "Popis pozorovacích podmínek"
 
 #: liboyranos_core/oyranos_core.c:415 tools/oyranos-device.c:443
-#: tools/qcmsevents/qcmsevents.cpp:309
+#: tools/qcmsevents/qcmsevents.cpp:310
 #, c-format
 msgid "WARNING"
 msgstr "VAROVÁNÍ"
@@ -4103,7 +4103,7 @@ msgstr "VAROVÁNÍ"
 msgid "Ware To Go CMM"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:174
+#: liboyranos_config/oyranos_texts.c:175
 msgid "Well behaving Color Space for Editing"
 msgstr "Dobře se chovající barvový prostor pro editaci"
 
@@ -4133,7 +4133,7 @@ msgstr "Write PPM Image Filter Object"
 msgid "Write to ICC profile:"
 msgstr "Zapsat do profilu ICC:"
 
-#: API_generated/oyProfile_s_.c:870
+#: API_generated/oyProfile_s_.c:892
 msgid "Wrong ICC profile id detected"
 msgstr "Zjištěno chybné ID profilu ICC"
 
@@ -4149,13 +4149,13 @@ msgstr "YCbCr"
 msgid "Yellow"
 msgstr "Žlutá"
 
-#: liboyranos_config/oyranos_texts.c:580 liboyranos_config/oyranos_texts.c:600
-#: liboyranos_config/oyranos_texts.c:610 liboyranos_config/oyranos_texts.c:620
-#: liboyranos_config/oyranos_texts.c:630
+#: liboyranos_config/oyranos_texts.c:581 liboyranos_config/oyranos_texts.c:601
+#: liboyranos_config/oyranos_texts.c:611 liboyranos_config/oyranos_texts.c:621
+#: liboyranos_config/oyranos_texts.c:631
 msgid "Yes"
 msgstr "Ano"
 
-#: API_generated/oyProfile_s.c:214
+#: API_generated/oyProfile_s.c:213
 msgid "You can get them from http://sf.net/projects/openicc"
 msgstr "Můžete je získat na http://sf.net/projects/openicc"
 
@@ -4163,7 +4163,7 @@ msgstr "Můžete je získat na http://sf.net/projects/openicc"
 msgid "Yxy"
 msgstr "Yxy"
 
-#: tools/oyranos_gamma.c:406
+#: tools/oyranos_gamma.c:407
 msgid "Zero profiles found in Taxi ICC DB"
 msgstr "V Taxi ICC DB nebyly nalezeny žádné profily"
 
@@ -4255,7 +4255,7 @@ msgstr "profil ICC"
 msgid "default profile type does not exist:"
 msgstr "výchozí typ profilu neexistuje:"
 
-#: tools/oyranos-device.c:932 tools/oyranos_gamma.c:454
+#: tools/oyranos-device.c:932 tools/oyranos_gamma.c:455
 msgid "description"
 msgstr "popis"
 
@@ -4311,9 +4311,9 @@ msgstr ""
 msgid "enable simple defaults"
 msgstr "aktivovat jednoduché výchozí hodnoty"
 
-#: API_generated/oyConversion_s.c:190 API_generated/oyFilterNode_s_.c:594
+#: API_generated/oyConversion_s.c:190 API_generated/oyFilterNode_s_.c:615
 #: API_generated/oyranos_devices.c:2657 API_generated/oyranos_devices.c:3168
-#: API_generated/oyranos_module.c:2045
+#: API_generated/oyranos_module.c:2000
 msgid "error in module:"
 msgstr "chyba v modulu:"
 
@@ -4346,9 +4346,9 @@ msgstr ""
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:898
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:904
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:916
-#: tools/oyranos_gamma.c:634 tools/oyranos_gamma.c:812
-#: tools/oyranos_gamma.c:978 tools/oyranos_gamma.c:981
-#: tools/oyranos_gamma.c:985 tools/oyranos_gamma.c:1023
+#: tools/oyranos_gamma.c:635 tools/oyranos_gamma.c:813
+#: tools/oyranos_gamma.c:979 tools/oyranos_gamma.c:982
+#: tools/oyranos_gamma.c:986 tools/oyranos_gamma.c:1024
 msgid "found issues"
 msgstr "nalezené problémy"
 
@@ -4410,7 +4410,7 @@ msgstr "nápověda"
 msgid "input class"
 msgstr "třída vstupu"
 
-#: API_generated/oyProfile_s.c:215 API_generated/oyProfile_s.c:229
+#: API_generated/oyProfile_s.c:214 API_generated/oyProfile_s.c:228
 #: API_generated/oyranos_devices.c:500
 msgid "install in the OpenIccDirectory icc path"
 msgstr "Nainstalujte do cesty \"OpenIccDirectory\""
@@ -4494,7 +4494,7 @@ msgstr ""
 msgid "machine specific path"
 msgstr "cesta příslušného počítače"
 
-#: tools/oyranos-device.c:932 tools/oyranos_gamma.c:454
+#: tools/oyranos-device.c:932 tools/oyranos_gamma.c:455
 msgid "match value"
 msgstr "hledat hodnotu"
 
@@ -4516,8 +4516,8 @@ msgstr "třída pojmenovaných barev"
 
 #: liboyranos/oyranos_cmm.c:255 modules/color/modules/oyranos_cmm_elDB.c:953
 #: modules/color/modules/oyranos_cmm_oiDB.c:553
-#: modules/color/modules/oyranos_cmm_oicc.c:1067
-#: modules/color/modules/oyranos_cmm_oydi.c:1322
+#: modules/color/modules/oyranos_cmm_oicc.c:1069
+#: modules/color/modules/oyranos_cmm_oydi.c:1319
 #: modules/color/modules/oyranos_cmm_oyra.c:146
 #: modules/color/modules/oyranos_cmm_trds.c:677
 #: modules/color/modules/devices/oyranos_cmm_disp.c:1342
