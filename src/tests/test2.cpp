@@ -6934,12 +6934,7 @@ int main(int argc, char** argv)
       argpos = 1,
       list = 0;
 
-  if(getenv("OY_DEBUG"))
-  {
-    int value = atoi(getenv("OY_DEBUG"));
-    if(value > 0)
-      oy_debug += value;
-  }
+  oyExportStart_(EXPORT_CHECK_NO);
 
   /* init */
   for(i = 0; i <= oyTESTRESULT_UNKNOWN; ++i)
@@ -7036,7 +7031,7 @@ int main(int argc, char** argv)
 
     fprintf( stdout, "\n    Hint: the '-l' option will list all test names\n" );
 
-    oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
+    oyFinish_( 0 );
   }
 
   return error;
