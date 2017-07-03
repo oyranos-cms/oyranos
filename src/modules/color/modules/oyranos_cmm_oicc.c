@@ -936,6 +936,8 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
         oyFilterNode_Release( &node );
   }
 
+  oyFilterGraph_Release( &g );
+
   return error;
 }
 
