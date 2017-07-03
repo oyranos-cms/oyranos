@@ -947,3 +947,4 @@ int      oyActivateMonitorProfiles   ( const char        * display_name )
 
 /** @} *//* monitor_api */
 
+
