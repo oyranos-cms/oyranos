@@ -83,6 +83,7 @@ IF(ENABLE_STATIC_LIBS)
                 "${CMAKE_CURRENT_SOURCE_DIR}/test2.cpp"
                 "${CMAKE_SOURCE_DIR}/src/examples/image_display/oyranos_display_helpers.c"
                 )
+  SET_TARGET_PROPERTIES( test2-static PROPERTIES COMPILE_DEFINITIONS "${COMPILE_DEFINITIONS_STATIC}" )
   TARGET_LINK_LIBRARIES( test2-static ${PACKAGE_NAME}-static )
   SET( TEST2_STATIC test2-static )
   SET( TEST2_DEPS ${TEST2_DEPS} test2-static )

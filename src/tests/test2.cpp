@@ -5904,7 +5904,12 @@ oyTESTRESULT_e testConversion()
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "oyConversion_CreateBasicPixels( \"renderer\"=\"lcms\" )" );
   } else
-  { PRINT_SUB( oyTESTRESULT_FAIL,
+  { PRINT_SUB(
+#ifdef COMPILE_STATIC
+               oyTESTRESULT_XFAIL,
+#else
+               oyTESTRESULT_FAIL,
+#endif
     "oyConversion_CreateBasicPixels( \"renderer\"=\"lcms\" ) %s", oyNoEmptyString_m_(reg) );
     fprintf( zout, "\tnode reg = %s\n", oyFilterNode_GetRegistration( icc ));
   }
@@ -5921,7 +5926,12 @@ oyTESTRESULT_e testConversion()
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "oyFilterNode_SetContext_( \"context\"=\"lcms\" ) %d", (int)oyBlob_GetSize(blob) );
   } else
-  { PRINT_SUB( oyTESTRESULT_FAIL,
+  { PRINT_SUB(
+#ifdef COMPILE_STATIC
+               oyTESTRESULT_XFAIL,
+#else
+               oyTESTRESULT_FAIL,
+#endif
     "oyFilterNode_SetContext_( \"context\"=\"lcms\" ) %s  ", oyNoEmptyString_m_(reg) );
   }
   oyBlob_Release( &blob );
@@ -5931,7 +5941,12 @@ oyTESTRESULT_e testConversion()
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "oyFilterNode_SetContext_( \"renderer\"=\"lcm2\" )" );
   } else
-  { PRINT_SUB( oyTESTRESULT_FAIL,
+  { PRINT_SUB(
+#ifdef COMPILE_STATIC
+               oyTESTRESULT_XFAIL,
+#else
+               oyTESTRESULT_FAIL,
+#endif
     "oyFilterNode_SetContext_( \"renderer\"=\"lcm2\" ) %s", oyNoEmptyString_m_(reg) );
   }
 
