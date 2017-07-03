@@ -1516,23 +1516,29 @@ oyTESTRESULT_e testOptionsType ()
 
   fprintf(stdout, "\n" );
 
+  oyOptions_s * os = oyOptions_New(0);
+  oyOptions_Release( &os );
+
   oyProfile_s * p = oyProfile_FromStd( oyASSUMED_WEB, 0,0 );
   oyOptions_s * opts = NULL;
-  oyOptions_MoveInStruct ( &opts, "///display.abstract.white_point.automatic.oicc",
+  oyOptions_MoveInStruct ( &opts, OY_STD "/display.abstract.icc_profile.white_point.automatic.oydi",
                            (oyStruct_s**)&p, OY_CREATE_NEW );
-  fprintf( zout, "opts: %s\n", oyOptions_GetText( opts, oyNAME_NICK ));
   p = oyProfile_FromStd( oyASSUMED_WEB, 0,0 );
-  oyOptions_MoveInStruct ( &opts, "///display.abstract.environment.automatic.my_app.passive",
+  oyOptions_MoveInStruct ( &opts, OY_STD "/display.abstract.icc_profile.gamma.automatic.oydi",
+                           (oyStruct_s**)&p, OY_CREATE_NEW );
+  fprintf( zout, "opts: %s\n", oyOptions_GetText( opts, oyNAME_NICK ) );
+  p = oyProfile_FromStd( oyASSUMED_WEB, 0,0 );
+  oyOptions_MoveInStruct ( &opts, OY_STD "/display.abstract.icc_profile.environment.automatic.my_app.passive",
                            (oyStruct_s**)&p, OY_CREATE_NEW );
   oyOption_s * o = NULL;
   error = oyOptions_GetType2( opts, -1, "abstract", oyNAME_PATTERN,
                                   oyOBJECT_PROFILE_S, NULL, &o );
   const char * reg = oyOption_GetRegistration( o );
-  char * reg_mod = oyStringReplace_( reg, ".oicc", ".my", 0 );
+  char * reg_mod = oyStringReplace_( reg, ".oydi", ".my", 0 );
   reg_mod = oyStringReplace_( reg_mod, ".automatic", "", 0 );
   oyStringAdd_( &reg_mod, ".passive", 0,0 );
   oyOption_SetRegistration( o, reg_mod );
-  fprintf( zout, "%s -> %s :: %s\n", reg, reg_mod, oyOption_GetRegistration(o));
+  fprintf( zout, "%s -> %s :: %s\n", reg, reg_mod, oyOption_GetRegistration(o) );
 
   if(error == 0 &&
      strcmp(reg_mod, oyOption_GetRegistration(o)) == 0)
@@ -1543,6 +1549,20 @@ oyTESTRESULT_e testOptionsType ()
   {
     PRINT_SUB( oyTESTRESULT_FAIL, 
     "oyOptions_GetType2() + replace + SetRegistration   " );
+  }
+  oyOption_Release( &o );
+
+  int count = oyOptions_CountType( opts, "display.abstract.icc_profile", oyOBJECT_PROFILE_S );
+  for(int i = 0; i < count; ++i)
+  {
+    error = oyOptions_GetType2( opts, i, "display.abstract.icc_profile", oyNAME_PATTERN,
+                                oyOBJECT_PROFILE_S, NULL, &o );
+    reg = oyOption_GetRegistration( o );
+    p = (oyProfile_s*) oyOption_GetStruct( o, oyOBJECT_PROFILE_S );
+    fprintf( zout, "display.abstract.icc_profile[%d]: %s:%s\n", i,
+             reg, oyProfile_GetText(p,oyNAME_DESCRIPTION) );
+    oyOption_Release( &o );
+    oyProfile_Release( &p );
   }
 
   fprintf( zout, "abstract: %d  white_point: %d\n",
