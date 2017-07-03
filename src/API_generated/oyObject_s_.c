@@ -16,6 +16,7 @@
 
 #include <math.h>
 
+#include <oyranos_cache.h>
 #include <oyranos_object_internal.h>
 
 #include "oyObject_s.h"
@@ -225,6 +226,8 @@ void               oyObject_UnTrack    ( oyObject_s          obj )
 {
   if(oy_obj_track_list && obj->id_ < MAX_OBJECTS_TRACKED)
     oy_obj_track_list[obj->id_] = NULL;
+  if(oyObjectUsedByCache_( obj->id_ ))
+    fprintf( stderr, "!!!ERROR: Object[%d] still in cache\n", obj->id_);
 }
 /* private tracking API's end */
 
