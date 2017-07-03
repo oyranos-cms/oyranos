@@ -567,7 +567,7 @@ int                oyConversion_RunPixels (
   oyRectangle_s_ roi = {oyOBJECT_RECTANGLE_S, 0,0,0, 0,0,0,0};
   double clck;
 
-  oyPixelAccess_s_ * pixel_access_ = (oyPixelAccess_s_*)pixel_access;
+  oyPixelAccess_s_ * pixel_access_ = (oyPixelAccess_s_*)oyPixelAccess_Copy(pixel_access,NULL);
 
   oyCheckType__m( oyOBJECT_CONVERSION_S, return 1 )
 
