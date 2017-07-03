@@ -1219,8 +1219,6 @@ cmsHPROFILE  lcmsGamutCheckAbstract  ( oyProfile_s       * proof,
       if(tr1) { lcmsDeleteTransform( tr1 ); tr1 = 0; }
       if(gmt_lut) { lcmsFreeLUT( gmt_lut ); gmt_lut = 0; }
 
-  oyProfile_Release( &proof );
-
   return gmt;
 }
 

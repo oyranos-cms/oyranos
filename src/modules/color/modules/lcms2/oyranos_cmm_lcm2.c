@@ -3408,8 +3408,6 @@ cmsHPROFILE  l2cmsGamutCheckAbstract  ( oyProfile_s       * proof,
       if(hLab) { l2cmsCloseProfile( hLab ); hLab = 0; }
       if(tr) { l2cmsDeleteTransform( tr ); tr = 0; }
 
-  oyProfile_Release( &proof );
-
   return gmt;
 }
 
