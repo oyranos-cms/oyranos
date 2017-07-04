@@ -1780,6 +1780,7 @@ oyPointer l2cmsFilterNode_CmmIccContextToMem (
                  * cprt = 0;
   int profiles_n = 0,
       profiles_simulation_n = 0,
+      profiles_display_n = 0,
       proof = 0,
       effect_switch = 0;
   int verbose = oyOptions_FindString( node_tags, "verbose", "true" ) ? 1 : 0;
@@ -1879,6 +1880,27 @@ oyPointer l2cmsFilterNode_CmmIccContextToMem (
     if(verbose || oy_debug > 2)
       l2cms_msg( oyMSG_DBG,(oyStruct_s*)node, OY_DBG_FORMAT_
                 " no simulation profile found", OY_DBG_ARGS_);
+
+
+  /* display profile */
+  profiles_display_n = oyOptions_CountType( node_options, "display.abstract.icc_profile", oyOBJECT_PROFILE_S );
+  l2cms_msg( oyMSG_WARN, (oyStruct_s*)node, OY_DBG_FORMAT_ "display.abstract.icc_profile[] = %d",
+             OY_DBG_ARGS_, profiles_display_n );
+  for(i = 0; i < profiles_display_n; ++i)
+  {
+    oyOption_s * o = NULL;
+    error = oyOptions_GetType2( node_options, i, "display.abstract.icc_profile", oyNAME_PATTERN,
+                                oyOBJECT_PROFILE_S, NULL, &o );
+    const char * reg = oyOption_GetRegistration( o );
+    p = (oyProfile_s*) oyOption_GetStruct( o, oyOBJECT_PROFILE_S );
+    //if(verbose || oy_debug > 2)
+      l2cms_msg( oyMSG_WARN,(oyStruct_s*)node, OY_DBG_FORMAT_ "display.abstract.icc_profile[%d]: %s:%s",
+                 OY_DBG_ARGS_, i, reg, oyProfile_GetText(p,oyNAME_DESCRIPTION) );
+    oyOption_Release( &o );
+    lps[ profiles_n++ ] = l2cmsAddProfile( p );
+    p = oyProfile_Copy( p, 0 );
+    error = oyProfiles_MoveIn( profs, &p, -1 );
+  }
 
 
   /* output profile */
@@ -2422,7 +2444,7 @@ char * oyCMMCacheListPrint_();
  *  @since   2008/07/18 (Oyranos: 0.1.8)
  *  @date    2011/06/17
  */
-int      l2cmsFilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
+int      l2cmsFilterPlug_CmmIccRun   ( oyFilterPlug_s    * requestor_plug,
                                        oyPixelAccess_s   * ticket )
 {
   int j, k, n;
