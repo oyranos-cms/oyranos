@@ -655,7 +655,7 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
   char * ID = 0;
   int icc_profile_flags = 0;
   int width = 0, height = 0;
-  int display_white_point = oyGetBehaviour( oyBEHAVIOUR_DISPLAY_WHITE_POINT );
+  int display_white_point = 0;
 
   image = (oyImage_s*)oyFilterSocket_GetData( socket );
   image_input = oyFilterPlug_ResolveImage( plug, socket, ticket );
@@ -694,6 +694,8 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
     pixel_layout &= (~oyChannels_m( oyToChannels_m(pixel_layout) ));
     pixel_layout |= oyChannels_m( channels_out );
 
+    oydi_msg( oyMSG_WARN, (oyStruct_s*)ticket, OY_DBG_FORMAT_
+              "ping", OY_DBG_ARGS_);
     error = oyOptions_FindInt( node_options, "datatype", 0, &datatype );
     if(error == 0)
     {
@@ -829,6 +831,9 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
     if(error <= 0)
     for(i = 0; i < n; ++i)
     {
+      oyOptions_s * f_options = NULL;
+      int f_options_n,j;
+
       c = oyConfigs_Get( devices, i );
 
       /* get device dimension */
@@ -879,10 +884,16 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
       {
         oyFilterPlug_s * rectangles_plug = oyFilterNode_GetPlug( rectangles, i );
         oyFilterSocket_s * rectangles_plug_socket = oyFilterPlug_GetSocket( rectangles_plug );
+        oyFilterNode_s   * node = oyFilterSocket_GetNode( rectangles_plug_socket );
+        int                flags = 0;
         image_input = (oyImage_s*)oyFilterSocket_GetData( rectangles_plug_socket );
-        oyFilterSocket_Release( &rectangles_plug_socket );
+	oyFilterSocket_Release( &rectangles_plug_socket );
         oyFilterPlug_Release( &rectangles_plug );
 
+        /* obtain filter options */
+        f_options = oyFilterNode_GetOptions( node, flags );
+
+        oyFilterNode_Release( &node );
       }
       if(!image_input)
       {
@@ -939,14 +950,36 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
         oyRectangle_Release( &r );
       }
 
-
+      o = oyOptions_Find( f_options, "display_white_point", oyNAME_PATTERN );
+      if(o)
+      {
+        const char * value = oyOption_GetValueString(o,0);
+        if(value)
+        {
+          int c = atoi( value );
+          if(c >= 0)
+            display_white_point = c;
+        }
+        oyOption_Release( &o );
+      }
+      oydi_msg( oyMSG_WARN, (oyStruct_s*)ticket, 
+                OY_DBG_FORMAT_"display_white_point: %d", OY_DBG_ARGS_, display_white_point);
+      /* erase old display profile */
+      f_options_n = oyOptions_Count( f_options );
+      for(j = 0; j < f_options_n; ++j)
+      {
+        o = oyOptions_Get(f_options, j);
+        if(o && strcmp(oyOption_GetRegistration(o),
+                       OY_STD "/display.icc_profile.abstract.white_point.automatic.oydi") == 0)
+        {
+          oyOption_Release( &o );
+          oyOptions_ReleaseAt( f_options, j );
+          break;
+        }
+        oyOption_Release( &o );
+      }
       if(display_white_point) /* not "none" */
       {
-        oyFilterPlug_s   * rectangles_plug = oyFilterNode_GetPlug( rectangles, i );
-        oyFilterSocket_s * rectangles_plug_socket = oyFilterPlug_GetSocket( rectangles_plug );
-        oyFilterNode_s   * node = oyFilterSocket_GetNode( rectangles_plug_socket );
-        int                flags = 0;
-        oyOptions_s      * f_options = oyFilterNode_GetOptions( node, flags );
         double             src_cie_a = -1, src_cie_b = -1, dst_cie_a = -1, dst_cie_b = -1;
         oyProfile_s      * image_input_profile = oyImage_GetProfile( image_input ),
                          * wtpt = NULL;
@@ -954,7 +987,7 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
         int error = oyProfile_GetWhitePoint( image_input_profile,
                                              &src_cie_a, &src_cie_b );
         if(!error)
-          error = oyGetDisplayWhitePoint( &dst_cie_a, &dst_cie_b );
+          error = oyGetDisplayWhitePoint( display_white_point, &dst_cie_a, &dst_cie_b );
 
         if(!error)
         {
@@ -977,15 +1010,12 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
                           OY_STD "/display.icc_profile.abstract.white_point.automatic.oydi",
                           (oyStruct_s**) &wtpt, OY_CREATE_NEW );
 
-        oyFilterSocket_Release( &rectangles_plug_socket );
-        oyFilterPlug_Release( &rectangles_plug );
-        oyFilterNode_Release( &node );
-        oyOptions_Release( &f_options );
         oyProfile_Release( &image_input_profile );
       }
 
       oyConfig_Release( &c );
       oyImage_Release( &image_input );
+      oyOptions_Release( &f_options );
     }
 
     clean2:
