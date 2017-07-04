@@ -1323,9 +1323,9 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
  *  @memberof oyOptions_s
  *  @brief   search for options with special attributes
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.9.7
+ *  @date    2017/07/04
  *  @since   2009/03/04 (Oyranos: 0.1.10)
- *  @date    2009/03/04
  */
 int            oyOptions_CountType   ( oyOptions_s       * options,
                                        const char        * registration,
@@ -1350,8 +1350,12 @@ int            oyOptions_CountType   ( oyOptions_s       * options,
          !oyFilterRegistrationMatch( o->registration, registration, 0 ))
           found = 0;
 
-      if(found && type && o->value_type == oyVAL_STRUCT &&
-         o->value && o->value->oy_struct->type_ == type)
+      if(found && type &&
+         (o->value_type != oyVAL_STRUCT || !o->value ||
+          o->value->oy_struct->type_ != type))
+        found = 0;
+
+      if(found)
         ++m;
 
       oyOption_Release( (oyOption_s**)&o );
@@ -1823,14 +1827,14 @@ int            oyOptions_SetFromDouble(oyOptions_s      ** obj,
  *  @param[in]     pattern_type        supported types of registration matching:
  *                                     - oyNAME_PATTERN for a pattern match, that is what most users prefer
  *                                     - oyNAME_REGISTRATION for a exact comparision
- *  @param[in]     object_type         the acceptable object type
+ *  @param[in]     object_type         the acceptable object type or oyOBJECT_NONE
  *  @param[out]    result              the found object; optional
  *  @param[out]    option              the belonging option; optional
  *  @return                            error
  *
  *
  *  @version Oyranos: 0.9.7
- *  @date    2017/06/10
+ *  @date    2017/07/04
  *  @since   2017/06/10 (Oyranos: 0.9.7)
  */
 int            oyOptions_GetType2    ( oyOptions_s       * options,
@@ -1860,7 +1864,8 @@ int            oyOptions_GetType2    ( oyOptions_s       * options,
          !oyOptionRegistrationMatch( o->registration, pattern, pattern_type ))
           found = 0;
 
-      if(found && !(o->value && o->value->oy_struct))
+      if(found && object_type &&
+         (o->value_type != oyVAL_STRUCT || !(o->value && o->value->oy_struct)))
         error = 1;
 
       if(found && object_type && !error &&
