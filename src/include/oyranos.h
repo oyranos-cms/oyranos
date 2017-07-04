@@ -226,7 +226,8 @@ int      oySetDefaultProfile         ( oyPROFILE_e         type,
                                        const char        * file_name );
 char*       oyGetDefaultProfileName    (oyPROFILE_e       type,
                                         oyAlloc_f         alloc_func);
-int      oyGetDisplayWhitePoint      ( double            * cie_a,
+int      oyGetDisplayWhitePoint      ( int                 mode,
+                                       double            * cie_a,
                                        double            * cie_b );
 int      oySetDisplayWhitePoint      ( double              cie_a,
                                        double              cie_b,

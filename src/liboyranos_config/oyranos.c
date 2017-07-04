@@ -740,10 +740,11 @@ int      oySetDisplayWhitePoint      ( double              cie_a,
 /**
  *  @brief get the CIE*ab coordinates for display white point target
  *
- *  The function asks for the actual white point target for the display.
+ *  The function asks for a white point target for displaying.
  *
  *  @see ::OY_DEFAULT_DISPLAY_WHITE_POINT.
  *
+ *  @param[in]     mode                -1 for oyGetBehaviour( oyBEHAVIOUR_DISPLAY_WHITE_POINT )
  *  @param[out]    cie_a               CIE*a component in 0.0 - 1.0 range
  *  @param[out]    cie_b               CIE*b component in 0.0 - 1.0 range
  *  @return                            error
@@ -752,14 +753,14 @@ int      oySetDisplayWhitePoint      ( double              cie_a,
  *                                     - >1: error
  *
  *  @version Oyranos: 0.9.7
- *  @date    2017/06/01
+ *  @date    2017/07/04
  *  @since   2017/06/01 (Oyranos: 0.9.7)
  */
-int      oyGetDisplayWhitePoint      ( double            * cie_a,
+int      oyGetDisplayWhitePoint      ( int                 mode,
+                                       double            * cie_a,
                                        double            * cie_b )
 {
   int error = -1;
-  int mode = oyGetBehaviour( oyBEHAVIOUR_DISPLAY_WHITE_POINT );
   char * value = NULL;
 
   double DE_xyz[5][3] = {
@@ -768,6 +769,9 @@ int      oyGetDisplayWhitePoint      ( double            * cie_a,
   { 0.31271,0.32902,0.35827}, /* D65 */
   { 0.29902,0.31485,0.38613}, /* D75 */
   { 0.2848, 0.2932, 0.42200}  /* D93 */ };
+
+  if(mode == -1)
+    mode = oyGetBehaviour( oyBEHAVIOUR_DISPLAY_WHITE_POINT );
 
   switch(mode)
   {

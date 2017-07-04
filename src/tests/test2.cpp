@@ -1647,11 +1647,9 @@ oyTESTRESULT_e testProfile ()
     "found oyPROFILE_EFFECT                                 " );
   }
 
-  int display_white_point_mode = oyGetBehaviour( oyBEHAVIOUR_DISPLAY_WHITE_POINT );
   /* get D50 */
-  oySetBehaviour( oyBEHAVIOUR_DISPLAY_WHITE_POINT, oySCOPE_USER, 2 );
   double cie_a = -1.0, cie_b = -1.0;
-  int error = oyGetDisplayWhitePoint( &cie_a, &cie_b );
+  int error = oyGetDisplayWhitePoint( 2, &cie_a, &cie_b );
   if(!error && cie_a != -1.0 && cie_b != -1.0)
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS, 
@@ -1664,8 +1662,7 @@ oyTESTRESULT_e testProfile ()
   cie_a = cie_b = -1.0;
 
   /* obtain first monitor white point */
-  oySetBehaviour( oyBEHAVIOUR_DISPLAY_WHITE_POINT, oySCOPE_USER, 7 );
-  error = oyGetDisplayWhitePoint( &cie_a, &cie_b );
+  error = oyGetDisplayWhitePoint( 7, &cie_a, &cie_b );
   if(!error && cie_a != -1.0 && cie_b != -1.0)
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS, 
@@ -1678,8 +1675,7 @@ oyTESTRESULT_e testProfile ()
 
   /* set a custom white point */
   oySetDisplayWhitePoint( 0.5,0.5, oySCOPE_USER, "test white point" );
-  oySetBehaviour( oyBEHAVIOUR_DISPLAY_WHITE_POINT, oySCOPE_USER, 1 );
-  error = oyGetDisplayWhitePoint( &cie_a, &cie_b );
+  error = oyGetDisplayWhitePoint( 1, &cie_a, &cie_b );
   if(!error && cie_a != -1.0 && cie_b != -1.0)
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS, 
@@ -1689,8 +1685,6 @@ oyTESTRESULT_e testProfile ()
     PRINT_SUB( oyTESTRESULT_FAIL, 
     "oyGetDisplayWhitePoint() = %g %g            mode = 1      ", cie_a, cie_b );
   }
-
-  oySetBehaviour( oyBEHAVIOUR_DISPLAY_WHITE_POINT, oySCOPE_USER, display_white_point_mode );
 
 
   oyOption_s * matrix = oyOption_FromRegistration("///color_matrix."
