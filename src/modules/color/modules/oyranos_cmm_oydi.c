@@ -993,9 +993,9 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
         {
           oyOptions_s * result_opts = NULL, * opts = NULL;
           error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/cie_a",
-                                           src_cie_a - dst_cie_a, 0, OY_CREATE_NEW );
+                                           dst_cie_a - src_cie_a, 0, OY_CREATE_NEW );
           error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/cie_b",
-                                           src_cie_b - dst_cie_b, 0, OY_CREATE_NEW );
+                                           dst_cie_b - src_cie_b, 0, OY_CREATE_NEW );
           error = oyOptions_Handle( "//" OY_TYPE_STD "/create_profile.white_point_adjust",
                                            opts,"create_profile.white_point_adjust",
                                            &result_opts );

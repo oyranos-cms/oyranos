@@ -49,7 +49,7 @@
  *  @date    2016/04/04
  *  @since   2013/06/10 (Oyranos: 0.9.5)
  */
-int      oyraFilter_ImageExposeRun    ( oyFilterPlug_s    * requestor_plug,
+int      oyraFilter_ImageExposeRun   ( oyFilterPlug_s    * requestor_plug,
                                        oyPixelAccess_s   * ticket )
 {
   int result = 0, error = 0;
