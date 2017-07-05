@@ -962,8 +962,10 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
         }
         oyOption_Release( &o );
       }
-      oydi_msg( oyMSG_WARN, (oyStruct_s*)ticket, 
-                OY_DBG_FORMAT_"display_white_point: %d", OY_DBG_ARGS_, display_white_point);
+
+      if(oy_debug)
+        oydi_msg( oyMSG_DBG, (oyStruct_s*)ticket, 
+                  OY_DBG_FORMAT_"display_white_point: %d", OY_DBG_ARGS_, display_white_point);
       /* erase old display profile */
       f_options_n = oyOptions_Count( f_options );
       for(j = 0; j < f_options_n; ++j)
