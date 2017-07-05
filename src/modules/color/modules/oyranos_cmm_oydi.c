@@ -970,7 +970,7 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
       {
         o = oyOptions_Get(f_options, j);
         if(o && strcmp(oyOption_GetRegistration(o),
-                       OY_STD "/display.icc_profile.abstract.white_point.automatic.oydi") == 0)
+                       OY_STD "/icc_color/display.icc_profile.abstract.white_point.automatic.oydi") == 0)
         {
           oyOption_Release( &o );
           oyOptions_ReleaseAt( f_options, j );
@@ -1007,7 +1007,7 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
         }
 
         oyOptions_MoveInStruct( &f_options,
-                          OY_STD "/display.icc_profile.abstract.white_point.automatic.oydi",
+                          OY_STD "/icc_color/display.icc_profile.abstract.white_point.automatic.oydi",
                           (oyStruct_s**) &wtpt, OY_CREATE_NEW );
 
         oyProfile_Release( &image_input_profile );
