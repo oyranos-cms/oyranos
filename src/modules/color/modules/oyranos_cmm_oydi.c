@@ -971,9 +971,12 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
       for(j = 0; j < f_options_n; ++j)
       {
         o = oyOptions_Get(f_options, j);
-        if(o && strcmp(oyOption_GetRegistration(o),
-                       OY_STD "/icc_color/display.icc_profile.abstract.white_point.automatic.oydi") == 0)
+        if(o && oyFilterRegistrationMatch( oyOption_GetRegistration(o),
+                       OY_STD "/icc_color/display.icc_profile.abstract.white_point.automatic", 0 ))
         {
+          if(oy_debug)
+          oydi_msg( oyMSG_DBG, (oyStruct_s*)ticket, 
+                  OY_DBG_FORMAT_"release: %s", OY_DBG_ARGS_, oyOption_GetRegistration(o));
           oyOption_Release( &o );
           oyOptions_ReleaseAt( f_options, j );
           break;
