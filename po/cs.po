@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: oyranos\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2017-07-05 07:16+0200\n"
+"POT-Creation-Date: 2017-07-06 00:00+0200\n"
 "PO-Revision-Date: 2012-10-19 15:10+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -938,7 +938,7 @@ msgstr "Copyright (c) 2005-2010 Kai-Uwe Behrmann; newBSD"
 msgid "Copyright (c) 2005-2014 Kai-Uwe Behrmann; newBSD"
 msgstr "Copyright (c) 2005-2010 Kai-Uwe Behrmann; newBSD"
 
-#: modules/color/modules/oyranos_cmm_oicc.c:1067
+#: modules/color/modules/oyranos_cmm_oicc.c:1143
 #, fuzzy
 msgid "Copyright (c) 2005-2016 Kai-Uwe Behrmann; newBSD"
 msgstr "Copyright (c) 2005-2010 Kai-Uwe Behrmann; newBSD"
@@ -953,7 +953,7 @@ msgstr "Copyright (c) 2009 Joseph Simon; MIT"
 msgid "Copyright (c) 2009 Kai-Uwe Behrmann; MIT"
 msgstr "Copyright (c) 2009 Kai-Uwe Behrmann; MIT"
 
-#: modules/color/modules/oyranos_cmm_oydi.c:1347
+#: modules/color/modules/oyranos_cmm_oydi.c:1352
 #: modules/color/modules/oyranos_cmm_lraw.cpp:235
 msgid "Copyright (c) 2009 Kai-Uwe Behrmann; newBSD"
 msgstr "Copyright (c) 2009 Kai-Uwe Behrmann; newBSD"
@@ -2561,11 +2561,11 @@ msgstr "Oyranos Dummy"
 msgid "Oyranos Help"
 msgstr "Nápověda Oyranosu"
 
-#: modules/color/modules/oyranos_cmm_oicc.c:1051
+#: modules/color/modules/oyranos_cmm_oicc.c:1127
 msgid "Oyranos ICC policy"
 msgstr "Politika Oyranosu pro ICC"
 
-#: modules/color/modules/oyranos_cmm_oicc.c:1053
+#: modules/color/modules/oyranos_cmm_oicc.c:1129
 msgid "Oyranos ICC policy module"
 msgstr "Modul politiky Oyranosu pro ICC"
 
@@ -2635,7 +2635,7 @@ msgstr ""
 msgid "Oyranos allows to fine tune handling of ICC color management."
 msgstr "Nastavení Oyranosu umožňují doladit chování správy barev."
 
-#: modules/color/modules/oyranos_cmm_oydi.c:1331
+#: modules/color/modules/oyranos_cmm_oydi.c:1336
 msgid "Oyranos display filter"
 msgstr "Filter Oyranosu pro displej"
 
@@ -2659,8 +2659,8 @@ msgstr ""
 msgid "Oyranos modules"
 msgstr "Moduly Oyranosu"
 
-#: modules/color/modules/oyranos_cmm_oicc.c:1061
-#: modules/color/modules/oyranos_cmm_oydi.c:1341
+#: modules/color/modules/oyranos_cmm_oicc.c:1137
+#: modules/color/modules/oyranos_cmm_oydi.c:1346
 #: modules/color/modules/oyranos_cmm_oyra.c:138
 #: modules/color/modules/oyranos_cmm_trds.c:669
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:981
@@ -3385,7 +3385,7 @@ msgstr "Technologie"
 msgid "The "
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oydi.c:1355
+#: modules/color/modules/oyranos_cmm_oydi.c:1360
 msgid ""
 "The \"display\" filter supports applications to show image content on single "
 "and multi monitor displays. It cares about the server communication in "
@@ -3501,7 +3501,7 @@ msgid ""
 "with a available threading model."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oydi.c:1333
+#: modules/color/modules/oyranos_cmm_oydi.c:1338
 #, fuzzy
 msgid "The client side window data handler of Oyranos."
 msgstr "The client side window data handler of Oyranos."
@@ -3596,7 +3596,7 @@ msgstr "The filter is a possible pixel target in a graph."
 msgid "The filter is used to reduce pixels."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oydi.c:1357
+#: modules/color/modules/oyranos_cmm_oydi.c:1362
 #, fuzzy
 msgid ""
 "The filter needs some informations attached to the output image tags of the "
@@ -3649,7 +3649,7 @@ msgstr ""
 msgid "The filter provides a generic image source."
 msgstr "The filter provides a generic image source."
 
-#: modules/color/modules/oyranos_cmm_oicc.c:1075
+#: modules/color/modules/oyranos_cmm_oicc.c:1151
 #, fuzzy
 msgid ""
 "The filter provides policy settings. These settings can be applied to a "
@@ -3802,7 +3802,7 @@ msgstr ""
 "Příkaz Little CMS \"create_profile.proofing_effect\" umožňuje vytvořit "
 "abstraktní profil ICC z daného profilu ICC. Viz položka \"proofing_effect\"."
 
-#: modules/color/modules/oyranos_cmm_oicc.c:1077
+#: modules/color/modules/oyranos_cmm_oicc.c:1153
 msgid ""
 "The module is responsible for many settings in the Oyranos color management "
 "settings panel. If applied the module care about rendering intents, "
@@ -4516,8 +4516,8 @@ msgstr "třída pojmenovaných barev"
 
 #: liboyranos/oyranos_cmm.c:255 modules/color/modules/oyranos_cmm_elDB.c:953
 #: modules/color/modules/oyranos_cmm_oiDB.c:553
-#: modules/color/modules/oyranos_cmm_oicc.c:1069
-#: modules/color/modules/oyranos_cmm_oydi.c:1349
+#: modules/color/modules/oyranos_cmm_oicc.c:1145
+#: modules/color/modules/oyranos_cmm_oydi.c:1354
 #: modules/color/modules/oyranos_cmm_oyra.c:146
 #: modules/color/modules/oyranos_cmm_trds.c:677
 #: modules/color/modules/devices/oyranos_cmm_disp.c:1342

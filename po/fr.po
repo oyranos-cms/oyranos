@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ICC Examin 0.41\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2017-07-05 07:16+0200\n"
+"POT-Creation-Date: 2017-07-06 00:00+0200\n"
 "PO-Revision-Date: 2006-06-29 19:31+0200\n"
 "Last-Translator: Pascal LACROIX <lacroixpascal at vfemail.net>\n"
 "Language-Team: <fr@li.org>\n"
@@ -926,7 +926,7 @@ msgstr ""
 msgid "Copyright (c) 2005-2014 Kai-Uwe Behrmann; newBSD"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oicc.c:1067
+#: modules/color/modules/oyranos_cmm_oicc.c:1143
 msgid "Copyright (c) 2005-2016 Kai-Uwe Behrmann; newBSD"
 msgstr ""
 
@@ -940,7 +940,7 @@ msgstr ""
 msgid "Copyright (c) 2009 Kai-Uwe Behrmann; MIT"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oydi.c:1347
+#: modules/color/modules/oyranos_cmm_oydi.c:1352
 #: modules/color/modules/oyranos_cmm_lraw.cpp:235
 msgid "Copyright (c) 2009 Kai-Uwe Behrmann; newBSD"
 msgstr ""
@@ -2516,12 +2516,12 @@ msgstr "Oyranos Préférences"
 msgid "Oyranos Help"
 msgstr "Oyranos Préférences"
 
-#: modules/color/modules/oyranos_cmm_oicc.c:1051
+#: modules/color/modules/oyranos_cmm_oicc.c:1127
 #, fuzzy
 msgid "Oyranos ICC policy"
 msgstr "Oyranos Préférences"
 
-#: modules/color/modules/oyranos_cmm_oicc.c:1053
+#: modules/color/modules/oyranos_cmm_oicc.c:1129
 #, fuzzy
 msgid "Oyranos ICC policy module"
 msgstr "Oyranos Préférences"
@@ -2589,7 +2589,7 @@ msgstr ""
 msgid "Oyranos allows to fine tune handling of ICC color management."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oydi.c:1331
+#: modules/color/modules/oyranos_cmm_oydi.c:1336
 #, fuzzy
 msgid "Oyranos display filter"
 msgstr "Oyranos Préférences"
@@ -2610,8 +2610,8 @@ msgstr ""
 msgid "Oyranos modules"
 msgstr "Oyranos Préférences"
 
-#: modules/color/modules/oyranos_cmm_oicc.c:1061
-#: modules/color/modules/oyranos_cmm_oydi.c:1341
+#: modules/color/modules/oyranos_cmm_oicc.c:1137
+#: modules/color/modules/oyranos_cmm_oydi.c:1346
 #: modules/color/modules/oyranos_cmm_oyra.c:138
 #: modules/color/modules/oyranos_cmm_trds.c:669
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:981
@@ -3319,7 +3319,7 @@ msgstr ""
 msgid "The "
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oydi.c:1355
+#: modules/color/modules/oyranos_cmm_oydi.c:1360
 msgid ""
 "The \"display\" filter supports applications to show image content on single "
 "and multi monitor displays. It cares about the server communication in "
@@ -3407,7 +3407,7 @@ msgid ""
 "with a available threading model."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oydi.c:1333
+#: modules/color/modules/oyranos_cmm_oydi.c:1338
 msgid "The client side window data handler of Oyranos."
 msgstr ""
 
@@ -3476,7 +3476,7 @@ msgstr ""
 msgid "The filter is used to reduce pixels."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oydi.c:1357
+#: modules/color/modules/oyranos_cmm_oydi.c:1362
 msgid ""
 "The filter needs some informations attached to the output image tags of the "
 "\"output\" image filter. The following list describes the X11/Xorg "
@@ -3511,7 +3511,7 @@ msgstr ""
 msgid "The filter provides a generic image source."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oicc.c:1075
+#: modules/color/modules/oyranos_cmm_oicc.c:1151
 msgid ""
 "The filter provides policy settings. These settings can be applied to a "
 "graph through the user function oyConversion_Correct()."
@@ -3623,7 +3623,7 @@ msgid ""
 "info item."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oicc.c:1077
+#: modules/color/modules/oyranos_cmm_oicc.c:1153
 msgid ""
 "The module is responsible for many settings in the Oyranos color management "
 "settings panel. If applied the module care about rendering intents, "
@@ -4313,8 +4313,8 @@ msgstr "Couleur désignée 2"
 
 #: liboyranos/oyranos_cmm.c:255 modules/color/modules/oyranos_cmm_elDB.c:953
 #: modules/color/modules/oyranos_cmm_oiDB.c:553
-#: modules/color/modules/oyranos_cmm_oicc.c:1069
-#: modules/color/modules/oyranos_cmm_oydi.c:1349
+#: modules/color/modules/oyranos_cmm_oicc.c:1145
+#: modules/color/modules/oyranos_cmm_oydi.c:1354
 #: modules/color/modules/oyranos_cmm_oyra.c:146
 #: modules/color/modules/oyranos_cmm_trds.c:677
 #: modules/color/modules/devices/oyranos_cmm_disp.c:1342

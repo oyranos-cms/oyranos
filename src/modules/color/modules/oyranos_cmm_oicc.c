@@ -755,7 +755,7 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
                                        uint32_t            flags,
                                        oyOptions_s       * options )
 {
-  int error = 0, j,m,
+  int error = 0, i,j,m,
       icc_nodes_n = 0;
   int verbose = oyOptions_FindString( options, "verbose", 0 ) ? 1:0;
   oyFilterGraph_s * g = 0;
@@ -768,12 +768,14 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
               * effp = 0;
   oyOptions_s * db_options = 0,
               * f_options = 0;
+  int f_options_n;
   oyOption_s * o = 0;
   const char * val = 0;
   int32_t proofing = 0,
           effect_switch = 0,
           display_mode = 0,
           rendering_gamut_warning = 0;
+  int display_white_point = 0;
 
   if(oy_debug == 1)
     verbose = 1;
@@ -920,6 +922,80 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
                                  strrchr(__FILE__,'/') + 1 : __FILE__ ,__LINE__,
                          o ? "is already set" : "no profile",
                          proofing ? "proofing is set" :"proofing is not set" );
+
+              o = oyOptions_Find( f_options, "display_white_point", oyNAME_PATTERN );
+              if(o)
+              {
+                const char * value = oyOption_GetValueString(o,0);
+                if(value)
+                {
+                  int c = atoi( value );
+                  if(c >= 0)
+                    display_white_point = c;
+                }
+                oyOption_Release( &o );
+              }
+
+              if(oy_debug)
+                oicc_msg( oyMSG_DBG, (oyStruct_s*)conversion, 
+                  OY_DBG_FORMAT_"display_white_point: %d", OY_DBG_ARGS_, display_white_point);
+              /* erase old display profile */
+              f_options_n = oyOptions_Count( f_options );
+              for(i = 0; i < f_options_n; ++i)
+              {
+                o = oyOptions_Get(f_options, i);
+                if(o && oyFilterRegistrationMatch( oyOption_GetRegistration(o),
+                       OY_STD "/icc_color/display.icc_profile.abstract.white_point.automatic", 0 ))
+                {
+                  if(oy_debug)
+                  oicc_msg( oyMSG_DBG, (oyStruct_s*)conversion, 
+                  OY_DBG_FORMAT_"release: %s", OY_DBG_ARGS_, oyOption_GetRegistration(o));
+                  oyOption_Release( &o );
+                  oyOptions_ReleaseAt( f_options, i );
+                  break;
+                }
+                oyOption_Release( &o );
+              }
+              if(display_white_point) /* not "none" */
+              {
+                double src_cie_a = -1, src_cie_b = -1, dst_cie_a = -1, dst_cie_b = -1;
+                oyImage_s * image = (oyImage_s*)oyFilterNode_GetData( node, 0 );
+                oyProfile_s* image_profile = oyImage_GetProfile( image ),
+                           * wtpt = NULL;
+
+                int error = oyProfile_GetWhitePoint( image_profile,
+                                                     &src_cie_a, &src_cie_b );
+                if(!error)
+                  error = oyGetDisplayWhitePoint( display_white_point, &dst_cie_a, &dst_cie_b );
+
+                if(oy_debug)
+                  oicc_msg( oyMSG_WARN, (oyStruct_s*)conversion, 
+                    OY_DBG_FORMAT_"display_white_point: %d %s", OY_DBG_ARGS_, display_white_point, oyProfile_GetText( image_profile, oyNAME_DESCRIPTION ));
+
+                if(!error)
+                {
+                  oyOptions_s * result_opts = NULL, * opts = NULL;
+                  error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/cie_a",
+                                           dst_cie_a - src_cie_a, 0, OY_CREATE_NEW );
+                  error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/cie_b",
+                                           dst_cie_b - src_cie_b, 0, OY_CREATE_NEW );
+                  error = oyOptions_Handle( "//" OY_TYPE_STD "/create_profile.white_point_adjust",
+                                           opts,"create_profile.white_point_adjust",
+                                           &result_opts );
+                  wtpt = (oyProfile_s*) oyOptions_GetType( result_opts, -1, "icc_profile",
+                                           oyOBJECT_PROFILE_S );
+                  error = !wtpt;
+                  oyOptions_Release( &result_opts );
+                  oyOptions_Release( &opts );
+                }
+
+                oyOptions_MoveInStruct( &f_options,
+                          OY_STD "/icc_color/display.icc_profile.abstract.white_point.automatic.oicc",
+                          (oyStruct_s**) &wtpt, OY_CREATE_NEW );
+
+                oyProfile_Release( &image_profile );
+                oyImage_Release( &image );
+              }
 
               oyOption_Release( &o );
               oyOptions_Release( &db_options );
