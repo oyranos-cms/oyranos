@@ -1,29 +1,29 @@
 # Packaging
 
-##Components
+## Components
 
 
-###Default ICC Profiles
+### Default ICC Profiles
 Make shure the icc-profiles-openicc and icc-profiles-basiccolor-printing2009 
 packages are in place. The policy files in the settings directory and the 
 default profile selection relies on them. These settings files are essential 
 to Oyranos. And applications migth fail if the ICC profiles are not available.
 
 
-###Libraries
+### Libraries
 Do not omit the provided libraries for normal distribution. You can consider 
 splitting it out into separate packages. E.g. 
 packaging liboyranos_CUPS_cmm_module.so 
 separately from liboyranos_SANE_cmm_module.so or liboyranos_oyX1_cmm_module.so 
 is appreciated for some special cases like headless print servers.
 
-####Essential modules are:
+#### Essential modules are:
 * liboyranos_oyIM_cmm_module.so
 * liboyranos_oicc_cmm_module.so
 * liboyranos_oyra_cmm_module.so
 * liboyranos_lcm[s,2]_cmm_module.so
 
-####X11 functionality depends on:
+#### X11 functionality depends on:
 * liboyranos_oyX1_cmm_module.so
 * liboyranos_oydi_cmm_module.so
 
@@ -34,30 +34,30 @@ Do not try to install the included Elektra. It is modified for Oyranos and not
 useful for installing.
 
 
-###GUI
+### GUI
 oyranos-config-fltk is a simple front end to the library. It can be replaced 
 with KolorManager, Synnefo or possible other front ends. The device settings
 will only appear if the according modules are installed (oyX1,CUPS,SANE,oyRE)
 
 
-###Tools
+### Tools
 oyranos-monitor and oyranos-monitor-daemon depend on X11 modules (oydi+oyX1)
 oyranos-profile-graph depends on lCC modules (oicc+lcm[s,2])
 
 
-##Sources
+## Sources
 Online source are on https://github.com/oyranos-cms/oyranos
 
 
-##Licenses
+## Licenses
 Oyranos tar ball includes pices with different licenses.
 Read the first part of the [COPYING](COPYING.md) file carefully. 
 
 
-##Documentation
+## Documentation
 The Doxyfile_intern is for Oyranos developers, not for public installation.
 
 
-##Dependencies
+## Dependencies
 Can be found in [README](README.md).
 
