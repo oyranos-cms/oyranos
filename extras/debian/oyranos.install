@@ -22,4 +22,4 @@ usr/share/pixmaps/oyranos_logo.*
 usr/share/pixmaps/lcms_logo2.png
 usr/share/color/settings/*.policy.xml
 usr/share/applications/oyranos-profile-install.desktop
-etc/xdg/autostart/oyranos-monitor-setup.desktop
+*etc/xdg/autostart/oyranos-monitor-setup.desktop

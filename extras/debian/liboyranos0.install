@@ -1,4 +1,4 @@
-usr/lib/lib*.so.*
-usr/lib/color/modules/*
-usr/lib/oyranos-meta/lib*
+usr/lib/*/lib*.so.*
+usr/lib/*/color/modules/*
+usr/lib/*/oyranos-meta/lib*
 usr/share/locale/*
