@@ -1299,7 +1299,7 @@ char **      oyOptionChoicesGetWtPt_ ( int               * choices )
   choice_list_n += devices_n;
   for(i = 0; i < devices_n; ++i)
   {
-    oyConfig_s * c = oyConfigs_Get( devices, 0 );
+    oyConfig_s * c = oyConfigs_Get( devices, i );
     char * text = NULL;
     const char * mnft = oyConfig_FindString( c, "manufacturer", 0 );
     const char * model = oyConfig_FindString( c, "model", 0 );
