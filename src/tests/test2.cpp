@@ -2907,6 +2907,8 @@ oyTESTRESULT_e testPolicy ()
   return result;
 }
 
+#include "oyranos_devices.h"
+
 oyTESTRESULT_e testWidgets ()
 {
   oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
@@ -2969,13 +2971,51 @@ oyTESTRESULT_e testWidgets ()
     "oyWidgetTitleGet                      " );
   }
 
+  option = oyWIDGET_DISPLAY_WHITE_POINT;
+  type = oyWidgetTitleGet( option, &categories, &name, &tooltip, &flags );
+  error = oyOptionChoicesGet2( option, 0, oyNAME_NAME,
+                               &choices, &choices_string_list,
+                               &current );
+
+  oyConfigs_s * configs = 0;
+  oyOptions_s * options = NULL;
+  error = oyOptions_SetFromText( &options,
+                                     "//" OY_TYPE_STD "/config/command",
+                                     "list", OY_CREATE_NEW );
+  error = oyDevicesGet( 0, "monitor", options, &configs );
+  int devices_n = oyConfigs_Count( configs );
+  oyOptions_Release( &options );
+  oyConfigs_Release( &configs );
+  int i,j, duplicate = 0;
+  for(i = 0; i < choices; ++i)
+    for(j = i+1; j < choices; ++j)
+      if(strcmp(choices_string_list[i],choices_string_list[j]) == 0)
+        ++duplicate;
+  if(choices == (7 + devices_n) &&
+     duplicate == 0)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyOptionChoicesGet2(%s) %d [%d]: %s", name, choices, current, choices_string_list[current] );
+  } else
+  { if(duplicate)
+    {
+      PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyOptionChoicesGet2(%s) duplicates detected: %d      ", name, duplicate );
+    } else {
+      PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyOptionChoicesGet2(%s) %d != 7 + %d      ", name, choices, devices_n );
+    }
+    for(i = 0; i < choices; ++i)
+      fprintf(zout,"\t%s %s\n", i==current?"*":" ", choices_string_list[i]);
+  }
+
+  oyOptionChoicesFree( option, &choices_string_list, choices );
+
   fprintf( zout, "\n");
 
   return result;
 }
 
 
-#include "oyranos_devices.h"
 
 oyTESTRESULT_e testCMMDevicesListing ()
 {
