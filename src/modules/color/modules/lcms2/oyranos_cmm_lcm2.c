@@ -333,8 +333,8 @@ static void* (*l2cmsGetContextUserData)(cmsContext ContextID) = NULL;
 static void* dummyGetContextUserData(cmsContext ContextID) {return NULL;}
 static cmsContext (*l2cmsGetProfileContextID)(cmsHPROFILE hProfile) = NULL;
 static cmsContext (*l2cmsGetTransformContextID)(cmsHPROFILE hProfile) = NULL;
-static int (*l2cmsGetEncodedCMMversion)(void) = NULL;
 static int dummyGetEncodedCMMversion() {return LCMS_VERSION;}
+static int (*l2cmsGetEncodedCMMversion)(void) = dummyGetEncodedCMMversion;
 
 #if !defined(COMPILE_STATIC)
 #define LOAD_FUNC( func, fallback_func ) l2##func = dlsym(l2cms_handle, #func ); \
@@ -488,7 +488,7 @@ int                l2cmsCMMInit       ( oyStruct_s        * filter )
 #endif
       LOAD_FUNC( cmsGetProfileContextID, NULL );
       LOAD_FUNC( cmsGetTransformContextID, NULL );
-#if LCMS_VERSION >= 2060
+#if LCMS_VERSION >= 2080
       LOAD_FUNC( cmsGetEncodedCMMversion, dummyGetEncodedCMMversion );
 #endif
       if(l2cmsSetLogErrorHandler)
