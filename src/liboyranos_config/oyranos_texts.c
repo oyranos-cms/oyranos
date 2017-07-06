@@ -259,6 +259,15 @@ oyOptionStringsTranslate_ ()
       NULL, NULL, NULL, NULL,
       NULL,
       "oyGROUP_BEHAVIOUR_EFFECT", 0,0)
+    oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_BEHAVIOUR_DISPLAY, 1,
+      oyGROUP_BEHAVIOUR, 0, 0,
+      _("Display"),
+      _("Display Settings"),
+      _("Display Settings enable handling of viewing conditions."),
+      0, /* choices */
+      NULL, NULL, NULL, NULL,
+      NULL,
+      "oyGROUP_BEHAVIOUR_DISPLAY", 0,0)
     oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_CMM, 0,
       0, 0, 0,
       _("CMM"),
