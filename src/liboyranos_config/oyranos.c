@@ -780,12 +780,12 @@ int      oyGetDisplayWhitePoint      ( int                 mode,
     {
       value = oyGetPersistentString( OY_DEFAULT_DISPLAY_WHITE_POINT_A, 0,
                                      oySCOPE_USER_SYS, oyAllocateFunc_ );
-      if(!oyStringToDouble( value, cie_a )
+      if(!oyStringToDouble( value, cie_a ))
         return error;
       oyFree_m_( value );
       value = oyGetPersistentString( OY_DEFAULT_DISPLAY_WHITE_POINT_B, 0,
                                      oySCOPE_USER_SYS, oyAllocateFunc_ );
-      if(!oyStringToDouble( value, cie_b )
+      if(!oyStringToDouble( value, cie_b ))
         return error;
       oyFree_m_( value );
       error = 0;
