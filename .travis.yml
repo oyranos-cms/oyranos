@@ -1,4 +1,6 @@
 language: c
+# intermediate fix
+group: deprecated-2017Q3
 compiler:
   - gcc
   - clang
