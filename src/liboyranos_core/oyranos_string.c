@@ -13,6 +13,7 @@
  *  @since    2010/11/16
  */
 
+#include <math.h>             /* NAN */
 #include <sys/stat.h>
 #include <stddef.h>           /* size_t ptrdiff_t */
 #include <stdlib.h>
@@ -47,12 +48,22 @@ int          oyStringToDouble        ( const char        * text,
                                        double            * value )
 {
   char * p = 0, * t;
-  int len = strlen(text);
+  int len;
   int found = 1;
 #ifdef USE_GETTEXT
   char * save_locale = oyStringCopy_( setlocale(LC_NUMERIC, 0 ), oyAllocateFunc_);
   setlocale(LC_NUMERIC, "C");
 #endif
+
+  if(text && text[0])
+    len = strlen(text);
+  else
+  {
+    *value = NAN;
+    found = 0;
+    return found;
+  }
+
   /* avoid irritating valgrind output of "Invalid read of size 8"
    * might be a glibc error or a false positive in valgrind */
   t = oyAllocateFunc_( len + 2*sizeof(double) + 1 );
