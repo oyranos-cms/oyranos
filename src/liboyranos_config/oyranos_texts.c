@@ -1802,6 +1802,8 @@ oyTestInsideBehaviourOptions_ (oyBEHAVIOUR_e type, int choice)
       if(choice >= 0 &&
          choice < choice_list_n)
         r = 1;
+      else
+        WARNc2_S( "choice %d is invalid (count: %d)", choice, choice_list_n );
       oyStringListRelease( &choice_list, choice_list_n, 0 );
     } else
     if ( choice >= 0 &&
