@@ -2410,13 +2410,13 @@ int      oySetBehaviour_             ( oyBEHAVIOUR_e       type,
                                        oySCOPE_e           scope,
                                        int                 choice)
 {
-  int r = 1;
+  int error = 0;
 
   DBG_PROG_START
 
   DBG_PROG2_S( "type = %d behaviour %d", type, choice )
 
-  if ( (r=oyTestInsideBehaviourOptions_(type, choice)) == 1 )
+  if ( (error=!oyTestInsideBehaviourOptions_(type, choice)) == 0 )
   {
     const char *key_name = 0;
 
@@ -2437,7 +2437,7 @@ int      oySetBehaviour_             ( oyBEHAVIOUR_e       type,
         com = oyStringCopy( oyOptionGet_((oyWIDGET_e)type)-> choice_list[ choice ], 0 );
 
       snprintf(val, 12, "%d", choice);
-      r = oySetPersistentString (key_name, scope, val, com);
+      error = oySetPersistentString (key_name, scope, val, com);
       DBG_PROG4_S( "%s %d %s %s", key_name, type, val, com?com:"" )
     }
     else
@@ -2445,7 +2445,7 @@ int      oySetBehaviour_             ( oyBEHAVIOUR_e       type,
   }
 
   DBG_PROG_ENDE
-  return r;
+  return error;
 }
 
 int oyGetBehaviour_      (oyBEHAVIOUR_e type)
