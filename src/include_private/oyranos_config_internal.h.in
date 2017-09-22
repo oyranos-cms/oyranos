@@ -19,6 +19,7 @@
 #cmakedefine HAVE_PTHREAD
 #cmakedefine HAVE_ELEKTRA
 #cmakedefine HAVE_OPENICC
+#cmakedefine HAVE_DBUS
 #cmakedefine HAVE_LIBXML2
 #cmakedefine HAVE_YAJL
 #cmakedefine HAVE_LCMS
