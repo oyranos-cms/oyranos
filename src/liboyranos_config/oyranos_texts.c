@@ -2373,7 +2373,7 @@ char *       oyGetPersistentString   ( const char        * key_name,
  *                                     - oySCOPE_USER
  *                                     - oySCOPE_SYS
  *                                     - oySCOPE_USER_SYS means, you are your own with prefixing
- *  @param         value               the value string
+ *  @param         value               the value string; NULL means erase
  *  @param         comment             the comment string
  *  @return                            DB specific return code
  *
@@ -2386,10 +2386,14 @@ int          oySetPersistentString   ( const char        * key_name,
                                        const char        * value,
                                        const char        * comment )
 {
-  int rc = oyDBSetString( key_name, scope, value, comment );
+  int rc;
   const char * key = key_name;
   int error = 0;
 
+  if(value)
+    rc = oyDBSetString( key_name, scope, value, comment );
+  else
+    rc = oyDBEraseKey( key_name, scope );
   if(scope == oySCOPE_USER_SYS)
   {
     if(strchr( key_name, '/' ))
