@@ -59,6 +59,19 @@ int                oyStringAddPrintf ( char             ** text,
                                        const char        * format,
                                                            ... );
 
+#ifdef HAVE_LOCALE_H
+#define oyStringAddPrintfC(value, alloc, dealloc, format, ...) \
+{ char * save_locale = oyjl_string_copy( setlocale(LC_NUMERIC, 0 ), oyAllocateFunc_ ); \
+  setlocale(LC_NUMERIC, "C"); \
+  oyStringAddPrintf (value, alloc,dealloc, format, __VA_ARGS__); \
+  setlocale(LC_NUMERIC, save_locale); \
+  oyFree_m_( save_locale ); \
+}
+#else
+#define oyStringAddPrintfC(value, alloc, dealloc, format, ...) \
+  oyStringAddPrintf(&value, alloc,dealloc, format, __VA_ARGS__);
+#endif
+
 #define oyStringSplit_ oyStringSplit
 char**             oyStringSplit_    ( const char        * text,
                                        const char          delimiter,
