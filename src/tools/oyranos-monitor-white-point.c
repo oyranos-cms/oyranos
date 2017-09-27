@@ -48,14 +48,6 @@ int runDaemon(int dmode);
 int setWtptMode( oySCOPE_e scope, int wtpt_mode );
 int checkWtptState();
 
-#ifdef HAVE_DBUS
-#include "dbus/dbus.h"
-int oyDbusReceiveMessage (DBusBusType type, DBusHandleMessageFunction filter_func, void * user_data);
-DBusHandlerResult  dbusFilterFunc    ( DBusConnection    * connection,
-                                       DBusMessage       * message,
-                                       void              * user_data );
-#endif
-
 void  printfHelp (int argc, char** argv)
 {
   int i;
@@ -570,53 +562,6 @@ void               oySleep           ( double              seconds )
   usleep((useconds_t)(seconds*(double)1000000));
 }
 
-int watchDBus( oyJob_s * job )
-{
-  char * t = NULL;
-  const char * tmp = oyOption_GetText((oyOption_s*)job->context, oyNAME_NICK);
-  if(job->cb_progress)
-  {
-    if(tmp)
-    {
-      t = (char*) malloc(80+strlen(__func__)+strlen(tmp));
-      sprintf( t, "%s():%d --->\n%s", __func__,__LINE__, tmp );
-    }
-    /* send a first message from inside the worker thread */
-    oyMsg_Add(job, .1, &t);
-    oyDbusReceiveMessage(DBUS_BUS_SESSION, dbusFilterFunc, job);
-  }
-  return 0;
-}
-
-int finishDBus( oyJob_s * job )
-{
-  char * t = NULL;
-  const char * tmp = oyOption_GetText((oyOption_s*)job->context,oyNAME_NICK);
-  if(job->cb_progress)
-  {
-    if(tmp)
-    {
-      t = (char*) malloc(80+strlen(__func__)+strlen(tmp));
-      sprintf( t, "%s():%d --->\n%s\n<--- finished", __func__,__LINE__, tmp );
-    }
-    /* send a final message from inside the managing thread */
-    oyMsg_Add(job, 0.9, &t);
-  }
-  return 0;
-}
-int config_state_changed = 0;
-void callbackDBus                    ( double              progress_zero_till_one,
-                                       char              * status_text,
-                                       int                 thread_id_,
-                                       int                 job_id,
-                                       oyStruct_s        * cb_progress_context )
-{ fprintf( stderr,"%s():%d %02f %s %d/%d\n",__func__,__LINE__,
-           progress_zero_till_one,
-           status_text?status_text:"",thread_id_,job_id);
-  /* Clear the changed state, before a new check. */
-  config_state_changed = 1;
-}
-
 
 /* check the sunrise / sunset state */
 int checkWtptState()
@@ -701,6 +646,15 @@ int checkWtptState()
   return error;
 }
 
+#ifdef HAVE_DBUS
+#include "oyranos_dbus_macros.h"
+oyWatchDBus_m
+oyFinishDBus_m
+int config_state_changed = 0;
+oyCallbackDBusCli_m(config_state_changed)
+#endif /* HAVE_DBUS */
+
+
 int runDaemon(int dmode)
 {
   int error = 0;
@@ -731,123 +685,23 @@ int runDaemon(int dmode)
   checkWtptState();
 
 #ifdef HAVE_DBUS
-  /* use asynchron DBus observation
-   * It is unknown when DBus message stream ends. Our DBus observer needs to 
-   * collect all messages and sends one update event after a reasonable time.
-   */
-  oyJob_s * job = oyJob_New( NULL );
-  /* This observer function keeps alive during the process run. */
-  job->work = watchDBus;
-  /* Just a informational callback in case DBus quits. */
-  job->finish = finishDBus;
-  oyOption_s * o = oyOption_FromRegistration( OY_STD "/device/", NULL );
-  oyOption_SetFromText( o, "", 0 );
-  job->context = (oyStruct_s*)o;
-  /* The callback informs about DBus events now from inside the main thread. 
-   * Here we should set a update state. */
-  job->cb_progress = callbackDBus;
-  error = oyJob_Add( &job, 0, oyJOB_ADD_PERSISTENT_JOB );
+  oyStartDBusObserver( oyWatchDBus, oyFinishDBus, oyCallbackDBus, OY_DEVICE_STD )
 
   while(1)
   {
-    double hour = oyGetCurrentGMTHour( 0 ),
-           hour_diff = hour_old - hour;
+    double hour = oyGetCurrentGMTHour( 0 );
     double repeat_check = 1.0/60.0;
 
-    if(hour_diff < 0.0)
-      hour_diff += 24.0;
-    if(hour_diff > 12)
-      hour_diff = 24.0 - hour_diff;
+    oyLoopDBusObserver( hour, repeat_check, config_state_changed, checkWtptState() );
 
-    /* Here in the main/managing thread we wait for a changed state. */
-    oyJobResult();
-
-    if(config_state_changed || hour_diff > repeat_check )
-    /* check the sunrise / sunset state */
-    {
-      error = checkWtptState();
-      hour_old = hour;
-    }
-
-    /* Clear the changed state, before a new check. */
-    config_state_changed = 0;
     /* delay next polling */
     oySleep( 0.25 );
   }
 
   return error;
-#endif
-}
-
-#ifdef HAVE_DBUS
-DBusHandlerResult  dbusFilterFunc    ( DBusConnection    * connection,
-                                       DBusMessage       * message,
-                                       void              * user_data )
-{
-  DBusMessageIter iter;
-  int arg_type;
-  char * value = NULL;
-  oyJob_s * job = (oyJob_s*)user_data;
-  const char * tmp = NULL;
-  char * hit = NULL;
-
-  dbus_message_iter_init( message, &iter );
-  arg_type = dbus_message_iter_get_arg_type( &iter );
-  if(arg_type == DBUS_TYPE_STRING)
-    dbus_message_iter_get_basic( &iter, &value );
-  if(job && job->context)
-    tmp = oyOption_GetRegistration( (oyOption_s*)job->context );
-  if(tmp && value)
-    hit = strstr( value, tmp );
-  if(hit)
-  {
-    value = oyStringCopy( value, 0 );
-    /* send a message */
-    oyMsg_Add( job, 0.5, &value );
-  }
-  
-  if(dbus_message_is_signal( message, DBUS_INTERFACE_LOCAL, "Disconnected" ))
-    exit (0);
-  
-  return DBUS_HANDLER_RESULT_HANDLED;
-}
-
-/* borrowed from libelektra project receivemessage.c
- * BSD License */
-int oyDbusReceiveMessage (DBusBusType type, DBusHandleMessageFunction filter_func, void * user_data)
-{
-  DBusConnection * connection;
-  DBusError error;
-
-  dbus_error_init (&error);
-  connection = dbus_bus_get (type, &error);
-  if (connection == NULL || dbus_error_is_set(&error))
-  {
-    fprintf (stderr, "Failed to open connection to %s message bus: %s\n", (type == DBUS_BUS_SYSTEM) ? "system" : "session",
-             error.message);
-    dbus_error_free( &error );
-    goto error;
-  }
-
-  dbus_bus_add_match (connection, "type='signal',interface='org.libelektra',path='/org/libelektra/configuration'", &error);
-  if (dbus_error_is_set (&error)) goto error;
-
-  if (!dbus_connection_add_filter (connection, filter_func, user_data, NULL))
-  {
-    goto error;
-  }
-
-  while(dbus_connection_read_write_dispatch(connection,-1))
-    ;
-
-  return 0;
-
-error:
-  printf ("Error occurred\n");
-  dbus_error_free (&error);
-  return -1;
-}
 #endif /* HAVE_DBUS */
+}
+
 
 /*  ---------------- 8< ------------------ */
 /*#include "sunriset.h"*/
