@@ -1,0 +1,135 @@
+.TH oyranos-monitor-white-point 1 "September 27, 2017" "User Commands"
+.SH NAME
+oyranos-monitor-white-point \- Oyranos CMS monitor white point configuration
+.SH SYNOPSIS
+\fBoyranos-monitor-white-point\fR --daemon|-d=0|1|2 [-v]
+.fi
+\fBoyranos-monitor-white-point\fR -w 0|1|2|3|4|5|6|7|8 [--system-wide] [-v]
+.fi
+\fBoyranos-monitor-white-point\fR -s 0|1|2|3|4|5|6|7|8 [--system-wide] [-v]
+.fi
+\fBoyranos-monitor-white-point\fR -n 1|2|3 [--system-wide] [-v]
+.fi
+\fBoyranos-monitor-white-point\fR -l [-v]
+.fi
+\fBoyranos-monitor-white-point\fR --longitude ANGLE_IN_DEGREE [-v]
+.fi
+\fBoyranos-monitor-white-point\fR --latitude ANGLE_IN_DEGREE [-v]
+.fi
+\fBoyranos-monitor-white-point\fR -r [-v]
+.fi
+\fBoyranos-monitor-white-point\fR -t ANGLE_IN_DEGREE [-v]
+.fi
+.SH DESCRIPTION
+The oyranos-monitor-white-point programm let you set a white point and can run as location specific daemon for nightly blue color reduction. Settings are stored in a data base, the OpenICC DB.
+.SH OPTIONS
+.TP
+.B \-d=1, \-\-daemon
+Autostart daemon.
+.sp
+.br
+.TP
+.B \fB\-d\fR \fIDAEMON_MODE\fR , \-d\fR=\fIDAEMON_MODE\fR
+Run sunrise-sunset daemon to update white point depending on geo position, twilight and local time.
+.sp
+.br
+\fB-d=0\fR stop daemon
+.br
+\fB-d=1\fR autostart daemon
+.br
+\fB-d=2\fR setup and start daemon
+.TP
+.B \fB\-m\fR
+Show white point modes including the current setting.
+.TP
+.B \fB\-w\fR 0|1|2|3|4|5|6|7|8
+Set actual white point mode. It may interfere with daemon settings.
+.sp
+.br
+\fB-w 0\fR no white point adjustments (old behaviour)
+.br
+\fB-w 1\fR automatic
+.br
+\fB-w 2\fR D50
+.br
+\fB-w 3\fR D55
+.br
+\fB-w 4\fR D65
+.br
+\fB-w 5\fR D75
+.br
+\fB-w 6\fR D93
+.br
+\fB-w 7\fR first monitors actual media white point as target for all other monitors
+.br
+\fB-w 8\fR second monitors actual media white point as target for all other monitor
+.TP
+.B \fB\-s\fR 0|1|2|3|4|5|6|7|8
+Set preferred day light white point
+.sp
+.br
+\fB-s x\fR see the -w option
+.TP
+.B \fB\-n\fR 1|2|3
+Set preferred night light white point
+.sp
+.br
+\fB-n 1\fR automatic
+.br
+\fB-n 2\fR D50
+.br
+\fB-n 3\fR D55
+.TP
+.B \fB\-l\fR
+Set geo location. Obtain from IP address.
+.TP
+.B \fB\--latitude\fR \fIANGLE_IN_DEGREE\fR
+Set manually geo location.
+.TP
+.B \fB\--longitude\fR \fIANGLE_IN_DEGREE\fR
+Set manually geo location.
+.TP
+.B \fB\-r\fR
+Show sun rise.
+.TP
+.B \fB\-t\fR \fIANGLE_IN_DEGREE\fR
+Set twilight angle.
+.sp
+.br
+\fB-t 0\fR rise/set
+.br
+\fB-t -6\fR civil
+.br
+\fB-t -12\fR nautical
+.br
+\fB-t -18\fR astronomical
+.SH GENERAL OPTIONS
+.TP
+.B \fB\-h\fR
+Show help text.
+.TP
+.B \-v, \-\-verbose\fR
+Increase verbosity
+.br
+.TP
+.B \-\-system-wide\fR
+Store Setting system wide.
+.SH ENVIRONMENT
+.TP
+.B OY_DEBUG
+set the Oyranos debug level. Alternatively the -v option can be used.
+.TP
+.B OY_MODULE_PATH
+route Oyranos to additional directories containing modules.
+.SH AUTHOR
+Kai-Uwe Behrmann (ku.b (at) gmx.de)
+.SH COPYRIGHT
+(c) 2017, Kai-Uwe Behrmann and others
+.fi
+License: new BSD <http://www.opensource.org/licenses/BSD-3-Clause>
+.SH "SEE ALSO"
+oyranos-monitor(1) oyranos-config-fltk(1) oyranos(3)
+.fi
+http://www.oyranos.org
+.SH "BUGS"
+at: https://github.com/oyranos-cms/oyranos/issues
