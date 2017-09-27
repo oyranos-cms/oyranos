@@ -726,10 +726,10 @@ int      oySetDisplayWhitePoint      ( double              cie_a,
 
   if(cie_b != 0 || cie_b != 0)
   {
-    oyStringAddPrintf( &value, 0,0, "%g", cie_a );
+    oyStringAddPrintfC( &value, 0,0, "%g", cie_a );
     r = oySetPersistentString( OY_DEFAULT_DISPLAY_WHITE_POINT_A, scope, value, comment );
     oyFree_m_( value );
-    oyStringAddPrintf( &value, 0,0, "%g", cie_b );
+    oyStringAddPrintfC( &value, 0,0, "%g", cie_b );
     r = oySetPersistentString( OY_DEFAULT_DISPLAY_WHITE_POINT_B, scope, value, comment );
     oyFree_m_( value );
   }
