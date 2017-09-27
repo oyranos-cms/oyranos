@@ -129,6 +129,10 @@
  *  @since 0.9.6
  */
 #define OY_CMM_STD               OY_STD OY_SLASH "icc_color"
+/** Type path for standard settings 
+ *  @since 0.9.7
+ */
+#define OY_DEVICE_STD            OY_STD OY_SLASH "device"
 
 /** Oyranos default profiles key path in the data base */
 #define OY_REGISTRED_PROFILES    OY_STD OY_SLASH "device_profiles"
@@ -221,11 +225,15 @@
 /** key name for common display white point CIE*ab target, the CIE*a component in 0.0 - 1.0 range
  *  @since 0.9.7
  */
-#define OY_DEFAULT_DISPLAY_WHITE_POINT_A OY_STD OY_SLASH "device" OY_SLASH "display_white_point_a"
+#define OY_DEFAULT_DISPLAY_WHITE_POINT_A OY_DEVICE_STD OY_SLASH "display_white_point_a"
 /** key name for common display white point CIE*ab target, the CIE*b component in 0.0 - 1.0 range
  *  @since 0.9.7
  */
-#define OY_DEFAULT_DISPLAY_WHITE_POINT_B OY_STD OY_SLASH "device" OY_SLASH "display_white_point_b"
+#define OY_DEFAULT_DISPLAY_WHITE_POINT_B OY_DEVICE_STD OY_SLASH "display_white_point_b"
+/** key name for display white point daemon
+ *  @since 0.9.7
+ */
+#define OY_DEFAULT_DISPLAY_WHITE_POINT_DAEMON OY_DEVICE_STD OY_SLASH "display_white_point_daemon"
 
 /** key name for context CMM
  *  @since 0.9.6
