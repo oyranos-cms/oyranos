@@ -75,7 +75,8 @@ int oyThreadCreate                   ( void             *(*func) (void * data),
 void *             oyJobWorker       ( void              * data );
 
 int                oyJob_Add_        ( oyJob_s          ** job,
-                                       int                 finished );
+                                       int                 finished,
+                                       int                 flags );
 int                oyJob_Get_        ( oyJob_s          ** job,
                                        int                 finished );
 int                oyMsg_Add_        ( oyJob_s           * job,
@@ -100,8 +101,8 @@ int                trdsCMMInit       ( );
 extern "C" {
 #endif /* __cplusplus */
 
-oyThread_t * oy_threads_ = NULL;
-int oy_thread_count_ = 0;
+
+oyStructList_s * oy_threads_ = NULL;
 
 /**
  *  @brief   start a thread with a given function
@@ -174,10 +175,15 @@ void       oyLockRelease_              ( oyPointer         lock,
 
 int oyGetThreadID( oyThread_t t )
 {
-  int i;
-  for(i = 0; i < oy_thread_count_; ++i)
-    if      (oyThreadEqual( oy_threads_[i], t ))
+  int i, count = oyStructList_Count(oy_threads_);
+  for(i = 0; i < count; ++i)
+  {
+    oyBlob_s * blob = (oyBlob_s*) oyStructList_GetRefType( oy_threads_, i, oyOBJECT_BLOB_S );
+    oyThread_t bt = (oyThread_t) oyBlob_GetPointer( blob );
+    oyBlob_Release( &blob );
+    if      (oyThreadEqual( bt, t ))
       break;
+  }
   return i;
 }
 
@@ -222,18 +228,40 @@ void       oyUnLock_                   ( oyPointer         lock,
 
 
 /* forward declaration from src/API_generated/oyStruct_s.c */
+void oyThreadAdd()
+{
+  oyThread_t background_thread;
+  int error;
+  oyOption_s * o = oyOption_FromRegistration( "///id", NULL );
+  int count = oyStructList_Count( oy_threads_ );
+  oyBlob_s * blob;
+
+  oyOption_SetFromInt( o, count, 0, 0 );
+
+  oyThreadCreate( oyJobWorker, (oyPointer)o, &background_thread );
+  if(oy_debug)
+    trds_msg( oyMSG_DBG, 0, "thread created [%ld]\n", background_thread);
+
+  blob = oyBlob_New(0);
+  oyBlob_SetFromStatic( blob, (oyPointer)background_thread, 0, "oyThread_t" );
+  oyObject_Lock( oy_threads_->oy_, __FILE__, __LINE__ );
+  error = oyStructList_MoveIn( oy_threads_, (oyStruct_s**) &blob, -1, 0 );
+  oyObject_UnLock( oy_threads_->oy_, __FILE__, __LINE__ );
+  if(error)
+    WARNc1_S("error=%d", error);
+}
 
 //oyStructList_s * oy_thread_cache_ = NULL;
 oyStructList_s * oy_job_list_ = NULL;
 oyStructList_s * oy_job_message_list_ = NULL;
-void oyThreadsInit_(void)
+void oyThreadsInit_( int flags )
 {
-  static int * thread_ids;
-  int i;
+  int i, count, error;
 
   /* initialise threadsafe job and message queues */
   if(!oy_job_list_)
   {
+    oyBlob_s * blob;
     /* check threading */
     if(!oyThreadLockingReady())
       /* initialise our locking */
@@ -252,40 +280,58 @@ void oyThreadsInit_(void)
 
 #if defined(_OPENMP) && defined(USE_OPENMP)
     if((omp_get_num_procs() - 1) >= 1)
-      oy_thread_count_ = omp_get_num_procs() - 1;
+      count = omp_get_num_procs() - 1;
     else
 #endif
-      oy_thread_count_ = 1;
+      count = 2;
 
-    oy_threads_ = (oyThread_t*)calloc(sizeof(oyThread_t),oy_thread_count_+1);
-    thread_ids = (int*)calloc(sizeof(int),oy_thread_count_+1);
+    oy_threads_ = oyStructList_Create( oyOBJECT_NONE, "oy_threads_", NULL );
 
-    oy_threads_[0] = oyThreadSelf();
+    blob = oyBlob_New(0);
+    oyBlob_SetFromStatic( blob, (oyPointer)oyThreadSelf(), 0, "oyThread_t" );
+    oyObject_Lock( oy_threads_->oy_, __FILE__, __LINE__ );
+    error = oyStructList_MoveIn( oy_threads_, (oyStruct_s**) &blob, -1, 0 );
+    oyObject_UnLock( oy_threads_->oy_, __FILE__, __LINE__ );
+    if(error)
+       WARNc1_S("error=%d", error);
 
-    for(i = 0; i < oy_thread_count_; ++i)
+    for(i = 0; i < count; ++i)
     {
       oyThread_t background_thread;
+      int error;
+      oyOption_s * o = oyOption_FromRegistration( "///id", NULL );
+      oyOption_SetFromInt( o, i+1, 0, 0 );
 
-      thread_ids[i+1] = i+1;
-
-      oyThreadCreate( oyJobWorker, &thread_ids[i+1], &background_thread );
+      oyThreadCreate( oyJobWorker, (oyPointer)o, &background_thread );
       if(oy_debug)
         trds_msg( oyMSG_DBG, 0, "thread created [%ld]\n", background_thread);
 
-      oy_threads_[i+1] = background_thread;
+      blob = oyBlob_New(0);
+      oyBlob_SetFromStatic( blob, (oyPointer)background_thread, 0, "oyThread_t" );
+      oyObject_Lock( oy_threads_->oy_, __FILE__, __LINE__ );
+      error = oyStructList_MoveIn( oy_threads_, (oyStruct_s**) &blob, -1, 0 );
+      oyObject_UnLock( oy_threads_->oy_, __FILE__, __LINE__ );
+      if(error)
+         WARNc1_S("error=%d", error);
     }
+  }
+
+  if(flags & oyJOB_ADD_PERSISTENT_JOB)
+  {
+    oyThreadAdd();
   }
 }
 
 /**
  *  @brief   Add and run a job
  *
- *  @version Oyranos: 0.9.6
- *  @date    2016/05/06
+ *  @version Oyranos: 0.9.7
+ *  @date    2017/09/22
  *  @since   2014/01/27 (Oyranos: 0.9.5)
  */
 int                oyJob_Add_        ( oyJob_s          ** job_,
-                                       int                 finished )
+                                       int                 finished,
+                                       int                 flags )
 {
   oyBlob_s * blob;
   static int job_count = 0;
@@ -295,7 +341,7 @@ int                oyJob_Add_        ( oyJob_s          ** job_,
 
   *job_ = NULL;
 
-  oyThreadsInit_();
+  oyThreadsInit_( flags );
 
   /* set status */
   if(finished)
@@ -304,6 +350,7 @@ int                oyJob_Add_        ( oyJob_s          ** job_,
   {
     job->id_ = ++job_count;
     job->status_done_ = 0;
+    job->flags_ = flags;
   }
 
   job_id = job->id_;
@@ -408,7 +455,7 @@ int                oyMsg_Add_        ( oyJob_s           * job,
   m->thread_id_ = job->thread_id_;
   m->job_id = job->id_;
   blob = oyBlob_New(NULL);
-  oyBlob_SetFromStatic( blob, m, 0, "oyJob_s" );
+  oyBlob_SetFromStatic( blob, m, 0, "oyMsg_s" );
   oyObject_Lock( oy_job_message_list_->oy_, __FILE__, __LINE__ );
   error = oyStructList_MoveIn( oy_job_message_list_, (oyStruct_s**) &blob, -1, 0 );
   oyObject_UnLock( oy_job_message_list_->oy_, __FILE__, __LINE__ );
@@ -438,15 +485,18 @@ int                oyMsg_Get         ( oyMsg_s          ** msg )
 
 void               oySleep           ( double              seconds )
 {
-  usleep((useconds_t)(seconds*(double)1000));
+  usleep((useconds_t)(seconds*(double)1000000));
 }
 
 void *             oyJobWorker       ( void              * data )
 {
-  int thread_id = *((int*)data);
+  oyOption_s * o = (oyOption_s*)data;
+  int thread_id = oyOption_GetValueInt(o,0);
+  oyOption_Release( &o );
 
   while(1)
   {
+    int flags = 0;
     oyJob_s * job = NULL;
     oyJob_Get_( &job, 0 );
     if(job)
@@ -465,9 +515,13 @@ void *             oyJobWorker       ( void              * data )
         t = strdup("done");
         oyMsg_Add_(job, 1.0, &t);
       }
-      oyJob_Add_( &job, finished );
+      flags = job->flags_;
+      oyJob_Add_( &job, finished, 0 );
     }
     oySleep(0.02);
+
+    if(flags & oyJOB_ADD_PERSISTENT_JOB)
+      break;
   }
   return NULL;
 }

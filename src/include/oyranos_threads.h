@@ -49,23 +49,34 @@ struct oyJob_s {
   oyStruct_Release_f   release;        /**< @brief Release function; optional */
   oyObject_s           oy_;            /**< @brief Oyranos internal object; not needed, keep to zero */
   
-  oyStruct_s * context;                /**< @brief the workload */
+  oyStruct_s * context;                /**< @brief the workload data; optional */
+  /** Main job function. Here the job does its processing. Data from 
+   *  oyJob_s::context can be used for this. */
   int (*work) (oyJob_s * job);         /**< @brief the working thread callback */
   int status_work_return;              /**< @brief return value of the work() function */
-  int (*finish) (oyJob_s * job);       /**< @brief the observating thread callback */
-  oyJobCallback_f cb_progress;         /**< @brief the progress callback, called by observating thread */
+  int (*finish) (oyJob_s * job);       /**< @brief the managing thread callback; optional @see oyJobResult() */
+  /**
+   *  oyJob_s::cb_progress_context may contain a GUI context, like a widget
+   *  object, to be used to display the progress information from within
+   *  the main/GUI thread. The callback is optional.
+   */
+  oyJobCallback_f cb_progress;         /**< @brief the progress callback, called inside the observating thread; optional */
+  /** optional data */
   oyStruct_s * cb_progress_context;    /**< @brief the progress callback context */
 
-  /* Oyranos maintained fields */
-  int id_;                             /**< Oyranos provided work ID, keep read only */
-  int thread_id_;                      /**< Oyranos provided ID; keep read only */
+  /* Oyranos or thread plug-in maintained fields */
+  int id_;                             /**< thread plug-in provided work ID, keep read only */
+  int thread_id_;                      /**< thread plug-in provided ID; keep read only */
   int status_done_;                    /**< Oyranos internal variable */
+  int flags_;                          /**< oyJob_Add() provided flags; keep read only */
 };
 oyJob_s *         oyJob_New          ( oyObject_s          object );
 void              oyJob_Release      ( oyJob_s          ** job );
 
+#define oyJOB_ADD_PERSISTENT_JOB 0x01
 typedef int      (*oyJob_Add_f)      ( oyJob_s          ** job,
-                                       int                 finished );
+                                       int                 finished,
+                                       int                 flags );
 typedef int      (*oyJob_Get_f)      ( oyJob_s          ** job,
                                        int                 finished );
 typedef int      (*oyMsg_Add_f)      ( oyJob_s           * job,

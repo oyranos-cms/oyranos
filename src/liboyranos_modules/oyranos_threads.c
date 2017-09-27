@@ -57,13 +57,39 @@
  *
  *  @subsection why_threads_modules Why a modular approach?
  *    Threading models can very easily conflict and linking
- *    can become a night mare. Thus threading from "trds" must be replaceable
- *    on the descretion of users.
+ *    can become a night mare. Thus threading from "trds" plug-in must be 
+ *    replaceable on the descretion of users.
  *
  *  @section init Initialisation
  *  Call oyThreadLockingSet() in order to use own thread locking functions.
  *  Call oyJobHandlingSet() to replace by own Job handling functions.
  *  The functions must be used before any call to Oyranos.
+ *
+ *  @section api_usage API usage
+ *  @subsection adding_jobs Adding Jobs
+ *  A oyJob_New() creates a new oyJob_s object which can be added to the job
+ *  qeue by oyJob_Add(). Job creation and Job adding belongs to the managing
+ *  thread. Calling oyJob_Add() for the first time in the process
+ *  initialises the API's and starts the worker threads.
+ *  oyJob_s::work() is called from inside the worker thread.
+ *
+ *  @subsection working Processing Jobs
+ *  oyJob_s::work() does the asynchron oyJob_s::context processing. It can
+ *  add messages with oyMsg_Add() to the message qeue.
+ *  After returning from oyJob_s::work() the job object is placed back into
+ *  the job qeue and marked as done (finished == 1) by the thread handling
+ *  plug-in.
+ *
+ *  @subsection getting_results Getting Results
+ *  Calling oyJobResult() in managing thread, usually the main GUI thread,
+ *  allows to obtain progress status from the Oyranos worker threads.
+ *  jobPrintfCallback() is the default message callback and just does printing
+ *  a status information, which were previously add inside the oyJob_s::work()
+ *  inside the worker thread with oyMsg_Add().
+ *  The oyJob_s object, including the processed data, is placed into the 
+ *  job qeue after oyJob_s::work() returned. To access the oyJob_s use the
+ *  oyJob_s::finish() callback. oyJobResult() is as well responsible to call 
+ *  oyJob_s::finish() from the managing/UI thread for that.
  *
  *  @{ *//* threads */
 
@@ -95,7 +121,8 @@ void               oyJobHandlingSet  ( oyJob_Add_f         jadd,
 }
 
 int                oyJob_AddInit     ( oyJob_s          ** job,
-                                       int                 finished );
+                                       int                 finished,
+                                       int                 flags );
 int                oyJobInitialise_  ( void )
 {
   oyOptions_s * opts = 0,
@@ -113,9 +140,10 @@ int                oyJobInitialise_  ( void )
 }
 
 int                oyJob_AddInit     ( oyJob_s          ** job,
-                                       int                 finished )
+                                       int                 finished,
+                                       int                 flags )
 { if(oyJobInitialise_() == 0)
-    return oyJob_Add( job, finished );
+    return oyJob_Add( job, finished, flags );
   else
     return 1;
 }
@@ -143,8 +171,8 @@ void               oyJobResultInit   ( void )
 /** @typedef oyJob_Add_f
  *  @brief   Add one unique oyJob_s to the job qeue
  *
- *  @version Oyranos: 0.9.6
- *  @date    2016/05/01
+ *  @version Oyranos: 0.9.7
+ *  @date    2017/09/22
  *  @since   2016/05/01 (Oyranos: 0.9.6)
  */
 /**
@@ -152,9 +180,24 @@ void               oyJobResultInit   ( void )
  *  @memberof oyJob_s
  *  @see     oyJob_Add_f
  *
- *  @version Oyranos: 0.9.6
+ *  @param   job                       the job object
+ *  @param   finished                  mark the job in the queue
+ *                                     - 0 - to be processed;
+ *                                           work funtion was not yet called
+ *                                     - 1 - finished processing;
+ *                                           work function was called inside
+ *                                           the worker thread;
+ *                                           ready for getting with oyJob_Get()
+ *  @param   flags                     hint on how to process the job
+ *                                     - oyJOB_ADD_PERSISTENT_JOB - suggest to 
+ *                                     add a new thread as the job may run 
+ *                                     over the whole process live time;
+ *                                     typical for a asynchron observer
+ *  @return                            the job ID
+ *
+ *  @version Oyranos: 0.9.7
+ *  @date    2017/09/22
  *  @since   2016/05/01 (Oyranos: 0.9.6)
- *  @date    2016/05/01
  */
 oyJob_Add_f oyJob_Add = oyJob_AddInit;
 /** @typedef oyJob_Get_f
@@ -199,9 +242,17 @@ oyMsg_Add_f oyMsg_Add = oyMsg_AddInit;
  *  @since   2016/05/01 (Oyranos: 0.9.6)
  */
 /**
- *  @brief   Poll for new Jobs
+ *  @brief   Poll for messages and finished jobs 
  *  @memberof oyJob_s
  *  @see     oyJobResult_f
+ *
+ *  The function does two things. It calls oyJob_s::cb_progress() from a 
+ *  filled message qeue.
+ *  And it takes jobs out of the job qeue, which are marked as finalised.
+ *  oyJob_s::finish() is optionally called. After the oyJob_s::finish()
+ *  callback the job is released.
+ *
+ *  The function is usually called from the managing-and main UI thread.
  *
  *  @version Oyranos: 0.9.6
  *  @since   2016/05/01 (Oyranos: 0.9.6)
@@ -211,6 +262,13 @@ oyJobResult_f oyJobResult = oyJobResultInit;
 
 /** @typedef oyJobCallback_f
  *  @brief   Progress callback for parallel job processing
+ *
+ *  @param   progress_zero_till_one    will be called by the work thread with 0.0 before start of oyJob_s::work() and after with 1.0
+ *                                     between oyMsg_Add() can be used inside oyJob_s::work() to add more fine grained status info
+ *  @param   status_text               textual description of the work progress
+ *  @param   thread_id_                work thread info
+ *  @param   job_id                    id of the job
+    @param   cb_progress_context       GUI context; e.g. gauge/progress bar ...
  *
  *  @version Oyranos: 0.9.6
  *  @date    2016/05/02

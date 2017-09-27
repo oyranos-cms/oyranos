@@ -350,7 +350,7 @@ void callback ( Fl_Widget* w, void* daten )
     job->finish = changeIccOptionsUpdate;
     job->context = (oyStruct_s*)context;
     job->cb_progress = jobCallback;
-    oyJob_Add(&job, 0);
+    oyJob_Add(&job, 0, 0);
   } else
     printf("could not find a suitable program structure\n");
 }
