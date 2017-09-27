@@ -71,6 +71,7 @@ SET( CHEADERS_OBJECT_MODULES_PUBLIC
 	${GENDIR}oyFilterPlugs_s.h
 	${GENDIR}${PACKAGE_NAME}_module.h
         ../include/oyCMM_s.h
+        ../include/${PACKAGE_NAME}_dbus_macros.h
         ../include/${PACKAGE_NAME}_threads.h
    )
 SET( CHEADERS_OBJECT_MODULES_PUBLIC ${CHEADERS_OBJECT_MODULES_PUBLIC} PARENT_SCOPE )
