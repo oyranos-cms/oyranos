@@ -502,13 +502,24 @@ oyOptionStringsTranslate_ ()
       _("Display White Point for all screens"),
       _("Select a white point target for all monitors."),
       7, /* choices */
-      /* order is automatic, none, static ones, first monitor, second monitor, ... , last monitor */
+      /* order is none, automatic, static ones, first monitor, second monitor, ... , last monitor */
       _("No"), _("Automatic"), _("Illuminant D50"), _("Illuminant D55"),
       OY_DEFAULT_DISPLAY_WHITE_POINT,
       "oyDISPLAY_WHITE_POINT" , 0,0)
       opt[oyWIDGET_DISPLAY_WHITE_POINT].choice_list[4] = _("Illuminant D65");
       opt[oyWIDGET_DISPLAY_WHITE_POINT].choice_list[5] = _("Illuminant D75");
       opt[oyWIDGET_DISPLAY_WHITE_POINT].choice_list[6] = _("Illuminant D93");
+
+    oySET_OPTIONS_M_( oyWIDGETTYPE_CHOICE, oyWIDGET_DISPLAY_WHITE_POINT_DAEMON, 2,
+      oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_PROOF, 0,
+      _("Display White Point Daemon"),
+      _("Display White Point Daemon for setting white point depending on geographical location and time."),
+      _("Select a daemon or set manually."),
+      2, /* choices */
+      /* order is none/manual or automatic/daemon */
+      _("No"), "oyranos-monitor-white-point", NULL, NULL,
+      OY_DEFAULT_DISPLAY_WHITE_POINT_DAEMON,
+      "oyDISPLAY_WHITE_POINT_DAEMON" , 0,0)
 
     oySET_OPTIONS_M_( oyWIDGETTYPE_DEFAULT_PROFILE, oyWIDGET_PROFILE_EFFECT, 2,
       oyGROUP_BEHAVIOUR, oyGROUP_BEHAVIOUR_EFFECT, 0,
@@ -1357,6 +1368,39 @@ int          oyOptionChoicesGet_     ( oyWIDGET_e          type,
     if( current )
       *current              = oyGetBehaviour_( (oyBEHAVIOUR_e) type );
   }
+  if( oyWIDGET_DISPLAY_WHITE_POINT_DAEMON == type )
+  {
+    int choice_list_n = t->choices;
+    int count = 0;
+    char ** texts = NULL;
+    char * value = 
+      oyGetPersistentString( OY_DEFAULT_DISPLAY_WHITE_POINT_DAEMON, 0,
+		             oySCOPE_USER_SYS, oyAllocateFunc_);
+
+    oyStringListAddStaticString( &texts, &count, t->choice_list[0],
+                                    oyAllocateFunc_, oyDeAllocateFunc_);
+    if(value)
+      oyStringListAddStaticString( &texts, &count, value,
+                                    oyAllocateFunc_, oyDeAllocateFunc_);
+    else
+      oyStringListAddStaticString( &texts, &count, t->choice_list[1],
+                                    oyAllocateFunc_, oyDeAllocateFunc_);
+
+    if( choices )
+      *choices              = choice_list_n;
+    if( choices_string_list )
+      *choices_string_list  = (const char **)texts; 
+    if( current )
+    {
+      if(value == NULL)
+      *current              = 0;
+      else
+      *current              = 1;
+    }
+ 
+    if(value)
+      oyFree_m_(value)
+  }
   else
   if( oyWIDGET_DEFAULT_PROFILE_START < type &&
       type < oyWIDGET_DEFAULT_PROFILE_END )
@@ -1467,7 +1511,8 @@ void          oyOptionChoicesFree_     (oyWIDGET_e        option,
   if( (oyWIDGET_DEFAULT_PROFILE_START < option &&
        option < oyWIDGET_DEFAULT_PROFILE_END ) ||
       option == oyWIDGET_POLICY ||
-      option == oyWIDGET_DISPLAY_WHITE_POINT )
+      option == oyWIDGET_DISPLAY_WHITE_POINT ||
+      option == oyWIDGET_DISPLAY_WHITE_POINT_DAEMON )
   {
     size_t i;
 
@@ -1486,7 +1531,7 @@ oyWIDGET_e    * oyWidgetListGet_         (oyGROUP_e           group,
 {
 #define oyGROUP_DEFAULT_PROFILES_LEN oyWIDGET_DEFAULT_PROFILE_END - oyWIDGET_DEFAULT_PROFILE_START + 1
 #define oyGROUP_BEHAVIOUR_RENDERING_LEN 4+1
-#define oyGROUP_BEHAVIOUR_PROOF_LEN 5+1
+#define oyGROUP_BEHAVIOUR_PROOF_LEN 6+1
 #define oyGROUP_BEHAVIOUR_EFFECT_LEN 2+1
 #define oyGROUP_BEHAVIOUR_MIXED_MODE_DOCUMENTS_LEN 6+1
 #define oyGROUP_BEHAVIOUR_MISSMATCH_LEN 6+1
@@ -1602,6 +1647,7 @@ oyWIDGET_e    * oyWidgetListGet_         (oyGROUP_e           group,
 
            lw[pos++] = oyWIDGET_GROUP_BEHAVIOUR_PROOF;
            lw[pos++] = oyWIDGET_DISPLAY_WHITE_POINT;
+           lw[pos++] = oyWIDGET_DISPLAY_WHITE_POINT_DAEMON;
            lw[pos++] = oyWIDGET_PROFILE_PROOF;
            lw[pos++] = oyWIDGET_RENDERING_INTENT_PROOF;
            lw[pos++] = oyWIDGET_PROOF_SOFT;
