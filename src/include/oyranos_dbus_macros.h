@@ -31,6 +31,7 @@ extern "C" {
 
 /* Defined are DBus callback and functions,
  * oyJob_s callbacks:
+   #include <oyranos_threads.h>
     oyWatchDBus_m
     oyFinishDBus_m
     int config_state_changed = 0;
@@ -182,19 +183,19 @@ static void oyCallbackDBus           ( double              progress_zero_till_on
   job->work = watch_; \
   /* Just a informational callback in case DBus quits. */ \
   job->finish = finish_; \
-  oyOption_s * o = oyOption_FromRegistration( OY_STD "/device/", NULL ); \
+  oyOption_s * o = oyOption_FromRegistration( key_fragment, NULL ); \
   oyOption_SetFromText( o, "", 0 ); \
   job->context = (oyStruct_s*)o; \
   /* The callback informs about DBus events now from inside the main thread. \
    * Here we should set a update state. */ \
   job->cb_progress = callback_; \
   error = oyJob_Add( &job, 0, oyJOB_ADD_PERSISTENT_JOB );
+
 /* poll for updates 
  * double hour: current time
  * double repeat_hour: repeat a full update in h
  * int check_var: 1 means check, 0 means no check needed
  * function update: will be called, when check_var is 1 */
-
 #define oyLoopDBusObserver( hour, repeat_hour, check_var, update ) \
     double hour_diff = hour_old - hour; \
  \
