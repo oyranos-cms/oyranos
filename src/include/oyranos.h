@@ -324,6 +324,7 @@ typedef enum  {
   oyWIDGET_DEVICES_RELATED = 200,      /**< select only device related profiles [checkbox] */
   oyWIDGET_POLICY_ACTIVE,              /**< active policy [choice] */
   oyWIDGET_TAXI_PROFILE_INSTALL,       /**< Install selected profile [button] */
+  oyWIDGET_DISPLAY_WHITE_POINT_DAEMON, /**< select a display white point daemon ::OY_DEFAULT_DISPLAY_WHITE_POINT_DAEMON */
 
   oyWIDGET_CMM_START = 300,            /**< CMM options */
   oyWIDGET_CMM_CONTEXT,                /**< CMM core selection */
