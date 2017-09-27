@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cinepaint_icc-examin_eu\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2017-09-27 11:08+0200\n"
+"POT-Creation-Date: 2017-09-27 17:55+0200\n"
 "PO-Revision-Date: 2007-11-07 11:11+0100\n"
 "Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@zundan.com>\n"
 "Language-Team: Basque <itzulpena@euskalgnu.org>\n"
@@ -303,7 +303,7 @@ msgstr ""
 msgid "About Oyranos"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:580 liboyranos_config/oyranos_texts.c:600
+#: liboyranos_config/oyranos_texts.c:591 liboyranos_config/oyranos_texts.c:611
 msgid "Absolute Colorimetric"
 msgstr "Koloremetria absolutua"
 
@@ -312,7 +312,7 @@ msgstr "Koloremetria absolutua"
 msgid "Abstract"
 msgstr "Abstraktua"
 
-#: liboyranos_config/oyranos_texts.c:537 liboyranos_config/oyranos_texts.c:547
+#: liboyranos_config/oyranos_texts.c:548 liboyranos_config/oyranos_texts.c:558
 msgid "Action for Image profile and Editing profile mismatches."
 msgstr ""
 
@@ -336,7 +336,7 @@ msgstr "profilik ez"
 msgid "Active matrix monitor"
 msgstr "Matrize aktibozko monitorea"
 
-#: tools/oyranos-monitor-white-point.c:652
+#: tools/oyranos-monitor-white-point.c:664
 #, fuzzy
 msgid "Actual white point mode"
 msgstr "Puntu-zuria euskarria"
@@ -416,13 +416,13 @@ msgstr ""
 msgid "Argyll CMS CMM"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:530
+#: liboyranos_config/oyranos_texts.c:541
 #, fuzzy
 msgid "Assign Assumed Profile"
 msgstr "profilik ez"
 
 #. choices
-#: liboyranos_config/oyranos_texts.c:530
+#: liboyranos_config/oyranos_texts.c:541
 #, fuzzy
 msgid "Assign No Profile"
 msgstr "profilik ez"
@@ -541,7 +541,7 @@ msgstr "Zein ICC profila?"
 msgid "Available devices"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:587 liboyranos_config/oyranos_texts.c:588
+#: liboyranos_config/oyranos_texts.c:598 liboyranos_config/oyranos_texts.c:599
 msgid "BPC affects often only the Relative Colorimetric Rendering intent."
 msgstr ""
 
@@ -549,16 +549,16 @@ msgstr ""
 msgid "Behaviour"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:617
+#: liboyranos_config/oyranos_texts.c:628
 msgid ""
 "Behaviour for preselecting Hardproofing with a Proofing Profile at print time"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:597
+#: liboyranos_config/oyranos_texts.c:608
 msgid "Behaviour of color space transformation for proofing"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:598
+#: liboyranos_config/oyranos_texts.c:609
 msgid ""
 "Behaviour of color space transformation for proofing. Most people want a "
 "preview on screen only. The Relative Colorimetric intent is right for that. "
@@ -657,22 +657,22 @@ msgstr ""
 msgid "CMM"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:646
+#: liboyranos_config/oyranos_texts.c:657
 #, fuzzy
 msgid "CMM Core"
 msgstr "kargatuta"
 
-#: liboyranos_config/oyranos_texts.c:666
+#: liboyranos_config/oyranos_texts.c:677
 #, fuzzy
 msgid "CMM Core Fallback"
 msgstr "kargatuta"
 
-#: liboyranos_config/oyranos_texts.c:656
+#: liboyranos_config/oyranos_texts.c:667
 #, fuzzy
 msgid "CMM Renderer"
 msgstr "kargatuta"
 
-#: liboyranos_config/oyranos_texts.c:676
+#: liboyranos_config/oyranos_texts.c:687
 #, fuzzy
 msgid "CMM Renderer Fallback"
 msgstr "kargatuta"
@@ -877,7 +877,7 @@ msgstr "r kolorea"
 msgid "Color space for Simulating an Output Device"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:516
+#: liboyranos_config/oyranos_texts.c:527
 msgid "Color space for showing a effect"
 msgstr ""
 
@@ -915,7 +915,7 @@ msgstr ""
 msgid "Convert Image:"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:540 liboyranos_config/oyranos_texts.c:550
+#: liboyranos_config/oyranos_texts.c:551 liboyranos_config/oyranos_texts.c:561
 msgid "Convert automatically"
 msgstr ""
 
@@ -927,21 +927,21 @@ msgstr ""
 msgid "Convert image to ICC Color Space"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:560
+#: liboyranos_config/oyranos_texts.c:571
 #, fuzzy
 msgid "Convert to Default Cmyk Editing Space"
 msgstr "Kolore-espazioa"
 
-#: liboyranos_config/oyranos_texts.c:570
+#: liboyranos_config/oyranos_texts.c:581
 #, fuzzy
 msgid "Convert to Default Rgb Editing Space"
 msgstr "Kolore-espazioa"
 
-#: liboyranos_config/oyranos_texts.c:570
+#: liboyranos_config/oyranos_texts.c:581
 msgid "Convert to WWW (sRGB)"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:560
+#: liboyranos_config/oyranos_texts.c:571
 msgid "Convert to untagged Cmyk, preserving Cmyk numbers"
 msgstr ""
 
@@ -1312,6 +1312,17 @@ msgstr ""
 msgid "Display White Point"
 msgstr "Puntu-zuria euskarria"
 
+#: liboyranos_config/oyranos_texts.c:515
+#, fuzzy
+msgid "Display White Point Daemon"
+msgstr "Puntu-zuria euskarria"
+
+#: liboyranos_config/oyranos_texts.c:516
+msgid ""
+"Display White Point Daemon for setting white point depending on geographical "
+"location and time."
+msgstr ""
+
 #: liboyranos_config/oyranos_texts.c:502
 msgid "Display White Point for all screens"
 msgstr ""
@@ -1380,7 +1391,7 @@ msgstr ""
 msgid "Editing XYZ"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:255 liboyranos_config/oyranos_texts.c:515
+#: liboyranos_config/oyranos_texts.c:255 liboyranos_config/oyranos_texts.c:526
 msgid "Effect"
 msgstr ""
 
@@ -1423,19 +1434,19 @@ msgstr ""
 msgid "Embedd device meta tag from image device into given device profile"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:637
+#: liboyranos_config/oyranos_texts.c:648
 #, fuzzy
 msgid "Enable effect profile"
 msgstr "Zein ICC profila?"
 
-#: liboyranos_config/oyranos_texts.c:618
+#: liboyranos_config/oyranos_texts.c:629
 msgid ""
 "Enable simulation of an output color space on a local printer. Most users do "
 "not work for a certain media and leave color handling to the system. They "
 "want no simulation."
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:608
+#: liboyranos_config/oyranos_texts.c:619
 msgid ""
 "Enable simulation of output print on the monitor. Most users do not work for "
 "a certain media and leave color handling to the system. They want no "
@@ -1568,12 +1579,12 @@ msgstr "Banderak:       "
 msgid "Flexography"
 msgstr "Flexografia"
 
-#: liboyranos_config/oyranos_texts.c:556
+#: liboyranos_config/oyranos_texts.c:567
 #, fuzzy
 msgid "For Print"
 msgstr "Pantaila:"
 
-#: liboyranos_config/oyranos_texts.c:566
+#: liboyranos_config/oyranos_texts.c:577
 #, fuzzy
 msgid "For Screen"
 msgstr "Pantaila:"
@@ -1594,7 +1605,7 @@ msgstr ""
 msgid "Fuji Film CMM"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:626
+#: liboyranos_config/oyranos_texts.c:637
 #, fuzzy
 msgid "Gamut Warning"
 msgstr "Kolore-gamaren abisua"
@@ -1621,7 +1632,7 @@ msgstr "Zein ICC profila?"
 msgid "Generate Image:"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:560
+#: tools/oyranos-monitor-white-point.c:559
 msgid "Geographical Position"
 msgstr ""
 
@@ -1670,22 +1681,22 @@ msgstr "Gris koloragarria"
 msgid "Green tone reproduction curve"
 msgstr "Tonu berdearen erreprodukzio-kurba"
 
-#: liboyranos_config/oyranos_texts.c:557
+#: liboyranos_config/oyranos_texts.c:568
 msgid "Handle mixed color spaces in preparing a document for print output."
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:558
+#: liboyranos_config/oyranos_texts.c:569
 msgid ""
 "Handle mixed color spaces in preparing a document for print output. A "
 "conversion to the default editing color space is typically what most users "
 "want."
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:567
+#: liboyranos_config/oyranos_texts.c:578
 msgid "Handle mixed color spaces in preparing a document for screen output."
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:568
+#: liboyranos_config/oyranos_texts.c:579
 msgid ""
 "Handle mixed color spaces in preparing a document for screen output. A "
 "conversion to sRGB helps in easy data exchange and is what most users want."
@@ -1704,7 +1715,7 @@ msgstr "Bereizketa"
 msgid "Handling of Mixed Color Spaces inside one single Document"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:616
+#: liboyranos_config/oyranos_texts.c:627
 msgid "Hardproof"
 msgstr ""
 
@@ -1912,7 +1923,7 @@ msgstr ""
 msgid "Image Socket"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:527
+#: liboyranos_config/oyranos_texts.c:538
 msgid ""
 "Image has no color space embedded. What default action shall be performed?"
 msgstr ""
@@ -1974,7 +1985,7 @@ msgstr ""
 msgid "Img"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:538 liboyranos_config/oyranos_texts.c:548
+#: liboyranos_config/oyranos_texts.c:549 liboyranos_config/oyranos_texts.c:559
 msgid ""
 "Incoming color spaces can differ from the default editing color space. For "
 "most users, an automatic conversion is fine. However, for more demanding "
@@ -2333,7 +2344,7 @@ msgstr "Hornitzailea:   "
 msgid "Manufacturer:    "
 msgstr "Hornitzailea: "
 
-#: liboyranos_config/oyranos_texts.c:627
+#: liboyranos_config/oyranos_texts.c:638
 msgid "Mark Out Of Gamut colors"
 msgstr ""
 
@@ -2419,7 +2430,7 @@ msgstr ""
 msgid "More indepth help  for My example filter."
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:628
+#: liboyranos_config/oyranos_texts.c:639
 msgid ""
 "Most users want a simple display of colors and will not check if colors "
 "match the simulation color space."
@@ -2500,17 +2511,20 @@ msgstr "Oyranos-en ezarpenak"
 
 #: tools/oyranos-monitor-white-point.c:341
 #: tools/oyranos-monitor-white-point.c:344
-#: tools/oyranos-monitor-white-point.c:680
+#: tools/oyranos-monitor-white-point.c:692
 #, fuzzy
 msgid "New white point mode"
 msgstr "Puntu-zuria euskarria"
 
 #. choices
-#. order is automatic, none, static ones, first monitor, second monitor, ... , last monitor
+#. order is none, automatic, static ones, first monitor, second monitor, ... , last monitor
 #. choices
-#: liboyranos_config/oyranos_texts.c:506 liboyranos_config/oyranos_texts.c:590
-#: liboyranos_config/oyranos_texts.c:610 liboyranos_config/oyranos_texts.c:620
-#: liboyranos_config/oyranos_texts.c:630 liboyranos_config/oyranos_texts.c:640
+#. order is none/manual or automatic/daemon
+#. choices
+#: liboyranos_config/oyranos_texts.c:506 liboyranos_config/oyranos_texts.c:520
+#: liboyranos_config/oyranos_texts.c:601 liboyranos_config/oyranos_texts.c:621
+#: liboyranos_config/oyranos_texts.c:631 liboyranos_config/oyranos_texts.c:641
+#: liboyranos_config/oyranos_texts.c:651
 msgid "No"
 msgstr ""
 
@@ -2519,7 +2533,7 @@ msgstr ""
 msgid "No ICC profile id detected"
 msgstr "ICC profilaren goiburua"
 
-#: liboyranos_config/oyranos_texts.c:526
+#: liboyranos_config/oyranos_texts.c:537
 #, fuzzy
 msgid "No Image profile"
 msgstr "Irudiaren profila..."
@@ -2533,11 +2547,11 @@ msgstr ""
 msgid "Offset Lithography"
 msgstr "Desplazamendu litografikoa"
 
-#: liboyranos_config/oyranos_texts.c:546
+#: liboyranos_config/oyranos_texts.c:557
 msgid "On Cmyk Mismatch"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:536
+#: liboyranos_config/oyranos_texts.c:547
 msgid "On Rgb Mismatch"
 msgstr ""
 
@@ -2785,7 +2799,7 @@ msgid "Paths where ICC Profiles can be found"
 msgstr ""
 
 #. choices
-#: liboyranos_config/oyranos_texts.c:580
+#: liboyranos_config/oyranos_texts.c:591
 #, fuzzy
 msgid "Perceptual"
 msgstr "Aurrebista, saturatua"
@@ -2904,8 +2918,8 @@ msgid "Preferred XYZ Editing Color Space"
 msgstr "Kolore-espazioa"
 
 #. choices
-#: liboyranos_config/oyranos_texts.c:540 liboyranos_config/oyranos_texts.c:550
-#: liboyranos_config/oyranos_texts.c:560 liboyranos_config/oyranos_texts.c:570
+#: liboyranos_config/oyranos_texts.c:551 liboyranos_config/oyranos_texts.c:561
+#: liboyranos_config/oyranos_texts.c:571 liboyranos_config/oyranos_texts.c:581
 msgid "Preserve Numbers"
 msgstr ""
 
@@ -3026,9 +3040,9 @@ msgstr "Profila-kolorea"
 msgid "Projection Television"
 msgstr "Proiekziozko telebista"
 
-#: liboyranos_config/oyranos_texts.c:530 liboyranos_config/oyranos_texts.c:540
-#: liboyranos_config/oyranos_texts.c:550 liboyranos_config/oyranos_texts.c:560
-#: liboyranos_config/oyranos_texts.c:570
+#: liboyranos_config/oyranos_texts.c:541 liboyranos_config/oyranos_texts.c:551
+#: liboyranos_config/oyranos_texts.c:561 liboyranos_config/oyranos_texts.c:571
+#: liboyranos_config/oyranos_texts.c:581
 #, fuzzy
 msgid "Prompt"
 msgstr "Proiektua"
@@ -3038,7 +3052,7 @@ msgstr "Proiektua"
 msgid "Proofing"
 msgstr "profila\"."
 
-#: liboyranos_config/oyranos_texts.c:596
+#: liboyranos_config/oyranos_texts.c:607
 #, fuzzy
 msgid "Proofing Rendering Intent"
 msgstr "Oyranos-en ezarpenak"
@@ -3117,7 +3131,7 @@ msgid "Relation of positional parameters:"
 msgstr ""
 
 #. choices
-#: liboyranos_config/oyranos_texts.c:580 liboyranos_config/oyranos_texts.c:600
+#: liboyranos_config/oyranos_texts.c:591 liboyranos_config/oyranos_texts.c:611
 msgid "Relative Colorimetric"
 msgstr "Koloremetria erlatiboa"
 
@@ -3142,7 +3156,7 @@ msgstr ""
 msgid "Rendering"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:576
+#: liboyranos_config/oyranos_texts.c:587
 msgid "Rendering Intent"
 msgstr ""
 
@@ -3152,13 +3166,13 @@ msgstr ""
 msgid "Rendering Intent:"
 msgstr "Oyranos-en ezarpenak"
 
-#: liboyranos_config/oyranos_texts.c:578
+#: liboyranos_config/oyranos_texts.c:589
 msgid ""
 "Rendering intent for color space transformations is typically the Relative "
 "Colorimetric intent plus Black Point Compensation or the Perceptual intent."
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:577
+#: liboyranos_config/oyranos_texts.c:588
 msgid "Rendering intent for color space transformations."
 msgstr ""
 
@@ -3192,7 +3206,7 @@ msgid "SampleICC CMM"
 msgstr ""
 
 #: liboyranos_config/oyranos_icc.c:296 liboyranos_config/oyranos_icc.c:302
-#: liboyranos_config/oyranos_texts.c:580
+#: liboyranos_config/oyranos_texts.c:591
 msgid "Saturation"
 msgstr "Saturazioa"
 
@@ -3242,7 +3256,7 @@ msgstr ""
 msgid "Select a CMM in Oyranos"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:517
+#: liboyranos_config/oyranos_texts.c:528
 msgid "Select a color profile for adding a effect."
 msgstr ""
 
@@ -3250,6 +3264,10 @@ msgstr ""
 msgid ""
 "Select a color profile representing a device to be simulated. This profile "
 "will only be applied if proofing is enabled."
+msgstr ""
+
+#: liboyranos_config/oyranos_texts.c:517
+msgid "Select a daemon or set manually."
 msgstr ""
 
 #: liboyranos_config/oyranos_texts.c:503
@@ -3261,11 +3279,11 @@ msgstr ""
 msgid "Select active policy:"
 msgstr "profilik ez"
 
-#: liboyranos_config/oyranos_texts.c:647 liboyranos_config/oyranos_texts.c:667
+#: liboyranos_config/oyranos_texts.c:658 liboyranos_config/oyranos_texts.c:678
 msgid "Select the core CMM"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:657 liboyranos_config/oyranos_texts.c:677
+#: liboyranos_config/oyranos_texts.c:668 liboyranos_config/oyranos_texts.c:688
 msgid "Select the processing CMM"
 msgstr ""
 
@@ -3396,7 +3414,7 @@ msgstr ""
 msgid "Silkscreen"
 msgstr "Serigrafia"
 
-#: liboyranos_config/oyranos_texts.c:607
+#: liboyranos_config/oyranos_texts.c:618
 msgid "Simulate the output print on the monitor"
 msgstr ""
 
@@ -3420,7 +3438,7 @@ msgstr "Tamaina:        "
 msgid "So something with options."
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:606
+#: liboyranos_config/oyranos_texts.c:617
 msgid "SoftProof"
 msgstr ""
 
@@ -3450,16 +3468,16 @@ msgstr "Izarra"
 msgid "Stop"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:560
+#: tools/oyranos-monitor-white-point.c:559
 #, fuzzy
 msgid "Sunrise"
 msgstr "Zein ICC profila?"
 
-#: tools/oyranos-monitor-white-point.c:563
+#: tools/oyranos-monitor-white-point.c:562
 msgid "Sunset"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:638
+#: liboyranos_config/oyranos_texts.c:649
 #, fuzzy
 msgid "Switch for enabling the effect profile."
 msgstr "Zein ICC profila?"
@@ -3599,7 +3617,7 @@ msgid ""
 "designed by the profile vendor."
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:648 liboyranos_config/oyranos_texts.c:668
+#: liboyranos_config/oyranos_texts.c:659 liboyranos_config/oyranos_texts.c:679
 msgid ""
 "The core Color Matching Module (CMM) takes individual profiles and options "
 "and backes a device link. It can provide alternative features regarding "
@@ -3868,7 +3886,7 @@ msgstr "Kolore-espazioa"
 msgid "The preferred XYZ Editing Color Space shall describe CIE*XYZ."
 msgstr "Kolore-espazioa"
 
-#: liboyranos_config/oyranos_texts.c:658 liboyranos_config/oyranos_texts.c:678
+#: liboyranos_config/oyranos_texts.c:669 liboyranos_config/oyranos_texts.c:689
 msgid ""
 "The processing Color Matching Module (CMM) takes one device link as "
 "argument. It can provide alternative features regarding security, speed or "
@@ -3950,7 +3968,7 @@ msgid ""
 "Management System."
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:528
+#: liboyranos_config/oyranos_texts.c:539
 msgid ""
 "This setting decides what to do in the case that colors have no color space "
 "assigned. Typically the according assumed ICC profile should be assigned."
@@ -3960,7 +3978,7 @@ msgstr ""
 msgid "Time Zone"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:560
+#: tools/oyranos-monitor-white-point.c:559
 msgid "Twilight"
 msgstr ""
 
@@ -4001,11 +4019,11 @@ msgstr "Oyranos-en ezarpenak"
 msgid "Usage"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:586
+#: liboyranos_config/oyranos_texts.c:597
 msgid "Use Black Point Compensation"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:636
+#: liboyranos_config/oyranos_texts.c:647
 msgid "Use Effect"
 msgstr ""
 
@@ -4116,9 +4134,9 @@ msgstr "YCbCr"
 msgid "Yellow"
 msgstr "Horia"
 
-#: liboyranos_config/oyranos_texts.c:590 liboyranos_config/oyranos_texts.c:610
-#: liboyranos_config/oyranos_texts.c:620 liboyranos_config/oyranos_texts.c:630
-#: liboyranos_config/oyranos_texts.c:640
+#: liboyranos_config/oyranos_texts.c:601 liboyranos_config/oyranos_texts.c:621
+#: liboyranos_config/oyranos_texts.c:631 liboyranos_config/oyranos_texts.c:641
+#: liboyranos_config/oyranos_texts.c:651
 msgid "Yes"
 msgstr "Bai"
 

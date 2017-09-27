@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: oyranos\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2017-09-27 11:08+0200\n"
+"POT-Creation-Date: 2017-09-27 17:55+0200\n"
 "PO-Revision-Date: 2012-10-19 15:10+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -280,7 +280,7 @@ msgstr ""
 msgid "About Oyranos"
 msgstr "O Oyranosu"
 
-#: liboyranos_config/oyranos_texts.c:580 liboyranos_config/oyranos_texts.c:600
+#: liboyranos_config/oyranos_texts.c:591 liboyranos_config/oyranos_texts.c:611
 msgid "Absolute Colorimetric"
 msgstr "Absolutní kolorimetrický"
 
@@ -289,7 +289,7 @@ msgstr "Absolutní kolorimetrický"
 msgid "Abstract"
 msgstr "Abstraktní"
 
-#: liboyranos_config/oyranos_texts.c:537 liboyranos_config/oyranos_texts.c:547
+#: liboyranos_config/oyranos_texts.c:548 liboyranos_config/oyranos_texts.c:558
 msgid "Action for Image profile and Editing profile mismatches."
 msgstr "Akce v případě nesouladu profilu obrázku a editace."
 
@@ -311,7 +311,7 @@ msgstr "Aktivní politika:"
 msgid "Active matrix monitor"
 msgstr "Monitor s aktivní maticí"
 
-#: tools/oyranos-monitor-white-point.c:652
+#: tools/oyranos-monitor-white-point.c:664
 #, fuzzy
 msgid "Actual white point mode"
 msgstr "Bílý bod média"
@@ -392,12 +392,12 @@ msgstr "Apply regions of interesst in form of simple rectangles."
 msgid "Argyll CMS CMM"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:530
+#: liboyranos_config/oyranos_texts.c:541
 msgid "Assign Assumed Profile"
 msgstr "Přiřadit předpokládaný profil"
 
 #. choices
-#: liboyranos_config/oyranos_texts.c:530
+#: liboyranos_config/oyranos_texts.c:541
 msgid "Assign No Profile"
 msgstr "Nepřiřadit žádný profil"
 
@@ -513,7 +513,7 @@ msgstr "Dostupná zařízení"
 msgid "Available devices"
 msgstr "Dostupná zařízení"
 
-#: liboyranos_config/oyranos_texts.c:587 liboyranos_config/oyranos_texts.c:588
+#: liboyranos_config/oyranos_texts.c:598 liboyranos_config/oyranos_texts.c:599
 msgid "BPC affects often only the Relative Colorimetric Rendering intent."
 msgstr "BPC ovlivňuje pouze relativní kolorimetrický záměr transformace."
 
@@ -521,16 +521,16 @@ msgstr "BPC ovlivňuje pouze relativní kolorimetrický záměr transformace."
 msgid "Behaviour"
 msgstr "Chování"
 
-#: liboyranos_config/oyranos_texts.c:617
+#: liboyranos_config/oyranos_texts.c:628
 msgid ""
 "Behaviour for preselecting Hardproofing with a Proofing Profile at print time"
 msgstr "Chování pro předvolbu Hardproofingu s profilem simulace při tisku"
 
-#: liboyranos_config/oyranos_texts.c:597
+#: liboyranos_config/oyranos_texts.c:608
 msgid "Behaviour of color space transformation for proofing"
 msgstr "Chování záměru transformace barvového prostoru pro simulaci"
 
-#: liboyranos_config/oyranos_texts.c:598
+#: liboyranos_config/oyranos_texts.c:609
 msgid ""
 "Behaviour of color space transformation for proofing. Most people want a "
 "preview on screen only. The Relative Colorimetric intent is right for that. "
@@ -636,22 +636,22 @@ msgstr ""
 msgid "CMM"
 msgstr "CMM"
 
-#: liboyranos_config/oyranos_texts.c:646
+#: liboyranos_config/oyranos_texts.c:657
 #, fuzzy
 msgid "CMM Core"
 msgstr "nacteno"
 
-#: liboyranos_config/oyranos_texts.c:666
+#: liboyranos_config/oyranos_texts.c:677
 #, fuzzy
 msgid "CMM Core Fallback"
 msgstr "nacteno"
 
-#: liboyranos_config/oyranos_texts.c:656
+#: liboyranos_config/oyranos_texts.c:667
 #, fuzzy
 msgid "CMM Renderer"
 msgstr "nacteno"
 
-#: liboyranos_config/oyranos_texts.c:676
+#: liboyranos_config/oyranos_texts.c:687
 #, fuzzy
 msgid "CMM Renderer Fallback"
 msgstr "nacteno"
@@ -881,7 +881,7 @@ msgstr "Barva r"
 msgid "Color space for Simulating an Output Device"
 msgstr "Barvový prostor pro simulaci výstupniho zařízení"
 
-#: liboyranos_config/oyranos_texts.c:516
+#: liboyranos_config/oyranos_texts.c:527
 #, fuzzy
 msgid "Color space for showing a effect"
 msgstr "Barvový prostor pro simulaci skutečných zařízení"
@@ -920,7 +920,7 @@ msgstr ""
 msgid "Convert Image:"
 msgstr "Konvertovat obrázek:"
 
-#: liboyranos_config/oyranos_texts.c:540 liboyranos_config/oyranos_texts.c:550
+#: liboyranos_config/oyranos_texts.c:551 liboyranos_config/oyranos_texts.c:561
 msgid "Convert automatically"
 msgstr "Automaticky konvertovat"
 
@@ -933,19 +933,19 @@ msgstr "Konvertovat obrázek do barvového prostoru ICC"
 msgid "Convert image to ICC Color Space"
 msgstr "Konvertovat obrázek do barvového prostoru ICC"
 
-#: liboyranos_config/oyranos_texts.c:560
+#: liboyranos_config/oyranos_texts.c:571
 msgid "Convert to Default Cmyk Editing Space"
 msgstr "Konvertovat do výchozího barvového prostoru editace CMYK"
 
-#: liboyranos_config/oyranos_texts.c:570
+#: liboyranos_config/oyranos_texts.c:581
 msgid "Convert to Default Rgb Editing Space"
 msgstr "Konvertovat do výchozího prostoru editace RGB"
 
-#: liboyranos_config/oyranos_texts.c:570
+#: liboyranos_config/oyranos_texts.c:581
 msgid "Convert to WWW (sRGB)"
 msgstr "Konvertovat do WWW (sRGB)"
 
-#: liboyranos_config/oyranos_texts.c:560
+#: liboyranos_config/oyranos_texts.c:571
 msgid "Convert to untagged Cmyk, preserving Cmyk numbers"
 msgstr "Konvertovat do neoznačeného CMYK se zachováním CMYK hodnot"
 
@@ -1310,6 +1310,17 @@ msgstr ""
 msgid "Display White Point"
 msgstr "Bílý bod média"
 
+#: liboyranos_config/oyranos_texts.c:515
+#, fuzzy
+msgid "Display White Point Daemon"
+msgstr "Bílý bod média"
+
+#: liboyranos_config/oyranos_texts.c:516
+msgid ""
+"Display White Point Daemon for setting white point depending on geographical "
+"location and time."
+msgstr ""
+
 #: liboyranos_config/oyranos_texts.c:502
 msgid "Display White Point for all screens"
 msgstr ""
@@ -1373,7 +1384,7 @@ msgstr "Editace RGB"
 msgid "Editing XYZ"
 msgstr "Editace XYZ"
 
-#: liboyranos_config/oyranos_texts.c:255 liboyranos_config/oyranos_texts.c:515
+#: liboyranos_config/oyranos_texts.c:255 liboyranos_config/oyranos_texts.c:526
 msgid "Effect"
 msgstr ""
 
@@ -1419,12 +1430,12 @@ msgstr ""
 msgid "Embedd device meta tag from image device into given device profile"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:637
+#: liboyranos_config/oyranos_texts.c:648
 #, fuzzy
 msgid "Enable effect profile"
 msgstr "Instalovat profil ICC:"
 
-#: liboyranos_config/oyranos_texts.c:618
+#: liboyranos_config/oyranos_texts.c:629
 msgid ""
 "Enable simulation of an output color space on a local printer. Most users do "
 "not work for a certain media and leave color handling to the system. They "
@@ -1434,7 +1445,7 @@ msgstr ""
 "uživatelů nepracuje se záměrem výstupu na konkrétním médiu a proto ponechává "
 "správu barev na systému. Tzn., že nepotřebují použít tuto simulaci."
 
-#: liboyranos_config/oyranos_texts.c:608
+#: liboyranos_config/oyranos_texts.c:619
 msgid ""
 "Enable simulation of output print on the monitor. Most users do not work for "
 "a certain media and leave color handling to the system. They want no "
@@ -1562,11 +1573,11 @@ msgstr "Priznaky:    "
 msgid "Flexography"
 msgstr "Flexografie"
 
-#: liboyranos_config/oyranos_texts.c:556
+#: liboyranos_config/oyranos_texts.c:567
 msgid "For Print"
 msgstr "Pro tisk"
 
-#: liboyranos_config/oyranos_texts.c:566
+#: liboyranos_config/oyranos_texts.c:577
 msgid "For Screen"
 msgstr "Pro obrazovku"
 
@@ -1586,7 +1597,7 @@ msgstr "Nenalezen žádný uzel při transformaci. Ukončeno."
 msgid "Fuji Film CMM"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:626
+#: liboyranos_config/oyranos_texts.c:637
 msgid "Gamut Warning"
 msgstr "Varování gamutu"
 
@@ -1611,7 +1622,7 @@ msgstr "Dostupná zařízení"
 msgid "Generate Image:"
 msgstr "Generovat obrázek:"
 
-#: tools/oyranos-monitor-white-point.c:560
+#: tools/oyranos-monitor-white-point.c:559
 msgid "Geographical Position"
 msgstr ""
 
@@ -1659,13 +1670,13 @@ msgstr "Zelený kolorant"
 msgid "Green tone reproduction curve"
 msgstr "Křivka reprodukce zelených tónů"
 
-#: liboyranos_config/oyranos_texts.c:557
+#: liboyranos_config/oyranos_texts.c:568
 msgid "Handle mixed color spaces in preparing a document for print output."
 msgstr ""
 "Zacházení se smíšenými barvovými prostory při přípravě dokumentu pro tiskový "
 "výstup."
 
-#: liboyranos_config/oyranos_texts.c:558
+#: liboyranos_config/oyranos_texts.c:569
 msgid ""
 "Handle mixed color spaces in preparing a document for print output. A "
 "conversion to the default editing color space is typically what most users "
@@ -1675,13 +1686,13 @@ msgstr ""
 "výstup. Většina uživatelů použije transformaci do barvového prostoru pro "
 "editaci."
 
-#: liboyranos_config/oyranos_texts.c:567
+#: liboyranos_config/oyranos_texts.c:578
 msgid "Handle mixed color spaces in preparing a document for screen output."
 msgstr ""
 "Zacházení se smíšenými barvovými prostory při přípravě dokumentu pro výstup "
 "na obrazovku."
 
-#: liboyranos_config/oyranos_texts.c:568
+#: liboyranos_config/oyranos_texts.c:579
 msgid ""
 "Handle mixed color spaces in preparing a document for screen output. A "
 "conversion to sRGB helps in easy data exchange and is what most users want."
@@ -1703,7 +1714,7 @@ msgid "Handling of Mixed Color Spaces inside one single Document"
 msgstr ""
 "Výchozí zacházení se smíšenými barvovými prostory v rámci jednoho dokumentu"
 
-#: liboyranos_config/oyranos_texts.c:616
+#: liboyranos_config/oyranos_texts.c:627
 msgid "Hardproof"
 msgstr "Hardproof"
 
@@ -1921,7 +1932,7 @@ msgstr "Obrázek"
 msgid "Image Socket"
 msgstr "Image[out]"
 
-#: liboyranos_config/oyranos_texts.c:527
+#: liboyranos_config/oyranos_texts.c:538
 msgid ""
 "Image has no color space embedded. What default action shall be performed?"
 msgstr ""
@@ -1997,7 +2008,7 @@ msgstr "Image[write_ppm]"
 msgid "Img"
 msgstr "Img"
 
-#: liboyranos_config/oyranos_texts.c:538 liboyranos_config/oyranos_texts.c:548
+#: liboyranos_config/oyranos_texts.c:549 liboyranos_config/oyranos_texts.c:559
 msgid ""
 "Incoming color spaces can differ from the default editing color space. For "
 "most users, an automatic conversion is fine. However, for more demanding "
@@ -2368,7 +2379,7 @@ msgstr "Výrobce"
 msgid "Manufacturer:    "
 msgstr "Vyrobce:      "
 
-#: liboyranos_config/oyranos_texts.c:627
+#: liboyranos_config/oyranos_texts.c:638
 msgid "Mark Out Of Gamut colors"
 msgstr "Označit barvy mimo gamut"
 
@@ -2456,7 +2467,7 @@ msgstr "Více bitů znamená větší přesnost při zpracování a větší vel
 msgid "More indepth help  for My example filter."
 msgstr "Detailnější nápověda pro můj testovací filtr."
 
-#: liboyranos_config/oyranos_texts.c:628
+#: liboyranos_config/oyranos_texts.c:639
 msgid ""
 "Most users want a simple display of colors and will not check if colors "
 "match the simulation color space."
@@ -2537,17 +2548,20 @@ msgstr "Pro úpravu je třeba profil ICC."
 
 #: tools/oyranos-monitor-white-point.c:341
 #: tools/oyranos-monitor-white-point.c:344
-#: tools/oyranos-monitor-white-point.c:680
+#: tools/oyranos-monitor-white-point.c:692
 #, fuzzy
 msgid "New white point mode"
 msgstr "Bílý bod média"
 
 #. choices
-#. order is automatic, none, static ones, first monitor, second monitor, ... , last monitor
+#. order is none, automatic, static ones, first monitor, second monitor, ... , last monitor
 #. choices
-#: liboyranos_config/oyranos_texts.c:506 liboyranos_config/oyranos_texts.c:590
-#: liboyranos_config/oyranos_texts.c:610 liboyranos_config/oyranos_texts.c:620
-#: liboyranos_config/oyranos_texts.c:630 liboyranos_config/oyranos_texts.c:640
+#. order is none/manual or automatic/daemon
+#. choices
+#: liboyranos_config/oyranos_texts.c:506 liboyranos_config/oyranos_texts.c:520
+#: liboyranos_config/oyranos_texts.c:601 liboyranos_config/oyranos_texts.c:621
+#: liboyranos_config/oyranos_texts.c:631 liboyranos_config/oyranos_texts.c:641
+#: liboyranos_config/oyranos_texts.c:651
 msgid "No"
 msgstr "Ne"
 
@@ -2555,7 +2569,7 @@ msgstr "Ne"
 msgid "No ICC profile id detected"
 msgstr "Nedetekován žádný profil ICC"
 
-#: liboyranos_config/oyranos_texts.c:526
+#: liboyranos_config/oyranos_texts.c:537
 msgid "No Image profile"
 msgstr "Žádný profil obrázku"
 
@@ -2568,11 +2582,11 @@ msgstr ""
 msgid "Offset Lithography"
 msgstr "Offsetová litografie"
 
-#: liboyranos_config/oyranos_texts.c:546
+#: liboyranos_config/oyranos_texts.c:557
 msgid "On Cmyk Mismatch"
 msgstr "V případě nesouladu CMYK"
 
-#: liboyranos_config/oyranos_texts.c:536
+#: liboyranos_config/oyranos_texts.c:547
 msgid "On Rgb Mismatch"
 msgstr "V případě nesouladu RGB"
 
@@ -2828,7 +2842,7 @@ msgid "Paths where ICC Profiles can be found"
 msgstr "Cesty, kde jsou uloženy profily ICC"
 
 #. choices
-#: liboyranos_config/oyranos_texts.c:580
+#: liboyranos_config/oyranos_texts.c:591
 msgid "Perceptual"
 msgstr "Perceptuální"
 
@@ -2943,8 +2957,8 @@ msgid "Preferred XYZ Editing Color Space"
 msgstr "Preferovaný barvový prostor XYZ pro editaci"
 
 #. choices
-#: liboyranos_config/oyranos_texts.c:540 liboyranos_config/oyranos_texts.c:550
-#: liboyranos_config/oyranos_texts.c:560 liboyranos_config/oyranos_texts.c:570
+#: liboyranos_config/oyranos_texts.c:551 liboyranos_config/oyranos_texts.c:561
+#: liboyranos_config/oyranos_texts.c:571 liboyranos_config/oyranos_texts.c:581
 msgid "Preserve Numbers"
 msgstr "Zachovat hodnoty"
 
@@ -3060,9 +3074,9 @@ msgstr "profil nenalezen:"
 msgid "Projection Television"
 msgstr "Projekční televize"
 
-#: liboyranos_config/oyranos_texts.c:530 liboyranos_config/oyranos_texts.c:540
-#: liboyranos_config/oyranos_texts.c:550 liboyranos_config/oyranos_texts.c:560
-#: liboyranos_config/oyranos_texts.c:570
+#: liboyranos_config/oyranos_texts.c:541 liboyranos_config/oyranos_texts.c:551
+#: liboyranos_config/oyranos_texts.c:561 liboyranos_config/oyranos_texts.c:571
+#: liboyranos_config/oyranos_texts.c:581
 msgid "Prompt"
 msgstr "Dotázat se"
 
@@ -3070,7 +3084,7 @@ msgstr "Dotázat se"
 msgid "Proofing"
 msgstr "Simulace"
 
-#: liboyranos_config/oyranos_texts.c:596
+#: liboyranos_config/oyranos_texts.c:607
 msgid "Proofing Rendering Intent"
 msgstr "Záměr transformace pro simulaci"
 
@@ -3152,7 +3166,7 @@ msgid "Relation of positional parameters:"
 msgstr ""
 
 #. choices
-#: liboyranos_config/oyranos_texts.c:580 liboyranos_config/oyranos_texts.c:600
+#: liboyranos_config/oyranos_texts.c:591 liboyranos_config/oyranos_texts.c:611
 msgid "Relative Colorimetric"
 msgstr "Relativní kolorimetrický"
 
@@ -3178,7 +3192,7 @@ msgstr ""
 msgid "Rendering"
 msgstr "Transformace"
 
-#: liboyranos_config/oyranos_texts.c:576
+#: liboyranos_config/oyranos_texts.c:587
 msgid "Rendering Intent"
 msgstr "Záměr transformace"
 
@@ -3187,7 +3201,7 @@ msgstr "Záměr transformace"
 msgid "Rendering Intent:"
 msgstr "Záměr transformace:"
 
-#: liboyranos_config/oyranos_texts.c:578
+#: liboyranos_config/oyranos_texts.c:589
 msgid ""
 "Rendering intent for color space transformations is typically the Relative "
 "Colorimetric intent plus Black Point Compensation or the Perceptual intent."
@@ -3195,7 +3209,7 @@ msgstr ""
 "Záměr pro transformace mezi různými barvovými prostory se obvykle volí "
 "relativní kolorimetrický vč. kompenzace černého bodu nebo perceptuální."
 
-#: liboyranos_config/oyranos_texts.c:577
+#: liboyranos_config/oyranos_texts.c:588
 msgid "Rendering intent for color space transformations."
 msgstr "Záměr transformace mezi barvovými prostory."
 
@@ -3231,7 +3245,7 @@ msgid "SampleICC CMM"
 msgstr ""
 
 #: liboyranos_config/oyranos_icc.c:296 liboyranos_config/oyranos_icc.c:302
-#: liboyranos_config/oyranos_texts.c:580
+#: liboyranos_config/oyranos_texts.c:591
 msgid "Saturation"
 msgstr "Saturační"
 
@@ -3280,7 +3294,7 @@ msgstr ""
 msgid "Select a CMM in Oyranos"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:517
+#: liboyranos_config/oyranos_texts.c:528
 msgid "Select a color profile for adding a effect."
 msgstr ""
 
@@ -3292,6 +3306,10 @@ msgstr ""
 "Zvolte barvový profil charakterizující zařízení, které má být simulováno. "
 "Tento profil bude použit pouze v případě použití funkce simulace."
 
+#: liboyranos_config/oyranos_texts.c:517
+msgid "Select a daemon or set manually."
+msgstr ""
+
 #: liboyranos_config/oyranos_texts.c:503
 msgid "Select a white point target for all monitors."
 msgstr ""
@@ -3300,11 +3318,11 @@ msgstr ""
 msgid "Select active policy:"
 msgstr "Zvolit aktivní politiku:"
 
-#: liboyranos_config/oyranos_texts.c:647 liboyranos_config/oyranos_texts.c:667
+#: liboyranos_config/oyranos_texts.c:658 liboyranos_config/oyranos_texts.c:678
 msgid "Select the core CMM"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:657 liboyranos_config/oyranos_texts.c:677
+#: liboyranos_config/oyranos_texts.c:668 liboyranos_config/oyranos_texts.c:688
 msgid "Select the processing CMM"
 msgstr ""
 
@@ -3437,7 +3455,7 @@ msgstr "Signál"
 msgid "Silkscreen"
 msgstr "Sítotisk"
 
-#: liboyranos_config/oyranos_texts.c:607
+#: liboyranos_config/oyranos_texts.c:618
 msgid "Simulate the output print on the monitor"
 msgstr "Simulovat tisk na monitoru"
 
@@ -3460,7 +3478,7 @@ msgstr "Velikost:    "
 msgid "So something with options."
 msgstr "Takže něco s volbami."
 
-#: liboyranos_config/oyranos_texts.c:606
+#: liboyranos_config/oyranos_texts.c:617
 msgid "SoftProof"
 msgstr "SofProof"
 
@@ -3489,16 +3507,16 @@ msgstr "Začátek"
 msgid "Stop"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:560
+#: tools/oyranos-monitor-white-point.c:559
 #, fuzzy
 msgid "Sunrise"
 msgstr "Získat profil ICC"
 
-#: tools/oyranos-monitor-white-point.c:563
+#: tools/oyranos-monitor-white-point.c:562
 msgid "Sunset"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:638
+#: liboyranos_config/oyranos_texts.c:649
 #, fuzzy
 msgid "Switch for enabling the effect profile."
 msgstr "Instalovat profil ICC:"
@@ -3680,7 +3698,7 @@ msgstr ""
 "transformace kromě těch kolorimetrických závisejí na tabulkách mapování "
 "barev vložených do profilu ICC jejich tvůrcem."
 
-#: liboyranos_config/oyranos_texts.c:648 liboyranos_config/oyranos_texts.c:668
+#: liboyranos_config/oyranos_texts.c:659 liboyranos_config/oyranos_texts.c:679
 msgid ""
 "The core Color Matching Module (CMM) takes individual profiles and options "
 "and backes a device link. It can provide alternative features regarding "
@@ -4033,7 +4051,7 @@ msgstr ""
 msgid "The preferred XYZ Editing Color Space shall describe CIE*XYZ."
 msgstr "Preferovaný barvový prostor editace XYZ by měl popisovat CIE*XYZ."
 
-#: liboyranos_config/oyranos_texts.c:658 liboyranos_config/oyranos_texts.c:678
+#: liboyranos_config/oyranos_texts.c:669 liboyranos_config/oyranos_texts.c:689
 msgid ""
 "The processing Color Matching Module (CMM) takes one device link as "
 "argument. It can provide alternative features regarding security, speed or "
@@ -4134,7 +4152,7 @@ msgid ""
 "Management System."
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:528
+#: liboyranos_config/oyranos_texts.c:539
 msgid ""
 "This setting decides what to do in the case that colors have no color space "
 "assigned. Typically the according assumed ICC profile should be assigned."
@@ -4147,7 +4165,7 @@ msgstr ""
 msgid "Time Zone"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:560
+#: tools/oyranos-monitor-white-point.c:559
 msgid "Twilight"
 msgstr ""
 
@@ -4189,11 +4207,11 @@ msgstr "Vypsat zařízení:"
 msgid "Usage"
 msgstr "Použití"
 
-#: liboyranos_config/oyranos_texts.c:586
+#: liboyranos_config/oyranos_texts.c:597
 msgid "Use Black Point Compensation"
 msgstr "Použít kompenzaci černého bodu (BPC)"
 
-#: liboyranos_config/oyranos_texts.c:636
+#: liboyranos_config/oyranos_texts.c:647
 msgid "Use Effect"
 msgstr ""
 
@@ -4301,9 +4319,9 @@ msgstr "YCbCr"
 msgid "Yellow"
 msgstr "Žlutá"
 
-#: liboyranos_config/oyranos_texts.c:590 liboyranos_config/oyranos_texts.c:610
-#: liboyranos_config/oyranos_texts.c:620 liboyranos_config/oyranos_texts.c:630
-#: liboyranos_config/oyranos_texts.c:640
+#: liboyranos_config/oyranos_texts.c:601 liboyranos_config/oyranos_texts.c:621
+#: liboyranos_config/oyranos_texts.c:631 liboyranos_config/oyranos_texts.c:641
+#: liboyranos_config/oyranos_texts.c:651
 msgid "Yes"
 msgstr "Ano"
 
