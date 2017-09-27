@@ -263,35 +263,35 @@ int main( int argc , char** argv )
   if(twilight != -1000)
   {
     oyStringAddPrintfC(&value, 0,0, "%g", twilight);
-    oySetPersistentString( OY_STD "/device/twilight", scope, value, NULL );
+    oySetPersistentString( OY_DEVICE_STD OY_SLASH "/twilight", scope, value, NULL );
     oyFree_m_(value);
   }
 
   if(longitude != 360)
   {
     oyStringAddPrintfC(&value, 0,0, "%g", longitude);
-    oySetPersistentString( OY_STD "/device/longitude", scope, value, NULL );
+    oySetPersistentString( OY_DEVICE_STD "/longitude", scope, value, NULL );
     oyFree_m_(value);
   }
 
   if(latitude != 360)
   {
     oyStringAddPrintfC(&value, 0,0, "%g", latitude);
-    oySetPersistentString( OY_STD "/device/latitude", scope, value, NULL );
+    oySetPersistentString( OY_DEVICE_STD "/latitude", scope, value, NULL );
     oyFree_m_(value);
   }
 
   if(wtpt_mode_night != -1)
   {
     oyStringAddPrintf(&value, 0,0, "%d", wtpt_mode_night);
-    oySetPersistentString( OY_STD "/device/display_white_point_mode_night", scope, value, NULL );
+    oySetPersistentString( OY_DEVICE_STD "/display_white_point_mode_night", scope, value, NULL );
     oyFree_m_(value);
   }
 
   if(wtpt_mode_sunlight != -1)
   {
     oyStringAddPrintf(&value, 0,0, "%d", wtpt_mode_sunlight);
-    oySetPersistentString( OY_STD "/device/display_white_point_mode_sunlight", scope, value, NULL );
+    oySetPersistentString( OY_DEVICE_STD "/display_white_point_mode_sunlight", scope, value, NULL );
     oyFree_m_(value);
   }
 
@@ -439,7 +439,7 @@ int getLocation( double * lon, double * lat)
   int need_location = 0;
   char * value = NULL;
  
-  value = oyGetPersistentString( OY_STD "/device/latitude", 0, oySCOPE_USER_SYS, oyAllocateFunc_ );
+  value = oyGetPersistentString( OY_DEVICE_STD "/latitude", 0, oySCOPE_USER_SYS, oyAllocateFunc_ );
   if(value && oyStringToDouble( value, lat ))
     fprintf(stderr, "lat = %g / %s\n", *lat, value);
   if(value)
@@ -447,7 +447,7 @@ int getLocation( double * lon, double * lat)
     oyFree_m_(value);
   } else
     need_location = 1;
-  value = oyGetPersistentString( OY_STD "/device/longitude", 0, oySCOPE_USER_SYS, oyAllocateFunc_ );
+  value = oyGetPersistentString( OY_DEVICE_STD "/longitude", 0, oySCOPE_USER_SYS, oyAllocateFunc_ );
   if(value && oyStringToDouble( value, lon ))
     fprintf(stderr, "lon = %g / %s\n", *lon, value);
   if(value)
@@ -535,12 +535,11 @@ int getSunriseSunset( double * rise, double * set )
   }
 
   value =
-      oyGetPersistentString(OY_STD "/device/twilight", 0, oySCOPE_USER_SYS, oyAllocateFunc_);
+      oyGetPersistentString(OY_DEVICE_STD "/twilight", 0, oySCOPE_USER_SYS, oyAllocateFunc_);
   if(value && oyStringToDouble( value, &twilight ))
     fprintf(stderr, "twilight = %g / %s\n", twilight, value);
   if(value)
-  {
-    oyFree_m_(value);
+  { oyFree_m_(value);
   }
 
   r = __sunriset__( year,month,day, lon,lat,
@@ -630,9 +629,22 @@ int checkWtptState()
 
   int choices = 0;
   const char ** choices_string_list = NULL;
+  char * value;
+  int active = 1;
 
   /* settings changed on disk, need to reread */
   oyGetPersistentStrings( NULL );
+
+  value = oyGetPersistentString(OY_DEFAULT_DISPLAY_WHITE_POINT_DAEMON, 0,
+                                oySCOPE_USER_SYS, oyAllocateFunc_);
+  if(!value || strcmp(value,"oyranos-monitor-white-point") != 0)
+    active = 0;
+  if(value)
+  { oyFree_m_(value);
+  }
+  if(!active)
+    return -1;
+
 
   dtime = oyGetCurrentGMTHour(&diff);
 
@@ -654,7 +666,7 @@ int checkWtptState()
     if(rise < dtime && dtime <= set)
     /* day time */
     {
-      char * value = oyGetPersistentString( OY_STD "/device/display_white_point_mode_sunlight", 0, oySCOPE_USER_SYS, oyAllocateFunc_ );
+      char * value = oyGetPersistentString( OY_DEVICE_STD "/display_white_point_mode_sunlight", 0, oySCOPE_USER_SYS, oyAllocateFunc_ );
       if(value)
       {
         new_mode = atoi(value);
@@ -665,7 +677,7 @@ int checkWtptState()
     } else
     /* night time */
     {
-      char * value = oyGetPersistentString( OY_STD "/device/display_white_point_mode_night", 0, oySCOPE_USER_SYS, oyAllocateFunc_ );
+      char * value = oyGetPersistentString( OY_DEVICE_STD "/display_white_point_mode_night", 0, oySCOPE_USER_SYS, oyAllocateFunc_ );
       if(value)
       {
         new_mode = atoi(value);
@@ -697,14 +709,14 @@ int runDaemon(int dmode)
   if(dmode == 0) /* stop service */
   {
     /* erase the key */
-    oySetPersistentString( OY_STD "/device/display_white_point_daemon", scope, NULL, NULL );
+    oySetPersistentString( OY_DEFAULT_DISPLAY_WHITE_POINT_DAEMON, scope, NULL, NULL );
     return 0; 
   }
   else
   if(dmode == 1) /* check if service is desired */
   {
     char * value = 
-      oyGetPersistentString(OY_STD "/device/display_white_point_daemon", 0,
+      oyGetPersistentString(OY_DEFAULT_DISPLAY_WHITE_POINT_DAEMON, 0,
 		            oySCOPE_USER_SYS, oyAllocateFunc_);
     if(!value || strcmp(value,"oyranos-monitor-white-point") != 0)
       return -1;
@@ -712,7 +724,7 @@ int runDaemon(int dmode)
     oyFree_m_(value);
   }
   else /* dmode >= 2 => start service */
-    oySetPersistentString( OY_STD "/device/display_white_point_daemon", scope, "oyranos-monitor-white-point", "CLI Daemon" );
+    oySetPersistentString( OY_DEFAULT_DISPLAY_WHITE_POINT_DAEMON, scope, "oyranos-monitor-white-point", "CLI Daemon" );
 
   /* ensure all keys are setup properly
    * before we lock the DBus connection by listening */
