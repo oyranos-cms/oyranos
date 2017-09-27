@@ -80,6 +80,14 @@ void selectBehaviourCallback( Fl_Widget* w, void* x ) {
           error = oySetCMMPattern( (oyCMM_e)op->option, 0, oySCOPE_USER, pattern );
           if(t) free(t);
           if(pattern) free(pattern);
+        } else if(op->option == oyWIDGET_DISPLAY_WHITE_POINT_DAEMON)
+        {
+           if(c->value() == 0)
+             oySetPersistentString( OY_DEFAULT_DISPLAY_WHITE_POINT_DAEMON,
+                                    oySCOPE_USER, NULL, NULL );
+           else
+             oySetPersistentString( OY_DEFAULT_DISPLAY_WHITE_POINT_DAEMON,
+                                    oySCOPE_USER, c->text(), "daemon" );
         } else
           error = oySetBehaviour( (oyBEHAVIOUR_e)op->option, oySCOPE_USER, c->value());
   
