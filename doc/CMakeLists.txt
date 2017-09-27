@@ -29,6 +29,7 @@ SET( MAN1_PAGES
      ${MAN_FLTK}
      man/oyranos-monitor.1
      man/oyranos-monitor-daemon.1
+     man/oyranos-monitor-white-point.1
      man/oyranos-policy.1
      man/oyranos-profile.1
      man/oyranos-profile-graph.1

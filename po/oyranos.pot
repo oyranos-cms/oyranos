@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Oyranos 0.9\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2017-07-06 09:18+0200\n"
+"POT-Creation-Date: 2017-09-27 11:13+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -64,7 +64,8 @@ msgstr ""
 #: API_generated/oyranos_devices.c:1747 API_generated/oyranos_devices.c:1831
 #: modules/color/modules/oyranos_cmm_oyra_image_channel.c:144
 #: tools/oyranos-device.c:1036 tools/oyranos-device.c:1046
-#: tools/oyranos-device.c:1063 tools/oyranos-device.c:1089 examples/taxi.c:229
+#: tools/oyranos-device.c:1063 tools/oyranos-device.c:1089
+#: tools/oyranos-monitor-white-point.c:371 examples/taxi.c:229
 #: examples/taxi.c:319
 msgid "found issues parsing JSON"
 msgstr ""
@@ -132,11 +133,11 @@ msgid "found list of wrong type"
 msgstr ""
 
 #: API_generated/oyOptions_s.c:1568 tools/oyranos-device.c:253
-#: tools/oyranos_convert.c:270 tools/oyranos_gamma.c:254
-#: tools/oyranos_policy.c:156 tools/oyranos_profile_graph.c:253
-#: tools/oyranos_profile_tool.c:233 tools/oyranos_profiles.c:244
-#: tools/oyranos_profiles.c:317 examples/taxi.c:206
-#: examples/libraw/oyranos_file.cpp:236
+#: tools/oyranos-monitor-white-point.c:215 tools/oyranos_convert.c:270
+#: tools/oyranos_gamma.c:254 tools/oyranos_policy.c:156
+#: tools/oyranos_profile_graph.c:253 tools/oyranos_profile_tool.c:233
+#: tools/oyranos_profiles.c:244 tools/oyranos_profiles.c:317
+#: examples/taxi.c:206 examples/libraw/oyranos_file.cpp:236
 msgid "wrong argument to option:"
 msgstr ""
 
@@ -223,9 +224,9 @@ msgstr ""
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:898
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:904
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:916
-#: tools/oyranos_gamma.c:635 tools/oyranos_gamma.c:813
-#: tools/oyranos_gamma.c:979 tools/oyranos_gamma.c:982
-#: tools/oyranos_gamma.c:986 tools/oyranos_gamma.c:1024
+#: tools/oyranos_gamma.c:639 tools/oyranos_gamma.c:817
+#: tools/oyranos_gamma.c:983 tools/oyranos_gamma.c:986
+#: tools/oyranos_gamma.c:990 tools/oyranos_gamma.c:1028
 msgid "found issues"
 msgstr ""
 
@@ -435,7 +436,7 @@ msgstr ""
 #: modules/color/modules/oyranos_cmm_oicc.c:1145
 #: modules/color/modules/oyranos_cmm_oydi.c:1354
 #: modules/color/modules/oyranos_cmm_oyra.c:146
-#: modules/color/modules/oyranos_cmm_trds.c:677
+#: modules/color/modules/oyranos_cmm_trds.c:731
 #: modules/color/modules/devices/oyranos_cmm_disp.c:1342
 #: modules/color/modules/oyranos_cmm_lraw.cpp:237
 #: examples/oyranos_cmm_dFil.c:164
@@ -465,7 +466,8 @@ msgstr ""
 #: tools/oyranos-device.c:386 tools/oyranos-device.c:401
 #: tools/oyranos-device.c:423 tools/oyranos-device.c:449
 #: tools/oyranos-device.c:812 tools/oyranos-device.c:1009
-#: tools/oyranos-device.c:1244 tools/qcmsevents/qcmsevents.cpp:313
+#: tools/oyranos-device.c:1244 tools/oyranos-monitor-white-point.c:344
+#: tools/qcmsevents/qcmsevents.cpp:313
 #, c-format
 msgid "!!! ERROR"
 msgstr ""
@@ -2217,7 +2219,7 @@ msgstr ""
 #: modules/color/modules/oyranos_cmm_lcms.c:2604
 #: modules/color/modules/oyranos_cmm_oiDB.c:460
 #: modules/color/modules/oyranos_cmm_oyra_profile_graph2d.c:324
-#: modules/color/modules/oyranos_cmm_trds.c:584
+#: modules/color/modules/oyranos_cmm_trds.c:638
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:187
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:368
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:548
@@ -2231,7 +2233,7 @@ msgstr ""
 #: modules/color/modules/oyranos_cmm_lcms.c:2606
 #: modules/color/modules/oyranos_cmm_oiDB.c:462
 #: modules/color/modules/oyranos_cmm_oyra_profile_graph2d.c:326
-#: modules/color/modules/oyranos_cmm_trds.c:586
+#: modules/color/modules/oyranos_cmm_trds.c:640
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:189
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:370
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:550
@@ -2587,7 +2589,7 @@ msgstr ""
 #: modules/color/modules/oyranos_cmm_oicc.c:1137
 #: modules/color/modules/oyranos_cmm_oydi.c:1346
 #: modules/color/modules/oyranos_cmm_oyra.c:138
-#: modules/color/modules/oyranos_cmm_trds.c:669
+#: modules/color/modules/oyranos_cmm_trds.c:723
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:981
 #: modules/color/modules/devices/oyranos_cmm_SANE.c:939
 #: modules/color/modules/devices/oyranos_cmm_disp.c:1334
@@ -2875,32 +2877,32 @@ msgstr ""
 msgid "The Oyranos \""
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_trds.c:592
-#: modules/color/modules/oyranos_cmm_trds.c:600
+#: modules/color/modules/oyranos_cmm_trds.c:646
+#: modules/color/modules/oyranos_cmm_trds.c:654
 msgid "Initialise the oyJob_s APIs."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_trds.c:594
-#: modules/color/modules/oyranos_cmm_trds.c:602
+#: modules/color/modules/oyranos_cmm_trds.c:648
+#: modules/color/modules/oyranos_cmm_trds.c:656
 msgid ""
 "The Oyranos \"threads_handler\" command will initialise the oyJob_s APIs "
 "with a available threading model."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_trds.c:659
+#: modules/color/modules/oyranos_cmm_trds.c:713
 msgid "Oyranos Threads"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_trds.c:661
+#: modules/color/modules/oyranos_cmm_trds.c:715
 msgid "Oyranos Threads default Handling"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_trds.c:675
+#: modules/color/modules/oyranos_cmm_trds.c:729
 msgid "Copyright (c) 2014-2016 Kai-Uwe Behrmann; new BSD"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_trds.c:683
-#: modules/color/modules/oyranos_cmm_trds.c:685
+#: modules/color/modules/oyranos_cmm_trds.c:737
+#: modules/color/modules/oyranos_cmm_trds.c:739
 msgid ""
 "The filter provides a default oyJob_s handling mechanism for asynchronous "
 "processing."
@@ -3187,11 +3189,11 @@ msgstr ""
 msgid "is a color profile administration tool for color devices"
 msgstr ""
 
-#: tools/oyranos-device.c:49 tools/oyranos_convert.c:61
-#: tools/oyranos_gamma.c:208 tools/oyranos_policy.c:54
-#: tools/oyranos_profile_graph.c:94 tools/oyranos_profile_tool.c:82
-#: tools/oyranos_profiles.c:63 examples/taxi.c:49
-#: examples/libraw/oyranos_file.cpp:45
+#: tools/oyranos-device.c:49 tools/oyranos-monitor-white-point.c:69
+#: tools/oyranos_convert.c:61 tools/oyranos_gamma.c:208
+#: tools/oyranos_policy.c:54 tools/oyranos_profile_graph.c:94
+#: tools/oyranos_profile_tool.c:82 tools/oyranos_profiles.c:63
+#: examples/taxi.c:49 examples/libraw/oyranos_file.cpp:45
 msgid "Usage"
 msgstr ""
 
@@ -3328,16 +3330,18 @@ msgstr ""
 msgid "Show Help:"
 msgstr ""
 
-#: tools/oyranos-device.c:100 tools/oyranos_convert.c:102
-#: tools/oyranos_gamma.c:235 tools/oyranos_profile_graph.c:121
-#: tools/oyranos_profile_tool.c:112 tools/oyranos_profiles.c:95
-#: examples/taxi.c:66 examples/libraw/oyranos_file.cpp:66
+#: tools/oyranos-device.c:100 tools/oyranos-monitor-white-point.c:123
+#: tools/oyranos_convert.c:102 tools/oyranos_gamma.c:235
+#: tools/oyranos_profile_graph.c:121 tools/oyranos_profile_tool.c:112
+#: tools/oyranos_profiles.c:95 examples/taxi.c:66
+#: examples/libraw/oyranos_file.cpp:66
 msgid "General options:"
 msgstr ""
 
-#: tools/oyranos-device.c:101 tools/oyranos_convert.c:103
-#: tools/oyranos_profile_graph.c:122 tools/oyranos_profile_tool.c:116
-#: tools/oyranos_profiles.c:96 examples/libraw/oyranos_file.cpp:69
+#: tools/oyranos-device.c:101 tools/oyranos-monitor-white-point.c:124
+#: tools/oyranos_convert.c:103 tools/oyranos_profile_graph.c:122
+#: tools/oyranos_profile_tool.c:116 tools/oyranos_profiles.c:96
+#: examples/libraw/oyranos_file.cpp:69
 msgid "verbose"
 msgstr ""
 
@@ -3369,9 +3373,9 @@ msgstr ""
 msgid "select ICC v4 profiles"
 msgstr ""
 
-#: tools/oyranos-device.c:109 tools/oyranos_gamma.c:240
-#: tools/oyranos_profile_graph.c:131 tools/oyranos_profile_tool.c:131
-#: examples/libraw/oyranos_file.cpp:78
+#: tools/oyranos-device.c:109 tools/oyranos-monitor-white-point.c:126
+#: tools/oyranos_gamma.c:240 tools/oyranos_profile_graph.c:131
+#: tools/oyranos_profile_tool.c:131 examples/libraw/oyranos_file.cpp:78
 #, c-format
 msgid "For more informations read the man page:"
 msgstr ""
@@ -3383,7 +3387,7 @@ msgstr ""
 
 #: tools/oyranos-device.c:372 tools/oyranos-device.c:388
 #: tools/oyranos-device.c:403 tools/oyranos-device.c:814
-#: tools/oyranos-device.c:1011 tools/oyranos_gamma.c:361
+#: tools/oyranos-device.c:1011 tools/oyranos_gamma.c:365
 msgid "Available devices"
 msgstr ""
 
@@ -3407,16 +3411,189 @@ msgstr ""
 msgid "found profiles for device class"
 msgstr ""
 
-#: tools/oyranos-device.c:931 tools/oyranos_gamma.c:454
+#: tools/oyranos-device.c:931 tools/oyranos_gamma.c:458
 msgid "Taxi ID"
 msgstr ""
 
-#: tools/oyranos-device.c:932 tools/oyranos_gamma.c:455
+#: tools/oyranos-device.c:932 tools/oyranos_gamma.c:459
 msgid "match value"
 msgstr ""
 
-#: tools/oyranos-device.c:932 tools/oyranos_gamma.c:455
+#: tools/oyranos-device.c:932 tools/oyranos_gamma.c:459
 msgid "description"
+msgstr ""
+
+#: tools/oyranos-monitor-white-point.c:68
+msgid "is a monitor white point handler"
+msgstr ""
+
+#: tools/oyranos-monitor-white-point.c:70
+msgid "Autostart daemon:"
+msgstr ""
+
+#: tools/oyranos-monitor-white-point.c:73
+msgid "Run sunset daemon:"
+msgstr ""
+
+#: tools/oyranos-monitor-white-point.c:74
+msgid "MODE"
+msgstr ""
+
+#: tools/oyranos-monitor-white-point.c:75
+msgid "Stop"
+msgstr ""
+
+#: tools/oyranos-monitor-white-point.c:76
+msgid "Autostart"
+msgstr ""
+
+#: tools/oyranos-monitor-white-point.c:77
+msgid "Activate"
+msgstr ""
+
+#: tools/oyranos-monitor-white-point.c:79
+msgid "Show modes:"
+msgstr ""
+
+#: tools/oyranos-monitor-white-point.c:82
+msgid "Set actual mode:"
+msgstr ""
+
+#: tools/oyranos-monitor-white-point.c:84
+msgid "no white point adjustments (old behaviour)"
+msgstr ""
+
+#: tools/oyranos-monitor-white-point.c:85
+#: tools/oyranos-monitor-white-point.c:96
+msgid "automatic"
+msgstr ""
+
+#: tools/oyranos-monitor-white-point.c:86
+#: tools/oyranos-monitor-white-point.c:97
+msgid "D50"
+msgstr ""
+
+#: tools/oyranos-monitor-white-point.c:87
+#: tools/oyranos-monitor-white-point.c:98
+msgid "D55"
+msgstr ""
+
+#: tools/oyranos-monitor-white-point.c:88
+msgid "D65"
+msgstr ""
+
+#: tools/oyranos-monitor-white-point.c:89
+msgid "D75"
+msgstr ""
+
+#: tools/oyranos-monitor-white-point.c:90
+msgid "D93"
+msgstr ""
+
+#: tools/oyranos-monitor-white-point.c:91
+msgid ""
+"first monitors actual media white point as target for all other monitors"
+msgstr ""
+
+#: tools/oyranos-monitor-white-point.c:92
+msgid ""
+"second monitors actual media white point as target for all other monitors"
+msgstr ""
+
+#: tools/oyranos-monitor-white-point.c:94
+msgid "Set preferred nightly white point:"
+msgstr ""
+
+#: tools/oyranos-monitor-white-point.c:100
+msgid "Set preferred sun white point:"
+msgstr ""
+
+#: tools/oyranos-monitor-white-point.c:102
+msgid "see the -w option"
+msgstr ""
+
+#: tools/oyranos-monitor-white-point.c:104
+msgid "Get Location:"
+msgstr ""
+
+#: tools/oyranos-monitor-white-point.c:107
+msgid "Set Longitude:"
+msgstr ""
+
+#: tools/oyranos-monitor-white-point.c:108
+#: tools/oyranos-monitor-white-point.c:111
+#: tools/oyranos-monitor-white-point.c:117
+msgid "ANGLE_IN_DEGREE"
+msgstr ""
+
+#: tools/oyranos-monitor-white-point.c:110
+msgid "Set Latitude:"
+msgstr ""
+
+#: tools/oyranos-monitor-white-point.c:113
+msgid "Show sun rise:"
+msgstr ""
+
+#: tools/oyranos-monitor-white-point.c:116
+msgid "Set twilight angle:"
+msgstr ""
+
+#: tools/oyranos-monitor-white-point.c:118
+msgid "rise/set"
+msgstr ""
+
+#: tools/oyranos-monitor-white-point.c:119
+msgid "civil"
+msgstr ""
+
+#: tools/oyranos-monitor-white-point.c:120
+msgid "nautical"
+msgstr ""
+
+#: tools/oyranos-monitor-white-point.c:121
+msgid "astronomical"
+msgstr ""
+
+#: tools/oyranos-monitor-white-point.c:251
+msgid "Choices:"
+msgstr ""
+
+#: tools/oyranos-monitor-white-point.c:341
+#: tools/oyranos-monitor-white-point.c:344
+#: tools/oyranos-monitor-white-point.c:680
+msgid "New white point mode"
+msgstr ""
+
+#: tools/oyranos-monitor-white-point.c:403
+msgid "Time Zone"
+msgstr ""
+
+#: tools/oyranos-monitor-white-point.c:404
+msgid "Country"
+msgstr ""
+
+#: tools/oyranos-monitor-white-point.c:405
+msgid "City"
+msgstr ""
+
+#: tools/oyranos-monitor-white-point.c:560
+msgid "Geographical Position"
+msgstr ""
+
+#: tools/oyranos-monitor-white-point.c:560
+msgid "Twilight"
+msgstr ""
+
+#: tools/oyranos-monitor-white-point.c:560
+msgid "Sunrise"
+msgstr ""
+
+#: tools/oyranos-monitor-white-point.c:563
+msgid "Sunset"
+msgstr ""
+
+#: tools/oyranos-monitor-white-point.c:652
+msgid "Actual white point mode"
 msgstr ""
 
 #: tools/oyranos_convert.c:51
@@ -3651,19 +3828,19 @@ msgstr ""
 msgid "DISPLAY variable not set: giving up."
 msgstr ""
 
-#: tools/oyranos_gamma.c:360
+#: tools/oyranos_gamma.c:364
 msgid "Could not resolve device"
 msgstr ""
 
-#: tools/oyranos_gamma.c:394
+#: tools/oyranos_gamma.c:398
 msgid "Please specify a monitor with the -d option."
 msgstr ""
 
-#: tools/oyranos_gamma.c:407
+#: tools/oyranos_gamma.c:411
 msgid "Zero profiles found in Taxi ICC DB"
 msgstr ""
 
-#: tools/oyranos_gamma.c:451
+#: tools/oyranos_gamma.c:455
 msgid "Taxi DB entries for device"
 msgstr ""
 

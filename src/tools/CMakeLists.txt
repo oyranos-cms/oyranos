@@ -20,6 +20,13 @@ TARGET_LINK_LIBRARIES ( oyranos-monitor ${TARGET_LIB} ${EXTRA_LIBS}
                ${XFIXES_LIBRARIES} ${X11_LIBRARIES} )
 INSTALL (TARGETS oyranos-monitor DESTINATION ${CMAKE_INSTALL_BINDIR})
 
+# Oyranos monitor white point handling
+IF( HAVE_DBUS)
+  ADD_EXECUTABLE( oyranos-monitor-white-point "${CMAKE_CURRENT_SOURCE_DIR}/oyranos-monitor-white-point.c" )
+  TARGET_LINK_LIBRARIES( oyranos-monitor-white-point ${TARGET_LIB} ${EXTRA_LIBS} ${DBUS_LIBRARIES} ${THREAD_LIBRARY} )
+  INSTALL (TARGETS oyranos-monitor-white-point DESTINATION ${CMAKE_INSTALL_BINDIR})
+ENDIF( HAVE_DBUS )
+
 # Device listing
 ADD_EXECUTABLE( oyranos-device "${CMAKE_CURRENT_SOURCE_DIR}/oyranos-device.c" )
 TARGET_LINK_LIBRARIES( oyranos-device ${TARGET_LIB} ${EXTRA_LIBS} )

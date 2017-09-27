@@ -3,9 +3,9 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2005-2015 (C) Kai-Uwe Behrmann
+ *            2005-2017 (C) Kai-Uwe Behrmann
  *
- *  @brief    gamma loader
+ *  @brief    monitor configurator, gamma loader, daemon
  *  @internal
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
@@ -16,7 +16,7 @@
  * profile(s)
  * as new default profile for a screen, including a possible curves upload to
  * the video card.
- * Currently You need xcalib installed to do the curves upload.
+ * One needs xcalib installed to do the curves upload.
  * 
  */
 
@@ -292,6 +292,10 @@ int main( int argc , char** argv )
     icc_profile_flags = oyICCProfileSelectionFlagsFromOptions( 
                                                               OY_CMM_STD, "//" OY_TYPE_STD "/icc_color",
                                                               NULL, 0 );  
+
+  /* start independent white point daemon */
+  if(daemon)
+    system("oyranos-monitor-white-point --daemon&");
 
 #ifdef XCM_HAVE_X11
   if(daemon)

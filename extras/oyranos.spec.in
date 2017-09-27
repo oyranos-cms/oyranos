@@ -518,8 +518,10 @@ desktop-file-install --dir=%{buildroot}/%{desktopdir} %{name}-image-display.desk
 %doc AUTHORS.md COPYING.md ChangeLog.md README.md
 %{_bindir}/%{name}-monitor
 %{_bindir}/%{name}-monitor-daemon
+%{_bindir}/%{name}-monitor-white-point
 %{_mandir}/man1/%{name}-monitor.1*
 %{_mandir}/man1/%{name}-monitor-daemon.1*
+%{_mandir}/man1/%{name}-monitor-white-point.1*
 /etc/xdg/autostart/%{name}-monitor-setup.desktop
 
 %files -n lib%{name}0-monitor
