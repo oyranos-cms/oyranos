@@ -557,11 +557,6 @@ int getSunriseSunset( double * rise, double * set )
   return r;
 }
 
-void               oySleep           ( double              seconds )
-{
-  usleep((useconds_t)(seconds*(double)1000000));
-}
-
 
 /* check the sunrise / sunset state */
 int checkWtptState()
@@ -633,11 +628,8 @@ int checkWtptState()
 
     if(new_mode != cmode)
     {
-      char * command = NULL;
       fprintf (stderr, "%s: %s\n", _("New white point mode"), new_mode<choices?choices_string_list[new_mode]:"----");
-      oyStringAddPrintf(&command, 0,0, "oyranos-monitor-white-point -w %d", new_mode);
-      /* A call to Elektra invokes DBus and causes a dead lock. setWtptMode( scope, new_mode ); */
-      error = system(command);
+      error = setWtptMode( scope, new_mode );
     }
   }
 
@@ -650,14 +642,14 @@ int checkWtptState()
 #include "oyranos_dbus_macros.h"
 oyWatchDBus_m
 oyFinishDBus_m
-int config_state_changed = 0;
-oyCallbackDBusCli_m(config_state_changed)
+int oy_dbus_config_changed = 0;
+oyCallbackDBusCli_m(oy_dbus_config_changed)
 #endif /* HAVE_DBUS */
 
 
 int runDaemon(int dmode)
 {
-  int error = 0;
+  int error = 0, id;
   double hour_old = 0.0;
 
   if(dmode == 0) /* stop service */
@@ -686,13 +678,15 @@ int runDaemon(int dmode)
 
 #ifdef HAVE_DBUS
   oyStartDBusObserver( oyWatchDBus, oyFinishDBus, oyCallbackDBus, OY_DEVICE_STD )
+  if(id)
+    fprintf(stderr, "oyStartDBusObserver ID: %d\n", id);
 
   while(1)
   {
     double hour = oyGetCurrentGMTHour( 0 );
     double repeat_check = 1.0/60.0;
 
-    oyLoopDBusObserver( hour, repeat_check, config_state_changed, checkWtptState() );
+    oyLoopDBusObserver( hour, repeat_check, oy_dbus_config_changed, checkWtptState() )
 
     /* delay next polling */
     oySleep( 0.25 );
