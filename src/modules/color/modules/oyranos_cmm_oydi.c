@@ -985,7 +985,7 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
       }
       if(display_white_point) /* not "none" */
       {
-        double             src_cie_a = -1, src_cie_b = -1, dst_cie_a = -1, dst_cie_b = -1;
+        double             src_cie_a = 0.5, src_cie_b = 0.5, dst_cie_a = 0.5, dst_cie_b = 0.5;
         oyProfile_s      * image_input_profile = oyImage_GetProfile( image_input ),
                          * wtpt = NULL;
 
@@ -993,6 +993,10 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
                                              &src_cie_a, &src_cie_b );
         if(!error)
           error = oyGetDisplayWhitePoint( display_white_point, &dst_cie_a, &dst_cie_b );
+
+        if(error || oy_debug)
+          oydi_msg( oyMSG_WARN, (oyStruct_s*)ticket, 
+                    OY_DBG_FORMAT_"display_white_point: %d %s", OY_DBG_ARGS_, display_white_point, oyProfile_GetText( image_input_profile, oyNAME_DESCRIPTION ));
 
         if(!error)
         {
@@ -1011,7 +1015,8 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
           oyOptions_Release( &opts );
         }
 
-        oyOptions_MoveInStruct( &f_options,
+        if(!error)
+          oyOptions_MoveInStruct( &f_options,
                           OY_STD "/icc_color/display.icc_profile.abstract.white_point.automatic.oydi",
                           (oyStruct_s**) &wtpt, OY_CREATE_NEW );
 

@@ -958,7 +958,7 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
               }
               if(display_white_point) /* not "none" */
               {
-                double src_cie_a = -1, src_cie_b = -1, dst_cie_a = -1, dst_cie_b = -1;
+                double src_cie_a = 0.5, src_cie_b = 0.5, dst_cie_a = 0.5, dst_cie_b = 0.5;
                 oyImage_s * image = (oyImage_s*)oyFilterNode_GetData( node, 0 );
                 oyProfile_s* image_profile = oyImage_GetProfile( image ),
                            * wtpt = NULL;
@@ -968,7 +968,7 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
                 if(!error)
                   error = oyGetDisplayWhitePoint( display_white_point, &dst_cie_a, &dst_cie_b );
 
-                if(oy_debug)
+                if(error || oy_debug)
                   oicc_msg( oyMSG_WARN, (oyStruct_s*)conversion, 
                     OY_DBG_FORMAT_"display_white_point: %d %s", OY_DBG_ARGS_, display_white_point, oyProfile_GetText( image_profile, oyNAME_DESCRIPTION ));
 
@@ -989,7 +989,8 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
                   oyOptions_Release( &opts );
                 }
 
-                oyOptions_MoveInStruct( &f_options,
+                if(!error)
+                  oyOptions_MoveInStruct( &f_options,
                           OY_STD "/icc_color/display.icc_profile.abstract.white_point.automatic.oicc",
                           (oyStruct_s**) &wtpt, OY_CREATE_NEW );
 
