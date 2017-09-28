@@ -755,7 +755,7 @@ void updateUI() {
     oyOptions_Release( &opts );
 
     if(error)
-      printf("send_native_update_event failed");
+      printf("send_native_update_event failed\n");
 
     Fl::add_idle(updateUIIdle);
 }
@@ -1507,6 +1507,27 @@ static void cb_3reload(Fl_Button*, void*) {
 
 Fl_Box *policy_box=(Fl_Box *)0;
 
+#ifdef HAVE_DBUS
+#include "oyranos_dbus_macros.h"
+#include "oyranos_threads.h"
+    oyWatchDBus_m
+    oyFinishDBus_m
+    int config_state_changed = 0;
+    oyCallbackDBusCli_m(config_state_changed)
+
+void DBusTimeOut(void *)
+{
+  /* Here in the main/managing thread we wait for a changed state. */
+  oyJobResult();
+
+  if(config_state_changed)
+    refreshOptions();
+
+  config_state_changed = 0;
+  Fl::repeat_timeout(0.25, DBusTimeOut);
+}
+#endif
+
 int main(int argc, char **argv) {
   Fl::scheme("plastic");
   
@@ -1593,8 +1614,18 @@ int main(int argc, char **argv) {
     top_group->end();
   } // Oy_Fl_Double_Window* top_group
   createUI();
-    updateUI();
+  updateUI();
   top_group->show(argc, argv);
+
+  #ifdef HAVE_DBUS
+  int id = 0;
+  oyStartDBusObserver( oyWatchDBus, oyFinishDBus, oyCallbackDBus, OY_STD )
+
+  if(id)
+    printf("oyStartDBusObserver ID: %d\n", id);
+  Fl::add_timeout( 0.25, DBusTimeOut, NULL );
+  #endif
+
   return Fl::run();
 }
 
