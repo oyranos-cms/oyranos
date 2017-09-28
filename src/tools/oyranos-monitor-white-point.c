@@ -640,7 +640,8 @@ int checkWtptState()
 
 #ifdef HAVE_DBUS
 #include "oyranos_dbus_macros.h"
-oyWatchDBus_m
+oyDBusFilter_m
+oyWatchDBus_m( oyDBusFilter )
 oyFinishDBus_m
 int oy_dbus_config_changed = 0;
 oyCallbackDBusCli_m(oy_dbus_config_changed)
@@ -649,14 +650,14 @@ oyCallbackDBusCli_m(oy_dbus_config_changed)
 
 int runDaemon(int dmode)
 {
-  int error = 0, id;
+  int error = 0, id, active = 1;
   double hour_old = 0.0;
 
   if(dmode == 0) /* stop service */
   {
     /* erase the key */
     oySetPersistentString( OY_DEFAULT_DISPLAY_WHITE_POINT_DAEMON, scope, NULL, NULL );
-    return 0; 
+    active = 0; 
   }
   else
   if(dmode == 1) /* check if service is desired */
@@ -665,7 +666,7 @@ int runDaemon(int dmode)
       oyGetPersistentString(OY_DEFAULT_DISPLAY_WHITE_POINT_DAEMON, 0,
 		            oySCOPE_USER_SYS, oyAllocateFunc_);
     if(!value || strcmp(value,"oyranos-monitor-white-point") != 0)
-      return -1;
+      active = 0;
 
     oyFree_m_(value);
   }
@@ -674,7 +675,8 @@ int runDaemon(int dmode)
 
   /* ensure all keys are setup properly
    * before we lock the DBus connection by listening */
-  checkWtptState();
+  if(active)
+    checkWtptState();
 
 #ifdef HAVE_DBUS
   oyStartDBusObserver( oyWatchDBus, oyFinishDBus, oyCallbackDBus, OY_DEVICE_STD )
