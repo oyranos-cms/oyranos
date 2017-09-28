@@ -1352,7 +1352,7 @@ int            oyOptions_CountType   ( oyOptions_s       * options,
 
       if(found && type &&
          (o->value_type != oyVAL_STRUCT || !o->value ||
-          o->value->oy_struct->type_ != type))
+          !o->value->oy_struct || o->value->oy_struct->type_ != type))
         found = 0;
 
       if(found)
