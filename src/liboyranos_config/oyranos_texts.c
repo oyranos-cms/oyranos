@@ -735,7 +735,23 @@ oyWIDGET_TYPE_e oyWidgetTitleGet_      (oyWIDGET_e        type,
     if( tooltip )
     *tooltip              = t->tooltip;
     if( flags )
+    {
     *flags                = t->flags;
+      if(type == oyWIDGET_DISPLAY_WHITE_POINT)
+      {
+        int active = 1;
+        char * value =
+              oyGetPersistentString(OY_DEFAULT_DISPLAY_WHITE_POINT_DAEMON, 0,
+                                oySCOPE_USER_SYS, oyAllocateFunc_);
+        if(!value || !value[0] || strcmp(value,"oyranos-monitor-white-point") != 0)
+          active = 0;
+        if(value)
+        { oyFree_m_(value);
+        }
+        if(active)
+          *flags |= OY_LAYOUT_INACTIVE;
+      }
+    }
   }
 
   DBG_PROG_ENDE
@@ -1379,7 +1395,7 @@ int          oyOptionChoicesGet_     ( oyWIDGET_e          type,
 
     oyStringListAddStaticString( &texts, &count, t->choice_list[0],
                                     oyAllocateFunc_, oyDeAllocateFunc_);
-    if(value)
+    if(value && value[0])
       oyStringListAddStaticString( &texts, &count, value,
                                     oyAllocateFunc_, oyDeAllocateFunc_);
     else
@@ -1392,7 +1408,7 @@ int          oyOptionChoicesGet_     ( oyWIDGET_e          type,
       *choices_string_list  = (const char **)texts; 
     if( current )
     {
-      if(value == NULL)
+      if(value == NULL || !value[0])
       *current              = 0;
       else
       *current              = 1;
