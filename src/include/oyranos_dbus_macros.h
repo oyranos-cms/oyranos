@@ -33,21 +33,55 @@ extern "C" {
 /* Defined are DBus callback and functions,
  * oyJob_s callbacks:
    #include <oyranos_threads.h>
-    oyWatchDBus_m
+    oyWatchDBus_m( oyDBusFilter )
     oyFinishDBus_m
     int config_state_changed = 0;
-    oyCallbackDBusCli_m(config_state_changed)
+    oyCallbackDBusCli_m( config_state_changed )
  * and
  * some Boiler Plate to place before and to be called inside the used loop:
  *  oyStartDBusObserver, oyLoopDBusObserver */
 	
 /* --- DBus callbacks --- */
 
+#define oyDBusFilter_m \
+DBusHandlerResult  oyDBusFilter      ( DBusConnection    * connection, \
+                                       DBusMessage       * message, \
+                                       void              * user_data ) \
+{ \
+  DBusMessageIter iter; \
+  int arg_type; \
+  char * value = NULL; \
+  oyJob_s * job = (oyJob_s*)user_data; \
+  const char * tmp = NULL; \
+  char * hit = NULL; \
+ \
+  dbus_message_iter_init( message, &iter ); \
+  arg_type = dbus_message_iter_get_arg_type( &iter ); \
+  if(arg_type == DBUS_TYPE_STRING) \
+    dbus_message_iter_get_basic( &iter, &value ); \
+  if(job && job->context) \
+    tmp = oyOption_GetRegistration( (oyOption_s*)job->context ); \
+  if(tmp && value) \
+    hit = strstr( value, tmp ); \
+  if(hit) \
+  { \
+    value = oyStringCopy( value, 0 ); \
+    /* send a message */ \
+    oyMsg_Add( job, 0.5, &value ); \
+  } \
+  \
+  if(dbus_message_is_signal( message, DBUS_INTERFACE_LOCAL, "Disconnected" )) \
+  { WARNc_S("obtained unexpected DBus Signal"); \
+    return DBUS_HANDLER_RESULT_NOT_YET_HANDLED; } \
+  \
+  return DBUS_HANDLER_RESULT_HANDLED; \
+}
+
 /* borrowed from libelektra project receivemessage.c
  * BSD License */
 #define oyDbusReceiveMessage_m \
 oySleep_m \
-int oyDbusReceiveMessage (DBusBusType type, void * user_data) \
+int oyDbusReceiveMessage (DBusBusType type, DBusHandleMessageFunction filter_func, void * user_data) \
 { \
   DBusConnection * connection; \
   DBusError error; \
@@ -65,39 +99,16 @@ int oyDbusReceiveMessage (DBusBusType type, void * user_data) \
   dbus_bus_add_match (connection, "type='signal',interface='org.libelektra',path='/org/libelektra/configuration'", &error); \
   if (dbus_error_is_set (&error)) goto error; \
  \
+  if (!dbus_connection_add_filter (connection, filter_func, user_data, NULL)) \
+  { \
+    goto error; \
+  } \
+ \
   while(1) \
   { \
+    int r;\
     dbus_connection_read_write(connection, 0); \
-    DBusMessage * message = dbus_connection_pop_message(connection); \
-    if(message) \
-    { \
-      DBusMessageIter iter; \
-      int arg_type; \
-      char * value = NULL; \
-      oyJob_s * job = (oyJob_s*)user_data; \
-      const char * tmp = NULL; \
-      char * hit = NULL; \
- \
-      dbus_message_iter_init( message, &iter ); \
-      arg_type = dbus_message_iter_get_arg_type( &iter ); \
-      if(arg_type == DBUS_TYPE_STRING) \
-        dbus_message_iter_get_basic( &iter, &value ); \
-      if(job && job->context) \
-        tmp = oyOption_GetRegistration( (oyOption_s*)job->context ); \
-      if(tmp && value) \
-        hit = strstr( value, tmp ); \
-      if(hit) \
-      { \
-        value = oyStringCopy( value, 0 ); \
-        /* send a message */ \
-        oyMsg_Add( job, 0.5, &value ); \
-      } \
- \
-      if(dbus_message_is_signal( message, DBUS_INTERFACE_LOCAL, "Disconnected" )) \
-        WARNc_S("obtained unexpected DBus Signal"); \
- \
-      dbus_message_unref(message); \
-    } else \
+    if((r = dbus_connection_dispatch(connection)) != DBUS_DISPATCH_DATA_REMAINS) \
       oySleep(0.25); \
   } \
  \
@@ -119,7 +130,7 @@ static void        oySleep           ( double              seconds ) \
 
 /* covers oyDbusReceiveMessage_m
  */
-#define oyWatchDBus_m \
+#define oyWatchDBus_m( filter_function ) \
 oyDbusReceiveMessage_m \
 static int oyWatchDBus( oyJob_s * job ) \
 { \
@@ -134,7 +145,7 @@ static int oyWatchDBus( oyJob_s * job ) \
     } \
     /* send a first message from inside the worker thread */ \
     oyMsg_Add(job, .1, &t); \
-    oyDbusReceiveMessage(DBUS_BUS_SESSION, job); \
+    oyDbusReceiveMessage(DBUS_BUS_SESSION, filter_function, job); \
   } \
   return 0; \
 }

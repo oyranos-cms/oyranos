@@ -1516,7 +1516,8 @@ Fl_Box *policy_box=(Fl_Box *)0;
 #ifdef HAVE_DBUS
 #include "oyranos_dbus_macros.h"
 #include "oyranos_threads.h"
-    oyWatchDBus_m
+    oyDBusFilter_m
+    oyWatchDBus_m( oyDBusFilter )
     oyFinishDBus_m
     int config_state_changed = 0;
     oyCallbackDBusCli_m(config_state_changed)
