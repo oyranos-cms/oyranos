@@ -1381,7 +1381,6 @@ oyX1Monitor_s* oyX1Monitor_newFrom_      ( const char        * display_name,
     if(!text) return 0;
 
     disp->display = XOpenDisplay( text );
-    free( text );
 
     if( !disp->display )
     {
@@ -1389,8 +1388,10 @@ oyX1Monitor_s* oyX1Monitor_newFrom_      ( const char        * display_name,
                             noE(display_name),
                             noE(disp->name),
                             noE(text));
+      free( text );
       return 0;
     }
+    free( text );
 
     disp->screen = 0;
   }

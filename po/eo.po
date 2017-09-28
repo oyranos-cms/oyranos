@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eo\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2017-09-28 10:07+0200\n"
+"POT-Creation-Date: 2017-09-28 23:27+0200\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  <eo@li.org>\n"
@@ -704,8 +704,8 @@ msgstr "kanalo"
 #: modules/color/modules/oyranos_cmm_trds.c:640
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:189
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:370
-#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:550
-#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:808
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:561
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:819
 #: examples/oyranos_cmm_dFil.c:612
 msgid "Check if this module can handle a certain command."
 msgstr ""
@@ -1665,8 +1665,8 @@ msgstr ""
 
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:203
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:384
-#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:564
-#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:832
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:575
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:843
 #: examples/image_display/image_display.cpp:1112
 msgid "Help"
 msgstr ""
@@ -2686,7 +2686,7 @@ msgstr "fotografico"
 msgid "Photographic paper printer"
 msgstr ""
 
-#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:558
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:569
 msgid "Ping the XCM_COLOUR_DESKTOP_ADVANCED X11 atom."
 msgstr ""
 
@@ -3133,11 +3133,11 @@ msgstr ""
 msgid "Set Longitude:"
 msgstr ""
 
-#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:814
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:825
 msgid "Set a X Color Management region."
 msgstr ""
 
-#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:556
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:567
 msgid "Set a X Color Management update toggle."
 msgstr ""
 
@@ -3661,13 +3661,13 @@ msgid ""
 "revert setup and with 1 setup profiles. The implementation uses Xlib."
 msgstr ""
 
-#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:566
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:577
 msgid ""
 "The oyX1 modules \"send_native_update_event\" handler lets you ping X Color "
 "Management advanced X11 atom. The implementation uses Xlib."
 msgstr ""
 
-#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:834
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:845
 msgid ""
 "The oyX1 modules \"set_xcm_region\" handler lets you set X Color Management "
 "compatible client side color regions. The implementation uses libXcm and "
@@ -3749,7 +3749,7 @@ msgid ""
 "define colors for further processing."
 msgstr ""
 
-#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:816
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:827
 msgid ""
 "The set_xcm_region takes minimal three options. The key name "
 "\"window_rectangle\" specifies in a oyRectangle_s object the requested "
@@ -4019,8 +4019,8 @@ msgstr ""
 #: modules/color/modules/oyranos_cmm_trds.c:638
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:187
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:368
-#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:548
-#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:806
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:559
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:817
 #: examples/oyranos_cmm_dFil.c:610
 msgid "check"
 msgstr ""
@@ -4205,8 +4205,8 @@ msgstr ""
 
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:201
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:382
-#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:562
-#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:830
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:573
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:841
 #: examples/oyranos_cmm_dDev.c:840 examples/oyranos_cmm_dFil.c:168
 #: examples/oyranos_cmm_dFil.c:624
 msgid "help"

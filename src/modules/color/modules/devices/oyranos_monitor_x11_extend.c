@@ -499,8 +499,19 @@ int          oyX1UpdateOptions_Handle( oyOptions_s       * options,
     // ping X11 observers about option change
     // ... by setting a known property again to its old value
     Display * display = XOpenDisplay(NULL);
-    Atom atom = XInternAtom(display, XCM_COLOUR_DESKTOP_ADVANCED, False); // "_ICC_COLOR_DISPLAY_ADVANCED"
-    Window root = RootWindow( display, 0 );
+    Atom atom;
+    Window root;
+
+    if(!display)
+    {
+       _msg( oyMSG_ERROR, (oyStruct_s*)options,
+          OY_DBG_FORMAT_ "can not open Display for %s\n", OY_DBG_ARGS_,
+          command );
+      return 1;
+    }
+
+    atom = XInternAtom(display, XCM_COLOUR_DESKTOP_ADVANCED, False); // "_ICC_COLOR_DISPLAY_ADVANCED"
+    root = RootWindow( display, 0 );
   
     XFlush( display );
   
