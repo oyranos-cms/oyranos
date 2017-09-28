@@ -211,6 +211,19 @@ oyTESTRESULT_e testDB()
   fprintf(stdout, "\n" );
 
   error = oySetPersistentString( TEST_DOMAIN TEST_KEY, oySCOPE_USER,
+                                 NULL, NULL );
+  start = oyGetPersistentString( TEST_DOMAIN TEST_KEY, 0, oySCOPE_USER_SYS, 0);
+  if(start && start[0])
+  {
+    PRINT_SUB( oyTESTRESULT_FAIL, 
+    "oyGetPersistentString(%s) no", TEST_DOMAIN TEST_KEY );
+  } else
+  {
+    PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyGetPersistentString(%s) no", TEST_DOMAIN TEST_KEY );
+  }
+
+  error = oySetPersistentString( TEST_DOMAIN TEST_KEY, oySCOPE_USER,
                                  "NULLTestValue", "NULLTestComment" );
   if(error)
   {
