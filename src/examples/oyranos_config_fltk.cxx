@@ -430,7 +430,6 @@ Option::Option( int x, int y, int w, int h, const char *name,
     }
     } /* switch */
   
-    
     end();
     resizable( box );
 }
@@ -725,6 +724,13 @@ static void refreshOptions() {
                   }
                 }
               }
+              if(wid)
+              {
+                if(flags & OY_LAYOUT_INACTIVE)
+                  wid->deactivate();
+                else
+                  wid->activate();
+	      }
             }
           }
         }
