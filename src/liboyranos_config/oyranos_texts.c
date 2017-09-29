@@ -1356,6 +1356,43 @@ char **      oyOptionChoicesGetWtPt_ ( int               * choices )
   return list;
 }
 
+void         oyOptionChoicesGetWtPtD_( int               * choices,
+                                       char            *** choices_string_list,
+                                       int               * current )
+{
+  const oyOption_t_ *t = oyOptionGet_(oyWIDGET_DISPLAY_WHITE_POINT_DAEMON);
+  int choice_list_n = t->choices;
+  int count = 0;
+  char ** texts = NULL;
+  char * value = 
+      oyGetPersistentString( OY_DEFAULT_DISPLAY_WHITE_POINT_DAEMON, 0,
+		             oySCOPE_USER_SYS, oyAllocateFunc_);
+
+  oyStringListAddStaticString( &texts, &count, t->choice_list[0],
+                               oyAllocateFunc_, oyDeAllocateFunc_);
+  if(value && value[0])
+    oyStringListAddStaticString( &texts, &count, value,
+                                 oyAllocateFunc_, oyDeAllocateFunc_);
+  else
+    oyStringListAddStaticString( &texts, &count, t->choice_list[1],
+                                 oyAllocateFunc_, oyDeAllocateFunc_);
+
+  if( choices )
+    *choices              = choice_list_n;
+  if( choices_string_list )
+    *choices_string_list  = texts; 
+  if( current )
+  {
+    if(value == NULL || !value[0])
+    *current              = 0;
+    else
+    *current              = 1;
+  }
+ 
+  if(value)
+    oyFree_m_(value)
+}
+
 int          oyOptionChoicesGet_     ( oyWIDGET_e          type,
                                        uint32_t            flags,
                                        int                 name_type,
@@ -1376,6 +1413,9 @@ int          oyOptionChoicesGet_     ( oyWIDGET_e          type,
     /* create dynamic choices */
     if(type == oyWIDGET_DISPLAY_WHITE_POINT)
       choice_list = (const char**)oyOptionChoicesGetWtPt_( &choice_list_n );
+    else if(type == oyWIDGET_DISPLAY_WHITE_POINT_DAEMON)
+      oyOptionChoicesGetWtPtD_( &choice_list_n, (char ***)&choice_list,
+                                current );
 
     if( choices )
       *choices              = choice_list_n;
@@ -1383,39 +1423,6 @@ int          oyOptionChoicesGet_     ( oyWIDGET_e          type,
       *choices_string_list  = (const char**) choice_list;
     if( current )
       *current              = oyGetBehaviour_( (oyBEHAVIOUR_e) type );
-  }
-  if( oyWIDGET_DISPLAY_WHITE_POINT_DAEMON == type )
-  {
-    int choice_list_n = t->choices;
-    int count = 0;
-    char ** texts = NULL;
-    char * value = 
-      oyGetPersistentString( OY_DEFAULT_DISPLAY_WHITE_POINT_DAEMON, 0,
-		             oySCOPE_USER_SYS, oyAllocateFunc_);
-
-    oyStringListAddStaticString( &texts, &count, t->choice_list[0],
-                                    oyAllocateFunc_, oyDeAllocateFunc_);
-    if(value && value[0])
-      oyStringListAddStaticString( &texts, &count, value,
-                                    oyAllocateFunc_, oyDeAllocateFunc_);
-    else
-      oyStringListAddStaticString( &texts, &count, t->choice_list[1],
-                                    oyAllocateFunc_, oyDeAllocateFunc_);
-
-    if( choices )
-      *choices              = choice_list_n;
-    if( choices_string_list )
-      *choices_string_list  = (const char **)texts; 
-    if( current )
-    {
-      if(value == NULL || !value[0])
-      *current              = 0;
-      else
-      *current              = 1;
-    }
- 
-    if(value)
-      oyFree_m_(value)
   }
   else
   if( oyWIDGET_DEFAULT_PROFILE_START < type &&
@@ -2490,7 +2497,7 @@ int      oySetBehaviour_             ( oyBEHAVIOUR_e       type,
 
     if(key_name)
     {
-      char val[12];
+      char val[64];
       char * com = NULL;
       if(type == oyBEHAVIOUR_DISPLAY_WHITE_POINT)
       {
@@ -2499,10 +2506,30 @@ int      oySetBehaviour_             ( oyBEHAVIOUR_e       type,
         if(choice < choice_list_n)
           com = oyStringCopy( choice_list[choice], 0 );
 	oyStringListRelease( &choice_list, choice_list_n, 0 );
+	
+      } else
+      if(type == oyBEHAVIOUR_DISPLAY_WHITE_POINT_DAEMON)
+      {
+        int choice_list_n = 0;
+        char ** choice_list = NULL;
+        if(choice == 0)
+        {
+          error = oySetPersistentString (key_name, scope, NULL, NULL);
+          DBG_PROG_ENDE
+          return error;
+        }
+        oyOptionChoicesGetWtPtD_( &choice_list_n, &choice_list,
+                                  NULL );
+        if(choice < choice_list_n)
+          com = oyStringCopy( choice_list[choice], 0 );
+        snprintf(val, 64, "%s", com);
+        oyStringListRelease( &choice_list, choice_list_n, 0 );
+
       } else
         com = oyStringCopy( oyOptionGet_((oyWIDGET_e)type)-> choice_list[ choice ], 0 );
 
-      snprintf(val, 12, "%d", choice);
+      if(type != oyBEHAVIOUR_DISPLAY_WHITE_POINT_DAEMON)
+        snprintf(val, 64, "%d", choice);
       error = oySetPersistentString (key_name, scope, val, com);
       DBG_PROG4_S( "%s %d %s %s", key_name, type, val, com?com:"" )
     }
@@ -2537,11 +2564,17 @@ int oyGetBehaviour_      (oyBEHAVIOUR_e type)
   else
     WARNc1_S( "type %d behaviour not possible", type);
 
-  if(name)
+  if(type == oyBEHAVIOUR_DISPLAY_WHITE_POINT_DAEMON)
+  {
+    if(name && name[0])
+      c = 1;
+  } else if(name)
   {
     c = atoi(name);
-    oyFree_m_( name );
   }
+
+  if(name)
+    oyFree_m_( name );
 
   if(c < 0)
     c = oyOptionGet_((oyWIDGET_e)type)-> default_value;
