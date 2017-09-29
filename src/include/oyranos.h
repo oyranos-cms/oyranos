@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2004-2015 (C) Kai-Uwe Behrmann
+ *            2004-2017 (C) Kai-Uwe Behrmann
  *
  *  @brief    public Oyranos API's
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
@@ -102,6 +102,7 @@ typedef enum  {
   oyBEHAVIOUR_EFFECT,                  /**< Using Effect by default */
   oyBEHAVIOUR_RENDERING_GAMUT_WARNING, /**< mark out of gamut colors */
   oyBEHAVIOUR_DISPLAY_WHITE_POINT,     /**< select a display white point */
+  oyBEHAVIOUR_DISPLAY_WHITE_POINT_DAEMON,/**< set and activate a display white point daemon; @see ::OY_DEFAULT_DISPLAY_WHITE_POINT_DAEMON */
   oyBEHAVIOUR_END                      /**< just for easen Gui design */
 } oyBEHAVIOUR_e;
 
@@ -301,6 +302,7 @@ typedef enum  {
   oyWIDGET_EFFECT,                    /**< Using Effect profile by default */
   oyWIDGET_RENDERING_GAMUT_WARNING,   /**< mark out of gamut colors */
   oyWIDGET_DISPLAY_WHITE_POINT,       /**< select a display white point mode ::OY_DEFAULT_DISPLAY_WHITE_POINT */
+  oyWIDGET_DISPLAY_WHITE_POINT_DAEMON,/**< select a display white point daemon ::OY_DEFAULT_DISPLAY_WHITE_POINT_DAEMON */
   oyWIDGET_BEHAVIOUR_END,             /**< just for easen Gui design */
 
   oyWIDGET_DEFAULT_PROFILE_START = 100,
@@ -324,7 +326,6 @@ typedef enum  {
   oyWIDGET_DEVICES_RELATED = 200,      /**< select only device related profiles [checkbox] */
   oyWIDGET_POLICY_ACTIVE,              /**< active policy [choice] */
   oyWIDGET_TAXI_PROFILE_INSTALL,       /**< Install selected profile [button] */
-  oyWIDGET_DISPLAY_WHITE_POINT_DAEMON, /**< select a display white point daemon ::OY_DEFAULT_DISPLAY_WHITE_POINT_DAEMON */
 
   oyWIDGET_CMM_START = 300,            /**< CMM options */
   oyWIDGET_CMM_CONTEXT,                /**< CMM core selection */
