@@ -1097,8 +1097,9 @@ oyCMMinfo_s *    oyCMMOpen_          ( const char        * lib_name )
       if(error)
       {
         error_text = dlerror();
-        WARNc2_S( "\n  error while dlopen'ing lib:\n    %s\n  dlerror(): %s",
-                  lib_name, error_text ? error_text : "no text" );
+        if(error_text)
+          WARNc2_S( "\n  error while dlopen'ing lib:\n    %s\n  dlerror(): %s",
+                    lib_name, error_text ? error_text : "no text" );
       }
     }
 
