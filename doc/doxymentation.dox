@@ -42,6 +42,9 @@
     # VideoCardGammaTable, if appropriate
     oyranos-monitor
     @endverbatim
+    - oyranos-monitor-white-point - a tool for setting display white point.
+      It covers a geo location and time sensitive daemon for white point 
+      adaption to red night light. The daemon is called from oyranos-monitor.
     - oyranos-policy - a tool to set a policy from a xml file. Use it like:
     @verbatim
     oyranos-policy `oyranos-config --syscolordir`/`oyranos-config --settingsdirname`/office.policy.xml
