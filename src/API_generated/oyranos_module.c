@@ -509,7 +509,7 @@ oyCMMapi_s *     oyCMMsGetApi__      ( oyOBJECT_e          type,
     oyCMMinfo_Release( &cmm_info );
   }
 
-  if(api->copy)
+  if(api && api->copy)
     api = (oyCMMapi_s*)api->copy((oyStruct_s*)api,NULL);
 
   return api;
@@ -629,7 +629,7 @@ oyCMMapi_s *     oyCMMsGetApi_       ( oyOBJECT_e          type,
     oyStringListRelease_( &files, files_n, oyDeAllocateFunc_ );
   }
 
-  if(api->copy)
+  if(api && api->copy)
     api = (oyCMMapi_s*)api->copy((oyStruct_s*)api,NULL); 
 
   return api;
