@@ -44,12 +44,21 @@
 /* separate from the external functions */
 
 
+/** @internal 
+ *  @brief   text to double conversion
+ *
+ *  @return                            error
+ *
+ *  @version Oyranos: 0.2.0
+ *  @date    2011/11/17
+ *  @since   2011/11/17 (Oyranos: 0.2.0)
+ */
 int          oyStringToDouble        ( const char        * text,
                                        double            * value )
 {
   char * p = 0, * t;
   int len;
-  int found = 1;
+  int error = 1;
 #ifdef USE_GETTEXT
   char * save_locale = oyStringCopy_( setlocale(LC_NUMERIC, 0 ), oyAllocateFunc_);
   setlocale(LC_NUMERIC, "C");
@@ -60,8 +69,8 @@ int          oyStringToDouble        ( const char        * text,
   else
   {
     *value = NAN;
-    found = 0;
-    return found;
+    error = 1;
+    return error;
   }
 
   /* avoid irritating valgrind output of "Invalid read of size 8"
@@ -87,11 +96,11 @@ int          oyStringToDouble        ( const char        * text,
 #endif
 
   if(p && p != text && p[0] == '\000')
-    found = 0;
+    error = 0;
 
   oyFree_m_( t );
 
-  return found;
+  return error;
 }
 
 
