@@ -1187,7 +1187,7 @@ oyCMMinfo_s *    oyCMMinfoFromLibNameDynamic(const char        * lib_name )
     cmm_info = oyCMMOpen_(lib_name);
   }
 
-  if(cmm_info->copy)
+  if(cmm_info && cmm_info->copy)
     cmm_info = (oyCMMinfo_s*)cmm_info->copy((oyStruct_s*)cmm_info, NULL);
 
   return cmm_info;
