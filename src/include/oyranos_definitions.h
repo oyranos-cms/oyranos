@@ -132,7 +132,12 @@
 /** Type path for standard settings 
  *  @since 0.9.7
  */
+#define OY_DISPLAY_STD           OY_STD OY_SLASH "display"
+/** Type path for standard settings 
+ *  @since 0.9.7
+ */
 #define OY_DEVICE_STD            OY_STD OY_SLASH "device"
+
 
 /** Oyranos default profiles key path in the data base */
 #define OY_REGISTRED_PROFILES    OY_STD OY_SLASH "device_profiles"
@@ -150,31 +155,58 @@
 
 /* --- default profiles --- */
 
-/** key name for the default Editing profile */
+/** key name for the default Editing profile
+ *
+ *  type string containing a profile file name or ID */
 #define OY_DEFAULT_EDITING_RGB_PROFILE       OY_PROFILE_STD OY_SLASH "editing_rgb"
-/** key name for the default Editing profile */
+/** key name for the default Editing profile
+ *
+ *  type string containing a profile file name or ID */
 #define OY_DEFAULT_EDITING_CMYK_PROFILE      OY_PROFILE_STD OY_SLASH "editing_cmyk"
-/** key name for the default Editing profile */
+/** key name for the default Editing profile
+ *
+ *  type string containing a profile file name or ID */
 #define OY_DEFAULT_EDITING_XYZ_PROFILE       OY_PROFILE_STD OY_SLASH "editing_xyz"
-/** key name for the default Editing profile */
+/** key name for the default Editing profile
+ *
+ *  type string containing a profile file name or ID */
 #define OY_DEFAULT_EDITING_LAB_PROFILE       OY_PROFILE_STD OY_SLASH "editing_lab"
-/** key name for the default Editing profile */
+/** key name for the default Editing profile
+ *
+ *  type string containing a profile file name or ID */
 #define OY_DEFAULT_EDITING_GRAY_PROFILE      OY_PROFILE_STD OY_SLASH "editing_gray"
-/** key name for the untagged data assumed source XYZ profile */
+/** key name for the untagged data assumed source XYZ profile
+ *
+ *  type string containing a profile file name or ID */
 #define OY_DEFAULT_ASSUMED_XYZ_PROFILE       OY_PROFILE_STD OY_SLASH "assumed_xyz"
-/** key name for the untagged data assumed source Lab profile */
+/** key name for the untagged data assumed source Lab profile
+ *
+ *  type string containing a profile file name or ID */
 #define OY_DEFAULT_ASSUMED_LAB_PROFILE       OY_PROFILE_STD OY_SLASH "assumed_lab"
-/** key name for the untagged data assumed source RGB profile */
+/** key name for the untagged data assumed source RGB profile
+ *
+ *  type string containing a profile file name or ID */
 #define OY_DEFAULT_ASSUMED_RGB_PROFILE       OY_PROFILE_STD OY_SLASH "assumed_rgb"
-/** name for the untagged data assumed source profile for www content */
+/** name for the untagged data assumed source profile for www content
+ *
+ *  type string containing a profile file name or ID */
 #define OY_DEFAULT_ASSUMED_WEB_PROFILE       OY_PROFILE_STD OY_SLASH "assumed_web" /* static_profile */
-/** key name for the untagged data assumed source Cmyk profile */
+/** key name for the untagged data assumed source Cmyk profile
+ *
+ *  type string containing a profile file name or ID */
 #define OY_DEFAULT_ASSUMED_CMYK_PROFILE      OY_PROFILE_STD OY_SLASH "assumed_cmyk"
-/** key name for the untagged data assumed source Gray profile */
+/** key name for the untagged data assumed source Gray profile
+ *
+ *  type string containing a profile file name or ID */
 #define OY_DEFAULT_ASSUMED_GRAY_PROFILE      OY_PROFILE_STD OY_SLASH "assumed_gray"
-/** key name for a standard proofing profile */
+/** key name for a standard proofing profile
+ *
+ *  type string containing a profile file name or ID */
 #define OY_DEFAULT_PROOF_PROFILE             OY_PROFILE_STD OY_SLASH "proof"
 /** key name for a standard proofing profile
+ *
+ *  type string containing a profile file name or ID
+ *
  *  @since 0.9.6
  */
 #define OY_DEFAULT_EFFECT_PROFILE            OY_PROFILE_STD OY_SLASH "effect"
@@ -182,29 +214,54 @@
 
 /* --- settings --- */
 
-/** key name for the non profile tagged content action [ dont assign | assign assumed Profile | promt ] */
+/** key name for the non profile tagged content action
+ *
+ *  type string containing a integer [ dont assign(0) | assign assumed Profile(1) | promt(2) ] */
 #define OY_ACTION_UNTAGGED_ASSIGN      OY_BEHAVIOUR_STD OY_SLASH "action_untagged_assign"
-/** key name for the rgb profile mismatch action */
+/** key name for the rgb profile mismatch action
+ *
+ *  type string containing a integer [ dont change(0) | convert automatic(1) | promt(2) ] */
 #define OY_ACTION_MISMATCH_RGB         OY_BEHAVIOUR_STD OY_SLASH "action_missmatch_rgb"
-/** key name for the cmyk profile mismatch action */
+/** key name for the cmyk profile mismatch action
+ *
+ *  type string containing a integer [ dont change(0) | convert automatic(1) | promt(2) ] */
 #define OY_ACTION_MISMATCH_CMYK        OY_BEHAVIOUR_STD OY_SLASH "action_missmatch_cmyk"
-/** key name for the allow mixed color space switch */
+/** key name for the allow mixed color space switch
+ *
+ *  type string containing a integer [ dont change(0) | convert automatic to default CMYK editing space(1) | convert automatic to unspecified CMYK, keep numbers(2) | promt(3) ] */
 #define OY_CONVERT_MIXED_COLOR_SPACE_PRINT_DOCUMENT OY_BEHAVIOUR_STD OY_SLASH "mixed_color_spaces_print_doc_convert"
-/** key name for generating a mixed color space for internet warning */
+/** key name for generating a mixed color space for internet warning
+ *
+ *  type string containing a integer [ dont change(0) | convert automatic to default RGB editing space(1) | convert automatic to WWW sRGB(2) | promt(3) ] */
 #define OY_CONVERT_MIXED_COLOR_SPACE_SCREEN_DOCUMENT OY_BEHAVIOUR_STD OY_SLASH "mixed_color_spaces_screen_doc_convert"
-/** key name for the default rendering intent */
+/** key name for the default rendering intent
+ *
+ *  type string containing a integer [perceptual(0) | relative colorimetric(1) | saturation(2) | absolute colorimetric(3)] */
 #define OY_DEFAULT_RENDERING_INTENT    OY_BEHAVIOUR_STD OY_SLASH "rendering_intent"
-/** key name for the default rendering with BPC */
+/** key name for the default rendering with BPC
+ *
+ *  type string containing 0 or 1 */
 #define OY_DEFAULT_RENDERING_BPC       OY_BEHAVIOUR_STD OY_SLASH "rendering_bpc"
-/** key name for the default proofing rendering intent */
+/** key name for the default proofing rendering intent
+ *
+ *  type string containing a integer [relative colorimetric(0) | absolute colorimetric(1)]
+ * */
 #define OY_DEFAULT_RENDERING_INTENT_PROOF    OY_BEHAVIOUR_STD OY_SLASH "rendering_intent_proof"
-/** key name for the default gamut warning */
+/** key name for the default gamut warning
+ *
+ *  type string containing 0 or 1 */
 #define OY_DEFAULT_RENDERING_GAMUT_WARNING  OY_BEHAVIOUR_STD OY_SLASH "rendering_gamut_warning"
-/** key name for soft proofing by default */
+/** key name for soft proofing by default
+ *
+ *  type string containing 0 or 1 */
 #define OY_DEFAULT_PROOF_SOFT          OY_BEHAVIOUR_STD OY_SLASH "proof_soft"
-/** key name for hard proofing by default */
+/** key name for hard proofing by default
+ *
+ *  type string containing 0 or 1 */
 #define OY_DEFAULT_PROOF_HARD          OY_BEHAVIOUR_STD OY_SLASH "proof_hard"
-/** key name for effect profile by default */
+/** key name for effect profile by default switch
+ *
+ *  type string containing 0 or 1 */
 #define OY_DEFAULT_EFFECT              OY_BEHAVIOUR_STD OY_SLASH "effect_switch"
 /** key name for common display white point mode
  *
@@ -219,45 +276,82 @@
  *  - 8: second monitors actual media white point as target for all other monitors
  *  - ...
  *
+ *  type string containing a integer
+ *
  *  @since 0.9.7
  */
 #define OY_DEFAULT_DISPLAY_WHITE_POINT OY_BEHAVIOUR_STD OY_SLASH "display_white_point"
 /** key name for common display white point CIE*ab target, the CIE*a component in 0.0 - 1.0 range
+ *
+ *  type string containing a double
+ *
  *  @since 0.9.7
  */
-#define OY_DEFAULT_DISPLAY_WHITE_POINT_A OY_DEVICE_STD OY_SLASH "display_white_point_a"
+#define OY_DEFAULT_DISPLAY_WHITE_POINT_A OY_DISPLAY_STD OY_SLASH "display_white_point_a"
 /** key name for common display white point CIE*ab target, the CIE*b component in 0.0 - 1.0 range
+ *
+ *  type string containing a double
+ *
  *  @since 0.9.7
  */
-#define OY_DEFAULT_DISPLAY_WHITE_POINT_B OY_DEVICE_STD OY_SLASH "display_white_point_b"
+#define OY_DEFAULT_DISPLAY_WHITE_POINT_B OY_DISPLAY_STD OY_SLASH "display_white_point_b"
 /** key name for display white point daemon
+ *
+ *  The setting is by default not present in the DB. Then
+ *  ::OY_DEFAULT_DISPLAY_WHITE_POINT is used for manual settings. 
+ *
+ *  The inbuild alternative value is the "oyranos-monitor-white-point" string 
+ *  for the daemon with the same name. oyranos-monitor-white-point is as well
+ *  a command line tool fore more options. Unsetting involves removal of the
+ *  key from the DB.
+ *
+ *  type string containing a service identifier
+ *
  *  @since 0.9.7
  */
-#define OY_DEFAULT_DISPLAY_WHITE_POINT_DAEMON OY_DEVICE_STD OY_SLASH "display_white_point_daemon"
+#define OY_DEFAULT_DISPLAY_WHITE_POINT_DAEMON OY_DISPLAY_STD OY_SLASH "display_white_point_daemon"
 
 /** key name for context CMM
+ *
+ *  type string containing a module
+ *
  *  @since 0.9.6
  */
 #define OY_DEFAULT_CMM_CONTEXT         OY_CMM_STD OY_SLASH "context"
 /** key name for renderer CMM 
+ *
+ *  type string containing a module
+ *
  *  @since 0.9.6
  */
 #define OY_DEFAULT_CMM_RENDERER        OY_CMM_STD OY_SLASH "renderer"
 /** key name for context CMM fallback 
+ *
+ *  type string containing a module
+ *
  *  @since 0.9.6
  */
 #define OY_DEFAULT_CMM_CONTEXT_FALLBACK  OY_CMM_STD OY_SLASH "context_fallback"
 /** key name for renderer CMM fallback 
+ *
+ *  type string containing a module
+ *
  *  @since 0.9.6
  */
 #define OY_DEFAULT_CMM_RENDERER_FALLBACK OY_CMM_STD OY_SLASH "renderer_fallback"
 
 
 /** key name for simulation profiles in a filter node; like for proofing
+ *
+ *  type oyProfiles_s containing profiles
+ *
  *  @since 0.9.6
  */
 #define OY_PROFILES_SIMULATION               OY_PROFILE_STD OY_SLASH "profiles_simulation"
 /** key name for effect profiles in a filter node; like for sepia or b/w etc.
+ *
+ *  type oyProfiles_s containing profiles
+ *
  *  @since 0.9.6
  */
 #define OY_PROFILES_EFFECT                   OY_PROFILE_STD OY_SLASH "profiles_effect"

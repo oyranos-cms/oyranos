@@ -64,7 +64,7 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "\n");
   fprintf( stderr, "  %s\n",              _("Run sunset daemon:"));
   fprintf( stderr, "      %s -d %s [-v]\n", argv[0], _("MODE") );
-  fprintf( stderr,  "      -d 0 - %s\n",   _("Stop"));
+  fprintf( stderr,  "      -d 0 - %s\n",   _("Deactivate"));
   fprintf( stderr,  "      -d 1 - %s\n",   _("Autostart"));
   fprintf( stderr,  "      -d 2 - %s\n",   _("Activate"));
   fprintf( stderr, "\n");
@@ -255,35 +255,35 @@ int main( int argc , char** argv )
   if(twilight != -1000)
   {
     oyStringAddPrintfC(&value, 0,0, "%g", twilight);
-    oySetPersistentString( OY_DEVICE_STD OY_SLASH "/twilight", scope, value, NULL );
+    oySetPersistentString( OY_DISPLAY_STD OY_SLASH "/twilight", scope, value, NULL );
     oyFree_m_(value);
   }
 
   if(longitude != 360)
   {
     oyStringAddPrintfC(&value, 0,0, "%g", longitude);
-    oySetPersistentString( OY_DEVICE_STD "/longitude", scope, value, NULL );
+    oySetPersistentString( OY_DISPLAY_STD "/longitude", scope, value, NULL );
     oyFree_m_(value);
   }
 
   if(latitude != 360)
   {
     oyStringAddPrintfC(&value, 0,0, "%g", latitude);
-    oySetPersistentString( OY_DEVICE_STD "/latitude", scope, value, NULL );
+    oySetPersistentString( OY_DISPLAY_STD "/latitude", scope, value, NULL );
     oyFree_m_(value);
   }
 
   if(wtpt_mode_night != -1)
   {
     oyStringAddPrintf(&value, 0,0, "%d", wtpt_mode_night);
-    oySetPersistentString( OY_DEVICE_STD "/display_white_point_mode_night", scope, value, NULL );
+    oySetPersistentString( OY_DISPLAY_STD "/display_white_point_mode_night", scope, value, NULL );
     oyFree_m_(value);
   }
 
   if(wtpt_mode_sunlight != -1)
   {
     oyStringAddPrintf(&value, 0,0, "%d", wtpt_mode_sunlight);
-    oySetPersistentString( OY_DEVICE_STD "/display_white_point_mode_sunlight", scope, value, NULL );
+    oySetPersistentString( OY_DISPLAY_STD "/display_white_point_mode_sunlight", scope, value, NULL );
     oyFree_m_(value);
   }
 
@@ -404,10 +404,10 @@ int findLocation(oySCOPE_e scope)
         printf( "%g %g\n", lat,lon);
 
         oyStringAddPrintfC(&value, 0,0, "%g", lat);
-        oySetPersistentString( OY_STD "/device/latitude", scope, value, NULL );
+        oySetPersistentString( OY_DISPLAY_STD "/latitude", scope, value, NULL );
         oyFree_m_(value);
         oyStringAddPrintfC(&value, 0,0, "%g", lon);
-        oySetPersistentString( OY_STD "/device/longitude", scope, value, NULL );
+        oySetPersistentString( OY_DISPLAY_STD "/longitude", scope, value, NULL );
         oyFree_m_(value);
 
 #ifdef HAVE_LOCALE_H
@@ -431,7 +431,7 @@ int getLocation( double * lon, double * lat)
   int need_location = 0;
   char * value = NULL;
  
-  value = oyGetPersistentString( OY_DEVICE_STD "/latitude", 0, oySCOPE_USER_SYS, oyAllocateFunc_ );
+  value = oyGetPersistentString( OY_DISPLAY_STD "/latitude", 0, oySCOPE_USER_SYS, oyAllocateFunc_ );
   if(value && oyStringToDouble( value, lat ))
     fprintf(stderr, "lat = %g / %s\n", *lat, value);
   if(value)
@@ -439,7 +439,7 @@ int getLocation( double * lon, double * lat)
     oyFree_m_(value);
   } else
     need_location = 1;
-  value = oyGetPersistentString( OY_DEVICE_STD "/longitude", 0, oySCOPE_USER_SYS, oyAllocateFunc_ );
+  value = oyGetPersistentString( OY_DISPLAY_STD "/longitude", 0, oySCOPE_USER_SYS, oyAllocateFunc_ );
   if(value && oyStringToDouble( value, lon ))
     fprintf(stderr, "lon = %g / %s\n", *lon, value);
   if(value)
@@ -527,7 +527,7 @@ int getSunriseSunset( double * rise, double * set )
   }
 
   value =
-      oyGetPersistentString(OY_DEVICE_STD "/twilight", 0, oySCOPE_USER_SYS, oyAllocateFunc_);
+      oyGetPersistentString(OY_DISPLAY_STD "/twilight", 0, oySCOPE_USER_SYS, oyAllocateFunc_);
   if(value && oyStringToDouble( value, &twilight ))
     fprintf(stderr, "twilight = %g / %s\n", twilight, value);
   if(value)
@@ -606,7 +606,7 @@ int checkWtptState()
     if(rise < dtime && dtime <= set)
     /* day time */
     {
-      char * value = oyGetPersistentString( OY_DEVICE_STD "/display_white_point_mode_sunlight", 0, oySCOPE_USER_SYS, oyAllocateFunc_ );
+      char * value = oyGetPersistentString( OY_DISPLAY_STD "/display_white_point_mode_sunlight", 0, oySCOPE_USER_SYS, oyAllocateFunc_ );
       if(value)
       {
         new_mode = atoi(value);
@@ -617,7 +617,7 @@ int checkWtptState()
     } else
     /* night time */
     {
-      char * value = oyGetPersistentString( OY_DEVICE_STD "/display_white_point_mode_night", 0, oySCOPE_USER_SYS, oyAllocateFunc_ );
+      char * value = oyGetPersistentString( OY_DISPLAY_STD "/display_white_point_mode_night", 0, oySCOPE_USER_SYS, oyAllocateFunc_ );
       if(value)
       {
         new_mode = atoi(value);
@@ -658,6 +658,7 @@ int runDaemon(int dmode)
     /* erase the key */
     oySetPersistentString( OY_DEFAULT_DISPLAY_WHITE_POINT_DAEMON, scope, NULL, NULL );
     active = 0; 
+    return error;
   }
   else
   if(dmode == 1) /* check if service is desired */
@@ -679,7 +680,7 @@ int runDaemon(int dmode)
     checkWtptState();
 
 #ifdef HAVE_DBUS
-  oyStartDBusObserver( oyWatchDBus, oyFinishDBus, oyCallbackDBus, OY_DEVICE_STD )
+  oyStartDBusObserver( oyWatchDBus, oyFinishDBus, oyCallbackDBus, OY_DISPLAY_STD )
   if(id)
     fprintf(stderr, "oyStartDBusObserver ID: %d\n", id);
 

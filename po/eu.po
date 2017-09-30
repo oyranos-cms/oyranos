@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cinepaint_icc-examin_eu\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2017-09-29 18:37+0200\n"
+"POT-Creation-Date: 2017-09-30 06:08+0200\n"
 "PO-Revision-Date: 2007-11-07 11:11+0100\n"
 "Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@zundan.com>\n"
 "Language-Team: Basque <itzulpena@euskalgnu.org>\n"
@@ -1200,6 +1200,11 @@ msgstr "Kolore-espazioa:"
 #, fuzzy
 msgid "Date"
 msgstr "Data"
+
+#: tools/oyranos-monitor-white-point.c:67
+#, fuzzy
+msgid "Deactivate"
+msgstr "profilik ez"
 
 #: examples/image_display/image_display.cpp:1105
 msgid "Debug"
@@ -3464,10 +3469,6 @@ msgstr "Behatzaile estandarra"
 msgid "Start"
 msgstr "Izarra"
 
-#: tools/oyranos-monitor-white-point.c:67
-msgid "Stop"
-msgstr ""
-
 #: tools/oyranos-monitor-white-point.c:551
 #, fuzzy
 msgid "Sunrise"
@@ -5620,7 +5621,8 @@ msgstr ""
 #~ msgid "Std-exception occured: "
 #~ msgstr "STD salbuespena gertatu da: "
 
-#~ msgid "Stop loading "
+#, fuzzy
+#~ msgid "Stop and exit"
 #~ msgstr "Gelditu kargatzea "
 
 #, fuzzy

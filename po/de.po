@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2017-09-29 18:37+0200\n"
+"POT-Creation-Date: 2017-09-30 06:08+0200\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -1161,6 +1161,10 @@ msgstr "Farbraum:        "
 #: API_generated/oyranos_profile.c:52 API_generated/oyranos_profile.c:53
 msgid "Date"
 msgstr "Datum"
+
+#: tools/oyranos-monitor-white-point.c:67
+msgid "Deactivate"
+msgstr "Deaktiviere"
 
 #: examples/image_display/image_display.cpp:1105
 msgid "Debug"
@@ -3339,10 +3343,6 @@ msgstr "Standard Betrachter 1931 2° Zeichnung:"
 #: liboyranos_config/oyranos_texts.c:156
 msgid "Start"
 msgstr "Start"
-
-#: tools/oyranos-monitor-white-point.c:67
-msgid "Stop"
-msgstr "Halt"
 
 #: tools/oyranos-monitor-white-point.c:551
 msgid "Sunrise"
@@ -5899,8 +5899,8 @@ msgstr "Falsches Profil für statischen WWW Farbraum, benötige sRGB"
 #~ msgid "Std-exception occured: "
 #~ msgstr "Std-Ausnahme: "
 
-#~ msgid "Stop loading "
-#~ msgstr "Laden angehalten: "
+#~ msgid "Stop"
+#~ msgstr "Halt"
 
 #~ msgid "Tag Version:"
 #~ msgstr "Element Version:"

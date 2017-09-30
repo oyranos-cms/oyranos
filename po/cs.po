@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: oyranos\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2017-09-29 18:37+0200\n"
+"POT-Creation-Date: 2017-09-30 06:08+0200\n"
 "PO-Revision-Date: 2012-10-19 15:10+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -1196,6 +1196,11 @@ msgstr "Bar. prostor:"
 #: API_generated/oyranos_profile.c:52 API_generated/oyranos_profile.c:53
 msgid "Date"
 msgstr "Datum"
+
+#: tools/oyranos-monitor-white-point.c:67
+#, fuzzy
+msgid "Deactivate"
+msgstr "Aktivovat profily:"
 
 #: examples/image_display/image_display.cpp:1105
 msgid "Debug"
@@ -3502,10 +3507,6 @@ msgstr "Graf standardního pozorovatele:"
 #: liboyranos_config/oyranos_texts.c:156
 msgid "Start"
 msgstr "Začátek"
-
-#: tools/oyranos-monitor-white-point.c:67
-msgid "Stop"
-msgstr ""
 
 #: tools/oyranos-monitor-white-point.c:551
 #, fuzzy
@@ -5980,7 +5981,8 @@ msgstr "špatný profil pro statický barvový prostor webu, vyžadováno sRGB"
 #~ msgid "Std-exception occured: "
 #~ msgstr "Nastala std. vyjimka: "
 
-#~ msgid "Stop loading "
+#, fuzzy
+#~ msgid "Stop and exit"
 #~ msgstr "Zastavit nacitani"
 
 #~ msgid "Tag Version:"

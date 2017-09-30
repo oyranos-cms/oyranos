@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Oyranos 0.9\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2017-09-29 18:37+0200\n"
+"POT-Creation-Date: 2017-09-30 06:08+0200\n"
 "PO-Revision-Date: 2015-02-20 17:32+0100\n"
 "Last-Translator: Kai-Uwe Behrmann <ku.b@gmx.de>\n"
 "Language-Team: russian <ru@li.org>\n"
@@ -1123,6 +1123,10 @@ msgstr ""
 #: API_generated/oyranos_profile.c:50 API_generated/oyranos_profile.c:51
 #: API_generated/oyranos_profile.c:52 API_generated/oyranos_profile.c:53
 msgid "Date"
+msgstr ""
+
+#: tools/oyranos-monitor-white-point.c:67
+msgid "Deactivate"
 msgstr ""
 
 #: examples/image_display/image_display.cpp:1105
@@ -3213,10 +3217,6 @@ msgstr ""
 
 #: liboyranos_config/oyranos_texts.c:156
 msgid "Start"
-msgstr ""
-
-#: tools/oyranos-monitor-white-point.c:67
-msgid "Stop"
 msgstr ""
 
 #: tools/oyranos-monitor-white-point.c:551

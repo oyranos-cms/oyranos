@@ -52,8 +52,8 @@ device specific Informations (ICC profiles) und system wide settings.
 * [gettext](https://www.gnu.org/software/gettext/) - i18n
 
 #### Debian/Ubuntu:
-    sudo apt-get install locales build-essential git autoconf cmake ruby libxml2-dev libyajl-dev gettext libfltk1.3-dev libjpeg-dev libpng-dev libcairo2-dev x11proto-xf86vidmode-dev x11proto-xext-dev libxxf86vm-dev libxrandr-dev libxinerama-dev libxmu-dev libxpm-dev libxfixes-dev libxft-dev fluid ftgl-dev liblcms-dev libexiv2-dev libcups2-dev cmake
-    # oyranos-0.3.3 can now be installed successfully.
+    sudo apt-get install locales build-essential git autoconf cmake ruby libxml2-dev libyajl-dev libdbus-1-dev gettext libfltk1.3-dev libjpeg-dev libpng-dev libcairo2-dev x11proto-xf86vidmode-dev x11proto-xext-dev libxxf86vm-dev libxrandr-dev libxinerama-dev libxmu-dev libxpm-dev libxfixes-dev libxft-dev fluid ftgl-dev liblcms-dev libexiv2-dev libcups2-dev cmake
+    # oyranos-0.9.7 can now be installed successfully.
     sudo apt-get install libqt4-dev                        # Synnefo
     sudo apt-get install kdelibs5-dev                      # KolorManager
     sudo apt-get install libgtk2.0-dev libglib2.0-dev libgutenprintui2-dev libopenexr-dev # CinePaint

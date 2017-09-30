@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Oyranos 0.9\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2017-09-29 18:37+0200\n"
+"POT-Creation-Date: 2017-09-30 06:53+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -3457,7 +3457,7 @@ msgid "MODE"
 msgstr ""
 
 #: tools/oyranos-monitor-white-point.c:67
-msgid "Stop"
+msgid "Deactivate"
 msgstr ""
 
 #: tools/oyranos-monitor-white-point.c:68
