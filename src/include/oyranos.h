@@ -89,20 +89,20 @@ typedef enum  {
  */
 typedef enum  {
   oyBEHAVIOUR_START = 30,
-  oyBEHAVIOUR_ACTION_UNTAGGED_ASSIGN,  /**< What to do if image is untagged ? */
-  oyBEHAVIOUR_ACTION_OPEN_MISMATCH_RGB,/**< What to do if profiles mismatch ? */
-  oyBEHAVIOUR_ACTION_OPEN_MISMATCH_CMYK,/**< What to do if profiles mismatch ?*/
-  oyBEHAVIOUR_MIXED_MOD_DOCUMENTS_PRINT,/**< Convert befor save for Print? */
-  oyBEHAVIOUR_MIXED_MOD_DOCUMENTS_SCREEN,/**< Convert befor save for Screen? */
-  oyBEHAVIOUR_RENDERING_INTENT,        /**< Standard color transformations */
-  oyBEHAVIOUR_RENDERING_BPC,           /**< use BlackPointCompensation */
-  oyBEHAVIOUR_RENDERING_INTENT_PROOF,  /**< Proofing color transformations */
-  oyBEHAVIOUR_PROOF_SOFT,              /**< Proofing by default for screen */
-  oyBEHAVIOUR_PROOF_HARD,              /**< Proofing by default for printing */
-  oyBEHAVIOUR_EFFECT,                  /**< Using Effect by default */
-  oyBEHAVIOUR_RENDERING_GAMUT_WARNING, /**< mark out of gamut colors */
-  oyBEHAVIOUR_DISPLAY_WHITE_POINT,     /**< select a display white point */
-  oyBEHAVIOUR_DISPLAY_WHITE_POINT_DAEMON,/**< set and activate a display white point daemon; @see ::OY_DEFAULT_DISPLAY_WHITE_POINT_DAEMON */
+  oyBEHAVIOUR_ACTION_UNTAGGED_ASSIGN,  /**< What to do if image is untagged ? ::OY_ACTION_UNTAGGED_ASSIGN */
+  oyBEHAVIOUR_ACTION_OPEN_MISMATCH_RGB,/**< What to do if profiles mismatch ? ::OY_ACTION_MISMATCH_RGB */
+  oyBEHAVIOUR_ACTION_OPEN_MISMATCH_CMYK,/**< What to do if profiles mismatch ? ::OY_ACTION_MISMATCH_CMYK */
+  oyBEHAVIOUR_MIXED_MOD_DOCUMENTS_PRINT,/**< Convert befor save for Print? ::OY_CONVERT_MIXED_COLOR_SPACE_PRINT_DOCUMENT */
+  oyBEHAVIOUR_MIXED_MOD_DOCUMENTS_SCREEN,/**< Convert befor save for Screen? ::OY_CONVERT_MIXED_COLOR_SPACE_SCREEN_DOCUMENT */
+  oyBEHAVIOUR_RENDERING_INTENT,        /**< Standard color transformations; ::OY_DEFAULT_RENDERING_INTENT */
+  oyBEHAVIOUR_RENDERING_BPC,           /**< use BlackPointCompensation; ::OY_DEFAULT_RENDERING_BPC */
+  oyBEHAVIOUR_RENDERING_INTENT_PROOF,  /**< Proofing color transformations; ::OY_DEFAULT_RENDERING_INTENT_PROOF */
+  oyBEHAVIOUR_PROOF_SOFT,              /**< Proofing by default for screen; ::OY_DEFAULT_PROOF_SOFT */
+  oyBEHAVIOUR_PROOF_HARD,              /**< Proofing by default for printing; ::OY_DEFAULT_PROOF_HARD */
+  oyBEHAVIOUR_EFFECT,                  /**< Using Effect by default; ::OY_DEFAULT_EFFECT */
+  oyBEHAVIOUR_RENDERING_GAMUT_WARNING, /**< mark out of gamut colors; ::OY_DEFAULT_RENDERING_GAMUT_WARNING */
+  oyBEHAVIOUR_DISPLAY_WHITE_POINT,     /**< select a display white point; ::OY_DEFAULT_DISPLAY_WHITE_POINT */
+  oyBEHAVIOUR_DISPLAY_WHITE_POINT_DAEMON,/**< set and activate a display white point daemon; ::OY_DEFAULT_DISPLAY_WHITE_POINT_DAEMON */
   oyBEHAVIOUR_END                      /**< just for easen Gui design */
 } oyBEHAVIOUR_e;
 
@@ -194,7 +194,8 @@ char* oyGetPathFromProfileName         (const char* profile_name,
 /* --- default profiles --- */
 
 /** @brief Default Profiles
- */
+ *
+ *  @see ::OY_DEFAULT_EDITING_RGB_PROFILE */
 typedef enum  {
   oyDEFAULT_PROFILE_START = 100,
   oyEDITING_XYZ,            /**< XYZ Editing (Workspace) Profile */

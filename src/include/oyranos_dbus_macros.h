@@ -15,7 +15,17 @@
  *  The file contains some macros and boilerplate for DBus updates from 
  *  settings changes. A direct dependency in the Oyranos libraries can not
  *  be cross platform and thus is not desireable.
- */
+ *
+ *  Defined are DBus callback and functions,
+ *  oyJob_s callbacks: @code
+    #include <oyranos_threads.h>
+     oyWatchDBus_m( oyDBusFilter )
+     oyFinishDBus_m
+     int config_state_changed = 0;
+     oyCallbackDBusCli_m( config_state_changed ) @endcode
+ *  and
+ *  some Boiler Plate to place before and to be called inside the used loop:
+ *   ::oyStartDBusObserver, ::oyLoopDBusObserver */
 
 
 #ifndef OYRANOS_DBUS_MACROS_H
@@ -30,19 +40,10 @@
 extern "C" {
 #endif /* __cplusplus */
 
-/* Defined are DBus callback and functions,
- * oyJob_s callbacks:
-   #include <oyranos_threads.h>
-    oyWatchDBus_m( oyDBusFilter )
-    oyFinishDBus_m
-    int config_state_changed = 0;
-    oyCallbackDBusCli_m( config_state_changed )
- * and
- * some Boiler Plate to place before and to be called inside the used loop:
- *  oyStartDBusObserver, oyLoopDBusObserver */
 	
 /* --- DBus callbacks --- */
 
+/** DBus filter function */
 #define oyDBusFilter_m \
 DBusHandlerResult  oyDBusFilter      ( DBusConnection    * connection, \
                                        DBusMessage       * message, \
@@ -77,7 +78,7 @@ DBusHandlerResult  oyDBusFilter      ( DBusConnection    * connection, \
   return DBUS_HANDLER_RESULT_HANDLED; \
 }
 
-/* borrowed from libelektra project receivemessage.c
+/** borrowed from libelektra project receivemessage.c
  * BSD License */
 #define oyDbusReceiveMessage_m \
 oySleep_m \
@@ -128,7 +129,8 @@ static void        oySleep           ( double              seconds ) \
 
 /* --- oyJob_s callbacks --- */
 
-/* covers oyDbusReceiveMessage_m
+/** covers oyDbusReceiveMessage_m
+ *  oyJob_s::work for the processing thread
  */
 #define oyWatchDBus_m( filter_function ) \
 oyDbusReceiveMessage_m \
@@ -149,6 +151,8 @@ static int oyWatchDBus( oyJob_s * job ) \
   } \
   return 0; \
 }
+/** oyJob_s::finish for the main thread
+ */
 #define oyFinishDBus_m \
 static int oyFinishDBus( oyJob_s * job ) \
 { \
@@ -166,6 +170,11 @@ static int oyFinishDBus( oyJob_s * job ) \
   } \
   return 0; \
 }
+/** oyJob_s::cb_progress for the main thread;
+ *
+ *  will be called inside
+ *  oyJobResult()
+ */
 #define oyCallbackDBusCli_m(check_var) \
 static void oyCallbackDBus           ( double              progress_zero_till_one, \
                                        char              * status_text, \
@@ -182,9 +191,9 @@ static void oyCallbackDBus           ( double              progress_zero_till_on
 
 /* --- Boiler Plate --- */
 
-/* setup the thread running the DBus observer
- * simple version:
-   oyStartDBusObserver( oyWatchDBus, oyFinishDBus, oyCallbackDBus, OY_STD )
+/** setup the thread running the DBus observer
+ *  simple version:
+    oyStartDBusObserver( oyWatchDBus, oyFinishDBus, oyCallbackDBus, OY_STD )
  */
 #define oyStartDBusObserver( watch_, finish_, callback_, key_fragment ) \
   /* use asynchron DBus observation \
@@ -204,11 +213,11 @@ static void oyCallbackDBus           ( double              progress_zero_till_on
   job->cb_progress = callback_; \
   id = oyJob_Add( &job, 0, oyJOB_ADD_PERSISTENT_JOB );
 
-/* poll for updates 
- * double hour: current time
- * double repeat_hour: repeat a full update in h
- * int check_var: 1 means check, 0 means no check needed
- * function update: will be called, when check_var is 1 */
+/** poll for updates 
+ *  double hour: current time
+ *  double repeat_hour: repeat a full update in h
+ *  int check_var: 1 means check, 0 means no check needed
+ *  function update: will be called, when check_var is 1 */
 #define oyLoopDBusObserver( hour, repeat_hour, check_var, update ) \
     double hour_diff = hour_old - hour; \
  \
