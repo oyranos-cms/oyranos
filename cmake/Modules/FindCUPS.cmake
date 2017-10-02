@@ -4,7 +4,8 @@
 # For details see the accompanying COPYING-CMAKE-SCRIPTS file.
 
 # use cmake default
-FIND_PACKAGE( Cups )
+# not here, as some systems do not differenciate between letter cases
+#FIND_PACKAGE( Cups )
 
 # fix the variable handling
 FIND_LIBRARY(CUPS_LIBRARY NAMES cups)
