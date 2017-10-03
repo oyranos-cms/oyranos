@@ -1196,6 +1196,7 @@ oyCMMinfo_s *    oyCMMinfoFromLibNameDynamic(const char        * lib_name )
 
 char **  (*oyCMMsGetLibNames_p) ( uint32_t* ) = &oyCMMsGetLibNamesDynamic;
 oyCMMinfo_s* (*oyCMMinfoFromLibName_p)(const char*) = &oyCMMinfoFromLibNameDynamic;
+oyCMMinfo_s*   oyCMMinfoFromLibName_(const char*) {return NULL;} /* dummy for deprecated internal API */
 #endif
 
 /** @internal

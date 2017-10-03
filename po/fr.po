@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ICC Examin 0.41\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2017-09-30 06:08+0200\n"
+"POT-Creation-Date: 2017-10-03 08:03+0200\n"
 "PO-Revision-Date: 2006-06-29 19:31+0200\n"
 "Last-Translator: Pascal LACROIX <lacroixpascal at vfemail.net>\n"
 "Language-Team: <fr@li.org>\n"
@@ -935,7 +935,7 @@ msgstr ""
 msgid "Convert to untagged Cmyk, preserving Cmyk numbers"
 msgstr ""
 
-#: API_generated/oyranos_module.c:1388 liboyranos_config/oyranos_icc.c:457
+#: API_generated/oyranos_module.c:1389 liboyranos_config/oyranos_icc.c:457
 msgid "Copyright"
 msgstr "Copyright"
 
@@ -995,7 +995,7 @@ msgstr ""
 msgid "Copyright:       "
 msgstr "Copyright"
 
-#: API_generated/oyranos_module.c:2009
+#: API_generated/oyranos_module.c:2010
 #, fuzzy
 msgid "Could not allocate memory for:"
 msgstr "Ouvrir Profil"
@@ -2278,7 +2278,7 @@ msgstr "Luv"
 #: API_generated/oyProfileTag_s_.c:208 API_generated/oyProfile_s_.c:323
 #: API_generated/oyProfiles_s_.c:195 API_generated/oyRectangle_s_.c:191
 #: API_generated/oyStructList_s_.c:239 API_generated/oyranos_devices.c:3580
-#: API_generated/oyranos_module.c:1550 liboyranos/oyranos_alpha.c:257
+#: API_generated/oyranos_module.c:1551 liboyranos/oyranos_alpha.c:257
 #: liboyranos_modules/oyranos_forms.c:56
 msgid "MEM Error."
 msgstr ""
@@ -2323,7 +2323,7 @@ msgstr ""
 msgid "Magic:           "
 msgstr "Taille:      "
 
-#: API_generated/oyranos_module.c:1387 API_generated/oyranos_profile.c:43
+#: API_generated/oyranos_module.c:1388 API_generated/oyranos_profile.c:43
 #, fuzzy
 msgid "Manufacturer"
 msgstr "Fabricant:   "
@@ -2472,7 +2472,7 @@ msgstr ""
 msgid "NUMBER"
 msgstr ""
 
-#: API_generated/oyranos_module.c:1386
+#: API_generated/oyranos_module.c:1387
 msgid "Name"
 msgstr "Nom"
 
@@ -4283,7 +4283,7 @@ msgstr ""
 
 #: API_generated/oyConversion_s.c:190 API_generated/oyFilterNode_s_.c:615
 #: API_generated/oyranos_devices.c:2657 API_generated/oyranos_devices.c:3168
-#: API_generated/oyranos_module.c:2001
+#: API_generated/oyranos_module.c:2002
 msgid "error in module:"
 msgstr ""
 
