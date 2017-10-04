@@ -1,6 +1,6 @@
 #include "oyOptions_s.h"
 #include <stdio.h>
-int main (int argc, char ** argv)
+int main (int argc OY_UNUSED, char ** argv OY_UNUSED)
 {
   int error = 0;
   oyOptions_s * result = 0;

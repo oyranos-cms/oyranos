@@ -925,7 +925,7 @@ int main( int argc , char** argv )
 
 #ifdef XCM_HAVE_X11
 void cleanDisplay                    ( Display           * display,
-                                       int                 n )
+                                       int                 n OY_UNUSED )
 {
   oyOptions_s * opts = 0,
               * result = 0;
@@ -939,9 +939,9 @@ void cleanDisplay                    ( Display           * display,
                                  &result );
 }
 
-int            getDeviceProfile      ( Display           * display,
+int            getDeviceProfile      ( Display           * display OY_UNUSED,
                                        oyConfig_s        * device,
-                                       int                 screen )
+                                       int                 screen OY_UNUSED )
 {
   oyProfile_s * dst_profile = 0;
   int error = 0;

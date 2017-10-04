@@ -264,7 +264,7 @@ int    oyICCparametricCurveToSegments (oyOption_s        * parameters,
 int  oyWriteIcSigLutAtoBType         ( oyStructList_s    * texts,
                                        int                 channels_in,
                                        int                 channels_out,
-                                       icTagTypeSignature  tag_sig,
+                                       icTagTypeSignature  tag_sig OY_UNUSED,
                                        char              * mem,
                                        size_t              offset_bcurve,
                                        size_t              offset_matrix,
@@ -2491,7 +2491,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
 int          oyIMProfileTag_Create   ( oyProfileTag_s    * tag,
                                        oyStructList_s    * list,
                                        icTagTypeSignature  tag_type,
-                                       uint32_t            version )
+                                       uint32_t            version OY_UNUSED )
 {
   oyProfileTag_s * s = tag,
                  * tmptag = 0;

@@ -87,7 +87,7 @@ char * ojpgFilterNode_GetText        ( oyFilterNode_s    * node,
  *  @since   2014/03/21 (Oyranos: 0.9.6)
  *  @date    2014/03/21
  */
-int                ojpgCMMInit       ( oyStruct_s * s )
+int                ojpgCMMInit       ( oyStruct_s * s OY_UNUSED )
 {
   int error = 0;
   return error;
@@ -302,7 +302,7 @@ oyCMMapi_s * ojpgApi4CmmCreate       ( const char        * format )
 
 
 char * ojpgFilterNode_GetText        ( oyFilterNode_s    * node,
-                                       oyNAME_e            type,
+                                       oyNAME_e            type OY_UNUSED,
                                        oyAlloc_f           allocateFunc )
 {
   char * t = NULL;
@@ -321,10 +321,10 @@ char * ojpgFilterNode_GetText        ( oyFilterNode_s    * node,
 #define A(long_text) oyStringAdd_( &tmp, long_text, AD )
 
 /* TODO */
-int                ojpgGetOFORMS     ( oyCMMapiFilter_s  * module,
-                                       oyOptions_s       * oy_opts,
+int                ojpgGetOFORMS     ( oyCMMapiFilter_s  * module OY_UNUSED,
+                                       oyOptions_s       * oy_opts OY_UNUSED,
                                        char             ** ui_text,
-                                       oyAlloc_f           allocateFunc )
+                                       oyAlloc_f           allocateFunc OY_UNUSED )
 {
   int error = 0;
   char * tmp = NULL;
@@ -337,8 +337,8 @@ int                ojpgGetOFORMS     ( oyCMMapiFilter_s  * module,
 
 oyOptions_s* ojpgFilter_CmmLoaderValidateOptions
                                      ( oyFilterCore_s    * filter,
-                                       oyOptions_s       * validate,
-                                       int                 statical,
+                                       oyOptions_s       * validate OY_UNUSED,
+                                       int                 statical OY_UNUSED,
                                        uint32_t          * result )
 {
   uint32_t error = !filter;

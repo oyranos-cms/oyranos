@@ -4,7 +4,7 @@
 #include <oyOptions_s.h>
 #include <oyranos_conversion.h>
 #include <oyranos_devices.h>
-int main ( int argc, char ** argv )
+int main ( int argc OY_UNUSED, char ** argv OY_UNUSED )
 {
   // get a device
   oyConfig_s * device = 0;

@@ -48,7 +48,7 @@ void oyConfigs_Release__Members( oyConfigs_s_ * configs )
  *  @since   YYYY/MM/DD (Oyranos: x.x.x)
  *  @date    YYYY/MM/DD
  */
-int oyConfigs_Init__Members( oyConfigs_s_ * configs )
+int oyConfigs_Init__Members( oyConfigs_s_ * configs OY_UNUSED )
 {
   return 0;
 }

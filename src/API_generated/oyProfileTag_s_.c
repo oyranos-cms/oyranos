@@ -50,7 +50,7 @@
  *  @since   YYYY/MM/DD (Oyranos: x.x.x)
  *  @date    YYYY/MM/DD
  */
-void oyProfileTag_Release__Members( oyProfileTag_s_ * profiletag )
+void oyProfileTag_Release__Members( oyProfileTag_s_ * profiletag OY_UNUSED )
 {
   /* Nothing to deallocate here */
 }
@@ -70,7 +70,7 @@ void oyProfileTag_Release__Members( oyProfileTag_s_ * profiletag )
  *  @since   YYYY/MM/DD (Oyranos: x.x.x)
  *  @date    YYYY/MM/DD
  */
-int oyProfileTag_Init__Members( oyProfileTag_s_ * profiletag )
+int oyProfileTag_Init__Members( oyProfileTag_s_ * profiletag OY_UNUSED )
 {
   return 0;
 }

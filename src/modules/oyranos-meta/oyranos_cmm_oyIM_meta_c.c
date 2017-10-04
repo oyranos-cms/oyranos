@@ -83,8 +83,8 @@ char * oyIMstructGetText             ( oyStruct_s        * item,
  *  @since   2008/12/17 (Oyranos: 0.1.10)
  *  @date    2008/12/17
  */
-oyCMMapiFilter_s * oyIMFilterLoad    ( oyPointer           data,
-                                       size_t              size,
+oyCMMapiFilter_s * oyIMFilterLoad    ( oyPointer           data OY_UNUSED,
+                                       size_t              size OY_UNUSED,
                                        const char        * file_name,
                                        oyOBJECT_e          type,
                                        int                 num )
@@ -110,8 +110,8 @@ oyCMMapiFilter_s * oyIMFilterLoad    ( oyPointer           data,
  *  @since   2008/12/13 (Oyranos: 0.1.10)
  *  @date    2008/12/13
  */
-int          oyIMFilterScan          ( oyPointer           data,
-                                       size_t              size,
+int          oyIMFilterScan          ( oyPointer           data OY_UNUSED,
+                                       size_t              size OY_UNUSED,
                                        const char        * lib_name,
                                        oyOBJECT_e          type,
                                        int                 num,

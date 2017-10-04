@@ -29,7 +29,7 @@ OYAPI int OYEXPORT oyConfigs_FromDomain (
                                        const char        * registration_domain,
                                        oyOptions_s       * options,
                                        oyConfigs_s      ** configs,
-                                       oyObject_s          object )
+                                       oyObject_s          object OY_UNUSED )
 {
   oyConfigs_s * s = 0;
   oyConfig_s * config = 0;

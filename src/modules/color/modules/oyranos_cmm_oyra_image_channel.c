@@ -411,7 +411,7 @@ oyCMMapi_s * oyraApi7ImageChannelCreate(void)
 const char * oyraApi4UiImageChannelGetText (
                                        const char        * select,
                                        oyNAME_e            type,
-                                       oyStruct_s        * context )
+                                       oyStruct_s        * context OY_UNUSED )
 {
   if(strcmp(select,"name") == 0)
   {

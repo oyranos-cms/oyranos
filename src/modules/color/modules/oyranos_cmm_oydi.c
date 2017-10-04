@@ -87,15 +87,15 @@ extern oyCMMapi7_s_   oydi_api7_image_display;
 #endif
 
 
-oyWIDGET_EVENT_e   oydiWidgetEvent   ( oyOptions_s       * options,
-                                       oyWIDGET_EVENT_e    type,
-                                       oyStruct_s        * event )
+oyWIDGET_EVENT_e   oydiWidgetEvent   ( oyOptions_s       * options OY_UNUSED,
+                                       oyWIDGET_EVENT_e    type OY_UNUSED,
+                                       oyStruct_s        * event OY_UNUSED )
 {return 0;}
 
 oyOptions_s* oydiFilter_ImageDisplayValidateOptions
                                      ( oyFilterCore_s    * filter,
-                                       oyOptions_s       * validate,
-                                       int                 statical,
+                                       oyOptions_s       * validate OY_UNUSED,
+                                       int                 statical OY_UNUSED,
                                        uint32_t          * result )
 {
   uint32_t error = !filter;
@@ -1090,8 +1090,8 @@ char oydi_extra_options[] = {
   </" OY_TOP_SHARED ">\n"
 };
 
-int  oydiUiGet                       ( oyCMMapiFilter_s   * module,
-                                       oyOptions_s       * opts,
+int  oydiUiGet                       ( oyCMMapiFilter_s   * module OY_UNUSED,
+                                       oyOptions_s       * opts OY_UNUSED,
                                        char             ** xforms_layout,
                                        oyAlloc_f           allocateFunc )
 {
@@ -1303,7 +1303,7 @@ oyCMMapi4_s_   oydi_api4_image_display = {
  *  @since   2009/04/13 (Oyranos: 0.1.10)
  *  @date    2009/12/17
  */
-int                oydiCMMInit       ( oyStruct_s        * filter )
+int                oydiCMMInit       ( oyStruct_s        * filter OY_UNUSED )
 {
   int error = 0;
   return error;
@@ -1331,7 +1331,7 @@ int            oydiCMMMessageFuncSet ( oyMessage_f         message_func )
  */
 const char * oydiGetText             ( const char        * select,
                                        oyNAME_e            type,
-                                       oyStruct_s        * context )
+                                       oyStruct_s        * context OY_UNUSED )
 {
          if(strcmp(select, "name")==0)
   {

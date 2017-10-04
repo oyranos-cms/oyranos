@@ -382,13 +382,13 @@ int          DeviceAttributes_       ( ppd_file_t        * ppd,
 
         for(i = 0; i < attr_n; i++)
         {
-          char key[16];
+          char key[42];
 
           keyword = ppd->attrs[i]->name;
 
           /* we support keys beginning with ColorKeyWords, e.g.
              "ColorKeyWords" "ColorKeyWords" ... */
-          snprintf( &key[0], 16, "%s", keyword );
+          snprintf( &key[0], 42, "%s", keyword );
           key[14] = 0;
         
           if (strcmp(key, "ColorKeyWords") == 0)
@@ -960,7 +960,7 @@ oyCMMapi8_s_ _api8 = {
 
 const char * GetText                 ( const char        * select,
                                        oyNAME_e            type,
-                                       oyStruct_s        * context )
+                                       oyStruct_s        * context OY_UNUSED )
 {
     if(strcmp(select, "name")==0)
     {

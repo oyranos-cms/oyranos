@@ -69,7 +69,7 @@ int          oiccFilterMessageFuncSet( oyMessage_f         message_func )
  *  @since   2009/07/24 (Oyranos: 0.1.10)
  *  @date    2009/12/17
  */
-int                oiccFilterInit    ( oyStruct_s        * filter )
+int                oiccFilterInit    ( oyStruct_s        * filter OY_UNUSED )
 {
   int error = 0;
   return error;
@@ -82,7 +82,7 @@ int                oiccFilterInit    ( oyStruct_s        * filter )
  *  @since   2013/12/11 (Oyranos: 0.9.5)
  *  @date    2013/12/11
  */
-int                oiccInit          ( oyStruct_s        * filter )
+int                oiccInit          ( oyStruct_s        * filter OY_UNUSED )
 {
   int error = 0;
   return error;
@@ -97,8 +97,8 @@ int                oiccInit          ( oyStruct_s        * filter )
  */
 oyOptions_s* oicc_defaultICCValidateOptions
                                      ( oyFilterCore_s    * filter,
-                                       oyOptions_s       * validate,
-                                       int                 statical,
+                                       oyOptions_s       * validate OY_UNUSED,
+                                       int                 statical OY_UNUSED,
                                        uint32_t          * result )
 {
   uint32_t error = !filter;
@@ -158,7 +158,7 @@ char oicc_default_color_icc_options[] = {
 
 #define A(long_text) STRING_ADD( tmp, long_text)
 
-int  oiccGetDefaultColorIccOptionsUI ( oyCMMapiFilter_s   * module,
+int  oiccGetDefaultColorIccOptionsUI ( oyCMMapiFilter_s   * module OY_UNUSED,
                                        oyOptions_s        * options,
                                        char              ** ui_text,
                                        oyAlloc_f            allocateFunc )
@@ -434,9 +434,9 @@ int  oiccGetDefaultColorIccOptionsUI ( oyCMMapiFilter_s   * module,
   return 0;
 }
 
-oyWIDGET_EVENT_e   oiccWidgetEvent   ( oyOptions_s       * options,
-                                       oyWIDGET_EVENT_e    type,
-                                       oyStruct_s        * event )
+oyWIDGET_EVENT_e   oiccWidgetEvent   ( oyOptions_s       * options OY_UNUSED,
+                                       oyWIDGET_EVENT_e    type OY_UNUSED,
+                                       oyStruct_s        * event OY_UNUSED )
 {return 0;}
 
 
@@ -609,7 +609,7 @@ oyCMMobjectType_s_ * icc_objects[] = {
 void             oiccChangeNodeOption( oyOptions_s       * f_options,
                                        oyOptions_s       * db_options,
                                        const char        * key,
-                                       oyConversion_s    * cc,
+                                       oyConversion_s    * cc OY_UNUSED,
                                        int                 verbose,
                                        int                 flags,
                                        int                 type )
@@ -1018,7 +1018,7 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
   return error;
 }
 
-char * oiccCMMGetFallback            ( oyFilterNode_s    * node,
+char * oiccCMMGetFallback            ( oyFilterNode_s    * node OY_UNUSED,
                                        uint32_t            flags,
                                        int                 select_core,
                                        oyAlloc_f           allocate_func )
@@ -1118,7 +1118,7 @@ oyCMMapi9_s_  oicc_api9 = {
  */
 const char * oiccInfoGetText         ( const char        * select,
                                        oyNAME_e            type,
-                                       oyStruct_s        * context )
+                                       oyStruct_s        * context OY_UNUSED )
 {
          if(strcmp(select, "name")==0)
   {

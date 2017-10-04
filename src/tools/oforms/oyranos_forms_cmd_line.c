@@ -52,7 +52,7 @@
  *  @date    2009/09/04
  */
 int        oyXML2XFORMsCmdLineSelect1Handler( xmlNodePtr          cur,
-                                       oyOptions_s       * collected_elements,
+                                       oyOptions_s       * collected_elements OY_UNUSED,
                                        oyPointer           user_data )
 {
   int is_default,
@@ -205,7 +205,7 @@ oyUiHandler_s oy_ui_cmd_line_handler_xf_select1_ =
  */
 int        oyXML2XFORMsCmdLineHtmlHeadlineHandler (
                                        xmlNodePtr          cur,
-                                       oyOptions_s       * collected_elements,
+                                       oyOptions_s       * collected_elements OY_UNUSED,
                                        oyPointer           user_data )
 {
   const char * label = 0,

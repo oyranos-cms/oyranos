@@ -1023,7 +1023,7 @@ void sunpos( double d, double *lon, double *r )
 void sun_RA_dec( double d, double *RA, double *dec, double *r )
 {
   double lon, obl_ecl;
-  double xs, ys, zs;
+  double xs, ys, zs OY_UNUSED;
   double xe, ye, ze;
   
   /* Compute Sun's ecliptical coordinates */

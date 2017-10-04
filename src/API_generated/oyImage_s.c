@@ -152,7 +152,7 @@ oyPointer oyImage_GetArray2dLineContinous (
                                          oyImage_s       * image,
                                          int               point_y,
                                          int             * height,
-                                         int               channel,
+                                         int               channel OY_UNUSED,
                                          int             * is_allocated )
 {
   oyArray2d_s_ * a = (oyArray2d_s_*) oyImagePriv_m(image)->pixel_data;
@@ -263,10 +263,10 @@ int       oyImage_SetArray2dLineContinous (
  *  @date    2008/08/24
  */
 oyPointer oyImage_GetArray2dPointPlanar( oyImage_s       * image,
-                                         int               point_x,
-                                         int               point_y,
-                                         int               channel,
-                                         int             * is_allocated )
+                                         int               point_x OY_UNUSED,
+                                         int               point_y OY_UNUSED,
+                                         int               channel OY_UNUSED,
+                                         int             * is_allocated OY_UNUSED )
 {
   WARNcc_S(image, "planar pixel access not implemented")
   return 0;
@@ -294,10 +294,10 @@ oyPointer oyImage_GetArray2dPointPlanar( oyImage_s       * image,
  *  @date    2008/08/24
  */
 oyPointer oyImage_GetArray2dLinePlanar ( oyImage_s       * image,
-                                         int               point_y,
+                                         int               point_y OY_UNUSED,
                                          int             * height,
-                                         int               channel,
-                                         int             * is_allocated )
+                                         int               channel OY_UNUSED,
+                                         int             * is_allocated OY_UNUSED )
 {
   if(height) *height = 1;
   WARNcc_S(image, "planar pixel access not implemented")
@@ -574,10 +574,10 @@ int            oyImage_SetCritical   ( oyImage_s         * image,
 }
 
 static int oyImage_CreateFillArray_  ( oyImage_s         * image,
-                                       oyRectangle_s     * rectangle,
+                                       oyRectangle_s     * rectangle OY_UNUSED,
                                        int                 allocate_method,
                                        oyArray2d_s      ** array,
-                                       oyRectangle_s     * array_rectangle,
+                                       oyRectangle_s     * array_rectangle OY_UNUSED,
                                        oyObject_s          obj,
                                        oyRectangle_s_    * arc )
 {

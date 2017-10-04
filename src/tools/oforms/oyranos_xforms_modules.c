@@ -41,7 +41,7 @@
 #include "oyranos_forms.h"
 
 
-void usage(int argc, char ** argv)
+void usage(int argc OY_UNUSED, char ** argv)
 {
   fprintf( stderr, "\n");
   fprintf( stderr, "oyranos-xforms v%d.%d.%d %s\n",

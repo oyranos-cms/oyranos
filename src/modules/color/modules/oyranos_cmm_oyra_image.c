@@ -60,8 +60,8 @@ oyDATATYPE_e oyra_image_data_types[7] = {oyUINT8, oyUINT16, oyUINT32,
 
 oyOptions_s* oyraFilter_ImageWriteValidateOptions
                                      ( oyFilterCore_s    * filter,
-                                       oyOptions_s       * validate,
-                                       int                 statical,
+                                       oyOptions_s       * validate OY_UNUSED,
+                                       int                 statical OY_UNUSED,
                                        uint32_t          * result )
 {
   uint32_t error = !filter;
@@ -320,7 +320,7 @@ oyCMMapi7_s_   oyra_api7_image_write = {
 const char * oyraApi4UiImageWriteGetText (
                                        const char        * select,
                                        oyNAME_e            type,
-                                       oyStruct_s        * context )
+                                       oyStruct_s        * context OY_UNUSED )
 {
   if(strcmp(select,"name") == 0)
   {
@@ -411,8 +411,8 @@ oyCMMapi4_s_   oyra_api4_image_write = {
 
 oyOptions_s* oyraFilter_ImageLoadValidateOptions
                                      ( oyFilterCore_s    * filter,
-                                       oyOptions_s       * validate,
-                                       int                 statical,
+                                       oyOptions_s       * validate OY_UNUSED,
+                                       int                 statical OY_UNUSED,
                                        uint32_t          * result )
 {
   uint32_t error = !filter;
@@ -719,7 +719,7 @@ oyCMMapi7_s_   oyra_api7_image_load = {
 const char * oyraApi4UiImageLoadGetText (
                                        const char        * select,
                                        oyNAME_e            type,
-                                       oyStruct_s        * context )
+                                       oyStruct_s        * context OY_UNUSED )
 {
   if(strcmp(select,"name") == 0)
   {
@@ -810,8 +810,8 @@ oyCMMapi4_s_   oyra_api4_image_load = {
 
 oyOptions_s* oyraFilter_ImageRectanglesValidateOptions
                                      ( oyFilterCore_s    * filter,
-                                       oyOptions_s       * validate,
-                                       int                 statical,
+                                       oyOptions_s       * validate OY_UNUSED,
+                                       int                 statical OY_UNUSED,
                                        uint32_t          * result )
 {
   uint32_t error = !filter;
@@ -1086,7 +1086,7 @@ oyCMMapi7_s_   oyra_api7_image_rectangles = {
 const char * oyraApi4UiImageRectanglesGetText (
                                        const char        * select,
                                        oyNAME_e            type,
-                                       oyStruct_s        * context )
+                                       oyStruct_s        * context OY_UNUSED )
 {
   if(strcmp(select,"name") == 0)
   {
@@ -1177,8 +1177,8 @@ oyCMMapi4_s_   oyra_api4_image_rectangles = {
 
 oyOptions_s* oyraFilter_ImageRootValidateOptions
                                      ( oyFilterCore_s    * filter,
-                                       oyOptions_s       * validate,
-                                       int                 statical,
+                                       oyOptions_s       * validate OY_UNUSED,
+                                       int                 statical OY_UNUSED,
                                        uint32_t          * result )
 {
   uint32_t error = !filter;
@@ -1294,7 +1294,7 @@ oyCMMapi7_s_   oyra_api7_image_root = {
 const char * oyraApi4UiImageRootGetText (
                                        const char        * select,
                                        oyNAME_e            type,
-                                       oyStruct_s        * context )
+                                       oyStruct_s        * context OY_UNUSED )
 {
   if(strcmp(select,"name") == 0)
   {
@@ -1485,7 +1485,7 @@ oyCMMapi7_s_   oyra_api7_image_output = {
 const char * oyraApi4UiImageOutputGetText (
                                        const char        * select,
                                        oyNAME_e            type,
-                                       oyStruct_s        * context )
+                                       oyStruct_s        * context OY_UNUSED )
 {
   if(strcmp(select,"name") == 0)
   {

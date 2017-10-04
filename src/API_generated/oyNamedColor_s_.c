@@ -86,7 +86,7 @@ void oyNamedColor_Release__Members( oyNamedColor_s_ * namedcolor )
  *  @since   YYYY/MM/DD (Oyranos: x.x.x)
  *  @date    YYYY/MM/DD
  */
-int oyNamedColor_Init__Members( oyNamedColor_s_ * namedcolor )
+int oyNamedColor_Init__Members( oyNamedColor_s_ * namedcolor OY_UNUSED )
 {
   return 0;
 }

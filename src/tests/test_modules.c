@@ -2,7 +2,7 @@
 #include "oyranos_module_internal.h"
 #include "oyCMMapi5_s_.h"
 
-int main( int argc, char ** argv)
+int main( int argc OY_UNUSED, char ** argv OY_UNUSED)
 {
   oyCMMapi6_s * api = oyCMMapi6_New(0);
   const char * in,*out;

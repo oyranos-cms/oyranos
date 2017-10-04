@@ -137,7 +137,7 @@ void oyCleanProfiles                 ( Display           * display )
  */
 int          oyX1CleanOptions_Handle ( oyOptions_s       * options,
                                        const char        * command,
-                                       oyOptions_s      ** result )
+                                       oyOptions_s      ** result OY_UNUSED )
 {
   int error = 0;
   if(oyFilterRegistrationMatch(command,"can_handle", 0))
@@ -177,7 +177,7 @@ int          oyX1CleanOptions_Handle ( oyOptions_s       * options,
  */
 const char * oyX1InfoGetTextMyHandlerC(const char        * select,
                                        oyNAME_e            type,
-                                       oyStruct_s        * context )
+                                       oyStruct_s        * context OY_UNUSED )
 {
          if(strcmp(select, "can_handle")==0)
   {
@@ -322,7 +322,7 @@ int  oyMoveColorServerProfiles       ( const char        * display_name,
  */
 int          oyX1MoveOptions_Handle  ( oyOptions_s       * options,
                                        const char        * command,
-                                       oyOptions_s      ** result )
+                                       oyOptions_s      ** result OY_UNUSED )
 {
   if(oyFilterRegistrationMatch(command,"can_handle", 0))
   {
@@ -358,7 +358,7 @@ int          oyX1MoveOptions_Handle  ( oyOptions_s       * options,
  */
 const char * oyX1InfoGetTextMyHandlerM(const char        * select,
                                        oyNAME_e            type,
-                                       oyStruct_s        * context )
+                                       oyStruct_s        * context OY_UNUSED )
 {
          if(strcmp(select, "can_handle")==0)
   {
@@ -484,7 +484,7 @@ int XcolorRegionFind(XcolorRegion * old_regions, unsigned long old_regions_n, Di
  */
 int          oyX1UpdateOptions_Handle( oyOptions_s       * options,
                                        const char        * command,
-                                       oyOptions_s      ** result )
+                                       oyOptions_s      ** result OY_UNUSED )
 {
   if(oyFilterRegistrationMatch(command,"can_handle", 0))
   {
@@ -549,7 +549,7 @@ int          oyX1UpdateOptions_Handle( oyOptions_s       * options,
  */
 const char * oyX1InfoGetTextMyHandlerU(const char        * select,
                                        oyNAME_e            type,
-                                       oyStruct_s        * context )
+                                       oyStruct_s        * context OY_UNUSED )
 {
          if(strcmp(select, "can_handle")==0)
   {
@@ -625,7 +625,7 @@ oyCMMapi10_s_    oyX1_api10_send_native_update_event_handler = {
  */
 int          oyX1MOptions_Handle     ( oyOptions_s       * options,
                                        const char        * command,
-                                       oyOptions_s      ** result )
+                                       oyOptions_s      ** result OY_UNUSED )
 {
   oyOption_s * o = 0;
   int error = 0;
@@ -807,7 +807,7 @@ int          oyX1MOptions_Handle     ( oyOptions_s       * options,
  */
 const char * oyX1InfoGetTextMyHandler( const char        * select,
                                        oyNAME_e            type,
-                                       oyStruct_s        * context )
+                                       oyStruct_s        * context OY_UNUSED )
 {
          if(strcmp(select, "can_handle")==0)
   {

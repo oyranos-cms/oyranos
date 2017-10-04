@@ -460,14 +460,14 @@ void             oyCMMProgress_      ( int                 ID,
  *  @since   2005/00/00 (Oyranos: 0.1.x)
  *  @date    2008/10/24
  */
-int      oyGetMonitorInfo            ( const char        * display_name,
-                                       char             ** manufacturer,
-                                       char             ** model,
-                                       char             ** serial,
-                                       char             ** system_port,
-                                       char             ** display_geometry,
-                                       oyBlob_s         ** edid,
-                                       oyAlloc_f           allocate_func )
+OY_DEPRECATED int      oyGetMonitorInfo            ( const char        * display_name OY_UNUSED,
+                                       char             ** manufacturer OY_UNUSED,
+                                       char             ** model OY_UNUSED,
+                                       char             ** serial OY_UNUSED,
+                                       char             ** system_port OY_UNUSED,
+                                       char             ** display_geometry OY_UNUSED,
+                                       oyBlob_s         ** edid OY_UNUSED,
+                                       oyAlloc_f           allocate_func OY_UNUSED )
 {
   int error = 0;
 
@@ -493,9 +493,9 @@ int      oyGetMonitorInfo            ( const char        * display_name,
  *  @since   2005/00/00 (Oyranos: 0.1.x)
  *  @date    2008/10/24
  */
-int      oyGetScreenFromPosition     ( const char        * display_name,
-                                       int                 x,
-                                       int                 y )
+OY_DEPRECATED int      oyGetScreenFromPosition     ( const char        * display_name OY_UNUSED,
+                                       int                 x OY_UNUSED,
+                                       int                 y OY_UNUSED )
 {
   int screen = 0;
 
@@ -521,7 +521,7 @@ int      oyGetScreenFromPosition     ( const char        * display_name,
  *  @since   2005/00/00 (Oyranos: 0.1.x)
  *  @date    2010/11/12
  */
-char *   oyGetDisplayNameFromPosition2(const char        * device_type,
+OY_DEPRECATED char *   oyGetDisplayNameFromPosition2(const char        * device_type,
                                        const char        * device_class,
                                        const char        * display_name,
                                        int                 x,
@@ -594,7 +594,7 @@ char *   oyGetDisplayNameFromPosition2(const char        * device_type,
  *  @since   2005/00/00 (Oyranos: 0.1.x)
  *  @date    2008/10/24
  */
-char *   oyGetDisplayNameFromPosition( const char        * display_name,
+OY_DEPRECATED char *   oyGetDisplayNameFromPosition( const char        * display_name,
                                        int                 x,
                                        int                 y,
                                        oyAlloc_f           allocateFunc )
@@ -664,7 +664,7 @@ char *   oyGetDisplayNameFromPosition( const char        * display_name,
  *  @since   2005/00/00 (Oyranos: 0.1.x)
  *  @date    2009/02/10
  */
-char *   oyGetMonitorProfile         ( const char        * device_name,
+OY_DEPRECATED char *   oyGetMonitorProfile         ( const char        * device_name,
                                        size_t            * size,
                                        oyAlloc_f           allocate_func )
 {
@@ -707,7 +707,7 @@ char *   oyGetMonitorProfile         ( const char        * device_name,
  *  @since   2009/02/08 (Oyranos: 0.1.10)
  *  @date    2009/02/08
  */
-char *   oyMonitorProfileNameFromDB  ( oyConfig_s        * device,
+OY_DEPRECATED char *   oyMonitorProfileNameFromDB  ( oyConfig_s        * device,
                                        oyAlloc_f           allocateFunc )
 {
   int error = !device;
@@ -752,7 +752,7 @@ char *   oyMonitorProfileNameFromDB  ( oyConfig_s        * device,
  *  @since   2005/00/00 (Oyranos: 0.1.x)
  *  @date    2008/10/24
  */
-char *   oyGetMonitorProfileNameFromDB(const char        * display_name,
+OY_DEPRECATED char *   oyGetMonitorProfileNameFromDB(const char        * display_name,
                                        oyAlloc_f           allocateFunc )
 {
   int error = !display_name || !display_name[0];
@@ -841,7 +841,7 @@ char *   oyGetMonitorProfileNameFromDB(const char        * display_name,
  *  @since   2005/00/00 (Oyranos: 0.1.x)
  *  @date    2009/01/28
  */
-int      oySetMonitorProfile         ( const char        * display_name,
+OY_DEPRECATED int      oySetMonitorProfile         ( const char        * display_name,
                                        const char        * profile_name )
 {
   int error = !display_name || !display_name[0];
@@ -904,7 +904,7 @@ int      oySetMonitorProfile         ( const char        * display_name,
  *  @since   2005/00/00 (Oyranos: 0.1.x)
  *  @date    2009/01/28
  */
-int      oyActivateMonitorProfiles   ( const char        * display_name )
+OY_DEPRECATED int      oyActivateMonitorProfiles   ( const char        * display_name )
 {
   int error = !display_name || !display_name[0];
   oyOptions_s * options = 0;

@@ -22,6 +22,16 @@
 #include <math.h>
 #include <wchar.h>
 
+#ifndef OY_UNUSED
+#ifdef __GNUC__
+#define OY_UNUSED                      __attribute__ ((unused))
+#elif defined(_MSC_VER)
+#define OY_UNUSED                      __declspec(unused)
+#else
+#define OY_UNUSED                      __attribute__ ((unused))
+#endif
+#endif
+
 #if LCMS_VERSION < 2050
 /* 'dscm' */
 #define cmsSigProfileDescriptionMLTag 0x6473636d
@@ -302,7 +312,7 @@ static double CIE_C_scaler = M_SQRT2; /* fit all Lab into LCh */
  */
 void         lcm2SamplerLab2LCh      ( const double        i[],
                                        double              o[],
-                                       void              * none )
+                                       void              * none OY_UNUSED )
 {
   double a = (i[1] - 0.5) * CIE_C_scaler,
          b = (i[2] - 0.5) * CIE_C_scaler;
@@ -332,7 +342,7 @@ void         lcm2SamplerLab2LCh      ( const double        i[],
  */
 void         lcm2SamplerLCh2Lab      ( const double        i[],
                                        double              o[],
-                                       void              * none )
+                                       void              * none OY_UNUSED )
 {
   /* CIE*L */
   o[0] = i[0];
@@ -536,7 +546,7 @@ static void scaleYCbCrToLinear( ITU_Std_e ITU_Std, double max, double * Y, doubl
 void         lcm2SamplerRGB2JpegYCbCr (
                                        const double        i[],
                                        double              o[],
-                                       void              * none )
+                                       void              * none OY_UNUSED )
 {
     /* final space PCS.Lab -> YCbCr */
 
@@ -572,7 +582,7 @@ void         lcm2SamplerRGB2JpegYCbCr (
  */
 void         lcm2SamplerJpegYCbCr2RGB( const double        i[],
                                        double              o[],
-                                       void              * none )
+                                       void              * none OY_UNUSED )
 {
     /* final space YCbCr -> PCS.Lab
      * Jpeg assumes no gamma correction
@@ -608,7 +618,7 @@ void         lcm2SamplerJpegYCbCr2RGB( const double        i[],
  */
 void         lcm2SamplerGrayer       ( const double        i[],
                                        double              o[],
-                                       void              * none )
+                                       void              * none OY_UNUSED )
 {
   o[0] = i[0]*1.0; // L / CIE*L / Y  / R
   o[1] = 0.5; // M / CIE*a / Cb / G
@@ -630,7 +640,7 @@ void         lcm2SamplerGrayer       ( const double        i[],
  */
 void         lcm2SamplerBlacknWhite  ( const double        i[],
                                        double              o[],
-                                       void              * none )
+                                       void              * none OY_UNUSED )
 {
   if(i[0] < 0.5)
     o[0] = 0.0; // L / CIE*L / Y  / R
@@ -684,7 +694,7 @@ void         lcm2SamplerSepia        ( const double        i[],
  */
 void         lcm2SamplerReddish      ( const double        i[],
                                        double              o[],
-                                       void              * none )
+                                       void              * none OY_UNUSED )
 {
   o[0] = i[0];
   o[1] = i[1] + 0.012+0.012*i[0];
@@ -1416,6 +1426,7 @@ cmsHPROFILE  lcm2CreateProfileFragment(
   cmsProfileClassSignature profile_class = cmsSigAbstractClass;
   cmsMLU * mlu[4] = {0,0,0,0};
   int i;
+  char * license = NULL;
 
   if(!h_profile)
   { h_profile = cmsCreateProfilePlaceholder( 0 ); } if(!h_profile) goto clean;
@@ -1460,7 +1471,7 @@ cmsHPROFILE  lcm2CreateProfileFragment(
     cmsWriteTag( h_profile, cmsSigDeviceMfgDescTag, mlu[2]);
   }
 
-  char * license = (char *) malloc( strlen(my_license) + strlen(provider) + strlen(vendor) + 1 );
+  license = (char *) malloc( strlen(my_license) + strlen(provider) + strlen(vendor) + 1 );
   if(!license) goto clean;;
   sprintf( license, my_license, provider, vendor );
   cmsMLUsetASCII(mlu[3], "EN", "us", license);
@@ -1895,8 +1906,8 @@ cmsHPROFILE  lcm2CreateICCMatrixProfile2 (
  *  @date    2009/07/20
  *  @since   2008/04/03 (OpenICC: 0.1.0)
  */
-int  lcm2MessageFunc                 ( int/*openiccMSG_e*/ code,
-                                       const void        * context_object,
+int  lcm2MessageFunc                 ( int/*openiccMSG_e*/ code OY_UNUSED,
+                                       const void        * context_object OY_UNUSED,
                                        const char        * format,
                                        ... )
 {

@@ -349,7 +349,7 @@ char *   oiOpeniccToOyranos          ( const char        * key_name,
  *  @date    2016/04/29
  *  @since   2016/04/29 (Oyranos: 0.9.6)
  */
-int                oiDBInit       ( oyStruct_s        * filter )
+int                oiDBInit       ( oyStruct_s        * filter OY_UNUSED )
 {
   int error = 0;
   return error;
@@ -357,8 +357,8 @@ int                oiDBInit       ( oyStruct_s        * filter )
 
 const char*oiDBopeniccStaticMessageFunc (
                                        oyPointer           obj,
-                                       oyNAME_e            type,
-                                       int                 flags )
+                                       oyNAME_e            type OY_UNUSED,
+                                       int                 flags OY_UNUSED )
 {
   typedef struct {
     openiccOBJECT_e type;
@@ -419,9 +419,9 @@ oyDbAPI_s oiDBopeniccDbAPI = {
  *  @date    2016/10/23
  *  @since   2016/05/01 (Oyranos: 0.9.6)
  */
-int          oiDBMOptions_Handle     ( oyOptions_s       * options,
+int          oiDBMOptions_Handle     ( oyOptions_s       * options OY_UNUSED,
                                        const char        * command,
-                                       oyOptions_s      ** result )
+                                       oyOptions_s      ** result OY_UNUSED )
 {
   int error = 0;
 
@@ -450,7 +450,7 @@ const char *oiDB_texts_profile_create[4] = {"can_handle","db_handler","help",0};
  */
 const char * oiDBInfoGetTextDBC      ( const char        * select,
                                        oyNAME_e            type,
-                                       oyStruct_s        * context )
+                                       oyStruct_s        * context OY_UNUSED )
 {
          if(strcmp(select, "can_handle")==0)
   {
@@ -525,7 +525,7 @@ oyCMMapi10_s_    oiDB_api10_cmm = {
  */
 const char * oiDBInfoGetText         ( const char        * select,
                                        oyNAME_e            type,
-                                       oyStruct_s        * context )
+                                       oyStruct_s        * context OY_UNUSED )
 {
          if(strcmp(select, "name")==0)
   {

@@ -51,7 +51,7 @@ void oyArray2d_Release__Members( oyArray2d_s_ * array2d )
  *  @since   YYYY/MM/DD (Oyranos: x.x.x)
  *  @date    YYYY/MM/DD
  */
-int oyArray2d_Init__Members( oyArray2d_s_ * array2d )
+int oyArray2d_Init__Members( oyArray2d_s_ * array2d OY_UNUSED )
 {
   return 0;
 }

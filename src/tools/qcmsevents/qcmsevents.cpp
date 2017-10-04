@@ -252,7 +252,7 @@ void QcmseDialog::log( const char * text, int code )
       text = strstr(text, "PropertyNotify : ") + strlen("PropertyNotify : ");
     item->setBackground( QBrush( color ) );
   }
-  else if (XCME_MSG_DISPLAY_STATUS)
+  else if (code == XCME_MSG_DISPLAY_STATUS)
   {
     int i;
     if(strstr(text, "atom: \"" XCM_COLOR_DESKTOP "\":"))

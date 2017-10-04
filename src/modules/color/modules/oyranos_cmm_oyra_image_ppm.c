@@ -51,7 +51,7 @@ int wread ( unsigned char   *data,    /* read a word */
 oyOptions_s* oyraFilter_ImageOutputPPMValidateOptions
                                      ( oyFilterCore_s    * filter,
                                        oyOptions_s       * validate,
-                                       int                 statical,
+                                       int                 statical OY_UNUSED,
                                        uint32_t          * result )
 {
   uint32_t error = !filter;
@@ -161,8 +161,8 @@ const char ppm_write_extra_options[] = {
   </" OY_TOP_SHARED ">\n"
 };
 
-int  oyraPPMwriteUiGet               ( oyCMMapiFilter_s   * module,
-                                       oyOptions_s       * opts,
+int  oyraPPMwriteUiGet               ( oyCMMapiFilter_s   * module OY_UNUSED,
+                                       oyOptions_s       * opts OY_UNUSED,
                                        char             ** xforms_layout,
                                        oyAlloc_f           allocateFunc )
 {
@@ -248,7 +248,7 @@ oyConnectorImaging_s_ * oyra_imageOutputPPM_connectors_plug[2] =
 const char * oyraApi4ImageWriteUiGetText (
                                        const char        * select,
                                        oyNAME_e            type,
-                                       oyStruct_s        * context )
+                                       oyStruct_s        * context OY_UNUSED )
 {
   static char * category = 0;
   if(strcmp(select,"name") == 0)
@@ -412,7 +412,7 @@ oyCMMapi7_s_ oyra_api7_image_write_ppm = {
 oyOptions_s* oyraFilter_ImageInputPPMValidateOptions
                                      ( oyFilterCore_s    * filter,
                                        oyOptions_s       * validate,
-                                       int                 statical,
+                                       int                 statical OY_UNUSED,
                                        uint32_t          * result )
 {
   uint32_t error = !filter;
@@ -1084,8 +1084,8 @@ const char ppm_read_extra_options[] = {
   </" OY_TOP_SHARED ">\n"
 };
 
-int  oyraPPMreadUiGet                ( oyCMMapiFilter_s   * module,
-                                       oyOptions_s       * opts,
+int  oyraPPMreadUiGet                ( oyCMMapiFilter_s   * module OY_UNUSED,
+                                       oyOptions_s       * opts OY_UNUSED,
                                        char             ** xforms_layout,
                                        oyAlloc_f           allocateFunc )
 {
@@ -1138,7 +1138,7 @@ oyConnectorImaging_s_ * oyra_imageInputPPM_connectors[2] =
 const char * oyraApi4ImageInputUiGetText (
                                        const char        * select,
                                        oyNAME_e            type,
-                                       oyStruct_s        * context )
+                                       oyStruct_s        * context OY_UNUSED )
 {
   static char * category = 0;
   if(strcmp(select,"name") == 0)

@@ -56,12 +56,12 @@ extern oyCMMapi7_s_   oPNG_api7_image_input_png;
 /* OY_WRITE_PNG_REGISTRATION */
 
 
-oyWIDGET_EVENT_e   oPNGWidgetEvent   ( oyOptions_s       * options,
-                                       oyWIDGET_EVENT_e    type,
-                                       oyStruct_s        * event )
+oyWIDGET_EVENT_e   oPNGWidgetEvent   ( oyOptions_s       * options OY_UNUSED,
+                                       oyWIDGET_EVENT_e    type OY_UNUSED,
+                                       oyStruct_s        * event OY_UNUSED )
 {return 0;}
 
-int                oPNGCMMInit       ( oyStruct_s        * filter )
+int                oPNGCMMInit       ( oyStruct_s        * filter OY_UNUSED )
 { int error = 0; return error; }
 
 /** Function oPNGCMMMessageFuncSet
@@ -121,13 +121,13 @@ oyCMM_s oPNG_cmm_module = {
 };
 
 
-void oPNGerror( png_structp png, const char * text )
+void oPNGerror( png_structp png OY_UNUSED, const char * text )
 {
   oPNG_msg( oyMSG_ERROR, (oyStruct_s*)NULL/*node*/,
              OY_DBG_FORMAT_ "%s",
              OY_DBG_ARGS_, text );
 }
-void oPNGwarn( png_structp png, const char * text )
+void oPNGwarn( png_structp png OY_UNUSED, const char * text )
 {
   oPNG_msg( oyMSG_WARN, (oyStruct_s*)NULL/*node*/,
              OY_DBG_FORMAT_ "%s",
@@ -141,7 +141,7 @@ void oPNGwarn( png_structp png, const char * text )
 oyOptions_s* oPNGFilter_ImageOutputPNGValidateOptions
                                      ( oyFilterCore_s    * filter,
                                        oyOptions_s       * validate,
-                                       int                 statical,
+                                       int                 statical OY_UNUSED,
                                        uint32_t          * result )
 {
   uint32_t error = !filter;
@@ -287,7 +287,7 @@ int  oyImage_WritePNG                ( oyImage_s         * image,
   /* set ICC profile */
   pmem = oyProfile_GetMem( prof, &psize, 0,0 );
   png_set_iCCP( png_ptr, info_ptr, (char*)colorspacename, 0,
-                pmem, psize);
+                (png_const_bytep)pmem, psize);
   oyDeAllocateFunc_( pmem ); pmem = 0;
 
   /* set time stamp */
@@ -474,8 +474,8 @@ const char png_write_extra_options[] = {
   </" OY_TOP_SHARED ">\n"
 };
 
-int  oPNGPNGwriteUiGet               ( oyCMMapiFilter_s   * module,
-                                       oyOptions_s       * opts,
+int  oPNGPNGwriteUiGet               ( oyCMMapiFilter_s   * module OY_UNUSED,
+                                       oyOptions_s       * opts OY_UNUSED,
                                        char             ** xforms_layout,
                                        oyAlloc_f           allocateFunc )
 {
@@ -532,7 +532,7 @@ oyConnectorImaging_s_ * oPNG_imageOutputPNG_connectors_plug[2] =
 const char * oPNGApi4ImageWriteUiGetText (
                                        const char        * select,
                                        oyNAME_e            type,
-                                       oyStruct_s        * context )
+                                       oyStruct_s        * context OY_UNUSED )
 {
   static char * category = 0;
   if(strcmp(select,"name") == 0)
@@ -697,7 +697,7 @@ oyCMMapi7_s_ oPNG_api7_image_write_png = {
 oyOptions_s* oPNGFilter_ImageInputPNGValidateOptions
                                      ( oyFilterCore_s    * filter,
                                        oyOptions_s       * validate,
-                                       int                 statical,
+                                       int                 statical OY_UNUSED,
                                        uint32_t          * result )
 {
   uint32_t error = !filter;
@@ -886,7 +886,7 @@ oyImage_s *  oyImage_FromPNG         ( const char        * filename,
     int compression = 0;
 
     if( png_get_iCCP( png_ptr, info_ptr, &name, &compression,
-                      &profile, &proflen ) )
+                      (png_bytepp) &profile, &proflen ) )
     {
       prof = oyProfile_FromMem( proflen, profile, 0,0 );
       oPNG_msg( oyMSG_DBG, object,
@@ -1076,8 +1076,8 @@ const char png_read_extra_options[] = {
   </" OY_TOP_SHARED ">\n"
 };
 
-int  oPNGPNGreadUiGet                ( oyCMMapiFilter_s   * module,
-                                       oyOptions_s       * opts,
+int  oPNGPNGreadUiGet                ( oyCMMapiFilter_s   * module OY_UNUSED,
+                                       oyOptions_s       * opts OY_UNUSED,
                                        char             ** xforms_layout,
                                        oyAlloc_f           allocateFunc )
 {
@@ -1090,7 +1090,7 @@ int  oPNGPNGreadUiGet                ( oyCMMapiFilter_s   * module,
 const char * oPNG_imageInputPNG_connectorGetText (
                                        const char        * select,
                                        oyNAME_e            type,
-                                       oyStruct_s        * context )
+                                       oyStruct_s        * context OY_UNUSED )
 {
   if(strcmp(select, "name")==0)
   {
@@ -1147,7 +1147,7 @@ oyConnectorImaging_s_ * oPNG_imageInputPNG_connectors[2] =
 const char * oPNGApi4ImageInputUiGetText (
                                        const char        * select,
                                        oyNAME_e            type,
-                                       oyStruct_s        * context )
+                                       oyStruct_s        * context OY_UNUSED )
 {
   static char * category = 0;
   if(strcmp(select,"name") == 0)

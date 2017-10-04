@@ -273,7 +273,7 @@ oyCMMapi_s * oyraApi7ImageExposeCreate(void)
 const char * oyraApi4UiImageExposeGetText (
                                        const char        * select,
                                        oyNAME_e            type,
-                                       oyStruct_s        * context )
+                                       oyStruct_s        * context OY_UNUSED )
 {
   if(strcmp(select,"name") == 0)
   {

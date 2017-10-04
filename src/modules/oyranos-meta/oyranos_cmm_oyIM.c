@@ -50,7 +50,7 @@ oyMessage_f oyIM_msg = oyMessageFunc;
  *  @since   2008/01/02 (Oyranos: 0.1.8)
  *  @date    2009/12/17
  */
-int                oyIMCMMInit       ( oyStruct_s        * filter )
+int                oyIMCMMInit       ( oyStruct_s        * filter OY_UNUSED )
 {
   int error = 0;
   return error;
@@ -91,18 +91,18 @@ int            oyIMCMMMessageFuncSet ( oyMessage_f         message_func )
 }
 
 
-const char * oyIMWidget_GetDummy     ( const char        * func_name,
-                                       uint32_t          * result )
+const char * oyIMWidget_GetDummy     ( const char        * func_name OY_UNUSED,
+                                       uint32_t          * result OY_UNUSED )
 {return 0;}
 oyWIDGET_EVENT_e oyIMWidget_EventDummy
-                                     ( const char        * wid,
-                                       oyWIDGET_EVENT_e    type )
+                                     ( const char        * wid OY_UNUSED,
+                                       oyWIDGET_EVENT_e    type OY_UNUSED )
 {return 0;}
 
 
-oyWIDGET_EVENT_e   oyIMWidgetEvent   ( oyOptions_s       * options,
-                                       oyWIDGET_EVENT_e    type,
-                                       oyStruct_s        * event )
+oyWIDGET_EVENT_e   oyIMWidgetEvent   ( oyOptions_s       * options OY_UNUSED,
+                                       oyWIDGET_EVENT_e    type OY_UNUSED,
+                                       oyStruct_s        * event OY_UNUSED )
 {return 0;}
 
 
@@ -117,7 +117,7 @@ oyWIDGET_EVENT_e   oyIMWidgetEvent   ( oyOptions_s       * options,
  */
 const char * oyIMInfoGetText         ( const char        * select,
                                        oyNAME_e            type,
-                                       oyStruct_s        * context )
+                                       oyStruct_s        * context OY_UNUSED )
 {
          if(strcmp(select, "name")==0)
   {

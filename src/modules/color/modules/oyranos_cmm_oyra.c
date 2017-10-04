@@ -50,7 +50,7 @@ oyMessage_f oyra_msg = oyMessageFunc;
  *  @since   2008/01/02 (Oyranos: 0.1.8)
  *  @date    2009/12/17
  */
-int                oyraCMMInit       ( oyStruct_s        * filter )
+int                oyraCMMInit       ( oyStruct_s        * filter OY_UNUSED )
 {
   int error = 0;
   return error;
@@ -93,18 +93,18 @@ int            oyraCMMMessageFuncSet ( oyMessage_f         message_func )
 
 
 
-const char * oyraWidget_GetDummy     ( const char        * func_name,
-                                       uint32_t          * result )
+const char * oyraWidget_GetDummy     ( const char        * func_name OY_UNUSED,
+                                       uint32_t          * result OY_UNUSED )
 {return 0;}
 oyWIDGET_EVENT_e oyraWidget_EventDummy
-                                     ( const char        * wid,
-                                       oyWIDGET_EVENT_e    type )
+                                     ( const char        * wid OY_UNUSED,
+                                       oyWIDGET_EVENT_e    type OY_UNUSED )
 {return 0;}
 
 
-oyWIDGET_EVENT_e   oyraWidgetEvent   ( oyOptions_s       * options,
-                                       oyWIDGET_EVENT_e    type,
-                                       oyStruct_s        * event )
+oyWIDGET_EVENT_e   oyraWidgetEvent   ( oyOptions_s       * options OY_UNUSED,
+                                       oyWIDGET_EVENT_e    type OY_UNUSED,
+                                       oyStruct_s        * event OY_UNUSED )
 {return 0;}
 
 
@@ -118,7 +118,7 @@ oyWIDGET_EVENT_e   oyraWidgetEvent   ( oyOptions_s       * options,
  */
 const char * oyraGetText             ( const char        * select,
                                        oyNAME_e            type,
-                                       oyStruct_s        * context )
+                                       oyStruct_s        * context OY_UNUSED )
 {
          if(strcmp(select, "name")==0)
   {
@@ -150,7 +150,7 @@ const char * oyraGetText             ( const char        * select,
 const char *oyra_texts[4] = {"name","copyright","manufacturer",0};
 
 extern oyCMM_s oyra_cmm_module;
-int  oyraInit                        ( oyStruct_s        * module_info )
+int  oyraInit                        ( oyStruct_s        * module_info OY_UNUSED )
 {
   oyCMMapi_s * a = 0,
              * a_tmp = 0,

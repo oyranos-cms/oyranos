@@ -85,7 +85,7 @@ void oyProfiles_Release__Members( oyProfiles_s_ * profiles )
  *  @since   YYYY/MM/DD (Oyranos: x.x.x)
  *  @date    YYYY/MM/DD
  */
-int oyProfiles_Init__Members( oyProfiles_s_ * profiles )
+int oyProfiles_Init__Members( oyProfiles_s_ * profiles OY_UNUSED )
 {
   return 0;
 }

@@ -45,7 +45,7 @@ extern "C" {
 
 /** DBus filter function */
 #define oyDBusFilter_m \
-DBusHandlerResult  oyDBusFilter      ( DBusConnection    * connection, \
+DBusHandlerResult  oyDBusFilter      ( DBusConnection    * connection OY_UNUSED, \
                                        DBusMessage       * message, \
                                        void              * user_data ) \
 { \
@@ -180,7 +180,7 @@ static void oyCallbackDBus           ( double              progress_zero_till_on
                                        char              * status_text, \
                                        int                 thread_id_, \
                                        int                 job_id, \
-                                       oyStruct_s        * cb_progress_context ) \
+                                       oyStruct_s        * cb_progress_context OY_UNUSED ) \
 { fprintf( stderr,"%s():%d %02f %s %d/%d\n",__func__,__LINE__, \
            progress_zero_till_one, \
            status_text?status_text:"",thread_id_,job_id); \

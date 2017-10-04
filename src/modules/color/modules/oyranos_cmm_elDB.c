@@ -773,7 +773,7 @@ int      elDBEraseKey                ( const char        * key_name,
  *  @date    2016/04/29
  *  @since   2016/04/29 (Oyranos: 0.9.6)
  */
-int                elDBInit       ( oyStruct_s        * filter )
+int                elDBInit       ( oyStruct_s        * filter OY_UNUSED )
 {
   int error = 0;
   return error;
@@ -819,9 +819,9 @@ oyDbAPI_s elDBopeniccDbAPI = {
  *  @date    2016/10/23
  *  @since   2016/05/01 (Oyranos: 0.9.6)
  */
-int          elDBMOptions_Handle     ( oyOptions_s       * options,
+int          elDBMOptions_Handle     ( oyOptions_s       * options OY_UNUSED,
                                        const char        * command,
-                                       oyOptions_s      ** result )
+                                       oyOptions_s      ** result OY_UNUSED )
 {
   int error = 0;
 
@@ -850,7 +850,7 @@ const char *elDB_texts_profile_create[4] = {"can_handle","db_handler","help",0};
  */
 const char * elDBInfoGetTextDBC      ( const char        * select,
                                        oyNAME_e            type,
-                                       oyStruct_s        * context )
+                                       oyStruct_s        * context OY_UNUSED )
 {
          if(strcmp(select, "can_handle")==0)
   {
@@ -925,7 +925,7 @@ oyCMMapi10_s_    elDB_api10_cmm = {
  */
 const char * elDBInfoGetText         ( const char        * select,
                                        oyNAME_e            type,
-                                       oyStruct_s        * context )
+                                       oyStruct_s        * context OY_UNUSED )
 {
          if(strcmp(select, "name")==0)
   {

@@ -1,6 +1,6 @@
 #include "oyranos_devices.h"
 
-int main( int argc, char ** argv)
+int main( int argc OY_UNUSED, char ** argv OY_UNUSED)
 {
   uint32_t count = 0,
          * rank_list = 0;

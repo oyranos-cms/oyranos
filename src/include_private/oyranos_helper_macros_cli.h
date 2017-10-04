@@ -71,13 +71,13 @@ extern "C" {
 #define OY_PARSE_STRING_ARG( opt ) \
                         if( pos + 1 < argc && argv[pos][i+1] == 0 ) \
                         { opt = argv[pos+1]; \
-                          if( opt == 0 && strcmp(argv[pos+1],"0") ) \
+                          if( opt == 0 && strcmp(argv[pos+1]?argv[pos+1]:"1","0") ) \
                             wrong_arg = "-" #opt; \
                           ++pos; \
                           i = 1000; \
                         } else if(argv[pos][i+1] == '=') \
                         { opt = &argv[pos][i+2]; \
-                          if( opt == 0 && strcmp(&argv[pos][i+2],"0") ) \
+                          if( opt == 0 && strcmp(&argv[pos][i+2]?&argv[pos][i+2]:"1","0") ) \
                             wrong_arg = "-" #opt; \
                           i = 1000; \
                         } else wrong_arg = "-" #opt; \

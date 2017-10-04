@@ -328,9 +328,9 @@ static void              (*l2cmsXYZ2Lab)(const cmsCIEXYZ* WhitePoint, cmsCIELab*
 static cmsFloat64Number (*l2cmsDeltaE)(const cmsCIELab* Lab1, const cmsCIELab* Lab2) = NULL;
 static void (*l2cmsGetAlarmCodes)(cmsUInt16Number NewAlarm[cmsMAXCHANNELS]) = NULL;
 static cmsContext (*l2cmsCreateContext)(void* Plugin, void* UserData) = NULL;
-static cmsContext dummyCreateContext(void* Plugin, void* UserData) {return NULL;}
+static cmsContext dummyCreateContext(void* Plugin OY_UNUSED, void* UserData OY_UNUSED) {return NULL;}
 static void* (*l2cmsGetContextUserData)(cmsContext ContextID) = NULL;
-static void* dummyGetContextUserData(cmsContext ContextID) {return NULL;}
+static void* dummyGetContextUserData(cmsContext ContextID OY_UNUSED) {return NULL;}
 static cmsContext (*l2cmsGetProfileContextID)(cmsHPROFILE hProfile) = NULL;
 static cmsContext (*l2cmsGetTransformContextID)(cmsHPROFILE hProfile) = NULL;
 static int dummyGetEncodedCMMversion() {return LCMS_VERSION;}
@@ -383,7 +383,7 @@ static int (*l2cmsGetEncodedCMMversion)(void) = dummyGetEncodedCMMversion;
  *  @date    2014/02/27
  *  @since   2007/12/11 (Oyranos: 0.1.8)
  */
-int                l2cmsCMMInit       ( oyStruct_s        * filter )
+int                l2cmsCMMInit       ( oyStruct_s        * filter OY_UNUSED )
 {
   int error = 0;
   if(!l2cms_initialised)
@@ -1323,8 +1323,8 @@ oyPointer  l2cmsCMMColorConversion_ToMem_ (
 
 oyOptions_s* l2cmsFilter_CmmIccValidateOptions
                                      ( oyFilterCore_s    * filter,
-                                       oyOptions_s       * validate,
-                                       int                 statical,
+                                       oyOptions_s       * validate OY_UNUSED,
+                                       int                 statical OY_UNUSED,
                                        uint32_t          * result )
 {
   uint32_t error = !filter;
@@ -1339,9 +1339,9 @@ oyOptions_s* l2cmsFilter_CmmIccValidateOptions
   return 0;
 }
 
-oyWIDGET_EVENT_e   l2cmsWidgetEvent   ( oyOptions_s       * options,
-                                       oyWIDGET_EVENT_e    type,
-                                       oyStruct_s        * event )
+oyWIDGET_EVENT_e   l2cmsWidgetEvent  ( oyOptions_s       * options OY_UNUSED,
+                                       oyWIDGET_EVENT_e    type OY_UNUSED,
+                                       oyStruct_s        * event OY_UNUSED )
 {return 0;}
 
 
@@ -1418,7 +1418,7 @@ oyConnectorImaging_s_* l2cms_cmmIccPlug_connectors[2]={&l2cms_cmmIccPlug_connect
  *  @date    2016/05/02
  *  @since   2009/11/05 (Oyranos: 0.1.10)
  */
-l2cmsProfileWrap_s*l2cmsAddProofProfile( oyProfile_s       * proof,
+l2cmsProfileWrap_s*l2cmsAddProofProfile( oyProfile_s     * proof,
                                        cmsUInt32Number     flags,
                                        int                 intent,
                                        int                 intent_proof,
@@ -2084,8 +2084,8 @@ oyPointer l2cmsFilterNode_CmmIccContextToMem (
   return block;
 }
 
-char * l2cmsImage_GetText             ( oyImage_s         * image,
-                                       int                 verbose,
+char * l2cmsImage_GetText            ( oyImage_s         * image,
+                                       int                 verbose OY_UNUSED,
                                        oyAlloc_f           allocateFunc )
 {
   oyPixel_t pixel_layout = oyImage_GetPixelLayout(image,oyLAYOUT); 
@@ -2157,7 +2157,7 @@ char * l2cmsImage_GetText             ( oyImage_s         * image,
  *  @date    2009/06/02
  */
 char * l2cmsFilterNode_GetText        ( oyFilterNode_s    * node,
-                                       oyNAME_e            type,
+                                       oyNAME_e            type OY_UNUSED,
                                        oyAlloc_f           allocateFunc )
 {
 #ifdef NO_OPT
@@ -2888,8 +2888,8 @@ void               oyCMMdeallocateFunc ( oyPointer         mem )
  *  @date    2007/11/00
  *  @since   2007/11/00 (Oyranos: 0.1.8)
  */
-void l2cmsErrorHandlerFunction        ( cmsContext          ContextID,
-                                       cmsUInt32Number     ErrorCode,
+void l2cmsErrorHandlerFunction       ( cmsContext          ContextID,
+                                       cmsUInt32Number     ErrorCode OY_UNUSED,
                                        const char        * ErrorText )
 {
   int code = 0;
@@ -2942,7 +2942,7 @@ char l2cms_extra_options[] = {
  *  @date    2014/01/08
  *  @since   2009/07/29 (Oyranos: 0.1.10)
  */
-int l2cmsGetOptionsUI                 ( oyCMMapiFilter_s   * module,
+int l2cmsGetOptionsUI                ( oyCMMapiFilter_s   * module OY_UNUSED,
                                        oyOptions_s        * options,
                                        char              ** ui_text,
                                        oyAlloc_f            allocateFunc )
@@ -3232,9 +3232,9 @@ int          l2cmsMOptions_Handle3   ( oyOptions_s       * options,
  *  @since   2017/06/06 (Oyranos: 0.9.7)
  *  @date    2017/06/06
  */
-const char * l2cmsInfoGetTextProfileC3( const char        * select,
+const char * l2cmsInfoGetTextProfileC3(const char        * select,
                                        oyNAME_e            type,
-                                       oyStruct_s        * context )
+                                       oyStruct_s        * context OY_UNUSED )
 {
          if(strcmp(select, "can_handle")==0)
   {
@@ -3507,9 +3507,9 @@ int          l2cmsMOptions_Handle2    ( oyOptions_s       * options,
  *  @since   2011/02/21 (Oyranos: 0.3.0)
  *  @date    2011/02/21
  */
-const char * l2cmsInfoGetTextProfileC2( const char        * select,
+const char * l2cmsInfoGetTextProfileC2(const char        * select,
                                        oyNAME_e            type,
-                                       oyStruct_s        * context )
+                                       oyStruct_s        * context OY_UNUSED )
 {
          if(strcmp(select, "can_handle")==0)
   {
@@ -3713,7 +3713,7 @@ int          l2cmsMOptions_Handle     ( oyOptions_s       * options,
  */
 const char * l2cmsInfoGetTextProfileC ( const char        * select,
                                        oyNAME_e            type,
-                                       oyStruct_s        * context )
+                                       oyStruct_s        * context OY_UNUSED )
 {
          if(strcmp(select, "can_handle")==0)
   {
@@ -3963,7 +3963,7 @@ oyCMMapi4_s_ l2cms_api4_cmm = {
  */
 const char * l2cmsInfoGetText         ( const char        * select,
                                        oyNAME_e            type,
-                                       oyStruct_s        * context )
+                                       oyStruct_s        * context OY_UNUSED )
 {
          if(strcmp(select, "name")==0)
   {

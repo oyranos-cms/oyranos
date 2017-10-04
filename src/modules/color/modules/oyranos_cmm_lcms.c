@@ -264,7 +264,7 @@ static double (*lcmsDeltaE)(LPcmsCIELab Lab1, LPcmsCIELab Lab2) = NULL;
  *  @date    2014/01/18
  *  @since   2007/12/11 (Oyranos: 0.1.8)
  */
-int                lcmsCMMInit       ( oyStruct_s        * filter )
+int                lcmsCMMInit       ( oyStruct_s        * filter OY_UNUSED )
 {
   int error = 0;
 
@@ -875,8 +875,8 @@ oyPointer  lcmsCMMColorConversion_ToMem_ (
 
 oyOptions_s* lcmsFilter_CmmIccValidateOptions
                                      ( oyFilterCore_s    * filter,
-                                       oyOptions_s       * validate,
-                                       int                 statical,
+                                       oyOptions_s       * validate OY_UNUSED,
+                                       int                 statical OY_UNUSED,
                                        uint32_t          * result )
 {
   uint32_t error = !filter;
@@ -891,9 +891,9 @@ oyOptions_s* lcmsFilter_CmmIccValidateOptions
   return 0;
 }
 
-oyWIDGET_EVENT_e   lcmsWidgetEvent   ( oyOptions_s       * options,
-                                       oyWIDGET_EVENT_e    type,
-                                       oyStruct_s        * event )
+oyWIDGET_EVENT_e   lcmsWidgetEvent   ( oyOptions_s       * options OY_UNUSED,
+                                       oyWIDGET_EVENT_e    type OY_UNUSED,
+                                       oyStruct_s        * event OY_UNUSED )
 {return 0;}
 
 
@@ -2277,7 +2277,7 @@ char lcms_extra_options[] = {
  *  @date    2014/01/08
  *  @since   2009/07/29 (Oyranos: 0.1.10)
  */
-int lcmsGetOptionsUI                 ( oyCMMapiFilter_s   * module,
+int lcmsGetOptionsUI                 ( oyCMMapiFilter_s   * module OY_UNUSED,
                                        oyOptions_s        * options,
                                        char              ** ui_text,
                                        oyAlloc_f            allocateFunc )
@@ -2521,7 +2521,7 @@ int          lcmsMOptions_Handle     ( oyOptions_s       * options,
  */
 const char * lcmsInfoGetTextProfileC2( const char        * select,
                                        oyNAME_e            type,
-                                       oyStruct_s        * context )
+                                       oyStruct_s        * context OY_UNUSED )
 {
          if(strcmp(select, "can_handle")==0)
   {
@@ -2594,7 +2594,7 @@ oyCMMapi10_s_  lcms_api10_cmm2 = {
  */
 const char * lcmsInfoGetTextProfileC ( const char        * select,
                                        oyNAME_e            type,
-                                       oyStruct_s        * context )
+                                       oyStruct_s        * context OY_UNUSED )
 {
          if(strcmp(select, "can_handle")==0)
   {
@@ -2840,7 +2840,7 @@ oyCMMapi4_s_ lcms_api4_cmm = {
  */
 const char * lcmsInfoGetText         ( const char        * select,
                                        oyNAME_e            type,
-                                       oyStruct_s        * context )
+                                       oyStruct_s        * context OY_UNUSED )
 {
          if(strcmp(select, "name")==0)
   {

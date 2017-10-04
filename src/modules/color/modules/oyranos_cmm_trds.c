@@ -142,7 +142,7 @@ typedef struct {
 } oyMutex_s;
 
 /* define our own mutex based locking */
-oyPointer  oyStruct_LockCreate_        ( oyStruct_s      * obj )
+oyPointer  oyStruct_LockCreate_        ( oyStruct_s      * obj  OY_UNUSED)
 {
   oyMutex_s * ms = (oyMutex_s*) calloc(sizeof(oyMutex_s),1);
 
@@ -564,7 +564,7 @@ void               oyJobResult_      ( void )
  *  @date    2016/04/29
  *  @since   2016/04/29 (Oyranos: 0.9.6)
  */
-int                trdsCMMInit       ( oyStruct_s        * filter )
+int                trdsCMMInit       ( oyStruct_s        * filter OY_UNUSED )
 {
   int error = 0;
   return error;
@@ -593,9 +593,9 @@ int            trdsCMMMessageFuncSet ( oyMessage_f         message_func )
  *  @since   2016/05/01 (Oyranos: 0.9.6)
  *  @date    2016/05/01
  */
-int          trdsMOptions_Handle     ( oyOptions_s       * options,
+int          trdsMOptions_Handle     ( oyOptions_s       * options OY_UNUSED,
                                        const char        * command,
-                                       oyOptions_s      ** result )
+                                       oyOptions_s      ** result OY_UNUSED )
 {
   int error = 0;
 
@@ -628,7 +628,7 @@ const char *trds_texts_profile_create[4] = {"can_handle","threads_handler","help
  */
 const char * trdsInfoGetTextThreadsC ( const char        * select,
                                        oyNAME_e            type,
-                                       oyStruct_s        * context )
+                                       oyStruct_s        * context OY_UNUSED )
 {
          if(strcmp(select, "can_handle")==0)
   {
@@ -703,7 +703,7 @@ oyCMMapi10_s_    trds_api10_cmm = {
  */
 const char * trdsInfoGetText         ( const char        * select,
                                        oyNAME_e            type,
-                                       oyStruct_s        * context )
+                                       oyStruct_s        * context OY_UNUSED )
 {
          if(strcmp(select, "name")==0)
   {

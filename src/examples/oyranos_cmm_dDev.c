@@ -184,7 +184,7 @@ void         ConfigsUsage            ( oyStruct_s        * options )
 int              DeviceFromName_     ( const char        * device_name,
                                        oyOptions_s       * options,
                                        oyConfig_s       ** device,
-                                       oyAlloc_f           allocateFunc )
+                                       oyAlloc_f           allocateFunc OY_UNUSED )
 {
   oyOption_s * o = 0;
   int error = !device;
@@ -808,7 +808,7 @@ oyCMMapi8_s_ _api8 = {
  */
 const char * GetText                 ( const char        * select,
                                        oyNAME_e            type,
-                                       oyStruct_s        * context )
+                                       oyStruct_s        * context OY_UNUSED )
 {
          if(strcmp(select, "name")==0)
   {

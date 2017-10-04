@@ -314,7 +314,7 @@ const char *oyra_texts_graph2d_create[4] = {"can_handle", SAT_L_COMMAND, "help",
  */
 const char * oyraInfoGetTextGraph2D  ( const char        * select,
                                        oyNAME_e            type,
-                                       oyStruct_s        * context )
+                                       oyStruct_s        * context OY_UNUSED )
 {
          if(strcmp(select, "can_handle")==0)
   {

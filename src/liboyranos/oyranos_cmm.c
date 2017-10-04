@@ -227,7 +227,7 @@ int oyDeviceCMMInit                  ( oyStruct_s        * filter,
  */
 const char * oyCMMgetText             ( const char        * select,
                                        oyNAME_e            type,
-                                       oyStruct_s        * context )
+                                       oyStruct_s        * context OY_UNUSED )
 {
          if(strcmp(select, "name")==0)
   {
@@ -268,7 +268,7 @@ const char *oyCMM_texts[4] = {"name","copyright","manufacturer",0};
 const char * oyCMMgetImageConnectorPlugText (
                                        const char        * select,
                                        oyNAME_e            type,
-                                       oyStruct_s        * context )
+                                       oyStruct_s        * context OY_UNUSED )
 {
   if(strcmp(select, "name")==0)
   {
@@ -292,7 +292,7 @@ const char * oy_image_connector_texts[] = {"name", 0};
 const char * oyCMMgetImageConnectorSocketText (
                                        const char        * select,
                                        oyNAME_e            type,
-                                       oyStruct_s        * context )
+                                       oyStruct_s        * context OY_UNUSED )
 {
   if(strcmp(select, "name")==0)
   {

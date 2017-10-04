@@ -27,7 +27,7 @@
 #define oyAllocateFunc_ malloc
 #define oyDeAllocateFunc_ free
 
-void  printfHelp (int argc, char** argv)
+void  printfHelp (int argc OY_UNUSED, char** argv)
 {
   char * version = oyVersionString(1,0);
   char * id = oyVersionString(2,0);

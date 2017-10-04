@@ -50,7 +50,7 @@ void oyConversion_Release__Members( oyConversion_s_ * conversion )
  *  @since   YYYY/MM/DD (Oyranos: x.x.x)
  *  @date    YYYY/MM/DD
  */
-int oyConversion_Init__Members( oyConversion_s_ * conversion )
+int oyConversion_Init__Members( oyConversion_s_ * conversion OY_UNUSED )
 {
   return 0;
 }

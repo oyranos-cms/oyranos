@@ -3,7 +3,7 @@
 #include <oyConversion_s.h>
 #include <stdio.h>
 
-int main( int argc, char ** argv ) {
+int main( int argc OY_UNUSED, char ** argv OY_UNUSED ) {
   oyConfigs_s * devices = NULL;
   oyConfig_s * monitor = NULL;
   oyOptions_s * options = NULL;

@@ -1,7 +1,7 @@
 #include "oyBlob_s.h"
 #include "oyOption_s.h"
 
-int main( int argc, char ** argv)
+int main( int argc OY_UNUSED, char ** argv OY_UNUSED)
 {
   oyBlob_s * blob = oyBlob_New(0);
   oyOption_s * o;

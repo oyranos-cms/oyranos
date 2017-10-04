@@ -89,18 +89,18 @@ int            dFilCMMMessageFuncSet ( oyMessage_f         message_func )
 
 /** For very simple options we do not need event handling. Dummies suffice in
  *  this case. */
-const char * dFilWidget_GetDummy     ( const char        * func_name,
-                                       uint32_t          * result )
+const char * dFilWidget_GetDummy     ( const char        * func_name OY_UNUSED,
+                                       uint32_t          * result OY_UNUSED )
 {return 0;}
 oyWIDGET_EVENT_e dFilWidget_EventDummy
-                                     ( const char        * wid,
-                                       oyWIDGET_EVENT_e    type )
+                                     ( const char        * wid OY_UNUSED,
+                                       oyWIDGET_EVENT_e    type OY_UNUSED )
 {return (oyWIDGET_EVENT_e)0;}
 
 
-oyWIDGET_EVENT_e   dFilWidgetEvent   ( oyOptions_s       * options,
-                                       oyWIDGET_EVENT_e    type,
-                                       oyStruct_s        * event )
+oyWIDGET_EVENT_e   dFilWidgetEvent   ( oyOptions_s       * options OY_UNUSED,
+                                       oyWIDGET_EVENT_e    type OY_UNUSED,
+                                       oyStruct_s        * event OY_UNUSED )
 {return (oyWIDGET_EVENT_e)0;}
 
 
@@ -136,7 +136,7 @@ oyPointer  dFilFilterNode_MyContextToMem (
  */
 const char * dFilGetText             ( const char        * select,
                                        oyNAME_e            type,
-                                       oyStruct_s        * context )
+                                       oyStruct_s        * context OY_UNUSED )
 {
          if(strcmp(select, "name")==0)
   {
@@ -214,8 +214,8 @@ oyCMM_s dFil_cmm_module = {
 
 oyOptions_s* dFilFilter_MyFilterValidateOptions
                                      ( oyFilterCore_s    * filter,
-                                       oyOptions_s       * validate,
-                                       int                 statical,
+                                       oyOptions_s       * validate OY_UNUSED,
+                                       int                 statical OY_UNUSED,
                                        uint32_t          * result )
 {
   uint32_t error = !filter;
@@ -382,7 +382,7 @@ oyConnectorImaging_s_ * dFil_myFilter_connectorPlugs[2] =
 const char * dFilApi4UiGetText (
                                        const char        * select,
                                        oyNAME_e            type,
-                                       oyStruct_s        * context )
+                                       oyStruct_s        * context OY_UNUSED )
 {
   static char * category = 0;
   if(strcmp(select,"name") == 0)
@@ -600,7 +600,7 @@ int          dFilMOptions_Handle     ( oyOptions_s       * options,
  */
 const char * dFilInfoGetTextMyHandler( const char        * select,
                                        oyNAME_e            type,
-                                       oyStruct_s        * context )
+                                       oyStruct_s        * context OY_UNUSED )
 {
          if(strcmp(select, "can_handle")==0)
   {

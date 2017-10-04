@@ -43,7 +43,9 @@
 #cmakedefine HAVE_QT
 #cmakedefine HAVE_CAIRO
 #define LIBPNG_INCLUDE "@LIBPNG_INCLUDE@"
+#ifndef USE_GETTEXT
 #cmakedefine USE_GETTEXT
+#endif
 #cmakedefine HAVE_DIRENT_H
 #cmakedefine HAVE_ICONV_H
 #cmakedefine HAVE_LANGINFO_H

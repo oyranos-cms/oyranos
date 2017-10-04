@@ -1290,7 +1290,7 @@ oyCMMapi8_s_ _api8 = {
  */
 const char * GetText                 ( const char        * select,
                                        oyNAME_e            type,
-                                       oyStruct_s        * context )
+                                       oyStruct_s        * context OY_UNUSED )
 {
          if(strcmp(select, "name")==0)
   {

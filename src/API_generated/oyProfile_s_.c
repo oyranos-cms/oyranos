@@ -1531,6 +1531,7 @@ oyPointer    oyProfile_WriteHeader_  ( oyProfile_s_      * profile,
     block = oyAllocateFunc_ (132);
     memset( block, 0, 132 );
     memcpy( block, profile->block_, 128 );
+    *size = 132;
 
   } else
   if(profile && profile->tags_)
@@ -1547,6 +1548,7 @@ oyPointer    oyProfile_WriteHeader_  ( oyProfile_s_      * profile,
         memcpy( block, tag->block_, 128 );
         /* unset profile ID */
         memset( &((char*)block)[84], 0, OY_HASH_SIZE );
+        *size = 132;
       }
     }
 

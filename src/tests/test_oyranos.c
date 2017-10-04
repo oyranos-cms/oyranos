@@ -57,7 +57,7 @@ char * tests_failed[64];
 
 oyTESTRESULT_e oyTestRun             ( oyTESTRESULT_e    (*test)(void),
                                        const char        * test_name,
-                                       int                 number )
+                                       int                 number OY_UNUSED )
 {
   oyTESTRESULT_e error = 0;
 
@@ -906,7 +906,7 @@ oyTESTRESULT_e testRegistrationMatch ()
 
 int myFilterSignalHandler            ( oyObserver_s      * observer,
                                        oySIGNAL_e          signal_type,
-                                       oyStruct_s        * signal_data )
+                                       oyStruct_s        * signal_data OY_UNUSED )
 {
   oyFilterNode_s * node = 0;
   int handled = 0;

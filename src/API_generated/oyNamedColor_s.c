@@ -232,7 +232,7 @@ oyProfile_s *     oyNamedColor_GetSpaceRef ( oyNamedColor_s  * color )
  */
 void   oyNamedColor_SetChannels      ( oyNamedColor_s    * color,
                                        const double      * channels,
-                                       uint32_t            flags )
+                                       uint32_t            flags OY_UNUSED )
 {
   int i, n;
   oyNamedColor_s_ * s = (oyNamedColor_s_*) color;
@@ -448,7 +448,7 @@ int               oyNamedColor_SetColorStd ( oyNamedColor_s * color,
  *  @date  october 2007 (API 0.1.8)
  */
 const double *    oyNamedColor_GetChannelsConst ( oyNamedColor_s * color,
-                                       uint32_t            flags )
+                                       uint32_t            flags OY_UNUSED )
 {
   static double l[3] = {-1.f,-1.f,-1.f};
   oyNamedColor_s_ * s = (oyNamedColor_s_*) color;

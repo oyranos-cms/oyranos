@@ -13,6 +13,16 @@
  *  @since    2005/01/31
  */
 
+#ifndef OY_UNUSED
+#ifdef __GNUC__
+#define OY_UNUSED                      __attribute__ ((unused))
+#elif defined(_MSC_VER)
+#define OY_UNUSED                      __declspec(unused)
+#else
+#define OY_UNUSED                      __attribute__ ((unused))
+#endif
+#endif
+
 #include "oyranos_monitor_hooks.h"
 #include "oyranos_monitor_hooks_x11.h"
 
@@ -313,17 +323,17 @@ int      oyX1GetMonitorEdid          ( oyX1Monitor_s     * disp,
  *
  */
 int      oyX1GetMonitorInfo          ( const char        * display_name,
-                                       char             ** manufacturer,
+                                       char             ** manufacturer OY_UNUSED,
                                        char             ** mnft,
-                                       char             ** model,
-                                       char             ** serial,
-                                       char             ** vendor,
+                                       char             ** model OY_UNUSED,
+                                       char             ** serial OY_UNUSED,
+                                       char             ** vendor OY_UNUSED,
                                        char             ** display_geometry,
                                        char             ** system_port,
                                        char             ** host,
                                        int               * week,
                                        int               * year,
-                                       int               * mnft_id,
+                                       int               * mnft_id OY_UNUSED,
                                        int               * model_id,
                                        double            * colors,
                                        char             ** edid,
