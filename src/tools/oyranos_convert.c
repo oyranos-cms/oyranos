@@ -284,6 +284,7 @@ int main( int argc , char** argv )
     printfHelp(argc, argv);
     if(node_name)
     {
+      int r OY_UNUSED;
       char * t = 0;
       STRING_ADD( t, "oyranos-xforms-modules -n " );
       STRING_ADD( t, node_name );
@@ -296,7 +297,7 @@ int main( int argc , char** argv )
         STRING_ADD( t, " -lh" );
       if(oy_debug)
         fprintf(stderr, "%s\n", t);
-      system(t);
+      r = system(t);
       exit(0);
     }
   }

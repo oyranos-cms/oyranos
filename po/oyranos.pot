@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Oyranos 0.9\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2017-10-03 08:04+0200\n"
+"POT-Creation-Date: 2017-10-04 10:56+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -54,7 +54,7 @@ msgstr ""
 #: API_generated/oyProfileTag_s_.c:208 API_generated/oyProfile_s_.c:323
 #: API_generated/oyProfiles_s_.c:195 API_generated/oyRectangle_s_.c:191
 #: API_generated/oyStructList_s_.c:239 API_generated/oyranos_devices.c:3580
-#: API_generated/oyranos_module.c:1551 liboyranos/oyranos_alpha.c:257
+#: API_generated/oyranos_module.c:1552 liboyranos/oyranos_alpha.c:257
 #: liboyranos_modules/oyranos_forms.c:56
 msgid "MEM Error."
 msgstr ""
@@ -81,7 +81,7 @@ msgstr ""
 
 #: API_generated/oyConversion_s.c:190 API_generated/oyFilterNode_s_.c:615
 #: API_generated/oyranos_devices.c:2657 API_generated/oyranos_devices.c:3168
-#: API_generated/oyranos_module.c:2002
+#: API_generated/oyranos_module.c:2003
 msgid "error in module:"
 msgstr ""
 
@@ -224,9 +224,9 @@ msgstr ""
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:898
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:904
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:916
-#: tools/oyranos_gamma.c:639 tools/oyranos_gamma.c:817
-#: tools/oyranos_gamma.c:983 tools/oyranos_gamma.c:986
-#: tools/oyranos_gamma.c:990 tools/oyranos_gamma.c:1028
+#: tools/oyranos_gamma.c:643 tools/oyranos_gamma.c:821
+#: tools/oyranos_gamma.c:987 tools/oyranos_gamma.c:990
+#: tools/oyranos_gamma.c:994 tools/oyranos_gamma.c:1032
 msgid "found issues"
 msgstr ""
 
@@ -244,19 +244,19 @@ msgid ""
 "point to a Oyranos module loader library?"
 msgstr ""
 
-#: API_generated/oyranos_module.c:1387
+#: API_generated/oyranos_module.c:1388
 msgid "Name"
 msgstr ""
 
-#: API_generated/oyranos_module.c:1388 API_generated/oyranos_profile.c:43
+#: API_generated/oyranos_module.c:1389 API_generated/oyranos_profile.c:43
 msgid "Manufacturer"
 msgstr ""
 
-#: API_generated/oyranos_module.c:1389 liboyranos_config/oyranos_icc.c:457
+#: API_generated/oyranos_module.c:1390 liboyranos_config/oyranos_icc.c:457
 msgid "Copyright"
 msgstr ""
 
-#: API_generated/oyranos_module.c:2010
+#: API_generated/oyranos_module.c:2011
 msgid "Could not allocate memory for:"
 msgstr ""
 
@@ -3404,7 +3404,7 @@ msgstr ""
 
 #: tools/oyranos-device.c:372 tools/oyranos-device.c:388
 #: tools/oyranos-device.c:403 tools/oyranos-device.c:814
-#: tools/oyranos-device.c:1011 tools/oyranos_gamma.c:365
+#: tools/oyranos-device.c:1011 tools/oyranos_gamma.c:369
 msgid "Available devices"
 msgstr ""
 
@@ -3428,15 +3428,15 @@ msgstr ""
 msgid "found profiles for device class"
 msgstr ""
 
-#: tools/oyranos-device.c:931 tools/oyranos_gamma.c:458
+#: tools/oyranos-device.c:931 tools/oyranos_gamma.c:462
 msgid "Taxi ID"
 msgstr ""
 
-#: tools/oyranos-device.c:932 tools/oyranos_gamma.c:459
+#: tools/oyranos-device.c:932 tools/oyranos_gamma.c:463
 msgid "match value"
 msgstr ""
 
-#: tools/oyranos-device.c:932 tools/oyranos_gamma.c:459
+#: tools/oyranos-device.c:932 tools/oyranos_gamma.c:463
 msgid "description"
 msgstr ""
 
@@ -3792,7 +3792,7 @@ msgstr ""
 msgid "Create 3D CLUT"
 msgstr ""
 
-#: tools/oyranos_convert.c:359
+#: tools/oyranos_convert.c:360
 msgid "Option"
 msgstr ""
 
@@ -3845,19 +3845,19 @@ msgstr ""
 msgid "DISPLAY variable not set: giving up."
 msgstr ""
 
-#: tools/oyranos_gamma.c:364
+#: tools/oyranos_gamma.c:368
 msgid "Could not resolve device"
 msgstr ""
 
-#: tools/oyranos_gamma.c:398
+#: tools/oyranos_gamma.c:402
 msgid "Please specify a monitor with the -d option."
 msgstr ""
 
-#: tools/oyranos_gamma.c:411
+#: tools/oyranos_gamma.c:415
 msgid "Zero profiles found in Taxi ICC DB"
 msgstr ""
 
-#: tools/oyranos_gamma.c:455
+#: tools/oyranos_gamma.c:459
 msgid "Taxi DB entries for device"
 msgstr ""
 

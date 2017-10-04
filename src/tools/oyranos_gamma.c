@@ -295,16 +295,20 @@ int main( int argc , char** argv )
 
   /* start independent white point daemon */
   if(daemon)
-    system("oyranos-monitor-white-point --daemon&");
+  {
+    int r OY_UNUSED;
+    r = system("oyranos-monitor-white-point --daemon&");
+  }
 
 #ifdef XCM_HAVE_X11
   if(daemon)
   {
+    int r OY_UNUSED;
     Display * display = XOpenDisplay( display_name );
     if(XcmColorServerCapabilities( display ) & XCM_COLOR_SERVER_MANAGEMENT)
       daemon = 2;
     XCloseDisplay( display );
-    system(argv[0]);
+    r = system(argv[0]);
   }
 
   /* we rely on any color server doing X11 setup by its own and do not want to interfere */

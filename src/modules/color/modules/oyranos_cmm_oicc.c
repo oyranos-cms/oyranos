@@ -442,7 +442,7 @@ oyWIDGET_EVENT_e   oiccWidgetEvent   ( oyOptions_s       * options,
 
 const char * oiccProfileGetText      ( oyStruct_s        * obj,
                                        oyNAME_e            type,
-                                       int                 flags )
+                                       int                 flags OY_UNUSED )
 {
   const char * text = 0;
 
@@ -478,7 +478,7 @@ const char * oiccProfileGetText      ( oyStruct_s        * obj,
  */
 const char * oiccProfilesGetText     ( oyStruct_s        * obj,
                                        oyNAME_e            type,
-                                       int                 flags )
+                                       int                 flags OY_UNUSED )
 {
   const char * text = 0, * t = 0;
   char * tmp = 0;
@@ -1041,9 +1041,9 @@ char * oiccCMMRegistrationToName     ( const char        * registration,
     return oyCMMRegistrationToName( registration, oyCMM_RENDERER, name_type, flags, allocate_func );
 }
 
-char * oiccCMMGetDefaultPattern      ( const char        * base_pattern,
-                                       uint32_t            flags,
-                                       int                 select_core,
+char * oiccCMMGetDefaultPattern      ( const char        * base_pattern OY_UNUSED,
+                                       uint32_t            flags OY_UNUSED,
+                                       int                 select_core OY_UNUSED,
                                        oyAlloc_f           allocate_func )
 {
   return oyStringCopy( "//" OY_TYPE_STD "/icc_color.lcm2", allocate_func );

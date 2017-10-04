@@ -3610,7 +3610,10 @@ oyTESTRESULT_e testCMMMonitorJSON ()
  
 #   ifdef HAVE_X11
     if(i == 0)
-      system("xprop -remove _ICC_PROFILE -root; xprop -remove _ICC_DEVICE_PROFILE -root");
+    {
+      int r OY_UNUSED;
+      r = system("xprop -remove _ICC_PROFILE -root; xprop -remove _ICC_DEVICE_PROFILE -root");
+    }
 #   endif
     oyProfile_s * p = NULL;
     oyOptions_SetFromText( &options,
@@ -3631,7 +3634,10 @@ oyTESTRESULT_e testCMMMonitorJSON ()
 
 #   ifdef HAVE_X11
     if(i == 0)
-      system("xprop -root -len 4 | grep _ICC");
+    {
+      int r OY_UNUSED;
+      r = system("xprop -root -len 4 | grep _ICC");
+    }
 #   endif
 
     oyOptions_SetFromText( &options,

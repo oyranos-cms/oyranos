@@ -441,11 +441,12 @@ int                oyMessageFormat   ( char             ** message_text,
 
     if(fp)
     {
+      int r OY_UNUSED;
       fprintf(fp, "attach %d\n", pid);
       fprintf(fp, "thread 1\nbacktrace\n"/*thread 2\nbacktrace\nthread 3\nbacktrace\n*/"detach" );
       fclose(fp);
       fprintf( stderr, "GDB output:\n" );
-      system("gdb -batch -x " TMP_FILE);
+      r = system("gdb -batch -x " TMP_FILE);
     } else
       fprintf( stderr, "could not open " TMP_FILE "\n" );
   }
@@ -511,12 +512,13 @@ int oyMessageFunc( int code, const void * context_object, const char * format, .
 
 oyMessage_f     oyMessageFunc_p = oyMessageFunc;
 
-void oyShowMessage(int type, const char * show_text, int show_gui)
+void oyShowMessage(int type OY_UNUSED, const char * show_text, int show_gui)
 {
         if(show_text)
         {
           if(show_gui)
           {
+            int r OY_UNUSED;
             char * app = NULL,
                  * txt = NULL;
 #if defined(__APPLE__)
@@ -562,7 +564,7 @@ void oyShowMessage(int type, const char * show_text, int show_gui)
               STRING_ADD( txt, "\\\"; sleep 10\"" );
               printf("%s\n", txt );
             }
-            system(txt);
+            r = system(txt);
             oyFree_m_( txt );
             oyFree_m_( app );
           }
@@ -647,11 +649,12 @@ int oyGuiMessageFunc( int code, const void * c, const char * format, ... )
 
     if(fp)
     {
+      int r OY_UNUSED;
       fprintf(fp, "attach %d\n", pid);
       fprintf(fp, "thread 1\nbacktrace\n"/*thread 2\nbacktrace\nthread 3\nbacktrace\n*/"detach" );
       fclose(fp);
       fprintf( stderr, "GDB output:\n" );
-      system("gdb -batch -x " TMP_FILE);
+      r = system("gdb -batch -x " TMP_FILE);
     } else
       fprintf( stderr, "could not open " TMP_FILE "\n" );
   }
@@ -682,7 +685,7 @@ int            oyMessageFuncSet      ( oyMessage_f         message_func )
  *  @since   2016/04/16 (Oyranos: 0.9.6)
  */
 void         oyObjectDebugMessage_   ( void              * object,
-                                       const char        * function_name,
+                                       const char        * function_name OY_UNUSED,
                                        const char        * struct_name )
 {
   struct oyObject_s_* obj = (struct oyObject_s_*)object;

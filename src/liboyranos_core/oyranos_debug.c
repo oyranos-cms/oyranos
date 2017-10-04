@@ -13,6 +13,8 @@
  *  @since    2005/02/01
  */
 
+#include "src/include/oyranos_types.h"
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>  /* system() */
@@ -85,8 +87,9 @@ void oy_backtrace_()
       fprintf(fp, "backtrace\ndetach" );
       fclose(fp);
       {
+        int r OY_UNUSED;
         fprintf( stderr, "GDB output:\n" );
-        system("gdb -batch -x " TMP_FILE);
+        r = system("gdb -batch -x " TMP_FILE);
       }
     } else
       fprintf( stderr, "could not open "TMP_FILE "\n" );

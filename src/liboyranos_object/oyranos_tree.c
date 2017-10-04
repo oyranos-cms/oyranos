@@ -818,6 +818,7 @@ void               oyObjectTreePrint ( int                 flags )
 
     if(flags & 0x01)
     {
+      int r OY_UNUSED;
       char * graph = 0;
       oyStringAddPrintf( &graph,0,0,
                         "\
@@ -845,9 +846,9 @@ bgcolor=\"transparent\"\n\
 
       /* generate a SVG and send to firefox */
       if(flags & 0x02)
-        system("dot -Tsvg oyranos_tree.dot -o oyranos_tree.svg && firefox oyranos_tree.svg &");
+        r = system("dot -Tsvg oyranos_tree.dot -o oyranos_tree.svg && firefox oyranos_tree.svg &");
       else
-        system("fdp -Tsvg oyranos_tree.dot -o oyranos_tree.svg && firefox oyranos_tree.svg &");
+        r = system("fdp -Tsvg oyranos_tree.dot -o oyranos_tree.svg && firefox oyranos_tree.svg &");
 
       oyFree_m_( graph );
       oyFree_m_( dot );
