@@ -82,6 +82,17 @@ typedef void * (*oyAlloc_f)          ( size_t              size );
 typedef void (*oyDeAlloc_f)          ( void              * data );
 
 
+#ifdef __GNUC__
+#define OY_UNUSED                      __attribute__ ((unused))
+#define OY_DEPRECATED                  __attribute__ ((deprecated))
+#elif defined(_MSC_VER)
+#define OY_UNUSED                      __declspec(unused)
+#define OY_DEPRECATED                  __declspec(deprecated)
+#else
+#define OY_UNUSED                      __attribute__ ((unused))
+#define OY_DEPRECATED                  #warning "deprecated"
+#endif
+
 #ifdef __cplusplus
 } /* extern "C" */
 #endif /* __cplusplus */
