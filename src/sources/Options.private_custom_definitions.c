@@ -49,7 +49,7 @@ void oyOptions_Release__Members( oyOptions_s_ * options )
  *  @since   YYYY/MM/DD (Oyranos: x.x.x)
  *  @date    YYYY/MM/DD
  */
-int oyOptions_Init__Members( oyOptions_s_ * options )
+int oyOptions_Init__Members( oyOptions_s_ * options OY_UNUSED )
 {
   return 0;
 }

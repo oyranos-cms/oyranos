@@ -774,7 +774,7 @@ char *         oyOption_GetValueText_( oyOption_s_       * obj,
 int            oyOption_SetFromInt_  ( oyOption_s_       * obj,
                                        int32_t             integer,
                                        int                 pos,
-                                       uint32_t            flags )
+                                       uint32_t            flags OY_UNUSED )
 {
   int error = !obj;
   oyOption_s_ * s = obj;

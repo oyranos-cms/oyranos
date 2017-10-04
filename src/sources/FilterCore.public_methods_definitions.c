@@ -3,14 +3,14 @@
  *  @brief    Get category string
  *
  *  @param[in,out] filter              filter object
- *  @param         nontranslated       switch for translation
+ *  @param         nontranslated       switch for translation; not implemented
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/06/26 (Oyranos: 0.1.8)
  *  @date    2009/02/28
  */
 const char * oyFilterCore_GetCategory( oyFilterCore_s    * filter,
-                                       int                 nontranslated )
+                                       int                 nontranslated OY_UNUSED )
 {
   if(!filter)
     return 0;

@@ -528,7 +528,7 @@ int          oyOptions_FromJSON      ( const char        * json_text,
  *  @date    2008/11/17
  */
 oyOptions_s *  oyOptions_FromText    ( const char        * text,
-                                       uint32_t            flags,
+                                       uint32_t            flags OY_UNUSED,
                                        oyObject_s          object )
 {
   oyOptions_s * s = 0;
@@ -580,7 +580,7 @@ oyOptions_s *  oyOptions_FromText    ( const char        * text,
 
   if(error <= 0)
   {
-    s = oyOptions_New(0);
+    s = oyOptions_New(object);
 
     oyOptions_ParseXML_( (oyOptions_s_*)s, &texts, &texts_n, doc, cur );
 
@@ -671,7 +671,7 @@ int            oyOptions_Add         ( oyOptions_s       * options,
     if(skip == 0)
     {
       tmp = (oyOption_s_*) oyOption_Copy( option, object );
-      oyOptions_MoveIn( options, (oyOption_s**)&tmp, -1 );
+      oyOptions_MoveIn( options, (oyOption_s**)&tmp, pos );
 
     } else if(skip == 2)
     {
@@ -748,7 +748,7 @@ int            oyOptions_Set         ( oyOptions_s       * options,
     if(replace == 0)
     {
       tmp = oyOption_Copy( option, object );
-      oyOptions_MoveIn( options, &tmp, -1 );
+      oyOptions_MoveIn( options, &tmp, pos );
     }
   }
 

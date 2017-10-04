@@ -15,7 +15,7 @@
  *  @since   YYYY/MM/DD (Oyranos: x.x.x)
  *  @date    YYYY/MM/DD
  */
-void oyList_Release__Members( oyList_s_ * list )
+void oyList_Release__Members( oyList_s_ * list OY_UNUSED )
 {
 }
 
@@ -34,7 +34,7 @@ void oyList_Release__Members( oyList_s_ * list )
  *  @since   YYYY/MM/DD (Oyranos: x.x.x)
  *  @date    YYYY/MM/DD
  */
-int oyList_Init__Members( oyList_s_ * list )
+int oyList_Init__Members( oyList_s_ * list OY_UNUSED )
 {
   return 0;
 }
@@ -55,7 +55,7 @@ int oyList_Init__Members( oyList_s_ * list )
  *  @since   YYYY/MM/DD (Oyranos: x.x.x)
  *  @date    YYYY/MM/DD
  */
-int oyList_Copy__Members( oyList_s_ * dst, oyList_s_ * src)
+int oyList_Copy__Members( oyList_s_ * dst OY_UNUSED, oyList_s_ * src OY_UNUSED)
 {
   return 0;
 }

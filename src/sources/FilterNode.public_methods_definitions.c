@@ -19,7 +19,7 @@ int            oyFilterNode_Connect  ( oyFilterNode_s    * input,
                                        const char        * socket_nick,
                                        oyFilterNode_s    * output,
                                        const char        * plug_nick,
-                                       int                 flags )
+                                       int                 flags OY_UNUSED )
 {
   oyFilterNode_s_ * s = (oyFilterNode_s_*)input;
   int error = !s;

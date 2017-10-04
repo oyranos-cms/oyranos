@@ -46,7 +46,7 @@ void oyRectangle_Release__Members( oyRectangle_s_ * rectangle )
  *  @since   YYYY/MM/DD (Oyranos: x.x.x)
  *  @date    YYYY/MM/DD
  */
-int oyRectangle_Init__Members( oyRectangle_s_ * rectangle )
+int oyRectangle_Init__Members( oyRectangle_s_ * rectangle OY_UNUSED )
 {
   return 0;
 }

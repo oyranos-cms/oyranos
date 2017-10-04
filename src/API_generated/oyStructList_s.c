@@ -366,7 +366,7 @@ int              oyStructList_Count ( oyStructList_s   * list )
 const char * oyStructList_GetText    ( oyStructList_s    * list,
                                        oyNAME_e            name_type,
                                        int                 intent_spaces,
-                                       uint32_t            flags )
+                                       uint32_t            flags OY_UNUSED )
 {
   oyStructList_s_ * s = (oyStructList_s_*)list;
   int error = !s, i, n;

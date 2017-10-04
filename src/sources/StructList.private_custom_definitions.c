@@ -47,7 +47,7 @@ void oyStructList_Release__Members( oyStructList_s_ * structlist )
  *
  *  @param[in]  structlist  the StructList object
  */
-int oyStructList_Init__Members( oyStructList_s_ * structlist )
+int oyStructList_Init__Members( oyStructList_s_ * structlist OY_UNUSED )
 {
   return 0;
 }

@@ -647,7 +647,7 @@ int    oyFilterRegistrationMatchKey  ( const char        * registration_a,
 int    oyTextIccDictMatch            ( const char        * text,
                                        const char        * pattern,
                                        double              delta,
-                                       char                path_separator,
+                                       char                path_separator OY_UNUSED,
                                        char                key_separator )
 {
   int match = 0;

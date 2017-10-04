@@ -192,16 +192,16 @@ OYAPI oyPointer  OYEXPORT
 
 
 /* Locking function definitions { */
-oyPointer  oyStruct_LockCreateDummy_   ( oyStruct_s      * obj )    {return 0;}
-void       oyLockReleaseDummy_         ( oyPointer         lock,
-                                         const char      * marker,
-                                         int               line )   {;}
-void       oyLockDummy_                ( oyPointer         lock,
-                                         const char      * marker,
-                                         int               line )   {;}
-void       oyUnLockDummy_              ( oyPointer         look,
-                                         const char      * marker,
-                                         int               line ) {;}
+oyPointer  oyStruct_LockCreateDummy_   ( oyStruct_s      * obj OY_UNUSED)    {return 0;}
+void       oyLockReleaseDummy_         ( oyPointer         lock OY_UNUSED,
+                                         const char      * marker OY_UNUSED,
+                                         int               line OY_UNUSED )   {;}
+void       oyLockDummy_                ( oyPointer         lock OY_UNUSED,
+                                         const char      * marker OY_UNUSED,
+                                         int               line OY_UNUSED )   {;}
+void       oyUnLockDummy_              ( oyPointer         look OY_UNUSED,
+                                         const char      * marker OY_UNUSED,
+                                         int               line OY_UNUSED ) {;}
 
 oyStruct_LockCreate_f   oyStruct_LockCreateFunc_ = oyStruct_LockCreateDummy_;
 oyLockRelease_f         oyLockReleaseFunc_ = oyLockReleaseDummy_;
