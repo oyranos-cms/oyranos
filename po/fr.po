@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ICC Examin 0.41\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2017-10-04 10:56+0200\n"
+"POT-Creation-Date: 2017-10-04 11:06+0200\n"
 "PO-Revision-Date: 2006-06-29 19:31+0200\n"
 "Last-Translator: Pascal LACROIX <lacroixpascal at vfemail.net>\n"
 "Language-Team: <fr@li.org>\n"
@@ -4595,7 +4595,7 @@ msgid "path is not a directory"
 msgstr ""
 
 #: liboyranos_core/oyranos_io_core.c:1348
-#: liboyranos_core/oyranos_io_core.c:1923
+#: liboyranos_core/oyranos_io_core.c:1924
 msgid "path is not readable"
 msgstr ""
 

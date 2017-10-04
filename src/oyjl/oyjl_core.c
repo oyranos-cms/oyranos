@@ -24,7 +24,7 @@
 #include "oyjl_tree_internal.h"
 
 yajl_status  oyjl_message_func       ( oyjl_message_e      error_code,
-                                       const void        * context_object,
+                                       const void        * context_object __attribute__((unused)),
                                        const char        * format,
                                        ... )
 {

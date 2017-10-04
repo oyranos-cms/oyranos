@@ -2878,14 +2878,14 @@ OYAPI char * OYEXPORT
     tc = oyOptions_GetText( node_opts, oyNAME_NICK );
     oyOptions_Release( &node_opts );
 #endif
-    t2 = oyStringReplace_( tc, "\n\n", "\n", oyAllocateFunc_ );
-    t = oyStringReplace_( t2, "\n", "\\n", oyAllocateFunc_ );
+    t2 = oyStringReplace_( tc, "\n\n", "\n", 0,0 );
+    t = oyStringReplace_( t2, "\n", "\\n", 0,0 );
     if(t2) oyFree_m_(t2);
-    t2 = oyStringReplace_( t, "\"", "\\\"", oyAllocateFunc_ );
+    t2 = oyStringReplace_( t, "\"", "\\\"", 0,0 );
     if(t) oyFree_m_(t);
-    t = oyStringReplace_( t2, "<", "*", oyAllocateFunc_ );
+    t = oyStringReplace_( t2, "<", "*", 0,0 );
     if(t2) oyFree_m_(t2);
-    t2 = oyStringReplace_( t, ">", "*", oyAllocateFunc_ );
+    t2 = oyStringReplace_( t, ">", "*", 0,0 );
     if(t) oyFree_m_(t);
     oyMessageFunc_p( oyMSG_DBG,(oyStruct_s*)node,
                      OY_DBG_FORMAT_ "%s\n%s", OY_DBG_ARGS_, oyNoEmptyString_m_(t2), oyNoEmptyString_m_(tc) );

@@ -619,10 +619,10 @@ char * oyObjectTreeDotGraphCallbackGetDescription( oyStruct_s * s )
   if(!text || strcmp(nick,text) == 0)
     return desc;
 
-  t = oyStringReplace_( text, "\"", "'", 0 );
-  t2 = oyStringReplace_( t, "\n", "\\n", 0 );
-  t3 = oyStringReplace_( t2, "<", "\\<", 0 );
-  desc = oyStringReplace_( t3, ">", "\\>", 0 );
+  t = oyStringReplace_( text, "\"", "'", 0,0 );
+  t2 = oyStringReplace_( t, "\n", "\\n", 0,0 );
+  t3 = oyStringReplace_( t2, "<", "\\<", 0,0 );
+  desc = oyStringReplace_( t3, ">", "\\>", 0,0 );
   oyFree_m_( t );
   oyFree_m_( t2 );
   oyFree_m_( t3 );

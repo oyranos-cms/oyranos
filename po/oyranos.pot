@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Oyranos 0.9\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2017-10-04 10:56+0200\n"
+"POT-Creation-Date: 2017-10-04 11:17+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -493,7 +493,7 @@ msgid "path is a link: ignored"
 msgstr ""
 
 #: liboyranos_core/oyranos_io_core.c:1348
-#: liboyranos_core/oyranos_io_core.c:1923
+#: liboyranos_core/oyranos_io_core.c:1924
 msgid "path is not readable"
 msgstr ""
 

@@ -291,7 +291,7 @@ char * oyReadStdinToMem_             ( size_t            * size,
       if(text_size >= buf_size-1)
       {
         buf_size = text_size + 65536;
-        tmp = calloc( sizeof(char), buf_size );
+        tmp = allocate_func( buf_size );
         if(text_size)
           memcpy(tmp, text, text_size);
         free(text);
@@ -1439,7 +1439,8 @@ oyRecursivePaths_  ( pathSelect_f_ doInPath,
 }
 
 int oyFileListCb_ ( oyFileList_s * data,
-                    const char * full_name, const char * filename)
+                    const char * full_name,
+		    const char * filename OY_UNUSED)
 {
   oyFileList_s *l = data;
 
@@ -1745,8 +1746,8 @@ char** oyDataPathsGet_(int             * count,
 char**
 oyFileListGet_                  (const char * subpath,
                                  int        * size,
-                                 int          data,
-                                 int          owner)
+                                 int          data OY_UNUSED,
+                                 int          owner OY_UNUSED)
 {
   oyFileList_s l = {oyOBJECT_FILE_LIST_S_, 128, NULL, 0, 128, 0, NULL};
   int count = 0;
@@ -1972,7 +1973,7 @@ char**  oyLibPathsGet_( int             * count,
 char**
 oyLibListGet_                   (const char * subpath,
                                  int        * size,
-                                 int          owner)
+                                 int          owner OY_UNUSED)
 {
   oyFileList_s l = {oyOBJECT_FILE_LIST_S_, 128, NULL, 0, 128, 0, NULL};
   int count = 0;

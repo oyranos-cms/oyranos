@@ -107,7 +107,8 @@ char *             oyStringSegmentN_ ( char              * text,
 char*              oyStringReplace_  ( const char        * text,
                                        const char        * search,
                                        const char        * replacement,
-                                       oyAlloc_f           allocateFunc );
+                                       oyAlloc_f           allocateFunc,
+                                       oyDeAlloc_f         deallocateFunc );
 #define oyStringListAppend_ oyStringListCat
 char**             oyStringListCat   ( const char       ** list,
                                        int                 n_alt,

@@ -621,7 +621,7 @@ oyTESTRESULT_e testStringRun ()
   }
 
   test = OY_INTERNAL "/display.oydi/display_name";
-  test_out = oyStringReplace_( test, OY_INTERNAL, OY_STD, 0 );
+  test_out = oyStringReplace_( test, OY_INTERNAL, OY_STD, 0,0 );
   //fprintf(zout, "test %s \"%s\"\n", test, test_out);
   if( strstr(test_out, OY_STD ) != NULL )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
@@ -631,7 +631,7 @@ oyTESTRESULT_e testStringRun ()
     "oyStringReplace_(start)                            " );
   }
 
-  test_out = oyStringReplace_( test, "display.", "foo.", 0 );
+  test_out = oyStringReplace_( test, "display.", "foo.", 0,0 );
   //fprintf(zout, "test %s \"%s\"\n", test, test_out);
   if( strstr(test_out, "foo" ) != NULL )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
@@ -641,7 +641,7 @@ oyTESTRESULT_e testStringRun ()
     "oyStringReplace_(middle)                           " );
   }
 
-  test_out = oyStringReplace_( test, "display_name", "bar", 0 );
+  test_out = oyStringReplace_( test, "display_name", "bar", 0,0 );
   //fprintf(zout, "test %s \"%s\"\n", test, test_out);
   if( strstr(test_out, "bar" ) != NULL &&
       strstr(test_out, "barbar" ) == NULL)
@@ -1547,8 +1547,8 @@ oyTESTRESULT_e testOptionsType ()
   error = oyOptions_GetType2( opts, -1, "abstract", oyNAME_PATTERN,
                                   oyOBJECT_PROFILE_S, NULL, &o );
   const char * reg = oyOption_GetRegistration( o );
-  char * reg_mod = oyStringReplace_( reg, ".oydi", ".my", 0 );
-  reg_mod = oyStringReplace_( reg_mod, ".automatic", "", 0 );
+  char * reg_mod = oyStringReplace_( reg, ".oydi", ".my", 0,0 );
+  reg_mod = oyStringReplace_( reg_mod, ".automatic", "", 0,0 );
   oyStringAdd_( &reg_mod, ".passive", 0,0 );
   oyOption_SetRegistration( o, reg_mod );
   fprintf( zout, "%s -> %s :: %s\n", reg, reg_mod, oyOption_GetRegistration(o) );

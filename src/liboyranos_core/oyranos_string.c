@@ -433,7 +433,7 @@ char *             oyStringSegmentN_ ( char              * text,
 
 int    oyStringSegmentX_             ( const char        * text,
                                        char                delimiter,
-                                       int               * count,
+                                       int               * count OY_UNUSED,
                                        int              ** pos,
                                        char             ** max_segment )
 {
@@ -488,31 +488,35 @@ int    oyStringSegmentX_             ( const char        * text,
 char*              oyStringReplace_  ( const char        * text,
                                        const char        * search,
                                        const char        * replacement,
-                                       oyAlloc_f           allocateFunc )
+                                       oyAlloc_f           allocateFunc,
+                                       oyDeAlloc_f         deallocateFunc )
 {
   char * t = 0;
   const char * start = text,
              * end = text;
   int s_len = strlen(search);
 
+  if(!allocateFunc) allocateFunc = oyAllocateFunc_;
+  if(!deallocateFunc) deallocateFunc = oyDeAllocateFunc_;
+
   if(text && search && replacement)
   while((end = strstr(start,search)) != 0)
   {
-    oyStringAddN_( &t, start, end-start, oyAllocateFunc_, oyDeAllocateFunc_ );
-    oyStringAdd_( &t, replacement, oyAllocateFunc_, oyDeAllocateFunc_ );
+    oyStringAddN_( &t, start, end-start, allocateFunc, deallocateFunc );
+    oyStringAdd_( &t, replacement, allocateFunc, deallocateFunc );
     if(strlen(end) >= s_len)
       start = end + s_len;
     else
     {
       if(strstr(start,search) != 0)
-        oyStringAdd_( &t, replacement, oyAllocateFunc_, oyDeAllocateFunc_ );
+        oyStringAdd_( &t, replacement, allocateFunc, deallocateFunc );
       start = end = end + s_len;
       break;
     }
   }
 
   if(start && strlen(start))
-    oyStringAdd_( &t, start, oyAllocateFunc_, oyDeAllocateFunc_ );
+    oyStringAdd_( &t, start, allocateFunc, deallocateFunc );
 
   return t;
 }

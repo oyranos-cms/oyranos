@@ -457,7 +457,7 @@ oyProfile_FromFile            ( const char      * name,
       {
         char * t = oyStringCopy( value + 1, oyAllocateFunc_ );
 	value[0] = '\000';
-	value = oyStringReplace_( t, "*", "", oyAllocateFunc_ );
+	value = oyStringReplace_( t, "*", "", 0,0 );
 	if(!value)
         {
           value = t;
