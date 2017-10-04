@@ -976,7 +976,7 @@ oyTESTRESULT_e testOptionsSet ()
 
   const char * json = "{\"org\":{\"free\":[{\"s1key_a\":\"val_a\",\"s1key_b\":\"val_b\"},{\"s2key_c\":\"val_c\",\"s2key_d\":\"val_d\"}],\"key_e\":\"val_e\"}}";
   oyOptions_s * options = NULL;
-  error = oyOptions_FromJSON( json, options, NULL, &setA, "org" );
+  error = oyOptions_FromJSON( json, options, &setA, "org" );
   int count = oyOptions_Count(setA);
   if(count == 1)
   {
@@ -988,7 +988,7 @@ oyTESTRESULT_e testOptionsSet ()
   }
 
   const char * json2 = "{\"org\":{\"free\":[{\"s1key_a\":\"val_a\",\"s1key_b\":\"val_b\"},{\"s2key_c\":\"val_c\",\"s2key_d\":\"val_d\"}],\"key_e\":\"val_e_xxx\"}}";
-  error = oyOptions_FromJSON( json2, options, NULL, &setA, "org" );
+  error = oyOptions_FromJSON( json2, options, &setA, "org" );
   count = oyOptions_Count(setA);
   if(count == 1 && strcmp(oyOptions_FindString(setA, "key_e",0),"val_e_xxx") == 0)
   {
@@ -1000,7 +1000,7 @@ oyTESTRESULT_e testOptionsSet ()
   }
 
   const char * json3 = "{\"org\":{\"free\":[{\"s1key_a\":\"val_a\",\"s1key_b\":\"val_b\"},{\"s2key_c\":\"val_c\",\"s2key_d\":\"val_d\"}],\"key_e\":\"val_e_yyy\",\"key_f\":\"val_f\"}}";
-  error = oyOptions_FromJSON( json3, options, NULL, &setA, "org" );
+  error = oyOptions_FromJSON( json3, options, &setA, "org" );
   count = oyOptions_Count(setA);
   if(count == 2 && strcmp(oyOptions_FindString(setA, "key_e",0),"val_e_yyy") == 0)
   {
@@ -1013,7 +1013,7 @@ oyTESTRESULT_e testOptionsSet ()
 
   oyOptions_SetFromText( &options, OY_STD "/key_path", 
                                    "org/host/path", OY_CREATE_NEW);
-  error = oyOptions_FromJSON( json3, options, NULL, &setA, "org/free/[1]" );
+  error = oyOptions_FromJSON( json3, options, &setA, "org/free/[1]" );
   count = oyOptions_Count(setA);
   if(count == 4 && strcmp(oyOptions_FindString(setA, "org/host/path/s2key_c",0),"val_c") == 0)
   {
@@ -1028,10 +1028,10 @@ oyTESTRESULT_e testOptionsSet ()
 
   oyOptions_SetFromText( &options, OY_STD "/key_path", 
                                    "org/host/path2", OY_CREATE_NEW);
-  error = oyOptions_FromJSON( json3, options, NULL, &setA, "org/free/[1]" );
+  error = oyOptions_FromJSON( json3, options, &setA, "org/free/[1]" );
   oyOptions_SetFromText( &options, OY_STD "/key_path", 
                                    "org/host/path2/four", OY_CREATE_NEW);
-  error = oyOptions_FromJSON( json3, options, NULL, &setA, "org/free/[1]" );
+  error = oyOptions_FromJSON( json3, options, &setA, "org/free/[1]" );
   t = oyOptions_GetText( setA, (oyNAME_e) oyNAME_JSON );
   oyOptions_Release( &options );
   count = oyOptions_Count(setA);
@@ -1044,7 +1044,7 @@ oyTESTRESULT_e testOptionsSet ()
     "oyOptions_FromJSON() key_paths                  %d", count );
   }
 
-  error = oyOptions_FromJSON( t, NULL, NULL, &options, "org" );
+  error = oyOptions_FromJSON( t, NULL, &options, "org" );
   t = oyOptions_GetText( options, (oyNAME_e) oyNAME_JSON );
   if(!error && t && strlen(t) == 59)
   {

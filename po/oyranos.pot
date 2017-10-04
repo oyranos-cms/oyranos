@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Oyranos 0.9\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2017-10-04 11:17+0200\n"
+"POT-Creation-Date: 2017-10-04 11:37+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -60,7 +60,7 @@ msgid "MEM Error."
 msgstr ""
 
 #: API_generated/oyConfig_s.c:1027 API_generated/oyConfig_s.c:1327
-#: API_generated/oyOptions_s.c:478 API_generated/oyranos_devices.c:1428
+#: API_generated/oyOptions_s.c:476 API_generated/oyranos_devices.c:1428
 #: API_generated/oyranos_devices.c:1747 API_generated/oyranos_devices.c:1831
 #: modules/color/modules/oyranos_cmm_oyra_image_channel.c:144
 #: tools/oyranos-device.c:1036 tools/oyranos-device.c:1046
@@ -132,7 +132,7 @@ msgstr ""
 msgid "found list of wrong type"
 msgstr ""
 
-#: API_generated/oyOptions_s.c:1568 tools/oyranos-device.c:253
+#: API_generated/oyOptions_s.c:1566 tools/oyranos-device.c:253
 #: tools/oyranos-monitor-white-point.c:207 tools/oyranos_convert.c:270
 #: tools/oyranos_gamma.c:254 tools/oyranos_policy.c:156
 #: tools/oyranos_profile_graph.c:253 tools/oyranos_profile_tool.c:233

@@ -1032,7 +1032,7 @@ int main(int argc, char *argv[])
         error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/key_path",
                                        path, OY_CREATE_NEW );  
         error = oyDeviceToJSON( c, options, &json, oyAllocFunc );
-        if(oyOptions_FromJSON( json, options, NULL, &parsed, "org/freedesktop/openicc/device/%s/[0]", device_class ))
+        if(oyOptions_FromJSON( json, options, &parsed, "org/freedesktop/openicc/device/%s/[0]", device_class ))
           WARNc1_S( "%s\n", _("found issues parsing JSON") );
         if(json) oyFree_m_( json );
 
@@ -1042,7 +1042,7 @@ int main(int argc, char *argv[])
           error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/options/source",
                                          "backend_core", OY_CREATE_NEW );
           error = oyDeviceToJSON( c, options, &json, oyAllocFunc );
-          if(oyOptions_FromJSON( json, options, NULL, &parsed, "org/freedesktop/openicc/device/%s/[0]", device_class ))
+          if(oyOptions_FromJSON( json, options, &parsed, "org/freedesktop/openicc/device/%s/[0]", device_class ))
             WARNc1_S( "%s\n", _("found issues parsing JSON") );
           if(json) oyFree_m_( json );
         }

@@ -414,20 +414,18 @@ oyOptions_s *  oyOptions_FromBoolean ( oyOptions_s       * set_a,
  *                                       the parsed keys below xpath.
  *                                     - "count" will be set to the number of
  *                                       elements in xpath.
- *  @param[in]     object              the optional object
  *  @param[out]    result              the result; A existing object will be
  *                                     merged.
  *  @param[in]     xformat             the xpath format string
  *  @param[in]     ...                 variable argument list for xpath
  *  @return                            error
  *
- *  @version Oyranos: 0.9.6
+ *  @version Oyranos: 0.9.7
+ *  @date    2017/10/04
  *  @since   2016/11/17 (Oyranos: 0.9.6)
- *  @date    2016/11/17
  */
 int          oyOptions_FromJSON      ( const char        * json_text,
                                        oyOptions_s       * options,
-                                       oyObject_s          object,
                                        oyOptions_s      ** result,
                                        const char        * xformat,
                                        ... )

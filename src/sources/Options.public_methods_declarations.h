@@ -12,7 +12,6 @@ OYAPI oyOptions_s *  OYEXPORT
 OYAPI int  OYEXPORT
                 oyOptions_FromJSON   ( const char        * json_text,
                                        oyOptions_s       * options,
-                                       oyObject_s          object,
                                        oyOptions_s      ** result,
                                        const char        * xformat,
                                        ... );

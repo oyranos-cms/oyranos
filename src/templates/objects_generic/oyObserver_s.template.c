@@ -21,7 +21,7 @@
  *  @date    2009/10/26
  */
 OYAPI oyObserver_s * OYEXPORT
-           oyObserver_New            ( oyObject_s          object )
+           oyObserver_New            ( oyObject_s          object OY_UNUSED )
 {
   /* ---- start of common object constructor ----- */
   oyOBJECT_e type = oyOBJECT_OBSERVER_S;

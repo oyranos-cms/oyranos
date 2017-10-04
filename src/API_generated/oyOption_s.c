@@ -493,7 +493,7 @@ int32_t        oyOption_GetValueInt  ( oyOption_s        * obj,
 int            oyOption_SetFromDouble( oyOption_s        * obj,
                                        double              floating_point,
                                        int                 pos,
-                                       uint32_t            flags )
+                                       uint32_t            flags OY_UNUSED )
 {
   int error = !obj;
   oyOption_s_ * s = (oyOption_s_*)obj;

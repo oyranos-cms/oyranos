@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2017-10-04 11:06+0200\n"
+"POT-Creation-Date: 2017-10-04 11:33+0200\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -4375,7 +4375,7 @@ msgid "found issues"
 msgstr "fand Probleme"
 
 #: API_generated/oyConfig_s.c:1027 API_generated/oyConfig_s.c:1327
-#: API_generated/oyOptions_s.c:478 API_generated/oyranos_devices.c:1428
+#: API_generated/oyOptions_s.c:476 API_generated/oyranos_devices.c:1428
 #: API_generated/oyranos_devices.c:1747 API_generated/oyranos_devices.c:1831
 #: modules/color/modules/oyranos_cmm_oyra_image_channel.c:144
 #: tools/oyranos-device.c:1036 tools/oyranos-device.c:1046
@@ -4898,7 +4898,7 @@ msgstr "schreibe zu einer Datei, derzeit nur im Format PPM"
 msgid "write to specified file"
 msgstr "schreibe nach Datei"
 
-#: API_generated/oyOptions_s.c:1568 tools/oyranos-device.c:253
+#: API_generated/oyOptions_s.c:1566 tools/oyranos-device.c:253
 #: tools/oyranos-monitor-white-point.c:207 tools/oyranos_convert.c:270
 #: tools/oyranos_gamma.c:254 tools/oyranos_policy.c:156
 #: tools/oyranos_profile_graph.c:253 tools/oyranos_profile_tool.c:233

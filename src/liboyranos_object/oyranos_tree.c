@@ -574,7 +574,7 @@ typedef struct oyTreeData_s {
 void oyObjectTreePrintCallback       ( void              * user_data,
                                        int                 top,
                                        oyLeave_s         * tree,
-                                       oyStruct_s        * grandparent,
+                                       oyStruct_s        * grandparent OY_UNUSED,
                                        oyStruct_s        * parent,
                                        oyStruct_s        * current,
                                        oyStruct_s       ** children,
