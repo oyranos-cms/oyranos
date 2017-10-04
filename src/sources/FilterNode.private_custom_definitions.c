@@ -66,7 +66,7 @@ void oyFilterNode_Release__Members( oyFilterNode_s_ * filternode )
  *  @since   YYYY/MM/DD (Oyranos: x.x.x)
  *  @date    YYYY/MM/DD
  */
-int oyFilterNode_Init__Members( oyFilterNode_s_ * filternode )
+int oyFilterNode_Init__Members( oyFilterNode_s_ * filternode OY_UNUSED )
 {
   /**  Is this necessary??
    *   filternode->relatives_ = 0;

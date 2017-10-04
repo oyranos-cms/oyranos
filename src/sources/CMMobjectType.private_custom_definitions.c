@@ -48,7 +48,7 @@ void oyCMMobjectType_Release__Members( oyCMMobjectType_s_ * cmmobjecttype )
  *  @since   YYYY/MM/DD (Oyranos: x.x.x)
  *  @date    YYYY/MM/DD
  */
-int oyCMMobjectType_Init__Members( oyCMMobjectType_s_ * cmmobjecttype )
+int oyCMMobjectType_Init__Members( oyCMMobjectType_s_ * cmmobjecttype OY_UNUSED )
 {
   return 0;
 }

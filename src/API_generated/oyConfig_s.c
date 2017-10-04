@@ -1028,7 +1028,7 @@ OYAPI int OYEXPORT oyConfig_FromJSON ( const char        * registration,
   oyFree_m_(t);
 
   /* set the registration string */
-  config_ = oyConfig_FromRegistration( registration, 0 );
+  config_ = oyConfig_FromRegistration( registration, object );
 
   if(!xpath)
     xpath = registration;

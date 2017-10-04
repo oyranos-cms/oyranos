@@ -1708,7 +1708,7 @@ int   oyCompareRanks_                ( const void       * rank1,
  */
 OYAPI int  OYEXPORT
              oyDevicesFromTaxiDB     ( oyConfig_s        * device,
-                                       oyOptions_s       * options,
+                                       oyOptions_s       * options OY_UNUSED,
                                        oyConfigs_s      ** devices,
                                        oyObject_s          obj )
 {
@@ -1866,7 +1866,7 @@ OYAPI int  OYEXPORT
             }
 
             if(!configs_)
-              configs_ = oyConfigs_New(0);
+              configs_ = oyConfigs_New(obj);
             oyConfigs_MoveIn( configs_, &dev, -1 );
           }
 
@@ -2720,7 +2720,7 @@ int            oyFilterNode_GetUi    ( oyFilterNode_s     * node,
  *                                     and end node of a oyConversion_s
  *  @param[in]     head_line           text for inclusion
  *  @param[in]     reserved            future format selector (dot, xml ...)
- *  @param[in]     allocateFunc        allocation function
+ *  @param[in]     allocateFunc        allocation function; not implemented
  *  @return                            the graph description
  *
  *  @version Oyranos: 0.9.5
@@ -2732,8 +2732,8 @@ OYAPI char * OYEXPORT
                                        oyFilterNode_s    * input,
                                        oyFilterNode_s    * output,
                                        const char        * head_line,
-                                       int                 reserved,
-                                       oyAlloc_f           allocateFunc )
+                                       int                 reserved OY_UNUSED,
+                                       oyAlloc_f           allocateFunc OY_UNUSED )
 {
   char * text = 0,
        * temp = oyAllocateFunc_(4096),
@@ -3163,7 +3163,7 @@ char *       oyGetFilterNodeDefaultPatternFromPolicy (
     {
       if(cmm_api9_->oyCMMGetDefaultPattern)
         name = cmm_api9_->oyCMMGetDefaultPattern( base_pattern, 0,
-                                                  select_core, oyAllocateFunc_ );
+                                                  select_core, allocate_func );
       if(!name)
         WARNc2_S( "%s %s",_("error in module:"), cmm_api9_->registration );
     }
@@ -3356,6 +3356,11 @@ uint32_t     oyICCProfileSelectionFlagsFromOptions (
   oyFilterNode_s * node = NULL;
   const char * reg = NULL;
   uint32_t icc_profile_flags = 0;
+  char * db_base_key_ = NULL;
+
+  if(db_base_key)
+    STRING_ADD( db_base_key_, db_base_key);
+  STRING_ADD( db_base_key_, select_core?"context":"renderer" );
 
   node = oyFilterNode_FromOptions( db_base_key, base_pattern, options, NULL );
   reg = oyFilterNode_GetRegistration( node );

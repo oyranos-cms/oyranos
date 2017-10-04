@@ -110,7 +110,7 @@ void     oyFinish_                   ( int                 flags )
  *  @since   2009/04/16 (Oyranos: 0.1.10)
  *  @date    2009/04/16
  */
-void     oyAlphaFinish_              ( int                 unused )
+void     oyAlphaFinish_              ( int                 unused OY_UNUSED )
 {
   oyProfiles_Release( &oy_profile_list_cache_ );
   oyStructList_Release( &oy_cmm_cache_ );

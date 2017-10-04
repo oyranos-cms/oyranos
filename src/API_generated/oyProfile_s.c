@@ -596,7 +596,7 @@ OYAPI oyProfile_s * OYEXPORT
  *  @date    2015/01/03
  *  @since   2009/03/20 (Oyranos: 0.1.10)
  */
-OYAPI oyProfile_s * OYEXPORT oyProfile_FromMD5(
+OYAPI oyProfile_s * OYEXPORT oyProfile_FromMD5 (
                                        uint32_t          * md5,
                                        uint32_t            flags,
                                        oyObject_s          object )
@@ -620,7 +620,7 @@ OYAPI oyProfile_s * OYEXPORT oyProfile_FromMD5(
       {
         if(oyStrcmp_(names[i], OY_PROFILE_NONE) != 0)
           /* ICC ID's are not relyable so we recompute it here */
-          tmp = oyProfile_FromFile( names[i], flags, 0 );
+          tmp = oyProfile_FromFile( names[i], flags, object );
 
         if(!tmp)
           continue;
@@ -694,7 +694,7 @@ OYAPI oyProfile_s * OYEXPORT oyProfile_FromTaxiDB (
 
   if(mem && size)
   {
-    p = oyProfile_FromMem( size, mem, 0, NULL);
+    p = oyProfile_FromMem( size, mem, 0, object );
     oyFree_m_( mem ); size = 0;
   }
 

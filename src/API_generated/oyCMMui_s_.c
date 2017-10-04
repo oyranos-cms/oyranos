@@ -85,7 +85,7 @@ void oyCMMui_Release__Members( oyCMMui_s_ * cmmui )
  *  @since   YYYY/MM/DD (Oyranos: x.x.x)
  *  @date    YYYY/MM/DD
  */
-int oyCMMui_Init__Members( oyCMMui_s_ * cmmui )
+int oyCMMui_Init__Members( oyCMMui_s_ * cmmui OY_UNUSED )
 {
   return 0;
 }

@@ -812,7 +812,7 @@ oyCMMapis_s *    oyCMMsGetMetaApis_  ( )
  *  @date    2008/12/08
  *  @since   2007/11/00 (Oyranos: 0.1.8)
  */
-int          oyCMMdsoRelease_      ( const char        * lib_name )
+int          oyCMMdsoRelease_      ( const char        * lib_name OY_UNUSED )
 {
   int error = 0;
 
@@ -2062,7 +2062,7 @@ int    oyAdjacencyListAdd_           ( oyFilterPlug_s    * plug,
                                        oyFilterNodes_s   * nodes,
                                        oyFilterPlugs_s   * edges,
                                        const char        * selector,
-                                       int                 flags )
+                                       int                 flags OY_UNUSED )
 {
   int added = 0, found = 0,
       i,n;

@@ -268,7 +268,7 @@ oyJobResult_f oyJobResult = oyJobResultInit;
  *  @param   status_text               textual description of the work progress
  *  @param   thread_id_                work thread info
  *  @param   job_id                    id of the job
-    @param   cb_progress_context       GUI context; e.g. gauge/progress bar ...
+    @param   cb_progress_context       GUI context; e.g. gauge/progress bar ... (unused)
  *
  *  @version Oyranos: 0.9.6
  *  @date    2016/05/02
@@ -279,7 +279,7 @@ static void jobPrintfCallback        ( double              progress_zero_till_on
                                        char              * status_text,
                                        int                 thread_id_,
                                        int                 job_id,
-                                       oyStruct_s        * cb_progress_context )
+                                       oyStruct_s        * cb_progress_context OY_UNUSED )
 { printf("%s():%d %02f %s %d/%d\n",__func__,__LINE__,progress_zero_till_one,
          status_text?status_text:"",thread_id_,job_id);
 }
@@ -295,7 +295,7 @@ static void jobPrintfCallback        ( double              progress_zero_till_on
  *  @date    2016/05/02
  *  @since   2016/05/02 (Oyranos: 0.9.6)
  */
-oyJob_s *         oyJob_New          ( oyObject_s          object )
+oyJob_s *         oyJob_New          ( oyObject_s          object OY_UNUSED )
 {
   oyJob_s * job = (oyJob_s*) oyAllocateFunc_(sizeof(oyJob_s));
 

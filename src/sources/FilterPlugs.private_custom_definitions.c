@@ -48,7 +48,7 @@ void oyFilterPlugs_Release__Members( oyFilterPlugs_s_ * filterplugs )
  *  @since   YYYY/MM/DD (Oyranos: x.x.x)
  *  @date    YYYY/MM/DD
  */
-int oyFilterPlugs_Init__Members( oyFilterPlugs_s_ * filterplugs )
+int oyFilterPlugs_Init__Members( oyFilterPlugs_s_ * filterplugs OY_UNUSED )
 {
   return 0;
 }

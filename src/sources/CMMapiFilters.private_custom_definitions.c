@@ -48,7 +48,7 @@ void oyCMMapiFilters_Release__Members( oyCMMapiFilters_s_ * cmmapifilters )
  *  @since   YYYY/MM/DD (Oyranos: x.x.x)
  *  @date    YYYY/MM/DD
  */
-int oyCMMapiFilters_Init__Members( oyCMMapiFilters_s_ * cmmapifilters )
+int oyCMMapiFilters_Init__Members( oyCMMapiFilters_s_ * cmmapifilters OY_UNUSED )
 {
   return 0;
 }

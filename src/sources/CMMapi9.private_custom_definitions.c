@@ -48,7 +48,7 @@ void oyCMMapi9_Release__Members( oyCMMapi9_s_ * cmmapi9 )
  *  @since   YYYY/MM/DD (Oyranos: x.x.x)
  *  @date    YYYY/MM/DD
  */
-int oyCMMapi9_Init__Members( oyCMMapi9_s_ * cmmapi9 )
+int oyCMMapi9_Init__Members( oyCMMapi9_s_ * cmmapi9 OY_UNUSED )
 {
   return 0;
 }

@@ -361,7 +361,7 @@ char *   oyFindProfile_              ( const char        * fileName,
 /* profile and other file lists API */
 
 int oyProfileListCb_ (oyFileList_s * data,
-                      const char* full_name, const char* filename)
+                      const char* full_name, const char* filename OY_UNUSED)
 {
   oyFileList_s *l = (oyFileList_s*)data;
 
@@ -391,7 +391,7 @@ int oyProfileListCb_ (oyFileList_s * data,
 }
 
 int oyPolicyListCb_ (oyFileList_s * data,
-                     const char* full_name, const char* filename)
+                     const char* full_name, const char* filename OY_UNUSED)
 {
   oyFileList_s *l = (oyFileList_s*)data;
   /* last 4 chars */

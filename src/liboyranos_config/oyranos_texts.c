@@ -1242,7 +1242,7 @@ int          oyPolicyFilesToDisplay  ( int               * choices,
  */
 char **            oyGetCMMs         ( oyCMM_e             type,
                                        int                 name_type,
-                                       uint32_t            flags,
+                                       uint32_t            flags OY_UNUSED,
                                        oyAlloc_f           allocate_func )
 {
   oyOBJECT_e otype = oyOBJECT_CMM_API4_S;
@@ -1818,7 +1818,7 @@ oyWIDGET_e    * oyWidgetListGet_         (oyGROUP_e           group,
 
 
 oyGROUP_e
-oyGroupAdd_                (const char *cmm,
+oyGroupAdd_                (const char *cmm OY_UNUSED,
                             const char *id,
                             const char *name,
                             const char *tooltips)
@@ -2078,7 +2078,7 @@ oyCMMapiFilter_s * oyGetCMM_         ( oyCMM_e             type,
 char *       oyCMMRegistrationToName ( const char        * registration,
                                        oyCMM_e             type,
                                        int                 name_type,
-                                       uint32_t            flags,
+                                       uint32_t            flags OY_UNUSED,
                                        oyAlloc_f           allocate_func )
 {
   char * name = NULL;
@@ -2124,7 +2124,7 @@ char *       oyCMMRegistrationToName ( const char        * registration,
 char *       oyCMMNameToRegistration ( const char        * name,
                                        oyCMM_e             type,
                                        int                 name_type,
-                                       uint32_t            flags,
+                                       uint32_t            flags OY_UNUSED,
                                        oyAlloc_f           allocate_func )
 {
   char * reg = NULL;
@@ -2219,7 +2219,7 @@ char *       oyGetCMMPattern         ( oyCMM_e             type,
  *  @since   2014/06/10 (Oyranos: 0.9.6)
  */
 int          oySetCMMPattern         ( oyCMM_e             type,
-                                       uint32_t            flags,
+                                       uint32_t            flags OY_UNUSED,
                                        oySCOPE_e           scope,
                                        const char        * pattern )
 {
@@ -2282,7 +2282,7 @@ uint32_t oyICCProfileSelectionFlagsFromRegistration (
 int      oyOptions_SetRegFromText    ( oyOptions_s      ** options,
                                        const char        * registration,
                                        const char        * value,
-                                       uint32_t            flags )
+                                       uint32_t            flags OY_UNUSED )
 {
   oyOption_s * o;
   int found = 0;
@@ -2588,7 +2588,7 @@ int oyGetBehaviour_      (oyBEHAVIOUR_e type)
 /* not  */
 void
 oyI18NSet_             ( int active,
-                         int reserved )
+                         int reserved OY_UNUSED )
 {
   DBG_PROG_START
 

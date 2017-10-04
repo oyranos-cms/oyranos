@@ -323,7 +323,7 @@ oyXMLgetArray_  (const char       *xml,
    The caller must do sorting for this internal function itself. */
 char*
 oyWriteOptionsToXML_    ( oyOption_t_ ** opts,
-                          char        ** values,
+                          char        ** values OY_UNUSED,
                           int            n,
                           char         * text )
 {
@@ -610,7 +610,7 @@ oyPolicyToXML_  (oyGROUP_e           group,
 }
 
 
-int oyReadXMLPolicy_(oyGROUP_e           group,
+int oyReadXMLPolicy_(oyGROUP_e           group OY_UNUSED,
                  const char      * xml)
 {
   /* allocate memory */
@@ -689,15 +689,13 @@ int oyReadXMLPolicy_(oyGROUP_e           group,
  *  @brief   write a page header
  *
  *  @param         options             zero terminated paired key/value strings
- *  @param         allocate_func       the user allocator
  *  @return                            the string
  *
  *  @version Oyranos: 0.9.7
  *  @date    2017/04/05
  *  @since   2011/08/09 (Oyranos: 0.3.2)
  */
-char * oyGetDocHeader                ( const char       ** options,
-                                       oyAlloc_f           allocate_func )
+char * oyGetDocHeader                ( const char       ** options )
 {
   char * text = NULL;
 
@@ -1035,7 +1033,7 @@ char * oyDescriptionToHTML           ( int                 group,
   }
 
   if( add_html_header )
-         html = oyGetDocHeader( options, 0 ); 
+         html = oyGetDocHeader( options ); 
 
   /* general informations */
   if( add_oyranos_title && add_oyranos_copyright )

@@ -48,7 +48,7 @@ void oyFilterNodes_Release__Members( oyFilterNodes_s_ * filternodes )
  *  @since   YYYY/MM/DD (Oyranos: x.x.x)
  *  @date    YYYY/MM/DD
  */
-int oyFilterNodes_Init__Members( oyFilterNodes_s_ * filternodes )
+int oyFilterNodes_Init__Members( oyFilterNodes_s_ * filternodes OY_UNUSED )
 {
   return 0;
 }

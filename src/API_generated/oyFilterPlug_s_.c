@@ -90,7 +90,7 @@ void oyFilterPlug_Release__Members( oyFilterPlug_s_ * filterplug )
  *  @since   YYYY/MM/DD (Oyranos: x.x.x)
  *  @date    YYYY/MM/DD
  */
-int oyFilterPlug_Init__Members( oyFilterPlug_s_ * filterplug )
+int oyFilterPlug_Init__Members( oyFilterPlug_s_ * filterplug OY_UNUSED )
 {
   return 0;
 }

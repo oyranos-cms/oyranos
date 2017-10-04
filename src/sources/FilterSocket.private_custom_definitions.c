@@ -69,7 +69,7 @@ void oyFilterSocket_Release__Members( oyFilterSocket_s_ * filtersocket )
  *  @since   YYYY/MM/DD (Oyranos: x.x.x)
  *  @date    YYYY/MM/DD
  */
-int oyFilterSocket_Init__Members( oyFilterSocket_s_ * filtersocket )
+int oyFilterSocket_Init__Members( oyFilterSocket_s_ * filtersocket OY_UNUSED )
 {
   return 0;
 }

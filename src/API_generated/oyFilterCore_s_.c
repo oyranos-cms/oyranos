@@ -93,7 +93,7 @@ void oyFilterCore_Release__Members( oyFilterCore_s_ * filtercore )
  *  @since   YYYY/MM/DD (Oyranos: x.x.x)
  *  @date    YYYY/MM/DD
  */
-int oyFilterCore_Init__Members( oyFilterCore_s_ * filtercore )
+int oyFilterCore_Init__Members( oyFilterCore_s_ * filtercore OY_UNUSED )
 {
   /* No members seem to need initialization for now */
   return 0;

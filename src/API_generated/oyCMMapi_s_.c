@@ -86,7 +86,7 @@ void oyCMMapi_Release__Members( oyCMMapi_s_ * cmmapi )
  *  @since   YYYY/MM/DD (Oyranos: x.x.x)
  *  @date    YYYY/MM/DD
  */
-int oyCMMapi_Init__Members( oyCMMapi_s_ * cmmapi )
+int oyCMMapi_Init__Members( oyCMMapi_s_ * cmmapi OY_UNUSED )
 {
   return 0;
 }
@@ -648,9 +648,9 @@ oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s         * api_ )
  *  @since   2007/12/16 (Oyranos: 0.1.9)
  *  @date    2009/09/02
  */
-oyOBJECT_e   oyCMMapi_CheckWrap_     ( oyCMMinfo_s       * cmm_info,
+oyOBJECT_e   oyCMMapi_CheckWrap_     ( oyCMMinfo_s       * cmm_info OY_UNUSED,
                                        oyCMMapi_s        * api,
-                                       oyPointer           data,
+                                       oyPointer           data OY_UNUSED,
                                        uint32_t          * rank )
 {
   oyOBJECT_e type = oyCMMapi_Check_( api );
@@ -673,7 +673,7 @@ oyOBJECT_e   oyCMMapi_CheckWrap_     ( oyCMMinfo_s       * cmm_info,
  *  @since   2008/12/16 (Oyranos: 0.1.9)
  *  @date    2008/12/16
  */
-oyOBJECT_e   oyCMMapi_selectFilter_  ( oyCMMinfo_s_      * info,
+oyOBJECT_e   oyCMMapi_selectFilter_  ( oyCMMinfo_s_      * info OY_UNUSED,
                                        oyCMMapi_s_       * api,
                                        oyPointer           data,
                                        uint32_t          * rank )
