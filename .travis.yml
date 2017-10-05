@@ -19,7 +19,23 @@ script:
       OY_MODULE_PATH=$TRAVIS_BUILD_DIR/../build/src/modules XDG_DATA_DIRS=$TRAVIS_BUILD_DIR make coverage;
       bash <(curl -s https://codecov.io/bash) -f coverage.info -R $TRAVIS_BUILD_DIR -X gcov;
     fi
-
 before_install:
   - sudo apt-get update -qq
   - sudo apt-get install -y locales cmake pkg-config libxml2-dev libyajl-dev libdbus-1-dev gettext valgrind icc-profiles-free lcov pkg-config libxfixes-dev libxmu-dev x11proto-xext-dev libxinerama-dev libxrandr-dev libxxf86vm-dev x11proto-xf86vidmode-dev liblcms2-dev libraw-dev libexiv2-dev libcups2-dev doxygen graphviz 
+  - echo -n | openssl s_client -connect scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
+
+env:
+  global:
+   # The next declaration is the encrypted COVERITY_SCAN_TOKEN, created
+   #   via the "travis encrypt" command using the project repo's public key
+   - secure: "lI3z0IJZRyj44w6f3eVhfCCvHwIzX8KGvcxNiYJy3td/qn+6QeYAVBYAeF8ZAe92gEWxnrA7A+Na5Z7HAc/heIwjFPBUgHMPfHdvCtUWFyy+91w5cSTQ4aSryOqxpwIbm9xZPUcTHFizXDvjTLv3ZNlVPC3Ci7vSS6FaAV2T6xA="
+
+addons:
+  coverity_scan:
+    project:
+      name: "oyranos-cms/oyranos"
+      description: "Build submitted via Travis CI"
+    notification_email: ku.b@gmx.de
+    build_command_prepend: "./configure; make clean"
+    build_command:   "make -j 4"
+    branch_pattern: coverity_scan
