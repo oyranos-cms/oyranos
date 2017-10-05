@@ -214,10 +214,10 @@ int  oyImage_WritePNG                ( oyImage_s         * image,
   oyProfile_s * prof = oyImage_GetProfile( image );
   const char * colorspacename = oyProfile_GetText( prof,
                                                     oyNAME_DESCRIPTION );
-#if LIBPNG_VERSION_NUM >= 10600
+#if LIBPNG_VERSION_NUM >= 10501
   png_bytep
 #else
-  oyPointer
+  png_charp
 #endif
          pmem = 0;
   size_t psize = 0;
@@ -897,10 +897,10 @@ oyImage_s *  oyImage_FromPNG         ( const char        * filename,
   {
 #if defined(PNG_iCCP_SUPPORTED)
     png_charp name = 0;
-#if LIBPNG_VERSION_NUM >= 10600
-    png_bytep
+#if LIBPNG_VERSION_NUM >= 10501
+  png_bytep
 #else
-    oyPointer
+  png_charp
 #endif
                 profile = 0;
     png_uint_32 proflen = 0;
