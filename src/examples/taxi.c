@@ -168,7 +168,8 @@ int main( int argc, char ** argv )
 
   if(argc >= 2)
   {
-    int pos = 1, i;
+    int pos = 1;
+    unsigned i;
     char *wrong_arg = 0;
     while(pos < argc)
     {
@@ -190,6 +191,7 @@ int main( int argc, char ** argv )
                         { OY_PARSE_STRING_ARG2(profile_name, "profile"); break; }
                         else if(OY_IS_ARG("db-download")) /* needs mnft */
                         { db_download = 1; i = 100; break; }
+                        OY_FALLTHROUGH
               default:
                         printfHelp(argc, argv);
                         exit (0);

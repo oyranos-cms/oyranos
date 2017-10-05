@@ -536,7 +536,7 @@ oyTESTRESULT_e testProfiles ()
   }
   oyStringListRelease_( &texts, size, oyDeAllocateFunc_ );
 
-  if(size < count)
+  if(size < (size_t)count)
   {
     PRINT_SUB( oyTESTRESULT_FAIL, 
     "oyProfileListGet() returned less than oyDEFAULT_PROFILE_START %u|%d", (unsigned int)size, count );
@@ -572,7 +572,7 @@ oyTESTRESULT_e testProfiles ()
 
     oyProfiles_Release( &profs );
   }
-  if(size < countB)
+  if(size < (size_t)countB)
   {
     PRINT_SUB( oyTESTRESULT_FAIL, 
     "oyProfileListGet() returned less than oyPROFILE_e %u|%d", (unsigned int)size, count );

@@ -27,7 +27,7 @@ int main( int argc OY_UNUSED, char ** argv OY_UNUSED)
     oyMessageFunc_p(oyMSG_WARN,NULL,"internal API oyCMMsGetLibNames_p() = %d", files_n);
     if(files_n)
     {
-      for(i = 0; i < files_n; ++i)
+      for(i = 0; (uint32_t)i < files_n; ++i)
       {
         oyCMMinfo_s * cmm_info = oyCMMinfoFromLibName_p(files[i]);
 
@@ -62,7 +62,7 @@ int main( int argc OY_UNUSED, char ** argv OY_UNUSED)
             files2 = oyCMMsGetNames_(&files2_n, api5->sub_paths, api5->ext,
                                 api5->data_type == 0 ? oyPATH_MODULE :
                                                        oyPATH_SCRIPT);
-            for(j = 0; j < files2_n; ++j)
+            for(j = 0; (uint32_t)j < files2_n; ++j)
             {
               oyCMMinfo_s * cmm_info2 = oyCMMinfoFromLibName_p(files2[j]);
 	      if(cmm_info2)

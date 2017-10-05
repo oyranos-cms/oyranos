@@ -85,7 +85,8 @@ int main (int argc, char ** argv)
 
   if(argc != 1)
   {
-    int pos = 1, i;
+    int pos = 1;
+    unsigned i;
     char *wrong_arg = 0;
     while(pos < argc)
     {

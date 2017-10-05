@@ -49,7 +49,7 @@ char *       oyReadFilepToMem_       ( FILE              * fp,
         return NULL;
       }
       /* read file possibly partitial */
-      if(!*size || *size > ftell(fp))
+      if(!*size || (int)*size > ftell(fp))
         *size = sz;
       rewind(fp);
 
@@ -67,7 +67,7 @@ char *       oyReadFilepToMem_       ( FILE              * fp,
         int s = fread(mem, sizeof(char), *size, fp);
 
         /* check again */
-        if (s != *size)
+        if (s != (int)*size)
         { *size = 0;
           free (mem);
           mem = 0;

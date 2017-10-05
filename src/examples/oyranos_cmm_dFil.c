@@ -204,7 +204,9 @@ oyCMM_s dFil_cmm_module = {
   (oyCMMapi_s*) & dFil_api4_my_filter,
 
   /** ::icon; zero terminated list of a icon pyramid */
-  &dFil_icon
+  &dFil_icon,
+
+  NULL                                 /**< init() */
 };
 
 
@@ -451,7 +453,8 @@ oyCMMui_s_   dFil_api4_ui_my_filter = {
   0,   /* oyCMMuiGet_f oyCMMuiGet */
 
   dFilApi4UiGetText, /* oyCMMGetText_f   getText */
-  dFil_api4_ui_texts /* const char    ** texts */
+  dFil_api4_ui_texts,/* const char    ** texts */
+  (oyCMMapiFilter_s*)&dFil_api4_my_filter /* oyCMMapiFilter_s*parent */
 };
 
 /** @instance dFil_api4
@@ -527,7 +530,8 @@ oyCMMapi7_s_ dFil_api7_my_filter = {
   0,   /* plugs_last_add */
   (oyConnector_s**) dFil_myFilter_connectorSockets,   /* sockets */
   1,   /* sockets_n */
-  0    /* sockets_last_add */
+  0,   /* sockets_last_add */
+  NULL /* properties */
 };
 
 

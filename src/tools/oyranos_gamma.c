@@ -109,7 +109,7 @@ int main( int argc , char** argv )
   const char * filename = 0;
   char * data = 0;
   uint32_t n = 0;
-  int i;
+  unsigned int i;
   uint32_t icc_profile_flags = 0;
   oySCOPE_e scope = oySCOPE_USER;
 
@@ -199,7 +199,7 @@ int main( int argc , char** argv )
                         { if(verbose) {oy_debug += 1;} verbose = 1; i=100; break;}
                         else if(OY_IS_ARG("system-wide"))
                         { scope = oySCOPE_SYSTEM; i=100; break; }
-                        }
+                        } OY_FALLTHROUGH
               default:
                         printf("\n");
                         printf("oyranos-monitor v%d.%d.%d %s\n",
@@ -359,7 +359,7 @@ int main( int argc , char** argv )
       error = oyDevicesGet( 0, device_class, options, &devices );
 
       n = oyConfigs_Count( devices );
-      if(error <= 0 && 0 <= device_pos && device_pos < n )
+      if(error <= 0 && 0 <= device_pos && device_pos < (int)n )
       {
         c = oyConfigs_Get( devices, device_pos );
         oy_display_name = strdup( oyConfig_FindString( c, "device_name", 0 ));

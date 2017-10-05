@@ -103,7 +103,8 @@ int main( int argc , char** argv )
 
   if(argc >= 2)
   {
-    int pos = 1, i;
+    int pos = 1;
+    unsigned i;
     char *wrong_arg = 0;
     DBG_PROG1_S("argc: %d\n", argc);
     while(pos < argc)
@@ -138,7 +139,7 @@ int main( int argc , char** argv )
                         { list_paths = 1; i=100; break; }
                         else if(OY_IS_ARG("system-wide"))
                         { scope = oySCOPE_SYSTEM; i=100; break; }
-                        }
+                        } OY_FALLTHROUGH
               case 'h':
               default:
                         printfHelp(argc, argv);

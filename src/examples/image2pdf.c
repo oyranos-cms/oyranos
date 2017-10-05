@@ -173,7 +173,7 @@ int main (int argc, char ** argv)
 
     /* Cairo uses a Blue Green Red Alpha channel layout */
 #pragma omp parallel for
-    for(j = 0; j < size; ++j)
+    for(j = 0; j < (int)size; ++j)
     {
       unsigned char t = image_data[j*4+2];
       image_data[j*4+2] = image_data[j*4+0];

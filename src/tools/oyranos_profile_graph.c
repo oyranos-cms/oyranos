@@ -239,7 +239,7 @@ int main( int argc , char** argv )
                         { color = 0; i=100; break;}
                         else if(OY_IS_ARG("verbose"))
                         { oy_debug += 1; i=100; break;}
-                        }
+                        } OY_FALLTHROUGH
               default:
                         printfHelp(argc, argv);
                         exit (0);

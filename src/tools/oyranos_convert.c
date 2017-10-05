@@ -165,7 +165,8 @@ int main( int argc , char** argv )
 
   if(argc >= 2)
   {
-    int pos = 1, i;
+    int pos = 1;
+    unsigned i;
     char *wrong_arg = 0;
     DBG_PROG1_S("argc: %d\n", argc);
     while(pos < argc)

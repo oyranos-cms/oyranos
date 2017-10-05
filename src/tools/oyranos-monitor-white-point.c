@@ -126,7 +126,7 @@ oySCOPE_e scope = oySCOPE_USER;
 
 int main( int argc , char** argv )
 {
-  int i;
+  unsigned i;
   int error = 0;
   /* the functional switches */
   int wtpt_mode = -1;
@@ -166,7 +166,7 @@ int main( int argc , char** argv )
       switch(argv[pos][0])
       {
         case '-':
-            for(i = 1; i < (int)strlen(argv[pos]); ++i)
+            for(i = 1; i < strlen(argv[pos]); ++i)
             switch (argv[pos][i])
             {
               case 'd': OY_PARSE_INT_ARG( daemon ); break;
@@ -194,7 +194,7 @@ int main( int argc , char** argv )
                         { OY_PARSE_FLOAT_ARG2( latitude,  "latitude",  - 90.0,  90.0, 0.0 ); i=100; break; }
                         else if(OY_IS_ARG("longitude"))
                         { OY_PARSE_FLOAT_ARG2( longitude, "longitude", -180.0, 180.0, 0.0 ); i=100; break; }
-                        }
+                        } OY_FALLTHROUGH
               default:
                         printfHelp(argc, argv);
                         exit (0);
@@ -241,9 +241,9 @@ int main( int argc , char** argv )
     if(!error)
     {
       fprintf(stderr, "%s\n", _("Choices:"));
-      for(i = 0; i < choices; ++i)
+      for(i = 0; (int)i < choices; ++i)
       {
-        printf("-w %d # %s %s\n", i, choices_string_list[i], i == current ? "*":" ");
+        printf("-w %u # %s %s\n", i, choices_string_list[i], (int)i == current ? "*":" ");
       }
     }
   }

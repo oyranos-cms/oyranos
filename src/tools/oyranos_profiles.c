@@ -140,7 +140,8 @@ int main( int argc , char** argv )
 
   if(argc >= 2)
   {
-    int pos = 1, i;
+    int pos = 1;
+    unsigned i;
     char *wrong_arg = 0;
     DBG_PROG1_S("argc: %d\n", argc);
     while(pos < argc)
@@ -227,7 +228,7 @@ int main( int argc , char** argv )
                         else if(OY_IS_ARG("duplicates"))
                         { flags |= OY_ALLOW_DUPLICATES; i=100; break; }
 
-                       }
+                       } OY_FALLTHROUGH
               default:
                         printfHelp(argc, argv);
                         exit (0);
@@ -294,7 +295,7 @@ int main( int argc , char** argv )
            flags & OY_ICC_VERSION_4 || meta != NULL))
       {
       names = oyProfileListGet_ ( NULL, flags, &count );
-      for(i = 0; i < (int)count; ++i)
+      for(i = 0; i < count; ++i)
         {
           const char * sfn = names[i];
           if(path && strstr(sfn, path) == NULL)
@@ -325,7 +326,7 @@ int main( int argc , char** argv )
         ps = oyProfiles_Create( patterns, flags, 0 );
         oyProfiles_Release( &patterns );
         count = oyProfiles_Count(ps);
-        for(i = 0; i < (int)count; ++i)
+        for(i = 0; i < count; ++i)
         {
           icSignature sig_class = 0;
 
@@ -432,7 +433,7 @@ int main( int argc , char** argv )
           free(pn);
         }
       } else
-        for(i = 0; i < n; ++i)
+        for(i = 0; (int)i < n; ++i)
           fprintf(stdout, "%s\n", path_names[i]);
 
       oyStringListRelease_(&path_names, n, oyDeAllocateFunc_);
@@ -465,7 +466,7 @@ int main( int argc , char** argv )
     }
 
     if(install_n)
-      for(i = 0; i < install_n; ++i)
+      for(i = 0; (int)i < install_n; ++i)
       {
         const char * file_name = install[i];
         oyProfile_s * ip = 0;

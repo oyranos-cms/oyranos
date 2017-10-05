@@ -149,7 +149,7 @@ int main(int argc, char *argv[])
              * device_name = 0;
   char * data = 0, *t;
   uint32_t n = 0;
-  int i;
+  unsigned i;
   uint32_t flags = 0;
   oySCOPE_e scope = oySCOPE_USER;
 
@@ -237,7 +237,7 @@ int main(int argc, char *argv[])
                         { if(verbose) oy_debug += 1; verbose = 1; i=100; break;}
                         else if(OY_IS_ARG("system-wide"))
                         { scope = oySCOPE_SYSTEM; i=100; break; }
-                        }
+                        } OY_FALLTHROUGH
               default:
                         displayHelp(argv);
                         exit (0);
@@ -364,7 +364,7 @@ int main(int argc, char *argv[])
 
     n = oyConfigs_Count( devices );
     if( device_pos != -1 &&
-        (device_pos >= n || device_pos < -1) )
+        (device_pos >= (int)n || device_pos < -1) )
     {
       device_name = 0;
       fprintf( stderr, "%s %s\n  device_class: \"%s\" device_pos: \"%d\"  %s: %d\n", _("!!! ERROR"), _("Could not resolve device."),
@@ -593,7 +593,7 @@ int main(int argc, char *argv[])
 
     /* get all configuration filters */
     oyConfigDomainList("//"OY_TYPE_STD"/device", &texts, &count,&rank_list ,0 );
-    for( i = 0; i < count; ++i )
+    for( i = 0; i < (int)count; ++i )
     {
       attributes_n = 0;
  

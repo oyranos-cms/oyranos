@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Oyranos 0.9\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2017-10-05 09:51+0200\n"
+"POT-Creation-Date: 2017-10-05 12:50+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -65,8 +65,8 @@ msgstr ""
 #: modules/color/modules/oyranos_cmm_oyra_image_channel.c:144
 #: tools/oyranos-device.c:1036 tools/oyranos-device.c:1046
 #: tools/oyranos-device.c:1063 tools/oyranos-device.c:1089
-#: tools/oyranos-monitor-white-point.c:363 examples/taxi.c:229
-#: examples/taxi.c:319
+#: tools/oyranos-monitor-white-point.c:363 examples/taxi.c:231
+#: examples/taxi.c:321
 msgid "found issues parsing JSON"
 msgstr ""
 
@@ -140,11 +140,11 @@ msgid "found list of wrong type"
 msgstr ""
 
 #: API_generated/oyOptions_s.c:1566 tools/oyranos-device.c:253
-#: tools/oyranos-monitor-white-point.c:207 tools/oyranos_convert.c:270
-#: tools/oyranos_gamma.c:254 tools/oyranos_policy.c:156
-#: tools/oyranos_profile_graph.c:253 tools/oyranos_profile_tool.c:233
-#: tools/oyranos_profiles.c:244 tools/oyranos_profiles.c:317
-#: examples/taxi.c:206 examples/libraw/oyranos_file.cpp:236
+#: tools/oyranos-monitor-white-point.c:207 tools/oyranos_convert.c:271
+#: tools/oyranos_gamma.c:254 tools/oyranos_policy.c:157
+#: tools/oyranos_profile_graph.c:253 tools/oyranos_profile_tool.c:234
+#: tools/oyranos_profiles.c:245 tools/oyranos_profiles.c:318
+#: examples/taxi.c:208 examples/libraw/oyranos_file.cpp:236
 msgid "wrong argument to option:"
 msgstr ""
 
@@ -177,11 +177,11 @@ msgid "Profile contains no description"
 msgstr ""
 
 #: API_generated/oyProfile_s.c:828 API_generated/oyProfile_s.c:834
-#: tools/oyranos_profiles.c:533
+#: tools/oyranos_profiles.c:534
 msgid "Profile already installed"
 msgstr ""
 
-#: API_generated/oyProfile_s.c:850 tools/oyranos_profile_tool.c:352
+#: API_generated/oyProfile_s.c:850 tools/oyranos_profile_tool.c:353
 msgid "Profile exists already"
 msgstr ""
 
@@ -2242,7 +2242,7 @@ msgstr ""
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:368
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:559
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:817
-#: examples/oyranos_cmm_dFil.c:610
+#: examples/oyranos_cmm_dFil.c:614
 msgid "check"
 msgstr ""
 
@@ -2256,7 +2256,7 @@ msgstr ""
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:370
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:561
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:819
-#: examples/oyranos_cmm_dFil.c:612
+#: examples/oyranos_cmm_dFil.c:616
 msgid "Check if this module can handle a certain command."
 msgstr ""
 
@@ -2394,7 +2394,7 @@ msgstr ""
 #: modules/color/modules/devices/oyranos_cmm_SANE.c:832
 #: modules/color/modules/devices/oyranos_cmm_disp.c:1199
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1224
-#: examples/oyranos_cmm_dDev.c:714 examples/oyranos_cmm_dFil.c:411
+#: examples/oyranos_cmm_dDev.c:714 examples/oyranos_cmm_dFil.c:413
 msgid "Color"
 msgstr ""
 
@@ -2445,7 +2445,7 @@ msgstr ""
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:991
 #: modules/color/modules/devices/oyranos_cmm_SANE.c:947
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1338
-#: examples/oyranos_cmm_dDev.c:836
+#: examples/oyranos_cmm_dDev.c:837
 msgid "MIT license: http://www.opensource.org/licenses/mit-license.php"
 msgstr ""
 
@@ -2588,7 +2588,7 @@ msgstr ""
 msgid "ICC color profile for color transformations"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oicc.c:488 tools/oyranos_profiles.c:289
+#: modules/color/modules/oyranos_cmm_oicc.c:488 tools/oyranos_profiles.c:290
 msgid "ICC profiles"
 msgstr ""
 
@@ -2613,7 +2613,7 @@ msgstr ""
 #: modules/color/modules/devices/oyranos_cmm_disp.c:1335
 #: modules/color/modules/oyranos_cmm_lraw.cpp:229
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1331
-#: examples/oyranos_cmm_dDev.c:828
+#: examples/oyranos_cmm_dDev.c:829
 msgid ""
 "Oyranos project; www: http://www.oyranos.com; support/email: ku.b@gmx.de; "
 "sources: http://www.oyranos.com/wiki/index.php?title=Oyranos/Download"
@@ -2982,19 +2982,19 @@ msgstr ""
 
 #: modules/color/modules/devices/oyranos_cmm_SANE.c:945
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1336
-#: examples/oyranos_cmm_dDev.c:834
+#: examples/oyranos_cmm_dDev.c:835
 msgid "Copyright (c) 2009 Kai-Uwe Behrmann; MIT"
 msgstr ""
 
 #: modules/color/modules/devices/oyranos_cmm_SANE.c:952
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1343
-#: examples/oyranos_cmm_dDev.c:842 examples/oyranos_cmm_dFil.c:170
+#: examples/oyranos_cmm_dDev.c:843 examples/oyranos_cmm_dFil.c:170
 msgid "My filter introduction."
 msgstr ""
 
 #: modules/color/modules/devices/oyranos_cmm_SANE.c:954
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1345
-#: examples/oyranos_cmm_dDev.c:844 examples/oyranos_cmm_dFil.c:172
+#: examples/oyranos_cmm_dDev.c:845 examples/oyranos_cmm_dFil.c:172
 msgid "All the small details for using this module."
 msgstr ""
 
@@ -3056,8 +3056,8 @@ msgstr ""
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:382
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:573
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:841
-#: examples/oyranos_cmm_dDev.c:840 examples/oyranos_cmm_dFil.c:168
-#: examples/oyranos_cmm_dFil.c:624
+#: examples/oyranos_cmm_dDev.c:841 examples/oyranos_cmm_dFil.c:168
+#: examples/oyranos_cmm_dFil.c:628
 msgid "help"
 msgstr ""
 
@@ -3793,7 +3793,7 @@ msgstr ""
 msgid "Create 3D CLUT"
 msgstr ""
 
-#: tools/oyranos_convert.c:360
+#: tools/oyranos_convert.c:361
 msgid "Option"
 msgstr ""
 
@@ -3882,7 +3882,7 @@ msgstr ""
 msgid "List available policies:"
 msgstr ""
 
-#: tools/oyranos_policy.c:61 tools/oyranos_policy.c:237
+#: tools/oyranos_policy.c:61 tools/oyranos_policy.c:238
 msgid "Currently active policy:"
 msgstr ""
 
@@ -3906,15 +3906,15 @@ msgstr ""
 msgid "policy name"
 msgstr ""
 
-#: tools/oyranos_policy.c:203
+#: tools/oyranos_policy.c:204
 msgid "installed new policy"
 msgstr ""
 
-#: tools/oyranos_policy.c:206
+#: tools/oyranos_policy.c:207
 msgid "installation of new policy file failed with error:"
 msgstr ""
 
-#: tools/oyranos_policy.c:257
+#: tools/oyranos_policy.c:258
 msgid "Policy search paths"
 msgstr ""
 
@@ -4043,7 +4043,7 @@ msgstr ""
 msgid "Show CIE*xy chromaticities:"
 msgstr ""
 
-#: tools/oyranos_profile_tool.c:103 tools/oyranos_profile_tool.c:320
+#: tools/oyranos_profile_tool.c:103 tools/oyranos_profile_tool.c:321
 msgid "Write to ICC profile:"
 msgstr ""
 
@@ -4068,8 +4068,8 @@ msgid ""
 "profiles."
 msgstr ""
 
-#: tools/oyranos_profile_tool.c:117 tools/oyranos_profile_tool.c:262
-#: tools/oyranos_profile_tool.c:266
+#: tools/oyranos_profile_tool.c:117 tools/oyranos_profile_tool.c:263
+#: tools/oyranos_profile_tool.c:267
 msgid "read input stream"
 msgstr ""
 
@@ -4077,139 +4077,139 @@ msgstr ""
 msgid "Count all profiles with Lab PCS"
 msgstr ""
 
-#: tools/oyranos_profile_tool.c:251
+#: tools/oyranos_profile_tool.c:252
 msgid "missed -w option to write a ICC profile"
 msgstr ""
 
-#: tools/oyranos_profile_tool.c:251 tools/oyranos_profile_tool.c:266
-#: tools/oyranos_profile_tool.c:274 tools/oyranos_profile_tool.c:289
-#: tools/oyranos_profile_tool.c:352 tools/oyranos_profile_tool.c:593
-#: tools/oyranos_profile_tool.c:728
+#: tools/oyranos_profile_tool.c:252 tools/oyranos_profile_tool.c:267
+#: tools/oyranos_profile_tool.c:275 tools/oyranos_profile_tool.c:290
+#: tools/oyranos_profile_tool.c:353 tools/oyranos_profile_tool.c:594
+#: tools/oyranos_profile_tool.c:729
 msgid "Exit!"
 msgstr ""
 
-#: tools/oyranos_profile_tool.c:262
+#: tools/oyranos_profile_tool.c:263
 msgid "ok"
 msgstr ""
 
-#: tools/oyranos_profile_tool.c:266
+#: tools/oyranos_profile_tool.c:267
 msgid "failed!"
 msgstr ""
 
-#: tools/oyranos_profile_tool.c:274
+#: tools/oyranos_profile_tool.c:275
 msgid "Need a ICC profile argument."
 msgstr ""
 
-#: tools/oyranos_profile_tool.c:289
+#: tools/oyranos_profile_tool.c:290
 msgid "Need a ICC profile to modify."
 msgstr ""
 
 #. keep total number of chars equal to original for cli print
-#: tools/oyranos_profile_tool.c:425
+#: tools/oyranos_profile_tool.c:426
 msgid "Description:     "
 msgstr ""
 
-#: tools/oyranos_profile_tool.c:427
+#: tools/oyranos_profile_tool.c:428
 msgid "File:            "
 msgstr ""
 
 #. keep total number of chars equal to original for cli print
-#: tools/oyranos_profile_tool.c:431 tools/oyranos_profile_tool.c:446
+#: tools/oyranos_profile_tool.c:432 tools/oyranos_profile_tool.c:447
 msgid "Size:            "
 msgstr ""
 
-#: tools/oyranos_profile_tool.c:437
+#: tools/oyranos_profile_tool.c:438
 msgid "Copyright:       "
 msgstr ""
 
-#: tools/oyranos_profile_tool.c:441
+#: tools/oyranos_profile_tool.c:442
 msgid "Header"
 msgstr ""
 
 #. keep total number of chars equal to original for cli print
-#: tools/oyranos_profile_tool.c:450
+#: tools/oyranos_profile_tool.c:451
 msgid "Cmm:             "
 msgstr ""
 
 #. keep total number of chars equal to original for cli print
-#: tools/oyranos_profile_tool.c:454
+#: tools/oyranos_profile_tool.c:455
 msgid "Version:         "
 msgstr ""
 
 #. keep total number of chars equal to original for cli print
-#: tools/oyranos_profile_tool.c:458
+#: tools/oyranos_profile_tool.c:459
 msgid "Type:            "
 msgstr ""
 
 #. keep total number of chars equal to original for cli print
-#: tools/oyranos_profile_tool.c:463
+#: tools/oyranos_profile_tool.c:464
 msgid "Data Color Space:"
 msgstr ""
 
 #. keep total number of chars equal to original for cli print
-#: tools/oyranos_profile_tool.c:468
+#: tools/oyranos_profile_tool.c:469
 msgid "PCS Color Space: "
 msgstr ""
 
 #. keep total number of chars equal to original for cli print
-#: tools/oyranos_profile_tool.c:473
+#: tools/oyranos_profile_tool.c:474
 msgid "Creation Date:   "
 msgstr ""
 
 #. keep total number of chars equal to original for cli print
-#: tools/oyranos_profile_tool.c:483
+#: tools/oyranos_profile_tool.c:484
 msgid "Magic:           "
 msgstr ""
 
 #. keep total number of chars equal to original for cli print
-#: tools/oyranos_profile_tool.c:487
+#: tools/oyranos_profile_tool.c:488
 msgid "Platform:        "
 msgstr ""
 
 #. keep total number of chars equal to original for cli print
-#: tools/oyranos_profile_tool.c:493
+#: tools/oyranos_profile_tool.c:494
 msgid "Flags:           "
 msgstr ""
 
 #. keep total number of chars equal to original for cli print
-#: tools/oyranos_profile_tool.c:499
+#: tools/oyranos_profile_tool.c:500
 msgid "Manufacturer:    "
 msgstr ""
 
 #. keep total number of chars equal to original for cli print
-#: tools/oyranos_profile_tool.c:504
+#: tools/oyranos_profile_tool.c:505
 msgid "Model:           "
 msgstr ""
 
 #. keep total number of chars equal to original for cli print
-#: tools/oyranos_profile_tool.c:509
+#: tools/oyranos_profile_tool.c:510
 msgid "Attributes:      "
 msgstr ""
 
 #. keep total number of chars equal to original for cli print
-#: tools/oyranos_profile_tool.c:515
+#: tools/oyranos_profile_tool.c:516
 msgid "Rendering Intent:"
 msgstr ""
 
 #. keep total number of chars equal to original for cli print
-#: tools/oyranos_profile_tool.c:519
+#: tools/oyranos_profile_tool.c:520
 msgid "Illuminant:      "
 msgstr ""
 
 #. keep total number of chars equal to original for cli print
-#: tools/oyranos_profile_tool.c:528
+#: tools/oyranos_profile_tool.c:529
 msgid "Profile ID:      "
 msgstr ""
 
-#: tools/oyranos_profile_tool.c:538
+#: tools/oyranos_profile_tool.c:539
 msgid "Profile Tags"
 msgstr ""
 
-#: tools/oyranos_profile_tool.c:592
+#: tools/oyranos_profile_tool.c:593
 msgid "Allowed option values are -f openicc and -f xml. unknown format:"
 msgstr ""
 
-#: tools/oyranos_profile_tool.c:728
+#: tools/oyranos_profile_tool.c:729
 msgid "RGB primaries missed"
 msgstr ""
 
@@ -4297,39 +4297,39 @@ msgstr ""
 msgid "machine specific path"
 msgstr ""
 
-#: tools/oyranos_profiles.c:192
+#: tools/oyranos_profiles.c:193
 msgid "A single path option is required"
 msgstr ""
 
-#: tools/oyranos_profiles.c:205
+#: tools/oyranos_profiles.c:206
 msgid "File name is missed"
 msgstr ""
 
-#: tools/oyranos_profiles.c:284
+#: tools/oyranos_profiles.c:285
 msgid "Search path"
 msgstr ""
 
-#: tools/oyranos_profiles.c:425
+#: tools/oyranos_profiles.c:426
 msgid "ICC profile search paths"
 msgstr ""
 
-#: tools/oyranos_profiles.c:456
+#: tools/oyranos_profiles.c:457
 msgid "Could not open: "
 msgstr ""
 
-#: tools/oyranos_profiles.c:493
+#: tools/oyranos_profiles.c:494
 msgid "Could not open or invalid data: "
 msgstr ""
 
-#: tools/oyranos_profiles.c:545
+#: tools/oyranos_profiles.c:546
 msgid "Path can not be written"
 msgstr ""
 
-#: tools/oyranos_profiles.c:557
+#: tools/oyranos_profiles.c:558
 msgid "Profile not useable"
 msgstr ""
 
-#: tools/oyranos_profiles.c:567
+#: tools/oyranos_profiles.c:568
 msgid "Internal Error"
 msgstr ""
 
@@ -4341,23 +4341,23 @@ msgstr ""
 msgid "Example Devices, for testing and learning purposes only."
 msgstr ""
 
-#: examples/oyranos_cmm_dDev.c:818
+#: examples/oyranos_cmm_dDev.c:819
 msgid "Oyranos Dummy"
 msgstr ""
 
-#: examples/oyranos_cmm_dDev.c:820
+#: examples/oyranos_cmm_dDev.c:821
 msgid "The dummy useless module of Oyranos."
 msgstr ""
 
-#: examples/oyranos_cmm_dDev.c:824
+#: examples/oyranos_cmm_dDev.c:825
 msgid "Kai-Uwe"
 msgstr ""
 
-#: examples/oyranos_cmm_dDev.c:826
+#: examples/oyranos_cmm_dDev.c:827
 msgid "Kai-Uwe Behrmann"
 msgstr ""
 
-#: examples/oyranos_cmm_dDev.c:832
+#: examples/oyranos_cmm_dDev.c:833
 msgid "MIT"
 msgstr ""
 
@@ -4383,39 +4383,39 @@ msgstr ""
 msgid "Copyright (c) 2009 My Name; newBSD"
 msgstr ""
 
-#: examples/oyranos_cmm_dFil.c:393
+#: examples/oyranos_cmm_dFil.c:395
 msgid "Image[my_filter]"
 msgstr ""
 
-#: examples/oyranos_cmm_dFil.c:395
+#: examples/oyranos_cmm_dFil.c:397
 msgid "My Filter Object"
 msgstr ""
 
-#: examples/oyranos_cmm_dFil.c:402
+#: examples/oyranos_cmm_dFil.c:404
 msgid "Some help for My example filter."
 msgstr ""
 
-#: examples/oyranos_cmm_dFil.c:404
+#: examples/oyranos_cmm_dFil.c:406
 msgid "More indepth help  for My example filter."
 msgstr ""
 
-#: examples/oyranos_cmm_dFil.c:411
+#: examples/oyranos_cmm_dFil.c:413
 msgid "My Filter"
 msgstr ""
 
-#: examples/oyranos_cmm_dFil.c:618
+#: examples/oyranos_cmm_dFil.c:622
 msgid "So something with options."
 msgstr ""
 
-#: examples/oyranos_cmm_dFil.c:620
+#: examples/oyranos_cmm_dFil.c:624
 msgid "The my_handler takes a option with key name \"print\" and prints it."
 msgstr ""
 
-#: examples/oyranos_cmm_dFil.c:626
+#: examples/oyranos_cmm_dFil.c:630
 msgid "Handle options."
 msgstr ""
 
-#: examples/oyranos_cmm_dFil.c:628
+#: examples/oyranos_cmm_dFil.c:632
 msgid "This example module \"my_handler\" lets you print a option."
 msgstr ""
 
@@ -4439,7 +4439,7 @@ msgstr ""
 msgid "Get ICC Profile:"
 msgstr ""
 
-#: examples/taxi.c:408
+#: examples/taxi.c:410
 msgid "Did you specify a 3 letter manufacturer code?"
 msgstr ""
 
