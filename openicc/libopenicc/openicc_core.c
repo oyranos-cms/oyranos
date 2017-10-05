@@ -34,9 +34,9 @@ int openicc_backtrace = 0;
  *  @{
  */
 
-openiccOBJECT_e    openiccObjectToType(void              * contextObject )
+openiccOBJECT_e    openiccObjectToType(const void        * contextObject )
 {
-  struct { openiccOBJECT_e type; } * x = contextObject;
+  struct { openiccOBJECT_e type; } const * x = contextObject;
   if(x)
     return x->type;
   return openiccOBJECT_NONE;
@@ -61,7 +61,7 @@ const char *       openiccObjectTypeToString (
  *  This default message function is used as a message formatter.
  *  The resulting string can be placed anywhere, e.g. in a GUI.
  *
- *  @see the openiccMessageFunc() needs just to replaxe the fprintf with your 
+ *  @see the openiccMessageFunc() needs just to replace the fprintf with your 
  *  favourite GUI call.
  *
  *  @version OpenICC: 0.1.0
@@ -71,7 +71,7 @@ const char *       openiccObjectTypeToString (
 int                openiccMessageFormat (
                                        char             ** message_text,
                                        int                 code,
-                                       void              * context_object,
+                                       const void        * context_object,
                                        const char        * string )
 {
   char * text = 0, * t = 0;
@@ -159,7 +159,7 @@ int                openiccMessageFormat (
   }
 
   free( text ); text = 0;
-  if(id_text_tmp) free(id_text_tmp); id_text_tmp = 0;
+  if(id_text_tmp) {free(id_text_tmp); id_text_tmp = 0;}
 
   *message_text = t;
 
@@ -184,7 +184,7 @@ int                openiccMessageFormat (
  *  @since   2008/04/03 (OpenICC: 0.1.0)
  */
 int  openiccMessageFunc              ( int/*openiccMSG_e*/ code,
-                                       void              * context_object,
+                                       const void        * context_object,
                                        const char        * format,
                                        ... )
 {
@@ -193,7 +193,7 @@ int  openiccMessageFunc              ( int/*openiccMSG_e*/ code,
   va_list list;
   size_t sz = 0;
   int len = 0;
-  openiccConfig_s * c = context_object;
+  const openiccConfig_s * c = context_object;
 
 
   va_start( list, format);

@@ -93,7 +93,7 @@ const char *       openiccConfig_DeviceGetJSON (
 char *             openiccConfig_DeviceClassGet (
                                        openiccConfig_s   * config,
                                        openiccAlloc_f      alloc );
-const char** const openiccConfigGetDeviceClasses (
+const char**       openiccConfigGetDeviceClasses (
                                        const char       ** device_classes,
                                        int               * count );
 
@@ -181,7 +181,7 @@ typedef enum {
 } openiccMSG_e;
 
 typedef int  (*openiccMessage_f)     ( int/*openiccMSG_e*/ error_code,
-                                       void              * context_object,
+                                       const void        * context_object,
                                        const char        * format,
                                        ... );
 int            openiccMessageFuncSet ( openiccMessage_f    message_func );

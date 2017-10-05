@@ -137,6 +137,7 @@
 # define rmdir _rmdir
 #else
 /* UNIX putenv is a pain.. */
+# ifdef STANDALONE_TEST
 static void mputenv(char *ss) {
 	int ll = strlen(ss);
 	ss = strdup(ss);
@@ -147,12 +148,14 @@ static void mputenv(char *ss) {
 		putenv(ss);
 	}
 }
+# endif
 #endif
 
 /* Allocate a copy of the string, and normalize the */
 /* path separator to '/' */
 
 /* Append a string. Free in. Return NULL on error. */
+#if 0
 static char *append(char *in, char *app) {
 	char *rv;
 
@@ -167,6 +170,7 @@ static char *append(char *in, char *app) {
 
 	return rv;
 }
+#endif
 
 /* Append a ':' or ';' then a string. Free in. Return NULL on error. */
 static char *cappend(char *in, char *app) {

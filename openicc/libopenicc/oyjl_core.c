@@ -24,7 +24,7 @@
 #include "oyjl_tree_internal.h"
 
 yajl_status  oyjl_message_func       ( oyjl_message_e      error_code,
-                                       const void        * context_object,
+                                       const void        * context_object __attribute__((unused)),
                                        const char        * format,
                                        ... )
 {
@@ -246,7 +246,7 @@ void       oyjl_string_list_release  ( char            *** l,
   {
     size_t i;
 
-    for(i = 0; i < size; ++i)
+    for(i = 0; (int)i < size; ++i)
       if((*list)[i])
         deAlloc( (*list)[i] );
     if(*list)

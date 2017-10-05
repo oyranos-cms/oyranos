@@ -169,7 +169,7 @@ int           openiccDB_AddScope     ( openiccDB_s       * db,
     {
       int count = openiccArray_Count( (openiccArray_s*)&db->ks );
       openiccConfig_s * config = openiccConfig_FromMem( text );
-      if(text) free(text); text = NULL;
+      if(text) {free(text); text = NULL;}
       /* The file name is expected later on write. */
       openiccConfig_SetInfo ( config, db_file );
 

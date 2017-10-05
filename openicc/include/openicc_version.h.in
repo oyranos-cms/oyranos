@@ -8,10 +8,10 @@
 #define OPENICC_VERSION (OPENICC_VERSION_A * 10000 + OPENICC_VERSION_B * 100 + OPENICC_VERSION_C)	/**< version variable */
 
 #define OPENICC_PREFIX         "@CMAKE_INSTALL_PREFIX@"	/**< install variable */
-#define OPENICC_BINDIR         "@CMAKE_INSTALL_PREFIX@/bin"	/**< install variable */
-#define OPENICC_DATADIR        "@CMAKE_INSTALL_PREFIX@/share"	/**< install variable */
-#define OPENICC_LIBDIR         "@CMAKE_INSTALL_PREFIX@/lib@LIB_SUFFIX@"	/**< install variable */
-#define OPENICC_DATADIR        "@CMAKE_INSTALL_PREFIX@/share"	/**< install variable */
+#define OPENICC_BINDIR         "@CMAKE_INSTALL_FULL_BINDIR@"	/**< install variable */
+#define OPENICC_DATADIR        "@CMAKE_INSTALL_FULL_DATAROOTDIR@"	/**< install variable */
+#define OPENICC_LIBDIR         "@CMAKE_INSTALL_FULL_LIBDIR@/"	/**< install variable */
+#define OPENICC_DATADIR        "@CMAKE_INSTALL_FULL_DATAROOTDIR@"	/**< install variable */
 #define OPENICC_SYSCOLORDIR    OPENICC_DATADIR "/color"	/**< install variable */
 #define OPENICC_LOCALEDIR      "@OI_LOCALEDIR@"
 #define OPENICC_CMMSUBPATH     "@OI_CMMSUBPATH@"	/**< install variable */

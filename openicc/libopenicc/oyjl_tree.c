@@ -22,6 +22,9 @@
 #include <errno.h>
 #include <assert.h>
 #include <unistd.h>
+#ifdef HAVE_LOCALE_H
+#include <locale.h>
+#endif
 
 #include <yajl/yajl_parse.h>
 #ifndef YAJL_VERSION
@@ -335,7 +338,16 @@ static int handle_number (void *ctx, const char *string, unsigned int string_len
 
     endptr = NULL;
     errno = 0;
+#ifdef HAVE_LOCALE_H
+    char * save_locale = oyjl_string_copy( setlocale(LC_NUMERIC, 0 ), malloc );
+    setlocale(LC_NUMERIC, "C");
+#endif
     v->u.number.d = strtod(v->u.number.r, &endptr);
+#ifdef HAVE_LOCALE_H
+    setlocale(LC_NUMERIC, save_locale);
+    if(save_locale)
+      free( save_locale );
+#endif
     if ((errno == 0) && (endptr != NULL) && (*endptr == 0))
         v->u.number.flags |= OYJL_NUMBER_DOUBLE_VALID;
 
@@ -545,7 +557,18 @@ char * oyjl_value_text (oyjl_val v, void*(*alloc)(size_t size))
          break;
     case oyjl_t_number:
          if(v->u.number.flags & OYJL_NUMBER_DOUBLE_VALID)
+         {
+#ifdef HAVE_LOCALE_H
+           char * save_locale = oyjl_string_copy( setlocale(LC_NUMERIC, 0 ), malloc );
+           setlocale(LC_NUMERIC, "C");
+#endif
            oyjl_string_add (&t, 0,0, "%g", v->u.number.d);
+#ifdef HAVE_LOCALE_H
+           setlocale(LC_NUMERIC, save_locale);
+           if(save_locale)
+             free( save_locale );
+#endif
+         }
          else
            oyjl_string_add (&t, 0,0, "%ld", v->u.number.i);
          break;
@@ -656,7 +679,18 @@ void oyjl_tree_to_json (oyjl_val v, int * level, char ** json)
          break;
     case oyjl_t_number:
          if(v->u.number.flags & OYJL_NUMBER_DOUBLE_VALID)
+         {
+#ifdef HAVE_LOCALE_H
+           char * save_locale = oyjl_string_copy( setlocale(LC_NUMERIC, 0 ), malloc );
+           setlocale(LC_NUMERIC, "C");
+#endif
            oyjl_string_add (json, 0,0, "%g", v->u.number.d);
+#ifdef HAVE_LOCALE_H
+           setlocale(LC_NUMERIC, save_locale);
+           if(save_locale)
+             free( save_locale );
+#endif
+         }
          else
            oyjl_string_add (json, 0,0, "%ld", v->u.number.i);
          break;
@@ -986,7 +1020,7 @@ oyjl_val   oyjl_tree_get_valuef      ( oyjl_val            v,
   len = vsnprintf( text, sz, format, list );
   va_end  ( list );
 
-  if (len >= sz)
+  if ((size_t)len >= sz)
   {
     text = realloc( text, (len+1)*sizeof(char) );
     va_start( list, format);

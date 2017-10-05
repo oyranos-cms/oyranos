@@ -54,6 +54,25 @@
 #define oyjl_value_text                openiccJValueText
 #include "oyjl_tree.h"
 
+#if   defined(__clang__)
+#define OI_FALLTHROUGH
+#elif __GNUC__ >= 7 
+#define OI_FALLTHROUGH                 __attribute__ ((fallthrough));
+#else
+#define OI_FALLTHROUGH
+#endif
+
+#if   __GNUC__ >= 7
+#define OI_UNUSED                      __attribute__ ((unused))
+#define OI_DEPRECATED                  __attribute__ ((deprecated))
+#elif defined(_MSC_VER)
+#define OI_UNUSED                      __declspec(unused)
+#define OI_DEPRECATED                  __declspec(deprecated)
+#else
+#define OI_UNUSED
+#define OI_DEPRECATED
+#endif
+
 #include "openicc_conf.h"
 #include "openicc_config.h"
 #include "openicc_version.h"
@@ -132,7 +151,7 @@ char *       openiccStringCopy       ( const char        * text,
 
 extern openiccMessage_f     openiccMessage_p;
 int  openiccMessageFunc              ( int/*openiccMSG_e*/ code,
-                                       void              * context_object,
+                                       const void        * context_object,
                                        const char        * format,
                                        ... );
 

@@ -114,7 +114,7 @@ static const char * dev_cl[] = {
 /**
  *  @brief   get default device class
  */
-const char** const openiccConfigGetDeviceClasses (
+const char** openiccConfigGetDeviceClasses (
                                        const char       ** device_classes,
                                        int               * count )
 {
@@ -383,7 +383,7 @@ const char *       openiccConfig_DeviceGetJSON (
       free(keys[j]);
       free(val);
     }
-    if(keys) free(keys); if(values) free(values);
+    if(keys) {free(keys);} if(values) {free(values);}
 
     /* close the object */
   if(!(flags & OPENICC_CONFIGS_SKIP_FOOTER))
@@ -452,7 +452,7 @@ int                openiccConfig_GetKeyNames (
                                        int               * n )
 {
   int error = !config || !xpath;
-  oyjl_val list;
+  oyjl_val list = NULL;
   int count = 0, i;
   char ** keys = (char**)  calloc(sizeof(char*),2);
 
@@ -574,7 +574,7 @@ int                openiccConfig_GetStringf (
   len = vsnprintf( text, sz, format, list );
   va_end  ( list );
 
-  if (len >= sz)
+  if (len >= (int)sz)
   {
     text = realloc( text, (len+1)*sizeof(char) );
     va_start( list, format);
@@ -728,7 +728,7 @@ char *       openiccGetInstallPath   ( openiccPATH_TYPE_e  type,
           openiccStringAddPrintf( &t, 0,0,
                              "~/.local/lib%s/" OPENICC_CMMSUBPATH, strstr(OPENICC_LIBDIR, "lib64") ? "64":"");
           path = C( t );
-          if(t) free(t); t = NULL;
+          if(t) {free(t); t = NULL;}
           break;
         }
         case openiccSCOPE_OPENICC:

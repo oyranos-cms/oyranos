@@ -5,6 +5,20 @@ INCLUDE_DIRECTORIES(
                     "${CMAKE_CURRENT_SOURCE_DIR}/libopenicc"
 )
 
+# if our static code lands inside a shared lib, we need -fPIC
+IF(UNIX)
+  IF(CMAKE_COMPILER_IS_GNUCC)
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
+    # coverage testing
+    IF(USE_GCOV)
+      SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -O0 -fprofile-arcs -ftest-coverage")
+      SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -fprofile-arcs -ftest-coverage")
+      SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -g -O0 -fprofile-arcs -ftest-coverage")
+      SET(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -g -O0 -fprofile-arcs -ftest-coverage")
+    ENDIF(USE_GCOV)
+  ENDIF(CMAKE_COMPILER_IS_GNUCC)
+ENDIF(UNIX)
 
 # dependencies
 INCLUDE(CheckLibraryExists)
@@ -72,7 +86,7 @@ ENDIF(HAVE_C)
 FIND_PATH( STDINT_INCLUDE_DIR stdint.h
            HINTS /mingw ${INCLUDE_DIRECTORIES}
            PATH_SUFFIXES include
-	   )
+         )
 IF(STDINT_INCLUDE_DIR)
   SET( HAVE_STDINT_H 1 )
   MESSAGE( "-- stdint.h: " ${STDINT_INCLUDE_DIR} )
@@ -83,7 +97,7 @@ ENDIF(STDINT_INCLUDE_DIR)
 FIND_PATH( INTTYPES_INCLUDE_DIR inttypes.h
            HINTS /mingw ${INCLUDE_DIRECTORIES}
            PATH_SUFFIXES include
-	   )
+         )
 IF(INTTYPES_INCLUDE_DIR)
   SET( HAVE_INTTYPES_H 1 )
   MESSAGE( "-- inttypes.h: " ${INTTYPES_INCLUDE_DIR} )
@@ -95,7 +109,7 @@ ENDIF(INTTYPES_INCLUDE_DIR)
 MESSAGE( "GetText: ${GETTEXT_FOUND}" )
 IF( GETTEXT_FOUND )
 #  SET( USE_GETTEXT TRUE )
-  SET( OI_LOCALEDIR "${CMAKE_INSTALL_PREFIX}/share/locale" )
+  SET( OI_LOCALEDIR "${CMAKE_INSTALL_FULL_LOCALEDIR}" )
 ENDIF()
 
 # debug
@@ -113,9 +127,13 @@ ADD_SUBDIRECTORY( include )
 
 ADD_SUBDIRECTORY( libopenicc )
 
-#ADD_SUBDIRECTORY( tests )
+IF( ENABLE_TESTS )
+#    ADD_SUBDIRECTORY( tests )
+ENDIF()
 
-#ADD_SUBDIRECTORY( tools )
+IF( ENABLE_TOOLS )
+#    ADD_SUBDIRECTORY( tools )
+ENDIF()
 
 #ADD_SUBDIRECTORY( examples )
 
