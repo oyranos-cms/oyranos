@@ -46,6 +46,7 @@
 #include <omp.h>
 #endif
 
+extern oyCMMapi4_s_   l2cms_api4_cmm;
 /*
 oyCMM_s               lcm2_cmm_module;
 oyCMMapi4_s           l2cms_api4_cmm;
@@ -120,7 +121,7 @@ typedef struct l2cmsProfileWrap_s_ {
  *  @since   2007/12/20 (Oyranos: 0.1.8)
  */
 typedef struct l2cmsTransformWrap_s_ {
-  int          type;                   /**< shall be l2cmsTRANSFORM */
+  uint32_t     type;                   /**< shall be l2cmsTRANSFORM */
   oyPointer    l2cms;                  /**< cmsHPROFILE struct */
   icColorSpaceSignature sig_in;        /**< ICC profile signature */
   icColorSpaceSignature sig_out;       /**< ICC profile signature */
@@ -611,7 +612,7 @@ l2cmsProfileWrap_s * l2cmsCMMProfile_GetWrap_( oyPointer_s* cmm_ptr )
   l2cmsProfileWrap_s * s = 0;
 
   char * type_ = l2cmsPROFILE;
-  int type = *((int32_t*)type_);
+  unsigned type = *((uint32_t*)type_);
 
   if(cmm_ptr && !l2cmsCMMCheckPointer( cmm_ptr, l2cmsPROFILE ) &&
      oyPointer_GetPointer(cmm_ptr))
@@ -642,7 +643,7 @@ int      l2cmsCMMTransform_GetWrap_   ( oyPointer_s       * cmm_ptr,
                                        l2cmsTransformWrap_s ** s )
 {
   char * type_ = l2cmsTRANSFORM;
-  int type = *((int32_t*)type_);
+  unsigned type = *((uint32_t*)type_);
 
   if(cmm_ptr && !l2cmsCMMCheckPointer( cmm_ptr, l2cmsTRANSFORM ) &&
      oyPointer_GetPointer(cmm_ptr))
@@ -670,7 +671,7 @@ int l2cmsCMMProfileReleaseWrap(oyPointer *p)
   l2cmsProfileWrap_s * s = 0;
   
   char * type_ = l2cmsPROFILE;
-  int type = *((int32_t*)type_);
+  unsigned type = *((uint32_t*)type_);
   char s_type[4];
 
   if(!error && *p)
@@ -1254,7 +1255,7 @@ cmsHTRANSFORM  l2cmsCMMConversionContextCreate_ (
               OY_DBG_ARGS_,
               multi_profiles_n, intent, adaption_state,
               l2cmsFlagsToText(flags));
-    for(i=0; i < profiles_n; ++i)
+    for(i=0; i < (unsigned)profiles_n; ++i)
       l2cms_msg( level,(oyStruct_s*)node, OY_DBG_FORMAT_"\n"
              "  ColorSpace:%s->PCS:%s DeviceClass:%s",
              OY_DBG_ARGS_,
@@ -3850,6 +3851,7 @@ oyCMMapi7_s_ l2cms_api7_cmm = {
   (oyConnector_s**) l2cms_cmmIccSocket_connectors,   /* sockets */
   1,                         /* sockets_n */
   0,                         /* sockets_last_add */
+  NULL                       /* properties */
 };
 
 /**
@@ -3915,7 +3917,8 @@ oyCMMui_s_ l2cms_api4_ui = {
   l2cmsGetOptionsUI,     /* oyCMMuiGet_f oyCMMuiGet */
 
   l2cmsApi4UiGetText, /* oyCMMGetText_f   getText */
-  l2cms_api4_ui_texts /* const char    ** texts */
+  l2cms_api4_ui_texts,/* const char    ** texts */
+  (oyCMMapiFilter_s*)&l2cms_api4_cmm /* oyCMMapiFilter_s * parent */
 };
 
 /** @instance l2cms_api4_cmm

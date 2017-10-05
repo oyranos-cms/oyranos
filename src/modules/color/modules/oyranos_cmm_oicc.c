@@ -286,10 +286,6 @@ int  oiccGetDefaultColorIccOptionsUI ( oyCMMapiFilter_s   * module OY_UNUSED,
           /* show the option */
           if(value != NULL)
           {
-            if( flags & OY_LAYOUT_MIDDLE )
-            if( flags & OY_LAYOUT_NO_CHOICES )
-              ;
-
             A("\
      <xf:select1 ref=\"/");
             A(         t->config_string );

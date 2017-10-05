@@ -169,6 +169,8 @@ oyCMM_s oyIM_cmm_module = {
 
   (oyCMMapi_s*) & oyIM_api3,
 
-  &oyIM_icon
+  &oyIM_icon,
+
+  NULL                                 /**< init() */
 };
 

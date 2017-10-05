@@ -312,7 +312,8 @@ oyCMMui_s_   oyra_api4_image_write_ppm_ui = {
   oyraPPMwriteUiGet, /* oyCMMuiGet_f oyCMMuiGet */
 
   oyraApi4ImageWriteUiGetText, /* oyCMMGetText_f   getText */
-  oyra_api4_image_write_ppm_ui_texts /* const char    ** texts */
+  oyra_api4_image_write_ppm_ui_texts, /* const char    ** texts */
+  (oyCMMapiFilter_s*)&oyra_api4_image_write_ppm /* oyCMMapiFilter_s*parent */
 };
 
 /** @instance oyra_api4
@@ -539,7 +540,7 @@ int      oyraFilterPlug_ImageInputPPMRun (
   oyAllocHelper_m_( data, uint8_t, fsize, 0, return 1);
 
   fpos = fread( data, sizeof(uint8_t), fsize, fp );
-  if( fpos < fsize ) {
+  if( fpos < (size_t)fsize ) {
     oyra_msg( oyMSG_WARN, (oyStruct_s*)node,
              OY_DBG_FORMAT_ " could not read: %s %d %d",
              OY_DBG_ARGS_, oyNoEmptyString_m_( filename ), fsize, (int)fpos );
@@ -601,7 +602,7 @@ int      oyraFilterPlug_ImageInputPPMRun (
       l_rdg = 1;
 
       /* read line */
-      while(fpos < fsize && l_rdg)
+      while(fpos < (size_t)fsize && l_rdg)
       {
         if(data[fpos] == '#')
         {
@@ -1202,7 +1203,8 @@ oyCMMui_s_   oyra_api4_ui_image_input_ppm = {
   oyraPPMreadUiGet, /* oyCMMuiGet_f oyCMMuiGet */
 
   oyraApi4ImageInputUiGetText, /* oyCMMGetText_f   getText */
-  oyra_api4_image_input_ppm_ui_texts /* const char    ** texts */
+  oyra_api4_image_input_ppm_ui_texts, /* const char    ** texts */
+  (oyCMMapiFilter_s*)&oyra_api4_image_input_ppm /* oyCMMapiFilter_s*parent */
 };
 
 /** @instance oyra_api4
@@ -1292,7 +1294,7 @@ oyCMMapi7_s_ oyra_api7_image_input_ppm = {
   1,   /* sockets_n */
   0,    /* sockets_last_add */
 
-  oyra_api7_image_input_ppm_properties /* char * properties */
+  oyra_api7_image_input_ppm_properties /* char ** properties */
 };
 
 

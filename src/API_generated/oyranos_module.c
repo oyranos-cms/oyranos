@@ -180,7 +180,7 @@ oyCMMapiFilters_s * oyCMMsGetFilterApis_(const char        * registration,
                  oyNoEmptyString_m_( registration ));
 
       if(files)
-      for( i = 0; i < files_n; ++i)
+      for( i = 0; (uint32_t)i < files_n; ++i)
       {
         const char * file = files[i];
         ret = 0; j = 0;
@@ -572,7 +572,7 @@ oyCMMapi_s *     oyCMMsGetApi_       ( oyOBJECT_e          type,
     files = oyCMMsGetLibNames_p( &files_n );
 
     /* open the modules */
-    for( i = 0; i < files_n; ++i)
+    for( i = 0; (uint32_t)i < files_n; ++i)
     {
       oyCMMinfo_s * cmm_info = oyCMMinfoFromLibName_p(files[i]);
 
@@ -778,7 +778,7 @@ oyCMMapis_s *    oyCMMsGetMetaApis_  ( )
     }
 
     /* open the modules */
-    for( i = 0; i < files_n; ++i)
+    for( i = 0; (uint32_t)i < files_n; ++i)
     {
       oyCMMinfo_s * cmm_info = oyCMMinfoFromLibName_p(files[i]);
 
@@ -1212,7 +1212,7 @@ oyCMMinfo_s *    oyCMMinfoFromLibNameDynamic(const char        * lib_name )
 
 char **  (*oyCMMsGetLibNames_p) ( uint32_t* ) = &oyCMMsGetLibNamesDynamic;
 oyCMMinfo_s* (*oyCMMinfoFromLibName_p)(const char*) = &oyCMMinfoFromLibNameDynamic;
-oyCMMinfo_s*   oyCMMinfoFromLibName_(const char*name) {name=NULL;return NULL;} /* dummy for deprecated internal API */
+oyCMMinfo_s*   oyCMMinfoFromLibName_(const char*name OY_UNUSED) {return NULL;} /* dummy for deprecated internal API */
 #endif
 
 /** @internal

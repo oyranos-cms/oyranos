@@ -28,7 +28,7 @@
       if(s->plugs[i]) ++p_n;
   }
 
-  if(oyObject_GetRefCount( s->oy_ ) > s_n + p_n)
+  if(oyObject_GetRefCount( s->oy_ ) > (int)(s_n + p_n))
     return 0;
 
   oyObject_Ref(s->oy_);

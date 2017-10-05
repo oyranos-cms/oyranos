@@ -92,7 +92,7 @@ static oyStaticCMMs_s cmms[] = {
 #ifdef HAVE_PTHREAD
   { "trds_cmm_module-inbuild", &trds_cmm_module, 0 },
 #endif
-  {NULL,NULL}
+  {NULL,NULL,0}
 };
 
 static int oy_cmms_n_ = sizeof(cmms) / sizeof(oyStaticCMMs_s) - 1;

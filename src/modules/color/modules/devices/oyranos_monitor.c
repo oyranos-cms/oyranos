@@ -244,7 +244,7 @@ int            oyDeviceFillEdid      ( const char        * registration,
                   * e = (unsigned char*) edi;
       uint32_t * h = (uint32_t*)&hash;
       char * t = NULL, * edid_text = NULL;
-      int i;
+      unsigned int i;
       oyConfig_s_ ** device = (oyConfig_s_**)device_;
 
       error = oyUnrollEdid1_( edi, &EDID_manufacturer, &EDID_mnft,

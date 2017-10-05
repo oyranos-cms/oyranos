@@ -198,7 +198,7 @@ int                oyStringFromData_ ( const oyPointer     ptr,
 
   if(ptr && size)
   {
-    while(j < size)
+    while((size_t)j < size)
       if(!isprint( text[j] ) && !isspace( text[j] ))
       {
         text = 0;
@@ -504,7 +504,7 @@ char*              oyStringReplace_  ( const char        * text,
   {
     oyStringAddN_( &t, start, end-start, allocateFunc, deallocateFunc );
     oyStringAdd_( &t, replacement, allocateFunc, deallocateFunc );
-    if(strlen(end) >= s_len)
+    if(strlen(end) >= (size_t)s_len)
       start = end + s_len;
     else
     {

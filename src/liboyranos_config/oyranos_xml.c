@@ -424,7 +424,7 @@ void         oyWriteOptionToXML_     ( oyGROUP_e           group,
        for(i = 0; i < n; ++i)
        {
          int wt = tmp[i];
-         if(start <= wt && wt <= end)
+         if(start <= (size_t)wt && (size_t)wt <= end)
          {
            char *value = 0;
            int opt_type = oyWidgetTypeGet_( wt );
@@ -922,7 +922,7 @@ void         oyWriteOptionToHTML_    ( oyGROUP_e           group,
        for(i = 0; i < n; ++i)
        {
          int wt = tmp[i];
-         if(start <= wt && wt <= end)
+         if(start <= (size_t)wt && (size_t)wt <= end)
          {
            int opt_type = oyWidgetTypeGet_( wt );
            int j;

@@ -262,7 +262,7 @@ int          oyraMOptions_HandleSatL ( oyOptions_s       * options,
     oyOption_s * o = oyOption_FromRegistration( OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH SAT_L_COMMAND ".output.double._" CMM_NICK,
                         0 );
     int pos;
-    for(pos = 0; pos < size*3; ++pos)
+    for(pos = 0; (size_t)pos < size*3; ++pos)
       oyOption_SetFromDouble( o, values[pos], pos, 0 );
     if(!*result)
       *result = oyOptions_New(0);

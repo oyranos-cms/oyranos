@@ -1020,7 +1020,7 @@ oyjl_val   oyjl_tree_get_valuef      ( oyjl_val            v,
   len = vsnprintf( text, sz, format, list );
   va_end  ( list );
 
-  if (len >= sz)
+  if ((size_t)len >= sz)
   {
     text = realloc( text, (len+1)*sizeof(char) );
     va_start( list, format);

@@ -875,7 +875,8 @@ oyCMMui_s_   _api8_ui = {
   0,    /* oyCMMuiGet_f oyCMMuiGet */
 
   Api8UiGetText,  /* oyCMMGetText_f getText */
-  _api8_ui_texts  /* (const char**)texts */
+  _api8_ui_texts, /* (const char**)texts */
+  (oyCMMapiFilter_s*)&_api8 /* oyCMMapiFilter_s*parent */
 };
 
 oyIcon_s _api8_icon = {
@@ -977,7 +978,9 @@ oyCMM_s _cmm_module = {
    (oyCMMapi_s *) & _api8,
 
   /** ::icon; zero terminated list of a icon pyramid */
-   &_api8_icon
+   &_api8_icon,
+
+   NULL                /**< init() */
 };
 
 /* Helper functions */
@@ -1015,7 +1018,7 @@ int ColorInfoFromHandle(const SANE_Handle device_handle, oyOptions_s **options)
 
    value_str = malloc(sizeof(char)*value_size);
 
-   for (opt_num = 1; opt_num < num_options; opt_num++) {
+   for (opt_num = 1; opt_num < (unsigned)num_options; opt_num++) {
       opt = sane_get_option_descriptor(device_handle, opt_num);
       /*if ((opt->cap & SANE_CAP_COLOUR))*/ /*&& !(opt->cap & SANE_CAP_INACTIVE)*/
       if(opt->name)
@@ -1057,7 +1060,7 @@ int ColorInfoFromHandle(const SANE_Handle device_handle, oyOptions_s **options)
                    int chars = 0;
                    for (i=0; i<count; ++i) {
                      int printed = snprintf(value_str+chars, value_size-chars, "%d, ", *(SANE_Int *) value+i);
-                     if (printed >= value_size-chars)
+                     if (printed >= (int)(value_size-chars))
                         break;
                      else
                         chars += printed;
@@ -1082,7 +1085,7 @@ int ColorInfoFromHandle(const SANE_Handle device_handle, oyOptions_s **options)
                                            value_size-chars,
                                            "%f, ",
                                            SANE_UNFIX(*(SANE_Fixed *) value+i));
-                    if (printed >= value_size-chars)
+                    if (printed >= (int)(value_size-chars))
                        break;
                     else
                        chars += printed;

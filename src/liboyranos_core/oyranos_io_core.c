@@ -195,7 +195,7 @@ char *       oyReadFilepToMem_       ( FILE              * fp,
         return NULL;
       }
       /* read file possibly partitial */
-      if(!*size || *size > ftell(fp))
+      if(!*size || *size > (size_t)ftell(fp))
         *size = sz;
       rewind(fp);
 
@@ -217,7 +217,7 @@ char *       oyReadFilepToMem_       ( FILE              * fp,
         DBG_MEM
 
         /* check again */
-        if (s != *size)
+        if ((size_t)s != *size)
         { *size = 0;
           oyFree_m_ (mem)
           mem = 0;
@@ -525,7 +525,7 @@ char * oyReadCmdToMemf_              ( size_t            * size,
   len = vsnprintf( text, sz, format, list );
   va_end  ( list );
 
-  if (len >= sz)
+  if ((size_t)len >= sz)
   {
     oyAllocHelper_m_(text, char, len + 1, oyAllocateFunc_, return NULL);
     va_start( list, format);
@@ -559,7 +559,7 @@ char * oyReadUrlToMemf_              ( size_t            * size,
   len = vsnprintf( text, sz, format, list );
   va_end  ( list );
 
-  if (len >= sz)
+  if ((size_t)len >= sz)
   {
     oyAllocHelper_m_(text, char, len + 1, oyAllocateFunc_, return NULL);
     va_start( list, format);

@@ -1539,7 +1539,7 @@ void          oyOptionChoicesFree_     (oyWIDGET_e        option,
   {
     size_t i;
 
-    for(i = 0; i < size; ++i)
+    for(i = 0; i < (size_t)size; ++i)
       oyFree_m_( (*list)[i] );
     oyFree_m_( *list );
     *list = NULL;
@@ -1839,7 +1839,7 @@ oyGroupAdd_                (const char *cmm OY_UNUSED,
 
   if(oy_groups_description_)
   {
-    for(i = 0; i < oy_groups_descriptions_ - 1; ++i)
+    for(i = 0; i < (int)oy_groups_descriptions_ - 1; ++i)
       ptr[i] = oy_groups_description_[i]; 
     oyFree_m_(oy_groups_description_);
   }

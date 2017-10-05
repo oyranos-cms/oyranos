@@ -1516,8 +1516,8 @@ oyX1Monitor_s* oyX1Monitor_newFrom_      ( const char        * display_name,
             if(!(geo[0] != -1 && geo[1] != -1 && geo[2] != -1 && geo[3] != -1)||
                (geo[0] == crtc_info->x &&
                 geo[1] == crtc_info->y &&
-                geo[2] == crtc_info->width &&
-                geo[3] == crtc_info->height ) )
+                geo[2] == (int)crtc_info->width &&
+                geo[3] == (int)crtc_info->height ) )
             {
               xrand_screen = monitors;
               ++geo_monitors;

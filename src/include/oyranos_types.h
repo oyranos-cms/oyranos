@@ -85,12 +85,15 @@ typedef void (*oyDeAlloc_f)          ( void              * data );
 #ifdef __GNUC__
 #define OY_UNUSED                      __attribute__ ((unused))
 #define OY_DEPRECATED                  __attribute__ ((deprecated))
+#define OY_FALLTHROUGH                 __attribute__ ((fallthrough));
 #elif defined(_MSC_VER)
 #define OY_UNUSED                      __declspec(unused)
 #define OY_DEPRECATED                  __declspec(deprecated)
+#define OY_FALLTHROUGH
 #else
 #define OY_UNUSED                      __attribute__ ((unused))
 #define OY_DEPRECATED                  #warning "deprecated"
+#define OY_FALLTHROUGH
 #endif
 
 #ifdef __cplusplus

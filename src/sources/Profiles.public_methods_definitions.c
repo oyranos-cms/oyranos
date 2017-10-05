@@ -78,7 +78,7 @@ OYAPI oyProfiles_s * OYEXPORT
     if(!(flags & OY_ALLOW_DUPLICATES))
       flags |= OY_COMPUTE;
 
-    if(oyProfiles_Count( oy_profile_list_cache_ ) != names_n)
+    if(oyProfiles_Count( oy_profile_list_cache_ ) != (int)names_n)
     {
       oyProfiles_s * l = oyProfiles_New(0);
       sorts = names_n;
@@ -109,7 +109,7 @@ OYAPI oyProfiles_s * OYEXPORT
         }
       }
       qsort( sort, sorts, sizeof(char**)*2, oyLowerStrcmpWrap_ );
-      for(i = 0; i < sorts; ++i)
+      for(i = 0; (int)i < sorts; ++i)
       {
         tmp = oyProfile_FromFile( sort[i*2+1], OY_NO_CACHE_WRITE | flags, 0 );
         oyProfiles_MoveIn(tmps, &tmp, -1);
@@ -126,7 +126,7 @@ OYAPI oyProfiles_s * OYEXPORT
     }
 
     n = oyProfiles_Count( oy_profile_list_cache_ );
-    if(oyProfiles_Count( oy_profile_list_cache_ ) != names_n)
+    if(oyProfiles_Count( oy_profile_list_cache_ ) != (int)names_n)
       WARNc2_S("updated oy_profile_list_cache_ differs: %d %d",n, names_n);
     oyStringListRelease_( &names, names_n, oyDeAllocateFunc_ ); names_n = 0;
 
@@ -412,7 +412,7 @@ OYAPI oyProfiles_s * OYEXPORT oyProfiles_ForStd
     /* detect the default profile position in our list */
     size = oyProfiles_Count(iccs);
     if(default_p)
-    for( i = 0; i < size; ++i)
+    for( i = 0; i < (int)size; ++i)
     {
       temp_prof = oyProfiles_Get( iccs, i );
       text = oyStringCopy_( oyProfile_GetFileName(temp_prof, -1),

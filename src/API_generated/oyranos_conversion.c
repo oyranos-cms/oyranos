@@ -195,8 +195,8 @@ int          oyFilterSocket_MatchImagingPlug (
       oyProfile_s * image_profile = oyImage_GetProfile( image );
       colors_n = oyProfile_GetChannelsCount( image_profile );
       oyProfile_Release( &image_profile );
-      if(oyChannels_m(layout) < oyConnectorImaging_GetCapability(b,oyCONNECTOR_IMAGING_CAP_MIN_CHANNELS_COUNT) ||
-         oyChannels_m(layout) > oyConnectorImaging_GetCapability(b,oyCONNECTOR_IMAGING_CAP_MAX_CHANNELS_COUNT) ||
+      if(oyChannels_m(layout) < (size_t)oyConnectorImaging_GetCapability(b,oyCONNECTOR_IMAGING_CAP_MIN_CHANNELS_COUNT) ||
+         oyChannels_m(layout) > (size_t)oyConnectorImaging_GetCapability(b,oyCONNECTOR_IMAGING_CAP_MAX_CHANNELS_COUNT) ||
          colors_n < oyConnectorImaging_GetCapability(b,oyCONNECTOR_IMAGING_CAP_MIN_CHANNELS_COUNT) ||
          colors_n > oyConnectorImaging_GetCapability(b,oyCONNECTOR_IMAGING_CAP_MAX_CHANNELS_COUNT))
         match = 0;

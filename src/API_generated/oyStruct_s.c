@@ -287,7 +287,7 @@ int          oyStruct_CheckType      ( oyStruct_s        * obj,
       for(i = 1; i <= n; ++i)
         if(inheritance[i] == type)
         {
-          if(inheritance[0] == i)
+          if(inheritance[0] == (size_t)i)
             error = 0;
           else
             error = -1;

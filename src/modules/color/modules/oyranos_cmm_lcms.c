@@ -57,6 +57,7 @@ oyCMMapi6_s     lcms_api6_cmm;
 oyCMMapi10_s    lcms_api10_cmm;
 oyCMMapi10_s    lcms_api10_cmm2;
 */
+extern oyCMMapi4_s_ lcms_api4_cmm;
 
 void* oyAllocateFunc_           (size_t        size);
 void* oyAllocateWrapFunc_       (size_t        size,
@@ -340,7 +341,7 @@ lcmsProfileWrap_s * lcmsCMMProfile_GetWrap_( oyPointer_s * cmm_ptr )
   lcmsProfileWrap_s * s = 0;
 
   char * type_ = lcmsPROFILE;
-  int type = *((int32_t*)type_);
+  uint32_t type = *((uint32_t*)type_);
 
   if(cmm_ptr && !lcmsCMMCheckPointer( cmm_ptr, lcmsPROFILE ) &&
      oyPointer_GetPointer(cmm_ptr))
@@ -391,7 +392,7 @@ int lcmsCMMProfileReleaseWrap(oyPointer *p)
   lcmsProfileWrap_s * s = 0;
   
   char * type_ = lcmsPROFILE;
-  int type = *((int32_t*)type_);
+  uint32_t type = *((uint32_t*)type_);
   char s_type[4];
 
   if(!error && *p)
@@ -2727,6 +2728,7 @@ oyCMMapi7_s_ lcms_api7_cmm = {
   (oyConnector_s**) lcms_cmmIccSocket_connectors,   /* sockets */
   1,                         /* sockets_n */
   0,                         /* sockets_last_add */
+  NULL                       /* char ** properties */
 };
 
 /**
@@ -2792,7 +2794,8 @@ oyCMMui_s_ lcms_api4_ui = {
   lcmsGetOptionsUI,     /* oyCMMuiGet_f oyCMMuiGet */
 
   lcmsApi4UiGetText, /* oyCMMGetText_f   getText */
-  lcms_api4_ui_texts /* const char    ** texts */
+  lcms_api4_ui_texts, /* const char    ** texts */
+  (oyCMMapiFilter_s*)&lcms_api4_cmm /* oyCMMapiFilter_s*parent */
 };
 
 /** @instance lcms_api4_cmm
@@ -2899,6 +2902,8 @@ oyCMM_s lcms_cmm_module = {
 
   (oyCMMapi_s*) & lcms_api4_cmm,       /**< api */
 
-  &lcms_icon /**< icon */
+  &lcms_icon,                          /**< icon */
+
+  NULL                                 /**< init() */
 };
 

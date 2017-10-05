@@ -117,7 +117,9 @@ oyCMM_s oPNG_cmm_module = {
 
   (oyCMMapi_s*) & oPNG_api4_image_write_png,
 
-  &oPNG_icon
+  &oPNG_icon,
+
+  NULL                                 /**< init() */
 };
 
 
@@ -596,7 +598,8 @@ oyCMMui_s_ oPNG_api4_image_write_png_ui = {
   oPNGPNGwriteUiGet, /* oyCMMuiGet_f oyCMMuiGet */
 
   oPNGApi4ImageWriteUiGetText, /* oyCMMGetText_f   getText */
-  oPNG_api4_image_write_png_ui_texts /* const char    ** texts */
+  oPNG_api4_image_write_png_ui_texts, /* const char    ** texts */
+  (oyCMMapiFilter_s*)&oPNG_api4_image_write_png /* oyCMMapiFilter_s*parent */
 };
 
 /** @instance oPNG_api4
@@ -860,7 +863,7 @@ oyImage_s *  oyImage_FromPNG         ( const char        * filename,
   case 1:
   case 2:
   case 4:
-       png_set_expand( png_ptr );
+       png_set_expand( png_ptr ); OY_FALLTHROUGH
   case 8:
        data_type = oyUINT8; break;
   case 16:
@@ -911,7 +914,8 @@ oyImage_s *  oyImage_FromPNG         ( const char        * filename,
                                         oyToDataType_m(pixel_layout),
                                         0 );
     png_byte ** array2d = (png_byte**) oyArray2d_GetData( a );
-    int i,y;
+    int i;
+    unsigned y;
 
     /* both variants of libpng access appear equal */
     if(1)
@@ -1211,7 +1215,8 @@ oyCMMui_s_ oPNG_api4_ui_image_input_png = {
   oPNGPNGreadUiGet, /* oyCMMuiGet_f oyCMMuiGet */
 
   oPNGApi4ImageInputUiGetText, /* oyCMMGetText_f   getText */
-  oPNG_api4_image_input_png_ui_texts /* const char    ** texts */
+  oPNG_api4_image_input_png_ui_texts, /* const char    ** texts */
+  (oyCMMapiFilter_s*)&oPNG_api4_image_input_png /* oyCMMapiFilter_s*parent */
 };
 
 /** @instance oPNG_api4

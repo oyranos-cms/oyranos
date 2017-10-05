@@ -167,7 +167,7 @@ OYAPI int  OYEXPORT oyConfigs_FromDeviceClass (
     *devices = oyConfigs_New( object );
 
   /** 1.3.) ask each module */
-  for( i = 0; i < count; ++i )
+  for( i = 0; (uint32_t)i < count; ++i )
   {
     const char * registration_domain = texts[i];
 
@@ -572,7 +572,7 @@ OYAPI int OYEXPORT oyConfigs_Modify  ( oyConfigs_s       * configs,
 
 
   /** 2.) call each modules oyCMMapi8_s::oyConfigs_Modify */
-  for( i = 0; i < count; ++i )
+  for( i = 0; (uint32_t)i < count; ++i )
   {
     registration_domain = texts[i];
 
@@ -687,7 +687,7 @@ OYAPI int OYEXPORT oyConfigDomainList( const char        * registration_pattern,
     if(!allocateFunc)
       allocateFunc = oyAllocateFunc_;
 
-    for(i = 0; i < apis_n; ++i)
+    for(i = 0; (uint32_t)i < apis_n; ++i)
     {
       api = (oyCMMapiFilter_s_*)oyCMMapiFilters_Get( apis, i );
       if(rank_list[0][i])

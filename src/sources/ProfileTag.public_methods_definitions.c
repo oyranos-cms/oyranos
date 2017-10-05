@@ -33,7 +33,7 @@ OYAPI oyProfileTag_s * OYEXPORT
   oyCMMProfileTag_Create_f funcP = 0;
   oyCMMapiQuery_s query = {oyQUERY_PROFILE_TAG_TYPE_WRITE, 0, oyREQUEST_HARD};
   oyCMMapiQuery_s *query_[2] = {0,0};
-  oyCMMapiQueries_s queries = {1,0};
+  oyCMMapiQueries_s queries = {1,0,{0}};
 
   if(error <= 0 && list->type_ != oyOBJECT_STRUCT_LIST_S)
     error = 1;
@@ -245,7 +245,7 @@ oyStructList_s*oyProfileTag_Get      ( oyProfileTag_s    * tag )
   oyStructList_s * values = 0;
   oyCMMapiQuery_s query = {oyQUERY_PROFILE_TAG_TYPE_READ, 0, oyREQUEST_HARD};
   oyCMMapiQuery_s *query_[2] = {0,0};
-  oyCMMapiQueries_s queries = {1,0};
+  oyCMMapiQueries_s queries = {1,0,{0}};
 
   if(!s)
     return 0;

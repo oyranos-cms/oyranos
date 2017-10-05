@@ -329,8 +329,8 @@ char * oyGetScopeString              ( oySCOPE_e           scope,
   }
 
   if(key_name)
-    if((strlen(key_name) > user_len && memcmp(key_name,OY_USER,user_len) == 0) ||
-       (strlen(key_name) > sys_len && memcmp(key_name,OY_SYS,sys_len) == 0))
+    if((strlen(key_name) > (size_t)user_len && memcmp(key_name,OY_USER,user_len) == 0) ||
+       (strlen(key_name) > (size_t)sys_len && memcmp(key_name,OY_SYS,sys_len) == 0))
       has_scope = 1;
 
   if(scope == oySCOPE_USER_SYS)
@@ -518,7 +518,7 @@ char **  elDB_getKeyNames            ( oyDB_s            * db,
       {
         const char * t = oyStrstr_(current_name, name);
 
-        if(strlen(t) > name_len &&
+        if(strlen(t) > (size_t)name_len &&
            !oyStringListHas_( (const char **)texts, *n, t ) )
           oyStringListAddStaticString( &texts, n, t,
                                         oyAllocateFunc_, oyDeAllocateFunc_);
@@ -578,7 +578,7 @@ char **  elDB_getKeyNamesOneLevel    ( oyDB_s            * db,
           t = txt;
         }
 
-        if(strlen(t) > name_len &&
+        if(strlen(t) > (size_t)name_len &&
            !oyStringListHas_( (const char **)texts, *n, t ) )
           oyStringListAddStaticString( &texts, n, t,
                                         oyAllocateFunc_, oyDeAllocateFunc_);

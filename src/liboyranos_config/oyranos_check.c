@@ -73,9 +73,7 @@ int      oyCheckProfile_             ( const char        * name,
   /*if(name) DBG_NUM_S((name)); */
   fullName = oyFindProfile_(name, flags);
   if (!fullName)
-    WARNc2_S("%s %s", _("not found:"),name)
-  else
-    ;/*DBG_NUM_S((fullName)); */
+  { WARNc2_S("%s %s", _("not found:"),name) }
 
   /* do check */
   if (oyIsFileFull_(fullName,"rb"))

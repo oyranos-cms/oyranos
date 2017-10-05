@@ -67,6 +67,8 @@ extern oyDATATYPE_e  oyra_image_data_types[7];
 
 extern oyCMMapi4_s_   oyra_api4_image_load;
 extern oyCMMapi7_s_   oyra_api7_image_load;
+extern oyCMMapi4_s_   oyra_api4_image_write;
+extern oyCMMapi7_s_   oyra_api7_image_write;
 extern oyCMMapi4_s_   oyra_api4_image_input_ppm;
 extern oyCMMapi7_s_   oyra_api7_image_input_ppm;
 extern oyCMMapi4_s_   oyra_api4_image_write_ppm;

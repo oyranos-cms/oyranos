@@ -1319,7 +1319,7 @@ oyProfileTag_s * oyProfile_GetTagByPos_( oyProfile_s_    * profile,
     error = !memcpy( profile_cmm, &profile_cmmId, 4 );
     profile_cmmId = 0;
 
-    if(error <= 0 && s->size_ > min_icc_size)
+    if(error <= 0 && s->size_ > (size_t)min_icc_size)
     {
       uint32_t tag_count = 0;
       icTag *tag_list = 0;
@@ -1350,7 +1350,7 @@ oyProfileTag_s * oyProfile_GetTagByPos_( oyProfile_s_    * profile,
       tag_list = (icTag*)&((char*)s->block_)[132];
 
       /* parse the profile and add tags to the oyProfile_s::tags_ list */
-      for(i = 0; i < tag_count; ++i)
+      for(i = 0; (size_t)i < tag_count; ++i)
       {
         icTag *ic_tag = &tag_list[i];
         size_t offset = oyValueUInt32( ic_tag->offset );

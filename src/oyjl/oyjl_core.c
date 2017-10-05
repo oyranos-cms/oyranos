@@ -246,7 +246,7 @@ void       oyjl_string_list_release  ( char            *** l,
   {
     size_t i;
 
-    for(i = 0; i < size; ++i)
+    for(i = 0; (int)i < size; ++i)
       if((*list)[i])
         deAlloc( (*list)[i] );
     if(*list)

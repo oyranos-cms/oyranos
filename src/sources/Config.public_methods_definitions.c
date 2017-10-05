@@ -584,7 +584,7 @@ OYAPI int  OYEXPORT
 
   if(error <= 0)
   {
-    for(i = 0; i < apis_n; ++i)
+    for(i = 0; (uint32_t)i < apis_n; ++i)
     {
       cmm_api8 = (oyCMMapi8_s_*) oyCMMapiFilters_Get( apis, i );
 
@@ -593,7 +593,7 @@ OYAPI int  OYEXPORT
       /** Ask the module if it wants later on to accept this configuration. */
         rank = cmm_api8->oyConfig_Rank( config ) * rank_list[i];
 
-      if(max_rank < rank)
+      if((int)max_rank < rank)
         max_rank = rank;
 
       if(cmm_api8->release)

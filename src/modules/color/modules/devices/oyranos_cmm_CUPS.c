@@ -912,7 +912,8 @@ oyCMMui_s_ _api8_ui = {
   0,    /* oyCMMuiGet_f oyCMMuiGet */
 
   Api8UiGetText,  /* oyCMMGetText_f getText */
-  _api8_ui_texts  /* (const char**)texts */
+  _api8_ui_texts,  /* (const char**)texts */
+  (oyCMMapiFilter_s*)&_api8 /* oyCMMapiFilter_s*parent */
 };
 
 oyIcon_s _api8_icon = {
@@ -1032,7 +1033,9 @@ oyCMM_s _cmm_module = {
 
   (oyCMMapi_s*) & _api8,
 
-  &_api8_icon
+  &_api8_icon,
+
+  NULL                                 /**< init() */
 };
 
 /** @brief get for possible profiles eachs qualifier

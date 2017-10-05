@@ -632,7 +632,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
   char * mem = 0;
   char * pos = 0;
   icTagTypeSignature  sig = 0;
-  int32_t size_ = -1;
+  uint32_t size_ = 0;
   oyStructList_s * list = 0;
   icTagTypeSignature tag_sig = (icTagTypeSignature)0;
   char num[32];
@@ -659,7 +659,8 @@ oyStructList_s * oyIMProfileTag_GetValues(
   - since Oyranos 0.1.12 (API 0.1.12)\
   - returns: text list\
     - the number of channels\
-    - the position of the normal channel names as strings 1 + i"
+    - the position of the normal channel names as strings 1 + i",
+      {0}
     };
 
     oyName_s description_clrt = {
@@ -674,7 +675,8 @@ oyStructList_s * oyIMProfileTag_GetValues(
  - returns: text list\
     - the number of channels\
     - the short channel name as string in 1 + 2 * i\
-    - PCS representation as three space separated integers in 1 + 2 * i + 1"
+    - PCS representation as three space separated integers in 1 + 2 * i + 1",
+      {0}
     };
 
     oyName_s description_curv = {
@@ -689,7 +691,8 @@ oyStructList_s * oyIMProfileTag_GetValues(
     - a option containing doubles\
       - first entry : count with zero means idendity, one means gamma\
       - more doubles means a segmented curve\
-      - second entry : values start"
+      - second entry : values start",
+      {0}
     };
 
     oyName_s description_mluc = {
@@ -701,7 +704,8 @@ oyStructList_s * oyIMProfileTag_GetValues(
   - since Oyranos 0.1.8 (API 0.1.8)\
   - list: will contain oyName_s objects\
     - oyName_s::name will hold the name\
-    - oyName_s::lang will hold i18n specifier, e.g. \"en_GB\""
+    - oyName_s::lang will hold i18n specifier, e.g. \"en_GB\"",
+      {0}
     };
 
     oyName_s description_nvmt = {
@@ -715,7 +719,8 @@ oyStructList_s * oyIMProfileTag_GetValues(
     - introduction text\
     - ascii string with the number (i) of the found elements\
     - a key string in 2 + i * 2\
-    - a value string in in 2 + i * 2 + 1"
+    - a value string in in 2 + i * 2 + 1",
+      {0}
     };
 
     oyName_s description_mAB = {
@@ -723,7 +728,8 @@ oyStructList_s * oyIMProfileTag_GetValues(
       CMM_NICK,
       "mAB",
       "\
-- icSigLutAtoBType:"
+- icSigLutAtoBType:",
+      {0}
     };
 
     oyName_s description_mmod = {
@@ -737,7 +743,8 @@ oyStructList_s * oyIMProfileTag_GetValues(
     - manufacturer id\
     - model id\
     - serialNumber id\
-    - manufacturer date id"
+    - manufacturer date id",
+      {0}
     };
 
     oyName_s description_ndin = {
@@ -747,7 +754,8 @@ oyStructList_s * oyIMProfileTag_GetValues(
       "\
 - icSigNativeDisplayInfoType:\
   - since Oyranos 0.1.11 (API 0.1.11)\
-  - returns a list of strings, uneven is descriptive, even contains values"
+  - returns a list of strings, uneven is descriptive, even contains values",
+      {0}
     };
 
     oyName_s description_psid = {
@@ -763,7 +771,8 @@ oyStructList_s * oyIMProfileTag_GetValues(
     - the string \"md5id:\" in in 1 + i * 5 + 1\
     - the low letter hexadecimal hash value in 1 + i * 5 + 2\
     - mluc translated by oyICCTagDescription in 1 + i * 5 + 3\
-    - the icSigProfileDescriptionTag according to language in 1 + i * 5 + 4"
+    - the icSigProfileDescriptionTag according to language in 1 + i * 5 + 4",
+      {0}
     };
 
     oyName_s description_ncl2 = {
@@ -775,7 +784,8 @@ oyStructList_s * oyIMProfileTag_GetValues(
   - since Oyranos 0.9.5 (API 0.9.0)\
   - list: should contain the objects to create the tag\
     - a string describing the tag\
-    - oyNamedColors_s"
+    - oyNamedColors_s",
+      {0}
     };
 
     oyName_s description_MS10 = {
@@ -785,7 +795,8 @@ oyStructList_s * oyIMProfileTag_GetValues(
       "\
 - icSigWCSProfileTag:\
   - since Oyranos 0.1.8 (API 0.1.8)\
-  - list: should contain only oyName_s"
+  - list: should contain only oyName_s",
+      {0}
     };
 
     oyName_s description_para = {
@@ -803,7 +814,8 @@ oyStructList_s * oyIMProfileTag_GetValues(
       - position 2 : first paramter for the parametric formula\
       - position 2 + param_n : the number of a segmented curve - seg_count\
       - position 2 + param_n + 1 : the curves value for 0.0\
-      - position 2 + param_n + 1 + seg_count - 1 : the curves value for 1.0"
+      - position 2 + param_n + 1 + seg_count - 1 : the curves value for 1.0",
+      {0}
     };
 
     oyName_s description_text = {
@@ -813,7 +825,8 @@ oyStructList_s * oyIMProfileTag_GetValues(
       "\
 - icSigTextType:\
   - since Oyranos 0.1.8 (API 0.1.8)\
-  - list: should contain only oyName_s"
+  - list: should contain only oyName_s",
+      {0}
     };
 
     oyName_s description_desc = {
@@ -823,7 +836,8 @@ oyStructList_s * oyIMProfileTag_GetValues(
       "\
 - icSigTextDescriptionType:\
   - since Oyranos 0.1.8 (API 0.1.8)\
-  - list: should contain only oyName_s"
+  - list: should contain only oyName_s",
+      {0}
     };
 
     oyName_s description_DevS = {
@@ -847,7 +861,8 @@ oyStructList_s * oyIMProfileTag_GetValues(
     - announce string\
     - priority (0-255)\
     - announce string\
-    - oyBlob_s data blob"
+    - oyBlob_s data blob",
+      {0}
     };
 
     oyName_s description_XYZ = {
@@ -861,7 +876,8 @@ oyStructList_s * oyIMProfileTag_GetValues(
     - a option containing doubles\
       - first entry :  CIE *X\
       - second entry:  CIE *Y\
-      - third entry :  CIE *Z"
+      - third entry :  CIE *Z",
+      {0}
     };
 
     oyStruct_s * description = 0;
@@ -939,7 +955,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
 
   if(!error && oyProfileTag_GetStatus( (oyProfileTag_s*)tag ) == oyOK)
   {
-    int tag_size = oyProfileTag_GetSize(tag);
+    unsigned int tag_size = oyProfileTag_GetSize(tag);
 
     error = oyProfileTag_GetBlock( tag, (oyPointer*)&mem, 0, oyAllocateFunc_);
     sig = oyProfileTag_GetType(tag);
@@ -967,7 +983,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
 
            if(error <= 0)
            {
-             int i;
+             unsigned int i;
              for(i = 0; i < count; ++i)
              {
                oySprintf_( num, "%d", mem[13 + i] );
@@ -993,7 +1009,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
            if(error <= 0)
            {
              double val; 
-             int i;
+             unsigned int i;
              icCurveType * daten = (icCurveType*)&mem[0]; 
 
              opt = oyOption_FromRegistration("////icCurveType",0);
@@ -1043,7 +1059,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
 
            if(error <= 0)
            {
-             int i, j;
+             unsigned int i, j;
              icUInt16Number * pcs;
              uint16_t pcs_triple[3];
              for(i = 0; i < count; ++i)
@@ -1665,7 +1681,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
            count = *(icUInt32Number*)(mem+8);
            count = oyValueUInt32( count );
 
-           if((int)count > tag_size- 20)
+           if(count > tag_size- 20)
            {
              int diff = count - tag_size - 20;
              char nt[128];
@@ -1828,7 +1844,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
              int i;
              int all = 1;
 
-             error = tag_size < 24 + count * size;
+             error = tag_size < (unsigned)24 + count * size;
 
              if(!error)
              for (i = 0; i < count; i++)
@@ -1837,7 +1853,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
                int  g = 0,
                     offset = 0;
 
-               error = tag_size < 20 + i * size;
+               error = tag_size < (unsigned)20 + i * size;
                if(!error)
                  g = oyValueUInt32( *(icUInt32Number*)&mem[20+ i*size] );
 
@@ -1849,7 +1865,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
                  oyStruct_s * oy_struct = 0;
                  char * t = 0;
 
-                 error = tag_size < 20 + i * size + g + 4;
+                 error = tag_size < (unsigned)20 + i * size + g + 4;
                  if(!error)
                  {
                    len = (g > 1) ? g : 8;
@@ -1868,14 +1884,14 @@ oyStructList_s * oyIMProfileTag_GetValues(
                    t[0] = 0;
 
                  if(!error)
-                   error = (24 + i*size + 4) > tag_size;
+                   error = (unsigned)(24 + i*size + 4) > tag_size;
 
                  if(!error)
                    offset = oyValueUInt32( *(icUInt32Number*)&mem
                                                   [24+ i*size] );
 
                  if(!error)
-                   error = offset + len > tag_size;
+                   error = (unsigned)offset + len > tag_size;
 
                  if(!error)
                  {
@@ -1897,7 +1913,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
                if(i == count-1 && !error)
                {
                  if(!error)
-                   error = (24 + i*size + 4) > tag_size;
+                   error = (unsigned)(24 + i*size + 4) > tag_size;
 
                  offset = oyValueUInt32( *(icUInt32Number*)&mem
                                                   [24+ i*size] );
@@ -1907,10 +1923,10 @@ oyStructList_s * oyIMProfileTag_GetValues(
 
              if (!oyStructList_Count(texts)) /* first entry */
              {
-               int g =        oyValueUInt32(*(icUInt32Number*)&mem[20]),
+               uint32_t g = oyValueUInt32(*(icUInt32Number*)&mem[20]),
                    offset = oyValueUInt32(*(icUInt32Number*)&mem[24]);
                char * t = 0;
-               int n_;
+               uint32_t n_;
 
                error = tag_size < offset + g;
 
@@ -2045,7 +2061,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
       case icSigProfileSequenceDescType:
            if(tag_size > 12 + 20 + sizeof(icTextDescription)*2)
            {
-             int off = 8;
+             uint32_t off = 8;
              uint32_t i=0;
              icDescStruct * desc = 0;
              char mfg_local[5] = {0,0,0,0,0},
@@ -2198,10 +2214,10 @@ oyStructList_s * oyIMProfileTag_GetValues(
             */
            if(tag_size > 12)
            {
-             int32_t off = 0;
-             int i, j;
-             int offset = 0, old_offset = 0;
-             int size = 0;
+             uint32_t off = 0;
+             uint32_t i, j;
+             uint32_t offset = 0, old_offset = 0;
+             uint32_t size = 0;
              uint32_t * hash = 0;
              uint32_t md5[4];
 
@@ -2287,7 +2303,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
                    size_ = offset + mluc_size;
 
                  if(!error)
-                   error = size < mluc_size;
+                   error = size < (unsigned)mluc_size;
 
                  oyStructList_AddName( texts,
                       oyICCTagDescription(icSigMultiLocalizedUnicodeType), -1 );
@@ -2520,7 +2536,8 @@ int          oyIMProfileTag_Create   ( oyProfileTag_s    * tag,
     - oyName_s::name is considered to hold the name\
     - oyName_s::lang is required to hold i18n specifier, e.g. \"en_GB\"\
     - the frist oyName_s::lang can have no i18n specifier as a default\
-  - version: is not honoured; note 'mluc' is known since ICC v4"
+  - version: is not honoured; note 'mluc' is known since ICC v4",
+      {0}
     };
     oyName_s description_psid = {
       oyOBJECT_NAME_S, 0,0,0,
@@ -2530,7 +2547,8 @@ int          oyIMProfileTag_Create   ( oyProfileTag_s    * tag,
 - icSigProfileSequenceIdentifierType:\
   - since Oyranos 0.1.8 (API 0.1.8)\
   - list: should contain only oyProfile_s\
-  - version: is not honoured; note 'psid' is known after ICC v4.2"
+  - version: is not honoured; note 'psid' is known after ICC v4.2",
+      {0}
     };
     oyName_s description_text = {
       oyOBJECT_NAME_S, 0,0,0,
@@ -2540,7 +2558,8 @@ int          oyIMProfileTag_Create   ( oyProfileTag_s    * tag,
 - icSigTextType:\
   - since Oyranos 0.1.8 (API 0.1.8)\
   - list: should contain only oyName_s\
-  - version: is not honoured"
+  - version: is not honoured",
+      {0}
     };
     oyName_s description_desc = {
       oyOBJECT_NAME_S, 0,0,0,
@@ -2550,7 +2569,8 @@ int          oyIMProfileTag_Create   ( oyProfileTag_s    * tag,
 - icSigTextDescriptionType:\
   - since Oyranos 0.1.8 (API 0.1.8)\
   - list: should contain only oyName_s\
-  - version: is not honoured; note 'desc' is a pre ICC v4.0 tag"
+  - version: is not honoured; note 'desc' is a pre ICC v4.0 tag",
+      {0}
     };
     oyStruct_s * description = 0;
 
@@ -2661,7 +2681,7 @@ int          oyIMProfileTag_Create   ( oyProfileTag_s    * tag,
                mem[mem_len+2*j+1] = string->name[j];
 #endif
 
-             error = (size != tmp_len);
+             error = (size != (unsigned)tmp_len);
 
              if(!error)
              {
@@ -3143,7 +3163,7 @@ int                oySizeOfMluc      ( const char        * mem,
   int i;
   int len = 0;
 
-  int error = max_tag_size < 24 + count * size;
+  int error = (int)max_tag_size < 24 + count * size;
 
   icTagTypeSignature tag_sig = (icTagTypeSignature)0;
   tag_sig = *(icUInt32Number*)(mem);
@@ -3161,32 +3181,32 @@ int                oySizeOfMluc      ( const char        * mem,
                int  g = 0,
                     offset = 0;
 
-               error = max_tag_size < 20 + i * size;
+               error = (int)max_tag_size < 20 + i * size;
                if(!error)
                  g = oyValueUInt32( *(icUInt32Number*)&mem[20+ i*size] );
 
                {
-                 error = max_tag_size < 20 + i * size + g + 4;
+                 error = (int)max_tag_size < 20 + i * size + g + 4;
                  if(!error)
                  {
                    len = (g > 1) ? g : 8;
                  }
 
                  if(!error)
-                   error = (24 + i*size + 4) > max_tag_size;
+                   error = (24 + i*size + 4) > (int)max_tag_size;
 
                  if(!error)
                    offset = oyValueUInt32( *(icUInt32Number*)&mem
                                                   [24+ i*size] );
 
                  if(!error)
-                   error = offset + len > max_tag_size;
+                   error = offset + len > (int)max_tag_size;
                }
 
                if(i == count-1 && !error)
                {
                  if(!error)
-                   error = (24 + i*size + 4) > max_tag_size;
+                   error = (24 + i*size + 4) > (int)max_tag_size;
 
                  offset = oyValueUInt32( *(icUInt32Number*)&mem
                                                   [24+ i*size] );
@@ -3208,7 +3228,7 @@ int                oySizeOfDesc      ( const char        * mem,
   int count = *(icUInt32Number*)(mem+8);
   count = oyValueUInt32( count );
 
-  if((int)count > max_tag_size - 20)
+  if((int)count > (int)max_tag_size - 20)
   {
     oyIM_msg( oyMSG_WARN,0, OY_DBG_FORMAT_
               "can't detect size of desc type tag",

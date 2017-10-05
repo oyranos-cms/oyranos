@@ -1166,11 +1166,11 @@ OYAPI oyConnector_s * OYEXPORT
 
   if(is_plug)
   {
-    if((*node_)->api7_->plugs_n <= as_pos &&
+    if((*node_)->api7_->plugs_n <= (size_t)as_pos &&
        as_pos < oyFilterNode_EdgeCount( node, 1, 0 ))
       as_pos = (*node_)->api7_->plugs_n - 1;
 
-    if((*node_)->api7_->plugs_n > as_pos)
+    if((*node_)->api7_->plugs_n > (size_t)as_pos)
     {
       if((*node_)->api7_->plugs[as_pos] && (*node_)->api7_->plugs[as_pos]->copy)
       {
@@ -1184,11 +1184,11 @@ OYAPI oyConnector_s * OYEXPORT
       }
     }
   } else {
-    if((*node_)->api7_->sockets_n <= as_pos &&
+    if((*node_)->api7_->sockets_n <= (size_t)as_pos &&
        as_pos < oyFilterNode_EdgeCount( node, 0, 0 ))
       as_pos = (*node_)->api7_->sockets_n - 1;
 
-    if((*node_)->api7_->sockets_n > as_pos)
+    if((*node_)->api7_->sockets_n > (size_t)as_pos)
     {
       if((*node_)->api7_->sockets[as_pos] && (*node_)->api7_->sockets[as_pos]->copy)
       {

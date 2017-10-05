@@ -87,7 +87,7 @@ void jpeg_write_marker_APP2 (j_compress_ptr cinfo,
      * We code it in this less-than-transparent way so that the code works
      * even if the local character set is not ASCII.
      */
-    for(i = 0; i < marker_name_length; ++i)
+    for(i = 0; (unsigned)i < marker_name_length; ++i)
       jpeg_write_m_byte(cinfo, marker_name_bytes[i]);
 
     /* Add the sequencing info */
@@ -150,10 +150,10 @@ void jpeg_write_marker_APP (j_compress_ptr cinfo,
 int marker_guess_name_length       (jpeg_saved_marker_ptr marker)
 {
   int len = 0;
-  while(len < marker->data_length && marker->data[len])
+  while((unsigned)len < marker->data_length && marker->data[len])
     ++len;
   /* count terminating '\000' */
-  if(len < marker->data_length) ++len;
+  if((unsigned)len < marker->data_length) ++len;
   return len;
 }
 
@@ -223,7 +223,7 @@ int jpeg_marker_is (jpeg_saved_marker_ptr marker,
 {
   return
     marker->marker == marker_code &&
-    marker->data_length >= marker_name_length &&
+    marker->data_length >= (unsigned)marker_name_length &&
     /* verify the identifying string */
     memcmp(marker->data, marker_name, marker_name_length) == 0;
 }

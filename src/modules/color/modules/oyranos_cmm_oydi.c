@@ -261,7 +261,7 @@ int oydiFilterSocket_SetWindowRegion ( oyPixelAccess_s   * ticket,
       /* look for old regions */
       old_regions = XcolorRegionFetch( display, w, &old_regions_n );
       /* remove our own old region */
-      for(i = 0; i < old_regions_n; ++i)
+      for(i = 0; (unsigned)i < old_regions_n; ++i)
       {
 
         if(!old_regions[i].region || pos >= 0)
@@ -1204,7 +1204,8 @@ oyCMMapi7_s_   oydi_api7_image_display = {
   0,   /* plugs_last_add */
   (oyConnector_s**) oyx1_Display_sockets,   /* sockets */
   1,   /* sockets_n */
-  0    /* sockets_last_add */
+  0,   /* sockets_last_add */
+  NULL /* properties */
 };
 
 const char * oydiApi4UiImageDisplayGetText (
@@ -1255,7 +1256,8 @@ oyCMMui_s_ oydi_api4_ui_image_display = {
   oydiUiGet,    /* oyCMMuiGet_f oyCMMuiGet */
 
   oydiApi4UiImageDisplayGetText,  /* oyCMMGetText_f getText */
-  oydi_api4_ui_image_display_texts  /* (const char**)texts */
+  oydi_api4_ui_image_display_texts,  /* (const char**)texts */
+  (oyCMMapiFilter_s*)&oydi_api4_image_display /* oyCMMapiFilter_s*parent */
 };
 
 /** @instance oydi_api4_image_display
@@ -1393,6 +1395,8 @@ oyCMM_s oydi_cmm_module = {
 
   (oyCMMapi_s*) & oydi_api4_image_display,
 
-  &oydi_icon
+  &oydi_icon,
+
+  NULL                                 /**< init() */
 };
 

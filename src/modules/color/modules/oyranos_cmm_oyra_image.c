@@ -314,7 +314,7 @@ oyCMMapi7_s_   oyra_api7_image_write = {
   1,   /* sockets_n */
   0,   /* sockets_last_add */
 
-  0    /* char * properties */
+  0    /* char ** properties */
 };
 
 const char * oyraApi4UiImageWriteGetText (
@@ -367,7 +367,8 @@ oyCMMui_s_ oyra_api4_ui_image_write = {
   0,   /* oyCMMuiGet_f oyCMMuiGet */
 
   oyraApi4UiImageWriteGetText,  /* oyCMMGetText_f getText */
-  oyra_api4_ui_image_write_texts  /* (const char**)texts */
+  oyra_api4_ui_image_write_texts,  /* (const char**)texts */
+  (oyCMMapiFilter_s*)&oyra_api4_image_write /* oyCMMapiFilter_s*parent */
 };
 
 /** @instance oyra_api4
@@ -713,7 +714,7 @@ oyCMMapi7_s_   oyra_api7_image_load = {
   1,   /* sockets_n */
   0,   /* sockets_last_add */
 
-  0    /* char * properties */
+  0    /* char ** properties */
 };
 
 const char * oyraApi4UiImageLoadGetText (
@@ -766,7 +767,8 @@ oyCMMui_s_ oyra_api4_ui_image_load = {
   0,   /* oyCMMuiGet_f oyCMMuiGet */
 
   oyraApi4UiImageLoadGetText,  /* oyCMMGetText_f getText */
-  oyra_api4_ui_image_load_texts  /* (const char**)texts */
+  oyra_api4_ui_image_load_texts,  /* (const char**)texts */
+  (oyCMMapiFilter_s*)&oyra_api4_image_load /* oyCMMapiFilter_s*parent */
 };
 
 /** @instance oyra_api4
@@ -1080,7 +1082,8 @@ oyCMMapi7_s_   oyra_api7_image_rectangles = {
   UINT16_MAX,   /* plugs_last_add */
   (oyConnector_s**) oyra_imageRectangles_sockets,   /* sockets */
   1,   /* sockets_n */
-  0    /* sockets_last_add */
+  0,   /* sockets_last_add */
+  NULL /* char ** properties */
 };
 
 const char * oyraApi4UiImageRectanglesGetText (
@@ -1133,7 +1136,8 @@ oyCMMui_s_ oyra_api4_ui_image_rectangles = {
   0,   /* oyCMMuiGet_f oyCMMuiGet */
 
   oyraApi4UiImageRectanglesGetText,  /* oyCMMGetText_f getText */
-  oyra_api4_ui_image_rectangles_texts  /* (const char**)texts */
+  oyra_api4_ui_image_rectangles_texts,  /* (const char**)texts */
+  (oyCMMapiFilter_s*)&oyra_api4_image_rectangles /* oyCMMapiFilter_s*parent */
 };
 
 /** @instance oyra_api4
@@ -1288,7 +1292,8 @@ oyCMMapi7_s_   oyra_api7_image_root = {
   0,   /* plugs_last_add */
   (oyConnector_s**) oyra_imageRoot_connectors,   /* sockets */
   1,   /* sockets_n */
-  0    /* sockets_last_add */
+  0,   /* sockets_last_add */
+  NULL /* char ** properties */
 };
 
 const char * oyraApi4UiImageRootGetText (
@@ -1341,7 +1346,8 @@ oyCMMui_s_ oyra_api4_ui_image_root = {
   0,   /* oyCMMuiGet_f oyCMMuiGet */
 
   oyraApi4UiImageRootGetText, /* oyCMMGetText_f getText */
-  oyra_api4_ui_image_root_texts /* (const char**)texts */
+  oyra_api4_ui_image_root_texts, /* (const char**)texts */
+  (oyCMMapiFilter_s*)&oyra_api4_image_root /* oyCMMapiFilter_s*parent */
 };
 
 /** @instance oyra_api4
@@ -1479,7 +1485,8 @@ oyCMMapi7_s_   oyra_api7_image_output = {
   0,   /* plugs_last_add */
   0,   /* sockets */
   0,   /* sockets_n */
-  0    /* sockets_last_add */
+  0,   /* sockets_last_add */
+  NULL /* char ** properties */
 };
 
 const char * oyraApi4UiImageOutputGetText (
@@ -1532,7 +1539,8 @@ oyCMMui_s_ oyra_api4_ui_image_output = {
   0,   /* oyCMMuiGet_f oyCMMuiGet */
 
   oyraApi4UiImageOutputGetText,  /* oyCMMGetText_f getText */
-  oyra_api4_ui_image_output_texts  /* (const char**)texts */
+  oyra_api4_ui_image_output_texts,  /* (const char**)texts */
+  (oyCMMapiFilter_s*)&oyra_api4_image_output /* oyCMMapiFilter_s*parent */
 };
 
 /** @instance oyra_api4

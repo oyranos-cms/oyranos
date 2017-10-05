@@ -5,7 +5,14 @@
 #ifdef oyCheckCType__m
 #undef oyCheckCType__m
 #endif
-#define oyCheckCType__m(a,b) ;
+#define oyCheckCType__m( type, action ) \
+  if( !s || !(oyOBJECT_CONNECTOR_S <= s->type_ && s->type_ < oyOBJECT_CONNECTOR_MAX_S)) \
+  { \
+    WARNc3_S( "%s %s(%s)", _("Unexpected object type:"), \
+              oyStructTypeToText( s ? s->type_ : oyOBJECT_NONE ), \
+              oyStructTypeToText( type )) \
+    action; \
+  }
 {% endblock %}
 
 {% block Copy_CheckType %}oyCheckCType__m{% endblock %}

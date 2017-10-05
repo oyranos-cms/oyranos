@@ -373,7 +373,7 @@ OYAPI oyProfile_s * OYEXPORT oyProfile_FromName (
 
     names = /*(const char**)*/ oyProfileListGet ( NULL, &count, oyAllocateFunc_ );
 
-    for(i = 0; i < (int)count; ++i)
+    for(i = 0; (uint32_t)i < count; ++i)
     {
       p = oyProfile_FromFile( names[i], flags ,0 );
 
@@ -763,7 +763,7 @@ OYAPI int OYEXPORT oyProfile_Install ( oyProfile_s       * profile,
     int len;
 
     len = strlen( desc );
-    for(i = 0; i < len; ++i)
+    for(i = 0; (int)i < len; ++i)
       if(desc[i] == OY_SLASH_C)
         desc[i] = '-';
 
@@ -818,7 +818,7 @@ OYAPI int OYEXPORT oyProfile_Install ( oyProfile_s       * profile,
 
   /** 2. check if file or description name exists */
   names = oyProfileListGet_ ( NULL, 0, &count );
-  for(i = 0; i < (int)count; ++i)
+  for(i = 0; (uint32_t)i < count; ++i)
   {
     p = oyProfile_FromFile(names[i], 0,0);
     t = oyProfile_GetText(p, oyNAME_DESCRIPTION);

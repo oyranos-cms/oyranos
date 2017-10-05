@@ -1572,8 +1572,8 @@ static Boolean isLegalUTF8(const UTF8 *source, int length)
   switch (length) {
     default: return false;
       /* Everything else falls through when "true"... */
-    case 4: if ((a = (*--srcptr)) < 0x80 || a > 0xBF) return false;
-    case 3: if ((a = (*--srcptr)) < 0x80 || a > 0xBF) return false;
+    case 4: if ((a = (*--srcptr)) < 0x80 || a > 0xBF) return false; OY_FALLTHROUGH
+    case 3: if ((a = (*--srcptr)) < 0x80 || a > 0xBF) return false; OY_FALLTHROUGH
     case 2: if ((a = (*--srcptr)) > 0xBF) return false;
 
       switch (*source) {
@@ -1582,8 +1582,8 @@ static Boolean isLegalUTF8(const UTF8 *source, int length)
         case 0xED: if (a > 0x9F) return false; break;
         case 0xF0: if (a < 0x90) return false; break;
         case 0xF4: if (a > 0x8F) return false; break;
-        default:   if (a < 0x80) return false;
-      }
+        default:   if (a < 0x80) return false; OY_FALLTHROUGH
+      } OY_FALLTHROUGH
 
     case 1: if (*source >= 0x80 && *source < 0xC2) return false;
   }
@@ -1612,12 +1612,12 @@ lcm2UtfConversionResult lcm2ConvertUTF8toUTF16 (const UTF8** sourceStart, const 
     * The cases all fall through. See "Note A" below.
     */
     switch (extraBytesToRead) {
-      case 5: ch += *source++; ch <<= 6; /* remember, illegal UTF-8 */
-      case 4: ch += *source++; ch <<= 6; /* remember, illegal UTF-8 */
-      case 3: ch += *source++; ch <<= 6;
-      case 2: ch += *source++; ch <<= 6;
-      case 1: ch += *source++; ch <<= 6;
-      case 0: ch += *source++;
+      case 5: ch += *source++; ch <<= 6; OY_FALLTHROUGH/* remember, illegal UTF-8 */
+      case 4: ch += *source++; ch <<= 6; OY_FALLTHROUGH /* remember, illegal UTF-8 */
+      case 3: ch += *source++; ch <<= 6; OY_FALLTHROUGH
+      case 2: ch += *source++; ch <<= 6; OY_FALLTHROUGH
+      case 1: ch += *source++; ch <<= 6; OY_FALLTHROUGH
+      case 0: ch += *source++; OY_FALLTHROUGH
     }
     ch -= offsetsFromUTF8[extraBytesToRead];
 
