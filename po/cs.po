@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: oyranos\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2017-10-05 08:53+0200\n"
+"POT-Creation-Date: 2017-10-05 09:50+0200\n"
 "PO-Revision-Date: 2012-10-19 15:10+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -67,8 +67,8 @@ msgstr "-v upovídaný výstup"
 
 #: modules/color/modules/oyranos_cmm_lcms.c:2757
 #: modules/color/modules/oyranos_cmm_lcms.c:2760
-#: modules/color/modules/oyranos_cmm_oPNG.c:561
-#: modules/color/modules/oyranos_cmm_oPNG.c:1178
+#: modules/color/modules/oyranos_cmm_oPNG.c:567
+#: modules/color/modules/oyranos_cmm_oPNG.c:1189
 #: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:268
 #: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1159
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:873
@@ -1550,8 +1550,8 @@ msgstr "Velikost:    "
 
 #. The following strings must match the categories for a menu entry.
 #: modules/color/modules/oyranos_cmm_oJPG.c:772
-#: modules/color/modules/oyranos_cmm_oPNG.c:560
-#: modules/color/modules/oyranos_cmm_oPNG.c:1177
+#: modules/color/modules/oyranos_cmm_oPNG.c:566
+#: modules/color/modules/oyranos_cmm_oPNG.c:1188
 #: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:267
 #: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1158
 msgid "Files"
@@ -1918,12 +1918,12 @@ msgstr "Osvetleni:   "
 
 #: API_generated/oyPixelAccess_s.c:540 liboyranos/oyranos_cmm.c:142
 #: liboyranos/oyranos_cmm.c:278 liboyranos/oyranos_cmm.c:302
-#: modules/color/modules/oyranos_cmm_oPNG.c:1111
+#: modules/color/modules/oyranos_cmm_oPNG.c:1122
 #: modules/color/modules/oyranos_cmm_oydi.c:944
 msgid "Image"
 msgstr "Obrázek"
 
-#: modules/color/modules/oyranos_cmm_oPNG.c:1113
+#: modules/color/modules/oyranos_cmm_oPNG.c:1124
 msgid "Image PNG Socket"
 msgstr ""
 
@@ -1968,7 +1968,7 @@ msgstr "Image[lraw]"
 msgid "Image[expose]"
 msgstr "Image[lraw]"
 
-#: modules/color/modules/oyranos_cmm_oPNG.c:1169
+#: modules/color/modules/oyranos_cmm_oPNG.c:1180
 #, fuzzy
 msgid "Image[input_png]"
 msgstr "Image[input_png]"
@@ -1998,7 +1998,7 @@ msgstr "Image[out]"
 msgid "Image[scale]"
 msgstr "Image[lraw]"
 
-#: modules/color/modules/oyranos_cmm_oPNG.c:552
+#: modules/color/modules/oyranos_cmm_oPNG.c:558
 #, fuzzy
 msgid "Image[write_png]"
 msgstr "Image[write_png]"
@@ -2009,7 +2009,7 @@ msgid "Image[write_ppm]"
 msgstr "Image[write_ppm]"
 
 #: liboyranos/oyranos_cmm.c:276 liboyranos/oyranos_cmm.c:300
-#: modules/color/modules/oyranos_cmm_oPNG.c:1109
+#: modules/color/modules/oyranos_cmm_oPNG.c:1120
 msgid "Img"
 msgstr "Img"
 
@@ -2060,7 +2060,7 @@ msgstr "Vstupní"
 msgid "Input Color Space"
 msgstr "Výstupní barvový prostor"
 
-#: modules/color/modules/oyranos_cmm_oPNG.c:1171
+#: modules/color/modules/oyranos_cmm_oPNG.c:1182
 #, fuzzy
 msgid "Input PNG Image Filter Object"
 msgstr "Input PNG Image Filter Object"
@@ -2617,12 +2617,12 @@ msgstr "Optimalizace"
 msgid "Option"
 msgstr "Volba"
 
-#: modules/color/modules/oyranos_cmm_oPNG.c:576
+#: modules/color/modules/oyranos_cmm_oPNG.c:582
 #: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:283
 msgid "Option \"filename\", a valid filename"
 msgstr "Volba \"filename\", platné jméno souboru"
 
-#: modules/color/modules/oyranos_cmm_oPNG.c:1193
+#: modules/color/modules/oyranos_cmm_oPNG.c:1204
 msgid "Option \"filename\", a valid filename of a existing PNG image"
 msgstr "Volba \"filename\", platný název souboru existujícího PNG obrázku"
 
@@ -3131,7 +3131,7 @@ msgstr "RawCamera"
 msgid "Read"
 msgstr "Číst PNG"
 
-#: modules/color/modules/oyranos_cmm_oPNG.c:1179
+#: modules/color/modules/oyranos_cmm_oPNG.c:1190
 msgid "Read PNG"
 msgstr "Číst PNG"
 
@@ -3598,7 +3598,7 @@ msgstr ""
 "Pokud soubor neexistuje, nastane chyba.\n"
 "Profil ICC oyEDITING_RGB je připojen."
 
-#: modules/color/modules/oyranos_cmm_oPNG.c:1195
+#: modules/color/modules/oyranos_cmm_oPNG.c:1206
 msgid ""
 "The Option \"filename\" should contain a valid filename to read the png data "
 "from. If the file does not exist, a error will occure.\n"
@@ -3621,7 +3621,7 @@ msgstr ""
 "Pokud soubor neexistuje, nastane chyba.\n"
 "Profil ICC oyEDITING_RGB je připojen."
 
-#: modules/color/modules/oyranos_cmm_oPNG.c:578
+#: modules/color/modules/oyranos_cmm_oPNG.c:584
 msgid ""
 "The Option \"filename\" should contain a valid filename to write the png "
 "data into. A existing file will be overwritten without notice."
@@ -4283,11 +4283,11 @@ msgstr "Dobře se chovající barvový prostor pro editaci"
 msgid "Write"
 msgstr "Zapsat"
 
-#: modules/color/modules/oyranos_cmm_oPNG.c:562
+#: modules/color/modules/oyranos_cmm_oPNG.c:568
 msgid "Write PNG"
 msgstr "Zapsat PNG"
 
-#: modules/color/modules/oyranos_cmm_oPNG.c:554
+#: modules/color/modules/oyranos_cmm_oPNG.c:560
 #, fuzzy
 msgid "Write PNG Image Filter Object"
 msgstr "Write PNG Image Filter Object"
@@ -4531,7 +4531,7 @@ msgstr ""
 
 #: API_generated/oyranos_devices.c:2574 API_generated/oyranos_devices.c:2585
 #: modules/color/modules/oyranos_cmm_lcms.c:2424
-#: modules/color/modules/oyranos_cmm_oPNG.c:956
+#: modules/color/modules/oyranos_cmm_oPNG.c:967
 #: modules/color/modules/oyranos_cmm_oyra_image_expose.c:101
 #: modules/color/modules/oyranos_cmm_oyra_image_scale.c:104
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:898

@@ -41,6 +41,7 @@
 #include <string.h>
 
 #include LIBPNG_INCLUDE
+#define LIBPNG_VERSION_NUM PNG_LIBPNG_VER_MAJOR * 10000 + PNG_LIBPNG_VER_MINOR *100 + PNG_LIBPNG_VER_RELEASE
 
 #define CMM_NICK "oPNG"
 #define CMM_VERSION {0,1,0}
@@ -213,7 +214,12 @@ int  oyImage_WritePNG                ( oyImage_s         * image,
   oyProfile_s * prof = oyImage_GetProfile( image );
   const char * colorspacename = oyProfile_GetText( prof,
                                                     oyNAME_DESCRIPTION );
-  char * pmem;
+#if LIBPNG_VERSION_NUM >= 10600
+  png_bytep
+#else
+  oyPointer
+#endif
+         pmem = 0;
   size_t psize = 0;
   icColorSpaceSignature sig = oyProfile_GetSignature( prof,
                                                       oySIGNATURE_COLOR_SPACE);
@@ -296,7 +302,7 @@ int  oyImage_WritePNG                ( oyImage_s         * image,
   /* set ICC profile */
   pmem = oyProfile_GetMem( prof, &psize, 0,0 );
   png_set_iCCP( png_ptr, info_ptr, (char*)colorspacename, 0,
-                (png_const_bytep)pmem, psize);
+                pmem, psize);
   oyDeAllocateFunc_( pmem ); pmem = 0;
 
   /* set time stamp */
@@ -891,12 +897,17 @@ oyImage_s *  oyImage_FromPNG         ( const char        * filename,
   {
 #if defined(PNG_iCCP_SUPPORTED)
     png_charp name = 0;
-    png_charp profile = 0;
+#if LIBPNG_VERSION_NUM >= 10600
+    png_bytep
+#else
+    oyPointer
+#endif
+                profile = 0;
     png_uint_32 proflen = 0;
     int compression = 0;
 
     if( png_get_iCCP( png_ptr, info_ptr, &name, &compression,
-                      (png_bytepp) &profile, &proflen ) )
+                      &profile, &proflen ) )
     {
       prof = oyProfile_FromMem( proflen, profile, 0,0 );
       oPNG_msg( oyMSG_DBG, object,
