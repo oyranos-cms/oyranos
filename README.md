@@ -1,5 +1,6 @@
 # Oyranos README
 [![Build Status](https://travis-ci.org/oyranos-cms/oyranos.svg?branch=master)](https://travis-ci.org/oyranos-cms/oyranos)
+[![Coverity Scan Build Status](https://scan.coverity.com/projects/13943/badge.svg)](https://scan.coverity.com/projects/13943)
 [![Documentation](https://codedocs.xyz/oyranos-cms/oyranos.svg)](https://codedocs.xyz/oyranos-cms/oyranos/)
 [![Codecov](https://codecov.io/gh/oyranos-cms/oyranos/branch/master/graph/badge.svg)](https://codecov.io/gh/oyranos-cms/oyranos)
 [![Issues](https://img.shields.io/github/issues-raw/oyranos-cms/oyranos.svg?style=flat-square)](https://github.com/oyranos-cms/oyranos/issues)
