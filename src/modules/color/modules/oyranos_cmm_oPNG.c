@@ -190,6 +190,13 @@ oyOptions_s* oPNGFilter_ImageOutputPNGValidateOptions
   return 0;
 }
 
+int png_jumpbuf_set ( png_structp png_ptr )
+{
+  if( setjmp( png_jmpbuf( png_ptr) ) )
+    return 1;
+  return 0;
+}
+
 /* the more heavily commented parts are from libpng/example.c */
 int  oyImage_WritePNG                ( oyImage_s         * image,
                                        const char        * file_name,
@@ -253,7 +260,7 @@ int  oyImage_WritePNG                ( oyImage_s         * image,
    /* Set error handling.  REQUIRED if you aren't supplying your own
     * error handling functions in the png_create_write_struct() call.
     */
-   if (setjmp(png_jmpbuf(png_ptr)))
+   if(png_jumpbuf_set(png_ptr))
    {
       /* If we get here, we had a problem writing the file */
       fclose(fp);
@@ -816,7 +823,7 @@ oyImage_s *  oyImage_FromPNG         ( const char        * filename,
     goto png_read_clean;
   }
 
-  if(setjmp(png_jmpbuf(png_ptr)))
+  if(png_jumpbuf_set(png_ptr))
   {
     /* Free all of the memory associated with the png_ptr and info_ptr */
     png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)NULL);
@@ -863,7 +870,7 @@ oyImage_s *  oyImage_FromPNG         ( const char        * filename,
   case 1:
   case 2:
   case 4:
-       png_set_expand( png_ptr ); OY_FALLTHROUGH
+       png_set_expand( png_ptr ); OY_FALLTHROUGH;
   case 8:
        data_type = oyUINT8; break;
   case 16:
