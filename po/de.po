@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2017-10-05 07:45+0200\n"
+"POT-Creation-Date: 2017-10-05 08:53+0200\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -71,8 +71,8 @@ msgstr "-v plauders"
 
 #: modules/color/modules/oyranos_cmm_lcms.c:2757
 #: modules/color/modules/oyranos_cmm_lcms.c:2760
-#: modules/color/modules/oyranos_cmm_oPNG.c:554
-#: modules/color/modules/oyranos_cmm_oPNG.c:1171
+#: modules/color/modules/oyranos_cmm_oPNG.c:561
+#: modules/color/modules/oyranos_cmm_oPNG.c:1178
 #: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:268
 #: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1159
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:873
@@ -1505,8 +1505,8 @@ msgstr "Datei:           "
 
 #. The following strings must match the categories for a menu entry.
 #: modules/color/modules/oyranos_cmm_oJPG.c:772
-#: modules/color/modules/oyranos_cmm_oPNG.c:553
-#: modules/color/modules/oyranos_cmm_oPNG.c:1170
+#: modules/color/modules/oyranos_cmm_oPNG.c:560
+#: modules/color/modules/oyranos_cmm_oPNG.c:1177
 #: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:267
 #: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1158
 msgid "Files"
@@ -1864,12 +1864,12 @@ msgstr "Beleuchtung:     "
 
 #: API_generated/oyPixelAccess_s.c:540 liboyranos/oyranos_cmm.c:142
 #: liboyranos/oyranos_cmm.c:278 liboyranos/oyranos_cmm.c:302
-#: modules/color/modules/oyranos_cmm_oPNG.c:1104
+#: modules/color/modules/oyranos_cmm_oPNG.c:1111
 #: modules/color/modules/oyranos_cmm_oydi.c:944
 msgid "Image"
 msgstr "Bild"
 
-#: modules/color/modules/oyranos_cmm_oPNG.c:1106
+#: modules/color/modules/oyranos_cmm_oPNG.c:1113
 msgid "Image PNG Socket"
 msgstr "PNG Bilddose"
 
@@ -1907,7 +1907,7 @@ msgstr "Bild[Kanal]"
 msgid "Image[expose]"
 msgstr "Bild[Belichtung]"
 
-#: modules/color/modules/oyranos_cmm_oPNG.c:1162
+#: modules/color/modules/oyranos_cmm_oPNG.c:1169
 msgid "Image[input_png]"
 msgstr "Bild[input_png]"
 
@@ -1931,7 +1931,7 @@ msgstr "Bild[Ausgang]"
 msgid "Image[scale]"
 msgstr "Bild[Skalierung]"
 
-#: modules/color/modules/oyranos_cmm_oPNG.c:545
+#: modules/color/modules/oyranos_cmm_oPNG.c:552
 msgid "Image[write_png]"
 msgstr "Bild[write_png]"
 
@@ -1940,7 +1940,7 @@ msgid "Image[write_ppm]"
 msgstr "Bild[write_ppm]"
 
 #: liboyranos/oyranos_cmm.c:276 liboyranos/oyranos_cmm.c:300
-#: modules/color/modules/oyranos_cmm_oPNG.c:1102
+#: modules/color/modules/oyranos_cmm_oPNG.c:1109
 msgid "Img"
 msgstr "Bild"
 
@@ -1988,7 +1988,7 @@ msgstr "Eingabe"
 msgid "Input Color Space"
 msgstr "Eingabefarbraum"
 
-#: modules/color/modules/oyranos_cmm_oPNG.c:1164
+#: modules/color/modules/oyranos_cmm_oPNG.c:1171
 msgid "Input PNG Image Filter Object"
 msgstr "Filterobjekt eines zu lesendes PNG Bildes"
 
@@ -2506,12 +2506,12 @@ msgstr "Optimierung"
 msgid "Option"
 msgstr "Option"
 
-#: modules/color/modules/oyranos_cmm_oPNG.c:569
+#: modules/color/modules/oyranos_cmm_oPNG.c:576
 #: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:283
 msgid "Option \"filename\", a valid filename"
 msgstr "Option \"filename\", ein gültiger Dateiname"
 
-#: modules/color/modules/oyranos_cmm_oPNG.c:1186
+#: modules/color/modules/oyranos_cmm_oPNG.c:1193
 msgid "Option \"filename\", a valid filename of a existing PNG image"
 msgstr ""
 "Option \"filename\", ein gültiger Dateiname eines existierenden PNG Bildes"
@@ -2988,7 +2988,7 @@ msgstr "Kamerarohdaten"
 msgid "Read"
 msgstr "Lese"
 
-#: modules/color/modules/oyranos_cmm_oPNG.c:1172
+#: modules/color/modules/oyranos_cmm_oPNG.c:1179
 msgid "Read PNG"
 msgstr "Lese PNG"
 
@@ -3428,7 +3428,7 @@ msgstr ""
 "Bildes enthalten. Falls die Datei nicht existiert wird ein Fehler gemeldet.\n"
 "Das oyEDITING_RGB ICC Farbprofil wird angehangen."
 
-#: modules/color/modules/oyranos_cmm_oPNG.c:1188
+#: modules/color/modules/oyranos_cmm_oPNG.c:1195
 msgid ""
 "The Option \"filename\" should contain a valid filename to read the png data "
 "from. If the file does not exist, a error will occure.\n"
@@ -3452,7 +3452,7 @@ msgstr ""
 "Bildes enthalten. Falls die Datei nicht existiert wird ein Fehler gemeldet.\n"
 "Das oyEDITING_RGB ICC Farbprofil wird angehangen."
 
-#: modules/color/modules/oyranos_cmm_oPNG.c:571
+#: modules/color/modules/oyranos_cmm_oPNG.c:578
 msgid ""
 "The Option \"filename\" should contain a valid filename to write the png "
 "data into. A existing file will be overwritten without notice."
@@ -4124,11 +4124,11 @@ msgstr "Gleichmäßiger Farbraum für die Bearbeitung"
 msgid "Write"
 msgstr "Schreibe"
 
-#: modules/color/modules/oyranos_cmm_oPNG.c:555
+#: modules/color/modules/oyranos_cmm_oPNG.c:562
 msgid "Write PNG"
 msgstr "Schreibe PNG"
 
-#: modules/color/modules/oyranos_cmm_oPNG.c:547
+#: modules/color/modules/oyranos_cmm_oPNG.c:554
 msgid "Write PNG Image Filter Object"
 msgstr "Filterobjekt zum Schreiben eines PNG Bildes"
 
@@ -4363,7 +4363,7 @@ msgstr "Weißpunkt des ersten Monitors als Ziel für alle Monitore."
 
 #: API_generated/oyranos_devices.c:2574 API_generated/oyranos_devices.c:2585
 #: modules/color/modules/oyranos_cmm_lcms.c:2424
-#: modules/color/modules/oyranos_cmm_oPNG.c:949
+#: modules/color/modules/oyranos_cmm_oPNG.c:956
 #: modules/color/modules/oyranos_cmm_oyra_image_expose.c:101
 #: modules/color/modules/oyranos_cmm_oyra_image_scale.c:104
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:898

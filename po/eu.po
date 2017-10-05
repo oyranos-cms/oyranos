@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cinepaint_icc-examin_eu\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2017-10-05 07:45+0200\n"
+"POT-Creation-Date: 2017-10-05 08:53+0200\n"
 "PO-Revision-Date: 2007-11-07 11:11+0100\n"
 "Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@zundan.com>\n"
 "Language-Team: Basque <itzulpena@euskalgnu.org>\n"
@@ -73,8 +73,8 @@ msgstr ""
 
 #: modules/color/modules/oyranos_cmm_lcms.c:2757
 #: modules/color/modules/oyranos_cmm_lcms.c:2760
-#: modules/color/modules/oyranos_cmm_oPNG.c:554
-#: modules/color/modules/oyranos_cmm_oPNG.c:1171
+#: modules/color/modules/oyranos_cmm_oPNG.c:561
+#: modules/color/modules/oyranos_cmm_oPNG.c:1178
 #: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:268
 #: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1159
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:873
@@ -1555,8 +1555,8 @@ msgstr "Tamaina:        "
 
 #. The following strings must match the categories for a menu entry.
 #: modules/color/modules/oyranos_cmm_oJPG.c:772
-#: modules/color/modules/oyranos_cmm_oPNG.c:553
-#: modules/color/modules/oyranos_cmm_oPNG.c:1170
+#: modules/color/modules/oyranos_cmm_oPNG.c:560
+#: modules/color/modules/oyranos_cmm_oPNG.c:1177
 #: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:267
 #: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1158
 #, fuzzy
@@ -1911,12 +1911,12 @@ msgstr "Iluminatzailea: "
 
 #: API_generated/oyPixelAccess_s.c:540 liboyranos/oyranos_cmm.c:142
 #: liboyranos/oyranos_cmm.c:278 liboyranos/oyranos_cmm.c:302
-#: modules/color/modules/oyranos_cmm_oPNG.c:1104
+#: modules/color/modules/oyranos_cmm_oPNG.c:1111
 #: modules/color/modules/oyranos_cmm_oydi.c:944
 msgid "Image"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oPNG.c:1106
+#: modules/color/modules/oyranos_cmm_oPNG.c:1113
 msgid "Image PNG Socket"
 msgstr ""
 
@@ -1953,7 +1953,7 @@ msgstr ""
 msgid "Image[expose]"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oPNG.c:1162
+#: modules/color/modules/oyranos_cmm_oPNG.c:1169
 msgid "Image[input_png]"
 msgstr ""
 
@@ -1977,7 +1977,7 @@ msgstr ""
 msgid "Image[scale]"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oPNG.c:545
+#: modules/color/modules/oyranos_cmm_oPNG.c:552
 msgid "Image[write_png]"
 msgstr ""
 
@@ -1986,7 +1986,7 @@ msgid "Image[write_ppm]"
 msgstr ""
 
 #: liboyranos/oyranos_cmm.c:276 liboyranos/oyranos_cmm.c:300
-#: modules/color/modules/oyranos_cmm_oPNG.c:1102
+#: modules/color/modules/oyranos_cmm_oPNG.c:1109
 msgid "Img"
 msgstr ""
 
@@ -2034,7 +2034,7 @@ msgstr "Sarrera"
 msgid "Input Color Space"
 msgstr "Kolore-espazioa"
 
-#: modules/color/modules/oyranos_cmm_oPNG.c:1164
+#: modules/color/modules/oyranos_cmm_oPNG.c:1171
 msgid "Input PNG Image Filter Object"
 msgstr ""
 
@@ -2583,12 +2583,12 @@ msgstr "Bereizketa"
 msgid "Option"
 msgstr "Bereizketa"
 
-#: modules/color/modules/oyranos_cmm_oPNG.c:569
+#: modules/color/modules/oyranos_cmm_oPNG.c:576
 #: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:283
 msgid "Option \"filename\", a valid filename"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oPNG.c:1186
+#: modules/color/modules/oyranos_cmm_oPNG.c:1193
 msgid "Option \"filename\", a valid filename of a existing PNG image"
 msgstr ""
 
@@ -3096,7 +3096,7 @@ msgstr ""
 msgid "Read"
 msgstr "Prest"
 
-#: modules/color/modules/oyranos_cmm_oPNG.c:1172
+#: modules/color/modules/oyranos_cmm_oPNG.c:1179
 #, fuzzy
 msgid "Read PNG"
 msgstr "Prest"
@@ -3542,7 +3542,7 @@ msgid ""
 "data from. If the file does not exist, a error will occure."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oPNG.c:1188
+#: modules/color/modules/oyranos_cmm_oPNG.c:1195
 msgid ""
 "The Option \"filename\" should contain a valid filename to read the png data "
 "from. If the file does not exist, a error will occure.\n"
@@ -3558,7 +3558,7 @@ msgid ""
 "The oyEDITING_RGB ICC profile is attached."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oPNG.c:571
+#: modules/color/modules/oyranos_cmm_oPNG.c:578
 msgid ""
 "The Option \"filename\" should contain a valid filename to write the png "
 "data into. A existing file will be overwritten without notice."
@@ -4096,12 +4096,12 @@ msgstr ""
 msgid "Write"
 msgstr "Puntua"
 
-#: modules/color/modules/oyranos_cmm_oPNG.c:555
+#: modules/color/modules/oyranos_cmm_oPNG.c:562
 #, fuzzy
 msgid "Write PNG"
 msgstr "Puntua"
 
-#: modules/color/modules/oyranos_cmm_oPNG.c:547
+#: modules/color/modules/oyranos_cmm_oPNG.c:554
 msgid "Write PNG Image Filter Object"
 msgstr ""
 
@@ -4349,7 +4349,7 @@ msgstr ""
 
 #: API_generated/oyranos_devices.c:2574 API_generated/oyranos_devices.c:2585
 #: modules/color/modules/oyranos_cmm_lcms.c:2424
-#: modules/color/modules/oyranos_cmm_oPNG.c:949
+#: modules/color/modules/oyranos_cmm_oPNG.c:956
 #: modules/color/modules/oyranos_cmm_oyra_image_expose.c:101
 #: modules/color/modules/oyranos_cmm_oyra_image_scale.c:104
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:898
