@@ -5827,6 +5827,18 @@ oyTESTRESULT_e testConversion()
                buf_type_out = oyUINT16;
   oyImage_s *input, *output;
 
+  char ** list = oyGetCMMs( oyCMM_CONTEXT, oyNAME_NICK, 0, malloc );
+  int count = 0, has_lcms = 0;
+
+  while(list && list[count])
+  {
+    if(strcmp(list[count],"lcms") == 0)
+      has_lcms = 1;
+    free( list[count] );
+    ++count;
+  }
+  if(list) free(list);
+  fprintf(stdout, "found CMMs: %d has_lcms=%d\n", count, has_lcms );
 
   input =oyImage_Create( 2,2, 
                          buf_16in2x2,
@@ -5961,7 +5973,7 @@ oyTESTRESULT_e testConversion()
 #ifdef COMPILE_STATIC
                oyTESTRESULT_XFAIL,
 #else
-               oyTESTRESULT_FAIL,
+               has_lcms ? oyTESTRESULT_FAIL : oyTESTRESULT_XFAIL,
 #endif
     "oyConversion_CreateBasicPixels( \"renderer\"=\"lcms\" ) %s", oyNoEmptyString_m_(reg) );
     fprintf( zout, "\tnode reg = %s\n", oyFilterNode_GetRegistration( icc ));
@@ -5983,7 +5995,7 @@ oyTESTRESULT_e testConversion()
 #ifdef COMPILE_STATIC
                oyTESTRESULT_XFAIL,
 #else
-               oyTESTRESULT_FAIL,
+               has_lcms ? oyTESTRESULT_FAIL : oyTESTRESULT_XFAIL,
 #endif
     "oyFilterNode_SetContext_( \"context\"=\"lcms\" ) %s  ", oyNoEmptyString_m_(reg) );
   }
@@ -5998,7 +6010,7 @@ oyTESTRESULT_e testConversion()
 #ifdef COMPILE_STATIC
                oyTESTRESULT_XFAIL,
 #else
-               oyTESTRESULT_FAIL,
+               has_lcms ? oyTESTRESULT_FAIL : oyTESTRESULT_XFAIL,
 #endif
     "oyFilterNode_SetContext_( \"renderer\"=\"lcm2\" ) %s", oyNoEmptyString_m_(reg) );
   }
