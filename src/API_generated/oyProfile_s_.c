@@ -274,7 +274,7 @@ static const char * oyProfile_StaticMessageFunc_ (
              );
     else
       sprintf( &text[strlen(text)], "%lu",
-               s->size_
+               (long unsigned int)s->size_
              );
   } else
   if((int)type >= oyNAME_DESCRIPTION)

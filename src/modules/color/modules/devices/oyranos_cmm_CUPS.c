@@ -323,7 +323,7 @@ int          DeviceAttributes_       ( ppd_file_t        * ppd,
       host = cupsServer();
       attrs = ppdFindAttr(ppd, "cupsICCProfile", 0);
 
-      if(attrs && attrs->text)
+      if(attrs && attrs->text[0])
         device_settings = attrs->text;
  
       if(error <= 0)

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ICC Examin 0.41\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2017-10-05 10:30+0200\n"
+"POT-Creation-Date: 2017-10-06 10:14+0200\n"
 "PO-Revision-Date: 2006-06-29 19:31+0200\n"
 "Last-Translator: Pascal LACROIX <lacroixpascal at vfemail.net>\n"
 "Language-Team: <fr@li.org>\n"
@@ -710,7 +710,7 @@ msgstr "Canal"
 #: modules/color/modules/oyranos_cmm_lcms.c:2534
 #: modules/color/modules/oyranos_cmm_lcms.c:2607
 #: modules/color/modules/oyranos_cmm_oiDB.c:462
-#: modules/color/modules/oyranos_cmm_oyra_profile_graph2d.c:326
+#: modules/color/modules/oyranos_cmm_oyra_profile_graph2d.c:327
 #: modules/color/modules/oyranos_cmm_trds.c:640
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:189
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:370
@@ -887,8 +887,8 @@ msgstr ""
 msgid "ColorGear CMM Lite"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_profile_graph2d.c:332
-#: modules/color/modules/oyranos_cmm_oyra_profile_graph2d.c:340
+#: modules/color/modules/oyranos_cmm_oyra_profile_graph2d.c:333
+#: modules/color/modules/oyranos_cmm_oyra_profile_graph2d.c:341
 msgid "Compute a saturation line."
 msgstr ""
 
@@ -972,7 +972,7 @@ msgstr ""
 msgid "Copyright (c) 2009 Kai-Uwe Behrmann; MIT"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oydi.c:1359
+#: modules/color/modules/oyranos_cmm_oydi.c:1361
 #: modules/color/modules/oyranos_cmm_lraw.cpp:235
 msgid "Copyright (c) 2009 Kai-Uwe Behrmann; newBSD"
 msgstr ""
@@ -1899,7 +1899,7 @@ msgstr "Luminance Y"
 #: API_generated/oyPixelAccess_s.c:540 liboyranos/oyranos_cmm.c:142
 #: liboyranos/oyranos_cmm.c:278 liboyranos/oyranos_cmm.c:302
 #: modules/color/modules/oyranos_cmm_oPNG.c:1122
-#: modules/color/modules/oyranos_cmm_oydi.c:944
+#: modules/color/modules/oyranos_cmm_oydi.c:946
 msgid "Image"
 msgstr ""
 
@@ -2695,7 +2695,7 @@ msgstr ""
 msgid "Oyranos allows to fine tune handling of ICC color management."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oydi.c:1343
+#: modules/color/modules/oyranos_cmm_oydi.c:1345
 #, fuzzy
 msgid "Oyranos display filter"
 msgstr "Oyranos Préférences"
@@ -2717,7 +2717,7 @@ msgid "Oyranos modules"
 msgstr "Oyranos Préférences"
 
 #: modules/color/modules/oyranos_cmm_oicc.c:1134
-#: modules/color/modules/oyranos_cmm_oydi.c:1353
+#: modules/color/modules/oyranos_cmm_oydi.c:1355
 #: modules/color/modules/oyranos_cmm_oyra.c:138
 #: modules/color/modules/oyranos_cmm_trds.c:723
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:982
@@ -3479,7 +3479,7 @@ msgstr ""
 msgid "The "
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oydi.c:1367
+#: modules/color/modules/oyranos_cmm_oydi.c:1369
 msgid ""
 "The \"display\" filter supports applications to show image content on single "
 "and multi monitor displays. It cares about the server communication in "
@@ -3540,8 +3540,8 @@ msgid ""
 "data into. A existing file will be overwritten without notice."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_profile_graph2d.c:334
-#: modules/color/modules/oyranos_cmm_oyra_profile_graph2d.c:342
+#: modules/color/modules/oyranos_cmm_oyra_profile_graph2d.c:335
+#: modules/color/modules/oyranos_cmm_oyra_profile_graph2d.c:343
 #, fuzzy
 msgid "The Oyranos \""
 msgstr "Oyranos Préférences"
@@ -3567,7 +3567,7 @@ msgid ""
 "with a available threading model."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oydi.c:1345
+#: modules/color/modules/oyranos_cmm_oydi.c:1347
 msgid "The client side window data handler of Oyranos."
 msgstr ""
 
@@ -3636,7 +3636,7 @@ msgstr ""
 msgid "The filter is used to reduce pixels."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oydi.c:1369
+#: modules/color/modules/oyranos_cmm_oydi.c:1371
 msgid ""
 "The filter needs some informations attached to the output image tags of the "
 "\"output\" image filter. The following list describes the X11/Xorg "
@@ -4182,7 +4182,7 @@ msgstr ""
 #: modules/color/modules/oyranos_cmm_lcms.c:2532
 #: modules/color/modules/oyranos_cmm_lcms.c:2605
 #: modules/color/modules/oyranos_cmm_oiDB.c:460
-#: modules/color/modules/oyranos_cmm_oyra_profile_graph2d.c:324
+#: modules/color/modules/oyranos_cmm_oyra_profile_graph2d.c:325
 #: modules/color/modules/oyranos_cmm_trds.c:638
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:187
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:368
@@ -4510,7 +4510,7 @@ msgstr ""
 #: liboyranos/oyranos_cmm.c:255 modules/color/modules/oyranos_cmm_elDB.c:953
 #: modules/color/modules/oyranos_cmm_oiDB.c:553
 #: modules/color/modules/oyranos_cmm_oicc.c:1142
-#: modules/color/modules/oyranos_cmm_oydi.c:1361
+#: modules/color/modules/oyranos_cmm_oydi.c:1363
 #: modules/color/modules/oyranos_cmm_oyra.c:146
 #: modules/color/modules/oyranos_cmm_trds.c:731
 #: modules/color/modules/devices/oyranos_cmm_disp.c:1343

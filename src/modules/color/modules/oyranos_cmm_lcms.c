@@ -1135,7 +1135,7 @@ gamutCheckSampler(register WORD In[],
   lcmsLabEncoded2Float(&Lab1, In);
   lcmsDoTransform( ptr[0], &Lab1, &Lab2, 1 );
   d = lcmsDeltaE( &Lab1, &Lab2 );
-  if(abs(d) > 10 && ptr[1])
+  if(fabs(d) > 10.0 && ptr[1])
   {
     Lab2.L = 50.0;
     Lab2.a = Lab2.b = 0.0;

@@ -182,8 +182,6 @@ int oydiFilterSocket_SetWindowRegion ( oyPixelAccess_s   * ticket,
     oyFree_m_( tmp );
 #endif
 
-    oyBlob_Release( &win_id );
-
     if(!old_window_rectangle)
     {
       old_window_rectangle = oyRectangle_NewFrom( 0,0 );
@@ -320,6 +318,10 @@ int oydiFilterSocket_SetWindowRegion ( oyPixelAccess_s   * ticket,
               OY_DBG_FORMAT_"display_name: %s",
               OY_DBG_ARGS_,
               oyNoEmptyString_m_(display_name) );
+
+  oyBlob_Release( &win_id );
+  oyBlob_Release( &display_id );
+  oyOptions_Release( &tags );
 
   return error;
 }

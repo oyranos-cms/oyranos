@@ -184,7 +184,8 @@ double * oyraGetSaturationLine_(oyProfile_s * profile, int intent, int precision
     oyra_msg( oyMSG_DBG, (oyStruct_s*)profile, OY_DBG_FORMAT_ "%s",
               OY_DBG_ARGS_, oyICCColorSpaceGetName(csp) );
 
-  if(csp == icSigRgbData || icSigXYZData ||
+  if(csp == icSigRgbData ||
+     csp == icSigXYZData ||
      csp == icSigYCbCrData ||
      csp == icSigCmykData ||
      csp == icSigLabData)

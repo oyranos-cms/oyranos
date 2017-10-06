@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2017-10-05 10:30+0200\n"
+"POT-Creation-Date: 2017-10-06 10:14+0200\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -689,7 +689,7 @@ msgstr "Kanäle:"
 #: modules/color/modules/oyranos_cmm_lcms.c:2534
 #: modules/color/modules/oyranos_cmm_lcms.c:2607
 #: modules/color/modules/oyranos_cmm_oiDB.c:462
-#: modules/color/modules/oyranos_cmm_oyra_profile_graph2d.c:326
+#: modules/color/modules/oyranos_cmm_oyra_profile_graph2d.c:327
 #: modules/color/modules/oyranos_cmm_trds.c:640
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:189
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:370
@@ -882,8 +882,8 @@ msgstr ""
 msgid "ColorGear CMM Lite"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_profile_graph2d.c:332
-#: modules/color/modules/oyranos_cmm_oyra_profile_graph2d.c:340
+#: modules/color/modules/oyranos_cmm_oyra_profile_graph2d.c:333
+#: modules/color/modules/oyranos_cmm_oyra_profile_graph2d.c:341
 msgid "Compute a saturation line."
 msgstr ""
 
@@ -963,7 +963,7 @@ msgstr ""
 msgid "Copyright (c) 2009 Kai-Uwe Behrmann; MIT"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oydi.c:1359
+#: modules/color/modules/oyranos_cmm_oydi.c:1361
 #: modules/color/modules/oyranos_cmm_lraw.cpp:235
 msgid "Copyright (c) 2009 Kai-Uwe Behrmann; newBSD"
 msgstr ""
@@ -1865,7 +1865,7 @@ msgstr "Beleuchtung:     "
 #: API_generated/oyPixelAccess_s.c:540 liboyranos/oyranos_cmm.c:142
 #: liboyranos/oyranos_cmm.c:278 liboyranos/oyranos_cmm.c:302
 #: modules/color/modules/oyranos_cmm_oPNG.c:1122
-#: modules/color/modules/oyranos_cmm_oydi.c:944
+#: modules/color/modules/oyranos_cmm_oydi.c:946
 msgid "Image"
 msgstr "Bild"
 
@@ -2625,7 +2625,7 @@ msgstr ""
 msgid "Oyranos allows to fine tune handling of ICC color management."
 msgstr "Oyranos erlaubt detailierte ICC Farbmanagementeinstellungen."
 
-#: modules/color/modules/oyranos_cmm_oydi.c:1343
+#: modules/color/modules/oyranos_cmm_oydi.c:1345
 msgid "Oyranos display filter"
 msgstr "Oyranos Monitor Modul"
 
@@ -2650,7 +2650,7 @@ msgid "Oyranos modules"
 msgstr "Oyranos Module"
 
 #: modules/color/modules/oyranos_cmm_oicc.c:1134
-#: modules/color/modules/oyranos_cmm_oydi.c:1353
+#: modules/color/modules/oyranos_cmm_oydi.c:1355
 #: modules/color/modules/oyranos_cmm_oyra.c:138
 #: modules/color/modules/oyranos_cmm_trds.c:723
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:982
@@ -3381,7 +3381,7 @@ msgstr "Technologie"
 msgid "The "
 msgstr "Das "
 
-#: modules/color/modules/oyranos_cmm_oydi.c:1367
+#: modules/color/modules/oyranos_cmm_oydi.c:1369
 msgid ""
 "The \"display\" filter supports applications to show image content on single "
 "and multi monitor displays. It cares about the server communication in "
@@ -3470,8 +3470,8 @@ msgstr ""
 "PPM Bildes enthalten. Eine existierende Datei wird ohne Warnung "
 "überschrieben."
 
-#: modules/color/modules/oyranos_cmm_oyra_profile_graph2d.c:334
-#: modules/color/modules/oyranos_cmm_oyra_profile_graph2d.c:342
+#: modules/color/modules/oyranos_cmm_oyra_profile_graph2d.c:335
+#: modules/color/modules/oyranos_cmm_oyra_profile_graph2d.c:343
 msgid "The Oyranos \""
 msgstr "Das Oyranos \""
 
@@ -3502,7 +3502,7 @@ msgstr ""
 "Das Oyranos \"threads_handler\" Kommando initialisiert die oyJob_s "
 "Schnittstellen mit einem verfügbaren parallelen Verfahren."
 
-#: modules/color/modules/oyranos_cmm_oydi.c:1345
+#: modules/color/modules/oyranos_cmm_oydi.c:1347
 msgid "The client side window data handler of Oyranos."
 msgstr "Die benutzerseitige Fensterdatenagent von Oyranos."
 
@@ -3591,7 +3591,7 @@ msgstr "Der Filter ist ein mögliches Rasterbildziel in einem Graphen."
 msgid "The filter is used to reduce pixels."
 msgstr "Der Filter verringert die Pixelanzahl."
 
-#: modules/color/modules/oyranos_cmm_oydi.c:1369
+#: modules/color/modules/oyranos_cmm_oydi.c:1371
 msgid ""
 "The filter needs some informations attached to the output image tags of the "
 "\"output\" image filter. The following list describes the X11/Xorg "
@@ -4242,7 +4242,7 @@ msgstr ""
 #: modules/color/modules/oyranos_cmm_lcms.c:2532
 #: modules/color/modules/oyranos_cmm_lcms.c:2605
 #: modules/color/modules/oyranos_cmm_oiDB.c:460
-#: modules/color/modules/oyranos_cmm_oyra_profile_graph2d.c:324
+#: modules/color/modules/oyranos_cmm_oyra_profile_graph2d.c:325
 #: modules/color/modules/oyranos_cmm_trds.c:638
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:187
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:368
@@ -4545,7 +4545,7 @@ msgstr "nautisch"
 #: liboyranos/oyranos_cmm.c:255 modules/color/modules/oyranos_cmm_elDB.c:953
 #: modules/color/modules/oyranos_cmm_oiDB.c:553
 #: modules/color/modules/oyranos_cmm_oicc.c:1142
-#: modules/color/modules/oyranos_cmm_oydi.c:1361
+#: modules/color/modules/oyranos_cmm_oydi.c:1363
 #: modules/color/modules/oyranos_cmm_oyra.c:146
 #: modules/color/modules/oyranos_cmm_trds.c:731
 #: modules/color/modules/devices/oyranos_cmm_disp.c:1343
