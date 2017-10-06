@@ -824,7 +824,7 @@ int        oyPixelToLcm2PixelLayout_ ( oyPixel_t           pixel_layout,
   int planar = oyToPlanar_m (pixel_layout);
   int flavour = oyToFlavor_m (pixel_layout);
   unsigned int cchans = l2cmsChannelsOf( (cmsColorSpaceSignature)color_space );
-  unsigned int l2cms_color_space = l2_cmsLCMScolorSpace( color_space );
+  unsigned int l2cms_color_space = l2_cmsLCMScolorSpace( (cmsColorSpaceSignature)color_space );
   int extra = chan_n - cchans;
 
   if(chan_n > CMMMaxChannels_M)
@@ -1084,12 +1084,12 @@ cmsHTRANSFORM  l2cmsCMMConversionContextCreate_ (
 
   if(!error && lps[0] && lps[profiles_n-1])
   {
-    color_in = l2cmsGetColorSpace( lps[0] );
+    color_in = (icColorSpaceSignature) l2cmsGetColorSpace( lps[0] );
     if(profiles_n > 1)
-      color_out = l2cmsGetColorSpace( lps[profiles_n-1] );
+      color_out = (icColorSpaceSignature) l2cmsGetColorSpace( lps[profiles_n-1] );
     else
-      color_out = l2cmsGetPCS( lps[profiles_n-1] );
-    profile_class_in = l2cmsGetDeviceClass( lps[0] );
+      color_out = (icColorSpaceSignature) l2cmsGetPCS( lps[profiles_n-1] );
+    profile_class_in = (icProfileClassSignature) l2cmsGetDeviceClass( lps[0] );
   }
 
   l2cms_pixel_layout_in  = oyPixelToLcm2PixelLayout_(oy_pixel_layout_in,
@@ -1259,9 +1259,9 @@ cmsHTRANSFORM  l2cmsCMMConversionContextCreate_ (
       l2cms_msg( level,(oyStruct_s*)node, OY_DBG_FORMAT_"\n"
              "  ColorSpace:%s->PCS:%s DeviceClass:%s",
              OY_DBG_ARGS_,
-             lps[0]?oyICCColorSpaceGetName(l2cmsGetColorSpace( lps[0])):"----",
-             lps[i]?oyICCColorSpaceGetName(l2cmsGetPCS( lps[i] )):"----",
-             lps[i]?oyICCDeviceClassDescription(l2cmsGetDeviceClass(lps[i])):"----" );
+             lps[0]?oyICCColorSpaceGetName((icColorSpaceSignature) l2cmsGetColorSpace( lps[0])):"----",
+             lps[i]?oyICCColorSpaceGetName((icColorSpaceSignature) l2cmsGetPCS( lps[i] )):"----",
+             lps[i]?oyICCDeviceClassDescription((icProfileClassSignature) l2cmsGetDeviceClass(lps[i])):"----" );
   }
 
   if(!error && ltw && oy)

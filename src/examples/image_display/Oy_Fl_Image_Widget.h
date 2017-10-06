@@ -315,7 +315,8 @@ public:
   /* implement Oy_Widget::markDirty() */
   void markDirty()
   {
-    damage( FL_DAMAGE_USER1 | FL_DAMAGE_ALL );
+    damage( FL_DAMAGE_USER1 );
+    damage( FL_DAMAGE_ALL );
     deactivate();
     activate();
   }

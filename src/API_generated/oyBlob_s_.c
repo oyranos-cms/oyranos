@@ -191,12 +191,12 @@ static const char * oyBlob_StaticMessageFunc_ (
   } else
   if(type == oyNAME_NAME)
     sprintf( &text[strlen(text)], "%s %lu",
-             s->type, s->size
+             s->type, (long unsigned int)s->size
            );
   else
   if((int)type >= oyNAME_DESCRIPTION)
     sprintf( &text[strlen(text)], "type: %s size: %lu flags: %d",
-             s->type, s->size, s->flags
+             s->type, (long unsigned int)s->size, s->flags
            );
 
 

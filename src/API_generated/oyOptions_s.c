@@ -1091,7 +1091,7 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
   char * text = 0;
   oyOption_s * o = 0, *o2 = 0;
   int i, n, ti, c, j,j_n,k, min_level;
-  int indent = (type == oyNAME_JSON)?1:6; /* base indentation for better looking XFORMS documents */
+  int indent = ((int)type == oyNAME_JSON)?1:6; /* base indentation for better looking XFORMS documents */
   int * sort, changed;
   char ** old_levels = 0;
   int old_levels_n = 0;
@@ -1106,12 +1106,12 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
     for( i = 0; i < n; ++i )
       sort[i]=i;
 
-    if(type == oyNAME_JSON && n)
+    if((int)type == oyNAME_JSON && n)
       STRING_ADD ( text, "{\n" );
 
     /* sort the options alphabetical */
     if(type == oyNAME_NAME ||
-       type == oyNAME_JSON)
+       (int)type == oyNAME_JSON)
     do
     {
       changed = 0;
@@ -1156,7 +1156,7 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
       /* Omit redundant XML level closes and opens based on alphabetical input.
        */
       if(type == oyNAME_NAME ||
-         type == oyNAME_JSON)
+         (int)type == oyNAME_JSON)
       {
         char * tmp = 0, **list = 0;
 
@@ -1301,7 +1301,7 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
     if(old_levels)
       oyStringListRelease_( &old_levels, old_levels_n, oyDeAllocateFunc_ );
 
-    if(type == oyNAME_JSON && n)
+    if((int)type == oyNAME_JSON && n)
       STRING_ADD ( text, "\n}" );
 
     error = oyObject_SetName( options->oy_, text, type );

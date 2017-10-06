@@ -177,7 +177,7 @@ static const char * oyProfileTag_StaticMessageFunc_ (
   if((int)type >= oyNAME_DESCRIPTION)
     sprintf( &text[strlen(text)], "%s %s\noffset: %lu size: %lu/%lu",
              oyICCTagDescription(s->use), oyICCTagTypeName(s->tag_type_),
-             s->offset_orig, s->size_, s->size_check_
+             (long unsigned int)s->offset_orig, (long unsigned int)s->size_, (long unsigned int)s->size_check_
            );
 
 
