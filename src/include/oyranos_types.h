@@ -91,14 +91,19 @@ typedef void (*oyDeAlloc_f)          ( void              * data );
 #endif
 
 #if   __GNUC__ >= 7
-#define OY_UNUSED                      __attribute__ ((unused))
 #define OY_DEPRECATED                  __attribute__ ((deprecated))
 #elif defined(_MSC_VER)
-#define OY_UNUSED                      __declspec(unused)
 #define OY_DEPRECATED                  __declspec(deprecated)
 #else
-#define OY_UNUSED
 #define OY_DEPRECATED
+#endif
+
+#if   (__GNUC__*100 + __GNUC_MINOR__) >= 406
+#define OY_UNUSED                      __attribute__ ((unused))
+#elif defined(_MSC_VER)
+#define OY_UNUSED                      __declspec(unused)
+#else
+#define OY_UNUSED
 #endif
 
 #ifdef __cplusplus
