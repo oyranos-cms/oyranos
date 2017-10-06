@@ -8,7 +8,7 @@
 # paths will be considered relative to the root of the repository, not the
 # location of the DOXYFILE.
 
-DOXYFILE =
+DOXYFILE = extras/codedocs/Doxyfile
 
 # Specify external repository to link documentation with.
 # This is similar to Doxygen's TAGFILES option, but will automatically link to
@@ -61,8 +61,8 @@ TAGLINKS =
 # ENABLED_SECTIONS =
 # ENABLE_PREPROCESSING =
 # ENUM_VALUES_PER_LINE =
-EXAMPLE_PATH = src/examples/ src/examples/image_display/ src/modules/color/modules/
-EXAMPLE_PATTERNS = *.c *.cpp
+#EXAMPLE_PATH = src/examples/ src/examples/image_display/ src/modules/color/modules/
+#EXAMPLE_PATTERNS = *.c *.cpp
 # EXAMPLE_RECURSIVE =
 # EXCLUDE =
 # EXCLUDE_PATTERNS =
@@ -77,7 +77,7 @@ EXAMPLE_PATTERNS = *.c *.cpp
 # EXTRACT_LOCAL_CLASSES =
 # EXTRACT_LOCAL_METHODS =
 # EXTRACT_PACKAGE =
-EXTRACT_PRIVATE = NO
+#EXTRACT_PRIVATE = NO
 # EXTRACT_STATIC =
 # EXT_LINKS_IN_WINDOW =
 # FILE_PATTERNS =
@@ -98,8 +98,8 @@ EXTRACT_PRIVATE = NO
 # HIDE_FRIEND_COMPOUNDS =
 # HIDE_IN_BODY_DOCS =
 # HIDE_SCOPE_NAMES =
-HIDE_UNDOC_CLASSES = YES
-HIDE_UNDOC_MEMBERS = YES
+#HIDE_UNDOC_CLASSES = YES
+#HIDE_UNDOC_MEMBERS = YES
 # HIDE_UNDOC_RELATIONS =
 # HTML_COLORSTYLE_GAMMA =
 # HTML_COLORSTYLE_HUE =
@@ -107,7 +107,7 @@ HIDE_UNDOC_MEMBERS = YES
 # HTML_DYNAMIC_SECTIONS =
 # HTML_EXTRA_FILES =
 # HTML_EXTRA_STYLESHEET =
-HTML_FOOTER = doc/doxygen.footer.dox
+#HTML_FOOTER = doc/doxygen.footer.dox
 # HTML_HEADER = doc/doxygen.header.dox
 # HTML_INDEX_NUM_ENTRIES =
 # HTML_STYLESHEET =
@@ -145,8 +145,8 @@ HTML_FOOTER = doc/doxygen.footer.dox
 # PREDEFINED =
 # PROJECT_BRIEF =
 # PROJECT_LOGO =
-PROJECT_NAME = Oyranos-Color-Management-System
-PROJECT_NUMBER = 0-devel
+#PROJECT_NAME = Oyranos-Color-Management-System
+#PROJECT_NUMBER = 0-devel
 # QT_AUTOBRIEF =
 # RECURSIVE =
 # REFERENCED_BY_RELATION =
