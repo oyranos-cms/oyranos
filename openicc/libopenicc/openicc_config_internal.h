@@ -63,14 +63,19 @@
 #endif
 
 #if   __GNUC__ >= 7
-#define OI_UNUSED                      __attribute__ ((unused))
 #define OI_DEPRECATED                  __attribute__ ((deprecated))
 #elif defined(_MSC_VER)
-#define OI_UNUSED                      __declspec(unused)
 #define OI_DEPRECATED                  __declspec(deprecated)
 #else
-#define OI_UNUSED
 #define OI_DEPRECATED
+#endif
+
+#if   (__GNUC__*100 + __GNUC_MINOR__) >= 406
+#define OI_UNUSED                      __attribute__ ((unused))
+#elif defined(_MSC_VER)
+#define OI_UNUSED                      __declspec(unused)
+#else
+#define OI_UNUSED
 #endif
 
 #include "openicc_conf.h"
