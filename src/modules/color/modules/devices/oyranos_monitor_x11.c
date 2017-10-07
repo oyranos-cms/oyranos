@@ -400,7 +400,12 @@ int      oyX1GetMonitorInfo          ( const char        * display_name,
       sz = ftell (fp);
       log_text = calloc( sizeof(char), sz+1 );
       s = fread( log_text, sizeof(char), sz, fp);
-      if(s != sz) log_text = NULL;
+      if(s != sz)
+      {
+        free(log_text);
+        log_text = NULL;
+      }
+      log_text[s] = '\000';
       fclose(fp);
     }
 
