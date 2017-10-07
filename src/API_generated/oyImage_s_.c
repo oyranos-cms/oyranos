@@ -217,8 +217,13 @@ oyImage_s_ * oyImage_New_ ( oyObject_s object )
 
   if(s_obj)
     s = (oyImage_s_*)s_obj->allocateFunc_(sizeof(oyImage_s_));
+  else
+  {
+    WARNc_S(_("MEM Error."));
+    return NULL;
+  }
 
-  if(!s || !s_obj)
+  if(!s)
   {
     WARNc_S(_("MEM Error."));
     return NULL;

@@ -186,8 +186,13 @@ oyCMMobjectType_s_ * oyCMMobjectType_New_ ( oyObject_s object )
 
   if(s_obj)
     s = (oyCMMobjectType_s_*)s_obj->allocateFunc_(sizeof(oyCMMobjectType_s_));
+  else
+  {
+    WARNc_S(_("MEM Error."));
+    return NULL;
+  }
 
-  if(!s || !s_obj)
+  if(!s)
   {
     WARNc_S(_("MEM Error."));
     return NULL;

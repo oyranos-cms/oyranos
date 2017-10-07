@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: oyranos\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2017-10-06 10:14+0200\n"
+"POT-Creation-Date: 2017-10-07 22:57+0200\n"
 "PO-Revision-Date: 2012-10-19 15:10+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -154,7 +154,7 @@ msgstr "15. kanál"
 msgid "15color"
 msgstr "15-barevný"
 
-#: modules/color/modules/oyranos_cmm_lraw.cpp:781
+#: modules/color/modules/oyranos_cmm_lraw.cpp:783
 msgid "16-bit"
 msgstr "16-bitů"
 
@@ -223,7 +223,7 @@ msgstr "7. kanál"
 msgid "7color"
 msgstr "7-barevný"
 
-#: modules/color/modules/oyranos_cmm_lraw.cpp:775
+#: modules/color/modules/oyranos_cmm_lraw.cpp:777
 msgid "8-bit"
 msgstr "8-bitů"
 
@@ -327,7 +327,7 @@ msgid "Agfa CMM"
 msgstr ""
 
 #: modules/color/modules/devices/oyranos_cmm_SANE.c:954
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1345
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1346
 #: examples/oyranos_cmm_dDev.c:845 examples/oyranos_cmm_dFil.c:172
 msgid "All the small details for using this module."
 msgstr "Všechny ty malé detaily pro používání tohoto modulu."
@@ -543,7 +543,7 @@ msgstr ""
 "zařízení a komplikované nastavení, nicméně umožňuje porovnání barev \"vedle "
 "sebe\" (např. na monitoru a výtisku)."
 
-#: modules/color/modules/oyranos_cmm_lraw.cpp:766
+#: modules/color/modules/oyranos_cmm_lraw.cpp:768
 msgid "Bits per Sample"
 msgstr "Bitů ve vzorku"
 
@@ -982,7 +982,7 @@ msgid "Copyright (c) 2009 Joseph Simon; MIT"
 msgstr "Copyright (c) 2009 Joseph Simon; MIT"
 
 #: modules/color/modules/devices/oyranos_cmm_SANE.c:945
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1336
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1337
 #: examples/oyranos_cmm_dDev.c:835
 msgid "Copyright (c) 2009 Kai-Uwe Behrmann; MIT"
 msgstr "Copyright (c) 2009 Kai-Uwe Behrmann; MIT"
@@ -1202,7 +1202,7 @@ msgstr "Datum"
 msgid "Deactivate"
 msgstr "Aktivovat profily:"
 
-#: examples/image_display/image_display.cpp:1105
+#: examples/image_display/image_display.cpp:1106
 msgid "Debug"
 msgstr "Ladění"
 
@@ -1361,7 +1361,7 @@ msgstr "EBU Tech.3213-E"
 msgid "EFI CMM"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:1101
+#: examples/image_display/image_display.cpp:1102
 msgid "Edit Options ..."
 msgstr "Upravit volby ..."
 
@@ -1464,7 +1464,7 @@ msgstr ""
 msgid "Erase profile:"
 msgstr "Smazat profil:"
 
-#: examples/image_display/image_display.cpp:1103
+#: examples/image_display/image_display.cpp:1104
 msgid "Examine ICC Profile ..."
 msgstr "Prozkoumat profil ICC ..."
 
@@ -1741,11 +1741,11 @@ msgstr ""
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:384
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:575
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:843
-#: examples/image_display/image_display.cpp:1112
+#: examples/image_display/image_display.cpp:1113
 msgid "Help"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:1110
+#: examples/image_display/image_display.cpp:1111
 msgid "Help Shortcuts"
 msgstr ""
 
@@ -1978,7 +1978,7 @@ msgstr "Image[input_png]"
 msgid "Image[input_ppm]"
 msgstr "Image[input_ppm]"
 
-#: modules/color/modules/oyranos_cmm_lraw.cpp:843
+#: modules/color/modules/oyranos_cmm_lraw.cpp:845
 #, fuzzy
 msgid "Image[lraw]"
 msgstr "Image[lraw]"
@@ -2070,7 +2070,7 @@ msgstr "Input PNG Image Filter Object"
 msgid "Input PPM Image Filter Object"
 msgstr "Input PPM Image Filter Object"
 
-#: modules/color/modules/oyranos_cmm_lraw.cpp:845
+#: modules/color/modules/oyranos_cmm_lraw.cpp:847
 #, fuzzy
 msgid "Input libraw Image Filter Object"
 msgstr "Input libraw Image Filter Object"
@@ -2326,7 +2326,7 @@ msgstr "Luv"
 #: API_generated/oyNamedColors_s_.c:186 API_generated/oyObserver_s.c:50
 #: API_generated/oyOption_s_.c:258 API_generated/oyOptions_s_.c:196
 #: API_generated/oyPixelAccess_s_.c:225 API_generated/oyPointer_s_.c:277
-#: API_generated/oyProfileTag_s_.c:208 API_generated/oyProfile_s_.c:323
+#: API_generated/oyProfileTag_s_.c:214 API_generated/oyProfile_s_.c:323
 #: API_generated/oyProfiles_s_.c:195 API_generated/oyRectangle_s_.c:191
 #: API_generated/oyStructList_s_.c:239 API_generated/oyranos_devices.c:3585
 #: API_generated/oyranos_module.c:1552 liboyranos/oyranos_alpha.c:257
@@ -2341,7 +2341,7 @@ msgstr "MIT"
 #: modules/color/modules/oyranos_cmm_lcms.c:2871
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:991
 #: modules/color/modules/devices/oyranos_cmm_SANE.c:947
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1338
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1339
 #: examples/oyranos_cmm_dDev.c:837
 msgid "MIT license: http://www.opensource.org/licenses/mit-license.php"
 msgstr "Licence MIT: http://www.opensource.org/licenses/mit-license.php"
@@ -2447,7 +2447,7 @@ msgstr "Model:       "
 msgid "Modify Profile:"
 msgstr "Profil monitoru"
 
-#: modules/color/modules/oyranos_cmm_lraw.cpp:761
+#: modules/color/modules/oyranos_cmm_lraw.cpp:763
 msgid "Module Options"
 msgstr "Volby modulu:"
 
@@ -2464,7 +2464,7 @@ msgstr ""
 "Monitory, které lze detekovat prostřednictvím ovladače grafické karty a "
 "okenního systému."
 
-#: modules/color/modules/oyranos_cmm_lraw.cpp:769
+#: modules/color/modules/oyranos_cmm_lraw.cpp:771
 msgid "More bits mean more precission for processing and more size."
 msgstr "Více bitů znamená větší přesnost při zpracování a větší velikost."
 
@@ -2498,7 +2498,7 @@ msgid "My Name"
 msgstr "Mé jméno"
 
 #: modules/color/modules/devices/oyranos_cmm_SANE.c:952
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1343
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1344
 #: examples/oyranos_cmm_dDev.c:843 examples/oyranos_cmm_dFil.c:170
 msgid "My filter introduction."
 msgstr "Úvod k filtrům."
@@ -2688,7 +2688,7 @@ msgstr "Filter Oyranosu pro displej"
 msgid "Oyranos Image Display Info"
 msgstr "Filter Oyranosu pro displej"
 
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1320
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1321
 #, fuzzy
 msgid "Oyranos RAW Image"
 msgstr "Oyranos RAW Image"
@@ -2776,7 +2776,7 @@ msgstr "Moduly Oyranosu"
 #: modules/color/modules/devices/oyranos_cmm_SANE.c:940
 #: modules/color/modules/devices/oyranos_cmm_disp.c:1335
 #: modules/color/modules/oyranos_cmm_lraw.cpp:229
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1331
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1332
 #: examples/oyranos_cmm_dDev.c:829
 msgid ""
 "Oyranos project; www: http://www.oyranos.com; support/email: ku.b@gmx.de; "
@@ -3104,7 +3104,7 @@ msgstr ""
 "Nastavení simulace umožňují stanovit barvový prostor pro napodobení jiného "
 "zařízení."
 
-#: examples/image_display/image_display.cpp:1114
+#: examples/image_display/image_display.cpp:1115
 msgid "Quit"
 msgstr "Ukončit"
 
@@ -3409,7 +3409,7 @@ msgstr ""
 msgid "Show Help:"
 msgstr "Ukázat model:"
 
-#: examples/image_display/image_display.cpp:1107
+#: examples/image_display/image_display.cpp:1108
 #, fuzzy
 msgid "Show Infos"
 msgstr "Ukázat volby"
@@ -3733,7 +3733,7 @@ msgstr ""
 "The filter will expect a \"rectangle\" option and will create, fill and "
 "process a according rectangle with a new job ticket."
 
-#: modules/color/modules/oyranos_cmm_lraw.cpp:853
+#: modules/color/modules/oyranos_cmm_lraw.cpp:855
 #, fuzzy
 msgid ""
 "The filter is a libraw image reader. The option \"device\" with value \"1\" "
@@ -3796,7 +3796,7 @@ msgstr ""
 " \"preserve_alpha\" is a integer option to keep a given alpha in a not yet "
 "allocated output image. "
 
-#: modules/color/modules/oyranos_cmm_lraw.cpp:851
+#: modules/color/modules/oyranos_cmm_lraw.cpp:853
 msgid "The filter obtains a image from libraw."
 msgstr "Filtr získá obrázek z libraw."
 
@@ -4059,7 +4059,7 @@ msgid ""
 "resource overhead."
 msgstr ""
 
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1322
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1323
 msgid "The raw image backend of Oyranos."
 msgstr "Backend Oyranosu pro RAW snímky."
 

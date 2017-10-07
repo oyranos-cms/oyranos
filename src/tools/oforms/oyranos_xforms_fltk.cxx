@@ -46,7 +46,7 @@ using namespace oyranos::forms;
 extern oyUiHandler_s * oy_ui_fltk_handlers[];
 
 
-void usage(int argc, char ** argv)
+void usage(int argc OY_UNUSED, char ** argv OY_UNUSED)
 {
   fprintf(stderr, "\n");
   fprintf(stderr, "oyranos-xforms-fltk v%d.%d.%d %s\n",

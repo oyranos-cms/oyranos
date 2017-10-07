@@ -849,7 +849,6 @@ int          oyCMMdsoRelease_      ( const char        * lib_name OY_UNUSED )
   return error;
 }
 
-
 #if !defined(COMPILE_STATIC)
 /** @internal
  *  @brief get Oyranos CMM dlopen handle

@@ -325,7 +325,7 @@ void jobCallback                     ( double              progress_zero_till_on
                                        char              * status_text,
                                        int                 thread_id_,
                                        int                 job_id,
-                                       oyStruct_s        * cb_progress_context )
+                                       oyStruct_s        * cb_progress_context OY_UNUSED )
 { printf( "%s():%d %02f %s %d/%d\n",__func__,__LINE__,progress_zero_till_one,
           status_text?status_text:"",thread_id_,job_id); }
 }
@@ -590,7 +590,7 @@ void info_cb ( Fl_Widget* w, void* daten )
     printf("could not find a suitable program structure\n");
 }
 
-void exit_cb ( Fl_Widget* w, void* daten )
+void exit_cb ( Fl_Widget* w OY_UNUSED, void* daten OY_UNUSED )
 {
   oy_widget->conversion(NULL);
   oyFilterNode_Release( &icc );
@@ -932,6 +932,7 @@ event_handler(int e)
         break;
       }
     }
+    break;
     case FL_KEYBOARD:
     {
       int k = ((char*)Fl::event_text())[0];

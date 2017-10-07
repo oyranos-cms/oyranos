@@ -46,13 +46,19 @@
  *
  *  @param[in]  profiletag  the ProfileTag object
  *
- *  @version Oyranos: x.x.x
- *  @since   YYYY/MM/DD (Oyranos: x.x.x)
- *  @date    YYYY/MM/DD
+ *  @version Oyranos: 0.9.7
+ *  @since   2017/10/07 (Oyranos: 0.9.7)
+ *  @date    2017/10/07
  */
 void oyProfileTag_Release__Members( oyProfileTag_s_ * profiletag OY_UNUSED )
 {
-  /* Nothing to deallocate here */
+  if(profiletag->oy_->deallocateFunc_)
+  {
+    oyDeAlloc_f deallocateFunc = profiletag->oy_->deallocateFunc_;
+
+    if(profiletag->block_)
+    { deallocateFunc( profiletag->block_ ); profiletag->block_ = 0; profiletag->size_ = 0; }
+  }
 }
 
 /** @internal
@@ -202,8 +208,13 @@ oyProfileTag_s_ * oyProfileTag_New_ ( oyObject_s object )
 
   if(s_obj)
     s = (oyProfileTag_s_*)s_obj->allocateFunc_(sizeof(oyProfileTag_s_));
+  else
+  {
+    WARNc_S(_("MEM Error."));
+    return NULL;
+  }
 
-  if(!s || !s_obj)
+  if(!s)
   {
     WARNc_S(_("MEM Error."));
     return NULL;

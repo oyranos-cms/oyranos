@@ -24,7 +24,7 @@ OYAPI int  OYEXPORT
                                        icTagTypeSignature  type,
                                        oySTATUS_e          status,
                                        size_t              tag_size,
-                                       oyPointer           tag_block );
+                                       oyPointer         * tag_block );
 OYAPI oyStructList_s  * OYEXPORT
                 oyProfileTag_Get     ( oyProfileTag_s    * tag );
 OYAPI char **  OYEXPORT

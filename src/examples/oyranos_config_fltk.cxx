@@ -426,7 +426,7 @@ Option::Option( int x, int y, int w, int h, const char *name,
     resizable( box );
 }
 
-ListEntry::ListEntry( int x, int y, int w, int h, const char * name, int flags )
+ListEntry::ListEntry( int x, int y, int w, int h, const char * name, int flags OY_UNUSED )
     : OyFl_Pack(x, y, w, h) {
   Fl_Pack::type( FL_HORIZONTAL );
       Fl_Pack::spacing(h_spacing);
@@ -562,7 +562,7 @@ static Fl_Widget* getWidget( Fl_Group* group, oyWIDGET_e oywid ) {
     return wid;
 }
 
-static Fl_Group* getTab( Flmm_Tabs* tabs, oyGROUP_e group, Fl_Group **container ) {
+static Fl_Group OY_UNUSED * getTab( Flmm_Tabs* tabs, oyGROUP_e group, Fl_Group **container ) {
   Fl_Group *parent = /*dynamic_cast <Fl_Group>*/ tabs; // parent tab
     Fl_Group *tab = NULL; // actual tab
   

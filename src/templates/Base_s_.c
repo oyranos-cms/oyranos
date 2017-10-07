@@ -89,8 +89,13 @@ static const char * oy{{ class.baseName }}_StaticMessageFunc_ (
 
   if(s_obj)
     s = ({{ class.privName }}*)s_obj->allocateFunc_(sizeof({{ class.privName }}));
+  else
+  {
+    WARNc_S(_("MEM Error."));
+    return NULL;
+  }
 
-  if(!s || !s_obj)
+  if(!s)
   {
     WARNc_S(_("MEM Error."));
     return NULL;

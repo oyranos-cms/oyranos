@@ -102,6 +102,8 @@ const char *xrandr_edids[] = {"EDID","EDID_DATA",0};
  *  Function oyX1Monitor_getProperty_
  *  @brief   obtain X property
  *
+ *  The returned property is owned by the caller.
+ *
  *  @version Oyranos: 0.9.6
  *  @date    2016/11/25
  *  @since   2009/01/17 (Oyranos: 0.1.10)
@@ -551,11 +553,9 @@ char *       oyX1GetMonitorProfile   ( const char        * device_name,
 
   if(prop)
   {
-    moni_profile = malloc( prop_size );
+    moni_profile = prop;
     if(moni_profile)
     {
-      error = !memcpy( moni_profile, prop,
-                       prop_size );
       *size = prop_size;
     }
   } /*else

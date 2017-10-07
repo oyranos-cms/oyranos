@@ -219,8 +219,13 @@ oyPixelAccess_s_ * oyPixelAccess_New_ ( oyObject_s object )
 
   if(s_obj)
     s = (oyPixelAccess_s_*)s_obj->allocateFunc_(sizeof(oyPixelAccess_s_));
+  else
+  {
+    WARNc_S(_("MEM Error."));
+    return NULL;
+  }
 
-  if(!s || !s_obj)
+  if(!s)
   {
     WARNc_S(_("MEM Error."));
     return NULL;

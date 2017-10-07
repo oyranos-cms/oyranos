@@ -109,7 +109,7 @@ public:
   virtual void markDirty() { dirty = 1; }
 
   static void iccProgressCallback (    double              progress_zero_till_one,
-                                       char              * status_text,
+                                       char              * status_text OY_UNUSED,
                                        int                 thread_id_,
                                        int                 job_id,
                                        oyStruct_s        * cb_progress_context )

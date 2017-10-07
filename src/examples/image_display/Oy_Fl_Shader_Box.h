@@ -469,7 +469,7 @@ private:
 
 public:
   int              setImage          ( const char        * file_name,
-                                       oyOptions_s       * cc_options,
+                                       oyOptions_s       * cc_options OY_UNUSED,
                                        const char        * clut_name )
   {
     oyImage_Release( &image );

@@ -77,7 +77,7 @@ extern oyCMMapi7_s_   lraw_api7_image_input_libraw;
  *  @since   2009/06/14 (Oyranos: 0.1.10)
  *  @date    2009/12/17
  */
-int                lrawCMMInit       ( oyStruct_s        * filter )
+int                lrawCMMInit       ( oyStruct_s        * filter OY_UNUSED )
 {
   int error = 0;
   return error;
@@ -165,18 +165,18 @@ int            lrawCMMMessageFuncSet ( oyMessage_f         message_func )
 
 
 
-const char * lrawWidget_GetDummy     ( const char        * func_name,
-                                       uint32_t          * result )
+const char * lrawWidget_GetDummy     ( const char        * func_name OY_UNUSED,
+                                       uint32_t          * result OY_UNUSED )
 {return 0;}
 oyWIDGET_EVENT_e lrawWidget_EventDummy
-                                     ( const char        * wid,
-                                       oyWIDGET_EVENT_e    type )
+                                     ( const char        * wid OY_UNUSED,
+                                       oyWIDGET_EVENT_e    type OY_UNUSED )
 {return (oyWIDGET_EVENT_e)0;}
 
 
-oyWIDGET_EVENT_e   lrawWidgetEvent   ( oyOptions_s       * options,
-                                       oyWIDGET_EVENT_e    type,
-                                       oyStruct_s        * event )
+oyWIDGET_EVENT_e   lrawWidgetEvent   ( oyOptions_s       * options OY_UNUSED,
+                                       oyWIDGET_EVENT_e    type OY_UNUSED,
+                                       oyStruct_s        * event OY_UNUSED )
 {return (oyWIDGET_EVENT_e)0;}
 
 
@@ -209,7 +209,7 @@ oyPointer  lrawFilterNode_LibrawContextToMem (
  */
 const char * lrawGetText             ( const char        * select,
                                        oyNAME_e            type,
-                                       oyStruct_s        * context )
+                                       oyStruct_s        * context OY_UNUSED )
 {
          if(strcmp(select, "name")==0)
   {
@@ -261,7 +261,9 @@ oyCMM_s lraw_cmm_module = {
 
   (oyCMMapi_s*) & lraw_api4_image_input_libraw,
 
-  &lraw_icon
+  &lraw_icon,
+
+  NULL                                 /**< init() */
 };
 
 
@@ -271,7 +273,7 @@ oyCMM_s lraw_cmm_module = {
 oyOptions_s* lrawFilter_ImageInputRAWValidateOptions
                                      ( oyFilterCore_s    * filter,
                                        oyOptions_s       * validate,
-                                       int                 statical,
+                                       int                 statical OY_UNUSED,
                                        uint32_t          * result )
 {
   uint32_t error = !filter;
@@ -743,7 +745,7 @@ const char lraw_extra_options[] = {
  *  @date    2014/01/08
  *  @since   2010/11/29 (Oyranos: 0.1.13)
  */
-int  lrawUiGet                       ( oyCMMapiFilter_s   * module,
+int  lrawUiGet                       ( oyCMMapiFilter_s  * module OY_UNUSED,
                                        oyOptions_s       * options,
                                        char             ** xforms_layout,
                                        oyAlloc_f           allocateFunc )
@@ -833,7 +835,7 @@ oyConnectorImaging_s_ * lraw_imageInputRAW_connectors[2] =
 const char * oyraApi4UiImageInputLibrawGetText (
                                        const char        * select,
                                        oyNAME_e            type,
-                                       oyStruct_s        * context )
+                                       oyStruct_s        * context OY_UNUSED )
 {
   if(strcmp(select,"name") == 0)
   {
@@ -885,7 +887,8 @@ oyCMMui_s_   oraw_api4_ui_image_input_libraw = {
   lrawUiGet,      /* oyCMMuiGet_f oyCMMuiGet */
 
   oyraApi4UiImageInputLibrawGetText, /* oyCMMGetText_f getText */
-  oyra_api4_ui_image_input_libraw_texts /* (const char**)texts */
+  oyra_api4_ui_image_input_libraw_texts, /* (const char**)texts */
+  (oyCMMapiFilter_s*)&lraw_api4_image_input_libraw /* oyCMMapiFilter_s*parent */
 };
 
 /** @instance lraw_api4

@@ -2620,6 +2620,10 @@ oyTESTRESULT_e testClut ()
     oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, NULL ), /* the data profile or device link */
     oyProfile_FromFile( "compatibleWithAdobeRGB1998.icc", icc_profile_flags, NULL ), /* the monitor profile or none */
     oyStringCopy( "*TEST*", oyAllocateFunc_ ), /* the intented output device */
+    {{{0}}},
+    0,
+    0,0,
+    0
   };
   double clck = oyClock();
   int dl_count = setupColourTable( &pc, 0 );
@@ -7002,7 +7006,7 @@ char * tests_xfailed[64];
 
 oyTESTRESULT_e oyTestRun             ( oyTESTRESULT_e    (*test)(void),
                                        const char        * test_name,
-                                       int                 number )
+                                       int                 number OY_UNUSED )
 {
   oyTESTRESULT_e error = oyTESTRESULT_UNKNOWN;
 
