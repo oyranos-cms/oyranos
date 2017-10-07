@@ -146,7 +146,7 @@ class formsFltkChoice : public Fl_Choice
  */
 int        oyXML2XFORMsFLTKSelect1Handler (
                                        xmlNodePtr          cur,
-                                       oyOptions_s       * collected_elements,
+                                       oyOptions_s       * collected_elements OY_UNUSED,
                                        oyPointer           user_data )
 {
   int k,
@@ -336,7 +336,7 @@ oyUiHandler_s oy_ui_fltk_handler_xf_select1_ =
  */
 int        oyXML2XFORMsFLTKHtmlHeadlineHandler (
                                        xmlNodePtr          cur,
-                                       oyOptions_s       * collected_elements,
+                                       oyOptions_s       * collected_elements OY_UNUSED,
                                        oyPointer           user_data )
 {
   const char * label = 0,

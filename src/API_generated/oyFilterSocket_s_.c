@@ -217,8 +217,13 @@ oyFilterSocket_s_ * oyFilterSocket_New_ ( oyObject_s object )
 
   if(s_obj)
     s = (oyFilterSocket_s_*)s_obj->allocateFunc_(sizeof(oyFilterSocket_s_));
+  else
+  {
+    WARNc_S(_("MEM Error."));
+    return NULL;
+  }
 
-  if(!s || !s_obj)
+  if(!s)
   {
     WARNc_S(_("MEM Error."));
     return NULL;

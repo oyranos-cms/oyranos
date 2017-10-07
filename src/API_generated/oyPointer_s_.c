@@ -271,8 +271,13 @@ oyPointer_s_ * oyPointer_New_ ( oyObject_s object )
 
   if(s_obj)
     s = (oyPointer_s_*)s_obj->allocateFunc_(sizeof(oyPointer_s_));
+  else
+  {
+    WARNc_S(_("MEM Error."));
+    return NULL;
+  }
 
-  if(!s || !s_obj)
+  if(!s)
   {
     WARNc_S(_("MEM Error."));
     return NULL;

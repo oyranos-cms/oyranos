@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2017-10-07 08:41+0200\n"
+"POT-Creation-Date: 2017-10-07 22:57+0200\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -158,7 +158,7 @@ msgstr "15. Kanal"
 msgid "15color"
 msgstr "15farbig"
 
-#: modules/color/modules/oyranos_cmm_lraw.cpp:781
+#: modules/color/modules/oyranos_cmm_lraw.cpp:783
 msgid "16-bit"
 msgstr "16-bit"
 
@@ -226,7 +226,7 @@ msgstr "7. Kanal"
 msgid "7color"
 msgstr "7farbig"
 
-#: modules/color/modules/oyranos_cmm_lraw.cpp:775
+#: modules/color/modules/oyranos_cmm_lraw.cpp:777
 msgid "8-bit"
 msgstr "8-bit"
 
@@ -331,7 +331,7 @@ msgid "Agfa CMM"
 msgstr ""
 
 #: modules/color/modules/devices/oyranos_cmm_SANE.c:954
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1345
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1346
 #: examples/oyranos_cmm_dDev.c:845 examples/oyranos_cmm_dFil.c:172
 msgid "All the small details for using this module."
 msgstr "All die kleinen Details für dieses Modul"
@@ -539,7 +539,7 @@ msgstr ""
 "benötigt eine sorgfältige komplizierte Einrichtung für Seit an Seit "
 "Vergleiche."
 
-#: modules/color/modules/oyranos_cmm_lraw.cpp:766
+#: modules/color/modules/oyranos_cmm_lraw.cpp:768
 msgid "Bits per Sample"
 msgstr "Bit pro Farbkanal"
 
@@ -958,7 +958,7 @@ msgid "Copyright (c) 2009 Joseph Simon; MIT"
 msgstr ""
 
 #: modules/color/modules/devices/oyranos_cmm_SANE.c:945
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1336
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1337
 #: examples/oyranos_cmm_dDev.c:835
 msgid "Copyright (c) 2009 Kai-Uwe Behrmann; MIT"
 msgstr ""
@@ -1166,7 +1166,7 @@ msgstr "Datum"
 msgid "Deactivate"
 msgstr "Deaktiviere"
 
-#: examples/image_display/image_display.cpp:1105
+#: examples/image_display/image_display.cpp:1106
 msgid "Debug"
 msgstr "Fehlersuche"
 
@@ -1320,7 +1320,7 @@ msgstr "EBU Tech.3213-E"
 msgid "EFI CMM"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:1101
+#: examples/image_display/image_display.cpp:1102
 msgid "Edit Options ..."
 msgstr "Editiere Optionen ..."
 
@@ -1421,7 +1421,7 @@ msgstr ""
 msgid "Erase profile:"
 msgstr "Melde Profil ab:"
 
-#: examples/image_display/image_display.cpp:1103
+#: examples/image_display/image_display.cpp:1104
 msgid "Examine ICC Profile ..."
 msgstr "Untersuche ICC Profil ..."
 
@@ -1692,11 +1692,11 @@ msgstr ""
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:384
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:575
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:843
-#: examples/image_display/image_display.cpp:1112
+#: examples/image_display/image_display.cpp:1113
 msgid "Help"
 msgstr "Hilfe"
 
-#: examples/image_display/image_display.cpp:1110
+#: examples/image_display/image_display.cpp:1111
 msgid "Help Shortcuts"
 msgstr "Hilfe zur Tastatur"
 
@@ -1915,7 +1915,7 @@ msgstr "Bild[input_png]"
 msgid "Image[input_ppm]"
 msgstr "Bild[input_ppm]"
 
-#: modules/color/modules/oyranos_cmm_lraw.cpp:843
+#: modules/color/modules/oyranos_cmm_lraw.cpp:845
 msgid "Image[lraw]"
 msgstr "Bild[lraw]"
 
@@ -1996,7 +1996,7 @@ msgstr "Filterobjekt eines zu lesendes PNG Bildes"
 msgid "Input PPM Image Filter Object"
 msgstr "Filterobjekt eines zu lesendes PPM Bildes"
 
-#: modules/color/modules/oyranos_cmm_lraw.cpp:845
+#: modules/color/modules/oyranos_cmm_lraw.cpp:847
 msgid "Input libraw Image Filter Object"
 msgstr "Filterobjekt für libraw Eingangsbilder"
 
@@ -2240,7 +2240,7 @@ msgstr "MIT"
 #: modules/color/modules/oyranos_cmm_lcms.c:2871
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:991
 #: modules/color/modules/devices/oyranos_cmm_SANE.c:947
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1338
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1339
 #: examples/oyranos_cmm_dDev.c:837
 msgid "MIT license: http://www.opensource.org/licenses/mit-license.php"
 msgstr "MIT Lizenz: http://www.opensource.org/licenses/mit-license.php"
@@ -2341,7 +2341,7 @@ msgstr "Modell:          "
 msgid "Modify Profile:"
 msgstr "Verändere Prmprofil"
 
-#: modules/color/modules/oyranos_cmm_lraw.cpp:761
+#: modules/color/modules/oyranos_cmm_lraw.cpp:763
 msgid "Module Options"
 msgstr "Moduloptionen"
 
@@ -2356,7 +2356,7 @@ msgid ""
 "system."
 msgstr "Bildschirme, welche durch das Modul erkannt werden."
 
-#: modules/color/modules/oyranos_cmm_lraw.cpp:769
+#: modules/color/modules/oyranos_cmm_lraw.cpp:771
 msgid "More bits mean more precission for processing and more size."
 msgstr "Mehr Bit bedeutet mehr Daten für höhere Genauigkeit zu verarbeiten."
 
@@ -2390,7 +2390,7 @@ msgid "My Name"
 msgstr "Mein Name"
 
 #: modules/color/modules/devices/oyranos_cmm_SANE.c:952
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1343
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1344
 #: examples/oyranos_cmm_dDev.c:843 examples/oyranos_cmm_dFil.c:170
 msgid "My filter introduction."
 msgstr "Meine Filter Einführung."
@@ -2574,7 +2574,7 @@ msgstr "Oyranos Bildanzeige Hilfe"
 msgid "Oyranos Image Display Info"
 msgstr "Oyranos Bildanzeige Info"
 
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1320
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1321
 msgid "Oyranos RAW Image"
 msgstr "Oyranos RAW Bild"
 
@@ -2657,7 +2657,7 @@ msgstr "Oyranos Module"
 #: modules/color/modules/devices/oyranos_cmm_SANE.c:940
 #: modules/color/modules/devices/oyranos_cmm_disp.c:1335
 #: modules/color/modules/oyranos_cmm_lraw.cpp:229
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1331
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1332
 #: examples/oyranos_cmm_dDev.c:829
 msgid ""
 "Oyranos project; www: http://www.oyranos.com; support/email: ku.b@gmx.de; "
@@ -2964,7 +2964,7 @@ msgstr ""
 "Simulationseinstellungen erlauben die Simulation eines zusätzlichen "
 "Farbraumes."
 
-#: examples/image_display/image_display.cpp:1114
+#: examples/image_display/image_display.cpp:1115
 msgid "Quit"
 msgstr "Beenden"
 
@@ -3250,7 +3250,7 @@ msgstr "Zeige CIE*xy Primärfarben"
 msgid "Show Help:"
 msgstr "Zeige Hilfe:"
 
-#: examples/image_display/image_display.cpp:1107
+#: examples/image_display/image_display.cpp:1108
 msgid "Show Infos"
 msgstr "Zeige Infos"
 
@@ -3570,7 +3570,7 @@ msgstr ""
 "Der Filter erwartet eine \"expose\" Gleitkomma Option und verarbeitet die "
 "Bilddaten entsprechend."
 
-#: modules/color/modules/oyranos_cmm_lraw.cpp:853
+#: modules/color/modules/oyranos_cmm_lraw.cpp:855
 msgid ""
 "The filter is a libraw image reader. The option \"device\" with value \"1\" "
 "requestests a oyConfig_s object containing typical device informations about "
@@ -3628,7 +3628,7 @@ msgstr ""
 " \"preserve_alpha\" ist eine Ganzzahloption die Deckkraft in einem neuen "
 "Bild zu erhalten."
 
-#: modules/color/modules/oyranos_cmm_lraw.cpp:851
+#: modules/color/modules/oyranos_cmm_lraw.cpp:853
 msgid "The filter obtains a image from libraw."
 msgstr "Der Filter erhält Bilder von libraw."
 
@@ -3912,7 +3912,7 @@ msgstr ""
 "Argument. Es kann alternative Eigenschaften anbieten bezüglich Sicherheit, "
 "Geschwiundigkeit oder Resourcenverbrauch."
 
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1322
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1323
 msgid "The raw image backend of Oyranos."
 msgstr "Das KameraRAW Bild Modul für Oyranos."
 

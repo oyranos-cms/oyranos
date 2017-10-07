@@ -220,7 +220,7 @@ int main(int argc, char ** argv)
                         { OY_PARSE_STRING_ARG2(prof_name, "profile"); break; }
                         else if(OY_IS_ARG("verbose"))
                         { if(verbose) oy_debug += 1; verbose = 1; i=100; break;}
-                        }
+                        } OY_FALLTHROUGH
               default:
                         displayHelp(argv);
                         exit (0);

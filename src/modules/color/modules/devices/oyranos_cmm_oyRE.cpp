@@ -351,7 +351,7 @@ oyProfile_s * createMatrixProfile      ( libraw_colordata_t & color,
                                          int32_t      icc_profile_flags,
                                          const char * manufacturer,
                                          const char * model,
-                                         int        * is_existing )
+                                         int        * is_existing OY_UNUSED )
 {
   static oyProfile_s * p = NULL;
 
@@ -1265,7 +1265,8 @@ oyCMMui_s_ _api8_ui = {
   0,    /* oyCMMuiGet_f oyCMMuiGet */
 
   Api8UiGetText,  /* oyCMMGetText_f getText */
-  _api8_ui_texts  /* (const char**)texts */
+  _api8_ui_texts,  /* (const char**)texts */
+  (oyCMMapiFilter_s*)&_api8 /* oyCMMapiFilter_s*parent */
 };
 
 oyIcon_s _api8_icon = {
@@ -1311,7 +1312,7 @@ oyCMMapi8_s_ _api8 = {
  *  \todo { Add usage info }
  */
 const char *GetText(const char *select, oyNAME_e type,
-                                       oyStruct_s        * context)
+                                       oyStruct_s        * context OY_UNUSED)
 {
    if (strcmp(select, "name") == 0) {
       if (type == oyNAME_NICK)
@@ -1369,7 +1370,9 @@ oyCMM_s _cmm_module = {
    (oyCMMapi_s *) & _api8,
 
   /** ::icon; zero terminated list of a icon pyramid */
-   &_api8_icon
+   &_api8_icon,
+
+  NULL                                 /**< init() */
 };
 
 /* Helper functions */

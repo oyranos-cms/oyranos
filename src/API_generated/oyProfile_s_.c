@@ -317,8 +317,13 @@ oyProfile_s_ * oyProfile_New_ ( oyObject_s object )
 
   if(s_obj)
     s = (oyProfile_s_*)s_obj->allocateFunc_(sizeof(oyProfile_s_));
+  else
+  {
+    WARNc_S(_("MEM Error."));
+    return NULL;
+  }
 
-  if(!s || !s_obj)
+  if(!s)
   {
     WARNc_S(_("MEM Error."));
     return NULL;

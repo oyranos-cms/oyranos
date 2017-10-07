@@ -39,6 +39,7 @@
               oyStructTypeToText( type )) \
     action; \
   }
+  
 
 
 /** Function oyConnectorImaging_New

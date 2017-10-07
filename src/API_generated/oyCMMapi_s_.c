@@ -189,8 +189,13 @@ oyCMMapi_s_ * oyCMMapi_New_ ( oyObject_s object )
 
   if(s_obj)
     s = (oyCMMapi_s_*)s_obj->allocateFunc_(sizeof(oyCMMapi_s_));
+  else
+  {
+    WARNc_S(_("MEM Error."));
+    return NULL;
+  }
 
-  if(!s || !s_obj)
+  if(!s)
   {
     WARNc_S(_("MEM Error."));
     return NULL;
