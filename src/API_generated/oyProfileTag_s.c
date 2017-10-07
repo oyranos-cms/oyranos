@@ -297,9 +297,9 @@ OYAPI oyProfileTag_s * OYEXPORT
  *                                     same allocators as the object.
  *  @return                            0 - success, 1 - error
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.9.7
+ *  @date    2017/10/07
  *  @since   2008/01/01 (Oyranos: 0.1.8)
- *  @date    2009/11/06
  */
 OYAPI int  OYEXPORT
                    oyProfileTag_Set  ( oyProfileTag_s    * tag,
@@ -326,6 +326,7 @@ OYAPI int  OYEXPORT
     if(s->block_)
       s->oy_->deallocateFunc_( s->block_ );
     s->block_ = *tag_block;
+    *((uint32_t*)s->block_) = oyValueUInt32( type );
     *tag_block = NULL;
   }
 

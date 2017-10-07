@@ -2751,11 +2751,6 @@ int          oyIMProfileTag_Create   ( oyProfileTag_s    * tag,
            mem_len = 12 + 8*n + 16*n + mluc_sum + 3*n;
            oyStruct_AllocHelper_m_( mem, char, mem_len, tag, error = 1 );
 
-           if(!error)
-           oyProfileTag_Set( s, icSigProfileSequenceIdentifierType,
-                                icSigProfileSequenceIdentifierType, oyOK,
-                                mem_len, (oyPointer*)&mem );
-
            tmp_len = 0;
 
            for(i = 0; i < n; ++i)
@@ -2801,6 +2796,11 @@ int          oyIMProfileTag_Create   ( oyProfileTag_s    * tag,
 
            if(error <= 0)
              *((uint32_t*)&mem[8]) = oyValueUInt32( n );
+
+           if(!error)
+           oyProfileTag_Set( s, icSigProfileSequenceIdentifierType,
+                                icSigProfileSequenceIdentifierType, oyOK,
+                                mem_len, (oyPointer*)&mem );
 
          }
          oyStructList_Release( &tag_list );
@@ -3071,7 +3071,7 @@ int          oyIMProfileTag_Create   ( oyProfileTag_s    * tag,
   if(s)
   {
     oyProfileTag_SetLastCMM( s, CMM_NICK );
-    if(oyProfileTag_GetStatus( s ) == oyOK)
+    if(mem && oyProfileTag_GetStatus( s ) == oyOK)
       *((uint32_t*)&mem[0]) = oyValueUInt32( tag_type );
   }
 
