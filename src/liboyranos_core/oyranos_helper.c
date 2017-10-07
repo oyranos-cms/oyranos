@@ -195,8 +195,9 @@ void* oyAllocateFunc_           (size_t        size)
 #endif
   {
     if(oy_debug_memory != 0 || size == 0)
-      printf( OY_DBG_FORMAT_ "allocate %d %lu + %lu byte in\n", OY_DBG_ARGS_,
-              oy_allocs_count_, (unsigned long) size, (unsigned long) 2*sizeof(long));
+      printf( "%lu + %lu byte allocate %d "OY_DBG_FORMAT_ ,
+              (unsigned long) size, (unsigned long) 2*sizeof(long),
+              oy_allocs_count_, OY_DBG_ARGS_);
 
     /* sizeof(long) is for better alignment and less valgrind positives 
      * 2*sizeof(long) helped on a oS-12.1 instal with glibc-2.14.1-14.27.1.x86_64 */
