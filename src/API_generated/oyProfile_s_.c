@@ -1327,14 +1327,14 @@ oyProfileTag_s * oyProfile_GetTagByPos_( oyProfile_s_    * profile,
       oyProfileTag_s_ * tag_ = oyProfileTag_New_( 0 );
       char h[5] = {"head"};
       uint32_t * hi = (uint32_t*)&h;
-      char *tag_block = 0;
+      oyPointer tag_block = 0;
 
       oyAllocHelper_m_( tag_block, char, 132, 0, return 0 );
       error = !memcpy( tag_block, s->block_, 132 );
       error = oyProfileTag_Set( (oyProfileTag_s*)tag_,
                                 (icTagSignature)*hi,
                                 (icTagTypeSignature)*hi,
-                                oyOK, 132, tag_block );
+                                oyOK, 132, &tag_block );
       if(error <= 0)
         error = !memcpy( tag_->profile_cmm_, profile_cmm, 4 );
 
@@ -1382,7 +1382,7 @@ oyProfileTag_s * oyProfile_GetTagByPos_( oyProfile_s_    * profile,
         }
 
         error = oyProfileTag_Set( tag_, sig, tag_type,
-                                  status, tag_size, tag_block );
+                                  status, tag_size, &tag_block );
         if(error <= 0)
           error = oyProfileTag_SetOffset( tag_, offset );
         if(error <= 0)

@@ -2518,7 +2518,7 @@ int                oyProfile_AddDevice(oyProfile_s       * profile,
 
   dict_tag = oyProfileTag_New(NULL);
   error = oyProfileTag_Set( dict_tag, icSigMetaDataTag, icSigDictType,
-                            oyOK, block_size, dict );
+                            oyOK, block_size, (oyPointer*)&dict );
   if(error <= 0)
     error = oyProfile_TagMoveIn( p, &dict_tag, -1 );
 
@@ -2533,7 +2533,7 @@ int                oyProfile_AddDevice(oyProfile_s       * profile,
       oyProfileTag_s * tag = oyProfile_GetTagByPos( p, 0 );
       char h[5] = {"head"};
       uint32_t * hi = (uint32_t*)&h;
-      char *tag_block = 0;
+      oyPointer tag_block = 0;
 
       data = oyProfile_GetMem( p, &size, 0, oyAllocateFunc_ );
       header = (icHeader*) data;
@@ -2550,7 +2550,7 @@ int                oyProfile_AddDevice(oyProfile_s       * profile,
       error = !memcpy( tag_block, data, 132 );
       error = oyProfileTag_Set( tag, (icTagSignature)*hi,
                                 (icTagTypeSignature)*hi,
-                                oyOK, 132, tag_block );
+                                oyOK, 132, &tag_block );
       t = manufacturer;
       if(t)
         error = oyProfile_AddTagText( p, icSigDeviceMfgDescTag, t );

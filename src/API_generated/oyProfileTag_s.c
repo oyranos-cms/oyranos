@@ -307,7 +307,7 @@ OYAPI int  OYEXPORT
                                        icTagTypeSignature  type,
                                        oySTATUS_e          status,
                                        size_t              tag_size,
-                                       oyPointer           tag_block )
+                                       oyPointer         * tag_block )
 {
   oyProfileTag_s_ * s = (oyProfileTag_s_*)tag;
   int error = !s;
@@ -325,7 +325,8 @@ OYAPI int  OYEXPORT
     s->size_ = tag_size;
     if(s->block_)
       s->oy_->deallocateFunc_( s->block_ );
-    s->block_ = tag_block;
+    s->block_ = *tag_block;
+    *tag_block = NULL;
   }
 
   return error;

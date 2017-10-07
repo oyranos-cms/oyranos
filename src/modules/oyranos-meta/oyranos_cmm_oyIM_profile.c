@@ -2124,7 +2124,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
                {
                  oyProfileTag_Set( tmptag, icSigDeviceMfgDescTag,
                                          tag_sig, oyOK,
-                                         mluc_size, tmp );
+                                         mluc_size, (oyPointer*)&tmp );
                  mfg_tmp = oyIMProfileTag_GetValues( tmptag );
                } else if(mluc_size)
                  oyIM_msg( oyMSG_WARN, tag, OY_DBG_FORMAT_"\n"
@@ -2158,7 +2158,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
                {
                  oyProfileTag_Set( tmptag, icSigDeviceModelDescTag,
                                          tag_sig, oyOK,
-                                         mluc_size, tmp );
+                                         mluc_size, (oyPointer*)&tmp );
                  model_tmp = oyIMProfileTag_GetValues( tmptag );
                } else if(mluc_size)
                  oyIM_msg( oyMSG_WARN, tag, OY_DBG_FORMAT_"\n"
@@ -2285,7 +2285,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
                    error = !memcpy(tmp, &mem[offset], tag_size - offset);
                    oyProfileTag_Set( tmptag, icSigProfileDescriptionTag,
                                            icSigMultiLocalizedUnicodeType, oyOK,
-                                           tag_size - offset, tmp );
+                                           tag_size - offset, (oyPointer*)&tmp );
                    tmp = 0;
                    desc_tmp = oyIMProfileTag_GetValues( tmptag );
                    if(oyStructList_Count( desc_tmp ) )
@@ -2696,7 +2696,7 @@ int          oyIMProfileTag_Create   ( oyProfileTag_s    * tag,
            oyProfileTag_SetStatus( s, oyUNDEFINED );
 
          } else {
-           oyProfileTag_Set( s, oyProfileTag_GetUse(s), tag_type, oyOK, mem_len, mem );
+           oyProfileTag_Set( s, oyProfileTag_GetUse(s), tag_type, oyOK, mem_len, (oyPointer*)&mem );
          }
        }
 
@@ -2754,7 +2754,7 @@ int          oyIMProfileTag_Create   ( oyProfileTag_s    * tag,
            if(!error)
            oyProfileTag_Set( s, icSigProfileSequenceIdentifierType,
                                 icSigProfileSequenceIdentifierType, oyOK,
-                                mem_len, mem );
+                                mem_len, (oyPointer*)&mem );
 
            tmp_len = 0;
 
@@ -2877,7 +2877,7 @@ int          oyIMProfileTag_Create   ( oyProfileTag_s    * tag,
          } else {
            len = mem_len + 1;
            mem_len = len + (len%4 ? len%4 : 0);
-           oyProfileTag_Set( s, oyProfileTag_GetUse(s), tag_type, oyOK, mem_len, mem );
+           oyProfileTag_Set( s, oyProfileTag_GetUse(s), tag_type, oyOK, mem_len, (oyPointer*)&mem );
          }
        }
 
@@ -2961,7 +2961,7 @@ int          oyIMProfileTag_Create   ( oyProfileTag_s    * tag,
          } else {
            /*len = mem_len + 1;
            mem_len = len + (len%4 ? len%4 : 0);*/
-           oyProfileTag_Set( s, oyProfileTag_GetUse( s ), tag_type, oyOK, len, mem );
+           oyProfileTag_Set( s, oyProfileTag_GetUse( s ), tag_type, oyOK, len, (oyPointer*)&mem );
          }
        }
 
@@ -3045,7 +3045,7 @@ int          oyIMProfileTag_Create   ( oyProfileTag_s    * tag,
                oyNamedColor_Release( &ncl );
              }
 
-             oyProfileTag_Set( s, oyProfileTag_GetUse( s ), tag_type, oyOK, size, ncl2 );
+             oyProfileTag_Set( s, oyProfileTag_GetUse( s ), tag_type, oyOK, size, (oyPointer*)&ncl2 );
              oyProfile_Release( &ref );
            }
          else
@@ -3133,7 +3133,7 @@ oyStructList_s *   oyStringsFrommluc ( const char        * mem,
 {
   oyStructList_s * desc = 0;
   oyProfileTag_s * tmptag = 0;
-  char * tmp = 0;
+  oyPointer tmp = 0;
   oyName_s * name = 0;
   int error = 0;
 
@@ -3144,7 +3144,7 @@ oyStructList_s *   oyStringsFrommluc ( const char        * mem,
   if(error) WARNc2_S("%s %d", _("found issues"),error);
   oyProfileTag_Set( tmptag, icSigProfileDescriptionTag,
                             icSigMultiLocalizedUnicodeType, oyOK,
-                            size, tmp );
+                            size, &tmp );
   tmp = 0;
 
   desc = oyIMProfileTag_GetValues( tmptag );
