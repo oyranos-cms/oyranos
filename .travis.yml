@@ -23,7 +23,7 @@ before_script:
     fi
 script:
   - if [[ $TRAVIS_BRANCH != coverity_scan ]]; then
-      make
+      make;
     fi
   - if [[ $TRAVIS_BRANCH != coverity_scan ]] && [[ "$CC" == "gcc" ]]; then
       OY_MODULE_PATH=$TRAVIS_BUILD_DIR/src/modules XDG_DATA_DIRS=$TRAVIS_BUILD_DIR make check;
