@@ -11,6 +11,10 @@ matrix:
 
 # Change this to your needs
 before_install:
+  - echo TRAVIS_BRANCH: $TRAVIS_BRANCH
+  - echo COVERITY_SCAN_BRANCH_PATTERN: $COVERITY_SCAN_BRANCH_PATTERN
+  - echo COVERITY: $COVERITY
+  - test $TRAVIS_BRANCH != coverity_scan || exit 0
   - test $TRAVIS_BRANCH == $COVERITY_SCAN_BRANCH_PATTERN -a $COVERITY != 1 && exit 0
   - sudo apt-get update -qq
   - sudo apt-get install -y locales cmake pkg-config libxml2-dev libyajl-dev libdbus-1-dev gettext valgrind icc-profiles-free lcov pkg-config libxfixes-dev libxmu-dev x11proto-xext-dev libxinerama-dev libxrandr-dev libxxf86vm-dev x11proto-xf86vidmode-dev liblcms2-dev libraw-dev libexiv2-dev libcups2-dev doxygen graphviz 
