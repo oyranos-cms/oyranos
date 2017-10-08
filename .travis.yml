@@ -1,7 +1,14 @@
 language: c
+
 compiler:
   - gcc
   - clang
+
+matrix:
+  include:
+    - compiler: gcc
+      env: COVERITY=1
+
 # Change this to your needs
 before_script:
   - if [[ "$CC" == "gcc" ]]; then
@@ -11,8 +18,8 @@ before_script:
     fi
 script:
   - if [[ "${COVERITY_SCAN_BRANCH}" == 1 ]]; then
-        echo "Do not build coverity_scan branch.";
-        exit 0;
+      echo "Do not build coverity_scan branch.";
+      exit 0;
     fi
   - make
   - if [[ "$CC" == "gcc" ]]; then
@@ -22,9 +29,15 @@ script:
       bash <(curl -s https://codecov.io/bash) -f coverage.info -R $TRAVIS_BUILD_DIR/.. -X gcov;
     fi
 before_install:
+  - if [[ "$COVERITY" != "1" ]] && [[ "$COVERITY_SCAN_BRANCH" == 1 ]]; then
+      echo "Do start coverity_scan branch other than with gcc (actual: $CC).";
+      exit 1;
+    fi
   - sudo apt-get update -qq
   - sudo apt-get install -y locales cmake pkg-config libxml2-dev libyajl-dev libdbus-1-dev gettext valgrind icc-profiles-free lcov pkg-config libxfixes-dev libxmu-dev x11proto-xext-dev libxinerama-dev libxrandr-dev libxxf86vm-dev x11proto-xf86vidmode-dev liblcms2-dev libraw-dev libexiv2-dev libcups2-dev doxygen graphviz 
-  - echo -n | openssl s_client -connect scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
+  - if [[ "$COVERITY" = "1" ]] && [[ "$COVERITY_SCAN_BRANCH" == 1 ]]; then
+      echo -n | openssl s_client -connect scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-;
+    fi
 
 env:
   global:
@@ -38,6 +51,6 @@ addons:
       name: "oyranos-cms/oyranos"
       description: "Build submitted via Travis CI"
     notification_email: ku.b@gmx.de
-    build_command_prepend: if [[ "$CC" == "gcc" ]]; then ./configure; make clean; fi
-    build_command:   if [[ "$CC" == "gcc" ]]; then make -j 4; fi
+    build_command_prepend: "./configure; make clean"
+    build_command:   "make -j 4"
     branch_pattern: coverity_scan
