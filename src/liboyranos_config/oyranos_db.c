@@ -172,17 +172,27 @@ int                oyDbInitialise_  ( void )
 {
   oyOptions_s * opts = 0,
               * result_opts = 0;
+  const char * prefered_db = "//" OY_TYPE_STD "/db_handler.elDB";
+
+  if(getenv("OY_DEBUG_DB_MODULE"))
+  {
+    prefered_db = getenv("OY_DEBUG_DB_MODULE");
+    oyMessageFunc_p( oyMSG_DBG, NULL, OY_DBG_FORMAT_
+                     " selecting OY_DEBUG_DB_MODULE=\"%s\"",OY_DBG_ARGS_, prefered_db );
+  }
 
   opts = oyOptions_New(0);
-  int error = oyOptions_Handle( "//"OY_TYPE_STD"/db_handler.elDB",
+  int error = oyOptions_Handle( prefered_db,
                                 opts,"db_handler",
                                 &result_opts );
   if(error || oyDB_newFrom == oyDB_newFromInit)
   {
+    const char * fallback_db = "//" OY_TYPE_STD "/db_handler";
     oyMessageFunc_p( oyMSG_DBG, NULL, OY_DBG_FORMAT_
-                     " can't initialise Elektra \"db_handler\" e:%d",OY_DBG_ARGS_, error);
+                     " can't initialise \"%s\" e:%d trying: \"%s\"",OY_DBG_ARGS_,
+                     prefered_db, error, fallback_db);
 
-    error = oyOptions_Handle( "//"OY_TYPE_STD"/db_handler",
+    error = oyOptions_Handle( fallback_db,
                               opts,"db_handler",
                               &result_opts );
     if(error || oyDB_newFrom == oyDB_newFromInit)
