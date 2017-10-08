@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2017-10-07 22:57+0200\n"
+"POT-Creation-Date: 2017-10-08 08:39+0200\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -927,7 +927,7 @@ msgstr "Umwandeln für's WWW (sRGB)"
 msgid "Convert to untagged Cmyk, preserving Cmyk numbers"
 msgstr "Wandle in unspezifziertes Cmyk, erhalte Cmyk Zahlen"
 
-#: API_generated/oyranos_module.c:1390 liboyranos_config/oyranos_icc.c:457
+#: API_generated/oyranos_module.c:1389 liboyranos_config/oyranos_icc.c:457
 msgid "Copyright"
 msgstr "Kopierrecht"
 
@@ -985,7 +985,7 @@ msgstr ""
 msgid "Copyright:       "
 msgstr "Kopierrecht:     "
 
-#: API_generated/oyranos_module.c:2011
+#: API_generated/oyranos_module.c:2010
 msgid "Could not allocate memory for:"
 msgstr "Kann nicht reservieren für:"
 
@@ -1143,7 +1143,7 @@ msgstr ""
 msgid "DB handling failed"
 msgstr "DB Verbindung gelang nicht"
 
-#: liboyranos_config/oyranos_db.c:143 liboyranos_config/oyranos_db.c:204
+#: liboyranos_config/oyranos_db.c:143 liboyranos_config/oyranos_db.c:214
 msgid "DB handling is already set"
 msgstr "DB Verbindung bereits gesetzt"
 
@@ -1745,7 +1745,7 @@ msgstr "ICC Dateiattribute"
 msgid "ICC profile"
 msgstr "ICC Profil"
 
-#: API_generated/oyProfile_s_.c:915
+#: API_generated/oyProfile_s_.c:920
 msgid "ICC profile id written"
 msgstr "ICC Profil ID geschrieben"
 
@@ -2203,32 +2203,54 @@ msgstr "Leuchtdichte Y"
 msgid "Luv"
 msgstr "Luv"
 
-#: API_generated/oyArray2d_s_.c:215 API_generated/oyBlob_s_.c:227
-#: API_generated/oyCMMapi10_s_.c:198 API_generated/oyCMMapi3_s_.c:189
-#: API_generated/oyCMMapi4_s.c:227 API_generated/oyCMMapi4_s_.c:236
-#: API_generated/oyCMMapi5_s_.c:189 API_generated/oyCMMapi6_s_.c:202
-#: API_generated/oyCMMapi7_s_.c:252 API_generated/oyCMMapi8_s_.c:202
-#: API_generated/oyCMMapi9_s_.c:202 API_generated/oyCMMapiFilter_s_.c:199
-#: API_generated/oyCMMapiFilters_s_.c:195 API_generated/oyCMMapi_s_.c:195
-#: API_generated/oyCMMapis_s_.c:195 API_generated/oyCMMinfo_s_.c:202
-#: API_generated/oyCMMobjectType_s_.c:192 API_generated/oyCMMui_s_.c:202
-#: API_generated/oyConfig_s_.c:235 API_generated/oyConfigs_s_.c:195
-#: API_generated/oyConnectorImaging_s_.c:257 API_generated/oyConnector_s_.c:201
-#: API_generated/oyConversion_s_.c:196 API_generated/oyFilterCore_s.c:203
-#: API_generated/oyFilterCore_s_.c:225 API_generated/oyFilterGraph_s_.c:201
-#: API_generated/oyFilterNode_s_.c:248 API_generated/oyFilterNodes_s_.c:195
-#: API_generated/oyFilterPlug_s_.c:202 API_generated/oyFilterPlugs_s_.c:195
-#: API_generated/oyFilterSocket_s_.c:223 API_generated/oyHash_s_.c:229
-#: API_generated/oyImage_s_.c:223 API_generated/oyLis_s_.c:187
-#: API_generated/oyList_s_.c:165 API_generated/oyName_s_.c:47
-#: API_generated/oyName_s_.c:55 API_generated/oyNamedColor_s_.c:223
-#: API_generated/oyNamedColors_s_.c:186 API_generated/oyObserver_s.c:50
-#: API_generated/oyOption_s_.c:258 API_generated/oyOptions_s_.c:196
-#: API_generated/oyPixelAccess_s_.c:225 API_generated/oyPointer_s_.c:277
-#: API_generated/oyProfileTag_s_.c:214 API_generated/oyProfile_s_.c:323
-#: API_generated/oyProfiles_s_.c:195 API_generated/oyRectangle_s_.c:191
-#: API_generated/oyStructList_s_.c:239 API_generated/oyranos_devices.c:3585
-#: API_generated/oyranos_module.c:1552 liboyranos/oyranos_alpha.c:257
+#: API_generated/oyArray2d_s_.c:214 API_generated/oyArray2d_s_.c:220
+#: API_generated/oyBlob_s_.c:226 API_generated/oyBlob_s_.c:232
+#: API_generated/oyCMMapi10_s_.c:197 API_generated/oyCMMapi10_s_.c:203
+#: API_generated/oyCMMapi3_s_.c:188 API_generated/oyCMMapi3_s_.c:194
+#: API_generated/oyCMMapi4_s.c:227 API_generated/oyCMMapi4_s_.c:235
+#: API_generated/oyCMMapi4_s_.c:241 API_generated/oyCMMapi5_s_.c:188
+#: API_generated/oyCMMapi5_s_.c:194 API_generated/oyCMMapi6_s_.c:201
+#: API_generated/oyCMMapi6_s_.c:207 API_generated/oyCMMapi7_s_.c:251
+#: API_generated/oyCMMapi7_s_.c:257 API_generated/oyCMMapi8_s_.c:201
+#: API_generated/oyCMMapi8_s_.c:207 API_generated/oyCMMapi9_s_.c:201
+#: API_generated/oyCMMapi9_s_.c:207 API_generated/oyCMMapiFilter_s_.c:198
+#: API_generated/oyCMMapiFilter_s_.c:204 API_generated/oyCMMapiFilters_s_.c:194
+#: API_generated/oyCMMapiFilters_s_.c:200 API_generated/oyCMMapi_s_.c:194
+#: API_generated/oyCMMapi_s_.c:200 API_generated/oyCMMapis_s_.c:194
+#: API_generated/oyCMMapis_s_.c:200 API_generated/oyCMMinfo_s_.c:201
+#: API_generated/oyCMMinfo_s_.c:207 API_generated/oyCMMobjectType_s_.c:191
+#: API_generated/oyCMMobjectType_s_.c:197 API_generated/oyCMMui_s_.c:201
+#: API_generated/oyCMMui_s_.c:207 API_generated/oyConfig_s_.c:234
+#: API_generated/oyConfig_s_.c:240 API_generated/oyConfigs_s_.c:194
+#: API_generated/oyConfigs_s_.c:200 API_generated/oyConnectorImaging_s_.c:256
+#: API_generated/oyConnectorImaging_s_.c:262 API_generated/oyConnector_s_.c:200
+#: API_generated/oyConnector_s_.c:206 API_generated/oyConversion_s_.c:195
+#: API_generated/oyConversion_s_.c:201 API_generated/oyFilterCore_s.c:203
+#: API_generated/oyFilterCore_s_.c:224 API_generated/oyFilterCore_s_.c:230
+#: API_generated/oyFilterGraph_s_.c:200 API_generated/oyFilterGraph_s_.c:206
+#: API_generated/oyFilterNode_s_.c:247 API_generated/oyFilterNode_s_.c:253
+#: API_generated/oyFilterNodes_s_.c:194 API_generated/oyFilterNodes_s_.c:200
+#: API_generated/oyFilterPlug_s_.c:201 API_generated/oyFilterPlug_s_.c:207
+#: API_generated/oyFilterPlugs_s_.c:194 API_generated/oyFilterPlugs_s_.c:200
+#: API_generated/oyFilterSocket_s_.c:222 API_generated/oyFilterSocket_s_.c:228
+#: API_generated/oyHash_s_.c:228 API_generated/oyHash_s_.c:234
+#: API_generated/oyImage_s_.c:222 API_generated/oyImage_s_.c:228
+#: API_generated/oyLis_s_.c:186 API_generated/oyLis_s_.c:192
+#: API_generated/oyList_s_.c:164 API_generated/oyList_s_.c:170
+#: API_generated/oyName_s_.c:47 API_generated/oyName_s_.c:55
+#: API_generated/oyNamedColor_s_.c:222 API_generated/oyNamedColor_s_.c:228
+#: API_generated/oyNamedColors_s_.c:185 API_generated/oyNamedColors_s_.c:191
+#: API_generated/oyObserver_s.c:50 API_generated/oyOption_s_.c:257
+#: API_generated/oyOption_s_.c:263 API_generated/oyOptions_s_.c:195
+#: API_generated/oyOptions_s_.c:201 API_generated/oyPixelAccess_s_.c:224
+#: API_generated/oyPixelAccess_s_.c:230 API_generated/oyPointer_s_.c:276
+#: API_generated/oyPointer_s_.c:282 API_generated/oyProfileTag_s_.c:213
+#: API_generated/oyProfileTag_s_.c:219 API_generated/oyProfile_s_.c:322
+#: API_generated/oyProfile_s_.c:328 API_generated/oyProfiles_s_.c:194
+#: API_generated/oyProfiles_s_.c:200 API_generated/oyRectangle_s_.c:190
+#: API_generated/oyRectangle_s_.c:196 API_generated/oyStructList_s_.c:238
+#: API_generated/oyStructList_s_.c:244 API_generated/oyranos_devices.c:3585
+#: API_generated/oyranos_module.c:1551 liboyranos/oyranos_alpha.c:257
 #: liboyranos_modules/oyranos_forms.c:56
 msgid "MEM Error."
 msgstr "Speicher Fehler"
@@ -2272,7 +2294,7 @@ msgstr "Signatur"
 msgid "Magic:           "
 msgstr "Signatur:        "
 
-#: API_generated/oyranos_module.c:1389 API_generated/oyranos_profile.c:43
+#: API_generated/oyranos_module.c:1388 API_generated/oyranos_profile.c:43
 msgid "Manufacturer"
 msgstr "Hersteller"
 
@@ -2417,7 +2439,7 @@ msgstr "NAME"
 msgid "NUMBER"
 msgstr "NUMMER"
 
-#: API_generated/oyranos_module.c:1388
+#: API_generated/oyranos_module.c:1387
 msgid "Name"
 msgstr "Name"
 
@@ -2460,7 +2482,7 @@ msgstr "Neuer Weißpunktmodus"
 msgid "No"
 msgstr "Nein"
 
-#: API_generated/oyProfile_s_.c:900
+#: API_generated/oyProfile_s_.c:905
 msgid "No ICC profile id detected"
 msgstr "kein ICC Profil ID gefunden"
 
@@ -3287,7 +3309,7 @@ msgstr "Zeige Sonnenauf-und untergang:"
 msgid "Show which policy matches by combining all involved settings."
 msgstr "Zeige an, welche Richtlinie zur Kombination aller Einstellungen passt."
 
-#: API_generated/oyFilterNode_s_.c:1237 API_generated/oyObserver_s.c:360
+#: API_generated/oyFilterNode_s_.c:1242 API_generated/oyObserver_s.c:360
 #: API_generated/oyObserver_s.c:371 API_generated/oyObserver_s.c:572
 #: API_generated/oyObserver_s.c:650 API_generated/oyObserver_s_.c:53
 #: examples/image_display/oyranos_display_helper_classes_fltk.cpp:47
@@ -4144,7 +4166,7 @@ msgstr "Filterobjekt zum Schreiben eines PPM Bildes"
 msgid "Write to ICC profile:"
 msgstr "Schreibe ICC Profil:"
 
-#: API_generated/oyProfile_s_.c:892
+#: API_generated/oyProfile_s_.c:897
 msgid "Wrong ICC profile id detected"
 msgstr "Fehler in ICC Profil ID gefunden!"
 
@@ -4330,9 +4352,9 @@ msgstr "bette Geräte-und Treiberinformationen in ICC meta Block ein"
 msgid "enable simple defaults"
 msgstr "benutze einfache Grundeinstellungen"
 
-#: API_generated/oyConversion_s.c:190 API_generated/oyFilterNode_s_.c:615
+#: API_generated/oyConversion_s.c:190 API_generated/oyFilterNode_s_.c:620
 #: API_generated/oyranos_devices.c:2657 API_generated/oyranos_devices.c:3168
-#: API_generated/oyranos_module.c:2003
+#: API_generated/oyranos_module.c:2002
 msgid "error in module:"
 msgstr "Fehler in Modul:"
 

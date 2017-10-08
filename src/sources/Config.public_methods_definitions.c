@@ -1262,6 +1262,9 @@ OYAPI int  OYEXPORT oyRankMapFromJSON( const char        * json_text,
         }
       }
     }
+
+    oyjl_tree_free( json );
+    json = NULL;
   }
 
   if(error <= 0 && rank_map)
