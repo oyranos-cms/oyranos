@@ -404,8 +404,9 @@ int      oyX1GetMonitorInfo          ( const char        * display_name,
       {
         free(log_text);
         log_text = NULL;
-      }
-      log_text[s] = '\000';
+      } else
+        log_text[s] = '\000';
+
       fclose(fp);
     }
 
