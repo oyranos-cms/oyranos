@@ -222,6 +222,7 @@ oyTESTRESULT_e testDB()
     PRINT_SUB( oyTESTRESULT_SUCCESS,
     "oyGetPersistentString(%s) no", TEST_DOMAIN TEST_KEY );
   }
+  oyFree_m_(start);
 
   error = oySetPersistentString( TEST_DOMAIN TEST_KEY, oySCOPE_USER,
                                  "NULLTestValue", "NULLTestComment" );
