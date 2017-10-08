@@ -46,12 +46,14 @@
     The given paths are scanned recursively to find the modules.
 
     @section debug_vars Debugging Variables
-    OY_DEBUG influences the internal ::oy_debug variable. Its value
+    OY_DEBUG influences the internal ::oy_debug integer variable. Its value
     changes the output level. See as well oyranos_debug.[h,c] . The configure
     switch --enable-debug enables most of the available output. \n
-    OY_DEBUG_MEMORY sets the internal ::oy_debug_memory variable on and
+    OY_DEBUG_MEMORY sets the internal ::oy_debug_memory integer variable on and
     helps somewhat in detecting memory leaks. This variable is dangerous and 
     should not to be run for production use. \n
+    OY_DEBUG_DB_MODULE can explicitely specify a module registration string
+    for testing. \n
     OY_DEBUG_OBJECTS is used to frequently print infos 
     about objects on stderr. The value of OY_DEBUG_OBJECTS can be a
     - Object ID or a
@@ -59,7 +61,7 @@
     - "1" to print track informations about all trackable objects.
     - "-1" to omit printing track informations.
  
-    OY_DEBUG_SIGNALS sets the internal ::oy_debug_signals variable on and
+    OY_DEBUG_SIGNALS sets the internal ::oy_debug_signals integer variable on and
     helps in tracing signals. This variable is dangerous and 
     should not to be run for production use. \n
     OY_DEBUG_WRITE together with OY_DEBUG is used to tell, that a file output
