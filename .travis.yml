@@ -1,10 +1,7 @@
 language: c
-
 compiler:
   - gcc
   - clang
-
-      env: COVERITY=1
 
 # Change this to your needs
 before_install:
