@@ -1098,6 +1098,7 @@ void oyjl_tree_free_node             ( oyjl_val            root,
              if( p->u.array.values[i] == o )
              {
                oyjl_tree_free( o );
+               o = NULL;
                p->u.array.values[i] = NULL;
 
                if(count > 1)
@@ -1121,6 +1122,7 @@ void oyjl_tree_free_node             ( oyjl_val            root,
              if( p->u.object.values[i] == o )
              {
                oyjl_tree_free( o );
+               o = NULL;
                p->u.object.keys[i] = NULL;
                p->u.object.values[i] = NULL;
 
@@ -1147,6 +1149,8 @@ void oyjl_tree_free_node             ( oyjl_val            root,
     if(path) free(path);
     path = parent_path;
     parent_path = NULL;
+    oyjl_tree_free( o );
+    o = NULL;
 
     if(delete_parent == 0)
       break;
