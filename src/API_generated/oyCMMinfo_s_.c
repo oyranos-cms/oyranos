@@ -55,6 +55,14 @@ void oyCMMinfo_Release__Members( oyCMMinfo_s_ * cmminfo )
   /* Deallocate members here
    * E.g: oyXXX_Release( &cmminfo->member );
    */
+  oyCMMapi_s * api = NULL,
+             * old_api = cmminfo->api;
+  while(old_api && (api = oyCMMapi_GetNext(old_api)) != NULL)
+  {
+    if(old_api->release)
+      old_api->release( (oyStruct_s**)&old_api );
+    old_api = api;
+  }
 
   if(cmminfo->oy_->deallocateFunc_)
   {

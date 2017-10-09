@@ -11,15 +11,23 @@
  *
  *  @param[in]  cmminfo  the CMMinfo object
  *
- *  @version Oyranos: x.x.x
+ *  @version Oyranos: 0.9.7
+ *  @date    2017/10/09
  *  @since   YYYY/MM/DD (Oyranos: x.x.x)
- *  @date    YYYY/MM/DD
  */
 void oyCMMinfo_Release__Members( oyCMMinfo_s_ * cmminfo )
 {
   /* Deallocate members here
    * E.g: oyXXX_Release( &cmminfo->member );
    */
+  oyCMMapi_s * api = NULL,
+             * old_api = cmminfo->api;
+  while(old_api && (api = oyCMMapi_GetNext(old_api)) != NULL)
+  {
+    if(old_api->release)
+      old_api->release( (oyStruct_s**)&old_api );
+    old_api = api;
+  }
 
   if(cmminfo->oy_->deallocateFunc_)
   {
