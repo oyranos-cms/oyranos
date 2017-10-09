@@ -255,6 +255,7 @@ int              DeviceFromName_     ( const char        * device_name,
         {
           edid = oyBlob_New(0);
           oyBlob_SetFromData( edid, edid_data, edid_size, 0 );
+	  free( edid_data );
         }
       }
 
