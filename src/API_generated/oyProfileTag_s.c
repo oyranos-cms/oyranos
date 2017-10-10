@@ -180,6 +180,20 @@ OYAPI oyProfileTag_s * OYEXPORT
   return s;
 }
 
+oyName_s * oyNameFromList_( oyStructList_s * list, int pos )
+{
+  oyOption_s * o = (oyOption_s*) oyStructList_GetRefType( list, pos,
+                                                          oyOBJECT_OPTION_S );
+  if(o)
+  {
+    struct oyObject_s_ * obj = (struct oyObject_s_*)o->oy_;
+    oyOption_Release( &o );
+    if(obj) return obj->name_;
+  }
+
+  return NULL;
+}
+
 /** Function  oyProfileTag_CreateFromText
  *  @memberof oyProfileTag_s
  *  @brief    Create a oyProfileTag_s from a string
@@ -203,21 +217,33 @@ OYAPI oyProfileTag_s * OYEXPORT
 {
   int error = !text;
   oyProfileTag_s * tag = 0;
-  struct oyObject_s_ * name = 0;
   oyStructList_s * list = 0;
 
   if(error <= 0)
   {
-    name = oyObject_New();
-    error = !name;
+    list = oyStructList_New(0);
+    error = !list;
   }
 
   if(error <= 0)
   {
-    oyObject_SetName( name, text, oyNAME_NAME );
-    memcpy( name->name_->lang, "en_GB", 5 );
-    list = oyStructList_New(0);
-    error = oyStructList_MoveIn( list, (oyStruct_s**) &name, 0,
+    oyOption_s * o = oyOption_FromRegistration( OY_INTERNAL, 0 );
+    struct oyObject_s_ * obj = NULL;
+
+    if(!o) error = 1;
+
+    if(!error)
+      obj = (struct oyObject_s_*)o->oy_;
+    if(!obj) error = 1;
+
+    if(!error)
+      error = oyObject_SetName( obj, text, oyNAME_NAME );
+
+    if(obj && !obj->name_)
+       error = 1;
+    else
+      memcpy( obj->name_->lang, "en_GB", 5 );
+    error = oyStructList_MoveIn( list, (oyStruct_s**) &o, 0,
                                  OY_OBSERVE_AS_WELL );
   }
 
@@ -429,7 +455,7 @@ char **        oyProfileTag_GetText  ( oyProfileTag_s    * tag,
   int implicite_i18n = 0;
   char ** texts = 0, * text = 0, * text_tmp = 0, * temp = 0;
   oyStructList_s * values = 0;
-  struct oyObject_s_ * name = NULL;
+  oyName_s * name = NULL;
   oyBlob_s * blob = 0;
   size_t size = 0;
   int values_n = 0, i = 0, k;
@@ -467,15 +493,15 @@ char **        oyProfileTag_GetText  ( oyProfileTag_s    * tag,
         {
           for(i = 0; i < values_n; ++i)
           {
-            text = 0;
-            name = (struct oyObject_s_*) oyStructList_GetRefType( values, i,
-                                                        oyOBJECT_OBJECT_S );
+            name = oyNameFromList_( values, i );
             if(!name)
             blob = (oyBlob_s*) oyStructList_GetRefType( values, i,
                                                         oyOBJECT_BLOB_S );
-            if(name && name->name_)
+
+	    text = 0;
+            if(name)
             {
-              memcpy(t_l, name->name_->lang, 8); t_c[0] = 0;
+              memcpy(t_l, name->lang, 8); t_c[0] = 0;
               t_ptr = oyStrchr_(t_l, '_');
               if(t_ptr)
               {
@@ -484,8 +510,8 @@ char **        oyProfileTag_GetText  ( oyProfileTag_s    * tag,
               }
             }
 
-            if(name && name->name_)
-              text = name->name_->name;
+            if(name)
+              text = name->name;
             else if(blob && oyBlob_GetPointer(blob) && oyBlob_GetSize(blob))
             {
               error = oyStringFromData_( oyBlob_GetPointer(blob),
@@ -510,10 +536,10 @@ char **        oyProfileTag_GetText  ( oyProfileTag_s    * tag,
                (k == 3 && ((!language && !country) || implicite_i18n))
               )
             {
-              if(name && name->name_ && isalpha(name->name_->lang[0]) && !implicite_i18n)
+              if(name && isalpha(name->lang[0]) && !implicite_i18n)
               {
                 /* string with i18n infos -> "de_DE:Licht" */
-                temp = oyStringAppend_(name->name_->lang, ":", oyAllocateFunc_);
+                temp = oyStringAppend_(name->lang, ":", oyAllocateFunc_);
                 temp = oyStringAppend_(temp, text, oyAllocateFunc_);
                 oyStringListAddString_( &texts, &texts_n, &temp,
                                             oyAllocateFunc_, oyDeAllocateFunc_);
@@ -521,7 +547,7 @@ char **        oyProfileTag_GetText  ( oyProfileTag_s    * tag,
               } else {
                 /* pure string -> "Licht" */
                 oyStringListAddStaticString( &texts, &texts_n, text,
-                                            oyAllocateFunc_, oyDeAllocateFunc_);
+                                             oyAllocateFunc_, oyDeAllocateFunc_);
                 /* no selection for best i18n match and no lang: take all */
                 if(k == 3 && implicite_i18n)
                 {

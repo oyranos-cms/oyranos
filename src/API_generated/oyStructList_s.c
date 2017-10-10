@@ -101,7 +101,7 @@ OYAPI int OYEXPORT
 
 
 /* Include "StructList.public_methods_definitions.c" { */
-#include "oyObject_s_.h"
+#include "oyOption_s.h"
 #include "oyranos_generic_internal.h"
 /** Function  oyStructList_MoveIn
  *  @memberof oyStructList_s
@@ -727,7 +727,8 @@ oyStructList_s * oyStructList_Create ( oyOBJECT_e          parent_type,
  *  @memberof oyStructList_s
  *  @brief    Move a name into a list
  *
- *  The text is added to a oyObject_s and freed.
+ *  The text is added as a oyOption_s->oy_(oyObject_s)->name_(oyName_s*).
+ *  The text is released inside.
  *
  *  @version Oyranos: 0.9.7
  *  @date    2017/10/10
@@ -749,7 +750,7 @@ int oyStructList_MoveInName( oyStructList_s * texts, char ** text, int pos )
  *  @memberof oyStructList_s
  *  @brief    Add a name to a list
  *
- *  The text is added as a oyObject_s.
+ *  The text is added as a oyOption_s->oy_(oyObject_s)->name_(oyName_s*).
  *
  *  @version Oyranos: 0.9.7
  *  @date    2017/10/10
@@ -758,16 +759,15 @@ int oyStructList_MoveInName( oyStructList_s * texts, char ** text, int pos )
 int oyStructList_AddName( oyStructList_s * texts, const char * text, int pos )
 {
   int error = !texts;
-  oyObject_s name = NULL;
-  oyStruct_s * oy_struct = 0;
   if(!error)
   {
-     name = oyObject_New();
-     if(!name) return 1;
-     if(text)
-       error = oyObject_SetName( name, text, oyNAME_NAME );
-     oy_struct = (oyStruct_s*) name;
-     oyStructList_MoveIn( texts, &oy_struct, pos, 0 );
+    oyOption_s * name = oyOption_FromRegistration( OY_INTERNAL, 0 );
+    oyStruct_s * oy_struct = 0;
+    if(!name) return 1;
+    if(text)
+      error = oyObject_SetName( name->oy_, text, oyNAME_NAME );
+    oy_struct = (oyStruct_s*) name;
+    oyStructList_MoveIn( texts, &oy_struct, pos, 0 );
   }
   return error;
 }
@@ -776,7 +776,7 @@ int oyStructList_AddName( oyStructList_s * texts, const char * text, int pos )
  *  @memberof oyStructList_s
  *  @brief    Add a name to a list
  *
- *  The text must have added as a oyObject_s.
+ *  The text must have added as a oyOption_s->oy_(oyObject_s)->name_(oyName_s*).
  *
  *  @version Oyranos: 0.9.7
  *  @date    2017/10/10
@@ -785,13 +785,13 @@ int oyStructList_AddName( oyStructList_s * texts, const char * text, int pos )
 const char * oyStructList_GetName( oyStructList_s * texts, int pos )
 {
   int error = !texts;
-  struct oyObject_s_ * name = NULL;
   const char * text = 0;
   if(!error)
   {
-     name = (struct oyObject_s_*)oyStructList_GetRefType(texts, pos, oyOBJECT_OBJECT_S);
-     if(!name) return text;
-     text = oyObject_GetName( name, oyNAME_NAME );
+    oyOption_s * name = (oyOption_s*)oyStructList_GetRefType(texts, pos, oyOBJECT_OPTION_S);
+    if(!name || !name->oy_) return text;
+    text = oyObject_GetName( name->oy_, oyNAME_NAME );
+    oyOption_Release( &name );
   }
   return text;
 }

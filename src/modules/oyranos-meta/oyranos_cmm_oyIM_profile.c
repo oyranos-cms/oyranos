@@ -463,6 +463,53 @@ int  oyWriteIcSigLutAtoBType         ( oyStructList_s    * texts,
   return error;
 }
 
+static oyName_s * oyStructListGetName_( oyStructList_s * list, int pos )
+{
+  oyOption_s * o = (oyOption_s*) oyStructList_GetRefType( list, pos,
+                                                          oyOBJECT_OPTION_S );
+  if(o)
+  {
+    struct oyObject_s_ * obj = (struct oyObject_s_*)o->oy_;
+    oyOption_Release( &o );
+    if(obj) return obj->name_;
+  }
+
+  return NULL;
+}
+
+static int oyStructListAddName_( oyStructList_s * list,
+                                 const char * text,
+                                 const char * lang,
+                                 int pos,
+                                 int flags )
+{
+  int error = !list;
+
+  if(error <= 0)
+  {
+    oyOption_s * o = oyOption_New(0);
+    struct oyObject_s_ * obj = NULL;
+
+    if(!o) error = 1;
+
+    if(!error)
+      obj = (struct oyObject_s_*)o->oy_;
+    if(!obj) error = 1;
+
+    if(!error)
+      error = oyObject_SetName( obj, text, oyNAME_NAME );
+
+    if(obj && !obj->name_)
+       error = 1;
+    else if(lang)
+      memcpy( obj->name_->lang, lang, 5 );
+
+    error = oyStructList_MoveIn( list, (oyStruct_s**) &o, pos, flags );
+  }
+
+  return error;
+}
+
 /** @func    oyIMProfileTag_GetValues
  *  @brief   get values from ICC profile tags
  *
@@ -636,7 +683,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
   oyStructList_s * list = 0;
   icTagTypeSignature tag_sig = (icTagTypeSignature)0;
   char num[32];
-  struct oyObject_s_ * name = 0;
+  oyName_s * name = 0;
   oyBlob_s * o = 0;
   oyOption_s * opt = 0;
 
@@ -702,7 +749,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
       "\
 - icSigMultiLocalizedUnicodeType:\
   - since Oyranos 0.1.8 (API 0.1.8)\
-  - list: will contain oyName_s objects\
+  - list: will contain oyOption_s::oyObject_s::oyName_s objects\
     - oyName_s::name will hold the name\
     - oyName_s::lang will hold i18n specifier, e.g. \"en_GB\"",
       {0}
@@ -765,7 +812,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
       "\
 - icSigProfileSequenceIdentifierType:\
   - since Oyranos 0.1.8 (API 0.1.8)\
-  - list: will contain oyName_s objects\
+  - list: will contain oyOption_s::oyObject_s::oyName_s objects\
     - first string as ascii the number (i) of the found elements\
     - a profile anounce string in 1 + i * 5\
     - the string \"md5id:\" in in 1 + i * 5 + 1\
@@ -795,7 +842,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
       "\
 - icSigWCSProfileTag:\
   - since Oyranos 0.1.8 (API 0.1.8)\
-  - list: should contain only oyName_s",
+  - list: should contain only oyOption_s::oyObject_s::oyName_s",
       {0}
     };
 
@@ -825,7 +872,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
       "\
 - icSigTextType:\
   - since Oyranos 0.1.8 (API 0.1.8)\
-  - list: should contain only oyName_s",
+  - list: should contain only oyOption_s::oyObject_s::oyName_s",
       {0}
     };
 
@@ -836,7 +883,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
       "\
 - icSigTextDescriptionType:\
   - since Oyranos 0.1.8 (API 0.1.8)\
-  - list: should contain only oyName_s",
+  - list: should contain only oyOption_s::oyObject_s::oyName_s",
       {0}
     };
 
@@ -1842,7 +1889,6 @@ oyStructList_s * oyIMProfileTag_GetValues(
              int count = oyValueUInt32( *(icUInt32Number*)&mem[8] );
              int size = oyValueUInt32( *(icUInt32Number*)&mem[12] ); /* 12 */
              int i;
-             int all = 1;
 
              error = tag_size < (unsigned)24 + count * size;
 
@@ -1861,8 +1907,6 @@ oyStructList_s * oyIMProfileTag_GetValues(
                lang[1] = mem[17+ i*size];
 
                {
-                 struct oyObject_s_ * name = 0;
-                 oyStruct_s * oy_struct = 0;
                  char * t = 0;
 
                  error = tag_size < (unsigned)20 + i * size + g + 4;
@@ -1871,17 +1915,6 @@ oyStructList_s * oyIMProfileTag_GetValues(
                    len = (g > 1) ? g : 8;
                    t = (char*) oyAllocateFunc_(len*4);
                    error = !t;
-                 }
-
-                 if(!error && all)
-                 {
-                   name = oyObject_New();
-                   oyObject_SetName( name, NULL, oyNAME_NAME );
-                   if(name->name_)
-                     oySprintf_( name->name_->lang, "%s_%c%c", lang,
-                                 mem[18+ i*size], mem[19+ i*size] );
-                   else
-                     error = 1;
                  }
 
                  if(!error)
@@ -1902,15 +1935,18 @@ oyStructList_s * oyIMProfileTag_GetValues(
                    /* ICC says UTF-16BE */
                    error = oyIMIconv( &mem[offset], len, t, "UTF-16BE" );
 
-                   if(!error)
-                     oy_struct = (oyStruct_s*) name;
                    /* eigther text or we have a non translatable string */
                    if(!error && (oyStrlen_(t) || oyStructList_Count(texts)))
                    {
-                     error = oyObject_SetName( name, t, oyNAME_NAME );
-                     oyStructList_MoveIn( texts, &oy_struct, -1, 0 );
-                   } else if(oy_struct && oy_struct->release)
-                     oy_struct->release(&oy_struct);
+                     char * lt = NULL;
+                     oyStringAddPrintf( &lt, 0,0, "%s_%c%c", lang,
+                                 mem[18+ i*size], mem[19+ i*size]);
+
+                     oyStructListAddName_( texts, t, lt, -1, 0 );
+
+                     oyFree_m_(lt);
+                     oyFree_m_(t);
+                   }
                  }
                }
 
@@ -2136,11 +2172,9 @@ oyStructList_s * oyIMProfileTag_GetValues(
                            OY_DBG_ARGS_, mluc_size, max_tag_size, off );
                if(oyStructList_Count( mfg_tmp ) )
                {
-                 name = 0;
-                 name = (struct oyObject_s_*) oyStructList_GetRefType( mfg_tmp,
-                                                   0, oyOBJECT_OBJECT_S );
+                 name = oyStructListGetName_( mfg_tmp, 0 );
                  if(name )
-                   mfg = oyObject_GetName( name, oyNAME_NAME );
+                   mfg = name->name;
                } else
                  mfg = "----";
                size = oyProfileTag_GetSizeCheck(tmptag);
@@ -2170,11 +2204,9 @@ oyStructList_s * oyIMProfileTag_GetValues(
                            OY_DBG_ARGS_, mluc_size, max_tag_size, off );
                if(oyStructList_Count( model_tmp ) )
                {
-                 name = 0;
-                 name = (struct oyObject_s_ *) oyStructList_GetRefType( model_tmp,
-                                                   0, oyOBJECT_OBJECT_S );
+                 name = oyStructListGetName_( model_tmp, 0 );
                  if(name)
-                   model = oyObject_GetName( name, oyNAME_NAME );
+                   model = name->name;
                } else
                  model = "----";
                size = oyProfileTag_GetSizeCheck(tmptag);
@@ -2294,11 +2326,9 @@ oyStructList_s * oyIMProfileTag_GetValues(
                    desc_tmp = oyIMProfileTag_GetValues( tmptag );
                    if(oyStructList_Count( desc_tmp ) )
                    {
-                     name = 0;
-                     name = (struct oyObject_s_ *) oyStructList_GetRefType( desc_tmp,
-                                                     0, oyOBJECT_OBJECT_S );
+                     name = oyStructListGetName_( desc_tmp, 0 );
                      if(name)
-                       tmp = oyStringCopy( oyObject_GetName( name, oyNAME_NAME ), 0 );
+                       tmp = oyStringCopy( name->name, 0 );
                    }
                    oyProfileTag_Release( &tmptag );
                  }
@@ -2524,8 +2554,7 @@ int          oyIMProfileTag_Create   ( oyProfileTag_s    * tag,
   oyProfile_s * prof = 0;
   oyStructList_s * tmp_list = 0,
                  * tag_list = 0;
-  struct oyObject_s_ * string = NULL;
-  const char * cname = NULL;
+  oyName_s * string = NULL;
 
   /* provide information about the function */
   if(!error && !s)
@@ -2611,19 +2640,20 @@ int          oyIMProfileTag_Create   ( oyProfileTag_s    * tag,
          {
            if(!error)
            {
-             string = (struct oyObject_s_*) oyStructList_GetRefType( list,
-                                                   i, oyOBJECT_OBJECT_S );
+             string = oyStructListGetName_( list, i );
              error = !string;
            }
 
            if(!error)
            {
-             if((cname = oyObject_GetName( string, oyNAME_NAME )) != NULL)
-               tmp_len = strlen( cname );
-             error = !tmp_len;
-             
-             if(i && string->name_)
-               error = !string->name_->lang[0];
+             if(string->name != NULL)
+             {
+               tmp_len = strlen( string->name );
+               error = !tmp_len;
+             }
+
+             if(i && string->name)
+               error = !string->lang[0];
 
              len = tmp_len * 2 + 4;
              mluc_len += len + (len%4 ? len%4 : 0);
@@ -2645,29 +2675,30 @@ int          oyIMProfileTag_Create   ( oyProfileTag_s    * tag,
          {
            if(!error)
            {
-             string = (struct oyObject_s_*) oyStructList_GetRefType( list,
-                                                   i, oyOBJECT_OBJECT_S );
+             string = oyStructListGetName_( list, i );
              error = !string;
            }
 
            if(!error)
            {
-             if(string->name_ && string->name_->name)
-               tmp_len = strlen( string->name_->name );
-             error = !tmp_len;
+             if(string->name)
+             {
+               tmp_len = strlen( string->name );
+               error = !tmp_len;
+             }
 
-             if(i && string->name_)
-               error = !string->name_->lang[0];
+             if(i && string->name)
+               error = !string->lang[0];
            }
 
-           if(!error && string->name_)
+           if(!error && string->name)
            {
-               if(string->name_->lang[0] && oyStrlen_(string->name_->lang))
+               if(string->lang[0] && oyStrlen_(string->lang))
                {
-                 if(strlen(string->name_->lang) >= 2)
-                   memcpy( &mem[16+i*12 + 0], string->name_->lang, 2 );
-                 if(strlen(string->name_->lang) > 4)
-                   memcpy( &mem[16+i*12 + 2], &string->name_->lang[3], 2 );
+                 if(strlen(string->lang) >= 2)
+                   memcpy( &mem[16+i*12 + 0], string->lang, 2 );
+                 if(strlen(string->lang) > 4)
+                   memcpy( &mem[16+i*12 + 2], &string->lang[3], 2 );
                }
 
                *((uint32_t*)&mem[16+i*12 + 4]) = oyValueUInt32( tmp_len * 2 );
@@ -2683,7 +2714,7 @@ int          oyIMProfileTag_Create   ( oyProfileTag_s    * tag,
 #else
              size = tmp_len;
              for(j = 0; j < tmp_len; ++j)
-               mem[mem_len+2*j+1] = string->name_->name[j];
+               mem[mem_len+2*j+1] = string->name[j];
 #endif
 
              error = (size != (unsigned)tmp_len);
@@ -2820,15 +2851,14 @@ int          oyIMProfileTag_Create   ( oyProfileTag_s    * tag,
          {
            if(!error)
            {
-             string = (struct oyObject_s_*) oyStructList_GetRefType( list,
-                                                   i, oyOBJECT_OBJECT_S );
+             string = oyStructListGetName_( list, i );
              error = !string;
            }
 
            if(!error)
            {
-             if(string->name_ && string->name_->name)
-               mem_len += strlen( string->name_->name ) + 1;
+             if(string->name)
+               mem_len += strlen( string->name ) + 1;
              error = !mem_len;
              
              len = mem_len;
@@ -2850,25 +2880,26 @@ int          oyIMProfileTag_Create   ( oyProfileTag_s    * tag,
          {
            if(!error)
            {
-             string = (struct oyObject_s_*) oyStructList_GetRefType( list,
-                                                   i, oyOBJECT_OBJECT_S );
+             string = oyStructListGetName_( list, i );
              error = !string;
            }
 
            if(!error)
            {
-             if(string->name_ && string->name_->name)
-               tmp_len = strlen( string->name_->name );
-             error = !tmp_len;
+             if(string->name)
+             {
+               tmp_len = strlen( string->name );
+               error = !tmp_len;
+             }
            }
 
-           if(!error && string->name_)
+           if(!error && string->name)
            {
              if(i)
                mem[mem_len++] = '\n';
 
              tmp = &mem[mem_len];
-             error = !memcpy( tmp, string->name_->name, tmp_len );
+             error = !memcpy( tmp, string->name, tmp_len );
              mem_len += tmp_len;
              if(!error)
                mem[mem_len] = 0;
@@ -2897,17 +2928,16 @@ int          oyIMProfileTag_Create   ( oyProfileTag_s    * tag,
          {
            if(!error)
            {
-             string = (struct oyObject_s_*) oyStructList_GetRefType( list,
-                                                   i, oyOBJECT_OBJECT_S );
+             string = oyStructListGetName_( list, i );
              error = !string;
            }
 
            if(!error)
            {
-             if(string->name_ && string->name_->name)
+             if(string->name)
              {
-               mem_len += strlen( string->name_->name ) + 1;
-               tmp_len += strlen( string->name_->name ) + 1;
+               mem_len += strlen( string->name ) + 1;
+               tmp_len += strlen( string->name ) + 1;
              }
              error = !mem_len;
            }
@@ -2934,25 +2964,24 @@ int          oyIMProfileTag_Create   ( oyProfileTag_s    * tag,
          {
            if(!error)
            {
-             string = (struct oyObject_s_*) oyStructList_GetRefType( list,
-                                                   i, oyOBJECT_OBJECT_S );
+             string = oyStructListGetName_( list, i );
              error = !string;
            }
 
            if(!error)
            {
-             if(string->name_ && string->name_->name)
-               tmp_len = strlen( string->name_->name );
+             if(string->name)
+               tmp_len = strlen( string->name );
              error = !tmp_len;
            }
 
-           if(!error && string->name_)
+           if(!error && string->name)
            {
              if(i)
                mem[mem_len++] = '\n';
 
              tmp = &mem[mem_len];
-             error = !memcpy( tmp, string->name_->name, tmp_len );
+             error = !memcpy( tmp, string->name, tmp_len );
              mem_len += tmp_len;
              if(!error)
                mem[mem_len] = 0;
