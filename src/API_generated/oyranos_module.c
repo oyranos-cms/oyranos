@@ -247,9 +247,10 @@ oyCMMapiFilters_s * oyCMMsGetFilterApis_(const char        * registration,
           ++j;
           if(reg) oyFree_m_( reg );
         }
+
+	oyCMMinfo_Release( (oyCMMinfo_s**)&info );
       }
 
-      oyCMMinfo_Release( (oyCMMinfo_s**)&info );
 #if 0
       if(api5->release)
         api5->release( (oyStruct_s**)&api5 );
