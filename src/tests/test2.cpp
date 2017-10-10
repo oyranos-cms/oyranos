@@ -312,8 +312,7 @@ oyTESTRESULT_e testDB()
       PRINT_SUB( oyTESTRESULT_FAIL, 
       "DB (value) wrong:                      %s", value );
     }
-  } else
-    result = oyTESTRESULT_SUCCESS;
+  }
   oyFree_m_( start );
   oyFree_m_( value );
 
