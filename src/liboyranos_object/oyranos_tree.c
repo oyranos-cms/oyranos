@@ -429,7 +429,7 @@ struct oyLeave_s {
   oyLeave_s * grandparent;
 };
 
-#define myCalloc(x,n) myCalloc_(x,n); if(oy_debug_memory) printf(OY_DBG_FORMAT_" %lu * %d bytes\n",OY_DBG_ARGS_, x,n);
+#define myCalloc_m(x,n) myCalloc_(x,n); if(oy_debug_memory) printf(OY_DBG_FORMAT_" %lu * %d bytes\n",OY_DBG_ARGS_, x,n);
 static void * myCalloc_( size_t size, size_t n )
 { void * mem = oyAllocateFunc_( size*n );
   memset(mem,0,size*n);
@@ -448,7 +448,9 @@ oyLeave_s *        oyLeave_NewWith   ( oyStruct_s        * obj,
   oyLeave_s * l = NULL;
  
   if(!oy_debug_leave_cache_)
-    oy_debug_leave_cache_ = (oyLeave_s**) myCalloc( sizeof( oyLeave_s* ), oy_object_list_max_count_ + 1 );
+  {
+    oy_debug_leave_cache_ = (oyLeave_s**) myCalloc_m( sizeof( oyLeave_s* ), oy_object_list_max_count_ + 1 );
+  }
 
   if(oy_debug_leave_cache_[id])
   {
@@ -459,7 +461,7 @@ oyLeave_s *        oyLeave_NewWith   ( oyStruct_s        * obj,
   if(!l)
   {
     oyStruct_s ** slist;
-    l = myCalloc( sizeof(oyLeave_s), 1 );
+    l = myCalloc_m( sizeof(oyLeave_s), 1 );
     *alloced = 1;
     l->obj = obj;
     l->id = id;
@@ -471,9 +473,9 @@ oyLeave_s *        oyLeave_NewWith   ( oyStruct_s        * obj,
     l->n = oyStruct_GetChildren( obj, &slist );
     if(l->n)
     {
-      l->list = myCalloc( sizeof(oyStruct_s*), l->n + 1 );
+      l->list = myCalloc_m( sizeof(oyStruct_s*), l->n + 1 );
       memcpy( l->list, slist, sizeof(oyStruct_s*) * l->n );
-      l->children = myCalloc( sizeof( oyLeave_s* ), l->n + 1 );
+      l->children = myCalloc_m( sizeof( oyLeave_s* ), l->n + 1 );
     }
 
     oy_debug_leave_cache_[id] = l;
@@ -635,7 +637,7 @@ int                oyObjectIdListTraverseStructTrees (
                                        int                 flags )
 {
   int i, n = 0;
-  oyLeave_s ** ts = myCalloc( sizeof( oyLeave_s* ), oy_object_list_max_count_ );
+  oyLeave_s ** ts = myCalloc_m( sizeof( oyLeave_s* ), oy_object_list_max_count_ );
   for(i = 0; i < oy_object_list_max_count_; ++i)
     if(ids[i] > 0)
       ts[n++] = oyObjectIdListGetStructTree( i, 0, 0, ids, i, flags & 0x01 ? -oy_object_list_max_count_ : 0, func, user_data );
@@ -878,7 +880,7 @@ void               oyObjectTreePrint ( int                 flags )
   if(oy_debug_objects >= 0)
   {
     int * ids_old = oyObjectGetCurrentObjectIdList( );
-    oyTreeData_s * trees = (oyTreeData_s*) myCalloc( sizeof( oyTreeData_s ), oy_object_list_max_count_ + 1 );
+    oyTreeData_s * trees = (oyTreeData_s*) myCalloc_m( sizeof( oyTreeData_s ), oy_object_list_max_count_ + 1 );
     int n, i, count = 0;
     char * dot = 0, * dot_edges = 0;
 
