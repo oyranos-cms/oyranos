@@ -955,7 +955,8 @@ OYAPI int OYEXPORT oyConfigDomainList( const char        * registration_pattern,
   int error = !list || !count;
   char ** reg_lists = 0;
   int i = 0,
-      reg_list_n = 0;
+      reg_list_n = 0,
+      list_n = 0;
   uint32_t apis_n = 0;
 
   oyExportStart_(EXPORT_CHECK_NO);
@@ -991,15 +992,15 @@ OYAPI int OYEXPORT oyConfigDomainList( const char        * registration_pattern,
 
     if(reg_list_n && reg_lists)
       *list = oyStringListAppend_( (const char**)reg_lists, reg_list_n, 0,0,
-                                   &reg_list_n, allocateFunc );
+                                   &list_n, allocateFunc );
 
     oyStringListRelease_( &reg_lists, reg_list_n, oyDeAllocateFunc_ );
 
-    oyStringListFreeDoubles( *list, &reg_list_n, oyDeAllocateFunc_ );
+    oyStringListFreeDoubles( *list, &list_n, oyDeAllocateFunc_ );
   }
 
   if(count)
-    *count = reg_list_n;
+    *count = list_n;
 
   oyCMMapiFilters_Release( &apis );
 
