@@ -1610,6 +1610,7 @@ oyPointer    oyProfile_WriteTags_    ( oyProfile_s_      * profile,
 
     len += sizeof(icTag) * (n-1);
 
+    if(!error)
     for(i = 0; i < n - 1; ++i)
     {
       char h[5] = {"head"};
@@ -1640,9 +1641,14 @@ oyPointer    oyProfile_WriteTags_    ( oyProfile_s_      * profile,
                                                (size%4 ? 4 - size%4 : 0));
         if(temp)
           memset( temp, 0, len + size + (size%4 ? 4 - size%4 : 0));
+        else
+        {
+          error = 1;
+          break;
+	}
       }
 
-      if(temp)
+      if(error <= 0)
         error = !memcpy( temp, block, len );
       if(error <= 0)
       {
