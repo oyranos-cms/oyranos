@@ -263,7 +263,10 @@ int  oyMoveColorServerProfiles       ( const char        * display_name,
   const char * monitor_icc_dscr = NULL;
 
   if(!disp)
+  {
+    oyFree_m_(screen_name);
     return -1;
+  }
 
   // get all monitors
   oyDevicesGet( NULL, "monitor", NULL, &devices );
