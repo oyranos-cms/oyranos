@@ -2003,7 +2003,7 @@ int             oyOptions_Handle     ( const char        * registration,
       }
     else
       WARNc2_S( "%s %s",_("Could not allocate memory for:"),
-                cmm_api10->registration );
+                oyNoEmptyString_m_(registration) );
 
     oyFree_m_( test );
     oyCMMapiFilters_Release( &apis );
