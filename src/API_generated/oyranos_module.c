@@ -254,7 +254,7 @@ oyCMMapiFilters_s * oyCMMsGetFilterApis_(const char        * registration,
       {
         file_match = oyStringCopy( files[match_i], 0 );
         /* Skip the others */
-        i = files_n;
+        k = meta_apis_n;
       }
       oyStringListRelease_( &files, files_n, oyDeAllocateFunc_ );
 
