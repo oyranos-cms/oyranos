@@ -527,8 +527,7 @@ char *       oyX1GetMonitorProfile   ( const char        * device_name,
                                        int                 flags,
                                        size_t            * size )
 {
-  char       *moni_profile=0;
-  int error = 0;
+  char * moni_profile = NULL;
 
 
   oyX1Monitor_s * disp = 0;
@@ -570,10 +569,7 @@ char *       oyX1GetMonitorProfile   ( const char        * device_name,
 
   oyX1Monitor_release_( &disp );
 
-  if(!error)
-    return moni_profile;
-  else
-    return NULL;
+  return moni_profile;
 }
 
 
