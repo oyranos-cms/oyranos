@@ -248,7 +248,7 @@ oyTESTRESULT_e testDB()
   }
 
   printf ("start is %s\n", oyNoEmptyString_m_(start));
-  if(!start)
+  if(!(start && start[0]))
   {
     oyExportStart_(EXPORT_CHECK_NO);
     oyExportEnd_();
@@ -257,20 +257,20 @@ oyTESTRESULT_e testDB()
     start = oyGetPersistentString(TEST_DOMAIN TEST_KEY, 0, oySCOPE_USER_SYS, 0);
     printf ("start is %s\n", start);
     
-    PRINT_SUB( start?oyTESTRESULT_SUCCESS:oyTESTRESULT_XFAIL,
+    PRINT_SUB( (start && start[0])?oyTESTRESULT_SUCCESS:oyTESTRESULT_XFAIL,
     "DB not initialised? try oyExportStart_(EXPORT_CHECK_NO)" );
   }
-  if(!start)
+  if(!(start && start[0]))
   {
     oyExportStart_(EXPORT_SETTING);
     oyExportEnd_();
     error = oySetPersistentString(TEST_DOMAIN TEST_KEY, oySCOPE_USER,
                                  "NULLTestValue", "NULLTestComment" );
     start = oyGetPersistentString(TEST_DOMAIN TEST_KEY, 0, oySCOPE_USER_SYS, 0);
-    PRINT_SUB( start?oyTESTRESULT_SUCCESS:oyTESTRESULT_XFAIL, 
+    PRINT_SUB( (start && start[0])?oyTESTRESULT_SUCCESS:oyTESTRESULT_XFAIL, 
     "DB not initialised? try oyExportStart_(EXPORT_SETTING)" );
   }
-  if(start)
+  if(start && start[0])
     fprintf(zout, "start key value: %s\n", start );
   else
     fprintf(zout, "could not initialise\n" );
@@ -297,7 +297,7 @@ oyTESTRESULT_e testDB()
     if(!value)
       PRINT_SUB( oyTESTRESULT_FAIL, 
       "DB (value) failed" );
-    if(!start)
+    if(!(start && start[0]))
       PRINT_SUB( oyTESTRESULT_FAIL, 
       "DB (init) failed" );
   } else
