@@ -1909,7 +1909,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
                    {
                      error = oyObject_SetName( name, t, oyNAME_NAME );
                      oyStructList_MoveIn( texts, &oy_struct, -1, 0 );
-                   } else
+                   } else if(oy_struct && oy_struct->release)
                      oy_struct->release(&oy_struct);
                  }
                }
