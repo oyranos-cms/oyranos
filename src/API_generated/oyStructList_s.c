@@ -101,6 +101,7 @@ OYAPI int OYEXPORT
 
 
 /* Include "StructList.public_methods_definitions.c" { */
+#include "oyObject_s_.h"
 #include "oyranos_generic_internal.h"
 /** Function  oyStructList_MoveIn
  *  @memberof oyStructList_s
@@ -724,26 +725,22 @@ oyStructList_s * oyStructList_Create ( oyOBJECT_e          parent_type,
 /**
  *  Function  oyStructList_MoveInName
  *  @memberof oyStructList_s
- *  @brief    Add a name to a list
+ *  @brief    Move a name into a list
  *
- *  The text is added to a oyName_s::name member variable and owned by the list.
+ *  The text is added to a oyObject_s and freed.
  *
- *  @version Oyranos: 0.1.13
- *  @date    2008/10/07
+ *  @version Oyranos: 0.9.7
+ *  @date    2017/10/10
  *  @since   2008/10/07 (Oyranos: 0.1.13)
  */
 int oyStructList_MoveInName( oyStructList_s * texts, char ** text, int pos )
 {
   int error = !texts || !text;
-  oyName_s * name = 0;
-  oyStruct_s * oy_struct = 0;
   if(!error)
   {
-     name = oyName_new(0);
-     name->name = *text;
-     *text = 0;
-     oy_struct = (oyStruct_s*) name;
-     oyStructList_MoveIn( texts, &oy_struct, pos, 0 );
+     oyStructList_AddName( texts, *text, pos );
+     oyFree_m_(*text);
+     *text = NULL;
   }
   return error;
 }
@@ -752,29 +749,23 @@ int oyStructList_MoveInName( oyStructList_s * texts, char ** text, int pos )
  *  @memberof oyStructList_s
  *  @brief    Add a name to a list
  *
- *  The text is added to a oyName_s::name member variable.
+ *  The text is added as a oyObject_s.
  *
- *  @version Oyranos: 0.1.13
- *  @date    2008/10/07
+ *  @version Oyranos: 0.9.7
+ *  @date    2017/10/10
  *  @since   2008/10/07 (Oyranos: 0.1.13)
  */
 int oyStructList_AddName( oyStructList_s * texts, const char * text, int pos )
 {
   int error = !texts;
-  oyName_s * name = 0;
+  oyObject_s name = NULL;
   oyStruct_s * oy_struct = 0;
-  char * tmp = 0;
   if(!error)
   {
-     name = oyName_new(0);
+     name = oyObject_New();
      if(!name) return 1;
      if(text)
-     {
-       tmp = oyAllocateFunc_( strlen(text) + 1 );
-       if(!tmp) return 1;
-       sprintf( tmp, "%s", text );
-       name->name = tmp;
-     }
+       error = oyObject_SetName( name, text, oyNAME_NAME );
      oy_struct = (oyStruct_s*) name;
      oyStructList_MoveIn( texts, &oy_struct, pos, 0 );
   }
@@ -785,22 +776,22 @@ int oyStructList_AddName( oyStructList_s * texts, const char * text, int pos )
  *  @memberof oyStructList_s
  *  @brief    Add a name to a list
  *
- *  The text is added a a oyName_s::name member variable.
+ *  The text must have added as a oyObject_s.
  *
- *  @version Oyranos: 0.3.1
- *  @date    2011/05/18
+ *  @version Oyranos: 0.9.7
+ *  @date    2017/10/10
  *  @since   2011/05/18 (Oyranos: 0.3.1)
  */
 const char * oyStructList_GetName( oyStructList_s * texts, int pos )
 {
   int error = !texts;
-  oyName_s * name = 0;
+  struct oyObject_s_ * name = NULL;
   const char * text = 0;
   if(!error)
   {
-     name = (oyName_s*)oyStructList_GetRefType(texts, pos, oyOBJECT_NAME_S);
+     name = (struct oyObject_s_*)oyStructList_GetRefType(texts, pos, oyOBJECT_OBJECT_S);
      if(!name) return text;
-     text = oyName_get_( name, oyNAME_NAME );
+     text = oyObject_GetName( name, oyNAME_NAME );
   }
   return text;
 }

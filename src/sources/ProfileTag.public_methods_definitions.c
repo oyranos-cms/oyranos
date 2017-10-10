@@ -98,19 +98,19 @@ OYAPI oyProfileTag_s * OYEXPORT
 {
   int error = !text;
   oyProfileTag_s * tag = 0;
-  oyName_s * name = 0;
+  struct oyObject_s_ * name = 0;
   oyStructList_s * list = 0;
 
   if(error <= 0)
   {
-    name = oyName_set_ ( name, text, oyNAME_NAME,
-                         oyAllocateFunc_, oyDeAllocateFunc_ );
+    name = oyObject_New();
     error = !name;
   }
 
   if(error <= 0)
   {
-    memcpy( name->lang, "en_GB", 5 );
+    oyObject_SetName( name, text, oyNAME_NAME );
+    memcpy( name->name_->lang, "en_GB", 5 );
     list = oyStructList_New(0);
     error = oyStructList_MoveIn( list, (oyStruct_s**) &name, 0,
                                  OY_OBSERVE_AS_WELL );
@@ -324,7 +324,7 @@ char **        oyProfileTag_GetText  ( oyProfileTag_s    * tag,
   int implicite_i18n = 0;
   char ** texts = 0, * text = 0, * text_tmp = 0, * temp = 0;
   oyStructList_s * values = 0;
-  oyName_s * name = 0;
+  struct oyObject_s_ * name = NULL;
   oyBlob_s * blob = 0;
   size_t size = 0;
   int values_n = 0, i = 0, k;
@@ -363,14 +363,14 @@ char **        oyProfileTag_GetText  ( oyProfileTag_s    * tag,
           for(i = 0; i < values_n; ++i)
           {
             text = 0;
-            name = (oyName_s*) oyStructList_GetRefType( values, i,
-                                                        oyOBJECT_NAME_S );
+            name = (struct oyObject_s_*) oyStructList_GetRefType( values, i,
+                                                        oyOBJECT_OBJECT_S );
             if(!name)
             blob = (oyBlob_s*) oyStructList_GetRefType( values, i,
                                                         oyOBJECT_BLOB_S );
-            if(name)
+            if(name && name->name_)
             {
-              memcpy(t_l, name->lang, 8); t_c[0] = 0;
+              memcpy(t_l, name->name_->lang, 8); t_c[0] = 0;
               t_ptr = oyStrchr_(t_l, '_');
               if(t_ptr)
               {
@@ -379,8 +379,8 @@ char **        oyProfileTag_GetText  ( oyProfileTag_s    * tag,
               }
             }
 
-            if(name)
-              text = name->name;
+            if(name && name->name_)
+              text = name->name_->name;
             else if(blob && oyBlob_GetPointer(blob) && oyBlob_GetSize(blob))
             {
               error = oyStringFromData_( oyBlob_GetPointer(blob),
@@ -405,10 +405,10 @@ char **        oyProfileTag_GetText  ( oyProfileTag_s    * tag,
                (k == 3 && ((!language && !country) || implicite_i18n))
               )
             {
-              if(name && isalpha(name->lang[0]) && !implicite_i18n)
+              if(name && name->name_ && isalpha(name->name_->lang[0]) && !implicite_i18n)
               {
                 /* string with i18n infos -> "de_DE:Licht" */
-                temp = oyStringAppend_(name->lang, ":", oyAllocateFunc_);
+                temp = oyStringAppend_(name->name_->lang, ":", oyAllocateFunc_);
                 temp = oyStringAppend_(temp, text, oyAllocateFunc_);
                 oyStringListAddString_( &texts, &texts_n, &temp,
                                             oyAllocateFunc_, oyDeAllocateFunc_);
