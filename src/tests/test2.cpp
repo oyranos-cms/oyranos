@@ -631,6 +631,7 @@ oyTESTRESULT_e testStringRun ()
   { PRINT_SUB( oyTESTRESULT_FAIL,
     "oyStringReplace_(start)                            " );
   }
+  oyFree_m_(test_out);
 
   test_out = oyStringReplace_( test, "display.", "foo.", 0,0 );
   //fprintf(zout, "test %s \"%s\"\n", test, test_out);
@@ -641,6 +642,7 @@ oyTESTRESULT_e testStringRun ()
   { PRINT_SUB( oyTESTRESULT_FAIL,
     "oyStringReplace_(middle)                           " );
   }
+  oyFree_m_(test_out);
 
   test_out = oyStringReplace_( test, "display_name", "bar", 0,0 );
   //fprintf(zout, "test %s \"%s\"\n", test, test_out);
@@ -652,6 +654,46 @@ oyTESTRESULT_e testStringRun ()
   { PRINT_SUB( oyTESTRESULT_FAIL,
     "oyStringReplace_(end)                              " );
   }
+  oyFree_m_(test_out);
+
+  int list_n = 0, filt_n = 0;
+  char ** list = oyStringSplit( "org/domain/eins.lib;org/domain/zwei.txt;org/domain/drei.lib;net/welt/vier.lib;net/welt/vier.txt", ';', &list_n, oyAllocateFunc_ );
+  char ** filt = oyStringListFilter_( (const char**)list, list_n,
+                                      "org/domain", NULL, "lib", &filt_n,
+                                      oyAllocateFunc_ );
+  if( filt_n == 2 &&
+      strcmp(filt[0], list[0] ) == 0 &&
+      strcmp(filt[1], list[2] ) == 0)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyStringListFilter(path=org/domain,suffix=lib)     " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyStringListFilter(path=org/domain,suffix=lib)     " );
+    for(i = 0; i < list_n; ++i)
+      fprintf(zout, " list[%d] \"%s\"\n", i, list[i] );
+    for(i = 0; i < filt_n; ++i)
+      fprintf(zout, " filt[%d] \"%s\"\n", i, filt[i] );
+  }
+  oyStringListRelease_( &filt, filt_n, oyDeAllocateFunc_ );
+
+  filt = oyStringListFilter_( (const char**)list, list_n,
+                              NULL, "vier", "", &filt_n,
+                              oyAllocateFunc_ );
+  if( filt_n == 2 &&
+      strcmp(filt[0], list[3] ) == 0 &&
+      strcmp(filt[1], list[4] ) == 0)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyStringListFilter(name=vier)                      " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyStringListFilter(name=vier)                      " );
+    for(i = 0; i < list_n; ++i)
+      fprintf(zout, " list[%d] \"%s\"\n", i, list[i] );
+    for(i = 0; i < filt_n; ++i)
+      fprintf(zout, " filt[%d] \"%s\"\n", i, filt[i] );
+  }
+  oyStringListRelease_( &filt, filt_n, oyDeAllocateFunc_ );
+  oyStringListRelease_( &list, list_n, oyDeAllocateFunc_ );
 
   return result;
 }
