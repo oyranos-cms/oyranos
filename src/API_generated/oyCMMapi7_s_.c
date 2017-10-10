@@ -62,19 +62,29 @@
  */
 void oyCMMapi7_Release__Members( oyCMMapi7_s_ * cmmapi7 )
 {
-  /* Deallocate members here
-   * E.g: oyXXX_Release( &cmmapi7->member );
-   */
+  uint32_t i;
+  for(i = 0; i < cmmapi7->plugs_n; ++i)
+  {
+    if(cmmapi7->plugs[i] && cmmapi7->plugs[i]->release)
+      cmmapi7->plugs[i]->release( (oyStruct_s**)&cmmapi7->plugs[i] );
+  }
+  for(i = 0; i < cmmapi7->plugs_n; ++i)
+  {
+    if(cmmapi7->sockets[i] && cmmapi7->sockets[i]->release)
+      cmmapi7->sockets[i]->release( (oyStruct_s**)&cmmapi7->sockets[i] );
+  }
 
   if(cmmapi7->oy_->deallocateFunc_)
   {
-#if 0
     oyDeAlloc_f deallocateFunc = cmmapi7->oy_->deallocateFunc_;
-#endif
 
-    /* Deallocate members of basic type here
-     * E.g.: deallocateFunc( cmmapi7->member );
-     */
+    if(cmmapi7->properties)
+    {
+      i = 0;
+      while(cmmapi7->properties && cmmapi7->properties[i])
+        deallocateFunc( cmmapi7->properties[i++] );
+      deallocateFunc( cmmapi7->properties );
+    }
   }
 }
 
