@@ -132,6 +132,11 @@ int main (int argc, char ** argv)
 
     w = oyImage_GetWidth( in );
     h = oyImage_GetHeight( in );
+    if(!(w && h))
+    {
+      oyImage_Release( &in );
+      continue;
+    }
 
     /* create a Cairo image */
     image_surf = cairo_image_surface_create( CAIRO_FORMAT_ARGB32, w, h );
