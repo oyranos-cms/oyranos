@@ -136,19 +136,18 @@ oyCMMapiFilters_s * oyCMMsGetFilterApis_(const char        * registration,
     oyCMMapi5_s_ * api5 = 0;
     oyCMMapis_s * meta_apis = oyCMMGetMetaApis_( );
     int meta_apis_n = 0;
-    char ** files = 0;
-    uint32_t  files_n = 0;
     int i, j, k = 0, match_j = -1, ret, match_i = -1, rank = 0, old_rank = 0,
         n, accept;
     char * match = 0, * reg = 0;
+    char * file_match = NULL;
     oyCMMinfo_s * info = 0;
 
     meta_apis_n = oyCMMapis_Count( meta_apis );
     for(k = 0; k < meta_apis_n; ++k)
     {
+      char ** files = 0;
+      uint32_t  files_n = 0;
       api5 = (oyCMMapi5_s_*) oyCMMapis_Get( meta_apis, k );
-
-      files_n = 0;
 
       if(!api5 && error <= 0)
         error = 1;
@@ -237,6 +236,14 @@ oyCMMapiFilters_s * oyCMMsGetFilterApis_(const char        * registration,
         oyCMMinfo_Release( (oyCMMinfo_s**)&info );
       }
 
+      if(-1 < match_i && match_i < (int)files_n)
+      {
+        file_match = oyStringCopy( files[match_i], 0 );
+        /* Skip the others */
+        i = files_n;
+      }
+      oyStringListRelease_( &files, files_n, oyDeAllocateFunc_ );
+
 #if 0
       if(api5->release)
         api5->release( (oyStruct_s**)&api5 );
@@ -248,9 +255,9 @@ oyCMMapiFilters_s * oyCMMsGetFilterApis_(const char        * registration,
     if(match && !rank_list)
     {
       apis2 = oyCMMapiFilters_New( 0 );
-      api = api5->oyCMMFilterLoad( 0,0, files[match_i], type, match_j );
+      api = api5->oyCMMFilterLoad( 0,0, file_match, type, match_j );
       if(!(*api_)->id_)
-        (*api_)->id_ = oyStringCopy_( files[match_i], oyAllocateFunc_ );
+        (*api_)->id_ = oyStringCopy_( file_match, oyAllocateFunc_ );
       (*api_)->api5_ = api5;
       oyCMMapiFilters_MoveIn( apis2, &api, -1 );
       if(count)
@@ -343,7 +350,8 @@ oyCMMapiFilters_s * oyCMMsGetFilterApis_(const char        * registration,
         *count = k;
     }
 
-    oyStringListRelease_( &files, files_n, oyDeAllocateFunc_ );
+    if(file_match)
+      oyFree_m_( file_match );
   }
 
   if(error <= 0 && apis2 && entry)
