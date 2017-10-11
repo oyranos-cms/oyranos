@@ -3507,7 +3507,7 @@ oyTESTRESULT_e testCMMRankMap ()
     "JSON from Map    [%d]          %lu    ", i, (long unsigned int)strlen(rank_map_text) );
     } else
     { PRINT_SUB( oyTESTRESULT_FAIL,
-    "JSON from Map failed  [%d]            ", i );
+    "JSON from Map failed  [%d]     %d     ", i, error );
     }
 
     oyRankMap * rank_map2 = 0;
@@ -3517,7 +3517,7 @@ oyTESTRESULT_e testCMMRankMap ()
     "Map from JSON    [%d]                 ", i );
     } else
     { PRINT_SUB( oyTESTRESULT_FAIL,
-    "Map from JSON failed [%d]             ", i );
+    "Map from JSON failed [%d]      %d     ", i, error );
     }
 
     oyConfig_Release( &device );
@@ -3548,7 +3548,7 @@ oyTESTRESULT_e testCMMRankMap ()
     "found rank maps                 %d    ", count );
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
-    "found too few rank maps         %d    ", count );
+    "found too few rank maps         %d %d ", count, error );
   }
 
   for( i = 0; i < count; ++i )
@@ -3568,7 +3568,7 @@ oyTESTRESULT_e testCMMRankMap ()
     "found rank map paths            %d    ", count );
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
-    "found too few rank map paths    %d    ", count );
+    "found too few rank map paths    %d %d ", count, error );
   }
 
   for( i = 0; i < count; ++i )
