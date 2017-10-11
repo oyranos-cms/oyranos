@@ -38,6 +38,18 @@ char * openiccOpenFile( const char * file_name,
     {
       fseek(fp,0L,SEEK_END); 
       size = ftell (fp);
+      if(size == (size_t)-1)
+      {
+        switch(errno)
+        {
+          case EBADF:        WARNc_S("Not a seekable stream %d", errno); break;
+          case EINVAL:       WARNc_S("Wrong argument %d", errno); break;
+          default:           WARNc_S("%s", strerror(errno)); break;
+        }
+        if(size_ptr)
+          *size_ptr = size;
+        return NULL;
+      }
       rewind(fp);
       text = malloc(size+1);
       if(text == NULL)

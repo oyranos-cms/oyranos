@@ -327,6 +327,18 @@ char * oyX1OpenFile( const char * file_name,
     {
       fseek(fp,0L,SEEK_END); 
       size = ftell (fp);
+      if(size == (size_t)-1)
+      {
+        switch(errno)
+        {
+          case EBADF:        fprintf(stderr, "Not a seekable stream"); break;
+          case EINVAL:       fprintf(stderr, "Wrong argument"); break;
+          default:           fprintf(stderr, "%s", strerror(errno)); break;
+        }
+        if(size_ptr)
+          *size_ptr = size;
+        return NULL;
+      }
       rewind(fp);
       text = malloc(size+1);
       if(text == NULL)
