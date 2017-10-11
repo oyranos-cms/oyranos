@@ -97,6 +97,8 @@ static const char * oy{{ class.baseName }}_StaticMessageFunc_ (
 
   if(!s)
   {
+    if(s_obj)
+      oyObject_Release( &s_obj );
     WARNc_S(_("MEM Error."));
     return NULL;
   }

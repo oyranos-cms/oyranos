@@ -227,6 +227,8 @@ oyFilterCore_s_ * oyFilterCore_New_ ( oyObject_s object )
 
   if(!s)
   {
+    if(s_obj)
+      oyObject_Release( &s_obj );
     WARNc_S(_("MEM Error."));
     return NULL;
   }

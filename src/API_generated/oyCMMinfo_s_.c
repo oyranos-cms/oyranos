@@ -46,9 +46,9 @@
  *
  *  @param[in]  cmminfo  the CMMinfo object
  *
- *  @version Oyranos: x.x.x
+ *  @version Oyranos: 0.9.7
+ *  @date    2017/10/09
  *  @since   YYYY/MM/DD (Oyranos: x.x.x)
- *  @date    YYYY/MM/DD
  */
 void oyCMMinfo_Release__Members( oyCMMinfo_s_ * cmminfo )
 {
@@ -212,6 +212,8 @@ oyCMMinfo_s_ * oyCMMinfo_New_ ( oyObject_s object )
 
   if(!s)
   {
+    if(s_obj)
+      oyObject_Release( &s_obj );
     WARNc_S(_("MEM Error."));
     return NULL;
   }

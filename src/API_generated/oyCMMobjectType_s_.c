@@ -194,6 +194,8 @@ oyCMMobjectType_s_ * oyCMMobjectType_New_ ( oyObject_s object )
 
   if(!s)
   {
+    if(s_obj)
+      oyObject_Release( &s_obj );
     WARNc_S(_("MEM Error."));
     return NULL;
   }

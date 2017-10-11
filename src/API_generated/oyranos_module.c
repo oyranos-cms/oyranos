@@ -247,7 +247,7 @@ oyCMMapiFilters_s * oyCMMsGetFilterApis_(const char        * registration,
           if(reg) oyFree_m_( reg );
         }
 
-	oyCMMinfo_Release( (oyCMMinfo_s**)&info );
+        oyCMMinfo_Release( (oyCMMinfo_s**)&info );
       }
 
       if(-1 < match_i && match_i < (int)files_n)
