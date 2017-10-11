@@ -191,7 +191,7 @@ oyChar *     oyDumpColorToCGATS     ( const double      * channels,
               "--",
               channels_n + 1,
               format,
-              (int)n/channels_n
+              (int)n/(channels_n?channels_n:-1.0)
             );
 
   setlocale(LC_NUMERIC, "C");
@@ -255,6 +255,7 @@ OYAPI oyCallback_s * OYEXPORT
   if(!s || !s_obj)
   {
     WARNc_S(_("MEM Error."));
+    oyObject_Release( &s_obj );
     return NULL;
   }
 
