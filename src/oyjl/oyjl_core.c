@@ -263,9 +263,13 @@ void       oyjl_string_list_add_static_string (
                                        void             (* deAlloc)(void*) )
 {
   int alt_n = *n;
-  char ** tmp = oyjl_string_list_cat_list((const char**)*list, alt_n,
-                                    (const char**)&string, 1,
-                                     n, alloc);
+  char ** tmp;
+
+  if(!list) return;
+
+  tmp = oyjl_string_list_cat_list((const char**)*list, alt_n,
+                                  (const char**)&string, 1,
+                                  n, alloc);
 
   oyjl_string_list_release(list, alt_n, deAlloc);
 
@@ -284,9 +288,12 @@ void       oyjl_string_list_free_doubles (
                                        int               * list_n,
                                        void             (* deAlloc)(void*) )
 {
-  int n = *list_n,
-      i,
+  int n, i,
       pos = n ? 1 : 0;
+
+  if(!list) return;
+
+  n = *list_n;
 
   if(!deAlloc) deAlloc = free;
 
@@ -320,6 +327,8 @@ void     oyjl_string_list_add_list   ( char            *** list,
 {
   int alt_n = 0;
   char ** tmp;
+
+  if(!list) return;
 
   if(n) alt_n = *n;
   tmp = oyjl_string_list_cat_list((const char**)*list, alt_n, append, n_app,

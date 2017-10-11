@@ -736,8 +736,11 @@ void oyjl_tree_to_json (oyjl_val v, int * level, char ** json)
              if(!v->u.object.keys || !v->u.object.keys[i])
              {
                oyjl_message_p( oyjl_message_error, 0, OYJL_DBG_FORMAT_"missing key", OYJL_DBG_ARGS_ );
-               if(json && *json) free(*json);
-               *json = NULL;
+               if(json && *json)
+               {
+                 free(*json);
+                 *json = NULL;
+               }
                return;
              }
              oyjl_string_add( json, 0,0, "\"%s\": ", v->u.object.keys[i] );
@@ -866,7 +869,7 @@ oyjl_val   oyjl_tree_get_value       ( oyjl_val            v,
           {
             oyjl_tree_free_content( parent );
             parent->type = oyjl_t_array;
-            oyjlAllocHelper_m_( parent->u.array.values, oyjl_val, 2, malloc, return NULL );
+            oyjlAllocHelper_m_( parent->u.array.values, oyjl_val, 2, malloc, oyjl_tree_free( level ), return NULL );
           } else
           {
             oyjl_val *tmp;
@@ -876,6 +879,7 @@ oyjl_val   oyjl_tree_get_value       ( oyjl_val            v,
             if (tmp == NULL)
             {
               oyjl_message_p( oyjl_message_error, 0, OYJL_DBG_FORMAT_"could not allocate memory", OYJL_DBG_ARGS_ );
+              oyjl_tree_free( level );
               return NULL;
             }
             parent->u.array.values = tmp;
@@ -891,8 +895,7 @@ oyjl_val   oyjl_tree_get_value       ( oyjl_val            v,
       /* search for name in object */
       for(j = 0; j < count; ++j)
       {
-        if(term &&
-           strcmp( parent->u.object.keys[j], term ) == 0)
+        if(strcmp( parent->u.object.keys[j], term ) == 0)
         {
           found = 1;
           level = parent->u.object.values[j];
@@ -912,8 +915,8 @@ oyjl_val   oyjl_tree_get_value       ( oyjl_val            v,
           {
             oyjl_tree_free_content( parent );
             parent->type = oyjl_t_object;
-            oyjlAllocHelper_m_( parent->u.object.values, oyjl_val, 2, malloc, return NULL );
-            oyjlAllocHelper_m_( parent->u.object.keys, char*, 2, malloc, return NULL );
+            oyjlAllocHelper_m_( parent->u.object.values, oyjl_val, 2, malloc, oyjl_tree_free( level ), return NULL );
+            oyjlAllocHelper_m_( parent->u.object.keys, char*, 2, malloc, oyjl_tree_free( level ), return NULL );
           } else
           {
             oyjl_val *tmp;
@@ -924,6 +927,7 @@ oyjl_val   oyjl_tree_get_value       ( oyjl_val            v,
             if (tmp == NULL)
             {
               oyjl_message_p( oyjl_message_error, 0, OYJL_DBG_FORMAT_"could not allocate memory", OYJL_DBG_ARGS_ );
+              oyjl_tree_free( level );
               return NULL;
             }
             parent->u.object.values = tmp;
@@ -933,6 +937,7 @@ oyjl_val   oyjl_tree_get_value       ( oyjl_val            v,
             if (keys == NULL)
             {
               oyjl_message_p( oyjl_message_error, 0, OYJL_DBG_FORMAT_"could not allocate memory", OYJL_DBG_ARGS_ );
+              oyjl_tree_free( level );
               return NULL;
             }
             parent->u.object.keys = keys;
@@ -1070,8 +1075,13 @@ void oyjl_tree_free_node             ( oyjl_val            root,
                                        const char        * xpath )
 {
   int n = 0, i, pos, count;
-  char ** list = oyjl_string_split(xpath, '/', &n, malloc);
-  char * path = oyjl_string_copy( xpath, malloc );
+  char ** list;
+  char * path;
+
+  if(!root) return;
+
+  list = oyjl_string_split(xpath, '/', &n, malloc);
+  path = oyjl_string_copy( xpath, malloc );
 
   for(pos = 0; pos < (n-1); ++pos)
   {
