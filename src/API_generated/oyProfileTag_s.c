@@ -237,14 +237,16 @@ OYAPI oyProfileTag_s * OYEXPORT
     if(!obj) error = 1;
 
     if(!error)
-      error = oyObject_SetName( obj, text, oyNAME_NAME );
+      oyObject_SetName( obj, text, oyNAME_NAME );
 
-    if(obj && !obj->name_)
-       error = 1;
-    else
+    if(obj && obj->name_)
       memcpy( obj->name_->lang, "en_GB", 5 );
-    error = oyStructList_MoveIn( list, (oyStruct_s**) &o, 0,
-                                 OY_OBSERVE_AS_WELL );
+    else
+      error = 1;
+
+    if(!error)
+      error = oyStructList_MoveIn( list, (oyStruct_s**) &o, 0,
+                                   OY_OBSERVE_AS_WELL );
   }
 
   if(error <= 0)

@@ -497,14 +497,15 @@ static int oyStructListAddName_( oyStructList_s * list,
     if(!obj) error = 1;
 
     if(!error)
-      error = oyObject_SetName( obj, text, oyNAME_NAME );
+      oyObject_SetName( obj, text, oyNAME_NAME );
 
-    if(obj && !obj->name_)
-       error = 1;
-    else if(lang)
+    if(obj && obj->name_ && lang)
       memcpy( obj->name_->lang, lang, 5 );
+    else if(lang)
+      error = 1;
 
-    error = oyStructList_MoveIn( list, (oyStruct_s**) &o, pos, flags );
+    if(!error)
+      error = oyStructList_MoveIn( list, (oyStruct_s**) &o, pos, flags );
   }
 
   return error;
