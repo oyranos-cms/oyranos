@@ -275,7 +275,7 @@ oyCMMapiFilters_s * oyCMMsGetFilterApis_(const char        * registration,
         char * apir = 0;
 
         api = oyCMMapiFilters_Get( apis, i );
-        if(flags | oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR)
+        if(flags & oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR)
           oyFilterRegistrationModify( (*api_)->registration,
                                     oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR,
                                       &apir, 0 );
@@ -1017,6 +1017,7 @@ char **          oyCMMsGetNames_     ( uint32_t          * n,
   {
     int  files_n = 0, i;
     char * lib_string = oyAllocateFunc_(24);
+    if(!lib_string) return NULL;
 
     lib_string[0] = 0;
     oySprintf_( lib_string, "%s", OY_MODULE_NAME );
@@ -1102,6 +1103,8 @@ oyCMMinfo_s *    oyCMMOpen_          ( const char        * lib_name )
     if(error <= 0)
     {
       char * info_sym = oyAllocateFunc_(24);
+      if(!info_sym)
+        goto cOpenClean;
 
       oySprintf_( info_sym, "%s%s", cmm, OY_MODULE_NAME );
 
@@ -1167,6 +1170,7 @@ oyCMMinfo_s *    oyCMMOpen_          ( const char        * lib_name )
     oyCMMdsoRelease_( lib_name );
   }
 
+cOpenClean:
   if(cmm)
     oyDeAllocateFunc_(cmm);
   cmm = 0;
@@ -1544,6 +1548,8 @@ oyCMMhandle_s *    oyCMMhandle_New_    ( oyObject_s        object )
   if(!s || !s_obj)
   {
     WARNc_S(_("MEM Error."));
+    oyObject_Release( &s_obj );
+    oyFree_m_( s );
     return NULL;
   }
 
@@ -1911,8 +1917,6 @@ oyPointer_s * oyPointer_LookUpFromText( const char        * text,
         if(error <= 0)
           error = oyPointer_Set( cmm_ptr, 0,
                                  data_type, 0, 0, 0 );
-
-        error = !cmm_ptr;
 
         if(error <= 0 && cmm_ptr)
           /* 3b.1. update cache entry */
