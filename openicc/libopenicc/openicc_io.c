@@ -21,6 +21,7 @@
 #include <string.h>  /* strdup() */
 #include <stdarg.h>  /* vsnprintf() */
 #include <stdio.h>   /* vsnprintf() */
+#include <errno.h>
 
 
 
