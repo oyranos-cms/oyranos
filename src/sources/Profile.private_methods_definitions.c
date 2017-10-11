@@ -995,7 +995,7 @@ int          oyProfile_TagReleaseAt_ ( oyProfile_s_      * profile,
 oyPointer    oyProfile_WriteHeader_  ( oyProfile_s_      * profile,
                                        size_t            * size )
 {
-  oyPointer block = 0;
+  char * block = 0;
   char h[5] = {"head"};
   uint32_t * hi = (uint32_t*)&h;
 
@@ -1022,7 +1022,7 @@ oyPointer    oyProfile_WriteHeader_  ( oyProfile_s_      * profile,
         memset( block, 0, 132 );
         memcpy( block, tag->block_, 128 );
         /* unset profile ID */
-        memset( &((char*)block)[84], 0, OY_HASH_SIZE );
+        memset( &block[84], 0, OY_HASH_SIZE );
         *size = 132;
       }
     }
@@ -1030,7 +1030,7 @@ oyPointer    oyProfile_WriteHeader_  ( oyProfile_s_      * profile,
     oyProfileTag_Release( (oyProfileTag_s**)&tag );
   }
 
-  return block;
+  return (oyPointer)block;
 }
 
 /** @internal
