@@ -123,12 +123,14 @@ char *       oyReadFileSToMem_       ( FILE              * fp,
                                        oyAlloc_f           allocate_func)
 {
   size_t mem_size = 256;
-  char* mem = (char*) malloc(mem_size),
-        c;
+  char* mem = (char*) malloc(mem_size);
+  int c;
 
   DBG_MEM_START
 
   DBG_MEM
+
+  if(!mem) return NULL;
 
   if (fp && size)
   {
@@ -153,12 +155,11 @@ char *       oyReadFileSToMem_       ( FILE              * fp,
       mem = oyAllocateWrapFunc_( *size+1, allocate_func );
       if(mem) {
         memcpy( mem, temp, *size );
-        oyFree_m_ (temp)
         mem[*size] = 0;
       } else {
-        oyFree_m_ (mem)
         *size = 0;
       }
+      oyFree_m_ (temp)
     }
   }
  
@@ -258,6 +259,7 @@ oyReadFileToMem_(const char* name, size_t *size,
      memcmp(filename, "file://", 7) == 0)
     filename = &filename[7];
 
+  if(filename)
   {
     fp = fopen(filename, "rb");
     DBG_MEM2_S ("fp = %u filename = %s\n", (unsigned int)((intptr_t)fp), filename)
@@ -327,6 +329,8 @@ char * oyReadUrlToMem_               ( const char        * url,
     char * mem = oyAllocateFunc_(len*3+1);
     char c;
     char * app = 0;
+
+    if(!mem) return NULL;
 
     for(i = 0, pos = 0; i < len; ++i)
     {
@@ -414,6 +418,7 @@ char * oyReadUrlToMem_               ( const char        * url,
     }
     if(command)
       oyFree_m_(command);
+    oyFree_m_( mem );
   }
 
   return text;
@@ -735,8 +740,9 @@ char * oyGetTempFileName_            ( const char        * name,
     int digits = 3;
     int max = 1000;
 
+    if(!format) return NULL;
     /* allocate memory */
-    oyAllocHelper_m_( tmp, char, strlen(full_name)+12, oyAllocateFunc_, return NULL);
+    oyAllocHelper_m_( tmp, char, strlen(full_name)+12, oyAllocateFunc_, free(format); return NULL);
 
     oySprintf_( tmp, "%s", full_name );
     ext = end = oyStrrchr_( tmp, '.' );
@@ -768,11 +774,13 @@ char * oyGetTempFileName_            ( const char        * name,
     if(pos >= max)
     {
       WARNc2_S( "%s: %s", _("File exists"), tmp );
+      oyFree_m_(tmp)
+      oyFree_m_(format)
       return NULL;
     }
 
     filename = tmp;
-    if(format) oyFree_m_(format)
+    oyFree_m_(format)
   }
 
   if(!error)
@@ -781,7 +789,7 @@ char * oyGetTempFileName_            ( const char        * name,
                             allocateFunc?allocateFunc:oyAllocateFunc_ );
   }
 
-  if(tmp) oyFree_m_(tmp)
+  oyFree_m_(tmp)
 
   return result;
 }
@@ -1075,7 +1083,7 @@ int oyMakeDir_ (const char* path)
       path_parent = oyPathGetParent_(path_name);
       if(!oyIsDir_(path_parent))
       {
-        rc = oyMakeDir_(path_parent);
+        int rc OY_UNUSED = oyMakeDir_(path_parent);
         oyDeAllocateFunc_( path_parent );
       }
 
@@ -1249,6 +1257,7 @@ char * oyFindApplication(const char * app_name)
         full_app_name = strdup( full_name );
       }
       oyFree_m_( full_name );
+      if(found) break;
     }
     oyStringListRelease_( &paths, paths_n, free );
   }
@@ -1573,7 +1582,7 @@ char**  oyXDGPathsGet_( int             * count,
         if(i == 1)
           oyStringListAddStaticString( &paths, &n, "~/.config",
                                         oyAllocateFunc_, oyDeAllocateFunc_ );
-        if(i == 4)
+        if(i == 3)
           oyStringListAddStaticString( &paths, &n, "/etc/xdg",
                                         oyAllocateFunc_, oyDeAllocateFunc_ );
       }
@@ -1848,7 +1857,7 @@ char **            oyGetFiles_       ( const char        * path,
  */
 char**  oyLibPathsGet_( int             * count,
                         const char      * subdir,
-                        int               owner,
+                        int               owner OY_UNUSED,
                         oyAlloc_f         allocateFunc )
 {
   char ** paths = 0, ** tmp;
@@ -1902,8 +1911,6 @@ char**  oyLibPathsGet_( int             * count,
 
   for(i = 0; i < vars_n; ++i)
   {
-    if( (i >= 2 && (owner != oySCOPE_USER)) ||
-        (i < 2 && (owner != oySCOPE_SYSTEM)))
     {
       const char * var = getenv(vars[i]);
       if(var)
