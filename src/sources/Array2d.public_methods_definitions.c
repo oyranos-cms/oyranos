@@ -476,10 +476,11 @@ OYAPI oyDATATYPE_e  OYEXPORT
  *  This function is not thread safe.
  *
  *  @param[in]     array               the channel array
+ *  @param[in]     channels            the channel count
  *  @return                            a description string
  *
- *  @version Oyranos: 0.9.6
- *  @date    2016/09/29
+ *  @version Oyranos: 0.9.7
+ *  @date    2017/10/11
  *  @since   2016/09/26 (Oyranos: 0.9.6)
  */
 OYAPI const char* OYEXPORT oyArray2d_Show (
@@ -498,6 +499,9 @@ OYAPI const char* OYEXPORT oyArray2d_Show (
 
   if(!array || !t)
     error = 1;
+
+  if(c == 0)
+    c = -1.0;
 
   if(!error)
   {
