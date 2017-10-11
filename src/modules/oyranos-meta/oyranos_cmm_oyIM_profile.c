@@ -500,7 +500,12 @@ static int oyStructListAddName_( oyStructList_s * list,
       oyObject_SetName( obj, text, oyNAME_NAME );
 
     if(obj && obj->name_ && lang)
-      memcpy( obj->name_->lang, lang, 5 );
+    {
+      int len = strlen(lang);
+      if(len > 5) len = 5;
+      if(len)
+        memcpy( obj->name_->lang, lang, len );
+    }
     else if(lang)
       error = 1;
 
