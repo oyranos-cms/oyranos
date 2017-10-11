@@ -1183,7 +1183,7 @@ oyGetDisplayNumber_        (oyX1Monitor_s *disp)
     if(txt[0])
       ++txt;
     l = strlen(txt) > 8 ? 8 : strlen(txt);
-    strncpy( ds, txt, strlen(txt) > 8 ? 8 : strlen(txt) );
+    strncpy( ds, txt, l );
     ds[7] = '\000';
     if( strchr( ds, '.' ) )
     {
