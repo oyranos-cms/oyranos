@@ -1482,6 +1482,7 @@ OYAPI int  OYEXPORT oyDeviceFromJSON ( const char        * json_text,
 
   *device = device_;
   device_ = NULL;
+  oyjl_tree_free( json );
 
   return error;
 }
