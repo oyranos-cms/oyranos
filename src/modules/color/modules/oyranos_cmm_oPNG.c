@@ -792,7 +792,7 @@ oyImage_s *  oyImage_FromPNG         ( const char        * filename,
   /* read the PNG header */
   size = 8;
 
-  oyAllocHelper_m_( data, uint8_t, size, oyAllocateFunc_, return NULL);
+  oyAllocHelper_m_( data, uint8_t, size, oyAllocateFunc_, fclose(fp); return NULL);
 
   fpos = fread( data, sizeof(uint8_t), size, fp );
   if( fpos < (size_t)size ) {
