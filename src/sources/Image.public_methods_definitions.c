@@ -490,7 +490,7 @@ static int oyImage_CreateFillArray_  ( oyImage_s         * image,
   int array_width, array_height;
   oyAlloc_f allocateFunc_ = 0;
   unsigned char * line_data = 0;
-  int i,j, height;
+  int i,j, height = 0;
 
   if(!image)
     return 1;
@@ -582,8 +582,6 @@ static int oyImage_CreateFillArray_  ( oyImage_s         * image,
             }
 
             i += height;
-
-            if(error) break;
           }
         }
       }
@@ -665,10 +663,11 @@ int            oyImage_FillArray     ( oyImage_s         * image,
 
   oyCheckType__m( oyOBJECT_IMAGE_S, return 1 )
 
-  if( allocate_method < 0 || allocate_method > 2 )
+  if( allocate_method < 0 || 2 < allocate_method )
   {
     WARNcc1_S(image, "allocate_method not allowed: %d", allocate_method )
     error = 1;
+    return error;
   }
 
   data_type = oyToDataType_m( s->layout_[oyLAYOUT] );
@@ -1647,8 +1646,8 @@ int            oyImage_RoiToSamples  ( oyImage_s         * image,
  *                                     oyImage_GetWidth() == 1.0 unit
  *  @return                            error
  *
- *  @version  Oyranos: 0.9.6
- *  @date     2016/09/25
+ *  @version  Oyranos: 0.9.7
+ *  @date     2017/10/11
  *  @since    2016/09/25 (Oyranos: 0.9.6)
  */
 int            oyImage_SamplesToRoi  ( oyImage_s         * image,
@@ -1679,10 +1678,14 @@ int            oyImage_SamplesToRoi  ( oyImage_s         * image,
     } else
     {
       channel_n = oyImage_GetPixelLayout( image, oyCHANS );
-      oyRectangle_SetByRectangle( *roi, sample_rectangle );
-      roi_->x /= channel_n;
-      roi_->width /= channel_n;
-      oyRectangle_Scale( *roi, 1.0/width );
+      if(channel_n != 0.0)
+      {
+        oyRectangle_SetByRectangle( *roi, sample_rectangle );
+        roi_->x /= channel_n;
+        roi_->width /= channel_n;
+        oyRectangle_Scale( *roi, 1.0/width );
+      } else
+        error = 1;
     }
   }
 
@@ -1701,8 +1704,8 @@ int            oyImage_SamplesToRoi  ( oyImage_s         * image,
  *                                     pixel unit
  *  @return                            error
  *
- *  @version  Oyranos: 0.9.6
- *  @date     2016/09/25
+ *  @version  Oyranos: 0.9.7
+ *  @date     2017/10/11
  *  @since    2016/09/25 (Oyranos: 0.9.6)
  */
 int            oyImage_SamplesToPixels(oyImage_s         * image,
@@ -1722,9 +1725,13 @@ int            oyImage_SamplesToPixels(oyImage_s         * image,
     in_ = (oyRectangle_s_*)sample_rectangle;
     out_ = (oyRectangle_s_*)pixel_rectangle;
 
-    oyRectangle_SetByRectangle( pixel_rectangle, sample_rectangle );
-    out_->x = in_->x / channel_n;
-    out_->width = in_->width / channel_n;
+    if(channel_n != 0.0)
+    {
+      oyRectangle_SetByRectangle( pixel_rectangle, sample_rectangle );
+      out_->x = in_->x / channel_n;
+      out_->width = in_->width / channel_n;
+    } else
+      error = 1;
   }
 
   return error;
