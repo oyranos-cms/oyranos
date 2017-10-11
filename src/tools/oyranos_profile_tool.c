@@ -512,9 +512,10 @@ int main( int argc , char** argv )
                f[0]&0x20?"Negative":"Positive", f[0]&0x10 ? "BW" : "Color" );
 
       oyOptionChoicesGet( oyWIDGET_RENDERING_INTENT, &count, &names, 0 );
+      j = oyProfile_GetSignature(p,oySIGNATURE_INTENT);
       /* keep total number of chars equal to original for cli print */
       fprintf( stdout, "%s %s\n", _("Rendering Intent:"),
-             names[oyProfile_GetSignature(p,oySIGNATURE_INTENT)]);
+               j < count ? names[j] : _("unknown"));
 
       /* keep total number of chars equal to original for cli print */
       fprintf( stdout, "%s %f %f %f\n", _("Illuminant:      "),
