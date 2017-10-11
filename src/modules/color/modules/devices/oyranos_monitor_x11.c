@@ -651,6 +651,7 @@ oyX1GetAllScreenNames_          (const char *display_name,
     {
       fprintf( stderr, "oyChangeScreenName_failed %s %d\n",
                noE(display_name), i );
+      free( list );
       return NULL;
     }
 
