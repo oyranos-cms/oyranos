@@ -549,7 +549,7 @@ oyOptions_s *  oyOptions_FromText    ( const char        * text,
     {
       /* cut off xf:model xf:instance tags and place a simple <top> instead */
       const char * t = strstr(text,"xf:instance");
-      char * tx;
+      char * tx = NULL;
       if(t)
         t = strstr(t,">");
       if(t)
