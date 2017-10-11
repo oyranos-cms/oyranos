@@ -258,8 +258,7 @@ oyTESTRESULT_e testElektra()
       PRINT_SUB( oyTESTRESULT_FAIL, 
       "Elektra (value) wrong: %s", value );
     }
-  } else
-    result = oyTESTRESULT_SUCCESS;
+  }
 
   if(start)
     oyDeAllocateFunc_(start);
