@@ -465,17 +465,21 @@ char * oyReadCmdToMem_               ( const char        * command,
       }
       if(fp && mem)
       {
-          /* copy to external allocator */
-          char* temp = mem;
-          mem = oyAllocateWrapFunc_( *size+1, allocate_func );
-          if(mem) {
-            memcpy( mem, temp, *size );
-            oyFree_m_ (temp)
-            mem[*size] = 0;
-          } else {
-            oyFree_m_ (mem)
-            *size = 0;
-          }
+        /* copy to external allocator */
+        char* temp = mem;
+        mem = oyAllocateWrapFunc_( *size+1, allocate_func );
+        if(mem)
+       	{
+          memcpy( mem, temp, *size );
+          oyFree_m_ (temp)
+          mem[*size] = 0;
+        } else
+       	{
+          oyMessageFunc_p( oyMSG_ERROR,0, OY_DBG_FORMAT_ "%s: \"%s\"",
+                           OY_DBG_ARGS_, _("MEM Error."), command);
+          oyFree_m_ (temp)
+          *size = 0;
+        }
         text = mem;
       }
       if(fp)
