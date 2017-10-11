@@ -508,6 +508,7 @@ int          oyOptions_FromJSON      ( const char        * json_text,
   opts = NULL;
 
   oyDeAllocateFunc_( xpath ); xpath = 0;
+  oyjl_tree_free( json );
 
   return error;
 }
