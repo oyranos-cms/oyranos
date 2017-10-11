@@ -29,15 +29,17 @@ void oyConfig_Release__Members( oyConfig_s_ * config )
   {
     oyDeAlloc_f deallocateFunc = config->oy_->deallocateFunc_;
 
-    /* Deallocate members of basic type here
-     * E.g.: deallocateFunc( config->member );
-     */
-    int i = 0;
-    if(config->rank_map)
-    {
-      while(config->rank_map[i].key)
-        deallocateFunc( config->rank_map[i++].key );
-      deallocateFunc( config->rank_map );
+    if(deallocateFunc)
+    { 
+      int i = 0;
+      if(config->rank_map)
+      {
+        while(config->rank_map[i].key)
+          deallocateFunc( config->rank_map[i++].key );
+        deallocateFunc( config->rank_map );
+      }
+      if(config->registration)
+        deallocateFunc( config->registration ); 
     }
   }
 }
