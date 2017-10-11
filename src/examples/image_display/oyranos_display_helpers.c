@@ -350,7 +350,7 @@ int  oyDrawScreenImage               ( oyConversion_s    * context,
         printf( "%s:%d WARNING: wrong image data format: %s\n%s\n"
                 "need 4 or 3 channels with %s\n", __FILE__,__LINE__,
                 oyOptions_FindString( image_tags, "filename", 0 ),
-                image ? oyObject_GetName( image->oy_, oyNAME_NICK ) : "",
+                oyObject_GetName( image->oy_, oyNAME_NICK ),
                 oyDataTypeToText( data_type_request ) );
         return 1;
       }
