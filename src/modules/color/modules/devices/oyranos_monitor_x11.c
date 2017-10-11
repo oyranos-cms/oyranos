@@ -487,6 +487,7 @@ int      oyX1GetMonitorInfo          ( const char        * display_name,
           free( save_locale );
       }
     }
+    free(log_file);
   }
 
   if(edid)
