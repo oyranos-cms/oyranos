@@ -537,7 +537,7 @@ int      oyraFilterPlug_ImageInputPPMRun (
   fsize = ftell(fp);
   rewind(fp);
 
-  oyAllocHelper_m_( data, uint8_t, fsize, 0, return 1);
+  oyAllocHelper_m_( data, uint8_t, fsize, 0, fclose(fp); return 1);
 
   fpos = fread( data, sizeof(uint8_t), fsize, fp );
   if( fpos < (size_t)fsize ) {
@@ -907,7 +907,7 @@ int      oyraFilterPlug_ImageInputPPMRun (
     return FALSE;
   }
 
-  oyAllocHelper_m_( buf, uint8_t, mem_n, 0, return 1);
+  oyAllocHelper_m_( buf, uint8_t, mem_n, 0, oyFree_m_( data ); return 1);
   DBG_NUM2_S("allocate image data: 0x%x size: %d ", (int)(intptr_t)
               buf, mem_n );
 
