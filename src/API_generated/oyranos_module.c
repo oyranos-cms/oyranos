@@ -328,7 +328,8 @@ oyCMMapiFilters_s * oyCMMsGetFilterApis_(const char        * registration,
           rank_list2_[k++] = rank_list_[i];
         }
 
-        oyFree_m_(apir);
+        if(apir)
+          oyFree_m_(apir);
 
         if(api && api->release)
           api->release( (oyStruct_s**)&api );
