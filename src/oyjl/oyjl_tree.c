@@ -869,7 +869,7 @@ oyjl_val   oyjl_tree_get_value       ( oyjl_val            v,
           {
             oyjl_tree_free_content( parent );
             parent->type = oyjl_t_array;
-            oyjlAllocHelper_m_( parent->u.array.values, oyjl_val, 2, malloc, oyjl_tree_free( level ), return NULL );
+            oyjlAllocHelper_m_( parent->u.array.values, oyjl_val, 2, malloc, oyjl_tree_free( level ); return NULL );
           } else
           {
             oyjl_val *tmp;
@@ -915,8 +915,8 @@ oyjl_val   oyjl_tree_get_value       ( oyjl_val            v,
           {
             oyjl_tree_free_content( parent );
             parent->type = oyjl_t_object;
-            oyjlAllocHelper_m_( parent->u.object.values, oyjl_val, 2, malloc, oyjl_tree_free( level ), return NULL );
-            oyjlAllocHelper_m_( parent->u.object.keys, char*, 2, malloc, oyjl_tree_free( level ), return NULL );
+            oyjlAllocHelper_m_( parent->u.object.values, oyjl_val, 2, malloc, oyjl_tree_free( level ); return NULL );
+            oyjlAllocHelper_m_( parent->u.object.keys, char*, 2, malloc, oyjl_tree_free( level ); return NULL );
           } else
           {
             oyjl_val *tmp;
