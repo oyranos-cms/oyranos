@@ -450,6 +450,8 @@ OYAPI int  OYEXPORT oyConfigs_FromDeviceClass (
   if(error <= 0)
     error = oyConfigDomainList  ( device_class_registration, &texts, &count,
                                   &rank_list, 0 );
+  if(rank_list)
+    oyFree_m_(rank_list);
 
   oyFree_m_(device_class_registration);
 
@@ -498,6 +500,7 @@ OYAPI int  OYEXPORT oyConfigs_FromDeviceClass (
 
     oyConfigs_Release( &configs );
   }
+  oyStringListRelease_( &texts, count, 0 );
 
   if(devices)
     j_n = oyConfigs_Count( *devices );
