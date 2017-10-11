@@ -4422,7 +4422,8 @@ oyTESTRESULT_e testCMMsShow ()
   oyDeAllocateFunc_( text_tmp );
 
   STRING_ADD( t, "     </xf:group>\n</body>\n</html>\n" );
-  remove("test2_CMMs.xhtml");
+  int r OY_UNUSED;
+  r = remove("test2_CMMs.xhtml");
   oyWriteMemToFile2_( "test2_CMMs.xhtml", t, strlen(t),0/*OY_FILE_NAME_SEARCH*/,
                       &rfile, malloc );
   fprintf(zout, "Wrote %s\n", rfile?rfile:"test2_CMMs.xhtml" );
