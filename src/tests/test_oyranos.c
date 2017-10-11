@@ -723,7 +723,7 @@ oyTESTRESULT_e testMonitor ()
       if(text && text[0])
         PRINT_SUB( oyTESTRESULT_SUCCESS, "device: %s", text)
       else
-        PRINT_SUB( oyTESTRESULT_XFAIL, "device: ---" )
+        PRINT_SUB( oyTESTRESULT_XFAIL, "device: --- %d", error )
 
       if(text)
         oyDeAllocateFunc_( text );
