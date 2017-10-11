@@ -2557,7 +2557,7 @@ static int     setupColourTable      ( PrivColorContext  * ccontext,
         int j = 0;
         while((fn = oyProfile_GetFileName( dl, j )) != NULL)
         {
-          fprintf( zout, " -> \"%s\"[%d]", fn?fn:"----", j );
+          fprintf( zout, " -> \"%s\"[%d]", fn, j );
           ++j;
         }
         dl_count = j;
