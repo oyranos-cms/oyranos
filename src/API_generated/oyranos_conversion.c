@@ -58,7 +58,7 @@ void oyShowGraph__( oyFilterGraph_s * s )
 {
   char * ptr = 0;
   int error = 0;
-  char * ps_viewer = oyGetPSViewer(),
+  char * ps_viewer = 0,
        * command = 0;
 
   oyFilterGraph_s * adjacency_list = s;
@@ -69,6 +69,8 @@ void oyShowGraph__( oyFilterGraph_s * s )
   ptr = oyFilterGraph_ToText( adjacency_list, 0, 0,
                               "Oyranos Test Graph", 0, malloc );
   oyWriteMemToFile_( "test.dot", ptr, strlen(ptr) );
+
+  ps_viewer = oyGetPSViewer(),
 
   oyStringAddPrintf_( &command, oyAllocateFunc_, oyDeAllocateFunc_,
                       "dot -Tps test.dot -o test.ps; %s test.ps &",
@@ -102,9 +104,11 @@ void               oyShowConversion_ ( oyConversion_s    * conversion,
   char * ptr = 0, * t = 0, * t2 = 0, * command = 0;
   int error = 0;
   oyConversion_s * s = conversion;
-  char * ps_viewer = oyGetPSViewer();
+  char * ps_viewer = NULL;
   oyCheckType__m( oyOBJECT_CONVERSION_S, return )
   /*return;*/
+
+  ps_viewer = oyGetPSViewer();
 
   ptr = oyConversion_ToText( s, "Conversion Graph", 0, oyAllocateFunc_ );
 
