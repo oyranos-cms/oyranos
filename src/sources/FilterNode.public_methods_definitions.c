@@ -231,9 +231,11 @@ oyFilterNode_s *   oyFilterNode_Create(const char        * registration,
 
     if(s->core)
     {
-      size_t len = sizeof(oyFilterSocket_s*) *
-             (oyFilterNode_EdgeCount( (oyFilterNode_s*) s, 0, 0 ) + 1);
-      len = len?len:sizeof(oyFilterSocket_s*);
+      int count = oyFilterNode_EdgeCount( (oyFilterNode_s*) s, 0, 0 );
+      size_t len;
+      if(count < 0) count = 0;
+      len = sizeof(oyFilterSocket_s*) * (count + 1);
+
       s->sockets = allocateFunc_( len );
       memset( s->sockets, 0, len );
 
@@ -658,8 +660,11 @@ OYAPI oyFilterPlug_s * OYEXPORT
 
     if(!node_->plugs)
     {
-      size_t len = sizeof(oyFilterPlug_s*) *
-                   (oyFilterNode_EdgeCount( (oyFilterNode_s*)node_, 1, 0 ) + 1);
+      int count = oyFilterNode_EdgeCount( (oyFilterNode_s*)node_, 1, 0 );
+      size_t len;
+      if(count < 0) count = 0;
+      len = sizeof(oyFilterPlug_s*) * (count + 1);
+
       node_->plugs = allocateFunc_( len );
       memset( node_->plugs, 0, len );
     }
@@ -751,8 +756,11 @@ OYAPI oyFilterSocket_s * OYEXPORT
 
     if(!node_->sockets)
     {
-      size_t len = sizeof(oyFilterSocket_s*) *
-                   (oyFilterNode_EdgeCount( (oyFilterNode_s*)node_, 0, 0 ) + 1);
+      int count = oyFilterNode_EdgeCount( (oyFilterNode_s*)node_, 0, 0 );
+      size_t len;
+      if(count < 0) count = 0;
+      len = sizeof(oyFilterSocket_s*) * (count + 1);
+
       node_->sockets = allocateFunc_( len );
       memset( node_->sockets, 0, len );
     }
