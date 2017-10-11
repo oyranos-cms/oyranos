@@ -288,12 +288,12 @@ void       oyjl_string_list_free_doubles (
                                        int               * list_n,
                                        void             (* deAlloc)(void*) )
 {
-  int n, i,
-      pos = n ? 1 : 0;
+  int n, i, pos;
 
   if(!list) return;
 
   n = *list_n;
+  pos = n ? 1 : 0;
 
   if(!deAlloc) deAlloc = free;
 
