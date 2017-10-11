@@ -3515,11 +3515,13 @@ oyTESTRESULT_e testCMMRankMap ()
     if( rank_map2 )
     { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "Map from JSON    [%d]                 ", i );
+    oyRankMapRelease( &rank_map2, free );
     } else
     { PRINT_SUB( oyTESTRESULT_FAIL,
     "Map from JSON failed [%d]      %d     ", i, error );
     }
 
+    oyFree_m_(rank_map_text);
     oyConfig_Release( &device );
 
 
@@ -3536,8 +3538,10 @@ oyTESTRESULT_e testCMMRankMap ()
     }
 
     oyConfig_Release( &device );
+    oyFree_m_(json_text);
     fprintf( zout, "\n");
   }
+  oyConfigs_Release( &devices );
 
   char ** list = NULL;
   error = oyRankMapList( NULL, NULL, &list, oyAllocateFunc_ );
@@ -3561,6 +3565,7 @@ oyTESTRESULT_e testCMMRankMap ()
   error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/path",
                                    "1", OY_CREATE_NEW );  
   error = oyRankMapList( NULL, options, &list, oyAllocateFunc_ );
+  oyOptions_Release( &options );
   count = 0;
   while( list && list[count]) ++count;
   if( count >= 1 )
@@ -3575,7 +3580,7 @@ oyTESTRESULT_e testCMMRankMap ()
   {
     fprintf( zout, "%d: %s\n", i, list[i] );
   }
-
+  oyStringListRelease_( &list, count, oyDeAllocateFunc_ );
 
   fprintf( zout, "\n");
 
