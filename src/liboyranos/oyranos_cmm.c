@@ -212,7 +212,12 @@ int oyDeviceCMMInit                  ( oyStruct_s        * filter,
       if(json_text) oyFree_m_( json_text );
     }
 
-    if(rank_name) oyStringListRelease_( &rank_name, 1, oyDeAllocateFunc_ );
+    if(rank_name)
+    {
+      int count = 0;
+      while( rank_name[count] ) ++count;
+      oyStringListRelease_( &rank_name, count, oyDeAllocateFunc_ );
+    }
   }
 
   return error;
