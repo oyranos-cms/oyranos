@@ -1825,7 +1825,12 @@ void         lcm2AddMetaTexts        ( cmsHPROFILE         profile,
     wchar_t * wchar_key = lcm2Utf8ToWchar(key),
 	    * wchar_val = lcm2Utf8ToWchar(val);
 
-    if(!wchar_key || !wchar_val) continue;
+    if(!wchar_key || !wchar_val)
+    {
+      if(wchar_key) free( wchar_key );
+      if(wchar_val) free( wchar_val );
+      continue;
+    }
 
     cmsDictAddEntry( dict, wchar_key, wchar_val, NULL,NULL );
 
