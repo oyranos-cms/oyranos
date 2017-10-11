@@ -31,26 +31,32 @@ char * openiccOpenFile( const char * file_name,
   size_t size = 0, s = 0;
   char * text = NULL;
 
-    if(file_name)
+  if(file_name)
+  {
+    fp = fopen(file_name,"rb");
+    if(fp)
     {
-      fp = fopen(file_name,"rb");
-      if(fp)
+      fseek(fp,0L,SEEK_END); 
+      size = ftell (fp);
+      rewind(fp);
+      text = malloc(size+1);
+      if(text == NULL)
       {
-        fseek(fp,0L,SEEK_END); 
-        size = ftell (fp);
-        rewind(fp);
-        text = malloc(size+1);
-        s = fread(text, sizeof(char), size, fp);
-        text[size] = '\000';
-        if(s != size)
-          WARNc_S( "Error: fread %lu but should read %lu",
-                  (long unsigned int) s, (long unsigned int)size);
+        WARNc_S( "Error: Could allocate memory: %lu", (long unsigned int)size);
         fclose( fp );
-      } else
-      {
-        WARNc_S( "Error: Could not open file - \"%s\"", file_name);
+        return NULL;
       }
+      s = fread(text, sizeof(char), size, fp);
+      text[size] = '\000';
+      if(s != size)
+        WARNc_S( "Error: fread %lu but should read %lu",
+                (long unsigned int) s, (long unsigned int)size);
+      fclose( fp );
+    } else
+    {
+      WARNc_S( "Error: Could not open file - \"%s\"", file_name);
     }
+  }
 
   if(size_ptr)
     *size_ptr = size;
