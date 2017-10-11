@@ -9,7 +9,10 @@ int main( int argc OY_UNUSED, char ** argv OY_UNUSED)
   int error = 0;
 
   if(!api)
+  {
     oyMessageFunc_p(oyMSG_WARN,0,"No oyCMMapi_s generated");
+    return 1;
+  }
 
   in = oyCMMapi6_GetDataType(api,0);
   out = oyCMMapi6_GetDataType(api,1);
