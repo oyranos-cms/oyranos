@@ -1171,7 +1171,10 @@ oyGetDisplayNumber_        (oyX1Monitor_s *disp)
   {
     char ds[8];             /* display.screen*/
     const char *txt = strchr( display_name, ':' );
+    int l;
     
+    memset( ds, 0, 8 );
+
     if( !txt )
     { fprintf( stderr, "invalid display name: %s\n", display_name );
       return -1;
@@ -1179,9 +1182,10 @@ oyGetDisplayNumber_        (oyX1Monitor_s *disp)
 
     if(txt[0])
       ++txt;
+    l = strlen(txt) > 8 ? 8 : strlen(txt);
     strncpy( ds, txt, strlen(txt) > 8 ? 8 : strlen(txt) );
     ds[7] = '\000';
-    if( strrchr( ds, '.' ) )
+    if( strchr( ds, '.' ) )
     {
       char *end = strchr( ds, '.' );
       if( end )
@@ -1203,6 +1207,8 @@ int   oyX1Monitor_getScreenFromDisplayName_( oyX1Monitor_s   * disp )
     char ds[8];             /* display.screen*/
     const char *txt = strchr( display_name, ':' );
     
+    memset( ds, 0, 8 );
+
     if( !txt )
     { fprintf( stderr, "invalid display name: %s\n", display_name );
       return -1;
@@ -1210,7 +1216,7 @@ int   oyX1Monitor_getScreenFromDisplayName_( oyX1Monitor_s   * disp )
 
     strncpy( ds, txt, strlen(txt) > 8 ? 8 : strlen(txt) );
     ds[7] = '\000';
-    if( strrchr( display_name, '.' ) )
+    if( strchr( display_name, '.' ) )
     {
       char *nummer_text = strchr( ds, '.' );
       if( nummer_text )
@@ -1724,6 +1730,7 @@ int          oyX1Monitor_release_      ( oyX1Monitor_s      ** obj )
   if(s->name) free( s->name );
   if(s->host) free( s->host );
   if(s->identifier) free( s->identifier );
+  if(s->system_port) free( s->system_port );
 
 
   s->geo[0] = s->geo[1] = -1;

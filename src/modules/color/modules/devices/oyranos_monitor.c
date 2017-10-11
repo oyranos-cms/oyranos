@@ -117,7 +117,7 @@ int            oyDeviceFillInfos     ( const char        * registration,
         OPTIONS_ADD( (*device)->backend_core, display_geometry, 0 )
         OPTIONS_ADD( (*device)->backend_core, system_port, 0 )
         OPTIONS_ADD( (*device)->backend_core, host, 0 )
-        OPTIONS_ADD( (*device)->backend_core, EDID_date, 0 )
+        OPTIONS_ADD( (*device)->backend_core, EDID_date, 1 )
         OPTIONS_ADD_INT( (*device)->backend_core, EDID_mnft_id )
         OPTIONS_ADD_INT( (*device)->backend_core, EDID_model_id )
         if(!error)
@@ -209,6 +209,7 @@ int            oyDeviceFillInfos     ( const char        * registration,
             sprintf( text, "%g", colors[8] );
             error = oyOptions_SetFromText( &(*device)->backend_core, t,
                                          text, OY_CREATE_NEW );
+            oyFree_m_(t);
 
             setlocale(LC_NUMERIC, save_locale);
             if(save_locale)
@@ -278,6 +279,16 @@ int            oyDeviceFillEdid      ( const char        * registration,
                                      edid_text, OY_CREATE_NEW );
       oyFree_m_( t );
       oyFree_m_( edid_text );
+      if(EDID_manufacturer)
+        oyFree_m_( EDID_manufacturer );
+      if(EDID_mnft)
+        oyFree_m_( EDID_mnft );
+      if(EDID_model)
+        oyFree_m_( EDID_model );
+      if(EDID_serial)
+        oyFree_m_( EDID_serial );
+      if(EDID_vendor)
+        oyFree_m_( EDID_vendor );
   }
 
   return error;
