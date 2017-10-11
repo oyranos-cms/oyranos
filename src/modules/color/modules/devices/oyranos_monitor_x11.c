@@ -1161,16 +1161,14 @@ int   oyX1Monitor_getScreenFromDisplayName_( oyX1Monitor_s   * disp )
 char*
 oyExtractHostName_           (const char* display_name)
 {
-  char* host_name = malloc(strlen( display_name ) + 48);
-
-  if(!host_name) return NULL;
+  char* host_name = NULL;
 
   /* Is this X server identifyable? */
   if(!display_name)
   {
     char *host = getenv ("HOSTNAME");
     if (host) {
-        strcpy( host_name, host );
+      host_name = strdup( host );
     }
   } else if (strchr(display_name,':') == display_name ||
              !strchr( display_name, ':' ) )
@@ -1178,15 +1176,18 @@ oyExtractHostName_           (const char* display_name)
     char *host = getenv ("HOSTNAME");
     /* good */
     if (host) {
-        strcpy( host_name, host );
+      host_name = strdup( host );
     }
   } else if ( strchr( display_name, ':' ) )
   {
     char* ptr = 0;
+    host_name = malloc(strlen( display_name ) + 48);
+    if(!host_name) return NULL;
     strcpy( host_name, display_name );
     ptr = strchr( host_name, ':' );
     ptr[0] = 0;
-  }
+  } else
+    host_name = strdup( "" );
 
   if(oy_debug) fprintf( stderr, "host_name = %s\n", host_name );
 
