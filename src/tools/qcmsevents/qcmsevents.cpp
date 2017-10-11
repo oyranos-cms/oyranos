@@ -175,13 +175,14 @@ void QcmseDialog::showConfig()
   if(xdg_desktop && strcmp(xdg_desktop,"KDE"))
     app = strdup("systemsettings5 settings-kolor-management");
 #endif
-  if(oyranos_settings_gui_app)
+  if(oyranos_settings_gui_app && oyranos_settings_gui_app[0])
     app = strdup(oyranos_settings_gui_app);
   while(!app && synnefo_bins[i])
     app = oyFindApplication( synnefo_bins[i++] );
 
   if(app)
   { char * command = (char*) malloc(strlen(app) + 128);
+    if(!command) return;
     sprintf(command, "%s&", app);
     system(command);
     free(command);
@@ -301,6 +302,11 @@ int QcmseMessageFunc( XCME_MSG_e code, const void * context, const char * format
   }
 
   text = (char*)calloc(sizeof(char), 4096);
+  if(!text)
+  {
+    dialog->log( format, code );
+    return 0;
+  }
   text[0] = 0;
 
 
