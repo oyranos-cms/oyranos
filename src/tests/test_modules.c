@@ -49,7 +49,7 @@ int main( int argc OY_UNUSED, char ** argv OY_UNUSED)
 	  while(tmp && tmp->type_ != oyOBJECT_CMM_API5_S)
             tmp = oyCMMapi_GetNext(tmp);
 
-	  if(tmp->type_ == oyOBJECT_CMM_API5_S)
+	  if(tmp && tmp->type_ == oyOBJECT_CMM_API5_S)
 	  {
             oyCMMapi5_s_ * api5 = (oyCMMapi5_s_*) tmp;
             int j;
