@@ -56,7 +56,7 @@ int      oyFilterPlug_ImageRootRun   ( oyFilterPlug_s    * requestor_plug,
   oyImage_s * image = (oyImage_s*)oyFilterSocket_GetData( socket ),
             * output_image;
   int output_image_width;
-  oyRectangle_s * output_array_roi;
+  oyRectangle_s * output_array_roi = NULL;
 
   DBGs_PROG3_S( ticket, "%s[%d] %s", "Work on remote socket image",
                 oyStruct_GetId( (oyStruct_s*)image ),
