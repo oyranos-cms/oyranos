@@ -656,7 +656,7 @@ oyTESTRESULT_e testStringRun ()
   oyFree_m_(test_out);
 
   int list_n = 0, filt_n = 0;
-  char ** list = oyStringSplit( "org/domain/eins.lib;org/domain/zwei.txt;org/domain/drei.lib;net/welt/vier.lib;net/welt/vier.txt", ';', &list_n, oyAllocateFunc_ );
+  char ** list = oyStringSplit( "org/domain/eins.lib;org/domain/zwei.txt;org/domain/drei.lib;net/welt/vier.lib;net/welt/vier.txt;/net/welt/fuenf;/net/welt/fuenf", ';', &list_n, oyAllocateFunc_ );
   char ** filt = oyStringListFilter_( (const char**)list, list_n,
                                       "org/domain", NULL, "lib", &filt_n,
                                       oyAllocateFunc_ );
@@ -692,6 +692,17 @@ oyTESTRESULT_e testStringRun ()
       fprintf(zout, " filt[%d] \"%s\"\n", i, filt[i] );
   }
   oyStringListRelease_( &filt, filt_n, oyDeAllocateFunc_ );
+
+  oyStringListFreeDoubles( list, &list_n, oyDeAllocateFunc_ );
+  if( list_n == 6 )
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyStringListFreeDoubles()                          " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyStringListFreeDoubles()                          " );
+    for(i = 0; i < list_n; ++i)
+      fprintf(zout, " list[%d] \"%s\"\n", i, list[i] );
+  }
   oyStringListRelease_( &list, list_n, oyDeAllocateFunc_ );
 
   return result;
@@ -6950,7 +6961,7 @@ oyTESTRESULT_e testConfDomain ()
 
   error = oyConfigDomainList( "//" OY_TYPE_STD, &domains, &count, &rank_list,
                               malloc );
-  if( count )
+  if( count && domains)
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "oyConfigDomainList \"%s\": %d               ", "//" OY_TYPE_STD "",
                                                     (int)count );
@@ -6961,7 +6972,7 @@ oyTESTRESULT_e testConfDomain ()
   }
   for( i = 0; i < (int)count; ++i)
   {
-    fprintf( zout, "%d: %s\n", i, domains[i] );
+    fprintf( zout, "%d: %s\n", i, oyNoEmptyString_m_(domains[i]) );
   }
   fprintf( zout, "\n");
   
@@ -6969,12 +6980,12 @@ oyTESTRESULT_e testConfDomain ()
   {
     int text_missed = 0;
     const char * t[3] = {0,0,0};
-    const char * nick = domains[i];
+    const char * nick = oyNoEmptyString_m_(domains[i]);
 
     if(strchr(nick, '/'))
       nick = strrchr(nick, '/') + 1;
 
-    a = oyConfDomain_FromReg( domains[i], 0 );
+    a = oyConfDomain_FromReg( oyNoEmptyString_m_(domains[i]), 0 );
     texts = oyConfDomain_GetTexts( a );
     n = j = 0;
     if(texts)
