@@ -191,7 +191,7 @@ oyChar *     oyDumpColorToCGATS     ( const double      * channels,
               "--",
               channels_n + 1,
               format,
-              (int)n/(channels_n?channels_n:-1.0)
+              (int)n/(channels_n?channels_n:-1)
             );
 
   setlocale(LC_NUMERIC, "C");
