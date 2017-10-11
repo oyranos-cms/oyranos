@@ -641,6 +641,11 @@ int      ojpgFilter_CmmRun           ( oyFilterPlug_s    * requestor_plug,
         ojpg_msg(oyMSG_WARN, (oyStruct_s *) node, _DBG_FORMAT_ "Could not allocate enough memory.", _DBG_ARGS_);
         return 1;
       }
+    } else
+    {
+      ojpg_msg( oyMSG_WARN, (oyStruct_s *) node, _DBG_FORMAT_ "nothing to allocate: %dx%dx%d", _DBG_ARGS_,
+                width, height, nchannels );
+      return 1;
     }
     if(oy_debug)
     ojpg_msg( oyMSG_DBG, (oyStruct_s *) node, _DBG_FORMAT_ "allocate image data: 0x%x size: %d ", _DBG_ARGS_, (int)(intptr_t)
