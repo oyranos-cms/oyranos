@@ -1049,7 +1049,10 @@ int          oyImage_WritePPM        ( oyImage_s         * image,
   }
 
   if(filename)
+  {
     fp = fopen( filename, "wb" );
+    oyFree_m_( filename );
+  }
   else
     error = 2;
 
