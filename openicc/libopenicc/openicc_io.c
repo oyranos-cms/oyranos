@@ -80,8 +80,8 @@ char *       openiccReadFileSToMem   ( FILE              * fp,
                                        size_t            * size)
 {
   size_t mem_size = 256;
-  char* mem = malloc(mem_size),
-        c;
+  char* mem = malloc(mem_size);
+  int c;
 
   if (fp && size)
   {
