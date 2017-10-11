@@ -313,6 +313,47 @@ int      oyX1GetMonitorEdid          ( oyX1Monitor_s     * disp,
   return error;
 }
 
+char * oyX1OpenFile( const char * file_name,
+                        size_t   * size_ptr )
+{
+  FILE * fp = NULL;
+  size_t size = 0, s = 0;
+  char * text = NULL;
+
+  if(file_name)
+  {
+    fp = fopen(file_name,"rb");
+    if(fp)
+    {
+      fseek(fp,0L,SEEK_END); 
+      size = ftell (fp);
+      rewind(fp);
+      text = malloc(size+1);
+      if(text == NULL)
+      {
+        fprintf( stderr, "Error: Could allocate memory: %lu", (long unsigned int)size);
+        fclose( fp );
+        return NULL;
+      }
+      s = fread(text, sizeof(char), size, fp);
+      text[size] = '\000';
+      if(s != size)
+        fprintf( stderr, "Error: fread %lu but should read %lu",
+                (long unsigned int) s, (long unsigned int)size);
+      fclose( fp );
+    } else
+    {
+      fprintf( stderr, "Error: Could not open file - \"%s\"", file_name);
+    }
+  }
+
+  if(size_ptr)
+    *size_ptr = size;
+
+  return text;
+}
+
+
 /** @brief pick up monitor information with Xlib
  *  @deprecated because sometimes is no ddc information available
  *  @todo include connection information - grafic cart
@@ -390,28 +431,20 @@ int      oyX1GetMonitorInfo          ( const char        * display_name,
 
     if(log_file)
     {
-      FILE* fp = fopen(log_file,"r");
-      int sz = 0, s = 0;
+      size_t size = 0;
 
 #define X_LOG_PATH  "/var/log/"
       sprintf( log_file, X_LOG_PATH "Xorg.%d.log", oyX1Monitor_number_(disp) );
 
-      /* get size */
-      fseek(fp,0L,SEEK_END);
-      sz = ftell (fp);
-      if(sz > 0)
-      {
-        log_text = calloc( sizeof(char), sz+1 );
-        s = fread( log_text, sizeof(char), sz, fp);
-      }
-      if(s != sz)
-      {
-        if(log_text) free(log_text);
-        log_text = NULL;
-      } else
-        log_text[s] = '\000';
+      log_text = oyX1OpenFile( log_file, &size );
 
-      fclose(fp);
+      if(!log_text)
+      {
+        free(log_file);
+        error = 1;
+        goto cleanInfoMem;
+      } else
+        log_text[size] = '\000';
     }
 
     if(log_text)
@@ -496,6 +529,7 @@ int      oyX1GetMonitorInfo          ( const char        * display_name,
     free(log_file);
   }
 
+cleanInfoMem:
   if(edid)
   {
     *edid = prop;

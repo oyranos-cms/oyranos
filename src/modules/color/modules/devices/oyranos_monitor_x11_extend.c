@@ -312,6 +312,7 @@ int  oyMoveColorServerProfiles       ( const char        * display_name,
   }
 
   oyProfile_Release( &monitor_icc );
+  oyX1Monitor_release_( &disp );
   if(screen_name) free( screen_name );
   return 1;
 }
