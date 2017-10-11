@@ -470,6 +470,7 @@ int              oyStructList_Sort   ( oyStructList_s    * list,
     memset( ptr, 0, sizeof(int*) * n );
 
     rank_copy = oyAllocateFunc_( n * sizeof(int32_t) );
+    if(!rank_copy) { free(ptr); return 0; }
     memset( rank_copy, 0, n * sizeof(int32_t) );
 
     for( j = 0; j < n; ++j )
@@ -505,6 +506,7 @@ int              oyStructList_Sort   ( oyStructList_s    * list,
       error = !memmove( rank_list, rank_copy, n * sizeof(int32_t) );
 
     oyFree_m_( ptr );
+    oyFree_m_( rank_copy );
 
     oyObject_UnLock( s->oy_, __FILE__, __LINE__ );
   }
