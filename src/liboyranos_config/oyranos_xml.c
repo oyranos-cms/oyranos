@@ -263,7 +263,7 @@ char*        oyXMLgetElement_        ( const char        * xml,
   {
     pices_n = -1;
     pices = oyXMLgetArray_( start, xpaths[i], &pices_n );
-    for( j = 0; j < pices_n; ++j )
+    for( j = 0; pices && j < pices_n; ++j )
     {
       text = oyXMLgetElement_( pices[j], oyStrchr_( xpath, '/' ), key );
       if(text) break;
@@ -1677,8 +1677,8 @@ const char *       oyXFORMsModelGetAttrValue (
         printf("\n");
     }
 
-    if( oyStrcmp_((char*)attr->name, attr_name) == 0 &&
-        attr->children->content )
+    if( attr->children && attr->children->content &&
+        oyStrcmp_((char*)attr->name, attr_name) == 0 )
     {
       v = (const char*)attr->children->content;
       if(v && oy_debug)
