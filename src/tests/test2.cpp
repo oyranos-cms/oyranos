@@ -708,6 +708,99 @@ oyTESTRESULT_e testStringRun ()
   return result;
 }
 
+oyTESTRESULT_e testJson ()
+{
+  oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
+
+  fprintf(stdout, "\n" );
+
+  int i;
+  const char * json = "{\"org\":{\"free\":[{\"s1key_a\":\"val_a\",\"s1key_b\":\"val_b\"},{\"s2key_c\":\"val_c\",\"s2key_d\":\"val_d\"}],\"key_e\":\"val_e_yyy\",\"key_f\":\"val_f\"}}";
+  char error_buffer[128];
+  oyjl_val_s * root = oyJTreeParse( json, error_buffer, 128 );
+  oyJTreeFree( root );
+
+  fprintf( zout, "%s\n", json );
+
+  oyjl_val value = 0;
+  const char * text = json;
+  for(i = 0; i < 6; ++i)
+  {
+    int level = 0;
+    oyjl_val root = 0;
+    const char * xpath = NULL;
+    char error_buffer[128];
+    int flags = 0;
+
+    root = oyjl_tree_parse( text, error_buffer, 128 );
+
+    switch(i) {
+    case 1: xpath = "org/free/[1]"; break;
+    case 2: xpath = "org/free/[1]/"; break;
+    case 3: xpath = "/org/free/[1]"; break;
+    case 5: oyjl_tree_free( root ); root = NULL; OY_FALLTHROUGH
+    case 4: xpath = "org/free/new_one";
+	    flags = OYJL_CREATE_NEW;
+	    break;
+    default: xpath = NULL; break;
+    }
+
+    if(!xpath)
+    {
+      char * json = 0;
+      oyjl_tree_to_json( root, &level, &json );
+      if(json && json[0] && strlen(json) == 210)
+      { PRINT_SUB( oyTESTRESULT_SUCCESS,
+        "oyjl_tree_to_json()                       %lu      ", (unsigned long)strlen(json) );
+      } else
+      { PRINT_SUB( oyTESTRESULT_FAIL,
+        "oyjl_tree_to_json()                                " );
+      }
+      fwrite( json, sizeof(char), strlen(json), zout );
+      fprintf( zout, "\n" );
+      oyFree_m_(json);
+    }
+    if(xpath)
+    {
+      int success = 0;
+      char * rjson = NULL;
+      value = oyjl_tree_get_value( root, flags, xpath );
+      if( value  )
+      {
+        if(i == 4)
+        {
+          oyjl_tree_to_json( root, &level, &rjson );
+        } else
+          oyjl_tree_to_json( value, &level, &rjson );
+      }
+      if(rjson && rjson[0])
+        success = 1;
+      else if(i == 2 || i == 3)
+        success = 1;
+      if(success)
+      { PRINT_SUB( oyTESTRESULT_SUCCESS,
+        "oyjl_tree_get_value(flags=%d) %s", flags, root?"                    ":"with empty root node" );
+      } else
+      { PRINT_SUB( oyTESTRESULT_FAIL,
+        "oyjl_tree_get_value(flags=%d) %s", flags, root?"                    ":"with empty root node" );
+      }
+      fprintf( zout, "%s xpath \"%s\" %s\n", value?"found":"found not", xpath, success?"ok":"" );
+      if(rjson && rjson[0])
+      {
+        success = 1;
+        fwrite( rjson, sizeof(char), strlen(rjson), zout );
+        fprintf( zout, "\n" );
+      }
+      if(rjson) oyFree_m_(rjson);
+      if(!root) oyjl_tree_free( value );
+    }
+
+    oyjl_tree_free( root );
+  }
+
+  return result;
+}
+
 
 oyTESTRESULT_e testOption ()
 {
@@ -7124,6 +7217,7 @@ int main(int argc, char** argv)
   TEST_RUN( testI18N, "Internationalisation" );
   TEST_RUN( testDB, "DB" );
   TEST_RUN( testStringRun, "String handling" );
+  TEST_RUN( testJson, "JSON handling" );
   TEST_RUN( testOption, "basic oyOption_s" );
   TEST_RUN( testOptionInt,  "oyOption_s integers" );
   TEST_RUN( testOptionsSet,  "Set oyOptions_s" );
