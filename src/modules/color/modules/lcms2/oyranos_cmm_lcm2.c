@@ -1820,6 +1820,8 @@ oyPointer l2cmsFilterNode_CmmIccContextToMem (
 
   len = sizeof(cmsHPROFILE) * (15 + 2 + 1);
   lps = oyAllocateFunc_( len );
+  if(!lps)
+    goto l2cmsFilterNode_CmmIccContextToMemClean;
   memset( lps, 0, len );
 
   /* input profile */
@@ -2085,6 +2087,7 @@ l2cmsFilterNode_CmmIccContextToMemClean:
   oyOptions_Release( &node_options );
   oyProfiles_Release( &profs );
   oyProfiles_Release( &profiles );
+  oyFree_m_( lps );
 
   return block;
 }
