@@ -1124,7 +1124,7 @@ int          lcm2CreateAbstractTemperatureProfile (
                                      )
 {
   cmsHPROFILE profile = NULL;
-  cmsToneCurve * i_curve[3], * o_curve[3];
+  cmsToneCurve * i_curve[3] = {NULL,NULL,NULL}, * o_curve[3] = {NULL,NULL,NULL};
   double curve_params[4] = {1,1,0,0}, curve_params_low[4] = {1,0.95,0,0};
   int i;
   cmsCIEXYZ * source_white = NULL;
@@ -1142,7 +1142,7 @@ int          lcm2CreateAbstractTemperatureProfile (
   double icc_ab[2];
   char * desc = NULL;
 
-  if(!error) return 1;
+  if(error) return 1;
 
   if(source_white_profile)
   {
@@ -1298,7 +1298,7 @@ int          lcm2CreateAbstractWhitePointProfile (
                                      )
 {
   cmsHPROFILE profile = NULL;
-  cmsToneCurve * i_curve[3], * o_curve[3];
+  cmsToneCurve * i_curve[3] = {NULL,NULL,NULL}, * o_curve[3] = {NULL,NULL,NULL};
   double curve_params[4] = {1,1,0,0}, curve_params_low[4] = {1,0.95,0,0};
   int i;
 
@@ -1311,10 +1311,10 @@ int          lcm2CreateAbstractWhitePointProfile (
     0,0
   };
   char * kelvin_name = malloc(1024);
-  int error = 0;
+  int error = !kelvin_name;
   double icc_ab[2] = {cie_a, cie_b};
 
-  if(!kelvin_name) return 1;
+  if(error) return 1;
 
   i_curve[0] = cmsBuildGamma(0, 1.0);
   if(!i_curve[0]) error = 1;
