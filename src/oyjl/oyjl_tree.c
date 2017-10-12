@@ -832,7 +832,7 @@ oyjl_val   oyjl_tree_get_value       ( oyjl_val            v,
                                        int                 flags,
                                        const char        * xpath )
 {
-  oyjl_val level = 0, parent = v;
+  oyjl_val level = 0, parent = v, root = NULL;
   int n = 0, i, found = 0;
   char ** list = oyjl_string_split(xpath, '/', &n, malloc);
 
@@ -946,10 +946,11 @@ oyjl_val   oyjl_tree_get_value       ( oyjl_val            v,
           parent->u.object.values[parent->u.object.len] = level;
           parent->u.object.len++;
         }
-      }
+      } 
 
       found = 1;
-    }
+    } if(!v && !root)
+        root = level;
     parent = level;
     level = NULL;
   }
@@ -961,6 +962,8 @@ clean:
   if(list)
     free(list);
 
+  if(found && root)
+    return root;
   if(found && parent)
     return parent;
   else
@@ -991,14 +994,18 @@ clean:
  *  the bar node, which is empty.
  *
  *  @param[in]     v                   the oyjl node
+ *                                     - the root node
+ *                                     - NULL and flags == OYJL_CREATE_NEW
+ *                                       will create a new tree along the path,
+ *                                       which is returned
  *  @param[in]     flags               OYJL_CREATE_NEW - returns nodes even
  *                                     if they did not yet exist
  *  @param[in]     format              the format for the slashed path string
  *  @param[in]     ...                 the variable argument list; optional
- *  @return                            the requested node or zero
+ *  @return                            the requested node or a new tree or zero
  *
- *  @version Oyranos: 0.9.6
- *  @date    2016/10/28
+ *  @version Oyranos: 0.9.7
+ *  @date    2017/10/12
  *  @since   2011/09/24 (Oyranos: 0.3.3)
  */
 oyjl_val   oyjl_tree_get_valuef      ( oyjl_val            v,
