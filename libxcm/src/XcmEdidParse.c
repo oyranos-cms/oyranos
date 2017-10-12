@@ -445,7 +445,7 @@ XCM_EDID_ERROR_e  XcmEdidFree        ( XcmEdidKeyValue_s** list )
   int pos = 0;
   XcmEdidKeyValue_s * l = 0;
 
-  if(!list)
+  if(!list || !*list)
     return XCM_EDID_OK;
 
   l = *list;
