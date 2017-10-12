@@ -856,8 +856,8 @@ int      oyraFilterPlug_ImageRectanglesRun (
   image = (oyImage_s*)oyFilterSocket_GetData( socket );
   if(!image)
   {
-    goto oyraFilterPlug_ImageRectanglesRun_clean;
     result = 1;
+    goto oyraFilterPlug_ImageRectanglesRun_clean;
   }
 
   {
@@ -872,8 +872,8 @@ int      oyraFilterPlug_ImageRectanglesRun (
 
     if(dirty)
     {
-      goto oyraFilterPlug_ImageRectanglesRun_clean2;
       result = dirty;
+      goto oyraFilterPlug_ImageRectanglesRun_clean2;
     }
 
     oyPixelAccess_RoiToPixels( ticket, NULL, &t_roi_pix );
