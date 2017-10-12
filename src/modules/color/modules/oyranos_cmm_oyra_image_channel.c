@@ -80,7 +80,7 @@ int      oyraFilter_ImageChannelRun  ( oyFilterPlug_s    * requestor_plug,
   oyFilterSocket_s * socket;
   oyFilterNode_s * input_node = 0,
                  * node;
-  oyFilterPlug_s * plug;
+  oyFilterPlug_s * plug = NULL;
   oyImage_s * image;
 
   int dirty = 0;
@@ -110,8 +110,8 @@ int      oyraFilter_ImageChannelRun  ( oyFilterPlug_s    * requestor_plug,
 
     if(dirty)
     {
-      goto oyraFilter_ImageChannelRun_clean2;
       result = dirty;
+      goto oyraFilter_ImageChannelRun_clean2;
     }
 
     plug = oyFilterNode_GetPlug( node, 0 );
@@ -163,7 +163,7 @@ int      oyraFilter_ImageChannelRun  ( oyFilterPlug_s    * requestor_plug,
       int layout_dst = oyImage_GetPixelLayout( output_image, oyLAYOUT );
       int channels_src = oyToChannels_m( layout_src );
       int channels_dst = oyToChannels_m( layout_dst );
-      int ticket_array_pix_width = oyArray2d_GetWidth( a_dest ) / channels_dst;
+      int ticket_array_pix_width = oyArray2d_GetWidth( a_dest ) / channels_dst?channels_dst:-1;
       int count = oyjl_value_count( json ), i;
       const int max_channels = 'z'-'a'+1;
       double  channel[max_channels+1];
