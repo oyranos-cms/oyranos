@@ -1115,7 +1115,7 @@ char *       oyPolicyFileNameToDisplay(const char        * file_name )
 
   oySprintf_( pn, "%s", file_name );
 
-  if(oyStrstr_(pn,"policy.xml"))
+  if(oyStrstr_(pn,".policy.xml"))
   {
     t = oyStrstr_(pn,".policy.xml");
     *t = 0;
@@ -1422,6 +1422,8 @@ int          oyOptionChoicesGet_     ( oyWIDGET_e          type,
       *choices              = choice_list_n;
     if( choices_string_list )
       *choices_string_list  = (const char**) choice_list;
+    else
+      oyOptionChoicesFree_( type, &choice_list, choices_list_n );
     if( current )
       *current              = oyGetBehaviour_( (oyBEHAVIOUR_e) type );
   }
