@@ -726,7 +726,7 @@ int      oySetDisplayWhitePoint      ( double              cie_a,
   int r = 1;
   char * value = NULL;
 
-  if(cie_b != 0 || cie_b != 0)
+  if(cie_a != 0 || cie_b != 0)
   {
     oyStringAddPrintfC( &value, 0,0, "%g", cie_a );
     r = oySetPersistentString( OY_DEFAULT_DISPLAY_WHITE_POINT_A, scope, value, comment );
