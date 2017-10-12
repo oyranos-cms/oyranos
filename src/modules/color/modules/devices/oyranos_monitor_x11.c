@@ -308,7 +308,7 @@ int      oyX1GetMonitorEdid          ( oyX1Monitor_s     * disp,
     prop = 0;
   }
 
-  if(prop_size && prop) free( prop );
+  if(prop) free( prop );
 
   return error;
 }
@@ -556,7 +556,7 @@ cleanInfoMem:
 
   if(prop || (edid && *edid))
   {
-    if(prop_size && prop) free( prop );
+    if(prop) free( prop );
     return error;
   } else {
     const char * log = "Can not read hardware information from device.";
@@ -824,8 +824,9 @@ void  oyX1Monitor_setCompatibility   ( oyX1Monitor_s     * disp,
     } else
       fprintf( stderr, "fwrite(%s) : %s\n", command, strerror(errno));
 
-    free(prop);
   }
+
+  if(prop) free( prop );
   free( command );
 }
 
@@ -1535,13 +1536,13 @@ oyX1Monitor_s* oyX1Monitor_newFrom_      ( const char        * display_name,
           oyX1Monitor_release_( &disp );
           return 0;
         }
+	if(!scr_info || !n_scr_info)
+          goto dispFailed;
 
         geo[0] = scr_info[selected_screen].x_org;
         geo[1] = scr_info[selected_screen].y_org;
         geo[2] = scr_info[selected_screen].width;
         geo[3] = scr_info[selected_screen].height;
-        if(!scr_info || !n_scr_info)
-          goto dispFailed;
 
         XFree( scr_info );
 
