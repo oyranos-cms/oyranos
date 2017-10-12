@@ -2059,7 +2059,7 @@ oyPointer l2cmsFilterNode_CmmIccContextToMem (
 
         oyStructList_Release( &list );
 
-        if(cprt)
+        if(!error)
           error = oyProfile_TagMoveIn ( prof, &cprt, -1 );
       }
 
@@ -2498,7 +2498,7 @@ int      l2cmsFilterPlug_CmmIccRun   ( oyFilterPlug_s    * requestor_plug,
     if(!a)
     {
       /* Use original pixel size for being save and do not fiddle with ROI's */
-      int w = oyArray2d_GetDataGeo1( old_a, 2 ) / channels_out;
+      int w = oyArray2d_GetDataGeo1( old_a, 2 ) / channels_out?channels_out:-1;
       int h = oyArray2d_GetDataGeo1( old_a, 3 );
       a = oyArray2d_Create( NULL, w * channels_in,h, oyToDataType_m( pixel_layout_in ), ticket->oy_ );
       if(oy_debug)
