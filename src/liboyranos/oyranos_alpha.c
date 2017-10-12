@@ -780,8 +780,7 @@ OY_DEPRECATED char *   oyGetMonitorProfileNameFromDB(const char        * display
 
   /** 1. get monitor device */
   if(error <= 0)
-    error = oyDeviceGet( OY_TYPE_STD, "monitor", display_name,
-                             options, &device );
+    oyDeviceGet( OY_TYPE_STD, "monitor", display_name, options, &device );
 
   oyOptions_Release( &options );
 
