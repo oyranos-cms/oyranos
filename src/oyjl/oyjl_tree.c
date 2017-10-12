@@ -869,7 +869,7 @@ oyjl_val   oyjl_tree_get_value       ( oyjl_val            v,
           {
             oyjl_tree_free_content( parent );
             parent->type = oyjl_t_array;
-            oyjlAllocHelper_m_( parent->u.array.values, oyjl_val, 2, malloc, oyjl_tree_free( level ); return NULL );
+            oyjlAllocHelper_m_( parent->u.array.values, oyjl_val, 2, malloc, oyjl_tree_free( level ); goto clean );
           } else
           {
             oyjl_val *tmp;
@@ -880,7 +880,7 @@ oyjl_val   oyjl_tree_get_value       ( oyjl_val            v,
             {
               oyjl_message_p( oyjl_message_error, 0, OYJL_DBG_FORMAT_"could not allocate memory", OYJL_DBG_ARGS_ );
               oyjl_tree_free( level );
-              return NULL;
+              goto  clean;
             }
             parent->u.array.values = tmp;
           }
@@ -915,8 +915,8 @@ oyjl_val   oyjl_tree_get_value       ( oyjl_val            v,
           {
             oyjl_tree_free_content( parent );
             parent->type = oyjl_t_object;
-            oyjlAllocHelper_m_( parent->u.object.values, oyjl_val, 2, malloc, oyjl_tree_free( level ); return NULL );
-            oyjlAllocHelper_m_( parent->u.object.keys, char*, 2, malloc, oyjl_tree_free( level ); return NULL );
+            oyjlAllocHelper_m_( parent->u.object.values, oyjl_val, 2, malloc, oyjl_tree_free( level ); goto clean );
+            oyjlAllocHelper_m_( parent->u.object.keys, char*, 2, malloc, oyjl_tree_free( level ); goto clean );
           } else
           {
             oyjl_val *tmp;
@@ -928,7 +928,7 @@ oyjl_val   oyjl_tree_get_value       ( oyjl_val            v,
             {
               oyjl_message_p( oyjl_message_error, 0, OYJL_DBG_FORMAT_"could not allocate memory", OYJL_DBG_ARGS_ );
               oyjl_tree_free( level );
-              return NULL;
+              goto clean;
             }
             parent->u.object.values = tmp;
 
@@ -938,7 +938,7 @@ oyjl_val   oyjl_tree_get_value       ( oyjl_val            v,
             {
               oyjl_message_p( oyjl_message_error, 0, OYJL_DBG_FORMAT_"could not allocate memory", OYJL_DBG_ARGS_ );
               oyjl_tree_free( level );
-              return NULL;
+              goto clean;
             }
             parent->u.object.keys = keys;
           }
@@ -955,6 +955,7 @@ oyjl_val   oyjl_tree_get_value       ( oyjl_val            v,
   }
 
   /* clean up temorary memory */
+clean:
   for(i = 0; i < n; ++i)
     free(list[i]);
   if(list)
