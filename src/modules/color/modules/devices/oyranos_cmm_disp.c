@@ -277,7 +277,7 @@ int              DeviceFromName_     ( const char        * device_name,
       } else if(error <= 0)
       {
         if(!error && device_name)
-        error = oyOptions_SetFromText( oyConfig_GetOptions(*device,"backend_core"),
+          oyOptions_SetFromText( oyConfig_GetOptions(*device,"backend_core"),
                                        MONITOR_REGISTRATION OY_SLASH "device_name",
                                        device_name, OY_CREATE_NEW );
 
@@ -757,6 +757,12 @@ int            Configs_Modify        ( oyConfigs_s       * devices,
                                      "edid",
                                      "yes", OY_CREATE_NEW );
               error = DeviceFromName_( device_name, options, &device );
+              if(error)
+              {
+                _msg( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n  "
+                "Could not create device from name %s",
+                     OY_DBG_ARGS_, device_name );
+              }
               o_tmp = oyOptions_Find( *oyConfig_GetOptions(device,"data"), "color_matrix."
                      "redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma",
                                     oyNAME_PATTERN);
@@ -769,7 +775,7 @@ int            Configs_Modify        ( oyConfigs_s       * devices,
               int32_t icc_profile_flags = 0;
               oyOptions_FindInt( options, "icc_profile_flags", 0, &icc_profile_flags );
               oyOptions_SetFromInt( &opts, "///icc_profile_flags", icc_profile_flags, 0, OY_CREATE_NEW );
-              error = oyOptions_MoveIn( opts, &o_tmp, -1 );
+              oyOptions_MoveIn( opts, &o_tmp, -1 );
               oyOptions_Handle( "//"OY_TYPE_STD"/create_profile.icc",
                                 opts,"create_profile.icc_profile.color_matrix",
                                 &result );
@@ -824,6 +830,12 @@ int            Configs_Modify        ( oyConfigs_s       * devices,
 
               error = oyProfile_AddTagText( prof,
                                             icSigProfileDescriptionTag, text);
+              if(error)
+              {
+                _msg( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n  "
+                      "Adding dscp tag gave error %s",
+                      OY_DBG_ARGS_, text );
+              }
               oyDeAllocateFunc_( text ); text = 0;
               t = oyConfig_FindString( device, "EDID_manufacturer", 0);
               if(!t)
@@ -845,13 +857,19 @@ int            Configs_Modify        ( oyConfigs_s       * devices,
               else
                 error = oyProfile_AddTagText( prof, icSigDeviceModelDescTag, t);
 
-              error = oyOptions_SetFromText( oyConfig_GetOptions(device,"backend_core"),
+              if(error)
+              {
+                _msg( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n  "
+                      "Adding info tags gave error",
+                      OY_DBG_ARGS_ );
+              }
+              oyOptions_SetFromText( oyConfig_GetOptions(device,"backend_core"),
                                        MONITOR_REGISTRATION OY_SLASH
                                        "OPENICC_automatic_generated",
                                        "1", OY_CREATE_NEW );
 
               /* embed meta tag */
-              error = oyOptions_SetFromText( &opts, "///key_prefix_required",
+              oyOptions_SetFromText( &opts, "///key_prefix_required",
                                                 "EDID_.OPENICC_",
                                                 OY_CREATE_NEW );
               oyProfile_AddDevice( prof, device, opts );
