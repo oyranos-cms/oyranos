@@ -3147,8 +3147,8 @@ oyProfile_s* lcm2AbstractWhitePoint  ( double              cie_a,
   if(error || !abs)
   {
     l2cms_msg( oyMSG_WARN, (oyStruct_s*)abs, OY_DBG_FORMAT_ " "
-               "failed to build white point effect",
-               OY_DBG_ARGS_ );
+               "failed to build white point effect: %s",
+               OY_DBG_ARGS_, oyNoEmptyString_m_(my_abstract_file_name) );
   } else
   {
     void * data;
@@ -3166,8 +3166,8 @@ oyProfile_s* lcm2AbstractWhitePoint  ( double              cie_a,
       oyFree_m_(t);
   }
 
-  if(abs)
-    l2cmsCloseProfile( abs );
+  oyFree_m_(my_abstract_file_name);
+  if(abs) l2cmsCloseProfile( abs );
 
   return prof;
 }
