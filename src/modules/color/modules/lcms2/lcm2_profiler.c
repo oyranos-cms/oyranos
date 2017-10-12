@@ -37,6 +37,8 @@
 #define cmsSigProfileDescriptionMLTag 0x6473636d
 #endif
 
+#define lcm2Free_m(v) if(v) { free(v); v = NULL; }
+
 extern lcm2Message_f lcm2msg_p;
 
 static const int max_channels = 16;
@@ -196,7 +198,7 @@ cmsHPROFILE  lcm2OpenProfileFile     ( const char        * my_space_profile,
     if(!h_my_space) { lcm2msg_p( 300, NULL, "no profile from %s", full_name); exit(1); }
     /*else printf("will use %s\n", full_name);*/
 
-    free(full_name);
+    lcm2Free_m(full_name);
   }
 
   return h_my_space;
@@ -1080,7 +1082,7 @@ int          lcm2CreateAbstractProfile(
   {
     char * fn = lcm2WriteProfileToFile( profile, my_abstract_file_name, 0,0 );
     lcm2msg_p( 302, NULL, "wrote to: %s", fn?fn:"----");
-    if(fn) free(fn);
+    lcm2Free_m(fn);
   }
 
   if(h_profile)
@@ -1484,7 +1486,7 @@ cmsHPROFILE  lcm2CreateProfileFragment(
   if(h_out_space) { cmsCloseProfile( h_out_space ); } h_out_space = 0;
   for(i = 0; i < 4; ++i)
     cmsMLUfree( mlu[i] );
-  if(license) free(license);
+  lcm2Free_m(license);
 
   return h_profile;
 }
@@ -1680,10 +1682,10 @@ wchar_t *    lcm2Utf8ToWchar         ( const char        * text )
   if(error != conversionOK)
   {
     lcm2msg_p( 300, NULL, "error[%d] %lu %lu %s", error, in_len, out_len, text );
-    free(wchar_out); wchar_out = NULL;
+    lcm2Free_m(wchar_out);
   }
 
-  if(tmp_in) free( tmp_in );
+  lcm2Free_m( tmp_in );
 
   return wchar_out;
 }
@@ -1745,7 +1747,7 @@ void         lcm2AddMluDescription   ( cmsHPROFILE         profile,
 
     cmsMLUsetWide( mlu, lang, country, wchar_out );
 
-    if(wchar_out) free( wchar_out );
+    lcm2Free_m( wchar_out );
   }
 
   if(n)
@@ -1811,31 +1813,31 @@ void         lcm2AddMetaTexts        ( cmsHPROFILE         profile,
     wchar_key = lcm2Utf8ToWchar( "prefix" );
     wchar_val = lcm2Utf8ToWchar( prefixes );
   }
-  if(wchar_val)
-  {
+  if(wchar_key && wchar_val)
     cmsDictAddEntry( dict, wchar_key, wchar_val, NULL,NULL );
-    if(wchar_key) free( wchar_key );
-    if(wchar_val) free( wchar_val );
-  }
+
+  lcm2Free_m( wchar_key );
+  lcm2Free_m( wchar_val );
 
   for( i = 0; i < n; i += 2 )
   {
     const char * key = key_value[i+0],
                * val = key_value[i+1];
-    wchar_t * wchar_key = lcm2Utf8ToWchar(key),
-	    * wchar_val = lcm2Utf8ToWchar(val);
+
+    wchar_key = lcm2Utf8ToWchar(key),
+    wchar_val = lcm2Utf8ToWchar(val);
 
     if(!wchar_key || !wchar_val)
     {
-      if(wchar_key) free( wchar_key );
-      if(wchar_val) free( wchar_val );
+      lcm2Free_m( wchar_key );
+      lcm2Free_m( wchar_val );
       continue;
     }
 
     cmsDictAddEntry( dict, wchar_key, wchar_val, NULL,NULL );
 
-    if(wchar_key) free( wchar_key );
-    if(wchar_val) free( wchar_val );
+    lcm2Free_m( wchar_key );
+    lcm2Free_m( wchar_val );
   }
 
   if(n)
@@ -1941,7 +1943,7 @@ int  lcm2MessageFunc                 ( int/*openiccMSG_e*/ code OY_UNUSED,
   if(text)
     fprintf( stderr, "%s\n", text );
 
-  free( text ); text = 0;
+  lcm2Free_m( text );
 
   return error;
 }
