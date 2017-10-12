@@ -755,7 +755,7 @@ const char * ojpgApi4UiGetText2      ( const char        * select,
                                        oyNAME_e            type,
                                        const char        * format )
 {
-  char * category = 0;
+  static char * category = 0;
 
   if(strcmp(select,"name") == 0)
   {
