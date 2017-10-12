@@ -752,12 +752,12 @@ oyTESTRESULT_e testJson ()
       if(json && json[0] && strlen(json) == 210)
       { PRINT_SUB( oyTESTRESULT_SUCCESS,
         "oyjl_tree_to_json()                       %lu      ", (unsigned long)strlen(json) );
+        fwrite( json, sizeof(char), strlen(json), zout );
+        fprintf( zout, "\n" );
       } else
       { PRINT_SUB( oyTESTRESULT_FAIL,
         "oyjl_tree_to_json()                                " );
       }
-      fwrite( json, sizeof(char), strlen(json), zout );
-      fprintf( zout, "\n" );
       oyFree_m_(json);
     }
     if(xpath)
