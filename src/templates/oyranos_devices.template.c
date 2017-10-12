@@ -2722,10 +2722,8 @@ OYAPI char * OYEXPORT
                                        int                 reserved OY_UNUSED,
                                        oyAlloc_f           allocateFunc OY_UNUSED )
 {
-  char * text = 0,
-       * temp = oyAllocateFunc_(4096),
-       * temp2 = oyAllocateFunc_(4096),
-       * tmp = 0, * txt = 0, * t = 0, * t2 = 0;
+  char * text = NULL, * temp = NULL, * temp2 = NULL,
+       * tmp = NULL, * txt = NULL, * t = NULL, * t2 = NULL;
   oyFilterNode_s * node = 0;
 #ifdef USE_GETTEXT
   char * save_locale = 0;
@@ -2737,7 +2735,12 @@ OYAPI char * OYEXPORT
       nodes_n = 0;
   oyPointer_s * backend_data;
 
-  oyCheckType__m( oyOBJECT_FILTER_GRAPH_S, return 0 )
+  oyCheckType__m( oyOBJECT_FILTER_GRAPH_S, return NULL )
+
+  temp = oyAllocateFunc_(4096);
+  if(!temp) { return NULL; }
+  temp2 = oyAllocateFunc_(4096);
+  if(!temp2) { oyFree_m_(temp); return NULL; }
 
 #ifdef USE_GETTEXT
   save_locale = oyStringCopy_( setlocale(LC_NUMERIC, 0 ), oyAllocateFunc_);
@@ -2976,6 +2979,7 @@ OYAPI char * OYEXPORT
   STRING_ADD( text, "" );
 
   oyFree_m_( temp );
+  oyFree_m_( temp2 );
 
   return text;
 }
