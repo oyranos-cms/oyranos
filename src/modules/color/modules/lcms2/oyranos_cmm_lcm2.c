@@ -3871,8 +3871,8 @@ const char * l2cmsApi4UiGetText (
                                        oyStruct_s        * context )
 {
   static char * category = 0;
-  if(strcmp(select,"name") ||
-     strcmp(select,"help"))
+  if(strcmp(select,"name") == 0 ||
+     strcmp(select,"help") == 0)
   {
     return l2cmsInfoGetText( select, type, context );
   }
