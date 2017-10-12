@@ -49,6 +49,7 @@ char * openiccOpenFile( const char * file_name,
         }
         if(size_ptr)
           *size_ptr = size;
+        fclose( fp );
         return NULL;
       }
       rewind(fp);
