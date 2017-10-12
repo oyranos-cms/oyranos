@@ -778,6 +778,7 @@ oyWIDGET_TYPE_e  oyWidgetDescriptionGet_(
        oyOptionChoicesGet_( type, flags, oyNAME_DESCRIPTION, &choices, &choices_string_list, &current );
        if(choice <= choices)
          *description     = choices_string_list[choice-1];
+       oyOptionChoicesFree_( type, &choices_string_list, choices );
     }
   }
 
