@@ -596,6 +596,12 @@ int oyGuiMessageFunc( int code, const void * c, const char * format, ... )
   }
 
   text = (char*)calloc(sizeof(char), 4096);
+  if(!text)
+  {
+    if(code == oyMSG_ERROR) oyShowMessage(code,format,1);
+    else fprintf( stderr, "%d %s\n", code, format );
+    return 1;
+  }
   text[0] = 0;
 
   if(format && strlen(format) > 6)
@@ -637,7 +643,7 @@ int oyGuiMessageFunc( int code, const void * c, const char * format, ... )
      getting lost during a crash */
   fprintf( stderr, "%d %s", code, text );
 
-  if(text) free( text );
+  free( text );
 
   if(oy_backtrace)
   {

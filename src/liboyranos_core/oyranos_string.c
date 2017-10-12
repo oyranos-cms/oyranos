@@ -236,9 +236,11 @@ void               oyStringAddN_     ( char             ** text,
 {
   char * text_copy = NULL;
 
+  if(!text) return;
+
   text_copy = oyStringAppendN_(*text, append, append_len, allocateFunc);
 
-  if(text && *text && deallocFunc)
+  if(*text && deallocFunc)
     deallocFunc(*text);
 
   *text = text_copy;
@@ -259,11 +261,13 @@ void               oyStringAdd_      ( char             ** text,
 {
   char * text_copy = NULL;
 
+  if(!text) return;
+
   text_copy = oyStringAppend_(*text, append, allocateFunc);
 
   if(!deallocFunc) deallocFunc = oyDeAllocateFunc_;
 
-  if(text && *text && deallocFunc)
+  if(*text && deallocFunc)
     deallocFunc(*text);
 
   *text = text_copy;
@@ -494,24 +498,26 @@ char*              oyStringReplace_  ( const char        * text,
   char * t = 0;
   const char * start = text,
              * end = text;
-  int s_len = strlen(search);
 
   if(!allocateFunc) allocateFunc = oyAllocateFunc_;
   if(!deallocateFunc) deallocateFunc = oyDeAllocateFunc_;
 
   if(text && search && replacement)
-  while((end = strstr(start,search)) != 0)
   {
-    oyStringAddN_( &t, start, end-start, allocateFunc, deallocateFunc );
-    oyStringAdd_( &t, replacement, allocateFunc, deallocateFunc );
-    if(strlen(end) >= (size_t)s_len)
-      start = end + s_len;
-    else
+    int s_len = strlen(search);
+    while((end = strstr(start,search)) != 0)
     {
-      if(strstr(start,search) != 0)
-        oyStringAdd_( &t, replacement, allocateFunc, deallocateFunc );
-      start = end = end + s_len;
-      break;
+      oyStringAddN_( &t, start, end-start, allocateFunc, deallocateFunc );
+      oyStringAdd_( &t, replacement, allocateFunc, deallocateFunc );
+      if(strlen(end) >= (size_t)s_len)
+        start = end + s_len;
+      else
+      {
+        if(strstr(start,search) != 0)
+          oyStringAdd_( &t, replacement, allocateFunc, deallocateFunc );
+        start = end = end + s_len;
+        break;
+      }
     }
   }
 
@@ -668,32 +674,29 @@ char**             oyStringListFilter_(const char   ** list,
 int     oyStrlen_( const char * str_ )
 {
   if(!str_)
-    WARNc_S("string missed");
+  { WARNc_S("string missed");
+    return 0;
+  }
   return strlen(str_); }
 void    oyStrcpy_( char * targ_, const char * src_ )
 {
-  if(!src_ || !targ_)
-    WARNc_S("string missed");
+  if(!src_ || !targ_) { WARNc_S("string missed"); return }
   strcpy(targ_,src_); }
 char *  oyStrchr_( const char * str_, char c_ )
 {
-  if(!str_)
-    WARNc_S("string missed");
+  if(!str_) { WARNc_S("string missed"); return NULL; }
   return strchr(str_,c_); }
 char *  oyStrrchr_( const char * str_, char c_ )
 {
-  if(!str_)
-    WARNc_S("string missed");
+  if(!str_) { WARNc_S("string missed"); return NULL; }
   return strrchr(str_,c_); }
 char *  oyStrstr_( const char * str1_, const char * str2_ )
 {
-  if(!str1_ || !str2_)
-    WARNc_S("string missed");
+  if(!str1_ || !str2_) { WARNc_S("string missed"); return NULL; }
   return strstr(str1_,str2_); }
 int     oyStrcmp_( const char * str1_, const char * str2_ )
 {
-  if(!str1_ || !str2_)
-    WARNc_S("string missed");
+  if(!str1_ || !str2_) { WARNc_S("string missed"); return NULL; }
   return strcmp(str1_,str2_); }
 char    oyToupper_( char c_ ) { return toupper(c_); }
 
