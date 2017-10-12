@@ -182,10 +182,12 @@ void QcmseDialog::showConfig()
 
   if(app)
   { char * command = (char*) malloc(strlen(app) + 128);
-    if(!command) return;
-    sprintf(command, "%s&", app);
-    system(command);
-    free(command);
+    if(command)
+    {
+      sprintf(command, "%s&", app);
+      system(command);
+      free(command);
+    }
     free(app); app = 0;
   } 
 }
