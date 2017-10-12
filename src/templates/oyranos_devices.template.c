@@ -3566,13 +3566,14 @@ oyConfDomain_s_ * oyConfDomain_New_  ( oyObject_s          object )
 # define STRUCT_TYPE oyConfDomain_s_
   int error = 0;
   oyObject_s    s_obj = oyObject_NewFrom( object );
-  STRUCT_TYPE * s = 0;
+  STRUCT_TYPE * s = NULL;
 
   if(s_obj)
     s = (STRUCT_TYPE*)s_obj->allocateFunc_(sizeof(STRUCT_TYPE));
 
   if(!s || !s_obj)
   {
+    oyObject_Release( &s_obj );
     WARNc_S(_("MEM Error."));
     return NULL;
   }
