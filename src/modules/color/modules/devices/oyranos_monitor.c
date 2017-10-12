@@ -360,7 +360,8 @@ int          oyUnrollEdid1_          ( void              * edid,
       c[8] = list[i].value.dbl;
   }
 
-  XcmEdidFree( &list );
+  if(list)
+    XcmEdidFree( &list );
 
   DBG_PROG_ENDE
   return err;
