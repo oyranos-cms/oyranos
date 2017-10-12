@@ -537,7 +537,7 @@ int      ojpgFilter_CmmRun           ( oyFilterPlug_s    * requestor_plug,
   {
     error = oyFilterPlug_ImageRootRun( requestor_plug, ticket );
 
-    return error;
+    goto ojpgFilter_CmmRunClean;
 
   } else if(requestor_plug->type_ == oyOBJECT_FILTER_SOCKET_S)
   {
@@ -569,7 +569,8 @@ int      ojpgFilter_CmmRun           ( oyFilterPlug_s    * requestor_plug,
     ojpg_msg( oyMSG_WARN, (oyStruct_s*)node,
              OY_DBG_FORMAT_ " could not open: %s",
              OY_DBG_ARGS_, oyNoEmptyString_m( filename ) );
-    return 1;
+    error = 1;
+    goto ojpgFilter_CmmRunClean;
   }
 
   /* file size fun */
@@ -639,13 +640,15 @@ int      ojpgFilter_CmmRun           ( oyFilterPlug_s    * requestor_plug,
       if(!buf)
       {
         ojpg_msg(oyMSG_WARN, (oyStruct_s *) node, _DBG_FORMAT_ "Could not allocate enough memory.", _DBG_ARGS_);
-        return 1;
+        error = 1;
+        goto ojpgFilter_CmmRunClean;
       }
     } else
     {
       ojpg_msg( oyMSG_WARN, (oyStruct_s *) node, _DBG_FORMAT_ "nothing to allocate: %dx%dx%d", _DBG_ARGS_,
                 width, height, nchannels );
-      return 1;
+      error = 1;
+      goto ojpgFilter_CmmRunClean;
     }
     if(oy_debug)
     ojpg_msg( oyMSG_DBG, (oyStruct_s *) node, _DBG_FORMAT_ "allocate image data: 0x%x size: %d ", _DBG_ARGS_, (int)(intptr_t)
@@ -698,7 +701,8 @@ int      ojpgFilter_CmmRun           ( oyFilterPlug_s    * requestor_plug,
     ojpg_msg( oyMSG_WARN, (oyStruct_s*)node,
              OY_DBG_FORMAT_ "can't create a new image\n%dx%d %s[%d]",
              OY_DBG_ARGS_,  width, height, format, nchannels );
-    return FALSE;
+    error = FALSE;
+    goto ojpgFilter_CmmRunClean;
   }
 
   /* remember the meta data like file name */
@@ -735,6 +739,7 @@ int      ojpgFilter_CmmRun           ( oyFilterPlug_s    * requestor_plug,
                          oyImage_GetHeight( image_in ) );
   }
 
+ojpgFilter_CmmRunClean:
   /* release Oyranos stuff */
   oyImage_Release( &image_in );
   oyImage_Release( &output_image );
