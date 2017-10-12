@@ -141,7 +141,7 @@ int  lcm2samplerFloat                ( const cmsFloat32Number In[],
  *
  *  @code
   // create ICC profile with linear gamma, RGB.709 primaries + D65 from tooken
-  if(in_space_profile) h_in_space  = lcm2OpenProfileFile( "*srgblinear", "" );
+  if(in_space_profile) h_in_space  = lcm2OpenProfileFile( "*srgblinear", NULL );
     @endcode
  *
  *  @param[in]    my_space_profile                        operating color space,
@@ -149,7 +149,7 @@ int  lcm2samplerFloat                ( const cmsFloat32Number In[],
  *                                                        *srgblinear, *srgb, *lab,
  *                                                        *rec601.625.linear, *rec601.525.linear
  *  @param[in]    my_space_profile_path                   path name for 
- *                                                        for my_space_profile
+ *                                                        for my_space_profile; optional
  *  @return                                               lcms profile handle
  *
  *  @version Oyranos: 0.9.6
@@ -160,10 +160,13 @@ cmsHPROFILE  lcm2OpenProfileFile     ( const char        * my_space_profile,
                                        const char        * my_space_profile_path )
 {
   cmsHPROFILE h_my_space = 0;
+
+  if(my_space_profile_path == NULL) my_space_profile_path = "";
   if(my_space_profile && my_space_profile[0])
   {
     char * full_name = (char*) malloc(strlen(my_space_profile_path) + strlen(my_space_profile) + 1);
-    sprintf( full_name, "%s%s", my_space_profile_path?my_space_profile_path:"", my_space_profile );
+    if(!full_name) return NULL;
+    sprintf( full_name, "%s%s", my_space_profile_path, my_space_profile );
 
     if(strcmp(my_space_profile,"*lab") == 0)
       h_my_space = cmsCreateLab4Profile(cmsD50_xyY());
@@ -195,7 +198,7 @@ cmsHPROFILE  lcm2OpenProfileFile     ( const char        * my_space_profile,
     if(!h_my_space)
       h_my_space = cmsOpenProfileFromFile( full_name, "rb" );
 
-    if(!h_my_space) { lcm2msg_p( 300, NULL, "no profile from %s", full_name); exit(1); }
+    if(!h_my_space) { lcm2msg_p( 300, NULL, "no profile from %s", full_name); }
     /*else printf("will use %s\n", full_name);*/
 
     lcm2Free_m(full_name);
@@ -822,6 +825,7 @@ int          lcm2CreateProfileLutByFunc (
   if(!profile) return 1;
 
   t[0] = cmsBuildGamma(0, 1.0);
+  if(!t[0]) return 1;
   for(i = 1; i < max_channels; ++i) t[i] = t[0];
 
   error = lcm2CreateProfileLutByFuncAndCurves (
@@ -835,7 +839,7 @@ int          lcm2CreateProfileLutByFunc (
                                        grid_size, tag_sig
                                      );
 
-  if(t[0]) cmsFreeToneCurve( t[0] );
+  cmsFreeToneCurve( t[0] );
 
   return error;
 }
@@ -898,9 +902,9 @@ int          lcm2CreateProfileLutByFuncAndCurves (
 
   if(!profile) return 1;
 
-  if(in_space_profile) h_in_space  = lcm2OpenProfileFile( in_space_profile, "" );
-  if(my_space_profile) h_my_space  = lcm2OpenProfileFile( my_space_profile, "" );
-  if(out_space_profile)h_out_space = lcm2OpenProfileFile( out_space_profile, "" );
+  if(in_space_profile) h_in_space  = lcm2OpenProfileFile( in_space_profile, NULL );
+  if(my_space_profile) h_my_space  = lcm2OpenProfileFile( my_space_profile, NULL );
+  if(out_space_profile)h_out_space = lcm2OpenProfileFile( out_space_profile, NULL );
 
   if(h_in_space && h_my_space && strcmp(in_space_profile,my_space_profile) != 0)
   {
@@ -909,7 +913,7 @@ int          lcm2CreateProfileLutByFuncAndCurves (
                                             h_my_space, my_layout,
                                             INTENT_RELATIVE_COLORIMETRIC,
                                             cmsFLAGS_NOOPTIMIZE);
-    if(!tr_In2MySpace) { lcm2msg_p( 300, NULL, "no transform"); error = 1; goto clean; }
+    if(!tr_In2MySpace) { lcm2msg_p( 300, NULL, "no transform"); error = 1; goto lcm2CreateProfileLutByFuncAndCurvesClean; }
   }
 
   if(h_my_space && h_out_space && strcmp(my_space_profile,out_space_profile) != 0)
@@ -919,7 +923,7 @@ int          lcm2CreateProfileLutByFuncAndCurves (
                                             INTENT_RELATIVE_COLORIMETRIC,
                                             cmsFLAGS_NOOPTIMIZE);
 
-    if(!tr_MySpace2Out) { lcm2msg_p( 300, NULL, "no transform"); error = 1; goto clean; }
+    if(!tr_MySpace2Out) { lcm2msg_p( 300, NULL, "no transform"); error = 1; goto lcm2CreateProfileLutByFuncAndCurvesClean; }
   }
       
   memset(&cargo, 0, sizeof(lcm2Cargo_s));
@@ -965,7 +969,7 @@ int          lcm2CreateProfileLutByFuncAndCurves (
   //cmsWriteTag( gmt, cmsSigDToB0Tag, gmt_pl );
 
 
-  clean:
+lcm2CreateProfileLutByFuncAndCurvesClean:
   if(h_in_space) {cmsCloseProfile( h_in_space );} h_in_space = 0;
   if(h_my_space) {cmsCloseProfile( h_my_space );} h_my_space = 0;
   if(h_out_space) {cmsCloseProfile( h_out_space );} h_out_space = 0;
@@ -1064,7 +1068,7 @@ int          lcm2CreateAbstractProfile(
                              my_abstract_description,
                              provider, vendor, my_license, 
                              device_model, device_manufacturer, NULL);
-  if(!profile) goto clean;
+  if(!profile) goto lcm2CreateAbstractProfileClean;
 
   if(my_meta_data)
     lcm2AddMetaTexts ( profile, my_meta_data[0], &my_meta_data[1], cmsSigMetaTag );
@@ -1073,6 +1077,8 @@ int          lcm2CreateAbstractProfile(
   error = lcm2CreateProfileLutByFunc( profile, samplerMySpace, samplerArg,
                                       "*lab", my_space_profile, "*lab",
                                       grid_size, cmsSigAToB0Tag );
+  if(error) goto lcm2CreateAbstractProfileClean;
+
 
   lcm2AddMluDescription ( profile, my_abstract_descriptions,
                           cmsSigProfileDescriptionMLTag
@@ -1089,7 +1095,7 @@ int          lcm2CreateAbstractProfile(
     *h_profile = profile;
   else
     cmsCloseProfile( profile );
-  clean:
+lcm2CreateAbstractProfileClean:
 
   return error;
 }
@@ -1117,7 +1123,7 @@ int          lcm2CreateAbstractTemperatureProfile (
                                        cmsHPROFILE       * h_profile
                                      )
 {
-  cmsHPROFILE profile = 0;
+  cmsHPROFILE profile = NULL;
   cmsToneCurve * i_curve[3], * o_curve[3];
   double curve_params[4] = {1,1,0,0}, curve_params_low[4] = {1,0.95,0,0};
   int i;
@@ -1132,9 +1138,11 @@ int          lcm2CreateAbstractTemperatureProfile (
     0,0
   };
   char * kelvin_name = malloc(1024);
-  int error = 0;
+  int error = !kelvin_name;
   double icc_ab[2];
   char * desc = NULL;
+
+  if(!error) return 1;
 
   if(source_white_profile)
   {
@@ -1144,6 +1152,7 @@ int          lcm2CreateAbstractTemperatureProfile (
       if(n)
       {
         desc = calloc( n+1, sizeof(char) );
+	if(!desc) goto lcm2CreateAbstractTemperatureProfileClean;
         cmsUInt32Number nr = cmsGetProfileInfoASCII(source_white_profile, cmsInfoDescription, cmsNoLanguage, cmsNoCountry, desc, n);
 	if(n != nr)
           lcm2msg_p( 301, NULL, "found propblem reading desc tag: %d %d", n,nr);
@@ -1154,9 +1163,10 @@ int          lcm2CreateAbstractTemperatureProfile (
   }
 
   i_curve[0] = o_curve[0] = cmsBuildGamma(0, 1.0);
-  for(i = 1; i < 3; ++i)
-  { i_curve[i] = o_curve[i] = i_curve[0]; }
+  if(!i_curve[0]) error = 1;
+  for(i = 1; i < 3; ++i) { i_curve[i] = i_curve[0]; }
 
+  if(!error)
   {
     cmsCIExyY xyWhitePoint;
     cmsFloat64Number TempK = kelvin;
@@ -1194,8 +1204,10 @@ int          lcm2CreateAbstractTemperatureProfile (
     curve_params_low[1] = max_brightness;
     o_curve[0] = cmsBuildParametricToneCurve(0, 6, curve_params_low);
     o_curve[1] = o_curve[2] = cmsBuildParametricToneCurve(0, 6, curve_params);
+    if(!o_curve[0] || !o_curve[1]) error = 1;
   }
-  if(error) return error;
+
+  if(error) goto lcm2CreateAbstractTemperatureProfileClean;
 
   if(icc_ab[1] > 0)
   {
@@ -1227,7 +1239,8 @@ int          lcm2CreateAbstractTemperatureProfile (
     }
   }
 
-  profile = lcm2CreateProfileFragment (
+  if(!error)
+    profile = lcm2CreateProfileFragment (
                              "*lab", // CIE*Lab
                              "*lab", // CIE*Lab
                              icc_profile_version,
@@ -1238,16 +1251,19 @@ int          lcm2CreateAbstractTemperatureProfile (
                              "CIE*Lab",
                              "http://www.cie.co.at",
                              NULL);
-  if(!profile) return 1;
+  if(!profile) error = 1;
 
-  error = lcm2CreateProfileLutByFuncAndCurves( profile,
+  if(!error)
+    error = lcm2CreateProfileLutByFuncAndCurves( profile,
                                       lcm2SamplerWhitePoint, icc_ab,
                                       o_curve, i_curve,
                                       "*lab", "*lab", "*lab",
                                       grid_size, cmsSigAToB0Tag );
 
-  lcm2AddMetaTexts ( profile, "EFFECT_,COLORIMETRY_,CMF_", kelvin_meta, cmsSigMetaTag );
+  if(!error)
+    lcm2AddMetaTexts ( profile, "EFFECT_,COLORIMETRY_,CMF_", kelvin_meta, cmsSigMetaTag );
 
+lcm2CreateAbstractTemperatureProfileClean:
   if(i_curve[0]) cmsFreeToneCurve( i_curve[0] );
   if(o_curve[0]) cmsFreeToneCurve( o_curve[0] );
   if(o_curve[1]) cmsFreeToneCurve( o_curve[1] );
@@ -1281,7 +1297,7 @@ int          lcm2CreateAbstractWhitePointProfile (
                                        cmsHPROFILE       * h_profile
                                      )
 {
-  cmsHPROFILE profile = 0;
+  cmsHPROFILE profile = NULL;
   cmsToneCurve * i_curve[3], * o_curve[3];
   double curve_params[4] = {1,1,0,0}, curve_params_low[4] = {1,0.95,0,0};
   int i;
@@ -1298,10 +1314,14 @@ int          lcm2CreateAbstractWhitePointProfile (
   int error = 0;
   double icc_ab[2] = {cie_a, cie_b};
 
-  i_curve[0] = o_curve[0] = cmsBuildGamma(0, 1.0);
-  for(i = 1; i < 3; ++i)
-  { i_curve[i] = o_curve[i] = i_curve[0]; }
+  if(!kelvin_name) return 1;
 
+  i_curve[0] = cmsBuildGamma(0, 1.0);
+  if(!i_curve[0]) error = 1;
+  for(i = 1; i < 3; ++i)
+  { i_curve[i] = i_curve[0]; }
+
+  if(!error)
   {
 #ifndef OY_HYP
     #define OY_SQRT(a,b)   ((a)*(a) + (b)*(b))
@@ -1313,8 +1333,10 @@ int          lcm2CreateAbstractWhitePointProfile (
     curve_params_low[1] = max_brightness;
     o_curve[0] = cmsBuildParametricToneCurve(0, 6, curve_params_low);
     o_curve[1] = o_curve[2] = cmsBuildParametricToneCurve(0, 6, curve_params);
+    if(!o_curve[0] || !o_curve[1]) error = 1;
   }
-  if(error) return error;
+
+  if(error) goto lcm2CreateAbstractWhitePointProfileClean;
 
   if(icc_ab[1] > 0)
   {
@@ -1340,7 +1362,7 @@ int          lcm2CreateAbstractWhitePointProfile (
                              "CIE*Lab",
                              "http://www.cie.co.at",
                              NULL);
-  if(!profile) return 1;
+  if(!profile) goto lcm2CreateAbstractWhitePointProfileClean;
 
   error = lcm2CreateProfileLutByFuncAndCurves( profile,
                                       lcm2SamplerWhitePoint, icc_ab,
@@ -1348,8 +1370,10 @@ int          lcm2CreateAbstractWhitePointProfile (
                                       "*lab", "*lab", "*lab",
                                       grid_size, cmsSigAToB0Tag );
 
-  lcm2AddMetaTexts ( profile, "EFFECT_,COLORIMETRY_,CMF_", kelvin_meta, cmsSigMetaTag );
+  if(!error)
+    lcm2AddMetaTexts ( profile, "EFFECT_,COLORIMETRY_,CMF_", kelvin_meta, cmsSigMetaTag );
 
+lcm2CreateAbstractWhitePointProfileClean:
   if(i_curve[0]) cmsFreeToneCurve( i_curve[0] );
   if(o_curve[0]) cmsFreeToneCurve( o_curve[0] );
   if(o_curve[1]) cmsFreeToneCurve( o_curve[1] );
@@ -1431,10 +1455,10 @@ cmsHPROFILE  lcm2CreateProfileFragment(
   char * license = NULL;
 
   if(!h_profile)
-  { h_profile = cmsCreateProfilePlaceholder( 0 ); } if(!h_profile) goto clean;
+  { h_profile = cmsCreateProfilePlaceholder( 0 ); } if(!h_profile) goto lcm2CreateProfileFragmentClean;
 
-  if(in_space_profile) h_in_space  = lcm2OpenProfileFile( in_space_profile, "" );
-  if(out_space_profile)h_out_space = lcm2OpenProfileFile( out_space_profile, "" );
+  if(in_space_profile) h_in_space  = lcm2OpenProfileFile( in_space_profile, NULL );
+  if(out_space_profile)h_out_space = lcm2OpenProfileFile( out_space_profile, NULL );
 
   csp_in = cmsGetColorSpace( h_in_space );
   csp_out = cmsGetColorSpace( h_out_space );
@@ -1474,14 +1498,14 @@ cmsHPROFILE  lcm2CreateProfileFragment(
   }
 
   license = (char *) malloc( strlen(my_license) + strlen(provider) + strlen(vendor) + 1 );
-  if(!license) goto clean;;
+  if(!license) goto lcm2CreateProfileFragmentClean;;
   sprintf( license, my_license, provider, vendor );
   cmsMLUsetASCII(mlu[3], "EN", "us", license);
   cmsWriteTag( h_profile, cmsSigCopyrightTag, mlu[3]);
 
   cmsWriteTag( h_profile, cmsSigMediaWhitePointTag, cmsD50_XYZ() );
 
-  clean:
+lcm2CreateProfileFragmentClean:
   if(h_in_space) { cmsCloseProfile( h_in_space ); } h_in_space = 0;
   if(h_out_space) { cmsCloseProfile( h_out_space ); } h_out_space = 0;
   for(i = 0; i < 4; ++i)
@@ -1728,6 +1752,9 @@ void         lcm2AddMluDescription   ( cmsHPROFILE         profile,
 
   if(n)
     mlu = cmsMLUalloc( 0, n/3 + 1 );
+  else
+    lcm2msg_p( 300, NULL, "nothing to write %s", __func__ );
+
   if(!mlu)
     return;
 
@@ -1750,10 +1777,7 @@ void         lcm2AddMluDescription   ( cmsHPROFILE         profile,
     lcm2Free_m( wchar_out );
   }
 
-  if(n)
-    cmsWriteTag( profile, tag_sig, mlu );
-  else
-    lcm2msg_p( 300, NULL, "nothing to write %s", __func__ );
+  cmsWriteTag( profile, tag_sig, mlu );
 
   cmsMLUfree( mlu );
 }
@@ -1805,6 +1829,9 @@ void         lcm2AddMetaTexts        ( cmsHPROFILE         profile,
 
   if(n)
     dict = cmsDictAlloc( contextID );
+  else
+    lcm2msg_p( 300, NULL, "nothing to write %s", __func__ );
+
   if(!dict)
     return;
 
@@ -1840,10 +1867,7 @@ void         lcm2AddMetaTexts        ( cmsHPROFILE         profile,
     lcm2Free_m( wchar_val );
   }
 
-  if(n)
-    cmsWriteTag( profile, tag_sig, dict );
-  else
-    lcm2msg_p( 300, NULL, "nothing to write %s", __func__ );
+  cmsWriteTag( profile, tag_sig, dict );
 
   cmsDictFree( dict );
 }
