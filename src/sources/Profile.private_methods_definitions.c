@@ -487,10 +487,11 @@ oyPointer    oyProfile_TagsToMem_    ( oyProfile_s_      * profile,
 
     if(error <= 0)
     {
-      oyDeAllocateFunc_(icc_header);
-      oyDeAllocateFunc_(icc_tagtable);
       *size = size_;
     }
+
+    oyFree_m_(icc_header);
+    oyFree_m_(icc_tagtable);
   }
 
   return block;
@@ -673,8 +674,6 @@ char *       oyProfile_GetFileName_r ( oyProfile_s_      * profile,
   int error = !s;
   char ** names = 0;
   uint32_t count = 0, i = 0;
-  char *  hash = 0;
-  char    tmp_hash[34];
 
   if(!s)
     return 0;
@@ -683,11 +682,11 @@ char *       oyProfile_GetFileName_r ( oyProfile_s_      * profile,
 
   if(error <= 0)
   {
-    if(s->file_name_ && !hash)
+    if(s->file_name_)
     {
       name = s->file_name_;
-    } else {
-
+    } else
+    {
       names = oyProfileListGet_ ( NULL, flags, &count );
 
       for(i = 0; i < count; ++i)
@@ -697,19 +696,6 @@ char *       oyProfile_GetFileName_r ( oyProfile_s_      * profile,
           if(oyStrcmp_(names[i], OY_PROFILE_NONE) != 0)
             tmp = oyProfile_FromFile( names[i], OY_NO_CACHE_WRITE, 0 );
 
-          if(hash && tmp)
-          {
-            uint32_t * h = (uint32_t*)s->oy_->hash_ptr_;
-            if(h)
-              oySprintf_(tmp_hash, "%08x%08x%08x%08x", h[0], h[1], h[2], h[3]);
-            else
-              oySprintf_(tmp_hash, "                " );
-            if(memcmp( hash, tmp_hash, 2*OY_HASH_SIZE ) == 0 )
-            {
-              name = names[i];
-              break;
-            }
-          } else
           if(oyProfile_Equal( (oyProfile_s*)s, tmp ))
           {
             name = names[i];
@@ -792,6 +778,7 @@ oyProfileTag_s * oyProfile_GetTagByPos_( oyProfile_s_    * profile,
 
     profile_cmmId = oyValueUInt32( profile_cmmId );
     error = !memcpy( profile_cmm, &profile_cmmId, 4 );
+    if(error) { WARNc_S("Unable to copy CMM name"); }
     profile_cmmId = 0;
 
     if(error <= 0 && s->size_ > (size_t)min_icc_size)
@@ -811,7 +798,11 @@ oyProfileTag_s * oyProfile_GetTagByPos_( oyProfile_s_    * profile,
                                 (icTagTypeSignature)*hi,
                                 oyOK, 132, &tag_block );
       if(error <= 0)
+      {
         error = !memcpy( tag_->profile_cmm_, profile_cmm, 4 );
+        if(error > 0)
+          WARNc_S("Unable to copy CMM name");
+      }
 
       if(0 == pos)
       {
@@ -851,6 +842,7 @@ oyProfileTag_s * oyProfile_GetTagByPos_( oyProfile_s_    * profile,
           oyAllocHelper_m_( tag_block, char, tag_size, 0, return 0 );
           tmp = &((char*)s->block_)[offset];
           error = !memcpy( tag_block, tmp, tag_size );
+          if(error) { WARNc_S("Unable to copy CMM name"); }
 
           tag_base = (icTagBase*) tag_block;
           tag_type = oyValueUInt32( tag_base->sig );
@@ -1071,12 +1063,16 @@ oyPointer    oyProfile_WriteTags_    ( oyProfile_s_      * profile,
     {
       memset( block, 0, 132 + n * sizeof(icTag) );
       error = !memcpy( block, icc_header, 132 );
+      if(error) { WARNc_S("Unable to copy CMM name"); }
     }
 
     len = 132;
 
     if(error <= 0)
+    {
       error = !memcpy( &block[len], icc_list, (n-1) * sizeof(icTag) );
+      if(error) { WARNc_S("Unable to copy CMM name"); }
+    }
 
     len += sizeof(icTag) * (n-1);
 
@@ -1119,10 +1115,14 @@ oyPointer    oyProfile_WriteTags_    ( oyProfile_s_      * profile,
       }
 
       if(error <= 0)
+      {
         error = !memcpy( temp, block, len );
+        if(error) { WARNc_S("Unable to copy CMM name"); }
+      }
       if(error <= 0)
       {
         error = !memcpy( &temp[len], tag->block_, tag->size_);
+        if(error) { WARNc_S("Unable to copy CMM name"); }
         len += size + (size%4 ? 4 - size%4 : 0);
       }
 
@@ -1146,7 +1146,10 @@ oyPointer    oyProfile_WriteTags_    ( oyProfile_s_      * profile,
 
       error = !temp;
       if(error <= 0)
+      {
         error = !memcpy( temp, block, len );
+        if(error) { WARNc_S("Unable to copy CMM name"); }
+      }
 
       oyDeAllocateFunc_( block );
       block = temp; temp = 0;

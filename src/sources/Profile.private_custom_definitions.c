@@ -112,6 +112,7 @@ int oyProfile_Copy__Members( oyProfile_s_ * dst, oyProfile_s_ * src)
     {
       dst->size_ = src->size_;
       error = !memcpy( dst->block_, src->block_, src->size_ );
+      if(error) { WARNc_S("Unable to copy CMM name"); }
     }
   }
 
