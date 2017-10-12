@@ -366,7 +366,7 @@ int                oyStruct_GetChildren (
     case oyOBJECT_STRUCT_LIST_S:
        {
          oyStructList_s_ * s = (oyStructList_s_*)obj;
-         int n_max = (s->n_ > oy_c_max) ? oy_c_max : s->n_;
+         int n_max = (s->n_ > oy_c_max-1) ? oy_c_max-1 : s->n_;
          if(s->ptr_ && s->n_)
          {
            memcpy(&c[n], s->ptr_, sizeof(oyStruct_s*)*n_max);
