@@ -1831,8 +1831,10 @@ oyGroupAdd_                (const char *cmm OY_UNUSED,
   int i;
 
   DBG_PROG_START
-  ptr = calloc ( sizeof(char***), ++oy_groups_descriptions_ );
-  desc = calloc( sizeof(char**), 3 );
+  ptr = calloc ( sizeof(char**), ++oy_groups_descriptions_ );
+  if(!ptr) return oyGROUP_START;
+  desc = calloc( sizeof(char*), 3 );
+  if(!desc) { free(ptr); return oyGROUP_START; }
 
   oyTextsCheck_ ();
 
