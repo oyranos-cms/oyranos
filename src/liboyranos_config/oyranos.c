@@ -523,7 +523,9 @@ int          oyPolicySaveActual      ( oyGROUP_e           group,
     }
     if(oyIsFile_(filename))
       WARNc2_S("%s %s",_("will overwrite policy file"), filename);
-    error = oyWriteMemToFile_( filename, text, oyStrlen_(text)+1 );
+
+    if(!error)
+      error = oyWriteMemToFile_( filename, text, oyStrlen_(text)+1 );
   }
 
   oyExportEnd_();
