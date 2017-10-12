@@ -351,8 +351,11 @@ int  oyWriteIcSigLutAtoBType         ( oyStructList_s    * texts,
                  {
                    if(i)
                      oyStringAddPrintf_( &tmp, AD, "x" );
-                   oyStringAddPrintf_( &tmp, AD, "%d",
-                                       dimensions[i] );
+                   if(dimensions)
+                     oyStringAddPrintf_( &tmp, AD, "%d",
+                                         dimensions[i] );
+                   else
+                     oyStringAddPrintf_( &tmp, AD, "-1" );
                  }
                  oyStructList_AddName( texts, tmp, -1);
                  oyFree_m_( tmp );
@@ -1184,6 +1187,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
                  tmp = oyAllocateFunc_( key_size * 2 + 2 );
                  error = oyIMIconv( &mem[key_offset], key_size, tmp,
                                     "UTF-16BE" );
+                 if(error) { oyStructList_AddName( texts, "problem with converting string", -1); oyFree_m_(tmp); break; }
                } else
                  STRING_ADD( tmp, "" );
                oyStructList_MoveInName( texts, &tmp, -1 );
@@ -1195,6 +1199,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
                  tmp = oyAllocateFunc_( value_size * 2 + 2 );
                  error = oyIMIconv( &mem[value_offset], value_size, tmp,
                                     "UTF-16BE" );
+                 if(error) { oyStructList_AddName( texts, "problem with converting string", -1); oyFree_m_(tmp); break; }
                } else
                  STRING_ADD( tmp, "" );
                oyStructList_MoveInName( texts, &tmp, -1 );
@@ -1959,7 +1964,10 @@ oyStructList_s * oyIMProfileTag_GetValues(
                if(i == count-1 && !error)
                {
                  if(!error)
+                 {
                    error = (unsigned)(24 + i*size + 4) > tag_size;
+                   break;
+                 }
 
                  offset = oyValueUInt32( *(icUInt32Number*)&mem
                                                   [24+ i*size] );
@@ -1967,6 +1975,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
                }
              }
 
+             if(!error)
              if (!oyStructList_Count(texts)) /* first entry */
              {
                uint32_t g = oyValueUInt32(*(icUInt32Number*)&mem[20]),
@@ -3248,9 +3257,11 @@ int                oySizeOfMluc      ( const char        * mem,
                  if(!error)
                    error = (24 + i*size + 4) > (int)max_tag_size;
 
-                 offset = oyValueUInt32( *(icUInt32Number*)&mem
+                 if(!error)
+                   offset = oyValueUInt32( *(icUInt32Number*)&mem
                                                   [24+ i*size] );
-                 size_ = offset + g;
+                 if(!error)
+                   size_ = offset + g;
                }
              }
 
