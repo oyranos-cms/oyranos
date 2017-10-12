@@ -72,10 +72,10 @@ using namespace std;
 #define _api8_ui_texts          catCMMfunc( oyRE, _api8_ui_texts )
 #define _api8_icon              catCMMfunc( oyRE, _api8_icon )
 
-#define _DBG_FORMAT_ "%s:%d %s() "
-#define _DBG_ARGS_ (__FILE__ && strrchr(__FILE__,'/')) ? \
-                   strrchr(__FILE__,'/')+1 : __FILE__,__LINE__,__func__
-#define _(x) x
+#define _DBG_FORMAT_ OY_DBG_FORMAT_
+#define _DBG_ARGS_ OY_DBG_ARGS_
+/* i18n */
+#include "oyranos_i18n.h"
 #define DUMMY "filename\nblob"
 
 const char * GetText                 ( const char        * select,
@@ -1091,9 +1091,9 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
                                        "1", OY_CREATE_NEW );
 
                 /* embed meta tag */
-                error = oyOptions_SetFromText( &opts, "///set_device_attributes",
+                oyOptions_SetFromText( &opts, "///set_device_attributes",
                                                "true", OY_CREATE_NEW );
-                error = oyOptions_SetFromText( &opts, "///key_prefix_required",
+                oyOptions_SetFromText( &opts, "///key_prefix_required",
                                                PRFX_EXIF "." PRFX_LRAW ".OPENICC_",
                                                OY_CREATE_NEW );
                 oyProfile_AddDevice( p, device, opts );
@@ -1105,8 +1105,13 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
                   oyProfile_s * tmpp = oyProfile_FromName( desc, icc_profile_flags, 0 );
                   if(!tmpp)
                   {
-                    error = oyOptions_SetFromText( &opts, "////device", "1", OY_CREATE_NEW );
+                    oyOptions_SetFromText( &opts, "////device", "1", OY_CREATE_NEW );
                     error = oyProfile_Install( p, oySCOPE_USER, opts );
+                    if(error)
+                    {
+                      oyRE_msg( oyMSG_DBG, (oyStruct_s *) p, _DBG_FORMAT_
+                                "Install as user failed.", _DBG_ARGS_);
+                    }
                     oyOptions_Release( &opts);
                   } else
                     oyProfile_Release( &tmpp );
