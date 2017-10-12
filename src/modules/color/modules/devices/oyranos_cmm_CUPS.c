@@ -1198,7 +1198,7 @@ int CUPSgetProfiles                  ( const char        * device_name,
             char uri[1024];         
             char temp_profile_location[1024];
             FILE * old_file = 0;
-            void * data = 0;
+            void * data = NULL;
             size_t size = 0;
             int tempfd = 0;
 
@@ -1232,23 +1232,15 @@ int CUPSgetProfiles                  ( const char        * device_name,
             /* Find the total size. */
             if(old_file)
             {
-              size_t lsize = 0;
-              fseek(old_file , 0, SEEK_END);
-              lsize = ftell(old_file);
-              rewind (old_file);
-
               /* Create buffer to read contents into a profile. */
-              data = (char*) malloc (sizeof(char)*lsize);
+              data = oyReadFilepToMem_( old_file, &size, malloc );
               if (data == NULL)
               { fputs ("Unable to find profile size.\n",stderr); }
-
-              if(lsize)
-                size = fread( data, 1, lsize, old_file);
 
               fclose( old_file );
             }
 
-            if(data && size)
+            if(data)
             {      
               is_custom_profile = 1;       /* Mark as a custom profile. */
 
