@@ -967,13 +967,13 @@ oyPolicyNameGet_()
   oyI18NSet(0,0);
   xml = oyPolicyToXML_ (oyGROUP_ALL, 0, oyAllocateFunc_);
   oyI18NSet(1,0);
-  xml[oyStrlen_(xml)-2] = 0;
-
   if( !xml )
   {
     WARNc_S( "no policy data available??" );
     return name;
   }
+
+  xml[oyStrlen_(xml)-2] = 0;
 
   for( i = 0; i < count; ++i )
   {
