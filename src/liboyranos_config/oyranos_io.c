@@ -366,7 +366,7 @@ int oyProfileListCb_ (oyFileList_s * data,
   oyFileList_s *l = (oyFileList_s*)data;
 
   if(l->type != oyOBJECT_FILE_LIST_S_)
-    WARNc_S("Could not find a oyFileList_s objetc.");
+    WARNc_S("Could not find a oyFileList_s object.");
 
       if (!oyCheckProfile_(full_name, l->colorsig, l->flags))
       {
@@ -398,11 +398,12 @@ int oyPolicyListCb_ (oyFileList_s * data,
   const char * end = NULL;
 
   if(l->type != oyOBJECT_FILE_LIST_S_)
-    WARNc_S("Could not find a oyFileList_s objetc.");
+    WARNc_S("Could not find a oyFileList_s object.");
 
   if(strlen(full_name) > 4)
     end = full_name + strlen(full_name) - 4;
 
+  if(end)
       if( (end[0] == '.') &&
           (end[1] == 'x' || end[1] == 'X') &&
           (end[2] == 'm' || end[2] == 'M') &&
