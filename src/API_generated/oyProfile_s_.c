@@ -1590,7 +1590,8 @@ oyPointer    oyProfile_WriteTags_    ( oyProfile_s_      * profile,
 
     n = oyProfile_GetTagCount_( profile );
     block = (char*) oyAllocateFunc_(132 + n * sizeof(icTag));
-    error = !block;
+    if(!block)
+    { WARNc_S("Unable to allocate memory"); return NULL; }
 
     if(error <= 0)
     {
@@ -1642,8 +1643,10 @@ oyPointer    oyProfile_WriteTags_    ( oyProfile_s_      * profile,
           memset( temp, 0, len + size + (size%4 ? 4 - size%4 : 0));
         else
         {
-          error = 1;
-          break;
+          WARNc_S("Unable to allocate memory");
+          oyFree_m_(block);
+          oyProfileTag_Release( (oyProfileTag_s**)&tag );
+          return NULL;
 	}
       }
 
@@ -1677,7 +1680,11 @@ oyPointer    oyProfile_WriteTags_    ( oyProfile_s_      * profile,
       icHeader* header = 0;
       oyPointer temp = oyAllocateWrapFunc_( len, allocateFunc );
 
-      error = !temp;
+      if(!temp)
+      {
+        oyFree_m_(block);
+        return block;
+      }
       if(error <= 0)
       {
         error = !memcpy( temp, block, len );
