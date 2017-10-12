@@ -368,7 +368,7 @@ oyProfile_s * profileFromMatrix( double pandg[9], const char * name, int32_t icc
             oyOptions_s * opts = oyOptions_New(0),
                         * result = 0;
 
-            int pos = 0;
+            int pos = 0, error;
 
 
             oyOptions_SetFromInt( &opts, "///icc_profile_flags", icc_profile_flags,
@@ -400,7 +400,12 @@ oyProfile_s * profileFromMatrix( double pandg[9], const char * name, int32_t icc
             oyOptions_Release( &result );
             oyOptions_Release( &opts );
 
-            oyProfile_Install( p, oySCOPE_USER, NULL );
+            error = oyProfile_Install( p, oySCOPE_USER, NULL );
+            if(error)
+            {
+              ojpg_msg( oyMSG_WARN, (oyStruct_s *) p, _DBG_FORMAT_
+                        "Install as user failed.", _DBG_ARGS_);
+            }
   }
 
   return p;

@@ -1109,7 +1109,7 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
                     error = oyProfile_Install( p, oySCOPE_USER, opts );
                     if(error)
                     {
-                      oyRE_msg( oyMSG_DBG, (oyStruct_s *) p, _DBG_FORMAT_
+                      oyRE_msg( oyMSG_WARN, (oyStruct_s *) p, _DBG_FORMAT_
                                 "Install as user failed.", _DBG_ARGS_);
                     }
                     oyOptions_Release( &opts);
