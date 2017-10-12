@@ -680,7 +680,7 @@ int     oyStrlen_( const char * str_ )
   return strlen(str_); }
 void    oyStrcpy_( char * targ_, const char * src_ )
 {
-  if(!src_ || !targ_) { WARNc_S("string missed"); return }
+  if(!src_ || !targ_) { WARNc_S("string missed"); return; }
   strcpy(targ_,src_); }
 char *  oyStrchr_( const char * str_, char c_ )
 {
@@ -696,7 +696,7 @@ char *  oyStrstr_( const char * str1_, const char * str2_ )
   return strstr(str1_,str2_); }
 int     oyStrcmp_( const char * str1_, const char * str2_ )
 {
-  if(!str1_ || !str2_) { WARNc_S("string missed"); return NULL; }
+  if(!str1_ || !str2_) { WARNc_S("string missed"); return -1; }
   return strcmp(str1_,str2_); }
 char    oyToupper_( char c_ ) { return toupper(c_); }
 

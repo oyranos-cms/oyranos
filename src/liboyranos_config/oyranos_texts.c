@@ -1423,7 +1423,7 @@ int          oyOptionChoicesGet_     ( oyWIDGET_e          type,
     if( choices_string_list )
       *choices_string_list  = (const char**) choice_list;
     else
-      oyOptionChoicesFree_( type, &choice_list, choices_list_n );
+      oyOptionChoicesFree_( type, &choice_list, choice_list_n );
     if( current )
       *current              = oyGetBehaviour_( (oyBEHAVIOUR_e) type );
   }
