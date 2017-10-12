@@ -627,9 +627,9 @@ int      ojpgFilter_CmmRun           ( oyFilterPlug_s    * requestor_plug,
     if(icc && len)
     {
       prof = oyProfile_FromMem( len, icc, 0, 0 );
-      free(icc); icc = NULL;
       len = 0;
     }
+    if(icc) oyFree_m_(icc);
 
     jpeg_start_decompress (&cinfo);
 
