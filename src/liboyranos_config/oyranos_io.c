@@ -150,8 +150,7 @@ char *   oyGetPathFromProfileName_   ( const char        * fileName,
       memcpy(search, fileName, len); search[len] = '\000';
     } else {
       WARNc2_S( "%s %d", _("name longer than"), MAX_PATH)
-      DBG_PROG_ENDE
-      return 0;
+      goto clean;
     }
     success = oyRecursivePaths_( oyGetPathFromProfileNameCb_, &l,
                                  (const char**)path_names, count );
@@ -164,22 +163,20 @@ char *   oyGetPathFromProfileName_   ( const char        * fileName,
         if(search[0] != 0) len = oyStrlen_(search);
         if(len) {
           char *ptr = 0;
-          oyAllocHelper_m_( pathName, char, len+1, allocate_func, return 0 );
+          oyAllocHelper_m_( pathName, char, len+1, allocate_func, goto clean );
           oyStrcpy_(pathName, search);
           ptr = oyStrrchr_(pathName , OY_SLASH_C);
           if(ptr)
             ptr[0] = '\000';
         }
         DBG_PROG_S( pathName )
-        DBG_PROG_ENDE
-        return pathName;
+        goto clean;
       } else
 
     if (!success && !strchr(fileName, OY_SLASH_C)) {
       if(oy_warn_)
         WARNc_PROFILE_S(_("profile not found in color path:"), fileName);
-      DBG_PROG_ENDE
-      return 0;
+      goto clean;
     }
   }
 
@@ -206,21 +203,20 @@ char *   oyGetPathFromProfileName_   ( const char        * fileName,
     {
       if(result == 1)
         WARNc_PROFILE_S( _("profile not found:"), oyNoEmptyName_m_(fileName))
-      DBG_PROG_ENDE
-      return 0;
+      goto clean;
     }
 
     pathName = oyExtractPathFromFileName_(fullFileName);
-
-    oyFree_m_ (header);
   }
 
+clean:
   if (!success)
   { oyFree_m_ (pathName);
     pathName = 0;
   }
 
-  oyFree_m_ (fullFileName);
+  if(fullFileName) oyFree_m_ (fullFileName);
+  if(header) oyFree_m_ (header);
 
   DBG_PROG_ENDE
   return pathName;
