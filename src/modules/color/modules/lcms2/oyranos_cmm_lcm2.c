@@ -1552,7 +1552,7 @@ cmsHPROFILE  l2cmsAddProfile          ( oyProfile_s       * p )
   {
     l2cms_msg( oyMSG_DBG, (oyStruct_s*)p,
               OY_DBG_FORMAT_" going to open %s cmm_ptr: %d", OY_DBG_ARGS_,
-              p?oyProfile_GetFileName( p,-1 ):"????", oyStruct_GetId((oyStruct_s*)cmm_ptr) );
+              oyProfile_GetFileName( p,-1 ), oyStruct_GetId((oyStruct_s*)cmm_ptr) );
   }
 
   if(!cmm_ptr)
@@ -1792,7 +1792,7 @@ oyPointer l2cmsFilterNode_CmmIccContextToMem (
   image_output_profile = oyImage_GetProfile( image_output );
 
   if(!image_input)
-    return 0;
+    goto l2cmsFilterNode_CmmIccContextToMemClean;
 
   if(image_input->type_ != oyOBJECT_IMAGE_S)
   {
@@ -1828,7 +1828,7 @@ oyPointer l2cmsFilterNode_CmmIccContextToMem (
   {
     l2cms_msg( oyMSG_WARN, (oyStruct_s*)node, OY_DBG_FORMAT_" "
              "missed image_input->profile_", OY_DBG_ARGS_ );
-    return 0;
+    goto l2cmsFilterNode_CmmIccContextToMemClean;
   }
   p = oyProfile_Copy( image_input_profile, 0 );
   profs = oyProfiles_New( 0 );
@@ -1909,7 +1909,7 @@ oyPointer l2cmsFilterNode_CmmIccContextToMem (
   {
     l2cms_msg( oyMSG_WARN, (oyStruct_s*)node, OY_DBG_FORMAT_" "
              "missed image_output->profile_", OY_DBG_ARGS_ );
-    return 0;
+    goto l2cmsFilterNode_CmmIccContextToMemClean;
   }
   lps[ profiles_n++ ] = l2cmsAddProfile( image_output_profile );
   p = oyProfile_Copy( image_output_profile, 0 );
@@ -1979,7 +1979,10 @@ oyPointer l2cmsFilterNode_CmmIccContextToMem (
       size_ = *size;
 
       if(!size_)
-        return NULL;
+      {
+        block = NULL;
+        goto l2cmsFilterNode_CmmIccContextToMemClean;
+      }
 
       prof = oyProfile_FromMem( size_, block, 0, 0 );
 
@@ -2070,6 +2073,7 @@ oyPointer l2cmsFilterNode_CmmIccContextToMem (
     }
   }
 
+l2cmsFilterNode_CmmIccContextToMemClean:
   oyFilterPlug_Release( &plug );
   oyFilterSocket_Release( &socket );
   oyFilterSocket_Release( & remote_socket );
