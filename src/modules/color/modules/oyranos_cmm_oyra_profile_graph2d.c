@@ -175,7 +175,7 @@ float * oyraCreateCMYKGradient_( int steps, size_t * size )
 double * oyraGetSaturationLine_(oyProfile_s * profile, int intent, int precision, size_t * size_, oyProfile_s * outspace)
 {
   int i;
-  double *lab_erg = 0;
+  double *lab_erg = NULL;
 
   icColorSpaceSignature csp = (icColorSpaceSignature)
                               oyProfile_GetSignature( profile,
@@ -205,14 +205,13 @@ double * oyraGetSaturationLine_(oyProfile_s * profile, int intent, int precision
         block = oyraCreateCMYKGradient_( precision, &size );
       else if(csp == icSigLabData)
         block = oyraCreateLabGradient_( precision, &size );
+      if(!block) goto Clean;
 
       if(oy_debug)
         oyra_msg( oyMSG_DBG, 0, OY_DBG_FORMAT_ "precision: %d size: %d",
                                 OY_DBG_ARGS_, precision, size );
       lab_block = (float*) malloc(size*4*sizeof(float));
-
-      if(!(block && lab_block))
-        return NULL;
+      if(!lab_block) goto Clean;
 
       sprintf(num,"%d", intent);
       oyOptions_SetFromText( &options, OY_BEHAVIOUR_STD OY_SLASH "rendering_intent",
@@ -222,10 +221,13 @@ double * oyraGetSaturationLine_(oyProfile_s * profile, int intent, int precision
                        oyFLOAT, oyFLOAT, options, size );
       *size_ = size;
       lab_erg =  (double*) calloc( sizeof(double), *size_ * 3);
+      if(!lab_erg) goto Clean;
       for(i = 0; i < (int)(*size_ * 3); ++i) {
         lab_erg[i] = lab_block[i];
       }
     }
+
+Clean:
     if(block) free (block);
     if(lab_block) free (lab_block);
   }
