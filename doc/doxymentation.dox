@@ -114,6 +114,9 @@
 /** @example oyranos_cmm_oJPG.c
  *  @brief   Module example.
  */
+/** @example tutorial_json_options.c
+ *  @brief   Oyjl API examples.
+ */
 /** @example lcm2_profiler.c
  *  @brief   Profiler API examples.
  */
