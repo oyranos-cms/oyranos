@@ -199,8 +199,7 @@ OYJL_API oyjl_val oyjl_tree_get(oyjl_val parent, const char ** path, oyjl_type t
  *  Get a pointer to a oyjl_val_array or NULL if the value is not an object. */
 #define OYJL_GET_ARRAY(v)  (OYJL_IS_ARRAY(v)  ? &(v)->u.array  : NULL)
 
-OYJL_API void oyjl_tree_free_content ( oyjl_val            v );
-void oyjl_tree_free_node             ( oyjl_val            root,
+void       oyjl_tree_clear_value     ( oyjl_val            root,
                                        const char        * xpath );
 void       oyjl_tree_to_json         ( oyjl_val            v,
                                        int               * level,
@@ -223,6 +222,7 @@ oyjl_val   oyjl_value_pos_get        ( oyjl_val            v,
                                        int                 pos );
 int        oyjl_value_set_string     ( oyjl_val            v,
                                        const char        * string );
+void       oyjl_value_clear          ( oyjl_val            v );
 
 
 char **    oyjl_string_split         ( const char        * text,

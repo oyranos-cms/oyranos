@@ -37,8 +37,7 @@ extern "C" {
 #define oyjl_object_free               oyJObjectFree
 #define oyjl_tree_callbacks            oy_jtree_callbacks
 #define oyjl_tree_free                 oyJTreeFree
-#define oyjl_tree_free_content         oyJTreeFreeContent
-#define oyjl_tree_free_node            oyJTreeFreeNode
+#define oyjl_tree_clear_value          oyJTreeClearValue
 #define oyjl_tree_get                  oyJTreeGet
 #define oyjl_tree_get_value            oyJTreeGetValue
 #define oyjl_tree_get_valuef           oyJTreeGetValuef
@@ -50,6 +49,7 @@ extern "C" {
 #define oyjl_value_pos_get             oyJValuePosGet
 #define oyjl_value_set_string          oyJValueSetString
 #define oyjl_value_text                oyJValueText
+#define oyjl_value_clear               oyJValueClear
 #include "oyjl/oyjl_tree.h"
 
 

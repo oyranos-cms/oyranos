@@ -88,7 +88,6 @@ oyOptions_s *  oyOptions_FromBoolean ( oyOptions_s       * set_a,
   return options;
 }
 
-/** @example tutorial_json_options.c Shows the oyOptions_s API for JSON handling */
 /** @fn         oyOptions_FromJSON
  *  @memberof   oyOptions_s
  *  @brief      deserialise a text file to oyOptions_s data

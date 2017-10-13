@@ -39,8 +39,7 @@
 #define oyjl_object_free               openiccJObjectFree
 #define oyjl_tree_callbacks            openicc_jtree_callbacks
 #define oyjl_tree_free                 openiccJTreeFree
-#define oyjl_tree_free_content         openiccJTreeFreeContent
-#define oyjl_tree_free_node            openiccJTreeFreeNode
+#define oyjl_tree_clear_value          openiccJTreeClearValue
 #define oyjl_tree_get                  openiccJTreeGet
 #define oyjl_tree_get_value            openiccJTreeGetValue
 #define oyjl_tree_get_valuef           openiccJTreeGetValuef
@@ -52,6 +51,7 @@
 #define oyjl_value_pos_get             openiccJValuePosGet
 #define oyjl_value_set_string          openiccJValueSetString
 #define oyjl_value_text                openiccJValueText
+#define oyjl_value_clear               openiccJValueClear
 #include "oyjl_tree.h"
 
 #if   defined(__clang__)

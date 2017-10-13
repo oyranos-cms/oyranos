@@ -439,6 +439,12 @@ static int handle_null (void *ctx)
  *  The API is designed to be easily useable without much boilerplate.
  *  It includes a xpath alike syntax to obtain or create nodes inside
  *  a tree.
+ *
+ *  @subsection tutorial Programming Tutorial
+ *  The following code examples come from @ref tutorial_json_options.c  . 
+ *  @dontinclude tutorial_json_options.c
+ *  @skip testOyjl(void)
+ *  @until oyjl_tree_free
  *  @{ *//* oyjl */
 
 /** @brief read a json text string into a C data structure */
@@ -536,8 +542,6 @@ static yajl_callbacks oyjl_tree_callbacks = {
     return (ctx.root);
 }
 
-/** @brief low level access function
- */
 oyjl_val oyjl_tree_get(oyjl_val n, const char ** path, oyjl_type type)
 {
     if (!path) return NULL;
@@ -892,7 +896,7 @@ oyjl_val   oyjl_tree_get_value       ( oyjl_val            v,
         {
           if(parent->type != oyjl_t_array)
           {
-            oyjl_tree_free_content( parent );
+            oyjl_value_clear( parent );
             parent->type = oyjl_t_array;
             oyjlAllocHelper_m_( parent->u.array.values, oyjl_val, 2, malloc, oyjl_tree_free( level ); goto clean );
           } else
@@ -938,7 +942,7 @@ oyjl_val   oyjl_tree_get_value       ( oyjl_val            v,
         {
           if(parent->type != oyjl_t_object)
           {
-            oyjl_tree_free_content( parent );
+            oyjl_value_clear( parent );
             parent->type = oyjl_t_object;
             oyjlAllocHelper_m_( parent->u.object.values, oyjl_val, 2, malloc, oyjl_tree_free( level ); goto clean );
             oyjlAllocHelper_m_( parent->u.object.keys, char*, 2, malloc, oyjl_tree_free( level ); goto clean );
@@ -1087,7 +1091,7 @@ int        oyjl_value_set_string     ( oyjl_val            v,
   int error = -1;
   if(v)
   {
-    oyjl_tree_free_content( v );
+    oyjl_value_clear( v );
     v->type = oyjl_t_string;
     error = oyjl_string_add( &v->u.string, 0,0, "%s", string );
   }
@@ -1095,7 +1099,7 @@ int        oyjl_value_set_string     ( oyjl_val            v,
 }
 
 /** @brief release all childs recursively */
-void oyjl_tree_free_content (oyjl_val v)
+void oyjl_value_clear        (oyjl_val v)
 {
     if (v == NULL) return;
 
@@ -1114,7 +1118,7 @@ void oyjl_tree_free_content (oyjl_val v)
 }
 
 /** @brief release a specific node and all its childs */
-void oyjl_tree_free_node             ( oyjl_val            root,
+void oyjl_tree_clear_value           ( oyjl_val            root,
                                        const char        * xpath )
 {
   int n = 0, i, pos, count;
@@ -1219,7 +1223,7 @@ void oyjl_tree_free (oyjl_val v)
 {
     if (v == NULL) return;
 
-    oyjl_tree_free_content (v);
+    oyjl_value_clear (v);
     free(v);
 }
 
