@@ -267,6 +267,23 @@
     It uses the Oyranos Monitor API from @file oyranos_monitor.h
 */
 
+/** @file oyjl_tree.c
+    @brief A easy to use JSON parsing API.
+ *
+ *
+ *  Here comes a minimalistic example:
+    @code
+    oyjl_val root = 0;
+    char error_buffer[128];
+
+    root = oyjl_tree_parse( text, error_buffer, 128 );
+
+    char * json = 0;
+    int level = 0;
+    oyjl_tree_to_json( root, &level, &json );
+    @endcode
+*/
+
 
 /** \addtogroup color Color
  *

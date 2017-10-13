@@ -73,9 +73,6 @@
     file tree, are defined in oyranos_definitions.h.
     \n
 
-    More in depth topics about programming with Oyranos can be found on the
-    @ref coding page. 
-
     @subsection api_tutorial Programming Tutorial
     Frist you have to put a
     @code
@@ -116,6 +113,9 @@
  */
 /** @example oyranos_cmm_oJPG.c
  *  @brief   Module example.
+ */
+/** @example lcm2_profiler.c
+ *  @brief   Profiler API examples.
  */
 /** @example image_display.cpp
  *  @brief   Image viewer example.

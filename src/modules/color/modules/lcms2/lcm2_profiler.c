@@ -133,21 +133,27 @@ int  lcm2samplerFloat                ( const cmsFloat32Number In[],
   return result;
 }
 
-/** \addtogroup profiler
+/** \addtogroup profiler ICC profiler API
+ *  @brief   Easy to use API to generate matrix and LUT ICC profiles.
+ *
  *  @{ */
 
 /** Function  lcm2OpenProfileFile
  *  @brief    Open a profile from file
  *
  *  @code
-  // create ICC profile with linear gamma, RGB.709 primaries + D65 from tooken
+  // create ICC profile with linear gamma, RGB.709 primaries + D65 from wildcard
   if(in_space_profile) h_in_space  = lcm2OpenProfileFile( "*srgblinear", NULL );
     @endcode
  *
- *  @param[in]    my_space_profile                        operating color space,
- *                                                        possible tookens:
- *                                                        *srgblinear, *srgb, *lab,
- *                                                        *rec601.625.linear, *rec601.525.linear
+ *  @param[in]    my_space_profile                        operating color space.
+ *                                                        Use a file name or
+ *                                                        possible wildcards:
+ *                                                        - *srgblinear
+ *                                                        - *srgb
+ *                                                        - *lab
+ *                                                        - *rec601.625.linear
+ *                                                        - *rec601.525.linear
  *  @param[in]    my_space_profile_path                   path name for 
  *                                                        for my_space_profile; optional
  *  @return                                               lcms profile handle
@@ -794,12 +800,15 @@ void         lcm2SamplerProof        ( const double        i[],
  *  @param[in,out] profile             profile to add LUT table
  *  @param[in]     samplerMySpace      the function to fill the LUT with color
  *  @param[in]     samplerArg          data pointer to samplerMySpace
- *  @param[in]     my_space_profile                       operating color space
- *                                                        for samplerMySpace();
- *  @param[in]     in_space_profile                       input color space
- *                                                        for samplerMySpace();
- *  @param[in]     out_space_profile                      output color space
- *                                                        for samplerMySpace();
+ *  @param[in]     my_space_profile    operating color space
+ *                                     for samplerMySpace(); for wildcards see
+ *                                     lcm2OpenProfileFile()
+ *  @param[in]     in_space_profile    input color space
+ *                                     for samplerMySpace(); for wildcards see
+ *                                     lcm2OpenProfileFile()
+ *  @param[in]     out_space_profile   output color space
+ *                                     for samplerMySpace(); for wildcards see
+ *                                     lcm2OpenProfileFile()
  *  @param[in]     grid_size           dimensions of the created LUT; e.g. 33
  *  @param[in]     tag_sig             tag signature for the generated LUT;
  *
@@ -860,12 +869,15 @@ int          lcm2CreateProfileLutByFunc (
  *  @param[in]     samplerArg          data pointer to samplerMySpace
  *  @param[in]     in_curves           input curves
  *  @param[in]     out_curves          output curves
- *  @param[in]     my_space_profile                       operating color space
- *                                                        for samplerMySpace();
- *  @param[in]     in_space_profile                       input color space
- *                                                        for samplerMySpace();
- *  @param[in]     out_space_profile                      output color space
- *                                                        for samplerMySpace();
+ *  @param[in]     my_space_profile    operating color space
+ *                                     for samplerMySpace(); for wildcards see
+ *                                     lcm2OpenProfileFile()
+ *  @param[in]     in_space_profile    input color space
+ *                                     for samplerMySpace(); for wildcards see
+ *                                     lcm2OpenProfileFile()
+ *  @param[in]     out_space_profile   output color space
+ *                                     for samplerMySpace(); for wildcards see
+ *                                     lcm2OpenProfileFile()
  *  @param[in]     grid_size           dimensions of the created LUT; e.g. 33
  *  @param[in]     tag_sig             tag signature for the generated LUT;
  *
@@ -1025,7 +1037,7 @@ lcm2CreateAbstractProfile  (
  *  @param[in]    icc_profile_version  2.3 or 4.3
  *  @param[in]    my_abstract_description                 internal profile name
  *  @param[in]    my_abstract_descriptions                internal profile name translated
- *  @param[in]    my_abstract_file_name                   profile file name; optional
+ *  @param[in]    my_abstract_file_name                   profile file name. If present a ICC profile will be written to that name. optional
  *  @param[in]    provider             e.g. "My Project 2016"
  *  @param[in]    vendor               e.g. "My Name"
  *  @param[in]    my_license           e.g. "This profile is made available by %s, with permission of %s, and may be copied, distributed, embedded, made, used, and sold without restriction. Altered versions of this profile shall have the original identification and copyright information removed and shall not be misrepresented as the original profile."
@@ -1108,7 +1120,7 @@ lcm2CreateAbstractProfileClean:
  *  @param[in]    grid_size            dimensions of the created LUT; e.g. 33
  *  @param[in]    icc_profile_version  2.3 or 4.3
  *  @param[out]   my_abstract_file_name                   profile file name
- *  @param[out]   h_profile            the resulting profile
+ *  @param[out]   h_profile            the resulting profile; If omitted the function will write the profile to my_abstract_file_name.
  *
  *  @version Oyranos: 0.9.7
  *  @date    2017/05/17
@@ -1240,6 +1252,7 @@ int          lcm2CreateAbstractTemperatureProfile (
   }
 
   if(!error)
+    /* profile fragment creation */
     profile = lcm2CreateProfileFragment (
                              "*lab", // CIE*Lab
                              "*lab", // CIE*Lab
@@ -1268,8 +1281,18 @@ lcm2CreateAbstractTemperatureProfileClean:
   if(o_curve[0]) cmsFreeToneCurve( o_curve[0] );
   if(o_curve[1]) cmsFreeToneCurve( o_curve[1] );
 
-  *h_profile = profile;
   *my_abstract_file_name = kelvin_name;
+  if(h_profile)
+    *h_profile = profile;
+  else if(profile && *my_abstract_file_name)
+  {
+    char * fn = lcm2WriteProfileToFile( profile, *my_abstract_file_name, 0,0 );
+
+    lcm2msg_p( 302, NULL, "wrote to: %s", fn?fn:"----");
+
+    lcm2Free_m(fn);
+    cmsCloseProfile( profile );
+  }
 
   return error;
 }
@@ -1282,7 +1305,7 @@ lcm2CreateAbstractTemperatureProfileClean:
  *  @param[in]    grid_size            dimensions of the created LUT; e.g. 33
  *  @param[in]    icc_profile_version  2.3 or 4.3
  *  @param[out]   my_abstract_file_name                   profile file name
- *  @param[out]   h_profile            the resulting profile
+ *  @param[out]   h_profile            the resulting profile; If omitted the function will write the profile to my_abstract_file_name.
  *
  *  @version Oyranos: 0.9.7
  *  @date    2017/06/02
@@ -1378,8 +1401,18 @@ lcm2CreateAbstractWhitePointProfileClean:
   if(o_curve[0]) cmsFreeToneCurve( o_curve[0] );
   if(o_curve[1]) cmsFreeToneCurve( o_curve[1] );
 
-  *h_profile = profile;
   *my_abstract_file_name = kelvin_name;
+  if(h_profile)
+    *h_profile = profile;
+  else if(profile && *my_abstract_file_name)
+  {
+    char * fn = lcm2WriteProfileToFile( profile, *my_abstract_file_name, 0,0 );
+
+    lcm2msg_p( 302, NULL, "wrote to: %s", fn?fn:"----");
+
+    lcm2Free_m(fn);
+    cmsCloseProfile( profile );
+  }
 
   return error;
 }
@@ -1415,8 +1448,10 @@ lcm2CreateAbstractWhitePointProfileClean:
                            );
     @endcode
  *
- *  @param[in]     in_space_profile    input color space
- *  @param[in]     out_space_profile   output color space
+ *  @param[in]     in_space_profile    input color space; for wildcards see
+ *                                     lcm2OpenProfileFile()
+ *  @param[in]     out_space_profile   output color space; for wildcards see
+ *                                     lcm2OpenProfileFile()
  *  @param[in]     icc_profile_version 2.3 or 4.3
  *  @param[in]     my_abstract_description                 internal profile name
  *  @param[in]     provider            e.g. "My Project 2016"
@@ -1994,3 +2029,61 @@ int            lcm2Version           ( )
   return LCM2PROFILER_API;
 }
 /** @} */ /* profiler */
+
+/** \addtogroup profiler
+ *
+ *  Oyranos ICC Profiler API provides a platformindependent C interface to generate 
+ *  ICC profiles. It's main purpose is to generate ICC Profiles in a programatic way.
+ *  The only dependency is littleCMS 2
+ *  <a href="http://www.littlecms.com">www.littlecms.com</a>.
+ * It reduces the need of many of the lcms2
+ *  boilerplate for format independent sampling, multi localised strings from UTF8
+ *  and more. The sampler collection contains effects and color space converters.
+ *  The code consists of one source file and a header. So it can easily
+ *  be placed inside your project.
+ *
+ *
+ *  @section api API Documentation
+ *  The Oyranos ICC Profiler API is contained in the lcm2_profiler.h header file.
+ *
+ *  The high level API takes few arguments and generates a profile in 
+ *  one go. 
+ *  Effect profiles can be created in one call
+ *  by lcm2CreateAbstractProfile(). It needs a @ref samplers function, which
+ *  fills the Look Up Table (LUT). Two APIs exist to generate white point
+ *  effects, lcm2CreateAbstractTemperatureProfile() and
+ *  lcm2CreateAbstractWhitePointProfile(). These above high level APIs allow to
+ *  write the profile to disc in one go.
+ *
+ *  The lower level APIs can be used to customise the profile generation.
+ *  Basic matrix/shaper profiles can be created with
+ *  lcm2CreateICCMatrixProfile2() and filled with custom texts in
+ *  lcm2CreateProfileFragment().
+ *
+ *  The following low level code sample comes from @ref lcm2_profiler.c.
+ *  The code sets up a basic profile description and color spaces:
+ *  @dontinclude lcm2_profiler.c
+ *  @code
+ *    // prepare some variables
+ *    double icc_profile_version = 2.3;
+ *    double icc_ab[2] = {0.0, 0.0};
+ *    cmsHPROFILE profile;
+ *    const char * kelvin_name = "5000 K"
+ *    int error;
+ *    int grid_size = 17;
+ *    cmsToneCurve * i_curve[3] = {NULL,NULL,NULL}, * o_curve[3] = {NULL,NULL,NULL};
+      i_curve[0] = o_curve[0] = cmsBuildGamma(0, 1.0);
+      for(i = 1; i < 3; ++i) { i_curve[i] = o_curve[i] = i_curve[0]; }
+ *  @endcode
+ *  @skip fragment
+    @until cmsSigAToB0Tag
+ *
+ *  Profile i/o happens with lcm2OpenProfileFile(), which takes file names and
+ *  a few wildcards as arguments. lcm2WriteProfileToFile() helps writing of
+ *  canonical profile names. lcm2WriteProfileToMem() writes a profile to a
+ *  custom memory allocator.
+ *  
+ *  Most of the functions come with examples.
+ *
+ *  @{ */
+

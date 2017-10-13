@@ -1,7 +1,7 @@
 # Doxyfile 1.3.8
 
 PROJECT_NUMBER         = @OYRANOS_VERSION@
-INPUT                  = @CMAKE_CURRENT_SOURCE_DIR@ @CMAKE_CURRENT_BINARY_DIR@ @CMAKE_SOURCE_DIR@/src/API_generated @CMAKE_BINARY_DIR@/src/include @CMAKE_SOURCE_DIR@/src/include @CMAKE_SOURCE_DIR@/src/include_private @CMAKE_SOURCE_DIR@/src/liboyranos @CMAKE_SOURCE_DIR@/src/liboyranos_core @CMAKE_SOURCE_DIR@/src/liboyranos_config @CMAKE_SOURCE_DIR@/src/liboyranos_modules @CMAKE_SOURCE_DIR@/src/liboyranos_object
+INPUT                  = @CMAKE_CURRENT_SOURCE_DIR@ @CMAKE_CURRENT_BINARY_DIR@ @CMAKE_SOURCE_DIR@/src/API_generated @CMAKE_BINARY_DIR@/src/include @CMAKE_SOURCE_DIR@/src/include @CMAKE_SOURCE_DIR@/src/include_private @CMAKE_SOURCE_DIR@/src/liboyranos @CMAKE_SOURCE_DIR@/src/liboyranos_core @CMAKE_SOURCE_DIR@/src/liboyranos_config @CMAKE_SOURCE_DIR@/src/liboyranos_modules @CMAKE_SOURCE_DIR@/src/liboyranos_object @CMAKE_SOURCE_DIR@/src/oyjl @CMAKE_SOURCE_DIR@/src/modules/color/modules/lcms2
 
 #---------------------------------------------------------------------------
 # Project related configuration options
@@ -87,7 +87,7 @@ EXCLUDE_PATTERNS       = oyranos_gamma.c oyranos_alpha* \
                          oyranos_widgets* oyranos_monitor_internal_cs.h \
                          oyranos_cs.h oyranos_xml.* \
                          oyranos_profile_tool.c oyranos_profiles.c oyranos_policy.c
-EXAMPLE_PATH           = @CMAKE_SOURCE_DIR@/src/examples/ @CMAKE_SOURCE_DIR@/src/tests/ @CMAKE_SOURCE_DIR@/src/examples/image_display/ @CMAKE_SOURCE_DIR@/src/modules/color/modules/
+EXAMPLE_PATH           = @CMAKE_SOURCE_DIR@/src/examples/ @CMAKE_SOURCE_DIR@/src/tests/ @CMAKE_SOURCE_DIR@/src/examples/image_display/ @CMAKE_SOURCE_DIR@/src/modules/color/modules/ @CMAKE_SOURCE_DIR@/src/modules/color/modules/lcms2
 EXAMPLE_PATTERNS       = *.c *.cpp
 EXAMPLE_RECURSIVE      = NO
 IMAGE_PATH             = 

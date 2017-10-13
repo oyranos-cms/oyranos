@@ -15,9 +15,10 @@
 
 /** \addtogroup profiler
  *  @{ */
-#define LCM2PROFILER_MAJOR 1
-#define LCM2PROFILER_MINOR 0
-#define LCM2PROFILER_MICRO 0
+
+#define LCM2PROFILER_MAJOR 1 /**< @brief major version */
+#define LCM2PROFILER_MINOR 0 /**< @brief minor version */
+#define LCM2PROFILER_MICRO 0 /**< @brief patch version */
 
 /** @brief compile time API Version
  */

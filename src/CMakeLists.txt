@@ -377,6 +377,10 @@ SET( DOC_SOURCES
 	${CHEADERS_OBJECT_CONFIG_PUBLIC}
 	${CFILES_OBJECT_IMAGING_PUBLIC}
 	${CHEADERS_OBJECT_IMAGING_PUBLIC}
+	${CMAKE_SOURCE_DIR}/src/oyjl/oyjl_tree.c
+	${CMAKE_SOURCE_DIR}/src/oyjl/oyjl_tree.h
+	${CMAKE_SOURCE_DIR}/src/modules/color/modules/lcms2/lcm2_profiler.c
+	${CMAKE_SOURCE_DIR}/src/modules/color/modules/lcms2/lcm2_profiler.h
         PARENT_SCOPE
    )
 
