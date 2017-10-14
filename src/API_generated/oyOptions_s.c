@@ -469,7 +469,6 @@ int          oyOptions_FromJSON      ( const char        * json_text,
     va_end  ( list );
   }
 
-  t = oyAllocateFunc_(256);
   oyAllocHelper_m_(t, char, 256, oyAllocateFunc_, error = 1; goto cleanFJson );
   json = oyjl_tree_parse( json_text, t, 256 );
   if(!json || t[0])
