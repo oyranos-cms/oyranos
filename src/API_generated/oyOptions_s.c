@@ -438,7 +438,7 @@ int          oyOptions_FromJSON      ( const char        * json_text,
                                                     "underline_key_suffix", 0 ),
              * key_path = oyOptions_FindString( options, "key_path", 0 );
   oyOption_s * co = oyOptions_Find( options, "count", oyNAME_PATTERN );
-  char * xpath = 0;
+  char * xpath = NULL;
 
   if(!json_text)
   { WARNc_S( "missed json_text argument" );
@@ -470,10 +470,14 @@ int          oyOptions_FromJSON      ( const char        * json_text,
   }
 
   t = oyAllocateFunc_(256);
+  oyAllocHelper_m_(t, char, 256, oyAllocateFunc_, error = 1; goto cleanFJson );
   json = oyjl_tree_parse( json_text, t, 256 );
-  if(t[0])
+  if(!json || t[0])
+  {
     WARNc3_S( "%s: %s\n%s", _("found issues parsing JSON"), t, json_text );
-  oyFree_m_(t);
+    error = 1;
+    goto cleanFJson;
+  }
 
   opts = *result;
 
@@ -506,8 +510,10 @@ int          oyOptions_FromJSON      ( const char        * json_text,
   *result = opts;
   opts = NULL;
 
-  oyDeAllocateFunc_( xpath ); xpath = 0;
-  oyjl_tree_free( json );
+cleanFJson:
+  oyFree_m_( xpath );
+  if(json) oyjl_tree_free( json );
+  if(t) oyFree_m_(t);
 
   return error;
 }
