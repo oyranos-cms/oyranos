@@ -996,7 +996,13 @@ clean:
   if(found && parent)
     return parent;
   else
+  {
+    if(root)
+      oyjl_tree_free(root);
+    else if(!v && parent)
+      oyjl_tree_free(parent);
     return NULL;
+  }
 }
 
 /** Function oyjl_tree_get_valuef
