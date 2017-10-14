@@ -1422,7 +1422,9 @@ OYAPI int  OYEXPORT oyDeviceFromJSON ( const char        * json_text,
   const char * device_class = 0;
   oyjl_val v;
 
-  t = oyAllocateFunc_(256);
+  if(error) return error;
+
+  oyAllocHelper_m_(t, char, 256, 0, error = 1; return error );
   json = oyjl_tree_parse( json_text, t, 256 );
   if(t[0])
     WARNc3_S( "%s: %s\n%s", _("found issues parsing JSON"), t, json_text );
