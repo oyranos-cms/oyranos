@@ -61,35 +61,31 @@ void testOyjl(void)
   /* convert back to JSON */
   oyjl_tree_to_json( root, &level, &json );
 
-    fwrite( json, sizeof(char), strlen(json), stderr );
-    fprintf( stderr, "\n" );
+    fprintf( stderr, "%s\n", json );
     free(json); json = NULL;
 
   /* use a xpath to obtain a node */
   value = oyjl_tree_get_valuef( root, 0, "org/free/[%d]", 1 );
 
     oyjl_tree_to_json( value, &level, &json );
-    fwrite( json, sizeof(char), strlen(json), stderr );
-    fprintf( stderr, "\n" );
+    fprintf( stderr, "%s\n", json );
     free(json); json = NULL;
 
   /* use a xpath to remove a node */
   oyjl_tree_clear_value( root, "org/free/[1]" );
 
     oyjl_tree_to_json( root, &level, &json );
-    fwrite( json, sizeof(char), strlen(json), stderr );
-    fprintf( stderr, "\n" );
+    fprintf( stderr, "%s\n", json );
     free(json); json = NULL;
 
   /* release memory */
-  oyjl_tree_free( root );
+  oyjl_tree_free ( root );
 
   /* use a xpath to create new tree */
   root = oyjl_tree_get_value( NULL, OYJL_CREATE_NEW, "org/free/new_one" );
 
     oyjl_tree_to_json( root, &level, &json );
-    fwrite( json, sizeof(char), strlen(json), stderr );
-    fprintf( stderr, "\n" );
+    fprintf( stderr, "%s\n", json );
     free(json); json = NULL;
 
   /* release memory */

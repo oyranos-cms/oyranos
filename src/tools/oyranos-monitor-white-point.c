@@ -687,7 +687,7 @@ int runDaemon(int dmode)
   while(1)
   {
     double hour = oyGetCurrentGMTHour( 0 );
-    double repeat_check = 1.0/60.0;
+    double repeat_check = 1.0/60.0; /* every minute */
 
     oyLoopDBusObserver( hour, repeat_check, oy_dbus_config_changed, checkWtptState() )
 

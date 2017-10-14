@@ -444,7 +444,7 @@ static int handle_null (void *ctx)
  *  The following code examples come from @ref tutorial_json_options.c  . 
  *  @dontinclude tutorial_json_options.c
  *  @skip testOyjl(void)
- *  @until oyjl_tree_free
+ *  @until oyjl_tree_free(
  *  @{ *//* oyjl */
 
 /** @brief read a json text string into a C data structure */
