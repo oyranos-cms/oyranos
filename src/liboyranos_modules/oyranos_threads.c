@@ -284,7 +284,7 @@ static void jobPrintfCallback        ( double              progress_zero_till_on
          status_text?status_text:"",thread_id_,job_id);
 }
 
-/** @fn      oyJob_New
+/** Function oyJob_New
  *  @brief   Allocate a new oyJob_s object
  *  @extends oyStruct_s
  *  @memberof oyJob_s
@@ -310,7 +310,7 @@ oyJob_s *         oyJob_New          ( oyObject_s          object OY_UNUSED )
   return job;
 }
 
-/** @fn      oyJob_Release
+/** Function oyJob_Release
  *  @brief   Deallocate a oyJob_s object
  *  @extends oyStruct_s
  *  @memberof oyJob_s

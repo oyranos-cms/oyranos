@@ -1955,7 +1955,7 @@ cmsHPROFILE  lcm2CreateICCMatrixProfile2 (
   return lp;
 }
 
-/** @fn      lcm2MessageFunc
+/** Function lcm2MessageFunc
  *  @brief   default message function to console
  *
  *  The default message function is used as a message printer to the console 

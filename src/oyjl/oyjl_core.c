@@ -71,8 +71,7 @@ yajl_status  oyjl_message_func       ( oyjl_message_e      error_code,
 
 oyjl_message_f     oyjl_message_p = oyjl_message_func;
 
-/** @fn      openiccMessageFuncSet
- *  @brief   set a custom message listener
+/** @brief   set a custom message listener
  *
  *  @version OpenICC: 0.1.0
  *  @date    2011/10/21

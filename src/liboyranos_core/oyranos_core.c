@@ -49,7 +49,7 @@
 static oyStruct_RegisterStaticMessageFunc_f * oy_static_msg_funcs_ = 0;
 static int oy_msg_func_n_ = 0;
 
-/** @fn      oyStruct_RegisterStaticMessageFunc
+/** Function oyStruct_RegisterStaticMessageFunc
  *  @memberof oyStruct_s
  *  @brief   register a function for verbosity
  *
@@ -101,7 +101,7 @@ int oyStruct_RegisterStaticMessageFunc (
   return error;
 }
                                        
-/** @fn      oyStruct_GetInfo
+/** Function oyStruct_GetInfo
  *  @memberof oyStruct_s
  *  @brief   get a additional string from a object
  *
@@ -349,7 +349,7 @@ OYAPI const char * OYEXPORT  oyObject_Show (
 
 
 
-/** @fn      oyMessageFormat
+/** Function oyMessageFormat
  *  @brief   default function to form a message string
  *
  *  This default message function is used as a message formatter.
@@ -459,7 +459,7 @@ int                oyMessageFormat   ( char             ** message_text,
   return 0;
 }
 
-/** @fn      oyMessageFunc
+/** Function oyMessageFunc
  *  @brief   default message function to console
  *
  *  The default message function is used as a message printer to the console 
@@ -668,7 +668,7 @@ int oyGuiMessageFunc( int code, const void * c, const char * format, ... )
   return 0;
 }
 
-/** @fn      oyMessageFuncSet
+/** Function oyMessageFuncSet
  *  @brief
  *
  *  @version Oyranos: 0.1.8
@@ -682,7 +682,7 @@ int            oyMessageFuncSet      ( oyMessage_f         message_func )
   return 0;
 }
 
-/** @fn      oyObjectDebugMessage_
+/** Function oyObjectDebugMessage_
  *  @internal for debugging objects
  *  @brief   used with _Copy() macros
  *

@@ -23,7 +23,7 @@ extern "C" {
 
 
 
-/** @fn      oySetupMonitorProfile_f
+/** Function oySetupMonitorProfile_f
  *  @ingroup monitor_hooks_api
  *  @brief   set all device system specific properties
  *
@@ -49,7 +49,7 @@ typedef int  (*oySetupMonitorProfile_f) (
                                        const char        * profile_data,
                                        size_t              profile_data_size );
 
-/** @fn      oyUnsetMonitorProfile_f
+/** Function oyUnsetMonitorProfile_f
  *  @ingroup monitor_hooks_api
  *  @brief   unset all device system specific properties
  *
@@ -69,7 +69,7 @@ typedef int  (*oySetupMonitorProfile_f) (
 typedef int  (*oyUnsetMonitorProfile_f) (
                                        const char        * monitor_name );
 
-/** @fn      oyGetRectangleFromMonitor_f
+/** Function oyGetRectangleFromMonitor_f
  *  @ingroup monitor_hooks_api
  *  @brief   get area dimensions in pixel
  *
@@ -95,7 +95,7 @@ typedef int  (*oyGetRectangleFromMonitor_f) (
                                        double            * width,
                                        double            * height );
 
-/** @fn      oyGetMonitorProfile_f
+/** Function oyGetMonitorProfile_f
  *  @ingroup monitor_hooks_api
  *  @brief   get a system specific monitor profile
  *
@@ -123,7 +123,7 @@ typedef char * (*oyGetMonitorProfile_f) (
                                        int                 flags,
                                        size_t            * size );
 
-/** @fn      oyGetAllMonitorNames_f
+/** Function oyGetAllMonitorNames_f
  *  @ingroup monitor_hooks_api
  *  @brief   get a list of connected monitors
  *
@@ -141,7 +141,7 @@ typedef char * (*oyGetMonitorProfile_f) (
 typedef int  (*oyGetAllMonitorNames_f)(const char        * display_name,
                                        char            *** monitor_names );
 
-/** @fn      oyGetMonitorInfo_f
+/** Function oyGetMonitorInfo_f
  *  @ingroup monitor_hooks_api
  *  @brief   get various informations about a monitor device
  *

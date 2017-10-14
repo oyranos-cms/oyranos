@@ -583,7 +583,7 @@ oyReadXMLPolicy        (oyGROUP_e           group,
   return n;
 }
 
-/** @fn      oyPolicyFileNameGet
+/** Function oyPolicyFileNameGet
  *  @brief   resolve the file name of a policy
  *
  *  The resolving is done by weak string matching. So it is possible to use
