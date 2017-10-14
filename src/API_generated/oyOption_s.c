@@ -50,7 +50,7 @@ OYAPI oyOption_s * OYEXPORT
   return (oyOption_s*) option;
 }
 
-/** @fn       oyOption_Copy
+/** Function  oyOption_Copy
  *  @memberof oyOption_s
  *  @brief    Copy or Reference a Option object
  *

@@ -51,7 +51,7 @@ OYAPI oyFilterNodes_s * OYEXPORT
   return (oyFilterNodes_s*) filternodes;
 }
 
-/** @fn       oyFilterNodes_Copy
+/** Function  oyFilterNodes_Copy
  *  @memberof oyFilterNodes_s
  *  @brief    Copy or Reference a FilterNodes object
  *

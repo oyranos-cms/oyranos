@@ -58,7 +58,7 @@ OYAPI oyConnector_s * OYEXPORT
   return (oyConnector_s*) connector;
 }
 
-/** @fn       oyConnector_Copy
+/** Function  oyConnector_Copy
  *  @memberof oyConnector_s
  *  @brief    Copy or Reference a Connector object
  *

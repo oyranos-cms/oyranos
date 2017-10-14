@@ -45,7 +45,7 @@ OYAPI oyBlob_s * OYEXPORT
   return (oyBlob_s*) blob;
 }
 
-/** @fn       oyBlob_Copy
+/** Function  oyBlob_Copy
  *  @memberof oyBlob_s
  *  @brief    Copy or Reference a Blob object
  *

@@ -48,7 +48,7 @@ OYAPI oyPointer_s * OYEXPORT
   return (oyPointer_s*) pointer;
 }
 
-/** @fn       oyPointer_Copy
+/** Function  oyPointer_Copy
  *  @memberof oyPointer_s
  *  @brief    Copy or Reference a Pointer object
  *

@@ -50,7 +50,7 @@ OYAPI oyProfileTag_s * OYEXPORT
   return (oyProfileTag_s*) profiletag;
 }
 
-/** @fn       oyProfileTag_Copy
+/** Function  oyProfileTag_Copy
  *  @memberof oyProfileTag_s
  *  @brief    Copy or Reference a ProfileTag object
  *

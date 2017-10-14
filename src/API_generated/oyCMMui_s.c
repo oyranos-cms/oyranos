@@ -45,7 +45,7 @@ OYAPI oyCMMui_s * OYEXPORT
   return (oyCMMui_s*) cmmui;
 }
 
-/** @fn       oyCMMui_Copy
+/** Function  oyCMMui_Copy
  *  @memberof oyCMMui_s
  *  @brief    Copy or Reference a CMMui object
  *

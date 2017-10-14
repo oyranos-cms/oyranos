@@ -45,7 +45,7 @@ OYAPI oyCMMinfo_s * OYEXPORT
   return (oyCMMinfo_s*) cmminfo;
 }
 
-/** @fn       oyCMMinfo_Copy
+/** Function  oyCMMinfo_Copy
  *  @memberof oyCMMinfo_s
  *  @brief    Copy or Reference a CMMinfo object
  *

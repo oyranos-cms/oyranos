@@ -24,7 +24,7 @@ OYAPI {{ class.name }} * OYEXPORT
   return ({{ class.name }}*) {{ class.baseName|lower }};
 }
 
-/** @fn       oy{{ class.baseName }}_Copy
+/** Function  oy{{ class.baseName }}_Copy
  *  @memberof {{ class.name }}
  *  @brief    Copy or Reference a {{ class.baseName }} object
  *

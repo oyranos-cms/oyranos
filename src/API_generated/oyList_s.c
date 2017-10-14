@@ -49,7 +49,7 @@ OYAPI oyList_s * OYEXPORT
   return (oyList_s*) list;
 }
 
-/** @fn       oyList_Copy
+/** Function  oyList_Copy
  *  @memberof oyList_s
  *  @brief    Copy or Reference a List object
  *

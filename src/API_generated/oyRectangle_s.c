@@ -49,7 +49,7 @@ OYAPI oyRectangle_s * OYEXPORT
   return (oyRectangle_s*) rectangle;
 }
 
-/** @fn       oyRectangle_Copy
+/** Function  oyRectangle_Copy
  *  @memberof oyRectangle_s
  *  @brief    Copy or Reference a Rectangle object
  *

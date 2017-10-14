@@ -45,7 +45,7 @@ OYAPI oyArray2d_s * OYEXPORT
   return (oyArray2d_s*) array2d;
 }
 
-/** @fn       oyArray2d_Copy
+/** Function  oyArray2d_Copy
  *  @memberof oyArray2d_s
  *  @brief    Copy or Reference a Array2d object
  *

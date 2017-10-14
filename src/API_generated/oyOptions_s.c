@@ -54,7 +54,7 @@ OYAPI oyOptions_s * OYEXPORT
   return (oyOptions_s*) options;
 }
 
-/** @fn       oyOptions_Copy
+/** Function  oyOptions_Copy
  *  @memberof oyOptions_s
  *  @brief    Copy or Reference a Options object
  *
@@ -296,7 +296,7 @@ OYAPI int  OYEXPORT
 #include "oyranos_definitions.h"
 #include "oyranos_db.h" /* oyjl API */
 
-/** @fn        oyOptions_FromBoolean
+/** Function   oyOptions_FromBoolean
  *  @memberof  oyOptions_s
  *  @brief     boolean operations on two sets of option
  *
@@ -383,7 +383,7 @@ oyOptions_s *  oyOptions_FromBoolean ( oyOptions_s       * set_a,
   return options;
 }
 
-/** @fn         oyOptions_FromJSON
+/** Function    oyOptions_FromJSON
  *  @memberof   oyOptions_s
  *  @brief      deserialise a text file to oyOptions_s data
  *

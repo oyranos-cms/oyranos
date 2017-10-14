@@ -45,7 +45,7 @@ OYAPI oyImage_s * OYEXPORT
   return (oyImage_s*) image;
 }
 
-/** @fn       oyImage_Copy
+/** Function  oyImage_Copy
  *  @memberof oyImage_s
  *  @brief    Copy or Reference a Image object
  *

@@ -50,7 +50,7 @@ OYAPI oyPixelAccess_s * OYEXPORT
   return (oyPixelAccess_s*) pixelaccess;
 }
 
-/** @fn       oyPixelAccess_Copy
+/** Function  oyPixelAccess_Copy
  *  @memberof oyPixelAccess_s
  *  @brief    Copy or Reference a PixelAccess object
  *

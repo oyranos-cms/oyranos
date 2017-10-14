@@ -47,7 +47,7 @@ OYAPI oyCMMapi3_s * OYEXPORT
   return (oyCMMapi3_s*) cmmapi3;
 }
 
-/** @fn       oyCMMapi3_Copy
+/** Function  oyCMMapi3_Copy
  *  @memberof oyCMMapi3_s
  *  @brief    Copy or Reference a CMMapi3 object
  *

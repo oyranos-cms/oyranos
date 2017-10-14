@@ -51,7 +51,7 @@ OYAPI oyFilterPlugs_s * OYEXPORT
   return (oyFilterPlugs_s*) filterplugs;
 }
 
-/** @fn       oyFilterPlugs_Copy
+/** Function  oyFilterPlugs_Copy
  *  @memberof oyFilterPlugs_s
  *  @brief    Copy or Reference a FilterPlugs object
  *

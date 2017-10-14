@@ -45,7 +45,7 @@ OYAPI oyLis_s * OYEXPORT
   return (oyLis_s*) lis;
 }
 
-/** @fn       oyLis_Copy
+/** Function  oyLis_Copy
  *  @memberof oyLis_s
  *  @brief    Copy or Reference a Lis object
  *

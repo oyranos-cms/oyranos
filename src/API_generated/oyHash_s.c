@@ -45,7 +45,7 @@ OYAPI oyHash_s * OYEXPORT
   return (oyHash_s*) hash;
 }
 
-/** @fn       oyHash_Copy
+/** Function  oyHash_Copy
  *  @memberof oyHash_s
  *  @brief    Copy or Reference a Hash object
  *

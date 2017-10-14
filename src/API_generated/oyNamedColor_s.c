@@ -45,7 +45,7 @@ OYAPI oyNamedColor_s * OYEXPORT
   return (oyNamedColor_s*) namedcolor;
 }
 
-/** @fn       oyNamedColor_Copy
+/** Function  oyNamedColor_Copy
  *  @memberof oyNamedColor_s
  *  @brief    Copy or Reference a NamedColor object
  *

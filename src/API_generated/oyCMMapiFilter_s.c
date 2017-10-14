@@ -48,7 +48,7 @@ OYAPI oyCMMapiFilter_s * OYEXPORT
   return (oyCMMapiFilter_s*) cmmapifilter;
 }
 
-/** @fn       oyCMMapiFilter_Copy
+/** Function  oyCMMapiFilter_Copy
  *  @memberof oyCMMapiFilter_s
  *  @brief    Copy or Reference a CMMapiFilter object
  *

@@ -48,7 +48,7 @@ OYAPI oyStructList_s * OYEXPORT
   return (oyStructList_s*) structlist;
 }
 
-/** @fn       oyStructList_Copy
+/** Function  oyStructList_Copy
  *  @memberof oyStructList_s
  *  @brief    Copy or Reference a StructList object
  *

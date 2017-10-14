@@ -48,7 +48,7 @@ OYAPI oyFilterCore_s * OYEXPORT
   return (oyFilterCore_s*) filtercore;
 }
 
-/** @fn       oyFilterCore_Copy
+/** Function  oyFilterCore_Copy
  *  @memberof oyFilterCore_s
  *  @brief    Copy or Reference a FilterCore object
  *

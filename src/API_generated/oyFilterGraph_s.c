@@ -52,7 +52,7 @@ OYAPI oyFilterGraph_s * OYEXPORT
   return (oyFilterGraph_s*) filtergraph;
 }
 
-/** @fn       oyFilterGraph_Copy
+/** Function  oyFilterGraph_Copy
  *  @memberof oyFilterGraph_s
  *  @brief    Copy or Reference a FilterGraph object
  *

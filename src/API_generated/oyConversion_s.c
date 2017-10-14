@@ -56,7 +56,7 @@ OYAPI oyConversion_s * OYEXPORT
   return (oyConversion_s*) conversion;
 }
 
-/** @fn       oyConversion_Copy
+/** Function  oyConversion_Copy
  *  @memberof oyConversion_s
  *  @brief    Copy or Reference a Conversion object
  *

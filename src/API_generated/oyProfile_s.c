@@ -54,7 +54,7 @@ OYAPI oyProfile_s * OYEXPORT
   return (oyProfile_s*) profile;
 }
 
-/** @fn       oyProfile_Copy
+/** Function  oyProfile_Copy
  *  @memberof oyProfile_s
  *  @brief    Copy or Reference a Profile object
  *

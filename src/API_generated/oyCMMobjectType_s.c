@@ -45,7 +45,7 @@ OYAPI oyCMMobjectType_s * OYEXPORT
   return (oyCMMobjectType_s*) cmmobjecttype;
 }
 
-/** @fn       oyCMMobjectType_Copy
+/** Function  oyCMMobjectType_Copy
  *  @memberof oyCMMobjectType_s
  *  @brief    Copy or Reference a CMMobjectType object
  *

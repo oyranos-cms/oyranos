@@ -60,7 +60,7 @@ OYAPI oyConnectorImaging_s * OYEXPORT
   return (oyConnectorImaging_s*) connectorimaging;
 }
 
-/** @fn       oyConnectorImaging_Copy
+/** Function  oyConnectorImaging_Copy
  *  @memberof oyConnectorImaging_s
  *  @brief    Copy or Reference a ConnectorImaging object
  *

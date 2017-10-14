@@ -54,7 +54,7 @@ OYAPI oyConfigs_s * OYEXPORT
   return (oyConfigs_s*) configs;
 }
 
-/** @fn       oyConfigs_Copy
+/** Function  oyConfigs_Copy
  *  @memberof oyConfigs_s
  *  @brief    Copy or Reference a Configs object
  *

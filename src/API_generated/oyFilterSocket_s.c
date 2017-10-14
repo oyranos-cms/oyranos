@@ -48,7 +48,7 @@ OYAPI oyFilterSocket_s * OYEXPORT
   return (oyFilterSocket_s*) filtersocket;
 }
 
-/** @fn       oyFilterSocket_Copy
+/** Function  oyFilterSocket_Copy
  *  @memberof oyFilterSocket_s
  *  @brief    Copy or Reference a FilterSocket object
  *
