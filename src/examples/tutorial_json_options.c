@@ -48,7 +48,7 @@ int main (int argc OY_UNUSED, char ** argv OY_UNUSED)
 void testOyjl(void)
 {
   /* JSON string */
-  const char * text = "{\"org\":{\"free\":[{\"s1key_a\":\"val_a\",\"s1key_b\":\"val_b\"},{\"s2key_c\":\"val_c\",\"s2key_d\":\"val_d\"}],\"key_e\":\"val_e_yyy\",\"key_f\":\"val_f\"}}";
+  const char * text = "{\"org\":{\"test\":[{\"s1key_a\":\"val_a\",\"s1key_b\":\"val_b\"},{\"s2key_c\":\"val_c\",\"s2key_d\":\"val_d\"}],\"key_e\":\"val_e_yyy\",\"key_f\":\"val_f\"}}";
 
   oyjl_val value = 0;
   int level = 0;
@@ -65,14 +65,28 @@ void testOyjl(void)
     free(json); json = NULL;
 
   /* use a xpath to obtain a node */
-  value = oyjl_tree_get_valuef( root, 0, "org/free/[%d]", 1 );
+  value = oyjl_tree_get_valuef( root, 0, "org/test/[%d]", 1 );
 
     oyjl_tree_to_json( value, &level, &json );
     fprintf( stderr, "%s\n", json );
     free(json); json = NULL;
 
   /* use a xpath to remove a node */
-  oyjl_tree_clear_value( root, "org/free/[1]" );
+  oyjl_tree_clear_value( root, "org/test/[0]" );
+
+    oyjl_tree_to_json( root, &level, &json );
+    fprintf( stderr, "%s\n", json );
+    free(json); json = NULL;
+
+  /* use a xpath to get a new node in a existing tree */
+  value = oyjl_tree_get_value( root, OYJL_CREATE_NEW, "org/add/opt" );
+
+    oyjl_tree_to_json( root, &level, &json );
+    fprintf( stderr, "%s\n", json );
+    free(json); json = NULL;
+
+  /* set the new node to some string value  */
+  oyjl_value_set_string( value, "value" );
 
     oyjl_tree_to_json( root, &level, &json );
     fprintf( stderr, "%s\n", json );
@@ -82,7 +96,7 @@ void testOyjl(void)
   oyjl_tree_free ( root );
 
   /* use a xpath to create new tree */
-  root = oyjl_tree_get_value( NULL, OYJL_CREATE_NEW, "org/free/new_one" );
+  root = oyjl_tree_new( "new/tree/key" );
 
     oyjl_tree_to_json( root, &level, &json );
     fprintf( stderr, "%s\n", json );
