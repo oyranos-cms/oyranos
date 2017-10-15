@@ -36,10 +36,12 @@ extern "C" {
 #define oyjl_message_p                 oy_oyjl_message_p
 #define oyjl_object_free               oyJObjectFree
 #define oyjl_tree_callbacks            oy_jtree_callbacks
+#define oyjl_tree_new                  oyJTreeNew
 #define oyjl_tree_free                 oyJTreeFree
 #define oyjl_tree_clear_value          oyJTreeClearValue
 #define oyjl_tree_get                  oyJTreeGet
 #define oyjl_tree_get_value            oyJTreeGetValue
+#define oyjl_tree_get_value_           oyJTreeGetValue_
 #define oyjl_tree_get_valuef           oyJTreeGetValuef
 #define oyjl_tree_parse                oyJTreeParse
 #define oyjl_tree_paths_get_index      oyJTreePathsGetIndex

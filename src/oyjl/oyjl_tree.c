@@ -438,16 +438,39 @@ static int handle_null (void *ctx)
  *
  *  The API is designed to be easily useable without much boilerplate.
  *  It includes a xpath alike syntax to obtain or create nodes inside
- *  a tree.
+ *  a tree. A path string is constructed of terms and the slash 
+ *  delimiter '/'. Understood terms are object names or the squared 
+ *  brackets index operator [].
  *
- *  @subsection tutorial Programming Tutorial
- *  The following code examples come from @ref tutorial_json_options.c  . 
+ *  \b Path \b Example:
+ *
+ *  "foo/[3]/bar" will return the "bar" node with the "found" string.
+ *  @verbatim
+    {
+      "foo": [
+        { "ignore": 0 },
+        { "ignore_too": 0 },
+        { "ignore_it": 0 },
+        { "bar": "found" }
+      ]
+    }
+    @endverbatim
+ *
+ *  \b Programming \b Tutorial
+ *
+ *  The following code examples come from @ref tutorial_json_options.c . 
  *  @dontinclude tutorial_json_options.c
  *  @skip testOyjl(void)
  *  @until oyjl_tree_free(
  *  @{ *//* oyjl */
 
-/** @brief read a json text string into a C data structure */
+/** @brief read a json text string into a C data structure
+ *
+ *  @dontinclude tutorial_json_options.c
+ *  @skipline text
+ *  @skip error_buffer
+ *  @until oyjl_tree_parse
+ */
 oyjl_val oyjl_tree_parse (const char *input,
                           char *error_buffer, size_t error_buffer_size)
 {
@@ -854,10 +877,8 @@ int        oyjl_tree_paths_get_index ( const char        * term,
   return error;
 }
 
-/** @brief obtain a node by a xpath expression
- *
- *  @see oyjl_tree_get_valuef() */
-oyjl_val   oyjl_tree_get_value       ( oyjl_val            v,
+/* split new root allocation from inside root manipulation */
+static oyjl_val  oyjl_tree_get_value_( oyjl_val            v,
                                        int                 flags,
                                        const char        * xpath )
 {
@@ -978,8 +999,12 @@ oyjl_val   oyjl_tree_get_value       ( oyjl_val            v,
       } 
 
       found = 1;
-    } if(!v && !root)
-        root = level;
+    }
+    if(!v && !root)
+    {
+      root = level;
+      --i;
+    }
     parent = level;
     level = NULL;
   }
@@ -1004,28 +1029,40 @@ clean:
     return NULL;
   }
 }
+/** @brief create a node by a path expression
+ *
+ *  A NULL argument allocates just a node of type oyjl_t_null.
+ *
+ *  @see oyjl_tree_get_valuef() */
+oyjl_val   oyjl_tree_new             ( const char        * xpath )
+{
+  if(xpath && xpath[0])
+    return oyjl_tree_get_value_( NULL, OYJL_CREATE_NEW, xpath );
+  else
+    return value_alloc( oyjl_t_null );
+}
+
+/** @brief obtain a node by a path expression
+ *
+ *  @see oyjl_tree_get_valuef() */
+oyjl_val   oyjl_tree_get_value       ( oyjl_val            v,
+                                       int                 flags,
+                                       const char        * xpath )
+{
+  if(!v || !xpath)
+    return NULL;
+  else
+    return oyjl_tree_get_value_(v,flags,xpath);
+}
+
 
 /** Function oyjl_tree_get_valuef
- *  @brief   get a child node by a xpath expression
- *
- *  A path string is constructed of terms and the slash delimiter '/'.
- *  Understood terms are object names or the squared brackets index operator [].
- *  Example: "foo/[3]/bar" will return the "bar" node with the "found" string.
- *  @verbatim
-    {
-      "foo": [
-        { "ignore": 0 },
-        { "ignore_too": 0 },
-        { "ignore_it": 0 },
-        { "bar": "found" }
-      ]
-    }
-    @endverbatim
+ *  @brief   get a child node by a path expression
  *
  *  Creating a new node inside a existing tree needs just a root node - v.
  *  The flags should contain OYJL_CREATE_NEW.
  *  @code
-    oyjl_val root = oyjl_tree_get_valuef( NULL, OYJL_CREATE_NEW, "my/new/node" );
+    oyjl_val new_node = oyjl_tree_get_valuef( root, OYJL_CREATE_NEW, "my/new/node" );
     @endcode
  *
  *  Example: "foo/[]/bar" will append a node to the foo array and create
@@ -1036,10 +1073,6 @@ clean:
  *
  *
  *  @param[in]     v                   the oyjl node
- *                                     - the root node
- *                                     - NULL and flags == OYJL_CREATE_NEW
- *                                       will create a new tree along the path,
- *                                       which is returned
  *  @param[in]     flags               OYJL_CREATE_NEW - returns nodes even
  *                                     if they did not yet exist
  *  @param[in]     format              the format for the slashed path string
@@ -1123,13 +1156,17 @@ void oyjl_value_clear        (oyjl_val v)
     v->type = oyjl_t_null;
 }
 
-/** @brief release a specific node and all its childs */
+/** @brief release a specific node and all its childs
+ *
+ *  In case parents have no children, release them or clear root.
+ */
 void oyjl_tree_clear_value           ( oyjl_val            root,
                                        const char        * xpath )
 {
   int n = 0, i, pos, count;
   char ** list;
   char * path;
+  int delete_parent = 0;
 
   if(!root) return;
 
@@ -1140,13 +1177,13 @@ void oyjl_tree_clear_value           ( oyjl_val            root,
   {
     oyjl_val p; /* parent */
     oyjl_val o = oyjl_tree_get_value( root, 0, path );
-    int delete_parent = 0;
 
     char * parent_path = oyjl_string_copy( path, malloc ),
          * t = strrchr(parent_path, '/');
     if(t)
       t[0] = '\000';
 
+    delete_parent = 0;
     p = oyjl_tree_get_value( root, 0, parent_path );
     if(p)
     {
@@ -1161,8 +1198,7 @@ void oyjl_tree_clear_value           ( oyjl_val            root,
              if( p->u.array.values[i] == o )
              {
                oyjl_tree_free( o );
-               o = NULL;
-               p->u.array.values[i] = NULL;
+               p->u.array.values[i] = o = NULL;
 
                if(count > 1)
                  memmove( &p->u.array.values[i], &p->u.array.values[i+1],
@@ -1180,14 +1216,19 @@ void oyjl_tree_clear_value           ( oyjl_val            root,
          {
            count = p->u.object.len;
 
+           if(count == 0)
+             delete_parent = 1;
+
            for(i = 0; i < count; ++i)
            {
              if( p->u.object.values[i] == o )
              {
-               oyjl_tree_free( o );
-               o = NULL;
+               if(p->u.object.keys[i])
+                 free(p->u.object.keys[i]);
                p->u.object.keys[i] = NULL;
-               p->u.object.values[i] = NULL;
+
+	       oyjl_tree_free( o );
+               p->u.object.values[i] = o = NULL;
 
                if(count > 1)
                {
@@ -1218,6 +1259,11 @@ void oyjl_tree_clear_value           ( oyjl_val            root,
     if(delete_parent == 0)
       break;
   }
+
+  /* The root node has no name here. So we need to detect that case.
+   * Keep the node itself, as it is still referenced by the caller. */
+  if(path && delete_parent && strchr(path,'/') == NULL)
+    oyjl_value_clear(root);
 
   for(i = 0; i < n; ++i) free(list[i]);
   if(list) free(list);
