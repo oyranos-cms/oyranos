@@ -211,8 +211,8 @@ char *   oyGetPathFromProfileName_   ( const char        * fileName,
 
 clean:
   if (!success)
-  { oyFree_m_ (pathName);
-    pathName = 0;
+  { if(pathName) { oyFree_m_ (pathName); }
+    pathName = NULL;
   }
 
   if(fullFileName) oyFree_m_ (fullFileName);
