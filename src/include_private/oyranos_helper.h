@@ -51,6 +51,7 @@ extern int oy_debug_memory;
 extern int oy_debug_objects;
 extern int oy_debug_signals;
 extern const char * oy_backtrace;
+extern const char * oy_prefered_db_;
 
 
 

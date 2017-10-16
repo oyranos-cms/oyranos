@@ -104,6 +104,7 @@ int      oySetProfile_               ( const char        * name,
 /* public API implementation */
 static const oyDbAPI_s * oy_db_handling_api = NULL;
 static int oy_db_handling_ready_ = 0;
+const char * oy_prefered_db_ = "//" OY_TYPE_STD "/db_handler.elDB";
 
 /* private helper */
 
@@ -172,17 +173,16 @@ int                oyDbInitialise_  ( void )
 {
   oyOptions_s * opts = 0,
               * result_opts = 0;
-  const char * prefered_db = "//" OY_TYPE_STD "/db_handler.elDB";
 
   if(getenv("OY_DEBUG_DB_MODULE"))
   {
-    prefered_db = getenv("OY_DEBUG_DB_MODULE");
+    oy_prefered_db_ = getenv("OY_DEBUG_DB_MODULE");
     oyMessageFunc_p( oyMSG_DBG, NULL, OY_DBG_FORMAT_
-                     " selecting OY_DEBUG_DB_MODULE=\"%s\"",OY_DBG_ARGS_, prefered_db );
+                     " selecting OY_DEBUG_DB_MODULE=\"%s\"",OY_DBG_ARGS_, oy_prefered_db_ );
   }
 
   opts = oyOptions_New(0);
-  int error = oyOptions_Handle( prefered_db,
+  int error = oyOptions_Handle( oy_prefered_db_,
                                 opts,"db_handler",
                                 &result_opts );
   if(error || oyDB_newFrom == oyDB_newFromInit)
@@ -190,7 +190,7 @@ int                oyDbInitialise_  ( void )
     const char * fallback_db = "//" OY_TYPE_STD "/db_handler";
     oyMessageFunc_p( oyMSG_DBG, NULL, OY_DBG_FORMAT_
                      " can't initialise \"%s\" e:%d trying: \"%s\"",OY_DBG_ARGS_,
-                     prefered_db, error, fallback_db);
+                     oy_prefered_db_, error, fallback_db);
 
     error = oyOptions_Handle( fallback_db,
                               opts,"db_handler",
@@ -310,3 +310,25 @@ oyDBSearchEmptyKeyname_f   oyDBSearchEmptyKeyname = oyDBSearchEmptyKeynameInit;
 oyDBEraseKey_f             oyDBEraseKey = oyDBEraseKeyInit;
 
 
+const char *       oyDbHandlingCurrent (void )
+{
+  if(oy_db_handling_api)
+    return oy_db_handling_api->nick;
+  else
+    return "";
+}
+void               oyDbHandlingReset ( void )
+{
+        oy_db_handling_ready_ = 0;
+           oy_db_handling_api = NULL;
+
+                 oyDB_newFrom = oyDB_newFromInit;
+                 oyDB_release = oyDB_releaseInit;
+               oyDB_getString = oyDB_getStringInit;
+              oyDB_getStrings = oyDB_getStringsInit;
+             oyDB_getKeyNames = oyDB_getKeyNamesInit;
+     oyDB_getKeyNamesOneLevel = oyDB_getKeyNamesOneLevelInit;
+                oyDBSetString = oyDBSetStringInit;
+       oyDBSearchEmptyKeyname = oyDBSearchEmptyKeynameInit;
+                 oyDBEraseKey = oyDBEraseKeyInit;
+}

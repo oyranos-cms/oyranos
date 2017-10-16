@@ -199,7 +199,7 @@ oyTESTRESULT_e testI18N()
 #define TEST_KEY "/test_key"
 
 #include "oyranos_db.h"
-oyTESTRESULT_e testDB()
+oyTESTRESULT_e testDBDefault()
 {
   int error = 0;
   char * value = 0,
@@ -450,6 +450,29 @@ oyTESTRESULT_e testDB()
   oySetBehaviour( oyBEHAVIOUR_EFFECT, oySCOPE_USER, old_effect_switch );
   
   return result;
+}
+oyTESTRESULT_e testDB()
+{
+  /* init the default DB handler */
+  oySetPersistentString( TEST_DOMAIN TEST_KEY, oySCOPE_USER, NULL, NULL );
+  fprintf(stdout, "%s\n", oyDbHandlingCurrent() );
+  return testDBDefault();
+}
+
+oyTESTRESULT_e testDB2()
+{
+  oy_prefered_db_ = "//" OY_TYPE_STD "/db_handler.oiDB";
+
+  oyDbHandlingReset();
+
+  /* clear the DB cache */
+  oyGetPersistentStrings(NULL);
+  /* init the new DB handler */
+  oySetPersistentString( TEST_DOMAIN TEST_KEY, oySCOPE_USER, NULL, NULL );
+
+  fprintf(stdout, "%s\n", oyDbHandlingCurrent() );
+
+  return testDBDefault();
 }
 
 #ifdef __cplusplus
@@ -7276,7 +7299,8 @@ int main(int argc, char** argv)
 
   TEST_RUN( testVersion, "Version matching" );
   TEST_RUN( testI18N, "Internationalisation" );
-  TEST_RUN( testDB, "DB" );
+  TEST_RUN( testDB, "elDB basics" );
+  TEST_RUN( testDB2, "oiDB basics" );
   TEST_RUN( testStringRun, "String handling" );
   TEST_RUN( testJson, "JSON handling" );
   TEST_RUN( testOption, "basic oyOption_s" );

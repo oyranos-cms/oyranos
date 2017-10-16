@@ -113,6 +113,8 @@ typedef struct {
 
 int                oyDbHandlingReady ( void );
 int                oyDbHandlingSet   ( const oyDbAPI_s   * db_api );
+void               oyDbHandlingReset ( void );
+const char *       oyDbHandlingCurrent (void );
 
 
 #ifdef __cplusplus
