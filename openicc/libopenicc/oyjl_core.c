@@ -71,8 +71,7 @@ yajl_status  oyjl_message_func       ( oyjl_message_e      error_code,
 
 oyjl_message_f     oyjl_message_p = oyjl_message_func;
 
-/** @fn      openiccMessageFuncSet
- *  @brief   set a custom message listener
+/** @brief   set a custom message listener
  *
  *  @version OpenICC: 0.1.0
  *  @date    2011/10/21
@@ -263,9 +262,13 @@ void       oyjl_string_list_add_static_string (
                                        void             (* deAlloc)(void*) )
 {
   int alt_n = *n;
-  char ** tmp = oyjl_string_list_cat_list((const char**)*list, alt_n,
-                                    (const char**)&string, 1,
-                                     n, alloc);
+  char ** tmp;
+
+  if(!list) return;
+
+  tmp = oyjl_string_list_cat_list((const char**)*list, alt_n,
+                                  (const char**)&string, 1,
+                                  n, alloc);
 
   oyjl_string_list_release(list, alt_n, deAlloc);
 
@@ -284,9 +287,12 @@ void       oyjl_string_list_free_doubles (
                                        int               * list_n,
                                        void             (* deAlloc)(void*) )
 {
-  int n = *list_n,
-      i,
-      pos = n ? 1 : 0;
+  int n, i, pos;
+
+  if(!list) return;
+
+  n = *list_n;
+  pos = n ? 1 : 0;
 
   if(!deAlloc) deAlloc = free;
 
@@ -320,6 +326,8 @@ void     oyjl_string_list_add_list   ( char            *** list,
 {
   int alt_n = 0;
   char ** tmp;
+
+  if(!list) return;
 
   if(n) alt_n = *n;
   tmp = oyjl_string_list_cat_list((const char**)*list, alt_n, append, n_app,

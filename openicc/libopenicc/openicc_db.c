@@ -433,7 +433,7 @@ int      openiccDBSetString          ( const char        * keyName,
       { 
         if(value == NULL && comment && strcmp(comment,"delete") == 0)
         {
-          oyjl_tree_free_node( root, keyName );
+          oyjl_tree_clear_value( root, keyName );
         } else
           error = oyjl_value_set_string( o, value );
         if(error)
