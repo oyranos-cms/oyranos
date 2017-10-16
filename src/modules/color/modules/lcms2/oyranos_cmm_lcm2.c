@@ -1887,7 +1887,7 @@ oyPointer l2cmsFilterNode_CmmIccContextToMem (
 
   /* display profile */
   profiles_display_n = oyOptions_CountType( node_options, "display.abstract.icc_profile", oyOBJECT_PROFILE_S );
-  l2cms_msg( oyMSG_WARN, (oyStruct_s*)node, OY_DBG_FORMAT_ "display.abstract.icc_profile[] = %d",
+  l2cms_msg( oyMSG_DBG, (oyStruct_s*)node, OY_DBG_FORMAT_ "display.abstract.icc_profile[] = %d",
              OY_DBG_ARGS_, profiles_display_n );
   for(i = 0; i < profiles_display_n; ++i)
   {
@@ -1896,8 +1896,8 @@ oyPointer l2cmsFilterNode_CmmIccContextToMem (
                                 oyOBJECT_PROFILE_S, NULL, &o );
     const char * reg = oyOption_GetRegistration( o );
     p = (oyProfile_s*) oyOption_GetStruct( o, oyOBJECT_PROFILE_S );
-    //if(verbose || oy_debug > 2)
-      l2cms_msg( oyMSG_WARN,(oyStruct_s*)node, OY_DBG_FORMAT_ "display.abstract.icc_profile[%d]: %s:%s",
+    if(verbose || oy_debug > 2)
+      l2cms_msg( verbose?oyMSG_WARN:oyMSG_DBG,(oyStruct_s*)node, OY_DBG_FORMAT_ "display.abstract.icc_profile[%d]: %s:%s",
                  OY_DBG_ARGS_, i, reg, oyProfile_GetText(p,oyNAME_DESCRIPTION) );
     oyOption_Release( &o );
     lps[ profiles_n++ ] = l2cmsAddProfile( p );

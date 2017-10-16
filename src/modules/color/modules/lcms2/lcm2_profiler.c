@@ -1785,13 +1785,10 @@ void         lcm2AddMluDescription   ( cmsHPROFILE         profile,
   if(texts)
     while( texts[n] ) ++n;
 
-  if(n)
-    mlu = cmsMLUalloc( 0, n/3 + 1 );
-  else
-    lcm2msg_p( 300, NULL, "nothing to write %s", __func__ );
+  if(!n) return;
 
-  if(!mlu)
-    return;
+  mlu = cmsMLUalloc( 0, n/3 + 1 );
+  if(!mlu) return;
 
   for( i = 0; i < n; i += 3 )
   {
