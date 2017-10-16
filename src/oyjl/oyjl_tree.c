@@ -1173,7 +1173,7 @@ void oyjl_tree_clear_value           ( oyjl_val            root,
   list = oyjl_string_split(xpath, '/', &n, malloc);
   path = oyjl_string_copy( xpath, malloc );
 
-  for(pos = 0; pos < (n-1); ++pos)
+  for(pos = 0; pos < n; ++pos)
   {
     oyjl_val p; /* parent */
     oyjl_val o = oyjl_tree_get_value( root, 0, path );
@@ -1181,10 +1181,14 @@ void oyjl_tree_clear_value           ( oyjl_val            root,
     char * parent_path = oyjl_string_copy( path, malloc ),
          * t = strrchr(parent_path, '/');
     if(t)
+    {
       t[0] = '\000';
+      p = oyjl_tree_get_value( root, 0, parent_path );
+    }
+    else
+      p = root;
 
     delete_parent = 0;
-    p = oyjl_tree_get_value( root, 0, parent_path );
     if(p)
     {
       switch(p->type)
