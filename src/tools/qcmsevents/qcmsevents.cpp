@@ -161,7 +161,11 @@ void QcmseDialog::setIcon(int index)
 
 void QcmseDialog::showConfig()
 {
+#if _GNU_SOURCE
+  const char * oyranos_settings_gui_app = secure_getenv("OYRANOS_SETTINGS_GUI");
+#else
   const char * oyranos_settings_gui_app = getenv("OYRANOS_SETTINGS_GUI");
+#endif
   char * app = NULL;
   const char * synnefo_bins[] = {"oyranos-config-synnefo",
                                  "oyranos-config-synnefo-qt4",
