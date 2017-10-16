@@ -716,30 +716,25 @@ oyTESTRESULT_e testJson ()
 
   int i;
   const char * json = "{\"org\":{\"free\":[{\"s1key_a\":\"val_a\",\"s1key_b\":\"val_b\"},{\"s2key_c\":\"val_c\",\"s2key_d\":\"val_d\"}],\"key_e\":\"val_e_yyy\",\"key_f\":\"val_f\"}}";
-  char error_buffer[128];
-  oyjl_val_s * root = oyJTreeParse( json, error_buffer, 128 );
-  oyJTreeFree( root );
 
   fprintf( zout, "%s\n", json );
 
   oyjl_val value = 0;
-  const char * text = json;
-  for(i = 0; i < 6; ++i)
+  oyjl_val root = 0;
+  for(i = 0; i < 5; ++i)
   {
     int level = 0;
-    oyjl_val root = 0;
     const char * xpath = NULL;
     char error_buffer[128];
     int flags = 0;
 
-    root = oyjl_tree_parse( text, error_buffer, 128 );
+    root = oyjl_tree_parse( json, error_buffer, 128 );
 
     switch(i) {
     case 1: xpath = "org/free/[1]"; break;
     case 2: xpath = "org/free/[1]/"; break;
     case 3: xpath = "/org/free/[1]"; break;
-    case 5: oyjl_tree_free( root ); root = NULL; OY_FALLTHROUGH
-    case 4: xpath = "org/free/new_one";
+    case 4: xpath = "org/objects/new_one";
 	    flags = OYJL_CREATE_NEW;
 	    break;
     default: xpath = NULL; break;
@@ -751,9 +746,8 @@ oyTESTRESULT_e testJson ()
       oyjl_tree_to_json( root, &level, &json );
       if(json && json[0] && strlen(json) == 210)
       { PRINT_SUB( oyTESTRESULT_SUCCESS,
-        "oyjl_tree_to_json()                       %lu      ", (unsigned long)strlen(json) );
-        fwrite( json, sizeof(char), strlen(json), zout );
-        fprintf( zout, "\n" );
+        "oyjl_tree_to_json()                     %lu", (unsigned long)strlen(json) );
+        fprintf( zout, "%s\n", json );
       } else
       { PRINT_SUB( oyTESTRESULT_FAIL,
         "oyjl_tree_to_json()                                " );
@@ -779,17 +773,16 @@ oyTESTRESULT_e testJson ()
         success = 1;
       if(success)
       { PRINT_SUB( oyTESTRESULT_SUCCESS,
-        "oyjl_tree_get_value(flags=%d) %s", flags, root?"                    ":"with empty root node" );
+        "oyjl_tree_get_value(flags=%d)            ", flags );
       } else
       { PRINT_SUB( oyTESTRESULT_FAIL,
-        "oyjl_tree_get_value(flags=%d) %s", flags, root?"                    ":"with empty root node" );
+        "oyjl_tree_get_value(flags=%d)            ", flags );
       }
       fprintf( zout, "%s xpath \"%s\" %s\n", value?"found":"found not", xpath, success?"ok":"" );
       if(rjson && rjson[0])
       {
         success = 1;
-        fwrite( rjson, sizeof(char), strlen(rjson), zout );
-        fprintf( zout, "\n" );
+        fprintf( zout, "%s\n", rjson );
       }
       if(rjson) oyFree_m_(rjson);
       if(!root) oyjl_tree_free( value );
@@ -797,6 +790,74 @@ oyTESTRESULT_e testJson ()
 
     oyjl_tree_free( root );
   }
+
+  value = oyjl_tree_get_value( NULL, OYJL_CREATE_NEW, "not/existing" );
+  if(!value)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyjl_tree_get_value( NULL, flags=OYJL_CREATE_NEW, xpath ) == NULL" );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyjl_tree_get_value( NULL, flags=OYJL_CREATE_NEW, xpath ) == NULL" );
+  }
+
+  root = oyjl_tree_new( NULL );
+  if(root)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyjl_tree_new( NULL )                     " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyjl_tree_new( NULL )                     " );
+  }
+  oyjl_tree_free( root );
+
+  root = oyjl_tree_new( "new/tree/key" );
+  char * rjson = NULL; i = 0;
+  oyjl_tree_to_json( root, &i, &rjson ); i = 0;
+  size_t len = strlen(rjson);
+  if(root)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyjl_tree_new( \"new/tree/key\" )       %d", (int)len );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyjl_tree_new( \"new/tree/key\" )       %d", (int)len );
+  }
+  fprintf( zout, "%s\n", rjson );
+  oyFree_m_( rjson );
+
+  value = oyjl_tree_get_value( root, 0, "new/tree/key" );
+  oyjl_value_set_string( value, "value" );
+  oyjl_tree_to_json( root, &i, &rjson ); i = 0;
+  if(len < strlen(rjson))
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyjl_value_set( \"value\" )             %d", (int)strlen(rjson) );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyjl_value_set( \"value\" )             %d", (int)strlen(rjson) );
+  }
+  fprintf( zout, "%s\n", rjson );
+  len = strlen(rjson);
+  oyFree_m_( rjson );
+
+  char * v = oyjl_value_text(value, oyAllocateFunc_);
+  if(v && strlen(v) == 5)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyjl_value_text( \"new/tree/key\" ) = \"%s\"", v );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyjl_value_text( \"new/tree/key\" ) = \"value\"" );
+  }
+  oyFree_m_(v)
+
+  oyjl_tree_clear_value( root,"new/tree/key" );
+  oyjl_tree_to_json( root, &i, &rjson ); i = 0;
+  if(!rjson)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyjl_tree_value_clear( \"new/tree/key\" ) " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyjl_tree_value_clear( \"new/tree/key\" ) " );
+  }
+  oyjl_tree_free( root );
 
   return result;
 }
