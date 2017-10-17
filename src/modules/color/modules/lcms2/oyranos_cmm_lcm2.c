@@ -2483,6 +2483,9 @@ int      l2cmsFilterPlug_CmmIccRun   ( oyFilterPlug_s    * requestor_plug,
   image_output = oyPixelAccess_GetOutputImage( ticket );
   layout_out = oyImage_GetPixelLayout( image_output, oyLAYOUT );
   channels_out = oyToChannels_m( layout_out );
+  if(!channels_out)
+    l2cms_msg( oyMSG_WARN, (oyStruct_s*)ticket, OY_DBG_FORMAT_"layout_out %s channels %d",
+               OY_DBG_ARGS_, oyPixelPrint(layout_out,malloc), channels_out );
 
   if(oyImage_GetPixelLayout( image_input, oyLAYOUT ) != 
      oyImage_GetPixelLayout( image_output, oyLAYOUT ))
