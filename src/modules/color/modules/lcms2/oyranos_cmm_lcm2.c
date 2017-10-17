@@ -2484,8 +2484,11 @@ int      l2cmsFilterPlug_CmmIccRun   ( oyFilterPlug_s    * requestor_plug,
   layout_out = oyImage_GetPixelLayout( image_output, oyLAYOUT );
   channels_out = oyToChannels_m( layout_out );
   if(!channels_out)
+  {
     l2cms_msg( oyMSG_WARN, (oyStruct_s*)ticket, OY_DBG_FORMAT_"layout_out %s channels %d",
                OY_DBG_ARGS_, oyPixelPrint(layout_out,malloc), channels_out );
+    channels_out = 1;
+  }
 
   if(oyImage_GetPixelLayout( image_input, oyLAYOUT ) != 
      oyImage_GetPixelLayout( image_output, oyLAYOUT ))
@@ -2504,7 +2507,7 @@ int      l2cmsFilterPlug_CmmIccRun   ( oyFilterPlug_s    * requestor_plug,
     if(!a)
     {
       /* Use original pixel size for being save and do not fiddle with ROI's */
-      int w = oyArray2d_GetDataGeo1( old_a, 2 ) / channels_out?channels_out:-1;
+      int w = oyArray2d_GetDataGeo1( old_a, 2 ) / channels_out;
       int h = oyArray2d_GetDataGeo1( old_a, 3 );
       a = oyArray2d_Create( NULL, w * channels_in,h, oyToDataType_m( pixel_layout_in ), ticket->oy_ );
       if(oy_debug)
