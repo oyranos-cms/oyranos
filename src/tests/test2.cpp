@@ -248,16 +248,21 @@ oyTESTRESULT_e testDBDefault()
   }
 
   printf ("start is %s\n", oyNoEmptyString_m_(start));
+  oyTESTRESULT_e r;
   if(!(start && start[0]))
   {
     oyExportStart_(EXPORT_CHECK_NO);
     oyExportEnd_();
     error = oySetPersistentString(TEST_DOMAIN TEST_KEY, oySCOPE_USER,
                                  "NULLTestValue", "NULLTestComment" );
+    if(error)
+      PRINT_SUB( oyTESTRESULT_XFAIL,
+      "oySetPersistentString(%s) == %d", TEST_DOMAIN TEST_KEY, error );
+    if(start && start[0]) r = oyTESTRESULT_SUCCESS; else r = oyTESTRESULT_XFAIL;
     start = oyGetPersistentString(TEST_DOMAIN TEST_KEY, 0, oySCOPE_USER_SYS, 0);
     printf ("start is %s\n", start);
-    
-    PRINT_SUB( (start && start[0])?oyTESTRESULT_SUCCESS:oyTESTRESULT_XFAIL,
+    if(start && start[0]) r = oyTESTRESULT_SUCCESS; else r = oyTESTRESULT_XFAIL;
+    PRINT_SUB( r,
     "DB not initialised? try oyExportStart_(EXPORT_CHECK_NO)" );
   }
   if(!(start && start[0]))
@@ -266,8 +271,12 @@ oyTESTRESULT_e testDBDefault()
     oyExportEnd_();
     error = oySetPersistentString(TEST_DOMAIN TEST_KEY, oySCOPE_USER,
                                  "NULLTestValue", "NULLTestComment" );
+    if(error)
+      PRINT_SUB( oyTESTRESULT_XFAIL,
+      "oySetPersistentString(%s) == %d", TEST_DOMAIN TEST_KEY, error );
     start = oyGetPersistentString(TEST_DOMAIN TEST_KEY, 0, oySCOPE_USER_SYS, 0);
-    PRINT_SUB( (start && start[0])?oyTESTRESULT_SUCCESS:oyTESTRESULT_XFAIL, 
+    if(start && start[0]) r = oyTESTRESULT_SUCCESS; else r = oyTESTRESULT_XFAIL;
+    PRINT_SUB( r, 
     "DB not initialised? try oyExportStart_(EXPORT_SETTING)" );
   }
   if(start && start[0])
@@ -513,7 +522,7 @@ oyTESTRESULT_e testStringRun ()
   int error = 0,
       i;
 
-  const char * test = OY_INTERNAL "/display.oydi/display_name";
+  const char * test = OY_INTERNAL "/display.oydi/display_name_long";
   
   int test_n = oyStringSegmentsN_( test, oyStrlen_(test), OY_SLASH_C );
   test_n = oyStringSegments_( test, OY_SLASH_C );
@@ -565,8 +574,11 @@ oyTESTRESULT_e testStringRun ()
 
   double clck = oyClock();
   for(i = 0; i < 1000000; ++i)
+  {
     test_sub = oyFilterRegistrationToSTextField( test, oyFILTER_REG_OPTION,
                                                  &test_end );
+    error = test_end != 17;
+  }
   clck = oyClock() - clck;
 
   if( !error )
@@ -578,12 +590,15 @@ oyTESTRESULT_e testStringRun ()
     "oyFilterRegistrationToSTextField()                 " );
   }
 
-
+  error = 0;
   clck = oyClock();
   for(i = 0; i < 1000000; ++i)
   {
     test_sub = oyFilterRegistrationToText( test, oyFILTER_REG_OPTION, 0 );
-    oyFree_m_(test_sub);
+    if(test_sub)
+    { oyFree_m_(test_sub); }
+    else
+      error = 1;
   }
   clck = oyClock() - clck;
 
@@ -1220,7 +1235,8 @@ oyTESTRESULT_e testOptionsSet ()
   const char * json2 = "{\"org\":{\"free\":[{\"s1key_a\":\"val_a\",\"s1key_b\":\"val_b\"},{\"s2key_c\":\"val_c\",\"s2key_d\":\"val_d\"}],\"key_e\":\"val_e_xxx\"}}";
   error = oyOptions_FromJSON( json2, options, &setA, "org" );
   count = oyOptions_Count(setA);
-  if(count == 1 && strcmp(oyOptions_FindString(setA, "key_e",0),"val_e_xxx") == 0)
+  t = oyOptions_FindString(setA, "key_e",0);
+  if(count == 1 && t && strcmp(t,"val_e_xxx") == 0)
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS, 
     "oyOptions_FromJSON() simple second              %d", count );
@@ -1232,7 +1248,8 @@ oyTESTRESULT_e testOptionsSet ()
   const char * json3 = "{\"org\":{\"free\":[{\"s1key_a\":\"val_a\",\"s1key_b\":\"val_b\"},{\"s2key_c\":\"val_c\",\"s2key_d\":\"val_d\"}],\"key_e\":\"val_e_yyy\",\"key_f\":\"val_f\"}}";
   error = oyOptions_FromJSON( json3, options, &setA, "org" );
   count = oyOptions_Count(setA);
-  if(count == 2 && strcmp(oyOptions_FindString(setA, "key_e",0),"val_e_yyy") == 0)
+  t = oyOptions_FindString(setA, "key_e",0);
+  if(count == 2 && t && strcmp(t,"val_e_yyy") == 0)
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS, 
     "oyOptions_FromJSON() simple thierd              %d", count );
@@ -1245,7 +1262,8 @@ oyTESTRESULT_e testOptionsSet ()
                                    "org/host/path", OY_CREATE_NEW);
   error = oyOptions_FromJSON( json3, options, &setA, "org/free/[1]" );
   count = oyOptions_Count(setA);
-  if(count == 4 && strcmp(oyOptions_FindString(setA, "org/host/path/s2key_c",0),"val_c") == 0)
+  t = oyOptions_FindString(setA, "org/host/path/s2key_c",0);
+  if(count == 4 && t && strcmp(t,"val_c") == 0)
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS, 
     "oyOptions_FromJSON() key_path                   %d", count );
@@ -1265,7 +1283,7 @@ oyTESTRESULT_e testOptionsSet ()
   t = oyOptions_GetText( setA, (oyNAME_e) oyNAME_JSON );
   oyOptions_Release( &options );
   count = oyOptions_Count(setA);
-  if(count == 8 && strlen(t) == 278)
+  if(count == 8 && t && strlen(t) == 278)
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS, 
     "oyOptions_FromJSON() key_paths                  %d", count );
@@ -1276,7 +1294,7 @@ oyTESTRESULT_e testOptionsSet ()
 
   error = oyOptions_FromJSON( t, NULL, &options, "org" );
   t = oyOptions_GetText( options, (oyNAME_e) oyNAME_JSON );
-  if(!error && t && strlen(t) == 59)
+  if(!error && t && t && strlen(t) == 59)
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS, 
     "oyOptions_FromJSON() validity                   %d", (int)(t?strlen(t):0) );
@@ -1880,9 +1898,11 @@ oyTESTRESULT_e testProfile ()
   oyProfile_Release( &p_a );
   p_a = oyProfile_FromStd ( oyPROFILE_EFFECT, 0, NULL );
   char * name = oyGetDefaultProfileName ( oyPROFILE_EFFECT, oyAllocateFunc_ );
+  oyTESTRESULT_e re;
   if(!p_a)
   {
-    PRINT_SUB( name && name[0] ? oyTESTRESULT_XFAIL : oyTESTRESULT_SUCCESS, 
+    if(name && name[0]) re = oyTESTRESULT_XFAIL; else re = oyTESTRESULT_SUCCESS;
+    PRINT_SUB( re, 
     "No default effect profile found                           " );
   } else
   {
@@ -3292,7 +3312,7 @@ oyTESTRESULT_e testCMMDevicesListing ()
   { PRINT_SUB( oyTESTRESULT_FAIL,
     "oyConfigDomainList Found CMM's %d     ", (int)count );
   }
-  for( i = 0; i < (int)count; ++i)
+  for( i = 0; texts && i < (int)count; ++i)
   {
     fprintf( zout, "%d: %s\n", i, texts[i] );
   }
@@ -3306,7 +3326,7 @@ oyTESTRESULT_e testCMMDevicesListing ()
   oyProfile_s * p = 0;
 
   /* send a empty query to one module to obtain instructions in a message */
-  if(count)
+  if(texts && count)
   error = oyConfigs_FromDomain( texts[0], 0, &configs, 0 );
   if( !error )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
@@ -3314,7 +3334,8 @@ oyTESTRESULT_e testCMMDevicesListing ()
                                               oyNoEmptyString_m_(texts[0]) :"----");
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
-    "oyConfigs_FromDomain \"%s\" help text ", texts[0] );
+    "oyConfigs_FromDomain \"%s\" help text ", texts ? 
+                                              oyNoEmptyString_m_(texts[0]) :"----");
   }
   fprintf( zout, "\n");
 
@@ -3328,7 +3349,7 @@ oyTESTRESULT_e testCMMDevicesListing ()
                                  "true", OY_CREATE_NEW );
 
   fprintf( zout, "oyConfigs_FromDomain() \"list\" call:\n" );
-  for( i = 0; i < (int)count; ++i)
+  for( i = 0; texts && i < (int)count; ++i)
   {
     const char * registration_domain = texts[i];
     fprintf(zout,"%d[rank %u]: %s\n", i, (unsigned int)rank_list[i], registration_domain);
@@ -3489,7 +3510,7 @@ oyTESTRESULT_e testCMMDevicesDetails ()
 
 
   fprintf( zout, "oyConfigs_FromDomain() \"properties\" call:\n" );
-  for( i = 0; i < (int)count; ++i)
+  for( i = 0; rank_list && i < (int)count; ++i)
   {
     const char * registration_domain = texts[i];
     fprintf(zout,"%d[rank %u]: %s\n", i, (unsigned int)rank_list[i], registration_domain);
@@ -4427,7 +4448,7 @@ oyTESTRESULT_e testCMMsShow ()
                                              &rank_list, &apis_n );
 
                 apis_n = oyCMMapiFilters_Count( apis );
-                for(k = 0; k < (int)apis_n; ++k)
+                for(k = 0; rank_list && k < (int)apis_n; ++k)
                 {
                   api = (oyCMMapiFilter_s_*)oyCMMapiFilters_Get( apis, k );
 
