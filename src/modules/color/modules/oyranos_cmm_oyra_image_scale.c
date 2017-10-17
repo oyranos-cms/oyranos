@@ -132,6 +132,10 @@ int      oyraFilter_ImageScaleRun    ( oyFilterPlug_s    * requestor_plug,
       int channels_src = oyToChannels_m( layout_src );
       int channels_dst = oyToChannels_m( layout_dst );
 
+      /* avoid division by zero */
+      if(!channels_src) channels_src = 1;
+      if(!channels_dst) channels_dst = 1;
+
       new_ticket = oyPixelAccess_Copy( ticket, ticket->oy_ );
       oyPixelAccess_SetArray( new_ticket, 0, 0 );
       oyPixelAccess_SetOutputImage( new_ticket, image );

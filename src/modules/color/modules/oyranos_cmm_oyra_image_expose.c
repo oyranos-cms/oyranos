@@ -111,7 +111,12 @@ int      oyraFilter_ImageExposeRun   ( oyFilterPlug_s    * requestor_plug,
       oyArray2d_s * array_out = oyPixelAccess_GetArray( ticket );
       int layout_dst = oyImage_GetPixelLayout( output_image, oyLAYOUT );
       int channels_dst = oyToChannels_m( layout_dst );
-      int ticket_array_pix_width = oyArray2d_GetWidth( array_out ) / channels_dst;
+      int ticket_array_pix_width;
+
+      /* avoid division by zero */
+      if(!channels_dst) channels_dst = 1;
+
+      ticket_array_pix_width = oyArray2d_GetWidth( array_out ) / channels_dst;
 
       {
         int w,h,x,y, start_x,start_y;
