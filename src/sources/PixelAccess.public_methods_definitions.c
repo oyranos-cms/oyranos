@@ -140,7 +140,10 @@ oyPixelAccess_s *  oyPixelAccess_Create (
      */
     s->output_array_roi->width = 1.0;
     if(image)
-      s->output_array_roi->height = oyImage_GetHeight( image ) / (double)oyImage_GetWidth( image );
+    {
+      double width = oyImage_GetWidth( image );
+      s->output_array_roi->height = oyImage_GetHeight( image ) / width;
+    }
     s->output_image = oyImage_Copy( image, 0 );
     s->graph = (oyFilterGraph_s_*)oyFilterGraph_FromNode( (oyFilterNode_s*)sock->node, 0 );
 
@@ -266,6 +269,8 @@ int                oyPixelAccess_SynchroniseROI (
 
     oyRectangle_s * roi_pix = NULL, * roi = NULL;
 
+    if(!image_width_dst) image_width_dst = 1; /* avoid division by zero */
+
     oyPixelAccess_RoiToPixels( pixel_access_src, NULL, &roi_pix );
     oyPixelAccess_PixelsToRoi( pixel_access_new, roi_pix, &roi );
     
@@ -332,6 +337,7 @@ int                oyPixelAccess_SetArrayFocus (
         /* set array focus for simple plug-ins */
         oyImage_s * image = oyPixelAccess_GetOutputImage( pixel_access );
         int channels = oyImage_GetPixelLayout( image, oyCHANS );
+        if(!channels) channels = 1; /* avoid division by zero */
 
         /* convert roi to channel units */
         oyPixelAccess_RoiToPixels( pixel_access, 0, &r );
@@ -425,7 +431,10 @@ const char *       oyPixelAccess_Show( oyPixelAccess_s   * pixel_access )
            start_y_pixel = oyPixelAccess_GetStart( ticket, 1 ) * (double)image_width;
     int layout = oyImage_GetPixelLayout( image, oyLAYOUT );
     int channels = oyToChannels_m( layout );
-    int a_width = oyArray2d_GetDataGeo1( a, 2 ) / channels;
+    int a_width;
+
+    if(!channels) channels = 1; /* avoid division by zero */
+    a_width = oyArray2d_GetDataGeo1( a, 2 ) / channels;
 
     oyRectangle_SetByRectangle( roi, ticket_array_roi );
     oyRectangle_Scale( roi, a_width?a_width:image_width );
@@ -513,8 +522,9 @@ int                oyPixelAccess_RoiToPixels (
 
     } else
     {
-      int channels = oyImage_GetPixelLayout( s->output_image, oyCHANS );
       int pixel_width;
+      int channels = oyImage_GetPixelLayout( s->output_image, oyCHANS );
+      if(!channels) channels = 1; /* avoid division by zero */
 
       oyRectangle_SetByRectangle( *pixel_rectangle, roi );
 
@@ -567,8 +577,9 @@ int                oyPixelAccess_PixelsToRoi (
 
   if(!error)
   {
-    int channels = oyImage_GetPixelLayout( s->output_image, oyCHANS );
     int pixel_width;
+    int channels = oyImage_GetPixelLayout( s->output_image, oyCHANS );
+    if(!channels) channels = 1; /* avoid division by zero */
 
     if(s->array)
       pixel_width = oyArray2d_GetDataGeo1( s->array, 2 ) / channels;
@@ -599,7 +610,8 @@ int                oyPixelAccess_PixelsToRoi (
       oyRectangle_SetByRectangle( *roi, pixel_rectangle );
       oyRectangle_Round( *roi );
 
-      oyRectangle_Scale( *roi, 1.0/pixel_width );
+      if(pixel_width) /* avoid division by zero */
+        oyRectangle_Scale( *roi, 1.0/pixel_width );
     }
   }
 
@@ -701,6 +713,7 @@ int                oyPixelAccess_SetArray (
   /* adapt to eventually new ROI base unit, which is
    * s->array::data:width/channels */
   channels = oyImage_GetPixelLayout( s->output_image, oyCHANS );
+  if(!channels) channels = 1; /* avoid division by zero */
 
   if(s->array)
     old_array_pix_width = oyArray2d_GetDataGeo1( s->array, 2 ) / channels;
@@ -712,7 +725,7 @@ int                oyPixelAccess_SetArray (
   else
     array_pix_width = oyImage_GetWidth( s->output_image );
 
-  if(old_array_pix_width != array_pix_width)
+  if(array_pix_width && old_array_pix_width != array_pix_width)
   {
     oyRectangle_Scale( (oyRectangle_s*)s->output_array_roi, old_array_pix_width );
     oyRectangle_Round( (oyRectangle_s*)s->output_array_roi );
