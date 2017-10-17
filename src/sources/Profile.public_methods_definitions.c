@@ -392,7 +392,8 @@ oyProfile_FromFile            ( const char      * name,
   s = oyProfile_FromFile_( name, flags, object );
 
   if(flags & OY_COMPUTE)
-    oyProfile_GetHash_( s, flags );
+  /* gives a warning message in case of error */
+  { int r OY_UNUSED = oyProfile_GetHash_( s, flags ); }
 
   oyProfile_GetID( (oyProfile_s*)s );
 
