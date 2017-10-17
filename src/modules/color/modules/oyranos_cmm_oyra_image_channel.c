@@ -163,11 +163,17 @@ int      oyraFilter_ImageChannelRun  ( oyFilterPlug_s    * requestor_plug,
       int layout_dst = oyImage_GetPixelLayout( output_image, oyLAYOUT );
       int channels_src = oyToChannels_m( layout_src );
       int channels_dst = oyToChannels_m( layout_dst );
-      int ticket_array_pix_width = oyArray2d_GetWidth( a_dest ) / channels_dst?channels_dst:-1;
+      int ticket_array_pix_width;
       int count = oyjl_value_count( json ), i;
       const int max_channels = 'z'-'a'+1;
       double  channel[max_channels+1];
       int channel_pos[max_channels+1];
+
+      /* avoid division by zero */
+      if(!channels_src) channels_src = 1;
+      if(!channels_dst) channels_dst = 1;
+
+      ticket_array_pix_width = oyArray2d_GetWidth( a_dest ) / channels_dst;
 
       memset( channel, 0, sizeof(double) * (max_channels+1) );
       memset( channel_pos, 0, sizeof(int) * (max_channels+1) );
