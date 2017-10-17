@@ -12,7 +12,7 @@
 {% block refCount %}
   {
   uint32_t s_n = 0, p_n = 0, i, n;
-  oyObject_UnRef(s->oy_);
+  int r OY_UNUSED = oyObject_UnRef(s->oy_);
 
   if(s->sockets)
   {
