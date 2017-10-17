@@ -1998,7 +1998,7 @@ OYAPI int  OYEXPORT
       error = oyOption_SetFromData( o, driver_context, driver_context_size );
 
     if(error <= 0)
-      l_error = oyOptions_MoveIn( s, &o, -1 ); OY_ERR
+    { l_error = oyOptions_MoveIn( s, &o, -1 ); OY_ERR }
 
     oyFree_m_( key );
   }
