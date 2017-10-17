@@ -608,6 +608,7 @@ oyTESTRESULT_e testMonitor ()
 
   /* get all monitors */
   error = oyDevicesGet( 0, "monitor", 0, &devices );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyDevicesGet() error: %d", error )
   /* see how many are included */
   n = oyConfigs_Count( devices );
   if(n)
@@ -620,9 +621,11 @@ oyTESTRESULT_e testMonitor ()
   error = oyOptions_SetFromText( &options,
                                "//"OY_TYPE_STD"/config/icc_profile.x_color_region_target",
                                        "yes", OY_CREATE_NEW );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromText() error: %d", error )
   error = oyOptions_SetFromText( &options,
                                  "//"OY_TYPE_STD"/config/command",
                                  "list", OY_CREATE_NEW );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromText() error: %d", error )
 
   for( i = 0; i < n; ++i )
   {
@@ -652,9 +655,12 @@ oyTESTRESULT_e testMonitor ()
   /* get all monitors */
   error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
                                  "list", OY_CREATE_NEW );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromText() error: %d", error )
   error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/device_rectangle",
                                  "true", OY_CREATE_NEW );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromText() error: %d", error )
   error = oyDevicesGet( 0, "monitor", options, &devices );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyDevicesGet() error: %d", error )
   oyOptions_Release( &options );
   /* see how many are included */
   n = oyConfigs_Count( devices );
@@ -698,11 +704,15 @@ oyTESTRESULT_e testMonitor ()
   error = oyOptions_SetFromText( &options,
                                "//"OY_TYPE_STD"/config/icc_profile.x_color_region_target",
                                        "yes", OY_CREATE_NEW );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromText() error: %d", error )
   error = oyOptions_SetFromText( &options,
                                  "//"OY_TYPE_STD"/config/command",
                                  "properties", OY_CREATE_NEW );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromText() error: %d", error )
 
   error = oyDevicesGet( OY_TYPE_STD, "monitor", options, &devices );
+  if(error)
+    PRINT_SUB( oyTESTRESULT_XFAIL, "oyDevicesGet() error: %d", error )
 
   n = oyConfigs_Count( devices );
   if(n)
@@ -719,6 +729,8 @@ oyTESTRESULT_e testMonitor ()
       c = oyConfigs_Get( devices, i );
 
       error = oyDeviceGetInfo( c, oyNAME_NAME, 0, &text, 0 );
+      if(error)
+        PRINT_SUB( oyTESTRESULT_XFAIL, "oyDeviceGetInfo() error: %d", error )
 
       if(text && text[0])
         PRINT_SUB( oyTESTRESULT_SUCCESS, "device: %s", text)
@@ -729,6 +741,8 @@ oyTESTRESULT_e testMonitor ()
         oyDeAllocateFunc_( text );
 
       error = oyDeviceGetInfo( c, oyNAME_DESCRIPTION, options, &text, 0 );
+      if(error)
+        PRINT_SUB( oyTESTRESULT_XFAIL, "oyDeviceGetInfo() error: %d", error )
 
       if(text && text[0])
       {
@@ -765,6 +779,8 @@ oyTESTRESULT_e testMonitor ()
 
       /* get the old oyMonitorxxx API conforming display name */
       error = oyDeviceGetInfo( c, oyNAME_NICK, 0, &text, 0 );
+      if(error)
+        PRINT_SUB( oyTESTRESULT_XFAIL, "oyDeviceGetInfo() error: %d", error )
 
       if(text && text[0])
         PRINT_SUB( oyTESTRESULT_SUCCESS, "device: %s", text )
@@ -775,6 +791,8 @@ oyTESTRESULT_e testMonitor ()
 
       size = 0;
       error = oyDeviceGetProfile( c, options, &p );
+      if(error)
+        PRINT_SUB( oyTESTRESULT_XFAIL, "oyDeviceGetProfile() error: %d", error )
       block = oyProfile_GetMem( p, &size, 0, malloc );
 
       if(block)
@@ -789,6 +807,8 @@ oyTESTRESULT_e testMonitor ()
       }
 
       error = oyDeviceProfileFromDB( c, &text, malloc );
+      if(error)
+        PRINT_SUB( oyTESTRESULT_XFAIL, "oyDeviceProfileFromDB() error: %d", error )
       if(display_name) { free(display_name); display_name = 0; }
       if(text)
       {
