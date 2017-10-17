@@ -931,8 +931,7 @@ event_handler(int e)
         found = 1;
         break;
       }
-    }
-    break;
+    } OY_FALLTHROUGH
     case FL_KEYBOARD:
     {
       int k = ((char*)Fl::event_text())[0];
