@@ -212,6 +212,7 @@ oyTESTRESULT_e testDBDefault()
 
   error = oySetPersistentString( TEST_DOMAIN TEST_KEY, oySCOPE_USER,
                                  NULL, NULL );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oySetPersistentString() error: %d", error )
   start = oyGetPersistentString( TEST_DOMAIN TEST_KEY, 0, oySCOPE_USER_SYS, 0);
   if(start && start[0])
   {
@@ -347,17 +348,21 @@ oyTESTRESULT_e testDBDefault()
     PRINT_SUB( oyTESTRESULT_SUCCESS,
     "DB key erased                                " );
   }
-  oyFree_m_(value);
+  if(value) { oyFree_m_(value); }
 
 
   error = oySetPersistentString( OY_STD "/device" TEST_KEY "/#0/key-01", oySCOPE_USER,
                                  "SomeValue", "SomeComment" );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oySetPersistentString() error: %d", error )
   error = oySetPersistentString( OY_STD "/device" TEST_KEY "/#0/key-02", oySCOPE_USER,
                                  "SomeValue", "SomeComment" );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oySetPersistentString() error: %d", error )
   error = oySetPersistentString( OY_STD "/device" TEST_KEY "/#1/key-01", oySCOPE_USER,
                                  "SomeValue", "SomeComment" );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oySetPersistentString() error: %d", error )
   error = oySetPersistentString( OY_STD "/device" TEST_KEY "/#1/key-02", oySCOPE_USER,
                                  "SomeValue", "SomeComment" );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oySetPersistentString() error: %d", error )
   value = oyDBSearchEmptyKeyname(OY_STD "/device" TEST_KEY, oySCOPE_USER);
   if(value && strstr( value, OY_STD "/device" TEST_KEY "/#2" ) )
   {
@@ -368,10 +373,10 @@ oyTESTRESULT_e testDBDefault()
     PRINT_SUB( oyTESTRESULT_FAIL,
     "oyDBSearchEmptyKeyname(%s)", OY_STD "/device" TEST_KEY );
   }
-  if(value)
-    oyFree_m_( value );
+  if(value) oyFree_m_( value );
 
   error = oyDBEraseKey( OY_STD "/device" TEST_KEY, oySCOPE_USER );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyDBEraseKey() error: %d", error )
   value = oyDBSearchEmptyKeyname(OY_STD "/device" TEST_KEY, oySCOPE_USER);
   if(value && strstr( value, OY_STD "/device" TEST_KEY "/#0" ) )
   {
@@ -386,12 +391,16 @@ oyTESTRESULT_e testDBDefault()
 
   error = oySetPersistentString( TEST_DOMAIN "/device" TEST_KEY "/#0/key-01", oySCOPE_USER,
                                  "SomeValue", "SomeComment" );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oySetPersistentString() error: %d", error )
   error = oySetPersistentString( TEST_DOMAIN "/device" TEST_KEY "/#0/key-02", oySCOPE_USER,
                                  "SomeValue", "SomeComment" );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oySetPersistentString() error: %d", error )
   error = oySetPersistentString( TEST_DOMAIN "/device" TEST_KEY "/#1/key-01", oySCOPE_USER,
                                  "SomeValue", "SomeComment" );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oySetPersistentString() error: %d", error )
   error = oySetPersistentString( TEST_DOMAIN "/device" TEST_KEY "/#1/key-02", oySCOPE_USER,
                                  "SomeValue", "SomeComment" );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oySetPersistentString() error: %d", error )
   value = oyDBSearchEmptyKeyname(TEST_DOMAIN "/device" TEST_KEY, oySCOPE_USER);
   if(value && strstr( value, TEST_DOMAIN "/device" TEST_KEY "/#2" ) )
   {
@@ -405,6 +414,7 @@ oyTESTRESULT_e testDBDefault()
   oyFree_m_( value );
 
   error = oyDBEraseKey( TEST_DOMAIN "/device" TEST_KEY, oySCOPE_USER );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyDBEraseKey() error: %d", error )
   value = oyDBSearchEmptyKeyname(TEST_DOMAIN "/device" TEST_KEY, oySCOPE_USER);
   if(value && strstr( value, TEST_DOMAIN "/device" TEST_KEY "/#0" ) )
   {
@@ -421,6 +431,7 @@ oyTESTRESULT_e testDBDefault()
                      "%s/array_key", value );
   error = oySetPersistentString( key, oySCOPE_USER_SYS,
                                  "ArrayValue", "ArrayComment" );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oySetPersistentString() error: %d", error )
   oyFree_m_( value );
   value = oyGetPersistentString(strchr(key,'/')+1, 0, oySCOPE_USER_SYS, 0);
   if(value && strcmp(value, "ArrayValue") == 0)
@@ -433,6 +444,7 @@ oyTESTRESULT_e testDBDefault()
     "oySetPersistentString(%s, oySCOPE_USER_SYS)", key );
   }
   error = oyDBEraseKey( key, oySCOPE_USER );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyDBEraseKey() error: %d", error )
   oyFree_m_( key );
   oyFree_m_( value );
 
@@ -534,7 +546,7 @@ oyTESTRESULT_e testStringRun ()
 
   error = 0;
   if(test_n != 5) error = 1;
-  for(i = 0; i < test_n; ++i)
+  for(i = 0; !error && i < test_n; ++i)
   {
     int test_end = 0;
     test_sub = oyStringSegment_( (char*) test, OY_SLASH_C, i,
@@ -620,7 +632,7 @@ oyTESTRESULT_e testStringRun ()
 
   error = 0;
   if(test_n != 5) error = 1;
-  for(i = 0; i < test_n; ++i)
+  for(i = 0; !error && i < test_n; ++i)
   {
     int test_end = 0;
     test_sub = oyStringSegment_( (char*) test, OY_SLASH_C, i,
@@ -925,6 +937,7 @@ oyTESTRESULT_e testOption ()
   }
 
   error = oyOption_FromRegistration( "blabla", 0 ) != 0;
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOption_FromRegistration() error: %d", error )
   if(o)
   { PRINT_SUB( oyTESTRESULT_SUCCESS, 
     "oyOption_New() with wrong registration rejected: ok");
@@ -1122,12 +1135,15 @@ oyTESTRESULT_e testOptionsSet ()
   error = oyOptions_SetFromText( &setA,
                                  "org/test/" OY_TYPE_STD "/filter/gamma_A",
                                  "1", OY_CREATE_NEW );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromText() error: %d", error )
   error = oyOptions_SetFromText( &setA,
                                  "org/test/" OY_TYPE_STD "/filter/gamma_A1",
                                  "1", OY_CREATE_NEW );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromText() error: %d", error )
   error = oyOptions_SetFromText( &setA,
                                  "org/test/" OY_TYPE_STD "/filter/gamma_A12",
                                  "1", OY_CREATE_NEW );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromText() error: %d", error )
 
   if(!error && oyOptions_Count( setA ) == 3)
   { PRINT_SUB( oyTESTRESULT_SUCCESS, 
@@ -1141,6 +1157,7 @@ oyTESTRESULT_e testOptionsSet ()
                                  "org/oyranos/" OY_TYPE_STD "/filter/gamma_A2",
                                  "one\ntwo\nthree\nfour",
                                  OY_CREATE_NEW | OY_STRING_LIST);
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromText() error: %d", error )
   t = oyOptions_GetText( setA, oyNAME_NAME );
   if(t && t[0] && oyOptions_Count( setA ) == 4)
   {
@@ -1222,6 +1239,7 @@ oyTESTRESULT_e testOptionsSet ()
   const char * json = "{\"org\":{\"free\":[{\"s1key_a\":\"val_a\",\"s1key_b\":\"val_b\"},{\"s2key_c\":\"val_c\",\"s2key_d\":\"val_d\"}],\"key_e\":\"val_e\"}}";
   oyOptions_s * options = NULL;
   error = oyOptions_FromJSON( json, options, &setA, "org" );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_FromJSON() error: %d", error )
   int count = oyOptions_Count(setA);
   if(count == 1)
   {
@@ -1234,6 +1252,7 @@ oyTESTRESULT_e testOptionsSet ()
 
   const char * json2 = "{\"org\":{\"free\":[{\"s1key_a\":\"val_a\",\"s1key_b\":\"val_b\"},{\"s2key_c\":\"val_c\",\"s2key_d\":\"val_d\"}],\"key_e\":\"val_e_xxx\"}}";
   error = oyOptions_FromJSON( json2, options, &setA, "org" );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_FromJSON() error: %d", error )
   count = oyOptions_Count(setA);
   t = oyOptions_FindString(setA, "key_e",0);
   if(count == 1 && t && strcmp(t,"val_e_xxx") == 0)
@@ -1247,6 +1266,7 @@ oyTESTRESULT_e testOptionsSet ()
 
   const char * json3 = "{\"org\":{\"free\":[{\"s1key_a\":\"val_a\",\"s1key_b\":\"val_b\"},{\"s2key_c\":\"val_c\",\"s2key_d\":\"val_d\"}],\"key_e\":\"val_e_yyy\",\"key_f\":\"val_f\"}}";
   error = oyOptions_FromJSON( json3, options, &setA, "org" );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_FromJSON() error: %d", error )
   count = oyOptions_Count(setA);
   t = oyOptions_FindString(setA, "key_e",0);
   if(count == 2 && t && strcmp(t,"val_e_yyy") == 0)
@@ -1261,6 +1281,7 @@ oyTESTRESULT_e testOptionsSet ()
   oyOptions_SetFromText( &options, OY_STD "/key_path", 
                                    "org/host/path", OY_CREATE_NEW);
   error = oyOptions_FromJSON( json3, options, &setA, "org/free/[1]" );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_FromJSON() error: %d", error )
   count = oyOptions_Count(setA);
   t = oyOptions_FindString(setA, "org/host/path/s2key_c",0);
   if(count == 4 && t && strcmp(t,"val_c") == 0)
@@ -1277,9 +1298,11 @@ oyTESTRESULT_e testOptionsSet ()
   oyOptions_SetFromText( &options, OY_STD "/key_path", 
                                    "org/host/path2", OY_CREATE_NEW);
   error = oyOptions_FromJSON( json3, options, &setA, "org/free/[1]" );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_FromJSON() error: %d", error )
   oyOptions_SetFromText( &options, OY_STD "/key_path", 
                                    "org/host/path2/four", OY_CREATE_NEW);
   error = oyOptions_FromJSON( json3, options, &setA, "org/free/[1]" );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_FromJSON() error: %d", error )
   t = oyOptions_GetText( setA, (oyNAME_e) oyNAME_JSON );
   oyOptions_Release( &options );
   count = oyOptions_Count(setA);
@@ -1293,6 +1316,7 @@ oyTESTRESULT_e testOptionsSet ()
   }
 
   error = oyOptions_FromJSON( t, NULL, &options, "org" );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_FromJSON() error: %d", error )
   t = oyOptions_GetText( options, (oyNAME_e) oyNAME_JSON );
   if(!error && t && t && strlen(t) == 59)
   {
@@ -1324,12 +1348,15 @@ oyTESTRESULT_e testOptionsCopy ()
   error = oyOptions_SetFromText( &setA,
                 OY_INTERNAL "/lcm2.color.icc/rendering_bpc.advanced",
                                  "1", OY_CREATE_NEW );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromText() error: %d", error )
   error = oyOptions_SetFromText( &setA,
                                  "//" OY_TYPE_STD "/image/A", "true",
                                  OY_CREATE_NEW );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromText() error: %d", error )
   error = oyOptions_SetFromText( &setA,
                                  "//" OY_TYPE_STD "/image/A", "true",
                                  OY_CREATE_NEW );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromText() error: %d", error )
 
   if(!error && oyOptions_Count( setA ) == 2)
   { PRINT_SUB( oyTESTRESULT_SUCCESS, 
@@ -1342,22 +1369,28 @@ oyTESTRESULT_e testOptionsCopy ()
   error = oyOptions_SetFromText( &setB,
                                  "//" OY_TYPE_STD "/config/A", "true",
                                  OY_CREATE_NEW );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromText() error: %d", error )
   error = oyOptions_SetFromText( &setB,
                                  "//" OY_TYPE_STD "/config/B", "true",
                                  OY_CREATE_NEW );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromText() error: %d", error )
   error = oyOptions_SetFromText( &setB,
                                  "//" OY_TYPE_STD "/config/C", "true",
                                  OY_CREATE_NEW );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromText() error: %d", error )
 
   error = oyOptions_SetFromText( &setC,
                                  "//" OY_TYPE_STD "/config/B", "true",
                                  OY_CREATE_NEW );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromText() error: %d", error )
   error = oyOptions_SetFromText( &setC,
                                  "//" OY_TYPE_STD "/config/D", "true",
                                  OY_CREATE_NEW );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromText() error: %d", error )
   error = oyOptions_SetFromText( &setC,
                                  "//" OY_TYPE_STD "/config/C", "true",
                                  OY_CREATE_NEW );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromText() error: %d", error )
 
   error = oyOptions_CopyFrom( &resultA, setA, oyBOOLEAN_UNION,
                               oyFILTER_REG_NONE,0 );
@@ -1447,6 +1480,7 @@ oyTESTRESULT_e testBlob ()
   }
 
   error = oyBlob_Release( &b );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyBlob_Release() error: %d", error )
 
   error = oyBlob_SetFromStatic( a, ptr, 0, type );
 
@@ -1818,6 +1852,7 @@ oyTESTRESULT_e testOptionsType ()
   {
     error = oyOptions_GetType2( opts, i, "display.abstract.icc_profile", oyNAME_PATTERN,
                                 oyOBJECT_PROFILE_S, NULL, &o );
+    if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_GetType2() error: %d", error )
     reg = oyOption_GetRegistration( o );
     p = (oyProfile_s*) oyOption_GetStruct( o, oyOBJECT_PROFILE_S );
     fprintf( zout, "display.abstract.icc_profile[%d]: %s:%s\n", i,
@@ -2425,9 +2460,11 @@ oyTESTRESULT_e testEffects ()
 
   error = oyOptions_MoveInStruct( &opts, "//" OY_TYPE_STD "/icc_profile.proofing_profile",
                                   (oyStruct_s**) &prof, OY_CREATE_NEW );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_MoveInStruct() error: %d", error )
   error = oyOptions_Handle( "//" OY_TYPE_STD "/create_profile.proofing_effect",
                             opts,"create_profile.proofing_effect",
                             &result_opts );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_Handle() error: %d", error )
   abstract = (oyProfile_s*)oyOptions_GetType( result_opts, -1, "icc_profile",
                                               oyOBJECT_PROFILE_S );
   oyOptions_Release( &result_opts );
@@ -2460,12 +2497,15 @@ oyTESTRESULT_e testEffects ()
   oyProfile_Release( &prof );
   error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/cie_a",
                                    0.5 - cie_a, 0, OY_CREATE_NEW );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromDouble() error: %d", error )
   error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/cie_b",
                                    0.5 - cie_b, 0, OY_CREATE_NEW );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromDouble() error: %d", error )
   fprintf(zout,"sourse white point cie_a %g cie_b %g\n", cie_a, cie_b );
   error = oyOptions_Handle( "//" OY_TYPE_STD "/create_profile.white_point_adjust",
                             opts,"create_profile.white_point_adjust",
                             &result_opts );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_Handle() error: %d", error )
   abstract = (oyProfile_s*)oyOptions_GetType( result_opts, -1, "icc_profile",
                                               oyOBJECT_PROFILE_S );
   oyOptions_Release( &result_opts );
@@ -2581,12 +2621,19 @@ oyTESTRESULT_e testDeviceLinkProfile ()
   }
 
   error = oyConversion_Release( &cc );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyConversion_Release() error: %d", error )
   error = oyImage_Release( &in );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyImage_Release() error: %d", error )
   error = oyImage_Release( &out );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyImage_Release() error: %d", error )
   error = oyProfile_Release( &prof );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyProfile_Release() error: %d", error )
   error = oyProfile_Release( &dl );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyProfile_Release() error: %d", error )
   error = oyOptions_Release( &options );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_Release() error: %d", error )
   error = oyFilterGraph_Release( &graph );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyFilterGraph_Release() error: %d", error )
 
 
   return result;
@@ -2705,7 +2752,7 @@ static int     setupColourTable      ( PrivColorContext  * ccontext,
       }
       oyOptions_Release( &options );
 
-      error = oyOptions_SetFromText( &options,
+      oyOptions_SetFromText( &options,
                                      "//" OY_TYPE_STD "/config/display_mode", "1",
                                      OY_CREATE_NEW );
       error = oyConversion_Correct(cc, "//" OY_TYPE_STD "/icc_color", flags, options);
@@ -2737,7 +2784,7 @@ static int     setupColourTable      ( PrivColorContext  * ccontext,
           goto clean_setupColourTable;
         }
         oyOptions_Release( &options );
-        error = oyOptions_SetFromText( &options,
+        oyOptions_SetFromText( &options,
                                      "//" OY_TYPE_STD "/config/display_mode", "1",
                                      OY_CREATE_NEW );
         error = oyConversion_Correct(cc, "//" OY_TYPE_STD "/icc_color", flags, options);
@@ -3243,13 +3290,16 @@ oyTESTRESULT_e testWidgets ()
   error = oyOptionChoicesGet2( option, 0, oyNAME_NAME,
                                &choices, &choices_string_list,
                                &current );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptionChoicesGet2() error: %d", error )
 
   oyConfigs_s * configs = 0;
   oyOptions_s * options = NULL;
   error = oyOptions_SetFromText( &options,
                                      "//" OY_TYPE_STD "/config/command",
                                      "list", OY_CREATE_NEW );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromText() error: %d", error )
   error = oyDevicesGet( 0, "monitor", options, &configs );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyDevicesGet() error: %d", error )
   int devices_n = oyConfigs_Count( configs );
   oyOptions_Release( &options );
   oyConfigs_Release( &configs );
@@ -3344,9 +3394,11 @@ oyTESTRESULT_e testCMMDevicesListing ()
   error = oyOptions_SetFromText( &options_list,
                                  "//" OY_TYPE_STD "/config/command", "list",
                                  OY_CREATE_NEW );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromText() error: %d", error )
   error = oyOptions_SetFromText( &options_list,
                                  "//" OY_TYPE_STD "/config/icc_profile",
                                  "true", OY_CREATE_NEW );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromText() error: %d", error )
 
   fprintf( zout, "oyConfigs_FromDomain() \"list\" call:\n" );
   for( i = 0; texts && i < (int)count; ++i)
@@ -3356,6 +3408,7 @@ oyTESTRESULT_e testCMMDevicesListing ()
 
     error = oyConfigs_FromDomain( registration_domain,
                                   options_list, &configs, 0 );
+    if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyConfigs_FromDomain() error: %d", error )
     j_n = oyConfigs_Count( configs );
     for( j = 0; j < j_n; ++j )
     {
@@ -3376,6 +3429,7 @@ oyTESTRESULT_e testCMMDevicesListing ()
                    "//" OY_TYPE_STD "/config/icc_profile.x_color_region_target",
                          "yes", OY_CREATE_NEW );
         error = oyDeviceGetProfile( config, options, &p );
+        if(error > 0) PRINT_SUB( oyTESTRESULT_FAIL, "oyDeviceGetProfile() error: %d", error )
         oyOptions_Release( &options );
         t = oyProfile_GetText( p, oyNAME_DESCRIPTION);
         fprintf(zout, "oyDeviceGetProfile(): \"%s\"\n", t ? t : "----" );
@@ -3383,20 +3437,25 @@ oyTESTRESULT_e testCMMDevicesListing ()
       }
 
       error = oyConfigs_FromDB( oyConfig_GetRegistration( config ), NULL, &heap, 0 );
+      if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyConfigs_FromDB() error: %d", error )
 
       error = oyDeviceSelectSimiliar( config, heap, 0, &dbs );
+      if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyDeviceSelectSimiliar() error: %d", error )
       precise_count = oyConfigs_Count( dbs );
       oyConfigs_Release( &dbs );
 
       error = oyDeviceSelectSimiliar( config, heap, 1, &dbs );
+      if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyDeviceSelectSimiliar() error: %d", error )
       serial_count = oyConfigs_Count( dbs );
       oyConfigs_Release( &dbs );
 
       error = oyDeviceSelectSimiliar( config, heap, 2, &dbs );
+      if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyDeviceSelectSimiliar() error: %d", error )
       mnft_count = oyConfigs_Count( dbs );
       oyConfigs_Release( &dbs );
 
       error = oyDeviceSelectSimiliar( config, heap, 4, &dbs );
+      if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyDeviceSelectSimiliar() error: %d", error )
       dev_name_count = oyConfigs_Count( dbs );
       oyConfigs_Release( &dbs );
 
@@ -3519,9 +3578,11 @@ oyTESTRESULT_e testCMMDevicesDetails ()
     error = oyOptions_SetFromText( &options,
                                      "//" OY_TYPE_STD "/config/command",
                                      "properties", OY_CREATE_NEW );
+    if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromText() error: %d", error )
     /* send the query to a module */
     error = oyConfigs_FromDomain( registration_domain,
                                   options, &configs, 0 );
+    if(error) fprintf( zout, "oyConfigs_FromDomain(%s) error: %d", registration_domain, error );
     devices_n = oyConfigs_Count( configs );
     for( l = 0; l < devices_n; ++l )
     {
@@ -3576,8 +3637,11 @@ oyTESTRESULT_e testCMMDevicesDetails ()
     oyConfDomain_Release( &domain );
   }
   error = oyConfig_AddDBData( config, "k1", "bla1", OY_CREATE_NEW );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyConfig_AddDBData() error: %d", error )
   error = oyConfig_AddDBData( config, "k2", "bla2", OY_CREATE_NEW );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyConfig_AddDBData() error: %d", error )
   error = oyConfig_AddDBData( config, "k3", "bla3", OY_CREATE_NEW );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyConfig_AddDBData() error: %d", error )
 
   if( !error  && config && oyOptions_Count(*oyConfig_GetOptions( config,"db") ))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
@@ -3592,8 +3656,10 @@ oyTESTRESULT_e testCMMDevicesDetails ()
     registration = oyStringCopy( oyConfig_GetRegistration( config ),
                                   oyAllocateFunc_ );
   error = oyConfig_SaveToDB( config, oySCOPE_USER );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyConfig_SaveToDB() error: %d", error )
 
   error = oyConfigs_FromDB( registration, NULL, &configs, 0 );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyConfigs_FromDB() error: %d", error )
   count = oyConfigs_Count( configs );
   oyConfigs_Release( &configs );
 
@@ -3608,6 +3674,7 @@ oyTESTRESULT_e testCMMDevicesDetails ()
 
   int32_t rank = 0;
   error = oyConfig_GetDB( config, NULL, &rank );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyConfig_GetDB() error: %d", error )
   const char * key_set_name = oyConfig_FindString( config, "key_set_name", 0 );
   char * key = 0;
   STRING_ADD( key, key_set_name );
@@ -3619,9 +3686,11 @@ oyTESTRESULT_e testCMMDevicesDetails ()
   if(key)
   { oyDeAllocateFunc_( key ); key = 0; }
   error = oyConfig_EraseFromDB( config, oySCOPE_USER );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyConfig_EraseFromDB() error: %d", error )
   oyConfig_Release( &config );
 
   error = oyConfigs_FromDB( registration, NULL, &configs, 0 );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyConfigs_FromDB() error: %d", error )
   i = oyConfigs_Count( configs );
   oyConfigs_Release( &configs );
 
@@ -3661,7 +3730,9 @@ oyTESTRESULT_e testCMMRankMap ()
                          "yes", OY_CREATE_NEW );
   error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
                                    "properties", OY_CREATE_NEW );  
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromText() error: %d", error )
   error = oyDevicesGet( OY_TYPE_STD, "monitor", options, &devices );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyDevicesGet() error: %d", error )
   oyOptions_Release( &options );
 
   int count = oyConfigs_Count( devices ),
@@ -3700,6 +3771,7 @@ oyTESTRESULT_e testCMMRankMap ()
 
     char * rank_map_text = 0;
     error = oyRankMapToJSON( map, options, &rank_map_text, malloc );
+    if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyRankMapToJSON() error: %d", error )
     if( rank_map_text )
     { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "JSON from Map    [%d]          %lu    ", i, (long unsigned int)strlen(rank_map_text) );
@@ -3710,6 +3782,7 @@ oyTESTRESULT_e testCMMRankMap ()
 
     oyRankMap * rank_map2 = 0;
     error = oyRankMapFromJSON( rank_map_text, options, &rank_map2, malloc );
+    if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyRankMapFromJSON() error: %d", error )
     if( rank_map2 )
     { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "Map from JSON    [%d]                 ", i );
@@ -3743,6 +3816,7 @@ oyTESTRESULT_e testCMMRankMap ()
 
   char ** list = NULL;
   error = oyRankMapList( NULL, NULL, &list, oyAllocateFunc_ );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyRankMapList() error: %d", error )
   count = 0;
   while( list && list[count]) ++count;
   if( count >= 3 )
@@ -3762,7 +3836,9 @@ oyTESTRESULT_e testCMMRankMap ()
 
   error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/path",
                                    "1", OY_CREATE_NEW );  
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromText() error: %d", error )
   error = oyRankMapList( NULL, options, &list, oyAllocateFunc_ );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyRankMapList() error: %d", error )
   oyOptions_Release( &options );
   count = 0;
   while( list && list[count]) ++count;
@@ -3809,6 +3885,7 @@ oyTESTRESULT_e testCMMMonitorJSON ()
   error = oyOptions_SetFromText( &options,
                                      "//" OY_TYPE_STD "/config/command",
                                      "properties", OY_CREATE_NEW );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromText() error: %d", error )
   error = oyDevicesGet( 0, "monitor", options, &configs );
   if( error <= 0 && configs )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
@@ -3883,6 +3960,7 @@ oyTESTRESULT_e testCMMMonitorJSON ()
                    "//" OY_TYPE_STD "/config/icc_profile.x_color_region_target",
                           "yes", OY_CREATE_NEW );
     error = oyDeviceGetProfile( config, options, &p );
+    if(error > 0) PRINT_SUB( oyTESTRESULT_XFAIL, "oyDeviceGetProfile() error: %d", error )
     if( p )
     { PRINT_SUB( oyTESTRESULT_SUCCESS,
       "oyDeviceGetProfile(\"list\") \"%s\"", oyProfile_GetText(p,oyNAME_DESCRIPTION) );
@@ -3904,6 +3982,10 @@ oyTESTRESULT_e testCMMMonitorJSON ()
                    "//" OY_TYPE_STD "/config/icc_profile.fallback",
                           "yes", OY_CREATE_NEW );
     error = oyDeviceGetProfile( config, options, &p );
+    if(error == -1)
+      PRINT_SUB( oyTESTRESULT_SUCCESS, "oyDeviceGetProfile(\"fallback\") error:       %d", error )
+    else
+      PRINT_SUB( oyTESTRESULT_XFAIL, "oyDeviceGetProfile(\"fallback\") error:       %d", error )
     if( p )
     { PRINT_SUB( oyTESTRESULT_SUCCESS,
       "oyDeviceGetProfile(\"fallback\") \"%s\"", oyProfile_GetText(p,oyNAME_DESCRIPTION) );
@@ -3918,6 +4000,7 @@ oyTESTRESULT_e testCMMMonitorJSON ()
 
 
     error = oyDeviceFromJSON( json_text, 0, &config );
+    if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyDeviceFromJSON() error: %d", error )
     oyOptions_SetFromText( &options,
                   "//" OY_TYPE_STD "/config/command",
                            "properties", OY_CREATE_NEW );
@@ -3949,6 +4032,10 @@ oyTESTRESULT_e testCMMMonitorJSON ()
                    "//" OY_TYPE_STD "/config/icc_profile.fallback",
                           "yes", OY_CREATE_NEW );
     error = oyDeviceGetProfile( config, options, &p );
+    if(error == -1)
+      PRINT_SUB( oyTESTRESULT_SUCCESS, "oyDeviceGetProfile(\"fallback\") error:       %d", error )
+    else
+      PRINT_SUB( oyTESTRESULT_XFAIL, "oyDeviceGetProfile(\"fallback\") error:       %d", error )
     if( p )
     { PRINT_SUB( oyTESTRESULT_SUCCESS,
       "oyDeviceGetProfile(\"fallback\") \"%s\"", oyProfile_GetText(p,oyNAME_DESCRIPTION) );
@@ -4053,6 +4140,7 @@ oyTESTRESULT_e testCMMMonitorListing ()
 
     clck = oyClock();
     error = oyDeviceProfileFromDB( config, &text, myAllocFunc );
+    if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyDeviceProfileFromDB() error: %d", error )
     clck = oyClock() - clck;
     if(text)
       fprintf( zout, "  %d oyDeviceProfileFromDB(): %s %s\n", i, text,
@@ -4062,12 +4150,14 @@ oyTESTRESULT_e testCMMMonitorListing ()
 
     clck = oyClock();
     error = oyDeviceGetInfo( config, oyNAME_NICK, 0, &text, 0 );
+    if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyDeviceGetInfo() error: %d", error )
     clck = oyClock() - clck;
     fprintf( zout, "  %d oyDeviceGetInfo)(..oyNAME_NICK..): \"%s\" %s\n",
              i, text? text:"???",
                    oyProfilingToString(1,clck/(double)CLOCKS_PER_SEC,"Obj."));
     clck = oyClock();
     error = oyDeviceGetInfo( config, oyNAME_NAME, 0, &text, 0 );
+    if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyDeviceGetInfo() error: %d", error )
     clck = oyClock() - clck;
     fprintf( zout, "  %d oyDeviceGetInfo)(..oyNAME_NAME..): \"%s\" %s\n",
              i, text? text:"???",
@@ -4163,10 +4253,12 @@ oyTESTRESULT_e testCMMMonitorModule ()
   error = oyOptions_SetFromText( &options,
                                  "//" OY_TYPE_STD "/config/device_name",
                                  t, OY_CREATE_NEW );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromText() error: %d", error )
   /* clean up */
   error = oyOptions_SetFromText( &options,
                                  "//" OY_TYPE_STD "/config/command",
                                  "unset", OY_CREATE_NEW );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "(oyOptions_SetFromText) error: %d", error )
   error = oyDevicesGet( OY_TYPE_STD, "monitor", options, &devices );
   oyConfigs_Release( &devices );
 
@@ -4268,6 +4360,7 @@ oyTESTRESULT_e testCMMmonitorDBmatch ()
   const char * reg = OY_STD "/device/test";
   oyConfigs_s * configs = NULL;
   error = oyConfigs_FromDB( reg, NULL, &configs, 0 );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyConfigs_FromDB() error: %d", error )
   int count = oyConfigs_Count( configs );
   oyConfig_Release( &device );
 
@@ -4297,6 +4390,7 @@ oyTESTRESULT_e testCMMmonitorDBmatch ()
   }
 
   error = oyDBEraseKey( reg, oySCOPE_USER );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyDBEraseKey() error: %d", error )
 
   return result;
 }
@@ -5118,6 +5212,7 @@ oyTESTRESULT_e testCMMnmRun ()
   /*oyFilterNode_SetData( out_node, (oyStruct_s*)output, 0, 0 );*/
   error = oyFilterNode_Connect( in_node, "//" OY_TYPE_STD "/data",
                                 out_node, "//" OY_TYPE_STD "/data", 0 );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyFilterNode_Connect() error: %d", error )
   oyConversion_Set( conv, 0, out_node );
   oyConversion_GetNode( conv, OY_OUTPUT );
   plug = oyFilterNode_GetPlug( out, 0 );
@@ -6285,6 +6380,7 @@ oyTESTRESULT_e testConversion()
   config_cmm = oyGetPersistentString( OY_DEFAULT_CMM_CONTEXT, 0, oySCOPE_USER_SYS, 0 );
   int error = oySetPersistentString( OY_DEFAULT_CMM_CONTEXT, oySCOPE_USER,
                                      "///icc_color.notX", "non existent CMM" );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oySetPersistentString() error: %d", error )
   char * test_config_cmm = oyGetPersistentString( OY_DEFAULT_CMM_CONTEXT, 0, oySCOPE_USER_SYS, 0 );
   if(strcmp(test_config_cmm,"///icc_color.notX") == 0)
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
@@ -6464,11 +6560,17 @@ oyTESTRESULT_e testConversion()
   oyOptions_Release( &node_opts );
 
   if(config_cmm)
+  {
     error = oySetPersistentString( OY_DEFAULT_CMM_CONTEXT, oySCOPE_USER,
                                    config_cmm, NULL );
+    if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oySetPersistentString() error: %d", error )
+  }
   else
+  {
     error = oySetPersistentString( OY_DEFAULT_CMM_CONTEXT, oySCOPE_USER,
                                    NULL, NULL );
+    if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oySetPersistentString() error: %d", error )
+  }
   oyFree_m_( config_cmm );
   oyFree_m_( test_config_cmm );
 
@@ -6773,6 +6875,7 @@ oyTESTRESULT_e testICCsCheck()
     buf_f32in2x2[1] = 0.0;
     buf_f32in2x2[2] = 1.0;
     error = oyConversion_RunPixels( cc, NULL );
+    if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyConversion_RunPixels() error: %d", error )
     float blue[3] = { buf_f32out2x2[0], buf_f32out2x2[1], buf_f32out2x2[2] };
     oyOptions_Release( &options );
     oyConversion_Release( &cc );
@@ -6788,8 +6891,10 @@ oyTESTRESULT_e testICCsCheck()
     error = oyOptions_SetFromText( &options,
                                      "//" OY_TYPE_STD "/config/display_mode", "1",
                                      OY_CREATE_NEW );
+    if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromText() error: %d", error )
     /* activate policy */
     error = oyConversion_Correct( cc, "//" OY_TYPE_STD "/icc_color", oyOPTIONATTRIBUTE_ADVANCED, options);
+    if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyConversion_Correct() error: %d", error )
     error = oyConversion_RunPixels( cc, NULL );
     /* Is the float conversion ~ equal to the integer math? */
     if(!error && (blue[0] != buf_f32out2x2[0] ||
