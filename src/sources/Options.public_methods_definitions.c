@@ -1364,7 +1364,7 @@ int            oyOptions_SetFromInt  ( oyOptions_s      ** obj,
 {
   int error = 0;
   oyOption_s * o = 0;
-  oyOptions_s * s = *obj;
+  oyOptions_s * s = obj ? *obj : NULL;
 
   if(!options) return 1;
   if(s)
@@ -1485,7 +1485,7 @@ int            oyOptions_SetFromDouble(oyOptions_s      ** obj,
 {
   int error = 0;
   oyOption_s * o = 0;
-  oyOptions_s * s = *obj;
+  oyOptions_s * s = obj ? *obj : NULL;
 
   if(!options) return 1;
   if(s)
