@@ -201,29 +201,23 @@ int            oyStructList_ReleaseAt( oyStructList_s    * list,
   oyStructList_s_ * s = (oyStructList_s_*)list;
   int error = 0;
 
-  error = !s;
+  if(!s) return -1;
 
-  if(!error && s->type_ != oyOBJECT_STRUCT_LIST_S)
-    error = 1;
+  if(s->type_ != oyOBJECT_STRUCT_LIST_S)
+    return 1;
 
-  if(error <= 0)
-    oyObject_Lock( s->oy_, __FILE__, __LINE__ );
-  else
-    return error;
+  oyObject_Lock( s->oy_, __FILE__, __LINE__ );
 
-  if(error <= 0 && s)
+  if(0 <= pos && pos < s->n_)
   {
-      if(0 <= pos && pos < s->n_)
-      {
-          if(s->ptr_[pos] && s->ptr_[pos]->release)
-            s->ptr_[pos]->release( (oyStruct_s**)&s->ptr_[pos] );
+    if(s->ptr_[pos] && s->ptr_[pos]->release)
+      s->ptr_[pos]->release( (oyStruct_s**)&s->ptr_[pos] );
 
-          if(pos < s->n_ - 1)
-            error = !memmove( &s->ptr_[pos], &s->ptr_[pos+1],
-                              sizeof(oyStruct_s*) * (s->n_ - pos - 1));
+    if(pos < s->n_ - 1)
+      error = !memmove( &s->ptr_[pos], &s->ptr_[pos+1],
+                        sizeof(oyStruct_s*) * (s->n_ - pos - 1));
 
-          --s->n_;
-      }
+    --s->n_;
   }
 
   oyObject_UnLock( s->oy_, __FILE__, __LINE__ );
