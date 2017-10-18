@@ -535,7 +535,7 @@ int getSunriseSunset( double * rise, double * set )
   }
 
   r = __sunriset__( year,month,day, lon,lat,
-                    (twilight==0)?-35/60:twilight, 0, rise, set );
+                    (twilight==0)?-35/(double)60:twilight, 0, rise, set );
   if(r > 0)
     fprintf(stderr, "sun will not get below twilight today\n");
   if(r < 0)
@@ -596,7 +596,7 @@ int checkWtptState()
                                  &choices_string_list, &current );
   }
 
-  if( getSunriseSunset( &rise, &set ) == 0 )
+  if( choices_string_list && getSunriseSunset( &rise, &set ) == 0 )
   {
     int new_mode = -1;
 
