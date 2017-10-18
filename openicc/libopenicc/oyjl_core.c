@@ -190,8 +190,10 @@ int        oyjl_string_add           ( char             ** string,
 
     deAllocate(text);
 
-  } else
+  } else if(string)
     *string = text;
+  else if(text)
+    deAllocate( text );
 
   return 0;
 }
