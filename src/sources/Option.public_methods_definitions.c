@@ -1029,6 +1029,10 @@ int            oyValueEqual          ( oyValue_u         * a,
 
   if(!a && !b)
     return 1;
+  else if(!a || !b)
+    return equal;
+  else if(a == b)
+    return 1;
 
   switch(type)
   {
@@ -1041,6 +1045,11 @@ int            oyValueEqual          ( oyValue_u         * a,
       {
         if(!a->int32_list && !b->int32_list)
           return 1;
+        if(!a->int32_list || !b->int32_list)
+          return 0;
+        if(a->int32_list == b->int32_list)
+          return 1;
+
         if(0 <= pos && pos < a->int32_list[0] &&
            pos < b->int32_list[0])
           if(a->int32_list[1 + pos] == b->int32_list[1 + pos])
@@ -1061,6 +1070,11 @@ int            oyValueEqual          ( oyValue_u         * a,
   case oyVAL_DOUBLE_LIST:
         if(!a->dbl_list && !b->dbl_list)
           return 1;
+        if(!a->dbl_list || !b->dbl_list)
+          return 0;
+        if(a->dbl_list == b->dbl_list)
+          return 1;
+
         if(0 <= pos && pos < a->dbl_list[0] &&
            pos < b->dbl_list[0])
           if(a->dbl_list[1 + pos] == b->dbl_list[1 + pos])
@@ -1085,6 +1099,11 @@ int            oyValueEqual          ( oyValue_u         * a,
   case oyVAL_STRING_LIST:
         if(!a->string_list && !b->string_list)
           return 1;
+        if(!a->string_list || !b->string_list)
+          return ;
+        if(a->string_list == b->string_list)
+          return 1;
+
         i = 0;
         n = 0;
         while((size_t)a->string_list[i])
@@ -1122,6 +1141,7 @@ int            oyValueEqual          ( oyValue_u         * a,
           return 0;
         if(a->oy_struct == b->oy_struct)
           return 1;
+
         if(a->oy_struct->type_ == oyOBJECT_BLOB_S &&
            b->oy_struct->type_ == oyOBJECT_BLOB_S &&
            oyBlob_GetPointer((oyBlob_s*)(a->oy_struct)) == oyBlob_GetPointer((oyBlob_s*)(b->oy_struct)) )
