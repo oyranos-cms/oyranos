@@ -139,11 +139,8 @@ oyPixelAccess_s *  oyPixelAccess_Create (
         The ticket must hold all pices of interesst.
      */
     s->output_array_roi->width = 1.0;
-    if(image)
-    {
-      double width = oyImage_GetWidth( image );
-      s->output_array_roi->height = oyImage_GetHeight( image ) / width;
-    }
+    if(image && w)
+      s->output_array_roi->height = oyImage_GetHeight( image ) / (double)w;
     s->output_image = oyImage_Copy( image, 0 );
     s->graph = (oyFilterGraph_s_*)oyFilterGraph_FromNode( (oyFilterNode_s*)sock->node, 0 );
 
