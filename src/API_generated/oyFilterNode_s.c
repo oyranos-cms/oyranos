@@ -1096,8 +1096,9 @@ const char * oyFilterNode_GetText    ( oyFilterNode_s    * node,
   out_datas = oyFilterNode_GetData_( s, 0 );
 
   /* make a description */
-  tmp = oyContextCollectData_( (oyStruct_s*)s, s->core->options_,
-                               in_datas, out_datas );
+  if(s->core)
+    tmp = oyContextCollectData_( (oyStruct_s*)s, s->core->options_,
+                                 in_datas, out_datas );
   hashTextAdd_m( tmp );
 
   hashTextAdd_m( "</oyFilterNode_s>\n" );
