@@ -2015,9 +2015,9 @@ int            oyOptions_SetFromData ( oyOptions_s      ** options,
                                        size_t              size,
                                        uint32_t            flags )
 {
-  int error = 0;
+  int error = !options;
   oyOption_s * o = 0;
-  oyOptions_s * s = options ? *options : 0;
+  oyOptions_s * s = options ? *options : NULL;
 
   if(s)
   { oyCheckType__m( oyOBJECT_OPTIONS_S, return 0 ) }
