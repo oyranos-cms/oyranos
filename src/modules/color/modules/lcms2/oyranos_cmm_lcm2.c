@@ -503,9 +503,11 @@ int                l2cmsCMMInit       ( oyStruct_s        * filter OY_UNUSED )
                     OY_DBG_FORMAT_" compile and run time version differ %d %d",
                     OY_DBG_ARGS_, l2cmsGetEncodedCMMversion, LCMS_VERSION );
           
+#if !defined(COMPILE_STATIC)
       if(error)
         l2cms_initialised = -1;
       else
+#endif
         l2cms_initialised = 1;
 
       if(report)
@@ -609,7 +611,7 @@ int                l2cmsCMMInit       ( oyStruct_s        * filter OY_UNUSED )
  */
 l2cmsProfileWrap_s * l2cmsCMMProfile_GetWrap_( oyPointer_s* cmm_ptr )
 {
-  l2cmsProfileWrap_s * s = 0;
+  l2cmsProfileWrap_s * s = NULL;
 
   char * type_ = l2cmsPROFILE;
   unsigned type = *((uint32_t*)type_);
@@ -619,9 +621,9 @@ l2cmsProfileWrap_s * l2cmsCMMProfile_GetWrap_( oyPointer_s* cmm_ptr )
     s = (l2cmsProfileWrap_s*) oyPointer_GetPointer(cmm_ptr);
 
   if(s && s->type != type)
-    s = 0;
+    s = NULL;
 
-  if(oy_debug >= 2)
+  if(s && oy_debug >= 2)
   {
     l2cms_msg( oyMSG_WARN, (oyStruct_s*)cmm_ptr,
               OY_DBG_FORMAT_" profile size: %d %s cmm_ptr: %d",
