@@ -24,7 +24,7 @@ int oyImage_CombinePixelLayout2Mask_ ( oyImage_s_        * image,
   oyDATATYPE_e t = oyToDataType_m( pixel_layout );
   int swap  = oyToSwapColorChannels_m( pixel_layout );
   /*int revert= oyT_FLAVOR_M( pixel_layout );*/
-  oyPixel_t *mask = image->oy_->allocateFunc_( sizeof(oyPixel_t*) * (oyCHAN0 + 
+  oyPixel_t *mask = image->oy_->allocateFunc_( sizeof(oyPixel_t) * (oyCHAN0 + 
                     OY_MAX(n,cchan_n) + 1));
   int error = !mask;
   int so = oyDataTypeGetSize( t );
@@ -45,7 +45,7 @@ int oyImage_CombinePixelLayout2Mask_ ( oyImage_s_        * image,
   /* describe the pixel layout and access */
   if(error <= 0)
   {
-    error = !memset( mask, 0, sizeof(mask) * sizeof(oyPixel_t*));
+    error = !memset( mask, 0, sizeof(mask) * sizeof(oyPixel_t));
     if(oyToPlanar_m( pixel_layout ))
     {
       mask[oyPOFF_X] = 1;
