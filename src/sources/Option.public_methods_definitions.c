@@ -1100,7 +1100,7 @@ int            oyValueEqual          ( oyValue_u         * a,
         if(!a->string_list && !b->string_list)
           return 1;
         if(!a->string_list || !b->string_list)
-          return ;
+          return 0;
         if(a->string_list == b->string_list)
           return 1;
 
