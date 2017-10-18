@@ -1661,10 +1661,9 @@ int            oyOptions_SetFromInt  ( oyOptions_s      ** obj,
   oyOption_s * o = 0;
   oyOptions_s * s = *obj;
 
+  if(!obj) return 1;
   if(s)
-  { oyCheckType__m( oyOBJECT_OPTIONS_S, return 0 ) }
-  else
-    return 1;
+  { oyCheckType__m( oyOBJECT_OPTIONS_S, return 1 ) }
 
   if(error <= 0)
   {
@@ -1783,10 +1782,9 @@ int            oyOptions_SetFromDouble(oyOptions_s      ** obj,
   oyOption_s * o = 0;
   oyOptions_s * s = *obj;
 
+  if(!obj) return 1;
   if(s)
-  { oyCheckType__m( oyOBJECT_OPTIONS_S, return 0 ) }
-  else
-    return 1;
+  { oyCheckType__m( oyOBJECT_OPTIONS_S, return 1 ) }
 
   if(error <= 0)
   {
@@ -2019,10 +2017,9 @@ int            oyOptions_SetFromData ( oyOptions_s      ** options,
   oyOption_s * o = 0;
   oyOptions_s * s = options ? *options : NULL;
 
+  if(!options) return 1;
   if(s)
-  { oyCheckType__m( oyOBJECT_OPTIONS_S, return 0 ) }
-  else
-    return 1;
+  { oyCheckType__m( oyOBJECT_OPTIONS_S, return 1 ) }
 
   if(error <= 0)
   {
