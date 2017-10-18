@@ -142,6 +142,7 @@ char *       oyReadFileSToMem_       ( FILE              * fp,
       {
         mem_size *= 2;
         mem = (char*) realloc( mem, mem_size );
+	if(!mem) { *size = 0; return NULL; }
       }
       mem[(*size)++] = c;
     } while(!feof(fp));
@@ -394,8 +395,10 @@ char * oyReadUrlToMem_               ( const char        * url,
         {
           mem_size *= 10;
           mem = realloc( mem, mem_size );
+          if(!mem) { *size = 0; break; }
         }
-        *size += fread( &mem[*size], sizeof(char), mem_size-*size, fp );
+	if(mem)
+          *size += fread( &mem[*size], sizeof(char), mem_size-*size, fp );
       }
       if(fp && mem)
       {
@@ -465,8 +468,10 @@ char * oyReadCmdToMem_               ( const char        * command,
         {
           mem_size *= 10;
           mem = realloc( mem, mem_size );
+          if(!mem) { *size = 0; break; }
         }
-        *size += fread( &mem[*size], sizeof(char), mem_size-*size, fp );
+        if(mem)
+          *size += fread( &mem[*size], sizeof(char), mem_size-*size, fp );
       }
       if(fp && mem)
       {
