@@ -1368,6 +1368,8 @@ int            oyOptions_SetFromInt  ( oyOptions_s      ** obj,
 
   if(s)
     oyCheckType__m( oyOBJECT_OPTIONS_S, return 0 )
+  else
+    return 1;
 
   if(error <= 0)
   {
@@ -1488,6 +1490,8 @@ int            oyOptions_SetFromDouble(oyOptions_s      ** obj,
 
   if(s)
     oyCheckType__m( oyOBJECT_OPTIONS_S, return 0 )
+  else
+    return 1;
 
   if(error <= 0)
   {
@@ -1722,6 +1726,8 @@ int            oyOptions_SetFromData ( oyOptions_s      ** options,
 
   if(s)
     oyCheckType__m( oyOBJECT_OPTIONS_S, return 0 )
+  else
+    return 1;
 
   if(error <= 0)
   {
