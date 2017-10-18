@@ -121,21 +121,22 @@ oyNamedColor_s *   oyNamedColor_Create ( const double    * chan,
   oyNamedColor_s_ * s = (oyNamedColor_s_*) oyNamedColor_New( object );
   int error = !s;
 
-  if(error <= 0)
-  {
-    s->profile_  = oyProfile_Copy( ref, 0 );
-  }
+  if(!s) return NULL;
+
+  s->profile_  = oyProfile_Copy( ref, 0 );
+  if(!s->profile_) return NULL;
 
   n = oyProfile_GetChannelsCount( s->profile_ );
   if(n)
-    s->channels_ = s->oy_->allocateFunc_( n * sizeof(double) );
+    oyAllocHelper_m_( s->channels_, double, n, 0, goto cleanC );
   oyCopyColor( chan, &s->channels_[0], 1, ref, n );
   oyCopyColor( 0, &s->XYZ_[0], 1, 0, 0 );
 
   if(error <= 0 && blob && blob_len)
   {
+
     s->blob_ = s->oy_->allocateFunc_( blob_len );
-    if(!s->blob_) error = 1;
+    if(!s->blob_) goto cleanC;
 
     if(error <= 0)
       error = !memcpy( s->blob_, blob, blob_len );
@@ -145,6 +146,10 @@ oyNamedColor_s *   oyNamedColor_Create ( const double    * chan,
   }
 
   return (oyNamedColor_s*) s;
+
+cleanC:
+  oyNamedColor_Release( (oyNamedColor_s**)&s );
+  return NULL;
 }
 
 /** Function: oyNamedColor_CreateWithName
@@ -178,16 +183,23 @@ oyNamedColor_s *   oyNamedColor_CreateWithName (
                                        oyObject_s          object )
 {
   int error = 0;
-  oyNamedColor_s_ * s = 0;
+  oyNamedColor_s_ * s = NULL;
   oyObject_s    s_obj = oyObject_NewFrom( object );
 
   error = !s_obj;
 
   if(error <= 0)
+  {
     error = oyObject_SetNames( s_obj, nick, name, description );
+    if(error)
+      WARNc1_S("oyObject_SetNames/ \"%s\" ) failed", oyNoEmptyName_m_(nick));
+  }
 
-  s = (oyNamedColor_s_*) oyNamedColor_Create( chan, blob, blob_len, profile_ref, s_obj );
-  error =!s;
+  if(!error)
+  {
+    s = (oyNamedColor_s_*) oyNamedColor_Create( chan, blob, blob_len, profile_ref, s_obj );
+    error =!s;
+  }
 
   oyObject_Release( &s_obj );
 
