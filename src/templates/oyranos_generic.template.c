@@ -42,9 +42,9 @@ const char *   oyContextCollectData_ ( oyStruct_s        * s,
                                        oyStructList_s    * outs )
 {
   int error = !s;
-  const char * model = 0;
+  const char * model = NULL;
 
-  char * hash_text = 0;
+  char * hash_text = NULL;
 
   if(error <= 0)
   {
@@ -68,10 +68,10 @@ const char *   oyContextCollectData_ ( oyStruct_s        * s,
 
     if(hash_text && s->oy_->deallocateFunc_)
       s->oy_->deallocateFunc_( hash_text );
-    hash_text = 0;
-  }
+    hash_text = NULL;
 
-  hash_text = (oyChar*) oyObject_GetName( s->oy_, oyNAME_NICK );
+    hash_text = (oyChar*) oyObject_GetName( s->oy_, oyNAME_NICK );
+  }
 
   return hash_text;
 }
