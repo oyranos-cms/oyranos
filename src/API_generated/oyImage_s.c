@@ -1778,7 +1778,7 @@ int            oyImage_SamplesToRoi  ( oyImage_s         * image,
     } else
     {
       channel_n = oyImage_GetPixelLayout( image, oyCHANS );
-      if(channel_n != 0.0)
+      if(channel_n != 0)
       {
         oyRectangle_SetByRectangle( *roi, sample_rectangle );
         roi_->x /= channel_n;
