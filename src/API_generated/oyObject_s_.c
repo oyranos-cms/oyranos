@@ -140,9 +140,9 @@ int32_t      oyObject_Hashed_        ( oyObject_s          s )
 int          oyObject_HashSet          ( oyObject_s        s,
                                          const unsigned char * hash )
 {
-  int error = 0;
+  int error = !(s && s->type_ == oyOBJECT_OBJECT_S);
 
-  if(s && s->type_ == oyOBJECT_OBJECT_S && !s->hash_ptr_)
+  if(!error && !s->hash_ptr_)
   {
     s->hash_ptr_ = s->allocateFunc_(OY_HASH_SIZE*2);
     error = !s->hash_ptr_;
