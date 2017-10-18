@@ -10,8 +10,8 @@
  *  @since   2007/11/0 (Oyranos: 0.1.9)
  *  @date    2014/04/04
  */
-OYAPI oyProfile_s * OYEXPORT
-         oyProfile_FromStd           ( oyPROFILE_e         type,
+OYAPI oyProfile_s * OYEXPORT oyProfile_FromStd (
+                                       oyPROFILE_e         type,
                                        uint32_t            flags,
                                        oyObject_s          object )
 {
@@ -22,10 +22,9 @@ OYAPI oyProfile_s * OYEXPORT
 
   if(!oy_profile_s_std_cache_)
   {
-    int len = sizeof(oyProfile_s_*) *
-                            (oyDEFAULT_PROFILE_END - oyDEFAULT_PROFILE_START);
-    oy_profile_s_std_cache_ = oyAllocateFunc_( len );
-    memset( oy_profile_s_std_cache_, 0, len );
+    oyAllocHelper_m_( oy_profile_s_std_cache_, oyProfile_s_*,
+                      oyDEFAULT_PROFILE_END - oyDEFAULT_PROFILE_START,
+                      oyAllocateFunc_, return NULL );
   }
 
   if(object)
@@ -39,7 +38,7 @@ OYAPI oyProfile_s * OYEXPORT
        oy_profile_s_std_cache_[pos]->file_name_ && name &&
        strcmp(oy_profile_s_std_cache_[pos]->file_name_, name) == 0 )
     {
-      if(object->deallocateFunc_)
+      if(object && object->deallocateFunc_)
         object->deallocateFunc_( name );
       else
         oyDeAllocateFunc_( name );
@@ -47,29 +46,30 @@ OYAPI oyProfile_s * OYEXPORT
       return (oyProfile_s*)oy_profile_s_std_cache_[pos];
     }
 
-  s = oyProfile_FromFile_( name, flags, object );
+  if(name)
+    s = oyProfile_FromFile_( name, flags, object );
 
-  if(!s)
+  if(!s && name && name[0])
   {
     /* try some aliases */
     /* START Debian icc-profiles icc-profiles-icc */
-    if(name && name[0] && strcmp("XYZ.icc",name) == 0)
+    if(strcmp("XYZ.icc",name) == 0)
     {
       s = oyProfile_FromFile_( "LCMSXYZI.ICM", flags, object );
     }
-    else if(name && name[0] && strcmp("Lab.icc",name) == 0)
+    else if(strcmp("Lab.icc",name) == 0)
     {
       s = oyProfile_FromFile_( "LCMSLABI.ICM", flags, object );
     }
-    else if(name && name[0] && strcmp("LStar-RGB.icc",name) == 0)
+    else if(strcmp("LStar-RGB.icc",name) == 0)
     {
       s = oyProfile_FromFile_( "eciRGB_v2.icc", flags, object );
     }
-    else if(name && name[0] && strcmp("sRGB.icc",name) == 0)
+    else if(strcmp("sRGB.icc",name) == 0)
     {
       s = oyProfile_FromFile_( "sRGB.icm", flags, object );
     }
-    else if(name && name[0] && strcmp("ISOcoated_v2_bas.ICC",name))
+    else if(strcmp("ISOcoated_v2_bas.ICC",name))
     {
       s = oyProfile_FromFile_( "ISOcoated_v2_eci.icc", flags, object );
       if(!s)
@@ -80,7 +80,7 @@ OYAPI oyProfile_s * OYEXPORT
 
   if(s)
     s->use_default_ = type;
-  else
+  else if(name && name[0])
   {
     int count = 0, i;
     char * text = 0;
@@ -332,8 +332,14 @@ oyProfile_FromFile            ( const char      * name,
     }
 
     s = (oyProfile_s_*) oyProfile_New(object);
-    if(s)
-      s->file_name_ = oyStringCopy_( name, s->oy_->allocateFunc_ );
+    if(!s)
+    {
+      oyMessageFunc_p( oyMSG_ERROR,(oyStruct_s*)object,
+                       OY_DBG_FORMAT_ "oyProfile_New() failed", OY_DBG_ARGS_);
+      return NULL;
+    }
+
+    s->file_name_ = oyStringCopy_( name, s->oy_->allocateFunc_ );
 
     if(strstr(name,"meta:") != 0)
     {

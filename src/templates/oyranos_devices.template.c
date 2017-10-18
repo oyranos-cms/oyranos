@@ -3793,6 +3793,8 @@ const char **oyConfDomain_GetTexts_  ( oyConfDomain_s_   * obj )
   const char ** texts = 0;
   oyCMMui_s * ui = 0;
 
+  if(!s) return NULL;
+
   if(s->api8)
     ui = oyCMMapi8_GetUi(s->api8);
 
