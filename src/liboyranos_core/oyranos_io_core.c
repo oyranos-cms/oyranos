@@ -247,9 +247,9 @@ char*
 oyReadFileToMem_(const char* name, size_t *size,
                  oyAlloc_f     allocate_func)
 {
-  FILE *fp = 0;
-  char* mem = 0;
-  const char* filename = name;
+  FILE * fp = NULL;
+  char * mem = NULL;
+  const char * filename = name;
 
   DBG_MEM_START
 

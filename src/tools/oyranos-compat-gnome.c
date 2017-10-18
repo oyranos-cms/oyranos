@@ -93,14 +93,15 @@ char *       oyReadFilepToMem_       ( FILE              * fp,
 char*
 oyReadFileToMem_(const char* name, size_t *size)
 {
-  FILE *fp = 0;
-  char* mem = 0;
-  const char* filename = name;
+  FILE * fp = NULL;
+  char * mem = NULL;
+  const char * filename = name;
 
   if(filename && filename[0] && strlen(filename) > 7 &&
      memcmp(filename, "file://", 7) == 0)
     filename = &filename[7];
 
+  if(filename)
   {
     fp = fopen(filename, "rb");
 
