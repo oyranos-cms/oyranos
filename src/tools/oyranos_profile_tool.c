@@ -515,7 +515,7 @@ int main( int argc , char** argv )
       j = oyProfile_GetSignature(p,oySIGNATURE_INTENT);
       /* keep total number of chars equal to original for cli print */
       fprintf( stdout, "%s %s\n", _("Rendering Intent:"),
-               j < count ? names[j] : _("unknown"));
+               (j < count && names && names[j]) ? names[j] : _("unknown"));
 
       /* keep total number of chars equal to original for cli print */
       fprintf( stdout, "%s %f %f %f\n", _("Illuminant:      "),
