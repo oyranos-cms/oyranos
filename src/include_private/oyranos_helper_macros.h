@@ -71,13 +71,13 @@ extern "C" {
   } else {                                                  \
       ptr_ = (type*) oyAllocateWrapFunc_(sizeof (type) * (size_t)(size_), \
                                          alloc_func );      \
-      memset( ptr_, 0, sizeof (type) * (size_t)(size_) );   \
   }                                                         \
   if (ptr_ == NULL) {                                       \
     WARNc3_S( "%s %d %s", _("Can not allocate memory for:"),\
               (int)(size_), #ptr_ );                        \
     action;                                                 \
-  }                                                         \
+  } else                                                    \
+    memset( ptr_, 0, sizeof (type) * (size_t)(size_) );     \
 }
 
 /* oyAllocHelper_ (void*, type, size_t, action) */ 
@@ -86,7 +86,7 @@ extern "C" {
   { \
     char text_fm[80];                                       \
     if(oy_observe_pointer_ == (intptr_t)ptr_) {             \
-      oySnprintf_( text_fm, 80, #ptr_ " pointer freed" ); \
+      oySnprintf_( text_fm, 80, #ptr_ " pointer freed" );   \
       WARNc_S( text_fm );                                   \
     }                                                       \
     obj_->oy_->deallocateFunc_ (ptr_);                      \
@@ -98,13 +98,13 @@ extern "C" {
   } else {                                                  \
       ptr_ = (type*) oyStruct_Allocate( (oyStruct_s*) obj_, \
                                         sizeof (type) * (size_t)(size_)); \
-      memset( ptr_, 0, sizeof (type) * (size_t)(size_) );   \
   }                                                         \
   if (ptr_ == NULL) {                                       \
     WARNc3_S( "%s %d %s", _("Can not allocate memory for:"),\
               (int)(size_), #ptr_ );                        \
     action;                                                 \
-  }                                                         \
+  } else                                                    \
+    memset( ptr_, 0, sizeof (type) * (size_t)(size_) );     \
 }
 
 
