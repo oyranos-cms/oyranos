@@ -280,7 +280,9 @@ static const char * oyProfile_StaticMessageFunc_ (
   } else
   if((int)type >= oyNAME_DESCRIPTION)
   {
-    uint32_t * h = (uint32_t*)s->oy_->hash_ptr_;
+    uint32_t * h = NULL;
+    if(s->oy_)
+      h = (uint32_t*)s->oy_->hash_ptr_;
     if(s->file_name_)
       sprintf( &text[strlen(text)], "%s\n",
                s->file_name_
