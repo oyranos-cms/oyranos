@@ -591,7 +591,7 @@ oyTESTRESULT_e testStringRun ()
 
 
   double clck = oyClock();
-  for(i = 0; i < 1000000; ++i)
+  for(i = 0; i < 100000; ++i)
   {
     test_sub = oyFilterRegistrationToSTextField( test, oyFILTER_REG_OPTION,
                                                  &test_end );
@@ -610,7 +610,7 @@ oyTESTRESULT_e testStringRun ()
 
   error = 0;
   clck = oyClock();
-  for(i = 0; i < 1000000; ++i)
+  for(i = 0; i < 100000; ++i)
   {
     test_sub = oyFilterRegistrationToText( test, oyFILTER_REG_OPTION, 0 );
     if(test_sub)
@@ -2380,7 +2380,7 @@ oyTESTRESULT_e testProfileLists ()
 #ifdef _WIN32
   int repeat = 100;
 #else
-  int repeat = 1000;
+  int repeat = 20;
 #endif
 
   fprintf(stdout, "\n" );
@@ -5316,7 +5316,7 @@ oyTESTRESULT_e testImagePixel()
   oyProfile_s /** p_cmyk = oyProfile_FromStd( oyEDITING_CMYK, NULL ),*/
               * p_in, * p_out;
   int error = 0,
-      i,n = 10;
+      i,n = 1;
   uint16_t buf_16in2x2[12] = {
   20000,20000,20000, 10000,10000,10000,
   0,0,0,             65535,65535,65535
