@@ -128,7 +128,7 @@ oyNamedColor_s *   oyNamedColor_Create ( const double    * chan,
 
   n = oyProfile_GetChannelsCount( s->profile_ );
   if(n)
-    oyAllocHelper_m_( s->channels_, double, n, 0, goto cleanC );
+    oyStruct_AllocHelper_m_( s->channels_, double, n, s, goto cleanC );
   oyCopyColor( chan, &s->channels_[0], 1, ref, n );
   oyCopyColor( 0, &s->XYZ_[0], 1, 0, 0 );
 

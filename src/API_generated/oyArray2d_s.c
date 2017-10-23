@@ -321,7 +321,6 @@ OYAPI int  OYEXPORT
     int y_len = sizeof(unsigned char *) * (s->height + 1),
         y;
     size_t size = 0;
-    oyAlloc_f allocateFunc_ = s->oy_->allocateFunc_;
 
     error = !s->array2d;
 
@@ -330,8 +329,8 @@ OYAPI int  OYEXPORT
     oyArray2d_ReleaseArray_( (oyArray2d_s*)s );
 
     /* allocate the base array */
-    oyAllocHelper_m_( s->array2d, unsigned char *, s->height+1, allocateFunc_,
-                      error = 1; return 1 );
+    oyStruct_AllocHelper_m_( s->array2d, unsigned char *, s->height+1, s,
+                             error = 1; return 1 );
     if(error <= 0)
       error = !memset( s->array2d, 0, y_len );
 
@@ -342,8 +341,8 @@ OYAPI int  OYEXPORT
       /* allocate each line separately */
       for(y = 0; y < s->height; ++y)
       {
-        oyAllocHelper_m_( s->array2d[y], unsigned char, size, allocateFunc_,
-                          error = 1; break );
+        oyStruct_AllocHelper_m_( s->array2d[y], unsigned char, size, s,
+                                 error = 1; break );
         error = !memcpy( s->array2d[y], rows[y], size );
       }
 
@@ -352,8 +351,8 @@ OYAPI int  OYEXPORT
     {
       /* allocate all lines at once */
       unsigned char * u8 = 0;
-      oyAllocHelper_m_( u8, unsigned char, size * s->height, allocateFunc_,
-                        error = 1; return 1 );
+      oyStruct_AllocHelper_m_( u8, unsigned char, size * s->height, s,
+                               error = 1; return 1 );
 
       s->own_lines = do_copy;
       if(error <= 0)
@@ -472,9 +471,8 @@ OYAPI int OYEXPORT
 
   error = oyArray2d_ReleaseArray_( (oyArray2d_s*)s );
   /* allocate the base array */
-  oyAllocHelper_m_( s->array2d, unsigned char *, height+1,
-                    s->oy_->allocateFunc_,
-                    error = 1; return 1 );
+  oyStruct_AllocHelper_m_( s->array2d, unsigned char *, height+1,
+                           s, error = 1; return 1 );
   if(error <= 0)
     error = !memset( s->array2d, 0, y_len );
 

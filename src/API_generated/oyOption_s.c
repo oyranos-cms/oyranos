@@ -523,9 +523,8 @@ int            oyOption_SetFromDouble( oyOption_s        * obj,
 
     if(!s->value)
     {
-      oyAllocHelper_m_( s->value, oyValue_u, 1,
-                        s->oy_->allocateFunc_,
-                        error = 1 );
+      oyStruct_AllocHelper_m_( s->value, oyValue_u, 1,
+                               s, error = 1 );
       if(pos == 0 &&
          s->value_type != oyVAL_DOUBLE_LIST)
         s->value_type = oyVAL_DOUBLE;
@@ -547,9 +546,8 @@ int            oyOption_SetFromDouble( oyOption_s        * obj,
         old_int = s->value->dbl;
 
       s->value->dbl_list = 0;
-      oyAllocHelper_m_( s->value->dbl_list, double, pos + 2,
-                        s->oy_->allocateFunc_,
-                        error = 1 );
+      oyStruct_AllocHelper_m_( s->value->dbl_list, double, pos + 2,
+                               s, error = 1 );
 
       if(!error && old_list)
       {

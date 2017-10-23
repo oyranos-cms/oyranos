@@ -100,7 +100,6 @@ OYAPI int  OYEXPORT
                                        oyConfigs_s      ** devices )
 {
   int error = !device_class || !device_class[0];
-  static char * num = 0;
 
   if(error > 0)
   {
@@ -108,11 +107,7 @@ OYAPI int  OYEXPORT
     return error;
   }
 
-  if(!num)
-    oyAllocHelper_m_( num, char, 80, 0, error = 1; return error );
-
   /** 1. obtain detailed and expensive device informations */
-
   if(!options)
   {
     /** 1.1 add "list" call to module arguments */
@@ -650,7 +645,6 @@ OYAPI int  OYEXPORT
   oyOption_s * o = 0;
   oyConfig_s * config = 0;
   const char * tmp = 0;
-  static char * num = 0;
   char * text = 0, * t = 0;
   int i, n,
       own_options = 0;
@@ -716,9 +710,6 @@ OYAPI int  OYEXPORT
     return error;
   }
 
-
-  if(!num)
-    oyAllocHelper_m_( num, char, 80, 0, error = 1; return error );
 
   if(error <= 0)
   {

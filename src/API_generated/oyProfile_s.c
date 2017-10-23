@@ -1071,8 +1071,7 @@ OYAPI int OYEXPORT
 
   if(error <= 0 && !s->block_)
   {
-    oyAllocHelper_m_( block_, char, size_, s->oy_ ? s->oy_->allocateFunc_:0,
-                      error = 1 );
+    oyStruct_AllocHelper_m_( block_, char, size_, s, error = 1 );
 
     if(error <= 0)
     {
@@ -1306,7 +1305,7 @@ OYAPI const oyChar* OYEXPORT
     char * temp = 0;
     int found = 0;
 
-    oyAllocHelper_m_( temp, oyChar, 1024, 0, error = 1 );
+    oyAllocHelper_m_( temp, char, 1024, 0, error = 1 );
 
 #if 0
     /* A short number represents a default profile,
@@ -2553,7 +2552,7 @@ int                oyProfile_AddDevice(oyProfile_s       * profile,
       model_idi = oyValueUInt32( model_idi );
       memcpy( &header->model, &model_idi, 4 );
 
-      oyAllocHelper_m_( tag_block, char, 132, 0, return 0 );
+      oyStruct_AllocHelper_m_( tag_block, char, 132, tag, return 0 );
       error = !memcpy( tag_block, data, 132 );
       error = oyProfileTag_Set( tag, (icTagSignature)*hi,
                                 (icTagTypeSignature)*hi,

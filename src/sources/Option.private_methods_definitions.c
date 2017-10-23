@@ -342,9 +342,8 @@ int            oyOption_SetFromInt_  ( oyOption_s_       * obj,
 
     if(!s->value)
     {
-      oyAllocHelper_m_( s->value, oyValue_u, 1,
-                        s->oy_->allocateFunc_,
-                        error = 1 );
+      oyStruct_AllocHelper_m_( s->value, oyValue_u, 1,
+                               s, error = 1 );
       if(pos == 0 &&
          s->value_type != oyVAL_INT_LIST)
         s->value_type = oyVAL_INT;
@@ -366,9 +365,8 @@ int            oyOption_SetFromInt_  ( oyOption_s_       * obj,
         old_int = s->value->int32;
 
       s->value->int32_list = 0;
-      oyAllocHelper_m_( s->value->int32_list, int32_t, pos + 2,
-                        s->oy_->allocateFunc_,
-                        error = 1 );
+      oyStruct_AllocHelper_m_( s->value->int32_list, int32_t, pos + 2,
+                               s, error = 1 );
 
       if(!error && old_list)
       {
@@ -426,8 +424,7 @@ int            oyOption_MoveInStruct_( oyOption_s_       * option,
       option->value_type = 0;
     }
 
-    oyAllocHelper_m_( option->value, oyValue_u, 1, option->oy_->allocateFunc_,
-                      error = 1 );
+    oyStruct_AllocHelper_m_( option->value, oyValue_u, 1, option, error = 1 );
   }
 
   if(error <= 0)

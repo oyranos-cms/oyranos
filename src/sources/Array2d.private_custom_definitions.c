@@ -75,16 +75,16 @@ int oyArray2d_Init__Members( oyArray2d_s_ * array2d OY_UNUSED )
 int oyArray2d_Copy__Members( oyArray2d_s_ * dst, oyArray2d_s_ * src)
 {
   int error = 0, i, size;
-  oyAlloc_f allocateFunc_ = 0;
 #if 0
+  oyAlloc_f allocateFunc_ = 0;
   oyDeAlloc_f deallocateFunc_ = 0;
 #endif
 
   if(!dst || !src)
     return 1;
 
-  allocateFunc_ = dst->oy_->allocateFunc_;
 #if 0
+  allocateFunc_ = dst->oy_->allocateFunc_;
   deallocateFunc_ = dst->oy_->deallocateFunc_;
 #endif
 
@@ -94,8 +94,8 @@ int oyArray2d_Copy__Members( oyArray2d_s_ * dst, oyArray2d_s_ * src)
   for(i = 0; i < dst->height; ++i)
   {
     size = dst->width * oyDataTypeGetSize( dst->t );
-    oyAllocHelper_m_( dst->array2d[i], unsigned char, size, allocateFunc_,
-                      error = 1; break );
+    oyStruct_AllocHelper_m_( dst->array2d[i], unsigned char, size,
+                             dst, error = 1; break );
     error = !memcpy( dst->array2d[i], src->array2d[i], size );
   }
 

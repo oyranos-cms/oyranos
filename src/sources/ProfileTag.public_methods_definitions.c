@@ -196,8 +196,7 @@ OYAPI oyProfileTag_s * OYEXPORT
     s->size_ = tag_size;
     if(s->size_)
     {
-      oyAllocHelper_m_( s->block_, char, tag_size, s->oy_->allocateFunc_,
-                        return 0 );
+      oyStruct_AllocHelper_m_( s->block_, char, tag_size, s, return 0 );
       memcpy( s->block_, tag_block, tag_size );
     }
   }

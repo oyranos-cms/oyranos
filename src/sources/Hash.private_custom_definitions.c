@@ -52,10 +52,10 @@ void oyHash_Release__Members( oyHash_s_ * hash )
  */
 int oyHash_Init__Members( oyHash_s_ * hash )
 {
-  oyAllocHelper_m_( hash->oy_->hash_ptr_,
+  oyStruct_AllocHelper_m_( hash->oy_->hash_ptr_,
                     unsigned char,
                     OY_HASH_SIZE*2,
-                    hash->oy_->allocateFunc_,
+                    hash,
                     oyHash_Release_( &hash ));
 
   return 0;

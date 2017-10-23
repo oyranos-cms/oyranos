@@ -791,7 +791,7 @@ oyProfileTag_s * oyProfile_GetTagByPos_( oyProfile_s_    * profile,
       uint32_t * hi = (uint32_t*)&h;
       oyPointer tag_block = 0;
 
-      oyAllocHelper_m_( tag_block, char, 132, 0, return 0 );
+      oyStruct_AllocHelper_m_( tag_block, char, 132, tag_, return 0 );
       error = !memcpy( tag_block, s->block_, 132 );
       error = oyProfileTag_Set( (oyProfileTag_s*)tag_,
                                 (icTagSignature)*hi,
@@ -839,7 +839,7 @@ oyProfileTag_s * oyProfile_GetTagByPos_( oyProfile_s_    * profile,
         {
           icTagBase * tag_base = 0;
 
-          oyAllocHelper_m_( tag_block, char, tag_size, 0, return 0 );
+          oyStruct_AllocHelper_m_( tag_block, char, tag_size, tag_, return 0 );
           tmp = &((char*)s->block_)[offset];
           error = !memcpy( tag_block, tmp, tag_size );
           if(error) { WARNc_S("Unable to copy CMM name"); }

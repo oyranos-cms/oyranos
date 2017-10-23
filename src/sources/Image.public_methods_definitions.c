@@ -488,7 +488,6 @@ static int oyImage_CreateFillArray_  ( oyImage_s         * image,
   int is_allocated = 0;
   int data_size, ay;
   int array_width, array_height;
-  oyAlloc_f allocateFunc_ = 0;
   unsigned char * line_data = 0;
   int i,j, height = 0;
 
@@ -542,9 +541,6 @@ static int oyImage_CreateFillArray_  ( oyImage_s         * image,
     {
       *array = (oyArray2d_s*) a;
 
-      if(a->oy_)
-        allocateFunc_ = a->oy_->allocateFunc_;
-
       error = !a;
       if(!error)
       {
@@ -555,11 +551,10 @@ static int oyImage_CreateFillArray_  ( oyImage_s         * image,
 
           for(ay = 0; ay < array_height; ++ay)
             if(!a->array2d[ay])
-              oyAllocHelper_m_( a->array2d[ay], 
+              oyStruct_AllocHelper_m_( a->array2d[ay], 
                               unsigned char,
                               array_width * data_size,
-                              allocateFunc_,
-                              error = 1; break );
+                              a, error = 1; break );
         } else if(allocate_method == 0)
         {
           for( i = 0; i < array_height; )

@@ -56,7 +56,7 @@ const char *   oyContextCollectData_ ( oyStruct_s        * s,
                                        oyStructList_s    * outs )
 {
   int error = !s;
-  const char * model = 0;
+  const char * model = NULL;
 
   char * hash_text = NULL;
 
