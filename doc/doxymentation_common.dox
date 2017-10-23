@@ -35,38 +35,38 @@
     @section path_vars Path Variables
     The XDG variables affect Oyranos' profile search. Oyranos searches under
     each provided paths color/icc directory, 
-    e.g. XDG_DATA_HOME=~/.local/share results in a additional search in
+    e.g. \b XDG_DATA_HOME=~/.local/share results in a additional search in
     ~/.local/share/color/icc. More details can be found in <a href="http://www.oyranos.org/wiki/index.php?title=OpenIccDirectoryProposal">OpenIccDirectoryProposal at ColourWiki</a>.
 
     @section i18n_vars Internationalisation Variables
-    OY_LOCALEDIR is described together with the internal ::oy_domain_codeset.
+    ::OY_LOCALEDIR is described together with the internal ::oy_domain_codeset.
 
     @section runtime_vars Runtime Variables
-    OY_MODULE_PATH can contain paths to meta and normal modules together.
+    ::OY_MODULE_PATH can contain paths to meta and normal modules together.
     The given paths are scanned recursively to find the modules.
 
     @section debug_vars Debugging Variables
-    OY_DEBUG influences the internal ::oy_debug integer variable. Its value
+    ::OY_DEBUG influences the internal ::oy_debug integer variable. Its value
     changes the output level. See as well oyranos_debug.[h,c] . The configure
     switch --enable-debug enables most of the available output. \n
-    OY_DEBUG_MEMORY sets the internal ::oy_debug_memory integer variable on and
+    ::OY_DEBUG_MEMORY sets the internal ::oy_debug_memory integer variable on and
     helps somewhat in detecting memory leaks. This variable is dangerous and 
     should not to be run for production use. \n
-    OY_DEBUG_DB_MODULE can explicitely specify a module registration string
+    ::OY_DEBUG_DB_MODULE can explicitely specify a module registration string
     for testing. \n
-    OY_DEBUG_OBJECTS is used to frequently print infos 
-    about objects on stderr. The value of OY_DEBUG_OBJECTS can be a
+    ::OY_DEBUG_OBJECTS is used to frequently print infos 
+    about objects on stderr. The value of ::OY_DEBUG_OBJECTS can be a
     - Object ID or a
     - type name like "oyImage_s","Image" to track all oyImage_s type objects or
     - "1" to print track informations about all trackable objects.
     - "-1" to omit printing track informations.
  
-    OY_DEBUG_SIGNALS sets the internal ::oy_debug_signals integer variable on and
+    ::OY_DEBUG_SIGNALS sets the internal ::oy_debug_signals integer variable on and
     helps in tracing signals. This variable is dangerous and 
     should not to be run for production use. \n
-    OY_DEBUG_WRITE together with OY_DEBUG is used to tell, that a file output
+    ::OY_DEBUG_WRITE together with ::OY_DEBUG is used to tell, that a file output
     is appreciated. Writing files will usually slow down debugging. \n
-    OY_BACKTRACE can be set to a debug message string and will then place
+    ::OY_BACKTRACE can be set to a debug message string and will then place
     a backtrace text from gdb into the console. That needs the debug message
     to be visible.
  */
