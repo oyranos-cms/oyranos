@@ -1811,7 +1811,7 @@ char * lcmsFilterNode_GetText        ( oyFilterNode_s    * node,
     {
       temp = lcmsImage_GetText( out_image, verbose, oyAllocateFunc_ );
       hashTextAdd_m( temp );
-      oyDeAllocateFunc_(temp); temp = 0;
+      oyStruct_DeAllocate( (oyStruct_s*) s, temp ); temp = 0;
     }
     hashTextAdd_m( "\n </data_out>\n" );
   }

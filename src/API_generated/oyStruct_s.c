@@ -189,6 +189,23 @@ OYAPI oyPointer  OYEXPORT
 
   return allocateFunc( size );
 }
+/** Function oyStruct_DeAllocate
+ *  @brief   let a object deallocate some memory
+ *
+ *  @version Oyranos: 0.9.7
+ *  @since   2017/10/23 (Oyranos: 0.9.7)
+ *  @date    2017/10/23
+ */
+OYAPI void OYEXPORT  oyStruct_DeAllocate ( oyStruct_s        * st,
+                                           oyPointer           ptr )
+{
+  oyDeAlloc_f deallocateFunc = oyDeAllocateFunc_;
+
+  if(st && st->oy_ && st->oy_->deallocateFunc_)
+    deallocateFunc = st->oy_->deallocateFunc_;
+
+  deallocateFunc( ptr );
+}
 
 
 /* Locking function definitions { */
