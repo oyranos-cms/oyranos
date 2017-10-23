@@ -174,9 +174,9 @@ int                oyDbInitialise_  ( void )
   oyOptions_s * opts = 0,
               * result_opts = 0;
 
-  if(getenv("OY_DEBUG_DB_MODULE"))
+  if(getenv(OY_DEBUG_DB_MODULE))
   {
-    oy_prefered_db_ = getenv("OY_DEBUG_DB_MODULE");
+    oy_prefered_db_ = getenv(OY_DEBUG_DB_MODULE);
     oyMessageFunc_p( oyMSG_DBG, NULL, OY_DBG_FORMAT_
                      " selecting OY_DEBUG_DB_MODULE=\"%s\"",OY_DBG_ARGS_, oy_prefered_db_ );
   }

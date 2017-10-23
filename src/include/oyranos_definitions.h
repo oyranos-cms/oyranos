@@ -38,30 +38,53 @@
 #define OY_SYS_PATH2                    "/usr/local"
 /** @brief Oyranos debug environment variable
  *
+ *  @see @ref debug_vars
+ *
  *  @since 0.9.0
  */
 #define OY_DEBUG                       "OY_DEBUG"
 /** @brief Oyranos debug environment variable
+ *
+ *  @see @ref debug_vars
  *
  *  @since 0.9.0
  */
 #define OY_DEBUG_MEMORY                "OY_DEBUG_MEMORY"
 /** @brief Oyranos debug environment variable
  *
+ *  @see @ref debug_vars
+ *
  *  @since 0.9.6
  */
 #define OY_DEBUG_OBJECTS               "OY_DEBUG_OBJECTS"
 /** @brief Oyranos debug environment variable
+ *
+ *  @see @ref debug_vars
  *
  *  @since 0.9.0
  */
 #define OY_DEBUG_SIGNALS               "OY_DEBUG_SIGNALS"
 /** @brief Oyranos debug environment variable
  *
+ *  Selects a prefered module to run the configuration engine with
+ *  persistent DB and signaling. The text format is like for @ref registration.
+ *  A default is \b "elDB" or \b "oiDB" depending on your system.
+ *
+ *  @see @ref debug_vars
+ *
+ *  @since 0.9.7
+ */
+#define OY_DEBUG_DB_MODULE             "OY_DEBUG_DB_MODULE"
+/** @brief Oyranos debug environment variable
+ *
+ *  @see @ref debug_vars
+ *
  *  @since 0.9.0
  */
 #define OY_BACKTRACE                   "OY_BACKTRACE"
 /** @brief Oyranos modules/CMM's environment variable
+ *
+ *  @see @ref runtime_vars
  *
  *  @since 0.1.8
  */
