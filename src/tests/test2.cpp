@@ -4208,14 +4208,14 @@ oyTESTRESULT_e testCMMDBListing ()
   oyOption_s * o = 0;
   char * val = 0;
 
-  error = oyConfigs_FromDB( "//" OY_TYPE_STD "", NULL, &configs, 0 );
+  error = oyConfigs_FromDB( OY_DEVICE_STD "/monitor", NULL, &configs, 0 );
   j_n = oyConfigs_Count( configs );
   if( !error )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyConfigs_FromDB( \"//" OY_TYPE_STD "\" ) count: %d     ", j_n );
+    "oyConfigs_FromDB( \"" OY_DEVICE_STD "/monitor" "\" ) count: %d     ", j_n );
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
-    "oyConfigs_FromDB( \"//" OY_TYPE_STD "\" ) count: %d     ", j_n );
+    "oyConfigs_FromDB( \"" OY_DEVICE_STD "/monitor" "\" ) count: %d     ", j_n );
   }
   for( j = 0; j < j_n; ++j )
   {
