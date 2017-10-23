@@ -118,7 +118,7 @@ int oyStructList_Copy__Members( oyStructList_s_ * dst, oyStructList_s_ * src)
 
   dst->n_reserved_ = (src->n_ > 10) ? (int)(src->n_ * 1.5) : 10;
   dst->n_ = src->n_;
-  dst->ptr_ = oyAllocateFunc_( sizeof(int*) * dst->n_reserved_ );
+  dst->ptr_ = oyStruct_Allocate( (oyStruct_s*) dst, sizeof(int*) * dst->n_reserved_ );
   memset( dst->ptr_, 0, sizeof(int*) * dst->n_reserved_ );
 
   for(i = 0; i < src->n_; ++i)
