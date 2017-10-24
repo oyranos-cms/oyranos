@@ -11,16 +11,15 @@ OYAPI int  OYEXPORT
                                         const char      * nick,
                                         const char      * name,
                                         const char      * description );
-OYAPI int  OYEXPORT
-                 oyObject_SetName         ( oyObject_s        object,
-                                        const char      * name,
-                                        oyNAME_e          type );
+OYAPI int OYEXPORT oyObject_SetName  ( oyObject_s          object,
+                                       const char        * text,
+                                       oyNAME_e            type );
 OYAPI int  OYEXPORT
                  oyObject_CopyNames       ( oyObject_s        dest,
                                         oyObject_s        src );
-OYAPI const  char  * OYEXPORT
-                oyObject_GetName         ( const oyObject_s  object,
-                                        oyNAME_e          type );
+OYAPI const char * OYEXPORT oyObject_GetName (
+                                       const oyObject_s    object,
+                                       oyNAME_e            type );
 /*oyPointer_s * oyObject_GetCMMPtr       ( oyObject_s        object,
                                         const char      * cmm );
 oyObject_s   oyObject_SetCMMPtr       ( oyObject_s        object,

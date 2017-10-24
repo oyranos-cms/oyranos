@@ -286,17 +286,18 @@ oyObject_s   oyObject_SetParent      ( oyObject_s        o,
 /** @brief   object naming
  *  @ingroup  objects_generic
  *
- *  @param[in]    object         the object
- *  @param[in]    text           the name to set
- *  @param[in]    type           the kind of name 
- *  @return                      0 == success, > 0 error, < 0 issue
+ *  @param[in]     object              the object
+ *  @param[in]     text                the name to set
+ *  @param[in]     type                the kind of name
+ *  @return                            0 == success, > 0 error, < 0 issue
  *
- *  @since Oyranos: version 0.1.8
- *  @date  november 2007 (API 0.1.8)
+ *  @version Oyranos: 0.3.0
+ *  @data    2011/04/09
+ *  @since   2007/11/00 (API 0.1.8)
  */
-int          oyObject_SetName         ( oyObject_s        object,
-                                        const char      * text,
-                                        oyNAME_e          type )
+int          oyObject_SetName        ( oyObject_s          object,
+                                       const char        * text,
+                                       oyNAME_e            type )
 {
   int error = 0;
 
@@ -313,8 +314,8 @@ int          oyObject_SetName         ( oyObject_s        object,
     char key[24];
     sprintf(key, "///oyNAME_s+%d", type );
     error = oyOptions_SetFromText( &object->handles_,
-                                 key,
-                                 text, OY_CREATE_NEW );
+                                   key,
+                                   text, OY_CREATE_NEW );
   }
   return !(text && type >= oyNAME_NAME && object && error <= 0);
 }
