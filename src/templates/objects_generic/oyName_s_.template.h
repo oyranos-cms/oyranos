@@ -29,6 +29,7 @@ struct {{ class.name }} {
 
 {% block GeneralPublicMethodsDeclarations %}
 /* {{ class.name }} common object functions { */
+oyName_s *   oyName_newWith          ( oyAlloc_f           allocateFunc );
 oyName_s *   oyName_new              ( oyObject_s          object );
 
 oyName_s *   oyName_copy             ( oyName_s          * obj,

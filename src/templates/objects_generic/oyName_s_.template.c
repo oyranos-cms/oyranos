@@ -11,20 +11,20 @@
  *  @internal
  *  @memberof oyName_s
  *
- *  @since Oyranos: version 0.1.8
- *  @date  2008/01/08 (API 0.1.8)
+ *  @version Oyranos: 0.9.7
+ *  @date    2017/10/22
+ *  @since   2008/01/08 (Oyranos: 0.1.8)
  */
-oyName_s *   oyName_new              ( oyObject_s          object )
+oyName_s *   oyName_newWith          ( oyAlloc_f           allocateFunc )
 {
-  oyAlloc_f allocateFunc = oyAllocateFunc_;
   /* ---- start of object constructor ----- */
   oyOBJECT_e type = oyOBJECT_NAME_S;
 # define STRUCT_TYPE oyName_s
   int error = 0;
   STRUCT_TYPE * s = 0;
 
-  if(object)
-    allocateFunc = object->allocateFunc_;
+  if(!allocateFunc)
+    allocateFunc = oyAllocateFunc_;
 
   s = (STRUCT_TYPE*)allocateFunc(sizeof(STRUCT_TYPE));
 
@@ -50,6 +50,22 @@ oyName_s *   oyName_new              ( oyObject_s          object )
   /* ---- end of object constructor ------- */
 
   return s;
+}
+
+/** @brief oyName_s new
+ *  @internal
+ *  @memberof oyName_s
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  2008/01/08 (API 0.1.8)
+ */
+oyName_s *   oyName_new              ( oyObject_s          object )
+{
+  oyAlloc_f allocateFunc = oyAllocateFunc_;
+  if(object)
+    allocateFunc = object->allocateFunc_;
+
+  return oyName_newWith( allocateFunc );
 }
 
 /** @brief oyName_s copy
@@ -132,7 +148,7 @@ int          oyName_copy_            ( oyName_s          * dest,
     s = oyName_set_ ( s, src->description, oyNAME_DESCRIPTION, allocateFunc, deallocateFunc );
 
   if(!s)
-    s = oyName_new(0);
+    s = oyName_new( object );
 
   if(error <= 0)
     error = !memcpy( s->lang, src->lang, 8 );
@@ -208,7 +224,7 @@ oyName_s *   oyName_set_             ( oyName_s          * obj,
   }
 
   if(!s)
-    s = oyName_new(0);
+    s = oyName_newWith( allocateFunc );
 
   if(!s) return s;
 
