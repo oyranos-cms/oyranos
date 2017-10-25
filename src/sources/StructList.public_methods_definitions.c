@@ -68,7 +68,7 @@ int              oyStructList_MoveIn ( oyStructList_s    * list,
     {
       len =  sizeof(oyPointer) * mult;
       s->n_reserved_ = mult;
-      tmp = oyAllocateFunc_(len);
+      tmp = oySTRUCT_ALLOC_m(s, len);
 
       error = !tmp;
 
@@ -113,7 +113,7 @@ int              oyStructList_MoveIn ( oyStructList_s    * list,
         if(real_copy)
         {
           if(s->ptr_)
-            oyDeAllocateFunc_(s->ptr_);
+            oySTRUCT_FREE_m(s, s->ptr_);
           s->ptr_ = tmp;
         }
       }

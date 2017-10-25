@@ -132,7 +132,7 @@ int oyImage_CombinePixelLayout2Mask_ ( oyImage_s_        * image,
 
 
   oyDeAllocateFunc_(text);
-  oyDeAllocateFunc_(hash_text);
+  oySTRUCT_FREE_m(s, hash_text);
 
   if(s->oy_->deallocateFunc_)
   {

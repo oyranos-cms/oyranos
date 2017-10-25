@@ -2131,14 +2131,13 @@ char * l2cmsImage_GetText            ( oyImage_s         * image,
   oySprintf_( text,   "  </oyImage_s>");
   hashTextAdd_m( text );
 
-  if(allocateFunc == oyAllocateFunc_)
-    oyDeAllocateFunc_(text);
-  else
+  oyDeAllocateFunc_(text);
+
+  if(allocateFunc != oyStruct_GetAllocator((oyStruct_s*)s))
   {
-    oyDeAllocateFunc_(text);
     text = hash_text;
     hash_text = oyStringCopy_( text, allocateFunc );
-    oyDeAllocateFunc_( text );
+    oySTRUCT_FREE_m( s, text );
   }
   text = 0;
 

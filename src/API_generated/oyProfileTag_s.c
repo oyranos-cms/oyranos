@@ -113,8 +113,8 @@ OYAPI int OYEXPORT
  *
  *  For the effect of the parameters look at the appropriate module
  *  documentation and the function infos.
- *  @see oyraProfileTag_Create
- *  @see oyraFunctionGetInfo
+ *
+ *  @see @ref profile_modules
  *
  *  @param[in]     list                a list of arguments
  *  @param[in]     tag_type            type to create
@@ -328,8 +328,11 @@ OYAPI int  OYEXPORT
   return error;
 }
 
-/** Function oyProfileTag_Get
+/** oyProfileTag_Get()
+ *  @brief    obtain parsed data and describing information from a tag
  *  @memberof oyProfileTag_s
+ *
+ *  Compile time supported tags are listed here @ref profile_modules .
  *
  *  @param[in]     tag                 the tag to read
  *  @return                            a list of strings
@@ -338,7 +341,7 @@ OYAPI int  OYEXPORT
  *  @since   2008/06/19 (Oyranos: 0.1.8)
  *  @date    2008/05/17
  */
-oyStructList_s*oyProfileTag_Get      ( oyProfileTag_s    * tag )
+oyStructList_s *   oyProfileTag_Get  ( oyProfileTag_s    * tag )
 {
   oyProfileTag_s_ * s = (oyProfileTag_s_*)tag;
   int error = !s;
