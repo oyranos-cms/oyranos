@@ -2029,12 +2029,15 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s_   * core,
               * opts_tmp2 = 0;
   oyOption_s * o = 0, * c, * r;
   int error = !core || !core->api4_;
-  char * type_txt = oyFilterRegistrationToText( core->registration_,
-                                                oyFILTER_REG_TYPE, 0 );
-  char * renderer = NULL,
+  char * type_txt = NULL,
+       * renderer = NULL,
        * context = NULL;
   oyCMMapi5_s * api5 = 0;
   int i,n;
+
+  if(!error)
+    type_txt = oyFilterRegistrationToText( core->registration_,
+                                           oyFILTER_REG_TYPE, 0 );
 
   /* by default we parse both sources */
   if(!(flags & OY_SELECT_FILTER) && !(flags & OY_SELECT_COMMON))
@@ -3452,7 +3455,9 @@ OYAPI oyConfDomain_s * OYEXPORT
   oyConfDomain_s_ * s = (oyConfDomain_s_*) obj;
 
   if(s)
-    oyCheckType__m( oyOBJECT_CONF_DOMAIN_S, return 0 );
+  { oyCheckType__m( oyOBJECT_CONF_DOMAIN_S, return NULL ); }
+  else
+    return NULL;
 
   s = oyConfDomain_Copy_( s, (oyObject_s) object );
 
@@ -3507,7 +3512,9 @@ OYAPI const char * OYEXPORT
   const char * text = 0;
 
   if(s)
-    oyCheckType__m( oyOBJECT_CONF_DOMAIN_S, return 0 );
+  { oyCheckType__m( oyOBJECT_CONF_DOMAIN_S, return NULL ); }
+  else
+    return NULL;
 
   text = oyConfDomain_GetText_( s, name, type );
 
@@ -3533,7 +3540,9 @@ OYAPI const char ** OYEXPORT
   const char ** texts = 0;
 
   if(s)
-    oyCheckType__m( oyOBJECT_CONF_DOMAIN_S, return 0 );
+  { oyCheckType__m( oyOBJECT_CONF_DOMAIN_S, return NULL ); }
+  else
+    return NULL;
 
   texts = oyConfDomain_GetTexts_( s );
 

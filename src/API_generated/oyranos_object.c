@@ -153,10 +153,11 @@ char *         oyFilterRegistrationToSTextField (
       if(t)
       {
         text = oyStringCopy_( erg, oyAllocateFunc_ );
-        text[*len] = 0;
+        if(text)
+          text[*len] = 0;
         /* i18n hint: a string "with '.' is not allowed" */
         WARNc3_S( "oyFILTER_TOP_TYPE %s: %s (%s)",
-                  _("with \'.\' is not allowed"), text, registration );
+                  _("with \'.\' is not allowed"), oyNoEmptyString_m_(text), registration );
         goto clean;
       }
     }
@@ -172,9 +173,10 @@ char *         oyFilterRegistrationToSTextField (
       if(t)
       {
         text = oyStringCopy_( erg, oyAllocateFunc_ );
-        text[*len] = 0;
+        if(text)
+          text[*len] = 0;
         WARNc3_S( "oyFILTER_REG_TYPE %s: %s (%s)",
-                  _("with \'.\' is not allowed"), text, registration );
+                  _("with \'.\' is not allowed"), oyNoEmptyString_m_(text), registration );
         goto clean;
       }
     }

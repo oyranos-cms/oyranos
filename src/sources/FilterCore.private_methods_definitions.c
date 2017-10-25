@@ -20,7 +20,8 @@ int          oyFilterCore_SetCMMapi4_( oyFilterCore_s_   * s,
   if(error <= 0)
     allocateFunc_ = s->oy_->allocateFunc_;
 
-  error = !(cmm_api4 && cmm_api4->type_ == oyOBJECT_CMM_API4_S);
+  if(error <= 0)
+    error = !(cmm_api4 && cmm_api4->type_ == oyOBJECT_CMM_API4_S);
 
   if(error <= 0)
   {

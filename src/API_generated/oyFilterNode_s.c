@@ -312,10 +312,11 @@ oyFilterNode_s *   oyFilterNode_Create(const char        * registration,
 
   s = (oyFilterNode_s_*) oyFilterNode_New( object );
   error = !s;
-  allocateFunc_ = s->oy_->allocateFunc_;
 
   if(error <= 0)
   {
+    allocateFunc_ = s->oy_->allocateFunc_;
+
     s->core = (oyFilterCore_s_*)oyFilterCore_Copy( filter, object );
     if(!s->core)
     {
@@ -401,7 +402,7 @@ oyStruct_s *   oyFilterNode_GetData  ( oyFilterNode_s    * node,
 
   oyFilterSocket_Release( &socket );
 
-  if(data->copy)
+  if(data && data->copy)
   {
     data = data->copy( data, 0 );
     if(oy_debug_objects >= 0)

@@ -326,8 +326,8 @@ int          oyObject_SetName        ( oyObject_s          object,
 {
   int error = 0;
 
-  if( object->type_ != oyOBJECT_OBJECT_S )
-    return 0;
+  if( !object || object->type_ != oyOBJECT_OBJECT_S )
+    return -1;
 
   if(type <= oyNAME_DESCRIPTION)
   {

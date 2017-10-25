@@ -344,7 +344,7 @@ OYAPI int  OYEXPORT
                                                   i, oyOBJECT_OBSERVER_S );
       if(obs)
         --obs->disable_ref;
-      if(obs->disable_ref < 0)
+      if(obs && obs->disable_ref < 0)
       {
         oyOption_s_ * o_ = (oyOption_s_*)o;
         obs->disable_ref = 0;

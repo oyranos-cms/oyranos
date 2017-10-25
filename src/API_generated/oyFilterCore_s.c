@@ -174,7 +174,8 @@ const char * oyFilterCore_GetText    ( oyFilterCore_s    * filter,
     text = oyAllocateWrapFunc_( 512, s->oy_ ? s->oy_->allocateFunc_ : 0 );
     if(!text)
       error = 1;
-    sprintf(text, "<oyFilterCore_s registration=\"%s\" category=\"%s\" version=\"%d.%d.%d\"/>\n",
+    if(!error)
+      sprintf(text, "<oyFilterCore_s registration=\"%s\" category=\"%s\" version=\"%d.%d.%d\"/>\n",
                   s->registration_,
                   s->category_,
                   s->api4_->version[0],

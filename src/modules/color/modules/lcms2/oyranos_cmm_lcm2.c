@@ -1980,7 +1980,7 @@ oyPointer l2cmsFilterNode_CmmIccContextToMem (
   /* additional tags for debugging */
   if(!error && (oy_debug || verbose))
   {
-    if(!error && size)
+    if(!error)
     {
       size_ = *size;
 
