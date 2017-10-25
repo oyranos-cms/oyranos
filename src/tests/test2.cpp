@@ -7369,12 +7369,13 @@ static int test_number = 0;
 }
 
 int results[oyTESTRESULT_UNKNOWN+1];
-char * tests_failed[64];
-char * tests_xfailed[64];
+static const int tn = 64;
+char * tests_failed[tn];
+char * tests_xfailed[tn];
 
 oyTESTRESULT_e oyTestRun             ( oyTESTRESULT_e    (*test)(void),
                                        const char        * test_name,
-                                       int                 number OY_UNUSED )
+                                       int                 number )
 {
   oyTESTRESULT_e error = oyTESTRESULT_UNKNOWN;
 
@@ -7386,9 +7387,9 @@ oyTESTRESULT_e oyTestRun             ( oyTESTRESULT_e    (*test)(void),
   fprintf(stdout, "\t%s", oyTestResultToString(error));
 
   if(error == oyTESTRESULT_FAIL)
-    tests_failed[results[error]] = (char*)test_name;
+    tests_failed[number] = (char*)test_name;
   if(error == oyTESTRESULT_XFAIL)
-    tests_xfailed[results[error]] = (char*)test_name;
+    tests_xfailed[number] = (char*)test_name;
   results[error] += 1;
 
   /* print */
@@ -7427,6 +7428,8 @@ int main(int argc, char** argv)
            "  developed: " OYRANOS_DATE
            "\n\n" );
 
+  memset(tests_xfailed, 0, sizeof(char*) * tn);
+  memset(tests_failed, 0, sizeof(char*) * tn);
   /* do tests */
 
   TEST_RUN( testVersion, "Version matching" );
@@ -7491,12 +7494,14 @@ int main(int argc, char** argv)
              results[oyTESTRESULT_UNKNOWN]
             );
 
-    for(i = 0; i < results[oyTESTRESULT_XFAIL]; ++i)
-      fprintf( stdout, "    %s: \"%s\"\n",
-               oyTestResultToString( oyTESTRESULT_XFAIL), tests_xfailed[i] );
-    for(i = 0; i < results[oyTESTRESULT_FAIL]; ++i)
-      fprintf( stdout, "    %s: \"%s\"\n",
-               oyTestResultToString( oyTESTRESULT_FAIL), tests_failed[i] );
+    for(i = 0; i < tn; ++i)
+      if(tests_xfailed[i])
+        fprintf( stdout, "    %s: [%d] \"%s\"\n",
+                 oyTestResultToString( oyTESTRESULT_XFAIL), i, tests_xfailed[i] );
+    for(i = 0; i < tn; ++i)
+      if(tests_failed[i])
+        fprintf( stdout, "    %s: [%d] \"%s\"\n",
+                 oyTestResultToString( oyTESTRESULT_FAIL), i, tests_failed[i] );
 
     if(error)
       fprintf( stdout, "    Tests FAILED\n" );
