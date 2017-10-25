@@ -13,10 +13,8 @@
  *  @since    2008/12/16
  */
 
-/** \addtogroup module_api
- *  @{ *//* module_api */
-/** \addtogroup modules
- *  @{ *//* modules */
+/** \addtogroup oyIM_profile oyIM Module
+ *  @{ */
 
 #include "oyranos_config_internal.h"
 
@@ -2457,7 +2455,8 @@ oyStructList_s * oyIMProfileTag_GetValues(
 /** oyIMProfileTag_Create()
  *  @brief Creates a ICC profile tag
  *
- *  This is a module function.
+ *  This is a module function. It implements
+ *  oyCMMProfileTag_Create_f oyCMMProfileTag_Create.
  *  @see oyProfileTag_Create()
  *
  *  The output depends on the tag type signature and arguments in list:
@@ -3325,5 +3324,4 @@ oyStructList_s *   oyCurvesFromTag   ( char              * mem,
   return list;
 }
 
-/**  @} *//* modules */
-/**  @} *//* module_api */
+/**  @} *//* oyIM_profile */
