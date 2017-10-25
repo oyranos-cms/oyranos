@@ -16,7 +16,7 @@
 #include "oyranos_sentinel.h"
 #include "oyranos_string.h"
 
-#define TAXI_URL "http://icc.opensuse.org"
+#define TAXI_URL "https://icc.opensuse.org"
 
 #ifndef oyNoEmptyString_m_
 #define oyNoEmptyString_m_(t) (t?t:"----")
@@ -223,13 +223,20 @@ int main( int argc, char ** argv )
   {
     char * manufacturers = oyReadUrlToMem_( TAXI_URL "/manufacturers",
                                             &size, "r", oyAllocateFunc_ );
-    if(manufacturers)
+    if(manufacturers && manufacturers[0])
     {
       char * t = oyAllocateFunc_(256);
+      memset(t,0,256);
       root = oyjl_tree_parse( manufacturers, t, 256 );
       if(t[0])
-        WARNc2_S( "%s: %s\n", _("found issues parsing JSON"), t );
+      {
+        WARNc3_S( "%s: %s\n%s", _("found issues parsing JSON"), t, manufacturers );
+      }
       oyFree_m_(t);
+    } else
+    {
+      fprintf(stderr, "%s\n", _("Could not download from WWW."));
+      return 1;
     }
     if(root)
     {
@@ -286,6 +293,12 @@ int main( int argc, char ** argv )
     char * fn = 0;
     const char * device_class = "dummy";
 
+    if(!device_db)
+    {
+      fprintf(stderr, "%s\n", _("Could not download from WWW."));
+      return 1;
+    }
+
     if(strstr(device_db, "EDID_") != NULL)
       device_class = "monitor";
 
@@ -302,7 +315,7 @@ int main( int argc, char ** argv )
 
         oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
                             "\n"OPENICC_DEVICE_JSON_FOOTER_BASE );
-        if(device_db) oyDeAllocateFunc_(device_db);
+        oyDeAllocateFunc_(device_db);
 
 
         if(db_download)
@@ -315,7 +328,7 @@ int main( int argc, char ** argv )
         }
         device_db = t; t = NULL;
 
-        t = oyAllocateFunc_(256);
+        oyAllocHelper_m_(t, char, 256, 0, error = 1; return error );
         root = oyjl_tree_parse( device_db, t, 256 );
         if(t[0])
           WARNc2_S( "%s: %s\n", _("found issues parsing JSON"), t );
@@ -395,7 +408,7 @@ int main( int argc, char ** argv )
                 if(t) oyDeAllocateFunc_(t); t = 0;
                 if(fn) oyDeAllocateFunc_(fn); fn = 0;
               }
-              break;
+              //break;
             }
             if(!taxi_id)
               printf("\n");
@@ -409,7 +422,7 @@ int main( int argc, char ** argv )
         if(!count)
           fprintf(stderr, "%s\n", _("Did you specify a 3 letter manufacturer code?"));
 
-        if(device_db) oyDeAllocateFunc_(device_db); device_db = 0;
+        if(device_db) { oyDeAllocateFunc_(device_db); device_db = NULL; }
   }
 
   oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );

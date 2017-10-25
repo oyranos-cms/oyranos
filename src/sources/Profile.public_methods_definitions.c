@@ -585,7 +585,7 @@ OYAPI oyProfile_s * OYEXPORT oyProfile_FromTaxiDB (
 
   if(taxi_id)
     mem = oyReadUrlToMemf_( &size, "r", oyAllocateFunc_,
-                            "http://icc.opensuse.org/profile/%s/profile.icc",
+                            "https://icc.opensuse.org/profile/%s/profile.icc",
                             taxi_id );
   else
     WARNc_S("No TAXI_id provided, Do not know what to download.");
