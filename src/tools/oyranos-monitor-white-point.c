@@ -331,7 +331,7 @@ int setWtptMode( oySCOPE_e scope, int wtpt_mode )
                                  &choices_string_list, &current );
     if(current == wtpt_mode)
       fprintf (stderr, "%s => %s\n", _("New white point mode"),
-               wtpt_mode<choices?choices_string_list[wtpt_mode]:"----");
+               (wtpt_mode<choices && choices_string_list) ? choices_string_list[wtpt_mode] : "----");
     else
       fprintf (stderr, "%s %s => %d != %d\n", _("!!! ERROR"), _("New white point mode"),
                wtpt_mode, current);
