@@ -1,4 +1,4 @@
-/** @file oyranos_cmm_l2cms.c
+/** @file oyranos_cmm_lcm2.c
  *
  *  Oyranos is an open source Color Management System 
  *
@@ -6,13 +6,14 @@
  *            2007-2017 (C) Kai-Uwe Behrmann
  *
  *  @brief    littleCMS CMM module for Oyranos
- *  @internal
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD <http://www.opensource.org/licenses/BSD-3-Clause>
  *  @since    2007/11/12
  */
 
+/** \addtogroup modules
+ *  @{ *//* modules */
 
 
 #include <lcms2.h>
@@ -30,6 +31,7 @@
 #include "oyCMMui_s_.h"
 #include "oyConnectorImaging_s_.h"
 #include "oyProfiles_s.h"
+#include "oyStructList_s.h"
 
 #include "oyranos_cmm.h"         /* the API's this CMM implements */
 #include "oyranos_config_internal.h"
@@ -711,7 +713,7 @@ int l2cmsCMMProfileReleaseWrap(oyPointer *p)
 }
 
 
-/** Function l2cmsCMMDataOpen
+/** l2cmsCMMDataOpen()
  *  @brief   oyCMMProfileOpen_t implementation
  *
  *  @version Oyranos: 0.1.10
@@ -1747,7 +1749,7 @@ oyProfiles_s * l2cmsProfilesFromOptions( oyFilterNode_s * node, oyFilterPlug_s *
   return profiles;
 }
 
-/** Function l2cmsFilterNode_CmmIccContextToMem
+/** l2cmsFilterNode_CmmIccContextToMem()
  *  @brief   implement oyCMMFilterNode_CreateContext_f()
  *
  *  @version Oyranos: 0.1.8
@@ -2010,28 +2012,18 @@ oyPointer l2cmsFilterNode_CmmIccContextToMem (
       /* Info tag */
       if(!error)
       {
-        oyStructList_s * list = 0;
+        oyStructList_s * list = oyStructList_Create( oyOBJECT_NONE, "l2cmsFilterNode_CmmIccContextToMem()", 0);
         char h[5] = {"Info"};
         uint32_t * hi = (uint32_t*)&h;
         char * cc_name = l2cmsFilterNode_GetText( node, oyNAME_NICK,
-                                                 oyAllocateFunc_ );
-        oyName_s * name = oyName_new(0);
+                                                  oyAllocateFunc_ );
         const char * lib_name = oyFilterNode_GetModuleName( node );
 
-        name = oyName_set_ ( name, cc_name, oyNAME_NAME,
-                             oyAllocateFunc_, oyDeAllocateFunc_ );
-        name = oyName_set_ ( name, lib_name, oyNAME_NICK,
-                             oyAllocateFunc_, oyDeAllocateFunc_ );
-        oyDeAllocateFunc_( cc_name );
-        list = oyStructList_New(0);
-        error = oyStructList_MoveIn( list,  (oyStruct_s**) &name, -1, 0 );
+        oyStructList_MoveInName( list, &cc_name, 0, oyNAME_NAME );
+        oyStructList_AddName( list, lib_name, 0, oyNAME_NICK );
 
-        if(!error)
-        {
-          info = oyProfileTag_Create( list, (icTagSignature)oyValueUInt32(*hi),
-                                      icSigTextType, 0, 0);
-          error = !info;
-        }
+        info = oyProfileTag_Create( list, (icTagSignature)oyValueUInt32(*hi),
+                                    icSigTextType, 0, 0);
 
         oyStructList_Release( &list );
 
@@ -2045,14 +2037,8 @@ oyPointer l2cmsFilterNode_CmmIccContextToMem (
       /* icSigCopyrightTag */
       if(!error && !cprt)
       {
-        oyStructList_s * list = 0;
-        const char * c_text = "no copyright; use freely";
-        oyName_s * name = oyName_new(0);
-
-        name = oyName_set_ ( name, c_text, oyNAME_NAME,
-                             oyAllocateFunc_, oyDeAllocateFunc_ );
-        list = oyStructList_New(0);
-        error = oyStructList_MoveIn( list, (oyStruct_s**) &name, -1, 0 );
+        oyStructList_s * list = oyStructList_New(0);
+        error = oyStructList_AddName( list, "no copyright; use freely", -1, oyNAME_NAME );
 
         if(!error)
         {
@@ -3130,8 +3116,10 @@ int l2cmsGetOptionsUI                ( oyCMMapiFilter_s   * module OY_UNUSED,
  *
  *  Abstract profiles can easily be merged into a multi profile transform.
  *
- *  @param         src_profile         a profile for source white point
- *  @param         dst_profile         a profile for target white point
+ *  @see lcm2CreateAbstractWhitePointProfile()
+ *
+ *  @param         cie_a               the white point coordinate
+ *  @param         cie_b               the white point coordinate
  *  @param         icc_profile_flags   profile flags
  *
  *  @version Oyranos: 0.9.7
@@ -3281,7 +3269,7 @@ const char * l2cmsInfoGetTextProfileC3(const char        * select,
 }
 const char *l2cms_texts_profile_create[4] = {"can_handle","create_profile","help",0};
 
-/** @instance l2cms_api10_cmm3
+/** l2cms_api10_cmm3
  *  @brief    littleCMS oyCMMapi10_s implementation
  *
  *  a filter for proofing effect profile creation
@@ -3327,6 +3315,7 @@ oyCMMapi10_s_    l2cms_api10_cmm3 = {
  *  @param         flags               the gamut check and softproof flags
  *  @param         intent              rendering intent
  *  @param         intent_proof        proof rendering intent
+ *  @param         icc_profile_flags   profile flags
  *
  *  @version Oyranos: 0.1.11
  *  @since   2009/11/04 (Oyranos: 0.1.10)
@@ -3558,7 +3547,7 @@ const char * l2cmsInfoGetTextProfileC2(const char        * select,
 #define OY_LCM2_CREATE_ABSTRACT_PROOFING_REGISTRATION OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH \
   "create_profile.proofing_effect.icc._" CMM_NICK "._CPU"
 
-/** @instance l2cms_api10_cmm2
+/** l2cms_api10_cmm2
  *  @brief    littleCMS oyCMMapi10_s implementation
  *
  *  a filter for proofing effect profile creation
@@ -3761,7 +3750,7 @@ const char * l2cmsInfoGetTextProfileC ( const char        * select,
 #define OY_LCM2_CREATE_MATRIX_REGISTRATION OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH \
   "create_profile.color_matrix.icc._" CMM_NICK "._CPU"
 
-/** @instance l2cms_api10_cmm
+/** l2cms_api10_cmm
  *  @brief    littleCMS oyCMMapi10_s implementation
  *
  *  a filter for simple profile creation
@@ -3798,7 +3787,7 @@ oyCMMapi10_s_    l2cms_api10_cmm = {
 #define OY_LCM2_DATA_CONVERT_REGISTRATION  OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH \
   "icc_color._" CMM_NICK "._CPU." oyCOLOR_ICC_DEVICE_LINK "_" l2cmsTRANSFORM
 
-/** @instance l2cms_api6_cmm
+/** l2cms_api6_cmm
  *  @brief    littleCMS oyCMMapi6_s implementation
  *
  *  a filter providing CMM API's
@@ -3830,7 +3819,7 @@ oyCMMapi6_s_ l2cms_api6_cmm = {
 };
 
 
-/** @instance l2cms_api7
+/** l2cms_api7
  *  @brief    littleCMS oyCMMapi7_s implementation
  *
  *  a filter providing CMM API's
@@ -3908,7 +3897,7 @@ const char * l2cmsApi4UiGetText (
   return 0;
 }
 const char * l2cms_api4_ui_texts[] = {"name", "category", "help", 0};
-/** @instance l2cms_api4_ui
+/** l2cms_api4_ui
  *  @brief    l2cms oyCMMapi4_s::ui implementation
  *
  *  The UI for l2cms.
@@ -3936,8 +3925,8 @@ oyCMMui_s_ l2cms_api4_ui = {
   (oyCMMapiFilter_s*)&l2cms_api4_cmm /* oyCMMapiFilter_s * parent */
 };
 
-/** @instance l2cms_api4_cmm
- *  @brief    littleCMS oyCMMapi4_s implementation
+/** l2cms_api4_cmm
+ *  @brief    littleCMS oyCMMapi4_s implementation for color context setup
  *
  *  a filter providing CMM API's
  *
@@ -4021,7 +4010,7 @@ const char * l2cmsInfoGetText         ( const char        * select,
 const char *l2cms_texts[5] = {"name","copyright","manufacturer","help",0};
 oyIcon_s l2cms_icon = {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "lcms_logo2.png"};
 
-/** @instance lcm2_cmm_module
+/** lcm2_cmm_module
  *  @brief    l2cms module infos
  *
  *  @version Oyranos: 0.1.10
@@ -4044,3 +4033,4 @@ oyCMM_s lcm2_cmm_module = {
   l2cmsCMMInit                         /**< oyCMMinfoInit_f */
 };
 
+/**  @} *//* modules */

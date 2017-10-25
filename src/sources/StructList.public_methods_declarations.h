@@ -48,14 +48,19 @@ OYAPI int  OYEXPORT
                  oyStructList_MoveInName (
                                        oyStructList_s    * texts,
                                        char             ** text,
-                                       int                 pos );
-OYAPI int  OYEXPORT
-                 oyStructList_AddName( oyStructList_s    * texts,
+                                       int                 pos,
+                                       oyNAME_e            type );
+/** @brief a short identifier for Language and Country, e.g. "de_DE" */
+#define oyNAME_LC (oyNAME_DESCRIPTION + 6)
+OYAPI int OYEXPORT oyStructList_AddName (
+                                       oyStructList_s    * list,
                                        const char        * text,
-                                       int pos );
-OYAPI const char *  OYEXPORT
-                 oyStructList_GetName( oyStructList_s    * texts,
-                                       int pos );
+                                       int                 pos,
+                                       oyNAME_e            type );
+OYAPI const char *  OYEXPORT oyStructList_GetName (
+                                       oyStructList_s    * texts,
+                                       int                 pos,
+                                       oyNAME_e            type );
 
 OYAPI oyStructList_s *  OYEXPORT
                  oyStructList_Create ( oyOBJECT_e          parent_type,

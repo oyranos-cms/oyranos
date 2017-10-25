@@ -1883,7 +1883,6 @@ OYAPI int OYEXPORT
                                           const char        * text )
 {
   oyStructList_s * list = 0;
-  oyName_s * name = oyName_new(0);
   int error = 0;
   oyProfileTag_s * tag = 0;
   icTagTypeSignature tt = icSigTextType;
@@ -1909,10 +1908,8 @@ OYAPI int OYEXPORT
       signature == icSigViewingCondDescTag))
     tt = icSigMultiLocalizedUnicodeType;
 
-  name = oyName_set_ ( name, text, oyNAME_NAME,
-                       oyAllocateFunc_, oyDeAllocateFunc_ );
   list = oyStructList_Create( oyOBJECT_NONE, "oyProfile_AddTagText", 0);
-  error = oyStructList_MoveIn( list, (oyStruct_s**) &name, 0, 0 );
+  error = oyStructList_AddName( list, text, -1, oyNAME_NAME );
 
   if(!error)
   {

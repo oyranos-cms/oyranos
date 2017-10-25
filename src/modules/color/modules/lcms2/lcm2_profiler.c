@@ -2082,5 +2082,5 @@ int            lcm2Version           ( )
  *  
  *  Most of the functions come with examples.
  *
- *  @{ */
+ */
 

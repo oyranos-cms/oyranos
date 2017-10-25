@@ -6,7 +6,6 @@
  *            2007-2016 (C) Kai-Uwe Behrmann
  *
  *  @brief    littleCMS CMM module for Oyranos
- *  @internal
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD <http://www.opensource.org/licenses/BSD-3-Clause>
@@ -29,6 +28,7 @@
 #include "oyCMMui_s_.h"
 #include "oyConnectorImaging_s_.h"
 #include "oyProfiles_s.h"
+#include "oyStructList_s.h"
 
 #include "oyranos_cmm.h"         /* the API's this CMM implements */
 #include "oyranos_generic.h"         /* oy_connector_imaging_static_object */
@@ -1535,21 +1535,15 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
       /* Info tag */
       if(!error)
       {
-        oyStructList_s * list = 0;
+        oyStructList_s * list = oyStructList_Create( oyOBJECT_NONE, "lcmsFilterNode_CmmIccContextToMem()", 0);
         char h[5] = {"Info"};
         uint32_t * hi = (uint32_t*)&h;
         char * cc_name = lcmsFilterNode_GetText( node, oyNAME_NICK,
                                                  oyAllocateFunc_ );
-        oyName_s * name = oyName_new(0);
         const char * lib_name = oyFilterNode_GetModuleName( node );
 
-        name = oyName_set_ ( name, cc_name, oyNAME_NAME,
-                             oyAllocateFunc_, oyDeAllocateFunc_ );
-        name = oyName_set_ ( name, lib_name, oyNAME_NICK,
-                             oyAllocateFunc_, oyDeAllocateFunc_ );
-        oyDeAllocateFunc_( cc_name );
-        list = oyStructList_New(0);
-        error = oyStructList_MoveIn( list,  (oyStruct_s**) &name, -1, 0 );
+        oyStructList_MoveInName( list, &cc_name, 0, oyNAME_NAME );
+        oyStructList_AddName( list, lib_name, 0, oyNAME_NICK );
 
         if(!error)
         {
@@ -1570,15 +1564,8 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
       /* icSigCopyrightTag */
       if(!error && !cprt)
       {
-        oyStructList_s * list = 0;
-        const char * c_text = "no copyright; use freely";
-        /* FIXME replace oyName_s with oyOption_s */
-        oyName_s * name = oyName_new(0);
-
-        name = oyName_set_ ( name, c_text, oyNAME_NAME,
-                             oyAllocateFunc_, oyDeAllocateFunc_ );
-        list = oyStructList_New(0);
-        error = oyStructList_MoveIn( list, (oyStruct_s**) &name, -1, 0 );
+        oyStructList_s * list = oyStructList_New(0);
+        error = oyStructList_AddName( list, "no copyright; use freely", -1, oyNAME_NAME );
 
         if(!error)
         {
@@ -1589,7 +1576,7 @@ oyPointer lcmsFilterNode_CmmIccContextToMem (
 
         oyStructList_Release( &list );
 
-        if(cprt)
+        if(!error)
           error = oyProfile_TagMoveIn ( prof, &cprt, -1 );
       }
 

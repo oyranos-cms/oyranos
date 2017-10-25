@@ -668,7 +668,7 @@ oyStruct_s *     oyStructList_GetType( oyStructList_s    * list,
   oyStruct_s * obj = oyStructList_Get_( (oyStructList_s_*)list, pos );
 
   if(obj && obj->type_ != type)
-    obj = 0;
+    obj = NULL;
   return obj;
 }
 
@@ -726,19 +726,20 @@ oyStructList_s * oyStructList_Create ( oyOBJECT_e          parent_type,
  *  @memberof oyStructList_s
  *  @brief    Move a name into a list
  *
- *  The text is added as a oyOption_s->oy_(oyObject_s)->name_(oyName_s*).
  *  The text is released inside.
  *
+ *  @see oyStructList_AddName()
+ *
  *  @version Oyranos: 0.9.7
- *  @date    2017/10/10
+ *  @date    2017/10/24
  *  @since   2008/10/07 (Oyranos: 0.1.13)
  */
-int oyStructList_MoveInName( oyStructList_s * texts, char ** text, int pos )
+int oyStructList_MoveInName( oyStructList_s * texts, char ** text, int pos, oyNAME_e type )
 {
   int error = !texts || !text;
   if(!error)
   {
-     oyStructList_AddName( texts, *text, pos );
+     oyStructList_AddName( texts, *text, pos, type );
      oyFree_m_(*text);
      *text = NULL;
   }
@@ -749,24 +750,48 @@ int oyStructList_MoveInName( oyStructList_s * texts, char ** text, int pos )
  *  @memberof oyStructList_s
  *  @brief    Add a name to a list
  *
- *  The text is added as a oyOption_s->oy_(oyObject_s)->name_(oyName_s*).
+ *  The text can be get back with oyStructList_GetName().
+ *
+ *  @param         list                the texts list
+ *  @param         text                the string to add
+ *  @param         pos                 the position of the string in list
+ *                                     or -1 for the end
+ *  @param         type                supported are:
+ *                                     - ::oyNAME_NAME
+ *                                     - ::oyNAME_NICK
+ *                                     - ::oyNAME_DESCRIPTION
+ *                                     - ::oyNAME_LC
+ *                                     language_country code in text with up to 5 bytes
+ *  @return                            error
  *
  *  @version Oyranos: 0.9.7
  *  @date    2017/10/10
  *  @since   2008/10/07 (Oyranos: 0.1.13)
  */
-int oyStructList_AddName( oyStructList_s * texts, const char * text, int pos )
+OYAPI int OYEXPORT oyStructList_AddName (
+                                       oyStructList_s    * texts,
+                                       const char        * text,
+                                       int                 pos,
+                                       oyNAME_e            type )
 {
   int error = !texts;
   if(!error)
   {
-    oyOption_s * name = oyOption_FromRegistration( OY_INTERNAL, 0 );
-    oyStruct_s * oy_struct = 0;
+    oyOption_s * name = (oyOption_s*) oyStructList_GetRefType( texts, pos, oyOBJECT_OPTION_S),
+	       * tname = name;
+    if(!name) name = oyOption_FromRegistration( OY_INTERNAL, 0 );
     if(!name) return 1;
+
     if(text)
-      error = oyObject_SetName( name->oy_, text, oyNAME_NAME );
-    oy_struct = (oyStruct_s*) name;
-    oyStructList_MoveIn( texts, &oy_struct, pos, 0 );
+      error = oyObject_SetName( name->oy_, text, type );
+
+    if(tname)
+      oyOption_Release( &tname );
+    else
+    {
+      oyStruct_s * oy_struct = (oyStruct_s*) name;
+      oyStructList_MoveIn( texts, &oy_struct, pos, 0 );
+    }
   }
   return error;
 }
@@ -775,21 +800,24 @@ int oyStructList_AddName( oyStructList_s * texts, const char * text, int pos )
  *  @memberof oyStructList_s
  *  @brief    Add a name to a list
  *
- *  The text must have added as a oyOption_s->oy_(oyObject_s)->name_(oyName_s*).
+ *  The text must have added with oyStructList_AddName().
  *
  *  @version Oyranos: 0.9.7
- *  @date    2017/10/10
+ *  @date    2017/10/24
  *  @since   2011/05/18 (Oyranos: 0.3.1)
  */
-const char * oyStructList_GetName( oyStructList_s * texts, int pos )
+OYAPI const char *  OYEXPORT oyStructList_GetName (
+                                       oyStructList_s    * texts,
+                                       int                 pos,
+                                       oyNAME_e            type )
 {
   int error = !texts;
-  const char * text = 0;
+  const char * text = NULL;
   if(!error)
   {
     oyOption_s * name = (oyOption_s*)oyStructList_GetRefType(texts, pos, oyOBJECT_OPTION_S);
     if(!name || !name->oy_) return text;
-    text = oyObject_GetName( name->oy_, oyNAME_NAME );
+    text = oyObject_GetName( name->oy_, type );
     oyOption_Release( &name );
   }
   return text;
