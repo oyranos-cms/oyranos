@@ -103,6 +103,7 @@ OYAPI int  OYEXPORT
                                            oyOBJECT_e          type );
 OYAPI int  OYEXPORT
                  oyStruct_GetId          ( oyStruct_s        * obj );
+#define oySTRUCT_ALLOC_m(s,len) oyStruct_Allocate((oyStruct_s*)s, len)
 OYAPI oyPointer  OYEXPORT
                  oyStruct_Allocate       ( oyStruct_s        * st,
                                            size_t              size );
