@@ -15,5 +15,6 @@ OYAPI int  OYEXPORT
 OYAPI oyPointer  OYEXPORT
                  oyStruct_Allocate       ( oyStruct_s        * st,
                                            size_t              size );
+#define oySTRUCT_FREE_m(s,ptr) oyStruct_DeAllocate((oyStruct_s*)s, ptr)
 OYAPI void OYEXPORT  oyStruct_DeAllocate ( oyStruct_s        * st,
                                            oyPointer           ptr );
