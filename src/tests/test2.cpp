@@ -5270,34 +5270,37 @@ oyTESTRESULT_e testCMMnmRun ()
   oyNamedColors_SetPrefix( colors, "test" );
   oyNamedColors_SetSuffix( colors, "color" );
 
-  clck = oyClock();
-  for( i = 0; i < 10*100; ++i )
+  if(p_cmyk)
   {
-    char name[12];
-    double lab[3], device[4] = {0.2,0.2,0.1,0.5};
+    clck = oyClock();
+    for( i = 0; i < 10*100; ++i )
+    {
+      char name[12];
+      double lab[3], device[4] = {0.2,0.2,0.1,0.5};
 
-    lab[0] = i*0.001;
-    lab[1] = lab[2] = 0.5;
-    sprintf( name, "%d", i );
+      lab[0] = i*0.001;
+      lab[1] = lab[2] = 0.5;
+      sprintf( name, "%d", i );
 
-    ncl = oyNamedColor_CreateWithName( name, name, name, NULL, NULL, NULL, 0, p_cmyk, testobj );
+      ncl = oyNamedColor_CreateWithName( name, name, name, NULL, NULL, NULL, 0, p_cmyk, testobj );
 
-    if(!error)
-      error = oyNamedColor_SetColorStd( ncl, oyEDITING_LAB, lab, oyDOUBLE, 0, NULL );
-    if(!error)
-      oyNamedColor_SetChannels( ncl, device, 0 );
+      if(!error)
+        error = oyNamedColor_SetColorStd( ncl, oyEDITING_LAB, lab, oyDOUBLE, 0, NULL );
+      if(!error)
+        oyNamedColor_SetChannels( ncl, device, 0 );
 
-    oyNamedColors_MoveIn( colors, &ncl, i );
-  }
-  clck = oyClock() - clck;
+      oyNamedColors_MoveIn( colors, &ncl, i );
+    }
+    clck = oyClock() - clck;
 
-  if( !error )
-  { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyNamedColor_CreateWithName()     %s",
+    if( !error )
+    { PRINT_SUB( oyTESTRESULT_SUCCESS,
+      "oyNamedColor_CreateWithName()     %s",
                           oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Ncl"));
-  } else
-  { PRINT_SUB( oyTESTRESULT_FAIL,
-    "oyNamedColor_CreateWithName()            " );
+    } else
+    { PRINT_SUB( oyTESTRESULT_FAIL,
+      "oyNamedColor_CreateWithName()            " );
+    }
   }
 
   
