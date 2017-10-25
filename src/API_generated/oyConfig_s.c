@@ -1021,6 +1021,18 @@ OYAPI int OYEXPORT oyConfig_FromJSON ( const char        * registration,
                                                     "underline_key_suffix", 0 );
   oyjl_val v;
 
+  if(error)
+  {
+    if(!json_text)
+      oyMessageFunc_p( oyMSG_ERROR, (oyStruct_s*)0, OY_DBG_FORMAT_ "\n"
+                       "Missed argument: json_text", OY_DBG_ARGS_ );
+    if(!config)
+      oyMessageFunc_p( oyMSG_ERROR, (oyStruct_s*)0, OY_DBG_FORMAT_ "\n"
+                       "Missed argument: config", OY_DBG_ARGS_ );
+    error = -1;
+    return error;
+  }
+
   t = oyAllocateFunc_(256);
   json = oyjl_tree_parse( json_text, t, 256 );
   if(t[0])
