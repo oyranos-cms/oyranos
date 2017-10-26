@@ -485,6 +485,7 @@ int      oyX1GetMonitorInfo          ( const char        * display_name,
         {
           ++t;
           t = strstr( t, "redX:" );
+          if(!t) break;
         }
       }
 
