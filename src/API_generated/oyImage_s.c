@@ -344,9 +344,12 @@ oyImage_s *    oyImage_Create         ( int               width,
   int error = 0;
 
 
-  if(!profile)
+  if(!profile || !s)
   {
-    WARNc_S("no profile obtained");
+    if(!profile)
+      WARNc_S("no profile obtained");
+    if(!s)
+      WARNc_S("Allocating image failed");
 
     oyImage_Release( (oyImage_s**)&s );
     return (oyImage_s*) s;
@@ -391,7 +394,7 @@ oyImage_s *    oyImage_Create         ( int               width,
   }
 
   if(oy_debug_objects >= 0)
-    oyObjectDebugMessage_( s?s->oy_:NULL, __func__, oyStructTypeToText(s->type_) );
+    oyObjectDebugMessage_( s->oy_, __func__, oyStructTypeToText(s->type_) );
 
   return (oyImage_s*) s;
 }
@@ -625,7 +628,14 @@ static int oyImage_CreateFillArray_  ( oyImage_s         * image,
       if(!a)
       {
         a = oyArray2d_Create_( array_width, array_height, data_type, obj );
-      
+	if(!a)
+        {
+          oyMessageFunc_p( oyMSG_ERROR, (oyStruct_s*)image,
+                 OY_DBG_FORMAT_ "array %dx%d can not be created",
+                 OY_DBG_ARGS_,
+                 array_width, array_height );
+          return 1;
+        }
       } else
       {
         oyMessageFunc_p( oyMSG_WARN, (oyStruct_s*)image,
