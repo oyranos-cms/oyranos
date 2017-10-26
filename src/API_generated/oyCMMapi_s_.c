@@ -483,7 +483,7 @@ oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s         * api_ )
                  oyStructTypeToText(api->type_),
                  oyNoEmptyString_m_(api->registration));
       }
-      if(!(s->oyCMMInit && s->ui))
+      if(s->ui)
       {
         int ui_module_api = s->ui->module_api[0]*10000
                             + s->ui->module_api[1]*100
@@ -493,8 +493,9 @@ oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s         * api_ )
           OYRANOS_VERSION < ui_module_api)
         {
           error = 1;
-          WARNc2_S("Wrong UI API for: %s %s", oyStructTypeToText(api->type_),
-                   oyNoEmptyString_m_(api->registration));
+	  if(oy_debug)
+            WARNc2_S("Wrong UI API for: %s %s", oyStructTypeToText(api->type_),
+                     oyNoEmptyString_m_(api->registration));
           return type;
         }
       }
