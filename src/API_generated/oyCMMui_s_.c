@@ -81,12 +81,17 @@ void oyCMMui_Release__Members( oyCMMui_s_ * cmmui )
  *
  *  @param[in]  cmmui  the CMMui object
  *
- *  @version Oyranos: x.x.x
- *  @since   YYYY/MM/DD (Oyranos: x.x.x)
- *  @date    YYYY/MM/DD
+ *  @version Oyranos: 0.9.7
+ *  @since   2017/10/26 (Oyranos: 0.9.7)
+ *  @date    2017/10/26
  */
-int oyCMMui_Init__Members( oyCMMui_s_ * cmmui OY_UNUSED )
+int oyCMMui_Init__Members( oyCMMui_s_ * cmmui )
 {
+  /* set basic versions, as is checked during module load */
+  cmmui->module_api[0] = cmmui->version[0] = OYRANOS_VERSION_A;
+  cmmui->module_api[1] = cmmui->version[1] = OYRANOS_VERSION_B;
+  cmmui->module_api[2] = cmmui->version[2] = OYRANOS_VERSION_C;
+
   return 0;
 }
 
