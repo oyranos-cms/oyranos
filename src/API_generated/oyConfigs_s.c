@@ -733,6 +733,7 @@ OYAPI int OYEXPORT oyConfigs_FromDB  ( const char        * registration,
     error *= -1;
 
     db_registration = oyStringCopy( registration, oyAllocateFunc_ );
+    if(!db_registration) return 1;
     if(strrchr( db_registration, '.' ))
     {
       char * t = strchr( db_registration, '.' );
@@ -741,6 +742,7 @@ OYAPI int OYEXPORT oyConfigs_FromDB  ( const char        * registration,
       
     db = oyDB_newFrom( db_registration, oySCOPE_USER_SYS, oyAllocateFunc_, oyDeAllocateFunc_ );
 
+    if(db)
     {
       char * key = NULL;
       /** 3.) obtain the directory structure for configurations */
@@ -765,13 +767,13 @@ OYAPI int OYEXPORT oyConfigs_FromDB  ( const char        * registration,
         /** 4.1.) add information about the data's origin */
         oyStringAddPrintf( &key, oyAllocateFunc_, oyDeAllocateFunc_, "%s/key_set_name",
                            oyConfig_GetRegistration( (oyConfig_s*) config ) );
-        if(config)
+        if(!error)
           error = oyOptions_SetFromText( &config->data, key,
                                          key_set_names[j], OY_CREATE_NEW );
 
         /** 5.) add a rank map to each object to allow for comparisions */
         /** 5.1.) try the rank map from module */
-        if(cmm_api8)
+        if(!error && cmm_api8)
           config->rank_map = oyRankMapCopy( cmm_api8->rank_map,
                                             config->oy_->allocateFunc_ );
 
@@ -782,9 +784,9 @@ OYAPI int OYEXPORT oyConfigs_FromDB  ( const char        * registration,
           config->rank_map = oyGetRankMapFromDB( registration );
 
         /** 6.) move the object into the list */
-        if(!s && config)
+        if(!s && !error)
           s = oyConfigs_New( 0 );
-        if(config)
+        if(!error)
           oyConfigs_MoveIn( s, (oyConfig_s**)&config, -1 );
 
         oyFree_m_( key );
