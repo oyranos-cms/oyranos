@@ -168,6 +168,8 @@ char *     oyAlphaPrint_             ( int                 verbose )
 
       if(cmmh)
         s = (oyCMMinfo_s*) cmmh->info;
+      else
+        continue;
 
       if( s && s->type_ == oyOBJECT_CMM_INFO_S &&
           *((uint32_t*)oyCMMinfo_GetCMM(s)) )
