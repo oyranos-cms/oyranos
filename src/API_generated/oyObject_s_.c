@@ -67,6 +67,8 @@ int          oyObject_Ref            ( oyObject_s          obj )
   oyObject_s s = obj;
   int error = !s;
 
+  if(!s) return 1;
+
   if( s->type_ != oyOBJECT_OBJECT_S)
   {
     WARNc2_S("Attempt to manipulate a non oyObject_s object; type: %d ID: %d",
