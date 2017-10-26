@@ -31,13 +31,14 @@ int oyImage_CombinePixelLayout2Mask_ ( oyImage_s_        * image,
   int w = image->width;
   int h = image->height;
   int i;
-  char * text = oyAllocateFunc_(512);
-  char * hash_text = 0;
+  char * text,
+       * hash_text = NULL;
   oyImage_s_ * s = image;
   oyCHANNELTYPE_e * clayout = 0; /* non profile described channels */
 
   if(!mask) return error;
-  if(!text) return 1;
+  text = oyAllocateFunc_(512);
+  if(!text) { image->oy_->deallocateFunc_(mask); return 1; }
 
   if(!n && cchan_n)
     n = cchan_n;
@@ -71,7 +72,7 @@ int oyImage_CombinePixelLayout2Mask_ ( oyImage_s_        * image,
   if(!s->channel_layout)
   {
     clayout = image->oy_->allocateFunc_( sizeof(int) * ( OY_MAX(n,cchan_n)+ 1));
-    if(!clayout) return 1;
+    if(!clayout) { image->oy_->deallocateFunc_(mask); oyDeAllocateFunc_(text); return 1; }
     /* we dont know about the content */
     for(i = 0; i < n; ++i)
       clayout[i] = oyCHANNELTYPE_OTHER;
