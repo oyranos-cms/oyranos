@@ -273,12 +273,15 @@ oyCMMapiFilters_s * oyCMMsGetFilterApis_(const char        * registration,
     {
       apis2 = oyCMMapiFilters_New( 0 );
       api = api5->oyCMMFilterLoad( 0,0, file_match, type, match_j );
-      if(!(*api_)->id_)
-        (*api_)->id_ = oyStringCopy_( file_match, oyAllocateFunc_ );
-      (*api_)->api5_ = api5;
-      oyCMMapiFilters_MoveIn( apis2, &api, -1 );
-      if(count)
-        *count = 1;
+      if(api)
+      { 
+        if(!(*api_)->id_)
+          (*api_)->id_ = oyStringCopy_( file_match, oyAllocateFunc_ );
+        (*api_)->api5_ = api5;
+        oyCMMapiFilters_MoveIn( apis2, &api, -1 );
+        if(count)
+          *count = 1;
+      }
     }
 
     if(rank_list_)
