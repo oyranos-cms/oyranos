@@ -193,7 +193,7 @@ oyCMMapiFilters_s * oyCMMsGetFilterApis_(const char        * registration,
                 rank_list_ = *rank_list;
                 apis = oyCMMapiFilters_New(0);
               } else
-              if(count_ >= rank_list_n)
+              if(k >= rank_list_n)
               {
                 rank_list_n *= 2;
                 rank_list_ = 0;
@@ -208,7 +208,10 @@ oyCMMapiFilters_s * oyCMMsGetFilterApis_(const char        * registration,
               rank_list_[k++] = rank;
               api = api5->oyCMMFilterLoad( 0,0, file, type, j);
               if(!api)
+              {
+                ++j;
                 continue;
+              }
 
               if(!(*api_)->id_)
                 (*api_)->id_ = oyStringCopy_( file, oyAllocateFunc_ );
