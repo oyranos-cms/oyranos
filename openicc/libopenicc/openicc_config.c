@@ -577,6 +577,7 @@ int                openiccConfig_GetStringf (
   if (len >= (int)sz)
   {
     text = realloc( text, (len+1)*sizeof(char) );
+    if(!text) return 0;
     va_start( list, format);
     len = vsnprintf( text, len+1, format, list );
     va_end  ( list );
