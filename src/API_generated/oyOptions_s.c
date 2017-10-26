@@ -1518,16 +1518,17 @@ const char *   oyOptions_FindString  ( oyOptions_s       * options,
   return text;
 }
 
-/** Function oyOptions_SetFromText
+/** oyOptions_SetFromText()
  *  @memberof oyOptions_s
  *  @brief   change a value
  *
- *  @param         obj                 the options list or set to manipulate
- *  @param         registration        the options registration name, e.g.
+ *  @param[in,out] obj                 the options list or set to manipulate
+ *  @param[in]     registration        the options registration name, e.g.
  *                                     "org/my_org/openicc/my_app/my_opt"
- *  @param         value               the value to set
- *  @param         flags               can be ::OY_CREATE_NEW for a new option,
+ *  @param[in]     value               the value to set
+ *  @param[in]     flags               can be ::OY_CREATE_NEW for a new option,
  *                                     ::OY_STRING_LIST, ::OY_ADD_ALWAYS, ::OY_MATCH_KEY
+ *  @return                            error
  *
  *  @version Oyranos: 0.3.0
  *  @since   2008/11/27 (Oyranos: 0.1.9)
@@ -1538,7 +1539,8 @@ int            oyOptions_SetFromText ( oyOptions_s      ** obj,
                                        const char        * value,
                                        uint32_t            flags )
 {
-  int error = (obj && *obj && (*obj)->type_ != oyOBJECT_OPTIONS_S) ||
+  int error = !obj ||
+              (obj && *obj && (*obj)->type_ != oyOBJECT_OPTIONS_S) ||
               !registration ||
               !value;
   oyOption_s * o = NULL;
@@ -1928,16 +1930,17 @@ oyStruct_s *   oyOptions_GetType     ( oyOptions_s       * options,
   return st;
 }
 
-/** Function oyOptions_MoveInStruct
+/** oyOptions_MoveInStruct()
  *  @memberof oyOptions_s
  *  @brief   change a value
  *
- *  @param         obj                 the options list or set to manipulate
- *  @param         registration        the options registration name, e.g.
+ *  @param[in,out] obj                 the options list or set to manipulate
+ *  @param[in]     registration        the options registration name, e.g.
  *                                     "org/my_org/openicc/my_app/my_opt"
- *  @param         oy_struct           the Oyranos style object to move in
- *  @param         flags               can be OY_CREATE_NEW for a new option,
+ *  @param[in]     oy_struct           the Oyranos style object to move in
+ *  @param[in]     flags               can be OY_CREATE_NEW for a new option,
  *                                     OY_ADD_ALWAYS, OY_MATCH_KEY
+ *  @return                            error
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/03/05 (Oyranos: 0.1.10)
@@ -1948,7 +1951,8 @@ int            oyOptions_MoveInStruct( oyOptions_s      ** obj,
                                        oyStruct_s       ** oy_struct,
                                        uint32_t            flags )
 {
-  int error = (obj && *obj && (*obj)->type_ != oyOBJECT_OPTIONS_S) ||
+  int error = !obj ||
+              (obj && *obj && (*obj)->type_ != oyOBJECT_OPTIONS_S) ||
               !registration ||
               !oy_struct;
   oyOption_s * o = 0;
