@@ -36,8 +36,8 @@ int oyImage_CombinePixelLayout2Mask_ ( oyImage_s_        * image,
   oyImage_s_ * s = image;
   oyCHANNELTYPE_e * clayout = 0; /* non profile described channels */
 
-  if(!s)
-    return 0;
+  if(!mask) return error;
+  if(!text) return 1;
 
   if(!n && cchan_n)
     n = cchan_n;
@@ -71,6 +71,7 @@ int oyImage_CombinePixelLayout2Mask_ ( oyImage_s_        * image,
   if(!s->channel_layout)
   {
     clayout = image->oy_->allocateFunc_( sizeof(int) * ( OY_MAX(n,cchan_n)+ 1));
+    if(!clayout) return 1;
     /* we dont know about the content */
     for(i = 0; i < n; ++i)
       clayout[i] = oyCHANNELTYPE_OTHER;
