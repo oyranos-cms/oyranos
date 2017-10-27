@@ -2952,7 +2952,7 @@ oyTESTRESULT_e testClut ()
   int old_display_white_point = oyGetBehaviour( oyBEHAVIOUR_DISPLAY_WHITE_POINT );
   char * value = NULL;
   oyStringAddPrintf( &value, oyAllocateFunc_, oyDeAllocateFunc_,
-                     "%d", old_display_white_point != 2 ? 2 : 7 );
+                     "%d", old_display_white_point != 0 ? 0 : 7 );
   oyDBSetString( OY_DEFAULT_DISPLAY_WHITE_POINT_DAEMON, oySCOPE_USER,
                  old_daemon ? NULL : "oyranos-monitor-white-point",
                  "testing");
