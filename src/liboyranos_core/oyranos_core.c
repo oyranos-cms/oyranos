@@ -395,7 +395,7 @@ int                oyMessageFormat   ( char             ** message_text,
     id_text = id_text_tmp;
   }
 
-  text = calloc( sizeof(char), 256 );
+  oyAllocHelper_m_(text, char, 256, malloc, return 1);
 
 # define MAX_LEVEL 20
   if(level_PROG < 0)
@@ -451,7 +451,7 @@ int                oyMessageFormat   ( char             ** message_text,
       fprintf( stderr, "could not open " TMP_FILE "\n" );
   }
 
-  free( text ); text = 0;
+  free( text ); text = NULL;
   if(id_text_tmp){ free(id_text_tmp); } id_text_tmp = 0;
 
   *message_text = t;
@@ -503,6 +503,8 @@ int oyMessageFunc( int code, const void * context_object, const char * format, .
 
   if(msg)
     fprintf( stderr, "%s\n", msg );
+  else if(error)
+    fprintf( stderr, "%s\n", format );
 
   oyDeAllocateFunc_( text ); text = 0;
   if(msg){ oyDeAllocateFunc_( msg ); } msg = 0;
