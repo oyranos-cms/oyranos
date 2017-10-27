@@ -395,7 +395,7 @@ int                oyMessageFormat   ( char             ** message_text,
     id_text = id_text_tmp;
   }
 
-  oyAllocHelper_m_(text, char, 256, malloc, return 1);
+  oyAllocHelper_m_(text, char, 256, malloc, if(id_text_tmp) free(id_text_tmp); return 1);
 
 # define MAX_LEVEL 20
   if(level_PROG < 0)
