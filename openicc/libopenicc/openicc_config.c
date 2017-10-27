@@ -3,7 +3,7 @@
  *  libOpenICC - OpenICC Colour Management Configuration
  *
  *  @par Copyright:
- *            2011-2016 (C) Kai-Uwe Behrmann
+ *            2011-2017 (C) Kai-Uwe Behrmann
  *
  *  @brief    OpenICC Colour Management configuration helpers
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
@@ -13,6 +13,7 @@
  */
 
 #include "openicc_config_internal.h"
+#include "oyjl_tree_internal.h"
 
 #if HAVE_POSIX
 #include <unistd.h>  /* getpid() */
@@ -34,21 +35,22 @@ openiccConfig_s *  openiccConfig_FromMem( const char       * data )
   openiccConfig_s * config = NULL;
   if(data && data[0])
   {
-    config = calloc( sizeof(openiccConfig_s), 1 );
-    if(!config)
-    {
-      ERRc_S( "could not allocate %d bytes",
-               (int)sizeof(openiccConfig_s));
-      return config;
-    }
+    oyjlAllocHelper_m_(config, openiccConfig_s, 1, malloc, return config);
 
     config->type = openiccOBJECT_CONFIG;
     config->json_text = strdup( (char*)data );
     config->info = openiccStringCopy( "openiccConfig_FromMem()", malloc );
+    if(!config->info)
+    {
+      ERRcc_S( config, "could not allocate%s", "" );
+      free(config); config = NULL;
+      return config;
+    }
     config->oyjl = oyjl_tree_parse( data, NULL, 0 );
     if(!config->oyjl)
     {
-      char * msg = malloc(1024);
+      char * msg = NULL;
+      oyjlAllocHelper_m_(msg, char, 1024, malloc, );
       config->oyjl = oyjl_tree_parse( data, msg, 1024 );
       WARNcc_S( config, "%s\n", msg?msg:"" );
       if( msg ) free(msg);
@@ -193,9 +195,10 @@ const char *       openiccConfig_DeviceGet (
                                        int                 pos,
                                        char            *** keys,
                                        char            *** values,
-                                       openiccAlloc_f      alloc )
+                                       openiccAlloc_f      alloc,
+                                       openiccDeAlloc_f    dealloc )
 {
-  int n = 0;
+  int n = 0, i, count = 0;
   const char * actual_device_class = 0;
 
   if(config)
@@ -207,7 +210,7 @@ const char *       openiccConfig_DeviceGet (
     {
       oyjl_val dev_class;
       {
-        int i = 0, device_classes_n = 0;
+        int device_classes_n = 0;
 
         device_classes = openiccConfigGetDeviceClasses( device_classes,
                                        &device_classes_n );
@@ -229,17 +232,14 @@ const char *       openiccConfig_DeviceGet (
                 actual_device_class = device_classes[i];
                 if(OYJL_IS_OBJECT( device ))
                 {
-                  int count = device->u.object.len;
-                  *keys = alloc( sizeof(char*) * (count + 1) );
-                  *values = alloc( sizeof(char*) * (count + 1) );
-                  if(*keys) memset(*keys, 0, sizeof(char*) * (count + 1) );
-                  if(*values) memset(*values, 0, sizeof(char*) * (count + 1) );
+                  count = device->u.object.len;
+                  oyjlAllocHelper_m_(*keys, char*, count + 1, alloc, return NULL);
+                  oyjlAllocHelper_m_(*values, char*, count + 1, alloc, goto clean_openiccConfig_DeviceGet);
                   for(i = 0; i < count; ++i)
                   {
                     if(device->u.object.keys[i] && device->u.object.keys[i][0])
                     {
-                      (*keys)[i] = alloc( sizeof(char) *
-                                       (strlen(device->u.object.keys[i]) + 1) );
+                      oyjlAllocHelper_m_((*keys)[i], char, strlen(device->u.object.keys[i]) + 1, alloc, goto clean_openiccConfig_DeviceGet);
                       strcpy( (*keys)[i], device->u.object.keys[i] );
                     }
                     if(device->u.object.values[i])
@@ -288,7 +288,7 @@ const char *       openiccConfig_DeviceGet (
                       }
                       if(!tmp)
                         tmp = "no value found";
-                      (*values)[i] = alloc( sizeof(char) * (strlen(tmp) + 1) );
+                      oyjlAllocHelper_m_((*values)[i], char, strlen(tmp) + 1, alloc, goto clean_openiccConfig_DeviceGet);
                       strcpy( (*values)[i], tmp );
                     }
                   }
@@ -307,6 +307,21 @@ const char *       openiccConfig_DeviceGet (
   }
 
   return actual_device_class;
+
+clean_openiccConfig_DeviceGet:
+  if(*keys)
+  {
+    for(i = 0; i < count; ++i)
+      if((*keys)[i]) dealloc((*keys)[i]);
+    dealloc(*keys);
+  }
+  if(*values)
+  {
+    for(i = 0; i < count; ++i)
+      if((*values)[i]) dealloc((*values)[i]);
+    dealloc(*values);
+  }
+  return NULL;
 }
 
 /**
@@ -332,7 +347,8 @@ const char *       openiccConfig_DeviceGetJSON (
                                        int                 flags,
                                        const char        * device_class,
                                        char             ** json,
-                                       openiccAlloc_f      alloc )
+                                       openiccAlloc_f      alloc,
+                                       openiccDeAlloc_f    dealloc )
 {
   char            ** keys = 0;
   char            ** values = 0;
@@ -340,7 +356,7 @@ const char *       openiccConfig_DeviceGetJSON (
   char * txt = 0;
 
   const char * d = openiccConfig_DeviceGet( config, device_classes, pos,
-                                            &keys, &values, malloc );
+                                            &keys, &values, malloc, dealloc );
 
   if(alloc)
     txt = alloc(4096);
@@ -419,11 +435,21 @@ char *             openiccConfig_DeviceClassGet (
       oyjl_val v = base;
 
       if(v->u.object.keys[0] && v->u.object.keys[0][0])
-        device_class = openiccStringCopy((v->u.object.keys[0]), alloc);
-
+      {
+        device_class = openiccStringCopy((v->u.object.keys[0]), malloc);
+        if(!device_class)
+          ERRcc_S( config, "could not allocate string%s", "" );
+      }
     } else
       WARNcc_S( config, "could not find " OPENICC_DEVICE_PATH " %s",
                 config->info ? config->info : "" );
+  }
+
+  if(alloc != malloc && device_class)
+  {
+    char * custom = openiccStringCopy( device_class, alloc );
+    free(device_class);
+    device_class = custom; custom = NULL;
   }
 
   return device_class;
@@ -456,22 +482,30 @@ int                openiccConfig_GetKeyNames (
   int count = 0, i;
   char ** keys = (char**)  calloc(sizeof(char*),2);
 
+  if(!keys) return 1;
+
   if(!error)
     list = oyjl_tree_get_value( config->oyjl, 0, xpath );
 
   if(!error)
     error = !list ? -1:0;
 
-  keys[0] = openiccStringCopy( xpath, malloc );
-  oyjl_tree_to_paths( list, child_levels, &keys );
+  if(!error)
+  {
+    keys[0] = openiccStringCopy( xpath, malloc );
+    error = !keys[0];
+  }
 
-  if(n)
+  if(!error)
+    oyjl_tree_to_paths( list, child_levels, &keys );
+
+  if(!error && n)
   {
     while(keys && keys[count]) ++count;
     *n = count?count-1:0;
   }
 
-  if(key_names && keys)
+  if(!error && key_names && keys)
   {
     /* the first key comes from this function is is artifical: remove it */
     free(keys[0]);
@@ -631,6 +665,8 @@ int                openiccConfig_GetStrings (
     error = !vals;
     if(!error)
       memset( vals, 0, size );
+    else
+      ERRcc_S( config, "could not allocate : %lu", (unsigned long)size );
   }
 
   if(error <= 0)
@@ -641,7 +677,14 @@ int                openiccConfig_GetStrings (
     if(t)
     {
       if(values)
+      {
         vals[pos] = openiccStringCopy( t, alloc );
+        if(!vals[pos])
+        {
+          ERRcc_S( config, "could not allocate string : %s", t );
+          break;
+        }
+      }
       pos++;
     }
   }

@@ -3,7 +3,7 @@
  *  libOpenICC - OpenICC Colour Management Configuration
  *
  *  @par Copyright:
- *            2015-2016 (C) Kai-Uwe Behrmann
+ *            2015-2017 (C) Kai-Uwe Behrmann
  *
  *  @brief    OpenICC Colour Management configuration helpers
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
@@ -13,6 +13,7 @@
  */
 
 #include "openicc_config_internal.h"
+#include "oyjl_tree_internal.h"
 #include "openicc_db.h"
 #include "xdg_bds.h"
 
@@ -169,7 +170,7 @@ int           openiccDB_AddScope     ( openiccDB_s       * db,
     {
       int count = openiccArray_Count( (openiccArray_s*)&db->ks );
       openiccConfig_s * config = openiccConfig_FromMem( text );
-      if(text) {free(text); text = NULL;}
+      free(text); text = NULL;
       /* The file name is expected later on write. */
       openiccConfig_SetInfo ( config, db_file );
 
@@ -200,36 +201,32 @@ int           openiccDB_AddScope     ( openiccDB_s       * db,
 openiccDB_s * openiccDB_NewFrom      ( const char        * top_key_name,
                                        openiccSCOPE_e      scope )
 {
-  openiccDB_s * db = calloc( sizeof(openiccDB_s), 1 );
+  openiccDB_s * db;
+  int error = 0;
 
-  if(db)
+  oyjlAllocHelper_m_(db, openiccDB_s, 1, malloc, return db);
+
+  db->type = openiccOBJECT_DB;
+  db->top_key_name = openiccStringCopy( top_key_name, malloc );
+  if( !db->top_key_name ) { openiccDB_Release( &db ); return db; };
+  db->scope = scope;
+  db->ks_array_reserved_n = 10;
+  oyjlAllocHelper_m_( db->ks, openiccConfig_s*, db->ks_array_reserved_n, malloc, openiccDB_Release( &db ); return db );
+
+  if(!error &&
+     (db->scope == openiccSCOPE_USER_SYS || db->scope == openiccSCOPE_USER))
   {
-    db->type = openiccOBJECT_DB;
-    db->top_key_name = openiccStringCopy( top_key_name, malloc );
-    db->scope = scope;
-    db->ks_array_reserved_n = 10;
-    db->ks = calloc( sizeof(openiccConfig_s *), db->ks_array_reserved_n );
+    error = openiccDB_AddScope( db, top_key_name, openiccSCOPE_USER );
   }
 
-  if(db)
+  if(!error &&
+     (db->scope == openiccSCOPE_USER_SYS || db->scope == openiccSCOPE_SYSTEM))
   {
-    int error = 0;
-
-    if(!error &&
-       (db->scope == openiccSCOPE_USER_SYS || db->scope == openiccSCOPE_USER))
-    {
-      error = openiccDB_AddScope( db, top_key_name, openiccSCOPE_USER );
-    }
-
-    if(!error &&
-       (db->scope == openiccSCOPE_USER_SYS || db->scope == openiccSCOPE_SYSTEM))
-    {
-      error = openiccDB_AddScope( db, top_key_name, openiccSCOPE_SYSTEM );
-    }
-
-    if(error)
-      ERRc_S("%s: %s %d", _("Could not setup db objetc"), top_key_name, scope );
+    error = openiccDB_AddScope( db, top_key_name, openiccSCOPE_SYSTEM );
   }
+
+  if(error)
+    ERRc_S("%s: %s %d", _("Could not setup db objetc"), top_key_name, scope );
 
   return db;
 }
@@ -251,11 +248,13 @@ void     openiccDB_Release           ( openiccDB_s      ** db )
     if(!s)
       return;
 
-    free( s->top_key_name );
+    if( s->top_key_name )
+      free( s->top_key_name );
     count = openiccArray_Count( (openiccArray_s*)&s->ks );
     for(i = 0; i < count; ++i)
       openiccConfig_Release( &s->ks[i] );
-    free( s->ks );
+    if( s->ks )
+      free( s->ks );
     s->ks_array_reserved_n = 0;
     free( s );
     *db = 0;
@@ -374,8 +373,13 @@ const char * openiccGetShortKeyFromFullKeyPath( const char * key, char ** temp )
   if(k)
   {
     k_temp = openiccStringCopy( key_short, malloc );
-    k_temp[strlen(key_short) - strlen(k)] = '\000';
-    key_short = k_temp;
+    if(!k_temp)
+      ERRc_S( "could not allocate : %s", key_short );
+    else
+    {
+      k_temp[strlen(key_short) - strlen(k)] = '\000';
+      key_short = k_temp;
+    }
   }
   *temp = k_temp;
   return key_short;
@@ -425,8 +429,13 @@ int      openiccDBSetString          ( const char        * keyName,
       root = (oyjl_val) calloc( sizeof(struct oyjl_val_s), 1 );
       file_name = openiccDBGetJSONFile( scope );
     }
+    if(!file_name)
+    {
+      ERRc_S("%s", _("Could not alloc memory"));
+      error = 1;
+    }
 
-    if(root)
+    if(!error && root)
     {
       oyjl_val o = oyjl_tree_get_value( root, OYJL_CREATE_NEW, xpath );
       if(o)
@@ -485,15 +494,13 @@ int      openiccDBSetString          ( const char        * keyName,
                  openiccScopeGetString(scope), keyName?keyName:"" );
       }
 
-      if(root && !db)
-        oyjl_tree_free(root);
-
     } else
     { error = 1;
       ERRcc_S( db, "%s [%s]/%s",
                _("Could not create root JSON node for"),
                openiccScopeGetString(scope), keyName?keyName:"" );
     }
+    if(root && !db) oyjl_tree_free(root);
     openiccDB_Release( &db );
     if(file_name) free(file_name);
   }

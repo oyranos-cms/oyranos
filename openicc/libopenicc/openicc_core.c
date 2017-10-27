@@ -14,6 +14,7 @@
  */
 
 #include "openicc_config_internal.h"
+#include "oyjl_tree_internal.h"
 
 int openicc_debug = 0;
 #ifndef HAVE_OPENICC
@@ -102,7 +103,7 @@ int                openiccMessageFormat (
     id_text = id_text_tmp;
   }
 
-  text = calloc( sizeof(char), 256 );
+  oyjlAllocHelper_m_(text, char, 256, malloc, if(id_text_tmp) free(id_text_tmp); return 1);
 
 # define MAX_LEVEL 20
   if(level_PROG < 0)
@@ -158,7 +159,7 @@ int                openiccMessageFormat (
       OI_DBG_FORMAT_"Could not open " TMP_FILE "\n",OI_DBG_ARGS_);
   }
 
-  free( text ); text = 0;
+  free( text ); text = NULL;
   if(id_text_tmp) {free(id_text_tmp); id_text_tmp = 0;}
 
   *message_text = t;
@@ -217,6 +218,8 @@ int  openiccMessageFunc              ( int/*openiccMSG_e*/ code,
 
   if(msg)
     fprintf( stderr, "%s\n", msg );
+  else if(error)
+    fprintf( stderr, "%s\n", format );
 
   free( text ); text = 0;
   free( msg ); msg = 0;

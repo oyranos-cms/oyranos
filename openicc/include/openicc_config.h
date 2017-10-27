@@ -3,7 +3,7 @@
  *  libOpenICC - OpenICC Colour Management Configuration
  *
  *  @par Copyright:
- *            2011-2016 (C) Kai-Uwe Behrmann
+ *            2011-2017 (C) Kai-Uwe Behrmann
  *
  *  @brief    OpenICC Colour Management configuration helpers
  *  @internal
@@ -79,7 +79,8 @@ const char *       openiccConfig_DeviceGet (
                                        int                 pos,
                                        char            *** keys,
                                        char            *** values,
-                                       openiccAlloc_f      alloc );
+                                       openiccAlloc_f      alloc,
+                                       openiccDeAlloc_f    dealloc );
 #define OPENICC_CONFIGS_SKIP_HEADER 0x01
 #define OPENICC_CONFIGS_SKIP_FOOTER 0x02
 const char *       openiccConfig_DeviceGetJSON (
@@ -89,7 +90,8 @@ const char *       openiccConfig_DeviceGetJSON (
                                        int                 flags,
                                        const char        * device_class,
                                        char             ** json,
-                                       openiccAlloc_f      alloc );
+                                       openiccAlloc_f      alloc,
+                                       openiccDeAlloc_f    dealloc );
 char *             openiccConfig_DeviceClassGet (
                                        openiccConfig_s   * config,
                                        openiccAlloc_f      alloc );
