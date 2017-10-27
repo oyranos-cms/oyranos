@@ -123,16 +123,19 @@ char *       oyReadFileSToMem_       ( FILE              * fp,
                                        oyAlloc_f           allocate_func)
 {
   size_t mem_size = 256;
-  char* mem = (char*) malloc(mem_size);
+  char* mem;
   int c;
 
   DBG_MEM_START
 
   DBG_MEM
 
+  if(!fp) return NULL;
+
+  mem = (char*) malloc(mem_size);
   if(!mem) return NULL;
 
-  if (fp && size)
+  if(size)
   {
     *size = 0;
     do
