@@ -2054,7 +2054,7 @@ oyTESTRESULT_e testProfile ()
   if(fp)
   {
     fclose(fp); fp = 0;
-    remove( ICC_TEST_NAME".icc" );
+    int r OY_UNUSED = remove( ICC_TEST_NAME".icc" );
   }
 
   size = 0;
@@ -2948,16 +2948,20 @@ oyTESTRESULT_e testClut ()
 
 
   // test outside DB change
-  int old_effect_switch = oyGetBehaviour( oyBEHAVIOUR_EFFECT );
+  char * old_daemon = oyGetPersistentString(OY_DEFAULT_DISPLAY_WHITE_POINT_DAEMON, 0, oySCOPE_USER_SYS, 0);
+  int old_display_white_point = oyGetBehaviour( oyBEHAVIOUR_DISPLAY_WHITE_POINT );
   char * value = NULL;
   oyStringAddPrintf( &value, oyAllocateFunc_, oyDeAllocateFunc_,
-                     "%d", old_effect_switch >= 1 ? 0 : 1 );
-  oyDBSetString( OY_DEFAULT_EFFECT, oySCOPE_USER, value,
+                     "%d", old_display_white_point != 2 ? 2 : 7 );
+  oyDBSetString( OY_DEFAULT_DISPLAY_WHITE_POINT_DAEMON, oySCOPE_USER,
+                 old_daemon ? NULL : "oyranos-monitor-white-point",
+                 "testing");
+  oyDBSetString( OY_DEFAULT_DISPLAY_WHITE_POINT, oySCOPE_USER, value,
                  "testing");
   /* clear the DB cache */
   oyGetPersistentStrings( NULL );
-  int effect_switch = oyGetBehaviour( oyBEHAVIOUR_EFFECT );
-  fprintf(zout, "old_value: %d -> setting oyBEHAVIOUR_EFFECT: %s  check %d\n", old_effect_switch, value, effect_switch );
+  int display_white_point = oyGetBehaviour( oyBEHAVIOUR_DISPLAY_WHITE_POINT );
+  fprintf(zout, "old_value: %d -> setting oyBEHAVIOUR_DISPLAY_WHITE_POINT: %s  check %d\n", old_display_white_point, value, display_white_point );
   oyFree_m_( value );
 
 
@@ -2976,7 +2980,12 @@ oyTESTRESULT_e testClut ()
 
 
   // reset to old value
-  oySetBehaviour( oyBEHAVIOUR_EFFECT, oySCOPE_USER, old_effect_switch );
+  oySetBehaviour( oyBEHAVIOUR_DISPLAY_WHITE_POINT, oySCOPE_USER, old_display_white_point );
+  if(old_daemon)
+  {
+    oySetPersistentString( OY_DEFAULT_DISPLAY_WHITE_POINT_DAEMON, oySCOPE_USER, old_daemon, NULL);
+    oyFree_m_(old_daemon);
+  }
   return result;
 }
 
