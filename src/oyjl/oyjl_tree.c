@@ -953,12 +953,12 @@ static oyjl_val  oyjl_tree_get_value_( oyjl_val            v,
       /* search for name in object */
       for(j = 0; j < count; ++j)
       {
-        if(strcmp( parent->u.object.keys[j], term ) == 0 ||
+        if((parent->type == oyjl_t_object && strcmp( parent->u.object.keys[j], term ) == 0) ||
             /* a empty term matches to everything */
            term[0] == '\000')
         {
           found = 1;
-          level = parent->u.object.values[j];
+          level = oyjl_value_pos_get( parent, j );
           break;
         }
       }
