@@ -853,6 +853,11 @@ int        oyjl_tree_paths_get_index ( const char        * term,
   int pos = -1;
   int error = -1;
 
+  /* pick wildcards "", "[]" */
+  if(term[0] == '\000' ||
+     strcmp(term,"[]") == 0)
+    pos = 0;
+  else
   if(tindex != NULL)
   {
     ptrdiff_t size;
@@ -898,13 +903,14 @@ static oyjl_val  oyjl_tree_get_value_( oyjl_val            v,
     int pos = -1;
 
     found = 0;
+    if(count == 0) break;
 
     /* requests index in object or array */
     if((oyjl_tree_paths_get_index( term, &pos ) == 0 && pos != -1) ||
        /* request a empty index together with OYJL_CREATE_NEW */
        strcmp(term,"[]") == 0)
     {
-      if(count > pos)
+      if(0 <= pos && pos < count)
         level = oyjl_value_pos_get( parent, pos );
       else
         level = NULL;
@@ -947,7 +953,9 @@ static oyjl_val  oyjl_tree_get_value_( oyjl_val            v,
       /* search for name in object */
       for(j = 0; j < count; ++j)
       {
-        if(strcmp( parent->u.object.keys[j], term ) == 0)
+        if(strcmp( parent->u.object.keys[j], term ) == 0 ||
+            /* a empty term matches to everything */
+           term[0] == '\000')
         {
           found = 1;
           level = parent->u.object.values[j];
