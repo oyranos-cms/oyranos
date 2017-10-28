@@ -903,7 +903,7 @@ static oyjl_val  oyjl_tree_get_value_( oyjl_val            v,
     int pos = -1;
 
     found = 0;
-    if(count == 0) break;
+    if(count == 0 && !(flags & OYJL_CREATE_NEW)) break;
 
     /* requests index in object or array */
     if((oyjl_tree_paths_get_index( term, &pos ) == 0 && pos != -1) ||
