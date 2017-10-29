@@ -809,6 +809,47 @@ oyTESTRESULT_e testJson ()
         "oyjl_tree_to_json()                                " );
       }
       oyFree_m_(json);
+
+      char ** paths = NULL;
+      oyjl_tree_to_paths( root, 10, 0, &paths );
+      int count = 0; while(paths && paths[count]) ++count;
+      if(count == 10)
+      { PRINT_SUB( oyTESTRESULT_SUCCESS,
+        "oyjl_tree_to_paths()                     %d", count );
+      } else
+      { PRINT_SUB( oyTESTRESULT_FAIL,
+        "oyjl_tree_to_paths()                     %d", count );
+      }
+      if(paths && count)
+        oyStringListRelease( &paths, count, free );
+
+      oyjl_tree_to_paths( root, 10, OYJL_KEY, &paths );
+      count = 0; while(paths && paths[count]) ++count;
+      if(count == 6)
+      { PRINT_SUB( oyTESTRESULT_SUCCESS,
+        "oyjl_tree_to_paths( OYJL_KEY )           %d", count );
+      } else
+      { PRINT_SUB( oyTESTRESULT_FAIL,
+        "oyjl_tree_to_paths( OYJL_KEY )           %d", count );
+      }
+      for(int j = 0; j < count; ++j)
+        fprintf( zout, "%d: %s\n", j, paths[j] );
+      if(paths && count)
+        oyStringListRelease( &paths, count, free );
+
+      oyjl_tree_to_paths( root, 10, OYJL_PATH, &paths );
+      count = 0; while(paths && paths[count]) ++count;
+      if(count == 4)
+      { PRINT_SUB( oyTESTRESULT_SUCCESS,
+        "oyjl_tree_to_paths( OYJL_PATH )          %d", count );
+      } else
+      { PRINT_SUB( oyTESTRESULT_FAIL,
+        "oyjl_tree_to_paths( OYJL_PATH )          %d", count );
+      }
+      for(int j = 0; j < count; ++j)
+        fprintf( zout, "%d: %s\n", j, paths[j] );
+      if(paths && count)
+        oyStringListRelease( &paths, count, free );
     }
     if(xpath)
     {

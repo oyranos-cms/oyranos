@@ -205,8 +205,11 @@ void       oyjl_tree_clear_value     ( oyjl_val            root,
 void       oyjl_tree_to_json         ( oyjl_val            v,
                                        int               * level,
                                        char             ** json );
+#define    OYJL_PATH                   0x08
+#define    OYJL_KEY                    0x10
 void       oyjl_tree_to_paths        ( oyjl_val            v,
                                        int                 child_levels,
+                                       int                 flags,
                                        char            *** paths );
 #define    OYJL_CREATE_NEW             0x02
 oyjl_val   oyjl_tree_get_value       ( oyjl_val            v,
