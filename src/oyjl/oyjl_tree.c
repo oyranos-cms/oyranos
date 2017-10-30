@@ -875,7 +875,8 @@ oyjl_val       oyjl_value_pos_get    ( oyjl_val            v,
   return NULL;
 }
 
-/** @brief tell about xpath segment
+/** @internal 
+ *  @brief tell about xpath segment
  *
  *  @param         term                xpath segment
  *  @param         index               resulting array position,
@@ -931,6 +932,14 @@ int        oyjl_path_term_get_index  ( const char        * term,
 
   return error;
 }
+/** @brief search for xpath pattern matching in a full path
+ *
+ *  @code
+    // the second xpath expression matches the first path
+    int matches = oyjl_path_match( "org/free/[1]/s2key_d", "org///s2key_d" );
+    // "//[1]/s2key_d" or "///s2key_d" would fit as well;  "//[0]/s2key_d" not
+    @endcode
+ */
 int        oyjl_path_match           ( const char        * path,
                                        const char        * xpath )
 {
