@@ -947,7 +947,7 @@ int        oyjl_path_match           ( const char        * path,
   char ** xlist = oyjl_string_split(xpath, '/', &xn, malloc);
   char ** plist = oyjl_string_split(path, '/', &pn, malloc);
 
-  if(!xlist || !xlist) return 0;
+  if(!xlist || !plist) return 0;
   if(pn >= xn) match = 1;
 
   /* follow the search path term */
