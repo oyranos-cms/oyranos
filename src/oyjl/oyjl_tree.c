@@ -639,7 +639,7 @@ char * oyjl_value_text (oyjl_val v, void*(*alloc)(size_t size))
   return text;
 }
 
-void       oyjl_tree_to_paths_       ( oyjl_val            root,
+static void  oyjl_tree_to_paths_     ( oyjl_val            root,
                                        int                 levels,
                                        int                 flags,
                                        const char        * base,
@@ -875,18 +875,36 @@ oyjl_val       oyjl_value_pos_get    ( oyjl_val            v,
   return NULL;
 }
 
-int        oyjl_tree_paths_get_index ( const char        * term,
+/** @brief tell about xpath segment
+ *
+ *  @param         term                xpath segment
+ *  @param         index               resulting array position,
+ *                                     - is a index: set index from term
+ *                                     - is a wildcard: keeps index untouched
+ *                                     - is not an index or wildcard: set position to -1
+ *  @return                            status
+ *                                     - 0  : index or wildcard
+ *                                     - 1  : error
+ *                                     - -1 : no suitable term, will set index to -1
+ */
+int        oyjl_path_term_get_index  ( const char        * term,
                                        int               * index )
 {
-  char * tindex = strrchr(term,'['),
-       * ttmp = NULL;
+  char * tindex;
   int pos = -1;
   int error = -1;
+
+  if(!term) { *index = pos; return 1; }
+
+  tindex = strrchr(term,'[');
 
   /* pick wildcards "", "[]" */
   if(term[0] == '\000' ||
      strcmp(term,"[]") == 0)
-    pos = 0;
+  {
+    pos = *index;
+    error = 0;
+  }
   else
   if(tindex != NULL)
   {
@@ -896,23 +914,55 @@ int        oyjl_tree_paths_get_index ( const char        * term,
     if(size > 0)
     {
       long signed int num = 0;
-      ttmp = malloc(size + 1);
+      char * ttmp = malloc(size + 1);
+      if(!ttmp) return 1;
       memcpy( ttmp, tindex, size );
       ttmp[size] = '\000';
 
       error = oyjl_string_to_long( ttmp, &num );
       if(!error)
         pos = num;
+
+      if(ttmp) free( ttmp );
     }
   }
 
   *index = pos;
 
-  if(ttmp)
-    free( ttmp );
-
   return error;
 }
+int        oyjl_path_match           ( const char        * path,
+                                       const char        * xpath )
+{
+  int match = 0, i,pn=0,xn=0;
+  char ** xlist = oyjl_string_split(xpath, '/', &xn, malloc);
+  char ** plist = oyjl_string_split(path, '/', &pn, malloc);
+
+  if(!xlist || !xlist) return 0;
+  if(pn >= xn) match = 1;
+
+  /* follow the search path term */
+  for(i = 0; i < xn && match; ++i)
+  {
+    char * xterm = xlist[i],
+         * pterm = plist[i];
+    int xindex = -2,
+        pindex = -2;
+    oyjl_path_term_get_index( xterm, &xindex );
+    oyjl_path_term_get_index( pterm, &pindex );
+
+    if(!(strcmp(xterm, pterm) == 0 ||
+        (pindex >= 0 && xindex == pindex) ||
+        (xindex == -2)))
+      match = 0;
+  }
+
+  oyjl_string_list_release( &xlist, xn, free );
+  oyjl_string_list_release( &plist, pn, free );
+
+  return match;
+}
+
 
 /* split new root allocation from inside root manipulation */
 static oyjl_val  oyjl_tree_get_value_( oyjl_val            v,
@@ -930,15 +980,15 @@ static oyjl_val  oyjl_tree_get_value_( oyjl_val            v,
     /* is object or array */
     int count = oyjl_value_count( parent );
     int j;
-    int pos = -1;
+    int pos = 0;
 
     found = 0;
     if(count == 0 && !(flags & OYJL_CREATE_NEW)) break;
 
+    oyjl_path_term_get_index( term, &pos );
+
     /* requests index in object or array */
-    if((oyjl_tree_paths_get_index( term, &pos ) == 0 && pos != -1) ||
-       /* request a empty index together with OYJL_CREATE_NEW */
-       strcmp(term,"[]") == 0)
+    if((pos != -1))
     {
       if(0 <= pos && pos < count)
         level = oyjl_value_pos_get( parent, pos );
