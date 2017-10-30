@@ -26,7 +26,7 @@ extern "C" {
 #define oyjl_string_split              oyStringSplit
 #define oyjl_string_list_add_list      oyStringListAdd
 #define oyjl_string_list_cat_list      oyStringListCat
-#define oyjl_string_list_release       oyStringListRelease_
+#define oyjl_string_list_release       oyStringListRelease
 #define oyjl_string_list_free_doubles  oyStringListFreeDoubles
 #define oyjl_string_list_add_static_string oyStringListAddStaticString
 #define oyjl_string_to_long            oyStringToLong
@@ -35,6 +35,8 @@ extern "C" {
 #define oyjl_message_func_set          oy_oyjl_message_func_set
 #define oyjl_message_p                 oy_oyjl_message_p
 #define oyjl_object_free               oyJObjectFree
+#define oyjl_path_term_get_index       oyJPathTermGetIndex
+#define oyjl_path_match                oyJPathMatch
 #define oyjl_tree_callbacks            oy_jtree_callbacks
 #define oyjl_tree_new                  oyJTreeNew
 #define oyjl_tree_free                 oyJTreeFree
@@ -44,7 +46,6 @@ extern "C" {
 #define oyjl_tree_get_value_           oyJTreeGetValue_
 #define oyjl_tree_get_valuef           oyJTreeGetValuef
 #define oyjl_tree_parse                oyJTreeParse
-#define oyjl_tree_paths_get_index      oyJTreePathsGetIndex
 #define oyjl_tree_to_json              oyJTreeToJson
 #define oyjl_tree_to_paths             oyJTreeToPaths
 #define oyjl_value_count               oyJValueCount
