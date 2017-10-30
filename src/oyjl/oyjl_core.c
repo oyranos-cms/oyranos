@@ -239,20 +239,21 @@ void       oyjl_string_list_release  ( char            *** l,
                                        int                 size,
                                        void             (* deAlloc)(void*) )
 {
-  char *** list = l;
-
   if(!deAlloc) deAlloc = free;
 
   if( l )
   {
-    size_t i;
+    char ** list = *l;
 
-    for(i = 0; (int)i < size; ++i)
-      if((*list)[i])
-        deAlloc( (*list)[i] );
-    if(*list)
-      deAlloc( *list );
-    *list = NULL;
+    if(list)
+    {
+      size_t i;
+      for(i = 0; (int)i < size; ++i)
+        if((list)[i])
+          deAlloc( (list)[i] );
+      deAlloc( list );
+      *l = NULL;
+    }
   }
 }
 
