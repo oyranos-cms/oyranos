@@ -3,7 +3,7 @@
  *  oyjl - Yajl tree extension
  *
  *  @par Copyright:
- *            2016 (C) Kai-Uwe Behrmann
+ *            2016-2017 (C) Kai-Uwe Behrmann
  *
  *  @brief    Oyjl command line
  *  @internal
@@ -156,18 +156,21 @@ int main(int argc, char ** argv)
 
     if(xpath)
     {
-      char * t = strdup(xpath), *x;
-      if(show == KEY)
-      {
-        x = strrchr( t, '/' );
-        if(x)
-        {
-          if(oyjl_tree_paths_get_index( x+1, &index ))
-            index = 0;
-          *x = 0;
+      char ** paths = NULL;
+      int count = 0, i;
+      const char * match = NULL;
+
+      oyjl_tree_to_paths( root, 1000000, 0, &paths );
+      while(paths && paths[count]) ++count;
+
+      for(i = 0; i < count; ++i)
+        if(oyjl_path_match( paths[i], xpath ))
+        { match = paths[i];
+          break;
         }
-      }
-      value = oyjl_tree_get_value( root, 0, t );
+
+      if(match)
+        value = oyjl_tree_get_value( root, 0, match );
       if(verbose)
         fprintf(stderr, "%s xpath \"%s\"\n", value?"found":"found not", xpath);
     }
