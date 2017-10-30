@@ -37,6 +37,8 @@
 #define oyjl_message_func_set          openiccJMessageFuncSet
 #define oyjl_message_p                 openiccJMessage_p
 #define oyjl_object_free               openiccJObjectFree
+#define oyjl_path_term_get_index       openiccJPathTermGetIndex
+#define oyjl_path_match                openiccJPathMatch
 #define oyjl_tree_callbacks            openicc_jtree_callbacks
 #define oyjl_tree_new                  openiccJTreeNew
 #define oyjl_tree_free                 openiccJTreeFree
@@ -46,7 +48,6 @@
 #define oyjl_tree_get_value_           openiccJTreeGetValue_
 #define oyjl_tree_get_valuef           openiccJTreeGetValuef
 #define oyjl_tree_parse                openiccJTreeParse
-#define oyjl_tree_paths_get_index      openiccJTreePathsGetIndex
 #define oyjl_tree_to_json              openiccJTreeToJson
 #define oyjl_tree_to_paths             openiccJTreeToPaths
 #define oyjl_value_count               openiccJValueCount

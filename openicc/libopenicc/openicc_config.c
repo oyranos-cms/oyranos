@@ -497,7 +497,7 @@ int                openiccConfig_GetKeyNames (
   }
 
   if(!error)
-    oyjl_tree_to_paths( list, child_levels, &keys );
+    oyjl_tree_to_paths( list, child_levels, 0, &keys );
 
   if(!error && n)
   {
