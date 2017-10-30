@@ -832,8 +832,21 @@ oyTESTRESULT_e testJson ()
       { PRINT_SUB( oyTESTRESULT_FAIL,
         "oyjl_tree_to_paths( OYJL_KEY )           %d", count );
       }
+      const char * match = NULL;
+      const char * xpath = "org///s2key_d";
       for(int j = 0; j < count; ++j)
+      {
+        if(oyjl_path_match( paths[j], xpath ))
+          match = paths[j];
         fprintf( zout, "%d: %s\n", j, paths[j] );
+      }
+      if(match && strcmp(match,"org/free/[1]/s2key_d") == 0)
+      { PRINT_SUB( oyTESTRESULT_SUCCESS,
+        "oyjl_path_match(%s, %s)", match, xpath );
+      } else
+      { PRINT_SUB( oyTESTRESULT_FAIL,
+        "oyjl_path_match(%s, %s)", match, xpath );
+      }
       if(paths && count)
         oyStringListRelease( &paths, count, free );
 
