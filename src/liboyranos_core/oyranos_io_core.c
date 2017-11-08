@@ -116,6 +116,31 @@ oyReadFileSize_(const char* name)
 }
 
 /** @internal
+ *  Copy to external allocator */
+char *       oyReAllocFromStdMalloc_ ( char              * mem,
+                                       size_t            * size,
+                                       oyAlloc_f           allocate_func )
+{
+  if(mem)
+  {
+    if(allocate_func != malloc)
+    {
+      char* temp = mem;
+
+      mem = oyAllocateWrapFunc_( *size+1, allocate_func );
+      if(mem)
+        memcpy( mem, temp, *size );
+      else
+        *size = 0;
+
+      free( temp );
+    }
+  }
+
+  return mem;
+}
+
+/** @internal
  *  Read a file stream without knowing its size in advance.
  */
 char *       oyReadFileSToMem_       ( FILE              * fp,
@@ -145,27 +170,17 @@ char *       oyReadFileSToMem_       ( FILE              * fp,
       {
         mem_size *= 2;
         mem = (char*) realloc( mem, mem_size );
-	if(!mem) { *size = 0; return NULL; }
+        if(!mem) { *size = 0; return NULL; }
       }
       mem[(*size)++] = c;
     } while(!feof(fp));
 
     --*size;
-
-    if(mem)
-    {
-      /* copy to external allocator */
-      char* temp = mem;
-      mem = oyAllocateWrapFunc_( *size+1, allocate_func );
-      if(mem) {
-        memcpy( mem, temp, *size );
-        mem[*size] = 0;
-      } else {
-        *size = 0;
-      }
-      oyFree_m_ (temp)
-    }
   }
+
+  mem = oyReAllocFromStdMalloc_( mem, size, allocate_func );
+  if(mem)
+    mem[*size] = 0;
  
   DBG_MEM_ENDE
   return mem;
@@ -227,17 +242,7 @@ char *       oyReadFilepToMem_       ( FILE              * fp,
           oyFree_m_ (mem)
           mem = 0;
         } else {
-          /* copy to external allocator */
-          char* temp = mem;
-          mem = oyAllocateWrapFunc_( *size+1, allocate_func );
-          if(mem) {
-            memcpy( mem, temp, *size );
-            oyFree_m_ (temp)
-            mem[*size] = 0;
-          } else {
-            oyFree_m_ (mem)
-            *size = 0;
-          }
+          mem = oyReAllocFromStdMalloc_( mem, size, allocate_func );
         }
       }
     }
@@ -325,45 +330,44 @@ char * oyReadUrlToMem_               ( const char        * url,
 {
   char * text = 0;
   char * command = 0;
-  FILE * fp = 0;
 
   if(url && strlen(url) && size )
   {
     int len = strlen(url), i, pos;
-    char * mem = oyAllocateFunc_(len*3+1);
+    char * new_url = oyAllocateFunc_(len*3+1);
     char c;
     char * app = 0;
 
-    if(!mem) return NULL;
+    if(!new_url) return NULL;
 
     for(i = 0, pos = 0; i < len; ++i)
     {
       c = url[i];
            if(c == ' ')
-      { memcpy( &mem[pos], "%20", 3 ); pos += 3; }
+      { memcpy( &new_url[pos], "%20", 3 ); pos += 3; }
       else if(c == '&')
-      { memcpy( &mem[pos], "%26", 3 ); pos += 3; }
+      { memcpy( &new_url[pos], "%26", 3 ); pos += 3; }
       else
-        mem[pos++] = c;
+        new_url[pos++] = c;
     }
-    mem[pos] = '\000';
+    new_url[pos] = '\000';
     
     if(!app && (app = oyFindApplication( "curl" )) != NULL)
     {
       if(oy_debug)
         oyStringAddPrintf_( &command, oyAllocateFunc_, oyDeAllocateFunc_,
-                            "curl -v -s %s", mem );
+                            "curl -v -s %s", new_url );
       else
         oyStringAddPrintf_( &command, oyAllocateFunc_, oyDeAllocateFunc_,
-                            "curl -s %s", mem );
+                            "curl -s %s", new_url );
     } else if(!app && (app = oyFindApplication( "wget" )) != NULL)
     {
       if(oy_debug)
         oyStringAddPrintf_( &command, oyAllocateFunc_, oyDeAllocateFunc_,
-                            "wget -v %s -O -", mem );
+                            "wget -v %s -O -", new_url );
       else
         oyStringAddPrintf_( &command, oyAllocateFunc_, oyDeAllocateFunc_,
-                            "wget -q %s -O -", mem );
+                            "wget -q %s -O -", new_url );
     } else
       WARNc_S(_("Could not download from WWW. Please install curl or wget."));
 
@@ -371,60 +375,11 @@ char * oyReadUrlToMem_               ( const char        * url,
   
     if(command)
     {
-      if(oy_debug)
-        oyMessageFunc_p( oyMSG_DBG, 0, OY_DBG_FORMAT_"%s",OY_DBG_ARGS_, command );
-      fp = oyPOPEN_m( command, mode );
-    }
-    if(fp)
-    {
-      size_t mem_size = 0;
-      char* mem = NULL;
-
-      text = oyReadFileSToMem_(fp, size, allocate_func );
-
-      if(!feof(fp))
-      {
-        if(text) oyFree_m_(text);
-        *size = 0;
-        mem_size = 1024;
-        mem = malloc(mem_size);
-        pclose(fp);
-        fp = oyPOPEN_m( command, mode );
-      }
-      if(fp)
-      while(!feof(fp))
-      {
-        if(*size >= mem_size)
-        {
-          mem_size *= 10;
-          mem = realloc( mem, mem_size );
-          if(!mem) { *size = 0; break; }
-        }
-	if(mem)
-          *size += fread( &mem[*size], sizeof(char), mem_size-*size, fp );
-      }
-      if(fp && mem)
-      {
-          /* copy to external allocator */
-          char* temp = mem;
-          mem = oyAllocateWrapFunc_( *size+1, allocate_func );
-          if(mem) {
-            memcpy( mem, temp, *size );
-            oyFree_m_ (temp)
-            mem[*size] = 0;
-          } else {
-            oyFree_m_ (mem)
-            *size = 0;
-          }
-        text = mem;
-      }
-      if(fp)
-        pclose(fp);
-      fp = 0;
-    }
-    if(command)
+      text = oyReadCmdToMem_( command, size, mode, allocate_func );
       oyFree_m_(command);
-    oyFree_m_( mem );
+    }
+
+    oyFree_m_( new_url );
   }
 
   return text;
@@ -441,7 +396,7 @@ char * oyReadCmdToMem_               ( const char        * command,
   char * text = 0;
   FILE * fp = 0;
 
-  if(command && strlen(command) && size )
+  if(command && command[0] && size )
   {
     {
       if(oy_debug)
@@ -453,11 +408,11 @@ char * oyReadCmdToMem_               ( const char        * command,
       size_t mem_size = 0;
       char* mem = NULL;
 
-      text = oyReadFileSToMem_(fp, size, allocate_func );
+      text = oyReadFileSToMem_(fp, size, malloc );
 
       if(!feof(fp))
       {
-        if(text) oyFree_m_(text);
+        if(text) free( text );
         *size = 0;
         mem_size = 1024;
         mem = malloc(mem_size);
@@ -478,21 +433,7 @@ char * oyReadCmdToMem_               ( const char        * command,
       }
       if(fp && mem)
       {
-        /* copy to external allocator */
-        char* temp = mem;
-        mem = oyAllocateWrapFunc_( *size+1, allocate_func );
-        if(mem)
-       	{
-          memcpy( mem, temp, *size );
-          oyFree_m_ (temp)
-          mem[*size] = 0;
-        } else
-       	{
-          oyMessageFunc_p( oyMSG_ERROR,0, OY_DBG_FORMAT_ "%s: \"%s\"",
-                           OY_DBG_ARGS_, _("MEM Error."), command);
-          oyFree_m_ (temp)
-          *size = 0;
-        }
+        mem = oyReAllocFromStdMalloc_( mem, size, allocate_func );
         text = mem;
       }
       if(fp)
