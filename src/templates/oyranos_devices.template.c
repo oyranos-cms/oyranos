@@ -1708,7 +1708,7 @@ OYAPI int  OYEXPORT
   error = oyDeviceCheckProperties ( device );
 
 
-  manufacturers = oyReadUrlToMem_( "http://icc.opensuse.org/manufacturers",
+  manufacturers = oyReadUrlToMem_( "https://icc.opensuse.org/manufacturers",
                                    &size, "r", oyAllocateFunc_ );
 
   
@@ -1791,7 +1791,7 @@ OYAPI int  OYEXPORT
         /* the device DB JSON contains all device meta data for one
          * mnft / manufacturer */
         device_db = oyReadUrlToMemf_( &size, "r", oyAllocateFunc_,
-                            "http://icc.opensuse.org/devices/%s", val );
+                            "https://icc.opensuse.org/devices/%s", val );
         STRING_ADD( t, device_db );
         oyFree_m_( device_db );
 
@@ -1802,7 +1802,7 @@ OYAPI int  OYEXPORT
         if(oy_debug)
           oyMessageFunc_p( oyMSG_DBG,(oyStruct_s*)device,
                        OY_DBG_FORMAT_
-                       "http://icc.opensuse.org/devices/%s with header:\n%s",
+                       "https://icc.opensuse.org/devices/%s with header:\n%s",
                        OY_DBG_ARGS_,
                        val, oyNoEmptyString_m_(device_db) );
         t = oyAllocateFunc_(256);
