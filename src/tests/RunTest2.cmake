@@ -1,5 +1,5 @@
 SET( ENV{OY_MODULE_PATH} "${CMAKE_BINARY_DIR}/../../src/modules" )
-SET( ENV{XDG_DATA_DIRS} "${CMAKE_SOURCE_DIR}/../../..:${CMAKE_SOURCE_DIR}/../../../oyranos" )
+SET( ENV{XDG_DATA_DIRS} "${CMAKE_SOURCE_DIR}/:${CMAKE_SOURCE_DIR}/../../..:${CMAKE_SOURCE_DIR}/../../../oyranos" )
 EXECUTE_PROCESS( COMMAND echo "./test_core")
 EXECUTE_PROCESS( COMMAND ./test_core)
 EXECUTE_PROCESS( COMMAND echo "./test_core-static")
