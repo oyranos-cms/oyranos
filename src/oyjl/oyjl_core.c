@@ -302,21 +302,27 @@ void       oyjl_string_list_free_doubles (
   for(i = pos; i < n; ++i)
   {
     int k, found = 0;
+    char * ti = list[i];
     for( k = 0; k < i; ++k )
-      if(list[i] && list[k] && strcmp(list[i], list[k]) == 0)
+    {
+      char * tk = list[k];
+      if(ti && tk && strcmp(ti, tk) == 0)
       {
-        deAlloc( list[i] );
-        list[i] = NULL;
+        deAlloc( ti );
+        list[i] = ti = NULL;
         found = 1;
         continue;
       }
+    }
 
     if(found == 0)
     {
-      list[pos] = list[i];
+      list[pos] = ti;
       ++pos;
     }
   }
+
+  list[pos] = NULL;
 
   *list_n = pos;
 }
