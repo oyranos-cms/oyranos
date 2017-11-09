@@ -129,7 +129,10 @@ char *       oyReAllocFromStdMalloc_ ( char              * mem,
 
       mem = oyAllocateWrapFunc_( *size+1, allocate_func );
       if(mem)
+      {
         memcpy( mem, temp, *size );
+        mem[*size] = '\000';
+      }
       else
         *size = 0;
 
@@ -179,8 +182,6 @@ char *       oyReadFileSToMem_       ( FILE              * fp,
   }
 
   mem = oyReAllocFromStdMalloc_( mem, size, allocate_func );
-  if(mem)
-    mem[*size] = 0;
  
   DBG_MEM_ENDE
   return mem;
