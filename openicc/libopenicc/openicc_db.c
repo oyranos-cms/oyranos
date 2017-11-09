@@ -129,7 +129,7 @@ char *        openiccDBGetJSONFile   ( openiccSCOPE_e      scope )
  *  @memberof openiccDB_s
  */
 int           openiccDB_AddScope     ( openiccDB_s       * db,
-                                       const char        * top_key_name,
+                                       const char        * top_key_name OI_UNUSED,
                                        openiccSCOPE_e      scope )
 {
   int error = 0;
@@ -159,7 +159,7 @@ int           openiccDB_AddScope     ( openiccDB_s       * db,
   {
     const char * db_file = paths[i];
     /* read JSON input file */
-    size_t size = 0;
+    int size = 0;
     char * text = NULL;
 
     if(openiccIsFileFull_( db_file, "r" ))
@@ -453,7 +453,7 @@ int      openiccDBSetString          ( const char        * keyName,
         } else
         {
           char * json = NULL;
-          size_t size = 0, result = 0;
+          int size = 0, result = 0;
           int level = 0;
 
           oyjl_tree_to_json( root, &level, &json );

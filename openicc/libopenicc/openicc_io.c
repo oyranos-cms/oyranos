@@ -26,10 +26,10 @@
 
 
 char * openiccOpenFile( const char * file_name,
-                        size_t   * size_ptr )
+                        int        * size_ptr )
 {
   FILE * fp = NULL;
-  size_t size = 0, s = 0;
+  int size = 0, s = 0;
   char * text = NULL;
 
   if(file_name)
@@ -37,9 +37,9 @@ char * openiccOpenFile( const char * file_name,
     fp = fopen(file_name,"rb");
     if(fp)
     {
-      fseek(fp,0L,SEEK_END); 
-      size = ftell (fp);
-      if(size == (size_t)-1)
+      fseek( fp, 0L, SEEK_END );
+      size = ftell( fp );
+      if(size == -1)
       {
         switch(errno)
         {
@@ -79,9 +79,9 @@ char * openiccOpenFile( const char * file_name,
 }
 
 char *       openiccReadFileSToMem   ( FILE              * fp,
-                                       size_t            * size)
+                                       int               * size)
 {
-  size_t mem_size = 256;
+  int mem_size = 256;
   char* mem;
   int c;
 
@@ -278,14 +278,14 @@ int openiccIsFileFull_ (const char* fullFileName, const char * read_mode)
   return r;
 }
   
-size_t openiccWriteFile(const char * filename,
+int  openiccWriteFile ( const char * filename,
                         void       * mem,
-                        size_t       size )
+                        int          size )
 {
   FILE *fp = 0;
   const char * full_name = filename;
   int r = !filename;
-  size_t written_n = 0;
+  int written_n = 0;
   char * path = 0;
 
   if(!r)

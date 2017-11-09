@@ -165,13 +165,13 @@ int  openiccMessageFunc              ( int/*openiccMSG_e*/ code,
 
 
 char * openiccOpenFile( const char * file_name,
-                        size_t     * size_ptr );
+                        int        * size_ptr );
 char * openiccReadFileSToMem(
                         FILE       * fp,
-                        size_t     * size);
-size_t openiccWriteFile(const char * file_name,
+                        int        * size);
+int    openiccWriteFile(const char * file_name,
                         void       * ptr,
-                        size_t       size );
+                        int          size );
 int openiccIsFileFull_ (const char* fullFileName, const char * read_mode);
 char * openiccExtractPathFromFileName_(const char        * file_name );
 int    openiccIsDirFull_             ( const char        * name );
