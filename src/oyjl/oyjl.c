@@ -55,6 +55,9 @@ void printfHelp(int argc, char ** argv)
   fprintf( stderr, "\n");
 }
 
+char *       oyjlReadFileSToMem_     ( FILE              * fp,
+                                       int               * size );
+
 typedef enum {
   JSON,
   COUNT,
@@ -67,7 +70,7 @@ int main(int argc, char ** argv)
   SHOW show = JSON;
   int verbose = 0;
   int error = 0;
-  size_t size = 0;
+  int size = 0;
   char * text = NULL;
   const char * input_file_name = NULL,
              * xpath = 0;
@@ -132,20 +135,17 @@ int main(int argc, char ** argv)
 
   if(input_file_name)
   {
-    FILE * fp = fopen(input_file_name,"rb");
+    FILE * fp;
+   
+    if(strcmp(input_file_name,"-") == 0)
+      fp = stdin;
+    else
+      fp = fopen(input_file_name,"rb");
 
     if(fp)
     {
-      fseek(fp,0L,SEEK_END); 
-      size = ftell (fp);
-      rewind(fp);
-      if(size)
-      {
-        text = malloc(size+1);
-        if(text)
-          fread(text, sizeof(char), size, fp);
-        text[size] = '\000';
-      }
+      text = oyjlReadFileSToMem_( fp, &size ); 
+      if(fp != stdin) fclose( fp );
     }
   }
 
@@ -178,6 +178,7 @@ int main(int argc, char ** argv)
       value = root;
   }
 
+  if(value)
   switch(show)
   {
     case JSON:
@@ -221,3 +222,36 @@ int main(int argc, char ** argv)
   return error;
 }
 
+char *       oyjlReadFileSToMem_     ( FILE              * fp,
+                                       int               * size )
+{
+  size_t mem_size = 256;
+  char* mem;
+  int c;
+
+  if(!fp) return NULL;
+
+  mem = (char*) malloc(mem_size+1);
+  if(!mem) return NULL;
+
+  if(size)
+  {
+    *size = 0;
+    do
+    {
+      c = getc(fp);
+      if(*size >= mem_size)
+      {
+        mem_size *= 2;
+        mem = (char*) realloc( mem, mem_size+1 );
+        if(!mem) { *size = 0; return NULL; }
+      }
+      mem[(*size)++] = c;
+    } while(!feof(fp));
+
+    --*size;
+    mem[*size] = '\000';
+  }
+
+  return mem;
+}
