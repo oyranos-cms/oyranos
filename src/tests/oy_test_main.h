@@ -83,19 +83,9 @@ int main(int argc, char** argv)
                  oyTestResultToString( oyTESTRESULT_FAIL), i, tests_failed[i] );
 
     if(error)
-    {
-      if(CHECK_COLOR)
-        fprintf( stdout, "    Tests " RED "FAILED" CTEND "\n" );
-      else
-        fprintf( stdout, "    Tests FAILED\n" );
-    }
+      fprintf( stdout, "    Tests %s\n", oyTermColor_( oyRED, "FAILED" ) );
     else
-    {
-      if(CHECK_COLOR)
-        fprintf( stdout, "    Tests " GREEN "SUCCEEDED" CTEND "\n" );
-      else
-        fprintf( stdout, "    Tests SUCCEEDED\n" );
-    }
+      fprintf( stdout, "    Tests %s\n", oyTermColor_( oyGREEN, "SUCCEEDED" ) );
 
     fprintf( stdout, "\n    Hint: the '-l' option will list all test names\n" );
 

@@ -56,36 +56,51 @@ typedef enum {
   oyTESTRESULT_UNKNOWN
 } oyTESTRESULT_e;
 
-
-#define RED "\033[38;2;240;0;0m"
-#define BLUE "\033[38;2;0;150;255m"
-#define GREEN "\033[38;2;0;250;100m"
+/* true color codes */
+#define RED_TC "\033[38;2;240;0;0m"
+#define GREEN_TC "\033[38;2;0;250;100m"
+#define BLUE_TC "\033[38;2;0;150;255m"
+/* basic color codes */
+#define RED_B "\033[0;31m"
+#define GREEN_B "\033[0;32m"
+#define BLUE_B "\033[0;34m"
+/* switch back */
 #define CTEND "\033[0m"
+typedef enum {
+  oyRED,
+  oyGREEN,
+  oyBLUE
+} oyCOLORTERM_e;
 const char * colorterm = NULL;
-#define CHECK_COLOR colorterm && strcmp(colorterm,"truecolor") == 0
+static const char * oyTermColor_( oyCOLORTERM_e rgb, const char * text) {
+  int len = strlen(text);
+  static char t[256];
+  int truecolor = colorterm && strcmp(colorterm,"truecolor") == 0;
+  int color = colorterm != NULL ? 1 : 0;
+  if(len < 200)
+  {
+    switch(rgb)
+    {
+      case oyRED: sprintf( t, "%s%s%s", truecolor ? RED_TC : color ? RED_B : "", text, CTEND ); break;
+      case oyGREEN: sprintf( t, "%s%s%s", truecolor ? GREEN_TC : color ? GREEN_B : "", text, CTEND ); break;
+      case oyBLUE: sprintf( t, "%s%s%s", truecolor ? BLUE_TC : color ? BLUE_B : "", text, CTEND ); break;
+    }
+    return t;
+  } else
+    return text;
+}
 
 const char * oyTestResultToString    ( oyTESTRESULT_e      error )
 {
   const char * text = "";
-  if(CHECK_COLOR)
   switch(error)
   {
-    case oyTESTRESULT_SYSERROR:text = RED "SYSERROR" CTEND; break;
-    case oyTESTRESULT_FAIL:    text = RED "FAIL" CTEND; break;
-    case oyTESTRESULT_XFAIL:   text = BLUE "XFAIL" CTEND; break;
-    case oyTESTRESULT_SUCCESS: text = GREEN "SUCCESS" CTEND; break;
-    case oyTESTRESULT_UNKNOWN: text = BLUE "UNKNOWN" CTEND; break;
-    default:                   text = BLUE "Huuch, what's that?" CTEND; break;
-  }
-  else
-  switch(error)
-  {
-    case oyTESTRESULT_SYSERROR:text = "SYSERROR"; break;
-    case oyTESTRESULT_FAIL:    text = "FAIL"; break;
-    case oyTESTRESULT_XFAIL:   text = "XFAIL"; break;
-    case oyTESTRESULT_SUCCESS: text = "SUCCESS"; break;
-    case oyTESTRESULT_UNKNOWN: text = "UNKNOWN"; break;
-    default:                   text = "Huuch, what's that?"; break;
+    case oyTESTRESULT_SYSERROR:text = oyTermColor_(oyRED,"SYSERROR"); break;
+    case oyTESTRESULT_FAIL:    text = oyTermColor_(oyRED,"FAIL"); break;
+    case oyTESTRESULT_XFAIL:   text = oyTermColor_(oyBLUE,"XFAIL"); break;
+    case oyTESTRESULT_SUCCESS: text = oyTermColor_(oyGREEN,"SUCCESS"); break;
+    case oyTESTRESULT_UNKNOWN: text = oyTermColor_(oyBLUE,"UNKNOWN"); break;
+    default:                   text = oyTermColor_(oyBLUE,"Huuch, what's that?"); break;
   }
   return text;
 }
