@@ -158,31 +158,28 @@ char *       oyReadFileSToMem_       ( FILE              * fp,
 
   DBG_MEM
 
-  if(!fp) return NULL;
+  if(!fp || !size) return NULL;
 
   mem = (char*) malloc(mem_size);
   if(!mem) return NULL;
 
-  if(size)
+  *size = 0;
+  do
   {
-    *size = 0;
-    do
+    c = getc(fp);
+    if(*size >= mem_size)
     {
-      c = getc(fp);
-      if(*size >= mem_size)
-      {
-        mem_size *= 2;
-        mem = (char*) realloc( mem, mem_size );
-        if(!mem) { *size = 0; return NULL; }
-      }
-      mem[(*size)++] = c;
-    } while(!feof(fp));
+      mem_size *= 2;
+      mem = (char*) realloc( mem, mem_size );
+      if(!mem) { *size = 0; return NULL; }
+    }
+    mem[(*size)++] = c;
+  } while(!feof(fp));
 
-    --*size;
-  }
+  --*size;
 
   mem = oyReAllocFromStdMalloc_( mem, size, allocate_func );
- 
+
   DBG_MEM_ENDE
   return mem;
 }
@@ -413,7 +410,7 @@ char * oyReadCmdToMem_               ( const char        * command,
 
       if(!feof(fp))
       {
-        if(text) free( text );
+        if(text) { free( text ); text = NULL; }
         *size = 0;
         mem_size = 1024;
         mem = malloc(mem_size);
@@ -739,7 +736,7 @@ char * oyGetTempFileName_            ( const char        * name,
                             allocateFunc?allocateFunc:oyAllocateFunc_ );
   }
 
-  oyFree_m_(tmp)
+  if(tmp) oyFree_m_(tmp)
 
   return result;
 }
