@@ -62,11 +62,12 @@ typedef enum {
 #define GREEN "\033[38;2;0;250;100m"
 #define CTEND "\033[0m"
 const char * colorterm = NULL;
+#define CHECK_COLOR colorterm && strcmp(colorterm,"truecolor") == 0
 
 const char * oyTestResultToString    ( oyTESTRESULT_e      error )
 {
   const char * text = "";
-  if(colorterm)
+  if(CHECK_COLOR)
   switch(error)
   {
     case oyTESTRESULT_SYSERROR:text = RED "SYSERROR" CTEND; break;

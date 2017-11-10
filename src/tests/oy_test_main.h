@@ -84,14 +84,14 @@ int main(int argc, char** argv)
 
     if(error)
     {
-      if(colorterm)
+      if(CHECK_COLOR)
         fprintf( stdout, "    Tests " RED "FAILED" CTEND "\n" );
       else
         fprintf( stdout, "    Tests FAILED\n" );
     }
     else
     {
-      if(colorterm)
+      if(CHECK_COLOR)
         fprintf( stdout, "    Tests " GREEN "SUCCEEDED" CTEND "\n" );
       else
         fprintf( stdout, "    Tests SUCCEEDED\n" );
