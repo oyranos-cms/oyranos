@@ -589,6 +589,9 @@ oyjl_val oyjl_tree_get(oyjl_val n, const char ** path, oyjl_type type)
     return n;
 }
 
+int        oyjl_path_term_get_index  ( const char        * term,
+                                       int               * index );
+
 /** @brief get the value as text string with user allocator */
 char * oyjl_value_text (oyjl_val v, void*(*alloc)(size_t size))
 {
@@ -639,13 +642,28 @@ char * oyjl_value_text (oyjl_val v, void*(*alloc)(size_t size))
   return text;
 }
 
-static void  oyjl_tree_to_paths_     ( oyjl_val            root,
+static void  oyjl_tree_find_         ( oyjl_val            root,
+                                       int                 level,
                                        int                 levels,
+                                       const char       ** terms,
                                        int                 flags,
                                        const char        * base,
-                                       char            *** xpaths )
+                                       char            *** paths)
 {
   int n = 0;
+  int pos = -1;
+  int i;
+  const char * term = NULL;
+  int count = oyjl_value_count( root );
+  char * xpath = NULL;
+  int tn = 0;
+
+  while(terms && terms[tn]) ++tn;
+  if(terms && level < tn)
+    term = terms[level];
+
+  if(term)
+    oyjl_path_term_get_index( term, &pos );
 
   switch(root->type)
   {
@@ -657,48 +675,50 @@ static void  oyjl_tree_to_paths_     ( oyjl_val            root,
          break;
     case oyjl_t_array:
          {
-           int i,
-               count = root->u.array.len;
-
            for(i = 0; i < count; ++i)
            {
-             char * xpath = NULL;
+             if(pos >= 0 && pos != i) continue;
+
              oyjl_string_add( &xpath, 0,0, "%s%s[%d]",base,base[0]?"/":"",i );
              if(flags & OYJL_PATH)
              {
-               n = 0; while(xpaths && *xpaths && (*xpaths)[n]) ++n;
-               oyjl_string_list_add_static_string( xpaths, &n, xpath, malloc,free );
+               n = 0; while(paths && *paths && (*paths)[n]) ++n;
+               if(tn-1 <= level)
+                 oyjl_string_list_add_static_string( paths, &n, xpath, malloc,free );
              }
 
              if(levels != 1)
-               oyjl_tree_to_paths_( root->u.array.values[i], levels-1, flags, xpath, xpaths );
-             free(xpath);
+               oyjl_tree_find_( root->u.array.values[i], level+1, levels-1, terms, flags, xpath, paths );
+             free(xpath); xpath = NULL;
            }
 
          } break;
     case oyjl_t_object:
          {
-           int i,
-               count = root->u.object.len;
-
            for(i = 0; i < count; ++i)
            {
-             int count = oyjl_value_count( root->u.object.values[i]);
-             char * xpath = NULL;
+             int ocount = oyjl_value_count( root->u.object.values[i]);
              const char * key = root->u.object.keys[i];
+
+             if(pos >= 0 && pos != i)
+               continue;
+             if(pos <  0 && term && key && !(strcmp(term,key) == 0 ||
+                                             term[0] == '\000'))
+               continue;
 
              oyjl_string_add( &xpath, 0,0, "%s%s%s", base,base[0]?"/":"", key );
 
-             if( (flags & OYJL_PATH && count) ||
-                 (flags & OYJL_KEY && count == 0) )
+             if( (flags & OYJL_PATH && ocount) ||
+                 (flags & OYJL_KEY && ocount == 0) )
              {
-               n = 0; while(xpaths && *xpaths && (*xpaths)[n]) ++n;
-               oyjl_string_list_add_static_string( xpaths, &n, xpath, malloc,free );
+               n = 0; while(paths && *paths && (*paths)[n]) ++n;
+               if(tn-1 <= level)
+                 oyjl_string_list_add_static_string( paths, &n, xpath, malloc,free );
              }
 
              if(levels != 1)
-               oyjl_tree_to_paths_( root->u.object.values[i], levels-1, flags, xpath, xpaths );
-             free(xpath);
+               oyjl_tree_find_( root->u.object.values[i], level+1, levels-1, terms, flags, xpath, paths );
+             free(xpath); xpath = NULL;
            }
          }
          break;
@@ -707,7 +727,7 @@ static void  oyjl_tree_to_paths_     ( oyjl_val            root,
          break;
   }
 }
-/** @brief obtain a list of paths from a node
+/** @brief find matching paths
  *
  *  @param         root                node
  *  @param         levels              desired level depth
@@ -719,29 +739,35 @@ static void  oyjl_tree_to_paths_     ( oyjl_val            root,
  */
 void       oyjl_tree_to_paths        ( oyjl_val            root,
                                        int                 levels,
+                                       const char        * xpath,
                                        int                 flags,
-                                       char            *** xpaths )
+                                       char            *** paths )
 {
   int pos = 0;
+  int n = 0;
   char * base = NULL;
+  char ** terms = oyjl_string_split(xpath, '/', &n, malloc);
 
   if(!root) return;
 
   if(!flags) flags = OYJL_PATH | OYJL_KEY;
 
-  while(xpaths && *xpaths && (*xpaths)[pos]) ++pos;
-  if(xpaths && pos)
-    base = oyjl_string_copy( (*xpaths)[pos-1], malloc );
+  while(paths && *paths && (*paths)[pos]) ++pos;
+  if(paths && pos)
+    base = oyjl_string_copy( (*paths)[pos-1], malloc );
   else
     base = oyjl_string_copy( "",malloc );
 
   if(base)
   {
-    oyjl_tree_to_paths_( root, levels, flags, base, xpaths );
+    oyjl_tree_find_( root, 0, levels, (const char**) terms, flags, base, paths );
 
     free(base);
   }
+
+  oyjl_string_list_release( &terms, n, free );
 }
+
 
 /** @brief convert a C tree into a JSON string */
 void oyjl_tree_to_json (oyjl_val v, int * level, char ** json)
@@ -997,7 +1023,7 @@ static oyjl_val  oyjl_tree_get_value_( oyjl_val            v,
     oyjl_path_term_get_index( term, &pos );
 
     /* requests index in object or array */
-    if((pos != -1))
+    if(pos != -1)
     {
       if(0 <= pos && pos < count)
         level = oyjl_value_pos_get( parent, pos );

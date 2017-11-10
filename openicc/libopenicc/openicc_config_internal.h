@@ -50,6 +50,7 @@
 #define oyjl_tree_parse                openiccJTreeParse
 #define oyjl_tree_to_json              openiccJTreeToJson
 #define oyjl_tree_to_paths             openiccJTreeToPaths
+#define oyjl_tree_find_                openiccJTreeFind_
 #define oyjl_value_count               openiccJValueCount
 #define oyjl_value_pos_get             openiccJValuePosGet
 #define oyjl_value_set_string          openiccJValueSetString

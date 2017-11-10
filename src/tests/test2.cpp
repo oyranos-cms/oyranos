@@ -734,7 +734,7 @@ oyTESTRESULT_e testJson ()
       oyFree_m_(json);
 
       char ** paths = NULL;
-      oyjl_tree_to_paths( root, 10, 0, &paths );
+      oyjl_tree_to_paths( root, 10, NULL, 0, &paths );
       int count = 0; while(paths && paths[count]) ++count;
       if(count == 10)
       { PRINT_SUB( oyTESTRESULT_SUCCESS,
@@ -746,7 +746,7 @@ oyTESTRESULT_e testJson ()
       if(paths && count)
         oyStringListRelease( &paths, count, free );
 
-      oyjl_tree_to_paths( root, 10, OYJL_KEY, &paths );
+      oyjl_tree_to_paths( root, 10, NULL, OYJL_KEY, &paths );
       count = 0; while(paths && paths[count]) ++count;
       if(count == 6)
       { PRINT_SUB( oyTESTRESULT_SUCCESS,
@@ -773,7 +773,7 @@ oyTESTRESULT_e testJson ()
       if(paths && count)
         oyStringListRelease( &paths, count, free );
 
-      oyjl_tree_to_paths( root, 10, OYJL_PATH, &paths );
+      oyjl_tree_to_paths( root, 10, NULL, OYJL_PATH, &paths );
       count = 0; while(paths && paths[count]) ++count;
       if(count == 4)
       { PRINT_SUB( oyTESTRESULT_SUCCESS,

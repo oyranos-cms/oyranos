@@ -29,7 +29,7 @@ void printfHelp(int argc, char ** argv)
   fprintf( stderr, "\n");
   fprintf( stderr, "%s\n",                 _("Usage"));
   fprintf( stderr, "  %s\n",               _("Print:"));
-  fprintf( stderr, "      %s [-j|-c|-k] [-v] [-i FILE_NAME] [-x PATH]\n",        argv[0]);
+  fprintf( stderr, "      %s [-j|-c|-k|-p] [-v] [-i FILE_NAME] [-x PATH]\n",        argv[0]);
   fprintf( stderr, "        -j\tprint JSON - default mode\n");
   fprintf( stderr, "        -c\tprint node count\n");
   fprintf( stderr, "        -k\tprint key name\n");
@@ -62,7 +62,8 @@ typedef enum {
   JSON,
   COUNT,
   TYPE,
-  KEY
+  KEY,
+  PATHS
 } SHOW;
 
 int main(int argc, char ** argv)
@@ -73,7 +74,7 @@ int main(int argc, char ** argv)
   int size = 0;
   char * text = NULL;
   const char * input_file_name = NULL,
-             * xpath = 0;
+             * xpath = NULL;
   oyjl_val root = NULL,
            value = NULL;
   int index = 0;
@@ -99,6 +100,7 @@ int main(int argc, char ** argv)
               case 'c': show = COUNT; break;
               case 'j': show = JSON; break;
               case 'k': show = KEY; break;
+              case 'p': show = PATHS; break;
               case 't': show = TYPE; break;
               case 'v': ++verbose; break;
               case 'h':
@@ -158,21 +160,22 @@ int main(int argc, char ** argv)
     {
       char ** paths = NULL;
       int count = 0, i;
-      const char * match = NULL;
 
-      oyjl_tree_to_paths( root, 1000000, 0, &paths );
+      oyjl_tree_to_paths( root, 1000000, xpath, 0, &paths );
       while(paths && paths[count]) ++count;
 
-      for(i = 0; i < count; ++i)
-        if(oyjl_path_match( paths[i], xpath ))
-        { match = paths[i];
-          break;
-        }
+      if(show == PATHS)
+        for(i = 0; i < count; ++i)
+          fprintf(stdout,"%s\n", paths[i]);
+      else if(show == KEY)
+        fprintf(stdout,"%s\n", (count && paths[0] && strlen(strchr(paths[0],'/'))) ? strrchr(paths[0],'/') + 1 : "");
 
-      if(match)
-        value = oyjl_tree_get_value( root, 0, match );
+      if(paths)
+        value = oyjl_tree_get_value( root, 0, paths[0] );
       if(verbose)
         fprintf(stderr, "%s xpath \"%s\"\n", value?"found":"found not", xpath);
+
+      oyjl_string_list_release( &paths, count, free );
     }
     else
       value = root;
@@ -187,7 +190,10 @@ int main(int argc, char ** argv)
         int level = 0;
         oyjl_tree_to_json( value, &level, &json );
         if(json)
+        {
           fwrite( json, sizeof(char), strlen(json), stdout );
+          free(json);
+        }
       }
       break;
     case TYPE:
@@ -211,9 +217,10 @@ int main(int argc, char ** argv)
       }
       break;
     case KEY:
-      if(value->type == oyjl_t_object && oyjl_value_count(value) > index)
+      if(!xpath && value->type == oyjl_t_object && oyjl_value_count(value) > index)
         puts( value->u.object.keys[index] );
       break;
+    default: break;
   }
 
   if(root) oyjl_tree_free( root );

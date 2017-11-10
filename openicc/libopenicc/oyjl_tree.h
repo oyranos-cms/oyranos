@@ -209,6 +209,7 @@ void       oyjl_tree_to_json         ( oyjl_val            v,
 #define    OYJL_KEY                    0x10
 void       oyjl_tree_to_paths        ( oyjl_val            v,
                                        int                 child_levels,
+                                       const char        * xpath,
                                        int                 flags,
                                        char            *** paths );
 #define    OYJL_CREATE_NEW             0x02
