@@ -93,10 +93,20 @@ oyTESTRESULT_e testVersion()
 
 oyTESTRESULT_e testI18N()
 {
-  const char * lang = 0;
+  const char * lang = NULL;
+  const char * clang = getenv("LANG");
   oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
 
   fprintf(stdout, "\n" );
+
+#ifdef USE_GETTEXT
+  if(!clang || strcmp(clang,"C") == 0)
+  {
+    char * tmp = oyStringCopy("LANG=de_DE", 0);
+    putenv(tmp);
+    oyFree_m_(tmp);
+  }
+#endif
 
   oyI18Nreset();
 
