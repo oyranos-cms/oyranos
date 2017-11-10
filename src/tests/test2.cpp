@@ -102,9 +102,11 @@ oyTESTRESULT_e testI18N()
 #ifdef USE_GETTEXT
   if(!clang || strcmp(clang,"C") == 0)
   {
-    char * tmp = oyStringCopy("LANG=de_DE", 0);
+    char * tmp = oyStringCopy("LANG=de_DE.UTF-8", 0);
     putenv(tmp);
-    oyFree_m_(tmp);
+    clang = getenv("LANG");
+    if(!clang || strcmp(clang,"de_DE.UTF-8") != 0)
+      fprintf( stderr, "Could not modify LANG environment variable. Test will not be useful.\n" );
   }
 #endif
 

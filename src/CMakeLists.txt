@@ -418,6 +418,14 @@ IF( GETTEXT_FOUND )
 
   # compile translations always to have them ready for installation
   GETTEXT_CREATE_TRANSLATIONS( ${_potFile} ALL ${LINGUAS} )
+
+  ADD_CUSTOM_COMMAND( OUTPUT gmo-cp
+    COMMAND for oy_lang in ${OY_LINGUAS}\; do mkdir -p "${CMAKE_BINARY_DIR}/locale/$$oy_lang/LC_MESSAGES/" \; cp "${CMAKE_BINARY_DIR}/src/$$oy_lang.gmo" "${CMAKE_BINARY_DIR}/locale/$$oy_lang/LC_MESSAGES/oyranos.mo" \; done
+    COMMENT "put gmo files into build path for testing with OY_LOCALEDIR"
+                    )
+  ADD_CUSTOM_TARGET( gmo ALL
+                     DEPENDS translations gmo-cp  )
+
 ENDIF()
 
 
