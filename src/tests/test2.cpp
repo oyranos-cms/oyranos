@@ -13,50 +13,50 @@
  */
 
 #define TESTS_RUN \
-  TEST_RUN( testVersion, "Version matching" ); \
-  TEST_RUN( testI18N, "Internationalisation" ); \
-  TEST_RUN( testDB, "elDB basics" ); \
-  TEST_RUN( testDB2, "oiDB basics" ); \
-  TEST_RUN( testStringRun, "String handling" ); \
-  TEST_RUN( testJson, "JSON handling" ); \
-  TEST_RUN( testOption, "basic oyOption_s" ); \
-  TEST_RUN( testOptionInt,  "oyOption_s integers" ); \
-  TEST_RUN( testOptionsSet,  "Set oyOptions_s" ); \
-  TEST_RUN( testOptionsCopy,  "Copy oyOptions_s" ); \
-  TEST_RUN( testOptionsType,  "Objects inside oyOptions_s" ); \
-  TEST_RUN( testBlob, "oyBlob_s" ); \
-  TEST_RUN( testSettings, "default oyOptions_s settings" ); \
-  TEST_RUN( testConfDomain, "oyConfDomain_s"); \
-  TEST_RUN( testInterpolation, "Interpolation oyLinInterpolateRampU16" ); \
-  TEST_RUN( testProfile, "Profile handling" ); \
-  TEST_RUN( testProfiles, "Profiles reading" ); \
-  TEST_RUN( testProfileLists, "Profile lists" ); \
-  TEST_RUN( testEffects, "Effects" ); \
-  TEST_RUN( testDeviceLinkProfile, "CMM deviceLink" ); \
-  TEST_RUN( testClut, "CMM clut" ); \
-  TEST_RUN( testRegistrationMatch,  "Registration matching" ); \
-  TEST_RUN( test_oyTextIccDictMatch,  "IccDict matching" ); \
-  TEST_RUN( testPolicy, "Policy handling" ); \
-  TEST_RUN( testWidgets, "Widgets" ); \
-  TEST_RUN( testCMMDevicesListing, "CMM devices listing" ); \
-  TEST_RUN( testCMMDevicesDetails, "CMM devices details" ); \
-  TEST_RUN( testCMMRankMap, "rank map handling" ); \
-  TEST_RUN( testCMMMonitorJSON, "monitor JSON" ); \
-  TEST_RUN( testCMMMonitorListing, "CMM monitor listing" ); \
-  TEST_RUN( testCMMMonitorModule, "CMM monitor module" ); \
-  TEST_RUN( testCMMDBListing, "CMM DB listing" ); \
-  TEST_RUN( testCMMmonitorDBmatch, "CMM monitor DB match" ); \
-  TEST_RUN( testCMMsShow, "CMMs show" ); \
-  TEST_RUN( testCMMnmRun, "CMM named color run" ); \
-  TEST_RUN( testImagePixel, "CMM Image Pixel run" ); \
-  TEST_RUN( testRectangles, "Image Rectangles" ); \
-  TEST_RUN( testScreenPixel, "Draw Screen Pixel run" ); \
-  TEST_RUN( testFilterNode, "FilterNode Options" ); \
-  TEST_RUN( testConversion, "CMM selection" ); \
-  TEST_RUN( testCMMlists, "CMMs listing" ); \
-  TEST_RUN( testICCsCheck, "CMMs ICC conversion check" ); \
-  TEST_RUN( testCache, "Cache" ); \
-  TEST_RUN( testPaths, "Paths" );
+  TEST_RUN( testVersion, "Version matching", 1 ); \
+  TEST_RUN( testI18N, "Internationalisation", 1 ); \
+  TEST_RUN( testDB, "elDB basics", 1 ); \
+  TEST_RUN( testDB2, "oiDB basics", 1 ); \
+  TEST_RUN( testStringRun, "String handling", 1 ); \
+  TEST_RUN( testJson, "JSON handling", 1 ); \
+  TEST_RUN( testOption, "basic oyOption_s", 1 ); \
+  TEST_RUN( testOptionInt,  "oyOption_s integers", 1 ); \
+  TEST_RUN( testOptionsSet,  "Set oyOptions_s", 1 ); \
+  TEST_RUN( testOptionsCopy,  "Copy oyOptions_s", 1 ); \
+  TEST_RUN( testOptionsType,  "Objects inside oyOptions_s", 1 ); \
+  TEST_RUN( testBlob, "oyBlob_s", 1 ); \
+  TEST_RUN( testSettings, "default oyOptions_s settings", 1 ); \
+  TEST_RUN( testConfDomain, "oyConfDomain_s", 1 ); \
+  TEST_RUN( testInterpolation, "Interpolation oyLinInterpolateRampU16", 1 ); \
+  TEST_RUN( testProfile, "Profile handling", 1 ); \
+  TEST_RUN( testProfiles, "Profiles reading", 1 ); \
+  TEST_RUN( testProfileLists, "Profile lists", 1 ); \
+  TEST_RUN( testEffects, "Effects", 1 ); \
+  TEST_RUN( testDeviceLinkProfile, "CMM deviceLink", 1 ); \
+  TEST_RUN( testClut, "CMM clut", 1 ); \
+  TEST_RUN( testRegistrationMatch,  "Registration matching", 1 ); \
+  TEST_RUN( test_oyTextIccDictMatch,  "IccDict matching", 1 ); \
+  TEST_RUN( testPolicy, "Policy handling", 1 ); \
+  TEST_RUN( testWidgets, "Widgets", 1 ); \
+  TEST_RUN( testCMMDevicesListing, "CMM devices listing", 1 ); \
+  TEST_RUN( testCMMDevicesDetails, "CMM devices details", 1 ); \
+  TEST_RUN( testCMMRankMap, "rank map handling", 1 ); \
+  TEST_RUN( testCMMMonitorJSON, "monitor JSON", displayFail() == oyTESTRESULT_FAIL ); \
+  TEST_RUN( testCMMMonitorListing, "CMM monitor listing", displayFail() == oyTESTRESULT_FAIL ); \
+  TEST_RUN( testCMMMonitorModule, "CMM monitor module", displayFail() == oyTESTRESULT_FAIL ); \
+  TEST_RUN( testCMMDBListing, "CMM DB listing", 1 ); \
+  TEST_RUN( testCMMmonitorDBmatch, "CMM monitor DB match", displayFail() == oyTESTRESULT_FAIL ); \
+  TEST_RUN( testCMMsShow, "CMMs show", 1 ); \
+  TEST_RUN( testCMMnmRun, "CMM named color run", 1 ); \
+  TEST_RUN( testImagePixel, "CMM Image Pixel run", 1 ); \
+  TEST_RUN( testRectangles, "Image Rectangles", 1 ); \
+  TEST_RUN( testScreenPixel, "Draw Screen Pixel run", 1 ); \
+  TEST_RUN( testFilterNode, "FilterNode Options", 1 ); \
+  TEST_RUN( testConversion, "CMM selection", 1 ); \
+  TEST_RUN( testCMMlists, "CMMs listing", 1 ); \
+  TEST_RUN( testICCsCheck, "CMMs ICC conversion check", 1 ); \
+  TEST_RUN( testCache, "Cache", 1 ); \
+  TEST_RUN( testPaths, "Paths", 1 );
 
 #include "oy_test.h"
 
@@ -1960,7 +1960,7 @@ oyTESTRESULT_e testProfile ()
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS, 
     "oyGetDisplayWhitePoint() = %g %g  mode = 7  %d   ", cie_a, cie_b, error );
-  } else
+  } else if( displayFail() == oyTESTRESULT_FAIL )
   {
     PRINT_SUB( oyTESTRESULT_XFAIL, 
     "oyGetDisplayWhitePoint() = %g %g  mode = 7  %d   ", cie_a, cie_b, error );
@@ -3303,7 +3303,7 @@ oyTESTRESULT_e testWidgets ()
                                      "list", OY_CREATE_NEW );
   if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromText() error: %d", error )
   error = oyDevicesGet( 0, "monitor", options, &configs );
-  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyDevicesGet() error: %d", error )
+  if(error && displayFail() == oyTESTRESULT_FAIL) PRINT_SUB( oyTESTRESULT_XFAIL, "oyDevicesGet() error: %d", error )
   int devices_n = oyConfigs_Count( configs );
   oyOptions_Release( &options );
   oyConfigs_Release( &configs );
@@ -3736,7 +3736,7 @@ oyTESTRESULT_e testCMMRankMap ()
                                    "properties", OY_CREATE_NEW );  
   if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromText() error: %d", error )
   error = oyDevicesGet( OY_TYPE_STD, "monitor", options, &devices );
-  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyDevicesGet() error: %d", error )
+  if(error && displayFail() == oyTESTRESULT_FAIL) PRINT_SUB( oyTESTRESULT_XFAIL, "oyDevicesGet() error: %d", error )
   oyOptions_Release( &options );
 
   int count = oyConfigs_Count( devices ),
@@ -3745,7 +3745,7 @@ oyTESTRESULT_e testCMMRankMap ()
   if( count )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "monitor(s) found               %d (%d)", (int)count, error );
-  } else
+  } else if(displayFail() == oyTESTRESULT_FAIL)
   { PRINT_SUB( displayFail(),
     "no monitor found               %d (%d)", (int)count, error );
   }
@@ -3894,7 +3894,7 @@ oyTESTRESULT_e testCMMMonitorJSON ()
   if( error <= 0 && configs )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "oyDevicesGet(\"monitor\")           " );
-  } else
+  } else if(displayFail() == oyTESTRESULT_FAIL)
   { PRINT_SUB( displayFail(),
     "oyDevicesGet(\"monitor\")           " );
   }
@@ -3903,7 +3903,7 @@ oyTESTRESULT_e testCMMMonitorJSON ()
   if( error <= 0 && devices_n > 0 )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "oyDevicesGet(\"monitor\") count:   %d", devices_n );
-  } else
+  } else if(displayFail() == oyTESTRESULT_FAIL)
   { PRINT_SUB( displayFail(),
     "oyDevicesGet(\"monitor\") count:   %d", devices_n );
   }
@@ -4095,6 +4095,9 @@ oyTESTRESULT_e testCMMMonitorJSON ()
   oyConfigs_Release( &configs );
   fprintf( zout, "\n");
 
+  if(result == oyTESTRESULT_UNKNOWN && displayFail() == oyTESTRESULT_XFAIL)
+    result = oyTESTRESULT_SUCCESS;
+
   return result;
 }
 
@@ -4129,7 +4132,7 @@ oyTESTRESULT_e testCMMMonitorListing ()
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "oyDevicesGet() \"monitor\": %d                      %s", devices_n,
                    oyProfilingToString(1,clck/(double)CLOCKS_PER_SEC,"Obj."));
-  } else
+  } else if(displayFail() == oyTESTRESULT_FAIL)
   { PRINT_SUB( displayFail(),
     "oyDevicesGet() \"monitor\": %d     ", devices_n );
   }
@@ -4318,7 +4321,7 @@ oyTESTRESULT_e testCMMmonitorDBmatch ()
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "oyDeviceGet(..\"monitor\" \"%s\".. &device) %d %s", device_name, k_n,
                    oyProfilingToString(1,clck/(double)CLOCKS_PER_SEC,"Obj."));
-  } else
+  } else if(displayFail() == oyTESTRESULT_FAIL)
   { PRINT_SUB( displayFail(),
     "oyDeviceGet(..\"monitor\" \"%s\".. &device) %d", device_name, k_n );
   }
@@ -6172,6 +6175,24 @@ oyTESTRESULT_e testFilterNode()
   return result;
 }
 
+int oyHasLcms()
+{
+  char ** list = oyGetCMMs( oyCMM_CONTEXT, oyNAME_NICK, 0, malloc );
+  int count = 0, has_lcms = 0;
+
+  while(list && list[count])
+  {
+    if(strcmp(list[count],"lcms") == 0)
+      has_lcms = 1;
+    free( list[count] );
+    ++count;
+  }
+  if(list) free(list);
+  fprintf(stdout, "found CMMs: %d has_lcms=%d\n", count, has_lcms );
+
+  return has_lcms;
+}
+
 oyTESTRESULT_e testConversion()
 {
   fprintf(stdout, "\n" );
@@ -6190,18 +6211,9 @@ oyTESTRESULT_e testConversion()
                buf_type_out = oyUINT16;
   oyImage_s *input, *output;
 
-  char ** list = oyGetCMMs( oyCMM_CONTEXT, oyNAME_NICK, 0, malloc );
-  int count = 0, has_lcms = 0;
-
-  while(list && list[count])
-  {
-    if(strcmp(list[count],"lcms") == 0)
-      has_lcms = 1;
-    free( list[count] );
-    ++count;
-  }
-  if(list) free(list);
-  fprintf(stdout, "found CMMs: %d has_lcms=%d\n", count, has_lcms );
+#ifndef COMPILE_STATIC
+  int has_lcms = oyHasLcms();
+#endif
 
   input =oyImage_Create( 2,2, 
                          buf_16in2x2,
@@ -6331,15 +6343,12 @@ oyTESTRESULT_e testConversion()
   if(reg && strstr(reg, "lcms"))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "oyConversion_CreateBasicPixels( \"renderer\"=\"lcms\" )" );
-  } else
-  { PRINT_SUB(
-#ifdef COMPILE_STATIC
-               oyTESTRESULT_XFAIL,
-#else
-               has_lcms ? oyTESTRESULT_FAIL : oyTESTRESULT_XFAIL,
-#endif
+#ifndef COMPILE_STATIC
+  } else if(has_lcms)
+  { PRINT_SUB( has_lcms ? oyTESTRESULT_FAIL : oyTESTRESULT_XFAIL,
     "oyConversion_CreateBasicPixels( \"renderer\"=\"lcms\" ) %s", oyNoEmptyString_m_(reg) );
     fprintf( zout, "\tnode reg = %s\n", oyFilterNode_GetRegistration( icc ));
+#endif
   }
 
   oyOptions_Release( &options );
@@ -6353,14 +6362,11 @@ oyTESTRESULT_e testConversion()
   if(reg && strstr(reg, "lcms"))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "oyFilterNode_SetContext_( \"context\"=\"lcms\" ) %d", (int)oyBlob_GetSize(blob) );
-  } else
-  { PRINT_SUB(
-#ifdef COMPILE_STATIC
-               oyTESTRESULT_XFAIL,
-#else
-               has_lcms ? oyTESTRESULT_FAIL : oyTESTRESULT_XFAIL,
-#endif
+#ifndef COMPILE_STATIC
+  } else if(has_lcms)
+  { PRINT_SUB( has_lcms ? oyTESTRESULT_FAIL : oyTESTRESULT_XFAIL,
     "oyFilterNode_SetContext_( \"context\"=\"lcms\" ) %s  ", oyNoEmptyString_m_(reg) );
+#endif
   }
   oyBlob_Release( &blob );
 
@@ -6368,14 +6374,11 @@ oyTESTRESULT_e testConversion()
   if(reg && strstr(reg, "lcm2"))
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "oyFilterNode_SetContext_( \"renderer\"=\"lcm2\" )" );
+#ifndef COMPILE_STATIC
   } else
-  { PRINT_SUB(
-#ifdef COMPILE_STATIC
-               oyTESTRESULT_XFAIL,
-#else
-               has_lcms ? oyTESTRESULT_FAIL : oyTESTRESULT_XFAIL,
-#endif
+  { PRINT_SUB( has_lcms ? oyTESTRESULT_FAIL : oyTESTRESULT_XFAIL,
     "oyFilterNode_SetContext_( \"renderer\"=\"lcm2\" ) %s", oyNoEmptyString_m_(reg) );
+#endif
   }
 
   oyOptions_Release( &options );

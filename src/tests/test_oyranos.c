@@ -13,15 +13,15 @@
  */
 
 #define TESTS_RUN \
-  TEST_RUN( testVersion, "Version matching" ); \
-  TEST_RUN( testI18N, "Internationalisation" ); \
-  TEST_RUN( testElektra, "Elektra" ); \
-  TEST_RUN( testOption, "basic oyOption_s" ); \
-  TEST_RUN( testSettings, "default oyOptions_s settings" ); \
-  TEST_RUN( testProfiles, "Profiles reading" ); \
-  TEST_RUN( testMonitor,  "Monitor profiles" ); \
-  TEST_RUN( testRegistrationMatch,  "Registration matching" );\
-  TEST_RUN( testObserver,  "Generic Object Observation" );
+  TEST_RUN( testVersion, "Version matching", 1 ); \
+  TEST_RUN( testI18N, "Internationalisation", 1 ); \
+  TEST_RUN( testElektra, "Elektra", 1 ); \
+  TEST_RUN( testOption, "basic oyOption_s", 1 ); \
+  TEST_RUN( testSettings, "default oyOptions_s settings", 1 ); \
+  TEST_RUN( testProfiles, "Profiles reading", 1 ); \
+  TEST_RUN( testMonitor,  "Monitor profiles", 1 ); \
+  TEST_RUN( testRegistrationMatch,  "Registration matching", 1 );\
+  TEST_RUN( testObserver,  "Generic Object Observation", 1 );
 
 #include "oy_test.h"
 

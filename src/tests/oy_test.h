@@ -107,15 +107,15 @@ const char * oyTestResultToString    ( oyTESTRESULT_e      error )
 
 FILE * zout;  /* printed inbetween results */
 static int test_number = 0;
-#define TEST_RUN( prog, text ) { \
-  if(argc > argpos) { \
+#define TEST_RUN( prog, text, do_it ) { \
+  if(argc > argpos && do_it) { \
       for(i = argpos; i < argc; ++i) \
         if(strstr(text, argv[i]) != 0 || \
            atoi(argv[i]) == test_number ) \
           oyTestRun( prog, text, test_number ); \
   } else if(list) \
     printf( "[%d] %s\n", test_number, text); \
-  else \
+  else if(do_it) \
     oyTestRun( prog, text, test_number ); \
   ++test_number; \
 }
