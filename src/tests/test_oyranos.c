@@ -2,9 +2,9 @@
  *
  *  Oyranos is an open source Color Management System 
  *
- *  Copyright (C) 2004-2012  Kai-Uwe Behrmann
+ *  Copyright (C) 2004-2017  Kai-Uwe Behrmann
  *
- *  @brief    Oyranos test siute
+ *  @brief    Oyranos test suite
  *  @internal
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:\n
@@ -12,86 +12,18 @@
  *  @since    2008/12/04
  */
 
-#include <stdarg.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
+#define TESTS_RUN \
+  TEST_RUN( testVersion, "Version matching" ); \
+  TEST_RUN( testI18N, "Internationalisation" ); \
+  TEST_RUN( testElektra, "Elektra" ); \
+  TEST_RUN( testOption, "basic oyOption_s" ); \
+  TEST_RUN( testSettings, "default oyOptions_s settings" ); \
+  TEST_RUN( testProfiles, "Profiles reading" ); \
+  TEST_RUN( testMonitor,  "Monitor profiles" ); \
+  TEST_RUN( testRegistrationMatch,  "Registration matching" );\
+  TEST_RUN( testObserver,  "Generic Object Observation" );
 
-#include "oyranos.h"
-#include "oyranos_string.h"
-
-#ifdef __APPLE__
-#include <CoreFoundation/CoreFoundation.h>
-#endif
-
-
-/* --- general test routines --- */
-
-typedef enum {
-  oyTESTRESULT_SUCCESS,
-  oyTESTRESULT_FAIL,
-  oyTESTRESULT_XFAIL,
-  oyTESTRESULT_SYSERROR,
-  oyTESTRESULT_UNKNOWN
-} oyTESTRESULT_e;
-
-int results[oyTESTRESULT_UNKNOWN+1];
-
-const char * oyTestResultToString( oyTESTRESULT_e error )
-{
-  const char * text = "";
-  switch(error)
-  {
-    case oyTESTRESULT_SUCCESS: text = "SUCCESS"; break;
-    case oyTESTRESULT_FAIL:    text = "FAIL"; break;
-    case oyTESTRESULT_XFAIL:   text = "XFAIL"; break;
-    case oyTESTRESULT_SYSERROR:text = "SYSERROR"; break;
-    case oyTESTRESULT_UNKNOWN: text = "UNKNOWN"; break;
-    default:                   text = "Huuch, whats that?"; break;
-  }
-  return text;
-}
-
-FILE * zout;
-char * tests_failed[64];
-
-oyTESTRESULT_e oyTestRun             ( oyTESTRESULT_e    (*test)(void),
-                                       const char        * test_name,
-                                       int                 number OY_UNUSED )
-{
-  oyTESTRESULT_e error = 0;
-
-  fprintf( stdout, "\n________________________________________________________________\n" );
-  fprintf(stdout, "Test: %s ... ", test_name );
-
-  error = test();
-
-  fprintf(stdout, "\t%s", oyTestResultToString(error));
-
-  if(error == oyTESTRESULT_FAIL)
-    tests_failed[results[error]] = (char*)test_name;
-  results[error] += 1;
-
-  /* print */
-  if(error && error != oyTESTRESULT_XFAIL)
-    fprintf(stdout, " !!! ERROR !!!" );
-  fprintf(stdout, "\n" );
-
-  return error;
-}
-
-#define PRINT_SUB( result_, ... ) { \
-  if(result == oyTESTRESULT_XFAIL || \
-     result == oyTESTRESULT_SUCCESS || \
-     result == oyTESTRESULT_UNKNOWN ) \
-    result = result_; \
-  fprintf(stdout, ## __VA_ARGS__ ); \
-  fprintf(stdout, " ..\t%s", oyTestResultToString(result_)); \
-  if(result_ && result_ != oyTESTRESULT_XFAIL) \
-    fprintf(stdout, " !!! ERROR !!!" ); \
-  fprintf(stdout, "\n" ); \
-}
-
+#include "oy_test.h"
 
 /* --- actual tests --- */
 
@@ -99,14 +31,19 @@ oyTESTRESULT_e testVersion()
 {
   oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
 
-  fprintf(stderr, "\n" );
+  fprintf(stdout, "\n" );
   fprintf(zout, "compiled version:     %d\n", OYRANOS_VERSION );
   fprintf(zout, " runtime version:     %d\n", oyVersion(0) );
+
+  fprintf(zout, " XDG_DATA_DIRS: %s\n", oyNoEmptyString_m_(getenv("XDG_DATA_DIRS")));
+  fprintf(zout, " OY_MODULE_PATH: %s\n", oyNoEmptyString_m_(getenv("OY_MODULE_PATH")));
 
   if(OYRANOS_VERSION == oyVersion(0))
     result = oyTESTRESULT_SUCCESS;
   else
     result = oyTESTRESULT_FAIL;
+
+  testobj = oyObject_NewWithAllocators( myAllocFunc, myDeAllocFunc );
 
   return result;
 }
@@ -1034,100 +971,7 @@ oyTESTRESULT_e testObserver ()
   return result;
 }
 
-
-static int test_number = 0;
-#define TEST_RUN( prog, text ) { \
-  if(argc > argpos) { \
-      for(i = argpos; i < argc; ++i) \
-        if(strstr(text, argv[i]) != 0 || \
-           atoi(argv[i]) == test_number ) \
-          oyTestRun( prog, text, test_number ); \
-  } else if(list) \
-    printf( "[%d] %s\n", test_number, text); \
-  else \
-    oyTestRun( prog, text, test_number ); \
-  ++test_number; \
-}
-
-/*  main */
-int main(int argc, char** argv)
-{
-  int i, error = 0,
-      argpos = 1,
-      list = 0;
-
-  zout = stdout;  /* printed inbetween results */
-
-  if(getenv("OY_DEBUG"))
-  {
-    int value = atoi(getenv("OY_DEBUG"));
-    if(value > 0)
-      oy_debug += value;
-  }
-
-  /* init */
-  for(i = 0; i <= oyTESTRESULT_UNKNOWN; ++i)
-    results[i] = 0;
-
-  i = 1; while(i < argc) if( strcmp(argv[i++],"-l") == 0 )
-  { ++argpos;
-    zout = stderr;
-    list = 1;
-  }
-
-  i = 1; while(i < argc) if( strcmp(argv[i++],"--silent") == 0 )
-  { ++argpos;
-    zout = stderr;
-  }
-
-  fprintf( stderr, "\nOyranos Tests v" OYRANOS_VERSION_NAME
-           "  developed: " OYRANOS_DATE  "\n\n" );
+/* --- end actual tests --- */
 
 
-  /* do tests */
-
-  TEST_RUN( testVersion, "Version matching" );
-  TEST_RUN( testI18N, "Internationalisation" );
-  TEST_RUN( testElektra, "Elektra" );
-  TEST_RUN( testOption, "basic oyOption_s" );
-  TEST_RUN( testSettings, "default oyOptions_s settings" );
-  TEST_RUN( testProfiles, "Profiles reading" );
-  TEST_RUN( testMonitor,  "Monitor profiles" );
-  TEST_RUN( testRegistrationMatch,  "Registration matching" );
-  TEST_RUN( testObserver,  "Generic Object Observation" );
-
-  /* give a summary */
-
-  if(!list)
-  {
-
-    fprintf( stdout, "\n################################################################\n" );
-    fprintf( stdout, "#                                                              #\n" );
-    fprintf( stdout, "#                     Results                                  #\n" );
-    for(i = 0; i <= oyTESTRESULT_UNKNOWN; ++i)
-      fprintf( stdout, "    Tests with status %s: %d\n",
-                       oyTestResultToString( (oyTESTRESULT_e)i ), results[i] );
-
-    error = (results[oyTESTRESULT_FAIL] ||
-             results[oyTESTRESULT_SYSERROR] ||
-             results[oyTESTRESULT_UNKNOWN]
-            );
-
-    for(i = 0; i < results[oyTESTRESULT_FAIL]; ++i)
-      fprintf( stdout, "    %s: \"%s\"\n",
-               oyTestResultToString( oyTESTRESULT_FAIL), tests_failed[i] );
-
-    if(error)
-      fprintf( stdout, "    Tests FAILED\n" );
-    else
-      fprintf( stdout, "    Tests SUCCEEDED\n" );
-
-    fprintf( stdout, "\n    Hint: the '-l' option will list all test names\n" );
-
-  }
-
-  oyFinish_(0);
-
-  return error;
-}
-
+#include "oy_test_main.h"

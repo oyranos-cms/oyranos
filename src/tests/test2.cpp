@@ -12,135 +12,58 @@
  *  @since    2008/12/04
  */
 
-#include <stdarg.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
+#define TESTS_RUN \
+  TEST_RUN( testVersion, "Version matching" ); \
+  TEST_RUN( testI18N, "Internationalisation" ); \
+  TEST_RUN( testDB, "elDB basics" ); \
+  TEST_RUN( testDB2, "oiDB basics" ); \
+  TEST_RUN( testStringRun, "String handling" ); \
+  TEST_RUN( testJson, "JSON handling" ); \
+  TEST_RUN( testOption, "basic oyOption_s" ); \
+  TEST_RUN( testOptionInt,  "oyOption_s integers" ); \
+  TEST_RUN( testOptionsSet,  "Set oyOptions_s" ); \
+  TEST_RUN( testOptionsCopy,  "Copy oyOptions_s" ); \
+  TEST_RUN( testOptionsType,  "Objects inside oyOptions_s" ); \
+  TEST_RUN( testBlob, "oyBlob_s" ); \
+  TEST_RUN( testSettings, "default oyOptions_s settings" ); \
+  TEST_RUN( testConfDomain, "oyConfDomain_s"); \
+  TEST_RUN( testInterpolation, "Interpolation oyLinInterpolateRampU16" ); \
+  TEST_RUN( testProfile, "Profile handling" ); \
+  TEST_RUN( testProfiles, "Profiles reading" ); \
+  TEST_RUN( testProfileLists, "Profile lists" ); \
+  TEST_RUN( testEffects, "Effects" ); \
+  TEST_RUN( testDeviceLinkProfile, "CMM deviceLink" ); \
+  TEST_RUN( testClut, "CMM clut" ); \
+  TEST_RUN( testRegistrationMatch,  "Registration matching" ); \
+  TEST_RUN( test_oyTextIccDictMatch,  "IccDict matching" ); \
+  TEST_RUN( testPolicy, "Policy handling" ); \
+  TEST_RUN( testWidgets, "Widgets" ); \
+  TEST_RUN( testCMMDevicesListing, "CMM devices listing" ); \
+  TEST_RUN( testCMMDevicesDetails, "CMM devices details" ); \
+  TEST_RUN( testCMMRankMap, "rank map handling" ); \
+  TEST_RUN( testCMMMonitorJSON, "monitor JSON" ); \
+  TEST_RUN( testCMMMonitorListing, "CMM monitor listing" ); \
+  TEST_RUN( testCMMMonitorModule, "CMM monitor module" ); \
+  TEST_RUN( testCMMDBListing, "CMM DB listing" ); \
+  TEST_RUN( testCMMmonitorDBmatch, "CMM monitor DB match" ); \
+  TEST_RUN( testCMMsShow, "CMMs show" ); \
+  TEST_RUN( testCMMnmRun, "CMM named color run" ); \
+  TEST_RUN( testImagePixel, "CMM Image Pixel run" ); \
+  TEST_RUN( testRectangles, "Image Rectangles" ); \
+  TEST_RUN( testScreenPixel, "Draw Screen Pixel run" ); \
+  TEST_RUN( testFilterNode, "FilterNode Options" ); \
+  TEST_RUN( testConversion, "CMM selection" ); \
+  TEST_RUN( testCMMlists, "CMMs listing" ); \
+  TEST_RUN( testICCsCheck, "CMMs ICC conversion check" ); \
+  TEST_RUN( testCache, "Cache" ); \
+  TEST_RUN( testPaths, "Paths" );
 
-
-#include "oyranos.h"
-#include "oyranos_i18n.h"
-#include "oyranos_string.h"
-#include "oyranos_xml.h"
-#include "oyranos_config_internal.h"
-
-/* C++ includes and definitions */
-#ifdef __cplusplus
-#include <fstream>
-#include <iostream>
-#define USE_NEW
-#endif
-
-oyObject_s testobj = NULL;
-
-#ifdef USE_NEW
-void* myAllocFunc(size_t size) { return new char [size]; }
-void  myDeAllocFunc( void * ptr ) { delete [] (char*)ptr; }
-#else
-void* myAllocFunc(size_t size) { return calloc(size,1); }
-void  myDeAllocFunc( void ** ptr ) { free( *ptr; ) }
-#endif
+#include "oy_test.h"
 
 #include <cmath>
 
 double d[6] = {0.5,0.5,0.5,0,0,0};
 
-/* --- general test routines --- */
-
-typedef enum {
-  oyTESTRESULT_SYSERROR,
-  oyTESTRESULT_FAIL,
-  oyTESTRESULT_XFAIL,
-  oyTESTRESULT_SUCCESS,
-  oyTESTRESULT_UNKNOWN
-} oyTESTRESULT_e;
-
-
-const char * oyTestResultToString    ( oyTESTRESULT_e      error )
-{
-  const char * text = "";
-  switch(error)
-  {
-    case oyTESTRESULT_SYSERROR:text = "SYSERROR"; break;
-    case oyTESTRESULT_FAIL:    text = "FAIL"; break;
-    case oyTESTRESULT_XFAIL:   text = "XFAIL"; break;
-    case oyTESTRESULT_SUCCESS: text = "SUCCESS"; break;
-    case oyTESTRESULT_UNKNOWN: text = "UNKNOWN"; break;
-    default:                   text = "Huuch, what's that?"; break;
-  }
-  return text;
-}
-
-const char  *  oyIntToString         ( int                 integer )
-{
-  static char texts[3][255];
-  static int a = 0;
-  int i;
-
-  if(a >= 3) a = 0;
-
-  for(i = 0; i < 8-log10(integer); ++i)
-    sprintf( &texts[a][i], " " );
-
-  sprintf( &texts[a][i], "%d", integer );
-
-  return texts[a++];
-}
-
-const char  *  oyProfilingToString   ( int                 integer,
-                                       double              duration,
-                                       const char        * term )
-{
-  static char texts[3][255];
-  static int a = 0;
-  int i, len;
-
-  if(a >= 3) a = 0;
-
-  if(integer/duration >= 1000000.0)
-    sprintf( &texts[a][0], "%.02f M%s/s", integer/duration/1000000.0, term );
-  else
-    sprintf( &texts[a][0], "%.00f %s/s", integer/duration, term );
-
-  len = strlen(&texts[a][0]);
-
-  for(i = 0; i < 16-len; ++i)
-    sprintf( &texts[a][i], " " );
-
-  if(integer/duration >= 1000000.0)
-    sprintf( &texts[a][i], "%.02f M%s/s", integer/duration/1000000.0, term );
-  else
-    sprintf( &texts[a][i], "%.00f %s/s", integer/duration, term );
-
-  return texts[a++];
-}
-
-FILE * zout = stdout;  /* printed inbetween results */
-
-int oy_test_sub_count = 0;
-#define PRINT_SUB( result_, ... ) { \
-  if((result_) < result) \
-    result = result_; \
-  fprintf(stdout, ## __VA_ARGS__ ); \
-  fprintf(stdout, " ..\t%s", oyTestResultToString(result_)); \
-  if((result_) <= oyTESTRESULT_FAIL) \
-    fprintf(stdout, " !!! ERROR !!!" ); \
-  fprintf(stdout, "\n" ); \
-  ++oy_test_sub_count; \
-}
-
-oyTESTRESULT_e displayFail()
-{
-  oyTESTRESULT_e fail_type = oyTESTRESULT_XFAIL;
-
-#if !defined(__APPLE__)
-  const char * disp_env = getenv("DISPLAY");
-  if(disp_env && disp_env[0])
-    fail_type = oyTESTRESULT_FAIL;
-#endif
-
-  return fail_type;
-}
 
 /* --- actual tests --- */
 
@@ -180,7 +103,7 @@ oyTESTRESULT_e testI18N()
   lang = oyLanguage();
   if((lang && (strcmp(lang, "C") == 0)) || !lang)
   { PRINT_SUB( oyTESTRESULT_SUCCESS, 
-    "oyLanguage() uninitialised good %s                ", lang );
+    "oyLanguage() uninitialised good %s                ", lang?lang:"---" );
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL, 
     "oyLanguage() uninitialised failed                 " );
@@ -192,10 +115,10 @@ oyTESTRESULT_e testI18N()
   lang = oyLanguage();
   if(lang && (strcmp(lang, "C") != 0))
   { PRINT_SUB( oyTESTRESULT_SUCCESS, 
-    "oyLanguage() initialised good %s                  ", lang );
+    "oyLanguage() initialised good %s                  ", lang?lang:"---" );
   } else
   { PRINT_SUB( oyTESTRESULT_XFAIL, 
-    "oyLanguage() initialised failed %s                ", lang );
+    "oyLanguage() initialised failed %s                ", lang?lang:"---" );
   }
 
   return result;
@@ -7420,165 +7343,7 @@ oyTESTRESULT_e testConfDomain ()
   return result;
 }
 
-static int test_number = 0;
-#define TEST_RUN( prog, text ) { \
-  if(argc > argpos) { \
-      for(i = argpos; i < argc; ++i) \
-        if(strstr(text, argv[i]) != 0 || \
-           atoi(argv[i]) == test_number ) \
-          oyTestRun( prog, text, test_number ); \
-  } else if(list) \
-    printf( "[%d] %s\n", test_number, text); \
-  else \
-    oyTestRun( prog, text, test_number ); \
-  ++test_number; \
-}
+/* --- end actual tests --- */
 
-int results[oyTESTRESULT_UNKNOWN+1];
-static const int tn = 64;
-char * tests_failed[tn];
-char * tests_xfailed[tn];
-
-oyTESTRESULT_e oyTestRun             ( oyTESTRESULT_e    (*test)(void),
-                                       const char        * test_name,
-                                       int                 number )
-{
-  oyTESTRESULT_e error = oyTESTRESULT_UNKNOWN;
-
-  fprintf( stdout, "\n________________________________________________________________\n" );
-  fprintf(stdout, "Test[%d]: %s ... ", test_number, test_name );
-
-  error = test();
-
-  fprintf(stdout, "\t%s", oyTestResultToString(error));
-
-  if(error == oyTESTRESULT_FAIL)
-    tests_failed[number] = (char*)test_name;
-  if(error == oyTESTRESULT_XFAIL)
-    tests_xfailed[number] = (char*)test_name;
-  results[error] += 1;
-
-  /* print */
-  if(error <= oyTESTRESULT_FAIL)
-    fprintf(stdout, " !!! ERROR !!!" );
-  fprintf(stdout, "\n" );
-
-  return error;
-}
-
-/*  main */
-int main(int argc, char** argv)
-{
-  int i, error = 0,
-      argpos = 1,
-      list = 0;
-
-  oyExportStart_(EXPORT_CHECK_NO);
-
-  /* init */
-  for(i = 0; i <= oyTESTRESULT_UNKNOWN; ++i)
-    results[i] = 0;
-
-  i = 1; while(i < argc) if( strcmp(argv[i++],"-l") == 0 )
-  { ++argpos;
-    zout = stderr;
-    list = 1;
-  }
-
-  i = 1; while(i < argc) if( strcmp(argv[i++],"--silent") == 0 )
-  { ++argpos;
-    zout = stderr;
-  }
-
-  fprintf( zout, "\nOyranos Tests v" OYRANOS_VERSION_NAME
-           "  developed: " OYRANOS_DATE
-           "\n\n" );
-
-  memset(tests_xfailed, 0, sizeof(char*) * tn);
-  memset(tests_failed, 0, sizeof(char*) * tn);
-  /* do tests */
-
-  TEST_RUN( testVersion, "Version matching" );
-  TEST_RUN( testI18N, "Internationalisation" );
-  TEST_RUN( testDB, "elDB basics" );
-  TEST_RUN( testDB2, "oiDB basics" );
-  TEST_RUN( testStringRun, "String handling" );
-  TEST_RUN( testJson, "JSON handling" );
-  TEST_RUN( testOption, "basic oyOption_s" );
-  TEST_RUN( testOptionInt,  "oyOption_s integers" );
-  TEST_RUN( testOptionsSet,  "Set oyOptions_s" );
-  TEST_RUN( testOptionsCopy,  "Copy oyOptions_s" );
-  TEST_RUN( testOptionsType,  "Objects inside oyOptions_s" );
-  TEST_RUN( testBlob, "oyBlob_s" );
-  TEST_RUN( testSettings, "default oyOptions_s settings" );
-  TEST_RUN( testConfDomain, "oyConfDomain_s");
-  TEST_RUN( testInterpolation, "Interpolation oyLinInterpolateRampU16" );
-  TEST_RUN( testProfile, "Profile handling" );
-  TEST_RUN( testProfiles, "Profiles reading" );
-  TEST_RUN( testProfileLists, "Profile lists" );
-  TEST_RUN( testEffects, "Effects" );
-  TEST_RUN( testDeviceLinkProfile, "CMM deviceLink" );
-  TEST_RUN( testClut, "CMM clut" );
-  TEST_RUN( testRegistrationMatch,  "Registration matching" );
-  TEST_RUN( test_oyTextIccDictMatch,  "IccDict matching" );
-  TEST_RUN( testPolicy, "Policy handling" );
-  TEST_RUN( testWidgets, "Widgets" );
-  TEST_RUN( testCMMDevicesListing, "CMM devices listing" );
-  TEST_RUN( testCMMDevicesDetails, "CMM devices details" );
-  TEST_RUN( testCMMRankMap, "rank map handling" );
-  TEST_RUN( testCMMMonitorJSON, "monitor JSON" );
-  TEST_RUN( testCMMMonitorListing, "CMM monitor listing" );
-  TEST_RUN( testCMMMonitorModule, "CMM monitor module" );
-  TEST_RUN( testCMMDBListing, "CMM DB listing" );
-  TEST_RUN( testCMMmonitorDBmatch, "CMM monitor DB match" );
-  TEST_RUN( testCMMsShow, "CMMs show" );
-  TEST_RUN( testCMMnmRun, "CMM named color run" );
-  TEST_RUN( testImagePixel, "CMM Image Pixel run" );
-  TEST_RUN( testRectangles, "Image Rectangles" );
-  TEST_RUN( testScreenPixel, "Draw Screen Pixel run" );
-  TEST_RUN( testFilterNode, "FilterNode Options" );
-  TEST_RUN( testConversion, "CMM selection" );
-  TEST_RUN( testCMMlists, "CMMs listing" );
-  TEST_RUN( testICCsCheck, "CMMs ICC conversion check" );
-  TEST_RUN( testCache, "Cache" );
-  TEST_RUN( testPaths, "Paths" );
-
-  /* give a summary */
-  if(!list)
-  {
-
-    fprintf( stdout, "\n################################################################\n" );
-    fprintf( stdout, "#                                                              #\n" );
-    fprintf( stdout, "#                     Results                                  #\n" );
-    fprintf( stdout, "    Total of Sub Tests:         %d\n", oy_test_sub_count );
-    for(i = 0; i <= oyTESTRESULT_UNKNOWN; ++i)
-      fprintf( stdout, "    Tests with status %s:\t%d\n",
-                       oyTestResultToString( (oyTESTRESULT_e)i ), results[i] );
-
-    error = (results[oyTESTRESULT_FAIL] ||
-             results[oyTESTRESULT_SYSERROR] ||
-             results[oyTESTRESULT_UNKNOWN]
-            );
-
-    for(i = 0; i < tn; ++i)
-      if(tests_xfailed[i])
-        fprintf( stdout, "    %s: [%d] \"%s\"\n",
-                 oyTestResultToString( oyTESTRESULT_XFAIL), i, tests_xfailed[i] );
-    for(i = 0; i < tn; ++i)
-      if(tests_failed[i])
-        fprintf( stdout, "    %s: [%d] \"%s\"\n",
-                 oyTestResultToString( oyTESTRESULT_FAIL), i, tests_failed[i] );
-
-    if(error)
-      fprintf( stdout, "    Tests FAILED\n" );
-    else
-      fprintf( stdout, "    Tests SUCCEEDED\n" );
-
-    fprintf( stdout, "\n    Hint: the '-l' option will list all test names\n" );
-
-    oyFinish_( 0 );
-  }
-
-  return error;
-}
+#include "oy_test_main.h"
 
