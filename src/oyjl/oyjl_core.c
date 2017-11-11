@@ -264,18 +264,33 @@ void       oyjl_string_list_add_static_string (
                                        void*            (* alloc)(size_t),
                                        void             (* deAlloc)(void*) )
 {
-  int alt_n = *n;
-  char ** tmp;
+  int n_alt = *n;
+  char ** nlist = 0;
 
   if(!list) return;
 
-  tmp = oyjl_string_list_cat_list((const char**)*list, alt_n,
+  if(1)
+  {
+    int i = 0;
+
+    oyjlAllocHelper_m_(nlist, char*, n_alt + 2, alloc, return);
+
+    memmove( nlist, *list, sizeof(char*) * n_alt);
+    nlist[n_alt] = oyjl_string_copy( string, alloc );
+    nlist[n_alt+1] = NULL;
+
+    if(n)
+      *n = n_alt + 1;
+  } else
+    nlist = oyjl_string_list_cat_list((const char**)*list, n_alt,
                                   (const char**)&string, 1,
                                   n, alloc);
 
-  oyjl_string_list_release(list, alt_n, deAlloc);
 
-  *list = tmp;
+  if(*list)
+    deAlloc(*list);
+
+  *list = nlist;
 }
 
 /** @internal
