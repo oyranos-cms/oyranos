@@ -15,7 +15,7 @@ TOBJECTS = $(TSOURCES:.c=.o)
 OSOURCES = oyjl.c
 OOBJECTS = $(OSOURCES:.c=.o)
 
-all:	$(TARGET)
+all:	$(TARGET) oyjl
 
 $(TARGET):	$(OBJECTS) $(TOBJECTS)
 	$(CC) $(CFLAGS) -o $@ $(TOBJECTS) $(OBJECTS) $(LDFLAGS) -lyajl
@@ -24,7 +24,7 @@ check:
 	./oyjl_tree_test
 	./oyjl_tree_test org/freedesktop/openicc/device/[0]/[0]
 
-oyjl:	all $(OOBJECTS)
+oyjl: $(OBJECTS) $(OOBJECTS)
 	$(CC) $(CFLAGS) -o $@ $(OOBJECTS) $(OBJECTS) $(LDFLAGS) -lyajl
 
 clean:
