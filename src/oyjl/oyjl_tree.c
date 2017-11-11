@@ -679,7 +679,9 @@ static void  oyjl_tree_find_         ( oyjl_val            root,
            {
              if(pos >= 0 && pos != i) continue;
 
-             oyjl_string_add( &xpath, 0,0, "%s%s[%d]",base,base[0]?"/":"",i );
+             if(base)
+               oyjl_string_add( &xpath, 0,0, "%s%s[%d]",base,base[0]?"/":"",i );
+
              if(flags & OYJL_PATH)
              {
                n = 0; while(paths && *paths && (*paths)[n]) ++n;
@@ -689,7 +691,7 @@ static void  oyjl_tree_find_         ( oyjl_val            root,
 
              if(levels != 1)
                oyjl_tree_find_( root->u.array.values[i], level+1, levels-1, terms, flags, xpath, paths );
-             free(xpath); xpath = NULL;
+             if(xpath) { free(xpath); xpath = NULL; }
            }
 
          } break;
@@ -706,7 +708,8 @@ static void  oyjl_tree_find_         ( oyjl_val            root,
                                              term[0] == '\000'))
                continue;
 
-             oyjl_string_add( &xpath, 0,0, "%s%s%s", base,base[0]?"/":"", key );
+             if(base && key)
+               oyjl_string_add( &xpath, 0,0, "%s%s%s", base,base[0]?"/":"", key );
 
              if( (flags & OYJL_PATH && ocount) ||
                  (flags & OYJL_KEY && ocount == 0) )
@@ -718,7 +721,7 @@ static void  oyjl_tree_find_         ( oyjl_val            root,
 
              if(levels != 1)
                oyjl_tree_find_( root->u.object.values[i], level+1, levels-1, terms, flags, xpath, paths );
-             free(xpath); xpath = NULL;
+             if(xpath) { free(xpath); xpath = NULL; }
            }
          }
          break;
@@ -768,6 +771,38 @@ void       oyjl_tree_to_paths        ( oyjl_val            root,
   oyjl_string_list_release( &terms, n, free );
 }
 
+static void oyjl_json_indent ( char ** json, const char * before, int level, const char * after )
+{
+  char * njson;
+  int len;
+
+  if(!json) return;
+
+  len = *json ? strlen(*json) : 0;
+  len += before ? strlen( before ) : 0;
+  len += level;
+  len += after ? strlen( after ) : 0;
+  len += 1;
+
+  njson = malloc( len );
+  if(!njson) return;
+  njson[0] = 0;
+
+  if(*json)
+  {
+    strcpy( njson, *json );
+    free( *json );
+  }
+  if(before) strcpy( &njson[strlen(njson)], before );
+  if(level)
+  {
+    len = strlen(njson);
+    memset( &njson[len], ' ', level );
+    njson[len+level] = '\000';
+  }
+  if(after) strcpy( &njson[strlen(njson)], after );
+  *json = njson;
+}
 
 /** @brief convert a C tree into a JSON string */
 void oyjl_tree_to_json (oyjl_val v, int * level, char ** json)
@@ -833,8 +868,7 @@ void oyjl_tree_to_json (oyjl_val v, int * level, char ** json)
            *level += 2;
            for(i = 0; i < count; ++i)
            {
-             oyjl_string_add( json, 0,0, "\n");
-             n = *level; while(n--) oyjl_string_add(json, 0,0, " ");
+             oyjl_json_indent( json, "\n", *level, NULL );
              if(!v->u.object.keys || !v->u.object.keys[i])
              {
                oyjl_message_p( oyjl_message_error, 0, OYJL_DBG_FORMAT_"missing key", OYJL_DBG_ARGS_ );
@@ -855,9 +889,7 @@ void oyjl_tree_to_json (oyjl_val v, int * level, char ** json)
            }
            *level -= 2;
 
-           oyjl_string_add( json, 0,0, "\n");
-           n = *level; while(n--) oyjl_string_add(json, 0,0, " ");
-           oyjl_string_add( json, 0,0, "}");
+           oyjl_json_indent( json, "\n", *level, "}" );
          }
          break;
     default:
