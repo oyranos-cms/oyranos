@@ -33,6 +33,7 @@ void printfHelp(int argc, char ** argv)
   fprintf( stderr, "        -j\tprint JSON - default mode\n");
   fprintf( stderr, "        -c\tprint node count\n");
   fprintf( stderr, "        -k\tprint key name\n");
+  fprintf( stderr, "        -p\tprint all matching paths\n");
   fprintf( stderr, "        -i FILE_NAME  %s\n", _("JSON file"));
   fprintf( stderr, "        -x PATH\tpath expression, indexing is in edged brackets \"[NUMBER]\"\n");
   fprintf( stderr, "\n");
@@ -51,6 +52,9 @@ void printfHelp(int argc, char ** argv)
   fprintf( stderr, "\n");
   fprintf( stderr, "  %s\n",               _("Print key name:"));
   fprintf( stderr, "      %s -k -i example.json -x [0]/[0]\n",        argv[0]);
+  fprintf( stderr, "\n");
+  fprintf( stderr, "  %s\n",               _("Print path:"));
+  fprintf( stderr, "      %s -p -i example.json -x /\n",        argv[0]);
   fprintf( stderr, "\n");
   fprintf( stderr, "\n");
 }
@@ -154,7 +158,11 @@ int main(int argc, char ** argv)
   if(text)
   {
     char error_buffer[128] = {0};
+    if(verbose)
+      fprintf(stderr, "file read:\t\"%s\"\n", input_file_name);
     root = oyjl_tree_parse( text, error_buffer, 128 );
+    if(verbose)
+      fprintf(stderr, "file parsed:\t\"%s\"\n", input_file_name);
 
     if(xpath)
     {
@@ -176,6 +184,9 @@ int main(int argc, char ** argv)
         fprintf(stderr, "%s xpath \"%s\"\n", value?"found":"found not", xpath);
 
       oyjl_string_list_release( &paths, count, free );
+
+      if(verbose)
+        fprintf(stderr, "processed:\t\"%s\"\n", input_file_name);
     }
     else
       value = root;
@@ -219,6 +230,23 @@ int main(int argc, char ** argv)
     case KEY:
       if(!xpath && value->type == oyjl_t_object && oyjl_value_count(value) > index)
         puts( value->u.object.keys[index] );
+      break;
+    case PATHS:
+      if(!xpath)
+      {
+        char ** paths = NULL;
+        int count = 0, i;
+
+        oyjl_tree_to_paths( root, 1000000, NULL, 0, &paths );
+        if(verbose)
+          fprintf(stderr, "processed:\t\"%s\"\n", input_file_name);
+        while(paths && paths[count]) ++count;
+
+        for(i = 0; i < count; ++i)
+          fprintf(stdout,"%s\n", paths[i]);
+
+        oyjl_string_list_release( &paths, count, free );
+      }
       break;
     default: break;
   }
