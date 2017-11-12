@@ -455,6 +455,8 @@ static int handle_null (void *ctx)
       ]
     }
     @endverbatim
+ *  Some API's accept extended paths expressions. Those can contain empty
+ *  terms, like "//", which matches all keys in the above example.
  *
  *  \b Programming \b Tutorial
  *
@@ -734,6 +736,8 @@ static void  oyjl_tree_find_         ( oyjl_val            root,
  *
  *  @param         root                node
  *  @param         levels              desired level depth
+ *  @param         xpath               extented path expression;
+ *                                     It accepts even empty terms.
  *  @param         flags               support filters:
  *                                     - OYJL_KEY: only keys
  *                                     - OYJL_PATH: only paths
