@@ -269,6 +269,8 @@ void       oyjl_string_list_add_static_string (
 
   if(!list || !n) return;
 
+  n_alt = *n;
+
   oyjlAllocHelper_m_(nlist, char*, n_alt + 2, alloc, return);
 
   memmove( nlist, *list, sizeof(char*) * n_alt);
