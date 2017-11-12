@@ -184,21 +184,29 @@ int main(int argc, char ** argv)
       else if(show == KEY)
         fprintf(stdout,"%s\n", (count && paths[0] && strlen(strchr(paths[0],'/'))) ? strrchr(paths[0],'/') + 1 : "");
 
-      if(paths)
+      if(paths || value_string)
         value = oyjl_tree_get_value( root,
                                      value_string ? OYJL_CREATE_NEW : 0,
-                                     paths[0] );
+                                     paths?paths[0]:xpath );
       if(verbose)
         fprintf(stderr, "%s xpath \"%s\"\n", value?"found":"found not", xpath);
 
       oyjl_string_list_release( &paths, count, free );
 
-      if(value_string && value)
-        oyjl_value_set_string( value, value_string );
+      if(value_string)
+      {
+        if(value)
+          oyjl_value_set_string( value, value_string );
+        else
+          oyjl_message_p( oyjl_message_error, 0, OYJL_DBG_FORMAT_"obtained no leave for xpath \"%s\" from JSON:\t\"%s\"",
+                          OYJL_DBG_ARGS_, xpath, input_file_name );
+      }
 
       if(verbose)
         fprintf(stderr, "processed:\t\"%s\"\n", input_file_name);
     }
+    else if(value_string)
+      oyjl_message_p( oyjl_message_error, 0, OYJL_DBG_FORMAT_"set argument needs as well a xpath argument", OYJL_DBG_ARGS_ );
     else
       value = root;
   }
