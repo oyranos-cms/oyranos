@@ -29,11 +29,12 @@ void printfHelp(int argc, char ** argv)
   fprintf( stderr, "\n");
   fprintf( stderr, "%s\n",                 _("Usage"));
   fprintf( stderr, "  %s\n",               _("Print:"));
-  fprintf( stderr, "      %s [-j|-c|-k|-p] [-v] [-i FILE_NAME] [-x PATH]\n",        argv[0]);
+  fprintf( stderr, "      %s [-j|-c|-k|-p|-v STRING] [-v] [-i FILE_NAME] [-x PATH]\n",        argv[0]);
   fprintf( stderr, "        -j\tprint JSON - default mode\n");
   fprintf( stderr, "        -c\tprint node count\n");
   fprintf( stderr, "        -k\tprint key name\n");
   fprintf( stderr, "        -p\tprint all matching paths\n");
+  fprintf( stderr, "        -v\tset a key to a value\n");
   fprintf( stderr, "        -i FILE_NAME  %s\n", _("JSON file"));
   fprintf( stderr, "        -x PATH\tpath expression, indexing is in edged brackets \"[NUMBER]\"\n");
   fprintf( stderr, "\n");
@@ -56,6 +57,9 @@ void printfHelp(int argc, char ** argv)
   fprintf( stderr, "  %s\n",               _("Print path:"));
   fprintf( stderr, "      %s -p -i example.json -x /\n",        argv[0]);
   fprintf( stderr, "\n");
+  fprintf( stderr, "  %s\n",               _("Set key/value:"));
+  fprintf( stderr, "      %s -i example.json -x [0]/[0]/key -s \"value\"\n",        argv[0]);
+  fprintf( stderr, "\n");
   fprintf( stderr, "\n");
 }
 
@@ -77,6 +81,7 @@ int main(int argc, char ** argv)
   int error = 0;
   int size = 0;
   char * text = NULL;
+  const char * value_string = NULL;
   const char * input_file_name = NULL,
              * xpath = NULL;
   oyjl_val root = NULL,
@@ -105,6 +110,7 @@ int main(int argc, char ** argv)
               case 'j': show = JSON; break;
               case 'k': show = KEY; break;
               case 'p': show = PATHS; break;
+              case 's': OY_PARSE_STRING_ARG(value_string); break;
               case 't': show = TYPE; break;
               case 'v': ++verbose; break;
               case 'h':
@@ -179,11 +185,16 @@ int main(int argc, char ** argv)
         fprintf(stdout,"%s\n", (count && paths[0] && strlen(strchr(paths[0],'/'))) ? strrchr(paths[0],'/') + 1 : "");
 
       if(paths)
-        value = oyjl_tree_get_value( root, 0, paths[0] );
+        value = oyjl_tree_get_value( root,
+                                     value_string ? OYJL_CREATE_NEW : 0,
+                                     paths[0] );
       if(verbose)
         fprintf(stderr, "%s xpath \"%s\"\n", value?"found":"found not", xpath);
 
       oyjl_string_list_release( &paths, count, free );
+
+      if(value_string && value)
+        oyjl_value_set_string( value, value_string );
 
       if(verbose)
         fprintf(stderr, "processed:\t\"%s\"\n", input_file_name);
@@ -199,7 +210,7 @@ int main(int argc, char ** argv)
       {
         char * json = NULL;
         int level = 0;
-        oyjl_tree_to_json( value, &level, &json );
+        oyjl_tree_to_json( value_string ? root : value, &level, &json );
         if(json)
         {
           fwrite( json, sizeof(char), strlen(json), stdout );
