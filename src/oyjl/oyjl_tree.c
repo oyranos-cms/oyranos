@@ -1063,6 +1063,8 @@ static oyjl_val  oyjl_tree_get_value_( oyjl_val            v,
     {
       if(0 <= pos && pos < count)
         level = oyjl_value_pos_get( parent, pos );
+      else if(flags & OYJL_CREATE_NEW)
+        break;
       else
         level = NULL;
 
