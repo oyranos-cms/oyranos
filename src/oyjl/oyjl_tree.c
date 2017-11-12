@@ -811,8 +811,6 @@ static void oyjl_json_indent ( char ** json, const char * before, int level, con
 /** @brief convert a C tree into a JSON string */
 void oyjl_tree_to_json (oyjl_val v, int * level, char ** json)
 {
-  int n = *level;
-
   if(v)
   switch(v->type)
   {

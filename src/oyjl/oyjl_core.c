@@ -265,7 +265,7 @@ void       oyjl_string_list_add_static_string (
                                        void             (* deAlloc)(void*) )
 {
   char ** nlist = 0;
-  int i = 0, n_alt;
+  int n_alt;
 
   if(!list || !n) return;
 
