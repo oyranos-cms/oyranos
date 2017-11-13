@@ -1061,8 +1061,6 @@ static oyjl_val  oyjl_tree_get_value_( oyjl_val            v,
     {
       if(0 <= pos && pos < count)
         level = oyjl_value_pos_get( parent, pos );
-      else if(flags & OYJL_CREATE_NEW)
-        break;
       else
         level = NULL;
 
@@ -1079,6 +1077,7 @@ static oyjl_val  oyjl_tree_get_value_( oyjl_val            v,
             oyjl_value_clear( parent );
             parent->type = oyjl_t_array;
             oyjlAllocHelper_m_( parent->u.array.values, oyjl_val, 2, malloc, oyjl_tree_free( level ); goto clean );
+            parent->u.array.len = 0;
           } else
           {
             oyjl_val *tmp;
@@ -1128,6 +1127,7 @@ static oyjl_val  oyjl_tree_get_value_( oyjl_val            v,
             parent->type = oyjl_t_object;
             oyjlAllocHelper_m_( parent->u.object.values, oyjl_val, 2, malloc, oyjl_tree_free( level ); goto clean );
             oyjlAllocHelper_m_( parent->u.object.keys, char*, 2, malloc, oyjl_tree_free( level ); goto clean );
+            parent->u.object.len = 0;
           } else
           {
             oyjl_val *tmp;
@@ -1294,6 +1294,7 @@ int        oyjl_value_set_string     ( oyjl_val            v,
   {
     oyjl_value_clear( v );
     v->type = oyjl_t_string;
+    v->u.string = NULL;
     error = oyjl_string_add( &v->u.string, 0,0, "%s", string );
   }
   return error;
