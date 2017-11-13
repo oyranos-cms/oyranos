@@ -43,6 +43,7 @@ int __sunriset__( int year, int month, int day, double lon, double lat,
                   double altit, int upper_limb, double *trise, double *tset );
 int findLocation();
 int getLocation( double * lon, double * lat);
+double getSunHeight( double year, double month, double day, double gmt_hours, double lat, double lon );
 int getSunriseSunset( double * rise, double * set );
 int runDaemon(int dmode);
 int setWtptMode( oySCOPE_e scope, int wtpt_mode );
@@ -123,6 +124,7 @@ void  printfHelp (int argc, char** argv)
 
 
 oySCOPE_e scope = oySCOPE_USER;
+double hour = -1.0; /* ignore this default value */
 
 int main( int argc , char** argv )
 {
@@ -194,6 +196,8 @@ int main( int argc , char** argv )
                         { OY_PARSE_FLOAT_ARG2( latitude,  "latitude",  - 90.0,  90.0, 0.0 ); i=100; break; }
                         else if(OY_IS_ARG("longitude"))
                         { OY_PARSE_FLOAT_ARG2( longitude, "longitude", -180.0, 180.0, 0.0 ); i=100; break; }
+                        else if(OY_IS_ARG("hour"))
+                        { OY_PARSE_FLOAT_ARG2( hour, "hour", 0.0, 24.0, 0.0 ); i=100; break; }
                         } OY_FALLTHROUGH
               default:
                         printfHelp(argc, argv);
@@ -464,12 +468,12 @@ double oyGetCurrentGMTHour( int * gmt_to_local_time_diff_sec )
 {
   time_t cutime;         /* Time since epoch */
   struct tm * ctime;
-  int    sec, min, hour;
+  int    sec, min, tm_hour;
   double dtime;
 
   cutime = time(NULL); /* time right NOW */
   ctime = gmtime(&cutime);
-  hour = ctime->tm_hour;
+  tm_hour = ctime->tm_hour;
   min = ctime->tm_min;
   sec = ctime->tm_sec;
   if(gmt_to_local_time_diff_sec)
@@ -477,7 +481,11 @@ double oyGetCurrentGMTHour( int * gmt_to_local_time_diff_sec )
     ctime = localtime(&cutime);
     *gmt_to_local_time_diff_sec = ctime->tm_gmtoff;
   }
-  dtime = hour + min/60.0 + sec/3600.0;
+
+  if(hour != -1.0)
+    dtime = hour;
+  else
+    dtime = tm_hour + min/60.0 + sec/3600.0;
   return dtime;
 }
 void oySplitHour( double hours, int * hour, int * minute, int * second )
@@ -535,20 +543,23 @@ int getSunriseSunset( double * rise, double * set )
   }
 
   r = __sunriset__( year,month,day, lon,lat,
-                    (twilight==0)?-35/(double)60:twilight, 0, rise, set );
+                    (twilight==0)?-35.0/60.0:twilight, 0, rise, set );
   if(r > 0)
     fprintf(stderr, "sun will not get below twilight today\n");
   if(r < 0)
     fprintf(stderr, "sun will not get above twilight today\n");
   {
     int hour, minute, second, gmt_diff_second;
+    double elevation;
+
     oyGetCurrentGMTHour( &gmt_diff_second );
     oySplitHour( oyGetCurrentLocalHour( oyGetCurrentGMTHour(0), gmt_diff_second ), &hour, &minute, &second );
+    elevation = getSunHeight( year, month, day, oyGetCurrentGMTHour(0), lat, lon );
     fprintf( stderr, "%d-%d-%d %d:%.2d:%.2d",
              year, month, day, hour, minute, second );
     oySplitHour( oyGetCurrentLocalHour( *rise, gmt_diff_second ), &hour, &minute, &second );
-    fprintf( stderr, " %s: %g° %g° %s: %g° %s: %d:%.2d:%.2d",
-             _("Geographical Position"), lat, lon, _("Twilight"), twilight, _("Sunrise"), hour, minute, second );
+    fprintf( stderr, " %s: %g° %g° %s: %g° (%s: %g°) %s: %d:%.2d:%.2d",
+             _("Geographical Position"), lat, lon, _("Twilight"), twilight, _("Sun Elevation"), elevation, _("Sunrise"), hour, minute, second );
     oySplitHour( oyGetCurrentLocalHour( *set,  gmt_diff_second ), &hour, &minute, &second );
     fprintf( stderr, " %s: %d:%.2d:%.2d\n",
              _("Sunset"), hour, minute, second );
@@ -1112,3 +1123,55 @@ double GMST0( double d )
                           ( 0.9856002585 + 4.70935E-5 ) * d );
       return sidtim0;
 } /* GMST0 */
+/*  ---------------- 8< ------------------ */
+
+double getSunHeight( double year, double month, double day, double gmt_hours,
+                     double lat, double lon )
+{
+  double  d = days_since_2000_Jan_0(year,month,day) + 0.5 - lon/360.0,
+      sr,         /* Solar distance, astronomical units */
+      sdec,       /* Sun's declination */
+      sRA,        /* Sun's Right Ascension */
+      sidtime,    /* Local sidereal time */
+      t,          /* Sun's local hour angle */
+      hs,         /* Sun's Height sinus */
+      h,          /* Sun's Height */
+      A;          /* Sun's Azimut */
+
+  int hour,minute,second;
+  oySplitHour( oyGetCurrentLocalHour( gmt_hours, 0 ), &hour, &minute, &second );
+  if(oy_debug)
+  fprintf( stderr, "GMT:\t%02d:%02d:%02d\n", hour,minute,second );
+  if(oy_debug)
+  fprintf( stderr, "JD (GMT 12:00):\t%fd\n", d + 2451545.0 + lon/360.0 );
+  if(oy_debug)
+  fprintf( stderr, "JD0 (GMT 12:00):\t%fd\n", d + lon/360.0 );
+  if(oy_debug)
+  fprintf( stderr, "LMST:\t%fd\n", d + gmt_hours/24.0*365.25/366.25 );
+
+  /* Compute local sideral time of this moment */
+  sidtime = revolution( GMST0(d) + 360.*gmt_hours/24.*365.25/366.25 + lon );
+  oySplitHour( oyGetCurrentLocalHour( sidtime/15., 0 ), &hour, &minute, &second );
+  if(oy_debug)
+  fprintf( stderr, "Local Mean Sidereal Time:\t%02d:%02d:%02d\n", hour,minute,second );
+
+  sun_RA_dec( d, &sRA, &sdec, &sr );
+  if(oy_debug)
+  fprintf( stderr, "Rectaszension:\t%g°\n", sRA);
+  if(oy_debug)
+  fprintf( stderr, "Declination:\t%g°\n", sdec);
+  t = sidtime - sRA;
+  if(oy_debug)
+  fprintf( stderr, "Sun's Hourly Angle:\t%g° (%gh)\n", t, t/15.);
+  A = atand( sind( t ) /
+             ( cosd( t )*sind( lon ) - tand( sdec )*cosd( lon ) )
+           );
+  if(oy_debug)
+  fprintf( stderr, "Sun's Azimut:\t%g°\n", revolution(A-180.0) );
+  hs = cosd( sdec )*cosd( t )*cosd( lat ) + sind( sdec )*sind( lat );
+  h = asind( hs );
+  if(oy_debug)
+  fprintf( stderr, "Sun's Height:\t%g° sin(%g)\n", h, hs );
+
+  return h;
+}
