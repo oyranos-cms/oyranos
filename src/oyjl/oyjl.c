@@ -29,7 +29,7 @@ void printfHelp(int argc, char ** argv)
   fprintf( stderr, "\n");
   fprintf( stderr, "%s\n",                 _("Usage"));
   fprintf( stderr, "  %s\n",               _("Print:"));
-  fprintf( stderr, "      %s [-j|-c|-k|-p|-v STRING] [-v] [-i FILE_NAME] [-x PATH]\n",        argv[0]);
+  fprintf( stderr, "      %s [-j|-c|-k|-p|-s STRING] [-v] [-i FILE_NAME] [-x PATH]\n",        argv[0]);
   fprintf( stderr, "        -j\tprint JSON - default mode\n");
   fprintf( stderr, "        -c\tprint node count\n");
   fprintf( stderr, "        -k\tprint key name\n");
