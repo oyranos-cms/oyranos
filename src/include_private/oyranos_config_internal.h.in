@@ -57,5 +57,8 @@
 #cmakedefine01 DEBUG
 #endif
 
+#define OY_SOURCEDIR "@CMAKE_SOURCE_DIR@"
+#define OY_BUILDDIR  "@CMAKE_BINARY_DIR@"
+
 #endif /* OYRANOS_CONFIG_INTERNAL_H */
 
