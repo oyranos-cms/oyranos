@@ -38,6 +38,10 @@
 
 void* oyAllocFunc(size_t size) {return malloc (size);}
 void  oyDeAllocFunc ( oyPointer ptr) { if(ptr) free (ptr); }
+void  getKey                         ( const char        * key,
+                                       oySCOPE_e           scope,
+                                       int                 verbose,
+                                       int                 print );
 char *   oyOpeniccToOyranos          ( const char        * key_name,
                                        oyAlloc_f           alloc );
 
@@ -231,7 +235,13 @@ int main(int argc, char *argv[])
         while(paths && paths[count]) ++count;
 
         for(i = 0; i < count; ++i)
-          fprintf(stdout,"%s\n", paths[i]);
+        {
+          if(verbose)
+          {
+            getKey( paths[i], scope, verbose, 1 );
+          } else
+            fprintf(stdout,"%s\n", paths[i]);
+        }
 
         oyjl_string_list_release( &paths, count, free );
         oyFree_m_(v);
@@ -241,13 +251,7 @@ int main(int argc, char *argv[])
   }
 
   if(get)
-  {
-    char * key_name = oyOpeniccToOyranos( get, oyAllocateFunc_ );
-    v = oyGetPersistentString( key_name, 0, scope, oyAllocateFunc_ );
-    fprintf( stdout, "%s\n", oyNoEmptyString_m_(v) );
-    if(v) oyFree_m_(v);
-    if(key_name) oyFree_m_(key_name);
-  } 
+    getKey( get, scope, verbose, 1 );
 
   if(set)
   {
@@ -259,21 +263,11 @@ int main(int argc, char *argv[])
       const char * value = list[1],
                  * comment = NULL;
       if(scope == oySCOPE_USER_SYS) scope = oySCOPE_USER;
-      if(verbose)
-      {
-        v = oyGetPersistentString( key_name, 0, scope, oyAllocateFunc_ );
-        fprintf( stderr, "%s\n", oyNoEmptyString_m_(v) );
-        if(v) oyFree_m_(v);
-      }
+      if(verbose) getKey( key_name, scope, verbose, 0 );
       error = oySetPersistentString( key_name, scope, value, comment );
       if(verbose)
         fprintf( stderr, "%s->%s\n", oyNoEmptyString_m_(list[0]), oyNoEmptyString_m_(value) );
-      if(verbose)
-      {
-        v = oyGetPersistentString( key_name, 0, scope, oyAllocateFunc_ );
-        fprintf( stderr, "%s\n", oyNoEmptyString_m_(v) );
-        if(v) oyFree_m_(v);
-      }
+      if(verbose) getKey( key_name, scope, verbose, 0 );
       if(key_name) oyFree_m_(key_name);
 
       oyStringListRelease( &list, count, oyDeAllocateFunc_ );
@@ -289,6 +283,24 @@ int main(int argc, char *argv[])
 
   return error;
 }
+
+void  getKey                         ( const char        * key,
+                                       oySCOPE_e           scope,
+                                       int                 verbose,
+                                       int                 print )
+{
+  if(key)
+  {
+    char * key_name = oyOpeniccToOyranos( key, oyAllocateFunc_ );
+    char * v = oyGetPersistentString( key_name, 0, scope, oyAllocateFunc_ );
+    if(verbose)
+      fprintf( print == 1 ? stdout : stderr, "%s:", key );
+    fprintf( print ? stdout : stderr, "%s\n", oyNoEmptyString_m_(v) );
+    if(v) oyFree_m_(v);
+    if(key_name) oyFree_m_(key_name);
+  }
+}
+
 
 char *   oyOpeniccToOyranos          ( const char        * key_name,
                                        oyAlloc_f           alloc )
