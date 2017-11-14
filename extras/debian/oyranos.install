@@ -10,6 +10,7 @@ usr/bin/oyranos-profile-graph
 usr/bin/oyranos-profile-install
 usr/bin/oyranos-xforms
 usr/bin/oyranos-xforms-modules
+usr/share/man/man1/oyranos-config.1*
 usr/share/man/man1/oyranos-monitor.1*
 usr/share/man/man1/oyranos-monitor-daemon.1*
 usr/share/man/man1/oyranos-monitor-white-point.1*
