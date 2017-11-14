@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Oyranos 0.9\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2017-11-13 14:17+0100\n"
+"POT-Creation-Date: 2017-11-14 08:54+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -161,12 +161,13 @@ msgstr ""
 msgid "found list of wrong type"
 msgstr ""
 
-#: API_generated/oyOptions_s.c:1573 tools/oyranos-device.c:253
-#: tools/oyranos-monitor-white-point.c:211 tools/oyranos_convert.c:271
-#: tools/oyranos_gamma.c:254 tools/oyranos_policy.c:157
-#: tools/oyranos_profile_graph.c:253 tools/oyranos_profile_tool.c:234
-#: tools/oyranos_profiles.c:245 tools/oyranos_profiles.c:318
-#: examples/taxi.c:208 examples/libraw/oyranos_file.cpp:236
+#: API_generated/oyOptions_s.c:1573 tools/oyranos-config.c:186
+#: tools/oyranos-device.c:253 tools/oyranos-monitor-white-point.c:211
+#: tools/oyranos_convert.c:271 tools/oyranos_gamma.c:254
+#: tools/oyranos_policy.c:157 tools/oyranos_profile_graph.c:253
+#: tools/oyranos_profile_tool.c:234 tools/oyranos_profiles.c:245
+#: tools/oyranos_profiles.c:318 examples/taxi.c:208
+#: examples/libraw/oyranos_file.cpp:236
 msgid "wrong argument to option:"
 msgstr ""
 
@@ -3226,16 +3227,137 @@ msgstr ""
 msgid "The raw image backend of Oyranos."
 msgstr ""
 
-#: tools/oyranos-device.c:48
-msgid "is a color profile administration tool for color devices"
+#: tools/oyranos-config.c:50
+msgid "is a settings administration tool"
 msgstr ""
 
-#: tools/oyranos-device.c:49 tools/oyranos-monitor-white-point.c:62
-#: tools/oyranos_convert.c:61 tools/oyranos_gamma.c:208
-#: tools/oyranos_policy.c:54 tools/oyranos_profile_graph.c:94
-#: tools/oyranos_profile_tool.c:82 tools/oyranos_profiles.c:63
-#: examples/taxi.c:49 examples/libraw/oyranos_file.cpp:45
+#: tools/oyranos-config.c:51 tools/oyranos-device.c:49
+#: tools/oyranos-monitor-white-point.c:62 tools/oyranos_convert.c:61
+#: tools/oyranos_gamma.c:208 tools/oyranos_policy.c:54
+#: tools/oyranos_profile_graph.c:94 tools/oyranos_profile_tool.c:82
+#: tools/oyranos_profiles.c:63 examples/taxi.c:49
+#: examples/libraw/oyranos_file.cpp:45
 msgid "Usage"
+msgstr ""
+
+#: tools/oyranos-config.c:52
+msgid "Persistent Settings"
+msgstr ""
+
+#: tools/oyranos-config.c:53
+msgid "Get a Value"
+msgstr ""
+
+#: tools/oyranos-config.c:54
+msgid "Set a Value"
+msgstr ""
+
+#: tools/oyranos-config.c:55
+msgid "List existing paths"
+msgstr ""
+
+#: tools/oyranos-config.c:56
+msgid "Show DB File"
+msgstr ""
+
+#: tools/oyranos-config.c:58
+msgid "Show Install Paths"
+msgstr ""
+
+#: tools/oyranos-config.c:59
+msgid "Path to system main color directory"
+msgstr ""
+
+#: tools/oyranos-config.c:60
+msgid "Path to users main color directory"
+msgstr ""
+
+#: tools/oyranos-config.c:61
+msgid "ICC profile directory name"
+msgstr ""
+
+#: tools/oyranos-config.c:62
+msgid "Oyranos settings directory name"
+msgstr ""
+
+#: tools/oyranos-config.c:63
+msgid "Oyranos CMM directory name"
+msgstr ""
+
+#: tools/oyranos-config.c:64
+msgid "Oyranos meta module directory name"
+msgstr ""
+
+#: tools/oyranos-config.c:66
+msgid "Show Version"
+msgstr ""
+
+#: tools/oyranos-config.c:67
+msgid "Show official version"
+msgstr ""
+
+#: tools/oyranos-config.c:68
+msgid "Show version of API"
+msgstr ""
+
+#: tools/oyranos-config.c:69
+msgid "Show version as a simple number"
+msgstr ""
+
+#: tools/oyranos-config.c:71 tools/oyranos-device.c:97
+#: examples/libraw/oyranos_file.cpp:63
+msgid "Show Help:"
+msgstr ""
+
+#: tools/oyranos-config.c:74 tools/oyranos-device.c:100
+#: tools/oyranos-monitor-white-point.c:116 tools/oyranos_convert.c:102
+#: tools/oyranos_gamma.c:235 tools/oyranos_profile_graph.c:121
+#: tools/oyranos_profile_tool.c:112 tools/oyranos_profiles.c:95
+#: examples/taxi.c:66 examples/libraw/oyranos_file.cpp:66
+msgid "General options:"
+msgstr ""
+
+#: tools/oyranos-config.c:75 tools/oyranos-device.c:101
+#: tools/oyranos-monitor-white-point.c:117 tools/oyranos_convert.c:103
+#: tools/oyranos_profile_graph.c:122 tools/oyranos_profile_tool.c:116
+#: tools/oyranos_profiles.c:96 examples/libraw/oyranos_file.cpp:69
+msgid "verbose"
+msgstr ""
+
+#: tools/oyranos-config.c:77
+msgid "Miscellaneous options:"
+msgstr ""
+
+#: tools/oyranos-config.c:78
+msgid "compiler flags"
+msgstr ""
+
+#: tools/oyranos-config.c:79
+msgid "dynamic link flags"
+msgstr ""
+
+#: tools/oyranos-config.c:80
+msgid "static linking flags"
+msgstr ""
+
+#: tools/oyranos-config.c:81
+msgid "Oyranos local source directory name"
+msgstr ""
+
+#: tools/oyranos-config.c:82
+msgid "Oyranos local build directory name"
+msgstr ""
+
+#: tools/oyranos-config.c:84 tools/oyranos-device.c:109
+#: tools/oyranos-monitor-white-point.c:119 tools/oyranos_gamma.c:240
+#: tools/oyranos_profile_graph.c:131 tools/oyranos_profile_tool.c:131
+#: examples/libraw/oyranos_file.cpp:78
+#, c-format
+msgid "For more informations read the man page:"
+msgstr ""
+
+#: tools/oyranos-device.c:48
+msgid "is a color profile administration tool for color devices"
 msgstr ""
 
 #: tools/oyranos-device.c:50
@@ -3367,25 +3489,6 @@ msgstr ""
 msgid "embedd device and driver information into ICC meta tag"
 msgstr ""
 
-#: tools/oyranos-device.c:97 examples/libraw/oyranos_file.cpp:63
-msgid "Show Help:"
-msgstr ""
-
-#: tools/oyranos-device.c:100 tools/oyranos-monitor-white-point.c:116
-#: tools/oyranos_convert.c:102 tools/oyranos_gamma.c:235
-#: tools/oyranos_profile_graph.c:121 tools/oyranos_profile_tool.c:112
-#: tools/oyranos_profiles.c:95 examples/taxi.c:66
-#: examples/libraw/oyranos_file.cpp:66
-msgid "General options:"
-msgstr ""
-
-#: tools/oyranos-device.c:101 tools/oyranos-monitor-white-point.c:117
-#: tools/oyranos_convert.c:103 tools/oyranos_profile_graph.c:122
-#: tools/oyranos_profile_tool.c:116 tools/oyranos_profiles.c:96
-#: examples/libraw/oyranos_file.cpp:69
-msgid "verbose"
-msgstr ""
-
 #: tools/oyranos-device.c:102
 msgid "CLASS"
 msgstr ""
@@ -3412,13 +3515,6 @@ msgstr ""
 
 #: tools/oyranos-device.c:107 tools/oyranos_profiles.c:76
 msgid "select ICC v4 profiles"
-msgstr ""
-
-#: tools/oyranos-device.c:109 tools/oyranos-monitor-white-point.c:119
-#: tools/oyranos_gamma.c:240 tools/oyranos_profile_graph.c:131
-#: tools/oyranos_profile_tool.c:131 examples/libraw/oyranos_file.cpp:78
-#, c-format
-msgid "For more informations read the man page:"
 msgstr ""
 
 #: tools/oyranos-device.c:370 tools/oyranos-device.c:386

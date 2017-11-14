@@ -49,7 +49,7 @@ void displayHelp(char ** argv)
          OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C,
          _("is a settings administration tool"));
   printf("%s:\n",                 _("Usage"));
-  printf("  %s:\n",               _("Handle DB Value"));
+  printf("  %s:\n",               _("Persistent Settings"));
   printf("      %s -g XPATH\t%s\n", argv[0], _("Get a Value") );
   printf("      %s -s XPATH:VALUE\t%s\n", argv[0], _("Set a Value") );
   printf("      %s -l\t\t%s\n", argv[0], _("List existing paths") );
@@ -64,9 +64,9 @@ void displayHelp(char ** argv)
   printf("      %s --metadir\t%s\n", argv[0], _("Oyranos meta module directory name") );
   printf("\n");
   printf("  %s\n",               _("Show Version"));
-  printf("      %s --version\n", argv[0]);
-  printf("      %s --api-version\n", argv[0]);
-  printf("      %s --num-version\n", argv[0]);
+  printf("      %s --version\t%s\n", argv[0], _("Show official version") );
+  printf("      %s --api-version\t%s\n", argv[0], _("Show version of API"));
+  printf("      %s --num-version\t%s\n", argv[0], _("Show version as a simple number"));
   printf("\n");
   printf("  %s\n",               _("Show Help:"));
   printf("      %s [-h]\n", argv[0]);
@@ -75,23 +75,11 @@ void displayHelp(char ** argv)
   printf("         -v      \t%s\n", _("verbose"));
   printf("\n");
   printf("  %s\n",               _("Miscellaneous options:"));
-  printf("         -v      \t%s\n", _("verbose"));
-#if 0
-  oyranos-config --version           get official version
-  ./build/oyranos-config --api-version       get version of API
-  ./build/oyranos-config --num-version       get version as a simple number
-  ./build/oyranos-config --cflags            compiler flags
-  ./build/oyranos-config --ldflags           dynamic link flags
-  ./build/oyranos-config --ldstaticflags     static linking flags
-  ./build/oyranos-config --syscolordir       path to system main color directory
-  ./build/oyranos-config --usercolordir      path to users main color directory
-  ./build/oyranos-config --iccdirname        ICC profile directory name
-  ./build/oyranos-config --settingsdirname   Oyranos settings directory name
-  ./build/oyranos-config --cmmdir            Oyranos CMM directory name
-  ./build/oyranos-config --metadir           Oyranos meta module directory name
-  ./build/oyranos-config --sourcedir         Oyranos local source directory name
-  ./build/oyranos-config --builddir          Oyranos local build directory name
-#endif
+  printf("         --cflags\t%s\n", _("compiler flags"));
+  printf("         --ldflags\t%s\n", _("dynamic link flags"));
+  printf("         --ldstaticflags\t%s\n", _("static linking flags"));
+  printf("         --sourcedir\t%s\n", _("Oyranos local source directory name"));
+  printf("         --builddir\t%s\n", _("Oyranos local build directory name"));
   printf("\n");
   printf(_("For more informations read the man page:"));
   printf("\n");
@@ -299,7 +287,7 @@ int main(int argc, char *argv[])
 
   oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
 
-  return 0;
+  return error;
 }
 
 char *   oyOpeniccToOyranos          ( const char        * key_name,

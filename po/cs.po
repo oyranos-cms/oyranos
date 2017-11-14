@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: oyranos\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2017-11-13 13:21+0100\n"
+"POT-Creation-Date: 2017-11-14 08:52+0100\n"
 "PO-Revision-Date: 2012-10-19 15:10+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -1591,9 +1591,10 @@ msgstr "Pro tisk"
 msgid "For Screen"
 msgstr "Pro obrazovku"
 
-#: tools/oyranos-device.c:109 tools/oyranos-monitor-white-point.c:119
-#: tools/oyranos_gamma.c:240 tools/oyranos_profile_graph.c:131
-#: tools/oyranos_profile_tool.c:131 examples/libraw/oyranos_file.cpp:78
+#: tools/oyranos-config.c:84 tools/oyranos-device.c:109
+#: tools/oyranos-monitor-white-point.c:119 tools/oyranos_gamma.c:240
+#: tools/oyranos_profile_graph.c:131 tools/oyranos_profile_tool.c:131
+#: examples/libraw/oyranos_file.cpp:78
 #, c-format
 msgid "For more informations read the man page:"
 msgstr "Pro více informací viz manuálová stránka:"
@@ -1611,11 +1612,11 @@ msgstr ""
 msgid "Gamut Warning"
 msgstr "Varování gamutu"
 
-#: tools/oyranos-device.c:100 tools/oyranos-monitor-white-point.c:116
-#: tools/oyranos_convert.c:102 tools/oyranos_gamma.c:235
-#: tools/oyranos_profile_graph.c:121 tools/oyranos_profile_tool.c:112
-#: tools/oyranos_profiles.c:95 examples/taxi.c:66
-#: examples/libraw/oyranos_file.cpp:66
+#: tools/oyranos-config.c:74 tools/oyranos-device.c:100
+#: tools/oyranos-monitor-white-point.c:116 tools/oyranos_convert.c:102
+#: tools/oyranos_gamma.c:235 tools/oyranos_profile_graph.c:121
+#: tools/oyranos_profile_tool.c:112 tools/oyranos_profiles.c:95
+#: examples/taxi.c:66 examples/libraw/oyranos_file.cpp:66
 msgid "General options:"
 msgstr "Obecné volby:"
 
@@ -1654,6 +1655,11 @@ msgstr "Získat profil ICC"
 #, fuzzy
 msgid "Get Location:"
 msgstr "ukázat volby politiky"
+
+#: tools/oyranos-config.c:53
+#, fuzzy
+msgid "Get a Value"
+msgstr "Hodnota"
 
 #. grav
 #: liboyranos_config/oyranos_icc.c:797
@@ -1800,6 +1806,11 @@ msgstr "Zvolte atribut"
 #: modules/color/modules/oyranos_cmm_oicc.c:448
 msgid "ICC profile"
 msgstr "profil ICC"
+
+#: tools/oyranos-config.c:61
+#, fuzzy
+msgid "ICC profile directory name"
+msgstr "jméno profilu"
 
 #: API_generated/oyProfile_s_.c:925
 msgid "ICC profile id written"
@@ -2188,6 +2199,11 @@ msgstr "Vypsat zařízení:"
 msgid "List devices:"
 msgstr "Vypsat zařízení:"
 
+#: tools/oyranos-config.c:55
+#, fuzzy
+msgid "List existing paths"
+msgstr "Vypsat prohledávané cesty:"
+
 #: tools/oyranos_profile_tool.c:83
 msgid "List included ICC tags:"
 msgstr "Vypsat zahrnuté štítky ICC:"
@@ -2444,6 +2460,11 @@ msgstr "Metadata"
 msgid "Microsoft"
 msgstr "Microsoft"
 
+#: tools/oyranos-config.c:77
+#, fuzzy
+msgid "Miscellaneous options:"
+msgstr "Obecné volby:"
+
 #: liboyranos_config/oyranos_texts.c:237
 msgid "Mismatching"
 msgstr "Nesoulad"
@@ -2685,6 +2706,11 @@ msgstr "Output Image Filter Object"
 msgid "Oyranos "
 msgstr "Oyranos X11"
 
+#: tools/oyranos-config.c:63
+#, fuzzy
+msgid "Oyranos CMM directory name"
+msgstr "Modul politiky Oyranosu pro ICC"
+
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:971
 msgid "Oyranos CUPS"
 msgstr "Oyranos CUPS"
@@ -2791,6 +2817,20 @@ msgstr ""
 "o barvách mezi různými barvovými prostory a různými zařízeními s ohledem na "
 "jejich schopnost reprodukce barev."
 
+#: tools/oyranos-config.c:82
+#, fuzzy
+msgid "Oyranos local build directory name"
+msgstr "Modul politiky Oyranosu pro ICC"
+
+#: tools/oyranos-config.c:81
+#, fuzzy
+msgid "Oyranos local source directory name"
+msgstr "Skupina nastavení Oyranosu"
+
+#: tools/oyranos-config.c:64
+msgid "Oyranos meta module directory name"
+msgstr ""
+
 #: liboyranos/oyranos_cmm.c:242 modules/color/modules/oyranos_cmm_oyra.c:128
 msgid "Oyranos modules"
 msgstr "Moduly Oyranosu"
@@ -2822,6 +2862,11 @@ msgstr ""
 "Projekt Oyranos; www: http://www.oyranos.com; podpora/email: ku.b@gmx.de; "
 "zdrojové soubory: http://www.oyranos.com/wiki/index.php?title=Oyranos/"
 "Download"
+
+#: tools/oyranos-config.c:62
+#, fuzzy
+msgid "Oyranos settings directory name"
+msgstr "Skupina nastavení Oyranosu"
 
 #. tooltip
 #: liboyranos_config/oyranos_texts.c:158
@@ -2865,6 +2910,16 @@ msgstr "Monitor s pasívní maticí"
 msgid "Path can not be written"
 msgstr "Profil neni ulozen."
 
+#: tools/oyranos-config.c:59
+#, fuzzy
+msgid "Path to system main color directory"
+msgstr "cesta není adresář"
+
+#: tools/oyranos-config.c:60
+#, fuzzy
+msgid "Path to users main color directory"
+msgstr "cesta není adresář"
+
 #: liboyranos_config/oyranos_texts.c:192 liboyranos_config/oyranos_texts.c:369
 msgid "Paths"
 msgstr "Cesty"
@@ -2877,6 +2932,11 @@ msgstr "Cesty, kde jsou uloženy profily ICC"
 #: liboyranos_config/oyranos_texts.c:591
 msgid "Perceptual"
 msgstr "Perceptuální"
+
+#: tools/oyranos-config.c:52
+#, fuzzy
+msgid "Persistent Settings"
+msgstr "Nastavení simulace"
 
 #. KPCD
 #: liboyranos_config/oyranos_icc.c:793
@@ -3371,6 +3431,11 @@ msgstr "ukázat volby politiky"
 msgid "Set Longitude:"
 msgstr ""
 
+#: tools/oyranos-config.c:54
+#, fuzzy
+msgid "Set a Value"
+msgstr "Hodnota"
+
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:829
 msgid "Set a X Color Management region."
 msgstr ""
@@ -3431,7 +3496,13 @@ msgstr "Vypsat zařízení:"
 msgid "Show CIE*xy chromaticities:"
 msgstr ""
 
-#: tools/oyranos-device.c:97 examples/libraw/oyranos_file.cpp:63
+#: tools/oyranos-config.c:56
+#, fuzzy
+msgid "Show DB File"
+msgstr "Získat profil ICC"
+
+#: tools/oyranos-config.c:71 tools/oyranos-device.c:97
+#: examples/libraw/oyranos_file.cpp:63
 #, fuzzy
 msgid "Show Help:"
 msgstr "Ukázat model:"
@@ -3441,10 +3512,20 @@ msgstr "Ukázat model:"
 msgid "Show Infos"
 msgstr "Ukázat volby"
 
+#: tools/oyranos-config.c:58
+#, fuzzy
+msgid "Show Install Paths"
+msgstr "cesta instalace Oyranosu"
+
 #: tools/oyranos_profile_tool.c:96
 #, fuzzy
 msgid "Show Profile ID:"
 msgstr "Zobrazení profilu selhalo"
+
+#: tools/oyranos-config.c:66
+#, fuzzy
+msgid "Show Version"
+msgstr "ICC Examin Verze"
 
 #: liboyranos_config/oyranos_texts.c:302
 msgid ""
@@ -3456,6 +3537,11 @@ msgstr ""
 #, fuzzy
 msgid "Show modes:"
 msgstr "Vypsat moduly:"
+
+#: tools/oyranos-config.c:67
+#, fuzzy
+msgid "Show official version"
+msgstr "Verze ovladače:"
 
 #: liboyranos_config/oyranos_texts.c:329
 msgid "Show only ICC profiles, which have metadata matching a given device."
@@ -3470,6 +3556,15 @@ msgstr "Zapsat do profilu ICC:"
 #, fuzzy
 msgid "Show sun rise:"
 msgstr "Získat profil ICC"
+
+#: tools/oyranos-config.c:69
+msgid "Show version as a simple number"
+msgstr ""
+
+#: tools/oyranos-config.c:68
+#, fuzzy
+msgid "Show version of API"
+msgstr "Verze ovladače:"
 
 #: liboyranos_config/oyranos_texts.c:359
 msgid "Show which policy matches by combining all involved settings."
@@ -4233,11 +4328,12 @@ msgstr "Unix a deriváty"
 msgid "Unset device:"
 msgstr "Vypsat zařízení:"
 
-#: tools/oyranos-device.c:49 tools/oyranos-monitor-white-point.c:62
-#: tools/oyranos_convert.c:61 tools/oyranos_gamma.c:208
-#: tools/oyranos_policy.c:54 tools/oyranos_profile_graph.c:94
-#: tools/oyranos_profile_tool.c:82 tools/oyranos_profiles.c:63
-#: examples/taxi.c:49 examples/libraw/oyranos_file.cpp:45
+#: tools/oyranos-config.c:51 tools/oyranos-device.c:49
+#: tools/oyranos-monitor-white-point.c:62 tools/oyranos_convert.c:61
+#: tools/oyranos_gamma.c:208 tools/oyranos_policy.c:54
+#: tools/oyranos_profile_graph.c:94 tools/oyranos_profile_tool.c:82
+#: tools/oyranos_profiles.c:63 examples/taxi.c:49
+#: examples/libraw/oyranos_file.cpp:45
 msgid "Usage"
 msgstr "Použití"
 
@@ -4449,6 +4545,10 @@ msgstr ""
 msgid "color space class"
 msgstr "třída barvového prostoru"
 
+#: tools/oyranos-config.c:78
+msgid "compiler flags"
+msgstr ""
+
 #: tools/oyranos-device.c:89
 #, fuzzy
 msgid "create OpenICC device color state JSON"
@@ -4516,6 +4616,11 @@ msgstr "Tmava sed"
 #, fuzzy
 msgid "dump OpenICC device color state rank map JSON"
 msgstr "vložit JSON OpenICC ze souboru"
+
+#: tools/oyranos-config.c:79
+#, fuzzy
+msgid "dynamic link flags"
+msgstr "třída spojovacího profilu"
 
 #: tools/oyranos_profile_tool.c:106
 msgid "embed OpenICC device JSON from file"
@@ -4688,6 +4793,11 @@ msgstr ""
 
 #: tools/oyranos_policy.c:44
 msgid "is a policy administration tool"
+msgstr "je nástroj pro správu politik"
+
+#: tools/oyranos-config.c:50
+#, fuzzy
+msgid "is a settings administration tool"
 msgstr "je nástroj pro správu politik"
 
 #: tools/oyranos_convert.c:97
@@ -5021,6 +5131,10 @@ msgstr "specifikujte výstupní jméno souboru, výchozí je output.png"
 msgid "specify output image width in pixel"
 msgstr "specifikujte šířku výstupního obrázku v pixelech"
 
+#: tools/oyranos-config.c:80
+msgid "static linking flags"
+msgstr ""
+
 #. 32BT
 #: liboyranos_config/oyranos_icc.c:687
 msgid "the imaging factory CMM"
@@ -5075,10 +5189,10 @@ msgstr ""
 msgid "user path"
 msgstr "uživatelská cesta"
 
-#: tools/oyranos-device.c:101 tools/oyranos-monitor-white-point.c:117
-#: tools/oyranos_convert.c:103 tools/oyranos_profile_graph.c:122
-#: tools/oyranos_profile_tool.c:116 tools/oyranos_profiles.c:96
-#: examples/libraw/oyranos_file.cpp:69
+#: tools/oyranos-config.c:75 tools/oyranos-device.c:101
+#: tools/oyranos-monitor-white-point.c:117 tools/oyranos_convert.c:103
+#: tools/oyranos_profile_graph.c:122 tools/oyranos_profile_tool.c:116
+#: tools/oyranos_profiles.c:96 examples/libraw/oyranos_file.cpp:69
 msgid "verbose"
 msgstr "upovídaný výstup"
 
@@ -5122,12 +5236,13 @@ msgstr "zapsat do souboru, v současnosti pouze ve formátu PPM"
 msgid "write to specified file"
 msgstr "zapsat do souboru"
 
-#: API_generated/oyOptions_s.c:1573 tools/oyranos-device.c:253
-#: tools/oyranos-monitor-white-point.c:211 tools/oyranos_convert.c:271
-#: tools/oyranos_gamma.c:254 tools/oyranos_policy.c:157
-#: tools/oyranos_profile_graph.c:253 tools/oyranos_profile_tool.c:234
-#: tools/oyranos_profiles.c:245 tools/oyranos_profiles.c:318
-#: examples/taxi.c:208 examples/libraw/oyranos_file.cpp:236
+#: API_generated/oyOptions_s.c:1573 tools/oyranos-config.c:186
+#: tools/oyranos-device.c:253 tools/oyranos-monitor-white-point.c:211
+#: tools/oyranos_convert.c:271 tools/oyranos_gamma.c:254
+#: tools/oyranos_policy.c:157 tools/oyranos_profile_graph.c:253
+#: tools/oyranos_profile_tool.c:234 tools/oyranos_profiles.c:245
+#: tools/oyranos_profiles.c:318 examples/taxi.c:208
+#: examples/libraw/oyranos_file.cpp:236
 msgid "wrong argument to option:"
 msgstr "chybný argument pro volbu:"
 
@@ -5726,6 +5841,10 @@ msgstr "špatný profil pro statický barvový prostor webu, vyžadováno sRGB"
 
 #~ msgid "Measurment- and profile colors from <b>"
 #~ msgstr "Zmerene barvy a barvy profilu z <b>"
+
+#, fuzzy
+#~ msgid "MiscellOyranos local source directory nameaneous options:"
+#~ msgstr "Skupina nastavení Oyranosu"
 
 #, fuzzy
 #~ msgid "Model:"
@@ -6539,10 +6658,6 @@ msgstr "špatný profil pro statický barvový prostor webu, vyžadováno sRGB"
 
 #~ msgid "parametric function type"
 #~ msgstr "typ parametrické funkce"
-
-#, fuzzy
-#~ msgid "path is a directory"
-#~ msgstr "cesta není adresář"
 
 #, fuzzy
 #~ msgid "path type not supported"
