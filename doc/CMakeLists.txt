@@ -27,6 +27,7 @@ ENDIF()
 
 SET( MAN1_PAGES
      ${MAN_FLTK}
+     man/oyranos-config.1
      man/oyranos-monitor.1
      man/oyranos-monitor-daemon.1
      man/oyranos-monitor-white-point.1
@@ -40,7 +41,6 @@ SET( MAN1_PAGES
    )
 SET( MAN3_PAGES
      man/oyranos.3
-     man/oyranos-config.3
    )
 
 INSTALL( FILES ${MAN1_PAGES} DESTINATION ${CMAKE_INSTALL_MANDIR}/man1 )

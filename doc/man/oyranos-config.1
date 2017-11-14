@@ -1,15 +1,27 @@
-.TH "oyranos-config" 3 "April 05, 2017" "User Commands"
+.TH "oyranos-config" 1 "Noveber 14, 2017" "User Commands"
 .SH NAME
-oyranos-config \- Oyranos CMS configuration query for builds and locations
+oyranos-config \- Oyranos CMS configuration DB access
 .SH SYNOPSIS
 .B oyranos-config
-[--version --api-version --num-version
- --cflags --ldflags --ldstaticflags
- --syscolordir --usercolordir
- --iccdirname --settingsdirname]
+[-g|-s|-l|-p|--version|--api-version|--num-version|
+ --cflags|--ldflags|--ldstaticflags|
+ --syscolordir|--usercolordir|
+ --iccdirname|--settingsdirname]
 .SH DESCRIPTION
-This script helps to obtain some basic static informations about the Oyranos color management system (CMS), like version numbers, compile flags and directories. Note: the Oyranos CMS provides even more dynamic informations. 
+The command line tool allows to access the persistent settings. Additionally it reports some basic static informations about the Oyranos color management system (CMS), like version numbers, compile flags and directories.
 .SH OPTIONS
+.TP
+.B \-g KEY
+get a persistent DB value
+.TP
+.B \-s KEY:VALUE
+set a persistent DB value
+.TP
+.B \-l
+list existing persistent DB keys
+.TP
+.B \-p
+show the file path to the DB
 .TP
 .B \--version
 get the release version of Oyranos CMS
