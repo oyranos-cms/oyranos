@@ -58,6 +58,9 @@ void displayHelp(char ** argv)
   printf("      %s -s XPATH:VALUE\t%s\n", argv[0], _("Set a Value") );
   printf("      %s -l\t\t%s\n", argv[0], _("List existing paths") );
   printf("      %s -p\t\t%s\n", argv[0], _("Show DB File") );
+#ifdef HAVE_DBUS
+  printf("      %s --watch\t\t%s\n", argv[0], _("Watch DB changes") );
+#endif
   printf("\n");
   printf("  %s:\n",               _("Show Install Paths"));
   printf("      %s --syscolordir\t%s\n", argv[0],  _("Path to system main color directory") );
@@ -90,6 +93,41 @@ void displayHelp(char ** argv)
   printf("      man oyranos-config\n");
 }
 
+#ifdef HAVE_DBUS
+#include "oyranos_dbus_macros.h"
+#include "oyranos_threads.h"
+oyDBusFilter_m
+oyWatchDBus_m( oyDBusFilter )
+oyFinishDBus_m
+int oy_dbus_config_changed = 0;
+static void oyConfigCallbackDBus     ( double              progress_zero_till_one OY_UNUSED,
+                                       char              * status_text,
+                                       int                 thread_id_ OY_UNUSED,
+                                       int                 job_id OY_UNUSED,
+                                       oyStruct_s        * cb_progress_context OY_UNUSED )
+{
+  const char * key;
+  if(!status_text) return;
+
+  oyGetPersistentStrings(NULL);
+
+  key = strchr( status_text, '/' );
+  if(key)
+    ++key;
+  else
+    return;
+
+  if(strstr(key,OY_STD) == NULL) return;
+
+  getKey( key, oySCOPE_USER_SYS, 1/*verbose*/, 1/*print*/ );
+
+  /* Clear the changed state, before a new check. */
+  oy_dbus_config_changed = 1;
+}
+
+#endif /* HAVE_DBUS */
+
+
 int main(int argc, char *argv[])
 {
   int error = 0;
@@ -104,6 +142,7 @@ int main(int argc, char *argv[])
   char * get = NULL;
   int path = 0;
   int paths = 0;
+  int daemon = -1;
 
   oySCOPE_e scope = oySCOPE_USER_SYS;
 
@@ -168,6 +207,8 @@ int main(int argc, char *argv[])
                         { puts( OY_SOURCEDIR "\n" ); return 0; }
                         else if(OY_IS_ARG("builddir"))
                         { puts( OY_BUILDDIR "\n" ); return 0; }
+                        else if(OY_IS_ARG("watch"))
+                        { daemon = 1; i=100; break; }
                         else if(OY_IS_ARG("verbose"))
                         { if(verbose) oy_debug += 1; verbose = 1; i=100; break;}
                         else if(OY_IS_ARG("help"))
@@ -279,6 +320,30 @@ int main(int argc, char *argv[])
     }
   } 
 
+#ifdef HAVE_DBUS
+  if(daemon != -1)
+  {
+    int id;
+    double hour_old = 0.0;
+
+    oyStartDBusObserver( oyWatchDBus, oyFinishDBus, oyConfigCallbackDBus, OY_STD )
+
+    if(id)
+      fprintf(stderr, "oyStartDBusObserver ID: %d\n", id);
+
+    while(1)
+    {
+      double hour = oySeconds( ) / 3600.;
+      double repeat_check = 1.0/60.0; /* every minute */
+
+      oyLoopDBusObserver( hour, repeat_check, oy_dbus_config_changed, 0 )
+
+      /* delay next polling */
+      oySleep( 0.25 );
+    }
+  }
+#endif /* HAVE_DBUS */
+
   oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
 
   return error;
@@ -340,3 +405,4 @@ char *   oyOpeniccToOyranos          ( const char        * key_name,
 
   return key;
 }
+

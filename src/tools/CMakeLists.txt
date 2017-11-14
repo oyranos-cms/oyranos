@@ -10,7 +10,7 @@ INSTALL (TARGETS oyranos-profile DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 # Oyranos settings and config DB
 ADD_EXECUTABLE( oyranos-config "${CMAKE_CURRENT_SOURCE_DIR}/oyranos-config.c" )
-TARGET_LINK_LIBRARIES( oyranos-config ${TARGET_LIB} ${EXTRA_LIBS} )
+TARGET_LINK_LIBRARIES( oyranos-config ${TARGET_LIB} ${EXTRA_LIBS} ${DBUS_LIBS} )
 INSTALL (TARGETS oyranos-config DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 # Oyranos policy / grouping for easy switching, export, import of default settings
