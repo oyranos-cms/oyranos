@@ -137,7 +137,8 @@ char *       oyReAllocFromStdMalloc_ ( char              * mem,
         *size = 0;
 
       free( temp );
-    }
+    } else
+      mem[*size] = '\000';
   }
 
   return mem;
@@ -170,7 +171,7 @@ char *       oyReadFileSToMem_       ( FILE              * fp,
     if(*size >= mem_size)
     {
       mem_size *= 2;
-      mem = (char*) realloc( mem, mem_size );
+      mem = (char*) realloc( mem, mem_size+1 );
       if(!mem) { *size = 0; return NULL; }
     }
     mem[(*size)++] = c;
@@ -413,7 +414,7 @@ char * oyReadCmdToMem_               ( const char        * command,
         if(text) { free( text ); text = NULL; }
         *size = 0;
         mem_size = 1024;
-        mem = malloc(mem_size);
+        mem = malloc(mem_size+1);
         pclose(fp);
         fp = oyPOPEN_m( command, mode );
       }
@@ -423,7 +424,7 @@ char * oyReadCmdToMem_               ( const char        * command,
         if(*size >= mem_size)
         {
           mem_size *= 10;
-          mem = realloc( mem, mem_size );
+          mem = realloc( mem, mem_size+1 );
           if(!mem) { *size = 0; break; }
         }
         if(mem)
