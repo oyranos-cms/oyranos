@@ -192,7 +192,7 @@ int main(int argc, char *argv[])
   }
   else
   {
-                        displayHelp(argv);
+                        fprintf( stdout, "oyranos" );
                         exit (0);
   }
 
