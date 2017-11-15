@@ -12,9 +12,6 @@
  *  @since    2007/11/12
  */
 
-/** \addtogroup modules
- *  @{ *//* modules */
-
 
 #include <lcms2.h>
 #include <stdarg.h>
@@ -2313,7 +2310,7 @@ char * l2cmsFlagsToText               ( int                 flags )
 }
 
 /** Function l2cmsModuleData_Convert
- *  @brief   convert between data formats
+ *  @brief   Convert a ICC device link to LittleCMS 2 color transform
  *  @ingroup cmm_handling
  *
  *  The function might be used to provide a module specific context.
@@ -3108,6 +3105,15 @@ int l2cmsGetOptionsUI                ( oyCMMapiFilter_s   * module OY_UNUSED,
 }
 
 
+/** \addtogroup misc_modules
+ *  @{ */
+/** \addtogroup lcm2_misc lcm2 Module
+ *  @brief      Little CMS 2 ICC style color profiles
+ *
+ *  The modules provide ICC style color space creation.
+ *
+ *  @{ */
+
 /* OY_LCM2_CREATE_ABSTRACT_WHITE_POINT_REGISTRATION -------------------------- */
 
 /** Function lcm2AbstractWhitePoint
@@ -3179,6 +3185,14 @@ oyProfile_s* lcm2AbstractWhitePoint  ( double              cie_a,
 
 /**
  *  This function implements oyMOptions_Handle_f.
+ *
+ *  @param[in]     options             expects at least two options
+ *                                     - "cie_a": The option shall be a double.
+ *                                     - "cie_b": The option shall be a double.
+ *                                     - "icc_profile_flags"  ::OY_ICC_VERSION_2 and ::OY_ICC_VERSION_4 let select version 2 and 4 profiles separately.
+ *                                     This option shall be a integer.
+ *  @param[in]     command             "//" OY_TYPE_STD "/create_profile.white_point_adjust"
+ *  @param[out]    result              will contain a oyProfile_s in "icc_profile.create_profile.white_point_adjust"
  *
  *  @version Oyranos: 0.9.7
  *  @since   2017/06/05 (Oyranos: 0.9.7)
@@ -3269,9 +3283,9 @@ const char * l2cmsInfoGetTextProfileC3(const char        * select,
 const char *l2cms_texts_profile_create[4] = {"can_handle","create_profile","help",0};
 
 /** l2cms_api10_cmm3
- *  @brief    littleCMS oyCMMapi10_s implementation
+ *  @brief   Create white point effect profile
  *
- *  a filter for proofing effect profile creation
+ *  littleCMS 2 oyCMMapi10_s implementation
  *
  *  @version Oyranos: 0.9.7
  *  @since   2017/06/05 (Oyranos: 0.9.7)
@@ -3440,6 +3454,13 @@ cmsHPROFILE  l2cmsGamutCheckAbstract  ( oyProfile_s       * proof,
 /**
  *  This function implements oyMOptions_Handle_f.
  *
+ *  @param[in]     options             expects at least one option
+ *                                     - "proofing_profile": The option shall be a oyProfile_s.
+ *                                     - "icc_profile_flags"  ::OY_ICC_VERSION_2 and ::OY_ICC_VERSION_4 let select version 2 and 4 profiles separately.
+ *                                     This option shall be a integer.
+ *  @param[in]     command             "//" OY_TYPE_STD "/create_profile.proofing_profile"
+ *  @param[out]    result              will contain a oyProfile_s in "icc_profile.create_profile.proofing_profile"
+ *
  *  @version Oyranos: 0.3.0
  *  @since   2011/02/21 (Oyranos: 0.3.0)
  *  @date    2011/02/21
@@ -3547,9 +3568,9 @@ const char * l2cmsInfoGetTextProfileC2(const char        * select,
   "create_profile.proofing_effect.icc._" CMM_NICK "._CPU"
 
 /** l2cms_api10_cmm2
- *  @brief    littleCMS oyCMMapi10_s implementation
- *
- *  a filter for proofing effect profile creation
+ *  @brief   Create proofing effect profile
+ *  
+ *  littleCMS 2 oyCMMapi10_s implementation
  *
  *  @version Oyranos: 0.3.0
  *  @since   2011/02/21 (Oyranos: 0.3.0)
@@ -3631,6 +3652,14 @@ oyProfile_s *      l2cmsCreateICCMatrixProfile (
 
 /**
  *  This function implements oyMOptions_Handle_f.
+ *
+ *  @param[in]     options             expects at least one option
+ *                                     - "color_matrix.redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma"
+ *                                     The option shall contain 9 double values.
+ *                                     - "icc_profile_flags"  ::OY_ICC_VERSION_2 and ::OY_ICC_VERSION_4 let select version 2 and 4 profiles separately.
+ *                                     This option shall be a integer.
+ *  @param[in]     command             "//" OY_TYPE_STD "/create_profile.color_matrix.icc"
+ *  @param[out]    result              will contain a oyProfile_s in "icc_profile.create_profile.color_matrix"
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/12/11 (Oyranos: 0.1.10)
@@ -3750,9 +3779,9 @@ const char * l2cmsInfoGetTextProfileC ( const char        * select,
   "create_profile.color_matrix.icc._" CMM_NICK "._CPU"
 
 /** l2cms_api10_cmm
- *  @brief    littleCMS oyCMMapi10_s implementation
+ *  @brief   Create simple color matrix profile
  *
- *  a filter for simple profile creation
+ *  littleCMS 2 oyCMMapi10_s implementation
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/12/11 (Oyranos: 0.1.10)
@@ -3782,6 +3811,18 @@ oyCMMapi10_s_    l2cms_api10_cmm = {
 };
 
 /* OY_LCM2_CREATE_MATRIX_REGISTRATION ------------------------------------- */
+/**  @} *//* lcm2_misc */
+/**  @} *//* misc_modules */
+
+
+/** \addtogroup graph_modules
+ *  @{ */
+/** \addtogroup lcm2_graph lcm2 Module
+ *  @brief      Little CMS 2 ICC style color conversion
+ *
+ *  The modules provide ICC style color space converison and data processing.
+ *
+ *  @{ */
 
 #define OY_LCM2_DATA_CONVERT_REGISTRATION  OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH \
   "icc_color._" CMM_NICK "._CPU." oyCOLOR_ICC_DEVICE_LINK "_" l2cmsTRANSFORM
@@ -3958,6 +3999,8 @@ oyCMMapi4_s_ l2cms_api4_cmm = {
   &l2cms_api4_ui                        /**< oyCMMui_s *ui */
 };
 
+/**  @} *//* lcm2_graph */
+/**  @} *//* graph_modules */
 
 
 /**
@@ -4032,4 +4075,3 @@ oyCMM_s lcm2_cmm_module = {
   l2cmsCMMInit                         /**< oyCMMinfoInit_f */
 };
 
-/**  @} *//* modules */

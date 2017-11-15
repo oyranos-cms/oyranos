@@ -574,25 +574,24 @@ digraph Modules {
       p [ label="Filter nodes / Graph handling APIs\n oyFilterNode_s"];
 
 
-      api4_A [URL="structoyCMMapi4__s.html#_details",label="Context Module + UI\n oyCMMapi4_s"];
-      api6_A [URL="structoyCMMapi6__s.html#_details",label="Context Converter\n oyCMMapi6_s"];
-      api7_A [URL="structoyCMMapi7__s.html#_details",label="Node Module\n oyCMMapi7_s"];
+      misc [URL="group__misc__modules.html", label="Miscellaneous Functions\n oyCMMapi10_s"];
+      m [URL="group__device__modules.html", label="Config (Device) Functions\n oyCMMapi8_s"];
+      policy [URL="group__policy__modules.html", label="Policy Functions\n oyCMMapi9_s"];
 
-      m [URL="structoyCMMapi8__s.html#_details", label="Config (Device) Functions\n oyCMMapi8_s"];
-      policy [URL="structoyCMMapi9__s.html#_details", label="Policy Functions\n oyCMMapi9_s"];
+      api7_A [URL="structoyCMMapi7__s.html",label="Node Module\n oyCMMapi7_s"];
+      api6_A [URL="group__graph__modules.html",label="Context Converter\n oyCMMapi6_s"];
+      api4_A [URL="structoyCMMapi4__s.html",label="Context Module + UI\n oyCMMapi4_s"];
 
 
       subgraph cluster_1 {
         color=gray;
         label="Module APIs"
 
-        subgraph cluster_2 {
-          rank=max;
-          color=red;
-         style=dashed;
-          node [style="filled"];
-          api4_A; api6_A; api7_A;
-          label="Graph Modules and Helpers";
+        subgraph cluster_12 {
+          color=gray;
+          style=dashed;
+          misc;
+          label="Miscellaneous Modules";
         }
 
         subgraph cluster_6 {
@@ -609,6 +608,14 @@ digraph Modules {
           label="Policy Modules";
         }
 
+        subgraph cluster_2 {
+          rank=max;
+          color=red;
+          style=dashed;
+          node [style="filled"];
+          api4_A; api6_A; api7_A;
+          label="Graph Modules and Helpers";
+        }
       }
 
       subgraph cluster_10 {
@@ -631,6 +638,7 @@ digraph Modules {
       i -> api7_A [arrowhead="open", color=red];
       i -> m [arrowhead="open", color=green];
       i -> policy [arrowhead="open", color=blue];
+      i -> misc [arrowhead="open", color=gray];
   }
 } @enddot
  *
@@ -837,6 +845,29 @@ digraph Anatomy_A {
  *  @{
  */
 
+/** @addtogroup graph_modules Data Processing Modules
+ *  @brief      Modules to configure, convert contexts and process data in a DAG
+ *
+ *  Only in-tree modules are listed here.
+ *
+ *  @{ */
+/**  @} *//* graph_modules */
+
+/** @addtogroup policy_modules Policy Modules
+ *  @brief      Modules to handle settings and register additional object types
+ *
+ *  Only in-tree modules are listed here.
+ *
+ *  @{ */
+/**  @} *//* policy_modules */
+
+/** @addtogroup device_modules Device Modules
+ *  @brief      Modules to handle devices
+ *
+ *  Only in-tree modules are listed here.
+ *
+ *  @{ */
+
 /** @addtogroup monitor_hooks_api Monitor Backend Modules
  *  @brief      Simple way to hook a display system into a Oyranos device config module
  *
@@ -855,6 +886,34 @@ digraph Anatomy_A {
  *
  *  @{
  */
-/** @} *//* monitor_hooks_api */
-/** @} *//* module_api */
+/**  @} *//* monitor_hooks_api */
+/**  @} *//* device_modules */
+
+/** \addtogroup profile_modules ICC Profil Tag i/o Modules
+ *  @brief      Adds extensible support of profile tag parsing and writing
+ *
+ *  The oyCMMProfileTag_GetValues_f function is parsing of tag content.
+ *  While the oyCMMProfileTag_Create_f oyCMMProfileTag_Create function
+ *  creates profile tags.
+ *
+ *  The front end API's are oyProfileTag_Get(), oyProfile_AddTagText() and oyProfileTag_Create().
+ *
+ *  Only in-tree modules are listed here.
+ *
+ *  @{ */
+/** @addtogroup oyIM_profile
+ *  @{ */
+/**  @} *//* oyIM_profile */
+/**  @} *//* profile_modules */
+
+/** \addtogroup misc_modules Miscellaneous Modules
+ *  @brief      Perform various task over a oyOptions_s transport mechanism
+ *
+ *  The front end API is oyOptions_Handle().
+ *
+ *  Only in-tree modules are listed here.
+ *
+ *  @{ */
+/**  @} *//* misc_modules */
+/**  @} *//* module_api */
 
