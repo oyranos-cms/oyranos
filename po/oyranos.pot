@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Oyranos 0.9\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2017-11-14 08:54+0100\n"
+"POT-Creation-Date: 2017-11-15 16:14+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -161,7 +161,7 @@ msgstr ""
 msgid "found list of wrong type"
 msgstr ""
 
-#: API_generated/oyOptions_s.c:1573 tools/oyranos-config.c:186
+#: API_generated/oyOptions_s.c:1573 tools/oyranos-config.c:231
 #: tools/oyranos-device.c:253 tools/oyranos-monitor-white-point.c:211
 #: tools/oyranos_convert.c:271 tools/oyranos_gamma.c:254
 #: tools/oyranos_policy.c:157 tools/oyranos_profile_graph.c:253
@@ -213,7 +213,7 @@ msgid "Can not write profile"
 msgstr ""
 
 #: API_generated/oyProfile_s.c:881 API_generated/oyranos_devices.c:1036
-#: liboyranos_core/oyranos_io_core.c:111 liboyranos_core/oyranos_io_core.c:278
+#: liboyranos_core/oyranos_io_core.c:111 liboyranos_core/oyranos_io_core.c:279
 msgid "Could not open profile"
 msgstr ""
 
@@ -496,28 +496,28 @@ msgstr ""
 msgid "!!! ERROR"
 msgstr ""
 
-#: liboyranos_core/oyranos_io_core.c:370
+#: liboyranos_core/oyranos_io_core.c:371
 msgid "Could not download from WWW. Please install curl or wget."
 msgstr ""
 
-#: liboyranos_core/oyranos_io_core.c:451 liboyranos_core/oyranos_io_core.c:453
+#: liboyranos_core/oyranos_io_core.c:452 liboyranos_core/oyranos_io_core.c:454
 msgid "Program not found"
 msgstr ""
 
-#: liboyranos_core/oyranos_io_core.c:677 liboyranos_core/oyranos_io_core.c:723
+#: liboyranos_core/oyranos_io_core.c:678 liboyranos_core/oyranos_io_core.c:724
 msgid "File exists"
 msgstr ""
 
-#: liboyranos_core/oyranos_io_core.c:1299
+#: liboyranos_core/oyranos_io_core.c:1300
 msgid "path is not a directory"
 msgstr ""
 
-#: liboyranos_core/oyranos_io_core.c:1303
+#: liboyranos_core/oyranos_io_core.c:1304
 msgid "path is a link: ignored"
 msgstr ""
 
-#: liboyranos_core/oyranos_io_core.c:1308
-#: liboyranos_core/oyranos_io_core.c:1882
+#: liboyranos_core/oyranos_io_core.c:1309
+#: liboyranos_core/oyranos_io_core.c:1883
 msgid "path is not readable"
 msgstr ""
 
@@ -2178,45 +2178,45 @@ msgid "CMM Renderer Fallback"
 msgstr ""
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:704
+#: liboyranos_config/oyranos_xml.c:705
 msgid "About Oyranos"
 msgstr ""
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:806
+#: liboyranos_config/oyranos_xml.c:807
 msgid "Oyranos Version"
 msgstr ""
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:816
+#: liboyranos_config/oyranos_xml.c:817
 msgid "Copyright &copy;"
 msgstr ""
 
-#: liboyranos_config/oyranos_xml.c:889
+#: liboyranos_config/oyranos_xml.c:890
 msgid "Oyranos User Manual"
 msgstr ""
 
 #. Hint for i18n: do not translate the &title; token.
-#: liboyranos_config/oyranos_xml.c:892
+#: liboyranos_config/oyranos_xml.c:893
 msgid ""
 "This is the documentation for the &title; that configures the Oyranos Color "
 "Management System."
 msgstr ""
 
-#: liboyranos_config/oyranos_xml.c:1180
+#: liboyranos_config/oyranos_xml.c:1181
 msgid "Internet: <a href=\"http://www.oyranos.org\">www.oyranos.org</a><br>"
 msgstr ""
 
-#: liboyranos_config/oyranos_xml.c:1190
+#: liboyranos_config/oyranos_xml.c:1191
 msgid "Introduction"
 msgstr ""
 
-#: liboyranos_config/oyranos_xml.c:1192
+#: liboyranos_config/oyranos_xml.c:1193
 msgid "Internet: <ulink url=\"http://www.oyranos.org\">www.oyranos.org</ulink>"
 msgstr ""
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:1200
+#: liboyranos_config/oyranos_xml.c:1201
 #, c-format
 msgid ""
 "Oyranos is a Color Management System (CMS), which relies one the ICC file "
@@ -2227,7 +2227,7 @@ msgid ""
 msgstr ""
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:1213
+#: liboyranos_config/oyranos_xml.c:1214
 msgid ""
 "Color matching between different devices is possible, provided that the "
 "color characteristics of the involved devices are known. The quality of a "
@@ -2239,7 +2239,7 @@ msgid ""
 msgstr ""
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:1228
+#: liboyranos_config/oyranos_xml.c:1229
 msgid ""
 "Color profiles are often available from manufacturers of imaging devices as "
 "digital cameras, monitors and printers. In Oyranos, ICC profiles are "
@@ -2248,7 +2248,7 @@ msgid ""
 msgstr ""
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:1238
+#: liboyranos_config/oyranos_xml.c:1239
 msgid ""
 "Oyranos allowes detailed settings like preferred editing color spaces and "
 "the behaviour of color conversions or simulation. Oyranos reduces the work "
@@ -3227,11 +3227,11 @@ msgstr ""
 msgid "The raw image backend of Oyranos."
 msgstr ""
 
-#: tools/oyranos-config.c:50
+#: tools/oyranos-config.c:54
 msgid "is a settings administration tool"
 msgstr ""
 
-#: tools/oyranos-config.c:51 tools/oyranos-device.c:49
+#: tools/oyranos-config.c:55 tools/oyranos-device.c:49
 #: tools/oyranos-monitor-white-point.c:62 tools/oyranos_convert.c:61
 #: tools/oyranos_gamma.c:208 tools/oyranos_policy.c:54
 #: tools/oyranos_profile_graph.c:94 tools/oyranos_profile_tool.c:82
@@ -3240,76 +3240,80 @@ msgstr ""
 msgid "Usage"
 msgstr ""
 
-#: tools/oyranos-config.c:52
+#: tools/oyranos-config.c:56
 msgid "Persistent Settings"
 msgstr ""
 
-#: tools/oyranos-config.c:53
+#: tools/oyranos-config.c:57
 msgid "Get a Value"
 msgstr ""
 
-#: tools/oyranos-config.c:54
+#: tools/oyranos-config.c:58
 msgid "Set a Value"
 msgstr ""
 
-#: tools/oyranos-config.c:55
+#: tools/oyranos-config.c:59
 msgid "List existing paths"
 msgstr ""
 
-#: tools/oyranos-config.c:56
+#: tools/oyranos-config.c:60
 msgid "Show DB File"
 msgstr ""
 
-#: tools/oyranos-config.c:58
+#: tools/oyranos-config.c:62
+msgid "Watch DB changes"
+msgstr ""
+
+#: tools/oyranos-config.c:65
 msgid "Show Install Paths"
 msgstr ""
 
-#: tools/oyranos-config.c:59
+#: tools/oyranos-config.c:66
 msgid "Path to system main color directory"
 msgstr ""
 
-#: tools/oyranos-config.c:60
+#: tools/oyranos-config.c:67
 msgid "Path to users main color directory"
 msgstr ""
 
-#: tools/oyranos-config.c:61
+#: tools/oyranos-config.c:68
 msgid "ICC profile directory name"
 msgstr ""
 
-#: tools/oyranos-config.c:62
+#: tools/oyranos-config.c:69
 msgid "Oyranos settings directory name"
 msgstr ""
 
-#: tools/oyranos-config.c:63
+#: tools/oyranos-config.c:70
 msgid "Oyranos CMM directory name"
 msgstr ""
 
-#: tools/oyranos-config.c:64
+#: tools/oyranos-config.c:71
 msgid "Oyranos meta module directory name"
 msgstr ""
 
-#: tools/oyranos-config.c:66
+#: tools/oyranos-config.c:73
 msgid "Show Version"
 msgstr ""
 
-#: tools/oyranos-config.c:67
+#: tools/oyranos-config.c:74
 msgid "Show official version"
 msgstr ""
 
-#: tools/oyranos-config.c:68
+#: tools/oyranos-config.c:75
 msgid "Show version of API"
 msgstr ""
 
-#: tools/oyranos-config.c:69
+#: tools/oyranos-config.c:76
 msgid "Show version as a simple number"
 msgstr ""
 
-#: tools/oyranos-config.c:71 tools/oyranos-device.c:97
+#: tools/oyranos-config.c:78 tools/oyranos-device.c:97
 #: examples/libraw/oyranos_file.cpp:63
 msgid "Show Help:"
 msgstr ""
 
-#: tools/oyranos-config.c:74 tools/oyranos-device.c:100
+#: tools/oyranos-config.c:81 tools/oyranos-device.c:100
 #: tools/oyranos-monitor-white-point.c:116 tools/oyranos_convert.c:102
 #: tools/oyranos_gamma.c:235 tools/oyranos_profile_graph.c:121
 #: tools/oyranos_profile_tool.c:112 tools/oyranos_profiles.c:95
@@ -3317,38 +3321,38 @@ msgstr ""
 msgid "General options:"
 msgstr ""
 
-#: tools/oyranos-config.c:75 tools/oyranos-device.c:101
+#: tools/oyranos-config.c:82 tools/oyranos-device.c:101
 #: tools/oyranos-monitor-white-point.c:117 tools/oyranos_convert.c:103
 #: tools/oyranos_profile_graph.c:122 tools/oyranos_profile_tool.c:116
 #: tools/oyranos_profiles.c:96 examples/libraw/oyranos_file.cpp:69
 msgid "verbose"
 msgstr ""
 
-#: tools/oyranos-config.c:77
+#: tools/oyranos-config.c:84
 msgid "Miscellaneous options:"
 msgstr ""
 
-#: tools/oyranos-config.c:78
+#: tools/oyranos-config.c:85
 msgid "compiler flags"
 msgstr ""
 
-#: tools/oyranos-config.c:79
+#: tools/oyranos-config.c:86
 msgid "dynamic link flags"
 msgstr ""
 
-#: tools/oyranos-config.c:80
+#: tools/oyranos-config.c:87
 msgid "static linking flags"
 msgstr ""
 
-#: tools/oyranos-config.c:81
+#: tools/oyranos-config.c:88
 msgid "Oyranos local source directory name"
 msgstr ""
 
-#: tools/oyranos-config.c:82
+#: tools/oyranos-config.c:89
 msgid "Oyranos local build directory name"
 msgstr ""
 
-#: tools/oyranos-config.c:84 tools/oyranos-device.c:109
+#: tools/oyranos-config.c:91 tools/oyranos-device.c:109
 #: tools/oyranos-monitor-white-point.c:119 tools/oyranos_gamma.c:240
 #: tools/oyranos_profile_graph.c:131 tools/oyranos_profile_tool.c:131
 #: examples/libraw/oyranos_file.cpp:78

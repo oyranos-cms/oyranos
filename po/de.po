@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2017-11-14 08:54+0100\n"
+"POT-Creation-Date: 2017-11-15 15:57+0100\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -282,7 +282,7 @@ msgid "ANGLE_IN_DEGREE"
 msgstr "WINKEL_IN_GRAD"
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:704
+#: liboyranos_config/oyranos_xml.c:705
 msgid "About Oyranos"
 msgstr "Über Oyranos"
 
@@ -819,7 +819,7 @@ msgstr ""
 "wünschen, und händisch eingreifen."
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:1213
+#: liboyranos_config/oyranos_xml.c:1214
 msgid ""
 "Color matching between different devices is possible, provided that the "
 "color characteristics of the involved devices are known. The quality of a "
@@ -843,7 +843,7 @@ msgid "Color measurement data"
 msgstr "Farbmessdaten"
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:1228
+#: liboyranos_config/oyranos_xml.c:1229
 msgid ""
 "Color profiles are often available from manufacturers of imaging devices as "
 "digital cameras, monitors and printers. In Oyranos, ICC profiles are "
@@ -932,7 +932,7 @@ msgid "Copyright"
 msgstr "Kopierrecht"
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:816
+#: liboyranos_config/oyranos_xml.c:817
 msgid "Copyright &copy;"
 msgstr "Kopierrecht &copy;"
 
@@ -997,7 +997,7 @@ msgstr "Konnte Filter nicht erzeugen"
 msgid "Could not download from WWW."
 msgstr "Konnte nicht aus dem Netz kopieren."
 
-#: liboyranos_core/oyranos_io_core.c:370
+#: liboyranos_core/oyranos_io_core.c:371
 msgid "Could not download from WWW. Please install curl or wget."
 msgstr ""
 "Konnte nicht aus dem Netz kopieren. Bitte installieren Sie curl oder wget."
@@ -1036,7 +1036,7 @@ msgid "Could not open or invalid data: "
 msgstr "Konnte nicht öffnen oder ungültige Daten: "
 
 #: API_generated/oyProfile_s.c:881 API_generated/oyranos_devices.c:1036
-#: liboyranos_core/oyranos_io_core.c:111 liboyranos_core/oyranos_io_core.c:278
+#: liboyranos_core/oyranos_io_core.c:111 liboyranos_core/oyranos_io_core.c:279
 msgid "Could not open profile"
 msgstr "Konnte Profil nicht laden"
 
@@ -1491,7 +1491,7 @@ msgstr "FORMAT"
 msgid "File Magic"
 msgstr "Dateisignatur"
 
-#: liboyranos_core/oyranos_io_core.c:677 liboyranos_core/oyranos_io_core.c:723
+#: liboyranos_core/oyranos_io_core.c:678 liboyranos_core/oyranos_io_core.c:724
 msgid "File exists"
 msgstr "Datei existiert"
 
@@ -1544,7 +1544,7 @@ msgstr "Für den Druck"
 msgid "For Screen"
 msgstr "Bildschirm"
 
-#: tools/oyranos-config.c:84 tools/oyranos-device.c:109
+#: tools/oyranos-config.c:91 tools/oyranos-device.c:109
 #: tools/oyranos-monitor-white-point.c:119 tools/oyranos_gamma.c:240
 #: tools/oyranos_profile_graph.c:131 tools/oyranos_profile_tool.c:131
 #: examples/libraw/oyranos_file.cpp:78
@@ -1565,7 +1565,7 @@ msgstr ""
 msgid "Gamut Warning"
 msgstr "Farbumfangswarnung"
 
-#: tools/oyranos-config.c:74 tools/oyranos-device.c:100
+#: tools/oyranos-config.c:81 tools/oyranos-device.c:100
 #: tools/oyranos-monitor-white-point.c:116 tools/oyranos_convert.c:102
 #: tools/oyranos_gamma.c:235 tools/oyranos_profile_graph.c:121
 #: tools/oyranos_profile_tool.c:112 tools/oyranos_profiles.c:95
@@ -1605,7 +1605,7 @@ msgstr "Hole ICC Profil"
 msgid "Get Location:"
 msgstr "Ermittle Position:"
 
-#: tools/oyranos-config.c:53
+#: tools/oyranos-config.c:57
 msgid "Get a Value"
 msgstr "Lese einen Wert"
 
@@ -1754,7 +1754,7 @@ msgstr "ICC Dateiattribute"
 msgid "ICC profile"
 msgstr "ICC Profil"
 
-#: tools/oyranos-config.c:61
+#: tools/oyranos-config.c:68
 msgid "ICC profile directory name"
 msgstr "ICC Profilpfad"
 
@@ -2041,16 +2041,16 @@ msgstr "Interner Fehler"
 msgid "Internal stored Size"
 msgstr "Interne Größe"
 
-#: liboyranos_config/oyranos_xml.c:1180
+#: liboyranos_config/oyranos_xml.c:1181
 msgid "Internet: <a href=\"http://www.oyranos.org\">www.oyranos.org</a><br>"
 msgstr "Internet: <a href=\"http://www.oyranos.org\">www.oyranos.org</a><br>"
 
-#: liboyranos_config/oyranos_xml.c:1192
+#: liboyranos_config/oyranos_xml.c:1193
 msgid "Internet: <ulink url=\"http://www.oyranos.org\">www.oyranos.org</ulink>"
 msgstr ""
 "Internet: <ulink url=\"http://www.oyranos.org\">www.oyranos.org</ulink>"
 
-#: liboyranos_config/oyranos_xml.c:1190
+#: liboyranos_config/oyranos_xml.c:1191
 msgid "Introduction"
 msgstr "Einführung"
 
@@ -2113,7 +2113,7 @@ msgstr "Zeige Geräteklassen:"
 msgid "List devices:"
 msgstr "Geräteliste:"
 
-#: tools/oyranos-config.c:55
+#: tools/oyranos-config.c:59
 msgid "List existing paths"
 msgstr "Zeige vorhandene Pfade"
 
@@ -2353,7 +2353,7 @@ msgstr "Allgemeine Daten"
 msgid "Microsoft"
 msgstr "Microsoft"
 
-#: tools/oyranos-config.c:77
+#: tools/oyranos-config.c:84
 msgid "Miscellaneous options:"
 msgstr "Sonstige Optionen:"
 
@@ -2589,7 +2589,7 @@ msgstr "Filterobjekt eines Ausgangsbildes"
 msgid "Oyranos "
 msgstr "Oyranos "
 
-#: tools/oyranos-config.c:63
+#: tools/oyranos-config.c:70
 msgid "Oyranos CMM directory name"
 msgstr "Oyranos CMM Pfadname"
 
@@ -2646,17 +2646,17 @@ msgstr "Oyranos Programmfäden"
 msgid "Oyranos Threads default Handling"
 msgstr "Oyranos standard Unterstützung für Programmfäden"
 
-#: liboyranos_config/oyranos_xml.c:889
+#: liboyranos_config/oyranos_xml.c:890
 msgid "Oyranos User Manual"
 msgstr "Oyranos Benutzerhandbuch"
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:806
+#: liboyranos_config/oyranos_xml.c:807
 msgid "Oyranos Version"
 msgstr "Oyranos Version"
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:1238
+#: liboyranos_config/oyranos_xml.c:1239
 msgid ""
 "Oyranos allowes detailed settings like preferred editing color spaces and "
 "the behaviour of color conversions or simulation. Oyranos reduces the work "
@@ -2677,7 +2677,7 @@ msgid "Oyranos display filter"
 msgstr "Oyranos Monitor Modul"
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:1200
+#: liboyranos_config/oyranos_xml.c:1201
 #, c-format
 msgid ""
 "Oyranos is a Color Management System (CMS), which relies one the ICC file "
@@ -2692,15 +2692,15 @@ msgstr ""
 "unterschiedlichen Farbräumen und den Abgleich auf verschiedenen Geräten mit "
 "ihren jeweiligen physikalischen Gegebenheiten ermöglichen."
 
-#: tools/oyranos-config.c:82
+#: tools/oyranos-config.c:89
 msgid "Oyranos local build directory name"
 msgstr "Oyranos lokaler Übersetzungpfad"
 
-#: tools/oyranos-config.c:81
+#: tools/oyranos-config.c:88
 msgid "Oyranos local source directory name"
 msgstr "Oyranos lokaler Quelltextpfad"
 
-#: tools/oyranos-config.c:64
+#: tools/oyranos-config.c:71
 msgid "Oyranos meta module directory name"
 msgstr "Oyranos Metamodulpfad"
 
@@ -2733,7 +2733,7 @@ msgstr ""
 "Oyranos Projekt: www: http://www.oyranos.org; Support/email: ku.b@gmx.de; "
 "Quellen: http://www.oyranos.org/downloads/"
 
-#: tools/oyranos-config.c:62
+#: tools/oyranos-config.c:69
 msgid "Oyranos settings directory name"
 msgstr "Oyranos Einstellungspfad"
 
@@ -2777,11 +2777,11 @@ msgstr "Passivmatrixmonitor"
 msgid "Path can not be written"
 msgstr "Verzeichnis kann nicht beschrieben werden."
 
-#: tools/oyranos-config.c:59
+#: tools/oyranos-config.c:66
 msgid "Path to system main color directory"
 msgstr "Pfad zum Hauptfarbverzeichnis im System"
 
-#: tools/oyranos-config.c:60
+#: tools/oyranos-config.c:67
 msgid "Path to users main color directory"
 msgstr "Pfad zum Hauptfarbverzeichnis des Benutzers"
 
@@ -2798,7 +2798,7 @@ msgstr "Pfad zu ICC Farbprofilen"
 msgid "Perceptual"
 msgstr "Fotografisch"
 
-#: tools/oyranos-config.c:52
+#: tools/oyranos-config.c:56
 msgid "Persistent Settings"
 msgstr "Einstellungen"
 
@@ -3005,7 +3005,7 @@ msgstr "Identifizierung der Profilverknüpfung"
 msgid "Profiling parameters"
 msgstr "Profilierungsparameter"
 
-#: liboyranos_core/oyranos_io_core.c:451 liboyranos_core/oyranos_io_core.c:453
+#: liboyranos_core/oyranos_io_core.c:452 liboyranos_core/oyranos_io_core.c:454
 msgid "Program not found"
 msgstr "Programm nicht gefunden"
 
@@ -3265,7 +3265,7 @@ msgstr "Setze Geographische Breite:"
 msgid "Set Longitude:"
 msgstr "Setze Geographische Länge:"
 
-#: tools/oyranos-config.c:54
+#: tools/oyranos-config.c:58
 msgid "Set a Value"
 msgstr "Setze einen Wert"
 
@@ -3325,11 +3325,11 @@ msgstr "Initialisiere Gerät:"
 msgid "Show CIE*xy chromaticities:"
 msgstr "Zeige CIE*xy Primärfarben"
 
-#: tools/oyranos-config.c:56
+#: tools/oyranos-config.c:60
 msgid "Show DB File"
 msgstr "Zeige DB Dateipfad"
 
-#: tools/oyranos-config.c:71 tools/oyranos-device.c:97
+#: tools/oyranos-config.c:78 tools/oyranos-device.c:97
 #: examples/libraw/oyranos_file.cpp:63
 msgid "Show Help:"
 msgstr "Zeige Hilfe:"
@@ -3338,7 +3338,7 @@ msgstr "Zeige Hilfe:"
 msgid "Show Infos"
 msgstr "Zeige Infos"
 
-#: tools/oyranos-config.c:58
+#: tools/oyranos-config.c:65
 msgid "Show Install Paths"
 msgstr "Zeige Installationspfade"
 
@@ -3346,7 +3346,7 @@ msgstr "Zeige Installationspfade"
 msgid "Show Profile ID:"
 msgstr "Zeige Profil ID:"
 
-#: tools/oyranos-config.c:66
+#: tools/oyranos-config.c:73
 msgid "Show Version"
 msgstr "Zeige Version"
 
@@ -3363,7 +3363,7 @@ msgstr ""
 msgid "Show modes:"
 msgstr "Zeige die Modi:"
 
-#: tools/oyranos-config.c:67
+#: tools/oyranos-config.c:74
 msgid "Show official version"
 msgstr "Zeige offizielle Version"
 
@@ -3379,11 +3379,11 @@ msgstr "Zeige nur zum Gerät passende ICC Profile"
 msgid "Show sun rise:"
 msgstr "Zeige Sonnenauf-und untergang:"
 
-#: tools/oyranos-config.c:69
+#: tools/oyranos-config.c:76
 msgid "Show version as a simple number"
 msgstr "Zeige Version als einfache Zahl"
 
-#: tools/oyranos-config.c:68
+#: tools/oyranos-config.c:75
 msgid "Show version of API"
 msgstr "Zeige Version der API"
 
@@ -4101,7 +4101,7 @@ msgid "This example module \"my_handler\" lets you print a option."
 msgstr ""
 
 #. Hint for i18n: do not translate the &title; token.
-#: liboyranos_config/oyranos_xml.c:892
+#: liboyranos_config/oyranos_xml.c:893
 msgid ""
 "This is the documentation for the &title; that configures the Oyranos Color "
 "Management System."
@@ -4153,7 +4153,7 @@ msgstr "Unix und unixartige"
 msgid "Unset device:"
 msgstr "Setze Gerät zurück:"
 
-#: tools/oyranos-config.c:51 tools/oyranos-device.c:49
+#: tools/oyranos-config.c:55 tools/oyranos-device.c:49
 #: tools/oyranos-monitor-white-point.c:62 tools/oyranos_convert.c:61
 #: tools/oyranos_gamma.c:208 tools/oyranos_policy.c:54
 #: tools/oyranos_profile_graph.c:94 tools/oyranos_profile_tool.c:82
@@ -4224,6 +4224,10 @@ msgstr "WARNUNG"
 #: liboyranos_config/oyranos_icc.c:688
 msgid "Ware To Go CMM"
 msgstr ""
+
+#: tools/oyranos-config.c:62
+msgid "Watch DB changes"
+msgstr "Beobachte Einstellungsänderungen"
 
 #: liboyranos_config/oyranos_texts.c:175
 msgid "Well behaving Color Space for Editing"
@@ -4369,7 +4373,7 @@ msgstr "bürgerlich"
 msgid "color space class"
 msgstr "Farbraum"
 
-#: tools/oyranos-config.c:78
+#: tools/oyranos-config.c:85
 msgid "compiler flags"
 msgstr "Übersetzungsargumente"
 
@@ -4431,7 +4435,7 @@ msgstr "zeichne grau"
 msgid "dump OpenICC device color state rank map JSON"
 msgstr "erzeuge OpenICC Wichtungstabelle JSON zu Gerätefarbeinstellungen"
 
-#: tools/oyranos-config.c:79
+#: tools/oyranos-config.c:86
 msgid "dynamic link flags"
 msgstr "dynamische Verknüpfungsargumente"
 
@@ -4603,7 +4607,7 @@ msgstr "ist ein Monitorweißpunkt Werkzeug"
 msgid "is a policy administration tool"
 msgstr "ist ein Richtlinienverwaltungswerkzeug"
 
-#: tools/oyranos-config.c:50
+#: tools/oyranos-config.c:54
 msgid "is a settings administration tool"
 msgstr "ist ein Einstellungsverwaltungswerkzeug"
 
@@ -4740,16 +4744,16 @@ msgstr "Ausgabedatenregion"
 msgid "oyranos install path"
 msgstr "Oyranos Installationspfad"
 
-#: liboyranos_core/oyranos_io_core.c:1303
+#: liboyranos_core/oyranos_io_core.c:1304
 msgid "path is a link: ignored"
 msgstr "Pfad ist eine Verknüpfung: ignoriert"
 
-#: liboyranos_core/oyranos_io_core.c:1299
+#: liboyranos_core/oyranos_io_core.c:1300
 msgid "path is not a directory"
 msgstr "Pfad ist kein Verzeichnis"
 
-#: liboyranos_core/oyranos_io_core.c:1308
-#: liboyranos_core/oyranos_io_core.c:1882
+#: liboyranos_core/oyranos_io_core.c:1309
+#: liboyranos_core/oyranos_io_core.c:1883
 msgid "path is not readable"
 msgstr "Pfad ist nicht lesbar"
 
@@ -4923,7 +4927,7 @@ msgstr "gib Ausgabedateiname an, voreingestellt ist output.png"
 msgid "specify output image width in pixel"
 msgstr "gib Ausgabebildbreite in Pixel an"
 
-#: tools/oyranos-config.c:80
+#: tools/oyranos-config.c:87
 msgid "static linking flags"
 msgstr "statische Verknüpfungsargumente"
 
@@ -4981,7 +4985,7 @@ msgstr ""
 msgid "user path"
 msgstr "Benutzerpfad"
 
-#: tools/oyranos-config.c:75 tools/oyranos-device.c:101
+#: tools/oyranos-config.c:82 tools/oyranos-device.c:101
 #: tools/oyranos-monitor-white-point.c:117 tools/oyranos_convert.c:103
 #: tools/oyranos_profile_graph.c:122 tools/oyranos_profile_tool.c:116
 #: tools/oyranos_profiles.c:96 examples/libraw/oyranos_file.cpp:69
@@ -5025,7 +5029,7 @@ msgstr "schreibe zu einer Datei, derzeit nur im Format PPM"
 msgid "write to specified file"
 msgstr "schreibe nach Datei"
 
-#: API_generated/oyOptions_s.c:1573 tools/oyranos-config.c:186
+#: API_generated/oyOptions_s.c:1573 tools/oyranos-config.c:231
 #: tools/oyranos-device.c:253 tools/oyranos-monitor-white-point.c:211
 #: tools/oyranos_convert.c:271 tools/oyranos_gamma.c:254
 #: tools/oyranos_policy.c:157 tools/oyranos_profile_graph.c:253
