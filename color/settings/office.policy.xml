@@ -44,10 +44,6 @@
        Assigning an untagged Cmyk Image this color space -->
   <oyASSUMED_CMYK>ISOcoated_v2_bas.ICC</oyASSUMED_CMYK>
 
-    <!-- Proofing
-         Color space for Simulating an Output Device -->
-    <oyPROFILE_PROOF>ISOcoated_v2_bas.ICC</oyPROFILE_PROOF>
-
 </oyGROUP_DEFAULT_PROFILES>
 
 
@@ -138,6 +134,10 @@
 <oyGROUP_BEHAVIOUR_PROOF>
 <!-- Proofing 
      Default Proofing Settings -->
+
+    <!-- Proofing
+         Color space for Simulating an Output Device -->
+    <oyPROFILE_PROOF>ISOcoated_v2_bas.ICC</oyPROFILE_PROOF>
 
     <!-- Proofing Rendering Intent
          Behaviour of color space transformation for proofing
