@@ -900,6 +900,11 @@ int                oyPoliciesEqual   ( const char        * policyA,
 
         const oyOption_t_ *t = oyOptionGet_( oywid );
 
+        /* skip temporary value, as it can easily be changed by
+         * oyranos-monitor-white-point --daemon  */
+        if(oywid == oyWIDGET_DISPLAY_WHITE_POINT)
+          continue;
+
         key = t->config_string_xml;
 
         /* read the value for the key */
@@ -915,6 +920,9 @@ int                oyPoliciesEqual   ( const char        * policyA,
             p_policyB = oyProfile_FromFile( value2, 0, 0);
             if(!oyProfile_Equal( p_policyA, p_policyB))
               is_equal = 0;
+
+            oyProfile_Release( &p_policyA );
+            oyProfile_Release( &p_policyB );
           }
 
         } else if(opt_type == oyWIDGETTYPE_BEHAVIOUR)
