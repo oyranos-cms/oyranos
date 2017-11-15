@@ -541,7 +541,8 @@ oyPolicyToXML_  (oyGROUP_e           group,
                                     &text, 1 );
          oyWriteOptionToXML_( group,
                                     oyWIDGET_RENDERING_INTENT_PROOF,
-                                    oyWIDGET_BEHAVIOUR_END - 1,
+                                    /* skip the two display settings */
+                                    oyWIDGET_BEHAVIOUR_END - 3,
                                     &text, 2 );
          break;
     case oyGROUP_BEHAVIOUR_EFFECT:
