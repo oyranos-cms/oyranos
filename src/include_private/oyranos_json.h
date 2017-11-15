@@ -31,6 +31,7 @@ extern "C" {
 #define oyjl_string_list_add_static_string oyStringListAddStaticString
 #define oyjl_string_to_long            oyStringToLong
 #define oyjl_array_free                oyJArrayFree
+#define oyjl_json_indent               oyJJsonIndent
 #define oyjl_message_func              oyJmessage_func
 #define oyjl_message_func_set          oyJmessage_func_set
 #define oyjl_message_p                 oyJmessage_p

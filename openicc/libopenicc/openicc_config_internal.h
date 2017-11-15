@@ -33,6 +33,7 @@
 #define oyjl_string_list_add_static_string openiccStringListAddStaticString
 #define oyjl_string_to_long            openiccStringToLong
 #define oyjl_array_free                openiccJArrayFree
+#define oyjl_json_indent               openiccJJsonIndent
 #define oyjl_message_func              openiccJMessageFunc
 #define oyjl_message_func_set          openiccJMessageFuncSet
 #define oyjl_message_p                 openiccJMessage_p
