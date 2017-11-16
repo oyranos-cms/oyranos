@@ -277,7 +277,7 @@ int              DeviceFromName_     ( const char        * device_name,
       } else if(error <= 0)
       {
         if(!error && device_name)
-          oyOptions_SetFromText( oyConfig_GetOptions(*device,"backend_core"),
+          oyOptions_SetFromString( oyConfig_GetOptions(*device,"backend_core"),
                                        MONITOR_REGISTRATION OY_SLASH "device_name",
                                        device_name, OY_CREATE_NEW );
 
@@ -432,7 +432,7 @@ int                Configs_FromPattern (
 
          /** 3.1.2 tell the "device_name" */
         if(error <= 0)
-        error = oyOptions_SetFromText( oyConfig_GetOptions(device,"backend_core"),
+        error = oyOptions_SetFromString( oyConfig_GetOptions(device,"backend_core"),
                                        MONITOR_REGISTRATION OY_SLASH
                                        "device_name",
                                        texts[i], OY_CREATE_NEW );
@@ -557,14 +557,14 @@ int                Configs_FromPattern (
                                     options );
         if(error <= 0)
         {
-          error = oyOptions_SetFromText( &opts, "///set_device_attributes",
+          error = oyOptions_SetFromString( &opts, "///set_device_attributes",
                                                 "true", OY_CREATE_NEW );
-          error = oyOptions_SetFromText( &opts, "///key_prefix_required",
+          error = oyOptions_SetFromString( &opts, "///key_prefix_required",
                                                 "EDID_.prefix", OY_CREATE_NEW );
         }
         oyProfile_AddDevice( prof, device, opts );
 
-        error = oyOptions_SetFromText( oyConfig_GetOptions(device,"backend_core"),
+        error = oyOptions_SetFromString( oyConfig_GetOptions(device,"backend_core"),
                                        MONITOR_REGISTRATION OY_SLASH
                                        "device_name",
                                        device_name, OY_CREATE_NEW );
@@ -752,7 +752,7 @@ int            Configs_Modify        ( oyConfigs_s       * devices,
                                     oyNAME_PATTERN );
             if(!o_tmp)
             {
-              oyOptions_SetFromText( &options,
+              oyOptions_SetFromString( &options,
                                      MONITOR_REGISTRATION OY_SLASH
                                      "edid",
                                      "yes", OY_CREATE_NEW );
@@ -863,13 +863,13 @@ int            Configs_Modify        ( oyConfigs_s       * devices,
                       "Adding info tags gave error",
                       OY_DBG_ARGS_ );
               }
-              oyOptions_SetFromText( oyConfig_GetOptions(device,"backend_core"),
+              oyOptions_SetFromString( oyConfig_GetOptions(device,"backend_core"),
                                        MONITOR_REGISTRATION OY_SLASH
                                        "OPENICC_automatic_generated",
                                        "1", OY_CREATE_NEW );
 
               /* embed meta tag */
-              oyOptions_SetFromText( &opts, "///key_prefix_required",
+              oyOptions_SetFromString( &opts, "///key_prefix_required",
                                                 "EDID_.OPENICC_",
                                                 OY_CREATE_NEW );
               oyProfile_AddDevice( prof, device, opts );
@@ -1006,7 +1006,7 @@ int            Configs_Modify        ( oyConfigs_s       * devices,
 
           if(error <= 0)
           {
-            t_err = oyOptions_SetFromText( oyConfig_GetOptions(device,"data"),
+            t_err = oyOptions_SetFromString( oyConfig_GetOptions(device,"data"),
                                          MONITOR_REGISTRATION OY_SLASH
                                          "oyNAME_NAME",
                                          text, OY_CREATE_NEW );

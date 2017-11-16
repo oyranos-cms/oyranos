@@ -2036,7 +2036,7 @@ OYAPI const char * OYEXPORT oyProfile_GetFileName (
         char * key = oyAllocateFunc_(80);
         txt = oyFindProfile_( name, 0 );
         sprintf( key, "//"OY_TYPE_STD"/profile.icc/psid_%d", dl_pos );
-        oyOptions_SetFromText( &s->oy_->handles_,
+        oyOptions_SetFromString( &s->oy_->handles_,
                                key,
                                txt,
                                OY_CREATE_NEW );
@@ -2364,7 +2364,7 @@ int                oyProfile_AddDevice(oyProfile_s       * profile,
     {
       o = oyOption_New( NULL );
       oyOption_SetRegistration( o, "////prefix" );
-      oyOption_SetFromText( o, prefix, 0 );
+      oyOption_SetFromString( o, prefix, 0 );
       oyOptions_MoveIn( *oyConfig_GetOptions(d,"backend_core"), &o, 0 );
     }
   }

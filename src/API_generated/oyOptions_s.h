@@ -184,7 +184,8 @@ OYAPI const char *  OYEXPORT
                                        const char        * key,
                                        const char        * value );
 OYAPI int  OYEXPORT
-                 oyOptions_SetFromText(oyOptions_s      ** obj,
+                 oyOptions_SetFromString (
+                                       oyOptions_s      ** obj,
                                        const char        * key,
                                        const char        * value,
                                        uint32_t            flags );

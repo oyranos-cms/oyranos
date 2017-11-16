@@ -127,7 +127,7 @@ main(int argc, char** argv)
     if(argc > 2 && strcmp(argv[i], "--icc-color-context") == 0)
     {
       icc_color_context = argv[i+1];
-      oyOptions_SetFromText( &module_options, OY_DEFAULT_CMM_CONTEXT,
+      oyOptions_SetFromString( &module_options, OY_DEFAULT_CMM_CONTEXT,
                              icc_color_context, OY_CREATE_NEW );
       icc_profile_flags = oyICCProfileSelectionFlagsFromRegistration( icc_color_context );
       ++file_pos;
@@ -135,7 +135,7 @@ main(int argc, char** argv)
     }
     if(argc > 2 && strcmp(argv[i], "--effect") == 0)
     {
-      oyOptions_SetFromText( &module_options, OY_DEFAULT_EFFECT,
+      oyOptions_SetFromString( &module_options, OY_DEFAULT_EFFECT,
                              "1", OY_CREATE_NEW );
       oyProfiles_s * effects = oyProfiles_New(0);
       oyProfile_s * p = oyProfile_FromName( argv[i+1], icc_profile_flags, 0 );
@@ -144,7 +144,7 @@ main(int argc, char** argv)
                                       OY_PROFILES_EFFECT,
                                        (oyStruct_s**) &effects,
                                        OY_CREATE_NEW );
-      /*oyOptions_SetFromText( &module_options, OY_DEFAULT_EFFECT_PROFILE,
+      /*oyOptions_SetFromString( &module_options, OY_DEFAULT_EFFECT_PROFILE,
                              argv[i+1], OY_CREATE_NEW );*/
       ++file_pos;
       ++file_pos;
@@ -728,7 +728,7 @@ void setChannel( oyProfile_s * p, int channel_pos )
     oyStringAddPrintf( &channels, 0,0, "]" );
   }
 
-  oyOptions_SetFromText( &opts, "//" OY_TYPE_STD "/channel/channel", channels, OY_CREATE_NEW );
+  oyOptions_SetFromString( &opts, "//" OY_TYPE_STD "/channel/channel", channels, OY_CREATE_NEW );
   oyDeAllocateFunc_( channels );
   oyOptions_Release( &opts );
 }

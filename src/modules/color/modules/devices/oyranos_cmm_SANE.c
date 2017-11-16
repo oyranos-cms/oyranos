@@ -125,7 +125,7 @@ int CMMMessageFuncSet(oyMessage_f message_func)
 }
 
 #define OPTIONS_ADD(opts, name) if(!error && name) \
-        error = oyOptions_SetFromText( opts, \
+        error = oyOptions_SetFromString( opts, \
                                        CMM_BASE_REG OY_SLASH #name, \
                                        name, OY_CREATE_NEW );
 
@@ -328,14 +328,14 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
          }
 
          /*Handle "device_name" option [OUT] */
-         oyOptions_SetFromText(oyConfig_GetOptions(device,"backend_core"),
+         oyOptions_SetFromString(oyConfig_GetOptions(device,"backend_core"),
                                CMM_BASE_REG OY_SLASH "device_name",
                                sane_name,
                                OY_CREATE_NEW);
 
          /*Handle "oyNAME_NAME" option */
          if (name_opt)
-            oyOptions_SetFromText(oyConfig_GetOptions(device,"backend_core"),
+            oyOptions_SetFromString(oyConfig_GetOptions(device,"backend_core"),
                                   CMM_BASE_REG OY_SLASH "oyNAME_NAME",
                                   sane_model,
                                   OY_CREATE_NEW);
@@ -600,7 +600,7 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
          /*Handle "oyNAME_NAME" option */
          name_opt_dev = oyConfig_Find(device, "oyNAME_NAME");
          if (!error && !name_opt_dev && oyOptions_Find(options, "oyNAME_NAME", oyNAME_PATTERN))
-            oyOptions_SetFromText(oyConfig_GetOptions(device,"backend_core"),
+            oyOptions_SetFromString(oyConfig_GetOptions(device,"backend_core"),
                                   CMM_BASE_REG OY_SLASH "oyNAME_NAME",
                                   sane_model,
                                   OY_CREATE_NEW);
@@ -1014,7 +1014,7 @@ int ColorInfoFromHandle(const SANE_Handle device_handle, oyOptions_s **options)
       return -1;
    }
 
-   oyOptions_SetFromText(options, CMM_BASE_REG OY_SLASH "prefix", "SANE_", OY_CREATE_NEW);
+   oyOptions_SetFromString(options, CMM_BASE_REG OY_SLASH "prefix", "SANE_", OY_CREATE_NEW);
 
    value_str = malloc(sizeof(char)*value_size);
 
@@ -1033,12 +1033,12 @@ int ColorInfoFromHandle(const SANE_Handle device_handle, oyOptions_s **options)
             case SANE_TYPE_BOOL:
                value_str[0] = *(SANE_Bool *) value ? '1' : '0';
                value_str[1] = '\0';
-               oyOptions_SetFromText(options, registration, value_str, OY_CREATE_NEW);
+               oyOptions_SetFromString(options, registration, value_str, OY_CREATE_NEW);
                break;
             case SANE_TYPE_INT:
                if (opt->size == (SANE_Int)sizeof(SANE_Word)) {
                   snprintf(value_str, value_size, "%d", *(SANE_Int *) value);
-                  oyOptions_SetFromText(options, registration, value_str, OY_CREATE_NEW);
+                  oyOptions_SetFromString(options, registration, value_str, OY_CREATE_NEW);
                } else {
                   int count = opt->size/sizeof(SANE_Word);
                 if (strstr(opt->name, "gamma-table")) {
@@ -1053,7 +1053,7 @@ int ColorInfoFromHandle(const SANE_Handle device_handle, oyOptions_s **options)
                       lt->GammaTable[i] = (WORD)((float)(*(SANE_Int *) value+i)*norm);
 
                    snprintf(value_str, value_size, "%f", cmsEstimateGamma(lt));
-                   oyOptions_SetFromText(options, registration, value_str, OY_CREATE_NEW);
+                   oyOptions_SetFromString(options, registration, value_str, OY_CREATE_NEW);
                    cmsFreeGamma(lt);
 #endif
                 } else {
@@ -1065,7 +1065,7 @@ int ColorInfoFromHandle(const SANE_Handle device_handle, oyOptions_s **options)
                      else
                         chars += printed;
                    }
-                   oyOptions_SetFromText(options, registration, value_str, OY_CREATE_NEW);
+                   oyOptions_SetFromString(options, registration, value_str, OY_CREATE_NEW);
                 }
                }
                break;
@@ -1075,7 +1075,7 @@ int ColorInfoFromHandle(const SANE_Handle device_handle, oyOptions_s **options)
                setlocale(LC_NUMERIC, "C");
                if (opt->size == (SANE_Int)sizeof(SANE_Word)) {
                   snprintf(value_str, value_size, "%f", SANE_UNFIX(*(SANE_Fixed *) value));
-                  oyOptions_SetFromText(options, registration, value_str, OY_CREATE_NEW);
+                  oyOptions_SetFromString(options, registration, value_str, OY_CREATE_NEW);
                } else {
                   int count = opt->size/sizeof(SANE_Word);
 
@@ -1090,14 +1090,14 @@ int ColorInfoFromHandle(const SANE_Handle device_handle, oyOptions_s **options)
                     else
                        chars += printed;
                   }
-                  oyOptions_SetFromText(options, registration, value_str, OY_CREATE_NEW);
+                  oyOptions_SetFromString(options, registration, value_str, OY_CREATE_NEW);
                }
                setlocale(LC_NUMERIC, save_locale);
                free( save_locale );
               }
                break;
             case SANE_TYPE_STRING:
-               oyOptions_SetFromText(options, registration, (const char *)value, OY_CREATE_NEW);
+               oyOptions_SetFromString(options, registration, (const char *)value, OY_CREATE_NEW);
                break;
             default:
                printf(PRFX "Do not know what to do with option %d\n", opt->type);

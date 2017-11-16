@@ -461,7 +461,7 @@ void           oyOptions_ParseXML_   ( oyOptions_s_      * s,
         goto clean_stage;
 
       key = xmlNodeListGetString(doc, cur, 1);
-      oyOption_SetFromText( o, (char*)key, 0 );
+      oyOption_SetFromString( o, (char*)key, 0 );
       xmlFree(key);
 
       oyOption_SetSource( o, oyOPTIONSOURCE_DATA );

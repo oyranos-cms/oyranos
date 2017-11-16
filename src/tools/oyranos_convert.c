@@ -193,7 +193,7 @@ int main( int argc , char** argv )
                         break;
               case 'i': OY_PARSE_STRING_ARG(input); break;
               case 'n': OY_PARSE_STRING_ARG(node_name);
-                        oyOptions_SetFromText( &module_options, OY_DEFAULT_CMM_CONTEXT,
+                        oyOptions_SetFromString( &module_options, OY_DEFAULT_CMM_CONTEXT,
                                                node_name, OY_CREATE_NEW );
 
                         icc_profile_flags = oyICCProfileSelectionFlagsFromOptions( OY_CMM_STD,
@@ -348,7 +348,7 @@ int main( int argc , char** argv )
             if(oy_debug)
             fprintf( stderr, "%s => ",
                     ct?ct:"---" ); ct = 0;
-            oyOption_SetFromText( o, other_args[i + 1], 0 );
+            oyOption_SetFromString( o, other_args[i + 1], 0 );
             data = oyOption_GetText( o, oyNAME_NICK );
 
             if(oy_debug)
@@ -368,7 +368,7 @@ int main( int argc , char** argv )
       /* handle the options as if they are commandline switches */
       for( i = 0; i+1 < other_args_n; i += 2 )
       {
-        oyOptions_SetFromText( &module_options, other_args[i],
+        oyOptions_SetFromString( &module_options, other_args[i],
                                other_args[i+1], OY_CREATE_NEW );
         
       }
@@ -591,7 +591,7 @@ int main( int argc , char** argv )
 
       STRING_ADD( comment, "source image was " );
       STRING_ADD( comment, input );
-      oyOptions_SetFromText( &opts, "//" OY_TYPE_STD "/file_write/comment",
+      oyOptions_SetFromString( &opts, "//" OY_TYPE_STD "/file_write/comment",
                              comment, OY_CREATE_NEW );
       error = oyImage_ToFile( image, output, opts );
 

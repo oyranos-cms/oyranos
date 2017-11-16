@@ -366,7 +366,7 @@ int main( int argc , char** argv )
       size_t json_size = 0;
       json_text = oyReadFileToMem_( json_name, &json_size, oyAllocateFunc_ );
       oyDeviceFromJSON( json_text, NULL, &device );
-      error = oyOptions_SetFromText( &opts, "///set_device_attributes",
+      error = oyOptions_SetFromString( &opts, "///set_device_attributes",
                                      "true", OY_CREATE_NEW );
       oyProfile_AddDevice( p, device, opts );
       oyOptions_Release( &opts );

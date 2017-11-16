@@ -67,7 +67,7 @@ void fltkCallback                    ( Fl_Widget         * widget,
   if(ch)
   {
     sprintf(num, "%d", ch->value() );
-    oyOptions_SetFromText( opts, cd->key, cd->value, 0 );
+    oyOptions_SetFromString( opts, cd->key, cd->value, 0 );
     printf("Fl_Choice %s(%s)=%s/%s\n", cd->key, cd->label, cd->value, num );
 
   } else
@@ -85,7 +85,7 @@ void fltkHelpViewCallback            ( Fl_Widget         * widget,
   if(ch)
   {
     sprintf(num, "%d", ch->value() );
-    oyOptions_SetFromText( opts, cd->key, cd->value, 0 );
+    oyOptions_SetFromString( opts, cd->key, cd->value, 0 );
     printf("Fl_Choice %s(%s)=%s/%s\n", cd->key, cd->label, cd->value, num );
 
   } else
@@ -296,7 +296,7 @@ int        oyXML2XFORMsFLTKSelect1Handler (
 
   /* collect results */
   if(xpath && forms_args)
-    oyOptions_SetFromText( (oyOptions_s**)&forms_args->xforms_data_model_,
+    oyOptions_SetFromString( (oyOptions_s**)&forms_args->xforms_data_model_,
                            xpath+1, default_value, OY_CREATE_NEW );
 
   return 0;

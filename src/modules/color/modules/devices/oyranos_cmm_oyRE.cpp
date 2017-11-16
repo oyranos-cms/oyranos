@@ -538,7 +538,7 @@ class exif2options {
          Exiv2::ExifKey key( exif );
          Exiv2::ExifData::iterator pos = _exif_data_->findKey(key);
          if (pos != _exif_data_->end()) {
-            return oyOptions_SetFromText( _options_,
+            return oyOptions_SetFromString( _options_,
                                           registration.str().c_str(),
                                           pos->toString().c_str(), OY_CREATE_NEW );
          } else {
@@ -679,10 +679,10 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
    device = oyConfig_FromRegistration(CMM_BASE_REG, 0);
    /*A device *must* have a device_name!*/
    if(oyOptions_FindString( options, "device_name", NULL ))
-     oyOptions_SetFromText(oyConfig_GetOptions(device,"backend_core"), CMM_BASE_REG OY_SLASH "device_name", oyOptions_FindString( options, "device_name", NULL ), OY_CREATE_NEW);
+     oyOptions_SetFromString(oyConfig_GetOptions(device,"backend_core"), CMM_BASE_REG OY_SLASH "device_name", oyOptions_FindString( options, "device_name", NULL ), OY_CREATE_NEW);
    else
-     oyOptions_SetFromText(oyConfig_GetOptions(device,"backend_core"), CMM_BASE_REG OY_SLASH "device_name", "dummy", OY_CREATE_NEW);
-   oyOptions_SetFromText(oyConfig_GetOptions(device,"backend_core"), CMM_BASE_REG OY_SLASH "prefix",
+     oyOptions_SetFromString(oyConfig_GetOptions(device,"backend_core"), CMM_BASE_REG OY_SLASH "device_name", "dummy", OY_CREATE_NEW);
+   oyOptions_SetFromString(oyConfig_GetOptions(device,"backend_core"), CMM_BASE_REG OY_SLASH "prefix",
                           PRFX_EXIF "," PRFX_LRAW, OY_CREATE_NEW);
 
    oyConfigs_s *devices = *s;
@@ -702,7 +702,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
 
       /*Handle "driver_version" option [IN] */
       if (version_opt) {
-         error = oyOptions_SetFromText(oyConfig_GetOptions(device,"data"),
+         error = oyOptions_SetFromString(oyConfig_GetOptions(device,"data"),
                                        CMM_BASE_REG OY_SLASH "driver_version_string",
                                        driver_version_string,
                                        OY_CREATE_NEW);
@@ -734,7 +734,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
          while(device_list[i++]);
 
          /*Handle "device_handle" option [OUT:informative]*/
-         error = oyOptions_SetFromText(oyConfig_GetOptions(device,"data"),
+         error = oyOptions_SetFromString(oyConfig_GetOptions(device,"data"),
                                        CMM_BASE_REG OY_SLASH "device_handle",
                                        DUMMY,
                                        OY_CREATE_NEW);
@@ -775,7 +775,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
            ++i;
          }
 
-         oyOptions_SetFromText ( oyConfig_GetOptions(device,"data"),
+         oyOptions_SetFromString ( oyConfig_GetOptions(device,"data"),
                                  CMM_BASE_REG OY_SLASH "supported_devices_info",
                                  string_list,
                                  OY_CREATE_NEW | OY_STRING_LIST );
@@ -789,7 +789,7 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
 
       /*Handle "driver_version" option [IN] */
       if (version_opt) {
-         error = oyOptions_SetFromText(oyConfig_GetOptions(device,"data"),
+         error = oyOptions_SetFromString(oyConfig_GetOptions(device,"data"),
                                        CMM_BASE_REG OY_SLASH "driver_version_string",
                                        driver_version_string,
                                        OY_CREATE_NEW);
@@ -891,7 +891,7 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
          /*Handle "driver_version" option [IN/OUT] */
          oyOption_s *version_opt_dev = oyConfig_Find(device, "driver_version");
          if (!version_opt_dev && version_opt) {
-            error = oyOptions_SetFromText(oyConfig_GetOptions(device,"backend_core"),
+            error = oyOptions_SetFromString(oyConfig_GetOptions(device,"backend_core"),
                                           CMM_BASE_REG OY_SLASH "driver_version_string",
                                           driver_version_string,
                                           OY_CREATE_NEW);
@@ -909,7 +909,7 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
          oyOption_s *handle_opt_dev = oyConfig_Find(device, "device_handle");
          if (!handle_opt_dev && handle_opt)
 	 {
-            error = oyOptions_SetFromText(oyConfig_GetOptions(device,"data"),
+            error = oyOptions_SetFromString(oyConfig_GetOptions(device,"data"),
                                           CMM_BASE_REG OY_SLASH "device_handle",
                                           DUMMY,
                                           OY_CREATE_NEW);
@@ -961,7 +961,7 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
          if(!handle_opt_dev)
          {
            handle_opt_dev = oyOption_FromRegistration( CMM_BASE_REG OY_SLASH "device_handle", NULL );
-           oyOption_SetFromText( handle_opt_dev, device_name, 0 );
+           oyOption_SetFromString( handle_opt_dev, device_name, 0 );
          }
 
          if (handle_opt_dev) {
@@ -987,7 +987,7 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
 
          /*Handle "device_name" option [OUT] */
          if (device_name) {
-            oyOptions_SetFromText(oyConfig_GetOptions(device,"backend_core"), CMM_BASE_REG OY_SLASH "device_name", device_name, OY_CREATE_NEW);
+            oyOptions_SetFromString(oyConfig_GetOptions(device,"backend_core"), CMM_BASE_REG OY_SLASH "device_name", device_name, OY_CREATE_NEW);
          }
 
 
@@ -1033,9 +1033,9 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
            oyPointer data = oyProfile_GetMem( profile, &size, 0, malloc );
            oyProfile_s * p = oyProfile_FromMem( size, data, 0, 0 );
            /* Filter the typical name spaces for embedding into the ICC profile.  */
-           error = oyOptions_SetFromText( &options, "///set_device_attributes",
+           error = oyOptions_SetFromString( &options, "///set_device_attributes",
                                           "true", OY_CREATE_NEW );
-           error = oyOptions_SetFromText( &options, "///key_prefix_required",
+           error = oyOptions_SetFromString( &options, "///key_prefix_required",
                                        PRFX_EXIF "." PRFX_LRAW ".prefix",
                                        OY_CREATE_NEW );
            oyProfile_AddDevice( p, device, options );
@@ -1085,15 +1085,15 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
                 if((t = oyConfig_FindString( device, PRFX_EXIF "model", 0 )) != 0)
                   error = oyProfile_AddTagText( p, icSigDeviceModelDescTag, t);
 
-                error = oyOptions_SetFromText( oyConfig_GetOptions(device,"backend_core"),
+                error = oyOptions_SetFromString( oyConfig_GetOptions(device,"backend_core"),
                                        CMM_BASE_REG OY_SLASH
                                        "OPENICC_automatic_generated",
                                        "1", OY_CREATE_NEW );
 
                 /* embed meta tag */
-                oyOptions_SetFromText( &opts, "///set_device_attributes",
+                oyOptions_SetFromString( &opts, "///set_device_attributes",
                                                "true", OY_CREATE_NEW );
-                oyOptions_SetFromText( &opts, "///key_prefix_required",
+                oyOptions_SetFromString( &opts, "///key_prefix_required",
                                                PRFX_EXIF "." PRFX_LRAW ".OPENICC_",
                                                OY_CREATE_NEW );
                 oyProfile_AddDevice( p, device, opts );
@@ -1105,7 +1105,7 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
                   oyProfile_s * tmpp = oyProfile_FromName( desc, icc_profile_flags, 0 );
                   if(!tmpp)
                   {
-                    oyOptions_SetFromText( &opts, "////device", "1", OY_CREATE_NEW );
+                    oyOptions_SetFromString( &opts, "////device", "1", OY_CREATE_NEW );
                     error = oyProfile_Install( p, oySCOPE_USER, opts );
                     if(error)
                     {

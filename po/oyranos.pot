@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Oyranos 0.9\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2017-11-15 16:43+0100\n"
+"POT-Creation-Date: 2017-11-16 13:58+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -161,7 +161,7 @@ msgstr ""
 msgid "found list of wrong type"
 msgstr ""
 
-#: API_generated/oyOptions_s.c:1573 tools/oyranos-config.c:231
+#: API_generated/oyOptions_s.c:1573 tools/oyranos-config.c:232
 #: tools/oyranos-device.c:253 tools/oyranos-monitor-white-point.c:211
 #: tools/oyranos_convert.c:271 tools/oyranos_gamma.c:254
 #: tools/oyranos_policy.c:157 tools/oyranos_profile_graph.c:253
@@ -2502,8 +2502,8 @@ msgid "read"
 msgstr ""
 
 #: modules/color/modules/oyranos_cmm_oJPG.c:772
-#: modules/color/modules/oyranos_cmm_oyra_image.c:332
-#: modules/color/modules/oyranos_cmm_oyra_image.c:732
+#: modules/color/modules/oyranos_cmm_oyra_image.c:342
+#: modules/color/modules/oyranos_cmm_oyra_image.c:743
 msgid "Load Image File Object"
 msgstr ""
 
@@ -2709,34 +2709,34 @@ msgstr ""
 msgid "Copyright (c) 2005-2010 Kai-Uwe Behrmann; newBSD"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:330
+#: modules/color/modules/oyranos_cmm_oyra_image.c:340
 msgid "Write"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:338
-#: modules/color/modules/oyranos_cmm_oyra_image.c:340
-#: modules/color/modules/oyranos_cmm_oyra_image.c:738
-#: modules/color/modules/oyranos_cmm_oyra_image.c:740
+#: modules/color/modules/oyranos_cmm_oyra_image.c:348
+#: modules/color/modules/oyranos_cmm_oyra_image.c:350
+#: modules/color/modules/oyranos_cmm_oyra_image.c:749
+#: modules/color/modules/oyranos_cmm_oyra_image.c:751
 msgid "unfinished"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:730
+#: modules/color/modules/oyranos_cmm_oyra_image.c:741
 msgid "Load"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1099
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1111
 msgid "Rectangles"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1101
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1113
 msgid "Rectangles Splitter Object"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1107
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1119
 msgid "Apply regions of interesst in form of simple rectangles."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1109
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1121
 msgid ""
 "The filter will expect a \"rectangle\" option containing a list of "
 "oyRectangle_s objects and will create, fill and process a according "
@@ -2745,35 +2745,35 @@ msgid ""
 "output array ROI."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1309
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1328
 msgid "Root Image"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1311
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1330
 msgid "Root Image Filter Object"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1317
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1336
 msgid "The filter provides a generic image source."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1319
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1338
 msgid "The root image filter can hold pixel data for processing in a graph."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1502
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1530
 msgid "Image[out]"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1504
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1532
 msgid "Output Image Filter Object"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1510
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1538
 msgid "The filter is a possible pixel target in a graph."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1512
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1540
 msgid ""
 "The filter can query pixels from its successors in a graph. The results are "
 "stored in the internal buffer."
@@ -3701,7 +3701,7 @@ msgstr ""
 
 #: tools/oyranos-monitor-white-point.c:337
 #: tools/oyranos-monitor-white-point.c:340
-#: tools/oyranos-monitor-white-point.c:642
+#: tools/oyranos-monitor-white-point.c:604
 msgid "New white point mode"
 msgstr ""
 
@@ -3717,27 +3717,27 @@ msgstr ""
 msgid "City"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:562
+#: tools/oyranos-monitor-white-point.c:524
 msgid "Geographical Position"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:562
+#: tools/oyranos-monitor-white-point.c:524
 msgid "Twilight"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:562
+#: tools/oyranos-monitor-white-point.c:524
 msgid "Sun Elevation"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:562
+#: tools/oyranos-monitor-white-point.c:524
 msgid "Sunrise"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:565
+#: tools/oyranos-monitor-white-point.c:527
 msgid "Sunset"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:615
+#: tools/oyranos-monitor-white-point.c:577
 msgid "Actual white point mode"
 msgstr ""
 

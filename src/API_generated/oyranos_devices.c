@@ -83,7 +83,7 @@ char *       oyGetFilterNodeKey      ( const char        * base_key,
     oyOptions_s * options = oyOptions_New( 0 );
     int error = 0;
 
-    error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
+    error = oyOptions_SetFromString( &options, "//" OY_TYPE_STD "/config/command",
                                    "properties", OY_CREATE_NEW );
     error = oyDevicesGet( 0, "monitor", 0, &monitors );
     oyOptions_Release( &options );
@@ -418,7 +418,7 @@ OYAPI int  OYEXPORT
         if(!profile_name)
         {
           oyOptions_s * opts = 0;
-          oyOptions_SetFromText( &opts, "////device", "1", OY_CREATE_NEW );
+          oyOptions_SetFromString( &opts, "////device", "1", OY_CREATE_NEW );
           error = oyProfile_Install( p, oySCOPE_USER, opts );
           oyOptions_Release( &opts );
           if(!error)
@@ -622,7 +622,7 @@ int      oyDeviceUnset               ( oyConfig_s        * device )
     int error = 0;
 
     // tell the module with the "properties" call to add all informations
-    error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD
+    error = oyOptions_SetFromString( &options, "//" OY_TYPE_STD
                                    "/config/command",
                                    "properties", OY_CREATE_NEW );
 
@@ -1285,7 +1285,7 @@ OYAPI int OYEXPORT oyDeviceSelectSimiliar
         !oyConfig_FindString(s,"model",0)))
     {
       oyOptions_s * options = 0;
-      error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
+      error = oyOptions_SetFromString( &options, "//" OY_TYPE_STD "/config/command",
                                    "properties", OY_CREATE_NEW );
       oyDeviceBackendCall( s, options );
       oyOptions_Release( &options );
@@ -1825,7 +1825,7 @@ OYAPI int  OYEXPORT
           WARNc2_S( "%s: %s\n", _("found issues parsing JSON"), t );
         oyFree_m_(t);
 
-        error = oyOptions_SetFromText( &opts,
+        error = oyOptions_SetFromString( &opts,
                                  "//" OY_TYPE_STD "/argv/underline_key_suffix",
                                  "TAXI", OY_CREATE_NEW );
 
@@ -2118,7 +2118,7 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s_   * core,
           api_pattern = cmm_api9_->oyCMMRegistrationToName(
                                  core->api4_->registration,
                                  oyNAME_PATTERN, 0, select_core, oyAllocateFunc_ );
-          oyOption_SetFromText( o, api_pattern, 0 );
+          oyOption_SetFromString( o, api_pattern, 0 );
           oyFree_m_( api_pattern );
           oyOptions_MoveIn( opts_tmp, &o, -1 );
 
@@ -2139,7 +2139,7 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s_   * core,
             o = oyOption_New( NULL );
             oyOption_SetRegistration( o, OY_DEFAULT_CMM_CONTEXT );
           }
-          oyOption_SetFromText( o, api_pattern, 0 );
+          oyOption_SetFromString( o, api_pattern, 0 );
           oyFree_m_( api_pattern );
           oyOptions_MoveIn( opts_tmp, &o, -1 );
 
@@ -2188,14 +2188,14 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s_   * core,
 
     if(c && context)
     {
-      oyOption_SetFromText( c, context, 0 );
+      oyOption_SetFromString( c, context, 0 );
       oyOption_SetFlags(c, oyOption_GetFlags(c) & (~oyOPTIONATTRIBUTE_EDIT));
       oyMessageFunc_p( oyMSG_DBG,(oyStruct_s*)c,
                        OY_DBG_FORMAT_ "set context to %s %d", OY_DBG_ARGS_, context, oyObject_GetId(c->oy_) );
     }
     if(r && renderer)
     {
-      oyOption_SetFromText( r, renderer, 0 );
+      oyOption_SetFromString( r, renderer, 0 );
       oyOption_SetFlags(r, oyOption_GetFlags(r) & (~oyOPTIONATTRIBUTE_EDIT));
     }
 
@@ -2236,7 +2236,7 @@ OYAPI int  OYEXPORT  oyOption_FromDB ( const char        * registration,
     /** This is merely a wrapper to oyOption_New() and
      *  oyOption_SetValueFromDB(). */
     o = oyOption_FromRegistration( registration, object );
-    error = oyOption_SetFromText( o, 0, 0 );
+    error = oyOption_SetFromString( o, 0, 0 );
     error = oyOption_SetValueFromDB( o );
     if(error)
       oyOption_Release( &o );
@@ -2365,7 +2365,7 @@ int            oyOption_SetValueFromDB  ( oyOption_s        * option )
     /** Change the option value only if something was found in the DB. */
     if(text && text[0])
     {
-      oyOption_SetFromText( option, text, 0 );
+      oyOption_SetFromString( option, text, 0 );
       oyOption_SetSource( s, oyOPTIONSOURCE_DATA );
     } else
       error = -1;
@@ -2515,7 +2515,7 @@ int          oyOptions_DoFilter      ( oyOptions_s       * opts,
                           oyNAME_PATTERN);
       oyOption_SetSource( o, oyOPTIONSOURCE_DATA );
       flags = oyOption_GetFlags(o);
-      oyOption_SetFromText( o, oyOption_GetValueString( db_opt,0 ), 0 );
+      oyOption_SetFromString( o, oyOption_GetValueString( db_opt,0 ), 0 );
       if(!(flags & oyOPTIONATTRIBUTE_EDIT))
         oyOption_SetFlags(o, oyOption_GetFlags(o) & (~oyOPTIONATTRIBUTE_EDIT));
       oyOption_Release( &o );

@@ -14,7 +14,7 @@
  *  @param[in]     config              the configuration
  *  @param[in]     key                 a key name, e.g. "my_key"
  *  @param[in]     value               a value, e.g. "my_value"
- *  @param[in]     flags               see oyOptions_s::oyOptions_SetFromText(.., flags,..)
+ *  @param[in]     flags               see oyOptions_s::oyOptions_SetFromString(.., flags,..)
  *  @return                            0 - good, 1 >= error
  *
  *  @version Oyranos: 0.1.10
@@ -49,8 +49,8 @@ OYAPI int  OYEXPORT
     else
       STRING_ADD( tmp, key );
 
-    /** We provide basically a wrapper for oyOptions_SetFromText(). */
-    error = oyOptions_SetFromText( &s->db, tmp, value, flags );
+    /** We provide basically a wrapper for oyOptions_SetFromString(). */
+    error = oyOptions_SetFromString( &s->db, tmp, value, flags );
 
     oyFree_m_( tmp );
   }
@@ -240,7 +240,7 @@ OYAPI int  OYEXPORT
     /* add information about the data's origin */
     oyStringAddPrintf( &key, oyAllocateFunc_, oyDeAllocateFunc_, "%s/key_set_name",
                        oyConfig_GetRegistration( config ) );
-    error = oyOptions_SetFromText( &config_->data, key, new_reg, OY_CREATE_NEW );
+    error = oyOptions_SetFromString( &config_->data, key, new_reg, OY_CREATE_NEW );
 
     oyFree_m_( new_reg );
     oyFree_m_( key );

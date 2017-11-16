@@ -367,7 +367,7 @@ int  oydiFilterSocket_ImageDisplayInit(oyPixelAccess_s   * ticket,
   rectangles = oyFilterNode_NewWith( "//" OY_TYPE_STD "/rectangles", 0, 0 );
   /* mark the new node as belonging to this node */
   rectangles_tags = oyFilterNode_GetTags( rectangles );
-  oyOptions_SetFromText( &rectangles_tags, ID, "true", OY_CREATE_NEW );
+  oyOptions_SetFromString( &rectangles_tags, ID, "true", OY_CREATE_NEW );
   oyOptions_Release( &rectangles_tags );
 
   /* insert "rectangles" between "display" and its input_node */
@@ -381,9 +381,9 @@ int  oydiFilterSocket_ImageDisplayInit(oyPixelAccess_s   * ticket,
 
   /* obtain device informations, including geometry and ICC profiles
      from the according Oyranos module */
-  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
+  error = oyOptions_SetFromString( &options, "//" OY_TYPE_STD "/config/command",
                                  "list", OY_CREATE_NEW );
-  error = oyOptions_SetFromText( &options,
+  error = oyOptions_SetFromString( &options,
                                  "//" OY_TYPE_STD "/config/device_rectangle",
                                  "true", OY_CREATE_NEW );
   o = oyOptions_Find( image_tags, "display_name", oyNAME_PATTERN );
@@ -504,7 +504,7 @@ int  oydiFilterSocket_ImageDisplayInit(oyPixelAccess_s   * ticket,
           
           /* mark the new node as belonging to this node */
           src_node_tags = oyFilterNode_GetTags( src_node );
-          oyOptions_SetFromText( &src_node_tags, ID, "true",
+          oyOptions_SetFromString( &src_node_tags, ID, "true",
                                  OY_CREATE_NEW );
           oyOptions_Release( &src_node_tags );
 
@@ -923,7 +923,7 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
         oyBlob_Release( &display_id );
         if(active & XCM_COLOR_SERVER_REGIONS)
 #endif
-        error = oyOptions_SetFromText( &options,
+        error = oyOptions_SetFromString( &options,
                                "//"OY_TYPE_STD"/config/x_color_region_target",
                                        "yes", OY_CREATE_NEW );
         error = oyDeviceGetProfile( c, options, &p );
@@ -935,7 +935,7 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
           oyOptions_s * ticket_graph_opts = 
                                        oyFilterGraph_GetOptions( ticket_graph );
           oyImage_SetCritical( image_input, 0, p, 0, -1,-1 );
-          error = oyOptions_SetFromText( &ticket_graph_opts,
+          error = oyOptions_SetFromString( &ticket_graph_opts,
                      "//" OY_TYPE_STD "/profile/dirty", "true", OY_CREATE_NEW );
           oyFilterGraph_Release( &ticket_graph );
           oyOptions_Release( &ticket_graph_opts );

@@ -305,7 +305,7 @@ oyTESTRESULT_e testSettings ()
                                             oyOPTIONATTRIBUTE_FRONT |
                                             OY_OPTIONSOURCE_META */, 0 );
 
-  oyOptions_SetFromText( &opts, "cmyk_cmyk_black_preservation", "1", 0 );
+  oyOptions_SetFromString( &opts, "cmyk_cmyk_black_preservation", "1", 0 );
 
   count = oyOptions_Count( opts );
   if(!count)
@@ -555,14 +555,14 @@ oyTESTRESULT_e testMonitor ()
     PRINT_SUB( oyTESTRESULT_XFAIL,
                "\"list\" device(s): ---                   " )
 
-  error = oyOptions_SetFromText( &options,
+  error = oyOptions_SetFromString( &options,
                                "//"OY_TYPE_STD"/config/icc_profile.x_color_region_target",
                                        "yes", OY_CREATE_NEW );
-  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromText() error: %d", error )
-  error = oyOptions_SetFromText( &options,
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromString() error: %d", error )
+  error = oyOptions_SetFromString( &options,
                                  "//"OY_TYPE_STD"/config/command",
                                  "list", OY_CREATE_NEW );
-  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromText() error: %d", error )
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromString() error: %d", error )
 
   for( i = 0; i < n; ++i )
   {
@@ -590,12 +590,12 @@ oyTESTRESULT_e testMonitor ()
 
 
   /* get all monitors */
-  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
+  error = oyOptions_SetFromString( &options, "//" OY_TYPE_STD "/config/command",
                                  "list", OY_CREATE_NEW );
-  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromText() error: %d", error )
-  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/device_rectangle",
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromString() error: %d", error )
+  error = oyOptions_SetFromString( &options, "//" OY_TYPE_STD "/config/device_rectangle",
                                  "true", OY_CREATE_NEW );
-  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromText() error: %d", error )
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromString() error: %d", error )
   error = oyDevicesGet( 0, "monitor", options, &devices );
   if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyDevicesGet() error: %d", error )
   oyOptions_Release( &options );
@@ -634,18 +634,18 @@ oyTESTRESULT_e testMonitor ()
 
 
 #if 0
-  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD"/config/command",
+  error = oyOptions_SetFromString( &options, "//" OY_TYPE_STD"/config/command",
                                  "properties", OY_CREATE_NEW );
 #endif
 
-  error = oyOptions_SetFromText( &options,
+  error = oyOptions_SetFromString( &options,
                                "//"OY_TYPE_STD"/config/icc_profile.x_color_region_target",
                                        "yes", OY_CREATE_NEW );
-  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromText() error: %d", error )
-  error = oyOptions_SetFromText( &options,
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromString() error: %d", error )
+  error = oyOptions_SetFromString( &options,
                                  "//"OY_TYPE_STD"/config/command",
                                  "properties", OY_CREATE_NEW );
-  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromText() error: %d", error )
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromString() error: %d", error )
 
   error = oyDevicesGet( OY_TYPE_STD, "monitor", options, &devices );
   if(error)
@@ -942,7 +942,7 @@ oyTESTRESULT_e testObserver ()
 
   fprintf(stderr, "\n" );
 
-  oyOption_SetFromText( o, "my_value", 0 );
+  oyOption_SetFromString( o, "my_value", 0 );
 
   if( !oyStruct_ObserverAdd( (oyStruct_s*)o, (oyStruct_s*)node, 0,
                              myFilterSignalHandler ) )
@@ -953,7 +953,7 @@ oyTESTRESULT_e testObserver ()
     "Added Observer                        " );
   }
 
-  oyOption_SetFromText( o, "new_value", 0 );
+  oyOption_SetFromString( o, "new_value", 0 );
 
   if( !oyStruct_ObserverRemove( (oyStruct_s*)o, (oyStruct_s*)node,
                                 myFilterSignalHandler ))
@@ -964,7 +964,7 @@ oyTESTRESULT_e testObserver ()
     "Removed Observer                      " );
   }
 
-  oyOption_SetFromText( o, "other_value", 0 );
+  oyOption_SetFromString( o, "other_value", 0 );
   oyOption_Release( &o );
   oyFilterNode_Release( &node );
 

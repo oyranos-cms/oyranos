@@ -111,7 +111,7 @@ void storeTaxiProfile( const char * taxi_id, const char * taxi_full_id, const ch
   oyOptions_s * options = 0;
   oyProfile_s * profile;
 
-  oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/argv/TAXI_id",
+  oyOptions_SetFromString( &options, "//" OY_TYPE_STD "/argv/TAXI_id",
                                    taxi_full_id,
                                    OY_CREATE_NEW );
 

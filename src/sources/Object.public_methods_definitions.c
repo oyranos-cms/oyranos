@@ -313,7 +313,7 @@ int          oyObject_SetName        ( oyObject_s          object,
   {
     char key[24];
     sprintf(key, "///oyNAME_s+%d", type );
-    error = oyOptions_SetFromText( &object->handles_,
+    error = oyOptions_SetFromString( &object->handles_,
                                    key,
                                    text, OY_CREATE_NEW );
   }

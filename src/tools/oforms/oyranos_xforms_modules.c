@@ -320,7 +320,7 @@ int main (int argc, char ** argv)
             ct = oyOption_GetText( o, oyNAME_NICK );
             fprintf( stderr, "%s => ",
                     ct ); ct = 0;
-            oyOption_SetFromText( o, other_args[i + 1], 0 );
+            oyOption_SetFromString( o, other_args[i + 1], 0 );
             data = oyOption_GetText( o, oyNAME_NICK );
 
             fprintf( stderr, "%s\n",

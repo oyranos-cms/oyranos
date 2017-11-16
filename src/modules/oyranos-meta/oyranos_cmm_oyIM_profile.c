@@ -297,7 +297,7 @@ int  oyWriteIcSigLutAtoBType         ( oyStructList_s    * texts,
                if(curves_n == channels_in)
                {
                  opt = oyOption_FromRegistration("////color_space",0);
-                 oyOption_SetFromText( opt, "1", 0 );
+                 oyOption_SetFromString( opt, "1", 0 );
                  for(i = 0; i < curves_n; ++i)
                  {
                    oyStructList_s * element = (oyStructList_s*)
@@ -399,7 +399,7 @@ int  oyWriteIcSigLutAtoBType         ( oyStructList_s    * texts,
                if(curves_n == channels_in)
                {
                  opt = oyOption_FromRegistration("////color_space",0);
-                 oyOption_SetFromText( opt, "0", 0 );
+                 oyOption_SetFromString( opt, "0", 0 );
                  for(i = 0; i < curves_n; ++i)
                  {
                    oyStructList_s * element = (oyStructList_s*)
@@ -444,7 +444,7 @@ int  oyWriteIcSigLutAtoBType         ( oyStructList_s    * texts,
                if(curves_n == channels_in)
                {
                  opt = oyOption_FromRegistration("////color_space",0);
-                 oyOption_SetFromText( opt, "0", 0 );
+                 oyOption_SetFromString( opt, "0", 0 );
                  for(i = 0; i < curves_n; ++i)
                  {
                    oyStructList_s * element = (oyStructList_s*)

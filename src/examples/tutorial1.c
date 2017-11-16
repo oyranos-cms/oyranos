@@ -14,7 +14,7 @@ int main( int argc OY_UNUSED, char ** argv OY_UNUSED ) {
   // just pick the first monitor
   monitor = oyConfigs_Get( devices, 0 );
   /* get XCM_ICC_COLOR_SERVER_TARGET_PROFILE_IN_X_BASE */
-  oyOptions_SetFromText( &options,
+  oyOptions_SetFromString( &options,
               "//"OY_TYPE_STD"/config/icc_profile.x_color_region_target", "yes", OY_CREATE_NEW );
   oyDeviceGetProfile( monitor, options, &monitor_icc );
   // get the profiles internal name

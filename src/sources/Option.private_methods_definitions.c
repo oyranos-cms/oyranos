@@ -82,7 +82,7 @@ int            oyOption_GetId_       ( oyOption_s_       * obj )
 
 /**
  *  @internal
- *  Function oyOption_SetFromText_
+ *  Function oyOption_SetFromString_
  *  @memberof oyOption_s
  *  @brief   set a option value from a string
  *
@@ -93,7 +93,7 @@ int            oyOption_GetId_       ( oyOption_s_       * obj )
  *
  *  @version Oyranos: 0.1.9
  */
-int            oyOption_SetFromText_ ( oyOption_s_       * obj,
+int            oyOption_SetFromString_ ( oyOption_s_       * obj,
                                        const char        * text,
                                        uint32_t            flags )
 {

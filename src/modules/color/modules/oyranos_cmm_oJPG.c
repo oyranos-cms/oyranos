@@ -712,7 +712,7 @@ int      ojpgFilter_CmmRun           ( oyFilterPlug_s    * requestor_plug,
 
   /* remember the meta data like file name */
   tags = oyImage_GetTags( image_in );
-  error = oyOptions_SetFromText( &tags,
+  error = oyOptions_SetFromString( &tags,
                                  "//" OY_TYPE_STD "/file_read.input_ojpg"
                                                                     "/filename",
                                  filename, OY_CREATE_NEW );

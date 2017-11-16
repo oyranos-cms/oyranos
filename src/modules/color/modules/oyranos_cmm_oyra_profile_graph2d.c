@@ -214,7 +214,7 @@ double * oyraGetSaturationLine_(oyProfile_s * profile, int intent, int precision
       if(!lab_block) goto Clean;
 
       sprintf(num,"%d", intent);
-      oyOptions_SetFromText( &options, OY_BEHAVIOUR_STD OY_SLASH "rendering_intent",
+      oyOptions_SetFromString( &options, OY_BEHAVIOUR_STD OY_SLASH "rendering_intent",
                             num, OY_CREATE_NEW);
 
       oyColorConvert_( profile, outspace, block, lab_block,

@@ -296,10 +296,10 @@ oyConfig_s * oyREgetColorInfo        ( const char        * filename,
    //2.  Get the relevant color information from Oyranos
    //    This is the "command" -> "properties" call
    //Request the properties call
-   oyOptions_SetFromText(&options, OY_LIBRAW_REGISTRATION OY_SLASH "command", "properties", OY_CREATE_NEW | OY_MATCH_KEY);
-   oyOptions_SetFromText(&options, OY_LIBRAW_REGISTRATION OY_SLASH "device_name", filename, OY_CREATE_NEW | OY_MATCH_KEY);
+   oyOptions_SetFromString(&options, OY_LIBRAW_REGISTRATION OY_SLASH "command", "properties", OY_CREATE_NEW | OY_MATCH_KEY);
+   oyOptions_SetFromString(&options, OY_LIBRAW_REGISTRATION OY_SLASH "device_name", filename, OY_CREATE_NEW | OY_MATCH_KEY);
    //Pass in the filename
-   oyOptions_SetFromText(&options, OY_LIBRAW_REGISTRATION OY_SLASH "device_handle", filename, OY_CREATE_NEW | OY_MATCH_KEY);
+   oyOptions_SetFromString(&options, OY_LIBRAW_REGISTRATION OY_SLASH "device_handle", filename, OY_CREATE_NEW | OY_MATCH_KEY);
    //Pass in the libraw object with the raw image rendering options
    oyOption_s *context_opt = oyOption_FromRegistration(
                            OY_LIBRAW_REGISTRATION OY_SLASH "device_context", 0);
@@ -597,10 +597,10 @@ int      lrawFilterPlug_ImageInputRAWRun (
 
       oyConfig_Release( &device );
 
-      error = oyOptions_SetFromText( &options,
+      error = oyOptions_SetFromString( &options,
                    "//" OY_TYPE_STD "/config/icc_profile.fallback",
                          "yes", OY_CREATE_NEW | OY_MATCH_KEY );
-      error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
+      error = oyOptions_SetFromString( &options, "//" OY_TYPE_STD "/config/command",
                                      "properties", OY_CREATE_NEW | OY_MATCH_KEY );  
 
       error = oyDeviceGet( 0, "raw-image", filename, options, &device );
@@ -656,7 +656,7 @@ int      lrawFilterPlug_ImageInputRAWRun (
   }
 
   
-  error = oyOptions_SetFromText( &image_in_tags,
+  error = oyOptions_SetFromString( &image_in_tags,
                               "//" OY_TYPE_STD OY_SLASH CMM_NICK "/filename",
                                  filename, OY_CREATE_NEW | OY_MATCH_KEY);
 

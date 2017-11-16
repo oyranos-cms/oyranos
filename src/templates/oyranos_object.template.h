@@ -209,7 +209,7 @@ typedef enum {
   /** basic settings, as typical for toolkits and office/web applications,
    *  e.g. disable proofing or disable mark out of gamut colors */
   oyOPTIONATTRIBUTE_BASIC = 0,
-  /** user modified, e.g. after oyOption_SetFromText() */
+  /** user modified, e.g. after oyOption_SetFromString() */
   oyOPTIONATTRIBUTE_EDIT = 32,
   /** automatically modified, e.g. by a CMM */
   oyOPTIONATTRIBUTE_AUTOMATIC = 64,

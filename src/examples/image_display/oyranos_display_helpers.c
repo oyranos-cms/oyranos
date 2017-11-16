@@ -73,7 +73,7 @@ oyConversion_s * oyConversion_FromImageForDisplay_ (
   options = oyFilterNode_GetOptions( out, OY_SELECT_FILTER );
   /* scale factor from DB */
   option = oyOption_FromRegistration( OY_INTERNAL "/scale/scale", 0 );
-  error = oyOption_SetFromText( option, 0, 0 );
+  error = oyOption_SetFromString( option, 0, 0 );
   error = oyOption_SetValueFromDB( option );
   scale = 1.0;
   if(!error)
@@ -115,7 +115,7 @@ oyConversion_s * oyConversion_FromImageForDisplay_ (
   out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/channel", 0, obj );
   options = oyFilterNode_GetOptions( out, OY_SELECT_FILTER );
   /* channel option*/
-  error = oyOptions_SetFromText( &options,
+  error = oyOptions_SetFromString( &options,
                                    "//" OY_TYPE_STD "/channel/channel",
                                    "", OY_CREATE_NEW );
   oyOptions_Release( &options );
@@ -185,7 +185,7 @@ oyConversion_s * oyConversion_FromImageForDisplay_ (
   oyConversion_Set( conversion, 0, out );
 
   /* apply policies */
-  /*error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "//verbose",
+  /*error = oyOptions_SetFromString( &options, "//" OY_TYPE_STD "//verbose",
                                  "true", OY_CREATE_NEW );*/
   oyConversion_Correct( conversion, "//" OY_TYPE_STD "/icc_color", flags,
                         options );
@@ -325,7 +325,7 @@ int  oyDrawScreenImage               ( oyConversion_s    * context,
             oyOption_MoveInStruct( o, (oyStruct_s**)&display_id );
             oyOptions_MoveIn( image_tags, &o, -1 );
 
-            oyOptions_SetFromText( &image_tags,
+            oyOptions_SetFromString( &image_tags,
                                    "//" OY_TYPE_STD "/display/display_name",
                                    DisplayString(disp), OY_CREATE_NEW );
 
@@ -336,7 +336,7 @@ int  oyDrawScreenImage               ( oyConversion_s    * context,
         }
 #endif
       } else if(strcmp("oy-test", system_type) == 0)
-        oyOptions_SetFromText( &image_tags,
+        oyOptions_SetFromString( &image_tags,
                                "//" OY_TYPE_STD "/display/display_name",
                                system_type, OY_CREATE_NEW );
 

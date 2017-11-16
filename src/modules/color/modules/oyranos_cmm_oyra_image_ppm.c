@@ -1036,7 +1036,7 @@ int      oyraFilterPlug_ImageInputPPMRun (
   }
 
   tags = oyImage_GetTags( image_in );
-  error = oyOptions_SetFromText( &tags,
+  error = oyOptions_SetFromString( &tags,
                                  "//" OY_TYPE_STD "/file_read.input_ppm"
                                                                     "/filename",
                                  filename, OY_CREATE_NEW );

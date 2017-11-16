@@ -8,7 +8,7 @@ OYAPI const  char *    OYEXPORT
                 oyOption_GetText     ( oyOption_s        * obj,
                                        oyNAME_e            type );
 OYAPI int  OYEXPORT
-                 oyOption_SetFromText( oyOption_s        * obj,
+                 oyOption_SetFromString( oyOption_s        * obj,
                                        const char        * text,
                                        uint32_t            flags );
 OYAPI char  *  OYEXPORT

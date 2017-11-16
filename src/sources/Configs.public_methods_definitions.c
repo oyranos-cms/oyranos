@@ -478,7 +478,7 @@ OYAPI int OYEXPORT oyConfigs_FromDB  ( const char        * registration,
         oyStringAddPrintf( &key, oyAllocateFunc_, oyDeAllocateFunc_, "%s/key_set_name",
                            oyConfig_GetRegistration( (oyConfig_s*) config ) );
         if(!error)
-          error = oyOptions_SetFromText( &config->data, key,
+          error = oyOptions_SetFromString( &config->data, key,
                                          key_set_names[j], OY_CREATE_NEW );
 
         /** 5.) add a rank map to each object to allow for comparisions */

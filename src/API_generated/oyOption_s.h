@@ -176,12 +176,9 @@ OYAPI const  char *    OYEXPORT
                 oyOption_GetText     ( oyOption_s        * obj,
                                        oyNAME_e            type );
 OYAPI int  OYEXPORT
-                 oyOption_SetFromText( oyOption_s        * obj,
+                 oyOption_SetFromString( oyOption_s        * obj,
                                        const char        * text,
                                        uint32_t            flags );
-OYAPI char  *  OYEXPORT
-                oyOption_GetValueText( oyOption_s        * obj,
-                                       oyAlloc_f           allocateFunc );
 OYAPI const  char *  OYEXPORT
                 oyOption_GetValueString (
                                        oyOption_s        * obj,
@@ -203,6 +200,9 @@ OYAPI int  OYEXPORT
 OYAPI double  OYEXPORT
                  oyOption_GetValueDouble(oyOption_s        * obj,
                                        int                 pos );
+OYAPI char  *  OYEXPORT
+                oyOption_GetValueText( oyOption_s        * obj,
+                                       oyAlloc_f           allocateFunc );
 OYAPI int  OYEXPORT
                  oyOption_Clear      ( oyOption_s        * s );
 OYAPI int  OYEXPORT

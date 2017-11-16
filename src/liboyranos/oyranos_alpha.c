@@ -539,12 +539,12 @@ OY_DEPRECATED char *   oyGetDisplayNameFromPosition2(const char        * device_
   int n, i;
   const char * device_name = 0;
 
-  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
+  error = oyOptions_SetFromString( &options, "//" OY_TYPE_STD "/config/command",
                                  "list", OY_CREATE_NEW );
-  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/device_rectangle",
+  error = oyOptions_SetFromString( &options, "//" OY_TYPE_STD "/config/device_rectangle",
                                  "true", OY_CREATE_NEW );
   /** we want a fuzzy look at our display, not the narrow "device_name" */
-  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/display_name",
+  error = oyOptions_SetFromString( &options, "//" OY_TYPE_STD "/config/display_name",
                                  display_name, OY_CREATE_NEW );
 
   error = oyConfigs_FromDeviceClass ( device_type, device_class, options, &devices,
@@ -610,12 +610,12 @@ OY_DEPRECATED char *   oyGetDisplayNameFromPosition( const char        * display
   int n, i;
   const char * device_name = 0;
 
-  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
+  error = oyOptions_SetFromString( &options, "//" OY_TYPE_STD "/config/command",
                                  "list", OY_CREATE_NEW );
-  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/device_rectangle",
+  error = oyOptions_SetFromString( &options, "//" OY_TYPE_STD "/config/device_rectangle",
                                  "true", OY_CREATE_NEW );
   /** we want a fuzzy look at our display, not the narrow "device_name" */
-  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/display_name",
+  error = oyOptions_SetFromString( &options, "//" OY_TYPE_STD "/config/display_name",
                                  display_name, OY_CREATE_NEW );
 
   error = oyConfigs_FromDeviceClass ( 0, "monitor", options, &devices,
@@ -857,7 +857,7 @@ OY_DEPRECATED int      oySetMonitorProfile         ( const char        * display
 
   /** 1. obtain detailed and expensive device informations */
   /** 1.1 add "properties" call to module arguments */
-  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
+  error = oyOptions_SetFromString( &options, "//" OY_TYPE_STD "/config/command",
                                  "properties", OY_CREATE_NEW );
 
   /** 1.2 get monitor device */
@@ -921,10 +921,10 @@ OY_DEPRECATED int      oyActivateMonitorProfiles   ( const char        * display
 
   {
     /* 1. set a general request */
-    error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
+    error = oyOptions_SetFromString( &options, "//" OY_TYPE_STD "/config/command",
                                    "list", OY_CREATE_NEW );
     /* we want a fuzzy look at our display, not as narrow as "device_name"*/
-    error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/display_name",
+    error = oyOptions_SetFromString( &options, "//" OY_TYPE_STD "/config/display_name",
                                    display_name, OY_CREATE_NEW );
     error = oyConfigs_FromDeviceClass ( 0, device_class, options,
                                             &devices, 0 );

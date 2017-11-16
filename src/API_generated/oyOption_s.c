@@ -298,7 +298,7 @@ const char *   oyOption_GetText      ( oyOption_s        * obj,
   return erg;
 }
 
-/** Function oyOption_SetFromText
+/** Function oyOption_SetFromString
  *  @memberof oyOption_s
  *  @brief   set a option value from a string
  *
@@ -313,7 +313,7 @@ const char *   oyOption_GetText      ( oyOption_s        * obj,
  *  @since   2008/11/25 (Oyranos: 0.1.9)
  *  @date    2011/01/21
  */
-int            oyOption_SetFromText  ( oyOption_s        * obj,
+int            oyOption_SetFromString( oyOption_s        * obj,
                                        const char        * text,
                                        uint32_t            flags )
 {
@@ -324,7 +324,7 @@ int            oyOption_SetFromText  ( oyOption_s        * obj,
 
   oyCheckType__m( oyOBJECT_OPTION_S, return -1 )
 
-  error = oyOption_SetFromText_( s, text, flags );
+  error = oyOption_SetFromString_( s, text, flags );
   if(!error)
     oyOption_UpdateFlags_(s);
 

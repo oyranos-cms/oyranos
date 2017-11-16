@@ -34,7 +34,7 @@ int main ( int argc OY_UNUSED, char ** argv OY_UNUSED )
       snprintf( id, 1024, "%s/0", oyOptions_FindString(
                                    *oyConfig_GetOptions(taxi_device,"db"),
                                    "TAXI_id", 0 ));
-      error = oyOptions_SetFromText( &options,
+      error = oyOptions_SetFromString( &options,
                                    "//" OY_TYPE_STD "/db/TAXI_id",
                                    id,
                                    OY_CREATE_NEW );
@@ -42,7 +42,7 @@ int main ( int argc OY_UNUSED, char ** argv OY_UNUSED )
       oyOptions_Release( &options );
       if(rank > 0)
       {
-        error = oyOptions_SetFromText( &options,
+        error = oyOptions_SetFromString( &options,
                                        "////device", "1",
                                        OY_CREATE_NEW );
         error = oyProfile_Install( ip, scope, options );
@@ -73,7 +73,7 @@ int main ( int argc OY_UNUSED, char ** argv OY_UNUSED )
           error = oyOptions_SetFromInt( &options,
                                 "//" OY_TYPE_STD "/icc_profile_flags",
                                 icc_profile_flags, 0, OY_CREATE_NEW );
-          error = oyOptions_SetFromText( &options,
+          error = oyOptions_SetFromString( &options,
                                   "//"OY_TYPE_STD"/config/skip_ask_for_profile", "yes", OY_CREATE_NEW );
           oyDeviceSetup( device, options );
           printf( "assigned -> %s\n", strrchr( filename, OY_SLASH_C ) + 1 );

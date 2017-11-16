@@ -453,7 +453,7 @@ oyConversion_s * oyConversion_CreateFromImage (
   oyConversion_Set( conversion, 0, out );
 
   /* apply policies */
-  /*error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "//verbose",
+  /*error = oyOptions_SetFromString( &options, "//" OY_TYPE_STD "//verbose",
                                  "true", OY_CREATE_NEW );*/
   oyConversion_Correct( conversion, "//" OY_TYPE_STD "/icc_color", flags,
                         options );

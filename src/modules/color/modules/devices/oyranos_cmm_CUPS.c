@@ -145,7 +145,7 @@ int            CMMMessageFuncSet ( oyMessage_f message_func )
 
 
 #define OPTIONS_ADD(opts, name) if(!error && name) \
-        error = oyOptions_SetFromText( opts, \
+        error = oyOptions_SetFromString( opts, \
                                        CMM_BASE_REG OY_SLASH #name, \
                                        name, OY_CREATE_NEW );
 const char * _help =
@@ -430,7 +430,7 @@ int          DeviceAttributes_       ( ppd_file_t        * ppd,
           STRING_ADD( reg_name, keyword );
           if(value)
           {
-            error= oyOptions_SetFromText( oyConfig_GetOptions(d,"backend_core"),
+            error= oyOptions_SetFromString( oyConfig_GetOptions(d,"backend_core"),
                                                reg_name,
                                                value,
                                                OY_CREATE_NEW );
@@ -465,7 +465,7 @@ int          DeviceAttributes_       ( ppd_file_t        * ppd,
             
             if(value)
             {
-              error = oyOptions_SetFromText( oyConfig_GetOptions(d,"backend_core"),
+              error = oyOptions_SetFromString( oyConfig_GetOptions(d,"backend_core"),
                                                 reg_name,
                                                 value,
                                                 OY_CREATE_NEW );
@@ -558,7 +558,7 @@ int            Configs_Modify    ( oyConfigs_s       * devices,
 
             oyProfile_Release( &p );
 
-            error = oyOptions_SetFromText( oyConfig_GetOptions(device,"data"),
+            error = oyOptions_SetFromString( oyConfig_GetOptions(device,"data"),
                                          CMM_BASE_REG OY_SLASH "oyNAME_NAME",
                                          text, OY_CREATE_NEW );
             if(text) { oyDeAllocateFunc_( text ); text = 0; }
@@ -666,7 +666,7 @@ int          LoadDevice              ( oyConfig_s        * device,
             oyConfig_s * d = oyConfigs_Get( devices_, j );
  
             /* set the device name */
-            error = oyOptions_SetFromText( oyConfig_GetOptions(d,"backend_core"),
+            error = oyOptions_SetFromString( oyConfig_GetOptions(d,"backend_core"),
                                      CMM_BASE_REG OY_SLASH "device_name",
                                      device_name, OY_CREATE_NEW );
 
@@ -785,7 +785,7 @@ int            Configs_FromPattern (
 
             oyProfile_Release( &p );
 
-            error = oyOptions_SetFromText( oyConfig_GetOptions(device,"data"),
+            error = oyOptions_SetFromString( oyConfig_GetOptions(device,"data"),
                                          CMM_BASE_REG OY_SLASH "oyNAME_NAME",
                                          text, OY_CREATE_NEW );
             if(text) { oyDeAllocateFunc_( text ); text = 0; }
@@ -1143,7 +1143,7 @@ int CUPSgetProfiles                  ( const char        * device_name,
         must_move = 1;
       }
 
-      oyOptions_SetFromText( oyConfig_GetOptions(device,"data"),
+      oyOptions_SetFromString( oyConfig_GetOptions(device,"data"),
                              CMM_BASE_REG OY_SLASH "profile_name",
                              profile_name, OY_CREATE_NEW );
 
@@ -1156,7 +1156,7 @@ int CUPSgetProfiles                  ( const char        * device_name,
         char * reg_name = 0;
         STRING_ADD( reg_name, CMM_BASE_REG OY_SLASH );
         STRING_ADD( reg_name, selectorA );
-        oyOptions_SetFromText( oyConfig_GetOptions(device,"backend_core"),
+        oyOptions_SetFromString( oyConfig_GetOptions(device,"backend_core"),
                                reg_name,
                                texts[0], OY_CREATE_NEW );
         oyRankMapAppend( &rank_map, selectorA, 2, -5, 0, 0,0 );
@@ -1167,7 +1167,7 @@ int CUPSgetProfiles                  ( const char        * device_name,
         char * reg_name = 0;
         STRING_ADD( reg_name, CMM_BASE_REG OY_SLASH );
         STRING_ADD( reg_name, selectorB );
-        oyOptions_SetFromText( oyConfig_GetOptions(device,"backend_core"),
+        oyOptions_SetFromString( oyConfig_GetOptions(device,"backend_core"),
                                reg_name,
                                texts[1], OY_CREATE_NEW );
         oyRankMapAppend( &rank_map, selectorB, 2, -5, 0, 0,0 );
@@ -1178,7 +1178,7 @@ int CUPSgetProfiles                  ( const char        * device_name,
         char * reg_name = 0;
         STRING_ADD( reg_name, CMM_BASE_REG OY_SLASH );
         STRING_ADD( reg_name, selectorC );
-        oyOptions_SetFromText( oyConfig_GetOptions(device,"backend_core"),
+        oyOptions_SetFromString( oyConfig_GetOptions(device,"backend_core"),
                                reg_name,
                                texts[2], OY_CREATE_NEW );
         oyRankMapAppend( &rank_map, selectorC, 2, -5, 0, 0,0 );

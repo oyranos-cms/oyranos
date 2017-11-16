@@ -633,7 +633,7 @@ void             oiccChangeNodeOption( oyOptions_s       * f_options,
                   else
                   {
                     text = oyOption_GetValueText( db_o, oyAllocateFunc_ );
-                    oyOption_SetFromText( o, text, 0 );
+                    oyOption_SetFromString( o, text, 0 );
                     oyOption_SetFlags(o, oyOption_GetFlags(o) | oyOPTIONATTRIBUTE_AUTOMATIC);
                     oyFree_m_( text );
                   }

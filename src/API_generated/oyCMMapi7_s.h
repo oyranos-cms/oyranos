@@ -89,7 +89,10 @@ typedef int (*oyCMMFilterPlug_Run_f) ( oyFilterPlug_s    * plug,
  *  
  *  The structure forms a node element in a directed acyclic graph. It's 
  *  connectors allow to communicate cababilities and semantics. This node type
- *  acts mostly on data processing. 
+ *  acts mostly on data processing.
+ *
+ *  The node can be inserted inside oyConversion_CreateBasicPixelsFromBuffers()
+ *  or used directly with oyFilterNode_NewWith() and oyFilterNode_Connect().
  *
  *  It is possible to delegate parameter or context creation to other
  *  specialised filter types.

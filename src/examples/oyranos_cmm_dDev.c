@@ -118,7 +118,7 @@ int            CMMMessageFuncSet     ( oyMessage_f         message_func )
 }
 
 #define OPTIONS_ADD(opts, name) if(!error && name) \
-        error = oyOptions_SetFromText( opts, \
+        error = oyOptions_SetFromString( opts, \
                                        CMM_BASE_REG OY_SLASH #name, \
                                        name, OY_CREATE_NEW );
 
@@ -234,7 +234,7 @@ int              DeviceFromName_     ( const char        * device_name,
           *device = oyConfig_FromRegistration( CMM_BASE_REG, 0 );
         error = !*device;
         if(!error && device_name)
-        error = oyOptions_SetFromText( oyConfig_GetOptions(*device,"backend_core"),
+        error = oyOptions_SetFromString( oyConfig_GetOptions(*device,"backend_core"),
                                        CMM_BASE_REG OY_SLASH "device_name",
                                        device_name, OY_CREATE_NEW );
 
@@ -407,7 +407,7 @@ int              Configs_Modify      ( oyConfigs_s       * devices,
           }
 
           if(error <= 0)
-          error = oyOptions_SetFromText( oyConfig_GetOptions(device,"data"),
+          error = oyOptions_SetFromString( oyConfig_GetOptions(device,"data"),
                                          CMM_BASE_REG OY_SLASH "oyNAME_NAME",
                                          text, OY_CREATE_NEW );
           free( text );
@@ -443,7 +443,7 @@ int              Configs_Modify      ( oyConfigs_s       * devices,
         if(error <= 0)
         device_name = oyConfig_FindString( device, "device_name", 0 );
 
-        error = oyOptions_SetFromText( oyConfig_GetOptions(device,"data"),
+        error = oyOptions_SetFromString( oyConfig_GetOptions(device,"data"),
                                          CMM_BASE_REG OY_SLASH "port",
                                          "8", OY_CREATE_NEW );
         oyConfig_Release( &device );
@@ -598,7 +598,7 @@ int              Configs_FromPattern ( const char        * registration,
         error = !device;
 
         if(error <= 0)
-        error=oyOptions_SetFromText( oyConfig_GetOptions(device,"backend_core"),
+        error=oyOptions_SetFromString( oyConfig_GetOptions(device,"backend_core"),
                                        CMM_BASE_REG OY_SLASH "device_name",
                                        texts[i], OY_CREATE_NEW );
 

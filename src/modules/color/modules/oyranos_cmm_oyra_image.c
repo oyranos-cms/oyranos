@@ -55,6 +55,15 @@
 oyDATATYPE_e oyra_image_data_types[7] = {oyUINT8, oyUINT16, oyUINT32,
                                          oyHALF, oyFLOAT, oyDOUBLE, 0};
 
+/** \addtogroup graph_modules
+ *  @{ */
+/** \addtogroup oyra_graph oyra Module
+ *  @brief      Image Processing Nodes
+ *
+ *  The module provides file I/O, region handling, source and output.
+ *
+ *  @{ */
+
 /* OY_IMAGE_WRITE_REGISTRATION ---------------------------------------------*/
 
 
@@ -276,6 +285,7 @@ oyConnectorImaging_s_ oyra_imageWrite_socket = {
 oyConnectorImaging_s_ *oyra_imageWrite_sockets[2] = {&oyra_imageWrite_socket,0};
 
 
+/** @brief registration string for \b oyra CMM */
 #define OY_IMAGE_WRITE_REGISTRATION OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "file_write.meta._" CMM_NICK
 /** @instance oyra_api7
  *  @brief    oyra oyCMMapi7_s implementation
@@ -676,6 +686,7 @@ oyConnectorImaging_s_ oyra_imageLoad_socket = {
 oyConnectorImaging_s_ *oyra_imageLoad_sockets[2] = {&oyra_imageLoad_socket,0};
 
 
+/** @brief registration string for \b oyra CMM */
 #define OY_IMAGE_LOAD_REGISTRATION OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "file_read.meta._" CMM_NICK
 /** @instance oyra_api7
  *  @brief    oyra oyCMMapi7_s implementation
@@ -1046,6 +1057,7 @@ oyConnectorImaging_s_ oyra_imageRectangles_socket = {
 oyConnectorImaging_s_ *oyra_imageRectangles_sockets[2] = {&oyra_imageRectangles_socket,0};
 
 
+/** @brief registration string for \b oyra CMM */
 #define OY_IMAGE_REGIONS_REGISTRATION OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "rectangles"
 /** @instance oyra_api7
  *  @brief    oyra oyCMMapi7_s implementation
@@ -1113,7 +1125,9 @@ const char * oyraApi4UiImageRectanglesGetText (
 const char * oyra_api4_ui_image_rectangles_texts[] = {"name", "help", 0};
 
 /** @instance oyra_api4_ui_image_rectangles
- *  @brief    oyra oyCMMapi4_s::ui implementation
+ *  @brief    Rectangles Node UI
+ *
+ *  oyra oyCMMapi4_s::ui implementation
  *
  *  The UI for filter image rectangles.
  *
@@ -1141,7 +1155,9 @@ oyCMMui_s_ oyra_api4_ui_image_rectangles = {
 };
 
 /** @instance oyra_api4
- *  @brief    oyra oyCMMapi4_s implementation
+ *  @brief    Rectangles Node (only UI)
+ *
+ *  oyra oyCMMapi4_s implementation
  *
  *  a filter routing the graph to several rectangles
  *
@@ -1212,7 +1228,7 @@ oyOptions_s* oyraFilter_ImageRootValidateOptions
 }
 
 /** @func    oyraFilterPlug_ImageRootRun
- *  @brief   implement oyCMMFilter_GetNext_f()
+ *  @brief    Source Image obtaining
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/07/10 (Oyranos: 0.1.8)
@@ -1256,9 +1272,12 @@ oyConnectorImaging_s_ oyra_imageRoot_connector = {
 oyConnectorImaging_s_ * oyra_imageRoot_connectors[2] = {&oyra_imageRoot_connector,0};
 
 
+/** @brief registration string for \b oyra CMM */
 #define OY_IMAGE_ROOT_REGISTRATION OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "root"
 /** @instance oyra_api7
- *  @brief    oyra oyCMMapi7_s implementation
+ *  @brief    Source Image Node
+ *
+ *  oyra oyCMMapi7_s implementation
  *
  *  a filter providing a source image
  *
@@ -1323,7 +1342,9 @@ const char * oyraApi4UiImageRootGetText (
 const char * oyra_api4_ui_image_root_texts[] = {"name", "help", 0};
 
 /** @instance oyra_api4_ui_image_root
- *  @brief    oyra oyCMMapi4_s::ui implementation
+ *  @brief    Source Image Node ui
+ *
+ *  oyra oyCMMapi4_s::ui implementation
  *
  *  The UI for filter image root.
  *
@@ -1351,7 +1372,9 @@ oyCMMui_s_ oyra_api4_ui_image_root = {
 };
 
 /** @instance oyra_api4
- *  @brief    oyra oyCMMapi4_s implementation
+ *  @brief    Source Image Node (only UI)
+ *
+ *  oyra oyCMMapi4_s implementation
  *
  *  a filter providing a source image
  *
@@ -1421,7 +1444,10 @@ oyConnectorImaging_s_* oyra_imageOutput_connectors[2] = {&oyra_imageOutput_conne
 
 
 /** @func    oyraFilter_ImageOutputRun
- *  @brief   implement oyCMMFilter_GetNext_f()
+ *  @brief   Start Processing
+ *
+ *  This node is itself pretty passive.
+ *  Implements oyCMMFilter_GetNext_f()
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/07/19 (Oyranos: 0.1.8)
@@ -1448,12 +1474,14 @@ int      oyraFilterPlug_ImageOutputRun(oyFilterPlug_s    * requestor_plug,
   return result;
 }
 
-
+/** @brief registration string for \b oyra CMM */
 #define OY_IMAGE_OUTPUT_REGISTRATION OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "output"
 /** @instance oyra_api7
- *  @brief    oyra oyCMMapi7_s implementation
+ *  @brief    Output Image Node
  *
- *  a filter providing a target image
+ *  oyra oyCMMapi7_s implementation
+ *
+ *  a filter providing a target image as output
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/12/27 (Oyranos: 0.1.10)
@@ -1516,7 +1544,9 @@ const char * oyraApi4UiImageOutputGetText (
 const char * oyra_api4_ui_image_output_texts[] = {"name", "help", 0};
 
 /** @instance oyra_api4_ui_image_output
- *  @brief    oyra oyCMMapi4_s::ui implementation
+ *  @brief    Image Output UI
+ *
+ *  oyra oyCMMapi4_s::ui implementation
  *
  *  The UI for filter image output.
  *
@@ -1544,9 +1574,9 @@ oyCMMui_s_ oyra_api4_ui_image_output = {
 };
 
 /** @instance oyra_api4
- *  @brief    oyra oyCMMapi4_s implementation
+ *  @brief    Image Output (only UI)
  *
- *  a filter providing a target image
+ *  A filter providing a target image
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/07/19 (Oyranos: 0.1.8)
@@ -1580,5 +1610,7 @@ oyCMMapi4_s_   oyra_api4_image_output = {
 /* OY_IMAGE_OUTPUT_REGISTRATION ----------------------------------------------*/
 /* ---------------------------------------------------------------------------*/
 
+/**  @} *//* oyra_graph */
+/**  @} *//* graph_modules */
 
 

@@ -2168,7 +2168,7 @@ int      lcmsFilterPlug_CmmIccRun    ( oyFilterPlug_s    * requestor_plug,
       oyFilterSocket_Callback( requestor_plug,
                                oyCONNECTOR_EVENT_OK );
 
-    error = oyOptions_SetFromText( &ticket_graph_opts,
+    error = oyOptions_SetFromString( &ticket_graph_opts,
                      "//" OY_TYPE_STD "/profile/dirty", "true", OY_CREATE_NEW );
     oyFilterGraph_Release( &ticket_graph );
     oyOptions_Release( &ticket_graph_opts );

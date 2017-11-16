@@ -332,21 +332,21 @@ int main( int argc , char** argv )
     if(device_pos != -1)
     {
 
-      error = oyOptions_SetFromText( &options,
+      error = oyOptions_SetFromString( &options,
                                      "//" OY_TYPE_STD "/config/command",
                                      "properties", OY_CREATE_NEW );
-      error = oyOptions_SetFromText( &options, "//"OY_TYPE_STD"/config/edid",
+      error = oyOptions_SetFromString( &options, "//"OY_TYPE_STD"/config/edid",
                                        "1", OY_CREATE_NEW );
 #ifdef HAVE_X11
       if(module_name && strstr(module_name, "oyX1"))
       {
 #endif
       if(server)
-        error = oyOptions_SetFromText( &options,
+        error = oyOptions_SetFromString( &options,
                                        "//"OY_TYPE_STD"/config/device_name",
                                        oy_display_name, OY_CREATE_NEW );
       else
-        error = oyOptions_SetFromText( &options,
+        error = oyOptions_SetFromString( &options,
                                        "//"OY_TYPE_STD"/config/display_name",
                                        display_name, OY_CREATE_NEW );
 #ifdef HAVE_X11
@@ -403,7 +403,7 @@ int main( int argc , char** argv )
         return error;
       }
 
-      error = oyOptions_SetFromText( &options,
+      error = oyOptions_SetFromString( &options,
                                  "//" OY_TYPE_STD "/config/command",
                                  "properties", OY_CREATE_NEW );
       error = oyDeviceGet( OY_TYPE_STD, device_class, oy_display_name, 0,
@@ -445,7 +445,7 @@ int main( int argc , char** argv )
             if(x_color_region_target)
             {
               /* get XCM_ICC_COLOR_SERVER_TARGET_PROFILE_IN_X_BASE */
-              error = oyOptions_SetFromText( &cs_options,
+              error = oyOptions_SetFromString( &cs_options,
               "//"OY_TYPE_STD"/config/icc_profile.x_color_region_target", "yes", OY_CREATE_NEW );
             }
             error = oyDeviceGetInfo( device, oyNAME_NICK, cs_options, &text,
@@ -494,20 +494,20 @@ int main( int argc , char** argv )
       icHeader * header = 0;
       char * out_name = 0;
 
-      error = oyOptions_SetFromText( &options,
+      error = oyOptions_SetFromString( &options,
                                      "//" OY_TYPE_STD "/config/command",
                                      "properties", OY_CREATE_NEW );
-      error = oyOptions_SetFromText( &options, "//"OY_TYPE_STD"/config/edid",
+      error = oyOptions_SetFromString( &options, "//"OY_TYPE_STD"/config/edid",
                                        "1", OY_CREATE_NEW );
       if(oy_display_name)
-        error = oyOptions_SetFromText( &options,
+        error = oyOptions_SetFromString( &options,
                                        "//"OY_TYPE_STD"/config/device_name",
                                        oy_display_name, OY_CREATE_NEW );
 #ifdef HAVE_X11
       else
       if(module_name && strstr(module_name, "oyX1"))
 #endif
-        error = oyOptions_SetFromText( &options,
+        error = oyOptions_SetFromString( &options,
                                        "//"OY_TYPE_STD"/config/display_name",
                                        display_name, OY_CREATE_NEW );
 
@@ -561,13 +561,13 @@ int main( int argc , char** argv )
               if(device_meta_tag)
               {
                 oyOptions_s * opts = 0;
-                error = oyOptions_SetFromText( &opts, "///key_prefix_required",
+                error = oyOptions_SetFromString( &opts, "///key_prefix_required",
                                                       "EDID_.OPENICC_" , OY_CREATE_NEW );
-                error = oyOptions_SetFromText( oyConfig_GetOptions( c,"backend_core" ),
+                error = oyOptions_SetFromString( oyConfig_GetOptions( c,"backend_core" ),
                                         OY_TOP_SHARED OY_SLASH OY_DOMAIN_STD OY_SLASH OY_TYPE_STD OY_SLASH "device" OY_SLASH "config.icc_profile.monitor" OY_SLASH
                                        "OPENICC_automatic_generated",
                                        "1", OY_CREATE_NEW );
-                error = oyOptions_SetFromText( oyConfig_GetOptions( c,"backend_core" ),
+                error = oyOptions_SetFromString( oyConfig_GetOptions( c,"backend_core" ),
                                         OY_TOP_SHARED OY_SLASH OY_DOMAIN_STD OY_SLASH OY_TYPE_STD OY_SLASH "device" OY_SLASH "config.icc_profile.monitor" OY_SLASH
                                        "prefix",
                                        "EDID_.OPENICC_", OY_CREATE_NEW );
@@ -598,7 +598,7 @@ int main( int argc , char** argv )
             if(x_color_region_target)
             {
               /* get XCM_ICC_COLOR_SERVER_TARGET_PROFILE_IN_X_BASE */
-              error = oyOptions_SetFromText( &cs_options,
+              error = oyOptions_SetFromString( &cs_options,
               "//"OY_TYPE_STD"/config/icc_profile.x_color_region_target", "yes", OY_CREATE_NEW );
             }
             oyDeviceAskProfile2( c, cs_options, &prof );
@@ -606,9 +606,9 @@ int main( int argc , char** argv )
             if(device_meta_tag)
             {
               oyOptions_s * opts = 0;
-              error = oyOptions_SetFromText( &opts, "///set_device_attributes",
+              error = oyOptions_SetFromString( &opts, "///set_device_attributes",
                                                     "true", OY_CREATE_NEW );
-              error = oyOptions_SetFromText( &opts, "///key_prefix_required",
+              error = oyOptions_SetFromString( &opts, "///key_prefix_required",
                                                     "EDID_" , OY_CREATE_NEW );
               oyProfile_AddDevice( prof, c, opts );
               oyOptions_Release( &opts );
@@ -658,7 +658,7 @@ int main( int argc , char** argv )
       prof = oyProfile_FromName( prof_name, OY_NO_CACHE_READ | icc_profile_flags, 0 );
       device = 0;
       oyOptions_Release( &options );
-      error = oyOptions_SetFromText( &options,
+      error = oyOptions_SetFromString( &options,
                                      "//" OY_TYPE_STD "/config/command",
                                      "add_meta", OY_CREATE_NEW );
       error = oyOptions_MoveInStruct( &options,
@@ -725,10 +725,10 @@ int main( int argc , char** argv )
       if(x_color_region_target)
       {
         /* get XCM_ICC_COLOR_SERVER_TARGET_PROFILE_IN_X_BASE */
-        error = oyOptions_SetFromText( &cs_options,
+        error = oyOptions_SetFromString( &cs_options,
               "//"OY_TYPE_STD"/config/icc_profile.x_color_region_target", "yes", OY_CREATE_NEW );
       }
-      error = oyOptions_SetFromText( &options,
+      error = oyOptions_SetFromString( &options,
                                      "//" OY_TYPE_STD "/config/command",
                                      "properties", OY_CREATE_NEW );
       error = oyDevicesGet( 0, device_class, options, &devices );
@@ -858,7 +858,7 @@ int main( int argc , char** argv )
       if(setup)
       {
         if(monitor_profile)
-          error = oyOptions_SetFromText( &options,
+          error = oyOptions_SetFromString( &options,
                                       "//"OY_TYPE_STD"/config/skip_ask_for_profile", "yes", OY_CREATE_NEW );
         if(verbose)
           fprintf( stdout, "oyDeviceSetup()\n" );
@@ -869,13 +869,13 @@ int main( int argc , char** argv )
     }
     else if(erase || unset || setup)
     {
-      error = oyOptions_SetFromText( &options,
+      error = oyOptions_SetFromString( &options,
                                      "//" OY_TYPE_STD "/config/command",
                                      "list", OY_CREATE_NEW );
 #ifdef HAVE_X11
       if(module_name && strstr(module_name, "oyX1"))
 #endif
-        error = oyOptions_SetFromText( &options,
+        error = oyOptions_SetFromString( &options,
                                      "//"OY_TYPE_STD"/config/display_name",
                                      display_name, OY_CREATE_NEW );
 
@@ -932,7 +932,7 @@ void cleanDisplay                    ( Display           * display,
 
   const char * display_name = strdup(XDisplayString(display));
 
-  oyOptions_SetFromText( &opts, "////display_name",
+  oyOptions_SetFromString( &opts, "////display_name",
                          display_name, OY_CREATE_NEW );
   oyOptions_Handle( "//" OY_TYPE_STD "/clean_profiles",
                                  opts,"clean_profiles",
@@ -952,10 +952,10 @@ int            getDeviceProfile      ( Display           * display OY_UNUSED,
 
   oyDeviceUnset( device );
 
-      /*oyOptions_SetFromText( &options,
+      /*oyOptions_SetFromString( &options,
                    "//"OY_TYPE_STD"/config/command",
                                        "list", OY_CREATE_NEW );
-      oyOptions_SetFromText( &options,
+      oyOptions_SetFromString( &options,
                    "//"OY_TYPE_STD"/config/icc_profile.x_color_region_target",
                                        "yes", OY_CREATE_NEW );*/
   error = oyOptions_SetFromInt( &options,
@@ -982,13 +982,13 @@ int updateOutputConfiguration( Display * display )
 
   /* obtain device informations, including geometry and ICC profiles
      from the according Oyranos module */
-  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
+  error = oyOptions_SetFromString( &options, "//" OY_TYPE_STD "/config/command",
                                  "list", OY_CREATE_NEW );
   if(error) WARNc2_S("%s %d", _("found issues"),error);
-  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/device_rectangle",
+  error = oyOptions_SetFromString( &options, "//" OY_TYPE_STD "/config/device_rectangle",
                                  "true", OY_CREATE_NEW );
   if(error) WARNc2_S("%s %d", _("found issues"),error);
-  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/edid",
+  error = oyOptions_SetFromString( &options, "//" OY_TYPE_STD "/config/edid",
                                  "refresh", OY_CREATE_NEW );
   error = oyDevicesGet( OY_TYPE_STD, "monitor", options, &devices );
   if(error) WARNc2_S("%s %d", _("found issues"),error);

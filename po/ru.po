@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Oyranos 0.9\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2017-11-15 15:57+0100\n"
+"POT-Creation-Date: 2017-11-16 11:16+0100\n"
 "PO-Revision-Date: 2015-02-20 17:32+0100\n"
 "Last-Translator: Kai-Uwe Behrmann <ku.b@gmx.de>\n"
 "Language-Team: russian <ru@li.org>\n"
@@ -315,7 +315,7 @@ msgstr ""
 msgid "Active matrix monitor"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:615
+#: tools/oyranos-monitor-white-point.c:577
 msgid "Actual white point mode"
 msgstr ""
 
@@ -384,7 +384,7 @@ msgstr ""
 msgid "Apple CMM"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1107
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1119
 msgid "Apply regions of interesst in form of simple rectangles."
 msgstr ""
 
@@ -1529,7 +1529,7 @@ msgstr ""
 msgid "Generate Image:"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:562
+#: tools/oyranos-monitor-white-point.c:524
 msgid "Geographical Position"
 msgstr ""
 
@@ -1856,7 +1856,7 @@ msgstr ""
 msgid "Image[my_filter]"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1502
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1530
 msgid "Image[out]"
 msgstr ""
 
@@ -2086,13 +2086,13 @@ msgid ""
 "extremely liberal open source license."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:730
+#: modules/color/modules/oyranos_cmm_oyra_image.c:741
 msgid "Load"
 msgstr ""
 
 #: modules/color/modules/oyranos_cmm_oJPG.c:772
-#: modules/color/modules/oyranos_cmm_oyra_image.c:332
-#: modules/color/modules/oyranos_cmm_oyra_image.c:732
+#: modules/color/modules/oyranos_cmm_oyra_image.c:342
+#: modules/color/modules/oyranos_cmm_oyra_image.c:743
 msgid "Load Image File Object"
 msgstr ""
 
@@ -2397,7 +2397,7 @@ msgstr ""
 
 #: tools/oyranos-monitor-white-point.c:337
 #: tools/oyranos-monitor-white-point.c:340
-#: tools/oyranos-monitor-white-point.c:642
+#: tools/oyranos-monitor-white-point.c:604
 msgid "New white point mode"
 msgstr ""
 
@@ -2489,7 +2489,7 @@ msgstr ""
 msgid "Output Color Space"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1504
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1532
 msgid "Output Image Filter Object"
 msgstr ""
 
@@ -2955,11 +2955,11 @@ msgstr ""
 msgid "Read PPM"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1099
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1111
 msgid "Rectangles"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1101
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1113
 msgid "Rectangles Splitter Object"
 msgstr ""
 
@@ -3032,11 +3032,11 @@ msgstr ""
 msgid "Rgb"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1309
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1328
 msgid "Root Image"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1311
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1330
 msgid "Root Image Filter Object"
 msgstr ""
 
@@ -3326,16 +3326,16 @@ msgstr ""
 msgid "Start"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:562
+#: tools/oyranos-monitor-white-point.c:524
 msgid "Sun Elevation"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:562
+#: tools/oyranos-monitor-white-point.c:524
 #, fuzzy
 msgid "Sunrise"
 msgstr "ICC-профиль"
 
-#: tools/oyranos-monitor-white-point.c:565
+#: tools/oyranos-monitor-white-point.c:527
 msgid "Sunset"
 msgstr ""
 
@@ -3492,7 +3492,7 @@ msgstr ""
 msgid "The filter adapts pixel brightness."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1512
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1540
 msgid ""
 "The filter can query pixels from its successors in a graph. The results are "
 "stored in the internal buffer."
@@ -3513,7 +3513,7 @@ msgid ""
 "\"=string."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1510
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1538
 msgid "The filter is a possible pixel target in a graph."
 msgstr ""
 
@@ -3556,7 +3556,7 @@ msgid ""
 "processing."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1317
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1336
 msgid "The filter provides a generic image source."
 msgstr ""
 
@@ -3586,7 +3586,7 @@ msgid ""
 "socket."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1109
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1121
 msgid ""
 "The filter will expect a \"rectangle\" option containing a list of "
 "oyRectangle_s objects and will create, fill and process a according "
@@ -3752,7 +3752,7 @@ msgstr ""
 msgid "The raw image backend of Oyranos."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1319
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1338
 msgid "The root image filter can hold pixel data for processing in a graph."
 msgstr ""
 
@@ -3833,7 +3833,7 @@ msgstr ""
 msgid "Time Zone"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:562
+#: tools/oyranos-monitor-white-point.c:524
 msgid "Twilight"
 msgstr ""
 
@@ -3945,7 +3945,7 @@ msgstr ""
 msgid "Well behaving Color Space for Editing"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:330
+#: modules/color/modules/oyranos_cmm_oyra_image.c:340
 msgid "Write"
 msgstr ""
 
@@ -4640,10 +4640,10 @@ msgstr ""
 msgid "the imaging factory CMM"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:338
-#: modules/color/modules/oyranos_cmm_oyra_image.c:340
-#: modules/color/modules/oyranos_cmm_oyra_image.c:738
-#: modules/color/modules/oyranos_cmm_oyra_image.c:740
+#: modules/color/modules/oyranos_cmm_oyra_image.c:348
+#: modules/color/modules/oyranos_cmm_oyra_image.c:350
+#: modules/color/modules/oyranos_cmm_oyra_image.c:749
+#: modules/color/modules/oyranos_cmm_oyra_image.c:751
 msgid "unfinished"
 msgstr ""
 
@@ -4732,7 +4732,7 @@ msgstr ""
 msgid "write to specified file"
 msgstr ""
 
-#: API_generated/oyOptions_s.c:1573 tools/oyranos-config.c:231
+#: API_generated/oyOptions_s.c:1573 tools/oyranos-config.c:232
 #: tools/oyranos-device.c:253 tools/oyranos-monitor-white-point.c:211
 #: tools/oyranos_convert.c:271 tools/oyranos_gamma.c:254
 #: tools/oyranos_policy.c:157 tools/oyranos_profile_graph.c:253

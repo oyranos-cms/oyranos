@@ -1118,7 +1118,10 @@ const char * oyFilterNode_GetText    ( oyFilterNode_s    * node,
 
 /** Function  oyFilterNode_NewWith
  *  @memberof oyFilterNode_s
- *  @brief    Initialise a new filter node object properly
+ *  @brief    Initialise a complete filter node
+ *
+ *  The function creates both the oyFilterCore_s with oyFilterCore_NewWith() and
+ *  oyFilterNode_s with oyFilterNode_Create().
  *
  *  @param         registration        a @ref registration string, @see module_api
  *  @param         options             options for the filter

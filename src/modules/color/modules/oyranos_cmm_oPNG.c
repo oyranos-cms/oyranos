@@ -960,7 +960,7 @@ oyImage_s *  oyImage_FromPNG         ( const char        * filename,
 
   {
     oyOptions_s * tags = oyImage_GetTags( image_in );
-    error = oyOptions_SetFromText( &tags,
+    error = oyOptions_SetFromString( &tags,
                                  "//" OY_TYPE_STD "/file_read.input_png"
                                                                     "/filename",
                                  filename, OY_CREATE_NEW );

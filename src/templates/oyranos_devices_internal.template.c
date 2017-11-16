@@ -88,7 +88,7 @@ int    oyOptions_SetDeviceTextKey_   ( oyOptions_s      ** options,
 
   text = oyDeviceRegistrationCreate_( device_type, device_class,
                                           key, text );
-  error = oyOptions_SetFromText( options, text, value, OY_CREATE_NEW );
+  error = oyOptions_SetFromString( options, text, value, OY_CREATE_NEW );
 
   oyFree_m_( text );
 
@@ -145,7 +145,7 @@ int    oyOptions_SetRegistrationTextKey_(
   if(old_val)
     DBG_PROG4_S( "%s=%s%s%s", text, old_val?old_val:"", old_val?" -> ": "", value );
 
-  error = oyOptions_SetFromText( options, text, value, OY_CREATE_NEW );
+  error = oyOptions_SetFromString( options, text, value, OY_CREATE_NEW );
 
   oyFree_m_( text );
   if(reg)
@@ -177,9 +177,9 @@ int          oyDeviceCheckProperties ( oyConfig_s        * device )
         !oyConfig_FindString(s,"model",0) )
     { 
       /* 1.1 add "properties" call to module arguments */
-      error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
+      error = oyOptions_SetFromString( &options, "//" OY_TYPE_STD "/config/command",
                                      "properties", OY_CREATE_NEW );
-      error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/device_name",
+      error = oyOptions_SetFromString( &options, "//" OY_TYPE_STD "/config/device_name",
                                      device_name, OY_CREATE_NEW );
 
       device_name = 0;

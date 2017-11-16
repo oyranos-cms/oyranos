@@ -499,7 +499,7 @@ int          oyOptions_FromJSON      ( const char        * json_text,
 
     /* ignore empty keys or values */
     if(k && val)
-      oyOptions_SetFromText( &opts, k, val, OY_CREATE_NEW );
+      oyOptions_SetFromString( &opts, k, val, OY_CREATE_NEW );
 
     if(k) oyDeAllocateFunc_(k);
     if(key) oyDeAllocateFunc_(key);
@@ -1518,7 +1518,7 @@ const char *   oyOptions_FindString  ( oyOptions_s       * options,
   return text;
 }
 
-/** oyOptions_SetFromText()
+/** oyOptions_SetFromString()
  *  @memberof oyOptions_s
  *  @brief   change a value
  *
@@ -1534,7 +1534,7 @@ const char *   oyOptions_FindString  ( oyOptions_s       * options,
  *  @since   2008/11/27 (Oyranos: 0.1.9)
  *  @date    2011/03/15
  */
-int            oyOptions_SetFromText ( oyOptions_s      ** obj,
+int            oyOptions_SetFromString(oyOptions_s      ** obj,
                                        const char        * registration,
                                        const char        * value,
                                        uint32_t            flags )
@@ -1567,8 +1567,8 @@ int            oyOptions_SetFromText ( oyOptions_s      ** obj,
 
       if(error <= 0)
       {
-        /** Flags are passed on to oyOption_SetFromText, e.g. OY_STRING_LIST. */
-        error = oyOption_SetFromText( o, value, flags & OY_STRING_LIST );
+        /** Flags are passed on to oyOption_SetFromString, e.g. OY_STRING_LIST. */
+        error = oyOption_SetFromString( o, value, flags & OY_STRING_LIST );
       } else
         WARNc3_S( "%s %s=%s",_("wrong argument to option:"),
                   oyNoEmptyString_m_(registration), oyNoEmptyString_m_(value) );
@@ -1576,7 +1576,7 @@ int            oyOptions_SetFromText ( oyOptions_s      ** obj,
       oyOptions_MoveIn( (*obj), &o, -1 );
 
     } else
-      oyOption_SetFromText( o, value, flags );
+      oyOption_SetFromString( o, value, flags );
 
     oyOption_Release( &o );
   }

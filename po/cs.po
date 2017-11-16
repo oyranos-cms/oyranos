@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: oyranos\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2017-11-15 15:57+0100\n"
+"POT-Creation-Date: 2017-11-16 11:16+0100\n"
 "PO-Revision-Date: 2012-10-19 15:10+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -311,7 +311,7 @@ msgstr "Aktivní politika:"
 msgid "Active matrix monitor"
 msgstr "Monitor s aktivní maticí"
 
-#: tools/oyranos-monitor-white-point.c:615
+#: tools/oyranos-monitor-white-point.c:577
 #, fuzzy
 msgid "Actual white point mode"
 msgstr "Bílý bod média"
@@ -382,7 +382,7 @@ msgstr "umí zobrazit informace o profilu ICC"
 msgid "Apple CMM"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1107
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1119
 #, fuzzy
 msgid "Apply regions of interesst in form of simple rectangles."
 msgstr "Apply regions of interesst in form of simple rectangles."
@@ -1633,7 +1633,7 @@ msgstr "Dostupná zařízení"
 msgid "Generate Image:"
 msgstr "Generovat obrázek:"
 
-#: tools/oyranos-monitor-white-point.c:562
+#: tools/oyranos-monitor-white-point.c:524
 msgid "Geographical Position"
 msgstr ""
 
@@ -2004,7 +2004,7 @@ msgstr "Image[lraw]"
 msgid "Image[my_filter]"
 msgstr "Image[my_filter]"
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1502
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1530
 #, fuzzy
 msgid "Image[out]"
 msgstr "Image[out]"
@@ -2274,13 +2274,13 @@ msgstr ""
 "nicméně knihovna lcms je k dispozici zdarma pro kohokoliv pod extrémně "
 "liberální licencí pro otevřený zdrojový kód."
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:730
+#: modules/color/modules/oyranos_cmm_oyra_image.c:741
 msgid "Load"
 msgstr "Načíst"
 
 #: modules/color/modules/oyranos_cmm_oJPG.c:772
-#: modules/color/modules/oyranos_cmm_oyra_image.c:332
-#: modules/color/modules/oyranos_cmm_oyra_image.c:732
+#: modules/color/modules/oyranos_cmm_oyra_image.c:342
+#: modules/color/modules/oyranos_cmm_oyra_image.c:743
 msgid "Load Image File Object"
 msgstr "Načíst objekt obrázkového souboru"
 
@@ -2601,7 +2601,7 @@ msgstr "Pro úpravu je třeba profil ICC."
 
 #: tools/oyranos-monitor-white-point.c:337
 #: tools/oyranos-monitor-white-point.c:340
-#: tools/oyranos-monitor-white-point.c:642
+#: tools/oyranos-monitor-white-point.c:604
 #, fuzzy
 msgid "New white point mode"
 msgstr "Bílý bod média"
@@ -2696,7 +2696,7 @@ msgstr "Výstupní"
 msgid "Output Color Space"
 msgstr "Výstupní barvový prostor"
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1504
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1532
 #, fuzzy
 msgid "Output Image Filter Object"
 msgstr "Output Image Filter Object"
@@ -3226,12 +3226,12 @@ msgstr "Číst PNG"
 msgid "Read PPM"
 msgstr "Načíst PPM"
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1099
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1111
 #, fuzzy
 msgid "Rectangles"
 msgstr "Rectangles"
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1101
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1113
 #, fuzzy
 msgid "Rectangles Splitter Object"
 msgstr "Rectangles Splitter Object"
@@ -3309,12 +3309,12 @@ msgstr "Záměr transformace mezi barvovými prostory."
 msgid "Rgb"
 msgstr "Rgb"
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1309
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1328
 #, fuzzy
 msgid "Root Image"
 msgstr "Root Image"
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1311
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1330
 #, fuzzy
 msgid "Root Image Filter Object"
 msgstr "Root Image Filter Object"
@@ -3630,17 +3630,17 @@ msgstr "Graf standardního pozorovatele:"
 msgid "Start"
 msgstr "Začátek"
 
-#: tools/oyranos-monitor-white-point.c:562
+#: tools/oyranos-monitor-white-point.c:524
 #, fuzzy
 msgid "Sun Elevation"
 msgstr "Saturační"
 
-#: tools/oyranos-monitor-white-point.c:562
+#: tools/oyranos-monitor-white-point.c:524
 #, fuzzy
 msgid "Sunrise"
 msgstr "Získat profil ICC"
 
-#: tools/oyranos-monitor-white-point.c:565
+#: tools/oyranos-monitor-white-point.c:527
 msgid "Sunset"
 msgstr ""
 
@@ -3842,7 +3842,7 @@ msgstr "Hloupý a neužitečný modul Oyranosu."
 msgid "The filter adapts pixel brightness."
 msgstr "The filter is a possible pixel target in a graph."
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1512
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1540
 #, fuzzy
 msgid ""
 "The filter can query pixels from its successors in a graph. The results are "
@@ -3873,7 +3873,7 @@ msgstr ""
 "objekt oyConfig_s obsahující typické informace zařízení o souboru cameraRAW. "
 "Volba \"render\" s hodnotou \"0\" přeskočí některá zpracování dat."
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1510
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1538
 #, fuzzy
 msgid "The filter is a possible pixel target in a graph."
 msgstr "The filter is a possible pixel target in a graph."
@@ -3934,7 +3934,7 @@ msgid ""
 "processing."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1317
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1336
 #, fuzzy
 msgid "The filter provides a generic image source."
 msgstr "The filter provides a generic image source."
@@ -3968,7 +3968,7 @@ msgid ""
 "socket."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1109
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1121
 msgid ""
 "The filter will expect a \"rectangle\" option containing a list of "
 "oyRectangle_s objects and will create, fill and process a according "
@@ -4190,7 +4190,7 @@ msgstr ""
 msgid "The raw image backend of Oyranos."
 msgstr "Backend Oyranosu pro RAW snímky."
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1319
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1338
 #, fuzzy
 msgid "The root image filter can hold pixel data for processing in a graph."
 msgstr "The root image filter can hold pixel data for processing in a graph."
@@ -4293,7 +4293,7 @@ msgstr ""
 msgid "Time Zone"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:562
+#: tools/oyranos-monitor-white-point.c:524
 msgid "Twilight"
 msgstr ""
 
@@ -4411,7 +4411,7 @@ msgstr ""
 msgid "Well behaving Color Space for Editing"
 msgstr "Dobře se chovající barvový prostor pro editaci"
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:330
+#: modules/color/modules/oyranos_cmm_oyra_image.c:340
 msgid "Write"
 msgstr "Zapsat"
 
@@ -5144,10 +5144,10 @@ msgstr ""
 msgid "the imaging factory CMM"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:338
-#: modules/color/modules/oyranos_cmm_oyra_image.c:340
-#: modules/color/modules/oyranos_cmm_oyra_image.c:738
-#: modules/color/modules/oyranos_cmm_oyra_image.c:740
+#: modules/color/modules/oyranos_cmm_oyra_image.c:348
+#: modules/color/modules/oyranos_cmm_oyra_image.c:350
+#: modules/color/modules/oyranos_cmm_oyra_image.c:749
+#: modules/color/modules/oyranos_cmm_oyra_image.c:751
 msgid "unfinished"
 msgstr "nedokončeno"
 
@@ -5240,7 +5240,7 @@ msgstr "zapsat do souboru, v současnosti pouze ve formátu PPM"
 msgid "write to specified file"
 msgstr "zapsat do souboru"
 
-#: API_generated/oyOptions_s.c:1573 tools/oyranos-config.c:231
+#: API_generated/oyOptions_s.c:1573 tools/oyranos-config.c:232
 #: tools/oyranos-device.c:253 tools/oyranos-monitor-white-point.c:211
 #: tools/oyranos_convert.c:271 tools/oyranos_gamma.c:254
 #: tools/oyranos_policy.c:157 tools/oyranos_profile_graph.c:253

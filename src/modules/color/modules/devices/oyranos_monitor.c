@@ -41,14 +41,14 @@
 
 #define OPTIONS_ADD(opts, name, clear) if(!error && name) { char * t = 0; \
         STRING_ADD( t , registration ); STRING_ADD( t, OY_SLASH #name ); \
-        error = oyOptions_SetFromText( &opts, t, \
+        error = oyOptions_SetFromString( &opts, t, \
                                        name, OY_CREATE_NEW ); \
         if(clear && name) { oyDeAllocateFunc_( (char*)name ); name = 0; } \
         if(t) oyFree_m_(t); }
 #define OPTIONS_ADD_INT(opts, name) if(!error && name) { char * t = 0; \
         STRING_ADD( t , registration ); STRING_ADD( t, OY_SLASH #name ); \
         oySprintf_( num, "%d", name ); \
-        error = oyOptions_SetFromText( &opts, t, \
+        error = oyOptions_SetFromString( &opts, t, \
                                        num, OY_CREATE_NEW ); \
         if(t) oyFree_m_(t); }
 
@@ -101,7 +101,7 @@ int            oyDeviceFillInfos     ( const char        * registration,
           *device = (oyConfig_s_*)oyConfig_FromRegistration( registration, 0 );
         error = !*device;
         if(!error && device_name)
-        error = oyOptions_SetFromText( &(*device)->backend_core, t,
+        error = oyOptions_SetFromString( &(*device)->backend_core, t,
                                        device_name, OY_CREATE_NEW );
         oyFree_m_(t);
 
@@ -159,55 +159,55 @@ int            oyDeviceFillInfos     ( const char        * registration,
             sprintf( text, "%g", colors[0] );
             STRING_ADD(t, registration); STRING_ADD(t, OY_SLASH );
             STRING_ADD(t, "EDID_red_x" );
-            error = oyOptions_SetFromText( &(*device)->backend_core, t,
+            error = oyOptions_SetFromString( &(*device)->backend_core, t,
                                          text, OY_CREATE_NEW );
             oyFree_m_(t);
             STRING_ADD(t, registration); STRING_ADD(t, OY_SLASH );
             STRING_ADD(t, "EDID_red_y" );
             sprintf( text, "%g", colors[1] );
-            error = oyOptions_SetFromText( &(*device)->backend_core, t,
+            error = oyOptions_SetFromString( &(*device)->backend_core, t,
                                          text, OY_CREATE_NEW );
             oyFree_m_(t);
             STRING_ADD(t, registration); STRING_ADD(t, OY_SLASH );
             STRING_ADD(t, "EDID_green_x" );
             sprintf( text, "%g", colors[2] );
-            error = oyOptions_SetFromText( &(*device)->backend_core, t,
+            error = oyOptions_SetFromString( &(*device)->backend_core, t,
                                          text, OY_CREATE_NEW );
             oyFree_m_(t);
             STRING_ADD(t, registration); STRING_ADD(t, OY_SLASH );
             STRING_ADD(t, "EDID_green_y" );
             sprintf( text, "%g", colors[3] );
-            error = oyOptions_SetFromText( &(*device)->backend_core, t,
+            error = oyOptions_SetFromString( &(*device)->backend_core, t,
                                          text, OY_CREATE_NEW );
             oyFree_m_(t);
             STRING_ADD(t, registration); STRING_ADD(t, OY_SLASH );
             STRING_ADD(t, "EDID_blue_x" );
             sprintf( text, "%g", colors[4] );
-            error = oyOptions_SetFromText( &(*device)->backend_core, t,
+            error = oyOptions_SetFromString( &(*device)->backend_core, t,
                                          text, OY_CREATE_NEW );
             oyFree_m_(t);
             STRING_ADD(t, registration); STRING_ADD(t, OY_SLASH );
             STRING_ADD(t, "EDID_blue_y" );
             sprintf( text, "%g", colors[5] );
-            error = oyOptions_SetFromText( &(*device)->backend_core, t,
+            error = oyOptions_SetFromString( &(*device)->backend_core, t,
                                          text, OY_CREATE_NEW );
             oyFree_m_(t);
             STRING_ADD(t, registration); STRING_ADD(t, OY_SLASH );
             STRING_ADD(t, "EDID_white_x" );
             sprintf( text, "%g", colors[6] );
-            error = oyOptions_SetFromText( &(*device)->backend_core, t,
+            error = oyOptions_SetFromString( &(*device)->backend_core, t,
                                          text, OY_CREATE_NEW );
             oyFree_m_(t);
             STRING_ADD(t, registration); STRING_ADD(t, OY_SLASH );
             STRING_ADD(t, "EDID_white_y" );
             sprintf( text, "%g", colors[7] );
-            error = oyOptions_SetFromText( &(*device)->backend_core, t,
+            error = oyOptions_SetFromString( &(*device)->backend_core, t,
                                          text, OY_CREATE_NEW );
             oyFree_m_(t);
             STRING_ADD(t, registration); STRING_ADD(t, OY_SLASH );
             STRING_ADD(t, "EDID_gamma" );
             sprintf( text, "%g", colors[8] );
-            error = oyOptions_SetFromText( &(*device)->backend_core, t,
+            error = oyOptions_SetFromString( &(*device)->backend_core, t,
                                          text, OY_CREATE_NEW );
             oyFree_m_(t);
 
@@ -267,7 +267,7 @@ int            oyDeviceFillEdid      ( const char        * registration,
       error = oyMiscBlobGetMD5_(edi, edi_size, hash);
       oySprintf_( edid_text, "%08x%08x%08x%08x", h[0], h[1], h[2], h[3] );
       oyStringAddPrintf( &t, 0,0, "%s/EDID_md5", registration );
-      error = oyOptions_SetFromText( &(*device)->backend_core, t,
+      error = oyOptions_SetFromString( &(*device)->backend_core, t,
                                      edid_text, OY_CREATE_NEW );
 
       t[0] = edid_text[0] = '\000';
@@ -275,7 +275,7 @@ int            oyDeviceFillEdid      ( const char        * registration,
       for(i = 0; i < edi_size; ++i)
         sprintf( &edid_text[2+i*2], "%02X", e[i]);
       oyStringAddPrintf( &t, 0,0, "%s/EDID", registration );
-      error = oyOptions_SetFromText( &(*device)->backend_core, t,
+      error = oyOptions_SetFromString( &(*device)->backend_core, t,
                                      edid_text, OY_CREATE_NEW );
       oyFree_m_( t );
       oyFree_m_( edid_text );

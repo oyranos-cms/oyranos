@@ -446,7 +446,7 @@ int main( int argc , char** argv )
       char * show_text = 0;
       const char * file_name = NULL;
 
-      error = oyOptions_SetFromText( &options,
+      error = oyOptions_SetFromString( &options,
                                  "//" OY_TYPE_STD "/argv/TAXI_id",
                                  taxi_id,
                                  OY_CREATE_NEW );
@@ -522,9 +522,9 @@ int    installProfile                ( oyProfile_s       * ip,
         const char * in = oyProfile_GetText( ip, oyNAME_DESCRIPTION );
         oyOptions_s * opts = 0;
 
-        oyOptions_SetFromText( &opts, "////path", path, OY_CREATE_NEW );
+        oyOptions_SetFromString( &opts, "////path", path, OY_CREATE_NEW );
         if(is_device_profile)
-          oyOptions_SetFromText( &opts, "////device", "1", OY_CREATE_NEW );
+          oyOptions_SetFromString( &opts, "////device", "1", OY_CREATE_NEW );
         error = oyProfile_Install( ip, oySCOPE_USER, opts );
 
         if(error == oyERROR_DATA_AMBIGUITY)

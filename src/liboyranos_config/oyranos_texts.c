@@ -1313,10 +1313,10 @@ oyConfigs_s *      oyGetMonitors_    ( oyOptions_s      ** options )
 {
   oyConfigs_s * devices = NULL;
   /* get XCM_ICC_COLOR_SERVER_TARGET_PROFILE_IN_X_BASE */
-  oyOptions_SetFromText( options,
+  oyOptions_SetFromString( options,
               "//"OY_TYPE_STD"/config/icc_profile.x_color_region_target",
               "yes", OY_CREATE_NEW );
-  oyOptions_SetFromText( options, "//" OY_TYPE_STD "/config/command",
+  oyOptions_SetFromString( options, "//" OY_TYPE_STD "/config/command",
                                   "properties", OY_CREATE_NEW );
   oyDevicesGet( 0, "monitor._native", *options, &devices );
 
@@ -2312,7 +2312,7 @@ int      oyOptions_SetRegFromText    ( oyOptions_s      ** options,
   } else
     o = oyOption_FromRegistration( registration, NULL );
 
-  error = oyOption_SetFromText( o,
+  error = oyOption_SetFromString( o,
     /* cache the searched for value,
      * or mark with empty string if nothing was found */
                           value ? value : "",

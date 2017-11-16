@@ -161,7 +161,7 @@ int        oyXML2XFORMsCmdLineSelect1Handler( xmlNodePtr          cur,
 
   /* collect results */
   if(xpath && forms_args)
-    oyOptions_SetFromText( (oyOptions_s**)&forms_args->xforms_data_model_,
+    oyOptions_SetFromString( (oyOptions_s**)&forms_args->xforms_data_model_,
                            xpath+1, default_value, OY_CREATE_NEW );
   if(default_key)
     oyFree_m_( default_key );

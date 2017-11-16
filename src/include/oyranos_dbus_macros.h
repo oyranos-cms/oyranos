@@ -206,7 +206,7 @@ static void oyCallbackDBus           ( double              progress_zero_till_on
   /* Just a informational callback in case DBus quits. */ \
   job->finish = finish_; \
   oyOption_s * o = oyOption_FromRegistration( key_fragment, NULL ); \
-  oyOption_SetFromText( o, key_fragment, 0 ); \
+  oyOption_SetFromString( o, key_fragment, 0 ); \
   job->context = (oyStruct_s*)o; \
   /* The callback informs about DBus events now from inside the main thread. \
    * Here we should set a update state. */ \

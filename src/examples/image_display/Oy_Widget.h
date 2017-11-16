@@ -97,7 +97,7 @@ public:
     job->cb_progress_context = (oyStruct_s*) oyPointer_Copy( oy_ptr, 0 );
     oyOptions_MoveInStruct( &module_options, OY_BEHAVIOUR_STD "/expensive_callback", (oyStruct_s**)&job, OY_CREATE_NEW );
     /* wait no longer than approximately 2 seconds */
-    oyOptions_SetFromText( &module_options, OY_BEHAVIOUR_STD "/expensive", "11", OY_CREATE_NEW );
+    oyOptions_SetFromString( &module_options, OY_BEHAVIOUR_STD "/expensive", "11", OY_CREATE_NEW );
 
     /* observe the icc node */
     oyStruct_ObserverAdd( (oyStruct_s*)icc, (oyStruct_s*)conversion(),

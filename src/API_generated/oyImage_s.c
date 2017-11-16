@@ -457,7 +457,7 @@ oyImage_s *    oyImage_CreateForDisplay ( int              width,
     error = !display_rectangle;
     
     if(error <= 0 && display_name)
-      error = oyOptions_SetFromText( &s->tags, "//imaging/output/display_name",
+      error = oyOptions_SetFromString( &s->tags, "//imaging/output/display_name",
                                      display_name, OY_CREATE_NEW );
 
     if(error <= 0 && icc_profile_flags)
@@ -1931,7 +1931,7 @@ int    oyImage_FromFile              ( const char        * file_name,
   if(in)
   options = oyFilterNode_GetOptions( in, OY_SELECT_FILTER );
   /* add a new option with the appropriate value */
-  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/file_read/filename",
+  error = oyOptions_SetFromString( &options, "//" OY_TYPE_STD "/file_read/filename",
                                  file_name, OY_CREATE_NEW );
   DBGs_NUM1_S(in, "set //" OY_TYPE_STD "/file_read/filename to %s", file_name);
   if(icc_profile_flags)
@@ -1951,7 +1951,7 @@ int    oyImage_FromFile              ( const char        * file_name,
   *image = oyConversion_GetImage( conversion, OY_INPUT );
 
   options = oyImage_GetTags( *image );
-  oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/file_read/filename",
+  oyOptions_SetFromString( &options, "//" OY_TYPE_STD "/file_read/filename",
                                  file_name, OY_CREATE_NEW );
   oyOptions_Release( &options );
 
@@ -2002,7 +2002,7 @@ int    oyImage_ToFile                ( oyImage_s         * image,
     oyOptions_CopyFrom( &options, opts, oyBOOLEAN_UNION, 0,0);
   }
   /* add a new option with the appropriate value */
-  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/file_write/filename",
+  error = oyOptions_SetFromString( &options, "//" OY_TYPE_STD "/file_write/filename",
                                  file_name, OY_CREATE_NEW );
   /* release the options object, this means its not any more refered from here*/
   oyOptions_Release( &options );
@@ -2015,7 +2015,7 @@ int    oyImage_ToFile                ( oyImage_s         * image,
   oyConversion_Set( conversion, 0, out );
 
   options = oyImage_GetTags( image );
-  oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/file_write/filename",
+  oyOptions_SetFromString( &options, "//" OY_TYPE_STD "/file_write/filename",
                                  file_name, OY_CREATE_NEW );
   oyOptions_Release( &options );
 

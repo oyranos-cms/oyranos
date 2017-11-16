@@ -123,11 +123,11 @@ oyConversion_s * oyConversion_FromImageFileName  (
   if(in)
   options = oyFilterNode_GetOptions( in, OY_SELECT_FILTER );
   /* add a new option with the appropriate value */
-  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/file_read/filename",
+  error = oyOptions_SetFromString( &options, "//" OY_TYPE_STD "/file_read/filename",
                                  file_name, OY_CREATE_NEW );
   /* set image process options */
   if(flags & 0x01)
-    error = oyOptions_SetFromText( &options,
+    error = oyOptions_SetFromString( &options,
                                    "//" OY_TYPE_STD "/file_read/device",
                                    "1", OY_CREATE_NEW );
 
@@ -139,7 +139,7 @@ oyConversion_s * oyConversion_FromImageFileName  (
                                     (oyStruct_s**)&prof, OY_CREATE_NEW );
   }
   if(flags & 0x02)
-    error = oyOptions_SetFromText( &options,
+    error = oyOptions_SetFromString( &options,
                                    "//" OY_TYPE_STD "/file_read/render",
                                    "0", OY_CREATE_NEW );
 
@@ -265,14 +265,14 @@ int main(int argc, char ** argv)
   {
     oyOptions_s * options = NULL;
     if(strcmp(format,"fallback-icc") == 0)
-      oyOptions_SetFromText( &options,
+      oyOptions_SetFromString( &options,
                    "//" OY_TYPE_STD "/config/icc_profile.fallback",
                              "yes", OY_CREATE_NEW );
     else
-      oyOptions_SetFromText( &options,
+      oyOptions_SetFromString( &options,
                    "//" OY_TYPE_STD "/config/icc_profile",
                              "yes", OY_CREATE_NEW );
-    error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
+    error = oyOptions_SetFromString( &options, "//" OY_TYPE_STD "/config/command",
                                    "properties", OY_CREATE_NEW );  
     if(icc_profile_flags)
       error = oyOptions_SetFromInt( &options,
@@ -375,7 +375,7 @@ int main(int argc, char ** argv)
           {
             oyOptions_s * opts = 0;
             t = oyConfig_FindString( device, "prefix", 0 );
-            error = oyOptions_SetFromText( &opts, "///key_prefix_required",
+            error = oyOptions_SetFromString( &opts, "///key_prefix_required",
                                                   t, OY_CREATE_NEW );
             oyProfile_AddDevice( profile, device, opts );
             oyOptions_Release( &opts );
@@ -403,7 +403,7 @@ int main(int argc, char ** argv)
 
       if(strcmp(format,"openicc") == 0)
       {
-        error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/options/source",
+        error = oyOptions_SetFromString( &options, "//" OY_TYPE_STD "/options/source",
                                        "db", OY_CREATE_NEW );  
         error = oyDeviceToJSON( device, options, &json, oyAllocFunc );
         oyOptions_Release( &options );
@@ -424,7 +424,7 @@ int main(int argc, char ** argv)
         { fprintf( stderr, "no RankMap found\n" ); exit(0);
         }
 
-        error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/options/device_class",
+        error = oyOptions_SetFromString( &options, "//" OY_TYPE_STD "/options/device_class",
                                        "camera", OY_CREATE_NEW );  
         oyRankMapToJSON( map, options, &json, oyAllocFunc );
         oyOptions_Release( &options );
@@ -454,7 +454,7 @@ int main(int argc, char ** argv)
       char * comment = 0;
       STRING_ADD( comment, "source image was " );
       STRING_ADD( comment, image_name );
-      oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/file_write/comment",
+      oyOptions_SetFromString( &options, "//" OY_TYPE_STD "/file_write/comment",
                              comment, OY_CREATE_NEW );
       if((error = oyImage_ToFile( image, output, options )) != 0)
         fprintf( stderr, "error in oyImage_ToFile( %s )\n", output );

@@ -464,7 +464,7 @@ int      elDB_getStrings             ( oyDB_s            * db,
       if(value[0])
       {
         oyOption_s * o = oyOption_FromRegistration( key, NULL );
-        oyOption_SetFromText(o, value, 0);
+        oyOption_SetFromString(o, value, 0);
         oyOption_SetFlags(o, oyOption_GetFlags(o) & (~oyOPTIONATTRIBUTE_EDIT));
         oyOption_SetSource( o, oyOPTIONSOURCE_DATA );
         if(!*options)

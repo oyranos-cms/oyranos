@@ -274,7 +274,7 @@ int  oyMoveColorServerProfiles       ( const char        * display_name,
   monitor = oyConfigs_Get( devices, screen );
   oyConfigs_Release( &devices );
   /* get XCM_ICC_COLOUR_SERVER_TARGET_PROFILE_IN_X_BASE */
-  oyOptions_SetFromText( &options,
+  oyOptions_SetFromString( &options,
               "//"OY_TYPE_STD"/config/icc_profile.x_color_region_target", "yes", OY_CREATE_NEW );
   oyDeviceGetProfile( monitor, options, &monitor_icc );
   oyConfig_Release( &monitor );

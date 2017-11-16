@@ -1127,32 +1127,32 @@ oyTESTRESULT_e testOptionsSet ()
 
   fprintf(stdout, "\n" );
 
-  error = oyOptions_SetFromText( &setA,
+  error = oyOptions_SetFromString( &setA,
                                  "org/test/" OY_TYPE_STD "/filter/gamma_A",
                                  "1", OY_CREATE_NEW );
-  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromText() error: %d", error )
-  error = oyOptions_SetFromText( &setA,
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromString() error: %d", error )
+  error = oyOptions_SetFromString( &setA,
                                  "org/test/" OY_TYPE_STD "/filter/gamma_A1",
                                  "1", OY_CREATE_NEW );
-  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromText() error: %d", error )
-  error = oyOptions_SetFromText( &setA,
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromString() error: %d", error )
+  error = oyOptions_SetFromString( &setA,
                                  "org/test/" OY_TYPE_STD "/filter/gamma_A12",
                                  "1", OY_CREATE_NEW );
-  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromText() error: %d", error )
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromString() error: %d", error )
 
   if(!error && oyOptions_Count( setA ) == 3)
   { PRINT_SUB( oyTESTRESULT_SUCCESS, 
-    "oyOptions_SetFromText() similiar registration good  " );
+    "oyOptions_SetFromString() similiar registration good  " );
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL, 
-    "oyOptions_SetFromText() similiar registration failed" );
+    "oyOptions_SetFromString() similiar registration failed" );
   }
 
-  error = oyOptions_SetFromText( &setA,
+  error = oyOptions_SetFromString( &setA,
                                  "org/oyranos/" OY_TYPE_STD "/filter/gamma_A2",
                                  "one\ntwo\nthree\nfour",
                                  OY_CREATE_NEW | OY_STRING_LIST);
-  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromText() error: %d", error )
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromString() error: %d", error )
   t = oyOptions_GetText( setA, oyNAME_NAME );
   if(t && t[0] && oyOptions_Count( setA ) == 4)
   {
@@ -1188,7 +1188,7 @@ oyTESTRESULT_e testOptionsSet ()
     found = 1;
   else
     o = oyOption_FromRegistration( OY_STD "/filter", testobj );
-  oyOption_SetFromText( o, "", 0 );
+  oyOption_SetFromString( o, "", 0 );
   if(found)
     oyOption_Release( &o );
   else
@@ -1200,7 +1200,7 @@ oyTESTRESULT_e testOptionsSet ()
     found = 1;
   else
     o = oyOption_FromRegistration( OY_STD "/filter/level_one", testobj );
-  oyOption_SetFromText( o, "", 0 );
+  oyOption_SetFromString( o, "", 0 );
   if(found)
     oyOption_Release( &o );
   else
@@ -1212,7 +1212,7 @@ oyTESTRESULT_e testOptionsSet ()
     found = 1;
   else
     o = oyOption_FromRegistration( OY_STD "/filter/level_one/level_two", testobj );
-  oyOption_SetFromText( o, "1", 0 );
+  oyOption_SetFromString( o, "1", 0 );
   if(found)
     oyOption_Release( &o );
   else
@@ -1273,7 +1273,7 @@ oyTESTRESULT_e testOptionsSet ()
     "oyOptions_FromJSON() simple thierd              %d", count );
   }
 
-  oyOptions_SetFromText( &options, OY_STD "/key_path", 
+  oyOptions_SetFromString( &options, OY_STD "/key_path", 
                                    "org/host/path", OY_CREATE_NEW);
   error = oyOptions_FromJSON( json3, options, &setA, "org/free/[1]" );
   if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_FromJSON() error: %d", error )
@@ -1290,11 +1290,11 @@ oyTESTRESULT_e testOptionsSet ()
   t = oyOptions_GetText( setA, (oyNAME_e) oyNAME_JSON );
   fprintf( zout, "%s\n", t?t:0 );
 
-  oyOptions_SetFromText( &options, OY_STD "/key_path", 
+  oyOptions_SetFromString( &options, OY_STD "/key_path", 
                                    "org/host/path2", OY_CREATE_NEW);
   error = oyOptions_FromJSON( json3, options, &setA, "org/free/[1]" );
   if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_FromJSON() error: %d", error )
-  oyOptions_SetFromText( &options, OY_STD "/key_path", 
+  oyOptions_SetFromString( &options, OY_STD "/key_path", 
                                    "org/host/path2/four", OY_CREATE_NEW);
   error = oyOptions_FromJSON( json3, options, &setA, "org/free/[1]" );
   if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_FromJSON() error: %d", error )
@@ -1340,52 +1340,52 @@ oyTESTRESULT_e testOptionsCopy ()
 
   fprintf(stdout, "\n" );
 
-  error = oyOptions_SetFromText( &setA,
+  error = oyOptions_SetFromString( &setA,
                 OY_INTERNAL "/lcm2.color.icc/rendering_bpc.advanced",
                                  "1", OY_CREATE_NEW );
-  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromText() error: %d", error )
-  error = oyOptions_SetFromText( &setA,
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromString() error: %d", error )
+  error = oyOptions_SetFromString( &setA,
                                  "//" OY_TYPE_STD "/image/A", "true",
                                  OY_CREATE_NEW );
-  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromText() error: %d", error )
-  error = oyOptions_SetFromText( &setA,
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromString() error: %d", error )
+  error = oyOptions_SetFromString( &setA,
                                  "//" OY_TYPE_STD "/image/A", "true",
                                  OY_CREATE_NEW );
-  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromText() error: %d", error )
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromString() error: %d", error )
 
   if(!error && oyOptions_Count( setA ) == 2)
   { PRINT_SUB( oyTESTRESULT_SUCCESS, 
-    "oyOptions_SetFromText() good                    " );
+    "oyOptions_SetFromString() good                    " );
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL, 
-    "oyOptions_SetFromText() failed                  " );
+    "oyOptions_SetFromString() failed                  " );
   }
 
-  error = oyOptions_SetFromText( &setB,
+  error = oyOptions_SetFromString( &setB,
                                  "//" OY_TYPE_STD "/config/A", "true",
                                  OY_CREATE_NEW );
-  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromText() error: %d", error )
-  error = oyOptions_SetFromText( &setB,
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromString() error: %d", error )
+  error = oyOptions_SetFromString( &setB,
                                  "//" OY_TYPE_STD "/config/B", "true",
                                  OY_CREATE_NEW );
-  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromText() error: %d", error )
-  error = oyOptions_SetFromText( &setB,
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromString() error: %d", error )
+  error = oyOptions_SetFromString( &setB,
                                  "//" OY_TYPE_STD "/config/C", "true",
                                  OY_CREATE_NEW );
-  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromText() error: %d", error )
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromString() error: %d", error )
 
-  error = oyOptions_SetFromText( &setC,
+  error = oyOptions_SetFromString( &setC,
                                  "//" OY_TYPE_STD "/config/B", "true",
                                  OY_CREATE_NEW );
-  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromText() error: %d", error )
-  error = oyOptions_SetFromText( &setC,
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromString() error: %d", error )
+  error = oyOptions_SetFromString( &setC,
                                  "//" OY_TYPE_STD "/config/D", "true",
                                  OY_CREATE_NEW );
-  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromText() error: %d", error )
-  error = oyOptions_SetFromText( &setC,
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromString() error: %d", error )
+  error = oyOptions_SetFromString( &setC,
                                  "//" OY_TYPE_STD "/config/C", "true",
                                  OY_CREATE_NEW );
-  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromText() error: %d", error )
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromString() error: %d", error )
 
   error = oyOptions_CopyFrom( &resultA, setA, oyBOOLEAN_UNION,
                               oyFILTER_REG_NONE,0 );
@@ -1573,7 +1573,7 @@ oyTESTRESULT_e testSettings ()
                                             oyOPTIONATTRIBUTE_FRONT |
                                             OY_SELECT_COMMON */, testobj );
 
-  oyOptions_SetFromText( &opts, "cmyk_cmyk_black_preservation", "1", 0 );
+  oyOptions_SetFromString( &opts, "cmyk_cmyk_black_preservation", "1", 0 );
 
   count = oyOptions_Count( opts );
   if(!count)
@@ -2544,7 +2544,7 @@ oyTESTRESULT_e testDeviceLinkProfile ()
                                               0,0, 12,12,
                                               icc_profile_flags, testobj );
   oyOptions_s * options = NULL;
-  oyOptions_SetFromText( &options, OY_CMM_STD"/context", "lcm2", OY_CREATE_NEW );
+  oyOptions_SetFromString( &options, OY_CMM_STD"/context", "lcm2", OY_CREATE_NEW );
   oyConversion_s *cc = oyConversion_CreateBasicPixels( in, out, options, testobj );
   oyFilterGraph_s * graph = NULL;
   oyFilterNode_s * node = NULL;
@@ -2736,7 +2736,7 @@ static int     setupColourTable      ( PrivColorContext  * ccontext,
 
       oyProfile_Release( &src_profile );
 
-      oyOptions_SetFromText( &options, "org/oyranos/cmm/any/cached", "1", OY_CREATE_NEW );
+      oyOptions_SetFromString( &options, "org/oyranos/cmm/any/cached", "1", OY_CREATE_NEW );
       cc = oyConversion_CreateBasicPixels( image_in, image_out, options, testobj );
       if (cc == NULL)
       {
@@ -2747,7 +2747,7 @@ static int     setupColourTable      ( PrivColorContext  * ccontext,
       }
       oyOptions_Release( &options );
 
-      oyOptions_SetFromText( &options,
+      oyOptions_SetFromString( &options,
                                      "//" OY_TYPE_STD "/config/display_mode", "1",
                                      OY_CREATE_NEW );
       error = oyConversion_Correct(cc, "//" OY_TYPE_STD "/icc_color", flags, options);
@@ -2769,7 +2769,7 @@ static int     setupColourTable      ( PrivColorContext  * ccontext,
         oyConversion_Release( &cc );
         oyFilterNode_Release( &icc );
 
-        oyOptions_SetFromText( &options, OY_DEFAULT_CMM_CONTEXT, "lcm2", OY_CREATE_NEW );
+        oyOptions_SetFromString( &options, OY_DEFAULT_CMM_CONTEXT, "lcm2", OY_CREATE_NEW );
         cc = oyConversion_CreateBasicPixels( image_in, image_out, options, testobj );
         if (cc == NULL)
         {
@@ -2779,7 +2779,7 @@ static int     setupColourTable      ( PrivColorContext  * ccontext,
           goto clean_setupColourTable;
         }
         oyOptions_Release( &options );
-        oyOptions_SetFromText( &options,
+        oyOptions_SetFromString( &options,
                                      "//" OY_TYPE_STD "/config/display_mode", "1",
                                      OY_CREATE_NEW );
         error = oyConversion_Correct(cc, "//" OY_TYPE_STD "/icc_color", flags, options);
@@ -3298,10 +3298,10 @@ oyTESTRESULT_e testWidgets ()
 
   oyConfigs_s * configs = 0;
   oyOptions_s * options = NULL;
-  error = oyOptions_SetFromText( &options,
+  error = oyOptions_SetFromString( &options,
                                      "//" OY_TYPE_STD "/config/command",
                                      "list", OY_CREATE_NEW );
-  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromText() error: %d", error )
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromString() error: %d", error )
   error = oyDevicesGet( 0, "monitor", options, &configs );
   if(error && displayFail() == oyTESTRESULT_FAIL) PRINT_SUB( oyTESTRESULT_XFAIL, "oyDevicesGet() error: %d", error )
   int devices_n = oyConfigs_Count( configs );
@@ -3395,14 +3395,14 @@ oyTESTRESULT_e testCMMDevicesListing ()
 
 
   /* add list call to module arguments */
-  error = oyOptions_SetFromText( &options_list,
+  error = oyOptions_SetFromString( &options_list,
                                  "//" OY_TYPE_STD "/config/command", "list",
                                  OY_CREATE_NEW );
-  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromText() error: %d", error )
-  error = oyOptions_SetFromText( &options_list,
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromString() error: %d", error )
+  error = oyOptions_SetFromString( &options_list,
                                  "//" OY_TYPE_STD "/config/icc_profile",
                                  "true", OY_CREATE_NEW );
-  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromText() error: %d", error )
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromString() error: %d", error )
 
   fprintf( zout, "oyConfigs_FromDomain() \"list\" call:\n" );
   for( i = 0; texts && i < (int)count; ++i)
@@ -3429,7 +3429,7 @@ oyTESTRESULT_e testCMMDevicesListing ()
       {
         oyOptions_s * options = 0;
         const char * t = 0;
-        oyOptions_SetFromText( &options,
+        oyOptions_SetFromString( &options,
                    "//" OY_TYPE_STD "/config/icc_profile.x_color_region_target",
                          "yes", OY_CREATE_NEW );
         error = oyDeviceGetProfile( config, options, &p );
@@ -3579,10 +3579,10 @@ oyTESTRESULT_e testCMMDevicesDetails ()
     fprintf(zout,"%d[rank %u]: %s\n", i, (unsigned int)rank_list[i], registration_domain);
 
     /* set a general request */
-    error = oyOptions_SetFromText( &options,
+    error = oyOptions_SetFromString( &options,
                                      "//" OY_TYPE_STD "/config/command",
                                      "properties", OY_CREATE_NEW );
-    if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromText() error: %d", error )
+    if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromString() error: %d", error )
     /* send the query to a module */
     error = oyConfigs_FromDomain( registration_domain,
                                   options, &configs, testobj );
@@ -3729,12 +3729,12 @@ oyTESTRESULT_e testCMMRankMap ()
   oyOptions_s * options = 0;
   oyConfigs_s * devices = 0;
 
-  oyOptions_SetFromText( &options,
+  oyOptions_SetFromString( &options,
                    "//" OY_TYPE_STD "/config/icc_profile.x_color_region_target",
                          "yes", OY_CREATE_NEW );
-  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/command",
+  error = oyOptions_SetFromString( &options, "//" OY_TYPE_STD "/config/command",
                                    "properties", OY_CREATE_NEW );  
-  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromText() error: %d", error )
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromString() error: %d", error )
   error = oyDevicesGet( OY_TYPE_STD, "monitor", options, &devices );
   if(error && displayFail() == oyTESTRESULT_FAIL) PRINT_SUB( oyTESTRESULT_XFAIL, "oyDevicesGet() error: %d", error )
   oyOptions_Release( &options );
@@ -3838,9 +3838,9 @@ oyTESTRESULT_e testCMMRankMap ()
 
   oyStringListRelease_( &list, count, oyDeAllocateFunc_ );
 
-  error = oyOptions_SetFromText( &options, "//" OY_TYPE_STD "/config/path",
+  error = oyOptions_SetFromString( &options, "//" OY_TYPE_STD "/config/path",
                                    "1", OY_CREATE_NEW );  
-  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromText() error: %d", error )
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromString() error: %d", error )
   error = oyRankMapList( NULL, options, &list, oyAllocateFunc_ );
   if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyRankMapList() error: %d", error )
   oyOptions_Release( &options );
@@ -3886,10 +3886,10 @@ oyTESTRESULT_e testCMMMonitorJSON ()
   char * first_json = NULL;
 
   clck = oyClock();
-  error = oyOptions_SetFromText( &options,
+  error = oyOptions_SetFromString( &options,
                                      "//" OY_TYPE_STD "/config/command",
                                      "properties", OY_CREATE_NEW );
-  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromText() error: %d", error )
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromString() error: %d", error )
   error = oyDevicesGet( 0, "monitor", options, &configs );
   if( error <= 0 && configs )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
@@ -3957,10 +3957,10 @@ oyTESTRESULT_e testCMMMonitorJSON ()
     }
 #   endif
     oyProfile_s * p = NULL;
-    oyOptions_SetFromText( &options,
+    oyOptions_SetFromString( &options,
                   "//" OY_TYPE_STD "/config/command",
                            "list", OY_CREATE_NEW );
-    oyOptions_SetFromText( &options,
+    oyOptions_SetFromString( &options,
                    "//" OY_TYPE_STD "/config/icc_profile.x_color_region_target",
                           "yes", OY_CREATE_NEW );
     error = oyDeviceGetProfile( config, options, &p );
@@ -3982,7 +3982,7 @@ oyTESTRESULT_e testCMMMonitorJSON ()
     }
 #   endif
 
-    oyOptions_SetFromText( &options,
+    oyOptions_SetFromString( &options,
                    "//" OY_TYPE_STD "/config/icc_profile.fallback",
                           "yes", OY_CREATE_NEW );
     error = oyDeviceGetProfile( config, options, &p );
@@ -4005,10 +4005,10 @@ oyTESTRESULT_e testCMMMonitorJSON ()
 
     error = oyDeviceFromJSON( json_text, 0, &config );
     if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyDeviceFromJSON() error: %d", error )
-    oyOptions_SetFromText( &options,
+    oyOptions_SetFromString( &options,
                   "//" OY_TYPE_STD "/config/command",
                            "properties", OY_CREATE_NEW );
-    oyOptions_SetFromText( &options,
+    oyOptions_SetFromString( &options,
                    "//" OY_TYPE_STD "/config/icc_profile.x_color_region_target",
                           "yes", OY_CREATE_NEW );
     error = oyDeviceGetProfile( config, options, &p );
@@ -4032,7 +4032,7 @@ oyTESTRESULT_e testCMMMonitorJSON ()
     oyProfile_Release( &list_profile );
 
 
-    oyOptions_SetFromText( &options,
+    oyOptions_SetFromString( &options,
                    "//" OY_TYPE_STD "/config/icc_profile.fallback",
                           "yes", OY_CREATE_NEW );
     error = oyDeviceGetProfile( config, options, &p );
@@ -4257,15 +4257,15 @@ oyTESTRESULT_e testCMMMonitorModule ()
   fprintf(stdout, "\n" );
 
   /* non existing display */
-  error = oyOptions_SetFromText( &options,
+  error = oyOptions_SetFromString( &options,
                                  "//" OY_TYPE_STD "/config/device_name",
                                  t, OY_CREATE_NEW );
-  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromText() error: %d", error )
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromString() error: %d", error )
   /* clean up */
-  error = oyOptions_SetFromText( &options,
+  error = oyOptions_SetFromString( &options,
                                  "//" OY_TYPE_STD "/config/command",
                                  "unset", OY_CREATE_NEW );
-  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "(oyOptions_SetFromText) error: %d", error )
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "(oyOptions_SetFromString) error: %d", error )
   error = oyDevicesGet( OY_TYPE_STD, "monitor", options, &devices );
   oyConfigs_Release( &devices );
 
@@ -4853,7 +4853,7 @@ oyTESTRESULT_e testCMMnmRun ()
 
   clck = oyClock();
   oyOption_s * option = oyOption_FromRegistration(OY_STD"/behaviour/rendering_bpc", testobj);
-  oyOption_SetFromText(option, "-1", 0);
+  oyOption_SetFromString(option, "-1", 0);
 
   for(i = 0; i < n*3*17; ++i)
   {
@@ -5984,8 +5984,8 @@ oyTESTRESULT_e testFilterNodeCMM( oyTESTRESULT_e result_,
   p_out = p_lab;
 
   oyOptions_s * options = NULL;
-  oyOptions_SetFromText( &options, "////rendering_intent", "3", OY_CREATE_NEW );
-  oyOptions_SetFromText( &options, "////context", reg_pattern, OY_CREATE_NEW );
+  oyOptions_SetFromString( &options, "////rendering_intent", "3", OY_CREATE_NEW );
+  oyOptions_SetFromString( &options, "////context", reg_pattern, OY_CREATE_NEW );
 
   oyConversion_s * cc = oyConversion_CreateBasicPixelsFromBuffers(
                               p_in, buf_16in2x2, oyDataType_m(buf_type_in),
@@ -6232,7 +6232,7 @@ oyTESTRESULT_e testConversion()
 
   oyOptions_s * options = NULL;
 
-  oyOptions_SetFromText( &options, "////cached", "1", OY_CREATE_NEW );
+  oyOptions_SetFromString( &options, "////cached", "1", OY_CREATE_NEW );
   oyConversion_s * cc = oyConversion_CreateBasicPixels( input,output, options, testobj );
   oyFilterGraph_s * cc_graph = oyConversion_GetGraph( cc );
   oyFilterNode_s * icc = oyFilterGraph_GetNode( cc_graph, -1, "///icc_color", 0 );
@@ -6282,7 +6282,7 @@ oyTESTRESULT_e testConversion()
   oyFilterGraph_Release( &cc_graph );
   oyFilterNode_Release( &icc );
 
-  oyOptions_SetFromText( &options, "////context", "lcm2", OY_CREATE_NEW );
+  oyOptions_SetFromString( &options, "////context", "lcm2", OY_CREATE_NEW );
   cc = oyConversion_CreateBasicPixels( input,output, options, testobj );
   cc_graph = oyConversion_GetGraph( cc );
   icc = oyFilterGraph_GetNode( cc_graph, -1, "///icc_color", 0 );
@@ -6333,8 +6333,8 @@ oyTESTRESULT_e testConversion()
   oyFilterGraph_Release( &cc_graph );
   oyFilterNode_Release( &icc );
 
-  oyOptions_SetFromText( &options, "////renderer", "lcms", OY_CREATE_NEW );
-  oyOptions_SetFromText( &options, "////context",  "lcm2", OY_CREATE_NEW );
+  oyOptions_SetFromString( &options, "////renderer", "lcms", OY_CREATE_NEW );
+  oyOptions_SetFromString( &options, "////context",  "lcm2", OY_CREATE_NEW );
   cc = oyConversion_CreateBasicPixels( input,output, options, testobj );
   cc_graph = oyConversion_GetGraph( cc );
   icc = oyFilterGraph_GetNode( cc_graph, -1, "///icc_color", 0 );
@@ -6354,8 +6354,8 @@ oyTESTRESULT_e testConversion()
   oyOptions_Release( &options );
 
   options = oyFilterNode_GetOptions( icc, oyOPTIONATTRIBUTE_ADVANCED );
-  oyOptions_SetFromText( &options, "////renderer", "lcm2", OY_CREATE_NEW );
-  oyOptions_SetFromText( &options, "////context", "lcms", OY_CREATE_NEW );
+  oyOptions_SetFromString( &options, "////renderer", "lcm2", OY_CREATE_NEW );
+  oyOptions_SetFromString( &options, "////context", "lcms", OY_CREATE_NEW );
   blob = oyFilterNode_ToBlob( icc, NULL );
 
   reg = oyFilterNode_GetRegistration( icc );
@@ -6469,7 +6469,7 @@ oyTESTRESULT_e testConversion()
   oyFilterNode_Release( &icc );
   oyOptions_Release( &node_opts );
 
-  oyOptions_SetFromText( &options, "////context", test_config_cmm, OY_CREATE_NEW );
+  oyOptions_SetFromString( &options, "////context", test_config_cmm, OY_CREATE_NEW );
   cc = oyConversion_CreateBasicPixels( input,output, options, 0 );
   cc_graph = oyConversion_GetGraph( cc );
   icc = oyFilterGraph_GetNode( cc_graph, -1, "///icc_color", 0 );
@@ -6519,7 +6519,7 @@ oyTESTRESULT_e testConversion()
   oyFilterNode_Release( &icc );
   oyOptions_Release( &node_opts );
 
-  oyOptions_SetFromText( &options, "////renderer", test_config_cmm, OY_CREATE_NEW );
+  oyOptions_SetFromString( &options, "////renderer", test_config_cmm, OY_CREATE_NEW );
   cc = oyConversion_CreateBasicPixels( input,output, options, 0 );
   cc_graph = oyConversion_GetGraph( cc );
   icc = oyFilterGraph_GetNode( cc_graph, -1, "///icc_color", 0 );
@@ -6763,7 +6763,7 @@ oyTESTRESULT_e testICCsCheck()
 
 
     oyOptions_s * options = NULL;
-    oyOptions_SetFromText( &options, OY_DEFAULT_CMM_CONTEXT, reg_pattern, OY_CREATE_NEW );
+    oyOptions_SetFromString( &options, OY_DEFAULT_CMM_CONTEXT, reg_pattern, OY_CREATE_NEW );
     uint32_t icc_profile_flags = oyICCProfileSelectionFlagsFromOptions( OY_CMM_STD,
                                        "//" OY_TYPE_STD "/icc_color", options, 0 );
     oyProfile_s /** p_cmyk = oyProfile_FromStd( oyEDITING_CMYK, NULL ),*/
@@ -6793,8 +6793,8 @@ oyTESTRESULT_e testICCsCheck()
                          p_out,
                          testobj );
     oyOptions_Release( &options );
-    oyOptions_SetFromText( &options, OY_DEFAULT_CMM_CONTEXT, reg_pattern, OY_CREATE_NEW );
-    oyOptions_SetFromText( &options, OY_DEFAULT_RENDERING_INTENT, "1", OY_CREATE_NEW );
+    oyOptions_SetFromString( &options, OY_DEFAULT_CMM_CONTEXT, reg_pattern, OY_CREATE_NEW );
+    oyOptions_SetFromString( &options, OY_DEFAULT_RENDERING_INTENT, "1", OY_CREATE_NEW );
     oyConversion_s * cc = oyConversion_CreateBasicPixels( input,output, options, testobj );
     oyFilterGraph_s * cc_graph = oyConversion_GetGraph( cc );
     oyFilterNode_s * icc = oyFilterGraph_GetNode( cc_graph, -1, "///icc_color", 0 );
@@ -6891,17 +6891,17 @@ oyTESTRESULT_e testICCsCheck()
     oyConversion_Release( &cc );
 
 
-    oyOptions_SetFromText( &options, OY_DEFAULT_CMM_CONTEXT, reg_pattern, OY_CREATE_NEW );
-    oyOptions_SetFromText( &options, OY_DEFAULT_RENDERING_INTENT, "1", OY_CREATE_NEW );
-    oyOptions_SetFromText( &options, OY_DEFAULT_PROOF_SOFT, "1", OY_CREATE_NEW );
+    oyOptions_SetFromString( &options, OY_DEFAULT_CMM_CONTEXT, reg_pattern, OY_CREATE_NEW );
+    oyOptions_SetFromString( &options, OY_DEFAULT_RENDERING_INTENT, "1", OY_CREATE_NEW );
+    oyOptions_SetFromString( &options, OY_DEFAULT_PROOF_SOFT, "1", OY_CREATE_NEW );
     cc = oyConversion_CreateBasicPixelsFromBuffers(
                               p_in, buf_f32in2x2, oyDataType_m(buf_type_in),
                               p_out, buf_f32out2x2, oyDataType_m(buf_type_out),
                                                     options, 4 );
-    error = oyOptions_SetFromText( &options,
+    error = oyOptions_SetFromString( &options,
                                      "//" OY_TYPE_STD "/config/display_mode", "1",
                                      OY_CREATE_NEW );
-    if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromText() error: %d", error )
+    if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromString() error: %d", error )
     /* activate policy */
     error = oyConversion_Correct( cc, "//" OY_TYPE_STD "/icc_color", oyOPTIONATTRIBUTE_ADVANCED, options);
     if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyConversion_Correct() error: %d", error )
@@ -6932,9 +6932,9 @@ oyTESTRESULT_e testICCsCheck()
 
 
     /* test multi profile transforms */
-    oyOptions_SetFromText( &options, OY_DEFAULT_CMM_CONTEXT, reg_pattern, OY_CREATE_NEW );
-    oyOptions_SetFromText( &options, OY_DEFAULT_RENDERING_INTENT, "0", OY_CREATE_NEW );
-    oyOptions_SetFromText( &options, OY_DEFAULT_PROOF_SOFT, "1", OY_CREATE_NEW );
+    oyOptions_SetFromString( &options, OY_DEFAULT_CMM_CONTEXT, reg_pattern, OY_CREATE_NEW );
+    oyOptions_SetFromString( &options, OY_DEFAULT_RENDERING_INTENT, "0", OY_CREATE_NEW );
+    oyOptions_SetFromString( &options, OY_DEFAULT_PROOF_SOFT, "1", OY_CREATE_NEW );
     oyProfile_s * p_cmyk = oyProfile_FromStd( oyEDITING_CMYK, icc_profile_flags, NULL );
     oyProfiles_s * proofing = oyProfiles_New(NULL);
     oyProfiles_MoveIn( proofing, &p_cmyk, -1 );

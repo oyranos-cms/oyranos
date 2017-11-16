@@ -254,7 +254,7 @@ public:
     job->work = loadImageName;
     job->finish = finishImageName;
     oyOption_s * o = oyOption_FromRegistration( "///file_name", NULL );
-    oyOption_SetFromText( o, file_name, 0 );
+    oyOption_SetFromString( o, file_name, 0 );
     job->context = (oyStruct_s*)o;
     job->cb_progress = jobCallback;
     oyJob_Add(&job, 0, 0);

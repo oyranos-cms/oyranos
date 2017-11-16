@@ -828,14 +828,14 @@ int          oyFilterNode_SetContext_( oyFilterNode_s_    * node,
               /* write the cmm4 context to memory */
               if(blob)
               {
-                error = oyOptions_SetFromText( &node->tags, "////verbose",
+                error = oyOptions_SetFromString( &node->tags, "////verbose",
                                                "true", OY_CREATE_NEW );
 
                 /* oy_debug is used to obtain a complete data set */
                 ptr = oyFilterNode_ContextToMem_( node, &size, oyAllocateFunc_);
                 oyBlob_SetFromData( (oyBlob_s*)blob, ptr, size,
                                     core_->api4_->context_type );
-                error = oyOptions_SetFromText( &node->tags, "////verbose",
+                error = oyOptions_SetFromString( &node->tags, "////verbose",
                                                "false", 0 );
 
                 goto clean;

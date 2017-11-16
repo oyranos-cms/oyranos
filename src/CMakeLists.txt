@@ -384,9 +384,12 @@ SET( DOC_SOURCES
 	${CMAKE_SOURCE_DIR}/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.c
 	${CMAKE_SOURCE_DIR}/src/modules/color/modules/*.c
 	${CMAKE_SOURCE_DIR}/src/modules/color/modules/*.cpp
+	${CMAKE_SOURCE_DIR}/src/modules/color/modules/*.h
 	${CMAKE_SOURCE_DIR}/src/modules/color/modules/devices/*.c
 	${CMAKE_SOURCE_DIR}/src/modules/color/modules/devices/*.cpp
+	${CMAKE_SOURCE_DIR}/src/modules/color/modules/devices/*.h
 	${CMAKE_SOURCE_DIR}/src/modules/oyranos-meta/*.c
+	${CMAKE_SOURCE_DIR}/src/modules/oyranos-meta/*.h
         PARENT_SCOPE
    )
 

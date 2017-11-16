@@ -585,7 +585,7 @@ int          dFilMOptions_Handle     ( oyOptions_s       * options,
 
       o = oyOption_FromRegistration( OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "my_handler.result." CMM_NICK,
                         0 );
-      oyOption_SetFromText( o, "done", 0 );
+      oyOption_SetFromString( o, "done", 0 );
       if(!*result)
         *result = oyOptions_New(0);
       oyOptions_MoveIn( *result, &o, -1 );

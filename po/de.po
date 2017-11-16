@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2017-11-15 15:57+0100\n"
+"POT-Creation-Date: 2017-11-16 11:16+0100\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -316,7 +316,7 @@ msgstr "Aktive Richtlinie:"
 msgid "Active matrix monitor"
 msgstr "Aktivmatrixmonitor"
 
-#: tools/oyranos-monitor-white-point.c:615
+#: tools/oyranos-monitor-white-point.c:577
 msgid "Actual white point mode"
 msgstr "Aktueller Weißpunktmodus"
 
@@ -385,7 +385,7 @@ msgstr "Details zu ICC Profilen in Ihrem System"
 msgid "Apple CMM"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1107
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1119
 msgid "Apply regions of interesst in form of simple rectangles."
 msgstr "Wende Regionen an in Form von einfachen Rechtecken."
 
@@ -1585,7 +1585,7 @@ msgstr "Erzeuge Verknüpfungsprofil:"
 msgid "Generate Image:"
 msgstr "Erzeuge Bild:"
 
-#: tools/oyranos-monitor-white-point.c:562
+#: tools/oyranos-monitor-white-point.c:524
 msgid "Geographical Position"
 msgstr "Geographische Position"
 
@@ -1936,7 +1936,7 @@ msgstr "Bild[lraw]"
 msgid "Image[my_filter]"
 msgstr "Bild[my_filter]"
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1502
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1530
 msgid "Image[out]"
 msgstr "Bild[Ausgang]"
 
@@ -2169,13 +2169,13 @@ msgid ""
 "extremely liberal open source license."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:730
+#: modules/color/modules/oyranos_cmm_oyra_image.c:741
 msgid "Load"
 msgstr "Lade"
 
 #: modules/color/modules/oyranos_cmm_oJPG.c:772
-#: modules/color/modules/oyranos_cmm_oyra_image.c:332
-#: modules/color/modules/oyranos_cmm_oyra_image.c:732
+#: modules/color/modules/oyranos_cmm_oyra_image.c:342
+#: modules/color/modules/oyranos_cmm_oyra_image.c:743
 msgid "Load Image File Object"
 msgstr "Lade Bilddateiobjekt"
 
@@ -2487,7 +2487,7 @@ msgstr "Benötige ein ICC Profil zum Verändern."
 
 #: tools/oyranos-monitor-white-point.c:337
 #: tools/oyranos-monitor-white-point.c:340
-#: tools/oyranos-monitor-white-point.c:642
+#: tools/oyranos-monitor-white-point.c:604
 msgid "New white point mode"
 msgstr "Neuer Weißpunktmodus"
 
@@ -2581,7 +2581,7 @@ msgstr "Ausgabe"
 msgid "Output Color Space"
 msgstr "Ausgabefarbraum"
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1504
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1532
 msgid "Output Image Filter Object"
 msgstr "Filterobjekt eines Ausgangsbildes"
 
@@ -3071,11 +3071,11 @@ msgstr "Lese PNG"
 msgid "Read PPM"
 msgstr "Lese PPM"
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1099
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1111
 msgid "Rectangles"
 msgstr "Rechtecke"
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1101
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1113
 msgid "Rectangles Splitter Object"
 msgstr "Rechteck Regionen Objekt"
 
@@ -3150,11 +3150,11 @@ msgstr "Übertragungsart für Farbtransformationen."
 msgid "Rgb"
 msgstr "Rgb"
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1309
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1328
 msgid "Root Image"
 msgstr "Quellbild"
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1311
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1330
 msgid "Root Image Filter Object"
 msgstr "FilterObjekt eines Quellbildes"
 
@@ -3448,15 +3448,15 @@ msgstr "Standard Betrachter 1931 2° Zeichnung:"
 msgid "Start"
 msgstr "Start"
 
-#: tools/oyranos-monitor-white-point.c:562
+#: tools/oyranos-monitor-white-point.c:524
 msgid "Sun Elevation"
 msgstr "Höhe"
 
-#: tools/oyranos-monitor-white-point.c:562
+#: tools/oyranos-monitor-white-point.c:524
 msgid "Sunrise"
 msgstr "Sonnenaufgang"
 
-#: tools/oyranos-monitor-white-point.c:565
+#: tools/oyranos-monitor-white-point.c:527
 msgid "Sunset"
 msgstr "Sonnenuntergang"
 
@@ -3662,7 +3662,7 @@ msgstr "Das Beispielmodul für Oyranos"
 msgid "The filter adapts pixel brightness."
 msgstr "Der Filter ändert die Bildhelligkeit."
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1512
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1540
 msgid ""
 "The filter can query pixels from its successors in a graph. The results are "
 "stored in the internal buffer."
@@ -3687,7 +3687,7 @@ msgid ""
 "\"=string."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1510
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1538
 msgid "The filter is a possible pixel target in a graph."
 msgstr "Der Filter ist ein mögliches Rasterbildziel in einem Graphen."
 
@@ -3749,7 +3749,7 @@ msgstr ""
 "Der Filter bietet einen voreingestellen Mechanismus für asynchrone "
 "Ausführung an."
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1317
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1336
 msgid "The filter provides a generic image source."
 msgstr "Der Filter bietet eine allgemeine Bildquelle."
 
@@ -3787,7 +3787,7 @@ msgstr ""
 "dividiert werden. Sein Stecker wird die dividierten Bildgrößen von seiner "
 "Quellsteckdose beziehen."
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1109
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1121
 msgid ""
 "The filter will expect a \"rectangle\" option containing a list of "
 "oyRectangle_s objects and will create, fill and process a according "
@@ -4024,7 +4024,7 @@ msgstr ""
 msgid "The raw image backend of Oyranos."
 msgstr "Das KameraRAW Bild Modul für Oyranos."
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1319
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1338
 msgid "The root image filter can hold pixel data for processing in a graph."
 msgstr ""
 "Der Quellbildfilter kann Rasterdaten zur Bearbeitung in einen Graphen "
@@ -4121,7 +4121,7 @@ msgstr ""
 msgid "Time Zone"
 msgstr "Zeitzone"
 
-#: tools/oyranos-monitor-white-point.c:562
+#: tools/oyranos-monitor-white-point.c:524
 msgid "Twilight"
 msgstr "Dämmerung"
 
@@ -4233,7 +4233,7 @@ msgstr "Beobachte Einstellungsänderungen"
 msgid "Well behaving Color Space for Editing"
 msgstr "Gleichmäßiger Farbraum für die Bearbeitung"
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:330
+#: modules/color/modules/oyranos_cmm_oyra_image.c:340
 msgid "Write"
 msgstr "Schreibe"
 
@@ -4936,10 +4936,10 @@ msgstr "statische Verknüpfungsargumente"
 msgid "the imaging factory CMM"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:338
-#: modules/color/modules/oyranos_cmm_oyra_image.c:340
-#: modules/color/modules/oyranos_cmm_oyra_image.c:738
-#: modules/color/modules/oyranos_cmm_oyra_image.c:740
+#: modules/color/modules/oyranos_cmm_oyra_image.c:348
+#: modules/color/modules/oyranos_cmm_oyra_image.c:350
+#: modules/color/modules/oyranos_cmm_oyra_image.c:749
+#: modules/color/modules/oyranos_cmm_oyra_image.c:751
 msgid "unfinished"
 msgstr "unvollendet"
 
@@ -5029,7 +5029,7 @@ msgstr "schreibe zu einer Datei, derzeit nur im Format PPM"
 msgid "write to specified file"
 msgstr "schreibe nach Datei"
 
-#: API_generated/oyOptions_s.c:1573 tools/oyranos-config.c:231
+#: API_generated/oyOptions_s.c:1573 tools/oyranos-config.c:232
 #: tools/oyranos-device.c:253 tools/oyranos-monitor-white-point.c:211
 #: tools/oyranos_convert.c:271 tools/oyranos_gamma.c:254
 #: tools/oyranos_policy.c:157 tools/oyranos_profile_graph.c:253
