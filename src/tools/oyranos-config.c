@@ -104,9 +104,10 @@ static void oyConfigCallbackDBus     ( double              progress_zero_till_on
                                        char              * status_text,
                                        int                 thread_id_ OY_UNUSED,
                                        int                 job_id OY_UNUSED,
-                                       oyStruct_s        * cb_progress_context OY_UNUSED )
+                                       oyStruct_s        * cb_progress_context )
 {
   const char * key;
+  int verbose = oyOption_GetValueInt( (oyOption_s*)cb_progress_context, 0 );
   if(!status_text) return;
 
   oyGetPersistentStrings(NULL);
@@ -119,7 +120,7 @@ static void oyConfigCallbackDBus     ( double              progress_zero_till_on
 
   if(strstr(key,OY_STD) == NULL) return;
 
-  getKey( key, oySCOPE_USER_SYS, 1/*verbose*/, 1/*print*/ );
+  getKey( key, oySCOPE_USER_SYS, verbose, 1/*print*/ );
 
   /* Clear the changed state, before a new check. */
   oy_dbus_config_changed = 1;
@@ -174,7 +175,7 @@ int main(int argc, char *argv[])
               case 's': OY_PARSE_STRING_ARG( set ); break;
               case 'l': paths = 1; break;
               case 'p': path = 1; break;
-              case 'v': if(verbose) oy_debug += 1; verbose = 1; break;
+              case 'v': if(verbose++) ++oy_debug; break;
               case 'h':
               case '-':
                         if(i == 1)
@@ -233,7 +234,7 @@ int main(int argc, char *argv[])
       }
       ++pos;
     }
-    if(oy_debug) printf( "%s\n", argv[1] );
+    if(oy_debug) fprintf( stderr, "%s\n", argv[1] );
   }
   else
   {
@@ -318,7 +319,7 @@ int main(int argc, char *argv[])
          * ... by setting a known property again to its old value
          */
         oyOptions_s * opts = oyOptions_New(NULL), * results = 0;
-        int error = oyOptions_Handle( "//" OY_TYPE_STD "/send_native_update_event",
+        error = oyOptions_Handle( "//" OY_TYPE_STD "/send_native_update_event",
                       opts,"send_native_update_event",
                       &results );
         oyOptions_Release( &opts );
@@ -339,10 +340,12 @@ int main(int argc, char *argv[])
   {
     int id;
     double hour_old = 0.0;
+    oyOption_s * cb_option = oyOption_FromRegistration(OY_STD "/verbose",0);;
+    oyOption_SetFromInt( cb_option, verbose+1, 0, 0 );
 
-    oyStartDBusObserver( oyWatchDBus, oyFinishDBus, oyConfigCallbackDBus, OY_STD )
+    oyStartDBusObserver( oyWatchDBus, oyFinishDBus, oyConfigCallbackDBus, OY_STD, cb_option )
 
-    if(id)
+    if(id && verbose)
       fprintf(stderr, "oyStartDBusObserver ID: %d\n", id);
 
     while(1)
@@ -372,8 +375,12 @@ void  getKey                         ( const char        * key,
   {
     char * key_name = oyOpeniccToOyranos( key, oyAllocateFunc_ );
     char * v = oyGetPersistentString( key_name, 0, scope, oyAllocateFunc_ );
-    if(verbose)
-      fprintf( print == 1 ? stdout : stderr, "%s:", key );
+    int hour, minute, second, gmt_diff_second;
+
+    oyGetCurrentGMTHour( &gmt_diff_second );
+    oySplitHour( oyGetCurrentLocalHour( oyGetCurrentGMTHour(0), gmt_diff_second ), &hour, &minute, &second );
+    if(verbose > 1) fprintf( print == 1 ? stdout : stderr, "%02d:%02d:%02d ", hour, minute, second );
+    if(verbose)     fprintf( print == 1 ? stdout : stderr, "%s:", key );
     fprintf( print ? stdout : stderr, "%s\n", oyNoEmptyString_m_(v) );
     if(v) oyFree_m_(v);
     if(key_name) oyFree_m_(key_name);
