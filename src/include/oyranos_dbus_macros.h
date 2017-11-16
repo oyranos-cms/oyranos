@@ -195,7 +195,7 @@ static void oyCallbackDBus           ( double              progress_zero_till_on
  *  simple version:
     oyStartDBusObserver( oyWatchDBus, oyFinishDBus, oyCallbackDBus, OY_STD )
  */
-#define oyStartDBusObserver( watch_, finish_, callback_, key_fragment ) \
+#define oyStartDBusObserver( watch_, finish_, callback_, key_fragment, cb_context_ ) \
   /* use asynchron DBus observation \
    * It is unknown when DBus message stream ends. Our DBus observer needs to \
    * collect all messages and sends one update event after a reasonable time. \
@@ -211,6 +211,7 @@ static void oyCallbackDBus           ( double              progress_zero_till_on
   /* The callback informs about DBus events now from inside the main thread. \
    * Here we should set a update state. */ \
   job->cb_progress = callback_; \
+  job->cb_progress_context = (oyStruct_s*)cb_context_; \
   id = oyJob_Add( &job, 0, oyJOB_ADD_PERSISTENT_JOB );
 
 /** poll for updates 

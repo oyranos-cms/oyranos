@@ -1618,7 +1618,7 @@ int main(int argc, char **argv) {
 
   #ifdef HAVE_DBUS
   int id = 0;
-  oyStartDBusObserver( oyWatchDBus, oyFinishDBus, oyCallbackDBus, OY_STD )
+  oyStartDBusObserver( oyWatchDBus, oyFinishDBus, oyCallbackDBus, OY_STD, NULL )
 
   if(id)
     printf("oyStartDBusObserver ID: %d\n", id);
