@@ -57,6 +57,18 @@ get the settings subdirectory name
 a options summary
 .SH EXAMPLES
 .TP
+Show a settings value:
+.B oyranos-config -g org/freedesktop/openicc/behaviour/effect_switch
+.PP
+.TP
+Change a setting:
+.B oyranos-config -s org/freedesktop/openicc/behaviour/effect_switch:1
+.PP
+.TP
+Log setting changes:
+.B oyranos-config --watch -v > log-file.txt
+.PP
+.TP
 Compile a simple programm:
 .B cc `oyranos-config --cflags` myFile.c `oyranos-config --ldflags` -o myProg
 .PP
