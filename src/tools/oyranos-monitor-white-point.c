@@ -124,7 +124,7 @@ void  printfHelp (int argc, char** argv)
 
 
 oySCOPE_e scope = oySCOPE_USER;
-double hour = -1.0; /* ignore this default value */
+double hour_ = -1.0; /* ignore this default value */
 
 int main( int argc , char** argv )
 {
@@ -197,7 +197,7 @@ int main( int argc , char** argv )
                         else if(OY_IS_ARG("longitude"))
                         { OY_PARSE_FLOAT_ARG2( longitude, "longitude", -180.0, 180.0, 0.0 ); i=100; break; }
                         else if(OY_IS_ARG("hour"))
-                        { OY_PARSE_FLOAT_ARG2( hour, "hour", 0.0, 24.0, 0.0 ); i=100; break; }
+                        { OY_PARSE_FLOAT_ARG2( hour_, "hour", 0.0, 24.0, 0.0 ); i=100; break; }
                         } OY_FALLTHROUGH
               default:
                         printfHelp(argc, argv);
@@ -455,45 +455,7 @@ int getLocation( double * lon, double * lat)
   return need_location;
 }
 
-double oyGetCurrentLocalHour( double time, int gmt_diff_sec )
-{
-  if((time + gmt_diff_sec/3600.0) > 24.0)
-    return time + gmt_diff_sec/3600.0 - 24.0;
-  if((time + gmt_diff_sec/3600.0) < 0.0)
-    return time + gmt_diff_sec/3600.0 + 24.0;
-  else
-    return time + gmt_diff_sec/3600.0;
-}
-double oyGetCurrentGMTHour( int * gmt_to_local_time_diff_sec )
-{
-  time_t cutime;         /* Time since epoch */
-  struct tm * ctime;
-  int    sec, min, tm_hour;
-  double dtime;
-
-  cutime = time(NULL); /* time right NOW */
-  ctime = gmtime(&cutime);
-  tm_hour = ctime->tm_hour;
-  min = ctime->tm_min;
-  sec = ctime->tm_sec;
-  if(gmt_to_local_time_diff_sec)
-  {
-    ctime = localtime(&cutime);
-    *gmt_to_local_time_diff_sec = ctime->tm_gmtoff;
-  }
-
-  if(hour != -1.0)
-    dtime = hour;
-  else
-    dtime = tm_hour + min/60.0 + sec/3600.0;
-  return dtime;
-}
-void oySplitHour( double hours, int * hour, int * minute, int * second )
-{
-  *hour   = (int)floor(hours);
-  *minute = (int)floor(hours*  60) - *hour  *60;
-  *second = (int)floor(hours*3600) - *minute*60 - *hour*3600;
-}
+#define oyGetCurrentGMTHour_(arg) ((hour_ != -1.0) ? hour_ + oyGetCurrentGMTHour(arg)*0.0 : oyGetCurrentGMTHour(arg))
 double oyNormaliseHour(double hour)
 {
   if(hour > 24.0)
@@ -552,9 +514,9 @@ int getSunriseSunset( double * rise, double * set )
     int hour, minute, second, gmt_diff_second;
     double elevation;
 
-    oyGetCurrentGMTHour( &gmt_diff_second );
-    oySplitHour( oyGetCurrentLocalHour( oyGetCurrentGMTHour(0), gmt_diff_second ), &hour, &minute, &second );
-    elevation = getSunHeight( year, month, day, oyGetCurrentGMTHour(0), lat, lon );
+    oyGetCurrentGMTHour_( &gmt_diff_second );
+    oySplitHour( oyGetCurrentLocalHour( oyGetCurrentGMTHour_(0), gmt_diff_second ), &hour, &minute, &second );
+    elevation = getSunHeight( year, month, day, oyGetCurrentGMTHour_(0), lat, lon );
     fprintf( stderr, "%d-%d-%d %d:%.2d:%.2d",
              year, month, day, hour, minute, second );
     oySplitHour( oyGetCurrentLocalHour( *rise, gmt_diff_second ), &hour, &minute, &second );
@@ -597,7 +559,7 @@ int checkWtptState()
     return -1;
 
 
-  dtime = oyGetCurrentGMTHour(&diff);
+  dtime = oyGetCurrentGMTHour_(&diff);
 
   {
     int current = -1;
@@ -691,13 +653,13 @@ int runDaemon(int dmode)
     checkWtptState();
 
 #ifdef HAVE_DBUS
-  oyStartDBusObserver( oyWatchDBus, oyFinishDBus, oyCallbackDBus, OY_DISPLAY_STD )
+  oyStartDBusObserver( oyWatchDBus, oyFinishDBus, oyCallbackDBus, OY_DISPLAY_STD, NULL )
   if(id)
     fprintf(stderr, "oyStartDBusObserver ID: %d\n", id);
 
   while(1)
   {
-    double hour = oyGetCurrentGMTHour( 0 );
+    double hour = oyGetCurrentGMTHour_( 0 );
     double repeat_check = 1.0/60.0; /* every minute */
 
     oyLoopDBusObserver( hour, repeat_check, oy_dbus_config_changed, checkWtptState() )

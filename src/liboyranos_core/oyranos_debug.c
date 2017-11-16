@@ -117,3 +117,45 @@ double             oySeconds         ( )
 double             oyClock           ( )
 { return oySeconds()*1000000; }
 
+void               oySplitHour       ( double              hours,
+                                       int               * hour,
+                                       int               * minute,
+                                       int               * second )
+{
+  *hour   = (int)floor(hours);
+  *minute = (int)floor(hours*  60) - *hour  *60;
+  *second = (int)floor(hours*3600) - *minute*60 - *hour*3600;
+}
+double   oyGetCurrentLocalHour       ( double              time,
+                                       int                 gmt_diff_sec )
+{
+  if((time + gmt_diff_sec/3600.0) > 24.0)
+    return time + gmt_diff_sec/3600.0 - 24.0;
+  if((time + gmt_diff_sec/3600.0) < 0.0)
+    return time + gmt_diff_sec/3600.0 + 24.0;
+  else
+    return time + gmt_diff_sec/3600.0;
+}
+double   oyGetCurrentGMTHour         ( int               * gmt_to_local_time_diff_sec )
+{
+  time_t cutime;         /* Time since epoch */
+  struct tm * ctime;
+  int    sec, min, tm_hour;
+  double dtime;
+
+  cutime = time(NULL); /* time right NOW */
+  ctime = gmtime(&cutime);
+  tm_hour = ctime->tm_hour;
+  min = ctime->tm_min;
+  sec = ctime->tm_sec;
+  if(gmt_to_local_time_diff_sec)
+  {
+    ctime = localtime(&cutime);
+    *gmt_to_local_time_diff_sec = ctime->tm_gmtoff;
+  }
+
+  dtime = tm_hour + min/60.0 + sec/3600.0;
+
+  return dtime;
+}
+

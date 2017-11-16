@@ -40,6 +40,13 @@ extern int oy_debug_write_id;
 double             oyClock           ( );
 double             oySeconds         ( );
 time_t             oyTime            ( );
+void               oySplitHour       ( double              hours,
+                                       int               * hour,
+                                       int               * minute,
+                                       int               * second );
+double   oyGetCurrentLocalHour       ( double              time,
+                                       int                 gmt_diff_sec );
+double   oyGetCurrentGMTHour         ( int               * gmt_to_local_time_diff_sec );
 
 #if defined(__GNUC__)
 # define  OY_DBG_FORMAT_ "%s:%d %s() "
