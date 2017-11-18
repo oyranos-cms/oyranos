@@ -3,6 +3,7 @@ INCLUDE_DIRECTORIES(
                     ${CMAKE_CURRENT_SOURCE_DIR}/include
                     ${CMAKE_CURRENT_SOURCE_DIR}/include/X11/Xcm
                     ${CMAKE_BINARY_DIR}/src/include
+                    ${CMAKE_BINARY_DIR}/src/include/X11/Xcm/
                     ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
