@@ -1,6 +1,6 @@
 Source: oyranos
 Priority: optional
-Maintainer: Kai-Uwe Behrmann (oy) <oy@oyranos.org>
+Maintainer: Kai-Uwe Behrmann <ku.b@gmx.de>
 # optionaly add fluid and libfltk-dev for oy-config-fltk
 Build-Depends: debhelper (>= 8.0.0), autotools-dev,
  autoconf,
