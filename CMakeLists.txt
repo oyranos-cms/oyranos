@@ -188,13 +188,21 @@ IF( HAVE_XCM )
   LINK_DIRECTORIES( ${XCM_LIBRARY_DIRS} )
 ELSE( HAVE_XCM )
   IF(CMAKE_VERSION VERSION_GREATER 2.8.0)
+    # build static libs of fallback subproject
     SET( HAVE_XCM TRUE  )
     INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_SOURCE_DIR}/libxcm/include/X11/Xcm
                          ${CMAKE_CURRENT_SOURCE_DIR}/libxcm/include
                          ${CMAKE_BINARY_DIR}/src/include/X11/Xcm )
     LINK_DIRECTORIES( ${CMAKE_CURRENT_BINARY_DIR}/libxcm/src
                       ${XCM_LIBRARY_DIRS} )
+
+    # disable install and build of shared libs for fallback subproject
+    SET( OLD_ENABLE_SHARED_LIBS ${ENABLE_SHARED_LIBS} )
+    SET( ENABLE_SHARED_LIBS OFF )
+    SET( ENABLE_INSTALL OFF )
     ADD_SUBDIRECTORY( libxcm )
+    SET( ENABLE_SHARED_LIBS ${OLD_ENABLE_SHARED_LIBS} )
+
     SET( XCM_LIBRARIES xcm-static )
   ENDIF()
 ENDIF( HAVE_XCM )

@@ -17,6 +17,7 @@ extern "C" {
 #include "Xcm.h"
 #include "XcmEdidParse.h"
 #include "XcmEvents.h"
+#include "XcmInternal.h"
 
 #define __USE_POSIX2 1
 #include <stdio.h>  /* popen() */
@@ -100,7 +101,7 @@ int      myXErrorHandler             ( Display           * display,
  *  @date    2010/10/01
  */
 int            XcmMessage            ( XCME_MSG_e          code,
-                                       const void        * context,
+                                       const void        * context XCM_UNUSED,
                                        const char        * format,
                                        ... )
 {
@@ -415,7 +416,7 @@ void     xcmePrintWindowRegions      ( Display           * display,
 {
   unsigned long n = 0;
   int i, j;
-  int result = -1;
+  int result XCM_UNUSED = -1;
   XcolorRegion * regions = 0;
 
   regions = XcolorRegionFetch( display, w, &n );
@@ -497,7 +498,7 @@ static inline unsigned long XcolorProfileCount(void *data, unsigned long nBytes)
   }
 }*/
 
-int myXErrorHandler ( Display * display, XErrorEvent * e)
+int myXErrorHandler ( Display * display XCM_UNUSED, XErrorEvent * e XCM_UNUSED)
 {
   DERR( "%s:%d catched a X11 error\n", 
           strrchr(__FILE__, '/')?strrchr(__FILE__, '/')+1:__FILE__,__LINE__ );
@@ -519,16 +520,16 @@ void XcmeSelectInput( XcmeContext_s * c )
   int format = 0;
   unsigned long left = 0, n = 0, i,j;
 
-        int r = XGetWindowProperty( c->display, c->root,
+        XGetWindowProperty( c->display, c->root,
           XInternAtom( c->display, "_NET_CLIENT_LIST", False), 0, ~0, False, XA_WINDOW, &actual, &format,
           &nWindow, &left, (unsigned char**)&windows );
         n = (int)(nWindow + left);
 
-        for(i = 0; i < (int)n; ++i)
+        for(i = 0; i < n; ++i)
         {
           /* search of a previous observation of a particular window */
           int found = 0;
-          for(j = 0; j < c->nWindows; ++j)
+          for(j = 0; (int)j < c->nWindows; ++j)
           {
             if(windows[i] == c->Windows[j])
               found = 1;
@@ -539,7 +540,7 @@ void XcmeSelectInput( XcmeContext_s * c )
               !found )
           {
             /* observe other windows */
-            r = XSelectInput( c->display, windows[i],
+            XSelectInput( c->display, windows[i],
                        PropertyChangeMask |  /* Xcolor properties */
                        ExposureMask );       /* Xcolor client messages */
           }
@@ -632,7 +633,7 @@ XcmeContext_s * XcmeContext_Create   ( const char        * display_name )
  */
 int      XcmeContext_Setup2          ( XcmeContext_s     * c,
                                        const char        * display_name,
-                                       int                 flags )
+                                       int                 flags XCM_UNUSED )
 {
   /* Open the display and create our window. */
   Visual * vis = 0;
@@ -731,7 +732,6 @@ int      XcmeContext_Setup           ( XcmeContext_s    * c,
                                        const char        * display_name )
 {
   /* Open the display and create our window. */
-  Status status = 0;
 
   XcmeContext_Setup2(c, display_name, 0);
 
@@ -740,12 +740,12 @@ int      XcmeContext_Setup           ( XcmeContext_s    * c,
      "libXcm based X11 colour management system events observer%s", "");
   M( XCME_MSG_COPYRIGHT, 0,
      "(c) 2009-2013 - Kai-Uwe Behrmann  License: MIT%s", "" );
-  DS( "atom: \""XCM_COLOR_PROFILES"\": %d", (int)c->aProfile );
-  DS( "atom: \""XCM_COLOR_OUTPUTS"\": %d", (int)c->aOutputs );
+  DS( "atom: \"" XCM_COLOR_PROFILES "\": %d", (int)c->aProfile );
+  DS( "atom: \"" XCM_COLOR_OUTPUTS "\": %d", (int)c->aOutputs );
   DS( "atom: \"_ICC_COLOR_MANAGEMENT\": %d", (int)c->aCM );
-  DS( "atom: \""XCM_COLOR_REGIONS"\": %d", (int)c->aRegion );
-  DS( "atom: \""XCM_COLOUR_DESKTOP_ADVANCED"\": %d", (int)c->aAdvanced );
-  DS( "atom: \""XCM_COLOR_DESKTOP"\": %d %s", (int)c->aDesktop,
+  DS( "atom: \"" XCM_COLOR_REGIONS "\": %d", (int)c->aRegion );
+  DS( "atom: \"" XCM_COLOUR_DESKTOP_ADVANCED "\": %d", (int)c->aAdvanced );
+  DS( "atom: \"" XCM_COLOR_DESKTOP "\": %d %s", (int)c->aDesktop,
                                           printfNetColorDesktop(c, 0) );
 
 
@@ -786,7 +786,7 @@ int      XcmeContext_Setup           ( XcmeContext_s    * c,
     XWindowAttributes window_attributes_return;
 
     XSync( c->display, 0 );
-    status = XQueryTree( c->display, c->root,
+    XQueryTree( c->display, c->root,
                          &root_return, &parent_return,
                          &children_return, &nchildren_return );
     wins = (Window*)malloc(sizeof(Window) * nchildren_return );
@@ -797,10 +797,10 @@ int      XcmeContext_Setup           ( XcmeContext_s    * c,
     for(i = nchildren_return - 1; i >= 0; --i)
     {
       root_return = 0;
-      status = XQueryTree( c->display, children_return[i],
+      XQueryTree( c->display, children_return[i],
                            &root_return, &parent_return,
                            &wins, &wins_n );
-      status = XGetWindowAttributes( c->display, children_return[i],
+      XGetWindowAttributes( c->display, children_return[i],
                                      &window_attributes_return );
       if(window_attributes_return.map_state == IsViewable &&
          parent_return == c->root)
@@ -990,15 +990,15 @@ int      XcmeContext_InLoop          ( XcmeContext_s    * c,
 
     } else if( event->type == PropertyNotify )
     {
-      int r;
       Atom atom = event->xproperty.atom;
 
       actual_name = XGetAtomName( display, atom );
 
       if(display != c->display)
-      { int result = 1;
+      {
         DE( "PropertyNotify : event and context displays are different: %s",
                actual_name );
+        result = 1;
       }
         
       actual = 0;
@@ -1017,14 +1017,14 @@ int      XcmeContext_InLoop          ( XcmeContext_s    * c,
            strstr( actual_name, XCM_ICC_COLOUR_SERVER_TARGET_PROFILE_IN_X_BASE) != 0 ||
            strstr( actual_name, XCM_ICC_V0_3_TARGET_PROFILE_IN_X_BASE) != 0 ||
            strstr( actual_name, "EDID") != 0)
-        r = XGetWindowProperty( display, event->xany.window,
+        XGetWindowProperty( display, event->xany.window,
                event->xproperty.atom, 0, ~0, False, XA_CARDINAL,&actual,&format,
                 &n, &left, &data );
         n += left;
 
         if(event->xproperty.atom == c->aAdvanced)
         {
-          r = XGetWindowProperty( display, event->xany.window,
+          XGetWindowProperty( display, event->xany.window,
                event->xproperty.atom, 0, ~0, False, XA_STRING,&actual,&format,
                 &n, &left, &data );
           result = 0;
@@ -1035,7 +1035,7 @@ int      XcmeContext_InLoop          ( XcmeContext_s    * c,
         {
           char * text;
 
-          r = XGetWindowProperty( display, event->xany.window,
+          XGetWindowProperty( display, event->xany.window,
                event->xproperty.atom, 0, ~0, False, XA_STRING, &actual, &format,
                 &n, &left, &data );
           n += left;
