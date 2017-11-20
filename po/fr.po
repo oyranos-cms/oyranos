@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ICC Examin 0.41\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2017-11-16 11:16+0100\n"
+"POT-Creation-Date: 2017-11-19 14:20+0100\n"
 "PO-Revision-Date: 2006-06-29 19:31+0200\n"
 "Last-Translator: Pascal LACROIX <lacroixpascal at vfemail.net>\n"
 "Language-Team: <fr@li.org>\n"
@@ -1169,11 +1169,11 @@ msgstr ""
 msgid "D93"
 msgstr ""
 
-#: liboyranos_config/oyranos_db.c:164
+#: liboyranos_config/oyranos_db.c:166
 msgid "DB handling failed"
 msgstr ""
 
-#: liboyranos_config/oyranos_db.c:144 liboyranos_config/oyranos_db.c:214
+#: liboyranos_config/oyranos_db.c:146 liboyranos_config/oyranos_db.c:216
 msgid "DB handling is already set"
 msgstr ""
 
@@ -3198,7 +3198,7 @@ msgstr ""
 msgid "Relative Colorimetric"
 msgstr "Colorimétrie relative"
 
-#: API_generated/oyFilterNode_s.c:1027
+#: API_generated/oyFilterNode_s.c:1029
 msgid "Remote filter or plug not available."
 msgstr ""
 
@@ -4354,7 +4354,7 @@ msgstr "Couleur"
 msgid "create fallback ICC profile"
 msgstr "ICC Profils"
 
-#: liboyranos_config/oyranos_db.c:68 liboyranos_config/oyranos_db.c:86
+#: liboyranos_config/oyranos_db.c:68 liboyranos_config/oyranos_db.c:88
 msgid "default profile type does not exist:"
 msgstr ""
 

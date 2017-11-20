@@ -382,14 +382,14 @@ OYAPI int  OYEXPORT
         if(oy_debug > 1)
         {
           int i, n = oyProfiles_Count( iccs );
-#if defined(DEBUG)
+#if DEBUG
           const char * fn;
 #endif
           oyProfile_Release( &p );
           for(i = 0; i < n; ++i)
           {
             p = oyProfiles_Get( iccs, i );
-#if defined(DEBUG)
+#if DEBUG
             fn = oyProfile_GetFileName(p, -1);
             if(rank_list[i])
               DBG_NUM2_S("%d: %s", rank_list[i], fn);

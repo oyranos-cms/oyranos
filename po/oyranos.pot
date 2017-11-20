@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Oyranos 0.9\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2017-11-16 13:58+0100\n"
+"POT-Creation-Date: 2017-11-20 12:37+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -126,7 +126,7 @@ msgstr ""
 msgid "?? Nothing to add ??"
 msgstr ""
 
-#: API_generated/oyFilterNode_s.c:1027
+#: API_generated/oyFilterNode_s.c:1029
 msgid "Remote filter or plug not available."
 msgstr ""
 
@@ -533,15 +533,15 @@ msgstr ""
 msgid "will overwrite policy file"
 msgstr ""
 
-#: liboyranos_config/oyranos_db.c:68 liboyranos_config/oyranos_db.c:86
+#: liboyranos_config/oyranos_db.c:68 liboyranos_config/oyranos_db.c:88
 msgid "default profile type does not exist:"
 msgstr ""
 
-#: liboyranos_config/oyranos_db.c:144 liboyranos_config/oyranos_db.c:214
+#: liboyranos_config/oyranos_db.c:146 liboyranos_config/oyranos_db.c:216
 msgid "DB handling is already set"
 msgstr ""
 
-#: liboyranos_config/oyranos_db.c:164
+#: liboyranos_config/oyranos_db.c:166
 msgid "DB handling failed"
 msgstr ""
 

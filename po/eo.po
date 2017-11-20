@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eo\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2017-11-16 11:16+0100\n"
+"POT-Creation-Date: 2017-11-19 14:20+0100\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  <eo@li.org>\n"
@@ -1135,11 +1135,11 @@ msgstr ""
 msgid "D93"
 msgstr ""
 
-#: liboyranos_config/oyranos_db.c:164
+#: liboyranos_config/oyranos_db.c:166
 msgid "DB handling failed"
 msgstr ""
 
-#: liboyranos_config/oyranos_db.c:144 liboyranos_config/oyranos_db.c:214
+#: liboyranos_config/oyranos_db.c:146 liboyranos_config/oyranos_db.c:216
 msgid "DB handling is already set"
 msgstr ""
 
@@ -3056,7 +3056,7 @@ msgstr ""
 msgid "Relative Colorimetric"
 msgstr ""
 
-#: API_generated/oyFilterNode_s.c:1027
+#: API_generated/oyFilterNode_s.c:1029
 msgid "Remote filter or plug not available."
 msgstr ""
 
@@ -4173,7 +4173,7 @@ msgstr "kolora"
 msgid "create fallback ICC profile"
 msgstr ""
 
-#: liboyranos_config/oyranos_db.c:68 liboyranos_config/oyranos_db.c:86
+#: liboyranos_config/oyranos_db.c:68 liboyranos_config/oyranos_db.c:88
 msgid "default profile type does not exist:"
 msgstr ""
 

@@ -74,8 +74,10 @@ int      oySetProfile_               ( const char        * name,
 
     } else if(type == oyDEVICE_PROFILE)
       {
+#if DEBUG
         int len = strlen(OY_REGISTRED_PROFILES)
                   + strlen(fileName);
+#endif
         char* key_name = NULL;
         oyStringAddPrintf( &key_name, AD, "%s%s", OY_REGISTRED_PROFILES OY_SLASH, fileName );
         r = oySetPersistentString (key_name, scope, com, 0);

@@ -827,6 +827,7 @@ OYAPI int  OYEXPORT
 
   oyCheckType__m( oyOBJECT_FILTER_NODE_S, return 1 )
 
+#if DEBUG
   if(oy_debug)
   {
     const char * tags = oyOptions_GetText( s->tags, oyNAME_NICK )/*,
@@ -839,6 +840,7 @@ OYAPI int  OYEXPORT
                  tags ? tags : "----"
                );
   }
+#endif
 
   error = oyCMMapi7_Run( (oyCMMapi7_s*) s->api7_, plug, ticket );
 

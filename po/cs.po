@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: oyranos\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2017-11-16 11:16+0100\n"
+"POT-Creation-Date: 2017-11-19 14:20+0100\n"
 "PO-Revision-Date: 2012-10-19 15:10+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -1177,12 +1177,12 @@ msgstr ""
 msgid "D93"
 msgstr ""
 
-#: liboyranos_config/oyranos_db.c:164
+#: liboyranos_config/oyranos_db.c:166
 #, fuzzy
 msgid "DB handling failed"
 msgstr "alokace selhala"
 
-#: liboyranos_config/oyranos_db.c:144 liboyranos_config/oyranos_db.c:214
+#: liboyranos_config/oyranos_db.c:146 liboyranos_config/oyranos_db.c:216
 msgid "DB handling is already set"
 msgstr ""
 
@@ -3262,7 +3262,7 @@ msgstr ""
 msgid "Relative Colorimetric"
 msgstr "Relativní kolorimetrický"
 
-#: API_generated/oyFilterNode_s.c:1027
+#: API_generated/oyFilterNode_s.c:1029
 #, fuzzy
 msgid "Remote filter or plug not available."
 msgstr "RGB vysledek neni k dispozici"
@@ -4573,7 +4573,7 @@ msgstr "vložit JSON OpenICC ze souboru"
 msgid "create fallback ICC profile"
 msgstr "profil ICC"
 
-#: liboyranos_config/oyranos_db.c:68 liboyranos_config/oyranos_db.c:86
+#: liboyranos_config/oyranos_db.c:68 liboyranos_config/oyranos_db.c:88
 msgid "default profile type does not exist:"
 msgstr "výchozí typ profilu neexistuje:"
 

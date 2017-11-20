@@ -1546,6 +1546,7 @@ OYAPI int OYEXPORT oyRankMapList     ( const char        * filter,
       *rank_map_file_names = oyDataFilesGet_( &n, subdir, data, owner,
                                       dir_string, filter, suffix,
                                       allocateFunc );
+#if DEBUG
     if(oy_debug)
       DBG_NUM1_S( "found rank maps: %d", n );
     for( i = 0; i < n; ++i )
@@ -1555,6 +1556,7 @@ OYAPI int OYEXPORT oyRankMapList     ( const char        * filter,
       if(oy_debug)
         DBG_NUM2_S( "%d: %s\n", i, file );
     }
+#endif
   }
 
   return error;
