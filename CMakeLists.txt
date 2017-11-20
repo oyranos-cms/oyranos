@@ -199,11 +199,10 @@ ELSE( HAVE_XCM )
     # disable install and build of shared libs for fallback subproject
     SET( OLD_ENABLE_SHARED_LIBS ${ENABLE_SHARED_LIBS} )
     SET( ENABLE_SHARED_LIBS OFF )
-    SET( ENABLE_INSTALL OFF )
     ADD_SUBDIRECTORY( libxcm )
     SET( ENABLE_SHARED_LIBS ${OLD_ENABLE_SHARED_LIBS} )
 
-    SET( XCM_LIBRARIES xcm-static )
+    SET( XCM_LIBRARIES xcm-static ${XFIXES_LIBRARIES} ${XMU_LIBRARIES} ${X11_LIBRARIES} )
   ENDIF()
 ENDIF( HAVE_XCM )
 
