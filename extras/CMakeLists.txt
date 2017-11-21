@@ -1,14 +1,16 @@
 #cmake settings for use by find_package
 CONFIGURE_FILE (
-		"${CMAKE_CURRENT_SOURCE_DIR}/OyranosConfig.cmake.in"
-		"${CMAKE_CURRENT_BINARY_DIR}/OyranosConfig.cmake"
-		@ONLY
-	)
+          "${CMAKE_CURRENT_SOURCE_DIR}/OyranosConfig.cmake.in"
+          "${CMAKE_CURRENT_BINARY_DIR}/OyranosConfig.cmake"
+          @ONLY
+        )
 
 INSTALL ( FILES
-		"${CMAKE_CURRENT_BINARY_DIR}/OyranosConfig.cmake"
-		DESTINATION ${CMAKE_MODULES_INSTALL_DIR} COMPONENT dev
-	)
+          "${CMAKE_CURRENT_BINARY_DIR}/OyranosConfig.cmake"
+          DESTINATION ${CMAKE_MODULES_INSTALL_DIR}
+          COMPONENT dev
+          RENAME FindOyranos.cmake
+        )
 
 
 INSTALL( PROGRAMS "${CMAKE_CURRENT_SOURCE_DIR}/oyranos-profile-install" DESTINATION ${CMAKE_INSTALL_BINDIR} )
