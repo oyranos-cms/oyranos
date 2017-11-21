@@ -193,8 +193,7 @@ ELSE( HAVE_XCM )
     INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_SOURCE_DIR}/libxcm/include/X11/Xcm
                          ${CMAKE_CURRENT_SOURCE_DIR}/libxcm/include
                          ${CMAKE_BINARY_DIR}/src/include/X11/Xcm )
-    LINK_DIRECTORIES( ${CMAKE_CURRENT_BINARY_DIR}/libxcm/src
-                      ${XCM_LIBRARY_DIRS} )
+    LINK_DIRECTORIES( ${CMAKE_CURRENT_BINARY_DIR}/libxcm/src )
 
     # disable install and build of shared libs for fallback subproject
     SET( OLD_ENABLE_SHARED_LIBS ${ENABLE_SHARED_LIBS} )
