@@ -12,3 +12,6 @@ export DH_VERBOSE=1
 %:
 	dh $@ --buildsystem=cmake
 
+override_dh_auto_configure:
+	dh_auto_configure --buildsystem=cmake -- \
+		-DXDG_CONFIG_DIR=/etc/xdg

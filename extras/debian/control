@@ -2,6 +2,7 @@ Source: oyranos
 Priority: optional
 Maintainer: Kai-Uwe Behrmann <ku.b@gmx.de>
 # optionaly add fluid and libfltk-dev for oy-config-fltk
+# add libjpeg62-turbo-dev for Debian_9.0
 Build-Depends: debhelper (>= 8.0.0), autotools-dev,
  autoconf,
  cmake,
