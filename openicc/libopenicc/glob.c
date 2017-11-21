@@ -442,7 +442,7 @@ globtilde(const Char *pattern, Char *patbuf, size_t patbuf_len, glob_t *pglob)
 	if (((char *) patbuf)[0] == EOS) {
 		/*
 		 * handle a plain ~ or ~/ by expanding $HOME first (iff
-		 * we're not running setuid or setgid) and then trying
+		 * we're not running setgid or setuid) and then trying
 		 * the password file
 		 */
 		if (issetugid() != 0 ||
