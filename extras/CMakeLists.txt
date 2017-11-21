@@ -9,7 +9,6 @@ INSTALL ( FILES
           "${CMAKE_CURRENT_BINARY_DIR}/OyranosConfig.cmake"
           DESTINATION ${CMAKE_MODULES_INSTALL_DIR}
           COMPONENT dev
-          RENAME FindOyranos.cmake
         )
 
 
