@@ -4,9 +4,12 @@ IF(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR})
   OPTION(ENABLE_INSTALL_XCM     "Install files" ON)
 ELSE()
   MESSAGE( "-- libxcm: compile as subproject - skip install (ENABLE_INSTALL_XCM=OFF)" )
+  # disable install and build of shared libs for fallback subproject
   IF(NOT ENABLE_INSTALL_XCM)
     SET(ENABLE_INSTALL_XCM OFF)
   ENDIF(NOT ENABLE_INSTALL_XCM)
+  SET(ENABLE_STATIC_LIBS ON)
+  SET(ENABLE_SHARED_LIBS OFF)
 ENDIF()
 
 SET (OPROJECT_NAME "XCM" )
