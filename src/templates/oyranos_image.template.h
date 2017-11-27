@@ -81,9 +81,9 @@ typedef enum {
 
     should fit into a 32bit type, usual unsigned int or uint32_t \n
 
-    X F P S TTTT OOOOOOOO CCCCCCCC \n
+    X F P S TTTT OOOOOOOO CCCCCCCCCCCCCCCC \n
 
-    C  channels count per pixel (3 for RGB); max 255 \n
+    C  channels count per pixel (3 for RGB); max 65535 \n
     O  color channel offset (0 for RGB, 1 for ARGB) \n
     P  Planar bit: 0 - interwoven, 1 - one channel after the other \n
     S  Swap color channels bit (BGR) \n
@@ -115,17 +115,17 @@ typedef enum {
 /** Set channels count in @ref oyPixel_t */
 #define oyChannels_m(c)             (c)
 /** Set offset count to first color channel in  @ref oyPixel_t */
-#define oyColorOffset_m(o)         ((o) << 8)
+#define oyColorOffset_m(o)         ((o) << 16)
 /** Set @ref oyDATATYPE_e in  @ref oyPixel_t */
-#define oyDataType_m(t)             ((t) << 16)
+#define oyDataType_m(t)             ((t) << 24)
 /** Set swapping of color channels in @ref oyPixel_t , e.g. BGR */
-#define oySwapColorChannels_m(s)   ((s) << 20)
+#define oySwapColorChannels_m(s)   ((s) << 28)
 /** Set planar instead of interwoven color channels in @ref oyPixel_t */
-#define oyPlanar_m(p)               ((p) << 21)
+#define oyPlanar_m(p)               ((p) << 29)
 /** Set min is white in @ref oyPixel_t */
-#define oyFlavor_m(p)               ((f) << 22)
+#define oyFlavor_m(p)               ((f) << 30)
 /** Set byte swapping for integers larger than 8 byte in @ref oyPixel_t */
-#define oyByteswap_m(x)             ((x) << 23)
+#define oyByteswap_m(x)             ((x) << 31)
 
 /* define some common types */
 /** 8-bit RGB/YUV/XYZ/... */
@@ -201,19 +201,19 @@ typedef enum {
 
 /* decode */
 /** Get channels count in @ref oyPixel_t */
-#define oyToChannels_m(c)           ((c)&255)
+#define oyToChannels_m(c)           ((c)&65535)
 /** Get offset count to first color channel in  @ref oyPixel_t */
-#define oyToColorOffset_m(o)       (((o) >> 8)&255)
+#define oyToColorOffset_m(o)       (((o) >> 16)&255)
 /** Get @ref oyDATATYPE_e in  @ref oyPixel_t */
-#define oyToDataType_m(t)           ((oyDATATYPE_e)(((t) >> 16)&15))
+#define oyToDataType_m(t)           ((oyDATATYPE_e)(((t) >> 24)&15))
 /** Get swapping of color channels in @ref oyPixel_t , e.g. BGR */
-#define oyToSwapColorChannels_m(s) (((s) >> 20)&1)
+#define oyToSwapColorChannels_m(s) (((s) >> 28)&1)
 /** Get planar instead of interwoven color channels in @ref oyPixel_t */
-#define oyToPlanar_m(p)             (((p) >> 21)&1)
+#define oyToPlanar_m(p)             (((p) >> 29)&1)
 /** Get min is white in @ref oyPixel_t */
-#define oyToFlavor_m(f)             (((f) >> 22)&1)
+#define oyToFlavor_m(f)             (((f) >> 30)&1)
 /** Get byte swapping for integers larger than 8 byte in @ref oyPixel_t */
-#define oyToByteswap_m(x)           (((x) >> 23)&1)
+#define oyToByteswap_m(x)           (((x) >> 31)&1)
 
 /** @} *//* objects_image */
 
