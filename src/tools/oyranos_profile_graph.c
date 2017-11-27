@@ -72,14 +72,38 @@
 #define MIN(a,b) ((a<b)?(a):(b))
 #define MAX(a,b) ((a>b)?(a):(b))
 
+
 double * getSaturationLine_(oyProfile_s * profile, int intent, size_t * size_, oyProfile_s * outspace);
 double   bb_spectrum( double wavelength, double bbTemp );
-void draw_illuminant( cairo_t * cr,
-                      float * spd, int start, int end, int lambda,
+
+oyImage_s * oySpectrumCreateEmpty ( int min, int max, int lambda, int columns );
+float    oySpectrumFillFromArrayF  ( oyImage_s * spec, float * curve, int pos );
+float    oySpectrumFillFromArrayF3 ( oyImage_s * spec, float curves[][3] );
+void     oySpectrumNormalise ( oyImage_s * spec, float scale );
+typedef enum {
+  oySPECTRUM_CHANNELS,
+  oySPECTRUM_START,
+  oySPECTRUM_END,
+  oySPECTRUM_LAMBDA,
+  oySPECTRUM_COLUMNS
+} oySPECTRUM_PARAM_e;
+double   oySpectrumGetParam  ( oyImage_s * spec, oySPECTRUM_PARAM_e mode );
+double   oySpectrumGet( oyImage_s * spec, int column, int channel );
+oyImage_s * oySpectrumFromCSV( char * text );
+
+typedef enum {
+  COLOR_COLOR,
+  COLOR_GRAY,
+  COLOR_SPECTRAL
+} COLOR_MODE;
+void drawIlluminant ( cairo_t * cr,
+                      oyImage_s * spec, int column,
                       float xO, float yO, float width, float height,
-                      int min_x, int max_x, int min_y, int max_y,
-                      int color,
-                      uint32_t icc_profile_flags );
+                      float min_x, float max_x, float min_y, float max_y,
+                      COLOR_MODE mode, double color[4],
+                      uint32_t icc_profile_flags, const char * id );
+
+int verbose = 0;
 
 void  printfHelp (int argc, char** argv)
 {
@@ -98,24 +122,28 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "      -x \t%s\n",     _("use CIE*xyY *x*y plane for saturation line projection"));
   fprintf( stderr, "      \t-c\t%s\n",    _("omit white line of lambert light emitters"));
   fprintf( stderr, "      -s \t%s\n",     _("omit the spectral line"));
-  fprintf( stderr, "      -d %s\t%s\n",   _("NUMBER"), _("specify incemental increase of the thickness of the graph lines"));
+  fprintf( stderr, "      -d %s\t%s\n",   _("NUMBER"), _("specify incremental increase of the thickness of the graph lines"));
   fprintf( stderr, "\n");
   fprintf( stderr,  "  %s\n",             _("Standard Observer 1931 2° Graph:"));
-  fprintf( stderr,  "      %s --standard-observer [-vbowt]\n", argv[0]);
+  fprintf( stderr,  "      %s --standard-observer [-vbowtr]\n", argv[0]);
   fprintf( stderr, "      \t--no-color\t%s\n",    _("draw gray"));
   fprintf( stderr, "\n");
   fprintf( stderr,  "  %s\n",             _("1964 10° Observer Graph:"));
-  fprintf( stderr,  "      %s --standard-observer-64 [-vbowt]\n", argv[0]);
+  fprintf( stderr,  "      %s --standard-observer-64 [-vbowtr]\n", argv[0]);
   fprintf( stderr, "      \t--no-color\t%s\n",    _("draw gray"));
   fprintf( stderr, "\n");
   fprintf( stderr,  "  %s\n",             _("Blackbody Radiator Spectrum Graph:"));
-  fprintf( stderr,  "      %s --kelvin %s [-vbowt]\n", argv[0], _("NUMBER"));
+  fprintf( stderr,  "      %s --kelvin %s [-vbowtr]\n", argv[0], _("NUMBER"));
   fprintf( stderr, "      \t--no-color\t%s\n",    _("draw gray"));
   fprintf( stderr, "\n");
   fprintf( stderr,  "  %s\n",             _("Illuminant Spectrum Graph:"));
-  fprintf( stderr,  "      %s --illuminant A|D65 [-vbowt]\n", argv[0]);
+  fprintf( stderr,  "      %s --illuminant A|D65 [-vbowtr]\n", argv[0]);
   fprintf( stderr, "      --illuminant A\t%s\n",   _("CIE A spectral power distribution"));
   fprintf( stderr, "      --illuminant D65\t%s\n", _("CIE D65 spectral power distribution"));
+  fprintf( stderr, "      \t--no-color\t%s\n",    _("draw gray"));
+  fprintf( stderr, "\n");
+  fprintf( stderr,  "  %s\n",             _("CSV Spectrum Graph:"));
+  fprintf( stderr,  "      %s --input %s [-vbowtr]\n", argv[0], _("FILE"));
   fprintf( stderr, "      \t--no-color\t%s\n",    _("draw gray"));
   fprintf( stderr, "\n");
   fprintf( stderr, "  %s\n",              _("General options:"));
@@ -125,6 +153,7 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "      -f %s\t%s\n",   _("FORMAT"),   _("specify output file format png or svg, default is png"));
   fprintf( stderr, "      -b \t%s\n",     _("omit border"));
   fprintf( stderr, "      -t %s\t%s\n",   _("NUMBER"), _("specify increase of the thickness of the graph lines"));
+  fprintf( stderr, "      -r \t%s\n",     _("draw grid"));
   fprintf( stderr, "      -2 \t%s\n",     _("select a ICC v2 profile"));
   fprintf( stderr, "      -4 \t%s\n",     _("select a ICC v4 profile"));
   fprintf( stderr, "\n");
@@ -138,11 +167,17 @@ int main( int argc , char** argv )
   /* the functional switches */
   char * format = 0;
   char * output = 0;
+  char * input = NULL;
+  oyImage_s * spectra = NULL;
+  int spectral_channels = 0;
+  int spectral_count = 0;
+  double spectra_rect[4] = {1000000.,-1000000.,1000000.,-1000000.}; /* x_min,x_max, y_min,y_max */
   int spectral = 1;
   int blackbody = 1;
   double thickness = 1.0;
   double change_thickness = 0.7;
   int border = 1;
+  int raster = 0;
   int standardobs = 0;
   int saturation = 1;
   double kelvin = 0.0;
@@ -150,7 +185,7 @@ int main( int argc , char** argv )
   int color = 1;
   int flags = 0;
 
-  int max_x,max_y,min_x,min_y;
+  double max_x,max_y,min_x,min_y;
 
   const char * filename = 0;
 
@@ -179,6 +214,8 @@ int main( int argc , char** argv )
   int lower_text_border = 0;
 
   float xO,yO,width,height,height_;
+  double rgba[4] = {.5,.5,.5,.7};
+  double bg_rgba[4] = {.7,.7,.7,.5};
 
   /* value range */
   min_x=min_y=0.0;
@@ -210,8 +247,9 @@ int main( int argc , char** argv )
               case 'd': i=0; OY_PARSE_FLOAT_ARG2( change_thickness, "d", -1000.0, 1000.0, .7 ); break;
               case 'f': OY_PARSE_STRING_ARG(format); break;
               case 'o': OY_PARSE_STRING_ARG(output); break;
+              case 'r': raster = 1; break;
               case 'w': OY_PARSE_INT_ARG( pixel_w ); break;
-              case 'v': oy_debug += 1; break;
+              case 'v': if(verbose++) oy_debug += 1; break;
               case 'x': proj = p_xyz; break;
               case 's': spectral = 0; break;
               case 't': i=0; OY_PARSE_FLOAT_ARG2( thickness, "t", 0.001, 10.0 , 1.0 ); break;
@@ -235,10 +273,13 @@ int main( int argc , char** argv )
                         else if(OY_IS_ARG("illuminant"))
                         { blackbody = spectral = saturation = 0;
                           OY_PARSE_STRING_ARG2(illuminant, "illuminant"); break; }
+                        else if(OY_IS_ARG("input"))
+                        { blackbody = spectral = saturation = 0;
+                          OY_PARSE_STRING_ARG2(input, "input"); break; }
                         else if(OY_IS_ARG("no-color"))
                         { color = 0; i=100; break;}
                         else if(OY_IS_ARG("verbose"))
-                        { oy_debug += 1; i=100; break;}
+                        { if(verbose++) oy_debug += 1; i=100; break;}
                         } OY_FALLTHROUGH
               default:
                         printfHelp(argc, argv);
@@ -268,6 +309,46 @@ int main( int argc , char** argv )
     fprintf( stderr, "  Oyranos v%s\n",
                   oyNoEmptyName_m_(oyVersionString(1,0)));
 
+  if(input)
+  {
+    size_t size = 0;
+    char * text = oyReadFileToMem_( input, &size, NULL );
+    double scale = 1.0;
+    spectra = oySpectrumFromCSV( text );
+    if(spectra)
+    {
+      spectral_channels = oySpectrumGetParam( spectra, oySPECTRUM_CHANNELS );
+      spectral_count = oySpectrumGetParam( spectra, oySPECTRUM_COLUMNS );
+      for(i = 0; i < spectral_channels; ++i)
+      {
+        float x = oySpectrumGet( spectra, -1, i );
+        if(x < spectra_rect[0]) spectra_rect[0] = x;
+        if(x > spectra_rect[1]) spectra_rect[1] = x;
+        for(j = 0; j < spectral_count; ++j)
+        {
+          double y = oySpectrumGet( spectra, j, i );
+          if(isnan(y))
+            continue;
+          if(y < spectra_rect[2]) spectra_rect[2] = y;
+          if(y > spectra_rect[3]) spectra_rect[3] = y;
+        }
+      }
+      if(fabs(spectra_rect[3]) > fabs(spectra_rect[2]))
+        scale = spectra_rect[3];
+      else if(spectra_rect[2])
+        scale = - spectra_rect[2];
+      oySpectrumNormalise( spectra, fabs(1.0/scale) );
+      if(spectra_rect[2] < 0.0)
+        min_y = spectra_rect[2] / scale;
+      max_y = 1.0;
+
+      if(verbose)
+      fprintf( stderr, "channels: %d (%d) count: %d (%f %f - %f %f / %f %f)\n",
+               (int)spectral_channels, (int)size, spectral_count,
+               spectra_rect[0], spectra_rect[1], spectra_rect[2], spectra_rect[3], min_y, max_y );
+    }
+  }
+
   pixel_h = pixel_w;
 
   thickness *= pixel_w/128.0;
@@ -284,7 +365,7 @@ int main( int argc , char** argv )
 
   cr = cairo_create( surface );
 
-  cairo_set_source_rgba( cr, 0.7, .7, .7, .5 );
+  cairo_set_source_rgba( cr, bg_rgba[0], bg_rgba[1], bg_rgba[2], bg_rgba[3] );
   cairo_rectangle( cr, 0, 0, pixel_w, pixel_h );
   cairo_fill( cr );
 
@@ -299,7 +380,7 @@ int main( int argc , char** argv )
   left_text_border *= scale/2;
   lower_text_border *= scale/2;
 
-  /* diagramvariables in image points */
+  /* diagram variables in image points */
   xO = (float)( x +           tab_border_x + left_text_border);     /* origin */
   yO = (float)(-y + pixel_h - tab_border_y - lower_text_border);    /* origin */
   width= (float)(pixel_w - 2*x - 2*tab_border_x - left_text_border); /* width of diagram */
@@ -475,93 +556,156 @@ int main( int argc , char** argv )
     }
   }
 
-#define drawSpectralCurve(array, pos, r,g,b,a) i = 0; cairo_line_to(cr, xToImage(i/371.0), yToImage(array[i][pos]/2.0)); \
-    if(color) cairo_set_source_rgba( cr, r,g,b,a); else cairo_set_source_rgba( cr, (r*0.2+g*0.7+b*0.1)/3.0,(r*0.2+g*0.7+b*0.1)/3.0,(r*0.2+g*0.7+b*0.1)/3.0,a); \
-    for(i = 0; i<=371; ++i) \
-      cairo_line_to(cr, xToImage(i/371.0), yToImage(array[i][pos]/2.0)); \
+
+  /* default spectral range to draw */
+  min_x = 300.;
+  max_x = 780.;
+
+  if(raster &&
+     ( standardobs || illuminant || kelvin > 0.0 || spectra ) )
+  {
+    /* draw some coordinate system hints */
+    cairo_set_line_width (cr, 0.35*thickness);
+    cairo_set_source_rgba( cr, bg_rgba[0], bg_rgba[1], bg_rgba[2], bg_rgba[3]);
+    /* 25 nm */
+    for(i = 300; i < max_x; i += 25)
+    {
+      cairo_move_to(cr, xToImage(i), yToImage(min_y));
+      cairo_line_to(cr, xToImage(i), yToImage(max_y));
+    }
     cairo_stroke(cr);
 
+    /* 100 nm */
+    cairo_set_line_width (cr, 0.7*thickness);
+    for(i = 300; i < max_x; i += 100)
+    {
+      cairo_move_to(cr, xToImage(i), yToImage(min_y));
+      cairo_line_to(cr, xToImage(i), yToImage(max_y));
+    }
+    cairo_stroke(cr);
+
+    if(min_y < 0.0)
+    {
+      /* zero intensity */
+      cairo_move_to(cr, xToImage(min_x), yToImage(0.0));
+      cairo_line_to(cr, xToImage(max_x), yToImage(0.0));
+      cairo_stroke(cr);
+    }
+  }
+
+#define drawSpectralCurve(spectra, index, r,g,b,a_) \
+    { \
+      double rgba[4] = {r,g,b,a_}; \
+      drawIlluminant( cr, \
+                      a, index, \
+                      xO, yO, width, height, \
+                      min_x, max_x,  min_y < 0 ? min_y : 0.0, max, \
+                      color ? COLOR_COLOR : COLOR_GRAY, rgba, \
+                      flags, id ); \
+    }
   cairo_set_line_width (cr, 3.*thickness);
   if(standardobs == 1)
   {
+    const char * id = "StdObs 31";
+    oyImage_s * a = oySpectrumCreateEmpty ( 360, 830, 1, 3 );
+    float max = oySpectrumFillFromArrayF3 ( a, cieXYZ_31_2 );
+    oySpectrumNormalise ( a, 1.0/max ); max = 1.0;
     /* draw spectral sensitivity curves from 1931 standard observer */
     drawSpectralCurve(cieXYZ_31_2, 0, 1.,.0,.0, 1.)
     drawSpectralCurve(cieXYZ_31_2, 1, .0,1.,.0,1.)
     drawSpectralCurve(cieXYZ_31_2, 2, .0,.0,1.,1.)
     cairo_stroke(cr);
+    oyImage_Release( &a );
   }
   if(standardobs == 2)
   {
+    oyImage_s * a = oySpectrumCreateEmpty ( 360, 830, 1, 3 );
+    float max = oySpectrumFillFromArrayF3 ( a, cieXYZ_64_10 );
+    const char * id = "StdObs 64";
+    oySpectrumNormalise ( a, 1.0/max ); max = 1.0;
     /* draw spectral sensitivity curves from 1964 standard observer */
     drawSpectralCurve(cieXYZ_64_10, 0, 1.0, .0, .0, 1.)
     drawSpectralCurve(cieXYZ_64_10, 1, .0, 1.0, .0, 1.)
     drawSpectralCurve(cieXYZ_64_10, 2, .0, .0, 1.0, 1.)
     cairo_stroke(cr);
+    oyImage_Release( &a );
   }
+#undef drawSpectralCurve
   if(kelvin > 0.0)
   {
     /* draw black body spectrum */
-    float bb[372];
-    double max = 0.0;
-    /* float precission avoids clamping in CIE*XYZ space on input */
-    double rgb[3] = {0.0,0.0,0.0}, XYZ[3] = {0.0,0.0,0.0};
-    oyProfile_s * pLab = oyProfile_FromStd( oyASSUMED_LAB, flags, 0 ),
-                * sRGB = oyProfile_FromStd( oyASSUMED_WEB, flags, 0 );
-    oyConversion_s * lab_srgb = oyConversion_CreateBasicPixelsFromBuffers (
-                                       pLab, rgb, oyDataType_m(oyDOUBLE),
-                                       sRGB, rgb, oyDataType_m(oyDOUBLE),
-                                       0, 1 );
-    for(i=0;i<372;++i) bb[i] = bb_spectrum(360+i, kelvin);
-    for(i=0;i<372;++i) if(bb[i] > max) max = bb[i];
-    for(i=0;i<372;++i) bb[i] /= max;
-
-    cairo_set_source_rgba( cr, 0.0,0.0,0.0, 1.0); \
-    cairo_move_to(cr, xToImage(0/371.0), yToImage(bb[0]));
-    for(i = 0; i<371-1; ++i)
-    {
-      cairo_pattern_t * g = cairo_pattern_create_linear(
-                                     xToImage(    i/371.0),yToImage(bb[i]),
-                                     xToImage((i+1)/371.0),yToImage(bb[i+1]));
-      /* start with previous color */
-      cairo_pattern_add_color_stop_rgba(g, 0, rgb[0],rgb[1],rgb[2], 1);
-      /* get spectral color from color matching function (CMF) */
-      for(j = 0; j<3; ++j)
-        XYZ[j] = cieXYZ_31_2[i][j];
-      oyXYZ2Lab( XYZ, rgb );
-      rgb[0] /= 100.0; rgb[1] = rgb[1]/256.0+0.5; rgb[2] = rgb[2]/256.0+0.5;
-      oyConversion_RunPixels( lab_srgb, 0 );
-      /* add different stop */
-      cairo_pattern_add_color_stop_rgba(g, 1, rgb[0],rgb[1],rgb[2], 1);
-      if(color)
-      /* only one color pattern can be drawn at each cairo_stroke;
-       * appears to be a cairo limitation */
-        cairo_set_source(cr, g);
-      cairo_move_to(cr, xToImage((i  )/371.0), yToImage(bb[i  ]));
-      /* draw a bit further and avoid empty space between lines */
-      cairo_line_to(cr, xToImage((i+2)/371.0), yToImage(bb[i+2]));
-      /* draw a disconnected single line segment with actual gradient pattern */
-      cairo_stroke(cr);
-    }
-    oyProfile_Release( &sRGB );
-    oyProfile_Release( &pLab );
-    oyConversion_Release( &lab_srgb );
+    const int lambda = 5,
+              max_x_ = 1000,
+              len = (max_x_ - 300) / lambda + 2;
+    float bb[len], max = 0;
+    oyImage_s * a = oySpectrumCreateEmpty ( 300, max_x_, lambda, 1 );
+    for(i=0; 300+i*lambda <= max_x_; ++i) bb[i] = bb_spectrum(300+i*lambda, kelvin);
+    for(i=0; 300+i*lambda <= max_x_ && 300+i*lambda <= max_x; ++i)
+      if(max < bb[i]) max = bb[i];
+    oySpectrumFillFromArrayF( a, bb, 0 );
+    oySpectrumNormalise ( a, 1.0/max ); max = 1.0;
+    drawIlluminant  ( cr,
+                      a, 0,
+                      xO, yO, width, height,
+                      min_x, max_x,  min_y < 0 ? min_y : 0.0, max,
+                      color ? COLOR_SPECTRAL : COLOR_GRAY, rgba,
+                      flags, "kelvin" );
+    oyImage_Release( &a );
   }
   if(illuminant != 0)
   {
     if(oyStringCaseCmp_(illuminant,"A") == 0)
-      draw_illuminant( cr,
-                       spd_A_5, 300, 780, 5,
-                       xO, yO, width, height,
-                       min_x, max_x, min_y, max_y,
-                       color, flags );
+    {
+      oyImage_s * a = oySpectrumCreateEmpty ( 300, 830, 5, 1 );
+      float max = oySpectrumFillFromArrayF( a, spd_A_5, 0 );
+      oySpectrumNormalise ( a, 1.0/max ); max = 1.0;
+      drawIlluminant( cr,
+                      a, 0,
+                      xO, yO, width, height,
+                      min_x, max_x,  min_y < 0 ? min_y : 0.0, max,
+                      color ? COLOR_SPECTRAL : COLOR_GRAY, rgba,
+                      flags, "A" );
+      oyImage_Release( &a );
+    }
     if(oyStringCaseCmp_(illuminant,"D65") == 0)
-      draw_illuminant( cr,
-                       spd_D65_5, 300, 830, 5,
-                       xO, yO, width, height,
-                       min_x, max_x, min_y, max_y,
-                       color, flags );
+    {
+      oyImage_s * a = oySpectrumCreateEmpty ( 300, 830, 5, 1 );
+      float max = oySpectrumFillFromArrayF( a, spd_D65_5, 0 );
+      oySpectrumNormalise ( a, 1.0/max ); max = 1.0;
+      drawIlluminant( cr,
+                      a, 0,
+                      xO, yO, width, height,
+                      min_x, max_x,  min_y < 0 ? min_y : 0.0, max,
+                      color ? COLOR_SPECTRAL : COLOR_GRAY, rgba,
+                      flags, "D65" );
+      oyImage_Release( &a );
+    }
   }
-#undef drawSpectralCurve
+  if(spectra)
+  {
+    int j;
+#define setColor(r_,g_,b_,a_) \
+                 rgba[0] = r_; rgba[1] = g_; rgba[2] = b_; rgba[3] = a_;
+    for(j = 0; j < spectral_count; ++j)
+    {
+      switch(j)
+      {
+        case 0: setColor( .8,.0,.0,1. ) break;
+        case 1: setColor( .0,.8,.0,1. ) break;
+        case 2: setColor( .0,.0,.8,1. ) break;
+      }
+      drawIlluminant( cr,
+                      spectra, j,
+                      xO, yO, width, height,
+                      min_x, max_x, min_y < 0 ? min_y : 0.0, max_y,
+                      spectral_count == 1 && color ? COLOR_SPECTRAL : COLOR_COLOR, rgba,
+                      flags, input );
+    }
+    oyImage_Release( &spectra );
+
+    min_x=min_y=0.0;
+    max_x=max_y=1.0;
+  }
 
   cairo_restore( cr );
 
@@ -627,115 +771,267 @@ double * getSaturationLine_(oyProfile_s * profile, int intent, size_t * size_, o
   return NULL;
 }
 
-void draw_illuminant( cairo_t * cr,
-                      float * spd, int start, int end, int lambda,
-                      float xO, float yO, float width, float height,
-                      int min_x, int max_x, int min_y, int max_y,
-                      int color,
-                      uint32_t icc_profile_flags )
+void        oySpectrumSetRange( oyImage_s * spec, double min, double max, double lambda )
 {
-  float n = (end-start)/lambda + 1;
+  int           spp  = (max - min + lambda) / lambda;
+  oyOptions_s * tags = oyImage_GetTags( spec );
+  oyOptions_SetFromDouble( &tags,   OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "SPECTRAL_START_NM",
+                        min, 0, OY_CREATE_NEW );
+  oyOptions_SetFromDouble( &tags,   OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "SPECTRAL_END_NM",
+                        max, 0, OY_CREATE_NEW );
+  /* this is redundant */
+  oyOptions_SetFromDouble( &tags,   OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "SPECTRAL_BANDS",
+                        spp, 0, OY_CREATE_NEW );
+  oyOptions_Release( &tags );
+}
+oyImage_s * oySpectrumCreateEmpty ( int min, int max, int lambda, int columns )
+{
+  oyPixel_t     pixel_layout = oyDataType_m( oyDOUBLE );
+  oyImage_s   * spec = NULL;
+  oyPointer     pixels = NULL;
+  oyProfile_s * p = oyProfile_FromStd(oyASSUMED_XYZ, 0, 0); 
+  int           spp  = (max - min + lambda) / lambda;
+
+  pixel_layout |= oyChannels_m( spp );
+  spec = oyImage_Create ( columns, 1, pixels, pixel_layout, p, NULL );
+  oySpectrumSetRange( spec, min, max, lambda );
+
+  return spec;
+}
+float    oySpectrumFillFromArrayF  ( oyImage_s * spec, float * curve, int column )
+{
+  int channels = oySpectrumGetParam( spec, oySPECTRUM_CHANNELS );
+  int i;
+  float max = -1000000.0;
+  int is_allocated = 0;
+  double * dbl = (double*) oyImage_GetPointF(spec)( spec, column,0,-1, &is_allocated );
+
+  for(i = 0; i < channels; ++i)
+  {
+    float v = curve[i];
+    dbl[i] = v;
+    if(!isnan(v) && v > max) max = v;
+  }
+  return max;
+}
+float    oySpectrumFillFromArrayF3 ( oyImage_s * spec, float curves[][3] )
+{
+  int channels = oySpectrumGetParam( spec, oySPECTRUM_CHANNELS );
+  int i, index;
+  float max = -1000000.0;
+
+  for(index = 0; index < 3; ++index)
+  {
+    int is_allocated = 0;
+    double * dbl = (double*) oyImage_GetPointF(spec)( spec, index,0,-1, &is_allocated );
+    for(i = 1; i <= channels; ++i)
+    {
+      float v = curves[i][index];
+      dbl[i] = v;
+      if(v > max)
+        max = v;
+    }
+  }
+
+  return max;
+}
+void     oySpectrumNormalise ( oyImage_s * spec, float scale )
+{
+  int channels = oySpectrumGetParam( spec, oySPECTRUM_CHANNELS );
+  int pixels = oySpectrumGetParam( spec, oySPECTRUM_COLUMNS );
+  int i, pixel;
+
+  if(scale)
+  for(pixel = 0; pixel < pixels; ++pixel)
+  {
+    int is_allocated = 0;
+    double * dbl = (double*) oyImage_GetPointF(spec)( spec, pixel,0,-1, &is_allocated );
+    for(i = 0; i < channels; ++i)
+      if(!isnan(dbl[i]))
+        dbl[i] *= scale;
+  }
+}
+double   oySpectrumGetParam  ( oyImage_s * spec, oySPECTRUM_PARAM_e mode )
+{
+  double nm = 0;
+  oyOptions_s * tags;
+
+  switch(mode)
+  {
+    case oySPECTRUM_CHANNELS:
+         return oyImage_GetPixelLayout( spec, oyCHANS );
+    case oySPECTRUM_START: OY_FALLTHROUGH
+    case oySPECTRUM_END:
+         tags = oyImage_GetTags( spec );
+         oyOptions_FindDouble( tags, mode == oySPECTRUM_START ? "SPECTRAL_START_NM" : "SPECTRAL_END_NM",
+                               0, &nm );
+         oyOptions_Release( &tags );
+         break;
+    case oySPECTRUM_LAMBDA:
+         {
+           float start    = oySpectrumGetParam(spec, oySPECTRUM_START),
+                 end      = oySpectrumGetParam(spec, oySPECTRUM_END),
+                 channels = oySpectrumGetParam(spec, oySPECTRUM_CHANNELS);
+           nm = (end - start) / (channels - 1);
+         }
+         break;
+    case oySPECTRUM_COLUMNS:
+         nm = oyImage_GetWidth( spec );
+         break;
+  }
+
+  return nm;
+}
+double   oySpectrumGet( oyImage_s * spec, int pos, int channel )
+{
+  int is_allocated = 0;
+  double * dbl;
+
+  if(pos < 0)
+  {
+    /* wave length mode */
+    double nm = 0;
+    double lambda = oySpectrumGetParam( spec, oySPECTRUM_LAMBDA ),
+           start = oySpectrumGetParam( spec, oySPECTRUM_START );
+
+    nm = start + channel*lambda;
+    return nm;
+  }
+
+  dbl = (double*) oyImage_GetPointF(spec)( spec, pos,0,-1, &is_allocated );
+  return dbl[channel];
+}
+void drawIlluminant( cairo_t * cr,
+                      oyImage_s * spec, int index,
+                      float xO, float yO, float width, float height,
+                      float min_x, float max_x, float min_y, float max_y,
+                      COLOR_MODE mode, double color[4],
+                      uint32_t icc_profile_flags, const char * id )
+{
+  int channels = oySpectrumGetParam( spec, oySPECTRUM_CHANNELS );
+  int start = oySpectrumGetParam( spec, oySPECTRUM_START ),
+      end = oySpectrumGetParam( spec, oySPECTRUM_END );
+  float max = -1000000.0;
+
+  int lambda = (end - start) / (channels - 1);
   /*  draw spectral power distribution
    *  start and end are not very precise,
    *  just some illustration
    */
-  float * curve;
-  double max = 0.0;
   double line_width = cairo_get_line_width( cr );
   int i;
   /* float precission avoids clamping in CIE*XYZ space on input */
-  double rgb[3] = {0.0,0.0,0.0};
+  double rgb[4] = {0.0,0.0,0.0,1.0};
 
-    oyProfile_s * pLab = oyProfile_FromStd( oyASSUMED_LAB, icc_profile_flags, 0 ),
-                * sRGB = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, 0 );
-    oyConversion_s * lab_srgb = oyConversion_CreateBasicPixelsFromBuffers (
+  for(i = 0; i < 4; ++i) rgb[i] = color[i];
+  cairo_set_source_rgba( cr, rgb[0],rgb[1],rgb[2], rgb[3]);
+
+  if(mode == COLOR_GRAY)
+  {
+#define setGrayColor(r,g,b,a) \
+    cairo_set_source_rgba( cr, (r*0.2+g*0.7+b*0.1)/3.0,(r*0.2+g*0.7+b*0.1)/3.0,(r*0.2+g*0.7+b*0.1)/3.0,a);
+    setGrayColor( rgb[0],rgb[1],rgb[2], rgb[3] )
+  }
+
+  oyProfile_s * pLab = oyProfile_FromStd( oyASSUMED_LAB, icc_profile_flags, 0 ),
+              * sRGB = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, 0 );
+  oyConversion_s * lab_srgb = NULL;
+
+  if(mode == COLOR_SPECTRAL)
+  {
+    lab_srgb = oyConversion_CreateBasicPixelsFromBuffers (
                                        pLab, rgb, oyDataType_m(oyDOUBLE),
                                        sRGB, rgb, oyDataType_m(oyDOUBLE),
                                        0, 1 );
+    rgb[3] = 1.0;
+  }
 
+  if(verbose)
+  fprintf( stderr, "drawing*sprectrum %d nm - %d nm %d nm precission %f", start, end, lambda, max_y );
 
-    curve = (float*) malloc( sizeof(float) * (n+2) );
-    for(i=0;i<n;++i) curve[i] = spd[i];
-    for(i=0;i<n;++i) if(curve[i] > max) max = curve[i];
-    for(i=0;i<n;++i) curve[i] /= max;
+  cairo_move_to(cr, xToImage( oySpectrumGetParam( spec, oySPECTRUM_START )), yToImage( oySpectrumGet(spec, index, 0)));
 
-    fprintf( stderr, "drawing sprectrum %d nm - %d nm %d nm precission %f %f\n", start, end, lambda, max, n );
+  for(i = 0; i < channels-1; ++i)
+  {
+    double XYZ[3] = {0.0,0.0,0.0};
+    int j;
+    double x0 = oySpectrumGet(spec, -1, i ),
+           x1 = oySpectrumGet(spec, -1, i+1 ),
+           y0 = oySpectrumGet(spec, index, i),
+           y1 = oySpectrumGet(spec, index, i+1);
+    cairo_pattern_t * g;
 
-    cairo_set_source_rgba( cr, 0.0,0.0,0.0, 1.0);
-    cairo_move_to(cr, xToImage(0/371.0), yToImage(curve[0]));
-#if defined(USE_CLIPPER)
-    /*/ not good enough for illuminant A - lots of artefacts */
-    cairo_set_line_width( cr, line_width/3 );
-    for(i = 0; i<371-1; ++i)
+    if(min_x > x0 || x1 > max_x ||
+       isnan(y0) || isnan(y1))
     {
-      float y0 = oyLinInterpolateRampF32( curve, n, i/371.0 );
-      cairo_line_to(cr, xToImage((i  )/371.0), yToImage(y0));
+      if(verbose) fprintf( stderr, " x0: %g y0: %g/%g\n", x0, y0, y1 );
+      if(isnan(y0) || isnan(y1)) break;
+      continue;
     }
-    cairo_close_path( cr );
 
-    using namespace ClipperLib;
-    Polygons pg; /* std::vector for polygon(s) storage */
-    int scaling = 3;
-    cairo::cairo_to_clipper(cr, pg, scaling);
-    /* offset the graph */
-    OffsetPolygons(pg, pg, line_width * std::pow((double)10,scaling), jtMiter, 0.125, false);
-    /* finally copy the clipped path back to the cairo context and draw it ... */
-    cairo::clipper_to_cairo(pg, cr, scaling);
-    std::cout << pg << std::endl;
-    cairo_stroke( cr );
+    if(y0 > max) max = y0;
+    if(y1 > max) max = y1;
 
-    for(i = 0; i<371-1; ++i)
+    if(mode != COLOR_SPECTRAL)
     {
-      float y0 = oyLinInterpolateRampF32( curve, n, i/371.0 );
-      cairo_line_to(cr, xToImage((i  )/371.0), yToImage(y0));
+      cairo_line_to(cr, xToImage(x0), yToImage(y0));
+      continue;
     }
-    cairo_stroke( cr );
-#else
-    for(i = 0; i<371-1; ++i)
-    {
-      double XYZ[3] = {0.0,0.0,0.0};
-      int j;
-      double a_b;
-      float y0 = oyLinInterpolateRampF32( curve, n, i/371.0 ),
-            y1 = oyLinInterpolateRampF32( curve, n, (i+1)/371.0 );
-      cairo_pattern_t * g = cairo_pattern_create_linear(
-                                     xToImage(    i/371.0),yToImage(y0),
-                                     xToImage((i+1)/371.0),yToImage(y1));
 
-      /* start with previous color */
-      cairo_pattern_add_color_stop_rgba(g, 0, rgb[0],rgb[1],rgb[2], 1);
+    g = cairo_pattern_create_linear( xToImage(x0),yToImage(y0),
+                                     xToImage(x1),yToImage(y1));
+
+    /* start with previous color */
+    cairo_pattern_add_color_stop_rgba(g, 0, rgb[0],rgb[1],rgb[2], rgb[3]);
+    if(lab_srgb)
+    {
       /* get spectral color from color matching function (CMF) */
-      for(j = 0; j<3; ++j)
-        XYZ[j] = cieXYZ_31_2[i][j];
+      if(360 <= x0 && x0 <= 830)
+        for(j = 0; j<3; ++j)
+          XYZ[j] = cieXYZ_31_2[(int)x0 - 360][j];
       oyXYZ2Lab( XYZ, rgb );
       rgb[0] /= 100.0; rgb[1] = rgb[1]/256.0+0.5; rgb[2] = rgb[2]/256.0+0.5;
       oyConversion_RunPixels( lab_srgb, 0 );
       /* add different stop */
-      cairo_pattern_add_color_stop_rgba(g, 1, rgb[0],rgb[1],rgb[2], 1);
-      if(color)
+      cairo_pattern_add_color_stop_rgba(g, 1, rgb[0],rgb[1],rgb[2], rgb[3]);
       /* only one color pattern can be drawn at each cairo_stroke;
        * appears to be a cairo limitation */
-        cairo_set_source(cr, g);
-
-      cairo_move_to(cr, xToImage((i  )/371.0), yToImage(y0));
-      /* draw a bit further and avoid empty space between lines */
-      cairo_line_to( cr, xToImage((i+1)/371.0), yToImage(y1) );
-      /* draw a disconnected single line segment with actual gradient pattern */
-      cairo_stroke(cr);
-
-      /* end with a half circle to cover empty areas toward the following line segment */
-      cairo_set_source_rgba( cr, rgb[0],rgb[1],rgb[2], 1);
-      a_b = atan((y0-y1)/(1/371.0));
-      cairo_arc_negative( cr, xToImage((i+1)/371.0), yToImage(y1), line_width/2.0, a_b+M_PI/2.0, a_b-M_PI/2.0);
-      cairo_fill(cr);
+      cairo_set_source(cr, g);
     }
-#endif
 
-    free(curve);
-    oyProfile_Release( &sRGB );
-    oyProfile_Release( &pLab );
-    oyConversion_Release( &lab_srgb );
+    cairo_move_to(cr, xToImage(x0), yToImage(y0));
+    /* draw a bit further and avoid empty space between lines */
+    cairo_line_to( cr, xToImage(x1), yToImage(y1) );
+    /* draw a disconnected single line segment with actual gradient pattern */
+    cairo_stroke(cr);
+
+    /* end with a half circle to cover empty areas toward the following line segment */
+    if(lab_srgb)
+      cairo_set_source_rgba( cr, rgb[0],rgb[1],rgb[2], rgb[3]);
+
+    {
+      float yi = (y0-y1) / (max_y - min_y),
+            xi = lambda / (max_x - min_x);
+      double a_b = atan( yi / xi );
+      if(verbose > 1)
+        fprintf( stderr, "x0,x1 y0,y1 %g,%g %g,%g  %g %g => %g\n", x0,x1,y0,y1, xi, yi, a_b );
+      cairo_arc_negative( cr, xToImage(x1), yToImage(y1), line_width/2.0, a_b+M_PI/2.0, a_b-M_PI/2.0);
+    }
+
+    cairo_fill(cr);
+  }
+
+  if(mode != COLOR_SPECTRAL)
+    cairo_stroke(cr);
+
+  if(verbose)
+  fprintf( stderr, " (%f) %d %s\n", max, channels, id );
+
+  oyProfile_Release( &sRGB );
+  oyProfile_Release( &pLab );
+  oyConversion_Release( &lab_srgb );
 }
+
 
 
 /*                            BB_SPECTRUM
@@ -759,4 +1055,113 @@ double bb_spectrum(double wavelength, double bbTemp)
      *  k - Boltzmann contant                     1.3806488(13)×10−23  J/K
      */
     return (3.74183e-16/*c1*/ * pow(wlm, -5.0)) / (exp(1.4388e-2/*c2*/ / (wlm * bbTemp)) - 1.0); /* W / m² / m */
+}
+
+int oyCSVglines( char * text )
+{
+  int lines = 0;
+  if(text)
+  {
+    int len = strlen(text), i;
+    int last_line_break = 0;
+    for(i = 0; i < len; ++i)
+      if(text[i] == '\n')
+      {
+        ++lines;
+        last_line_break = i;
+      }
+    if(last_line_break < len - 3)
+      ++lines;
+  }
+  return lines;
+}
+float oyCSVparseDouble( char * text )
+{
+  double v = -1;
+  if(text)
+  {
+    int r = oyStringToDouble( text, &v );
+    if(r == 0) return v;
+  }
+  return v;
+}
+int oyCSVgetColumns( char * text )
+{
+  int len = oyStrlen_(text), i;
+  int pixels = 0;
+  for(i = 0; i < len; ++i)
+  {
+    char c = text[i];
+    int is_line_break = 0;
+    if(((int)'0' <= (int)c &&
+          (int)c <= (int)'9') ||
+       c == '.' ||
+       c == '-' ||
+       c == 'e' ||
+       c == 'E' ||
+       c == ' '
+      )
+      continue; /* is a number */
+    else if(c == ',')
+      ++pixels;
+    else if(c == '\n')
+      is_line_break = 1;
+    else
+      return pixels;
+    if(is_line_break)
+      return pixels ? pixels : i?1:0;
+  }
+  return pixels;
+}
+oyImage_s * oySpectrumFromCSV   ( char * text )
+{
+  oyImage_s * spec = NULL;
+  int pixels = 0,
+      lines = 0;
+  float nm, start, end, lambda;
+  if(!text) return spec;
+  pixels = oyCSVgetColumns( text );
+  lines = oyCSVglines( text );
+  if(verbose)
+    fprintf( stderr, "lines: %d\n", lines );
+
+  if(pixels >= 1)
+  {
+    int is_allocated = 0;
+    double * dbl;;
+    int i,index;
+    spec = oySpectrumCreateEmpty( 1, lines, 1, pixels );
+    for(i = 0; i < lines; ++i)
+    {
+      char * endl = strchr( text, '\n' );
+      nm = oyCSVparseDouble(text);
+      if(i == 0) start = nm;
+      else if(i == 1) lambda = nm - start;
+      else if(i == lines-1) end = nm;
+      if(verbose > 1)
+        fprintf( stderr, "%d lamda: %f ", i, nm );
+      for(index = 0; index < pixels; ++index)
+      {
+        is_allocated = 0;
+        dbl = (double*) oyImage_GetPointF(spec)( spec, index,0,-1, &is_allocated );
+        text = strchr( text, ',' );
+        if(text && text < endl && text[0] != '\r' && text[1] != '\r')
+          dbl[i] = oyCSVparseDouble(++text);
+        else
+          dbl[i] = NAN;
+        if(verbose > 1)
+          fprintf( stderr, "%d: %f ", i, dbl[i] );
+      }
+      if(text)
+      {
+        text = strchr( text, '\n' );
+        if(text) ++text;
+        if(verbose > 1)
+          fprintf( stderr, "\n" );
+      }
+    }
+    oySpectrumSetRange( spec, start, end, lambda );
+  }
+
+  return spec;
 }

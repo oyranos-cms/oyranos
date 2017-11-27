@@ -1,4 +1,4 @@
-.TH oyranos-profile-graph 1 "March 03, 2013" "User Commands"
+.TH oyranos-profile-graph 1 "November 27, 2017" "User Commands"
 .SH NAME
 oyranos-profile-graph \- ICC profile graph tool
 .SH SYNOPSIS
@@ -64,6 +64,13 @@ show the CIE D65 spectral power distribution, ~ 6500 Kelvin daylight
 .br
 \fB--no-color\fR
 draw in gray
+.TP
+.B \-\-input \fIFILENAME\fR
+show a comma separated value text file containing spectrums (CMF, SPD,...) as curves.
+.sp
+.br
+\fB--no-color\fR
+draw in gray
 .SH GENERAL OPTIONS
 .TP
 .B \-v, \-\-verbose
@@ -77,6 +84,9 @@ write resulting image to file name.
 .TP
 .B \-b
 omit border.
+.TP
+.B \-r
+show grid in spectral graphs.
 .TP
 \fB-t\fR \fIFLOATINGPOINTNUMBER\fR
 increase the thickness of the graph lines
@@ -105,7 +115,7 @@ Show the standard observer spectral function as curves:
 .SH AUTHOR
 Kai-Uwe Behrmann (ku.b (at) gmx.de)
 .SH COPYRIGHT
-(c) 2012-2013 Kai-Uwe Behrmann and others
+(c) 2012-2017 Kai-Uwe Behrmann and others
 .fi
 License: BSD-3-Clause <http://www.opensource.org/licenses/BSD-3-Clause>
 .SH "SEE ALSO"
