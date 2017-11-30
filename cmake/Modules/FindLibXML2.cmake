@@ -31,7 +31,7 @@ find_path(LIBXML2_INCLUDE_DIR NAMES libxml/xpath.h
    PATH_SUFFIXES libxml2
  )
 
-find_library(LIBXML2_LIBRARIES NAMES xml2 libxml2
+find_library(LIBXML2_LIBRARIES NAMES xml2 libxml2 xml2-static libxml2-static
    HINTS
    ${PC_LIBXML_LIBDIR}
    ${PC_LIBXML_LIBRARY_DIRS}
