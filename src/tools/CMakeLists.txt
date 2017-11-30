@@ -21,8 +21,7 @@ INSTALL (TARGETS oyranos-policy DESTINATION ${CMAKE_INSTALL_BINDIR})
 # automatic monitor profile selection, information, Taxi DB, EDID fallback
 ADD_EXECUTABLE( oyranos-monitor "${CMAKE_CURRENT_SOURCE_DIR}/oyranos_gamma.c" )
 TARGET_LINK_LIBRARIES ( oyranos-monitor ${TARGET_LIB} ${EXTRA_LIBS}
-               ${XINERAMA_LIBRARIES} ${XRANDR_LIBRARIES} ${XCM_LIBRARIES}
-               ${XFIXES_LIBRARIES} ${X11_LIBRARIES} )
+               ${XCM_LIBRARIES} ${X11_EXTRA_LIBS} )
 INSTALL (TARGETS oyranos-monitor DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 # Oyranos monitor white point handling
