@@ -693,6 +693,21 @@ int main( int argc , char** argv )
         case 0: setColor( .8,.0,.0,1. ) break;
         case 1: setColor( .0,.8,.0,1. ) break;
         case 2: setColor( .0,.0,.8,1. ) break;
+        case 3: setColor( .0,.8,.8,1. ) break;
+        case 4: setColor( .8,.8,.0,1. ) break;
+        case 5: setColor( .8,.0,.8,1. ) break;
+        case 6: setColor( .5,.0,.0,1. ) break;
+        case 7: setColor( .0,.5,.0,1. ) break;
+        case 8: setColor( .0,.0,.5,1. ) break;
+        case 9: setColor( .0,.5,.5,1. ) break;
+        case 10: setColor( .5,.5,.0,1. ) break;
+        case 11: setColor( .5,.0,.5,1. ) break;
+        case 12: setColor( 1.,1.,1.,1. ) break;
+        case 13: setColor( .8,.8,.8,1. ) break;
+        case 14: setColor( .6,.6,.6,1. ) break;
+        case 15: setColor( .4,.4,.4,1. ) break;
+        case 16: setColor( .2,.2,.2,1. ) break;
+        case 17: setColor( .0,.0,.0,1. ) break;
       }
       drawIlluminant( cr,
                       spectra, j,
