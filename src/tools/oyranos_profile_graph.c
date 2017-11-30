@@ -979,7 +979,7 @@ void drawIlluminant( cairo_t * cr,
     if(min_x > x0 || x1 > max_x ||
        isnan(y0) || isnan(y1))
     {
-      if(verbose) fprintf( stderr, " x0: %g y0: %g/%g\n", x0, y0, y1 );
+      if(verbose > 1) fprintf( stderr, " x0: %g y0: %g/%g\n", x0, y0, y1 );
       if(isnan(y0) || isnan(y1)) break;
       continue;
     }
@@ -1100,6 +1100,19 @@ float oyCSVparseDouble( char * text )
   }
   return v;
 }
+int oyIsNumber( char c )
+{
+  if(((int)'0' <= (int)c &&
+        (int)c <= (int)'9') ||
+       c == '.' ||
+       c == '-' ||
+       c == 'e' ||
+       c == 'E' ||
+       c == ' '
+      )
+    return 1;
+  return 0;
+}
 int oyCSVgetColumns( char * text )
 {
   int len = oyStrlen_(text), i;
@@ -1108,14 +1121,7 @@ int oyCSVgetColumns( char * text )
   {
     char c = text[i];
     int is_line_break = 0;
-    if(((int)'0' <= (int)c &&
-          (int)c <= (int)'9') ||
-       c == '.' ||
-       c == '-' ||
-       c == 'e' ||
-       c == 'E' ||
-       c == ' '
-      )
+    if(oyIsNumber(c))
       continue; /* is a number */
     else if(c == ',')
       ++pixels;
@@ -1128,6 +1134,17 @@ int oyCSVgetColumns( char * text )
   }
   return pixels;
 }
+char * oySkipHeaderComment   ( char * text )
+{
+  if(oyIsNumber( text[0] )) return text;
+  while((text = strchr(text, '\n')) != 0)
+  {
+    ++text;
+    if(oyIsNumber( text[0] ))
+      return text;
+  }
+  return NULL;
+}
 oyImage_s * oySpectrumFromCSV   ( char * text )
 {
   oyImage_s * spec = NULL;
@@ -1135,6 +1152,7 @@ oyImage_s * oySpectrumFromCSV   ( char * text )
       lines = 0;
   float nm, start, end, lambda;
   if(!text) return spec;
+  text = oySkipHeaderComment( text );
   pixels = oyCSVgetColumns( text );
   lines = oyCSVglines( text );
   if(verbose)
