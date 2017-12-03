@@ -33,9 +33,9 @@ device specific Informations (ICC profiles) und system wide settings.
 * [libXinerama, libXrandr, libXfixes and libXxf86vm](http:/www.x.org) - for X11 support
 * [Xcalib](http://www.etg.e-technik.uni-erlangen.de/web/doe/xcalib/) - a vcgt/calibration loader, required on X11/Windows 
 * [lcms and/or lcms2](http://www.littlecms.com) - CMM for color conversion
-* [libxml2](http://www.xmlsoft.org/) - for XML parsing
 
 ##### Optional
+* [libxml2](http://www.xmlsoft.org/) - for XML parsing (or internal fallback)
 * [libXcm >= 0.5.4] (http://www.oyranos.org/libxcm) - for monitor support (or internal fallback)
 * [Yajl](http://lloyd.github.com/yajl) - JSON API (or internall fallback)
 * [libOpenICC](https://github.com/OpenICC/config) - JSON/Yajl based DB API (or internall fallback)
