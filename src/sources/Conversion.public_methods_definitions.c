@@ -5,6 +5,11 @@
  *  Without any options the module selected with the @ref registration 
  *  policy filter shall perform graph analysis and correct the graph.
  *
+ *  @code
+    // use the output
+    oyConversion_Correct( conversion, "//" OY_TYPE_STD "/icc_color", 0, 0 );
+    @endcode
+
  *  @par Typical Options:
  *  - "command"-"help" - a string option issuing a help text as message
  *  - "verbose" - reporting changes as message
@@ -95,8 +100,13 @@ int                oyConversion_Correct (
 
 /** Function  oyConversion_CreateBasicPixels
  *  @memberof oyConversion_s
- *  @brief    Allocate initialise a basic oyConversion_s object
+ *  @brief    Allocate and initialise a basic oyConversion_s object
  *
+ *  @code
+    // create a image graph
+    oyConversion_CreateBasicPixels( input_image, output_image, 0, 0 );
+    @endcode
+
  *  Provided options will be passed to oyFilterNode_NewWith(). There for no
  *  options defaults will be selected.
  *
@@ -539,8 +549,8 @@ int          oyConversion_GetOnePixel( oyConversion_s    * conversion,
  *
  *  @code
     // use the output
-    oyConversion_RunPixels( context, NULL );
-    oyImage_s * image = oyConversion_GetImage( context, OY_OUTPUT );
+    oyConversion_RunPixels( conversion, NULL );
+    oyImage_s * image = oyConversion_GetImage( conversion, OY_OUTPUT );
     // get the data and draw the image
     for(i = 0; i < image->height; ++i)
     {
@@ -551,7 +561,7 @@ int          oyConversion_GetOnePixel( oyConversion_s    * conversion,
       if(is_allocated)
         free( image_data );
     } @endcode
- 
+
  *  @param[in,out] conversion          conversion object
  *  @param[in,out] pixel_access        optional pixel iterator configuration
  *  @return                            0 on success, else error
