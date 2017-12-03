@@ -13,6 +13,13 @@
  *  @since    2008/12/16
  */
 
+/** \addtogroup oicc_policy oicc Module
+ *
+ *  The handled options are listed in @ref oicc_default_color_icc_options .
+ *  Descriptions for the options can be found in @ref defaults_apis and
+ *  in the @ref oyranos_definitions.h header file.
+ *  The registration string for this module is "//" OY_TYPE_STD "/icc_color".
+ *  @{ */
 
 #include "oyranos_config_internal.h"
 #include "oyranos_oicc.h"
@@ -109,7 +116,7 @@ oyOptions_s* oicc_defaultICCValidateOptions
 }
 
 
-/*
+/** @showinitializer
  <xf:model> <xf:instance> - must be added in Oyranos to make the model complete
  */
 char oicc_default_color_icc_options[] = {
@@ -1046,7 +1053,7 @@ char * oiccCMMGetDefaultPattern      ( const char        * base_pattern OY_UNUSE
 }
 
 /** @instance oicc_api9
- *  @brief    oicc oyCMMapi9_s implementation
+ *  @brief    oicc policy oyCMMapi9_s implementation
  *
  *  A module to match ICC CMM default settings to Oyranos policy settings.
  *  Per object user settings have priority and are not touched.
@@ -1179,3 +1186,4 @@ oyCMM_s oicc_cmm_module = {
   oiccInit
 };
 
+/**  @} *//* oicc_policy */

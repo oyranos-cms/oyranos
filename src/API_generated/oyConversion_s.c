@@ -126,12 +126,15 @@ OYAPI int OYEXPORT
  *
  *  @param   conversion                the to be checked configuration
  *  @param   registration              the to be used policy module
- *  @param[in]     flags               for inbuild defaults |
- *                                     oyOPTIONSOURCE_FILTER;
- *                                     for options marked as advanced |
- *                                     oyOPTIONATTRIBUTE_ADVANCED |
- *                                     OY_SELECT_FILTER |
- *                                     OY_SELECT_COMMON
+ *  @param[in]     flags               select particular options:
+ *                                     - for inbuild defaults
+ *                                       @ref oyOPTIONSOURCE_FILTER
+ *                                     - for options marked as advanced
+ *                                       @ref oyOPTIONATTRIBUTE_ADVANCED
+ *                                     - use inbuild options from filter type
+ *                                       @ref OY_SELECT_FILTER
+ *                                     - cover policy options
+ *                                       @ref OY_SELECT_COMMON
  *  @param   options                   options to the policy module
  *  @return                            0 - indifferent, >= 1 - error
  *                                     + a message should be sent
@@ -371,12 +374,15 @@ oyConversion_s *   oyConversion_CreateBasicPixelsFromBuffers (
  *  @param[in]     module_options      options for icc node
  *  @param[in]     output_profile      profile to convert colors to;
  *  @param[in]     buf_type_out        the desired data type for output
- *  @param[in]     flags               for inbuild defaults |
- *                                     oyOPTIONSOURCE_FILTER;
- *                                     for options marked as advanced |
- *                                     oyOPTIONATTRIBUTE_ADVANCED |
- *                                     OY_SELECT_FILTER |
- *                                     OY_SELECT_COMMON
+ *  @param[in]     flags               select particular options:
+ *                                     - for inbuild defaults
+ *                                       @ref oyOPTIONSOURCE_FILTER
+ *                                     - for options marked as advanced
+ *                                       @ref oyOPTIONATTRIBUTE_ADVANCED
+ *                                     - use inbuild options from filter type
+ *                                       @ref OY_SELECT_FILTER
+ *                                     - cover policy options
+ *                                       @ref OY_SELECT_COMMON
  *  @param[in]     obj                 Oyranos object (optional)
  *  @return                            generated new graph, owned by caller
  *

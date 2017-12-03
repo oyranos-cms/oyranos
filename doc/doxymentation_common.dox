@@ -859,11 +859,26 @@ digraph Anatomy_A {
 /**  @} *//* graph_modules */
 
 /** @addtogroup policy_modules Policy Modules
- *  @brief      Modules to handle settings and register additional object types
+ *  @brief      Modules to handle options and register additional object types
+ *
+ *  One main goal is to simplify handling of options in data processing nodes.
+ *  The rationale is, not every developer needs to know any changes in the
+ *  Oyranos CMS to create and maintain a consistent user experience over time.
+ *
+ *  While users are free to ignore system settings, it is recommended 
+ *  to take user and system wide settings into account. So the oicc modules
+ *  synchonises the node options from the OpenICC persitently configured settings.
+ *  In case they are not available, it used inbuild defaults. These settings are
+ *  further exposed for creating UI's for user intervention.
+ *
+ *  The front end API's are described in @ref defaults_apis, especially in oyConversion_Correct().
  *
  *  Only in-tree modules are listed here.
  *
  *  @{ */
+/** @addtogroup oicc_policy
+ *   @{ */
+/**  @} */   /* oicc_policy */
 /**  @} *//* policy_modules */
 
 /** @addtogroup device_modules Device Modules

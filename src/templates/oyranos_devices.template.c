@@ -1939,12 +1939,15 @@ OYAPI int  OYEXPORT
  *  @see OY_SELECT_FILTER OY_SELECT_COMMON oyOPTIONATTRIBUTE_e
  *
  *  @param[in]     registration        the filter registration to search for
- *  @param[in]     flags               for inbuild defaults |
- *                                     oyOPTIONSOURCE_FILTER;
- *                                     for options marked as advanced |
- *                                     oyOPTIONATTRIBUTE_ADVANCED |
- *                                     OY_SELECT_FILTER |
- *                                     OY_SELECT_COMMON
+ *  @param[in]     flags               select particular options:
+ *                                     - for inbuild defaults
+ *                                       @ref oyOPTIONSOURCE_FILTER
+ *                                     - for options marked as advanced
+ *                                       @ref oyOPTIONATTRIBUTE_ADVANCED
+ *                                     - use inbuild options from filter type
+ *                                       @ref OY_SELECT_FILTER
+ *                                     - cover policy options
+ *                                       @ref OY_SELECT_COMMON
  *  @param         object              the optional object
  *  @return                            the options
  *
@@ -2006,12 +2009,15 @@ oyOptions_s *  oyOptions_ForFilter   ( const char        * registration,
  *
  *  @param[in]     core                the filter core
  *  @param[in]     node                the filter node; optional
- *  @param[in]     flags               for inbuild defaults |
- *                                     oyOPTIONSOURCE_FILTER;
- *                                     for options marked as advanced |
- *                                     oyOPTIONATTRIBUTE_ADVANCED |
- *                                     OY_SELECT_FILTER |
- *                                     OY_SELECT_COMMON
+ *  @param[in]     flags               select particular options:
+ *                                     - for inbuild defaults
+ *                                       @ref oyOPTIONSOURCE_FILTER
+ *                                     - for options marked as advanced
+ *                                       @ref oyOPTIONATTRIBUTE_ADVANCED
+ *                                     - use inbuild options from filter type
+ *                                       @ref OY_SELECT_FILTER
+ *                                     - cover policy options
+ *                                       @ref OY_SELECT_COMMON
  *  @param         object              the optional object
  *  @return                            the options
  *
@@ -2391,10 +2397,15 @@ int            oyOption_SetValueFromDB  ( oyOption_s        * option )
  *                                     oyOPTIONSOURCE_FILTER;
  *                                     for options marked as advanced |
  *                                     oyOPTIONATTRIBUTE_ADVANCED;
- *                                     for front end options |
- *                                     oyOPTIONATTRIBUTE_FRONT
- *                                     for already edited options |
- *                                     oyOPTIONATTRIBUTE_EDIT
+ *  @param[in]     flags               select particular options:
+ *                                     - for inbuild defaults
+ *                                       @ref oyOPTIONSOURCE_FILTER
+ *                                     - for options marked as advanced
+ *                                       @ref oyOPTIONATTRIBUTE_ADVANCED
+ *                                     - for front end options
+ *                                       @ref oyOPTIONATTRIBUTE_FRONT
+ *                                     - for already edited options |
+ *                                       @ref oyOPTIONATTRIBUTE_EDIT
  *  @param         filter_type         the type level from a registration
  *  @return                            options
  *
