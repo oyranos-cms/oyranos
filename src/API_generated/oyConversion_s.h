@@ -54,9 +54,13 @@ typedef struct oyConversion_s oyConversion_s;
 /** @struct  oyConversion_s
  *  @ingroup objects_conversion
  *  @extends oyStruct_s
- *  @brief   A filter chain or graph to manipulate a image
+ *  @brief   Image Manipulation by a Graph (DAG)
  *
- * Order of filters matters.
+ *  The main and most simple entry points are oyConversion_CreateBasicPixels(),
+ *  oyConversion_Correct() and oyConversion_RunPixels(). More details can be
+ *  read in @ref graph_usage.
+ *
+ *  Order of filters matters.
  *  The processing direction is a bit like raytracing as nodes request their
  *  parent.
  *
@@ -131,7 +135,8 @@ digraph G {
   conversion
 }
  \enddot
- *  \b Creating \b Graphs: \n
+ * @section graph_usage Graph Live Cycle
+    \b Creating \b Graphs: \n
  *  Most simple is to use the oyConversion_CreateBasicPixels() function to 
  *  create a profile to profile and possible image buffer to image buffer linear
  *  graph.\n
@@ -144,6 +149,13 @@ digraph G {
  *  input node is accessible for user manipulation. The other one is the out_
  *  member. It is the closing node in the graph. It will be set by Oyranos
  *  during closing the graph.
+ *
+ *  \b Configuring \b Graphs: \n
+ *  Image graphs for displayable result should in most cases be synced with
+ *  user and system settings. Image graphs are typically used in three categories:
+ *  - desktop widgets, web browsers, file managers, text editors: oyConversion_Correct( flags=0 )
+ *  - editing applications, image viewers: oyConversion_Correct( flags=@ref oyOPTIONATTRIBUTE_ADVANCED )
+ *  - command line tools without displaying: just as is, most likely skip oyConversion_Correct()
  *
  *  \b Using \b Graphs: \n
  *  To obtain the data the oyConversion_RunPixels() and
@@ -173,6 +185,9 @@ digraph G {
   }
 }
  \enddot
+ *
+ *  \b Releasing \b Graphs: \n
+ *  Giving memory back is simple as oyConversion_Release()
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/06/08 (Oyranos: 0.1.8)

@@ -214,6 +214,7 @@ const char *     oyStructTypeToText  ( oyOBJECT_e          type );
  */
 #define OY_SELECT_FILTER         2048
 /** @brief   select from policy
+ *
  *  @ingroup objects_value
  *
  *  Select typical from a associatable oyCMMapi9_s type of filter for providing
@@ -225,7 +226,8 @@ const char *     oyStructTypeToText  ( oyOBJECT_e          type );
  */
 #define OY_SELECT_COMMON         4096
 /** @enum    oyOPTIONATTRIBUTE_e
- *  @brief   usage type
+ *  @brief   Usage and State Properties 
+ *
  *  @ingroup objects_value
  *
  *  The types of Oyranos default settings to include into the options set.
@@ -236,7 +238,7 @@ const char *     oyStructTypeToText  ( oyOBJECT_e          type );
  *  The ".invisible" attribute says a option shall not be displayed in a GUI.
  *  The ".readonly" attribute alllows for unchangeable, static options. They
  *  might be used for passing additional informations.
- *  The ".font" and ".advanced" attributes are described for the according
+ *  The ".front" and ".advanced" attributes are described for the according
  *  enum values.
  *
  *  See as well @ref registration
