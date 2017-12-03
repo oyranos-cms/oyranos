@@ -23,14 +23,25 @@
 #include <wchar.h>
 
 #ifndef OY_UNUSED
-#ifdef __GNUC__
+#if   (__GNUC__*100 + __GNUC_MINOR__) >= 406
 #define OY_UNUSED                      __attribute__ ((unused))
 #elif defined(_MSC_VER)
 #define OY_UNUSED                      __declspec(unused)
 #else
-#define OY_UNUSED                      __attribute__ ((unused))
+#define OY_UNUSED
 #endif
 #endif
+
+#ifndef OY_FALLTHROUGH
+#if   defined(__clang__)
+#define OY_FALLTHROUGH
+#elif __GNUC__ >= 7 
+#define OY_FALLTHROUGH                 __attribute__ ((fallthrough));
+#else
+#define OY_FALLTHROUGH
+#endif
+#endif
+
 
 #if LCMS_VERSION < 2050
 /* 'dscm' */
@@ -1738,7 +1749,14 @@ wchar_t *    lcm2Utf8ToWchar         ( const char        * text )
   in = tmp_in = strdup( text );
   error = lcm2ConvertUTF8toUTF16( (const UTF8**)&in, (const UTF8*)in+in_len, (UTF16**)&tmp_out, (UTF16*)(tmp_out+out_len), lenientConversion );
 
-  if(error != conversionOK)
+  if(error == conversionOK)
+  {
+    /* store UTF16BE in wchar_t for lcms2 */
+    uint16_t * icc_utf16 = (uint16_t*) wchar_out;
+    int i;
+    for(i = in_len; i >= 0; --i) wchar_out[i] = icc_utf16[i];
+  }
+  else
   {
     lcm2msg_p( 300, NULL, "error[%d] %lu %lu %s", error, in_len, out_len, text );
     lcm2Free_m(wchar_out);
