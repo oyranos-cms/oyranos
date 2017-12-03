@@ -27,6 +27,7 @@
 #include "oyCMMapi10_s_.h"
 #include "oyCMMui_s_.h"
 #include "oyConnectorImaging_s_.h"
+#include "oyImage_s.h"
 #include "oyProfiles_s.h"
 #include "oyStructList_s.h"
 
@@ -59,6 +60,7 @@ oyCMMapi6_s           l2cms_api6_cmm;                    OY_LCM2_DATA_CONVERT_RE
 oyCMMapi10_s          l2cms_api10_cmm;                   OY_LCM2_CREATE_ABSTRACT_PROOFING_REGISTRATION
 oyCMMapi10_s          l2cms_api10_cmm2;                  OY_LCM2_CREATE_MATRIX_REGISTRATION
 oyCMMapi10_s          l2cms_api10_cmm3;                  OY_LCM2_CREATE_ABSTRACT_WHITE_POINT_REGISTRATION
+oyCMMapi10_s          l2cms_api10_cmm4;                  OY_LCM2_PARSE_CGATS
 */
 
 void* oyAllocateFunc_           (size_t        size);
@@ -3114,6 +3116,161 @@ int l2cmsGetOptionsUI                ( oyCMMapiFilter_s   * module OY_UNUSED,
  *
  *  @{ */
 
+/* OY_LCM2_PARSE_CGATS -------------------------- */
+
+/** Function lcm2ParseCGATS
+ *  @brief   Parse a CGATS text
+ *
+ *  @version Oyranos: 0.9.7
+ *  @since   2017/11/26 (Oyranos: 0.9.7)
+ *  @date    2017/11/26
+ */
+oyImage_s* lcm2ParseCGATS          ( const char        * cgats )
+{
+  int error = !cgats;
+  oyImage_s * spec = NULL;
+  if(error) return spec;
+
+  //cmsCGATS
+
+  return spec;
+}
+
+#define OY_LCM2_PARSE_CGATS OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH \
+  "parse_cgats.cgats._" CMM_NICK "._CPU"
+
+/**
+ *  This function implements oyMOptions_Handle_f.
+ *
+ *  @param[in]     options             expects at least one options
+ *                                     - "cgats": The option shall be a string.
+ *  @param[in]     command             "//" OY_TYPE_STD "/parse_cgats"
+ *  @param[out]    result              will contain a oyImage_s in "colors"
+ *
+ *  The Handler uses internally lcm2ParseCGATS().
+ *
+ *  @version Oyranos: 0.9.7
+ *  @since   2017/11/26 (Oyranos: 0.9.7)
+ *  @date    2017/11/26
+ */
+int          l2cmsMOptions_Handle4   ( oyOptions_s       * options,
+                                       const char        * command,
+                                       oyOptions_s      ** result )
+{
+  int error = 0;
+
+  if(oyFilterRegistrationMatch(command,"can_handle", 0))
+  {
+    if(oyFilterRegistrationMatch(command,"parse_cgats", 0))
+    {
+      const char * cgats = oyOptions_FindString( options, "cgats", 0 );
+      if(!cgats) error = 1;
+      return error;
+    }
+    else
+      return -1;
+  }
+  else if(oyFilterRegistrationMatch(command,"parse_cgats.cgats", 0))
+  {
+    oyImage_s * spec = NULL;
+    const char * cgats = NULL;
+
+    cgats = oyOptions_FindString( options, "cgats", 0 );
+
+    spec = lcm2ParseCGATS( cgats );
+
+    if(spec)
+    {
+      oyOption_s * o = oyOption_FromRegistration( ".colors", 0 );
+      error = oyOption_MoveInStruct( o, (oyStruct_s**) &spec );
+      if(!*result)
+        *result = oyOptions_New(0);
+      oyOptions_MoveIn( *result, &o, -1 );
+    } else
+        l2cms_msg( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_
+                   "parsing creation failed",
+                   OY_DBG_ARGS_ );
+  }
+
+  return 0;
+}
+/**
+ *  This function implements oyCMMinfoGetText_f.
+ *
+ *  @version Oyranos: 0.9.7
+ *  @since   2017/06/06 (Oyranos: 0.9.7)
+ *  @date    2017/06/06
+ */
+const char * l2cmsInfoGetTextProfileC4(const char        * select,
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context OY_UNUSED )
+{
+         if(strcmp(select, "can_handle")==0)
+  {
+         if(type == oyNAME_NICK)
+      return "check";
+    else if(type == oyNAME_NAME)
+      return _("check");
+    else
+      return _("Check if this module can handle a certain command.");
+  } else if(strcmp(select, "parse_cgats")==0)
+  {
+         if(type == oyNAME_NICK)
+      return "parse_cgats";
+    else if(type == oyNAME_NAME)
+      return _("Parse CGATS text.");
+    else
+      return _("The littleCMS \"parse_cgats\" command lets you parse CGATS files. The filter expects a oyOption_s object with name \"cgats\" containing a string value. The result will appear in \"colors\" as a oyImage_s.");
+  } else if(strcmp(select, "help")==0)
+  {
+         if(type == oyNAME_NICK)
+      return "help";
+    else if(type == oyNAME_NAME)
+      return _("Parse CGATS file.");
+    else
+      return _("The littleCMS \"parse_cgats\" command lets you parse CGATS files. See the \"parse_cgats\" info item.");
+  }
+  return 0;
+}
+const char *l2cms_texts_parse_cgats[4] = {"can_handle","parse_cgats","help",0};
+
+/** l2cms_api10_cmm4
+ *  @brief   Node for Parsing a CGATS text
+ *
+ *  littleCMS 2 oyCMMapi10_s implementation
+ *
+ *  For the front end API see oyOptions_Handle(). The backend options
+ *  are described in l2cmsMOptions_Handle4().
+ *
+ *  @version Oyranos: 0.9.7
+ *  @since   2017/06/05 (Oyranos: 0.9.7)
+ *  @date    2017/06/05
+ */
+oyCMMapi10_s_    l2cms_api10_cmm4 = {
+
+  oyOBJECT_CMM_API10_S,
+  0,0,0,
+  0,
+
+  l2cmsCMMInit,
+  l2cmsCMMMessageFuncSet,
+
+  OY_LCM2_PARSE_CGATS,
+
+  CMM_VERSION,
+  CMM_API_VERSION,                  /**< int32_t module_api[3] */
+  0,   /* id_; keep empty */
+  0,   /* api5_; keep empty */
+  0,   /* runtime_context */
+ 
+  l2cmsInfoGetTextProfileC4,            /**< getText */
+  (char**)l2cms_texts_parse_cgats,      /**<texts; list of arguments to getText*/
+ 
+  l2cmsMOptions_Handle4                 /**< oyMOptions_Handle_f oyMOptions_Handle */
+};
+
+/* OY_LCM2_PARSE_CGATS -------------------------- */
+
 /* OY_LCM2_CREATE_ABSTRACT_WHITE_POINT_REGISTRATION -------------------------- */
 
 /** Function lcm2AbstractWhitePoint
@@ -3193,6 +3350,8 @@ oyProfile_s* lcm2AbstractWhitePoint  ( double              cie_a,
  *                                     This option shall be a integer.
  *  @param[in]     command             "//" OY_TYPE_STD "/create_profile.white_point_adjust"
  *  @param[out]    result              will contain a oyProfile_s in "icc_profile.create_profile.white_point_adjust"
+ *
+ *  This function uses internally lcm2AbstractWhitePoint().
  *
  *  @version Oyranos: 0.9.7
  *  @since   2017/06/05 (Oyranos: 0.9.7)
@@ -3283,9 +3442,12 @@ const char * l2cmsInfoGetTextProfileC3(const char        * select,
 const char *l2cms_texts_profile_create[4] = {"can_handle","create_profile","help",0};
 
 /** l2cms_api10_cmm3
- *  @brief   Create white point effect profile
+ *  @brief   Node for Creating White Point Effect Profiles
  *
  *  littleCMS 2 oyCMMapi10_s implementation
+ *
+ *  For the front end API see oyOptions_Handle(). The backend options
+ *  are described in l2cmsMOptions_Handle3().
  *
  *  @version Oyranos: 0.9.7
  *  @since   2017/06/05 (Oyranos: 0.9.7)
@@ -3295,7 +3457,7 @@ oyCMMapi10_s_    l2cms_api10_cmm3 = {
 
   oyOBJECT_CMM_API10_S,
   0,0,0,
-  0,
+  (oyCMMapi_s*) & l2cms_api10_cmm4,
 
   l2cmsCMMInit,
   l2cmsCMMMessageFuncSet,
@@ -3461,6 +3623,8 @@ cmsHPROFILE  l2cmsGamutCheckAbstract  ( oyProfile_s       * proof,
  *  @param[in]     command             "//" OY_TYPE_STD "/create_profile.proofing_profile"
  *  @param[out]    result              will contain a oyProfile_s in "icc_profile.create_profile.proofing_profile"
  *
+ *  This function uses internally l2cmsAddProofProfile().
+ *
  *  @version Oyranos: 0.3.0
  *  @since   2011/02/21 (Oyranos: 0.3.0)
  *  @date    2011/02/21
@@ -3568,9 +3732,12 @@ const char * l2cmsInfoGetTextProfileC2(const char        * select,
   "create_profile.proofing_effect.icc._" CMM_NICK "._CPU"
 
 /** l2cms_api10_cmm2
- *  @brief   Create proofing effect profile
+ *  @brief   Node for Creating Proofing Effect Profiles
  *  
  *  littleCMS 2 oyCMMapi10_s implementation
+ *
+ *  For the front end API see oyOptions_Handle(). The backend options
+ *  are described in l2cmsMOptions_Handle2().
  *
  *  @version Oyranos: 0.3.0
  *  @since   2011/02/21 (Oyranos: 0.3.0)
@@ -3660,6 +3827,8 @@ oyProfile_s *      l2cmsCreateICCMatrixProfile (
  *                                     This option shall be a integer.
  *  @param[in]     command             "//" OY_TYPE_STD "/create_profile.color_matrix.icc"
  *  @param[out]    result              will contain a oyProfile_s in "icc_profile.create_profile.color_matrix"
+ *
+ *  This function uses internally l2cmsCreateICCMatrixProfile().
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/12/11 (Oyranos: 0.1.10)
@@ -3779,9 +3948,12 @@ const char * l2cmsInfoGetTextProfileC ( const char        * select,
   "create_profile.color_matrix.icc._" CMM_NICK "._CPU"
 
 /** l2cms_api10_cmm
- *  @brief   Create simple color matrix profile
+ *  @brief   Node for Creating simple Color Matrix Profiles
  *
  *  littleCMS 2 oyCMMapi10_s implementation
+ *
+ *  For the front end API see oyOptions_Handle(). The backend options
+ *  are described in l2cmsMOptions_Handle().
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/12/11 (Oyranos: 0.1.10)
@@ -3828,9 +4000,13 @@ oyCMMapi10_s_    l2cms_api10_cmm = {
   "icc_color._" CMM_NICK "._CPU." oyCOLOR_ICC_DEVICE_LINK "_" l2cmsTRANSFORM
 
 /** l2cms_api6_cmm
- *  @brief    littleCMS oyCMMapi6_s implementation
+ *  @brief   Node for Converting a Device Link into a lcms2 CMM Context
+ *
+ *  littleCMS oyCMMapi6_s implementation
  *
  *  a filter providing CMM API's
+ *
+ *  This Node type uses internally l2cmsModuleData_Convert().
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/12/28 (Oyranos: 0.1.10)
@@ -3859,8 +4035,10 @@ oyCMMapi6_s_ l2cms_api6_cmm = {
 };
 
 
-/** l2cms_api7
- *  @brief    littleCMS oyCMMapi7_s implementation
+/** l2cms_api7_cmm
+ *  @brief   lcms2 ICC CMM Pixel Processor Engine Node
+ *
+ *  littleCMS oyCMMapi7_s implementation
  *
  *  a filter providing CMM API's
  *
@@ -3938,7 +4116,9 @@ const char * l2cmsApi4UiGetText (
 }
 const char * l2cms_api4_ui_texts[] = {"name", "category", "help", 0};
 /** l2cms_api4_ui
- *  @brief    l2cms oyCMMapi4_s::ui implementation
+ *  @brief   lcms2 ICC CMM Node UI
+ *
+ *  l2cms oyCMMapi4_s::ui implementation
  *
  *  The UI for l2cms.
  *
@@ -3966,9 +4146,14 @@ oyCMMui_s_ l2cms_api4_ui = {
 };
 
 /** l2cms_api4_cmm
- *  @brief    littleCMS oyCMMapi4_s implementation for color context setup
+ *  @brief   lcms2 ICC CMM Context Setup and UI Node
  *
- *  a filter providing CMM API's
+ *  littleCMS oyCMMapi4_s implementation for color context setup
+ *
+ *  A filter providing CMM API's. It creates specifically a ICC
+ *  device link profile for exchange with data processing CMM engines.
+ *
+ *  This node type uses internally l2cmsFilterNode_CmmIccContextToMem().
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/07/18 (Oyranos: 0.1.8)
@@ -4053,7 +4238,7 @@ const char *l2cms_texts[5] = {"name","copyright","manufacturer","help",0};
 oyIcon_s l2cms_icon = {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "lcms_logo2.png"};
 
 /** lcm2_cmm_module
- *  @brief    l2cms module infos
+ *  @brief    l2cms Module Infos
  *
  *  @version Oyranos: 0.1.10
  *  @since   2007/11/00 (Oyranos: 0.1.8)

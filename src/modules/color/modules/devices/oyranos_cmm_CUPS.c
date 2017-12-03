@@ -6,7 +6,6 @@
  *            2009-2011 (C) Joseph Simon III
  *
  *  @brief    Printer Device Detection (CUPS module)
- *  @internal
  *  @author   Joseph Simon III <j.simon.iii@astound.net>
  *  @par License:
  *            MIT <http://www.opensource.org/licenses/mit-license.php>
@@ -15,6 +14,10 @@
  *
  * @author Joseph Simon <j.simon.iii@astound.net>
 */
+/** \addtogroup cups_device CUPS Module
+ *
+ *  CUPS is a Unix style printing system. See as well <a href="https://www.cups.org">www.cups.org</a> .
+ *  @{ */
 #include "oyCMM_s.h"
 #include "oyCMMapi8_s_.h"
 #include "oyCMMui_s_.h"
@@ -40,6 +43,8 @@
 /* --- internal definitions --- */
 
 #define CMM_NICK "CUPS"
+/** CUPS registration string
+ */
 #define CMM_BASE_REG OY_TOP_SHARED OY_SLASH OY_DOMAIN_STD OY_SLASH OY_TYPE_STD OY_SLASH "device" OY_SLASH "config.icc_profile.printer." CMM_NICK
 #define CMM_VERSION {OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C}
 
@@ -1449,3 +1454,4 @@ resetPPDAttributes_(ppd_file_t* ppd, const char* attribute_string,
   
     return attr_found;
 }
+/**  @} *//* cups_device */

@@ -6,12 +6,15 @@
  *            2007-2015 (C) Kai-Uwe Behrmann
  *
  *  @brief    Oyranos X11 module for Oyranos
- *  @internal
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            new BSD <http://www.opensource.org/licenses/BSD-3-Clause>
  *  @since    2007/12/12
  */
+
+/** \addtogroup monitor_device disp Module(s)
+ *  @{ */
+
 #include "oyCMM_s.h"
 #include "oyCMMapi8_s_.h"
 #include "oyCMMui_s_.h"
@@ -45,6 +48,12 @@
 
 /* MONITOR_REGISTRATION -------------------------------------------------*/
 
+/** Common monitor registration base string
+ *
+ *  Dependent on your platform are different CMM_NICKs implemented.
+ *  A few are "qarz" and "oyX1". They can be labeld as "native" in
+ *  case the module fits to the primary platform displaying system.
+ */
 #define MONITOR_REGISTRATION_BASE OY_TOP_SHARED OY_SLASH OY_DOMAIN_STD OY_SLASH OY_TYPE_STD OY_SLASH "device" OY_SLASH "config.icc_profile.monitor."
 #if defined(qarz) || defined(wcsD)
 #define MONITOR_REGISTRATION MONITOR_REGISTRATION_BASE "native." CMM_NICK
@@ -1234,7 +1243,9 @@ const char * Api8UiGetText           ( const char        * select,
 const char * _api8_ui_texts[] = {"name", "help", "device_class", "icc_profile_class", "category", "key_prefix", 0};
 
 /** @instance _api8_ui
- *  @brief    oyCMMapi8_s::ui implementation
+ *  @brief    Monitor Device Node UI
+ *
+ * oyCMMapi8_s::ui implementation
  *
  *  The UI for Monitor devices.
  *
@@ -1266,7 +1277,9 @@ oyIcon_s _api8_icon = {
 };
 
 /** @instance _api8
- *  @brief    oyCMMapi8_s implementations
+ *  @brief    Monitor Device Node
+ *
+ *  oyCMMapi8_s implementations
  *
  *  @version Oyranos: 0.1.13
  *  @since   2009/01/19 (Oyranos: 0.1.10)
@@ -1366,7 +1379,7 @@ const char * GetText                 ( const char        * select,
 const char *_texts[5] = {"name","copyright","manufacturer","help",0};
 
 /** @instance _cmm_module
- *  @brief    module infos
+ *  @brief    Module Infos
  *
  *  @version Oyranos: 0.1.10
  *  @since   2007/12/12 (Oyranos: 0.1.8)
@@ -1389,3 +1402,4 @@ oyCMM_s _cmm_module = {
   NULL                                 /**< init() */
 };
 
+/**  @} *//* monitor_device */

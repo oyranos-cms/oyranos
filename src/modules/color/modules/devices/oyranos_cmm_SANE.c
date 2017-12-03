@@ -12,7 +12,10 @@
  *            MIT <http://www.opensource.org/licenses/mit-license.php>
  *  @since    2009/07/05
  */
-
+/** \addtogroup sane_device SANE Module
+ *
+ *  SANE is a scanner interface for unix style systems. See as well <a href="http://www.sane-project.org/">www.sane-project.org/</a> .
+ *  @{ */
 #include "oyranos_cmm.h"
 #include "oyranos_i18n.h"
 #include "oyObject_s_.h"
@@ -1182,3 +1185,4 @@ int check_driver_version(oyOptions_s *options, oyOption_s **version_opt_p, int *
    }
    return 0;
 }
+/**  @} *//* sane_device */

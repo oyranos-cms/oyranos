@@ -6,12 +6,15 @@
  *            2009 (C) Yiannis Belias
  *
  *  @brief    Oyranos "RAW image & EXIF data" device backend for Oyranos
- *  @internal
  *  @author   Yiannis Belias <orion@linux.gr>
  *  @par License:
  *            MIT <http://www.opensource.org/licenses/mit-license.php>
  *  @since    2009/07/05
  */
+/** \addtogroup oyre_device oyRE Module
+ *
+ *  libraw is a Camera RAW image processing library. See as well <a href="https://www.libraw.org">www.libraw.org</a> .
+ *  @{ */
 #include "oyCMM_s.h"
 #include "oyCMMapi8_s_.h"
 #include "oyCMMui_s_.h"

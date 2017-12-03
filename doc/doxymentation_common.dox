@@ -848,6 +848,11 @@ digraph Anatomy_A {
 /** @addtogroup graph_modules Data Processing Modules
  *  @brief      Modules to configure, convert contexts and process data in a DAG
  *
+ *  The Modules are the core of the Oyranos image processing API's. The
+ *  front end API is in oyFilterNode_Create() and oyFilterNode_NewWith().
+ *  For some context dependend node types it is possibly to use a different
+ *  data processor node registration than for the context node registration.
+ *
  *  Only in-tree modules are listed here.
  *
  *  @{ */
@@ -864,9 +869,31 @@ digraph Anatomy_A {
 /** @addtogroup device_modules Device Modules
  *  @brief      Modules to handle devices
  *
+ *  The goals of device modules are:
+ *  - Identify devices and related device settings, which influence color rendering
+ *  - Provide a means to compare and rank device configurations for matching a provided pattern
+ *  - Obtain device specific system ICC profiles for a device / settings configuration
+ *  - Set device specific system ICC profile to a device
+ *  - Generate a fallback ICC Profile for a device
+ *
+ *  The front end API's are described in @ref devices_handling.
+ *
  *  Only in-tree modules are listed here.
  *
  *  @{ */
+   
+/** @addtogroup monitor_device
+ *   @{ */
+/**  @} */   /* monitor_device */
+/** @addtogroup cups_device
+ *   @{ */
+/**  @} */   /* cups_device */
+/** @addtogroup sane_device
+ *   @{ */
+/**  @} */   /* sane_device */
+/** @addtogroup oyre_device
+ *   @{ */
+/**  @} */   /* oyre_device */
 
 /** @addtogroup monitor_hooks_api Monitor Backend Modules
  *  @brief      Simple way to hook a display system into a Oyranos device config module
