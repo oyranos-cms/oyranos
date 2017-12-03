@@ -18,6 +18,9 @@ class Oy_Fl_GL_Box : public Fl_Gl_Window,
                      public Oy_Fl_Image_Widget
 {
   char * frame_data;
+  int frame_height, frame_width;
+  int gl_type;
+  oyDATATYPE_e data_type;
   int W,H;
 public:
   Oy_Fl_GL_Box(int x, int y, int w, int h)
@@ -36,6 +39,30 @@ public:
 
 private:
   int need_redraw;
+  void drawFrame()
+  {
+      glRasterPos2i(-frame_width, -frame_height);
+      /* on osX it uses sRGB without alternative */
+      if(data_type == oyUINT16)
+        glDrawPixels( frame_width, frame_height, gl_type,
+                      GL_UNSIGNED_SHORT, frame_data );
+      else if(data_type == oyFLOAT)
+        glDrawPixels( frame_width, frame_height, gl_type,
+                      GL_FLOAT, frame_data );
+      else if(data_type == oyHALF)
+        glDrawPixels( frame_width, frame_height, gl_type,
+                      GL_HALF_FLOAT, frame_data );
+      else
+        fprintf(stdout, "%s:%d unsupported data type %s %dx%d %dx%d\n",
+                    strrchr(__FILE__,'/')?strrchr(__FILE__,'/')+1:__FILE__,
+                    __LINE__, oyDataTypeToText( data_type ),
+                    frame_width,frame_height,W,H);
+
+#ifndef __APPLE__
+      glDrawBuffer(GL_BACK);
+#endif // !MESA
+
+  }
   void draw()
   {
     int W_ = Oy_Fl_Image_Widget::w(),
@@ -54,9 +81,10 @@ private:
       int sample_size;
       oyPixel_t pt;
       int channels = 0;
-      oyDATATYPE_e data_type = oyUINT8;
       oyImage_s * draw_image = 0;
-      int gl_type = 0;
+
+      gl_type = 0;
+      data_type = oyUINT8;
 
       draw_image = oyConversion_GetImage( conversion(), OY_INPUT );
       pt = oyImage_GetPixelLayout( draw_image, oyLAYOUT );
@@ -101,6 +129,11 @@ private:
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
       }
 
+      glClear(GL_COLOR_BUFFER_BIT);
+      glColor3f(1.0, 1.0, 1.0);
+      glBegin(GL_LINE_STRIP); glVertex2f(W, H); glVertex2f(-W,-H); glEnd();
+      glBegin(GL_LINE_STRIP); glVertex2f(W,-H); glVertex2f(-W, H); glEnd();
+
       if((!draw_image || result != 0) && valid())
       {
         if(!need_redraw)
@@ -111,6 +144,9 @@ private:
                   strrchr(__FILE__,'/')?strrchr(__FILE__,'/')+1:__FILE__,
                   __LINE__, __func__,result, (long unsigned)draw_image,
                   (intptr_t)frame_data);
+
+          drawFrame();
+
           return;
         }
         --need_redraw;
@@ -120,13 +156,8 @@ private:
       glDrawBuffer(GL_FRONT_AND_BACK);
 #endif // !MESA
 
-      glClear(GL_COLOR_BUFFER_BIT);
-      glColor3f(1.0, 1.0, 1.0);
-      glBegin(GL_LINE_STRIP); glVertex2f(W, H); glVertex2f(-W,-H); glEnd();
-      glBegin(GL_LINE_STRIP); glVertex2f(W,-H); glVertex2f(-W, H); glEnd();
-
-      int frame_height = OY_MIN(oyImage_GetHeight( draw_image ),H),
-          frame_width = OY_MIN(oyImage_GetWidth( draw_image ),W);
+      frame_height = OY_MIN(oyImage_GetHeight( draw_image ),H),
+      frame_width = OY_MIN(oyImage_GetWidth( draw_image ),W);
 
       int pos[4] = {-2,-2,-2,-2};
       glGetIntegerv( GL_CURRENT_RASTER_POSITION, &pos[0] );
@@ -147,28 +178,9 @@ private:
           free( image_data );
       }
 
-      glRasterPos2i(-frame_width, -frame_height);
-      /* on osX it uses sRGB without alternative */
-      if(data_type == oyUINT16)
-        glDrawPixels( frame_width, frame_height, gl_type,
-                      GL_UNSIGNED_SHORT, frame_data );
-      else if(data_type == oyFLOAT)
-        glDrawPixels( frame_width, frame_height, gl_type,
-                      GL_FLOAT, frame_data );
-      else if(data_type == oyHALF)
-        glDrawPixels( frame_width, frame_height, gl_type,
-                      GL_HALF_FLOAT, frame_data );
-      else
-        fprintf(stdout, "%s:%d unsupported data type %s %dx%d %dx%d\n",
-                    strrchr(__FILE__,'/')?strrchr(__FILE__,'/')+1:__FILE__,
-                    __LINE__, oyDataTypeToText( data_type ),
-                    frame_width,frame_height,W,H);
+      drawFrame();
 
       glGetIntegerv( GL_CURRENT_RASTER_POSITION, &pos[0] );
-
-#ifndef __APPLE__
-      glDrawBuffer(GL_BACK);
-#endif // !MESA
 
       if(0&&oy_display_verbose)
         fprintf(stdout, "%s:%d draw %dx%d %dx%d\n",
