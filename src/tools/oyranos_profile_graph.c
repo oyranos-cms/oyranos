@@ -1166,31 +1166,37 @@ oyImage_s * oySpectrumFromCSV   ( char * text )
     spec = oySpectrumCreateEmpty( 1, lines, 1, pixels );
     for(i = 0; i < lines; ++i)
     {
-      char * endl = strchr( text, '\n' );
+      char * endl;
+
+      if(!text) continue;
+      endl = strchr( text, '\n' );
       nm = oyCSVparseDouble(text);
       if(i == 0) start = nm;
       else if(i == 1) lambda = nm - start;
       else if(i == lines-1) end = nm;
-      if(verbose > 1)
-        fprintf( stderr, "%d lamda: %f ", i, nm );
+
+      if(verbose > 1) fprintf( stderr, "%d lamda: %f ", i, nm );
+
       for(index = 0; index < pixels; ++index)
       {
         is_allocated = 0;
         dbl = (double*) oyImage_GetPointF(spec)( spec, index,0,-1, &is_allocated );
-        text = strchr( text, ',' );
+        if(text)
+          text = strchr( text, ',' );
         if(text && text < endl && text[0] != '\r' && text[1] != '\r')
           dbl[i] = oyCSVparseDouble(++text);
         else
           dbl[i] = NAN;
-        if(verbose > 1)
-          fprintf( stderr, "%d: %f ", i, dbl[i] );
+
+        if(verbose > 1) fprintf( stderr, "%d: %f ", i, dbl[i] );
       }
+
       if(text)
       {
         text = strchr( text, '\n' );
         if(text) ++text;
-        if(verbose > 1)
-          fprintf( stderr, "\n" );
+
+        if(verbose > 1) fprintf( stderr, "\n" );
       }
     }
     oySpectrumSetRange( spec, start, end, lambda );
