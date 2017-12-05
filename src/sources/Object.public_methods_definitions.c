@@ -308,7 +308,8 @@ int          oyObject_SetName        ( oyObject_s          object,
   {
     object->name_ = oyName_set_( object->name_, text, type,
                                  object->allocateFunc_, object->deallocateFunc_ );
-    error = !object->name_;
+    if(text)
+      error = !object->name_;
   } else
   {
     char key[24];
@@ -317,7 +318,7 @@ int          oyObject_SetName        ( oyObject_s          object,
                                    key,
                                    text, OY_CREATE_NEW );
   }
-  return !(text && type >= oyNAME_NAME && object && error <= 0);
+  return !(type >= oyNAME_NAME && object && error <= 0);
 }
 
 
