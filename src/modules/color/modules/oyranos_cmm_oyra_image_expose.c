@@ -41,6 +41,17 @@
 
 /* OY_IMAGE_EXPOSE_REGISTRATION ----------------------------------------------*/
 
+uint16_t oyByteSwapUInt16(uint16_t v)
+{
+  uint8_t c[2], *vp = (uint8_t*)&v;
+
+  c[0] = vp[1];
+  c[1] = vp[0];
+  vp = &c[0];
+  v = *(uint16_t*)vp;
+
+  return v;
+}
 
 /** @func    oyraFilter_ImageExposeRun
  *  @brief   implement oyCMMFilter_GetNext_f()
@@ -111,6 +122,7 @@ int      oyraFilter_ImageExposeRun   ( oyFilterPlug_s    * requestor_plug,
       oyArray2d_s * array_out = oyPixelAccess_GetArray( ticket );
       int layout_dst = oyImage_GetPixelLayout( output_image, oyLAYOUT );
       int channels_dst = oyToChannels_m( layout_dst );
+      int byte_swap = oyToByteswap_m( layout_dst );
       int ticket_array_pix_width;
 
       /* avoid division by zero */
@@ -154,13 +166,22 @@ int      oyraFilter_ImageExposeRun   ( oyFilterPlug_s    * requestor_plug,
             
             for(i = 0; i < channels_dst; ++i)
             {
+              int v;
               switch(data_type_out)
               {
               case oyUINT8:
-                array_out_data[y][x*channels_dst*bps_out + i*bps_out] *= expose;
+                v = array_out_data[y][x*channels_dst*bps_out + i*bps_out] * expose;
+                if(v > 255) v = 255;
+                array_out_data[y][x*channels_dst*bps_out + i*bps_out] = v;
                 break;
               case oyUINT16:
-                *((uint16_t*)&array_out_data[y][x*channels_dst*bps_out + i*bps_out]) *= expose;
+                if(byte_swap)
+                  v = oyByteSwapUInt16(*((uint16_t*)&array_out_data[y][x*channels_dst*bps_out + i*bps_out]));
+                else
+                  v = *((uint16_t*)&array_out_data[y][x*channels_dst*bps_out + i*bps_out]);
+                v *= expose;
+                if(v > 65535) v = 65535;
+                *((uint16_t*)&array_out_data[y][x*channels_dst*bps_out + i*bps_out]) = byte_swap ? oyByteSwapUInt16(v) : v;
                 break;
               case oyUINT32:
                 *((uint32_t*)&array_out_data[y][x*channels_dst*bps_out + i*bps_out]) *= expose;
