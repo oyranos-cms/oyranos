@@ -52,6 +52,56 @@ uint16_t oyByteSwapUInt16(uint16_t v)
 
   return v;
 }
+uint32_t oyByteSwapUInt32(uint32_t v)
+{
+  uint8_t c[4], *vp = (uint8_t*)&v;
+
+  c[0] = vp[3];
+  c[1] = vp[2];
+  c[2] = vp[1];
+  c[3] = vp[0];
+  vp = &c[0];
+  v = *(uint32_t*)vp;
+
+  return v;
+}
+
+void     oySensibleClip ( double * c, int range_max, double expose )
+{
+  int max = 0, max_pos,
+      mid, mid_pos,
+      min = range_max, min_pos,
+      i;
+
+  for(i = 0; i < 3; ++i)
+  {
+    if(max < c[i]) { max = c[i]; max_pos = i; }
+    if(min > c[i]) { min = c[i]; min_pos = i; }
+  }
+
+  if( min * expose > range_max)
+    for(i = 0; i < 3; ++i)
+      c[i] = range_max;
+  else if(max * expose <= range_max)
+    for(i = 0; i < 3; ++i)
+      c[i] *= expose;
+  else
+  {
+    double exposed_min = min * expose;
+    double mid_part;
+    double exposed_mid;
+
+    mid_pos = min_pos != 0 && max_pos != 0 ? 0 : min_pos != 1 && max_pos != 1 ? 1 : 2;
+    mid = c[mid_pos];
+
+    mid_part = (double)( mid - min )/(double)( max - min );
+
+    c[min_pos] = exposed_min + 0.5;
+    exposed_mid = exposed_min + mid_part * (range_max - exposed_min);
+    c[mid_pos] = exposed_mid + 0.5;
+    c[max_pos] = range_max;
+  }
+}
 
 /** @func    oyraFilter_ImageExposeRun
  *  @brief   implement oyCMMFilter_GetNext_f()
@@ -120,6 +170,8 @@ int      oyraFilter_ImageExposeRun   ( oyFilterPlug_s    * requestor_plug,
     {
       oyImage_s * output_image = oyPixelAccess_GetOutputImage( ticket );
       oyArray2d_s * array_out = oyPixelAccess_GetArray( ticket );
+      oyProfile_s * p = oyImage_GetProfile( output_image );
+      icColorSpaceSignature sig = oyProfile_GetSignature( p, oySIGNATURE_COLOR_SPACE );
       int layout_dst = oyImage_GetPixelLayout( output_image, oyLAYOUT );
       int channels_dst = oyToChannels_m( layout_dst );
       int byte_swap = oyToByteswap_m( layout_dst );
@@ -164,6 +216,83 @@ int      oyraFilter_ImageExposeRun   ( oyFilterPlug_s    * requestor_plug,
           {
             int i;
             
+            if(sig == icSigRgbData && channels_dst >= 3)
+            {
+              double rgb[3], v;
+              unsigned int max = 1;
+
+              for(i = 0; i < 3; ++i)
+              {
+                switch(data_type_out)
+                {
+                case oyUINT8:
+                  rgb[i] = array_out_data[y][x*channels_dst*bps_out + i*bps_out];
+                  max = 255;
+                  break;
+                case oyUINT16:
+                  {
+                  uint16_t v = *((uint16_t*)&array_out_data[y][x*channels_dst*bps_out + i*bps_out]);
+                  if(byte_swap) v = oyByteSwapUInt16(v);
+                  rgb[i] = v;
+                  }
+                  max = 65535;
+                  break;
+                case oyUINT32:
+                  {
+                  uint32_t v = *((uint32_t*)&array_out_data[y][x*channels_dst*bps_out + i*bps_out]);
+                  if(byte_swap) v = oyByteSwapUInt32(v);
+                  rgb[i] = v;
+                  max = UINT32_MAX;
+                  }
+                  break;
+                case oyHALF:
+                  v = *((uint16_t*)&array_out_data[y][x*channels_dst*bps_out + i*bps_out]);
+                  rgb[i] = v;
+                  break;
+                case oyFLOAT:
+                  v = *((float*)&array_out_data[y][x*channels_dst*bps_out + i*bps_out]);
+                  rgb[i] = v;
+                  break;
+                case oyDOUBLE:
+                  v = *((double*)&array_out_data[y][x*channels_dst*bps_out + i*bps_out]);
+                  rgb[i] = v;
+                  break;
+                }
+              }
+
+              oySensibleClip ( rgb, max, expose );
+
+              for(i = 0; i < 3; ++i)
+              {
+                v = rgb[i];
+                switch(data_type_out)
+                {
+                case oyUINT8:
+                  array_out_data[y][x*channels_dst*bps_out + i*bps_out] = v;
+                  break;
+                case oyUINT16:
+                  { uint16_t u16 = v;
+                  *((uint16_t*)&array_out_data[y][x*channels_dst*bps_out + i*bps_out]) = byte_swap ? oyByteSwapUInt16(u16) : u16;
+                  }
+                  break;
+                case oyUINT32:
+                  { uint32_t u32 = v;
+                  *((uint32_t*)&array_out_data[y][x*channels_dst*bps_out + i*bps_out]) = byte_swap ? oyByteSwapUInt16(u32) : u32;
+                  }
+                  break;
+                case oyHALF:
+                  *((uint16_t*)&array_out_data[y][x*channels_dst*bps_out + i*bps_out]) = v;
+                  break;
+                case oyFLOAT:
+                  *((float*)&array_out_data[y][x*channels_dst*bps_out + i*bps_out]) = v;
+                  break;
+                case oyDOUBLE:
+                  *((double*)&array_out_data[y][x*channels_dst*bps_out + i*bps_out]) = v;
+                  break;
+                }
+              }
+            }
+            else
             for(i = 0; i < channels_dst; ++i)
             {
               int v;
@@ -175,10 +304,8 @@ int      oyraFilter_ImageExposeRun   ( oyFilterPlug_s    * requestor_plug,
                 array_out_data[y][x*channels_dst*bps_out + i*bps_out] = v;
                 break;
               case oyUINT16:
-                if(byte_swap)
-                  v = oyByteSwapUInt16(*((uint16_t*)&array_out_data[y][x*channels_dst*bps_out + i*bps_out]));
-                else
-                  v = *((uint16_t*)&array_out_data[y][x*channels_dst*bps_out + i*bps_out]);
+                v = *((uint16_t*)&array_out_data[y][x*channels_dst*bps_out + i*bps_out]);
+                if(byte_swap) v = oyByteSwapUInt16(v);
                 v *= expose;
                 if(v > 65535) v = 65535;
                 *((uint16_t*)&array_out_data[y][x*channels_dst*bps_out + i*bps_out]) = byte_swap ? oyByteSwapUInt16(v) : v;
@@ -205,6 +332,7 @@ int      oyraFilter_ImageExposeRun   ( oyFilterPlug_s    * requestor_plug,
       oyArray2d_Release( &array_out );
 
       oyImage_Release( &output_image );
+      oyProfile_Release( &p );
     } else /* expose == 1.0 */
     {
       result = oyFilterNode_Run( input_node, plug, ticket );
