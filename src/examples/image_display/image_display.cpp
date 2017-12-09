@@ -1040,6 +1040,26 @@ event_handler(int e)
         oy_widget->resetScale();
         oyOption_SetFromDouble( opt, scale, 0,0 );
         break;
+      case FL_ENTER:
+      case 13:
+        {
+          int32_t frames = 0, frame = 0;
+          oyConversion_s * cc = oy_widget->conversion();
+          oyImage_s * image = oyConversion_GetImage( cc, OY_INPUT );
+          opts = oyImage_GetTags(image);
+          oyOptions_FindInt( opts, "//" OY_TYPE_STD "/file_read/frames", 0, &frames );
+          oyOptions_FindInt( opts, "//" OY_TYPE_STD "/file_read/frame", 0, &frame );
+          if(frame < 0) frame = 0;
+          ++frame;
+          if(frame >= frames) frame = 0;
+          oyOptions_SetFromInt( &opts,"//" OY_TYPE_STD "/file_read/frame",
+                                frame, 0, OY_CREATE_NEW );
+          oyOptions_Release( &opts );
+          oyImage_Release( &image );
+        }
+        oy_widget->damage( FL_DAMAGE_USER1 );
+        found = 1;
+        break;
       case '<':
         openNextImage(oy_widget, -1);
         found = 1;
@@ -1066,7 +1086,6 @@ event_handler(int e)
           dv = -3;
         oyStringAddPrintf( &d, 0,0, "%g", dv );
         error = oySetPersistentString( scale_reg, oySCOPE_USER, d, 0 );
-        printf("%d saved key to DB\n", error);
         oyOption_Release( &opt );
         oyFree_m_( d );
       }
