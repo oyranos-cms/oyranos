@@ -451,7 +451,7 @@ int select_icc_profile(j_decompress_ptr cinfo,
              profile_name = strdup("compatibleWithAdobeRGB1998.icc");
            else
            {
-             profile_name = strdup("YCC profile - supports extended sRGB range PRELIMINARY 1-4-2002.icc");
+             profile_name = strdup("YCbCr-Jpeg_v1_oyra.icc");
              if( !oyCheckProfile (profile_name, 0) )
              {
                prof_mem = (char*)oyGetProfileBlock( profile_name, &size, malloc );
@@ -472,7 +472,7 @@ int select_icc_profile(j_decompress_ptr cinfo,
          else if(!oyCheckProfile ("ITUFAX.ICM", 0) )
            prof_mem = (char*)oyGetProfileBlock( "ITUFAX.ICM", &size, malloc );
          else
-           profile_name = strdup("YCC profile - supports extended sRGB range PRELIMINARY 1-4-2002.icc");
+           profile_name = strdup("YCbCr-Jpeg_v1_oyra.icc");
          break;
     case JCS_UNKNOWN:
     case JCS_YCCK:
