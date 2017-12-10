@@ -216,7 +216,9 @@ int      oyraFilter_ImageExposeRun   ( oyFilterPlug_s    * requestor_plug,
           {
             int i;
             
-            if(sig == icSigRgbData && channels_dst >= 3)
+            if( (sig == icSigRgbData ||
+                 sig == icSigXYZData )
+                && channels_dst >= 3)
             {
               double rgb[3], v;
               unsigned int max = 1;
