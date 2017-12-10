@@ -14,12 +14,12 @@
  */
 
 #ifndef OY_UNUSED
-#ifdef __GNUC__
+#if   (__GNUC__*100 + __GNUC_MINOR__) >= 406
 #define OY_UNUSED                      __attribute__ ((unused))
 #elif defined(_MSC_VER)
 #define OY_UNUSED                      __declspec(unused)
 #else
-#define OY_UNUSED                      __attribute__ ((unused))
+#define OY_UNUSED
 #endif
 #endif
 
