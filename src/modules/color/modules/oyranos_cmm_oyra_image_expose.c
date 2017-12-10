@@ -66,26 +66,31 @@ uint32_t oyByteSwapUInt32(uint32_t v)
   return v;
 }
 
-void     oySensibleClip ( double * c, int range_max, double expose )
+void     oySensibleClip ( double * c, icColorSpaceSignature sig, int range_max, double expose )
 {
   int max = 0, max_pos,
       mid, mid_pos,
       min = range_max, min_pos,
-      i;
+      i,
+      n = oyICCColorSpaceGetChannelCount(sig);
 
-  for(i = 0; i < 3; ++i)
+  if(sig == icSigLabData ||
+     sig == icSigYCbCrData)
+    n = 1;
+
+  for(i = 0; i < n; ++i)
   {
     if(max < c[i]) { max = c[i]; max_pos = i; }
     if(min > c[i]) { min = c[i]; min_pos = i; }
   }
 
   if( min * expose > range_max)
-    for(i = 0; i < 3; ++i)
+    for(i = 0; i < n; ++i)
       c[i] = range_max;
   else if(max * expose <= range_max)
-    for(i = 0; i < 3; ++i)
+    for(i = 0; i < n; ++i)
       c[i] *= expose;
-  else
+  else if(n > 1)
   {
     double exposed_min = min * expose;
     double mid_part;
@@ -217,7 +222,9 @@ int      oyraFilter_ImageExposeRun   ( oyFilterPlug_s    * requestor_plug,
             int i;
             
             if( (sig == icSigRgbData ||
-                 sig == icSigXYZData )
+                 sig == icSigXYZData ||
+                 sig == icSigLabData ||
+                 sig == icSigYCbCrData)
                 && channels_dst >= 3)
             {
               double rgb[3], v;
@@ -262,7 +269,7 @@ int      oyraFilter_ImageExposeRun   ( oyFilterPlug_s    * requestor_plug,
                 }
               }
 
-              oySensibleClip ( rgb, max, expose );
+              oySensibleClip ( rgb, sig, max, expose );
 
               for(i = 0; i < 3; ++i)
               {
