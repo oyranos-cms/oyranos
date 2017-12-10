@@ -131,6 +131,55 @@ OYAPI oyProfile_s * OYEXPORT oyProfile_FromStd (
   return (oyProfile_s*)s;
 }
 
+oyProfile_s * oyProfile_FromMatrix   ( double              pandg[9],
+                                       int                 icc_profile_flags,
+                                       const char        * name  )
+{
+  oyProfile_s * p = 0;
+  oyOption_s * primaries = oyOption_FromRegistration( "//" 
+                    OY_TYPE_STD 
+                    "/color_matrix."
+                    "redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma",
+                    0);
+  oyOptions_s * opts = oyOptions_New(0),
+              * result = 0;
+  int pos = 0, error OY_UNUSED;
+
+  /* red */
+  oyOption_SetFromDouble( primaries, pandg[pos], pos, 0 ); pos++;
+  oyOption_SetFromDouble( primaries, pandg[pos], pos, 0 ); pos++;
+  /* green */
+  oyOption_SetFromDouble( primaries, pandg[pos], pos, 0 ); pos++;
+  oyOption_SetFromDouble( primaries, pandg[pos], pos, 0 ); pos++;
+  /* blue */
+  oyOption_SetFromDouble( primaries, pandg[pos], pos, 0 ); pos++;
+  oyOption_SetFromDouble( primaries, pandg[pos], pos, 0 ); pos++;
+  /* white */
+  oyOption_SetFromDouble( primaries, pandg[pos], pos, 0 ); pos++;
+  oyOption_SetFromDouble( primaries, pandg[pos], pos, 0 ); pos++;
+  /* gamma */
+  oyOption_SetFromDouble( primaries, pandg[pos], pos, 0 ); pos++;
+  error = oyOptions_MoveIn( opts, &primaries, -1 );
+  error = oyOptions_SetFromInt( &opts,
+                                    "//" OY_TYPE_STD "/icc_profile_flags",
+                                    icc_profile_flags, 0, OY_CREATE_NEW );
+
+  oyOptions_Handle( "//"OY_TYPE_STD"/create_profile.icc",
+                               opts,"create_profile.icc_profile.color_matrix",
+                               &result );
+  p = (oyProfile_s*)oyOptions_GetType( result, -1, "icc_profile",
+                                       oyOBJECT_PROFILE_S );
+
+  error = oyProfile_AddTagText( p, icSigProfileDescriptionTag, name);
+  error = oyProfile_AddTagText( p, icSigCopyrightTag, "ICC License 2011");
+
+  oyOptions_Release( &result );
+  oyOptions_Release( &opts );
+
+  return p;
+}
+
+
 /** Function  oyProfile_FromName
  *  @memberof oyProfile_s
  *  @brief    Create from name
@@ -232,6 +281,10 @@ OYAPI oyProfile_s * OYEXPORT oyProfile_FromName (
       fn = oyGetDefaultProfileName( oyEDITING_LAB, oyAllocateFunc_ );
     else if(strcmp(name,"xyz") == 0)
       fn = oyGetDefaultProfileName( oyEDITING_XYZ, oyAllocateFunc_ );
+    else if(strcmp(name,"xyze") == 0)
+    { double primaries_and_gamma[9]={ 1.0,0.0, 0.0,1.0, 0.0,0.0, 0.5,0.5, 1.0};
+      s = oyProfile_FromMatrix( primaries_and_gamma, flags, "XYZ D*E" );
+    }
     else if(strcmp(name,"rgbi") == 0)
       fn = oyGetDefaultProfileName( oyASSUMED_RGB, oyAllocateFunc_ );
     else if(strcmp(name,"cmyki") == 0)

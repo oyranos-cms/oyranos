@@ -11,6 +11,11 @@ OYAPI oyProfile_s * OYEXPORT
                                        uint32_t            flags,
                                        oyObject_s          object);
 OYAPI oyProfile_s * OYEXPORT
+                   oyProfile_FromMatrix (
+                                       double              pandg[9],
+                                       int                 icc_profile_flags,
+                                       const char        * name  );
+OYAPI oyProfile_s * OYEXPORT
                    oyProfile_FromMem ( size_t              buf_size,
                                        const oyPointer     buf,
                                        uint32_t            flags,
