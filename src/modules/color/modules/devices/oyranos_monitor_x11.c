@@ -1240,6 +1240,34 @@ int   oyX1Monitor_getScreenFromDisplayName_( oyX1Monitor_s   * disp )
   return scr_nummer;
 }
 
+char * oyX1Hostname()
+{
+  char * t = getenv ("HOSTNAME");
+  FILE * fp;
+  if(!t) t = getenv("HOST");
+  if(!t) t = getenv("XAUTHLOCALHOSTNAME");
+
+  if(t)
+    t = strdup(t);
+  else
+  {
+    fp = popen("uname -n", "r");
+    if(fp)
+    {
+      oyX1Alloc( t, 48, return strdup("dummy");)
+      if( fread( t, sizeof(char), 48, fp ) > 0 )
+      {
+        t[47] = '\000';
+        fclose(fp);
+        return t;
+      }
+      else if(t) free(t);
+    }
+    t = strdup("dummy");
+  }
+
+  return t;
+}
 
 /**  @internal
  *  extract the host name or get from environment
@@ -1252,18 +1280,11 @@ oyExtractHostName_           (const char* display_name)
   /* Is this X server identifyable? */
   if(!display_name)
   {
-    char *host = getenv ("HOSTNAME");
-    if (host) {
-      host_name = strdup( host );
-    }
+    host_name = oyX1Hostname();
   } else if (strchr(display_name,':') == display_name ||
              !strchr( display_name, ':' ) )
   {
-    char *host = getenv ("HOSTNAME");
-    /* good */
-    if (host) {
-      host_name = strdup( host );
-    }
+    host_name = oyX1Hostname();
   } else if ( strchr( display_name, ':' ) )
   {
     char* ptr = 0;
@@ -1274,7 +1295,7 @@ oyExtractHostName_           (const char* display_name)
   } else
     host_name = strdup( "" );
 
-  if(oy_debug) fprintf( stderr, OY_DBG_FORMAT_ "host_name = %s  display_name = %s\n", OY_DBG_ARGS_, oyNoEmptyString_m_(host_name), oyNoEmptyString_m_(display_name) );
+  if(oy_debug || !host_name) fprintf( stderr, OY_DBG_FORMAT_ "host_name = %s  display_name = %s\n", OY_DBG_ARGS_, oyNoEmptyString_m_(host_name), oyNoEmptyString_m_(display_name) );
 
   return host_name;
 }
