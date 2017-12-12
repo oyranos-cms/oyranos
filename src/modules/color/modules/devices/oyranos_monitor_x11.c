@@ -1262,6 +1262,7 @@ char * oyX1Hostname()
         return t;
       }
       else if(t) free(t);
+      fclose(fp);
     }
     t = strdup("dummy");
   }
