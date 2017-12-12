@@ -420,7 +420,7 @@ int main(int argc, char *argv[])
     }
     if(!c)
     {
-      fprintf( stderr, "%s %s: %s  %d\n", _("!!! ERROR"), _("Could not resolve device_json"),
+      fprintf( stderr, OY_DBG_FORMAT_ "%s %s: %s  %d\n", OY_DBG_ARGS_, _("!!! ERROR"), _("Could not resolve device_json"),
                device_json, error);
       oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
       exit(1);
@@ -437,11 +437,27 @@ int main(int argc, char *argv[])
       oyRankMap * rank_map = NULL;
       const char * rankj = rank_json ? rank_json : device_json;
 
+      json_size = 0;
       json_text = oyReadFileToMem_( rankj, &json_size, oyAllocateFunc_ );
       error = oyRankMapFromJSON ( json_text, NULL, &rank_map, oyAllocateFunc_ );
+      oyDeAllocateFunc_( json_text );
       if(!rank_map || error || !rank_map[0].key)
-        fprintf( stderr, "%s: %s: %s  %d\n", _("WARNING"), _("Creation of rank_map filed from"), rankj, error );
-      else
+      {
+        char ** list = NULL;
+        fprintf( stderr, OY_DBG_FORMAT_ "%s: %s: %s  %d\n", OY_DBG_ARGS_, _("WARNING"), _("Creation of rank_map failed from"), rankj, error );
+        error = oyRankMapList( device_class, NULL, &list, oyAllocateFunc_ );
+        if(error)
+          fprintf( stderr, OY_DBG_FORMAT_ "%s: %s: %s  %d\n", OY_DBG_ARGS_, _("WARNING"), _("Creation of rank_map failed from"), device_class, error );
+        if(list && list[0])
+        { json_size = 0;
+          json_text = oyReadFileToMem_( list[0], &json_size, oyAllocateFunc_ );
+          error = oyRankMapFromJSON ( json_text, NULL, &rank_map, oyAllocateFunc_ );
+          if(error)
+            fprintf( stderr, OY_DBG_FORMAT_ "%s: %s: %s  %d\n", OY_DBG_ARGS_, _("WARNING"), _("Creation of rank_map failed from"), device_class, error );
+        }
+      }
+
+      if(rank_map)
         oyConfig_SetRankMap( c, rank_map );
 
       if( (list_profiles || list_taxi_profiles) && rank_json )
@@ -1183,7 +1199,8 @@ int main(int argc, char *argv[])
         {
           prof = (oyProfile_s*) oyOption_GetStruct( o, oyOBJECT_PROFILE_S );
           oyOption_Release( &o );
-        }
+        } else
+          error = oyDeviceAskProfile2( c, options, &prof );
 
         if(prof)
         {
