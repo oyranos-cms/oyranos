@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2005-2009 (C) Kai-Uwe Behrmann
+ *            2005-2017 (C) Kai-Uwe Behrmann
  *
  *  @brief    monitor device detection
  *  @internal
@@ -66,6 +66,8 @@ int            oyDeviceFillEdid      ( const char        * registration,
                                        const char        * display_geometry,
                                        const char        * system_port,
                                        oyOptions_s       * options );
+oyOption_s *   oyDeviceToChromaticity( oyConfig_s        * device,
+                                       const char        * registration );
 
 
 

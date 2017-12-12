@@ -367,7 +367,46 @@ int          oyUnrollEdid1_          ( void              * edid,
   return err;
 }
 
+int            oyOptionsToChromaticity(double            * pandg,
+                                       oyOptions_s       * options )
+{
+  const char * t;
+  int pos = 0;
+  double value;
 
+#define READ_DBL( key ) \
+  t = oyOptions_FindString(options, key, NULL); \
+  if(!t) return 1; \
+  oyStringToDouble( t, &value ); \
+  pandg[pos++] = value;
+  READ_DBL( "EDID_red_x" )
+  READ_DBL( "EDID_red_y" )
+  READ_DBL( "EDID_green_x" )
+  READ_DBL( "EDID_green_y" )
+  READ_DBL( "EDID_blue_x" )
+  READ_DBL( "EDID_blue_y" )
+  READ_DBL( "EDID_white_x" )
+  READ_DBL( "EDID_white_y" )
+  READ_DBL( "EDID_gamma" )
+  return 0;
+}
+
+oyOption_s *   oyDeviceToChromaticity( oyConfig_s        * device,
+                                       const char        * registration )
+{
+  double pandg[9] = {-1,-1,-1,-1,-1,-1,-1,-1,-1};
+  oyOption_s * result = NULL;
+  int i;
+
+  if(oyOptionsToChromaticity( pandg, *oyConfig_GetOptions( device, "data" )))
+    if(oyOptionsToChromaticity( pandg, *oyConfig_GetOptions( device, "db" )))
+      return result;
+
+  result = oyOption_FromRegistration( registration, 0 );
+  for(i = 0; i < 9; ++i)
+    oyOption_SetFromDouble( result, pandg[i], i, 0 );
+  return result;
+}
 
 
 
