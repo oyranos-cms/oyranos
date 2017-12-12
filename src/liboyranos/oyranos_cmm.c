@@ -205,7 +205,7 @@ int oyDeviceCMMInit                  ( oyStruct_s        * filter,
 
       if(!rank_map || error || !rank_map[0].key)
         oyMessageFunc_p( oyMSG_WARN, filter, "%s() %s: %s  %d", __func__,
-                         _("Creation of rank_map filed from"), rank_name[0], error );
+                         _("Creation of rank_map failed from"), rank_name[0], error );
       else
         s->rank_map = rank_map;
 

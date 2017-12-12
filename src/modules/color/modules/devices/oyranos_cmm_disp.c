@@ -759,6 +759,19 @@ int            Configs_Modify        ( oyConfigs_s       * devices,
             o_tmp = oyOptions_Find( *oyConfig_GetOptions(device,"data"), "color_matrix."
                      "redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma",
                                     oyNAME_PATTERN );
+             /* try to obtain already included EDID keys */
+            if(!o_tmp)
+            {
+              oyOption_s * pandg = oyDeviceToChromaticity( device,
+                                MONITOR_REGISTRATION OY_SLASH "color_matrix."
+                     "redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma" );
+              if(pandg)
+              {
+                o_tmp = oyOption_Copy( pandg, NULL );
+                oyOptions_MoveIn( *oyConfig_GetOptions(device,"data"), &pandg, -1 );
+              }
+            }
+
             if(!o_tmp)
             {
               oyOptions_SetFromString( &options,
