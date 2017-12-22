@@ -23,7 +23,8 @@ device specific Informations (ICC profiles) und system wide settings.
 * [Development](http://www.oyranos.org/development)
 * [Future](http://www.oyranos.org/future)
 * [Packaging](PACKAGING.md)
-* [Wiki](http://www.oyranos.org/wiki/index.php?title=Oyranos)
+* [Wiki](http://www.oyranos.org/wiki/index.php%3Ftitle=Oyranos)
+* [FAQ](doc/FAQ.md)
 
 
 ### Dependencies
