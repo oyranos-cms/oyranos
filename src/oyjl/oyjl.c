@@ -163,10 +163,12 @@ int main(int argc, char ** argv)
 
   if(text)
   {
-    char error_buffer[128] = {0};
+    char error_buffer[256] = {0};
     if(verbose)
       fprintf(stderr, "file read:\t\"%s\"\n", input_file_name);
-    root = oyjl_tree_parse( text, error_buffer, 128 );
+    root = oyjl_tree_parse( text, error_buffer, 256 );
+    if(error_buffer[0] != '\000')
+      fprintf(stderr, "ERROR:\t\"%s\"\n", error_buffer);
     if(verbose)
       fprintf(stderr, "file parsed:\t\"%s\"\n", input_file_name);
 
