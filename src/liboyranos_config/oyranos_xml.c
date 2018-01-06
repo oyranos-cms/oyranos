@@ -25,6 +25,7 @@
 #include "oyranos_debug.h"
 #include "oyranos_helper.h"
 #include "oyranos_internal.h"
+#include "oyranos_json.h"
 #include "oyranos_string.h"
 
 #ifdef HAVE_LIBXML2
@@ -53,6 +54,10 @@ void               oyParseXMLDoc_    ( xmlDocPtr           doc,
                                        oyUiHandler_s    ** ui_handlers,
                                        oyPointer           ui_handlers_context);
 #endif
+void               oyParseJsonDoc_   ( oyjl_val            root,
+                                       oyjl_val            val,
+                                       oyUiHandler_s    ** ui_handlers,
+                                       oyPointer           ui_handlers_context);
 
 /* miscellaneous */
 
@@ -1310,24 +1315,43 @@ int          oyXFORMsRenderUi        ( const char        * xforms,
                                        oyPointer           user_data )
 {
   int error = !xforms || !ui_handlers;
+  oyjl_val root = NULL,
+           value = NULL;
+  int has_xml = 0;
 #ifdef HAVE_LIBXML2
-  xmlDocPtr doc = 0;
-  xmlNodePtr cur = 0;
+  xmlDocPtr doc = NULL;
+  xmlNodePtr cur = NULL;
   const char * text = xforms;
 
   if(error)
     return error;
 
-  doc = xmlParseMemory( text, strlen(text) );
-  cur = xmlDocGetRootElement(doc);
+  if(text[0] == '<')
+  {
+    doc = xmlParseMemory( text, strlen(text) );
+    cur = xmlDocGetRootElement(doc);
+  }
 
   if(doc && cur)
   {
+    has_xml = 1;
     oyParseXMLDoc_( doc, cur, ui_handlers, user_data );
     xmlFreeDoc( doc );
   }
   else
 #endif
+  {
+    char error_buffer[256] = {0};
+    root = oyjl_tree_parse( text, error_buffer, 256 );
+    if(error_buffer[0] != '\000')
+      oyMessageFunc_p( oyMSG_WARN, NULL, OY_DBG_FORMAT_ "ERROR:\t\"%s\"\n", OY_DBG_ARGS_, error_buffer );
+    else
+      oyParseJsonDoc_( root, value, ui_handlers, user_data );
+    if(root)
+      oyjl_tree_free( root );
+  }
+
+  if(!root && !has_xml)
     error = 1;
 
   return error;
@@ -1757,4 +1781,45 @@ const char *       oyXML2NodeValue   ( xmlNodePtr          cur )
   return v;
 }
 #endif
+
+void               oyParseJsonDoc_   ( oyjl_val            root,
+                                       oyjl_val            value OY_UNUSED,
+                                       oyUiHandler_s    ** ui_handlers,
+                                       oyPointer           ui_handlers_context)
+{
+  int count = 0, i;
+  char ** paths = NULL;
+
+  oyjl_tree_to_paths( root, 1000000, NULL, 0, &paths );
+  while(paths && paths[count]) ++count;
+
+  for(i = 0; i < count; ++i)
+  {
+    char * path = paths[i];
+    oyOptions_s * wid_data = 0;
+    int pos = 0;
+
+    /* search a entry node */
+    while(ui_handlers[pos])
+    {
+      int pos2 = 0;
+      while(ui_handlers[pos]->element_searches[pos2])
+      {
+        const char * pattern = ui_handlers[pos]->element_searches[pos2];
+
+        if(oyjl_path_match( path, pattern, OYJL_PATH_MATCH_LAST_ITEMS ))
+        {
+          oyjl_val v = oyjl_tree_get_value( root, 0, path );
+
+          /* render */
+          ui_handlers[pos]->handler( v, wid_data, ui_handlers_context );
+        }
+
+        ++pos2;
+      }
+
+      ++pos;
+    }
+  }
+}
 
