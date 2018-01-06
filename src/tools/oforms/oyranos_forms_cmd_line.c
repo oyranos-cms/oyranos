@@ -26,8 +26,69 @@
 #include "oyranos_forms.h"
 #include "oyranos_helper.h"
 #include "oyranos_internal.h"
+#include "oyranos_json.h"
 #include "oyranos_string.h"
 #include "oyranos_xml.h"
+
+
+/** @internal
+ *  Function oyJSON2XFORMsCmdLineHtmlHeadlineHandler
+ *  @brief   build a UI from a 'groups' Json array
+ *
+ *  This function is a simple demonstration.
+ *
+ *  @param[in]     cur                 json node
+ *  @param[in]     collected_elements  parsed and requested elements
+ *  @param[in]     user_data           toolkit context
+ *  @return                            error
+ *
+ *  @version Oyranos: 0.9.7
+ *  @date    2018/01/02
+ *  @since   2009/08/29 (Oyranos: 0.1.10)
+ */
+int        oyJSON2XFORMsCmdLineHtmlHeadlineHandler (
+                                       oyjl_val            value,
+                                       oyOptions_s       * collected_elements OY_UNUSED,
+                                       oyPointer           user_data )
+{
+  const char * label = 0,
+             * help = 0,
+             * type = 0;
+  oyFormsArgs_s * forms_args = (oyFormsArgs_s *)user_data;
+  int print = forms_args ? forms_args->print : 1;
+
+  if(!print || !value)
+    return 0;
+
+  oyjl_val v = oyjl_tree_get_value( value, 0, "name" );
+  if (OYJL_IS_STRING(v))
+    label = v->u.string;
+  v = oyjl_tree_get_value( value, 0, "help" );
+  if(!v)
+    v = oyjl_tree_get_value( value, 0, "description" );
+  if (OYJL_IS_STRING(v))
+    help = v->u.string;
+
+  if(label && label[0])
+    printf( "%s\n", label );
+  if(help && help[0])
+    printf( " [%s]\n", help );
+
+  return 0;
+}
+
+
+const char * oy_ui_cmd_line_handler_json_headline_element_searches_[] = {
+"/////groups/", 0};
+oyUiHandler_s oy_ui_cmd_line_handler_json_headline_ =
+  {oyOBJECT_UI_HANDLER_S,0,0,0,        /**< oyStruct_s members */
+   "oyJSON",                           /**< dialect */
+   "oyjl",                             /**< parser_type */
+   (oyUiHandler_f)oyJSON2XFORMsCmdLineHtmlHeadlineHandler, /**<oyUiHandler_f handler*/
+   "oyjl node",                        /**< handler_type */
+   (char**)oy_ui_cmd_line_handler_json_headline_element_searches_ /**< element_searches */
+  };
+
 
 #ifdef HAVE_LIBXML2
 #include <libxml/parser.h>
@@ -259,11 +320,13 @@ oyUiHandler_s oy_ui_cmd_line_handler_html_headline_ =
 oyUiHandler_s * oy_ui_cmd_line_handlers[4] = {
   &oy_ui_cmd_line_handler_xf_select1_,
   &oy_ui_cmd_line_handler_html_headline_,
+  &oy_ui_cmd_line_handler_json_headline_,
   0
 };
 #else /* HAVE_LIBXML2 */
 
 oyUiHandler_s * oy_ui_cmd_line_handlers[4] = {
+  &oy_ui_cmd_line_handler_json_headline_,
   0
 };
 
