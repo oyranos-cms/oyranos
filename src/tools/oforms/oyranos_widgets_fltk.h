@@ -25,11 +25,12 @@
 #include "oyranos_types.h"
 #include "oyranos_forms.h"
 
-#define H_SPACING 10
-#define V_SPACING 3
-#define BUTTON_HEIGHT 25
-#define BOX_WIDTH 250
-#define SELECT_WIDTH 176
+extern float oy_forms_fltk_scale;
+#define H_SPACING     (OY_ROUND(10 * oy_forms_fltk_scale))
+#define V_SPACING     (OY_ROUND(3 * oy_forms_fltk_scale))
+#define BUTTON_HEIGHT (OY_ROUND(25 * oy_forms_fltk_scale))
+#define BOX_WIDTH     (OY_ROUND(176 * oy_forms_fltk_scale))
+#define SELECT_WIDTH  (OY_ROUND(176 * oy_forms_fltk_scale))
 
 namespace oyranos {
 namespace forms {
