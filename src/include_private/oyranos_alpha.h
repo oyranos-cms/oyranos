@@ -118,14 +118,14 @@ char   *       oyDumpColorToCGATS   ( const double      * channels,
 /**
  *  @brief   handle parser output and build the UI
  *
- *  @param[in]     cur                 libxml2 node
- *  @param[in]     collected_elements  from libxml2
+ *  @param[in]     cur                 type specific node
+ *  @param[in]     collected_elements  from xForms
  *  @param[in]     handler_context     the toolkit context
  *  @return                            ns + ':' + name
  *
  *  @version Oyranos: 0.1.10
- *  @since   2009/08/30 (Oyranos: 0.1.10)
  *  @date    2009/08/30
+ *  @since   2009/08/30 (Oyranos: 0.1.10)
  */
 typedef int  (*oyUiHandler_f)        ( oyPointer           cur,
                                        oyOptions_s       * collected_elements,
