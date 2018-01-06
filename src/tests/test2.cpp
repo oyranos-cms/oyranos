@@ -771,7 +771,7 @@ oyTESTRESULT_e testJson ()
       const char * xpath = "org///s2key_d";
       for(int j = 0; j < count; ++j)
       {
-        if(oyjl_path_match( paths[j], xpath ))
+        if(oyjl_path_match( paths[j], xpath, 0 ))
           match = paths[j];
         fprintf( zout, "%d: %s\n", j, paths[j] );
       }

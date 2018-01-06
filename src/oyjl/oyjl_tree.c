@@ -996,27 +996,37 @@ int        oyjl_path_term_get_index  ( const char        * term,
  *
  *  @code
     // the second xpath expression matches the first path
-    int matches = oyjl_path_match( "org/free/[1]/s2key_d", "org///s2key_d" );
+    int matches = oyjl_path_match( "org/free/[1]/s2key_d", "org///s2key_d", 0 );
     // "//[1]/s2key_d" or "///s2key_d" would fit as well;  "//[0]/s2key_d" not
     @endcode
  */
 int        oyjl_path_match           ( const char        * path,
-                                       const char        * xpath )
+                                       const char        * xpath,
+                                       int                 flags )
 {
-  int match = 0, i,pn=0,xn=0;
+  int match = 0, i,pn=0,xn=0,diff=0;
   char ** xlist = oyjl_string_split(xpath, '/', &xn, malloc);
   char ** plist = oyjl_string_split(path, '/', &pn, malloc);
 
+  if(flags & OYJL_PATH_MATCH_LAST_ITEMS)
+    diff = pn - xn;
+
   if(!xlist || !plist) return 0;
-  if(pn >= xn) match = 1;
+  if(flags & OYJL_PATH_MATCH_LEN)
+  {
+    if(pn == xn) match = 1;
+  } else {
+    if(pn >= xn) match = 1;
+  }
 
   /* follow the search path term */
-  for(i = 0; i < xn && match; ++i)
+  for(i = diff; i < (diff + xn) && match; ++i)
   {
-    char * xterm = xlist[i],
+    char * xterm = xlist[i - diff],
          * pterm = plist[i];
     int xindex = -2,
         pindex = -2;
+
     oyjl_path_term_get_index( xterm, &xindex );
     oyjl_path_term_get_index( pterm, &pindex );
 

@@ -228,8 +228,11 @@ oyjl_val   oyjl_value_pos_get        ( oyjl_val            v,
 int        oyjl_value_set_string     ( oyjl_val            v,
                                        const char        * string );
 void       oyjl_value_clear          ( oyjl_val            v );
+#define    OYJL_PATH_MATCH_LEN         0x20
+#define    OYJL_PATH_MATCH_LAST_ITEMS  0x40
 int        oyjl_path_match           ( const char        * path,
-                                       const char        * xpath );
+                                       const char        * xpath,
+                                       int                 flags );
 
 
 /* --- string helpers --- */
