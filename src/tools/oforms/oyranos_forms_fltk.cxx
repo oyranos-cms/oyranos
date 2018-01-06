@@ -40,6 +40,7 @@
 #include "oyranos_helper.h"
 #include "oyranos_i18n.h"
 #include "oyranos_internal.h"
+#include "oyranos_json.h"
 #include "oyranos_forms.h"
 #include "oyranos_string.h"
 #include "oyranos_xml.h"
@@ -55,6 +56,8 @@ typedef struct {
   char * key;
   oyOptions_s ** callback_data;
 } fltk_cb_data;
+
+float oy_forms_fltk_scale = 1.0;
 
 void fltkCallback                    ( Fl_Widget         * widget,
                                        void              * user_data )
@@ -417,9 +420,295 @@ oyUiHandler_s oy_ui_fltk_handler_html_headline_ =
    (char**)oy_ui_fltk_handler_html_headline_element_searches_ /**< element_searches */
   };
 
+
+/** @internal
+ *  Function oyJSON2XFORMsFltkHtmlHeadlineHandler
+ *  @brief   build a UI from a 'groups' Json array
+ *
+ *  This function is a handler for a OpenICC style JSON ui.
+ *
+ *  @param[in]     cur                 json node
+ *  @param[in]     collected_elements  parsed and requested elements
+ *  @param[in]     user_data           toolkit context
+ *  @return                            error
+ *
+ *  @version Oyranos: 0.9.7
+ *  @date    2018/01/02
+ *  @since   2009/08/29 (Oyranos: 0.1.10)
+ */
+int        oyJSON2XFORMsFltkHtmlHeadlineHandler (
+                                       oyjl_val            value,
+                                       oyOptions_s       * collected_elements OY_UNUSED,
+                                       oyPointer           user_data )
+{
+  const char * name = NULL,
+             * desc = NULL,
+             * help = NULL,
+             * properties = NULL;
+  oyFormsArgs_s * forms_args = (oyFormsArgs_s *)user_data;
+  int print = forms_args ? forms_args->print : 1;
+
+  if(!print || !value)
+    return 0;
+
+  oyjl_val v;
+  v = oyjl_tree_get_value( value, 0, "name" );
+  if (OYJL_IS_STRING(v))              name = v->u.string;
+  v = oyjl_tree_get_value( value, 0, "description" );
+  if (OYJL_IS_STRING(v))              desc = v->u.string;
+  v = oyjl_tree_get_value( value, 0, "help" );
+  if (OYJL_IS_STRING(v))              help = v->u.string;
+  v = oyjl_tree_get_value( value, 0, "properties" );
+  if (OYJL_IS_STRING(v))              properties = v->u.string;
+
+  OyFl_Box_c * box = 0;
+
+  if(name)
+  {
+    Fl_Group *parent = Fl_Group::current(); // parent tab
+
+    if( !parent )
+    {
+      WARNc_S( "wrong widget" );
+      return 1;
+    }
+
+    Fl_Widget *wid = (Fl_Widget*)0; //parent->user_data();
+    if( !wid ) wid = parent;
+
+    int x = parent->x(),
+        y = parent->y(),
+        w = parent->w();
+    box = new OyFl_Box_c( x,y,w,BUTTON_HEIGHT );
+    char * label = NULL;
+    oyjl_string_add( &label, malloc, free, "%s %s", name, desc?desc:"" );
+    if(label)
+    {
+      box->copy_label( (const char *)label );
+      free(label);
+    }
+    if( properties &&
+        ( strstr(properties,"h3") ||
+          strstr(properties,"frame")
+        )
+      )
+      box->labelfont( FL_BOLD );
+    else
+      box->labelfont( FL_ITALIC );
+    box->align( FL_ALIGN_LEFT | FL_ALIGN_INSIDE );
+
+    if(help)
+    {
+      oyCallback_s * cb = 0;
+      oyOptions_FindData( (oyOptions_s*)forms_args->data_,
+                                      OYFORMS_FLTK_HELP_VIEW_REG,
+                                      (oyPointer*)&cb, 0, 0);
+      if(cb && box)
+        box->hint_callback = cb;
+      if(box)
+        box->user_data( (void*)strdup(help) );
+    }
+  }
+
+  return 0;
+}
+
+
+const char * oy_ui_fltk_handler_json_headline_element_searches_[] = {
+ "groups/",
+ 0
+};
+oyUiHandler_s oy_ui_fltk_handler_json_headline_ =
+  {oyOBJECT_UI_HANDLER_S,0,0,0,         /**< oyStruct_s members */
+   (char*)"oyJSON",                     /**< dialect */
+   (char*)"oyjl",                       /**< parser_type */
+   (oyUiHandler_f)oyJSON2XFORMsFltkHtmlHeadlineHandler, /**<oyUiHandler_f handler*/
+   (char*)"oyjl node",                  /**< handler_type */
+   (char**)oy_ui_fltk_handler_json_headline_element_searches_ /**< element_searches */
+  };
+
+char * oyjp(oyjl_val v)
+{ char * t = NULL; int l = 0; oyjl_tree_to_json(v,&l,&t); return t; }
+
+/** @internal
+ *  Function oyJSON2XFORMsFLTKSelect1Handler
+ *  @brief   build a UI for a xf:select1 XFORMS sequence
+ *
+ *  This function is a handler for a OpenICC style JSON ui.
+ *
+ *  @param[in]     cur                 libxml2 node
+ *  @param[in]     collected_elements  unused
+ *  @param[in]     user_data           toolkit context
+ *  @return                            error
+ *
+ *  @version Oyranos: 0.9.7
+ *  @date    2018/01/03
+ *  @since   2009/08/29 (Oyranos: 0.1.10)
+ */
+int        oyJSON2XFORMsFLTKSelect1Handler (
+                                       oyjl_val            ov,
+                                       oyOptions_s       * collected_elements OY_UNUSED,
+                                       oyPointer           user_data )
+{
+  int k,
+      is_default, default_pos = -1;
+  const char * default_value = NULL,
+             * label,
+             * value,
+             * xpath = 0;
+  char * default_string = 0;
+  oyFormsArgs_s * forms_args = (oyFormsArgs_s *)user_data;
+  int print = forms_args ? forms_args->print : 1;
+
+  oyjl_val choices;
+
+  Fl_Group *parent = Fl_Group::current();
+
+  if(!parent)
+    return 1;
+
+  int x = parent->x(),
+      y = parent->y(),
+      w = parent->w()/*,
+      h = parent->h()*/;
+  Fl_Pack * pack = new Fl_Pack(x,y,w,BUTTON_HEIGHT);
+  pack->type( FL_HORIZONTAL );
+  pack->spacing(H_SPACING);
+
+  new Fl_Box( 0,0,H_SPACING,BUTTON_HEIGHT);
+  OyFl_Box_c * box = new OyFl_Box_c( 2*H_SPACING,0,w-BOX_WIDTH-4*H_SPACING,BUTTON_HEIGHT);
+  box->align( FL_ALIGN_LEFT | FL_ALIGN_INSIDE );
+
+  formsFltkChoice * c = new formsFltkChoice( w-BOX_WIDTH-H_SPACING,0,BOX_WIDTH,BUTTON_HEIGHT );
+
+  if(ov)
+  {
+    oyjl_val v;
+
+    label = 0;
+
+    v = oyjl_tree_get_value( ov, 0, "default" );
+    if( OYJL_IS_STRING( v ) )         default_value = v->u.string;
+    if(oy_debug && default_value && print)
+      printf( "found default: \"%s\"\n", default_value );
+
+    v = oyjl_tree_get_value( ov, 0, "nick" );
+    if( OYJL_IS_STRING( v ) )         xpath = v->u.string;
+
+    v = oyjl_tree_get_value( ov, 0, "name" );
+    if( OYJL_IS_STRING( v ) )         label = v->u.string;
+      
+    if(label && print)
+      box->copy_label( (const char *)label );
+
+    const char * t;
+    v = oyjl_tree_get_value( ov, 0, "help" );
+    if( OYJL_IS_STRING( v ) ) t = v->u.string;
+    if(t)
+    {
+      oyCallback_s * cb = 0;
+      oyOptions_FindData( (oyOptions_s*)forms_args->data_,
+                                      OYFORMS_FLTK_HELP_VIEW_REG,
+                                      (oyPointer*)&cb, 0, 0);
+      if(cb)
+        c->hint_callback = cb;
+      c->user_data( (void*)strdup(t) );
+    }
+
+    choices = oyjl_tree_get_value( ov, 0, "choices" );
+    int count = oyjl_value_count( choices );
+    for(int i = 0; i < count; ++i)
+    {
+      oyjl_val item = oyjl_tree_get_valuef( choices, 0, "[%d]", i );
+      oyjl_val v;
+
+      is_default = 0;
+      label = value = 0;
+
+      v = oyjl_tree_get_value( item, 0, "name" );
+      if( OYJL_IS_STRING( v ) ) label = v->u.string;
+      v = oyjl_tree_get_value( item, 0, "nick" );
+      if( OYJL_IS_STRING( v ) ) value = v->u.string;
+
+      if(label)
+      {
+        /* detect default */
+        if( value && default_value &&
+            oyStrcmp_( default_value, value ) == 0 )
+        {
+          is_default = 1;
+          default_pos = i;
+        }
+
+        if(!value) value = label;
+        if(!label) label = value;
+
+        /* append the choice
+         * store the label and value in user_data() for evaluating results*/
+        if(print)
+        {
+          fltk_cb_data *cb_data=(fltk_cb_data*)malloc(sizeof(fltk_cb_data));
+          int len = strlen(label), pos = 0;
+          memset(cb_data, 0, sizeof(fltk_cb_data) );
+          cb_data->label = (char*) malloc(strlen(label)*2);
+          cb_data->value = strdup(value);
+          cb_data->key = xpath ? strdup(xpath):0;
+          cb_data->callback_data = (oyOptions_s**)
+                                              &forms_args->xforms_data_model_;
+          for(k = 0; k <= len; ++k)
+          {
+            if(label[k] == '/')
+              cb_data->label[pos++] = '\\';
+            cb_data->label[pos++] = label[k];
+          }
+          c->add( (const char *) cb_data->label, 0,
+                    fltkCallback,
+                    (void*)cb_data, 0 );
+
+          if(is_default)
+            default_string = oyStringCopy_( label, malloc );
+        }
+      }
+    }
+
+    if(default_string && default_pos >= 0)
+    {
+      c->value( c->find_item( (char*)default_string ) );
+      free( default_string ); default_string = 0;
+    } else
+      c->value( -1 );
+  }
+
+  pack->end();
+  pack->resizable( box );
+
+  /* collect results */
+  if(xpath && forms_args)
+    oyOptions_SetFromString( (oyOptions_s**)&forms_args->xforms_data_model_,
+                             xpath, default_value, OY_CREATE_NEW );
+
+  return 0;
+}
+
+const char * oy_ui_fltk_handler_json_select1_element_searches_[] = {
+ "options/",
+ 0
+};
+
+oyUiHandler_s oy_ui_fltk_handler_json_options_ =
+  {oyOBJECT_UI_HANDLER_S,0,0,0,        /**< oyStruct_s members */
+   (char*)"oyJSON",                   /**< dialect */
+   (char*)"oyjl",                   /**< parser_type */
+   (oyUiHandler_f)oyJSON2XFORMsFLTKSelect1Handler, /**<oyUiHandler_f handler*/
+   (char*)"oyjl node",                     /**< handler_type */
+   (char**)oy_ui_fltk_handler_json_select1_element_searches_ /**< element_searches */
+  };
+
 oyUiHandler_s * oy_ui_fltk_handlers[5] = {
   &oy_ui_fltk_handler_xf_select1_,
   &oy_ui_fltk_handler_html_headline_,
+  &oy_ui_fltk_handler_json_headline_,
+  &oy_ui_fltk_handler_json_options_,
   0
 };
 

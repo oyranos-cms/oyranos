@@ -39,8 +39,7 @@ typedef void (*lcm2Sampler_f)        ( const double        i[],
                                        void              * vars);
 /** @} */ /* profiler */
 
-int          lcm2CreateAbstractProfile (
-                                       lcm2Sampler_f       samplerMySpace,
+int          lcm2CreateAbstractProfile(lcm2Sampler_f       samplerMySpace,
                                        void              * samplerArg,
                                        const char        * my_space_profile,
                                        int                 grid_size,

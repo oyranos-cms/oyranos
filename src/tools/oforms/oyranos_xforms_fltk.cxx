@@ -38,6 +38,7 @@
 #include <FL/Fl_Pack.H>
 #include <FL/Fl_Scroll.H>
 #include <FL/Fl_Text_Display.H>
+#include <FL/Fl_Tile.H>
 #include <FL/Fl_Help_View.H>
 
 using namespace oyranos;
@@ -235,40 +236,60 @@ int main (int argc, char ** argv)
     fprintf(stderr, "%s\n", text);
 
   Oy_Fl_Double_Window * w = new Oy_Fl_Double_Window(400,475,_("XFORMS in FLTK"));
-    oyCallback_s callback = {oyOBJECT_CALLBACK_S, 0,0,0,
-                                  (void(*)())callback_help_view,0};
-    Fl_Group* o = new Fl_Group(0, 340, 400, 100);
+  Fl_Group * wg = new Fl_Group(0, 0, 400, 475);
+    wg->box( FL_FLAT_BOX );
+    Fl_Tile * tile = new Fl_Tile(0,0, 400, 440);
+
       Fl_Help_View * help_view = new Fl_Help_View( 0,340,400,100 );
       help_view->box(FL_ENGRAVED_BOX);
       help_view->color(FL_BACKGROUND_COLOR);
       //help_view->align(FL_ALIGN_LEFT);
       help_view->selection_color(FL_DARK1);
       help_view->value("");
-      callback.data = help_view;
-    o->end(); // Fl_Group* o
-    oyFormsArgs_ResourceSet( forms_args, OYFORMS_FLTK_HELP_VIEW_REG,
-                             (oyPointer)&callback);
+
+      Fl_Group * sg = new Fl_Group(0, 0, 400, 340);
+        Fl_Scroll * scroll = new Fl_Scroll( 5,1,395,338 );
+        scroll->box( FL_NO_BOX );
+      sg->end();
+
+    tile->end();
 
     Fl_Button * done_button = new Fl_Button( 160, 445, 80, 25, _("&Done"));
     done_button->callback( callback_done, 0 );
-
-  Fl_Scroll * scroll = new Fl_Scroll( 5,1,395,338 );
-  scroll->box( FL_NO_BOX ); //FL_THIN_UP_BOX );
-    OyFl_Pack_c * pack = new OyFl_Pack_c( 5,1,395,338 );
-    pack->spacing(V_SPACING);
-      error = oyXFORMsRenderUi( text, oy_ui_fltk_handlers, forms_args );
-
-
-    pack->end();
-  scroll->end();
-  w->resizable( scroll );
+  wg->end();
+  w->resizable( wg );
   w->end();
 
+  oyCallback_s callback = { oyOBJECT_CALLBACK_S, 0,0,0,
+                            (void(*)())callback_help_view, help_view };
+  oyFormsArgs_ResourceSet ( forms_args, OYFORMS_FLTK_HELP_VIEW_REG,
+                            (oyPointer)&callback);
+
+
+  // detect window scaling
   if(print)
-  {
     w->show(1, argv);
+
+  // resize widgets
+  oy_forms_fltk_scale = w->scale();
+# define SROUND(x) (oy_forms_fltk_scale*x)
+  //wg->resize(SROUND(0), SROUND(340), SROUND(400), SROUND(475)); -- makes the window unresponsive
+  tile->resize( SROUND(0),SROUND(0),SROUND(400),SROUND(440) );
+  sg->resize( SROUND(0),SROUND(0),SROUND(400),SROUND(340) );
+  scroll->resize( SROUND(5),SROUND(1),SROUND(395),SROUND(338) );
+  help_view->resize(SROUND(0), SROUND(340), SROUND(400), SROUND(100));
+  done_button->resize( SROUND(160), SROUND(445), SROUND(80), SROUND(25) );
+
+  // render options
+  scroll->begin();
+    OyFl_Pack_c * pack = new OyFl_Pack_c( SROUND(5),SROUND(1),SROUND(395),SROUND(338) );
+      pack->spacing(V_SPACING);
+      oyXFORMsRenderUi( text, oy_ui_fltk_handlers, forms_args );
+    pack->end();
+  scroll->end();
+
+  if(print)
     Fl::run();
-  }
 
 
   result_xml = oyFormsArgs_ModelGet( forms_args );
