@@ -198,6 +198,93 @@ int        oyjl_string_add           ( char             ** string,
   return 0;
 }
 
+char*      oyjl_string_appendn       ( const char        * text,
+                                       const char        * append,
+                                       int                 append_len,
+                                       void*            (* alloc)(size_t size) )
+{
+  char * text_copy = NULL;
+  int text_len = 0;
+
+  if(text)
+    text_len = oyStrlen_(text);
+
+  if(text_len || append_len)
+  {
+    oyjlAllocHelper_m_( text_copy, char,
+                        text_len + append_len + 1,
+                        alloc, return NULL );
+
+    if(text_len)
+      memcpy( text_copy, text, text_len );
+
+    if(append_len)
+      memcpy( &text_copy[text_len], append, append_len );
+
+    text_copy[text_len+append_len] = '\000';
+  }
+
+  return text_copy;
+}
+
+void       oyjl_string_addn          ( char             ** text,
+                                       const char        * append,
+                                       int                 append_len,
+                                       void*            (* alloc)(size_t),
+                                       void             (* deAlloc)(void*) )
+{
+  char * text_copy = NULL;
+
+  if(!text) return;
+
+  text_copy = oyjl_string_appendn(*text, append, append_len, alloc);
+
+  if(*text && deAlloc)
+    deAlloc(*text);
+
+  *text = text_copy;
+
+  return;
+}
+
+char*      oyjl_string_replace       ( const char        * text,
+                                       const char        * search,
+                                       const char        * replacement,
+                                       void*            (* alloc)(size_t),
+                                       void             (* deAlloc)(void*) )
+{
+  char * t = 0;
+  const char * start = text,
+             * end = text;
+
+  void*(* allocate)(size_t size) = alloc?alloc:malloc;
+  void (* deAllocate)(void * data ) = deAlloc?deAlloc:free;
+
+  if(text && search && replacement)
+  {
+    int s_len = strlen(search);
+    while((end = strstr(start,search)) != 0)
+    {
+      oyjl_string_addn( &t, start, end-start, allocate, deAllocate );
+      oyjl_string_addn( &t, replacement, strlen(replacement), allocate, deAllocate );
+      if(strlen(end) >= (size_t)s_len)
+        start = end + s_len;
+      else
+      {
+        if(strstr(start,search) != 0)
+          oyjl_string_addn( &t, replacement, strlen(replacement), allocate, deAllocate );
+        start = end = end + s_len;
+        break;
+      }
+    }
+  }
+
+  if(start && strlen(start))
+    oyjl_string_addn( &t, start, strlen(start), allocate, deAllocate );
+
+  return t;
+}
+
 
 char **    oyjl_string_list_cat_list ( const char       ** list,
                                        int                 n_alt,

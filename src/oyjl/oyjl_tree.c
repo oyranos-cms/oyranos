@@ -1225,7 +1225,7 @@ clean:
  *  @see oyjl_tree_get_valuef() */
 oyjl_val   oyjl_tree_new             ( const char        * path )
 {
-  if(xpath && xpath[0])
+  if(path && path[0])
     return oyjl_tree_get_value_( NULL, OYJL_CREATE_NEW, path );
   else
     return value_alloc( oyjl_t_null );

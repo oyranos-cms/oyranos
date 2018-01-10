@@ -247,6 +247,20 @@ int        oyjl_string_add           ( char             ** string,
                                        void             (* deAlloc)(void*),
                                        const char        * format,
                                                            ... );
+char*      oyjl_string_appendn       ( const char        * text,
+                                       const char        * append,
+                                       int                 append_len,
+                                       void*            (* alloc)(size_t size) );
+void       oyjl_string_addn          ( char             ** text,
+                                       const char        * append,
+                                       int                 append_len,
+                                       void*            (* alloc)(size_t),
+                                       void             (* deAlloc)(void*) );
+char*      oyjl_string_replace       ( const char        * text,
+                                       const char        * search,
+                                       const char        * replacement,
+                                       void*            (* alloc)(size_t),
+                                       void             (* deAlloc)(void*) );
 void       oyjl_string_list_release  ( char            *** l,
                                        int                 size,
                                        void             (* deAlloc)(void*) );
