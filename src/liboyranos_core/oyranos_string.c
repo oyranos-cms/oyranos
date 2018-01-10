@@ -117,44 +117,6 @@ void               oyStringFree_     ( char             ** text,
   }
 }
 
-char*              oyStringAppendN_  ( const char        * text,
-                                       const char        * append,
-                                       int                 append_len,
-                                       oyAlloc_f           allocateFunc )
-{
-  char * text_copy = NULL;
-  int text_len = 0;
-
-  if(text)
-    text_len = oyStrlen_(text);
-
-  if(text_len || append_len)
-  {
-    oyAllocHelper_m_( text_copy, char,
-                      text_len + append_len + 1,
-                      allocateFunc, return 0 );
-
-    if(text_len)
-      memcpy( text_copy, text, text_len );
-
-    if(append_len)
-    {
-      if(0 && oy_debug_memory)
-      {
-        printf( OY_DBG_FORMAT_""OY_PRINT_POINTER" \"%s\" %d %d "OY_PRINT_POINTER" \"%s\"\n",
-                OY_DBG_ARGS_,(ptrdiff_t)text_copy, text_copy, text_len,
-                append_len, (ptrdiff_t)append,append  );
-        fflush( stdout );
-      }
-      memcpy( &text_copy[text_len], append, append_len );
-    }
-
-    text_copy[text_len+append_len] = '\000';
-  }
-
-  return text_copy;
-}
-
 /** @internal 
  *  @brief append a string and care about allocation
  *
@@ -171,7 +133,7 @@ char*              oyStringAppend_   ( const char        * text,
   if(append)
     append_len = oyStrlen_(append);
 
-  text_copy = oyStringAppendN_(text, append, append_len, allocateFunc);
+  text_copy = oyStringAppendN(text, append, append_len, allocateFunc);
 
   return text_copy;
 }
@@ -226,26 +188,6 @@ int                oyStringFromData_ ( const oyPointer     ptr,
   }
 
   return error;
-}
-
-void               oyStringAddN_     ( char             ** text,
-                                       const char        * append,
-                                       int                 append_len,
-                                       oyAlloc_f           allocateFunc,
-                                       oyDeAlloc_f         deallocFunc )
-{
-  char * text_copy = NULL;
-
-  if(!text) return;
-
-  text_copy = oyStringAppendN_(*text, append, append_len, allocateFunc);
-
-  if(*text && deallocFunc)
-    deallocFunc(*text);
-
-  *text = text_copy;
-
-  return;
 }
 
 /** @internal 
@@ -487,44 +429,6 @@ int    oyStringSegmentX_             ( const char        * text,
   }
 
   return 0;
-}
-
-char*              oyStringReplace_  ( const char        * text,
-                                       const char        * search,
-                                       const char        * replacement,
-                                       oyAlloc_f           allocateFunc,
-                                       oyDeAlloc_f         deallocateFunc )
-{
-  char * t = 0;
-  const char * start = text,
-             * end = text;
-
-  if(!allocateFunc) allocateFunc = oyAllocateFunc_;
-  if(!deallocateFunc) deallocateFunc = oyDeAllocateFunc_;
-
-  if(text && search && replacement)
-  {
-    int s_len = strlen(search);
-    while((end = strstr(start,search)) != 0)
-    {
-      oyStringAddN_( &t, start, end-start, allocateFunc, deallocateFunc );
-      oyStringAdd_( &t, replacement, allocateFunc, deallocateFunc );
-      if(strlen(end) >= (size_t)s_len)
-        start = end + s_len;
-      else
-      {
-        if(strstr(start,search) != 0)
-          oyStringAdd_( &t, replacement, allocateFunc, deallocateFunc );
-        start = end = end + s_len;
-        break;
-      }
-    }
-  }
-
-  if(start && strlen(start))
-    oyStringAdd_( &t, start, allocateFunc, deallocateFunc );
-
-  return t;
 }
 
 void               oyStringListAddString_ ( char       *** list,

@@ -24,6 +24,9 @@ extern "C" {
 #define oyjl_string_add                oyStringAddPrintf
 #define oyjl_string_copy               oyStringCopy
 #define oyjl_string_split              oyStringSplit
+#define oyjl_string_appendn            oyStringAppendN
+#define oyjl_string_addn               oyStringAddN
+#define oyjl_string_replace            oyStringReplace
 #define oyjl_string_list_add_list      oyStringListAdd
 #define oyjl_string_list_cat_list      oyStringListCat
 #define oyjl_string_list_release       oyStringListRelease

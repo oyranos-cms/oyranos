@@ -18,6 +18,7 @@
 
 #include "oyranos_helper.h"
 #include "oyranos_types.h"
+#include "oyranos_json.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -104,11 +105,6 @@ char *             oyStringSegmentN_ ( char              * text,
                                        char                delimiter,
                                        int                 segment,
                                        int               * end );
-char*              oyStringReplace_  ( const char        * text,
-                                       const char        * search,
-                                       const char        * replacement,
-                                       oyAlloc_f           allocateFunc,
-                                       oyDeAlloc_f         deallocateFunc );
 #define oyStringListAppend_ oyStringListCat
 char**             oyStringListCat   ( const char       ** list,
                                        int                 n_alt,
