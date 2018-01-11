@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ICC Examin 0.41\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2017-12-12 12:59+0100\n"
+"POT-Creation-Date: 2018-01-02 16:59+0100\n"
 "PO-Revision-Date: 2006-06-29 19:31+0200\n"
 "Last-Translator: Pascal LACROIX <lacroixpascal at vfemail.net>\n"
 "Language-Team: <fr@li.org>\n"
@@ -294,7 +294,7 @@ msgid "ANGLE_IN_DEGREE"
 msgstr ""
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:705
+#: liboyranos_config/oyranos_xml.c:710
 msgid "About Oyranos"
 msgstr "À propos Oyranos"
 
@@ -840,7 +840,7 @@ msgid ""
 msgstr ""
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:1214
+#: liboyranos_config/oyranos_xml.c:1219
 msgid ""
 "Color matching between different devices is possible, provided that the "
 "color characteristics of the involved devices are known. The quality of a "
@@ -856,7 +856,7 @@ msgid "Color measurement data"
 msgstr ""
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:1229
+#: liboyranos_config/oyranos_xml.c:1234
 msgid ""
 "Color profiles are often available from manufacturers of imaging devices as "
 "digital cameras, monitors and printers. In Oyranos, ICC profiles are "
@@ -945,7 +945,7 @@ msgid "Copyright"
 msgstr "Copyright"
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:817
+#: liboyranos_config/oyranos_xml.c:822
 #, fuzzy
 msgid "Copyright &copy;"
 msgstr "Copyright"
@@ -2088,15 +2088,15 @@ msgstr ""
 msgid "Internal stored Size"
 msgstr ""
 
-#: liboyranos_config/oyranos_xml.c:1181
+#: liboyranos_config/oyranos_xml.c:1186
 msgid "Internet: <a href=\"http://www.oyranos.org\">www.oyranos.org</a><br>"
 msgstr ""
 
-#: liboyranos_config/oyranos_xml.c:1193
+#: liboyranos_config/oyranos_xml.c:1198
 msgid "Internet: <ulink url=\"http://www.oyranos.org\">www.oyranos.org</ulink>"
 msgstr ""
 
-#: liboyranos_config/oyranos_xml.c:1191
+#: liboyranos_config/oyranos_xml.c:1196
 msgid "Introduction"
 msgstr ""
 
@@ -2731,19 +2731,19 @@ msgstr "Oyranos Préférences"
 msgid "Oyranos Threads default Handling"
 msgstr ""
 
-#: liboyranos_config/oyranos_xml.c:890
+#: liboyranos_config/oyranos_xml.c:895
 #, fuzzy
 msgid "Oyranos User Manual"
 msgstr "Oyranos Préférences"
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:807
+#: liboyranos_config/oyranos_xml.c:812
 #, fuzzy
 msgid "Oyranos Version"
 msgstr "Oyranos Préférences"
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:1239
+#: liboyranos_config/oyranos_xml.c:1244
 msgid ""
 "Oyranos allowes detailed settings like preferred editing color spaces and "
 "the behaviour of color conversions or simulation. Oyranos reduces the work "
@@ -2761,7 +2761,7 @@ msgid "Oyranos display filter"
 msgstr "Oyranos Préférences"
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:1201
+#: liboyranos_config/oyranos_xml.c:1206
 #, c-format
 msgid ""
 "Oyranos is a Color Management System (CMS), which relies one the ICC file "
@@ -4064,7 +4064,7 @@ msgid "This example module \"my_handler\" lets you print a option."
 msgstr ""
 
 #. Hint for i18n: do not translate the &title; token.
-#: liboyranos_config/oyranos_xml.c:893
+#: liboyranos_config/oyranos_xml.c:898
 msgid ""
 "This is the documentation for the &title; that configures the Oyranos Color "
 "Management System."

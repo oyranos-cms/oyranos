@@ -26,6 +26,9 @@
 #define oyjl_string_add                openiccStringAddPrintf
 #define oyjl_string_copy               openiccStringCopy
 #define oyjl_string_split              openiccStringSplit
+#define oyjl_string_appendn            openiccStringAppendN
+#define oyjl_string_addn               openiccStringAddN
+#define oyjl_string_replace            openiccStringReplace
 #define oyjl_string_list_add_list      openiccStringListAdd
 #define oyjl_string_list_cat_list      openiccStringListCat
 #define oyjl_string_list_release       openiccStringListRelease
@@ -59,31 +62,8 @@
 #define oyjl_value_clear               openiccJValueClear
 #include "oyjl_tree.h"
 
-#if   defined(__clang__)
-#define OI_FALLTHROUGH
-#elif __GNUC__ >= 7 
-#define OI_FALLTHROUGH                 __attribute__ ((fallthrough));
-#else
-#define OI_FALLTHROUGH
-#endif
-
-#if   __GNUC__ >= 7
-#define OI_DEPRECATED                  __attribute__ ((deprecated))
-#elif defined(_MSC_VER)
-#define OI_DEPRECATED                  __declspec(deprecated)
-#else
-#define OI_DEPRECATED
-#endif
-
-#if   (__GNUC__*100 + __GNUC_MINOR__) >= 406
-#define OI_UNUSED                      __attribute__ ((unused))
-#elif defined(_MSC_VER)
-#define OI_UNUSED                      __declspec(unused)
-#else
-#define OI_UNUSED
-#endif
-
 #include "openicc_conf.h"
+#include "openicc_core.h"
 #include "openicc_config.h"
 #include "openicc_version.h"
 
@@ -148,15 +128,12 @@ typedef struct openiccArray_s openiccArray_s;
 int      openiccArray_Count          ( openiccArray_s    * array );
 int      openiccArray_Push           ( openiccArray_s    * array );
 
-int          openiccStringAddPrintf  ( char             ** string,
-                                       void*            (* alloc)(size_t size),
-                                       void             (* deAlloc)(void * data ),
-                                       const char        * format,
-                                                           ... );
 #define STRING_ADD( t, append ) openiccStringAddPrintf( &t, 0,0, append )
 char *       openiccStringCopy       ( const char        * text,
                                        openiccAlloc_f      alloc );
 #define openiccNoEmptyString_m_(t) (t?t:"")
+
+int            openiccInit           ( void );
 
 
 extern openiccMessage_f     openiccMessage_p;
@@ -168,9 +145,6 @@ int  openiccMessageFunc              ( int/*openiccMSG_e*/ code,
 
 char * openiccOpenFile( const char * file_name,
                         int        * size_ptr );
-char * openiccReadFileSToMem(
-                        FILE       * fp,
-                        int        * size);
 int    openiccWriteFile(const char * file_name,
                         void       * ptr,
                         int          size );

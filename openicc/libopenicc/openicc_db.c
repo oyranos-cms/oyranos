@@ -149,10 +149,10 @@ int           openiccDB_AddScope     ( openiccDB_s       * db,
     return 1;
   }
 
-  if(openicc_debug)
+  if(*openicc_debug)
     DBGc_S("%s", _("Paths:"));
   for(i=0; i < npaths; ++i)
-    if(openicc_debug)
+    if(*openicc_debug)
       DBGc_S("%s", paths[i]);
 
   for(i = 0; i < npaths; ++i)

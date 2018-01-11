@@ -20,8 +20,7 @@
 extern "C" {
 #endif /* __cplusplus */
 
-typedef void * (*openiccAlloc_f)     ( size_t              size );
-typedef void   (*openiccDeAlloc_f)   ( void              * data );
+#include "openicc_core.h"
 
 /** \addtogroup OpenICC_config
 
@@ -162,35 +161,6 @@ char *       openiccGetInstallPath   ( openiccPATH_TYPE_e  type,
 
 /** 
  *  @} *//* path_names
- */
-
-/** \addtogroup misc
-
- *  @{ */
-#define OPENICC_SLASH "/"
-
-/** @brief customisable messages */
-#define OI_DEBUG                       "OI_DEBUG"
-extern int openicc_debug;
-extern int openicc_backtrace;
-
-int            openiccInit           ( void );
-
-typedef enum {
-  openiccMSG_ERROR = 300,              /**< @brief fatal user messages */
-  openiccMSG_WARN,                     /**< @brief log messages */
-  openiccMSG_DBG,                      /**< @brief developer messages */
-} openiccMSG_e;
-
-typedef int  (*openiccMessage_f)     ( int/*openiccMSG_e*/ error_code,
-                                       const void        * context_object,
-                                       const char        * format,
-                                       ... );
-int            openiccMessageFuncSet ( openiccMessage_f    message_func );
-int            openiccVersion        ( void );
-
-/** 
- *  @} *//* misc
  */
 
 #ifdef __cplusplus

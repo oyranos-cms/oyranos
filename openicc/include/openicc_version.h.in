@@ -13,6 +13,7 @@
 #define OPENICC_LIBDIR         "@CMAKE_INSTALL_FULL_LIBDIR@/"	/**< install variable */
 #define OPENICC_DATADIR        "@CMAKE_INSTALL_FULL_DATAROOTDIR@"	/**< install variable */
 #define OPENICC_SYSCOLORDIR    OPENICC_DATADIR "/color"	/**< install variable */
+#define OPENICC_SYSIDDIR       OPENICC_SYSCOLORDIR "/cmm/openicc"	/**< install variable */
 #define OPENICC_LOCALEDIR      "@OI_LOCALEDIR@"
 #define OPENICC_CMMSUBPATH     "@OI_CMMSUBPATH@"	/**< install variable */
 #define OPENICC_METASUBPATH    "@OI_METASUBPATH@"	/**< install variable */

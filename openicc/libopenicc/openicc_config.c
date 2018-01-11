@@ -544,7 +544,7 @@ int                openiccConfig_GetString (
                                        const char       ** value )
 {
   int error = !config || !xpath;
-  oyjl_val o;
+  oyjl_val o = NULL;
   const char * string = NULL;
 
   if(error == 0)

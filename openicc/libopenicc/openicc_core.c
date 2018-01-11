@@ -16,7 +16,8 @@
 #include "openicc_config_internal.h"
 #include "oyjl_tree_internal.h"
 
-int openicc_debug = 0;
+int openicc_debug_local = 0;
+int * openicc_debug = &openicc_debug_local;
 #ifndef HAVE_OPENICC
 #define level_PROG openicc_level_PROG
 int level_PROG = 0;
@@ -34,6 +35,8 @@ int openicc_backtrace = 0;
 /** \addtogroup misc
  *  @{
  */
+
+void           openiccSetDebugVariable(int               * cmm_debug ) { openicc_debug = cmm_debug; }
 
 openiccOBJECT_e    openiccObjectToType(const void        * contextObject )
 {
@@ -89,7 +92,7 @@ int                openiccMessageFormat (
   char * id_text_tmp = 0;
   openiccConfig_s * c = NULL;
 
-  if(code == openiccMSG_DBG && !openicc_debug)
+  if(code == openiccMSG_DBG && !*openicc_debug)
     return 0;
 
   if(type == openiccOBJECT_CONFIG)
@@ -273,8 +276,8 @@ int            openiccInit           ( void )
   if(getenv(OI_DEBUG))
   {
     int v = openiccVersion();
-    openicc_debug = atoi(getenv(OI_DEBUG));
-    if(openicc_debug)
+    *openicc_debug = atoi(getenv(OI_DEBUG));
+    if(*openicc_debug)
       DBGc_S( "OpenICC v%s config: %d", OPENICC_VERSION_NAME, v );
   }
 
@@ -292,7 +295,7 @@ int            openiccInit           ( void )
     putenv(var); /* Solaris */
 
     bindtextdomain( "OpenICC", openicc_domain_path );
-    if(openicc_debug)
+    if(*openicc_debug)
       WARNc_S("bindtextdomain() to \"%s\"", openicc_domain_path );
   }
   return openicc_i18n_init;

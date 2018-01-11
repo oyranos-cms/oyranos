@@ -456,7 +456,9 @@ static int handle_null (void *ctx)
     }
     @endverbatim
  *  Some API's accept extended paths expressions. Those can contain empty
- *  terms, like "//", which matches all keys in the above example.
+ *  terms, like "//", which matches all keys in the above example. Those
+ *  are oyjl_tree_to_paths() and oyjl_path_match(). oyjl_tree_to_paths()
+ *  works on the whole tree to match a extended xpath.
  *
  *  \b Programming \b Tutorial
  *
@@ -734,6 +736,8 @@ static void  oyjl_tree_find_         ( oyjl_val            root,
 }
 /** @brief find matching paths
  *
+ *  The function works on the whole tree to match a xpath.
+ *
  *  @param         root                node
  *  @param         levels              desired level depth
  *  @param         xpath               extented path expression;
@@ -743,6 +747,10 @@ static void  oyjl_tree_find_         ( oyjl_val            root,
  *                                     - OYJL_PATH: only paths
  *                                     - 0 for both, paths and keys
  *  @param         xpaths              the resulting string list
+ *
+ *  @version Oyranos: 0.9.7
+ *  @date    2017/11/12
+ *  @since   2017/11/10 (Oyranos: 0.9.7)
  */
 void       oyjl_tree_to_paths        ( oyjl_val            root,
                                        int                 levels,
@@ -994,29 +1002,49 @@ int        oyjl_path_term_get_index  ( const char        * term,
 }
 /** @brief search for xpath pattern matching in a full path
  *
+ *  The function tries to match a single path expression level by level.
+ *
  *  @code
     // the second xpath expression matches the first path
-    int matches = oyjl_path_match( "org/free/[1]/s2key_d", "org///s2key_d" );
+    int matches = oyjl_path_match( "org/free/[1]/s2key_d", "org///s2key_d", 0 );
     // "//[1]/s2key_d" or "///s2key_d" would fit as well;  "//[0]/s2key_d" not
     @endcode
+ *
+ *  @param         path                a path expression
+ *  @param         xpath               a extented path expression
+ *  @param         flags               optional switches
+ *                                     - 0 : match all xpaths from start
+ *                                     - OYJL_PATH_MATCH_LEN : match all xpaths of the exact same number of terms
+ *                                     - OYJL_PATH_MATCH_LAST_ITEMS : search the last terms(s) from xpath
+ *  @return                            0 - fail, 1 - match
  */
 int        oyjl_path_match           ( const char        * path,
-                                       const char        * xpath )
+                                       const char        * xpath,
+                                       int                 flags )
 {
-  int match = 0, i,pn=0,xn=0;
+  int match = 0, i,pn=0,xn=0,diff=0;
   char ** xlist = oyjl_string_split(xpath, '/', &xn, malloc);
   char ** plist = oyjl_string_split(path, '/', &pn, malloc);
 
+  if(flags & OYJL_PATH_MATCH_LAST_ITEMS)
+    diff = pn - xn;
+
   if(!xlist || !plist) return 0;
-  if(pn >= xn) match = 1;
+  if(flags & OYJL_PATH_MATCH_LEN)
+  {
+    if(pn == xn) match = 1;
+  } else {
+    if(pn >= xn) match = 1;
+  }
 
   /* follow the search path term */
-  for(i = 0; i < xn && match; ++i)
+  for(i = diff; i < (diff + xn) && match; ++i)
   {
-    char * xterm = xlist[i],
+    char * xterm = xlist[i - diff],
          * pterm = plist[i];
     int xindex = -2,
         pindex = -2;
+
     oyjl_path_term_get_index( xterm, &xindex );
     oyjl_path_term_get_index( pterm, &pindex );
 
@@ -1195,10 +1223,10 @@ clean:
  *  A NULL argument allocates just a node of type oyjl_t_null.
  *
  *  @see oyjl_tree_get_valuef() */
-oyjl_val   oyjl_tree_new             ( const char        * xpath )
+oyjl_val   oyjl_tree_new             ( const char        * path )
 {
-  if(xpath && xpath[0])
-    return oyjl_tree_get_value_( NULL, OYJL_CREATE_NEW, xpath );
+  if(path && path[0])
+    return oyjl_tree_get_value_( NULL, OYJL_CREATE_NEW, path );
   else
     return value_alloc( oyjl_t_null );
 }
