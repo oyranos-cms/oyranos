@@ -207,7 +207,7 @@ char*      oyjl_string_appendn       ( const char        * text,
   int text_len = 0;
 
   if(text)
-    text_len = oyStrlen_(text);
+    text_len = strlen(text);
 
   if(text_len || append_len)
   {
