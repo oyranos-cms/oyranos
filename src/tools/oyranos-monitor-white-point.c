@@ -2,7 +2,7 @@
  *
  *  Oyranos is an open source Color Management System 
  *
- *  Copyright (C) 2017  Kai-Uwe Behrmann
+ *  Copyright (C) 2017-2018  Kai-Uwe Behrmann
  *
  */
 
@@ -41,12 +41,12 @@
 
 int __sunriset__( int year, int month, int day, double lon, double lat,
                   double altit, int upper_limb, double *trise, double *tset );
-int findLocation();
+int findLocation(oySCOPE_e scope, int dry);
 int getLocation( double * lon, double * lat);
 double getSunHeight( double year, double month, double day, double gmt_hours, double lat, double lon );
-int getSunriseSunset( double * rise, double * set );
+int getSunriseSunset( double * rise, double * set, int dry );
 int runDaemon(int dmode);
-int setWtptMode( oySCOPE_e scope, int wtpt_mode );
+int setWtptMode( oySCOPE_e scope, int wtpt_mode, int dry );
 int checkWtptState();
 
 void  printfHelp (int argc, char** argv)
@@ -135,6 +135,7 @@ int main( int argc , char** argv )
   int wtpt_mode_night = -1;
   int wtpt_mode_sunlight = -1;
   int show = 0;
+  int dry = 0;
   int location = 0;
   double longitude = 360;
   double latitude = 360;
@@ -198,6 +199,8 @@ int main( int argc , char** argv )
                         { OY_PARSE_FLOAT_ARG2( longitude, "longitude", -180.0, 180.0, 0.0 ); i=100; break; }
                         else if(OY_IS_ARG("hour"))
                         { OY_PARSE_FLOAT_ARG2( hour_, "hour", 0.0, 24.0, 0.0 ); i=100; break; }
+                        else if(OY_IS_ARG("dry-run"))
+                        { dry = 1; i=100; break; }
                         } OY_FALLTHROUGH
               default:
                         printfHelp(argc, argv);
@@ -229,7 +232,7 @@ int main( int argc , char** argv )
 
   if(wtpt_mode >= 0)
   {
-    error = setWtptMode( scope, wtpt_mode );
+    error = setWtptMode( scope, wtpt_mode, dry );
     return error;
   }
 
@@ -254,46 +257,51 @@ int main( int argc , char** argv )
 
 
   if(location)
-    error = findLocation(scope);
+    error = findLocation(scope, dry);
 
   if(twilight != -1000)
   {
     oyStringAddPrintfC(&value, 0,0, "%g", twilight);
-    oySetPersistentString( OY_DISPLAY_STD OY_SLASH "/twilight", scope, value, NULL );
+    if(dry == 0)
+      oySetPersistentString( OY_DISPLAY_STD OY_SLASH "/twilight", scope, value, NULL );
     oyFree_m_(value);
   }
 
   if(longitude != 360)
   {
     oyStringAddPrintfC(&value, 0,0, "%g", longitude);
-    oySetPersistentString( OY_DISPLAY_STD "/longitude", scope, value, NULL );
+    if(dry == 0)
+      oySetPersistentString( OY_DISPLAY_STD "/longitude", scope, value, NULL );
     oyFree_m_(value);
   }
 
   if(latitude != 360)
   {
     oyStringAddPrintfC(&value, 0,0, "%g", latitude);
-    oySetPersistentString( OY_DISPLAY_STD "/latitude", scope, value, NULL );
+    if(dry == 0)
+      oySetPersistentString( OY_DISPLAY_STD "/latitude", scope, value, NULL );
     oyFree_m_(value);
   }
 
   if(wtpt_mode_night != -1)
   {
     oyStringAddPrintf(&value, 0,0, "%d", wtpt_mode_night);
-    oySetPersistentString( OY_DISPLAY_STD "/display_white_point_mode_night", scope, value, NULL );
+    if(dry == 0)
+      oySetPersistentString( OY_DISPLAY_STD "/display_white_point_mode_night", scope, value, NULL );
     oyFree_m_(value);
   }
 
   if(wtpt_mode_sunlight != -1)
   {
     oyStringAddPrintf(&value, 0,0, "%d", wtpt_mode_sunlight);
-    oySetPersistentString( OY_DISPLAY_STD "/display_white_point_mode_sunlight", scope, value, NULL );
+    if(dry == 0)
+      oySetPersistentString( OY_DISPLAY_STD "/display_white_point_mode_sunlight", scope, value, NULL );
     oyFree_m_(value);
   }
 
   if(sunrise)
   {
-    error = getSunriseSunset( &rise, &set );
+    error = getSunriseSunset( &rise, &set, dry );
 
     printf( "%g %g\n", rise, set);
   }
@@ -302,19 +310,22 @@ int main( int argc , char** argv )
     error = runDaemon(daemon);
 
   if(check)
-    checkWtptState();
+    checkWtptState( dry );
 
   oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
 
   return error;
 }
 
-int setWtptMode( oySCOPE_e scope, int wtpt_mode )
+int setWtptMode( oySCOPE_e scope, int wtpt_mode, int dry )
 {
   int choices = 0;
   const char ** choices_string_list = NULL;
 
-  int error = oySetBehaviour( oyBEHAVIOUR_DISPLAY_WHITE_POINT, scope, wtpt_mode );
+  int error = 0;
+  
+  if(dry == 0)
+    oySetBehaviour( oyBEHAVIOUR_DISPLAY_WHITE_POINT, scope, wtpt_mode );
   /* ping X11 observers about option change
    * ... by setting a known property again to its old value
    */
@@ -345,7 +356,7 @@ int setWtptMode( oySCOPE_e scope, int wtpt_mode )
   return error;
 }
 
-int findLocation(oySCOPE_e scope)
+int findLocation(oySCOPE_e scope, int dry)
 {
   int error = 0;
 
@@ -408,10 +419,12 @@ int findLocation(oySCOPE_e scope)
         printf( "%g %g\n", lat,lon);
 
         oyStringAddPrintfC(&value, 0,0, "%g", lat);
-        oySetPersistentString( OY_DISPLAY_STD "/latitude", scope, value, NULL );
+        if(dry == 0)
+          oySetPersistentString( OY_DISPLAY_STD "/latitude", scope, value, NULL );
         oyFree_m_(value);
         oyStringAddPrintfC(&value, 0,0, "%g", lon);
-        oySetPersistentString( OY_DISPLAY_STD "/longitude", scope, value, NULL );
+        if(dry == 0)
+          oySetPersistentString( OY_DISPLAY_STD "/longitude", scope, value, NULL );
         oyFree_m_(value);
 
 #ifdef HAVE_LOCALE_H
@@ -466,7 +479,7 @@ double oyNormaliseHour(double hour)
     return hour;
 }
 
-int getSunriseSunset( double * rise, double * set )
+int getSunriseSunset( double * rise, double * set, int dry )
 {
   double lat = 0.0,
          lon = 0.0;
@@ -477,7 +490,7 @@ int getSunriseSunset( double * rise, double * set )
  
   if(getLocation(&lon, &lat))
   {
-    findLocation( scope );
+    findLocation( scope, dry );
     getLocation(&lon, &lat);
   }
 
@@ -532,7 +545,7 @@ int getSunriseSunset( double * rise, double * set )
 
 
 /* check the sunrise / sunset state */
-int checkWtptState()
+int checkWtptState(int dry)
 {
   int error = 0;
   int cmode;
@@ -569,7 +582,7 @@ int checkWtptState()
                                  &choices_string_list, &current );
   }
 
-  if( choices_string_list && getSunriseSunset( &rise, &set ) == 0 )
+  if( choices_string_list && getSunriseSunset( &rise, &set, dry ) == 0 )
   {
     int new_mode = -1;
 
@@ -602,7 +615,7 @@ int checkWtptState()
     if(new_mode != cmode)
     {
       fprintf (stderr, "%s: %s\n", _("New white point mode"), new_mode<choices?choices_string_list[new_mode]:"----");
-      error = setWtptMode( scope, new_mode );
+      error = setWtptMode( scope, new_mode, dry );
     }
   }
 
@@ -650,7 +663,7 @@ int runDaemon(int dmode)
   /* ensure all keys are setup properly
    * before we lock the DBus connection by listening */
   if(active)
-    checkWtptState();
+    checkWtptState( 0 );
 
 #ifdef HAVE_DBUS
   oyStartDBusObserver( oyWatchDBus, oyFinishDBus, oyCallbackDBus, OY_DISPLAY_STD, NULL )
@@ -662,7 +675,7 @@ int runDaemon(int dmode)
     double hour = oyGetCurrentGMTHour_( 0 );
     double repeat_check = 1.0/60.0; /* every minute */
 
-    oyLoopDBusObserver( hour, repeat_check, oy_dbus_config_changed, checkWtptState() )
+    oyLoopDBusObserver( hour, repeat_check, oy_dbus_config_changed, checkWtptState(0) )
 
     /* delay next polling */
     oySleep( 0.25 );
