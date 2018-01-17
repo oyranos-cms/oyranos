@@ -2175,7 +2175,7 @@ char * l2cmsFilterNode_GetText        ( oyFilterNode_s    * node,
                    * remote_socket = oyFilterPlug_GetSocket( plug );
   oyProfiles_s * profiles;
   oyProfile_s * p;
-  int effect_switch, proof, i,n;
+  int effect_switch, proof, profiles_display_n, i,n;
 
   /* pick all sockets (output) data */
   out_image = (oyImage_s*)oyFilterSocket_GetData( remote_socket );
@@ -2228,23 +2228,36 @@ char * l2cmsFilterNode_GetText        ( oyFilterNode_s    * node,
     proof = oyOptions_FindString  ( node_opts, "proof_soft", "1" ) ? 1 : 0;
     proof += oyOptions_FindString  ( node_opts, "proof_hard", "1" ) ? 1 : 0;
     effect_switch = oyOptions_FindString  ( node_opts, "effect_switch", "1" ) ? 1 : 0;
-    if(proof || effect_switch)
+    /* display profile */
+    profiles_display_n = oyOptions_CountType( node_opts, "display.abstract.icc_profile", oyOBJECT_PROFILE_S );
+    if(proof || effect_switch || profiles_display_n)
     hashTextAdd_m(   " <oyProfiles_s>" );
     profiles = l2cmsProfilesFromOptions( node, plug, node_opts, "profiles_effect", effect_switch, verbose );
     n = oyProfiles_Count( profiles );
-    if(n)
+    for(i = 0; i < n; ++i)
     {
-      for(i = 0; i < n; ++i)
-      {
-        p = oyProfiles_Get( profiles, i );
-        model = oyProfile_GetText( p, oyNAME_NAME );
-    hashTextAdd_m( "\n  " );
-    hashTextAdd_m( model );
-        oyProfile_Release( &p );
-      }
+      p = oyProfiles_Get( profiles, i );
+      model = oyProfile_GetText( p, oyNAME_NAME );
+      hashTextAdd_m( "\n  " );
+      hashTextAdd_m( model );
+      oyProfile_Release( &p );
     }
     oyProfiles_Release( &profiles );
-    if(proof || effect_switch)
+
+    for(i = 0; i < profiles_display_n; ++i)
+    {
+      oyOption_s * o = NULL;
+      oyOptions_GetType2( node_opts, i, "display.abstract.icc_profile", oyNAME_PATTERN,
+                                  oyOBJECT_PROFILE_S, NULL, &o );
+      p = (oyProfile_s*) oyOption_GetStruct( o, oyOBJECT_PROFILE_S );
+      oyOption_Release( &o );
+      model = oyProfile_GetText( p, oyNAME_NAME );
+      hashTextAdd_m( "\n  " );
+      hashTextAdd_m( model );
+      oyProfile_Release( &p );
+    }
+
+    if(proof || effect_switch || profiles_display_n)
     hashTextAdd_m( "\n </oyProfiles_s>\n" );
 
     /* output data */
@@ -3286,7 +3299,7 @@ oyCMMapi10_s_    l2cms_api10_cmm4 = {
  *
  *  @version Oyranos: 0.9.7
  *  @since   2017/06/05 (Oyranos: 0.9.7)
- *  @date    2017/06/05
+ *  @date    2018/01/17
  */
 oyProfile_s* lcm2AbstractWhitePoint  ( double              cie_a,
                                        double              cie_b,
