@@ -796,6 +796,27 @@ oyTESTRESULT_e testJson ()
       }
       for(int j = 0; j < count; ++j)
         fprintf( zout, "%d: %s\n", j, paths[j] );
+
+      double clck = oyClock();
+      const char * p = "org/free/[0]/s1key_b";
+      int k = 0, n = 500;
+      for(k = 0; k < n; ++k)
+      {
+        value = oyjl_tree_get_value( root, flags, p );
+        char * t = oyjl_value_text(value, oyAllocateFunc_);
+        if(!t) break;
+        oyFree_m_(t);
+      }
+      clck = oyClock() - clck;
+      if( k == n )
+      { PRINT_SUB( oyTESTRESULT_SUCCESS,
+        "oyjl_value_text(%s)                       %s", p,
+                   oyProfilingToString(n,clck/(double)CLOCKS_PER_SEC,"key"));
+      } else
+      { PRINT_SUB( oyTESTRESULT_FAIL,
+        "oyjl_value_text(%s) (%d) (%s)", p, k, value?"oyjl_tree_get_value() good":"oyjl_tree_get_value() failed" );
+      }
+
       if(paths && count)
         oyStringListRelease( &paths, count, free );
     }
