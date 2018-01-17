@@ -1148,6 +1148,7 @@ int          lcm2CreateAbstractTemperatureProfile (
 {
   cmsHPROFILE profile = NULL;
   cmsToneCurve * i_curve[3] = {NULL,NULL,NULL}, * o_curve[3] = {NULL,NULL,NULL};
+  /* type[6]  Y = (a * X + b) ^ Gamma + c  order: {g, a, b, c} */
   double curve_params[4] = {1,1,0,0}, curve_params_low[4] = {1,0.95,0,0};
   int i;
   cmsCIEXYZ * source_white = NULL;
@@ -1214,7 +1215,8 @@ int          lcm2CreateAbstractTemperatureProfile (
     #define OY_SQRT(a,b)   ((a)*(a) + (b)*(b))
     #define OY_HYP(a,b)    pow(OY_SQRT(a,b),1.0/2.0)
 #endif
-    max_brightness = 1.0 - OY_HYP(icc_ab[0],icc_ab[1]);
+    /* reduce brightness remaining inside a cone with a roof angle of 30° */
+    max_brightness = 1.0 - OY_HYP(icc_ab[0],icc_ab[1]/1.5);
 
     cmsXYZ2Lab( cmsD50_XYZ(), &SrcLabWhitePoint, reference_white );
     cmsXYZ2Lab( cmsD50_XYZ(), &LabWhitePoint, &WhitePoint );
@@ -1333,6 +1335,7 @@ int          lcm2CreateAbstractWhitePointProfile (
 {
   cmsHPROFILE profile = NULL;
   cmsToneCurve * i_curve[3] = {NULL,NULL,NULL}, * o_curve[3] = {NULL,NULL,NULL};
+  /* type[6]  Y = (a * X + b) ^ Gamma + c  order: {g, a, b, c} */
   double curve_params[4] = {1,1,0,0}, curve_params_low[4] = {1,0.95,0,0};
   int i;
 
@@ -1361,7 +1364,8 @@ int          lcm2CreateAbstractWhitePointProfile (
     #define OY_SQRT(a,b)   ((a)*(a) + (b)*(b))
     #define OY_HYP(a,b)    pow(OY_SQRT(a,b),1.0/2.0)
 #endif
-    double max_brightness = 1.0 - OY_HYP(icc_ab[0],icc_ab[1]);
+    /* reduce brightness remaining inside a cone with a roof angle of 30° */
+    double max_brightness = 1.0 - OY_HYP(icc_ab[0],icc_ab[1]/1.5);
 
     /* avoid color clipping around the white point */
     curve_params_low[1] = max_brightness;
