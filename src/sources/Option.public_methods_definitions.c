@@ -208,7 +208,7 @@ const char *   oyOption_GetText      ( oyOption_s        * obj,
  *  @since   2008/11/25 (Oyranos: 0.1.9)
  *  @date    2011/01/21
  */
-int            oyOption_SetFromString  ( oyOption_s        * obj,
+int            oyOption_SetFromString( oyOption_s        * obj,
                                        const char        * text,
                                        uint32_t            flags )
 {

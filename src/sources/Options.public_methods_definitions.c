@@ -1239,7 +1239,7 @@ const char *   oyOptions_FindString  ( oyOptions_s       * options,
  *  @since   2008/11/27 (Oyranos: 0.1.9)
  *  @date    2011/03/15
  */
-int            oyOptions_SetFromString ( oyOptions_s      ** obj,
+int            oyOptions_SetFromString(oyOptions_s      ** obj,
                                        const char        * registration,
                                        const char        * value,
                                        uint32_t            flags )

@@ -8,7 +8,7 @@
  *  Oyranos is an open source Color Management System
  *
  *  @par Copyright:
- *            2004-2017 (C) Kai-Uwe Behrmann
+ *            2004-2018 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
@@ -45,7 +45,7 @@ typedef struct oyConversion_s_ oyConversion_s_;
 
 /** @internal
  *  @struct   oyConversion_s_
- *  @brief      A filter chain or graph to manipulate a image
+ *  @brief      Image Manipulation by a Graph (DAG)
  *  @ingroup  objects_conversion
  *  @extends  oyStruct_s
  */
