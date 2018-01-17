@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Oyranos 0.9\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2018-01-10 12:05+0100\n"
+"POT-Creation-Date: 2018-01-17 11:48+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -87,7 +87,7 @@ msgstr ""
 #: modules/color/modules/oyranos_cmm_oyra_image_channel.c:144
 #: tools/oyranos-device.c:1052 tools/oyranos-device.c:1062
 #: tools/oyranos-device.c:1079 tools/oyranos-device.c:1105
-#: tools/oyranos-monitor-white-point.c:367 examples/taxi.c:233
+#: tools/oyranos-monitor-white-point.c:419 examples/taxi.c:233
 #: examples/taxi.c:334
 msgid "found issues parsing JSON"
 msgstr ""
@@ -162,7 +162,7 @@ msgid "found list of wrong type"
 msgstr ""
 
 #: API_generated/oyOptions_s.c:1573 tools/oyranos-config.c:232
-#: tools/oyranos-device.c:253 tools/oyranos-monitor-white-point.c:211
+#: tools/oyranos-device.c:253 tools/oyranos-monitor-white-point.c:223
 #: tools/oyranos_convert.c:271 tools/oyranos_gamma.c:254
 #: tools/oyranos_policy.c:157 tools/oyranos_profile_graph.c:294
 #: tools/oyranos_profile_tool.c:234 tools/oyranos_profiles.c:245
@@ -492,7 +492,7 @@ msgstr ""
 #: tools/oyranos-device.c:386 tools/oyranos-device.c:401
 #: tools/oyranos-device.c:423 tools/oyranos-device.c:465
 #: tools/oyranos-device.c:828 tools/oyranos-device.c:1025
-#: tools/oyranos-device.c:1261 tools/oyranos-monitor-white-point.c:340
+#: tools/oyranos-device.c:1261 tools/oyranos-monitor-white-point.c:392
 #: tools/qcmsevents/qcmsevents.cpp:325
 #, c-format
 msgid "!!! ERROR"
@@ -3234,7 +3234,7 @@ msgid "is a settings administration tool"
 msgstr ""
 
 #: tools/oyranos-config.c:55 tools/oyranos-device.c:49
-#: tools/oyranos-monitor-white-point.c:62 tools/oyranos_convert.c:61
+#: tools/oyranos-monitor-white-point.c:65 tools/oyranos_convert.c:61
 #: tools/oyranos_gamma.c:208 tools/oyranos_policy.c:54
 #: tools/oyranos_profile_graph.c:118 tools/oyranos_profile_tool.c:82
 #: tools/oyranos_profiles.c:63 examples/taxi.c:49
@@ -3316,7 +3316,7 @@ msgid "Show Help:"
 msgstr ""
 
 #: tools/oyranos-config.c:81 tools/oyranos-device.c:100
-#: tools/oyranos-monitor-white-point.c:116 tools/oyranos_convert.c:102
+#: tools/oyranos-monitor-white-point.c:123 tools/oyranos_convert.c:102
 #: tools/oyranos_gamma.c:235 tools/oyranos_profile_graph.c:149
 #: tools/oyranos_profile_tool.c:112 tools/oyranos_profiles.c:95
 #: examples/taxi.c:66 examples/libraw/oyranos_file.cpp:66
@@ -3324,7 +3324,7 @@ msgid "General options:"
 msgstr ""
 
 #: tools/oyranos-config.c:82 tools/oyranos-device.c:101
-#: tools/oyranos-monitor-white-point.c:117 tools/oyranos_convert.c:103
+#: tools/oyranos-monitor-white-point.c:124 tools/oyranos_convert.c:103
 #: tools/oyranos_profile_graph.c:150 tools/oyranos_profile_tool.c:116
 #: tools/oyranos_profiles.c:96 examples/libraw/oyranos_file.cpp:69
 msgid "verbose"
@@ -3355,7 +3355,7 @@ msgid "Oyranos local build directory name"
 msgstr ""
 
 #: tools/oyranos-config.c:91 tools/oyranos-device.c:109
-#: tools/oyranos-monitor-white-point.c:119 tools/oyranos_gamma.c:240
+#: tools/oyranos-monitor-white-point.c:126 tools/oyranos_gamma.c:240
 #: tools/oyranos_profile_graph.c:160 tools/oyranos_profile_tool.c:131
 #: examples/libraw/oyranos_file.cpp:78
 #, c-format
@@ -3567,180 +3567,192 @@ msgstr ""
 msgid "description"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:61
+#: tools/oyranos-monitor-white-point.c:64
 msgid "is a monitor white point handler"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:63
+#: tools/oyranos-monitor-white-point.c:66
 msgid "Autostart daemon:"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:66
+#: tools/oyranos-monitor-white-point.c:69
 msgid "Run sunset daemon:"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:67
+#: tools/oyranos-monitor-white-point.c:70
 msgid "MODE"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:68
+#: tools/oyranos-monitor-white-point.c:71
 msgid "Deactivate"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:69
+#: tools/oyranos-monitor-white-point.c:72
 msgid "Autostart"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:70
+#: tools/oyranos-monitor-white-point.c:73
 msgid "Activate"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:72
+#: tools/oyranos-monitor-white-point.c:75
 msgid "Show modes:"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:75
+#: tools/oyranos-monitor-white-point.c:78
 msgid "Set actual mode:"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:77
+#: tools/oyranos-monitor-white-point.c:80
 msgid "no white point adjustments (old behaviour)"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:78
-#: tools/oyranos-monitor-white-point.c:89
+#: tools/oyranos-monitor-white-point.c:81
+#: tools/oyranos-monitor-white-point.c:92
 msgid "automatic"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:79
-#: tools/oyranos-monitor-white-point.c:90
+#: tools/oyranos-monitor-white-point.c:82
+#: tools/oyranos-monitor-white-point.c:93
 msgid "D50"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:80
-#: tools/oyranos-monitor-white-point.c:91
+#: tools/oyranos-monitor-white-point.c:83
+#: tools/oyranos-monitor-white-point.c:94
 msgid "D55"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:81
+#: tools/oyranos-monitor-white-point.c:84
 msgid "D65"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:82
+#: tools/oyranos-monitor-white-point.c:85
 msgid "D75"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:83
+#: tools/oyranos-monitor-white-point.c:86
 msgid "D93"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:84
+#: tools/oyranos-monitor-white-point.c:87
 msgid ""
 "first monitors actual media white point as target for all other monitors"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:85
+#: tools/oyranos-monitor-white-point.c:88
 msgid ""
 "second monitors actual media white point as target for all other monitors"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:87
+#: tools/oyranos-monitor-white-point.c:90
 msgid "Set preferred nightly white point:"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:93
+#: tools/oyranos-monitor-white-point.c:96
 msgid "Set preferred sun white point:"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:95
+#: tools/oyranos-monitor-white-point.c:98
 msgid "see the -w option"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:97
+#: tools/oyranos-monitor-white-point.c:100
+msgid "Set automatic white point:"
+msgstr ""
+
+#: tools/oyranos-monitor-white-point.c:102
+msgid "A value from 2700 till 8000 Kelvin is expected to show no artefacts"
+msgstr ""
+
+#: tools/oyranos-monitor-white-point.c:104
 msgid "Get Location:"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:100
+#: tools/oyranos-monitor-white-point.c:107
 msgid "Set Longitude:"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:101
-#: tools/oyranos-monitor-white-point.c:104
-#: tools/oyranos-monitor-white-point.c:110
+#: tools/oyranos-monitor-white-point.c:108
+#: tools/oyranos-monitor-white-point.c:111
+#: tools/oyranos-monitor-white-point.c:117
 msgid "ANGLE_IN_DEGREE"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:103
+#: tools/oyranos-monitor-white-point.c:110
 msgid "Set Latitude:"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:106
+#: tools/oyranos-monitor-white-point.c:113
 msgid "Show sun rise:"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:109
+#: tools/oyranos-monitor-white-point.c:116
 msgid "Set twilight angle:"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:111
+#: tools/oyranos-monitor-white-point.c:118
 msgid "rise/set"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:112
+#: tools/oyranos-monitor-white-point.c:119
 msgid "civil"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:113
+#: tools/oyranos-monitor-white-point.c:120
 msgid "nautical"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:114
+#: tools/oyranos-monitor-white-point.c:121
 msgid "astronomical"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:247
+#: tools/oyranos-monitor-white-point.c:257
+msgid "Automatic white point"
+msgstr ""
+
+#: tools/oyranos-monitor-white-point.c:283
 msgid "Choices:"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:337
-#: tools/oyranos-monitor-white-point.c:340
-#: tools/oyranos-monitor-white-point.c:604
+#: tools/oyranos-monitor-white-point.c:389
+#: tools/oyranos-monitor-white-point.c:392
+#: tools/oyranos-monitor-white-point.c:658
 msgid "New white point mode"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:399
+#: tools/oyranos-monitor-white-point.c:451
 msgid "Time Zone"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:400
+#: tools/oyranos-monitor-white-point.c:452
 msgid "Country"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:401
+#: tools/oyranos-monitor-white-point.c:453
 msgid "City"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:524
+#: tools/oyranos-monitor-white-point.c:578
 msgid "Geographical Position"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:524
+#: tools/oyranos-monitor-white-point.c:578
 msgid "Twilight"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:524
+#: tools/oyranos-monitor-white-point.c:578
 msgid "Sun Elevation"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:524
+#: tools/oyranos-monitor-white-point.c:578
 msgid "Sunrise"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:527
+#: tools/oyranos-monitor-white-point.c:581
 msgid "Sunset"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:577
+#: tools/oyranos-monitor-white-point.c:631
 msgid "Actual white point mode"
 msgstr ""
 

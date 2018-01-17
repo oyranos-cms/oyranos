@@ -1,4 +1,4 @@
-.TH oyranos-monitor-white-point 1 "September 27, 2017" "User Commands"
+.TH oyranos-monitor-white-point 1 "January 17, 2018" "User Commands"
 .SH NAME
 oyranos-monitor-white-point \- Oyranos CMS monitor white point configuration
 .SH SYNOPSIS
@@ -19,6 +19,8 @@ oyranos-monitor-white-point \- Oyranos CMS monitor white point configuration
 \fBoyranos-monitor-white-point\fR -r [-v]
 .fi
 \fBoyranos-monitor-white-point\fR -t ANGLE_IN_DEGREE [-v]
+.fi
+\fBoyranos-monitor-white-point\fR -a KELVIN [-v]
 .fi
 .SH DESCRIPTION
 The oyranos-monitor-white-point programm let you set a white point and can run as location specific daemon for nightly blue color reduction. Settings are stored in a data base, the OpenICC DB.
@@ -80,6 +82,12 @@ Set preferred night light white point
 .br
 \fB-n 3\fR D55
 .TP
+.B \fB\-a\fR KELVIN
+Set white point for automatic -w or -n 1 options in Kelvin. The allowed range is 1000 - 10.000 Kelvin. Artefacts appear already outside 2800-8000 Kelvin range.
+.sp
+.br
+\fB-a\fR KELVIN
+.TP
 .B \fB\-l\fR
 Set geo location. Obtain from IP address.
 .TP
@@ -112,6 +120,10 @@ Show help text.
 Increase verbosity
 .br
 .TP
+.B \-\-dry\-run\fR
+Dont set anything permanently
+.br
+.TP
 .B \-\-system-wide\fR
 Store Setting system wide.
 .SH ENVIRONMENT
@@ -124,7 +136,7 @@ route Oyranos to additional directories containing modules.
 .SH AUTHOR
 Kai-Uwe Behrmann (ku.b (at) gmx.de)
 .SH COPYRIGHT
-(c) 2017, Kai-Uwe Behrmann and others
+(c) 2017-2018, Kai-Uwe Behrmann and others
 .fi
 License: new BSD <http://www.opensource.org/licenses/BSD-3-Clause>
 .SH "SEE ALSO"

@@ -27,6 +27,8 @@
 #include <time.h>
 #include <unistd.h> /* usleep() */
 
+#include "bb_100K.h"
+#include "oyranos_color.h"
 #include "oyranos_debug.h"
 #include "oyranos_helper.h"
 #include "oyranos_helper_macros.h"
@@ -47,6 +49,7 @@ double getSunHeight( double year, double month, double day, double gmt_hours, do
 int getSunriseSunset( double * rise, double * set, int dry );
 int runDaemon(int dmode);
 int setWtptMode( oySCOPE_e scope, int wtpt_mode, int dry );
+void pingNativeDisplay();
 int checkWtptState();
 
 void  printfHelp (int argc, char** argv)
@@ -94,6 +97,10 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr,  "     %s -s 0|1|2|3|4|5|6|7|8 [--system-wide] [-v]\n", argv[0]);
   fprintf( stderr,  "      -s x - %s\n",   _("see the -w option"));
   fprintf( stderr, "\n");
+  fprintf( stderr,  "  %s\n",             _("Set automatic white point:"));
+  fprintf( stderr,  "     %s -a KELVIN [--system-wide] [-v]\n", argv[0]);
+  fprintf( stderr,  "      -a KELVIN - %s\n",   _("A value from 2700 till 8000 Kelvin is expected to show no artefacts"));
+  fprintf( stderr, "\n");
   fprintf( stderr, "  %s\n",              _("Get Location:"));
   fprintf( stderr, "      %s -l [-v]\n", argv[0] );
   fprintf( stderr, "\n");
@@ -134,6 +141,7 @@ int main( int argc , char** argv )
   int wtpt_mode = -1;
   int wtpt_mode_night = -1;
   int wtpt_mode_sunlight = -1;
+  double temperature = 0.0;
   int show = 0;
   int dry = 0;
   int location = 0;
@@ -172,6 +180,7 @@ int main( int argc , char** argv )
             for(i = 1; i < strlen(argv[pos]); ++i)
             switch (argv[pos][i])
             {
+              case 'a': i=0; OY_PARSE_FLOAT_ARG2( temperature, "a", 1000, 100000, 5000 ); break;
               case 'd': OY_PARSE_INT_ARG( daemon ); break;
               case 'r': sunrise = 1; break;
               case 'l': location = 1; break;
@@ -229,6 +238,30 @@ int main( int argc , char** argv )
     fprintf( stderr, "  Oyranos v%s\n",
                   oyNoEmptyName_m_(oyVersionString(1,0)));
 
+
+  if(temperature != 0.0)
+  {
+    int i = (temperature - 1000) / 100;
+    double xyz[3] = { bb_100K[i][0], bb_100K[i][1], bb_100K[i][2] };
+    double XYZ[3] = { xyz[0]/xyz[1], 1.0, xyz[2]/xyz[1] };
+    double Lab[3];
+    double cie_a = 0.0, cie_b = 0.0;
+    char * comment = NULL;
+    oyXYZ2Lab( XYZ, Lab);
+
+    oyGetDisplayWhitePoint( 1 /* automatic */, &cie_a, &cie_b );
+    oyStringAddPrintf( &comment, 0,0, "Old cie_a: %f cie_b: %f ", cie_a, cie_b );
+    cie_a = Lab[1]/256.0 + 0.5;
+    cie_b = Lab[2]/256.0 + 0.5;
+    oyStringAddPrintf( &comment, 0,0, "New Temperature: %.00f cie_a: %f cie_b: %f", temperature, cie_a, cie_b );
+    fprintf (stderr, "%s %s\n", _("Automatic white point"), comment );
+    if(dry == 0)
+    {
+      oySetDisplayWhitePoint( cie_a, cie_b, scope, comment );
+      pingNativeDisplay();
+    }
+    oyFree_m_( comment );
+  }
 
   if(wtpt_mode >= 0)
   {
@@ -317,6 +350,18 @@ int main( int argc , char** argv )
   return error;
 }
 
+void pingNativeDisplay()
+{
+  /* ping X11 observers about option change
+   * ... by setting a known property again to its old value
+   */
+  oyOptions_s * opts = oyOptions_New(NULL), * results = 0;
+  oyOptions_Handle( "//" OY_TYPE_STD "/send_native_update_event",
+                      opts,"send_native_update_event",
+                      &results );
+  oyOptions_Release( &opts );
+}
+
 int setWtptMode( oySCOPE_e scope, int wtpt_mode, int dry )
 {
   int choices = 0;
@@ -329,14 +374,10 @@ int setWtptMode( oySCOPE_e scope, int wtpt_mode, int dry )
   /* ping X11 observers about option change
    * ... by setting a known property again to its old value
    */
-  oyOptions_s * opts = oyOptions_New(NULL), * results = 0;
   if(!error)
-    error = oyOptions_Handle( "//" OY_TYPE_STD "/send_native_update_event",
-                      opts,"send_native_update_event",
-                      &results );
+    pingNativeDisplay();
   else
     fprintf(stderr, "error %d in oySetBehaviour(oyBEHAVIOUR_DISPLAY_WHITE_POINT,%d,%d)\n", error, scope, wtpt_mode);
-  oyOptions_Release( &opts );
 
   {
     int current = -1;
