@@ -789,9 +789,9 @@ int            oyOptions_Filter      ( oyOptions_s      ** add_list,
  *  @param         type                oyNAME_NICK is equal to an ID
  *  @return                            the text
  *
- *  @version Oyranos: 0.9.6
+ *  @version Oyranos: 0.9.7
+ *  @date    2018/01/18
  *  @since   2008/11/25 (Oyranos: 0.1.9)
- *  @date    2016/11/17
  */
 const char *   oyOptions_GetText     ( oyOptions_s       * options,
                                        oyNAME_e            type )
@@ -806,6 +806,7 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
   char ** old_levels = 0;
   int old_levels_n = 0;
   int close_oy_struct = 0;
+  oyjl_val root = oyjl_tree_new("org"), v;
 
   if(error <= 0)
   {
@@ -863,10 +864,26 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
       o = oyOptions_Get( options, sort[i] );
       o_ = (oyOption_s_*)o;
 
+
+      if((int)type == oyNAME_JSON)
+      {
+        const char * key = oyObject_GetName( o->oy_, oyNAME_DESCRIPTION ),
+                   * val = NULL;
+        char * tmp = NULL;
+
+        if( o_->value_type == oyVAL_STRUCT )
+          val = oyOption_GetText( o, oyNAME_NAME );
+        else
+          val = tmp = oyOption_GetValueText( o, oyAllocateFunc_ );
+
+        v = oyjl_tree_get_value( root, OYJL_CREATE_NEW, key );
+        oyjl_value_set_string( v, val );
+
+        if( tmp ) oyFree_m_( tmp );
+      }
       /* Omit redundant XML level closes and opens based on alphabetical input.
        */
-      if(type == oyNAME_NAME ||
-         (int)type == oyNAME_JSON)
+      else if(type == oyNAME_NAME)
       {
         char * tmp = 0, **list = 0;
 
@@ -903,27 +920,9 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
                 STRING_ADD ( text, " " );
               close_oy_struct = 0;
             }
-            if(type == oyNAME_NAME)
-            {
-              STRING_ADD ( text, "</" );
-              STRING_ADD ( text, old_levels[j] );
-              STRING_ADD ( text, ">" );
-            }
-            else
-            {
-              const char * old_level = old_levels[j-1],
-                         * level = old_levels_n == j_n ? list[j-1] : NULL;
-              if(old_levels_n == j_n &&
-                 ((j >= 1 && strcmp(old_level,level) == 0) ||
-                  j_n == 1))
-                STRING_ADD ( text, "\"," );
-              else if(j == old_levels_n-1)
-                STRING_ADD ( text, "\"" );
-              else if(j == min_level)
-                STRING_ADD ( text, "}," );
-              else
-                STRING_ADD ( text, "}" );
-            }
+            STRING_ADD ( text, "</" );
+            STRING_ADD ( text, old_levels[j] );
+            STRING_ADD ( text, ">" );
             if(j)
               STRING_ADD ( text, "\n" );
           }
@@ -934,24 +933,12 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
         {
           for(k = 0; k < indent+j; ++k)
             STRING_ADD ( text, " " );
-          if(type == oyNAME_NAME)
-            STRING_ADD ( text, "<" );
-          else
-            STRING_ADD ( text, "\"" );
+          STRING_ADD ( text, "<" );
           STRING_ADD ( text, list[j] );
           if(j+1==j_n)
-          {
-            if(type == oyNAME_NAME)
-              STRING_ADD ( text, ">" );
-            else
-              STRING_ADD ( text, "\": \"" );
-          } else
-          {
-            if(type == oyNAME_NAME)
-              STRING_ADD ( text, ">\n" );
-            else
-              STRING_ADD ( text, "\": {\n" );
-          }
+            STRING_ADD ( text, ">" );
+          else
+            STRING_ADD ( text, ">\n" );
         }
 
         if( o_->value_type == oyVAL_STRUCT )
@@ -968,7 +955,6 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
           STRING_ADD ( text, tmp );
           oyFree_m_( tmp );
         }
-
         if(old_levels)
           oyStringListRelease_( &old_levels, old_levels_n, oyDeAllocateFunc_ );
         old_levels = list;
@@ -992,16 +978,9 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
             STRING_ADD ( text, " " );
         if(old_levels_n > j)
         {
-          if(type == oyNAME_NAME)
-          {
-            STRING_ADD ( text, "</" );
-            STRING_ADD ( text, old_levels[j] );
-            STRING_ADD ( text, ">" );
-          }
-          else if(j == j_n - 1)
-            STRING_ADD ( text, "\"" );
-          else
-            STRING_ADD ( text, "}" );
+          STRING_ADD ( text, "</" );
+          STRING_ADD ( text, old_levels[j] );
+          STRING_ADD ( text, ">" );
 
           if(j)
             STRING_ADD ( text, "\n" );
@@ -1012,9 +991,14 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
       oyStringListRelease_( &old_levels, old_levels_n, oyDeAllocateFunc_ );
 
     if((int)type == oyNAME_JSON && n)
-      STRING_ADD ( text, "\n}" );
-
-    error = oyObject_SetName( options->oy_, text, type );
+    {
+      oyFree_m_(text);
+      i = 0;
+      oyjl_tree_to_json( root, &i, &text );
+      error = oyObject_SetName( options->oy_, text, type );
+      if(text) { free(text); text = NULL; }
+    } else
+      error = oyObject_SetName( options->oy_, text, type );
 
     if(text)
       oyFree_m_( text );
