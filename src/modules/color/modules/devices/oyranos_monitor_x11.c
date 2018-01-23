@@ -871,6 +871,34 @@ int      oyX1MonitorProfileSetup     ( const char        * display_name,
 
   if( profile_name && profile_name[0] )
   {
+    int version = 0; char * t = NULL;
+    const char * xs = "-s";
+    FILE * fp = popen("xcalib -version", "r");
+    if(fp)
+    {
+      oyX1Alloc( t, 48, return 1;)
+      if( fread( t, sizeof(char), 48, fp ) > 0 )
+        t[47] = '\000';
+      fclose(fp);
+    } else
+      fprintf( stderr, OY_DBG_FORMAT_ "xcalib not found for setting with %s\n", OY_DBG_ARGS_, profile_name?profile_name:"" );
+    if(t && strstr(t, "xcalib "))
+    {
+      int major = -1, minor = -1, micro = 0;
+      char * tmp = strstr(t, "xcalib ");
+
+      tmp = &tmp[7];
+      sscanf( tmp, "%d.%d.%d", &major, &minor, &micro );
+      version = major*10000 + minor * 100 + micro;
+
+      if(version < 0 || oy_debug)
+        fprintf( stderr, OY_DBG_FORMAT_ "xcalib version string: \"%s\" \"%s\" version: %d\n", OY_DBG_ARGS_, t, tmp, version );
+    }
+    if(t) { free(t); t = NULL; }
+
+    if(version >= 1000)
+      xs = "-o";
+
     oyX1Alloc(text, MAX_PATH, goto Clean;)
 
     /** set vcgt tag with xcalib
@@ -878,18 +906,18 @@ int      oyX1MonitorProfileSetup     ( const char        * display_name,
 
        @todo TODO xcalib should be configurable as a module
      */
-    sprintf(text,"xcalib -d %s -s %d %s \'%s\'", dpy_name, disp->geo[1],
+    sprintf(text,"xcalib -d %s %s %d %s \'%s\'", dpy_name, xs, disp->geo[1],
                  oy_debug?"-v":"", profile_name);
     if(oyX1Monitor_infoSource_( disp ) == oyX11INFO_SOURCE_XRANDR)
 #if defined(HAVE_XRANDR)
-      sprintf(text,"xcalib -d %s -s %d %s \'%s\'", dpy_name, oyX1Monitor_rrScreen_(disp),
+      sprintf(text,"xcalib -d %s %s %d %s \'%s\'", dpy_name, xs, oyX1Monitor_rrScreen_(disp),
               oy_debug?"-v":"", profile_name);
 #else
-      sprintf(text,"xcalib -d %s -s %d %s \'%s\'", dpy_name, 0,
+      sprintf(text,"xcalib -d %s %s %d %s \'%s\'", dpy_name, xs, 0,
               oy_debug?"-v":"", profile_name);
 #endif
     else
-      sprintf(text,"xcalib -d %s -s %d %s \'%s\'", dpy_name, disp->geo[1],
+      sprintf(text,"xcalib -d %s %s %d %s \'%s\'", dpy_name, xs, disp->geo[1],
               oy_debug?"-v":"", profile_name);
 
     {
