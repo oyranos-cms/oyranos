@@ -37,7 +37,6 @@ extern "C" {
 #endif /* __cplusplus */
 
 
-
 /* gives string bordered by a xml style keyword */
 char*       oyXMLgetValue_     (const char       *xml,
                                 const char       *key);
