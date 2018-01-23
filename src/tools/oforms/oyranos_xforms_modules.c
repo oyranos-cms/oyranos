@@ -95,6 +95,7 @@ int main (int argc, char ** argv)
   oyOptions_s * opts = 0;
   oyOption_s * o = 0;
   int front = 0;  /* front end options */
+  int flags = 0;  /* JSON */
 
 #ifdef USE_GETTEXT
   setlocale(LC_ALL,"");
@@ -117,6 +118,7 @@ int main (int argc, char ** argv)
               case 'n': OY_PARSE_STRING_ARG( node_name ); break;
               case 't': OY_PARSE_STRING_ARG( text_info ); break;
               case 'f': front = 1; break;
+              case 'j': flags = oyNAME_JSON; break;
               case 'l': list = 1; break;
               case 'x': OY_PARSE_STRING_ARG( output_xml_file ); break;
               case 'v': if(verbose) oy_debug += 1; verbose = 1; break;
@@ -295,8 +297,12 @@ int main (int argc, char ** argv)
     opts = oyFilterNode_GetOptions( node, attributes );
 
     /* ... then get the UI for this filters options. */
-    error = oyFilterNode_GetUi( node, &ui_text, &namespaces, malloc );
+    error = oyFilterNode_GetUi( node, flags, &ui_text, &namespaces, malloc );
     oyFilterNode_Release( &node );
+    if(!(flags & oyNAME_JSON) && ui_text && oyJson(ui_text))
+      flags |= oyNAME_JSON;
+    if(flags & oyNAME_JSON && ui_text && !oyJson(ui_text))
+      flags = flags & (~oyNAME_JSON);
 
     data = oyOptions_GetText( opts, oyNAME_NAME );
     opt_names = oyOptions_GetText( opts, oyNAME_DESCRIPTION );
@@ -336,9 +342,13 @@ int main (int argc, char ** argv)
       }
     }
 
-    data = oyOptions_GetText( opts, oyNAME_NAME );
-    text = oyXFORMsFromModelAndUi( data, ui_text, (const char**)namespaces, 0,
-                                   malloc );
+    data = oyOptions_GetText( opts, (flags&oyNAME_JSON) ? oyNAME_JSON : oyNAME_NAME );
+    text = NULL;
+    if(flags & oyNAME_JSON)
+      text = oyJsonFromModelAndUi( data, ui_text, malloc );
+    else
+      text = oyXFORMsFromModelAndUi( data, ui_text, (const char**)namespaces, 0,
+                                     malloc );
 
     data = 0;
     oyOptions_Release( &opts );

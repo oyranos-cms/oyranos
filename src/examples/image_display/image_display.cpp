@@ -273,7 +273,7 @@ int changeIccOptions ( oyJob_s * job )
     if(!tmp_dir)
       tmp_dir = "/tmp";
 
-    error = oyFilterNode_GetUi( node, &ui_text, &namespaces, malloc );
+    error = oyFilterNode_GetUi( node, 0, &ui_text, &namespaces, malloc );
 
     opts = oyFilterNode_GetOptions( node, OY_SELECT_FILTER |
                                           oyOPTIONATTRIBUTE_ADVANCED );
