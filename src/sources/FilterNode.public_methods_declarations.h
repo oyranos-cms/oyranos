@@ -87,6 +87,7 @@ OYAPI oyConnector_s * OYEXPORT
                                        int                 plug );
 OYAPI int  OYEXPORT
                  oyFilterNode_GetUi  ( oyFilterNode_s     * node,
+                                       int                  flags,
                                        char              ** ui_text,
                                        char             *** namespaces,
                                        oyAlloc_f            allocateFunc );
