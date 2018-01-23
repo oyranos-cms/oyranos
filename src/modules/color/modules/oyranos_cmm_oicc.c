@@ -35,6 +35,7 @@
 #include "oyranos_icc.h"
 #include "oyranos_i18n.h"
 #include "oyranos_io.h"
+#include "oyranos_json.h"
 #include "oyranos_module_internal.h"
 #include "oyranos_string.h"
 #include "oyranos_texts.h"
@@ -115,6 +116,11 @@ oyOptions_s* oicc_defaultICCValidateOptions
   return 0;
 }
 
+#define jADD( value_, key_, ... ) \
+{ \
+  oyjl_val v = oyjl_tree_get_valuef( group, OYJL_CREATE_NEW, key_, __VA_ARGS__ ); \
+  oyjl_value_set_string( v, value_ ); \
+}
 
 /** @showinitializer
  <xf:model> <xf:instance> - must be added in Oyranos to make the model complete
@@ -155,8 +161,8 @@ char oicc_default_color_icc_options[] = {
       <rendering_gamut_warning.advanced>0</rendering_gamut_warning.advanced>\n\
      </behaviour>\n\
      <icc_color>\n\
-      <context.advanced>///lcm2</context.advanced>\n\
-      <renderer.advanced>///lcm2</renderer.advanced>\n\
+      <context.advanced>///icc_color.lcm2</context.advanced>\n\
+      <renderer.advanced>///icc_color.lcm2</renderer.advanced>\n\
      </icc_color>\n\
     </" OY_TYPE_STD ">\n\
    </" OY_DOMAIN_STD ">\n\
@@ -165,13 +171,18 @@ char oicc_default_color_icc_options[] = {
 
 #define A(long_text) STRING_ADD( tmp, long_text)
 
-int  oiccGetDefaultColorIccOptionsUI ( oyCMMapiFilter_s   * module OY_UNUSED,
-                                       oyOptions_s        * options,
-                                       char              ** ui_text,
-                                       oyAlloc_f            allocateFunc )
+int  oiccGetDefaultColorIccOptionsUI ( oyCMMapiFilter_s  * module OY_UNUSED,
+                                       oyOptions_s       * options,
+                                       int                 aflags,
+                                       char             ** ui_text,
+                                       oyAlloc_f           allocateFunc )
 {
   char * tmp = 0;
-  oyOptions_s * os = options;
+  oyjl_val root = NULL;
+  oyjl_val group = NULL;
+  int jgroup = -1, jgroup2 = -1, jopt = -1, jchoice = -1;
+  oyOptions_s * os = options,
+              * defaults = oyOptions_FromText( oicc_default_color_icc_options, 0, NULL );
   const oyOption_t_ * t = 0;
   int n, i = 0,j;
 #if 0
@@ -193,6 +204,9 @@ int  oiccGetDefaultColorIccOptionsUI ( oyCMMapiFilter_s   * module OY_UNUSED,
   int32_t icc_profile_flags = 0;
 
   oyOptions_FindInt( options, "icc_profile_flags", 0, &icc_profile_flags );
+
+  if(aflags & oyNAME_JSON)
+    root = oyjl_tree_new(OY_STD);
 
   /* fill in all the options */
   for( i = 0 ; i < n ; ++i )
@@ -241,10 +255,25 @@ int  oiccGetDefaultColorIccOptionsUI ( oyCMMapiFilter_s   * module OY_UNUSED,
             {
               if(section_group[0])
               {
-                A("\
+                if(!(aflags & oyNAME_JSON))
+                   A("\
  </xf:group>\n");
                 section_group[0] = 0;
               }
+              if(aflags & oyNAME_JSON)
+              {
+                ++jgroup;
+                group = oyjl_tree_get_valuef( root, OYJL_CREATE_NEW, OY_STD "/cmms/[0]/groups/[%d]", jgroup );
+                jADD( "Oyranos", "%s", "name" )
+                jADD( section_names[0], "%s", "description" )
+                jADD( section_description[0], "%s", "help" )
+                jADD( "frame.h3", "%s", "properties" )
+                jopt = -1;
+                if(oy_debug)
+                  fprintf(stderr, "add group1[%d]: %s\n", jgroup, section_names[0]);
+              }
+              else
+              {
               A("\
  <xf:group type=\"frame\">\n");
               A("\
@@ -257,6 +286,7 @@ int  oiccGetDefaultColorIccOptionsUI ( oyCMMapiFilter_s   * module OY_UNUSED,
   <xf:help>" );
               A( section_description[0] );
               A(      "</xf:help>\n");
+              }
               /* The headline is in place. The reference shall be removed. */
               section_names[0] = 0;
               /* Remember to later close that group */
@@ -266,10 +296,24 @@ int  oiccGetDefaultColorIccOptionsUI ( oyCMMapiFilter_s   * module OY_UNUSED,
             {
               if(groups[0] > 1 && section_group[1])
               {
+                if(!(aflags & oyNAME_JSON))
                 A("\
   </xf:group>\n");
                 section_group[1] = 0;
               }
+              if(aflags & oyNAME_JSON)
+              {
+                ++jgroup2;
+                group = oyjl_tree_get_valuef( root, OYJL_CREATE_NEW, OY_STD "/cmms/[0]/groups/[%d]/groups/[%d]", jgroup, jgroup2 );
+                jADD( section_names[1], "%s", "name" )
+                //jADD( section_tooltips[1], OY_STD "/cmms/[0]/groups/[0]/groups/[%d]/%s", i, "description" )
+                jADD( section_description[1], "%s", "help" )
+                jopt = -1;
+                if(oy_debug)
+                  fprintf(stderr, "   add group2[%d]: %s\n", jgroup2, section_names[1]);
+              }
+              else
+              {
               A("\
   <xf:group type=\"frame\">\n");
    /*<h4>");
@@ -285,6 +329,7 @@ int  oiccGetDefaultColorIccOptionsUI ( oyCMMapiFilter_s   * module OY_UNUSED,
    <xf:help>" );
               A( section_description[1] );
               A(      "</xf:help>\n");
+              }
               section_names[1] = 0;
               section_group[1] = 1;
             }
@@ -293,6 +338,21 @@ int  oiccGetDefaultColorIccOptionsUI ( oyCMMapiFilter_s   * module OY_UNUSED,
           /* show the option */
           if(value != NULL)
           {
+            if(aflags & oyNAME_JSON)
+            {
+              const char * d = oyOptions_FindString( defaults, t->config_string, NULL );
+              ++jopt;
+              jADD( t->config_string, "options/[%d]/%s", jopt, "nick" )
+              jADD( d, "options/[%d]/%s", jopt, "default" )
+              jADD( name, "options/[%d]/%s", jopt, "name" )
+              jADD( tooltip, "options/[%d]/%s", jopt, "description" )
+              jADD( description, "options/[%d]/%s", jopt, "help" )
+              jchoice = -1;
+              if(oy_debug)
+                fprintf(stderr, "      add option[%d]: %s\n%s\n", jopt, name, oyJsonPrint(group) );
+            }
+            else
+            {
             A("\
      <xf:select1 ref=\"/");
             A(         t->config_string );
@@ -307,6 +367,7 @@ int  oiccGetDefaultColorIccOptionsUI ( oyCMMapiFilter_s   * module OY_UNUSED,
             A( description );
             A(        "</xf:help>\n\
       <xf:choices>\n");
+            }
 
             /* add selection items */
             for(j = 0; j < count; ++j)
@@ -321,11 +382,28 @@ int  oiccGetDefaultColorIccOptionsUI ( oyCMMapiFilter_s   * module OY_UNUSED,
                 /* add the internal name ... */
                 profile_text = oyProfile_GetText( p, oyNAME_DESCRIPTION );
 
+                file_name = oyProfile_GetFileName( p, 0 );
+                if(aflags & oyNAME_JSON)
+                {
+                  ++jchoice;
+                  if(file_name)
+                  {
+                    char * t = NULL; oyStringAddPrintf( &t, oyAllocateFunc_, oyDeAllocateFunc_, "%s (%s)", profile_text, file_name );
+                    jADD( t, "options/[%d]/choices/[%d]/name", jopt, jchoice )
+                    oyFree_m_( t );
+                  }
+                  else
+                  jADD( profile_text, "options/[%d]/choices/[%d]/name", jopt, jchoice )
+                  jADD( names[j], "options/[%d]/choices/[%d]/nick", jopt, jchoice )
+                  if(oy_debug)
+                  fprintf(stderr, "         add choice[%d]: %s\n", jchoice, names[j]);
+                }
+                else
+                {
                 A("\
        <xf:item>\n\
         <xf:label>");
                 A( profile_text );
-                file_name = oyProfile_GetFileName( p, 0 );
                 /* ... and the full file name */
                 if(file_name)
                 {
@@ -338,6 +416,7 @@ int  oiccGetDefaultColorIccOptionsUI ( oyCMMapiFilter_s   * module OY_UNUSED,
                 A( names[j] );
                 A(                    "</xf:value>\n\
        </xf:item>\n");
+                }
                 oyProfile_Release( &p );
 
               } else if(oyWIDGET_CMM_START < oywid && oywid < oyWIDGET_CMM_END)
@@ -362,6 +441,16 @@ int  oiccGetDefaultColorIccOptionsUI ( oyCMMapiFilter_s   * module OY_UNUSED,
                 else
                   t = oyCMMRegistrationToName( reg, (oyCMM_e)oywid, oyNAME_PATTERN, 0, oyAllocateFunc_ );
 
+                if(aflags & oyNAME_JSON)
+                {
+                  ++jchoice;
+                  jADD( names[j], "options/[%d]/choices/[%d]/name", jopt, jchoice )
+                  jADD( t, "options/[%d]/choices/[%d]/nick", jopt, jchoice )
+                  if(oy_debug)
+                    fprintf(stderr, "         add choice[%d]: %s\n", jchoice, names[j]);
+                }
+                else
+                {
                 A("\
        <xf:item>\n\
         <xf:label>");
@@ -374,9 +463,20 @@ int  oiccGetDefaultColorIccOptionsUI ( oyCMMapiFilter_s   * module OY_UNUSED,
        </xf:item>\n");
                 oyFree_m_( reg );
                 oyFree_m_( t );
+                }
               } else
               {
                 sprintf( num, "%d", j );
+                if(aflags & oyNAME_JSON)
+                {
+                  ++jchoice;
+                  jADD( names[j], "options/[%d]/choices/[%d]/name", jopt, jchoice )
+                  jADD( num, "options/[%d]/choices/[%d]/nick", jopt, jchoice )
+                  if(oy_debug)
+                    fprintf(stderr, "         add choice[%d]: %s\n", jchoice, names[j]);
+                }
+                else
+                {
                 A("\
        <xf:item>\n\
         <xf:label>");
@@ -387,8 +487,10 @@ int  oiccGetDefaultColorIccOptionsUI ( oyCMMapiFilter_s   * module OY_UNUSED,
                 A( num );
                 A(                    "</xf:value>\n\
        </xf:item>\n");
+                }
               }
             }
+            if(!(aflags & oyNAME_JSON))
             A("\
       </xf:choices>\n\
      </xf:select1>\n");
@@ -410,6 +512,8 @@ int  oiccGetDefaultColorIccOptionsUI ( oyCMMapiFilter_s   * module OY_UNUSED,
   }
 
   /* close open sections */
+  if(!(aflags & oyNAME_JSON))
+  {
   if(section_group[1])
             {
               A("\
@@ -422,7 +526,13 @@ int  oiccGetDefaultColorIccOptionsUI ( oyCMMapiFilter_s   * module OY_UNUSED,
  </xf:group>\n");
               section_group[0] = 0;
             }
+  }
 
+  if(aflags & oyNAME_JSON)
+  {
+    int level = 0;
+    oyjl_tree_to_json( root, &level, &tmp );
+  }
 
   if(allocateFunc && tmp)
   {
@@ -1084,8 +1194,8 @@ oyCMMapi9_s_  oicc_api9 = {
   oiccWidgetEvent, /* oyWidgetEvent_f */
 
   oicc_default_color_icc_options,   /* options */
-  oiccGetDefaultColorIccOptionsUI,  /* oyCMMuiGet_f */
-  (char*)CMM_NICK"=\"http://www.oyranos.org/2009/oyranos_icc\"", /* xml_namespace */
+  oiccGetDefaultColorIccOptionsUI,  /* oyCMMuiGet_f oyCMMuiGet */
+  (char*)CMM_NICK "=\"http://www.oyranos.org/2009/oyranos_icc\"", /* xml_namespace */
 
   (oyCMMobjectType_s**)icc_objects,  /* object_types */
 
