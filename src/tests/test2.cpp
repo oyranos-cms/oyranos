@@ -6985,6 +6985,18 @@ oyTESTRESULT_e testICCsCheck()
       "device link contains 2 profiles + simulation == %d", j );
     }
 
+    oyOptions_s * node_opts = oyFilterNode_GetOptions( icc, oyOPTIONATTRIBUTE_ADVANCED );
+    char * ui_text = NULL;
+    char ** namespaces = NULL;
+    oyFilterNode_GetUi( icc, oyNAME_JSON, &ui_text, &namespaces, malloc );
+    const char * data = oyOptions_GetText( node_opts, (oyNAME_e) oyNAME_JSON );
+    char * text = NULL;
+    text = oyJsonFromModelAndUi( data, ui_text, malloc );
+    fprintf( stderr, "JSON: %d\n", text?strlen(text):0 );
+    oyOptions_Release( &node_opts );
+    oyFree_m_( text );
+    oyFree_m_( ui_text );
+
     oyOptions_Release( &options );
     oyConversion_Release( &cc );
 

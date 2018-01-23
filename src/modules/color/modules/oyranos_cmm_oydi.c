@@ -1094,6 +1094,7 @@ char oydi_extra_options[] = {
 
 int  oydiUiGet                       ( oyCMMapiFilter_s   * module OY_UNUSED,
                                        oyOptions_s       * opts OY_UNUSED,
+                                       int                 flags OY_UNUSED,
                                        char             ** xforms_layout,
                                        oyAlloc_f           allocateFunc )
 {

@@ -741,12 +741,13 @@ const char lraw_extra_options[] = {
 /** Function lrawUiGet
  *  @brief   return XFORMS for matching options
  *
- *  @version Oyranos: 0.9.5
- *  @date    2014/01/08
+ *  @version Oyranos: 0.9.7
+ *  @date    2018/01/17
  *  @since   2010/11/29 (Oyranos: 0.1.13)
  */
 int  lrawUiGet                       ( oyCMMapiFilter_s  * module OY_UNUSED,
                                        oyOptions_s       * options,
+                                       int                 flags,
                                        char             ** xforms_layout,
                                        oyAlloc_f           allocateFunc )
 {

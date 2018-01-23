@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2016 (C) Kai-Uwe Behrmann
+ *            2016-2018 (C) Kai-Uwe Behrmann
  *
  *  @brief    JSON functions
  *  @internal
@@ -60,6 +60,12 @@ extern "C" {
 #define oyjl_value_clear               oyJValueClear
 #include "oyjl/oyjl_tree.h"
 
+int          oyJson                  ( const char        * json );
+oyjl_val     oyJsonParse             ( const char        * json );
+char *       oyJsonFromModelAndUi    ( const char        * data,
+                                       const char        * ui_text,
+                                       oyAlloc_f           allocate_func );
+char *       oyJsonPrint             ( oyjl_val            root );
 
 #ifdef __cplusplus
 } /* extern "C" */

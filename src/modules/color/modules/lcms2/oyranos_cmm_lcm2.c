@@ -2957,6 +2957,7 @@ char l2cms_extra_options[] = {
  */
 int l2cmsGetOptionsUI                ( oyCMMapiFilter_s   * module OY_UNUSED,
                                        oyOptions_s        * options,
+                                       int                  flags,
                                        char              ** ui_text,
                                        oyAlloc_f            allocateFunc )
 {

@@ -846,7 +846,17 @@ void oyjl_tree_to_json (oyjl_val v, int * level, char ** json)
     case oyjl_t_false:
          oyjl_string_add (json, 0,0, "0"); break;
     case oyjl_t_string:
-         oyjl_string_add (json, 0,0, "\"%s\"", v->u.string); break;
+         {
+          const char * t = v->u.string;
+          char * tmp = NULL;
+          if(t && strstr(t, "\""))
+          {
+            t = tmp = oyjl_string_replace( t, "\"", "\\\"", 0, 0);
+          }
+          oyjl_string_add (json, 0,0, "\"%s\"", t);
+          if(tmp) free(tmp);
+         }
+         break;
     case oyjl_t_array:
          {
            int i,
