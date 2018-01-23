@@ -2600,16 +2600,19 @@ oyOptions_s* oyFilterNode_GetOptions ( oyFilterNode_s    * node,
  *  @brief    Get filter options XFORMS
  *
  *  @param[in,out] node                filter object
+ *  @param[in]     flags               modificators
+ *                                     - oyNAME_JSON : order JSON flavour
  *  @param[out]    ui_text             XFORMS fitting to the node Options
  *  @param[out]    namespaces          additional XML namespaces
  *  @param         allocateFunc        optional user allocator
  *  @return                            the options
  *
- *  @version Oyranos: 0.9.6
- *  @date    2014/06/29
+ *  @version Oyranos: 0.9.7
+ *  @date    2018/01/17
  *  @since   2009/07/29 (Oyranos: 0.1.10)
  */
 int            oyFilterNode_GetUi    ( oyFilterNode_s     * node,
+                                       int                  flags,
                                        char              ** ui_text,
                                        char             *** namespaces,
                                        oyAlloc_f            allocateFunc )
@@ -2617,8 +2620,10 @@ int            oyFilterNode_GetUi    ( oyFilterNode_s     * node,
   int error = 0;
   oyFilterNode_s * s = node;
   oyOptions_s * options = 0;
-  char * text = 0,
-       * tmp = 0;
+  char * text = NULL,
+       * tmp = NULL,
+       * tmp4 = NULL;
+  oyjl_val root9 = NULL, root4 = NULL;
 
   oyFilterNode_s_ ** node_ = (oyFilterNode_s_**)&node;
 
@@ -2632,6 +2637,13 @@ int            oyFilterNode_GetUi    ( oyFilterNode_s     * node,
 
   if(!error)
     options = oyFilterNode_GetOptions( node, 0 );
+
+  if(!error && (*node_)->core->api4_->ui->oyCMMuiGet)
+    error = (*node_)->core->api4_->ui->oyCMMuiGet( (oyCMMapiFilter_s*) (*node_)->core->api4_, options, flags, &tmp4, oyAllocateFunc_ );
+  if(!(flags & oyNAME_JSON) && tmp4 && oyJson(tmp4))
+    flags |= oyNAME_JSON;
+  if(flags & oyNAME_JSON && tmp4 && !oyJson(tmp4))
+    flags = flags & (~oyNAME_JSON);
 
   if(!error)
   {
@@ -2658,7 +2670,7 @@ int            oyFilterNode_GetUi    ( oyFilterNode_s     * node,
       if(oyFilterRegistrationMatch( reg, (*cmm_api9_)->pattern, 0 ))
       {
         if((*cmm_api9_)->oyCMMuiGet)
-          error = (*cmm_api9_)->oyCMMuiGet( (oyCMMapiFilter_s*) cmm_api9_, options, &tmp, oyAllocateFunc_ );
+          error = (*cmm_api9_)->oyCMMuiGet( (oyCMMapiFilter_s*) cmm_api9_, options, flags, &tmp, oyAllocateFunc_ );
 
         if(error)
         {
@@ -2670,6 +2682,12 @@ int            oyFilterNode_GetUi    ( oyFilterNode_s     * node,
         {
           STRING_ADD( text, tmp );
           STRING_ADD( text, "\n" );
+          if(flags & oyNAME_JSON)
+          {
+            root9 = oyJsonParse( tmp );
+            if(tmp && !root9)
+              WARNc3_S( "%s %s\n%s",_("error in module:"), (*cmm_api9_)->registration, tmp );
+          }
           oyFree_m_(tmp);
 
           if(namespaces && (*cmm_api9_)->xml_namespace)
@@ -2694,23 +2712,65 @@ int            oyFilterNode_GetUi    ( oyFilterNode_s     * node,
     oyCMMapiFilters_Release( &apis );
   }
 
-  if(!error && (*node_)->core->api4_->ui->oyCMMuiGet)
+  if(!error && tmp4)
   {
     /* @todo and how to mix in the values? */
-    error = (*node_)->core->api4_->ui->oyCMMuiGet( (oyCMMapiFilter_s*) (*node_)->core->api4_, options, &tmp, oyAllocateFunc_ );
-    if(tmp)
+    if(flags & oyNAME_JSON)
     {
-      STRING_ADD( text, tmp );
-      oyFree_m_(tmp);
+      root4 = oyJsonParse( tmp4 );
+      if(!root4)
+        WARNc3_S( "%s %s\n%s",_("error in module:"), (*node_)->core->api4_->registration, tmp4 );
     }
+    STRING_ADD( text, tmp4 );
+    oyFree_m_(tmp4);
   }
+
+  if( flags & oyNAME_JSON &&
+      root9 && root4 )
+  {
+    /* add api9 groups to api4 declaration */
+    oyjl_val g9 = oyjl_tree_get_value( root9, 0, "org/freedesktop/openicc/cmms/[0]/groups" ),
+             g4 = oyjl_tree_get_value( root4, 0, "org/freedesktop/openicc/cmms/[0]/groups" );
+    int n9 = oyjl_value_count( g9 ),
+        n4 = oyjl_value_count( g4 ), i;
+    for(i = 0; i < n9; ++i)
+    {
+      oyjl_val group9 = oyjl_tree_get_valuef( root9, 0, "org/freedesktop/openicc/cmms/[0]/groups/[%d]", i );
+      /* allocate new array member */
+      oyjl_val g4new = oyjl_tree_get_valuef( root4, OYJL_CREATE_NEW, "org/freedesktop/openicc/cmms/[0]/groups/[%d]", n4 + i );
+      /* move the node to the new tree */
+      if(g4new && OYJL_IS_ARRAY(g4) && g4->u.array.values)
+      {
+        int size = sizeof(oyjl_val);
+        memmove( &g4->u.array.values[i+1], &g4->u.array.values[i], size*n4 );
+        g4->u.array.values[i] = group9;
+        g9->u.array.values[i] = NULL;
+        if(i == n9 - 1)
+          g9->u.array.len -= n9;
+      }
+    }
+    oyFree_m_( text );
+    text = oyJsonPrint( root4 );
+  }
+  oyjl_tree_free(root9);
+  oyjl_tree_free(root4);
 
   oyOptions_Release( &options );
 
   if(error <= 0 && text)
   {
-    *ui_text = oyStringCopy_( text, allocateFunc );
+    if(allocateFunc != malloc)
+    {
+      *ui_text = oyStringCopy_( text, allocateFunc );
+      free(text);
+    }
+    else
+      *ui_text = text;
+    text = NULL;
   }
+
+  if(text)
+    free(text);
 
   return error;
 }
