@@ -68,6 +68,7 @@ const char * ojpgApi4UiGetText2      ( const char        * select,
                                        const char        * format );
 int                ojpgGetOFORMS     ( oyCMMapiFilter_s  * module,
                                        oyOptions_s       * oy_opts,
+                                       int                 flags,
                                        char             ** ui_text,
                                        oyAlloc_f           allocateFunc );
 const char * ojpgApi4UiGetText       ( const char        * select,
@@ -323,6 +324,7 @@ char * ojpgFilterNode_GetText        ( oyFilterNode_s    * node,
 /* TODO */
 int                ojpgGetOFORMS     ( oyCMMapiFilter_s  * module OY_UNUSED,
                                        oyOptions_s       * oy_opts OY_UNUSED,
+                                       int                 flags OY_UNUSED,
                                        char             ** ui_text,
                                        oyAlloc_f           allocateFunc OY_UNUSED )
 {

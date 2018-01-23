@@ -163,6 +163,7 @@ const char ppm_write_extra_options[] = {
 
 int  oyraPPMwriteUiGet               ( oyCMMapiFilter_s   * module OY_UNUSED,
                                        oyOptions_s       * opts OY_UNUSED,
+                                       int                 flags OY_UNUSED,
                                        char             ** xforms_layout,
                                        oyAlloc_f           allocateFunc )
 {
@@ -1087,6 +1088,7 @@ const char ppm_read_extra_options[] = {
 
 int  oyraPPMreadUiGet                ( oyCMMapiFilter_s   * module OY_UNUSED,
                                        oyOptions_s       * opts OY_UNUSED,
+                                       int                 flags OY_UNUSED,
                                        char             ** xforms_layout,
                                        oyAlloc_f           allocateFunc )
 {

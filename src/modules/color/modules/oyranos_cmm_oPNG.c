@@ -491,6 +491,7 @@ const char png_write_extra_options[] = {
 
 int  oPNGPNGwriteUiGet               ( oyCMMapiFilter_s   * module OY_UNUSED,
                                        oyOptions_s       * opts OY_UNUSED,
+                                       int                 flags OY_UNUSED,
                                        char             ** xforms_layout,
                                        oyAlloc_f           allocateFunc )
 {
@@ -1100,6 +1101,7 @@ const char png_read_extra_options[] = {
 
 int  oPNGPNGreadUiGet                ( oyCMMapiFilter_s   * module OY_UNUSED,
                                        oyOptions_s       * opts OY_UNUSED,
+                                       int                 flags OY_UNUSED,
                                        char             ** xforms_layout,
                                        oyAlloc_f           allocateFunc )
 {
