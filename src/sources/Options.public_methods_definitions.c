@@ -864,6 +864,8 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
       o = oyOptions_Get( options, sort[i] );
       o_ = (oyOption_s_*)o;
 
+      if(!oyObject_GetName( o->oy_, oyNAME_DESCRIPTION ))
+          oyOption_GetText(o, oyNAME_DESCRIPTION);
 
       if((int)type == oyNAME_JSON)
       {
@@ -888,10 +890,6 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
         char * tmp = 0, **list = 0;
 
         j_n = 1;
-
-        if(!oyObject_GetName( o->oy_, oyNAME_DESCRIPTION ))
-          oyOption_GetText(o, oyNAME_DESCRIPTION);
-
 
         list = oyStringSplit_( oyObject_GetName( o->oy_, oyNAME_DESCRIPTION ),
                                '/', &j_n, oyAllocateFunc_);
