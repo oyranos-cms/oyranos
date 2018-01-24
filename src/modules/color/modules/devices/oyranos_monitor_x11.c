@@ -879,7 +879,7 @@ int      oyX1MonitorProfileSetup     ( const char        * display_name,
       oyX1Alloc( t, 48, return 1;)
       if( fread( t, sizeof(char), 48, fp ) > 0 )
         t[47] = '\000';
-      fclose(fp);
+      pclose(fp);
     } else
       fprintf( stderr, OY_DBG_FORMAT_ "xcalib not found for setting with %s\n", OY_DBG_ARGS_, profile_name?profile_name:"" );
     if(t && strstr(t, "xcalib "))
@@ -1282,15 +1282,15 @@ char * oyX1Hostname()
     fp = popen("uname -n", "r");
     if(fp)
     {
-      oyX1Alloc( t, 48, return strdup("dummy");)
+      oyX1Alloc( t, 48, pclose(fp); return strdup("dummy");)
       if( fread( t, sizeof(char), 48, fp ) > 0 )
       {
         t[47] = '\000';
-        fclose(fp);
+        pclose(fp);
         return t;
       }
       else if(t) free(t);
-      fclose(fp);
+      pclose(fp);
     }
     t = strdup("dummy");
   }
