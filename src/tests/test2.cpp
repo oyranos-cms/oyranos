@@ -1163,7 +1163,7 @@ oyTESTRESULT_e testOptionsSet ()
 
   if(!error && oyOptions_Count( setA ) == 3)
   { PRINT_SUB( oyTESTRESULT_SUCCESS, 
-    "oyOptions_SetFromString() similiar registration good  " );
+    "oyOptions_SetFromString() similiar registration good" );
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL, 
     "oyOptions_SetFromString() similiar registration failed" );
@@ -1322,25 +1322,27 @@ oyTESTRESULT_e testOptionsSet ()
   t = oyOptions_GetText( setA, (oyNAME_e) oyNAME_JSON );
   oyOptions_Release( &options );
   count = oyOptions_Count(setA);
-  if(count == 8 && t && strlen(t) == 278)
+  if(count == 8 && t && strlen(t) == 334)
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS, 
-    "oyOptions_FromJSON() key_paths                  %d", count );
+    "oyOptions_FromJSON() key_paths               %d %d", count, (int)strlen(t) );
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
-    "oyOptions_FromJSON() key_paths                  %d", count );
+    "oyOptions_FromJSON() key_paths               %d %d", count, (int)(t?strlen(t):0));
+    fprintf( zout, "%s\n", t?t:0 );
   }
 
   error = oyOptions_FromJSON( t, NULL, &options, "org" );
   if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_FromJSON() error: %d", error )
   t = oyOptions_GetText( options, (oyNAME_e) oyNAME_JSON );
-  if(!error && t && t && strlen(t) == 59)
+  if(!error && t && t && strlen(t) == 65)
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS, 
     "oyOptions_FromJSON() validity                   %d", (int)(t?strlen(t):0) );
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
     "oyOptions_FromJSON() validity                   %d", (int)(t?strlen(t):0) );
+    fprintf( zout, "%s\n", t?t:0 );
   }
 
   oyOptions_Release( &options );
@@ -6992,7 +6994,7 @@ oyTESTRESULT_e testICCsCheck()
     const char * data = oyOptions_GetText( node_opts, (oyNAME_e) oyNAME_JSON );
     char * text = NULL;
     text = oyJsonFromModelAndUi( data, ui_text, malloc );
-    fprintf( stderr, "JSON: %d\n", text?strlen(text):0 );
+    fprintf( stderr, "JSON: %d\n", (int)(text?strlen(text):0) );
     oyOptions_Release( &node_opts );
     oyFree_m_( text );
     oyFree_m_( ui_text );
