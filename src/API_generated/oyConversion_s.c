@@ -118,7 +118,9 @@ OYAPI int OYEXPORT
  *
  *  @code
     // use the output
-    oyConversion_Correct( conversion, "//" OY_TYPE_STD "/icc_color", 0, 0 );
+    error = oyConversion_Correct( conversion, "//" OY_TYPE_STD "/icc_color", 0, 0 );
+    if(error > 0) error_msg();
+    else if(error < 0) debug_msg();
     @endcode
 
  *  @par Typical Options:
@@ -141,11 +143,14 @@ OYAPI int OYEXPORT
  *                                     - cover policy options
  *                                       @ref OY_SELECT_COMMON
  *  @param   options                   options to the policy module
- *  @return                            0 - indifferent, >= 1 - error
+ *  @return                            status
+ *                                     - 0 : indifferent
+ *                                     - >= 1 : error
+ *                                     - < 0 : issue like, no module found from registration arg
  *                                     + a message should be sent
  *
- *  @version Oyranos: 0.9.6
- *  @date    2014/06/26
+ *  @version Oyranos: 0.9.7
+ *  @date    2018/01/25
  *  @since   2009/07/24 (Oyranos: 0.1.10)
  */
 int                oyConversion_Correct (
@@ -154,12 +159,12 @@ int                oyConversion_Correct (
                                        uint32_t            flags,
                                        oyOptions_s       * options )
 {
-  int error = 0;
+  int error = -1;
   oyConversion_s_ * s = (oyConversion_s_*)conversion;
   const char * pattern = registration;
 
   if(!s)
-    return error;
+    return 0;
 
   oyCheckType__m( oyOBJECT_CONVERSION_S, return 1 )
 
@@ -169,7 +174,7 @@ int                oyConversion_Correct (
     return 1;
   }
 
-  if(!error)
+  if(error <= 0)
   {
     oyCMMapiFilters_s * apis;
     int apis_n = 0, i;
@@ -206,7 +211,10 @@ int                oyConversion_Correct (
     oyCMMapiFilters_Release( &apis );
   }
 
-  return 0;
+  if(error == -1)
+    WARNc3_S( "%s: %s flags: %d",_("Found no policy module"), registration, flags );
+
+  return error;
 }
 
 /** Function  oyConversion_CreateBasicPixels

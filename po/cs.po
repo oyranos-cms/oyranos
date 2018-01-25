@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: oyranos\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2018-01-19 10:31+0100\n"
+"POT-Creation-Date: 2018-01-25 21:21+0100\n"
 "PO-Revision-Date: 2012-10-19 15:10+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -1615,9 +1615,14 @@ msgstr "Pro obrazovku"
 msgid "For more informations read the man page:"
 msgstr "Pro více informací viz manuálová stránka:"
 
-#: API_generated/oyConversion_s.c:168
+#: API_generated/oyConversion_s.c:173
 msgid "Found no node in conversion. give up"
 msgstr "Nenalezen žádný uzel při transformaci. Ukončeno."
+
+#: API_generated/oyConversion_s.c:215
+#, fuzzy
+msgid "Found no policy module"
+msgstr "Modul politiky Oyranosu pro ICC"
 
 #. FF
 #: liboyranos_config/oyranos_icc.c:676
@@ -4666,7 +4671,7 @@ msgstr ""
 msgid "enable simple defaults"
 msgstr "aktivovat jednoduché výchozí hodnoty"
 
-#: API_generated/oyConversion_s.c:198 API_generated/oyFilterNode_s_.c:622
+#: API_generated/oyConversion_s.c:203 API_generated/oyFilterNode_s_.c:622
 #: API_generated/oyranos_devices.c:2677 API_generated/oyranos_devices.c:2689
 #: API_generated/oyranos_devices.c:2722 API_generated/oyranos_devices.c:3240
 #: API_generated/oyranos_module.c:2022
@@ -5270,7 +5275,7 @@ msgstr "zapsat do souboru, v současnosti pouze ve formátu PPM"
 msgid "write to specified file"
 msgstr "zapsat do souboru"
 
-#: API_generated/oyOptions_s.c:1557 tools/oyranos-config.c:232
+#: API_generated/oyOptions_s.c:1555 tools/oyranos-config.c:232
 #: tools/oyranos-device.c:253 tools/oyranos-monitor-white-point.c:223
 #: tools/oyranos_convert.c:271 tools/oyranos_gamma.c:254
 #: tools/oyranos_policy.c:157 tools/oyranos_profile_graph.c:294

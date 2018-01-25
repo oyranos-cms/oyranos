@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Oyranos 0.9\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2018-01-23 14:13+0100\n"
+"POT-Creation-Date: 2018-01-25 21:50+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -104,15 +104,19 @@ msgstr ""
 msgid "Unexpected object type:"
 msgstr ""
 
-#: API_generated/oyConversion_s.c:168
+#: API_generated/oyConversion_s.c:173
 msgid "Found no node in conversion. give up"
 msgstr ""
 
-#: API_generated/oyConversion_s.c:198 API_generated/oyFilterNode_s_.c:622
+#: API_generated/oyConversion_s.c:203 API_generated/oyFilterNode_s_.c:622
 #: API_generated/oyranos_devices.c:2677 API_generated/oyranos_devices.c:2689
 #: API_generated/oyranos_devices.c:2722 API_generated/oyranos_devices.c:3240
 #: API_generated/oyranos_module.c:2022
 msgid "error in module:"
+msgstr ""
+
+#: API_generated/oyConversion_s.c:215
+msgid "Found no policy module"
 msgstr ""
 
 #: API_generated/oyFilterCore_s.c:260
@@ -162,7 +166,7 @@ msgstr ""
 msgid "found list of wrong type"
 msgstr ""
 
-#: API_generated/oyOptions_s.c:1557 tools/oyranos-config.c:232
+#: API_generated/oyOptions_s.c:1555 tools/oyranos-config.c:232
 #: tools/oyranos-device.c:253 tools/oyranos-monitor-white-point.c:223
 #: tools/oyranos_convert.c:271 tools/oyranos_gamma.c:254
 #: tools/oyranos_policy.c:157 tools/oyranos_profile_graph.c:294

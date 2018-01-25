@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2018-01-19 10:31+0100\n"
+"POT-Creation-Date: 2018-01-25 21:21+0100\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -1568,9 +1568,13 @@ msgstr "Bildschirm"
 msgid "For more informations read the man page:"
 msgstr "Mehr Informationen stehen im Handbuch:"
 
-#: API_generated/oyConversion_s.c:168
+#: API_generated/oyConversion_s.c:173
 msgid "Found no node in conversion. give up"
 msgstr "Fand keinen Knoten im Graph. Gebe auf."
+
+#: API_generated/oyConversion_s.c:215
+msgid "Found no policy module"
+msgstr "Fand kein ICC Richtlinien Modul"
 
 #. FF
 #: liboyranos_config/oyranos_icc.c:676
@@ -4477,7 +4481,7 @@ msgstr "bette Geräte-und Treiberinformationen in ICC meta Block ein"
 msgid "enable simple defaults"
 msgstr "benutze einfache Grundeinstellungen"
 
-#: API_generated/oyConversion_s.c:198 API_generated/oyFilterNode_s_.c:622
+#: API_generated/oyConversion_s.c:203 API_generated/oyFilterNode_s_.c:622
 #: API_generated/oyranos_devices.c:2677 API_generated/oyranos_devices.c:2689
 #: API_generated/oyranos_devices.c:2722 API_generated/oyranos_devices.c:3240
 #: API_generated/oyranos_module.c:2022
@@ -5056,7 +5060,7 @@ msgstr "schreibe zu einer Datei, derzeit nur im Format PPM"
 msgid "write to specified file"
 msgstr "schreibe nach Datei"
 
-#: API_generated/oyOptions_s.c:1557 tools/oyranos-config.c:232
+#: API_generated/oyOptions_s.c:1555 tools/oyranos-config.c:232
 #: tools/oyranos-device.c:253 tools/oyranos-monitor-white-point.c:223
 #: tools/oyranos_convert.c:271 tools/oyranos_gamma.c:254
 #: tools/oyranos_policy.c:157 tools/oyranos_profile_graph.c:294

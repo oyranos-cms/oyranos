@@ -2774,11 +2774,11 @@ static int     setupColourTable      ( PrivColorContext  * ccontext,
                                      "//" OY_TYPE_STD "/config/display_mode", "1",
                                      OY_CREATE_NEW );
       error = oyConversion_Correct(cc, "//" OY_TYPE_STD "/icc_color", flags, options);
-      if(error)
+      if(error > 0)
       {
         oyCompLogMessage( NULL, "compicc", CompLogLevelWarn,
-                      DBG_STRING "oyConversion_Correct(///icc_color,%d,0) failed %s",
-                      DBG_ARGS, flags, ccontext->output_name);
+                      DBG_STRING "oyConversion_Correct(///icc_color,%d,0) failed %s, %d",
+                      DBG_ARGS, flags, ccontext->output_name, error);
         goto clean_setupColourTable;
       }
       oyOptions_Release( &options );
