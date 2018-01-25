@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2005-2016 (C) Kai-Uwe Behrmann
+ *            2005-2018 (C) Kai-Uwe Behrmann
  *
  *  @brief    monitor device detection
  *  @internal
@@ -876,9 +876,11 @@ int      oyX1MonitorProfileSetup     ( const char        * display_name,
     FILE * fp = popen("xcalib -version", "r");
     if(fp)
     {
-      oyX1Alloc( t, 48, return 1;)
-      if( fread( t, sizeof(char), 48, fp ) > 0 )
-        t[47] = '\000';
+      int n;
+      oyX1Alloc( t, 48, pclose(fp); free(dpy_name); return 1;)
+      n = fread( t, sizeof(char), 48, fp );
+      if(0 <= n && n < 48) t[n] = '\000';
+      else t[47] = '\000';
       pclose(fp);
     } else
       fprintf( stderr, OY_DBG_FORMAT_ "xcalib not found for setting with %s\n", OY_DBG_ARGS_, profile_name?profile_name:"" );
