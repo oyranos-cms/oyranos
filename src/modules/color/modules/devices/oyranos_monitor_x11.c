@@ -1594,12 +1594,13 @@ oyX1Monitor_s* oyX1Monitor_newFrom_      ( const char        * display_name,
         int n_scr_info = 0;
         XineramaScreenInfo *scr_info = XineramaQueryScreens( display,
                                                              &n_scr_info );
-        if(oy_debug) fprintf( stderr, OY_DBG_FORMAT_ "Xinerama: n_scr_info: %d\n", OY_DBG_ARGS_, n_scr_info );
+        const char * dn = oyX1Monitor_name_(disp);
+        if(oy_debug) fprintf( stderr, OY_DBG_FORMAT_ "Xinerama: n_scr_info: %d selected_screen: %d %s\n", OY_DBG_ARGS_, n_scr_info, selected_screen, dn?dn:"----" );
         if(n_scr_info <= selected_screen)
         {
           XFree( scr_info );
+          fprintf( stderr, OY_DBG_FORMAT_ "ERROR: Xinerama: n_scr_info <= selected_screen %d %d %s\n", OY_DBG_ARGS_, n_scr_info, selected_screen, dn?dn:"----" );
           oyX1Monitor_release_( &disp );
-          fprintf( stderr, OY_DBG_FORMAT_ "ERROR: Xinerama: n_scr_info <= selected_screen %d - %d\n", OY_DBG_ARGS_, n_scr_info, selected_screen );
           return 0;
         }
         if(!scr_info || !n_scr_info)
