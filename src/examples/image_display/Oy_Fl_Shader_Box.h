@@ -157,7 +157,9 @@ private:
     w = grid_points = oyImage_GetWidth( clut_image );
     h = oyImage_GetHeight( clut_image );
     int is_allocated = 0;
-    clut = (GLushort*)oyImage_GetPointF( clut_image )( clut_image, 0,0, 0, &is_allocated );
+    clut = (GLushort*)oyImage_GetLineF( clut_image )( clut_image, 0,0, 0, &is_allocated );
+    if(!clut)
+      fprintf( stderr,_DBG_FORMAT_"obtained no data from clut image\n%s\n", _DBG_ARGS_, oyStruct_GetText( (oyStruct_s*)clut_image, oyNAME_NAME, 0));
 
     if( h != w*w || data_type != oyUINT16 )
     {
@@ -291,7 +293,9 @@ private:
     /* size may be too big */
     check_error("glTexImage2D failed (image too large?)");
 
-    disp_img = oyImage_GetPointF( display_image )( display_image, 0,0, 0, 0 );
+    disp_img = oyImage_GetLineF( display_image )( display_image, 0,0, 0, 0 );
+    if(!disp_img)
+      fprintf( stderr,_DBG_FORMAT_"obtained no data from display image\n%s\n", _DBG_ARGS_, oyStruct_GetText( (oyStruct_s*)display_image, oyNAME_NAME, 0));
     glTexSubImage2D (GL_TEXTURE_2D, 0, 0, 0, w_, h_,
 		     gl_channels, gl_data_type, disp_img);
     if(0&&oy_display_verbose)
@@ -359,10 +363,10 @@ private:
       setupShaderTexture();
 
       if(GLEE_ARB_fragment_shader && GLEE_ARB_shading_language_100)
-	init_shaders ();
+        init_shaders ();
     }
 
-    oyImage_s * draw_image = 0;
+    oyImage_s * draw_image = NULL;
     if(conversion())
     {
       oyPixel_t pt;
@@ -406,6 +410,12 @@ private:
       }
     }
 
+    if(!draw_image)
+    {
+      fprintf( stderr, _DBG_FORMAT_ "no draw image\n", _DBG_ARGS_ );
+      return;
+    }
+
     w_ = oyImage_GetWidth(  draw_image );
     h_ = oyImage_GetHeight( draw_image );
     /* border values */
@@ -435,7 +445,10 @@ private:
     glBindTexture (GL_TEXTURE_2D, img_texture);
     glTexImage2D (GL_TEXTURE_2D, 0, GL_RGB16, w_, h_,
 		  0, GL_RGB, GL_UNSIGNED_SHORT, NULL);
-    oyPointer disp_img = oyImage_GetPointF( draw_image )( draw_image, 0,0, 0, 0 );
+    oyPointer disp_img = oyImage_GetLineF( draw_image )( draw_image, 0,0, 0, 0 );
+    if(!clut)
+      fprintf( stderr,_DBG_FORMAT_"obtained no data from draw image\n%s\n", _DBG_ARGS_,
+               oyStruct_GetText( (oyStruct_s*)draw_image, oyNAME_DESCRIPTION, 0));
     glTexSubImage2D (GL_TEXTURE_2D, 0, 0, 0, w_, h_,
 		     GL_RGB, GL_UNSIGNED_SHORT, disp_img);
 
