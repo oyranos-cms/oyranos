@@ -34,7 +34,7 @@ public:
   Oy_Fl_Shader_Box(int x, int y, int w, int h)
     : Fl_Gl_Window(x,y,w,h), Oy_Fl_Image_Widget(x,y,w,h)
   { frame_data = NULL; W=0; H=0; clut_image = image = display_image = NULL;
-    grid_points = 0; clut = 0; clut_filled = 0; need_redraw=2; };
+    grid_points = 0; clut = 0; clut_filled = 0; need_redraw=2; clut_texture = -1; };
 
   ~Oy_Fl_Shader_Box(void) { oyImage_Release( &clut_image );
     oyImage_Release( &image ); oyImage_Release( &display_image ); };
@@ -215,7 +215,6 @@ private:
 
     /*if(data_type == oyUINT8)
       data_type = oyUINT16;*/
-
     oyOptions_s * old_tags = oyImage_GetTags( display_image ), * tags;
     oyImage_Release( &display_image );
     display_image = oyImage_Create( w_, h_,
@@ -237,7 +236,7 @@ private:
         w_,h_, oyDataTypeToText(data_type));
 
     cc = oyConversion_FromImageForDisplay( image, display_image,
-                         0, oyOPTIONATTRIBUTE_ADVANCED, data_type, 0, 0 );
+                         0, OY_SKIP_ICC, data_type, 0, 0 );
     conversion( cc );
 
     glGenTextures (1, &img_texture);
@@ -282,7 +281,7 @@ private:
         Oy_Fl_Image_Widget::parent()->x(), Oy_Fl_Image_Widget::parent()->y(),
         w_,h_, oyDataTypeToText(data_type));
 
-    if(oy_display_verbose)
+    if(oy_debug)
       fprintf( stderr,_DBG_FORMAT_"texture:%dx%d %s %s %s %s\n", _DBG_ARGS_,
         w_,h_, oyDataTypeToText(data_type),
         printType( gl_type ), printDataType(gl_data_type), printChannelType( gl_channels));
@@ -305,6 +304,7 @@ private:
   void setupShaderTexture()
   {
     glGenTextures (1, &clut_texture);
+    if(oy_display_verbose) fprintf(stderr,_DBG_FORMAT_ "clut_texture: %d\n", _DBG_ARGS_, clut_texture);
     /* texture 1 = clut */
     glActiveTextureARB (GL_TEXTURE0_ARB + 1);
     glBindTexture (GL_TEXTURE_3D, clut_texture);
@@ -388,7 +388,7 @@ private:
         gl_type = GL_RGBA;
 #endif
 
-      if(oy_display_verbose && draw_image)
+      if(oy_debug && draw_image)
         fprintf(stdout, _DBG_FORMAT_"pixellayout: %d width: %d channels: %d\n",
                     _DBG_ARGS_,
                     pt, oyImage_GetWidth(draw_image), oyToChannels_m(pt) );
@@ -425,7 +425,7 @@ private:
     float tw = (W - bw)/(float)w_;
     float th = (H - bh)/(float)h_;
 
-    if(oy_display_verbose)
+    if(oy_debug)
       fprintf( stderr, _DBG_FORMAT_"w_ %d h_ %d  parent:%dx%d\n"
                "img:%d clut:%d scale:%f offset:%f prog:%tx shader:%tx texture ratio:%gx%g\n",
                _DBG_ARGS_, w_,h_,
@@ -474,7 +474,7 @@ private:
     if(!clut)
       fprintf( stderr,_DBG_FORMAT_"obtained no data from draw image\n%s\n", _DBG_ARGS_,
                oyStruct_GetText( (oyStruct_s*)draw_image, oyNAME_DESCRIPTION, 0));
-    if(oy_display_verbose)
+    if(oy_debug)
       fprintf(stderr,_DBG_FORMAT_ "w_: %d h_: %d disp image:\n%s\n", _DBG_ARGS_, w_,h_,
             oyStruct_GetText( (oyStruct_s*)draw_image, oyNAME_NAME, 0));
     glTexSubImage2D (GL_TEXTURE_2D, 0, 0, 0, w_, h_,
