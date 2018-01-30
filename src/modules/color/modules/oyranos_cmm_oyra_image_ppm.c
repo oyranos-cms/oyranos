@@ -605,7 +605,7 @@ int      oyraFilterPlug_ImageInputPPMRun (
       /* read line */
       while(fpos < (size_t)fsize && l_rdg)
       {
-        if(data[fpos] == '#')
+        if(data[fpos-1] == '\n' && data[fpos] == '#')
         {
           in_c = 1;
           l_end = fpos-1;
