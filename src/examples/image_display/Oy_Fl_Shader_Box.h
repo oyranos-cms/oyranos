@@ -46,7 +46,6 @@ public:
     Oy_Fl_Image_Widget::damage( c );
   }
 
-
 private:
     GLushort * clut;
     int clut_filled;
@@ -138,9 +137,10 @@ private:
     oyPixel_t pt;
     oyDATATYPE_e data_type;
 
-    if (file_name == NULL) {
+    if (file_name == NULL)
+    {
     	fprintf(stderr, _DBG_FORMAT_"Cannot open clut file\n", _DBG_ARGS_);
-	return 1;
+      return 1;
     }
 
     oyImage_Release( &clut_image );
@@ -166,7 +166,7 @@ private:
     	fprintf( stderr,_DBG_FORMAT_
                  "Cannot use clut file: %dx%d %s\nneed %dx%d oyUINT16\n",
                  _DBG_ARGS_, w,h,oyDataTypeToText(data_type), w,w*w);
-	return 1;
+      return 1;
     }
 
     clut_scale = (double) (w - 1) / w;
@@ -229,7 +229,7 @@ private:
     oyOptions_Release( &tags );
 
     if(oy_display_verbose)
-      fprintf( stderr,_DBG_FORMAT_"%dx%d+%d+%d %dx%d+%d+%d %dx%d %s\n",
+      fprintf( stderr,_DBG_FORMAT_"Wid:%dx%d+%d+%d Parent:%dx%d+%d+%d texture:%dx%d %s\n",
         _DBG_ARGS_,
         W,H,Oy_Fl_Image_Widget::x(),Oy_Fl_Image_Widget::y(),
         Oy_Fl_Image_Widget::parent()->w(), Oy_Fl_Image_Widget::parent()->h(),
@@ -283,9 +283,9 @@ private:
         w_,h_, oyDataTypeToText(data_type));
 
     if(oy_display_verbose)
-      fprintf( stderr,_DBG_FORMAT_"%dx%d %s %d %d %d %d %d %d\n", _DBG_ARGS_,
+      fprintf( stderr,_DBG_FORMAT_"texture:%dx%d %s %s %s %s\n", _DBG_ARGS_,
         w_,h_, oyDataTypeToText(data_type),
-        GL_RGB16, gl_type, GL_UNSIGNED_SHORT, gl_data_type, GL_RGB, gl_channels);
+        printType( gl_type ), printDataType(gl_data_type), printChannelType( gl_channels));
 
     glTexImage2D (GL_TEXTURE_2D, 0, gl_type, w_, h_,
 		  0, gl_channels, gl_data_type, NULL);
@@ -335,7 +335,7 @@ private:
     W = Oy_Fl_Image_Widget::w(),
     H = Oy_Fl_Image_Widget::h();
     if(oy_display_verbose)
-      fprintf( stderr, _DBG_FORMAT_"%dx%d+%d+%d %dx%d+%d+%d\n",_DBG_ARGS_, 
+      fprintf( stderr, _DBG_FORMAT_"Widget:%dx%d+%d+%d  Parent:%dx%d+%d+%d\n",_DBG_ARGS_, 
         W,H,Oy_Fl_Image_Widget::x(),Oy_Fl_Image_Widget::y(),
         Oy_Fl_Image_Widget::parent()->w(), Oy_Fl_Image_Widget::parent()->h(),
         Oy_Fl_Image_Widget::parent()->x(), Oy_Fl_Image_Widget::parent()->y());
@@ -427,7 +427,7 @@ private:
 
     if(oy_display_verbose)
       fprintf( stderr, _DBG_FORMAT_"w_ %d h_ %d  parent:%dx%d\n"
-               "img:%d clut:%d scale:%f offset:%f prog:%tx shader:%tx %gx%g\n",
+               "img:%d clut:%d scale:%f offset:%f prog:%tx shader:%tx texture ratio:%gx%g\n",
                _DBG_ARGS_, w_,h_,
                Oy_Fl_Image_Widget::parent()->w(),
                Oy_Fl_Image_Widget::parent()->h(),
@@ -443,21 +443,49 @@ private:
     glTexEnvf (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
     /* update texture 0 (image) */
     glBindTexture (GL_TEXTURE_2D, img_texture);
-    glTexImage2D (GL_TEXTURE_2D, 0, GL_RGB16, w_, h_,
-		  0, GL_RGB, GL_UNSIGNED_SHORT, NULL);
+    int gl_data_type = 0;
+    int gl_type = 0;
+    oyPixel_t pt = oyImage_GetPixelLayout( draw_image, oyLAYOUT );
+    oyDATATYPE_e data_type = oyToDataType_m( pt );
+    int channels = oyToChannels_m( pt );
+    int gl_channels = 0;
+    if(channels == 3)
+      gl_channels = GL_RGB;
+    if(channels == 4)
+      gl_channels = GL_RGBA;
+    if(data_type == oyUINT16)
+    {
+      gl_data_type = GL_UNSIGNED_SHORT;
+      if(channels == 3)
+        gl_type = GL_RGB16;
+      if(channels == 4)
+        gl_type = GL_RGBA16;
+    } else if(data_type == oyUINT8)
+    {
+      gl_data_type = GL_UNSIGNED_BYTE;
+      if(channels == 3)
+        gl_type = GL_RGB8;
+      if(channels == 4)
+        gl_type = GL_RGBA8;
+    }
+    glTexImage2D (GL_TEXTURE_2D, 0, gl_type, w_, h_,
+		  0, gl_channels, gl_data_type, NULL);
     oyPointer disp_img = oyImage_GetLineF( draw_image )( draw_image, 0,0, 0, 0 );
     if(!clut)
       fprintf( stderr,_DBG_FORMAT_"obtained no data from draw image\n%s\n", _DBG_ARGS_,
                oyStruct_GetText( (oyStruct_s*)draw_image, oyNAME_DESCRIPTION, 0));
+    if(oy_display_verbose)
+      fprintf(stderr,_DBG_FORMAT_ "w_: %d h_: %d disp image:\n%s\n", _DBG_ARGS_, w_,h_,
+            oyStruct_GetText( (oyStruct_s*)draw_image, oyNAME_NAME, 0));
     glTexSubImage2D (GL_TEXTURE_2D, 0, 0, 0, w_, h_,
-		     GL_RGB, GL_UNSIGNED_SHORT, disp_img);
+		     GL_RGB, gl_data_type, disp_img);
 
     /* draw surface */
     glBegin (GL_QUADS);
-	glTexCoord2f (0.0, th);  glVertex2f (-W + bw, -H + bh);
-	glTexCoord2f (0.0, 0.0); glVertex2f (-W + bw,  H - bh);
-	glTexCoord2f (tw,  0.0); glVertex2f ( W - bw,  H - bh);
-	glTexCoord2f (tw,  th);  glVertex2f ( W - bw, -H + bh);
+      glTexCoord2f (0.0, th);  glVertex2f (-W + bw, -H + bh);
+      glTexCoord2f (0.0, 0.0); glVertex2f (-W + bw,  H - bh);
+      glTexCoord2f (tw,  0.0); glVertex2f ( W - bw,  H - bh);
+      glTexCoord2f (tw,  th);  glVertex2f ( W - bw, -H + bh);
     glEnd ();
 
     glDisable (GL_TEXTURE_2D);
@@ -487,6 +515,9 @@ public:
   {
     oyImage_Release( &image );
     oyImage_FromFile( file_name, 0, &image, 0 );
+    if(oy_display_verbose)
+      fprintf(stderr, _DBG_FORMAT_"loaded image: %s\n%s\n", _DBG_ARGS_,
+                      file_name, oyStruct_GetText( (oyStruct_s*)image, oyNAME_NAME, 0));
 
     int error = load3DTextureFromFile( clut_name );
     if(!error && oy_display_verbose)
@@ -495,6 +526,46 @@ public:
 
     return error;
   }
+
+  const char * printDataType( int gl_data_type )
+  {
+    static char t[64] = {0};
+    switch( gl_data_type )
+    {
+      case GL_UNSIGNED_SHORT: strcpy(t, "GL_UNSIGNED_SHORT"); break;
+      case GL_UNSIGNED_BYTE:  strcpy(t, "GL_UNSIGNED_BYTE"); break;
+      case GL_HALF_FLOAT:     strcpy(t, "GL_HALF_FLOAT"); break;
+      case GL_FLOAT:          strcpy(t, "GL_FLOAT"); break;
+      case GL_DOUBLE:         strcpy(t, "GL_DOUBLE"); break;
+      default: sprintf( t, "%d", gl_data_type );
+    }
+    return t;
+  }
+  const char * printChannelType( int type )
+  {
+    static char t[64] = {0};
+    switch( type )
+    {
+      case GL_RGB:  strcpy(t, "GL_RGB"); break;
+      case GL_RGBA: strcpy(t, "GL_RGBA"); break;
+      default: sprintf( t, "%d", type );
+    }
+    return t;
+  }
+  const char * printType( int type )
+  {
+    static char t[64] = {0};
+    switch( type )
+    {
+      case GL_RGB8:  strcpy(t, "GL_RGB8"); break;
+      case GL_RGBA8: strcpy(t, "GL_RGBA8"); break;
+      case GL_RGB16:  strcpy(t, "GL_RGB16"); break;
+      case GL_RGBA16: strcpy(t, "GL_RGBA16"); break;
+      default: sprintf( t, "%d", type );
+    }
+    return t;
+  }
+
 
 };
 
