@@ -128,6 +128,7 @@ oyConversion_s * oyConversion_FromImageForDisplay_ (
 
 
   /* create a new filter node */
+  if(!(flags & OY_SKIP_ICC))
   {
     icc = out = oyFilterNode_FromOptions( OY_CMM_STD, "//" OY_TYPE_STD "/icc_color",
                                      cc_options, NULL );
@@ -144,11 +145,12 @@ oyConversion_s * oyConversion_FromImageForDisplay_ (
     error = oyFilterNode_SetData( out, (oyStruct_s*)image_out, 0, 0 );
     if(error != 0)
       fprintf( stderr, "could not add data\n" );
+
+    /* swap in and out */
+    if(out)
+      in = out;
   }
 
-  /* swap in and out */
-  if(out)
-    in = out;
 
 
   /* create a node for preparing the image for displaying */
@@ -187,8 +189,9 @@ oyConversion_s * oyConversion_FromImageForDisplay_ (
   /* apply policies */
   /*error = oyOptions_SetFromString( &options, "//" OY_TYPE_STD "//verbose",
                                  "true", OY_CREATE_NEW );*/
-  oyConversion_Correct( conversion, "//" OY_TYPE_STD "/icc_color", flags,
-                        options );
+  if(!(flags & OY_SKIP_ICC))
+    oyConversion_Correct( conversion, "//" OY_TYPE_STD "/icc_color", flags,
+                          options );
   oyOptions_Release( &options );
 
   if(cc_node)
@@ -207,13 +210,14 @@ oyConversion_s * oyConversion_FromImageForDisplay_ (
  *                                     for options marked as advanced |
  *                                     oyOPTIONATTRIBUTE_ADVANCED |
  *                                     OY_SELECT_FILTER |
- *                                     OY_SELECT_COMMON
+ *                                     OY_SELECT_COMMON |
+ *                                     OY_SKIP_ICC
  *  @param[in]     data_type           the desired data type for output
  *  @param[in]     obj                 Oyranos object (optional)
  *  @return                            generated new graph, owned by caller
  *
- *  @version Oyranos: 0.9.6
- *  @date    2016/04/13
+ *  @version Oyranos: 0.9.7
+ *  @date    2018/01/30
  *  @since   2012/01/21 (Oyranos: 0.4.0)
  */
 oyConversion_s * oyConversion_FromImageForDisplay  (

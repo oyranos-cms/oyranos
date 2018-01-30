@@ -28,6 +28,7 @@ extern "C" {
 
 extern int oy_display_verbose;
 
+#define OY_SKIP_ICC 8192
 oyConversion_s * oyConversion_FromImageForDisplay  (
                                        oyImage_s         * image_in,
                                        oyImage_s         * image_out,
