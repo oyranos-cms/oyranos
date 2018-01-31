@@ -75,6 +75,7 @@ void jobResultRepeatCb(void*)
 
 /* keep at least one node around to handle options */
 static oyFilterNode_s * icc = 0;
+const char * clut_name = 0;
 
 int
 main(int argc, char** argv)
@@ -90,7 +91,6 @@ main(int argc, char** argv)
   int gl_box = 0x01;
   int logo = 0x02;
   const char * icc_color_context = 0;
-  const char * clut_name = 0;
   int i;
   oyOptions_s * module_options = NULL;
   uint32_t icc_profile_flags = 0;
@@ -664,7 +664,8 @@ Oy_Fl_Double_Window * createWindow (Oy_Fl_Image_Widget ** oy_box, uint32_t flags
 
 oyOptions_s * findOpts( const char * filter_name )
 {
-  oyFilterGraph_s * g = oyFilterGraph_FromNode( icc, 0 );
+  oyConversion_s * cc = oy_widget->conversion();
+  oyFilterGraph_s * g = oyConversion_GetGraph( cc );
   oyFilterNode_s * n = oyFilterGraph_GetNode( g, -1, filter_name, NULL );
   oyOptions_s * opts = oyFilterNode_GetOptions( n, 0 );
   oyFilterGraph_Release( &g );
@@ -675,7 +676,8 @@ oyOptions_s * findOpts( const char * filter_name )
 
 oyOption_s * findOpt( const char * filter_name, const char * key_name )
 {
-  oyFilterGraph_s * g = oyFilterGraph_FromNode( icc, 0 );
+  oyConversion_s * cc = oy_widget->conversion();
+  oyFilterGraph_s * g = oyConversion_GetGraph( cc );
   oyFilterNode_s * n = oyFilterGraph_GetNode( g, -1, filter_name, NULL );
   oyOptions_s * opts = oyFilterNode_GetOptions( n, 0 );
   oyOption_s * opt = oyOptions_Find( opts, key_name, oyNAME_PATTERN );
@@ -784,6 +786,7 @@ void               openNextImage     ( Oy_Fl_Image_Widget* oy_widget,
   oyOptions_s * module_options = oyFilterNode_GetOptions( icc, 0 );
 
   Oy_Fl_GL_Box * oy_box = dynamic_cast<Oy_Fl_GL_Box*> (oy_widget);
+  Oy_Fl_Shader_Box * oy_shader_box = dynamic_cast<Oy_Fl_Shader_Box*> (oy_widget);
   if(oy_box)
   {
     oyFilterNode_Release( &icc );
@@ -814,7 +817,36 @@ void               openNextImage     ( Oy_Fl_Image_Widget* oy_widget,
       fflush( stderr );
       Fl::wait(0);
     }
-  } else
+  } else if(oy_shader_box)
+  {
+    for(int i = 0; i < count; ++i)
+    {
+      pos += increment;
+      if(pos >= count)
+        pos = 0;
+      else if(pos < 0)
+        pos = count - 1;
+
+      if(strstr(files[pos],".xvpics") != NULL ||
+         strstr(files[pos],".thumbnails") != NULL)
+        continue;
+
+      if(oy_display_verbose)
+        fprintf( stderr, "open image %s %d/%d\n", files[pos], i, count  );
+      int error = oy_shader_box->setImage( files[pos], module_options, clut_name );
+      if(!error)
+      {
+        setWindowMenue( win, oy_widget, icc  );
+        win->label( files[pos] );
+        oy_shader_box->valid(0);
+        break;
+      } else if(oy_display_verbose)
+        fprintf( stderr, "could not open image %s; continuing with next. %d/%d\n", files[pos], i, count  );
+      fflush( stderr );
+      Fl::wait(0);
+    }
+  }
+  else
     fprintf(stderr, "need a GL box; skipping image change ...\n");
 
   oyOptions_Release( &module_options );

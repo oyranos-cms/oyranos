@@ -338,7 +338,7 @@ private:
       fprintf( stderr,_DBG_FORMAT_"texture:(%dx%d)%dc %s %s %s %s\n", _DBG_ARGS_,
         frame_width,frame_height, channels, oyDataTypeToText(data_type),
         printType( gl_type ), printDataType(gl_data_type), printChannelType( gl_channels));
-      exit(1);
+      //exit(1);
     }
 
     glBindTexture (GL_TEXTURE_2D, 0);
@@ -442,7 +442,6 @@ private:
         {
           valid(0);
           --need_redraw;
-          fprintf(stderr, "need_redraw: %d\n", need_redraw);
           // needed for proper first time displaying
           oyConversion_RunPixels( conversion(), 0 );
           oyImage_Release( &draw_image );
@@ -536,7 +535,6 @@ private:
 
     if(need_redraw)
     {
-      fprintf(stderr, _DBG_FORMAT_"need_redraw: %d\n",_DBG_ARGS_, need_redraw);
       oyImage_Release( &draw_image );
       return;
     }
@@ -592,17 +590,19 @@ public:
                                        const char        * clut_name )
   {
     oyImage_Release( &image );
-    oyImage_FromFile( file_name, 0, &image, 0 );
+    int error = oyImage_FromFile( file_name, 0, &image, 0 );
     if(oy_display_verbose)
       fprintf(stderr, _DBG_FORMAT_"loaded image: %s\n%s\n", _DBG_ARGS_,
                       file_name, oyStruct_GetText( (oyStruct_s*)image, oyNAME_NAME, 0));
+    if(!image)
+      error = 1;
 
-    int error = load3DTextureFromFile( clut_name );
-    if(!error && oy_display_verbose)
+    int lerror = load3DTextureFromFile( clut_name );
+    if(!error && !lerror && oy_display_verbose)
       fprintf(stderr, _DBG_FORMAT_"successfully loaded clut: %s\n", _DBG_ARGS_,
                       clut_name );
 
-    return error;
+    return error + lerror;
   }
 
   const char * printDataType( int gl_data_type )
