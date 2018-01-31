@@ -24,9 +24,15 @@
 class Oy_Fl_Shader_Box : public Fl_Gl_Window,
                          public Oy_Fl_Image_Widget
 {
+  /* texture storage */
   char * frame_data;
+  int frame_height, frame_width;
+  /* widget dimensions */
   int W,H;
+  /* sub texture dimensions */
+  int sw = 0, sh = 0;
   int grid_points;
+  int max_texture_size;
   oyImage_s * clut_image,
             * image,
             * display_image;
@@ -34,7 +40,9 @@ public:
   Oy_Fl_Shader_Box(int x, int y, int w, int h)
     : Fl_Gl_Window(x,y,w,h), Oy_Fl_Image_Widget(x,y,w,h)
   { frame_data = NULL; W=0; H=0; clut_image = image = display_image = NULL;
-    grid_points = 0; clut = 0; clut_filled = 0; need_redraw=2; clut_texture = -1; };
+    grid_points = 0; clut = 0; clut_filled = 0; clut_texture = -1; need_redraw=2;
+    glGetIntegerv( GL_MAX_TEXTURE_SIZE, &max_texture_size );
+  };
 
   ~Oy_Fl_Shader_Box(void) { oyImage_Release( &clut_image );
     oyImage_Release( &image ); oyImage_Release( &display_image ); };
@@ -70,25 +78,28 @@ private:
     glGetObjectParameterivARB (obj, GL_OBJECT_INFO_LOG_LENGTH_ARB, &len);
 
     if (len > 0) {
-	log = (char*) malloc (len);
-	glGetInfoLogARB (obj, len, &nwritten, log);
-	fprintf (stderr, "%s\n", log);
-	free (log);
+      log = (char*) malloc (len);
+      glGetInfoLogARB (obj, len, &nwritten, log);
+      fprintf (stderr, "%s\n", log);
+      free (log);
     }
   }
-  void check_error (const char *text)
+  int check_error (const char *text)
   {
     GLenum err = glGetError ();
 
-    if (err != GL_NO_ERROR) {
-    	if (text)
-	    fprintf (stderr, _DBG_FORMAT_"%s: ",_DBG_ARGS_, text);
-	while (err != GL_NO_ERROR) {
-	    fprintf (stderr, _DBG_FORMAT_"GL error %#x\n",_DBG_ARGS_,(int) err);
-	    err = glGetError ();
-	}
-	exit (1);
+    if (err != GL_NO_ERROR)
+    {
+      if (text)
+        fprintf (stderr, _DBG_FORMAT_"%s:\n",_DBG_ARGS_, text);
+      while (err != GL_NO_ERROR)
+      {
+        fprintf (stderr, _DBG_FORMAT_"GL error %#x\n",_DBG_ARGS_,(int) err);
+        err = glGetError ();
+      }
+      return 1;
     }
+    return 0;
   }
 
 
@@ -125,10 +136,6 @@ private:
 
     loc = glGetUniformLocation ((GLintptr)cmm_prog, "clut");
     glUniform1iARB (loc, 1);
-
-    /* back to texture 0 (image) */
-    glActiveTextureARB (GL_TEXTURE0_ARB);
-    glBindTexture (GL_TEXTURE_2D, img_texture);
   }
 
   int  load3DTextureFromFile( const char * file_name )
@@ -182,42 +189,80 @@ private:
     }
     return 0;
   }
- 
-  void make_image_texture (void)
-  {
-    int w_ = 8;
-    int h_ = 8;
-    oyPointer disp_img;
-    oyPixel_t pt = oyImage_GetPixelLayout( image, oyLAYOUT );
-    oyDATATYPE_e data_type = oyToDataType_m( pt );
-    oyConversion_s * cc;
-    int width = oyImage_GetWidth( image ),
-        height = oyImage_GetHeight( image );
 
-    /* set image texture size to the smaller of the image or viewport */
+  int change_frame_dimensions( int width, int height )
+  {
+    int changed = 0;
+    int old_frame_width = frame_width,
+        old_frame_height = frame_height;
+    frame_width = 8;
+    frame_height = 8;
+
     if(width > W)
       width = W;
     if(height > H)
       height = H;
 
-    while (w_ < width)
+    while (frame_width < width)
     {
-      w_ += w_;
-      if(w_ > width)
+      frame_width += frame_width;
+      if(frame_width > width)
         break;
     }
-    while (h_ < height)
+    while (frame_height < height)
     {
-      h_ += h_;
-      if(h_ > height)
+      frame_height += frame_height;
+      if(frame_height > height)
         break;
     }
+    changed = old_frame_width != frame_width || old_frame_height != frame_height;
+
+    if(!changed)
+      return changed;
+
+    if( frame_width > max_texture_size ||
+        frame_height > max_texture_size )
+      fprintf( stderr,_DBG_FORMAT_"frame size is likely too big frame(%dx%d) sub(%dx%d) max:%d\n", _DBG_ARGS_, frame_width, frame_height, sw,sh, max_texture_size);
+    else if(oy_display_verbose)
+      fprintf( stderr,_DBG_FORMAT_"frame size (%dx%d) max:%d\n", _DBG_ARGS_, frame_width, frame_height, max_texture_size);
+
+
+    oyPixel_t pt = oyImage_GetPixelLayout( image, oyLAYOUT );
+    oyDATATYPE_e data_type = oyToDataType_m( pt );
+    int channels = oyToChannels_m( pt );
+    int sample_size = oyDataTypeGetSize( data_type );
+
+    if(frame_data) free(frame_data);
+    frame_data = (char*)malloc(frame_width*frame_height*channels*sample_size);
+    if(!frame_data)
+      fprintf( stderr,_DBG_FORMAT_"failed to allocate frame_data (%dx%d)%dc\n", _DBG_ARGS_, frame_width, frame_height, channels);
+
+    return changed;
+  }
+
+  void make_image_texture (void)
+  {
+    oyImage_s * draw_image = NULL;
+
+    if(conversion())
+      draw_image = oyConversion_GetImage( conversion(), OY_OUTPUT );
+
+    oyPixel_t pt = oyImage_GetPixelLayout( image, oyLAYOUT );
+    oyDATATYPE_e data_type = oyToDataType_m( pt );
+    int channels = oyToChannels_m( pt );
+    oyConversion_s * cc;
+    int width = oyImage_GetWidth( draw_image ? draw_image : image ),
+        height = oyImage_GetHeight( draw_image ? draw_image : image );
+    oyImage_Release( &draw_image );
+
+    /* set image texture size to the smaller of the image or viewport */
+    change_frame_dimensions( width, height );
 
     /*if(data_type == oyUINT8)
       data_type = oyUINT16;*/
     oyOptions_s * old_tags = oyImage_GetTags( display_image ), * tags;
     oyImage_Release( &display_image );
-    display_image = oyImage_Create( w_, h_,
+    display_image = oyImage_Create( frame_width, frame_height,
                          0,
                          oyChannels_m(3) | oyDataType_m(data_type),
                          oyImage_GetProfile( image ),
@@ -228,29 +273,17 @@ private:
     oyOptions_Release( &tags );
 
     if(oy_display_verbose)
-      fprintf( stderr,_DBG_FORMAT_"Wid:%dx%d+%d+%d Parent:%dx%d+%d+%d texture:%dx%d %s\n",
+      fprintf( stderr,_DBG_FORMAT_"Wid:%dx%d+%d+%d Parent:%dx%d+%d+%d texture:(%dx%d)%dc %s\n",
         _DBG_ARGS_,
         W,H,Oy_Fl_Image_Widget::x(),Oy_Fl_Image_Widget::y(),
         Oy_Fl_Image_Widget::parent()->w(), Oy_Fl_Image_Widget::parent()->h(),
         Oy_Fl_Image_Widget::parent()->x(), Oy_Fl_Image_Widget::parent()->y(),
-        w_,h_, oyDataTypeToText(data_type));
+        frame_width,frame_height, channels, oyDataTypeToText(data_type));
 
     cc = oyConversion_FromImageForDisplay( image, display_image,
                          0, OY_SKIP_ICC, data_type, 0, 0 );
     conversion( cc );
 
-    glGenTextures (1, &img_texture);
-    glBindTexture (GL_TEXTURE_2D, img_texture);
-
-    glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
-    // glTexImage2D (GL_TEXTURE_2D, 0, GL_RGB16F_ARB, w_, h_,
-    // glTexImage2D (GL_TEXTURE_2D, 0, GL_LUMINANCE8, w_, h_,
-
-    int channels = oyToChannels_m( pt );
     int gl_channels = 0;
     if(channels == 3)
       gl_channels = GL_RGB;
@@ -279,24 +312,37 @@ private:
         W,H,Oy_Fl_Image_Widget::x(),Oy_Fl_Image_Widget::y(),
         Oy_Fl_Image_Widget::parent()->w(), Oy_Fl_Image_Widget::parent()->h(),
         Oy_Fl_Image_Widget::parent()->x(), Oy_Fl_Image_Widget::parent()->y(),
-        w_,h_, oyDataTypeToText(data_type));
+        frame_width,frame_height, oyDataTypeToText(data_type));
 
     if(oy_debug)
-      fprintf( stderr,_DBG_FORMAT_"texture:%dx%d %s %s %s %s\n", _DBG_ARGS_,
-        w_,h_, oyDataTypeToText(data_type),
+      fprintf( stderr,_DBG_FORMAT_"texture:(%dx%d)%dc %s %s %s %s\n", _DBG_ARGS_,
+        frame_width,frame_height, channels, oyDataTypeToText(data_type),
         printType( gl_type ), printDataType(gl_data_type), printChannelType( gl_channels));
 
-    glTexImage2D (GL_TEXTURE_2D, 0, gl_type, w_, h_,
-		  0, gl_channels, gl_data_type, NULL);
+    /* texture 0 (image) */
+    glGenTextures (1, &img_texture);
+    glActiveTextureARB (GL_TEXTURE0_ARB);
+    glBindTexture (GL_TEXTURE_2D, img_texture);
+
+    glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+    glTexImage2D (GL_TEXTURE_2D, 0, gl_type, frame_width, frame_height,
+		  0, gl_channels, gl_data_type, frame_data);
 
     /* size may be too big */
-    check_error("glTexImage2D failed (image too large?)");
+    if(check_error("glTexImage2D failed (image too large?)"))
+    {
+      fprintf( stderr,_DBG_FORMAT_"texture:(%dx%d)%dc %s %s %s %s\n", _DBG_ARGS_,
+        frame_width,frame_height, channels, oyDataTypeToText(data_type),
+        printType( gl_type ), printDataType(gl_data_type), printChannelType( gl_channels));
+      exit(1);
+    }
 
-    disp_img = oyImage_GetLineF( display_image )( display_image, 0,0, 0, 0 );
-    if(!disp_img)
-      fprintf( stderr,_DBG_FORMAT_"obtained no data from display image\n%s\n", _DBG_ARGS_, oyStruct_GetText( (oyStruct_s*)display_image, oyNAME_NAME, 0));
-    glTexSubImage2D (GL_TEXTURE_2D, 0, 0, 0, w_, h_,
-		     gl_channels, gl_data_type, disp_img);
+    glBindTexture (GL_TEXTURE_2D, 0);
+
     if(0&&oy_display_verbose)
       oyImage_ToFile( display_image, "display_image.ppm", 0 );
   }
@@ -325,40 +371,52 @@ private:
 
     /* back to texture 0 (image) */
     glActiveTextureARB (GL_TEXTURE0_ARB);
+    glBindTexture (GL_TEXTURE_2D, img_texture);
   }
 
   int need_redraw;
   void draw()
   {
-    int w_,h_;
+    int W_ = Oy_Fl_Image_Widget::w(),
+        H_ = Oy_Fl_Image_Widget::h();
 
-    W = Oy_Fl_Image_Widget::w(),
-    H = Oy_Fl_Image_Widget::h();
     if(oy_display_verbose)
       fprintf( stderr, _DBG_FORMAT_"Widget:%dx%d+%d+%d  Parent:%dx%d+%d+%d\n",_DBG_ARGS_, 
         W,H,Oy_Fl_Image_Widget::x(),Oy_Fl_Image_Widget::y(),
         Oy_Fl_Image_Widget::parent()->w(), Oy_Fl_Image_Widget::parent()->h(),
         Oy_Fl_Image_Widget::parent()->x(), Oy_Fl_Image_Widget::parent()->y());
 
-    glClearColor (0.5, 0.5, 0.5, 0.0);
+    // - not needed, but might improve speed - START //
     glShadeModel (GL_FLAT);
     glDisable (GL_DITHER);
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
     glDisable (GL_BLEND);
     glDisable (GL_DEPTH_TEST);
 
     glMatrixMode (GL_PROJECTION);
     glLoadIdentity ();
+    // - not needed, but might improve speed - END //
+
+    glClearColor (0.5, 0.5, 0.5, 0.0);
+
     glMatrixMode (GL_MODELVIEW);
     glLoadIdentity ();
-
-    glViewport(0,0, W,H );
+    glViewport( 0,0, W,H );
     glOrtho( -W,W, -H,H, -1.0,1.0);
+    glEnable (GL_TEXTURE_2D);
 
-    if(image && clut_image && !valid())
+
+
+    if(image && clut_image)
+    if(!valid() || need_redraw ||
+       W_ != W || H_ != H ||
+       !frame_data)
     {
-      make_image_texture ();
+      W = W_;
+      H = H_;
+      valid(1);
+
+      make_image_texture();
 
       setupShaderTexture();
 
@@ -367,48 +425,86 @@ private:
     }
 
     oyImage_s * draw_image = NULL;
+    int channels = 0;
+    oyDATATYPE_e data_type = oyUINT8;
+    int sample_size = 0;
     if(conversion())
     {
-      oyPixel_t pt;
-      oyDATATYPE_e data_type = oyUINT8;
-
-      pt = oyImage_GetPixelLayout( display_image, oyLAYOUT );
+      oyPixel_t pt = oyImage_GetPixelLayout( display_image, oyLAYOUT );
       data_type = oyToDataType_m( pt );
+      sample_size = oyDataTypeGetSize( data_type );
 
       int result = drawPrepare( &draw_image, data_type, 1 );
 
+      if(!draw_image || result != 0)
+      {
+        if(need_redraw && valid())
+        {
+          valid(0);
+          --need_redraw;
+          fprintf(stderr, "need_redraw: %d\n", need_redraw);
+          // needed for proper first time displaying
+          oyConversion_RunPixels( conversion(), 0 );
+          oyImage_Release( &draw_image );
+          return;
+        }
+      }
+
       pt = oyImage_GetPixelLayout( draw_image, oyLAYOUT );
 
-#if 0
-      int channels = oyToChannels_m( pt );
-      int gl_type = 0;
-      if(channels == 3)
-        gl_type = GL_RGB;
-      if(channels == 4)
-        gl_type = GL_RGBA;
-#endif
+      channels = oyToChannels_m( pt );
 
       if(oy_debug && draw_image)
         fprintf(stdout, _DBG_FORMAT_"pixellayout: %d width: %d channels: %d\n",
                     _DBG_ARGS_,
                     pt, oyImage_GetWidth(draw_image), oyToChannels_m(pt) );
 
-      if(!valid())
-      {
-        valid(1);
-        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-      }
+#ifdef __APPLE__
+      glDrawBuffer(GL_FRONT_AND_BACK);
+#endif // !MESA
 
-      if((!draw_image || result != 0) && valid())
+      /* glTexSubImage2D texture dimensions */
+      sw = OY_MIN(oyImage_GetWidth( draw_image), W);
+      sh = OY_MIN(oyImage_GetHeight(draw_image), H);
+
+      if( frame_width < sw || frame_height < sh )
       {
-        if(!need_redraw)
+        if(change_frame_dimensions( sw, sh ))
         {
+          oyImage_SetCritical( display_image, 0, NULL, NULL, frame_width, frame_height );
+          valid(0);
           oyImage_Release( &draw_image );
           return;
         }
-        --need_redraw;
+        //make_image_texture();
       }
-    }
+
+      /* a buffer alignment of 4 byte is what most GPUs prefer */
+      if((sw*channels*sample_size)%4)
+        glPixelStorei(GL_UNPACK_ALIGNMENT,1);
+      else
+        glPixelStorei(GL_UNPACK_ALIGNMENT,4);
+
+      /* get the data */
+      if(draw_image && frame_data)
+      {
+        if(sh > frame_height)
+          fprintf( stderr, _DBG_FORMAT_"draw_image height: %d frame_height: %d\n",
+                   _DBG_ARGS_, sh, frame_height );
+        for(int y = 0; y < sh; ++y)
+        {
+          int is_allocated = 0, height = 0;
+          void * image_data = oyImage_GetLineF(draw_image)( draw_image, y, &height, -1, &is_allocated );
+
+          memcpy( &frame_data[sw*(sh-y-1)*channels*sample_size], image_data,
+                  sw*channels*sample_size );
+
+          if(is_allocated)
+            free( image_data );
+        }
+      }
+    } else
+      fprintf( stderr, _DBG_FORMAT_ "conversion not ready\n", _DBG_ARGS_ );
 
     if(!draw_image)
     {
@@ -416,76 +512,58 @@ private:
       return;
     }
 
-    w_ = oyImage_GetWidth(  draw_image );
-    h_ = oyImage_GetHeight( draw_image );
     /* border values */
-    float bw = OY_MAX( 0, W - oyImage_GetWidth(image)),
-          bh = OY_MAX( 0, H - oyImage_GetHeight(image));
+    float bw = OY_MAX( 0, W - sw),
+          bh = OY_MAX( 0, H - sh);
     /* maintain texture ratio */
-    float tw = (W - bw)/(float)w_;
-    float th = (H - bh)/(float)h_;
+    float tw = (W - bw)/(float)frame_width;
+    float th = (H - bh)/(float)frame_height;
 
-    if(oy_debug)
-      fprintf( stderr, _DBG_FORMAT_"w_ %d h_ %d  parent:%dx%d\n"
-               "img:%d clut:%d scale:%f offset:%f prog:%tx shader:%tx texture ratio:%gx%g\n",
-               _DBG_ARGS_, w_,h_,
+    if(oy_display_verbose)
+      fprintf( stderr, _DBG_FORMAT_"frame: (%dx%d)%dc WxH(%dx%d border %g,%g) parent:%dx%d\n"
+               "img:%d clut:%d(scale:%f offset:%f) prog:%tx shader:%tx texture ratio:%gx%g align:%d\n",
+               _DBG_ARGS_, frame_width,frame_height,channels, W,H, bw,bh,
                Oy_Fl_Image_Widget::parent()->w(),
                Oy_Fl_Image_Widget::parent()->h(),
                img_texture, clut_texture, clut_scale, clut_offset,
-               cmm_prog, cmm_shader, tw,th);
+               cmm_prog, cmm_shader, tw,th,
+               (OY_MIN(oyImage_GetWidth( draw_image), W)*channels*sample_size)%2);
 
     glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glColor3f(1.0, 1.0, 1.0);
     glBegin(GL_LINE_STRIP); glVertex2f(W, H); glVertex2f(-W,-H); glEnd();
     glBegin(GL_LINE_STRIP); glVertex2f(W,-H); glVertex2f(-W, H); glEnd();
 
-    glEnable (GL_TEXTURE_2D);
-    glTexEnvf (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-    /* update texture 0 (image) */
-    glBindTexture (GL_TEXTURE_2D, img_texture);
-    int gl_data_type = 0;
-    int gl_type = 0;
-    oyPixel_t pt = oyImage_GetPixelLayout( draw_image, oyLAYOUT );
-    oyDATATYPE_e data_type = oyToDataType_m( pt );
-    int channels = oyToChannels_m( pt );
-    int gl_channels = 0;
-    if(channels == 3)
-      gl_channels = GL_RGB;
-    if(channels == 4)
-      gl_channels = GL_RGBA;
-    if(data_type == oyUINT16)
+    if(need_redraw)
     {
-      gl_data_type = GL_UNSIGNED_SHORT;
-      if(channels == 3)
-        gl_type = GL_RGB16;
-      if(channels == 4)
-        gl_type = GL_RGBA16;
-    } else if(data_type == oyUINT8)
-    {
-      gl_data_type = GL_UNSIGNED_BYTE;
-      if(channels == 3)
-        gl_type = GL_RGB8;
-      if(channels == 4)
-        gl_type = GL_RGBA8;
+      fprintf(stderr, _DBG_FORMAT_"need_redraw: %d\n",_DBG_ARGS_, need_redraw);
+      oyImage_Release( &draw_image );
+      return;
     }
-    glTexImage2D (GL_TEXTURE_2D, 0, gl_type, w_, h_,
-		  0, gl_channels, gl_data_type, NULL);
-    oyPointer disp_img = oyImage_GetLineF( draw_image )( draw_image, 0,0, 0, 0 );
-    if(!clut)
-      fprintf( stderr,_DBG_FORMAT_"obtained no data from draw image\n%s\n", _DBG_ARGS_,
-               oyStruct_GetText( (oyStruct_s*)draw_image, oyNAME_DESCRIPTION, 0));
-    if(oy_debug)
-      fprintf(stderr,_DBG_FORMAT_ "w_: %d h_: %d disp image:\n%s\n", _DBG_ARGS_, w_,h_,
-            oyStruct_GetText( (oyStruct_s*)draw_image, oyNAME_NAME, 0));
-    glTexSubImage2D (GL_TEXTURE_2D, 0, 0, 0, w_, h_,
-		     GL_RGB, gl_data_type, disp_img);
+
+    glTexEnvf (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+
+    int gl_data_type = 0;
+    if(data_type == oyUINT16)
+      gl_data_type = GL_UNSIGNED_SHORT;
+    else if(data_type == oyUINT8)
+      gl_data_type = GL_UNSIGNED_BYTE;
+
+    /* upload texture 0 (image) */
+    glBindTexture (GL_TEXTURE_2D, img_texture);
+    glTexSubImage2D (GL_TEXTURE_2D, 0, 0, 0, sw, sh,
+                     GL_RGB, gl_data_type, frame_data);
+    glBindTexture (GL_TEXTURE_2D, 0);
+
+    if(oy_display_verbose)
+      fprintf(stderr, _DBG_FORMAT_"subImage(%dx%d) frame(%dx%d)\n", _DBG_ARGS_, sw,sh, frame_width, frame_height );
 
     /* draw surface */
     glBegin (GL_QUADS);
-      glTexCoord2f (0.0, th);  glVertex2f (-W + bw, -H + bh);
-      glTexCoord2f (0.0, 0.0); glVertex2f (-W + bw,  H - bh);
-      glTexCoord2f (tw,  0.0); glVertex2f ( W - bw,  H - bh);
-      glTexCoord2f (tw,  th);  glVertex2f ( W - bw, -H + bh);
+      glTexCoord2f (0.0, 0.0); glVertex2f (-W + bw, -H + bh);
+      glTexCoord2f (0.0, th ); glVertex2f (-W + bw,  H - bh);
+      glTexCoord2f (tw,  th ); glVertex2f ( W - bw,  H - bh);
+      glTexCoord2f (tw,  0.0); glVertex2f ( W - bw, -H + bh);
     glEnd ();
 
     glDisable (GL_TEXTURE_2D);
@@ -565,8 +643,6 @@ public:
     }
     return t;
   }
-
-
 };
 
     const char * Oy_Fl_Shader_Box::cmm_shader_source =
