@@ -188,7 +188,8 @@ int      oyraFilter_ImageExposeRun   ( oyFilterPlug_s    * requestor_plug,
       ticket_array_pix_width = oyArray2d_GetWidth( array_out ) / channels_dst;
 
       {
-        int w,h,x,y, start_x,start_y;
+        int w,h,x,y, i, start_x,start_y;
+        unsigned int max = 1;
         oyRectangle_s * ticket_roi = oyPixelAccess_GetArrayROI( ticket );
         oyRectangle_s_  roi_= {oyOBJECT_RECTANGLE_S,0,0,0, 0,0,0,0};
         oyRectangle_s * roi = (oyRectangle_s*)&roi_;
@@ -210,17 +211,22 @@ int      oyraFilter_ImageExposeRun   ( oyFilterPlug_s    * requestor_plug,
         start_x = OY_ROUND(roi_.x);
         start_y = OY_ROUND(roi_.y);
 
+        switch(data_type_out)
+        {
+          case oyUINT8: max = 255; break;
+          case oyUINT16: max = 65535; break;
+          case oyUINT32: max = UINT32_MAX; break;
+          default: break;
+        }
 
         /* expose the samples */
 #if defined(USE_OPENMP)
-#pragma omp parallel for private(x)
+#pragma omp parallel for private(x,y,i)
 #endif
         for(y = start_y; y < h; ++y)
         {
           for(x = start_x; x < w; ++x)
           {
-            int i;
-            
             if( (sig == icSigRgbData ||
                  sig == icSigXYZData ||
                  sig == icSigLabData ||
@@ -228,7 +234,6 @@ int      oyraFilter_ImageExposeRun   ( oyFilterPlug_s    * requestor_plug,
                 && channels_dst >= 3)
             {
               double rgb[3], v;
-              unsigned int max = 1;
 
               for(i = 0; i < 3; ++i)
               {
@@ -236,7 +241,6 @@ int      oyraFilter_ImageExposeRun   ( oyFilterPlug_s    * requestor_plug,
                 {
                 case oyUINT8:
                   rgb[i] = array_out_data[y][x*channels_dst*bps_out + i*bps_out];
-                  max = 255;
                   break;
                 case oyUINT16:
                   {
@@ -244,14 +248,12 @@ int      oyraFilter_ImageExposeRun   ( oyFilterPlug_s    * requestor_plug,
                   if(byte_swap) v = oyByteSwapUInt16(v);
                   rgb[i] = v;
                   }
-                  max = 65535;
                   break;
                 case oyUINT32:
                   {
                   uint32_t v = *((uint32_t*)&array_out_data[y][x*channels_dst*bps_out + i*bps_out]);
                   if(byte_swap) v = oyByteSwapUInt32(v);
                   rgb[i] = v;
-                  max = UINT32_MAX;
                   }
                   break;
                 case oyHALF:

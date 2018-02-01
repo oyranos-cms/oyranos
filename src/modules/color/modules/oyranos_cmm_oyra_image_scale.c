@@ -267,9 +267,11 @@ int      oyraFilter_ImageScaleRun    ( oyFilterPlug_s    * requestor_plug,
         for(y = 0; y < h; ++y)
         {
           ys = y/scale;
-          if((int)OY_ROUND(ys) >= nh) { oyra_msg( oyMSG_ERROR, (oyStruct_s*)ticket,
-                         OY_DBG_FORMAT_"scale:%g y:%d h:%d ys:%d/%g nh:%d\n",
-                         OY_DBG_ARGS_, scale, y,h,ys,y/scale,nh); break; }
+          if((int)OY_ROUND(ys) >= nh)
+          { oyra_msg( oyMSG_ERROR, (oyStruct_s*)ticket,
+                      OY_DBG_FORMAT_"scale:%g y:%d h:%d ys:%d/%g nh:%d\n",
+                      OY_DBG_ARGS_, scale, y,h,ys,y/scale,nh);
+          } else
           for(x = 0; x < w; ++x)
           {
             xs = x/scale;

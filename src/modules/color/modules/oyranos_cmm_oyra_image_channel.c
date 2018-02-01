@@ -254,7 +254,7 @@ int      oyraFilter_ImageChannelRun  ( oyFilterPlug_s    * requestor_plug,
 
         /* copy the channels */
 #if defined(USE_OPENMP)
-#pragma omp parallel for private(x,pos,u8421,flt,u4)
+#pragma omp parallel for private(x,y,i)
 #endif
         for(y = start_y; y < h; ++y)
         {
