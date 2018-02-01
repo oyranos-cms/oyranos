@@ -15,6 +15,7 @@
 #include <FL/gl.h>
 
 #include "Oy_Fl_Image_Widget.h"
+#include "oyranos_devices.h"
 
 #ifndef _DBG_FORMAT_
 #define _DBG_FORMAT_ "%s:%d %s() "
@@ -137,27 +138,49 @@ private:
     loc = glGetUniformLocation ((GLintptr)cmm_prog, "clut");
     glUniform1iARB (loc, 1);
   }
+  oyProfile_s * getFirstMonitorDeviceProfile()
+  {
+    oyProfile_s * prof = NULL;
+    oyOptions_s * cs_options = NULL,
+                * options = NULL;
+    oyConfigs_s * devices = NULL;
+    oyConfig_s * c = NULL;
+    int n = 0,i;
 
-  int  load3DTextureFromFile( const char * file_name )
+    /* get XCM_ICC_COLOR_SERVER_TARGET_PROFILE_IN_X_BASE */
+    int error = oyOptions_SetFromString( &cs_options,
+              "//" OY_TYPE_STD "/config/icc_profile.x_color_region_target", "yes", OY_CREATE_NEW );
+    error = oyOptions_SetFromString( &options,
+                                     "//" OY_TYPE_STD "/config/command",
+                                     "properties", OY_CREATE_NEW );
+    error = oyDevicesGet( 0, "monitor", options, &devices );
+
+
+    n = oyConfigs_Count( devices );
+    if(error <= 0)
+    {
+      for(i = 0; i < n; ++i)
+      {
+        c = oyConfigs_Get( devices, i );
+        oyDeviceAskProfile2( c, cs_options, &prof );
+        size_t size = 0;
+        void * data = oyProfile_GetMem( prof, &size, 0, oyAllocateFunc_);
+        if(size && data)
+          oyDeAllocateFunc_( data );
+        oyConfig_Release( &c );
+      }
+    }
+    oyConfigs_Release( &devices );
+    oyOptions_Release( &options );
+    oyOptions_Release( &cs_options );
+    return prof;
+  }
+
+  int  load3DTexture( )
   {
     int w,h;
     oyPixel_t pt;
     oyDATATYPE_e data_type;
-
-    if (file_name == NULL)
-    {
-    	fprintf(stderr, _DBG_FORMAT_"Cannot open clut file\n", _DBG_ARGS_);
-      return 1;
-    }
-
-    oyImage_Release( &clut_image );
-    oyImage_FromFile( file_name, 0, &clut_image, 0 );
-    if(!clut_image)
-    {
-      fprintf(stderr, _DBG_FORMAT_"Cannot open clut file: %s\n", _DBG_ARGS_,
-                      file_name);
-      return 1;
-    }
 
     pt = oyImage_GetPixelLayout( clut_image, oyLAYOUT );
     data_type = oyToDataType_m(pt);
@@ -183,11 +206,108 @@ private:
     if( oy_display_verbose )
     {
     	fprintf( stderr,_DBG_FORMAT_
-                "loaded clut: %s\ngrid_points:%d h:%d %s need %dx%d oyUINT16\n",
-                 _DBG_ARGS_, file_name,
+                "loaded clut: grid_points:%d h:%d %s need %dx%d oyUINT16\n",
+                 _DBG_ARGS_,
                  grid_points, h,oyDataTypeToText(data_type), w,w*w);
     }
     return 0;
+  }
+
+  int load3DTextureDefault( void )
+  {
+    int error = 0;
+    int icc_profile_flags = oyICCProfileSelectionFlagsFromOptions( 
+                                                              OY_CMM_STD, "//" OY_TYPE_STD "/icc_color",
+                                                              NULL, 0 );
+    fprintf( stderr, "loading default monitor profile and image profile\n" );
+
+    {
+      int width = 64,
+          size, l,a,b,j;
+      uint16_t * buf = 0;
+      uint16_t in[3];
+      char comment[80];
+      oyProfile_s * p = NULL;
+
+      size = width*width;
+
+      buf = (uint16_t*)calloc(sizeof(uint16_t), size*width*3);
+
+#pragma omp parallel for private(in,a,b,j)
+      for(l = 0; l < width; ++l)
+      {
+        in[0] = floor((double) l / (width - 1) * 65535.0 + 0.5);
+        for(a = 0; a < width; ++a) {
+          in[1] = floor((double) a / (width - 1) * 65535.0 + 0.5);
+          for(b = 0; b < width; ++b)
+          {
+            in[2] = floor((double) b / (width - 1) * 65535.0 + 0.5);
+
+            for(j = 0; j < 3; ++j)
+              /* BGR */
+              buf[b*size*3+a*+width*3+l*3+j] = in[j];
+          }
+        }
+      }
+      if(image)
+      {
+        p = oyImage_GetProfile(image);
+        if(!p)
+        {
+          WARNc_S("Could not open profile from image");
+          error = 1;
+        }
+        else
+          fprintf(stderr, "found image profile: %s\n", oyProfile_GetText(p,oyNAME_DESCRIPTION));
+      } else
+      {
+        p = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, 0 );
+        fprintf(stderr, "falling back to default profile: %s\n", oyProfile_GetText(p,oyNAME_DESCRIPTION));
+      }
+      oyImage_s * cimage = oyImage_Create( width,width*width, buf, OY_TYPE_123_16,
+                              p, 0 );
+      oyProfile_Release( &p );
+      sprintf( comment, "clut with %d levels", width );
+
+      oyDATATYPE_e data_type = oyUINT16;
+      p = getFirstMonitorDeviceProfile();
+      int flags = 0;
+      oyConversion_s * cc = oyConversion_CreateFromImage (
+                                cimage, NULL,
+                                p, data_type, flags, 0 );
+
+      error = oyConversion_RunPixels( cc, 0 );
+      if(clut_image) oyImage_Release( &clut_image );
+      clut_image = oyConversion_GetImage( cc, OY_OUTPUT );
+      oyConversion_Release( &cc );
+      //error = oyImage_WritePPM( clut_image, "dbg-clut.ppm", comment);
+      if(!clut_image)
+      { WARNc_S("Could not open clut image");
+      } else
+        error = load3DTexture( );
+    }
+    return error;
+  }
+
+  int  load3DTextureFromFile( const char * file_name )
+  {
+    if (file_name == NULL)
+    {
+    	fprintf(stderr, _DBG_FORMAT_"Cannot open clut file\n", _DBG_ARGS_);
+      return 1;
+    }
+
+    oyImage_Release( &clut_image );
+    oyImage_FromFile( file_name, 0, &clut_image, 0 );
+    if(!clut_image)
+    {
+      fprintf(stderr, _DBG_FORMAT_"Cannot open clut file: %s\n", _DBG_ARGS_,
+                      file_name);
+      return 1;
+    }
+
+    int error = load3DTexture( );
+    return error;
   }
 
   int change_frame_dimensions( int width, int height )
@@ -264,7 +384,7 @@ private:
     oyImage_Release( &display_image );
     display_image = oyImage_Create( frame_width, frame_height,
                          0,
-                         oyChannels_m(3) | oyDataType_m(data_type),
+                         oyChannels_m(channels) | oyDataType_m(data_type),
                          oyImage_GetProfile( image ),
                          0 );
     tags = oyImage_GetTags( display_image );
@@ -285,28 +405,12 @@ private:
     conversion( cc );
 
     int gl_channels = 0;
-    if(channels == 3)
-      gl_channels = GL_RGB;
-    if(channels == 4)
-      gl_channels = GL_RGBA;
+    if(channels == 3) gl_channels = GL_RGB;
+    if(channels == 4) gl_channels = GL_RGBA;
 
-    int gl_data_type = 0;
-    int gl_type = 0;
-    if(data_type == oyUINT16)
-    {
-      gl_data_type = GL_UNSIGNED_SHORT;
-      if(channels == 3)
-        gl_type = GL_RGB16;
-      if(channels == 4)
-        gl_type = GL_RGBA16;
-    } else if(data_type == oyUINT8)
-    {
-      gl_data_type = GL_UNSIGNED_BYTE;
-      if(channels == 3)
-        gl_type = GL_RGB8;
-      if(channels == 4)
-        gl_type = GL_RGBA8;
-    } else
+    int gl_data_type = oyToGlDataType(data_type);
+    int gl_type = oyToGlPixelType(pt);
+    if(!gl_type)
       fprintf( stderr,_DBG_FORMAT_"%dx%d+%d+%d %dx%d+%d+%d %dx%d not supported %s\n",
         _DBG_ARGS_,
         W,H,Oy_Fl_Image_Widget::x(),Oy_Fl_Image_Widget::y(),
@@ -541,16 +645,16 @@ private:
 
     glTexEnvf (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 
-    int gl_data_type = 0;
-    if(data_type == oyUINT16)
-      gl_data_type = GL_UNSIGNED_SHORT;
-    else if(data_type == oyUINT8)
-      gl_data_type = GL_UNSIGNED_BYTE;
+    int gl_data_type = oyToGlDataType(data_type);
+    int gl_channels = 0;
+    if(channels == 3) gl_channels = GL_RGB;
+    if(channels == 4) gl_channels = GL_RGBA;
+
 
     /* upload texture 0 (image) */
     glBindTexture (GL_TEXTURE_2D, img_texture);
     glTexSubImage2D (GL_TEXTURE_2D, 0, 0, 0, sw, sh,
-                     GL_RGB, gl_data_type, frame_data);
+                     gl_channels, gl_data_type, frame_data);
     glBindTexture (GL_TEXTURE_2D, 0);
 
     if(oy_display_verbose)
@@ -597,7 +701,11 @@ public:
     if(!image)
       error = 1;
 
-    int lerror = load3DTextureFromFile( clut_name );
+    int lerror = 0;
+    if(clut_name[0] == 0)
+      lerror = load3DTextureDefault();
+    else
+      lerror = load3DTextureFromFile( clut_name );
     if(!error && !lerror && oy_display_verbose)
       fprintf(stderr, _DBG_FORMAT_"successfully loaded clut: %s\n", _DBG_ARGS_,
                       clut_name );
@@ -642,6 +750,35 @@ public:
       default: sprintf( t, "%d", type );
     }
     return t;
+  }
+
+  static int oyToGlDataType( oyDATATYPE_e type )
+  {
+    switch(type)
+    {
+      case oyUINT8: return GL_UNSIGNED_BYTE;
+      case oyUINT16: return GL_UNSIGNED_SHORT;
+      case oyUINT32: return GL_UNSIGNED_INT;
+      case oyHALF: return GL_HALF_FLOAT;
+      case oyFLOAT: return GL_FLOAT;
+      case oyDOUBLE: return GL_DOUBLE;
+      default: fprintf(stderr, "data type is not supported: %s", oyDataTypeToText(type)); return 0;
+    }
+  }
+  static int oyToGlPixelType( int type )
+  {
+    switch( type )
+    {
+      case OY_TYPE_123_8: return GL_RGB8;
+      case OY_TYPE_123A_8: return GL_RGBA8;
+      case OY_TYPE_123_16: return GL_RGB16;
+      case OY_TYPE_123A_16: return GL_RGBA16;
+      case OY_TYPE_123_HALF: return GL_RGB16F;
+      case OY_TYPE_123A_HALF: return GL_RGBA16F;
+      case OY_TYPE_123_FLOAT: return GL_RGB32F;
+      case OY_TYPE_123A_FLOAT: return GL_RGBA32F;
+      default: { char * t = oyPixelPrint(type,malloc); fprintf(stderr, "pixel type is not supported: %s", t?t:"????"); if(t)free(t); return 0; }
+    }
   }
 };
 

@@ -164,7 +164,8 @@ main(int argc, char** argv)
              "\t--no-logo\tskip Oyranos logo\n"
              "\t--icc-color-context <name>\tselect a Oyranos wrapped context CMM\n"
              "\t--effect <name>\tselect a effect profile\n"
-             "\t--shader <file>\tset a CLUT from PPM image for color transform\n"
+             "\t--shader <file>\tset a CLUT from PPM image for color transform or\n"
+             "\t--shader \"\"\tgenerate image to first monitor 3D CLUT\n"
              "\t-v\t\tprint verbosely\n"
              "\t--help\t\tprint this help text\n"
             );
