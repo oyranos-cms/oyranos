@@ -267,17 +267,19 @@ int      oyraFilter_ImageScaleRun    ( oyFilterPlug_s    * requestor_plug,
         for(y = 0; y < h; ++y)
         {
           ys = y/scale;
-          if((int)OY_ROUND(ys) >= nh)
-          { oyra_msg( oyMSG_ERROR, (oyStruct_s*)ticket,
+          if(OY_ROUNDp(ys) >= nh)
+          {
+            if(oy_debug || (OY_ROUNDp(ys) >= (nh + 1)))
+              oyra_msg( oy_debug?oyMSG_DBG:oyMSG_ERROR, (oyStruct_s*)ticket,
                       OY_DBG_FORMAT_"scale:%g y:%d h:%d ys:%d/%g nh:%d\n",
                       OY_DBG_ARGS_, scale, y,h,ys,y/scale,nh);
           } else
           for(x = 0; x < w; ++x)
           {
             xs = x/scale;
-            if((int)OY_ROUND(xs) >= nw) { continue; }
-            memcpy( &array_out_data[y] [x  *channels_dst*bps_out],
-                    &array_in_data [ys][xs *channels_src*bps_in], channels_src*bps_in );
+            if(OY_ROUNDp(xs) < nw)
+              memcpy( &array_out_data[y] [x  *channels_dst*bps_out],
+                      &array_in_data [ys][xs *channels_src*bps_in], channels_src*bps_in );
           }
         }
 
