@@ -40,9 +40,9 @@ class Oy_Fl_Shader_Box : public Fl_Gl_Window,
 public:
   Oy_Fl_Shader_Box(int x, int y, int w, int h)
     : Fl_Gl_Window(x,y,w,h), Oy_Fl_Image_Widget(x,y,w,h)
-  { frame_data = NULL; W=0; H=0; clut_image = image = display_image = NULL;
+  { frame_data = NULL; frame_width= frame_height= W= H= sw= sh=0; clut_image = image = display_image = NULL;
     grid_points = 0; clut = 0; clut_filled = 0; clut_texture = -1; need_redraw=2;
-    glGetIntegerv( GL_MAX_TEXTURE_SIZE, &max_texture_size );
+    max_texture_size=0;
   };
 
   ~Oy_Fl_Shader_Box(void) { oyImage_Release( &clut_image );
@@ -157,18 +157,15 @@ private:
 
 
     n = oyConfigs_Count( devices );
-    if(error <= 0)
+    if(n && error <= 0)
     {
-      for(i = 0; i < n; ++i)
-      {
-        c = oyConfigs_Get( devices, i );
-        oyDeviceAskProfile2( c, cs_options, &prof );
-        size_t size = 0;
-        void * data = oyProfile_GetMem( prof, &size, 0, oyAllocateFunc_);
-        if(size && data)
-          oyDeAllocateFunc_( data );
-        oyConfig_Release( &c );
-      }
+      c = oyConfigs_Get( devices, 0 );
+      oyDeviceAskProfile2( c, cs_options, &prof );
+      size_t size = 0;
+      void * data = oyProfile_GetMem( prof, &size, 0, oyAllocateFunc_);
+      if(size && data)
+        oyDeAllocateFunc_( data );
+      oyConfig_Release( &c );
     }
     oyConfigs_Release( &devices );
     oyOptions_Release( &options );
@@ -231,7 +228,7 @@ private:
 
       size = width*width;
 
-      buf = (uint16_t*)calloc(sizeof(uint16_t), size*width*3);
+      buf = (uint16_t*)calloc(size*width*3, sizeof(uint16_t));
 
 #pragma omp parallel for private(in,a,b,j)
       for(l = 0; l < width; ++l)
@@ -337,6 +334,11 @@ private:
     }
     changed = old_frame_width != frame_width || old_frame_height != frame_height;
 
+    if(frame_width == 0 || frame_height == 0)
+    {
+      fprintf( stderr,_DBG_FORMAT_"%dx%d no frame dimensions(%dx%d)\n", _DBG_ARGS_, width,height, frame_width, frame_height);
+      return changed;
+    }
     if(!changed)
       return changed;
 
@@ -353,7 +355,7 @@ private:
     int sample_size = oyDataTypeGetSize( data_type );
 
     if(frame_data) free(frame_data);
-    frame_data = (char*)malloc(frame_width*frame_height*channels*sample_size);
+    frame_data = (char*)calloc(frame_width*frame_height*channels*sample_size, sizeof(char));
     if(!frame_data)
       fprintf( stderr,_DBG_FORMAT_"failed to allocate frame_data (%dx%d)%dc\n", _DBG_ARGS_, frame_width, frame_height, channels);
 
@@ -490,6 +492,8 @@ private:
         Oy_Fl_Image_Widget::parent()->w(), Oy_Fl_Image_Widget::parent()->h(),
         Oy_Fl_Image_Widget::parent()->x(), Oy_Fl_Image_Widget::parent()->y());
 
+    if(max_texture_size == 0)
+      glGetIntegerv( GL_MAX_TEXTURE_SIZE, &max_texture_size );
     // - not needed, but might improve speed - START //
     glShadeModel (GL_FLAT);
     glDisable (GL_DITHER);
@@ -508,6 +512,7 @@ private:
     glViewport( 0,0, W,H );
     glOrtho( -W,W, -H,H, -1.0,1.0);
     glEnable (GL_TEXTURE_2D);
+    glEnable (GL_TEXTURE_3D);
 
 
 
@@ -651,6 +656,7 @@ private:
     if(channels == 4) gl_channels = GL_RGBA;
 
 
+    if(!frame_data) { valid(0); fprintf(stderr,_DBG_FORMAT_ "frame_data not yet ready\n",_DBG_ARGS_);return; }
     /* upload texture 0 (image) */
     glBindTexture (GL_TEXTURE_2D, img_texture);
     glTexSubImage2D (GL_TEXTURE_2D, 0, 0, 0, sw, sh,
