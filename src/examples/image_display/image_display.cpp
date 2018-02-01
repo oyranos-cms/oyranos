@@ -114,7 +114,7 @@ main(int argc, char** argv)
       oy_display_verbose = 1;
       ++file_pos;
     }
-    if(argc > 1 && strcmp(argv[i], "--no-logo") == 0)
+    if(argc > 1 && (strcmp(argv[i], "--no-logo") == 0 || strcmp(argv[i], "-n") == 0))
     {
       logo = 0;
       ++file_pos;
@@ -147,6 +147,12 @@ main(int argc, char** argv)
       /*oyOptions_SetFromString( &module_options, OY_DEFAULT_EFFECT_PROFILE,
                              argv[i+1], OY_CREATE_NEW );*/
       ++file_pos;
+      ++file_pos;
+    }
+    if(argc > 1 && strcmp(argv[i], "-s") == 0)
+    {
+      gl_box = 0x04;
+      clut_name = "";
       ++file_pos;
     }
     if(argc > 2 && strcmp(argv[i], "--shader") == 0)
