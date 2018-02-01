@@ -42,7 +42,7 @@ public:
     : Fl_Gl_Window(x,y,w,h), Oy_Fl_Image_Widget(x,y,w,h)
   { frame_data = NULL; frame_width= frame_height= W= H= sw= sh=0; clut_image = image = display_image = NULL;
     grid_points = 0; clut = 0; clut_filled = 0; clut_texture = -1; need_redraw=2;
-    max_texture_size=0;
+    max_texture_size=0,tick=0;
   };
 
   ~Oy_Fl_Shader_Box(void) { oyImage_Release( &clut_image );
@@ -145,7 +145,7 @@ private:
                 * options = NULL;
     oyConfigs_s * devices = NULL;
     oyConfig_s * c = NULL;
-    int n = 0,i;
+    int n = 0;
 
     /* get XCM_ICC_COLOR_SERVER_TARGET_PROFILE_IN_X_BASE */
     int error = oyOptions_SetFromString( &cs_options,
@@ -233,12 +233,12 @@ private:
 #pragma omp parallel for private(in,a,b,j)
       for(l = 0; l < width; ++l)
       {
-        in[0] = floor((double) l / (width - 1) * 65535.0 + 0.5);
+        in[0] = (int)((double) l / (width - 1) * 65535.0 + 0.5);
         for(a = 0; a < width; ++a) {
-          in[1] = floor((double) a / (width - 1) * 65535.0 + 0.5);
+          in[1] = (int)((double) a / (width - 1) * 65535.0 + 0.5);
           for(b = 0; b < width; ++b)
           {
-            in[2] = floor((double) b / (width - 1) * 65535.0 + 0.5);
+            in[2] = (int)((double) b / (width - 1) * 65535.0 + 0.5);
 
             for(j = 0; j < 3; ++j)
               /* BGR */
@@ -481,6 +481,8 @@ private:
   }
 
   int need_redraw;
+  int tick;
+  double second;
   void draw()
   {
     int W_ = Oy_Fl_Image_Widget::w(),
@@ -491,6 +493,22 @@ private:
         W,H,Oy_Fl_Image_Widget::x(),Oy_Fl_Image_Widget::y(),
         Oy_Fl_Image_Widget::parent()->w(), Oy_Fl_Image_Widget::parent()->h(),
         Oy_Fl_Image_Widget::parent()->x(), Oy_Fl_Image_Widget::parent()->y());
+
+#if 1
+    /* performance test */
+    double s = oySeconds();
+    if(tick)
+    {
+      printf(".");
+      if((int)s > (int)second)
+      {
+        printf(" %f t/s\n", tick/(s-second));
+        second = s;
+        tick = 0;
+      }
+    } else second = s;
+    ++tick;
+#endif
 
     if(max_texture_size == 0)
       glGetIntegerv( GL_MAX_TEXTURE_SIZE, &max_texture_size );
