@@ -154,6 +154,10 @@ char    oyToupper_( char c_ );
 #define OY_HYP(a,b)    pow((a)*(a) + (b)*(b),1.0/2.0)
 #define OY_HYP3(a,b,c) pow( (a)*(a) + (b)*(b) + (c)*(c) , 1.0/2.0)
 #define OY_ROUND(a)    ((int)floor((a)+0.5))
+/* fast rounding */
+#define OY_ROUNDf(a)   ((int) ((a)+.5) - (((a)+.5) < (int) ((a)+.5)))
+/* positive rounding */
+#define OY_ROUNDp(a)   ((int) ((a)+.5))
 
 /* --- miscellaneous helpers --- */
 
