@@ -506,9 +506,9 @@ int            oyFilterNode_Disconnect(oyFilterNode_s    * node,
  *                                       for the last connector type
  *  @return                            the number of possible edges
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.9.7
+ *  @date    2018/02/01
  *  @since   2009/02/24 (Oyranos: 0.1.10)
- *  @date    2009/02/27
  */
 int            oyFilterNode_EdgeCount( oyFilterNode_s    * node,
                                        int                 is_input,
@@ -537,10 +537,14 @@ int            oyFilterNode_EdgeCount( oyFilterNode_s    * node,
       start = 0;
     }
 
-    if(s->plugs)
+    if(s->plugs && oyToFilterEdge_Connected_m(flags))
       for(i = start; i < possible; ++i)
+      {
         if(s->plugs[i] && s->plugs[i]->remote_socket_)
           ++connected;
+        else
+          break;
+      }
 
     if(oyToFilterEdge_Free_m(flags))
       n = possible - connected;
@@ -562,10 +566,14 @@ int            oyFilterNode_EdgeCount( oyFilterNode_s    * node,
       start = 0;
     }
 
-    if(s->sockets)
+    if(s->sockets && oyToFilterEdge_Connected_m(flags))
       for(i = 0; i < possible; ++i)
+      {
         if(s->sockets[i])
           connected += oyFilterPlugs_Count(s->sockets[i]->requesting_plugs_);
+        else
+          break;
+      }
 
     if(oyToFilterEdge_Free_m(flags))
       n = possible ? INT32_MAX : 0;
