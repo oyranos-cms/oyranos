@@ -278,8 +278,25 @@ int      oyraFilter_ImageScaleRun    ( oyFilterPlug_s    * requestor_plug,
           {
             xs = x/scale;
             if(OY_ROUNDp(xs) < nw)
-              memcpy( &array_out_data[y] [x  *channels_dst*bps_out],
-                      &array_in_data [ys][xs *channels_src*bps_in], channels_src*bps_in );
+            {
+#if 0
+              /* optimisations which have not much benefit */
+              int chars = channels_src*bps_in, b;
+              uint32_t ** array_out_4 = (uint32_t**)array_out_data;
+              uint32_t ** array_in_4  = (uint32_t**)array_in_data;
+              if(bps_in == 4)
+              for( b = 0; b < channels_src; ++b )
+                array_out_4[y] [x  *channels_dst+b] =
+                array_in_4 [ys][xs *channels_src+b];
+              else
+              for( b = 0; b < chars; ++b )
+                array_out_data[y] [x  *channels_dst*bps_out+b] =
+                array_in_data [ys][xs *channels_src*bps_in +b];
+#else
+              memmove( &array_out_data[y] [x  *channels_dst*bps_out],
+                       &array_in_data [ys][xs *channels_src*bps_in], channels_src*bps_in );
+#endif
+            }
           }
         }
 
