@@ -499,7 +499,8 @@ private:
     double s = oySeconds();
     if(tick)
     {
-      printf(".");
+      if(oy_debug == 0)
+        printf(".");
       if((int)s > (int)second)
       {
         printf(" %f t/s\n", tick/(s-second));

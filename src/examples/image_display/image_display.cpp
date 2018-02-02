@@ -2,7 +2,7 @@
  *  Oyranos is an open source Color Management System 
  * 
  *  @par Copyright:
- *            2009-2016 (C) Kai-Uwe Behrmann
+ *            2009-2018 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
@@ -167,11 +167,11 @@ main(int argc, char** argv)
     {
       printf("Usage: image_display [options] <image_file>\n"
              "\t--use-pixel\tuse normal pixel copy\n"
-             "\t--no-logo\tskip Oyranos logo\n"
+             "\t--no-logo|-n\tskip Oyranos logo\n"
              "\t--icc-color-context <name>\tselect a Oyranos wrapped context CMM\n"
              "\t--effect <name>\tselect a effect profile\n"
              "\t--shader <file>\tset a CLUT from PPM image for color transform or\n"
-             "\t--shader \"\"\tgenerate image to first monitor 3D CLUT\n"
+             "\t--shader \"\"|-s\tgenerate image to first monitor 3D CLUT\n"
              "\t-v\t\tprint verbosely\n"
              "\t--help\t\tprint this help text\n"
             );
@@ -878,6 +878,7 @@ void setFullscreen()
     oy_widget->window()->fullscreen();
     fullscreen = 1;
   }
+  oy_widget->damage( FL_DAMAGE_USER1 );
 }
 
 int
@@ -923,6 +924,7 @@ event_handler(int e)
           setChannel( profile, k - '0' );
           oyImage_Release( &image );
           oyProfile_Release( &profile );
+          oy_widget->damage( FL_DAMAGE_USER1 );
         }
         found = 1;
         break;
@@ -991,6 +993,7 @@ event_handler(int e)
         oy_widget->py = int((double)(oy_widget->py - oy_widget->h()/2) / oy_widget->scale_changer) + oy_widget->h()/2;
         oy_widget->resetScale();
         oyOption_SetFromDouble( opt, scale, 0,0 );
+        oy_widget->damage( FL_DAMAGE_USER1 );
         break;
       case '+': // 43
         found = 1;
@@ -1002,6 +1005,7 @@ event_handler(int e)
         oy_widget->py = int((double)(oy_widget->py - oy_widget->h()/2) * oy_widget->scale_changer) + oy_widget->h()/2;
         oy_widget->resetScale();
         oyOption_SetFromDouble( opt, scale, 0,0 );
+        oy_widget->damage( FL_DAMAGE_USER1 );
         break;
       case '*':
         found = 1;
@@ -1029,6 +1033,7 @@ event_handler(int e)
         found = 1;
         oy_widget->resetScale();
         oyOption_SetFromDouble( opt, scale, 0,0 );
+        oy_widget->damage( FL_DAMAGE_USER1 );
         break;
       case 'w':
         opt = findOpt( scales_reg, scale_reg );
@@ -1048,6 +1053,7 @@ event_handler(int e)
         found = 1;
         oy_widget->resetScale();
         oyOption_SetFromDouble( opt, scale, 0,0 );
+        oy_widget->damage( FL_DAMAGE_USER1 );
         break;
       case '0': /* image ==> window size */
       case 'f': /* fit window */
@@ -1071,6 +1077,7 @@ event_handler(int e)
         opt = findOpt( scales_reg, scale_reg );
         oy_widget->resetScale();
         oyOption_SetFromDouble( opt, scale, 0,0 );
+        oy_widget->damage( FL_DAMAGE_USER1 );
         break;
       case '1': /* pixel size */
         scale = 1.0;
@@ -1078,6 +1085,7 @@ event_handler(int e)
         opt = findOpt( scales_reg, scale_reg );
         oy_widget->resetScale();
         oyOption_SetFromDouble( opt, scale, 0,0 );
+        oy_widget->damage( FL_DAMAGE_USER1 );
         break;
       case FL_ENTER:
       case 13:
@@ -1098,6 +1106,7 @@ event_handler(int e)
         }
         oy_widget->damage( FL_DAMAGE_USER1 );
         found = 1;
+        oy_widget->damage( FL_DAMAGE_USER1 );
         break;
       case '<':
         openNextImage(oy_widget, -1);
