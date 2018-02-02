@@ -402,18 +402,18 @@ int          oyArray2d_SetFocus      ( oyArray2d_s       * array,
   {
     /* shift array focus to requested region */
     int bps = oyDataTypeGetSize( a->t );
-    if(a->data_area.x != OY_ROUND(array_roi_chan->x))
+    if(a->data_area.x != OY_ROUNDf(array_roi_chan->x))
     {
       int height = a->data_area.height + a->data_area.y;
-      int shift = (OY_ROUND(array_roi_chan->x) + OY_ROUND(a->data_area.x)) * bps;
+      int shift = (OY_ROUNDf(array_roi_chan->x) + OY_ROUNDf(a->data_area.x)) * bps;
       for(y = a->data_area.y; y < height; ++y)
         a->array2d[y] += shift;
-      a->data_area.x = -OY_ROUND(array_roi_chan->x);
+      a->data_area.x = -OY_ROUNDf(array_roi_chan->x);
       error = -1;
     }
-    if(a->data_area.y != OY_ROUND(array_roi_chan->y))
+    if(a->data_area.y != OY_ROUNDf(array_roi_chan->y))
     {
-      a->array2d += OY_ROUND(array_roi_chan->y + a->data_area.y);
+      a->array2d += OY_ROUNDf(array_roi_chan->y + a->data_area.y);
       a->data_area.y = -array_roi_chan->y;
       error = -1;
     }

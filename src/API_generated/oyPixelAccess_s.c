@@ -148,7 +148,7 @@ int                oyPixelAccess_ChangeRectangle (
       oyImage_s * image = pixel_access_->output_image;
       int channels = oyImage_GetPixelLayout( image, oyCHANS );
       double pixels = start_x * oyImage_GetWidth( image );
-      int val = OY_ROUND( pixels );
+      int val = OY_ROUNDf( pixels );
       double diff = (pixels - val) * channels;
       if(diff > 0.5)
       {
