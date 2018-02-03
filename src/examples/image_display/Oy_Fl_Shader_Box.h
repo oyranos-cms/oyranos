@@ -128,6 +128,10 @@ private:
     loc = glGetUniformLocation ((GLintptr)cmm_prog, "offset");
     glUniform1fARB (loc, clut_offset);
 
+    /* texture 0 = image */
+    glActiveTextureARB (GL_TEXTURE0_ARB + 0);
+    glBindTexture (GL_TEXTURE_2D, img_texture);
+
     loc = glGetUniformLocation ((GLintptr)cmm_prog, "image");
     glUniform1iARB (loc, 0);
 
@@ -474,10 +478,6 @@ private:
     int n = oyImage_GetWidth(clut_image);
     glTexImage3D (GL_TEXTURE_3D, 0, GL_RGB16, n, n, n,
 		  0, GL_RGB, GL_UNSIGNED_SHORT, clut);
-
-    /* back to texture 0 (image) */
-    glActiveTextureARB (GL_TEXTURE0_ARB);
-    glBindTexture (GL_TEXTURE_2D, img_texture);
   }
 
   int need_redraw;
