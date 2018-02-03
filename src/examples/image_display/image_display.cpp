@@ -1106,7 +1106,6 @@ event_handler(int e)
         }
         oy_widget->damage( FL_DAMAGE_USER1 );
         found = 1;
-        oy_widget->damage( FL_DAMAGE_USER1 );
         break;
       case '<':
         openNextImage(oy_widget, -1);
