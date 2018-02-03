@@ -431,7 +431,8 @@ private:
 
     /* texture 0 (image) */
     glGenTextures (1, &img_texture);
-    glActiveTextureARB (GL_TEXTURE0_ARB);
+    if(oy_display_verbose) fprintf(stderr,_DBG_FORMAT_ "image_texture: %d\n", _DBG_ARGS_, img_texture);
+    glActiveTextureARB (GL_TEXTURE0_ARB + 0);
     glBindTexture (GL_TEXTURE_2D, img_texture);
 
     glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -487,53 +488,18 @@ private:
   {
     int W_ = Oy_Fl_Image_Widget::w(),
         H_ = Oy_Fl_Image_Widget::h();
+    int need_draw = 0;
 
     if(oy_display_verbose)
       fprintf( stderr, _DBG_FORMAT_"Widget:%dx%d+%d+%d  Parent:%dx%d+%d+%d\n",_DBG_ARGS_, 
         W,H,Oy_Fl_Image_Widget::x(),Oy_Fl_Image_Widget::y(),
         Oy_Fl_Image_Widget::parent()->w(), Oy_Fl_Image_Widget::parent()->h(),
         Oy_Fl_Image_Widget::parent()->x(), Oy_Fl_Image_Widget::parent()->y());
-
-#if 1
-    /* performance test */
-    double s = oySeconds();
-    if(tick)
-    {
-      if(oy_debug == 0)
-        printf(".");
-      if((int)s > (int)second)
-      {
-        printf(" %f t/s\n", tick/(s-second));
-        second = s;
-        tick = 0;
-      }
-    } else second = s;
-    ++tick;
-#endif
+    if(oy_debug == 0 && oy_display_verbose == 0 && need_redraw == 2)
+      fprintf( stderr, _DBG_FORMAT_"\nw  window change or no frame data or invalid\nf  frame size changes\n0  skip redraw\n.  do redraw\nP  dirty before oyDrawScreenImage()\np  oyDrawScreenImage() returns dirty\nD  damaged\ni  no draw_image\n",_DBG_ARGS_);
 
     if(max_texture_size == 0)
       glGetIntegerv( GL_MAX_TEXTURE_SIZE, &max_texture_size );
-    // - not needed, but might improve speed - START //
-    glShadeModel (GL_FLAT);
-    glDisable (GL_DITHER);
-
-    glDisable (GL_BLEND);
-    glDisable (GL_DEPTH_TEST);
-
-    glMatrixMode (GL_PROJECTION);
-    glLoadIdentity ();
-    // - not needed, but might improve speed - END //
-
-    glClearColor (0.5, 0.5, 0.5, 0.0);
-
-    glMatrixMode (GL_MODELVIEW);
-    glLoadIdentity ();
-    glViewport( 0,0, W,H );
-    glOrtho( -W,W, -H,H, -1.0,1.0);
-    glEnable (GL_TEXTURE_2D);
-    glEnable (GL_TEXTURE_3D);
-
-
 
     if(image && clut_image)
     if(!valid() || need_redraw ||
@@ -543,6 +509,9 @@ private:
       W = W_;
       H = H_;
       valid(1);
+      if(oy_debug == 0 && oy_display_verbose == 0)
+        fprintf(stderr, "w");
+      ++need_draw;
 
       make_image_texture();
 
@@ -566,9 +535,13 @@ private:
 
       if(!draw_image || result != 0)
       {
+        if(oy_debug == 0 && oy_display_verbose == 0 && !draw_image)
+          fprintf(stderr, "i");
+        ++need_draw;
         if(need_redraw && valid())
         {
-          valid(0);
+          if(need_redraw == 1)
+            valid(0);
           --need_redraw;
           // needed for proper first time displaying
           oyConversion_RunPixels( conversion(), 0 );
@@ -596,15 +569,44 @@ private:
 
       if( frame_width < sw || frame_height < sh )
       {
+        if(oy_debug == 0 && oy_display_verbose == 0)
+          fprintf(stderr, "f");
+        ++need_draw;
         if(change_frame_dimensions( sw, sh ))
         {
           oyImage_SetCritical( display_image, 0, NULL, NULL, frame_width, frame_height );
-          valid(0);
+          if(need_redraw == 1)
+            valid(0);
           oyImage_Release( &draw_image );
           return;
         }
         //make_image_texture();
       }
+
+      if(need_draw == 0)
+      {
+        if(oy_debug == 0 && oy_display_verbose == 0)
+          fprintf(stderr, "0");
+        return;
+      }
+
+#if 1
+      /* performance test */
+      double s = oySeconds();
+      if(tick)
+      {
+        if(oy_debug == 0 && oy_display_verbose == 0)
+          fprintf(stderr, ".");
+        if((int)s > (int)second)
+        {
+          fprintf(stderr, " %f t/s\n", tick/(s-second));
+          second = s;
+          tick = 0;
+        }
+      } else second = s;
+      ++tick;
+#endif
+
 
       /* a buffer alignment of 4 byte is what most GPUs prefer */
       if((sw*channels*sample_size)%4)
@@ -655,6 +657,27 @@ private:
                img_texture, clut_texture, clut_scale, clut_offset,
                cmm_prog, cmm_shader, tw,th,
                (OY_MIN(oyImage_GetWidth( draw_image), W)*channels*sample_size)%2);
+
+    // - not needed, but might improve speed - START //
+    glShadeModel (GL_FLAT);
+    glDisable (GL_DITHER);
+
+    glDisable (GL_BLEND);
+    glDisable (GL_DEPTH_TEST);
+
+    glMatrixMode (GL_PROJECTION);
+    glLoadIdentity ();
+    // - not needed, but might improve speed - END //
+
+    glClearColor (0.5, 0.5, 0.5, 0.0);
+
+    glMatrixMode (GL_MODELVIEW);
+    glLoadIdentity ();
+    glViewport( 0,0, W,H );
+    glOrtho( -W,W, -H,H, -1.0,1.0);
+    glEnable (GL_TEXTURE_2D);
+    glEnable (GL_TEXTURE_3D);
+
 
     glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glColor3f(1.0, 1.0, 1.0);
