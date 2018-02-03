@@ -376,14 +376,12 @@ int  oyDrawScreenImage               ( oyConversion_s    * context,
            (old_roi_rectangle &&
             !oyRectangle_IsEqual( ticket_roi, old_roi_rectangle ))||
            /* Did the image move? */
-           oyPixelAccess_GetStart( ticket,0 ) !=
-           oyPixelAccess_GetOldStart( ticket,0 ) ||
-           oyPixelAccess_GetStart( ticket,1 ) !=
-           oyPixelAccess_GetOldStart( ticket,1 )) ||
+           oyPixelAccess_GetStart( ticket,0 ) != oyPixelAccess_GetOldStart( ticket,0 ) ||
+           oyPixelAccess_GetStart( ticket,1 ) != oyPixelAccess_GetOldStart( ticket,1 )) ||
            dirty > 0))
       {
 #ifdef DEBUG_
-        printf( "%s:%d new display rectangle: %s +%d+%d\n", __FILE__,__LINE__,
+        printf( "%s:%d new display rectangle: %s +%g+%g\n", __FILE__,__LINE__,
                 oyRectangle_Show(disp_rectangle), X, Y ),
 #endif
 
