@@ -387,6 +387,7 @@ int  oyDrawScreenImage               ( oyConversion_s    * context,
 
         /* convert the image data */
         oyConversion_RunPixels( context, ticket );
+        result = -1;
 
         if(oy_debug && getenv("OY_DEBUG_WRITE"))
         {
@@ -400,8 +401,7 @@ int  oyDrawScreenImage               ( oyConversion_s    * context,
         oyRectangle_SetByRectangle( old_roi_rectangle, ticket_roi );
         oyPixelAccess_SetOldStart(ticket,0, oyPixelAccess_GetStart(ticket,0));
         oyPixelAccess_SetOldStart(ticket,1, oyPixelAccess_GetStart(ticket,1));
-      } else
-        result = -1;
+      }
 
       oyFilterNode_Release( &node_out );
       oyOptions_Release( &image_tags );
