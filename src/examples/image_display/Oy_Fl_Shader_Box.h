@@ -722,7 +722,7 @@ private:
     glViewport( 0,0, W,H );
     glOrtho( -W,W, -H,H, -1.0,1.0);
 
-/* draw background */
+    /* draw background */
     glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glClearColor (0.5, 0.5, 0.5, 0.0);
     glColor3f(1.0, 1.0, 1.0);
@@ -732,6 +732,51 @@ private:
     if(!frame_data)
     { fprintf(stderr,_DBG_FORMAT_ "frame_data not yet ready\n",_DBG_ARGS_); return; }
 
+    if(channels == 4)
+    {
+      /* draw a checker board as background for alpha images */
+      Oy_Fl_Image_Widget * ow = dynamic_cast<Oy_Fl_Image_Widget*>(this);
+      Oy_Fl_Window_Base * win = dynamic_cast<Oy_Fl_Window_Base*>(ow->window());
+      double scale = win->scale();
+      int len = 32 * scale;
+      int start_w = -W+bw,
+          start_h = -H+bh;
+
+      glBegin (GL_QUADS);
+        for(int w = start_w; w < W-bw; w += len)
+          for(int h = start_h; h < H-bh; h += len)
+          {
+            if(w+len < (W-bw) &&
+               h+len < (H-bh))
+            {
+              /* tr */
+              glVertex2f ( w+len/2, h+len/2);
+              glVertex2f ( w+len/2, h+len  );
+              glVertex2f ( w+len,   h+len  );
+              glVertex2f ( w+len,   h+len/2);
+              /* bl */
+              glVertex2f ( w,       h      );
+              glVertex2f ( w,       h+len/2);
+              glVertex2f ( w+len/2, h+len/2);
+              glVertex2f ( w+len/2, h      );
+            } else
+            {
+              /* tr */
+              glVertex2f ( OY_MIN( w+len/2, W-bw), OY_MIN( h+len/2, H-bh) );
+              glVertex2f ( OY_MIN( w+len/2, W-bw), OY_MIN( h+len  , H-bh) );
+              glVertex2f ( OY_MIN( w+len  , W-bw), OY_MIN( h+len  , H-bh) );
+              glVertex2f ( OY_MIN( w+len  , W-bw), OY_MIN( h+len/2, H-bh) );
+              /* bl */
+              glVertex2f ( w                     , h );
+              glVertex2f ( w                     , OY_MIN( h+len/2, H-bh) );
+              glVertex2f ( OY_MIN( w+len/2, W-bw), OY_MIN( h+len/2, H-bh) );
+              glVertex2f ( OY_MIN( w+len/2, W-bw), h );
+            }
+          }
+      glEnd ();
+    }
+
+
     glEnable (GL_TEXTURE_2D);
     glEnable (GL_TEXTURE_3D);
     glTexEnvf (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
@@ -740,7 +785,6 @@ private:
     int gl_channels = 0;
     if(channels == 3) gl_channels = GL_RGB;
     if(channels == 4) gl_channels = GL_RGBA;
-
 
     /* upload texture 0 (image) */
     glBindTexture (GL_TEXTURE_2D, img_texture);
