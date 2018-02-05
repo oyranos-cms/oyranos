@@ -1121,16 +1121,10 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
                 }
 
                 data = (char*) oyProfile_GetMem( p, &size, 0, oyAllocateFunc_ );
+                if(data && size)
+                { oyDeAllocateFunc_( data ); data = NULL; size = 0; }
               }
               oyOption_Release( &o_tmp );
-              if(!is_existing)
-                oyProfile_Release( &p );
-              if(!is_existing)
-              if(data && size)
-              {
-                p = oyProfile_FromMem( size, data, 0, 0 );
-                oyDeAllocateFunc_( data ); data = NULL; size = 0;
-              }
               if(has == 0)
                 o = oyOption_FromRegistration( CMM_BASE_REG OY_SLASH
                                 "icc_profile.fallback", 0 );
