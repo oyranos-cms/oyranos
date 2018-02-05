@@ -57,7 +57,7 @@ public:
   long mod = 0;
   TEST_GL(FL_RGB)
   //TEST_GL(FL_DOUBLE)
-  //TEST_GL(FL_ALPHA)
+  TEST_GL(FL_ALPHA)
   //TEST_GL(FL_DEPTH)
   //TEST_GL(FL_MULTISAMPLE)
   mode(mod);
@@ -752,12 +752,19 @@ private:
       fprintf(stderr, _DBG_FORMAT_"subImage(%dx%d) frame(%dx%d)\n", _DBG_ARGS_, sw,sh, frame_width, frame_height );
 
     /* draw surface */
+    if(gl_channels == GL_RGBA)
+    {
+      glEnable (GL_BLEND);
+      glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+    }
     glBegin (GL_QUADS);
       glTexCoord2f (0.0, 0.0); glVertex2f (-W + bw, -H + bh);
       glTexCoord2f (0.0, th ); glVertex2f (-W + bw,  H - bh);
       glTexCoord2f (tw,  th ); glVertex2f ( W - bw,  H - bh);
       glTexCoord2f (tw,  0.0); glVertex2f ( W - bw, -H + bh);
     glEnd ();
+    if(gl_channels == GL_RGBA)
+      glDisable (GL_BLEND);
     glDisable (GL_TEXTURE_2D);
     glDisable (GL_TEXTURE_3D);
   }
@@ -883,14 +890,15 @@ public:
     "								\n"
     "void main()						\n"
     "{								\n"
-    "    vec3 img = texture2D(image, gl_TexCoord[0].xy).rgb;	\n"
+    "    vec4 img = texture2D(image, gl_TexCoord[0].xy).rgba;	\n"
     "								\n"
     "    // interpolate CLUT					\n"
     "    img = img * scale + offset;				\n"
-    "    gl_FragColor = texture3D(clut, img);			\n"
+    "    gl_FragColor = texture3D(clut, img.rgb);			\n"
+    "    gl_FragColor.a = img.a;         \n"
     "								\n"
     "    // w/o color management				\n"
-    "    // gl_FragColor = vec4(img, 1.0);			\n"
+    "    // gl_FragColor = vec4(img, 0.5);			\n"
     "}								\n"
     ;
 
