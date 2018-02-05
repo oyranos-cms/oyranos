@@ -42,7 +42,7 @@ public:
   Oy_Fl_Shader_Box(int x, int y, int w, int h)
     : Fl_Gl_Window(x,y,w,h), Oy_Fl_Image_Widget(x,y,w,h)
   { frame_data = NULL; frame_width= frame_height= W= H= sw= sh=0; clut_image = image = display_image = NULL;
-    grid_points = 0; clut = 0; clut_filled = 0; clut_texture = -1; init = 0; need_redraw=2;
+    grid_points = 0; clut = 0; clut_filled = 0; clut_texture = -1; init = 0;
     max_texture_size=0,tick=0;
 # define TEST_GL(modus) { \
     this->mode(modus); \
@@ -500,7 +500,6 @@ private:
 		  0, GL_RGB, GL_UNSIGNED_SHORT, clut);
   }
 
-  int need_redraw;
   int tick;
   double second;
   void draw()
@@ -519,9 +518,9 @@ private:
         W,H,Oy_Fl_Image_Widget::x(),Oy_Fl_Image_Widget::y(),
         Oy_Fl_Image_Widget::parent()->w(), Oy_Fl_Image_Widget::parent()->h(),
         Oy_Fl_Image_Widget::parent()->x(), Oy_Fl_Image_Widget::parent()->y());*/
-    if(0&&oy_debug == 0 && oy_display_verbose == 0 && need_redraw == 2)
+    if(0&&oy_debug == 0 && oy_display_verbose == 0 && init == 0)
       fprintf( stderr, _DBG_FORMAT_"\nw  window change or no frame data or invalid\nf  frame size changes\n0  skip redraw\n.  do redraw\nP  dirty before oyDrawScreenImage()\np  oyDrawScreenImage() returns dirty\nD  damaged\n",_DBG_ARGS_);
-    if(oy_debug == 0 && oy_display_verbose == 0 && need_redraw == 0 && !valid())
+    if(oy_debug == 0 && oy_display_verbose == 0 && init == 1 && !valid())
       fprintf( stderr, "v");
 
     if(max_texture_size == 0)
@@ -542,7 +541,8 @@ private:
 
       pt = oyImage_GetPixelLayout( display_image, oyLAYOUT );
       data_type = oyToDataType_m( pt );
-      drawPrepare( &draw_image, data_type, 1 );
+      if(drawPrepare( &draw_image, data_type, 1 ) == -1)
+        ++need_draw;
       int sw = OY_MIN(oyImage_GetWidth( draw_image), W);
       int sh = OY_MIN(oyImage_GetHeight(draw_image), H);
       oyImage_Release( &draw_image );
@@ -577,14 +577,8 @@ private:
         return;
       }
 
-      if(result < 0 || need_redraw)
+      if(result < 0)
         ++need_draw;
-
-      if(result < 0 && !need_redraw)
-        ++need_redraw;
-      else
-      if( need_redraw )
-        --need_redraw;
 
       pt = oyImage_GetPixelLayout( draw_image, oyLAYOUT );
       channels = oyToChannels_m( pt );
