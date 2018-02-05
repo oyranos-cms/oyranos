@@ -83,22 +83,22 @@ private:
     GLfloat clut_scale;
     GLfloat clut_offset;
 
-    GLhandleARB cmm_prog;
-    GLhandleARB cmm_shader;
+    GLuint cmm_prog;
+    GLuint cmm_shader;
 
     static const char * cmm_shader_source;
 
-  void print_log (GLhandleARB obj)
+  void print_log (GLuint obj)
   {
     int len = 0;
     int nwritten = 0;
     char *log;
 
-    glGetObjectParameterivARB (obj, GL_OBJECT_INFO_LOG_LENGTH_ARB, &len);
+    glGetShaderiv (obj, GL_INFO_LOG_LENGTH, &len);
 
     if (len > 0) {
       log = (char*) malloc (len);
-      glGetInfoLogARB (obj, len, &nwritten, log);
+      glGetShaderInfoLog (obj, len, &nwritten, log);
       fprintf (stderr, "%s\n", log);
       free (log);
     }
@@ -128,37 +128,37 @@ private:
 
     /* compile shader program */
 
-    cmm_shader = glCreateShaderObjectARB (GL_FRAGMENT_SHADER_ARB);
-    glShaderSourceARB (cmm_shader, 1, &cmm_shader_source, NULL);
-    glCompileShaderARB (cmm_shader);
+    cmm_shader = glCreateShader (GL_FRAGMENT_SHADER);
+    glShaderSource (cmm_shader, 1, &cmm_shader_source, NULL);
+    glCompileShader (cmm_shader);
     print_log (cmm_shader);
 
-    cmm_prog = glCreateProgramObjectARB ();
-    glAttachObjectARB (cmm_prog, cmm_shader);
-    glLinkProgramARB (cmm_prog);
+    cmm_prog = glCreateProgram ();
+    glAttachShader (cmm_prog, cmm_shader);
+    glLinkProgram (cmm_prog);
     print_log (cmm_prog);
 
-    glUseProgramObjectARB (cmm_prog);
+    glUseProgram (cmm_prog);
 
     loc = glGetUniformLocation ((GLintptr)cmm_prog, "scale");
-    glUniform1fARB (loc, clut_scale);
+    glUniform1f (loc, clut_scale);
 
     loc = glGetUniformLocation ((GLintptr)cmm_prog, "offset");
-    glUniform1fARB (loc, clut_offset);
+    glUniform1f (loc, clut_offset);
 
     /* texture 0 = image */
-    glActiveTextureARB (GL_TEXTURE0_ARB + 0);
+    glActiveTexture (GL_TEXTURE0 + 0);
     glBindTexture (GL_TEXTURE_2D, img_texture);
 
     loc = glGetUniformLocation ((GLintptr)cmm_prog, "image");
-    glUniform1iARB (loc, 0);
+    glUniform1i (loc, 0);
 
     /* texture 1 = clut */
-    glActiveTextureARB (GL_TEXTURE0_ARB + 1);
+    glActiveTexture (GL_TEXTURE0 + 1);
     glBindTexture (GL_TEXTURE_3D, clut_texture);
 
     loc = glGetUniformLocation ((GLintptr)cmm_prog, "clut");
-    glUniform1iARB (loc, 1);
+    glUniform1i (loc, 1);
   }
 
   oyProfile_s * getFirstMonitorDeviceProfile()
@@ -451,7 +451,7 @@ private:
     /* texture 0 (image) */
     glGenTextures (1, &img_texture);
     if(oy_display_verbose) fprintf(stderr,_DBG_FORMAT_ "image_texture: %d\n", _DBG_ARGS_, img_texture);
-    glActiveTextureARB (GL_TEXTURE0_ARB + 0);
+    glActiveTexture (GL_TEXTURE0 + 0);
     glBindTexture (GL_TEXTURE_2D, img_texture);
 
     glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -482,7 +482,7 @@ private:
     glGenTextures (1, &clut_texture);
     if(oy_display_verbose) fprintf(stderr,_DBG_FORMAT_ "clut_texture: %d\n", _DBG_ARGS_, clut_texture);
     /* texture 1 = clut */
-    glActiveTextureARB (GL_TEXTURE0_ARB + 1);
+    glActiveTexture (GL_TEXTURE0 + 1);
     glBindTexture (GL_TEXTURE_3D, clut_texture);
 
     glTexParameteri (GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -529,7 +529,7 @@ private:
     oyImage_s * draw_image = NULL;
     oyDATATYPE_e data_type = oyUINT8;
     oyPixel_t pt;
-    if(!init)
+    if(init == 0)
     {
       /* update textures and shader */
       valid(1);
@@ -555,8 +555,7 @@ private:
 
       initClutTexture();
 
-      if(GLEE_ARB_fragment_shader && GLEE_ARB_shading_language_100)
-        initShaders ();
+      initShaders ();
 
       ++init;
     }
@@ -742,6 +741,7 @@ private:
       int start_w = -W+bw,
           start_h = -H+bh;
 
+      glColor3f(.0, .0, .0);
       glBegin (GL_QUADS);
         for(int w = start_w; w < W-bw; w += len)
           for(int h = start_h; h < H-bh; h += len)
