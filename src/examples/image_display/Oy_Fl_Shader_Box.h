@@ -37,12 +37,12 @@ class Oy_Fl_Shader_Box : public Fl_Gl_Window,
   oyImage_s * clut_image,
             * image,
             * display_image;
-  int init;
+  int load;
 public:
   Oy_Fl_Shader_Box(int x, int y, int w, int h)
     : Fl_Gl_Window(x,y,w,h), Oy_Fl_Image_Widget(x,y,w,h)
   { frame_data = NULL; frame_width= frame_height= W= H= sw= sh=0; clut_image = image = display_image = NULL;
-    grid_points = 0; clut = 0; clut_filled = 0; clut_texture = -1; init = 0;
+    grid_points = 0; clut = 0; clut_filled = 0; clut_texture = -1; load = 0;
     max_texture_size=0,tick=0;
 # define TEST_GL(modus) { \
     this->mode(modus); \
@@ -122,7 +122,7 @@ private:
   }
 
 
-  void initShaders (void)
+  void loadShaders (void)
   {
     GLint loc;
 
@@ -391,7 +391,7 @@ private:
     return changed;
   }
 
-  void initDAG()
+  void loadDAG()
   {
     oyPixel_t pt = oyImage_GetPixelLayout( image, oyLAYOUT );
     oyDATATYPE_e data_type = oyToDataType_m( pt );
@@ -423,7 +423,7 @@ private:
     conversion( cc );
   }
 
-  void initImageTexture ()
+  void loadImageTexture ()
   {
     oyPixel_t pt = oyImage_GetPixelLayout( display_image, oyLAYOUT );
     oyDATATYPE_e data_type = oyToDataType_m( pt );
@@ -477,7 +477,7 @@ private:
       oyImage_ToFile( display_image, "display_image.ppm", 0 );
   }
 
-  void initClutTexture()
+  void loadClutTexture()
   {
     glGenTextures (1, &clut_texture);
     if(oy_display_verbose) fprintf(stderr,_DBG_FORMAT_ "clut_texture: %d\n", _DBG_ARGS_, clut_texture);
@@ -500,6 +500,38 @@ private:
 		  0, GL_RGB, GL_UNSIGNED_SHORT, clut);
   }
 
+  int loadContext()
+  {
+    /* update textures and shader */
+    if(oy_debug == 0 && oy_display_verbose == 0)
+      fprintf(stderr, "l");
+
+    /* prepare Oyranos */
+    loadDAG();
+
+    oyPixel_t pt = oyImage_GetPixelLayout( display_image, oyLAYOUT );
+    oyDATATYPE_e data_type = oyToDataType_m( pt );
+    int dirty = 0;
+    oyImage_s * draw_image = NULL;
+    if(drawPrepare( &draw_image, data_type, 1 ) == -1)
+      ++dirty;
+    int sw = OY_MIN(oyImage_GetWidth( draw_image), W);
+    int sh = OY_MIN(oyImage_GetHeight(draw_image), H);
+    oyImage_Release( &draw_image );
+
+    /* intermediate buffer */
+    createFrame( sw, sh );
+
+    /* OpenGL */
+    loadImageTexture();
+
+    loadClutTexture();
+
+    loadShaders ();
+
+    return dirty;
+  }
+
   int tick;
   double second;
   void draw()
@@ -518,48 +550,24 @@ private:
         W,H,Oy_Fl_Image_Widget::x(),Oy_Fl_Image_Widget::y(),
         Oy_Fl_Image_Widget::parent()->w(), Oy_Fl_Image_Widget::parent()->h(),
         Oy_Fl_Image_Widget::parent()->x(), Oy_Fl_Image_Widget::parent()->y());*/
-    if(0&&oy_debug == 0 && oy_display_verbose == 0 && init == 0)
+    if(0&&oy_debug == 0 && oy_display_verbose == 0 && load == 0)
       fprintf( stderr, _DBG_FORMAT_"\nw  window change or no frame data or invalid\nf  frame size changes\n0  skip redraw\n.  do redraw\nP  dirty before oyDrawScreenImage()\np  oyDrawScreenImage() returns dirty\nD  damaged\n",_DBG_ARGS_);
-    if(oy_debug == 0 && oy_display_verbose == 0 && init == 1 && !valid())
+    if(oy_debug == 0 && oy_display_verbose == 0 && load == 0 && !valid())
       fprintf( stderr, "v");
 
     if(max_texture_size == 0)
       glGetIntegerv( GL_MAX_TEXTURE_SIZE, &max_texture_size );
 
-    oyImage_s * draw_image = NULL;
-    oyDATATYPE_e data_type = oyUINT8;
-    oyPixel_t pt;
-    if(init == 0)
+    if(load == 1)
     {
-      /* update textures and shader */
       valid(1);
-      if(oy_debug == 0 && oy_display_verbose == 0)
-        fprintf(stderr, "w");
-
-      /* prepare Oyranos */
-      initDAG();
-
-      pt = oyImage_GetPixelLayout( display_image, oyLAYOUT );
-      data_type = oyToDataType_m( pt );
-      if(drawPrepare( &draw_image, data_type, 1 ) == -1)
-        ++need_draw;
-      int sw = OY_MIN(oyImage_GetWidth( draw_image), W);
-      int sh = OY_MIN(oyImage_GetHeight(draw_image), H);
-      oyImage_Release( &draw_image );
-
-      /* intermediate buffer */
-      createFrame( sw, sh );
-
-      /* OpenGL */
-      initImageTexture();
-
-      initClutTexture();
-
-      initShaders ();
-
-      ++init;
+      need_draw = loadContext();
+      --load;
     }
 
+    oyImage_s * draw_image = NULL;
+    oyPixel_t pt;
+    oyDATATYPE_e data_type = oyUINT8;
     int channels = 0;
     int sample_size = 0;
     if(conversion())
@@ -843,7 +851,10 @@ public:
     if(!image)
       error = 1;
     else
-      initDAG();
+    {
+      loadDAG();
+      load = 1;
+    }
 
     int lerror = 0;
     if(clut_name[0] == 0)
