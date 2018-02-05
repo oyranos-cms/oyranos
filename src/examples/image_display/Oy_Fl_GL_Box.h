@@ -25,7 +25,25 @@ class Oy_Fl_GL_Box : public Fl_Gl_Window,
 public:
   Oy_Fl_GL_Box(int x, int y, int w, int h)
     : Fl_Gl_Window(x,y,w,h), Oy_Fl_Image_Widget(x,y,w,h)
-  { frame_data = NULL; W=0; H=0; need_redraw=2; };
+  { frame_data = NULL; W=0; H=0; need_redraw=2;
+# define TEST_GL(modus) { \
+    this->mode(modus); \
+    if(this->can_do()) { \
+      mod |= modus; \
+      this->mode(mod); \
+      fprintf(stderr, "OpenGL understand: yes  %s %d\n", #modus, this->mode() ); \
+    } else {  printf("can_do() false: %d\n", modus); \
+      fprintf(stderr, "OpenGL understand: no   %s %d\n", #modus, this->mode() ); \
+    } \
+  }
+  long mod = 0;
+  TEST_GL(FL_RGB)
+  //TEST_GL(FL_DOUBLE)
+  //TEST_GL(FL_ALPHA)
+  //TEST_GL(FL_DEPTH)
+  //TEST_GL(FL_MULTISAMPLE)
+  mode(mod);
+  };
 
   ~Oy_Fl_GL_Box(void) { };
 
@@ -65,6 +83,9 @@ private:
   }
   void draw()
   {
+    if(!context_valid())
+      return;
+
     int W_ = Oy_Fl_Image_Widget::w(),
         H_ = Oy_Fl_Image_Widget::h();
     if(oy_display_verbose)
@@ -112,9 +133,6 @@ private:
                     __LINE__,
                     pt, oyImage_GetWidth( draw_image ), oyToChannels_m(pt) );
 
-      if(!context_valid())
-        return;
-
       if(!valid() ||
          W_ != W || H_ != H || !frame_data)
       {
@@ -134,7 +152,7 @@ private:
       glBegin(GL_LINE_STRIP); glVertex2f(W, H); glVertex2f(-W,-H); glEnd();
       glBegin(GL_LINE_STRIP); glVertex2f(W,-H); glVertex2f(-W, H); glEnd();
 
-      if((!draw_image || result != 0) && valid())
+      if((!draw_image || result == 0) && valid())
       {
         if(!need_redraw)
         {
@@ -151,6 +169,8 @@ private:
         }
         --need_redraw;
       }
+
+      //if(result < 0) ++need_redraw;
 
 #ifdef __APPLE__
       glDrawBuffer(GL_FRONT_AND_BACK);
@@ -182,11 +202,14 @@ private:
 
       glGetIntegerv( GL_CURRENT_RASTER_POSITION, &pos[0] );
 
-      if(0&&oy_display_verbose)
+      if(oy_display_verbose)
         fprintf(stdout, "%s:%d draw %dx%d %dx%d\n",
                     strrchr(__FILE__,'/')?strrchr(__FILE__,'/')+1:__FILE__,
                     __LINE__,
                     frame_width,frame_height,W,H);
+
+      if(oy_debug && getenv("OY_DEBUG_WRITE"))
+        oyImage_WritePPM( draw_image, "dbg.ppm", __FILE__);
 
       oyImage_Release( &draw_image );
       if(oy_debug )
