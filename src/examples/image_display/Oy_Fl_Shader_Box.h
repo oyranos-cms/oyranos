@@ -784,12 +784,15 @@ public:
                                        const char        * clut_name )
   {
     oyImage_Release( &image );
+    conversion( NULL );
     int error = oyImage_FromFile( file_name, 0, &image, 0 );
     if(oy_display_verbose)
       fprintf(stderr, _DBG_FORMAT_"loaded image: %s\n%s\n", _DBG_ARGS_,
                       file_name, oyStruct_GetText( (oyStruct_s*)image, oyNAME_NAME, 0));
     if(!image)
       error = 1;
+    else
+      initDAG();
 
     int lerror = 0;
     if(clut_name[0] == 0)
