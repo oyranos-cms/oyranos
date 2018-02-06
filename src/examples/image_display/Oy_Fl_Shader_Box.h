@@ -417,6 +417,14 @@ private:
     return error;
   }
 
+  void releaseFrame()
+  {
+    if(frame_width && frame_height && frame_data)
+      free(frame_data);
+    frame_width = frame_height = 0;
+    frame_data = NULL;
+  }
+
   int createFrame( int width, int height )
   {
     int changed = 0;
@@ -567,6 +575,8 @@ private:
     /* intermediate buffer */
     if(init == 0)
       createFrame( sw, sh );
+    else
+      releaseFrame();
 
     return dirty;
   }
@@ -850,7 +860,7 @@ private:
     glBindTexture (GL_TEXTURE_2D, 0);
 
     if(oy_display_verbose)
-      fprintf(stderr, _DBG_FORMAT_"subImage(%dx%d) frame(%dx%d)\n", _DBG_ARGS_, sw,sh, frame_width, frame_height );
+      fprintf(stderr, _DBG_FORMAT_"subImage(%dx%d)%dc frame(%dx%d)\n", _DBG_ARGS_, sw,sh,channels, frame_width, frame_height );
 
     /* draw surface */
     if(gl_channels == GL_RGBA)
