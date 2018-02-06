@@ -288,10 +288,10 @@ public:
       data_type = oyToDataType_m( pt );
       channels = oyToChannels_m( pt );
       if(pt != 0 &&
-         ((channels != 4 && channels != 3) || data_type != data_type_request))
+         ((channels != 4 && channels != 3 && channels != 1) || data_type != data_type_request))
       {
         printf( _DBG_FORMAT_"WARNING: wrong image_output data format: %s\n"
-                "need 4 or 3 channels with %s\n",_DBG_ARGS_,
+                "need 1, 3 or 4 channels with %s\n",_DBG_ARGS_,
                 image_output ? oyObject_GetName( image_output->oy_, oyNAME_NICK ) : "",
                 oyDataTypeToText( data_type_request ) );
         return 1;
@@ -309,7 +309,10 @@ public:
   void damage( char c )
   {
     if(c & FL_DAMAGE_USER1)
+    {
+      fprintf(stderr, "D");
       dirty = 1;
+    }
     Fl_Widget::damage( c );
   }
   /* implement Oy_Widget::markDirty() */

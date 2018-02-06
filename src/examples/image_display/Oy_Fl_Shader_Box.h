@@ -172,10 +172,7 @@ private:
     oyDATATYPE_e data_type = oyToDataType_m( pt );
     int channels = oyToChannels_m( pt );
 
-    int gl_channels = 0;
-    if(channels == 3) gl_channels = GL_RGB;
-    if(channels == 4) gl_channels = GL_RGBA;
-
+    int gl_channels = oyToGlChannelType(channels);
     int gl_data_type = oyToGlDataType(data_type);
     int gl_type = oyToGlPixelType(pt);
 
@@ -195,7 +192,7 @@ private:
 		  0, gl_channels, gl_data_type, frame_data);
 
     /* size may be too big */
-    if(check_error("glTexImage2D failed (image too large?)"))
+    if(check_error("glTexImage2D failed"))
     {
       fprintf( stderr,_DBG_FORMAT_"texture:(%dx%d)%dc %s %s %s %s\n", _DBG_ARGS_,
         frame_width,frame_height, channels, oyDataTypeToText(data_type),
@@ -366,7 +363,13 @@ private:
         }
         else
           fprintf(stderr, "found image profile: %s\n", oyProfile_GetText(p,oyNAME_DESCRIPTION));
-      } else
+        if(oyProfile_GetChannelsCount(p) != 3)
+        {
+          fprintf(stderr, "found unsupported channel count: %d\n", oyProfile_GetChannelsCount(p));
+          oyProfile_Release( &p );
+        }
+      }
+      if(!p)
       {
         p = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, 0 );
         fprintf(stderr, "falling back to default profile: %s\n", oyProfile_GetText(p,oyNAME_DESCRIPTION));
@@ -387,6 +390,8 @@ private:
       if(clut_image) oyImage_Release( &clut_image );
       clut_image = oyConversion_GetImage( cc, OY_OUTPUT );
       oyConversion_Release( &cc );
+      oyImage_Release( &cimage );
+      free(buf);
       //error = oyImage_WritePPM( clut_image, "dbg-clut.ppm", comment);
       if(!clut_image)
       { WARNc_S("Could not open clut image");
@@ -683,9 +688,7 @@ private:
           {
             glBindTexture (GL_TEXTURE_2D, img_texture);
 
-            int gl_channels = 0;
-            if(channels == 3) gl_channels = GL_RGB;
-            if(channels == 4) gl_channels = GL_RGBA;
+            int gl_channels = oyToGlChannelType(channels);
             int gl_data_type = oyToGlDataType(data_type);
             int gl_type = oyToGlPixelType(pt);
 
@@ -849,9 +852,7 @@ private:
     glTexEnvf (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 
     int gl_data_type = oyToGlDataType(data_type);
-    int gl_channels = 0;
-    if(channels == 3) gl_channels = GL_RGB;
-    if(channels == 4) gl_channels = GL_RGBA;
+    int gl_channels = oyToGlChannelType(channels);
 
     /* upload texture 0 (image) */
     glBindTexture (GL_TEXTURE_2D, img_texture);
@@ -914,9 +915,19 @@ public:
     }
     else
     {
-      load = 1;
-      valid(0);
-      redraw();
+      oyPixel_t pt = oyImage_GetPixelLayout( image, oyLAYOUT );
+      int channels = oyToChannels_m( pt );
+      if(channels == 1 || channels == 3 || channels == 4)
+      {
+        load = 1;
+        valid(0);
+        redraw();
+      } else
+      {
+        fprintf(stderr, _DBG_FORMAT_"image channels not supported: %d %s\n", _DBG_ARGS_,
+                        channels, file_name);
+        return 1;
+      }
     }
 
     int lerror = 0;
@@ -950,6 +961,8 @@ public:
     static char t[64] = {0};
     switch( type )
     {
+      case GL_LUMINANCE: strcpy(t, "GL_LUMINANCE"); break;
+      case GL_LUMINANCE_ALPHA: strcpy(t, "GL_LUMINANCE_ALPHA"); break;
       case GL_RGB:  strcpy(t, "GL_RGB"); break;
       case GL_RGBA: strcpy(t, "GL_RGBA"); break;
       default: sprintf( t, "%d", type );
@@ -961,15 +974,30 @@ public:
     static char t[64] = {0};
     switch( type )
     {
-      case GL_RGB8:  strcpy(t, "GL_RGB8"); break;
-      case GL_RGBA8: strcpy(t, "GL_RGBA8"); break;
-      case GL_RGB16:  strcpy(t, "GL_RGB16"); break;
-      case GL_RGBA16: strcpy(t, "GL_RGBA16"); break;
+      case GL_LUMINANCE8:        strcpy(t, "GL_LUMINANCE8"); break;
+      //case GL_LUMINANCE_ALPHA8:  strcpy(t, "GL_LUMINANCE_ALPHA8"); break;
+      case GL_RGB8:              strcpy(t, "GL_RGB8"); break;
+      case GL_RGBA8:             strcpy(t, "GL_RGBA8"); break;
+      case GL_LUMINANCE16:       strcpy(t, "GL_LUMINANCE16"); break;
+      //case GL_LUMINANCE_ALPHA16: strcpy(t, "GL_LUMINANCE_ALPHA16"); break;
+      case GL_RGB16:             strcpy(t, "GL_RGB16"); break;
+      case GL_RGBA16:            strcpy(t, "GL_RGBA16"); break;
       default: sprintf( t, "%d", type );
     }
     return t;
   }
 
+  static int oyToGlChannelType( int channels )
+  {
+    switch(channels)
+    {
+      case 1: return GL_LUMINANCE;
+      //case 2: return GL_LUMINANCE_ALPHA;
+      case 3: return GL_RGB;
+      case 4: return GL_RGBA;
+      default: fprintf(stderr, "channels not supported: %d", channels); return 0;
+    }
+  }
   static int oyToGlDataType( oyDATATYPE_e type )
   {
     switch(type)
@@ -987,8 +1015,11 @@ public:
   {
     switch( type )
     {
+      case OY_TYPE_1_8: return GL_LUMINANCE8;
+      //case OY_TYPE_1A_8: return GL_LUMINANCE_ALPHA8;
       case OY_TYPE_123_8: return GL_RGB8;
       case OY_TYPE_123A_8: return GL_RGBA8;
+      case OY_TYPE_1_16: return GL_LUMINANCE16;
       case OY_TYPE_123_16: return GL_RGB16;
       case OY_TYPE_123A_16: return GL_RGBA16;
       case OY_TYPE_123_HALF: return GL_RGB16F;

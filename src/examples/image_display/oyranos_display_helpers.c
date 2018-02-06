@@ -349,10 +349,10 @@ int  oyDrawScreenImage               ( oyConversion_s    * context,
       data_type = oyToDataType_m( pt );
       channels = oyToChannels_m( pt );
       if(pt != 0 &&
-         ((channels != 4 && channels != 3) || data_type != data_type_request))
+         ((channels != 4 && channels != 3 && channels != 1) || data_type != data_type_request))
       {
         printf( "%s:%d WARNING: wrong image data format: %s\n%s\n"
-                "need 4 or 3 channels with %s\n", __FILE__,__LINE__,
+                "need 1, 3 or 4 channels with %s\n", __FILE__,__LINE__,
                 oyOptions_FindString( image_tags, "filename", 0 ),
                 oyObject_GetName( image->oy_, oyNAME_NICK ),
                 oyDataTypeToText( data_type_request ) );
