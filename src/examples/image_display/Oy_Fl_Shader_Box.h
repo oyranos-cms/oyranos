@@ -37,30 +37,30 @@ class Oy_Fl_Shader_Box : public Fl_Gl_Window,
   oyImage_s * clut_image,
             * image,
             * display_image;
-  int load;
+  int load, init;
 public:
   Oy_Fl_Shader_Box(int x, int y, int w, int h)
     : Fl_Gl_Window(x,y,w,h), Oy_Fl_Image_Widget(x,y,w,h)
-  { frame_data = NULL; frame_width= frame_height= W= H= sw= sh=0; clut_image = image = display_image = NULL;
-    grid_points = 0; clut = 0; clut_filled = 0; clut_texture = -1; load = 0;
-    max_texture_size=0,tick=0;
+  { frame_data= NULL; frame_width= frame_height= W= H= sw= sh=0; clut_image= image= display_image= NULL;
+    grid_points= 0; clut= 0; img_texture= clut_texture= 0; load= init= 0;
+    max_texture_size= 0,tick= 0;
 # define TEST_GL(modus) { \
-    this->mode(modus); \
-    if(this->can_do()) { \
-      mod |= modus; \
-      this->mode(mod); \
-      fprintf(stderr, "OpenGL understand: yes  %s %d\n", #modus, this->mode() ); \
-    } else {  printf("can_do() false: %d\n", modus); \
-      fprintf(stderr, "OpenGL understand: no   %s %d\n", #modus, this->mode() ); \
-    } \
-  }
-  long mod = 0;
-  TEST_GL(FL_RGB)
-  //TEST_GL(FL_DOUBLE)
-  TEST_GL(FL_ALPHA)
-  //TEST_GL(FL_DEPTH)
-  //TEST_GL(FL_MULTISAMPLE)
-  mode(mod);
+      this->mode(modus); \
+      if(this->can_do()) { \
+        mod |= modus; \
+        this->mode(mod); \
+        fprintf(stderr, "OpenGL understand: yes  %s %d\n", #modus, this->mode() ); \
+      } else {  printf("can_do() false: %d\n", modus); \
+        fprintf(stderr, "OpenGL understand: no   %s %d\n", #modus, this->mode() ); \
+      } \
+    }
+    long mod = 0;
+    TEST_GL(FL_RGB)
+    //TEST_GL(FL_DOUBLE)
+    TEST_GL(FL_ALPHA)
+    //TEST_GL(FL_DEPTH)
+    //TEST_GL(FL_MULTISAMPLE)
+    mode(mod);
   };
 
   ~Oy_Fl_Shader_Box(void) { oyImage_Release( &clut_image );
@@ -75,7 +75,6 @@ public:
 
 private:
     GLushort * clut;
-    int clut_filled;
 
     GLuint img_texture;
     GLuint clut_texture;
@@ -110,10 +109,14 @@ private:
     if (err != GL_NO_ERROR)
     {
       if (text)
-        fprintf (stderr, _DBG_FORMAT_"%s:\n",_DBG_ARGS_, text);
+        fprintf (stderr, _DBG_FORMAT_ "%s:\n",_DBG_ARGS_, text);
       while (err != GL_NO_ERROR)
       {
-        fprintf (stderr, _DBG_FORMAT_"GL error %#x\n",_DBG_ARGS_,(int) err);
+        const char * t = "";
+        switch(err) {
+        case GL_INVALID_ENUM: t = "GL_INVALID_ENUM"; break;
+        case GL_INVALID_OPERATION: t = "GL_INVALID_OPERATION"; break; }
+        fprintf (stderr, _DBG_FORMAT_ "GL ERROR %s %#x\n",_DBG_ARGS_, t, (int) err);
         err = glGetError ();
       }
       return 1;
@@ -122,7 +125,7 @@ private:
   }
 
 
-  void loadShaders (void)
+  void initShaders (void)
   {
     GLint loc;
 
@@ -140,25 +143,105 @@ private:
 
     glUseProgram (cmm_prog);
 
-    loc = glGetUniformLocation ((GLintptr)cmm_prog, "scale");
+    loc = glGetUniformLocation (cmm_prog, "scale");
     glUniform1f (loc, clut_scale);
 
-    loc = glGetUniformLocation ((GLintptr)cmm_prog, "offset");
+    loc = glGetUniformLocation (cmm_prog, "offset");
     glUniform1f (loc, clut_offset);
 
     /* texture 0 = image */
     glActiveTexture (GL_TEXTURE0 + 0);
     glBindTexture (GL_TEXTURE_2D, img_texture);
 
-    loc = glGetUniformLocation ((GLintptr)cmm_prog, "image");
+    loc = glGetUniformLocation (cmm_prog, "image");
     glUniform1i (loc, 0);
 
     /* texture 1 = clut */
     glActiveTexture (GL_TEXTURE0 + 1);
     glBindTexture (GL_TEXTURE_3D, clut_texture);
 
-    loc = glGetUniformLocation ((GLintptr)cmm_prog, "clut");
+    loc = glGetUniformLocation (cmm_prog, "clut");
     glUniform1i (loc, 1);
+  }
+
+  void initImageTexture ()
+  {
+    oyPixel_t pt = oyImage_GetPixelLayout( image, oyLAYOUT );
+    if(!image)
+      pt = OY_TYPE_123_8;
+    oyDATATYPE_e data_type = oyToDataType_m( pt );
+    int channels = oyToChannels_m( pt );
+
+    int gl_channels = 0;
+    if(channels == 3) gl_channels = GL_RGB;
+    if(channels == 4) gl_channels = GL_RGBA;
+
+    int gl_data_type = oyToGlDataType(data_type);
+    int gl_type = oyToGlPixelType(pt);
+
+    /* texture 0 (image) */
+    glGenTextures (1, &img_texture);
+    if(oy_display_verbose || !img_texture) fprintf(stderr,_DBG_FORMAT_ "image_texture: %d\n", _DBG_ARGS_, img_texture);
+    if(img_texture <= 0) return;
+    glActiveTexture (GL_TEXTURE0 + 0);
+    glBindTexture (GL_TEXTURE_2D, img_texture);
+
+    glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+    glTexImage2D (GL_TEXTURE_2D, 0, gl_type, frame_width, frame_height,
+		  0, gl_channels, gl_data_type, frame_data);
+
+    /* size may be too big */
+    if(check_error("glTexImage2D failed (image too large?)"))
+    {
+      fprintf( stderr,_DBG_FORMAT_"texture:(%dx%d)%dc %s %s %s %s\n", _DBG_ARGS_,
+        frame_width,frame_height, channels, oyDataTypeToText(data_type),
+        printType( gl_type ), printDataType(gl_data_type), printChannelType( gl_channels));
+    }
+
+    glBindTexture (GL_TEXTURE_2D, 0);
+
+    if(0&&oy_display_verbose)
+      oyImage_ToFile( display_image, "display_image.ppm", 0 );
+  }
+
+  void initClutTexture()
+  {
+    glGenTextures (1, &clut_texture);
+    if(oy_display_verbose || !clut_texture) fprintf(stderr,_DBG_FORMAT_ "clut_texture: %d\n", _DBG_ARGS_, clut_texture);
+    if(clut_texture <= 0) return;
+    /* texture 1 = clut */
+    glActiveTexture (GL_TEXTURE0 + 1);
+    glBindTexture (GL_TEXTURE_3D, clut_texture);
+
+    glTexParameteri (GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri (GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri (GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+    glTexParameteri (GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri (GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+    /*
+     * Don't use FP luts, but only 16-bit integer ones, since the ATI card
+     * does not support GL_LINEAR for GL_RGB32F_ARB, but ony GL_NEAREST
+     */
+    int n = oyImage_GetWidth(clut_image);
+    glTexImage3D (GL_TEXTURE_3D, 0, GL_RGB16, n, n, n,
+		  0, GL_RGB, GL_UNSIGNED_SHORT, clut);
+    check_error("init glTexImage3D(clut) failed");
+
+    glBindTexture (GL_TEXTURE_3D, 0);
+  }
+
+  void initGL()
+  {
+    if(oy_debug == 0 && oy_display_verbose == 0)
+      fprintf(stderr, "g");
+    initImageTexture();
+    initClutTexture();
+    initShaders ();
   }
 
   oyProfile_s * getFirstMonitorDeviceProfile()
@@ -222,7 +305,6 @@ private:
     clut_scale = (double) (w - 1) / w;
     clut_offset = 1.0 / (2 * w);
 
-    clut_filled = 1;
     if( oy_display_verbose )
     {
     	fprintf( stderr,_DBG_FORMAT_
@@ -230,6 +312,11 @@ private:
                  _DBG_ARGS_,
                  grid_points, h,oyDataTypeToText(data_type), w,w*w);
     }
+
+    ++load;
+    valid(0);
+    redraw();
+
     return 0;
   }
 
@@ -371,14 +458,16 @@ private:
     if(!changed)
       return changed;
 
-    if( frame_width > max_texture_size ||
-        frame_height > max_texture_size )
+    if((frame_width > max_texture_size ||
+        frame_height > max_texture_size ) && max_texture_size)
       fprintf( stderr,_DBG_FORMAT_"frame size is likely too big frame(%dx%d) sub(%dx%d) max:%d\n", _DBG_ARGS_, frame_width, frame_height, sw,sh, max_texture_size);
     else if(oy_display_verbose)
       fprintf( stderr,_DBG_FORMAT_"frame size (%dx%d) max:%d\n", _DBG_ARGS_, frame_width, frame_height, max_texture_size);
 
 
     oyPixel_t pt = oyImage_GetPixelLayout( image, oyLAYOUT );
+    if(!image)
+      pt = OY_TYPE_123_8;
     oyDATATYPE_e data_type = oyToDataType_m( pt );
     int channels = oyToChannels_m( pt );
     int sample_size = oyDataTypeGetSize( data_type );
@@ -423,73 +512,17 @@ private:
     conversion( cc );
   }
 
-  void loadImageTexture ()
+  void loadClut()
   {
-    oyPixel_t pt = oyImage_GetPixelLayout( display_image, oyLAYOUT );
-    oyDATATYPE_e data_type = oyToDataType_m( pt );
-    int channels = oyToChannels_m( pt );
-
-    int gl_channels = 0;
-    if(channels == 3) gl_channels = GL_RGB;
-    if(channels == 4) gl_channels = GL_RGBA;
-
-    int gl_data_type = oyToGlDataType(data_type);
-    int gl_type = oyToGlPixelType(pt);
-    if(!gl_type)
-      fprintf( stderr,_DBG_FORMAT_"%dx%d+%d+%d %dx%d+%d+%d %dx%d not supported %s\n",
-        _DBG_ARGS_,
-        W,H,Oy_Fl_Image_Widget::x(),Oy_Fl_Image_Widget::y(),
-        Oy_Fl_Image_Widget::parent()->w(), Oy_Fl_Image_Widget::parent()->h(),
-        Oy_Fl_Image_Widget::parent()->x(), Oy_Fl_Image_Widget::parent()->y(),
-        frame_width,frame_height, oyDataTypeToText(data_type));
-
-    if(oy_debug || !frame_data)
-      fprintf( stderr,_DBG_FORMAT_"texture:(%dx%d)%dc %s %s %s %s\n", _DBG_ARGS_,
-        frame_width,frame_height, channels, oyDataTypeToText(data_type),
-        printType( gl_type ), printDataType(gl_data_type), printChannelType( gl_channels));
-
-    /* texture 0 (image) */
-    glGenTextures (1, &img_texture);
-    if(oy_display_verbose) fprintf(stderr,_DBG_FORMAT_ "image_texture: %d\n", _DBG_ARGS_, img_texture);
-    glActiveTexture (GL_TEXTURE0 + 0);
-    glBindTexture (GL_TEXTURE_2D, img_texture);
-
-    glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
-    glTexImage2D (GL_TEXTURE_2D, 0, gl_type, frame_width, frame_height,
-		  0, gl_channels, gl_data_type, frame_data);
-
-    /* size may be too big */
-    if(check_error("glTexImage2D failed (image too large?)"))
-    {
-      fprintf( stderr,_DBG_FORMAT_"texture:(%dx%d)%dc %s %s %s %s\n", _DBG_ARGS_,
-        frame_width,frame_height, channels, oyDataTypeToText(data_type),
-        printType( gl_type ), printDataType(gl_data_type), printChannelType( gl_channels));
-      //exit(1);
+    /* clut must be present */
+    /* GL needs first to be initialised */
+    if(!clut || !clut_texture || !cmm_prog)
+    { fprintf( stderr,_DBG_FORMAT_ "%s %s %s\n", _DBG_ARGS_, clut?"":"no clut", clut_texture?"":"not clut_texture initialised", cmm_prog?"":"no cmm_prog initialised" );
+      return;
     }
 
-    glBindTexture (GL_TEXTURE_2D, 0);
-
-    if(0&&oy_display_verbose)
-      oyImage_ToFile( display_image, "display_image.ppm", 0 );
-  }
-
-  void loadClutTexture()
-  {
-    glGenTextures (1, &clut_texture);
-    if(oy_display_verbose) fprintf(stderr,_DBG_FORMAT_ "clut_texture: %d\n", _DBG_ARGS_, clut_texture);
-    /* texture 1 = clut */
-    glActiveTexture (GL_TEXTURE0 + 1);
+    //glActiveTexture (GL_TEXTURE0 + 1);
     glBindTexture (GL_TEXTURE_3D, clut_texture);
-
-    glTexParameteri (GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri (GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri (GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-    glTexParameteri (GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri (GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
     /*
      * Don't use FP luts, but only 16-bit integer ones, since the ATI card
@@ -498,6 +531,18 @@ private:
     int n = oyImage_GetWidth(clut_image);
     glTexImage3D (GL_TEXTURE_3D, 0, GL_RGB16, n, n, n,
 		  0, GL_RGB, GL_UNSIGNED_SHORT, clut);
+    check_error("load glTexImage3D(clut) failed");
+
+    return; // TODO make the following work
+    /* shader parameter update */
+    GLint loc;
+    loc = glGetUniformLocation (cmm_prog, "scale");
+    glUniform1f (loc, clut_scale);
+
+    loc = glGetUniformLocation (cmm_prog, "offset");
+    glUniform1f (loc, clut_offset);
+
+    glBindTexture (GL_TEXTURE_3D, 0);    
   }
 
   int loadContext()
@@ -520,14 +565,8 @@ private:
     oyImage_Release( &draw_image );
 
     /* intermediate buffer */
-    createFrame( sw, sh );
-
-    /* OpenGL */
-    loadImageTexture();
-
-    loadClutTexture();
-
-    loadShaders ();
+    if(init == 0)
+      createFrame( sw, sh );
 
     return dirty;
   }
@@ -538,8 +577,6 @@ private:
   {
     if(!context_valid())
       return;
-
-    //if(!(image && clut_image)) return;
 
     W = Oy_Fl_Image_Widget::w(),
     H = Oy_Fl_Image_Widget::h();
@@ -558,12 +595,21 @@ private:
     if(max_texture_size == 0)
       glGetIntegerv( GL_MAX_TEXTURE_SIZE, &max_texture_size );
 
-    if(load == 1)
+    if(load > 0)
     {
       valid(1);
       need_draw = loadContext();
-      --load;
     }
+    if(clut)
+    {
+      if(init == 0)
+      {
+        initGL(); /* buffers, textures and shaders */
+        ++init;
+      } else if(load)
+        loadClut();
+    }
+    load = 0;
 
     oyImage_s * draw_image = NULL;
     oyPixel_t pt;
@@ -711,7 +757,7 @@ private:
                Oy_Fl_Image_Widget::parent()->h(),
                img_texture, clut_texture, clut_scale, clut_offset,
                (ptrdiff_t)cmm_prog, (ptrdiff_t)cmm_shader, tw,th,
-               (OY_MIN(oyImage_GetWidth( draw_image), W)*channels*sample_size)%2);
+               (sw*channels*sample_size)%4);
 
     // - not needed, but might improve speed - START //
     glShadeModel (GL_FLAT);
@@ -849,11 +895,15 @@ public:
       fprintf(stderr, _DBG_FORMAT_"loaded image: %s\n%s\n", _DBG_ARGS_,
                       file_name, oyStruct_GetText( (oyStruct_s*)image, oyNAME_NAME, 0));
     if(!image)
+    {
       error = 1;
+      return error;
+    }
     else
     {
-      loadDAG();
       load = 1;
+      valid(0);
+      redraw();
     }
 
     int lerror = 0;
