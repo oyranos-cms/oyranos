@@ -37,12 +37,12 @@ class Oy_Fl_Shader_Box : public Fl_Gl_Window,
   oyImage_s * clut_image,
             * image,
             * display_image;
-  int load, init;
+  int load, init, adraw;
 public:
   Oy_Fl_Shader_Box(int x, int y, int w, int h)
     : Fl_Gl_Window(x,y,w,h), Oy_Fl_Image_Widget(x,y,w,h)
   { frame_data= NULL; frame_width= frame_height= W= H= sw= sh=0; clut_image= image= display_image= NULL;
-    grid_points= 0; clut= 0; img_texture= clut_texture= 0; load= init= 0;
+    grid_points= 0; clut= 0; img_texture= clut_texture= 0; load= init= adraw= 0;
     max_texture_size= 0,tick= 0;
 # define TEST_GL(modus) { \
       this->mode(modus); \
@@ -606,6 +606,7 @@ private:
       {
         initGL(); /* buffers, textures and shaders */
         ++init;
+        adraw = 2;
       } else if(load)
         loadClut();
     }
@@ -650,7 +651,7 @@ private:
 
     if(draw_image)
     {
-      if(need_draw == 0)
+      if(need_draw == 0 && !adraw)
       {
         if(oy_debug == 0 && oy_display_verbose == 0)
           fprintf(stderr, "0");
@@ -692,6 +693,8 @@ private:
             glBindTexture (GL_TEXTURE_2D, 0);
           }
         }
+        if(adraw)
+          --adraw;
       }
 
       if(frame_data)
