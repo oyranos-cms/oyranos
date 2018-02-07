@@ -112,9 +112,64 @@ public:
       return ret;
   }
 
+
+  void colorServerRegionSet          ( Fl_Widget         * widget,
+                                       oyProfile_s       * p,
+                                       oyRectangle_s     * old_rect,
+                                       int                 remove )
+  {
+#if defined(XCM_HAVE_X11)          
+    if(!fl_display || !widget->window() || !widget->window()->visible())
+      return;
+
+      /* add X11 window and display identifiers to output image */
+    Display * dpy = fl_display;
+    Window win = fl_xid(widget->window());
+
+    oyBlob_s * b = oyBlob_New(NULL);
+    oyOptions_s * opts = oyOptions_New( NULL ),
+                * result = NULL;
+    oyRectangle_s * r;
+    oyProfile_s * prof = NULL;
+    int error = 0;
+
+    oyBlob_SetFromStatic( b, (void*)win, 0, "Window" );
+    error = oyOptions_MoveInStruct( &opts, "///window_id", (oyStruct_s**)&b,
+                          OY_CREATE_NEW );
+    b = oyBlob_New(NULL);
+    oyBlob_SetFromStatic( b, (void*)dpy, 0, "Display" );
+    error = oyOptions_MoveInStruct( &opts, "///display_id", (oyStruct_s**)&b,
+                          OY_CREATE_NEW);
+    if(remove)
+      r = oyRectangle_NewWith( 0, 0, 0, 0, NULL );
+    else
+      r = oyRectangle_NewWith( widget->x(), widget->y(), widget->w(), widget->h(),
+                             NULL );
+    error = oyOptions_MoveInStruct( &opts, "///window_rectangle",(oyStruct_s**)&r,
+                          OY_CREATE_NEW );
+    r = oyRectangle_Copy( old_rect, NULL );
+    error = oyOptions_MoveInStruct( &opts, "///old_window_rectangle",
+                          (oyStruct_s**)&r, OY_CREATE_NEW );
+    if(p)
+    {
+      prof = oyProfile_Copy( p, NULL );
+      error = oyOptions_MoveInStruct( &opts, "///icc_profile",(oyStruct_s**)&prof,
+                          OY_CREATE_NEW );
+    }
+
+    error = oyOptions_Handle( "//" OY_TYPE_STD "/set_xcm_region",
+                                opts,"set_xcm_region",
+                                &result );
+    if(error)
+      WARNc1_S("\"set_xcm_region\" failed %d", error);
+    oyOptions_Release( &opts );
+#endif                     
+  }
+
 public:
+  // flags : centerd == 0x01 | skip_server_region_upload == 0x02;
   int drawPrepare( oyImage_s ** draw_image, oyDATATYPE_e data_type_request,
-                    int center_aligned )
+                    int flags )
   {
     {
       Oy_Fl_Window_Base * topWindow_is_a_Oy_Fl_Window_Base = 0, * win = 0;
@@ -223,7 +278,7 @@ public:
 
         /* Inform about the images display coverage.  */
         int offset_x = 0, offset_y = 0;
-        if(center_aligned)
+        if(flags & 0x01 /* centerd */)
         {
           if(W > width_scale)
             offset_x = (W - width_scale) / 2;
@@ -258,6 +313,14 @@ public:
       {
         *oyRectangle_SetGeo1(display_rectangle,2) = OY_MIN( oyRectangle_GetGeo1(display_rectangle,2), width_roi );
         *oyRectangle_SetGeo1(display_rectangle,3) = OY_MIN( oyRectangle_GetGeo1(display_rectangle,3), height_roi );
+      }
+
+      if(flags & 0x02/* skip_server_region_upload */)
+      {
+        /* It impossible for the oydi filter node to upload a XCM window
+           region by skippig the X11 information. */
+        display = NULL;
+        window = NULL;
       }
 
       if(image_output)
