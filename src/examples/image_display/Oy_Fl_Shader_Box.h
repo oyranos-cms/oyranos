@@ -38,12 +38,14 @@ class Oy_Fl_Shader_Box : public Fl_Gl_Window,
             * image,
             * display_image;
   int load, init, adraw;
+  float background[3];
+  oyRectangle_s * old_rect;
 public:
   Oy_Fl_Shader_Box(int x, int y, int w, int h)
     : Fl_Gl_Window(x,y,w,h), Oy_Fl_Image_Widget(x,y,w,h)
   { frame_data= NULL; frame_width= frame_height= W= H= sw= sh=0; clut_image= image= display_image= NULL;
     grid_points= 0; clut= 0; img_texture= clut_texture= 0; load= init= adraw= 0;
-    max_texture_size= 0,tick= 0;
+    max_texture_size= 0,tick= 0; old_rect= NULL;
 # define TEST_GL(modus) { \
       this->mode(modus); \
       if(this->can_do()) { \
@@ -64,7 +66,10 @@ public:
   };
 
   ~Oy_Fl_Shader_Box(void) { oyImage_Release( &clut_image );
-    oyImage_Release( &image ); oyImage_Release( &display_image ); };
+    oyImage_Release( &image ); oyImage_Release( &display_image );
+    colorServerRegionSet( dynamic_cast<Fl_Widget*>(dynamic_cast<Oy_Fl_Image_Widget*>(this)), NULL, old_rect, 1 );
+    oyRectangle_Release( &old_rect );
+  };
 
   void damage( char c )
   {
@@ -274,6 +279,28 @@ private:
     oyOptions_Release( &options );
     oyOptions_Release( &cs_options );
     return prof;
+  }
+
+  void sRgbToMonitor( float srgb_in[3], float * rgb_moni )
+  {
+    oyProfile_s * monitor_icc = getFirstMonitorDeviceProfile();
+
+    // now convert some colors from sRGB to monitor space
+    // find the appropriate profile flags
+    uint32_t icc_profile_flags =oyICCProfileSelectionFlagsFromOptions( OY_CMM_STD,
+                                   "//" OY_TYPE_STD "/icc_color", NULL, 0 );
+    oyProfile_s * srgb = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, 0 );
+    // setup the color context
+    oyConversion_s * cc = oyConversion_CreateBasicPixelsFromBuffers(
+                         srgb, srgb_in, OY_TYPE_123_FLOAT,
+                         monitor_icc, rgb_moni, OY_TYPE_123_FLOAT,
+                         NULL, 1 );
+    oyConversion_Correct( cc, "//" OY_TYPE_STD "/icc_color", oyOPTIONATTRIBUTE_ADVANCED, NULL );
+    // convert by running the conversion graph
+    oyConversion_RunPixels( cc, NULL );
+    oyProfile_Release( &monitor_icc );
+    oyProfile_Release( &srgb );
+    oyConversion_Release( &cc );
   }
 
   int  load3DTexture( )
@@ -571,7 +598,8 @@ private:
     oyDATATYPE_e data_type = oyToDataType_m( pt );
     int dirty = 0;
     oyImage_s * draw_image = NULL;
-    if(drawPrepare( &draw_image, data_type, 1 ) == -1)
+    // centerd == 0x01  skip_server_region_upload == 0x02;
+    if(drawPrepare( &draw_image, data_type, 1 | 2 ) == -1)
       ++dirty;
     int sw = OY_MIN(oyImage_GetWidth( draw_image), W);
     int sh = OY_MIN(oyImage_GetHeight(draw_image), H);
@@ -593,9 +621,19 @@ private:
     if(!context_valid())
       return;
 
-    W = Oy_Fl_Image_Widget::w(),
-    H = Oy_Fl_Image_Widget::h();
+    int W_ = Oy_Fl_Image_Widget::w(),
+        H_ = Oy_Fl_Image_Widget::h();
     int need_draw = 0;
+
+    if( W_ != W ||
+        H_ != H )
+    {
+      if(!old_rect) old_rect = oyRectangle_New(NULL);
+      colorServerRegionSet( dynamic_cast<Fl_Widget*>(dynamic_cast<Oy_Fl_Image_Widget*>(this)), NULL, old_rect, 0 );
+      W = W_;
+      H = H_;
+      oyRectangle_SetGeo( old_rect, 0,0,W,H );
+    }
 
     /*if(oy_display_verbose)
       fprintf( stderr, _DBG_FORMAT_"Widget:%dx%d+%d+%d  Parent:%dx%d+%d+%d\n",_DBG_ARGS_, 
@@ -614,6 +652,9 @@ private:
     {
       valid(1);
       need_draw = loadContext();
+
+      float bg[3] = {0.5, 0.5, 0.5};
+      sRgbToMonitor( bg, background );
     }
     if(clut)
     {
@@ -639,7 +680,8 @@ private:
       sample_size = oyDataTypeGetSize( data_type );
 
       /* detect Oyranos DAG changes and process teh graph of needed */
-      int result = drawPrepare( &draw_image, data_type, 1 );
+      // centerd == 0x01  skip_server_region_upload == 0x02;
+      int result = drawPrepare( &draw_image, data_type, 1 | 2 );
 
       if(!draw_image)
       { fprintf( stderr, _DBG_FORMAT_ "no draw image\n", _DBG_ARGS_ );
@@ -794,6 +836,7 @@ private:
     /* draw background */
     glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glClearColor (0.5, 0.5, 0.5, 0.0);
+    glClearColor (background[0], background[1], background[2], 0.0);
     glColor3f(1.0, 1.0, 1.0);
     glBegin(GL_LINE_STRIP); glVertex2f(W, H); glVertex2f(-W,-H); glEnd();
     glBegin(GL_LINE_STRIP); glVertex2f(W,-H); glVertex2f(-W, H); glEnd();
@@ -811,6 +854,7 @@ private:
       int start_w = -W+bw,
           start_h = -H+bh;
 
+      /* checker board */
       glColor3f(.0, .0, .0);
       glBegin (GL_QUADS);
         for(int w = start_w; w < W-bw; w += len)
