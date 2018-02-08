@@ -184,6 +184,11 @@ int            oyRampManipulateF64   ( double            * ramp1,
                                        double            * ramp_result,
                                        int                 ramp_size,
                                        double            (*manip_f)(double,double) );
+uint16_t oyByteSwapUInt16            ( uint16_t            v );
+uint32_t oyByteSwapUInt32            ( uint32_t            v );
+int      oyByteSwap                  ( void              * data,
+                                       int                 Bps, /**< Bytes per sample can be 2, 4 or 8 */
+                                       unsigned int        count );
 
 /* --- miscellaneous helpers --- */
 

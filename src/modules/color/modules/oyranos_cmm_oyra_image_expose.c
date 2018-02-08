@@ -41,31 +41,6 @@
 
 /* OY_IMAGE_EXPOSE_REGISTRATION ----------------------------------------------*/
 
-uint16_t oyByteSwapUInt16(uint16_t v)
-{
-  uint8_t c[2], *vp = (uint8_t*)&v;
-
-  c[0] = vp[1];
-  c[1] = vp[0];
-  vp = &c[0];
-  v = *(uint16_t*)vp;
-
-  return v;
-}
-uint32_t oyByteSwapUInt32(uint32_t v)
-{
-  uint8_t c[4], *vp = (uint8_t*)&v;
-
-  c[0] = vp[3];
-  c[1] = vp[2];
-  c[2] = vp[1];
-  c[3] = vp[0];
-  vp = &c[0];
-  v = *(uint32_t*)vp;
-
-  return v;
-}
-
 void     oySensibleClip ( double * c, icColorSpaceSignature sig, int range_max, double expose )
 {
   int max = 0, max_pos,
