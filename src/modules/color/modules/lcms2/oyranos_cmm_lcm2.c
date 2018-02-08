@@ -3340,7 +3340,7 @@ oyProfile_s* lcm2AbstractWhitePoint  ( double              cie_a,
   if(oy_debug && getenv("OY_DEBUG_WRITE"))
   {
       char * t = 0; oyStringAddPrintf( &t, 0,0,
-      "%04d-%s-abstract-wtpt[%d]", ++oy_debug_write_id,CMM_NICK,oyStruct_GetId((oyStruct_s*)abs));
+      "%04d-%s-abstract-wtpt[%d]", ++oy_debug_write_id,CMM_NICK,oyStruct_GetId((oyStruct_s*)prof));
       lcm2WriteProfileToFile( abs, t, NULL,NULL );
       oyFree_m_(t);
   }
