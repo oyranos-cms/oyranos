@@ -138,12 +138,16 @@ typedef enum {
 #define oyDataType_m(t)             ((t) << 24)
 /** Set swapping of color channels in @ref oyPixel_t , e.g. BGR */
 #define oySwapColorChannels_m(s)   ((s) << 28)
+#define OY_SWAP_COLOR_CHANNELS      0x10000000
 /** Set planar instead of interwoven color channels in @ref oyPixel_t */
 #define oyPlanar_m(p)               ((p) << 29)
+#define OY_PLANAR                   0x20000000
 /** Set min is white in @ref oyPixel_t */
 #define oyFlavor_m(p)               ((f) << 30)
+#define OY_FLAVOR                   0x40000000
 /** Set byte swapping for integers larger than 8 byte in @ref oyPixel_t */
 #define oyByteswap_m(x)             ((x) << 31)
+#define OY_BYTESWAPED               0x80000000
 
 /* define some common types */
 /** 8-bit RGB/YUV/XYZ/... */
