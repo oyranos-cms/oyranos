@@ -219,6 +219,59 @@ oyChar *     oyDumpColorToCGATS     ( const double      * channels,
 /** @} *//* alpha */
 
 
+int      oyByteSwap                  ( void              * data,
+                                       int                 Bps, /**< Bytes per sample can be 2, 4 or 8 */
+                                       unsigned int        count )
+{
+  unsigned int i;
+  int error = 0;
+  unsigned char * c, ct;
+  uint16_t * u16 = (uint16_t*) data;
+  uint32_t * u32 = (uint32_t*) data;
+  uint64_t * u64 = (uint64_t*) data;
+
+  if(!data)
+    return -1;
+
+  switch(Bps)
+  {
+    case 2:
+#pragma omp parallel for private(ct,c)
+        for(i = 0; i < count; ++i)
+        {
+          c = (unsigned char*) &u16[i];
+          // endianess is wonderful stuff
+          ct = c[0]; c[0] = c[1]; c[1] = ct;
+        }
+        break;
+    case 4:
+        for(i = 0; i < count; ++i)
+        {
+          c = (unsigned char*) &u32[i];
+          ct = c[0]; c[0] = c[3]; c[3] = ct;
+          ct = c[2]; c[2] = c[1]; c[1] = ct;
+        }
+        break;
+    case 8:
+        for(i = 0; i < count; ++i)
+        {
+          unsigned char  uint64_c[8];
+          int little = 0,
+              big    = 8;
+          c = (unsigned char*) &u64[i];
+          for (; little < 8 ; little++ )
+            uint64_c[little] = c[big--];
+          u64[i] = *((uint64_t*) &uint64_c[0]);
+        }
+        break;
+    default:
+        // should not happen
+        error = 1;
+        break;
+  }
+  return error;
+}
+
 
 
 /* --- Object handling API's start ------------------------------------ */
