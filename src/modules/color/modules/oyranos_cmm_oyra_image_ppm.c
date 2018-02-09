@@ -925,14 +925,14 @@ int      oyraFilterPlug_ImageInputPPMRun (
 
     if(oyBigEndian())
     {
-      if(maxval < 0 && byteps == 4)
+      if( maxval < 0 &&
+          (byteps == 2 || byteps == 4) )
         byte_swap = 1;
     } else
     {
-      if( (byteps == 2) ||
-        (maxval > 0 && byteps == 4)  ) {
+      if( maxval > 0 && 
+          (byteps == 2 || byteps == 4) )
         byte_swap = 1;
-      }
     }
 
     maxval = fabs(maxval);
