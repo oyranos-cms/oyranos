@@ -766,6 +766,8 @@ private:
           if(sh > frame_height)
             fprintf( stderr, _DBG_FORMAT_"draw_image height: %d frame_height: %d\n",
                      _DBG_ARGS_, sh, frame_height );
+
+          pt = oyImage_GetPixelLayout( image, oyLAYOUT );
           for(int y = 0; y < sh; ++y)
           {
             int is_allocated = 0, height = 0;
@@ -774,9 +776,15 @@ private:
             memcpy( &frame_data[sw*(sh-y-1)*channels*sample_size], image_data,
                     sw*channels*sample_size );
 
+            if(pt & OY_BYTESWAPED && sample_size > 1)
+              oyByteSwap(&frame_data[sw*(sh-y-1)*channels*sample_size], sample_size, sw*channels);
+
             if(is_allocated)
               free( image_data );
           }
+
+          if(pt & OY_BYTESWAPED && sample_size > 1)
+            printf("%u %s\n", pt, oyPixelPrint(pt, malloc));
         }
 
 #if 1
@@ -1026,6 +1034,10 @@ public:
       //case GL_LUMINANCE_ALPHA16: strcpy(t, "GL_LUMINANCE_ALPHA16"); break;
       case GL_RGB16:             strcpy(t, "GL_RGB16"); break;
       case GL_RGBA16:            strcpy(t, "GL_RGBA16"); break;
+      case GL_RGB16F:            strcpy(t, "GL_RGB16F"); break;
+      case GL_RGBA16F:           strcpy(t, "GL_RGBA16F"); break;
+      case GL_RGB32F:            strcpy(t, "GL_RGB32F"); break;
+      case GL_RGBA32F:           strcpy(t, "GL_RGBA32F"); break;
       default: sprintf( t, "%d", type );
     }
     return t;
@@ -1055,9 +1067,9 @@ public:
       default: fprintf(stderr, "data type is not supported: %s", oyDataTypeToText(type)); return 0;
     }
   }
-  static int oyToGlPixelType( int type )
+  static GLuint oyToGlPixelType( unsigned int type )
   {
-    switch( type )
+    switch( type & (~OY_BYTESWAPED) )
     {
       case OY_TYPE_1_8: return GL_LUMINANCE8;
       //case OY_TYPE_1A_8: return GL_LUMINANCE_ALPHA8;
@@ -1070,7 +1082,7 @@ public:
       case OY_TYPE_123A_HALF: return GL_RGBA16F;
       case OY_TYPE_123_FLOAT: return GL_RGB32F;
       case OY_TYPE_123A_FLOAT: return GL_RGBA32F;
-      default: { char * t = oyPixelPrint(type,malloc); fprintf(stderr, "pixel type is not supported: %s", t?t:"????"); if(t)free(t); return 0; }
+      default: { char * t = oyPixelPrint(type,malloc); fprintf(stderr, "pixel type is not supported: %u %s", type, t?t:"????"); if(t)free(t); return 0; }
     }
   }
 };
