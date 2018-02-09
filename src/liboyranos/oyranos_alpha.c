@@ -236,7 +236,7 @@ int      oyByteSwap                  ( void              * data,
   switch(Bps)
   {
     case 2:
-#pragma omp parallel for private(ct,c)
+#pragma omp parallel for private(ct,c,i)
         for(i = 0; i < count; ++i)
         {
           c = (unsigned char*) &u16[i];
@@ -245,6 +245,7 @@ int      oyByteSwap                  ( void              * data,
         }
         break;
     case 4:
+#pragma omp parallel for private(ct,c,i)
         for(i = 0; i < count; ++i)
         {
           c = (unsigned char*) &u32[i];
@@ -253,6 +254,7 @@ int      oyByteSwap                  ( void              * data,
         }
         break;
     case 8:
+#pragma omp parallel for private(c,i)
         for(i = 0; i < count; ++i)
         {
           unsigned char  uint64_c[8];
