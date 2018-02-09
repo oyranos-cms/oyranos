@@ -914,7 +914,7 @@ int      oyraFilterPlug_ImageInputPPMRun (
 
   /* the following code is almost completely taken from ku.b's ppm CP plug-in */
   {
-    int h, j_h = 0, p, n_samples, n_bytes;
+    int h, j_h = 0, p, n_samples = 0, n_bytes = 0;
     int byte_swap = 0;
     unsigned char *d_8 = 0;
     unsigned char *src = &data[fpos];
@@ -922,6 +922,7 @@ int      oyraFilterPlug_ImageInputPPMRun (
     uint16_t *d_16;
     half   *d_f16;
     float  *d_f;
+    int adapt = 0;
 
     if(oyBigEndian())
     {
@@ -977,6 +978,7 @@ int      oyraFilterPlug_ImageInputPPMRun (
         {
           unsigned char *c_buf = &buf[ h * width * spp * byteps ];
           char  tmp;
+          adapt |= 1;
           if (byteps == 2) {         /* 16 bit */
 #pragma omp parallel for private(tmp)
             for (p = 0; p < n_bytes; p += 2)
@@ -1000,25 +1002,35 @@ int      oyraFilterPlug_ImageInputPPMRun (
         }
 
         if (byteps == 1 && maxval < 255) {         /*  8 bit */
+          adapt |= 2;
 #pragma omp parallel for
           for (p = 0; p < n_samples; ++p)
             d_8[p] = (d_8[p] * 255) / maxval;
         } else if (byteps == 2 && maxval != 1.0 &&
                    (type == -8 || type == -9)) {  /* half float */
+          adapt |= 2;
 #pragma omp parallel for
           for (p = 0; p < n_samples; ++p)
             d_f16[p] = d_f16[p] * maxval;
         } else if (byteps == 2 && maxval < 65535 &&
                    type != -8 && type != -9) {/* 16 bit */
+          adapt |= 2;
 #pragma omp parallel for
           for (p = 0; p < n_samples; ++p)
             d_16 [p] = (d_16[p] * 65535) / maxval;
         } else if (byteps == 4 && maxval != 1.0) {  /* float */
+          adapt |= 2;
 #pragma omp parallel for
           for (p = 0; p < n_samples; ++p)
             d_f[p] = d_f[p] * maxval;
         }
     }
+    if((adapt & 1) && oy_debug)
+      oyra_msg( oyMSG_DBG, (oyStruct_s*)node, OY_DBG_FORMAT_ 
+              "going to swap bytes %d %d", OY_DBG_ARGS_, byteps, n_bytes );
+    if((adapt & 2) && oy_debug)
+      oyra_msg( oyMSG_DBG, (oyStruct_s*)node,
+        OY_DBG_FORMAT_ "going to adapt intensity %g %d", OY_DBG_ARGS_, maxval, n_samples );
   }
 
   pixel_type = oyChannels_m(spp) | oyDataType_m(data_type); 
