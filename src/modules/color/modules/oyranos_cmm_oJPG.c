@@ -672,7 +672,11 @@ int      ojpgFilter_CmmRun           ( oyFilterPlug_s    * requestor_plug,
 
   /* create a Oyranos image */
   pixel_type = oyChannels_m(nchannels) | oyDataType_m(data_type); 
-  image_in = oyImage_Create( width, height, buf, pixel_type, prof, 0 );
+  image_in = oyImage_Create( width, height, NULL, pixel_type, prof, 0 );
+  oyArray2d_s * a = oyArray2d_Create( buf, width*nchannels, height, data_type, NULL );
+  oyImage_ReadArray(image_in, NULL, a, NULL);
+  oyArray2d_Release( &a );
+  free(buf); buf = NULL;
 
   if (!image_in)
   {
