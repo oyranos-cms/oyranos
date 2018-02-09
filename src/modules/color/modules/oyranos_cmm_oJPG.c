@@ -32,6 +32,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>   /* isspace() */
+#include <setjmp.h>  /* libjpeg specific error handling */
 
 #include "jpegmarkers.h"
 
@@ -437,6 +438,22 @@ int select_icc_profile(j_decompress_ptr cinfo,
   return 0;
 }
 
+/* Taken from the libjpeg's example.c */
+typedef struct oJPG_error_mgr {
+  struct jpeg_error_mgr pub;
+  jmp_buf setjmp_buffer;
+} * oJPG_error_ptr;
+
+
+static void
+oJPG_error_exit (j_common_ptr cinfo)
+{
+  oJPG_error_ptr myerr = (oJPG_error_ptr) cinfo->err;
+  (*cinfo->err->output_message) (cinfo);
+  longjmp (myerr->setjmp_buffer, 1);
+}
+
+
 /** Function ojpgFilter_CmmRun
  *  @brief   implement oyCMMFilter_GetNext_f()
  *
@@ -535,13 +552,26 @@ int      ojpgFilter_CmmRun           ( oyFilterPlug_s    * requestor_plug,
   /* get ICC Profile */
   {
     struct jpeg_decompress_struct cinfo; 
-    struct jpeg_error_mgr jerr;
+    struct oJPG_error_mgr jerr;
     unsigned int len = 0;
     unsigned char * icc = NULL;
     int m;
 
+    cinfo.err = jpeg_std_error (&jerr.pub);
+    jerr.pub.error_exit = oJPG_error_exit;
+
+    // Provide custom error handling to avoid libjpeg calling exit()
+    if( setjmp( jerr.setjmp_buffer ))
+    {
+      jpeg_destroy_decompress (&cinfo);
+      ojpg_msg( oyMSG_WARN, (oyStruct_s*)node,
+             OY_DBG_FORMAT_ "Exit from libjpeg for %s",
+             OY_DBG_ARGS_, oyNoEmptyString_m( filename ) );
+      error = FALSE;
+      goto ojpgFilter_CmmRunClean;
+    }
+
     // Setup decompression structure
-    cinfo.err = jpeg_std_error(&jerr); 
     jpeg_create_decompress (&cinfo);
 
     jpeg_stdio_src (&cinfo, fp);
@@ -693,6 +723,8 @@ ojpgFilter_CmmRunClean:
   oyImage_Release( &output_image );
   oyFilterNode_Release( &node );
   oyFilterSocket_Release( &socket );
+
+  if(fp) fclose(fp);
 
   /* return an error to cause the graph to retry */
   return 1;
