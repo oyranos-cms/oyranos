@@ -773,6 +773,7 @@ char ** getFileList(const char * path, int * count, const char * file, int * pos
 const char * scale_reg = OY_INTERNAL OY_SLASH "scale/scale";
 const char * scales_reg = OY_INTERNAL OY_SLASH "scale";
 char * path = 0;
+const char * filename = NULL;
 void               openNextImage     ( Oy_Fl_Image_Widget* oy_widget,
                                        int                 increment )
 {
@@ -780,9 +781,11 @@ void               openNextImage     ( Oy_Fl_Image_Widget* oy_widget,
   oyConversion_s * cc = oy_widget->conversion();
   oyImage_s * image = oyConversion_GetImage( cc, OY_INPUT );
   oyOptions_s * tags = oyImage_GetTags( image );
-  const char * filename = oyOptions_FindString( tags,
-                                       "//" OY_TYPE_STD "/file_read/filename",
+  const char * fn =
+            oyOptions_FindString( tags, "//" OY_TYPE_STD "/file_read/filename",
                                                         0 );
+  if(fn) filename = fn;
+  else { if(increment > 0) ++increment; else --increment; }
   if(!path)
     path  = oyExtractPathFromFileName_( filename );
   oyOptions_Release( &tags );
