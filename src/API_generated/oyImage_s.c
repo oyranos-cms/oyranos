@@ -1330,7 +1330,7 @@ int          oyImage_WritePPM        ( oyImage_s         * image,
           } else 
           for(i = 0; i < len; ++i)
           {
-            if(!oyBigEndian() && (byteps == 2))
+            if(!oyBigEndian() && (byteps == 2 && data_type != oyHALF))
             { if(i%2)
                 fputc ( out_values[l * len + i - 1] , fp);
               else
