@@ -795,9 +795,10 @@ void               openNextImage     ( Oy_Fl_Image_Widget* oy_widget,
   oyImage_Release( &image );
   oyOptions_s * module_options = oyFilterNode_GetOptions( icc, 0 );
 
-  Oy_Fl_GL_Box * oy_box = dynamic_cast<Oy_Fl_GL_Box*> (oy_widget);
+  Oy_Fl_GL_Box * oy_gl_box = dynamic_cast<Oy_Fl_GL_Box*> (oy_widget);
   Oy_Fl_Shader_Box * oy_shader_box = dynamic_cast<Oy_Fl_Shader_Box*> (oy_widget);
-  if(oy_box)
+  Oy_Fl_Image_Box * oy_box = dynamic_cast<Oy_Fl_Image_Box*> (oy_widget);
+  if(oy_gl_box || oy_box)
   {
     oyFilterNode_Release( &icc );
     for(int i = 0; i < count; ++i)
@@ -814,7 +815,10 @@ void               openNextImage     ( Oy_Fl_Image_Widget* oy_widget,
 
       if(oy_display_verbose)
         fprintf( stderr, "open image %s %d/%d\n", files[pos], i, count  );
-      icc = oy_box->setImage( files[pos], module_options );
+      if(oy_box)
+        icc = oy_box->setImage( files[pos], module_options );
+      else
+        icc = oy_gl_box->setImage( files[pos], module_options );
       if(icc)
       {
         setWindowMenue( win, oy_widget, icc  );
