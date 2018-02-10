@@ -938,6 +938,7 @@ void               oyObjectTreePrint ( int                 flags )
     oyFree_m_(trees);
     oyFree_m_(ids_old);
     /* check if everything is released */
+    if(oy_debug_leave_cache_)
     for(i = 0; i < oy_object_list_max_count_; ++i)
       if(oy_debug_leave_cache_[i] )
         oyLeave_Release( &oy_debug_leave_cache_[i] );
