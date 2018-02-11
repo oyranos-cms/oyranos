@@ -342,10 +342,12 @@ int                oyStruct_GetChildren (
        }
        break;
     case oyOBJECT_CMM_UI_S:
-       {
+       /* The parent struct is quite interessting, but might pose a
+        * circular relation, which is hard to handle inside DAG. Skip! */
+       /*{
          oyCMMui_s_ * s = (oyCMMui_s_*)obj;
          CHECK_ASSIGN_STRUCT( parent )
-       }
+       }*/
        break;
     case oyOBJECT_CMM_OBJECT_TYPE_S:
     case oyOBJECT_CMM_API_MAX:
@@ -517,9 +519,9 @@ int                oyLeave_Release   ( oyLeave_s        ** leave )
 }
 
 /* @param          direction           search direction
- * - -1 : search down in children
+ * -  1 : search down in children
  * -  0 : search in both directions
- * -  1 : search upward in parents */
+ * - -1 : search upward in parents */
 int                oyObjectStructTreeContains (
                                        oyLeave_s         * l,
                                        int                 id,
