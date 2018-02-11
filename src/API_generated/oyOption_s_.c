@@ -191,44 +191,41 @@ static const char * oyOption_StaticMessageFunc_ (
   
 
   
-  /* allocate enough space */
-  if(text_n < 1000)
   {
+    const char * t = "";
     oyDeAlloc_f dealloc = oyDeAllocateFunc_;
-    if(s->oy_ && s->oy_->deallocateFunc_)
-      dealloc = s->oy_->deallocateFunc_;
-    if(text && text_n)
-      dealloc( text );
-    text_n = 1024;
-    text = alloc(text_n);
-    if(text)
-      text[0] = '\000';
-    else
-      return "Memory Error";
-
+    if(s->oy_ && s->oy_->deallocateFunc_) dealloc = s->oy_->deallocateFunc_;
+#define AD alloc,dealloc
     if(!(flags & 0x01))
-      sprintf(text, "%s%s", oyStructTypeToText( s->type_ ), type != oyNAME_NICK?" ":"");
-  }
+      oyStringAddPrintf( &text, AD, "%s%s", oyStructTypeToText( s->type_ ), type != oyNAME_NICK?" ":"");
 
-  if(type == oyNAME_NICK && (flags & 0x01))
-  {
-    sprintf( &text[strlen(text)], "%s",
-             oyOption_GetText((oyOption_s*)s,type)
+
+    if(type == oyNAME_NICK && (flags & 0x01))
+    {
+      t = oyOption_GetText((oyOption_s*)s,type);
+      oyStringAddPrintf( &text, AD, "%s",
+             oyNoEmptyString_m_(t)
+             );
+    } else
+    if(type == oyNAME_NAME)
+    {
+      t = oyOption_GetText((oyOption_s*)s, oyNAME_NICK);
+      oyStringAddPrintf( &text, AD, "id:%d %s",
+             s->id, oyNoEmptyString_m_(t)
            );
-  } else
-  if(type == oyNAME_NAME)
-    sprintf( &text[strlen(text)], "id:%d %s",
-             s->id, oyOption_GetText((oyOption_s*)s, oyNAME_NICK)
-           );
-  else
-  if((int)type >= oyNAME_DESCRIPTION)
-    sprintf( &text[strlen(text)], "%s\nid: %d type: %s source: %d flags: %d",
-             oyOption_GetText((oyOption_s*)s, oyNAME_NICK),
+    } else
+    if((int)type >= oyNAME_DESCRIPTION)
+    {
+      t = oyOption_GetText((oyOption_s*)s, oyNAME_NICK);
+      oyStringAddPrintf( &text, AD, "%s\nid: %d type: %s source: %d flags: %d",
+             oyNoEmptyString_m_(t),
              s->id,
              oyValueTypeText(s->value_type),
              s->source,
              s->flags
            );
+    }
+  }
 
 
   return text;
@@ -391,6 +388,7 @@ oyOption_s_ * oyOption_Copy_ ( oyOption_s_ *option, oyObject_s object )
   return s;
 }
  
+void               oyObject_UnTrack    ( oyObject_s          obj );
 /** @internal
  *  Function oyOption_Release_
  *  @memberof oyOption_s_
@@ -452,7 +450,12 @@ int oyOption_Release_( oyOption_s_ **option )
     oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
     int id = s->oy_->id_;
 
+    if(oy_debug_objects >= 0)
+      oyObject_UnTrack( s->oy_ );
+    /* supress printing any information of this object, as references to this object are invalid */
+    s->oy_->id_ = 0;
     oyObject_Release( &s->oy_ );
+    /* print information of this object */
     if(track_name)
       fprintf( stderr, "%s[%d] untracked\n", track_name, id);
 
