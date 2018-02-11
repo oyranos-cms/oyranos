@@ -197,7 +197,8 @@ static oyPointer oy_object_id_mutex_ = NULL;
  */
 int oyGetNewObjectID()
 {
-  static int oy_object_id_ = 0;
+  /* For the ::OY_DEBUG_OBJECTS variable starting with 2 is much easier. */
+  static int oy_object_id_ = 2;
   int val = -1;
   if(!oy_object_id_mutex_)
     oy_object_id_mutex_ = oyStruct_LockCreateFunc_(NULL);
@@ -226,6 +227,7 @@ void               oyObject_Track    ( oyObject_s          obj )
 }
 void               oyObject_UnTrack    ( oyObject_s          obj )
 {
+  if(obj->id_ <= 0) return; /* objects without ID are invisible by purpose */
   if(oy_obj_track_list && obj->id_ < MAX_OBJECTS_TRACKED)
     oy_obj_track_list[obj->id_] = NULL;
   if(oyObjectUsedByCache_( obj->id_ ))

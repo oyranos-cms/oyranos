@@ -569,7 +569,7 @@ int          oyObject_UnRef          ( oyObject_s          obj )
     if(error <= 0 && --s->ref_ > 0)
       ref = s->ref_;
 
-    if(oy_debug_objects >= 0)
+    if(oy_debug_objects >= 0 && s->id_ > 0)
       /* track object */
       oyObject_GetId( obj );
 
@@ -585,7 +585,7 @@ int          oyObject_UnRef          ( oyObject_s          obj )
     if((uintptr_t)obj->parent_types_ < (uintptr_t)oyOBJECT_MAX)
     {
       WARNc1_S( "non plausible inheritance pointer: %s", 
-                oyStruct_GetInfo(obj,oyNAME_NAME,0) );
+                (s->id_ > 0)?oyStruct_GetInfo(obj,oyNAME_NAME,0):"----" );
       return -1;
     }
 
