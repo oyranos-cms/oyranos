@@ -345,7 +345,7 @@ int                oyStruct_GetChildren (
        }
        break;
     case oyOBJECT_CMM_UI_S:
-       /* The parent struct is quite interessting, but might pose a
+       /* The parent struct add just clutter, and might pose a
         * circular relation, which is hard to handle inside DAG. Skip! */
        /*{
          oyCMMui_s_ * s = (oyCMMui_s_*)obj;
@@ -810,33 +810,10 @@ char * oyObjectTreeDotGraphCallbackGetDescription( oyStruct_s * s )
 
   return desc;
 }
-void oyObjectTreeDotGraphCallback    ( void              * user_data,
-                                       int                 top,
-                                       oyLeave_s         * tree,
-                                       oyStruct_s        * grandparent,
-                                       oyStruct_s        * parent,
-                                       oyStruct_s        * current,
-                                       oyStruct_s       ** children,
-                                       int                 children_n,
-                                       int                 level )
+const char * oyDotNodeGetColor       ( oyStruct_s        * current,
+                                       const char        * desc )
 {
-  oyTreeData_s * graphs = (oyTreeData_s*) user_data;
-  int id = oyStruct_GetId(current), i,k;
-  char * desc = 0;
   const char * node = "";
-
-  /* Non identifyable objects map to different trees, which is ambiguous. */
-  if(id < 0)
-    return;
-
-  if(!parent && oyObjectStructTreeContains( tree, id, -1 ))
-    /* skip */
-    return;
-
-  if(graphs->flags & 0x02)
-    desc = oyObjectTreeDotGraphCallbackGetDescription( current );
-
-  /* emphasise with color */
   if(current->type_ == oyOBJECT_CONVERSION_S)
     node = " fillcolor=\"RoyalBlue2\"";
   else
@@ -871,9 +848,46 @@ void oyObjectTreeDotGraphCallback    ( void              * user_data,
   if(current->type_ == oyOBJECT_IMAGE_S ||
      current->type_ == oyOBJECT_ARRAY2D_S)
     node = " fillcolor=\"orange\"";
+  return node;
+}
 
-  oyStringAddPrintf( &graphs[top].text2, 0,0, "%d [label=\"%s id=%d refs=%d%s%s\"%s];\n",
+void oyDotNodeAppend                 ( char             ** text,
+                                       oyStruct_s        * current,
+                                       int                 id,
+                                       const char        * desc )
+{
+  /* emphasise with color */
+  const char * node = oyDotNodeGetColor( current, desc );
+  oyStringAddPrintf( text, 0,0, "%d [label=\"%s id=%d refs=%d%s%s\"%s];\n",
                      id, oyStructTypeToText( current->type_ ), id, oyObject_GetRefCount(current->oy_), desc?"\\n":"", desc?desc:"", node );
+}
+
+void oyObjectTreeDotGraphCallback    ( void              * user_data,
+                                       int                 top,
+                                       oyLeave_s         * tree,
+                                       oyStruct_s        * grandparent,
+                                       oyStruct_s        * parent,
+                                       oyStruct_s        * current,
+                                       oyStruct_s       ** children,
+                                       int                 children_n,
+                                       int                 level )
+{
+  oyTreeData_s * graphs = (oyTreeData_s*) user_data;
+  int id = oyStruct_GetId(current), i,k;
+  char * desc = 0;
+
+  /* Non identifyable objects map to different trees, which is ambiguous. */
+  if(id < 0)
+    return;
+
+  if(!parent && oyObjectStructTreeContains( tree, id, -1 ))
+    /* skip */
+    return;
+
+  if(graphs->flags & 0x02)
+    desc = oyObjectTreeDotGraphCallbackGetDescription( current );
+
+  oyDotNodeAppend( &graphs[top].text2, current, id, desc );
   if(desc) oyFree_m_( desc );
 
   for(i = 0; i < children_n; ++i)
@@ -910,8 +924,8 @@ void oyObjectTreeDotGraphCallback    ( void              * user_data,
                        id, i_id, edge );
     if(graphs->flags & 0x02)
       desc = oyObjectTreeDotGraphCallbackGetDescription( children[i] );
-    oyStringAddPrintf( &graphs[top].text2, 0,0, "%d [label=\"%s id=%d refs=%d%s%s%s\"];\n",
-                       i_id, oyStructTypeToText( children[i]->type_ ), i_id, oyObject_GetRefCount(children[i]->oy_), desc?"\\n\\\"":"", desc?desc:"", desc?"\\\"":"" );
+
+    oyDotNodeAppend( &graphs[top].text2, children[i], i_id, desc );
     if(desc) oyFree_m_( desc );
 
     if(graphs[tree->id].l && graphs[tree->id].l != tree)
@@ -954,6 +968,7 @@ oyStruct_s *       oyStruct_FromId   ( int                 id )
     return NULL;
 }
 
+
 /** @brief    Print the current object trees to stderr.
  *  @ingroup  objects_generic
  * 
@@ -962,6 +977,7 @@ oyStruct_s *       oyStruct_FromId   ( int                 id )
  *
  *  @param        flags               - 0x01 show a graph
  *                                    - 0x02 include more object details
+ *                                    - 0x04 skip cmm caches to show a more functional graph
  *
  *  @version  Oyranos: 0.9.6
  *  @date     2016/04/17
@@ -1037,16 +1053,17 @@ void               oyObjectTreePrint ( int                 flags )
         oyLeave_Release( &oy_debug_leave_cache_[i] );
     oyFree_m_(oy_debug_leave_cache_);
 
-    /* remove double lines */
+    /* remove double lines and priorise */
     {
       int lines_n = 0;
       char ** lines = oyStringSplit_( dot, '\n', &lines_n, 0 );
       char * tmp = 0;
       fprintf(stderr, "dot has number of lines %d\n", lines_n);
-      oyStringListFreeDoubles_( lines, &lines_n, 0 );
+      oyStringListSetHeadingWhiteSpace( lines, lines_n, 4, 0,0 );
+      oyStringListFreeDoubles( lines, &lines_n, 0 );
       fprintf(stderr, "dot has number of unique lines %d\n", lines_n);
       for(i = 0; i < lines_n; ++i)
-        oyStringAdd_( &tmp, lines[i], 0,0 );
+        oyStringAddPrintf( &tmp, 0,0, "%s\n", lines[i] );
       oyFree_m_(dot);
       oyStringListRelease_( &lines, lines_n, 0 );
       dot = tmp; tmp = 0;
@@ -1054,10 +1071,11 @@ void               oyObjectTreePrint ( int                 flags )
       lines_n = 0;
       lines = oyStringSplit_( dot_edges, '\n', &lines_n, 0 );
       fprintf(stderr, "dot_edges has number of lines %d\n", lines_n);
-      oyStringListFreeDoubles_( lines, &lines_n, 0 );
+      oyStringListSetHeadingWhiteSpace( lines, lines_n, 4, 0,0 );
+      oyStringListFreeDoubles( lines, &lines_n, 0 );
       fprintf(stderr, "dot_edges has number of unique lines %d\n", lines_n);
       for(i = 0; i < lines_n; ++i)
-        oyStringAdd_( &tmp, lines[i], 0,0 );
+        oyStringAddPrintf( &tmp, 0,0, "%s\n", lines[i] );
       oyFree_m_(dot_edges);
       oyStringListRelease_( &lines, lines_n, 0 );
       dot_edges = tmp; tmp = 0;
