@@ -33,7 +33,7 @@
            );
   else
   if((int)type >= oyNAME_DESCRIPTION)
-    sprintf( &text[strlen(text)], "%s\ntype: %s id: %s",
-             s->registration, s->context_type, s->id_
+    sprintf( &text[strlen(text)], "%s%s%s",
+             s->registration, s->context_type[0]?"\ntype: ":"", s->context_type
            );
 {% endblock %}

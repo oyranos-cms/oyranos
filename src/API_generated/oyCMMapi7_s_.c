@@ -212,14 +212,14 @@ static const char * oyCMMapi7_StaticMessageFunc_ (
   } else
   if(type == oyNAME_NAME)
     sprintf( &text[strlen(text)], "%s %d/%d",
-             s->registration, s->plugs_n, s->sockets_n
+             s->registration?s->registration:_("Start"), s->plugs_n, s->sockets_n
            );
   else
   if((int)type >= oyNAME_DESCRIPTION)
   {
     int i = 0;
-    sprintf( &text[strlen(text)], "reg: %s\nid: %s\nplugs: %d sockets: %d context: %s",
-             s->registration, s->id_,
+    sprintf( &text[strlen(text)], "reg: %s\nplugs: %d sockets: %d context: %s",
+             s->registration,
              s->plugs_n, s->sockets_n, s->context_type
            );
     if(s->properties)
