@@ -1060,6 +1060,24 @@ void               oyObjectTreePrint ( int                 flags )
       char * tmp = 0;
       fprintf(stderr, "dot has number of lines %d\n", lines_n);
       oyStringListSetHeadingWhiteSpace( lines, lines_n, 4, 0,0 );
+
+      /* give some item priority by moving the nodes up */
+      for(i = 0; i < lines_n; ++i)
+        if(strstr( lines[i], "oyConversion_s"))
+          oyStringAddPrintf( &tmp, 0,0, "%s\n", lines[i] );
+      for(i = 0; i < lines_n; ++i)
+        if(strstr( lines[i], "oyFilterNode_s"))
+          oyStringAddPrintf( &tmp, 0,0, "%s\n", lines[i] );
+      for(i = 0; i < lines_n; ++i)
+        if(strstr( lines[i], "oyFilterSocket_s"))
+          oyStringAddPrintf( &tmp, 0,0, "%s\n", lines[i] );
+      for(i = 0; i < lines_n; ++i)
+        if(strstr( lines[i], "oyImage_s"))
+          oyStringAddPrintf( &tmp, 0,0, "%s\n", lines[i] );
+      for(i = 0; i < lines_n; ++i)
+        if(strstr( lines[i], "oyFilterPlugs_s"))
+          oyStringAddPrintf( &tmp, 0,0, "%s\n", lines[i] );
+
       oyStringListFreeDoubles( lines, &lines_n, 0 );
       fprintf(stderr, "dot has number of unique lines %d\n", lines_n);
       for(i = 0; i < lines_n; ++i)
