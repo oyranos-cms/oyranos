@@ -447,6 +447,7 @@ static void * myCalloc_( size_t size, size_t n )
   memset(mem,0,size*n);
   return mem;
 }
+#define AD oyAllocateFunc_,oyDeAllocateFunc_
 static const int oy_object_list_max_count_ = 1000000;
 oyLeave_s ** oy_debug_leave_cache_ = NULL;
 
@@ -642,7 +643,7 @@ int                oyObjectStructTreeContains (
             CRETURN( 0 );
           }
         }
-        /* detect current ID and stop */
+        /* detect current ID upward and stop */
         if(oyObjectStructTreeContains(l->children[i], l->id, 1))
           CRETURN( 0 );
         if(oyObjectStructTreeContains(l->children[i], id, 1))
@@ -801,10 +802,10 @@ char * oyObjectTreeDotGraphCallbackGetDescription( oyStruct_s * s )
   if(!text || strcmp(nick,text) == 0)
     return desc;
 
-  t = oyStringReplace( text, "\"", "'", 0,0 );
-  t2 = oyStringReplace( t, "\n", "\\n", 0,0 );
-  t3 = oyStringReplace( t2, "<", "\\<", 0,0 );
-  desc = oyStringReplace( t3, ">", "\\>", 0,0 );
+  t = oyStringReplace( text, "\"", "'", AD );
+  t2 = oyStringReplace( t, "\n", "\\n", AD );
+  t3 = oyStringReplace( t2, "<", "\\<", AD );
+  desc = oyStringReplace( t3, ">", "\\>", AD );
   oyFree_m_( t );
   oyFree_m_( t2 );
   oyFree_m_( t3 );
@@ -926,7 +927,10 @@ void oyObjectTreeDotGraphCallback    ( void              * user_data,
         if( keep )
           fprintf(stderr, "keep %s[%d] %s\n", oyStructTypeToText(current->type_), id, desc?desc:"----" );
         else
+        {
+          if(desc) oyFree_m_( desc );
           return;
+        }
       }
     }
   }
