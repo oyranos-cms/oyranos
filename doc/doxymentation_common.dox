@@ -60,6 +60,8 @@
     - type name like "oyImage_s","Image" to track all oyImage_s type objects or
     - "1" to print track informations about all trackable objects.
     - "-1" to omit printing track informations.
+    ::OY_DEBUG_OBJECTS_SKIP_CMM_CACHES together with ::OY_DEBUG_OBJECTS for a
+    cleaner graph
  
     ::OY_DEBUG_SIGNALS sets the internal ::oy_debug_signals integer variable on and
     helps in tracing signals. This variable is dangerous and 

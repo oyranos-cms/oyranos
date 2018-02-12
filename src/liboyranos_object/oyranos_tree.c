@@ -740,6 +740,7 @@ int                oyObjectIdListTraverseStructTrees (
   return n;
 }
 
+int skip_ids[10] = {0,0,0,0,0, 0,0,0,0,0};
 typedef struct oyTreeData_s {
   oyLeave_s * l;
   char * text;
@@ -887,6 +888,49 @@ void oyObjectTreeDotGraphCallback    ( void              * user_data,
   if(graphs->flags & 0x02)
     desc = oyObjectTreeDotGraphCallbackGetDescription( current );
 
+  if(skip_ids[0])
+  { int i,
+        keep = 0;
+    if( current->type_ == oyOBJECT_IMAGE_S ||
+        current->type_ == oyOBJECT_RECTANGLE_S ||
+        current->type_ == oyOBJECT_ARRAY2D_S ||
+        current->type_ == oyOBJECT_CONVERSION_S ||
+        current->type_ == oyOBJECT_FILTER_NODE_S ||
+        current->type_ == oyOBJECT_FILTER_CORE_S ||
+        current->type_ == oyOBJECT_FILTER_PLUG_S ||
+        current->type_ == oyOBJECT_FILTER_PLUGS_S ||
+        current->type_ == oyOBJECT_FILTER_SOCKET_S ||
+        current->type_ == oyOBJECT_CMM_API3_S ||
+        current->type_ == oyOBJECT_CMM_API5_S ||
+        current->type_ == oyOBJECT_CMM_API6_S ||
+        current->type_ == oyOBJECT_CMM_API4_S ||
+        current->type_ == oyOBJECT_CMM_API7_S ||
+        current->type_ == oyOBJECT_CMM_API8_S ||
+        current->type_ == oyOBJECT_CMM_API9_S ||
+        ( current->type_ == oyOBJECT_STRUCT_LIST_S &&
+          desc && strstr(desc,"FilterPlug") != NULL) ||
+        current->type_ == oyOBJECT_PROFILE_S ||
+        current->type_ == oyOBJECT_PROFILES_S ||
+        current->type_ == oyOBJECT_PROFILE_TAG_S ||
+        ( current->type_ == oyOBJECT_STRUCT_LIST_S &&
+          desc && strstr(desc,"ProfileTag") != NULL)
+      )
+      keep = 1;
+
+    for(i = 0; i < 10; ++i)
+    { int cid = skip_ids[i];
+      if( cid &&
+          ( id == cid ||
+            oyObjectStructTreeParentContains( tree, cid, 1 ) == 0))
+      { /* keep essential object types */
+        if( keep )
+          fprintf(stderr, "keep %s[%d] %s\n", oyStructTypeToText(current->type_), id, desc?desc:"----" );
+        else
+          return;
+      }
+    }
+  }
+
   oyDotNodeAppend( &graphs[top].text2, current, id, desc );
   if(desc) oyFree_m_( desc );
 
@@ -987,13 +1031,34 @@ void               oyObjectTreePrint ( int                 flags )
 {
   if(oy_debug_objects >= 0)
   {
+    int skip_cmm_caches_flag = getenv("OY_DEBUG_OBJECTS_SKIP_CMM_CACHES") ? 0x04 : 0;
     int * ids_old = oyObjectGetCurrentObjectIdList( );
     oyTreeData_s * trees = (oyTreeData_s*) myCalloc_m( sizeof( oyTreeData_s ), oy_object_list_max_count_ + 1 );
     int n, i, count = 0;
     char * dot = 0, * dot_edges = 0;
 
+    flags |= skip_cmm_caches_flag;
+
     if(flags)
       for(i = 0; i < oy_object_list_max_count_; ++i) trees[i].flags = flags;
+
+    /* skip most of the caches */
+    if(flags & 0x04)
+    {
+      int pos = 0;
+      for(i = 0; i < oy_object_list_max_count_; ++i)
+      {
+        oyStruct_s * s = oyStruct_FromId(i);
+        const char * text = oyStruct_GetText( s, oyNAME_DESCRIPTION, 2 );
+        if(text &&
+            ( strstr(text,"oy_cmm_") ||
+              strstr(text,"oy_db_")))
+        {
+          skip_ids[pos++] = i;
+          printf("ignore: %s\n", text);
+        }
+      }
+    }
 
     if(flags & 0x01)
       n = oyObjectIdListTraverseStructTrees_( ids_old, oyObjectTreeDotGraphCallback, trees, flags );
