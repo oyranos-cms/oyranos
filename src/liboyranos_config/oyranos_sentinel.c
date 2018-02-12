@@ -86,14 +86,14 @@ int oyExportReset_(int export_check)
   return action;
 }
 
-/* @param          flags               - 0x01 keep caches
- *                                     - 0x02 keep i18n
+/* @param          flags               - 0x01 keep i18n
+ *                                     - 0x02 keep caches
  */
 void     oyFinish_                   ( int                 flags )
 {
-  if(!(flags & 0x01))
+  if(!(flags & FINISH_IGNORE_I18N))
     oyI18Nreset_();
-  if(!(flags & 0x02))
+  if(!(flags & FINISH_IGNORE_CACHES))
     oyAlphaFinish_( 0 );
   if(oy_debug_objects >= 0)
     oyObjectTreePrint( 0x01 | 0x02 );
