@@ -65,6 +65,7 @@ int                oyStruct_GetChildren (
   static oyStruct_s * c[oy_c_max];
   int n = 0, i = 0;
 
+  memset(c,0,sizeof(oyStruct_s *)*oy_c_max);
   if(list) *list = c;
 
 #define CHECK_ASSIGN_STRUCT(struct_name) \
@@ -414,6 +415,13 @@ int                oyStruct_GetChildren (
   }
 #undef CHECK_ASSIGN_STRUCT 
   c[n] = NULL;
+
+  {
+    int i = 0;
+    while(c[i] && i < 120) ++i;
+    if(i != n)
+      fprintf( stderr, OY_DBG_FORMAT_ "%s[%d] collected ambigous child count: %d == %d\n", OY_DBG_ARGS_, oyStructTypeToText( obj->type_ ), oyStruct_GetId(obj), i,n );
+  }
 
   return n;
 }
