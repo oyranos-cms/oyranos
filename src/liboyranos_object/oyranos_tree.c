@@ -535,6 +535,46 @@ int                oyLeave_Release   ( oyLeave_s        ** leave )
   return 0;
 }
 
+int                oyObjectStructTreeParentContains (
+                                       oyLeave_s         * l,
+                                       int                 id,
+                                       int                 tolerate )
+{
+  int n = 0, lid,cid;
+  oyLeave_s * c = l;
+  if(!l || !l->parent) return tolerate;
+  lid = l->id;
+  /* put here a non recursive element, in order to avoid infinite loops. */
+  while((c = c->parent) != NULL)
+  { cid = c->id;
+    if(lid == cid)
+      --tolerate;
+    if(tolerate <= 0)
+      return tolerate; 
+    ++n;
+    if(n > 100)
+    {
+      if( id == oy_debug_objects ||
+          l->id == oy_debug_objects )
+        WARNc3_S( "[%d](%d) maximum loops reached: %d", l->id, id, n );
+      --tolerate;
+      break;
+    }
+  }
+
+  if(l->parent && l->parent->id == id)
+    --tolerate;
+
+  if(tolerate <= 0)
+    return tolerate; 
+
+  tolerate = oyObjectStructTreeParentContains(l->parent, id, tolerate);
+
+  return tolerate;
+}
+static int contains_cache[10] = {0,0,0,0,0, 0,0,0,0,0};
+static int contains_nested = 0;
+#define CRETURN( code ) { --contains_nested; return code; }
 /* @param          direction           search direction
  * -  1 : search down in children
  * -  0 : search in both directions
@@ -544,27 +584,34 @@ int                oyObjectStructTreeContains (
                                        int                 id,
                                        int                 direction )
 {
-  int i;
+  int i, tolerate = 1;
+  ++contains_nested;
 
   if(l)
   {
+    if(contains_nested > 100)
+    {
+      fprintf(stderr, OY_DBG_FORMAT_ "%s[%d] nested: %d (parents [%d]->[%d]->[%d]->[%d]->[%d]->[%d]->[%d]->[%d]->[%d])\n", OY_DBG_ARGS_, oyStructTypeToText( l->obj->type_ ), l->id, contains_nested, contains_cache[1], contains_cache[2], contains_cache[3], contains_cache[4], contains_cache[5], contains_cache[6], contains_cache[7], contains_cache[8], contains_cache[9]);
+      CRETURN( 1 );
+    }
+
     if(direction == 0)
     {
       if(oyObjectStructTreeContains(l, id, -1))
-        return 1;
+        CRETURN( 1 );
       if(oyObjectStructTreeContains(l, id, 1))
-        return 1;
-      return 0;
+        CRETURN( 1 );
+      CRETURN( 0 );
     }
 
     /* check this leave upward */
     if(direction < 0 && l->parent)
     {
       if(l->parent->id == id)
-        return 1;
+        CRETURN( 1 );
       if(l->parent &&
-         oyObjectStructTreeContains(l->parent, id, -1))
-        return 1;
+         oyObjectStructTreeParentContains(l->parent, id, tolerate) <= 0)
+        CRETURN( 1 );
     }
 
     /* check this leave downward */
@@ -575,15 +622,38 @@ int                oyObjectStructTreeContains (
         if(!l->children[i])
           continue;
         if(l->children[i]->id == id)
-          return 1;
+          CRETURN( 1 );
+        PRINT_ID(l->id)
+        {
+          memmove(&contains_cache[1], &contains_cache[0], sizeof(int) * 9);
+          contains_cache[0] = l->id;
+#if 1
+          int n = oyObjectStructTreeParentContains(l,id,tolerate);
+          if(n <= 0)
+#else
+          if( (contains_cache[0] && (contains_cache[0] == contains_cache[1] || contains_cache[0] == contains_cache[2])) ||
+              (contains_cache[1] && contains_cache[1] == c3) )
+#endif
+          {
+            if( id == oy_debug_objects ||
+                l->id == oy_debug_objects ||
+                oy_debug )
+              fprintf(stderr, OY_DBG_FORMAT_ "[%d] found circulars (parents [%d]->[%d]->[%d]->[%d]->[%d]->[%d]->[%d]->[%d]->[%d])\n", OY_DBG_ARGS_, l->id, contains_cache[1], contains_cache[2], contains_cache[3], contains_cache[4], contains_cache[5], contains_cache[6], contains_cache[7], contains_cache[8], contains_cache[9]);
+            CRETURN( 0 );
+          }
+        }
+        /* detect current ID and stop */
+        if(oyObjectStructTreeContains(l->children[i], l->id, 1))
+          CRETURN( 0 );
         if(oyObjectStructTreeContains(l->children[i], id, 1))
-          return 1;
+          CRETURN( 1 );
       }
     }
   }
 
-  return 0;
+  CRETURN( 0 );
 }
+#undef CRETURN
 
 static int cntx = 0;
 static int cntx_mem = 0;
@@ -669,7 +739,6 @@ int                oyObjectIdListTraverseStructTrees (
 
   return n;
 }
-
 
 typedef struct oyTreeData_s {
   oyLeave_s * l;
