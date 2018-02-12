@@ -150,6 +150,11 @@ void               oyStringListReplaceBy (
                                        char *           (* replacer)(const char*, oyAlloc_f),
                                        oyAlloc_f           allocateFunc,
                                        oyDeAlloc_f         deAllocateFunc );
+void oyStringListSetHeadingWhiteSpace( char             ** list,
+                                       int                 n,
+                                       int                 count,
+                                       oyAlloc_f           allocateFunc,
+                                       oyDeAlloc_f         deallocateFunc );
 #define oyStringListFreeDoubles_ oyStringListFreeDoubles
 void     oyStringListFreeDoubles     ( char         ** list,
                                        int           * list_n,

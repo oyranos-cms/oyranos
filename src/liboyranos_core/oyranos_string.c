@@ -496,6 +496,45 @@ void               oyStringListReplaceBy (
   }
 }
 
+void oyStringListSetHeadingWhiteSpace( char             ** list,
+                                       int                 n,
+                                       int                 count,
+                                       oyAlloc_f           allocateFunc,
+                                       oyDeAlloc_f         deallocateFunc )
+{
+  int i;
+  char * head = NULL;
+  if(!allocateFunc) allocateFunc = oyAllocateFunc_;
+  if(!deallocateFunc) deallocateFunc = oyDeAllocateFunc_;
+
+  if(count)
+  {
+    head = (char*)allocateFunc( sizeof(char) * (count + 4) );
+    for(i = 0; i < count; ++i)
+      head[i] = ' ';
+    head[count] = '\000';
+  }
+  else
+    head = oyStringCopy("", 0);
+
+  for(i = 0; i < n; ++i)
+  {
+    int h = 0;
+    char * t = list[i], * tmp = NULL;
+    if(!t) return;
+    while(t[h] == ' ') ++h;
+    if(h != count)
+    {
+      oyStringAddPrintf( &tmp, allocateFunc, deallocateFunc, "%s%s", head, &list[i][h]  );
+      deallocateFunc( list[i] );
+      list[i] = tmp; tmp = NULL;
+    }
+  }
+
+  if(head) deallocateFunc(head);
+}
+                                       
+
 /** @internal
  *  @brief reducing filter
  *
