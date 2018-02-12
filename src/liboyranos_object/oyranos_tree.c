@@ -56,6 +56,8 @@
 #include "oyConfig_s_.h"
 #include "oyConfigs_s_.h"
 
+#define PRINT_ID(id_)  if(id_ == oy_debug_objects) fprintf(stderr, OY_DBG_FORMAT_ "ID: %d\n", OY_DBG_ARGS_, id_);
+
 /* get a objects directly owned references */
 int                oyStruct_GetChildren (
                                        oyStruct_s        * obj,
@@ -462,6 +464,11 @@ oyLeave_s *        oyLeave_NewWith   ( oyStruct_s        * obj,
     oy_debug_leave_cache_ = (oyLeave_s**) myCalloc_m( sizeof( oyLeave_s* ), oy_object_list_max_count_ + 1 );
   }
 
+  if(id == oy_debug_objects)
+  { fprintf(stderr, "%s ", oyStruct_GetText(obj, oyNAME_DESCRIPTION, 2));
+    PRINT_ID(id)
+  }
+
   if(oy_debug_leave_cache_[id])
   {
     l = oy_debug_leave_cache_[id];
@@ -504,6 +511,8 @@ int                oyLeave_Release   ( oyLeave_s        ** leave )
 
   if(l == NULL)
     return 1;
+
+  PRINT_ID(l->id)
 
   if(oy_debug_leave_cache_[l->id] == NULL)
     error = 1;
@@ -601,6 +610,8 @@ oyLeave_s *          oyObjectIdListGetStructTree (
     return l;
   }
 
+  if(id == oy_debug_objects)
+    PRINT_ID(id)
   obs = oyObjectGetList( &max_count );
   if(!obs || !obs[id])
     return l;
@@ -619,6 +630,7 @@ oyLeave_s *          oyObjectIdListGetStructTree (
     {
       int i_id = oyStruct_GetId(l->list[i]);
 
+      PRINT_ID(i_id)
       if(i_id >= oy_object_list_max_count_)
       {
         WARNc5_S("l(%d)->list[%d]: " OY_PRINT_POINTER " %s[%d]", l->n, i, obj, oyStruct_GetText(obj, oyNAME_DESCRIPTION, 1),
@@ -686,6 +698,7 @@ void oyObjectTreePrintCallback       ( void              * user_data,
     /* skip */
     return;
 
+  PRINT_ID(id)
   for(i = 0; i < children_n; ++i)
   {
     if(!children[i])
@@ -912,8 +925,9 @@ void               oyObjectTreePrint ( int                 flags )
           const char * nick = oyStructTypeToText( s->type_ ),
                      * text = oyStruct_GetText( s, oyNAME_DESCRIPTION, 2 );
           fprintf( stderr, "present: %s \"%s\" - %s\n", nick, text, trees[i].text);
-        }	  
+        }
       }
+      PRINT_ID(i)
       if(trees[i].text)
       {
         int found = 0, j;
