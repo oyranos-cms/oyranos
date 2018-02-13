@@ -910,11 +910,8 @@ void oyObjectTreeDotGraphCallback    ( void              * user_data,
         current->type_ == oyOBJECT_CMM_API9_S ||
         ( current->type_ == oyOBJECT_STRUCT_LIST_S &&
           desc && strstr(desc,"FilterPlug") != NULL) ||
-        current->type_ == oyOBJECT_PROFILE_S ||
-        current->type_ == oyOBJECT_PROFILES_S ||
-        current->type_ == oyOBJECT_PROFILE_TAG_S ||
-        ( current->type_ == oyOBJECT_STRUCT_LIST_S &&
-          desc && strstr(desc,"ProfileTag") != NULL)
+        ( current->type_ == oyOBJECT_PROFILE_S &&
+          desc && strstr(desc,"oyImage_s") != NULL)
       )
       keep = 1;
 
@@ -1056,7 +1053,8 @@ void               oyObjectTreePrint ( int                 flags )
         const char * text = oyStruct_GetText( s, oyNAME_DESCRIPTION, 2 );
         if(text &&
             ( strstr(text,"oy_cmm_") ||
-              strstr(text,"oy_db_")))
+              strstr(text,"oy_db_") ||
+              strstr(text,"oy_profile_s_file_cache_")))
         {
           skip_ids[pos++] = i;
           printf("ignore: %s\n", text);
@@ -1135,7 +1133,9 @@ void               oyObjectTreePrint ( int                 flags )
         if(strstr( lines[i], "oyConversion_s"))
           oyStringAddPrintf( &tmp, 0,0, "%s\n", lines[i] );
       for(i = 0; i < lines_n; ++i)
-        if(strstr( lines[i], "oyFilterNode_s"))
+        if( strstr( lines[i], "oyFilterNode_s") &&
+            !strstr( lines[i], "oyOption_s") &&
+            !strstr( lines[i], "oyStructList_s"))
           oyStringAddPrintf( &tmp, 0,0, "%s\n", lines[i] );
       for(i = 0; i < lines_n; ++i)
         if(strstr( lines[i], "oyFilterSocket_s"))
