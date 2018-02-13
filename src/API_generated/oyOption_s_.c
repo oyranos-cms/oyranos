@@ -388,7 +388,6 @@ oyOption_s_ * oyOption_Copy_ ( oyOption_s_ *option, oyObject_s object )
   return s;
 }
  
-void               oyObject_UnTrack    ( oyObject_s          obj );
 /** @internal
  *  Function oyOption_Release_
  *  @memberof oyOption_s_
@@ -450,12 +449,7 @@ int oyOption_Release_( oyOption_s_ **option )
     oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
     int id = s->oy_->id_;
 
-    if(oy_debug_objects >= 0)
-      oyObject_UnTrack( s->oy_ );
-    /* supress printing any information of this object, as references to this object are invalid */
-    s->oy_->id_ = 0;
     oyObject_Release( &s->oy_ );
-    /* print information of this object */
     if(track_name)
       fprintf( stderr, "%s[%d] untracked\n", track_name, id);
 

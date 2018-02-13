@@ -28,12 +28,21 @@
       if(s->plugs[i]) ++p_n;
   }
 
+  /* referenences from members has to be substracted
+   * from this objects ref count */
   if(oyObject_GetRefCount( s->oy_ ) > (int)(s_n + p_n))
     return 0;
 
+  /* ref before oyXXX_Release__Members(), so the
+   * oyXXX_Release() is not called twice */
   oyObject_Ref(s->oy_);
   }
 {% endblock %}
+
+{% block customDestructor %}
+  /* unref after oyXXX_Release__Members() */
+  oyObject_UnRef(s->oy_);
+{% endblock customDestructor %}
 
 {% block customStaticMessage %}
 {{ block.super }}
