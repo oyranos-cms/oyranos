@@ -232,6 +232,8 @@ main(int argc, char** argv)
   Fl::add_timeout(0.02, (void(*)(void*))jobResultRepeatCb);
   Fl::run();
 
+  oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
+
   return 0;
 }
 
