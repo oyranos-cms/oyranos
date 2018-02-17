@@ -63,7 +63,7 @@ extern "C" {
                         } \
                         if(min > opt || opt > max) \
                         { char * t = 0; const char * slash = strlen(arg)==1?"-":"--"; \
-                          oyStringAddPrintf_( &t, 0,0, "%s%s=%g %s %s=%g %s=%g", slash,arg,opt, _("value out of range"), _("minimal"), min, _("maximal"), max ); \
+                          oyStringAddPrintf_( &t, 0,0, "%s%s=%g %s %s=%g %s=%g", slash,arg,opt, _("value out of range"), _("minimal"), (double)min, _("maximal"), (double)max ); \
                           wrong_arg = t; \
                           i = 1000; \
                         } \
