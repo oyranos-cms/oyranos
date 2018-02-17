@@ -51,6 +51,7 @@ int runDaemon(int dmode);
 int setWtptMode( oySCOPE_e scope, int wtpt_mode, int dry );
 void pingNativeDisplay();
 int checkWtptState();
+double estimateTemperature( double cie_a, double cie_b );
 
 void  printfHelp (int argc, char** argv)
 {
@@ -180,7 +181,7 @@ int main( int argc , char** argv )
             for(i = 1; i < strlen(argv[pos]); ++i)
             switch (argv[pos][i])
             {
-              case 'a': i=0; OY_PARSE_FLOAT_ARG2( temperature, "a", 1000, 100000, 5000 ); break;
+              case 'a': i=0; OY_PARSE_FLOAT_ARG2( temperature, "a", 1100, 10100, 5000 ); break;
               case 'd': OY_PARSE_INT_ARG( daemon ); break;
               case 'r': sunrise = 1; break;
               case 'l': location = 1; break;
@@ -247,9 +248,13 @@ int main( int argc , char** argv )
     double Lab[3];
     double cie_a = 0.0, cie_b = 0.0;
     char * comment = NULL;
+    double old_temperature = 0;
     oyXYZ2Lab( XYZ, Lab);
 
     oyGetDisplayWhitePoint( 1 /* automatic */, &cie_a, &cie_b );
+    old_temperature = estimateTemperature( cie_a, cie_b );
+    if(old_temperature)
+      oyStringAddPrintf( &comment, 0,0, "Old Temperature:: %g ", old_temperature );
     oyStringAddPrintf( &comment, 0,0, "Old cie_a: %f cie_b: %f ", cie_a, cie_b );
     cie_a = Lab[1]/256.0 + 0.5;
     cie_b = Lab[2]/256.0 + 0.5;
@@ -283,7 +288,21 @@ int main( int argc , char** argv )
       fprintf(stderr, "%s\n", _("Choices:"));
       for(i = 0; (int)i < choices; ++i)
       {
-        printf("-w %u # %s %s\n", i, choices_string_list[i], (int)i == current ? "*":" ");
+        const char * t = "";
+        char * tmp = NULL;
+        if(i == 1) /* automatic */
+        {
+          double cie_a = 0.0, cie_b = 0.0;
+          oyGetDisplayWhitePoint( 1 /* automatic */, &cie_a, &cie_b );
+          double temperature = estimateTemperature( cie_a, cie_b );
+          if(temperature)
+          {
+            oyStringAddPrintf( &tmp, 0,0, "%g %s ", temperature, _("Kelvin") );
+            t = tmp;
+          }
+        }
+        printf("-w %u # %s %s%s\n", i, choices_string_list[i], t, (int)i == current ? "*":" ");
+        if(tmp) oyFree_m_(tmp);
       }
     }
   }
@@ -395,6 +414,35 @@ int setWtptMode( oySCOPE_e scope, int wtpt_mode, int dry )
   }
 
   return error;
+}
+
+double estimateTemperature( double cie_a_, double cie_b_ )
+{
+  double temperature = 0;
+
+  if(cie_a_ != 0.0 && cie_b_ != 0.0)
+  {
+    int i;
+    for(i = 1; i <= bb_100K[0][2]; ++i)
+    {
+      double xyz[3] = { bb_100K[i][0], bb_100K[i][1], bb_100K[i][2] };
+      double XYZ[3] = { xyz[0]/xyz[1], 1.0, xyz[2]/xyz[1] };
+      double Lab[3];
+      double cie_a = 0.0, cie_b = 0.0;
+      oyXYZ2Lab( XYZ, Lab);
+
+      cie_a = Lab[1]/256.0 + 0.5;
+      cie_b = Lab[2]/256.0 + 0.5;
+      if(fabs(cie_a - cie_a_) < 0.0001 &&
+         fabs(cie_b - cie_b_) < 0.0001)
+      {
+        temperature = bb_100K[0][0] + i * bb_100K[0][1];
+        break;
+      }
+    }
+  }
+
+  return temperature;
 }
 
 int findLocation(oySCOPE_e scope, int dry)
