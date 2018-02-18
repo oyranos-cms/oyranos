@@ -119,7 +119,7 @@ main(int argc, char** argv)
       logo = 0;
       ++file_pos;
     }
-    if(argc > 1 && strcmp(argv[i], "--use-pixel") == 0)
+    if(argc > 1 && (strcmp(argv[i], "--use-pixel") == 0 || strcmp(argv[i], "-p") == 0))
     {
       gl_box = 0;
       ++file_pos;
@@ -166,9 +166,9 @@ main(int argc, char** argv)
        strcmp(argv[i], "-h") == 0 ) )
     {
       printf("Usage: image_display [options] <image_file>\n"
-             "\t--use-pixel\tuse normal pixel copy\n"
+             "\t--use-pixel|-p\tuse normal pixel copy\n"
              "\t--no-logo|-n\tskip Oyranos logo\n"
-             "\t--icc-color-context <name>\tselect a Oyranos wrapped context CMM\n"
+             "\t--icc-color-context <name>\tselect a ICC CMM\n"
              "\t--effect <name>\tselect a effect profile\n"
              "\t--shader <file>\tset a CLUT from PPM image for color transform or\n"
              "\t--shader \"\"|-s\tgenerate image to first monitor 3D CLUT\n"
