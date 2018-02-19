@@ -1313,6 +1313,9 @@ lcm2CreateAbstractTemperatureProfileClean:
 /** Function  lcm2CreateAbstractWhitePointProfile
  *  @brief    Create a effect profile of type abstract in CIE*Lab PCS for white point adjustment
  *
+ *  These profiles can be applied to 1D / per single channel only adjustments.
+ *  It will be marked with EFFECT_linear=yes in the meta tag.
+ *
  *  @param[in]    cie_a                CIE*a correction value in -0.5 - 0.5 range
  *  @param[in]    cie_b                CIE*b correction value in -0.5 - 0.5 range
  *  @param[in]    grid_size            dimensions of the created LUT; e.g. 33
@@ -1321,7 +1324,7 @@ lcm2CreateAbstractTemperatureProfileClean:
  *  @param[out]   h_profile            the resulting profile; If omitted the function will write the profile to my_abstract_file_name.
  *
  *  @version Oyranos: 0.9.7
- *  @date    2017/06/02
+ *  @date    2018/02/19
  *  @since   2017/06/02 (Oyranos: 0.9.7)
  */
 int          lcm2CreateAbstractWhitePointProfile (
@@ -1340,7 +1343,8 @@ int          lcm2CreateAbstractWhitePointProfile (
   int i;
 
   const char * kelvin_meta[] = {
-    "EFFECT_class", "reddish,white_point,atom",
+    "EFFECT_class", "reddish,white_point,linear,atom",
+    "EFFECT_linear", "yes", /* can be used for 1D curves like VCGT */
     "COLORIMETRY_white_point", "yes,reddish,kelvin",
     "CMF_binary", "create-abstract",
     "CMF_version", "0.9.7",
@@ -1394,7 +1398,7 @@ int          lcm2CreateAbstractWhitePointProfile (
                              "*lab", // CIE*Lab
                              icc_profile_version,
                              kelvin_name,
-                             "Oyranos project 2017",
+                             "Oyranos project 2018",
                              "Kai-Uwe Behrmann",
                              ICC_2011_LICENSE,
                              "CIE*Lab",
