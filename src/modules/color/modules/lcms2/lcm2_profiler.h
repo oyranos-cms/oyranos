@@ -39,7 +39,8 @@ typedef void (*lcm2Sampler_f)        ( const double        i[],
                                        void              * vars);
 /** @} */ /* profiler */
 
-int          lcm2CreateAbstractProfile(lcm2Sampler_f       samplerMySpace,
+int          lcm2CreateAbstractProfile (
+                                       lcm2Sampler_f       samplerMySpace,
                                        void              * samplerArg,
                                        const char        * my_space_profile,
                                        int                 grid_size,
@@ -157,6 +158,9 @@ void         lcm2SamplerWhitePoint   ( const double        i[],
                                        double              o[],
                                        void              * data );
 void         lcm2SamplerProof        ( const double        i[],
+                                             double        o[],
+                                       void              * data );
+void         lcm2SamplerProofD       ( const double        i[],
                                              double        o[],
                                        void              * data );
 

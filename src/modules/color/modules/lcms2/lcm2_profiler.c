@@ -358,8 +358,8 @@ void         lcm2SamplerLab2LCh      ( const double        i[],
  *  @param[out]    o                   output Lab triple
  *  @param[out]    none                unused
  *
- *  @version Oyranos: 0.9.6
- *  @date    2016/03/13
+ *  @version Oyranos: 0.9.7
+ *  @date    2017/12/05
  *  @since   2016/13/13 (Oyranos: 0.9.6)
  */
 void         lcm2SamplerLCh2Lab      ( const double        i[],
@@ -369,9 +369,9 @@ void         lcm2SamplerLCh2Lab      ( const double        i[],
   /* CIE*L */
   o[0] = i[0];
   /* CIE*a = C * cos(h) */
-  o[1] = i[1] * cos(M_PI*2.0*i[2]) / CIE_C_scaler + 0.5;
+  o[1] = 1.0 - (i[1] * cos(M_PI*2.0*i[2]) / CIE_C_scaler + 0.5);
   /* CIE*b = C * sin(h) */
-  o[2] = i[1] * sin(M_PI*2.0*i[2]) / CIE_C_scaler + 0.5;
+  o[2] = 1.0 - (i[1] * sin(M_PI*2.0*i[2]) / CIE_C_scaler + 0.5);
 }
 
 
@@ -759,7 +759,8 @@ void         lcm2SamplerWhitePoint   ( const double        i[],
  *  @param[in]     i                   input PCS.Lab triple
  *  @param[out]    o                   output PCS.Lab triple
  *  @param[out]    data                pointer to array of two void* with 
- *                                     - desired cmsHTRANSFORM and
+ *                                     - desired cmsHTRANSFORM
+ *                                       for uint32_t arrays in PT_Lab
  *                                     - cmsFLAGS_GAMUTCHECK flag
  *
  *  @version Oyranos: 0.9.7
@@ -773,6 +774,53 @@ void         lcm2SamplerProof        ( const double        i[],
   cmsCIELab Lab1, Lab2;
   double d;
   cmsFloat32Number i_[3], o_[3];
+  void ** ptr = (void**)data;
+
+  i_[0] = Lab1.L = i[0] * 100.0;
+  i_[1] = Lab1.a = i[1] * 257.0 - 128.0;
+  i_[2] = Lab1.b = i[2] * 257.0 - 128.0;
+
+  cmsDoTransform( ptr[0], i_, o_, 1 );
+
+  Lab2.L = o_[0]; Lab2.a = o_[1]; Lab2.b = o_[2];
+
+  d = cmsDeltaE( &Lab1, &Lab2 );
+  if((fabs(d) > 10) && ptr[1] != NULL)
+  {
+    Lab2.L = 50.0;
+    Lab2.a = Lab2.b = 0.0;
+  }
+
+  o[0] = Lab2.L/100.0; 
+  o[1] = (Lab2.a + 128.0) / 257.0;
+  o[2] = (Lab2.b + 128.0) / 257.0;
+}
+
+/** Function  lcm2SamplerProofD
+ *  @brief    Lab -> proofing profile -> Lab
+ *
+ *  Convert a proofing profile into a abstract one.
+ *  Abstract profiles can easily be merged into a multi profile transform.
+ *  PCS Lab range of 0-1 for all channels is assumed.
+ *
+ *  @param[in]     i                   input PCS.Lab triple
+ *  @param[out]    o                   output PCS.Lab triple
+ *  @param[out]    data                pointer to array of two void* with 
+ *                                     - desired cmsHTRANSFORM and
+ *                                       for uint64_t arrays in PT_Lab
+ *                                     - cmsFLAGS_GAMUTCHECK flag
+ *
+ *  @version Oyranos: 0.9.7
+ *  @since   2009/11/04 (Oyranos: 0.1.10)
+ *  @date    2017/11/06
+ */
+void         lcm2SamplerProofD       ( const double        i[],
+                                             double        o[],
+                                       void              * data )
+{
+  cmsCIELab Lab1, Lab2;
+  double d;
+  cmsFloat64Number i_[3], o_[3];
   void ** ptr = (void**)data;
 
   i_[0] = Lab1.L = i[0] * 100.0;
