@@ -3303,7 +3303,7 @@ oyStructList_s *   oyCurvesFromTag   ( char              * mem,
   {
     if(curve_bytes_total > size) break;
 
-    data = oyCurveFromTag( &mem[curve_bytes_total], size );
+    data = oyCurveFromTag( &mem[curve_bytes_total], size - curve_bytes_total );
 
     values = (oyOption_s*) oyStructList_GetRefType( data,
                                                     1, oyOBJECT_OPTION_S );
