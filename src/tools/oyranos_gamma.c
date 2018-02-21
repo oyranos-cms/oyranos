@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2005-2017 (C) Kai-Uwe Behrmann
+ *            2005-2018 (C) Kai-Uwe Behrmann
  *
  *  @brief    monitor configurator, gamma loader, daemon
  *  @internal
@@ -48,7 +48,9 @@
 #include "oyranos_string.h"
 #include "oyranos_texts.h"
 
+#include "oyConversion_s.h"
 #include "oyProfile_s_.h"
+#include "oyProfiles_s.h"
 #include "oyRectangle_s.h"
 
 
@@ -61,6 +63,17 @@ void  cleanDisplay                   ( Display           * display,
                                        int                 n );
 int  runDaemon                       ( const char        * display_name );
 #endif
+int      getLinearEffectProfile      ( oyProfiles_s      * effects );
+int      getWhitePointEffect         ( oyProfile_s       * monitor_profile,
+                                       oyOptions_s      ** module_options );
+uint16_t *   getVCGT                 ( oyProfile_s       * profile,
+                                       int               * width );
+int          setVCGT                 ( oyProfile_s       * profile,
+                                       uint16_t          * vcgt,
+                                       int                 width );
+uint16_t *   getRamp                 ( int                 width,
+                                       oyProfile_s       * p,
+                                       oyOptions_s       * options );
 
 void* oyAllocFunc(size_t size) {return malloc (size);}
 void  oyDeAllocFunc ( oyPointer ptr) { if(ptr) free (ptr); }
@@ -147,10 +160,10 @@ int main( int argc , char** argv )
               case 'e': erase = 1; monitor_profile = 0; break;
               case 'c': x_color_region_target = 1; monitor_profile = 0; break;
               case 'd': server = 1; OY_PARSE_INT_ARG( device_pos ); break;
-              case 'f': OY_PARSE_STRING_ARG(format); monitor_profile = 0; break;
+              case 'f': OY_PARSE_STRING_ARG( format ); monitor_profile = 0; break;
               case 'l': list = 1; monitor_profile = 0; break;
               case 'm': device_meta_tag = 1; break;
-              case 'o': OY_PARSE_STRING_ARG(output); monitor_profile = 0; break;
+              case 'o': OY_PARSE_STRING_ARG( output ); monitor_profile = 0; break;
               case 'u': unset = 1; monitor_profile = 0; break;
               case 'x': server = 1; OY_PARSE_INT_ARG( x ); break;
               case 'y': server = 1; OY_PARSE_INT_ARG( y ); break;
@@ -230,7 +243,7 @@ int main( int argc , char** argv )
                         printf("      %s --modules\n",        argv[0]);
                         printf("\n");
                         printf("  %s\n",               _("Dump data:"));
-                        printf("      %s -f=[edid|icc|edid_icc] [-o=edid.bin] [-x pos -y pos | -d number] [-m]\n", argv[0]);
+                        printf("      %s -f=[edid|icc|edid_icc|vcgt] [-o=edid.bin] [-x pos -y pos | -d number] [-m]\n", argv[0]);
                         printf("\n");
                         printf("  %s\n",               _("General options:"));
                         printf("      %s\n",           _("-v verbose"));
@@ -489,7 +502,8 @@ int main( int argc , char** argv )
     if(format &&
        (strcmp(format,"edid") == 0 ||
         strcmp(format,"icc") == 0 ||
-        strcmp(format,"edid_icc") == 0))
+        strcmp(format,"edid_icc") == 0 ||
+        strcmp(format,"vcgt") == 0))
     {
       icHeader * header = 0;
       char * out_name = 0;
@@ -592,7 +606,8 @@ int main( int argc , char** argv )
             o = oyConfig_Find( c, "edid" );
             data = oyOption_GetData( o, &size, oyAllocFunc );
           } else
-          if(strcmp(format,"icc") == 0)
+          if( strcmp(format,"icc") == 0 ||
+              strcmp(format, "vcgt") == 0 )
           {
             oyOptions_s * cs_options = 0;
             if(x_color_region_target)
@@ -613,7 +628,91 @@ int main( int argc , char** argv )
               oyProfile_AddDevice( prof, c, opts );
               oyOptions_Release( &opts );
             }
-            data = oyProfile_GetMem( prof, &size, 0, oyAllocFunc );
+            if(strcmp(format,"icc") == 0)
+              data = oyProfile_GetMem( prof, &size, 0, oyAllocFunc );
+            else if(strcmp(format, "vcgt") == 0)
+            {
+              /* 1. detect if a XCM color server is active */
+              int error = 0;
+              int active = 0;
+              oyOptions_s * module_options = NULL;
+#if defined(XCM_HAVE_X11)
+              Display * display = XOpenDisplay( display_name );
+              if(XcmColorServerCapabilities( display ) & XCM_COLOR_SERVER_MANAGEMENT)
+                active = 1;
+              XCloseDisplay( display );
+#endif
+              /* 1.1. stop if XCM is active*/
+              if(active)
+                data = oyProfile_GetMem( prof, &size, 0, oyAllocFunc );
+              else
+              {
+                /* 2. get user effect profile and display white point effect */
+                /* 2.1. get effect profile and decide if it can be embedded into a VGCT tag */
+                oyProfiles_s * effects = oyProfiles_New(NULL);
+                int is_linear = getLinearEffectProfile( effects );
+                if(is_linear)
+                {
+                  int effect_switch = oyGetBehaviour( oyBEHAVIOUR_EFFECT );
+                  if(effect_switch)
+                    error = oyOptions_SetFromString( &module_options, OY_DEFAULT_EFFECT,
+                                                     "1" , OY_CREATE_NEW );
+                  if(error)
+                    fprintf(stderr, "oyOptions_SetFromString(OY_DEFAULT_EFFECT) failed %d\n", error);
+                }
+                /* 2.2. get the display white point effect */
+                error = getWhitePointEffect( prof, &module_options );
+                if(error)
+                  fprintf(stderr, "No white for monitor profile %d\n", error);
+                error = oyOptions_MoveInStruct( &module_options,
+                                      OY_PROFILES_EFFECT,
+                                       (oyStruct_s**) &effects,
+                                       OY_CREATE_NEW );
+                /* 3. extract a existing VCGT */
+                int width = 256;
+                uint16_t * vcgt = getVCGT( prof, &width );
+                oyImage_s * img;
+                if(getenv("OY_DEBUG_WRITE"))
+                {
+                  img = oyImage_Create( width, 1, vcgt, OY_TYPE_123_16, prof, 0 );
+                  oyImage_WritePPM( img, "wtpt-vcgt.ppm", "vcgt ramp" );
+                  oyImage_Release( &img );
+                }
+                /* 4. create conversion, fill ramp and convert */
+                uint16_t * ramp = getRamp( width, prof, module_options );
+                if(getenv("OY_DEBUG_WRITE"))
+                {
+                  img = oyImage_Create( width, 1, ramp, OY_TYPE_123_16, prof, 0 );
+                  oyImage_WritePPM( img, "wtpt-effect.ppm", "white point ramp" );
+                  oyImage_Release( &img );
+                }
+                /* 5. mix the two ramps */
+                uint16_t * mix = calloc( sizeof(uint16_t), width*3);
+                int j;
+                for(i = 0; (int)i < width; ++i)
+                  for(j = 0; j < 3; ++j)
+                    mix[i*3+j] = OY_ROUNDp( oyLinInterpolateRampU16c( vcgt, width, j,3, oyLinInterpolateRampU16c( ramp, width, j, 3, (double)i/width )/65535.) );
+                if(getenv("OY_DEBUG_WRITE"))
+                {
+                  img  = oyImage_Create( width, 1, mix, OY_TYPE_123_16, prof, 0 );
+                  oyImage_WritePPM( img, "wtpt-mix.ppm", "white point + vcgt" );
+                  oyImage_Release( &img );
+                }
+                /* 6. create a new VCGT tag and exchange the tag */
+                if(setVCGT( prof, mix, width ))
+                  fprintf(stderr, "Alter VCGT tag failed\n");
+                /* 7. write the profile */
+                data = oyProfile_GetMem( prof, &size, 0, oyAllocFunc );
+              }
+              uint32_t flags = 0;
+              int choices = 0, current = -1;
+              const char ** choices_string_list = NULL;
+              error = oyOptionChoicesGet2( oyWIDGET_DISPLAY_WHITE_POINT, flags,
+                                 oyNAME_NAME, &choices,
+                                 &choices_string_list, &current );
+              int display_white_point = oyGetBehaviour( oyBEHAVIOUR_DISPLAY_WHITE_POINT );
+              fprintf(stderr, "Color Server active: %d white point mode: %s\n", active, 0 <= current && current < choices ? choices_string_list[current]:"" );
+            }
           }
 
           if(data && size)
@@ -1103,3 +1202,194 @@ int  runDaemon                       ( const char        * display_name )
 }
 #endif
 
+int      getLinearEffectProfile      ( oyProfiles_s      * effects )
+{
+  /* 2. get effect profile and decide if it can be embedded into a VGCT tag */
+  int is_linear = 0;
+  oyProfile_s * effect = oyProfile_FromStd ( oyPROFILE_EFFECT, 0, NULL );
+  oyProfileTag_s * tag = oyProfile_GetTagById( effect, (icTagSignature)icSigMetaDataTag );
+  if( tag )
+  {
+    int32_t texts_n = 0, tag_size = 0;
+    char ** texts = oyProfileTag_GetText( tag, &texts_n, NULL, NULL,
+                                          &tag_size, oyAllocateFunc_ );
+    for(int j = 0; j < texts_n; ++j)
+    {
+      if( strcmp(texts[j],"EFFECT_linear") == 0 &&
+          texts_n > (j+1) &&
+          strcmp(texts[j+1], "yes") == 0)
+        ++is_linear;
+    }
+    fprintf(stderr, "EFFECT_linear=yes: %d\n", is_linear);
+    if(!is_linear)
+      oyProfile_Release( &effect );
+    else
+      oyProfiles_MoveIn( effects, &effect, -1 );
+
+    oyProfileTag_Release( &tag );
+  }
+
+  return is_linear;
+}
+
+int      getWhitePointEffect         ( oyProfile_s       * monitor_profile,
+                                       oyOptions_s      ** module_options )
+{
+  double        src_cie_a = 0.5, src_cie_b = 0.5, dst_cie_a = 0.5, dst_cie_b = 0.5;
+  oyProfile_s * wtpt = NULL;
+  int error = oyProfile_GetWhitePoint( monitor_profile, &src_cie_a, &src_cie_b );
+  int display_white_point = oyGetBehaviour( oyBEHAVIOUR_DISPLAY_WHITE_POINT );
+  oyOptions_s * result_opts = NULL, * opts = NULL;
+
+  if(!error)
+    error = oyGetDisplayWhitePoint( display_white_point, &dst_cie_a, &dst_cie_b );
+  fprintf( stderr, "%s display_white_point: %d [%g %g] -> [%g %g]\n",
+          oyProfile_GetText( monitor_profile, oyNAME_DESCRIPTION ), display_white_point,
+          src_cie_a, src_cie_b, dst_cie_a, dst_cie_b);
+  error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/cie_a",
+                                   dst_cie_a - src_cie_a, 0, OY_CREATE_NEW );
+  error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/cie_b",
+                                   dst_cie_b - src_cie_b, 0, OY_CREATE_NEW );
+  error = oyOptions_Handle( "//" OY_TYPE_STD "/create_profile.white_point_adjust",
+                                         opts,"create_profile.white_point_adjust",
+                                         &result_opts );
+  wtpt = (oyProfile_s*) oyOptions_GetType( result_opts, -1, "icc_profile",
+                                           oyOBJECT_PROFILE_S );
+  error = !wtpt;
+  oyOptions_MoveInStruct( module_options,
+                          OY_STD "/icc_color/display.icc_profile.abstract.white_point.automatic.oy-monitor",
+                          (oyStruct_s**) &wtpt, OY_CREATE_NEW );
+  oyOptions_Release( &result_opts );
+  oyOptions_Release( &opts );
+
+  return error;
+}
+
+uint16_t *   getRamp                 ( int                 width,
+                                       oyProfile_s       * p,
+                                       oyOptions_s       * options )
+{
+  oyProfile_s * w      = oyProfile_FromStd ( oyASSUMED_WEB, 0, NULL );
+  uint16_t    * ramp   = calloc( sizeof(uint16_t), width*3);
+  oyImage_s   * input  = oyImage_Create( width, 1, ramp, OY_TYPE_123_16, w, 0 );
+  oyImage_s   * output = oyImage_Create( width, 1, ramp, OY_TYPE_123_16, p, 0 );
+  int i,j, error, mul = 65536/width;
+
+  oyConversion_s * cc = oyConversion_CreateBasicPixels( input, output, options, NULL);
+
+  for(i = 0; i < width; ++i)
+  {
+    for(j = 0; j < 3; ++j)
+      ramp[i*3 + j] = i * mul;
+  }
+
+  if(getenv("OY_DEBUG_WRITE"))
+    oyImage_WritePPM( input, "wtpt-effect-gray.ppm", "gray ramp" );
+
+  error = oyConversion_RunPixels( cc, 0 );
+  if(error)
+    fprintf( stderr, "found issue while converting ramp: %d\n", error );
+
+  oyProfile_Release( &w );
+  oyImage_Release( &input );
+  oyImage_Release( &output );
+
+  return ramp;
+}
+
+uint16_t *   getVCGT                 ( oyProfile_s       * profile,
+                                       int               * width )
+{
+  oyProfileTag_s * tag = oyProfile_GetTagById( profile, (icTagSignature) icSigVideoCardGammaTable );
+  uint8_t * data_ = NULL;
+  size_t size = 0;
+  int error = oyProfileTag_GetBlock( tag, (void**) &data_, &size, oyAllocateFunc_ );
+  uint16_t * ramp         = NULL;
+  if(error || size < 18)
+  {
+    if(error) fprintf( stderr, "no vcgt tag %d\n", error );
+    else fprintf( stderr, "vcgt tag size too small %lu\n", size );
+    return ramp;
+  }
+
+  int parametrisch        = oyValueUInt32(*(icUInt32Number*) &data_[8]);
+  icUInt16Number nkurven  = oyValueUInt16(*(icUInt16Number*) &data_[12]);
+  icUInt16Number segmente = oyValueUInt16(*(icUInt16Number*) &data_[14]);
+  icUInt16Number byte     = oyValueUInt16(*(icUInt16Number*) &data_[16]);
+ 
+  fprintf( stderr, "vcgt parametric: %d curves: %d segments: %d bytes: %d\n", parametrisch, nkurven, segmente, byte );
+
+  if (parametrisch) { //icU16Fixed16Number
+      double r_gamma = 1.0/oyValueUInt32(*(icUInt32Number*)&data_[12])*65536.0;
+      double start_r = oyValueUInt32(*(icUInt32Number*)&data_[16])/65536.0;
+      double ende_r = oyValueUInt32(*(icUInt32Number*)&data_[20])/65536.0;
+      double g_gamma = 1.0/oyValueUInt32(*(icUInt32Number*)&data_[24])*65536.0;
+      double start_g = oyValueUInt32(*(icUInt32Number*)&data_[28])/65536.0;
+      double ende_g = oyValueUInt32(*(icUInt32Number*)&data_[32])/65536.0;
+      double b_gamma = 1.0/oyValueUInt32(*(icUInt32Number*)&data_[36])*65536.0;
+      double start_b = oyValueUInt32(*(icUInt32Number*)&data_[40])/65536.0;
+      double ende_b = oyValueUInt32(*(icUInt32Number*)&data_[44])/65536.0;
+  } else {
+    int start = 18, i,j;
+    if((int)size < start + byte * segmente * nkurven)
+    {
+      fprintf( stderr, "vcgt tag too small: %lu need %d\n", size, start + byte * segmente * nkurven );
+      return ramp;
+    }
+    if(byte != 2)
+    {
+      fprintf( stderr, "vcgt bytes not supported: %d need 2\n", byte );
+      return ramp;
+    }
+
+    ramp = calloc( byte, segmente * nkurven);
+    for (j = 0; j < nkurven; j++)
+      for (i = segmente * j; i < segmente * (j+1); i++)
+        ramp[(i - segmente*j) * nkurven + j] = oyValueUInt16 (*(icUInt16Number*)&data_[start + byte*i]);
+
+    *width = segmente;
+  }
+
+  return ramp;
+}
+
+int          setVCGT                 ( oyProfile_s       * profile,
+                                       uint16_t          * vcgt,
+                                       int                 width )
+{
+  int size = 18+width*3*2, i,j;
+  uint8_t * data_ = calloc(sizeof(char), size);
+  uint16_t * u;
+  int error = !data_;
+  oyProfileTag_s * tag;
+
+  if(error) return error;
+  *(icUInt32Number*) &data_[0]  = oyValueUInt32( (icTagSignature) icSigVideoCardGammaTable );
+  *(icUInt32Number*) &data_[8]  = oyValueUInt32( 0 ); /* parametric */
+  *(icUInt16Number*) &data_[12] = oyValueUInt16( 3 ); /* channels */
+  *(icUInt16Number*) &data_[14] = oyValueUInt16( width );
+  *(icUInt16Number*) &data_[16] = oyValueUInt16( 2 ); /* bytes */
+
+  u = (uint16_t*)&data_[18];
+  for(i = 0; i < width; ++i)
+    for(j = 0; j < 3; ++j)
+      u[j*width+i] = oyValueUInt16(vcgt[i*3+j]);
+
+  tag = oyProfileTag_CreateFromData((icTagSignature) icSigVideoCardGammaTable,
+                                (icTagTypeSignature) icSigVideoCardGammaTable,
+                                    oyOK, size, data_, NULL );
+  if(!tag)
+  {
+    error = 1;
+    fprintf(stderr, "VCGT Tag creation failed\n" );
+  }
+
+  if(!error)
+  {
+    error = oyProfile_TagMoveIn( profile, &tag, 1 );
+    if(error)
+      fprintf(stderr, "oyProfile_TagMoveIn failed %d\n", error );
+  }
+
+  return error;
+}
