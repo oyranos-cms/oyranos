@@ -16,8 +16,10 @@
 #include <math.h>
 #include "oyranos_types.h"
 
-float        oyLinInterpolateRampU16 ( uint16_t          * ramp,
+float        oyLinInterpolateRampU16c( uint16_t          * ramp,
                                        int                 ramp_size,
+                                       int                 ramp_channel,
+                                       int                 ramp_channels,
                                        float               pos )
 {
   uint16_t val1, val2;
@@ -33,14 +35,20 @@ float        oyLinInterpolateRampU16 ( uint16_t          * ramp,
     return ramp[ramp_size-1];
 
   dist = modff( pos*(ramp_size-1), &start );
-  val1 = ramp[(int)start];
-  val2 = ramp[(int)start+1];
+  val1 = ramp[(int)start*ramp_channels+ramp_channel];
+  val2 = ramp[(int)start*ramp_channels+ramp_channel+ramp_channels];
 
   result = val2 - val1;
   result *= dist;
   result += val1;
 
   return result;
+}
+float        oyLinInterpolateRampU16 ( uint16_t          * ramp,
+                                       int                 ramp_size,
+                                       float               pos )
+{
+  return oyLinInterpolateRampU16c( ramp, ramp_size, 0, 1, pos );
 }
 
 float        oyLinInterpolateRampF32 ( float             * ramp,

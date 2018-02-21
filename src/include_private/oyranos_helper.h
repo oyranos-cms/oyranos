@@ -144,6 +144,11 @@ char * oyReadCmdToMemf_              ( size_t            * size,
 
 /* --- mathematical helpers --- */
 
+float        oyLinInterpolateRampU16c( uint16_t          * ramp,
+                                       int                 ramp_size,
+                                       int                 ramp_channel,
+                                       int                 ramp_channels,
+                                       float               pos );
 float        oyLinInterpolateRampU16 ( uint16_t          * ramp,
                                        int                 ramp_size,
                                        float               pos );

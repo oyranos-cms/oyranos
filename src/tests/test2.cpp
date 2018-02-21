@@ -1817,6 +1817,31 @@ oyTESTRESULT_e testInterpolation ()
     PRINT_SUB( oyTESTRESULT_FAIL, 
     "Interpolation failed: %f == %u                         ", pol, ramp[3] );
   }
+
+  uint16_t ramp3[12] = { 0,0,65535, 21845,21845,43690, 43690,43690,21845, 65535,65535,0 };
+  pol = oyLinInterpolateRampU16c( ramp3, 4, 1, 3, 2.0/3.0 );
+  if(pol == ramp3[2*3+1] &&
+     oyLinInterpolateRampU16c( ramp3, 4, 0, 3, 2.0/3.0 ) == ramp3[2*3+0])
+  {
+    PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "Interpolation c1 is fine: %g == %u               ", pol, ramp3[2*3+1] );
+  } else
+  {
+    PRINT_SUB( oyTESTRESULT_FAIL, 
+    "Interpolation c failed: %f == %u                       ", pol, ramp3[2*3+1] );
+  }
+  pol = oyLinInterpolateRampU16c( ramp3, 4, 2, 3, 2.0/3.0 );
+  if(pol == ramp3[2*3+2])
+  {
+    PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "Interpolation c2 is fine: %g == %u               ", pol, ramp3[2*3+2] );
+  } else
+  {
+    PRINT_SUB( oyTESTRESULT_FAIL, 
+    "Interpolation c failed: %f == %u                       ", pol, ramp3[2*3+2] );
+  }
+
+
   return result;
 }
 
