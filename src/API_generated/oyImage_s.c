@@ -1171,6 +1171,7 @@ int          oyImage_WritePPM        ( oyImage_s         * image,
 
       int cchan_n = oyProfile_GetChannelsCount( s->profile_ );
       int channels = oyToChannels_m( s->layout_[oyLAYOUT] );
+      int bigendian = oyToByteswap_m( s->layout_[oyLAYOUT] ) != (uint8_t)oyBigEndian();
       oyDATATYPE_e data_type = oyToDataType_m( s->layout_[oyLAYOUT] );
       int alpha = channels - cchan_n;
       int byteps = oyDataTypeGetSize( data_type );
@@ -1184,7 +1185,8 @@ int          oyImage_WritePPM        ( oyImage_s         * image,
 
             fputc( 'P', fp );
       if(alpha ||
-         cchan_n > 3) 
+         cchan_n > 3 ||
+         !bigendian) 
             fputc( '7', fp );
       else
       {
@@ -1251,7 +1253,7 @@ int          oyImage_WritePPM        ( oyImage_s         * image,
       if (byteps == 4 || byteps == 8 ||
           (byteps == 2 && data_type == oyHALF))
       {
-        if(oyBigEndian())
+        if(bigendian)
           snprintf( bytes, 48, "1.0" );
         else
           snprintf( bytes, 48, "-1.0" );
@@ -1269,7 +1271,8 @@ int          oyImage_WritePPM        ( oyImage_s         * image,
 
 
       if(alpha ||
-         cchan_n > 3)
+         cchan_n > 3 ||
+         !bigendian)
       {
         const char *tupl = "RGB_ALPHA";
 
@@ -1285,9 +1288,9 @@ int          oyImage_WritePPM        ( oyImage_s         * image,
           tupl = "DEVN";
 
         snprintf( text, 128, "WIDTH %d\nHEIGHT %d\nDEPTH %d\nMAXVAL "
-                  "%s\nTUPLTYPE %s\nENDHDR\n",
+                  "%s\nTUPLTYPE %s\nBIGENDIAN %d\nENDHDR\n",
                   s->width, s->height,
-                  channels, bytes, tupl );
+                  channels, bytes, tupl, bigendian );
         len = strlen( text );
         do { fputc ( text[pt++] , fp); } while (--len); pt = 0;
 
@@ -1329,15 +1332,7 @@ int          oyImage_WritePPM        ( oyImage_s         * image,
             }
           } else 
           for(i = 0; i < len; ++i)
-          {
-            if(!oyBigEndian() && (byteps == 2 && data_type != oyHALF))
-            { if(i%2)
-                fputc ( out_values[l * len + i - 1] , fp);
-              else
-                fputc ( out_values[l * len + i + 1] , fp);
-            } else
-              fputc ( out_values[l * len + i] , fp);
-          }
+            fputc ( out_values[l * len + i] , fp);
         }
 
         if(is_allocated)
