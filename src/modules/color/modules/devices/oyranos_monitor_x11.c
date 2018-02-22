@@ -54,7 +54,8 @@
 extern int oy_debug; /* print debug infos on stderr */
 enum {
   oyOBJECT_MONITOR_S = 2,
-  oyOBJECT_MONITOR_HOOKS_S = 120
+  oyOBJECT_MONITOR_HOOKS_S = 120,
+  oyOBJECT_MONITOR_HOOKS2_S = 120
 };
 
 #ifndef MAX_PATH
@@ -730,18 +731,18 @@ oyX1GetAllScreenNames_          (const char *display_name,
 
 
 /** @internal
- *  Function oyX1Rectangle_FromDevice
+ *  Function oyX1GetRectangleFromMonitor
  *  @memberof monitor_api
  *  @brief   value filled a oyStruct_s object
  *
  *  @param         device_name         the Oyranos specific device name
  *  @return                            the rectangle the device projects to
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.9.7
+ *  @date    2018/02/22
  *  @since   2009/01/28 (Oyranos: 0.1.10)
- *  @date    2009/01/28
  */
-int          oyX1Rectangle_FromDevice( const char        * device_name,
+int      oyX1GetRectangleFromMonitor ( const char        * device_name,
                                        double            * x,
                                        double            * y,
                                        double            * width,
@@ -842,10 +843,150 @@ void  oyX1Monitor_setCompatibility   ( oyX1Monitor_s     * disp,
   free( command );
 }
 
-int      oyX1MonitorProfileSetup     ( const char        * display_name,
+int      oyX1SetupMonitorProfile     ( const char        * display_name,
                                        const char        * profile_name,
                                        const char        * profile_data,
                                        size_t              profile_data_size )
+{
+  int error = 0;
+  oyX1Monitor_s * disp = 0;
+  char       *dpy_name = NULL;
+  char *text = 0;
+
+  /* XRandR needs a expensive initialisation */
+  disp = oyX1Monitor_newFrom_( display_name, 1 );
+  if(!disp)
+    return -1;
+
+  dpy_name = calloc( sizeof(char), MAX_PATH );
+  if(!dpy_name)
+  { fprintf(stderr, OY_DBG_FORMAT_ "ERROR: calloc() failed", OY_DBG_ARGS_);
+    goto Clean;
+  }
+  if( display_name && !strstr( disp->host, display_name ) )
+    snprintf( dpy_name, MAX_PATH, ":%d", disp->geo[0] );
+  else
+    snprintf( dpy_name, MAX_PATH, "%s:%d", disp->host, disp->geo[0] );
+
+  if(oy_debug) fprintf( stderr, OY_DBG_FORMAT_ "profile_name = %s\n", OY_DBG_ARGS_, profile_name?profile_name:"" );
+
+  if( profile_name && profile_name[0] )
+  {
+    /* set XCM_ICC_V0_3_TARGET_PROFILE_IN_X_BASE atom in X */
+    {
+      Display *display;
+      Atom atom = 0;
+      int screen = 0;
+      Window w;
+
+      char       *atom_name=0;
+      int         result = 0;
+
+      if(display_name)
+        if(oy_debug) fprintf( stderr,OY_DBG_FORMAT_ "display_name %s\n", OY_DBG_ARGS_,display_name);
+
+      display = oyX1Monitor_device_( disp );
+
+      screen = oyX1Monitor_deviceScreen_( disp );
+      if(oy_debug) fprintf( stderr, OY_DBG_FORMAT_ "screen: %d\n", OY_DBG_ARGS_, screen);
+      w = RootWindow(display, screen); if(oy_debug) fprintf( stderr,OY_DBG_FORMAT_ "w: %ld\n", OY_DBG_ARGS_, w);
+
+      if(!profile_data_size || !profile_data)
+        fprintf( stderr,OY_DBG_FORMAT_ "Error obtaining profile\n", OY_DBG_ARGS_);
+
+#if defined(XCM_HAVE_X11) && defined(HAVE_XCM)
+      atom_name = oyX1Monitor_getAtomName_( disp, XCM_ICC_V0_3_TARGET_PROFILE_IN_X_BASE );
+#else
+      atom_name = oyX1Monitor_getAtomName_( disp, "_ICC_PROFILE" );
+#endif
+      if( atom_name )
+      {
+        atom = XInternAtom (display, atom_name, False);
+        if (atom == None) {
+          fprintf( stderr,OY_DBG_FORMAT_ "%s \"%s\"\n", OY_DBG_ARGS_, "Error setting up atom", atom_name);
+        }
+      } else fprintf( stderr,OY_DBG_FORMAT_ "Error setting up atom\n", OY_DBG_ARGS_);
+
+      if( atom && profile_data)
+      result = XChangeProperty( display, w, atom, XA_CARDINAL,
+                       8, PropModeReplace, (unsigned char*)profile_data, (int)profile_data_size );
+      if(result == 0) fprintf( stderr,OY_DBG_FORMAT_ "%s %d\n", OY_DBG_ARGS_, "found issues",result);
+
+# if defined(HAVE_XRANDR)
+      if( oyX1Monitor_infoSource_( disp ) == oyX11INFO_SOURCE_XRANDR )
+      {
+#if defined(XCM_HAVE_X11) && defined(HAVE_XCM)
+        atom = XInternAtom( display, XCM_ICC_V0_3_TARGET_PROFILE_IN_X_BASE, True );
+#else   
+        atom = XInternAtom( display, "_ICC_PROFILE", True );
+#endif
+
+        if(atom)
+        {
+          XRRChangeOutputProperty( display, oyX1Monitor_xrrOutput_( disp ),
+			           atom, XA_CARDINAL, 8, PropModeReplace,
+			           (unsigned char *)profile_data, (int)profile_data_size );
+
+          if(oy_debug)
+            atom_name = XGetAtomName(display, atom);
+          if(oy_debug) fprintf( stderr, OY_DBG_FORMAT_ "output: \"%s\" crtc: %d atom_name: %s\n", OY_DBG_ARGS_,
+               noE(oyX1Monitor_xrrOutputInfo_(disp)->name),
+               (int)oyX1Monitor_xrrOutputInfo_(disp)->crtc, atom_name );
+        }
+      }
+#else
+      if(oy_debug) fprintf( stderr,OY_DBG_FORMAT_ "!HAVE_XRANDR\n", OY_DBG_ARGS_);
+# endif
+
+      /* claim to be compatible with 0.4 
+       * http://www.freedesktop.org/wiki/OpenIcc/ICC_Profiles_in_X_Specification_0.4
+       */
+      atom = XInternAtom( display, "_ICC_PROFILE_IN_X_VERSION", False );
+      if(atom)
+      {
+        Atom a;
+        /* 0.4 == 100*0 + 1*4 = 4 */
+        const unsigned char * value = (const unsigned char*)"4";
+        int actual_format_return;
+        unsigned long nitems_return=0, bytes_after_return=0;
+        unsigned char* prop_return=0;
+
+        XGetWindowProperty( display, w, atom, 0, INT_MAX, False, XA_STRING,
+                     &a, &actual_format_return, &nitems_return, 
+                     &bytes_after_return, &prop_return );
+        if(bytes_after_return != 0) fprintf( stderr,OY_DBG_FORMAT_ "%s bytes_after_return: %lu\n", OY_DBG_ARGS_,
+                                          "found issues",bytes_after_return);
+        /* check if the old value is the same as our intented */
+        if(actual_format_return != XA_STRING ||
+           nitems_return == 0)
+        {
+          if(!prop_return || strcmp( (char*)prop_return, (char*)value ) != 0)
+          result = XChangeProperty( display, w, atom, XA_STRING,
+                                    8, PropModeReplace,
+                                    value, 4 );
+          if(result == 0) fprintf( stderr,OY_DBG_FORMAT_ "%s %d\n", OY_DBG_ARGS_, "found issues",result);
+        }
+      }
+
+      free( atom_name );
+
+      oyX1Monitor_setCompatibility( disp, profile_name );
+    }
+
+    free( text );
+  }
+
+  Clean:
+  oyX1Monitor_release_( &disp );
+  if(dpy_name) free( dpy_name );
+
+  return error;
+}
+
+int      oyX1SetupMonitorCalibration ( const char        * display_name,
+                                       const char        * profile_name,
+                                       const char        * profile_data OY_UNUSED,
+                                       size_t              profile_data_size OY_UNUSED )
 {
   int error = 0;
   oyX1Monitor_s * disp = 0;
@@ -976,107 +1117,6 @@ int      oyX1MonitorProfileSetup     ( const char        * display_name,
 
     if(oy_debug) fprintf( stderr, OY_DBG_FORMAT_ "system: %s\n", OY_DBG_ARGS_, text );
 
-    /* set XCM_ICC_V0_3_TARGET_PROFILE_IN_X_BASE atom in X */
-    {
-      Display *display;
-      Atom atom = 0;
-      int screen = 0;
-      Window w;
-
-      char       *atom_name=0;
-      int         result = 0;
-
-      if(display_name)
-        if(oy_debug) fprintf( stderr,OY_DBG_FORMAT_ "display_name %s\n", OY_DBG_ARGS_,display_name);
-
-      display = oyX1Monitor_device_( disp );
-
-      screen = oyX1Monitor_deviceScreen_( disp );
-      if(oy_debug) fprintf( stderr, OY_DBG_FORMAT_ "screen: %d\n", OY_DBG_ARGS_, screen);
-      w = RootWindow(display, screen); if(oy_debug) fprintf( stderr,OY_DBG_FORMAT_ "w: %ld\n", OY_DBG_ARGS_, w);
-
-      if(!profile_data_size || !profile_data)
-        fprintf( stderr,OY_DBG_FORMAT_ "Error obtaining profile\n", OY_DBG_ARGS_);
-
-#if defined(XCM_HAVE_X11) && defined(HAVE_XCM)
-      atom_name = oyX1Monitor_getAtomName_( disp, XCM_ICC_V0_3_TARGET_PROFILE_IN_X_BASE );
-#else
-      atom_name = oyX1Monitor_getAtomName_( disp, "_ICC_PROFILE" );
-#endif
-      if( atom_name )
-      {
-        atom = XInternAtom (display, atom_name, False);
-        if (atom == None) {
-          fprintf( stderr,OY_DBG_FORMAT_ "%s \"%s\"\n", OY_DBG_ARGS_, "Error setting up atom", atom_name);
-        }
-      } else fprintf( stderr,OY_DBG_FORMAT_ "Error setting up atom\n", OY_DBG_ARGS_);
-
-      if( atom && profile_data)
-      result = XChangeProperty( display, w, atom, XA_CARDINAL,
-                       8, PropModeReplace, (unsigned char*)profile_data, (int)profile_data_size );
-      if(result == 0) fprintf( stderr,OY_DBG_FORMAT_ "%s %d\n", OY_DBG_ARGS_, "found issues",result);
-
-# if defined(HAVE_XRANDR)
-      if( oyX1Monitor_infoSource_( disp ) == oyX11INFO_SOURCE_XRANDR )
-      {
-#if defined(XCM_HAVE_X11) && defined(HAVE_XCM)
-        atom = XInternAtom( display, XCM_ICC_V0_3_TARGET_PROFILE_IN_X_BASE, True );
-#else   
-        atom = XInternAtom( display, "_ICC_PROFILE", True );
-#endif
-
-        if(atom)
-        {
-          XRRChangeOutputProperty( display, oyX1Monitor_xrrOutput_( disp ),
-			           atom, XA_CARDINAL, 8, PropModeReplace,
-			           (unsigned char *)profile_data, (int)profile_data_size );
-
-          if(oy_debug)
-            atom_name = XGetAtomName(display, atom);
-          if(oy_debug) fprintf( stderr, OY_DBG_FORMAT_ "output: \"%s\" crtc: %d atom_name: %s\n", OY_DBG_ARGS_,
-               noE(oyX1Monitor_xrrOutputInfo_(disp)->name),
-               (int)oyX1Monitor_xrrOutputInfo_(disp)->crtc, atom_name );
-        }
-      }
-#else
-      if(oy_debug) fprintf( stderr,OY_DBG_FORMAT_ "!HAVE_XRANDR\n", OY_DBG_ARGS_);
-# endif
-
-      /* claim to be compatible with 0.4 
-       * http://www.freedesktop.org/wiki/OpenIcc/ICC_Profiles_in_X_Specification_0.4
-       */
-      atom = XInternAtom( display, "_ICC_PROFILE_IN_X_VERSION", False );
-      if(atom)
-      {
-        Atom a;
-        /* 0.4 == 100*0 + 1*4 = 4 */
-        const unsigned char * value = (const unsigned char*)"4";
-        int actual_format_return;
-        unsigned long nitems_return=0, bytes_after_return=0;
-        unsigned char* prop_return=0;
-
-        XGetWindowProperty( display, w, atom, 0, INT_MAX, False, XA_STRING,
-                     &a, &actual_format_return, &nitems_return, 
-                     &bytes_after_return, &prop_return );
-        if(bytes_after_return != 0) fprintf( stderr,OY_DBG_FORMAT_ "%s bytes_after_return: %lu\n", OY_DBG_ARGS_,
-                                          "found issues",bytes_after_return);
-        /* check if the old value is the same as our intented */
-        if(actual_format_return != XA_STRING ||
-           nitems_return == 0)
-        {
-          if(!prop_return || strcmp( (char*)prop_return, (char*)value ) != 0)
-          result = XChangeProperty( display, w, atom, XA_STRING,
-                                    8, PropModeReplace,
-                                    value, 4 );
-          if(result == 0) fprintf( stderr,OY_DBG_FORMAT_ "%s %d\n", OY_DBG_ARGS_, "found issues",result);
-        }
-      }
-
-      free( atom_name );
-
-      oyX1Monitor_setCompatibility( disp, profile_name );
-    }
-
     free( text );
   }
 
@@ -1088,7 +1128,7 @@ int      oyX1MonitorProfileSetup     ( const char        * display_name,
 }
 
 
-int      oyX1MonitorProfileUnset     ( const char        * display_name )
+int      oyX1UnsetMonitorProfile     ( const char        * display_name )
 {
   int error = 0;
 
@@ -1849,19 +1889,20 @@ int          oyX1Monitor_release_      ( oyX1Monitor_s      ** obj )
       " The \"properties\" call might be a expensive one.\n" \
       " Informations are stored in the returned oyConfig_s::backend_core member."
 #include "config.icc_profile.monitor.oyX1.qarz.json.h"
-oyMonitorHooks_s oyX1MonitorHooks_ = {
-  oyOBJECT_MONITOR_HOOKS_S,
+oyMonitorHooks2_s oyX1MonitorHooks2_ = {
+  oyOBJECT_MONITOR_HOOKS2_S,
   {"oyX1"},
   10000, /* 1.0.0 */
   oyX1_help_system_specific,
   (const char*)config_icc_profile_monitor_oyX1_qarz_json,
-  oyX1MonitorProfileSetup,
-  oyX1MonitorProfileUnset,
-  oyX1Rectangle_FromDevice,
+  oyX1SetupMonitorCalibration,
+  oyX1SetupMonitorProfile,
+  oyX1UnsetMonitorProfile,
+  oyX1GetRectangleFromMonitor,
   oyX1GetMonitorProfile,
   oyX1GetAllScreenNames,
   oyX1GetMonitorInfo
 };
 
-oyMonitorHooks_s * oyX1MonitorHooks = &oyX1MonitorHooks_;
+oyMonitorHooks2_s * oyX1MonitorHooks2 = &oyX1MonitorHooks2_;
 

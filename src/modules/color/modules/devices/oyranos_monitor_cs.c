@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2005-2013 (C) Kai-Uwe Behrmann
+ *            2005-2018 (C) Kai-Uwe Behrmann
  *
  *  @brief    monitor osX device detection
  *  @internal
@@ -275,18 +275,18 @@ qarzGetAllScreenNames_          (const char *display_name,
 
 
 /** @internal
- *  Function qarzRectangle_FromDevice
+ *  Function qarzGetRectangleFromMonitor
  *  @memberof monitor_api
  *  @brief   value filled a oyStruct_s object
  *
  *  @param         device_name         the Oyranos specific device name
  *  @return                            the rectangle the device projects to
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.9.7
+ *  @date    2018/02/22
  *  @since   2009/01/28 (Oyranos: 0.1.10)
- *  @date    2009/01/28
  */
-int          qarzRectangle_FromDevice (
+int          qarzGetRectangleFromMonitor (
                                        const char        * device_name,
                                        double            * x,
                                        double            * y,
@@ -335,11 +335,25 @@ qarzMonitor_getGeometryIdentifier_         (qarzMonitor_s  *disp)
 
 
 
-int      qarzMonitorProfileSetup     ( const char        * display_name,
+int      qarzSetupMonitorCalibration ( const char        * display_name,
                                        const char        * profil_name,
                                        const char        * profile_data,
                                        size_t              profile_data_size )
 {
+  /* CS provides a all in one call. ICC profile setup is done with calibration setup. */
+  int error = 0;
+  DBG_PROG_START
+  DBG_NUM1_S( "skip display_name: %s", display_name );
+  DBG_PROG_ENDE
+  return error;
+}
+
+int      qarzSetupMonitorProfile     ( const char        * display_name OY_UNUSED,
+                                       const char        * profil_name OY_UNUSED,
+                                       const char        * profile_data OY_UNUSED,
+                                       size_t              profile_data_size OY_UNUSED )
+{
+  /* CS provides a all in one call. ICC profile setup is done with calibration setup. */
   int error = 0;
   const char * profile_fullname = 0;
   const char * profil_basename = 0;
@@ -403,8 +417,7 @@ int      qarzMonitorProfileSetup     ( const char        * display_name,
   return error;
 }
 
-
-int      qarzMonitorProfileUnset     ( const char        * display_name )
+int      qarzUnsetMonitorProfile     ( const char        * display_name )
 {
   int error = 0;
 
@@ -773,18 +786,19 @@ char * printCFDictionary( CFDictionaryRef dict )
       " The \"properties\" call might be a expensive one.\n" \
       " Informations are stored in the returned oyConfig_s::backend_core member."
 
-oyMonitorHooks_s qarzMonitorHooks_ = {
-  oyOBJECT_MONITOR_HOOKS_S,
+oyMonitorHooks2_s qarzMonitorHooks2_ = {
+  oyOBJECT_MONITOR_HOOKS2_S,
   {"qarz"},
   10000, /* 1.0.0 */
   qarz_help_system_specific,
   NULL,
-  qarzMonitorProfileSetup,
-  qarzMonitorProfileUnset,
-  qarzRectangle_FromDevice,
+  qarzSetupMonitorCalibration,
+  qarzSetupMonitorProfile,
+  qarzUnsetMonitorProfile,
+  qarzGetRectangleFromMonitor,
   qarzGetMonitorProfile,
   qarzGetAllScreenNames,
   qarzGetMonitorInfo_lib
 };
 
-oyMonitorHooks_s * qarzMonitorHooks = &qarzMonitorHooks_;
+oyMonitorHooks2_s * qarzMonitorHooks2 = &qarzMonitorHooks2_;

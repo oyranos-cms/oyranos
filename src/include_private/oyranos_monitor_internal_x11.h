@@ -2,7 +2,7 @@
  *
  *  Oyranos is an open source Color Management System 
  *
- *  Copyright (C) 2005-2010  Kai-Uwe Behrmann
+ *  Copyright (C) 2005-2018  Kai-Uwe Behrmann
  *
  */
 
@@ -28,7 +28,7 @@ extern "C" {
 
 #define CMM_NICK "oyX1"
 
-extern oyMonitorHooks_s * oyX1MonitorHooks;
+extern oyMonitorHooks2_s* oyX1MonitorHooks2;
 extern oyCMMapi10_s_      oyX1_api10_set_xcm_region_handler;
 #define next_api (oyCMMapi_s*) & oyX1_api10_set_xcm_region_handler
 
@@ -40,7 +40,7 @@ extern oyCMMapi10_s_      oyX1_api10_set_xcm_region_handler;
 #define Configs_Modify          catCMMfunc( oyX1, Configs_Modify )
 #define GetText                 catCMMfunc( oyX1, GetText )
 #define Api8UiGetText           catCMMfunc( oyX1, Api8UiGetText )
-#define hooks                   catCMMfunc( oyX1, MonitorHooks )
+#define hooks2                  catCMMfunc( oyX1, MonitorHooks2 )
 #define _help_list              catCMMfunc( oyX1, _help_list )
 #define _help_properties        catCMMfunc( oyX1, _help_properties )
 #define _help_system_specific   catCMMstruct( oyX1, help_system_specific )
@@ -59,9 +59,10 @@ extern oyCMMapi10_s_      oyX1_api10_set_xcm_region_handler;
 #define _texts                  catCMMfunc( oyX1, _texts )
 #define GetMonitorInfo_lib      catCMMstruct( oyX1, getInfo )
 #define GetAllScreenNames       catCMMstruct( oyX1, getAllMonitorNames )
-#define MonitorProfileSetup     catCMMstruct( oyX1, setupProfile )
-#define MonitorProfileUnset     catCMMstruct( oyX1, unsetProfile )
-#define GetRectangleFromDevice  catCMMstruct( oyX1, getRectangle )
+#define SetupMonitorCalibration catCMMstruct( oyX1, setupCalibration )
+#define SetupMonitorProfile     catCMMstruct( oyX1, setupProfile )
+#define UnsetMonitorProfile     catCMMstruct( oyX1, unsetProfile )
+#define GetRectangleFromMonitor catCMMstruct( oyX1, getRectangle )
 #define GetMonitorProfile       catCMMstruct( oyX1, getProfile )
 #define MoveColorServerProfiles catCMMstruct( oyX1, moveColorServerProfiles )
 

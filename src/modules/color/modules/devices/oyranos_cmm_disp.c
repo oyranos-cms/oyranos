@@ -492,7 +492,8 @@ int                Configs_FromPattern (
                   "command: setup on device_name: %s \"%s\" %ul",
                   OY_DBG_ARGS_, odevice_name, oprofile_name, size );
 
-        error = MonitorProfileSetup( odevice_name, profile_fullname, data, size );
+        error = SetupMonitorProfile( odevice_name, profile_fullname, data, size );
+        error = SetupMonitorCalibration( odevice_name, profile_fullname, data, size );
         oyProfile_Release( &p );
       }
 
@@ -515,7 +516,7 @@ int                Configs_FromPattern (
         _msg(oyMSG_DBG, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n "
                   "command: unset on device_name: \"%s\"",
                   OY_DBG_ARGS_, odevice_name );
-        error = MonitorProfileUnset( odevice_name );
+        error = UnsetMonitorProfile( odevice_name );
       }
 
       goto cleanup;
@@ -683,7 +684,7 @@ int            Configs_Modify        ( oyConfigs_s       * devices,
         {
           double x,y,w,h;
           has = 0;
-          if(GetRectangleFromDevice( device_name, &x,&y,&w,&h))
+          if(GetRectangleFromMonitor( device_name, &x,&y,&w,&h))
           {
 #if defined(__APPLE__) && !defined(qarz)
             if(oy_debug)
@@ -1095,7 +1096,8 @@ int            Configs_Modify        ( oyConfigs_s       * devices,
                   "command: setup on device_name: %s \"%s\" %ul",
                   OY_DBG_ARGS_, device_name, oprofile_name, size );
 
-          error = MonitorProfileSetup( device_name, oprofile_name, data, size );
+          error = SetupMonitorProfile( device_name, oprofile_name, data, size );
+          error = SetupMonitorCalibration( device_name, oprofile_name, data, size );
           oyProfile_Release( &p );
         }
         oyConfig_Release( &device );
@@ -1141,7 +1143,7 @@ int            Configs_Modify        ( oyConfigs_s       * devices,
           _msg(oyMSG_DBG, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n "
                   "command: unset on device_name: \"%s\"",
                   OY_DBG_ARGS_, device_name );
-          error = MonitorProfileUnset( device_name );
+          error = UnsetMonitorProfile( device_name );
         }
 
         oyConfig_Release( &device );

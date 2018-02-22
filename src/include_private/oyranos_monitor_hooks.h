@@ -3,7 +3,7 @@
  *
  *  Oyranos is an open source Color Management System 
  *
- *  Copyright (C) 2005-2016  Kai-Uwe Behrmann
+ *  Copyright (C) 2005-2018  Kai-Uwe Behrmann
  *
  *  @brief    monitor device detection
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
@@ -23,6 +23,32 @@ extern "C" {
 
 
 
+/** Function oySetupMonitorCalibration_f
+ *  @ingroup monitor_hooks_api
+ *  @brief   set all device system specific properties
+ *
+ *  The device type might need special setup to make it calibrated,
+ *  visible in a device specific manner of the device
+ *  handling protocols and API's. This function is for the device specific
+ *  setup part one.
+ *
+ *  @param[in]     monitor_name        the identifier of the device as returned
+ *                                     by oyGetAllMonitorNames_f
+ *  @param[in]     profle_name         the fopen()able on disk file name
+ *  @param[in]     profile_data        a memory block containing a ICC profile
+ *  @param[in]     profile_data_size   the size of profile_data
+ *  @return                            status
+ *
+ *  @version Oyranos Monitor: 0.9.7
+ *  @date    2018/02/22
+ *  @since   2018/02/22 (Oyranos Monitor: 0.9.7)
+ */
+typedef int  (*oySetupMonitorCalibration_f) (
+                                       const char        * monitor_name,
+                                       const char        * profil_name,
+                                       const char        * profile_data,
+                                       size_t              profile_data_size );
+
 /** Function oySetupMonitorProfile_f
  *  @ingroup monitor_hooks_api
  *  @brief   set all device system specific properties
@@ -30,7 +56,7 @@ extern "C" {
  *  The device type might need special setup to get a ICC profile assigned,
  *  visible in a device specific manner and transported by means of the device
  *  handling protocols and API's. This function is for the device specific
- *  setup.
+ *  setup part two.
  *
  *  @param[in]     monitor_name        the identifier of the device as returned
  *                                     by oyGetAllMonitorNames_f
@@ -211,30 +237,31 @@ typedef int  (*oyGetMonitorInfo_f)   ( const char        * monitor_name,
                                        size_t            * edid_size,
                                        int                 refresh_edid );
 
-/** @struct  oyMonitorHooks_s
+/** @struct  oyMonitorHooks2_s
  *  @ingroup monitor_hooks_api
  *  @brief   provide a set of hooks to enable support for a display system
  *
- *  The oyMonitorHooks_s is used by the oyranos_cmm_disp.c code in order to
+ *  The oyMonitorHooks2_s is used by the oyranos_cmm_disp.c code in order to
  *  wire the hooks into the Oyranos device config scheme.
  *
- *  @version Oyranos Monitor: 0.9.6
- *  @date    2016/11/27
+ *  @version Oyranos Monitor: 0.9.7
+ *  @date    2018/02/22
  *  @since   2016/11/27 (Oyranos Monitor: 0.9.6)
  */
 typedef struct {
-  int              type;               /**< set to 120 for ABI compatibility with the actual used header version */
+  int              type;               /**< set to 122 for ABI compatibility with the actual used header version */
   char             nick[8];            /**< four byte nick name of module + terminating zero */
   int              version;            /**< set to module version; Major * 10000 + Minor * 100 + Micro */
   const char *     help_system_specific; /**< System specific description for developers. E.g. how monitor_name's are build etc. */
   const char *     rank_map;           /**< optional JSON rank map */
-  oySetupMonitorProfile_f     setupProfile;           /**< profile activation */
-  oyUnsetMonitorProfile_f     unsetProfile;           /**< profile deactivation */
+  oySetupMonitorCalibration_f setupCalibration;       /**< VCGT activation */
+  oySetupMonitorProfile_f     setupProfile;           /**< ICC profile activation */
+  oyUnsetMonitorProfile_f     unsetProfile;           /**< ICC profile deactivation */
   oyGetRectangleFromMonitor_f getRectangle;           /**< get the monitor display area */
   oyGetMonitorProfile_f       getProfile;             /**< obtain a ICC profile */
   oyGetAllMonitorNames_f      getAllMonitorNames;     /**< detect all monitors to present as list to users */
   oyGetMonitorInfo_f          getInfo;                /**< obtain info to compare the device with other devices. */
-} oyMonitorHooks_s;
+} oyMonitorHooks2_s;
 
 #ifdef __cplusplus
 } /* extern "C" */

@@ -13,6 +13,11 @@
  *  @since    2005/01/31
  */
 
+/* handler: clean_profiles */
+/* handler: move_color_server_profiles */
+/* handler: send_native_update_event */
+/* handler: set_xcm_region */
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>

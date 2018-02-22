@@ -199,6 +199,7 @@ typedef enum {
   oyOBJECT_JOB_S,                     /**< oyJob_s dummy */
   oyOBJECT_DB_API_S,                  /**< oyDbAPI_s */
   oyOBJECT_MONITOR_HOOKS_S   = 120,   /**< oyMonitorHooks_s */
+  oyOBJECT_MONITOR_HOOKS2_S  = 122,   /**< oyMonitorHooks2_s */
   oyOBJECT_MAX
 } oyOBJECT_e;
 #endif

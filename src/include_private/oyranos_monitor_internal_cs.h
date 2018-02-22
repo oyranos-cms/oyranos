@@ -3,7 +3,7 @@
  *
  *  Oyranos is an open source Color Management System 
  *
- *  Copyright (C) 2005-2015  Kai-Uwe Behrmann
+ *  Copyright (C) 2005-2018  Kai-Uwe Behrmann
  *
  */
 
@@ -34,7 +34,7 @@ extern "C" {
 
 #define CMM_NICK "qarz"
 
-extern oyMonitorHooks_s * qarzMonitorHooks;
+extern oyMonitorHooks2_s * qarzMonitorHooks2;
 #define next_api (oyCMMapi_s*) NULL
 
 #define CMMInit                 catCMMfunc( qarz, CMMInit )
@@ -45,7 +45,7 @@ extern oyMonitorHooks_s * qarzMonitorHooks;
 #define Configs_Modify          catCMMfunc( qarz, Configs_Modify )
 #define GetText                 catCMMfunc( qarz, GetText )
 #define Api8UiGetText           catCMMfunc( qarz, Api8UiGetText )
-#define hooks                   catCMMfunc( qarz, MonitorHooks )
+#define hooks2                  catCMMfunc( qarz, MonitorHooks2 )
 #define _help_list              catCMMfunc( qarz, _help_list )
 #define _help_properties        catCMMfunc( qarz, _help_properties )
 #define _help_system_specific   catCMMstruct( qarz, help_system_specific )
@@ -64,9 +64,10 @@ extern oyMonitorHooks_s * qarzMonitorHooks;
 #define _texts                  catCMMfunc( qarz, _texts )
 #define GetMonitorInfo_lib      catCMMstruct( qarz, getInfo )
 #define GetAllScreenNames       catCMMstruct( qarz, getAllMonitorNames )
-#define MonitorProfileSetup     catCMMstruct( qarz, setupProfile )
-#define MonitorProfileUnset     catCMMstruct( qarz, unsetProfile )
-#define GetRectangleFromDevice    catCMMstruct( qarz, getRectangle )
+#define SetupMonitorCalibration catCMMstruct( qarz, setupCalibration )
+#define SetupMonitorProfile     catCMMstruct( qarz, setupProfile )
+#define UnsetMonitorProfile     catCMMstruct( qarz, unsetProfile )
+#define GetRectangleFromMonitor catCMMstruct( qarz, getRectangle )
 #define GetMonitorProfile       catCMMstruct( qarz, getProfile )
 
 int                CMMInit           ( );

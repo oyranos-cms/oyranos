@@ -3,7 +3,7 @@
  *
  *  Oyranos is an open source Color Management System 
  *
- *  Copyright (C) 2005-2016  Kai-Uwe Behrmann
+ *  Copyright (C) 2005-2018  Kai-Uwe Behrmann
  *
  */
 
@@ -19,7 +19,7 @@
 
 #define CMM_VERSION {OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C}
 #define catCMMfunc(nick,func) nick ## func
-#define catCMMstruct(nick, func) nick ## MonitorHooks -> func
+#define catCMMstruct(nick, func) nick ## MonitorHooks2 -> func
 
 
 #endif /* OYRANOS_MONITOR__INTERNAL_H */

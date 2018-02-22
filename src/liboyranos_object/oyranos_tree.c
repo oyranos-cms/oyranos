@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2004-2016 (C) Kai-Uwe Behrmann
+ *            2004-2018 (C) Kai-Uwe Behrmann
  *
  *  @brief    public Oyranos API's
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
@@ -412,6 +412,7 @@ int                oyStruct_GetChildren (
     case oyOBJECT_LIS_S:
     case oyOBJECT_DB_API_S:
     case oyOBJECT_MONITOR_HOOKS_S:
+    case oyOBJECT_MONITOR_HOOKS2_S:
     case oyOBJECT_MAX:
          break;
   }

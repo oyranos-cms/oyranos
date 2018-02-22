@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2004-2016 (C) Kai-Uwe Behrmann
+ *            2004-2018 (C) Kai-Uwe Behrmann
  *
  *  @brief    public Oyranos API's
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
@@ -228,6 +228,7 @@ const char *     oyStructTypeToText  ( oyOBJECT_e          type )
     case oyOBJECT_LIS_S: text = "(oyLis_s)"; break;
     case oyOBJECT_JOB_S: text = "(oyJob_s)"; break;
     case oyOBJECT_MONITOR_HOOKS_S: text = "(oyMonitorHooks_s)"; break;
+    case oyOBJECT_MONITOR_HOOKS2_S: text = "(oyMonitorHooks2_s)"; break;
     case oyOBJECT_MAX: text = "MAX - not defined"; break;
     default: { icUInt32Number i = oyValueUInt32(type);
                static char t[8];
