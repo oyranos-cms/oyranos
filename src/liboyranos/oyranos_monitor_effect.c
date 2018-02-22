@@ -27,10 +27,11 @@ int      oyGetLinearEffectProfile    ( oyProfiles_s      * effects )
   oyProfileTag_s * tag = oyProfile_GetTagById( effect, (icTagSignature)icSigMetaDataTag );
   if( tag )
   {
+    int j;
     int32_t texts_n = 0, tag_size = 0;
     char ** texts = oyProfileTag_GetText( tag, &texts_n, NULL, NULL,
                                           &tag_size, oyAllocateFunc_ );
-    for(int j = 0; j < texts_n; ++j)
+    for(j = 0; j < texts_n; ++j)
     {
       if( strcmp(texts[j],"EFFECT_linear") == 0 &&
           texts_n > (j+1) &&
