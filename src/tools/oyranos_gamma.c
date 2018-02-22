@@ -633,74 +633,20 @@ int main( int argc , char** argv )
               /* 1. detect if a XCM color server is active */
               int active = oyDisplayColorServerIsActive( display_name );
 
-              int error = 0;
-              oyOptions_s * module_options = NULL;
               /* 1.1. stop if XCM is active*/
               if(active)
                 data = oyProfile_GetMem( prof, &size, 0, oyAllocFunc );
               else
               {
-                /* 2. get user effect profile and display white point effect */
-                /* 2.1. get effect profile and decide if it can be embedded into a VGCT tag */
-                oyProfiles_s * effects = oyProfiles_New(NULL);
-                int is_linear = oyGetLinearEffectProfile( effects );
-                if(is_linear)
-                {
-                  int effect_switch = oyGetBehaviour( oyBEHAVIOUR_EFFECT );
-                  if(effect_switch)
-                    error = oyOptions_SetFromString( &module_options, OY_DEFAULT_EFFECT,
-                                                     "1" , OY_CREATE_NEW );
-                  if(error)
-                    fprintf(stderr, "oyOptions_SetFromString(OY_DEFAULT_EFFECT) failed %d\n", error);
-                }
-                /* 2.2. get the display white point effect */
-                error = oyProfileAddWhitePointEffect( prof, &module_options );
-                if(error)
-                  fprintf(stderr, "No white for monitor profile %d\n", error);
-                error = oyOptions_MoveInStruct( &module_options,
-                                      OY_PROFILES_EFFECT,
-                                       (oyStruct_s**) &effects,
-                                       OY_CREATE_NEW );
-                /* 3. extract a existing VCGT */
-                int width = 256;
-                uint16_t * vcgt = oyProfile_GetVCGT( prof, &width );
-                oyImage_s * img;
-                if(getenv("OY_DEBUG_WRITE"))
-                {
-                  img = oyImage_Create( width, 1, vcgt, OY_TYPE_123_16, prof, 0 );
-                  oyImage_WritePPM( img, "wtpt-vcgt.ppm", "vcgt ramp" );
-                  oyImage_Release( &img );
-                }
-                /* 4. create conversion, fill ramp and convert */
-                uint16_t * ramp = oyProfileGetWhitePointRamp( width, prof, module_options );
-                if(getenv("OY_DEBUG_WRITE"))
-                {
-                  img = oyImage_Create( width, 1, ramp, OY_TYPE_123_16, prof, 0 );
-                  oyImage_WritePPM( img, "wtpt-effect.ppm", "white point ramp" );
-                  oyImage_Release( &img );
-                }
-                /* 5. mix the two ramps */
-                uint16_t * mix = calloc( sizeof(uint16_t), width*3);
-                int j;
-                for(i = 0; (int)i < width; ++i)
-                  for(j = 0; j < 3; ++j)
-                    mix[i*3+j] = OY_ROUNDp( oyLinInterpolateRampU16c( vcgt, width, j,3, oyLinInterpolateRampU16c( ramp, width, j, 3, (double)i/width )/65535.) );
-                if(getenv("OY_DEBUG_WRITE"))
-                {
-                  img  = oyImage_Create( width, 1, mix, OY_TYPE_123_16, prof, 0 );
-                  oyImage_WritePPM( img, "wtpt-mix.ppm", "white point + vcgt" );
-                  oyImage_Release( &img );
-                }
-                /* 6. create a new VCGT tag and exchange the tag */
-                if(oyProfile_SetVCGT( prof, mix, width ))
-                  fprintf(stderr, "Alter VCGT tag failed\n");
+                if(oyProfile_CreateEffectVCGT( prof ))
+                  fprintf(stderr, "Create Effect VCGT failed\n");
                 /* 7. write the profile */
                 data = oyProfile_GetMem( prof, &size, 0, oyAllocFunc );
               }
               uint32_t flags = 0;
               int choices = 0, current = -1;
               const char ** choices_string_list = NULL;
-              error = oyOptionChoicesGet2( oyWIDGET_DISPLAY_WHITE_POINT, flags,
+              oyOptionChoicesGet2( oyWIDGET_DISPLAY_WHITE_POINT, flags,
                                  oyNAME_NAME, &choices,
                                  &choices_string_list, &current );
               fprintf(stderr, "Color Server active: %d white point mode: %s\n", active, 0 <= current && current < choices ? choices_string_list[current]:"" );

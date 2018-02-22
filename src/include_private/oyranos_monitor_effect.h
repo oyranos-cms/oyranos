@@ -18,6 +18,7 @@
 
 #include "oyProfiles_s.h"
 
+int      oyProfile_CreateEffectVCGT  ( oyProfile_s       * prof );
 int      oyGetLinearEffectProfile    ( oyProfiles_s      * effects );
 int      oyProfileAddWhitePointEffect( oyProfile_s       * monitor_profile,
                                        oyOptions_s      ** module_options );
