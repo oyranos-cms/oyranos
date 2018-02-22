@@ -68,6 +68,131 @@
 
 extern oyMessage_f oyX1_msg;
 
+int      oyX1ColorServerActive( Display * display )
+{
+  static int active = 0;
+#if defined(XCM_HAVE_X11)
+  static double z = 0;
+  if(z + 1.0 < oySeconds())
+  {
+    active = XcmColorServerCapabilities( display );
+    z = oySeconds();
+    DBG_NUM2_S("color server active: %d %g\n", active, z);
+  }
+#endif
+  return active;
+}
+/**
+ *  This function implements oyMOptions_Handle_f.
+ *
+ *  @version Oyranos: 0.9.7
+ *  @date    2018/02/22
+ *  @since   2018/02/22 (Oyranos: 0.9.7)
+ */
+int          oyX1ColorServer_Handle  ( oyOptions_s       * options OY_UNUSED,
+                                       const char        * command,
+                                       oyOptions_s      ** result )
+{
+  if(oyFilterRegistrationMatch(command,"can_handle", 0))
+  {
+    if(oyFilterRegistrationMatch(command,"color_server_active", 0))
+    {
+    }
+    else
+      return 1;
+  }
+  else if(oyFilterRegistrationMatch(command,"color_server_active", 0))
+  {
+    Display * display = XOpenDisplay(NULL);
+    int active = oyX1ColorServerActive( display );
+
+    oyOptions_SetFromString( result,
+              "//"OY_TYPE_STD"/config/color_server_active",
+              active?"1":"0", OY_CREATE_NEW );
+
+    if(display)
+      XCloseDisplay(display);
+  }
+
+  return 0;
+}
+
+/**
+ *  This function implements oyCMMinfoGetText_f.
+ *
+ *  @version Oyranos: 0.9.7
+ *  @date    2018/02/22
+ *  @since   2018/02/22 (Oyranos: 0.9.7)
+ */
+const char * oyX1InfoGetTextMyHandlerA(const char        * select,
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context OY_UNUSED )
+{
+         if(strcmp(select, "can_handle")==0)
+  {
+         if(type == oyNAME_NICK)
+      return "check";
+    else if(type == oyNAME_NAME)
+      return _("check");
+    else
+      return _("Check if this module can handle a certain command.");
+  } else if(strcmp(select, "color_server_active")==0)
+  {
+         if(type == oyNAME_NICK)
+      return "color_server_active";
+    else if(type == oyNAME_NAME)
+      return _("Get X Color Management activity state.");
+    else
+      return _("Ask about _ICC_COLOR_DESKTOP activity.");
+  } else if(strcmp(select, "help")==0)
+  {
+         if(type == oyNAME_NICK)
+      return _("help");
+    else if(type == oyNAME_NAME)
+      return _("Help");
+    else
+      return _("The oyX1 modules \"color_server_active\" handler lets you ask "
+               "for the X Color Management _ICC_COLOR_DESKTOP X11 atom. "
+               "The implementation uses Xlib.");
+  }
+  return 0;
+}
+const char *oyX1_texts_color_server_active[4] = {"can_handle","color_server_active","help",0};
+
+/** @instance oyX1_api10_color_server_active_handler
+ *  @brief    oyX1 oyCMMapi10_s implementation
+ *
+ *  X Color Management desktop advanced toogle
+ *
+ *  @version Oyranos: 0.9.7
+ *  @date    2018/02/22
+ *  @since   2018/02/22 (Oyranos: 0.9.7)
+ */
+oyCMMapi10_s_    oyX1_api10_color_server_active_handler = {
+
+  oyOBJECT_CMM_API10_S,
+  0,0,0,
+  NULL,
+
+  CMMInit,
+  CMMMessageFuncSet,
+
+  OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
+  "color_server_active._" CMM_NICK,
+
+  {OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C},/**< version[3] */
+  CMM_API_VERSION,                     /**< int32_t module_api[3] */
+  0,   /* id_; keep empty */
+  0,   /* api5_; keep empty */
+  0,                         /**< oyPointer_s * runtime_context */
+ 
+  oyX1InfoGetTextMyHandlerA,             /**< getText */
+  (char**)oyX1_texts_color_server_active, /**<texts; list of arguments to getText*/
+ 
+  oyX1ColorServer_Handle               /**< oyMOptions_Handle_f oyMOptions_Handle */
+};
+
+
 #ifdef HAVE_XRANDR
 void oyCleanDisplayXRR                 ( Display           * display )
 {
@@ -230,7 +355,7 @@ oyCMMapi10_s_    oyX1_api10_clean_profiles_handler = {
 
   oyOBJECT_CMM_API10_S,
   0,0,0,
-  (oyCMMapi_s*) NULL,
+  (oyCMMapi_s*) &oyX1_api10_color_server_active_handler,
 
   CMMInit,
   CMMMessageFuncSet,
