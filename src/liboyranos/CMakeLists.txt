@@ -23,6 +23,7 @@ SET( CFILES_OBJECT_IMAGING
 	${GENDIR}oyPixelAccess_s_.c
 	${CMAKE_CURRENT_SOURCE_DIR}/${PACKAGE_NAME}_alpha.c
 	${CMAKE_CURRENT_SOURCE_DIR}/${PACKAGE_NAME}_cmm.c
+	${CMAKE_CURRENT_SOURCE_DIR}/${PACKAGE_NAME}_monitor_effect.c
    )
 SET( CHEADERS_OBJECT_IMAGING_PUBLIC
 	${GENDIR}oyArray2d_s.h
@@ -47,6 +48,7 @@ SET( CHEADERS_OBJECT_IMAGING
 	${GENDIR}oyPixelAccess_s_.h
 	${GENDIR}${PACKAGE_NAME}_conversion_internal.h
 	${GENDIR}${PACKAGE_NAME}_image_internal.h
+	../include_private/${PACKAGE_NAME}_monitor_effect.h
 	${CHEADERS_OBJECT_IMAGING_PUBLIC}
    )
 

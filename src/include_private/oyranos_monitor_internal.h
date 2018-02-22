@@ -22,4 +22,4 @@
 #define catCMMstruct(nick, func) nick ## MonitorHooks2 -> func
 
 
-#endif /* OYRANOS_MONITOR__INTERNAL_H */
+#endif /* OYRANOS_MONITOR_INTERNAL_H */
