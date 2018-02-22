@@ -1,4 +1,4 @@
-.TH oyranos-monitor 1 "March 06, 2015" "User Commands"
+.TH oyranos-monitor 1 "February 22, 2018" "User Commands"
 .SH NAME
 oyranos-monitor \- Oyranos CMS monitor configuration
 .SH SYNOPSIS
@@ -13,7 +13,7 @@ oyranos-monitor \- Oyranos CMS monitor configuration
 .fi
 \fBoyranos-monitor\fR --modules [-v]
 .fi
-\fBoyranos-monitor\fR -f [edid|icc|edid_icc] [-o \fIOUT_FILENAME\fR | default:stdout] [[-x num] [-y num]|-d \fINUMBER\fR] [-m] [-v]
+\fBoyranos-monitor\fR -f [edid|icc|edid_icc|vcgt] [-o \fIOUT_FILENAME\fR | default:stdout] [[-x num] [-y num]|-d \fINUMBER\fR] [-m] [-v]
 .fi
 \fBoyranos-monitor\fR --add-edid \fIFILENAME\fR --profile \fIFILENAME\fR [--name \fINAME\fR] [-v]
 .SH DESCRIPTION
@@ -79,8 +79,8 @@ do system wide, might need admin or root privileges
 .B \-\-modules
 list monitor modules
 .TP
-.B \-f, \-\-format [edid|icc|edid_icc]\fR Get data
-Select a data format. Possible are \fBedid\fR for server side EDID data, \fBicc\fR for a server side ICC profile and \fBedid_icc\fR for a ICC profile created from server side EDID. Without the -o/--ouput option the output is written to stdout.
+.B \-f, \-\-format [edid|icc|edid_icc|vcgt]\fR Get data
+Select a data format. Possible are \fBedid\fR for server side EDID data, \fBicc\fR for a server side ICC profile, \fBedid_icc\fR for a ICC profile created from server side EDID and \fBvcgt\fR for effect and monitor white point merged into a possibly altered VCGT tag. Without the -o/--ouput option the output is written to stdout.
 .sp
 .br
 \fB\-d\fR \fINUMBER\fR , \-d\fR=\fINUMBER\fR
@@ -194,7 +194,7 @@ Embedd device informations into ICC meta tag:
 .SH AUTHOR
 Kai-Uwe Behrmann (ku.b (at) gmx.de)
 .SH COPYRIGHT
-(c) 2005-2015, Kai-Uwe Behrmann and others
+(c) 2005-2018, Kai-Uwe Behrmann and others
 .fi
 License: new BSD <http://www.opensource.org/licenses/BSD-3-Clause>
 .SH "SEE ALSO"

@@ -988,7 +988,7 @@ int      oyX1SetupMonitorCalibration ( const char        * display_name,
                                        const char        * profile_data OY_UNUSED,
                                        size_t              profile_data_size OY_UNUSED )
 {
-  int error = 0;
+  int status = 0x00, error = 0;
   oyX1Monitor_s * disp = 0;
   char       *dpy_name = NULL;
   char *text = 0;
@@ -1024,7 +1024,10 @@ int      oyX1SetupMonitorCalibration ( const char        * display_name,
       else t[47] = '\000';
       pclose(fp);
     } else
+    {
       fprintf( stderr, OY_DBG_FORMAT_ "xcalib not found for setting with %s\n", OY_DBG_ARGS_, profile_name?profile_name:"" );
+      status |= OY_CALIB_ERROR;
+    }
     if(t && strstr(t, "xcalib "))
     {
       int major = -1, minor = -1, micro = 0;
@@ -1101,12 +1104,14 @@ int      oyX1SetupMonitorCalibration ( const char        * display_name,
         error = system(text);
 #endif
       }
+      if(!can_gamma)
+        status |= OY_CALIB_DEVICE_NOT_SUPPORTED;
       if(error &&
          error != 65280)
       { /* hack */
         fprintf( stderr,OY_DBG_FORMAT_ "%s %s %d\n", OY_DBG_ARGS_, "No monitor gamma curves by profile:",
                 noE(profile_name), error );
-        error = -1;
+        status |= OY_CALIB_VCGT_NOT_CONTAINED;
       } else
       {
         /* take xcalib error not serious, turn into a issue */
@@ -1124,7 +1129,7 @@ int      oyX1SetupMonitorCalibration ( const char        * display_name,
   oyX1Monitor_release_( &disp );
   if(dpy_name) free( dpy_name );
 
-  return error;
+  return status;
 }
 
 

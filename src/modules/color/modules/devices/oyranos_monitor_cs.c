@@ -341,11 +341,11 @@ int      qarzSetupMonitorCalibration ( const char        * display_name,
                                        size_t              profile_data_size )
 {
   /* CS provides a all in one call. ICC profile setup is done with calibration setup. */
-  int error = 0;
+  int status = OY_CALIB_NOT_IMPLEMENTED | OY_CALIB_WITH_PROFILE_SETUP;
   DBG_PROG_START
   DBG_NUM1_S( "skip display_name: %s", display_name );
   DBG_PROG_ENDE
-  return error;
+  return status;
 }
 
 int      qarzSetupMonitorProfile     ( const char        * display_name OY_UNUSED,

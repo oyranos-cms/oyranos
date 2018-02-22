@@ -21,23 +21,37 @@
 extern "C" {
 #endif /* __cplusplus */
 
-
-
+#define OY_CALIB_ERROR 0x01                 /**< system error, e.g. xcalib not installed */
+#define OY_CALIB_VCGT_ALTERED 0x02          /**< vcgt modified before upload */
+#define OY_CALIB_VCGT_NOT_CONTAINED 0x04    /**< vcgt not found inside ICC profile */
+#define OY_CALIB_DEVICE_NOT_SUPPORTED 0x08  /**< device can not be calibrated */
+#define OY_CALIB_NOT_IMPLEMENTED 0x10       /**< function has no effect */
+#define OY_CALIB_WITH_PROFILE_SETUP 0x20    /**< handled in oySetupMonitorProfile_f */
 /** Function oySetupMonitorCalibration_f
  *  @ingroup monitor_hooks_api
  *  @brief   set all device system specific properties
  *
- *  The device type might need special setup to make it calibrated,
- *  visible in a device specific manner of the device
- *  handling protocols and API's. This function is for the device specific
- *  setup part one.
+ *  The device type might need special setup to make it calibrated.
+ *  The calibration data is inside the non standard vcgt tag. This
+ *  VideCardGammaTable (vcgt) is uploaded into the devices gamma ramps.
+ *
+ *  Even in case of no profile argument, it shall return the alter flag
+ *  as it would have done with a profile.
  *
  *  @param[in]     monitor_name        the identifier of the device as returned
  *                                     by oyGetAllMonitorNames_f
  *  @param[in]     profle_name         the fopen()able on disk file name
  *  @param[in]     profile_data        a memory block containing a ICC profile
  *  @param[in]     profile_data_size   the size of profile_data
- *  @return                            status
+ *  @return                            status flags:
+ *                                     - 0 : success, plain vgct load
+ *                                     - OY_CALIB_ERROR : error, something went wrong with system;
+ *                                       That can be authorisation problems, API or tool misses ...
+ *                                     - OY_CALIB_VCGT_ALTERED : altered vcgt by white point || effect
+ *                                     - OY_CALIB_VCGT_NOT_CONTAINED : no vcgt found
+ *                                     - OY_CALIB_DEVICE_NOT_SUPPORTED : device supports no gamma setup
+ *                                     - OY_CALIB_NOT_IMPLEMENTED : does nothing, not implemented
+ *                                     - OY_CALIB_WITH_PROFILE_SETUP : combined in profile load; e.g. on OS X
  *
  *  @version Oyranos Monitor: 0.9.7
  *  @date    2018/02/22
@@ -254,7 +268,7 @@ typedef struct {
   int              version;            /**< set to module version; Major * 10000 + Minor * 100 + Micro */
   const char *     help_system_specific; /**< System specific description for developers. E.g. how monitor_name's are build etc. */
   const char *     rank_map;           /**< optional JSON rank map */
-  oySetupMonitorCalibration_f setupCalibration;       /**< VCGT activation */
+  oySetupMonitorCalibration_f setupCalibration;       /**< vcgt activation */
   oySetupMonitorProfile_f     setupProfile;           /**< ICC profile activation */
   oyUnsetMonitorProfile_f     unsetProfile;           /**< ICC profile deactivation */
   oyGetRectangleFromMonitor_f getRectangle;           /**< get the monitor display area */
