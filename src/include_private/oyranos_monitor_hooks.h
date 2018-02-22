@@ -22,7 +22,6 @@ extern "C" {
 #endif /* __cplusplus */
 
 #define OY_CALIB_ERROR 0x01                 /**< system error, e.g. xcalib not installed */
-#define OY_CALIB_VCGT_ALTERED 0x02          /**< vcgt modified before upload */
 #define OY_CALIB_VCGT_NOT_CONTAINED 0x04    /**< vcgt not found inside ICC profile */
 #define OY_CALIB_DEVICE_NOT_SUPPORTED 0x08  /**< device can not be calibrated */
 #define OY_CALIB_NOT_IMPLEMENTED 0x10       /**< function has no effect */
@@ -35,9 +34,6 @@ extern "C" {
  *  The calibration data is inside the non standard vcgt tag. This
  *  VideCardGammaTable (vcgt) is uploaded into the devices gamma ramps.
  *
- *  Even in case of no profile argument, it shall return the alter flag
- *  as it would have done with a profile.
- *
  *  @param[in]     monitor_name        the identifier of the device as returned
  *                                     by oyGetAllMonitorNames_f
  *  @param[in]     profle_name         the fopen()able on disk file name
@@ -47,7 +43,6 @@ extern "C" {
  *                                     - 0 : success, plain vgct load
  *                                     - OY_CALIB_ERROR : error, something went wrong with system;
  *                                       That can be authorisation problems, API or tool misses ...
- *                                     - OY_CALIB_VCGT_ALTERED : altered vcgt by white point || effect
  *                                     - OY_CALIB_VCGT_NOT_CONTAINED : no vcgt found
  *                                     - OY_CALIB_DEVICE_NOT_SUPPORTED : device supports no gamma setup
  *                                     - OY_CALIB_NOT_IMPLEMENTED : does nothing, not implemented
