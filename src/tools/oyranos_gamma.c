@@ -64,6 +64,7 @@ void  cleanDisplay                   ( Display           * display,
                                        int                 n );
 int  runDaemon                       ( const char        * display_name );
 #endif
+int oyDisplayColorServerIsActive     ( const char        * display_name );
 
 void* oyAllocFunc(size_t size) {return malloc (size);}
 void  oyDeAllocFunc ( oyPointer ptr) { if(ptr) free (ptr); }
@@ -607,6 +608,13 @@ int main( int argc , char** argv )
               "//"OY_TYPE_STD"/config/icc_profile.x_color_region_target", "yes", OY_CREATE_NEW );
             }
             oyDeviceAskProfile2( c, cs_options, &prof );
+            if(!prof)
+            {
+              fprintf(stderr, "Try harder to get monitor profile ...\n");
+              oyDeviceGetProfile( c, cs_options, &prof );
+              if(!prof)
+                fprintf(stderr, "Harder try to get monitor profile failed.\n");
+            }
             oyOptions_Release( &cs_options );
             if(device_meta_tag)
             {
@@ -623,15 +631,10 @@ int main( int argc , char** argv )
             else if(strcmp(format, "vcgt") == 0)
             {
               /* 1. detect if a XCM color server is active */
+              int active = oyDisplayColorServerIsActive( display_name );
+
               int error = 0;
-              int active = 0;
               oyOptions_s * module_options = NULL;
-#if defined(XCM_HAVE_X11)
-              Display * display = XOpenDisplay( display_name );
-              if(XcmColorServerCapabilities( display ) & XCM_COLOR_SERVER_MANAGEMENT)
-                active = 1;
-              XCloseDisplay( display );
-#endif
               /* 1.1. stop if XCM is active*/
               if(active)
                 data = oyProfile_GetMem( prof, &size, 0, oyAllocFunc );
@@ -700,7 +703,6 @@ int main( int argc , char** argv )
               error = oyOptionChoicesGet2( oyWIDGET_DISPLAY_WHITE_POINT, flags,
                                  oyNAME_NAME, &choices,
                                  &choices_string_list, &current );
-              int display_white_point = oyGetBehaviour( oyBEHAVIOUR_DISPLAY_WHITE_POINT );
               fprintf(stderr, "Color Server active: %d white point mode: %s\n", active, 0 <= current && current < choices ? choices_string_list[current]:"" );
             }
           }
@@ -1192,3 +1194,14 @@ int  runDaemon                       ( const char        * display_name )
 }
 #endif
 
+int oyDisplayColorServerIsActive     ( const char        * display_name )
+{
+  int active = 0;
+#if defined(XCM_HAVE_X11)
+  Display * display = XOpenDisplay( display_name );
+  if(XcmColorServerCapabilities( display ) & XCM_COLOR_SERVER_MANAGEMENT)
+    active = 1;
+  XCloseDisplay( display );
+#endif
+  return active;
+}
