@@ -22,30 +22,13 @@
 int      oyGetLinearEffectProfile    ( oyProfiles_s      * effects )
 {
   /* 2. get effect profile and decide if it can be embedded into a VGCT tag */
-  int is_linear = 0;
   oyProfile_s * effect = oyProfile_FromStd ( oyPROFILE_EFFECT, 0, NULL );
-  oyProfileTag_s * tag = oyProfile_GetTagById( effect, (icTagSignature)icSigMetaDataTag );
-  if( tag )
-  {
-    int j;
-    int32_t texts_n = 0, tag_size = 0;
-    char ** texts = oyProfileTag_GetText( tag, &texts_n, NULL, NULL,
-                                          &tag_size, oyAllocateFunc_ );
-    for(j = 0; j < texts_n; ++j)
-    {
-      if( strcmp(texts[j],"EFFECT_linear") == 0 &&
-          texts_n > (j+1) &&
-          strcmp(texts[j+1], "yes") == 0)
-        ++is_linear;
-    }
-    fprintf(stderr, "EFFECT_linear=yes: %d\n", is_linear);
-    if(!is_linear)
-      oyProfile_Release( &effect );
-    else
-      oyProfiles_MoveIn( effects, &effect, -1 );
-
-    oyProfileTag_Release( &tag );
-  }
+  int is_linear = oyProfile_FindMeta( effect, "EFFECT_linear", "yes" ) != NULL;
+  fprintf(stderr, "EFFECT_linear=yes: %d\n", is_linear);
+  if(is_linear)
+    oyProfiles_MoveIn( effects, &effect, -1 );
+  else
+    oyProfile_Release( &effect );
 
   return is_linear;
 }
@@ -224,8 +207,8 @@ int      oyProfile_CreateEffectVCGT  ( oyProfile_s       * prof )
   {
     int effect_switch = oyGetBehaviour( oyBEHAVIOUR_EFFECT );
     if(effect_switch)
-      error = oyOptions_SetFromString( &module_options, OY_DEFAULT_EFFECT,
-                                                     "1" , OY_CREATE_NEW );
+    error = oyOptions_SetFromString( &module_options, OY_DEFAULT_EFFECT,
+                                     effect_switch?"1":"0" , OY_CREATE_NEW );
     if(error)
       fprintf(stderr, "oyOptions_SetFromString(OY_DEFAULT_EFFECT) failed %d\n", error);
   }
