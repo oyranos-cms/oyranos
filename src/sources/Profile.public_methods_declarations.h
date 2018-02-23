@@ -103,6 +103,9 @@ OYAPI int  OYEXPORT
                  oyProfile_GetWhitePoint ( oyProfile_s   * profile,
                                        double            * cie_a,
                                        double            * cie_b );
+const char * oyProfile_FindMeta      ( oyProfile_s       * profile,
+                                       const char        * key,
+                                       const char        * value );
 OYAPI int  OYEXPORT
                  oyProfile_AddDevice(oyProfile_s       * profile,
                                        oyConfig_s        * device,

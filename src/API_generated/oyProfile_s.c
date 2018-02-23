@@ -2684,6 +2684,55 @@ int      oyProfile_GetWhitePoint     ( oyProfile_s       * profile,
   return error;
 }
 
+/**
+ *  @brief Find string match in meta tag
+ *
+ *  @param[in]     profile             the object
+ *  @param[out]    key                 the key inside the meta tag
+ *  @param[out]    value               the expected value or NULL for any value
+ *  @return                            matching string
+ *
+ *  @version Oyranos: 0.9.7
+ *  @date    2018/02/22
+ *  @since   2018/02/22 (Oyranos: 0.9.7)
+ */
+const char * oyProfile_FindMeta      ( oyProfile_s       * profile,
+                                       const char        * key,
+                                       const char        * value )
+{
+  const char * text = NULL;
+  oyProfileTag_s * tag = NULL;
+  if(profile)
+    tag = oyProfile_GetTagById( profile, icSigMetaDataTag );
+
+  if( tag )
+  {
+    int j;
+    int32_t texts_n = 0, tag_size = 0;
+    char ** texts = oyProfileTag_GetText( tag, &texts_n, NULL, NULL,
+                                          &tag_size, oyAllocateFunc_ );
+    for(j = 0; j < texts_n; ++j)
+    {
+      if( strcmp(texts[j],key) == 0 &&
+          texts_n > (j+1) )
+      {
+        if(!value ||
+            (value && oyTextIccDictMatch(texts[j+1], value, 0, '/', ',' )))
+        {
+          oyObject_SetName( profile->oy_, texts[j+1], oyNAME_PATTERN );
+          text = oyObject_GetName( profile->oy_, oyNAME_PATTERN );
+          break;
+        }
+      }
+    }
+    oyStringListRelease( &texts, texts_n, oyDeAllocateFunc_ );
+
+    oyProfileTag_Release( &tag );
+  }
+
+  return text;
+}
+
 
 /* } Include "Profile.public_methods_definitions.c" */
 
