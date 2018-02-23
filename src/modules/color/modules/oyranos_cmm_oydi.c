@@ -20,7 +20,7 @@
 #include "oyConnectorImaging_s_.h"
 #include "oyFilterNode_s_.h"         /* for oyFilterNode_TextToInfo_ */
 #include "oyRectangle_s_.h"
-#include "oyProfile_s.h"
+#include "oyProfiles_s.h"
 
 #include "oyranos_config_internal.h"
 #include "oyranos_cmm.h"
@@ -889,7 +889,7 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
         oyFilterNode_s   * node = oyFilterSocket_GetNode( rectangles_plug_socket );
         int                flags = 0;
         image_input = (oyImage_s*)oyFilterSocket_GetData( rectangles_plug_socket );
-	oyFilterSocket_Release( &rectangles_plug_socket );
+        oyFilterSocket_Release( &rectangles_plug_socket );
         oyFilterPlug_Release( &rectangles_plug );
 
         /* obtain filter options */
@@ -904,24 +904,26 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
                  OY_DBG_ARGS_, i, oyRectangle_Show( (oyRectangle_s*)&roi_pix ) );
       }
 
+      o = oyOptions_Find( f_options, "display_white_point", oyNAME_PATTERN );
+
       /* set the device profile of all CMM's image data */
       if(init)
       {
         oyProfile_s * image_input_profile = oyImage_GetProfile( image_input );
         oyOptions_s * options = 0;
+        int color_server_active = 0;
 # if defined(XCM_HAVE_X11) && defined (HAVE_XCM)
         oyOptions_s * tags = oyImage_GetTags( image );
-        int active = 0;
         oyBlob_s * display_id = (oyBlob_s*) oyOptions_GetType( tags, -1, "display_id",
                                           oyOBJECT_BLOB_S );
         if(!display_id && test == 0)
           oydi_msg( oyMSG_ERROR, (oyStruct_s*)image,
             OY_DBG_FORMAT_"no display_id", OY_DBG_ARGS_ );
         if(test == 0)
-          active = oydiColorServerActive( display_id );
+          color_server_active = oydiColorServerActive( display_id );
         oyOptions_Release( &tags );
         oyBlob_Release( &display_id );
-        if(active & XCM_COLOR_SERVER_REGIONS)
+        if(color_server_active & XCM_COLOR_SERVER_REGIONS)
 #endif
         error = oyOptions_SetFromString( &options,
                                "//"OY_TYPE_STD"/config/x_color_region_target",
@@ -950,9 +952,58 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
         oyProfile_Release( &p );
         oyProfile_Release( &image_input_profile );
         oyRectangle_Release( &r );
+
+        /* automatic disable the local white point handling */
+        if(!color_server_active && o)
+        {
+          /* display_white_point */
+          oyOption_SetFromString( o, "0", 0 );
+          oyOption_SetFlags( o, oyOption_GetFlags(o) | oyOPTIONATTRIBUTE_AUTOMATIC );
+        }
+
+        /* Ensure the 1D effect profile is not set twice: once in the global VCGT
+         * and second here in the local transform. */
+        {
+          oyOption_s * o = oyOptions_Find( f_options, "effect_switch", oyNAME_PATTERN );
+          int touched = oyOption_GetFlags(o) & oyOPTIONATTRIBUTE_EDIT;
+          int effect_switch = oyOptions_FindString( f_options, "effect_switch", "1" ) != NULL;
+          if(oy_debug)
+          oydi_msg( oyMSG_DBG, (oyStruct_s*)ticket, OY_DBG_FORMAT_
+                    "color_server_active = %d touched = %d flags = %d effect_switch = %d", OY_DBG_ARGS_,
+                    color_server_active, touched, oyOption_GetFlags(o), effect_switch );
+          oyOption_Release( &o );
+
+          if(!touched && effect_switch)
+          {
+            int reject = 0;
+            oyProfiles_s * effps = NULL;
+            oyProfile_s * effp = NULL;
+
+            o = oyOptions_Find( f_options, "profiles_effect", oyNAME_PATTERN );
+            effps = (oyProfiles_s*) oyOption_GetStruct( o, oyOBJECT_PROFILES_S );
+            oyOption_Release( &o );
+
+            effp = oyProfiles_Get( effps, 0 );
+            if(color_server_active == 0 &&
+               oyProfile_FindMeta( effp, "EFFECT_linear", "yes" ) != NULL)
+            {
+              o = oyOptions_Find( f_options, "effect_switch", oyNAME_PATTERN );
+              oyOption_SetFromString( o, "0", 0 );
+              oyOption_SetFlags( o, oyOption_GetFlags(o) | oyOPTIONATTRIBUTE_AUTOMATIC );
+              oyOption_Release( &o );
+              reject = 1;
+            }
+            oyProfiles_Release( &effps );
+            if(oy_debug)
+              oydi_msg( oyMSG_DBG, (oyStruct_s*)ticket, OY_DBG_FORMAT_
+                    "Effect profile acceptance: color_server_active = %d EFFECT_linear=%s%s", OY_DBG_ARGS_,
+                    color_server_active, oyProfile_FindMeta( effp, "EFFECT_linear", "yes" ),
+                    reject?" automatic rejected":" passed" );
+            oyProfile_Release( &effp );
+          }
+        }
       }
 
-      o = oyOptions_Find( f_options, "display_white_point", oyNAME_PATTERN );
       if(o)
       {
         const char * value = oyOption_GetValueString(o,0);
