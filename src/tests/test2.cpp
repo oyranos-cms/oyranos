@@ -55,6 +55,7 @@
   TEST_RUN( testConversion, "CMM selection", 1 ); \
   TEST_RUN( testCMMlists, "CMMs listing", 1 ); \
   TEST_RUN( testICCsCheck, "CMMs ICC conversion check", 1 ); \
+  TEST_RUN( testCCorrectFlags, "Conversion Correct Option Flags", 1 ); \
   TEST_RUN( testCache, "Cache", 1 ); \
   TEST_RUN( testPaths, "Paths", 1 );
 
@@ -7051,6 +7052,112 @@ oyTESTRESULT_e testICCsCheck()
   return result;
 }
 
+oyTESTRESULT_e testCCorrectFlags( )
+{
+  oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
+
+  fprintf(stdout, "\n" );
+
+  uint32_t icc_profile_flags =oyICCProfileSelectionFlagsFromOptions( OY_CMM_STD,
+                                       "//" OY_TYPE_STD "/icc_color", NULL, 0 );
+  oyProfile_s * p_lab = oyProfile_FromFile( "compatibleWithAdobeRGB1998.icc", icc_profile_flags, testobj );
+  oyProfile_s * p_web = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, testobj );
+  oyProfile_s /** p_cmyk = oyProfile_FromStd( oyEDITING_CMYK, NULL ),*/
+              * p_in, * p_out;
+  uint16_t buf_16in2x2[12] = {
+  20000,20000,20000, 10000,10000,10000,
+  0,0,0,             65535,65535,65535
+  };
+  uint16_t buf_16out2x2[12];
+  oyDATATYPE_e buf_type_in = oyUINT16,
+               buf_type_out = oyUINT16;
+  int i;
+
+
+  p_in = p_web;
+  p_out = p_lab;
+
+  oyOptions_s * options = NULL;
+  oyOptions_SetFromString( &options, "////rendering_intent", "3", OY_CREATE_NEW );
+  oyOptions_SetFromString( &options, "////context", "lcm2", OY_CREATE_NEW );
+
+  oyConversion_s * cc = oyConversion_CreateBasicPixelsFromBuffers(
+                              p_in, buf_16in2x2, oyDataType_m(buf_type_in),
+                              p_out, buf_16out2x2, oyDataType_m(buf_type_out),
+                                                    options, 4 );
+
+  oyFilterGraph_s * cc_graph = oyConversion_GetGraph( cc );
+  oyFilterNode_s * icc = oyFilterGraph_GetNode( cc_graph, -1, "///icc_color", 0 );
+  oyOptions_s * node_opts = oyFilterNode_GetOptions( icc, oyOPTIONATTRIBUTE_ADVANCED );
+  int count = oyOptions_Count( node_opts );
+  oyOption_s * o = oyOptions_Find( node_opts, "rendering_intent", oyNAME_PATTERN );
+  if(o)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyOptions_Find( node_opts )  %s(%d)", oyOption_GetText(o, oyNAME_NICK), count );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyOptions_Find( node_opts )  %s(%d)", oyOption_GetText(o, oyNAME_NICK), count );
+  }
+  oyOption_Release( &o );
+
+  int error = oyConversion_Correct( cc, "//" OY_TYPE_STD "/icc_color", oyOPTIONATTRIBUTE_ADVANCED, NULL);
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyConversion_Correct() error: %d", error )
+
+  int ri_count = 0, ri_touched = 0, bpc_touched = 0;
+  for(i = 0 ; i < count; ++i)
+  {
+    oyOption_s * opt = oyOptions_Get( node_opts, i );
+    int flags = oyOption_GetFlags( opt );
+    const char * reg = oyOption_GetRegistration( opt );
+    const char * val = oyOption_GetValueString( opt, 0 );
+    if(reg && oyFilterRegistrationMatch( reg, "rendering_intent", oyOBJECT_NONE ))
+    {
+      ++ri_count;
+      if(flags & oyOPTIONATTRIBUTE_EDIT)
+        ri_touched = 1;
+    }
+    if( reg &&
+        oyFilterRegistrationMatch( reg, "rendering_bpc", oyOBJECT_NONE ) &&
+        flags & oyOPTIONATTRIBUTE_EDIT )
+      bpc_touched = 1;
+    fprintf( zout, "%s:%s %s%s %d\n", reg, val,
+             flags & oyOPTIONATTRIBUTE_EDIT ? " touched":"",
+             flags & oyOPTIONATTRIBUTE_AUTOMATIC ? " auto":"",
+             flags );
+    oyOption_Release( &opt );
+  }
+  if(ri_count == 1)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "ri: exact count for manipulated option           " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "ri: exact count for manipulated option           " );
+  }
+  if(ri_touched == 1)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "ri: oyOPTIONATTRIBUTE_EDIT flag found correctly  " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "ri: oyOPTIONATTRIBUTE_EDIT flag found correctly  " );
+  }
+  if(bpc_touched == 0)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "bpc: oyOPTIONATTRIBUTE_EDIT flag missed correctly" );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "bpc: oyOPTIONATTRIBUTE_EDIT flag missed correctly" );
+  }
+
+  oyOptions_Release( &options );
+  oyOptions_Release( &node_opts );
+  oyConversion_Release( &cc );
+  oyFilterGraph_Release( &cc_graph );
+  oyFilterNode_Release( &icc );
+  oyProfile_Release( &p_lab );
+  oyProfile_Release( &p_web );
+
+  return result;
+}
 
 #include "oyranos_generic_internal.h"
 oyHash_s *   oyTestCacheListGetEntry_ ( const char        * hash_text)
