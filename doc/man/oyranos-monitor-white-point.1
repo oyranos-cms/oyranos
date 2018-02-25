@@ -22,6 +22,10 @@ oyranos-monitor-white-point \- Oyranos CMS monitor white point configuration
 .fi
 \fBoyranos-monitor-white-point\fR -a KELVIN [-v]
 .fi
+\fBoyranos-monitor-white-point\fR --night-effect ICC_PROFILE [--system-wide] [-v]
+.fi
+\fBoyranos-monitor-white-point\fR --sunlight-effect ICC_PROFILE [--system-wide] [-v]
+.fi
 .SH DESCRIPTION
 The oyranos-monitor-white-point programm let you set a white point and can run as location specific daemon for nightly blue color reduction. Settings are stored in a data base, the OpenICC DB.
 .SH OPTIONS
@@ -84,9 +88,12 @@ Set preferred night light white point
 .TP
 .B \fB\-a\fR KELVIN
 Set white point for automatic -w or -n 1 options in Kelvin. The allowed range is 1000 - 10.000 Kelvin. Artefacts appear already outside 2800-8000 Kelvin range.
-.sp
-.br
-\fB-a\fR KELVIN
+.TP
+.B \fB\--night-effect\fR ICC_PROFILE
+Set preferred nightly effect with a ICC profile of class abstract. Ideally the effect profile works on 1D RGB curves only and is marked meta:EFFECT_linear=yes .
+.TP
+.B \fB\--sunlight-effect\fR ICC_PROFILE
+Set preferred daylight effect with a ICC profile of class abstract. Ideally the effect profile works on 1D RGB curves only and is marked meta:EFFECT_linear=yes .
 .TP
 .B \fB\-l\fR
 Set geo location. Obtain from IP address.

@@ -103,6 +103,14 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr,  "     %s -a KELVIN [--system-wide] [-v]\n", argv[0]);
   fprintf( stderr,  "      -a KELVIN - %s\n",   _("A value from 2700 till 8000 Kelvin is expected to show no artefacts"));
   fprintf( stderr, "\n");
+  fprintf( stderr,  "  %s\n",             _("Set preferred nightly effect:"));
+  fprintf( stderr,  "     %s --night-effect ICC_PROFILE [--system-wide] [-v]\n", argv[0]);
+  fprintf( stderr,  "      --night-effect ICC_PROFILE - %s\n", _("a ICC profile of class abstract. Ideally the effect profile works on 1D RGB curves only and is marked meta:EFFECT_linear=yes ."));
+  fprintf( stderr, "\n");
+  fprintf( stderr,  "  %s\n",             _("Set preferred daylight effect:"));
+  fprintf( stderr,  "     %s --sunlight-effect ICC_PROFILE [--system-wide] [-v]\n", argv[0]);
+  fprintf( stderr,  "      --sunlight-effect ICC_PROFILE - %s\n", _("a ICC profile of class abstract. Ideally the effect profile works on 1D RGB curves only and is marked meta:EFFECT_linear=yes ."));
+  fprintf( stderr, "\n");
   fprintf( stderr, "  %s\n",              _("Get Location:"));
   fprintf( stderr, "      %s -l [-v]\n", argv[0] );
   fprintf( stderr, "\n");
@@ -143,6 +151,8 @@ int main( int argc , char** argv )
   int wtpt_mode = -1;
   int wtpt_mode_night = -1;
   int wtpt_mode_sunlight = -1;
+  char * sunlight_effect = NULL;
+  char * night_effect = NULL;
   double temperature = 0.0;
   int show = 0;
   int dry = 0;
@@ -208,6 +218,10 @@ int main( int argc , char** argv )
                         { OY_PARSE_FLOAT_ARG2( latitude,  "latitude",  - 90.0,  90.0, 0.0 ); i=100; break; }
                         else if(OY_IS_ARG("longitude"))
                         { OY_PARSE_FLOAT_ARG2( longitude, "longitude", -180.0, 180.0, 0.0 ); i=100; break; }
+                        else if(OY_IS_ARG("sunlight-effect"))
+                        { OY_PARSE_STRING_ARG2(sunlight_effect, "sunlight-effect"); break; }
+                        else if(OY_IS_ARG("night-effect"))
+                        { OY_PARSE_STRING_ARG2(night_effect, "night-effect"); break; }
                         else if(OY_IS_ARG("hour"))
                         { OY_PARSE_FLOAT_ARG2( hour_, "hour", 0.0, 24.0, 0.0 ); i=100; break; }
                         else if(OY_IS_ARG("dry-run"))
@@ -352,6 +366,12 @@ int main( int argc , char** argv )
     oyFree_m_(value);
   }
 
+  if(night_effect != NULL && dry == 0)
+    oySetPersistentString( OY_DISPLAY_STD "/night_effect", scope, night_effect, NULL );
+
+  if(sunlight_effect != NULL && dry == 0)
+    oySetPersistentString( OY_DISPLAY_STD "/sunlight_effect", scope, sunlight_effect, NULL );
+
   if(sunrise)
   {
     error = getSunriseSunset( &rise, &set, dry );
@@ -434,7 +454,7 @@ void updateVCGT()
   for(i = 0; i < count; ++i)
   {
     int r OY_UNUSED;
-    oyStringAddPrintf(&cmd, 0,0, "oyranos-monitor -f vcgt -d %d -o %s", i, tmpname);
+    oyStringAddPrintf(&cmd, 0,0, "oyranos-monitor -c -f vcgt -d %d -o %s", i, tmpname);
     fputs(cmd, stderr); fputs("\n", stderr );
     r = system( cmd );
     oyFree_m_(cmd);
@@ -442,7 +462,7 @@ void updateVCGT()
     fputs(cmd, stderr); fputs("\n", stderr );
     r = system( cmd );
     oyFree_m_(cmd);
-    remove( tmpname );
+    //remove( tmpname );
   }
 }
 
@@ -668,6 +688,7 @@ int checkWtptState(int dry)
 {
   int error = 0;
   int cmode;
+  char * effect = NULL;
 
   int    diff;
   double dtime, rise, set;
@@ -704,9 +725,12 @@ int checkWtptState(int dry)
   if( choices_string_list && getSunriseSunset( &rise, &set, dry ) == 0 )
   {
     int new_mode = -1;
+    char * new_effect = NULL;
 
     cmode = oyGetBehaviour( oyBEHAVIOUR_DISPLAY_WHITE_POINT );
-    fprintf (stderr, "%s: %s\n", _("Actual white point mode"), cmode<choices?choices_string_list[cmode]:"----");
+    effect = oyGetPersistentString( OY_DEFAULT_EFFECT_PROFILE, 0, oySCOPE_USER_SYS, oyAllocateFunc_ );
+    fprintf (stderr, "%s: %s %s: %s\n", _("Actual white point mode"), cmode<choices?choices_string_list[cmode]:"----",
+            _("Effect"), oyNoEmptyString_m_(effect));
 
     if(rise < dtime && dtime <= set)
     /* day time */
@@ -719,6 +743,8 @@ int checkWtptState(int dry)
       } else /* defaut to D65 for daylight */
         new_mode = 4;
 
+      new_effect = oyGetPersistentString( OY_DISPLAY_STD "/sunlight_effect", 0, oySCOPE_USER_SYS, oyAllocateFunc_ );
+
     } else
     /* night time */
     {
@@ -729,13 +755,25 @@ int checkWtptState(int dry)
         oyFree_m_(value);
       } else /* defaut to D50 for night light */
         new_mode = 2;
+
+      new_effect = oyGetPersistentString( OY_DISPLAY_STD "/night_effect", 0, oySCOPE_USER_SYS, oyAllocateFunc_ );
     }
 
-    if(new_mode != cmode)
+    if( (new_mode != cmode) ||
+        ((effect?1:0) != (new_effect?1:0) ||
+         (effect && new_effect && strcmp(effect, new_effect) != 0)))
     {
-      fprintf (stderr, "%s: %s\n", _("New white point mode"), new_mode<choices?choices_string_list[new_mode]:"----");
+      fprintf(  stderr, "%s: %s %s: %s\n", _("New white point mode"), new_mode<choices?choices_string_list[new_mode]:"----",
+                _("Effect"), oyNoEmptyString_m_(new_effect) );
+
+      if(dry == 0)
+        oySetPersistentString( OY_DEFAULT_EFFECT_PROFILE, scope, new_effect, NULL );
+
       error = setWtptMode( scope, new_mode, dry );
     }
+
+    if(effect) oyFree_m_(effect);
+    if(new_effect) oyFree_m_(new_effect);
   }
 
   oyOptionChoicesFree( oyWIDGET_DISPLAY_WHITE_POINT, &choices_string_list, choices );
