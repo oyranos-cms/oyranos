@@ -992,6 +992,7 @@ int      oyX1SetupMonitorCalibration ( const char        * display_name,
   oyX1Monitor_s * disp = 0;
   char       *dpy_name = NULL;
   char *text = 0;
+  char *clear = 0;
 
   /* XRandR needs a expensive initialisation */
   disp = oyX1Monitor_newFrom_( display_name, 1 );
@@ -1046,6 +1047,7 @@ int      oyX1SetupMonitorCalibration ( const char        * display_name,
       xs = "-o";
 
     oyX1Alloc(text, MAX_PATH, goto Clean;)
+    oyX1Alloc(clear, MAX_PATH, goto Clean;)
 
     /** set vcgt tag with xcalib
        not useable with multihead Xinerama at one screen
@@ -1054,17 +1056,29 @@ int      oyX1SetupMonitorCalibration ( const char        * display_name,
      */
     sprintf(text,"xcalib -d %s %s %d %s \'%s\'", dpy_name, xs, disp->geo[1],
                  oy_debug?"-v":"", profile_name);
+    sprintf(clear,"xcalib -d %s %s %d %s -c", dpy_name, xs, disp->geo[1],
+                 oy_debug?"-v":"");
     if(oyX1Monitor_infoSource_( disp ) == oyX11INFO_SOURCE_XRANDR)
+    {
 #if defined(HAVE_XRANDR)
       sprintf(text,"xcalib -d %s %s %d %s \'%s\'", dpy_name, xs, oyX1Monitor_rrScreen_(disp),
               oy_debug?"-v":"", profile_name);
+      sprintf(clear,"xcalib -d %s %s %d %s -c", dpy_name, xs, oyX1Monitor_rrScreen_(disp),
+              oy_debug?"-v":"");
 #else
       sprintf(text,"xcalib -d %s %s %d %s \'%s\'", dpy_name, xs, 0,
               oy_debug?"-v":"", profile_name);
+      sprintf(clear,"xcalib -d %s %s %d %s -c", dpy_name, xs, 0,
+              oy_debug?"-v":"");
 #endif
+    }
     else
+    {
       sprintf(text,"xcalib -d %s %s %d %s \'%s\'", dpy_name, xs, disp->geo[1],
               oy_debug?"-v":"", profile_name);
+      sprintf(clear,"xcalib -d %s %s %d %s -c", dpy_name, xs, disp->geo[1],
+              oy_debug?"-v":"");
+    }
 
     {
       Display * display = oyX1Monitor_device_( disp );
@@ -1101,6 +1115,7 @@ int      oyX1SetupMonitorCalibration ( const char        * display_name,
       {
       /* OS X handles VGCT fine, no need for xcalib */
 #if !defined(__APPLE__)
+        error = system(clear);
         error = system(text);
 #endif
       }
@@ -1120,8 +1135,10 @@ int      oyX1SetupMonitorCalibration ( const char        * display_name,
       }
     }
 
+    if(oy_debug) fprintf( stderr, OY_DBG_FORMAT_ "system: %s\n", OY_DBG_ARGS_, clear );
     if(oy_debug) fprintf( stderr, OY_DBG_FORMAT_ "system: %s\n", OY_DBG_ARGS_, text );
 
+    free( clear );
     free( text );
   }
 
