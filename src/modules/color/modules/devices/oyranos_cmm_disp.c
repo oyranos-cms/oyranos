@@ -179,7 +179,10 @@ const char * _help_setup =
       "The presence of option \"command=setup\" will setup the device from a\n"
       " profile.\n"
       " The option \"device_name\" must be present, see \"list\" above.\n"
-      " The option \"profile_name\" must be present, containing a ICC profile\n"      " file name."
+      " The option \"profile_name\" must be present, containing a ICC profile\n"
+      " file name.\n"
+      " The option \"gamma_only:yes\" can be added to skip the ICC profile\n"
+      " assign stage."
 ;
 const char * _help_unset =
       "The presence of call \"command=unset\" will invalidate a profile of\n"
@@ -487,12 +490,15 @@ int                Configs_FromPattern (
         size_t size = oyProfile_GetSize( p, 0 );
         char * data = oyProfile_GetMem( p, &size, 0, oyAllocateFunc_ );
         const char * profile_fullname = oyProfile_GetFileName( p, -1 );
+        int gamma_only = oyOptions_FindString( options, "gamma_only", "yes" ) != NULL;
 
         _msg(oyMSG_DBG, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n "
-                  "command: setup on device_name: %s \"%s\" %ul",
-                  OY_DBG_ARGS_, odevice_name, oprofile_name, size );
+                  "command: setup on device_name: %s \"%s\" %lu%s",
+                  OY_DBG_ARGS_, odevice_name, oprofile_name, size,
+                  gamma_only?" only VCGT":"" );
 
-        error = SetupMonitorProfile( odevice_name, profile_fullname, data, size );
+        if(!gamma_only)
+          error = SetupMonitorProfile( odevice_name, profile_fullname, data, size );
         error = SetupMonitorCalibration( odevice_name, profile_fullname, data, size );
         oyProfile_Release( &p );
       }
@@ -1091,12 +1097,15 @@ int            Configs_Modify        ( oyConfigs_s       * devices,
           oyProfile_s * p = oyProfile_FromName( oprofile_name, 0, 0 );
           size_t size = oyProfile_GetSize( p, 0 );
           char * data = oyProfile_GetMem( p, &size, 0, oyAllocateFunc_ );
+          int gamma_only = oyOptions_FindString( options, "gamma_only", "yes" ) != NULL;
 
           _msg(oyMSG_DBG, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n "
-                  "command: setup on device_name: %s \"%s\" %ul",
-                  OY_DBG_ARGS_, device_name, oprofile_name, size );
+                  "command: setup on device_name: %s \"%s\" %lu %s",
+                  OY_DBG_ARGS_, device_name, oprofile_name, size,
+                  gamma_only?"only VCGT":"" );
 
-          error = SetupMonitorProfile( device_name, oprofile_name, data, size );
+          if(!gamma_only)
+            error = SetupMonitorProfile( device_name, oprofile_name, data, size );
           error = SetupMonitorCalibration( device_name, oprofile_name, data, size );
           oyProfile_Release( &p );
         }
