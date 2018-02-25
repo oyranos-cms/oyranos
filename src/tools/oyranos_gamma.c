@@ -64,7 +64,7 @@ void  cleanDisplay                   ( Display           * display,
                                        int                 n );
 int  runDaemon                       ( const char        * display_name );
 #endif
-int oyDisplayColorServerIsActive     ( const char        * display_name );
+int oyXCMDisplayColorServerIsActive  ( const char        * display_name );
 
 void* oyAllocFunc(size_t size) {return malloc (size);}
 void  oyDeAllocFunc ( oyPointer ptr) { if(ptr) free (ptr); }
@@ -83,6 +83,7 @@ int main( int argc , char** argv )
   int unset = 0;
   int list = 0;
   int setup = 0;
+  int gamma = 0;
   int daemon = 0;
   char * format = 0;
   char * output = 0;
@@ -152,6 +153,7 @@ int main( int argc , char** argv )
               case 'c': x_color_region_target = 1; monitor_profile = 0; break;
               case 'd': server = 1; OY_PARSE_INT_ARG( device_pos ); break;
               case 'f': OY_PARSE_STRING_ARG( format ); monitor_profile = 0; break;
+              case 'g': gamma = 1; break;
               case 'l': list = 1; monitor_profile = 0; break;
               case 'm': device_meta_tag = 1; break;
               case 'o': OY_PARSE_STRING_ARG( output ); monitor_profile = 0; break;
@@ -319,7 +321,7 @@ int main( int argc , char** argv )
   if(daemon != 2)
 #endif
   {
-    if(!erase && !unset && !list && !setup && !format &&
+    if(!erase && !unset && !list && !setup && !format && !gamma &&
        !add_meta && !list_modules && !list_taxi)
       setup = 1;
 
@@ -631,7 +633,7 @@ int main( int argc , char** argv )
             else if(strcmp(format, "vcgt") == 0)
             {
               /* 1. detect if a XCM color server is active */
-              int active = oyDisplayColorServerIsActive( display_name );
+              int active = oyXCMDisplayColorServerIsActive( display_name );
 
               /* 1.1. stop if XCM is active*/
               if(active)
@@ -870,7 +872,7 @@ int main( int argc , char** argv )
                                     "//" OY_TYPE_STD "/icc_profile_flags",
                                     icc_profile_flags, 0, OY_CREATE_NEW );
 
-      if(monitor_profile)
+      if(monitor_profile && !gamma)
       {
         if(verbose)
           fprintf( stdout, "oyDeviceSetProfile()\n" );
@@ -899,7 +901,14 @@ int main( int argc , char** argv )
                                       "//"OY_TYPE_STD"/config/skip_ask_for_profile", "yes", OY_CREATE_NEW );
         if(verbose)
           fprintf( stdout, "oyDeviceSetup()\n" );
-        oyDeviceSetup( device, options );
+        oyDeviceSetup2( device, options );
+      }
+      if(gamma)
+      {
+        if(monitor_profile)
+          oyDeviceSetupVCGT( device, options, monitor_profile );
+        else
+          fprintf( stderr, "no monitor profile specified\n" );
       }
 
       oyConfig_Release( &device );
@@ -934,7 +943,7 @@ int main( int argc , char** argv )
           if(erase)
             oyConfig_EraseFromDB( device, scope );
           if(setup)
-            oyDeviceSetup( device, options );
+            oyDeviceSetup2( device, options );
 
           oyConfig_Release( &device );
         }
@@ -1140,7 +1149,7 @@ int  runDaemon                       ( const char        * display_name )
 }
 #endif
 
-int oyDisplayColorServerIsActive     ( const char        * display_name )
+int oyXCMDisplayColorServerIsActive  ( const char        * display_name )
 {
   int active = 0;
 #if defined(XCM_HAVE_X11)
