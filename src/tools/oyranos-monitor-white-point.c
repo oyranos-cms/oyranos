@@ -51,6 +51,7 @@ int runDaemon(int dmode);
 int setWtptMode( oySCOPE_e scope, int wtpt_mode, int dry );
 void pingNativeDisplay();
 int checkWtptState();
+void updateVCGT();
 double estimateTemperature( double cie_a, double cie_b );
 
 void  printfHelp (int argc, char** argv)
@@ -389,7 +390,10 @@ int setWtptMode( oySCOPE_e scope, int wtpt_mode, int dry )
   int error = 0;
   
   if(dry == 0)
+  {
     oySetBehaviour( oyBEHAVIOUR_DISPLAY_WHITE_POINT, scope, wtpt_mode );
+    updateVCGT();
+  }
   /* ping X11 observers about option change
    * ... by setting a known property again to its old value
    */
@@ -414,6 +418,32 @@ int setWtptMode( oySCOPE_e scope, int wtpt_mode, int dry )
   }
 
   return error;
+}
+
+void updateVCGT()
+{
+  size_t size = 0;
+  char * result = oyReadCmdToMem_( "oyranos-monitor -l | wc -l", &size, "r", malloc );
+  char * tmpname = oyGetTempFileName_( NULL, "vcgt.icc", 0, oyAllocateFunc_ );
+  if(!result) return;
+  int count = atoi(result), i;
+  char * cmd = NULL;
+  fprintf(stderr, "monitor count: %d\n", count);
+  free(result);
+
+  for(i = 0; i < count; ++i)
+  {
+    int r OY_UNUSED;
+    oyStringAddPrintf(&cmd, 0,0, "oyranos-monitor -f vcgt -d %d -o %s", i, tmpname);
+    fputs(cmd, stderr); fputs("\n", stderr );
+    r = system( cmd );
+    oyFree_m_(cmd);
+    oyStringAddPrintf(&cmd, 0,0, "oyranos-monitor -g -d %d %s", i, tmpname);
+    fputs(cmd, stderr); fputs("\n", stderr );
+    r = system( cmd );
+    oyFree_m_(cmd);
+    remove( tmpname );
+  }
 }
 
 double estimateTemperature( double cie_a_, double cie_b_ )
