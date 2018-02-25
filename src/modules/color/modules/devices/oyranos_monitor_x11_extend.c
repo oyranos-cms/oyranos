@@ -13,6 +13,7 @@
  *  @since    2005/01/31
  */
 
+/* handler: color_server_active */
 /* handler: clean_profiles */
 /* handler: move_color_server_profiles */
 /* handler: send_native_update_event */
@@ -53,6 +54,7 @@
 #include "oyranos_internal.h"
 #include "oyranos_io.h"
 #include "oyranos_monitor.h"
+#include "oyranos_monitor_effect.h"
 #include "oyranos_monitor_internal_x11.h"
 #include "oyranos_monitor_internal.h"
 #include "oyranos_monitor_hooks_x11.h"
@@ -68,16 +70,20 @@
 
 extern oyMessage_f oyX1_msg;
 
-int      oyX1ColorServerActive( Display * display )
+int      oyX1ColorServerActive       ( int                 flags )
 {
   static int active = 0;
 #if defined(XCM_HAVE_X11)
   static double z = 0;
-  if(z + 1.0 < oySeconds())
+  if( z + 1.0 < oySeconds() ||
+      flags & oySOURCE_DATA )
   {
+    Display * display = XOpenDisplay(NULL);
     active = XcmColorServerCapabilities( display );
     z = oySeconds();
     DBG_NUM2_S("color server active: %d %g\n", active, z);
+    if(display)
+      XCloseDisplay(display);
   }
 #endif
   return active;
@@ -103,15 +109,19 @@ int          oyX1ColorServer_Handle  ( oyOptions_s       * options OY_UNUSED,
   }
   else if(oyFilterRegistrationMatch(command,"color_server_active", 0))
   {
-    Display * display = XOpenDisplay(NULL);
-    int active = oyX1ColorServerActive( display );
+    int flags = 0;
+    int active;
+    oyOptions_FindInt( options, "flags", 0, &flags );
+    if(oyFilterRegistrationMatch(command,"source_data", 0))
+      flags |= oySOURCE_DATA;
+    active = oyX1ColorServerActive( flags );
 
     oyOptions_SetFromString( result,
               "//"OY_TYPE_STD"/config/color_server_active",
               active?"1":"0", OY_CREATE_NEW );
-
-    if(display)
-      XCloseDisplay(display);
+    _msg( oyMSG_WARN, (oyStruct_s*)options,
+          OY_DBG_FORMAT_ "color_server_active%s: %d", OY_DBG_ARGS_,
+          flags & oySOURCE_DATA?".source_data":"", active );
   }
 
   return 0;
@@ -153,6 +163,7 @@ const char * oyX1InfoGetTextMyHandlerA(const char        * select,
     else
       return _("The oyX1 modules \"color_server_active\" handler lets you ask "
                "for the X Color Management _ICC_COLOR_DESKTOP X11 atom. "
+               "Use \"color_server_active.source_data\" to avoid the default caching. "
                "The implementation uses Xlib.");
   }
   return 0;
@@ -178,7 +189,7 @@ oyCMMapi10_s_    oyX1_api10_color_server_active_handler = {
   CMMMessageFuncSet,
 
   OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
-  "color_server_active._" CMM_NICK,
+  "color_server_active._source_data._" CMM_NICK,
 
   {OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C},/**< version[3] */
   CMM_API_VERSION,                     /**< int32_t module_api[3] */
@@ -407,7 +418,6 @@ int  oyMoveColorServerProfiles       ( const char        * display_name,
   oyOptions_SetFromString( &options,
               "//"OY_TYPE_STD"/config/icc_profile.x_color_region_target", "yes", OY_CREATE_NEW );
   oyDeviceGetProfile( monitor, options, &monitor_icc );
-  oyConfig_Release( &monitor );
   oyOptions_Release( &options );
   dev_prof = oyProfile_GetMem( monitor_icc, &dev_prof_size, 0,0 );
   // get the profiles internal name
@@ -437,10 +447,12 @@ int  oyMoveColorServerProfiles       ( const char        * display_name,
     const char * filename = oyProfile_GetFileName( monitor_icc, -1 );
     oyX1Monitor_setProperty_( disp, XCM_ICC_COLOUR_SERVER_TARGET_PROFILE_IN_X_BASE, NULL, 0 );
     oyX1Monitor_setProperty_( disp, XCM_ICC_V0_3_TARGET_PROFILE_IN_X_BASE, dev_prof, dev_prof_size );
+    oyDeviceSetup2( monitor, NULL );
     if(filename)
       oyX1Monitor_setCompatibility( disp, filename );
   }
 
+  oyConfig_Release( &monitor );
   oyProfile_Release( &monitor_icc );
   oyX1Monitor_release_( &disp );
   if(screen_name) free( screen_name );
