@@ -289,6 +289,10 @@ icProfileClassSignature oyDeviceSigGet(oyConfig_s        * device )
 
 /** Function oyDeviceSetup
  *  @brief   activate the device using the stored configuration
+ *  @deprecated
+ *
+ *  Please move on to oyDeviceSetup2() call with extended
+ *  functionality.
  *
  *  @param[in]     device              the device
  *  @param[in]     options             additional options,
@@ -752,85 +756,6 @@ OYAPI int  OYEXPORT
   return error;
 }
 
-/** Function oyDeviceGetProfile
- *  @brief   order a device profile
- *
- *  This function is designed to satisfy most users as it tries to deliver
- *  a profile all the time. 
- *  Following code can almost allways expect some profile to go with.
- *  It tries hard to get a current profile or set the system up and retry or
- *  get at least one basic profile.
- *
- *  For a basic and thus weaker call to the device use
- *  oyDeviceAskProfile2() instead.
- *
- *  @param         device              the device
- *  @param         options             
- *                                     - options passed to the backend
- *                                     - "///icc_profile_flags" with a int 
- *                                       containing ::OY_ICC_VERSION_2 or
- *                                       ::OY_ICC_VERSION_4
- *  @param         profile             the device's ICC profile
- *  @return                            error
- *
- *  @version Oyranos: 0.9.6
- *  @since   2009/02/08 (Oyranos: 0.1.10)
- *  @date    2014/08/04
- */
-OYAPI int  OYEXPORT
-           oyDeviceGetProfile        ( oyConfig_s        * device,
-                                       oyOptions_s       * options,
-                                       oyProfile_s      ** profile )
-{
-  int error = !device,
-      l_error = 0;
-  oyConfig_s * s = device;
-  oyProfile_s * p;
-  oyOption_s * o = NULL;
-
-  oyCheckType__m( oyOBJECT_CONFIG_S, return 1 )
-
-
-  l_error = oyDeviceAskProfile2( device, options, profile ); OY_ERR
-
-  /** This function does a device setup in case no profile is delivered
-   *  by the according module. */
-  if(error != 0 && !*profile)
-  {
-    oyMessageFunc_p( oyMSG_DBG,(oyStruct_s*)device, OY_DBG_FORMAT_
-                     "calling oyDeviceSetup()\n", OY_DBG_ARGS_ );
-    error = oyDeviceSetup( device, options );
-  }
-
-  /* The backend shows with the existence of the "icc_profile" response that it
-   * can handle device profiles through the driver. */
-  if(error <= 0)
-    o = oyConfig_Find( device, "icc_profile" );
-
-  p = (oyProfile_s*) oyOption_GetStruct( o, oyOBJECT_PROFILE_S );
-  if(oyProfile_GetSignature( p, oySIGNATURE_MAGIC ) == icMagicNumber)
-    *profile = p;
-  else if(!error)
-    error = -1;
-  p = 0;
-
-  if(error <= 0) 
-    l_error = oyDeviceAskProfile2( device, options, profile ); OY_ERR
-
-  /** As a last means oyASSUMED_WEB is delivered. */
-  if(!*profile)
-  {
-    int32_t icc_profile_flags = 0;
-
-    oyOptions_FindInt( options, "icc_profile_flags", 0, &icc_profile_flags );
-    *profile = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, 0 );
-    if(error == 0)
-      error = -1;
-  }
-
-  return error;
-}
-
 /** Function oyDeviceAskProfile2
  *  @brief   ask for the device profile
  *
@@ -940,7 +865,7 @@ OYAPI int  OYEXPORT
     // remove any device entries
     oyDeviceUnset( device );
     // update the device from the newly added Oyranos data base settings
-    oyDeviceSetup( device );
+    oyDeviceSetup2( device, options );
     @endcode
  *
  *  @param         device              the device

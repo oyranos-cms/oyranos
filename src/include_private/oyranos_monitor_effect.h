@@ -31,5 +31,11 @@ int      oyProfile_SetVCGT           ( oyProfile_s       * profile,
                                        uint16_t          * vcgt,
                                        int                 width );
 
+void     oyDeviceSetupVCGT           ( oyConfig_s        * device,
+                                       oyOptions_s       * options,
+                                       const char        * profile_name );
+int      oyDeviceSetup2              ( oyConfig_s        * device,
+                                       oyOptions_s       * options );
+
 #endif /* OYRANOS_MONITOR_EFFECT_H */
 
