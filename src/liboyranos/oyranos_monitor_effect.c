@@ -50,7 +50,7 @@ int      oyProfileAddWhitePointEffect( oyProfile_s       * monitor_profile,
   oyOptions_s * result_opts = NULL, * opts = NULL;
 
   if(!display_white_point)
-    return;
+    return 0;
 
   if(!error)
     error = oyGetDisplayWhitePoint( display_white_point, &dst_cie_a, &dst_cie_b );
