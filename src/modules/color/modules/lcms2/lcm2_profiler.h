@@ -142,6 +142,9 @@ void         lcm2SamplerRGB2JpegYCbCr( const double        i[],
 void         lcm2SamplerJpegYCbCr2RGB( const double        i[],
                                        double              o[],
                                        void              * none );
+void         lcm2SamplerIdendity     ( const double        i[],
+                                       double              o[],
+                                       void              * none );
 void         lcm2SamplerGrayer       ( const double        i[],
                                        double              o[],
                                        void              * none );

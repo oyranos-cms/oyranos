@@ -625,6 +625,28 @@ void         lcm2SamplerJpegYCbCr2RGB( const double        i[],
   o[0] = R; o[1] = G; o[2] = B;
 }
 
+/** Function  lcm2SamplerIdendity
+ *  @brief    Lab -> Lab
+ *
+ *  PCS Lab range of 0-1 for all channels is assumed.
+ *
+ *  @param[in]     i                   input PCS.Lab triple
+ *  @param[out]    o                   output PCS.Lab triple
+ *  @param[out]    none                unused
+ *
+ *  @version Oyranos: 0.9.7
+ *  @date    2018/02/26
+ *  @since   2018/02/26 (Oyranos: 0.9.7)
+ */
+void         lcm2SamplerIdendity     ( const double        i[],
+                                       double              o[],
+                                       void              * none OY_UNUSED )
+{
+  o[0] = i[0]; // L / CIE*L / Y  / R
+  o[1] = i[1]; // M / CIE*a / Cb / G
+  o[2] = i[2]; // S / CIE*b / Cr / B
+}
+
 /** Function  lcm2SamplerGrayer
  *  @brief    Lab -> Gray -> Lab
  *
