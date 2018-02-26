@@ -367,10 +367,10 @@ int main( int argc , char** argv )
   }
 
   if(night_effect != NULL && dry == 0)
-    oySetPersistentString( OY_DISPLAY_STD "/night_effect", scope, night_effect, NULL );
+    oySetPersistentString( OY_DISPLAY_STD "/night_effect", scope, night_effect[0]?night_effect:NULL, NULL );
 
   if(sunlight_effect != NULL && dry == 0)
-    oySetPersistentString( OY_DISPLAY_STD "/sunlight_effect", scope, sunlight_effect, NULL );
+    oySetPersistentString( OY_DISPLAY_STD "/sunlight_effect", scope, sunlight_effect[0]?sunlight_effect:NULL, NULL );
 
   if(sunrise)
   {
@@ -726,6 +726,7 @@ int checkWtptState(int dry)
   {
     int new_mode = -1;
     char * new_effect = NULL;
+    int use_effect = 0;
 
     cmode = oyGetBehaviour( oyBEHAVIOUR_DISPLAY_WHITE_POINT );
     effect = oyGetPersistentString( OY_DEFAULT_EFFECT_PROFILE, 0, oySCOPE_USER_SYS, oyAllocateFunc_ );
@@ -744,6 +745,17 @@ int checkWtptState(int dry)
         new_mode = 4;
 
       new_effect = oyGetPersistentString( OY_DISPLAY_STD "/sunlight_effect", 0, oySCOPE_USER_SYS, oyAllocateFunc_ );
+      if(new_effect)
+        ++use_effect;
+      else
+      {
+        value = oyGetPersistentString( OY_DISPLAY_STD "/night_effect", 0, oySCOPE_USER_SYS, oyAllocateFunc_ );
+        if(value)
+        {
+          ++use_effect;
+          oyFree_m_(value);
+        }
+      }
 
     } else
     /* night time */
@@ -757,6 +769,17 @@ int checkWtptState(int dry)
         new_mode = 2;
 
       new_effect = oyGetPersistentString( OY_DISPLAY_STD "/night_effect", 0, oySCOPE_USER_SYS, oyAllocateFunc_ );
+      if(new_effect)
+        ++use_effect;
+      else
+      {
+        value = oyGetPersistentString( OY_DISPLAY_STD "/sunlight_effect", 0, oySCOPE_USER_SYS, oyAllocateFunc_ );
+        if(value)
+        {
+          ++use_effect;
+          oyFree_m_(value);
+        }
+      }
     }
 
     if( (new_mode != cmode) ||
@@ -766,7 +789,7 @@ int checkWtptState(int dry)
       fprintf(  stderr, "%s: %s %s: %s\n", _("New white point mode"), new_mode<choices?choices_string_list[new_mode]:"----",
                 _("Effect"), oyNoEmptyString_m_(new_effect) );
 
-      if(dry == 0)
+      if(dry == 0 && use_effect)
         oySetPersistentString( OY_DEFAULT_EFFECT_PROFILE, scope, new_effect, NULL );
 
       error = setWtptMode( scope, new_mode, dry );
