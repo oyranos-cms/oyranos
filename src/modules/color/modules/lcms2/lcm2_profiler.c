@@ -318,7 +318,7 @@ void *       lcm2WriteProfileToMem   ( cmsHPROFILE       * profile,
 
 static double CIE_C_scaler = M_SQRT2; /* fit all Lab into LCh */
 /** Function  lcm2SamplerLab2LCh
- *  @brief    CIE*Lab -> CIE*LCh in PCS*Lab
+ *  @brief    CIE*Lab -> CIE*LCh in PCS*Lab range
  *
  *  The CIE*C channel is scaled to contain all CIE*Lab colors.
  *  The ICC PCS*Lab space with range of 0->1 for all channels is utilised to
@@ -372,6 +372,82 @@ void         lcm2SamplerLCh2Lab      ( const double        i[],
   o[1] = 1.0 - (i[1] * cos(M_PI*2.0*i[2]) / CIE_C_scaler + 0.5);
   /* CIE*b = C * sin(h) */
   o[2] = 1.0 - (i[1] * sin(M_PI*2.0*i[2]) / CIE_C_scaler + 0.5);
+}
+
+
+
+/* sRGB */
+cmsViewingConditions lcm2_vc_srgb_ =
+{
+    { 95.05, 100.0, 108.88 }, /* D65 white point */
+    20, /* viewing background luminance Yb */
+    4,  /* ambient in cd/m² (== 64 lux) */
+    2,  /* Dim sourround */
+    1   /* adapted (0-1) */
+};
+
+/** Function  lcm2SamplerJCh2Lab
+ *  @brief    CIE*LCh -> CIE*Lab in PCS*Lab range
+ *
+ *  The CIE*C channel is scaled to contain all CIE*Lab colors.
+ *  The ICC PCS*Lab space with range of 0->1 for all channels is utilised to
+ *  be useful as a sampler argument to lcm2CreateProfileLutByFunc().
+ *
+ *  @param[in]     i                   input LCh triple
+ *  @param[out]    o                   output Lab triple
+ *  @param[in]     v                   (cmsViewingConditions*); optional, default sRGB
+ *
+ *  @version Oyranos: 0.9.7
+ *  @date    2018/02/28
+ *  @since   2018/02/28 (Oyranos: 0.9.7)
+ */
+void         lcm2SamplerJCh2Lab      ( const double        i[],
+                                       double              o[],
+                                       void              * v )
+{
+  cmsViewingConditions * vc = &lcm2_vc_srgb_;
+  cmsHANDLE vh;
+  cmsCIEXYZ XYZ;
+  cmsJCh JCh = { i[0], i[1], i[2] };
+
+  vh = cmsCIECAM02Init( NULL, v?v:vc );
+  cmsCIECAM02Reverse( vh, &JCh, &XYZ );
+  cmsCIECAM02Done( vh );
+
+  lcm2CIEXYZ2iccLab( &XYZ, o );
+}
+
+/** Function  lcm2SamplerLab2JCh
+ *  @brief    CIE*Lab -> CIE*JCh
+ *
+ *  The CIECAM02 appearance space.
+ *
+ *  @param[in]     i                   input Lab triple
+ *  @param[out]    o                   output JCh triple
+ *  @param[in]     v                   (cmsViewingConditions*); optional, default sRGB
+ *
+ *  @version Oyranos: 0.9.7
+ *  @date    2018/02/28
+ *  @since   2018/02/28 (Oyranos: 0.9.7)
+ */
+void         lcm2SamplerLab2JCh      ( const double        i[],
+                                       double              o[],
+                                       void              * v )
+{
+  cmsViewingConditions * vc = &lcm2_vc_srgb_;
+  cmsHANDLE vh;
+  cmsCIEXYZ XYZ;
+  cmsJCh JCh;
+
+  lcm2iccLab2CIEXYZ( i, &XYZ );
+
+  vh = cmsCIECAM02Init( NULL, v?v:vc );
+  cmsCIECAM02Forward( vh, &XYZ, &JCh );
+  cmsCIECAM02Done( vh );
+
+  o[0] = JCh.J;
+  o[1] = JCh.C;
+  o[2] = JCh.h;
 }
 
 
@@ -745,11 +821,12 @@ void         lcm2SamplerReddish      ( const double        i[],
   o[2] = i[2] + 0.025+0.025*i[0];
 }
 
-/** Function  lcm2SamplerWhitePoint
+/** Function  lcm2SamplerWhitePointLab
  *  @brief    Lab -> White Point Adaption -> Lab
  *
  *  PCS Lab range of 0-1 for all channels is assumed.
  *  Same like reddish, but adapts all colors to a given white point difference.
+ *  It uses simple linear adaption inside CIE*Lab.
  *
  *  @param[in]     i                   input PCS.Lab triple
  *  @param[out]    o                   output PCS.Lab triple
@@ -760,7 +837,7 @@ void         lcm2SamplerReddish      ( const double        i[],
  *  @date    2017/05/17
  *  @since   2017/05/17 (Oyranos: 0.9.7)
  */
-void         lcm2SamplerWhitePoint   ( const double        i[],
+void         lcm2SamplerWhitePointLab( const double        i[],
                                        double              o[],
                                        void              * data )
 {
@@ -770,6 +847,114 @@ void         lcm2SamplerWhitePoint   ( const double        i[],
   o[1] = i[1] + icc_ab[0] * i[0];
   o[2] = i[2] + icc_ab[1] * i[0];
 }
+
+/** Function  lcm2iccLab2CIEXYZ
+ *  @brief    ICC*Lab -> CIE*XYZ
+ *
+ *  Converts from PCS Lab encoding to lcms XYZ type.
+ *
+ *  @param[in]     i                   input Lab triple in PCS range
+ *  @param[out]    o                   output XYZ struct
+ *  @param[out]    none                unused
+ *
+ *  @version Oyranos: 0.9.7
+ *  @date    2018/02/28
+ *  @since   2018/02/28 (Oyranos: 0.9.7)
+ */
+void         lcm2iccLab2CIEXYZ       ( const double      * icc_Lab,
+                                       cmsCIEXYZ         * XYZ )
+{
+  cmsCIELab Lab;
+
+  Lab.L = icc_Lab[0] * 100.0;
+  Lab.a = icc_Lab[1] * 257.0 - 128.0;
+  Lab.b = icc_Lab[2] * 257.0 - 128.0;
+
+  cmsLab2XYZ( cmsD50_XYZ(), XYZ, &Lab);
+}
+
+/** Function  lcm2CIEXYZ2iccLab
+ *  @brief    CIE*XYZ -> ICC*Lab
+ *
+ *  Converts from lcms XYZ type to PCS Lab encoding.
+ *
+ *  @param[in]     i                   input XYZ struct
+ *  @param[out]    o                   output Lab triple in PCS range
+ *  @param[out]    none                unused
+ *
+ *  @version Oyranos: 0.9.7
+ *  @date    2018/02/28
+ *  @since   2018/02/28 (Oyranos: 0.9.7)
+ */
+void         lcm2CIEXYZ2iccLab       ( const cmsCIEXYZ   * XYZ,
+                                       double            * icc_Lab )
+{
+  cmsCIELab Lab;
+
+  cmsXYZ2Lab( cmsD50_XYZ(), &Lab, XYZ );
+
+  icc_Lab[0] =  Lab.L          / 100.0;
+  icc_Lab[1] = (Lab.a + 128.0) / 257.0;
+  icc_Lab[2] = (Lab.b + 128.0) / 257.0;
+}
+
+/** Function  lcm2iccXYZ2iccLab
+ *  @brief    ICC*XYZ -> ICC*Lab
+ *
+ *  Converts from PCS XYZ to PCS Lab encoding.
+ *
+ *  @param[in]     i                   input XYZ triple
+ *  @param[out]    o                   output Lab triple in PCS range
+ *  @param[out]    none                unused
+ *
+ *  @version Oyranos: 0.9.7
+ *  @date    2018/02/28
+ *  @since   2018/02/28 (Oyranos: 0.9.7)
+ */
+void         lcm2iccXYZ2iccLab       ( const double      * XYZ,
+                                       double            * icc_Lab )
+{
+  cmsCIEXYZ XYZ_ = { XYZ[0], XYZ[1], XYZ[2] };
+  lcm2CIEXYZ2iccLab( &XYZ_, icc_Lab );
+}
+
+/** Function  lcm2SamplerWhitePointBradford
+ *  @brief    Lab -> Bradford White Point Adaption -> Lab
+ *
+ *  PCS Lab range of 0-1 for all channels is assumed.
+ *  Same like reddish, but adapts all colors to a given white point difference.
+ *  It uses Bradford CAT.
+ *
+ *  @param[in]     i                   input PCS.Lab triple
+ *  @param[out]    o                   output PCS.Lab triple
+ *  @param[out]    data                pointer to array of two doubles with 
+ *                                     source ICC*XYZ white point, followed by
+ *                                     destination ICC*XYZ whitepoint
+ *
+ *  @version Oyranos: 0.9.7
+ *  @date    2018/02/28
+ *  @since   2018/02/28 (Oyranos: 0.9.7)
+ */
+void lcm2SamplerWhitePointBradford   ( const double        i[],
+                                       double              o[],
+                                       void              * data )
+{
+  double * icc_XYZ = (double*) data;
+  double scale = 100.0;
+  cmsCIEXYZ srcXYZwtpt, iXYZ, oXYZ, dstXYZillu;
+
+  srcXYZwtpt.X = icc_XYZ[0] * scale;
+  srcXYZwtpt.Y = icc_XYZ[1] * scale;
+  srcXYZwtpt.Z = icc_XYZ[2] * scale;
+  dstXYZillu.X = icc_XYZ[3+0] * scale;
+  dstXYZillu.Y = icc_XYZ[3+1] * scale;
+  dstXYZillu.Z = icc_XYZ[3+2] * scale;
+
+  lcm2iccLab2CIEXYZ( i, &iXYZ );
+  cmsAdaptToIlluminant( &oXYZ, &srcXYZwtpt, &dstXYZillu, &iXYZ );
+  lcm2CIEXYZ2iccLab( &oXYZ, o );
+}
+
 
 /** Function  lcm2SamplerProof
  *  @brief    Lab -> proofing profile -> Lab
@@ -1075,7 +1260,7 @@ lcm2CreateProfileLutByFuncAndCurvesClean:
 }
 
 /** Function  lcm2CreateAbstractProfile
- *  @brief    Create a effect profile of type abstract in CIE*Lab PCS
+ *  @brief    Create a effect profile of type abstract in ICC*Lab PCS
  *
  *  Here a code example:
  *  @code
@@ -1194,7 +1379,7 @@ lcm2CreateAbstractProfileClean:
 }
 
 /** Function  lcm2CreateAbstractTemperatureProfile
- *  @brief    Create a effect profile of type abstract in CIE*Lab PCS from Kelvin
+ *  @brief    Create a effect profile of type abstract in ICC*Lab PCS from Kelvin
  *
  *  @param[in]    kelvin               the desired temperature in Kelvin; ICC reference (D50) is 5000 Kelvin
  *  @param[in]    source_white_profile a profile, e.g. the actual monitor profile; optional, default is D50
@@ -1225,6 +1410,7 @@ int          lcm2CreateAbstractTemperatureProfile (
 
   const char * kelvin_meta[] = {
     "EFFECT_class", "reddish,white_point,atom",
+    "EFFECT_type", "CIEab",
     "COLORIMETRY_white_point", "yes,reddish,kelvin",
     "CMF_binary", "create-abstract",
     "CMF_version", "0.9.7",
@@ -1351,7 +1537,7 @@ int          lcm2CreateAbstractTemperatureProfile (
 
   if(!error)
     error = lcm2CreateProfileLutByFuncAndCurves( profile,
-                                      lcm2SamplerWhitePoint, icc_ab,
+                                      lcm2SamplerWhitePointLab, icc_ab,
                                       o_curve, i_curve,
                                       "*lab", "*lab", "*lab",
                                       grid_size, cmsSigAToB0Tag );
@@ -1380,8 +1566,8 @@ lcm2CreateAbstractTemperatureProfileClean:
   return error;
 }
 
-/** Function  lcm2CreateAbstractWhitePointProfile
- *  @brief    Create a effect profile of type abstract in CIE*Lab PCS for white point adjustment
+/** Function  lcm2CreateAbstractWhitePointProfileLab
+ *  @brief    Create a effect profile of type abstract in ICC*Lab PCS for white point adjustment
  *
  *  These profiles can be applied to 1D / per single channel only adjustments.
  *  It will be marked with EFFECT_linear=yes in the meta tag.
@@ -1394,10 +1580,10 @@ lcm2CreateAbstractTemperatureProfileClean:
  *  @param[out]   h_profile            the resulting profile; If omitted the function will write the profile to my_abstract_file_name.
  *
  *  @version Oyranos: 0.9.7
- *  @date    2018/02/19
+ *  @date    2018/02/28
  *  @since   2017/06/02 (Oyranos: 0.9.7)
  */
-int          lcm2CreateAbstractWhitePointProfile (
+int          lcm2CreateAbstractWhitePointProfileLab (
                                        double              cie_a,
                                        double              cie_b,
                                        int                 grid_size,
@@ -1415,6 +1601,7 @@ int          lcm2CreateAbstractWhitePointProfile (
   const char * kelvin_meta[] = {
     "EFFECT_class", "reddish,white_point,linear,atom",
     "EFFECT_linear", "yes", /* can be used for 1D curves like VCGT */
+    "EFFECT_type", "CIEab",
     "COLORIMETRY_white_point", "yes,reddish,kelvin",
     "CMF_binary", "create-abstract",
     "CMF_version", "0.9.7",
@@ -1477,7 +1664,7 @@ int          lcm2CreateAbstractWhitePointProfile (
   if(!profile) goto lcm2CreateAbstractWhitePointProfileClean;
 
   error = lcm2CreateProfileLutByFuncAndCurves( profile,
-                                      lcm2SamplerWhitePoint, icc_ab,
+                                      lcm2SamplerWhitePointLab, icc_ab,
                                       o_curve, i_curve,
                                       "*lab", "*lab", "*lab",
                                       grid_size, cmsSigAToB0Tag );
@@ -1486,6 +1673,142 @@ int          lcm2CreateAbstractWhitePointProfile (
     lcm2AddMetaTexts ( profile, "EFFECT_,COLORIMETRY_,CMF_", kelvin_meta, cmsSigMetaTag );
 
 lcm2CreateAbstractWhitePointProfileClean:
+  if(i_curve[0]) cmsFreeToneCurve( i_curve[0] );
+  if(o_curve[0]) cmsFreeToneCurve( o_curve[0] );
+  if(o_curve[1]) cmsFreeToneCurve( o_curve[1] );
+
+  *my_abstract_file_name = kelvin_name;
+  if(h_profile)
+    *h_profile = profile;
+  else if(profile && *my_abstract_file_name)
+  {
+    char * fn = lcm2WriteProfileToFile( profile, *my_abstract_file_name, 0,0 );
+
+    lcm2msg_p( 302, NULL, "wrote to: %s", fn?fn:"----");
+
+    lcm2Free_m(fn);
+    cmsCloseProfile( profile );
+  }
+
+  return error;
+}
+
+/** Function  lcm2CreateAbstractWhitePointProfileBradford
+ *  @brief    Create a effect profile of type abstract in ICC*Lab PCS for white point adjustment
+ *
+ *  These profiles can be applied to 1D / per single channel only adjustments.
+ *  It will be marked with EFFECT_linear=yes in the meta tag.
+ *
+ *  @param[in]    source_white_profile profile with media white point as source
+ *  @param[in]    illu_iccXYZ          ICC*XYZ illuminant in 0.0 - 2.0 range
+ *  @param[in]    grid_size            dimensions of the created LUT; e.g. 33
+ *  @param[in]    icc_profile_version  2.3 or 4.3
+ *  @param[out]   my_abstract_file_name                    profile file name
+ *  @param[out]   h_profile            the resulting profile; If omitted the function will write the profile to my_abstract_file_name.
+ *
+ *  @version Oyranos: 0.9.7
+ *  @date    2018/02/28
+ *  @since   2017/06/02 (Oyranos: 0.9.7)
+ */
+int          lcm2CreateAbstractWhitePointProfileBradford (
+                                       double            * src_iccXYZ,
+                                       double            * illu_iccXYZ,
+                                       int                 grid_size,
+                                       double              icc_profile_version,
+                                       char             ** my_abstract_file_name,
+                                       cmsHPROFILE       * h_profile
+                                     )
+{
+  cmsHPROFILE profile = NULL;
+  cmsToneCurve * i_curve[3] = {NULL,NULL,NULL}, * o_curve[3] = {NULL,NULL,NULL};
+  /* type[6]  Y = (a * X + b) ^ Gamma + c  order: {g, a, b, c} */
+  double curve_params[4] = {1,1,0,0}, curve_params_low[4] = {1,0.95,0,0};
+  int i;
+
+  const char * kelvin_meta[] = {
+    "EFFECT_class", "reddish,type,white_point,linear,atom",
+    "EFFECT_linear", "yes", /* can be used for 1D curves like VCGT */
+    "COLORIMETRY_white_point", "yes,reddish,kelvin",
+    "EFFECT_type", "bradford",
+    "CMF_binary", "create-abstract",
+    "CMF_version", "0.9.7",
+    "CMF_product", "Oyranos",
+    0,0
+  };
+  char * kelvin_name = malloc(1024);
+  int error = !kelvin_name;
+  double icc_XYZ[6] = { src_iccXYZ[0],  src_iccXYZ[1],  src_iccXYZ[2],
+                       illu_iccXYZ[0], illu_iccXYZ[1], illu_iccXYZ[2]};
+  double icc_ab[2] = {0,0};
+
+  if(error) return 1;
+
+  i_curve[0] = cmsBuildGamma(0, 1.0);
+  if(!i_curve[0]) error = 1;
+  for(i = 1; i < 3; ++i)
+  { i_curve[i] = i_curve[0]; }
+
+  if(!error)
+  {
+#ifndef OY_HYP
+    #define OY_SQRT(a,b)   ((a)*(a) + (b)*(b))
+    #define OY_HYP(a,b)    pow(OY_SQRT(a,b),1.0/2.0)
+#endif
+    /* reduce brightness remaining inside a cone with a roof angle of 30° */
+    double max_brightness;
+    double src_Lab[3], dst_Lab[3];
+
+    lcm2iccXYZ2iccLab(  src_iccXYZ, src_Lab );
+    lcm2iccXYZ2iccLab( illu_iccXYZ, dst_Lab );
+    icc_ab[0] = dst_Lab[1] - src_Lab[1];
+    icc_ab[1] = dst_Lab[2] - src_Lab[2];
+    max_brightness = 1.0 - OY_HYP(icc_ab[0],icc_ab[1]/1.5);
+
+    /* avoid color clipping around the white point */
+    curve_params_low[1] = max_brightness;
+    o_curve[0] = cmsBuildParametricToneCurve(0, 6, curve_params_low);
+    o_curve[1] = o_curve[2] = cmsBuildParametricToneCurve(0, 6, curve_params);
+    if(!o_curve[0] || !o_curve[1]) error = 1;
+  }
+
+  if(error) goto lcm2CreateAbstractWhitePointProfileBClean;
+
+  if(icc_ab[1] > 0)
+  {
+    sprintf( kelvin_name, "Reddish CIE*a %g CIE*b %g", icc_ab[0], icc_ab[1] );
+  } else if(-0.001 < icc_ab[1] && icc_ab[0] < 0.001) {
+    sprintf( kelvin_name, "CIE*a %g CIE*b %g", icc_ab[0], icc_ab[1] );
+    kelvin_meta[1] = "neutral,type,white_point,atom";
+    kelvin_meta[3] = "yes,D50,kelvin";
+  } else {
+    sprintf( kelvin_name, "Bluish CIE*a %g CIE*b %g", icc_ab[0], icc_ab[1] );
+    kelvin_meta[1] = "bluish,type,white_point,atom";
+    kelvin_meta[3] = "yes,bluish,kelvin";
+  }
+
+  profile = lcm2CreateProfileFragment (
+                             "*lab", // CIE*Lab
+                             "*lab", // CIE*Lab
+                             icc_profile_version,
+                             kelvin_name,
+                             "Oyranos project 2018",
+                             "Kai-Uwe Behrmann",
+                             ICC_2011_LICENSE,
+                             "Bradford",
+                             "http://www.cie.co.at",
+                             NULL);
+  if(!profile) goto lcm2CreateAbstractWhitePointProfileBClean;
+
+  error = lcm2CreateProfileLutByFuncAndCurves( profile,
+                                      lcm2SamplerWhitePointBradford, icc_XYZ,
+                                      o_curve, i_curve,
+                                      "*lab", "*lab", "*lab",
+                                      grid_size, cmsSigAToB0Tag );
+
+  if(!error)
+    lcm2AddMetaTexts ( profile, "EFFECT_,COLORIMETRY_,CMF_", kelvin_meta, cmsSigMetaTag );
+
+lcm2CreateAbstractWhitePointProfileBClean:
   if(i_curve[0]) cmsFreeToneCurve( i_curve[0] );
   if(o_curve[0]) cmsFreeToneCurve( o_curve[0] );
   if(o_curve[1]) cmsFreeToneCurve( o_curve[1] );
@@ -2145,7 +2468,8 @@ int            lcm2Version           ( )
  *  by lcm2CreateAbstractProfile(). It needs a @ref samplers function, which
  *  fills the Look Up Table (LUT). Two APIs exist to generate white point
  *  effects, lcm2CreateAbstractTemperatureProfile() and
- *  lcm2CreateAbstractWhitePointProfile(). These above high level APIs allow to
+ *  lcm2CreateAbstractWhitePointProfileLab() or
+ *  lcm2CreateAbstractWhitePointProfileBradford(). These above high level APIs allow to
  *  write the profile to disc in one go.
  *
  *  The lower level APIs can be used to customise the profile generation.

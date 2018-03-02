@@ -2537,23 +2537,62 @@ oyTESTRESULT_e testEffects ()
   oyProfile_Release( &abstract );
 
 
-
   double XYZ[3] = {-1, -1, -1};
-  double Lab[3], cie_a, cie_b;
-  prof = oyProfile_FromStd( oyASSUMED_WEB, 0, testobj );
-  oyProfile_GetWhitePoint ( prof, XYZ ); 
-  oyProfile_Release( &prof );
+  double Lab[3], cie_a, cie_b, dst_cie_a, dst_cie_b;
+  error = oyGetDisplayWhitePoint( 2, XYZ );
   oyXYZ2Lab( XYZ, Lab );
-  cie_a = XYZ[1]; cie_b = XYZ[2];
+  cie_a = Lab[1]/256.0+0.5; cie_b = Lab[2]/256.0+0.5;
+  error = oyGetDisplayWhitePoint( 5, XYZ );
+  oyXYZ2Lab( XYZ, Lab );
+  dst_cie_a = Lab[1]/256.0+0.5; dst_cie_b = Lab[2]/256.0+0.5;
   error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/cie_a",
-                                   0.5 - cie_a, 0, OY_CREATE_NEW );
+                                   dst_cie_a - cie_a, 0, OY_CREATE_NEW );
   if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromDouble() error: %d", error )
   error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/cie_b",
-                                   0.5 - cie_b, 0, OY_CREATE_NEW );
+                                   dst_cie_b - cie_b, 0, OY_CREATE_NEW );
   if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromDouble() error: %d", error )
-  fprintf(zout,"source white point cie_a %g cie_b %g\n", cie_a, cie_b );
+  fprintf(zout,"source white point cie_ab %g %g -> %g %g\n", cie_a, cie_b, dst_cie_a, dst_cie_b );
   error = oyOptions_Handle( "//" OY_TYPE_STD "/create_profile.white_point_adjust.lab",
                             opts,"create_profile.white_point_adjust.lab",
+                            &result_opts );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_Handle() error: %d", error )
+  abstract = (oyProfile_s*)oyOptions_GetType( result_opts, -1, "icc_profile",
+                                              oyOBJECT_PROFILE_S );
+  oyOptions_Release( &result_opts );
+  oyOptions_Release( &opts );
+
+  text = oyProfile_GetText( abstract, oyNAME_DESCRIPTION );
+
+  if(abstract)
+  {
+    PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyOptions_Handle(\"create_profile\"): %s", text );
+  } else if(error == -1)
+  {
+    PRINT_SUB( oyTESTRESULT_XFAIL,
+    "oyOptions_Handle(\"create_profile\") no" );
+  } else
+  {
+    PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyOptions_Handle(\"create_profile\") zero" );
+  }
+  oyProfile_ToFile_( (oyProfile_s_*)abstract, "test_wtpt_effect-lab.icc" );
+  oyProfile_Release( &abstract );
+
+
+  double        src_XYZ[3] = {0.0, 0.0, 0.0}, dst_XYZ[3] = {0.0, 0.0, 0.0};
+  error = oyGetDisplayWhitePoint( 2, src_XYZ );
+  error = oyGetDisplayWhitePoint( 5, dst_XYZ );
+  error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/src_iccXYZ", src_XYZ[0], 0, OY_CREATE_NEW );
+  error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/src_iccXYZ", src_XYZ[1], 1, OY_CREATE_NEW );
+  error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/src_iccXYZ", src_XYZ[2], 2, OY_CREATE_NEW );
+  error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/illu_iccXYZ", dst_XYZ[0], 0, OY_CREATE_NEW );
+  error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/illu_iccXYZ", dst_XYZ[1], 1, OY_CREATE_NEW );
+  error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/illu_iccXYZ", dst_XYZ[2], 2, OY_CREATE_NEW );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromDouble() error: %d", error )
+  fprintf(zout,"white point XYZ %g %g %g -> %g %g %g\n", src_XYZ[0], src_XYZ[1], src_XYZ[2], dst_XYZ[0], dst_XYZ[1], dst_XYZ[2] );
+  error = oyOptions_Handle( "//" OY_TYPE_STD "/create_profile.white_point_adjust.bradford",
+                            opts,"create_profile.white_point_adjust.bradford",
                             &result_opts );
   if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_Handle() error: %d", error )
   abstract = (oyProfile_s*)oyOptions_GetType( result_opts, -1, "icc_profile",
@@ -2577,7 +2616,7 @@ oyTESTRESULT_e testEffects ()
     "oyOptions_Handle(\"create_profile\") zero" );
   }
 
-  oyProfile_ToFile_( (oyProfile_s_*)abstract, "test_wtpt_effect.icc" );
+  oyProfile_ToFile_( (oyProfile_s_*)abstract, "test_wtpt_effect-bradford.icc" );
   oyProfile_Release( &abstract );
 
   return result;

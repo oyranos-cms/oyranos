@@ -59,8 +59,9 @@ oyConnectorImaging_s  l2cms_cmmIccPlug_connector;
 oyCMMapi6_s           l2cms_api6_cmm;                    OY_LCM2_DATA_CONVERT_REGISTRATION
 oyCMMapi10_s          l2cms_api10_cmm;                   OY_LCM2_CREATE_ABSTRACT_PROOFING_REGISTRATION
 oyCMMapi10_s          l2cms_api10_cmm2;                  OY_LCM2_CREATE_MATRIX_REGISTRATION
-oyCMMapi10_s          l2cms_api10_cmm3;                  OY_LCM2_CREATE_ABSTRACT_WHITE_POINT_REGISTRATION
-oyCMMapi10_s          l2cms_api10_cmm4;                  OY_LCM2_PARSE_CGATS
+oyCMMapi10_s          l2cms_api10_cmm3;                  OY_LCM2_CREATE_ABSTRACT_WHITE_POINT_LAB_REGISTRATION
+oyCMMapi10_s          l2cms_api10_cmm4;                  OY_LCM2_CREATE_ABSTRACT_WHITE_POINT_BRADFORD_REGISTRATION
+oyCMMapi10_s          l2cms_api10_cmm5;                  OY_LCM2_PARSE_CGATS
 */
 
 void* oyAllocateFunc_           (size_t        size);
@@ -325,8 +326,12 @@ static void (*l2cmsFloat2LabEncoded)(cmsUInt16Number wLab[3], const cmsCIELab* L
 static const cmsCIEXYZ*  (*l2cmsD50_XYZ)(void);
 static const cmsCIExyY*  (*l2cmsD50_xyY)(void);
 static cmsBool           (*l2cmsWhitePointFromTemp)(cmsCIExyY* WhitePoint, cmsFloat64Number  TempK) = NULL;
+static cmsBool           (*l2cmsAdaptToIlluminant)(cmsCIEXYZ* Result, const cmsCIEXYZ* SourceWhitePt,
+                                                                           const cmsCIEXYZ* Illuminant,
+                                                                           const cmsCIEXYZ* Value) = NULL;
 static void              (*l2cmsxyY2XYZ)(cmsCIEXYZ* Dest, const cmsCIExyY* Source) = NULL;
 static void              (*l2cmsXYZ2Lab)(const cmsCIEXYZ* WhitePoint, cmsCIELab* Lab, const cmsCIEXYZ* xyz) = NULL;
+static void              (*l2cmsLab2XYZ)(const cmsCIEXYZ* WhitePoint, cmsCIEXYZ* xyz, const cmsCIELab* Lab) = NULL;
 static cmsFloat64Number (*l2cmsDeltaE)(const cmsCIELab* Lab1, const cmsCIELab* Lab2) = NULL;
 static void (*l2cmsGetAlarmCodes)(cmsUInt16Number NewAlarm[cmsMAXCHANNELS]) = NULL;
 static cmsContext (*l2cmsCreateContext)(void* Plugin, void* UserData) = NULL;
@@ -477,8 +482,10 @@ int                l2cmsCMMInit       ( oyStruct_s        * filter OY_UNUSED )
       LOAD_FUNC( cmsD50_XYZ, NULL );
       LOAD_FUNC( cmsD50_xyY, NULL );
       LOAD_FUNC( cmsWhitePointFromTemp, NULL );
+      LOAD_FUNC( cmsAdaptToIlluminant, NULL );
       LOAD_FUNC( cmsxyY2XYZ, NULL );
       LOAD_FUNC( cmsXYZ2Lab, NULL );
+      LOAD_FUNC( cmsLab2XYZ, NULL );
       LOAD_FUNC( cmsDeltaE, NULL );
       LOAD_FUNC( cmsGetAlarmCodes, NULL );
 #if LCMS_VERSION >= 2060
@@ -591,8 +598,10 @@ int                l2cmsCMMInit       ( oyStruct_s        * filter OY_UNUSED )
 #define cmsD50_XYZ l2cmsD50_XYZ
 #define cmsD50_xyY l2cmsD50_xyY
 #define cmsWhitePointFromTemp l2cmsWhitePointFromTemp
+#define cmsAdaptToIlluminant l2cmsAdaptToIlluminant
 #define cmsxyY2XYZ l2cmsxyY2XYZ
 #define cmsXYZ2Lab l2cmsXYZ2Lab
+#define cmsLab2XYZ l2cmsLab2XYZ
 #define cmsDeltaE l2cmsDeltaE
 #define cmsGetAlarmCodes l2cmsGetAlarmCodes
 #define cmsCreateContext l2cmsCreateContext
@@ -3167,7 +3176,7 @@ oyImage_s* lcm2ParseCGATS          ( const char        * cgats )
  *  @since   2017/11/26 (Oyranos: 0.9.7)
  *  @date    2017/11/26
  */
-int          l2cmsMOptions_Handle4   ( oyOptions_s       * options,
+int          l2cmsMOptions_Handle5   ( oyOptions_s       * options,
                                        const char        * command,
                                        oyOptions_s      ** result )
 {
@@ -3215,7 +3224,7 @@ int          l2cmsMOptions_Handle4   ( oyOptions_s       * options,
  *  @since   2017/06/06 (Oyranos: 0.9.7)
  *  @date    2017/06/06
  */
-const char * l2cmsInfoGetTextProfileC4(const char        * select,
+const char * l2cmsInfoGetTextProfileC5(const char        * select,
                                        oyNAME_e            type,
                                        oyStruct_s        * context OY_UNUSED )
 {
@@ -3248,19 +3257,19 @@ const char * l2cmsInfoGetTextProfileC4(const char        * select,
 }
 const char *l2cms_texts_parse_cgats[4] = {"can_handle","parse_cgats","help",0};
 
-/** l2cms_api10_cmm4
+/** l2cms_api10_cmm5
  *  @brief   Node for Parsing a CGATS text
  *
  *  littleCMS 2 oyCMMapi10_s implementation
  *
  *  For the front end API see oyOptions_Handle(). The backend options
- *  are described in l2cmsMOptions_Handle4().
+ *  are described in l2cmsMOptions_Handle5().
  *
  *  @version Oyranos: 0.9.7
  *  @since   2017/06/05 (Oyranos: 0.9.7)
  *  @date    2017/06/05
  */
-oyCMMapi10_s_    l2cms_api10_cmm4 = {
+oyCMMapi10_s_    l2cms_api10_cmm5 = {
 
   oyOBJECT_CMM_API10_S,
   0,0,0,
@@ -3277,15 +3286,230 @@ oyCMMapi10_s_    l2cms_api10_cmm4 = {
   0,   /* api5_; keep empty */
   0,   /* runtime_context */
  
-  l2cmsInfoGetTextProfileC4,            /**< getText */
+  l2cmsInfoGetTextProfileC5,            /**< getText */
   (char**)l2cms_texts_parse_cgats,      /**<texts; list of arguments to getText*/
  
-  l2cmsMOptions_Handle4                 /**< oyMOptions_Handle_f oyMOptions_Handle */
+  l2cmsMOptions_Handle5                 /**< oyMOptions_Handle_f oyMOptions_Handle */
 };
 
 /* OY_LCM2_PARSE_CGATS -------------------------- */
 
-/* OY_LCM2_CREATE_ABSTRACT_WHITE_POINT_REGISTRATION -------------------------- */
+const char *l2cms_texts_profile_create[4] = {"can_handle","create_profile","help",0};
+
+/* OY_LCM2_CREATE_ABSTRACT_WHITE_POINT_BRADFORD_REGISTRATION -------------------------- */
+
+/** Function lcm2AbstractWhitePointBradford
+ *  @brief   create a White point correction profile with Bradford
+ *
+ *  Abstract profiles can easily be merged into a multi profile transform.
+ *
+ *  @see lcm2CreateAbstractWhitePointProfileBradford()
+ *
+ *  @param         src_iccXYZ          the source white point
+ *  @param         illu_iccXYZ         the illumination white point
+ *  @param         icc_profile_flags   profile flags
+ *
+ *  @version Oyranos: 0.9.7
+ *  @date    2018/03/02
+ *  @since   2017/06/05 (Oyranos: 0.9.7)
+ */
+oyProfile_s* lcm2AbstractWhitePointBradford (
+                                       double            * src_iccXYZ,
+                                       double            * illu_iccXYZ,
+                                       uint32_t            icc_profile_flags )
+{
+  int error = 0;
+  cmsHPROFILE abs = NULL;
+  char * my_abstract_file_name = NULL;
+  double profile_version = 2.4;
+  oyProfile_s * prof = NULL;
+
+  l2cms_msg( oyMSG_DBG, NULL, OY_DBG_FORMAT_
+             "XYZ %g %g %g -> %g %g %g", OY_DBG_ARGS_, src_iccXYZ[0], src_iccXYZ[1], src_iccXYZ[2], illu_iccXYZ[0], illu_iccXYZ[1], illu_iccXYZ[2] );
+
+  if(icc_profile_flags & OY_ICC_VERSION_2)
+    profile_version = 4.3;
+
+  error = lcm2CreateAbstractWhitePointProfileBradford( src_iccXYZ, illu_iccXYZ,
+                                                15,
+                                                profile_version,
+                                                & my_abstract_file_name,
+                                                &abs );
+
+  if(error || !abs)
+  {
+    l2cms_msg( oyMSG_WARN, (oyStruct_s*)abs, OY_DBG_FORMAT_ " "
+               "failed to build white point effect: %s",
+               OY_DBG_ARGS_, oyNoEmptyString_m_(my_abstract_file_name) );
+  } else
+  {
+    void * data;
+    size_t size = 0;
+    data = lcm2WriteProfileToMem( abs, &size, oyAllocateFunc_ );
+    prof = oyProfile_FromMem( size, data, 0,0 );
+    if(data && size) oyFree_m_( data );
+  }
+
+  if(oy_debug && getenv("OY_DEBUG_WRITE"))
+  {
+      char * t = 0; oyStringAddPrintf( &t, 0,0,
+      "%04d-%s-abstract-wtptB[%d]", ++oy_debug_write_id,CMM_NICK,oyStruct_GetId((oyStruct_s*)prof));
+      lcm2WriteProfileToFile( abs, t, NULL,NULL );
+      oyFree_m_(t);
+  }
+
+  oyFree_m_(my_abstract_file_name);
+  if(abs) l2cmsCloseProfile( abs );
+
+  return prof;
+}
+
+#define OY_LCM2_CREATE_ABSTRACT_WHITE_POINT_BRADFORD_REGISTRATION OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH \
+  "create_profile.white_point_adjust.bradford.icc._" CMM_NICK "._CPU"
+
+/**
+ *  This function implements oyMOptions_Handle_f.
+ *
+ *  @param[in]     options             expects at least two options
+ *                                     - "src_iccXYZ": The option shall be a double[3] array.
+ *                                     - "illu_iccXYZ": The option shall be a double[3] array.
+ *                                     - "icc_profile_flags"  ::OY_ICC_VERSION_2 and ::OY_ICC_VERSION_4 let select version 2 and 4 profiles separately.
+ *                                     This option shall be a integer.
+ *  @param[in]     command             "//" OY_TYPE_STD "/create_profile.white_point_adjust.bradford"
+ *  @param[out]    result              will contain a oyProfile_s in "icc_profile.create_profile.white_point_adjust.bradford"
+ *
+ *  This function uses internally lcm2AbstractWhitePoint().
+ *
+ *  @version Oyranos: 0.9.7
+ *  @date    2018/03/02
+ *  @since   2017/06/05 (Oyranos: 0.9.7)
+ */
+int          l2cmsMOptions_Handle4   ( oyOptions_s       * options,
+                                       const char        * command,
+                                       oyOptions_s      ** result )
+{
+  int error = 0;
+  double  src_iccXYZ[3] = {-1,-1,-1},
+         illu_iccXYZ[3] = {-1,-1,-1};
+
+  if(oyFilterRegistrationMatch(command,"can_handle", 0))
+  {
+    if(oyFilterRegistrationMatch(command,"create_profile.white_point_adjust.bradford", 0))
+    {
+      error = !(oyOptions_FindDouble( options,  "src_iccXYZ", 2,  &src_iccXYZ[2] ) == 0 &&
+                oyOptions_FindDouble( options, "illu_iccXYZ", 2, &illu_iccXYZ[2] ) == 0 );
+
+      return error;
+    }
+    else
+      return -1;
+  }
+  else if(oyFilterRegistrationMatch(command,"create_profile.white_point_adjust.bradford", 0))
+  {
+    int32_t icc_profile_flags = 0;
+    oyOptions_FindInt( options, "icc_profile_flags", 0, &icc_profile_flags ); 
+    oyProfile_s * p = NULL;
+
+    if( oyOptions_FindDouble( options,  "src_iccXYZ", 0, &src_iccXYZ[0] ) == 0 &&
+        oyOptions_FindDouble( options,  "src_iccXYZ", 1, &src_iccXYZ[1] ) == 0 &&
+        oyOptions_FindDouble( options,  "src_iccXYZ", 2, &src_iccXYZ[2] ) == 0 &&
+        oyOptions_FindDouble( options, "illu_iccXYZ", 0, &illu_iccXYZ[0] ) == 0 &&
+        oyOptions_FindDouble( options, "illu_iccXYZ", 1, &illu_iccXYZ[1] ) == 0 &&
+        oyOptions_FindDouble( options, "illu_iccXYZ", 2, &illu_iccXYZ[2] ) == 0 )
+      p = lcm2AbstractWhitePointBradford( src_iccXYZ, illu_iccXYZ, icc_profile_flags );
+
+    if(p)
+    {
+      oyOption_s * o = oyOption_FromRegistration( OY_LCM2_CREATE_ABSTRACT_WHITE_POINT_BRADFORD_REGISTRATION ".icc_profile", 0 );
+      error = oyOption_MoveInStruct( o, (oyStruct_s**) &p );
+      if(!*result)
+        *result = oyOptions_New(0);
+      oyOptions_MoveIn( *result, &o, -1 );
+    } else
+        l2cms_msg( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_
+                   "effect creation failed",
+                   OY_DBG_ARGS_ );
+  }
+
+  return 0;
+}
+/**
+ *  This function implements oyCMMinfoGetText_f.
+ *
+ *  @version Oyranos: 0.9.7
+ *  @date    2018/03/02
+ *  @since   2017/06/06 (Oyranos: 0.9.7)
+ */
+const char * l2cmsInfoGetTextProfile4(const char        * select,
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context OY_UNUSED )
+{
+         if(strcmp(select, "can_handle")==0)
+  {
+         if(type == oyNAME_NICK)
+      return "check";
+    else if(type == oyNAME_NAME)
+      return _("check");
+    else
+      return _("Check if this module can handle a certain command.");
+  } else if(strcmp(select, "create_profile")==0)
+  {
+         if(type == oyNAME_NICK)
+      return "white_point_adjust.bradford";
+    else if(type == oyNAME_NAME)
+      return _("Create a ICC white point profile.");
+    else
+      return _("The littleCMS \"create_profile.white_point_adjust.bradford\" command lets you create ICC abstract profiles from CIE*XYZ coordinates for white point adjustment. The filter expects a oyOption_s object with name \"src_iccXYZ\" and \"illu_iccXYZ\" each containing a double triple value in range 0.0 - 2.0. The result will appear in \"icc_profile\" with the additional attributes \"create_profile.white_point_adjust.bradford\" as a oyProfile_s object.");
+  } else if(strcmp(select, "help")==0)
+  {
+         if(type == oyNAME_NICK)
+      return "help";
+    else if(type == oyNAME_NAME)
+      return _("Create a ICC abstract white point effect profile.");
+    else
+      return _("The littleCMS \"create_profile.white_point_adjust.bradford\" command lets you create ICC abstract profiles from a pair of CIE*XYZ coordinates. See the \"create_profile\" info item.");
+  }
+  return 0;
+}
+
+/** l2cms_api10_cmm4
+ *  @brief   Node for Creating White Point Effect Profiles
+ *
+ *  littleCMS 2 oyCMMapi10_s implementation
+ *
+ *  For the front end API see oyOptions_Handle(). The backend options
+ *  are described in l2cmsMOptions_Handle4().
+ *
+ *  @version Oyranos: 0.9.7
+ *  @date    2018/03/02
+ *  @since   2018/03/02 (Oyranos: 0.9.7)
+ */
+oyCMMapi10_s_    l2cms_api10_cmm4 = {
+
+  oyOBJECT_CMM_API10_S,
+  0,0,0,
+  (oyCMMapi_s*) & l2cms_api10_cmm5,
+
+  l2cmsCMMInit,
+  l2cmsCMMMessageFuncSet,
+
+  OY_LCM2_CREATE_ABSTRACT_WHITE_POINT_BRADFORD_REGISTRATION,
+
+  CMM_VERSION,
+  CMM_API_VERSION,                  /**< int32_t module_api[3] */
+  0,   /* id_; keep empty */
+  0,   /* api5_; keep empty */
+  0,   /* runtime_context */
+ 
+  l2cmsInfoGetTextProfile4,            /**< getText */
+  (char**)l2cms_texts_profile_create,  /**<texts; list of arguments to getText*/
+ 
+  l2cmsMOptions_Handle4                 /**< oyMOptions_Handle_f oyMOptions_Handle */
+};
+
+/* OY_LCM2_CREATE_ABSTRACT_WHITE_POINT_BRADFORD_REGISTRATION -------------------------- */
+
+/* OY_LCM2_CREATE_ABSTRACT_WHITE_POINT_LAB_REGISTRATION -------------------------- */
 
 /** Function lcm2AbstractWhitePoint
  *  @brief   create a White point correction profile
@@ -3318,10 +3542,10 @@ oyProfile_s* lcm2AbstractWhitePoint  ( double              cie_a,
   if(icc_profile_flags & OY_ICC_VERSION_2)
     profile_version = 4.3;
 
-  error = lcm2CreateAbstractWhitePointProfile ( cie_a, cie_b, 15,
-                                                profile_version,
-                                                & my_abstract_file_name,
-                                                &abs );
+  error = lcm2CreateAbstractWhitePointProfileLab( cie_a, cie_b, 15,
+                                                  profile_version,
+                                                  &my_abstract_file_name,
+                                                  &abs );
 
   if(error || !abs)
   {
@@ -3340,7 +3564,7 @@ oyProfile_s* lcm2AbstractWhitePoint  ( double              cie_a,
   if(oy_debug && getenv("OY_DEBUG_WRITE"))
   {
       char * t = 0; oyStringAddPrintf( &t, 0,0,
-      "%04d-%s-abstract-wtpt[%d]", ++oy_debug_write_id,CMM_NICK,oyStruct_GetId((oyStruct_s*)prof));
+      "%04d-%s-abstract-wtptL[%d]", ++oy_debug_write_id,CMM_NICK,oyStruct_GetId((oyStruct_s*)prof));
       lcm2WriteProfileToFile( abs, t, NULL,NULL );
       oyFree_m_(t);
   }
@@ -3351,8 +3575,8 @@ oyProfile_s* lcm2AbstractWhitePoint  ( double              cie_a,
   return prof;
 }
 
-#define OY_LCM2_CREATE_ABSTRACT_WHITE_POINT_REGISTRATION OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH \
-  "create_profile.white_point_adjust.icc._" CMM_NICK "._CPU"
+#define OY_LCM2_CREATE_ABSTRACT_WHITE_POINT_LAB_REGISTRATION OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH \
+  "create_profile.white_point_adjust.lab.icc._" CMM_NICK "._CPU"
 
 /**
  *  This function implements oyMOptions_Handle_f.
@@ -3362,8 +3586,8 @@ oyProfile_s* lcm2AbstractWhitePoint  ( double              cie_a,
  *                                     - "cie_b": The option shall be a double.
  *                                     - "icc_profile_flags"  ::OY_ICC_VERSION_2 and ::OY_ICC_VERSION_4 let select version 2 and 4 profiles separately.
  *                                     This option shall be a integer.
- *  @param[in]     command             "//" OY_TYPE_STD "/create_profile.white_point_adjust"
- *  @param[out]    result              will contain a oyProfile_s in "icc_profile.create_profile.white_point_adjust"
+ *  @param[in]     command             "//" OY_TYPE_STD "/create_profile.white_point_adjust.lab"
+ *  @param[out]    result              will contain a oyProfile_s in "icc_profile.create_profile.white_point_adjust.lab"
  *
  *  This function uses internally lcm2AbstractWhitePoint().
  *
@@ -3381,7 +3605,7 @@ int          l2cmsMOptions_Handle3   ( oyOptions_s       * options,
 
   if(oyFilterRegistrationMatch(command,"can_handle", 0))
   {
-    if(oyFilterRegistrationMatch(command,"create_profile.white_point_adjust", 0))
+    if(oyFilterRegistrationMatch(command,"create_profile.white_point_adjust.lab", 0))
     {
       error = oyOptions_FindDouble( options, "cie_a", 0, &cie_a ); 
 
@@ -3390,7 +3614,7 @@ int          l2cmsMOptions_Handle3   ( oyOptions_s       * options,
     else
       return -1;
   }
-  else if(oyFilterRegistrationMatch(command,"create_profile.white_point_adjust", 0))
+  else if(oyFilterRegistrationMatch(command,"create_profile.white_point_adjust.lab", 0))
   {
     int32_t icc_profile_flags = 0;
     oyOptions_FindInt( options, "icc_profile_flags", 0, &icc_profile_flags ); 
@@ -3402,7 +3626,7 @@ int          l2cmsMOptions_Handle3   ( oyOptions_s       * options,
 
     if(p)
     {
-      oyOption_s * o = oyOption_FromRegistration( OY_LCM2_CREATE_ABSTRACT_WHITE_POINT_REGISTRATION".icc_profile", 0 );
+      oyOption_s * o = oyOption_FromRegistration( OY_LCM2_CREATE_ABSTRACT_WHITE_POINT_LAB_REGISTRATION ".icc_profile", 0 );
       error = oyOption_MoveInStruct( o, (oyStruct_s**) &p );
       if(!*result)
         *result = oyOptions_New(0);
@@ -3419,8 +3643,8 @@ int          l2cmsMOptions_Handle3   ( oyOptions_s       * options,
  *  This function implements oyCMMinfoGetText_f.
  *
  *  @version Oyranos: 0.9.7
+ *  @date    2018/03/01
  *  @since   2017/06/06 (Oyranos: 0.9.7)
- *  @date    2017/06/06
  */
 const char * l2cmsInfoGetTextProfileC3(const char        * select,
                                        oyNAME_e            type,
@@ -3437,23 +3661,22 @@ const char * l2cmsInfoGetTextProfileC3(const char        * select,
   } else if(strcmp(select, "create_profile")==0)
   {
          if(type == oyNAME_NICK)
-      return "white_point_adjust";
+      return "white_point_adjust.lab";
     else if(type == oyNAME_NAME)
-      return _("Create a ICC abstract white point profile.");
+      return _("Create a ICC white point profile.");
     else
-      return _("The littleCMS \"create_profile.white_point_adjust\" command lets you create ICC abstract profiles from CIE*ab coordinates for white point adjustment. The filter expects a oyOption_s object with name \"cie_a\" and \"cie_b\" each containing a double value in range -0.5 - 0.5. The result will appear in \"icc_profile\" with the additional attributes \"create_profile.white_point_adjust\" as a oyProfile_s object.");
+      return _("The littleCMS \"create_profile.white_point_adjust.lab\" command lets you create ICC abstract profiles from CIE*ab coordinates for white point adjustment. The filter expects a oyOption_s object with name \"cie_a\" and \"cie_b\" each containing a double value in range -0.5 - 0.5. The result will appear in \"icc_profile\" with the additional attributes \"create_profile.white_point_adjust.lab\" as a oyProfile_s object.");
   } else if(strcmp(select, "help")==0)
   {
          if(type == oyNAME_NICK)
       return "help";
     else if(type == oyNAME_NAME)
-      return _("Create a ICC white point effect profile.");
+      return _("Create a ICC abstract white point effect profile.");
     else
-      return _("The littleCMS \"create_profile.white_point_adjust\" command lets you create ICC abstract profiles from CIE*ab coordinates. See the \"white_point_adjust\" info item.");
+      return _("The littleCMS \"create_profile.white_point_adjust.lab\" command lets you create ICC abstract profiles from CIE*ab coordinates. See the \"create_profile\" info item.");
   }
   return 0;
 }
-const char *l2cms_texts_profile_create[4] = {"can_handle","create_profile","help",0};
 
 /** l2cms_api10_cmm3
  *  @brief   Node for Creating White Point Effect Profiles
@@ -3476,7 +3699,7 @@ oyCMMapi10_s_    l2cms_api10_cmm3 = {
   l2cmsCMMInit,
   l2cmsCMMMessageFuncSet,
 
-  OY_LCM2_CREATE_ABSTRACT_WHITE_POINT_REGISTRATION,
+  OY_LCM2_CREATE_ABSTRACT_WHITE_POINT_LAB_REGISTRATION,
 
   CMM_VERSION,
   CMM_API_VERSION,                  /**< int32_t module_api[3] */
@@ -3490,7 +3713,7 @@ oyCMMapi10_s_    l2cms_api10_cmm3 = {
   l2cmsMOptions_Handle3                 /**< oyMOptions_Handle_f oyMOptions_Handle */
 };
 
-/* OY_LCM2_CREATE_ABSTRACT_WHITE_POINT_REGISTRATION -------------------------- */
+/* OY_LCM2_CREATE_ABSTRACT_WHITE_POINT_LAB_REGISTRATION -------------------------- */
 
 /* OY_LCM2_CREATE_ABSTRACT_PROOFING_REGISTRATION -------------------------- */
 
@@ -3737,7 +3960,7 @@ const char * l2cmsInfoGetTextProfileC2(const char        * select,
     else if(type == oyNAME_NAME)
       return _("Create a ICC proofing profile.");
     else
-      return _("The littleCMS \"create_profile.proofing_effect\" command lets you create ICC abstract profiles from some given ICC profile. See the \"proofing_effect\" info item.");
+      return _("The littleCMS \"create_profile.proofing_effect\" command lets you create ICC abstract profiles from some given ICC profile. See the \"create_profile\" info item.");
   }
   return 0;
 }

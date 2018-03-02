@@ -64,9 +64,17 @@ int          lcm2CreateAbstractTemperatureProfile (
                                        char             ** my_abstract_file_name,
                                        cmsHPROFILE       * h_profile
                                      );
-int          lcm2CreateAbstractWhitePointProfile (
+int          lcm2CreateAbstractWhitePointProfileLab (
                                        double              cie_a,
                                        double              cie_b,
+                                       int                 grid_size,
+                                       double              icc_profile_version,
+                                       char             ** my_abstract_file_name,
+                                       cmsHPROFILE       * h_profile
+                                     );
+int          lcm2CreateAbstractWhitePointProfileBradford (
+                                       double            * src_iccXYZ,
+                                       double            * illu_iccXYZ,
                                        int                 grid_size,
                                        double              icc_profile_version,
                                        char             ** my_abstract_file_name,
@@ -130,18 +138,33 @@ int          lcm2CreateProfileLutByFuncAndCurves (
                                      );
 
 
+/* PCS color space conversions */
+void         lcm2iccLab2CIEXYZ       ( const double      * icc_Lab,
+                                       cmsCIEXYZ         * XYZ );
+void         lcm2CIEXYZ2iccLab       ( const cmsCIEXYZ   * XYZ,
+                                       double            * icc_Lab );
+void         lcm2iccXYZ2iccLab       ( const double      * XYZ,
+                                       double            * icc_Lab );
+/* color space converters */
 void         lcm2SamplerLab2LCh      ( const double        i[],
                                        double              o[],
                                        void              * none );
 void         lcm2SamplerLCh2Lab      ( const double        i[],
                                        double              o[],
                                        void              * none );
+void         lcm2SamplerLab2JCh      ( const double        i[],
+                                       double              o[],
+                                       void              * viewing_condition );
+void         lcm2SamplerLCh2Lab      ( const double        i[],
+                                       double              o[],
+                                       void              * viewing_condition );
 void         lcm2SamplerRGB2JpegYCbCr( const double        i[],
                                        double              o[],
                                        void              * none );
 void         lcm2SamplerJpegYCbCr2RGB( const double        i[],
                                        double              o[],
                                        void              * none );
+/* effects */
 void         lcm2SamplerIdendity     ( const double        i[],
                                        double              o[],
                                        void              * none );
@@ -157,7 +180,10 @@ void         lcm2SamplerSepia        ( const double        i[],
 void         lcm2SamplerReddish      ( const double        i[],
                                        double              o[],
                                        void              * none );
-void         lcm2SamplerWhitePoint   ( const double        i[],
+void         lcm2SamplerWhitePointLab( const double        i[],
+                                       double              o[],
+                                       void              * data );
+void lcm2SamplerWhitePointBradford   ( const double        i[],
                                        double              o[],
                                        void              * data );
 void         lcm2SamplerProof        ( const double        i[],
