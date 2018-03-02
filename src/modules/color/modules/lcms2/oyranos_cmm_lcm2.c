@@ -108,8 +108,8 @@ int                l2cmsCMMInit      ( );
  */
 typedef struct l2cmsProfileWrap_s_ {
   uint32_t     type;                   /**< shall be l2cmsPROFILE */
-  size_t       size;
-  oyPointer    block;                  /**< Oyranos raw profile pointer. Dont free! */
+  size_t       size;                   /**< size of block */
+  oyPointer    block;                  /**< profile data */
   oyPointer    l2cms;                  /**< cmsHPROFILE struct */
   icColorSpaceSignature sig;           /**< ICC profile signature */
   oyProfile_s *dbg_profile;            /**< only for debugging */
@@ -709,6 +709,8 @@ int l2cmsCMMProfileReleaseWrap(oyPointer *p)
 
     s->l2cms = 0;
     s->type = 0;
+    if(s->block && s->size)
+      free(s->block);
     s->size = 0;
     s->block = 0;
     free(s);
@@ -746,7 +748,7 @@ int          l2cmsCMMData_Open        ( oyStruct_s        * data,
     if(data->type_ == oyOBJECT_PROFILE_S)
     {
       p = (oyProfile_s*)data;
-      block = oyProfile_GetMem( p, &size, 0, oyAllocateFunc_ );
+      block = oyProfile_GetMem( p, &size, 0, malloc );
     }
 
     s->type = type;
@@ -1495,7 +1497,7 @@ l2cmsProfileWrap_s*l2cmsAddProofProfile( oyProfile_s     * proof,
     if(hp)
     {
       /* save to memory */
-      block = lcm2WriteProfileToMem( hp, &size, oyAllocateFunc_ );
+      block = lcm2WriteProfileToMem( hp, &size, malloc );
       l2cmsCloseProfile( hp ); hp = 0;
     }
 
@@ -1532,7 +1534,11 @@ l2cmsProfileWrap_s*l2cmsAddProofProfile( oyProfile_s     * proof,
   if(!error)
     return s;
   else
+  {
+    l2cms_msg( oyMSG_WARN, (oyStruct_s*)proof,
+             OY_DBG_FORMAT_" adding %s failed", OY_DBG_ARGS_, oyProfile_GetText( proof, oyNAME_DESCRIPTION ) );
     return 0;
+  }
 }
 
 
