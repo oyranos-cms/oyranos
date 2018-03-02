@@ -6030,8 +6030,8 @@ oyTESTRESULT_e testScreenPixel()
   clck = oyClock() - clck;
 
   if( !error &&
-      !dirty
-      )
+      dirty <= 0
+    )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "oyDrawScreenImage                  %s",
                  oyProfilingToString(n,clck/(double)CLOCKS_PER_SEC, "draws"));
