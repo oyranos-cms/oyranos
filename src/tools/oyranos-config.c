@@ -42,8 +42,6 @@ void  getKey                         ( const char        * key,
                                        oySCOPE_e           scope,
                                        int                 verbose,
                                        int                 print );
-char *   oyOpeniccToOyranos          ( const char        * key_name,
-                                       oyAlloc_f           alloc );
 
 
 void displayHelp(char ** argv)
@@ -301,7 +299,7 @@ int main(int argc, char *argv[])
 
     if(count == 2)
     {
-      char * key_name = oyOpeniccToOyranos( list[0], oyAllocateFunc_ );
+      const char * key_name = list[0];
       const char * value = list[1],
                  * comment = NULL;
       if(scope == oySCOPE_USER_SYS) scope = oySCOPE_USER;
@@ -310,7 +308,6 @@ int main(int argc, char *argv[])
       if(verbose)
         fprintf( stderr, "%s->%s\n", oyNoEmptyString_m_(list[0]), oyNoEmptyString_m_(value) );
       if(verbose) getKey( key_name, scope, verbose, 0 );
-      if(key_name) oyFree_m_(key_name);
 
       oyStringListRelease( &list, count, oyDeAllocateFunc_ );
 
@@ -373,8 +370,7 @@ void  getKey                         ( const char        * key,
 {
   if(key)
   {
-    char * key_name = oyOpeniccToOyranos( key, oyAllocateFunc_ );
-    char * v = oyGetPersistentString( key_name, 0, scope, oyAllocateFunc_ );
+    char * v = oyGetPersistentString( key, 0, scope, oyAllocateFunc_ );
     int hour, minute, second, gmt_diff_second;
 
     oyGetCurrentGMTHour( &gmt_diff_second );
@@ -383,47 +379,8 @@ void  getKey                         ( const char        * key,
     if(verbose)     fprintf( print == 1 ? stdout : stderr, "%s:", key );
     fprintf( print ? stdout : stderr, "%s\n", oyNoEmptyString_m_(v) );
     if(v) oyFree_m_(v);
-    if(key_name) oyFree_m_(key_name);
   }
 }
 
 
-char *   oyOpeniccToOyranos          ( const char        * key_name,
-                                       oyAlloc_f           alloc )
-{
-  int count = 0, i;
-  char** list;
-  char * key = NULL, *r;
-
-  if(!key_name || !*key_name) return NULL;
-
-  list = oyStringSplit( key_name, '/', &count, 0 );
-
-  for(i = 0; i < count; ++i)
-  {
-    char * k = list[i];
-    if(k[0] == '[')
-    {
-      char * t = oyStringCopy( k, 0 ), * t2 = strrchr( t, ']' );
-
-      if(t2)
-        t2[0] = '\000';
-      oyStringAddPrintf( &key, 0,0, "%s#%s", i && i < count ? "/":"", t+1 );
-      oyFree_m_(t);
-    }
-    else
-      oyStringAddPrintf( &key, 0,0, "%s%s", i && i < count ? "/":"", k );
-  }
-
-  if(alloc && alloc != oyAllocateFunc_)
-  {
-    r = oyStringCopy( key, alloc );
-    oyFree_m_( key );
-    key = r;
-  }
-
-  oyStringListRelease( &list, count, 0 );
-
-  return key;
-}
 
