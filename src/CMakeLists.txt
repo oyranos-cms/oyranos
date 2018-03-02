@@ -427,6 +427,7 @@ IF( GETTEXT_FOUND )
         modules/oyranos/*.c
         modules/color/modules/*.c
         modules/color/modules/devices/*.c
+        modules/color/modules/lcms2/*.c
         modules/color/modules/*.cpp
         modules/color/modules/devices/*.cpp
         tools/*.c tools/qcmsevents/*.cpp tools/qcmsevents/*.cxx
