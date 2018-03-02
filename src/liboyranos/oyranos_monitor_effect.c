@@ -24,6 +24,10 @@
 #include "oyConversion_s.h"
 #include "oyProfile_s_.h"
 
+#define USE_BRADFORD 1
+#ifndef USE_BRADFORD
+#define USE_LAB
+#endif
 
 int      oyGetLinearEffectProfile    ( oyProfiles_s      * effects )
 {
@@ -43,9 +47,12 @@ int      oyGetLinearEffectProfile    ( oyProfiles_s      * effects )
 int      oyProfileAddWhitePointEffect( oyProfile_s       * monitor_profile,
                                        oyOptions_s      ** module_options )
 {
+#ifdef USE_LAB
   double        src_cie_a = 0.5, src_cie_b = 0.5, dst_cie_a = 0.5, dst_cie_b = 0.5;
+  double Lab[3];
+#endif
   oyProfile_s * wtpt = NULL;
-  double        src_XYZ[3] = {0.0, 0.0, 0.0}, dst_XYZ[3] = {0.0, 0.0, 0.0}, Lab[3];
+  double        src_XYZ[3] = {0.0, 0.0, 0.0}, dst_XYZ[3] = {0.0, 0.0, 0.0};
   int error = oyProfile_GetWhitePoint( monitor_profile, src_XYZ );
   int display_white_point = oyGetBehaviour( oyBEHAVIOUR_DISPLAY_WHITE_POINT );
   oyOptions_s * result_opts = NULL, * opts = NULL;
@@ -53,12 +60,28 @@ int      oyProfileAddWhitePointEffect( oyProfile_s       * monitor_profile,
   if(!display_white_point)
     return 0;
 
+  if(!error)
+    error = oyGetDisplayWhitePoint( display_white_point, dst_XYZ );
+
+#ifdef USE_BRADFORD
+  oyMessageFunc_p( oyMSG_WARN,(oyStruct_s*)monitor_profile, OY_DBG_FORMAT_
+                   "%s display_white_point: %d [%g %g %g] -> [%g %g %g]", OY_DBG_ARGS_,
+          oyProfile_GetText( monitor_profile, oyNAME_DESCRIPTION ), display_white_point,
+          src_XYZ[0], src_XYZ[1], src_XYZ[2], dst_XYZ[0], dst_XYZ[1], dst_XYZ[2]);
+  error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/src_iccXYZ", src_XYZ[0], 0, OY_CREATE_NEW );
+  error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/src_iccXYZ", src_XYZ[1], 1, OY_CREATE_NEW );
+  error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/src_iccXYZ", src_XYZ[2], 2, OY_CREATE_NEW );
+  error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/illu_iccXYZ", dst_XYZ[0], 0, OY_CREATE_NEW );
+  error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/illu_iccXYZ", dst_XYZ[1], 1, OY_CREATE_NEW );
+  error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/illu_iccXYZ", dst_XYZ[2], 2, OY_CREATE_NEW );
+  error = oyOptions_Handle( "//" OY_TYPE_STD "/create_profile.white_point_adjust.bradford",
+                            opts,             "create_profile.white_point_adjust.bradford",
+                            &result_opts );
+#else
   oyXYZ2Lab( src_XYZ, Lab );
   src_cie_a = Lab[1]/256.0+0.5;
   src_cie_b = Lab[2]/256.0+0.5;
 
-  if(!error)
-    error = oyGetDisplayWhitePoint( display_white_point, dst_XYZ );
   oyXYZ2Lab( dst_XYZ, Lab );
   dst_cie_a = Lab[1]/256.0+0.5;
   dst_cie_b = Lab[2]/256.0+0.5;
@@ -74,6 +97,7 @@ int      oyProfileAddWhitePointEffect( oyProfile_s       * monitor_profile,
   error = oyOptions_Handle( "//" OY_TYPE_STD "/create_profile.white_point_adjust.lab",
                                          opts,"create_profile.white_point_adjust.lab",
                                          &result_opts );
+#endif
   wtpt = (oyProfile_s*) oyOptions_GetType( result_opts, -1, "icc_profile",
                                            oyOBJECT_PROFILE_S );
   error = !wtpt;
