@@ -701,38 +701,39 @@ char * oyGetDefaultProfileName       ( oyPROFILE_e         type,
 }
 
 /**
- *  @brief set the CIE*ab coordinates for display white point target
+ *  @brief set the CIE*XYZ coordinates for display white point target
  *
  *  The function sets a custom white point target for the display. Note this
  *  setting will only be active when ::OY_DEFAULT_DISPLAY_WHITE_POINT is set
  *  to 1 - automatic.
  *
- *  @param[in]     cie_a               CIE*a component in 0.0 - 1.0 range
- *  @param[in]     cie_b               CIE*b component in 0.0 - 1.0 range
+ *  @param[out]    ICC_XYZ             ICC*XYZ trio in 0.0 - 2.0 range
  *  @param[in]     scope               supported are:
  *                                     - oySCOPE_USER for HOME install
  *                                     - oySCOPE_SYSTEM for system wide install
  *  @param[in]     comment             string
  *
  *  @version Oyranos: 0.9.7
- *  @date    2017/06/01
+ *  @date    2018/03/01
  *  @since   2017/06/01 (Oyranos: 0.9.7)
  */
-int      oySetDisplayWhitePoint      ( double              cie_a,
-                                       double              cie_b,
+int      oySetDisplayWhitePoint      ( double            * XYZ,
                                        oySCOPE_e           scope,
                                        const char        * comment )
 {
   int r = 1;
   char * value = NULL;
 
-  if(cie_a != 0 || cie_b != 0)
+  if(XYZ[0] != 0.0 || XYZ[1] != 0.0 || XYZ[1] != 0.0)
   {
-    oyStringAddPrintfC( &value, 0,0, "%g", cie_a );
-    r = oySetPersistentString( OY_DEFAULT_DISPLAY_WHITE_POINT_A, scope, value, comment );
+    oyStringAddPrintfC( &value, 0,0, "%g", XYZ[0] );
+    r = oySetPersistentString( OY_DEFAULT_DISPLAY_WHITE_POINT_X, scope, value, comment );
     oyFree_m_( value );
-    oyStringAddPrintfC( &value, 0,0, "%g", cie_b );
-    r = oySetPersistentString( OY_DEFAULT_DISPLAY_WHITE_POINT_B, scope, value, comment );
+    oyStringAddPrintfC( &value, 0,0, "%g", XYZ[1] );
+    r = oySetPersistentString( OY_DEFAULT_DISPLAY_WHITE_POINT_Y, scope, value, comment );
+    oyFree_m_( value );
+    oyStringAddPrintfC( &value, 0,0, "%g", XYZ[2] );
+    r = oySetPersistentString( OY_DEFAULT_DISPLAY_WHITE_POINT_Z, scope, value, comment );
     oyFree_m_( value );
   }
 

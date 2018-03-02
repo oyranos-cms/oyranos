@@ -1990,42 +1990,44 @@ oyTESTRESULT_e testProfile ()
   }
 
   /* get D50 */
-  double cie_a = -1.0, cie_b = -1.0;
-  int error = oyGetDisplayWhitePoint( 2, &cie_a, &cie_b );
-  if(!error && cie_a != -1.0 && cie_b != -1.0)
+  double XYZ[3] = {-1.0, -1.0, -1.0};
+  int error = oyGetDisplayWhitePoint( 2, XYZ );
+  if(!error && XYZ[0] != -1.0 && XYZ[1] != -1.0 && XYZ[2] != -1.0)
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS, 
-    "oyGetDisplayWhitePoint() = %g %g  mode = 2      ", cie_a, cie_b );
+    "oyGetDisplayWhitePoint() = %g %g %g mode = 2    ", XYZ[0], XYZ[1], XYZ[2] );
   } else
   {
     PRINT_SUB( oyTESTRESULT_FAIL, 
-    "oyGetDisplayWhitePoint() = %g %g  mode = 2      ", cie_a, cie_b );
+    "oyGetDisplayWhitePoint() = %g %g %g mode = 2    ", XYZ[0], XYZ[1], XYZ[2] );
   }
-  cie_a = cie_b = -1.0;
+  XYZ[0] = XYZ[1] = XYZ[2] = -1.0;
 
   /* obtain first monitor white point */
-  error = oyGetDisplayWhitePoint( 7, &cie_a, &cie_b );
-  if(!error && cie_a != -1.0 && cie_b != -1.0)
+  error = oyGetDisplayWhitePoint( 7, XYZ );
+  if(!error && XYZ[0] != -1.0 && XYZ[1] != -1.0 && XYZ[2] != -1.0)
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS, 
-    "oyGetDisplayWhitePoint() = %g %g  mode = 7  %d   ", cie_a, cie_b, error );
+    "oyGetDisplayWhitePoint() = %g %g %g mode = 7  %d   ", XYZ[0], XYZ[1], XYZ[2], error );
   } else if( displayFail() == oyTESTRESULT_FAIL )
   {
     PRINT_SUB( oyTESTRESULT_XFAIL, 
-    "oyGetDisplayWhitePoint() = %g %g  mode = 7  %d   ", cie_a, cie_b, error );
+    "oyGetDisplayWhitePoint() = %g %g %g mode = 7  %d   ", XYZ[0], XYZ[1], XYZ[2], error );
   }
 
   /* set a custom white point */
-  oySetDisplayWhitePoint( 0.5,0.5, oySCOPE_USER, "test white point" );
-  error = oyGetDisplayWhitePoint( 1, &cie_a, &cie_b );
-  if(!error && cie_a != -1.0 && cie_b != -1.0)
+  XYZ[0] = XYZ[1] = XYZ[2] = 0.333;
+  oySetDisplayWhitePoint( XYZ, oySCOPE_USER, "test white point" );
+  memset(XYZ,0,sizeof(double)*3);
+  error = oyGetDisplayWhitePoint( 1, XYZ );
+  if(!error && XYZ[0] == 0.333 && XYZ[1] == 0.333 && XYZ[2] == 0.333)
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS, 
-    "oyGetDisplayWhitePoint() = %g %g            mode = 1      ", cie_a, cie_b );
+    "oyGetDisplayWhitePoint() = %g %g %g       mode = 1      ", XYZ[0], XYZ[1], XYZ[2] );
   } else
   {
     PRINT_SUB( oyTESTRESULT_FAIL, 
-    "oyGetDisplayWhitePoint() = %g %g            mode = 1      ", cie_a, cie_b );
+    "oyGetDisplayWhitePoint() = %g %g %g       mode = 1      ", XYZ[0], XYZ[1], XYZ[2] );
   }
 
 
@@ -2489,6 +2491,7 @@ oyTESTRESULT_e testProfileLists ()
 }
 
 #include "oyProfile_s_.h"           /* oyProfile_ToFile_ */
+#include "oyranos_color.h"
 
 oyTESTRESULT_e testEffects ()
 {
@@ -2535,19 +2538,22 @@ oyTESTRESULT_e testEffects ()
 
 
 
-  double cie_a = -1, cie_b = -1;
+  double XYZ[3] = {-1, -1, -1};
+  double Lab[3], cie_a, cie_b;
   prof = oyProfile_FromStd( oyASSUMED_WEB, 0, testobj );
-  oyProfile_GetWhitePoint ( prof, &cie_a, &cie_b ); 
+  oyProfile_GetWhitePoint ( prof, XYZ ); 
   oyProfile_Release( &prof );
+  oyXYZ2Lab( XYZ, Lab );
+  cie_a = XYZ[1]; cie_b = XYZ[2];
   error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/cie_a",
                                    0.5 - cie_a, 0, OY_CREATE_NEW );
   if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromDouble() error: %d", error )
   error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/cie_b",
                                    0.5 - cie_b, 0, OY_CREATE_NEW );
   if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromDouble() error: %d", error )
-  fprintf(zout,"sourse white point cie_a %g cie_b %g\n", cie_a, cie_b );
-  error = oyOptions_Handle( "//" OY_TYPE_STD "/create_profile.white_point_adjust",
-                            opts,"create_profile.white_point_adjust",
+  fprintf(zout,"source white point cie_a %g cie_b %g\n", cie_a, cie_b );
+  error = oyOptions_Handle( "//" OY_TYPE_STD "/create_profile.white_point_adjust.lab",
+                            opts,"create_profile.white_point_adjust.lab",
                             &result_opts );
   if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_Handle() error: %d", error )
   abstract = (oyProfile_s*)oyOptions_GetType( result_opts, -1, "icc_profile",

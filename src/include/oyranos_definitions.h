@@ -304,20 +304,27 @@
  *  @since 0.9.7
  */
 #define OY_DEFAULT_DISPLAY_WHITE_POINT OY_BEHAVIOUR_STD OY_SLASH "display_white_point"
-/** key name for common display white point CIE*ab target, the CIE*a component in 0.0 - 1.0 range
+/** key name for common display white point ICC*XYZ target, the ICC*X component in 0.0 - 2.0 range
  *
  *  type string containing a double
  *
  *  @since 0.9.7
  */
-#define OY_DEFAULT_DISPLAY_WHITE_POINT_A OY_DISPLAY_STD OY_SLASH "display_white_point_a"
-/** key name for common display white point CIE*ab target, the CIE*b component in 0.0 - 1.0 range
+#define OY_DEFAULT_DISPLAY_WHITE_POINT_X OY_DISPLAY_STD OY_SLASH "display_white_point_XYZ/[0]"
+/** key name for common display white point ICC*XYZ target, the ICC*Y component in 0.0 - 2.0 range
  *
  *  type string containing a double
  *
  *  @since 0.9.7
  */
-#define OY_DEFAULT_DISPLAY_WHITE_POINT_B OY_DISPLAY_STD OY_SLASH "display_white_point_b"
+#define OY_DEFAULT_DISPLAY_WHITE_POINT_Y OY_DISPLAY_STD OY_SLASH "display_white_point_XYZ/[1]"
+/** key name for common display white point ICC*XYZ target, the ICC*Z component in 0.0 - 2.0 range
+ *
+ *  type string containing a double
+ *
+ *  @since 0.9.7
+ */
+#define OY_DEFAULT_DISPLAY_WHITE_POINT_Z OY_DISPLAY_STD OY_SLASH "display_white_point_XYZ/[2]"
 /** key name for display white point daemon
  *
  *  The setting is by default not present in the DB. Then

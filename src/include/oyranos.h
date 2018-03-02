@@ -230,10 +230,8 @@ int      oySetDefaultProfile         ( oyPROFILE_e         type,
 char*       oyGetDefaultProfileName    (oyPROFILE_e       type,
                                         oyAlloc_f         alloc_func);
 int      oyGetDisplayWhitePoint      ( int                 mode,
-                                       double            * cie_a,
-                                       double            * cie_b );
-int      oySetDisplayWhitePoint      ( double              cie_a,
-                                       double              cie_b,
+                                       double            * XYZ );
+int      oySetDisplayWhitePoint      ( double            * XYZ,
                                        oySCOPE_e           scope,
                                        const char        * comment );
 

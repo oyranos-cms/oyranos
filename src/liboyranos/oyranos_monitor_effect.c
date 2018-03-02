@@ -45,15 +45,24 @@ int      oyProfileAddWhitePointEffect( oyProfile_s       * monitor_profile,
 {
   double        src_cie_a = 0.5, src_cie_b = 0.5, dst_cie_a = 0.5, dst_cie_b = 0.5;
   oyProfile_s * wtpt = NULL;
-  int error = oyProfile_GetWhitePoint( monitor_profile, &src_cie_a, &src_cie_b );
+  double        src_XYZ[3] = {0.0, 0.0, 0.0}, dst_XYZ[3] = {0.0, 0.0, 0.0}, Lab[3];
+  int error = oyProfile_GetWhitePoint( monitor_profile, src_XYZ );
   int display_white_point = oyGetBehaviour( oyBEHAVIOUR_DISPLAY_WHITE_POINT );
   oyOptions_s * result_opts = NULL, * opts = NULL;
 
   if(!display_white_point)
     return 0;
 
+  oyXYZ2Lab( src_XYZ, Lab );
+  src_cie_a = Lab[1]/256.0+0.5;
+  src_cie_b = Lab[2]/256.0+0.5;
+
   if(!error)
-    error = oyGetDisplayWhitePoint( display_white_point, &dst_cie_a, &dst_cie_b );
+    error = oyGetDisplayWhitePoint( display_white_point, dst_XYZ );
+  oyXYZ2Lab( dst_XYZ, Lab );
+  dst_cie_a = Lab[1]/256.0+0.5;
+  dst_cie_b = Lab[2]/256.0+0.5;
+
   oyMessageFunc_p( oyMSG_WARN,(oyStruct_s*)monitor_profile, OY_DBG_FORMAT_
                    "%s display_white_point: %d [%g %g] -> [%g %g]", OY_DBG_ARGS_,
           oyProfile_GetText( monitor_profile, oyNAME_DESCRIPTION ), display_white_point,
@@ -62,8 +71,8 @@ int      oyProfileAddWhitePointEffect( oyProfile_s       * monitor_profile,
                                    dst_cie_a - src_cie_a, 0, OY_CREATE_NEW );
   error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/cie_b",
                                    dst_cie_b - src_cie_b, 0, OY_CREATE_NEW );
-  error = oyOptions_Handle( "//" OY_TYPE_STD "/create_profile.white_point_adjust",
-                                         opts,"create_profile.white_point_adjust",
+  error = oyOptions_Handle( "//" OY_TYPE_STD "/create_profile.white_point_adjust.lab",
+                                         opts,"create_profile.white_point_adjust.lab",
                                          &result_opts );
   wtpt = (oyProfile_s*) oyOptions_GetType( result_opts, -1, "icc_profile",
                                            oyOBJECT_PROFILE_S );
@@ -408,7 +417,7 @@ int      oyDeviceSetup2              ( oyConfig_s        * device,
     /* set the gamma table */
     oyDeviceSetupVCGT( device, options, tmpname );
 
-    //remove( tmpname );
+    remove( tmpname );
     oyFree_m_( tmpname );
   }
 
@@ -496,27 +505,25 @@ OYAPI int  OYEXPORT
 
 
 /**
- *  @brief get the CIE*ab coordinates for display white point target
+ *  @brief get the ICC*XYZ coordinates for display white point target
  *
  *  The function asks for a white point target for displaying.
  *
  *  @see ::OY_DEFAULT_DISPLAY_WHITE_POINT.
  *
  *  @param[in]     mode                -1 for oyGetBehaviour( oyBEHAVIOUR_DISPLAY_WHITE_POINT )
- *  @param[out]    cie_a               CIE*a component in 0.0 - 1.0 range
- *  @param[out]    cie_b               CIE*b component in 0.0 - 1.0 range
+ *  @param[out]    ICC_XYZ             ICC*XYZ trio in 0.0 - 2.0 range
  *  @return                            error
  *                                     - 0: success
  *                                     - -1: no white point available
  *                                     - >1: error
  *
  *  @version Oyranos: 0.9.7
- *  @date    2017/07/04
+ *  @date    2018/03/01
  *  @since   2017/06/01 (Oyranos: 0.9.7)
  */
 int      oyGetDisplayWhitePoint      ( int                 mode,
-                                       double            * cie_a,
-                                       double            * cie_b )
+                                       double            * XYZ )
 {
   int error = -1;
   char * value = NULL;
@@ -536,14 +543,19 @@ int      oyGetDisplayWhitePoint      ( int                 mode,
   case 0: return error;
   case 1:
     {
-      value = oyGetPersistentString( OY_DEFAULT_DISPLAY_WHITE_POINT_A, 0,
+      value = oyGetPersistentString( OY_DEFAULT_DISPLAY_WHITE_POINT_X, 0,
                                      oySCOPE_USER_SYS, oyAllocateFunc_ );
-      if(oyStringToDouble( value, cie_a ))
+      if(oyStringToDouble( value, &XYZ[0] ))
         return error;
       oyFree_m_( value );
-      value = oyGetPersistentString( OY_DEFAULT_DISPLAY_WHITE_POINT_B, 0,
+      value = oyGetPersistentString( OY_DEFAULT_DISPLAY_WHITE_POINT_Y, 0,
                                      oySCOPE_USER_SYS, oyAllocateFunc_ );
-      if(oyStringToDouble( value, cie_b ))
+      if(oyStringToDouble( value, &XYZ[1] ))
+        return error;
+      oyFree_m_( value );
+      value = oyGetPersistentString( OY_DEFAULT_DISPLAY_WHITE_POINT_Z, 0,
+                                     oySCOPE_USER_SYS, oyAllocateFunc_ );
+      if(oyStringToDouble( value, &XYZ[2] ))
         return error;
       oyFree_m_( value );
       error = 0;
@@ -556,12 +568,11 @@ int      oyGetDisplayWhitePoint      ( int                 mode,
   case 6:
     {
       int p = mode-2;
-      double xyz[3] = { DE_xyz[p][0], DE_xyz[p][1], DE_xyz[p][2] },
-             XYZ[3] = { xyz[0]/xyz[1], 1.0, xyz[2]/xyz[1] },
-	     Lab[3];
-      oyXYZ2Lab( XYZ, Lab );
-      *cie_a = Lab[1]/256.0 + 0.5;
-      *cie_b = Lab[2]/256.0 + 0.5;
+      double xyz[3] = { DE_xyz[p][0], DE_xyz[p][1], DE_xyz[p][2] };
+
+      XYZ[0] = xyz[0]/xyz[1];
+      XYZ[1] = 1.0;
+      XYZ[2] = xyz[2]/xyz[1];
       error = 0;
     }
     break;
@@ -576,7 +587,7 @@ int      oyGetDisplayWhitePoint      ( int                 mode,
     oyProfile_s* profile = NULL;
 
     oyDeviceGetProfile( monitor, options, &profile );
-    error = oyProfile_GetWhitePoint( profile, cie_a, cie_b );
+    error = oyProfile_GetWhitePoint( profile, XYZ );
 
     oyConfig_Release( &monitor );
     oyOptions_Release( &options );

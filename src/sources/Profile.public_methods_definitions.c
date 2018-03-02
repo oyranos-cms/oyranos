@@ -2527,19 +2527,17 @@ int                oyProfile_AddDevice(oyProfile_s       * profile,
 #endif
 
 /**
- *  @brief get the CIE*ab coordinates of a white point
+ *  @brief get the ICC*XYZ coordinates of a white point
  *
- *  @param[out]    cie_a               CIE*a component in 0.0 - 1.0 range
- *  @param[out]    cie_b               CIE*b component in 0.0 - 1.0 range
+ *  @param[out]    ICC_XYZ             ICC*XYZ trio in 0.0 - 2.0 range
  *  @return                            0 - success; -1 - no white point available; < 1 - error
  *
  *  @version Oyranos: 0.9.7
- *  @date    2017/06/06
+ *  @date    2018/02/28
  *  @since   2017/06/06 (Oyranos: 0.9.7)
  */
 int      oyProfile_GetWhitePoint     ( oyProfile_s       * profile,
-                                       double            * cie_a,
-                                       double            * cie_b )
+                                       double            * ICC_XYZ )
 {
   int error = -1;
   if(profile)
@@ -2554,17 +2552,15 @@ int      oyProfile_GetWhitePoint     ( oyProfile_s       * profile,
     for(j = 0; j < count; ++j)
     {
       oyOption_s * opt = (oyOption_s*) oyStructList_GetType( s, j,
-                                                    oyOBJECT_OPTION_S );
+                                                            oyOBJECT_OPTION_S );
       if(opt && strstr( oyOption_GetRegistration( opt ), "icSigXYZType" ) != NULL)
-      {
-         double XYZ[3] = { oyOption_GetValueDouble( opt, 0 ),
-                           oyOption_GetValueDouble( opt, 1 ),
-                           oyOption_GetValueDouble( opt, 2 ) },
-                Lab[3];
-         oyXYZ2Lab( XYZ, Lab );
-         *cie_a = Lab[1]/256.0 + 0.5;
-         *cie_b = Lab[2]/256.0 + 0.5;
-         error = 0;
+      { int i;
+        double XYZ[3] = { oyOption_GetValueDouble( opt, 0 ),
+                          oyOption_GetValueDouble( opt, 1 ),
+                          oyOption_GetValueDouble( opt, 2 ) };
+        for(i = 0; i < 3; ++i)
+          ICC_XYZ[i] = XYZ[i];
+        error = 0;
       }
     }
 

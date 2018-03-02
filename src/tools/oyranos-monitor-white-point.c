@@ -259,14 +259,18 @@ int main( int argc , char** argv )
   {
     int i = (temperature - 1000) / 100;
     double xyz[3] = { bb_100K[i][0], bb_100K[i][1], bb_100K[i][2] };
-    double XYZ[3] = { xyz[0]/xyz[1], 1.0, xyz[2]/xyz[1] };
-    double Lab[3];
+    double XYZ[3] = { xyz[0]/xyz[1], 1.0, xyz[2]/xyz[1] }, oldXYZ[3];
+    double Lab[3], oldLab[3];
     double cie_a = 0.0, cie_b = 0.0;
     char * comment = NULL;
     double old_temperature = 0;
     oyXYZ2Lab( XYZ, Lab);
 
-    oyGetDisplayWhitePoint( 1 /* automatic */, &cie_a, &cie_b );
+    oyGetDisplayWhitePoint( 1 /* automatic */, oldXYZ );
+    oyXYZ2Lab( oldXYZ, oldLab);
+    cie_a = oldLab[1]/256.0 + 0.5;
+    cie_b = oldLab[2]/256.0 + 0.5;
+
     old_temperature = estimateTemperature( cie_a, cie_b );
     if(old_temperature)
       oyStringAddPrintf( &comment, 0,0, "Old Temperature:: %g ", old_temperature );
@@ -277,7 +281,7 @@ int main( int argc , char** argv )
     fprintf (stderr, "%s %s\n", _("Automatic white point"), comment );
     if(dry == 0)
     {
-      oySetDisplayWhitePoint( cie_a, cie_b, scope, comment );
+      oySetDisplayWhitePoint( XYZ, scope, comment );
       pingNativeDisplay();
     }
     oyFree_m_( comment );
@@ -307,8 +311,9 @@ int main( int argc , char** argv )
         char * tmp = NULL;
         if(i == 1) /* automatic */
         {
-          double cie_a = 0.0, cie_b = 0.0;
-          oyGetDisplayWhitePoint( 1 /* automatic */, &cie_a, &cie_b );
+          double cie_a = 0.0, cie_b = 0.0, XYZ[3], Lab[3];
+          oyGetDisplayWhitePoint( 1 /* automatic */, XYZ );
+          oyXYZ2Lab(XYZ,Lab); cie_a = Lab[1]/256.0+0.5; cie_b = Lab[2]/256.0+0.5;
           double temperature = estimateTemperature( cie_a, cie_b );
           if(temperature)
           {
@@ -792,7 +797,8 @@ int checkWtptState(int dry)
       if(dry == 0 && use_effect)
         oySetPersistentString( OY_DEFAULT_EFFECT_PROFILE, scope, new_effect, NULL );
 
-      error = setWtptMode( scope, new_mode, dry );
+      if(cmode != new_mode)
+        error = setWtptMode( scope, new_mode, dry );
     }
 
     if(effect) oyFree_m_(effect);

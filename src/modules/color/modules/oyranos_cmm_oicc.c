@@ -37,6 +37,7 @@
 #include "oyranos_io.h"
 #include "oyranos_json.h"
 #include "oyranos_module_internal.h"
+#include "oyranos_monitor_effect.h"
 #include "oyranos_string.h"
 #include "oyranos_texts.h"
 
@@ -1071,41 +1072,13 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
               }
               if(display_white_point) /* not "none" */
               {
-                double src_cie_a = 0.5, src_cie_b = 0.5, dst_cie_a = 0.5, dst_cie_b = 0.5;
                 oyImage_s * image = (oyImage_s*)oyFilterNode_GetData( node, 0 );
-                oyProfile_s* image_profile = oyImage_GetProfile( image ),
-                           * wtpt = NULL;
+                oyProfile_s* image_profile = oyImage_GetProfile( image );
 
-                int error = oyProfile_GetWhitePoint( image_profile,
-                                                     &src_cie_a, &src_cie_b );
-                if(!error)
-                  error = oyGetDisplayWhitePoint( display_white_point, &dst_cie_a, &dst_cie_b );
-
+                error = oyProfileAddWhitePointEffect( image_profile, &f_options );
                 if(error || oy_debug)
                   oicc_msg( oyMSG_WARN, (oyStruct_s*)conversion, 
                     OY_DBG_FORMAT_"display_white_point: %d %s", OY_DBG_ARGS_, display_white_point, oyProfile_GetText( image_profile, oyNAME_DESCRIPTION ));
-
-                if(!error)
-                {
-                  oyOptions_s * result_opts = NULL, * opts = NULL;
-                  error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/cie_a",
-                                           dst_cie_a - src_cie_a, 0, OY_CREATE_NEW );
-                  error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/cie_b",
-                                           dst_cie_b - src_cie_b, 0, OY_CREATE_NEW );
-                  error = oyOptions_Handle( "//" OY_TYPE_STD "/create_profile.white_point_adjust",
-                                           opts,"create_profile.white_point_adjust",
-                                           &result_opts );
-                  wtpt = (oyProfile_s*) oyOptions_GetType( result_opts, -1, "icc_profile",
-                                           oyOBJECT_PROFILE_S );
-                  error = !wtpt;
-                  oyOptions_Release( &result_opts );
-                  oyOptions_Release( &opts );
-                }
-
-                if(!error)
-                  oyOptions_MoveInStruct( &f_options,
-                          OY_STD "/icc_color/display.icc_profile.abstract.white_point.automatic.oicc",
-                          (oyStruct_s**) &wtpt, OY_CREATE_NEW );
 
                 oyProfile_Release( &image_profile );
                 oyImage_Release( &image );

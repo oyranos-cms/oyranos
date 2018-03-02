@@ -30,6 +30,7 @@
 #include "oyranos_helper.h"
 #include "oyranos_i18n.h"
 #include "oyranos_monitor.h"
+#include "oyranos_monitor_effect.h"
 #include "oyranos_string.h"
 #include "oyranos_texts.h"
 
@@ -949,7 +950,6 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
              oyStruct_GetInfo((oyStruct_s*)image_input,0,0),
              oyProfile_GetText(p,oyNAME_NAME) );
 
-        oyProfile_Release( &p );
         oyProfile_Release( &image_input_profile );
         oyRectangle_Release( &r );
 
@@ -1038,44 +1038,15 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
       }
       if(display_white_point) /* not "none" */
       {
-        double             src_cie_a = 0.5, src_cie_b = 0.5, dst_cie_a = 0.5, dst_cie_b = 0.5;
-        oyProfile_s      * image_input_profile = oyImage_GetProfile( image_input ),
-                         * wtpt = NULL;
-
-        int error = oyProfile_GetWhitePoint( image_input_profile,
-                                             &src_cie_a, &src_cie_b );
-        if(!error)
-          error = oyGetDisplayWhitePoint( display_white_point, &dst_cie_a, &dst_cie_b );
+        int error = oyProfileAddWhitePointEffect( p, &f_options );
 
         if(error || oy_debug)
           oydi_msg( oyMSG_WARN, (oyStruct_s*)ticket, 
-                    OY_DBG_FORMAT_"display_white_point: %d %s", OY_DBG_ARGS_, display_white_point, oyProfile_GetText( image_input_profile, oyNAME_DESCRIPTION ));
+                    OY_DBG_FORMAT_"display_white_point: %d %s", OY_DBG_ARGS_, display_white_point, oyProfile_GetText( p, oyNAME_DESCRIPTION ));
 
-        if(!error)
-        {
-          oyOptions_s * result_opts = NULL, * opts = NULL;
-          error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/cie_a",
-                                           dst_cie_a - src_cie_a, 0, OY_CREATE_NEW );
-          error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/cie_b",
-                                           dst_cie_b - src_cie_b, 0, OY_CREATE_NEW );
-          error = oyOptions_Handle( "//" OY_TYPE_STD "/create_profile.white_point_adjust",
-                                           opts,"create_profile.white_point_adjust",
-                                           &result_opts );
-          wtpt = (oyProfile_s*) oyOptions_GetType( result_opts, -1, "icc_profile",
-                                           oyOBJECT_PROFILE_S );
-          error = !wtpt;
-          oyOptions_Release( &result_opts );
-          oyOptions_Release( &opts );
-        }
-
-        if(!error)
-          oyOptions_MoveInStruct( &f_options,
-                          OY_STD "/icc_color/display.icc_profile.abstract.white_point.automatic.oydi",
-                          (oyStruct_s**) &wtpt, OY_CREATE_NEW );
-
-        oyProfile_Release( &image_input_profile );
       }
 
+      oyProfile_Release( &p );
       oyConfig_Release( &c );
       oyImage_Release( &image_input );
       oyOptions_Release( &f_options );
