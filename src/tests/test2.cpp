@@ -2390,7 +2390,7 @@ oyTESTRESULT_e testProfiles ()
                  * profiles = 0;
 
     // only desaturation effects
-    oyProfile_s * pattern = oyProfile_FromFile( "meta:EFFECT_saturation;yes", OY_NO_LOAD, testobj );
+    oyProfile_s * pattern = oyProfile_FromFile( "meta:EFFECT_linear;yes", OY_NO_LOAD, testobj );
     oyProfiles_MoveIn( patterns, &pattern, -1 );
 
     profiles = oyProfiles_Create( patterns, icc_profile_flags, testobj );
@@ -2400,11 +2400,11 @@ oyTESTRESULT_e testProfiles ()
     if((int)size > count && count)
     {
       PRINT_SUB( oyTESTRESULT_SUCCESS,
-      "oyProfiles_Create( meta:EFFECT_satur.;yes )  %u|%d", (unsigned int)size, count );
+      "oyProfiles_Create( meta:EFFECT_linear;yes )  %u|%d", (unsigned int)size, count );
     } else
     {
       PRINT_SUB( oyTESTRESULT_XFAIL, 
-      "oyProfiles_Create( meta:EFFECT_satur.;yes )  %u|%d", (unsigned int)size, count );
+      "oyProfiles_Create( meta:EFFECT_linear;yes )  %u|%d", (unsigned int)size, count );
     }
     oyProfiles_Release( &profiles );
   }

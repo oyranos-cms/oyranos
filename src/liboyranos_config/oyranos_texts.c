@@ -2279,9 +2279,9 @@ uint32_t oyICCProfileSelectionFlagsFromRegistration (
     return profile_flags;
 
   if(strstr( registration, "icc_version_2") != NULL)
-    profile_flags = OY_ICC_VERSION_2;
+    profile_flags |= OY_ICC_VERSION_2;
   if(strstr( registration, "icc_version_4") != NULL)
-    profile_flags = OY_ICC_VERSION_4;
+    profile_flags |= OY_ICC_VERSION_4;
 
   return profile_flags;
 }
