@@ -575,7 +575,7 @@ OYAPI int OYEXPORT oyConfig_Match    ( oyConfig_s        * module_device,
                 if(oyStrcmp_(rank_map[k].key, d_opt) == 0)
                 {
                   if(oy_debug)
-                    DBG_NUM5_S( "match_value[%s]: %s - %s %d+%d\n",
+                    DBG_PROG5_S( "match_value[%s]: %s - %s %d+%d",
                                 oyNoEmptyString_m_(d_opt), oyNoEmptyString_m_(d_val),
                                 oyNoEmptyString_m_(p_val),
                                 rank, rank_map[k].match_value );
@@ -596,7 +596,7 @@ OYAPI int OYEXPORT oyConfig_Match    ( oyConfig_s        * module_device,
               if(oyStrcmp_(rank_map[k].key, d_opt) == 0)
               {
                 if(oy_debug)
-                    DBG_NUM5_S( "none_match_value[%s]: %s - %s %d+%d\n",
+                    DBG_PROG5_S( "none_match_value[%s]: %s - %s %d+%d",
                                 oyNoEmptyString_m_(d_opt), oyNoEmptyString_m_(d_val),
                                 oyNoEmptyString_m_(p_val),
                                 rank, rank_map[k].none_match_value );
@@ -613,7 +613,7 @@ OYAPI int OYEXPORT oyConfig_Match    ( oyConfig_s        * module_device,
                                            oyOBJECT_CMM_API8_S); */
 
         if(oy_debug)
-          DBG_NUM4_S( "[%s]: %s/%s %d\n",
+          DBG_MEM4_S( "[%s]: %s/%s %d",
                       oyNoEmptyString_m_(d_opt), oyNoEmptyString_m_(d_val),
                       oyNoEmptyString_m_(p_val), rank );
 

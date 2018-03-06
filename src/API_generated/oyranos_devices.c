@@ -365,7 +365,8 @@ OYAPI int  OYEXPORT
       clck = oyClock();
       iccs = oyProfiles_Create( patterns, icc_profile_flags, 0 );
       clck = oyClock() - clck;
-      DBG_NUM1_S("oyProfiles_Create(): %g", clck/1000000.0 );
+      DBG_NUM4_S("oyProfiles_Create(icc_profile_flags: %d, %s) = %d: %g", icc_profile_flags,
+                 oyICCDeviceClassDescription(device_signature), oyProfiles_Count(iccs), clck/1000000.0 );
       oyProfiles_Release( &patterns );
 
       size = oyProfiles_Count(iccs);
@@ -3363,6 +3364,7 @@ uint32_t     oyICCProfileSelectionFlagsFromOptions (
   reg = oyFilterNode_GetRegistration( node );
   icc_profile_flags = oyICCProfileSelectionFlagsFromRegistration( reg );
   oyFilterNode_Release( &node );
+  DBG_NUM2_S("reg: %s icc_profile_flags: %d", reg, icc_profile_flags );
 
   return icc_profile_flags;
 }
