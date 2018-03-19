@@ -14,6 +14,7 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+#include <math.h>    /* NAN */
 #include <stdarg.h>  /* va_list */
 #include <stddef.h>  /* ptrdiff_t size_t */
 #include <stdio.h>
@@ -452,5 +453,56 @@ int      oyjl_string_to_long         ( const char        * text,
     return 0;
   else
     return 1;
+}
+
+/** @internal 
+ *  @brief   text to double conversion
+ *
+ *  @return                            error
+ *
+ *  @version Oyranos: 0.9.7
+ *  @date    2018/03/18
+ *  @since   2011/11/17 (Oyranos: 0.2.0)
+ */
+int          oyjl_string_to_double   ( const char        * text,
+                                       double            * value )
+{
+  char * p = NULL, * t = NULL;
+  int len;
+  int error = -1;
+#ifdef HAVE_LOCALE_H
+  char * save_locale = oyjl_string_copy( setlocale(LC_NUMERIC, 0 ), malloc );
+  setlocale(LC_NUMERIC, "C");
+#endif
+
+  if(text && text[0])
+    len = strlen(text);
+  else
+  {
+    *value = NAN;
+    error = 1;
+    return error;
+  }
+
+  /* avoid irritating valgrind output of "Invalid read of size 8"
+   * might be a glibc error or a false positive in valgrind */
+  oyjlAllocHelper_m_( t, char, len + 2*sizeof(double) + 1, malloc, return 1);
+  memset( t, 0, len + 2*sizeof(double) + 1 );
+
+  memcpy( t, text, len );
+
+  *value = strtod( t, &p );
+
+#ifdef HAVE_LOCALE_H
+  setlocale(LC_NUMERIC, save_locale);
+  if(save_locale) free( save_locale );
+#endif
+
+  if(p && p != text && p[0] == '\000')
+    error = 0;
+
+  free( t );
+
+  return error;
 }
 

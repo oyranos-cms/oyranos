@@ -44,66 +44,6 @@
 /* separate from the external functions */
 
 
-/** @internal 
- *  @brief   text to double conversion
- *
- *  @return                            error
- *
- *  @version Oyranos: 0.2.0
- *  @date    2011/11/17
- *  @since   2011/11/17 (Oyranos: 0.2.0)
- */
-int          oyStringToDouble        ( const char        * text,
-                                       double            * value )
-{
-  char * p = 0, * t;
-  int len;
-  int error = 1;
-#ifdef USE_GETTEXT
-  char * save_locale = oyStringCopy_( setlocale(LC_NUMERIC, 0 ), oyAllocateFunc_);
-  setlocale(LC_NUMERIC, "C");
-#endif
-
-  if(text && text[0])
-    len = strlen(text);
-  else
-  {
-    *value = NAN;
-    error = 1;
-    return error;
-  }
-
-  /* avoid irritating valgrind output of "Invalid read of size 8"
-   * might be a glibc error or a false positive in valgrind */
-  t = oyAllocateFunc_( len + 2*sizeof(double) + 1 );
-  memset( t, 0, len + 2*sizeof(double) + 1 );
-
-  memcpy( t, text, len );
-
-  if(0 && oy_debug_memory)
-  {
-    fprintf( stderr, OY_DBG_FORMAT_""OY_PRINT_POINTER" \"%s\" %d "OY_PRINT_POINTER" \"%s\"\n",
-            OY_DBG_ARGS_,(ptrdiff_t)text, text, len,
-            (ptrdiff_t)t, t  );
-    fflush( stderr );
-  }
-
-  *value = strtod( t, &p );
-
-#ifdef USE_GETTEXT
-  setlocale(LC_NUMERIC, save_locale);
-  oyFree_m_( save_locale );
-#endif
-
-  if(p && p != text && p[0] == '\000')
-    error = 0;
-
-  oyFree_m_( t );
-
-  return error;
-}
-
-
 /* string manipulation */
 
 void               oyStringFree_     ( char             ** text,
@@ -706,7 +646,7 @@ int                oyIconv           ( const char        * input,
   char * in_txt = (char*)input;
   const char * src = from_codeset ? from_codeset : oy_domain_codeset;
   const char * loc_env = 
-# ifdef USE_GETTEXT
+# ifdef HAVE_LOCALE_H
   setlocale( LC_MESSAGES, 0 )
 # else
   0
