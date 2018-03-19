@@ -919,6 +919,98 @@ void oyjl_tree_to_json (oyjl_val v, int * level, char ** json)
   return;
 }
 
+/** @brief convert a C tree into a YAML string */
+void oyjl_tree_to_yaml (oyjl_val v, int * level, char ** text)
+{
+#define YAML_INDENT " "
+  if(*level == 0)
+    oyjl_string_add( text, 0,0, "---" );
+
+  if(v)
+  switch(v->type)
+  {
+    case oyjl_t_null:
+         break;
+    case oyjl_t_number:
+         if(v->u.number.flags & OYJL_NUMBER_DOUBLE_VALID)
+         {
+#ifdef HAVE_LOCALE_H
+           char * save_locale = oyjl_string_copy( setlocale(LC_NUMERIC, 0 ), malloc );
+           setlocale(LC_NUMERIC, "C");
+#endif
+           oyjl_string_add (text, 0,0, YAML_INDENT "%g", v->u.number.d);
+#ifdef HAVE_LOCALE_H
+           setlocale(LC_NUMERIC, save_locale);
+           if(save_locale)
+             free( save_locale );
+#endif
+         }
+         else
+           oyjl_string_add (text, 0,0, YAML_INDENT "%ld", v->u.number.i);
+         break;
+    case oyjl_t_true:
+         oyjl_string_add (text, 0,0, "1"); break;
+    case oyjl_t_false:
+         oyjl_string_add (text, 0,0, "0"); break;
+    case oyjl_t_string:
+         {
+          const char * t = v->u.string;
+          char * tmp = NULL;
+          if(t && strstr(t, "\""))
+            t = tmp = oyjl_string_replace( t, "\"", "\\\"", 0, 0);
+          if(t && strstr(t, ": "))
+            t = tmp = oyjl_string_replace( t, ": ", ":\\ ", 0, 0);
+          oyjl_string_add (text, 0,0, YAML_INDENT "%s", t);
+          if(tmp) free(tmp);
+         }
+         break;
+    case oyjl_t_array:
+         {
+           int i,
+               count = v->u.array.len;
+
+           for(i = 0; i < count; ++i)
+           {
+             oyjl_json_indent( text, "\n", *level, "-" );
+             *level += 2;
+             oyjl_tree_to_yaml( v->u.array.values[i], level, text );
+             *level -= 2;
+           }
+
+         } break;
+    case oyjl_t_object:
+         {
+           int i,
+               count = v->u.object.len;
+
+           for(i = 0; i < count; ++i)
+           {
+             oyjl_json_indent( text, "\n", *level, NULL );
+             if(!v->u.object.keys || !v->u.object.keys[i])
+             {
+               oyjl_message_p( oyjl_message_error, 0, OYJL_DBG_FORMAT_"missing key", OYJL_DBG_ARGS_ );
+               if(text && *text)
+               {
+                 free(*text);
+                 *text = NULL;
+               }
+               return;
+             }
+             oyjl_string_add( text, 0,0, "%s:", v->u.object.keys[i] );
+             *level += 2;
+             oyjl_tree_to_yaml( v->u.object.values[i], level, text );
+             *level -= 2;
+           }
+         }
+         break;
+    default:
+         oyjl_message_p( oyjl_message_error, 0, OYJL_DBG_FORMAT_"unknown type: %d", OYJL_DBG_ARGS_, v->type );
+         break;
+  }
+  return;
+#undef YAML_INDENT
+}
+
 /** @brief return the number of members if any at the node level
  *
  *  This function is useful to traverse through objects and arrays of a
