@@ -23,6 +23,20 @@
 
 void printfHelp(int argc, char ** argv)
 {
+  if(strstr(argv[0],"jsontoyaml"))
+  {
+  fprintf( stderr, "\n");
+  fprintf( stderr, "%s %s\n",   argv[0],
+                                _("is a JSON to YAML converter"));
+  fprintf( stderr, "\n");
+  fprintf( stderr, "%s\n",                 _("Usage"));
+  fprintf( stderr, "      %s FILE_NAME\n",        argv[0]);
+  fprintf( stderr, "\n");
+  fprintf( stderr, "\n");
+    return;
+  }
+
+
   fprintf( stderr, "\n");
   fprintf( stderr, "%s %s\n",   argv[0],
                                 _("is a JSON parse tool"));
@@ -31,6 +45,7 @@ void printfHelp(int argc, char ** argv)
   fprintf( stderr, "  %s\n",               _("Print:"));
   fprintf( stderr, "      %s [-j|-c|-k|-p|-s STRING] [-v] [-i FILE_NAME] [-x PATH]\n",        argv[0]);
   fprintf( stderr, "        -j\tprint JSON - default mode\n");
+  fprintf( stderr, "        -y\tprint YAML - better human readable\n");
   fprintf( stderr, "        -c\tprint node count\n");
   fprintf( stderr, "        -k\tprint key name\n");
   fprintf( stderr, "        -p\tprint all matching paths\n");
@@ -68,6 +83,7 @@ char *       oyjlReadFileSToMem_     ( FILE              * fp,
 
 typedef enum {
   JSON,
+  YAML,
   COUNT,
   TYPE,
   KEY,
@@ -92,6 +108,18 @@ int main(int argc, char ** argv)
   setlocale(LC_ALL,"");
 #endif
 
+  if(strstr(argv[0],"jsontoyaml"))
+  {
+    if(argc > 1)
+      input_file_name = argv[1];
+    else
+    {
+      printfHelp(argc, argv);
+      exit (0);
+    }
+    show = YAML;
+  }
+  else
   if(argc >= 2)
   {
     int pos = 1, i;
@@ -113,6 +141,7 @@ int main(int argc, char ** argv)
               case 's': OY_PARSE_STRING_ARG(value_string); break;
               case 't': show = TYPE; break;
               case 'v': ++verbose; break;
+              case 'y': show = YAML; break;
               case 'h':
               case '-':
                         if(i == 1)
@@ -217,14 +246,18 @@ int main(int argc, char ** argv)
   switch(show)
   {
     case JSON:
+    case YAML:
       {
-        char * json = NULL;
+        char * text = NULL;
         int level = 0;
-        oyjl_tree_to_json( value_string ? root : value, &level, &json );
-        if(json)
+        if(show == JSON)
+          oyjl_tree_to_json( value_string ? root : value, &level, &text );
+        else if(show == YAML)
+          oyjl_tree_to_yaml( value_string ? root : value, &level, &text );
+        if(text)
         {
-          fwrite( json, sizeof(char), strlen(json), stdout );
-          free(json);
+          fwrite( text, sizeof(char), strlen(text), stdout );
+          free(text);
         }
       }
       break;
