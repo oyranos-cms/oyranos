@@ -1,7 +1,7 @@
 prefix=/usr
 
 CC = gcc
-DEBUG= -Wall -g
+DEBUG= -Wall -Wextra -g
 INCL = -I$(prefix)/include
 LDFLAGS = -L$(prefix)/lib64
 TARGET = oyjl_tree_test
@@ -15,7 +15,7 @@ TOBJECTS = $(TSOURCES:.c=.o)
 OSOURCES = oyjl.c
 OOBJECTS = $(OSOURCES:.c=.o)
 
-all:	$(TARGET) oyjl
+all:	$(TARGET) oyjl jsontoyaml yamltojson
 
 $(TARGET):	$(OBJECTS) $(TOBJECTS)
 	$(CC) $(CFLAGS) -o $@ $(TOBJECTS) $(OBJECTS) $(LDFLAGS) -lyajl
@@ -26,6 +26,12 @@ check:
 
 oyjl: $(OBJECTS) $(OOBJECTS)
 	$(CC) $(CFLAGS) -o $@ $(OOBJECTS) $(OBJECTS) $(LDFLAGS) -lyajl
+
+jsontoyaml: $(OBJECTS) $(OOBJECTS)
+	$(CC) $(CFLAGS) -o $@ $(OOBJECTS) $(OBJECTS) $(LDFLAGS) -lyajl
+
+yamltojson: yaml2json.o $(OBJECTS)
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS) $< $(LDFLAGS) -lyajl -lyaml
 
 clean:
 	$(RM) $(OBJECTS) $(TOBJECTS) $(OOBJECTS) $(TARGET) oyjl
