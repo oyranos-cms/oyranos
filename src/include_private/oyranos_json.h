@@ -59,7 +59,7 @@ extern "C" {
 #define oyjl_value_set_string          oyJValueSetString
 #define oyjl_value_text                oyJValueText
 #define oyjl_value_clear               oyJValueClear
-#include "oyjl/oyjl_tree.h"
+#include "oyjl/oyjl.h"
 
 int          oyJson                  ( const char        * json );
 oyjl_val     oyJsonParse             ( const char        * json );
