@@ -155,6 +155,7 @@ int main( int argc , char** argv )
   char * night_effect = NULL;
   double temperature = 0.0;
   int show = 0;
+  char * json = 0;
   int dry = 0;
   int location = 0;
   double longitude = 360;
@@ -197,6 +198,7 @@ int main( int argc , char** argv )
               case 'r': sunrise = 1; break;
               case 'l': location = 1; break;
               case 'n': OY_PARSE_INT_ARG( wtpt_mode_night ); break;
+              case 'j': show = 2; break;
               case 'm': show = 1; break;
               case 's': OY_PARSE_INT_ARG( wtpt_mode_sunlight ); break;
               case 't': i=0; OY_PARSE_FLOAT_ARG2( twilight, "t", -90.0, 90.0, 0.0 ); break;
@@ -294,7 +296,7 @@ int main( int argc , char** argv )
   }
 
 
-  if(show)
+  if(show == 1)
   {
     uint32_t flags = 0;
     int choices = 0, current = -1;
@@ -386,6 +388,10 @@ int main( int argc , char** argv )
 
   if(daemon != -1)
     error = runDaemon(daemon);
+
+  if(show == 2)
+  {
+  }
 
   if(check)
     checkWtptState( dry );
@@ -517,7 +523,7 @@ int findLocation(oySCOPE_e scope, int dry)
     if(geo_json)
     {
       char * t = oyAllocateFunc_(256);
-      root = oyjl_tree_parse( geo_json, t, 256 );
+      root = oyjlTreeParse( geo_json, t, 256 );
       if(t[0])
         WARNc2_S( "%s: %s\n", _("found issues parsing JSON"), t );
       oyFree_m_(t);
@@ -530,22 +536,22 @@ int findLocation(oySCOPE_e scope, int dry)
     {
       char * json = NULL;
       int level = 0;
-      v = oyjl_tree_get_valuef( root, 0, "latitude", NULL );
-      value = oyjl_value_text( v, oyAllocateFunc_ );
+      v = oyjlTreeGetValuef( root, 0, "latitude", NULL );
+      value = oyjlValueText( v, oyAllocateFunc_ );
       if(oyStringToDouble( value, &lat ))
         error = 1;
-      v = oyjl_tree_get_valuef( root, 0, "longitude", NULL );
-      value = oyjl_value_text( v, oyAllocateFunc_ );
+      v = oyjlTreeGetValuef( root, 0, "longitude", NULL );
+      value = oyjlValueText( v, oyAllocateFunc_ );
       if(oyStringToDouble( value, &lon ))
         error = 1;
       oyFree_m_(value);
-      oyjl_tree_to_json( root, &level, &json );
+      oyjlTreeToJson( root, &level, &json );
 
       if(lat != 0.0 && lon != 0.0)
       {
         #define PRINT_VAL( key, name )\
-        v = oyjl_tree_get_valuef( root, 0, key, NULL ); \
-        value = oyjl_value_text( v, oyAllocateFunc_ ); \
+        v = oyjlTreeGetValuef( root, 0, key, NULL ); \
+        value = oyjlValueText( v, oyAllocateFunc_ ); \
 	if(value) \
         { if(value[0]) \
             fprintf( stderr, "%s: %s\n", name, value ); \
@@ -557,7 +563,7 @@ int findLocation(oySCOPE_e scope, int dry)
         #undef PRINT_VAL
 
 #ifdef HAVE_LOCALE_H
-        char * save_locale = oyjl_string_copy( setlocale(LC_NUMERIC, 0 ), malloc );
+        char * save_locale = oyjlStringCopy( setlocale(LC_NUMERIC, 0 ), malloc );
         setlocale(LC_NUMERIC, "C");
 #endif
         printf( "%g %g\n", lat,lon);
@@ -579,7 +585,7 @@ int findLocation(oySCOPE_e scope, int dry)
       } else
         error = 1;
 
-      oyjl_tree_free(root);
+      oyjlTreeFree(root);
     } else
       error = 1;
   }

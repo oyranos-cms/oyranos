@@ -56,52 +56,52 @@ void testOyjl(void)
   char error_buffer[128];
 
   /* read JSON into C data struct */
-  oyjl_val root = oyjl_tree_parse( text, error_buffer, 128 );
+  oyjl_val root = oyjlTreeParse( text, error_buffer, 128 );
   
   /* convert back to JSON */
-  oyjl_tree_to_json( root, &level, &json );
+  oyjlTreeToJson( root, &level, &json );
 
     fprintf( stderr, "%s\n", json );
     free(json); json = NULL;
 
   /* use a xpath to obtain a node */
-  value = oyjl_tree_get_valuef( root, 0, "org/test/[%d]", 1 );
+  value = oyjlTreeGetValuef( root, 0, "org/test/[%d]", 1 );
 
-    oyjl_tree_to_json( value, &level, &json );
+    oyjlTreeToJson( value, &level, &json );
     fprintf( stderr, "%s\n", json );
     free(json); json = NULL;
 
   /* use a xpath to remove a node */
-  oyjl_tree_clear_value( root, "org/test/[0]" );
+  oyjlTreeClearValue( root, "org/test/[0]" );
 
-    oyjl_tree_to_json( root, &level, &json );
+    oyjlTreeToJson( root, &level, &json );
     fprintf( stderr, "%s\n", json );
     free(json); json = NULL;
 
   /* use a xpath to get a new node in a existing tree */
-  value = oyjl_tree_get_value( root, OYJL_CREATE_NEW, "org/add/opt" );
+  value = oyjlTreeGetValue( root, OYJL_CREATE_NEW, "org/add/opt" );
 
-    oyjl_tree_to_json( root, &level, &json );
+    oyjlTreeToJson( root, &level, &json );
     fprintf( stderr, "%s\n", json );
     free(json); json = NULL;
 
   /* set the new node to some string value  */
-  oyjl_value_set_string( value, "value" );
+  oyjlValueSetString( value, "value" );
 
-    oyjl_tree_to_json( root, &level, &json );
+    oyjlTreeToJson( root, &level, &json );
     fprintf( stderr, "%s\n", json );
     free(json); json = NULL;
 
   /* release memory */
-  oyjl_tree_free ( root );
+  oyjlTreeFree ( root );
 
   /* use a xpath to create new tree */
-  root = oyjl_tree_new( "new/tree/key" );
+  root = oyjlTreeNew( "new/tree/key" );
 
-    oyjl_tree_to_json( root, &level, &json );
+    oyjlTreeToJson( root, &level, &json );
     fprintf( stderr, "%s\n", json );
     free(json); json = NULL;
 
   /* release memory */
-  oyjl_tree_free( root );
+  oyjlTreeFree( root );
 }

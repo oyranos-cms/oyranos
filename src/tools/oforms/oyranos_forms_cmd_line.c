@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2009-2011 (C) Kai-Uwe Behrmann
+ *            2009-2018 (C) Kai-Uwe Behrmann
  *
  *  @brief    forms handling for command line applications
  *  @internal
@@ -60,12 +60,12 @@ int        oyJSON2XFORMsCmdLineHtmlHeadlineHandler (
   if(!print || !value)
     return 0;
 
-  oyjl_val v = oyjl_tree_get_value( value, 0, "name" );
+  oyjl_val v = oyjlTreeGetValue( value, 0, "name" );
   if (OYJL_IS_STRING(v))
     label = v->u.string;
-  v = oyjl_tree_get_value( value, 0, "help" );
+  v = oyjlTreeGetValue( value, 0, "help" );
   if(!v)
-    v = oyjl_tree_get_value( value, 0, "description" );
+    v = oyjlTreeGetValue( value, 0, "description" );
   if (OYJL_IS_STRING(v))
     help = v->u.string;
 

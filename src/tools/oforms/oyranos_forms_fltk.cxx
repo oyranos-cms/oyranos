@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2009-2011 (C) Kai-Uwe Behrmann
+ *            2009-2018 (C) Kai-Uwe Behrmann
  *
  *  @brief    forms handling for the FLTK toolkit
  *  @internal
@@ -452,13 +452,13 @@ int        oyJSON2XFORMsFltkHtmlHeadlineHandler (
     return 0;
 
   oyjl_val v;
-  v = oyjl_tree_get_value( value, 0, "name" );
+  v = oyjlTreeGetValue( value, 0, "name" );
   if (OYJL_IS_STRING(v))              name = v->u.string;
-  v = oyjl_tree_get_value( value, 0, "description" );
+  v = oyjlTreeGetValue( value, 0, "description" );
   if (OYJL_IS_STRING(v))              desc = v->u.string;
-  v = oyjl_tree_get_value( value, 0, "help" );
+  v = oyjlTreeGetValue( value, 0, "help" );
   if (OYJL_IS_STRING(v))              help = v->u.string;
-  v = oyjl_tree_get_value( value, 0, "properties" );
+  v = oyjlTreeGetValue( value, 0, "properties" );
   if (OYJL_IS_STRING(v))              properties = v->u.string;
 
   OyFl_Box_c * box = 0;
@@ -481,7 +481,7 @@ int        oyJSON2XFORMsFltkHtmlHeadlineHandler (
         w = parent->w();
     box = new OyFl_Box_c( x,y,w,BUTTON_HEIGHT );
     char * label = NULL;
-    oyjl_string_add( &label, malloc, free, "%s %s", name, desc?desc:"" );
+    oyjlStringAdd( &label, malloc, free, "%s %s", name, desc?desc:"" );
     if(label)
     {
       box->copy_label( (const char *)label );
@@ -528,7 +528,7 @@ oyUiHandler_s oy_ui_fltk_handler_json_headline_ =
   };
 
 char * oyjp(oyjl_val v)
-{ char * t = NULL; int l = 0; oyjl_tree_to_json(v,&l,&t); return t; }
+{ char * t = NULL; int l = 0; oyjlTreeToJson(v,&l,&t); return t; }
 
 /** @internal
  *  Function oyJSON2XFORMsFLTKSelect1Handler
@@ -587,22 +587,22 @@ int        oyJSON2XFORMsFLTKSelect1Handler (
 
     label = 0;
 
-    v = oyjl_tree_get_value( ov, 0, "default" );
+    v = oyjlTreeGetValue( ov, 0, "default" );
     if( OYJL_IS_STRING( v ) )         default_value = v->u.string;
     if(oy_debug && default_value && print)
       printf( "found default: \"%s\"\n", default_value );
 
-    v = oyjl_tree_get_value( ov, 0, "nick" );
+    v = oyjlTreeGetValue( ov, 0, "nick" );
     if( OYJL_IS_STRING( v ) )         xpath = v->u.string;
 
-    v = oyjl_tree_get_value( ov, 0, "name" );
+    v = oyjlTreeGetValue( ov, 0, "name" );
     if( OYJL_IS_STRING( v ) )         label = v->u.string;
       
     if(label && print)
       box->copy_label( (const char *)label );
 
     const char * t;
-    v = oyjl_tree_get_value( ov, 0, "help" );
+    v = oyjlTreeGetValue( ov, 0, "help" );
     if( OYJL_IS_STRING( v ) ) t = v->u.string;
     if(t)
     {
@@ -615,19 +615,19 @@ int        oyJSON2XFORMsFLTKSelect1Handler (
       c->user_data( (void*)strdup(t) );
     }
 
-    choices = oyjl_tree_get_value( ov, 0, "choices" );
-    int count = oyjl_value_count( choices );
+    choices = oyjlTreeGetValue( ov, 0, "choices" );
+    int count = oyjlValueCount( choices );
     for(int i = 0; i < count; ++i)
     {
-      oyjl_val item = oyjl_tree_get_valuef( choices, 0, "[%d]", i );
+      oyjl_val item = oyjlTreeGetValuef( choices, 0, "[%d]", i );
       oyjl_val v;
 
       is_default = 0;
       label = value = 0;
 
-      v = oyjl_tree_get_value( item, 0, "name" );
+      v = oyjlTreeGetValue( item, 0, "name" );
       if( OYJL_IS_STRING( v ) ) label = v->u.string;
-      v = oyjl_tree_get_value( item, 0, "nick" );
+      v = oyjlTreeGetValue( item, 0, "nick" );
       if( OYJL_IS_STRING( v ) ) value = v->u.string;
 
       if(label)

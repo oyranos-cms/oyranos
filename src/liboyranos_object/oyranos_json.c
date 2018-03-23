@@ -45,7 +45,7 @@ oyjl_val     oyJsonParse             ( const char        * json )
   if(error)
     return NULL;
 
-  root = oyjl_tree_parse( json, error_buffer, 256 );
+  root = oyjlTreeParse( json, error_buffer, 256 );
   if(error_buffer[0] != '\000')
     oyMessageFunc_p( oyMSG_WARN, NULL, OY_DBG_FORMAT_ "ERROR:\t\"%s\"\n", OY_DBG_ARGS_, error_buffer );
 
@@ -61,7 +61,7 @@ char **      oyJsonPathsFromPattern  ( oyjl_val            root,
   char ** paths = NULL;
   int paths_n = 0, i;
 
-  oyjl_tree_to_paths( root, 1000000, NULL, 0, &paths );
+  oyjlTreeToPaths( root, 1000000, NULL, 0, &paths );
   while(paths && paths[paths_n]) ++paths_n;
 
   if(paths)
@@ -69,10 +69,10 @@ char **      oyJsonPathsFromPattern  ( oyjl_val            root,
     for(i = 0; i < paths_n; ++i)
     {
       const char * path = paths[i];
-      if(oyjl_path_match(path, key, OYJL_PATH_MATCH_LAST_ITEMS))
+      if(oyjlPathMatch(path, key, OYJL_PATH_MATCH_LAST_ITEMS))
         oyStringListAddStaticString( &list, &list_n, path, oyAllocateFunc_, oyDeAllocateFunc_ );
     }
-    oyjl_string_list_release( &paths, paths_n, free );
+    oyjlStringListRelease( &paths, paths_n, free );
 
   }
 
@@ -101,35 +101,35 @@ char *       oyJsonFromModelAndUi    ( const char        * data,
   {
     char * path = paths[i];
     /* get the key node */
-    oyjl_val uiv = oyjl_tree_get_value( uiroot, 0, path ),
+    oyjl_val uiv = oyjlTreeGetValue( uiroot, 0, path ),
              dv = NULL, v = NULL;
     /* get the key name */
-    char * key = oyjl_value_text( uiv, oyAllocateFunc_ ),
+    char * key = oyjlValueText( uiv, oyAllocateFunc_ ),
          * value = NULL;
     /* get the value node by the key */
     if(key)
-      dv = oyjl_tree_get_value( droot, 0, key );
+      dv = oyjlTreeGetValue( droot, 0, key );
     /* get the value */
     if(dv)
-      value = oyjl_value_text( dv, oyAllocateFunc_ );
+      value = oyjlValueText( dv, oyAllocateFunc_ );
     /* write the value into the options "default" key */
     if(value && key && strchr(key,'/'))
     {
       char * t = strrchr(path,'/');
       t[0] = 0;
-      v = oyjl_tree_get_valuef( uiroot, OYJL_CREATE_NEW, "%s/default", path );
-      oyjl_value_set_string( v, value );
+      v = oyjlTreeGetValuef( uiroot, OYJL_CREATE_NEW, "%s/default", path );
+      oyjlValueSetString( v, value );
     }
     if(key) oyFree_m_( key );
     if(value) oyFree_m_( value );
   }
 
   i = 0;
-  oyjl_tree_to_json( uiroot, &i, &text );
+  oyjlTreeToJson( uiroot, &i, &text );
 
-  oyjl_tree_free( uiroot );
-  oyjl_tree_free( droot );
-  oyjl_string_list_release( &paths, paths_n, free );
+  oyjlTreeFree( uiroot );
+  oyjlTreeFree( droot );
+  oyjlStringListRelease( &paths, paths_n, free );
 
   if(allocate_func && allocate_func != oyAllocateFunc_)
   {
@@ -146,6 +146,6 @@ char *       oyJsonPrint             ( oyjl_val            root )
 {
   char * json = NULL;
   int level = 0;
-  oyjl_tree_to_json( root, &level, &json );
+  oyjlTreeToJson( root, &level, &json );
   return json;
 }

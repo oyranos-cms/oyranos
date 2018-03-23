@@ -1342,13 +1342,13 @@ int          oyXFORMsRenderUi        ( const char        * xforms,
 #endif
   {
     char error_buffer[256] = {0};
-    root = oyjl_tree_parse( text, error_buffer, 256 );
+    root = oyjlTreeParse( text, error_buffer, 256 );
     if(error_buffer[0] != '\000')
       oyMessageFunc_p( oyMSG_WARN, NULL, OY_DBG_FORMAT_ "ERROR:\t\"%s\"\n", OY_DBG_ARGS_, error_buffer );
     else
       oyParseJsonDoc_( root, value, ui_handlers, user_data );
     if(root)
-      oyjl_tree_free( root );
+      oyjlTreeFree( root );
   }
 
   if(!root && !has_xml)
@@ -1790,7 +1790,7 @@ void               oyParseJsonDoc_   ( oyjl_val            root,
   int count = 0, i;
   char ** paths = NULL;
 
-  oyjl_tree_to_paths( root, 1000000, NULL, 0, &paths );
+  oyjlTreeToPaths( root, 1000000, NULL, 0, &paths );
   while(paths && paths[count]) ++count;
 
   for(i = 0; i < count; ++i)
@@ -1807,9 +1807,9 @@ void               oyParseJsonDoc_   ( oyjl_val            root,
       {
         const char * pattern = ui_handlers[pos]->element_searches[pos2];
 
-        if(oyjl_path_match( path, pattern, OYJL_PATH_MATCH_LAST_ITEMS ))
+        if(oyjlPathMatch( path, pattern, OYJL_PATH_MATCH_LAST_ITEMS ))
         {
-          oyjl_val v = oyjl_tree_get_value( root, 0, path );
+          oyjl_val v = oyjlTreeGetValue( root, 0, path );
 
           /* render */
           ui_handlers[pos]->handler( v, wid_data, ui_handlers_context );

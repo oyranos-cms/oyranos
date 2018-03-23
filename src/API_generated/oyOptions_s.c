@@ -470,7 +470,7 @@ int          oyOptions_FromJSON      ( const char        * json_text,
   }
 
   oyAllocHelper_m_(t, char, 256, oyAllocateFunc_, error = 1; goto cleanFJson );
-  json = oyjl_tree_parse( json_text, t, 256 );
+  json = oyjlTreeParse( json_text, t, 256 );
   if(!json || t[0])
   {
     WARNc3_S( "%s: %s\n%s", _("found issues parsing JSON"), t, json_text );
@@ -480,16 +480,16 @@ int          oyOptions_FromJSON      ( const char        * json_text,
 
   opts = *result;
 
-  xv = oyjl_tree_get_value( json, 0, xpath );
-  count = oyjl_value_count( xv );
+  xv = oyjlTreeGetValue( json, 0, xpath );
+  count = oyjlValueCount( xv );
   if(co) oyOption_SetFromInt( co, count, 0, 0 );
   for(i = 0; i < count; ++i)
   {
     char * k = NULL;
     if(xv->type == oyjl_t_object)
       key = oyStringCopy_( xv->u.object.keys[i], oyAllocateFunc_ );
-    v = oyjl_value_pos_get( xv, i );
-    val = oyjl_value_text( v, oyAllocateFunc_ );
+    v = oyjlValuePosGet( xv, i );
+    val = oyjlValueText( v, oyAllocateFunc_ );
 
     if(key && key[0] && key[0] == '_' && underline_key_suffix)
       oyStringAddPrintf( &k, 0,0, "%s/%s%s", key_path ? key_path : xpath,
@@ -511,7 +511,7 @@ int          oyOptions_FromJSON      ( const char        * json_text,
 
 cleanFJson:
   oyFree_m_( xpath );
-  if(json) oyjl_tree_free( json );
+  if(json) oyjlTreeFree( json );
   if(t) oyFree_m_(t);
 
   return error;
@@ -1101,7 +1101,7 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
   char ** old_levels = 0;
   int old_levels_n = 0;
   int close_oy_struct = 0;
-  oyjl_val root = oyjl_tree_new("org"), v;
+  oyjl_val root = oyjlTreeNew("org"), v;
 
   if(error <= 0)
   {
@@ -1173,8 +1173,8 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
         else
           val = tmp = oyOption_GetValueText( o, oyAllocateFunc_ );
 
-        v = oyjl_tree_get_value( root, OYJL_CREATE_NEW, key );
-        oyjl_value_set_string( v, val );
+        v = oyjlTreeGetValue( root, OYJL_CREATE_NEW, key );
+        oyjlValueSetString( v, val );
 
         if( tmp ) oyFree_m_( tmp );
       }
@@ -1287,7 +1287,7 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
     {
       oyFree_m_(text);
       i = 0;
-      oyjl_tree_to_json( root, &i, &text );
+      oyjlTreeToJson( root, &i, &text );
       error = oyObject_SetName( options->oy_, text, type );
       if(text) { free(text); text = NULL; }
     } else

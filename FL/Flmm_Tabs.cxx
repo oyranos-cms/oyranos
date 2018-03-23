@@ -40,6 +40,7 @@
 #include <stdio.h>
 #include <memory.h>
 
+#include "../src/include/oyranos_types.h"
 
 #define BORDER 2
 #define EXTRASPACE 10
@@ -105,8 +106,8 @@ int Flmm_Tabs::handle(int event) {
         }
         return 1;
       }
-    }
-  case FL_DRAG:
+    } OY_FALLTHROUGH
+  case FL_DRAG: OY_FALLTHROUGH
   case FL_RELEASE:
     o = which(Fl::event_x(), Fl::event_y());
     if (event == FL_RELEASE) {
@@ -118,7 +119,7 @@ int Flmm_Tabs::handle(int event) {
     } else push(o);
     if (Fl::visible_focus() && event == FL_RELEASE) Fl::focus(this);
     return 1;
-  case FL_FOCUS:
+  case FL_FOCUS: OY_FALLTHROUGH
   case FL_UNFOCUS:
     if (!Fl::visible_focus()) return Fl_Group::handle(event);
     if (Fl::event() == FL_RELEASE ||
@@ -163,6 +164,7 @@ int Flmm_Tabs::handle(int event) {
     }
   case FL_SHOW:
     value(); // update visibilities and fall through
+    OY_FALLTHROUGH
   default:
     return Fl_Group::handle(event);
 

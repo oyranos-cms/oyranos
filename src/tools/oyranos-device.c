@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2012-2017 (C) Kai-Uwe Behrmann
+ *            2012-2018 (C) Kai-Uwe Behrmann
  *
  *  @brief    device manipulation tool
  *  @internal
@@ -1074,7 +1074,7 @@ int main(int argc, char *argv[])
         }
 
         t = oyAllocateFunc_(256);
-        device = oyjl_tree_parse( json, t, 256 );
+        device = oyjlTreeParse( json, t, 256 );
         if(t[0])
           WARNc2_S( "%s: %s\n", _("found issues parsing JSON"), t );
         oyFree_m_(t);
@@ -1100,7 +1100,7 @@ int main(int argc, char *argv[])
         }
 
         t = oyAllocateFunc_(256);
-        rank_root = oyjl_tree_parse( json, t, 256 );
+        rank_root = oyjlTreeParse( json, t, 256 );
         if(t[0])
           WARNc2_S( "%s: %s\n", _("found issues parsing JSON"), t );
         oyFree_m_(t);
@@ -1112,10 +1112,10 @@ int main(int argc, char *argv[])
 
         /*oyjl_message_func_set( (oyjl_message_f)oyMessageFunc );*/
 
-        rank_map = oyjl_tree_get_value( rank_root, 0, xpath );
+        rank_map = oyjlTreeGetValue( rank_root, 0, xpath );
         if(rank_map && rank_map->type == oyjl_t_object)
         {
-          oyjl_val openicc = oyjl_tree_get_value( device, 0, "org/freedesktop/openicc" );
+          oyjl_val openicc = oyjlTreeGetValue( device, 0, "org/freedesktop/openicc" );
           /* copy the rank_map into the openicc node */
           if(openicc && openicc->type == oyjl_t_object)
           {
@@ -1124,8 +1124,8 @@ int main(int argc, char *argv[])
             char ** keys;
 
             oyDeAllocFunc( json ); json = 0;
-            oyjl_tree_to_json( rank_map, &level, &json );
-            rank_map = oyjl_tree_parse( json, 0,0 );
+            oyjlTreeToJson( rank_map, &level, &json );
+            rank_map = oyjlTreeParse( json, 0,0 );
             if(json){ free(json); json = 0; }
 
             keys = openicc->u.object.keys;
@@ -1145,13 +1145,13 @@ int main(int argc, char *argv[])
               ++openicc->u.object.len;
 
               /* level = 0; */
-              oyjl_tree_to_json( device, &level, &json );
+              oyjlTreeToJson( device, &level, &json );
             }
           }
         }
 
-        oyjl_tree_free( rank_root ); rank_root = 0;
-        oyjl_tree_free( device ); device = 0;
+        oyjlTreeFree( rank_root ); rank_root = 0;
+        oyjlTreeFree( device ); device = 0;
       }
 
       if(output)

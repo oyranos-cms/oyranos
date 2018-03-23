@@ -921,7 +921,7 @@ OYAPI int OYEXPORT oyConfig_FromJSON ( const char        * registration,
   }
 
   t = oyAllocateFunc_(256);
-  json = oyjl_tree_parse( json_text, t, 256 );
+  json = oyjlTreeParse( json_text, t, 256 );
   if(t[0])
     WARNc3_S( "%s: %s\n%s", _("found issues parsing JSON"), t, json_text );
   oyFree_m_(t);
@@ -936,20 +936,20 @@ OYAPI int OYEXPORT oyConfig_FromJSON ( const char        * registration,
   oyStringAddPrintf( &t, oyAllocateFunc_, oyDeAllocateFunc_, "%s/[%d]",
 		     xpath, pos );
 
-  json_config = oyjl_tree_get_value( json, 0, t );
+  json_config = oyjlTreeGetValue( json, 0, t );
 
   if(!json_config)
     WARNc2_S( "\"%s\" %s\n", t,_("not found:") );
   oyFree_m_( t );
       
-  count = oyjl_value_count(json_config);
+  count = oyjlValueCount(json_config);
   if(config_)
   for(i = 0; i < count; ++i)
   {
     if(json_config->type == oyjl_t_object)
       key = oyStringCopy_(json_config->u.object.keys[i], oyAllocateFunc_ );
-    v = oyjl_value_pos_get( json_config, i );
-    val = oyjl_value_text( v, oyAllocateFunc_ );
+    v = oyjlValuePosGet( json_config, i );
+    val = oyjlValueText( v, oyAllocateFunc_ );
 
     if(key && key[0] && key[0] == '_' && underline_key_suffix)
     {
@@ -1220,7 +1220,7 @@ OYAPI int  OYEXPORT oyRankMapFromJSON( const char        * json_text,
     oyjl_val v;
 
     t = oyAllocateFunc_(256);
-    json = oyjl_tree_parse( json_text, t, 256 );
+    json = oyjlTreeParse( json_text, t, 256 );
     if(t[0])
     {
       WARNc2_S( "%s: %s\n", _("found issues parsing JSON"), t );
@@ -1229,20 +1229,20 @@ OYAPI int  OYEXPORT oyRankMapFromJSON( const char        * json_text,
     oyFree_m_(t);
 
     oyOptions_FindInt( options, "pos", 0, &pos );
-    json_rankm = oyjl_tree_get_valuef( json, 0, xpath, pos );
+    json_rankm = oyjlTreeGetValuef( json, 0, xpath, pos );
 
-    count = oyjl_value_count( json_rankm );
+    count = oyjlValueCount( json_rankm );
     oyAllocHelper_m_( map, oyRankMap, count + 1, allocateFunc, error = 1 );
 
     for(i = 0; i < count; ++i)
     {
-      v = oyjl_value_pos_get( json_rankm, i );
+      v = oyjlValuePosGet( json_rankm, i );
       if(json_rankm->type == oyjl_t_object)
         key = oyStringCopy_( json_rankm->u.object.keys[i], allocateFunc );
       else
         key = 0;
 
-      if(key && oyjl_value_count( v ))
+      if(key && oyjlValueCount( v ))
       {
         map[i].key = key; key = 0;
         if(v->type == oyjl_t_array)
@@ -1275,7 +1275,7 @@ OYAPI int  OYEXPORT oyRankMapFromJSON( const char        * json_text,
       }
     }
 
-    oyjl_tree_free( json );
+    oyjlTreeFree( json );
     json = NULL;
   }
 

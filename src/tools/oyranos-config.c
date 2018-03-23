@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2017 (C) Kai-Uwe Behrmann
+ *            2017-2018 (C) Kai-Uwe Behrmann
  *
  *  @brief    DB manipulation tool
  *  @internal
@@ -269,9 +269,9 @@ int main(int argc, char *argv[])
       {
         char ** paths = NULL;
         char error_buffer[128] = {0};
-        oyjl_val root = oyjl_tree_parse( v, error_buffer, 128 );
+        oyjl_val root = oyjlTreeParse( v, error_buffer, 128 );
 
-        oyjl_tree_to_paths( root, 1000000, NULL, OYJL_KEY, &paths );
+        oyjlTreeToPaths( root, 1000000, NULL, OYJL_KEY, &paths );
         while(paths && paths[count]) ++count;
 
         for(i = 0; i < count; ++i)
@@ -283,7 +283,7 @@ int main(int argc, char *argv[])
             fprintf(stdout,"%s\n", paths[i]);
         }
 
-        oyjl_string_list_release( &paths, count, free );
+        oyjlStringListRelease( &paths, count, free );
         oyFree_m_(v);
       }
       oyFree_m_(p);

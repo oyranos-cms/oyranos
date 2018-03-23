@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2016 (C) Kai-Uwe Behrmann
+ *            2016-2018 (C) Kai-Uwe Behrmann
  *
  *  @brief    Channel selection module for Oyranos
  *  @internal
@@ -138,7 +138,7 @@ int      oyraFilter_ImageChannelRun  ( oyFilterPlug_s    * requestor_plug,
                                          oyAllocateFunc_ );
       setlocale( LC_NUMERIC, "C" );
       t = oyAllocateFunc_(256);
-      json = oyjl_tree_parse( channels_json, t, 256 );
+      json = oyjlTreeParse( channels_json, t, 256 );
       if(t[0])
       {
         WARNc2_S( "channel option: %s: %s\n", _("found issues parsing JSON"), t );
@@ -164,7 +164,7 @@ int      oyraFilter_ImageChannelRun  ( oyFilterPlug_s    * requestor_plug,
       int channels_src = oyToChannels_m( layout_src );
       int channels_dst = oyToChannels_m( layout_dst );
       int ticket_array_pix_width;
-      int count = oyjl_value_count( json ), i;
+      int count = oyjlValueCount( json ), i;
       const int max_channels = 'z'-'a'+1;
       double  channel[max_channels+1];
       int channel_pos[max_channels+1];
@@ -188,7 +188,7 @@ int      oyraFilter_ImageChannelRun  ( oyFilterPlug_s    * requestor_plug,
       if(!error)
       for(i = 0; i < count && !error; ++i)
       {
-        oyjl_val v = oyjl_value_pos_get( json, i );
+        oyjl_val v = oyjlValuePosGet( json, i );
         if( OYJL_IS_NUMBER(v) ||
             OYJL_IS_DOUBLE(v) )
         {
@@ -207,7 +207,7 @@ int      oyraFilter_ImageChannelRun  ( oyFilterPlug_s    * requestor_plug,
           }
         }
       }
-      oyjl_tree_free( json );
+      oyjlTreeFree( json );
 
       if(!error)
       {
