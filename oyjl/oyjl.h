@@ -305,6 +305,29 @@ typedef yajl_status(*oyjl_message_f) ( oyjl_message_e      error_code,
                                        ... );
 yajl_status    oyjl_message_func_set ( oyjl_message_f      message_func );
 
+#if   defined(__clang__)
+#define OYJL_FALLTHROUGH
+#elif __GNUC__ >= 7 
+#define OYJL_FALLTHROUGH              __attribute__ ((fallthrough));
+#else
+#define OYJL_FALLTHROUGH
+#endif
+
+#if   __GNUC__ >= 7
+#define OYJL_DEPRECATED                __attribute__ ((deprecated))
+#elif defined(_MSC_VER)
+#define OYJL_DEPRECATED                __declspec(deprecated)
+#else
+#define OYJL_DEPRECATED
+#endif
+
+#if   (__GNUC__*100 + __GNUC_MINOR__) >= 406
+#define OYJL_UNUSED                    __attribute__ ((unused))
+#elif defined(_MSC_VER)
+#define OYJL_UNUSED                    __declspec(unused)
+#else
+#define OYJL_UNUSED
+#endif
 
 #ifdef __cplusplus
 }

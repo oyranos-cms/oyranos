@@ -3,7 +3,7 @@
  *  oyjl - Yajl tree extension
  *
  *  @par Copyright:
- *            2016-2017 (C) Kai-Uwe Behrmann
+ *            2016-2018 (C) Kai-Uwe Behrmann
  *
  *  @brief    Oyjl command line
  *  @internal
@@ -21,7 +21,7 @@
 #include "oyjl_macros.h"
 
 
-void printfHelp(int argc, char ** argv)
+void printfHelp(int argc OYJL_UNUSED, char ** argv)
 {
   if(strstr(argv[0],"jsontoyaml"))
   {
@@ -129,7 +129,7 @@ int main(int argc, char ** argv)
       switch(argv[pos][0])
       {
         case '-':
-            for(i = 1; pos < argc && i < strlen(argv[pos]); ++i)
+            for(i = 1; pos < argc && i < (int)strlen(argv[pos]); ++i)
             switch (argv[pos][i])
             {
               case 'i': OY_PARSE_STRING_ARG(input_file_name); break;
@@ -148,7 +148,7 @@ int main(int argc, char ** argv)
                         {
                              if(OY_IS_ARG("verbose"))
                         { ++verbose; i=100; break; }
-                        }
+                        } OYJL_FALLTHROUGH
               default:
                         printfHelp(argc, argv);
                         exit (0);
