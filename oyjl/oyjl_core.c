@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2016  Kai-Uwe Behrmann  <ku.b@gmx.de>
+ * Copyright (c) 2004-2018  Kai-Uwe Behrmann  <ku.b@gmx.de>
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -24,8 +24,8 @@
 
 #include "oyjl_tree_internal.h"
 
-yajl_status  oyjl_message_func       ( oyjl_message_e      error_code,
-                                       const void        * context_object __attribute__((unused)),
+yajl_status  oyjlMessageFunc         ( int/*oyjlMSG_e*/    error_code,
+                                       const void        * context_object OYJL_UNUSED,
                                        const char        * format,
                                        ... )
 {
@@ -54,10 +54,10 @@ yajl_status  oyjl_message_func       ( oyjl_message_e      error_code,
     va_end  ( list );
   }
 
-  if(error_code == oyjl_message_info) status_text = "Info: ";
-  if(error_code == oyjl_message_client_canceled) status_text = "Client Canceled: ";
-  if(error_code == oyjl_message_insufficient_data) status_text = "Insufficient data: ";
-  if(error_code == oyjl_message_error) status_text = "!!! ERROR: ";
+  if(error_code == oyjlMSG_INFO) status_text = "Info: ";
+  if(error_code == oyjlMSG_CLIENT_CANCELED) status_text = "Client Canceled: ";
+  if(error_code == oyjlMSG_INSUFFICIENT_DATA) status_text = "Insufficient data: ";
+  if(error_code == oyjlMSG_ERROR) status_text = "!!! ERROR: ";
 
   if(status_text)
     fprintf( stderr, "%s", status_text );
@@ -70,7 +70,7 @@ yajl_status  oyjl_message_func       ( oyjl_message_e      error_code,
   return error;
 }
 
-oyjl_message_f     oyjl_message_p = oyjl_message_func;
+oyjlMessage_f     oyjlMessage_p = oyjlMessageFunc;
 
 /** @brief   set a custom message listener
  *
@@ -78,14 +78,14 @@ oyjl_message_f     oyjl_message_p = oyjl_message_func;
  *  @date    2011/10/21
  *  @since   2008/04/03 (OpenICC: 0.1.0)
  */
-yajl_status    oyjl_message_func_set ( oyjl_message_f    message_func )
+yajl_status    oyjlMessageFuncSet    ( oyjlMessage_f       message_func )
 {
   if(message_func)
-    oyjl_message_p = message_func;
+    oyjlMessage_p = message_func;
   return 0;
 }
 
-char **        oyjl_string_split     ( const char        * text,
+char **        oyjlStringSplit       ( const char        * text,
                                        const char          delimiter,
                                        int               * count,
                                        void*            (* alloc)(size_t))
@@ -138,7 +138,7 @@ char **        oyjl_string_split     ( const char        * text,
   return list;
 }
 
-char *     oyjl_string_copy          ( const char        * string,
+char *     oyjlStringCopy            ( const char        * string,
                                        void*            (* alloc)(size_t))
 {
   char * text_copy = NULL;
@@ -153,7 +153,7 @@ char *     oyjl_string_copy          ( const char        * string,
   return text_copy;
 }
 
-int        oyjl_string_add           ( char             ** string,
+int        oyjlStringAdd             ( char             ** string,
                                        void*            (* alloc)(size_t size),
                                        void             (* deAlloc)(void * data ),
                                        const char        * format,
@@ -199,7 +199,7 @@ int        oyjl_string_add           ( char             ** string,
   return 0;
 }
 
-char*      oyjl_string_appendn       ( const char        * text,
+char*      oyjlStringAppendn         ( const char        * text,
                                        const char        * append,
                                        int                 append_len,
                                        void*            (* alloc)(size_t size) )
@@ -228,7 +228,7 @@ char*      oyjl_string_appendn       ( const char        * text,
   return text_copy;
 }
 
-void       oyjl_string_addn          ( char             ** text,
+void       oyjlStringAddn            ( char             ** text,
                                        const char        * append,
                                        int                 append_len,
                                        void*            (* alloc)(size_t),
@@ -238,7 +238,7 @@ void       oyjl_string_addn          ( char             ** text,
 
   if(!text) return;
 
-  text_copy = oyjl_string_appendn(*text, append, append_len, alloc);
+  text_copy = oyjlStringAppendn(*text, append, append_len, alloc);
 
   if(*text && deAlloc)
     deAlloc(*text);
@@ -248,7 +248,7 @@ void       oyjl_string_addn          ( char             ** text,
   return;
 }
 
-char*      oyjl_string_replace       ( const char        * text,
+char*      oyjlStringReplace         ( const char        * text,
                                        const char        * search,
                                        const char        * replacement,
                                        void*            (* alloc)(size_t),
@@ -266,14 +266,14 @@ char*      oyjl_string_replace       ( const char        * text,
     int s_len = strlen(search);
     while((end = strstr(start,search)) != 0)
     {
-      oyjl_string_addn( &t, start, end-start, allocate, deAllocate );
-      oyjl_string_addn( &t, replacement, strlen(replacement), allocate, deAllocate );
+      oyjlStringAddn( &t, start, end-start, allocate, deAllocate );
+      oyjlStringAddn( &t, replacement, strlen(replacement), allocate, deAllocate );
       if(strlen(end) >= (size_t)s_len)
         start = end + s_len;
       else
       {
         if(strstr(start,search) != 0)
-          oyjl_string_addn( &t, replacement, strlen(replacement), allocate, deAllocate );
+          oyjlStringAddn( &t, replacement, strlen(replacement), allocate, deAllocate );
         start = end = end + s_len;
         break;
       }
@@ -281,13 +281,13 @@ char*      oyjl_string_replace       ( const char        * text,
   }
 
   if(start && strlen(start))
-    oyjl_string_addn( &t, start, strlen(start), allocate, deAllocate );
+    oyjlStringAddn( &t, start, strlen(start), allocate, deAllocate );
 
   return t;
 }
 
 
-char **    oyjl_string_list_cat_list ( const char       ** list,
+char **    oyjlStringListCatList     ( const char       ** list,
                                        int                 n_alt,
                                        const char       ** append,
                                        int                 n_app,
@@ -306,13 +306,13 @@ char **    oyjl_string_list_cat_list ( const char       ** list,
     for(i = 0; i < n_alt; ++i)
     {
       if(list[i])
-        nlist[n] = oyjl_string_copy( list[i], alloc );
+        nlist[n] = oyjlStringCopy( list[i], alloc );
       n++;
     }
 
     for(i = 0; i < n_app; ++i)
     {
-      nlist[n] = oyjl_string_copy( append[i], alloc );
+      nlist[n] = oyjlStringCopy( append[i], alloc );
       n++;
     }
 
@@ -323,7 +323,7 @@ char **    oyjl_string_list_cat_list ( const char       ** list,
   return nlist;
 }
 
-void       oyjl_string_list_release  ( char            *** l,
+void       oyjlStringListRelease  ( char            *** l,
                                        int                 size,
                                        void             (* deAlloc)(void*) )
 {
@@ -345,7 +345,7 @@ void       oyjl_string_list_release  ( char            *** l,
   }
 }
 
-void       oyjl_string_list_add_static_string (
+void       oyjlStringListAddStaticString (
                                        char            *** list,
                                        int               * n,
                                        const char        * string,
@@ -362,7 +362,7 @@ void       oyjl_string_list_add_static_string (
   oyjlAllocHelper_m_(nlist, char*, n_alt + 2, alloc, return);
 
   memmove( nlist, *list, sizeof(char*) * n_alt);
-  nlist[n_alt] = oyjl_string_copy( string, alloc );
+  nlist[n_alt] = oyjlStringCopy( string, alloc );
   nlist[n_alt+1] = NULL;
 
   *n = n_alt + 1;
@@ -380,7 +380,7 @@ void       oyjl_string_list_add_static_string (
  *  @date    2015/08/04
  *  @since   2015/08/04 (Oyranos: 0.9.6)
  */
-void       oyjl_string_list_free_doubles (
+void       oyjlStringListFreeDoubles (
                                        char             ** list,
                                        int               * list_n,
                                        void             (* deAlloc)(void*) )
@@ -421,7 +421,7 @@ void       oyjl_string_list_free_doubles (
 
   *list_n = pos;
 }
-void     oyjl_string_list_add_list   ( char            *** list,
+void     oyjlStringListAddList       ( char            *** list,
                                        int               * n,
                                        const char       ** append,
                                        int                 n_app,
@@ -434,17 +434,17 @@ void     oyjl_string_list_add_list   ( char            *** list,
   if(!list) return;
 
   if(n) alt_n = *n;
-  tmp = oyjl_string_list_cat_list((const char**)*list, alt_n, append, n_app,
+  tmp = oyjlStringListCatList((const char**)*list, alt_n, append, n_app,
                                      n, alloc);
 
-  oyjl_string_list_release(list, alt_n, deAlloc);
+  oyjlStringListRelease(list, alt_n, deAlloc);
 
   *list = tmp;
 }
 
 
 /* show better const behaviour and return instant error status */
-int      oyjl_string_to_long         ( const char        * text,
+int      oyjlStringToLong            ( const char        * text,
                                        long              * value )
 {
   char * end = 0;
@@ -464,14 +464,14 @@ int      oyjl_string_to_long         ( const char        * text,
  *  @date    2018/03/18
  *  @since   2011/11/17 (Oyranos: 0.2.0)
  */
-int          oyjl_string_to_double   ( const char        * text,
+int          oyjlStringToDouble      ( const char        * text,
                                        double            * value )
 {
   char * p = NULL, * t = NULL;
   int len;
   int error = -1;
 #ifdef HAVE_LOCALE_H
-  char * save_locale = oyjl_string_copy( setlocale(LC_NUMERIC, 0 ), malloc );
+  char * save_locale = oyjlStringCopy( setlocale(LC_NUMERIC, 0 ), malloc );
   setlocale(LC_NUMERIC, "C");
 #endif
 
@@ -506,3 +506,37 @@ int          oyjl_string_to_double   ( const char        * text,
   return error;
 }
 
+
+char *     oyjlReadFileStreamToMem   ( FILE              * fp,
+                                       int               * size )
+{
+  size_t mem_size = 256;
+  char* mem;
+  int c;
+
+  if(!fp) return NULL;
+
+  mem = (char*) malloc(mem_size+1);
+  if(!mem) return NULL;
+
+  if(size)
+  {
+    *size = 0;
+    do
+    {
+      c = getc(fp);
+      if(*size >= (int)mem_size)
+      {
+        mem_size *= 2;
+        mem = (char*) realloc( mem, mem_size+1 );
+        if(!mem) { *size = 0; return NULL; }
+      }
+      mem[(*size)++] = c;
+    } while(!feof(fp));
+
+    --*size;
+    mem[*size] = '\000';
+  }
+
+  return mem;
+}

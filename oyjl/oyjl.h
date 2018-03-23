@@ -15,7 +15,6 @@
  */
 
 /**
- *  @internal
  *   * \file oyjl_tree.h
  *
  * Parses JSON data and returns the data in tree form.
@@ -44,7 +43,7 @@
 extern "C" {
 #endif
 
-/** @internal
+/**
  *  possible data types that a oyjl_val_s can hold */
 typedef enum {
     oyjl_t_string = 1,
@@ -68,7 +67,6 @@ typedef enum {
 typedef struct oyjl_val_s * oyjl_val;
 
 /**
- * @internal
  * A JSON value representation capable of holding one of the seven
  * types above. For "string", "number", "object", and "array"
  * additional data is available in the union.  The "OYJL_IS_*"
@@ -109,7 +107,6 @@ struct oyjl_val_s
 };
 
 /**
- * @internal
  * Parse a string.
  *
  * Parses an null-terminated string containing JSON data and returns a pointer
@@ -131,17 +128,16 @@ struct oyjl_val_s
  * null terminated message describing the error in more detail is stored in
  * \em error_buffer if it is not \c NULL.
  */
-OYJL_API oyjl_val oyjl_tree_parse (const char *input,
+OYJL_API oyjl_val oyjlTreeParse  ( const char *input,
                                    char *error_buffer, size_t error_buffer_size);
 
 /**
- * @internal
  * Free a parse tree returned by "oyjl_tree_parse".
  *
  * \param v Pointer to a JSON value returned by "oyjl_tree_parse". Passing NULL
  * is valid and results in a no-op.
  */
-OYJL_API void oyjl_tree_free (oyjl_val v);
+OYJL_API void oyjlTreeFree ( oyjl_val v );
 
 /**
  * @internal
@@ -158,7 +154,7 @@ OYJL_API void oyjl_tree_free (oyjl_val v);
  * like .first and .last, even .length.  Inspiration from JSONPath and css selectors?
  * No it wouldn't be fast, but that's not what this API is about.
  */
-OYJL_API oyjl_val oyjl_tree_get(oyjl_val parent, const char ** path, oyjl_type type);
+OYJL_API oyjl_val oyjlTreeGet ( oyjl_val parent, const char ** path, oyjl_type type );
 
 /* Various convenience macros to check the type of a `oyjl_val` */
 #define OYJL_IS_STRING(v) (((v) != NULL) && ((v)->type == oyjl_t_string))
@@ -199,112 +195,120 @@ OYJL_API oyjl_val oyjl_tree_get(oyjl_val parent, const char ** path, oyjl_type t
  *  Get a pointer to a oyjl_val_array or NULL if the value is not an object. */
 #define OYJL_GET_ARRAY(v)  (OYJL_IS_ARRAY(v)  ? &(v)->u.array  : NULL)
 
-oyjl_val   oyjl_tree_new             ( const char        * path );
-void       oyjl_tree_clear_value     ( oyjl_val            root,
+oyjl_val   oyjlTreeNew               ( const char        * path );
+void       oyjlTreeClearValue        ( oyjl_val            root,
                                        const char        * xpath );
-void       oyjl_tree_to_json         ( oyjl_val            v,
+void       oyjlTreeToJson            ( oyjl_val            v,
                                        int               * level,
                                        char             ** json );
-void       oyjl_tree_to_yaml         ( oyjl_val            v,
+void       oyjlTreeToYaml            ( oyjl_val            v,
                                        int               * level,
                                        char             ** yaml );
 #define    OYJL_PATH                   0x08
 #define    OYJL_KEY                    0x10
-void       oyjl_tree_to_paths        ( oyjl_val            v,
+void       oyjlTreeToPaths           ( oyjl_val            v,
                                        int                 child_levels,
                                        const char        * xpath,
                                        int                 flags,
                                        char            *** paths );
 #define    OYJL_CREATE_NEW             0x02
-oyjl_val   oyjl_tree_get_value       ( oyjl_val            v,
+oyjl_val   oyjlTreeGetValue          ( oyjl_val            v,
                                        int                 flags,
                                        const char        * path );
-oyjl_val   oyjl_tree_get_valuef      ( oyjl_val            v,
+oyjl_val   oyjlTreeGetValuef         ( oyjl_val            v,
                                        int                 flags,
                                        const char        * format,
                                                            ... );
-char *     oyjl_value_text           ( oyjl_val            v,
+char *     oyjlValueText             ( oyjl_val            v,
                                        void*             (*alloc)(size_t));
-int        oyjl_value_count          ( oyjl_val            v );
-oyjl_val   oyjl_value_pos_get        ( oyjl_val            v,
+int        oyjlValueCount            ( oyjl_val            v );
+oyjl_val   oyjlValuePosGet           ( oyjl_val            v,
                                        int                 pos );
-int        oyjl_value_set_string     ( oyjl_val            v,
+int        oyjlValueSetString        ( oyjl_val            v,
                                        const char        * string );
-void       oyjl_value_clear          ( oyjl_val            v );
+void       oyjlValueClear            ( oyjl_val            v );
 #define    OYJL_PATH_MATCH_LEN         0x20
 #define    OYJL_PATH_MATCH_LAST_ITEMS  0x40
-int        oyjl_path_match           ( const char        * path,
+int        oyjlPathMatch             ( const char        * path,
                                        const char        * xpath,
                                        int                 flags );
 
+/* --- Core --- */
 
 /* --- string helpers --- */
-char **    oyjl_string_split         ( const char        * text,
+char **    oyjlStringSplit           ( const char        * text,
                                        const char          delimiter,
                                        int               * count,
                                        void*            (* alloc)(size_t));
-char *     oyjl_string_copy          ( const char        * string,
+char *     oyjlStringCopy            ( const char        * string,
                                        void*            (* alloc)(size_t));
-int        oyjl_string_add           ( char             ** string,
+int        oyjlStringAdd             ( char             ** string,
                                        void*            (* alloc)(size_t),
                                        void             (* deAlloc)(void*),
                                        const char        * format,
                                                            ... );
-char*      oyjl_string_appendn       ( const char        * text,
+char*      oyjlStringAppendn         ( const char        * text,
                                        const char        * append,
                                        int                 append_len,
                                        void*            (* alloc)(size_t size) );
-void       oyjl_string_addn          ( char             ** text,
+void       oyjlStringAddn            ( char             ** text,
                                        const char        * append,
                                        int                 append_len,
                                        void*            (* alloc)(size_t),
                                        void             (* deAlloc)(void*) );
-char*      oyjl_string_replace       ( const char        * text,
+char*      oyjlStringReplace         ( const char        * text,
                                        const char        * search,
                                        const char        * replacement,
                                        void*            (* alloc)(size_t),
                                        void             (* deAlloc)(void*) );
-void       oyjl_string_list_release  ( char            *** l,
+void       oyjlStringListRelease     ( char            *** l,
                                        int                 size,
                                        void             (* deAlloc)(void*) );
-void       oyjl_string_list_free_doubles (
-                                       char             ** list,
+void       oyjlStringListFreeDoubles ( char             ** list,
                                        int               * list_n,
                                        void             (* deAlloc)(void*) );
-void       oyjl_string_list_add_list ( char            *** list,
+void       oyjlStringListAddList     ( char            *** list,
                                        int               * n,
                                        const char       ** append,
                                        int                 n_app,
                                        void*            (* alloc)(size_t),
                                        void             (* deAlloc)(void*) );
-char **    oyjl_string_list_cat_list ( const char       ** list,
+char **    oyjlStringListCatList ( const char       ** list,
                                        int                 n_alt,
                                        const char       ** append,
                                        int                 n_app,
                                        int               * count,
                                        void*            (* alloc)(size_t) );
-void       oyjl_string_list_add_static_string (
+void       oyjlStringListAddStaticString (
                                        char            *** list,
                                        int               * n,
                                        const char        * string,
                                        void*            (* alloc)(size_t),
                                        void             (* deAlloc)(void*) );
-int        oyjl_string_to_long       ( const char        * text,
+int        oyjlStringToLong          ( const char        * text,
                                        long              * value );
+int        oyjlStringToDouble        ( const char        * text,
+                                       double            * value );
+
+/* --- I/O helpers --- */
+char *     oyjlReadFileStreamToMem   ( FILE              * fp,
+                                       int               * size );
 
 /* --- message helpers --- */
 typedef enum {
-  oyjl_message_info = 400 + yajl_status_ok,
-  oyjl_message_client_canceled,
-  oyjl_message_insufficient_data,
-  oyjl_message_error
-} oyjl_message_e;
-typedef yajl_status(*oyjl_message_f) ( oyjl_message_e      error_code,
+  oyjlMSG_INFO = 400 + yajl_status_ok,
+  oyjlMSG_CLIENT_CANCELED,
+  oyjlMSG_INSUFFICIENT_DATA,
+  oyjlMSG_ERROR
+} oyjlMSG_e;
+typedef yajl_status(*oyjlMessage_f)  ( int/*oyjlMSG_e*/    error_code,
                                        const void        * context,
                                        const char        * format,
                                        ... );
-yajl_status    oyjl_message_func_set ( oyjl_message_f      message_func );
+yajl_status    oyjlMessageFuncSet    ( oyjlMessage_f      message_func );
 
+
+/* --- compile helpers --- */
 #if   defined(__clang__)
 #define OYJL_FALLTHROUGH
 #elif __GNUC__ >= 7 
@@ -328,6 +332,7 @@ yajl_status    oyjl_message_func_set ( oyjl_message_f      message_func );
 #else
 #define OYJL_UNUSED
 #endif
+
 
 #ifdef __cplusplus
 }

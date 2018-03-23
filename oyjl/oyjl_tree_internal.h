@@ -28,7 +28,7 @@ extern "C" {
 #endif
 #define oyjlAllocHelper_m_(ptr_, type, size_, alloc_func, action) { \
   if ((size_) <= 0) {                                       \
-      oyjl_message_p( oyjl_message_insufficient_data, 0, "Nothing to allocate"); \
+      oyjlMessage_p( oyjlMSG_INSUFFICIENT_DATA, 0, "Nothing to allocate"); \
   } else {                                                  \
       void*(*a)(size_t size) = alloc_func;                  \
       if(!a) a = malloc;                                    \
@@ -36,7 +36,7 @@ extern "C" {
       memset( ptr_, 0, sizeof (type) * (size_t)(size_) );   \
   }                                                         \
   if (ptr_ == NULL) {                                       \
-      oyjl_message_p( oyjl_message_error, 0, "Out of memory"); \
+      oyjlMessage_p( oyjlMSG_ERROR, 0, "Out of memory"); \
     action;                                                 \
   }                                                         \
 }
@@ -49,9 +49,9 @@ extern "C" {
 # define  OYJL_DBG_ARGS_   strrchr(__FILE__,'/') ? strrchr(__FILE__,'/')+1 : __FILE__,__LINE__
 #endif
 
-extern oyjl_message_f oyjl_message_p;
+extern oyjlMessage_f oyjlMessage_p;
 
-int        oyjl_tree_paths_get_index ( const char        * term,
+int        oyjlTreePathsGetIndex     ( const char        * term,
                                        int               * index );
 
 #ifdef __cplusplus

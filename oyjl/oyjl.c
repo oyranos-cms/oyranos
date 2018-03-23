@@ -78,8 +78,6 @@ void printfHelp(int argc OYJL_UNUSED, char ** argv)
   fprintf( stderr, "\n");
 }
 
-char *       oyjlReadFileSToMem_     ( FILE              * fp,
-                                       int               * size );
 
 typedef enum {
   JSON,
@@ -185,7 +183,7 @@ int main(int argc, char ** argv)
 
     if(fp)
     {
-      text = oyjlReadFileSToMem_( fp, &size ); 
+      text = oyjlReadFileStreamToMem( fp, &size ); 
       if(fp != stdin) fclose( fp );
     }
   }
@@ -195,7 +193,7 @@ int main(int argc, char ** argv)
     char error_buffer[256] = {0};
     if(verbose)
       fprintf(stderr, "file read:\t\"%s\"\n", input_file_name);
-    root = oyjl_tree_parse( text, error_buffer, 256 );
+    root = oyjlTreeParse( text, error_buffer, 256 );
     if(error_buffer[0] != '\000')
       fprintf(stderr, "ERROR:\t\"%s\"\n", error_buffer);
     if(verbose)
@@ -206,7 +204,7 @@ int main(int argc, char ** argv)
       char ** paths = NULL;
       int count = 0, i;
 
-      oyjl_tree_to_paths( root, 1000000, xpath, 0, &paths );
+      oyjlTreeToPaths( root, 1000000, xpath, 0, &paths );
       while(paths && paths[count]) ++count;
 
       if(show == PATHS)
@@ -216,28 +214,28 @@ int main(int argc, char ** argv)
         fprintf(stdout,"%s\n", (count && paths[0] && strlen(strchr(paths[0],'/'))) ? strrchr(paths[0],'/') + 1 : "");
 
       if(paths || value_string)
-        value = oyjl_tree_get_value( root,
+        value = oyjlTreeGetValue( root,
                                      value_string ? OYJL_CREATE_NEW : 0,
                                      paths?paths[0]:xpath );
       if(verbose)
         fprintf(stderr, "%s xpath \"%s\"\n", value?"found":"found not", xpath);
 
-      oyjl_string_list_release( &paths, count, free );
+      oyjlStringListRelease( &paths, count, free );
 
       if(value_string)
       {
         if(value)
-          oyjl_value_set_string( value, value_string );
+          oyjlValueSetString( value, value_string );
         else
-          oyjl_message_p( oyjl_message_error, 0, OYJL_DBG_FORMAT_"obtained no leave for xpath \"%s\" from JSON:\t\"%s\"",
-                          OYJL_DBG_ARGS_, xpath, input_file_name );
+          oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT_"obtained no leave for xpath \"%s\" from JSON:\t\"%s\"",
+                         OYJL_DBG_ARGS_, xpath, input_file_name );
       }
 
       if(verbose)
         fprintf(stderr, "processed:\t\"%s\"\n", input_file_name);
     }
     else if(value_string)
-      oyjl_message_p( oyjl_message_error, 0, OYJL_DBG_FORMAT_"set argument needs as well a xpath argument", OYJL_DBG_ARGS_ );
+      oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT_"set argument needs as well a xpath argument", OYJL_DBG_ARGS_ );
     else
       value = root;
   }
@@ -251,9 +249,9 @@ int main(int argc, char ** argv)
         char * text = NULL;
         int level = 0;
         if(show == JSON)
-          oyjl_tree_to_json( value_string ? root : value, &level, &text );
+          oyjlTreeToJson( value_string ? root : value, &level, &text );
         else if(show == YAML)
-          oyjl_tree_to_yaml( value_string ? root : value, &level, &text );
+          oyjlTreeToYaml( value_string ? root : value, &level, &text );
         if(text)
         {
           fwrite( text, sizeof(char), strlen(text), stdout );
@@ -277,12 +275,12 @@ int main(int argc, char ** argv)
     case COUNT:
       {
         char n[128] = {0};
-        sprintf(n, "%d", oyjl_value_count(value));
+        sprintf(n, "%d", oyjlValueCount(value));
         puts( n );
       }
       break;
     case KEY:
-      if(!xpath && value->type == oyjl_t_object && oyjl_value_count(value) > index)
+      if(!xpath && value->type == oyjl_t_object && oyjlValueCount(value) > index)
         puts( value->u.object.keys[index] );
       break;
     case PATHS:
@@ -291,7 +289,7 @@ int main(int argc, char ** argv)
         char ** paths = NULL;
         int count = 0, i;
 
-        oyjl_tree_to_paths( root, 1000000, NULL, 0, &paths );
+        oyjlTreeToPaths( root, 1000000, NULL, 0, &paths );
         if(verbose)
           fprintf(stderr, "processed:\t\"%s\"\n", input_file_name);
         while(paths && paths[count]) ++count;
@@ -299,48 +297,15 @@ int main(int argc, char ** argv)
         for(i = 0; i < count; ++i)
           fprintf(stdout,"%s\n", paths[i]);
 
-        oyjl_string_list_release( &paths, count, free );
+        oyjlStringListRelease( &paths, count, free );
       }
       break;
     default: break;
   }
 
-  if(root) oyjl_tree_free( root );
+  if(root) oyjlTreeFree( root );
   if(text) free(text);
 
   return error;
 }
 
-char *       oyjlReadFileSToMem_     ( FILE              * fp,
-                                       int               * size )
-{
-  size_t mem_size = 256;
-  char* mem;
-  int c;
-
-  if(!fp) return NULL;
-
-  mem = (char*) malloc(mem_size+1);
-  if(!mem) return NULL;
-
-  if(size)
-  {
-    *size = 0;
-    do
-    {
-      c = getc(fp);
-      if(*size >= mem_size)
-      {
-        mem_size *= 2;
-        mem = (char*) realloc( mem, mem_size+1 );
-        if(!mem) { *size = 0; return NULL; }
-      }
-      mem[(*size)++] = c;
-    } while(!feof(fp));
-
-    --*size;
-    mem[*size] = '\000';
-  }
-
-  return mem;
-}
