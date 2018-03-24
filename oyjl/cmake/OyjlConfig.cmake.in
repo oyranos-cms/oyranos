@@ -1,0 +1,75 @@
+# - Find Oyjl
+# Find the native Oyjl headers and libraries.
+#
+#  OYJL_FOUND        - True if Oyjl found.
+#  OYJL_INCLUDE_DIRS - where to find kdb.h, etc.
+#  OYJL_LIBRARIES    - List of libraries when using Oyjl.
+#  OYJL_LIBRARY_DIRS - where to find libraries
+#
+#  OYJL_VERSION       - The version of oyjl (x.y.z)
+#  OYJL_VERSION_MAJOR - The major version of oyjl (x)
+#  OYJL_VERSION_MINOR - The minor version of oyjl (y)
+#  OYJL_VERSION_MICRO - The patch version of oyjl (z)
+#
+#  OYJL_LINGUAS       - Oyjl translation languages
+#  OYJL_LINGUAS_FULL  - Oyjl translation languages with country code
+#
+#  OYJL_INCLUDE_DIR         - Include of of the Oyjl.framework Headers path
+#  OYJL_LIBRARIES           - libraries for imaging API + above
+#  OYJL_LIBRARIES_EXTRA         - linked libraries
+#
+#  HAVE_OYJL          - TRUE
+
+
+# Set path to the header file.
+SET(OYJL_INCLUDE_DIR
+      @CMAKE_INSTALL_FULL_INCLUDEDIR@
+   )
+MARK_AS_ADVANCED(OYJL_INCLUDE_DIR)
+
+# Set path to the library.
+FIND_LIBRARY(OYJL_CORE_LIBRARY
+	NAMES @PROJECT_NAME@Core
+	PATHS @CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_LIBDIR@
+)
+FIND_LIBRARY(OYJL_LIBRARY
+	NAMES @PROJECT_NAME@
+	PATHS @CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_LIBDIR@
+)
+SET( OYJL_LIBRARIES ${OYJL_LIBRARY} ${OYJL_CORE_LIBRARY} @CONFIG_YAJL_LIBRARIES@ )
+
+FIND_LIBRARY(OYJL_CORE_STATIC_LIBRARY
+	NAMES @PACKAGE_NAME@-core-static
+	PATHS @CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_LIBDIR@
+)
+FIND_LIBRARY(OYJL_STATIC_LIBRARY
+	NAMES @PACKAGE_NAME@-static
+	PATHS @CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_LIBDIR@
+)
+MARK_AS_ADVANCED(OYJL_STATIC_LIBRARY)
+IF(NOT OYJL_LIBRARIES AND OYJL_STATIC_LIBRARY)
+  SET( OYJL_LIBRARIES ${OYJL_STATIC_LIBRARY} ${OYJL_CORE_STATIC_LIBRARY} @CONFIG_YAJL_LIBRARIES@ )
+ENDIF()
+
+MARK_AS_ADVANCED(OYJL_LIBRARIES)
+
+# handle the QUIETLY and REQUIRED arguments and set OYJL_FOUND to TRUE if
+# all listed variables are TRUE
+INCLUDE(FindPackageHandleStandardArgs)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(Oyjl DEFAULT_MSG OYJL_LIBRARIES OYJL_INCLUDE_DIR)
+
+if (OYJL_FOUND)
+        SET( OYJL_VERSION_MAJOR @OYJL_VERSION_MAJOR@ )
+        SET( OYJL_VERSION_MINOR @OYJL_VERSION_MINOR@ )
+        SET( OYJL_VERSION_MICRO @OYJL_VERSION_MICRO@ )
+        SET( OYJL_VERSION       @OYJL_VERSION@ )
+        SET( OYJL_LIBRARIES_EXTRA         @EXTRA_LIBS@ )
+        SET( OYJL_LINGUAS       @OYJL_LINGUAS@ )
+        SET( OYJL_LINGUAS_FULL       @OYJL_LINGUAS_FULL@ )
+        SET( HAVE_OYJL          TRUE )
+        SET( OYJL_INCLUDE_DIRS
+             ${OYJL_INCLUDE_DIR}
+           )
+        SET( OYJL_LIBRARY_DIRS @CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_LIBDIR@ )
+endif (OYJL_FOUND)
+
