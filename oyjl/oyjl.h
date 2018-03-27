@@ -234,6 +234,7 @@ int        oyjlPathMatch             ( const char        * path,
                                        int                 flags );
 
 /* --- Core --- */
+int        oyjlVersion               ( int                 type );
 
 /* --- string helpers --- */
 char **    oyjlStringSplit           ( const char        * text,
@@ -247,11 +248,11 @@ int        oyjlStringAdd             ( char             ** string,
                                        void             (* deAlloc)(void*),
                                        const char        * format,
                                                            ... );
-char*      oyjlStringAppendn         ( const char        * text,
+char*      oyjlStringAppendN         ( const char        * text,
                                        const char        * append,
                                        int                 append_len,
                                        void*            (* alloc)(size_t size) );
-void       oyjlStringAddn            ( char             ** text,
+void       oyjlStringAddN            ( char             ** text,
                                        const char        * append,
                                        int                 append_len,
                                        void*            (* alloc)(size_t),
