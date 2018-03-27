@@ -155,7 +155,6 @@ int main( int argc , char** argv )
   char * night_effect = NULL;
   double temperature = 0.0;
   int show = 0;
-  char * json = 0;
   int dry = 0;
   int location = 0;
   double longitude = 360;
@@ -822,7 +821,51 @@ oyDBusFilter_m
 oyWatchDBus_m( oyDBusFilter )
 oyFinishDBus_m
 int oy_dbus_config_changed = 0;
-oyCallbackDBusCli_m(oy_dbus_config_changed)
+static void oyMonitorCallbackDBus    ( double              progress_zero_till_one OY_UNUSED,
+                                       char              * status_text,
+                                       int                 thread_id_ OY_UNUSED,
+                                       int                 job_id OY_UNUSED,
+                                       oyStruct_s        * cb_progress_context )
+{
+  const char * key;
+  int verbose = oyOption_GetValueInt( (oyOption_s*)cb_progress_context, 0 );
+  if(!status_text) return;
+
+  oyGetPersistentStrings(NULL);
+
+  key = strchr( status_text, '/' );
+  if(key)
+    ++key;
+  else
+    return;
+  if(!verbose) return;
+
+  if( strstr(key, OY_STD "/ping") == NULL && /* let us ping */
+      strstr(key, OY_DISPLAY_STD) == NULL && /* all display variables */
+      strstr(key, OY_DEFAULT_DISPLAY_WHITE_POINT) == NULL && /* oySetDisplayWhitePoint() */
+      strstr(key, OY_DEFAULT_EFFECT) == NULL && /* effect switch changes */
+      strstr(key, OY_DEFAULT_EFFECT_PROFILE) == NULL /* new effect profile */
+    )
+    return;
+  if( /* skip XY(Z) and listen only on Z to reduce flicker */
+      strstr(key, OY_DEFAULT_DISPLAY_WHITE_POINT_X) != NULL ||
+      strstr(key, OY_DEFAULT_DISPLAY_WHITE_POINT_Y) != NULL || 
+      /* skip XY(Z) with elektra style array indixes */
+      strstr(key, OY_DISPLAY_STD OY_SLASH "display_white_point_XYZ/#0") != NULL ||
+      strstr(key, OY_DISPLAY_STD OY_SLASH "display_white_point_XYZ/#1") != NULL
+    )
+    return;
+
+  char * v = oyGetPersistentString( key, 0, scope, oyAllocateFunc_ );
+  fprintf(stderr, "%s:%s\n", key,v);
+  oyFree_m_(v);
+
+  checkWtptState( 0 );
+  updateVCGT();
+
+  /* Clear the changed state, before a new check. */
+  oy_dbus_config_changed = 1;
+}
 #endif /* HAVE_DBUS */
 
 
@@ -858,7 +901,7 @@ int runDaemon(int dmode)
     checkWtptState( 0 );
 
 #ifdef HAVE_DBUS
-  oyStartDBusObserver( oyWatchDBus, oyFinishDBus, oyCallbackDBus, OY_DISPLAY_STD, NULL )
+  oyStartDBusObserver( oyWatchDBus, oyFinishDBus, oyMonitorCallbackDBus, OY_DISPLAY_STD, NULL )
   if(id)
     fprintf(stderr, "oyStartDBusObserver ID: %d\n", id);
 
