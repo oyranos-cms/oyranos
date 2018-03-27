@@ -288,6 +288,10 @@ static cmsToneCurve* (*l2cmsBuildGamma)(cmsContext ContextID, cmsFloat64Number G
 static cmsToneCurve*(*l2cmsBuildSegmentedToneCurve)(cmsContext ContextID, cmsInt32Number nSegments, const cmsCurveSegment Segments[]) = NULL;
 static cmsToneCurve*(*l2cmsBuildParametricToneCurve)(cmsContext ContextID, cmsInt32Number Type, const cmsFloat64Number Parameters[]) = NULL;
 static void (*l2cmsFreeToneCurve)(cmsToneCurve* Curve) = NULL;
+static cmsHANDLE         (*l2cmsCIECAM02Init)               (cmsContext ContextID, const cmsViewingConditions* pVC) = NULL;
+static void              (*l2cmsCIECAM02Done)               (cmsHANDLE hModel) = NULL;
+static void              (*l2cmsCIECAM02Forward)            (cmsHANDLE hModel, const cmsCIEXYZ* pIn, cmsJCh* pOut) = NULL;
+static void              (*l2cmsCIECAM02Reverse)            (cmsHANDLE hModel, const cmsJCh* pIn,    cmsCIEXYZ* pOut) = NULL;
 static cmsPipeline*      (*l2cmsPipelineAlloc)              (cmsContext ContextID, cmsUInt32Number InputChannels, cmsUInt32Number OutputChannels) = NULL;
 static int               (*l2cmsPipelineInsertStage)        (cmsPipeline* lut, cmsStageLoc loc, cmsStage* mpe) = NULL;
 static void              (*l2cmsPipelineFree)               (cmsPipeline* lut) = NULL;
@@ -452,6 +456,10 @@ int                l2cmsCMMInit       ( oyStruct_s        * filter OY_UNUSED )
       LOAD_FUNC( cmsBuildSegmentedToneCurve, NULL );
       LOAD_FUNC( cmsBuildParametricToneCurve, NULL );
       LOAD_FUNC( cmsFreeToneCurve, NULL );
+      LOAD_FUNC( cmsCIECAM02Init, NULL );
+      LOAD_FUNC( cmsCIECAM02Done, NULL );
+      LOAD_FUNC( cmsCIECAM02Forward, NULL );
+      LOAD_FUNC( cmsCIECAM02Reverse, NULL );
       LOAD_FUNC( cmsPipelineAlloc, NULL );
       LOAD_FUNC( cmsPipelineFree, NULL );
       LOAD_FUNC( cmsPipelineInsertStage, NULL );
@@ -568,6 +576,10 @@ int                l2cmsCMMInit       ( oyStruct_s        * filter OY_UNUSED )
 #define cmsBuildSegmentedToneCurve l2cmsBuildSegmentedToneCurve
 #define cmsBuildParametricToneCurve l2cmsBuildParametricToneCurve
 #define cmsFreeToneCurve l2cmsFreeToneCurve
+#define cmsCIECAM02Init l2cmsCIECAM02Init
+#define cmsCIECAM02Done l2cmsCIECAM02Done
+#define cmsCIECAM02Forward l2cmsCIECAM02Forward
+#define cmsCIECAM02Reverse l2cmsCIECAM02Reverse
 #define cmsPipelineAlloc l2cmsPipelineAlloc
 #define cmsPipelineFree l2cmsPipelineFree
 #define cmsPipelineInsertStage l2cmsPipelineInsertStage
