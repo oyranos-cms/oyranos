@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Oyranos 0.9\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2018-03-03 23:27+0100\n"
+"POT-Creation-Date: 2018-03-26 22:10+0200\n"
 "PO-Revision-Date: 2015-02-20 17:32+0100\n"
 "Last-Translator: Kai-Uwe Behrmann <ku.b@gmx.de>\n"
 "Language-Team: russian <ru@li.org>\n"
@@ -25,7 +25,7 @@ msgstr ""
 #: tools/oyranos-device.c:386 tools/oyranos-device.c:401
 #: tools/oyranos-device.c:423 tools/oyranos-device.c:465
 #: tools/oyranos-device.c:828 tools/oyranos-device.c:1025
-#: tools/oyranos-device.c:1261 tools/oyranos-monitor-white-point.c:446
+#: tools/oyranos-device.c:1261 tools/oyranos-monitor-white-point.c:445
 #: tools/qcmsevents/qcmsevents.cpp:325
 #, c-format
 msgid "!!! ERROR"
@@ -322,7 +322,7 @@ msgstr ""
 msgid "Active matrix monitor"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:744
+#: tools/oyranos-monitor-white-point.c:743
 msgid "Actual white point mode"
 msgstr ""
 
@@ -500,7 +500,7 @@ msgstr ""
 msgid "Automatic"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:283
+#: tools/oyranos-monitor-white-point.c:282
 msgid "Automatic white point"
 msgstr ""
 
@@ -710,10 +710,10 @@ msgstr ""
 msgid "Channels:"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_elDB.c:862
+#: modules/color/modules/oyranos_cmm_elDB.c:974
 #: modules/color/modules/oyranos_cmm_lcms.c:2522
 #: modules/color/modules/oyranos_cmm_lcms.c:2595
-#: modules/color/modules/oyranos_cmm_oiDB.c:462
+#: modules/color/modules/oyranos_cmm_oiDB.c:429
 #: modules/color/modules/oyranos_cmm_oyra_profile_graph2d.c:329
 #: modules/color/modules/oyranos_cmm_trds.c:640
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:148
@@ -730,7 +730,7 @@ msgstr ""
 msgid "Check if this module can handle a certain command."
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:309
+#: tools/oyranos-monitor-white-point.c:308
 msgid "Choices:"
 msgstr ""
 
@@ -739,7 +739,7 @@ msgstr ""
 msgid "Chromaticity"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:562
+#: tools/oyranos-monitor-white-point.c:561
 msgid "City"
 msgstr ""
 
@@ -1011,8 +1011,8 @@ msgstr ""
 msgid "Copyright (c) 2014-2016 Kai-Uwe Behrmann; new BSD"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_elDB.c:951
-#: modules/color/modules/oyranos_cmm_oiDB.c:551
+#: modules/color/modules/oyranos_cmm_elDB.c:1063
+#: modules/color/modules/oyranos_cmm_oiDB.c:518
 msgid "Copyright (c) 2016 Kai-Uwe Behrmann; new BSD"
 msgstr ""
 
@@ -1046,7 +1046,7 @@ msgid ""
 "point to a Oyranos module loader library?"
 msgstr ""
 
-#: API_generated/oyranos_devices.c:498
+#: API_generated/oyranos_devices.c:499
 msgid "Could not open ICC profile"
 msgstr ""
 
@@ -1054,7 +1054,7 @@ msgstr ""
 msgid "Could not open default ICC profile"
 msgstr ""
 
-#: API_generated/oyranos_devices.c:223 API_generated/oyranos_devices.c:950
+#: API_generated/oyranos_devices.c:223 API_generated/oyranos_devices.c:951
 #: liboyranos/oyranos_alpha.c:846 liboyranos/oyranos_alpha.c:929
 msgid "Could not open device"
 msgstr ""
@@ -1067,7 +1067,7 @@ msgstr ""
 msgid "Could not open or invalid data: "
 msgstr ""
 
-#: API_generated/oyProfile_s.c:934 API_generated/oyranos_devices.c:961
+#: API_generated/oyProfile_s.c:934 API_generated/oyranos_devices.c:962
 #: liboyranos_core/oyranos_io_core.c:111 liboyranos_core/oyranos_io_core.c:279
 msgid "Could not open profile"
 msgstr ""
@@ -1097,7 +1097,7 @@ msgstr ""
 msgid "Could not resolve rank_json"
 msgstr ""
 
-#: API_generated/oyranos_devices.c:446
+#: API_generated/oyranos_devices.c:447
 msgid "Could not write to file"
 msgstr ""
 
@@ -1105,7 +1105,7 @@ msgstr ""
 msgid "Count all profiles with Lab PCS"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:561
+#: tools/oyranos-monitor-white-point.c:560
 msgid "Country"
 msgstr ""
 
@@ -1404,8 +1404,8 @@ msgid "Editing XYZ"
 msgstr ""
 
 #: liboyranos_config/oyranos_texts.c:255 liboyranos_config/oyranos_texts.c:526
-#: tools/oyranos-monitor-white-point.c:745
-#: tools/oyranos-monitor-white-point.c:801
+#: tools/oyranos-monitor-white-point.c:744
+#: tools/oyranos-monitor-white-point.c:800
 msgid "Effect"
 msgstr ""
 
@@ -1432,12 +1432,12 @@ msgstr ""
 msgid "Electrostatic printer"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_elDB.c:935
-#: modules/color/modules/oyranos_cmm_elDB.c:937
+#: modules/color/modules/oyranos_cmm_elDB.c:1047
+#: modules/color/modules/oyranos_cmm_elDB.c:1049
 msgid "Elektra Configuration API"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_elDB.c:945
+#: modules/color/modules/oyranos_cmm_elDB.c:1057
 msgid ""
 "Elektra project; www/support: http://github.com/ElektraInitiative/libelektra"
 msgstr ""
@@ -1643,7 +1643,7 @@ msgstr ""
 msgid "Generate Image:"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:687
+#: tools/oyranos-monitor-white-point.c:686
 msgid "Geographical Position"
 msgstr ""
 
@@ -2018,10 +2018,10 @@ msgstr ""
 msgid "Information:"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_elDB.c:868
-#: modules/color/modules/oyranos_cmm_elDB.c:876
-#: modules/color/modules/oyranos_cmm_oiDB.c:468
-#: modules/color/modules/oyranos_cmm_oiDB.c:476
+#: modules/color/modules/oyranos_cmm_elDB.c:980
+#: modules/color/modules/oyranos_cmm_elDB.c:988
+#: modules/color/modules/oyranos_cmm_oiDB.c:435
+#: modules/color/modules/oyranos_cmm_oiDB.c:443
 msgid "Initialise the oyDB_s APIs."
 msgstr ""
 
@@ -2104,7 +2104,7 @@ msgstr ""
 msgid "Kai-Uwe Behrmann"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:322
+#: tools/oyranos-monitor-white-point.c:321
 msgid "Kelvin"
 msgstr ""
 
@@ -2349,7 +2349,7 @@ msgstr ""
 #: API_generated/oyProfile_s_.c:333 API_generated/oyProfiles_s_.c:194
 #: API_generated/oyProfiles_s_.c:202 API_generated/oyRectangle_s_.c:190
 #: API_generated/oyRectangle_s_.c:198 API_generated/oyStructList_s_.c:238
-#: API_generated/oyStructList_s_.c:246 API_generated/oyranos_devices.c:3589
+#: API_generated/oyStructList_s_.c:246 API_generated/oyranos_devices.c:3591
 #: API_generated/oyranos_module.c:1571 liboyranos/oyranos_alpha.c:312
 #: liboyranos_modules/oyranos_forms.c:57
 msgid "MEM Error."
@@ -2567,9 +2567,9 @@ msgstr ""
 msgid "Need a ICC profile to modify."
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:443
-#: tools/oyranos-monitor-white-point.c:446
-#: tools/oyranos-monitor-white-point.c:800
+#: tools/oyranos-monitor-white-point.c:442
+#: tools/oyranos-monitor-white-point.c:445
+#: tools/oyranos-monitor-white-point.c:799
 msgid "New white point mode"
 msgstr ""
 
@@ -2619,12 +2619,12 @@ msgstr ""
 msgid "On Rgb Mismatch"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oiDB.c:535
-#: modules/color/modules/oyranos_cmm_oiDB.c:537
+#: modules/color/modules/oyranos_cmm_oiDB.c:502
+#: modules/color/modules/oyranos_cmm_oiDB.c:504
 msgid "OpenICC Configuration API"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oiDB.c:545
+#: modules/color/modules/oyranos_cmm_oiDB.c:512
 msgid "OpenICC project; www/support: http://github.com/OpenICC/config"
 msgstr ""
 
@@ -3536,16 +3536,16 @@ msgstr ""
 msgid "Start"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:687
+#: tools/oyranos-monitor-white-point.c:686
 msgid "Sun Elevation"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:687
+#: tools/oyranos-monitor-white-point.c:686
 #, fuzzy
 msgid "Sunrise"
 msgstr "ICC-профиль"
 
-#: tools/oyranos-monitor-white-point.c:690
+#: tools/oyranos-monitor-white-point.c:689
 msgid "Sunset"
 msgstr ""
 
@@ -3645,15 +3645,15 @@ msgstr ""
 msgid "The Oyranos \""
 msgstr "О программе Oyranos"
 
-#: modules/color/modules/oyranos_cmm_elDB.c:870
-#: modules/color/modules/oyranos_cmm_elDB.c:878
+#: modules/color/modules/oyranos_cmm_elDB.c:982
+#: modules/color/modules/oyranos_cmm_elDB.c:990
 msgid ""
 "The Oyranos \"db_handler\" command will initialise the oyDB hooks with the "
 "Elektra Configuration API."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oiDB.c:470
-#: modules/color/modules/oyranos_cmm_oiDB.c:478
+#: modules/color/modules/oyranos_cmm_oiDB.c:437
+#: modules/color/modules/oyranos_cmm_oiDB.c:445
 msgid ""
 "The Oyranos \"db_handler\" command will initialise the oyDB hooks with the "
 "OpenICC Configuration API."
@@ -3782,13 +3782,13 @@ msgid ""
 "graph through the user function oyConversion_Correct()."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_elDB.c:959
-#: modules/color/modules/oyranos_cmm_elDB.c:961
+#: modules/color/modules/oyranos_cmm_elDB.c:1071
+#: modules/color/modules/oyranos_cmm_elDB.c:1073
 msgid "The filter provides the Elektra Configuration API to Oyranos DB hooks."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oiDB.c:559
-#: modules/color/modules/oyranos_cmm_oiDB.c:561
+#: modules/color/modules/oyranos_cmm_oiDB.c:526
+#: modules/color/modules/oyranos_cmm_oiDB.c:528
 msgid ""
 "The filter provides the libOpenICC Configuration API to Oyranos DB hooks."
 msgstr ""
@@ -4161,11 +4161,11 @@ msgid ""
 "assigned. Typically the according assumed ICC profile should be assigned."
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:560
+#: tools/oyranos-monitor-white-point.c:559
 msgid "Time Zone"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:687
+#: tools/oyranos-monitor-white-point.c:686
 msgid "Twilight"
 msgstr ""
 
@@ -4422,10 +4422,10 @@ msgid ""
 "profiles."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_elDB.c:860
+#: modules/color/modules/oyranos_cmm_elDB.c:972
 #: modules/color/modules/oyranos_cmm_lcms.c:2520
 #: modules/color/modules/oyranos_cmm_lcms.c:2593
-#: modules/color/modules/oyranos_cmm_oiDB.c:460
+#: modules/color/modules/oyranos_cmm_oiDB.c:427
 #: modules/color/modules/oyranos_cmm_oyra_profile_graph2d.c:327
 #: modules/color/modules/oyranos_cmm_trds.c:638
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:146
@@ -4486,7 +4486,7 @@ msgstr ""
 msgid "device position start from zero"
 msgstr ""
 
-#: API_generated/oyranos_devices.c:1363
+#: API_generated/oyranos_devices.c:1364
 msgid "device_class not found:"
 msgstr ""
 
@@ -4534,8 +4534,8 @@ msgid "enable simple defaults"
 msgstr ""
 
 #: API_generated/oyConversion_s.c:203 API_generated/oyFilterNode_s_.c:628
-#: API_generated/oyranos_devices.c:2602 API_generated/oyranos_devices.c:2614
-#: API_generated/oyranos_devices.c:2647 API_generated/oyranos_devices.c:3165
+#: API_generated/oyranos_devices.c:2603 API_generated/oyranos_devices.c:2615
+#: API_generated/oyranos_devices.c:2648 API_generated/oyranos_devices.c:3166
 #: API_generated/oyranos_module.c:2022
 msgid "error in module:"
 msgstr ""
@@ -4565,7 +4565,7 @@ msgid ""
 "first monitors actual media white point as target for all other monitors"
 msgstr ""
 
-#: API_generated/oyranos_devices.c:2507 API_generated/oyranos_devices.c:2518
+#: API_generated/oyranos_devices.c:2508 API_generated/oyranos_devices.c:2519
 #: modules/color/modules/oyranos_cmm_lcms.c:2412
 #: modules/color/modules/oyranos_cmm_oPNG.c:968
 #: modules/color/modules/oyranos_cmm_oyra_image_expose.c:142
@@ -4581,12 +4581,12 @@ msgid "found issues"
 msgstr ""
 
 #: API_generated/oyConfig_s.c:1039 API_generated/oyConfig_s.c:1339
-#: API_generated/oyOptions_s.c:476 API_generated/oyranos_devices.c:1346
-#: API_generated/oyranos_devices.c:1666 API_generated/oyranos_devices.c:1750
+#: API_generated/oyOptions_s.c:476 API_generated/oyranos_devices.c:1347
+#: API_generated/oyranos_devices.c:1667 API_generated/oyranos_devices.c:1751
 #: modules/color/modules/oyranos_cmm_oyra_image_channel.c:144
 #: tools/oyranos-device.c:1052 tools/oyranos-device.c:1062
 #: tools/oyranos-device.c:1079 tools/oyranos-device.c:1105
-#: tools/oyranos-monitor-white-point.c:528 examples/taxi.c:233
+#: tools/oyranos-monitor-white-point.c:527 examples/taxi.c:233
 #: examples/taxi.c:334
 msgid "found issues parsing JSON"
 msgstr ""
@@ -4640,7 +4640,7 @@ msgid "input class"
 msgstr ""
 
 #: API_generated/oyProfile_s.c:214 API_generated/oyProfile_s.c:228
-#: API_generated/oyranos_devices.c:499
+#: API_generated/oyranos_devices.c:500
 msgid "install in the OpenIccDirectory icc path"
 msgstr ""
 
@@ -4757,8 +4757,8 @@ msgstr ""
 msgid "nautical"
 msgstr ""
 
-#: liboyranos/oyranos_cmm.c:260 modules/color/modules/oyranos_cmm_elDB.c:953
-#: modules/color/modules/oyranos_cmm_oiDB.c:553
+#: liboyranos/oyranos_cmm.c:260 modules/color/modules/oyranos_cmm_elDB.c:1065
+#: modules/color/modules/oyranos_cmm_oiDB.c:520
 #: modules/color/modules/oyranos_cmm_oicc.c:1232
 #: modules/color/modules/oyranos_cmm_oydi.c:1386
 #: modules/color/modules/oyranos_cmm_oyra.c:146
@@ -4791,7 +4791,7 @@ msgstr ""
 msgid "not a profile:"
 msgstr ""
 
-#: API_generated/oyConfig_s.c:1055 API_generated/oyranos_devices.c:1372
+#: API_generated/oyConfig_s.c:1055 API_generated/oyranos_devices.c:1373
 #: liboyranos_config/oyranos_check.c:76
 msgid "not found:"
 msgstr ""
@@ -5123,7 +5123,7 @@ msgid "write to specified file"
 msgstr ""
 
 #: API_generated/oyOptions_s.c:1555 tools/oyranos-config.c:230
-#: tools/oyranos-device.c:253 tools/oyranos-monitor-white-point.c:241
+#: tools/oyranos-device.c:253 tools/oyranos-monitor-white-point.c:240
 #: tools/oyranos_convert.c:271 tools/oyranos_gamma.c:260
 #: tools/oyranos_policy.c:157 tools/oyranos_profile_graph.c:294
 #: tools/oyranos_profile_tool.c:234 tools/oyranos_profiles.c:245

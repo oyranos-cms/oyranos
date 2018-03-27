@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2016 (C) Kai-Uwe Behrmann
+ *            2016-2018 (C) Kai-Uwe Behrmann
  *
  *  @brief    Elektra DB module for Oyranos
  *  @internal
@@ -127,6 +127,100 @@ char *       oyGetScopeString        ( oySCOPE_e           scope,
 #define FOR_EACH_IN_KDBKEYSET( current_, list ) \
    ksRewind( list );  \
    for( current_ = ksNext( list ); current_; current_ = ksNext( list )  )
+
+static char *   elToJson             ( const char        * key_name,
+                                       oyAlloc_f           alloc,
+                                       int                 strict )
+{
+  int count = 0, i;
+  char** list;
+  char * key = NULL;
+
+  if(!key_name || !*key_name) return NULL;
+
+  if(strchr(key_name,'[') && strict)
+    elDB_msg( oyMSG_DBG, 0, OY_DBG_FORMAT_ "expected Elektra style array index but obtained: %s %d", OY_DBG_ARGS_, key_name, oy_debug );
+
+  list = oyStringSplit( key_name, '/', &count, 0 );
+
+  for(i = 0; i < count; ++i)
+  {
+    char * k = list[i];
+    if(k[0] == '#')
+      oyStringAddPrintf( &key, 0,0, "%s[%s]", i && i < count ? "/":"", k+1 );
+    else
+      oyStringAddPrintf( &key, 0,0, "%s%s", i && i < count ? "/":"", k );
+  }
+
+  if(alloc && alloc != oyAllocateFunc_)
+  {
+    char * r = oyStringCopy( key, alloc );
+    oyFree_m_( key );
+    key = r;
+  }
+
+  oyStringListRelease( &list, count, 0 );
+
+  return key;
+}
+static char *   elToJson2            ( char              * key_name,
+                                       oyAlloc_f           alloc,
+                                       oyDeAlloc_f         dealloc, 
+                                       int                 strict )
+{
+  char * t = NULL;
+  oyDeAlloc_f d = dealloc?dealloc : oyDeAllocateFunc_;
+
+  if(key_name)
+  {
+    t = elToJson(key_name, alloc?alloc:oyAllocateFunc_, strict);
+    d(key_name);
+  }
+
+  return t;
+}
+
+static char *   jsonToEl             ( const char        * key_name,
+                                       oyAlloc_f           alloc )
+{
+  int count = 0, i;
+  char** list;
+  char * key = NULL, *r;
+
+  if(!key_name || !*key_name) return NULL;
+
+  if(strchr(key_name,'#'))
+    elDB_msg( oyMSG_DBG, 0, OY_DBG_FORMAT_ "expected JSON style array index but obtained: %s", OY_DBG_ARGS_, key_name );
+
+  list = oyStringSplit( key_name, '/', &count, 0 );
+
+  for(i = 0; i < count; ++i)
+  {
+    char * k = list[i];
+    if(k[0] == '[')
+    {
+      char * t = oyStringCopy( k, 0 ), * t2 = strrchr( t, ']' );
+
+      if(t2)
+        t2[0] = '\000';
+      oyStringAddPrintf( &key, 0,0, "%s#%s", i && i < count ? "/":"", t+1 );
+      oyFree_m_(t);
+    }
+    else
+      oyStringAddPrintf( &key, 0,0, "%s%s", i && i < count ? "/":"", k );
+  }
+
+  if(alloc && alloc != oyAllocateFunc_)
+  {
+    r = oyStringCopy( key, alloc );
+    oyFree_m_( key );
+    key = r;
+  }
+
+  oyStringListRelease( &list, count, 0 );
+
+  return key;
+}
 
 int oyGetByName(KeySet * ks, const char * key_name)
 {
@@ -321,6 +415,7 @@ char * oyGetScopeString              ( oySCOPE_e           scope,
   char * full_elektra_key_reg = NULL;
   static int user_len = 0;
   static int sys_len = 0;
+  char * name = NULL;
 
   if(user_len == 0)
   {
@@ -336,7 +431,9 @@ char * oyGetScopeString              ( oySCOPE_e           scope,
   if(scope == oySCOPE_USER_SYS)
     scope = scope_prefered;
 
-  oyStringAddPrintf( &full_elektra_key_reg, 0,0, "%s%s", has_scope?"":oyGetScopeString_(scope), key_name );
+  name = jsonToEl( key_name, oyAllocateFunc_ );
+
+  oyStringAddPrintf( &full_elektra_key_reg, 0,0, "%s%s", has_scope?"":oyGetScopeString_(scope), name );
 
   return full_elektra_key_reg;
 }
@@ -407,13 +504,13 @@ char *   elDB_getString              ( oyDB_s            * db,
   const char * current_name;
   KeySet * my_key_set = NULL;
   Key * current = NULL;
-  const char *name = NULL;
+  char * name = NULL;
   char * value = NULL;
 
   DBG_PROG_START
 
   if(!error)
-    name = key_name;
+    name = jsonToEl( key_name, oyAllocateFunc_ );
 
   if(!db->ks)
     oyDB_GetChildren( db );
@@ -441,6 +538,8 @@ char *   elDB_getString              ( oyDB_s            * db,
       }
     }
   }
+
+  oyFree_m_(name);
 
   DBG_PROG_ENDE
   return value;
@@ -489,14 +588,15 @@ char **  elDB_getKeyNames            ( oyDB_s            * db,
   const char * current_name = NULL;
   KeySet * my_key_set = NULL;
   Key * current = NULL;
-  const char *name = NULL;
+  char * name = NULL,
+       * current_name_json = NULL;
   char ** texts = NULL;
   int name_len;
 
   DBG_PROG_START
 
   if(!error)
-    name = key_name;
+    name = jsonToEl( key_name, oyAllocateFunc_ );
   if(n)
     *n = 0;
 
@@ -513,18 +613,22 @@ char **  elDB_getKeyNames            ( oyDB_s            * db,
     FOR_EACH_IN_KDBKEYSET( current, my_key_set )
     {
       current_name = keyName(current);
+      current_name_json = elToJson(current_name, oyAllocateFunc_, 1);
       if(current_name &&
-         oyStrstr_(current_name, name) )
+         oyStrstr_(current_name_json, name) )
       {
-        const char * t = oyStrstr_(current_name, name);
+        const char * t = oyStrstr_(current_name_json, name);
 
         if(strlen(t) > (size_t)name_len &&
            !oyStringListHas_( (const char **)texts, *n, t ) )
           oyStringListAddStaticString( &texts, n, t,
                                         oyAllocateFunc_, oyDeAllocateFunc_);
       }
+      oyFree_m_(current_name_json);
     }
   }
+
+  oyFree_m_(name);
 
   DBG_PROG_ENDE
   return texts;
@@ -538,14 +642,15 @@ char **  elDB_getKeyNamesOneLevel    ( oyDB_s            * db,
   const char * current_name = NULL;
   KeySet * my_key_set = NULL;
   Key * current = NULL;
-  const char *name = NULL;
+  char * name = NULL,
+       * current_name_json = NULL;
   char ** texts = NULL;
   int name_len;
 
   DBG_PROG_START
 
   if(!error)
-    name = key_name;
+    name = elToJson( key_name, oyAllocateFunc_, 0 );
   if(n)
     *n = 0;
 
@@ -562,13 +667,15 @@ char **  elDB_getKeyNamesOneLevel    ( oyDB_s            * db,
     FOR_EACH_IN_KDBKEYSET( current, my_key_set )
     {
       current_name = keyName(current);
+      current_name_json = elToJson(current_name, oyAllocateFunc_, 0);
       if(current_name &&
-         oyStrstr_(current_name, name) )
+         oyStrstr_(current_name_json, name) )
       {
-        const char * t = oyStrstr_(current_name, name);
+        const char * t = oyStrstr_(current_name_json, name);
         char * txt = NULL, * tmp;
         /** Cut after one level behind key_parent_name. */
-        if( oyStrrchr_( &t[oyStrlen_(name)+1], OY_SLASH_C ) )
+        if( oyStrlen_(name) < oyStrlen_(t) &&
+            oyStrrchr_( &t[oyStrlen_(name)+1], OY_SLASH_C ) )
         {
           txt = oyStringCopy_( t, oyAllocateFunc_ );
           tmp = &txt[oyStrlen_(name)+1];
@@ -585,8 +692,11 @@ char **  elDB_getKeyNamesOneLevel    ( oyDB_s            * db,
 
         if(txt) oyFree_m_(txt);
       }
+      oyFree_m_(current_name_json);
     }
   }
+
+  oyFree_m_(name);
 
   DBG_PROG_ENDE
   return texts;
@@ -627,6 +737,8 @@ int elDBSetString                    ( const char        * key_name,
 
   if (key_name)
     DBG_PROG_S(( key_name ));
+  if (name)
+    DBG_PROG_S(( name ));
   if (value)
     DBG_PROG_S(( value ));
   if (comment)
@@ -730,7 +842,7 @@ char*    elDBSearchEmptyKeyname        ( const char      * key_parent_name,
   keyDel(error_key);
 
   DBG_PROG_ENDE
-  return new_key_name;
+  return elToJson2(new_key_name, 0,0, 1);
 }
 
 int      elDBEraseKey                ( const char        * key_name,

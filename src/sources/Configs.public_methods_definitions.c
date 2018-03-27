@@ -349,7 +349,7 @@ oyRankMap * oyGetRankMapFromDB       ( const char        * registration )
                        "/" );
   }
   oyStringAddPrintf( &new_reg, oyAllocateFunc_, oyDeAllocateFunc_,
-                     "#0" );
+                     "[0]" );
 
   oyStringListRelease_( &regs, regs_n, oyDeAllocateFunc_ );
 
@@ -366,7 +366,7 @@ oyRankMap * oyGetRankMapFromDB       ( const char        * registration )
     for(j = 0; j < 3; ++j)
     {
       oyStringAddPrintf( &key, oyAllocateFunc_, oyDeAllocateFunc_,
-                        "%s/#%d", key_names[i], j );
+                        "%s/[%d]", key_names[i], j );
       val = oyDB_getString( db, key );
       oyFree_m_( key );
 

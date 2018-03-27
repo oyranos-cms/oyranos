@@ -306,40 +306,7 @@ char *   oiOyranosToOpenicc          ( const char        * key_name,
 char *   oiOpeniccToOyranos          ( const char        * key_name,
                                        oyAlloc_f           alloc )
 {
-  int count = 0, i;
-  char** list;
-  char * key = NULL, *r;
-
-  if(!key_name || !*key_name) return NULL;
-
-  list = oyStringSplit( key_name, '/', &count, 0 );
-
-  for(i = 0; i < count; ++i)
-  {
-    char * k = list[i];
-    if(k[0] == '[')
-    {
-      char * t = oyStringCopy( k, 0 ), * t2 = strrchr( t, ']' );
-
-      if(t2)
-        t2[0] = '\000';
-      oyStringAddPrintf( &key, 0,0, "%s#%s", i && i < count ? "/":"", t+1 );
-      oyFree_m_(t);
-    }
-    else
-      oyStringAddPrintf( &key, 0,0, "%s%s", i && i < count ? "/":"", k );
-  }
-
-  if(alloc && alloc != oyAllocateFunc_)
-  {
-    r = oyStringCopy( key, alloc );
-    oyFree_m_( key );
-    key = r;
-  }
-
-  oyStringListRelease( &list, count, 0 );
-
-  return key;
+  return key_name ? oyStringCopy( key_name, alloc ) : NULL;
 }
 
 /** Function oiDBInit

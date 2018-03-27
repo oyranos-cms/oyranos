@@ -293,20 +293,20 @@ oyTESTRESULT_e testDBDefault()
   if(value) { oyFree_m_(value); }
 
 
-  error = oySetPersistentString( OY_STD "/device" TEST_KEY "/#0/key-01", oySCOPE_USER,
+  error = oySetPersistentString( OY_STD "/device" TEST_KEY "/[0]/key-01", oySCOPE_USER,
                                  "SomeValue", "SomeComment" );
   if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oySetPersistentString() error: %d", error )
-  error = oySetPersistentString( OY_STD "/device" TEST_KEY "/#0/key-02", oySCOPE_USER,
+  error = oySetPersistentString( OY_STD "/device" TEST_KEY "/[0]/key-02", oySCOPE_USER,
                                  "SomeValue", "SomeComment" );
   if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oySetPersistentString() error: %d", error )
-  error = oySetPersistentString( OY_STD "/device" TEST_KEY "/#1/key-01", oySCOPE_USER,
+  error = oySetPersistentString( OY_STD "/device" TEST_KEY "/[1]/key-01", oySCOPE_USER,
                                  "SomeValue", "SomeComment" );
   if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oySetPersistentString() error: %d", error )
-  error = oySetPersistentString( OY_STD "/device" TEST_KEY "/#1/key-02", oySCOPE_USER,
+  error = oySetPersistentString( OY_STD "/device" TEST_KEY "/[1]/key-02", oySCOPE_USER,
                                  "SomeValue", "SomeComment" );
   if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oySetPersistentString() error: %d", error )
   value = oyDBSearchEmptyKeyname(OY_STD "/device" TEST_KEY, oySCOPE_USER);
-  if(value && strstr( value, OY_STD "/device" TEST_KEY "/#2" ) )
+  if(value && strstr( value, OY_STD "/device" TEST_KEY "/[2]" ) )
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS, 
     "oyDBSearchEmptyKeyname()=%s", value );
@@ -320,7 +320,7 @@ oyTESTRESULT_e testDBDefault()
   error = oyDBEraseKey( OY_STD "/device" TEST_KEY, oySCOPE_USER );
   if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyDBEraseKey() error: %d", error )
   value = oyDBSearchEmptyKeyname(OY_STD "/device" TEST_KEY, oySCOPE_USER);
-  if(value && strstr( value, OY_STD "/device" TEST_KEY "/#0" ) )
+  if(value && strstr( value, OY_STD "/device" TEST_KEY "/[0]" ) )
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS, 
     "oyDBSearchEmptyKeyname()=%s", value );
@@ -331,20 +331,20 @@ oyTESTRESULT_e testDBDefault()
   }
   oyFree_m_( value );
 
-  error = oySetPersistentString( TEST_DOMAIN "/device" TEST_KEY "/#0/key-01", oySCOPE_USER,
+  error = oySetPersistentString( TEST_DOMAIN "/device" TEST_KEY "/[0]/key-01", oySCOPE_USER,
                                  "SomeValue", "SomeComment" );
   if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oySetPersistentString() error: %d", error )
-  error = oySetPersistentString( TEST_DOMAIN "/device" TEST_KEY "/#0/key-02", oySCOPE_USER,
+  error = oySetPersistentString( TEST_DOMAIN "/device" TEST_KEY "/[0]/key-02", oySCOPE_USER,
                                  "SomeValue", "SomeComment" );
   if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oySetPersistentString() error: %d", error )
-  error = oySetPersistentString( TEST_DOMAIN "/device" TEST_KEY "/#1/key-01", oySCOPE_USER,
+  error = oySetPersistentString( TEST_DOMAIN "/device" TEST_KEY "/[1]/key-01", oySCOPE_USER,
                                  "SomeValue", "SomeComment" );
   if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oySetPersistentString() error: %d", error )
-  error = oySetPersistentString( TEST_DOMAIN "/device" TEST_KEY "/#1/key-02", oySCOPE_USER,
+  error = oySetPersistentString( TEST_DOMAIN "/device" TEST_KEY "/[1]/key-02", oySCOPE_USER,
                                  "SomeValue", "SomeComment" );
   if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oySetPersistentString() error: %d", error )
   value = oyDBSearchEmptyKeyname(TEST_DOMAIN "/device" TEST_KEY, oySCOPE_USER);
-  if(value && strstr( value, TEST_DOMAIN "/device" TEST_KEY "/#2" ) )
+  if(value && strstr( value, TEST_DOMAIN "/device" TEST_KEY "/[2]" ) )
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS, 
     "oyDBSearchEmptyKeyname()=%s", value );
@@ -358,7 +358,7 @@ oyTESTRESULT_e testDBDefault()
   error = oyDBEraseKey( TEST_DOMAIN "/device" TEST_KEY, oySCOPE_USER );
   if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyDBEraseKey() error: %d", error )
   value = oyDBSearchEmptyKeyname(TEST_DOMAIN "/device" TEST_KEY, oySCOPE_USER);
-  if(value && strstr( value, TEST_DOMAIN "/device" TEST_KEY "/#0" ) )
+  if(value && strstr( value, TEST_DOMAIN "/device" TEST_KEY "/[0]" ) )
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS, 
     "oyDBSearchEmptyKeyname()=%s", value );
@@ -4452,10 +4452,10 @@ oyTESTRESULT_e testCMMmonitorDBmatch ()
     //error = oyConfig_EraseFromDB( config );
   }
 
-  oySetPersistentString( OY_STD "/device/test/#0/system_port", oySCOPE_USER, "TEST-port", "TESTcomment" );
-  oySetPersistentString( OY_STD "/device/test/#0/model", oySCOPE_USER, "TEST-model", "TESTcomment" );
-  oySetPersistentString( OY_STD "/device/test/#1/system_port", oySCOPE_USER, "TEST-port2", "TESTcomment2" );
-  oySetPersistentString( OY_STD "/device/test/#1/model", oySCOPE_USER, "TEST-model2", "TESTcomment2" );
+  oySetPersistentString( OY_STD "/device/test/[0]/system_port", oySCOPE_USER, "TEST-port", "TESTcomment" );
+  oySetPersistentString( OY_STD "/device/test/[0]/model", oySCOPE_USER, "TEST-model", "TESTcomment" );
+  oySetPersistentString( OY_STD "/device/test/[1]/system_port", oySCOPE_USER, "TEST-port2", "TESTcomment2" );
+  oySetPersistentString( OY_STD "/device/test/[1]/model", oySCOPE_USER, "TEST-model2", "TESTcomment2" );
   fprintf(zout, "creating DB device class: \"%s\"\n", OY_STD "/device/test/#[0,1]/system_port: TEST-port/1" );
 
   const char * reg = OY_STD "/device/test";
