@@ -21,8 +21,6 @@
 #include "oyranos_json.h"
 #include "oyranos_config_internal.h"
 
-#include "../../oyjl/oyjl_tree.c"
-
 int          oyJson                  ( const char        * json )
 {
   int c,i = 0;
