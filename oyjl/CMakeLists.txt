@@ -49,7 +49,7 @@ ENDIF()
 # Target installation folders
 #
 
-SET (TARGET_INCLUDE_FOLDER
+SET (${PROJECT_UP_NAME}_INCLUDE_FOLDER
 		${PROJECT_NAME}
 		CACHE STRING
 		"Optional folder below system include folder to install include files."
@@ -70,7 +70,7 @@ SET (TARGET_PKGCONFIG_FOLDER
 		"The folder below system library folder where to install pkgconfig files."
     )
 
-SET (TARGET_DOCUMENTATION_FOLDER
+SET (${PROJECT_UP_NAME}_DOCUMENTATION_FOLDER
 		"share/doc/${PACKAGE_NAME}-api"
 		CACHE STRING
 		"The folder below system prefix where to install api documentation files."
