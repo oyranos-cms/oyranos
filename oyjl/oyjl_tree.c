@@ -22,17 +22,19 @@
 #include <errno.h>
 #include <assert.h>
 #include <unistd.h>
-#ifdef HAVE_LOCALE_H
-#include <locale.h>
-#endif
 
+#include "oyjl_version.h"
 #include <yajl/yajl_parse.h>
 #ifndef YAJL_VERSION
 #include <yajl/yajl_version.h>
 #endif
+
 #include "oyjl.h"
+#include "oyjl_version.h"
 #include "oyjl_tree_internal.h"
-#define YA_FREE(afs, ptr) (afs)->free((afs)->ctx, (ptr))
+#ifdef HAVE_LOCALE_H
+#include <locale.h>
+#endif
 
 
 #define STATUS_CONTINUE 1
