@@ -2362,10 +2362,11 @@ int          oyGetPersistentStrings  ( const char        * top_key_name )
 
     for(i = 0; i < key_names_n; ++i)
     {
-      value = oyDB_getString(db, key_names[i]);
+      const char * key_name = key_names[i];
+      value = oyDB_getString(db, key_name);
 
       error = oyOptions_SetRegFromText( &oy_db_cache_,
-                                        key_names[i],
+                                        key_name,
       /* cache the searched for value,
        * or mark with empty string if nothing was found */
                                         value ? value : "",

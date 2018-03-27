@@ -21,19 +21,7 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#define oyjlStringAdd                oyStringAddPrintf
-#define oyjlStringCopy               oyStringCopy
-#define oyjlStringSplit              oyStringSplit
-#define oyjlStringAppendn            oyStringAppendN
-#define oyjlStringAddn               oyStringAddN
-#define oyjlStringReplace            oyStringReplace
-#define oyjlStringListAddList      oyStringListAdd
-#define oyjlStringListCatList      oyStringListCat
-#define oyjlStringListRelease       oyStringListRelease
-#define oyjlStringListFreeDoubles  oyStringListFreeDoubles
-#define oyjlStringListAddStaticString oyStringListAddStaticString
-#define oyjlStringToLong            oyStringToLong
-#define oyjlStringToDouble          oyStringToDouble
+#include "oyranos_string.h"
 #include "oyjl/oyjl.h"
 
 int          oyJson                  ( const char        * json );

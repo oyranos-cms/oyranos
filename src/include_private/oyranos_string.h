@@ -29,6 +29,8 @@ extern "C" {
 #define oyNoEmptyName_m_( text_nem ) text_nem?text_nem:"---"
 #define oyNoEmptyString_m_ oyNoEmptyName_m_
 
+
+
 int          oyStringToLong          ( const char        * text,
                                        long              * value );
 int          oyStringToDouble        ( const char        * text,
@@ -173,6 +175,16 @@ int                oyIconvGet        ( const char        * text,
                                        const char        * encoding_to,
                                        oyAlloc_f           alloc );
 
+/* oyjl compatible definitions */
+#define oyStringAppendN             oyjlStringAppendN
+#define oyStringAddN                oyjlStringAddN
+#define oyStringReplace             oyjlStringReplace
+#define oyStringListAdd             oyjlStringListAddList
+#define oyStringListCat             oyjlStringListCatList
+#define oyStringListFreeDoubles     oyjlStringListFreeDoubles
+#define oyStringListAddStaticString oyjlStringListAddStaticString
+#define oyStringToLong              oyjlStringToLong
+#define oyStringToDouble            oyjlStringToDouble
 
 
 #ifdef __cplusplus
