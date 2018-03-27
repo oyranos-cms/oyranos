@@ -821,6 +821,85 @@ void           oyI18Nreset           ( void )
 
 /** @} *//* i18n */
 
+/** \addtogroup string Strings
+ *  @brief String handling.
+
+ *  @{ *//* string */
+
+#undef oyStringAddPrintf
+/** @brief  Append a string and handle memory */
+int                oyStringAddPrintf ( char             ** string,
+                                       oyAlloc_f           alloc,
+                                       oyDeAlloc_f         deAlloc,
+                                       const char        * format,
+                                                           ... )
+{
+  char * text_copy = NULL;
+  char * text = 0;
+  va_list list;
+  int len;
+  size_t sz = 0;
+
+  void*(* allocate)(size_t size) = alloc?alloc: oyAllocateFunc_;
+  void (* deAllocate)(void * data ) = deAlloc?deAlloc: oyDeAllocateFunc_;
+
+  va_start( list, format);
+  len = vsnprintf( text, sz, format, list );
+  va_end  ( list );
+
+  {
+    oyAllocHelper_m_(text, char, len + 1, allocate, return 1);
+    va_start( list, format);
+    len = vsnprintf( text, len+1, format, list );
+    va_end  ( list );
+  }
+
+  if(string && *string)
+  {
+    int l = strlen(*string);
+    text_copy = allocate( len + l + 1 );
+    strcpy( text_copy, *string );
+    strcpy( &text_copy[l], text );
+
+    deAllocate(*string);
+    *string = text_copy;
+
+    deAllocate(text);
+
+  } else if(string)
+    *string = text;
+  else if(text)
+    deAllocate( text );
+
+  return 0;
+}
+
+#undef oyStringSplit
+/** @brief  Create a array of strings */
+char**             oyStringSplit     ( const char        * text,
+                                       const char          delimiter,
+                                       int               * count,
+                                       oyAlloc_f           allocateFunc )
+{
+  return oyjlStringSplit( text, delimiter, count, allocateFunc?allocateFunc : oyAllocateFunc_ );
+}
+#undef oyStringListRelease
+/** @brief  Release a array of strings */
+void               oyStringListRelease(char            *** l,
+                                       int                 size,
+                                       oyDeAlloc_f         deallocFunc )
+{
+  oyjlStringListRelease( l, size, deallocFunc?deallocFunc : oyDeAllocateFunc_ );
+}
+#undef oyStringCopy
+/** @brief  Copy with allocator */
+char*              oyStringCopy      ( const char        * text,
+                                       oyAlloc_f           allocateFunc )
+{
+  return oyjlStringCopy( text, allocateFunc?allocateFunc : oyAllocateFunc_ );
+}
+/** @} *//* string */
+
 /** @brief  give the compiled in library version
  *
  *  @param[in]  type           0 - Oyranos API
@@ -1021,6 +1100,7 @@ unsigned long oyValueUInt64 (icUInt64Number val)
   return (long)val;
 }
 
+/** @brief swap byte order */
 uint16_t oyByteSwapUInt16            ( uint16_t            v )
 {
   uint8_t c[2], *vp = (uint8_t*)&v;
@@ -1032,6 +1112,7 @@ uint16_t oyByteSwapUInt16            ( uint16_t            v )
 
   return v;
 }
+/** @brief swap byte order */
 uint32_t oyByteSwapUInt32            ( uint32_t            v )
 {
   uint8_t c[4], *vp = (uint8_t*)&v;

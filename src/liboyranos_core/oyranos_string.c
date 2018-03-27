@@ -552,7 +552,6 @@ char**             oyStringListFilter_(const char   ** list,
 
 /* rename some symbols */
 #include "oyranos_db.h"
-#include "../oyjl/oyjl_core.c"
 
 int     oyStrlen_( const char * str_ )
 {
