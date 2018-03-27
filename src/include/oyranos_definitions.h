@@ -289,7 +289,7 @@
 /** key name for common display white point mode
  *
  *  - 0: no white point adjustments (old behaviour)
- *  - 1: automatic - use target values from ::OY_DEFAULT_DISPLAY_WHITE_POINT_A and ::OY_DEFAULT_DISPLAY_WHITE_POINT_B
+ *  - 1: automatic - use target values from ::OY_DEFAULT_DISPLAY_WHITE_POINT_X , ::OY_DEFAULT_DISPLAY_WHITE_POINT_Y and ::OY_DEFAULT_DISPLAY_WHITE_POINT_Z
  *  - 2: D50
  *  - 3: D55
  *  - 4: D65
