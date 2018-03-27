@@ -64,10 +64,12 @@ int      oyProfileAddWhitePointEffect( oyProfile_s       * monitor_profile,
     error = oyGetDisplayWhitePoint( display_white_point, dst_XYZ );
 
 #ifdef USE_BRADFORD
-  oyMessageFunc_p( oyMSG_WARN,(oyStruct_s*)monitor_profile, OY_DBG_FORMAT_
+  oyMessageFunc_p( error ? oyMSG_WARN:oyMSG_DBG,(oyStruct_s*)monitor_profile, OY_DBG_FORMAT_
                    "%s display_white_point: %d [%g %g %g] -> [%g %g %g]", OY_DBG_ARGS_,
           oyProfile_GetText( monitor_profile, oyNAME_DESCRIPTION ), display_white_point,
           src_XYZ[0], src_XYZ[1], src_XYZ[2], dst_XYZ[0], dst_XYZ[1], dst_XYZ[2]);
+  if(error)
+    return error;
   error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/src_iccXYZ", src_XYZ[0], 0, OY_CREATE_NEW );
   error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/src_iccXYZ", src_XYZ[1], 1, OY_CREATE_NEW );
   error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/src_iccXYZ", src_XYZ[2], 2, OY_CREATE_NEW );
@@ -424,7 +426,7 @@ int      oyDeviceSetup2              ( oyConfig_s        * device,
     oyProfile_s * prof = NULL;
     const char * profile_name;
 
-    oyDeviceGetProfile( device, options, &prof );
+    oyDeviceAskProfile2( device, options, &prof );
     profile_name = oyProfile_GetFileName( prof, -1 );
 
     if(oyProfile_CreateEffectVCGT( prof ))
