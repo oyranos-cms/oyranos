@@ -251,7 +251,10 @@ int main(int argc, char ** argv)
         if(show == JSON)
           oyjlTreeToJson( value_string ? root : value, &level, &text );
         else if(show == YAML)
+        {
           oyjlTreeToYaml( value_string ? root : value, &level, &text );
+          oyjlStringAdd( &text, 0,0, "\n" );
+        }
         if(text)
         {
           fwrite( text, sizeof(char), strlen(text), stdout );
