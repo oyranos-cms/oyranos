@@ -250,7 +250,7 @@ int main(int argc, char *argv[])
     v = oyGetInstallPath( oyPATH_POLICY, scope, oyAllocateFunc_ );
     if(v)
       STRING_ADD( v, "/openicc.json" );
-    fprintf( stderr, "%s\n", oyNoEmptyString_m_(v) );
+    fprintf( stdout, "%s\n", oyNoEmptyString_m_(v) );
     if(v) oyFree_m_(v);
   }
 
