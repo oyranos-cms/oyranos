@@ -22,7 +22,12 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "oyjl.h"
+#include "oyjl_version.h"
 #include "oyjl_tree_internal.h"
+#ifdef HAVE_LOCALE_H
+#include <locale.h>
+#endif
 
 yajl_status  oyjlMessageFunc         ( int/*oyjlMSG_e*/    error_code,
                                        const void        * context_object OYJL_UNUSED,
@@ -199,7 +204,7 @@ int        oyjlStringAdd             ( char             ** string,
   return 0;
 }
 
-char*      oyjlStringAppendn         ( const char        * text,
+char*      oyjlStringAppendN         ( const char        * text,
                                        const char        * append,
                                        int                 append_len,
                                        void*            (* alloc)(size_t size) )
@@ -228,7 +233,7 @@ char*      oyjlStringAppendn         ( const char        * text,
   return text_copy;
 }
 
-void       oyjlStringAddn            ( char             ** text,
+void       oyjlStringAddN            ( char             ** text,
                                        const char        * append,
                                        int                 append_len,
                                        void*            (* alloc)(size_t),
@@ -238,7 +243,7 @@ void       oyjlStringAddn            ( char             ** text,
 
   if(!text) return;
 
-  text_copy = oyjlStringAppendn(*text, append, append_len, alloc);
+  text_copy = oyjlStringAppendN(*text, append, append_len, alloc);
 
   if(*text && deAlloc)
     deAlloc(*text);
@@ -266,14 +271,14 @@ char*      oyjlStringReplace         ( const char        * text,
     int s_len = strlen(search);
     while((end = strstr(start,search)) != 0)
     {
-      oyjlStringAddn( &t, start, end-start, allocate, deAllocate );
-      oyjlStringAddn( &t, replacement, strlen(replacement), allocate, deAllocate );
+      oyjlStringAddN( &t, start, end-start, allocate, deAllocate );
+      oyjlStringAddN( &t, replacement, strlen(replacement), allocate, deAllocate );
       if(strlen(end) >= (size_t)s_len)
         start = end + s_len;
       else
       {
         if(strstr(start,search) != 0)
-          oyjlStringAddn( &t, replacement, strlen(replacement), allocate, deAllocate );
+          oyjlStringAddN( &t, replacement, strlen(replacement), allocate, deAllocate );
         start = end = end + s_len;
         break;
       }
@@ -281,7 +286,7 @@ char*      oyjlStringReplace         ( const char        * text,
   }
 
   if(start && strlen(start))
-    oyjlStringAddn( &t, start, strlen(start), allocate, deAllocate );
+    oyjlStringAddN( &t, start, strlen(start), allocate, deAllocate );
 
   return t;
 }
@@ -539,4 +544,22 @@ char *     oyjlReadFileStreamToMem   ( FILE              * fp,
   }
 
   return mem;
+}
+
+#include "oyjl_version.h"
+#include <yajl/yajl_parse.h>
+#include <yajl/yajl_version.h>
+/** @brief  give the compiled in library version
+ *
+ *  @param[in]  type           0 - Oyjl API
+ *                             1 - Yajl API
+ *
+ *  @return                    OYJL_VERSION at library compile time
+ */
+int            oyjlVersion           ( int                 type )
+{
+  if(type == 1)
+    return YAJL_VERSION;
+
+  return OYJL_VERSION;
 }
