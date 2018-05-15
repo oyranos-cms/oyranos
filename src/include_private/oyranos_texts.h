@@ -96,6 +96,10 @@ oyGROUP_e       oyGroupAdd_              (const char *id, const char *cmm,
 int           oyGroupRemove_           (oyGROUP_e     id);
 
 
+char *       oyExistPersistentString ( const char        * key_name,
+                                       const char        * value,
+                                       uint32_t            flags,
+                                       oySCOPE_e           scope );
 char *       oyGetPersistentString   ( const char        * key_name,
                                        uint32_t            flags,
                                        oySCOPE_e           scope,

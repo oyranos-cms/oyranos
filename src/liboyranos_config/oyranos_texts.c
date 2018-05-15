@@ -2448,6 +2448,41 @@ char *       oyGetPersistentString   ( const char        * key_name,
   return value;
 }
 
+/** Function oyExistPersistentString
+ *  @brief   check a cached string from DB
+ *
+ *  @param         key_name            the DB key name
+ *  @param         flags               
+ *                                     - 0 for cached string or
+ *                                     - oySOURCE_DATA for a likely expensive DB lookup
+ *  @param         scope               user/system or both, works together with
+ *                                     flags |= oySOURCE_DATA
+ *  @param         value               the expected value
+ *  @return                            the cached value
+ *
+ *  @version Oyranos: 0.9.7
+ *  @date    2018/05/15
+ *  @since   2018/05/15 (Oyranos: 0.9.7)
+ */
+char *       oyExistPersistentString ( const char        * key_name,
+                                       const char        * value,
+                                       uint32_t            flags,
+                                       oySCOPE_e           scope )
+{
+  int found = 0;
+  char * value_ = oyGetPersistentString( key_name, flags, scope, oyAllocateFunc_ );
+
+  if(value && value_ && strcmp(value, value_) == 0)
+    ++found;
+  else if(value == NULL && value_)
+    ++found;
+
+  if(value_)
+    oyFree_m_(value_);
+
+  return found;
+}
+
 /** Function oySetPersistentString
  *  @brief   set string into DB and cache
  *
