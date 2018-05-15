@@ -766,6 +766,9 @@ int checkWtptState(int dry)
           oyFree_m_(value);
         }
       }
+      if(dry == 0)
+        if(!oyExistPersistentString( OY_DISPLAY_STD "/night", "0", 0, oySCOPE_USER_SYS ))
+          oySetPersistentString( OY_DISPLAY_STD "/night", scope, "0", NULL );
 
     } else
     /* night time */
@@ -790,6 +793,9 @@ int checkWtptState(int dry)
           oyFree_m_(value);
         }
       }
+      if(dry == 0)
+        if(!oyExistPersistentString( OY_DISPLAY_STD "/night", "1", 0, oySCOPE_USER_SYS ))
+          oySetPersistentString( OY_DISPLAY_STD "/night", scope, "1", NULL );
     }
 
     if( (new_mode != cmode) ||
