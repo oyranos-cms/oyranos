@@ -22,7 +22,7 @@
 #include "oyranos_object_internal.h"
 
 
-/** \addtogroup devices_handling Device API
+/** \addtogroup devices_handling
  *
  *  @{ *//* devices_handling */
 

@@ -289,8 +289,7 @@ const char * oyraApi4ImageWriteUiGetText (
 }
 const char * oyra_api4_image_write_ppm_ui_texts[] = {"name", "category", "help", 0};
 
-/** @instance oyra_api4_image_write_ppm_ui
- *  @brief    oyra oyCMMapi4_s::ui implementation
+/** @brief    oyra oyCMMapi4_s::ui implementation
  *
  *  The UI for filter write ppm.
  *
@@ -317,8 +316,7 @@ oyCMMui_s_   oyra_api4_image_write_ppm_ui = {
   (oyCMMapiFilter_s*)&oyra_api4_image_write_ppm /* oyCMMapiFilter_s*parent */
 };
 
-/** @instance oyra_api4
- *  @brief    oyra oyCMMapi4_s implementation
+/** @brief    oyra oyCMMapi4_s implementation
  *
  *  A filter writing a PPM image.
  *
@@ -364,8 +362,7 @@ char * oyra_api7_image_output_ppm_properties[] =
   0
 };
 
-/** @instance oyra_api7
- *  @brief    oyra oyCMMapi7_s implementation
+/** @brief    oyra oyCMMapi7_s implementation
  *
  *  A filter writing a PPM image.
  *
@@ -1193,8 +1190,7 @@ const char * oyraApi4ImageInputUiGetText (
 }
 const char * oyra_api4_image_input_ppm_ui_texts[] = {"name", "category", "help", 0};
 
-/** @instance oyra_api4_ui_image_input_ppm
- *  @brief    oyra oyCMMapi4_s::ui implementation
+/** @brief    oyra oyCMMapi4_s::ui implementation
  *
  *  The UI for filter input ppm.
  *
@@ -1221,8 +1217,7 @@ oyCMMui_s_   oyra_api4_ui_image_input_ppm = {
   (oyCMMapiFilter_s*)&oyra_api4_image_input_ppm /* oyCMMapiFilter_s*parent */
 };
 
-/** @instance oyra_api4
- *  @brief    oyra oyCMMapi4_s implementation
+/** @brief    oyra oyCMMapi4_s implementation
  *
  *  A filter for reading a PPM image.
  *
@@ -1268,8 +1263,7 @@ char * oyra_api7_image_input_ppm_properties[] =
   0
 };
 
-/** @instance oyra_api7
- *  @brief    oyra oyCMMapi7_s implementation
+/** @brief    oyra oyCMMapi7_s implementation
  *
  *  A filter reading a PPM image.
  *

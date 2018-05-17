@@ -198,7 +198,7 @@
 
 
 /** @page links References
-    @section links Links
+    @section links_ Links
     - cross platform color information exchange standard, called ICC - http://www.color.org
     - OpenICC: http://www.freedesktop.org/wiki/OpenIcc
     - Email list: https://lists.sourceforge.net/lists/listinfo/oyranos-devel
@@ -216,8 +216,7 @@
     @brief The API header for general users to include in your application.
     
     This file contains all functions and structs available in the Oyranos API.\n
-    For further macros see @file oyranos_definitions.h\n
-    For the Oyranos Monitor API see @file oyranos_monitor.h
+    For further macros see @file oyranos_definitions.h \n
 */
 
 /** @file oyranos_definitions.h
@@ -225,16 +224,8 @@
     
     This file contains all macros which are relevant to the Oyranos API using
     the Elektra library as configuration engine.\n
-    For the Oyranos API see @file oyranos.h\n
+    For the Oyranos API see @file oyranos.h \n
     @see <a href="http://freedesktop.org/wiki/Software/Elektra">Elektra</a>
-*/
-
-/** @file oyranos_monitor.h
-    @brief The Monitor API header to include in your application.
-    
-    This file contains all functions and structs available in the Oyranos Monitor API.\n
-    @see oyranos_definitions.h for Elektra macros\n
-    @see oyranos.h for the Oyranos API
 */
 
 /** @file oyranos_config.h
@@ -249,41 +240,6 @@
     
     This file contains functions implementing the Oyranos API.\n
     For the Oyranos API see @file oyranos.h
-*/
-
-/** @file oyranos_monitor.c
-    @brief The Monitor API implementation
-    
-    This file contains functions implementing the Oyranos Monitor API.\n
-    For the Oyranos Monitor API see @file oyranos_monitor.h\n
-    For the Oyranos API see @file oyranos.h
-*/
-
-/** @file oyranos_gamma.c
-    @brief A small helper for setting up Oyranos at the window server
-           start time.
-    
-    This helper searches for the appropriate monitor profile in the Oyranos 
-    Deviceprofiles database. If found it tells the window server about it and
-    loads a possibly available VideoCardGammaTable tag into the running session.
-    It uses the Oyranos Monitor API from @file oyranos_monitor.h
-*/
-
-/** @file oyjl_tree.c
-    @brief A easy to use JSON parsing API.
- *
- *
- *  Here comes a minimalistic example:
-    @code
-    oyjl_val root = 0;
-    char error_buffer[128];
-
-    root = oyjl_tree_parse( text, error_buffer, 128 );
-
-    char * json = 0;
-    int level = 0;
-    oyjl_tree_to_json( root, &level, &json );
-    @endcode
 */
 
 

@@ -141,6 +141,7 @@ OYAPI int OYEXPORT
  *  @brief    Get edges
  *
  *  @param[in]     graph               a filter graph
+ *  @param[in]     pos                 the desired index
  *  @return                            the edges count
  *
  *  @version  Oyranos: 0.5.0

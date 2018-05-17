@@ -447,8 +447,7 @@ const char * oiDBInfoGetTextDBC      ( const char        * select,
   return 0;
 }
 
-/** @instance oiDB_api10_cmm
- *  @brief    oiDB oyCMMapi10_s implementation
+/** @brief    oiDB oyCMMapi10_s implementation
  *
  *  handlers for OpenICC DB
  *
@@ -532,8 +531,7 @@ const char * oiDBInfoGetText         ( const char        * select,
 const char *oiDB_texts[5] = {"name","copyright","manufacturer","help",0};
 oyIcon_s oiDB_icon = {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"};
 
-/** @instance oiDB_cmm_module
- *  @brief    oiDB module infos
+/** @brief    oiDB module infos
  *
  *  @version Oyranos: 0.9.6
  *  @date    2016/10/23

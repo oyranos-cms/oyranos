@@ -362,6 +362,10 @@ typedef enum {
   oyUNDEFINED
 } oySTATUS_e;
 
+/** @enum     oyERROR_e
+ *  @ingroup  objects_profile
+ *  @brief    Common errors
+ */
 typedef enum {
   oyERROR_USER      = 10,              /**< wrong or missing argument */
   oyERROR_DATA_READ,                   /**< input error */

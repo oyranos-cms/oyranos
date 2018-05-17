@@ -83,8 +83,7 @@ void     oySensibleClip ( double * c, icColorSpaceSignature sig, int range_max, 
   }
 }
 
-/** @func    oyraFilter_ImageExposeRun
- *  @brief   implement oyCMMFilter_GetNext_f()
+/** @brief   implement oyCMMFilter_GetNext_f()
  *
  *  @version Oyranos: 0.9.6
  *  @date    2016/04/04
@@ -343,8 +342,7 @@ int      oyraFilter_ImageExposeRun   ( oyFilterPlug_s    * requestor_plug,
 
 #define OY_IMAGE_EXPOSE_REGISTRATION OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "expose"
 
-/** @instance oyra_api7
- *  @brief    oyra oyCMMapi7_s implementation
+/** @brief    oyra oyCMMapi7_s implementation
  *
  *  a filter providing a expose image filter
  *
@@ -451,8 +449,7 @@ const char * oyraApi4UiImageExposeGetText (
 }
 
 
-/** @instance oyra_api4
- *  @brief    oyra oyCMMapi4_s implementation
+/** @brief    oyra oyCMMapi4_s implementation
  *
  *  a filter providing a expose image filter
  *

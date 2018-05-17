@@ -853,9 +853,8 @@ void         lcm2SamplerWhitePointLab( const double        i[],
  *
  *  Converts from PCS Lab encoding to lcms XYZ type.
  *
- *  @param[in]     i                   input Lab triple in PCS range
- *  @param[out]    o                   output XYZ struct
- *  @param[out]    none                unused
+ *  @param[in]     icc_Lab             input Lab triple in PCS range
+ *  @param[out]    XYZ                 output XYZ struct
  *
  *  @version Oyranos: 0.9.7
  *  @date    2018/02/28
@@ -878,9 +877,8 @@ void         lcm2iccLab2CIEXYZ       ( const double      * icc_Lab,
  *
  *  Converts from lcms XYZ type to PCS Lab encoding.
  *
- *  @param[in]     i                   input XYZ struct
- *  @param[out]    o                   output Lab triple in PCS range
- *  @param[out]    none                unused
+ *  @param[in]     XYZ                 input XYZ struct
+ *  @param[out]    icc_Lab             output Lab triple in PCS range
  *
  *  @version Oyranos: 0.9.7
  *  @date    2018/02/28
@@ -903,9 +901,8 @@ void         lcm2CIEXYZ2iccLab       ( const cmsCIEXYZ   * XYZ,
  *
  *  Converts from PCS XYZ to PCS Lab encoding.
  *
- *  @param[in]     i                   input XYZ triple
- *  @param[out]    o                   output Lab triple in PCS range
- *  @param[out]    none                unused
+ *  @param[in]     XYZ                 input XYZ triple
+ *  @param[out]    icc_Lab             output Lab triple in PCS range
  *
  *  @version Oyranos: 0.9.7
  *  @date    2018/02/28
@@ -1699,7 +1696,7 @@ lcm2CreateAbstractWhitePointProfileClean:
  *  These profiles can be applied to 1D / per single channel only adjustments.
  *  It will be marked with EFFECT_linear=yes in the meta tag.
  *
- *  @param[in]    source_white_profile profile with media white point as source
+ *  @param[in]    src_iccXYZ           source media white point
  *  @param[in]    illu_iccXYZ          ICC*XYZ illuminant in 0.0 - 2.0 range
  *  @param[in]    grid_size            dimensions of the created LUT; e.g. 33
  *  @param[in]    icc_profile_version  2.3 or 4.3

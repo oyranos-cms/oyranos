@@ -12,6 +12,7 @@
  *  @see @ref profile_modules
  *
  *  @param[in]     list                a list of arguments
+ *  @param[in]     tag_use             purpose of the tag
  *  @param[in]     tag_type            type to create
  *  @param[in]     version             version as supported
  *  @param[in]     object              the user object for the tag creation
@@ -881,8 +882,8 @@ OYAPI size_t  OYEXPORT
  *  @memberof oyProfileTag_s
  *  @brief    Set the data check size.
  *
- *  @param[in/out] tag                 the tag to read
- *  @param[in]                         check size
+ *  @param[in,out] tag                 the tag to read
+ *  @param[in]     size_check          check size
  *
  *  @version Oyranos: 0.5.0
  *  @since   2012/09/24 (Oyranos: 0.5.0)

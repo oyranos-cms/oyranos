@@ -50,17 +50,6 @@ typedef struct oyProfile_s oyProfile_s;
 /** \addtogroup objects_profile ICC Profile APIs
  *
  *  @{ *//* objects_profile */
-/** @typedef oyIO_t
-    parametric type as shorthand for IO flags \n
-
-    should fit into a 32bit type, usual unsigned int or uint32_t \n
-
-    ------ W R \n
-
-    R  no cache read \n
-    W  no cache write \n
-
- */
 #define OY_NO_CACHE_READ            0x01        /**< read not from cache */
 #define OY_NO_CACHE_WRITE           0x02        /**< write not from cache */
 /* decode */

@@ -239,8 +239,7 @@ int          oyIMFilterScan          ( oyPointer           data OY_UNUSED,
   return ret;
 }
 
-/** @instance oyIM_api5
- *  @brief    oyIM oyCMMapi5_s implementation
+/** @brief    oyIM oyCMMapi5_s implementation
  *
  *  a interpreter for imaging modules
  *

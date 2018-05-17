@@ -1,4 +1,4 @@
-/** @file oyranos_cmm_oicc.h
+/** @file oyranos_oicc.h
  *
  *  Oyranos is an open source Color Management System 
  *

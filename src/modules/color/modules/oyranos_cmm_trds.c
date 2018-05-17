@@ -658,8 +658,7 @@ const char * trdsInfoGetTextThreadsC ( const char        * select,
   return 0;
 }
 
-/** @instance trds_api10_cmm
- *  @brief    trdsead oyCMMapi10_s implementation
+/** @brief    trdsead oyCMMapi10_s implementation
  *
  *  handlers for threading
  *
@@ -743,8 +742,7 @@ const char * trdsInfoGetText         ( const char        * select,
 const char *trds_texts[5] = {"name","copyright","manufacturer","help",0};
 oyIcon_s trds_icon = {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"};
 
-/** @instance trds_cmm_module
- *  @brief    trds module infos
+/** @brief    trds module infos
  *
  *  @version Oyranos: 0.9.6
  *  @since   2016/05/01 (Oyranos: 0.9.6)

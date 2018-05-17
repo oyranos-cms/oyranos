@@ -208,6 +208,7 @@ char* oyGetDefaultProfileName_   (oyPROFILE_e       type,
  *
  *  @param       group           specify which group dialog to build
  *  @param[out]  count           number of widgets contained in list
+ *  @param       allocate_func   user provided function for allocating the strings memory
  *
  *  @return                      list of widgets to create in correct order
  */
@@ -236,6 +237,7 @@ oyWIDGET_e    * oyWidgetListGet          (oyGROUP_e           group,
  *                              for widget of type oyGROUP_e this is empty
  *  @param[out]  name            transated widget title
  *  @param[out]  tooltip         transated tooltip
+ *  @param[out]  flags           option properties
  *
  *  @return                      widget type, gives a hint to further properties,
  *                              { like choices or int/float value ranges ... }
@@ -287,7 +289,7 @@ oyWIDGET_TYPE_e  oyWidgetDescriptionGet (
  *  @param       option          merge oyBEHAVIOUR_e and oyPROFILE_e
  *  @param[out]  choices         n choices; if choices is zero then you need to
  *                               optain the choices otherwise, like for profiles
- *  @param[out]  choices_strings translated list of n choices
+ *  @param[out]  choices_string_list translated list of n choices
  *  @param[out]  current         the actual setting
  *
  *  @return                      error
@@ -348,6 +350,7 @@ int          oyOptionChoicesGet2     ( oyWIDGET_e          option,
 }
 
 /** @brief delete list of choices from a option
+ *  @param option   option type
  *  @param list     string list
  *  @param size     number of strings in the list to free
  */
@@ -654,9 +657,13 @@ oyPolicySet                (const char      * policy_file,
 
 /** Sets a profile, which is available in the current configured path.
  *
- *  @param  type      the kind of default profile
- *  @param  file_name the profile which shall become the default for the above
- *                    specified profile type
+ *  @param         type                the kind of default profile
+ *  @param[in]     scope               supported are:
+ *                                     - oySCOPE_USER for HOME install
+ *                                     - oySCOPE_SYSTEM for system wide install
+ *  @param         file_name           the profile, which shall become the 
+ *                                     default for the above specified profile 
+ *                                     type
  *  @return success
  */
 int      oySetDefaultProfile         ( oyPROFILE_e         type,
@@ -707,7 +714,7 @@ char * oyGetDefaultProfileName       ( oyPROFILE_e         type,
  *  setting will only be active when ::OY_DEFAULT_DISPLAY_WHITE_POINT is set
  *  to 1 - automatic.
  *
- *  @param[out]    ICC_XYZ             ICC*XYZ trio in 0.0 - 2.0 range
+ *  @param[out]    XYZ                 ICC*XYZ trio in 0.0 - 2.0 range
  *  @param[in]     scope               supported are:
  *                                     - oySCOPE_USER for HOME install
  *                                     - oySCOPE_SYSTEM for system wide install
@@ -771,8 +778,9 @@ char **  oyProfilePathsGet           ( int               * size,
  *  @{ *//* profile_lists */
 
 /** @brief get a list of profile filenames
- *  @param colorsig filter as ICC 4 byte string
- *  @param[out] size profile filenames count
+ *  @param         colorsig            filter as ICC 4 byte string
+ *  @param[out]    size                profile filenames count
+ *  @param[in]     allocateFunc        optional user allocator
  *  @return the profiles filename list allocated within Oyranos
  *
  *  @see @ref path_names

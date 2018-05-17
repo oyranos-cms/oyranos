@@ -752,7 +752,7 @@ int oyStructList_MoveInName( oyStructList_s * texts, char ** text, int pos, oyNA
  *
  *  The text can be get back with oyStructList_GetName().
  *
- *  @param         list                the texts list
+ *  @param         texts               the texts list
  *  @param         text                the string to add
  *  @param         pos                 the position of the string in list
  *                                     or -1 for the end

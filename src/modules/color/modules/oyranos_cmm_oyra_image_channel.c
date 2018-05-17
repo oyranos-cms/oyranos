@@ -45,8 +45,7 @@
 /* OY_IMAGE_CHANNEL_REGISTRATION ----------------------------------------------*/
 
 
-/** @func    oyraFilter_ImageChannelRun
- *  @brief   implement oyCMMFilter_GetNext_f()
+/** @brief   implement oyCMMFilter_GetNext_f()
  *
  *  The "channel" option is build of channel fields. It contains the
  *  output section in one text string each in squared brackets: "[a|b|c]".
@@ -347,8 +346,7 @@ int      oyraFilter_ImageChannelRun  ( oyFilterPlug_s    * requestor_plug,
 
 #define OY_IMAGE_CHANNEL_REGISTRATION OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "channel"
 
-/** @instance oyra_api7
- *  @brief    oyra oyCMMapi7_s implementation
+/** @brief    oyra oyCMMapi7_s implementation
  *
  *  a filter providing a channel image filter
  *
@@ -454,8 +452,7 @@ const char * oyraApi4UiImageChannelGetText (
 }
 
 
-/** @instance oyra_api4
- *  @brief    oyra oyCMMapi4_s implementation
+/** @brief    oyra oyCMMapi4_s implementation
  *
  *  a filter providing a channel image filter
  *

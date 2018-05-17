@@ -136,8 +136,7 @@ const char * ojpgGetText             ( const char        * select,
 }
 oyIcon_s ojpg_icon = {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"};
 
-/** @instance oJPG_cmm_module
- *  @brief    ojpg module infos
+/** @brief    ojpg module infos
  *
  *  This structure is dlopened by Oyranos. Its name has to consist of the
  *  following elements:
@@ -172,8 +171,7 @@ oyCMM_s oJPG_cmm_module = {
 
 #define OY_oJPG_FILTER_REGISTRATION_BASE OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
 
-/** @instance ojpg_api7
- *  @brief    ojpg oyCMMapi7_s implementation
+/** @brief    ojpg oyCMMapi7_s implementation
  *
  *  a filter providing a CMM filter
  *
@@ -257,8 +255,7 @@ const char ojpg_read_extra_options[] = {
   </" OY_TOP_SHARED ">\n"
 };
 
-/** @instance ojpg_api4
- *  @brief    ojpg oyCMMapi4_s implementation
+/** @brief    ojpg oyCMMapi4_s implementation
  *
  *  a filter providing a CMM device link creator
  *

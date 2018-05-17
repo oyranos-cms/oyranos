@@ -64,7 +64,7 @@ typedef struct oyCMMapi4_s oyCMMapi4_s;
  *
  *  Different filters have to provide this struct each one per filter.
  *
- *  The ::oyCMMFilterNode_ContextToMem @see oyCMMFilterNode_ContextToMem_f
+ *  The oyCMMFilterNode_ContextToMem @see oyCMMFilterNode_ContextToMem_f
  *  should be implemented in case the context_type is set to a
  *  context data type.
  *

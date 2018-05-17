@@ -170,8 +170,7 @@ const char * oyX1InfoGetTextMyHandlerA(const char        * select,
 }
 const char *oyX1_texts_color_server_active[4] = {"can_handle","color_server_active","help",0};
 
-/** @instance oyX1_api10_color_server_active_handler
- *  @brief    oyX1 oyCMMapi10_s implementation
+/** @brief    oyX1 oyCMMapi10_s implementation
  *
  *  X Color Management desktop advanced toogle
  *
@@ -353,8 +352,7 @@ const char * oyX1InfoGetTextMyHandlerC(const char        * select,
 }
 const char *oyX1_texts_clean_profiles[4] = {"can_handle","clean_profiles","help",0};
 
-/** @instance oyX1_api10_clean_profiles_handler
- *  @brief    oyX1 oyCMMapi10_s implementation
+/** @brief    oyX1 oyCMMapi10_s implementation
  *
  *  X Color Management desktop device profile handler
  *
@@ -542,8 +540,7 @@ const char * oyX1InfoGetTextMyHandlerM(const char        * select,
 }
 const char *oyX1_texts_move_color_server_profiles[4] = {"can_handle","move_color_server_profiles","help",0};
 
-/** @instance oyX1_api10_move_color_server_profiles_handler
- *  @brief    oyX1 oyCMMapi10_s implementation
+/** @brief    oyX1 oyCMMapi10_s implementation
  *
  *  X Color Management desktop device profile handler
  *
@@ -728,8 +725,7 @@ const char * oyX1InfoGetTextMyHandlerU(const char        * select,
 }
 const char *oyX1_texts_send_native_update_event[4] = {"can_handle","send_native_update_event","help",0};
 
-/** @instance oyX1_api10_send_native_update_event_handler
- *  @brief    oyX1 oyCMMapi10_s implementation
+/** @brief    oyX1 oyCMMapi10_s implementation
  *
  *  X Color Management desktop advanced toogle
  *
@@ -996,8 +992,7 @@ const char * oyX1InfoGetTextMyHandler( const char        * select,
 }
 const char *oyX1_texts_set_xcm_region[4] = {"can_handle","set_xcm_region","help",0};
 
-/** @instance oyX1_api10_set_xcm_region_handler
- *  @brief    oyX1 oyCMMapi10_s implementation
+/** @brief    oyX1 oyCMMapi10_s implementation
  *
  *  X Color Management server side regions setup
  *

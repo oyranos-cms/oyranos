@@ -182,8 +182,7 @@ int  oyraInit                        ( oyStruct_s        * module_info OY_UNUSED
 
 oyIcon_s oyra_icon = {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"};
 
-/** @instance oyra_cmm_module
- *  @brief    oyra module infos
+/** @brief    oyra module infos
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/01/02 (Oyranos: 0.1.8)

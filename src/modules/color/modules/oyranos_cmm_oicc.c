@@ -1135,8 +1135,7 @@ char * oiccCMMGetDefaultPattern      ( const char        * base_pattern OY_UNUSE
   return oyStringCopy( "//" OY_TYPE_STD "/icc_color.lcm2", allocate_func );
 }
 
-/** @instance oicc_api9
- *  @brief    oicc policy oyCMMapi9_s implementation
+/** @brief    oicc policy oyCMMapi9_s implementation
  *
  *  A module to match ICC CMM default settings to Oyranos policy settings.
  *  Per object user settings have priority and are not touched.
@@ -1245,8 +1244,7 @@ const char *oicc_texts[5] = {"name","copyright","manufacturer","help",0};
 
 oyIcon_s oicc_icon = {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"};
 
-/** @instance oicc_cmm_module
- *  @brief    oicc module infos
+/** @brief    oicc module infos
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/07/23 (Oyranos: 0.1.10)

@@ -348,8 +348,7 @@ const char * oyraInfoGetTextGraph2D  ( const char        * select,
 }
 
                  
-/** @instance oyra_api10_profile_graph2d_SaturationLine
- *  @brief    oyra oyCMMapi10_s implementation
+/** @brief    oyra oyCMMapi10_s implementation
  *
  *  supplier for black body temperature curve
  *

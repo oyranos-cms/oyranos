@@ -992,8 +992,7 @@ const char * elDBInfoGetTextDBC      ( const char        * select,
   return 0;
 }
 
-/** @instance elDB_api10_cmm
- *  @brief    elDB oyCMMapi10_s implementation
+/** @brief    elDB oyCMMapi10_s implementation
  *
  *  handlers for OpenICC DB
  *
@@ -1077,8 +1076,7 @@ const char * elDBInfoGetText         ( const char        * select,
 const char *elDB_texts[5] = {"name","copyright","manufacturer","help",0};
 oyIcon_s elDB_icon = {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"};
 
-/** @instance elDB_cmm_module
- *  @brief    elDB module infos
+/** @brief    elDB module infos
  *
  *  @version Oyranos: 0.9.6
  *  @date    2016/10/23

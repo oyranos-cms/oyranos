@@ -717,8 +717,8 @@ OYAPI oyProfile_s * OYEXPORT oyProfile_FromMD5 (
  *
  *  @param[in]     options             - "TAXI_id" shall provide a string
  *                                       for device driver parameter selection
- *  @param[out]    profile             the resulting profile
- *  @return                            error
+ *  @param[in]     object              the optional object
+ *  @return                            the resulting profile
  *
  *  @version Oyranos: 0.3.3
  *  @since   2012/01/08 (Oyranos: 0.3.3)
@@ -2638,6 +2638,7 @@ int                oyProfile_AddDevice(oyProfile_s       * profile,
 /**
  *  @brief get the ICC*XYZ coordinates of a white point
  *
+ *  @param[in]     profile             the ICC profile object if interesst
  *  @param[out]    ICC_XYZ             ICC*XYZ trio in 0.0 - 2.0 range
  *  @return                            0 - success; -1 - no white point available; < 1 - error
  *

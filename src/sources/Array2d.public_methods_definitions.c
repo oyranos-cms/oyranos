@@ -192,7 +192,7 @@ OYAPI int  OYEXPORT
  *  @brief    Set the data and (re-)initialise the object
  *
  *  @param[in,out] obj                 struct object
- *  @param[in]     data                the data
+ *  @param[in]     rows                the data
  *  @param[in]     do_copy             - 0 : take the memory as is
  *                                     - 1 : copy the memory monolithic
  *                                     - 2 : copy the memory chunky
@@ -391,6 +391,7 @@ OYAPI int OYEXPORT
  *  The function informs about reserves and possible offsets.
  *
  *  @param[in,out] array               the channels array
+ *  @param[in]     x_y_w_h             dimension selector
  *  @return                            the position or dimension
  *
  *  @version  Oyranos: 0.5.0

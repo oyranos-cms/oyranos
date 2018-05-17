@@ -79,8 +79,7 @@ struct Ncl2 {
 
 /* --- implementations --- */
 
-/** @func  oyIMProfileCanHandle
- *  @brief inform about icTagTypeSignature capabilities
+/** @brief inform about icTagTypeSignature capabilities
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/01/03 (Oyranos: 0.1.8)
@@ -624,7 +623,7 @@ int  oyWriteIcSigLutAtoBType         ( oyStructList_s    * texts,
  *      - a option containing doubles
  *        - first entry :  CIE *X
  *        - second entry:  CIE *Y
- *        - third entry : CIE *Z
+ *        - third entry :  CIE *Z
  *
  *  @version Oyranos: 0.9.7
  *  @date    2017/10/24
@@ -3069,8 +3068,7 @@ int          oyIMProfileTag_Create   ( oyProfileTag_s    * tag,
 }
 
 
-/** @instance oyIM_api3
- *  @brief    oyIM oyCMMapi3_s implementations
+/** @brief    oyIM oyCMMapi3_s implementations
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/01/02 (Oyranos: 0.1.8)

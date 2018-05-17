@@ -109,8 +109,7 @@ oyOptions_s* oydiFilter_ImageDisplayValidateOptions
   return 0;
 }
 
-/** @func    oydiFilterNode_ImageDisplayContextToMem
- *  @brief   implement oyCMMFilter_ContextToMem_f()
+/** @brief   implement oyCMMFilter_ContextToMem_f()
  *
  *  Serialise into a Oyranos specific ICC profile containers "Info" tag.
  *  We do not have any binary context to include.
@@ -598,8 +597,7 @@ int  oydiFilterSocket_ImageDisplayInit(oyPixelAccess_s   * ticket,
 }
 
 
-/** @func    oydiColorServerActive
- *  @brief   wrap XcmColorServerCapabilities
+/** @brief   wrap XcmColorServerCapabilities
  *
  *  @version Oyranos: 0.9.2
  *  @since   2012/12/20 (Oyranos: 0.9.2)
@@ -622,8 +620,7 @@ int      oydiColorServerActive( oyBlob_s * display_id )
 }
 
 
-/** @func    oydiFilterPlug_ImageDisplayRun
- *  @brief   implement oyCMMFilter_GetNext_f()
+/** @brief   implement oyCMMFilter_GetNext_f()
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/02/23 (Oyranos: 0.1.10)
@@ -1038,7 +1035,17 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
       }
       if(display_white_point) /* not "none" */
       {
-        int error = oyProfileAddWhitePointEffect( p, &f_options );
+        int error = 0;
+        if(!p)
+        {
+          oyOptions_s * options = NULL;
+          error = oyOptions_SetFromString( &options,
+                               "//"OY_TYPE_STD"/config/x_color_region_target",
+                                       "yes", OY_CREATE_NEW );
+          error = oyDeviceGetProfile( c, options, &p );
+          oyOptions_Release( &options );
+        }
+        error = oyProfileAddWhitePointEffect( p, &f_options );
 
         if(error || oy_debug)
           oydi_msg( oyMSG_WARN, (oyStruct_s*)ticket, 
@@ -1194,8 +1201,7 @@ oyConnectorImaging_s_ *oyx1_Display_sockets[2] = {&oyx1_Display_socket,0};
 
 
 #define OY_IMAGE_DISPLAY_REGISTRATION OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "display"
-/** @instance oydi_api7_image_display
- *  @brief    oydi oyCMMapi7_s implementation
+/** @brief    oydi oyCMMapi7_s implementation
  *
  *  a filter for expanding the graph to several display devices
  *
@@ -1256,8 +1262,7 @@ const char * oydiApi4UiImageDisplayGetText (
 }
 const char * oydi_api4_ui_image_display_texts[] = {"name", "help", 0};
 
-/** @instance oydi_api4_ui_image_display
- *  @brief    oydi oyCMMapi4_s::ui implementation
+/** @brief    oydi oyCMMapi4_s::ui implementation
  *
  *  The UI for filter image display.
  *
@@ -1285,8 +1290,7 @@ oyCMMui_s_ oydi_api4_ui_image_display = {
   (oyCMMapiFilter_s*)&oydi_api4_image_display /* oyCMMapiFilter_s*parent */
 };
 
-/** @instance oydi_api4_image_display
- *  @brief    oydi oyCMMapi4_s implementation
+/** @brief    oydi oyCMMapi4_s implementation
  *
  *  a filter for expanding the graph to several display devices
  *
@@ -1400,8 +1404,7 @@ const char * oydiGetText             ( const char        * select,
 const char *oydi_texts[5] = {"name","copyright","manufacturer","help",0};
 oyIcon_s oydi_icon = {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"};
 
-/** @instance oydi_cmm_module
- *  @brief    oydi module infos
+/** @brief    oydi module infos
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/01/00 (Oyranos: 0.1.10)

@@ -1,4 +1,4 @@
-/** @file oyranos_cmm_oyX1.c
+/** @file oyranos_cmm_disp.c
  *
  *  Oyranos is an open source Color Management System 
  *
@@ -107,8 +107,7 @@ void               oyCMMdeallocateFunc ( oyPointer         mem )
     free(mem);
 }*/
 
-/** @func  CMMMessageFuncSet
- *  @brief API requirement
+/** @brief API requirement
  *
  *  @version Oyranos: 0.1.8
  *  @date    2007/12/12
@@ -1266,8 +1265,7 @@ const char * Api8UiGetText           ( const char        * select,
 }
 const char * _api8_ui_texts[] = {"name", "help", "device_class", "icc_profile_class", "category", "key_prefix", 0};
 
-/** @instance _api8_ui
- *  @brief    Monitor Device Node UI
+/** @brief    Monitor Device Node UI
  *
  * oyCMMapi8_s::ui implementation
  *
@@ -1300,8 +1298,7 @@ oyIcon_s _api8_icon = {
   oyOBJECT_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"
 };
 
-/** @instance _api8
- *  @brief    Monitor Device Node
+/** @brief    Monitor Device Node
  *
  *  oyCMMapi8_s implementations
  *
@@ -1402,8 +1399,7 @@ const char * GetText                 ( const char        * select,
 }
 const char *_texts[5] = {"name","copyright","manufacturer","help",0};
 
-/** @instance _cmm_module
- *  @brief    Module Infos
+/** @brief    Module Infos
  *
  *  @version Oyranos: 0.1.10
  *  @since   2007/12/12 (Oyranos: 0.1.8)

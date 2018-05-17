@@ -52,9 +52,6 @@
 /* OY_IMAGE_OUTPUT_REGISTRATION */
 
 
-oyDATATYPE_e oyra_image_data_types[7] = {oyUINT8, oyUINT16, oyUINT32,
-                                         oyHALF, oyFLOAT, oyDOUBLE, 0};
-
 /** \addtogroup graph_modules
  *  @{ */
 /** \addtogroup oyra_graph oyra Module
@@ -62,7 +59,16 @@ oyDATATYPE_e oyra_image_data_types[7] = {oyUINT8, oyUINT16, oyUINT32,
  *
  *  The module provides file I/O, region handling, source and output.
  *
+ *  - ::oyra_api7_image_load
+ *  - ::oyra_api7_image_write
+ *  - ::oyra_api7_image_rectangles
+ *  - ::oyra_api7_image_root
+ *  - ::oyra_api7_image_output
+ *
  *  @{ */
+
+oyDATATYPE_e oyra_image_data_types[7] = {oyUINT8, oyUINT16, oyUINT32,
+                                         oyHALF, oyFLOAT, oyDOUBLE, 0};
 
 /* OY_IMAGE_WRITE_REGISTRATION ---------------------------------------------*/
 
@@ -84,8 +90,7 @@ oyOptions_s* oyraFilter_ImageWriteValidateOptions
 }
 
 
-/** @func    oyraFilterPlug_ImageWriteRun
- *  @brief   Target File Image meta filter
+/** @brief   Target File Image meta filter
  *
  *  implement oyCMMFilter_GetNext_f()
  *
@@ -289,12 +294,11 @@ oyConnectorImaging_s_ *oyra_imageWrite_sockets[2] = {&oyra_imageWrite_socket,0};
 
 /** @brief registration string for \b oyra CMM */
 #define OY_IMAGE_WRITE_REGISTRATION OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "file_write.meta._" CMM_NICK
-/** @instance oyra_api7_image_write
- *  @brief    Target File Image Meta Node
+/** @brief    Target File Image Meta Node
  *
  *  oyra oyCMMapi7_s implementation
  *
- *  a filter abstraction image file writing
+ *  A abstraction filter for image file writing.
  *
  *  @version Oyranos: 0.5.0
  *  @since   2012/07/19 (Oyranos: 0.5.0)
@@ -357,8 +361,7 @@ const char * oyraApi4UiImageWriteGetText (
 }
 const char * oyra_api4_ui_image_write_texts[] = {"name", "help", 0};
 
-/** @instance oyra_api4_ui_image_write
- *  @brief    Target File Image Meta Node UI
+/** @brief    Target File Image Meta Node UI
  *
  *  oyra oyCMMapi4_s::ui implementation
  *
@@ -387,12 +390,11 @@ oyCMMui_s_ oyra_api4_ui_image_write = {
   (oyCMMapiFilter_s*)&oyra_api4_image_write /* oyCMMapiFilter_s*parent */
 };
 
-/** @instance oyra_api4_image_write
- *  @brief    Target File Image Meta Node (UI only)
+/** @brief    Target File Image Meta Node (UI only)
  *
  *  oyra oyCMMapi4_s implementation
  *
- *  a filter abstraction image file writeing
+ *  A abstraction filter for image file writing.
  *
  *  @version Oyranos: 0.5.0
  *  @since   2012/07/19 (Oyranos: 0.5.0)
@@ -444,8 +446,7 @@ oyOptions_s* oyraFilter_ImageLoadValidateOptions
   return 0;
 }
 
-/** @func    oyraFilterNode_ImageLoadContextToMem
- *  @brief   Provide text info for debugging and hashing
+/** @brief   Provide text info for debugging and hashing
  *
  *  implement oyCMMFilter_ContextToMem_f()
  *
@@ -465,8 +466,7 @@ oyPointer  oyraFilterNode_ImageLoadContextToMem (
   return oyFilterNode_TextToInfo_( (oyFilterNode_s_*)node, size, allocateFunc );
 }
 
-/** @func    oyraFilterPlug_ImageLoadRun
- *  @brief   Source File Image meta filter
+/** @brief   Source File Image meta filter
  *
  *  implement oyCMMFilter_GetNext_f()
  *
@@ -703,12 +703,13 @@ oyConnectorImaging_s_ *oyra_imageLoad_sockets[2] = {&oyra_imageLoad_socket,0};
 
 /** @brief registration string for \b oyra CMM */
 #define OY_IMAGE_LOAD_REGISTRATION OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "file_read.meta._" CMM_NICK
-/** @instance oyra_api7_image_load
- *  @brief   Source File Image Meta Node
+/** @brief   Source File Image Meta Node
  *
  *  oyra oyCMMapi7_s implementation
  *
- *  a filter abstraction image file loading
+ *  A abstraction filter for image file loading.
+ *
+ *  @see oyraFilterPlug_ImageLoadRun() and oyra_api4_image_load
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/07/15 (Oyranos: 0.1.10)
@@ -771,8 +772,7 @@ const char * oyraApi4UiImageLoadGetText (
 }
 const char * oyra_api4_ui_image_load_texts[] = {"name", "help", 0};
 
-/** @instance oyra_api4_ui_image_load
- *  @brief    Source File Image Meta Node UI
+/** @brief    Source File Image Meta Node UI
  *
  *  oyra oyCMMapi4_s::ui implementation
  *
@@ -801,12 +801,11 @@ oyCMMui_s_ oyra_api4_ui_image_load = {
   (oyCMMapiFilter_s*)&oyra_api4_image_load /* oyCMMapiFilter_s*parent */
 };
 
-/** @instance oyra_api4_image_load
- *  @brief    Source File Image Meta Node (UI only)
+/** @brief    Source File Image Meta Node (UI only)
  *
  *  oyra oyCMMapi4_s implementation
  *
- *  a filter abstraction image file loading
+ *  A abstraction filter for image file loading.
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/07/15 (Oyranos: 0.1.10)
@@ -859,8 +858,7 @@ oyOptions_s* oyraFilter_ImageRectanglesValidateOptions
 }
 
 
-/** @func    oyraFilterPlug_ImageRectanglesRun
- *  @brief   Split image processing into rectangles
+/** @brief   Split image processing into rectangles
  *
  *  implement oyCMMFilter_GetNext_f()
  *
@@ -1100,12 +1098,13 @@ oyConnectorImaging_s_ *oyra_imageRectangles_sockets[2] = {&oyra_imageRectangles_
 
 /** @brief registration string for \b oyra CMM */
 #define OY_IMAGE_REGIONS_REGISTRATION OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "rectangles"
-/** @instance oyra_api7_image_rectangles
- *  @brief   Rectangles Node
+/** @brief   Rectangles Node
  *
  *  oyra oyCMMapi7_s implementation
  *
  *  A filter routing the graph to several rectangles.
+ *  @dontinclude   oyranos_cmm_oyra_image.c
+    @skip rect_description
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/02/24 (Oyranos: 0.1.10)
@@ -1156,19 +1155,21 @@ const char * oyraApi4UiImageRectanglesGetText (
       return _("Rectangles Splitter Object");
   } else if(strcmp(select,"help") == 0)
   {
+    static char * rect_description = NULL;
+    if(!rect_description)
+      rect_description = _("The filter will expect a \"rectangle\" option containing a list of oyRectangle_s objects and will create, fill and process a according rectangle within a list of new job tickets. Each rectangle shall be in pixel coordinates. It describes a individual ROI inside the source image and the output array ROI.");
     if(type == oyNAME_NICK)
       return "help";
     else if(type == oyNAME_NAME)
       return _("Apply regions of interesst in form of simple rectangles.");
     else if(type == oyNAME_DESCRIPTION)
-      return _("The filter will expect a \"rectangle\" option containing a list of oyRectangle_s objects and will create, fill and process a according rectangle within a list of new job tickets. Each rectangle shall be in pixel coordinates. It describes a individual ROI inside the source image and the output array ROI.");
+      return rect_description;
   }
   return 0;
 }
 const char * oyra_api4_ui_image_rectangles_texts[] = {"name", "help", 0};
 
-/** @instance oyra_api4_ui_image_rectangles
- *  @brief    Rectangles Node UI
+/** @brief    Rectangles Node UI
  *
  *  oyra oyCMMapi4_s::ui implementation
  *
@@ -1197,8 +1198,7 @@ oyCMMui_s_ oyra_api4_ui_image_rectangles = {
   (oyCMMapiFilter_s*)&oyra_api4_image_rectangles /* oyCMMapiFilter_s*parent */
 };
 
-/** @instance oyra_api4_image_rectangles
- *  @brief    Rectangles Node (only UI)
+/** @brief    Rectangles Node (only UI)
  *
  *  oyra oyCMMapi4_s implementation
  *
@@ -1270,8 +1270,7 @@ oyOptions_s* oyraFilter_ImageRootValidateOptions
   return 0;
 }
 
-/** @func    oyraFilterPlug_ImageRootRun
- *  @brief   Source in memory image obtaining
+/** @brief   Source in memory image obtaining
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/07/10 (Oyranos: 0.1.8)
@@ -1317,8 +1316,7 @@ oyConnectorImaging_s_ * oyra_imageRoot_connectors[2] = {&oyra_imageRoot_connecto
 
 /** @brief registration string for \b oyra CMM */
 #define OY_IMAGE_ROOT_REGISTRATION OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "root"
-/** @instance oyra_api7_image_root
- *  @brief    Source in memory Image Node
+/** @brief    Source in memory Image Node
  *
  *  oyra oyCMMapi7_s implementation
  *
@@ -1384,8 +1382,7 @@ const char * oyraApi4UiImageRootGetText (
 }
 const char * oyra_api4_ui_image_root_texts[] = {"name", "help", 0};
 
-/** @instance oyra_api4_ui_image_root
- *  @brief    Source in memory Image Node UI
+/** @brief    Source in memory Image Node UI
  *
  *  oyra oyCMMapi4_s::ui implementation
  *
@@ -1414,8 +1411,7 @@ oyCMMui_s_ oyra_api4_ui_image_root = {
   (oyCMMapiFilter_s*)&oyra_api4_image_root /* oyCMMapiFilter_s*parent */
 };
 
-/** @instance oyra_api4_image_root
- *  @brief    Source in memory Image Node (only UI)
+/** @brief    Source in memory Image Node (only UI)
  *
  *  oyra oyCMMapi4_s implementation
  *
@@ -1486,8 +1482,7 @@ oyConnectorImaging_s_ oyra_imageOutput_connector = {
 oyConnectorImaging_s_* oyra_imageOutput_connectors[2] = {&oyra_imageOutput_connector,0};
 
 
-/** @func    oyraFilterPlug_ImageOutputRun
- *  @brief   Start Processing
+/** @brief   Start Processing
  *
  *  This node is itself pretty passive.
  *  Implements oyCMMFilter_GetNext_f()
@@ -1519,8 +1514,7 @@ int      oyraFilterPlug_ImageOutputRun(oyFilterPlug_s    * requestor_plug,
 
 /** @brief registration string for \b oyra CMM */
 #define OY_IMAGE_OUTPUT_REGISTRATION OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "output"
-/** @instance oyra_api7_image_output
- *  @brief    Output in memory Image Node
+/** @brief    Output in memory Image Node
  *
  *  oyra oyCMMapi7_s implementation
  *
@@ -1586,8 +1580,7 @@ const char * oyraApi4UiImageOutputGetText (
 }
 const char * oyra_api4_ui_image_output_texts[] = {"name", "help", 0};
 
-/** @instance oyra_api4_ui_image_output
- *  @brief    Image Output UI
+/** @brief    Image Output UI
  *
  *  oyra oyCMMapi4_s::ui implementation
  *
@@ -1616,8 +1609,7 @@ oyCMMui_s_ oyra_api4_ui_image_output = {
   (oyCMMapiFilter_s*)&oyra_api4_image_output /* oyCMMapiFilter_s*parent */
 };
 
-/** @instance oyra_api4_image_output
- *  @brief    Image Output (only UI)
+/** @brief    Image Output (only UI)
  *
  *  A filter providing a target image.
  *

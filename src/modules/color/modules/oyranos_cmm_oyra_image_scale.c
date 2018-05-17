@@ -333,8 +333,7 @@ int      oyraFilter_ImageScaleRun    ( oyFilterPlug_s    * requestor_plug,
 
 #define OY_IMAGE_SCALE_REGISTRATION OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "scale"
 
-/** @instance oyra_api7
- *  @brief    oyra oyCMMapi7_s implementation
+/** @brief    oyra oyCMMapi7_s implementation
  *
  *  a filter providing a scale image filter
  *
@@ -463,8 +462,7 @@ const char * oyraApi4UiImageScaleGetText (
 }
 
 
-/** @instance oyra_api4
- *  @brief    oyra oyCMMapi4_s implementation
+/** @brief    oyra oyCMMapi4_s implementation
  *
  *  a filter providing a scale image filter
  *

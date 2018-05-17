@@ -1,4 +1,4 @@
-/** @file oyranos_cmm_oyRE.cc
+/** @file oyranos_cmm_oyRE.cpp
  *
  *  Oyranos is an open source Color Management System 
  *
@@ -174,8 +174,7 @@ void CMMdeallocateFunc(oyPointer mem)
       free(mem);
 }
 
-/** @func  CMMMessageFuncSet
- *  @brief API requirement
+/** @brief API requirement
  *
  *  @version Oyranos: 0.1.10
  *  @since   2007/12/12 (Oyranos: 0.1.10)
@@ -1242,8 +1241,7 @@ const char * Api8UiGetText           ( const char        * select,
 }
 const char * _api8_ui_texts[] = {"name", "help", "device_class", "icc_profile_class", "category", 0};
 
-/** @instance _api8_ui
- *  @brief    oydi oyCMMapi4_s::ui implementation
+/** @brief    oydi oyCMMapi4_s::ui implementation
  *
  *  The UI parts for oyRE devices.
  *
@@ -1275,14 +1273,13 @@ oyIcon_s _api8_icon = {
   oyOBJECT_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"
 };
 
-/** @instance _api8
- *  @brief    CMM_NICK oyCMMapi8_s implementations
+/** @brief    CMM_NICK oyCMMapi8_s implementations
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/01/19 (Oyranos: 0.1.10)
  *  @date    2009/12/28
  */
-oyCMMapi8_s_ _api8 = {
+oyCMMapi8_s_ oyRE_api8 = {
    oyOBJECT_CMM_API8_S,
    0, 0, 0,
    (oyCMMapi_s*) 0,                                                   /**< next */
@@ -1351,8 +1348,7 @@ const char *GetText(const char *select, oyNAME_e type,
 }
 const char *_texts[5] = { "name", "copyright", "manufacturer", "help", 0 };
 
-/** @instance _cmm_module
- *  @brief    CMM_NICK module infos
+/** @brief    CMM_NICK module infos
  *
  *  @version Oyranos: 0.1.10
  *  @since   2007/12/12 (Oyranos: 0.1.10)
@@ -1524,3 +1520,4 @@ bool is_raw( int id )
            return true;
    }
 }
+/**  @} *//* oyre_device */

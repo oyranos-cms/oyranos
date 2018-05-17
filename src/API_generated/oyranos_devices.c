@@ -37,7 +37,7 @@
 #include "oyProfiles_s.h"
 
 
-/** \addtogroup devices_handling Device API
+/** \addtogroup devices_handling
  *  @brief Color device meta data and profile handling
  *
  *  Devices are a special form of configurations. Their access is grouped
@@ -1314,7 +1314,7 @@ OYAPI int OYEXPORT oyDeviceSelectSimiliar
  *                                       suffix for keys starting with underline
  *                                       '_'
  *                                     - "pos" integer selects position in array
- *  @param[out]   config               the device
+ *  @param[out]   device               the device
  *  @return                            error
  *
  *  @version Oyranos: 0.9.6
@@ -1425,7 +1425,7 @@ OYAPI int  OYEXPORT oyDeviceFromJSON ( const char        * json_text,
 /** Function oyDeviceToJSON
  *  @brief   get JSON format device calibration text from a device
  *
- *  @param[in]     config              the device
+ *  @param[in]     device              the device
  *  @param[in]     options             "source" value is used for
  *                                     oyConfig_GetOptions()
  *  @param[out]    json_text           the device calibration
@@ -1619,6 +1619,7 @@ int   oyCompareRanks_                ( const void       * rank1,
  *  @param[in]     device              the device
  *  @param[in]     options             not used
  *  @param[out]    devices             the obtained device calibrations
+ *  @param         obj                 the optional object
  *  @return                            0 - good, >= 1 - error + a message should
  *                                     be sent
  *
@@ -2148,7 +2149,7 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s_   * core,
  *  @brief   new option with registration and value filled from DB if available
  *
  *  @param         registration        no or full qualified registration
- *  @param[out[    option              the result
+ *  @param[out]    option              the result
  *  @param         object              the optional object
  *  @return                            0 - good, 1 >= error, -1 <= issue(s)
  *
@@ -2190,7 +2191,7 @@ OYAPI int  OYEXPORT  oyOption_FromDB ( const char        * registration,
  *  @param         scope               oySCOPE_USER and oySCOPE_SYS are possible
  *  @param[in]     registration        the registration
  *  @param[out]    new_reg             the new registration; optional
- *  @param[in]     alloc               the user allocator for new_reg; optional
+ *  @param[in]     allocateFunc        the user allocator for new_reg; optional
  *  @return                            0 - good, 1 >= error
  *
  *  @version Oyranos: 0.9.6

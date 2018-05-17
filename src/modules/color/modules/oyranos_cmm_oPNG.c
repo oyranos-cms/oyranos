@@ -1,4 +1,4 @@
-/** @file oyranos_cmm_oyra_image_png.c
+/** @file oyranos_cmm_oPNG.c
  *
  *  Oyranos is an open source Color Management System 
  *
@@ -99,8 +99,7 @@ const char * oPNGGetText             ( const char        * select,
 
 oyIcon_s oPNG_icon = {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"};
 
-/** @instance oPNG_cmm_module
- *  @brief    oPNG module infos
+/** @brief    oPNG module infos
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/01/02 (Oyranos: 0.1.8)
@@ -409,8 +408,7 @@ int  oyImage_WritePNG                ( oyImage_s         * image,
    return 0;
 }
 
-/** @func    oPNGFilterPlug_ImageOutputPNGWrite
- *  @brief   implement oyCMMFilter_GetNext_f()
+/** @brief   implement oyCMMFilter_GetNext_f()
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/10/07 (Oyranos: 0.1.8)
@@ -588,8 +586,7 @@ const char * oPNGApi4ImageWriteUiGetText (
 }
 const char * oPNG_api4_image_write_png_ui_texts[] = {"name", "category", "help", 0};
 
-/** @instance oPNG_api4_image_write_png_ui
- *  @brief    oPNG oyCMMapi4_s::ui implementation
+/** @brief    oPNG oyCMMapi4_s::ui implementation
  *
  *  The UI for filter write png.
  *
@@ -616,8 +613,7 @@ oyCMMui_s_ oPNG_api4_image_write_png_ui = {
   (oyCMMapiFilter_s*)&oPNG_api4_image_write_png /* oyCMMapiFilter_s*parent */
 };
 
-/** @instance oPNG_api4
- *  @brief    oPNG oyCMMapi4_s implementation
+/** @brief    oPNG oyCMMapi4_s implementation
  *
  *  A filter writing a PNG image.
  *
@@ -663,8 +659,7 @@ char * oPNG_api7_image_output_png_properties[] =
   0
 };
 
-/** @instance oPNG_api7
- *  @brief    oPNG oyCMMapi7_s implementation
+/** @brief    oPNG oyCMMapi7_s implementation
  *
  *  A filter writing a PNG image.
  *
@@ -727,8 +722,7 @@ oyOptions_s* oPNGFilter_ImageInputPNGValidateOptions
   return 0;
 }
 
-/** @func    oyImage_FromPNG
- *  @brief   implement oyCMMFilter_GetNext_f()
+/** @brief   implement oyCMMFilter_GetNext_f()
  *
  *  @version Oyranos: 0.1.11
  *  @since   2010/09/12 (Oyranos: 0.1.11)
@@ -988,8 +982,7 @@ oyImage_s *  oyImage_FromPNG         ( const char        * filename,
   return image_in;
 }
 
-/** @func    oPNGFilterPlug_ImageInputPNGRun
- *  @brief   implement oyCMMFilter_GetNext_f()
+/** @brief   implement oyCMMFilter_GetNext_f()
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/02/18 (Oyranos: 0.1.10)
@@ -1211,8 +1204,7 @@ const char * oPNGApi4ImageInputUiGetText (
 }
 const char * oPNG_api4_image_input_png_ui_texts[] = {"name", "category", "help", 0};
 
-/** @instance oPNG_api4_ui_image_input_png
- *  @brief    oPNG oyCMMapi4_s::ui implementation
+/** @brief    oPNG oyCMMapi4_s::ui implementation
  *
  *  The UI for filter input png.
  *
@@ -1239,8 +1231,7 @@ oyCMMui_s_ oPNG_api4_ui_image_input_png = {
   (oyCMMapiFilter_s*)&oPNG_api4_image_input_png /* oyCMMapiFilter_s*parent */
 };
 
-/** @instance oPNG_api4
- *  @brief    oPNG oyCMMapi4_s implementation
+/** @brief    oPNG oyCMMapi4_s implementation
  *
  *  A filter for reading a PNG image.
  *
@@ -1286,8 +1277,7 @@ char * oPNG_api7_image_input_png_properties[] =
   0
 };
 
-/** @instance oPNG_api7
- *  @brief    oPNG oyCMMapi7_s implementation
+/** @brief    oPNG oyCMMapi7_s implementation
  *
  *  A filter reading a PNG image.
  *

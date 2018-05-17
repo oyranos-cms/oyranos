@@ -27,7 +27,7 @@
 #include "oyranos_types.h"
 #include "oyOptions_s.h"
 
-/** \addtogroup objects_conversion DAG and Image processing API
+/** \addtogroup objects_conversion
  *  @brief Directed Acyclic Graph handling, caching and data processing
  *
  *  @{ *//* objects_conversion */

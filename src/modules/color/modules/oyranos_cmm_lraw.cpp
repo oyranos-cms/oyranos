@@ -242,8 +242,7 @@ const char *lraw_texts[4] = {"name","copyright","manufacturer",0};
 
 oyIcon_s lraw_icon = {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"};
 
-/** @instance lraw_cmm_module
- *  @brief    lraw module infos
+/** @brief    lraw module infos
  *
  *  @version Oyranos: 0.1.10
  *  @date    2009/06/14
@@ -864,8 +863,7 @@ const char * oyraApi4UiImageInputLibrawGetText (
 }
 const char * oyra_api4_ui_image_input_libraw_texts[] = {"name", "help", 0};
 
-/** @instance lraw_api4_ui_image_input_libraw
- *  @brief    lraw oyCMMapi4_s::ui implementation
+/** @brief    lraw oyCMMapi4_s::ui implementation
  *
  *  The UI for image input libraw.
  *
@@ -892,8 +890,7 @@ oyCMMui_s_   oraw_api4_ui_image_input_libraw = {
   (oyCMMapiFilter_s*)&lraw_api4_image_input_libraw /* oyCMMapiFilter_s*parent */
 };
 
-/** @instance lraw_api4
- *  @brief    lraw oyCMMapi4_s implementation
+/** @brief    lraw oyCMMapi4_s implementation
  *
  *  A filter for reading a RAW image.
  *
@@ -940,8 +937,7 @@ const char * lraw_api7_image_input_raw_properties[] =
 };
 
 
-/** @instance lraw_api7
- *  @brief    lraw oyCMMapi7_s implementation
+/** @brief    lraw oyCMMapi7_s implementation
  *
  *  A filter reading a RAW image.
  *

@@ -154,7 +154,7 @@ void               oyShowConversion_ ( oyConversion_s    * conversion,
 /** Function oyFilterSocket_MatchImagingPlug
  *  @brief   verify connectors matching each other
  *  @ingroup module_api
- *  @memberof oyCMMapi5_s
+ *  @memberof oyConnectorImaging_s
  *
  *  @param         socket              a filter socket
  *  @param         plug                a filter plug

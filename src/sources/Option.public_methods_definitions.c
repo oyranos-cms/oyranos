@@ -758,7 +758,7 @@ const char *   oyOption_GetRegistration (
  *  @brief   value filled by a oyStruct_s object
  *
  *  @param         option              the option
- *  @param         s                   the Oyranos style object
+ *  @param         oystruct            the Oyranos style object
  *  @return                            error
  *
  *  @version Oyranos: 0.9.5

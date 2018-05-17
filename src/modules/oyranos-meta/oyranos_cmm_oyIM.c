@@ -43,8 +43,7 @@ oyMessage_f oyIM_msg = oyMessageFunc;
 
 /* --- implementations --- */
 
-/** @func  oyIMCMMInit
- *  @brief API requirement
+/** @brief API requirement
  *
  *  @version Oyranos: 0.1.8
  *  @since   2008/01/02 (Oyranos: 0.1.8)
@@ -58,8 +57,7 @@ int                oyIMCMMInit       ( oyStruct_s        * filter OY_UNUSED )
 
 
 
-/** @func  oyIMIconv
- *  @brief convert between codesets
+/** @brief convert between codesets
  *
  *  @version Oyranos: 0.1.8
  *  @date    2008/05/27
@@ -77,8 +75,7 @@ int                oyIMIconv         ( const char        * input,
 
 
 
-/** @func  oyIMCMMMessageFuncSet
- *  @brief API requirement
+/** @brief API requirement
  *
  *  @version Oyranos: 0.1.8
  *  @date    2008/01/02
@@ -150,8 +147,7 @@ const char *oyIM_texts[4] = {"name","copyright","manufacturer",0};
 
 oyIcon_s oyIM_icon = {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"};
 
-/** @instance oyIM_cmm_module
- *  @brief    oyIM module infos
+/** @brief    oyIM module infos
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/01/02 (Oyranos: 0.1.8)

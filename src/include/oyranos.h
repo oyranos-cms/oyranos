@@ -38,8 +38,8 @@ typedef enum {
   oyPATH_ICC       = 0x01,             /**< ICC profile path */
   oyPATH_POLICY    = 0x02,             /**< policy data */
   oyPATH_MODULE    = 0x04,             /**< module data */
-  oyPATH_SCRIPT    = 0x08,
-  oyPATH_CACHE     = 0xf0
+  oyPATH_SCRIPT    = 0x08,             /**< JIT code */
+  oyPATH_CACHE     = 0xf0              /**< cached files */
 } oyPATH_TYPE_e;
 
 /** @brief Select Scope for Installation or Configurations

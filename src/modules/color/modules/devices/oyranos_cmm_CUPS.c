@@ -135,8 +135,7 @@ void CMMdeallocateFunc ( oyPointer mem )
     free(mem);
 }
 
-/** @func  CMMMessageFuncSet
- *  @brief API requirement
+/** @brief API requirement
  *
  *  @version Oyranos: 0.1.10
  *  @since   2007/12/12 (Oyranos: 0.1.10)
@@ -892,8 +891,7 @@ const char * Api8UiGetText           ( const char        * select,
 }
 const char * _api8_ui_texts[] = {"name", "help", "device_class", "icc_profile_class", "category", 0};
 
-/** @instance _api8_ui
- *  @brief    oydi oyCMMapi4_s::ui implementation
+/** @brief    oydi oyCMMapi4_s::ui implementation
  *
  *  The UI parts for CUPS devices.
  *
@@ -925,8 +923,7 @@ oyIcon_s _api8_icon = {
   oyOBJECT_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"
 };
 
-/** @instance _api8
- *  @brief     oyCMMapi8_s implementations
+/** @brief     oyCMMapi8_s implementations
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/01/19 (Oyranos: 0.1.10)
@@ -1019,8 +1016,7 @@ const char * GetText                 ( const char        * select,
 }
 const char * _texts[5] = {"name","copyright","manufacturer","help",0};
 
-/** @instance _cmm_module
- *  @brief     module infos
+/** @brief     module infos
  *
  *  @version Oyranos: 0.1.10
  *  @since   2007/12/12 (Oyranos: 0.1.10)
@@ -1046,7 +1042,10 @@ oyCMM_s _cmm_module = {
 /** @brief get for possible profiles eachs qualifier
  *
  *  @param         device_name         the device to request the ppd for
- *  @param         device              add the 3 qualifiers and the profile
+ *  @param         ppd_file            add the 3 qualifiers and the profile
+ *  @param[out]    devices             the result
+ *  @param         user_options        the passed in fton end options
+ *                                     - icc_profile_flags integer
  */
 int CUPSgetProfiles                  ( const char        * device_name,
                                        ppd_file_t        * ppd_file,

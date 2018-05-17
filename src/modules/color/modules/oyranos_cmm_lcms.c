@@ -2541,8 +2541,7 @@ const char * lcmsInfoGetTextProfileC2( const char        * select,
 }
 const char *lcms_texts_profile_create[4] = {"can_handle","create_profile","help",0};
 
-/** @instance lcms_api10_cmm2
- *  @brief    littleCMS oyCMMapi10_s implementation
+/** @brief    littleCMS oyCMMapi10_s implementation
  *
  *  a filter for proofing effect profile creation
  *
@@ -2613,8 +2612,7 @@ const char * lcmsInfoGetTextProfileC ( const char        * select,
   return 0;
 }
 
-/** @instance lcms_api10_cmm
- *  @brief    littleCMS oyCMMapi10_s implementation
+/** @brief    littleCMS oyCMMapi10_s implementation
  *
  *  a filter for simple profile creation
  *
@@ -2647,8 +2645,7 @@ oyCMMapi10_s_  lcms_api10_cmm = {
 };
 
 
-/** @instance lcms_api6
- *  @brief    littleCMS oyCMMapi6_s implementation
+/** @brief    littleCMS oyCMMapi6_s implementation
  *
  *  a filter providing CMM API's
  *
@@ -2680,8 +2677,7 @@ oyCMMapi6_s_ lcms_api6_cmm = {
 };
 
 
-/** @instance lcms_api7
- *  @brief    littleCMS oyCMMapi7_s implementation
+/** @brief    littleCMS oyCMMapi7_s implementation
  *
  *  a filter providing CMM API's
  *
@@ -2758,8 +2754,7 @@ const char * lcmsApi4UiGetText (
   return 0;
 }
 const char * lcms_api4_ui_texts[] = {"name", "category", "help", 0};
-/** @instance lcms_api4_ui
- *  @brief    lcms oyCMMapi4_s::ui implementation
+/** @brief    lcms oyCMMapi4_s::ui implementation
  *
  *  The UI for lcms.
  *
@@ -2786,8 +2781,7 @@ oyCMMui_s_ lcms_api4_ui = {
   (oyCMMapiFilter_s*)&lcms_api4_cmm /* oyCMMapiFilter_s*parent */
 };
 
-/** @instance lcms_api4_cmm
- *  @brief    littleCMS oyCMMapi4_s implementation
+/** @brief    littleCMS oyCMMapi4_s implementation
  *
  *  a filter providing CMM API's
  *
@@ -2871,8 +2865,7 @@ const char * lcmsInfoGetText         ( const char        * select,
 const char *lcms_texts[5] = {"name","copyright","manufacturer","help",0};
 oyIcon_s lcms_icon = {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "lcms_logo2.png"};
 
-/** @instance lcms_cmm_module
- *  @brief    lcms module infos
+/** @brief    lcms module infos
  *
  *  @version Oyranos: 0.1.10
  *  @since   2007/11/00 (Oyranos: 0.1.8)

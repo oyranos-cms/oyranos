@@ -248,7 +248,8 @@ OYAPI int OYEXPORT
  *  @brief    Get edges
  *
  *  @param[in]     graph               a filter graph
- *  @return                            the edges count
+ *  @param[in]     pos                 the desired index
+ *  @return                            the edge
  *
  *  @version  Oyranos: 0.5.0
  *  @date     2012/09/24
