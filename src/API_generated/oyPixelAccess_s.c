@@ -192,10 +192,10 @@ int                oyPixelAccess_ArrayIsFocussed (
 
 /** Function  oyPixelAccess_Create
  *  @memberof oyPixelAccess_s
- *  @brief    Allocate iand initialise a basic oyPixelAccess_s object
+ *  @brief    Allocate and initialise a basic oyPixelAccess_s object
  *
  *  @code
-  // conversion->out_ has to be linear, so we access only the first plug
+  // conversion->out_ has to be linear, as we access only the first plug
   node = oyConversion_GetNode( conversion, OY_OUTPUT );
   plug = oyFilterNode_GetPlug( node, 0 );
   oyFilterNode_Release( &node );
@@ -205,6 +205,8 @@ int                oyPixelAccess_ArrayIsFocussed (
     pixel_access = oyPixelAccess_Create( 0,0, plug,
                                          oyPIXEL_ACCESS_IMAGE, 0 );
     @endcode
+ *
+ *  @see oyPixelAccess_SetOutputImage() and oyPixelAccess_SetArray()
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/07/07 (Oyranos: 0.1.8)
