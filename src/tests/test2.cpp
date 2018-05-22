@@ -4834,6 +4834,7 @@ oyTESTRESULT_e testCMMsShow ()
 #include "oyNamedColor_s.h"
 #include "oyNamedColors_s.h"
 #include "oyranos_alpha_internal.h"
+extern int oy_debug_image_read_array_count;
 
 oyTESTRESULT_e testCMMnmRun ()
 {
@@ -5052,7 +5053,6 @@ oyTESTRESULT_e testCMMnmRun ()
 
 
   oyConversion_s * s = 0;
-  oyFilterNode_s * out = 0;
   oyImage_s * input  = NULL,
             * output = NULL;
   double * buf_in = &d[0],
@@ -5100,14 +5100,14 @@ oyTESTRESULT_e testCMMnmRun ()
     "oyConversion_CreateBasicPixels()                   " );
   }
 
-  input =oyImage_Create( 1,1, 
-                         buf_in ,
+  input =oyImage_Create( 1,1,
+                         buf_in,
                          oyChannels_m(oyProfile_GetChannelsCount(p_in)) |
                           oyDataType_m(buf_type_in),
                          p_in,
                          testobj );
-  output=oyImage_Create( 1,1, 
-                         buf_out ,
+  output=oyImage_Create( 1,1,
+                         buf_out,
                          oyChannels_m(oyProfile_GetChannelsCount(p_out)) |
                           oyDataType_m(buf_type_out),
                          p_out,
@@ -5115,26 +5115,24 @@ oyTESTRESULT_e testCMMnmRun ()
 
   #define OY_ERR if(l_error != 0) error = l_error;
 
-  oyFilterPlug_s * plug = 0;
-  oyPixelAccess_s * pixel_access = 0;
   s = oyConversion_CreateBasicPixels( input,output, 0, testobj );
-  out = oyConversion_GetNode( s, OY_OUTPUT );
+  // create a basic job ticket for faster repeats of oyConversion_RunPixels()
+  oyFilterPlug_s * plug = 0;
+  oyFilterNode_s * out = oyConversion_GetNode( s, OY_OUTPUT );
   if(s && out)
     plug = oyFilterNode_GetPlug( out, 0 );
   else
     error = 1;
-  pixel_access = oyPixelAccess_Create( 0,0, plug,
+  oyPixelAccess_s * pixel_access = oyPixelAccess_Create( 0,0, plug,
                                        oyPIXEL_ACCESS_IMAGE, testobj );
   oyFilterPlug_Release( &plug );
 
+  oy_debug_image_read_array_count = 0;
   clck = oyClock();
   for(i = 0; i < n*1000; ++i)
   if(error <= 0)
     error  = oyConversion_RunPixels( s, pixel_access );
   clck = oyClock() - clck;
-
-  oyConversion_Release ( &s );
-  oyPixelAccess_Release( &pixel_access );
 
   if( !error )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
@@ -5144,6 +5142,33 @@ oyTESTRESULT_e testCMMnmRun ()
   { PRINT_SUB( oyTESTRESULT_FAIL,
     "oyConversion_RunPixels()                           " );
   }
+
+  oy_debug_image_read_array_count = 0;
+  oyArray2d_s * pdata = (oyArray2d_s*) oyImage_GetPixelData( output ); // or use oyConversion_GetImage()
+  oyImage_s * output_image = oyPixelAccess_GetOutputImage( pixel_access );
+  if(output_image != output)
+    fprintf( zout, "Can not optimise last output copy\n" );
+  oyArray2d_s * array = oyPixelAccess_GetArray( pixel_access );
+  if(array != pdata) // should be typical the case
+    oyPixelAccess_SetArray( pixel_access, (oyArray2d_s*)pdata, 0 );
+  clck = oyClock();
+  for(i = 0; i < n*1000; ++i)
+  if(error <= 0)
+    error  = oyConversion_RunPixels( s, pixel_access );
+  clck = oyClock() - clck;
+
+  if( !oy_debug_image_read_array_count )
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyConversion_RunPixels( array fast )%s",
+                          oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Pixel"));
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyConversion_RunPixels( array fast )%s",
+                          oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Pixel"));
+  }
+
+  oyConversion_Release ( &s );
+  oyPixelAccess_Release( &pixel_access );
 
 
   s = oyConversion_CreateBasicPixels( input,output, options, testobj );
