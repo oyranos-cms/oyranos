@@ -59,11 +59,16 @@
  *
  *  The module provides file I/O, region handling, source and output.
  *
- *  - ::oyra_api7_image_load
- *  - ::oyra_api7_image_write
- *  - ::oyra_api7_image_rectangles
- *  - ::oyra_api7_image_root
- *  - ::oyra_api7_image_output
+ *  - ::oyra_api7_image_load -
+ *      a abstraction filter for image file loading.
+ *  - ::oyra_api7_image_write - 
+ *      a abstraction filter for image file writing.
+ *  - ::oyra_api7_image_rectangles - 
+ *      a filter collecting results from several rectangles.
+ *  - ::oyra_api7_image_root - 
+ *      a filter providing a source image
+ *  - ::oyra_api7_image_output - 
+ *      a filter providing a target image as output
  *
  *  @{ */
 
@@ -471,7 +476,9 @@ oyPointer  oyraFilterNode_ImageLoadContextToMem (
  *  implement oyCMMFilter_GetNext_f()
  *
  *  The filter searches for a suitable filter and select it for opening
- *  a given image file name.
+ *  a given image file name. The loaded image is set to the filters socket.
+ *  The pixels are copied into the ticket, during running the DAG with
+ *  oyConversion_RunPixels().
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/07/15 (Oyranos: 0.1.10)
@@ -708,6 +715,10 @@ oyConnectorImaging_s_ *oyra_imageLoad_sockets[2] = {&oyra_imageLoad_socket,0};
  *  oyra oyCMMapi7_s implementation
  *
  *  A abstraction filter for image file loading.
+ *  The filter searches for a suitable filter and select it for opening
+ *  a given image file name. The loaded image is set to the filters socket.
+ *  The pixels are copied into the ticket, during running the DAG with
+ *  oyConversion_RunPixels().
  *
  *  @see oyraFilterPlug_ImageLoadRun() and oyra_api4_image_load
  *
@@ -1095,16 +1106,13 @@ oyConnectorImaging_s_ oyra_imageRectangles_socket = {
 };
 oyConnectorImaging_s_ *oyra_imageRectangles_sockets[2] = {&oyra_imageRectangles_socket,0};
 
-
 /** @brief registration string for \b oyra CMM */
 #define OY_IMAGE_REGIONS_REGISTRATION OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "rectangles"
 /** @brief   Rectangles Node
  *
  *  oyra oyCMMapi7_s implementation
  *
- *  A filter routing the graph to several rectangles.
- *  @dontinclude   oyranos_cmm_oyra_image.c
-    @skip rect_description
+ *  The filter expects "//" OY_TYPE_STD "/rectangles/rectangle/[#]" options containing each a oyRectangle_s object and will create, fill and process a according rectangle. Each rectangle shall be in pixel coordinates. It describes a individual ROI inside the source image and the output image.
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/02/24 (Oyranos: 0.1.10)
@@ -1155,15 +1163,12 @@ const char * oyraApi4UiImageRectanglesGetText (
       return _("Rectangles Splitter Object");
   } else if(strcmp(select,"help") == 0)
   {
-    static char * rect_description = NULL;
-    if(!rect_description)
-      rect_description = _("The filter will expect a \"rectangle\" option containing a list of oyRectangle_s objects and will create, fill and process a according rectangle within a list of new job tickets. Each rectangle shall be in pixel coordinates. It describes a individual ROI inside the source image and the output array ROI.");
     if(type == oyNAME_NICK)
       return "help";
     else if(type == oyNAME_NAME)
       return _("Apply regions of interesst in form of simple rectangles.");
     else if(type == oyNAME_DESCRIPTION)
-      return rect_description;
+      return _("The filter expects \"//\" OY_TYPE_STD \"/rectangles/rectangle/[#]\" options containing each a oyRectangle_s object and will create, fill and process a according rectangle. Each rectangle shall be in pixel coordinates. It describes a individual ROI inside the source image and the output image.");
   }
   return 0;
 }
@@ -1202,7 +1207,7 @@ oyCMMui_s_ oyra_api4_ui_image_rectangles = {
  *
  *  oyra oyCMMapi4_s implementation
  *
- *  a filter routing the graph to several rectangles
+ *  A filter collecting results from several rectangles
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/02/24 (Oyranos: 0.1.10)
@@ -1321,6 +1326,11 @@ oyConnectorImaging_s_ * oyra_imageRoot_connectors[2] = {&oyra_imageRoot_connecto
  *  oyra oyCMMapi7_s implementation
  *
  *  a filter providing a source image
+ *
+ *  The __root__ image filter can hold pixel data for processing in a graph.
+ *  It copies the socket data image to the __ticket__'s output image
+ *  according to the __ticket__ region and offset (alias start), during
+ *  running the DAG with oyConversion_RunPixels().
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/12/27 (Oyranos: 0.1.10)
