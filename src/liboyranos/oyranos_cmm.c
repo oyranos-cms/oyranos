@@ -41,8 +41,13 @@
 #define DEBUG_OBJECT 1
 #endif
 
-/** @func    oyFilterPlug_ImageRootRun
- *  @brief   implement oyCMMFilter_GetNext_f()
+/** @addtogroup module_api
+ *  @{ */
+
+/** @brief   implement oyCMMFilter_GetNext_f()
+ *
+ *  Copy the socket data image to the __ticket__'s output image according to the
+ *  __ticket__ region and offset (alias start).
  *
  *  @version Oyranos: 0.9.6
  *  @date    2016/09/09
@@ -175,6 +180,22 @@ int      oyFilterPlug_ImageRootRun   ( oyFilterPlug_s    * requestor_plug,
   return result;
 }
 
+
+/** @brief   load Rank Map from disk
+ *
+ *  The rank map is selected by __rank_file_pattern__ and searched with
+ *  oyRankMapList(). After reading from disk,
+ *  oyRankMapFromJSON() creates a oyRankMap array and assigns that to the
+ *  device config __filter__ structure.
+ *
+ *  @param[in]     filter              the oyCMMapi8_s device config filter
+ *  @param[in]     rank_file_pattern   the ID or class name
+ *  @return                            error
+ *
+ *  @version Oyranos: 0.9.6
+ *  @date    2017/10/11
+ *  @since   2015/08/05 (Oyranos: 0.9.6)
+ */
 int oyDeviceCMMInit                  ( oyStruct_s        * filter,
                                        const char        * rank_file_pattern )
 {
@@ -224,7 +245,8 @@ int oyDeviceCMMInit                  ( oyStruct_s        * filter,
 }
 
 /**
- *  This function implements oyCMMinfoGetText_f.
+ *  This function implements oyCMMinfoGetText_f for modules shipped with
+ *  Oyranos.
  *
  *  @version Oyranos: 0.1.10
  *  @since   2008/12/23 (Oyranos: 0.1.10)
@@ -311,3 +333,4 @@ const char * oyCMMgetImageConnectorSocketText (
   return NULL;
 }
 
+/**  @} *//* module_api */
