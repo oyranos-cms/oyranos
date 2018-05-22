@@ -880,6 +880,7 @@ int            oyImage_FillArray     ( oyImage_s         * image,
   return error;
 }
 
+int oy_debug_image_read_array_count = 0;
 /** Function oyImage_ReadArray
  *  @memberof oyImage_s
  *  @brief   read a array into a image
@@ -994,6 +995,8 @@ int            oyImage_ReadArray     ( oyImage_s         * image,
                       &array_->array2d
                               [i][OY_ROUND(array_rect_chan.x) * bps] );
     }
+
+    ++oy_debug_image_read_array_count;
 
     if(getenv("OY_DEBUG_WRITE"))
     {
