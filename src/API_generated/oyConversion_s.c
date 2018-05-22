@@ -664,8 +664,9 @@ int          oyConversion_GetOnePixel( oyConversion_s    * conversion,
 
 /** Function  oyConversion_RunPixels
  *  @memberof oyConversion_s
- *  @brief    Iterate over a conversion graph
+ *  @brief    Process a pixel conversion graph
  *
+ *  Here a very basic code snippet:
  *  @code
     // use the output
     oyConversion_RunPixels( conversion, NULL );
@@ -680,9 +681,18 @@ int          oyConversion_GetOnePixel( oyConversion_s    * conversion,
       if(is_allocated)
         free( image_data );
     } @endcode
-
+ *
+ *  Here a example from test2.cpp for creating a job ticket from the DAG:
+ *  @dontinclude test2.cpp
+    @skip create a basic job ticket for faster repeats of oyConversion_RunPixels()
+    @until oyFilterPlug_Release
+ *
  *  @param[in,out] conversion          conversion object
- *  @param[in,out] pixel_access        optional pixel iterator configuration
+ *  @param[in,out] pixel_access        optional custom pixel iterator
+ *                                     configuration;
+ *                                     The ticket can be passed in for
+ *                                     specifying only regions of the source
+ *                                     data.
  *  @return                            0 on success, else error
  *
  *  @version Oyranos: 0.1.10
@@ -721,14 +731,17 @@ int                oyConversion_RunPixels (
 
   if(!pixel_access_)
   {
-    /* create a very simple pixel iterator as job ticket */
+    /** The function creates a very simple pixel iterator if no job ticket
+        is passed in as __pixel_access__. */
     if(plug)
     {
-      clck = oyClock();
+      if(oy_debug) clck = oyClock();
       pixel_access_ = (oyPixelAccess_s_*)oyPixelAccess_Create( 0,0, plug,
                                                       oyPIXEL_ACCESS_IMAGE, 0 );
-      clck = oyClock() - clck;
-      DBG_PROG1_S("oyPixelAccess_Create(): %g", clck/1000000.0 );
+      if(oy_debug)
+      { clck = oyClock() - clck;
+        DBG_PROG1_S("oyPixelAccess_Create(): %g", clck/1000000.0 );
+      }
     }
     tmp_ticket = 1;
   }
@@ -744,12 +757,14 @@ int                oyConversion_RunPixels (
 
   if(error <= 0 && !pixel_access_->array)
   {
-    clck = oyClock();
+    if(oy_debug) clck = oyClock();
     result = oyImage_FillArray( image_out, (oyRectangle_s*)&roi, 0,
                                 &pixel_access_->array,
                                 (oyRectangle_s*)pixel_access_->output_array_roi, 0 );
-    clck = oyClock() - clck;
-    DBGs_PROG1_S( pixel_access_,"oyImage_FillArray(): %g", clck/1000000.0 );
+    if(oy_debug)
+    { clck = oyClock() - clck;
+      DBGs_PROG1_S( pixel_access_,"oyImage_FillArray(): %g", clck/1000000.0 );
+    }
     error = ( result != 0 );
   }
 
@@ -759,14 +774,16 @@ int                oyConversion_RunPixels (
     DBGs_PROG2_S( pixel_access_, "Run: node_out[%d] image_out[%d]",
                  oyStruct_GetId((oyStruct_s*)node_out),
                  oyStruct_GetId((oyStruct_s*)image_out) );
-    clck = oyClock();
+    if(oy_debug) clck = oyClock();
     error = oyFilterNodePriv_m(node_out)->api7_->oyCMMFilterPlug_Run( plug,
                                              (oyPixelAccess_s*)pixel_access_ );
-    clck = oyClock() - clck;
-    DBG_PROG1_S( "conversion->out_->api7_->oyCMMFilterPlug_Run(): %g",
+    if(oy_debug)
+    { clck = oyClock() - clck;
+      DBG_PROG1_S( "conversion->out_->api7_->oyCMMFilterPlug_Run(): %g",
                 clck/1000000.0 );
-    DBGs_PROG1_S( pixel_access_, 
+      DBGs_PROG1_S( pixel_access_, 
          "conversion->out_->api7_->oyCMMFilterPlug_Run(): %g", clck/1000000.0 );
+    }
   }
 
   if(error != 0 && pixel_access_)
@@ -775,17 +792,21 @@ int                oyConversion_RunPixels (
             ? 1 : 0;
 
     /* refresh the graph representation */
-    clck = oyClock();
+    if(oy_debug) clck = oyClock();
     oyFilterGraph_SetFromNode( (oyFilterGraph_s*)pixel_access_->graph, (oyFilterNode_s*)s->input, 0, 0 );
-    clck = oyClock() - clck;
-    DBGs_PROG1_S(pixel_access_,"oyFilterGraph_SetFromNode(): %g",clck/1000000.0 );
+    if(oy_debug)
+    { clck = oyClock() - clck;
+      DBGs_PROG1_S(pixel_access_,"oyFilterGraph_SetFromNode(): %g",clck/1000000.0 );
+    }
 
     /* resolve missing data */
-    clck = oyClock();
+    if(oy_debug) clck = oyClock();
     image_input = oyFilterPlug_ResolveImage( plug, (oyFilterSocket_s*)((oyFilterPlug_s_*)plug)->remote_socket_,
                                              (oyPixelAccess_s*)pixel_access_ );
-    clck = oyClock() - clck;
-    DBGs_PROG1_S(pixel_access_,"oyFilterPlug_ResolveImage(): %g",clck/1000000.0 );
+    if(oy_debug)
+    { clck = oyClock() - clck;
+      DBGs_PROG1_S(pixel_access_,"oyFilterPlug_ResolveImage(): %g",clck/1000000.0 );
+    }
     oyImage_Release( &image_input );
 
     {
@@ -810,17 +831,21 @@ int                oyConversion_RunPixels (
           pixel_access_->start_xy[1] = pixel_access_->start_xy_old[1];
         }
 
-        clck = oyClock();
+        if(oy_debug) clck = oyClock();
         oyFilterGraph_PrepareContexts( (oyFilterGraph_s*)pixel_access_->graph, 0 );
-        clck = oyClock() - clck;
-        DBGs_PROG1_S( pixel_access_,
+        if(oy_debug)
+        { clck = oyClock() - clck;
+          DBGs_PROG1_S( pixel_access_,
                      "oyFilterGraph_PrepareContexts(): %g", clck/1000000.0 );
-        clck = oyClock();
+          clck = oyClock();
+        }
         error = s->out_->api7_->oyCMMFilterPlug_Run( plug,
                                               (oyPixelAccess_s*)pixel_access_);
-        clck = oyClock() - clck;
-        DBGs_PROG1_S( pixel_access_,
+        if(oy_debug)
+        { clck = oyClock() - clck;
+          DBGs_PROG1_S( pixel_access_,
           "conversion->out_->api7_->oyCMMFilterPlug_Run(): %g",clck/1000000.0 );
+        }
       }
     }
   }
@@ -838,14 +863,20 @@ int                oyConversion_RunPixels (
           oyPixelAccess_Show( (oyPixelAccess_s*)pixel_access_ ) );
   }
 
-  /* Write the data to the output image.
-   *
+  /** Write the pixel data possibly to the output image.
+   * \n
    * The oyPixelAccess_s job ticket contains a oyArray2d_s object called array
    * holding the in memory data. After the job is done the output images
    * pixel_data pointer is compared with the job tickets array pointer. If
    * they are the same it is assumed that a observer of the output image will
    * see the same processed data, otherwise oyPixelAccess_s::array must be
-   * copied to the output image.
+   * copied to the output image. Here a example from test2.cpp for a
+   * optimisation by setting the same array in the DAG output image and the
+   * __ticket__:
+   *  @dontinclude test2.cpp
+      @skip oyImage_GetPixelData
+      @until oyPixelAccess_SetArray
+   *  @see oyPixelAccess_Create() oyImage_GetPixelData() oyPixelAccess_GetOutputImage() oyPixelAccess_GetArray() oyPixelAccess_SetArray()
    *
    * While the design of having whatever data storage in a oyImage_s is very
    * flexible, the oyPixelAccess_s::array's in memory buffer is not.
