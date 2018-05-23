@@ -555,6 +555,18 @@ int          oyConversion_GetOnePixel( oyConversion_s    * conversion,
  *  @memberof oyConversion_s
  *  @brief    Process a pixel conversion graph
  *
+ *  @param[in,out] conversion          conversion object
+ *  @param[in,out] pixel_access        optional custom pixel iterator
+ *                                     configuration;
+ *                                     The ticket can be passed in for
+ *                                     specifying only regions of the source
+ *                                     data.
+ *  @return                            0 on success, else error
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2008/07/06 (Oyranos: 0.1.8)
+ *  @date    2009/03/06
+ *
  *  Here a very basic code snippet:
  *  @code
     // use the output
@@ -576,17 +588,6 @@ int          oyConversion_GetOnePixel( oyConversion_s    * conversion,
     @skip create a basic job ticket for faster repeats of oyConversion_RunPixels()
     @until oyFilterPlug_Release
  *
- *  @param[in,out] conversion          conversion object
- *  @param[in,out] pixel_access        optional custom pixel iterator
- *                                     configuration;
- *                                     The ticket can be passed in for
- *                                     specifying only regions of the source
- *                                     data.
- *  @return                            0 on success, else error
- *
- *  @version Oyranos: 0.1.10
- *  @since   2008/07/06 (Oyranos: 0.1.8)
- *  @date    2009/03/06
  */
 int                oyConversion_RunPixels (
                                        oyConversion_s    * conversion,
