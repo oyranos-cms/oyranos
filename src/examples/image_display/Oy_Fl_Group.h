@@ -14,6 +14,8 @@ void               oyShowConversion_ ( oyConversion_s    * conversion,
                                        uint32_t            flags );
 }
 
+extern int oy_debug_image_read_array_count;
+
 class Oy_Fl_Group : public Fl_Group
 {
   Fl_Offscreen off;
@@ -67,8 +69,10 @@ public:
 
       if(image && !ticket)
       {
+        oyArray2d_s * pdata = (oyArray2d_s*) oyImage_GetPixelData( image );
         oyFilterPlug_s * plug = oyFilterNode_GetPlug( node_out, 0 );
         ticket = oyPixelAccess_Create( 0,0, plug, oyPIXEL_ACCESS_IMAGE, 0 );
+        oyPixelAccess_SetArray( ticket, (oyArray2d_s*)pdata, 0 );
       }
 
       if(image)
@@ -131,6 +135,7 @@ public:
         oyRectangle_Release( &output_rectangle );
       }
 
+      oy_debug_image_read_array_count = 0;
       if(image)
         dirty = oyDrawScreenImage(conversion(), ticket, display_rectangle,
                                 old_display_rectangle,
@@ -138,6 +143,9 @@ public:
                                 data_type_request,
                                 display, window, dirty,
                                 image );
+      if(oy_debug_image_read_array_count)
+        printf( "%s:%d WARNING: Ticket lost connection to DAG output image: %d\n",
+                __FILE__,__LINE__,oy_debug_image_read_array_count );
 
       oyRectangle_Release( &display_rectangle );
 
