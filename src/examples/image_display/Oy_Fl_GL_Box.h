@@ -22,10 +22,12 @@ class Oy_Fl_GL_Box : public Fl_Gl_Window,
   int gl_type;
   oyDATATYPE_e data_type;
   int W,H;
+  oyImage_s * display_image;
 public:
   Oy_Fl_GL_Box(int x, int y, int w, int h)
     : Fl_Gl_Window(x,y,w,h), Oy_Fl_Image_Widget(x,y,w,h)
   { frame_data = NULL; W=0; H=0; need_redraw=2;
+    display_image = NULL;
 # define TEST_GL(modus) { \
     this->mode(modus); \
     if(this->can_do()) { \
@@ -45,7 +47,10 @@ public:
   mode(mod);
   };
 
-  ~Oy_Fl_GL_Box(void) { };
+  ~Oy_Fl_GL_Box(void)
+  {
+    oyImage_Release( &display_image );
+  };
 
   void damage( char c )
   {
@@ -107,15 +112,13 @@ private:
       gl_type = 0;
       data_type = oyUINT8;
 
-      draw_image = oyConversion_GetImage( conversion(), OY_INPUT );
-      pt = oyImage_GetPixelLayout( draw_image, oyLAYOUT );
+      pt = oyImage_GetPixelLayout( display_image, oyLAYOUT );
       data_type = oyToDataType_m( pt );
       if(data_type == oyUINT8) /* avoid ICC conversion quantisation */
         data_type = oyUINT16;
       if(data_type == oyDOUBLE) /* OpenGL appears to support only <= float buffers */
         data_type = oyFLOAT;
       sample_size = oyDataTypeGetSize( data_type );
-      oyImage_Release( &draw_image );
 
       int result = drawPrepare( &draw_image, data_type, 1 );
 
@@ -127,7 +130,7 @@ private:
       if(channels == 4)
         gl_type = GL_RGBA;
 
-      if(0&&oy_display_verbose && draw_image)
+      if(oy_display_verbose && draw_image)
         fprintf(stdout, "%s:%d pixellayout: %d width: %d channels: %d\n",
                     strrchr(__FILE__,'/')?strrchr(__FILE__,'/')+1:__FILE__,
                     __LINE__,
@@ -141,11 +144,12 @@ private:
         if(frame_data) free(frame_data);
         frame_data = (char*)malloc(W*H*channels*sample_size);
         valid(1);
-        glLoadIdentity();
-        glViewport( 0,0, W,H );
-        glOrtho( -W,W, -H,H, -1.0,1.0);
-        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
       }
+
+      glLoadIdentity();
+      glViewport( 0,0, W,H );
+      glOrtho( -W,W, -H,H, -1.0,1.0);
+      glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
       glClear(GL_COLOR_BUFFER_BIT);
       glColor3f(1.0, 1.0, 1.0);
@@ -157,7 +161,7 @@ private:
         if(!need_redraw)
         {
           oyImage_Release( &draw_image );
-          if(oy_debug >= 4)
+          if( oy_display_verbose )
             fprintf(stderr, "%s:%d %s() return after result:%d ======  %lu ==========================\n0x%tx\n", 
                   strrchr(__FILE__,'/')?strrchr(__FILE__,'/')+1:__FILE__,
                   __LINE__, __func__,result, (long unsigned)draw_image,
@@ -181,8 +185,10 @@ private:
 
       int pos[4] = {-2,-2,-2,-2};
       glGetIntegerv( GL_CURRENT_RASTER_POSITION, &pos[0] );
-      if(0&&oy_display_verbose)
-        fprintf( stderr, "%s():%d %d,%d %d %d\n", __FILE__,__LINE__,
+      if(oy_display_verbose)
+        fprintf( stderr, "%s:%d %d,%d %d %d\n",
+                 strrchr(__FILE__,'/')?strrchr(__FILE__,'/')+1:__FILE__,
+                 __LINE__,
                  pos[0],pos[1],pos[2], pos[3] );
 
       /* get the data */
@@ -212,7 +218,7 @@ private:
         oyImage_WritePPM( draw_image, "dbg.ppm", __FILE__);
 
       oyImage_Release( &draw_image );
-      if(oy_debug )
+      if( oy_display_verbose )
           fprintf(stderr, "%s:%d %s() ========== finished ========== result:%d valid:%d dirty:%d\n", 
                   strrchr(__FILE__,'/')?strrchr(__FILE__,'/')+1:__FILE__,
                   __LINE__, __func__, result, valid(), dirty);
@@ -305,7 +311,8 @@ public:
     if(data_type == oyDOUBLE)
       data_type = oyFLOAT;
 
-    oyImage_s * display_image = oyImage_Create( oyImage_GetWidth( image ), oyImage_GetHeight( image ),
+    oyImage_Release( &display_image );
+    display_image = oyImage_Create( oyImage_GetWidth( image ), oyImage_GetHeight( image ),
                          0,
                          oyChannels_m(3) | oyDataType_m(data_type),
                          oyImage_GetProfile( image ),
@@ -314,7 +321,6 @@ public:
     oyFilterNode_s * icc = setImageType( image, display_image, data_type,
                                          cc_options );
     oyImage_Release( &image );
-    oyImage_Release( &display_image );
     return icc;
   }
 

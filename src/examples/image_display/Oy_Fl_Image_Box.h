@@ -75,6 +75,7 @@ private:
       oyImage_s * image = 0;
 
       drawPrepare( &image, oyUINT8, 0 );
+      fprintf(stderr,".");
 
       pt = oyImage_GetPixelLayout( image, oyLAYOUT );
       channels = oyToChannels_m( pt );
