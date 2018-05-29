@@ -54,8 +54,19 @@ int      oyProfileAddWhitePointEffect( oyProfile_s       * monitor_profile,
   oyProfile_s * wtpt = NULL;
   double        src_XYZ[3] = {0.0, 0.0, 0.0}, dst_XYZ[3] = {0.0, 0.0, 0.0};
   int error = oyProfile_GetWhitePoint( monitor_profile, src_XYZ );
-  int display_white_point = oyGetBehaviour( oyBEHAVIOUR_DISPLAY_WHITE_POINT );
+  int32_t display_white_point = oyGetBehaviour( oyBEHAVIOUR_DISPLAY_WHITE_POINT );
   oyOptions_s * result_opts = NULL, * opts = NULL;
+
+  if(*module_options)
+  {
+    const char * value = oyOptions_FindString( *module_options, "display_white_point", 0 );
+    if(value)
+    {
+      int c = atoi( value );
+      if(c >= 0)
+        display_white_point = c;
+    }
+  }
 
   if(!display_white_point)
     return 0;
