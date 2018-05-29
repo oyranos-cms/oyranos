@@ -2709,6 +2709,9 @@ oyTESTRESULT_e testDeviceLinkProfile ()
     "oyProfile_GetFileName(dl, 1): %s", oyNoEmptyString_m_(fn) );
   }
 
+  fn = oyProfile_GetText( dl, oyNAME_NAME );
+  fprintf(zout,"oyProfile_GetText( dl, oyNAME_NAME ): %s\n", fn );
+
   error = oyConversion_Release( &cc );
   if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyConversion_Release() error: %d", error )
   error = oyImage_Release( &in );
