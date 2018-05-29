@@ -1531,10 +1531,17 @@ OYAPI const oyChar* OYEXPORT
              oyNoEmptyName_m_(text),
              oyNoEmptyName_m_(file_name) );
       if(i)
-        oySprintf_( &temp[oyStrlen_(temp)], "%08x%08x%08x%08x\" />",
+        oySprintf_( &temp[oyStrlen_(temp)], "%08x%08x%08x%08x\"",
              i[0], i[1], i[2], i[3] );
       else
-        oySprintf_( &temp[oyStrlen_(temp)], "                \" />" );
+        oySprintf_( &temp[oyStrlen_(temp)], "                \"" );
+      if(!file_name)
+      {
+        const char * desc = oyProfile_GetText( (oyProfile_s*)s, oyNAME_DESCRIPTION );
+        oySprintf_( &temp[oyStrlen_(temp)], " name=\"%s\"",
+             oyNoEmptyName_m_(desc) );
+      }
+      oySprintf_( &temp[oyStrlen_(temp)], " />" );
 
       if(file_name) { free(file_name); file_name = 0; }
       found = 1;
