@@ -445,7 +445,7 @@ int                oyPixelAccess_SetArrayFocus (
 
         /* convert roi to channel units */
         oyPixelAccess_RoiToPixels( pixel_access, 0, &r );
-        /* scale horicontal for pixel -> channels */
+        /* scale horizontal for pixel -> channels */
         oyImage_PixelsToSamples( image, r, r_samples );
         /* finally set the focus for simple plug-ins */
         error = oyArray2d_SetFocus( array, r_samples );
@@ -480,7 +480,7 @@ int                oyPixelAccess_SetArrayFocus (
       {
         r_.width = oyArray2d_GetDataGeo1( array, 2 );
         r_.height = oyArray2d_GetDataGeo1( array, 3 );
-        error = oyArray2d_SetFocus( array, r_samples );
+        error = oyArray2d_SetFocus( array, r );
         ((oyPixelAccess_s_*)pixel_access)->output_array_is_focussed = 0;
 
         if(oy_debug >=3 || error > 0)
@@ -743,6 +743,27 @@ oyFilterGraph_s *  oyPixelAccess_GetGraph (
   oyFilterGraph_Copy( (oyFilterGraph_s*)s->graph, 0 );
   return (oyFilterGraph_s*)s->graph;
 }
+/** @memberof oyPixelAccess_s
+ *  @brief    Set oyPixelAccess_s::graph::options
+ *  @see      oyOptions_SetFromString()
+ *
+ *  @version  Oyranos: 0.9.7
+ *  @date     2018/05/28
+ *  @since    2018/05/28 (Oyranos: 0.9.7)
+ */
+int      oyPixelAccess_SetFromString ( oyPixelAccess_s   * ticket,
+                                       const char        * key,
+                                       const char        * value,
+                                       int                 flags )
+{
+  oyFilterGraph_s * ticket_graph = oyPixelAccess_GetGraph( ticket );
+  oyOptions_s * ticket_graph_opts = oyFilterGraph_GetOptions( ticket_graph );
+  int error = oyOptions_SetFromString( &ticket_graph_opts, key, value, flags );
+  oyFilterGraph_Release( &ticket_graph );
+  oyOptions_Release( &ticket_graph_opts );
+  return error;
+}
+
 /** Function  oyPixelAccess_GetRequestQueue
  *  @memberof oyPixelAccess_s
  *  @brief    Access oyPixelAccess_s::request_queue
