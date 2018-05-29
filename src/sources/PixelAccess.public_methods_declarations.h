@@ -21,6 +21,11 @@ int                oyPixelAccess_SetOutputImage (
                                        oyImage_s         * image );
 oyFilterGraph_s *  oyPixelAccess_GetGraph (
                                        oyPixelAccess_s   * pixel_access );
+int                oyPixelAccess_SetFromString (
+                                       oyPixelAccess_s   * ticket,
+                                       const char        * key,
+                                       const char        * value,
+                                       int                 flags );
 oyOptions_s *      oyPixelAccess_GetRequestQueue (
                                        oyPixelAccess_s   * pixel_access );
 oyArray2d_s *      oyPixelAccess_GetArray (
