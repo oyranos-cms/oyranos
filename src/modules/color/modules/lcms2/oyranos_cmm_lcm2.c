@@ -2870,9 +2870,6 @@ int      l2cmsFilterPlug_CmmIccRun   ( oyFilterPlug_s    * requestor_plug,
     }
   } else
   {
-    oyFilterGraph_s * ticket_graph = oyPixelAccess_GetGraph( ticket );
-    oyOptions_s * ticket_graph_opts = 
-                                       oyFilterGraph_GetOptions( ticket_graph );
     if(error)
       oyFilterSocket_Callback( requestor_plug,
                                oyCONNECTOR_EVENT_INCOMPATIBLE_CONTEXT );
@@ -2880,10 +2877,8 @@ int      l2cmsFilterPlug_CmmIccRun   ( oyFilterPlug_s    * requestor_plug,
       oyFilterSocket_Callback( requestor_plug,
                                oyCONNECTOR_EVENT_OK );
 
-    error = oyOptions_SetFromString( &ticket_graph_opts,
+    error = oyPixelAccess_SetFromString( ticket,
                      "//" OY_TYPE_STD "/profile/dirty", "true", OY_CREATE_NEW );
-    oyFilterGraph_Release( &ticket_graph );
-    oyOptions_Release( &ticket_graph_opts );
     error = 1;
   }
 
