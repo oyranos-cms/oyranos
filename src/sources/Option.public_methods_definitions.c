@@ -334,7 +334,7 @@ int            oyOption_SetFromInt   ( oyOption_s        * obj,
  *  @return                            integer
  *
  *  @version Oyranos: 0.9.7
- *  @date    2017/04/13
+ *  @date    2018/05/24
  *  @since   2009/05/04 (Oyranos: 0.1.10)
  */
 int32_t        oyOption_GetValueInt  ( oyOption_s        * obj,
@@ -354,10 +354,10 @@ int32_t        oyOption_GetValueInt  ( oyOption_s        * obj,
     if( s->value_type == oyVAL_INT_LIST &&
         s->value->int32_list )
     {
-      if( s->value->int32_list[0] > pos )
-        result = s->value->int32_list[pos + 1];
-      else if( pos == -1 )
+      if( pos == -1 )
         result = s->value->int32_list[0];
+      else if( s->value->int32_list[0] > pos )
+        result = s->value->int32_list[pos + 1];
     }
     else if( s->value_type == oyVAL_INT )
     {
@@ -482,7 +482,7 @@ int            oyOption_SetFromDouble( oyOption_s        * obj,
  *  @return                            double
  *
  *  @version Oyranos: 0.9.7
- *  @date    2017/04/13
+ *  @date    2018/05/24
  *  @since   2009/08/03 (Oyranos: 0.1.10)
  */
 double         oyOption_GetValueDouble(oyOption_s        * obj,
@@ -502,10 +502,10 @@ double         oyOption_GetValueDouble(oyOption_s        * obj,
     if( s->value_type == oyVAL_DOUBLE_LIST &&
         s->value->dbl_list )
     {
-      if( s->value->dbl_list[0] > pos )
-        result = s->value->dbl_list[pos + 1];
-      else if(pos == -1)
+      if(pos == -1)
         result = s->value->dbl_list[0];
+      else if( s->value->dbl_list[0] > pos )
+        result = s->value->dbl_list[pos + 1];
     }
     else if(s->value_type == oyVAL_DOUBLE)
     {
