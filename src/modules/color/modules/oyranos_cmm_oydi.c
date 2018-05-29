@@ -619,7 +619,6 @@ int      oydiColorServerActive( oyBlob_s * display_id )
   return active;
 }
 
-
 /** @brief   implement oyCMMFilter_GetNext_f()
  *
  *  @version Oyranos: 0.1.10
@@ -764,6 +763,11 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
       if(display_name && strcmp(display_name,"oy-test") == 0)
         test = 1;
 
+
+      if(oy_debug)
+        oydi_msg( oyMSG_DBG, (oyStruct_s*)image,
+                    OY_DBG_FORMAT_"no display_graph (display_name=%s)", OY_DBG_ARGS_,
+                    oyNoEmptyString_m_(display_name) );
 
 # if defined(XCM_HAVE_X11) && defined (HAVE_XCM)
       if(test == 0)
@@ -924,21 +928,16 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
         if(color_server_active & XCM_COLOR_SERVER_REGIONS)
 #endif
         error = oyOptions_SetFromString( &options,
-                               "//"OY_TYPE_STD"/config/x_color_region_target",
+                               "//" OY_TYPE_STD "/config/x_color_region_target",
                                        "yes", OY_CREATE_NEW );
         error = oyDeviceGetProfile( c, options, &p );
         oyOptions_Release( &options );
 
         if(p && image_input && !oyProfile_Equal( image_input_profile, p ))
         {
-          oyFilterGraph_s * ticket_graph = oyPixelAccess_GetGraph( ticket );
-          oyOptions_s * ticket_graph_opts = 
-                                       oyFilterGraph_GetOptions( ticket_graph );
           oyImage_SetCritical( image_input, 0, p, 0, -1,-1 );
-          error = oyOptions_SetFromString( &ticket_graph_opts,
+          error = oyPixelAccess_SetFromString ( ticket,
                      "//" OY_TYPE_STD "/profile/dirty", "true", OY_CREATE_NEW );
-          oyFilterGraph_Release( &ticket_graph );
-          oyOptions_Release( &ticket_graph_opts );
           ++dirty;
         } else if(oy_debug)
           oydi_msg( oyMSG_DBG, (oyStruct_s*)ticket,
@@ -1013,44 +1012,58 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
         oyOption_Release( &o );
       }
 
-      if(oy_debug)
-        oydi_msg( oyMSG_DBG, (oyStruct_s*)ticket, 
-                  OY_DBG_FORMAT_"display_white_point: %d", OY_DBG_ARGS_, display_white_point);
-      /* erase old display profile */
-      f_options_n = oyOptions_Count( f_options );
-      for(j = 0; j < f_options_n; ++j)
       {
-        o = oyOptions_Get(f_options, j);
-        if(o && oyFilterRegistrationMatch( oyOption_GetRegistration(o),
+        int32_t old_display_white_point = 0;
+        oyOptions_FindInt( node_options,"old_display_white_point", 0, &old_display_white_point );
+        if(oy_debug)
+          oydi_msg( oy_debug?oyMSG_DBG:oyMSG_WARN, (oyStruct_s*)ticket, 
+                    OY_DBG_FORMAT_"display_white_point: %d -> %d", OY_DBG_ARGS_,
+                    old_display_white_point, display_white_point);
+        if(old_display_white_point != display_white_point)
+        {
+          oyOptions_SetFromInt( &node_options,
+                                "//" OY_TYPE_STD "/display/old_display_white_point",
+                                display_white_point, 0, OY_CREATE_NEW );
+          /* erase old display profile */
+          f_options_n = oyOptions_Count( f_options );
+          for(j = 0; j < f_options_n; ++j)
+          {
+            o = oyOptions_Get(f_options, j);
+            if(o && oyFilterRegistrationMatch( oyOption_GetRegistration(o),
                        OY_STD "/icc_color/display.icc_profile.abstract.white_point.automatic", 0 ))
-        {
-          if(oy_debug)
-          oydi_msg( oyMSG_DBG, (oyStruct_s*)ticket, 
-                  OY_DBG_FORMAT_"release: %s", OY_DBG_ARGS_, oyOption_GetRegistration(o));
-          oyOption_Release( &o );
-          oyOptions_ReleaseAt( f_options, j );
-          break;
-        }
-        oyOption_Release( &o );
-      }
-      if(display_white_point) /* not "none" */
-      {
-        int error = 0;
-        if(!p)
-        {
-          oyOptions_s * options = NULL;
-          error = oyOptions_SetFromString( &options,
-                               "//"OY_TYPE_STD"/config/x_color_region_target",
+            {
+              if(oy_debug)
+              oydi_msg( oyMSG_DBG, (oyStruct_s*)ticket, 
+                    OY_DBG_FORMAT_"release: %s", OY_DBG_ARGS_, oyOption_GetRegistration(o));
+              oyOption_Release( &o );
+              oyOptions_ReleaseAt( f_options, j );
+              break;
+            }
+            oyOption_Release( &o );
+          }
+          if(display_white_point) /* not "none" */
+          {
+            int error = 0;
+            if(!p)
+            {
+              oyOptions_s * options = NULL;
+              error = oyOptions_SetFromString( &options,
+                               "//" OY_TYPE_STD "/config/x_color_region_target",
                                        "yes", OY_CREATE_NEW );
-          error = oyDeviceGetProfile( c, options, &p );
-          oyOptions_Release( &options );
-        }
-        error = oyProfileAddWhitePointEffect( p, &f_options );
+              error = oyDeviceGetProfile( c, options, &p );
+              oyOptions_Release( &options );
+            }
+            error = oyProfileAddWhitePointEffect( p, &f_options );
 
-        if(error || oy_debug)
-          oydi_msg( oyMSG_WARN, (oyStruct_s*)ticket, 
+            if(error || oy_debug)
+              oydi_msg( oyMSG_WARN, (oyStruct_s*)ticket, 
                     OY_DBG_FORMAT_"display_white_point: %d %s", OY_DBG_ARGS_, display_white_point, oyProfile_GetText( p, oyNAME_DESCRIPTION ));
 
+          }
+          error = oyPixelAccess_SetFromString ( ticket,
+                     "//" OY_TYPE_STD "/profile/dirty", "true", OY_CREATE_NEW );
+          ++dirty;
+        }
       }
 
       oyProfile_Release( &p );
