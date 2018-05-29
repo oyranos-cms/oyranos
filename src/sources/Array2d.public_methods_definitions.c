@@ -506,11 +506,11 @@ OYAPI const char* OYEXPORT oyArray2d_Show (
   {
     const char * key = "///channels";
 
-    sprintf( t, "a[%d](%gx%d/%gx%g+%g+%g)%dc",
+    sprintf( t, "a[%d](%gx%g+%g+%g(%gx%d)%dc",
              oyStruct_GetId((oyStruct_s*)a),
-             a->width / c, a->height,
              a->data_area.width / c, a->data_area.height,
              a->data_area.x / c, a->data_area.y,
+             a->width / c, a->height,
              channels );
 
     /* store for debugging */
