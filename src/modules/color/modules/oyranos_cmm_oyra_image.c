@@ -303,7 +303,9 @@ oyConnectorImaging_s_ *oyra_imageWrite_sockets[2] = {&oyra_imageWrite_socket,0};
  *
  *  oyra oyCMMapi7_s implementation
  *
- *  A abstraction filter for image file writing.
+ *  A abstraction filter for image file loading.
+ *  The filter searches for a suitable filter by the file name ending and
+ *  runs it for writing the DAG to a given image file name.
  *
  *  @version Oyranos: 0.5.0
  *  @since   2012/07/19 (Oyranos: 0.5.0)
