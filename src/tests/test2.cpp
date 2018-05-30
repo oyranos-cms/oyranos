@@ -1114,6 +1114,15 @@ oyTESTRESULT_e testOptionInt ()
     "oyOption_GetValueInt() failed                   " );
   }
 
+  erg[0] = oyOption_GetValueInt( o, -1 );
+  if(!error && erg[0] == 3)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS, 
+    "oyOption_GetValueInt(-1) == %d                   ", erg[0] );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL, 
+    "oyOption_GetValueInt(-1) == %d                   ", erg[0] );
+  }
+
   oyOption_Release( &o );
 
 
