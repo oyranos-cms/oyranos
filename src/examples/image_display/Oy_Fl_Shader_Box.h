@@ -44,7 +44,7 @@ public:
   Oy_Fl_Shader_Box(int x, int y, int w, int h)
     : Fl_Gl_Window(x,y,w,h), Oy_Fl_Image_Widget(x,y,w,h)
   { frame_data= NULL; frame_width= frame_height= W= H= sw= sh=0; clut_image= image= display_image= NULL;
-    grid_points= 0; clut= 0; img_texture= clut_texture= 0; load= init= adraw= 0;
+    grid_points= 0; clut= NULL; img_texture= clut_texture= 0; load= init= adraw= 0;
     max_texture_size= 0,tick= 0; old_rect= NULL;
 # define TEST_GL(modus) { \
       this->mode(modus); \
@@ -181,6 +181,9 @@ private:
     int gl_data_type = oyToGlDataType(data_type);
     int gl_type = oyToGlPixelType(pt);
 
+    if(oy_debug == 0 && oy_display_verbose == 0)
+      fprintf(stderr,"iIT");
+
     /* texture 0 (image) */
     glGenTextures (1, &img_texture);
     if(oy_display_verbose || !img_texture) fprintf(stderr,_DBG_FORMAT_ "image_texture: %d\n", _DBG_ARGS_, img_texture);
@@ -215,6 +218,8 @@ private:
     glGenTextures (1, &clut_texture);
     if(oy_display_verbose || !clut_texture) fprintf(stderr,_DBG_FORMAT_ "clut_texture: %d\n", _DBG_ARGS_, clut_texture);
     if(clut_texture <= 0) return;
+    if(oy_debug == 0 && oy_display_verbose == 0)
+      fprintf(stderr,"iCT");
     /* texture 1 = clut */
     glActiveTexture (GL_TEXTURE0 + 1);
     glBindTexture (GL_TEXTURE_3D, clut_texture);
@@ -308,6 +313,8 @@ private:
     int w,h;
     oyPixel_t pt;
     oyDATATYPE_e data_type;
+    if(oy_debug == 0 && oy_display_verbose == 0)
+      fprintf(stderr,"l3DT");
 
     pt = oyImage_GetPixelLayout( clut_image, oyLAYOUT );
     data_type = oyToDataType_m(pt);
@@ -344,7 +351,7 @@ private:
     return 0;
   }
 
-  int load3DTextureDefault( void )
+  int load3DTextureDefault( oyOptions_s * module_options )
   {
     int error = 0;
     int icc_profile_flags = oyICCProfileSelectionFlagsFromOptions( 
@@ -410,7 +417,7 @@ private:
       p = getFirstMonitorDeviceProfile();
       int flags = 0;
       oyConversion_s * cc = oyConversion_CreateFromImage (
-                                cimage, NULL,
+                                cimage, module_options,
                                 p, data_type, flags, 0 );
 
       error = oyConversion_RunPixels( cc, 0 );
@@ -561,6 +568,9 @@ private:
       return;
     }
 
+    if(oy_debug == 0 && oy_display_verbose == 0)
+      fprintf(stderr,"lClut");
+
     //glActiveTexture (GL_TEXTURE0 + 1);
     glBindTexture (GL_TEXTURE_3D, clut_texture);
 
@@ -589,7 +599,7 @@ private:
   {
     /* update textures and shader */
     if(oy_debug == 0 && oy_display_verbose == 0)
-      fprintf(stderr, "l");
+      fprintf(stderr,"lContext");
 
     /* prepare Oyranos */
     loadDAG();
@@ -643,7 +653,7 @@ private:
     if(0&&oy_debug == 0 && oy_display_verbose == 0 && load == 0)
       fprintf( stderr, _DBG_FORMAT_"\nw  window change or no frame data or invalid\nf  frame size changes\n0  skip redraw\n.  do redraw\nP  dirty before oyDrawScreenImage()\np  oyDrawScreenImage() returns dirty\nD  damaged\n",_DBG_ARGS_);
     if(oy_debug == 0 && oy_display_verbose == 0 && load == 0 && !valid())
-      fprintf( stderr, "v");
+      fprintf( stderr,"v");
 
     if(max_texture_size == 0)
       glGetIntegerv( GL_MAX_TEXTURE_SIZE, &max_texture_size );
@@ -711,7 +721,7 @@ private:
       if(need_draw == 0 && !adraw)
       {
         if(oy_debug == 0 && oy_display_verbose == 0)
-          fprintf(stderr, "0");
+          fprintf(stderr,"0");
         oyImage_Release( &draw_image );
         return;
       } else
@@ -723,7 +733,7 @@ private:
         if( frame_width < sw || frame_height < sh )
         {
           if(oy_debug == 0 && oy_display_verbose == 0)
-            fprintf(stderr, "f");
+            fprintf(stderr,"f");
 
           /* update intermediate buffer */
           if(createFrame( sw, sh ))
@@ -793,7 +803,7 @@ private:
         if(tick)
         {
           if(oy_debug == 0 && oy_display_verbose == 0)
-            fprintf(stderr, ".");
+            fprintf(stderr,".");
           if((int)s > (int)second)
           {
             fprintf(stderr, " %f t/s\n", tick/(s-second));
@@ -951,7 +961,7 @@ private:
 
 public:
   int              setImage          ( const char        * file_name,
-                                       oyOptions_s       * cc_options OY_UNUSED,
+                                       oyOptions_s       * cc_options,
                                        const char        * clut_name )
   {
     oyImage_Release( &image );
@@ -984,7 +994,7 @@ public:
 
     int lerror = 0;
     if(clut_name[0] == 0)
-      lerror = load3DTextureDefault();
+      lerror = load3DTextureDefault( cc_options );
     else
       lerror = load3DTextureFromFile( clut_name );
     if(!error && !lerror && oy_display_verbose)
