@@ -5,9 +5,11 @@
 #if defined(__APPLE__)
 #  include <OpenGL/gl.h>
 #  include <OpenGL/glu.h>
+#  include <OpenGL/glext.h>
 #else
 #  include <GL/gl.h>
 #  include <GL/glu.h>
+#  include <GL/glext.h>
 #endif
 
 #include <FL/Fl_Gl_Window.H>
@@ -69,6 +71,7 @@ public:
     oyImage_Release( &image ); oyImage_Release( &display_image );
     colorServerRegionSet( dynamic_cast<Fl_Widget*>(dynamic_cast<Oy_Fl_Image_Widget*>(this)), NULL, old_rect, 1 );
     oyRectangle_Release( &old_rect );
+    freeGL();
   };
 
   void damage( char c )
@@ -90,7 +93,8 @@ private:
     GLuint cmm_prog;
     GLuint cmm_shader;
 
-    static const char * cmm_shader_source;
+    static const char * cmm_shader_source_rgba;
+    static const char * cmm_shader_source_4c;
 
   void print_log (GLuint obj)
   {
@@ -130,14 +134,19 @@ private:
   }
 
 
-  void initShaders (void)
+  void initShaders (int cchannels )
   {
     GLint loc;
 
     /* compile shader program */
 
+    if(oy_debug == 0 && oy_display_verbose == 0)
+      fprintf(stderr,"iS");
     cmm_shader = glCreateShader (GL_FRAGMENT_SHADER);
-    glShaderSource (cmm_shader, 1, &cmm_shader_source, NULL);
+    if(cchannels == 4)
+      glShaderSource (cmm_shader, 1, &cmm_shader_source_4c, NULL);
+    else
+      glShaderSource (cmm_shader, 1, &cmm_shader_source_rgba, NULL);
     glCompileShader (cmm_shader);
     print_log (cmm_shader);
 
@@ -213,7 +222,7 @@ private:
       oyImage_ToFile( display_image, "display_image.ppm", 0 );
   }
 
-  void initClutTexture()
+  void initClutTexture(int cchannels)
   {
     glGenTextures (1, &clut_texture);
     if(oy_display_verbose || !clut_texture) fprintf(stderr,_DBG_FORMAT_ "clut_texture: %d\n", _DBG_ARGS_, clut_texture);
@@ -244,11 +253,26 @@ private:
 
   void initGL()
   {
+    oyProfile_s * p = oyImage_GetProfile(image);
+    int cchannels = oyProfile_GetChannelsCount( p );
+    oyProfile_Release( &p );
     if(oy_debug == 0 && oy_display_verbose == 0)
-      fprintf(stderr, "g");
+      fprintf(stderr,"iGL");
     initImageTexture();
-    initClutTexture();
-    initShaders ();
+    initClutTexture( cchannels );
+    initShaders ( cchannels );
+  }
+
+  void freeGL()
+  {
+    if( cmm_prog > 0 )
+      glDeleteProgram( cmm_prog );
+    if(cmm_shader > 0)
+      glDeleteShader( cmm_shader );
+    if(clut_texture > 0)
+      glDeleteTextures( 1, &clut_texture);
+    if( img_texture )
+      glDeleteTextures( 1, &img_texture);
   }
 
   oyProfile_s * getFirstMonitorDeviceProfile()
@@ -366,6 +390,7 @@ private:
       uint16_t in[3];
       char comment[80];
       oyProfile_s * p = NULL;
+      int cchannels = 3;
 
       size = width*width;
 
@@ -396,8 +421,12 @@ private:
           error = 1;
         }
         else
+        {
           fprintf(stderr, "found image profile: %s\n", oyProfile_GetText(p,oyNAME_DESCRIPTION));
-        if(oyProfile_GetChannelsCount(p) != 3)
+          cchannels = oyProfile_GetChannelsCount( p );
+        }
+        if( cchannels != 3 &&
+            cchannels != 4 )
         {
           fprintf(stderr, "found unsupported channel count: %d\n", oyProfile_GetChannelsCount(p));
           oyProfile_Release( &p );
@@ -408,7 +437,8 @@ private:
         p = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, 0 );
         fprintf(stderr, "falling back to default profile: %s\n", oyProfile_GetText(p,oyNAME_DESCRIPTION));
       }
-      oyImage_s * cimage = oyImage_Create( width,width*width, buf, OY_TYPE_123_16,
+      oyImage_s * cimage = oyImage_Create( width,width*width, buf,
+                              oyChannels_m(cchannels<=3?3:cchannels)|oyDataType_m(oyUINT16),
                               p, 0 );
       oyProfile_Release( &p );
       sprintf( comment, "clut with %d levels", width );
@@ -533,13 +563,15 @@ private:
     oyDATATYPE_e data_type = oyToDataType_m( pt );
     int channels = oyToChannels_m( pt );
     oyConversion_s * cc;
+    if(oy_debug == 0 && oy_display_verbose == 0)
+      fprintf(stderr,"lDAG");
 
     oyOptions_s * old_tags = oyImage_GetTags( display_image ), * tags;
     oyImage_Release( &display_image );
     display_image = oyImage_Create( 640, 480,
                          0,
                          oyChannels_m(channels) | oyDataType_m(data_type),
-                         oyImage_GetProfile( image ),
+                         oyImage_GetProfile( image ), // TODO: who owns the profile ref?
                          0 );
     tags = oyImage_GetTags( display_image );
     oyOptions_AppendOpts( tags, old_tags );
@@ -581,7 +613,9 @@ private:
     int n = oyImage_GetWidth(clut_image);
     glTexImage3D (GL_TEXTURE_3D, 0, GL_RGB16, n, n, n,
 		  0, GL_RGB, GL_UNSIGNED_SHORT, clut);
-    check_error("load glTexImage3D(clut) failed");
+    if(check_error("load glTexImage3D(clut) failed"))
+      fprintf( stderr,_DBG_FORMAT_"clut_image::width: %d\n", _DBG_ARGS_,
+               n );
 
     return; // TODO make the following work
     /* shader parameter update */
@@ -670,11 +704,15 @@ private:
     {
       if(init == 0)
       {
-        initGL(); /* buffers, textures and shaders */
+        initGL(); /* textures and shaders */
         ++init;
         adraw = 2;
       } else if(load)
+      {
+        freeGL();
+        initGL(); /* textures and shaders */
         loadClut();
+      }
     }
     load = 0;
 
@@ -1097,7 +1135,7 @@ public:
   }
 };
 
-    const char * Oy_Fl_Shader_Box::cmm_shader_source =
+    const char * Oy_Fl_Shader_Box::cmm_shader_source_rgba =
     "uniform sampler2D image;					\n"
     "uniform sampler3D clut;					\n"
     "uniform float scale;					\n"
@@ -1114,6 +1152,22 @@ public:
     "								\n"
     "    // w/o color management				\n"
     "    // gl_FragColor = vec4(img, 0.5);			\n"
+    "}								\n"
+    ;
+
+    const char * Oy_Fl_Shader_Box::cmm_shader_source_4c =
+    "uniform sampler2D image;					\n"
+    "uniform sampler3D clut;					\n"
+    "uniform float scale;					\n"
+    "uniform float offset;					\n"
+    "								\n"
+    "void main()						\n"
+    "{								\n"
+    "    vec4 img = texture2D(image, gl_TexCoord[0].xy).rgba;	\n"
+    "    gl_FragColor.r = 1.0-img.r-img.a;         \n"
+    "    gl_FragColor.g = 1.0-img.g-img.a;         \n"
+    "    gl_FragColor.b = 1.0-img.b-img.a;         \n"
+    "    gl_FragColor.a = 1.0;         \n"
     "}								\n"
     ;
 
