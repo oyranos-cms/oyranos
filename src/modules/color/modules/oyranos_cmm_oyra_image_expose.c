@@ -43,9 +43,9 @@
 
 void     oySensibleClip ( double * c, icColorSpaceSignature sig, int range_max, double expose )
 {
-  int max = 0, max_pos,
+  int max = 0, max_pos = 0,
       mid, mid_pos,
-      min = range_max, min_pos,
+      min = range_max, min_pos = 0,
       i,
       n = oyICCColorSpaceGetChannelCount(sig);
 
