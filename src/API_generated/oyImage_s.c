@@ -364,6 +364,15 @@ oyImage_s *    oyImage_Create         ( int               width,
                                         s->height,
                                         oyToDataType_m(pixel_layout),
                                         s->oy_ );
+    if(!a)
+    {
+      const char * txt;
+      error = oyImage_CombinePixelLayout2Mask_ ( s, pixel_layout );
+      txt = oyStruct_GetInfo( (oyStruct_s*)s, oyNAME_NAME, 0 );
+      oyMessageFunc_p( oyMSG_ERROR, s, OY_DBG_FORMAT_ "%s", OY_DBG_ARGS_, txt );
+      oyImage_Release( (oyImage_s**)&s );
+      return (oyImage_s*) s;
+    }
     oyImage_SetData ( (oyImage_s*)s, (oyStruct_s**) &a, 0,0,0,0,0,0 );
   }
   s->profile_ = oyProfile_Copy( profile, 0 );
