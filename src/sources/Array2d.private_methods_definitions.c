@@ -22,7 +22,7 @@ int                oyArray2d_Init_   ( oyArray2d_s_      * s,
     s->t = data_type;
     memcpy( &s->data_area, &rtype, sizeof(oyOBJECT_e) );
     oyRectangle_SetGeo( (oyRectangle_s*)&s->data_area, 0,0, width, height );
-    s->array2d = s->oy_->allocateFunc_( y_len );
+    oyAllocHelper_m_( s->array2d, unsigned char *, height + 1, s->oy_->allocateFunc_, return 1 );
     error = !memset( s->array2d, 0, y_len );
     s->own_lines = oyNO;
   }
@@ -56,6 +56,8 @@ oyArray2d_s_ *
   if(error <= 0)
   {
     error = oyArray2d_Init_( s, width, height, data_type );
+    if(error)
+      oyArray2d_Release( (oyArray2d_s**)&s );
   }
 
   return s;
