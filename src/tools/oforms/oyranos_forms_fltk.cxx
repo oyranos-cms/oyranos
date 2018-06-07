@@ -592,7 +592,7 @@ int        oyJSON2XFORMsFLTKSelect1Handler (
     if(oy_debug && default_value && print)
       printf( "found default: \"%s\"\n", default_value );
 
-    v = oyjlTreeGetValue( ov, 0, "nick" );
+    v = oyjlTreeGetValue( ov, 0, "key" );
     if( OYJL_IS_STRING( v ) )         xpath = v->u.string;
 
     v = oyjlTreeGetValue( ov, 0, "name" );

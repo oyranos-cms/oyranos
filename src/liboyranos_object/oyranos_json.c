@@ -86,7 +86,7 @@ char *       oyJsonFromModelAndUi    ( const char        * data,
            uiroot = oyJsonParse( ui_text );
 
   int paths_n = 0, i;
-  char ** paths = oyJsonPathsFromPattern( uiroot, "groups//options//nick");
+  char ** paths = oyJsonPathsFromPattern( uiroot, "groups//options//key");
   while(paths && paths[paths_n]) ++paths_n;
 
   if(!droot)

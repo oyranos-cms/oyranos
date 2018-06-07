@@ -264,7 +264,7 @@ int  oiccGetDefaultColorIccOptionsUI ( oyCMMapiFilter_s  * module OY_UNUSED,
               if(aflags & oyNAME_JSON)
               {
                 ++jgroup;
-                group = oyjlTreeGetValuef( root, OYJL_CREATE_NEW, OY_STD "/cmms/[0]/groups/[%d]", jgroup );
+                group = oyjlTreeGetValuef( root, OYJL_CREATE_NEW, OY_STD "/modules/[0]/groups/[%d]", jgroup );
                 jADD( "Oyranos", "%s", "name" )
                 jADD( section_names[0], "%s", "description" )
                 jADD( section_description[0], "%s", "help" )
@@ -305,9 +305,9 @@ int  oiccGetDefaultColorIccOptionsUI ( oyCMMapiFilter_s  * module OY_UNUSED,
               if(aflags & oyNAME_JSON)
               {
                 ++jgroup2;
-                group = oyjlTreeGetValuef( root, OYJL_CREATE_NEW, OY_STD "/cmms/[0]/groups/[%d]/groups/[%d]", jgroup, jgroup2 );
+                group = oyjlTreeGetValuef( root, OYJL_CREATE_NEW, OY_STD "/modules/[0]/groups/[%d]/groups/[%d]", jgroup, jgroup2 );
                 jADD( section_names[1], "%s", "name" )
-                //jADD( section_tooltips[1], OY_STD "/cmms/[0]/groups/[0]/groups/[%d]/%s", i, "description" )
+                //jADD( section_tooltips[1], OY_STD "/modules/[0]/groups/[0]/groups/[%d]/%s", i, "description" )
                 jADD( section_description[1], "%s", "help" )
                 jopt = -1;
                 if(oy_debug)
@@ -343,7 +343,7 @@ int  oiccGetDefaultColorIccOptionsUI ( oyCMMapiFilter_s  * module OY_UNUSED,
             {
               const char * d = oyOptions_FindString( defaults, t->config_string, NULL );
               ++jopt;
-              jADD( t->config_string, "options/[%d]/%s", jopt, "nick" )
+              jADD( t->config_string, "options/[%d]/%s", jopt, "key" )
               jADD( d, "options/[%d]/%s", jopt, "default" )
               jADD( name, "options/[%d]/%s", jopt, "name" )
               jADD( tooltip, "options/[%d]/%s", jopt, "description" )
