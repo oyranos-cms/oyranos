@@ -39,7 +39,8 @@ typedef enum {
   oyPATH_POLICY    = 0x02,             /**< policy data */
   oyPATH_MODULE    = 0x04,             /**< module data */
   oyPATH_SCRIPT    = 0x08,             /**< JIT code */
-  oyPATH_CACHE     = 0xf0              /**< cached files */
+  oyPATH_CACHE     = 0xf0,             /**< cached files */
+  oyPATH_LOGO      = 0xf1              /**< logo images */
 } oyPATH_TYPE_e;
 
 /** @brief Select Scope for Installation or Configurations

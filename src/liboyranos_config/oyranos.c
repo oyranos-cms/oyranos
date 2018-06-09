@@ -1031,8 +1031,8 @@ void oyI18NSet         ( int active,
  *  ::oyPATH_MODULE + ::oySCOPE_USER and ::oyPATH_MODULE + ::oySCOPE_OYRANOS are
  *  supported. ::oyPATH_SCRIPT gives no result at all.
  *
- *  @version Oyranos: 0.9.6
- *  @date    2016/03/16
+ *  @version Oyranos: 0.9.7
+ *  @date    2018/06/09
  *  @since   2015/02/08 (Oyranos: 0.9.6)
  */
 char *       oyGetInstallPath        ( oyPATH_TYPE_e       type,
@@ -1114,6 +1114,25 @@ char *       oyGetInstallPath        ( oyPATH_TYPE_e       type,
           break;
         default:
           path = NULL;
+      }
+      break;
+    }
+    case oyPATH_LOGO:
+    {
+      switch((int)scope)
+      {
+        case oySCOPE_USER:
+          path = F( OS_LOGO_USER_DIR );
+          break;
+        case oySCOPE_SYSTEM:
+          path = F( OS_LOGO_SYSTEM_DIR );
+          break;
+        case oySCOPE_OYRANOS:
+          path = F( OY_DATADIR OY_SLASH OY_PIXMAPSDIRNAME );
+          break;
+        case oySCOPE_MACHINE:
+          path = NULL;
+        break;
       }
       break;
     }
