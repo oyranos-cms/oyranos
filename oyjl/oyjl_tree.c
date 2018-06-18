@@ -553,22 +553,26 @@ static yajl_callbacks oyjl_tree_callbacks = {
     status = yajl_parse(handle,
                         (unsigned char *) input,
                         strlen (input));
-#if YAJL_VERSION > 19999
-    status = yajl_complete_parse (handle);
-#endif
     if (status != yajl_status_ok) {
-        if (error_buffer != NULL && error_buffer_size > 0) {
-               internal_err_str = (char *) yajl_get_error(handle, 1,
+        if (error_buffer != NULL && error_buffer_size > 0)
+        {
+            internal_err_str = (char *) yajl_get_error(handle, 1,
                      (const unsigned char *) input,
                      strlen(input));
              snprintf(error_buffer, error_buffer_size, "%s", internal_err_str);
              yajl_free_error( handle, (unsigned char*)internal_err_str );
              internal_err_str = 0;
         }
+#if YAJL_VERSION > 19999
+        status = yajl_complete_parse (handle);
+#endif
         yajl_free (handle);
         return NULL;
     }
 
+#if YAJL_VERSION > 19999
+    status = yajl_complete_parse (handle);
+#endif
     yajl_free (handle);
     return (ctx.root);
 }
@@ -851,10 +855,13 @@ void oyjlTreeToJson (oyjl_val v, int * level, char ** json)
          {
           const char * t = v->u.string;
           char * tmp = NULL;
-          if(t && strstr(t, "\""))
-          {
-            t = tmp = oyjlStringReplace( t, "\"", "\\\"", 0, 0);
-          }
+          if(t && strstr(t, "\\")) t = tmp = oyjlStringReplace( t, "\\", "\\\\", 0, 0);
+          if(t && strstr(t, "\"")) t = tmp = oyjlStringReplace( t, "\"", "\\\"", 0, 0);
+          if(t && strstr(t, "\b")) t = tmp = oyjlStringReplace( t, "\b", "\\b", 0, 0);
+          if(t && strstr(t, "\f")) t = tmp = oyjlStringReplace( t, "\f", "\\f", 0, 0);
+          if(t && strstr(t, "\n")) t = tmp = oyjlStringReplace( t, "\n", "\\n", 0, 0);
+          if(t && strstr(t, "\r")) t = tmp = oyjlStringReplace( t, "\r", "\\r", 0, 0);
+          if(t && strstr(t, "\t")) t = tmp = oyjlStringReplace( t, "\t", "\\t", 0, 0);
           oyjlStringAdd (json, 0,0, "\"%s\"", t);
           if(tmp) free(tmp);
          }
@@ -1326,7 +1333,7 @@ clean:
  *
  *  A NULL argument allocates just a node of type oyjl_t_null.
  *
- *  @see oyjl_tree_get_valuef() */
+ *  @see oyjlTreeGetValuef() */
 oyjl_val   oyjlTreeNew               ( const char        * path )
 {
   if(path && path[0])
@@ -1337,7 +1344,7 @@ oyjl_val   oyjlTreeNew               ( const char        * path )
 
 /** @brief obtain a node by a path expression
  *
- *  @see oyjl_tree_get_valuef() */
+ *  @see oyjlTreeGetValuef() */
 oyjl_val   oyjlTreeGetValue          ( oyjl_val            v,
                                        int                 flags,
                                        const char        * xpath )
@@ -1355,13 +1362,13 @@ oyjl_val   oyjlTreeGetValue          ( oyjl_val            v,
  *  Creating a new node inside a existing tree needs just a root node - v.
  *  The flags should contain OYJL_CREATE_NEW.
  *  @code
-    oyjl_val new_node = oyjl_tree_get_valuef( root, OYJL_CREATE_NEW, "my/new/node" );
+    oyjl_val new_node = oyjlTreeGetValuef( root, OYJL_CREATE_NEW, "my/new/node" );
     @endcode
  *
  *  Example: "foo/[]/bar" will append a node to the foo array and create
  *  the bar node, which is empty.
  *  @code
-    oyjl_val new_node = oyjl_tree_get_valuef( root, OYJL_CREATE_NEW, "foo/[]/bar" );
+    oyjl_val new_node = oyjlTreeGetValuef( root, OYJL_CREATE_NEW, "foo/[]/bar" );
     @endcode
  *
  *
