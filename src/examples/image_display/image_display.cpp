@@ -282,21 +282,22 @@ int changeIccOptions ( oyJob_s * job )
     if(!tmp_dir)
       tmp_dir = "/tmp";
 
-    error = oyFilterNode_GetUi( node, 0, &ui_text, &namespaces, malloc );
+    error = oyFilterNode_GetUi( node, oyNAME_JSON, &ui_text, &namespaces, malloc );
 
     opts = oyFilterNode_GetOptions( node, OY_SELECT_FILTER |
                                           oyOPTIONATTRIBUTE_ADVANCED );
-    model = oyOptions_GetText( opts, oyNAME_NAME );
-    in_text= oyXFORMsFromModelAndUi( model, ui_text, (const char**)namespaces,0,
-                                     malloc );
+    model = oyOptions_GetText( opts, (oyNAME_e) oyNAME_JSON );
+    in_text = oyJsonFromModelAndUi( model, ui_text, malloc );
+    if(!in_text)
+      return 1;
     /* export the options values */
-    sprintf( command, "%s/image_display_in_tmp.xml", tmp_dir );
+    sprintf( command, "%s/image_display_in_tmp.json", tmp_dir );
     oyWriteMemToFile_( command, in_text, strlen(in_text) );
     in_text = 0; command[0] = 0;
 
     /* render the options to the UI */
     {
-      const char * uiRenderer = getenv("OY_OFORMS_RENDERER");
+      const char * uiRenderer = getenv("OI_FORMS_RENDERER");
       if(uiRenderer && uiRenderer[0])
         sprintf(command, "%s ", uiRenderer );
       else
@@ -306,7 +307,7 @@ int changeIccOptions ( oyJob_s * job )
         sprintf(command, "oyranos-xforms-fltk " );
     }
     sprintf(&command[strlen(command)],
-            " -i %s/image_display_in_tmp.xml -o %s/image_display_tmp.xml",
+            " -i %s/image_display_in_tmp.json -o %s/image_display_tmp.json",
             tmp_dir, tmp_dir );
     error = system(command);
     if(error)
