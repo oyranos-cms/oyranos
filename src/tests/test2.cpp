@@ -1359,6 +1359,19 @@ oyTESTRESULT_e testOptionsSet ()
 
   oyOptions_Release( &setA );
 
+  options = oyOptions_FromText( json3, 0, testobj );
+  t = oyOptions_GetText( options, (oyNAME_e) oyNAME_JSON );
+  if(!error && t && t && strcmp(t, json3))
+  {
+    PRINT_SUB( oyTESTRESULT_SUCCESS, 
+    "oyOptions_FromText( json ) roundtrip              " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyOptions_FromText( json ) roundtrip              " );
+    fprintf( zout, "%s\n", t?t:0 );
+  }
+  oyOptions_Release( &options );
+
   return result;
 }
 
