@@ -38,14 +38,18 @@ oyjl_val     oyJsonParse             ( const char        * json )
 {
   int error = !json;
   oyjl_val root;
-  char error_buffer[256] = {0};
+  char * error_buffer = (char*)oyAllocateFunc_( 256 );
 
-  if(error)
+  if(error || !error_buffer)
     return NULL;
+
+  error_buffer[0] = '\000';
 
   root = oyjlTreeParse( json, error_buffer, 256 );
   if(error_buffer[0] != '\000')
     oyMessageFunc_p( oyMSG_WARN, NULL, OY_DBG_FORMAT_ "ERROR:\t\"%s\"\n", OY_DBG_ARGS_, error_buffer );
+
+  oyDeAllocateFunc_( error_buffer );
 
   return root;
 }
