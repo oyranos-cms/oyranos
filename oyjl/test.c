@@ -363,26 +363,27 @@ oyjlTESTRESULT_e testJson ()
   myDeAllocFunc( rjson ); rjson = NULL;
 
   value = oyjlTreeGetValue( root, 0, "new/tree/key" );
-  oyjlValueSetString( value, "value" );
+#define VALUE "value-\"one\""
+  oyjlValueSetString( value, VALUE );
   oyjlTreeToJson( root, &i, &rjson ); i = 0;
   if(len < strlen(rjson))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjl_value_set( \"value\" )             %d", (int)strlen(rjson) );
+    "oyjlValueSetString( %s )         %d", VALUE, (int)strlen(rjson) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjl_value_set( \"value\" )             %d", (int)strlen(rjson) );
+    "oyjlValueSetString( %s )         %d", VALUE, (int)strlen(rjson) );
   }
   fprintf( zout, "%s\n", rjson );
   len = strlen(rjson);
   myDeAllocFunc( rjson ); rjson = NULL;
 
   char * v = oyjlValueText(value, myAllocFunc);
-  if(v && strlen(v) == 5)
+  if(v && strlen(v) == strlen(VALUE))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlValueText( \"new/tree/key\" ) = \"%s\"", v );
+    "oyjlValueText( \"new/tree/key\" ) = %s", v );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlValueText( \"new/tree/key\" ) = \"value\"" );
+    "oyjlValueText( \"new/tree/key\" ) = %s", VALUE );
   }
   myDeAllocFunc(v);
 
