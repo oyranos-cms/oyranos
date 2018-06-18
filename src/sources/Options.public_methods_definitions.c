@@ -242,8 +242,9 @@ oyOptions_s *  oyOptions_FromText    ( const char        * text,
                                        oyObject_s          object )
 {
   oyOptions_s * s = 0;
-#ifdef HAVE_LIBXML2
   int error = !text;
+  int is_json = !error && oyJson(text);
+#ifdef HAVE_LIBXML2
   xmlDocPtr doc = 0;
   xmlNodePtr cur = 0;
   char ** texts = 0;
@@ -251,7 +252,7 @@ oyOptions_s *  oyOptions_FromText    ( const char        * text,
   const char * root_start = "<top>", * root_end = "</top>";
   char * tmp = 0;
 
-  if(error <= 0)
+  if(error <= 0 && !is_json)
   {
     /* add a root level node - <top> */
     if(strlen(text) > 5 && memcmp( text, "<?xml", 5 ) == 0)
@@ -288,7 +289,7 @@ oyOptions_s *  oyOptions_FromText    ( const char        * text,
     error = !cur;
   }
 
-  if(error <= 0)
+  if(error <= 0 && !is_json)
   {
     s = oyOptions_New(object);
 
@@ -298,6 +299,10 @@ oyOptions_s *  oyOptions_FromText    ( const char        * text,
     xmlFreeDoc(doc);
   }
 #endif
+  if(error <= 0 && is_json)
+  {
+    error = oyOptions_FromJSON( text, NULL, &s, NULL );
+  }
 
   return s;
 }
