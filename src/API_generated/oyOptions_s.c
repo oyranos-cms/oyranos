@@ -480,7 +480,29 @@ int          oyOptions_FromJSON      ( const char        * json_text,
 
   opts = *result;
 
-  xv = oyjlTreeGetValue( json, 0, xpath );
+  if(strlen(xpath))
+    xv = oyjlTreeGetValue( json, 0, xpath );
+  else
+  {
+    char ** paths = NULL;
+    oyjlTreeToPaths( json, 1000000, NULL, OYJL_KEY, &paths );
+    count = 0;
+    while(paths && paths[count]) ++count;
+    for(i = 0; i < count; ++i)
+    {
+      xpath = paths[i];
+      v = oyjlTreeGetValue( json, 0, xpath );
+      val = oyjlValueText( v, oyAllocateFunc_ );
+
+      /* ignore empty keys or values */
+      if(val)
+        oyOptions_SetFromString( &opts, xpath, val, OY_CREATE_NEW );
+
+      if(key) oyDeAllocateFunc_(key);
+      if(val) oyDeAllocateFunc_(val);
+    }
+  }
+
   count = oyjlValueCount( xv );
   if(co) oyOption_SetFromInt( co, count, 0, 0 );
   for(i = 0; i < count; ++i)
