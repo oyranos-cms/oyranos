@@ -32,13 +32,17 @@
 
 void* oyAllocFunc(size_t size) {return malloc (size);}
 
-void  printfHelp (int argc OY_UNUSED, char** argv)
+void  printfHelp (int argc, char** argv)
 {
   char * version = oyVersionString(1,0);
   char * id = oyVersionString(2,0);
   char * cfg_date =  oyVersionString(3,0);
   char * devel_time = oyVersionString(4,0);
 
+  int i;
+  fprintf( stderr, "\n");
+  for(i = 0; i < argc; ++i)
+    fprintf( stderr, "%s ", argv[i]);
   fprintf( stderr, "\n");
   fprintf( stderr, "oyranos-policy %s\n",
                                 _("is a policy administration tool"));

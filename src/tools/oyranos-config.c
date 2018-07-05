@@ -44,8 +44,12 @@ void  getKey                         ( const char        * key,
                                        int                 print );
 
 
-void displayHelp(char ** argv)
+void  printfHelp (int argc, char** argv)
 {
+  int i;
+  fprintf( stderr, "\n");
+  for(i = 0; i < argc; ++i)
+    fprintf( stderr, "\'%s\' ", argv[i]);
   printf("\n");
   printf("oyranos-config v%d.%d.%d %s\n",
          OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C,
@@ -211,18 +215,18 @@ int main(int argc, char *argv[])
                         else if(OY_IS_ARG("verbose"))
                         { if(verbose) oy_debug += 1; verbose = 1; i=100; break;}
                         else if(OY_IS_ARG("help"))
-                        { displayHelp(argv); i=100; break; }
+                        { printfHelp(argc, argv); i=100; break; }
                         else if(OY_IS_ARG("system-wide"))
                         { scope = oySCOPE_SYSTEM; i=100; break; }
                         } OY_FALLTHROUGH
               default:
-                        displayHelp(argv);
+                        printfHelp(argc, argv);
                         exit (0);
                         break;
             }
             break;
         default:
-                        displayHelp(argv);
+                        printfHelp(argc, argv);
                         exit (0);
       }
       if( wrong_arg )
@@ -232,7 +236,9 @@ int main(int argc, char *argv[])
       }
       ++pos;
     }
-    if(oy_debug) fprintf( stderr, "%s\n", argv[1] );
+    if(oy_debug)
+      for(i = 0; i < argc; ++i)
+        fprintf( stderr, "\'%s\' ", argv[i]);
   }
   else
   {
@@ -327,7 +333,7 @@ int main(int argc, char *argv[])
     }
     else
     {
-                        displayHelp(argv);
+                        printfHelp(argc, argv);
                         exit (0);
     }
   } 
