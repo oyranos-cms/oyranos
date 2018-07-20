@@ -3194,6 +3194,16 @@ oyTESTRESULT_e testRegistrationMatch ()
     "long device key match                 " );
   }
 
+  if( oyFilterRegistrationMatch("org/freedesktop/openicc/icc_color/display.icc_profile.abstract.white_point.automatic.oy-monitor",
+                                "display.abstract.icc_profile",
+                                oyOBJECT_NONE ))
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "changed key order match               " );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "changed key order match               " );
+  }
+
   if( oyFilterStringMatch( "abc-def-ghi",
                            "+def._ghi.-jkl", oyOBJECT_NONE, '/', '.',
                            OY_MATCH_SUB_STRING ))
