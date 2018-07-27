@@ -901,7 +901,7 @@ int                oyPoliciesEqual   ( const char        * policyA,
         const oyOption_t_ *t = oyOptionGet_( oywid );
 
         /* skip temporary value, as it can easily be changed by
-         * oyranos-monitor-white-point --daemon  */
+         * oyranos-monitor-white-point --daemon=1  */
         if(oywid == oyWIDGET_DISPLAY_WHITE_POINT)
           continue;
 
@@ -1309,9 +1309,10 @@ char **            oyGetCMMs         ( oyCMM_e             type,
 /** @} *//* cmm_handling */
 /** @} *//* defaults_apis */
 
-oyConfigs_s *      oyGetMonitors_    ( oyOptions_s      ** options )
+oyConfigs_s *      oyGetMonitors     ( oyOptions_s      ** options )
 {
-  oyConfigs_s * devices = NULL;
+  oyConfigs_s * devices = oy_monitors_cache_;
+  if(devices) return devices;
   /* get XCM_ICC_COLOR_SERVER_TARGET_PROFILE_IN_X_BASE */
   oyOptions_SetFromString( options,
               "//"OY_TYPE_STD"/config/icc_profile.x_color_region_target",
@@ -1319,8 +1320,21 @@ oyConfigs_s *      oyGetMonitors_    ( oyOptions_s      ** options )
   oyOptions_SetFromString( options, "//" OY_TYPE_STD "/config/command",
                                   "properties", OY_CREATE_NEW );
   oyDevicesGet( 0, "monitor._native", *options, &devices );
+  oy_monitors_cache_ = devices;
 
   return devices;
+}
+
+int          oyOptionChoicesGetWtPtN_( )
+{
+  /* order is none, automatic, static ones, first monitor, second monitor, ... , last monitor */
+  int choice_list_n = 1+1+5;
+  oyOptions_s * options = 0;
+  oyConfigs_s * devices = oyGetMonitors( &options );
+  int devices_n = oyConfigs_Count( devices );
+  choice_list_n += devices_n;
+
+  return choice_list_n;
 }
 
 char **      oyOptionChoicesGetWtPt_ ( int               * choices )
@@ -1333,7 +1347,7 @@ char **      oyOptionChoicesGetWtPt_ ( int               * choices )
   char ** list;
 
   oyOptions_s * options = 0;
-  oyConfigs_s * devices = oyGetMonitors_( &options );
+  oyConfigs_s * devices = oyGetMonitors( &options );
   int devices_n = oyConfigs_Count( devices );
 
   choice_list_n = 1+1+5;
@@ -1357,7 +1371,6 @@ char **      oyOptionChoicesGetWtPt_ ( int               * choices )
   }
 
   oyOptions_Release( &options );
-  oyConfigs_Release( &devices );
 
   if( choices )
     *choices              = choice_list_n;
@@ -1879,14 +1892,12 @@ oyTestInsideBehaviourOptions_ (oyBEHAVIOUR_e type, int choice)
   {
     if(type == oyBEHAVIOUR_DISPLAY_WHITE_POINT)
     {
-      int choice_list_n = 0;
-      char ** choice_list = oyOptionChoicesGetWtPt_( &choice_list_n );
+      int choice_list_n = oyOptionChoicesGetWtPtN_( );
       if(choice >= 0 &&
          choice < choice_list_n)
         r = 1;
       else
         WARNc2_S( "choice %d is invalid (count: %d)", choice, choice_list_n );
-      oyStringListRelease( &choice_list, choice_list_n, 0 );
     } else
     if ( choice >= 0 &&
          choice < t->choices )
@@ -2352,6 +2363,7 @@ int          oyGetPersistentStrings  ( const char        * top_key_name )
   if(!top_key_name)
   {
     oyOptions_Release( &oy_db_cache_ );
+    oyConfigs_Release( &oy_monitors_cache_ );
     oy_db_cache_init_ = 0;
   }
   else
@@ -2458,13 +2470,13 @@ char *       oyGetPersistentString   ( const char        * key_name,
  *  @param         scope               user/system or both, works together with
  *                                     flags |= oySOURCE_DATA
  *  @param         value               the expected value
- *  @return                            the cached value
+ *  @return                            found : number of occurences, otherwise : false
  *
  *  @version Oyranos: 0.9.7
  *  @date    2018/05/15
  *  @since   2018/05/15 (Oyranos: 0.9.7)
  */
-char *       oyExistPersistentString ( const char        * key_name,
+int          oyExistPersistentString ( const char        * key_name,
                                        const char        * value,
                                        uint32_t            flags,
                                        oySCOPE_e           scope )

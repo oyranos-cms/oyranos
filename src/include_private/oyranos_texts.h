@@ -33,7 +33,7 @@ typedef struct {
   oyWIDGET_TYPE_e type;           /**< type */
   oyWIDGET_e    id;               /**< option */
   oyGROUP_e     category[10];     /**< layout for categories */
-  int         flags;            /**< flags to control widget bebahiour */
+  int         flags;            /**< flags to control widget behaviour */
   const char *name;             /**< label for setting */
   const char *description;      /**< long description for setting */
   const char *tooltip;          /**< tooltip or short description for setting */
@@ -96,7 +96,7 @@ oyGROUP_e       oyGroupAdd_              (const char *id, const char *cmm,
 int           oyGroupRemove_           (oyGROUP_e     id);
 
 
-char *       oyExistPersistentString ( const char        * key_name,
+int          oyExistPersistentString ( const char        * key_name,
                                        const char        * value,
                                        uint32_t            flags,
                                        oySCOPE_e           scope );
@@ -142,7 +142,7 @@ char **     oyLibPathsGet_           ( int             * count,
                                        oyAlloc_f         allocateFunc );
 
 #include "oyConfigs_s.h"
-oyConfigs_s *      oyGetMonitors_    ( oyOptions_s      ** options );
+oyConfigs_s *      oyGetMonitors     ( oyOptions_s      ** options );
 
 
 

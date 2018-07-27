@@ -44,6 +44,12 @@ int      oyGetLinearEffectProfile    ( oyProfiles_s      * effects )
   return is_linear;
 }
 
+#define DBG_S_ if(oy_debug >= 1)DBG_S
+/** @brief  create_profile.white_point_adjust.bradford
+ *
+ *  The profile will be generated in many different shades, which will explode
+ *  conversion cache.
+ */
 int      oyProfileAddWhitePointEffect( oyProfile_s       * monitor_profile,
                                        oyOptions_s      ** module_options )
 {
@@ -81,15 +87,51 @@ int      oyProfileAddWhitePointEffect( oyProfile_s       * monitor_profile,
           src_XYZ[0], src_XYZ[1], src_XYZ[2], dst_XYZ[0], dst_XYZ[1], dst_XYZ[2]);
   if(error)
     return error;
+  DBG_S_( oyPrintTime() );
   error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/src_iccXYZ", src_XYZ[0], 0, OY_CREATE_NEW );
   error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/src_iccXYZ", src_XYZ[1], 1, OY_CREATE_NEW );
   error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/src_iccXYZ", src_XYZ[2], 2, OY_CREATE_NEW );
   error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/illu_iccXYZ", dst_XYZ[0], 0, OY_CREATE_NEW );
   error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/illu_iccXYZ", dst_XYZ[1], 1, OY_CREATE_NEW );
   error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/illu_iccXYZ", dst_XYZ[2], 2, OY_CREATE_NEW );
+  /* cache the display white point abstract profile */
   error = oyOptions_Handle( "//" OY_TYPE_STD "/create_profile.white_point_adjust.bradford",
+                            opts,             "create_profile.white_point_adjust.bradford.file_name",
+                            &result_opts );
+  DBG_S_( oyPrintTime() );
+  if(error == 0)
+  {
+    const char * file_name = oyOptions_FindString( result_opts, "file_name", 0 );
+    char * cache_path = oyGetInstallPath( oyPATH_CACHE, oySCOPE_USER, oyAllocateFunc_ ), *t;
+    if(strstr( cache_path, "device_link") != NULL)
+    {
+      t = strstr( cache_path, "device_link");
+      t[0] = '\000';
+      oyStringAddPrintf( &cache_path, 0,0, "white_point_adjust/%s.icc", file_name );
+    }
+
+    if(oyIsFile_(cache_path))
+    {
+      if(oy_debug)
+        oyMessageFunc_p( oyMSG_DBG,(oyStruct_s*)monitor_profile, OY_DBG_FORMAT_
+                     "found file_name: %s -> %s\n", OY_DBG_ARGS_, file_name, cache_path );
+      wtpt = oyProfile_FromFile( cache_path, 0,0 );
+      DBG_S_( oyPrintTime() );
+    } else
+    {
+      if(oy_debug)
+        oyMessageFunc_p( oyMSG_DBG,(oyStruct_s*)monitor_profile, OY_DBG_FORMAT_
+                     "creating file_name: %s -> %s\n", OY_DBG_ARGS_, file_name, cache_path );
+      error = oyOptions_Handle( "//" OY_TYPE_STD "/create_profile.white_point_adjust.bradford",
                             opts,             "create_profile.white_point_adjust.bradford",
                             &result_opts );
+      wtpt = (oyProfile_s*) oyOptions_GetType( result_opts, -1, "icc_profile",
+                                           oyOBJECT_PROFILE_S );
+      error = !wtpt;
+      oyProfile_ToFile_( (oyProfile_s_*) wtpt, cache_path );
+      DBG_S_( oyPrintTime() );
+    }
+  }
 #else
   oyXYZ2Lab( src_XYZ, Lab );
   src_cie_a = Lab[1]/256.0+0.5;
@@ -110,9 +152,9 @@ int      oyProfileAddWhitePointEffect( oyProfile_s       * monitor_profile,
   error = oyOptions_Handle( "//" OY_TYPE_STD "/create_profile.white_point_adjust.lab",
                                          opts,"create_profile.white_point_adjust.lab",
                                          &result_opts );
-#endif
   wtpt = (oyProfile_s*) oyOptions_GetType( result_opts, -1, "icc_profile",
                                            oyOBJECT_PROFILE_S );
+#endif
   error = !wtpt;
   oyOptions_MoveInStruct( module_options,
                           OY_STD "/icc_color/display.icc_profile.abstract.white_point.automatic.oy-monitor",
@@ -619,7 +661,7 @@ int      oyGetDisplayWhitePoint      ( int                 mode,
   {
     int pos = mode - 7;
     oyOptions_s * options = NULL;
-    oyConfigs_s * devices = oyGetMonitors_( &options );
+    oyConfigs_s * devices = oyGetMonitors( &options );
     oyConfig_s * monitor = oyConfigs_Get( devices, pos );
     oyProfile_s* profile = NULL;
 
@@ -628,7 +670,6 @@ int      oyGetDisplayWhitePoint      ( int                 mode,
 
     oyConfig_Release( &monitor );
     oyOptions_Release( &options );
-    oyConfigs_Release( &devices );
     oyProfile_Release( &profile );
   }
 

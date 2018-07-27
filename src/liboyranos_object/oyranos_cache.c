@@ -16,31 +16,26 @@
 
 #include "oyObject_s.h"
 #include "oyObject_s_.h"
-
-
-int      oyObjectUsedByStructList_   ( int                 id,
-                                       oyStructList_s    * sl )
-{
-  int found = 0, count, i;
-  oyStruct_s * st;
-
-  count = oyStructList_Count(sl);
-  for(i = 0; i < count; ++i)
-  {
-    st = oyStructList_Get_( (oyStructList_s_ *)sl, i );
-    if(st && st->oy_ && st->oy_->id_ == id)
-      found = 1;
-    if(found) break;
-  }
-
-  return found;
-}
-
 #include "oyProfiles_s_.h"
 #include "oyOptions_s_.h"
 
-oyStructList_s_ * oy_profile_s_file_cache_ = NULL;
+
+
 /** @internal
+ *  The oy_cmm_cache_ is publicly accessed with oyPointer_LookUpFromText()
+ *  by modules, as of writing only by @ref lcm2_graph for private
+ *  cmsHTRANSFORM and cmsHPROFILE handles.\n
+ *  The cache is privately accessed with oyCMMCacheListGetEntry_() and a
+ *  string as hash value. Convinience API's are oyCMMsGetFilterApis_() and
+ *  oyCMMsGetMetaApis_(). The oyCMMapi4_s and oyCMMapi7_s contexts are
+ *  created and transformed with a oyCMMapi6_s filter by
+ *  oyFilterNode_SetContext_() and cached here. oyFilterNode_ToBlob() is
+ *  a public API for oyFilterNode_SetContext_()' oyCMMapi4_s context part.
+ *  oyFilterGraph_PrepareContexts() uses oyFilterNode_SetContext_() as well
+ *  and is itself called by oyConversion_RunPixels() for automatic
+ *  resources resolving during DAG processing.
+ *
+ *  Concepts:\n
  *  The lists are allocated one time and live until the application quits
  *  It contains the various caches for faster access of CPU intentsive data.\n
  *  We'd need a 3 dimensional table to map\n
@@ -59,7 +54,7 @@ oyStructList_s_ * oy_profile_s_file_cache_ = NULL;
  *  A transparent approach has to allow for easy identifying each entry.\n
  *  A help would be a function to compute both a md5 digest and a message from
  *  the 3 arguments outlined above. Probably it would allow much more arguments
- *  to add as we can not know how many optins and other influential parameters
+ *  to add as we can not know how many options and other influential parameters
  *  the cache entry depends on.\n
  *  \n
  *  A final implementation would consist of a
@@ -85,10 +80,76 @@ oyStructList_s * oy_cmm_cache_ = NULL;
  *  @date  6 december 2007 (API 0.1.8)
  */
 oyStructList_s * oy_cmm_infos_ = NULL;
+/** @internal
+ *  @brief internal Oyranos filter handle list
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  6 december 2007 (API 0.1.8)
+ */
 oyStructList_s * oy_cmm_handles_ = NULL;
+/** @internal
+ *  @brief internal Oyranos color profile list
+ *
+ *  Accessed with oyCacheListGetEntry_() and the file name as hash value.
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  6 december 2007 (API 0.1.8)
+ */
+oyStructList_s_ * oy_profile_s_file_cache_ = NULL;
+/** @internal
+ *  @brief internal Oyranos color profile list
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  6 december 2007 (API 0.1.8)
+ */
 oyProfiles_s * oy_profile_list_cache_ = NULL;
+/** @internal
+*  @brief internal Oyranos enumerated color profile list
+*
+*  @since Oyranos: version 0.1.8
+*  @date  6 december 2007 (API 0.1.8)
+*/
 oyProfile_s_ ** oy_profile_s_std_cache_ = NULL;
+/** @internal
+ *  @brief internal DB strings
+ *
+ *  The key name is used as hash value.
+ *  Can be reset with NULL arg to oyGetPersistentStrings().
+ *
+ *  @since Oyranos: version 0.1.8
+ *  @date  6 december 2007 (API 0.1.8)
+ */
 oyOptions_s * oy_db_cache_ = NULL;
+/** @internal
+ *  @brief internal monitor devices
+ *
+ *  Can be reset with NULL arg to oyGetPersistentStrings().
+ *
+ *  @since Oyranos: version 0.9.7
+ *  @date  05.2018 (API 0.9.7)
+ */
+oyConfigs_s * oy_monitors_cache_ = NULL;
+
+
+int      oyObjectUsedByStructList_   ( int                 id,
+                                       oyStructList_s    * sl )
+{
+  int found = 0, count, i;
+  oyStruct_s * st;
+
+  count = oyStructList_Count(sl);
+  for(i = 0; i < count; ++i)
+  {
+    st = oyStructList_Get_( (oyStructList_s_ *)sl, i );
+    if(st && st->oy_ && st->oy_->id_ == id)
+      found = 1;
+    if(found) break;
+  }
+
+  return found;
+}
+
+#include "oyConfigs_s_.h"
 int      oyObjectUsedByCache_        ( int                 id )
 {
   int found = 0;
@@ -112,6 +173,8 @@ int      oyObjectUsedByCache_        ( int                 id )
          found = 1;
      }
   }
+  if(!found && oy_monitors_cache_)
+    found = oyObjectUsedByStructList_( id, ((oyConfigs_s_*)oy_monitors_cache_)->list_ );
 
   if(found)
     return 1;
