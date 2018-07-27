@@ -194,7 +194,7 @@ OYAPI oyPointer_s * OYEXPORT
  *  - 2: last Oyranos patch version during development time, e.g. 5
  *  @param         context_type        tell the context type, if any
  *  the data type of the context returned by oyCMMapi4_s::oyCMMFilterNode_ContextToMem_f, mandatory in case of a set oyCMMapi4_s::oyCMMFilterNode_ContextToMem
- *  e.g. oyCOLOR_ICC_DEVICE_LINK / "oyDL"
+ *  e.g. ::oyCOLOR_ICC_DEVICE_LINK / "oyDL"
  *  @param         contextToMem 
  *  only mandatory for context producing filters, e.g. "//color/icc"
  *  @param         getText             optionally set a 
