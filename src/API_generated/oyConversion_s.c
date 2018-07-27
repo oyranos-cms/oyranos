@@ -699,6 +699,10 @@ int          oyConversion_GetOnePixel( oyConversion_s    * conversion,
     @skip create a basic job ticket for faster repeats of oyConversion_RunPixels()
     @until oyFilterPlug_Release
  *
+ *  oyFilterGraph_PrepareContexts() uses the internal oyFilterNode_SetContext_()
+ *  for automatic resources resolving during DAG processing. Both oyCMMapi4_s
+ *  and oyCMMapi7_s contexts are checked for if declared by oyCMMapi4_Create()
+ *  context_type argument.
  */
 int                oyConversion_RunPixels (
                                        oyConversion_s    * conversion,
