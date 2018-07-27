@@ -88,8 +88,49 @@ digraph G {
 }
  \enddot
  *
- *  oyFilterNode_s types are contained inside libraries called modules. 
+ *  oyFilterNode_s types, like oyCMMapi4_s, oyCMMapi6_s and oyCMMapi7_s, are
+ *  contained inside libraries called modules. 
  *  The filter types are identified by @ref registration strings.
+ *
+ *  A node can have several data entries attached to it. However, a node type
+ *  is free to use only in case it is required for it to work. That entries
+ *  are *processing data* like images, *processing context* like curves,
+ *  tables or the options and a *runtime context*. The two types of context
+ *  apply to both filter node types oyCMMapi4_s and oyCMMapi7_s. Here the API
+ *  overview:
+ *  - oyFilterNode_GetData() and oyFilterNode_SetData() access processing data
+ *    from the socket, e.g. a oyArray2d_s or oyImage_s ...
+ *  - oyFilterNode_ToBlob() is the oyCMMapi4_s processing context. The filter
+ *    shall return the type, which was declared and defined in
+ *    oyCMMapi4_Create() by the context_type and contextToMem arguments.
+ *    This cached data is created by the filter from it's options in
+ *    oyFilterNode_GetOptions(), e.g. profiles, switches, file names ...
+ *  - oyFilterCore_GetBackendContext() and oyFilterCore_SetBackendContext()
+ *    access node type specific runtime context for oyCMMapi4_s like
+ *    library hooks or handles; oyCMMapi4_s modules can use
+ *    oyCMMapi4_SetBackendContext() for the same data, which can be useful
+ *    during filter initalisation.
+ *  - oyFilterNode_GetContext() and oyFilterNode_SetContext()
+ *    access a particular nodes processing context for oyCMMapi7_s like
+ *    data tables, library specfic color transform data or FBO's ...
+ *    It's creation can be triggered by calling
+ *    oyFilterGraph_PrepareContexts() only if the context_type is required by
+ *    the filter type.
+ *  - oyFilterNode_GetBackendContext() and oyFilterNode_SetBackendContext()
+ *    access node type specific runtime context for oyCMMapi7_s like
+ *    library hooks or handles; oyCMMapi7_s modules can use
+ *    oyCMMapi7_SetBackendContext() for the same data.
+ *
+ *  As the oyCMMapi4_s filter part and the oyCMMapi7_s filter part can be
+ *  completely differently implemented. Thus Oyranos' core needs to connect
+ *  both. It does this by converting the oyCMMapi4_s processing context
+ *  from oyFilterNode_ToBlob() to the processing context type of oyCMMapi7_s.
+ *  The filter type must be provided to Oyranos as a oyCMMapi6_s converter
+ *  filter. This oyCMMapi6_s converter must support both data types specified
+ *  in oyCMMapi4_Create() context_type argument and the one specified by the
+ *  oyCMMapi7_Create() context_type argument. oyFilterGraph_PrepareContexts(),
+ *  which calls the internal oyFilterNode_SetContext_(), resolves the processing
+ *  contexts automatically during oyConversion_RunPixels().
  *
  *  @version Oyranos: 0.1.9
  *  @since   2008/07/08 (Oyranos: 0.1.8)
