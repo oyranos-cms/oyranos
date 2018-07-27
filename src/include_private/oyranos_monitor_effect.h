@@ -18,6 +18,7 @@
 
 #include "oyProfiles_s.h"
 
+int      oyDisplayColorServerIsActive( );
 int      oyProfile_CreateEffectVCGT  ( oyProfile_s       * prof );
 int      oyGetLinearEffectProfile    ( oyProfiles_s      * effects );
 int      oyProfileAddWhitePointEffect( oyProfile_s       * monitor_profile,
