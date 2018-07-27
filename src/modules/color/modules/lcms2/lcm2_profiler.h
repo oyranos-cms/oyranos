@@ -1,7 +1,7 @@
 /** @file lcm2_profiler.h
  *
  *  @par Copyright:
- *            2009-2017 (C) Kai-Uwe Behrmann
+ *            2009-2018 (C) Kai-Uwe Behrmann
  *
  *  @brief    littleCMS CMM profile generator for Oyranos
  *  @internal
@@ -77,6 +77,7 @@ int          lcm2CreateAbstractWhitePointProfileBradford (
                                        double            * illu_iccXYZ,
                                        int                 grid_size,
                                        double              icc_profile_version,
+                                       int                 flags,
                                        char             ** my_abstract_file_name,
                                        cmsHPROFILE       * h_profile
                                      );

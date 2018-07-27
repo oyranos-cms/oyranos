@@ -1,7 +1,7 @@
 /** @file lcm2_profiler.c
  *
  *  @par Copyright:
- *            2009-2017 (C) Kai-Uwe Behrmann
+ *            2009-2018 (C) Kai-Uwe Behrmann
  *
  *  @brief    littleCMS CMM profile generator for Oyranos
  *  @internal
@@ -1700,11 +1700,12 @@ lcm2CreateAbstractWhitePointProfileClean:
  *  @param[in]    illu_iccXYZ          ICC*XYZ illuminant in 0.0 - 2.0 range
  *  @param[in]    grid_size            dimensions of the created LUT; e.g. 33
  *  @param[in]    icc_profile_version  2.3 or 4.3
+ *  @param[in]    flags                - 0x01 : return only fast my_abstract_file_name, without expensive profile computation
  *  @param[out]   my_abstract_file_name                    profile file name
  *  @param[out]   h_profile            the resulting profile; If omitted the function will write the profile to my_abstract_file_name.
  *
  *  @version Oyranos: 0.9.7
- *  @date    2018/02/28
+ *  @date    2018/07/25
  *  @since   2017/06/02 (Oyranos: 0.9.7)
  */
 int          lcm2CreateAbstractWhitePointProfileBradford (
@@ -1712,6 +1713,7 @@ int          lcm2CreateAbstractWhitePointProfileBradford (
                                        double            * illu_iccXYZ,
                                        int                 grid_size,
                                        double              icc_profile_version,
+                                       int                 flags,
                                        char             ** my_abstract_file_name,
                                        cmsHPROFILE       * h_profile
                                      )
@@ -1740,10 +1742,13 @@ int          lcm2CreateAbstractWhitePointProfileBradford (
 
   if(error) return 1;
 
-  i_curve[0] = cmsBuildGamma(0, 1.0);
-  if(!i_curve[0]) error = 1;
-  for(i = 1; i < 3; ++i)
-  { i_curve[i] = i_curve[0]; }
+  if(!(flags & 0x01)) /* skip computation */
+  {
+    i_curve[0] = cmsBuildGamma(0, 1.0);
+    if(!i_curve[0]) error = 1;
+    for(i = 1; i < 3; ++i)
+    { i_curve[i] = i_curve[0]; }
+  }
 
   if(!error)
   {
@@ -1761,26 +1766,35 @@ int          lcm2CreateAbstractWhitePointProfileBradford (
     icc_ab[1] = dst_Lab[2] - src_Lab[2];
     max_brightness = 1.0 - OY_HYP(icc_ab[0],icc_ab[1]/1.5);
 
-    /* avoid color clipping around the white point */
-    curve_params_low[1] = max_brightness;
-    o_curve[0] = cmsBuildParametricToneCurve(0, 6, curve_params_low);
-    o_curve[1] = o_curve[2] = cmsBuildParametricToneCurve(0, 6, curve_params);
-    if(!o_curve[0] || !o_curve[1]) error = 1;
+    if(!(flags & 0x01)) /* skip computation */
+    {
+      /* avoid color clipping around the white point */
+      curve_params_low[1] = max_brightness;
+      o_curve[0] = cmsBuildParametricToneCurve(0, 6, curve_params_low);
+      o_curve[1] = o_curve[2] = cmsBuildParametricToneCurve(0, 6, curve_params);
+      if(!o_curve[0] || !o_curve[1]) error = 1;
+    }
   }
 
   if(error) goto lcm2CreateAbstractWhitePointProfileBClean;
 
   if(icc_ab[1] > 0)
   {
-    sprintf( kelvin_name, "Reddish CIE*a %g CIE*b %g", icc_ab[0], icc_ab[1] );
+    sprintf( kelvin_name, "Bradford Reddish CIE*a %g CIE*b %g v1 lcm2", icc_ab[0], icc_ab[1] );
   } else if(-0.001 < icc_ab[1] && icc_ab[0] < 0.001) {
-    sprintf( kelvin_name, "CIE*a %g CIE*b %g", icc_ab[0], icc_ab[1] );
+    sprintf( kelvin_name, "Bradford CIE*a %g CIE*b %g v1 lcm2", icc_ab[0], icc_ab[1] );
     kelvin_meta[1] = "neutral,type,white_point,atom";
     kelvin_meta[3] = "yes,D50,kelvin";
   } else {
-    sprintf( kelvin_name, "Bluish CIE*a %g CIE*b %g", icc_ab[0], icc_ab[1] );
+    sprintf( kelvin_name, "Bradford Bluish CIE*a %g CIE*b %g v1 lcm2", icc_ab[0], icc_ab[1] );
     kelvin_meta[1] = "bluish,type,white_point,atom";
     kelvin_meta[3] = "yes,bluish,kelvin";
+  }
+
+  *my_abstract_file_name = kelvin_name;
+  if(flags & 0x01) /* skip computation */
+  {
+    return error;
   }
 
   profile = lcm2CreateProfileFragment (
@@ -1810,7 +1824,6 @@ lcm2CreateAbstractWhitePointProfileBClean:
   if(o_curve[0]) cmsFreeToneCurve( o_curve[0] );
   if(o_curve[1]) cmsFreeToneCurve( o_curve[1] );
 
-  *my_abstract_file_name = kelvin_name;
   if(h_profile)
     *h_profile = profile;
   else if(profile && *my_abstract_file_name)
@@ -2463,7 +2476,7 @@ int            lcm2Version           ( )
  *  one go. 
  *  Effect profiles can be created in one call
  *  by lcm2CreateAbstractProfile(). It needs a @ref samplers function, which
- *  fills the Look Up Table (LUT). Two APIs exist to generate white point
+ *  fills the Look Up Table (LUT). Three APIs exist to generate white point
  *  effects, lcm2CreateAbstractTemperatureProfile() and
  *  lcm2CreateAbstractWhitePointProfileLab() or
  *  lcm2CreateAbstractWhitePointProfileBradford(). These above high level APIs allow to
