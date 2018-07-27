@@ -47,6 +47,7 @@ void               oySplitHour       ( double              hours,
 double   oyGetCurrentLocalHour       ( double              time,
                                        int                 gmt_diff_sec );
 double   oyGetCurrentGMTHour         ( int               * gmt_to_local_time_diff_sec );
+const char *       oyPrintTime       ( );
 
 #if defined(__GNUC__)
 # define  OY_DBG_FORMAT_ "%s:%d %s() "

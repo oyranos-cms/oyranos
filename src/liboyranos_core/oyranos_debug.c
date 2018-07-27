@@ -158,4 +158,15 @@ double   oyGetCurrentGMTHour         ( int               * gmt_to_local_time_dif
 
   return dtime;
 }
+const char *       oyPrintTime       ( )
+{
+  int hour, minute, second, gmt_diff_second;
+  static char time[64];
+
+  oyGetCurrentGMTHour( &gmt_diff_second );
+  oySplitHour( oyGetCurrentLocalHour( oyGetCurrentGMTHour(0), gmt_diff_second ), &hour, &minute, &second );
+  sprintf( time, "%d:%.2d:%.2d.%03.d", hour, minute, second, (int)floor((oySeconds() - (long)oySeconds())*1000) );
+  return time;
+}
+
 
