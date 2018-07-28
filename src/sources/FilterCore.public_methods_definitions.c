@@ -66,19 +66,31 @@ const char * oyFilterCore_GetText    ( oyFilterCore_s    * filter,
   if(error)
     return 0;
 
-  if(name_type == oyNAME_NAME && !oyObject_GetName(s->oy_, name_type))
+  if( (name_type == oyNAME_NAME || name_type == oyNAME_JSON) &&
+      !oyObject_GetName(s->oy_, name_type))
   {
     text = oyAllocateWrapFunc_( 512, s->oy_ ? s->oy_->allocateFunc_ : 0 );
     if(!text)
       error = 1;
     if(!error)
-      sprintf(text, "<oyFilterCore_s registration=\"%s\" category=\"%s\" version=\"%d.%d.%d\"/>\n",
+    {
+      if(name_type == oyNAME_NAME)
+        sprintf(text, "<oyFilterCore_s registration=\"%s\" category=\"%s\" version=\"%d.%d.%d\"/>\n",
                   s->registration_,
                   s->category_,
                   s->api4_->version[0],
                   s->api4_->version[1],
                   s->api4_->version[2]
            );
+      else
+        sprintf(text, "{\n \"oyFilterCore_s\": {\n  \"registration\": \"%s\",\n  \"category\": \"%s\",\n  \"version\": \"%d.%d.%d\"\n }\n}",
+                  s->registration_,
+                  s->category_,
+                  s->api4_->version[0],
+                  s->api4_->version[1],
+                  s->api4_->version[2]
+           );
+    }
 
 #if 0
     if(error <= 0 && s->profiles_)
