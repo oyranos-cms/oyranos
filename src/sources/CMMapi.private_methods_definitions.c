@@ -112,7 +112,7 @@ oyOBJECT_e       oyCMMapi_Check_     ( oyCMMapi_s         * api_ )
                  oyNoEmptyString_m_(api->registration));
       }
       if(!(s->ui && s->ui->texts &&
-           s->ui->getText && s->ui->getText("name", oyNAME_NAME, (oyStruct_s*)
+           s->ui->getText && s->ui->getText("name", oyNAME_NICK, (oyStruct_s*)
                                             s->ui)))
       {
         error = 1;
