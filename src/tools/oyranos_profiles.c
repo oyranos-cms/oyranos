@@ -313,7 +313,7 @@ int main( int argc , char** argv )
           char * t = NULL;
           oyStringAddPrintf( &t, oyAllocateFunc_,oyDeAllocateFunc_, "meta:%s", meta );
           pattern = oyProfile_FromFile( t, OY_NO_LOAD, NULL );
-	  if(!pattern)
+          if(!pattern)
           {
             fprintf(stderr, "%s %s\n", _("wrong argument to option:"), meta);
             printfHelp(argc, argv);
