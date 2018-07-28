@@ -229,6 +229,7 @@ const char *     oyStructTypeToText  ( oyOBJECT_e          type )
     case oyOBJECT_JOB_S: text = "(oyJob_s)"; break;
     case oyOBJECT_MONITOR_HOOKS_S: text = "(oyMonitorHooks_s)"; break;
     case oyOBJECT_MONITOR_HOOKS2_S: text = "(oyMonitorHooks2_s)"; break;
+    case oyOBJECT_MONITOR_HOOKS3_S: text = "(oyMonitorHooks3_s)"; break;
     case oyOBJECT_MAX: text = "MAX - not defined"; break;
     default: { icUInt32Number i = oyValueUInt32(type);
                static char t[8];

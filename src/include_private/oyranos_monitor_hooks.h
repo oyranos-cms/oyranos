@@ -21,6 +21,38 @@
 extern "C" {
 #endif /* __cplusplus */
 
+typedef struct oyMonitor_s oyMonitor_s;
+/**
+ *  @ingroup monitor_hooks_api
+ *  @brief   create a monitor object
+ *
+ *  Almost any other calls of the hook need this object.
+ *
+ *  @param[in]     monitor_name        the identifier of the device as returned
+ *                                     by oyGetAllMonitorNames_f
+ *  @return                            object
+ *
+ *  @version Oyranos Monitor: 0.9.7
+ *  @date    2018/07/22
+ *  @since   2018/07/22 (Oyranos Monitor: 0.9.7)
+ */
+typedef oyMonitor_s * (*oyGetMonitorFromName_f) (
+                                       const char        * monitor_name );
+/**
+ *  @ingroup monitor_hooks_api
+ *  @brief   delete a monitor object
+ *
+ *  Release all resources of the monitor object.
+ *
+ *  @param[in]     monitor             object
+ *  @return                            0 - success; < 0 - issue; > 0 - error
+ *
+ *  @version Oyranos Monitor: 0.9.7
+ *  @date    2018/07/22
+ *  @since   2018/07/22 (Oyranos Monitor: 0.9.7)
+ */
+typedef int  (*oyFreeMonitor_f)      ( oyMonitor_s      ** monitor );
+
 #define OY_CALIB_ERROR 0x01                 /**< system error, e.g. xcalib not installed */
 #define OY_CALIB_VCGT_NOT_CONTAINED 0x04    /**< vcgt not found inside ICC profile */
 #define OY_CALIB_DEVICE_NOT_SUPPORTED 0x08  /**< device can not be calibrated */
@@ -34,8 +66,7 @@ extern "C" {
  *  The calibration data is inside the non standard vcgt tag. This
  *  VideCardGammaTable (vcgt) is uploaded into the devices gamma ramps.
  *
- *  @param[in]     monitor_name        the identifier of the device as returned
- *                                     by oyGetAllMonitorNames_f
+ *  @param[in]     monitor             object
  *  @param[in]     profle_name         the fopen()able on disk file name
  *  @param[in]     profile_data        a memory block containing a ICC profile
  *  @param[in]     profile_data_size   the size of profile_data
@@ -53,7 +84,7 @@ extern "C" {
  *  @since   2018/02/22 (Oyranos Monitor: 0.9.7)
  */
 typedef int  (*oySetupMonitorCalibration_f) (
-                                       const char        * monitor_name,
+                                       oyMonitor_s       * monitor,
                                        const char        * profil_name,
                                        const char        * profile_data,
                                        size_t              profile_data_size );
@@ -67,8 +98,7 @@ typedef int  (*oySetupMonitorCalibration_f) (
  *  handling protocols and API's. This function is for the device specific
  *  setup part two.
  *
- *  @param[in]     monitor_name        the identifier of the device as returned
- *                                     by oyGetAllMonitorNames_f
+ *  @param[in]     monitor             object
  *  @param[in]     profle_name         the fopen()able on disk file name
  *  @param[in]     profile_data        a memory block containing a ICC profile
  *  @param[in]     profile_data_size   the size of profile_data
@@ -79,7 +109,7 @@ typedef int  (*oySetupMonitorCalibration_f) (
  *  @since   2016/11/27 (Oyranos Monitor: 0.9.6)
  */
 typedef int  (*oySetupMonitorProfile_f) (
-                                       const char        * monitor_name,
+                                       oyMonitor_s       * monitor,
                                        const char        * profil_name,
                                        const char        * profile_data,
                                        size_t              profile_data_size );
@@ -93,8 +123,7 @@ typedef int  (*oySetupMonitorProfile_f) (
  *  handling protocols and API's. This function is for the device specific
  *  setup cleaning.
  *
- *  @param[in]     monitor_name        the identifier of the device as returned
- *                                     by oyGetAllMonitorNames_f
+ *  @param[in]     monitor             object
  *  @return                            status
  *
  *  @version Oyranos Monitor: 0.9.6
@@ -102,7 +131,7 @@ typedef int  (*oySetupMonitorProfile_f) (
  *  @since   2016/11/27 (Oyranos Monitor: 0.9.6)
  */
 typedef int  (*oyUnsetMonitorProfile_f) (
-                                       const char        * monitor_name );
+                                       oyMonitor_s       * monitor );
 
 /** Function oyGetRectangleFromMonitor_f
  *  @ingroup monitor_hooks_api
@@ -111,8 +140,7 @@ typedef int  (*oyUnsetMonitorProfile_f) (
  *  Display devices typical cover a certain pixel area and have offsets to
  *  neighbours.
  *
- *  @param[in]     monitor_name        the identifier of the device as returned
- *                                     by oyGetAllMonitorNames_f
+ *  @param[in]     monitor             object
  *  @param[in]     x                   x offset
  *  @param[in]     y                   y offset
  *  @param[in]     width               w dimension
@@ -124,7 +152,7 @@ typedef int  (*oyUnsetMonitorProfile_f) (
  *  @since   2016/11/27 (Oyranos Monitor: 0.9.6)
  */
 typedef int  (*oyGetRectangleFromMonitor_f) (
-                                       const char        * monitor_name,
+                                       oyMonitor_s       * monitor,
                                        double            * x,
                                        double            * y,
                                        double            * width,
@@ -134,8 +162,7 @@ typedef int  (*oyGetRectangleFromMonitor_f) (
  *  @ingroup monitor_hooks_api
  *  @brief   get a system specific monitor profile
  *
- *  @param[in]     monitor_name        the identifier of the device as returned
- *                                     by oyGetAllMonitorNames_f
+ *  @param[in]     monitor             object
  *  @param[in]     flags               profile selector
  *                                     - default: Return a target space profile.
  *                                                That will be the device
@@ -154,7 +181,7 @@ typedef int  (*oyGetRectangleFromMonitor_f) (
  *  @since   2016/11/27 (Oyranos Monitor: 0.9.6)
  */
 typedef char * (*oyGetMonitorProfile_f) (
-                                       const char        * monitor_name,
+                                       oyMonitor_s       * monitor,
                                        int                 flags,
                                        size_t            * size );
 
@@ -187,7 +214,7 @@ typedef int  (*oyGetAllMonitorNames_f)(const char        * display_name,
  *  provide a way for system specific replacements in case the EDID is
  *  currently not available.
  *
- *  @param[in]     monitor_name        the system specific display name
+ *  @param[in]     monitor             object
  *  @param[out]    manufacturer        from EDID
  *  @param[out]    mnft                the three letter abbeviation from EDID
  *  @param[out]    model               from EDID
@@ -228,7 +255,7 @@ typedef int  (*oyGetAllMonitorNames_f)(const char        * display_name,
  *  @date    2016/11/27
  *  @since   2016/11/27 (Oyranos Monitor: 0.9.6)
  */
-typedef int  (*oyGetMonitorInfo_f)   ( const char        * monitor_name,
+typedef int  (*oyGetMonitorInfo_f)   ( oyMonitor_s       * monitor,
                                        char             ** manufacturer,
                                        char             ** mnft,
                                        char             ** model,
@@ -246,23 +273,25 @@ typedef int  (*oyGetMonitorInfo_f)   ( const char        * monitor_name,
                                        size_t            * edid_size,
                                        int                 refresh_edid );
 
-/** @struct  oyMonitorHooks2_s
+/** @struct  oyMonitorHooks3_s
  *  @ingroup monitor_hooks_api
  *  @brief   provide a set of hooks to enable support for a display system
  *
- *  The oyMonitorHooks2_s is used by the oyranos_cmm_disp.c code in order to
+ *  The oyMonitorHooks3_s is used by the oyranos_cmm_disp.c code in order to
  *  wire the hooks into the Oyranos device config scheme.
  *
  *  @version Oyranos Monitor: 0.9.7
- *  @date    2018/02/22
+ *  @date    2018/07/22
  *  @since   2016/11/27 (Oyranos Monitor: 0.9.6)
  */
 typedef struct {
-  int              type;               /**< set to 122 for ABI compatibility with the actual used header version */
+  int              type;               /**< set to 123 for ABI compatibility with the actual used header version */
   char             nick[8];            /**< four byte nick name of module + terminating zero */
   int              version;            /**< set to module version; Major * 10000 + Minor * 100 + Micro */
   const char *     help_system_specific; /**< System specific description for developers. E.g. how monitor_name's are build etc. */
   const char *     rank_map;           /**< optional JSON rank map */
+  oyGetMonitorFromName_f      getMonitor;             /**< obtain a monitor object */
+  oyFreeMonitor_f             freeMonitor;            /**< release a monitor object */
   oySetupMonitorCalibration_f setupCalibration;       /**< vcgt activation */
   oySetupMonitorProfile_f     setupProfile;           /**< ICC profile activation */
   oyUnsetMonitorProfile_f     unsetProfile;           /**< ICC profile deactivation */
@@ -270,7 +299,7 @@ typedef struct {
   oyGetMonitorProfile_f       getProfile;             /**< obtain a ICC profile */
   oyGetAllMonitorNames_f      getAllMonitorNames;     /**< detect all monitors to present as list to users */
   oyGetMonitorInfo_f          getInfo;                /**< obtain info to compare the device with other devices. */
-} oyMonitorHooks2_s;
+} oyMonitorHooks3_s;
 
 #ifdef __cplusplus
 } /* extern "C" */

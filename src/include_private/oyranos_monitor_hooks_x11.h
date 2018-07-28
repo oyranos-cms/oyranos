@@ -56,7 +56,7 @@ typedef enum {
 } oyX11INFO_SOURCE_e;
 
 /** \internal  platformdependent */
-typedef struct {
+typedef struct oyMonitor_s {
   int          type_;                  /**< object type oyOBJECT_MONITOR_S */
   char         *name;        /**< traditional display name - host:0 / :0 */
   char         *host;        /**< host name only - host */
@@ -76,38 +76,38 @@ typedef struct {
 # endif
   char               * system_port;    /**< the operating systems port name */
   oyX11INFO_SOURCE_e   info_source; /**< */
-} oyX1Monitor_s;
+} oyMonitor;
 
-oyX1Monitor_s* oyX1Monitor_newFrom_      ( const char        * display_name,
-                                       int                 expensive );
-int          oyX1Monitor_release_      ( oyX1Monitor_s      ** disp );
+oyMonitor_s* oyX1Monitor_newFrom_      ( const char      * display_name,
+                                         int               expensive );
+int          oyX1Monitor_release_      ( oyMonitor_s    ** disp );
 
-const char*  oyX1Monitor_name_         ( oyX1Monitor_s       * disp );
-const char*  oyX1Monitor_hostName_     ( oyX1Monitor_s       * disp );
-const char*  oyX1Monitor_identifier_   ( oyX1Monitor_s       * disp );
-const char * oyX1Monitor_systemPort_   ( oyX1Monitor_s       * disp );
-char*        oyX1Monitor_screenNumber_ ( oyX1Monitor_s       * disp );
-int          oyX1Monitor_deviceScreenNumber_( oyX1Monitor_s  * disp );
-int          oyX1Monitor_number_       ( oyX1Monitor_s       * disp );
-int          oyX1Monitor_screen_       ( oyX1Monitor_s       * disp );
-int          oyX1Monitor_x_            ( oyX1Monitor_s       * disp );
-int          oyX1Monitor_y_            ( oyX1Monitor_s       * disp );
-int          oyX1Monitor_width_        ( oyX1Monitor_s       * disp );
-int          oyX1Monitor_height_       ( oyX1Monitor_s       * disp );
+const char*  oyX1Monitor_name_         ( oyMonitor_s     * disp );
+const char*  oyX1Monitor_hostName_     ( oyMonitor_s     * disp );
+const char*  oyX1Monitor_identifier_   ( oyMonitor_s     * disp );
+const char * oyX1Monitor_systemPort_   ( oyMonitor_s     * disp );
+char*        oyX1Monitor_screenNumber_ ( oyMonitor_s     * disp );
+int          oyX1Monitor_deviceScreenNumber_( oyMonitor_s* disp );
+int          oyX1Monitor_number_       ( oyMonitor_s     * disp );
+int          oyX1Monitor_screen_       ( oyMonitor_s     * disp );
+int          oyX1Monitor_x_            ( oyMonitor_s     * disp );
+int          oyX1Monitor_y_            ( oyMonitor_s     * disp );
+int          oyX1Monitor_width_        ( oyMonitor_s     * disp );
+int          oyX1Monitor_height_       ( oyMonitor_s     * disp );
 
 
-Display*     oyX1Monitor_device_       ( oyX1Monitor_s       * disp );
+Display*     oyX1Monitor_device_       ( oyMonitor_s     * disp );
 oyX11INFO_SOURCE_e 
-             oyX1Monitor_infoSource_   ( oyX1Monitor_s       * disp );
+             oyX1Monitor_infoSource_   ( oyMonitor_s     * disp );
 # ifdef HAVE_XRANDR
 XRRScreenResources *
-             oyX1Monitor_xrrResource_  ( oyX1Monitor_s       * disp );
-RROutput     oyX1Monitor_xrrOutput_    ( oyX1Monitor_s       * disp );
+             oyX1Monitor_xrrResource_  ( oyMonitor_s     * disp );
+RROutput     oyX1Monitor_xrrOutput_    ( oyMonitor_s     * disp );
 XRROutputInfo *
-             oyX1Monitor_xrrOutputInfo_( oyX1Monitor_s       * disp );
-int          oyX1Monitor_activeOutputs_( oyX1Monitor_s       * disp );
-int          oyX1Monitor_rrVersion_    ( oyX1Monitor_s       * disp );
-int          oyX1Monitor_rrScreen_     ( oyX1Monitor_s       * disp );
+             oyX1Monitor_xrrOutputInfo_( oyMonitor_s     * disp );
+int          oyX1Monitor_activeOutputs_( oyMonitor_s     * disp );
+int          oyX1Monitor_rrVersion_    ( oyMonitor_s     * disp );
+int          oyX1Monitor_rrScreen_     ( oyMonitor_s     * disp );
 # endif
 
 int          oyX1MonitorProfileSetup ( const char        * display_name,
@@ -120,7 +120,7 @@ int          oyX1Rectangle_FromDevice( const char        * device_name,
                                        double            * y,
                                        double            * width,
                                        double            * height );
-char *       oyX1GetMonitorProfile   ( const char        * device_name,
+char *       oyX1GetMonitorProfile   ( oyMonitor_s       * disp,
                                        int                 flags,
                                        size_t            * size );
 int      oyX1GetAllScreenNames       ( const char        * display_name,
@@ -130,7 +130,7 @@ int      oyX1MoveColorServerProfiles ( const char        * display_name,
                                        int                 setup );
 
 
-int      oyX1GetMonitorInfo          ( const char        * display,
+int      oyX1GetMonitorInfo          ( oyMonitor_s       * disp,
                                        char             ** manufacturer,
                                        char             ** mnft,
                                        char             ** model,
@@ -149,24 +149,24 @@ int      oyX1GetMonitorInfo          ( const char        * display,
                                        int                 refresh_edid );
 
 
-char *   oyX1Monitor_getProperty_    ( oyX1Monitor_s       * disp,
+char *   oyX1Monitor_getProperty_    ( oyMonitor_s       * disp,
                                        const char        * prop_name,
                                        const char       ** prop_name_xrandr,
                                        size_t            * prop_size );
-int      oyX1Monitor_setProperty_    ( oyX1Monitor_s     * disp,
+int      oyX1Monitor_setProperty_    ( oyMonitor_s       * disp,
                                        const char        * prop_name,
                                        char              * prop,
                                        size_t              prop_size );
-int      oyX1GetMonitorEdid          ( oyX1Monitor_s     * disp,
+int      oyX1GetMonitorEdid          ( oyMonitor_s       * disp,
                                        char             ** edid,
                                        size_t            * edid_size,
                                        int                 refresh_edid );
-void  oyX1Monitor_setCompatibility   ( oyX1Monitor_s     * disp,
+void  oyX1Monitor_setCompatibility   ( oyMonitor_s       * disp,
                                        const char        * profile_name );
-int   oyX1Monitor_getScreenFromDisplayName_( oyX1Monitor_s   * disp );
+int   oyX1Monitor_getScreenFromDisplayName_( oyMonitor_s * disp );
 char** oyX1GetAllScreenNames_        ( const char        * display_name,
                                        int               * n_scr );
-int    oyX1Monitor_getScreenGeometry_( oyX1Monitor_s     * disp );
+int    oyX1Monitor_getScreenGeometry_( oyMonitor_s       * disp );
 char * oyX1ChangeScreenName_         ( const char        * display_name,
                                        int                 screen );
 

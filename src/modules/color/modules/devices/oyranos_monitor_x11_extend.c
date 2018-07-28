@@ -390,7 +390,7 @@ int  oyMoveColorServerProfiles       ( const char        * display_name,
                                        int                 setup )
 {
   char * screen_name = oyX1ChangeScreenName_( display_name, screen );
-  oyX1Monitor_s * disp = oyX1Monitor_newFrom_( screen_name, 1 );
+  oyMonitor_s * disp = oyX1Monitor_newFrom_( screen_name, 1 );
   char * dev_prof;
   size_t dev_prof_size = 0;
   /* select profiles matching actual capabilities */

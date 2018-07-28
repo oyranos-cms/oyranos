@@ -222,6 +222,34 @@ void               ConfigsUsage      ( oyStruct_s        * options )
   return;
 }
 
+oyMonitor_s *    dispDeviceGetMonitor( oyConfig_s        * device )
+{
+  const char * device_name = oyConfig_FindString( device, "device_name", 0 );
+  oyPointer_s * oy_struct = (oyPointer_s*)oyOptions_GetType( *oyConfig_GetOptions( device, "data" ), -1, "device_handle",
+                                              oyOBJECT_POINTER_S );
+  oyMonitor_s * moni = (oyMonitor_s*) oyPointer_GetPointer( oy_struct );
+  oyPointer_Release( &oy_struct );
+
+  if(moni)
+    return moni;
+
+  moni = GetMonitorFromName( device_name );
+  if(moni)
+  {
+    /*Handle "device_handle" option */
+    oyPointer_s * handle_ptr = oyPointer_New(0);
+    oyPointer_Set(handle_ptr,
+                            CMM_NICK,
+                            "handle",
+                            (oyPointer)moni,
+                            "FreeMonitor",
+                            (oyPointer_release_f) FreeMonitor );
+    oyOptions_MoveInStruct( oyConfig_GetOptions( device, "data" ),
+                                      MONITOR_REGISTRATION_BASE OY_SLASH "device_handle",
+                                      (oyStruct_s **) &handle_ptr, OY_CREATE_NEW);
+  }
+  return moni;
+}
 
 int              DeviceFromName_     ( const char        * device_name,
                                        oyOptions_s       * options,
@@ -230,6 +258,7 @@ int              DeviceFromName_     ( const char        * device_name,
   const char * value3 = 0;
   int error = !device;
   oyOption_s * o = 0;
+  oyMonitor_s * moni = NULL;
 
     value3 = oyOptions_FindString( options, "edid", 0 );
 
@@ -255,18 +284,36 @@ int              DeviceFromName_     ( const char        * device_name,
       {
         char * edid_data = NULL;
         size_t edid_size = 0;
-        error = GetMonitorInfo_lib( device_name,
+        moni = GetMonitorFromName( device_name );
+        if(moni)
+        {
+          /*Handle "device_handle" option */
+          oyPointer_s * handle_ptr = oyPointer_New(0);
+          oyPointer_Set(handle_ptr,
+                            CMM_NICK,
+                            "handle",
+                            (oyPointer)moni,
+                            "FreeMonitor",
+                            (oyPointer_release_f) FreeMonitor );
+          oyOptions_MoveInStruct( oyConfig_GetOptions( *device, "data" ),
+                                      MONITOR_REGISTRATION_BASE OY_SLASH "device_handle",
+                                      (oyStruct_s **) &handle_ptr, OY_CREATE_NEW);
+
+          error = GetMonitorInfo_lib( moni,
                       &EDID_manufacturer, &EDID_mnft, &EDID_model, &EDID_serial,
                       &EDID_vendor, &display_geometry, &system_port, &host,
                       &week, &year, &EDID_mnft_id, &EDID_model_id,
                                         colors,
                                         &edid_data, &edid_size,
                                         oyOptions_FindString( options, "edid", "refresh" ) ? 1 : 0 );
+        } else
+          _msg(oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "Unable to open monitor device \"%s\"\n", OY_DBG_ARGS_, device_name);
+
         if(edid_data && edid_size)
         {
           edid = oyBlob_New(0);
           oyBlob_SetFromData( edid, edid_data, edid_size, 0 );
-	  free( edid_data );
+          free( edid_data );
         }
       }
 
@@ -447,6 +494,8 @@ int                Configs_FromPattern (
                                        MONITOR_REGISTRATION OY_SLASH
                                        "device_name",
                                        texts[i], OY_CREATE_NEW );
+        if(error <= 0)
+        error = DeviceFromName_( texts[i], options, &device );
 
         oyConfigs_MoveIn( devices, &device, -1 );
       }
@@ -490,15 +539,22 @@ int                Configs_FromPattern (
         char * data = oyProfile_GetMem( p, &size, 0, oyAllocateFunc_ );
         const char * profile_fullname = oyProfile_GetFileName( p, -1 );
         int gamma_only = oyOptions_FindString( options, "gamma_only", "yes" ) != NULL;
+        oyMonitor_s * moni = GetMonitorFromName( odevice_name );
+        error = moni?0:-1;
 
-        _msg(oyMSG_DBG, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n "
+        _msg(error?oyMSG_WARN:oyMSG_DBG, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n "
                   "command: setup on device_name: %s \"%s\" %lu%s",
                   OY_DBG_ARGS_, odevice_name, oprofile_name, size,
                   gamma_only?" only VCGT":"" );
 
-        if(!gamma_only)
-          error = SetupMonitorProfile( odevice_name, profile_fullname, data, size );
-        error = SetupMonitorCalibration( odevice_name, profile_fullname, data, size );
+        if(error == 0)
+        {
+          if(!gamma_only)
+            error = SetupMonitorProfile( moni, profile_fullname, data, size );
+          error = SetupMonitorCalibration( moni, profile_fullname, data, size );
+
+          FreeMonitor( &moni );
+        }
         oyProfile_Release( &p );
       }
 
@@ -518,10 +574,16 @@ int                Configs_FromPattern (
                 );
       else
       {
-        _msg(oyMSG_DBG, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n "
+        oyMonitor_s * moni = GetMonitorFromName( odevice_name );
+        error = moni?0:-1;
+        _msg(error?oyMSG_WARN:oyMSG_DBG, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n "
                   "command: unset on device_name: \"%s\"",
                   OY_DBG_ARGS_, odevice_name );
-        error = UnsetMonitorProfile( odevice_name );
+        if(error == 0)
+        {
+          error = UnsetMonitorProfile( moni );
+          FreeMonitor( &moni );
+        }
       }
 
       goto cleanup;
@@ -669,6 +731,7 @@ int            Configs_Modify        ( oyConfigs_s       * devices,
       /** 3.1.1 iterate over all provided devices */
       for( i = 0; i < n; ++i )
       {
+        oyMonitor_s * moni;
         device = oyConfigs_Get( devices, i );
         rank = oyFilterRegistrationMatch( _api8.registration,
                                           oyConfig_GetRegistration(device),
@@ -683,13 +746,15 @@ int            Configs_Modify        ( oyConfigs_s       * devices,
         if(error <= 0)
         device_name = oyConfig_FindString( device, "device_name", 0 );
 
+        moni = dispDeviceGetMonitor( device );
+
         /** 3.1.3 tell the "device_rectangle" in a oyRectangle_s */
         if(oyOptions_FindString( options, "device_rectangle", 0 ) ||
            oyOptions_FindString( options, "oyNAME_NAME", 0 ))
         {
           double x,y,w,h;
           has = 0;
-          if(GetRectangleFromMonitor( device_name, &x,&y,&w,&h))
+          if(GetRectangleFromMonitor( moni, &x,&y,&w,&h))
           {
 #if defined(__APPLE__) && !defined(qarz)
             if(oy_debug)
@@ -784,6 +849,9 @@ int            Configs_Modify        ( oyConfigs_s       * devices,
                                      MONITOR_REGISTRATION OY_SLASH
                                      "edid",
                                      "yes", OY_CREATE_NEW );
+              if(oy_debug)
+                _msg( oyMSG_DBG, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n  "
+                     "CallingDeviceFromName_( %s )", OY_DBG_ARGS_, device_name );
               error = DeviceFromName_( device_name, options, &device );
               if(error)
               {
@@ -928,7 +996,7 @@ int            Configs_Modify        ( oyConfigs_s       * devices,
             error = -1;
           } else if(!has)
           {
-            data = GetMonitorProfile( device_name, flags, &size );
+            data = GetMonitorProfile( moni, flags, &size );
 
             if(data && size)
             {
@@ -1044,11 +1112,6 @@ int            Configs_Modify        ( oyConfigs_s       * devices,
           oyFree_m_( text );
         }
 
-        if(!oyOptions_FindString( options, "icc_profile.fallback", 0 ) &&
-           (oyOptions_FindString( options, "command", "properties" ) ||
-            oyOptions_FindString( options, "edid", "refresh" )))
-          error = DeviceFromName_( device_name, options, &device );
-
         /** 3.1.6 add the rank scheme to combine properties */
         if(error <= 0 && !oyConfig_GetRankMap(device))
           oyConfig_SetRankMap(device, _api8.rank_map );
@@ -1069,6 +1132,7 @@ int            Configs_Modify        ( oyConfigs_s       * devices,
       /** 3.1.1 iterate over all provided devices */
       for( i = 0; i < n; ++i )
       {
+        oyMonitor_s * moni;
         device = oyConfigs_Get( devices, i );
         rank = oyFilterRegistrationMatch( _api8.registration,
                                           oyConfig_GetRegistration(device),
@@ -1078,6 +1142,8 @@ int            Configs_Modify        ( oyConfigs_s       * devices,
           oyConfig_Release( &device );
           continue;
         }
+
+        moni = dispDeviceGetMonitor( device );
 
         /** 3.1.2 get the "device_name" */
         if(error <= 0)
@@ -1104,8 +1170,8 @@ int            Configs_Modify        ( oyConfigs_s       * devices,
                   gamma_only?"only VCGT":"" );
 
           if(!gamma_only)
-            error = SetupMonitorProfile( device_name, oprofile_name, data, size );
-          error = SetupMonitorCalibration( device_name, oprofile_name, data, size );
+            error = SetupMonitorProfile( moni, oprofile_name, data, size );
+          error = SetupMonitorCalibration( moni, oprofile_name, data, size );
           oyProfile_Release( &p );
         }
         oyConfig_Release( &device );
@@ -1124,6 +1190,7 @@ int            Configs_Modify        ( oyConfigs_s       * devices,
       /** 3.1.1 iterate over all provided devices */
       for( i = 0; i < n; ++i )
       {
+        oyMonitor_s * moni;
         device = oyConfigs_Get( devices, i );
         rank = oyFilterRegistrationMatch( _api8.registration,
                                           oyConfig_GetRegistration(device),
@@ -1133,6 +1200,8 @@ int            Configs_Modify        ( oyConfigs_s       * devices,
           oyConfig_Release( &device );
           continue;
         }
+
+        moni = dispDeviceGetMonitor( device );
 
         /** 3.1.2 get the "device_name" */
         if(error <= 0)
@@ -1151,7 +1220,7 @@ int            Configs_Modify        ( oyConfigs_s       * devices,
           _msg(oyMSG_DBG, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n "
                   "command: unset on device_name: \"%s\"",
                   OY_DBG_ARGS_, device_name );
-          error = UnsetMonitorProfile( device_name );
+          error = UnsetMonitorProfile( moni );
         }
 
         oyConfig_Release( &device );

@@ -28,7 +28,7 @@ extern "C" {
 
 #define CMM_NICK "oyX1"
 
-extern oyMonitorHooks2_s* oyX1MonitorHooks2;
+extern oyMonitorHooks3_s* oyX1MonitorHooks3;
 extern oyCMMapi10_s_      oyX1_api10_set_xcm_region_handler;
 #define next_api (oyCMMapi_s*) & oyX1_api10_set_xcm_region_handler
 
@@ -40,7 +40,7 @@ extern oyCMMapi10_s_      oyX1_api10_set_xcm_region_handler;
 #define Configs_Modify          catCMMfunc( oyX1, Configs_Modify )
 #define GetText                 catCMMfunc( oyX1, GetText )
 #define Api8UiGetText           catCMMfunc( oyX1, Api8UiGetText )
-#define hooks2                  catCMMfunc( oyX1, MonitorHooks2 )
+#define hooks3                  catCMMfunc( oyX1, MonitorHooks3 )
 #define _help_list              catCMMfunc( oyX1, _help_list )
 #define _help_properties        catCMMfunc( oyX1, _help_properties )
 #define _help_system_specific   catCMMstruct( oyX1, help_system_specific )
@@ -57,6 +57,8 @@ extern oyCMMapi10_s_      oyX1_api10_set_xcm_region_handler;
 #define _api8                   catCMMfunc( oyX1, _api8 )
 #define _cmm_module             catCMMfunc( oyX1, _cmm_module )
 #define _texts                  catCMMfunc( oyX1, _texts )
+#define GetMonitorFromName      catCMMstruct( oyX1, getMonitor )
+#define FreeMonitor             catCMMstruct( oyX1, freeMonitor )
 #define GetMonitorInfo_lib      catCMMstruct( oyX1, getInfo )
 #define GetAllScreenNames       catCMMstruct( oyX1, getAllMonitorNames )
 #define SetupMonitorCalibration catCMMstruct( oyX1, setupCalibration )

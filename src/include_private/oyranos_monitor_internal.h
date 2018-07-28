@@ -19,7 +19,7 @@
 
 #define CMM_VERSION {OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C}
 #define catCMMfunc(nick,func) nick ## func
-#define catCMMstruct(nick, func) nick ## MonitorHooks2 -> func
+#define catCMMstruct(nick, func) nick ## MonitorHooks3 -> func
 
 
 #endif /* OYRANOS_MONITOR_INTERNAL_H */
