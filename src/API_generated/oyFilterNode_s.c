@@ -1420,12 +1420,15 @@ OYAPI int  OYEXPORT
  *  @memberof oyFilterNode_s
  *  @brief    Node context to binary blob
  *
- *  Typical a cached context from a CMM will be returned. It is a intermediate
+ *  Typical a context from a CMM will be returned. It is a intermediate
  *  context from oyCMMapi4_s backend. For a CMM with a registration string
  *  including "icc_color", the context type should be "oyDL" and this function
  *  shall return a ICC device link profile.
  *  A converted context, which is suited for precessing by oyCMMapi7_s backends,
  *  is stored inside the node and can be obtained by oyFilterNode_GetContext().
+ *
+ *  The function is expensive, as it requests the data from the CMM without
+ *  caching.
  *
  *  @param         node                node object
  *  @param         object              the optional object

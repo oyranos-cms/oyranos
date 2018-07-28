@@ -715,7 +715,7 @@ void *       oyFilterNode_ContextToMem_
  *  of this transformer will on request be cached by Oyranos as well.
  *
  *  @param[in]     node                filter
- *  @param[in,out] blob                context to fill
+ *  @param[in,out] blob                context to fill; expensive
  *  @return                            error
  *
  *  @version Oyranos: 0.9.6
