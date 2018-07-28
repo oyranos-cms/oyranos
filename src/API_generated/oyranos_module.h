@@ -82,7 +82,7 @@ typedef const char*(* oyCMMGetText_f)( const char        * select,
 
 #define oyCMM_PROFILE "oyPR"
 #define oyCMM_COLOR_CONVERSION "oyCC"
-#define oyCOLOR_ICC_DEVICE_LINK "oyDL"
+#define oyCOLOR_ICC_DEVICE_LINK "oyDL"             /**< A color transformation in the format of a ICC device link profile. */
 
 
 #define OY_FILTEREDGE_FREE             0x01        /**< list free edges */
