@@ -2614,6 +2614,25 @@ oyTESTRESULT_e testEffects ()
   if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromDouble() error: %d", error )
   fprintf(zout,"white point XYZ %g %g %g -> %g %g %g\n", src_XYZ[0], src_XYZ[1], src_XYZ[2], dst_XYZ[0], dst_XYZ[1], dst_XYZ[2] );
   error = oyOptions_Handle( "//" OY_TYPE_STD "/create_profile.white_point_adjust.bradford",
+                            opts,"create_profile.white_point_adjust.bradford.file_name",
+                            &result_opts );
+  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_Handle() error: %d", error )
+  text = oyOptions_FindString(result_opts, "file_name", 0);
+  if(text)
+  {
+    PRINT_SUB( oyTESTRESULT_SUCCESS, 
+    "oyOptions_Handle(\"create_profile.file_name\"): %s", text );
+  } else if(error == -1)
+  {
+    PRINT_SUB( oyTESTRESULT_XFAIL,
+    "oyOptions_Handle(\"create_profile.file_name\") no" );
+  } else
+  {
+    PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyOptions_Handle(\"create_profile.filename\") zero" );
+  }
+
+  error = oyOptions_Handle( "//" OY_TYPE_STD "/create_profile.white_point_adjust.bradford",
                             opts,"create_profile.white_point_adjust.bradford",
                             &result_opts );
   if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_Handle() error: %d", error )
