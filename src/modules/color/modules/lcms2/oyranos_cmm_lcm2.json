@@ -1,0 +1,161 @@
+{
+  "org": {
+    "freedesktop": {
+      "openicc": {
+        "comment": "This is the OpenICC namespace",
+        "modules": [{
+            "comment": "This is the OpenICC-CMM-API namespace",
+            "comment": "Internationalisation: Please translate only the following keys label, name, description, help. The translated strings shall be add as new keys at the same paths level by appending .lang_country identifier. e.g. org/freedesktop/openicc/modules/[0]/name=ExampleCMM => org/freedesktop/openicc/modules/[0]/name.de=BeispielCMM",
+            "openicc_module_api_version": "1",
+            "comment": "We describe here a particular CMM. Each property object contains at least one 'name' key. All values shall be strings. *nick* or *description* keys are optional. If they are not contained, fall back to *name*. Well known objects are *manufacturer*, *copyright*, *license*, *url*, *support*, *download*, *sources*, *openicc_modules_author*, *documentation* and *logo*. The *modules/[]/nick* shall contain a four byte string in as the CMM identifier.",
+            "type": "CMM",
+            "label": "CMM",
+            "nick": "lcm2",
+            "name": "Little CMS 2",
+            "description": "Little Color Management System",
+            "information": [{
+                "type": "manufacturer",
+                "label": "Manufacturer",
+                "name": "Marti Maria",
+                "nick": "mm2",
+                "description": "http://www.littlecms.com"
+              },{
+                "type":"copyright",
+                "label": "Copyright",
+                "name": "Copyright 2018 Marti Maria"
+              },{
+                "type": "license",
+                "label": "License",
+                "name": "MIT",
+                "description": "http://www.littlecms.com"
+              },{
+                "type": "url",
+                "label": "URL",
+                "name": "http://www.littlecms.com"
+              },{
+                "type": "support",
+                "label": "Support",
+                "name": "http://www.littlecms.com/"
+              },{
+                "type": "download",
+                "label": "Download",
+                "name": "http://www.littlecms.com/"
+              },{
+                "type": "sources",
+                "label": "Sources",
+                "name": "http://www.littlecms.com/"
+              },{
+                "type": "development",
+                "label": "Development",
+                "name": "https://github.com/mm2/little-cms"
+              },{
+                "type": "openicc_module_author",
+                "label": "OpenICC CMM Author",
+                "name": "Kai-Uwe Behrmann",
+                "description": "http://www.behrmann.name"
+              },{
+                "type": "documentation",
+                "label": "Documentation",
+                "name": "http://www.openicc.info",
+                "description": "The module expects options for profiles and rendering_intent. Optional are rendering_bpc, cmyk_cmyk_black_preservation, precalculation_curves, adaption_state, no_white_on_white_fixup."
+              }],
+            "logo": "lcms_logo2",
+            "groups": [{
+                "comment": "Logical group",
+                "name": "Little CMS 2",
+                "description": "Extended Options",
+                "help": "Additional options.",
+                "properties": "h3.frame",
+                "groups": [{
+                    "comment": "Logical sub group for presentation. *name* might be shown as label alone or together with *description*.",
+                    "name": "CMM",
+                    "description": "Options",
+                    "help": "CMM behaviour options for color rendering, precission and fixes.",
+                    "properties": "h4",
+                    "options": [{
+                        "key": "org/freedesktop/openicc/icc_color/cmyk_cmyk_black_preservation",
+                        "default": "0",
+                        "properties": "rendering",
+                        "choices": [{
+                            "nick": "0",
+                            "name": "[none]"
+                          },{
+                            "nick": "1",
+                            "name": "LCMS_PRESERVE_PURE_K"
+                          },{
+                            "nick": "2",
+                            "name": "LCMS_PRESERVE_K_PLANE"
+                          }],
+                        "name": "Black Preservation",
+                        "description": "Decide how to preserve the black channel for Cmyk to Cmyk transforms",
+                        "help": "Cmyk to Cmyk transforms can provide various strategies to preserve the black only channel. None means, black might change to Cmy and thus text prints not very well. LittleCMS 2 has added two different modes to deal with that: Black-ink-only preservation and black-plane preservation. The first is simple and effective: do all the colorimetric transforms but keep only K (preserving L*) where the source image is only black. The second mode is fair more complex and tries to preserve the WHOLE K plane."
+                      },{
+                        "key": "org/freedesktop/openicc/icc_color/precalculation",
+                        "default": "0",
+                        "properties": "rendering.advanced",
+                        "choices": [{
+                            "nick": "0",
+                            "name": "normal"
+                          },{
+                            "nick": "1",
+                            "name": "LCMS2_NOOPTIMIZE"
+                          },{
+                            "nick": "2",
+                            "name": "LCMS2_HIGHRESPRECALC"
+                          },{
+                            "nick": "3",
+                            "name": "LCMS2_LOWRESPRECALC"
+                          }],
+                        "name": "Optimization",
+                        "description": "Color Transforms can be differently stored internally",
+                        "help": "Little CMS tries to optimize profile chains whatever possible. There are some built-in optimization schemes, and you can add new schemas by using a plug-in. This generally improves the performance of the transform, but may introduce a small delay of 1-2 seconds when creating the transform. If you are going to transform just few colors, you don't need this precalculations. Then, the flag cmsFLAGS_NOOPTIMIZE in cmsCreateTransform() can be used to inhibit the optimization process. See the API reference for a more detailed discussion of the flags."
+                      },{
+                        "key": "org/freedesktop/openicc/icc_color/precalculation_curves",
+                        "default": "1",
+                        "properties": "rendering.advanced.boolean",
+                        "choices": [{
+                            "nick": "0",
+                            "name": "[none]"
+                          },{
+                            "nick": "1",
+                            "name": "LCMS2_POST+PRE_CURVES"
+                          }],
+                        "name": "Curves for Optimization",
+                        "description": "Color Transform CLUT's can additionally use curves for special cases",
+                        "help": "Little CMS can use curves before and after CLUT's for special cases like gamma encoded values to and from linear gamma values. Performance will suffer."
+                      },{
+                        "key": "org/freedesktop/openicc/icc_color/adaption_state",
+                        "default": "1",
+                        "properties": "rendering.advanced",
+                        "choices": [{
+                            "nick": "0",
+                            "name": "0.0"
+                          },{
+                            "nick": "1",
+                            "name": "1.0"
+                          }],
+                        "name": "Adaptation State",
+                        "description": "Adaptation state for absolute colorimetric intent",
+                        "help": "The adaption state should be between 0 and 1.0 and will apply to the absolute colorimetric intent."
+                      },{
+                        "key": "org/freedesktop/openicc/icc_color/no_white_on_white_fixup",
+                        "default": "1",
+                        "properties": "rendering.advanced",
+                        "choices": [{
+                            "nick": "0",
+                            "name": "No"
+                          },{
+                            "nick": "1",
+                            "name": "Yes"
+                          }],
+                        "name": "No White on White Fix",
+                        "description": "Skip White Point on White point alignment",
+                        "help": "Avoid force of White on White mapping. Default for absolute rendering intent."
+                      }]
+                  }]
+              }]
+          }]
+      }
+    }
+  }
+}

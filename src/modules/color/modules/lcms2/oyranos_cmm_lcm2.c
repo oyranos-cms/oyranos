@@ -41,6 +41,8 @@
 #include "oyranos_object_internal.h"
 #include "oyranos_string.h"
 
+#include "oyranos_cmm_lcm2.i18n.c"
+
 #ifdef _OPENMP
 #define USE_OPENMP 1
 #include <omp.h>
@@ -2124,37 +2126,35 @@ char * l2cmsImage_GetText            ( oyImage_s         * image,
   oyImage_s * s = image;
 
   /* describe the image */
-  oySprintf_( text,   "  <oyImage_s>\n");
+  oySprintf_( text,   "  {\n  \"oyImage_s\": {\n    \"oyProfile_s\": %s,\n", oyProfile_GetText(profile, oyNAME_JSON));
   hashTextAdd_m( text );
-  oySprintf_( text, "    %s\n", oyProfile_GetText(profile, oyNAME_NAME));
-  hashTextAdd_m( text );
-  oySprintf_( text,   "    <channels all=\"%d\" color=\"%d\" />\n", n,cchan_n);
+  oySprintf_( text,   "    \"channels\": {\n      \"all\": \"%d\",\n      \"color\": \"%d\"\n    },\n", n,cchan_n);
   hashTextAdd_m( text );
   oySprintf_( text,
-                      "    <offsets first_color_sample=\"%d\" next_pixel=\"%d\" />\n"
+                      "    \"offsets first_color_sample\": \"%d\",\n    \"next_pixel\": \"%d\",\n"
               /*"  next line = %d\n"*/,
               coff_x, oyImage_GetPixelLayout( s,oyPOFF_X )/*, mask[oyPOFF_Y]*/ );
   hashTextAdd_m( text );
 
   if(swap || oyToByteswap_m( pixel_layout ))
   {
-    hashTextAdd_m(    "    <swap" );
+    hashTextAdd_m(    "    \"swap\": {" );
     if(swap)
-      hashTextAdd_m(  " colorswap=\"yes\"" );
+      hashTextAdd_m(  "      \"colorswap\": \"yes\",\n" );
     if( oyToByteswap_m( pixel_layout ) )
-      hashTextAdd_m(  " byteswap=\"yes\"" );
-    hashTextAdd_m(    " />\n" );
+      hashTextAdd_m(  "      \"byteswap\": \"yes\"\n" );
+    hashTextAdd_m(    "    },\n" );
   }
 
   if( oyToFlavor_m( pixel_layout ) )
   {
-    oySprintf_( text, "    <flawor value=\"yes\" />\n" );
+    oySprintf_( text, ",\n    \"flawor\": {\n      \"value\": \"yes\"\n    },\n" );
     hashTextAdd_m( text );
   }
-  oySprintf_( text,   "    <sample_type value=\"%s[%dByte]\" />\n",
+  oySprintf_( text,   "    \"sample\": {\n      \"type\": \"%s\",\n      \"bytes\": \"%d\"\n    }\n",
                     oyDataTypeToText(t), so );
   hashTextAdd_m( text );
-  oySprintf_( text,   "  </oyImage_s>");
+  oySprintf_( text,   "  }\n}");
   hashTextAdd_m( text );
 
   oyDeAllocateFunc_(text);
@@ -2184,8 +2184,7 @@ char * l2cmsFilterNode_GetText        ( oyFilterNode_s    * node,
 #ifdef NO_OPT
   return oyStringCopy_( oyFilterNode_GetText( node, type ), allocateFunc );
 #else
-  const char * tmp = 0,
-             * model = 0;
+  const char * model = 0;
   char * hash_text = 0,
        * temp = 0;
   oyFilterNode_s * s = node;
@@ -2215,22 +2214,23 @@ char * l2cmsFilterNode_GetText        ( oyFilterNode_s    * node,
   verbose = oyOptions_FindString( node_tags, "verbose", "true" ) ? 1 : 0;
 
   /* 1. create hash text */
-  hashTextAdd_m( "<oyFilterNode_s>\n  " );
+  hashTextAdd_m( "{ \"node\": " );
 
   /* the filter text */
-  hashTextAdd_m( oyFilterCore_GetText( node_core, oyNAME_NAME ) );
+  hashTextAdd_m( oyFilterCore_GetText( node_core, oyNAME_JSON ) );
+  hashTextAdd_m( ",\n" );
 
   /* make a description */
   {
     /* input data */
-    hashTextAdd_m(   " <data_in>\n" );
+    hashTextAdd_m(   " \"data_in\": " );
     if(in_image)
     {
       temp = l2cmsImage_GetText( in_image, verbose, oyAllocateFunc_ );
       hashTextAdd_m( temp );
       oyDeAllocateFunc_(temp); temp = 0;
     }
-    hashTextAdd_m( "\n </data_in>\n" );
+    hashTextAdd_m( ",\n" );
 
     /* pick inbuild defaults */
     opts_tmp2 = oyOptions_FromText( l2cms_extra_options, 0, NULL );
@@ -2245,10 +2245,13 @@ char * l2cmsFilterNode_GetText        ( oyFilterNode_s    * node,
     oyOptions_Release( &opts_tmp );
 
     /* options -> xforms */
-    hashTextAdd_m(   " <oyOptions_s>\n" );
-    model = oyOptions_GetText( options, oyNAME_NAME );
-    hashTextAdd_m( model );
-    hashTextAdd_m( "\n </oyOptions_s>\n" );
+    if(model)
+    {
+      hashTextAdd_m(   " \"options\": " );
+      model = oyOptions_GetText( options, oyNAME_JSON );
+      hashTextAdd_m( model );
+      hashTextAdd_m( ",\n" );
+    }
     oyOptions_Release( &options );
 
     /* abstract profiles */
@@ -2258,13 +2261,13 @@ char * l2cmsFilterNode_GetText        ( oyFilterNode_s    * node,
     /* display profile */
     profiles_display_n = oyOptions_CountType( node_opts, "display.abstract.icc_profile", oyOBJECT_PROFILE_S );
     if(proof || effect_switch || profiles_display_n)
-    hashTextAdd_m(   " <oyProfiles_s>" );
+    hashTextAdd_m(   " \"profiles\": " );
     profiles = l2cmsProfilesFromOptions( node, plug, node_opts, "profiles_effect", effect_switch, verbose );
     n = oyProfiles_Count( profiles );
     for(i = 0; i < n; ++i)
     {
       p = oyProfiles_Get( profiles, i );
-      model = oyProfile_GetText( p, oyNAME_NAME );
+      model = oyProfile_GetText( p, oyNAME_JSON );
       hashTextAdd_m( "\n  " );
       hashTextAdd_m( model );
       oyProfile_Release( &p );
@@ -2278,28 +2281,39 @@ char * l2cmsFilterNode_GetText        ( oyFilterNode_s    * node,
                                   oyOBJECT_PROFILE_S, NULL, &o );
       p = (oyProfile_s*) oyOption_GetStruct( o, oyOBJECT_PROFILE_S );
       oyOption_Release( &o );
-      model = oyProfile_GetText( p, oyNAME_NAME );
+      model = oyProfile_GetText( p, oyNAME_JSON );
       hashTextAdd_m( "\n  " );
       hashTextAdd_m( model );
       oyProfile_Release( &p );
     }
 
     if(proof || effect_switch || profiles_display_n)
-    hashTextAdd_m( "\n </oyProfiles_s>\n" );
+    hashTextAdd_m( ",\n" );
 
     /* output data */
-    hashTextAdd_m(   " <data_out>\n" );
+    hashTextAdd_m(   " \"data_out\": " );
     if(out_image)
     {
       temp = l2cmsImage_GetText( out_image, verbose, oyAllocateFunc_ );
       hashTextAdd_m( temp );
-      oyDeAllocateFunc_(temp); temp = 0;
     }
-    hashTextAdd_m( "\n </data_out>\n" );
+    hashTextAdd_m( "\n}\n" );
   }
-  hashTextAdd_m( tmp );
 
-  hashTextAdd_m(   "</oyFilterNode_s>\n" );
+  /* add hash in the first line */
+  {
+    oyjl_val root = oyJsonParse( hash_text );
+    unsigned char hash[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+    uint32_t * h = (uint32_t*)&hash;
+
+    temp = oyJsonPrint( root );
+    oyMiscBlobGetMD5_(temp, strlen(temp), hash);
+    oySprintf_( hash_text, "%08x%08x%08x%08x\n", h[0], h[1], h[2], h[3] );
+    hashTextAdd_m( temp );
+
+    oyDeAllocateFunc_(temp); temp = 0;
+    oyjlTreeFree( root );
+  }
 
   oyOptions_Release( &node_opts );
   oyOptions_Release( &node_tags );
@@ -2952,20 +2966,21 @@ int            l2cmsCMMMessageFuncSet ( oyMessage_f         message_func )
 }
 
 char l2cms_extra_options[] = {
- "\n\
-  <" OY_TOP_SHARED ">\n\
-   <" OY_DOMAIN_INTERNAL ">\n\
-    <" OY_TYPE_STD ">\n\
-     <" "icc_color" ">\n\
-      <cmyk_cmyk_black_preservation.advanced>0</cmyk_cmyk_black_preservation.advanced>\n\
-      <precalculation.advanced>0</precalculation.advanced>\n\
-      <precalculation_curves.advanced>1</precalculation_curves.advanced>\n\
-      <adaption_state.advanced>1.0</adaption_state.advanced>\n\
-      <no_white_on_white_fixup.advanced>1</no_white_on_white_fixup.advanced>\n\
-     </" "icc_color" ">\n\
-    </" OY_TYPE_STD ">\n\
-   </" OY_DOMAIN_INTERNAL ">\n\
-  </" OY_TOP_SHARED ">\n"
+"{\n\
+  \"" OY_TOP_SHARED "\": {\n\
+   \"" OY_DOMAIN_INTERNAL "\": {\n\
+    \"" OY_TYPE_STD "\": {\n\
+     \"" "icc_color" "\": {\n\
+      \"cmyk_cmyk_black_preservation.advanced\": \"0\",\n\
+      \"precalculation.advanced\": \"0\",\n\
+      \"precalculation_curves.advanced\": \"1\",\n\
+      \"adaption_state.advanced\": \"1.0\",\n\
+      \"no_white_on_white_fixup.advanced\": \"1\"\n\
+     }\n\
+    }\n\
+   }\n\
+  }\n\
+}\n"
 };
 
 #define A(long_text) STRING_ADD( tmp, long_text)
@@ -2973,8 +2988,10 @@ char l2cms_extra_options[] = {
 /** Function l2cmsGetOptionsUI
  *  @brief   return XFORMS for matching options
  *
- *  @version Oyranos: 0.9.5
- *  @date    2014/01/08
+ *  Static options.
+ *
+ *  @version Oyranos: 0.9.7
+ *  @date    2018/06/14
  *  @since   2009/07/29 (Oyranos: 0.1.10)
  */
 int l2cmsGetOptionsUI                ( oyCMMapiFilter_s   * module OY_UNUSED,
@@ -2985,11 +3002,7 @@ int l2cmsGetOptionsUI                ( oyCMMapiFilter_s   * module OY_UNUSED,
 {
   char * tmp = 0;
 
-  tmp = (char *)oyOptions_FindString( options,
-                                      "cmyk_cmyk_black_preservation", 0 );
-  if(tmp == 0)
-    return 0;
-
+#if 0
   tmp = oyStringCopy_( "\
   <xf:group type=\"frame\">\
     <xf:label>little CMS 2 ", oyAllocateFunc_ );
@@ -3136,6 +3149,9 @@ int l2cmsGetOptionsUI                ( oyCMMapiFilter_s   * module OY_UNUSED,
     tmp = t; t = 0;
   } else
     return 1;
+#else
+  tmp = oyStringCopy( oyranos_json, allocateFunc );
+#endif
 
   *ui_text = tmp;
 
@@ -3154,8 +3170,7 @@ int l2cmsGetOptionsUI                ( oyCMMapiFilter_s   * module OY_UNUSED,
 
 /* OY_LCM2_PARSE_CGATS -------------------------- */
 
-/** Function lcm2ParseCGATS
- *  @brief   Parse a CGATS text
+/** @brief   TODO: Parse a CGATS text
  *
  *  @version Oyranos: 0.9.7
  *  @since   2017/11/26 (Oyranos: 0.9.7)
@@ -3167,7 +3182,7 @@ oyImage_s* lcm2ParseCGATS          ( const char        * cgats )
   oyImage_s * spec = NULL;
   if(error) return spec;
 
-  //cmsCGATS
+  /** @todo implement CGATS parsing with cmsCGATS */
 
   return spec;
 }
@@ -3175,7 +3190,7 @@ oyImage_s* lcm2ParseCGATS          ( const char        * cgats )
 #define OY_LCM2_PARSE_CGATS OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH \
   "parse_cgats.cgats._" CMM_NICK "._CPU"
 
-/**
+/** @brief  lcm2ParseCGATS()
  *  This function implements oyMOptions_Handle_f.
  *
  *  @param[in]     options             expects at least one options
@@ -3321,6 +3336,7 @@ const char *l2cms_texts_profile_create[4] = {"can_handle","create_profile","help
  *  @param         src_iccXYZ          the source white point
  *  @param         illu_iccXYZ         the illumination white point
  *  @param         icc_profile_flags   profile flags
+ *  @param         file_name           return the file name
  *
  *  @version Oyranos: 0.9.7
  *  @date    2018/03/02
@@ -3329,7 +3345,8 @@ const char *l2cms_texts_profile_create[4] = {"can_handle","create_profile","help
 oyProfile_s* lcm2AbstractWhitePointBradford (
                                        double            * src_iccXYZ,
                                        double            * illu_iccXYZ,
-                                       uint32_t            icc_profile_flags )
+                                       uint32_t            icc_profile_flags,
+                                       char             ** file_name )
 {
   int error = 0;
   cmsHPROFILE abs = NULL;
@@ -3345,9 +3362,14 @@ oyProfile_s* lcm2AbstractWhitePointBradford (
 
   error = lcm2CreateAbstractWhitePointProfileBradford( src_iccXYZ, illu_iccXYZ,
                                                 15,
-                                                profile_version,
+                                                profile_version, file_name?0x01:0,
                                                 & my_abstract_file_name,
                                                 &abs );
+  if(file_name)
+  {
+    *file_name = my_abstract_file_name;
+    return prof;
+  }
 
   if(error || !abs)
   {
@@ -3380,7 +3402,7 @@ oyProfile_s* lcm2AbstractWhitePointBradford (
 #define OY_LCM2_CREATE_ABSTRACT_WHITE_POINT_BRADFORD_REGISTRATION OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH \
   "create_profile.white_point_adjust.bradford.icc._" CMM_NICK "._CPU"
 
-/**
+/** @brief  lcm2AbstractWhitePoint()
  *  This function implements oyMOptions_Handle_f.
  *
  *  @param[in]     options             expects at least two options
@@ -3417,6 +3439,31 @@ int          l2cmsMOptions_Handle4   ( oyOptions_s       * options,
     else
       return -1;
   }
+  else if(oyFilterRegistrationMatch(command,"create_profile.white_point_adjust.bradford.file_name", 0))
+  {
+    int32_t icc_profile_flags = 0;
+    oyOptions_FindInt( options, "icc_profile_flags", 0, &icc_profile_flags ); 
+    char * file_name = NULL;
+
+    if( oyOptions_FindDouble( options,  "src_iccXYZ", 0, &src_iccXYZ[0] ) == 0 &&
+        oyOptions_FindDouble( options,  "src_iccXYZ", 1, &src_iccXYZ[1] ) == 0 &&
+        oyOptions_FindDouble( options,  "src_iccXYZ", 2, &src_iccXYZ[2] ) == 0 &&
+        oyOptions_FindDouble( options, "illu_iccXYZ", 0, &illu_iccXYZ[0] ) == 0 &&
+        oyOptions_FindDouble( options, "illu_iccXYZ", 1, &illu_iccXYZ[1] ) == 0 &&
+        oyOptions_FindDouble( options, "illu_iccXYZ", 2, &illu_iccXYZ[2] ) == 0 )
+      lcm2AbstractWhitePointBradford( src_iccXYZ, illu_iccXYZ, icc_profile_flags, &file_name );
+
+    if(file_name)
+    {
+      if(!*result)
+        *result = oyOptions_New(0);
+      oyOptions_SetFromString( result, OY_LCM2_CREATE_ABSTRACT_WHITE_POINT_BRADFORD_REGISTRATION ".file_name",
+                               file_name, OY_CREATE_NEW );
+    } else
+        l2cms_msg( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_
+                   "effect name failed",
+                   OY_DBG_ARGS_ );
+  }
   else if(oyFilterRegistrationMatch(command,"create_profile.white_point_adjust.bradford", 0))
   {
     int32_t icc_profile_flags = 0;
@@ -3429,7 +3476,7 @@ int          l2cmsMOptions_Handle4   ( oyOptions_s       * options,
         oyOptions_FindDouble( options, "illu_iccXYZ", 0, &illu_iccXYZ[0] ) == 0 &&
         oyOptions_FindDouble( options, "illu_iccXYZ", 1, &illu_iccXYZ[1] ) == 0 &&
         oyOptions_FindDouble( options, "illu_iccXYZ", 2, &illu_iccXYZ[2] ) == 0 )
-      p = lcm2AbstractWhitePointBradford( src_iccXYZ, illu_iccXYZ, icc_profile_flags );
+      p = lcm2AbstractWhitePointBradford( src_iccXYZ, illu_iccXYZ, icc_profile_flags, NULL );
 
     if(p)
     {
@@ -3443,6 +3490,7 @@ int          l2cmsMOptions_Handle4   ( oyOptions_s       * options,
                    "effect creation failed",
                    OY_DBG_ARGS_ );
   }
+
 
   return 0;
 }
@@ -3591,7 +3639,7 @@ oyProfile_s* lcm2AbstractWhitePoint  ( double              cie_a,
 #define OY_LCM2_CREATE_ABSTRACT_WHITE_POINT_LAB_REGISTRATION OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH \
   "create_profile.white_point_adjust.lab.icc._" CMM_NICK "._CPU"
 
-/**
+/** @brief  lcm2AbstractWhitePoint()
  *  This function implements oyMOptions_Handle_f.
  *
  *  @param[in]     options             expects at least two options
@@ -3863,7 +3911,7 @@ cmsHPROFILE  l2cmsGamutCheckAbstract  ( oyProfile_s       * proof,
   return gmt;
 }
 
-/**
+/** @brief  l2cmsAddProofProfile()
  *  This function implements oyMOptions_Handle_f.
  *
  *  @param[in]     options             expects at least one option
@@ -4067,7 +4115,7 @@ oyProfile_s *      l2cmsCreateICCMatrixProfile (
   return prof;
 }
 
-/**
+/** @brief  l2cmsCreateICCMatrixProfile()
  *  This function implements oyMOptions_Handle_f.
  *
  *  @param[in]     options             expects at least one option
