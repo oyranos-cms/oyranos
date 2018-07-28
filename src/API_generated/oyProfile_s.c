@@ -515,24 +515,24 @@ oyProfile_FromFile            ( const char      * name,
       if(value)
       {
         char * t = oyStringCopy( value + 1, oyAllocateFunc_ );
-	value[0] = '\000';
-	value = oyStringReplace( t, "*", "", NULL,NULL );
-	if(!value)
+        value[0] = '\000';
+        value = oyStringReplace( t, "*", "", NULL,NULL );
+        if(!value)
         {
           value = t;
           value[0] = '\000';
         }
         else
-	  oyFree_m_(t);
+          oyFree_m_(t);
       } else
       {
         oyMessageFunc_p( oyMSG_WARN,(oyStruct_s*)object,
                        OY_DBG_FORMAT_ "could not parse value: %s %d\n"
-		       "need a string of form: \"meta:key;value\"",
+                       "need a string of form: \"meta:key;value\"",
                        OY_DBG_ARGS_, name, flags );
-	oyFree_m_(key);
-	oyProfile_Release( (oyProfile_s**)&s );
-	return (oyProfile_s*)s;
+        oyFree_m_(key);
+        oyProfile_Release( (oyProfile_s**)&s );
+        return (oyProfile_s*)s;
       }
 
       oyStringAddPrintf( &jrank, oyAllocateFunc_,oyDeAllocateFunc_,
@@ -1443,13 +1443,15 @@ OYAPI int OYEXPORT
  *  - oyNAME_NAME - a readable XML element
  *  - oyNAME_NICK - the hash ID
  *  - oyNAME_DESCRIPTION - profile internal name (icSigProfileDescriptionTag)
+ *  - oyNAME_JSON - contains non expensive "id" and internal "name" keys,
+ *    "id" can be use type, file name, if already present, or ICC hash
  *
- *  @version Oyranos: 0.1.8
+ *  @version Oyranos: 0.9.7
+ *  @date    2018/07/18
  *  @since   2007/11/26 (Oyranos: 0.1.8)
- *  @date    2008/06/23
  */
-OYAPI const oyChar* OYEXPORT
-                   oyProfile_GetText ( oyProfile_s       * profile,
+OYAPI const oyChar* OYEXPORT oyProfile_GetText (
+                                       oyProfile_s       * profile,
                                        oyNAME_e            type )
 {
   const char * text = 0;
@@ -1512,7 +1514,7 @@ OYAPI const oyChar* OYEXPORT
           temp[len] = 0;
           found = 1;
         }
-	oyProfileTag_Release( &tag );
+        oyProfileTag_Release( &tag );
       }
     }
 
@@ -1547,6 +1549,27 @@ OYAPI const oyChar* OYEXPORT
       found = 1;
     }
 
+    if(type == oyNAME_JSON)
+    {
+      oyjl_val root = oyjlTreeNew(""), val;
+      const char * name = oyProfile_GetText( profile, oyNAME_DESCRIPTION );
+      const char * id = oyProfile_GetText( profile, oyNAME_NICK );
+      char * json = NULL; int i = 0;
+      if(id)
+      {
+        val = oyjlTreeGetValue( root, OYJL_CREATE_NEW, "id" );
+        oyjlValueSetString( val, id );
+      }
+      if(name)
+      {
+        val = oyjlTreeGetValue( root, OYJL_CREATE_NEW, "name" );
+        oyjlValueSetString( val, name );
+      }
+      oyjlTreeToJson( root, &i, &json );
+      if(json && strlen(json) < 1024)
+        strcpy(temp, json);
+    }
+
     if(!found)
     {
       text = oyProfile_GetID( (oyProfile_s*)s );
@@ -1570,7 +1593,7 @@ OYAPI const oyChar* OYEXPORT
       error = 1;
 
     if(error <= 0)
-      error = oyObject_SetName( s->oy_, temp, type );
+      error = oyObject_SetName( s->oy_, temp && temp[0] ? temp:text?text:"", type );
 
     oyFree_m_( temp );
 
@@ -2100,7 +2123,7 @@ OYAPI const char * OYEXPORT oyProfile_GetFileName (
                                key,
                                txt,
                                OY_CREATE_NEW );
-        oyDeAllocateFunc_( txt );
+        if(txt) oyDeAllocateFunc_( txt );
         name = oyOptions_FindString( s->oy_->handles_,
                                      key, 0 );
         oyFree_m_( key );
