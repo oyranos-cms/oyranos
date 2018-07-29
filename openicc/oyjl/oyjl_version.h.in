@@ -1,0 +1,20 @@
+/** @file  oyjl_version.h
+ *  @brief automatic generated variables
+ */
+#ifndef OYJL_VERSION_H
+#define OYJL_VERSION_H
+
+#define OYJL_VERSION_A @OYJL_VERSION_MAJOR@	/**< version variable */
+#define OYJL_VERSION_B @OYJL_VERSION_MINOR@	/**< version variable */
+#define OYJL_VERSION_C @OYJL_VERSION_MICRO@	/**< version variable */
+#define OYJL_VERSION_NAME "@OYJL_VERSION_MAJOR@.@OYJL_VERSION_MINOR@.@OYJL_VERSION_MICRO@"	/**< version variable */
+#define OYJL_VERSION (@OYJL_VERSION_MAJOR@ * 10000 + @OYJL_VERSION_MINOR@ * 100 + @OYJL_VERSION_MICRO@)	/**< version variable */
+
+#define OYJL_YAJL_VERSION @YAJL_VERSION@
+#cmakedefine HAVE_YAJL
+#cmakedefine HAVE_YAJL_VERSION_H
+
+#cmakedefine HAVE_LOCALE_H
+
+#endif /*OYJL_VERSION_H*/
+

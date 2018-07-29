@@ -1,0 +1,48 @@
+language: c
+compiler:
+  - gcc
+  - clang
+
+# Change this to your needs
+before_install:
+  - test $TRAVIS_BRANCH != coverity_scan -o ${TRAVIS_JOB_NUMBER##*.} = 1 || exit 0
+  - sudo apt-get update -qq
+  - sudo apt-get install -y locales cmake pkg-config libyajl-dev gettext valgrind icc-profiles-free lcov
+  - if [[ $TRAVIS_BRANCH == coverity_scan ]] && [[ "$CC" == "gcc" ]]; then
+      echo -n | openssl s_client -connect scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-;
+    fi
+before_script:
+  - if [[ "$CC" == "gcc" ]]; then
+      cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=$TRAVIS_BUILD_DIR/../install $TRAVIS_BUILD_DIR;
+      if [[ $TRAVIS_BRANCH != coverity_scan ]]; then
+        cmake -DUSE_GCOV=ON $TRAVIS_BUILD_DIR;
+      fi
+    else
+      cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=$TRAVIS_BUILD_DIR/../install $TRAVIS_BUILD_DIR;
+    fi
+script:
+  - if [[ $TRAVIS_BRANCH != coverity_scan ]]; then
+      make;
+    fi
+  - if [[ $TRAVIS_BRANCH != coverity_scan ]] && [[ "$CC" == "gcc" ]]; then
+      make check;
+      make coverage;
+      bash <(curl -s https://codecov.io/bash) -f coverage.info -R $TRAVIS_BUILD_DIR -X gcov;
+    fi
+
+env:
+  global:
+   # The next declaration is the encrypted COVERITY_SCAN_TOKEN, created
+   #   via the "travis encrypt" command using the project repo's public key
+   - secure: "nolPMOxcUP9H1vUIUFiCXn2i/sSIz7wfKMfsFjtlxkD8IitYhhUTvt3mItMjqXP6OrFgfmu1W8db6i8CR2znV95iuLq2SbTKiF1OEAVTK9bBOQ7EYHVXeT1sMhRHOE4aouN6YFy1CSIyj1IaRWrMZ/GV/Ki9hwRySiiyeXKZ1ykkdnGNntJVi8i9eJcJ3CmAParRuIUEXEtxmneiWaW1z/LsStgx95f4RR/lzTUPg+FmezjJMIt4m0JOCctqPYcGlaeysLex3BtGoiMpz8N6UO2Kru1luH9v9Dj+jLPkpi3a0HuEN/OPj6UWRmShDZGRkQQ5AWbYqvJkXmwxBTWdQSufbxyejUETu6L+1y0sYqicWMTHYpoP98Q/hDFVECi4K3hPYlmzAQCjmlpL/qHmfv+P1n8SfiJec7esb9Q5qIenDqfU3OHlWcd3Y4mCBCzShhJGvI+UZMULDSgEJ4CyYk6+VGQB73h/aF6gHdSC4RpimDdZeRBbcrdiXdrC419/SZtM2U8aBOOTu0z7/FHd0l4yANMTqoPA8nWuU3aTR4CJOAMF/GYpL4d4q0g/bYGoNwLxHURX87HsNF4n0uUISU0bVshVl3PD6g9fWo7HeiNpIB+FYBFJCsJ7fqIStXJrqqRaZwUQgiIVT7lxOYVDSY7hFidOTJa+vA8orsgLaPo="
+
+
+addons:
+  coverity_scan:
+    project:
+      name: "OpenICC/config"
+      description: "Build submitted via Travis CI"
+    notification_email: ku.b@gmx.de
+    build_command_prepend: "cmake -DCMAKE_INSTALL_PREFIX=$TRAVIS_BUILD_DIR/../install $TRAVIS_BUILD_DIR; make clean"
+    build_command:  "make"
+    branch_pattern: coverity_scan

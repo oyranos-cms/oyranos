@@ -1,0 +1,45 @@
+prefix=/opt/local
+
+CC = gcc
+DEBUG= -Wall -g
+INCL = -I$(prefix)/include -Isrc/include -Isrc/libopenicc -Isrc/simple
+LDFLAGS = -L$(prefix)/lib64 -L./
+LDFLAGS_DB = -lm
+TARGET = openicc-config-read
+CFLAGS=$(DEBUG) $(INCL)
+HEADER  = src/include/openicc_config.h
+SOURCES = \
+	src/libopenicc/openicc_config.c \
+	src/libopenicc/openicc_core.c \
+	src/libopenicc/openicc_string.c
+SOURCES_DB = \
+	src/libopenicc/openicc_db.c \
+	src/libopenicc/openicc_io.c \
+	src/libopenicc/xdg_bds.c \
+	src/libopenicc/aglob.c
+SOURCES_config_read = src/examples/openicc_config_read.c
+SOURCES_test = src/tests/test.c
+OBJECTS = $(SOURCES:.c=.o)
+OBJECTS_config_read = $(SOURCES_config_read:.c=.o)
+OBJECTS_DB = $(SOURCES_DB:.c=.o)
+OBJECTS_test = $(SOURCES_test:.c=.o)
+
+all:	$(TARGET) test
+
+$(TARGET):	$(OBJECTS_config_read) $(OBJECTS) $(SOURCES) $(HEADER)
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS_config_read) $(OBJECTS) $(LDFLAGS) -lyajl
+
+test:	$(OBJECTS_test) $(OBJECTS_DB) $(OBJECTS) $(SOURCES) $(HEADER)
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS_test) $(OBJECTS_DB) $(OBJECTS) $(LDFLAGS) $(LDFLAGS_DB) -lyajl
+
+clean:
+	$(RM) $(OBJECTS) $(OBJECTS_config_read) $(OBJECTS_DB) $(OBJECTS_test) $(TARGET) test
+
+check:	$(TARGET) test
+	./$(TARGET) OpenICC_device_config_DB.json
+	./test
+
+.SUFFIXES: .c.o
+
+.c.o:	$< $(HEADER)
+	$(CC) $(CFLAGS) -c $< -o $@
