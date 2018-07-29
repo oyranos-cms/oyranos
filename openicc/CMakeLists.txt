@@ -1,178 +1,187 @@
-INCLUDE_DIRECTORIES(
-                    "${CMAKE_CURRENT_SOURCE_DIR}"
-                    "${CMAKE_CURRENT_SOURCE_DIR}/include"
-                    "${CMAKE_BINARY_DIR}/src/include"
-                    "${CMAKE_CURRENT_SOURCE_DIR}/libopenicc"
-)
+CMAKE_MINIMUM_REQUIRED (VERSION 2.8.5)
 
-# if our static code lands inside a shared lib, we need -fPIC
-IF(UNIX)
-  IF(CMAKE_COMPILER_IS_GNUCC)
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
-    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
-    # coverage testing
-    IF(USE_GCOV)
-      SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -O0 -fprofile-arcs -ftest-coverage")
-      SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -fprofile-arcs -ftest-coverage")
-      SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -g -O0 -fprofile-arcs -ftest-coverage")
-      SET(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -g -O0 -fprofile-arcs -ftest-coverage")
-    ENDIF(USE_GCOV)
-  ENDIF(CMAKE_COMPILER_IS_GNUCC)
-ENDIF(UNIX)
+PROJECT (OpenICC)
 
-# dependencies
-INCLUDE(CheckLibraryExists)
-INCLUDE(CheckIncludeFile)
-CHECK_INCLUDE_FILE(dirent.h HAVE_DIRENT_H)
-FIND_PATH( DIRENT_INCLUDE_DIR dirent.h
-           HINTS /mingw ${INCLUDE_DIRECTORIES}
-           PATH_SUFFIXES include
-	  )
-   IF(DIRENT_INCLUDE_DIR)
-   SET( HAVE_DIRENT_H TRUE )
-   MESSAGE( "-- dirent.h: " ${DIRENT_INCLUDE_DIR} )
-ELSE(DIRENT_INCLUDE_DIR)
-  MESSAGE( "-- dirent.h not found" )
-ENDIF(DIRENT_INCLUDE_DIR)
-CHECK_INCLUDE_FILE(glob.h HAVE_GLOB_H)
-CHECK_LIBRARY_EXISTS( c glob "glob.h" HAVE_GLOB )
-CHECK_LIBRARY_EXISTS( c issetugid "unistd.h" HAVE_ISSETUGID )
-CHECK_LIBRARY_EXISTS( c getauxval "sys/auxv.h" HAVE_GETAUXVAL )
+SET( ${PROJECT_NAME}_MAJOR_VERSION 0)
+SET( ${PROJECT_NAME}_MINOR_VERSION 1)
+SET( ${PROJECT_NAME}_MICRO_VERSION 1)
+SET( ${PROJECT_NAME}_VERSION ${${PROJECT_NAME}_MAJOR_VERSION}.${${PROJECT_NAME}_MINOR_VERSION}.${${PROJECT_NAME}_MICRO_VERSION} )
 
-CHECK_INCLUDE_FILE(langinfo.h HAVE_LANGINFO_H)
-CHECK_INCLUDE_FILE(locale.h HAVE_LOCALE_H)
+SET (PROJECT_UP_NAME "OPENICC" )
+SET (PROJECT_DOWN_NAME "openicc" )
+SET (PACKAGE_NAME "${PROJECT_DOWN_NAME}" )
+SET (PACKAGE_DESCRIPTION "The OpenICC configuration data base allows to store, share and manipulate
+color management informations.")
 
-CHECK_INCLUDE_FILE(libintl.h HAVE_LIBINTL_H)
-FIND_LIBRARY( LIBINTL_LIBRARIES NAMES intl libintl libintl-8 )
-IF(LIBINTL_LIBRARIES)
-  SET( EXTRA_LIBS ${EXTRA_LIBS} ${LIBINTL_LIBRARIES} )
-  SET( EXTRA_LIBS_CORE ${EXTRA_LIBS_CORE} ${LIBINTL_LIBRARIES} )
-ELSE(LIBINTL_LIBRARIES)
-  MESSAGE( "-- libintl not found" )
-ENDIF(LIBINTL_LIBRARIES)
+SET( OI_CMMSUBPATH     "color/modules" )
+SET( OI_METASUBPATH    "${PACKAGE_NAME}" )
 
-CHECK_LIBRARY_EXISTS( iconv libiconv_open "iconv.h" HAVE_ICONV )
-IF( HAVE_ICONV )
-  FIND_LIBRARY( LIBICONV_LIBRARIES NAMES libiconv-2 libiconv iconv
-        )
-  IF(LIBICONV_LIBRARIES)
-    SET( ICONV_LIBS ${LIBICONV_LIBRARIES} )
-  ELSE(LIBICONV_LIBRARIES)
-    SET( ICONV_LIBS iconv )
-  ENDIF(LIBICONV_LIBRARIES)
-  SET( EXTRA_LIBS ${EXTRA_LIBS} ${ICONV_LIBS} )
-  SET( EXTRA_LIBS_CORE ${EXTRA_LIBS_CORE} ${ICONV_LIBS} )
-ELSE( HAVE_ICONV )
-  CHECK_LIBRARY_EXISTS( iconv iconv_open "iconv.h" HAVE_ICONV_UNIX )
-  IF( HAVE_ICONV_UNIX )
-    SET( EXTRA_LIBS ${EXTRA_LIBS} iconv )
-    SET( EXTRA_LIBS_CORE ${EXTRA_LIBS_CORE} iconv )
-    SET( HAVE_ICONV TRUE )
-  ENDIF( HAVE_ICONV_UNIX )
-ENDIF( HAVE_ICONV )
+SET( ${PROJECT_UP_NAME}_MAJOR_VERSION ${${PROJECT_NAME}_MAJOR_VERSION} )
+SET( ${PROJECT_UP_NAME}_MINOR_VERSION ${${PROJECT_NAME}_MINOR_VERSION} )
+SET( ${PROJECT_UP_NAME}_MICRO_VERSION ${${PROJECT_NAME}_MICRO_VERSION} )
+SET( ${PROJECT_UP_NAME}_VERSION ${${PROJECT_NAME}_VERSION} )
+
+#additional cmake modules for loading libraries
+SET (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
+
+IF (NOT CMAKE_BUILD_TYPE)
+	SET(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel." FORCE)
+ENDIF (NOT CMAKE_BUILD_TYPE)
 
 
-CHECK_LIBRARY_EXISTS(m pow "math.h" HAVE_M)
-IF(HAVE_M)
-  SET( EXTRA_LIBS ${EXTRA_LIBS} m )
-  SET( EXTRA_LIBS_CORE ${EXTRA_LIBS_CORE} m )
-ENDIF(HAVE_M)
+# some basic and important variables
+SET( DOMAIN openicc.org ) #needed by doxygen
+SET( REVERSE_DOMAIN org.openicc )
 
-CHECK_LIBRARY_EXISTS(c malloc "stdio.h" HAVE_C)
-IF(HAVE_C)
-  SET( EXTRA_LIBS ${EXTRA_LIBS} c )
-ENDIF(HAVE_C)
+SET( ${PROJECT_NAME}_VERSION_MAJORMINOR "${${PROJECT_NAME}_MAJOR_VERSION}.${${PROJECT_NAME}_MINOR_VERSION}" )
 
-FIND_PATH( STDINT_INCLUDE_DIR stdint.h
-           HINTS /mingw ${INCLUDE_DIRECTORIES}
-           PATH_SUFFIXES include
-         )
-IF(STDINT_INCLUDE_DIR)
-  SET( HAVE_STDINT_H 1 )
-  MESSAGE( "-- stdint.h: " ${STDINT_INCLUDE_DIR} )
-ELSE(STDINT_INCLUDE_DIR)
-  MESSAGE( "-- stdint.h not found" )
-ENDIF(STDINT_INCLUDE_DIR)
+include(GNUInstallDirs)
 
-FIND_PATH( INTTYPES_INCLUDE_DIR inttypes.h
-           HINTS /mingw ${INCLUDE_DIRECTORIES}
-           PATH_SUFFIXES include
-         )
-IF(INTTYPES_INCLUDE_DIR)
-  SET( HAVE_INTTYPES_H 1 )
-  MESSAGE( "-- inttypes.h: " ${INTTYPES_INCLUDE_DIR} )
-ELSE(INTTYPES_INCLUDE_DIR)
-  MESSAGE( "-- inttypes.h not found" )
-ENDIF(INTTYPES_INCLUDE_DIR)
+option(ENABLE_TESTS "Build tests (requires static libs)" ON)
+option(ENABLE_TOOLS "Build tools (currently openicc-device)" ON)
+option(ENABLE_STATIC_LIBS "Build static libs" ON)
 
-#FIND_PACKAGE( GetText )
-MESSAGE( "GetText: ${GETTEXT_FOUND}" )
-IF( GETTEXT_FOUND )
-#  SET( USE_GETTEXT TRUE )
-  SET( OI_LOCALEDIR "${CMAKE_INSTALL_FULL_LOCALEDIR}" )
+IF(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR})
+  OPTION(ENABLE_INSTALL_${PROJECT_UP_NAME} "Install files" ON)
+ELSE()
+  MESSAGE( "-- ${PROJECT_NAME}: compile as subproject - skip install (ENABLE_INSTALL_${PROJECT_UP_NAME}=OFF)" )
+  # disable install and build of shared libs for fallback subproject
+  IF(NOT ENABLE_INSTALL_${PROJECT_UP_NAME})
+    SET(ENABLE_INSTALL_${PROJECT_UP_NAME} OFF)
+  ENDIF(NOT ENABLE_INSTALL_${PROJECT_UP_NAME})
+  SET(ENABLE_STATIC_LIBS ON)
+  SET(ENABLE_SHARED_LIBS OFF)
+  SET(ENABLE_TESTS OFF)
+  #SET(ENABLE_TOOLS OFF) #oi-json needs to work for other projects (Oyranos)
 ENDIF()
-
-# debug
-GET_PROPERTY(inc_dirs DIRECTORY PROPERTY INCLUDE_DIRECTORIES)
-#MESSAGE( "-- INCLUDE_DIRECTORIES: ${inc_dirs}" )
-
-
-SET (OPROJECT_NAME "OPENICC" )
-SET( ${OPROJECT_NAME}_MAJOR_VERSION 0)
-SET( ${OPROJECT_NAME}_MINOR_VERSION 1)
-SET( ${OPROJECT_NAME}_MICRO_VERSION 0)
-SET( ${OPROJECT_NAME}_VERSION ${${OPROJECT_NAME}_MAJOR_VERSION}.${${OPROJECT_NAME}_MINOR_VERSION}.${${OPROJECT_NAME}_MICRO_VERSION} )
-
-ADD_SUBDIRECTORY( include )
-
-ADD_SUBDIRECTORY( libopenicc )
 
 IF( ENABLE_TESTS )
-#    ADD_SUBDIRECTORY( tests )
+  SET(ENABLE_STATIC_LIBS ON)
 ENDIF()
 
-IF( ENABLE_TOOLS )
-#    ADD_SUBDIRECTORY( tools )
+# if our static code lands inside a shared lib, we need -fPIC
+IF(ENABLE_SHARED_LIBS)
+  SET( CMAKE_POSITION_INDEPENDENT_CODE ON)
 ENDIF()
 
-#ADD_SUBDIRECTORY( examples )
+IF( ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+  SET(PLATFORM "OSX")
+ELSEIF( ${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+  SET(PLATFORM "Linux")
+ELSE( ${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+  SET(PLATFORM "${CMAKE_SYSTEM_NAME}")
+ENDIF( ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+MESSAGE( "-- Found PLATFORM: ${PLATFORM}" )
 
-# versions for libraries
-#SET_TARGET_PROPERTIES(   OpenICC
-#    PROPERTIES VERSION   ${${OPROJECT_NAME}_MAJOR_VERSION}.${${OPROJECT_NAME}_MINOR_VERSION}.${${OPROJECT_NAME}_MICRO_VERSION}
-#               SOVERSION ${${OPROJECT_NAME}_MAJOR_VERSION}
-#                     )
-
-
-SET( SOURCES_STATIC ${SOURCES_STATIC} PARENT_SCOPE )
-
-SET( DOC_SOURCES
-	doxymentation.dox
-	${CFILES_OBJECT_CONFIG_PUBLIC}
-	${CHEADERS_OBJECT_CONFIG_PUBLIC}
-        PARENT_SCOPE
-   )
-
-
-# i18n
-IF( GETTEXT_FOUND_NO )
-  SET(_potFile ${CMAKE_SOURCE_DIR}/po/${OPROJECT_NAME}.pot)
-  #SET( _xgettext_option_list --language=C --keyword=_ --keyword=N_ --keyword=C_:1c,2 --keyword=NC_:1c,2 -s --package-name=${PROJECT_NAME} --package-version=${${PROJECT_NAME}_MAJOR_VERSION}.${${PROJECT_NAME}_MINOR_VERSION} )
-  SET( _xgettext_option_list --add-comments --keyword=gettext --flag=gettext:1:pass-c-format --keyword=_ --flag=_:1:pass-c-format --keyword=N_ --flag=N_:1:pass-c-format  --copyright-holder='Kai-Uwe Behrmann'  --msgid-bugs-address='ku.b@gmx.de' --from-code=utf-8 --package-name=${PROJECT_NAME} --package-version=${${PROJECT_NAME}_MAJOR_VERSION}.${${PROJECT_NAME}_MINOR_VERSION} )
-  SET( XGETTEXT_CMD xgettext )
-  FILE( GLOB SRC_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-        libopenicc/*.c
-      )
-
-  ADD_CUSTOM_COMMAND(OUTPUT ${_potFile}
-    COMMAND ${XGETTEXT_CMD} ${_xgettext_option_list} -o ${_potFile} ${SRC_FILES}
-    DEPENDS ${SRC_FILES}
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-    COMMENT "Extract translatable messages to ${_potFile}"
-  )
-
-  SET( LINGUAS ../po/cs.po ../po/de.po ../po/eo.po ../po/eu.po  ../po/fr.po ../po/ru.po )
-  # compile translations always to have them ready for installation
-  GETTEXT_CREATE_TRANSLATIONS( ${_potFile} ALL ${LINGUAS} )
+IF( CMAKE_BUILD_TYPE MATCHES "[Dd][Ee][Bb][Uu][Gg]" )
+  MESSAGE( "-- Info build \"${CMAKE_BUILD_TYPE}\"" )
+  SET( DEBUG 1 )
 ENDIF()
+
+FIND_PROGRAM(CMAKE_AR_TMP NAMES ar)
+
+# detect top level projects
+IF(USE_SYSTEM_OYJL)
+  FIND_PACKAGE(Oyjl REQUIRED)
+ELSE()
+  FIND_PACKAGE(Oyjl)
+ENDIF()
+IF( HAVE_OYJL )
+  INCLUDE_DIRECTORIES( ${OYJL_INCLUDE_DIR} )
+  LINK_DIRECTORIES( ${OYJL_LIBRARY_DIRS} )
+  INCLUDE( CheckIncludeFiles )
+  CHECK_INCLUDE_FILES( oyjl/oyjl_version.h HAVE_OYJL_VERSION_H )
+  IF( NOT HAVE_OYJL_VERSION_H )
+    INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/oyjl/ )
+  ENDIF( NOT HAVE_OYJL_VERSION_H )
+ELSE( HAVE_OYJL )
+  INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_SOURCE_DIR}/oyjl )
+  INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_BINARY_DIR}/oyjl )
+  LINK_DIRECTORIES( ${CMAKE_CURRENT_BINARY_DIR}/oyjl )
+  SET( CMAKE_POSITION_INDEPENDENT_CODE ON)
+  ADD_SUBDIRECTORY( oyjl )
+  SET( OYJL_LIBRARIES oyjl-static )
+  SET( OYJL_CORE_LIBRARY oyjl-core-static )
+ENDIF( HAVE_OYJL )
+SET( EXTRA_LIBS_CORE ${EXTRA_LIBS_CORE} ${OYJL_CORE_LIBRARY} )
+SET( EXTRA_LIBS ${EXTRA_LIBS} ${OYJL_LIBRARIES} )
+IF(NOT HAVE_YAJL)
+  INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_SOURCE_DIR}/oyjl/yajl )
+ENDIF(NOT HAVE_YAJL)
+
+
+#now add all directories
+ADD_SUBDIRECTORY( src )
+ADD_SUBDIRECTORY( cmake )
+ADD_SUBDIRECTORY( extras )
+#ADD_SUBDIRECTORY( settings )
+IF(ENABLE_INSTALL_${PROJECT_UP_NAME})
+  ADD_SUBDIRECTORY( docs )
+ENDIF(ENABLE_INSTALL_${PROJECT_UP_NAME})
+
+CONFIGURE_FILE(
+    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/OpenIccUninstall.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/cmake/OpenIccUninstall.cmake"
+    IMMEDIATE @ONLY)
+
+IF(ENABLE_INSTALL_${PROJECT_UP_NAME})
+ADD_CUSTOM_TARGET( uninstall
+	"${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_BINARY_DIR}/cmake/OpenIccUninstall.cmake")
+
+ADD_CUSTOM_TARGET( dist
+		COMMAND cd ${CMAKE_CURRENT_SOURCE_DIR}/ && git archive --prefix=${PACKAGE_NAME}-${${PROJECT_NAME}_VERSION}/ --format=tar HEAD > ${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}-${${PROJECT_NAME}_VERSION}.tar 
+                COMMAND echo "git:       git clone git://guthub.com/openicc-cms/${PACKAGE_NAME}.git" > ${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}-${${PROJECT_NAME}_VERSION}.tar.bz2.hashsum
+                COMMAND echo "git sha1:  " | tr -d "\\n" >> ${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}-${${PROJECT_NAME}_VERSION}.tar.bz2.hashsum
+                COMMAND cd ${CMAKE_CURRENT_SOURCE_DIR}/ && git rev-parse HEAD >> ${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}-${${PROJECT_NAME}_VERSION}.tar.bz2.hashsum 
+                COMMAND rm -rf ${PACKAGE_NAME}-${${PROJECT_NAME}_VERSION} && tar xf ${PACKAGE_NAME}-${${PROJECT_NAME}_VERSION}.tar 
+                COMMAND tar cf - ${PACKAGE_NAME}-${${PROJECT_NAME}_VERSION} | bzip2 > ${PACKAGE_NAME}-${${PROJECT_NAME}_VERSION}.tar.bz2
+                COMMAND echo  "package:   http://sourceforge.net/projects/openicc/files/OpenICC/${PACKAGE_NAME}%20${${PROJECT_NAME}_VERSION_MAJORMINOR}/${PACKAGE_NAME}-${${PROJECT_NAME}_VERSION}.tar.bz2" >> ${PACKAGE_NAME}-${${PROJECT_NAME}_VERSION}.tar.bz2.hashsum
+                COMMAND echo  "size:      " | tr -d "\\n" >> ${PACKAGE_NAME}-${${PROJECT_NAME}_VERSION}.tar.bz2.hashsum
+                COMMAND du -b ${PACKAGE_NAME}-${${PROJECT_NAME}_VERSION}.tar.bz2 | sed s/[[:space:]][[:print:]]*// >> ${PACKAGE_NAME}-${${PROJECT_NAME}_VERSION}.tar.bz2.hashsum 
+                COMMAND echo  "md5sum:    " | tr -d "\\n" >> ${PACKAGE_NAME}-${${PROJECT_NAME}_VERSION}.tar.bz2.hashsum
+                COMMAND cd ${CMAKE_CURRENT_BINARY_DIR}/ && md5sum ${PACKAGE_NAME}-${${PROJECT_NAME}_VERSION}.tar.bz2 >> ${PACKAGE_NAME}-${${PROJECT_NAME}_VERSION}.tar.bz2.hashsum
+                COMMAND echo  "sha1sum:   " | tr -d "\\n" >> ${PACKAGE_NAME}-${${PROJECT_NAME}_VERSION}.tar.bz2.hashsum
+                COMMAND sha1sum ${PACKAGE_NAME}-${${PROJECT_NAME}_VERSION}.tar.bz2 >> ${PACKAGE_NAME}-${${PROJECT_NAME}_VERSION}.tar.bz2.hashsum
+                COMMAND echo  "sha256sum: " | tr -d "\\n" >> ${PACKAGE_NAME}-${${PROJECT_NAME}_VERSION}.tar.bz2.hashsum
+                COMMAND sha256sum ${PACKAGE_NAME}-${${PROJECT_NAME}_VERSION}.tar.bz2 >> ${PACKAGE_NAME}-${${PROJECT_NAME}_VERSION}.tar.bz2.hashsum
+		COMMENT Make a ${PACKAGE_NAME} source package by using git
+		VERBATIM
+		WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
+		)
+EXECUTE_PROCESS(COMMAND rpmbuild --showrc
+                COMMAND awk '/^build arch/ {print $$4}'
+                OUTPUT_VARIABLE RPMARCH
+                ERROR_VARIABLE RPMBUILD_ERROR
+               )
+ADD_CUSTOM_TARGET( rpm
+		COMMAND test -d ${PACKAGE_NAME}-${${PROJECT_NAME}_VERSION}/ && rm -rf ${PACKAGE_NAME}-${${PROJECT_NAME}_VERSION}/
+		COMMAND tar xjf ${PACKAGE_NAME}-${${PROJECT_NAME}_VERSION}.tar.bz2
+                COMMAND mkdir -p rpmdir/BUILD rpmdir/SPECS rpmdir/SOURCES rpmdir/SRPMS rpmdir/RPMS/${RPMARCH}
+                COMMAND cp -f ${PACKAGE_NAME}-${${PROJECT_NAME}_VERSION}.tar.bz2 rpmdir/SOURCES
+                COMMAND rpmbuild --clean -ba extras/${PACKAGE_NAME}.spec --define "_topdir ${CMAKE_CURRENT_BINARY_DIR}/rpmdir"
+                DEPENDS dist
+		COMMENT Make a ${PACKAGE_NAME} RPM package
+		VERBATIM
+		)
+
+ADD_CUSTOM_TARGET( debsrc
+		COMMAND test -d ${PACKAGE_NAME}-${${PROJECT_NAME}_VERSION}/ && rm -rf ${PACKAGE_NAME}-${${PROJECT_NAME}_VERSION}/
+		COMMAND tar xjf ${PACKAGE_NAME}-${${PROJECT_NAME}_VERSION}.tar.bz2
+                COMMAND mv ${PACKAGE_NAME}-${${PROJECT_NAME}_VERSION}.tar.bz2 ${PACKAGE_NAME}_${${PROJECT_NAME}_VERSION}.orig.tar.bz2
+                COMMAND cp -R ${CMAKE_SOURCE_DIR}/extras/debian ${PACKAGE_NAME}-${${PROJECT_NAME}_VERSION}/
+                COMMAND dpkg-source -b ${PACKAGE_NAME}-${${PROJECT_NAME}_VERSION}/
+                DEPENDS dist
+		COMMENT Make a ${PACKAGE_NAME}# DEB source package
+		VERBATIM
+		)
+ADD_CUSTOM_TARGET( debian
+		COMMAND cd ${PACKAGE_NAME}-${${PROJECT_NAME}_VERSION}/ && debuild
+                DEPENDS debsrc
+		COMMENT Make a ${PACKAGE_NAME} DEB package
+		VERBATIM
+		)
+ENDIF(ENABLE_INSTALL_${PROJECT_UP_NAME})
+
+INCLUDE(FeatureSummary)
+FEATURE_SUMMARY(WHAT ALL INCLUDE_QUIET_PACKAGES FATAL_ON_MISSING_REQUIRED_PACKAGES)
 

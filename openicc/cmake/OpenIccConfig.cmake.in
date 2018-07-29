@@ -1,0 +1,45 @@
+# - Find OpenICC
+# Find the native OpenICC headers and libraries.
+#
+#  OPENICC_FOUND        - True if OpenICC found.
+#  OPENICC_INCLUDE_DIRS - where to find openicc.h, etc.
+#  OPENICC_LIBRARIES    - List of libraries when using OpenICC.
+#
+#  OPENICC_VERSION       - The version of openicc (x.y.z)
+#  OPENICC_VERSION_MAJOR - The major version of openicc (x)
+#  OPENICC_VERSION_MINOR - The minor version of openicc (y)
+#  OPENICC_VERSION_MICRO - The patch version of openicc (z)
+#
+
+
+
+# Set path to the header file.
+FIND_PATH(OPENICC_INCLUDE_DIR
+	NAMES openicc_version.h
+	PATHS @CMAKE_INSTALL_FULL_INCLUDEDIR@/@TARGET_INCLUDE_FOLDER@
+)
+MARK_AS_ADVANCED(OPENICC_INCLUDE_DIR)
+
+
+# Set path to the library.
+FIND_LIBRARY(OPENICC_LIBRARY
+	NAMES OpenICC openicc-static
+	PATHS @CMAKE_INSTALL_FULL_LIBDIR@
+)
+MARK_AS_ADVANCED(OPENICC_LIBRARY)
+
+# handle the QUIETLY and REQUIRED arguments and set OPENICC_FOUND to TRUE if
+# all listed variables are TRUE
+INCLUDE(FindPackageHandleStandardArgs)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(OpenICC DEFAULT_MSG OPENICC_LIBRARY OPENICC_INCLUDE_DIR)
+
+if (OPENICC_FOUND)
+        SET( OPENICC_VERSION_MAJOR @OPENICC_MAJOR_VERSION@ )
+        SET( OPENICC_VERSION_MINOR @OPENICC_MINOR_VERSION@ )
+        SET( OPENICC_VERSION_MICRO @OPENICC_MICRO_VERSION@ )
+        SET( OPENICC_VERSION @OPENICC_VERSION@ )
+        SET( OPENICC_CMMSUBPATH @OI_CMMSUBPATH@ )
+        SET( HAVE_OPENICC TRUE )
+	SET(OPENICC_INCLUDE_DIRS ${OPENICC_INCLUDE_DIR})
+	SET(OPENICC_LIBRARIES    ${OPENICC_LIBRARY} )
+endif (OPENICC_FOUND)

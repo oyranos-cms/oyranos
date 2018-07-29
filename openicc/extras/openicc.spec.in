@@ -1,0 +1,161 @@
+#
+# spec file for package openicc
+#
+# Copyright (c) 2015-2016 Kai-Uwe Behrmann <ku.b@gmx.de>
+#
+# All modifications and additions to the file contributed by third parties
+# remain the property of their copyright owners, unless otherwise agreed
+# upon. The license for this file, and modifications and additions to the
+# file, is the same license as for the pristine package itself (unless the
+# license for the pristine package is not an Open Source License, in which
+# case the license is the MIT License). An "Open Source License" is a
+# license that conforms to the Open Source Definition (Version 1.9)
+# published by the Open Source Initiative.
+
+Version:         @OPENICC_MAJOR_VERSION@.@OPENICC_MINOR_VERSION@.@OPENICC_MICRO_VERSION@
+Source:          %{name}-%{version}.tar.bz2
+Release:         0
+%define pixmapdir       /usr/share/pixmaps
+%define icondir         /usr/share/icons
+%define desktopdir      /usr/share/applications
+
+
+Summary:        Color Management System
+License:        MIT
+Group:          Development/Libraries/Other
+
+Name:           openicc
+Url:            http://www.openicc.info
+BuildRoot:      %{_tmppath}/%{name}-%{version}-build
+Prefix:         %{_prefix}
+
+BuildRequires:  cmake
+BuildRequires:  color-filesystem
+BuildRequires:  desktop-file-utils
+
+%if 0%{?suse_version} > 0
+BuildRequires:  doxygen
+BuildRequires:  gcc-c++
+BuildRequires:  gettext
+BuildRequires:  graphviz
+BuildRequires:  pkgconfig
+BuildRequires:  xdg-utils
+%endif
+
+%if 0%{?suse_version} > 1010
+BuildRequires:  update-desktop-files
+%endif
+
+%if 0%{?suse_version} > 1130
+BuildRequires:  libyajl-devel
+%endif
+
+%if 0%{?fedora_version} > 0 && 0%{?rhel_version} < 600
+BuildRequires:  doxygen
+BuildRequires:  gcc-c++
+BuildRequires:  gettext
+BuildRequires:  graphviz
+BuildRequires:  pkgconfig
+BuildRequires:  xdg-utils
+BuildRequires:  yajl-devel
+%endif
+
+%if 0%{?centos_version} >= 600
+BuildRequires:  doxygen
+BuildRequires:  gcc-c++
+BuildRequires:  gettext
+BuildRequires:  graphviz
+BuildRequires:  pkgconfig
+BuildRequires:  xdg-utils
+BuildRequires:  yajl-devel
+%endif
+
+%if 0%{?rhel_version} >= 600
+BuildRequires:  doxygen
+BuildRequires:  gcc-c++
+BuildRequires:  gettext
+BuildRequires:  libyajl2-devel
+BuildRequires:  pkgconfig
+BuildRequires:  xdg-utils
+%endif
+
+
+%package      -n lib%{name}0
+Summary:        Color Management System Libraries
+Group:          Development/Libraries/Other
+# we need rgb, lab, xyz gray and cmyk profiles
+# the proper names: sRGB.icc, XYZ.icc, Lab.icc are in the OpenICC-data package
+Requires:       icc-profiles
+
+%package      -n lib%{name}-devel
+Summary:        Headers, Configuration and static Libs + Documentation
+Group:          Development/Libraries/Other
+Requires:       lib%{name}0 = %{version}
+%if 0%{?suse_version} > 1130
+Requires:       libyajl-devel
+%endif
+
+
+%description
+OpenICC is a minimal color management system.
+Features:
+o configuration for cross application color agreement 
+
+%description -n lib%{name}0
+OpenICC is a minimal color management system.
+
+%description -n lib%{name}-devel
+OpenICC is a minimal color management system.
+Header files, libraries and documentation for development.
+
+
+%prep
+%setup -q
+
+%build
+%cmake \
+  -DTARGET_CMAKE_FOLDER=%{_lib}/cmake/%{name} \
+  -DCMAKE_C_FLAGS="-fPIC $CFLAGS" \
+  -DCMAKE_CXX_FLAGS="-fPIC $CXXFLAGS"
+%{__make} VERBOSE=1 %{_smp_mflags} || make
+
+%install
+%make_install -C build
+mkdir -p %{buildroot}/%{_datadir}/doc/packages/lib%{name}
+mv %{buildroot}/%{_datadir}/doc/%{name}/html/* %{buildroot}/%{_datadir}/doc/packages/lib%{name}
+rm -rf %{buildroot}/%{_datadir}/doc/%{name}
+%find_lang OpenICC       # generate a special file list
+
+%post -n lib%{name}0 -p /sbin/ldconfig
+
+%postun -n lib%{name}0 -p /sbin/ldconfig
+
+%files -f OpenICC.lang
+%defattr(-, root, root)
+%doc docs/AUTHORS.md docs/COPYING.md docs/ChangeLog.md README.md
+%{_bindir}/%{name}-device
+#%{_mandir}/man1/%{name}-device*
+#%{pixmapdir}/openicc_logo.*
+
+%files -n lib%{name}0
+%defattr(-, root, root)
+%doc docs/AUTHORS.md docs/COPYING.md docs/ChangeLog.md README.md
+%{_libdir}/libOpenICC.so.*
+
+%files -n lib%{name}-devel
+%defattr(-, root, root)
+%doc docs/AUTHORS.md docs/COPYING.md docs/ChangeLog.md README.md
+%{_libdir}/libOpenICC.so
+%dir %{_includedir}/%{name}
+%{_includedir}/%{name}/*.h
+%{_libdir}/pkgconfig/*
+%dir %{_libdir}/cmake/%{name}
+%{_libdir}/cmake/%{name}/*.cmake
+%{_libdir}/lib%{name}-static.a
+%dir %{_datadir}/doc/packages/lib%{name}
+%{_datadir}/doc/packages/lib%{name}
+
+%changelog
+* Fri Aug 28 2015 Kai-Uwe Behrmann
+- start
+

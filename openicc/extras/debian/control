@@ -1,0 +1,61 @@
+Source: openicc
+Priority: optional
+Maintainer: Kai-Uwe Behrmann <ku.b@gmx.de>
+Build-Depends: debhelper (>= 8.0.0),
+ cmake,
+ libyajl-dev,
+ gettext,
+ pkg-config,
+ icc-profiles-free,
+ doxygen,
+ graphviz
+Standards-Version: 3.9.3
+Section: libs
+Homepage: http://www.openicc.org
+Vcs-Git: git://github.com/openicc-cms/openicc
+Vcs-Browser: http://github.com/openicc-cms/openicc
+
+Package: libopenicc-dev
+Section: libdevel
+Architecture: any
+Depends: openicc (= ${binary:Version}), ${misc:Depends}
+Description: Color Management System Development Files
+ The library allows one to match predictably input device colors to 
+ output device colors across supporting applications. One goal 
+ is to make color management useful for all users in a automated 
+ fashion and regardless of any technical knowledge.
+ Headers and development files for OpenICC.
+
+#Package: openicc-doc
+#Section: doc
+#Architecture: all
+#Depends: ${shlibs:Depends}, ${misc:Depends}
+#Description: Color Management System Programming Documentation
+# The library allows one to match predictably input device colors to 
+# output device colors across supporting applications. One goal 
+# is to make color management useful for all users in a automated 
+# fashion and regardless of any technical knowledge.
+# OpenICC API documentation.
+
+Package: libopenicc0
+Section: libs
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, icc-profiles-free
+Description: Color Management System Libraries
+ The library allows one to match predictably input device colors to 
+ output device colors across supporting applications. One goal 
+ is to make color management useful for all users in a automated 
+ fashion and regardless of any technical knowledge.
+ OpenICC Libraries.
+
+Package: openicc
+Section: graphics
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Color Management System Tools
+ The library allows one to match predictably input device colors to 
+ output device colors across supporting applications. One goal 
+ is to make color management useful for all users in a automated 
+ fashion and regardless of any technical knowledge.
+ OpenICC Tools.
+

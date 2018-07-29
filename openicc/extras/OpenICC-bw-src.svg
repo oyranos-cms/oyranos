@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="128"
+   height="128"
+   id="svg2606"
+   version="1.0"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="OpenICC-bw-src.svg">
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="2464"
+     inkscape:window-height="1558"
+     id="namedview59"
+     showgrid="false"
+     inkscape:zoom="3.9920794"
+     inkscape:cx="55.771717"
+     inkscape:cy="101.81641"
+     inkscape:window-x="96"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg2606" />
+  <defs
+     id="defs2608">
+    <inkscape:path-effect
+       effect="skeletal"
+       id="path-effect4357"
+       is_visible="true"
+       pattern="M 0,5 C 0,2.24 2.24,0 5,0 7.76,0 10,2.24 10,5 10,7.76 7.76,10 5,10 2.24,10 0,7.76 0,5 Z"
+       copytype="single_stretched"
+       prop_scale="1"
+       scale_y_rel="false"
+       spacing="0"
+       normal_offset="0"
+       tang_offset="0"
+       prop_units="false"
+       vertical_pattern="false"
+       fuse_tolerance="0" />
+    <linearGradient
+       id="linearGradient4778">
+      <stop
+         id="stop4780"
+         offset="0"
+         style="stop-color:#000000;stop-opacity:1;" />
+      <stop
+         id="stop4782"
+         offset="1"
+         style="stop-color:#000000;stop-opacity:0;" />
+    </linearGradient>
+    <filter
+       id="filter4794">
+      <feGaussianBlur
+         id="feGaussianBlur4796"
+         stdDeviation="1.6571087" />
+    </filter>
+    <linearGradient
+       y2="70.646294"
+       x2="288.85443"
+       y1="120.49628"
+       x1="256.81406"
+       gradientUnits="userSpaceOnUse"
+       id="linearGradient7460"
+       xlink:href="#linearGradient4778" />
+    <filter
+       height="1.6047849"
+       y="-0.30239243"
+       width="1.4012106"
+       x="-0.20060531"
+       id="filter14270"
+       style="color-interpolation-filters:sRGB">
+      <feGaussianBlur
+         id="feGaussianBlur14272"
+         stdDeviation="12.535315" />
+    </filter>
+    <filter
+       height="1.6770401"
+       y="-0.33852005"
+       width="1.6125817"
+       x="-0.30629084"
+       id="filter14322"
+       style="color-interpolation-filters:sRGB">
+      <feGaussianBlur
+         id="feGaussianBlur14324"
+         stdDeviation="11.008424" />
+    </filter>
+    <filter
+       height="1.5516146"
+       y="-0.27580728"
+       width="1.552386"
+       x="-0.27619299"
+       id="filter14566"
+       style="color-interpolation-filters:sRGB">
+      <feGaussianBlur
+         id="feGaussianBlur14568"
+         stdDeviation="10.048233" />
+    </filter>
+    <filter
+       height="1.571588"
+       y="-0.28579401"
+       width="1.4318668"
+       x="-0.21593339"
+       id="filter14802"
+       style="color-interpolation-filters:sRGB">
+      <feGaussianBlur
+         id="feGaussianBlur14804"
+         stdDeviation="10.41207" />
+    </filter>
+    <filter
+       height="1.6064001"
+       y="-0.30320005"
+       width="1.8367747"
+       x="-0.41838735"
+       id="filter15030"
+       style="color-interpolation-filters:sRGB">
+      <feGaussianBlur
+         id="feGaussianBlur15032"
+         stdDeviation="15.037294" />
+    </filter>
+    <filter
+       height="1.8347658"
+       y="-0.41738288"
+       width="1.8119503"
+       x="-0.40597517"
+       id="filter15122"
+       style="color-interpolation-filters:sRGB">
+      <feGaussianBlur
+         id="feGaussianBlur15124"
+         stdDeviation="14.589042" />
+    </filter>
+    <clipPath
+       id="clipPath15134"
+       clipPathUnits="userSpaceOnUse">
+      <path
+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.66360509px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         d="m 179.69849,-18.097207 c -39.54,-41.393433 -54.52196,-53.131871 -65.79704,-61.781253 -11.27508,-8.649381 -16.989854,-11.583989 -22.241242,-12.819614 -5.25141,-1.23562 -7.72266,-0.154455 -9.26718,1.235625 -1.54454,1.39008 -7.41376,8.031566 -8.18602,23.631341 -0.77227,15.599756 1.69899,32.126243 5.56031,45.25476 3.86133,13.1285221 14.209678,34.90641 18.688818,40.77562 4.479144,5.869231 5.251414,4.324701 5.251414,4.324701 0,0 2.93461,-4.170241 15.29086,-12.201811 12.35626,-8.0315479 25.0214,-15.2908479 36.14204,-19.7699879 11.12061,-4.4791401 24.55804,-8.6493811 24.55804,-8.6493811 z"
+         id="path15136" />
+    </clipPath>
+    <filter
+       height="2.9895706"
+       y="-0.9947853"
+       width="2.9422001"
+       x="-0.97110006"
+       id="filter17690"
+       style="color-interpolation-filters:sRGB">
+      <feGaussianBlur
+         id="feGaussianBlur17692"
+         stdDeviation="11.959164" />
+    </filter>
+  </defs>
+  <metadata
+     id="metadata2611">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <path
+     inkscape:connector-curvature="0"
+     style="fill:#000000"
+     d=""
+     id="path2197" />
+  <g
+     style="display:none"
+     id="Frame_copy"
+     display="none"
+     transform="translate(1042.0419,-279.83386)">
+    <g
+       style="display:inline"
+       display="inline"
+       id="g3978">
+      <g
+         id="g3982">
+        <circle
+           cx="279.51501"
+           cy="278.93399"
+           r="275.909"
+           id="circle3984" />
+      </g>
+    </g>
+    <g
+       style="display:inline"
+       id="Frame_copy_1_"
+       display="inline" />
+  </g>
+  <g
+     style="display:none"
+     id="Frame_copy_2"
+     display="none"
+     transform="translate(1042.0419,-279.83386)">
+    <circle
+       style="display:inline;fill:#ffffff"
+       display="inline"
+       cx="279.51501"
+       cy="278.93399"
+       r="275.909"
+       id="circle3988" />
+    <g
+       style="display:inline"
+       id="Frame_copy_2_1_"
+       display="inline" />
+  </g>
+  <g
+     id="Foreground_Grid_1_"
+     transform="matrix(0.333692,0,0,0.333692,-610.81394,-151.23635)" />
+  <g
+     id="layer4"
+     style="display:inline"
+     transform="matrix(0.6433923,0,0,0.6433923,563.19164,120.38376)" />
+  <g
+     id="layer5"
+     style="display:inline"
+     transform="matrix(0.6433923,0,0,0.6433923,563.19164,120.38376)" />
+  <rect
+     style="opacity:0.57786889;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none"
+     id="rect1327"
+     width="0.64339232"
+     height="0"
+     x="563.78369"
+     y="130.76021" />
+  <path
+     style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:12;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;filter:url(#filter17690);color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
+     id="path7529-6-9"
+     d="m 127.80178,-43.241277 a 14.778082,14.426225 0 0 1 14.47706,14.647536 14.778082,14.426225 0 0 1 -14.93653,14.201107 14.778082,14.426225 0 0 1 -14.61757,-14.513938 14.778082,14.426225 0 0 1 14.79901,-14.337648"
+     transform="matrix(0.86915065,0,0,0.86915065,-55.3997,96.370493)"
+     inkscape:connector-curvature="0" />
+  <path
+     inkscape:connector-curvature="0"
+     id="path6190-6-0-6"
+     d="M 106.03169,81.883542 C 67.638803,41.691012 53.0915,30.293128 42.143532,21.894682 31.195562,13.496233 25.646589,10.646763 20.547551,9.4469868 15.448495,8.2472147 13.048939,9.2970138 11.549231,10.646763 10.049502,11.996515 4.3505575,18.44532 3.6007026,33.592517 2.8508378,48.739694 5.2504029,64.786716 8.9996978,77.53435 12.749003,90.281989 22.797127,111.42806 27.146319,117.127 c 4.34919,5.69894 5.099056,4.19924 5.099056,4.19924 0,0 2.849471,-4.04926 14.847244,-11.84781 11.997782,-7.79855 24.295482,-14.84725 35.093491,-19.196441 10.797985,-4.34919 23.84558,-8.398447 23.84558,-8.398447 z"
+     style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2.20124531;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+  <text
+     sodipodi:linespacing="125%"
+     xml:space="preserve"
+     style="font-style:normal;font-weight:normal;font-size:29.04570389px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#4d4d4d;fill-opacity:1;stroke:#ffffff;stroke-width:6.46432781;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     x="3.0026877"
+     y="51.113201"
+     id="text18224"><tspan
+       id="tspan18226"
+       x="3.0026877"
+       y="51.113201"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:'MgOpen Modata';-inkscape-font-specification:'MgOpen Modata Bold';fill:#4d4d4d;fill-opacity:1;stroke:#ffffff;stroke-width:6.46432781;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">OpenICC</tspan></text>
+  <text
+     sodipodi:linespacing="125%"
+     xml:space="preserve"
+     style="font-style:normal;font-weight:normal;font-size:29.04570389px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     x="3.0026877"
+     y="51.113201"
+     id="text18224-3"><tspan
+       id="tspan18226-0"
+       x="3.0026877"
+       y="51.113201"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:'MgOpen Modata';-inkscape-font-specification:'MgOpen Modata Bold';fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.76277655;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">OpenICC</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-style:normal;font-weight:normal;font-size:180px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     x="43.085316"
+     y="52.350201"
+     id="text4306"
+     sodipodi:linespacing="125%"><tspan
+       sodipodi:role="line"
+       id="tspan4308"
+       x="43.085316"
+       y="52.350201" /></text>
+</svg>
