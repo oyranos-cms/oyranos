@@ -165,7 +165,7 @@ const char *       oyPrintTime       ( )
 
   oyGetCurrentGMTHour( &gmt_diff_second );
   oySplitHour( oyGetCurrentLocalHour( oyGetCurrentGMTHour(0), gmt_diff_second ), &hour, &minute, &second );
-  sprintf( time, "%d:%.2d:%.2d.%03.d", hour, minute, second, (int)floor((oySeconds() - (long)oySeconds())*1000) );
+  sprintf( time, "%d:%.2d:%.2d.%04.d", hour, minute, second, (int)floor((oySeconds() - (long)oySeconds())*10000) );
   return time;
 }
 
