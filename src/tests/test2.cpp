@@ -2811,19 +2811,286 @@ typedef struct {
   GLfloat scale, offset;             /* texture parameters */
   int ref;                           /* reference counter */
 } PrivColorContext;
+typedef void CompScreen;
+typedef struct pcc_s {
+  oyConversion_s * cc;
+  oyArray2d_s * clut;
+  char * hash_text;
+} pcc_t;
+static void * setupColourTable_cb( void * data )
+{
+  pcc_t * d OY_UNUSED = (pcc_t*)data;
 
+  //setupColourTable( d->ccontext, d->advanced, d->screen );
+  //updateOutputConfiguration( d->screen, FALSE, -1 );
+
+  return NULL;
+}
+static void iccProgressCallback (    double              progress_zero_till_one,
+                                     char              * status_text OY_UNUSED,
+                                     int                 thread_id_,
+                                     int                 job_id,
+                                     oyStruct_s        * cb_progress_context )
+{
+  oyPointer_s * context = (oyPointer_s *) cb_progress_context;
+  pcc_t * pcontext = (pcc_t*) oyPointer_GetPointer( context );
+  printf( "%s() job_id: %d thread: %d %g\n", __func__, job_id, thread_id_,
+          progress_zero_till_one );
+  if(progress_zero_till_one >= 1.0)
+  {
+    setupColourTable_cb( pcontext );
+    free(pcontext);
+  }
+}
+
+#include <oyranos_threads.h>
+#define DBG_S_ if(oy_debug >= 1)DBG_S
+static int icc_profile_flags = 0;
+static oyConversion_s * setupColourConversion (
+                                       PrivColorContext  * ccontext,
+                                       int                 advanced,
+                                       CompScreen        * s OY_UNUSED,
+                                       oyArray2d_s       * clut )
+{
+  oyConversion_s * cc = NULL;
+  int error = 0;
+  oyProfile_s * dst_profile = ccontext->dst_profile, * web = 0;
+  int ** ptr = (int**) oyArray2d_GetData( clut );
+
+    if(!ccontext->dst_profile)
+      dst_profile = web = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, 0 );
+
+    {
+      int flags = 0;
+
+      oyProfile_s * src_profile = ccontext->src_profile;
+      oyOptions_s * options = 0;
+      oyImage_s * image_in = NULL;
+      oyImage_s * image_out= NULL;
+
+      oyPixel_t pixel_layout = OY_TYPE_123_16;
+      /*oyCompLogMessage(NULL, "compicc", CompLogLevelDebug,
+             DBG_STRING "%s -> %s",
+             DBG_ARGS, oyProfile_GetText( src_profile, oyNAME_DESCRIPTION ),
+                       oyProfile_GetText( dst_profile, oyNAME_DESCRIPTION ) );*/
+
+      /* skip web to web conversion */
+      if(oyProfile_Equal( src_profile, web ))
+      {
+        oyCompLogMessage(NULL, "compicc", CompLogLevelDebug,
+             DBG_STRING "src_profile == web",
+             DBG_ARGS );
+        goto clean_setupColourConversion;
+      }
+
+      if(!src_profile)
+        src_profile = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, 0 );
+
+      if(!src_profile)
+        oyCompLogMessage(NULL, "compicc", CompLogLevelWarn,
+             DBG_STRING "Output %s: no oyASSUMED_WEB src_profile",
+             DBG_ARGS, ccontext->output_name );
+
+      /* optionally set advanced options from Oyranos */
+      if(advanced)
+        flags = oyOPTIONATTRIBUTE_ADVANCED;
+
+      /*oyCompLogMessage( NULL, "compicc", CompLogLevelDebug,
+                      DBG_STRING "oyConversion_Correct(///icc_color,%d,0) %s %s",
+                      DBG_ARGS, flags, ccontext->output_name,
+                      advanced?"advanced":"");*/
+      image_in = oyImage_Create( GRIDPOINTS,GRIDPOINTS*GRIDPOINTS,
+                                 ptr?(oyPointer)ptr[0]:(oyPointer)ccontext->clut, pixel_layout, src_profile, 0 );
+      image_out= oyImage_Create( GRIDPOINTS,GRIDPOINTS*GRIDPOINTS,
+                                 ptr?(oyPointer)ptr[0]:(oyPointer)ccontext->clut, pixel_layout, dst_profile, 0 );
+
+      oyProfile_Release( &src_profile );
+
+      cc = oyConversion_CreateBasicPixels( image_in, image_out, options, 0 );
+      if (cc == NULL)
+      {
+        oyCompLogMessage( NULL, "compicc", CompLogLevelWarn,
+                      DBG_STRING "no conversion created for %s",
+                      DBG_ARGS, ccontext->output_name);
+        goto clean_setupColourConversion;
+      }
+      oyOptions_Release( &options );
+
+      error = oyOptions_SetFromString( &options,
+                                     "//" OY_TYPE_STD "/config/display_mode", "1",
+                                     OY_CREATE_NEW );
+      error = oyConversion_Correct(cc, "//" OY_TYPE_STD "/icc_color", flags, options);
+      if(error)
+      {
+        oyCompLogMessage( NULL, "compicc", CompLogLevelWarn,
+                      DBG_STRING "oyConversion_Correct(///icc_color,%d,0) failed %s",
+                      DBG_ARGS, flags, ccontext->output_name);
+        goto clean_setupColourConversion;
+      }
+
+    clean_setupColourConversion:
+      oyOptions_Release( &options );
+      oyImage_Release( &image_in );
+      oyImage_Release( &image_out );
+      oyProfile_Release( &web );
+    }
+
+  return cc;
+}
+static oyFilterNode_s *  getColourNode(oyConversion_s    * cc )
+{
+      oyFilterGraph_s * cc_graph = oyConversion_GetGraph( cc );
+      oyFilterNode_s * icc = oyFilterGraph_GetNode( cc_graph, -1, "///icc_color", 0 );
+      oyFilterGraph_Release( &cc_graph );
+      return icc;
+}
+static oyJob_s*setupColourJob        ( oyConversion_s   ** cc,
+                                       const char        * hash_text,
+                                       oyArray2d_s      ** clut )
+{
+      oyJob_s * job = oyJob_New(0);
+      job->cb_progress = iccProgressCallback;
+      oyPointer_s * oy_ptr = oyPointer_New(0);
+      pcc_t * pcc   = (pcc_t*)calloc( sizeof(pcc_t), 1 );
+      pcc->cc = *cc;
+      *cc = NULL;
+      pcc->hash_text = strdup(hash_text);
+      pcc->clut = *clut;
+      clut = NULL;
+      oyPointer_Set( oy_ptr,
+                     __FILE__,
+                     "struct pcc_s*",
+                     pcc, 0, 0 );
+      job->cb_progress_context = (oyStruct_s*) oyPointer_Copy( oy_ptr, 0 );
+      job->work = NULL; // TODO
+      oyFilterNode_s * icc = getColourNode( pcc->cc );
+      oyOptions_s * options = oyFilterNode_GetOptions( icc, 0 );
+      oyFilterNode_Release( &icc );
+      oyOptions_MoveInStruct( &options, OY_BEHAVIOUR_STD "/expensive_callback", (oyStruct_s**)&job, OY_CREATE_NEW );
+      /* wait no longer than approximately 1 seconds */
+      oyOptions_SetFromString( &options, OY_BEHAVIOUR_STD "/expensive", "10", OY_CREATE_NEW );
+      oyOptions_Release( &options );
+      return job;
+}
+static oyHash_s * getColourHash      ( oyFilterNode_s    * icc,
+                                       char             ** hash_text )
+{
+      uint32_t exact_hash_size = 0;
+      const char * t = 0;
+      {
+        t = oyFilterNode_GetText( icc, oyNAME_NAME );
+        if(t)
+          *hash_text = strdup(t);
+      }
+      oyHash_s * entry;
+      oyStructList_s * cache = pluginGetPrivatesCache();
+      entry = oyStructList_GetHash( cache, exact_hash_size, *hash_text );
+
+      return entry;
+}
+static void          fillColourClut  ( PrivColorContext  * ccontext )
+{
+        uint16_t in[3];
+        for (int r = 0; r < GRIDPOINTS; ++r)
+        {
+          in[0] = floor((double) r / (GRIDPOINTS - 1) * 65535.0 + 0.5);
+          for (int g = 0; g < GRIDPOINTS; ++g) {
+            in[1] = floor((double) g / (GRIDPOINTS - 1) * 65535.0 + 0.5);
+            for (int b = 0; b < GRIDPOINTS; ++b)
+            {
+              in[2] = floor((double) b / (GRIDPOINTS - 1) * 65535.0 + 0.5);
+              for(int j = 0; j < 3; ++j)
+                /* BGR */
+                ccontext->clut[b][g][r][j] = in[j];
+            }
+          }
+        }
+}
+#ifdef _OPENMP
+#define USE_OPENMP 1
+#include <omp.h>
+#endif
+static int           fillColourClut2 ( oyArray2d_s       * array )
+{
+  int ** ptr = (int**) oyArray2d_GetData( array );
+  uint16_t (*clut)[GRIDPOINTS][GRIDPOINTS][GRIDPOINTS][3] = (uint16_t(*)[GRIDPOINTS][GRIDPOINTS][GRIDPOINTS][3]) ptr[0];
+
+#define myFLOOR(d) ((int)(d))
+#if defined(USE_OPENMP)
+#pragma omp parallel for
+#endif
+        for (int r = 0; r < GRIDPOINTS; ++r)
+        {
+          uint16_t in[3];
+          in[0] = myFLOOR((double) r / (GRIDPOINTS - 1) * 65535.0 + 0.5);
+          for (int g = 0; g < GRIDPOINTS; ++g) {
+            in[1] = myFLOOR((double) g / (GRIDPOINTS - 1) * 65535.0 + 0.5);
+            for (int b = 0; b < GRIDPOINTS; ++b)
+            {
+              in[2] = myFLOOR((double) b / (GRIDPOINTS - 1) * 65535.0 + 0.5);
+              for(int j = 0; j < 3; ++j)
+              {
+                /* BGR */
+                (*clut)[b][g][r][j] = in[j];
+              }
+            }
+          }
+        }
+        return GRIDPOINTS*GRIDPOINTS*GRIDPOINTS;
+}
+static void          runColourClut   ( PrivColorContext  * ccontext,
+                                       oyConversion_s    * cc )
+{
+  oyFilterNode_s * icc = getColourNode( cc );
+  char * hash_text = NULL;
+  oyHash_s * entry = getColourHash( icc, &hash_text );
+  oyArray2d_s * clut;
+  int error = 0;
+  int ** ptr;
+
+  fillColourClut( ccontext );
+
+        clut = oyArray2d_Create( NULL, GRIDPOINTS*3, GRIDPOINTS*GRIDPOINTS,
+                                 oyUINT16, NULL );
+
+        error = oyConversion_RunPixels( cc, 0 );
+
+        if(error)
+        {
+          oyCompLogMessage( NULL, "compicc", CompLogLevelWarn,
+                      DBG_STRING "oyConversion_RunPixels() error: %d %s",
+                      DBG_ARGS, error, ccontext->output_name);
+          goto clean_runColourClut;
+        }
+
+        ptr = (int**)oyArray2d_GetData(clut);
+        memcpy( ptr[0], ccontext->clut,
+                sizeof(GLushort) * GRIDPOINTS*GRIDPOINTS*GRIDPOINTS * 3 );
+
+        oyHash_SetPointer( entry, (oyStruct_s*) clut );
+
+
+clean_runColourClut:
+  if(hash_text)
+  { cicc_free(hash_text); hash_text = 0; }
+  oyFilterNode_Release( &icc );
+}
 static int     setupColourTable      ( PrivColorContext  * ccontext,
                                        int                 advanced )
 {
   int dl_count = 0;
 
-  uint32_t icc_profile_flags =oyICCProfileSelectionFlagsFromOptions( OY_CMM_STD,
-                                       "//" OY_TYPE_STD "/icc_color", NULL, 0 );
   oyConversion_s * cc;
   int error = 0;
   oyProfile_s * dst_profile = ccontext->dst_profile, * web = 0;
+  uint32_t icc_profile_flags;
 
-    if(!ccontext->dst_profile)
+  DBG_S_( oyPrintTime() );
+  icc_profile_flags = oyICCProfileSelectionFlagsFromOptions( OY_CMM_STD,
+                                       "//" OY_TYPE_STD "/icc_color", NULL, 0 );
+  DBG_S_( oyPrintTime() );
+
+  if(!ccontext->dst_profile)
       dst_profile = web = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, testobj );
 
 
@@ -2861,6 +3128,8 @@ static int     setupColourTable      ( PrivColorContext  * ccontext,
       if(advanced)
         flags = oyOPTIONATTRIBUTE_ADVANCED;
 
+      DBG_S_( oyPrintTime() );
+
       oyCompLogMessage( NULL, "compicc", CompLogLevelDebug,
                       DBG_STRING "oyConversion_Correct(///icc_color,%d,0) %s %s",
                       DBG_ARGS, flags, ccontext->output_name,
@@ -2888,6 +3157,8 @@ static int     setupColourTable      ( PrivColorContext  * ccontext,
       oyOptions_SetFromString( &options,
                                      "//" OY_TYPE_STD "/config/display_mode", "1",
                                      OY_CREATE_NEW );
+      DBG_S_( oyPrintTime() );
+
       error = oyConversion_Correct(cc, "//" OY_TYPE_STD "/icc_color", flags, options);
       if(error > 0)
       {
@@ -2897,51 +3168,11 @@ static int     setupColourTable      ( PrivColorContext  * ccontext,
         goto clean_setupColourTable;
       }
       oyOptions_Release( &options );
+      DBG_S_( oyPrintTime() );
+
 
       oyFilterGraph_s * cc_graph = oyConversion_GetGraph( cc );
       oyFilterNode_s * icc = oyFilterGraph_GetNode( cc_graph, -1, "///icc_color", 0 );
-      oyBlob_s * blob = oyFilterNode_ToBlob( icc, testobj );
-
-      if(!blob)
-      {
-        oyConversion_Release( &cc );
-        oyFilterNode_Release( &icc );
-
-        oyOptions_SetFromString( &options, OY_DEFAULT_CMM_CONTEXT, "lcm2", OY_CREATE_NEW );
-        cc = oyConversion_CreateBasicPixels( image_in, image_out, options, testobj );
-        if (cc == NULL)
-        {
-          oyCompLogMessage( NULL, "compicc", CompLogLevelWarn,
-                      DBG_STRING "no conversion created for %s",
-                      DBG_ARGS, ccontext->output_name);
-          goto clean_setupColourTable;
-        }
-        oyOptions_Release( &options );
-        oyOptions_SetFromString( &options,
-                                     "//" OY_TYPE_STD "/config/display_mode", "1",
-                                     OY_CREATE_NEW );
-        error = oyConversion_Correct(cc, "//" OY_TYPE_STD "/icc_color", flags, options);
-        icc = oyFilterGraph_GetNode( cc_graph, -1, "///icc_color", 0 );
-        blob = oyFilterNode_ToBlob( icc, NULL );
-      }
-
-      {
-        oyOptions_s * node_opts = oyFilterNode_GetOptions( icc, 0 );
-        oyProfile_s * dl;
-        dl = oyProfile_FromMem( oyBlob_GetSize( blob ),
-                                oyBlob_GetPointer( blob ), 0,testobj );
-        const char * fn;
-        int j = 0;
-        while((fn = oyProfile_GetFileName( dl, j )) != NULL)
-        {
-          fprintf( zout, " -> \"%s\"[%d]", fn, j );
-          ++j;
-        }
-        dl_count = j;
-        fprintf( zout, " %d\n", dl_count );
-        if(oy_debug) fprintf( zout, "%s\n", oyOptions_GetText( node_opts, oyNAME_NAME ) );
-      }
-
       uint32_t exact_hash_size = 0;
       char * hash_text = 0;
       const char * t = 0;
@@ -2950,21 +3181,26 @@ static int     setupColourTable      ( PrivColorContext  * ccontext,
         if(t)
           hash_text = strdup(t);
         if(oy_debug)
-          fprintf( zout, " hash_text = %s", oyNoEmptyString_m_(t) );
+        {
+          char * fn = NULL;
+          static int pos = 0;
+          oyjlStringAdd( &fn, 0,0, "clut-hash-%d.json", pos++ );
+          oyWriteMemToFile_(fn, t, strlen(t));
+        }
       }
       oyHash_s * entry;
       oyArray2d_s * clut = NULL;
       oyStructList_s * cache = pluginGetPrivatesCache();
       entry = oyStructList_GetHash( cache, exact_hash_size, hash_text );
       clut = (oyArray2d_s*) oyHash_GetPointer( entry, oyOBJECT_ARRAY2D_S);
-      oyFilterNode_Release( &icc );
-      oyFilterGraph_Release( &cc_graph );
+
+      DBG_S_( oyPrintTime() );
 
       if(oy_debug)
       oyCompLogMessage( NULL, "compicc", CompLogLevelDebug,
                       DBG_STRING "clut from cache %s %s",
-                      DBG_ARGS, clut?"obtained":"", oyNoEmptyString_m_(hash_text) );
-      if(clut)
+                      DBG_ARGS, clut?"obtained":"not obtained", oyNoEmptyString_m_(hash_text) );
+      if(clut) // found in cache
       {
         ptr = (int**)oyArray2d_GetData(clut);
         memcpy( ccontext->clut, ptr[0], 
@@ -2972,6 +3208,58 @@ static int     setupColourTable      ( PrivColorContext  * ccontext,
       } else
       {
         uint16_t in[3];
+        oyBlob_s * blob = oyFilterNode_ToBlob( icc, testobj );
+
+        DBG_S_( oyPrintTime() );
+
+        if(!blob)
+        {
+          oyConversion_Release( &cc );
+          oyFilterNode_Release( &icc );
+
+          oyOptions_SetFromString( &options, OY_DEFAULT_CMM_CONTEXT, "lcm2", OY_CREATE_NEW );
+          DBG_S_( oyPrintTime() );
+          cc = oyConversion_CreateBasicPixels( image_in, image_out, options, testobj );
+          if (cc == NULL)
+          {
+            oyCompLogMessage( NULL, "compicc", CompLogLevelWarn,
+                      DBG_STRING "no conversion created for %s",
+                      DBG_ARGS, ccontext->output_name);
+            goto clean_setupColourTable;
+          }
+          oyOptions_Release( &options );
+          oyOptions_SetFromString( &options,
+                                     "//" OY_TYPE_STD "/config/display_mode", "1",
+                                     OY_CREATE_NEW );
+          DBG_S_( oyPrintTime() );
+          error = oyConversion_Correct(cc, "//" OY_TYPE_STD "/icc_color", flags, options);
+          DBG_S_( oyPrintTime() );
+          icc = oyFilterGraph_GetNode( cc_graph, -1, "///icc_color", 0 );
+          DBG_S_( oyPrintTime() );
+          blob = oyFilterNode_ToBlob( icc, NULL );
+        }
+
+        DBG_S_( oyPrintTime() );
+
+        {
+          oyOptions_s * node_opts = oyFilterNode_GetOptions( icc, 0 );
+          oyProfile_s * dl;
+          DBG_S_( oyPrintTime() );
+          dl = oyProfile_FromMem( oyBlob_GetSize( blob ),
+                                  oyBlob_GetPointer( blob ), 0,testobj );
+          const char * fn;
+          int j = 0;
+          while((fn = oyProfile_GetFileName( dl, j )) != NULL)
+          {
+            fprintf( zout, " -> \"%s\"[%d]", fn, j );
+            ++j;
+          }
+          dl_count = j;
+          fprintf( zout, " %d\n", dl_count );
+          if(oy_debug) fprintf( zout, "%s\n", oyOptions_GetText( node_opts, oyNAME_NAME ) );
+        }
+
+        DBG_S_( oyPrintTime() );
         for (int r = 0; r < GRIDPOINTS; ++r)
         {
           in[0] = floor((double) r / (GRIDPOINTS - 1) * 65535.0 + 0.5);
@@ -2987,9 +3275,11 @@ static int     setupColourTable      ( PrivColorContext  * ccontext,
           }
         }
 
+        DBG_S_( oyPrintTime() );
         clut = oyArray2d_Create( NULL, GRIDPOINTS*3, GRIDPOINTS*GRIDPOINTS,
                                  oyUINT16, testobj );
 
+        DBG_S_( oyPrintTime() );
         error = oyConversion_RunPixels( cc, 0 );
 
         if(error)
@@ -3007,18 +3297,24 @@ static int     setupColourTable      ( PrivColorContext  * ccontext,
         oyHash_SetPointer( entry, (oyStruct_s*) clut );
       }
 
+      DBG_S_( oyPrintTime() );
+
       if(hash_text)
       {
         cicc_free(hash_text); hash_text = 0;
       }
 
 
+      oyFilterNode_Release( &icc );
+      oyFilterGraph_Release( &cc_graph );
       oyOptions_Release( &options );
       oyImage_Release( &image_in );
       oyImage_Release( &image_out );
       oyConversion_Release( &cc );
 
       cdCreateTexture( ccontext );
+
+      DBG_S_( oyPrintTime() );
 
     }
 
@@ -3033,9 +3329,12 @@ static int     setupColourTable      ( PrivColorContext  * ccontext,
     if(web)
       oyProfile_Release( &web );
 
+    DBG_S_( oyPrintTime() );
+
   return dl_count;
 }
 
+// TODO: needs optmimisation, as it's much slower than command line
 oyTESTRESULT_e testClut ()
 {
   oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
@@ -3065,14 +3364,155 @@ oyTESTRESULT_e testClut ()
   int count = oyStructList_Count( oy_test_cache_ );
   if( count )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "clut cached            %d %s", count,
+    "clut new             \t%d\t%s", count,
                    oyProfilingToString(1,clck/(double)CLOCKS_PER_SEC,"Tex"));
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
     "clut cache empty                      " );
   }
+
+  clck = oyClock();
+  dl_count = setupColourTable( &pc, 0 );
+  clck = oyClock() - clck;
+
+  count = oyStructList_Count( oy_test_cache_ );
+  if( count == 1 )
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "clut cached          \t%d\t%s", count,
+                   oyProfilingToString(1,clck/(double)CLOCKS_PER_SEC," Tex"));
+  } else
+  { PRINT_SUB( oyTESTRESULT_XFAIL,
+    "clut cached          \t%d\t%s", count,
+                   oyProfilingToString(1,clck/(double)CLOCKS_PER_SEC," Tex"));
+  }
+
+  int i;
+  clck = oyClock();
+  for(i = 0; i < 10; ++i)
+    setupColourConversion( &pc, 0, NULL, NULL );
+  clck = oyClock() - clck;
+  fprintf( zout, "setupColourConversion()\t10\t\%s\n",
+                 oyProfilingToString(10,clck/(double)CLOCKS_PER_SEC,"node"));
+
+  oyConversion_s * cc = setupColourConversion( &pc, 0, NULL, NULL );
+  clck = oyClock();
+  for(i = 0; i < 10; ++i)
+  {
+    oyFilterNode_s * icc = getColourNode( cc );
+    oyOptions_s * options = oyFilterNode_GetOptions( icc, 0 );
+    oyOptions_Release( &options );
+    oyFilterNode_Release( &icc );
+  }
+  clck = oyClock() - clck;
+  fprintf( zout, "getColourNode()+options\t10\t%s\n",
+                 oyProfilingToString(10,clck/(double)CLOCKS_PER_SEC,"node"));
+
+  oyJob_s * j OY_UNUSED;
+  oyArray2d_s * clut = oyArray2d_Create( NULL, GRIDPOINTS*3, GRIDPOINTS*GRIDPOINTS,
+                                 oyUINT16, NULL );
+  oyFilterNode_s * icc = getColourNode( cc );
+  const char * node_hash = oyFilterNode_GetText( icc, oyNAME_NAME );
+  clck = oyClock();
+  j = setupColourJob( &cc, node_hash, &clut );
+  clck = oyClock() - clck;
+  fprintf( zout, "setupColourJob()      \t1\t%s\n",
+                 oyProfilingToString(1,clck/(double)CLOCKS_PER_SEC," job"));
+
+  oyHash_s * hash OY_UNUSED;
+  char * hash_text = NULL;
+  clck = oyClock();
+  for(i = 0; i < 10; ++i)
+  {
+    hash = getColourHash( icc, &hash_text );
+    free(hash_text); hash_text = NULL;
+  }
+  clck = oyClock() - clck;
+  oyFilterNode_Release( &icc );
+  fprintf( zout, "getColourHash()       \t%d\t%s\n",i,
+                 oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC,"hash"));
+
+  clck = oyClock();
+  for(i = 0; i < 10; ++i)
+  {
+    fillColourClut( &pc );
+  }
+  clck = oyClock() - clck;
+  fprintf( zout, "fillColourClut()      \t%d\t%s\n",i,
+                 oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC,"fill"));
+
+  clut = oyArray2d_Create( NULL, 3, GRIDPOINTS*GRIDPOINTS*GRIDPOINTS,
+                                 oyUINT16, NULL );
+  clck = oyClock();
+  int n;
+  for(i = 0; i < 10; ++i)
+  {
+    n = fillColourClut2( clut );
+  }
+  clck = oyClock() - clck;
+  fprintf( zout, "fillColourClut2 %d\t%d\t%s\n", n,i,
+                 oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC,"fill"));
+  oyArray2d_Release( &clut );
+
+  cc = setupColourConversion( &pc, 0, NULL, NULL );
+  clck = oyClock();
+  for(i = 0; i < 10; ++i)
+  {
+    runColourClut( &pc, cc );
+  }
+  clck = oyClock() - clck;
+  fprintf( zout, "runColourClut()       \t%d\t%s\n",i,
+                 oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC," run"));
+
+  clck = oyClock();
+  for(i = 0; i < 10; ++i)
+  {
+    oyConversion_RunPixels( cc, 0 );
+  }
+  clck = oyClock() - clck;
+  fprintf( zout, "oyConversion_RunPixels\t%d\t%s\n",i,
+                 oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC," run"));
+
+  oyConversion_Release( &cc );
   oyProfile_Release( &pc.dst_profile );
 
+  double clck2 = oyClock();
+  clck = oyClock();
+  pc.dst_profile = oyProfile_FromName( "ProPhoto-RGB.icc", icc_profile_flags, NULL );
+  clut = oyArray2d_Create( NULL, 3, GRIDPOINTS*GRIDPOINTS*GRIDPOINTS,
+                                 oyUINT16, NULL );
+  n = fillColourClut2( clut ); i = 1;
+  clck = oyClock() - clck;
+  fprintf( zout, "PP+fillColourClut2\t%d\t%s\n", i,
+                 oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC,"fill"));
+
+  clck = oyClock();
+  cc = setupColourConversion( &pc, 0, NULL, clut );
+  clck = oyClock() - clck;
+  fprintf( zout, "setupColourConversionPP\t\t%s\n",
+                 oyProfilingToString(1,clck/(double)CLOCKS_PER_SEC,"node"));
+  clck = oyClock();
+  runColourClut( &pc, cc );
+  clck = oyClock() - clck;
+  fprintf( zout, "runColourClut(PP)     \t%d\t%s\n",i,
+                 oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC," run"));
+
+  clck = oyClock();
+  icc = getColourNode( cc );
+  hash = getColourHash( icc, &hash_text );
+  oyHash_SetPointer( hash, (oyStruct_s*) clut );
+  clck = oyClock() - clck;
+  fprintf( zout, "oyHash_SetPointer(PP) \t%d\t%s\n",i,
+                 oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC,"hash"));
+
+  free(hash_text); hash_text = NULL;
+  oyFilterNode_Release( &icc );
+  oyConversion_Release( &cc );
+  oyProfile_Release( &pc.dst_profile );
+  oyArray2d_Release( &clut );
+
+  clck2 = oyClock() - clck2;
+  fprintf( zout, "PP fill node run hash -\t%d\t%s\n",i,
+                 oyProfilingToString(i,clck2/(double)CLOCKS_PER_SEC,"clut"));
 
   // test outside DB change
   char * old_daemon = oyGetPersistentString(OY_DEFAULT_DISPLAY_WHITE_POINT_DAEMON, 0, oySCOPE_USER_SYS, 0);
@@ -5505,7 +5945,6 @@ oyTESTRESULT_e testImagePixel()
 
   fprintf(stdout, "\n" );
 
-  double clck = oyClock();
   p_in = p_web;
   p_out = p_lab;
   input =oyImage_Create( 2,2, 
@@ -5535,7 +5974,9 @@ oyTESTRESULT_e testImagePixel()
                                            oyPIXEL_ACCESS_IMAGE, testobj );
   oyFilterPlug_Release( &plug );
 
+  double clck1 = oyClock(), clck;
   error  = oyConversion_RunPixels( cc, pixel_access );
+  clck1 = oyClock() - clck1;
   clck = oyClock();
   for(i = 0; i < n*1000; ++i)
   if(error <= 0)
@@ -5543,6 +5984,19 @@ oyTESTRESULT_e testImagePixel()
     error  = oyConversion_RunPixels( cc, pixel_access );
   }
   clck = oyClock() - clck;
+  if(clck1/2.0 > clck/i)
+  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+    "oyConversion_RunPixels() caches %s %s",
+                          oyProfilingToString(1,clck1/(double)CLOCKS_PER_SEC, "1th"),
+                          oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "X")
+                          );
+  } else
+  { PRINT_SUB( oyTESTRESULT_FAIL,
+    "oyConversion_RunPixels() caches %s %s",
+                          oyProfilingToString(1,clck1/(double)CLOCKS_PER_SEC, "1th"),
+                          oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "X")
+                          );
+  }
 
   if( !error &&
       /* check unchanged input buffer */
