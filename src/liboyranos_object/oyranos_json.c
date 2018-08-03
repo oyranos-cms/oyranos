@@ -47,7 +47,7 @@ oyjl_val     oyJsonParse             ( const char        * json )
 
   root = oyjlTreeParse( json, error_buffer, 256 );
   if(error_buffer[0] != '\000')
-    oyMessageFunc_p( oyMSG_WARN, NULL, OY_DBG_FORMAT_ "ERROR:\t\"%s\"\n", OY_DBG_ARGS_, error_buffer );
+    oyMessageFunc_p( oyMSG_WARN, NULL, OY_DBG_FORMAT_ "ERROR:\t\"%s\"\n%s", OY_DBG_ARGS_, error_buffer, json );
 
   oyDeAllocateFunc_( error_buffer );
 
