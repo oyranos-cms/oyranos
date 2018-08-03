@@ -3011,21 +3011,34 @@ static int           fillColourClut2 ( oyArray2d_s       * array )
         }
         return GRIDPOINTS*GRIDPOINTS*GRIDPOINTS;
 }
+void pingNativeDisplay()
+{
+  /* ping X11 observers about option change
+   * ... by setting a known property again to its old value
+   */
+  oyOptions_s * opts = oyOptions_New(NULL), * results = 0;
+  oyOptions_Handle( "//" OY_TYPE_STD "/send_native_update_event",
+                      opts,"send_native_update_event",
+                      &results );
+  oyOptions_Release( &opts );
+}
 static int computeClut( oyJob_s * job )
 {
   oyPointer_s * context = (oyPointer_s *) job->context;
   pcc_t * pcontext = (pcc_t*) oyPointer_GetPointer( context );
   oyArray2d_s * clut = (oyArray2d_s*) oyHash_GetPointer( pcontext->hash, oyOBJECT_ARRAY2D_S);
+  /* make sure no one else finished already work on this */
   if(!clut)
   {
     fillColourClut2( pcontext->clut );
     oyConversion_RunPixels( pcontext->cc, 0 );
     oyHash_SetPointer( pcontext->hash, (oyStruct_s*) pcontext->clut );
+    pingNativeDisplay();
   }
   fprintf(zout, DBG_STRING "hash_text: %s %s %s\n", DBG_ARGS, pcontext->hash_text, oyArray2d_Show(pcontext->clut, 3), clut==NULL?"newly computed":"already there" );
   return 0;
 }
-static oyJob_s*setupColourJob        ( oyConversion_s   ** cc,
+static oyJob_s *   setupColourJob    ( oyConversion_s   ** cc,
                                        char             ** hash_text,
                                        oyHash_s         ** hash,
                                        oyArray2d_s      ** clut )
