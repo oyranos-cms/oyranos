@@ -2816,6 +2816,7 @@ typedef struct pcc_s {
   oyConversion_s * cc;
   oyArray2d_s * clut;
   char * hash_text;
+  oyHash_s * hash;
 } pcc_t;
 static void * setupColourTable_cb( void * data )
 {
@@ -2847,23 +2848,23 @@ static void iccProgressCallback (    double              progress_zero_till_one,
 #define DBG_S_ if(oy_debug >= 1)DBG_S
 static int icc_profile_flags = 0;
 static oyConversion_s * setupColourConversion (
-                                       PrivColorContext  * ccontext,
+                                       oyProfile_s       * dst_profile,
+                                       oyProfile_s       * src_profile,
                                        int                 advanced,
-                                       CompScreen        * s OY_UNUSED,
+                                       const char        * output_name,
                                        oyArray2d_s       * clut )
 {
   oyConversion_s * cc = NULL;
   int error = 0;
-  oyProfile_s * dst_profile = ccontext->dst_profile, * web = 0;
+  oyProfile_s * web = 0;
   int ** ptr = (int**) oyArray2d_GetData( clut );
 
-    if(!ccontext->dst_profile)
+    if(!dst_profile)
       dst_profile = web = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, 0 );
 
     {
       int flags = 0;
 
-      oyProfile_s * src_profile = ccontext->src_profile;
       oyOptions_s * options = 0;
       oyImage_s * image_in = NULL;
       oyImage_s * image_out= NULL;
@@ -2889,7 +2890,7 @@ static oyConversion_s * setupColourConversion (
       if(!src_profile)
         oyCompLogMessage(NULL, "compicc", CompLogLevelWarn,
              DBG_STRING "Output %s: no oyASSUMED_WEB src_profile",
-             DBG_ARGS, ccontext->output_name );
+             DBG_ARGS, output_name );
 
       /* optionally set advanced options from Oyranos */
       if(advanced)
@@ -2900,9 +2901,9 @@ static oyConversion_s * setupColourConversion (
                       DBG_ARGS, flags, ccontext->output_name,
                       advanced?"advanced":"");*/
       image_in = oyImage_Create( GRIDPOINTS,GRIDPOINTS*GRIDPOINTS,
-                                 ptr?(oyPointer)ptr[0]:(oyPointer)ccontext->clut, pixel_layout, src_profile, 0 );
+                                 ptr[0], pixel_layout, src_profile, 0 );
       image_out= oyImage_Create( GRIDPOINTS,GRIDPOINTS*GRIDPOINTS,
-                                 ptr?(oyPointer)ptr[0]:(oyPointer)ccontext->clut, pixel_layout, dst_profile, 0 );
+                                 ptr[0], pixel_layout, dst_profile, 0 );
 
       oyProfile_Release( &src_profile );
 
@@ -2911,7 +2912,7 @@ static oyConversion_s * setupColourConversion (
       {
         oyCompLogMessage( NULL, "compicc", CompLogLevelWarn,
                       DBG_STRING "no conversion created for %s",
-                      DBG_ARGS, ccontext->output_name);
+                      DBG_ARGS, output_name);
         goto clean_setupColourConversion;
       }
       oyOptions_Release( &options );
@@ -2924,7 +2925,7 @@ static oyConversion_s * setupColourConversion (
       {
         oyCompLogMessage( NULL, "compicc", CompLogLevelWarn,
                       DBG_STRING "oyConversion_Correct(///icc_color,%d,0) failed %s",
-                      DBG_ARGS, flags, ccontext->output_name);
+                      DBG_ARGS, flags, output_name);
         goto clean_setupColourConversion;
       }
 
@@ -2943,34 +2944,6 @@ static oyFilterNode_s *  getColourNode(oyConversion_s    * cc )
       oyFilterNode_s * icc = oyFilterGraph_GetNode( cc_graph, -1, "///icc_color", 0 );
       oyFilterGraph_Release( &cc_graph );
       return icc;
-}
-static oyJob_s*setupColourJob        ( oyConversion_s   ** cc,
-                                       const char        * hash_text,
-                                       oyArray2d_s      ** clut )
-{
-      oyJob_s * job = oyJob_New(0);
-      job->cb_progress = iccProgressCallback;
-      oyPointer_s * oy_ptr = oyPointer_New(0);
-      pcc_t * pcc   = (pcc_t*)calloc( sizeof(pcc_t), 1 );
-      pcc->cc = *cc;
-      *cc = NULL;
-      pcc->hash_text = strdup(hash_text);
-      pcc->clut = *clut;
-      clut = NULL;
-      oyPointer_Set( oy_ptr,
-                     __FILE__,
-                     "struct pcc_s*",
-                     pcc, 0, 0 );
-      job->cb_progress_context = (oyStruct_s*) oyPointer_Copy( oy_ptr, 0 );
-      job->work = NULL; // TODO
-      oyFilterNode_s * icc = getColourNode( pcc->cc );
-      oyOptions_s * options = oyFilterNode_GetOptions( icc, 0 );
-      oyFilterNode_Release( &icc );
-      oyOptions_MoveInStruct( &options, OY_BEHAVIOUR_STD "/expensive_callback", (oyStruct_s**)&job, OY_CREATE_NEW );
-      /* wait no longer than approximately 1 seconds */
-      oyOptions_SetFromString( &options, OY_BEHAVIOUR_STD "/expensive", "10", OY_CREATE_NEW );
-      oyOptions_Release( &options );
-      return job;
 }
 static oyHash_s * getColourHash      ( oyFilterNode_s    * icc,
                                        char             ** hash_text )
@@ -3037,6 +3010,47 @@ static int           fillColourClut2 ( oyArray2d_s       * array )
           }
         }
         return GRIDPOINTS*GRIDPOINTS*GRIDPOINTS;
+}
+static int computeClut( oyJob_s * job )
+{
+  oyPointer_s * context = (oyPointer_s *) job->context;
+  pcc_t * pcontext = (pcc_t*) oyPointer_GetPointer( context );
+  oyArray2d_s * clut = (oyArray2d_s*) oyHash_GetPointer( pcontext->hash, oyOBJECT_ARRAY2D_S);
+  if(!clut)
+  {
+    fillColourClut2( pcontext->clut );
+    oyConversion_RunPixels( pcontext->cc, 0 );
+    oyHash_SetPointer( pcontext->hash, (oyStruct_s*) pcontext->clut );
+  }
+  fprintf(zout, DBG_STRING "hash_text: %s %s %s\n", DBG_ARGS, pcontext->hash_text, oyArray2d_Show(pcontext->clut, 3), clut==NULL?"newly computed":"already there" );
+  return 0;
+}
+static oyJob_s*setupColourJob        ( oyConversion_s   ** cc,
+                                       char             ** hash_text,
+                                       oyHash_s         ** hash,
+                                       oyArray2d_s      ** clut )
+{
+      oyJob_s * job = oyJob_New(0);
+      job->cb_progress = iccProgressCallback;
+      oyPointer_s * oy_ptr = oyPointer_New(0);
+      pcc_t * pcc   = (pcc_t*)calloc( sizeof(pcc_t), 1 );
+      pcc->cc = *cc;
+      *cc = NULL;
+      pcc->hash_text = *hash_text;
+      *hash_text = NULL;
+      pcc->hash = *hash;
+      *hash = NULL;
+      pcc->clut = *clut;
+      clut = NULL;
+      oyPointer_Set( oy_ptr,
+                     __FILE__,
+                     "struct pcc_s*",
+                     pcc, 0, 0 );
+      job->cb_progress_context = (oyStruct_s*) oyPointer_Copy( oy_ptr, 0 );
+      job->context = (oyStruct_s*) oyPointer_Copy( oy_ptr, 0 );
+      job->work = computeClut;
+      job->finish = NULL; /* optionally call from main thread, e.g. for texture creation in updateOutputConfiguration() */
+      return job;
 }
 static void          runColourClut   ( PrivColorContext  * ccontext,
                                        oyConversion_s    * cc )
@@ -3387,14 +3401,18 @@ oyTESTRESULT_e testClut ()
   }
 
   int i;
+  oyArray2d_s * clut = oyArray2d_Create( NULL, GRIDPOINTS*3, GRIDPOINTS*GRIDPOINTS,
+                                 oyUINT16, NULL );
   clck = oyClock();
   for(i = 0; i < 10; ++i)
-    setupColourConversion( &pc, 0, NULL, NULL );
+    setupColourConversion( pc.dst_profile, pc.src_profile, 0, pc.output_name, clut );
   clck = oyClock() - clck;
   fprintf( zout, "setupColourConversion()\t10\t\%s\n",
                  oyProfilingToString(10,clck/(double)CLOCKS_PER_SEC,"node"));
 
-  oyConversion_s * cc = setupColourConversion( &pc, 0, NULL, NULL );
+  oyProfile_Release( &pc.dst_profile );
+  pc.dst_profile = oyProfile_FromName( "Lab.icc", icc_profile_flags, NULL );
+  oyConversion_s * cc = setupColourConversion( pc.dst_profile, pc.src_profile, 0, pc.output_name, clut );
   clck = oyClock();
   for(i = 0; i < 10; ++i)
   {
@@ -3407,19 +3425,16 @@ oyTESTRESULT_e testClut ()
   fprintf( zout, "getColourNode()+options\t10\t%s\n",
                  oyProfilingToString(10,clck/(double)CLOCKS_PER_SEC,"node"));
 
-  oyJob_s * j OY_UNUSED;
-  oyArray2d_s * clut = oyArray2d_Create( NULL, GRIDPOINTS*3, GRIDPOINTS*GRIDPOINTS,
-                                 oyUINT16, NULL );
   oyFilterNode_s * icc = getColourNode( cc );
-  const char * node_hash = oyFilterNode_GetText( icc, oyNAME_NAME );
   clck = oyClock();
-  j = setupColourJob( &cc, node_hash, &clut );
+  char * hash_text = NULL;
+  oyHash_s * hash = getColourHash( icc, &hash_text );
+  oyJob_s * job = setupColourJob( &cc, &hash_text, &hash, &clut );
+  oyJob_Add( &job, 0, 0 );
   clck = oyClock() - clck;
   fprintf( zout, "setupColourJob()      \t1\t%s\n",
                  oyProfilingToString(1,clck/(double)CLOCKS_PER_SEC," job"));
 
-  oyHash_s * hash OY_UNUSED;
-  char * hash_text = NULL;
   clck = oyClock();
   for(i = 0; i < 10; ++i)
   {
@@ -3451,9 +3466,8 @@ oyTESTRESULT_e testClut ()
   clck = oyClock() - clck;
   fprintf( zout, "fillColourClut2 %d\t%d\t%s\n", n,i,
                  oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC,"fill"));
-  oyArray2d_Release( &clut );
 
-  cc = setupColourConversion( &pc, 0, NULL, NULL );
+  cc = setupColourConversion( pc.dst_profile, pc.src_profile, 0, pc.output_name, clut );
   clck = oyClock();
   for(i = 0; i < 10; ++i)
   {
@@ -3478,15 +3492,13 @@ oyTESTRESULT_e testClut ()
   double clck2 = oyClock();
   clck = oyClock();
   pc.dst_profile = oyProfile_FromName( "ProPhoto-RGB.icc", icc_profile_flags, NULL );
-  clut = oyArray2d_Create( NULL, 3, GRIDPOINTS*GRIDPOINTS*GRIDPOINTS,
-                                 oyUINT16, NULL );
   n = fillColourClut2( clut ); i = 1;
   clck = oyClock() - clck;
   fprintf( zout, "PP+fillColourClut2\t%d\t%s\n", i,
                  oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC,"fill"));
 
   clck = oyClock();
-  cc = setupColourConversion( &pc, 0, NULL, clut );
+  cc = setupColourConversion( pc.dst_profile, pc.src_profile, 0, pc.output_name, clut );
   clck = oyClock() - clck;
   fprintf( zout, "setupColourConversionPP\t\t%s\n",
                  oyProfilingToString(1,clck/(double)CLOCKS_PER_SEC,"node"));
