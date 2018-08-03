@@ -154,7 +154,7 @@ int                l2cmsCMMCheckPointer(oyPointer_s       * cmm_ptr,
 int        oyPixelToLcm2PixelLayout_ ( oyPixel_t           pixel_layout,
                                        icColorSpaceSignature color_space );
 char * l2cmsImage_GetText            ( oyImage_s         * image,
-                                       int                 verbose,
+                                       oyNAME_e            type,
                                        oyAlloc_f           allocateFunc );
 
 
@@ -1085,7 +1085,8 @@ cmsHTRANSFORM  l2cmsCMMConversionContextCreate_ (
                                        oyPixel_t           oy_pixel_layout_out,
                                        oyOptions_s       * opts,
                                        l2cmsTransformWrap_s ** ltw,
-                                       oyPointer_s       * oy )
+                                       oyPointer_s       * oy,
+                                       int                 verbose )
 {
   oyPixel_t l2cms_pixel_layout_in = 0;
   oyPixel_t l2cms_pixel_layout_out = 0;
@@ -1119,6 +1120,11 @@ cmsHTRANSFORM  l2cmsCMMConversionContextCreate_ (
       color_out = (icColorSpaceSignature) l2cmsGetPCS( lps[profiles_n-1] );
     profile_class_in = (icProfileClassSignature) l2cmsGetDeviceClass( lps[0] );
   }
+
+  if(oy_debug || verbose)
+    l2cms_msg( oy_debug?oyMSG_DBG:oyMSG_WARN,(oyStruct_s*)node, OY_DBG_FORMAT_"\n"
+             "  profiles_n: %d  proof_n: %d",
+             OY_DBG_ARGS_, profiles_n, proof_n );
 
   l2cms_pixel_layout_in  = oyPixelToLcm2PixelLayout_(oy_pixel_layout_in,
                                                    color_in);
@@ -1290,7 +1296,11 @@ cmsHTRANSFORM  l2cmsCMMConversionContextCreate_ (
              lps[0]?oyICCColorSpaceGetName((icColorSpaceSignature) l2cmsGetColorSpace( lps[0])):"----",
              lps[i]?oyICCColorSpaceGetName((icColorSpaceSignature) l2cmsGetPCS( lps[i] )):"----",
              lps[i]?oyICCDeviceClassDescription((icProfileClassSignature) l2cmsGetDeviceClass(lps[i])):"----" );
-  }
+  } else
+  if(oy_debug || verbose)
+    l2cms_msg( oy_debug?oyMSG_DBG:oyMSG_WARN,(oyStruct_s*)node, OY_DBG_FORMAT_"\n"
+             "  finished",
+             OY_DBG_ARGS_ );
 
   if(!error && ltw && oy)
     *ltw= l2cmsTransformWrap_Set_( xform, color_in, color_out,
@@ -1919,6 +1929,7 @@ oyPointer l2cmsFilterNode_CmmIccContextToMem (
 
   /* display profile */
   profiles_display_n = oyOptions_CountType( node_options, "display.abstract.icc_profile", oyOBJECT_PROFILE_S );
+  if(verbose || oy_debug)
   l2cms_msg( oyMSG_DBG, (oyStruct_s*)node, OY_DBG_FORMAT_ "display.abstract.icc_profile[] = %d",
              OY_DBG_ARGS_, profiles_display_n );
   for(i = 0; i < profiles_display_n; ++i)
@@ -1956,12 +1967,16 @@ oyPointer l2cmsFilterNode_CmmIccContextToMem (
                                            profiles, profiles_simulation_n, proof,
                                 oyImage_GetPixelLayout( image_input, oyLAYOUT ),
                                 oyImage_GetPixelLayout( image_output, oyLAYOUT ),
-                                           node_options, 0, 0 );
+                                           node_options, 0, 0, verbose );
+  error = !xform;
   if(oy_debug > 3)
     l2cms_msg( oyMSG_DBG, (oyStruct_s*)node, OY_DBG_FORMAT_"\n%s",
               OY_DBG_ARGS_,
               oyFilterNode_GetText( node, oyNAME_NAME ) );
-  error = !xform;
+  else
+    if(oy_debug || verbose)
+      l2cms_msg( oyMSG_DBG, (oyStruct_s*)node, OY_DBG_FORMAT_"start oyDL %d",
+              OY_DBG_ARGS_, error );
 
   if(!error)
   {
@@ -1973,6 +1988,9 @@ oyPointer l2cmsFilterNode_CmmIccContextToMem (
                                               size, allocateFunc );
     error = !block || !*size;
     l2cmsDeleteTransform( xform ); xform = 0;
+    if(oy_debug || verbose)
+      l2cms_msg( oyMSG_DBG, (oyStruct_s*)node, OY_DBG_FORMAT_"created oyDL %d",
+              OY_DBG_ARGS_, error );
   } else
   {
     l2cms_msg( oyMSG_WARN, (oyStruct_s*)node, OY_DBG_FORMAT_"\n"
@@ -2105,11 +2123,14 @@ l2cmsFilterNode_CmmIccContextToMemClean:
   oyProfiles_Release( &profiles );
   oyFree_m_( lps );
 
+  if(verbose || oy_debug)
+    l2cms_msg( oyMSG_DBG,(oyStruct_s*)node, OY_DBG_FORMAT_
+                "finished", OY_DBG_ARGS_);
   return block;
 }
 
 char * l2cmsImage_GetText            ( oyImage_s         * image,
-                                       int                 verbose OY_UNUSED,
+                                       oyNAME_e            type,
                                        oyAlloc_f           allocateFunc )
 {
   oyPixel_t pixel_layout = oyImage_GetPixelLayout(image,oyLAYOUT); 
@@ -2126,36 +2147,42 @@ char * l2cmsImage_GetText            ( oyImage_s         * image,
   oyImage_s * s = image;
 
   /* describe the image */
-  oySprintf_( text,   "  {\n  \"oyImage_s\": {\n    \"oyProfile_s\": %s,\n", oyProfile_GetText(profile, oyNAME_JSON));
+  if(type == oyNAME_DESCRIPTION)
+    oySprintf_( text,   "  {\n  \"oyImage_s\": {\n    \"oyProfile_s\": %s", oyProfile_GetText(profile, oyNAME_JSON));
+  else
+    oySprintf_( text,   "%s", oyProfile_GetText(profile, oyNAME_JSON));
   hashTextAdd_m( text );
-  oySprintf_( text,   "    \"channels\": {\n      \"all\": \"%d\",\n      \"color\": \"%d\"\n    },\n", n,cchan_n);
-  hashTextAdd_m( text );
-  oySprintf_( text,
-                      "    \"offsets first_color_sample\": \"%d\",\n    \"next_pixel\": \"%d\",\n"
+  if(type == oyNAME_DESCRIPTION)
+  {
+    oySprintf_( text,",\n    \"channels\": {\n      \"all\": \"%d\",\n      \"color\": \"%d\"\n    },\n", n,cchan_n);
+    hashTextAdd_m( text );
+    oySprintf_( text,
+                        "    \"offsets first_color_sample\": \"%d\",\n    \"next_pixel\": \"%d\",\n"
               /*"  next line = %d\n"*/,
               coff_x, oyImage_GetPixelLayout( s,oyPOFF_X )/*, mask[oyPOFF_Y]*/ );
-  hashTextAdd_m( text );
+    hashTextAdd_m( text );
 
-  if(swap || oyToByteswap_m( pixel_layout ))
-  {
-    hashTextAdd_m(    "    \"swap\": {" );
-    if(swap)
-      hashTextAdd_m(  "      \"colorswap\": \"yes\",\n" );
-    if( oyToByteswap_m( pixel_layout ) )
-      hashTextAdd_m(  "      \"byteswap\": \"yes\"\n" );
-    hashTextAdd_m(    "    },\n" );
-  }
+    if(swap || oyToByteswap_m( pixel_layout ))
+    {
+      hashTextAdd_m(    "    \"swap\": {" );
+      if(swap)
+        hashTextAdd_m(  "      \"colorswap\": \"yes\",\n" );
+      if( oyToByteswap_m( pixel_layout ) )
+        hashTextAdd_m(  "      \"byteswap\": \"yes\"\n" );
+      hashTextAdd_m(    "    },\n" );
+    }
 
-  if( oyToFlavor_m( pixel_layout ) )
-  {
-    oySprintf_( text, ",\n    \"flawor\": {\n      \"value\": \"yes\"\n    },\n" );
+    if( oyToFlavor_m( pixel_layout ) )
+    {
+      oySprintf_( text, ",\n    \"flawor\": {\n      \"value\": \"yes\"\n    },\n" );
+      hashTextAdd_m( text );
+    }
+    oySprintf_( text,   "    \"sample\": {\n      \"type\": \"%s\",\n      \"bytes\": \"%d\"\n    }\n",
+                    oyDataTypeToText(t), so );
+    hashTextAdd_m( text );
+    oySprintf_( text,     "  }\n}");
     hashTextAdd_m( text );
   }
-  oySprintf_( text,   "    \"sample\": {\n      \"type\": \"%s\",\n      \"bytes\": \"%d\"\n    }\n",
-                    oyDataTypeToText(t), so );
-  hashTextAdd_m( text );
-  oySprintf_( text,   "  }\n}");
-  hashTextAdd_m( text );
 
   oyDeAllocateFunc_(text);
 
@@ -2173,12 +2200,15 @@ char * l2cmsImage_GetText            ( oyImage_s         * image,
 /** Function l2cmsFilterNode_GetText
  *  @brief   implement oyCMMFilterNode_GetText_f()
  *
- *  @version Oyranos: 0.1.10
+ *  param type oyNAME_NAME, oyNAME_NICK suitable for hash ID;
+ *             oyNAME_DESCRIPTION more details
+ *
+ *  @version Oyranos: 0.9.7
+ *  @date    2018/08/03
  *  @since   2008/12/27 (Oyranos: 0.1.10)
- *  @date    2009/06/02
  */
-char * l2cmsFilterNode_GetText        ( oyFilterNode_s    * node,
-                                       oyNAME_e            type OY_UNUSED,
+char * l2cmsFilterNode_GetText       ( oyFilterNode_s    * node,
+                                       oyNAME_e            type,
                                        oyAlloc_f           allocateFunc )
 {
 #ifdef NO_OPT
@@ -2223,10 +2253,13 @@ char * l2cmsFilterNode_GetText        ( oyFilterNode_s    * node,
   /* make a description */
   {
     /* input data */
-    hashTextAdd_m(   " \"data_in\": " );
+    if(type == oyNAME_DESCRIPTION)
+      hashTextAdd_m(   " \"data_in\": " );
+    else
+      hashTextAdd_m(   " \"icc_profile.in\": " );
     if(in_image)
     {
-      temp = l2cmsImage_GetText( in_image, verbose, oyAllocateFunc_ );
+      temp = l2cmsImage_GetText( in_image, type, oyAllocateFunc_ );
       hashTextAdd_m( temp );
       oyDeAllocateFunc_(temp); temp = 0;
     }
@@ -2245,10 +2278,10 @@ char * l2cmsFilterNode_GetText        ( oyFilterNode_s    * node,
     oyOptions_Release( &opts_tmp );
 
     /* options -> xforms */
+    model = oyOptions_GetText( options, oyNAME_JSON );
     if(model)
     {
-      hashTextAdd_m(   " \"options\": " );
-      model = oyOptions_GetText( options, oyNAME_JSON );
+      hashTextAdd_m(   " \"model\": " );
       hashTextAdd_m( model );
       hashTextAdd_m( ",\n" );
     }
@@ -2260,17 +2293,21 @@ char * l2cmsFilterNode_GetText        ( oyFilterNode_s    * node,
     effect_switch = oyOptions_FindString  ( node_opts, "effect_switch", "1" ) ? 1 : 0;
     /* display profile */
     profiles_display_n = oyOptions_CountType( node_opts, "display.abstract.icc_profile", oyOBJECT_PROFILE_S );
-    if(proof || effect_switch || profiles_display_n)
-    hashTextAdd_m(   " \"profiles\": " );
     profiles = l2cmsProfilesFromOptions( node, plug, node_opts, "profiles_effect", effect_switch, verbose );
     n = oyProfiles_Count( profiles );
     for(i = 0; i < n; ++i)
     {
       p = oyProfiles_Get( profiles, i );
       model = oyProfile_GetText( p, oyNAME_JSON );
-      hashTextAdd_m( "\n  " );
-      hashTextAdd_m( model );
       oyProfile_Release( &p );
+
+      if(i==0)
+        hashTextAdd_m(  " \"icc_profile.effect.abstract\": [\n" );
+      else
+        hashTextAdd_m(    ",\n  " );
+      hashTextAdd_m( model );
+      if(i+1 == n)
+        hashTextAdd_m(  " ],\n" );
     }
     oyProfiles_Release( &profiles );
 
@@ -2282,19 +2319,25 @@ char * l2cmsFilterNode_GetText        ( oyFilterNode_s    * node,
       p = (oyProfile_s*) oyOption_GetStruct( o, oyOBJECT_PROFILE_S );
       oyOption_Release( &o );
       model = oyProfile_GetText( p, oyNAME_JSON );
-      hashTextAdd_m( "\n  " );
-      hashTextAdd_m( model );
       oyProfile_Release( &p );
+
+      if(i==0)
+        hashTextAdd_m(  " \"icc_profile.display.abstract\": [\n" );
+      else
+        hashTextAdd_m(    ",\n  " );
+      hashTextAdd_m( model );
+      if(i+1 == profiles_display_n)
+        hashTextAdd_m(  " ],\n" );
     }
 
-    if(proof || effect_switch || profiles_display_n)
-    hashTextAdd_m( ",\n" );
-
     /* output data */
-    hashTextAdd_m(   " \"data_out\": " );
+    if(type == oyNAME_DESCRIPTION)
+      hashTextAdd_m(   " \"data_out\": " );
+    else
+      hashTextAdd_m(   " \"icc_profile.out\": " );
     if(out_image)
     {
-      temp = l2cmsImage_GetText( out_image, verbose, oyAllocateFunc_ );
+      temp = l2cmsImage_GetText( out_image, type, oyAllocateFunc_ );
       hashTextAdd_m( temp );
     }
     hashTextAdd_m( "\n}\n" );
@@ -2389,9 +2432,11 @@ int  l2cmsModuleData_Convert          ( oyPointer_s       * data_in,
   oyFilterPlug_s * plug = oyFilterNode_GetPlug( node, 0 );
   oyFilterSocket_s * socket = oyFilterNode_GetSocket( node, 0 ),
                    * remote_socket = oyFilterPlug_GetSocket( plug );
-  oyOptions_s * node_options = oyFilterNode_GetOptions( node, 0 );
+  oyOptions_s * node_options = oyFilterNode_GetOptions( node, 0 ),
+              * node_tags = oyFilterNode_GetTags( node );
   oyImage_s * image_input = (oyImage_s*)oyFilterSocket_GetData( remote_socket ),
             * image_output = (oyImage_s*)oyFilterSocket_GetData( socket );
+  int verbose = oyOptions_FindString( node_tags, "verbose", "true" ) ? 1 : 0;
 
   if(!error)
   {
@@ -2422,7 +2467,7 @@ int  l2cmsModuleData_Convert          ( oyPointer_s       * data_in,
                                 oyImage_GetPixelLayout( image_input, oyLAYOUT ),
                                 oyImage_GetPixelLayout( image_output,oyLAYOUT ),
                                            node_options,
-                                           &ltw, cmm_ptr_out );
+                                           &ltw, cmm_ptr_out, verbose );
 
     if(oy_debug > 4)
     {
@@ -2479,6 +2524,7 @@ int  l2cmsModuleData_Convert          ( oyPointer_s       * data_in,
   oyImage_Release( &image_input );
   oyImage_Release( &image_output );
   oyOptions_Release( &node_options );
+  oyOptions_Release( &node_tags );
 
   return error;
 }
