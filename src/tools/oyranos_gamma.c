@@ -101,7 +101,7 @@ int main( int argc , char** argv )
   int simple = 0;
 
   char *ptr = NULL;
-  int x = 0, y = 0;
+  int x = -1, y = -1;
   int device_pos = -1;
   char *oy_display_name = NULL;
   oyProfile_s * prof = 0;
@@ -295,15 +295,17 @@ int main( int argc , char** argv )
 
   /* implicite selection for the most common default case */
   if(!icc_profile_flags)
+  {
     icc_profile_flags = oyICCProfileSelectionFlagsFromOptions( 
                                                               OY_CMM_STD, "//" OY_TYPE_STD "/icc_color",
-                                                              NULL, 0 );  
+                                                              NULL, 0 );
+  }
 
   /* start independent white point daemon */
   if(daemon)
   {
     int r OY_UNUSED;
-    r = system("oyranos-monitor-white-point --daemon&");
+    r = system("oyranos-monitor-white-point --daemon=1");
   }
 
 #ifdef XCM_HAVE_X11
@@ -335,9 +337,13 @@ int main( int argc , char** argv )
     if(monitor_profile && !server && device_pos == -1)
       device_pos = 0;
 
-    if(device_pos != -1)
+    if(server && x != -1 && y != -1)
+      oy_display_name = oyGetDisplayNameFromPosition2 ( OY_TYPE_STD,
+                                                    device_class,
+                                                    display_name, x,y,
+                                                    oyAllocFunc);
+    else
     {
-
       error = oyOptions_SetFromString( &options,
                                      "//" OY_TYPE_STD "/config/command",
                                      "properties", OY_CREATE_NEW );
@@ -367,19 +373,13 @@ int main( int argc , char** argv )
       n = oyConfigs_Count( devices );
       if(error <= 0 && 0 <= device_pos && device_pos < (int)n )
       {
-        c = oyConfigs_Get( devices, device_pos );
-        oy_display_name = strdup( oyConfig_FindString( c, "device_name", 0 ));
-        oyConfig_Release( &c );
-      } else
+        device = oyConfigs_Get( devices, device_pos );
+        oy_display_name = strdup( oyConfig_FindString( device, "device_name", 0 ));
+      } else if(device_pos != -1)
         fprintf( stderr, "%s %d. %s: %d\n", _("Could not resolve device"),
                  device_pos, _("Available devices"), n);
-      oyConfigs_Release( &devices );
       oyOptions_Release( &options );
-    } else if(server)
-      oy_display_name = oyGetDisplayNameFromPosition2 ( OY_TYPE_STD,
-                                                    device_class,
-                                                    display_name, x,y,
-                                                    oyAllocFunc);
+    }
 
     if(list_modules)
     {
@@ -409,11 +409,6 @@ int main( int argc , char** argv )
         return error;
       }
 
-      error = oyOptions_SetFromString( &options,
-                                 "//" OY_TYPE_STD "/config/command",
-                                 "properties", OY_CREATE_NEW );
-      error = oyDeviceGet( OY_TYPE_STD, device_class, oy_display_name, 0,
-                           &device );
       oyDevicesFromTaxiDB( device, options, &devices, NULL );
       n = oyConfigs_Count( devices );
       if(n == 0)
@@ -521,8 +516,6 @@ int main( int argc , char** argv )
       error = oyOptions_SetFromInt( &options,
                                     "//" OY_TYPE_STD "/icc_profile_flags",
                                     icc_profile_flags, 0, OY_CREATE_NEW );
-
-      error = oyDevicesGet( 0, device_class, options, &devices );
 
       n = oyConfigs_Count( devices );
       if(!error)
@@ -767,11 +760,6 @@ int main( int argc , char** argv )
         error = oyOptions_SetFromString( &cs_options,
               "//"OY_TYPE_STD"/config/icc_profile.x_color_region_target", "yes", OY_CREATE_NEW );
       }
-      error = oyOptions_SetFromString( &options,
-                                     "//" OY_TYPE_STD "/config/command",
-                                     "properties", OY_CREATE_NEW );
-      error = oyDevicesGet( 0, device_class, options, &devices );
-
 
       n = oyConfigs_Count( devices );
       if(error <= 0)
@@ -866,8 +854,6 @@ int main( int argc , char** argv )
     if(oy_display_name)
     /* make shure the display name is correctly including the screen number */
     {
-      error = oyDeviceGet( OY_TYPE_STD, device_class, oy_display_name, 0,
-                           &device );
       error = oyOptions_SetFromInt( &options,
                                     "//" OY_TYPE_STD "/icc_profile_flags",
                                     icc_profile_flags, 0, OY_CREATE_NEW );
@@ -906,7 +892,9 @@ int main( int argc , char** argv )
       if(gamma)
       {
         if(monitor_profile)
+        {
           oyDeviceSetupVCGT( device, options, monitor_profile );
+        }
         else
           fprintf( stderr, "no monitor profile specified\n" );
       }
@@ -915,22 +903,6 @@ int main( int argc , char** argv )
     }
     else if(erase || unset || setup)
     {
-      error = oyOptions_SetFromString( &options,
-                                     "//" OY_TYPE_STD "/config/command",
-                                     "list", OY_CREATE_NEW );
-#ifdef HAVE_X11
-      if(module_name && strstr(module_name, "oyX1"))
-#endif
-        error = oyOptions_SetFromString( &options,
-                                     "//"OY_TYPE_STD"/config/display_name",
-                                     display_name, OY_CREATE_NEW );
-
-      error = oyOptions_SetFromInt( &options,
-                                    "//" OY_TYPE_STD "/icc_profile_flags",
-                                    icc_profile_flags, 0, OY_CREATE_NEW );
-
-      error = oyDevicesGet( 0, device_class, options, &devices );
-
       n = oyConfigs_Count( devices );
       if(!error)
       {
