@@ -207,7 +207,7 @@ OYAPI oyProfile_s * OYEXPORT oyProfile_FromStd (
        strcmp("ISOcoated_v2_bas.ICC",name) == 0
       )
     {
-      oyMessageFunc_p( oyMSG_ERROR,(oyStruct_s*)object,
+      oyMessageFunc_p( oyMSG_ERROR, NULL,
                        OY_DBG_FORMAT_ "\n\t%s: \"%s\"\n\t%s\n\t%s\n%s", OY_DBG_ARGS_,
                 _("Could not open default ICC profile"),name,
                 _("You can get them from http://sf.net/projects/openicc"),
@@ -222,7 +222,7 @@ OYAPI oyProfile_s * OYEXPORT oyProfile_FromStd (
       /* without name from core we can ignore proof, effect and above profile types */
       if(type >= oyPROFILE_PROOF && (!name || !name[0]))
         msg_type = oyMSG_DBG;
-      oyMessageFunc_p( msg_type, (oyStruct_s*)object,
+      oyMessageFunc_p( msg_type, NULL,
                        OY_DBG_FORMAT_ "\n\t%s \"%s\": \"%s\"\n\t%s\n%s", OY_DBG_ARGS_,
                 _("Could not open default ICC profile"), t, name,
                 name&&name[0]?_("install in the OpenIccDirectory icc path"):"", name&&name[0]?text:"" );
@@ -488,7 +488,7 @@ oyProfile_FromFile            ( const char      * name,
   {
     if(!name)
     {
-      oyMessageFunc_p( oyMSG_ERROR,(oyStruct_s*)object,
+      oyMessageFunc_p( oyMSG_ERROR, NULL,
                        OY_DBG_FORMAT_ "\"name\" arg missed",OY_DBG_ARGS_);
       return NULL;
     }
@@ -496,7 +496,7 @@ oyProfile_FromFile            ( const char      * name,
     s = (oyProfile_s_*) oyProfile_New(object);
     if(!s)
     {
-      oyMessageFunc_p( oyMSG_ERROR,(oyStruct_s*)object,
+      oyMessageFunc_p( oyMSG_ERROR, NULL,
                        OY_DBG_FORMAT_ "oyProfile_New() failed", OY_DBG_ARGS_);
       return NULL;
     }
@@ -526,7 +526,7 @@ oyProfile_FromFile            ( const char      * name,
           oyFree_m_(t);
       } else
       {
-        oyMessageFunc_p( oyMSG_WARN,(oyStruct_s*)object,
+        oyMessageFunc_p( oyMSG_WARN, NULL,
                        OY_DBG_FORMAT_ "could not parse value: %s %d\n"
                        "need a string of form: \"meta:key;value\"",
                        OY_DBG_ARGS_, name, flags );
@@ -551,7 +551,7 @@ oyProfile_FromFile            ( const char      * name,
     }
 
     if(oy_debug)
-      oyMessageFunc_p( oyMSG_DBG,(oyStruct_s*)object,
+      oyMessageFunc_p( oyMSG_DBG, NULL,
                        OY_DBG_FORMAT_ "path only profile: %s %d",
                        OY_DBG_ARGS_, name, flags );
     return (oyProfile_s*)s;
