@@ -47,7 +47,7 @@ int __sunriset__( int year, int month, int day, double lon, double lat,
 int findLocation(oySCOPE_e scope, int dry);
 int getLocation( double * lon, double * lat);
 double getSunHeight( double year, double month, double day, double gmt_hours, double lat, double lon );
-int getSunriseSunset( double * rise, double * set, int dry );
+int getSunriseSunset( double * rise, double * set, int dry, int verbose );
 int isNight(int dry);
 int runDaemon(int dmode);
 int setWtptMode( oySCOPE_e scope, int wtpt_mode, int dry );
@@ -163,7 +163,9 @@ oyjlOPTIONSTATE_e oyjlOptions_GetResult (
                                        int               * result_int );
 char * oyjlOptions_ResultsToJson     ( oyjlOptions_s     * opts );
 char * oyjlOptions_ResultsToText     ( oyjlOptions_s     * opts );
+typedef struct oyjlUi_s oyjlUi_s;
 void   oyjlOptions_PrintHelp         ( oyjlOptions_s     * opts,
+                                       oyjlUi_s          * ui,
                                        int                 verbose,
                                        const char        * motto_format,
                                                            ... );
@@ -181,7 +183,7 @@ typedef struct oyjlUiHeaderSection_s {
 } oyjlUiHeaderSection_s;
 
 /** @brief Info for graphic UI's */
-typedef struct oyjlUi_s {
+struct oyjlUi_s {
   char type [4];                       /**< must be 'oiui' */
   const char * app_type;               /**< "tool" or "module" */
   char         nick[8];                /**< four byte ID, e.g. "oyjl" */
@@ -191,10 +193,13 @@ typedef struct oyjlUi_s {
   /** We describe here a particular tool/module. Each property object contains at least one 'name' key. All values shall be strings. *nick* or *description* keys are optional. If they are not contained, fall back to *name*. Well known objects are *manufacturer*, *copyright*, *license*, *url*, *support*, *download*, *sources*, *development*, *openicc_modules_author*, *documentation* and *logo*. The *modules/[]/nick* shall contain a four byte string in as the CMM identifier. */
   oyjlUiHeaderSection_s * sections;
   oyjlOptions_s * opts;                /**< info for UI logic */
-} oyjlUi_s;
+};
 oyjlUi_s *   oyjlUi_New              ( int                 argc,
                                        char             ** argv );
 int       oyjlUi_CountHeaderSections ( oyjlUi_s          * ui );
+oyjlUiHeaderSection_s * oyjlUi_GetHeaderSection (
+                                       oyjlUi_s          * ui,
+                                       const char        * nick );
 char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
                                        int                 flags );
 
@@ -636,6 +641,7 @@ oyjlWidgetChoice_s * oyjlOption_GetChoices_ (
 }
 #include <stdarg.h> /* va_list */
 void  oyjlOptions_PrintHelp          ( oyjlOptions_s     * opts,
+                                       oyjlUi_s          * ui,
                                        int                 verbose,
                                        const char        * motto_format,
                                                            ... )
@@ -643,6 +649,7 @@ void  oyjlOptions_PrintHelp          ( oyjlOptions_s     * opts,
   int i,ng;
   va_list list;
   int indent = 2;
+  oyjlUiHeaderSection_s * section = NULL;
   fprintf( stderr, "\n");
   if(verbose)
     for(i = 0; i < opts->argc; ++i)
@@ -655,6 +662,10 @@ void  oyjlOptions_PrintHelp          ( oyjlOptions_s     * opts,
 
   ng = oyjlOptions_CountGroups(opts);
   if(!ng) return;
+
+  if( ui && (section = oyjlUi_GetHeaderSection(ui, "documentation")) != NULL &&
+      section->description )
+    fprintf( stderr, "\n%s:\n  %s\n", _("Description"), section->description );
 
   fprintf( stderr, "\n%s:\n", _("Synopsis") );
   for(i = 0; i < ng; ++i)
@@ -758,6 +769,17 @@ int       oyjlUi_CountHeaderSections ( oyjlUi_s          * ui )
   int n = 0;
   while(memcmp(ui->sections[n].type, "oihs", 4) == 0) ++n;
   return n;
+}
+oyjlUiHeaderSection_s * oyjlUi_GetHeaderSection (
+                                       oyjlUi_s          * ui,
+                                       const char        * nick )
+{
+  oyjlUiHeaderSection_s * section = NULL;
+  int i, count = oyjlUi_CountHeaderSections(ui);
+  for(i = 0; i < count; ++i)
+    if( strcmp(ui->sections[i].nick, nick) == 0 )
+      section = &ui->sections[i];
+  return section;
 }
 char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
                                        int                 flags OYJL_UNUSED )
@@ -1030,6 +1052,13 @@ oyjlWidgetChoice_s * getWhitePointChoices       ( oyjlOption_s      * o,
     } else
       return NULL;
 }
+const char * jcommands = "{\n\
+  \"command_set\": \"oyranos-monitor-white-point\",\n\
+  \"comment\": \"command_set_delimiter - build key:value; default is '=' key=value\",\n\
+  \"comment\": \"command_set_option - use \\\"-s\\\" \\\"key\\\"; skip \\\"--\\\" direct in front of key\",\n\
+  \"command_get\": \"oyranos-monitor-white-point\",\n\
+  \"command_get_args\": [\"-j\"]\n\
+}";
 void myOptionsFill                   ( oyjlOptions_s       * opts )
 {
   DBG_S_( oyPrintTime() );
@@ -1062,6 +1091,7 @@ void myOptionsFill                   ( oyjlOptions_s       * opts )
       {.dbl.start = 18, .dbl.end = -18, .dbl.tick = 1, .dbl.d = getDoubleFromDB( OY_DISPLAY_STD "/twilight", 0 )} },
     {"oiwi", 0, 'z', "system-wide", NULL, _("system wide"), _("System wide DB setting"), NULL, NULL, oyjlWIDGETTYPE_NONE, {} },
     {"oiwi", 0, 'j', "oi-json", NULL, _("OpenICC UI Json"), _("Get OpenICC Json UI declaration"), NULL, NULL, oyjlWIDGETTYPE_NONE, {} },
+    {"oiwi", 0, 'J', "oi-json-command", NULL, _("OpenICC UI Json + command"), _("Get OpenICC Json UI declaration incuding command"), NULL, NULL, oyjlWIDGETTYPE_NONE, {} },
     {"oiwi", 0, 'h', "help", NULL, _("help"), _("Help"), NULL, NULL, oyjlWIDGETTYPE_NONE, {} },
     {"oiwi", 0, 'v', "verbose", NULL, _("verbose"), _("verbose"), NULL, NULL, oyjlWIDGETTYPE_NONE, {} },
     {"oiwi", 0, 'y', "dry-run", NULL, "dry run", "dry run", NULL, NULL, oyjlWIDGETTYPE_NONE, {} },
@@ -1078,7 +1108,7 @@ void myOptionsFill                   ( oyjlOptions_s       * opts )
     {"oiwg", 0, _("Day Mode"), _("Sun light appearance"), NULL, "s", "ezv", "se" },
     {"oiwg", 0, _("Location"), _("Location and Twilight"), NULL, "l|oi", "tzv", "loit"},
     {"oiwg", 0, _("Daemon Service"), _("Run sunset daemon"), NULL, "d", "v", "d" },
-    {"oiwg", 0, _("Misc"), _("General options"), NULL, "", "", "zmrjvh" },
+    {"oiwg", 0, _("Misc"), _("General options"), NULL, "", "", "zmrjJvh" },
     {"",0,0,0,0,0,0,0}
   };
   double night = isNight(0);
@@ -1145,6 +1175,7 @@ int main( int argc , char** argv )
   double temperature = 0.0;
   int show = 0;
   int json = 0;
+  int json_command = 0;
   int dry = 0;
   int location = 0;
   double longitude = 360;
@@ -1161,7 +1192,6 @@ int main( int argc , char** argv )
   oyjlOptions_s * opts;
   oyjlUi_s * ui;
 
-  fprintf(stderr, " %.06g %s\n", DBG_UHR_, oyPrintTime() );
   if(getenv(OY_DEBUG))
   {
     int value = atoi(getenv(OY_DEBUG));
@@ -1169,6 +1199,8 @@ int main( int argc , char** argv )
       oy_debug += value;
     DBG_S_( oyPrintTime() );
   }
+  if(oy_debug)
+    fprintf(stderr, " %.06g %s\n", DBG_UHR_, oyPrintTime() );
 
 #ifdef USE_GETTEXT
   setlocale(LC_ALL,"");
@@ -1218,6 +1250,7 @@ int main( int argc , char** argv )
   oyjlOptions_GetResult( opts, 't', NULL, &twilight, NULL);
   oyjlOptions_GetResult( opts, 'w', NULL, NULL, &wtpt_mode);
   oyjlOptions_GetResult( opts, 'j', NULL, NULL, &json);
+  oyjlOptions_GetResult( opts, 'J', NULL, NULL, &json_command);
   oyjlOptions_GetResult( opts, 'm', NULL, NULL, &show);
   oyjlOptions_GetResult( opts, 'z', NULL, NULL, &dry);
   oyjlOptions_GetResult( opts, 'u', NULL, &hour_, NULL);
@@ -1229,9 +1262,9 @@ int main( int argc , char** argv )
   {
     int use_option_defaults = 1;
     opts->user_data = &use_option_defaults;
-    oyjlOptions_PrintHelp( opts, oy_debug, "%s v%d.%d.%d %s\n", argv[0],
+    oyjlOptions_PrintHelp( opts, ui, oy_debug, "%s v%d.%d.%d %s\n", argv[0],
                         OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C,
-                                _("is a monitor white point handler"));
+                                _("is a monitor white point handler") );
     exit (0);
   }
 
@@ -1361,9 +1394,7 @@ int main( int argc , char** argv )
 
   if(sunrise)
   {
-    error = getSunriseSunset( &rise, &set, dry );
-
-    printf( "%g %g\n", rise, set);
+    error = getSunriseSunset( &rise, &set, dry, 1 );
   }
 
   if(daemon != -1)
@@ -1371,13 +1402,23 @@ int main( int argc , char** argv )
 
   if(json)
     puts( oyjlUi_ToJson( ui, 0 ) );
+  if(json_command)
+  {
+    char * json = oyjlUi_ToJson( ui, 0 ),
+         * json_commands = strdup(jcommands);
+    json_commands[strlen(json_commands)-2] = ',';
+    json_commands[strlen(json_commands)-1] = '\000';
+    oyjlStringAdd( &json_commands, malloc, free, "%s", &json[1] );
+    puts( json_commands );
+  }
 
   if(check)
     checkWtptState( dry );
 
   oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
 
-  fprintf(stderr, " %.06g %s\n", DBG_UHR_, oyPrintTime() );
+  if(oy_debug)
+    fprintf(stderr, " %.06g %s\n", DBG_UHR_, oyPrintTime() );
   return error;
 }
 
@@ -1614,7 +1655,7 @@ double oyNormaliseHour(double hour)
 }
 
 #define oyGetCurrentGMTHour_(arg) ((hour_ != -1.0) ? hour_ + oyGetCurrentGMTHour(arg)*0.0 : oyGetCurrentGMTHour(arg))
-int getSunriseSunset( double * rise, double * set, int dry )
+int getSunriseSunset( double * rise, double * set, int dry, int verbose )
 {
   double lat = 0.0,
          lon = 0.0;
@@ -1665,13 +1706,16 @@ int getSunriseSunset( double * rise, double * set, int dry )
     oyGetCurrentGMTHour_( &gmt_diff_second );
     oySplitHour( oyGetCurrentLocalHour( oyGetCurrentGMTHour_(0), gmt_diff_second ), &hour, &minute, &second );
     elevation = getSunHeight( year, month, day, oyGetCurrentGMTHour_(0), lat, lon );
-    fprintf( stderr, "%d-%d-%d %d:%.2d:%.2d",
+    if(verbose)
+      fprintf( stdout, "%d-%d-%d %d:%.2d:%.2d",
              year, month, day, hour, minute, second );
     oySplitHour( oyGetCurrentLocalHour( *rise, gmt_diff_second ), &hour, &minute, &second );
-    fprintf( stderr, " %s: %g° %g° %s: %g° (%s: %g°) %s: %d:%.2d:%.2d",
+    if(verbose)
+      fprintf( stdout, " %s: %g° %g° %s: %g° (%s: %g°) %s: %d:%.2d:%.2d",
              _("Geographical Position"), lat, lon, _("Twilight"), twilight, _("Sun Elevation"), elevation, _("Sunrise"), hour, minute, second );
     oySplitHour( oyGetCurrentLocalHour( *set,  gmt_diff_second ), &hour, &minute, &second );
-    fprintf( stderr, " %s: %d:%.2d:%.2d\n",
+    if(verbose)
+      fprintf( stdout, " %s: %d:%.2d:%.2d\n",
              _("Sunset"), hour, minute, second );
   }
 
@@ -1685,7 +1729,7 @@ int isNight(int dry)
 
   dtime = oyGetCurrentGMTHour_(&diff);
 
-  if( getSunriseSunset( &rise, &set, dry ) == 0 )
+  if( getSunriseSunset( &rise, &set, dry, 0 ) == 0 )
   {
     if(rise < dtime && dtime <= set)
     /* day time */
@@ -1740,7 +1784,7 @@ int checkWtptState(int dry)
   }
 
   DBG_S_( oyPrintTime() );
-  if( choices_string_list && getSunriseSunset( &rise, &set, dry ) == 0 )
+  if( choices_string_list && getSunriseSunset( &rise, &set, dry, 0 ) == 0 )
   {
     int new_mode = -1;
     char * new_effect = NULL;
