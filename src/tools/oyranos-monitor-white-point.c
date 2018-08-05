@@ -29,6 +29,7 @@
 
 #include "bb_100K.h"
 #include "oyranos_color.h"
+#include "oyranos_conversion.h"
 #include "oyranos_debug.h"
 #include "oyranos_helper.h"
 #include "oyranos_helper_macros.h"
@@ -40,6 +41,7 @@
 #include "oyranos_string.h"
 #include "oyranos_texts.h"
 #include "oyranos_threads.h"
+#include "oyProfiles_s.h"
 
 #define DBG_S_ if(oy_debug >= 1)DBG_S
 int __sunriset__( int year, int month, int day, double lon, double lat,
@@ -961,9 +963,73 @@ void * oyjlMemDup                    ( void              * ptr,
 // TODO: export man page
 // end of oyjl
 
-// TODO: getLinearEffectProfileChoices()
-static oyjlWidgetChoice_s * white_point_choices_ = NULL;
-static int white_point_choices_selected_ = -1;
+static uint32_t icc_profile_flags = 0;
+static oyjlWidgetChoice_s * linear_effect_choices_ = NULL;
+static oyjlWidgetChoice_s * getLinearEffectProfileChoices (
+                                                  oyjlOption_s      * o,
+                                                  int               * selected,
+                                                  oyjlOptions_s     * opts OY_UNUSED )
+{
+    int choices = 0, current = -1;
+    oyProfiles_s * patterns = oyProfiles_New( NULL ),
+                 * profiles = 0;
+
+    if(!selected && linear_effect_choices_)
+      return linear_effect_choices_;
+
+    // only linear effects
+    oyProfile_s * pattern = oyProfile_FromFile( "meta:EFFECT_linear;yes", OY_NO_LOAD, NULL );
+    oyProfiles_MoveIn( patterns, &pattern, -1 );
+
+    if(icc_profile_flags == 0)
+      icc_profile_flags = oyICCProfileSelectionFlagsFromOptions( 
+                                      OY_CMM_STD, "//" OY_TYPE_STD "/icc_color",
+                                                                     NULL, 0 );
+    profiles = oyProfiles_Create( patterns, icc_profile_flags, NULL );
+    oyProfiles_Release( &patterns );
+    choices = oyProfiles_Count( profiles );
+
+    if(choices)
+    {
+      int i;
+      long l = -1;
+      char * value = NULL;
+      oyjlWidgetChoice_s * c = calloc(choices+1, sizeof(oyjlWidgetChoice_s));
+      if(c)
+      {
+        linear_effect_choices_ = c;
+        for(i = 0; i < choices; ++i)
+        {
+          oyProfile_s * p = oyProfiles_Get( profiles, i );
+
+          c[i].nick = strdup(oyProfile_GetText( p, oyNAME_NICK ));
+          c[i].name = strdup(oyProfile_GetText( p, oyNAME_DESCRIPTION ));
+          c[i].description = strdup(oyProfile_GetFileName( p, 0));
+          c[i].help = strdup("");
+
+          oyProfile_Release( &p );
+        }
+        c[i].nick = malloc(4);
+        c[i].nick[0] = '\000';
+      }
+      if(selected)
+        *selected = current;
+      if(o->o == 'g' && selected)
+      {
+        value = oyGetPersistentString( OY_DISPLAY_STD "/night_effect", 0, oySCOPE_USER_SYS, oyAllocateFunc_ );
+        if(value && oyjlStringToLong( value, &l ) == 0)
+          *selected = l;
+      } else if(o->o == 'e' && selected)
+      {
+        value = oyGetPersistentString( OY_DISPLAY_STD "/sunlight_effect", 0, oySCOPE_USER_SYS, oyAllocateFunc_ );
+        if(value && oyjlStringToLong( value, &l ) == 0)
+          *selected = l;
+      }
+
+      return c;
+    } else
+      return NULL;
+}
 double getTemperature                ( double              d )
 {
   double cie_a = 0.0, cie_b = 0.0, XYZ[3], Lab[3];
@@ -986,15 +1052,16 @@ double getDoubleFromDB               ( const char        * key,
     oyDeAllocateFunc_( value );
   return d;
 }
+static oyjlWidgetChoice_s * white_point_choices_ = NULL;
+static int white_point_choices_selected_ = -1;
 oyjlWidgetChoice_s * getWhitePointChoices       ( oyjlOption_s      * o,
                                                   int               * selected,
-                                                  oyjlOptions_s     * opts )
+                                                  oyjlOptions_s     * opts OY_UNUSED )
 {
     uint32_t flags = 0;
     int choices = 0, current = -1;
     const char ** choices_string_list = NULL;
     int error = 0;
-    int use_defaults = 0;
 
     if(!selected && white_point_choices_)
       return white_point_choices_;
@@ -1079,8 +1146,8 @@ void myOptionsFill                   ( oyjlOptions_s       * opts )
        *  conversion cache. Thus we limit the possible shades to 100 kelvin steps, which in turn
        *  limits to around 100 profiles per monitor white point. */
       _("KELVIN"), oyjlWIDGETTYPE_DOUBLE, {.dbl.start = 1100, .dbl.end = 10100, .dbl.tick = 100, .dbl.d = getTemperature(5000)} },
-    {"oiwi", 0, 'g', "night-effect", NULL, _("Night effect"), _("Set night time effect"), _("A ICC profile of class abstract. Ideally the effect profile works on 1D RGB curves only and is marked meta:EFFECT_linear=yes ."), _("ICC_PROFILE"), oyjlWIDGETTYPE_NONE, {/*.getChoices = getLinearEffectProfileChoices*/} },
-    {"oiwi", 0, 'e', "sunlight-effect", NULL, _("Sun light effect"), _("Set day time effect"), _("A ICC profile of class abstract. Ideally the effect profile works on 1D RGB curves only and is marked meta:EFFECT_linear=yes ."), _("ICC_PROFILE"), oyjlWIDGETTYPE_NONE, {/*.getChoices = getLinearEffectProfileChoices*/} },
+    {"oiwi", 0, 'g', "night-effect", NULL, _("Night effect"), _("Set night time effect"), _("A ICC profile of class abstract. Ideally the effect profile works on 1D RGB curves only and is marked meta:EFFECT_linear=yes ."), _("ICC_PROFILE"), oyjlWIDGETTYPE_FUNCTION, {.getChoices = getLinearEffectProfileChoices} },
+    {"oiwi", 0, 'e', "sunlight-effect", NULL, _("Sun light effect"), _("Set day time effect"), _("A ICC profile of class abstract. Ideally the effect profile works on 1D RGB curves only and is marked meta:EFFECT_linear=yes ."), _("ICC_PROFILE"), oyjlWIDGETTYPE_FUNCTION, {.getChoices = getLinearEffectProfileChoices} },
     {"oiwi", 0, 'l', "location", NULL, _("location"), _("Detect location by IP adress"), NULL, NULL, oyjlWIDGETTYPE_NONE, {} },
     {"oiwi", 0, 'o', "longitude", NULL, _("Longitude"), _("Set Longitude"), NULL, _("ANGLE_IN_DEGREE"), oyjlWIDGETTYPE_DOUBLE,
       {.dbl.start = -180, .dbl.end = 180, .dbl.tick = 1, .dbl.d = getDoubleFromDB( OY_DISPLAY_STD "/longitude", 0 )} },
