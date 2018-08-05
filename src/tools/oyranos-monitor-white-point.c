@@ -364,7 +364,7 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
           if( require_value )
           {
             value = NULL;
-            if( j == l-1 && opts->argc > i+1 && opts->argv[i+1][0] != '-' )
+            if( j == l-1 && opts->argc > i+1 && (opts->argv[i+1][0] != '-' || strlen(opts->argv[i+1]) <= 1) )
             {
               value = opts->argv[i+1];
               ++i;
@@ -901,11 +901,14 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
           {
             int n = 0,l, selected;
             oyjlWidgetChoice_s * list = oyjlOption_GetChoices_(o, &selected, opts );
-            key = oyjlTreeGetValuef( root, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "default" );
-            sprintf( num, "%d", selected ); oyjlValueSetString( key, num );
             if(list)
               while(list[n].nick[0] != '\000')
                 ++n;
+            if(0 <= selected && selected < n && strlen(list[selected].nick))
+            {
+              key = oyjlTreeGetValuef( root, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "default" );
+              oyjlValueSetString( key, list[selected].nick );
+            }
             for(l = 0; l < n; ++l)
             {
               key = oyjlTreeGetValuef( root, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/groups/[%d]/options/[%d]/choices/[%d]/%s", i,j,l, "nick" );
@@ -992,38 +995,46 @@ static oyjlWidgetChoice_s * getLinearEffectProfileChoices (
     if(choices)
     {
       int i;
-      long l = -1;
       char * value = NULL;
-      oyjlWidgetChoice_s * c = calloc(choices+1, sizeof(oyjlWidgetChoice_s));
+      oyjlWidgetChoice_s * c = calloc(1+choices+1, sizeof(oyjlWidgetChoice_s));
+
+      if(o->o == 'g' && selected)
+        value = oyGetPersistentString( OY_DISPLAY_STD "/night_effect", 0, oySCOPE_USER_SYS, oyAllocateFunc_ );
+      else if(o->o == 'e' && selected)
+        value = oyGetPersistentString( OY_DISPLAY_STD "/sunlight_effect", 0, oySCOPE_USER_SYS, oyAllocateFunc_ );
+      else if(selected)
+        *selected = 0;
+
       if(c)
       {
         linear_effect_choices_ = c;
+
+        /* first entry is for unsetting */
+        i = 0;
+        c[i].nick = strdup("-");
+        c[i].name = strdup(_("[none]"));
+        c[i].description = strdup("");
+        c[i].help = strdup("");
+
+        /* profile choices */
         for(i = 0; i < choices; ++i)
         {
           oyProfile_s * p = oyProfiles_Get( profiles, i );
+          const char * nick = oyProfile_GetText( p, oyNAME_NICK );
 
-          c[i].nick = strdup(oyProfile_GetText( p, oyNAME_NICK ));
-          c[i].name = strdup(oyProfile_GetText( p, oyNAME_DESCRIPTION ));
-          c[i].description = strdup(oyProfile_GetFileName( p, 0));
-          c[i].help = strdup("");
+          c[i+1].nick = strdup(nick);
+          c[i+1].name = strdup(oyProfile_GetText( p, oyNAME_DESCRIPTION ));
+          c[i+1].description = strdup(oyProfile_GetFileName( p, 0));
+          c[i+1].help = strdup("");
+
+          if(selected && value && strcmp(value, nick) == 0)
+            *selected = i+1;
 
           oyProfile_Release( &p );
         }
-        c[i].nick = malloc(4);
-        c[i].nick[0] = '\000';
-      }
-      if(selected)
-        *selected = current;
-      if(o->o == 'g' && selected)
-      {
-        value = oyGetPersistentString( OY_DISPLAY_STD "/night_effect", 0, oySCOPE_USER_SYS, oyAllocateFunc_ );
-        if(value && oyjlStringToLong( value, &l ) == 0)
-          *selected = l;
-      } else if(o->o == 'e' && selected)
-      {
-        value = oyGetPersistentString( OY_DISPLAY_STD "/sunlight_effect", 0, oySCOPE_USER_SYS, oyAllocateFunc_ );
-        if(value && oyjlStringToLong( value, &l ) == 0)
-          *selected = l;
+        /* empty choice for end of list */
+        c[i+1].nick = malloc(4);
+        c[i+1].nick[0] = '\000';
       }
 
       return c;
@@ -1454,10 +1465,14 @@ int main( int argc , char** argv )
   }
 
   if(night_effect != NULL && dry == 0)
-    oySetPersistentString( OY_DISPLAY_STD "/night_effect", scope, night_effect[0]?night_effect:NULL, NULL );
+    oySetPersistentString( OY_DISPLAY_STD "/night_effect", scope,
+                           (night_effect[0] && night_effect[0] != '-') ?
+                            night_effect : NULL, NULL );
 
   if(sunlight_effect != NULL && dry == 0)
-    oySetPersistentString( OY_DISPLAY_STD "/sunlight_effect", scope, sunlight_effect[0]?sunlight_effect:NULL, NULL );
+    oySetPersistentString( OY_DISPLAY_STD "/sunlight_effect", scope,
+                           (sunlight_effect[0] && sunlight_effect[0]!='-') ?
+                            sunlight_effect : NULL, NULL );
 
   if(sunrise)
   {
@@ -1925,7 +1940,18 @@ int checkWtptState(int dry)
                 _("Effect"), oyNoEmptyString_m_(new_effect) );
 
       if(dry == 0 && use_effect)
-        oySetPersistentString( OY_DEFAULT_EFFECT_PROFILE, scope, new_effect, NULL );
+      {
+        if(!new_effect || (strcmp(new_effect,"-") == 0 ||
+                           strlen(new_effect) == 0 ))
+        {
+          oySetPersistentString( OY_DEFAULT_EFFECT_PROFILE, scope, NULL, NULL );
+          oySetPersistentString( OY_DEFAULT_EFFECT, scope, "0", NULL );
+        } else
+        {
+          oySetPersistentString( OY_DEFAULT_EFFECT_PROFILE, scope, new_effect, NULL );
+          oySetPersistentString( OY_DEFAULT_EFFECT, scope, "1", NULL );
+        }
+      }
 
       if(cmode != new_mode)
         error = setWtptMode( scope, new_mode, dry );
@@ -1984,8 +2010,13 @@ static void oyMonitorCallbackDBus    ( double              progress_zero_till_on
     return;
 
   char * v = oyGetPersistentString( key, 0, scope, oyAllocateFunc_ );
-  fprintf(stderr, "%s:%s\n", key,v);
-  oyFree_m_(v);
+  if(!v)
+    fprintf(stderr, "%s: no value\n", key );
+  else
+  {
+    fprintf(stderr, "%s:%s\n", key,v);
+    oyFree_m_(v);
+  }
 
   checkWtptState( 0 );
   updateVCGT();
