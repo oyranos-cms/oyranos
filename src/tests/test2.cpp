@@ -1961,7 +1961,12 @@ oyTESTRESULT_e testProfile ()
   {
     PRINT_SUB( oyTESTRESULT_SUCCESS, 
     "found oyASSUMED_WEB                                    " );
+    fprintf( zout, "oyNAME_NICK: %s\n", oyProfile_GetText(p_a, oyNAME_NICK) );
+    fprintf( zout, "oyNAME_NAME: %s\n", oyProfile_GetText(p_a, oyNAME_NAME) );
+    fprintf( zout, "oyNAME_DESCRIPTION: %s\n", oyProfile_GetText(p_a, oyNAME_DESCRIPTION) );
+    fprintf( zout, "oyNAME_JSON: %s\n", oyProfile_GetText(p_a, oyNAME_JSON) );
   }
+
 
   /* compare the usual conversion profiles with the total of profiles */
   data = oyProfile_GetMem( p_a, &size, 0, malloc );
@@ -2411,7 +2416,7 @@ oyTESTRESULT_e testProfiles ()
     oyProfiles_s * patterns = oyProfiles_New( testobj ),
                  * profiles = 0;
 
-    // only desaturation effects
+    // only linear effects
     oyProfile_s * pattern = oyProfile_FromFile( "meta:EFFECT_linear;yes", OY_NO_LOAD, testobj );
     oyProfiles_MoveIn( patterns, &pattern, -1 );
 
