@@ -51,17 +51,19 @@ IF( FLTK_FOUND )
     )
   ENDIF()
 
-  ADD_EXECUTABLE( oyranos-image-display 
+  IF(HAVE_GLU_H OR OPENGL_glu_LIBRARY)
+    ADD_EXECUTABLE( oyranos-image-display 
                   "${CMAKE_CURRENT_SOURCE_DIR}/image_display/image_display.cpp"
                   "${CMAKE_CURRENT_SOURCE_DIR}/image_display/GLee.c"
                 )
-  SET_PROPERTY(TARGET oyranos-image-display PROPERTY OSX_ARCHITECTURES x86_64)
-  SET_PROPERTY(TARGET oyranos-image-display PROPERTY OSX_ARCHITECTURES_DEBUG x86_64)
-  TARGET_LINK_LIBRARIES ( oyranos-image-display ${TARGET_LIB} ${EXTRA_LIBS}
+    SET_PROPERTY(TARGET oyranos-image-display PROPERTY OSX_ARCHITECTURES x86_64)
+    SET_PROPERTY(TARGET oyranos-image-display PROPERTY OSX_ARCHITECTURES_DEBUG x86_64)
+    TARGET_LINK_LIBRARIES ( oyranos-image-display ${TARGET_LIB} ${EXTRA_LIBS}
                  ${FLTK_LIBRARIES} ${XRANDR_LIBRARIES} )
-  INSTALL (TARGETS oyranos-image-display DESTINATION ${CMAKE_INSTALL_BINDIR})
-  INSTALL( FILES ${CMAKE_CURRENT_SOURCE_DIR}/image_display/oyranos-image-display.desktop DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications )
-  INSTALL( FILES ${CMAKE_CURRENT_SOURCE_DIR}/image_display/oyranos-image-display.1 DESTINATION ${CMAKE_INSTALL_MANDIR}/man1 )
+    INSTALL (TARGETS oyranos-image-display DESTINATION ${CMAKE_INSTALL_BINDIR})
+    INSTALL( FILES ${CMAKE_CURRENT_SOURCE_DIR}/image_display/oyranos-image-display.desktop DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications )
+    INSTALL( FILES ${CMAKE_CURRENT_SOURCE_DIR}/image_display/oyranos-image-display.1 DESTINATION ${CMAKE_INSTALL_MANDIR}/man1 )
+  ENDIF()
 
   ADD_EXECUTABLE( oyranos-config-fltk
                   oyranos_config_fltk.cxx
