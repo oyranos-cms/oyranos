@@ -443,6 +443,20 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
             ++pos;
             oyjlStringListAddStaticString( &result, &llen, value, malloc, free );
           }
+        } else
+        {
+          if(!( strchr(str, '=') != NULL || (opts->argc > i+1 && opts->argv[i+1][0] != '-') ))
+          {
+            int llen = 0;
+            while(result[llen]) ++llen;
+            result[0][pos] = o->o;
+            ++pos;
+            oyjlStringListAddStaticString( &result, &llen, "1", malloc, free );
+          } else
+          {
+            fprintf( stderr, "%s %s \'%c\'\n", _("Usage Error:"), _("Option has a unexpected argument"), arg );
+            state = oyjlOPTION_UNEXPECTED_VALUE;
+          }
         }
       }
       /* parse anonymous value, if requested */
