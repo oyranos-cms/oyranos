@@ -172,6 +172,12 @@ IF(HAVE_CAIRO)
   LINK_DIRECTORIES( ${CAIRO_LIBRARY_DIRS} )
 ENDIF(HAVE_CAIRO)
 
+CHECK_INCLUDE_FILE( OpenGL/glu.h HAVE_GLU_H )
+FIND_PATH( HAVE_GLU_H glu.h
+           HINTS /mingw ${INCLUDE_DIRECTORIES}
+           PATH_SUFFIXES include
+	  )
+
 IF(NOT ${CMAKE_SYSTEM_NAME} MATCHES Android AND ENABLE_FLTK)
   FIND_PACKAGE( FLTK )
   IF(FLTK_FOUND)
@@ -293,7 +299,7 @@ IF( GETTEXT_FOUND AND HAVE_LIBINTL_H )
     SET( OY_LINGUAS ${OY_LINGUAS} ${_lang} )
     SET( OY_LINGUAS_GMO_FILES ${OY_LINGUAS_GMO_FILES} " ${CMAKE_BINARY_DIR}/src/${_lang}.gmo" )
   ENDFOREACH( oy_lang )
-  SET( OY_LINGUAS_FULL cs_CZ de_DE eo eu fr_FR ru_RU)
+  SET( OY_LINGUAS_FULL cs_CZ de_DE eo eu fr_FR ru_RU )
   SET( OY_LINGUAS ${OY_LINGUAS} PARENT_SCOPE )
   SET( OY_LINGUAS_FULL ${OY_LINGUAS_FULL} PARENT_SCOPE )
   SET( OY_LINGUAS_PO_FILES ${LINGUAS} PARENT_SCOPE )
@@ -394,6 +400,7 @@ SET( DOC_SOURCES
 	${CHEADERS_OBJECT_CONFIG_PUBLIC}
 	${CFILES_OBJECT_IMAGING_PUBLIC}
 	${CHEADERS_OBJECT_IMAGING_PUBLIC}
+  ${CMAKE_SOURCE_DIR}/doc/Release*.md
 	${CMAKE_SOURCE_DIR}/src/oyjl/oyjl_tree.c
 	${CMAKE_SOURCE_DIR}/src/oyjl/oyjl_tree.h
 	${CMAKE_SOURCE_DIR}/src/modules/color/modules/lcms2/lcm2_profiler.h
@@ -402,6 +409,8 @@ SET( DOC_SOURCES
 	${CMAKE_SOURCE_DIR}/src/modules/color/modules/*.c
 	${CMAKE_SOURCE_DIR}/src/modules/color/modules/*.cpp
 	${CMAKE_SOURCE_DIR}/src/modules/color/modules/*.h
+  ${CMAKE_SOURCE_DIR}/src/modules/color/modules/*.md
+  ${CMAKE_SOURCE_DIR}/src/modules/color/modules/devices/*.md
 	${CMAKE_SOURCE_DIR}/src/modules/color/modules/devices/*.c
 	${CMAKE_SOURCE_DIR}/src/modules/color/modules/devices/*.cpp
 	${CMAKE_SOURCE_DIR}/src/modules/color/modules/devices/*.h
