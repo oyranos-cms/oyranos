@@ -413,6 +413,7 @@ int                oyStruct_GetChildren (
     case oyOBJECT_DB_API_S:
     case oyOBJECT_MONITOR_HOOKS_S:
     case oyOBJECT_MONITOR_HOOKS2_S:
+    case oyOBJECT_MONITOR_HOOKS3_S:
     case oyOBJECT_MAX:
          break;
   }
