@@ -20,7 +20,7 @@
 
 int      oyDisplayColorServerIsActive( );
 int      oyProfile_CreateEffectVCGT  ( oyProfile_s       * prof );
-int      oyGetLinearEffectProfile    ( oyProfiles_s      * effects );
+int      oyAddLinearDisplayEffect    ( oyOptions_s      ** module_options );
 int      oyProfileAddWhitePointEffect( oyProfile_s       * monitor_profile,
                                        oyOptions_s      ** module_options );
 uint16_t*oyProfileGetWhitePointRamp  ( int                 width,
@@ -31,6 +31,9 @@ uint16_t*oyProfile_GetVCGT           ( oyProfile_s       * profile,
 int      oyProfile_SetVCGT           ( oyProfile_s       * profile,
                                        uint16_t          * vcgt,
                                        int                 width );
+int      oyAddMonitorEffects         ( oyProfile_s       * monitor_profile,
+                                       oyOptions_s      ** module_options );
+int      oyAddDisplayEffects         ( oyOptions_s      ** module_options );
 
 void     oyDeviceSetupVCGT           ( oyConfig_s        * device,
                                        oyOptions_s       * options,

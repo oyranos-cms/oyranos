@@ -11,6 +11,23 @@
  *  @par License:
  *            new BSD <http://www.opensource.org/licenses/BSD-3-Clause>
  *  @since    2018/02/19
+ *
+ *  The display effects depend on a color server being active or not.
+ *  With oyDisplayColorServerIsActive(), the normal case, the effects
+ *  are created for servers and late binding application transforms.
+ *  Those both work on the same way on a local scope. The options for 
+ *  marking that is "display_mode"="1".
+ *  Other non display_mode transforms shall not see the display effects,
+ *  e.g. white_point and display effect.
+ *
+ *  If oyDisplayColorServerIsActive() is inactive, only the monitor
+ *  profile shall see the display effects. It gets them embedded into
+ *  it's VCGT table during oyDeviceSetup2(). These display effects are
+ *  then applied globally by the graphics card gamma table API.
+ *
+ *  All these transforms rely on the XCM _ICC_COLOR_DESKTOP atom being
+ *  present with at color server start. So oyDisplayColorServerIsActive()
+ *  can detect the color server correctly.
  */
 
 #include "oyranos_color.h"
@@ -29,19 +46,23 @@
 #define USE_LAB
 #endif
 
-int      oyGetLinearEffectProfile    ( oyProfiles_s      * effects )
+int      oyAddLinearDisplayEffect    ( oyOptions_s      ** module_options )
 {
-  /* 2. get effect profile and decide if it can be embedded into a VGCT tag */
-  oyProfile_s * effect = oyProfile_FromStd ( oyPROFILE_EFFECT, 0, NULL );
-  int is_linear = oyProfile_FindMeta( effect, "EFFECT_linear", "yes" ) != NULL;
+  /* 2. get display effect profile and decide if it can be embedded into a VGCT tag */
+  const char * fn = oyGetPersistentString( OY_DEFAULT_DISPLAY_EFFECT_PROFILE, 0, oySCOPE_USER_SYS, oyAllocateFunc_ );
+  oyProfile_s * effect = (fn && fn[0]) ? oyProfile_FromName ( fn, 0, NULL ) : NULL;
+  int is_linear = effect ? oyProfile_FindMeta( effect, "EFFECT_linear", "yes" ) != NULL : 0;
+  int error = is_linear && !effect;
   oyMessageFunc_p( oyMSG_DBG,(oyStruct_s*)effect, OY_DBG_FORMAT_
-                   "EFFECT_linear=yes: %d", OY_DBG_ARGS_, is_linear );
+                   "EFFECT_linear=yes: %d %s", OY_DBG_ARGS_, is_linear, fn );
   if(is_linear)
-    oyProfiles_MoveIn( effects, &effect, -1 );
+    oyOptions_MoveInStruct( module_options,
+                          OY_STD "/icc_color/display.icc_profile.abstract.effect.automatic.oy-monitor",
+                          (oyStruct_s**) &effect, OY_CREATE_NEW );
   else
     oyProfile_Release( &effect );
 
-  return is_linear;
+  return error;
 }
 
 #define DBG_S_ if(oy_debug >= 1)DBG_S
@@ -165,6 +186,89 @@ int      oyProfileAddWhitePointEffect( oyProfile_s       * monitor_profile,
   return error;
 }
 
+int        oyAddMonitorEffects       ( oyProfile_s       * monitor_profile,
+                                       oyOptions_s      ** module_options )
+{
+  int error = 0;
+  oyOptions_s * f_options = *module_options;
+  int f_options_n, i,
+      display_white_point = 0;
+  oyOption_s * o = oyOptions_Find( f_options, "display_white_point", oyNAME_PATTERN );
+  if(o)
+  {
+    const char * value = oyOption_GetValueString(o,0);
+    if(value)
+    {
+      int c = atoi( value );
+      if(c >= 0)
+        display_white_point = c;
+    }
+    oyOption_Release( &o );
+  }
+
+  if( oy_debug )
+      oyMessageFunc_p( oyMSG_DBG, (oyStruct_s*)f_options,
+                OY_DBG_FORMAT_"display_white_point: %d", OY_DBG_ARGS_, display_white_point);
+  /* erase old display profile */
+  f_options_n = oyOptions_Count( f_options );
+  for(i = 0; i < f_options_n; ++i)
+  {
+    oyOption_s * o = oyOptions_Get(f_options, i);
+    if(o && oyFilterRegistrationMatch( oyOption_GetRegistration(o),
+                       OY_STD "/icc_color/display.icc_profile.abstract.white_point.automatic", 0 ))
+    {
+      if(oy_debug)
+        oyMessageFunc_p( oyMSG_DBG, (oyStruct_s*)f_options,
+                  OY_DBG_FORMAT_"release: %s", OY_DBG_ARGS_, oyOption_GetRegistration(o));
+      oyOption_Release( &o );
+      oyOptions_ReleaseAt( f_options, i );
+      break;
+    }
+    oyOption_Release( &o );
+  }
+
+  if(display_white_point) /* not "none" */
+  {
+    error = oyProfileAddWhitePointEffect( monitor_profile, module_options );
+    if( error || oy_debug )
+        oyMessageFunc_p( oyMSG_WARN, (oyStruct_s*)f_options,
+                  OY_DBG_FORMAT_"display_white_point: %d %s", OY_DBG_ARGS_, display_white_point, oyProfile_GetText( monitor_profile, oyNAME_DESCRIPTION ));
+  }
+
+  return error;
+}
+
+int        oyAddDisplayEffects       ( oyOptions_s      ** module_options )
+{
+  int error = 0;
+  oyOptions_s * f_options = *module_options;
+  int f_options_n, i;
+
+  /* erase old display profile */
+  f_options_n = oyOptions_Count( f_options );
+  for(i = 0; i < f_options_n; ++i)
+  {
+    oyOption_s * o = oyOptions_Get(f_options, i);
+    if(o && oyFilterRegistrationMatch( oyOption_GetRegistration(o),
+                       OY_STD "/icc_color/display.icc_profile.abstract.effect.automatic", 0 ))
+    {
+      if(oy_debug)
+        oyMessageFunc_p( oyMSG_DBG, (oyStruct_s*)f_options,
+                  OY_DBG_FORMAT_"release: %s", OY_DBG_ARGS_, oyOption_GetRegistration(o));
+      oyOption_Release( &o );
+      oyOptions_ReleaseAt( f_options, i );
+      break;
+    }
+    oyOption_Release( &o );
+  }
+  error = oyAddLinearDisplayEffect( module_options );
+  if( error || oy_debug )
+        oyMessageFunc_p( oyMSG_WARN, (oyStruct_s*)f_options,
+                  OY_DBG_FORMAT_"display_white_point: %d", OY_DBG_ARGS_, error );
+
+  return error;
+}
+
 uint16_t * oyProfileGetWhitePointRamp( int                 width,
                                        oyProfile_s       * p,
                                        oyOptions_s       * options )
@@ -186,6 +290,7 @@ uint16_t * oyProfileGetWhitePointRamp( int                 width,
   if(getenv("OY_DEBUG_WRITE"))
     oyImage_WritePPM( input, "wtpt-effect-gray.ppm", "gray ramp" );
 
+  oyConversion_Correct( cc, "//" OY_TYPE_STD "/icc_color", 0, NULL);
   error = oyConversion_RunPixels( cc, 0 );
   if(error)
     oyMessageFunc_p( oyMSG_WARN,(oyStruct_s*)p, OY_DBG_FORMAT_
@@ -331,20 +436,12 @@ int      oyProfile_CreateEffectVCGT  ( oyProfile_s       * prof )
   /* 2. get user effect profile and display white point effect */
   /* 2.1. get effect profile and decide if it can be embedded into a VGCT tag */
   oyOptions_s * module_options = NULL;
-  oyProfiles_s * effects = oyProfiles_New(NULL);
-  int is_linear = oyGetLinearEffectProfile( effects );
-  if(is_linear)
-  {
-    int effect_switch = oyGetBehaviour( oyBEHAVIOUR_EFFECT );
-    if(effect_switch)
-    error = oyOptions_SetFromString( &module_options, OY_DEFAULT_EFFECT,
-                                     effect_switch?"1":"0" , OY_CREATE_NEW );
-    if(error)
-      oyMessageFunc_p( oyMSG_WARN,(oyStruct_s*)prof, OY_DBG_FORMAT_
-                        "oyOptions_SetFromString(OY_DEFAULT_EFFECT) failed %d",
+  error = oyAddLinearDisplayEffect( &module_options );
+  if(error)
+    oyMessageFunc_p( oyMSG_WARN,(oyStruct_s*)prof, OY_DBG_FORMAT_
+                        "No display effect for monitor profile %d",
                         OY_DBG_ARGS_,
                         error );
-  }
 
   /* 2.2. get the display white point effect */
   error = oyProfileAddWhitePointEffect( prof, &module_options );
@@ -353,10 +450,6 @@ int      oyProfile_CreateEffectVCGT  ( oyProfile_s       * prof )
                         "No white for monitor profile %d",
                         OY_DBG_ARGS_,
                         error );
-  error = oyOptions_MoveInStruct( &module_options,
-                                      OY_PROFILES_EFFECT,
-                                       (oyStruct_s**) &effects,
-                                       OY_CREATE_NEW );
 
   /* 3. extract a existing VCGT */
   int width = 256;
@@ -416,6 +509,11 @@ int oyDisplayColorServerIsActive( )
                           &result_opts );
   color_server_active = oyOptions_FindString( result_opts, "color_server_active", "1" ) != NULL;
   oyOptions_Release( &result_opts );
+
+  if(oy_debug && color_server_active)
+    oyMessageFunc_p( oyMSG_DBG, NULL, OY_DBG_FORMAT_
+                        "color_server_active=%d",
+                        OY_DBG_ARGS_, color_server_active );
 
   return color_server_active;
 }
@@ -496,7 +594,8 @@ int      oyDeviceSetup2              ( oyConfig_s        * device,
     /* set the gamma table */
     oyDeviceSetupVCGT( device, options, tmpname );
 
-    remove( tmpname );
+    if(oy_debug == 0)
+      remove( tmpname );
     oyFree_m_( tmpname );
   }
 
