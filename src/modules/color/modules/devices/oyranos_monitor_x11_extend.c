@@ -384,7 +384,6 @@ oyCMMapi10_s_    oyX1_api10_clean_profiles_handler = {
   oyX1CleanOptions_Handle               /**< oyMOptions_Handle_f oyMOptions_Handle */
 };
 
-
 int  oyMoveColorServerProfiles       ( const char        * display_name,
                                        int                 screen,
                                        int                 setup )
@@ -400,6 +399,7 @@ int  oyMoveColorServerProfiles       ( const char        * display_name,
   oyOptions_s * options = NULL;
   oyProfile_s * monitor_icc = NULL;
   const char * monitor_icc_dscr = NULL;
+  int active = oyX1ColorServerActive( oySOURCE_DATA );
 
   if(!disp)
   {
@@ -409,7 +409,6 @@ int  oyMoveColorServerProfiles       ( const char        * display_name,
 
   // get all monitors
   oyDevicesGet( NULL, "monitor", NULL, &devices );
-  // just pick the first monitor
   monitor = oyConfigs_Get( devices, screen );
   oyConfigs_Release( &devices );
   /* get XCM_ICC_COLOUR_SERVER_TARGET_PROFILE_IN_X_BASE */
@@ -422,8 +421,10 @@ int  oyMoveColorServerProfiles       ( const char        * display_name,
   monitor_icc_dscr = oyProfile_GetText( monitor_icc, oyNAME_DESCRIPTION );
   //fprintf( stderr, "monitor[%s] has profile: \"%s\"\n", screen_name, monitor_icc_dscr );
   _msg( oyMSG_DBG, (oyStruct_s*)options,
-        OY_DBG_FORMAT_ "monitor[%d] has profile: \"%s\"", OY_DBG_ARGS_,
-        screen, monitor_icc_dscr );
+        OY_DBG_FORMAT_ "monitor[%d] has profile: \"%s\" %s %s", OY_DBG_ARGS_,
+        screen, monitor_icc_dscr, active ? "color_server_active":"no color server", setup?"setup":"unset");
+
+  oyConfig_Release( &monitor );
 
   if(setup)
   {
@@ -445,6 +446,9 @@ int  oyMoveColorServerProfiles       ( const char        * display_name,
     const char * filename = oyProfile_GetFileName( monitor_icc, -1 );
     oyX1Monitor_setProperty_( disp, XCM_ICC_COLOUR_SERVER_TARGET_PROFILE_IN_X_BASE, NULL, 0 );
     oyX1Monitor_setProperty_( disp, XCM_ICC_V0_3_TARGET_PROFILE_IN_X_BASE, dev_prof, dev_prof_size );
+    oyDevicesGet( NULL, "monitor", NULL, &devices );
+    monitor = oyConfigs_Get( devices, screen );
+    oyConfigs_Release( &devices );
     oyDeviceSetup2( monitor, NULL );
     if(filename)
       oyX1Monitor_setCompatibility( disp, filename );
