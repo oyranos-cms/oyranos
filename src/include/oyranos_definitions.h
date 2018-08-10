@@ -226,9 +226,9 @@
  *
  *  type string containing a profile file name or ID */
 #define OY_DEFAULT_PROOF_PROFILE             OY_PROFILE_STD OY_SLASH "proof"
-/** key name for a standard proofing profile
+/** key name for a standard effect profile
  *
- *  type string containing a profile file name or ID
+ *  type string containing a profile file name or ID of a class abstract profile
  *
  *  @since 0.9.6
  */
@@ -340,6 +340,15 @@
  *  @since 0.9.7
  */
 #define OY_DEFAULT_DISPLAY_WHITE_POINT_DAEMON OY_DISPLAY_STD OY_SLASH "display_white_point_daemon"
+/** key name for a abstract effect profile
+ *
+ *  A type string containing a profile file name or ID.
+ *  The profile is to be used in the display pipe line.
+ *  It can be set automatically by a daemon and shall not be manually exposed.
+ *
+ *  @since 0.9.7
+ */
+#define OY_DEFAULT_DISPLAY_EFFECT_PROFILE OY_PROFILE_STD OY_SLASH "display_effect"
 
 /** key name for context CMM
  *
