@@ -35,6 +35,7 @@
 #include "oyranos_helper_macros.h"
 #include "oyranos_internal.h"
 #include "oyranos_json.h"
+#include "oyranos_monitor_effect.h"
 #include "oyranos_config.h"
 #include "oyranos_version.h"
 #include "oyranos_sentinel.h"
@@ -44,6 +45,8 @@
 #include "oyProfiles_s.h"
 
 #define DBG_S_ if(oy_debug >= 1)DBG_S
+#define DBG1_S_ if(oy_debug >= 1)DBG1_S
+#define DBG2_S_ if(oy_debug >= 1)DBG2_S
 int __sunriset__( int year, int month, int day, double lon, double lat,
                   double altit, int upper_limb, double *trise, double *tset );
 int findLocation(oySCOPE_e scope, int dry);
@@ -980,6 +983,7 @@ void * oyjlMemDup                    ( void              * ptr,
 // TODO: export man page
 // end of oyjl
 
+// TODO: It is not yet clear how to differenciate e.g. printable effect profiles and display only enhancements. A "invert" filter shall not be printed on paper.
 static uint32_t icc_profile_flags = 0;
 static oyjlWidgetChoice_s * linear_effect_choices_ = NULL;
 static oyjlWidgetChoice_s * getLinearEffectProfileChoices (
@@ -987,7 +991,7 @@ static oyjlWidgetChoice_s * getLinearEffectProfileChoices (
                                                   int               * selected,
                                                   oyjlOptions_s     * opts OY_UNUSED )
 {
-    int choices = 0, current = -1;
+    int choices = 0;
     oyProfiles_s * patterns = oyProfiles_New( NULL ),
                  * profiles = 0;
 
@@ -1571,8 +1575,14 @@ int setWtptMode( oySCOPE_e scope, int wtpt_mode, int dry )
 
 void updateVCGT()
 {
+  int r = 0;
   DBG_S_( oyPrintTime() );
-  if(oyDisplayColorServerIsActive()) return;
+  if((r=oyDisplayColorServerIsActive()) > 0)
+  {
+    DBG2_S_( "color server is active(%d) - stop  %s", r, oyPrintTime() );
+    return;
+  } else
+    DBG1_S_( "color server is inactive - continue  %s", oyPrintTime() );
   size_t size = 0;
   char * result = oyReadCmdToMem_( "oyranos-monitor -l | wc -l", &size, "r", malloc );
   char * tmpname = oyGetTempFileName_( NULL, "vcgt.icc", 0, oyAllocateFunc_ );
@@ -1887,7 +1897,7 @@ int checkWtptState(int dry)
     int use_effect = 0;
 
     cmode = oyGetBehaviour( oyBEHAVIOUR_DISPLAY_WHITE_POINT );
-    effect = oyGetPersistentString( OY_DEFAULT_EFFECT_PROFILE, 0, oySCOPE_USER_SYS, oyAllocateFunc_ );
+    effect = oyGetPersistentString( OY_DEFAULT_DISPLAY_EFFECT_PROFILE, 0, oySCOPE_USER_SYS, oyAllocateFunc_ );
     fprintf (stderr, "%s: %s %s: %s\n", _("Actual white point mode"), cmode<choices?choices_string_list[cmode]:"----",
             _("Effect"), oyNoEmptyString_m_(effect));
 
@@ -1953,18 +1963,15 @@ int checkWtptState(int dry)
       fprintf(  stderr, "%s: %s %s: %s\n", _("New white point mode"), new_mode<choices?choices_string_list[new_mode]:"----",
                 _("Effect"), oyNoEmptyString_m_(new_effect) );
 
-      if(dry == 0 && use_effect)
+      if(dry == 0 && (use_effect ||
+                      (effect?1:0) != (new_effect?1:0)))
       {
-        if(!new_effect || (strcmp(new_effect,"-") == 0 ||
-                           strlen(new_effect) == 0 ))
-        {
-          oySetPersistentString( OY_DEFAULT_EFFECT_PROFILE, scope, NULL, NULL );
-          oySetPersistentString( OY_DEFAULT_EFFECT, scope, "0", NULL );
-        } else
-        {
-          oySetPersistentString( OY_DEFAULT_EFFECT_PROFILE, scope, new_effect, NULL );
-          oySetPersistentString( OY_DEFAULT_EFFECT, scope, "1", NULL );
-        }
+        if( !new_effect || (strcmp(new_effect,"-") == 0 ||
+                            strlen(new_effect) == 0 ))
+          oySetPersistentString( OY_DEFAULT_DISPLAY_EFFECT_PROFILE, scope, NULL, NULL );
+        else
+          oySetPersistentString( OY_DEFAULT_DISPLAY_EFFECT_PROFILE, scope, new_effect, NULL );
+        pingNativeDisplay();
       }
 
       if(cmode != new_mode)
@@ -2005,15 +2012,19 @@ static void oyMonitorCallbackDBus    ( double              progress_zero_till_on
     ++key;
   else
     return;
-  if(!verbose) return;
+  //if(!verbose) return;
 
   if( strstr(key, OY_STD "/ping") == NULL && /* let us ping */
       strstr(key, OY_DISPLAY_STD) == NULL && /* all display variables */
+      strstr(key, OY_DEFAULT_DISPLAY_EFFECT_PROFILE) == NULL && /* new display effect profile */
       strstr(key, OY_DEFAULT_DISPLAY_WHITE_POINT) == NULL && /* oySetDisplayWhitePoint() */
       strstr(key, OY_DEFAULT_EFFECT) == NULL && /* effect switch changes */
       strstr(key, OY_DEFAULT_EFFECT_PROFILE) == NULL /* new effect profile */
     )
+  {
+    fprintf(stderr, "ignoring key: %s\n", key );
     return;
+  }
   if( /* skip XY(Z) and listen only on Z to reduce flicker */
       strstr(key, OY_DEFAULT_DISPLAY_WHITE_POINT_X) != NULL ||
       strstr(key, OY_DEFAULT_DISPLAY_WHITE_POINT_Y) != NULL || 
@@ -2074,7 +2085,7 @@ int runDaemon(int dmode)
     checkWtptState( 0 );
 
 #ifdef HAVE_DBUS
-  oyStartDBusObserver( oyWatchDBus, oyFinishDBus, oyMonitorCallbackDBus, OY_DISPLAY_STD, NULL )
+  oyStartDBusObserver( oyWatchDBus, oyFinishDBus, oyMonitorCallbackDBus, OY_STD, NULL )
   if(id)
     fprintf(stderr, "oyStartDBusObserver ID: %d\n", id);
 
