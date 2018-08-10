@@ -311,10 +311,11 @@ int main( int argc , char** argv )
 #ifdef XCM_HAVE_X11
   if(daemon)
   {
-    int r OY_UNUSED;
+    int r = 0;
     Display * display = XOpenDisplay( display_name );
-    if(XcmColorServerCapabilities( display ) & XCM_COLOR_SERVER_MANAGEMENT)
+    if((r=XcmColorServerCapabilities( display )) > 0 && r & XCM_COLOR_SERVER_MANAGEMENT)
       daemon = 2;
+    if(oy_debug) fprintf( stderr, "active: %d\n", r);
     XCloseDisplay( display );
     r = system(argv[0]);
   }
@@ -1123,11 +1124,12 @@ int  runDaemon                       ( const char        * display_name )
 
 int oyXCMDisplayColorServerIsActive  ( const char        * display_name )
 {
-  int active = 0;
+  int active = 0, r;
 #if defined(XCM_HAVE_X11)
   Display * display = XOpenDisplay( display_name );
-  if(XcmColorServerCapabilities( display ) & XCM_COLOR_SERVER_MANAGEMENT)
+  if((r = XcmColorServerCapabilities( display )) > 0 && r & XCM_COLOR_SERVER_MANAGEMENT)
     active = 1;
+  if(oy_debug) fprintf( stderr, "active: %d\n", r);
   XCloseDisplay( display );
 #endif
   return active;
