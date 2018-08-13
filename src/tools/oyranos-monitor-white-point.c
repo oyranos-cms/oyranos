@@ -44,6 +44,8 @@
 #include "oyranos_threads.h"
 #include "oyProfiles_s.h"
 
+#include <X11/Xcm/XcmVersion.h>
+
 #define DBG_S_ if(oy_debug >= 1)DBG_S
 #define DBG1_S_ if(oy_debug >= 1)DBG1_S
 #define DBG2_S_ if(oy_debug >= 1)DBG2_S
@@ -516,7 +518,16 @@ oyjlOPTIONSTATE_e oyjlOptions_GetResult (
     *result_string = t;
 
   if(result_dbl)
+  {
+    oyjlOption_s * o = oyjlOptions_GetOption( opts, oc );
     oyjlStringToDouble( t, result_dbl );
+    if( o->value_type == oyjlWIDGETTYPE_DOUBLE &&
+        ( o->values.dbl.start > *result_dbl ||
+          o->values.dbl.end < *result_dbl) )
+    {
+      fprintf( stderr, "%s %s \'%c\' %s %g->%g !: %g\n", _("Usage Error:"), _("Option has a different value range"), oc, o->name, o->values.dbl.start, o->values.dbl.end, *result_dbl  );
+    }
+  }
   if(result_int)
   {
     int l = strlen( list ), i,n = 0;
@@ -983,7 +994,6 @@ void * oyjlMemDup                    ( void              * ptr,
 // TODO: export man page
 // end of oyjl
 
-// TODO: It is not yet clear how to differenciate e.g. printable effect profiles and display only enhancements. A "invert" filter shall not be printed on paper.
 static uint32_t icc_profile_flags = 0;
 static oyjlWidgetChoice_s * linear_effect_choices_ = NULL;
 static oyjlWidgetChoice_s * getLinearEffectProfileChoices (
@@ -1177,6 +1187,8 @@ void myOptionsFill                   ( oyjlOptions_s       * opts )
       _("KELVIN"), oyjlWIDGETTYPE_DOUBLE, {.dbl.start = 1100, .dbl.end = 10100, .dbl.tick = 100, .dbl.d = getTemperature(5000)} },
     {"oiwi", 0, 'g', "night-effect", NULL, _("Night effect"), _("Set night time effect"), _("A ICC profile of class abstract. Ideally the effect profile works on 1D RGB curves only and is marked meta:EFFECT_linear=yes ."), _("ICC_PROFILE"), oyjlWIDGETTYPE_FUNCTION, {.getChoices = getLinearEffectProfileChoices} },
     {"oiwi", 0, 'e', "sunlight-effect", NULL, _("Sun light effect"), _("Set day time effect"), _("A ICC profile of class abstract. Ideally the effect profile works on 1D RGB curves only and is marked meta:EFFECT_linear=yes ."), _("ICC_PROFILE"), oyjlWIDGETTYPE_FUNCTION, {.getChoices = getLinearEffectProfileChoices} },
+    {"oiwi", 0, 'b', "night-backlight", NULL, _("Night Backlight"), _("Set Nightly Backlight"), _("The option needs xbacklight installed and supporting your device for dimming the monitor lamp."), _("PERCENT"), oyjlWIDGETTYPE_DOUBLE,
+      {.dbl.start = 0, .dbl.end = 100, .dbl.tick = 1, .dbl.d = getDoubleFromDB( OY_DISPLAY_STD "/display_backlight_night", 0 )} },
     {"oiwi", 0, 'l', "location", NULL, _("location"), _("Detect location by IP adress"), NULL, NULL, oyjlWIDGETTYPE_NONE, {} },
     {"oiwi", 0, 'o', "longitude", NULL, _("Longitude"), _("Set Longitude"), NULL, _("ANGLE_IN_DEGREE"), oyjlWIDGETTYPE_DOUBLE,
       {.dbl.start = -180, .dbl.end = 180, .dbl.tick = 1, .dbl.d = getDoubleFromDB( OY_DISPLAY_STD "/longitude", 0 )} },
@@ -1200,7 +1212,11 @@ void myOptionsFill                   ( oyjlOptions_s       * opts )
   oyjlOptionGroup_s groups[] = {
   /* type,   flags, name, description, help, mandatory, optional, detail */
     {"oiwg", 0, _("Mode"), _("Actual mode"), NULL, "wa", "zv", "wa" },
+#if defined( XCM_HAVE_X11 )
+    {"oiwg", 0, _("Night Mode"), _("Nightly appearance"), NULL, "n", "gbzv", "ngb" },
+#else
     {"oiwg", 0, _("Night Mode"), _("Nightly appearance"), NULL, "n", "gzv", "ng" },
+#endif
     {"oiwg", 0, _("Day Mode"), _("Sun light appearance"), NULL, "s", "ezv", "se" },
     {"oiwg", 0, _("Location"), _("Location and Twilight"), NULL, "l|oi", "tzv", "loit"},
     {"oiwg", 0, _("Daemon Service"), _("Run sunset daemon"), NULL, "d", "v", "d" },
@@ -1228,7 +1244,12 @@ void myOptionsRelease                ( oyjlOptions_s      ** opts )
   if(*opts) free(*opts);
   *opts = NULL;
 }
-void myUiFill                        ( oyjlUi_s            * ui )
+void oyUiFill                        ( oyjlUi_s            * ui,
+                                       const char          * nick,
+                                       const char          * name,
+                                       const char          * description,
+                                       const char          * icon,
+                                       const char          * documentation )
 {
   DBG_S_( oyPrintTime() );
   oyjlUiHeaderSection_s s[] = {
@@ -1242,14 +1263,14 @@ void myUiFill                        ( oyjlUi_s            * ui )
     { "oihs", "sources", NULL, "http://www.oyranos.org", NULL },
     { "oihs", "development", NULL, "https://github.com/oyranos-cms/oyranos", NULL },
     { "oihs", "openicc_module_author", NULL, "Kai-Uwe Behrmann", "http://www.behrmann.name" },
-    { "oihs", "documentation", NULL, "http://www.openicc.info", _("The tool can set the actual white point or set it by local day and night time. A additional effect profile can be selected.") },
+    { "oihs", "documentation", NULL, "http://www.openicc.info", documentation },
     { "", NULL, NULL, NULL, NULL }
   };
   ui->app_type = "tool";
-  memcpy( ui->nick, "oyNM", 4 );
-  ui->name = _("Night Manager");
-  ui->description = _("Oyranos Night Manager");
-  ui->logo = "oyranos_logo";
+  memcpy( ui->nick, nick, 4 );
+  ui->name = name;
+  ui->description = description;
+  ui->logo = icon;
   ui->sections = oyjlMemDup( s, sizeof(s) );
   DBG_S_( oyPrintTime() );
 }
@@ -1268,6 +1289,7 @@ int main( int argc , char** argv )
   int wtpt_mode_sunlight = -1;
   const char * sunlight_effect = NULL;
   const char * night_effect = NULL;
+  double night_backlight = -1;
   double temperature = 0.0;
   int show = 0;
   int json = 0;
@@ -1307,7 +1329,9 @@ int main( int argc , char** argv )
   ui = oyjlUi_New( argc, argv );
   opts = ui->opts;
   myOptionsFill( opts );
-  myUiFill( ui );
+  oyUiFill( ui, "oyNM", _("Night Manager"), _("Oyranos Night Manager"),
+            "oyNM-logo",
+            _("The tool can set the actual white point or set it by local day and night time. A additional effect profile can be selected.") );
   /* parse the options */
   oyjlOPTIONSTATE_e state = oyjlOptions_Parse( opts );
   DBG_S_( oyPrintTime() );
@@ -1339,6 +1363,7 @@ int main( int argc , char** argv )
   oyjlOptions_GetResult( opts, 'a', NULL, &temperature, NULL);
   oyjlOptions_GetResult( opts, 'r', NULL, NULL, &sunrise);
   oyjlOptions_GetResult( opts, 'l', NULL, NULL, &location);
+  oyjlOptions_GetResult( opts, 'b', NULL, &night_backlight, NULL);
   oyjlOptions_GetResult( opts, 'n', NULL, NULL, &wtpt_mode_night);
   oyjlOptions_GetResult( opts, 's', NULL, NULL, &wtpt_mode_sunlight);
   oyjlOptions_GetResult( opts, 'o', NULL, &longitude, NULL);
@@ -1486,6 +1511,14 @@ int main( int argc , char** argv )
     oySetPersistentString( OY_DISPLAY_STD "/night_effect", scope,
                            (night_effect[0] && night_effect[0] != '-') ?
                             night_effect : NULL, NULL );
+
+  if(night_backlight != -1 && dry == 0)
+  {
+    oyStringAddPrintfC(&value, 0,0, "%g", night_backlight);
+    oySetPersistentString( OY_DISPLAY_STD "/display_backlight_night", scope,
+                           night_backlight == 0 ? NULL : value, NULL );
+    oyFree_m_(value);
+  }
 
   if(sunlight_effect != NULL && dry == 0)
     oySetPersistentString( OY_DISPLAY_STD "/sunlight_effect", scope,
@@ -1926,7 +1959,9 @@ int checkWtptState(int dry)
       }
       if(dry == 0)
         if(!oyExistPersistentString( OY_DISPLAY_STD "/night", "0", 0, oySCOPE_USER_SYS ))
+        {
           oySetPersistentString( OY_DISPLAY_STD "/night", scope, "0", NULL );
+        }
 
     } else
     /* night time */
@@ -1953,7 +1988,29 @@ int checkWtptState(int dry)
       }
       if(dry == 0)
         if(!oyExistPersistentString( OY_DISPLAY_STD "/night", "1", 0, oySCOPE_USER_SYS ))
+        {
           oySetPersistentString( OY_DISPLAY_STD "/night", scope, "1", NULL );
+#if defined( XCM_HAVE_X11 )
+          size_t size = 0;
+          char * backlight = oyReadCmdToMem_( "xbacklight", &size, "r", oyAllocateFunc_);
+          if(backlight && oyExistPersistentString( OY_DISPLAY_STD "/display_backlight_night", NULL, 0, oySCOPE_USER_SYS ))
+          {
+            int bl = atoi(backlight);
+            int nbl = -1;
+            if(backlight[strlen(backlight)-1] == '\n')
+              backlight[strlen(backlight)-1] = '\000';
+            value = oyGetPersistentString( OY_DISPLAY_STD "/display_backlight_night", 0, oySCOPE_USER_SYS, oyAllocateFunc_ );
+            nbl = atoi(value);
+            fprintf( stderr, "xbacklight old | new: %d(%s) | %d\n", bl, backlight, nbl );
+            if(bl > nbl)
+            {
+              value = oyReadCmdToMemf_( &size, "r", oyAllocateFunc_, "xbacklight -set %d", nbl );
+            }
+            oyFree_m_(value);
+            oyFree_m_(backlight);
+          }
+#endif
+        }
     }
 
     if( (new_mode != cmode) ||
@@ -1998,10 +2055,9 @@ static void oyMonitorCallbackDBus    ( double              progress_zero_till_on
                                        char              * status_text,
                                        int                 thread_id_ OY_UNUSED,
                                        int                 job_id OY_UNUSED,
-                                       oyStruct_s        * cb_progress_context )
+                                       oyStruct_s        * cb_progress_context OY_UNUSED )
 {
   const char * key;
-  int verbose = oyOption_GetValueInt( (oyOption_s*)cb_progress_context, 0 );
   if(!status_text) return;
   DBG_S_( oyPrintTime() );
 
@@ -2012,7 +2068,6 @@ static void oyMonitorCallbackDBus    ( double              progress_zero_till_on
     ++key;
   else
     return;
-  //if(!verbose) return;
 
   if( strstr(key, OY_STD "/ping") == NULL && /* let us ping */
       strstr(key, OY_DISPLAY_STD) == NULL && /* all display variables */
