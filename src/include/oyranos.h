@@ -146,13 +146,13 @@ int          oySetCMMPattern         ( oyCMM_e             type,
 /** \addtogroup cmm_handling
  *  @{ *//* cmm_handling */
 /** @brief the system specific module name; e.g. a library name */
-#define oyNAME_MODULE (oyNAME_DESCRIPTION + 2)
+#define oyNAME_MODULE 4
 /** @brief the logical name for selection */
-#define oyNAME_REGISTRATION (oyNAME_DESCRIPTION + 3)
+#define oyNAME_REGISTRATION 5
 /** @brief a logical name for registration search */
-#define oyNAME_PATTERN (oyNAME_DESCRIPTION + 4)
+#define oyNAME_PATTERN 6
 /** @brief a logical name for registration search */
-#define oyNAME_JSON (oyNAME_DESCRIPTION + 5)
+#define oyNAME_JSON 7
 /** @brief use inbuild values */
 #define oySOURCE_FILTER 0x02
 /** @brief use persistenly stored DB values */
