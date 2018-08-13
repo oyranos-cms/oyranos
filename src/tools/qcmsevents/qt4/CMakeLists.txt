@@ -20,7 +20,7 @@ IF( HAVE_QT AND UNIX AND NOT APPLE AND NOT ${CMAKE_SYSTEM_NAME} MATCHES Android 
     QT4_WRAP_CPP( qcmsevents_SRCS ${qcmsevents_MOC_HEADERS} )
 
     ADD_EXECUTABLE( qcmsevents-qt4 ${qcmsevents_SRCS} ${qcmsevents_RCC_SRCS} )
-    TARGET_LINK_LIBRARIES ( qcmsevents-qt4 Oyranos ${EXTRA_LIBS}
+    TARGET_LINK_LIBRARIES ( qcmsevents-qt4 ${TARGET_LIB} ${EXTRA_LIBS}
                     ${QT_LIBRARIES} ${XCM_LIBRARIES} )
     INSTALL( TARGETS qcmsevents-qt4
              RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} )

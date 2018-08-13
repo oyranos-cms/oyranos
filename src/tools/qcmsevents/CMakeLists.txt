@@ -19,11 +19,11 @@ IF( HAVE_QT AND UNIX AND NOT APPLE AND Qt5Widgets_FOUND)
   INCLUDE_DIRECTORIES( ${Qt5Widgets_INCLUDE_DIRS} )
 
   ADD_EXECUTABLE( qcmsevents ${qcmsevents_SRCS} ${qcmsevents_RCC_SRCS} )
-  TARGET_LINK_LIBRARIES ( qcmsevents Oyranos ${EXTRA_LIBS}
+  TARGET_LINK_LIBRARIES ( qcmsevents  ${TARGET_LIB} ${EXTRA_LIBS}
                  ${QT_LIBRARIES} ${XCM_LIBRARIES} )
   FIND_PACKAGE(PkgConfig)
   PKG_CHECK_MODULES(X11 x11)
-  TARGET_LINK_LIBRARIES ( qcmsevents Oyranos ${EXTRA_LIBS}
+  TARGET_LINK_LIBRARIES ( qcmsevents  ${TARGET_LIB} ${EXTRA_LIBS}
                  Qt5::Widgets Qt5::X11Extras
                  ${XCM_LIBRARIES}
                  ${X11_LIBRARIES} )
