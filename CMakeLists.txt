@@ -39,9 +39,7 @@ OPTION(ENABLE_FLTK "Build FLTK tools" ON)
 OPTION(ENABLE_DOCU "Build HTML documentation out of sources" ON)
 
 # if our static code lands inside a shared lib, we need -fPIC
-IF(ENABLE_SHARED_LIBS)
-  SET( CMAKE_POSITION_INDEPENDENT_CODE ON)
-ENDIF()
+SET( CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 MESSAGE( "-- Found CMAKE_SYSTEM_NAME: ${CMAKE_SYSTEM_NAME}" )
 
