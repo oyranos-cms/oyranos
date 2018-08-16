@@ -1,6 +1,6 @@
 # translation of de.po to 
 # German translations for icc_examin
-# Copyright (C) 2005-2012 Kai-Uwe Behrmann
+# Copyright (C) 2005-2018 Kai-Uwe Behrmann
 # Kai-Uwe Behrmann <ku.b@gmx.de>, 2005-2012.
 # This file is distributed under the BSD licence (http://www.opensource.org/licenses/bsd-license.php)
 #
@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2018-06-14 16:47+0200\n"
+"POT-Creation-Date: 2018-08-16 08:34+0200\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -19,7 +19,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: vim 6.0\n"
 
-#: libopenicc/openicc_core.c:129
+#: libopenicc/openicc_core.c:128
 msgid "!!! ERROR"
 msgstr "!!! Fehler"
 
@@ -30,6 +30,10 @@ msgstr "Füge mit gettext übersetzte Schlüssel to JSON hinzu:"
 #: tools/openicc_json.c:38
 msgid "Convert JSON to gettext ready C strings:"
 msgstr "Wandle JSON in gettext lesbare C Texte:"
+
+#: libopenicc/openicc_args.c:817
+msgid "Copyright"
+msgstr "Kopierrecht"
 
 #: libopenicc/openicc_db.c:60 libopenicc/openicc_db.c:180
 #: libopenicc/openicc_db.c:434
@@ -60,9 +64,45 @@ msgstr "Konnte keinen JSON Text setzen für"
 msgid "Could not setup db objetc"
 msgstr "Konnte DB Objekt nicht erstellen"
 
+#: libopenicc/openicc_args.c:630
+msgid "Description"
+msgstr "Beschreibung"
+
+#: libopenicc/openicc_args.c:823
+msgid "Development"
+msgstr "Entwicklung"
+
+#: libopenicc/openicc_args.c:825
+msgid "Documentation"
+msgstr "Dokumente"
+
+#: libopenicc/openicc_args.c:198
+msgid "Double occuring option"
+msgstr "Doppelte Option"
+
+#: libopenicc/openicc_args.c:821
+msgid "Download"
+msgstr "Bezugsquelle"
+
 #: tools/openicc_json.c:51
 msgid "General options:"
 msgstr "Allgemeine Optionen:"
+
+#: libopenicc/openicc_args.c:818
+msgid "License"
+msgstr "Lizenz"
+
+#: libopenicc/openicc_args.c:816
+msgid "Manufacturer"
+msgstr "Hersteller"
+
+#: libopenicc/openicc_args.c:797
+msgid "Module"
+msgstr "Modul"
+
+#: libopenicc/openicc_args.c:940
+msgid "No"
+msgstr "Nein"
 
 #: libopenicc/openicc_db.c:476
 msgid "No JSON content obtained for"
@@ -71,6 +111,26 @@ msgstr "Kein JSON Inhalt erhalten für"
 #: libopenicc/openicc_db.c:485
 msgid "No JSON obtained for"
 msgstr "Kein JSON erhalten für"
+
+#: libopenicc/openicc_args.c:824
+msgid "OpenICC Module Author"
+msgstr "Autor des OpenICC Modules"
+
+#: libopenicc/openicc_args.c:424
+msgid "Option has a different value range"
+msgstr "Die Option besitzt einen anderen Wertebereich"
+
+#: libopenicc/openicc_args.c:288 libopenicc/openicc_args.c:343
+msgid "Option has a unexpected argument"
+msgstr "Die Option hat einen unerwartetes Argument"
+
+#: libopenicc/openicc_args.c:266 libopenicc/openicc_args.c:320
+msgid "Option needs a argument"
+msgstr "Die Option erwartet ein Argument"
+
+#: libopenicc/openicc_args.c:245 libopenicc/openicc_args.c:302
+msgid "Option not supported"
+msgstr "Die Option ist nicht unterstützt"
 
 #: libopenicc/openicc_db.c:153
 msgid "Paths:"
@@ -84,17 +144,53 @@ msgstr "Zeige einen Hilfetext an:"
 msgid "Rendering Intent"
 msgstr "Übertragungsart"
 
-#: tools/openicc_json.c:37 tools/openicc_json.c:145
+#: libopenicc/openicc_args.c:822
+msgid "Sources"
+msgstr "Quellen"
+
+#: libopenicc/openicc_args.c:820
+msgid "Support"
+msgstr "Unterstützung"
+
+#: libopenicc/openicc_args.c:632
+msgid "Synopsis"
+msgstr ""
+
+#: libopenicc/openicc_args.c:795
+msgid "Tool"
+msgstr "Werkzeug"
+
+#: libopenicc/openicc_args.c:819
+msgid "Url"
+msgstr ""
+
+#: libopenicc/openicc_args.c:640 tools/openicc_json.c:37
+#: tools/openicc_json.c:145
 msgid "Usage"
 msgstr "Benutzung"
 
-#: libopenicc/openicc_core.c:126
+#: libopenicc/openicc_args.c:198 libopenicc/openicc_args.c:245
+#: libopenicc/openicc_args.c:266 libopenicc/openicc_args.c:288
+#: libopenicc/openicc_args.c:302 libopenicc/openicc_args.c:320
+#: libopenicc/openicc_args.c:343 libopenicc/openicc_args.c:424
+msgid "Usage Error:"
+msgstr "Benutzerfehler:"
+
+#: libopenicc/openicc_args.c:826
+msgid "Version"
+msgstr "Version"
+
+#: libopenicc/openicc_core.c:125
 msgid "WARNING"
 msgstr "WARNUNG"
 
 #: libopenicc/openicc_db.c:469
 msgid "Writing failed for"
 msgstr "Schreiben mislungen für"
+
+#: libopenicc/openicc_args.c:940
+msgid "Yes"
+msgstr "Ja"
 
 #: tools/openicc_json.c:33
 msgid "is a JSON helper tool"
@@ -919,9 +1015,6 @@ msgstr "plaudernd"
 #~ msgid "Convert to untagged Cmyk, preserving Cmyk numbers"
 #~ msgstr "Wandle in unspezifziertes Cmyk, erhalte Cmyk Zahlen"
 
-#~ msgid "Copyright"
-#~ msgstr "Kopierrecht"
-
 #~ msgid "Copyright &copy;"
 #~ msgstr "Kopierrecht &copy;"
 
@@ -1140,9 +1233,6 @@ msgstr "plaudernd"
 
 #~ msgid "Display"
 #~ msgstr "Monitor"
-
-#~ msgid "Documentation"
-#~ msgstr "Dokumente"
 
 #~ msgid "Documents"
 #~ msgstr "Dokumente"
@@ -1808,9 +1898,6 @@ msgstr "plaudernd"
 #~ msgid "Lab"
 #~ msgstr "Lab"
 
-#~ msgid "License"
-#~ msgstr "Lizenz"
-
 #~ msgid "Light gray"
 #~ msgstr "Hellgrau"
 
@@ -1942,9 +2029,6 @@ msgstr "plaudernd"
 #~ msgid "Manage Favorites"
 #~ msgstr "Bearbeite Lesezeichen"
 
-#~ msgid "Manufacturer"
-#~ msgstr "Hersteller"
-
 #~ msgid "Manufacturer:"
 #~ msgstr "Hersteller:"
 
@@ -2026,9 +2110,6 @@ msgstr "plaudernd"
 
 #~ msgid "Modify Profile:"
 #~ msgstr "Verändere Prmprofil"
-
-#~ msgid "Module Options"
-#~ msgstr "Moduloptionen"
 
 #~ msgid "Monitor"
 #~ msgstr "Bildschirm"
@@ -2119,9 +2200,6 @@ msgstr "plaudernd"
 #~ msgid "New Folder"
 #~ msgstr "Neuer Ordner"
 
-#~ msgid "No"
-#~ msgstr "Nein"
-
 #~ msgid "No Color"
 #~ msgstr "keine Farbe"
 
@@ -2198,9 +2276,6 @@ msgstr "plaudernd"
 #~ msgid "Option \"filename\", a valid filename of a existing PPM image"
 #~ msgstr ""
 #~ "Option \"filename\", ein gültiger Dateiname eines existierenden PPM Bildes"
-
-#~ msgid "Option not supported type:"
-#~ msgstr "Option nicht unterstützten Typs:"
 
 #~ msgid "Options"
 #~ msgstr "Optionen"
@@ -3547,9 +3622,6 @@ msgstr "plaudernd"
 #~ msgid "Value"
 #~ msgstr "Wert"
 
-#~ msgid "Version"
-#~ msgstr "Version"
-
 #~ msgid "Version:         "
 #~ msgstr "Version:         "
 
@@ -3652,9 +3724,6 @@ msgstr "plaudernd"
 #~ msgid "Yellow"
 #~ msgstr "Gelb"
 
-#~ msgid "Yes"
-#~ msgstr "Ja"
-
 #~ msgid "You can get them from http://sf.net/projects/openicc"
 #~ msgstr "Sie können es erhalten von http://sf.net/projects/openicc"
 
@@ -3755,9 +3824,6 @@ msgstr "plaudernd"
 
 #~ msgid "default profile type does not exist:"
 #~ msgstr "Standard Profiltyp existiert nicht:"
-
-#~ msgid "description"
-#~ msgstr "Beschreibung"
 
 #~ msgid "device class"
 #~ msgstr "Geräteklasse"

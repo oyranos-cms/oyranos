@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: openicc\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2018-06-14 16:47+0200\n"
+"POT-Creation-Date: 2018-08-16 08:34+0200\n"
 "PO-Revision-Date: 2006-06-29 19:31+0200\n"
 "Last-Translator: Pascal LACROIX <lacroixpascal at vfemail.net>\n"
 "Language-Team: <fr@li.org>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: libopenicc/openicc_core.c:129
+#: libopenicc/openicc_core.c:128
 msgid "!!! ERROR"
 msgstr ""
 
@@ -27,6 +27,10 @@ msgstr ""
 #: tools/openicc_json.c:38
 msgid "Convert JSON to gettext ready C strings:"
 msgstr ""
+
+#: libopenicc/openicc_args.c:817
+msgid "Copyright"
+msgstr "Copyright"
 
 #: libopenicc/openicc_db.c:60 libopenicc/openicc_db.c:180
 #: libopenicc/openicc_db.c:434
@@ -63,10 +67,49 @@ msgstr ""
 msgid "Could not setup db objetc"
 msgstr "Ouvrir Profil"
 
+#: libopenicc/openicc_args.c:630
+#, fuzzy
+msgid "Description"
+msgstr "Description"
+
+#: libopenicc/openicc_args.c:823
+msgid "Development"
+msgstr ""
+
+#: libopenicc/openicc_args.c:825
+msgid "Documentation"
+msgstr ""
+
+#: libopenicc/openicc_args.c:198
+msgid "Double occuring option"
+msgstr ""
+
+#: libopenicc/openicc_args.c:821
+msgid "Download"
+msgstr ""
+
 #: tools/openicc_json.c:51
 #, fuzzy
 msgid "General options:"
 msgstr "Options"
+
+#: libopenicc/openicc_args.c:818
+msgid "License"
+msgstr ""
+
+#: libopenicc/openicc_args.c:816
+#, fuzzy
+msgid "Manufacturer"
+msgstr "Fabricant:   "
+
+#: libopenicc/openicc_args.c:797
+#, fuzzy
+msgid "Module"
+msgstr "Options"
+
+#: libopenicc/openicc_args.c:940
+msgid "No"
+msgstr ""
 
 #: libopenicc/openicc_db.c:476
 msgid "No JSON content obtained for"
@@ -74,6 +117,26 @@ msgstr ""
 
 #: libopenicc/openicc_db.c:485
 msgid "No JSON obtained for"
+msgstr ""
+
+#: libopenicc/openicc_args.c:824
+msgid "OpenICC Module Author"
+msgstr ""
+
+#: libopenicc/openicc_args.c:424
+msgid "Option has a different value range"
+msgstr ""
+
+#: libopenicc/openicc_args.c:288 libopenicc/openicc_args.c:343
+msgid "Option has a unexpected argument"
+msgstr ""
+
+#: libopenicc/openicc_args.c:266 libopenicc/openicc_args.c:320
+msgid "Option needs a argument"
+msgstr ""
+
+#: libopenicc/openicc_args.c:245 libopenicc/openicc_args.c:302
+msgid "Option not supported"
 msgstr ""
 
 #: libopenicc/openicc_db.c:153
@@ -89,17 +152,54 @@ msgstr ""
 msgid "Rendering Intent"
 msgstr "Oyranos Préférences"
 
-#: tools/openicc_json.c:37 tools/openicc_json.c:145
+#: libopenicc/openicc_args.c:822
+msgid "Sources"
+msgstr ""
+
+#: libopenicc/openicc_args.c:820
+msgid "Support"
+msgstr ""
+
+#: libopenicc/openicc_args.c:632
+msgid "Synopsis"
+msgstr ""
+
+#: libopenicc/openicc_args.c:795
+msgid "Tool"
+msgstr ""
+
+#: libopenicc/openicc_args.c:819
+msgid "Url"
+msgstr ""
+
+#: libopenicc/openicc_args.c:640 tools/openicc_json.c:37
+#: tools/openicc_json.c:145
 msgid "Usage"
 msgstr ""
 
-#: libopenicc/openicc_core.c:126
+#: libopenicc/openicc_args.c:198 libopenicc/openicc_args.c:245
+#: libopenicc/openicc_args.c:266 libopenicc/openicc_args.c:288
+#: libopenicc/openicc_args.c:302 libopenicc/openicc_args.c:320
+#: libopenicc/openicc_args.c:343 libopenicc/openicc_args.c:424
+msgid "Usage Error:"
+msgstr ""
+
+#: libopenicc/openicc_args.c:826
+#, fuzzy
+msgid "Version"
+msgstr "ICC Examin Version"
+
+#: libopenicc/openicc_core.c:125
 msgid "WARNING"
 msgstr ""
 
 #: libopenicc/openicc_db.c:469
 msgid "Writing failed for"
 msgstr ""
+
+#: libopenicc/openicc_args.c:940
+msgid "Yes"
+msgstr "Oui"
 
 #: tools/openicc_json.c:33
 msgid "is a JSON helper tool"
@@ -453,9 +553,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Convert to Default Rgb Editing Space"
 #~ msgstr "Espace colorimétrique"
-
-#~ msgid "Copyright"
-#~ msgstr "Copyright"
 
 #, fuzzy
 #~ msgid "Copyright &copy;"
@@ -890,10 +987,6 @@ msgstr ""
 #~ msgid "Magic:           "
 #~ msgstr "Taille:      "
 
-#, fuzzy
-#~ msgid "Manufacturer"
-#~ msgstr "Fabricant:   "
-
 #~ msgid "Manufacturer:"
 #~ msgstr "Fabricant:   "
 
@@ -928,10 +1021,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Modify Profile:"
 #~ msgstr "Ouvrir Profil"
-
-#, fuzzy
-#~ msgid "Module Options"
-#~ msgstr "Options"
 
 #, fuzzy
 #~ msgid "Monitor"
@@ -1368,10 +1457,6 @@ msgstr ""
 #~ msgstr "Valeur"
 
 #, fuzzy
-#~ msgid "Version"
-#~ msgstr "ICC Examin Version"
-
-#, fuzzy
 #~ msgid "Version:         "
 #~ msgstr "Taille:      "
 
@@ -1406,9 +1491,6 @@ msgstr ""
 
 #~ msgid "Yellow"
 #~ msgstr "Jaune"
-
-#~ msgid "Yes"
-#~ msgstr "Oui"
 
 #~ msgid "Yxy"
 #~ msgstr "Yxy"
@@ -1446,10 +1528,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "create_profile"
 #~ msgstr "Ouvrir Profil"
-
-#, fuzzy
-#~ msgid "description"
-#~ msgstr "Description"
 
 #, fuzzy
 #~ msgid "device class"

@@ -44,6 +44,7 @@ class QcmseDialog : public QDialog
     void quit() { oyFinish_( 0 ); exit(0); }
     void setIcon(int index);
     void showConfig();
+    void showNM();
 
   public:
     QSystemTrayIcon * icon;
@@ -53,6 +54,7 @@ class QcmseDialog : public QDialog
     QAction * quitA;
     QAction * showA;
     QAction * showC;
+    QAction * showN;
 
     QListWidget * log_list;
     QComboBox * icons;

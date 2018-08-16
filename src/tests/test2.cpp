@@ -1964,7 +1964,7 @@ oyTESTRESULT_e testProfile ()
     fprintf( zout, "oyNAME_NICK: %s\n", oyProfile_GetText(p_a, oyNAME_NICK) );
     fprintf( zout, "oyNAME_NAME: %s\n", oyProfile_GetText(p_a, oyNAME_NAME) );
     fprintf( zout, "oyNAME_DESCRIPTION: %s\n", oyProfile_GetText(p_a, oyNAME_DESCRIPTION) );
-    fprintf( zout, "oyNAME_JSON: %s\n", oyProfile_GetText(p_a, oyNAME_JSON) );
+    fprintf( zout, "oyNAME_JSON: %s\n", oyProfile_GetText(p_a, (oyNAME_e) oyNAME_JSON) );
   }
 
 

@@ -92,8 +92,9 @@ int      openiccArray_Count          ( openiccArray_s    * array );
 int      openiccArray_Push           ( openiccArray_s    * array );
 
 #define STRING_ADD( t, append ) oyjlStringAdd( &t, 0,0, append )
-char *       openiccStringCopy       ( const char        * text,
-                                       openiccAlloc_f      alloc );
+void         oyjlTreeSetValueString  ( oyjl_val            root,
+                                       const char        * key,
+                                       const char        * value );
 #define openiccNoEmptyString_m_(t) (t?t:"")
 
 int            openiccInit           ( void );

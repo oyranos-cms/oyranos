@@ -59,8 +59,7 @@ const char *       openiccObjectTypeToString (
   return type_name;
 }
 
-/** @fn        openiccMessageFormat
- *  @brief   default function to form a message string
+/** @brief   default function to form a message string
  *
  *  This default message function is used as a message formatter.
  *  The resulting string can be placed anywhere, e.g. in a GUI.
@@ -170,8 +169,7 @@ int                openiccMessageFormat (
   return 0;
 }
 
-/** @fn      openiccMessageFunc
- *  @brief   default message function to console
+/** @brief   default message function to console
  *
  *  The default message function is used as a message printer to the console 
  *  from library start.
@@ -232,8 +230,7 @@ int  openiccMessageFunc              ( int/*openiccMSG_e*/ code,
 
 openiccMessage_f     openiccMessage_p = openiccMessageFunc;
 
-/** @fn      openiccMessageFuncSet
- *  @brief   set a custom message listener
+/** @brief   set a custom message listener
  *
  *  @version OpenICC: 0.1.0
  *  @date    2011/10/21
@@ -246,8 +243,7 @@ int            openiccMessageFuncSet ( openiccMessage_f    message_func )
   return 0;
 }
 
-/** @fn      openiccVersion
- *  @brief   runtime version
+/** @brief   runtime version
  *
  *  @version OpenICC: 0.1.0
  *  @date    2015/08/27
@@ -260,8 +256,7 @@ int            openiccVersion        ( void )
 
 const char * openicc_domain_path = OPENICC_LOCALEDIR;
 int openicc_i18n_init = 0;
-/** @fn      openiccInit
- *  @brief   init the library; optionally
+/** @brief   init the library; optionally
  *
  *  Additionally use setlocale() somewhere in your application.
  *
@@ -301,6 +296,21 @@ int            openiccInit           ( void )
   return openicc_i18n_init;
 #endif
   return -1;
+}
+
+/** @brief   return the malloced copy of a pointer
+ *
+ *  @version OpenICC: 0.1.1
+ *  @date    2018/08/14
+ *  @since   2018/08/14 (OpenICC: 0.1.1)
+ */
+void *         openiccMemDup         ( const void        * src,
+                                       size_t              size )
+{
+  void * dest = malloc(size);
+  if(dest)
+    memcpy( dest, src, size );
+  return dest;
 }
 
 /*  @} *//* misc */

@@ -34,6 +34,8 @@ QcmseDialog::QcmseDialog()
   connect( quitA, SIGNAL(triggered()), this, SLOT(quit()) );
   showA = new QAction( tr("&Show Window"), this );
   connect( showA, SIGNAL(triggered()), this, SLOT(showNormal()) );
+  showN = new QAction( tr("&Night Manager"), this );
+  connect( showN, SIGNAL(triggered()), this, SLOT(showNM()) );
   showC = new QAction( tr("&Configure"), this );
   connect( showC, SIGNAL(triggered()), this, SLOT(showConfig()) );
 
@@ -79,6 +81,7 @@ void QcmseDialog::createIcon()
   systrayIconMenu->addSeparator();
 
   systrayIconMenu->addAction( showA );
+  systrayIconMenu->addAction( showN );
   systrayIconMenu->addAction( showC );
   systrayIconMenu->addAction( quitA );
 
@@ -157,6 +160,11 @@ void QcmseDialog::setIcon(int index)
   setWindowIcon(ic);
 
   icon->setToolTip( t );
+}
+
+void QcmseDialog::showNM()
+{
+  system("oyranos-monitor-white-point -J | openicc-json-qml -i - -c +");
 }
 
 void QcmseDialog::showConfig()

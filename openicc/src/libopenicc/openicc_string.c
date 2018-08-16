@@ -3,7 +3,7 @@
  *  libOpenICC - OpenICC Colour Management Configuration
  *
  *  @par Copyright:
- *            2011-2016 (C) Kai-Uwe Behrmann
+ *            2011-2018 (C) Kai-Uwe Behrmann
  *
  *  @brief    OpenICC Colour Management configuration helpers
  *  @internal
@@ -22,5 +22,10 @@
 #include <stdarg.h>  /* vsnprintf() */
 #include <stdio.h>   /* vsnprintf() */
 
-#include "oyjl_core.c"
-
+void         oyjlTreeSetValueString  ( oyjl_val            root,
+                                       const char        * key,
+                                       const char        * value )
+{
+  oyjl_val v = oyjlTreeGetValue( root, OYJL_CREATE_NEW, key );
+  oyjlValueSetString( v, value );
+}
