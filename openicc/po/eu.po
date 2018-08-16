@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: openicc\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2018-06-14 16:47+0200\n"
+"POT-Creation-Date: 2018-08-16 08:34+0200\n"
 "PO-Revision-Date: 2007-11-07 11:11+0100\n"
 "Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@zundan.com>\n"
 "Language-Team: Basque <itzulpena@euskalgnu.org>\n"
@@ -19,7 +19,7 @@ msgstr ""
 "X-Generator: KBabel 1.11.4\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: libopenicc/openicc_core.c:129
+#: libopenicc/openicc_core.c:128
 msgid "!!! ERROR"
 msgstr ""
 
@@ -30,6 +30,10 @@ msgstr ""
 #: tools/openicc_json.c:38
 msgid "Convert JSON to gettext ready C strings:"
 msgstr ""
+
+#: libopenicc/openicc_args.c:817
+msgid "Copyright"
+msgstr "Copyright-a"
 
 #: libopenicc/openicc_db.c:60 libopenicc/openicc_db.c:180
 #: libopenicc/openicc_db.c:434
@@ -66,10 +70,49 @@ msgstr ""
 msgid "Could not setup db objetc"
 msgstr "Ezin izan da letra-tipoa ireki:"
 
+#: libopenicc/openicc_args.c:630
+#, fuzzy
+msgid "Description"
+msgstr "Azalpena"
+
+#: libopenicc/openicc_args.c:823
+msgid "Development"
+msgstr ""
+
+#: libopenicc/openicc_args.c:825
+msgid "Documentation"
+msgstr "Dokumentazioa"
+
+#: libopenicc/openicc_args.c:198
+msgid "Double occuring option"
+msgstr ""
+
+#: libopenicc/openicc_args.c:821
+msgid "Download"
+msgstr ""
+
 #: tools/openicc_json.c:51
 #, fuzzy
 msgid "General options:"
 msgstr "Bereizketa"
+
+#: libopenicc/openicc_args.c:818
+msgid "License"
+msgstr "Lizentzia"
+
+#: libopenicc/openicc_args.c:816
+#, fuzzy
+msgid "Manufacturer"
+msgstr "Hornitzailea:   "
+
+#: libopenicc/openicc_args.c:797
+#, fuzzy
+msgid "Module"
+msgstr "Bereizketa"
+
+#: libopenicc/openicc_args.c:940
+msgid "No"
+msgstr ""
 
 #: libopenicc/openicc_db.c:476
 msgid "No JSON content obtained for"
@@ -77,6 +120,26 @@ msgstr ""
 
 #: libopenicc/openicc_db.c:485
 msgid "No JSON obtained for"
+msgstr ""
+
+#: libopenicc/openicc_args.c:824
+msgid "OpenICC Module Author"
+msgstr ""
+
+#: libopenicc/openicc_args.c:424
+msgid "Option has a different value range"
+msgstr ""
+
+#: libopenicc/openicc_args.c:288 libopenicc/openicc_args.c:343
+msgid "Option has a unexpected argument"
+msgstr ""
+
+#: libopenicc/openicc_args.c:266 libopenicc/openicc_args.c:320
+msgid "Option needs a argument"
+msgstr ""
+
+#: libopenicc/openicc_args.c:245 libopenicc/openicc_args.c:302
+msgid "Option not supported"
 msgstr ""
 
 #: libopenicc/openicc_db.c:153
@@ -93,17 +156,54 @@ msgstr ""
 msgid "Rendering Intent"
 msgstr "Oyranos-en ezarpenak"
 
-#: tools/openicc_json.c:37 tools/openicc_json.c:145
+#: libopenicc/openicc_args.c:822
+msgid "Sources"
+msgstr ""
+
+#: libopenicc/openicc_args.c:820
+msgid "Support"
+msgstr ""
+
+#: libopenicc/openicc_args.c:632
+msgid "Synopsis"
+msgstr ""
+
+#: libopenicc/openicc_args.c:795
+msgid "Tool"
+msgstr ""
+
+#: libopenicc/openicc_args.c:819
+msgid "Url"
+msgstr ""
+
+#: libopenicc/openicc_args.c:640 tools/openicc_json.c:37
+#: tools/openicc_json.c:145
 msgid "Usage"
 msgstr ""
 
-#: libopenicc/openicc_core.c:126
+#: libopenicc/openicc_args.c:198 libopenicc/openicc_args.c:245
+#: libopenicc/openicc_args.c:266 libopenicc/openicc_args.c:288
+#: libopenicc/openicc_args.c:302 libopenicc/openicc_args.c:320
+#: libopenicc/openicc_args.c:343 libopenicc/openicc_args.c:424
+msgid "Usage Error:"
+msgstr ""
+
+#: libopenicc/openicc_args.c:826
+#, fuzzy
+msgid "Version"
+msgstr "ICC Examin-en bertsioa"
+
+#: libopenicc/openicc_core.c:125
 msgid "WARNING"
 msgstr ""
 
 #: libopenicc/openicc_db.c:469
 msgid "Writing failed for"
 msgstr ""
+
+#: libopenicc/openicc_args.c:940
+msgid "Yes"
+msgstr "Bai"
 
 #: tools/openicc_json.c:33
 msgid "is a JSON helper tool"
@@ -690,9 +790,6 @@ msgstr ""
 #~ msgid "Convert to Default Rgb Editing Space"
 #~ msgstr "Kolore-espazioa"
 
-#~ msgid "Copyright"
-#~ msgstr "Copyright-a"
-
 #, fuzzy
 #~ msgid "Copyright &copy;"
 #~ msgstr "Copyright-a"
@@ -853,9 +950,6 @@ msgstr ""
 
 #~ msgid "Display"
 #~ msgstr "Pantaila"
-
-#~ msgid "Documentation"
-#~ msgstr "Dokumentazioa"
 
 #, fuzzy
 #~ msgid "Driver name:"
@@ -1241,9 +1335,6 @@ msgstr ""
 #~ msgid "Lab"
 #~ msgstr "Lab"
 
-#~ msgid "License"
-#~ msgstr "Lizentzia"
-
 #~ msgid "Light gray"
 #~ msgstr "Gris argia"
 
@@ -1337,10 +1428,6 @@ msgstr ""
 #~ msgid "Manage Favorites"
 #~ msgstr "Kudeatu gogokoak"
 
-#, fuzzy
-#~ msgid "Manufacturer"
-#~ msgstr "Hornitzailea:   "
-
 #~ msgid "Manufacturer:"
 #~ msgstr "Hornitzailea:   "
 
@@ -1418,10 +1505,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Modify Profile:"
 #~ msgstr "Monitorearen profila"
-
-#, fuzzy
-#~ msgid "Module Options"
-#~ msgstr "Bereizketa"
 
 #, fuzzy
 #~ msgid "Monitor"
@@ -2128,10 +2211,6 @@ msgstr ""
 #~ msgstr "Balioa"
 
 #, fuzzy
-#~ msgid "Version"
-#~ msgstr "ICC Examin-en bertsioa"
-
-#, fuzzy
 #~ msgid "Version:         "
 #~ msgstr "CMM:            "
 
@@ -2236,9 +2315,6 @@ msgstr ""
 #~ msgid "Yellow"
 #~ msgstr "Horia"
 
-#~ msgid "Yes"
-#~ msgstr "Bai"
-
 #~ msgid "Your"
 #~ msgstr "Zure"
 
@@ -2337,10 +2413,6 @@ msgstr ""
 
 #~ msgid "dE2000"
 #~ msgstr "dE2000"
-
-#, fuzzy
-#~ msgid "description"
-#~ msgstr "Azalpena"
 
 #, fuzzy
 #~ msgid "device class"
