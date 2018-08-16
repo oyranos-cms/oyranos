@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2018-08-16 08:24+0200\n"
+"POT-Creation-Date: 2018-08-16 19:18+0200\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -23,7 +23,7 @@ msgstr ""
 #: tools/oyranos-device.c:386 tools/oyranos-device.c:401
 #: tools/oyranos-device.c:423 tools/oyranos-device.c:465
 #: tools/oyranos-device.c:828 tools/oyranos-device.c:1025
-#: tools/oyranos-device.c:1261 tools/oyranos-monitor-white-point.c:672
+#: tools/oyranos-device.c:1261 tools/oyranos-monitor-white-point.c:639
 #: tools/qcmsevents/qcmsevents.cpp:333
 #, c-format
 msgid "!!! ERROR"
@@ -70,7 +70,7 @@ msgstr "-d garäte_position_startet_von_null"
 msgid "-v verbose"
 msgstr "-v plauders"
 
-#: tools/oyranos-monitor-white-point.c:412
+#: tools/oyranos-monitor-white-point.c:379
 msgid "... try with --help|-h option for usage text. give up"
 msgstr "... probieren Sie --help|-h Option für Hilfe. Gebe auf"
 
@@ -288,8 +288,8 @@ msgstr ""
 "Es kann alternative Eigenschaften anbieten bezüglich Farbanmutung, "
 "Sicherheit, Geschwindigkeit oder Resourcenverbrauch."
 
+#: tools/oyranos-monitor-white-point.c:258
 #: tools/oyranos-monitor-white-point.c:259
-#: tools/oyranos-monitor-white-point.c:260
 msgid ""
 "A ICC profile of class abstract. Ideally the effect profile works on 1D RGB "
 "curves only and is marked meta:EFFECT_linear=yes ."
@@ -302,18 +302,18 @@ msgstr ""
 msgid "A single path option is required"
 msgstr "Eine einzelne Pfadangabe wird benötigt"
 
-#: tools/oyranos-monitor-white-point.c:254
+#: tools/oyranos-monitor-white-point.c:253
 msgid "A value from 2700 till 8000 Kelvin is expected to show no artefacts"
 msgstr ""
 "Werte zwischen 2700 bis 8000 Kelvin sollten keine Darstellungsfehler "
 "hervorrufen"
 
-#: tools/oyranos-monitor-white-point.c:264
-#: tools/oyranos-monitor-white-point.c:266
+#: tools/oyranos-monitor-white-point.c:263
+#: tools/oyranos-monitor-white-point.c:265
 msgid "ANGLE_IN_DEGREE"
 msgstr "WINKEL_IN_GRAD"
 
-#: tools/oyranos-monitor-white-point.c:269
+#: tools/oyranos-monitor-white-point.c:268
 msgid "ANGLE_IN_DEGREE|0:rise/set|-6:civil|-12:nautical|-18:astronomical"
 msgstr "WINKEL_IN_GRAD|0:Auf-/Untergang|-6:zivil|-12:nautisch|-18:astronomisch"
 
@@ -335,7 +335,7 @@ msgstr "Abstrakter Farbraum"
 msgid "Action for Image profile and Editing profile mismatches."
 msgstr "Verhalten bei Ungleichheit von Bild- und Editierfarbraum"
 
-#: tools/oyranos-monitor-white-point.c:245
+#: tools/oyranos-monitor-white-point.c:244
 msgid "Activate"
 msgstr "Aktiviere"
 
@@ -352,11 +352,11 @@ msgstr "Aktive Richtlinie:"
 msgid "Active matrix monitor"
 msgstr "Aktivmatrixmonitor"
 
-#: tools/oyranos-monitor-white-point.c:285
+#: tools/oyranos-monitor-white-point.c:284
 msgid "Actual mode"
 msgstr "Aktueller Modus"
 
-#: tools/oyranos-monitor-white-point.c:1006
+#: tools/oyranos-monitor-white-point.c:973
 msgid "Actual white point mode"
 msgstr "Aktueller Weißpunktmodus"
 
@@ -545,11 +545,11 @@ msgstr "Attribute:       "
 msgid "Automatic"
 msgstr "Automatisch"
 
-#: tools/oyranos-monitor-white-point.c:492
+#: tools/oyranos-monitor-white-point.c:459
 msgid "Automatic white point"
 msgstr "Automatischer Weißpunkt"
 
-#: tools/oyranos-monitor-white-point.c:244
+#: tools/oyranos-monitor-white-point.c:243
 msgid "Autostart"
 msgstr "Automatischer Start"
 
@@ -797,7 +797,7 @@ msgstr "Kanäle:"
 msgid "Check if this module can handle a certain command."
 msgstr "Prüfe ob dieses Modul ein bestimmtes Kommando behandeln kann."
 
-#: tools/oyranos-monitor-white-point.c:518
+#: tools/oyranos-monitor-white-point.c:485
 msgid "Choices:"
 msgstr "Auswahlmöglichkeiten:"
 
@@ -806,7 +806,7 @@ msgstr "Auswahlmöglichkeiten:"
 msgid "Chromaticity"
 msgstr "Primärfarben"
 
-#: tools/oyranos-monitor-white-point.c:799
+#: tools/oyranos-monitor-white-point.c:766
 msgid "City"
 msgstr "Stadt"
 
@@ -1014,7 +1014,7 @@ msgstr "ColorGear CMM Lite"
 msgid "Compute a saturation line."
 msgstr "Berechne eine Sättigungslinie."
 
-#: tools/oyranos-monitor-white-point.c:249
+#: tools/oyranos-monitor-white-point.c:248
 msgid "Control user daemon"
 msgstr "Setze Sonnenuntergangsdienst"
 
@@ -1215,7 +1215,7 @@ msgstr "Konnte Datei nicht schreiben"
 msgid "Count all profiles with Lab PCS"
 msgstr "Zähle alle Profile mit Lab PCS"
 
-#: tools/oyranos-monitor-white-point.c:798
+#: tools/oyranos-monitor-white-point.c:765
 msgid "Country"
 msgstr "Land"
 
@@ -1301,7 +1301,7 @@ msgstr "DB Verbindung bereits gesetzt"
 msgid "DISPLAY variable not set: giving up."
 msgstr "DISPLAY Variable nicht gesetzt: gebe auf."
 
-#: tools/oyranos-monitor-white-point.c:293
+#: tools/oyranos-monitor-white-point.c:292
 msgid "Daemon Service"
 msgstr "Daemon Service"
 
@@ -1316,13 +1316,13 @@ msgstr "Farbraum:        "
 msgid "Date"
 msgstr "Datum"
 
-#: tools/oyranos-monitor-white-point.c:253
-#: tools/oyranos-monitor-white-point.c:291
+#: tools/oyranos-monitor-white-point.c:252
+#: tools/oyranos-monitor-white-point.c:290
 msgid "Day Mode"
 msgstr "Tagesmodus"
 
 #. nick, name, description, help
-#: tools/oyranos-monitor-white-point.c:243
+#: tools/oyranos-monitor-white-point.c:242
 msgid "Deactivate"
 msgstr "Deaktiviere"
 
@@ -1362,7 +1362,7 @@ msgstr "Voreingestellte ICC Profile"
 msgid "Description:     "
 msgstr "Beschreibung:    "
 
-#: tools/oyranos-monitor-white-point.c:263
+#: tools/oyranos-monitor-white-point.c:262
 msgid "Detect location by IP adress"
 msgstr "Erhalte Position von IP Adresse"
 
@@ -1535,8 +1535,8 @@ msgid "Editing XYZ"
 msgstr "Editier XYZ"
 
 #: liboyranos_config/oyranos_texts.c:255 liboyranos_config/oyranos_texts.c:526
-#: tools/oyranos-monitor-white-point.c:1007
-#: tools/oyranos-monitor-white-point.c:1093
+#: tools/oyranos-monitor-white-point.c:974
+#: tools/oyranos-monitor-white-point.c:1060
 msgid "Effect"
 msgstr "Effekt"
 
@@ -1764,7 +1764,7 @@ msgstr ""
 msgid "Gamut Warning"
 msgstr "Farbumfangswarnung"
 
-#: tools/oyranos-monitor-white-point.c:294
+#: tools/oyranos-monitor-white-point.c:293
 msgid "General options"
 msgstr "Allgemeine Optionen"
 
@@ -1788,7 +1788,7 @@ msgstr "Erzeuge Verknüpfungsprofil:"
 msgid "Generate Image:"
 msgstr "Erzeuge Bild:"
 
-#: tools/oyranos-monitor-white-point.c:926
+#: tools/oyranos-monitor-white-point.c:893
 msgid "Geographical Position"
 msgstr "Geographische Position"
 
@@ -1804,11 +1804,11 @@ msgstr "Hole ICC Profil:"
 msgid "Get ICC profile"
 msgstr "Hole ICC Profil"
 
-#: tools/oyranos-monitor-white-point.c:272
+#: tools/oyranos-monitor-white-point.c:271
 msgid "Get OpenICC Json UI declaration"
 msgstr "Hole OpenICC Json Benutzerschnittstellen"
 
-#: tools/oyranos-monitor-white-point.c:273
+#: tools/oyranos-monitor-white-point.c:272
 msgid "Get OpenICC Json UI declaration incuding command"
 msgstr "Hole OpenICC Json Benutzerschnittstellen und Kommando"
 
@@ -1914,7 +1914,7 @@ msgstr ""
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:532
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:722
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:989
-#: tools/oyranos-monitor-white-point.c:274
+#: tools/oyranos-monitor-white-point.c:273
 msgid "Help"
 msgstr "Hilfe"
 
@@ -2030,8 +2030,8 @@ msgstr ""
 msgid "ICC_FILE_NAME"
 msgstr "ICC_DATEINAME"
 
+#: tools/oyranos-monitor-white-point.c:258
 #: tools/oyranos-monitor-white-point.c:259
-#: tools/oyranos-monitor-white-point.c:260
 msgid "ICC_PROFILE"
 msgstr "ICC_PROFIL"
 
@@ -2281,7 +2281,7 @@ msgstr "Einführung"
 #. The white point profiles will be generated in many different shades, which will explode
 #. *  conversion cache. Thus we limit the possible shades to 100 kelvin steps, which in turn
 #. *  limits to around 100 profiles per monitor white point.
-#: tools/oyranos-monitor-white-point.c:258
+#: tools/oyranos-monitor-white-point.c:257
 msgid "KELVIN"
 msgstr ""
 
@@ -2294,8 +2294,8 @@ msgstr ""
 msgid "Kai-Uwe Behrmann"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:205
-#: tools/oyranos-monitor-white-point.c:528
+#: tools/oyranos-monitor-white-point.c:204
+#: tools/oyranos-monitor-white-point.c:495
 msgid "Kelvin"
 msgstr "Kelvin"
 
@@ -2352,7 +2352,7 @@ msgstr "Lab nach Fließkomma PCS"
 msgid "Lab2XYZ"
 msgstr "Lab nach XYZ"
 
-#: tools/oyranos-monitor-white-point.c:266
+#: tools/oyranos-monitor-white-point.c:265
 msgid "Latitude"
 msgstr "Geographische Breite"
 
@@ -2502,11 +2502,11 @@ msgstr "Lade"
 msgid "Load Image File Object"
 msgstr "Lade Bilddateiobjekt"
 
-#: tools/oyranos-monitor-white-point.c:292
+#: tools/oyranos-monitor-white-point.c:291
 msgid "Location"
 msgstr "Position"
 
-#: tools/oyranos-monitor-white-point.c:292
+#: tools/oyranos-monitor-white-point.c:291
 msgid "Location and Twilight"
 msgstr "Ort und Dämmerung"
 
@@ -2515,7 +2515,7 @@ msgstr "Ort und Dämmerung"
 msgid "LogoSync CMM"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:264
+#: tools/oyranos-monitor-white-point.c:263
 msgid "Longitude"
 msgstr "Geographische Länge"
 
@@ -2701,7 +2701,7 @@ msgstr "Allgemeine Daten"
 msgid "Microsoft"
 msgstr "Microsoft"
 
-#: tools/oyranos-monitor-white-point.c:294
+#: tools/oyranos-monitor-white-point.c:293
 msgid "Misc"
 msgstr "Verschiedenes"
 
@@ -2724,8 +2724,8 @@ msgstr ""
 "vereinheitlichen."
 
 #. type,   flags, name, description, help, mandatory, optional, detail
-#: tools/oyranos-monitor-white-point.c:251
-#: tools/oyranos-monitor-white-point.c:285
+#: tools/oyranos-monitor-white-point.c:250
+#: tools/oyranos-monitor-white-point.c:284
 msgid "Mode"
 msgstr "Modus"
 
@@ -2738,7 +2738,7 @@ msgstr "Modell"
 msgid "Model:           "
 msgstr "Modell:          "
 
-#: tools/oyranos-monitor-white-point.c:250
+#: tools/oyranos-monitor-white-point.c:249
 msgid "Modes"
 msgstr "Modi"
 
@@ -2848,32 +2848,32 @@ msgstr "Benötige ein ICC Profil Argument."
 msgid "Need a ICC profile to modify."
 msgstr "Benötige ein ICC Profil zum Verändern."
 
-#: tools/oyranos-monitor-white-point.c:669
-#: tools/oyranos-monitor-white-point.c:672
-#: tools/oyranos-monitor-white-point.c:1092
+#: tools/oyranos-monitor-white-point.c:636
+#: tools/oyranos-monitor-white-point.c:639
+#: tools/oyranos-monitor-white-point.c:1059
 msgid "New white point mode"
 msgstr "Neuer Weißpunktmodus"
 
-#: tools/oyranos-monitor-white-point.c:261
+#: tools/oyranos-monitor-white-point.c:260
 msgid "Night Backlight"
 msgstr "Nachthelligkeit"
 
-#: tools/oyranos-monitor-white-point.c:404
+#: tools/oyranos-monitor-white-point.c:371
 msgid "Night Manager"
 msgstr "Nacht Manager"
 
-#: tools/oyranos-monitor-white-point.c:252
-#: tools/oyranos-monitor-white-point.c:287
-#: tools/oyranos-monitor-white-point.c:289
+#: tools/oyranos-monitor-white-point.c:251
+#: tools/oyranos-monitor-white-point.c:286
+#: tools/oyranos-monitor-white-point.c:288
 msgid "Night Mode"
 msgstr "NachtModus"
 
-#: tools/oyranos-monitor-white-point.c:259
+#: tools/oyranos-monitor-white-point.c:258
 msgid "Night effect"
 msgstr "Nacht Effekt"
 
-#: tools/oyranos-monitor-white-point.c:287
-#: tools/oyranos-monitor-white-point.c:289
+#: tools/oyranos-monitor-white-point.c:286
+#: tools/oyranos-monitor-white-point.c:288
 msgid "Nightly appearance"
 msgstr "Nächtliche Anmutung"
 
@@ -2936,11 +2936,11 @@ msgstr "OpenICC CMM Autor"
 msgid "OpenICC Configuration API"
 msgstr "OpenICC Konfigurations API"
 
-#: tools/oyranos-monitor-white-point.c:272
+#: tools/oyranos-monitor-white-point.c:271
 msgid "OpenICC UI Json"
 msgstr "OpenICC UI Json"
 
-#: tools/oyranos-monitor-white-point.c:273
+#: tools/oyranos-monitor-white-point.c:272
 msgid "OpenICC UI Json + command"
 msgstr "OpenICC UI Json + Kommando"
 
@@ -3040,7 +3040,7 @@ msgstr "Oyranos Bildanzeige Hilfe"
 msgid "Oyranos Image Display Info"
 msgstr "Oyranos Bildanzeige Info"
 
-#: tools/oyranos-monitor-white-point.c:404
+#: tools/oyranos-monitor-white-point.c:371
 msgid "Oyranos Night Manager"
 msgstr "Oyranos Nacht Manager"
 
@@ -3187,7 +3187,7 @@ msgstr "PCS"
 msgid "PCS Color Space: "
 msgstr "PCS Farbraum:    "
 
-#: tools/oyranos-monitor-white-point.c:261
+#: tools/oyranos-monitor-white-point.c:260
 msgid "PERCENT"
 msgstr "PROZENT"
 
@@ -3596,7 +3596,7 @@ msgstr "Quellbild"
 msgid "Root Image Filter Object"
 msgstr "FilterObjekt eines Quellbildes"
 
-#: tools/oyranos-monitor-white-point.c:293
+#: tools/oyranos-monitor-white-point.c:292
 msgid "Run sunset daemon"
 msgstr "Setze Sonnenuntergangsdienst"
 
@@ -3695,19 +3695,19 @@ msgstr "Wähle die Rechner CMM"
 msgid "Set ICC profiles in Oyranos for device Color Management."
 msgstr "ICC Profileinstellungen in Oyranos für Gerätefarbmanagement"
 
-#: tools/oyranos-monitor-white-point.c:266
+#: tools/oyranos-monitor-white-point.c:265
 msgid "Set Latitude"
 msgstr "Setze Geographische Breite"
 
-#: tools/oyranos-monitor-white-point.c:264
+#: tools/oyranos-monitor-white-point.c:263
 msgid "Set Longitude"
 msgstr "Setze Geographische Länge"
 
-#: tools/oyranos-monitor-white-point.c:261
+#: tools/oyranos-monitor-white-point.c:260
 msgid "Set Nightly Backlight"
 msgstr "Setze Nächtiches Monitorlicht"
 
-#: tools/oyranos-monitor-white-point.c:269
+#: tools/oyranos-monitor-white-point.c:268
 msgid "Set Twilight angle"
 msgstr "Setze Dämmerungswinkel"
 
@@ -3727,11 +3727,11 @@ msgstr "Setze eine X Color Management Schalter."
 msgid "Set all X Color Management device profiles."
 msgstr "Setze alle X Color Management Geräteprofile."
 
-#: tools/oyranos-monitor-white-point.c:260
+#: tools/oyranos-monitor-white-point.c:259
 msgid "Set day time effect"
 msgstr "Setze den Tages Effect"
 
-#: tools/oyranos-monitor-white-point.c:253
+#: tools/oyranos-monitor-white-point.c:252
 msgid "Set day time mode"
 msgstr "Setze den Tagesmodus"
 
@@ -3739,15 +3739,15 @@ msgstr "Setze den Tagesmodus"
 msgid "Set new profile:"
 msgstr "Setze neues Profil:"
 
-#: tools/oyranos-monitor-white-point.c:259
+#: tools/oyranos-monitor-white-point.c:258
 msgid "Set night time effect"
 msgstr "Setze den Nacht Effect"
 
-#: tools/oyranos-monitor-white-point.c:252
+#: tools/oyranos-monitor-white-point.c:251
 msgid "Set night time mode"
 msgstr "Setze den Nachtmodus"
 
-#: tools/oyranos-monitor-white-point.c:251
+#: tools/oyranos-monitor-white-point.c:250
 msgid "Set white point mode"
 msgstr "Setze Weißpunktmodus"
 
@@ -3809,7 +3809,7 @@ msgstr ""
 "Internet Taxi Datenbank. Die Metadaten aus Taxi DB und vom Geräte müssen "
 "passen."
 
-#: tools/oyranos-monitor-white-point.c:268
+#: tools/oyranos-monitor-white-point.c:267
 msgid ""
 "Show local time, used geographical location, twilight height angles, sun "
 "rise and sun set times"
@@ -3841,7 +3841,7 @@ msgstr "Zeige Version der API"
 msgid "Show which policy matches by combining all involved settings."
 msgstr "Zeige an, welche Richtlinie zur Kombination aller Einstellungen passt."
 
-#: tools/oyranos-monitor-white-point.c:250
+#: tools/oyranos-monitor-white-point.c:249
 msgid "Show white point modes"
 msgstr "Zeige Weißpunktmodus"
 
@@ -3913,24 +3913,24 @@ msgstr "Standard Betrachter 1931 2° Zeichnung:"
 msgid "Start"
 msgstr "Start"
 
-#: tools/oyranos-monitor-white-point.c:926
+#: tools/oyranos-monitor-white-point.c:893
 msgid "Sun Elevation"
 msgstr "Höhe"
 
-#: tools/oyranos-monitor-white-point.c:291
+#: tools/oyranos-monitor-white-point.c:290
 msgid "Sun light appearance"
 msgstr "Setze Tagesmodus"
 
-#: tools/oyranos-monitor-white-point.c:260
+#: tools/oyranos-monitor-white-point.c:259
 msgid "Sun light effect"
 msgstr "Sonnenlicht Effekt"
 
-#: tools/oyranos-monitor-white-point.c:268
-#: tools/oyranos-monitor-white-point.c:926
+#: tools/oyranos-monitor-white-point.c:267
+#: tools/oyranos-monitor-white-point.c:893
 msgid "Sunrise"
 msgstr "Sonnenaufgang"
 
-#: tools/oyranos-monitor-white-point.c:930
+#: tools/oyranos-monitor-white-point.c:897
 msgid "Sunset"
 msgstr "Sonnenuntergang"
 
@@ -3943,7 +3943,7 @@ msgstr "Unterstützung"
 msgid "Switch for enabling the effect profile."
 msgstr "Schalter für das ausgewählte ICC Effektprofil."
 
-#: tools/oyranos-monitor-white-point.c:271
+#: tools/oyranos-monitor-white-point.c:270
 msgid "System wide DB setting"
 msgstr "Einstellung in der systemweiten DB"
 
@@ -3967,7 +3967,7 @@ msgstr "Taxi ID"
 msgid "Technologie"
 msgstr "Technologie"
 
-#: tools/oyranos-monitor-white-point.c:254
+#: tools/oyranos-monitor-white-point.c:253
 msgid "Temperature"
 msgstr "Temperatur"
 
@@ -4616,7 +4616,7 @@ msgstr ""
 msgid "The my_handler takes a option with key name \"print\" and prints it."
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:261
+#: tools/oyranos-monitor-white-point.c:260
 msgid ""
 "The option needs xbacklight installed and supporting your device for dimming "
 "the monitor lamp."
@@ -4789,7 +4789,7 @@ msgid ""
 "to upload to the server."
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:406
+#: tools/oyranos-monitor-white-point.c:373
 msgid ""
 "The tool can set the actual white point or set it by local day and night "
 "time. A additional effect profile can be selected."
@@ -4828,12 +4828,12 @@ msgstr ""
 "Die Einstellung entscheidet was mit Farben ohne Farbprofil geschehen soll. "
 "Typischerweise wird das vermutete Farbprofil automatisch zugewiesen."
 
-#: tools/oyranos-monitor-white-point.c:797
+#: tools/oyranos-monitor-white-point.c:764
 msgid "Time Zone"
 msgstr "Zeitzone"
 
-#: tools/oyranos-monitor-white-point.c:269
-#: tools/oyranos-monitor-white-point.c:926
+#: tools/oyranos-monitor-white-point.c:268
+#: tools/oyranos-monitor-white-point.c:893
 msgid "Twilight"
 msgstr "Dämmerung"
 
@@ -5054,7 +5054,7 @@ msgstr "Zoran CMM"
 #: modules/color/modules/lcms2/i18n.c:140
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:3073
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:3131
-#: tools/oyranos-monitor-white-point.c:114
+#: tools/oyranos-monitor-white-point.c:113
 msgid "[none]"
 msgstr "[kein]"
 
@@ -5133,7 +5133,7 @@ msgid "create fallback ICC profile"
 msgstr "erzeuge alternatives ICC Profil"
 
 #. type,   flags, o, option, key, name, description, help, value_name, value_type, values
-#: tools/oyranos-monitor-white-point.c:249
+#: tools/oyranos-monitor-white-point.c:248
 msgid "daemon"
 msgstr "Dienst"
 
@@ -5249,7 +5249,7 @@ msgstr "fand Probleme"
 #: modules/color/modules/oyranos_cmm_oyra_image_channel.c:143
 #: tools/oyranos-device.c:1052 tools/oyranos-device.c:1062
 #: tools/oyranos-device.c:1079 tools/oyranos-device.c:1105
-#: tools/oyranos-monitor-white-point.c:765
+#: tools/oyranos-monitor-white-point.c:732
 msgid "found issues parsing JSON"
 msgstr "Fand Probleme beim Lesen des JSON"
 
@@ -5294,7 +5294,7 @@ msgstr "h - Passe Bildhöhe in Fenster ein"
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:530
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:720
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:987
-#: tools/oyranos-monitor-white-point.c:274
+#: tools/oyranos-monitor-white-point.c:273
 msgid "help"
 msgstr "Hilfe"
 
@@ -5378,7 +5378,7 @@ msgstr "ist ein Farbprofilverwaltungswerkzeug für Farbgeräte"
 msgid "is a color profile administration tool for monitors"
 msgstr "ist ein Farbprofilverwaltungswerkzeug für Bildschirme"
 
-#: tools/oyranos-monitor-white-point.c:460
+#: tools/oyranos-monitor-white-point.c:427
 msgid "is a monitor white point handler"
 msgstr "ist ein Monitorweißpunkt Werkzeug"
 
@@ -5429,7 +5429,7 @@ msgstr ""
 "support@littlecms.com; Quellen: http://www.littlecms.com/downloads.htm; "
 "Oyranos Einbindung: Kai-Uwe Behrmann"
 
-#: tools/oyranos-monitor-white-point.c:263
+#: tools/oyranos-monitor-white-point.c:262
 msgid "location"
 msgstr "Position"
 
@@ -5713,7 +5713,7 @@ msgstr "gib Ausgabebildbreite in Pixel an"
 msgid "static linking flags"
 msgstr "statische Verknüpfungsargumente"
 
-#: tools/oyranos-monitor-white-point.c:271
+#: tools/oyranos-monitor-white-point.c:270
 msgid "system wide"
 msgstr "systemweit"
 
@@ -5772,7 +5772,7 @@ msgid "user path"
 msgstr "Benutzerpfad"
 
 #: examples/libraw/oyranos_file.cpp:69 tools/oyranos-config.c:84
-#: tools/oyranos-device.c:101 tools/oyranos-monitor-white-point.c:275
+#: tools/oyranos-device.c:101 tools/oyranos-monitor-white-point.c:274
 #: tools/oyranos_convert.c:103 tools/oyranos_profile_graph.c:150
 #: tools/oyranos_profile_tool.c:116 tools/oyranos_profiles.c:96
 msgid "verbose"

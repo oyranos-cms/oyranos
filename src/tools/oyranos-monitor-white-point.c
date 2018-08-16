@@ -45,7 +45,6 @@
 #include "oyProfiles_s.h"
 
 #include <X11/Xcm/XcmVersion.h>
-#include <openicc_core.h>
 
 #define DBG_S_ if(oy_debug >= 1)DBG_S
 #define DBG1_S_ if(oy_debug >= 1)DBG1_S
@@ -315,38 +314,6 @@ void myOptionsRelease                ( openiccOptions_s   ** opts )
   if(*opts) free(*opts);
   *opts = NULL;
 }
-void oyUiFill                        ( openiccUi_s         * ui,
-                                       const char          * nick,
-                                       const char          * name,
-                                       const char          * description,
-                                       const char          * icon,
-                                       const char          * documentation )
-{
-  DBG_S_( oyPrintTime() );
-  openiccUiHeaderSection_s s[] = {
-    /* type, nick, label, name, description */
-    { "oihs", "version", NULL, OYRANOS_VERSION_NAME, NULL },
-    { "oihs", "manufacturer", NULL, "Kai-Uwe Behrmann", "http://www.oyranos.org" },
-    { "oihs", "copyright", NULL, "Copyright 2018 Kai-Uwe Behrmann", NULL },
-    { "oihs", "license", NULL, "newBSD", "http://www.oyranos.org" },
-    { "oihs", "url", NULL, "http://www.oyranos.org", NULL },
-    { "oihs", "support", NULL, "https://www.github.com/oyranos-cms/oyranos/issues", NULL },
-    { "oihs", "download", NULL, "http://www.oyranos.org", NULL },
-    { "oihs", "sources", NULL, "http://www.oyranos.org", NULL },
-    { "oihs", "development", NULL, "https://github.com/oyranos-cms/oyranos", NULL },
-    { "oihs", "openicc_module_author", NULL, "Kai-Uwe Behrmann", "http://www.behrmann.name" },
-    { "oihs", "documentation", NULL, "http://www.openicc.info", documentation },
-    { "", NULL, NULL, NULL, NULL }
-  };
-  ui->app_type = "tool";
-  memcpy( ui->nick, nick, 4 );
-  ui->name = name;
-  ui->description = description;
-  ui->logo = icon;
-  ui->sections = openiccMemDup( s, sizeof(s) );
-  DBG_S_( oyPrintTime() );
-}
-
 
 oySCOPE_e scope = oySCOPE_USER;
 double hour_ = -1.0; /* ignore this default value */
