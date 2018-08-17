@@ -20,6 +20,7 @@
 #include "openicc_conf.h"
 #include "openicc_version.h"
 #include "openicc_config.h"
+#include "openicc_core.h"
 #include "openicc_macros.h"
 #include "openicc_config_internal.h"
 #include "xdg_bds.h"

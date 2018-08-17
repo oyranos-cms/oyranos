@@ -959,3 +959,35 @@ char *       openiccUi_ToJson        ( openiccUi_s       * ui,
 /** 
  *  @} *//* args
  */
+
+/* private stuff */
+
+void oiUiFill                        ( openiccUi_s         * ui,
+                                       const char          * nick,
+                                       const char          * name,
+                                       const char          * description,
+                                       const char          * icon,
+                                       const char          * documentation )
+{
+  openiccUiHeaderSection_s s[] = {
+    /* type,  nick,      label,name,                 description */
+    { "oihs", "version", NULL, OPENICC_VERSION_NAME, NULL },
+    { "oihs", "manufacturer", NULL, "Kai-Uwe Behrmann", "http://www.openicc.org" },
+    { "oihs", "copyright", NULL, "Copyright 2018 Kai-Uwe Behrmann", NULL },
+    { "oihs", "license", NULL, "newBSD", "http://www.openicc.org" },
+    { "oihs", "url", NULL, "http://www.openicc.org", NULL },
+    { "oihs", "support", NULL, "https://www.github.com/OpenICC/config/issues", NULL },
+    { "oihs", "download", NULL, "https://github.com/OpenICC/config/releases", NULL },
+    { "oihs", "sources", NULL, "https://github.com/OpenICC/config", NULL },
+    { "oihs", "development", NULL, "https://github.com/OpenICC/config", NULL },
+    { "oihs", "openicc_module_author", NULL, "Kai-Uwe Behrmann", "http://www.behrmann.name" },
+    { "oihs", "documentation", NULL, "http://www.openicc.info", documentation },
+    { "", NULL, NULL, NULL, NULL }
+  };
+  ui->app_type = "tool";
+  memcpy( ui->nick, nick, 4 );
+  ui->name = name;
+  ui->description = description;
+  ui->logo = icon;
+  ui->sections = openiccMemDup( s, sizeof(s) );
+}
