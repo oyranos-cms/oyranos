@@ -235,47 +235,103 @@ const char * jcommands = "{\n\
   \"command_get\": \"oyranos-monitor-white-point\",\n\
   \"command_get_args\": [\"-j\"]\n\
 }";
-void myOptionsFill                   ( openiccOptions_s    * opts )
+void myOptionsRelease                ( openiccOptions_s   ** opts )
 {
+  if(*opts) free(*opts);
+  *opts = NULL;
+}
+
+oySCOPE_e scope = oySCOPE_USER;
+double hour_ = -1.0; /* ignore this default value */
+
+int main( int argc , char** argv )
+{
+  unsigned i;
+  int error = 0;
+  /* the functional switches */
+  int wtpt_mode = -1;
+  int wtpt_mode_night = -1;
+  int wtpt_mode_sunlight = -1;
+  const char * sunlight_effect = NULL;
+  const char * night_effect = NULL;
+  double night_backlight = -1;
+  double temperature = 0.0;
+  int show = 0;
+  int json = 0;
+  int json_command = 0;
+  int dry = 0;
+  int system_wide = 0;
+  int location = 0;
+  double longitude = 360;
+  double latitude = 360;
+  int sunrise = 0;
+  double twilight = -1000;
+  char * value = NULL;
+  double rise = 0.0,
+         set = 0.0;
+  int daemon = -1;
+  int check = 0;
+  int help = 0;
+  int verbose = 0;
+  openiccOptions_s * opts;
+  openiccUi_s * ui;
+  openiccUiHeaderSection_s * info;
+
+  if(getenv(OY_DEBUG))
+  {
+    int value = atoi(getenv(OY_DEBUG));
+    if(value > 0)
+      oy_debug += value;
+    DBG_S_( oyPrintTime() );
+  }
+  if(oy_debug)
+    fprintf(stderr, " %.06g %s\n", DBG_UHR_, oyPrintTime() );
+
+#ifdef USE_GETTEXT
+  setlocale(LC_ALL,"");
+#endif
+  oyI18NInit_();
+
   DBG_S_( oyPrintTime() );
+  opts = openiccOptions_New( argc, argv );
   /* nick, name, description, help */
   openiccOptionChoice_s d_choices[] = {{"0", _("Deactivate"), _("Deactivate"), ""},
                                     {"1", _("Autostart"), _("Autostart"), ""},
                                     {"2", _("Activate"), _("Activate"), ""},
                                     {"","","",""}};
   openiccOption_s oarray[] = {
-  /* type,   flags, o, option, key, name, description, help, value_name, value_type, values */
-    {"oiwi", 0, 'd', "daemon", NULL, _("daemon"), _("Control user daemon"), NULL, "0|1|2", openiccOPTIONTYPE_CHOICE, {.choices.list = openiccMemDup( d_choices, sizeof(d_choices) )} },
-    {"oiwi", 0, 'm', "modes", NULL, _("Modes"), _("Show white point modes"), NULL, NULL, openiccOPTIONTYPE_NONE, {} },
-    {"oiwi", 0, 'w', "white-point", NULL, _("Mode"), _("Set white point mode"), NULL, "0|1|2|3|4|5|6|7", openiccOPTIONTYPE_FUNCTION, {.getChoices = getWhitePointChoices} },
-    {"oiwi", 0, 'n', "night-white-point", NULL, _("Night Mode"), _("Set night time mode"), NULL, "0|1|2|3|4|5|6|7", openiccOPTIONTYPE_FUNCTION, {.getChoices = getWhitePointChoices} },
-    {"oiwi", 0, 's', "sun-white-point", NULL, _("Day Mode"), _("Set day time mode"), NULL, "0|1|2|3|4|5|6|7", openiccOPTIONTYPE_FUNCTION, {.getChoices = getWhitePointChoices} },
+  /* type,   flags, o, option, key, name, description, help, value_name, value_type, values, var_type, variable */
+    {"oiwi", 0, 'd', "daemon", NULL, _("daemon"), _("Control user daemon"), NULL, "0|1|2", openiccOPTIONTYPE_CHOICE, {.choices.list = openiccMemDup( d_choices, sizeof(d_choices) )}, openiccINT, {.i=&daemon} },
+    {"oiwi", 0, 'm', "modes", NULL, _("Modes"), _("Show white point modes"), NULL, NULL, openiccOPTIONTYPE_NONE, {}, openiccINT, {.i=&show} },
+    {"oiwi", 0, 'w', "white-point", NULL, _("Mode"), _("Set white point mode"), NULL, "0|1|2|3|4|5|6|7", openiccOPTIONTYPE_FUNCTION, {.getChoices = getWhitePointChoices}, openiccINT,{.i=&wtpt_mode} },
+    {"oiwi", 0, 'n', "night-white-point", NULL, _("Night Mode"), _("Set night time mode"), NULL, "0|1|2|3|4|5|6|7", openiccOPTIONTYPE_FUNCTION, {.getChoices = getWhitePointChoices}, openiccINT, {.i=&wtpt_mode_night} },
+    {"oiwi", 0, 's', "sun-white-point", NULL, _("Day Mode"), _("Set day time mode"), NULL, "0|1|2|3|4|5|6|7", openiccOPTIONTYPE_FUNCTION, {.getChoices = getWhitePointChoices}, openiccINT, {.i=&wtpt_mode_sunlight} },
     {"oiwi", 0, 'a', "automatic", NULL, _("Temperature"), _("A value from 2700 till 8000 Kelvin is expected to show no artefacts"), NULL,
       /*  The white point profiles will be generated in many different shades, which will explode
        *  conversion cache. Thus we limit the possible shades to 100 kelvin steps, which in turn
        *  limits to around 100 profiles per monitor white point. */
-      _("KELVIN"), openiccOPTIONTYPE_DOUBLE, {.dbl.start = 1100, .dbl.end = 10100, .dbl.tick = 100, .dbl.d = getTemperature(5000)} },
-    {"oiwi", 0, 'g', "night-effect", NULL, _("Night effect"), _("Set night time effect"), _("A ICC profile of class abstract. Ideally the effect profile works on 1D RGB curves only and is marked meta:EFFECT_linear=yes ."), _("ICC_PROFILE"), openiccOPTIONTYPE_FUNCTION, {.getChoices = getLinearEffectProfileChoices} },
-    {"oiwi", 0, 'e', "sunlight-effect", NULL, _("Sun light effect"), _("Set day time effect"), _("A ICC profile of class abstract. Ideally the effect profile works on 1D RGB curves only and is marked meta:EFFECT_linear=yes ."), _("ICC_PROFILE"), openiccOPTIONTYPE_FUNCTION, {.getChoices = getLinearEffectProfileChoices} },
+      _("KELVIN"), openiccOPTIONTYPE_DOUBLE, {.dbl.start = 1100, .dbl.end = 10100, .dbl.tick = 100, .dbl.d = getTemperature(5000)}, openiccDOUBLE, {.d=&temperature} },
+    {"oiwi", 0, 'g', "night-effect", NULL, _("Night effect"), _("Set night time effect"), _("A ICC profile of class abstract. Ideally the effect profile works on 1D RGB curves only and is marked meta:EFFECT_linear=yes ."), _("ICC_PROFILE"), openiccOPTIONTYPE_FUNCTION, {.getChoices = getLinearEffectProfileChoices}, openiccSTRING, {.s=&night_effect} },
+    {"oiwi", 0, 'e', "sunlight-effect", NULL, _("Sun light effect"), _("Set day time effect"), _("A ICC profile of class abstract. Ideally the effect profile works on 1D RGB curves only and is marked meta:EFFECT_linear=yes ."), _("ICC_PROFILE"), openiccOPTIONTYPE_FUNCTION, {.getChoices = getLinearEffectProfileChoices}, openiccSTRING, {.s=&sunlight_effect} },
     {"oiwi", 0, 'b', "night-backlight", NULL, _("Night Backlight"), _("Set Nightly Backlight"), _("The option needs xbacklight installed and supporting your device for dimming the monitor lamp."), _("PERCENT"), openiccOPTIONTYPE_DOUBLE,
-      {.dbl.start = 0, .dbl.end = 100, .dbl.tick = 1, .dbl.d = getDoubleFromDB( OY_DISPLAY_STD "/display_backlight_night", 0 )} },
-    {"oiwi", 0, 'l', "location", NULL, _("location"), _("Detect location by IP adress"), NULL, NULL, openiccOPTIONTYPE_NONE, {} },
+      {.dbl.start = 0, .dbl.end = 100, .dbl.tick = 1, .dbl.d = getDoubleFromDB( OY_DISPLAY_STD "/display_backlight_night", 0 )}, openiccDOUBLE, {.d=&night_backlight} },
+    {"oiwi", 0, 'l', "location", NULL, _("location"), _("Detect location by IP adress"), NULL, NULL, openiccOPTIONTYPE_NONE, {}, openiccINT, {.i=&location} },
     {"oiwi", 0, 'o', "longitude", NULL, _("Longitude"), _("Set Longitude"), NULL, _("ANGLE_IN_DEGREE"), openiccOPTIONTYPE_DOUBLE,
-      {.dbl.start = -180, .dbl.end = 180, .dbl.tick = 1, .dbl.d = getDoubleFromDB( OY_DISPLAY_STD "/longitude", 0 )} },
+      {.dbl.start = -180, .dbl.end = 180, .dbl.tick = 1, .dbl.d = getDoubleFromDB( OY_DISPLAY_STD "/longitude", 0 )}, openiccDOUBLE, {.d=&longitude} },
     {"oiwi", 0, 'i', "latitude", NULL, _("Latitude"), _("Set Latitude"), NULL, _("ANGLE_IN_DEGREE"), openiccOPTIONTYPE_DOUBLE,
-      {.dbl.start = -90, .dbl.end = 90, .dbl.tick = 1, .dbl.d = getDoubleFromDB( OY_DISPLAY_STD "/latitude", 0 )} },
-    {"oiwi", 0, 'r', "sunrise", NULL, _("Sunrise"), _("Show local time, used geographical location, twilight height angles, sun rise and sun set times"), NULL, NULL, openiccOPTIONTYPE_NONE, {} },
+      {.dbl.start = -90, .dbl.end = 90, .dbl.tick = 1, .dbl.d = getDoubleFromDB( OY_DISPLAY_STD "/latitude", 0 )}, openiccDOUBLE, {.d=&latitude} },
+    {"oiwi", 0, 'r', "sunrise", NULL, _("Sunrise"), _("Show local time, used geographical location, twilight height angles, sun rise and sun set times"), NULL, NULL, openiccOPTIONTYPE_NONE, {}, openiccINT, {.i=&sunrise} },
     {"oiwi", 0, 't', "twilight", NULL, _("Twilight"), _("Set Twilight angle"), NULL, _("ANGLE_IN_DEGREE|0:rise/set|-6:civil|-12:nautical|-18:astronomical"), openiccOPTIONTYPE_DOUBLE,
-      {.dbl.start = 18, .dbl.end = -18, .dbl.tick = 1, .dbl.d = getDoubleFromDB( OY_DISPLAY_STD "/twilight", 0 )} },
-    {"oiwi", 0, 'z', "system-wide", NULL, _("system wide"), _("System wide DB setting"), NULL, NULL, openiccOPTIONTYPE_NONE, {} },
-    {"oiwi", 0, 'j', "oi-json", NULL, _("OpenICC UI Json"), _("Get OpenICC Json UI declaration"), NULL, NULL, openiccOPTIONTYPE_NONE, {} },
-    {"oiwi", 0, 'J', "oi-json-command", NULL, _("OpenICC UI Json + command"), _("Get OpenICC Json UI declaration incuding command"), NULL, NULL, openiccOPTIONTYPE_NONE, {} },
-    {"oiwi", 0, 'h', "help", NULL, _("help"), _("Help"), NULL, NULL, openiccOPTIONTYPE_NONE, {} },
-    {"oiwi", 0, 'v', "verbose", NULL, _("verbose"), _("verbose"), NULL, NULL, openiccOPTIONTYPE_NONE, {} },
-    {"oiwi", 0, 'y', "dry-run", NULL, "dry run", "dry run", NULL, NULL, openiccOPTIONTYPE_NONE, {} },
-    {"oiwi", 0, 'u', "hour", NULL, "hour", "hour", NULL, NULL, openiccOPTIONTYPE_DOUBLE, {.dbl.start = 0, .dbl.end = 48, .dbl.tick = 1, .dbl.d = 0} },
-    {"oiwi", 0, 'c', "check", NULL, "check", "check", NULL, NULL, openiccOPTIONTYPE_NONE, {} },
-    {"",0,0,0,0,0,0,0, NULL, openiccOPTIONTYPE_END, {}}
+      {.dbl.start = 18, .dbl.end = -18, .dbl.tick = 1, .dbl.d = getDoubleFromDB( OY_DISPLAY_STD "/twilight", 0 )}, openiccDOUBLE, {.d=&twilight} },
+    {"oiwi", 0, 'z', "system-wide", NULL, _("system wide"), _("System wide DB setting"), NULL, NULL, openiccOPTIONTYPE_NONE, {}, openiccINT, {.i=&system_wide} },
+    {"oiwi", 0, 'j', "oi-json", NULL, _("OpenICC UI Json"), _("Get OpenICC Json UI declaration"), NULL, NULL, openiccOPTIONTYPE_NONE, {}, openiccINT, {.i=&json} },
+    {"oiwi", 0, 'J', "oi-json-command", NULL, _("OpenICC UI Json + command"), _("Get OpenICC Json UI declaration incuding command"), NULL, NULL, openiccOPTIONTYPE_NONE, {}, openiccINT, {.i=&json_command} },
+    {"oiwi", 0, 'h', "help", NULL, _("help"), _("Help"), NULL, NULL, openiccOPTIONTYPE_NONE, {}, openiccINT, {.i=&help} },
+    {"oiwi", 0, 'v', "verbose", NULL, _("verbose"), _("verbose"), NULL, NULL, openiccOPTIONTYPE_NONE, {}, openiccINT, {.i=&verbose} },
+    {"oiwi", 0, 'y', "dry-run", NULL, "dry run", "dry run", NULL, NULL, openiccOPTIONTYPE_NONE, {}, openiccINT, {.i=&dry} },
+    {"oiwi", 0, 'u', "hour", NULL, "hour", "hour", NULL, NULL, openiccOPTIONTYPE_DOUBLE, {.dbl.start = 0, .dbl.end = 48, .dbl.tick = 1, .dbl.d = 0}, openiccDOUBLE, {.d=&hour_} },
+    {"oiwi", 0, 'c', "check", NULL, "check", "check", NULL, NULL, openiccOPTIONTYPE_NONE, {}, openiccINT, {.i=&check} },
+    {"",0,0,0,0,0,0,0, NULL, openiccOPTIONTYPE_END, {},0,{}}
   };
   opts->array = openiccMemDup( oarray, sizeof(oarray) );
 
@@ -307,80 +363,15 @@ void myOptionsFill                   ( openiccOptions_s    * opts )
     memcpy( &groups[2], &ng, sizeof(openiccOptionGroup_s) );
   }
   opts->groups = openiccMemDup( groups, sizeof(groups));
-  DBG_S_( oyPrintTime() );
-}
-void myOptionsRelease                ( openiccOptions_s   ** opts )
-{
-  if(*opts) free(*opts);
-  *opts = NULL;
-}
 
-oySCOPE_e scope = oySCOPE_USER;
-double hour_ = -1.0; /* ignore this default value */
-
-int main( int argc , char** argv )
-{
-  unsigned i;
-  int error = 0;
-  /* the functional switches */
-  int wtpt_mode = -1;
-  int wtpt_mode_night = -1;
-  int wtpt_mode_sunlight = -1;
-  const char * sunlight_effect = NULL;
-  const char * night_effect = NULL;
-  double night_backlight = -1;
-  double temperature = 0.0;
-  int show = 0;
-  int json = 0;
-  int json_command = 0;
-  int dry = 0;
-  int location = 0;
-  double longitude = 360;
-  double latitude = 360;
-  int sunrise = 0;
-  double twilight = -1000;
-  char * value = NULL;
-  double rise = 0.0,
-         set = 0.0;
-  int daemon = -1;
-  int check = 0;
-  int help = 0;
-  int verbose = 0;
-  openiccOptions_s * opts;
-  openiccUi_s * ui;
-
-  if(getenv(OY_DEBUG))
-  {
-    int value = atoi(getenv(OY_DEBUG));
-    if(value > 0)
-      oy_debug += value;
-    DBG_S_( oyPrintTime() );
-  }
-  if(oy_debug)
-    fprintf(stderr, " %.06g %s\n", DBG_UHR_, oyPrintTime() );
-
-#ifdef USE_GETTEXT
-  setlocale(LC_ALL,"");
-#endif
-  oyI18NInit_();
+  info = oyUiInfo(_("The tool can set the actual white point or set it by local day and night time. A additional effect profile can be selected."));
+  ui = openiccUi_Create( argc, argv,
+      "oyNM", _("Night Manager"), _("Oyranos Night Manager"),
+      "oyNM-logo",
+      info, opts->array, opts->groups );
+  if(!ui) return 0;
 
   DBG_S_( oyPrintTime() );
-  ui = openiccUi_New( argc, argv );
-  opts = ui->opts;
-  myOptionsFill( opts );
-  oyUiFill( ui, "oyNM", _("Night Manager"), _("Oyranos Night Manager"),
-            "oyNM-logo",
-            _("The tool can set the actual white point or set it by local day and night time. A additional effect profile can be selected.") );
-  /* parse the options */
-  openiccOPTIONSTATE_e state = openiccOptions_Parse( opts );
-  DBG_S_( oyPrintTime() );
-  if(state != openiccOPTION_NONE)
-  {
-    fputs( _("... try with --help|-h option for usage text. give up"), stderr );
-    fputs( "\n", stderr );
-    exit(1);
-  }
-  openiccOptions_GetResult( opts, 'v', NULL, NULL, &verbose );
   if(verbose > 1)
     oy_debug += verbose -1;
 
@@ -397,41 +388,12 @@ int main( int argc , char** argv )
     fputs( "\n", stderr );
   }
 
-  /* assign command line options to variables */
-  openiccOptions_GetResult( opts, 'd', NULL, NULL, &daemon );
-  openiccOptions_GetResult( opts, 'a', NULL, &temperature, NULL);
-  openiccOptions_GetResult( opts, 'r', NULL, NULL, &sunrise);
-  openiccOptions_GetResult( opts, 'l', NULL, NULL, &location);
-  openiccOptions_GetResult( opts, 'b', NULL, &night_backlight, NULL);
-  openiccOptions_GetResult( opts, 'n', NULL, NULL, &wtpt_mode_night);
-  openiccOptions_GetResult( opts, 's', NULL, NULL, &wtpt_mode_sunlight);
-  openiccOptions_GetResult( opts, 'o', NULL, &longitude, NULL);
-  openiccOptions_GetResult( opts, 'i', NULL, &latitude, NULL);
-  openiccOptions_GetResult( opts, 't', NULL, &twilight, NULL);
-  openiccOptions_GetResult( opts, 'w', NULL, NULL, &wtpt_mode);
-  openiccOptions_GetResult( opts, 'j', NULL, NULL, &json);
-  openiccOptions_GetResult( opts, 'J', NULL, NULL, &json_command);
-  openiccOptions_GetResult( opts, 'm', NULL, NULL, &show);
-  openiccOptions_GetResult( opts, 'z', NULL, NULL, &dry);
-  openiccOptions_GetResult( opts, 'u', NULL, &hour_, NULL);
-  openiccOptions_GetResult( opts, 'g', &night_effect, NULL, NULL);
-  openiccOptions_GetResult( opts, 'e', &sunlight_effect, NULL, NULL);
-  openiccOptions_GetResult( opts, 'c', NULL, NULL, &check);
-  openiccOptions_GetResult( opts, 'h', NULL, NULL, &help);
-  if(help || openiccOptions_GetResult( opts, ' ', NULL, NULL, NULL) == openiccOPTION_NONE)
-  {
-    int use_option_defaults = 1;
-    opts->user_data = &use_option_defaults;
-    openiccOptions_PrintHelp( opts, ui, oy_debug, "%s v%d.%d.%d %s\n", argv[0],
-                        OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C,
-                                _("is a monitor white point handler") );
-    exit (0);
-  }
-
   if(oy_debug)
     fprintf( stderr, "  Oyranos v%s\n",
                   oyNoEmptyName_m_(oyVersionString(1,0)));
 
+  if(system_wide)
+    scope = oySCOPE_SYSTEM;
 
   if(temperature != 0.0)
   {

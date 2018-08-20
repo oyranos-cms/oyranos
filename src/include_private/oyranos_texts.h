@@ -96,12 +96,7 @@ oyGROUP_e       oyGroupAdd_              (const char *id, const char *cmm,
                                         const char *name, const char *tooltips);
 int           oyGroupRemove_           (oyGROUP_e     id);
 
-void oyUiFill                        ( openiccUi_s         * ui,
-                                       const char          * nick,
-                                       const char          * name,
-                                       const char          * description,
-                                       const char          * icon,
-                                       const char          * documentation );
+openiccUiHeaderSection_s * oyUiInfo  ( const char          * documentation );
 
 
 int          oyExistPersistentString ( const char        * key_name,

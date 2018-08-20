@@ -18,13 +18,7 @@
 #include "oyranos_version.h"
 
 #include <string.h>
-
-void oyUiFill                        ( openiccUi_s         * ui,
-                                       const char          * nick,
-                                       const char          * name,
-                                       const char          * description,
-                                       const char          * icon,
-                                       const char          * documentation )
+openiccUiHeaderSection_s * oyUiInfo  ( const char          * documentation )
 {
   openiccUiHeaderSection_s s[] = {
     /* type,  nick,      label,name,                 description */
@@ -41,13 +35,6 @@ void oyUiFill                        ( openiccUi_s         * ui,
     { "oihs", "documentation", NULL, "http://www.openicc.info", documentation },
     { "", NULL, NULL, NULL, NULL }
   };
-  ui->app_type = "tool";
-  memcpy( ui->nick, nick, 4 );
-  ui->name = name;
-  ui->description = description;
-  ui->logo = icon;
-  ui->sections = malloc(sizeof(s));
-  memcpy( ui->sections, s, sizeof(s) );
+  return openiccMemDup( s, sizeof(s) );
 }
-
 
