@@ -97,8 +97,6 @@ void         oyjlTreeSetValueString  ( oyjl_val            root,
                                        const char        * value );
 #define openiccNoEmptyString_m_(t) (t?t:"")
 
-int            openiccInit           ( void );
-
 
 extern openiccMessage_f     openiccMessage_p;
 int  openiccMessageFunc              ( int/*openiccMSG_e*/ code,
@@ -174,6 +172,7 @@ char * openiccPathGetParent_         ( const char        * name );
 # define OS_DL_CACHE_SYSTEM_DIR        OS_MACHINE_DIR        OS_CACHE_PATH
 # define OS_DL_CACHE_MACHINE_DIR       OS_MACHINE_DIR        OS_CACHE_PATH
 
+openiccUiHeaderSection_s * oiUiInfo  ( const char          * documentation );
 
 #ifdef __cplusplus
 } /* extern "C" */

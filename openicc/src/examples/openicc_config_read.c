@@ -38,6 +38,10 @@ int main(int argc, char ** argv)
   const char * devices_filter[] = {OPENICC_DEVICE_CAMERA,NULL},
              * old_device_class = NULL,
              * d = NULL;
+  int output = 0;
+  const char * file = NULL;
+  int help = 0;
+  int verbose = 0;
 
   setlocale(LC_ALL,"");
   openiccInit();
@@ -72,12 +76,12 @@ int main(int argc, char ** argv)
 
   /* declare options - the core information; use previously declared choices */
   openiccOption_s oarray[] = {
-  /* type,   flags, o,   option,    key,  name,         description,         help, value_name,    value_type,               values */
-    {"oiwi", 0,     'i', "input",   NULL, _("input"),   _("Set Input"),      NULL, _("FILENAME"), openiccOPTIONTYPE_CHOICE, {.choices.list = openiccMemDup( i_choices, sizeof(i_choices) )} },
-    {"oiwi", 0,     'o', "output",  NULL, _("output"),  _("Control Output"), NULL, "0|1|2",       openiccOPTIONTYPE_CHOICE, {.choices.list = openiccMemDup( o_choices, sizeof(o_choices) )} },
-    {"oiwi", 0,     'h', "help",    NULL, _("help"),    _("Help"),           NULL, NULL,          openiccOPTIONTYPE_NONE,   {} },
-    {"oiwi", 0,     'v', "verbose", NULL, _("verbose"), _("verbose"),        NULL, NULL,          openiccOPTIONTYPE_NONE,   {} },
-    {"",0,0,0,0,0,0,0, NULL, openiccOPTIONTYPE_END, {}}
+  /* type,   flags, o,   option,    key,  name,         description,         help, value_name,    value_type,               values,                                                          variable_type, output variable */
+    {"oiwi", 0,     'i', "input",   NULL, _("input"),   _("Set Input"),      NULL, _("FILENAME"), openiccOPTIONTYPE_CHOICE, {.choices.list = openiccMemDup( i_choices, sizeof(i_choices) )}, openiccSTRING, {.s = &file} },
+    {"oiwi", 0,     'o', "output",  NULL, _("output"),  _("Control Output"), NULL, "0|1|2",       openiccOPTIONTYPE_CHOICE, {.choices.list = openiccMemDup( o_choices, sizeof(o_choices) )}, openiccINT, {.i = &output} },
+    {"oiwi", 0,     'h', "help",    NULL, _("help"),    _("Help"),           NULL, NULL,          openiccOPTIONTYPE_NONE, {}, openiccINT, {.i = &help} },
+    {"oiwi", 0,     'v', "verbose", NULL, _("verbose"), _("verbose"),        NULL, NULL,          openiccOPTIONTYPE_NONE, {}, openiccINT, {.i = &verbose} },
+    {"",0,0,0,0,0,0,0, NULL, openiccOPTIONTYPE_END, {},0,{}}
   };
   /* copy in */
   options->array = openiccMemDup( oarray, sizeof(oarray) );
@@ -85,14 +89,14 @@ int main(int argc, char ** argv)
   /* declare option groups, for better syntax checking and UI groups */
   openiccOptionGroup_s groups[] = {
   /* type,   flags, name,      description,          help, mandatory, optional, detail */
-    {"oiwg", 0,     _("Mode"), _("Actual mode"),     NULL, "io",      "v",      "io" },
+    {"oiwg", 0,     _("Mode"), _("Actual mode"),     NULL, "i",       "ov",     "io" },
     {"oiwg", 0,     _("Misc"), _("General options"), NULL, "",        "",       "vh" },
     {"",0,0,0,0,0,0,0}
   };
   /* copy in */
   options->groups = openiccMemDup( groups, sizeof(groups));
 
-  /* check syntax ... */
+  /* get results and check syntax ... */
   openiccOPTIONSTATE_e state = openiccOptions_Parse( options );
   /* ... and report detected errors */
   if(state != openiccOPTION_NONE)
@@ -102,15 +106,6 @@ int main(int argc, char ** argv)
     exit(1);
   }
 
-  /* get option results */
-  int output = 0;
-  const char * file = NULL;
-  int help = 0;
-  int verbose = 0;
-  openiccOptions_GetResult( options, 'i', &file, 0,0 );
-  openiccOptions_GetResult( options, 'o', 0, 0, &output );
-  openiccOptions_GetResult( options, 'h', 0, 0, &help );
-  openiccOptions_GetResult( options, 'v', 0, 0, &verbose );
   if(help)
   {
     openiccOptions_PrintHelp( options, ui, verbose, "%s example tool", argv[0] );

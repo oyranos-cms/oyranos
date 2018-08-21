@@ -3,7 +3,7 @@
  *  libOpenICC - OpenICC Colour Management Configuration
  *
  *  @par Copyright:
- *            2011-2017 (C) Kai-Uwe Behrmann
+ *            2011-2018 (C) Kai-Uwe Behrmann
  *
  *  @brief    OpenICC Colour Management configuration helpers
  *  @internal
@@ -49,51 +49,11 @@ typedef enum {
 } ucmm_scope;
 
 
-void printfHelp(int argc OI_UNUSED, char ** argv)
-{
-  fprintf( stderr, "\n");
-  fprintf( stderr, "%s %s\n",   argv[0],
-                                _("is a color management data base tool"));
-  fprintf( stderr, "  v%s\n",
-                  OPENICC_VERSION_NAME );
-  fprintf( stderr, "\n");
-  fprintf( stderr, "%s\n",                 _("Usage"));
-  fprintf( stderr, "  %s\n",               _("List devices:"));
-  fprintf( stderr, "      %s -l [-v] [-db-file FILE_NAME] [--long]\n",        argv[0]);
-  fprintf( stderr, "                        [-d NUMBER|--device NUMBER] [-j]\n");
-  fprintf( stderr, "        --db-file FILE_NAME  %s\n", _("specify DB file"));
-  fprintf( stderr, "        --long          %s\n", _("listing all key/values pairs"));
-  fprintf( stderr, "        -d NUMBER | --device NUMBER\n"
-                   "                        %s\n", _("select device by position"));
-  fprintf( stderr, "        -j | --json     %s\n", _("dump raw JSON"));
-  fprintf( stderr, "\n");
-  fprintf( stderr, "  %s\n",               _("Print a help text:"));
-  fprintf( stderr, "      %s -h\n",        argv[0]);
-  fprintf( stderr, "\n");
-  fprintf( stderr, "  %s\n",               _("Add device:"));
-  fprintf( stderr, "      %s -a [-f FILE_NAME] [-v] [-db-file FILE_NAME] \n",argv[0]);
-  fprintf( stderr, "        -w              %s\n", _("write to selected DB file"));
-  fprintf( stderr, "\n");
-  fprintf( stderr, "  %s\n",               _("Erase device:"));
-  fprintf( stderr, "      %s -e [-d NUMBER|--device NUMBER] [-v] [-db-file FILE_NAME] \n",argv[0]);
-  fprintf( stderr, "                        %s\n", _("implies --json option"));
-  fprintf( stderr, "        -w              %s\n", _("write to selected DB file"));
-  fprintf( stderr, "\n");
-  fprintf( stderr, "  %s\n",               _("Show DB path:"));
-  fprintf( stderr, "        --show-path [-s]   %s\n", _("locate DB"));
-  fprintf( stderr, "        -s              %s\n", _("list system DB (default is user DB)"));
-  fprintf( stderr, "\n");
-  fprintf( stderr, "  %s\n",               _("General options:"));
-  fprintf( stderr, "        -v              %s\n", _("verbose"));
-  fprintf( stderr, "\n");
-  fprintf( stderr, "\n");
-}
-
-
 int main(int argc, char ** argv)
 {
   int count = 0;
 
+  int help = 0;
   int verbose = 0;
   int list_devices = 0,
       list_long = 0;
@@ -132,76 +92,55 @@ int main(int argc, char ** argv)
 #endif
   openiccInit();
 
-  if(argc >= 2)
-  {
-    int pos = 1;
-    unsigned i;
-    char *wrong_arg = 0;
-    while(pos < argc)
-    {
-      switch(argv[pos][0])
-      {
-        case '-':
-            for(i = 1; pos < argc && i < strlen(argv[pos]); ++i)
-            switch (argv[pos][i])
-            {
-              case 'a': add_device = 1; dump_json = 1; break;
-              case 'c': OY_PARSE_STRING_ARG(device_class); break;
-              case 'd': OY_PARSE_INT_ARG(list_pos); break;
-              case 'e': erase_device = 1; dump_json = 1; break;
-              case 'f': OY_PARSE_STRING_ARG(file_name); break;
-              case 'j': dump_json = 1; break;
-              case 'l': list_devices = 1; break;
-              case 's': scope = ucmm_local_system; break;
-              case 'v': ++verbose; ++*openicc_debug; break;
-              case 'w': write_db_file = 1; break;
-              case 'h':
-              case '-':
-                        if(i == 1)
-                        {
-                             if(OY_IS_ARG("verbose"))
-                        { ++*openicc_debug; ++verbose; i=100; break; }
-                        else if(OY_IS_ARG("json"))
-                        { dump_json = 1; i=100; break; }
-                        else if(OY_IS_ARG("long"))
-                        { list_long = 1; i=100; break; }
-                        else if(OY_IS_ARG("device"))
-                        { OY_PARSE_INT_ARG2( list_pos, "device" ); break; }
-                        else if(OY_IS_ARG("show-path"))
-                        { show_path = 1; i=100; break; }
-                        else if(OY_IS_ARG("db-file"))
-                        { OY_PARSE_STRING_ARG2( db_file, "db-file"); break; }
-                        } OI_FALLTHROUGH
-              default:
-                        printfHelp(argc, argv);
-                        exit (0);
-                        break;
-            }
-            break;
-        default:
-                        printfHelp(argc, argv);
-                        exit (0);
-                        break;
-      }
-      if( wrong_arg )
-      {
-       WARN( 0, "%s %s", "wrong argument to option:", wrong_arg);
-       printfHelp(argc, argv);
-       exit(1);
-      }
-      ++pos;
-    }
-  } else
-  {
-                        printfHelp(argc, argv);
-                        exit (0);
-  }
+  /* declare some option choices */
+  openiccOptionChoice_s b_choices[] = {{"DB-file-name.json", _("DB File"), _("File Name of device JSON Data Base"), ""},
+                                       {"","","",""}};
+  openiccOptionChoice_s c_choices[] = {{"monitor", _("Monitor"), _("Monitor"), ""},
+                                       {"printer", _("Printer"), _("Printer"), ""},
+                                       {"camera", _("Camera"), _("Camera"), ""},
+                                       {"scanner", _("Scanner"), _("Scanner"), ""},
+                                       {"","","",""}};
+  openiccOptionChoice_s f_choices[] = {{"device-file-name.json", _("Device File"), _("File Name of Device JSON"), ""},
+                                       {"","","",""}};
 
-  if(erase_device && list_pos == -1)
-  {
-                        printfHelp(argc, argv);
-                        exit (0);
-  }
+
+  /* declare options - the core information; use previously declared choices */
+  openiccOption_s oarray[] = {
+  /* type,   flags, o,  option,          key,  name,             description,         help, value_name,    value_type,        values, variable_type, result */
+    {"oiwi", 0,    'a', "add",           NULL, _("add"),         _("Add Device to DB"),NULL,NULL, openiccOPTIONTYPE_NONE,     {}, openiccINT,{.i=&add_device} },
+    {"oiwi", 0,    'b', "db-file",       NULL, _("db-file"),     _("DB File Name"),   NULL, _("FILENAME"), openiccOPTIONTYPE_CHOICE, {.choices.list = openiccMemDup(b_choices,sizeof(b_choices))}, openiccSTRING,{.s=&db_file} },
+    {"oiwi", 0,    'c', "device-class",  NULL, _("device-class"),_("Device Class"),   NULL, "monitor|printer|camera|scanner", openiccOPTIONTYPE_CHOICE, {.choices.list = openiccMemDup( c_choices, sizeof(c_choices) )}, openiccSTRING, {.s = &device_class} },
+    {"oiwi", 0,    'd', "device",        NULL, _("device"),      _("Device position"),NULL, _("NUMBER"), openiccOPTIONTYPE_DOUBLE, {.dbl.tick=1,.dbl.start=0,.dbl.end=10000}, openiccINT,{.i=&list_pos} },
+    {"oiwi", 0,    'e', "erase-device",  NULL, _("erase-device"),_("Erase Devices"),  NULL, NULL, openiccOPTIONTYPE_NONE,     {},      openiccINT,   {.i=&erase_device} },
+    {"oiwi", 0,    'f', "file-name",     NULL, _("file-name"),   _("File Name"),      NULL, _("FILENAME"), openiccOPTIONTYPE_CHOICE, {.choices.list = openiccMemDup(f_choices,sizeof(f_choices))}, openiccSTRING,{.s=&file_name} },
+    {"oiwi", 0,    'h', "help",          NULL, _("help"),        _("Help"),           NULL, NULL, openiccOPTIONTYPE_NONE,     {},      openiccINT,   {.i=&help} },
+    {"oiwi", 0,    'j', "dump-json",     NULL, _("dump-json"),   _("Dump JSON"),      NULL, NULL, openiccOPTIONTYPE_NONE,     {},      openiccINT,   {.i=&dump_json} },
+    {"oiwi", 0,    'l', "list-devices",  NULL, _("list-devices"),_("List Devices"),   NULL, NULL, openiccOPTIONTYPE_NONE,     {},     openiccINT,    {.i=&list_devices} },
+    {"oiwi", 0,    'n', "long",          NULL, _("long"),        _("List all key/values pairs"),  NULL, NULL, openiccOPTIONTYPE_NONE,     {},      openiccINT,   {.i=&list_long} },
+    {"oiwi", 0,    'p', "show-path",     NULL, _("show-path"),   _("Show Path"),      NULL, NULL, openiccOPTIONTYPE_NONE,     {},      openiccINT,   {.i=&show_path} },
+    {"oiwi", 0,    's', "scope",         NULL, _("scope"),       _("System"),         NULL, NULL, openiccOPTIONTYPE_NONE,     {},      openiccINT,   {.i=(int*)&scope} },
+    {"oiwi", 0,    'v', "verbose",       NULL, _("verbose"),     _("verbose"),        NULL, NULL, openiccOPTIONTYPE_NONE,     {},      openiccINT,   {.i=&verbose} },
+    {"oiwi", 0,    'w', "write",         NULL, _("write"),       _("Write DB File"),  NULL, NULL, openiccOPTIONTYPE_NONE,     {},      openiccINT,   {.i=&write_db_file} },
+    {"",0,0,0,0,0,0,0, NULL, 0,{},0,{}}
+  };
+
+  /* declare option groups, for better syntax checking and UI groups */
+  openiccOptionGroup_s groups[] = {
+  /* type,   flags, name,              description,                          help, mandatory, optional, detail */
+    {"oiwg", 0,     _("List Devices"), _("Print the Devices in the DB"),     NULL, "l",       "djnbv",  "ldjn" },
+    {"oiwg", 0,     _("Add Device"),   _("Add a Devices to the DB"),         NULL, "af",      "bv",     "af" },
+    {"oiwg", 0,     _("Erase Device"), _("Erase a Devices from the DB"),     NULL, "ed",      "bv",     "ed" },
+    {"oiwg", 0,     _("Show DB Path"), _("Show Filepath to the DB"),         NULL, "p",       "sv",     "ps" },
+    {"oiwg", 0,     _("Misc"),         _("General options"),                 NULL, "",        "",       "bvh" },
+    {"",0,0,0,0,0,0,0}
+  };
+
+
+  openiccUiHeaderSection_s * info = oiUiInfo(_("Manipulation of OpenICC color management data base device entries."));
+  openiccUi_s * ui = openiccUi_Create( argc, argv,
+      "oiDv", "openicc-device", _("OpenICC devices"), "openicc-logo",
+      info, oarray, groups );
+  if(!ui) return 0;
 
   if(!db_file)
   {

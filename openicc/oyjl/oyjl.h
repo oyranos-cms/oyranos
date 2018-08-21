@@ -34,7 +34,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <yajl/yajl_parse.h>
 #ifndef OYJL_API
 #define OYJL_API
 #endif
@@ -297,16 +296,16 @@ char *     oyjlReadFileStreamToMem   ( FILE              * fp,
 
 /* --- message helpers --- */
 typedef enum {
-  oyjlMSG_INFO = 400 + yajl_status_ok,
+  oyjlMSG_INFO = 400,
   oyjlMSG_CLIENT_CANCELED,
   oyjlMSG_INSUFFICIENT_DATA,
   oyjlMSG_ERROR
 } oyjlMSG_e;
-typedef yajl_status(*oyjlMessage_f)  ( int/*oyjlMSG_e*/    error_code,
+typedef int (* oyjlMessage_f)        ( int/*oyjlMSG_e*/    error_code,
                                        const void        * context,
                                        const char        * format,
                                        ... );
-yajl_status    oyjlMessageFuncSet    ( oyjlMessage_f      message_func );
+int            oyjlMessageFuncSet    ( oyjlMessage_f      message_func );
 
 
 /* --- compile helpers --- */

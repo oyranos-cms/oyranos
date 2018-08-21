@@ -29,7 +29,7 @@
 #include <locale.h>
 #endif
 
-yajl_status  oyjlMessageFunc         ( int/*oyjlMSG_e*/    error_code,
+int          oyjlMessageFunc         ( int/*oyjlMSG_e*/    error_code,
                                        const void        * context_object OYJL_UNUSED,
                                        const char        * format,
                                        ... )
@@ -83,7 +83,7 @@ oyjlMessage_f     oyjlMessage_p = oyjlMessageFunc;
  *  @date    2011/10/21
  *  @since   2008/04/03 (OpenICC: 0.1.0)
  */
-yajl_status    oyjlMessageFuncSet    ( oyjlMessage_f       message_func )
+int            oyjlMessageFuncSet    ( oyjlMessage_f       message_func )
 {
   if(message_func)
     oyjlMessage_p = message_func;

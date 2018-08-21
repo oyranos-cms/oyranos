@@ -22,7 +22,9 @@
 /** \addtogroup args Options Handling
  *  @brief   Structured Options and Arguments for more than the command line
  *
- *  Argument handling uses a compact, table like creation syntax. Parsing
+ *  Argument handling uses a compact, table like creation syntax.
+ *  openiccUi_Create() is a high level API for tools to feed only the
+ *  declarations and obtain the results in one call. On a lower level parsing
  *  with openiccOptions_Parse() detects conflicts during programming and
  *  on run time. The arguments can be printed as a typical command line tool
  *  help text with openiccOptions_PrintHelp(). The OpenICC JSON
@@ -43,7 +45,7 @@
  *
  *  @{ */
 
-/** @brief   release dynamic structure
+/** @brief    Release dynamic structure
  *  @memberof openiccOptionChoice_s
  *
  *  @version OpenICC: 0.1.1
@@ -69,7 +71,7 @@ void openiccOptionChoice_Release     ( openiccOptionChoice_s**choices )
   free(*choices);
 }
 
-/** @brief   return number of "oiwi" array elements
+/** @brief    Return number of "oiwi" array elements
  *  @memberof openiccOptions_s
  *
  *  @version OpenICC: 0.1.1
@@ -83,7 +85,7 @@ int openiccOptions_Count             ( openiccOptions_s  * opts )
   return n;
 }
 
-/** @brief   return number of "oiwi" groups elements
+/** @brief    Return number of "oiwi" groups elements
  *  @memberof openiccOptions_s
  *
  *  @version OpenICC: 0.1.1
@@ -122,7 +124,7 @@ void  openiccOption_PrintArg         ( openiccOption_s   * o,
   fprintf( stderr, " " );
 }
 
-/** @brief   obtain the specified option from option char
+/** @brief    Obtain the specified option from option char
  *  @memberof openiccOptions_s
  *
  *  @version OpenICC: 0.1.1
@@ -148,7 +150,7 @@ openiccOption_s * openiccOptions_GetOption (
   return o;
 }
 
-/** @brief   obtain the specified option from option string
+/** @brief    Obtain the specified option from option string
  *  @memberof openiccOptions_s
  *
  *  @version OpenICC: 0.1.1
@@ -203,11 +205,16 @@ openiccOPTIONSTATE_e openiccOptions_Check (
   return openiccOPTION_NONE;
 }
 
-/** @brief   parse the options into a private data structure
+/** @brief    Parse the options into a private data structure
  *  @memberof openiccOptions_s
  *
+ *  The returned status can be used to detect usage errors and hint them on
+ *  the command line.
+ *  In the usual case where the variable fields are set, the results
+ *  will be set too.
+ *
  *  @version OpenICC: 0.1.1
- *  @date    2018/08/14
+ *  @date    2018/08/19
  *  @since   2018/08/14 (OpenICC: 0.1.1)
  */
 openiccOPTIONSTATE_e openiccOptions_Parse (
@@ -215,15 +222,16 @@ openiccOPTIONSTATE_e openiccOptions_Parse (
 {
   openiccOPTIONSTATE_e state = openiccOPTION_NONE;
   openiccOption_s * o;
+  char ** result;
 
   /* parse the command line arguments */
   if(!opts->private_data)
   {
     int i, pos = 0;
-    char ** result = (char**) calloc( 2, sizeof(char*) );
+    result = (char**) calloc( 2, sizeof(char*) );
     result[0] = (char*) calloc( 65536, sizeof(char) );
     if((state = openiccOptions_Check(opts)) != openiccOPTION_NONE)
-      return state;
+      goto clean_parse;
     for(i = 1; i < opts->argc; ++i)
     {
       char * str = opts->argv[i];
@@ -244,7 +252,7 @@ openiccOPTIONSTATE_e openiccOptions_Parse (
           {
             fprintf( stderr, "%s %s \'%c\'\n", _("Usage Error:"), _("Option not supported"), arg );
             state = openiccOPTION_NOT_SUPPORTED;
-            return state;
+            goto clean_parse;
           }
           require_value = o->value_type != openiccOPTIONTYPE_NONE;
           if( require_value )
@@ -301,7 +309,7 @@ openiccOPTIONSTATE_e openiccOptions_Parse (
         {
           fprintf( stderr, "%s %s \'%s\'\n", _("Usage Error:"), _("Option not supported"), long_arg );
           state = openiccOPTION_NOT_SUPPORTED;
-          return state;
+          goto clean_parse;
         }
         require_value = o->value_type != openiccOPTIONTYPE_NONE;
         if( require_value )
@@ -353,13 +361,35 @@ openiccOPTIONSTATE_e openiccOptions_Parse (
       }
     }
     opts->private_data = result;
+
+    pos = 0;
+    while(result[0][pos])
+    {
+      openiccOption_s * o = openiccOptions_GetOption( opts, result[0][pos] );
+      switch(o->variable_type)
+      {
+        case openiccNONE:   break;
+        case openiccSTRING: openiccOptions_GetResult( opts, o->o, o->variable.s, 0, 0 ); break;
+        case openiccDOUBLE: openiccOptions_GetResult( opts, o->o, 0, o->variable.d, 0 ); break;
+        case openiccINT:    openiccOptions_GetResult( opts, o->o, 0, 0, o->variable.i ); break;
+      }
+      ++pos;
+    }
   }
 
   return state;
+
+clean_parse:
+  free(result[0]);
+  free(result);
+  return state;
 }
 
-/** @brief   obtain the parsed result
+/** @brief    Obtain the parsed result
  *  @memberof openiccOptions_s
+ *
+ *  This function is only useful, if the results shall be obtained
+ *  independently from openiccOptions_Parse().
  *
  *  If the option was not specified the state openiccOPTION_NONE will be
  *  returned and otherwise openiccOPTION_USER_CHANGED. With result_int and
@@ -445,7 +475,7 @@ openiccOPTIONSTATE_e openiccOptions_GetResult (
   return state;
 }
 
-/** @brief   convert the parsed content to JSON
+/** @brief    Convert the parsed content to JSON
  *  @memberof openiccOptions_s
  *
  *  @version OpenICC: 0.1.1
@@ -463,6 +493,10 @@ char * openiccOptions_ResultsToJson  ( openiccOptions_s  * opts )
   if(!results)
   {
     if(openiccOptions_Parse( opts ))
+      return NULL;
+
+    results = opts->private_data;
+    if(!results)
       return NULL;
   }
 
@@ -484,7 +518,7 @@ char * openiccOptions_ResultsToJson  ( openiccOptions_s  * opts )
   return rjson;
 }
 
-/** @brief   convert the parsed content to simple text
+/** @brief    Convert the parsed content to simple text
  *  @memberof openiccOptions_s
  *
  *  @version OpenICC: 0.1.1
@@ -502,6 +536,10 @@ char * openiccOptions_ResultsToText  ( openiccOptions_s  * opts )
   {
     if(openiccOptions_Parse( opts ))
       return NULL;
+
+    results = opts->private_data;
+    if(!results)
+      return NULL;
   }
 
   args = results[0];
@@ -516,7 +554,7 @@ char * openiccOptions_ResultsToText  ( openiccOptions_s  * opts )
   return text;
 }
 
-/** @brief   print synopsis of a option group to stderr
+/** @brief    Print synopsis of a option group to stderr
  *  @memberof openiccOptions_s
  *
  *  @version OpenICC: 0.1.1
@@ -590,7 +628,7 @@ openiccOptionChoice_s * openiccOption_GetChoices_ (
 }
 
 #include <stdarg.h> /* va_list */
-/** @brief   print help text to stderr
+/** @brief    Print help text to stderr
  *  @memberof openiccOptions_s
  *
  *  @param   opts                      options to print
@@ -614,13 +652,16 @@ void  openiccOptions_PrintHelp       ( openiccOptions_s  * opts,
   openiccUiHeaderSection_s * section = NULL;
   fprintf( stderr, "\n");
   if(verbose)
+  {
     for(i = 0; i < opts->argc; ++i)
       fprintf( stderr, "\'%s\' ", opts->argv[i]);
-  fprintf( stderr, "\n");
+    fprintf( stderr, "\n");
+  }
 
   va_start( list, motto_format );
   vfprintf( stderr, motto_format, list );
   va_end  ( list );
+  fprintf( stderr, "\n");
 
   ng = openiccOptions_CountGroups(opts);
   if(!ng) return;
@@ -664,6 +705,12 @@ void  openiccOptions_PrintHelp       ( openiccOptions_s  * opts,
         case openiccOPTIONTYPE_CHOICE:
           {
             int n = 0,l;
+            if(o->value_name)
+            {
+              fprintf( stderr, "\t" );
+              openiccOption_PrintArg(o, openiccOPTIONSTYLE_ONELETTER | openiccOPTIONSTYLE_STRING);
+              fprintf( stderr, "\t%s%s%s\n", o->description ? o->description:"", o->help?": ":"", o->help?o->help :"" );
+            }
             while(o->values.choices.list[n].nick[0] != '\000')
               ++n;
             for(l = 0; l < n; ++l)
@@ -701,7 +748,7 @@ void  openiccOptions_PrintHelp       ( openiccOptions_s  * opts,
   fprintf( stderr, "\n" );
 }
 
-/** @brief   allocate a new options structure
+/** @brief    Allocate a new options structure
  *  @memberof openiccOptions_s
  *
  *  @version OpenICC: 0.1.1
@@ -719,7 +766,7 @@ openiccOptions_s * openiccOptions_New( int                 argc,
   return opts;
 }
 
-/** @brief   allocate a new ui structure
+/** @brief    Allocate a new ui structure
  *  @memberof openiccUi_s
  *
  *  The openiccUi_s contains already options in the opts member.
@@ -737,7 +784,110 @@ openiccUi_s* openiccUi_New           ( int                 argc,
   return ui;
 }
 
-/** @brief   return the number of sections of type "oihs"
+/** @brief    Create a new UI structure
+ *  @memberof openiccUi_s
+ *
+ *  This is a high level convinience function.
+ *  The returned openiccUi_s is a comlete description of the UI and can be
+ *  used instantly. The options are parsed, errors are printed, help text
+ *  is printed for the boolean -h/--help option. Boolean -v/--verbose
+ *  is handled too. The results are set to the declared variables. 
+ *  The app_type defaults to "tool", but it can be replaced if needed.
+ *
+ *  @code
+  openiccUi_s * ui = openiccUi_Create( argc, argv,
+                                       "myCl",
+                                       _("My Command"),
+                                       _("My Command line tool from Me"),
+                                       "my_logo",
+                                       info, options, groups )
+    @endcode
+ *
+ *  @param[in]     argc                number of command line arguments
+ *  @param[in]     argv                command line args from C/C++ main()
+ *  @param[in]     nick                four byte string; e.g. "myCl"
+ *  @param[in]     name                short name of the tool; i18n;
+ *                 e.g. _("My Command")
+ *  @param[in]     description         compact sentence starting with full name; i18n;
+ *                 e.g. _("My Command line tool from Me")
+ *  @param[in]     logo                icon name; This variable must contain
+ *                 the file name only, without ending. The icon needs
+ *                 to be installed in typical icon search path and will be
+ *                 detected there. e.g. "my_logo" points to "my_logo.{png|svg}"
+ *  @param[in]     info                general information for rich UI's and
+ *                                     for help text
+ *  @param[in,out] options             the main option declaration, with
+ *                 syntax declaration and variable passing for setting results
+ *  @param[in]     groups              the option grouping declares
+ *                 dependencies of options and provides a UI layout
+ *  @return                            UI object for later use
+ *
+ *  @version OpenICC: 0.1.1
+ *  @date    2018/08/20
+ *  @since   2018/08/20 (OpenICC: 0.1.1)
+ */
+openiccUi_s *  openiccUi_Create      ( int                 argc,
+                                       char             ** argv,
+                                       const char        * nick,
+                                       const char        * name,
+                                       const char        * description,
+                                       const char        * logo,
+                                       openiccUiHeaderSection_s * info,
+                                       openiccOption_s   * options,
+                                       openiccOptionGroup_s * groups )
+{
+  int help = 0, verbose = 0;
+  openiccOption_s * h, * v;
+  openiccInit();
+
+  /* allocate options structure */
+  openiccUi_s * ui = openiccUi_New( argc, argv ); /* argc+argv are required for parsing the command line options */
+  /* tell about the tool */
+  ui->app_type = "tool";
+  if(nick) memcpy( ui->nick, nick, 4 );
+  ui->name = name;
+  ui->description = description;
+  ui->logo = logo;
+
+  /* Select from *version*, *manufacturer*, *copyright*, *license*, *url*,
+   * *support*, *download*, *sources*, *openicc_modules_author* and
+   * *documentation* what you see fit. Add new ones as needed. */
+  ui->sections = info;
+  ui->opts->array = options;
+  ui->opts->groups = groups;
+
+  /* get results and check syntax ... */
+  openiccOPTIONSTATE_e state = openiccOptions_Parse( ui->opts );
+  /* ... and report detected errors */
+  if(state != openiccOPTION_NONE)
+  {
+    fputs( _("... try with --help|-h option for usage text. give up"), stderr );
+    fputs( "\n", stderr );
+    free(ui->opts); free(ui);
+    return NULL;
+  }
+
+  h = openiccOptions_GetOption( ui->opts, 'h' );
+  if(h && h->variable_type == openiccINT && h->variable.i)
+    help = *h->variable.i;
+  v = openiccOptions_GetOption( ui->opts, 'v' );
+  if(v && v->variable_type == openiccINT && v->variable.i)
+    verbose = *v->variable.i;
+  if(help)
+  {
+    openiccUiHeaderSection_s * version = openiccUi_GetHeaderSection( ui,
+                                                               "version" );
+    openiccOptions_PrintHelp( ui->opts, ui, verbose, "%s v%s - %s", argv[0],
+                              version && version->name ? version->name : "",
+                              ui->description ? ui->description : "" );
+    free(ui->opts); free(ui);
+    return NULL;
+  } /* done with options handling */
+
+  return ui;
+}
+
+/** @brief    Return the number of sections of type "oihs"
  *  @memberof openiccUi_s
  *
  *  The openiccUi_s contains already options in the opts member.
@@ -753,7 +903,7 @@ int     openiccUi_CountHeaderSections( openiccUi_s       * ui )
   return n;
 }
 
-/** @brief   return the section which was specified by its nick name
+/** @brief    Return the section which was specified by its nick name
  *  @memberof openiccUi_s
  *
  *  @version OpenICC: 0.1.1
@@ -772,7 +922,7 @@ openiccUiHeaderSection_s * openiccUi_GetHeaderSection (
   return section;
 }
 
-/** @brief   return a JSON representation of the options
+/** @brief    Return a JSON representation of the options
  *  @memberof openiccUi_s
  *
  *  @version OpenICC: 0.1.1
@@ -788,7 +938,7 @@ char *       openiccUi_ToJson        ( openiccUi_s       * ui,
 
   root = oyjlTreeNew( "" );
   oyjlTreeSetValueString( root, "org/freedesktop/openicc/modules/[0]/openicc_module_api_version", "1" );
-  if(ui->type)
+  if(ui->app_type && ui->app_type[0])
   {
     oyjlTreeSetValueString( root, "org/freedesktop/openicc/modules/[0]/type", ui->app_type );
     if(strcmp( ui->app_type, "tool" ) == 0)
@@ -962,12 +1112,7 @@ char *       openiccUi_ToJson        ( openiccUi_s       * ui,
 
 /* private stuff */
 
-void oiUiFill                        ( openiccUi_s         * ui,
-                                       const char          * nick,
-                                       const char          * name,
-                                       const char          * description,
-                                       const char          * icon,
-                                       const char          * documentation )
+openiccUiHeaderSection_s * oiUiInfo  ( const char          * documentation )
 {
   openiccUiHeaderSection_s s[] = {
     /* type,  nick,      label,name,                 description */
@@ -984,10 +1129,6 @@ void oiUiFill                        ( openiccUi_s         * ui,
     { "oihs", "documentation", NULL, "http://www.openicc.info", documentation },
     { "", NULL, NULL, NULL, NULL }
   };
-  ui->app_type = "tool";
-  memcpy( ui->nick, nick, 4 );
-  ui->name = name;
-  ui->description = description;
-  ui->logo = icon;
-  ui->sections = openiccMemDup( s, sizeof(s) );
+  return openiccMemDup( s, sizeof(s) );
 }
+
