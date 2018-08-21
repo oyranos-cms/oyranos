@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2018-08-20 15:52+0200\n"
+"POT-Creation-Date: 2018-08-20 23:11+0200\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -3037,8 +3037,8 @@ msgid "Oyranos Image Display Info"
 msgstr "Oyranos Bildanzeige Info"
 
 #: tools/oyranos-monitor-white-point.c:369
-msgid "Oyranos Night Manager"
-msgstr "Oyranos Nacht Manager"
+msgid "Oyranos Night Manager handles the monitor white point"
+msgstr "Oyranos Nacht Manager stellt den Monitor Weißpunkt ein"
 
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1320
 msgid "Oyranos RAW Image"
@@ -6527,6 +6527,9 @@ msgstr "Falsches Profil für statischen WWW Farbraum, benötige sRGB"
 
 #~ msgid "Oyranos Control Panel"
 #~ msgstr "Oyranos Konfiguration"
+
+#~ msgid "Oyranos Night Manager"
+#~ msgstr "Oyranos Nacht Manager"
 
 #~ msgid "Oyranos X11"
 #~ msgstr "Oyranos X11"

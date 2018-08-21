@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Oyranos 0.9\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2018-08-20 15:52+0200\n"
+"POT-Creation-Date: 2018-08-20 23:11+0200\n"
 "PO-Revision-Date: 2015-02-20 17:32+0100\n"
 "Last-Translator: Kai-Uwe Behrmann <ku.b@gmx.de>\n"
 "Language-Team: russian <ru@li.org>\n"
@@ -2961,7 +2961,7 @@ msgid "Oyranos Image Display Info"
 msgstr ""
 
 #: tools/oyranos-monitor-white-point.c:369
-msgid "Oyranos Night Manager"
+msgid "Oyranos Night Manager handles the monitor white point"
 msgstr ""
 
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1320

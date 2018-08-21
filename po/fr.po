@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ICC Examin 0.41\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2018-08-20 15:52+0200\n"
+"POT-Creation-Date: 2018-08-20 23:11+0200\n"
 "PO-Revision-Date: 2006-06-29 19:31+0200\n"
 "Last-Translator: Pascal LACROIX <lacroixpascal at vfemail.net>\n"
 "Language-Team: <fr@li.org>\n"
@@ -3157,9 +3157,8 @@ msgid "Oyranos Image Display Info"
 msgstr "Oyranos Préférences"
 
 #: tools/oyranos-monitor-white-point.c:369
-#, fuzzy
-msgid "Oyranos Night Manager"
-msgstr "Oyranos Préférences"
+msgid "Oyranos Night Manager handles the monitor white point"
+msgstr ""
 
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1320
 #, fuzzy
@@ -5843,6 +5842,10 @@ msgstr ""
 
 #, fuzzy
 #~ msgid "Oyranos"
+#~ msgstr "Oyranos Préférences"
+
+#, fuzzy
+#~ msgid "Oyranos Night Manager"
 #~ msgstr "Oyranos Préférences"
 
 #, fuzzy

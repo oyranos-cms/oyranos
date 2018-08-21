@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eo\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2018-08-20 15:52+0200\n"
+"POT-Creation-Date: 2018-08-20 23:11+0200\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  <eo@li.org>\n"
@@ -3031,9 +3031,8 @@ msgid "Oyranos Image Display Info"
 msgstr ""
 
 #: tools/oyranos-monitor-white-point.c:369
-#, fuzzy
-msgid "Oyranos Night Manager"
-msgstr "blanco punkto"
+msgid "Oyranos Night Manager handles the monitor white point"
+msgstr ""
 
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1320
 msgid "Oyranos RAW Image"
@@ -5656,6 +5655,10 @@ msgstr ""
 
 #, fuzzy
 #~ msgid "Oyranos"
+#~ msgstr "blanco punkto"
+
+#, fuzzy
+#~ msgid "Oyranos Night Manager"
 #~ msgstr "blanco punkto"
 
 #, fuzzy

@@ -366,7 +366,7 @@ int main( int argc , char** argv )
 
   info = oyUiInfo(_("The tool can set the actual white point or set it by local day and night time. A additional effect profile can be selected."));
   ui = openiccUi_Create( argc, argv,
-      "oyNM", _("Night Manager"), _("Oyranos Night Manager"),
+      "oyNM", _("Night Manager"), _("Oyranos Night Manager handles the monitor white point"),
       "oyNM-logo",
       info, opts->array, opts->groups );
   if(!ui) return 0;
