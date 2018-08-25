@@ -40,7 +40,6 @@
 
 /** The CMM_NICK consists of four bytes, which appear as well in the library name. This is important for Oyranos to identify the required filter struct name. */
 #define CMM_NICK "oJPG"
-#define OY_oJPG_FILTER_REGISTRATION OY_TOP_INTERNAL OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "file_loader"
 
 /** The message function pointer to use for messaging. */
 oyMessage_f ojpg_msg = oyMessageFunc;
@@ -62,9 +61,19 @@ oyMessage_f ojpg_msg = oyMessageFunc;
 #define AD oyAllocateFunc_, oyDeAllocateFunc_
 
 int  ojpgInit                        ( oyStruct_s        * module_info );
-int      ojpgFilter_CmmRun           ( oyFilterPlug_s    * requestor_plug,
+oyImage_s *  oyImage_FromJPEG        ( const char        * filename,
+                                       int32_t             icc_profile_flags );
+int          oyImage_WriteJPEG       ( oyImage_s         * image,
+                                       const char        * filename,
+                                       oyOptions_s       * options );
+int      ojpgFilter_CmmRunRead       ( oyFilterPlug_s    * requestor_plug,
                                        oyPixelAccess_s   * ticket );
-const char * ojpgApi4UiGetText2      ( const char        * select,
+int      ojpgFilter_CmmRunWrite      ( oyFilterPlug_s    * requestor_plug,
+                                       oyPixelAccess_s   * ticket );
+const char * ojpgApi4UiGetText2Read  ( const char        * select,
+                                       oyNAME_e            type,
+                                       const char        * format );
+const char * ojpgApi4UiGetText2Write ( const char        * select,
                                        oyNAME_e            type,
                                        const char        * format );
 int                ojpgGetOFORMS     ( oyCMMapiFilter_s  * module,
@@ -72,7 +81,10 @@ int                ojpgGetOFORMS     ( oyCMMapiFilter_s  * module,
                                        int                 flags,
                                        char             ** ui_text,
                                        oyAlloc_f           allocateFunc );
-const char * ojpgApi4UiGetText       ( const char        * select,
+const char * ojpgApi4UiGetTextRead   ( const char        * select,
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context );
+const char * ojpgApi4UiGetTextWrite  ( const char        * select,
                                        oyNAME_e            type,
                                        oyStruct_s        * context );
 extern const char * ojpg_api4_ui_texts[];
@@ -144,16 +156,16 @@ oyIcon_s ojpg_icon = {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"};
  *  - "_cmm_module"
  *  This string must be included in the the filters filename.
  *
- *  @version Oyranos: 0.9.6
+ *  @version Oyranos: 0.9.7
  *  @since   2014/03/21 (Oyranos: 0.9.6)
- *  @date    2014/03/21
+ *  @date    2018/08/25
  */
 oyCMM_s oJPG_cmm_module = {
 
   oyOBJECT_CMM_INFO_S, /**< ::type; the object type */
   0,0,0,               /**< static objects omit these fields */
   CMM_NICK,            /**< ::cmm; the four char filter id */
-  (char*)"0.9.6",      /**< ::backend_version */
+  (char*)"0.9.7",      /**< ::backend_version */
   ojpgGetText,         /**< ::getText; UI texts */
   (char**)oyCMM_texts, /**< ::texts; list of arguments to getText */
   OYRANOS_VERSION,     /**< ::oy_compatibility; last supported Oyranos CMM API*/
@@ -167,9 +179,10 @@ oyCMM_s oJPG_cmm_module = {
 };
 
 
-/* OY_oJPG_FILTER_REGISTRATION ----------------------------------------------*/
-
 #define OY_oJPG_FILTER_REGISTRATION_BASE OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
+
+/* OY_oJPG_FILTER_REGISTRATION_READ -----------------------------------------*/
+
 
 /** @brief    ojpg oyCMMapi7_s implementation
  *
@@ -179,7 +192,7 @@ oyCMM_s oJPG_cmm_module = {
  *  @date    2014/03/21
  *  @since   2014/03/21 (Oyranos: 0.9.6)
  */
-oyCMMapi_s * ojpgApi7CmmCreate       ( const char        * format,
+oyCMMapi_s * ojpgApi7CmmCreateRead   ( const char        * format,
                                        const char        * ext )
 {
   int32_t cmm_version[3] = {OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C},
@@ -233,7 +246,7 @@ oyCMMapi_s * ojpgApi7CmmCreate       ( const char        * format,
                                        registration,
                                        cmm_version, module_api,
                                        NULL,
-                                       ojpgFilter_CmmRun,
+                                       ojpgFilter_CmmRunRead,
                                        (oyConnector_s**)plugs, 0, 0,
                                        (oyConnector_s**)sockets, 1, 0,
                                        properties, 0 );
@@ -263,15 +276,15 @@ const char ojpg_read_extra_options[] = {
  *  @since   2014/03/21 (Oyranos: 0.9.6)
  *  @date    2014/03/21
  */
-oyCMMapi_s * ojpgApi4CmmCreate       ( const char        * format )
+oyCMMapi_s * ojpgApi4CmmCreateRead   ( const char        * format )
 {
   int32_t cmm_version[3] = {OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C},
           module_api[3]  = {0,9,6};
   oyPointer_s * backend_context = oyPointer_New(0);
   char * registration = NULL;
-  const char * category = ojpgApi4UiGetText2("category", oyNAME_NAME, format);
+  const char * category = ojpgApi4UiGetText2Read("category", oyNAME_NAME, format);
   oyCMMuiGet_f getOFORMS = ojpgGetOFORMS;
-  oyCMMui_s * ui = oyCMMui_Create( category, ojpgApi4UiGetText,
+  oyCMMui_s * ui = oyCMMui_Create( category, ojpgApi4UiGetTextRead,
                                    ojpg_api4_ui_texts, 0 );
   oyOptions_s * oy_opts = NULL;
   const char * oforms_options = ojpg_read_extra_options;
@@ -334,24 +347,6 @@ int                ojpgGetOFORMS     ( oyCMMapiFilter_s  * module OY_UNUSED,
   return error;
 }
 
-
-oyOptions_s* ojpgFilter_CmmLoaderValidateOptions
-                                     ( oyFilterCore_s    * filter,
-                                       oyOptions_s       * validate OY_UNUSED,
-                                       int                 statical OY_UNUSED,
-                                       uint32_t          * result )
-{
-  uint32_t error = !filter;
-
-#if 0
-  if(!error)
-    error = !oyOptions_FindString( validate, "my_options", 0 );
-#endif
-
-  *result = error;
-
-  return 0;
-}
 
 int select_icc_profile(j_decompress_ptr cinfo,
                       const char * filename,
@@ -450,8 +445,192 @@ oJPG_error_exit (j_common_ptr cinfo)
   longjmp (myerr->setjmp_buffer, 1);
 }
 
+oyImage_s *  oyImage_FromJPEG        ( const char        * filename,
+                                       int32_t             icc_profile_flags )
+{
+  oyOptions_s * tags = 0;
+  FILE * fp = 0;
+  oyDATATYPE_e data_type = oyUINT8;
+  oyPROFILE_e profile_type = oyASSUMED_RGB;
+  oyProfile_s * prof = 0;
+  oyImage_s * image = NULL;
+  oyPixel_t pixel_type = 0;
+  size_t  fsize = 0;
+  uint8_t * buf = 0;
+  size_t  mem_n = 0;   /* needed memory in bytes */
+  int width,height,nchannels;
+  const char * format = "jpeg";
 
-/** Function ojpgFilter_CmmRun
+  /* file tests */
+  if(filename)
+    fp = fopen( filename, "rm" );
+
+  if(!fp)
+  {
+    ojpg_msg( oyMSG_WARN, (oyStruct_s*)NULL,
+             OY_DBG_FORMAT_ " could not open: %s",
+             OY_DBG_ARGS_, oyNoEmptyString_m( filename ) );
+    return NULL;
+  }
+
+  /* file size fun */
+  fseek(fp,0L,SEEK_END);
+  fsize = ftell(fp);
+  rewind(fp);
+  if(oy_debug)
+    ojpg_msg( oyMSG_DBG, (oyStruct_s*)NULL,
+             OY_DBG_FORMAT_ "file size %u",
+             OY_DBG_ARGS_, fsize );
+
+
+
+  /* get ICC Profile */
+  {
+    struct jpeg_decompress_struct cinfo; 
+    struct oJPG_error_mgr jerr;
+    unsigned int len = 0;
+    unsigned char * icc = NULL;
+    int m;
+
+    cinfo.err = jpeg_std_error (&jerr.pub);
+    jerr.pub.error_exit = oJPG_error_exit;
+
+    // Provide custom error handling to avoid libjpeg calling exit()
+    if( setjmp( jerr.setjmp_buffer ))
+    {
+      jpeg_destroy_decompress (&cinfo);
+      ojpg_msg( oyMSG_WARN, (oyStruct_s*)NULL,
+             OY_DBG_FORMAT_ "Exit from libjpeg for %s",
+             OY_DBG_ARGS_, oyNoEmptyString_m( filename ) );
+      goto ojpgReadClean;
+    }
+
+    // Setup decompression structure
+    jpeg_create_decompress (&cinfo);
+
+    jpeg_stdio_src (&cinfo, fp);
+
+    for (m = 0; m < 16; m++)
+      jpeg_save_markers(&cinfo, JPEG_APP0 + m, 0xFFFF);
+
+    (void) jpeg_read_header (&cinfo, TRUE);
+
+    if( jpeg_get_marker_size( &cinfo, JPEG_APP0+2, (JOCTET*)"ICC_PROFILE", 12, &len ) == 0 )
+    {
+      icc = (unsigned char*) malloc(len);
+      jpeg_get_marker_data( &cinfo, JPEG_APP0+2, (JOCTET*)"ICC_PROFILE", 12, len, (JOCTET*)icc );
+    }
+
+    if (icc && len)
+    { if(oy_debug)
+      ojpg_msg( oyMSG_DBG, (oyStruct_s*)NULL, OY_DBG_FORMAT_ "jpeg embedded profile found: %d", OY_DBG_ARGS_, len);
+    } else if (select_icc_profile(&cinfo, filename, &icc, &len))
+    { if(oy_debug)
+      ojpg_msg( oyMSG_DBG, (oyStruct_s*)NULL, OY_DBG_FORMAT_ "jpeg default profile selected: %d", OY_DBG_ARGS_, len);
+    } else
+      if(oy_debug)
+      ojpg_msg( oyMSG_DBG, (oyStruct_s*)NULL, OY_DBG_FORMAT_ "jpeg no profile found", OY_DBG_ARGS_);
+
+    if(icc && len)
+    {
+      prof = oyProfile_FromMem( len, icc, 0, 0 );
+      len = 0;
+    }
+    if(icc) oyFree_m_(icc);
+
+    jpeg_start_decompress (&cinfo);
+
+    nchannels = cinfo.out_color_components;
+    width = cinfo.output_width;
+    height = cinfo.output_height;
+
+    /* allocate a buffer to hold the whole image */
+    mem_n = width*height*oyDataTypeGetSize(data_type)*nchannels;
+    if(mem_n)
+    {
+      buf = (uint8_t*) oyAllocateFunc_(mem_n * sizeof(uint8_t));
+      if(!buf)
+      {
+        ojpg_msg(oyMSG_WARN, (oyStruct_s *) NULL, _DBG_FORMAT_ "Could not allocate enough memory.", _DBG_ARGS_);
+        goto ojpgReadClean;
+      }
+    } else
+    {
+      ojpg_msg( oyMSG_WARN, (oyStruct_s *) NULL, _DBG_FORMAT_ "nothing to allocate: %dx%dx%d", _DBG_ARGS_,
+                width, height, nchannels );
+      goto ojpgReadClean;
+    }
+    if(oy_debug)
+    ojpg_msg( oyMSG_DBG, (oyStruct_s *) NULL, _DBG_FORMAT_ "allocate image data: 0x%x size: %d ", _DBG_ARGS_, (int)(intptr_t)
+              buf, mem_n );
+
+
+    while (cinfo.output_scanline < (unsigned)height) {
+    /* jpeg_read_scanlines expects an array of pointers to scanlines.
+     * Here the array is only one element long, but you could ask for
+     * more than one scanline at a time if that's more convenient.
+     */
+    JSAMPROW b = &buf[(cinfo.output_width * nchannels)*cinfo.output_scanline];
+    jpeg_read_scanlines(&cinfo, &b, 1);
+    }
+
+    icColorSpaceSignature csp = (icColorSpaceSignature) oyProfile_GetSignature(prof,oySIGNATURE_COLOR_SPACE);
+    if(csp == icSigCmykData)
+    {
+      int n = width * height * 4;
+      if(data_type == oyUINT8)
+      {
+        uint8_t * d = (uint8_t*)buf;
+        int i;
+#pragma omp parallel for private(i)
+        for(i = 0; i < n; ++i)
+          d[i] = 255 - d[i];
+      }
+    }
+ 
+    jpeg_finish_decompress (&cinfo);
+    jpeg_destroy_decompress (&cinfo);
+  }
+
+  /* fallback profile */
+  if(!prof)
+    prof = oyProfile_FromStd( profile_type, icc_profile_flags, 0 );
+
+  if(oy_debug)
+    ojpg_msg( oyMSG_DBG, (oyStruct_s*)NULL,
+             OY_DBG_FORMAT_ "%dx%d %s|%s[%d]",
+             OY_DBG_ARGS_,  width, height,
+             format, oyDataTypeToText(data_type), nchannels );
+
+  /* create a Oyranos image */
+  pixel_type = oyChannels_m(nchannels) | oyDataType_m(data_type); 
+  image = oyImage_Create( width, height, NULL, pixel_type, prof, 0 );
+  oyArray2d_s * a = oyArray2d_Create( buf, width*nchannels, height, data_type, NULL );
+  oyImage_ReadArray(image, NULL, a, NULL);
+  oyArray2d_Release( &a );
+  free(buf); buf = NULL;
+
+  if (!image)
+  {
+    ojpg_msg( oyMSG_WARN, (oyStruct_s*)NULL,
+             OY_DBG_FORMAT_ "can't create a new image\n%dx%d %s[%d]",
+             OY_DBG_ARGS_,  width, height, format, nchannels );
+    goto ojpgReadClean;
+  }
+
+  /* remember the meta data like file name */
+  tags = oyImage_GetTags( image );
+  oyOptions_SetFromString( &tags, "//" OY_TYPE_STD "/file_read.input_ojpg"
+                                                                    "/filename",
+                                 filename, OY_CREATE_NEW );
+
+ojpgReadClean:
+  oyOptions_Release( &tags );
+  if(fp) fclose(fp);
+  return image;
+}
+
+/** Function ojpgFilter_CmmRunRead
  *  @brief   implement oyCMMFilter_GetNext_f()
  *
  *  The primary filter entry for data processing.
@@ -464,28 +643,17 @@ oJPG_error_exit (j_common_ptr cinfo)
  *  @since   2014/03/21 (Oyranos: 0.9.6)
  *  @date    2014/03/21
  */
-int      ojpgFilter_CmmRun           ( oyFilterPlug_s    * requestor_plug,
+int      ojpgFilter_CmmRunRead       ( oyFilterPlug_s    * requestor_plug,
                                        oyPixelAccess_s   * ticket )
 {
   oyFilterSocket_s * socket = 0;
   oyStruct_s * socket_data = 0;
   oyFilterNode_s * node = 0;
-  oyOptions_s * tags = 0;
   int error = 0;
   const char * filename = 0;
-  FILE * fp = 0;
-  oyDATATYPE_e data_type = oyUINT8;
-  oyPROFILE_e profile_type = oyASSUMED_RGB;
-  oyProfile_s * prof = 0;
   oyImage_s * image_in = 0,
             * output_image = 0;
-  oyPixel_t pixel_type = 0;
-  size_t  fsize = 0;
-  uint8_t * buf = 0;
-  size_t  mem_n = 0;   /* needed memory in bytes */
-  int width,height,nchannels;
   int32_t icc_profile_flags = 0;
-  const char * format = "jpeg";
 
   if(requestor_plug->type_ == oyOBJECT_FILTER_PLUG_S)
   {
@@ -521,180 +689,16 @@ int      ojpgFilter_CmmRun           ( oyFilterPlug_s    * requestor_plug,
     oyOptions_FindInt( opts, "icc_profile_flags", 0, &icc_profile_flags );
     oyOptions_Release( &opts );
   }
+  
+  image_in = oyImage_FromJPEG( filename, icc_profile_flags );
 
-  /* file tests */
-  if(filename)
-    fp = fopen( filename, "rm" );
-
-  if(!fp)
+  if(!image_in)
   {
     ojpg_msg( oyMSG_WARN, (oyStruct_s*)node,
              OY_DBG_FORMAT_ " could not open: %s",
              OY_DBG_ARGS_, oyNoEmptyString_m( filename ) );
-    error = 1;
     goto ojpgFilter_CmmRunClean;
   }
-
-  /* file size fun */
-  fseek(fp,0L,SEEK_END);
-  fsize = ftell(fp);
-  rewind(fp);
-  if(oy_debug)
-    ojpg_msg( oyMSG_DBG, (oyStruct_s*)node,
-             OY_DBG_FORMAT_ "file size %u",
-             OY_DBG_ARGS_, fsize );
-
-
-
-  /* get ICC Profile */
-  {
-    struct jpeg_decompress_struct cinfo; 
-    struct oJPG_error_mgr jerr;
-    unsigned int len = 0;
-    unsigned char * icc = NULL;
-    int m;
-
-    cinfo.err = jpeg_std_error (&jerr.pub);
-    jerr.pub.error_exit = oJPG_error_exit;
-
-    // Provide custom error handling to avoid libjpeg calling exit()
-    if( setjmp( jerr.setjmp_buffer ))
-    {
-      jpeg_destroy_decompress (&cinfo);
-      ojpg_msg( oyMSG_WARN, (oyStruct_s*)node,
-             OY_DBG_FORMAT_ "Exit from libjpeg for %s",
-             OY_DBG_ARGS_, oyNoEmptyString_m( filename ) );
-      error = FALSE;
-      goto ojpgFilter_CmmRunClean;
-    }
-
-    // Setup decompression structure
-    jpeg_create_decompress (&cinfo);
-
-    jpeg_stdio_src (&cinfo, fp);
-
-    for (m = 0; m < 16; m++)
-      jpeg_save_markers(&cinfo, JPEG_APP0 + m, 0xFFFF);
-
-    (void) jpeg_read_header (&cinfo, TRUE);
-
-    if( jpeg_get_marker_size( &cinfo, JPEG_APP0+2, (JOCTET*)"ICC_PROFILE", 12, &len ) == 0 )
-    {
-      icc = (unsigned char*) malloc(len);
-      jpeg_get_marker_data( &cinfo, JPEG_APP0+2, (JOCTET*)"ICC_PROFILE", 12, len, (JOCTET*)icc );
-    }
-
-    if (icc && len)
-    { if(oy_debug)
-      ojpg_msg( oyMSG_DBG, (oyStruct_s*)node, OY_DBG_FORMAT_ "jpeg embedded profile found: %d", OY_DBG_ARGS_, len);
-    } else if (select_icc_profile(&cinfo, filename, &icc, &len))
-    { if(oy_debug)
-      ojpg_msg( oyMSG_DBG, (oyStruct_s*)node, OY_DBG_FORMAT_ "jpeg default profile selected: %d", OY_DBG_ARGS_, len);
-    } else
-      if(oy_debug)
-      ojpg_msg( oyMSG_DBG, (oyStruct_s*)node, OY_DBG_FORMAT_ "jpeg no profile found", OY_DBG_ARGS_);
-
-    if(icc && len)
-    {
-      prof = oyProfile_FromMem( len, icc, 0, 0 );
-      len = 0;
-    }
-    if(icc) oyFree_m_(icc);
-
-    jpeg_start_decompress (&cinfo);
-
-    nchannels = cinfo.out_color_components;
-    width = cinfo.output_width;
-    height = cinfo.output_height;
-
-    /* allocate a buffer to hold the whole image */
-    mem_n = width*height*oyDataTypeGetSize(data_type)*nchannels;
-    if(mem_n)
-    {
-      buf = (uint8_t*) oyAllocateFunc_(mem_n * sizeof(uint8_t));
-      if(!buf)
-      {
-        ojpg_msg(oyMSG_WARN, (oyStruct_s *) node, _DBG_FORMAT_ "Could not allocate enough memory.", _DBG_ARGS_);
-        error = 1;
-        goto ojpgFilter_CmmRunClean;
-      }
-    } else
-    {
-      ojpg_msg( oyMSG_WARN, (oyStruct_s *) node, _DBG_FORMAT_ "nothing to allocate: %dx%dx%d", _DBG_ARGS_,
-                width, height, nchannels );
-      error = 1;
-      goto ojpgFilter_CmmRunClean;
-    }
-    if(oy_debug)
-    ojpg_msg( oyMSG_DBG, (oyStruct_s *) node, _DBG_FORMAT_ "allocate image data: 0x%x size: %d ", _DBG_ARGS_, (int)(intptr_t)
-              buf, mem_n );
-
-
-    while (cinfo.output_scanline < height) {
-    /* jpeg_read_scanlines expects an array of pointers to scanlines.
-     * Here the array is only one element long, but you could ask for
-     * more than one scanline at a time if that's more convenient.
-     */
-    JSAMPROW b = &buf[(cinfo.output_width * nchannels)*cinfo.output_scanline];
-    jpeg_read_scanlines(&cinfo, &b, 1);
-    }
-
-    icColorSpaceSignature csp = (icColorSpaceSignature) oyProfile_GetSignature(prof,oySIGNATURE_COLOR_SPACE);
-    if(csp == icSigCmykData)
-    {
-      int n = width * height * 4;
-      if(data_type == oyUINT8)
-      {
-        uint8_t * d = (uint8_t*)buf;
-        int i;
-#pragma omp parallel for private(i)
-        for(i = 0; i < n; ++i)
-          d[i] = 255 - d[i];
-      }
-    }
- 
-    jpeg_finish_decompress (&cinfo);
-    jpeg_destroy_decompress (&cinfo);
-  }
-
-  /* fallback profile */
-  if(!prof)
-    prof = oyProfile_FromStd( profile_type, icc_profile_flags, 0 );
-
-  if(oy_debug)
-    ojpg_msg( oyMSG_DBG, (oyStruct_s*)node,
-             OY_DBG_FORMAT_ "%dx%d %s|%s[%d]",
-             OY_DBG_ARGS_,  width, height,
-             format, oyDataTypeToText(data_type), nchannels );
-
-  /* create a Oyranos image */
-  pixel_type = oyChannels_m(nchannels) | oyDataType_m(data_type); 
-  image_in = oyImage_Create( width, height, NULL, pixel_type, prof, 0 );
-  oyArray2d_s * a = oyArray2d_Create( buf, width*nchannels, height, data_type, NULL );
-  oyImage_ReadArray(image_in, NULL, a, NULL);
-  oyArray2d_Release( &a );
-  free(buf); buf = NULL;
-
-  if (!image_in)
-  {
-    ojpg_msg( oyMSG_WARN, (oyStruct_s*)node,
-             OY_DBG_FORMAT_ "can't create a new image\n%dx%d %s[%d]",
-             OY_DBG_ARGS_,  width, height, format, nchannels );
-    error = FALSE;
-    goto ojpgFilter_CmmRunClean;
-  }
-
-  /* remember the meta data like file name */
-  tags = oyImage_GetTags( image_in );
-  error = oyOptions_SetFromString( &tags,
-                                 "//" OY_TYPE_STD "/file_read.input_ojpg"
-                                                                    "/filename",
-                                 filename, OY_CREATE_NEW );
-
-  oyOptions_Release( &tags );
-
-  /* close the image and FILE pointer */
-  fclose(fp); fp = NULL;
 
   /* add image to filter socket */
   if(error <= 0)
@@ -725,14 +729,12 @@ ojpgFilter_CmmRunClean:
   oyFilterNode_Release( &node );
   oyFilterSocket_Release( &socket );
 
-  if(fp) fclose(fp);
-
   /* return an error to cause the graph to retry */
   return 1;
 }
 
 
-const char * ojpgApi4UiGetText2      ( const char        * select,
+const char * ojpgApi4UiGetText2Read  ( const char        * select,
                                        oyNAME_e            type,
                                        const char        * format )
 {
@@ -788,7 +790,7 @@ const char * ojpgApi4UiGetText2      ( const char        * select,
  *  This function implements oyCMMGetText_f.
  *
  */
-const char * ojpgApi4UiGetText       ( const char        * select,
+const char * ojpgApi4UiGetTextRead   ( const char        * select,
                                        oyNAME_e            type,
                                        oyStruct_s        * context )
 {
@@ -798,11 +800,433 @@ const char * ojpgApi4UiGetText       ( const char        * select,
   oyPointer_Release( &backend_context );
   api->release( (oyStruct_s**) &api );
 
-  return ojpgApi4UiGetText2(select, type, format);
+  return ojpgApi4UiGetText2Read(select, type, format);
 }
 const char * ojpg_api4_ui_texts[] = {"name", "category", "help", NULL};
 
-/* OY_oJPG_FILTER_REGISTRATION ----------------------------------------------*/
+/* OY_oJPG_FILTER_REGISTRATION_READ -----------------------------------------*/
+
+/* OY_oJPG_FILTER_REGISTRATION_WRITE ----------------------------------------*/
+
+/** @brief    ojpg oyCMMapi7_s implementation
+ *
+ *  a filter providing a CMM filter
+ *
+ *  @version Oyranos: 0.9.7
+ *  @date    2018/08/25
+ *  @since   2018/08/25 (Oyranos: 0.9.7)
+ */
+oyCMMapi_s * ojpgApi7CmmCreateWrite  ( const char        * format,
+                                       const char        * ext )
+{
+  int32_t cmm_version[3] = {OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C},
+          module_api[3]  = {0,9,6};
+  static oyDATATYPE_e data_types[6] = {oyUINT8, oyUINT16, oyUINT32,
+                                       oyFLOAT, oyDOUBLE, (oyDATATYPE_e)0};
+  oyConnectorImaging_s * plug = oyConnectorImaging_New(0),
+                       * socket = oyConnectorImaging_New(0);
+  static oyConnectorImaging_s * plugs[2] = {0,0},
+                              * sockets[2] = {0,0};
+  
+  const char * properties[] =
+  {
+    "file=write",    /* file read|write */
+    "image=pixel",  /* image type, pixel/vector/font */
+    "layers=1",     /* layer count, one for plain images */
+    "icc=1",        /* image type ICC profile support */
+    "ext=jpg,jpeg", /* supported extensions */
+    0
+  };
+
+  plugs[0] = plug;
+  sockets[0] = socket;
+  char * registration = NULL;
+
+  oyStringAddPrintf( &registration, AD,
+                     OY_oJPG_FILTER_REGISTRATION_BASE"file_write.write_%s._%s._CPU._ACCEL", format, CMM_NICK );
+
+  if(oy_debug >= 2) ojpg_msg(oyMSG_DBG, NULL, _DBG_FORMAT_ "registration:%s ojpg %s", _DBG_ARGS_,
+                             registration,
+                             ext );
+
+
+  oyConnectorImaging_SetDataTypes( socket, data_types, 5 );
+  oyConnectorImaging_SetReg( socket, "//" OY_TYPE_STD "/image.data" );
+  oyConnectorImaging_SetMatch( socket, oyFilterSocket_MatchImagingPlug );
+  oyConnectorImaging_SetTexts( socket, oyCMMgetImageConnectorSocketText,
+                               oy_image_connector_texts );
+  oyConnectorImaging_SetIsPlug( socket, 0 );
+  oyConnectorImaging_SetCapability( socket, oyCONNECTOR_IMAGING_CAP_MAX_COLOR_OFFSET, -1 );
+  oyConnectorImaging_SetCapability( socket, oyCONNECTOR_IMAGING_CAP_MIN_CHANNELS_COUNT, 1 );
+  oyConnectorImaging_SetCapability( socket, oyCONNECTOR_IMAGING_CAP_MAX_CHANNELS_COUNT, 4 );
+  oyConnectorImaging_SetCapability( socket, oyCONNECTOR_IMAGING_CAP_MIN_COLOR_COUNT, 1 );
+  oyConnectorImaging_SetCapability( socket, oyCONNECTOR_IMAGING_CAP_MAX_COLOR_COUNT, 4 );
+  oyConnectorImaging_SetCapability( socket, oyCONNECTOR_IMAGING_CAP_CAN_INTERWOVEN, 1 );
+  oyConnectorImaging_SetCapability( socket, oyCONNECTOR_IMAGING_CAP_CAN_PREMULTIPLIED_ALPHA, 1 );
+  oyConnectorImaging_SetCapability( socket, oyCONNECTOR_IMAGING_CAP_CAN_NONPREMULTIPLIED_ALPHA, 1 );
+  oyConnectorImaging_SetCapability( socket, oyCONNECTOR_IMAGING_CAP_ID, 1 );
+
+  oyCMMapi7_s * cmm7 = oyCMMapi7_Create( ojpgCMMInit, ojpgCMMMessageFuncSet,
+                                       registration,
+                                       cmm_version, module_api,
+                                       NULL,
+                                       ojpgFilter_CmmRunWrite,
+                                       (oyConnector_s**)plugs, 0, 0,
+                                       (oyConnector_s**)sockets, 1, 0,
+                                       properties, 0 );
+  //oyFree_m_( registration );
+  return (oyCMMapi_s*) cmm7;
+}
+
+const char ojpg_write_extra_options[] = {
+ "\n\
+  <" OY_TOP_SHARED ">\n\
+   <" OY_DOMAIN_INTERNAL ">\n\
+    <" OY_TYPE_STD ">\n\
+     <" "file_read" ">\n\
+      <filename></filename>\n\
+      <quality>97</quality>\n\
+     </" "file_read" ">\n\
+    </" OY_TYPE_STD ">\n\
+   </" OY_DOMAIN_INTERNAL ">\n\
+  </" OY_TOP_SHARED ">\n"
+};
+
+/** @brief    ojpg oyCMMapi4_s implementation
+ *
+ *  a filter providing a CMM device link creator
+ *
+ *  @version Oyranos: 0.9.7
+ *  @since   2018/08/25 (Oyranos: 0.9.7)
+ *  @date    2018/08/25
+ */
+oyCMMapi_s * ojpgApi4CmmCreateWrite  ( const char        * format )
+{
+  int32_t cmm_version[3] = {OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C},
+          module_api[3]  = {0,9,6};
+  oyPointer_s * backend_context = oyPointer_New(0);
+  char * registration = NULL;
+  const char * category = ojpgApi4UiGetText2Write("category", oyNAME_NAME, format);
+  oyCMMuiGet_f getOFORMS = ojpgGetOFORMS;
+  oyCMMui_s * ui = oyCMMui_Create( category, ojpgApi4UiGetTextWrite,
+                                   ojpg_api4_ui_texts, 0 );
+  oyOptions_s * oy_opts = NULL;
+  const char * oforms_options = ojpg_write_extra_options;
+
+  oyCMMui_SetUiOptions( ui, oyStringCopy( oforms_options, oyAllocateFunc_ ), getOFORMS ); 
+
+  oyPointer_Set( backend_context, NULL, "ojpg_file_format", oyStringCopy(format, oyAllocateFunc_),
+                 "char*", deAllocData );
+
+  oyStringAddPrintf( &registration, AD,
+                     OY_oJPG_FILTER_REGISTRATION_BASE"file_write.write_%s._" CMM_NICK "._CPU._ACCEL", format );
+
+  oyCMMapi4_s * cmm4 = oyCMMapi4_Create( ojpgCMMInit, ojpgCMMMessageFuncSet,
+                                       registration,
+                                       cmm_version, module_api,
+                                       "",
+                                       NULL,
+                                       ojpgFilterNode_GetText,
+                                       ui,
+                                       NULL );
+
+  oyCMMapi4_SetBackendContext( cmm4, backend_context );
+  oyOptions_Release( &oy_opts );
+
+  return (oyCMMapi_s*)cmm4;
+}
+
+int          oyImage_WriteJPEG       ( oyImage_s         * image,
+                                       const char        * filename,
+                                       oyOptions_s       * options )
+{
+  int error = 0;
+  int32_t quality = -1;
+  int y;
+  uint8_t * cmyk = NULL;
+
+  int image_height = oyImage_GetHeight( image );
+  int image_width = oyImage_GetWidth( image );
+  int pixel_layout = oyImage_GetPixelLayout( image, oyLAYOUT );
+  oyProfile_s * prof = oyImage_GetProfile( image );
+  //const char * colorspacename = oyProfile_GetText( prof, oyNAME_DESCRIPTION );
+  icColorSpaceSignature sig = oyProfile_GetSignature( prof,
+                                                      oySIGNATURE_COLOR_SPACE);
+  int channels_n = oyToChannels_m( pixel_layout );
+  //int cchan_n = oyProfile_GetChannelsCount( prof );
+  oyDATATYPE_e data_type = oyToDataType_m( pixel_layout );
+  int stride = image_width * channels_n;
+
+  struct jpeg_compress_struct cinfo;
+  /* This struct represents a JPEG error handler.  It is declared separately
+   * because applications often want to supply a specialized error handler
+   * (see the second half of this file for an example).  But here we just
+   * take the easy way out and use the standard error handler, which will
+   * print a message on stderr and call exit() if compression fails.
+   * Note that this struct must live as long as the main JPEG parameter
+   * struct, to avoid dangling-pointer problems.
+   */
+  struct jpeg_error_mgr jerr;
+  /* More stuff */
+  FILE * outfile;		/* target file */
+  int jcs; /* jpeg color space */
+
+  if(!prof)
+  {
+    ojpg_msg( oyMSG_WARN, (oyStruct_s*)image,
+             OY_DBG_FORMAT_ " not profile found for: %s",
+             OY_DBG_ARGS_, oyNoEmptyString_m( filename ) );
+    return -1;
+  }
+
+  /* Here we use the library-supplied code to send compressed data to a
+   * stdio stream.  You can also write your own code to do something else.
+   * VERY IMPORTANT: use "b" option to fopen() if you are on a machine that
+   * requires it in order to write binary files.
+   */
+  if ((outfile = fopen(filename, "wb")) == NULL)
+  {
+    ojpg_msg( oyMSG_WARN, (oyStruct_s*)image,
+             OY_DBG_FORMAT_ " could not open: %s",
+             OY_DBG_ARGS_, oyNoEmptyString_m( filename ) );
+    return 1;
+  }
+
+  oyOptions_FindInt( options, "quality", 0, &quality );
+  if(quality <= 0)
+    quality = 97;
+
+  /* Step 1: allocate and initialize JPEG compression object */
+
+  /* We have to set up the error handler first, in case the initialization
+   * step fails.  (Unlikely, but it could happen if you are out of memory.)
+   * This routine fills in the contents of struct jerr, and returns jerr's
+   * address which we place into the link field in cinfo.
+   */
+  cinfo.err = jpeg_std_error(&jerr);
+  /* Now we can initialize the JPEG compression object. */
+  jpeg_create_compress(&cinfo);
+
+  /* Step 2: specify data destination (eg, a file) */
+  /* Note: steps 2 and 3 can be done in either order. */
+
+  jpeg_stdio_dest(&cinfo, outfile);
+
+  /* Step 3: set parameters for compression */
+
+  /* First we supply a description of the input image.
+   * Four fields of the cinfo struct must be filled in:
+   */
+  cinfo.image_width = image_width; 	/* image width and height, in pixels */
+  cinfo.image_height = image_height;
+  cinfo.input_components = channels_n;		/* # of color components per pixel */
+  switch(sig)
+  {
+    case icSigGrayData:
+         jcs = JCS_GRAYSCALE;
+         break;
+    case icSigRgbData:
+         jcs = JCS_RGB;
+         break;
+    case icSigCmykData:
+         jcs = JCS_CMYK;
+         break;
+    case icSigYCbCrData:
+         jcs = JCS_YCbCr;
+         break;
+    default: jcs = JCS_RGB;
+  }
+  cinfo.in_color_space = jcs; 	/* colorspace of input image */
+  /* Now use the library's routine to set default compression parameters.
+   * (You must set at least cinfo.in_color_space before calling this,
+   * since the defaults depend on the source color space.)
+   */
+  jpeg_set_defaults(&cinfo);
+  /* Now you can set any non-default parameters you wish to.
+   * Here we just illustrate the use of quality (quantization table) scaling:
+   */
+  jpeg_set_quality(&cinfo, quality, TRUE /* limit to baseline-JPEG values */);
+
+  /* Step 4: Start compressor */
+
+  /* TRUE ensures that we will write a complete interchange-JPEG file.
+   * Pass TRUE unless you are very sure of what you're doing.
+   */
+  jpeg_start_compress(&cinfo, TRUE);
+
+  /* Step 5: while (scan lines remain to be written) */
+  /*           jpeg_write_scanlines(...); */
+
+  if( jcs == JCS_CMYK && 
+      data_type == oyUINT8 )
+    cmyk = (uint8_t*) malloc( stride );
+
+  for(y = 0; y < image_height; ++y)
+  {
+    int is_allocated = 0;
+    void * p = oyImage_GetPointF(image)( image, 0,y, -1, &is_allocated );
+    JSAMPROW row_pointer[2] = {p,0};	/* Points to large array of R,G,B-order data */
+
+    /* jpeg_write_scanlines expects an array of pointers to scanlines.
+     * Here the array is only one element long, but you could pass
+     * more than one scanline at a time if that's more convenient.
+     */
+    if( jcs == JCS_CMYK && 
+        data_type == oyUINT8 )
+    {
+      int i;
+      memcpy(cmyk, p, stride);
+#pragma omp parallel for private(i)
+      for(i = 0; i < stride; ++i)
+        cmyk[i] = 255 - cmyk[i];
+
+      row_pointer[0] = cmyk;
+      (void) jpeg_write_scanlines(&cinfo, row_pointer, 1);
+
+    } else
+      (void) jpeg_write_scanlines(&cinfo, row_pointer, 1);
+  }
+  if(cmyk) {free(cmyk);} cmyk = NULL;
+
+  /* Step 6: Finish compression */
+
+  jpeg_finish_compress(&cinfo);
+  /* After finish_compress, we can close the output file. */
+  fclose(outfile);
+
+  /* Step 7: release JPEG compression object */
+
+  /* This is an important step since it will release a good deal of memory. */
+  jpeg_destroy_compress(&cinfo);
+
+  /* And we're done! */
+
+  return error;
+}
+
+
+/** Function ojpgFilter_CmmRunWrite
+ *  @brief   implement oyCMMFilter_GetNext_f()
+ *
+ *  The primary filter entry for data processing.
+ *
+ *  @param         requestor_plug      the plug of the requesting node after 
+ *                                     my filter in the graph
+ *  @param         ticket              the job ticket
+ *
+ *  @version Oyranos: 0.9.7
+ *  @since   2018/08/25 (Oyranos: 0.9.7)
+ *  @date    2018/08/25
+ */
+int      ojpgFilter_CmmRunWrite      ( oyFilterPlug_s    * requestor_plug,
+                                       oyPixelAccess_s   * ticket )
+{
+  oyFilterSocket_s * socket;
+  oyFilterNode_s * node = 0;
+  oyOptions_s * node_opts = 0;
+  int result = 0;
+  const char * filename = 0;
+  FILE * fp = 0;
+
+  socket = oyFilterPlug_GetSocket( requestor_plug );
+  node = oyFilterSocket_GetNode( socket );
+  node_opts = oyFilterNode_GetOptions( node, 0 );
+
+  /* to reuse the requestor_plug is a exception for the starting request */
+  if(node)
+    result = oyFilterNode_Run( node, requestor_plug, ticket );
+  else
+    result = 1;
+
+  if(result <= 0)
+    filename = oyOptions_FindString( node_opts, "filename", 0 );
+
+  if(filename)
+    fp = fopen( filename, "wb" );
+
+  if(fp)
+  {
+    oyImage_s *image_output = (oyImage_s*)oyFilterSocket_GetData( socket );
+
+    fclose (fp); fp = 0;
+
+    result = oyImage_WriteJPEG( image_output, filename,
+                                node_opts );
+  }
+
+  return result;
+}
+
+
+const char * ojpgApi4UiGetText2Write ( const char        * select,
+                                       oyNAME_e            type,
+                                       const char        * format )
+{
+  static char * category = 0;
+
+  if(strcmp(select,"name") == 0)
+  {
+    if(type == oyNAME_NICK)
+      return "read";
+    else if(type == oyNAME_NAME)
+      return _("read");
+    else if(type == oyNAME_DESCRIPTION)
+      return _("Load Image File Object");
+  } else if(strcmp(select,"help") == 0)
+  {
+    if(type == oyNAME_NICK)
+      return "help";
+    else if(type == oyNAME_NAME)
+      return _("Option \"filename\", a valid filename of a existing image");
+    else if(type == oyNAME_DESCRIPTION)
+      return _("The Option \"filename\" should contain a valid filename to read the image data from. If the file does not exist, a error will occure.");
+  }
+  else if(strcmp(select,"category") == 0)
+  {
+    if(!category)
+    {
+      /* The following strings must match the categories for a menu entry. */
+      const char * i18n[] = {_("Files"),_("Read"),0};
+      int len =  strlen(i18n[0]) + strlen(i18n[1]) + strlen(format);
+
+      category = (char*)malloc( len + 64 );
+      if(category)
+      {
+        char * t;
+        /* Create a translation for ojpg_api4_ui_cmm_loader::category. */
+        sprintf( category,"%s/%s %s", i18n[0], i18n[1], format );
+        t = strstr(category, format);
+        if(t) t[0] = toupper(t[0]);
+      } else
+        ojpg_msg(oyMSG_WARN, (oyStruct_s *) 0, _DBG_FORMAT_ "\n " "Could not allocate enough memory.", _DBG_ARGS_);
+    }
+
+         if(type == oyNAME_NICK)
+      return "category";
+    else if(type == oyNAME_NAME)
+      return category;
+    else
+      return category;
+  }
+  return 0;
+}
+/**
+ *  This function implements oyCMMGetText_f.
+ *
+ */
+const char * ojpgApi4UiGetTextWrite  ( const char        * select,
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context )
+{
+  oyCMMapiFilter_s * api = oyCMMui_GetParent( (oyCMMui_s *) context );
+  oyPointer_s * backend_context = oyCMMapiFilter_GetBackendContext( api );
+  const char * format = (const char*) oyPointer_GetPointer( backend_context );
+  oyPointer_Release( &backend_context );
+  api->release( (oyStruct_s**) &api );
+
+  return ojpgApi4UiGetText2Write(select, type, format);
+}
+/* OY_oJPG_FILTER_REGISTRATION_WRITE ----------------------------------------*/
 
 extern oyCMM_s oJPG_cmm_module;
 int  ojpgInit                        ( oyStruct_s        * module_info )
@@ -810,7 +1234,7 @@ int  ojpgInit                        ( oyStruct_s        * module_info )
   oyCMMapi_s * a = 0,
              * a_tmp = 0,
              * m = 0;
-  int i,n = 1;
+  int i,n = 2;
 
   if((oyStruct_s*)&oJPG_cmm_module != module_info)
     ojpg_msg( oyMSG_WARN, module_info, _DBG_FORMAT_ "wrong module info passed in", _DBG_ARGS_ );
@@ -821,10 +1245,14 @@ int  ojpgInit                        ( oyStruct_s        * module_info )
     a = a_tmp;
 
   /* append new items */
+  for( i = 0; i < n; ++i)
   {
     const char * format = "jpeg";
 
-    m = ojpgApi4CmmCreate( format );
+    if(i == 0)
+      m = ojpgApi4CmmCreateRead( format );
+    else
+      m = ojpgApi4CmmCreateWrite( format );
     if(!a)
     {
       oJPG_cmm_module.api = m;
@@ -840,7 +1268,10 @@ int  ojpgInit                        ( oyStruct_s        * module_info )
   {
     const char * format = "jpeg";
 
-    m = ojpgApi7CmmCreate( format, "jpeg,jpg" );
+    if(i == 0)
+      m = ojpgApi7CmmCreateRead( format, "jpeg,jpg" );
+    else
+      m = ojpgApi7CmmCreateWrite( format, "jpeg,jpg" );
     if(!oJPG_cmm_module.api)
     {
       oJPG_cmm_module.api = m;
