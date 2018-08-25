@@ -189,9 +189,9 @@ oyConnectorImaging_s_ oyra_imageOutputPPM_connector_out = {
   4, /* data_types_n; elements in data_types array */
   -1, /* max_color_offset */
   1, /* min_channels_count; */
-  4, /* max_channels_count; */
+  32, /* max_channels_count; */
   1, /* min_color_count; */
-  4, /* max_color_count; */
+  32, /* max_color_count; */
   0, /* can_planar; can read separated channels */
   1, /* can_interwoven; can read continuous channels */
   0, /* can_swap; can swap color channels (BGR)*/
