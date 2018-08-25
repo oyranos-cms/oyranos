@@ -232,11 +232,28 @@ int  oyImage_WritePNG                ( oyImage_s         * image,
   time_t ttime;
   png_time png_time_data;
 
+  if(cchan_n > 3)
+  {
+    oPNG_msg( oyMSG_WARN, image,
+             OY_DBG_FORMAT_ "Not supported. Color space needs more than 3 color planes: c%d. But oPNG supoprts only 1 or 3 color planes plus eventually one alpha channel.",
+             OY_DBG_ARGS_, cchan_n );
+    return (1);
+  }
 
    /* Open the file */
    fp = fopen(file_name, "wb");
    if (fp == NULL)
       return (1);
+
+  /* set ICC profile */
+  pmem = oyProfile_GetMem( prof, &psize, 0,0 );
+  if(!pmem)
+  {
+    oPNG_msg( oyMSG_WARN, image,
+             OY_DBG_FORMAT_ "not profile available for %s",
+             OY_DBG_ARGS_, file_name );
+    return (1);
+  }
 
    /* Create and initialize the png_struct with the desired error handler
     * functions.  If you want to use the default stderr and longjump method,
@@ -298,11 +315,9 @@ int  oyImage_WritePNG                ( oyImage_s         * image,
    png_set_IHDR(png_ptr, info_ptr, width, height, byteps*8, color,
       PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
 
-  /* set ICC profile */
-  pmem = oyProfile_GetMem( prof, &psize, 0,0 );
   png_set_iCCP( png_ptr, info_ptr, (char*)colorspacename, 0,
                 pmem, psize);
-  oyDeAllocateFunc_( pmem ); pmem = 0;
+  if(pmem) {oyDeAllocateFunc_( pmem );} pmem = 0;
 
   /* set time stamp */
   ttime= time(NULL); /* time right NOW */
