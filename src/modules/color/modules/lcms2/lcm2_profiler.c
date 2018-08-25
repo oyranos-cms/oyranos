@@ -762,7 +762,7 @@ void         lcm2SamplerBlacknWhite  ( const double        i[],
                                        double              o[],
                                        void              * none OY_UNUSED )
 {
-  if(i[0] < 0.5)
+  if(i[0] <= 0.5)
     o[0] = 0.0; // L / CIE*L / Y  / R
   else
     o[0] = 1.0; // L / CIE*L / Y  / R
