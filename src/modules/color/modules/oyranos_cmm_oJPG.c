@@ -971,6 +971,14 @@ int          oyImage_WriteJPEG       ( oyImage_s         * image,
   FILE * outfile;		/* target file */
   int jcs; /* jpeg color space */
 
+  if(!image)
+  {
+    ojpg_msg( oyMSG_WARN, (oyStruct_s*)image,
+             OY_DBG_FORMAT_ " not image obtained for %s",
+             OY_DBG_ARGS_, oyNoEmptyString_m( filename ) );
+    return 1;
+  }
+
   if(!prof)
   {
     ojpg_msg( oyMSG_WARN, (oyStruct_s*)image,
@@ -1064,7 +1072,8 @@ int          oyImage_WriteJPEG       ( oyImage_s         * image,
   for(y = 0; y < image_height; ++y)
   {
     int is_allocated = 0;
-    void * p = oyImage_GetPointF(image)( image, 0,y, -1, &is_allocated );
+    int height = 0;
+    void * p = oyImage_GetLineF(image)( image, y, &height, -1, &is_allocated );
     JSAMPROW row_pointer[2] = {p,0};	/* Points to large array of R,G,B-order data */
 
     /* jpeg_write_scanlines expects an array of pointers to scanlines.
