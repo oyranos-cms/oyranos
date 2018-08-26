@@ -812,6 +812,8 @@ int                oyConversion_RunPixels (
     { clck = oyClock() - clck;
       DBGs_PROG1_S(pixel_access_,"oyFilterPlug_ResolveImage(): %g",clck/1000000.0 );
     }
+    DBGs_PROG1_S( pixel_access_, "image_input: %s",
+                  oyStruct_GetText((oyStruct_s*)image_input, oyNAME_NAME, 0) );
     oyImage_Release( &image_input );
 
     {
@@ -855,6 +857,8 @@ int                oyConversion_RunPixels (
     }
   }
 
+  DBGs_PROG1_S( pixel_access_, "image_out: %s",
+                oyStruct_GetText((oyStruct_s*)image_out, oyNAME_NAME, 0) );
   oyPixelAccess_SetArrayFocus( (oyPixelAccess_s*)pixel_access_, 0 );
   if(oy_debug)
   {
@@ -888,7 +892,7 @@ int                oyConversion_RunPixels (
    * Users with very large data sets have to process the data in chunks and
    * the oyPixelAccess_s::array allocation can remain constant.
    */
-  if(image_out && pixel_access_ &&
+  if(image_out && oyImagePriv_m(image_out)->pixel_data->type_ == oyOBJECT_ARRAY2D_S && pixel_access_ &&
      ((oyPointer)oyImagePriv_m(image_out)->pixel_data != (oyPointer)pixel_access_->array ||
       image_out != pixel_access_->output_image))
   {
