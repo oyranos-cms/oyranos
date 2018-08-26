@@ -180,16 +180,17 @@ int      oyraFilterPlug_ImageWriteRun (
         if(api7->properties)
           while(api7->properties[j] && api7->properties[j][0])
           {
-            if(strcmp( api7->properties[j], "file=write" ) == 0)
+            const char * prop = api7->properties[j];
+            if(strcmp( prop, "file=write" ) == 0)
               file_write = 1;
 
-            if(strstr( api7->properties[j], "image=" ) != 0 &&
-               strstr( api7->properties[j], "pixel" ) != 0)
+            if(strstr( prop, "image=" ) != 0 &&
+               strstr( prop, "pixel" ) != 0)
               image_pixel = 1;
 
-            if(file_ext && strstr( api7->properties[j], "ext=" ) != 0)
+            if(file_ext && strstr( prop, "ext=" ) != 0)
             {
-              STRING_ADD( api_ext,  &api7->properties[j][4] );
+              STRING_ADD( api_ext,  &prop[4] );
               k = 0;
               while(api_ext[k]) { api_ext[k] = tolower( api_ext[k] ); ++k; }
               if(strstr( api_ext, file_ext ) != 0)
