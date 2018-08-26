@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: oyranos\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2018-08-25 11:13+0200\n"
+"POT-Creation-Date: 2018-08-26 21:24+0200\n"
 "PO-Revision-Date: 2012-10-19 15:10+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -74,8 +74,8 @@ msgstr "-v upovídaný výstup"
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4449
 #: modules/color/modules/oyranos_cmm_lcms.c:2736
 #: modules/color/modules/oyranos_cmm_lcms.c:2739
-#: modules/color/modules/oyranos_cmm_oPNG.c:581
-#: modules/color/modules/oyranos_cmm_oPNG.c:1199
+#: modules/color/modules/oyranos_cmm_oPNG.c:582
+#: modules/color/modules/oyranos_cmm_oPNG.c:1200
 #: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:269
 #: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1170
 msgid "/"
@@ -435,7 +435,7 @@ msgstr "umí zobrazit informace o profilu ICC"
 msgid "Apple CMM"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1171
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1172
 #, fuzzy
 msgid "Apply regions of interesst in form of simple rectangles."
 msgstr "Apply regions of interesst in form of simple rectangles."
@@ -1120,7 +1120,7 @@ msgstr "Copyright (c) 2005-2010 Kai-Uwe Behrmann; newBSD"
 msgid "Copyright (c) 2005-2014 Kai-Uwe Behrmann; newBSD"
 msgstr "Copyright (c) 2005-2010 Kai-Uwe Behrmann; newBSD"
 
-#: modules/color/modules/oyranos_cmm_oicc.c:1200
+#: modules/color/modules/oyranos_cmm_oicc.c:1202
 #, fuzzy
 msgid "Copyright (c) 2005-2016 Kai-Uwe Behrmann; newBSD"
 msgstr "Copyright (c) 2005-2010 Kai-Uwe Behrmann; newBSD"
@@ -1762,9 +1762,10 @@ msgid "File:            "
 msgstr "Velikost:    "
 
 #. The following strings must match the categories for a menu entry.
-#: modules/color/modules/oyranos_cmm_oJPG.c:772
-#: modules/color/modules/oyranos_cmm_oPNG.c:580
-#: modules/color/modules/oyranos_cmm_oPNG.c:1198
+#: modules/color/modules/oyranos_cmm_oJPG.c:765
+#: modules/color/modules/oyranos_cmm_oJPG.c:1299
+#: modules/color/modules/oyranos_cmm_oPNG.c:581
+#: modules/color/modules/oyranos_cmm_oPNG.c:1199
 #: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:268
 #: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1169
 msgid "Files"
@@ -2181,12 +2182,12 @@ msgstr "Osvetleni:   "
 #: liboyranos/oyranos_cmm.c:305 liboyranos/oyranos_cmm.c:329
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:2634
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:2639
-#: modules/color/modules/oyranos_cmm_oPNG.c:1132
+#: modules/color/modules/oyranos_cmm_oPNG.c:1133
 #: modules/color/modules/oyranos_cmm_oydi.c:945
 msgid "Image"
 msgstr "Obrázek"
 
-#: modules/color/modules/oyranos_cmm_oPNG.c:1134
+#: modules/color/modules/oyranos_cmm_oPNG.c:1135
 #, fuzzy
 msgid "Image PNG Socket"
 msgstr "Image[out]"
@@ -2232,7 +2233,7 @@ msgstr "Image[lraw]"
 msgid "Image[expose]"
 msgstr "Image[lraw]"
 
-#: modules/color/modules/oyranos_cmm_oPNG.c:1190
+#: modules/color/modules/oyranos_cmm_oPNG.c:1191
 #, fuzzy
 msgid "Image[input_png]"
 msgstr "Image[input_png]"
@@ -2252,7 +2253,7 @@ msgstr "Image[lraw]"
 msgid "Image[my_filter]"
 msgstr "Image[my_filter]"
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1579
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1580
 #, fuzzy
 msgid "Image[out]"
 msgstr "Image[out]"
@@ -2262,7 +2263,7 @@ msgstr "Image[out]"
 msgid "Image[scale]"
 msgstr "Image[lraw]"
 
-#: modules/color/modules/oyranos_cmm_oPNG.c:572
+#: modules/color/modules/oyranos_cmm_oPNG.c:573
 #, fuzzy
 msgid "Image[write_png]"
 msgstr "Image[write_png]"
@@ -2273,7 +2274,7 @@ msgid "Image[write_ppm]"
 msgstr "Image[write_ppm]"
 
 #: liboyranos/oyranos_cmm.c:303 liboyranos/oyranos_cmm.c:327
-#: modules/color/modules/oyranos_cmm_oPNG.c:1130
+#: modules/color/modules/oyranos_cmm_oPNG.c:1131
 msgid "Img"
 msgstr "Img"
 
@@ -2324,7 +2325,7 @@ msgstr "Vstupní"
 msgid "Input Color Space"
 msgstr "Výstupní barvový prostor"
 
-#: modules/color/modules/oyranos_cmm_oPNG.c:1192
+#: modules/color/modules/oyranos_cmm_oPNG.c:1193
 #, fuzzy
 msgid "Input PNG Image Filter Object"
 msgstr "Input PNG Image Filter Object"
@@ -2628,13 +2629,14 @@ msgstr ""
 "nicméně knihovna lcms je k dispozici zdarma pro kohokoliv pod extrémně "
 "liberální licencí pro otevřený zdrojový kód."
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:772
+#: modules/color/modules/oyranos_cmm_oyra_image.c:773
 msgid "Load"
 msgstr "Načíst"
 
-#: modules/color/modules/oyranos_cmm_oJPG.c:757
-#: modules/color/modules/oyranos_cmm_oyra_image.c:357
-#: modules/color/modules/oyranos_cmm_oyra_image.c:774
+#: modules/color/modules/oyranos_cmm_oJPG.c:750
+#: modules/color/modules/oyranos_cmm_oJPG.c:1284
+#: modules/color/modules/oyranos_cmm_oyra_image.c:358
+#: modules/color/modules/oyranos_cmm_oyra_image.c:775
 msgid "Load Image File Object"
 msgstr "Načíst objekt obrázkového souboru"
 
@@ -3119,12 +3121,12 @@ msgstr "Optimalizace"
 msgid "Option"
 msgstr "Volba"
 
-#: modules/color/modules/oyranos_cmm_oPNG.c:596
+#: modules/color/modules/oyranos_cmm_oPNG.c:597
 #: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:284
 msgid "Option \"filename\", a valid filename"
 msgstr "Volba \"filename\", platné jméno souboru"
 
-#: modules/color/modules/oyranos_cmm_oPNG.c:1214
+#: modules/color/modules/oyranos_cmm_oPNG.c:1215
 msgid "Option \"filename\", a valid filename of a existing PNG image"
 msgstr "Volba \"filename\", platný název souboru existujícího PNG obrázku"
 
@@ -3132,7 +3134,8 @@ msgstr "Volba \"filename\", platný název souboru existujícího PNG obrázku"
 msgid "Option \"filename\", a valid filename of a existing PPM image"
 msgstr "Volba \"soubor\", platné jméno souboru existujícího obrázku PPM"
 
-#: modules/color/modules/oyranos_cmm_oJPG.c:763
+#: modules/color/modules/oyranos_cmm_oJPG.c:756
+#: modules/color/modules/oyranos_cmm_oJPG.c:1290
 #, fuzzy
 msgid "Option \"filename\", a valid filename of a existing image"
 msgstr "Volba \"filename\", platný název souboru existujícího PNG obrázku"
@@ -3156,7 +3159,7 @@ msgstr "Výstupní"
 msgid "Output Color Space"
 msgstr "Výstupní barvový prostor"
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1581
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1582
 #, fuzzy
 msgid "Output Image Filter Object"
 msgstr "Output Image Filter Object"
@@ -3183,11 +3186,11 @@ msgstr "Oyranos Dummy"
 msgid "Oyranos Help"
 msgstr "Nápověda Oyranosu"
 
-#: modules/color/modules/oyranos_cmm_oicc.c:1184
+#: modules/color/modules/oyranos_cmm_oicc.c:1186
 msgid "Oyranos ICC policy"
 msgstr "Politika Oyranosu pro ICC"
 
-#: modules/color/modules/oyranos_cmm_oicc.c:1186
+#: modules/color/modules/oyranos_cmm_oicc.c:1188
 msgid "Oyranos ICC policy module"
 msgstr "Modul politiky Oyranosu pro ICC"
 
@@ -3307,7 +3310,7 @@ msgstr "Moduly Oyranosu"
 #: modules/color/modules/devices/oyranos_cmm_disp.c:1457
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1331
 #: modules/color/modules/oyranos_cmm_lraw.cpp:229
-#: modules/color/modules/oyranos_cmm_oicc.c:1194
+#: modules/color/modules/oyranos_cmm_oicc.c:1196
 #: modules/color/modules/oyranos_cmm_oydi.c:1386
 #: modules/color/modules/oyranos_cmm_oyra.c:138
 #: modules/color/modules/oyranos_cmm_trds.c:722
@@ -3692,12 +3695,13 @@ msgstr ""
 msgid "RawCamera"
 msgstr "RawCamera"
 
-#: modules/color/modules/oyranos_cmm_oJPG.c:772
+#: modules/color/modules/oyranos_cmm_oJPG.c:765
+#: modules/color/modules/oyranos_cmm_oJPG.c:1299
 #, fuzzy
 msgid "Read"
 msgstr "Číst PNG"
 
-#: modules/color/modules/oyranos_cmm_oPNG.c:1200
+#: modules/color/modules/oyranos_cmm_oPNG.c:1201
 msgid "Read PNG"
 msgstr "Číst PNG"
 
@@ -3710,12 +3714,12 @@ msgstr "Načíst PPM"
 msgid "Read from"
 msgstr "číst ze souboru"
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1163
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1164
 #, fuzzy
 msgid "Rectangles"
 msgstr "Rectangles"
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1165
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1166
 #, fuzzy
 msgid "Rectangles Splitter Object"
 msgstr "Rectangles Splitter Object"
@@ -3793,12 +3797,12 @@ msgstr "Záměr transformace mezi barvovými prostory."
 msgid "Rgb"
 msgstr "Rgb"
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1381
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1382
 #, fuzzy
 msgid "Root Image"
 msgstr "Root Image"
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1383
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1384
 #, fuzzy
 msgid "Root Image Filter Object"
 msgstr "Root Image Filter Object"
@@ -4254,7 +4258,8 @@ msgstr ""
 "neutrální šedá. Poznámka: barvový prostor pro editaci je totéž co pracovní "
 "prostor."
 
-#: modules/color/modules/oyranos_cmm_oJPG.c:765
+#: modules/color/modules/oyranos_cmm_oJPG.c:758
+#: modules/color/modules/oyranos_cmm_oJPG.c:1292
 #, fuzzy
 msgid ""
 "The Option \"filename\" should contain a valid filename to read the image "
@@ -4264,7 +4269,7 @@ msgstr ""
 "Pokud soubor neexistuje, nastane chyba.\n"
 "Profil ICC oyEDITING_RGB je připojen."
 
-#: modules/color/modules/oyranos_cmm_oPNG.c:1216
+#: modules/color/modules/oyranos_cmm_oPNG.c:1217
 msgid ""
 "The Option \"filename\" should contain a valid filename to read the png data "
 "from. If the file does not exist, a error will occure.\n"
@@ -4287,7 +4292,7 @@ msgstr ""
 "Pokud soubor neexistuje, nastane chyba.\n"
 "Profil ICC oyEDITING_RGB je připojen."
 
-#: modules/color/modules/oyranos_cmm_oPNG.c:598
+#: modules/color/modules/oyranos_cmm_oPNG.c:599
 msgid ""
 "The Option \"filename\" should contain a valid filename to write the png "
 "data into. A existing file will be overwritten without notice."
@@ -4391,7 +4396,7 @@ msgstr "Hloupý a neužitečný modul Oyranosu."
 msgid "The filter adapts pixel brightness."
 msgstr "The filter is a possible pixel target in a graph."
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1589
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1590
 #, fuzzy
 msgid ""
 "The filter can query pixels from its successors in a graph. The results are "
@@ -4400,7 +4405,7 @@ msgstr ""
 "The filter can query pixels from its successors in a graph. The results are "
 "stored in the internal buffer."
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1173
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1174
 msgid ""
 "The filter expects \"//\" OY_TYPE_STD \"/rectangles/rectangle/[#]\" options "
 "containing each a oyRectangle_s object and will create, fill and process a "
@@ -4430,7 +4435,7 @@ msgstr ""
 "objekt oyConfig_s obsahující typické informace zařízení o souboru cameraRAW. "
 "Volba \"render\" s hodnotou \"0\" přeskočí některá zpracování dat."
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1587
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1588
 #, fuzzy
 msgid "The filter is a possible pixel target in a graph."
 msgstr "The filter is a possible pixel target in a graph."
@@ -4491,12 +4496,12 @@ msgid ""
 "processing."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1389
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1390
 #, fuzzy
 msgid "The filter provides a generic image source."
 msgstr "The filter provides a generic image source."
 
-#: modules/color/modules/oyranos_cmm_oicc.c:1208
+#: modules/color/modules/oyranos_cmm_oicc.c:1210
 #, fuzzy
 msgid ""
 "The filter provides policy settings. These settings can be applied to a "
@@ -4825,7 +4830,7 @@ msgid ""
 "adaption_state, no_white_on_white_fixup."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oicc.c:1210
+#: modules/color/modules/oyranos_cmm_oicc.c:1212
 msgid ""
 "The module is responsible for many settings in the Oyranos color management "
 "settings panel. If applied the module care about rendering intents, "
@@ -4942,7 +4947,7 @@ msgstr ""
 msgid "The raw image backend of Oyranos."
 msgstr "Backend Oyranosu pro RAW snímky."
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1391
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1392
 #, fuzzy
 msgid "The root image filter can hold pixel data for processing in a graph."
 msgstr "The root image filter can hold pixel data for processing in a graph."
@@ -5183,15 +5188,15 @@ msgstr ""
 msgid "Well behaving Color Space for Editing"
 msgstr "Dobře se chovající barvový prostor pro editaci"
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:355
+#: modules/color/modules/oyranos_cmm_oyra_image.c:356
 msgid "Write"
 msgstr "Zapsat"
 
-#: modules/color/modules/oyranos_cmm_oPNG.c:582
+#: modules/color/modules/oyranos_cmm_oPNG.c:583
 msgid "Write PNG"
 msgstr "Zapsat PNG"
 
-#: modules/color/modules/oyranos_cmm_oPNG.c:574
+#: modules/color/modules/oyranos_cmm_oPNG.c:575
 #, fuzzy
 msgid "Write PNG Image Filter Object"
 msgstr "Write PNG Image Filter Object"
@@ -5470,7 +5475,7 @@ msgstr ""
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:918
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4158
 #: modules/color/modules/oyranos_cmm_lcms.c:2407
-#: modules/color/modules/oyranos_cmm_oPNG.c:977
+#: modules/color/modules/oyranos_cmm_oPNG.c:978
 #: modules/color/modules/oyranos_cmm_oyra_image_expose.c:141
 #: modules/color/modules/oyranos_cmm_oyra_image_scale.c:104
 #: tools/oyranos_gamma.c:676 tools/oyranos_gamma.c:849
@@ -5703,7 +5708,7 @@ msgstr "třída pojmenovaných barev"
 #: modules/color/modules/oyranos_cmm_elDB.c:1064
 #: modules/color/modules/oyranos_cmm_lraw.cpp:237
 #: modules/color/modules/oyranos_cmm_oiDB.c:519
-#: modules/color/modules/oyranos_cmm_oicc.c:1202
+#: modules/color/modules/oyranos_cmm_oicc.c:1204
 #: modules/color/modules/oyranos_cmm_oydi.c:1394
 #: modules/color/modules/oyranos_cmm_oyra.c:146
 #: modules/color/modules/oyranos_cmm_trds.c:730
@@ -5849,7 +5854,8 @@ msgstr "profil nenalezen v předdefinovaném adresáři:"
 msgid "profile not found:"
 msgstr "profil nenalezen:"
 
-#: modules/color/modules/oyranos_cmm_oJPG.c:755
+#: modules/color/modules/oyranos_cmm_oJPG.c:748
+#: modules/color/modules/oyranos_cmm_oJPG.c:1282
 msgid "read"
 msgstr ""
 
@@ -5983,10 +5989,10 @@ msgstr "systémová cesta"
 msgid "the imaging factory CMM"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:363
-#: modules/color/modules/oyranos_cmm_oyra_image.c:365
-#: modules/color/modules/oyranos_cmm_oyra_image.c:780
-#: modules/color/modules/oyranos_cmm_oyra_image.c:782
+#: modules/color/modules/oyranos_cmm_oyra_image.c:364
+#: modules/color/modules/oyranos_cmm_oyra_image.c:366
+#: modules/color/modules/oyranos_cmm_oyra_image.c:781
+#: modules/color/modules/oyranos_cmm_oyra_image.c:783
 msgid "unfinished"
 msgstr "nedokončeno"
 
