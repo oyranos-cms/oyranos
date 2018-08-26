@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2012-2015 (C) Kai-Uwe Behrmann
+ *            2012-2018 (C) Kai-Uwe Behrmann
  *
  *  @brief    ICC conversion - on the command line
  *  @internal
@@ -722,6 +722,20 @@ int main( int argc , char** argv )
     {
       WARNc_S("Could not write to file");
     }
+  }
+  /* format conversion */
+  else if(input && output)
+  {
+    char * comment = NULL;
+    STRING_ADD( comment, "source image was " );
+    STRING_ADD( comment, input );
+    oyOptions_SetFromString( &opts, "//" OY_TYPE_STD "/file_write/comment",
+                             comment, OY_CREATE_NEW );
+    oyFree_m_( comment );
+    error = oyImage_FromFile( input, icc_profile_flags, &image, NULL );
+    error = oyImage_ToFile( image, output, opts );
+
+    oyImage_Release( &image );
   }
   else
   {
