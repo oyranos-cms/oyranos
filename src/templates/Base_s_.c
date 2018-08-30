@@ -51,7 +51,7 @@ static const char * oy{{ class.baseName }}_StaticMessageFunc_ (
 
   if( text == NULL || text_n == 0 )
   {
-    text_n = 128;
+    text_n = 512;
     text = (char*) alloc( text_n );
     if(text)
       memset( text, 0, text_n );
@@ -341,6 +341,37 @@ int oy{{ class.baseName }}_Release_( {{ class.privName }} **{{ class.baseName|lo
   s = *{{ class.baseName|lower }};
 
   *{{ class.baseName|lower }} = 0;
+
+  if(oy_debug_objects >= 0 && s->oy_)
+  {
+    const char * t = getenv(OY_DEBUG_OBJECTS);
+    int id_ = -1;
+
+    if(t)
+      id_ = atoi(t);
+
+    if((id_ >= 0 && s->oy_->id_ == id_) ||
+       (t && s && strstr(oyStructTypeToText(s->type_), t) != 0) ||
+       id_ == 1)
+    {
+      oyStruct_s ** parents = NULL;
+      int n = oyStruct_GetParents( (oyStruct_s*)s, &parents );
+      if(n != s->oy_->ref_)
+      {
+        int i;
+        track_name = oyStructTypeToText(s->type_);
+        fprintf( stderr, "%s[%d] untracking refs: %d parents: %d\n",
+                 track_name, s->oy_->id_, s->oy_->ref_, n );
+        for(i = 0; i < n; ++i)
+        {
+          track_name = oyStructTypeToText(parents[i]->type_);
+          fprintf( stderr, "parent[%d]: %s %d\n", i,
+                   track_name, parents[i]->oy_->id_ );
+        }
+      }
+    }
+  }
+
 {% block refCount %}
   if(oyObject_UnRef(s->oy_))
     return 0;{% endblock %}

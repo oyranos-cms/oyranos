@@ -142,7 +142,7 @@ digraph G {
  \enddot
  *
  *  oyFilterNode_s types, like oyCMMapi4_s, oyCMMapi6_s and oyCMMapi7_s, are
- *  contained inside libraries called modules.
+ *  contained inside libraries called modules. 
  *  The filter types are identified by @ref registration strings.
  *
  *  A node can have several data entries attached to it. However, a node type

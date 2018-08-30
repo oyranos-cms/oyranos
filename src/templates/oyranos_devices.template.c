@@ -2135,7 +2135,7 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s_   * core,
  *  @brief   new option with registration and value filled from DB if available
  *
  *  @param         registration        no or full qualified registration
- *  @param[out[    option              the result
+ *  @param[out]    option              the result
  *  @param         object              the optional object
  *  @return                            0 - good, 1 >= error, -1 <= issue(s)
  *

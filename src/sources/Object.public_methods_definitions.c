@@ -251,7 +251,7 @@ int          oyObject_Release         ( oyObject_s      * obj )
  *  @param[in]    parent         a pointer to the parent struct
  *
  *  @version Oyranos: 0.3.0
- *  @data    2011/02/02
+ *  @date    2011/02/02
  *  @since   2007/11/00 (API 0.1.8)
  */
 oyObject_s   oyObject_SetParent      ( oyObject_s        o,
@@ -292,7 +292,7 @@ oyObject_s   oyObject_SetParent      ( oyObject_s        o,
  *  @return                            0 == success, > 0 error, < 0 issue
  *
  *  @version Oyranos: 0.3.0
- *  @data    2011/04/09
+ *  @date    2011/04/09
  *  @since   2007/11/00 (API 0.1.8)
  */
 int          oyObject_SetName        ( oyObject_s          object,
