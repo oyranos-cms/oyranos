@@ -430,6 +430,80 @@ int                oyStruct_GetChildren (
   return n;
 }
 
+void oyObjectTreeCallbackSearchParents(void              * user_data,
+                                       int                 top_id OY_UNUSED,
+                                       oyLeave_s         * tree OY_UNUSED,
+                                       oyStruct_s        * grandparent OY_UNUSED,
+                                       oyStruct_s        * parent,
+                                       oyStruct_s        * current,
+                                       oyStruct_s       ** children OY_UNUSED,
+                                       int                 children_n OY_UNUSED,
+                                       int                 level OY_UNUSED )
+{
+  oyStruct_s ** c = (oyStruct_s**)user_data,
+             * ref = c[0];
+  int id;
+  int cid;
+  int pid OY_UNUSED;
+  int pos = 0;
+  oyStruct_s * found = NULL;
+  int old_oy_debug_objects = oy_debug_objects; /* be more silent */
+
+  oy_debug_objects = -1;
+
+  id = oyStruct_GetId(ref);
+  cid = current->oy_ ? oyStruct_GetId(current) : -2;
+  pid = parent && parent->oy_ ? oyStruct_GetId(parent) : -1;
+
+  if(id == cid)
+    found = parent;
+  /* test children */
+  else
+  {
+    static oyStruct_s ** c = NULL;
+    int n = oyStruct_GetChildren(current, &c);
+    for(pos = 0; pos < n; ++pos)
+    {
+      oyStruct_s * s = c[pos];
+      int bid = oyStruct_GetId(s);
+      if(bid == id)
+        found = current;
+    }
+  }
+
+  pos = 1;
+  while(c[pos])
+  {
+    if(found == c[pos])
+      found = NULL;
+    ++pos;
+  }
+
+  if(found != NULL && pos < oy_c_max)
+    c[pos] = found;
+
+  oy_debug_objects = old_oy_debug_objects;
+}
+
+
+int                oyStruct_GetParents(oyStruct_s        * obj,
+                                       oyStruct_s      *** list )
+{
+  static oyStruct_s * c[oy_c_max];
+  int * ids = oyObjectGetCurrentObjectIdList( );
+  int n = 0;
+
+  memset(c,0,sizeof(oyStruct_s *)*oy_c_max);
+  c[0] = obj;
+  oyObjectIdListTraverseStructTrees( ids, oyObjectTreeCallbackSearchParents, c, 0 );
+
+  while(c[n+1]) ++n;
+
+  if(list) *list = &c[1];
+
+  return n;
+}
+
 struct oyLeave_s {
   /* downward */
   int n;
@@ -486,6 +560,8 @@ oyLeave_s *        oyLeave_NewWith   ( oyStruct_s        * obj,
     l->obj = obj;
     l->id = id;
     l->parent = parent;
+    if(parent && parent->obj && parent->obj->type_ == oyOBJECT_OBJECT_S)
+      fprintf( stderr, "wrong type oyObject_s\n" );
     l->grandparent = grandparent;
     if(oy_debug_memory)
       fprintf( stderr, "%d <- new oyLeave_s(id) " OY_PRINT_POINTER "\n", id, (ptrdiff_t)l );
@@ -536,6 +612,16 @@ int                oyLeave_Release   ( oyLeave_s        ** leave )
   oyFree_m_(l);
 
   return 0;
+}
+
+void oyDebugLevelCacheClean          ( void )
+{
+  int i;
+  if(oy_debug_leave_cache_)
+  for(i = 0; i < oy_object_list_max_count_; ++i)
+    if(oy_debug_leave_cache_[i] )
+      oyLeave_Release( &oy_debug_leave_cache_[i] );
+  oyFree_m_(oy_debug_leave_cache_);
 }
 
 int                oyObjectStructTreeParentContains (
@@ -737,7 +823,8 @@ int                oyObjectIdListTraverseStructTrees (
     if(ids[i] > 0)
       ts[n++] = oyObjectIdListGetStructTree( i, 0, 0, ids, i, flags & 0x01 ? -oy_object_list_max_count_ : 0, func, user_data );
 
-  /* TODO: release trees */
+  /* release trees */
+  oyDebugLevelCacheClean();
   oyFree_m_(ts);
 
   return n;
@@ -991,6 +1078,10 @@ int                oyObjectIdListTraverseStructTrees_ (
                                        int                 flags )
 {
   int i, n = 0;
+
+  /* scan upon a new cache */
+  oyDebugLevelCacheClean();
+
   for(i = 0; i < oy_object_list_max_count_; ++i)
     if(ids[i] > 0)
     {
@@ -1116,11 +1207,7 @@ void               oyObjectTreePrint ( int                 flags )
     oyFree_m_(trees);
     oyFree_m_(ids_old);
     /* check if everything is released */
-    if(oy_debug_leave_cache_)
-    for(i = 0; i < oy_object_list_max_count_; ++i)
-      if(oy_debug_leave_cache_[i] )
-        oyLeave_Release( &oy_debug_leave_cache_[i] );
-    oyFree_m_(oy_debug_leave_cache_);
+    oyDebugLevelCacheClean();
 
     /* remove double lines and priorise */
     {
