@@ -73,3 +73,8 @@ int                oyObjectStructTreeContains (
                                        int                 id,
                                        int                 direction_minusIsUp_plusIsDown_zeroIsBoth );
 void               oyObjectTreePrint ( int                 flags );
+int                oyStruct_GetChildren (
+                                       oyStruct_s        * obj,
+                                       oyStruct_s      *** list );
+int                oyStruct_GetParents(oyStruct_s        * obj,
+                                       oyStruct_s      *** list );
