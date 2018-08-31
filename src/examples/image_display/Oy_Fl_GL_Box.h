@@ -50,6 +50,7 @@ public:
   ~Oy_Fl_GL_Box(void)
   {
     oyImage_Release( &display_image );
+    if(frame_data) free(frame_data);
   };
 
   void damage( char c )
