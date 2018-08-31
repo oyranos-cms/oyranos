@@ -390,6 +390,35 @@ oyConnectorImaging_s_ * oyConnectorImaging_Copy_ ( oyConnectorImaging_s_ *connec
   {
     s = connectorimaging;
     
+    if(oy_debug_objects >= 0 && s->oy_)
+    {
+      const char * t = getenv(OY_DEBUG_OBJECTS);
+      int id_ = -1;
+
+      if(t)
+        id_ = atoi(t);
+
+      if((id_ >= 0 && s->oy_->id_ == id_) ||
+         (t && s && strstr(oyStructTypeToText(s->type_), t) != 0) ||
+         id_ == 1)
+      {
+        oyStruct_s ** parents = NULL;
+        int n = oyStruct_GetParents( (oyStruct_s*)s, &parents );
+        if(n != s->oy_->ref_)
+        {
+          int i;
+          const char * track_name = oyStructTypeToText(s->type_);
+          fprintf( stderr, "%s[%d] tracking refs: %d parents: %d\n",
+                   track_name, s->oy_->id_, s->oy_->ref_, n );
+          for(i = 0; i < n; ++i)
+          {
+            track_name = oyStructTypeToText(parents[i]->type_);
+            fprintf( stderr, "parent[%d]: %s %d\n", i,
+                     track_name, parents[i]->oy_->id_ );
+          }
+        }
+      }
+    }
     oyObject_Copy( s->oy_ );
     return s;
   }
