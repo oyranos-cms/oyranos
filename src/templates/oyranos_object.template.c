@@ -355,6 +355,12 @@ int  oyMemCmp( const void * a, size_t an, const void * b, size_t bn )
 {
   return memcmp( a, b, OY_MIN(an,bn) ) == 0;
 }
+int  oyMemMemFound( const void * a, size_t an, const void * b, size_t bn )
+{
+  void * ptr = oyMemMem(a,an,b,bn);
+  if(ptr) return 1;
+  else return 0;
+}
 
 /** @brief   analyse string and compare with a given pattern
  *
@@ -404,8 +410,7 @@ int    oyFilterStringMatch           ( const char        * registration,
                        const void *s2, size_t s2n) = oyMemCmp;
 
   if(flags & OY_MATCH_SUB_STRING)
-    memmatch = (int(*)(const void *,size_t,
-                       const void *,size_t)) oyMemMem;
+    memmatch = oyMemMemFound;
  
   if(registration && pattern)
   {

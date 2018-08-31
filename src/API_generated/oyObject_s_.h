@@ -52,8 +52,8 @@
 
 struct oyObject_s_ {
   oyOBJECT_e           type_;          /*!< @private struct type oyOBJECT_OBJECT_S*/
-  oyStruct_Copy_f      copy;           /**< copy function */
-  oyStruct_Release_f   release;        /**< release function */
+  oyObject_s         (*copy) (oyObject_s object); /**< copy function */
+  int                (*release) (oyObject_s * object); /**< release function */
   int                  id_;            /**< @private identification for Oyranos */
   oyAlloc_f            allocateFunc_;  /**< @private data  allocator */
   oyDeAlloc_f          deallocateFunc_;/**< @private data release function */

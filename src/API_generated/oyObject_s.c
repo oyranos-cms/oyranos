@@ -99,8 +99,8 @@ oyObject_s         oyObject_NewWithAllocators (
     return NULL;
   
   o = oyObject_SetAllocators_( o, allocateFunc, deallocateFunc );
-  o->copy = (oyStruct_Copy_f) oyObject_Copy;
-  o->release = (oyStruct_Release_f) oyObject_Release;
+  o->copy = oyObject_Copy;
+  o->release = oyObject_Release;
   o->ref_ = 1;
  
 #if OY_USE_OBJECT_POOL_
