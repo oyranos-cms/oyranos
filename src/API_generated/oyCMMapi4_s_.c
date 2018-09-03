@@ -385,6 +385,8 @@ oyCMMapi4_s_ * oyCMMapi4_Copy_ ( oyCMMapi4_s_ *cmmapi4, oyObject_s object )
 
       if(t)
         id_ = atoi(t);
+      else
+        id_ = oy_debug_objects;
 
       if((id_ >= 0 && s->oy_->id_ == id_) ||
          (t && s && strstr(oyStructTypeToText(s->type_), t) != 0) ||
@@ -401,7 +403,7 @@ oyCMMapi4_s_ * oyCMMapi4_Copy_ ( oyCMMapi4_s_ *cmmapi4, oyObject_s object )
           for(i = 0; i < n; ++i)
           {
             track_name = oyStructTypeToText(parents[i]->type_);
-            fprintf( stderr, "parent[%d]: %s %d\n", i,
+            fprintf( stderr, "parent[%d]: %s[%d]\n", i,
                      track_name, parents[i]->oy_->id_ );
           }
         }
@@ -447,6 +449,8 @@ int oyCMMapi4_Release_( oyCMMapi4_s_ **cmmapi4 )
 
     if(t)
       id_ = atoi(t);
+    else
+      id_ = oy_debug_objects;
 
     if((id_ >= 0 && s->oy_->id_ == id_) ||
        (t && s && strstr(oyStructTypeToText(s->type_), t) != 0) ||
@@ -463,7 +467,7 @@ int oyCMMapi4_Release_( oyCMMapi4_s_ **cmmapi4 )
         for(i = 0; i < n; ++i)
         {
           track_name = oyStructTypeToText(parents[i]->type_);
-          fprintf( stderr, "parent[%d]: %s %d\n", i,
+          fprintf( stderr, "parent[%d]: %s[%d]\n", i,
                    track_name, parents[i]->oy_->id_ );
         }
       }
@@ -482,6 +486,8 @@ int oyCMMapi4_Release_( oyCMMapi4_s_ **cmmapi4 )
 
     if(t)
       id_ = atoi(t);
+    else
+      id_ = oy_debug_objects;
 
     if((id_ >= 0 && s->oy_->id_ == id_) ||
        (t && s && strstr(oyStructTypeToText(s->type_), t) != 0) ||

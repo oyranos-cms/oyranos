@@ -354,6 +354,8 @@ oyNamedColor_s_ * oyNamedColor_Copy_ ( oyNamedColor_s_ *namedcolor, oyObject_s o
 
       if(t)
         id_ = atoi(t);
+      else
+        id_ = oy_debug_objects;
 
       if((id_ >= 0 && s->oy_->id_ == id_) ||
          (t && s && strstr(oyStructTypeToText(s->type_), t) != 0) ||
@@ -370,7 +372,7 @@ oyNamedColor_s_ * oyNamedColor_Copy_ ( oyNamedColor_s_ *namedcolor, oyObject_s o
           for(i = 0; i < n; ++i)
           {
             track_name = oyStructTypeToText(parents[i]->type_);
-            fprintf( stderr, "parent[%d]: %s %d\n", i,
+            fprintf( stderr, "parent[%d]: %s[%d]\n", i,
                      track_name, parents[i]->oy_->id_ );
           }
         }
@@ -416,6 +418,8 @@ int oyNamedColor_Release_( oyNamedColor_s_ **namedcolor )
 
     if(t)
       id_ = atoi(t);
+    else
+      id_ = oy_debug_objects;
 
     if((id_ >= 0 && s->oy_->id_ == id_) ||
        (t && s && strstr(oyStructTypeToText(s->type_), t) != 0) ||
@@ -432,7 +436,7 @@ int oyNamedColor_Release_( oyNamedColor_s_ **namedcolor )
         for(i = 0; i < n; ++i)
         {
           track_name = oyStructTypeToText(parents[i]->type_);
-          fprintf( stderr, "parent[%d]: %s %d\n", i,
+          fprintf( stderr, "parent[%d]: %s[%d]\n", i,
                    track_name, parents[i]->oy_->id_ );
         }
       }
@@ -451,6 +455,8 @@ int oyNamedColor_Release_( oyNamedColor_s_ **namedcolor )
 
     if(t)
       id_ = atoi(t);
+    else
+      id_ = oy_debug_objects;
 
     if((id_ >= 0 && s->oy_->id_ == id_) ||
        (t && s && strstr(oyStructTypeToText(s->type_), t) != 0) ||

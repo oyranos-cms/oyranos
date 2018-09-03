@@ -408,6 +408,8 @@ oyPointer_s_ * oyPointer_Copy_ ( oyPointer_s_ *pointer, oyObject_s object )
 
       if(t)
         id_ = atoi(t);
+      else
+        id_ = oy_debug_objects;
 
       if((id_ >= 0 && s->oy_->id_ == id_) ||
          (t && s && strstr(oyStructTypeToText(s->type_), t) != 0) ||
@@ -424,7 +426,7 @@ oyPointer_s_ * oyPointer_Copy_ ( oyPointer_s_ *pointer, oyObject_s object )
           for(i = 0; i < n; ++i)
           {
             track_name = oyStructTypeToText(parents[i]->type_);
-            fprintf( stderr, "parent[%d]: %s %d\n", i,
+            fprintf( stderr, "parent[%d]: %s[%d]\n", i,
                      track_name, parents[i]->oy_->id_ );
           }
         }
@@ -470,6 +472,8 @@ int oyPointer_Release_( oyPointer_s_ **pointer )
 
     if(t)
       id_ = atoi(t);
+    else
+      id_ = oy_debug_objects;
 
     if((id_ >= 0 && s->oy_->id_ == id_) ||
        (t && s && strstr(oyStructTypeToText(s->type_), t) != 0) ||
@@ -486,7 +490,7 @@ int oyPointer_Release_( oyPointer_s_ **pointer )
         for(i = 0; i < n; ++i)
         {
           track_name = oyStructTypeToText(parents[i]->type_);
-          fprintf( stderr, "parent[%d]: %s %d\n", i,
+          fprintf( stderr, "parent[%d]: %s[%d]\n", i,
                    track_name, parents[i]->oy_->id_ );
         }
       }
@@ -505,6 +509,8 @@ int oyPointer_Release_( oyPointer_s_ **pointer )
 
     if(t)
       id_ = atoi(t);
+    else
+      id_ = oy_debug_objects;
 
     if((id_ >= 0 && s->oy_->id_ == id_) ||
        (t && s && strstr(oyStructTypeToText(s->type_), t) != 0) ||

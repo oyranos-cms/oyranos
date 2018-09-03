@@ -345,6 +345,8 @@ oyProfileTag_s_ * oyProfileTag_Copy_ ( oyProfileTag_s_ *profiletag, oyObject_s o
 
       if(t)
         id_ = atoi(t);
+      else
+        id_ = oy_debug_objects;
 
       if((id_ >= 0 && s->oy_->id_ == id_) ||
          (t && s && strstr(oyStructTypeToText(s->type_), t) != 0) ||
@@ -361,7 +363,7 @@ oyProfileTag_s_ * oyProfileTag_Copy_ ( oyProfileTag_s_ *profiletag, oyObject_s o
           for(i = 0; i < n; ++i)
           {
             track_name = oyStructTypeToText(parents[i]->type_);
-            fprintf( stderr, "parent[%d]: %s %d\n", i,
+            fprintf( stderr, "parent[%d]: %s[%d]\n", i,
                      track_name, parents[i]->oy_->id_ );
           }
         }
@@ -407,6 +409,8 @@ int oyProfileTag_Release_( oyProfileTag_s_ **profiletag )
 
     if(t)
       id_ = atoi(t);
+    else
+      id_ = oy_debug_objects;
 
     if((id_ >= 0 && s->oy_->id_ == id_) ||
        (t && s && strstr(oyStructTypeToText(s->type_), t) != 0) ||
@@ -423,7 +427,7 @@ int oyProfileTag_Release_( oyProfileTag_s_ **profiletag )
         for(i = 0; i < n; ++i)
         {
           track_name = oyStructTypeToText(parents[i]->type_);
-          fprintf( stderr, "parent[%d]: %s %d\n", i,
+          fprintf( stderr, "parent[%d]: %s[%d]\n", i,
                    track_name, parents[i]->oy_->id_ );
         }
       }
@@ -442,6 +446,8 @@ int oyProfileTag_Release_( oyProfileTag_s_ **profiletag )
 
     if(t)
       id_ = atoi(t);
+    else
+      id_ = oy_debug_objects;
 
     if((id_ >= 0 && s->oy_->id_ == id_) ||
        (t && s && strstr(oyStructTypeToText(s->type_), t) != 0) ||

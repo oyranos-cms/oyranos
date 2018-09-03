@@ -332,6 +332,8 @@ oyFilterGraph_s_ * oyFilterGraph_Copy_ ( oyFilterGraph_s_ *filtergraph, oyObject
 
       if(t)
         id_ = atoi(t);
+      else
+        id_ = oy_debug_objects;
 
       if((id_ >= 0 && s->oy_->id_ == id_) ||
          (t && s && strstr(oyStructTypeToText(s->type_), t) != 0) ||
@@ -348,7 +350,7 @@ oyFilterGraph_s_ * oyFilterGraph_Copy_ ( oyFilterGraph_s_ *filtergraph, oyObject
           for(i = 0; i < n; ++i)
           {
             track_name = oyStructTypeToText(parents[i]->type_);
-            fprintf( stderr, "parent[%d]: %s %d\n", i,
+            fprintf( stderr, "parent[%d]: %s[%d]\n", i,
                      track_name, parents[i]->oy_->id_ );
           }
         }
@@ -394,6 +396,8 @@ int oyFilterGraph_Release_( oyFilterGraph_s_ **filtergraph )
 
     if(t)
       id_ = atoi(t);
+    else
+      id_ = oy_debug_objects;
 
     if((id_ >= 0 && s->oy_->id_ == id_) ||
        (t && s && strstr(oyStructTypeToText(s->type_), t) != 0) ||
@@ -410,7 +414,7 @@ int oyFilterGraph_Release_( oyFilterGraph_s_ **filtergraph )
         for(i = 0; i < n; ++i)
         {
           track_name = oyStructTypeToText(parents[i]->type_);
-          fprintf( stderr, "parent[%d]: %s %d\n", i,
+          fprintf( stderr, "parent[%d]: %s[%d]\n", i,
                    track_name, parents[i]->oy_->id_ );
         }
       }
@@ -429,6 +433,8 @@ int oyFilterGraph_Release_( oyFilterGraph_s_ **filtergraph )
 
     if(t)
       id_ = atoi(t);
+    else
+      id_ = oy_debug_objects;
 
     if((id_ >= 0 && s->oy_->id_ == id_) ||
        (t && s && strstr(oyStructTypeToText(s->type_), t) != 0) ||

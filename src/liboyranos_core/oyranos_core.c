@@ -265,6 +265,8 @@ int            oyObject_GetId        ( oyObject_s          object )
     int id_ = -1;
     if(t)
       id_ = atoi(t);
+    else
+      id_ = oy_debug_objects;
 
     if((id_ >= 0 && obj->id_ == id_) ||
        (t && strstr(oyStructTypeToText(st->type_), t) != 0) ||
@@ -711,6 +713,8 @@ void         oyObjectDebugMessage_   ( void              * object,
     int id_ = -1;
     if(t)
       id_ = atoi(t);
+    else
+      id_ = oy_debug_objects;
 
     if((id_ >= 0 && obj->id_ == id_) ||
        (t && strstr(struct_name, t) != 0) ||

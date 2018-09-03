@@ -328,6 +328,8 @@ oyFilterPlugs_s_ * oyFilterPlugs_Copy_ ( oyFilterPlugs_s_ *filterplugs, oyObject
 
       if(t)
         id_ = atoi(t);
+      else
+        id_ = oy_debug_objects;
 
       if((id_ >= 0 && s->oy_->id_ == id_) ||
          (t && s && strstr(oyStructTypeToText(s->type_), t) != 0) ||
@@ -344,7 +346,7 @@ oyFilterPlugs_s_ * oyFilterPlugs_Copy_ ( oyFilterPlugs_s_ *filterplugs, oyObject
           for(i = 0; i < n; ++i)
           {
             track_name = oyStructTypeToText(parents[i]->type_);
-            fprintf( stderr, "parent[%d]: %s %d\n", i,
+            fprintf( stderr, "parent[%d]: %s[%d]\n", i,
                      track_name, parents[i]->oy_->id_ );
           }
         }
@@ -390,6 +392,8 @@ int oyFilterPlugs_Release_( oyFilterPlugs_s_ **filterplugs )
 
     if(t)
       id_ = atoi(t);
+    else
+      id_ = oy_debug_objects;
 
     if((id_ >= 0 && s->oy_->id_ == id_) ||
        (t && s && strstr(oyStructTypeToText(s->type_), t) != 0) ||
@@ -406,7 +410,7 @@ int oyFilterPlugs_Release_( oyFilterPlugs_s_ **filterplugs )
         for(i = 0; i < n; ++i)
         {
           track_name = oyStructTypeToText(parents[i]->type_);
-          fprintf( stderr, "parent[%d]: %s %d\n", i,
+          fprintf( stderr, "parent[%d]: %s[%d]\n", i,
                    track_name, parents[i]->oy_->id_ );
         }
       }
@@ -425,6 +429,8 @@ int oyFilterPlugs_Release_( oyFilterPlugs_s_ **filterplugs )
 
     if(t)
       id_ = atoi(t);
+    else
+      id_ = oy_debug_objects;
 
     if((id_ >= 0 && s->oy_->id_ == id_) ||
        (t && s && strstr(oyStructTypeToText(s->type_), t) != 0) ||
