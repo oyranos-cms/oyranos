@@ -68,14 +68,22 @@ void oyFilterNode_Release__Members( oyFilterNode_s_ * filternode )
   {
     n = oyFilterNode_EdgeCount( (oyFilterNode_s*)filternode, 0, 0 );
     for(i = 0; i < n; ++i)
-      oyFilterSocket_Release( (oyFilterSocket_s **)&filternode->sockets[i] );
+      if(filternode->sockets[i])
+      {
+        filternode->sockets[i]->node = NULL;
+        oyFilterSocket_Release( (oyFilterSocket_s **)&filternode->sockets[i] );
+      }
   }
 
   if(filternode->plugs)
   {
     n = oyFilterNode_EdgeCount( (oyFilterNode_s*)filternode, 1, 0 );
     for(i = 0; i < n; ++i)
-      oyFilterPlug_Release( (oyFilterPlug_s**)&filternode->plugs[i] );
+      if(filternode->plugs[i])
+      {
+        filternode->plugs[i]->node = NULL;
+        oyFilterPlug_Release( (oyFilterPlug_s**)&filternode->plugs[i] );
+      }
   }
 
   if(filternode->oy_->deallocateFunc_)
