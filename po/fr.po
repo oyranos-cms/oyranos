@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ICC Examin 0.41\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2018-08-30 18:57+0200\n"
+"POT-Creation-Date: 2018-09-03 10:15+0200\n"
 "PO-Revision-Date: 2006-06-29 19:31+0200\n"
 "Last-Translator: Pascal LACROIX <lacroixpascal at vfemail.net>\n"
 "Language-Team: <fr@li.org>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: liboyranos_core/oyranos_core.c:421 tools/oyranos-device.c:370
+#: liboyranos_core/oyranos_core.c:423 tools/oyranos-device.c:370
 #: tools/oyranos-device.c:386 tools/oyranos-device.c:401
 #: tools/oyranos-device.c:423 tools/oyranos-device.c:465
 #: tools/oyranos-device.c:828 tools/oyranos-device.c:1025
@@ -2030,7 +2030,7 @@ msgstr "ICC Profils"
 msgid "ICC profile directory name"
 msgstr "Fichier"
 
-#: API_generated/oyProfile_s_.c:956
+#: API_generated/oyProfile_s_.c:991
 #, fuzzy
 msgid "ICC profile id written"
 msgstr "ICC Profils"
@@ -2672,11 +2672,11 @@ msgstr "Luv"
 #: API_generated/oyConversion_s_.c:203 API_generated/oyFilterCore_s.c:216
 #: API_generated/oyFilterCore_s_.c:224 API_generated/oyFilterCore_s_.c:232
 #: API_generated/oyFilterGraph_s_.c:200 API_generated/oyFilterGraph_s_.c:208
-#: API_generated/oyFilterNode_s_.c:247 API_generated/oyFilterNode_s_.c:255
+#: API_generated/oyFilterNode_s_.c:259 API_generated/oyFilterNode_s_.c:267
 #: API_generated/oyFilterNodes_s_.c:194 API_generated/oyFilterNodes_s_.c:202
 #: API_generated/oyFilterPlug_s_.c:201 API_generated/oyFilterPlug_s_.c:209
 #: API_generated/oyFilterPlugs_s_.c:194 API_generated/oyFilterPlugs_s_.c:202
-#: API_generated/oyFilterSocket_s_.c:220 API_generated/oyFilterSocket_s_.c:228
+#: API_generated/oyFilterSocket_s_.c:217 API_generated/oyFilterSocket_s_.c:225
 #: API_generated/oyHash_s_.c:228 API_generated/oyHash_s_.c:236
 #: API_generated/oyImage_s_.c:222 API_generated/oyImage_s_.c:230
 #: API_generated/oyLis_s_.c:186 API_generated/oyLis_s_.c:194
@@ -2995,7 +2995,7 @@ msgstr "Model:"
 msgid "No"
 msgstr ""
 
-#: API_generated/oyProfile_s_.c:941
+#: API_generated/oyProfile_s_.c:976
 #, fuzzy
 msgid "No ICC profile id detected"
 msgstr "ICC Profils"
@@ -3697,7 +3697,7 @@ msgstr ""
 msgid "Relative Colorimetric"
 msgstr "Colorimétrie relative"
 
-#: API_generated/oyFilterNode_s.c:1037
+#: API_generated/oyFilterNode_s.c:1040
 msgid "Remote filter or plug not available."
 msgstr ""
 
@@ -4019,7 +4019,7 @@ msgstr ""
 msgid "Show white point modes"
 msgstr "ICC Profils"
 
-#: API_generated/oyFilterNode_s_.c:1281 API_generated/oyObserver_s.c:360
+#: API_generated/oyFilterNode_s_.c:1328 API_generated/oyObserver_s.c:360
 #: API_generated/oyObserver_s.c:371 API_generated/oyObserver_s.c:572
 #: API_generated/oyObserver_s.c:650 API_generated/oyObserver_s_.c:53
 #: examples/image_display/oyranos_display_helper_classes_fltk.cpp:47
@@ -4888,7 +4888,7 @@ msgstr "Description"
 msgid "Viewing conditions description"
 msgstr "Description"
 
-#: liboyranos_core/oyranos_core.c:418 tools/oyranos-device.c:447
+#: liboyranos_core/oyranos_core.c:420 tools/oyranos-device.c:447
 #: tools/oyranos-device.c:450 tools/oyranos-device.c:456
 #: tools/qcmsevents/qcmsevents.cpp:330
 #, c-format
@@ -4943,7 +4943,7 @@ msgstr "Ouvrir Profil"
 msgid "Write to ICC profile:"
 msgstr "ICC Profils"
 
-#: API_generated/oyProfile_s_.c:933
+#: API_generated/oyProfile_s_.c:968
 #, fuzzy
 msgid "Wrong ICC profile id detected"
 msgstr "ICC Profils"
@@ -5167,7 +5167,7 @@ msgstr ""
 msgid "enable simple defaults"
 msgstr ""
 
-#: API_generated/oyConversion_s.c:203 API_generated/oyFilterNode_s_.c:659
+#: API_generated/oyConversion_s.c:203 API_generated/oyFilterNode_s_.c:706
 #: API_generated/oyranos_devices.c:2604 API_generated/oyranos_devices.c:2616
 #: API_generated/oyranos_devices.c:2649 API_generated/oyranos_devices.c:3167
 #: API_generated/oyranos_module.c:2022

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2018-08-30 18:57+0200\n"
+"POT-Creation-Date: 2018-09-03 10:15+0200\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -19,7 +19,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: vim 6.0\n"
 
-#: liboyranos_core/oyranos_core.c:421 tools/oyranos-device.c:370
+#: liboyranos_core/oyranos_core.c:423 tools/oyranos-device.c:370
 #: tools/oyranos-device.c:386 tools/oyranos-device.c:401
 #: tools/oyranos-device.c:423 tools/oyranos-device.c:465
 #: tools/oyranos-device.c:828 tools/oyranos-device.c:1025
@@ -1967,7 +1967,7 @@ msgstr "ICC Profil"
 msgid "ICC profile directory name"
 msgstr "ICC Profilpfad"
 
-#: API_generated/oyProfile_s_.c:956
+#: API_generated/oyProfile_s_.c:991
 msgid "ICC profile id written"
 msgstr "ICC Profil ID geschrieben"
 
@@ -2582,11 +2582,11 @@ msgstr "Luv"
 #: API_generated/oyConversion_s_.c:203 API_generated/oyFilterCore_s.c:216
 #: API_generated/oyFilterCore_s_.c:224 API_generated/oyFilterCore_s_.c:232
 #: API_generated/oyFilterGraph_s_.c:200 API_generated/oyFilterGraph_s_.c:208
-#: API_generated/oyFilterNode_s_.c:247 API_generated/oyFilterNode_s_.c:255
+#: API_generated/oyFilterNode_s_.c:259 API_generated/oyFilterNode_s_.c:267
 #: API_generated/oyFilterNodes_s_.c:194 API_generated/oyFilterNodes_s_.c:202
 #: API_generated/oyFilterPlug_s_.c:201 API_generated/oyFilterPlug_s_.c:209
 #: API_generated/oyFilterPlugs_s_.c:194 API_generated/oyFilterPlugs_s_.c:202
-#: API_generated/oyFilterSocket_s_.c:220 API_generated/oyFilterSocket_s_.c:228
+#: API_generated/oyFilterSocket_s_.c:217 API_generated/oyFilterSocket_s_.c:225
 #: API_generated/oyHash_s_.c:228 API_generated/oyHash_s_.c:236
 #: API_generated/oyImage_s_.c:222 API_generated/oyImage_s_.c:230
 #: API_generated/oyLis_s_.c:186 API_generated/oyLis_s_.c:194
@@ -2889,7 +2889,7 @@ msgstr "Nächtliche Anmutung"
 msgid "No"
 msgstr "Nein"
 
-#: API_generated/oyProfile_s_.c:941
+#: API_generated/oyProfile_s_.c:976
 msgid "No ICC profile id detected"
 msgstr "kein ICC Profil ID gefunden"
 
@@ -3543,7 +3543,7 @@ msgstr "Beziehung der Positionsparameter:"
 msgid "Relative Colorimetric"
 msgstr "Relativ Farbmetrisch"
 
-#: API_generated/oyFilterNode_s.c:1037
+#: API_generated/oyFilterNode_s.c:1040
 msgid "Remote filter or plug not available."
 msgstr "Gegenüberliegender Filter oder Stecker nicht verfügbar."
 
@@ -3845,7 +3845,7 @@ msgstr "Zeige an, welche Richtlinie zur Kombination aller Einstellungen passt."
 msgid "Show white point modes"
 msgstr "Zeige Weißpunktmodus"
 
-#: API_generated/oyFilterNode_s_.c:1281 API_generated/oyObserver_s.c:360
+#: API_generated/oyFilterNode_s_.c:1328 API_generated/oyObserver_s.c:360
 #: API_generated/oyObserver_s.c:371 API_generated/oyObserver_s.c:572
 #: API_generated/oyObserver_s.c:650 API_generated/oyObserver_s_.c:53
 #: examples/image_display/oyranos_display_helper_classes_fltk.cpp:47
@@ -4939,7 +4939,7 @@ msgstr "Betrachtungsbedingungen"
 msgid "Viewing conditions description"
 msgstr "Beschreibung der Betrachtungbedingungen"
 
-#: liboyranos_core/oyranos_core.c:418 tools/oyranos-device.c:447
+#: liboyranos_core/oyranos_core.c:420 tools/oyranos-device.c:447
 #: tools/oyranos-device.c:450 tools/oyranos-device.c:456
 #: tools/qcmsevents/qcmsevents.cpp:330
 #, c-format
@@ -4987,7 +4987,7 @@ msgstr "Schreibe nach"
 msgid "Write to ICC profile:"
 msgstr "Schreibe ICC Profil:"
 
-#: API_generated/oyProfile_s_.c:933
+#: API_generated/oyProfile_s_.c:968
 msgid "Wrong ICC profile id detected"
 msgstr "Fehler in ICC Profil ID gefunden!"
 
@@ -5201,7 +5201,7 @@ msgstr "bette Geräte-und Treiberinformationen in ICC meta Block ein"
 msgid "enable simple defaults"
 msgstr "benutze einfache Grundeinstellungen"
 
-#: API_generated/oyConversion_s.c:203 API_generated/oyFilterNode_s_.c:659
+#: API_generated/oyConversion_s.c:203 API_generated/oyFilterNode_s_.c:706
 #: API_generated/oyranos_devices.c:2604 API_generated/oyranos_devices.c:2616
 #: API_generated/oyranos_devices.c:2649 API_generated/oyranos_devices.c:3167
 #: API_generated/oyranos_module.c:2022

@@ -13,6 +13,7 @@
  */
 
 #include <stddef.h>  /* ptrdiff_t size_t */
+#include <assert.h>
 
 #include <oyranos_object_internal.h>
 
@@ -56,7 +57,8 @@
 #include "oyConfig_s_.h"
 #include "oyConfigs_s_.h"
 
-#define PRINT_ID(id_)  if(id_ == oy_debug_objects) fprintf(stderr, OY_DBG_FORMAT_ "ID: %d\n", OY_DBG_ARGS_, id_);
+#define PRINT_ID(id_)  if(id_ == old_oy_debug_objects) fprintf(stderr, OY_DBG_FORMAT_ "ID: %d\n", OY_DBG_ARGS_, id_);
+int old_oy_debug_objects = -1; /* be more silent */
 
 /* get a objects directly owned references */
 int                oyStruct_GetChildren (
@@ -71,7 +73,10 @@ int                oyStruct_GetChildren (
   if(list) *list = c;
 
 #define CHECK_ASSIGN_STRUCT(struct_name) \
-         if(s->struct_name) c[n++] = (oyStruct_s*)s->struct_name;
+         if(s->struct_name) { c[n++] = (oyStruct_s*)s->struct_name; \
+                              if(((oyStruct_s*)s->struct_name)->type_ > oyOBJECT_MAX) \
+                              { fprintf(stderr, "%s::%s failed\n", oyStruct_GetText( (oyStruct_s*)s, oyNAME_DESCRIPTION, 0 ), #struct_name); \
+                                goto gcassert; } }
   switch(obj->type_)
   {
     case oyOBJECT_NONE:
@@ -428,9 +433,13 @@ int                oyStruct_GetChildren (
   }
 
   return n;
+
+gcassert:
+  return 0;
 }
 
-void oyObjectTreeCallbackSearchParents(void              * user_data,
+static void oyObjectTreeCallbackSearchParents (
+                                       void              * user_data,
                                        int                 top_id OY_UNUSED,
                                        oyLeave_s         * tree OY_UNUSED,
                                        oyStruct_s        * grandparent OY_UNUSED,
@@ -447,9 +456,6 @@ void oyObjectTreeCallbackSearchParents(void              * user_data,
   int pid OY_UNUSED;
   int pos = 0;
   oyStruct_s * found = NULL;
-  int old_oy_debug_objects = oy_debug_objects; /* be more silent */
-
-  oy_debug_objects = -1;
 
   id = oyStruct_GetId(ref);
   cid = current->oy_ ? oyStruct_GetId(current) : -2;
@@ -481,8 +487,6 @@ void oyObjectTreeCallbackSearchParents(void              * user_data,
 
   if(found != NULL && pos < oy_c_max)
     c[pos] = found;
-
-  oy_debug_objects = old_oy_debug_objects;
 }
 
 
@@ -495,7 +499,10 @@ int                oyStruct_GetParents(oyStruct_s        * obj,
 
   memset(c,0,sizeof(oyStruct_s *)*oy_c_max);
   c[0] = obj;
+
   oyObjectIdListTraverseStructTrees( ids, oyObjectTreeCallbackSearchParents, c, 0 );
+
+  oyObjectReleaseCurrentObjectIdList( &ids );
 
   while(c[n+1]) ++n;
 
@@ -528,7 +535,7 @@ static const int oy_object_list_max_count_ = 1000000;
 oyLeave_s ** oy_debug_leave_cache_ = NULL;
 
 /* allocate object and oyLeave_s**children + oyStruct_s**obj arrays */
-oyLeave_s *        oyLeave_NewWith   ( oyStruct_s        * obj,
+static oyLeave_s * oyLeave_NewWith   ( oyStruct_s        * obj,
                                        int                 id,
                                        oyLeave_s         * parent,
                                        oyLeave_s         * grandparent,
@@ -541,7 +548,7 @@ oyLeave_s *        oyLeave_NewWith   ( oyStruct_s        * obj,
     oy_debug_leave_cache_ = (oyLeave_s**) myCalloc_m( sizeof( oyLeave_s* ), oy_object_list_max_count_ + 1 );
   }
 
-  if(id == oy_debug_objects)
+  if(id == old_oy_debug_objects)
   { fprintf(stderr, "%s ", oyStruct_GetText(obj, oyNAME_DESCRIPTION, 2));
     PRINT_ID(id)
   }
@@ -580,7 +587,7 @@ oyLeave_s *        oyLeave_NewWith   ( oyStruct_s        * obj,
   return l;
 }
 
-int                oyLeave_Release   ( oyLeave_s        ** leave )
+static int         oyLeave_Release   ( oyLeave_s        ** leave )
 {
   oyLeave_s * l = NULL;
   int error = 0;
@@ -614,17 +621,20 @@ int                oyLeave_Release   ( oyLeave_s        ** leave )
   return 0;
 }
 
-void oyDebugLevelCacheClean          ( void )
+static void oyDebugLevelCacheClean   ( void )
 {
-  int i;
   if(oy_debug_leave_cache_)
-  for(i = 0; i < oy_object_list_max_count_; ++i)
-    if(oy_debug_leave_cache_[i] )
-      oyLeave_Release( &oy_debug_leave_cache_[i] );
-  oyFree_m_(oy_debug_leave_cache_);
+  {
+    int i;
+    for(i = 0; i < oy_object_list_max_count_; ++i)
+      if(oy_debug_leave_cache_[i] )
+        oyLeave_Release( &oy_debug_leave_cache_[i] );
+    oyFree_m_(oy_debug_leave_cache_);
+  }
+  oy_debug_leave_cache_ = NULL;
 }
 
-int                oyObjectStructTreeParentContains (
+static int         oyObjectStructTreeParentContains (
                                        oyLeave_s         * l,
                                        int                 id,
                                        int                 tolerate )
@@ -643,8 +653,8 @@ int                oyObjectStructTreeParentContains (
     ++n;
     if(n > 100)
     {
-      if( id == oy_debug_objects ||
-          l->id == oy_debug_objects )
+      if( id == old_oy_debug_objects ||
+          l->id == old_oy_debug_objects )
         WARNc3_S( "[%d](%d) maximum loops reached: %d", l->id, id, n );
       --tolerate;
       break;
@@ -668,8 +678,7 @@ static int contains_nested = 0;
  * -  1 : search down in children
  * -  0 : search in both directions
  * - -1 : search upward in parents */
-int                oyObjectStructTreeContains (
-                                       oyLeave_s         * l,
+static int oyObjectStructTreeContains( oyLeave_s         * l,
                                        int                 id,
                                        int                 direction )
 {
@@ -724,8 +733,8 @@ int                oyObjectStructTreeContains (
               (contains_cache[1] && contains_cache[1] == c3) )
 #endif
           {
-            if( id == oy_debug_objects ||
-                l->id == oy_debug_objects ||
+            if( id == old_oy_debug_objects ||
+                l->id == old_oy_debug_objects ||
                 oy_debug )
               fprintf(stderr, OY_DBG_FORMAT_ "[%d] found circulars (parents [%d]->[%d]->[%d]->[%d]->[%d]->[%d]->[%d]->[%d]->[%d])\n", OY_DBG_ARGS_, l->id, contains_cache[1], contains_cache[2], contains_cache[3], contains_cache[4], contains_cache[5], contains_cache[6], contains_cache[7], contains_cache[8], contains_cache[9]);
             CRETURN( 0 );
@@ -746,7 +755,7 @@ int                oyObjectStructTreeContains (
 
 static int cntx = 0;
 static int cntx_mem = 0;
-oyLeave_s *          oyObjectIdListGetStructTree (
+static oyLeave_s * oyObjectIdListGetStructTree (
                                        int                 top,
                                        oyLeave_s         * grandparent,
                                        oyLeave_s         * parent,
@@ -769,7 +778,7 @@ oyLeave_s *          oyObjectIdListGetStructTree (
     return l;
   }
 
-  if(id == oy_debug_objects)
+  if(id == old_oy_debug_objects)
     PRINT_ID(id)
   obs = oyObjectGetList( &max_count );
   if(!obs || !obs[id])
@@ -787,7 +796,9 @@ oyLeave_s *          oyObjectIdListGetStructTree (
 
     for(i = 0; i < l->n; ++i)
     {
-      int i_id = oyStruct_GetId(l->list[i]);
+      int i_id = -1;
+      if(l->list[i] && l->list[i]->oy_)
+        i_id = l->list[i]->oy_->id_;
 
       PRINT_ID(i_id)
       if(i_id >= oy_object_list_max_count_)
@@ -819,6 +830,10 @@ int                oyObjectIdListTraverseStructTrees (
 {
   int i, n = 0;
   oyLeave_s ** ts = myCalloc_m( sizeof( oyLeave_s* ), oy_object_list_max_count_ );
+
+  old_oy_debug_objects = oy_debug_objects; /* be more silent */
+  oy_debug_objects = -1;
+
   for(i = 0; i < oy_object_list_max_count_; ++i)
     if(ids[i] > 0)
       ts[n++] = oyObjectIdListGetStructTree( i, 0, 0, ids, i, flags & 0x01 ? -oy_object_list_max_count_ : 0, func, user_data );
@@ -826,6 +841,8 @@ int                oyObjectIdListTraverseStructTrees (
   /* release trees */
   oyDebugLevelCacheClean();
   oyFree_m_(ts);
+
+  oy_debug_objects = old_oy_debug_objects;
 
   return n;
 }
@@ -838,7 +855,7 @@ typedef struct oyTreeData_s {
   int flags;
 } oyTreeData_s;
 
-void oyObjectTreePrintCallback       ( void              * user_data,
+static void oyObjectTreePrintCallback( void              * user_data,
                                        int                 top,
                                        oyLeave_s         * tree,
                                        oyStruct_s        * grandparent OY_UNUSED,
@@ -882,7 +899,7 @@ void oyObjectTreePrintCallback       ( void              * user_data,
     graphs[top].l = tree;
   }
 }
-char * oyObjectTreeDotGraphCallbackGetDescription( oyStruct_s * s )
+static char * oyObjectTreeDotGraphCallbackGetDescription( oyStruct_s * s )
 {
   const char * nick = oyStructTypeToText( s->type_ ),
              * text = oyStruct_GetText( s, oyNAME_DESCRIPTION, 2 );
@@ -901,7 +918,7 @@ char * oyObjectTreeDotGraphCallbackGetDescription( oyStruct_s * s )
 
   return desc;
 }
-const char * oyDotNodeGetColor       ( oyStruct_s        * current,
+static const char * oyDotNodeGetColor( oyStruct_s        * current,
                                        const char        * desc )
 {
   const char * node = "";
@@ -942,7 +959,7 @@ const char * oyDotNodeGetColor       ( oyStruct_s        * current,
   return node;
 }
 
-void oyDotNodeAppend                 ( char             ** text,
+static void  oyDotNodeAppend         ( char             ** text,
                                        oyStruct_s        * current,
                                        int                 id,
                                        const char        * desc )
@@ -953,7 +970,8 @@ void oyDotNodeAppend                 ( char             ** text,
                      id, oyStructTypeToText( current->type_ ), id, oyObject_GetRefCount(current->oy_), desc?"\\n":"", desc?desc:"", node );
 }
 
-void oyObjectTreeDotGraphCallback    ( void              * user_data,
+static void oyObjectTreeDotGraphCallback (
+                                       void              * user_data,
                                        int                 top,
                                        oyLeave_s         * tree,
                                        oyStruct_s        * grandparent,
@@ -1071,7 +1089,7 @@ void oyObjectTreeDotGraphCallback    ( void              * user_data,
   }
 }
 
-int                oyObjectIdListTraverseStructTrees_ (
+static int oyObjectIdListTraverseStructTrees_ (
                                        int               * ids,
                                        oyObjectTreeCallback_f func,
                                        oyTreeData_s      * trees,
@@ -1092,7 +1110,7 @@ int                oyObjectIdListTraverseStructTrees_ (
   return n;
 }
 
-oyStruct_s *       oyStruct_FromId   ( int                 id )
+static oyStruct_s *  oyStruct_FromId ( int                 id )
 {
   const oyObject_s * obs;
 
@@ -1131,6 +1149,9 @@ void               oyObjectTreePrint ( int                 flags )
     int n, i, count = 0;
     char * dot = 0, * dot_edges = 0;
 
+    old_oy_debug_objects = oy_debug_objects; /* be more silent */
+    oy_debug_objects = -1;
+
     flags |= skip_cmm_caches_flag;
 
     if(flags)
@@ -1162,7 +1183,7 @@ void               oyObjectTreePrint ( int                 flags )
 
     for(i = 0; i < oy_object_list_max_count_; ++i)
     {
-      if(oy_debug_objects == i)
+      if(old_oy_debug_objects == i)
       {
         oyStruct_s * s = oyStruct_FromId(i);
         if(s)
@@ -1184,7 +1205,7 @@ void               oyObjectTreePrint ( int                 flags )
             found = oyObjectStructTreeContains( trees[j].l, i, 1 );
           if(found) break;
         }
-        if(oy_debug_objects == i)
+        if(old_oy_debug_objects == i)
           fprintf( stderr, " %s %d in %d\n", found?"found":"found not",i,j);
         if(found == 0)
         {
@@ -1205,7 +1226,7 @@ void               oyObjectTreePrint ( int                 flags )
     fprintf( stderr, "found/printed trees: %d/%d\n", n, count);
 
     oyFree_m_(trees);
-    oyFree_m_(ids_old);
+    oyObjectReleaseCurrentObjectIdList( &ids_old );
     /* check if everything is released */
     oyDebugLevelCacheClean();
 
@@ -1295,6 +1316,7 @@ bgcolor=\"transparent\"\n\
       oyFree_m_( dot );
       oyFree_m_( dot_edges );
     }
+    oy_debug_objects = old_oy_debug_objects;
   }
 }
 
