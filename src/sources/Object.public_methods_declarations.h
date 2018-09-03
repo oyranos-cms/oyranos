@@ -68,10 +68,6 @@ int                oyObjectIdListTraverseStructTrees (
                                        oyObjectTreeCallback_f func,
                                        void              * user_data,
                                        int                 flags );
-int                oyObjectStructTreeContains (
-                                       oyLeave_s         * l,
-                                       int                 id,
-                                       int                 direction_minusIsUp_plusIsDown_zeroIsBoth );
 void               oyObjectTreePrint ( int                 flags );
 int                oyStruct_GetChildren (
                                        oyStruct_s        * obj,
