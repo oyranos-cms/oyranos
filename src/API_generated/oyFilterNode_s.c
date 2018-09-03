@@ -488,6 +488,9 @@ int            oyFilterNode_Disconnect(oyFilterNode_s    * node,
   oyCheckType__m( oyOBJECT_FILTER_NODE_S, return 0 );
 
   edge = s->plugs[pos];
+  if(!edge)
+    return 1;
+
   oyFilterSocket_Callback( (oyFilterPlug_s*)edge, oyCONNECTOR_EVENT_RELEASED );
   oyFilterSocket_Release( (oyFilterSocket_s**)&edge->remote_socket_ );
   return 0;
