@@ -647,14 +647,15 @@ oyTESTRESULT_e testStringRun ()
   }
   oyFree_m_(test_out);
 
-  int list_n = 0, filt_n = 0;
-  char ** list = oyStringSplit( "org/domain/eins.lib;org/domain/zwei.txt;org/domain/drei.lib;net/welt/vier.lib;net/welt/vier.txt;/net/welt/fuenf;/net/welt/fuenf", ';', &list_n, oyAllocateFunc_ );
+  int list_n = 0, filt_n = 0, orig_n;
+  char ** list = oyStringSplit( "org/domain/eins.lib;org/domain/eins.lib;org/domain/zwei.txt;org/domain/drei.lib;org/domain/zwei.txt;org/domain/eins.lib;net/welt/vier.lib;net/welt/vier.txt;/net/welt/fuenf;/net/welt/fuenf", ';', &list_n, oyAllocateFunc_ );
   char ** filt = oyStringListFilter_( (const char**)list, list_n,
                                       "org/domain", NULL, "lib", &filt_n,
                                       oyAllocateFunc_ );
-  if( filt_n == 2 &&
+  orig_n = list_n;
+  if( filt_n == 4 &&
       strcmp(filt[0], list[0] ) == 0 &&
-      strcmp(filt[1], list[2] ) == 0)
+      strcmp(filt[2], list[3] ) == 0)
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "oyStringListFilter(path=org/domain,suffix=lib)     " );
   } else
@@ -671,8 +672,8 @@ oyTESTRESULT_e testStringRun ()
                               NULL, "vier", "", &filt_n,
                               oyAllocateFunc_ );
   if( filt_n == 2 &&
-      strcmp(filt[0], list[3] ) == 0 &&
-      strcmp(filt[1], list[4] ) == 0)
+      strcmp(filt[0], list[6] ) == 0 &&
+      strcmp(filt[1], list[7] ) == 0)
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
     "oyStringListFilter(name=vier)                      " );
   } else
@@ -688,7 +689,7 @@ oyTESTRESULT_e testStringRun ()
   oyStringListFreeDoubles( list, &list_n, oyDeAllocateFunc_ );
   if( list_n == 6 )
   { PRINT_SUB( oyTESTRESULT_SUCCESS,
-    "oyStringListFreeDoubles()                          " );
+    "oyStringListFreeDoubles()  %d/%d                   ", orig_n, list_n );
   } else
   { PRINT_SUB( oyTESTRESULT_FAIL,
     "oyStringListFreeDoubles()                          " );
