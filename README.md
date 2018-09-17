@@ -151,6 +151,7 @@ device specific Informations (ICC profiles) und system wide settings.
 * USE\_SYSTEM\_ELEKTRA - fail if not found
 * USE\_SYSTEM\_LIBXCM - fail if not found; default is shipped fallback version
 * USE\_SYSTEM\_OPENICC - fail if not found; default is shipped fallback version
+* USE\_SYSTEM\_OYJL - fail if not found; default is shipped fallback version
 * USE\_SYSTEM\_YAJL - fail if not found; default is shipped fallback version
 * USE\_SYSTEM\_LIBXML2 - fail if not found; default is shipped fallback version
 * ENABLE\_QT - detect Qt5 and Qt4i; default is ON
