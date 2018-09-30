@@ -134,6 +134,18 @@ const char *   oyStruct_GetInfo      ( oyPointer           context_object,
 
   if(oy_static_msg_funcs_ != NULL)
   {
+    int n = oy_msg_func_n_;
+
+    if(!oy_msg_func_n_)
+      n = (int) oyOBJECT_MAX;
+
+    if((int)c->type_ > n)
+    {
+      fprintf(stderr, "range check for oyStruct_s::type_ failed: %d > %d\n",
+              (int)c->type_, n);
+      return NULL;
+    }
+
     f = oy_static_msg_funcs_[c->type_];
     if(f)
       text = f( c, type, flags );
