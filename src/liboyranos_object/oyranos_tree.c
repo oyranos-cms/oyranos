@@ -20,6 +20,7 @@
 #include "oyObject_s.h"
 #include "oyObject_s_.h"
 
+#include "oyranos_threads.h"
 #include "oyNamedColor_s_.h"
 #include "oyNamedColors_s_.h"
 #include "oyProfile_s_.h"
@@ -57,7 +58,7 @@
 #include "oyConfig_s_.h"
 #include "oyConfigs_s_.h"
 
-#define PRINT_ID(id_)  if(id_ == old_oy_debug_objects) fprintf(stderr, OY_DBG_FORMAT_ "ID: %d\n", OY_DBG_ARGS_, id_);
+#define PRINT_ID(id_)  ;//if(id_ == old_oy_debug_objects) fprintf(stderr, OY_DBG_FORMAT_ "ID: %d\n", OY_DBG_ARGS_, id_);
 int old_oy_debug_objects = -1; /* be more silent */
 
 /* get a objects directly owned references */
@@ -429,7 +430,18 @@ int                oyStruct_GetChildren (
     int i = 0;
     while(c[i] && i < 120) ++i;
     if(i != n)
-      fprintf( stderr, OY_DBG_FORMAT_ "%s[%d] collected ambigous child count: %d == %d\n", OY_DBG_ARGS_, oyStructTypeToText( obj->type_ ), oyStruct_GetId(obj), i,n );
+    {
+      fprintf( stderr, OY_DBG_FORMAT_ "%s[%d] collected ambigous child count: %d == %d ", OY_DBG_ARGS_, oyStructTypeToText( obj->type_ ), oyStruct_GetId(obj), i,n );
+      if(obj->type_ == oyOBJECT_STRUCT_LIST_S)
+      {
+        int j;
+        oyStructList_s_ * s = (oyStructList_s_*)obj;
+        fprintf( stderr, "\n%s\n", oyStruct_GetText(obj,oyNAME_DESCRIPTION,2) );
+        for(j = 0; j < i && j < 5; ++j)
+          fprintf( stderr, "[%d]", oyStruct_GetId(s->ptr_[j]) );
+      }
+      fprintf( stderr, "\n" );
+    }
   }
 
   return n;
@@ -531,8 +543,19 @@ static void * myCalloc_( size_t size, size_t n )
   return mem;
 }
 #define AD oyAllocateFunc_,oyDeAllocateFunc_
+int oyObjectGetThreadIdDummy() { return 0; }
+oyThreadId_f oyObjectGetThreadId = oyObjectGetThreadIdDummy;
 static const int oy_object_list_max_count_ = 1000000;
-oyLeave_s ** oy_debug_leave_cache_ = NULL;
+oyLeave_s *** oy_debug_leave_cache_ = NULL;
+oyLeave_s ** oyDebugLevelCacheGetForThread()
+{
+  int thread_id = oyObjectGetThreadId();
+  if(!oy_debug_leave_cache_)
+    oy_debug_leave_cache_ = (oyLeave_s***) myCalloc_m( sizeof( oyLeave_s** ), 1024 );
+  if(!oy_debug_leave_cache_[thread_id])
+    oy_debug_leave_cache_[thread_id] = (oyLeave_s**) myCalloc_m( sizeof( oyLeave_s* ), oy_object_list_max_count_ + 1 );
+  return oy_debug_leave_cache_[thread_id];
+}
 
 /* allocate object and oyLeave_s**children + oyStruct_s**obj arrays */
 static oyLeave_s * oyLeave_NewWith   ( oyStruct_s        * obj,
@@ -543,19 +566,19 @@ static oyLeave_s * oyLeave_NewWith   ( oyStruct_s        * obj,
 {
   oyLeave_s * l = NULL;
  
-  if(!oy_debug_leave_cache_)
-  {
-    oy_debug_leave_cache_ = (oyLeave_s**) myCalloc_m( sizeof( oyLeave_s* ), oy_object_list_max_count_ + 1 );
-  }
+  oyLeave_s ** cache = oyDebugLevelCacheGetForThread( );
 
   if(id == old_oy_debug_objects)
-  { fprintf(stderr, "%s ", oyStruct_GetText(obj, oyNAME_DESCRIPTION, 2));
+  { const char * txt = oyStruct_GetText(obj, oyNAME_DESCRIPTION, 2);
+    if(!txt)
+      txt = oyStruct_GetText(obj, oyNAME_DESCRIPTION, 0);
+    fprintf(stderr, "%s ", txt);
     PRINT_ID(id)
   }
 
-  if(oy_debug_leave_cache_[id])
+  if(cache[id])
   {
-    l = oy_debug_leave_cache_[id];
+    l = cache[id];
     *alloced = 0;
   }
 
@@ -581,7 +604,7 @@ static oyLeave_s * oyLeave_NewWith   ( oyStruct_s        * obj,
       l->children = myCalloc_m( sizeof( oyLeave_s* ), l->n + 1 );
     }
 
-    oy_debug_leave_cache_[id] = l;
+    cache[id] = l;
   }
 
   return l;
@@ -590,6 +613,7 @@ static oyLeave_s * oyLeave_NewWith   ( oyStruct_s        * obj,
 static int         oyLeave_Release   ( oyLeave_s        ** leave )
 {
   oyLeave_s * l = NULL;
+  oyLeave_s ** cache = oyDebugLevelCacheGetForThread( );
   int error = 0;
  
   if(leave)
@@ -600,7 +624,7 @@ static int         oyLeave_Release   ( oyLeave_s        ** leave )
 
   PRINT_ID(l->id)
 
-  if(oy_debug_leave_cache_[l->id] == NULL)
+  if(cache[l->id] == NULL)
     error = 1;
 
   *leave = NULL;
@@ -608,7 +632,7 @@ static int         oyLeave_Release   ( oyLeave_s        ** leave )
   if(error)
     return error;
 
-  oy_debug_leave_cache_[l->id] = NULL;
+  cache[l->id] = NULL;
   if(oy_debug_memory)
     fprintf( stderr, "%d <- release oyLeave_s(id) " OY_PRINT_POINTER "\n", l->id, (ptrdiff_t)l );
 
@@ -623,15 +647,17 @@ static int         oyLeave_Release   ( oyLeave_s        ** leave )
 
 static void oyDebugLevelCacheClean   ( void )
 {
-  if(oy_debug_leave_cache_)
+  oyLeave_s ** cache = oyDebugLevelCacheGetForThread( );
+  int thread_id = oyObjectGetThreadId();
+  if(cache)
   {
     int i;
     for(i = 0; i < oy_object_list_max_count_; ++i)
-      if(oy_debug_leave_cache_[i] )
-        oyLeave_Release( &oy_debug_leave_cache_[i] );
-    oyFree_m_(oy_debug_leave_cache_);
+      if(cache[i] )
+        oyLeave_Release( &cache[i] );
+    oyFree_m_(cache);
   }
-  oy_debug_leave_cache_ = NULL;
+  oy_debug_leave_cache_[thread_id] = NULL;
 }
 
 static int         oyObjectStructTreeParentContains (
@@ -655,7 +681,7 @@ static int         oyObjectStructTreeParentContains (
     {
       if( id == old_oy_debug_objects ||
           l->id == old_oy_debug_objects )
-        WARNc3_S( "[%d](%d) maximum loops reached: %d", l->id, id, n );
+        WARNc3_S( "[%d](%d) maximum loops reached: %d", l->id, cid, n );
       --tolerate;
       break;
     }
@@ -778,8 +804,7 @@ static oyLeave_s * oyObjectIdListGetStructTree (
     return l;
   }
 
-  if(id == old_oy_debug_objects)
-    PRINT_ID(id)
+  PRINT_ID(id)
   obs = oyObjectGetList( &max_count );
   if(!obs || !obs[id])
     return l;
@@ -968,6 +993,8 @@ static void  oyDotNodeAppend         ( char             ** text,
   const char * node = oyDotNodeGetColor( current, desc );
   oyStringAddPrintf( text, 0,0, "%d [label=\"%s id=%d refs=%d%s%s\"%s];\n",
                      id, oyStructTypeToText( current->type_ ), id, oyObject_GetRefCount(current->oy_), desc?"\\n":"", desc?desc:"", node );
+  if(old_oy_debug_objects == id)
+    printf("append: %d\n", id);
 }
 
 static void oyObjectTreeDotGraphCallback (
@@ -1029,7 +1056,10 @@ static void oyObjectTreeDotGraphCallback (
             oyObjectStructTreeParentContains( tree, cid, 1 ) == 0))
       { /* keep essential object types */
         if( keep )
+        {
           fprintf(stderr, "keep %s[%d] %s\n", oyStructTypeToText(current->type_), id, desc?desc:"----" );
+          break;
+        }
         else
         {
           if(desc) oyFree_m_( desc );
@@ -1058,17 +1088,23 @@ static void oyObjectTreeDotGraphCallback (
       edge = " [weight=\"3\" color=\"RoyalBlue4\" penwidth=\"3.0\"]"; else
     if IS_EDGE_TYPES(oyOBJECT_CONVERSION_S,oyOBJECT_FILTER_NODE_S)
       edge = " [color=\"RoyalBlue4\" penwidth=\"3.0\"]"; else
-    if IS_EDGE_TYPES(oyOBJECT_FILTER_NODE_S,oyOBJECT_FILTER_SOCKET_S)
-      edge = " [weight=\"5\" color=\"RoyalBlue4\" penwidth=\"3.0\"]"; else
+    if (current->type_ == oyOBJECT_FILTER_NODE_S && children[i]->type_ == oyOBJECT_FILTER_SOCKET_S)
+      edge = " [weight=\"5\" color=\"RoyalBlue4\" penwidth=\"3.0\"]";
+    if (current->type_ == oyOBJECT_FILTER_SOCKET_S && children[i]->type_ == oyOBJECT_FILTER_NODE_S)
+      edge = " [weight=\"5\" color=\"orange\" penwidth=\"3.0\"]";
     if IS_EDGE_TYPES(oyOBJECT_FILTER_SOCKET_S,oyOBJECT_FILTER_PLUGS_S)
       edge = " [weight=\"5\" color=\"RoyalBlue4\" penwidth=\"3.0\"]"; else
     if IS_EDGE_TYPES(oyOBJECT_FILTER_SOCKET_S,oyOBJECT_FILTER_PLUG_S)
-      edge = " [weight=\"0\"]"; else
+      edge = " [weight=\"0\" color=\"orange\" penwidth=\"3.0\"]"; else
+    if IS_EDGE_TYPES(oyOBJECT_FILTER_SOCKET_S,oyOBJECT_IMAGE_S)
+      edge = " [color=\"orange\" penwidth=\"3.0\"]"; else
     if IS_EDGE_TYPES(oyOBJECT_FILTER_PLUGS_S,oyOBJECT_STRUCT_LIST_S)
       edge = " [weight=\"5\" color=\"RoyalBlue4\" penwidth=\"3.0\"]"; else
     if (IS_EDGE_TYPES(oyOBJECT_STRUCT_LIST_S,oyOBJECT_FILTER_PLUG_S) && parent && parent->type_ == oyOBJECT_FILTER_PLUGS_S && grandparent && grandparent->type_ == oyOBJECT_FILTER_SOCKET_S)
       edge = " [weight=\"5\" color=\"RoyalBlue4\" penwidth=\"3.0\"]"; else
-    if IS_EDGE_TYPES(oyOBJECT_FILTER_PLUG_S,oyOBJECT_FILTER_NODE_S)
+    if (current->type_ == oyOBJECT_FILTER_NODE_S && children[i]->type_ == oyOBJECT_FILTER_PLUG_S)
+      edge = " [weight=\"5\" color=\"orange\" penwidth=\"3.0\"]";
+    if (current->type_ == oyOBJECT_FILTER_PLUG_S && children[i]->type_ == oyOBJECT_FILTER_NODE_S)
       edge = " [weight=\"5\" color=\"RoyalBlue4\" penwidth=\"3.0\"]";
     for(k = 0; k < level; ++k)
       oyStringAddPrintf( &graphs[top].text, 0,0, "- ");
@@ -1119,7 +1155,25 @@ static oyStruct_s *  oyStruct_FromId ( int                 id )
 
   obs = oyObjectGetList( NULL );
   if(obs && obs[id])
+  {
+    if(obs[id]->type_ != oyOBJECT_OBJECT_S)
+    {
+      fprintf(stderr, "oyStruct_FromId(%d) out of range: %s\n", id, oyStructTypeToText(obs[id]->type_) );
+      return NULL;
+    }
+    if(obs[id]->parent_ == NULL)
+    {
+      fprintf(stderr, "oyStruct_FromId(%d) no parent found\n", id );
+      return NULL;
+    }
+    if(obs[id]->parent_->type_ > oyOBJECT_MAX)
+    {
+      fprintf(stderr, "oyStruct_FromId(%d) non reasonable type found: \"%s\"\n", id, oyStructTypeToText(obs[id]->parent_->type_) );
+      return NULL;
+    }
+
     return obs[id]->parent_;
+  }
   else
     return NULL;
 }
@@ -1171,7 +1225,9 @@ void               oyObjectTreePrint ( int                 flags )
               strstr(text,"oy_profile_s_file_cache_")))
         {
           skip_ids[pos++] = i;
-          printf("ignore: %s\n", text);
+          if(strstr(text,"oy_db_cache"))
+            skip_ids[pos++] = i-1;
+          printf("ignore: %s[%d]\n", text, i);
         }
       }
     }
@@ -1193,30 +1249,17 @@ void               oyObjectTreePrint ( int                 flags )
           fprintf( stderr, "present: %s \"%s\" - %s\n", nick, text, trees[i].text);
         }
       }
-      PRINT_ID(i)
+      if(i == old_oy_debug_objects)
+        fprintf(stderr, OY_DBG_FORMAT_ "ID: %d\n", OY_DBG_ARGS_, i);
       if(trees[i].text)
       {
-        int found = 0, j;
-        for(j = 0; j < oy_object_list_max_count_; ++j)
+        if(flags & 0x01)
         {
-          if(i == j)
-            continue;
-          if(trees[j].text)
-            found = oyObjectStructTreeContains( trees[j].l, i, 1 );
-          if(found) break;
-        }
-        if(old_oy_debug_objects == i)
-          fprintf( stderr, " %s %d in %d\n", found?"found":"found not",i,j);
-        if(found == 0)
-        {
-          if(flags & 0x01)
-          {
-            oyStringAddPrintf( &dot, 0,0, "    %s", trees[i].text2 );
-            oyStringAddPrintf( &dot_edges, 0,0, "    %s", trees[i].text );
-          } else
-            fprintf(stderr, "%d: %s\n", i, trees[i].text);
-          ++count;
-        }
+          oyStringAddPrintf( &dot, 0,0, "    %s", trees[i].text2 );
+          oyStringAddPrintf( &dot_edges, 0,0, "    %s", trees[i].text );
+        } else
+          fprintf(stderr, "%d: %s\n", i, trees[i].text);
+        ++count;
       }
       if(trees[i].text)
         oyFree_m_(trees[i].text);
@@ -1254,16 +1297,31 @@ void               oyObjectTreePrint ( int                 flags )
         if(strstr( lines[i], "oyImage_s"))
           oyStringAddPrintf( &tmp, 0,0, "%s\n", lines[i] );
       for(i = 0; i < lines_n; ++i)
-        if(strstr( lines[i], "oyFilterPlugs_s"))
+        if(strstr( lines[i], "oyFilterPlug_s"))
           oyStringAddPrintf( &tmp, 0,0, "%s\n", lines[i] );
-
-      oyStringListFreeDoubles( lines, &lines_n, 0 );
-      fprintf(stderr, "dot has number of unique lines %d\n", lines_n);
-      for(i = 0; i < lines_n; ++i)
-        oyStringAddPrintf( &tmp, 0,0, "%s\n", lines[i] );
+      oyStringAddPrintf( &tmp, 0,0, "\n%s", dot );
       oyFree_m_(dot);
+
       oyStringListRelease_( &lines, lines_n, 0 );
-      dot = tmp; tmp = 0;
+      lines = oyStringSplit_( tmp, '\n', &lines_n, 0 );
+      oyFree_m_(tmp);
+      for(i = 0; i < lines_n; ++i)
+      {
+        int pos = 0;
+        while(lines[i][pos] == ' ')
+          pos++;
+        oyStringAddPrintf( &dot, 0,0, "  %s\n", &lines[i][pos] );
+      }
+      oyStringListRelease_( &lines, lines_n, 0 );
+      lines = oyStringSplit_( dot, '\n', &lines_n, 0 );
+      oyFree_m_(dot);
+      oyStringListFreeDoubles( lines, &lines_n, 0 );
+      for(i = 0; i < lines_n; ++i)
+      {
+        oyStringAddPrintf( &dot, 0,0, "%s\n", lines[i] );
+      }
+      fprintf(stderr, "dot has number of unique lines %d\n", lines_n);
+      oyStringListRelease_( &lines, lines_n, 0 );
 
       lines_n = 0;
       lines = oyStringSplit_( dot_edges, '\n', &lines_n, 0 );
