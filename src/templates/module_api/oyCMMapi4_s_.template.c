@@ -24,16 +24,16 @@
   if(type == oyNAME_NICK && (flags & 0x01))
   {
     sprintf( &text[strlen(text)], "%s",
-             s->registration
+             s->registration?s->registration:""
            );
   } else
   if(type == oyNAME_NAME)
     sprintf( &text[strlen(text)], "%s %s",
-             s->registration, s->context_type
+             s->registration?s->registration:"", s->context_type
            );
   else
   if((int)type >= oyNAME_DESCRIPTION)
     sprintf( &text[strlen(text)], "%s%s%s",
-             s->registration, s->context_type[0]?"\ntype: ":"", s->context_type
+             s->registration?s->registration:"", s->context_type[0]?"\ntype: ":"", s->context_type
            );
 {% endblock %}
