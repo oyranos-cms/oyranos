@@ -187,6 +187,13 @@ int oyGetThreadID( oyThread_t t )
   return i;
 }
 
+int oyThreadIdTrds( void )
+{
+  oyThread_t t = oyThreadSelf();
+  int id = oyGetThreadID(t);
+  return id;
+}
+
 void       oyLock_                     ( oyPointer         lock,
                                          const char      * marker,
                                          int               line )
@@ -611,6 +618,7 @@ int          trdsMOptions_Handle     ( oyOptions_s       * options OY_UNUSED,
                       oyMsg_Add_,
                       oyJobResult_,
                       CMM_NICK );
+    oyThreadIdSet( oyThreadIdTrds, CMM_NICK );
     trds_msg( oyMSG_DBG, 0, "called %s()::threads_handler", __func__ );
   }
 

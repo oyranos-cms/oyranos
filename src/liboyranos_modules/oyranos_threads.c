@@ -123,6 +123,7 @@ void               oyJobHandlingSet  ( oyJob_Add_f         jadd,
 int                oyJob_AddInit     ( oyJob_s          ** job,
                                        int                 finished,
                                        int                 flags );
+extern oyThreadId_f oyObjectGetThreadId;
 int                oyJobInitialise_  ( void )
 {
   oyOptions_s * opts = 0,
@@ -136,6 +137,10 @@ int                oyJobInitialise_  ( void )
     oyMessageFunc_p( oyMSG_WARN, NULL, OY_DBG_FORMAT_
                      " can't properly call \"threads_handler\"",OY_DBG_ARGS_);
   oyOptions_Release( &opts );
+
+  /* initialise for lower level libOyranosObject as well */
+  oyObjectGetThreadId = oyThreadId;
+
   return error;
 }
 
@@ -165,6 +170,12 @@ int                oyMsg_AddInit     ( oyJob_s           * job,
 void               oyJobResultInit   ( void )
 { if(oyJobInitialise_() == 0)
     oyJobResult();
+}
+int                oyThreadIdInit    ( void )
+{ if(oyJobInitialise_() == 0)
+    return oyThreadId();
+  else
+    return 1;
 }
 
 
@@ -259,6 +270,32 @@ oyMsg_Add_f oyMsg_Add = oyMsg_AddInit;
  *  @date    2016/05/01
  */
 oyJobResult_f oyJobResult = oyJobResultInit;
+/** @typedef oyThreadId_f
+ *  @brief   Get one unique thread ID
+ *
+ *  @version Oyranos: 0.9.7
+ *  @date    2019/09/22
+ *  @since   2019/09/22 (Oyranos: 0.9.7)
+ */
+/**
+ *  @brief   Get one unique thread Id
+ *  @see     oyThreadId_f
+ *
+ *  @version Oyranos: 0.9.7
+ *  @date    2019/09/22
+ *  @since   2019/09/22 (Oyranos: 0.9.7)
+ */
+oyThreadId_f oyThreadId = oyThreadIdInit;
+void               oyThreadIdSet     ( oyThreadId_f        tid,
+                                       const char        * nick )
+{
+  if(!oy_thread_api_nick || (oy_thread_api_nick && nick && strcmp(oy_thread_api_nick,nick) != 0))
+    oyMessageFunc_p( oyMSG_WARN, NULL, OY_DBG_FORMAT_
+                     " previous and new thread API nick differ %s - %s.",OY_DBG_ARGS_,
+                     oyNoEmptyString_m_(oy_thread_api_nick), oyNoEmptyString_m_(nick));
+  oyThreadId = tid;
+}
+
 
 /** @typedef oyJobCallback_f
  *  @brief   Progress callback for parallel job processing

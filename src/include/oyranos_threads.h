@@ -89,11 +89,17 @@ extern oyJob_Get_f oyJob_Get;
 extern oyMsg_Add_f oyMsg_Add;
 extern oyJobResult_f oyJobResult;
 
-void              oyJobHandlingSet   ( oyJob_Add_f         jadd,
+void               oyJobHandlingSet  ( oyJob_Add_f         jadd,
                                        oyJob_Get_f         jget,
                                        oyMsg_Add_f         madd,
                                        oyJobResult_f       result,
                                        const char        * nick );
+
+typedef int      (*oyThreadId_f)     ( void );
+extern oyThreadId_f oyThreadId;
+void               oyThreadIdSet     ( oyThreadId_f        tid,
+                                       const char        * nick );
+
 
 #ifdef __cplusplus
 } /* extern "C" */
