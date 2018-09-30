@@ -2104,7 +2104,7 @@ int    oyAdjacencyListAdd_           ( oyFilterPlug_s    * plug,
   for(i = 0; i < n; ++i)
   {
     p = oyFilterPlugs_Get( edges, i );
-    if(oyObject_GetId( p->oy_ ) == oyObject_GetId( plug->oy_ ))
+    if(oyStruct_GetId( (oyStruct_s*)p ) == oyStruct_GetId( (oyStruct_s*)plug ))
       found = 1;
     oyFilterPlug_Release( &p );
   }
@@ -2122,7 +2122,7 @@ int    oyAdjacencyListAdd_           ( oyFilterPlug_s    * plug,
       for(i = 0; i < n; ++i)
       {
         node = oyFilterNodes_Get( nodes, i );
-        if(oyObject_GetId( plug_node->oy_ ) == oyObject_GetId( node->oy_))
+        if(oyStruct_GetId( (oyStruct_s*)plug_node ) == oyStruct_GetId( (oyStruct_s*)node ))
           found = 1;
         oyFilterNode_Release( &node );
       }
@@ -2141,8 +2141,8 @@ int    oyAdjacencyListAdd_           ( oyFilterPlug_s    * plug,
         node = oyFilterNodes_Get( nodes, i );
         if(remote_socket && remote_socket_node)
         {
-          if(oyObject_GetId( remote_socket_node->oy_ ) ==
-             oyObject_GetId( node->oy_ ))
+          if(oyStruct_GetId( (oyStruct_s*)remote_socket_node ) ==
+             oyStruct_GetId( (oyStruct_s*)node ))
             found = 1;
 
         } else
