@@ -20,7 +20,27 @@ void oyFilterNode_Release__Members( oyFilterNode_s_ * filternode )
   /* Deallocate members here
    * E.g: oyXXX_Release( &filternode->member );
    */
-  int i,n;
+  int i = 0,n, cid = oyObject_GetId(filternode->oy_);
+  static int oid[20] = {0,0,0,0,0, 0,0,0,0,0,
+                        0,0,0,0,0, 0,0,0,0,0};
+  int oid_n = 0, twice = 0, first_empty = -1;
+  if(oy_debug_objects >= 0)
+  {
+    for(i = 0; i < 20; ++i)
+    {
+      if(oid[i]) ++oid_n;
+      else if(first_empty == -1)
+        first_empty = i;
+      if(oid[i] == cid)
+        ++twice;
+    }
+    if(first_empty >= 0)
+      oid[first_empty] = cid;
+ 
+    fprintf(stderr, "%s[%d](start) %d\n",__func__, cid, oid_n);
+    if(twice)
+      fprintf(stderr, "\n!!!ERROR: nested releasing same object: %s %d refs: %d\n\n", oyFilterNode_StaticMessageFunc_(filternode, oyNAME_DESCRIPTION, 2), twice, oyObject_GetRefCount(filternode->oy_));
+  }
 
   oyOptions_Release( &filternode->tags );
 
@@ -30,7 +50,23 @@ void oyFilterNode_Release__Members( oyFilterNode_s_ * filternode )
     for(i = 0; i < n; ++i)
       if(filternode->sockets[i])
       {
-        filternode->sockets[i]->node = NULL;
+        if(filternode->sockets[i]->requesting_plugs_)
+        {
+          oyFilterPlugs_s * remote_plugs = filternode->sockets[i]->requesting_plugs_;
+          int count = oyFilterPlugs_Count( remote_plugs ), j;
+          for(j = 0; j < count; ++j)
+          {
+            oyFilterPlug_s * remote_plug = oyFilterPlugs_Get( remote_plugs, j );
+            oyFilterSocket_Callback( remote_plug, oyCONNECTOR_EVENT_RELEASED );
+            oyFilterPlug_Callback( remote_plug, oyCONNECTOR_EVENT_RELEASED );
+            oyFilterPlug_Release( &remote_plug );
+          }
+        }
+        if((oy_debug || oy_debug_objects >= 0) &&
+            oyObject_GetRefCount(filternode->sockets[i]->oy_) > 2)
+        {
+          fprintf(stderr, "node[%d]->socket[%d] may not be released. refs: %d\n", cid, filternode->sockets[i]->oy_->id_, oyObject_GetRefCount(filternode->sockets[i]->oy_));
+        }
         oyFilterSocket_Release( (oyFilterSocket_s **)&filternode->sockets[i] );
       }
   }
@@ -41,10 +77,15 @@ void oyFilterNode_Release__Members( oyFilterNode_s_ * filternode )
     for(i = 0; i < n; ++i)
       if(filternode->plugs[i])
       {
-        filternode->plugs[i]->node = NULL;
-        oyFilterPlug_Release( (oyFilterPlug_s**)&filternode->plugs[i] );
+        oyFilterNode_Disconnect( (oyFilterNode_s*)filternode, i );
+        if((oy_debug || oy_debug_objects >= 0) &&
+            oyObject_GetRefCount(filternode->plugs[i]->oy_) > 2)
+          fprintf(stderr, "!!!ERROR: node[%d]->plug[%d] can not be released with refs: %d\n", cid, filternode->plugs[i]->oy_->id_, oyObject_GetRefCount(filternode->plugs[i]->oy_));
+        oyFilterPlug_Release( (oyFilterPlug_s **)&filternode->plugs[i] );
       }
   }
+
+  oyFilterCore_Release( (oyFilterCore_s**)&filternode->core );
 
   if(filternode->oy_->deallocateFunc_)
   {
@@ -55,7 +96,18 @@ void oyFilterNode_Release__Members( oyFilterNode_s_ * filternode )
      */
     if(filternode->relatives_)
       deallocateFunc( filternode->relatives_ );
-    filternode->relatives_ = 0;
+    filternode->relatives_ = NULL;
+    if(filternode->sockets) deallocateFunc(filternode->sockets);
+    filternode->sockets = NULL;
+    if(filternode->plugs) deallocateFunc(filternode->plugs);
+    filternode->plugs = NULL;
+  }
+
+  if(oy_debug_objects >= 0)
+  {
+    if(first_empty >= 0)
+      oid[i] = 0;
+    fprintf(stderr, "%s[%d](end)\n", __func__, cid);
   }
 }
 
