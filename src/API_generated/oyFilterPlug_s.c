@@ -119,20 +119,40 @@ OYAPI int  OYEXPORT
                                        oyFilterPlug_s    * c,
                                        oyCONNECTOR_EVENT_e e )
 {
-  oyFilterPlug_s_ ** c_ = (oyFilterPlug_s_**)&c;
+  oyFilterPlug_s_ * c_ = (oyFilterPlug_s_*)c;
 
   if(oy_debug_signals)
     WARNc4_S("oyFilterNode_s[%d]->oyFilterPlug_s[%d]\n"
              "  event: \"%s\" socket[%d]",
-            (c && (*c_)->node) ? oyObject_GetId((*c_)->node->oy_) : -1,
+            (c && c_->node) ? oyObject_GetId(c_->node->oy_) : -1,
             c ? oyObject_GetId(c->oy_) : -1,
             oyConnectorEventToText(e),
-            (c && (*c_)->remote_socket_) ?
-                                   oyObject_GetId( (*c_)->remote_socket_->oy_ ) : -1
+            (c && c_->remote_socket_) ?
+                                   oyObject_GetId( c_->remote_socket_->oy_ ) : -1
           );
 
   if(c && e == oyCONNECTOR_EVENT_RELEASED)
-    (*c_)->remote_socket_ = 0;
+  {
+    oyFilterPlug_s * s = c;
+    oyFilterNode_s * n = (oyFilterNode_s *)c_->node;
+    if(c_->node != NULL)
+      oyFilterPlug_Release( &s );
+    c_->node = NULL;
+    oyFilterNode_Release( &n );
+
+    s = c;
+    if(c_->remote_socket_)
+      oyFilterPlug_Release( &s );
+    c_->remote_socket_ = NULL;
+  }
+#ifdef LET_NODE_RELEASE_PLUG::NODE
+  {
+    oyFilterPlug_s * p = c;
+    if(c_->remote_socket_)
+      oyFilterPlug_Release( &p );
+    c_->remote_socket_ = NULL;
+  }
+#endif
 
   return 0;
 }
@@ -161,7 +181,6 @@ OYAPI int  OYEXPORT
 
   if(tp->remote_socket_)
     oyFilterSocket_Callback( (oyFilterPlug_s*)tp, oyCONNECTOR_EVENT_RELEASED );
-  oyFilterSocket_Release( (oyFilterSocket_s**)&tp->remote_socket_ );
 
 # if DEBUG_OBJECT
       WARNc6_S("%s Id: %d -> %s Id: %d\n  %s -> %s",
@@ -173,10 +192,13 @@ OYAPI int  OYEXPORT
 
   tp->remote_socket_ = (oyFilterSocket_s_*)*s; *s = 0;
 
+  oyFilterPlug_Copy((oyFilterPlug_s*)tp, NULL);
+  oyFilterSocket_Copy((oyFilterSocket_s*)tp->remote_socket_, NULL);
+
   if (!ts->requesting_plugs_)
     ts->requesting_plugs_ = oyFilterPlugs_New(ts->oy_);
 
-  return !oyFilterPlugs_MoveIn( ts->requesting_plugs_, p, -1 );
+  return oyFilterPlugs_MoveIn( ts->requesting_plugs_, p, -1 );
 }
 
 /** Function  oyFilterPlug_GetNode
