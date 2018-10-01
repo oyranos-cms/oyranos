@@ -64,6 +64,7 @@ void oyImage_Release__Members( oyImage_s_ * image )
     image->user_data->release( &image->user_data );
 
   oyProfile_Release( &image->profile_ );
+  oyOptions_Release( &image->tags );
 
 
   if(image->oy_->deallocateFunc_)
