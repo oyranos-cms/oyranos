@@ -32,12 +32,14 @@ void oyFilterSocket_Release__Members( oyFilterSocket_s_ * filtersocket )
     {
       c = oyFilterPlugs_Get( filtersocket->requesting_plugs_, i );
       oyFilterPlug_Callback( c, oyCONNECTOR_EVENT_RELEASED );
-      oyFilterPlug_Release( &c );
     }
+    oyFilterPlugs_Release( &filtersocket->requesting_plugs_ );
   }
 
   r = oyObject_UnRef(filtersocket->oy_);
   oyConnector_Release( &filtersocket->pattern );
+  if(filtersocket->data && filtersocket->data->release)
+    filtersocket->data->release(&filtersocket->data);
 
   if(filtersocket->oy_->deallocateFunc_)
   {
