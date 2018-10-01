@@ -235,6 +235,7 @@ int          oyIMFilterScan          ( oyPointer           data OY_UNUSED,
   if(cmm)
     oyDeAllocateFunc_(cmm);
   cmm = 0;
+  oyCMMinfo_Release( &cmm_info );
 
   return ret;
 }
