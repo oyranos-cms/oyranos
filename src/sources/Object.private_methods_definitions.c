@@ -206,6 +206,11 @@ void               oyObject_UnTrack    ( oyObject_s          obj )
     oy_obj_track_list[obj->id_] = NULL;
   if(oyObjectUsedByCache_( obj->id_ ))
     fprintf( stderr, "!!!ERROR: Object[%d] still in cache\n", obj->id_);
+  if(obj->ref_ < -1 && (oy_debug_objects >= 0 || oy_debug))
+  {
+    const char * type = obj->parent_?oyStructTypeToText(obj->parent_->type_):"";
+    fprintf( stderr, "!!!ERROR: Object[%d] has unexpected reference counter: %d  %s\n", obj->id_, obj->ref_, type );
+  }
 }
 /* private tracking API's end */
 

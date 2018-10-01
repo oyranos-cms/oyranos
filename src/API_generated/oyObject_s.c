@@ -588,6 +588,11 @@ int          oyObject_UnRef          ( oyObject_s          obj )
   {
     oyObject_Lock( s, __FILE__, __LINE__ );
 
+    if(s->ref_ < 0 && (oy_debug_objects >= 0 || oy_debug))
+      WARNc3_S( "%s ID: %d refs: %d",
+                oyStructTypeToText( s->parent_types_[s->parent_types_[0]] ),
+                s->id_, s->ref_ )
+
     if(s->ref_ < 0)
       ref = 0;
 
