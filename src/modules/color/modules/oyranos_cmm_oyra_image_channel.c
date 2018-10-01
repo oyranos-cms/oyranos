@@ -280,7 +280,7 @@ int      oyraFilter_ImageChannelRun  ( oyFilterPlug_s    * requestor_plug,
                 cache[i].u2 = (channel_pos[i] == -1) ? OY_ROUND(channel[i] * max_value) : *((uint16_t*)&array_out_data[y][x*channels_dst*bps_out + pos*bps_out]);
                 break;
               case oyUINT32:
-                cache[i].u4 = (channel_pos[i] == -1) ? OY_ROUND(channel[i] * max_value) : *((uint32_t*)&array_out_data[y][x*channels_dst*bps_out + pos*bps_out]);
+                cache[i].u4 = (channel_pos[i] == -1) ? (uint32_t) OY_ROUND(channel[i] * max_value) : *((uint32_t*)&array_out_data[y][x*channels_dst*bps_out + pos*bps_out]);
                 break;
               case oyHALF:
                 flt = channel[i] * max_value;
