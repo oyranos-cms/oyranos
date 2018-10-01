@@ -13,7 +13,7 @@
 
   if( r+1 < (int)n )
     WARNcc2_S( s, "reference count below internal references to other object(s): %s %s",
-               s->node?"node":"", s->remote_socket_?"requesting_plugs_":"" );
+               s->node?"node":"", s->remote_socket_?"remote_socket_":"" );
 
   /* referenences from members has to be substracted
    * from this objects ref count */
