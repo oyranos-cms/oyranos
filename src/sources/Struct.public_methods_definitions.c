@@ -141,7 +141,7 @@ int          oyStruct_GetId          ( oyStruct_s        * st )
 
   if(st && st->oy_)
   {
-    if(st->type_ < oyOBJECT_MAX)
+    if(oyOBJECT_NONE < st->type_ && st->type_ < oyOBJECT_MAX)
       id = oyObject_GetId(st->oy_);
     else
       WARNc1_S( "type too non default - skip: %d", st->type_ );
