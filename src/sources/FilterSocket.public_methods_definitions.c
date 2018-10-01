@@ -8,9 +8,9 @@
  *  @param         e                   the event type
  *  @return                            0 on success, else error
  *
- *  @version Oyranos: 0.1.8
+ *  @version Oyranos: 0.9.7
+ *  @date    2018/09/28
  *  @since   2008/07/28 (Oyranos: 0.1.8)
- *  @date    2009/02/19
  */
 OYAPI int  OYEXPORT
                  oyFilterSocket_Callback(
@@ -21,26 +21,26 @@ OYAPI int  OYEXPORT
   oyFilterSocket_s_ * s_;
   oyFilterPlug_s * p;
 
-  oyFilterPlug_s_ ** c_ = (oyFilterPlug_s_**)&c;
+  oyFilterPlug_s_ * c_ = (oyFilterPlug_s_*)c;
 
   if(e != oyCONNECTOR_EVENT_OK && oy_debug_signals)
   {
     WARNc5_S("\n  oyFilterNode_s[%d]->oyFilterSocket_s[%d]\n"
              "  event: \"%s\" plug[%d/node%d]",
-            (c && (*c_)->remote_socket_ && (*c_)->remote_socket_->node) ?
-                   oyObject_GetId((*c_)->remote_socket_->node->oy_) : -1,
-            (c && (*c_)->remote_socket_) ? oyObject_GetId((*c_)->remote_socket_->oy_)
+            (c && c_->remote_socket_ && c_->remote_socket_->node) ?
+                   oyObject_GetId(c_->remote_socket_->node->oy_) : -1,
+            (c && c_->remote_socket_) ? oyObject_GetId(c_->remote_socket_->oy_)
                                      : -1,
             oyConnectorEventToText(e),
             c ? oyObject_GetId( c->oy_ ) : -1,
-            c ? ((*c_)->node ? oyObject_GetId( (*c_)->node->oy_ ) : -1) : -1
+            c ? (c_->node ? oyObject_GetId( c_->node->oy_ ) : -1) : -1
           );
   }
 
   if(!c)
     return 1;
 
-  s_ = (oyFilterSocket_s_*) (*c_)->remote_socket_;
+  s_ = (oyFilterSocket_s_*) c_->remote_socket_;
 
   if(!s_)
     return 0;
@@ -53,7 +53,16 @@ OYAPI int  OYEXPORT
       p = oyFilterPlugs_Get( s_->requesting_plugs_, i );
       if(p == c)
       {
+        if(s_->node != NULL)
+        {
+          oyFilterSocket_s * s = (oyFilterSocket_s *)s_;
+          oyFilterNode_s * n = (oyFilterNode_s *)s_->node;
+          s_->node = NULL;
+          oyFilterNode_Release( &n );
+          oyFilterSocket_Release( &s );
+        }
         oyFilterPlugs_ReleaseAt( s_->requesting_plugs_, i );
+        oyFilterSocket_Release( (oyFilterSocket_s**)&c_->remote_socket_ );
         break;
       }
       oyFilterPlug_Release( &p );
