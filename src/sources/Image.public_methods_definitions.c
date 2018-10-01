@@ -1931,8 +1931,6 @@ int    oyImage_ToFile                ( oyImage_s         * image,
     WARNcc1_S(in,"oyConversion_RunPixels() returned error: %d", error);
 
   oyConversion_Release( &conversion );
-  oyFilterNode_Release( &in );
-  oyFilterNode_Release( &out );
 
   return error;
 }
