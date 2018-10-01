@@ -171,6 +171,7 @@ OYAPI int  OYEXPORT
   return error;
 }
 
+
 /** Function oyStruct_ObserverSignal
  *  @memberof oyObserver_s
  *  @brief   send a signal to all ovservers of a model
@@ -609,6 +610,64 @@ OYAPI int  OYEXPORT
 
   return observed;
 }
+
+/**
+ *  Function oyStruct_GetObserverRefs
+ *  @memberof oyObserver_s
+ *  @brief   return the number of object<->model references
+ *
+ *  @param         observer            which observes a model
+ *  @return                            count
+ *
+ *  @version Oyranos: 0.9.7
+ *  @date    2018/09/29
+ *  @since   2018/09/29 (Oyranos: 0.9.7)
+ */
+OYAPI int  OYEXPORT
+           oyStruct_ObservedModelCount(oyStruct_s        * observer )
+{
+  int observed = 0;
+  int i,n = 0;
+  oyOption_s_ * o = 0;
+  oyOptions_s_ * handles = (oyOptions_s_*) observer->oy_->handles_;
+  int error = 0;
+
+  if(handles)
+    n = oyStructList_Count( handles->list_ );
+  for(i = 0; i < n; ++i)
+  {
+    o = (oyOption_s_*) oyStructList_Get_( (oyStructList_s_*)(handles->list_), i );
+    if( oyStrcmp_( o->registration, OY_SIGNAL_MODELS ) == 0)
+    {
+      if(observer)
+      {
+        oyStructList_s * models = 0;
+        int j_n,j;
+
+        models = (oyStructList_s*)oyOption_GetStruct( (oyOption_s*) o,
+                                                       oyOBJECT_STRUCT_LIST_S );
+
+        if(!error)
+        {
+          j_n = oyStructList_Count( models );
+          for(j = 0; j < j_n; ++j)
+          {
+            oyObserver_s * obs;
+            obs = (oyObserver_s*) oyStructList_GetType( models,
+                                                   j, oyOBJECT_OBSERVER_S );
+            if(obs && obs->observer == observer)
+            {
+              ++observed;
+              break;
+            }
+          }
+        }
+      }
+    }
+  } 
+  return observed;
+}
+  
 
 const char *       oySignalToString  ( oySIGNAL_e          signal_type )
 {
