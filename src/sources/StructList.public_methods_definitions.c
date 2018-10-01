@@ -210,14 +210,14 @@ int            oyStructList_ReleaseAt( oyStructList_s    * list,
 
   if(0 <= pos && pos < s->n_)
   {
+    --s->n_;
+
     if(s->ptr_[pos] && s->ptr_[pos]->release)
       s->ptr_[pos]->release( (oyStruct_s**)&s->ptr_[pos] );
 
-    if(pos < s->n_ - 1)
+    if(pos < s->n_)
       error = !memmove( &s->ptr_[pos], &s->ptr_[pos+1],
-                        sizeof(oyStruct_s*) * (s->n_ - pos - 1));
-
-    --s->n_;
+                        sizeof(oyStruct_s*) * (s->n_ - pos));
   }
 
   oyObject_UnLock( s->oy_, __FILE__, __LINE__ );
