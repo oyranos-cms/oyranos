@@ -232,6 +232,8 @@ main(int argc, char** argv)
   Fl::add_timeout(0.02, (void(*)(void*))jobResultRepeatCb);
   Fl::run();
 
+  delete win;
+
   oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
 
   return 0;
@@ -604,6 +606,7 @@ void exit_cb ( Fl_Widget* w OY_UNUSED, void* daten OY_UNUSED )
 {
   oy_widget->conversion(NULL);
   oyFilterNode_Release( &icc );
+  delete oy_widget;
   if(oy_debug_objects >= 0)
     oyObjectTreePrint( 0x01 | 0x02 );
   exit(0);
