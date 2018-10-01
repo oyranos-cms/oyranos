@@ -20,8 +20,30 @@ void oyConversion_Release__Members( oyConversion_s_ * conversion )
   /* Deallocate members here
    * E.g: oyXXX_Release( &conversion->member );
    */
+  oyFilterGraph_s * g = oyFilterGraph_New( 0 );
+  int i,n;
+  oyFilterGraph_SetFromNode( g, (oyFilterNode_s*)conversion->input, 0, 0 );
+
   oyFilterNode_Release( (oyFilterNode_s**)&conversion->input );
   oyFilterNode_Release( (oyFilterNode_s**)&conversion->out_ );
+
+  n = oyFilterGraph_CountNodes( g, "", NULL );
+  for(i = 0; i < n; ++i)
+  {
+    oyFilterNode_s * node = oyFilterGraph_GetNode( g, i, "", NULL ),
+                   * temp;
+    int ref = oyObject_GetRefCount( node->oy_ );
+    if(ref > 1)
+    {
+      temp = node;
+      oyFilterNode_Release( &temp );
+    }
+    oyFilterNode_Release( &node );
+  }
+
+  oyFilterGraph_Release( &g );
+  conversion->input = NULL;
+  conversion->out_ = NULL;
 
   if(conversion->oy_->deallocateFunc_)
   {
