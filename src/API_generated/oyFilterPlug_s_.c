@@ -58,7 +58,6 @@ void oyFilterPlug_Release__Members( oyFilterPlug_s_ * filterplug )
   oyFilterNode_Release( (oyFilterNode_s**)&filterplug->node );
 
   oyFilterSocket_Callback( (oyFilterPlug_s*)filterplug, oyCONNECTOR_EVENT_RELEASED );
-  oyFilterSocket_Release( (oyFilterSocket_s**)&filterplug->remote_socket_ );
 
   oyConnector_Release( &filterplug->pattern );
 
@@ -172,8 +171,9 @@ static const char * oyFilterPlug_StaticMessageFunc_ (
   if(!(flags & 0x01))
     sprintf(text, "%s%s", oyStructTypeToText( s->type_ ), type != oyNAME_NICK?" ":"");
 
-  
-  
+  if(type == oyNAME_DESCRIPTION)
+    sprintf( &text[strlen(text)], "%s", s->relatives_?s->relatives_:"" );
+
 
   return text;
 }
@@ -423,8 +423,30 @@ int oyFilterPlug_Release_( oyFilterPlug_s_ **filterplug )
   }
 
 
-  if(oyObject_UnRef(s->oy_))
+  {
+  uint32_t n = 0;
+  int r OY_UNUSED = oyObject_UnRef(s->oy_);
+
+  if(s->node)
+    ++n;
+
+  if(s->remote_socket_)
+    ++n;
+
+  if( r+1 < (int)n )
+    WARNcc2_S( s, "reference count below internal references to other object(s): %s %s",
+               s->node?"node":"", s->remote_socket_?"requesting_plugs_":"" );
+
+  /* referenences from members has to be substracted
+   * from this objects ref count */
+  if(oyObject_GetRefCount( s->oy_ ) > (int)n)
     return 0;
+
+  /* ref before oyXXX_Release__Members(), so the
+   * oyXXX_Release() is not called twice */
+  oyObject_Ref(s->oy_);
+  }
+
   /* ---- end of common object destructor ------- */
 
   if(oy_debug_objects >= 0)
@@ -454,6 +476,9 @@ int oyFilterPlug_Release_( oyFilterPlug_s_ **filterplug )
   
   
   
+  /* unref after oyXXX_Release__Members() */
+  oyObject_UnRef(s->oy_);
+
 
 
 

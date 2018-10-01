@@ -23,7 +23,6 @@ void oyFilterPlug_Release__Members( oyFilterPlug_s_ * filterplug )
   oyFilterNode_Release( (oyFilterNode_s**)&filterplug->node );
 
   oyFilterSocket_Callback( (oyFilterPlug_s*)filterplug, oyCONNECTOR_EVENT_RELEASED );
-  oyFilterSocket_Release( (oyFilterSocket_s**)&filterplug->remote_socket_ );
 
   oyConnector_Release( &filterplug->pattern );
 
