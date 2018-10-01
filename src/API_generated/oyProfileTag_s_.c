@@ -32,6 +32,84 @@
   
 
 
+static int oy_profiletag_init_ = 0;
+static const char * oyProfileTag_StaticMessageFunc_ (
+                                       oyPointer           obj,
+                                       oyNAME_e            type,
+                                       int                 flags )
+{
+  oyProfileTag_s_ * s = (oyProfileTag_s_*) obj;
+  static char * text = 0;
+  static int text_n = 0;
+  oyAlloc_f alloc = oyAllocateFunc_;
+
+  /* silently fail */
+  if(!s)
+   return "";
+
+  if(s->oy_ && s->oy_->allocateFunc_)
+    alloc = s->oy_->allocateFunc_;
+
+  if( text == NULL || text_n == 0 )
+  {
+    text_n = 512;
+    text = (char*) alloc( text_n );
+    if(text)
+      memset( text, 0, text_n );
+  }
+
+  if( text == NULL || text_n == 0 )
+    return "Memory problem";
+
+  text[0] = '\000';
+
+  if(!(flags & 0x01))
+    sprintf(text, "%s%s", oyStructTypeToText( s->type_ ), type != oyNAME_NICK?" ":"");
+
+  
+
+  
+  /* allocate enough space */
+  if(text_n < 1000)
+  {
+    oyDeAlloc_f dealloc = oyDeAllocateFunc_;
+    if(s->oy_ && s->oy_->deallocateFunc_)
+      dealloc = s->oy_->deallocateFunc_;
+    if(text && text_n)
+      dealloc( text );
+    text_n = 1000;
+    text = alloc(text_n);
+    if(text)
+      text[0] = '\000';
+    else
+      return "Memory Error";
+
+    if(!(flags & 0x01))
+      sprintf(text, "%s%s", oyStructTypeToText( s->type_ ), type != oyNAME_NICK?" ":"");
+  }
+
+  if(type == oyNAME_NICK && (flags & 0x01))
+  {
+    sprintf( &text[strlen(text)], "%s",
+             oyICCTagName(s->use)
+           );
+  } else
+  if(type == oyNAME_NAME)
+    sprintf( &text[strlen(text)], "%s %s",
+             oyICCTagName(s->use), oyICCTagTypeName(s->tag_type_)
+           );
+  else
+  if((int)type >= oyNAME_DESCRIPTION)
+    sprintf( &text[strlen(text)], "%s %s\noffset: %lu size: %lu/%lu",
+             oyICCTagDescription(s->use), oyICCTagTypeName(s->tag_type_),
+             (long unsigned int)s->offset_orig, (long unsigned int)s->size_, (long unsigned int)s->size_check_
+           );
+
+
+  return text;
+}
+
+
 /* Include "ProfileTag.private_custom_definitions.c" { */
 /** @internal
  *  Function    oyProfileTag_Release__Members
@@ -112,83 +190,6 @@ int oyProfileTag_Copy__Members( oyProfileTag_s_ * dst, oyProfileTag_s_ * src)
 /* } Include "ProfileTag.private_custom_definitions.c" */
 
 
-
-static int oy_profiletag_init_ = 0;
-static const char * oyProfileTag_StaticMessageFunc_ (
-                                       oyPointer           obj,
-                                       oyNAME_e            type,
-                                       int                 flags )
-{
-  oyProfileTag_s_ * s = (oyProfileTag_s_*) obj;
-  static char * text = 0;
-  static int text_n = 0;
-  oyAlloc_f alloc = oyAllocateFunc_;
-
-  /* silently fail */
-  if(!s)
-   return "";
-
-  if(s->oy_ && s->oy_->allocateFunc_)
-    alloc = s->oy_->allocateFunc_;
-
-  if( text == NULL || text_n == 0 )
-  {
-    text_n = 512;
-    text = (char*) alloc( text_n );
-    if(text)
-      memset( text, 0, text_n );
-  }
-
-  if( text == NULL || text_n == 0 )
-    return "Memory problem";
-
-  text[0] = '\000';
-
-  if(!(flags & 0x01))
-    sprintf(text, "%s%s", oyStructTypeToText( s->type_ ), type != oyNAME_NICK?" ":"");
-
-  
-
-  
-  /* allocate enough space */
-  if(text_n < 1000)
-  {
-    oyDeAlloc_f dealloc = oyDeAllocateFunc_;
-    if(s->oy_ && s->oy_->deallocateFunc_)
-      dealloc = s->oy_->deallocateFunc_;
-    if(text && text_n)
-      dealloc( text );
-    text_n = 1000;
-    text = alloc(text_n);
-    if(text)
-      text[0] = '\000';
-    else
-      return "Memory Error";
-
-    if(!(flags & 0x01))
-      sprintf(text, "%s%s", oyStructTypeToText( s->type_ ), type != oyNAME_NICK?" ":"");
-  }
-
-  if(type == oyNAME_NICK && (flags & 0x01))
-  {
-    sprintf( &text[strlen(text)], "%s",
-             oyICCTagName(s->use)
-           );
-  } else
-  if(type == oyNAME_NAME)
-    sprintf( &text[strlen(text)], "%s %s",
-             oyICCTagName(s->use), oyICCTagTypeName(s->tag_type_)
-           );
-  else
-  if((int)type >= oyNAME_DESCRIPTION)
-    sprintf( &text[strlen(text)], "%s %s\noffset: %lu size: %lu/%lu",
-             oyICCTagDescription(s->use), oyICCTagTypeName(s->tag_type_),
-             (long unsigned int)s->offset_orig, (long unsigned int)s->size_, (long unsigned int)s->size_check_
-           );
-
-
-  return text;
-}
 /** @internal
  *  Function oyProfileTag_New_
  *  @memberof oyProfileTag_s_
@@ -392,6 +393,7 @@ oyProfileTag_s_ * oyProfileTag_Copy_ ( oyProfileTag_s_ *profiletag, oyObject_s o
 int oyProfileTag_Release_( oyProfileTag_s_ **profiletag )
 {
   const char * track_name = NULL;
+  int observer_refs = 0, i;
   /* ---- start of common object destructor ----- */
   oyProfileTag_s_ *s = 0;
 
@@ -401,6 +403,8 @@ int oyProfileTag_Release_( oyProfileTag_s_ **profiletag )
   s = *profiletag;
 
   *profiletag = 0;
+
+  observer_refs = oyStruct_ObservedModelCount( (oyStruct_s*)s );
 
   if(oy_debug_objects >= 0 && s->oy_)
   {
@@ -422,8 +426,8 @@ int oyProfileTag_Release_( oyProfileTag_s_ **profiletag )
       {
         int i;
         track_name = oyStructTypeToText(s->type_);
-        fprintf( stderr, "%s[%d] untracking refs: %d parents: %d\n",
-                 track_name, s->oy_->id_, s->oy_->ref_, n );
+        fprintf( stderr, "%s[%d] unref with refs: %d observers: %d parents: %d\n",
+                 track_name, s->oy_->id_, s->oy_->ref_, observer_refs, n );
         for(i = 0; i < n; ++i)
         {
           track_name = oyStructTypeToText(parents[i]->type_);
@@ -434,7 +438,7 @@ int oyProfileTag_Release_( oyProfileTag_s_ **profiletag )
     }
   }
 
-
+  
   if(oyObject_UnRef(s->oy_))
     return 0;
   /* ---- end of common object destructor ------- */
@@ -454,7 +458,7 @@ int oyProfileTag_Release_( oyProfileTag_s_ **profiletag )
        id_ == 1)
     {
       track_name = oyStructTypeToText(s->type_);
-      fprintf( stderr, "%s[%d] untracking\n", track_name, s->oy_->id_);
+      fprintf( stderr, "%s[%d] destruct\n", track_name, s->oy_->id_);
     }
   }
 
@@ -469,14 +473,27 @@ int oyProfileTag_Release_( oyProfileTag_s_ **profiletag )
 
 
 
+  /* model and observer reference each other. So release the object two times.
+   * The models and and observers are released later inside the
+   * oyObject_s::handles. */
+  for(i = 0; i < observer_refs; ++i)
+  {
+    oyObject_UnRef(s->oy_);
+    oyObject_UnRef(s->oy_);
+  }
+
   if(s->oy_->deallocateFunc_)
   {
     oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
     int id = s->oy_->id_;
+    int refs = s->oy_->ref_;
+
+    if(refs > 1)
+      fprintf( stderr, "!!!ERROR: node[%d]->object can not be untracked with refs: %d\n", id, refs);
 
     oyObject_Release( &s->oy_ );
     if(track_name)
-      fprintf( stderr, "%s[%d] untracked\n", track_name, id);
+      fprintf( stderr, "%s[%d] destructed\n", track_name, id );
 
     deallocateFunc( s );
   }

@@ -42,6 +42,83 @@
   
 
 
+static int oy_cmmapi4_init_ = 0;
+static const char * oyCMMapi4_StaticMessageFunc_ (
+                                       oyPointer           obj,
+                                       oyNAME_e            type,
+                                       int                 flags )
+{
+  oyCMMapi4_s_ * s = (oyCMMapi4_s_*) obj;
+  static char * text = 0;
+  static int text_n = 0;
+  oyAlloc_f alloc = oyAllocateFunc_;
+
+  /* silently fail */
+  if(!s)
+   return "";
+
+  if(s->oy_ && s->oy_->allocateFunc_)
+    alloc = s->oy_->allocateFunc_;
+
+  if( text == NULL || text_n == 0 )
+  {
+    text_n = 512;
+    text = (char*) alloc( text_n );
+    if(text)
+      memset( text, 0, text_n );
+  }
+
+  if( text == NULL || text_n == 0 )
+    return "Memory problem";
+
+  text[0] = '\000';
+
+  if(!(flags & 0x01))
+    sprintf(text, "%s%s", oyStructTypeToText( s->type_ ), type != oyNAME_NICK?" ":"");
+
+  
+
+  
+  /* allocate enough space */
+  if(text_n < 1000)
+  {
+    oyDeAlloc_f dealloc = oyDeAllocateFunc_;
+    if(s->oy_ && s->oy_->deallocateFunc_)
+      dealloc = s->oy_->deallocateFunc_;
+    if(text && text_n)
+      dealloc( text );
+    text_n = 1000;
+    text = alloc(text_n);
+    if(text)
+      text[0] = '\000';
+    else
+      return "Memory Error";
+
+    if(!(flags & 0x01))
+      sprintf(text, "%s%s", oyStructTypeToText( s->type_ ), type != oyNAME_NICK?" ":"");
+  }
+
+  if(type == oyNAME_NICK && (flags & 0x01))
+  {
+    sprintf( &text[strlen(text)], "%s",
+             s->registration?s->registration:""
+           );
+  } else
+  if(type == oyNAME_NAME)
+    sprintf( &text[strlen(text)], "%s %s",
+             s->registration?s->registration:"", s->context_type
+           );
+  else
+  if((int)type >= oyNAME_DESCRIPTION)
+    sprintf( &text[strlen(text)], "%s%s%s",
+             s->registration?s->registration:"", s->context_type[0]?"\ntype: ":"", s->context_type
+           );
+
+
+  return text;
+}
+
+
 /* Include "CMMapi4.private_custom_definitions.c" { */
 /** Function    oyCMMapi4_Release__Members
  *  @memberof   oyCMMapi4_s
@@ -135,82 +212,6 @@ int oyCMMapi4_Copy__Members( oyCMMapi4_s_ * dst, oyCMMapi4_s_ * src)
 /* } Include "CMMapi4.private_custom_definitions.c" */
 
 
-
-static int oy_cmmapi4_init_ = 0;
-static const char * oyCMMapi4_StaticMessageFunc_ (
-                                       oyPointer           obj,
-                                       oyNAME_e            type,
-                                       int                 flags )
-{
-  oyCMMapi4_s_ * s = (oyCMMapi4_s_*) obj;
-  static char * text = 0;
-  static int text_n = 0;
-  oyAlloc_f alloc = oyAllocateFunc_;
-
-  /* silently fail */
-  if(!s)
-   return "";
-
-  if(s->oy_ && s->oy_->allocateFunc_)
-    alloc = s->oy_->allocateFunc_;
-
-  if( text == NULL || text_n == 0 )
-  {
-    text_n = 512;
-    text = (char*) alloc( text_n );
-    if(text)
-      memset( text, 0, text_n );
-  }
-
-  if( text == NULL || text_n == 0 )
-    return "Memory problem";
-
-  text[0] = '\000';
-
-  if(!(flags & 0x01))
-    sprintf(text, "%s%s", oyStructTypeToText( s->type_ ), type != oyNAME_NICK?" ":"");
-
-  
-
-  
-  /* allocate enough space */
-  if(text_n < 1000)
-  {
-    oyDeAlloc_f dealloc = oyDeAllocateFunc_;
-    if(s->oy_ && s->oy_->deallocateFunc_)
-      dealloc = s->oy_->deallocateFunc_;
-    if(text && text_n)
-      dealloc( text );
-    text_n = 1000;
-    text = alloc(text_n);
-    if(text)
-      text[0] = '\000';
-    else
-      return "Memory Error";
-
-    if(!(flags & 0x01))
-      sprintf(text, "%s%s", oyStructTypeToText( s->type_ ), type != oyNAME_NICK?" ":"");
-  }
-
-  if(type == oyNAME_NICK && (flags & 0x01))
-  {
-    sprintf( &text[strlen(text)], "%s",
-             s->registration?s->registration:""
-           );
-  } else
-  if(type == oyNAME_NAME)
-    sprintf( &text[strlen(text)], "%s %s",
-             s->registration?s->registration:"", s->context_type
-           );
-  else
-  if((int)type >= oyNAME_DESCRIPTION)
-    sprintf( &text[strlen(text)], "%s%s%s",
-             s->registration?s->registration:"", s->context_type[0]?"\ntype: ":"", s->context_type
-           );
-
-
-  return text;
-}
 /** @internal
  *  Function oyCMMapi4_New_
  *  @memberof oyCMMapi4_s_
@@ -432,6 +433,7 @@ oyCMMapi4_s_ * oyCMMapi4_Copy_ ( oyCMMapi4_s_ *cmmapi4, oyObject_s object )
 int oyCMMapi4_Release_( oyCMMapi4_s_ **cmmapi4 )
 {
   const char * track_name = NULL;
+  int observer_refs = 0, i;
   /* ---- start of common object destructor ----- */
   oyCMMapi4_s_ *s = 0;
 
@@ -441,6 +443,8 @@ int oyCMMapi4_Release_( oyCMMapi4_s_ **cmmapi4 )
   s = *cmmapi4;
 
   *cmmapi4 = 0;
+
+  observer_refs = oyStruct_ObservedModelCount( (oyStruct_s*)s );
 
   if(oy_debug_objects >= 0 && s->oy_)
   {
@@ -462,8 +466,8 @@ int oyCMMapi4_Release_( oyCMMapi4_s_ **cmmapi4 )
       {
         int i;
         track_name = oyStructTypeToText(s->type_);
-        fprintf( stderr, "%s[%d] untracking refs: %d parents: %d\n",
-                 track_name, s->oy_->id_, s->oy_->ref_, n );
+        fprintf( stderr, "%s[%d] unref with refs: %d observers: %d parents: %d\n",
+                 track_name, s->oy_->id_, s->oy_->ref_, observer_refs, n );
         for(i = 0; i < n; ++i)
         {
           track_name = oyStructTypeToText(parents[i]->type_);
@@ -474,7 +478,7 @@ int oyCMMapi4_Release_( oyCMMapi4_s_ **cmmapi4 )
     }
   }
 
-
+  
   if(oyObject_UnRef(s->oy_))
     return 0;
   /* ---- end of common object destructor ------- */
@@ -494,7 +498,7 @@ int oyCMMapi4_Release_( oyCMMapi4_s_ **cmmapi4 )
        id_ == 1)
     {
       track_name = oyStructTypeToText(s->type_);
-      fprintf( stderr, "%s[%d] untracking\n", track_name, s->oy_->id_);
+      fprintf( stderr, "%s[%d] destruct\n", track_name, s->oy_->id_);
     }
   }
 
@@ -515,14 +519,27 @@ int oyCMMapi4_Release_( oyCMMapi4_s_ **cmmapi4 )
 
 
 
+  /* model and observer reference each other. So release the object two times.
+   * The models and and observers are released later inside the
+   * oyObject_s::handles. */
+  for(i = 0; i < observer_refs; ++i)
+  {
+    oyObject_UnRef(s->oy_);
+    oyObject_UnRef(s->oy_);
+  }
+
   if(s->oy_->deallocateFunc_)
   {
     oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
     int id = s->oy_->id_;
+    int refs = s->oy_->ref_;
+
+    if(refs > 1)
+      fprintf( stderr, "!!!ERROR: node[%d]->object can not be untracked with refs: %d\n", id, refs);
 
     oyObject_Release( &s->oy_ );
     if(track_name)
-      fprintf( stderr, "%s[%d] untracked\n", track_name, id);
+      fprintf( stderr, "%s[%d] destructed\n", track_name, id );
 
     deallocateFunc( s );
   }

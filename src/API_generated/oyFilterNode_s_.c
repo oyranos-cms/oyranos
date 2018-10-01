@@ -35,10 +35,65 @@
 #include "oyranos_module_internal.h"
 #include "oyranos_object_internal.h"
   
+
+
+static int oy_filternode_init_ = 0;
 static const char * oyFilterNode_StaticMessageFunc_ (
                                        oyPointer           obj,
                                        oyNAME_e            type,
-                                       int                 flags );
+                                       int                 flags )
+{
+  oyFilterNode_s_ * s = (oyFilterNode_s_*) obj;
+  static char * text = 0;
+  static int text_n = 0;
+  oyAlloc_f alloc = oyAllocateFunc_;
+
+  /* silently fail */
+  if(!s)
+   return "";
+
+  if(s->oy_ && s->oy_->allocateFunc_)
+    alloc = s->oy_->allocateFunc_;
+
+  if( text == NULL || text_n == 0 )
+  {
+    text_n = 512;
+    text = (char*) alloc( text_n );
+    if(text)
+      memset( text, 0, text_n );
+  }
+
+  if( text == NULL || text_n == 0 )
+    return "Memory problem";
+
+  text[0] = '\000';
+
+  if(!(flags & 0x01))
+    sprintf(text, "%s%s", oyStructTypeToText( s->type_ ), type != oyNAME_NICK?" ":"");
+
+  
+
+  
+  if(type == oyNAME_NICK && (flags & 0x01))
+  {
+    sprintf( &text[strlen(text)], "%s",
+             oyNoEmptyString_m_(s->api7_?s->api7_->registration:s->relatives_)
+           );
+  } else
+  if(type == oyNAME_NAME)
+    sprintf( &text[strlen(text)], "%s %d/%d",
+             oyNoEmptyString_m_(s->api7_?s->api7_->registration:s->relatives_), s->plugs_n_, s->sockets_n_
+           );
+  else
+  if((int)type >= oyNAME_DESCRIPTION)
+    sprintf( &text[strlen(text)], "reg: %s\nrelatives: %s\nplugs: %d sockets: %d context: %s",
+             oyNoEmptyString_m_(s->api7_?s->api7_->registration:s->relatives_), s->relatives_,
+             s->plugs_n_, s->sockets_n_, oyNoEmptyString_m_(s->api7_?s->api7_->context_type:"???")
+           );
+
+
+  return text;
+}
 
 
 /* Include "FilterNode.private_custom_definitions.c" { */
@@ -229,64 +284,6 @@ int oyFilterNode_Copy__Members( oyFilterNode_s_ * dst, oyFilterNode_s_ * src)
 /* } Include "FilterNode.private_custom_definitions.c" */
 
 
-
-static int oy_filternode_init_ = 0;
-static const char * oyFilterNode_StaticMessageFunc_ (
-                                       oyPointer           obj,
-                                       oyNAME_e            type,
-                                       int                 flags )
-{
-  oyFilterNode_s_ * s = (oyFilterNode_s_*) obj;
-  static char * text = 0;
-  static int text_n = 0;
-  oyAlloc_f alloc = oyAllocateFunc_;
-
-  /* silently fail */
-  if(!s)
-   return "";
-
-  if(s->oy_ && s->oy_->allocateFunc_)
-    alloc = s->oy_->allocateFunc_;
-
-  if( text == NULL || text_n == 0 )
-  {
-    text_n = 512;
-    text = (char*) alloc( text_n );
-    if(text)
-      memset( text, 0, text_n );
-  }
-
-  if( text == NULL || text_n == 0 )
-    return "Memory problem";
-
-  text[0] = '\000';
-
-  if(!(flags & 0x01))
-    sprintf(text, "%s%s", oyStructTypeToText( s->type_ ), type != oyNAME_NICK?" ":"");
-
-  
-
-  
-  if(type == oyNAME_NICK && (flags & 0x01))
-  {
-    sprintf( &text[strlen(text)], "%s",
-             oyNoEmptyString_m_(s->api7_?s->api7_->registration:s->relatives_)
-           );
-  } else
-  if(type == oyNAME_NAME)
-    sprintf( &text[strlen(text)], "%s %d/%d",
-             oyNoEmptyString_m_(s->api7_?s->api7_->registration:s->relatives_), s->plugs_n_, s->sockets_n_
-           );
-  else
-  if((int)type >= oyNAME_DESCRIPTION)
-    sprintf( &text[strlen(text)], "reg: %s\nrelatives: %s\nplugs: %d sockets: %d context: %s",
-             oyNoEmptyString_m_(s->api7_?s->api7_->registration:s->relatives_), s->relatives_,
-             s->plugs_n_, s->sockets_n_, oyNoEmptyString_m_(s->api7_?s->api7_->context_type:"???")
-           );
-
-
-  return text;
-}
 /** @internal
  *  Function oyFilterNode_New_
  *  @memberof oyFilterNode_s_
@@ -501,6 +498,8 @@ int oyFilterNode_Release_( oyFilterNode_s_ **filternode )
 
   *filternode = 0;
 
+  observer_refs = oyStruct_ObservedModelCount( (oyStruct_s*)s );
+
   if(oy_debug_objects >= 0 && s->oy_)
   {
     const char * t = getenv(OY_DEBUG_OBJECTS);
@@ -521,8 +520,8 @@ int oyFilterNode_Release_( oyFilterNode_s_ **filternode )
       {
         int i;
         track_name = oyStructTypeToText(s->type_);
-        fprintf( stderr, "%s[%d] unref from: %d parents: %d\n",
-                 track_name, s->oy_->id_, s->oy_->ref_, n );
+        fprintf( stderr, "%s[%d] unref with refs: %d observers: %d parents: %d\n",
+                 track_name, s->oy_->id_, s->oy_->ref_, observer_refs, n );
         for(i = 0; i < n; ++i)
         {
           track_name = oyStructTypeToText(parents[i]->type_);
@@ -533,7 +532,7 @@ int oyFilterNode_Release_( oyFilterNode_s_ **filternode )
     }
   }
 
-
+  
   {
   uint32_t s_n = 0, p_n = 0, sn_n = 0, pn_n = 0, i, n;
   int r OY_UNUSED = oyObject_UnRef(s->oy_);
@@ -561,8 +560,6 @@ int oyFilterNode_Release_( oyFilterNode_s_ **filternode )
         ++p_n;
       }
   }
-
-  observer_refs = oyStruct_ObservedModelCount( (oyStruct_s*)s );
 
   /* referenences from members has to be substracted
    * from this objects ref count */
@@ -625,6 +622,7 @@ int oyFilterNode_Release_( oyFilterNode_s_ **filternode )
   /* unref after oyXXX_Release__Members() */
   oyObject_UnRef(s->oy_);
 
+
   /* model and observer reference each other. So release the object two times.
    * The models and and observers are released later inside the
    * oyObject_s::handles. */
@@ -634,7 +632,6 @@ int oyFilterNode_Release_( oyFilterNode_s_ **filternode )
     oyObject_UnRef(s->oy_);
   }
 
-
   if(s->oy_->deallocateFunc_)
   {
     oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
@@ -643,6 +640,7 @@ int oyFilterNode_Release_( oyFilterNode_s_ **filternode )
 
     if(refs > 1)
       fprintf( stderr, "!!!ERROR: node[%d]->object can not be untracked with refs: %d\n", id, refs);
+
     oyObject_Release( &s->oy_ );
     if(track_name)
       fprintf( stderr, "%s[%d] destructed\n", track_name, id );

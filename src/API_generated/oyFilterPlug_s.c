@@ -145,14 +145,6 @@ OYAPI int  OYEXPORT
       oyFilterPlug_Release( &s );
     c_->remote_socket_ = NULL;
   }
-#ifdef LET_NODE_RELEASE_PLUG::NODE
-  {
-    oyFilterPlug_s * p = c;
-    if(c_->remote_socket_)
-      oyFilterPlug_Release( &p );
-    c_->remote_socket_ = NULL;
-  }
-#endif
 
   return 0;
 }

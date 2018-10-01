@@ -32,6 +32,85 @@
   
 
 
+static int oy_structlist_init_ = 0;
+static const char * oyStructList_StaticMessageFunc_ (
+                                       oyPointer           obj,
+                                       oyNAME_e            type,
+                                       int                 flags )
+{
+  oyStructList_s_ * s = (oyStructList_s_*) obj;
+  static char * text = 0;
+  static int text_n = 0;
+  oyAlloc_f alloc = oyAllocateFunc_;
+
+  /* silently fail */
+  if(!s)
+   return "";
+
+  if(s->oy_ && s->oy_->allocateFunc_)
+    alloc = s->oy_->allocateFunc_;
+
+  if( text == NULL || text_n == 0 )
+  {
+    text_n = 512;
+    text = (char*) alloc( text_n );
+    if(text)
+      memset( text, 0, text_n );
+  }
+
+  if( text == NULL || text_n == 0 )
+    return "Memory problem";
+
+  text[0] = '\000';
+
+  if(!(flags & 0x01))
+    sprintf(text, "%s%s", oyStructTypeToText( s->type_ ), type != oyNAME_NICK?" ":"");
+
+  
+
+  
+  /* allocate enough space */
+  if(text_n < 1000)
+  {
+    oyDeAlloc_f dealloc = oyDeAllocateFunc_;
+    if(s->oy_ && s->oy_->deallocateFunc_)
+      dealloc = s->oy_->deallocateFunc_;
+    if(text && text_n)
+      dealloc( text );
+    text_n = 1024;
+    text = alloc(text_n);
+    if(text)
+      text[0] = '\000';
+    else
+      return "Memory Error";
+
+    if(!(flags & 0x01))
+      sprintf(text, "%s%s", oyStructTypeToText( s->type_ ), type != oyNAME_NICK?" ":"");
+  }
+
+  if(type == oyNAME_NICK && (flags & 0x01))
+    sprintf( &text[strlen(text)], "%s%d",
+             s->n_?"n: ":"", s->n_
+           );
+  else
+  if(type == oyNAME_NAME)
+    sprintf( &text[strlen(text)], "%s%s%s%d",
+             s->list_name?s->list_name:"", s->list_name?"\n":"",
+             s->n_?" n: ":"", s->n_
+           );
+  else
+  if((int)type >= oyNAME_DESCRIPTION)
+    sprintf( &text[strlen(text)], "%s%s%s%s%s%d",
+             s->list_name?s->list_name:"", s->list_name?"\n":"",
+             s->parent_type_?"parent: ":"", s->parent_type_?oyStructTypeToText(s->parent_type_):"",
+             " n: ", s->n_
+           );
+
+
+  return text;
+}
+
+
 /* Include "StructList.private_custom_definitions.c" { */
 /** @internal
  *  Function    oyStructList_Release__Members
@@ -136,84 +215,6 @@ int oyStructList_Copy__Members( oyStructList_s_ * dst, oyStructList_s_ * src)
 /* } Include "StructList.private_custom_definitions.c" */
 
 
-
-static int oy_structlist_init_ = 0;
-static const char * oyStructList_StaticMessageFunc_ (
-                                       oyPointer           obj,
-                                       oyNAME_e            type,
-                                       int                 flags )
-{
-  oyStructList_s_ * s = (oyStructList_s_*) obj;
-  static char * text = 0;
-  static int text_n = 0;
-  oyAlloc_f alloc = oyAllocateFunc_;
-
-  /* silently fail */
-  if(!s)
-   return "";
-
-  if(s->oy_ && s->oy_->allocateFunc_)
-    alloc = s->oy_->allocateFunc_;
-
-  if( text == NULL || text_n == 0 )
-  {
-    text_n = 512;
-    text = (char*) alloc( text_n );
-    if(text)
-      memset( text, 0, text_n );
-  }
-
-  if( text == NULL || text_n == 0 )
-    return "Memory problem";
-
-  text[0] = '\000';
-
-  if(!(flags & 0x01))
-    sprintf(text, "%s%s", oyStructTypeToText( s->type_ ), type != oyNAME_NICK?" ":"");
-
-  
-
-  
-  /* allocate enough space */
-  if(text_n < 1000)
-  {
-    oyDeAlloc_f dealloc = oyDeAllocateFunc_;
-    if(s->oy_ && s->oy_->deallocateFunc_)
-      dealloc = s->oy_->deallocateFunc_;
-    if(text && text_n)
-      dealloc( text );
-    text_n = 1024;
-    text = alloc(text_n);
-    if(text)
-      text[0] = '\000';
-    else
-      return "Memory Error";
-
-    if(!(flags & 0x01))
-      sprintf(text, "%s%s", oyStructTypeToText( s->type_ ), type != oyNAME_NICK?" ":"");
-  }
-
-  if(type == oyNAME_NICK && (flags & 0x01))
-    sprintf( &text[strlen(text)], "%s%d",
-             s->n_?"n: ":"", s->n_
-           );
-  else
-  if(type == oyNAME_NAME)
-    sprintf( &text[strlen(text)], "%s%s%s%d",
-             s->list_name?s->list_name:"", s->list_name?"\n":"",
-             s->n_?" n: ":"", s->n_
-           );
-  else
-  if((int)type >= oyNAME_DESCRIPTION)
-    sprintf( &text[strlen(text)], "%s%s%s%s%s%d",
-             s->list_name?s->list_name:"", s->list_name?"\n":"",
-             s->parent_type_?"parent: ":"", s->parent_type_?oyStructTypeToText(s->parent_type_):"",
-             " n: ", s->n_
-           );
-
-
-  return text;
-}
 /** @internal
  *  Function oyStructList_New_
  *  @memberof oyStructList_s_
@@ -417,6 +418,7 @@ oyStructList_s_ * oyStructList_Copy_ ( oyStructList_s_ *structlist, oyObject_s o
 int oyStructList_Release_( oyStructList_s_ **structlist )
 {
   const char * track_name = NULL;
+  int observer_refs = 0, i;
   /* ---- start of common object destructor ----- */
   oyStructList_s_ *s = 0;
 
@@ -426,6 +428,8 @@ int oyStructList_Release_( oyStructList_s_ **structlist )
   s = *structlist;
 
   *structlist = 0;
+
+  observer_refs = oyStruct_ObservedModelCount( (oyStruct_s*)s );
 
   if(oy_debug_objects >= 0 && s->oy_)
   {
@@ -447,8 +451,8 @@ int oyStructList_Release_( oyStructList_s_ **structlist )
       {
         int i;
         track_name = oyStructTypeToText(s->type_);
-        fprintf( stderr, "%s[%d] untracking refs: %d parents: %d\n",
-                 track_name, s->oy_->id_, s->oy_->ref_, n );
+        fprintf( stderr, "%s[%d] unref with refs: %d observers: %d parents: %d\n",
+                 track_name, s->oy_->id_, s->oy_->ref_, observer_refs, n );
         for(i = 0; i < n; ++i)
         {
           track_name = oyStructTypeToText(parents[i]->type_);
@@ -459,7 +463,7 @@ int oyStructList_Release_( oyStructList_s_ **structlist )
     }
   }
 
-
+  
   if(oyObject_UnRef(s->oy_))
     return 0;
   /* ---- end of common object destructor ------- */
@@ -479,7 +483,7 @@ int oyStructList_Release_( oyStructList_s_ **structlist )
        id_ == 1)
     {
       track_name = oyStructTypeToText(s->type_);
-      fprintf( stderr, "%s[%d] untracking\n", track_name, s->oy_->id_);
+      fprintf( stderr, "%s[%d] destruct\n", track_name, s->oy_->id_);
     }
   }
 
@@ -494,14 +498,27 @@ int oyStructList_Release_( oyStructList_s_ **structlist )
 
 
 
+  /* model and observer reference each other. So release the object two times.
+   * The models and and observers are released later inside the
+   * oyObject_s::handles. */
+  for(i = 0; i < observer_refs; ++i)
+  {
+    oyObject_UnRef(s->oy_);
+    oyObject_UnRef(s->oy_);
+  }
+
   if(s->oy_->deallocateFunc_)
   {
     oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
     int id = s->oy_->id_;
+    int refs = s->oy_->ref_;
+
+    if(refs > 1)
+      fprintf( stderr, "!!!ERROR: node[%d]->object can not be untracked with refs: %d\n", id, refs);
 
     oyObject_Release( &s->oy_ );
     if(track_name)
-      fprintf( stderr, "%s[%d] untracked\n", track_name, id);
+      fprintf( stderr, "%s[%d] destructed\n", track_name, id );
 
     deallocateFunc( s );
   }

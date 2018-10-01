@@ -32,6 +32,84 @@
   
 
 
+static int oy_hash_init_ = 0;
+static const char * oyHash_StaticMessageFunc_ (
+                                       oyPointer           obj,
+                                       oyNAME_e            type,
+                                       int                 flags )
+{
+  oyHash_s_ * s = (oyHash_s_*) obj;
+  static char * text = 0;
+  static int text_n = 0;
+  oyAlloc_f alloc = oyAllocateFunc_;
+
+  /* silently fail */
+  if(!s)
+   return "";
+
+  if(s->oy_ && s->oy_->allocateFunc_)
+    alloc = s->oy_->allocateFunc_;
+
+  if( text == NULL || text_n == 0 )
+  {
+    text_n = 512;
+    text = (char*) alloc( text_n );
+    if(text)
+      memset( text, 0, text_n );
+  }
+
+  if( text == NULL || text_n == 0 )
+    return "Memory problem";
+
+  text[0] = '\000';
+
+  if(!(flags & 0x01))
+    sprintf(text, "%s%s", oyStructTypeToText( s->type_ ), type != oyNAME_NICK?" ":"");
+
+  
+
+  
+  const char * hash_text = oyObject_GetName(s->oy_, oyNAME_NAME);
+  int l = 0;
+  if(hash_text)
+    l = strlen(hash_text);
+
+  /* allocate enough space */
+  if(text_n < l)
+  {
+    oyDeAlloc_f dealloc = oyDeAllocateFunc_;
+    if(s->oy_ && s->oy_->deallocateFunc_)
+      dealloc = s->oy_->deallocateFunc_;
+    if(text && text_n)
+      dealloc( text );
+    text_n = l;
+    text = alloc(text_n);
+    if(text)
+      text[0] = '\000';
+    else
+      return "Memory Error";
+
+    if(!(flags & 0x01))
+      sprintf(text, "%s%s", oyStructTypeToText( s->type_ ), type != oyNAME_NICK?" ":"");
+  }
+
+  if(type == oyNAME_NICK && (flags & 0x01))
+  {
+    sprintf( &text[strlen(text)], "%d",
+             l
+           );
+  } else
+  if(type == oyNAME_NAME ||
+     (int)type >= oyNAME_DESCRIPTION)
+    sprintf( &text[strlen(text)], "%s",
+             hash_text?hash_text:"----"
+           );
+
+
+  return text;
+}
+
+
 /* Include "Hash.private_custom_definitions.c" { */
 /** @internal
  *  Function    oyHash_Release__Members
@@ -127,83 +205,6 @@ int oyHash_Copy__Members( oyHash_s_ * dst, oyHash_s_ * src)
 /* } Include "Hash.private_custom_definitions.c" */
 
 
-
-static int oy_hash_init_ = 0;
-static const char * oyHash_StaticMessageFunc_ (
-                                       oyPointer           obj,
-                                       oyNAME_e            type,
-                                       int                 flags )
-{
-  oyHash_s_ * s = (oyHash_s_*) obj;
-  static char * text = 0;
-  static int text_n = 0;
-  oyAlloc_f alloc = oyAllocateFunc_;
-
-  /* silently fail */
-  if(!s)
-   return "";
-
-  if(s->oy_ && s->oy_->allocateFunc_)
-    alloc = s->oy_->allocateFunc_;
-
-  if( text == NULL || text_n == 0 )
-  {
-    text_n = 512;
-    text = (char*) alloc( text_n );
-    if(text)
-      memset( text, 0, text_n );
-  }
-
-  if( text == NULL || text_n == 0 )
-    return "Memory problem";
-
-  text[0] = '\000';
-
-  if(!(flags & 0x01))
-    sprintf(text, "%s%s", oyStructTypeToText( s->type_ ), type != oyNAME_NICK?" ":"");
-
-  
-
-  
-  const char * hash_text = oyObject_GetName(s->oy_, oyNAME_NAME);
-  int l = 0;
-  if(hash_text)
-    l = strlen(hash_text);
-
-  /* allocate enough space */
-  if(text_n < l)
-  {
-    oyDeAlloc_f dealloc = oyDeAllocateFunc_;
-    if(s->oy_ && s->oy_->deallocateFunc_)
-      dealloc = s->oy_->deallocateFunc_;
-    if(text && text_n)
-      dealloc( text );
-    text_n = l;
-    text = alloc(text_n);
-    if(text)
-      text[0] = '\000';
-    else
-      return "Memory Error";
-
-    if(!(flags & 0x01))
-      sprintf(text, "%s%s", oyStructTypeToText( s->type_ ), type != oyNAME_NICK?" ":"");
-  }
-
-  if(type == oyNAME_NICK && (flags & 0x01))
-  {
-    sprintf( &text[strlen(text)], "%d",
-             l
-           );
-  } else
-  if(type == oyNAME_NAME ||
-     (int)type >= oyNAME_DESCRIPTION)
-    sprintf( &text[strlen(text)], "%s",
-             hash_text?hash_text:"----"
-           );
-
-
-  return text;
-}
 /** @internal
  *  Function oyHash_New_
  *  @memberof oyHash_s_
@@ -410,6 +411,7 @@ oyHash_s_ * oyHash_Copy_ ( oyHash_s_ *hash, oyObject_s object )
 int oyHash_Release_( oyHash_s_ **hash )
 {
   const char * track_name = NULL;
+  int observer_refs = 0, i;
   /* ---- start of common object destructor ----- */
   oyHash_s_ *s = 0;
 
@@ -419,6 +421,8 @@ int oyHash_Release_( oyHash_s_ **hash )
   s = *hash;
 
   *hash = 0;
+
+  observer_refs = oyStruct_ObservedModelCount( (oyStruct_s*)s );
 
   if(oy_debug_objects >= 0 && s->oy_)
   {
@@ -440,8 +444,8 @@ int oyHash_Release_( oyHash_s_ **hash )
       {
         int i;
         track_name = oyStructTypeToText(s->type_);
-        fprintf( stderr, "%s[%d] untracking refs: %d parents: %d\n",
-                 track_name, s->oy_->id_, s->oy_->ref_, n );
+        fprintf( stderr, "%s[%d] unref with refs: %d observers: %d parents: %d\n",
+                 track_name, s->oy_->id_, s->oy_->ref_, observer_refs, n );
         for(i = 0; i < n; ++i)
         {
           track_name = oyStructTypeToText(parents[i]->type_);
@@ -452,7 +456,7 @@ int oyHash_Release_( oyHash_s_ **hash )
     }
   }
 
-
+  
   if(oyObject_UnRef(s->oy_))
     return 0;
   /* ---- end of common object destructor ------- */
@@ -472,7 +476,7 @@ int oyHash_Release_( oyHash_s_ **hash )
        id_ == 1)
     {
       track_name = oyStructTypeToText(s->type_);
-      fprintf( stderr, "%s[%d] untracking\n", track_name, s->oy_->id_);
+      fprintf( stderr, "%s[%d] destruct\n", track_name, s->oy_->id_);
     }
   }
 
@@ -487,14 +491,27 @@ int oyHash_Release_( oyHash_s_ **hash )
 
 
 
+  /* model and observer reference each other. So release the object two times.
+   * The models and and observers are released later inside the
+   * oyObject_s::handles. */
+  for(i = 0; i < observer_refs; ++i)
+  {
+    oyObject_UnRef(s->oy_);
+    oyObject_UnRef(s->oy_);
+  }
+
   if(s->oy_->deallocateFunc_)
   {
     oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
     int id = s->oy_->id_;
+    int refs = s->oy_->ref_;
+
+    if(refs > 1)
+      fprintf( stderr, "!!!ERROR: node[%d]->object can not be untracked with refs: %d\n", id, refs);
 
     oyObject_Release( &s->oy_ );
     if(track_name)
-      fprintf( stderr, "%s[%d] untracked\n", track_name, id);
+      fprintf( stderr, "%s[%d] destructed\n", track_name, id );
 
     deallocateFunc( s );
   }

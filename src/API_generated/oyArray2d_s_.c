@@ -32,6 +32,57 @@
   
 
 
+static int oy_array2d_init_ = 0;
+static const char * oyArray2d_StaticMessageFunc_ (
+                                       oyPointer           obj,
+                                       oyNAME_e            type,
+                                       int                 flags )
+{
+  oyArray2d_s_ * s = (oyArray2d_s_*) obj;
+  static char * text = 0;
+  static int text_n = 0;
+  oyAlloc_f alloc = oyAllocateFunc_;
+
+  /* silently fail */
+  if(!s)
+   return "";
+
+  if(s->oy_ && s->oy_->allocateFunc_)
+    alloc = s->oy_->allocateFunc_;
+
+  if( text == NULL || text_n == 0 )
+  {
+    text_n = 512;
+    text = (char*) alloc( text_n );
+    if(text)
+      memset( text, 0, text_n );
+  }
+
+  if( text == NULL || text_n == 0 )
+    return "Memory problem";
+
+  text[0] = '\000';
+
+  if(!(flags & 0x01))
+    sprintf(text, "%s%s", oyStructTypeToText( s->type_ ), type != oyNAME_NICK?" ":"");
+
+  
+
+  
+  if(type == oyNAME_NICK && (flags & 0x01))
+    sprintf( &text[strlen(text)], "%dx%d", s->width, s->height);
+  else
+  if(type == oyNAME_NAME)
+    sprintf( &text[strlen(text)], "(%dx%d)%dt", s->width, s->height, s->t);
+  else
+  if((int)type >= oyNAME_DESCRIPTION)
+    sprintf( &text[strlen(text)], "(%dx%d)%s", s->width, s->height, oyDataTypeToText(s->t));
+
+
+  return text;
+}
+
+
 /* Include "Array2d.private_custom_definitions.c" { */
 #include "oyranos_image_internal.h"
 
@@ -140,56 +191,6 @@ int oyArray2d_Copy__Members( oyArray2d_s_ * dst, oyArray2d_s_ * src)
 /* } Include "Array2d.private_custom_definitions.c" */
 
 
-
-static int oy_array2d_init_ = 0;
-static const char * oyArray2d_StaticMessageFunc_ (
-                                       oyPointer           obj,
-                                       oyNAME_e            type,
-                                       int                 flags )
-{
-  oyArray2d_s_ * s = (oyArray2d_s_*) obj;
-  static char * text = 0;
-  static int text_n = 0;
-  oyAlloc_f alloc = oyAllocateFunc_;
-
-  /* silently fail */
-  if(!s)
-   return "";
-
-  if(s->oy_ && s->oy_->allocateFunc_)
-    alloc = s->oy_->allocateFunc_;
-
-  if( text == NULL || text_n == 0 )
-  {
-    text_n = 512;
-    text = (char*) alloc( text_n );
-    if(text)
-      memset( text, 0, text_n );
-  }
-
-  if( text == NULL || text_n == 0 )
-    return "Memory problem";
-
-  text[0] = '\000';
-
-  if(!(flags & 0x01))
-    sprintf(text, "%s%s", oyStructTypeToText( s->type_ ), type != oyNAME_NICK?" ":"");
-
-  
-
-  
-  if(type == oyNAME_NICK && (flags & 0x01))
-    sprintf( &text[strlen(text)], "%dx%d", s->width, s->height);
-  else
-  if(type == oyNAME_NAME)
-    sprintf( &text[strlen(text)], "(%dx%d)%dt", s->width, s->height, s->t);
-  else
-  if((int)type >= oyNAME_DESCRIPTION)
-    sprintf( &text[strlen(text)], "(%dx%d)%s", s->width, s->height, oyDataTypeToText(s->t));
-
-
-  return text;
-}
 /** @internal
  *  Function oyArray2d_New_
  *  @memberof oyArray2d_s_
@@ -393,6 +394,7 @@ oyArray2d_s_ * oyArray2d_Copy_ ( oyArray2d_s_ *array2d, oyObject_s object )
 int oyArray2d_Release_( oyArray2d_s_ **array2d )
 {
   const char * track_name = NULL;
+  int observer_refs = 0, i;
   /* ---- start of common object destructor ----- */
   oyArray2d_s_ *s = 0;
 
@@ -402,6 +404,8 @@ int oyArray2d_Release_( oyArray2d_s_ **array2d )
   s = *array2d;
 
   *array2d = 0;
+
+  observer_refs = oyStruct_ObservedModelCount( (oyStruct_s*)s );
 
   if(oy_debug_objects >= 0 && s->oy_)
   {
@@ -423,8 +427,8 @@ int oyArray2d_Release_( oyArray2d_s_ **array2d )
       {
         int i;
         track_name = oyStructTypeToText(s->type_);
-        fprintf( stderr, "%s[%d] untracking refs: %d parents: %d\n",
-                 track_name, s->oy_->id_, s->oy_->ref_, n );
+        fprintf( stderr, "%s[%d] unref with refs: %d observers: %d parents: %d\n",
+                 track_name, s->oy_->id_, s->oy_->ref_, observer_refs, n );
         for(i = 0; i < n; ++i)
         {
           track_name = oyStructTypeToText(parents[i]->type_);
@@ -435,7 +439,7 @@ int oyArray2d_Release_( oyArray2d_s_ **array2d )
     }
   }
 
-
+  
   if(oyObject_UnRef(s->oy_))
     return 0;
   /* ---- end of common object destructor ------- */
@@ -455,7 +459,7 @@ int oyArray2d_Release_( oyArray2d_s_ **array2d )
        id_ == 1)
     {
       track_name = oyStructTypeToText(s->type_);
-      fprintf( stderr, "%s[%d] untracking\n", track_name, s->oy_->id_);
+      fprintf( stderr, "%s[%d] destruct\n", track_name, s->oy_->id_);
     }
   }
 
@@ -470,14 +474,27 @@ int oyArray2d_Release_( oyArray2d_s_ **array2d )
 
 
 
+  /* model and observer reference each other. So release the object two times.
+   * The models and and observers are released later inside the
+   * oyObject_s::handles. */
+  for(i = 0; i < observer_refs; ++i)
+  {
+    oyObject_UnRef(s->oy_);
+    oyObject_UnRef(s->oy_);
+  }
+
   if(s->oy_->deallocateFunc_)
   {
     oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
     int id = s->oy_->id_;
+    int refs = s->oy_->ref_;
+
+    if(refs > 1)
+      fprintf( stderr, "!!!ERROR: node[%d]->object can not be untracked with refs: %d\n", id, refs);
 
     oyObject_Release( &s->oy_ );
     if(track_name)
-      fprintf( stderr, "%s[%d] untracked\n", track_name, id);
+      fprintf( stderr, "%s[%d] destructed\n", track_name, id );
 
     deallocateFunc( s );
   }

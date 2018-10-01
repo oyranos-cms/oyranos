@@ -24,12 +24,6 @@
 {% ifequal class.group "objects_generic" %}#include "oyranos_generic_internal.h"{% endifequal %}
 {% block LocalIncludeFiles %}{% endblock %}  
 
-{% block CustomPrivateMethodsDefinitions %}
-/* Include "{{ class.private_custom_definitions_c }}" { */
-{% include class.private_custom_definitions_c %}
-/* } Include "{{ class.private_custom_definitions_c }}" */
-{% endblock CustomPrivateMethodsDefinitions %}
-
 {% block GeneralPrivateMethodsDefinitions %}
 static int oy_{{ class.baseName|lower }}_init_ = 0;
 static const char * oy{{ class.baseName }}_StaticMessageFunc_ (
@@ -70,6 +64,13 @@ static const char * oy{{ class.baseName }}_StaticMessageFunc_ (
 
   return text;
 }
+
+{% block CustomPrivateMethodsDefinitions %}
+/* Include "{{ class.private_custom_definitions_c }}" { */
+{% include class.private_custom_definitions_c %}
+/* } Include "{{ class.private_custom_definitions_c }}" */
+{% endblock CustomPrivateMethodsDefinitions %}
+
 /** @internal
  *  Function oy{{ class.baseName }}_New_
  *  @memberof {{ class.privName }}
@@ -363,6 +364,7 @@ static const char * oy{{ class.baseName }}_StaticMessageFunc_ (
 int oy{{ class.baseName }}_Release_( {{ class.privName }} **{{ class.baseName|lower }} )
 {
   const char * track_name = NULL;
+  int observer_refs = 0, i;
   /* ---- start of common object destructor ----- */
   {{ class.privName }} *s = 0;
 
@@ -372,6 +374,8 @@ int oy{{ class.baseName }}_Release_( {{ class.privName }} **{{ class.baseName|lo
   s = *{{ class.baseName|lower }};
 
   *{{ class.baseName|lower }} = 0;
+
+  observer_refs = oyStruct_ObservedModelCount( (oyStruct_s*)s );
 
   if(oy_debug_objects >= 0 && s->oy_)
   {
@@ -393,8 +397,8 @@ int oy{{ class.baseName }}_Release_( {{ class.privName }} **{{ class.baseName|lo
       {
         int i;
         track_name = oyStructTypeToText(s->type_);
-        fprintf( stderr, "%s[%d] untracking refs: %d parents: %d\n",
-                 track_name, s->oy_->id_, s->oy_->ref_, n );
+        fprintf( stderr, "%s[%d] unref with refs: %d observers: %d parents: %d\n",
+                 track_name, s->oy_->id_, s->oy_->ref_, observer_refs, n );
         for(i = 0; i < n; ++i)
         {
           track_name = oyStructTypeToText(parents[i]->type_);
@@ -405,7 +409,7 @@ int oy{{ class.baseName }}_Release_( {{ class.privName }} **{{ class.baseName|lo
     }
   }
 
-{% block refCount %}
+  {% block refCount %}
   if(oyObject_UnRef(s->oy_))
     return 0;{% endblock %}
   /* ---- end of common object destructor ------- */
@@ -425,7 +429,7 @@ int oy{{ class.baseName }}_Release_( {{ class.privName }} **{{ class.baseName|lo
        id_ == 1)
     {
       track_name = oyStructTypeToText(s->type_);
-      fprintf( stderr, "%s[%d] untracking\n", track_name, s->oy_->id_);
+      fprintf( stderr, "%s[%d] destruct\n", track_name, s->oy_->id_);
     }
   }
 
@@ -470,14 +474,27 @@ int oy{{ class.baseName }}_Release_( {{ class.privName }} **{{ class.baseName|lo
 {% block customDestructor %}
 {% endblock customDestructor %}
 
+  /* model and observer reference each other. So release the object two times.
+   * The models and and observers are released later inside the
+   * oyObject_s::handles. */
+  for(i = 0; i < observer_refs; ++i)
+  {
+    oyObject_UnRef(s->oy_);
+    oyObject_UnRef(s->oy_);
+  }
+
   if(s->oy_->deallocateFunc_)
   {
     oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
     int id = s->oy_->id_;
+    int refs = s->oy_->ref_;
+
+    if(refs > 1)
+      fprintf( stderr, "!!!ERROR: node[%d]->object can not be untracked with refs: %d\n", id, refs);
 
     oyObject_Release( &s->oy_ );
     if(track_name)
-      fprintf( stderr, "%s[%d] untracked\n", track_name, id);
+      fprintf( stderr, "%s[%d] destructed\n", track_name, id );
 
     deallocateFunc( s );
   }

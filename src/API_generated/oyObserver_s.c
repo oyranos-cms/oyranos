@@ -765,9 +765,12 @@ OYAPI int  OYEXPORT
 {
   int observed = 0;
   int i,n = 0;
-  oyOption_s_ * o = 0;
-  oyOptions_s_ * handles = (oyOptions_s_*) observer->oy_->handles_;
+  oyOption_s_ * o = NULL;
+  oyOptions_s_ * handles = NULL;
   int error = 0;
+
+  if(observer && observer->oy_)
+    handles = (oyOptions_s_*) observer->oy_->handles_;
 
   if(handles)
     n = oyStructList_Count( handles->list_ );
