@@ -121,7 +121,7 @@ int          oyIMFilterScan          ( oyPointer           data OY_UNUSED,
                                        oyCMMinfo_s      ** info,
                                        oyObject_s          object )
 {
-  oyCMM_s * cmm_info = 0;
+  oyCMM_s * cmm_obj = 0;
   oyCMMapi_s_ * api = 0;
   oyCMMapi4_s_ * api4 = 0;
   int error = !lib_name;
@@ -160,15 +160,15 @@ int          oyIMFilterScan          ( oyPointer           data OY_UNUSED,
 #endif
 
 #if DLOPEN
-      cmm_info = (oyCMM_s*) dlsym (dso_handle, info_sym);
+      cmm_obj = (oyCMM_s*) dlsym (dso_handle, info_sym);
 
       if(info_sym)
         oyFree_m_(info_sym);
 #else
-      cmm_info = (oyCMM_s*)oyCMMinfoFromLibName_p( lib_name );
+      cmm_obj = (oyCMM_s*)oyCMMinfoFromLibName_p( lib_name );
 #endif
 
-      error = !cmm_info;
+      error = !cmm_obj;
 
 #if DLOPEN
       if(error)
@@ -179,8 +179,8 @@ int          oyIMFilterScan          ( oyPointer           data OY_UNUSED,
 #endif
 
       if(!error)
-        if(oyCMMapi_Check_( cmm_info->api ))
-          api = (oyCMMapi_s_*)cmm_info->api;
+        if(oyCMMapi_Check_( cmm_obj->api ))
+          api = (oyCMMapi_s_*)cmm_obj->api;
 
       if(!error && api)
       {
@@ -213,7 +213,7 @@ int          oyIMFilterScan          ( oyPointer           data OY_UNUSED,
                                    allocateFunc );
           if(info)
           {
-            oyCMMinfo_s * ci = oyCMMinfo_Copy( (oyCMMinfo_s*)cmm_info, object );
+            oyCMMinfo_s * ci = oyCMMinfo_Copy( (oyCMMinfo_s*)cmm_obj, object );
             *info = ci;
           }
           ret = 0;
@@ -235,7 +235,6 @@ int          oyIMFilterScan          ( oyPointer           data OY_UNUSED,
   if(cmm)
     oyDeAllocateFunc_(cmm);
   cmm = 0;
-  oyCMMinfo_Release( &cmm_info );
 
   return ret;
 }
