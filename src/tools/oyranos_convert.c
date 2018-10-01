@@ -626,6 +626,9 @@ int main( int argc , char** argv )
       oyDeAllocateFunc_(data); size = 0; data = 0;
     } else
       WARNc_S("No profile found");
+
+    oyImage_Release( &image );
+    oyProfile_Release( &prof );
     
   } else
   if(format && (strcmp(format,"hald") == 0 ||
@@ -742,6 +745,9 @@ int main( int argc , char** argv )
                         printfHelp(argc, argv);
                         exit (0);
   }
+
+  oyProfiles_Release( &effects );
+  oyProfiles_Release( &proofing );
 
   oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
 
