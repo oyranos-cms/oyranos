@@ -37,15 +37,15 @@ int            oyFilterNode_Connect  ( oyFilterNode_s    * input,
     if(error <= 0 &&
        (!s->core || !s->core->api4_))
     {
-      WARNc2_S( "%s: %s",
+      WARNcc2_S( s, "%s: %s",
       _("attempt to add a incomplete filter"), s->relatives_ );
       error = 1;
     }
     if(error <= 0 &&
        !oyFilterNode_EdgeCount( input, 0, OY_FILTEREDGE_FREE ))
     {
-      WARNc2_S( "%s: %s", "input node has no free socket",
-                oyFilterCore_GetName( (oyFilterCore_s*)oyFilterNodePriv_m(input)->core, oyNAME_NAME) );
+      WARNcc2_S( input, "%s: %s", "input node has no free socket",
+                 oyFilterCore_GetName( (oyFilterCore_s*)oyFilterNodePriv_m(input)->core, oyNAME_NAME) );
       error = 1;
     }
 
@@ -70,8 +70,8 @@ int            oyFilterNode_Connect  ( oyFilterNode_s    * input,
 
       if(!out_plug)
       {
-        WARNc3_S( "\n  %s: \"%s\" %s", "Could not find plug for filter",
-                  oyFilterCore_GetName( (oyFilterCore_s*)oyFilterNodePriv_m(output)->core, oyNAME_NAME), socket_nick );
+        WARNcc3_S( output, "\n  %s: \"%s\" %s", "Could not find plug for filter",
+                   oyFilterCore_GetName( (oyFilterCore_s*)oyFilterNodePriv_m(output)->core, oyNAME_NAME), socket_nick );
         error = 1;
       }
 
@@ -81,8 +81,8 @@ int            oyFilterNode_Connect  ( oyFilterNode_s    * input,
           output_socket = oyFilterNode_GetSocket( output, 0 );
         else
         {
-          WARNc3_S( "\n  %s: %s -> %s", "Filter connectors do not match",
-                    oyFilterNodePriv_m(input)->relatives_, oyFilterNodePriv_m(output)->relatives_ );
+          WARNcc3_S( input, "\n  %s: %s -> %s", "Filter connectors do not match",
+                     oyFilterNodePriv_m(input)->relatives_, oyFilterNodePriv_m(output)->relatives_ );
           error = 1;
         }
       }
@@ -99,12 +99,24 @@ int            oyFilterNode_Connect  ( oyFilterNode_s    * input,
       }
 
       if(error <= 0)
-        oyFilterPlug_ConnectIntoSocket( &out_plug, &in_socket );
+      {
+        oyFilterPlug_s_  * out_plug_ = (oyFilterPlug_s_*) out_plug;
+        oyFilterSocket_s_* in_socket_ = (oyFilterSocket_s_*)in_socket;
+        error = oyFilterPlug_ConnectIntoSocket( &out_plug, &in_socket );
+        if(error <= 0)
+        {
+          oyFilterNode_Release( (oyFilterNode_s**) &out_plug_->node );
+          out_plug_->node = (oyFilterNode_s_*) oyFilterNode_Copy( output, NULL );
+          oyFilterNode_Release( (oyFilterNode_s**) &in_socket_->node );
+          in_socket_->node = (oyFilterNode_s_*) oyFilterNode_Copy( input, NULL );
+        }
+      }
 
     } else
-      WARNc2_S( "%s: %d", _("?? Nothing to add ??"),
-                oyObject_GetId(input->oy_));
+      WARNcc2_S( input, "%s: %d", _("?? Nothing to add ??"),
+                 oyObject_GetId(input->oy_));
   }
+  oyFilterSocket_Release( &output_socket );
 
   return error;
 }
@@ -377,7 +389,7 @@ int            oyFilterNode_Disconnect(oyFilterNode_s    * node,
     return 1;
 
   oyFilterSocket_Callback( (oyFilterPlug_s*)edge, oyCONNECTOR_EVENT_RELEASED );
-  oyFilterSocket_Release( (oyFilterSocket_s**)&edge->remote_socket_ );
+  oyFilterPlug_Callback( (oyFilterPlug_s*)edge, oyCONNECTOR_EVENT_RELEASED );
   return 0;
 }
 
@@ -658,8 +670,8 @@ OYAPI int  OYEXPORT
  *  @since   2008/07/30 (Oyranos: 0.1.8)
  *  @date    2008/07/30
  */
-OYAPI oyFilterPlug_s * OYEXPORT
-                 oyFilterNode_GetPlug( oyFilterNode_s    * node,
+OYAPI oyFilterPlug_s * OYEXPORT oyFilterNode_GetPlug (
+                                       oyFilterNode_s    * node,
                                        int                 pos )
 {
   oyFilterNode_s_ * node_ = (oyFilterNode_s_*)node;
@@ -686,6 +698,7 @@ OYAPI oyFilterPlug_s * OYEXPORT
       s = (oyFilterPlug_s_*)oyFilterPlug_New( node_->oy_ );
       s->pattern = oyFilterNode_ShowConnector( (oyFilterNode_s*)node_, pos, 1 );
       s->node = (oyFilterNode_s_*)oyFilterNode_Copy( (oyFilterNode_s*)node_, 0);
+      oyFilterPlug_Copy((oyFilterPlug_s*)s,0); /* ref node */
       s->relatives_ = oyStringCopy_( node_->relatives_, allocateFunc_ );
       node_->plugs[pos] = s;
     }
@@ -785,14 +798,13 @@ OYAPI oyFilterSocket_s * OYEXPORT
       s = (oyFilterSocket_s_*)oyFilterSocket_New( node_->oy_ );
       s->pattern = oyFilterNode_ShowConnector( (oyFilterNode_s*)node_, pos, 0 );
       s->node = (oyFilterNode_s_*)oyFilterNode_Copy( (oyFilterNode_s*)node_,0 );
+      oyFilterSocket_Copy((oyFilterSocket_s*)s, 0); /* ref for node */
       s->relatives_ = oyStringCopy_( node_->relatives_, allocateFunc_ );
       node_->sockets[pos] = s;
     }
-
-    s = node_->sockets[pos];
+    s = (oyFilterSocket_s_*)oyFilterSocket_Copy((oyFilterSocket_s*)node_->sockets[pos], 0);
   }
 
-  oyFilterSocket_Copy((oyFilterSocket_s*)s, 0);
   return (oyFilterSocket_s*)s;
 }
 
