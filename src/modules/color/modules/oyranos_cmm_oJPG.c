@@ -1158,6 +1158,7 @@ int          oyImage_WriteJPEG       ( oyImage_s         * image,
                            (JOCTET*)pmem, psize ); -- appears not to work */
     if(oy_debug)
       ojpg_msg( oyMSG_DBG, (oyStruct_s*)image, OY_DBG_FORMAT_ "embedd profile: %lu", OY_DBG_ARGS_, psize);
+    oyFree_m_( pmem );
   }
 
   if(comment)
@@ -1203,6 +1204,7 @@ int          oyImage_WriteJPEG       ( oyImage_s         * image,
   jpeg_finish_compress(&cinfo);
   /* After finish_compress, we can close the output file. */
   fclose(outfile);
+  outfile = NULL;
 
   /* Step 7: release JPEG compression object */
 
@@ -1210,6 +1212,8 @@ int          oyImage_WriteJPEG       ( oyImage_s         * image,
   jpeg_destroy_compress(&cinfo);
 
   /* And we're done! */
+
+  oyProfile_Release( &prof );
 
   return error;
 }
@@ -1262,7 +1266,13 @@ int      ojpgFilter_CmmRunWrite      ( oyFilterPlug_s    * requestor_plug,
 
     result = oyImage_WriteJPEG( image_output, filename,
                                 node_opts );
+
+    oyImage_Release( &image_output );
   }
+
+  oyFilterSocket_Release( &socket );
+  oyFilterNode_Release( &node );
+  oyOptions_Release( &node_opts );
 
   return result;
 }
