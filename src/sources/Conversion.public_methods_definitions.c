@@ -793,11 +793,11 @@ int                oyConversion_RunPixels (
                                 pixel_access_->array, 0 );
   }
 
-  if(tmp_ticket)
-    oyPixelAccess_Release( (oyPixelAccess_s**)&pixel_access_ );
+  oyPixelAccess_Release( (oyPixelAccess_s**)&pixel_access_ );
 
   oyImage_Release( &image_out );
   oyFilterPlug_Release( &plug );
+  oyFilterNode_Release( &node_out );
 
   return error;
 }
@@ -825,10 +825,10 @@ int                oyConversion_Set  ( oyConversion_s    * conversion,
   oyCheckType__m( oyOBJECT_CONVERSION_S, return 1 )
 
   if(input)
-    s->input = (oyFilterNode_s_*)input;
+    s->input = (oyFilterNode_s_*)oyFilterNode_Copy(input,NULL);
 
   if(output)
-    s->out_ = (oyFilterNode_s_*)output;
+    s->out_ = (oyFilterNode_s_*)oyFilterNode_Copy(output,NULL);
 
   return error;
 }
