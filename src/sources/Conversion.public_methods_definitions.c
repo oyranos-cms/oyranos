@@ -602,7 +602,7 @@ int                oyConversion_RunPixels (
   oyFilterNode_s * node_out = 0;
   oyImage_s * image_out = 0,
             * image_input = 0;
-  int error = 0, result = 0, dirty = 0, tmp_ticket = 0;
+  int error = 0, result = 0, dirty = 0;
   oyRectangle_s_ roi = {oyOBJECT_RECTANGLE_S, 0,0,0, 0,0,0,0};
   double clck;
 
@@ -637,7 +637,6 @@ int                oyConversion_RunPixels (
         DBG_PROG1_S("oyPixelAccess_Create(): %g", clck/1000000.0 );
       }
     }
-    tmp_ticket = 1;
   }
 
   if(!pixel_access_)
