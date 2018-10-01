@@ -11,27 +11,55 @@
 
 {% block refCount %}
   {
-  uint32_t s_n = 0, p_n = 0, i, n;
+  uint32_t s_n = 0, p_n = 0, sn_n = 0, pn_n = 0, i, n;
   int r OY_UNUSED = oyObject_UnRef(s->oy_);
 
   if(s->sockets)
   {
     n = oyFilterNode_EdgeCount( (oyFilterNode_s*)s, 0, 0 );
     for(i = 0; i < n; ++i)
-      if(s->sockets[i]) ++s_n;
+      if(s->sockets[i])
+      {
+        if(s->sockets[i]->node)
+          ++sn_n;
+        ++s_n;
+      }
   }
 
   if(s->plugs)
   {
     n = oyFilterNode_EdgeCount( (oyFilterNode_s*)s, 1, 0 );
     for(i = 0; i < n; ++i)
-      if(s->plugs[i]) ++p_n;
+      if(s->plugs[i])
+      {
+        if(s->plugs[i]->node)
+          ++pn_n;
+        ++p_n;
+      }
   }
 
   /* referenences from members has to be substracted
    * from this objects ref count */
-  if(oyObject_GetRefCount( s->oy_ ) > (int)(s_n + p_n))
+  if(oyObject_GetRefCount( s->oy_ ) > (int)(sn_n + pn_n))
     return 0;
+
+  if(oy_debug_objects >= 0 && s->oy_)
+  {
+    const char * t = getenv(OY_DEBUG_OBJECTS);
+    int id_ = -1;
+
+    if(t)
+      id_ = atoi(t);
+    else
+      id_ = oy_debug_objects;
+
+    if((id_ >= 0 && s->oy_->id_ == id_) ||
+       (t && s && strstr(oyStructTypeToText(s->type_), t) != 0) ||
+       id_ == 1)
+    {
+      fprintf(stderr, "prepare destruct %s[%d] refs: %d sockets: %d|%d plugs: %d|%d\n", track_name, s->oy_->id_, s->oy_->ref_, s_n,sn_n, p_n,pn_n);
+    }
+  }
 
   /* ref before oyXXX_Release__Members(), so the
    * oyXXX_Release() is not called twice */
