@@ -378,7 +378,6 @@ int  oydiFilterSocket_ImageDisplayInit(oyPixelAccess_s   * ticket,
                                 node, "//" OY_TYPE_STD "/data",0 );
 
 
-
   /* obtain device informations, including geometry and ICC profiles
      from the according Oyranos module */
   error = oyOptions_SetFromString( &options, "//" OY_TYPE_STD "/config/command",

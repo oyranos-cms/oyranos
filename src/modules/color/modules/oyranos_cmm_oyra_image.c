@@ -233,6 +233,10 @@ int      oyraFilterPlug_ImageWriteRun (
     oyFree_m_(file_ext);
   }
 
+  oyFilterSocket_Release( &socket );
+  oyFilterNode_Release( &node );
+  oyImage_Release( &image );
+
   return result;
 }
 
@@ -606,7 +610,6 @@ int      oyraFilterPlug_ImageLoadRun (
           if(image)
             oyFilterSocket_SetData( socket, (oyStruct_s*)image );
 
-          oyFilterNode_Release( &format );
           oyFilterPlug_Release( &plug );
           oyFilterSocket_Release( &sock );
           oyImage_Release( &image );
@@ -1512,6 +1515,7 @@ int      oyraFilterPlug_ImageOutputRun(oyFilterPlug_s    * requestor_plug,
   int result = 0;
 
   node = oyFilterSocket_GetNode( socket );
+  oyFilterSocket_Release( &socket );
 
   /* to reuse the requestor_plug is a exception for the starting request */
   if(node)
@@ -1519,6 +1523,7 @@ int      oyraFilterPlug_ImageOutputRun(oyFilterPlug_s    * requestor_plug,
     DBGs_PROG2_S( ticket, "%s[%d]", "Call next filter in node",
                  oyStruct_GetId( (oyStruct_s*)node ) );
     result = oyFilterNode_Run( node, requestor_plug, ticket );
+    oyFilterNode_Release( &node );
   } else
     result = 1;
 
