@@ -1061,7 +1061,7 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
               oyOptions_Release( &db_options );
               oyOptions_Release( &f_options );
 
-              break;
+              j = m;
             }
           }
           oyFilterSocket_Release( &edge_remote );
