@@ -584,6 +584,7 @@ int main( int argc , char** argv )
       cc = oyConversion_CreateFromImage (
                                 image, module_options,
                                 p, data_type, flags, 0 );
+      oyImage_Release( &image );
 
       error = oyConversion_RunPixels( cc, 0 );
       image = oyConversion_GetImage( cc, OY_OUTPUT );
@@ -746,8 +747,10 @@ int main( int argc , char** argv )
                         exit (0);
   }
 
+  oyProfile_Release( &p );
   oyProfiles_Release( &effects );
   oyProfiles_Release( &proofing );
+  oyOptions_Release( &opts );
 
   oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
 
