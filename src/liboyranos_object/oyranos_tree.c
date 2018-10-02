@@ -928,7 +928,7 @@ static char * oyObjectTreeDotGraphCallbackGetDescription( oyStruct_s * s )
 {
   const char * nick = oyStructTypeToText( s->type_ ),
              * text = oyStruct_GetText( s, oyNAME_DESCRIPTION, 2 );
-  char * t, *t2, *t3, *desc = NULL;
+  char * t, *t2, *t3, *t4, *t5, *desc = NULL;
 
   if(!text || strcmp(nick,text) == 0)
     return desc;
@@ -936,10 +936,14 @@ static char * oyObjectTreeDotGraphCallbackGetDescription( oyStruct_s * s )
   t = oyStringReplace( text, "\"", "'", AD );
   t2 = oyStringReplace( t, "\n", "\\n", AD );
   t3 = oyStringReplace( t2, "<", "\\<", AD );
-  desc = oyStringReplace( t3, ">", "\\>", AD );
+  t4 = oyStringReplace( t3, ">", "\\>", AD );
+  t5 = oyStringReplace( t4, "{", "\\{", AD );
+  desc = oyStringReplace( t5, "}", "\\}", AD );
   oyFree_m_( t );
   oyFree_m_( t2 );
   oyFree_m_( t3 );
+  oyFree_m_( t4 );
+  oyFree_m_( t5 );
 
   return desc;
 }
