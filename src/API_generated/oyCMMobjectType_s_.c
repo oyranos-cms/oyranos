@@ -417,7 +417,7 @@ int oyCMMobjectType_Release_( oyCMMobjectType_s_ **cmmobjecttype )
   }
 
   
-  if(oyObject_UnRef(s->oy_))
+  if((oyObject_UnRef(s->oy_) - 2 * observer_refs) > 0)
     return 0;
   /* ---- end of common object destructor ------- */
 

@@ -422,7 +422,7 @@ int oyConfigs_Release_( oyConfigs_s_ **configs )
   }
 
   
-  if(oyObject_UnRef(s->oy_))
+  if((oyObject_UnRef(s->oy_) - 2 * observer_refs) > 0)
     return 0;
   /* ---- end of common object destructor ------- */
 

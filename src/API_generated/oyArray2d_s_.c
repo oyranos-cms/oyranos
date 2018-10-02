@@ -440,7 +440,7 @@ int oyArray2d_Release_( oyArray2d_s_ **array2d )
   }
 
   
-  if(oyObject_UnRef(s->oy_))
+  if((oyObject_UnRef(s->oy_) - 2 * observer_refs) > 0)
     return 0;
   /* ---- end of common object destructor ------- */
 

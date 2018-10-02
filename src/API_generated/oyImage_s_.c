@@ -449,7 +449,7 @@ int oyImage_Release_( oyImage_s_ **image )
   }
 
   
-  if(oyObject_UnRef(s->oy_))
+  if((oyObject_UnRef(s->oy_) - 2 * observer_refs) > 0)
     return 0;
   /* ---- end of common object destructor ------- */
 

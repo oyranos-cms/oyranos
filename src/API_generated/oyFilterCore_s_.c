@@ -450,7 +450,7 @@ int oyFilterCore_Release_( oyFilterCore_s_ **filtercore )
   }
 
   
-  if(oyObject_UnRef(s->oy_))
+  if((oyObject_UnRef(s->oy_) - 2 * observer_refs) > 0)
     return 0;
   /* ---- end of common object destructor ------- */
 
