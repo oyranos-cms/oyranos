@@ -37,7 +37,7 @@ void oyFilterNode_Release__Members( oyFilterNode_s_ * filternode )
     if(first_empty >= 0)
       oid[first_empty] = cid;
  
-    fprintf(stderr, "%s[%d](start) %d\n",__func__, cid, oid_n);
+    fprintf(stderr, "%s[%d](start) %d %s\n",__func__, cid, oid_n,  filternode->core->registration_);
     if(twice)
       fprintf(stderr, "\n!!!ERROR: nested releasing same object: %s %d refs: %d\n\n", oyFilterNode_StaticMessageFunc_(filternode, oyNAME_DESCRIPTION, 2), twice, oyObject_GetRefCount(filternode->oy_));
   }
@@ -106,7 +106,7 @@ void oyFilterNode_Release__Members( oyFilterNode_s_ * filternode )
   if(oy_debug_objects >= 0)
   {
     if(first_empty >= 0)
-      oid[i] = 0;
+      oid[first_empty] = 0;
     fprintf(stderr, "%s[%d](end)\n", __func__, cid);
   }
 }
