@@ -822,7 +822,7 @@ static oyLeave_s * oyObjectIdListGetStructTree (
     for(i = 0; i < l->n; ++i)
     {
       int i_id = -1;
-      if(l->list[i] && l->list[i]->oy_)
+      if(l->list[i] && oyOBJECT_NONE < l->list[i]->type_ && l->list[i]->type_ < oyOBJECT_MAX && l->list[i]->oy_)
         i_id = l->list[i]->oy_->id_;
 
       PRINT_ID(i_id)
