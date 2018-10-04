@@ -36,7 +36,8 @@ OYAPI int  OYEXPORT
            oyStruct_IsObserved       ( oyStruct_s        * model,
                                        oyStruct_s        * observer );
 OYAPI int  OYEXPORT
-           oyStruct_ObservedModelCount(oyStruct_s        * observer );
+           oyStruct_ObservationCount ( oyStruct_s        * observer,
+                                       uint32_t            flags );
 OYAPI uint32_t OYEXPORT
            oyObserverGetFlags        ( void );
 OYAPI int  OYEXPORT

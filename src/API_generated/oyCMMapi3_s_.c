@@ -370,9 +370,9 @@ oyCMMapi3_s_ * oyCMMapi3_Copy_ ( oyCMMapi3_s_ *cmmapi3, oyObject_s object )
  *
  *  @param[in,out] cmmapi3                 CMMapi3 struct object
  *
- *  @version Oyranos: 
+ *  @version Oyranos: 0.9.7
+ *  @date    2018/10/03
  *  @since   2010/04/26 (Oyranos: 0.1.10)
- *  @date    2010/04/26
  */
 int oyCMMapi3_Release_( oyCMMapi3_s_ **cmmapi3 )
 {
@@ -388,7 +388,7 @@ int oyCMMapi3_Release_( oyCMMapi3_s_ **cmmapi3 )
 
   *cmmapi3 = 0;
 
-  observer_refs = oyStruct_ObservedModelCount( (oyStruct_s*)s );
+  observer_refs = oyStruct_ObservationCount( (oyStruct_s*)s, 0 );
 
   if(oy_debug_objects >= 0 && s->oy_)
   {

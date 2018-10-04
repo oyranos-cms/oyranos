@@ -473,7 +473,6 @@ oyConversion_s * oyConversion_CreateFromImage (
   error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
                                 out, "//" OY_TYPE_STD "/data", 0 );
   oyFilterNode_SetData( in, (oyStruct_s*)image_out, 0, 0 );
-  oyImage_Release( &image_out );
   /* set the output node of the conversion */
   oyConversion_Set( conversion, 0, out );
 

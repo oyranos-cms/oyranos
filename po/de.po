@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2018-10-01 12:16+0200\n"
+"POT-Creation-Date: 2018-10-04 06:31+0200\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -1097,7 +1097,7 @@ msgid "Copyright (c) 2009 Kai-Uwe Behrmann; MIT"
 msgstr ""
 
 #: modules/color/modules/oyranos_cmm_lraw.cpp:235
-#: modules/color/modules/oyranos_cmm_oydi.c:1391
+#: modules/color/modules/oyranos_cmm_oydi.c:1392
 msgid "Copyright (c) 2009 Kai-Uwe Behrmann; newBSD"
 msgstr ""
 
@@ -3094,7 +3094,7 @@ msgstr ""
 msgid "Oyranos allows to fine tune handling of ICC color management."
 msgstr "Oyranos erlaubt detailierte ICC Farbmanagementeinstellungen."
 
-#: modules/color/modules/oyranos_cmm_oydi.c:1375
+#: modules/color/modules/oyranos_cmm_oydi.c:1376
 msgid "Oyranos display filter"
 msgstr "Oyranos Monitor Modul"
 
@@ -3137,7 +3137,7 @@ msgstr "Oyranos Module"
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1331
 #: modules/color/modules/oyranos_cmm_lraw.cpp:229
 #: modules/color/modules/oyranos_cmm_oicc.c:1196
-#: modules/color/modules/oyranos_cmm_oydi.c:1385
+#: modules/color/modules/oyranos_cmm_oydi.c:1386
 #: modules/color/modules/oyranos_cmm_oyra.c:138
 #: modules/color/modules/oyranos_cmm_trds.c:730
 msgid ""
@@ -3976,7 +3976,7 @@ msgstr "Temperatur"
 msgid "The "
 msgstr "Das "
 
-#: modules/color/modules/oyranos_cmm_oydi.c:1399
+#: modules/color/modules/oyranos_cmm_oydi.c:1400
 msgid ""
 "The \"display\" filter supports applications to show image content on single "
 "and multi monitor displays. It cares about the server communication in "
@@ -4108,7 +4108,7 @@ msgstr ""
 "Der Farbanpassungsgrad sollte zwischen 0 und 1.0 liegen und wird auf die "
 "absolut farbmetrische Übertragung angewendet."
 
-#: modules/color/modules/oyranos_cmm_oydi.c:1377
+#: modules/color/modules/oyranos_cmm_oydi.c:1378
 msgid "The client side window data handler of Oyranos."
 msgstr "Die benutzerseitige Fensterdatenagent von Oyranos."
 
@@ -4211,7 +4211,7 @@ msgstr "Der Filter ist ein mögliches Rasterbildziel in einem Graphen."
 msgid "The filter is used to reduce pixels."
 msgstr "Der Filter verringert die Pixelanzahl."
 
-#: modules/color/modules/oyranos_cmm_oydi.c:1401
+#: modules/color/modules/oyranos_cmm_oydi.c:1402
 msgid ""
 "The filter needs some informations attached to the output image tags of the "
 "\"output\" image filter. The following list describes the X11/Xorg "
@@ -5460,7 +5460,7 @@ msgstr "Einzelfarben 2"
 #: modules/color/modules/oyranos_cmm_lraw.cpp:237
 #: modules/color/modules/oyranos_cmm_oiDB.c:519
 #: modules/color/modules/oyranos_cmm_oicc.c:1204
-#: modules/color/modules/oyranos_cmm_oydi.c:1393
+#: modules/color/modules/oyranos_cmm_oydi.c:1394
 #: modules/color/modules/oyranos_cmm_oyra.c:146
 #: modules/color/modules/oyranos_cmm_trds.c:738
 msgid "new BSD license: http://www.opensource.org/licenses/BSD-3-Clause"

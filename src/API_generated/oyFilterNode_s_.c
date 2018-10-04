@@ -136,7 +136,7 @@ void oyFilterNode_Release__Members( oyFilterNode_s_ * filternode )
     if(first_empty >= 0)
       oid[first_empty] = cid;
  
-    fprintf(stderr, "%s[%d](start) %d\n",__func__, cid, oid_n);
+    fprintf(stderr, "%s[%d](start) %d %s\n",__func__, cid, oid_n,  filternode->core->registration_);
     if(twice)
       fprintf(stderr, "\n!!!ERROR: nested releasing same object: %s %d refs: %d\n\n", oyFilterNode_StaticMessageFunc_(filternode, oyNAME_DESCRIPTION, 2), twice, oyObject_GetRefCount(filternode->oy_));
   }
@@ -205,7 +205,7 @@ void oyFilterNode_Release__Members( oyFilterNode_s_ * filternode )
   if(oy_debug_objects >= 0)
   {
     if(first_empty >= 0)
-      oid[i] = 0;
+      oid[first_empty] = 0;
     fprintf(stderr, "%s[%d](end)\n", __func__, cid);
   }
 }
@@ -480,9 +480,9 @@ oyFilterNode_s_ * oyFilterNode_Copy_ ( oyFilterNode_s_ *filternode, oyObject_s o
  *
  *  @param[in,out] filternode                 FilterNode struct object
  *
- *  @version Oyranos: 
+ *  @version Oyranos: 0.9.7
+ *  @date    2018/10/03
  *  @since   2010/04/26 (Oyranos: 0.1.10)
- *  @date    2010/04/26
  */
 int oyFilterNode_Release_( oyFilterNode_s_ **filternode )
 {
@@ -498,7 +498,7 @@ int oyFilterNode_Release_( oyFilterNode_s_ **filternode )
 
   *filternode = 0;
 
-  observer_refs = oyStruct_ObservedModelCount( (oyStruct_s*)s );
+  observer_refs = oyStruct_ObservationCount( (oyStruct_s*)s, 0 );
 
   if(oy_debug_objects >= 0 && s->oy_)
   {

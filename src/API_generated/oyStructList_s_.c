@@ -411,9 +411,9 @@ oyStructList_s_ * oyStructList_Copy_ ( oyStructList_s_ *structlist, oyObject_s o
  *
  *  @param[in,out] structlist                 StructList struct object
  *
- *  @version Oyranos: 
+ *  @version Oyranos: 0.9.7
+ *  @date    2018/10/03
  *  @since   2010/04/26 (Oyranos: 0.1.10)
- *  @date    2010/04/26
  */
 int oyStructList_Release_( oyStructList_s_ **structlist )
 {
@@ -429,7 +429,7 @@ int oyStructList_Release_( oyStructList_s_ **structlist )
 
   *structlist = 0;
 
-  observer_refs = oyStruct_ObservedModelCount( (oyStruct_s*)s );
+  observer_refs = oyStruct_ObservationCount( (oyStruct_s*)s, 0 );
 
   if(oy_debug_objects >= 0 && s->oy_)
   {

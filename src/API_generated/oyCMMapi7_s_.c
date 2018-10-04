@@ -452,9 +452,9 @@ oyCMMapi7_s_ * oyCMMapi7_Copy_ ( oyCMMapi7_s_ *cmmapi7, oyObject_s object )
  *
  *  @param[in,out] cmmapi7                 CMMapi7 struct object
  *
- *  @version Oyranos: 
+ *  @version Oyranos: 0.9.7
+ *  @date    2018/10/03
  *  @since   2010/04/26 (Oyranos: 0.1.10)
- *  @date    2010/04/26
  */
 int oyCMMapi7_Release_( oyCMMapi7_s_ **cmmapi7 )
 {
@@ -470,7 +470,7 @@ int oyCMMapi7_Release_( oyCMMapi7_s_ **cmmapi7 )
 
   *cmmapi7 = 0;
 
-  observer_refs = oyStruct_ObservedModelCount( (oyStruct_s*)s );
+  observer_refs = oyStruct_ObservationCount( (oyStruct_s*)s, 0 );
 
   if(oy_debug_objects >= 0 && s->oy_)
   {

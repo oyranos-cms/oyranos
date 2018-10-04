@@ -390,9 +390,9 @@ oyConversion_s_ * oyConversion_Copy_ ( oyConversion_s_ *conversion, oyObject_s o
  *
  *  @param[in,out] conversion                 Conversion struct object
  *
- *  @version Oyranos: 
+ *  @version Oyranos: 0.9.7
+ *  @date    2018/10/03
  *  @since   2010/04/26 (Oyranos: 0.1.10)
- *  @date    2010/04/26
  */
 int oyConversion_Release_( oyConversion_s_ **conversion )
 {
@@ -408,7 +408,7 @@ int oyConversion_Release_( oyConversion_s_ **conversion )
 
   *conversion = 0;
 
-  observer_refs = oyStruct_ObservedModelCount( (oyStruct_s*)s );
+  observer_refs = oyStruct_ObservationCount( (oyStruct_s*)s, 0 );
 
   if(oy_debug_objects >= 0 && s->oy_)
   {

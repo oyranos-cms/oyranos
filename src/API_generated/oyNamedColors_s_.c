@@ -369,9 +369,9 @@ oyNamedColors_s_ * oyNamedColors_Copy_ ( oyNamedColors_s_ *namedcolors, oyObject
  *
  *  @param[in,out] namedcolors                 NamedColors struct object
  *
- *  @version Oyranos: 
+ *  @version Oyranos: 0.9.7
+ *  @date    2018/10/03
  *  @since   2010/04/26 (Oyranos: 0.1.10)
- *  @date    2010/04/26
  */
 int oyNamedColors_Release_( oyNamedColors_s_ **namedcolors )
 {
@@ -387,7 +387,7 @@ int oyNamedColors_Release_( oyNamedColors_s_ **namedcolors )
 
   *namedcolors = 0;
 
-  observer_refs = oyStruct_ObservedModelCount( (oyStruct_s*)s );
+  observer_refs = oyStruct_ObservationCount( (oyStruct_s*)s, 0 );
 
   if(oy_debug_objects >= 0 && s->oy_)
   {

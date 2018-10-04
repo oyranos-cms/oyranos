@@ -749,19 +749,27 @@ OYAPI int  OYEXPORT
 }
 
 /**
- *  Function oyStruct_GetObserverRefs
+ *  Function oyStruct_ObservationCount
  *  @memberof oyObserver_s
  *  @brief   return the number of object<->model references
  *
- *  @param         observer            which observes a model
+ *  The function lists by default (0) models and observers. Both
+ *  types are individually selectable in the flags.
+ *
+ *  @param         object              which observes a model
+ *  @param         flags               select:
+ *                                     - 0 : all
+ *                                     - 1 : show observers count
+ *                                     - 2 : show models count
  *  @return                            count
  *
  *  @version Oyranos: 0.9.7
- *  @date    2018/09/29
+ *  @date    2018/10/04
  *  @since   2018/09/29 (Oyranos: 0.9.7)
  */
 OYAPI int  OYEXPORT
-           oyStruct_ObservedModelCount(oyStruct_s        * observer )
+           oyStruct_ObservationCount ( oyStruct_s        * object,
+                                       uint32_t            flags )
 {
   int observed = 0;
   int i,n = 0;
@@ -769,17 +777,18 @@ OYAPI int  OYEXPORT
   oyOptions_s_ * handles = NULL;
   int error = 0;
 
-  if(observer && observer->oy_)
-    handles = (oyOptions_s_*) observer->oy_->handles_;
+  if(object && object->oy_)
+    handles = (oyOptions_s_*) object->oy_->handles_;
 
   if(handles)
     n = oyStructList_Count( handles->list_ );
   for(i = 0; i < n; ++i)
   {
+    
     o = (oyOption_s_*) oyStructList_Get_( (oyStructList_s_*)(handles->list_), i );
-    if( oyStrcmp_( o->registration, OY_SIGNAL_MODELS ) == 0)
+    if( (!flags || flags & 0x02) && oyStrcmp_( o->registration, OY_SIGNAL_MODELS ) == 0)
     {
-      if(observer)
+      if(object)
       {
         oyStructList_s * models = 0;
         int j_n,j;
@@ -795,11 +804,33 @@ OYAPI int  OYEXPORT
             oyObserver_s * obs;
             obs = (oyObserver_s*) oyStructList_GetType( models,
                                                    j, oyOBJECT_OBSERVER_S );
-            if(obs && obs->observer == observer)
-            {
+            if(obs && obs->observer == object)
               ++observed;
-              break;
-            }
+          }
+        }
+      }
+    }
+
+    if( (!flags || flags & 0x01) && oyStrcmp_( o->registration, OY_SIGNAL_OBSERVERS ) == 0)
+    {
+      if(object)
+      {
+        oyStructList_s * observers = 0;
+        int j_n,j;
+
+        observers = (oyStructList_s*)oyOption_GetStruct( (oyOption_s*) o,
+                                                       oyOBJECT_STRUCT_LIST_S );
+
+        if(!error)
+        {
+          j_n = oyStructList_Count( observers );
+          for(j = 0; j < j_n; ++j)
+          {
+            oyObserver_s * obs;
+            obs = (oyObserver_s*) oyStructList_GetType( observers,
+                                                   j, oyOBJECT_OBSERVER_S );
+            if(obs && obs->model == object)
+              ++observed;
           }
         }
       }

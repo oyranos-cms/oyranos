@@ -380,9 +380,9 @@ oyCMMapiFilter_s_ * oyCMMapiFilter_Copy_ ( oyCMMapiFilter_s_ *cmmapifilter, oyOb
  *
  *  @param[in,out] cmmapifilter                 CMMapiFilter struct object
  *
- *  @version Oyranos: 
+ *  @version Oyranos: 0.9.7
+ *  @date    2018/10/03
  *  @since   2010/04/26 (Oyranos: 0.1.10)
- *  @date    2010/04/26
  */
 int oyCMMapiFilter_Release_( oyCMMapiFilter_s_ **cmmapifilter )
 {
@@ -398,7 +398,7 @@ int oyCMMapiFilter_Release_( oyCMMapiFilter_s_ **cmmapifilter )
 
   *cmmapifilter = 0;
 
-  observer_refs = oyStruct_ObservedModelCount( (oyStruct_s*)s );
+  observer_refs = oyStruct_ObservationCount( (oyStruct_s*)s, 0 );
 
   if(oy_debug_objects >= 0 && s->oy_)
   {

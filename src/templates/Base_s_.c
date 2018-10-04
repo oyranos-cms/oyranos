@@ -357,9 +357,9 @@ static const char * oy{{ class.baseName }}_StaticMessageFunc_ (
  *
  *  @param[in,out] {{ class.baseName|lower }}                 {{ class.baseName }} struct object
  *
- *  @version Oyranos: {{ oyranos_version }}
+ *  @version Oyranos: 0.9.7
+ *  @date    2018/10/03
  *  @since   2010/04/26 (Oyranos: 0.1.10)
- *  @date    2010/04/26
  */
 int oy{{ class.baseName }}_Release_( {{ class.privName }} **{{ class.baseName|lower }} )
 {
@@ -375,7 +375,7 @@ int oy{{ class.baseName }}_Release_( {{ class.privName }} **{{ class.baseName|lo
 
   *{{ class.baseName|lower }} = 0;
 
-  observer_refs = oyStruct_ObservedModelCount( (oyStruct_s*)s );
+  observer_refs = oyStruct_ObservationCount( (oyStruct_s*)s, 0 );
 
   if(oy_debug_objects >= 0 && s->oy_)
   {
