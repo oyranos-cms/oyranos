@@ -36,6 +36,20 @@ class Oy_Fl_Image_Widget : public Fl_Widget, public Oy_Widget
 {
   int e, ox, oy;
   double scale_;
+  oyOptions_s * node_out_opts_;
+  oyFilterNode_s * node_out_;
+  void checkNodeOut()
+  {
+    oyFilterNode_s * node_out = oyConversion_GetNode( conversion(),OY_OUTPUT);
+    if(node_out != node_out_)
+    {
+      oyOptions_Release( &node_out_opts_ );
+      oyFilterNode_Release( &node_out_ );
+      node_out_ = oyConversion_GetNode( conversion(),OY_OUTPUT);
+      node_out_opts_ = findOpts( node_out_, "//" OY_TYPE_STD "/scale" );
+    }
+    oyFilterNode_Release( &node_out );
+  }
 public:
   void resetScale( ) { scale_ = 1; }
   double scale_changer;
@@ -75,13 +89,12 @@ public:
         case FL_MOUSEWHEEL:
           if(Fl::event_dy())
           {
-            oyFilterNode_s * node_out = oyConversion_GetNode( conversion(),OY_OUTPUT);
 
             double scale = 1.0;
             double wheel_scale_changer = (scale_changer-1.0)/10.0+1.0;
-            oyOptions_s * opts = findOpts( node_out, "//" OY_TYPE_STD "/scale" );
 
-            oyOptions_FindDouble( opts, "scale",
+            checkNodeOut();
+            oyOptions_FindDouble( node_out_opts_, "scale",
                                    0, &scale );
             if(Fl::event_dy() > 0)
             {
@@ -97,10 +110,9 @@ public:
               px = int((double)(px - mx) / wheel_scale_changer) + mx;
               py = int((double)(py - my) / wheel_scale_changer) + my;
             }
-            oyOptions_SetFromDouble( &opts,
+            oyOptions_SetFromDouble( &node_out_opts_,
                                    "//" OY_TYPE_STD "/scale/scale",
                                    scale, 0, OY_CREATE_NEW );
-            oyOptions_Release( &opts );
             redraw();
             return (1);
           }
@@ -187,16 +199,14 @@ public:
       oyDATATYPE_e data_type;
       oyImage_s * image_input = 0, * image_output = 0;
       oyRectangle_s * display_rectangle = 0;
-      oyFilterNode_s * node_out = oyConversion_GetNode( conversion(),OY_OUTPUT);
       void * display = 0,
            * window = 0;
       int width_input, width_output, width_scale, width_roi;
       int height_input, height_output, height_scale, height_roi;
 
       double scale = 1.0;
-      oyOptions_s * opts = findOpts( node_out, "//" OY_TYPE_STD "/scale" );
-
-      oyOptions_FindDouble( opts, "scale",
+      checkNodeOut();
+      oyOptions_FindDouble( node_out_opts_, "scale",
                                    0, &scale );
 
 #if defined(XCM_HAVE_X11)
@@ -222,13 +232,12 @@ public:
           scale = widget_width/width_input;
         else /* scale_ == -1 || scale_ == -3 */
           scale = widget_height/height_input;
-        oyOption_s * opt = oyOptions_Find( opts, "scale", oyNAME_PATTERN );
+        oyOption_s * opt = oyOptions_Find( node_out_opts_, "scale", oyNAME_PATTERN );
         oyOption_SetFromDouble( opt, scale, 0,0 );
         oyOption_Release( &opt );
         if(oy_debug)
           printf("found negative scale: %g ==> %g\n", scale_, scale);
       }
-      oyOptions_Release( &opts );
 
       width_scale = width_roi = width_input * scale;
       height_scale = height_roi = height_input * scale;
@@ -244,8 +253,9 @@ public:
 
       if(image_output && !ticket())
       {
-        oyFilterPlug_s * plug = oyFilterNode_GetPlug( node_out, 0 );
-        ticket( oyPixelAccess_Create( 0,0, plug, oyPIXEL_ACCESS_IMAGE, 0 ) );
+        oyFilterPlug_s * plug = oyFilterNode_GetPlug( node_out_, 0 );
+        oyPixelAccess_s * pa = oyPixelAccess_Create( 0,0, plug, oyPIXEL_ACCESS_IMAGE, 0 );
+        ticket( &pa );
       }
 
 
@@ -387,7 +397,10 @@ public:
     activate();
   }
 
-  Oy_Fl_Image_Widget(int x, int y, int w, int h) : Fl_Widget(x,y,w,h)
+  Oy_Fl_Image_Widget(int x, int y, int w, int h)
+    : Fl_Widget(x,y,w,h),
+      node_out_opts_(NULL),
+      node_out_(NULL)
   {
     px=py=ox=oy=0;
     scale_changer = 1.2;
@@ -396,6 +409,8 @@ public:
 
   ~Oy_Fl_Image_Widget(void)
   {
+    oyOptions_Release( &node_out_opts_ );
+    oyFilterNode_Release( &node_out_ );
   };
 };
 
