@@ -641,7 +641,7 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
   oyImage_s * image = 0,
             * image_input = 0;
   oyOption_s * o = 0;
-  oyRectangle_s * r, * device_rectangle = NULL, * display_rectangle;
+  oyRectangle_s * r = NULL, * device_rectangle = NULL, * display_rectangle;
   oyRectangle_s_ roi_pix = {oyOBJECT_RECTANGLE_S,0,0,0,0,0,0,0};
   oyConfigs_s * devices = 0;
   oyConfig_s * c = 0;
@@ -1094,6 +1094,7 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
   oyOptions_Release( &node_options );
   oyFilterGraph_Release( &display_graph );
   oyRectangle_Release( &device_rectangle );
+  oyRectangle_Release( &r );
   if(ID) free(ID);    
 
   return result;
