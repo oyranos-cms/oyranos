@@ -572,7 +572,10 @@ static oyLeave_s * oyLeave_NewWith   ( oyStruct_s        * obj,
   { const char * txt = oyStruct_GetText(obj, oyNAME_DESCRIPTION, 2);
     if(!txt)
       txt = oyStruct_GetText(obj, oyNAME_DESCRIPTION, 0);
-    fprintf(stderr, "%s ", txt);
+    if(txt && (strlen(txt) < 80))
+      fprintf(stderr, "%s ", txt);
+    else
+      fprintf(stderr, "%s ", oyStruct_TypeToText(obj));
     PRINT_ID(id)
   }
 
