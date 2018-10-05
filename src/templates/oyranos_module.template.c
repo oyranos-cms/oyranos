@@ -127,7 +127,7 @@ oyCMMapiFilters_s * oyCMMsGetFilterApis_(const char        * registration,
       oyCMMapiFilters_Release( &apis );
 
       /* return cached result */
-      return apis2;
+      goto clean;
     }
   }
 
