@@ -337,7 +337,7 @@ oyConnector_s_ * oyConnector_Copy_ ( oyConnector_s_ *connector, oyObject_s objec
         id_ = oy_debug_objects;
 
       if((id_ >= 0 && s->oy_->id_ == id_) ||
-         (t && s && strstr(oyStructTypeToText(s->type_), t) != 0) ||
+         (t && s && (strstr(oyStructTypeToText(s->type_), t) != 0)) ||
          id_ == 1)
       {
         oyStruct_s ** parents = NULL;
@@ -404,7 +404,7 @@ int oyConnector_Release_( oyConnector_s_ **connector )
       id_ = oy_debug_objects;
 
     if((id_ >= 0 && s->oy_->id_ == id_) ||
-       (t && s && strstr(oyStructTypeToText(s->type_), t) != 0) ||
+       (t && s && (strstr(oyStructTypeToText(s->type_), t) != 0)) ||
        id_ == 1)
     {
       oyStruct_s ** parents = NULL;
@@ -441,7 +441,7 @@ int oyConnector_Release_( oyConnector_s_ **connector )
       id_ = oy_debug_objects;
 
     if((id_ >= 0 && s->oy_->id_ == id_) ||
-       (t && s && strstr(oyStructTypeToText(s->type_), t) != 0) ||
+       (t && s && (strstr(oyStructTypeToText(s->type_), t) != 0)) ||
        id_ == 1)
     {
       track_name = oyStructTypeToText(s->type_);

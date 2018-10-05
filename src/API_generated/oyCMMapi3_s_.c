@@ -334,7 +334,7 @@ oyCMMapi3_s_ * oyCMMapi3_Copy_ ( oyCMMapi3_s_ *cmmapi3, oyObject_s object )
         id_ = oy_debug_objects;
 
       if((id_ >= 0 && s->oy_->id_ == id_) ||
-         (t && s && strstr(oyStructTypeToText(s->type_), t) != 0) ||
+         (t && s && (strstr(oyStructTypeToText(s->type_), t) != 0)) ||
          id_ == 1)
       {
         oyStruct_s ** parents = NULL;
@@ -401,7 +401,7 @@ int oyCMMapi3_Release_( oyCMMapi3_s_ **cmmapi3 )
       id_ = oy_debug_objects;
 
     if((id_ >= 0 && s->oy_->id_ == id_) ||
-       (t && s && strstr(oyStructTypeToText(s->type_), t) != 0) ||
+       (t && s && (strstr(oyStructTypeToText(s->type_), t) != 0)) ||
        id_ == 1)
     {
       oyStruct_s ** parents = NULL;
@@ -438,7 +438,7 @@ int oyCMMapi3_Release_( oyCMMapi3_s_ **cmmapi3 )
       id_ = oy_debug_objects;
 
     if((id_ >= 0 && s->oy_->id_ == id_) ||
-       (t && s && strstr(oyStructTypeToText(s->type_), t) != 0) ||
+       (t && s && (strstr(oyStructTypeToText(s->type_), t) != 0)) ||
        id_ == 1)
     {
       track_name = oyStructTypeToText(s->type_);

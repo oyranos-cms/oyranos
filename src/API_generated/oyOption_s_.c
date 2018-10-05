@@ -391,7 +391,7 @@ oyOption_s_ * oyOption_Copy_ ( oyOption_s_ *option, oyObject_s object )
         id_ = oy_debug_objects;
 
       if((id_ >= 0 && s->oy_->id_ == id_) ||
-         (t && s && strstr(oyStructTypeToText(s->type_), t) != 0) ||
+         (t && s && (strstr(oyStructTypeToText(s->type_), t) != 0)) ||
          id_ == 1)
       {
         oyStruct_s ** parents = NULL;
@@ -458,7 +458,7 @@ int oyOption_Release_( oyOption_s_ **option )
       id_ = oy_debug_objects;
 
     if((id_ >= 0 && s->oy_->id_ == id_) ||
-       (t && s && strstr(oyStructTypeToText(s->type_), t) != 0) ||
+       (t && s && (strstr(oyStructTypeToText(s->type_), t) != 0)) ||
        id_ == 1)
     {
       oyStruct_s ** parents = NULL;
@@ -495,7 +495,7 @@ int oyOption_Release_( oyOption_s_ **option )
       id_ = oy_debug_objects;
 
     if((id_ >= 0 && s->oy_->id_ == id_) ||
-       (t && s && strstr(oyStructTypeToText(s->type_), t) != 0) ||
+       (t && s && (strstr(oyStructTypeToText(s->type_), t) != 0)) ||
        id_ == 1)
     {
       track_name = oyStructTypeToText(s->type_);
