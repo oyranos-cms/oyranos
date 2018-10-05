@@ -604,45 +604,52 @@ int oyImage_CombinePixelLayout2Mask_ ( oyImage_s_        * image,
 
   /* describe the image */
   oySprintf_( text, 
-                  "  <oyImage_s id=\"%d\" width=\"%d\" height=\"%d\" resolution=\"%.02f,%.02f\">\n",
+                  "{ \"oyImage_s\": { \"id\": \"%d\", \"width\": \"%d\", \"height\": \"%d\", \"resolution\": [\"%.02f\", \"%.02f\"],\n",
                   oyObject_GetId(image->oy_),
                   image->width,
                   image->height,
                   image->resolution_x,
                   image->resolution_y);
   hashTextAdd_m( text );
-  /*if(oy_debug)*/
-    oySprintf_( text, "    %s\n", oyProfile_GetText(profile, oyNAME_NAME));
-  /*else
-    oySprintf_( text, "    %s\n", oyProfile_GetText(profile, oyNAME_NICK));*/
+  i = strlen(text);
+  oySprintf_( text, "\"icc_profile\": %s\n", oyProfile_GetText(profile, oyNAME_JSON));
+  if(text[16] == '\n') text[16] = ' ';
+  i = strlen(text);
+  if(text[i-3] == '\n') text[i-3] = ' ';
+  if(text[i-1] == '\n') text[i-1] = ',';
   hashTextAdd_m( text );
-  oySprintf_( text, "    <channels all=\"%d\" color=\"%d\" />\n", n, cchan_n );
+  oySprintf_( text, "\n \"channels\": { \"all\": \"%d\", \"color\": \"%d\" }, ", n, cchan_n );
   hashTextAdd_m( text );
   oySprintf_( text,
-              "    <offsets first_color_sample=\"%d\" next_pixel=\"%d\" />\n"
+              "\"offsets\": { \"first_color_sample\": \"%d\", \"next_pixel\": \"%d\"}"
               /*"  next line = %d\n"*/,
               coff_x, mask[oyPOFF_X]/*, mask[oyPOFF_Y]*/ );
   hashTextAdd_m( text );
 
   if(swap || oyToByteswap_m( pixel_layout ))
   {
-    hashTextAdd_m( "    <swap" );
+    hashTextAdd_m( ", \"swap\": {" );
     if(swap)
-      hashTextAdd_m( " colorswap=\"yes\"" );
+    {
+      if(oyToByteswap_m( pixel_layout ))
+        hashTextAdd_m( " \"colorswap\": \"yes\"," );
+      else
+        hashTextAdd_m( " \"colorswap\": \"yes\"" );
+    }
     if( oyToByteswap_m( pixel_layout ) )
-      hashTextAdd_m( " byteswap=\"yes\"" );
-    hashTextAdd_m( " />\n" );
+      hashTextAdd_m( " \"byteswap\": \"yes\"" );
+    hashTextAdd_m( " }" );
   }
 
   if( oyToFlavor_m( pixel_layout ) )
   {
-    oySprintf_( text, "    <flawor value=\"yes\" />\n" );
+    oySprintf_( text, ", \"flawor value\": \"yes\"" );
     hashTextAdd_m( text );
   }
-  oySprintf_( text, "    <sample_type value=\"%s[%dByte]\" />\n",
+  oySprintf_( text, ",\n\"sample_type\": { \"value\": \"%s\", \"byte\": \"%d\" }",
                     oyDataTypeToText(t), so );
   hashTextAdd_m( text );
-  oySprintf_( text, "  </oyImage_s>");
+  oySprintf_( text, "}}");
   hashTextAdd_m( text );
 
   if(error <= 0)
