@@ -24,6 +24,11 @@
 {% ifequal class.group "objects_generic" %}#include "oyranos_generic_internal.h"{% endifequal %}
 {% block LocalIncludeFiles %}{% endblock %}  
 
+#ifdef HAVE_BACKTRACE
+#include <execinfo.h>
+#define BT_BUF_SIZE 100
+#endif
+
 {% block GeneralPrivateMethodsDefinitions %}
 static int oy_{{ class.baseName|lower }}_init_ = 0;
 static const char * oy{{ class.baseName }}_StaticMessageFunc_ (
@@ -330,6 +335,53 @@ static const char * oy{{ class.baseName }}_StaticMessageFunc_ (
         {
           int i;
           const char * track_name = oyStructTypeToText(s->type_);
+#ifdef HAVE_BACKTRACE
+          int j, nptrs;
+          void *buffer[BT_BUF_SIZE];
+          char **strings;
+
+          nptrs = backtrace(buffer, BT_BUF_SIZE);
+
+          /* The call backtrace_symbols_fd(buffer, nptrs, STDOUT_FILENO)
+             would produce similar output to the following: */
+
+          strings = backtrace_symbols(buffer, nptrs);
+          if( strings == NULL )
+          {
+            perror("backtrace_symbols");
+          } else
+          {
+            int start = nptrs-1;
+            do { --start; } while( start >= 0 && (strstr(strings[start], "(main+") == NULL) );
+            fprintf(stderr, "\n");
+            for(j = start; j >= 0; j--)
+            {
+              if(oy_debug)
+                fprintf(stderr, "%s\n", strings[j]);
+              else
+              {
+                char * t = NULL, * txt = NULL;
+                const char * line = strings[j],
+                           * tmp = strchr( line, '(' );
+                if(tmp) t = oyStringCopy( &tmp[1], NULL );
+                else t = oyStringCopy( line, NULL );
+                txt = strchr( t, '+' );
+                if(txt) txt[0] = '\000';
+                if(j > 0 && (strstr(strings[j-1], t) != NULL) )
+                  oyFree_m_(t);
+                if(t)
+                {
+                  if(j==0)
+                    fprintf(stderr, "%s() ", t);
+                  else
+                    fprintf(stderr, "%s()->", t);
+                  oyFree_m_(t);
+                }
+              }
+            }
+            free(strings);
+          }
+#endif
           fprintf( stderr, "%s[%d] tracking refs: %d parents: %d\n",
                    track_name, s->oy_->id_, s->oy_->ref_, n );
           for(i = 0; i < n; ++i)
@@ -396,6 +448,53 @@ int oy{{ class.baseName }}_Release_( {{ class.privName }} **{{ class.baseName|lo
       if(n != s->oy_->ref_)
       {
         int i;
+#ifdef HAVE_BACKTRACE
+          int j, nptrs;
+          void *buffer[BT_BUF_SIZE];
+          char **strings;
+
+          nptrs = backtrace(buffer, BT_BUF_SIZE);
+
+          /* The call backtrace_symbols_fd(buffer, nptrs, STDOUT_FILENO)
+             would produce similar output to the following: */
+
+          strings = backtrace_symbols(buffer, nptrs);
+          if( strings == NULL )
+          {
+            perror("backtrace_symbols");
+          } else
+          {
+            int start = nptrs-1;
+            do { --start; } while( start >= 0 && (strstr(strings[start], "(main+") == NULL) );
+            fprintf(stderr, "\n");
+            for(j = start; j >= 0; j--)
+            {
+              if(oy_debug)
+                fprintf(stderr, "%s\n", strings[j]);
+              else
+              {
+                char * t = NULL, * txt = NULL;
+                const char * line = strings[j],
+                           * tmp = strchr( line, '(' );
+                if(tmp) t = oyStringCopy( &tmp[1], NULL );
+                else t = oyStringCopy( line, NULL );
+                txt = strchr( t, '+' );
+                if(txt) txt[0] = '\000';
+                if(j > 0 && (strstr(strings[j-1], t) != NULL) )
+                  oyFree_m_(t);
+                if(t)
+                {
+                  if(j==0)
+                    fprintf(stderr, "%s() ", t);
+                  else
+                    fprintf(stderr, "%s()->", t);
+                  oyFree_m_(t);
+                }
+              }
+            }
+            free(strings);
+          }
+#endif
         track_name = oyStructTypeToText(s->type_);
         fprintf( stderr, "%s[%d] unref with refs: %d observers: %d parents: %d\n",
                  track_name, s->oy_->id_, s->oy_->ref_, observer_refs, n );

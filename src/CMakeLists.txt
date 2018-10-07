@@ -116,6 +116,9 @@ ELSE(INTTYPES_INCLUDE_DIR)
   MESSAGE( "-- inttypes.h not found" )
 ENDIF(INTTYPES_INCLUDE_DIR)
 
+# A GNU extension for debugging the call stack.
+CHECK_LIBRARY_EXISTS( c backtrace "execinfo.h" HAVE_BACKTRACE )
+
 FIND_PACKAGE( LCMS )
 IF( HAVE_LCMS )
   INCLUDE_DIRECTORIES( ${LCMS_INCLUDE_DIR} )
