@@ -41,7 +41,11 @@ OYAPI {{ class.name }}* OYEXPORT
   {{ class.privName }} * s = ({{ class.privName }}*) {{ class.baseName|lower }};
 
   if(s)
-    {% block Copy_CheckType %}oyCheckType__m{% endblock %}( oyOBJECT_{{ class.baseName|underscores|upper }}_S, return 0 )
+  {
+    {% block Copy_CheckType %}oyCheckType__m{% endblock %}( oyOBJECT_{{ class.baseName|underscores|upper }}_S, return NULL )
+  }
+  else
+    return NULL;
 
   s = oy{{ class.baseName }}_Copy_( s, object );
 
