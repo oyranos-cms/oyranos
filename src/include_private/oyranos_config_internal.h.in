@@ -10,6 +10,7 @@
 #cmakedefine BSD 
 /* #cmakedefine _WIN32 */ /* already defined by the system */
 #cmakedefine HAVE_OPENMP
+#cmakedefine HAVE_BACKTRACE
 #cmakedefine HAVE_C
 #cmakedefine HAVE_ICONV
 #cmakedefine HAVE_LTDL
