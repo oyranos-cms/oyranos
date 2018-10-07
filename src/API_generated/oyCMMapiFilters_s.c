@@ -71,7 +71,11 @@ OYAPI oyCMMapiFilters_s* OYEXPORT
   oyCMMapiFilters_s_ * s = (oyCMMapiFilters_s_*) cmmapifilters;
 
   if(s)
-    oyCheckType__m( oyOBJECT_CMM_API_FILTERS_S, return 0 )
+  {
+    oyCheckType__m( oyOBJECT_CMM_API_FILTERS_S, return NULL )
+  }
+  else
+    return NULL;
 
   s = oyCMMapiFilters_Copy_( s, object );
 

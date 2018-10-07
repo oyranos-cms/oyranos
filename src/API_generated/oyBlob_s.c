@@ -62,7 +62,11 @@ OYAPI oyBlob_s* OYEXPORT
   oyBlob_s_ * s = (oyBlob_s_*) blob;
 
   if(s)
-    oyCheckType__m( oyOBJECT_BLOB_S, return 0 )
+  {
+    oyCheckType__m( oyOBJECT_BLOB_S, return NULL )
+  }
+  else
+    return NULL;
 
   s = oyBlob_Copy_( s, object );
 

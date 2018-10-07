@@ -68,7 +68,11 @@ OYAPI oyFilterNodes_s* OYEXPORT
   oyFilterNodes_s_ * s = (oyFilterNodes_s_*) filternodes;
 
   if(s)
-    oyCheckType__m( oyOBJECT_FILTER_NODES_S, return 0 )
+  {
+    oyCheckType__m( oyOBJECT_FILTER_NODES_S, return NULL )
+  }
+  else
+    return NULL;
 
   s = oyFilterNodes_Copy_( s, object );
 

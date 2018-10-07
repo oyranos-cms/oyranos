@@ -62,7 +62,11 @@ OYAPI oyCMMui_s* OYEXPORT
   oyCMMui_s_ * s = (oyCMMui_s_*) cmmui;
 
   if(s)
-    oyCheckType__m( oyOBJECT_CMM_UI_S, return 0 )
+  {
+    oyCheckType__m( oyOBJECT_CMM_UI_S, return NULL )
+  }
+  else
+    return NULL;
 
   s = oyCMMui_Copy_( s, object );
 

@@ -62,7 +62,11 @@ OYAPI oyLis_s* OYEXPORT
   oyLis_s_ * s = (oyLis_s_*) lis;
 
   if(s)
-    oyCheckType__m( oyOBJECT_LIS_S, return 0 )
+  {
+    oyCheckType__m( oyOBJECT_LIS_S, return NULL )
+  }
+  else
+    return NULL;
 
   s = oyLis_Copy_( s, object );
 

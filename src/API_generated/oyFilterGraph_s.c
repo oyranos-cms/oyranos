@@ -69,7 +69,11 @@ OYAPI oyFilterGraph_s* OYEXPORT
   oyFilterGraph_s_ * s = (oyFilterGraph_s_*) filtergraph;
 
   if(s)
-    oyCheckType__m( oyOBJECT_FILTER_GRAPH_S, return 0 )
+  {
+    oyCheckType__m( oyOBJECT_FILTER_GRAPH_S, return NULL )
+  }
+  else
+    return NULL;
 
   s = oyFilterGraph_Copy_( s, object );
 

@@ -67,7 +67,11 @@ OYAPI oyProfileTag_s* OYEXPORT
   oyProfileTag_s_ * s = (oyProfileTag_s_*) profiletag;
 
   if(s)
-    oyCheckType__m( oyOBJECT_PROFILE_TAG_S, return 0 )
+  {
+    oyCheckType__m( oyOBJECT_PROFILE_TAG_S, return NULL )
+  }
+  else
+    return NULL;
 
   s = oyProfileTag_Copy_( s, object );
 

@@ -71,7 +71,11 @@ OYAPI oyOptions_s* OYEXPORT
   oyOptions_s_ * s = (oyOptions_s_*) options;
 
   if(s)
-    oyCheckType__m( oyOBJECT_OPTIONS_S, return 0 )
+  {
+    oyCheckType__m( oyOBJECT_OPTIONS_S, return NULL )
+  }
+  else
+    return NULL;
 
   s = oyOptions_Copy_( s, object );
 

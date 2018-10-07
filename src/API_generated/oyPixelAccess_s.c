@@ -67,7 +67,11 @@ OYAPI oyPixelAccess_s* OYEXPORT
   oyPixelAccess_s_ * s = (oyPixelAccess_s_*) pixelaccess;
 
   if(s)
-    oyCheckType__m( oyOBJECT_PIXEL_ACCESS_S, return 0 )
+  {
+    oyCheckType__m( oyOBJECT_PIXEL_ACCESS_S, return NULL )
+  }
+  else
+    return NULL;
 
   s = oyPixelAccess_Copy_( s, object );
 

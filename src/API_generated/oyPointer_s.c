@@ -65,7 +65,11 @@ OYAPI oyPointer_s* OYEXPORT
   oyPointer_s_ * s = (oyPointer_s_*) pointer;
 
   if(s)
-    oyCheckType__m( oyOBJECT_POINTER_S, return 0 )
+  {
+    oyCheckType__m( oyOBJECT_POINTER_S, return NULL )
+  }
+  else
+    return NULL;
 
   s = oyPointer_Copy_( s, object );
 

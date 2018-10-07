@@ -65,7 +65,11 @@ OYAPI oyFilterCore_s* OYEXPORT
   oyFilterCore_s_ * s = (oyFilterCore_s_*) filtercore;
 
   if(s)
-    oyCheckType__m( oyOBJECT_FILTER_CORE_S, return 0 )
+  {
+    oyCheckType__m( oyOBJECT_FILTER_CORE_S, return NULL )
+  }
+  else
+    return NULL;
 
   s = oyFilterCore_Copy_( s, object );
 

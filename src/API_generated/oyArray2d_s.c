@@ -62,7 +62,11 @@ OYAPI oyArray2d_s* OYEXPORT
   oyArray2d_s_ * s = (oyArray2d_s_*) array2d;
 
   if(s)
-    oyCheckType__m( oyOBJECT_ARRAY2D_S, return 0 )
+  {
+    oyCheckType__m( oyOBJECT_ARRAY2D_S, return NULL )
+  }
+  else
+    return NULL;
 
   s = oyArray2d_Copy_( s, object );
 

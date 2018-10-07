@@ -65,7 +65,11 @@ OYAPI oyStructList_s* OYEXPORT
   oyStructList_s_ * s = (oyStructList_s_*) structlist;
 
   if(s)
-    oyCheckType__m( oyOBJECT_STRUCT_LIST_S, return 0 )
+  {
+    oyCheckType__m( oyOBJECT_STRUCT_LIST_S, return NULL )
+  }
+  else
+    return NULL;
 
   s = oyStructList_Copy_( s, object );
 
@@ -313,14 +317,16 @@ int            oyStructList_ReleaseAt( oyStructList_s    * list,
 
   if(0 <= pos && pos < s->n_)
   {
-    --s->n_;
+    oyStruct_s * entry = s->ptr_[pos];
 
-    if(s->ptr_[pos] && s->ptr_[pos]->release)
-      s->ptr_[pos]->release( (oyStruct_s**)&s->ptr_[pos] );
+    --s->n_;
 
     if(pos < s->n_)
       error = !memmove( &s->ptr_[pos], &s->ptr_[pos+1],
                         sizeof(oyStruct_s*) * (s->n_ - pos));
+
+    if(entry && entry->release)
+      entry->release( &entry );
   }
 
   oyObject_UnLock( s->oy_, __FILE__, __LINE__ );

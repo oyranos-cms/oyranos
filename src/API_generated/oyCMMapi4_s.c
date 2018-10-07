@@ -67,7 +67,11 @@ OYAPI oyCMMapi4_s* OYEXPORT
   oyCMMapi4_s_ * s = (oyCMMapi4_s_*) cmmapi4;
 
   if(s)
-    oyCheckType__m( oyOBJECT_CMM_API4_S, return 0 )
+  {
+    oyCheckType__m( oyOBJECT_CMM_API4_S, return NULL )
+  }
+  else
+    return NULL;
 
   s = oyCMMapi4_Copy_( s, object );
 

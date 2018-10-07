@@ -65,7 +65,11 @@ OYAPI oyFilterSocket_s* OYEXPORT
   oyFilterSocket_s_ * s = (oyFilterSocket_s_*) filtersocket;
 
   if(s)
-    oyCheckType__m( oyOBJECT_FILTER_SOCKET_S, return 0 )
+  {
+    oyCheckType__m( oyOBJECT_FILTER_SOCKET_S, return NULL )
+  }
+  else
+    return NULL;
 
   s = oyFilterSocket_Copy_( s, object );
 

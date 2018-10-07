@@ -68,7 +68,11 @@ OYAPI oyNamedColors_s* OYEXPORT
   oyNamedColors_s_ * s = (oyNamedColors_s_*) namedcolors;
 
   if(s)
-    oyCheckType__m( oyOBJECT_NAMED_COLORS_S, return 0 )
+  {
+    oyCheckType__m( oyOBJECT_NAMED_COLORS_S, return NULL )
+  }
+  else
+    return NULL;
 
   s = oyNamedColors_Copy_( s, object );
 

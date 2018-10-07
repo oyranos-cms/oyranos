@@ -77,7 +77,11 @@ OYAPI oyConnectorImaging_s* OYEXPORT
   oyConnectorImaging_s_ * s = (oyConnectorImaging_s_*) connectorimaging;
 
   if(s)
-    oyCheckCType__m( oyOBJECT_CONNECTOR_IMAGING_S, return 0 )
+  {
+    oyCheckCType__m( oyOBJECT_CONNECTOR_IMAGING_S, return NULL )
+  }
+  else
+    return NULL;
 
   s = oyConnectorImaging_Copy_( s, object );
 

@@ -68,7 +68,11 @@ OYAPI oyFilterPlugs_s* OYEXPORT
   oyFilterPlugs_s_ * s = (oyFilterPlugs_s_*) filterplugs;
 
   if(s)
-    oyCheckType__m( oyOBJECT_FILTER_PLUGS_S, return 0 )
+  {
+    oyCheckType__m( oyOBJECT_FILTER_PLUGS_S, return NULL )
+  }
+  else
+    return NULL;
 
   s = oyFilterPlugs_Copy_( s, object );
 

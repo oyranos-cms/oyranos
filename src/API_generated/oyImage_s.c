@@ -62,7 +62,11 @@ OYAPI oyImage_s* OYEXPORT
   oyImage_s_ * s = (oyImage_s_*) image;
 
   if(s)
-    oyCheckType__m( oyOBJECT_IMAGE_S, return 0 )
+  {
+    oyCheckType__m( oyOBJECT_IMAGE_S, return NULL )
+  }
+  else
+    return NULL;
 
   s = oyImage_Copy_( s, object );
 

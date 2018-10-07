@@ -73,7 +73,11 @@ OYAPI oyConversion_s* OYEXPORT
   oyConversion_s_ * s = (oyConversion_s_*) conversion;
 
   if(s)
-    oyCheckType__m( oyOBJECT_CONVERSION_S, return 0 )
+  {
+    oyCheckType__m( oyOBJECT_CONVERSION_S, return NULL )
+  }
+  else
+    return NULL;
 
   s = oyConversion_Copy_( s, object );
 
@@ -473,6 +477,8 @@ oyConversion_s * oyConversion_CreateFromImage (
   error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
                                 out, "//" OY_TYPE_STD "/data", 0 );
   oyFilterNode_SetData( in, (oyStruct_s*)image_out, 0, 0 );
+  oyImage_Release( &image_out );
+
   /* set the output node of the conversion */
   oyConversion_Set( conversion, 0, out );
 

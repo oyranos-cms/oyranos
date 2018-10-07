@@ -62,7 +62,11 @@ OYAPI oyCMMinfo_s* OYEXPORT
   oyCMMinfo_s_ * s = (oyCMMinfo_s_*) cmminfo;
 
   if(s)
-    oyCheckType__m( oyOBJECT_CMM_INFO_S, return 0 )
+  {
+    oyCheckType__m( oyOBJECT_CMM_INFO_S, return NULL )
+  }
+  else
+    return NULL;
 
   s = oyCMMinfo_Copy_( s, object );
 

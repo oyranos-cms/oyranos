@@ -75,7 +75,11 @@ OYAPI oyConnector_s* OYEXPORT
   oyConnector_s_ * s = (oyConnector_s_*) connector;
 
   if(s)
-    oyCheckCType__m( oyOBJECT_CONNECTOR_S, return 0 )
+  {
+    oyCheckCType__m( oyOBJECT_CONNECTOR_S, return NULL )
+  }
+  else
+    return NULL;
 
   s = oyConnector_Copy_( s, object );
 

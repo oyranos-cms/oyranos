@@ -66,7 +66,11 @@ OYAPI oyRectangle_s* OYEXPORT
   oyRectangle_s_ * s = (oyRectangle_s_*) rectangle;
 
   if(s)
-    oyCheckType__m( oyOBJECT_RECTANGLE_S, return 0 )
+  {
+    oyCheckType__m( oyOBJECT_RECTANGLE_S, return NULL )
+  }
+  else
+    return NULL;
 
   s = oyRectangle_Copy_( s, object );
 

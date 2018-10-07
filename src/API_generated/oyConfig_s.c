@@ -75,7 +75,11 @@ OYAPI oyConfig_s* OYEXPORT
   oyConfig_s_ * s = (oyConfig_s_*) config;
 
   if(s)
-    oyCheckType__m( oyOBJECT_CONFIG_S, return 0 )
+  {
+    oyCheckType__m( oyOBJECT_CONFIG_S, return NULL )
+  }
+  else
+    return NULL;
 
   s = oyConfig_Copy_( s, object );
 

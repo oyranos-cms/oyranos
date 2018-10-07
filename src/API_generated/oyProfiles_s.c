@@ -69,7 +69,11 @@ OYAPI oyProfiles_s* OYEXPORT
   oyProfiles_s_ * s = (oyProfiles_s_*) profiles;
 
   if(s)
-    oyCheckType__m( oyOBJECT_PROFILES_S, return 0 )
+  {
+    oyCheckType__m( oyOBJECT_PROFILES_S, return NULL )
+  }
+  else
+    return NULL;
 
   s = oyProfiles_Copy_( s, object );
 

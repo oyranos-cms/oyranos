@@ -62,7 +62,11 @@ OYAPI oyHash_s* OYEXPORT
   oyHash_s_ * s = (oyHash_s_*) hash;
 
   if(s)
-    oyCheckType__m( oyOBJECT_HASH_S, return 0 )
+  {
+    oyCheckType__m( oyOBJECT_HASH_S, return NULL )
+  }
+  else
+    return NULL;
 
   s = oyHash_Copy_( s, object );
 
