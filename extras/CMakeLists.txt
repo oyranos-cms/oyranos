@@ -14,7 +14,9 @@ INSTALL ( FILES
 
 INSTALL( PROGRAMS "${CMAKE_CURRENT_SOURCE_DIR}/oyranos-profile-install" DESTINATION ${CMAKE_INSTALL_BINDIR} )
 INSTALL( PROGRAMS "${CMAKE_CURRENT_SOURCE_DIR}/oyranos-monitor-daemon" DESTINATION ${CMAKE_INSTALL_BINDIR} )
+INSTALL( PROGRAMS "${CMAKE_CURRENT_SOURCE_DIR}/oyranos-night-manager" DESTINATION ${CMAKE_INSTALL_BINDIR} )
 INSTALL( FILES oyranos-profile-install.desktop DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications)
+INSTALL( FILES oyranos-night-manager.desktop DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications)
 INSTALL( FILES icons/oyranos_logo.png DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pixmaps )
 # KDE has problems rendering SVG blur
 #INSTALL( FILES icons/oyranos_logo.svg DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/scalable/apps )

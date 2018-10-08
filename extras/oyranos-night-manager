@@ -1,0 +1,2 @@
+#!/bin/sh
+oyranos-monitor-white-point -J | openicc-json-qml -i - -c +

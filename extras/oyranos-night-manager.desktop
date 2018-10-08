@@ -1,0 +1,17 @@
+[Desktop Entry]
+X-SuSE-translate=true
+Version=1.0
+Encoding=UTF-8
+Type=Application
+Categories=Settings;System;HardwareSettings;Utility;
+Icon=oyNM-logo
+Exec=oyranos-night-manager
+TryExec=oyranos-night-manager
+Name=Oyranos Monitor White Point and Effects
+Name[de]=Oyranos Monitorweißpunkt und-effekte
+GenericName=Night Manager
+GenericName[de]=Nachteinstellungen
+Comment=Select whitepoint and ICC effect profiles for day and night. Set geographic location for computation of sunrise and sunset.
+Comment[de]=Wähle Weißpunkt und ICC Effectprofile für Tag und Nacht. Setze die geographische Position zur Berechnung von Sonnenauf-und untergang.
+Terminal=false
+StartupNotify=true
