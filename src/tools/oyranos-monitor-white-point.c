@@ -259,6 +259,7 @@ int main( int argc , char** argv )
   int show = 0;
   int json = 0;
   int json_command = 0;
+  int man = 0;
   int dry = 0;
   int system_wide = 0;
   int location = 0;
@@ -299,12 +300,18 @@ int main( int argc , char** argv )
                                     {"1", _("Autostart"), _("Autostart"), ""},
                                     {"2", _("Activate"), _("Activate"), ""},
                                     {"","","",""}};
+  openiccOptionChoice_s env_vars[]={{"OY_DEBUG", _("set the Oyranos debug level."), _("Alternatively the -v option can be used."), _("Valid integer range is from 1-20.")},
+                                    {"OY_MODULE_PATH", _("route Oyranos to additional directories containing modules."), "", ""},
+                                    {"","","",""}};
+  openiccOptionChoice_s examples[]={{_("Enable the daemon, set night white point to 3000 Kelvin and use that in night mode"), "oyranos-monitor-white-point", "-d 2 -a 3000 -n 1", ""},
+                                    {_("Switch all day light intereference off such as white point and effect"), "oyranos-monitor-white-point", "-s 0 -e 0", ""},
+                                    {"","","",""}};
   openiccOption_s oarray[] = {
   /* type,   flags, o, option, key, name, description, help, value_name, value_type, values, var_type, variable */
     {"oiwi", 0, 'd', "daemon", NULL, _("daemon"), _("Control user daemon"), NULL, "0|1|2", openiccOPTIONTYPE_CHOICE, {.choices.list = openiccMemDup( d_choices, sizeof(d_choices) )}, openiccINT, {.i=&daemon} },
     {"oiwi", 0, 'm', "modes", NULL, _("Modes"), _("Show white point modes"), NULL, NULL, openiccOPTIONTYPE_NONE, {}, openiccINT, {.i=&show} },
     {"oiwi", 0, 'w', "white-point", NULL, _("Mode"), _("Set white point mode"), NULL, "0|1|2|3|4|5|6|7", openiccOPTIONTYPE_FUNCTION, {.getChoices = getWhitePointChoices}, openiccINT,{.i=&wtpt_mode} },
-    {"oiwi", 0, 'n', "night-white-point", NULL, _("Night Mode"), _("Set night time mode"), NULL, "0|1|2|3|4|5|6|7", openiccOPTIONTYPE_FUNCTION, {.getChoices = getWhitePointChoices}, openiccINT, {.i=&wtpt_mode_night} },
+    {"oiwi", 0, 'n', "night-white-point", NULL, _("Night Mode"), _("Set night time mode"), _("A white point temperature of around 4000K and lower allows to get easier into sleep. Enable by setting this option to Automatic (-n=1) and Temperature to 3000 (-a=3000)."), "0|1|2|3|4|5|6|7", openiccOPTIONTYPE_FUNCTION, {.getChoices = getWhitePointChoices}, openiccINT, {.i=&wtpt_mode_night} },
     {"oiwi", 0, 's', "sun-white-point", NULL, _("Day Mode"), _("Set day time mode"), NULL, "0|1|2|3|4|5|6|7", openiccOPTIONTYPE_FUNCTION, {.getChoices = getWhitePointChoices}, openiccINT, {.i=&wtpt_mode_sunlight} },
     {"oiwi", 0, 'a', "automatic", NULL, _("Temperature"), _("A value from 2700 till 8000 Kelvin is expected to show no artefacts"), NULL,
       /*  The white point profiles will be generated in many different shades, which will explode
@@ -326,11 +333,15 @@ int main( int argc , char** argv )
     {"oiwi", 0, 'z', "system-wide", NULL, _("system wide"), _("System wide DB setting"), NULL, NULL, openiccOPTIONTYPE_NONE, {}, openiccINT, {.i=&system_wide} },
     {"oiwi", 0, 'j', "oi-json", NULL, _("OpenICC UI Json"), _("Get OpenICC Json UI declaration"), NULL, NULL, openiccOPTIONTYPE_NONE, {}, openiccINT, {.i=&json} },
     {"oiwi", 0, 'J', "oi-json-command", NULL, _("OpenICC UI Json + command"), _("Get OpenICC Json UI declaration incuding command"), NULL, NULL, openiccOPTIONTYPE_NONE, {}, openiccINT, {.i=&json_command} },
+    {"oiwi", 0, 'M', "man", NULL, _("Man page"), _("Get a unix manual page"), NULL, NULL, openiccOPTIONTYPE_NONE, {}, openiccINT, {.i=&man} },
     {"oiwi", 0, 'h', "help", NULL, _("help"), _("Help"), NULL, NULL, openiccOPTIONTYPE_NONE, {}, openiccINT, {.i=&help} },
     {"oiwi", 0, 'v', "verbose", NULL, _("verbose"), _("verbose"), NULL, NULL, openiccOPTIONTYPE_NONE, {}, openiccINT, {.i=&verbose} },
     {"oiwi", 0, 'y', "dry-run", NULL, "dry run", "dry run", NULL, NULL, openiccOPTIONTYPE_NONE, {}, openiccINT, {.i=&dry} },
     {"oiwi", 0, 'u', "hour", NULL, "hour", "hour", NULL, NULL, openiccOPTIONTYPE_DOUBLE, {.dbl.start = 0, .dbl.end = 48, .dbl.tick = 1, .dbl.d = 0}, openiccDOUBLE, {.d=&hour_} },
     {"oiwi", 0, 'c', "check", NULL, "check", "check", NULL, NULL, openiccOPTIONTYPE_NONE, {}, openiccINT, {.i=&check} },
+    /* blind options, useful only for man page generation */
+    {"oiwi", 0, '.', "man-environment_variables", NULL, "", "", NULL, NULL, openiccOPTIONTYPE_CHOICE, {.choices.list = openiccMemDup( env_vars, sizeof(env_vars) )}, openiccNONE, {.i=NULL} },
+    {"oiwi", 0, ',', "man-examples", NULL, "", "", NULL, NULL, openiccOPTIONTYPE_CHOICE, {.choices.list = openiccMemDup( examples, sizeof(examples) )}, openiccNONE, {.i=NULL} },
     {"",0,0,0,0,0,0,0, NULL, openiccOPTIONTYPE_END, {},0,{}}
   };
   opts->array = openiccMemDup( oarray, sizeof(oarray) );
@@ -339,9 +350,9 @@ int main( int argc , char** argv )
   /* type,   flags, name, description, help, mandatory, optional, detail */
     {"oiwg", 0, _("Mode"), _("Actual mode"), NULL, "wa", "zv", "wa" },
 #if defined( XCM_HAVE_X11 )
-    {"oiwg", 0, _("Night Mode"), _("Nightly appearance"), NULL, "n", "gbzv", "ngb" },
+    {"oiwg", 0, _("Night Mode"), _("Nightly appearance"), _("The Night white point mode shall allow to reduce influence of blue light during night time. A white point temperature of around 4000K and lower allows to get easier into sleep and is recommended along with warm room illumination in evening and night times."), "n", "gbzv", "ngb" },
 #else
-    {"oiwg", 0, _("Night Mode"), _("Nightly appearance"), NULL, "n", "gzv", "ng" },
+    {"oiwg", 0, _("Night Mode"), _("Nightly appearance"), _("The Night white point mode shall allow to reduce influence of blue light during night time. A white point temperature of around 4000K and lower allows to get easier into sleep and is recommended along with warm room illumination in evening and night times."), "n", "gzv", "ng" },
 #endif
     {"oiwg", 0, _("Day Mode"), _("Sun light appearance"), NULL, "s", "ezv", "se" },
     {"oiwg", 0, _("Location"), _("Location and Twilight"), NULL, "l|oi", "tzv", "loit"},
@@ -364,9 +375,10 @@ int main( int argc , char** argv )
   }
   opts->groups = openiccMemDup( groups, sizeof(groups));
 
-  info = oyUiInfo(_("The tool can set the actual white point or set it by local day and night time. A additional effect profile can be selected."));
+  info = oyUiInfo(_("The tool can set the actual white point or set it by local day and night time. A additional effect profile can be selected."),
+                  "2018-10-11T12:00:00", "October 11, 2018");
   ui = openiccUi_Create( argc, argv,
-      "oyNM", _("Night Manager"), _("Oyranos Night Manager handles the monitor white point"),
+      "oyranos-monitor-white-point", _("Night Manager"), _("Oyranos Night Manager handles the monitor white point"),
       "oyNM-logo",
       info, opts->array, opts->groups );
   if(!ui) return 0;
@@ -545,6 +557,9 @@ int main( int argc , char** argv )
     oyjlStringAdd( &json_commands, malloc, free, "%s", &json[1] );
     puts( json_commands );
   }
+
+  if(man)
+    puts( openiccUi_ToMan( ui, 0 ) );
 
   if(check)
     checkWtptState( dry );
