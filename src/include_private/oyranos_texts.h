@@ -96,7 +96,9 @@ oyGROUP_e       oyGroupAdd_              (const char *id, const char *cmm,
                                         const char *name, const char *tooltips);
 int           oyGroupRemove_           (oyGROUP_e     id);
 
-openiccUiHeaderSection_s * oyUiInfo  ( const char          * documentation );
+openiccUiHeaderSection_s * oyUiInfo  ( const char          * documentation,
+                                       const char          * iso_dateTtime,
+                                       const char          * date_description );
 
 
 int          oyExistPersistentString ( const char        * key_name,

@@ -18,11 +18,14 @@
 #include "oyranos_version.h"
 
 #include <string.h>
-openiccUiHeaderSection_s * oyUiInfo  ( const char          * documentation )
+openiccUiHeaderSection_s * oyUiInfo  ( const char          * documentation,
+                                       const char          * iso_dateTtime,
+                                       const char          * date_description )
 {
   openiccUiHeaderSection_s s[] = {
     /* type,  nick,      label,name,                 description */
     { "oihs", "version", NULL, OYRANOS_VERSION_NAME, NULL },
+    { "oihs", "date", NULL, iso_dateTtime, date_description },
     { "oihs", "manufacturer", NULL, "Kai-Uwe Behrmann", "http://www.oyranos.org" },
     { "oihs", "copyright", NULL, "Copyright 2018 Kai-Uwe Behrmann", NULL },
     { "oihs", "license", NULL, "newBSD", "http://www.oyranos.org" },
