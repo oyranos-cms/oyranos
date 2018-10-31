@@ -935,6 +935,8 @@ int      oyX1SetupMonitorProfile     ( oyMonitor_s       * disp,
       free( atom_name );
 
       oyX1Monitor_setCompatibility( disp, profile_name );
+
+      XFlush( display );
     }
 
     free( text );
@@ -1208,8 +1210,11 @@ int      oyX1UnsetMonitorProfile     ( oyMonitor_s       * disp )
 
       oyX1Monitor_setCompatibility( disp, NULL );
 
+      XFlush( display );
+
       free( atom_name );
-    goto finish;
+
+      goto finish;
   }
 
 
