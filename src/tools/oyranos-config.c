@@ -90,7 +90,7 @@ void  printfHelp (int argc, char** argv)
   printf("         --sourcedir\t%s\n", _("Oyranos local source directory name"));
   printf("         --builddir\t%s\n", _("Oyranos local build directory name"));
   printf("\n");
-  printf(_("For more informations read the man page:"));
+  printf(_("For more information read the man page:"));
   printf("\n");
   printf("      man oyranos-config\n");
 }

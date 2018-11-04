@@ -243,7 +243,7 @@ int main( int argc , char** argv )
                         printf("      %s\n",           _("--module name"));
                         printf("      %s\n",           _("-d device_position_start_from_zero"));
                         printf("\n");
-                        printf(_("For more informations read the man page:"));
+                        printf(_("For more information read the man page:"));
                         printf("\n");
                         printf("      man oyranos-monitor\n");
                         exit (0);

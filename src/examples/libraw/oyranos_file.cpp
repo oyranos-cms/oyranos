@@ -75,7 +75,7 @@ void displayHelp(char ** argv)
   printf("    %s\n",             _("Convert CameraRaw image to Rgb image:"));
   printf("      %s -i image.dng -o image.png\n", argv[0]);
   printf("\n");
-  printf("%s", _("For more informations read the man page:"));
+  printf("%s", _("For more information read the man page:"));
   printf("\n");
   printf("      man oyranos-camera-raw\n");
 }

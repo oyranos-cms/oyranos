@@ -103,10 +103,10 @@ void displayHelp(char ** argv)
   printf("         -d %s\t%s\n",    _("NUMBER"), _("device position start from zero"));
   printf("         --device-name %s\t%s\n",    _("NAME"), _("alternatively specify the name of a device"));
   printf("         -r      \t%s\n", _("skip X Color Management device profile"));
-  printf("         -2      \t%s\n", _("select ICC v2 profiles"));
-  printf("         -4      \t%s\n", _("select ICC v4 profiles"));
+  printf("         -2      \t%s\n", _("Select ICC v2 Profiles"));
+  printf("         -4      \t%s\n", _("Select ICC v4 Profiles"));
   printf("\n");
-  printf(_("For more informations read the man page:"));
+  printf(_("For more information read the man page:"));
   printf("\n");
   printf("      man oyranos-device\n");
 }
