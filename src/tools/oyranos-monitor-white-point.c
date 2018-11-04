@@ -54,7 +54,7 @@ int __sunriset__( int year, int month, int day, double lon, double lat,
 int findLocation(oySCOPE_e scope, int dry);
 int getLocation( double * lon, double * lat);
 double getSunHeight( double year, double month, double day, double gmt_hours, double lat, double lon );
-int getSunriseSunset( double * rise, double * set, int dry, int verbose );
+int getSunriseSunset( double * rise, double * set, int dry, char ** text );
 int isNight(int dry);
 int runDaemon(int dmode);
 int setWtptMode( oySCOPE_e scope, int wtpt_mode, int dry );
@@ -274,6 +274,8 @@ int main( int argc , char** argv )
   int check = 0;
   int help = 0;
   int verbose = 0;
+  int state = 0;
+  int worked = 0;
   openiccOptions_s * opts;
   openiccUi_s * ui;
   openiccUiHeaderSection_s * info;
@@ -357,7 +359,7 @@ int main( int argc , char** argv )
     {"oiwg", 0, _("Day Mode"), _("Sun light appearance"), NULL, "s", "ezv", "se" },
     {"oiwg", 0, _("Location"), _("Location and Twilight"), NULL, "l|oi", "tzv", "loit"},
     {"oiwg", 0, _("Daemon Service"), _("Run sunset daemon"), NULL, "d", "v", "d" },
-    {"oiwg", 0, _("Misc"), _("General options"), NULL, "", "", "zmrjJvh" },
+    {"oiwg", 0, _("Misc"), _("General options"), NULL, "", "", "zmrjJMvh" },
     {"",0,0,0,0,0,0,0}
   };
   double night = isNight(0);
@@ -380,8 +382,13 @@ int main( int argc , char** argv )
   ui = openiccUi_Create( argc, argv,
       "oyranos-monitor-white-point", _("Night Manager"), _("Oyranos Night Manager handles the monitor white point"),
       "oyNM-logo",
-      info, opts->array, opts->groups );
-  if(!ui) return 0;
+      info, opts->array, opts->groups, &state );
+  if(state & openiccUI_STATE_HELP)
+  {
+    fprintf( stderr, "%s\n\tman oyranos-monitor-white-point\n\n", _("For more information read the man page:"));
+    return 0;
+  }
+  if(!ui) return 1;
 
   DBG_S_( oyPrintTime() );
   if(verbose > 1)
@@ -437,6 +444,7 @@ int main( int argc , char** argv )
       pingNativeDisplay();
     }
     oyFree_m_( comment );
+    ++worked;
   }
 
   if(wtpt_mode >= 0)
@@ -474,11 +482,15 @@ int main( int argc , char** argv )
         if(tmp) oyFree_m_(tmp);
       }
     }
+    ++worked;
   }
 
 
   if(location)
+  {
     error = findLocation(scope, dry);
+    ++worked;
+  }
 
   if(twilight != -1000)
   {
@@ -486,6 +498,7 @@ int main( int argc , char** argv )
     if(dry == 0)
       oySetPersistentString( OY_DISPLAY_STD OY_SLASH "/twilight", scope, value, NULL );
     oyFree_m_(value);
+    ++worked;
   }
 
   if(longitude != 360)
@@ -494,6 +507,7 @@ int main( int argc , char** argv )
     if(dry == 0)
       oySetPersistentString( OY_DISPLAY_STD "/longitude", scope, value, NULL );
     oyFree_m_(value);
+    ++worked;
   }
 
   if(latitude != 360)
@@ -502,6 +516,7 @@ int main( int argc , char** argv )
     if(dry == 0)
       oySetPersistentString( OY_DISPLAY_STD "/latitude", scope, value, NULL );
     oyFree_m_(value);
+    ++worked;
   }
 
   if(wtpt_mode_night != -1)
@@ -510,6 +525,7 @@ int main( int argc , char** argv )
     if(dry == 0)
       oySetPersistentString( OY_DISPLAY_STD "/display_white_point_mode_night", scope, value, NULL );
     oyFree_m_(value);
+    ++worked;
   }
 
   if(wtpt_mode_sunlight != -1)
@@ -518,12 +534,16 @@ int main( int argc , char** argv )
     if(dry == 0)
       oySetPersistentString( OY_DISPLAY_STD "/display_white_point_mode_sunlight", scope, value, NULL );
     oyFree_m_(value);
+    ++worked;
   }
 
   if(night_effect != NULL && dry == 0)
+  {
     oySetPersistentString( OY_DISPLAY_STD "/night_effect", scope,
                            (night_effect[0] && night_effect[0] != '-') ?
                             night_effect : NULL, NULL );
+    ++worked;
+  }
 
   if(night_backlight != -1 && dry == 0)
   {
@@ -531,38 +551,65 @@ int main( int argc , char** argv )
     oySetPersistentString( OY_DISPLAY_STD "/display_backlight_night", scope,
                            night_backlight == 0 ? NULL : value, NULL );
     oyFree_m_(value);
+    ++worked;
   }
 
   if(sunlight_effect != NULL && dry == 0)
+  {
     oySetPersistentString( OY_DISPLAY_STD "/sunlight_effect", scope,
                            (sunlight_effect[0] && sunlight_effect[0]!='-') ?
                             sunlight_effect : NULL, NULL );
+    ++worked;
+  }
 
   if(sunrise)
   {
-    error = getSunriseSunset( &rise, &set, dry, 1 );
+    char * text = NULL;
+    error = getSunriseSunset( &rise, &set, dry, &text );
+    puts(text);
+    ++worked;
   }
 
   if(daemon != -1)
+  {
     error = runDaemon(daemon);
+    ++worked;
+  }
 
   if(json)
+  {
     puts( openiccUi_ToJson( ui, 0 ) );
+    ++worked;
+  }
   if(json_command)
   {
-    char * json = openiccUi_ToJson( ui, 0 ),
-         * json_commands = strdup(jcommands);
+    char * json = NULL,
+         * json_commands = strdup(jcommands),
+         * text = NULL;
+    error = getSunriseSunset( &rise, &set, dry, &text );
+    ui->opts->groups[3].help = text;
+    json = openiccUi_ToJson( ui, 0 ),
     json_commands[strlen(json_commands)-2] = ',';
     json_commands[strlen(json_commands)-1] = '\000';
     oyjlStringAdd( &json_commands, malloc, free, "%s", &json[1] );
     puts( json_commands );
+    ++worked;
   }
 
   if(man)
+  {
     puts( openiccUi_ToMan( ui, 0 ) );
+    ++worked;
+  }
 
   if(check)
+  {
     checkWtptState( dry );
+    ++worked;
+  }
+
+  if(worked == 0)
+    openiccOptions_PrintHelp( opts, ui, verbose, NULL );
 
   oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
 
@@ -810,7 +857,7 @@ double oyNormaliseHour(double hour)
 }
 
 #define oyGetCurrentGMTHour_(arg) ((hour_ != -1.0) ? hour_ + oyGetCurrentGMTHour(arg)*0.0 : oyGetCurrentGMTHour(arg))
-int getSunriseSunset( double * rise, double * set, int dry, int verbose )
+int getSunriseSunset( double * rise, double * set, int dry, char ** text )
 {
   double lat = 0.0,
          lon = 0.0;
@@ -861,16 +908,16 @@ int getSunriseSunset( double * rise, double * set, int dry, int verbose )
     oyGetCurrentGMTHour_( &gmt_diff_second );
     oySplitHour( oyGetCurrentLocalHour( oyGetCurrentGMTHour_(0), gmt_diff_second ), &hour, &minute, &second );
     elevation = getSunHeight( year, month, day, oyGetCurrentGMTHour_(0), lat, lon );
-    if(verbose)
-      fprintf( stdout, "%d-%d-%d %d:%.2d:%.2d",
+    if(text)
+      oyjlStringAdd( text, malloc, free, "%d-%d-%d %d:%.2d:%.2d",
              year, month, day, hour, minute, second );
     oySplitHour( oyGetCurrentLocalHour( *rise, gmt_diff_second ), &hour, &minute, &second );
-    if(verbose)
-      fprintf( stdout, " %s: %g° %g° %s: %g° (%s: %g°) %s: %d:%.2d:%.2d",
+    if(text)
+      oyjlStringAdd( text, malloc, free, " %s: %g° %g° %s: %g° (%s: %g°) %s: %d:%.2d:%.2d",
              _("Geographical Position"), lat, lon, _("Twilight"), twilight, _("Sun Elevation"), elevation, _("Sunrise"), hour, minute, second );
     oySplitHour( oyGetCurrentLocalHour( *set,  gmt_diff_second ), &hour, &minute, &second );
-    if(verbose)
-      fprintf( stdout, " %s: %d:%.2d:%.2d\n",
+    if(text)
+      oyjlStringAdd( text, malloc, free, " %s: %d:%.2d:%.2d",
              _("Sunset"), hour, minute, second );
   }
 
@@ -884,7 +931,7 @@ int isNight(int dry)
 
   dtime = oyGetCurrentGMTHour_(&diff);
 
-  if( getSunriseSunset( &rise, &set, dry, 0 ) == 0 )
+  if( getSunriseSunset( &rise, &set, dry, NULL ) == 0 )
   {
     if(rise < dtime && dtime <= set)
     /* day time */
@@ -939,7 +986,7 @@ int checkWtptState(int dry)
   }
 
   DBG_S_( oyPrintTime() );
-  if( choices_string_list && getSunriseSunset( &rise, &set, dry, 0 ) == 0 )
+  if( choices_string_list && getSunriseSunset( &rise, &set, dry, NULL ) == 0 )
   {
     int new_mode = -1;
     char * new_effect = NULL;
