@@ -2,7 +2,7 @@
 # Target installation folders
 #
 
-SET (TARGET_INCLUDE_FOLDER
+SET (${PROJECT_UP_NAME}_TARGET_INCLUDE_FOLDER
 		${PROJECT_DOWN_NAME}
 		CACHE STRING
 		"Optional folder below system include folder to install include files."
@@ -17,7 +17,7 @@ IF(NOT CMAKE_MODULES_INSTALL_DIR)
 ENDIF(NOT CMAKE_MODULES_INSTALL_DIR)
 
 
-SET (TARGET_PLUGIN_FOLDER "openicc"
+SET (${PROJECT_UP_NAME}_TARGET_PLUGIN_FOLDER "openicc"
 		CACHE STRING
 		"Optional folder below system library folder where to install openicc plugins."
     )
@@ -28,7 +28,7 @@ SET (TARGET_PKGCONFIG_FOLDER
 		"The folder below system library folder where to install pkgconfig files."
     )
 
-SET (TARGET_DOCUMENTATION_FOLDER
+SET (${PROJECT_UP_NAME}_TARGET_DOCUMENTATION_FOLDER
 		"share/doc/openicc-api"
 		CACHE STRING
 		"The folder below system prefix where to install api documentation files."
