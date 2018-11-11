@@ -74,6 +74,7 @@ static openiccOptionChoice_s * getLinearEffectProfileChoices (
     int choices = 0;
     oyProfiles_s * patterns = oyProfiles_New( NULL ),
                  * profiles = 0;
+    const char * man_page = getenv("DISPLAY");
 
     if(!selected && linear_effect_choices_)
       return linear_effect_choices_;
@@ -90,7 +91,36 @@ static openiccOptionChoice_s * getLinearEffectProfileChoices (
     oyProfiles_Release( &patterns );
     choices = oyProfiles_Count( profiles );
 
-    if(choices)
+    if(man_page && strcmp(man_page,"man_page") == 0)
+    {
+      openiccOptionChoice_s * c = calloc(1+2+1, sizeof(openiccOptionChoice_s));
+      if(c)
+      {
+        /* first entry is for unsetting */
+        int i = 0;
+        c[i].nick = strdup("-");
+        c[i].name = strdup(_("[none]"));
+        c[i].description = strdup("");
+        c[i].help = strdup("");
+
+        /* example profile choices */
+        c[++i].nick = strdup("Effect 1");
+        c[i].name = strdup("Example Effect 1");
+        c[i].description = strdup("example.effect.1.icc");
+        c[i].help = strdup("");
+
+        c[++i].nick = strdup("Effect 2");
+        c[i].name = strdup("Example Effect 2");
+        c[i].description = strdup("example.effect.2.icc");
+        c[i].help = strdup("");
+
+        /* empty choice for end of list */
+        c[++i].nick = malloc(4);
+        c[i].nick[0] = '\000';
+      }
+      return c;
+    }
+    else if(choices)
     {
       int i;
       char * value = NULL;
@@ -257,9 +287,7 @@ int main( int argc , char** argv )
   double night_backlight = -1;
   double temperature = 0.0;
   int show = 0;
-  int json = 0;
-  int json_command = 0;
-  int man = 0;
+  const char * export = NULL;
   int dry = 0;
   int system_wide = 0;
   int location = 0;
@@ -333,9 +361,8 @@ int main( int argc , char** argv )
     {"oiwi", 0, 't', "twilight", NULL, _("Twilight"), _("Set Twilight angle"), NULL, _("ANGLE_IN_DEGREE|0:rise/set|-6:civil|-12:nautical|-18:astronomical"), openiccOPTIONTYPE_DOUBLE,
       {.dbl.start = 18, .dbl.end = -18, .dbl.tick = 1, .dbl.d = getDoubleFromDB( OY_DISPLAY_STD "/twilight", 0 )}, openiccDOUBLE, {.d=&twilight} },
     {"oiwi", 0, 'z', "system-wide", NULL, _("system wide"), _("System wide DB setting"), NULL, NULL, openiccOPTIONTYPE_NONE, {}, openiccINT, {.i=&system_wide} },
-    {"oiwi", 0, 'j', "oi-json", NULL, _("OpenICC UI Json"), _("Get OpenICC Json UI declaration"), NULL, NULL, openiccOPTIONTYPE_NONE, {}, openiccINT, {.i=&json} },
-    {"oiwi", 0, 'J', "oi-json-command", NULL, _("OpenICC UI Json + command"), _("Get OpenICC Json UI declaration incuding command"), NULL, NULL, openiccOPTIONTYPE_NONE, {}, openiccINT, {.i=&json_command} },
-    {"oiwi", 0, 'M', "man", NULL, _("Man page"), _("Get a unix manual page"), NULL, NULL, openiccOPTIONTYPE_NONE, {}, openiccINT, {.i=&man} },
+    /* default option template -X|--export */
+    {"oiwi", 0, 'X', "export", NULL, NULL, NULL, NULL, NULL, openiccOPTIONTYPE_CHOICE, {.choices.list = NULL}, openiccSTRING, {.s=&export} },
     {"oiwi", 0, 'h', "help", NULL, _("help"), _("Help"), NULL, NULL, openiccOPTIONTYPE_NONE, {}, openiccINT, {.i=&help} },
     {"oiwi", 0, 'v', "verbose", NULL, _("verbose"), _("verbose"), NULL, NULL, openiccOPTIONTYPE_NONE, {}, openiccINT, {.i=&verbose} },
     {"oiwi", 0, 'y', "dry-run", NULL, "dry run", "dry run", NULL, NULL, openiccOPTIONTYPE_NONE, {}, openiccINT, {.i=&dry} },
@@ -359,7 +386,7 @@ int main( int argc , char** argv )
     {"oiwg", 0, _("Day Mode"), _("Sun light appearance"), NULL, "s", "ezv", "se" },
     {"oiwg", 0, _("Location"), _("Location and Twilight"), NULL, "l|oi", "tzv", "loit"},
     {"oiwg", 0, _("Daemon Service"), _("Run sunset daemon"), NULL, "d", "v", "d" },
-    {"oiwg", 0, _("Misc"), _("General options"), NULL, "", "", "zmrjJMvh" },
+    {"oiwg", 0, _("Misc"), _("General options"), NULL, "", "", "zmrXvh" },
     {"",0,0,0,0,0,0,0}
   };
   double night = isNight(0);
@@ -383,6 +410,10 @@ int main( int argc , char** argv )
       "oyranos-monitor-white-point", _("Night Manager"), _("Oyranos Night Manager handles the monitor white point"),
       "oyNM-logo",
       info, opts->array, opts->groups, &state );
+  if( state & openiccUI_STATE_EXPORT &&
+      export &&
+      strcmp(export,"json+command") != 0)
+    return 0;
   if(state & openiccUI_STATE_HELP)
   {
     fprintf( stderr, "%s\n\tman oyranos-monitor-white-point\n\n", _("For more information read the man page:"));
@@ -576,12 +607,7 @@ int main( int argc , char** argv )
     ++worked;
   }
 
-  if(json)
-  {
-    puts( openiccUi_ToJson( ui, 0 ) );
-    ++worked;
-  }
-  if(json_command)
+  if((export && strcmp(export,"json+command") == 0))
   {
     char * json = NULL,
          * json_commands = strdup(jcommands),
@@ -593,12 +619,6 @@ int main( int argc , char** argv )
     json_commands[strlen(json_commands)-1] = '\000';
     oyjlStringAdd( &json_commands, malloc, free, "%s", &json[1] );
     puts( json_commands );
-    ++worked;
-  }
-
-  if(man)
-  {
-    puts( openiccUi_ToMan( ui, 0 ) );
     ++worked;
   }
 

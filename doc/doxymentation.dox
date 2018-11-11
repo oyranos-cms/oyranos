@@ -42,7 +42,7 @@
     # VideoCardGammaTable, if appropriate
     oyranos-monitor
     @endverbatim
-    - oyranos-monitor-white-point - a tool for setting display white point.
+    - @ref oyranosmonitorwhitepoint - a tool for setting display white point.
       It covers a geo location and time sensitive daemon for white point 
       adaption to red night light. The daemon is called from oyranos-monitor.
     - oyranos-policy - a tool to set a policy from a xml file. Use it like:
@@ -52,7 +52,7 @@
     Affected are default profiles and some behaviour settings.
     - oyranos-profile - access profile information
     - oyranos-profile-graph - draw a 2D graph from profiles
-    - oyranos-profiles - lookup profiles in the systems color paths, download and install
+    - @ref oyranosprofiles - lookup profiles in the systems color paths, download and install
     - <a href="http://www.oyranos.org/wiki/index.php?title=Oyranos_Configuration_Dialog">oyranos-config-fltk</a> - a configuration UI application, using some functions      of the Oyranos APIs. If you have <a href="http://www.oyranos.org/wiki/index.php?title=ICC_Examin">ICC Examin</a> installed it can be called to
       show details of profiles. 
     - oyranos-config - a command line tool to get compiler flags to using Oyranos in your own project. Try  \a oyranos-config \a --help to see the appropriate options.

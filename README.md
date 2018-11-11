@@ -17,6 +17,7 @@ device specific Informations (ICC profiles) und system wide settings.
 * [Features](http://www.oyranos.org/features)
 * [Sources & Download](http://www.oyranos.org/downloads/)
 * [Documentation & Support](http://www.oyranos.org/support)
+* [Command Line Tools](src/tools/README.md)
 * [ChangeLog](ChangeLog.md)
 * [Copyright](COPYING.md) - BSD
 * [Authors](AUTHORS.md)

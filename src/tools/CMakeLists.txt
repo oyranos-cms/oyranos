@@ -1,7 +1,20 @@
 # ICC profiles listing
-ADD_EXECUTABLE( oyranos-profiles "${CMAKE_CURRENT_SOURCE_DIR}/oyranos_profiles.c" )
-TARGET_LINK_LIBRARIES( oyranos-profiles ${TARGET_LIB} ${EXTRA_LIBS} )
-INSTALL (TARGETS oyranos-profiles DESTINATION ${CMAKE_INSTALL_BINDIR})
+SET( TOOL "oyranos-profiles" )
+ADD_EXECUTABLE( ${TOOL} "${CMAKE_CURRENT_SOURCE_DIR}/oyranos_profiles.c" )
+TARGET_LINK_LIBRARIES( ${TOOL} ${TARGET_LIB} ${EXTRA_LIBS} )
+INSTALL (TARGETS ${TOOL} DESTINATION ${CMAKE_INSTALL_BINDIR})
+ADD_CUSTOM_TARGET( ${TOOL}.md ALL
+    COMMAND PATH=. LANG=en ${TOOL} -X markdown > ${CMAKE_CURRENT_SOURCE_DIR}/${TOOL}.md
+    DEPENDS ${TOOL}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    COMMENT "Extract markdown formated manual page from tool"
+  )
+ADD_CUSTOM_TARGET(  ${TOOL}-de.md ALL
+    COMMAND PATH=. LANG=de_DE.UTF8  ${TOOL} -X markdown > ${CMAKE_CURRENT_SOURCE_DIR}/${TOOL}-de.md
+    DEPENDS  ${TOOL}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    COMMENT "Extrahiere markdown formatiertes Handbuch von Werkzeug"
+  )
 
 # ICC profile information and manipulations
 ADD_EXECUTABLE( oyranos-profile "${CMAKE_CURRENT_SOURCE_DIR}/oyranos_profile_tool.c" )
@@ -25,9 +38,22 @@ TARGET_LINK_LIBRARIES ( oyranos-monitor ${TARGET_LIB} ${EXTRA_LIBS}
 INSTALL (TARGETS oyranos-monitor DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 # Oyranos monitor white point handling
-ADD_EXECUTABLE( oyranos-monitor-white-point "${CMAKE_CURRENT_SOURCE_DIR}/oyranos-monitor-white-point.c" )
-TARGET_LINK_LIBRARIES( oyranos-monitor-white-point ${TARGET_LIB} ${EXTRA_LIBS} ${DBUS_LIBS} )
-INSTALL (TARGETS oyranos-monitor-white-point DESTINATION ${CMAKE_INSTALL_BINDIR})
+SET( TOOL "oyranos-monitor-white-point" )
+ADD_EXECUTABLE( ${TOOL} "${CMAKE_CURRENT_SOURCE_DIR}/oyranos-monitor-white-point.c" )
+TARGET_LINK_LIBRARIES( ${TOOL} ${TARGET_LIB} ${EXTRA_LIBS} ${DBUS_LIBS} )
+INSTALL (TARGETS ${TOOL} DESTINATION ${CMAKE_INSTALL_BINDIR})
+ADD_CUSTOM_TARGET(  ${TOOL}.md ALL
+    COMMAND PATH=. LANG=en DISPLAY="man_page" ${TOOL} -X markdown > ${CMAKE_CURRENT_SOURCE_DIR}/${TOOL}.md
+    DEPENDS ${TOOL}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    COMMENT "Extract markdown formated manual page from tool"
+  )
+ADD_CUSTOM_TARGET(  ${TOOL}-de.md ALL
+    COMMAND PATH=. LANG=de_DE.UTF8 DISPLAY="man_page" ${TOOL} -X markdown > ${CMAKE_CURRENT_SOURCE_DIR}/${TOOL}-de.md
+    DEPENDS  ${TOOL}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    COMMENT "Extrahiere markdown formatiertes Handbuch von Werkzeug"
+  )
 
 # Device listing
 ADD_EXECUTABLE( oyranos-device "${CMAKE_CURRENT_SOURCE_DIR}/oyranos-device.c" )

@@ -404,8 +404,6 @@ SET( DOC_SOURCES
 	${CFILES_OBJECT_IMAGING_PUBLIC}
 	${CHEADERS_OBJECT_IMAGING_PUBLIC}
   ${CMAKE_SOURCE_DIR}/doc/Release*.md
-	${CMAKE_SOURCE_DIR}/src/oyjl/oyjl_tree.c
-	${CMAKE_SOURCE_DIR}/src/oyjl/oyjl_tree.h
 	${CMAKE_SOURCE_DIR}/src/modules/color/modules/lcms2/lcm2_profiler.h
 	${CMAKE_SOURCE_DIR}/src/modules/color/modules/lcms2/lcm2_profiler.c
 	${CMAKE_SOURCE_DIR}/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.c
@@ -419,6 +417,7 @@ SET( DOC_SOURCES
 	${CMAKE_SOURCE_DIR}/src/modules/color/modules/devices/*.h
 	${CMAKE_SOURCE_DIR}/src/modules/oyranos-meta/*.c
 	${CMAKE_SOURCE_DIR}/src/modules/oyranos-meta/*.h
+  ${CMAKE_SOURCE_DIR}/src/tools/oyranos*.md
         PARENT_SCOPE
    )
 

@@ -1,2 +1,2 @@
 #!/bin/sh
-oyranos-profiles --gui --install -u "$@"
+oyranos-profiles --gui -u --install "$@"
