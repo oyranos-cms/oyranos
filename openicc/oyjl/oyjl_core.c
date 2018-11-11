@@ -395,27 +395,31 @@ void       oyjlStringListFreeDoubles (
   if(!list) return;
 
   n = *list_n;
-  pos = 0;
+  pos = n ? 1 : 0;
 
   if(!deAlloc) deAlloc = free;
 
-  for(i = 0; i < n; ++i)
+  for(i = pos; i < n; ++i)
   {
-    int k;
+    int k, found = 0;
     char * ti = list[i];
-    if(!ti) continue;
-    for( k = i+1; k < n; ++k )
+    for( k = 0; k < i; ++k )
     {
       char * tk = list[k];
       if(ti && tk && strcmp(ti, tk) == 0)
       {
-        deAlloc( tk );
-        list[k] = tk = NULL;
+        deAlloc( ti );
+        list[i] = ti = NULL;
+        found = 1;
+        continue;
       }
     }
 
-    list[pos] = ti;
-    ++pos;
+    if(found == 0)
+    {
+      list[pos] = ti;
+      ++pos;
+    }
   }
 
   list[pos] = NULL;

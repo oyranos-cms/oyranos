@@ -55,6 +55,11 @@ const char *       openiccObjectTypeToString (
     case openiccOBJECT_NONE: type_name = ""; break;
     case openiccOBJECT_CONFIG: type_name = "openiccConfig_s"; break;
     case openiccOBJECT_DB: type_name = "openiccDB_s"; break;
+    case openiccOBJECT_OPTION: type_name = "openiccOption_s"; break;
+    case openiccOBJECT_OPTION_GROUP: type_name = "openiccOptionGroup_s"; break;
+    case openiccOBJECT_OPTIONS: type_name = "openiccOptions_s"; break;
+    case openiccOBJECT_UI_HEADER_SECTION: type_name = "openiccUiHeaderSection_s"; break;
+    case openiccOBJECT_UI: type_name = "openiccUi_s"; break;
   }
   return type_name;
 }

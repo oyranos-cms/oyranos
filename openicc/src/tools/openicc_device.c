@@ -55,6 +55,7 @@ int main(int argc, char ** argv)
 
   int help = 0;
   int verbose = 0;
+  const char * export = NULL;
   int list_devices = 0,
       list_long = 0;
   int error = 0;
@@ -120,6 +121,8 @@ int main(int argc, char ** argv)
     {"oiwi", 0,    'p', "show-path",     NULL, _("show-path"),   _("Show Path"),      NULL, NULL, openiccOPTIONTYPE_NONE,     {},      openiccINT,   {.i=&show_path} },
     {"oiwi", 0,    's', "scope",         NULL, _("scope"),       _("System"),         NULL, NULL, openiccOPTIONTYPE_NONE,     {},      openiccINT,   {.i=(int*)&scope} },
     {"oiwi", 0,    'v', "verbose",       NULL, _("verbose"),     _("verbose"),        NULL, NULL, openiccOPTIONTYPE_NONE,     {},      openiccINT,   {.i=&verbose} },
+    /* default option template -X|--export */
+    {"oiwi", 0,    'X', "export",        NULL, NULL,             NULL,                NULL, NULL, openiccOPTIONTYPE_CHOICE,   {},      openiccSTRING,{.s=&export} },
     {"oiwi", 0,    'w', "write",         NULL, _("write"),       _("Write DB File"),  NULL, NULL, openiccOPTIONTYPE_NONE,     {},      openiccINT,   {.i=&write_db_file} },
     {"",0,0,0,0,0,0,0, NULL, 0,{},0,{}}
   };
@@ -128,18 +131,18 @@ int main(int argc, char ** argv)
   openiccOptionGroup_s groups[] = {
   /* type,   flags, name,              description,                          help, mandatory, optional, detail */
     {"oiwg", 0,     _("List Devices"), _("Print the Devices in the DB"),     NULL, "l",       "djnbv",  "ldjn" },
-    {"oiwg", 0,     _("Add Device"),   _("Add a Devices to the DB"),         NULL, "af",      "bv",     "af" },
+    {"oiwg", 0,     _("Add Device"),   _("Add Device to DB"),                NULL, "af",      "bv",     "af" },
     {"oiwg", 0,     _("Erase Device"), _("Erase a Devices from the DB"),     NULL, "ed",      "bv",     "ed" },
     {"oiwg", 0,     _("Show DB Path"), _("Show Filepath to the DB"),         NULL, "p",       "sv",     "ps" },
-    {"oiwg", 0,     _("Misc"),         _("General options"),                 NULL, "",        "",       "bvh" },
+    {"oiwg", 0,     _("Misc"),         _("General options"),                 NULL, "",        "",       "bXvh" },
     {"",0,0,0,0,0,0,0}
   };
 
 
   openiccUiHeaderSection_s * info = oiUiInfo(_("Manipulation of OpenICC color management data base device entries."));
   openiccUi_s * ui = openiccUi_Create( argc, argv,
-      "oiDv", "openicc-device", _("OpenICC devices"), "openicc-logo",
-      info, oarray, groups );
+      "openicc-device", "OpenICC Device", _("OpenICC devices handling tool"), "openicc-logo",
+      info, oarray, groups, NULL );
   if(!ui) return 0;
 
   if(!db_file)
@@ -182,7 +185,7 @@ int main(int argc, char ** argv)
     DBG( 0, "%s at \"%s\"", _("unable to open data base"), db_file);
     exit(0);
   } else
-    fprintf( stderr, "using DB: %s\n", db_file);
+    openiccOptions_PrintHelp( ui->opts, ui, verbose, NULL );
  
   {
     /* read JSON input file */

@@ -139,9 +139,9 @@ SET_TARGET_PROPERTIES(   OpenICC
                SOVERSION ${${PROJECT_NAME}_MAJOR_VERSION}
                      )
 
-
 SET( DOC_SOURCES
 	doxymentation.dox
+  openicc*.md
 	${CFILES_OBJECT_CONFIG_PUBLIC}
 	${CHEADERS_OBJECT_CONFIG_PUBLIC}
         PARENT_SCOPE
@@ -156,6 +156,7 @@ IF( GETTEXT_FOUND )
   SET( XGETTEXT_CMD xgettext )
   FILE( GLOB SRC_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
         libopenicc/*.c
+        tools/openicc_device.c
         tools/openicc_json.c
       )
 

@@ -2,16 +2,21 @@ prefix=/opt/local
 
 CC = gcc
 DEBUG= -Wall -g
-INCL = -I$(prefix)/include -Isrc/include -Isrc/libopenicc -Isrc/simple
+INCL = -I$(prefix)/include -Ioyjl -Isrc/include -Isrc/libopenicc -Isrc/simple
 LDFLAGS = -L$(prefix)/lib64 -L./
 LDFLAGS_DB = -lm
 TARGET = openicc-config-read
 CFLAGS=$(DEBUG) $(INCL)
 HEADER  = src/include/openicc_config.h
 SOURCES = \
+	src/libopenicc/openicc_args.c \
 	src/libopenicc/openicc_config.c \
 	src/libopenicc/openicc_core.c \
-	src/libopenicc/openicc_string.c
+	src/libopenicc/openicc_io.c \
+	src/libopenicc/openicc_string.c \
+	oyjl/oyjl_core.c \
+	oyjl/oyjl_tree.c \
+	oyjl/oyjl_yajl.c
 SOURCES_DB = \
 	src/libopenicc/openicc_db.c \
 	src/libopenicc/openicc_io.c \

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: openicc\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2018-08-20 23:14+0200\n"
+"POT-Creation-Date: 2018-11-11 10:31+0100\n"
 "PO-Revision-Date: 2012-10-19 15:10+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -15,23 +15,50 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: libopenicc/openicc_core.c:128
+#: libopenicc/openicc_core.c:133
 msgid "!!! ERROR"
 msgstr "!!! CHYBA"
 
-#: libopenicc/openicc_args.c:864
+#: libopenicc/openicc_args.c:1014
 msgid "... try with --help|-h option for usage text. give up"
+msgstr ""
+
+#: libopenicc/openicc_args.c:1585 libopenicc/openicc_args.c:1756
+msgid "AUTHOR"
+msgstr ""
+
+#: tools/openicc_device.c:134
+#, fuzzy
+msgid "Add Device"
+msgstr "Zařízení"
+
+#: tools/openicc_device.c:111 tools/openicc_device.c:134
+msgid "Add Device to DB"
 msgstr ""
 
 #: tools/openicc_json.c:42
 msgid "Add gettext translated keys to JSON:"
 msgstr ""
 
+#: libopenicc/openicc_args.c:1595 libopenicc/openicc_args.c:1766
+#: libopenicc/openicc_args.c:1768
+msgid "BUGS"
+msgstr ""
+
+#: libopenicc/openicc_args.c:1589 libopenicc/openicc_args.c:1760
+msgid "COPYRIGHT"
+msgstr ""
+
+#: tools/openicc_device.c:101
+#, fuzzy
+msgid "Camera"
+msgstr "CameraRaw"
+
 #: tools/openicc_json.c:38
 msgid "Convert JSON to gettext ready C strings:"
 msgstr ""
 
-#: libopenicc/openicc_args.c:967
+#: libopenicc/openicc_args.c:1185
 msgid "Copyright"
 msgstr "Copyright"
 
@@ -70,45 +97,226 @@ msgstr ""
 msgid "Could not setup db objetc"
 msgstr "Nelze rozpoznat zařízení"
 
-#: libopenicc/openicc_args.c:671
+#. declare some option choices
+#: tools/openicc_device.c:97
+#, fuzzy
+msgid "DB File"
+msgstr "Soubory"
+
+#: tools/openicc_device.c:112
+#, fuzzy
+msgid "DB File Name"
+msgstr "Jmeno souboru:"
+
+#: libopenicc/openicc_args.c:1500 libopenicc/openicc_args.c:1675
+msgid "DESCRIPTION"
+msgstr ""
+
+#: libopenicc/openicc_args.c:1194
+msgid "Date"
+msgstr "Datum"
+
+#: libopenicc/openicc_args.c:805
 #, fuzzy
 msgid "Description"
 msgstr "popis"
 
-#: libopenicc/openicc_args.c:973
+#: libopenicc/openicc_args.c:1191
 msgid "Development"
 msgstr ""
 
-#: libopenicc/openicc_args.c:975
+#: tools/openicc_device.c:113
+#, fuzzy
+msgid "Device Class"
+msgstr "použít třídu zařízení"
+
+#: tools/openicc_device.c:104
+#, fuzzy
+msgid "Device File"
+msgstr "Sériové číslo zař.:"
+
+#: tools/openicc_device.c:114
+#, fuzzy
+msgid "Device position"
+msgstr "Popis modelu zařízení"
+
+#: libopenicc/openicc_args.c:1193
 msgid "Documentation"
 msgstr "Dokumentace"
 
-#: libopenicc/openicc_args.c:200
+#: libopenicc/openicc_args.c:283
 msgid "Double occuring option"
 msgstr ""
 
-#: libopenicc/openicc_args.c:971
+#: libopenicc/openicc_args.c:1189
 msgid "Download"
 msgstr ""
+
+#: tools/openicc_device.c:118
+msgid "Dump JSON"
+msgstr ""
+
+#: libopenicc/openicc_args.c:1376
+msgid "ENVIRONMENT VARIABLES"
+msgstr ""
+
+#: libopenicc/openicc_args.c:1372
+msgid "EXAMPLES"
+msgstr ""
+
+#: libopenicc/openicc_args.c:1374
+msgid "EXIT-STATE"
+msgstr ""
+
+#: tools/openicc_device.c:135
+#, fuzzy
+msgid "Erase Device"
+msgstr "Testovací zařízení"
+
+#: tools/openicc_device.c:115
+#, fuzzy
+msgid "Erase Devices"
+msgstr "Testovací zařízení"
+
+#: tools/openicc_device.c:135
+msgid "Erase a Devices from the DB"
+msgstr ""
+
+#: libopenicc/openicc_args.c:194
+msgid "Export formated text"
+msgstr ""
+
+#: tools/openicc_device.c:112 tools/openicc_device.c:116
+msgid "FILENAME"
+msgstr ""
+
+#: libopenicc/openicc_args.c:1380
+msgid "FILES"
+msgstr ""
+
+#: tools/openicc_device.c:116
+#, fuzzy
+msgid "File Name"
+msgstr "Jmeno souboru:"
+
+#: tools/openicc_device.c:104
+msgid "File Name of Device JSON"
+msgstr ""
+
+#: tools/openicc_device.c:97
+msgid "File Name of device JSON Data Base"
+msgstr ""
+
+#: libopenicc/openicc_args.c:183
+msgid "Formated text"
+msgstr ""
+
+#: libopenicc/openicc_args.c:174
+#, fuzzy
+msgid "GUI"
+msgstr "SGI"
+
+#: libopenicc/openicc_args.c:177
+msgid "GUI + Command"
+msgstr ""
+
+#: tools/openicc_device.c:137
+#, fuzzy
+msgid "General options"
+msgstr "Obecné volby:"
 
 #: tools/openicc_json.c:51
 msgid "General options:"
 msgstr "Obecné volby:"
 
-#: libopenicc/openicc_args.c:968
+#: libopenicc/openicc_args.c:178
+msgid "Get OpenICC Json UI declaration incuding command"
+msgstr ""
+
+#: libopenicc/openicc_args.c:196
+msgid "Get UI converted into text formats"
+msgstr ""
+
+#: libopenicc/openicc_args.c:175
+msgid "Get a OpenICC Json UI declaration"
+msgstr ""
+
+#: libopenicc/openicc_args.c:181
+#, fuzzy
+msgid "Get a unix man page"
+msgstr "Unix a deriváty"
+
+#: libopenicc/openicc_args.c:184
+msgid "Get formated text"
+msgstr ""
+
+#: libopenicc/openicc_args.c:1378
+msgid "HISTORY"
+msgstr ""
+
+#: tools/openicc_device.c:117
+msgid "Help"
+msgstr ""
+
+#: libopenicc/openicc_args.c:173
+msgid "Json"
+msgstr ""
+
+#: libopenicc/openicc_args.c:176
+msgid "Json + Command"
+msgstr ""
+
+#: libopenicc/openicc_args.c:1186 libopenicc/openicc_args.c:1591
+#: libopenicc/openicc_args.c:1762
 msgid "License"
 msgstr "Licence"
 
-#: libopenicc/openicc_args.c:966
+#. type,   flags, name,              description,                          help, mandatory, optional, detail
+#: tools/openicc_device.c:119 tools/openicc_device.c:133
+#, fuzzy
+msgid "List Devices"
+msgstr "Vypsat zařízení:"
+
+#: tools/openicc_device.c:120
+#, fuzzy
+msgid "List all key/values pairs"
+msgstr "nalezené key/value dvojice:"
+
+#: libopenicc/openicc_args.c:179
+#, fuzzy
+msgid "Man"
+msgstr "Purpurová"
+
+#: tools/openicc_device.c:142
+msgid "Manipulation of OpenICC color management data base device entries."
+msgstr ""
+
+#: libopenicc/openicc_args.c:1184
 msgid "Manufacturer"
 msgstr "Výrobce"
 
-#: libopenicc/openicc_args.c:947
+#: libopenicc/openicc_args.c:182
+msgid "Markdown"
+msgstr ""
+
+#: tools/openicc_device.c:137
+msgid "Misc"
+msgstr ""
+
+#: libopenicc/openicc_args.c:1165
 #, fuzzy
 msgid "Module"
 msgstr "Volby modulu:"
 
-#: libopenicc/openicc_args.c:1090
+#: tools/openicc_device.c:99
+msgid "Monitor"
+msgstr "Monitor"
+
+#: tools/openicc_device.c:114
+msgid "NUMBER"
+msgstr ""
+
+#: libopenicc/openicc_args.c:1319
 msgid "No"
 msgstr "Ne"
 
@@ -120,28 +328,36 @@ msgstr ""
 msgid "No JSON obtained for"
 msgstr ""
 
-#: libopenicc/openicc_args.c:974
+#: libopenicc/openicc_args.c:1502 libopenicc/openicc_args.c:1677
+msgid "OPTIONS"
+msgstr ""
+
+#: libopenicc/openicc_args.c:1192
 msgid "OpenICC Module Author"
 msgstr ""
 
-#: libopenicc/openicc_args.c:454
+#: tools/openicc_device.c:144
+msgid "OpenICC devices handling tool"
+msgstr ""
+
+#: libopenicc/openicc_args.c:542
 msgid "Option has a different value range"
 msgstr ""
 
-#: libopenicc/openicc_args.c:296 libopenicc/openicc_args.c:351
+#: libopenicc/openicc_args.c:383 libopenicc/openicc_args.c:438
 msgid "Option has a unexpected argument"
 msgstr ""
 
-#: libopenicc/openicc_args.c:274 libopenicc/openicc_args.c:328
+#: libopenicc/openicc_args.c:357 libopenicc/openicc_args.c:415
 msgid "Option needs a argument"
 msgstr ""
 
-#: libopenicc/openicc_args.c:253 libopenicc/openicc_args.c:310
+#: libopenicc/openicc_args.c:336 libopenicc/openicc_args.c:397
 #, fuzzy
 msgid "Option not supported"
 msgstr "Volba nepodporovaného typu:"
 
-#: libopenicc/openicc_db.c:153
+#: libopenicc/openicc_db.c:153 tools/openicc_device.c:172
 #, fuzzy
 msgid "Paths:"
 msgstr "Cesty"
@@ -150,58 +366,146 @@ msgstr "Cesty"
 msgid "Print a help text:"
 msgstr "Vytisknout nápovědu:"
 
+#: tools/openicc_device.c:133
+msgid "Print the Devices in the DB"
+msgstr ""
+
+#: tools/openicc_device.c:100
+msgid "Printer"
+msgstr "Tiskárna"
+
 #: tools/openicc_json.c:218
 msgid "Rendering Intent"
 msgstr "Záměr transformace"
 
-#: libopenicc/openicc_args.c:972
+#: libopenicc/openicc_args.c:1382
+msgid "SEE AS WELL"
+msgstr ""
+
+#: libopenicc/openicc_args.c:1489 libopenicc/openicc_args.c:1664
+msgid "SYNOPSIS"
+msgstr ""
+
+#: tools/openicc_device.c:102
+msgid "Scanner"
+msgstr "Skener"
+
+#: tools/openicc_device.c:136
+msgid "Show DB Path"
+msgstr ""
+
+#: tools/openicc_device.c:136
+msgid "Show Filepath to the DB"
+msgstr ""
+
+#: tools/openicc_device.c:121
+#, fuzzy
+msgid "Show Path"
+msgstr "Cesta"
+
+#: libopenicc/openicc_args.c:1190
 msgid "Sources"
 msgstr ""
 
-#: libopenicc/openicc_args.c:970
+#: libopenicc/openicc_args.c:1188
 msgid "Support"
 msgstr ""
 
-#: libopenicc/openicc_args.c:673
+#: libopenicc/openicc_args.c:807
 msgid "Synopsis"
 msgstr ""
 
-#: libopenicc/openicc_args.c:945
+#: tools/openicc_device.c:122
+msgid "System"
+msgstr ""
+
+#: libopenicc/openicc_args.c:1163
 msgid "Tool"
 msgstr ""
 
-#: libopenicc/openicc_args.c:969
+#: libopenicc/openicc_args.c:180
+#, fuzzy
+msgid "Unix Man page"
+msgstr "Unix a deriváty"
+
+#: libopenicc/openicc_args.c:1187
 msgid "Url"
 msgstr ""
 
-#: libopenicc/openicc_args.c:681 tools/openicc_json.c:37
+#: libopenicc/openicc_args.c:814 tools/openicc_json.c:37
 #: tools/openicc_json.c:145
 msgid "Usage"
 msgstr "Použití"
 
-#: libopenicc/openicc_args.c:200 libopenicc/openicc_args.c:253
-#: libopenicc/openicc_args.c:274 libopenicc/openicc_args.c:296
-#: libopenicc/openicc_args.c:310 libopenicc/openicc_args.c:328
-#: libopenicc/openicc_args.c:351 libopenicc/openicc_args.c:454
+#: libopenicc/openicc_args.c:283 libopenicc/openicc_args.c:336
+#: libopenicc/openicc_args.c:357 libopenicc/openicc_args.c:383
+#: libopenicc/openicc_args.c:397 libopenicc/openicc_args.c:415
+#: libopenicc/openicc_args.c:438 libopenicc/openicc_args.c:542
 msgid "Usage Error:"
 msgstr ""
 
-#: libopenicc/openicc_args.c:976
+#: libopenicc/openicc_args.c:1195
 #, fuzzy
 msgid "Version"
 msgstr "ICC Examin Verze"
 
-#: libopenicc/openicc_core.c:125
+#: libopenicc/openicc_core.c:130
 msgid "WARNING"
 msgstr "VAROVÁNÍ"
+
+#: tools/openicc_device.c:126
+#, fuzzy
+msgid "Write DB File"
+msgstr "zapsat do souboru"
 
 #: libopenicc/openicc_db.c:469
 msgid "Writing failed for"
 msgstr ""
 
-#: libopenicc/openicc_args.c:1090
+#: libopenicc/openicc_args.c:1319
 msgid "Yes"
 msgstr "Ano"
+
+#. type,   flags, o,  option,          key,  name,             description,         help, value_name,    value_type,        values, variable_type, result
+#: tools/openicc_device.c:111
+msgid "add"
+msgstr ""
+
+#: tools/openicc_device.c:112
+msgid "db-file"
+msgstr ""
+
+#: tools/openicc_device.c:114
+#, fuzzy
+msgid "device"
+msgstr "Zařízení"
+
+#: tools/openicc_device.c:113
+#, fuzzy
+msgid "device-class"
+msgstr "použít třídu zařízení"
+
+#: tools/openicc_device.c:118
+msgid "dump-json"
+msgstr ""
+
+#: tools/openicc_device.c:115
+#, fuzzy
+msgid "erase-device"
+msgstr "Vypsat zařízení:"
+
+#: libopenicc/openicc_args.c:191
+msgid "export"
+msgstr ""
+
+#: tools/openicc_device.c:116
+#, fuzzy
+msgid "file-name"
+msgstr "Jmeno souboru:"
+
+#: tools/openicc_device.c:117
+msgid "help"
+msgstr "nápověda"
 
 #: tools/openicc_json.c:33
 msgid "is a JSON helper tool"
@@ -210,6 +514,11 @@ msgstr ""
 #: tools/openicc_json.c:55
 msgid "language specific wrap; -w C for C static char"
 msgstr ""
+
+#: tools/openicc_device.c:119
+#, fuzzy
+msgid "list-devices"
+msgstr "Vypsat zařízení:"
 
 #: tools/openicc_json.c:46
 msgid ""
@@ -221,6 +530,10 @@ msgstr ""
 msgid "locales in a comma separated list"
 msgstr ""
 
+#: tools/openicc_device.c:120
+msgid "long"
+msgstr ""
+
 #: tools/openicc_json.c:53
 #, fuzzy
 msgid "output"
@@ -228,6 +541,14 @@ msgstr "Výstupní"
 
 #: tools/openicc_json.c:40
 msgid "output format string"
+msgstr ""
+
+#: tools/openicc_device.c:122
+msgid "scope"
+msgstr ""
+
+#: tools/openicc_device.c:121
+msgid "show-path"
 msgstr ""
 
 #: tools/openicc_json.c:52
@@ -242,9 +563,18 @@ msgstr ""
 msgid "to be used key names in a comma separated list"
 msgstr ""
 
-#: tools/openicc_json.c:56
+#: tools/openicc_device.c:185
+msgid "unable to open data base"
+msgstr ""
+
+#: tools/openicc_device.c:123 tools/openicc_json.c:56
 msgid "verbose"
 msgstr "upovídaný výstup"
+
+#: tools/openicc_device.c:126
+#, fuzzy
+msgid "write"
+msgstr "Zapsat"
 
 #~ msgid ""
 #~ "    ICC Examin is licensed under the GPL version 2.    Especially all "
@@ -763,10 +1093,6 @@ msgstr "upovídaný výstup"
 #~ msgstr "Datum kalibrace"
 
 #, fuzzy
-#~ msgid "CameraRaw"
-#~ msgstr "CameraRaw"
-
-#, fuzzy
 #~ msgid "CameraRaw image"
 #~ msgstr "CameraRaw"
 
@@ -1151,9 +1477,6 @@ msgstr "upovídaný výstup"
 #~ msgid "Data:"
 #~ msgstr "Data:"
 
-#~ msgid "Date"
-#~ msgstr "Datum"
-
 #~ msgid "Date:"
 #~ msgstr "Datum:"
 
@@ -1185,9 +1508,6 @@ msgstr "upovídaný výstup"
 #~ msgid "Description:     "
 #~ msgstr "popis"
 
-#~ msgid "Device"
-#~ msgstr "Zařízení"
-
 #~ msgid "Device Colors"
 #~ msgstr "Barvy zařízení"
 
@@ -1197,10 +1517,6 @@ msgstr "upovídaný výstup"
 
 #, fuzzy
 #~ msgid "Device Model"
-#~ msgstr "Sériové číslo zař.:"
-
-#, fuzzy
-#~ msgid "Device Related"
 #~ msgstr "Sériové číslo zař.:"
 
 #~ msgid "Device Serial:"
@@ -1214,9 +1530,6 @@ msgstr "upovídaný výstup"
 
 #~ msgid "Device manufacturerer description"
 #~ msgstr "Popis výrobce zařízení"
-
-#~ msgid "Device model description"
-#~ msgstr "Popis modelu zařízení"
 
 #, fuzzy
 #~ msgid "Devices"
@@ -1332,9 +1645,6 @@ msgstr "upovídaný výstup"
 #~ msgid "Example"
 #~ msgstr "Příklad"
 
-#~ msgid "Example Device"
-#~ msgstr "Testovací zařízení"
-
 #~ msgid "Example Devices, for testing and learning purposes only."
 #~ msgstr "Testovací zařízení, pouze pro účely testování a učení se."
 
@@ -1377,12 +1687,6 @@ msgstr "upovídaný výstup"
 
 #~ msgid "Filename (other data type)"
 #~ msgstr "Jmeno souboru (jiny typ)"
-
-#~ msgid "Filename:"
-#~ msgstr "Jmeno souboru:"
-
-#~ msgid "Files"
-#~ msgstr "Soubory"
 
 #~ msgid "Film scanner"
 #~ msgstr "Filmový skener"
@@ -1878,9 +2182,6 @@ msgstr "upovídaný výstup"
 #~ msgid "List device classes:"
 #~ msgstr "Vypsat zařízení:"
 
-#~ msgid "List devices:"
-#~ msgstr "Vypsat zařízení:"
-
 #~ msgid "List included ICC tags:"
 #~ msgstr "Vypsat zahrnuté štítky ICC:"
 
@@ -2040,9 +2341,6 @@ msgstr "upovídaný výstup"
 #~ msgid "Macintosh"
 #~ msgstr "Macintosh"
 
-#~ msgid "Magenta"
-#~ msgstr "Purpurová"
-
 #, fuzzy
 #~ msgid "Magic:           "
 #~ msgstr "Datum:       "
@@ -2139,9 +2437,6 @@ msgstr "upovídaný výstup"
 #, fuzzy
 #~ msgid "Modify Profile:"
 #~ msgstr "Profil monitoru"
-
-#~ msgid "Monitor"
-#~ msgstr "Monitor"
 
 #~ msgid ""
 #~ "Monitors, which can be detected through the video card driver and "
@@ -2418,9 +2713,6 @@ msgstr "upovídaný výstup"
 #~ msgid "Passive matrix monitor"
 #~ msgstr "Monitor s pasívní maticí"
 
-#~ msgid "Path"
-#~ msgstr "Cesta"
-
 #, fuzzy
 #~ msgid "Path can not be written"
 #~ msgstr "Profil neni ulozen."
@@ -2536,9 +2828,6 @@ msgstr "upovídaný výstup"
 
 #~ msgid "Preview, saturated"
 #~ msgstr "Náhled, saturace"
-
-#~ msgid "Printer"
-#~ msgstr "Tiskárna"
 
 #~ msgid "Printer CUPS"
 #~ msgstr "Tiskárna CUPS"
@@ -2768,9 +3057,6 @@ msgstr "upovídaný výstup"
 #~ msgid "Rotate around slice"
 #~ msgstr "Rotovat okolo rezu"
 
-#~ msgid "SGI"
-#~ msgstr "SGI"
-
 #~ msgid "SMPTE RP145-1994"
 #~ msgstr "SMPTE RP145-1994"
 
@@ -2804,9 +3090,6 @@ msgstr "upovídaný výstup"
 #, fuzzy
 #~ msgid "Scale Image Filter Object"
 #~ msgstr "Root Image Filter Object"
-
-#~ msgid "Scanner"
-#~ msgstr "Skener"
 
 #~ msgid "Scanner data, which come from SANE library."
 #~ msgstr "Data skeneru, která přichází od knihovny SANE."
@@ -3595,15 +3878,8 @@ msgstr "upovídaný výstup"
 #~ msgid "Unexpected object type:"
 #~ msgstr "Neočekávaný typ objektu:"
 
-#~ msgid "Unix and derivatives"
-#~ msgstr "Unix a deriváty"
-
 #~ msgid "Unknown argument"
 #~ msgstr "Neznámý argument"
-
-#, fuzzy
-#~ msgid "Unset device:"
-#~ msgstr "Vypsat zařízení:"
 
 #~ msgid "Use Black Point Compensation"
 #~ msgstr "Použít kompenzaci černého bodu (BPC)"
@@ -3665,9 +3941,6 @@ msgstr "upovídaný výstup"
 
 #~ msgid "Work Space"
 #~ msgstr "Pracovni prostor"
-
-#~ msgid "Write"
-#~ msgstr "Zapsat"
 
 #~ msgid "Write Model:"
 #~ msgstr "Zapsat model:"
@@ -3852,10 +4125,6 @@ msgstr "upovídaný výstup"
 #~ msgstr "výchozí typ profilu neexistuje:"
 
 #, fuzzy
-#~ msgid "device class"
-#~ msgstr "použít třídu zařízení"
-
-#, fuzzy
 #~ msgid "device position start from zero"
 #~ msgstr "-d device_position_start_from_zero"
 
@@ -3983,9 +4252,6 @@ msgstr "upovídaný výstup"
 #~ msgid "gray"
 #~ msgstr "sede"
 
-#~ msgid "help"
-#~ msgstr "nápověda"
-
 #~ msgid "high contrast"
 #~ msgstr "vysoky kontrast"
 
@@ -4049,9 +4315,6 @@ msgstr "upovídaný výstup"
 
 #~ msgid "kein ICCwaehlerProfil??"
 #~ msgstr "zadny ICCwaehlerProfil??"
-
-#~ msgid "key/value pairs found:"
-#~ msgstr "nalezené key/value dvojice:"
 
 #~ msgid "left mouse button -> go back"
 #~ msgstr "leve tlacitko mysi -> jit zpet"
@@ -4441,9 +4704,6 @@ msgstr "upovídaný výstup"
 #, fuzzy
 #~ msgid "write assigned ICC profile"
 #~ msgstr "Zapsat do profilu ICC:"
-
-#~ msgid "write to file"
-#~ msgstr "zapsat do souboru"
 
 #, fuzzy
 #~ msgid "write to file, currently only PPM and PNG formats"

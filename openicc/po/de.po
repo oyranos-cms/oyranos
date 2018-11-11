@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2018-08-20 23:14+0200\n"
+"POT-Creation-Date: 2018-11-11 10:31+0100\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -19,23 +19,48 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: vim 6.0\n"
 
-#: libopenicc/openicc_core.c:128
+#: libopenicc/openicc_core.c:133
 msgid "!!! ERROR"
 msgstr "!!! Fehler"
 
-#: libopenicc/openicc_args.c:864
+#: libopenicc/openicc_args.c:1014
 msgid "... try with --help|-h option for usage text. give up"
 msgstr "... versuche bitte die --help|-h Option für einen Hilfetext. Gebe auf"
+
+#: libopenicc/openicc_args.c:1585 libopenicc/openicc_args.c:1756
+msgid "AUTHOR"
+msgstr "AUTOR"
+
+#: tools/openicc_device.c:134
+msgid "Add Device"
+msgstr "Trage Gerät ein"
+
+#: tools/openicc_device.c:111 tools/openicc_device.c:134
+msgid "Add Device to DB"
+msgstr "Trage Gerät in die DB ein"
 
 #: tools/openicc_json.c:42
 msgid "Add gettext translated keys to JSON:"
 msgstr "Füge mit gettext übersetzte Schlüssel to JSON hinzu:"
 
+#: libopenicc/openicc_args.c:1595 libopenicc/openicc_args.c:1766
+#: libopenicc/openicc_args.c:1768
+msgid "BUGS"
+msgstr "FEHLER"
+
+#: libopenicc/openicc_args.c:1589 libopenicc/openicc_args.c:1760
+msgid "COPYRIGHT"
+msgstr "KOPIERRECHT"
+
+#: tools/openicc_device.c:101
+msgid "Camera"
+msgstr "Kamera"
+
 #: tools/openicc_json.c:38
 msgid "Convert JSON to gettext ready C strings:"
 msgstr "Wandle JSON in gettext lesbare C Texte:"
 
-#: libopenicc/openicc_args.c:967
+#: libopenicc/openicc_args.c:1185
 msgid "Copyright"
 msgstr "Kopierrecht"
 
@@ -68,43 +93,211 @@ msgstr "Konnte keinen JSON Text setzen für"
 msgid "Could not setup db objetc"
 msgstr "Konnte DB Objekt nicht erstellen"
 
-#: libopenicc/openicc_args.c:671
+#. declare some option choices
+#: tools/openicc_device.c:97
+msgid "DB File"
+msgstr "DB Datei"
+
+#: tools/openicc_device.c:112
+msgid "DB File Name"
+msgstr "DB Dateiname"
+
+#: libopenicc/openicc_args.c:1500 libopenicc/openicc_args.c:1675
+msgid "DESCRIPTION"
+msgstr "BESCHREIBUNG"
+
+#: libopenicc/openicc_args.c:1194
+msgid "Date"
+msgstr "Datum"
+
+#: libopenicc/openicc_args.c:805
 msgid "Description"
 msgstr "Beschreibung"
 
-#: libopenicc/openicc_args.c:973
+#: libopenicc/openicc_args.c:1191
 msgid "Development"
 msgstr "Entwicklung"
 
-#: libopenicc/openicc_args.c:975
+#: tools/openicc_device.c:113
+msgid "Device Class"
+msgstr "Geräteklasse"
+
+#: tools/openicc_device.c:104
+msgid "Device File"
+msgstr "Gerätedatei"
+
+#: tools/openicc_device.c:114
+msgid "Device position"
+msgstr "Gerätebeposition"
+
+#: libopenicc/openicc_args.c:1193
 msgid "Documentation"
 msgstr "Dokumente"
 
-#: libopenicc/openicc_args.c:200
+#: libopenicc/openicc_args.c:283
 msgid "Double occuring option"
 msgstr "Doppelte Option"
 
-#: libopenicc/openicc_args.c:971
+#: libopenicc/openicc_args.c:1189
 msgid "Download"
 msgstr "Bezugsquelle"
+
+#: tools/openicc_device.c:118
+msgid "Dump JSON"
+msgstr "Schreibe Json"
+
+#: libopenicc/openicc_args.c:1376
+msgid "ENVIRONMENT VARIABLES"
+msgstr "UMGEBUNGSVARIABLEN"
+
+#: libopenicc/openicc_args.c:1372
+msgid "EXAMPLES"
+msgstr "BEISPIELE"
+
+#: libopenicc/openicc_args.c:1374
+msgid "EXIT-STATE"
+msgstr "EXIT-STATUS"
+
+#: tools/openicc_device.c:135
+msgid "Erase Device"
+msgstr "Lösche Gerät"
+
+#: tools/openicc_device.c:115
+msgid "Erase Devices"
+msgstr "Lösche Geräte"
+
+#: tools/openicc_device.c:135
+msgid "Erase a Devices from the DB"
+msgstr "Lösche Gerät von der DB"
+
+#: libopenicc/openicc_args.c:194
+msgid "Export formated text"
+msgstr "Exportiere formatierten Text"
+
+#: tools/openicc_device.c:112 tools/openicc_device.c:116
+msgid "FILENAME"
+msgstr "DATEINAME"
+
+#: libopenicc/openicc_args.c:1380
+msgid "FILES"
+msgstr "DATEIEN"
+
+#: tools/openicc_device.c:116
+msgid "File Name"
+msgstr "Dateiname"
+
+#: tools/openicc_device.c:104
+msgid "File Name of Device JSON"
+msgstr "Dateiname des Geräte Json"
+
+#: tools/openicc_device.c:97
+msgid "File Name of device JSON Data Base"
+msgstr "Dateiname der Json Gerätedatenbank"
+
+#: libopenicc/openicc_args.c:183
+msgid "Formated text"
+msgstr "Formatierter Text"
+
+#: libopenicc/openicc_args.c:174
+msgid "GUI"
+msgstr "GUI"
+
+#: libopenicc/openicc_args.c:177
+msgid "GUI + Command"
+msgstr "GUI + Kommando"
+
+#: tools/openicc_device.c:137
+msgid "General options"
+msgstr "Allgemeine Optionen"
 
 #: tools/openicc_json.c:51
 msgid "General options:"
 msgstr "Allgemeine Optionen:"
 
-#: libopenicc/openicc_args.c:968
+#: libopenicc/openicc_args.c:178
+msgid "Get OpenICC Json UI declaration incuding command"
+msgstr "Hole OpenICC Json Benutzerschnittstelle mit Kommando"
+
+#: libopenicc/openicc_args.c:196
+msgid "Get UI converted into text formats"
+msgstr "Hole Benutzerschnittstelle als Text"
+
+#: libopenicc/openicc_args.c:175
+msgid "Get a OpenICC Json UI declaration"
+msgstr "Hole OpenICC Json Benutzerschnittstelle"
+
+#: libopenicc/openicc_args.c:181
+msgid "Get a unix man page"
+msgstr "Hole Unix Handbuchseite"
+
+#: libopenicc/openicc_args.c:184
+msgid "Get formated text"
+msgstr "Hole formatierten Text"
+
+#: libopenicc/openicc_args.c:1378
+msgid "HISTORY"
+msgstr "GESCHICHTE"
+
+#: tools/openicc_device.c:117
+msgid "Help"
+msgstr "Hilfe"
+
+#: libopenicc/openicc_args.c:173
+msgid "Json"
+msgstr ""
+
+#: libopenicc/openicc_args.c:176
+msgid "Json + Command"
+msgstr "Json + Kommando"
+
+#: libopenicc/openicc_args.c:1186 libopenicc/openicc_args.c:1591
+#: libopenicc/openicc_args.c:1762
 msgid "License"
 msgstr "Lizenz"
 
-#: libopenicc/openicc_args.c:966
+#. type,   flags, name,              description,                          help, mandatory, optional, detail
+#: tools/openicc_device.c:119 tools/openicc_device.c:133
+msgid "List Devices"
+msgstr "Zeige Geräte"
+
+#: tools/openicc_device.c:120
+msgid "List all key/values pairs"
+msgstr "Zeige alle Schlüssel/Wertepaare"
+
+#: libopenicc/openicc_args.c:179
+msgid "Man"
+msgstr "Handbuch"
+
+#: tools/openicc_device.c:142
+msgid "Manipulation of OpenICC color management data base device entries."
+msgstr ""
+"Bearbeitung von Geräteeinträgen in der Datenbank für OpenICC Farbmanagement"
+
+#: libopenicc/openicc_args.c:1184
 msgid "Manufacturer"
 msgstr "Hersteller"
 
-#: libopenicc/openicc_args.c:947
+#: libopenicc/openicc_args.c:182
+msgid "Markdown"
+msgstr "Markdown"
+
+#: tools/openicc_device.c:137
+msgid "Misc"
+msgstr "Verschiedenes"
+
+#: libopenicc/openicc_args.c:1165
 msgid "Module"
 msgstr "Modul"
 
-#: libopenicc/openicc_args.c:1090
+#: tools/openicc_device.c:99
+msgid "Monitor"
+msgstr "Bildschirm"
+
+#: tools/openicc_device.c:114
+msgid "NUMBER"
+msgstr "NUMMER"
+
+#: libopenicc/openicc_args.c:1319
 msgid "No"
 msgstr "Nein"
 
@@ -116,27 +309,35 @@ msgstr "Kein JSON Inhalt erhalten für"
 msgid "No JSON obtained for"
 msgstr "Kein JSON erhalten für"
 
-#: libopenicc/openicc_args.c:974
+#: libopenicc/openicc_args.c:1502 libopenicc/openicc_args.c:1677
+msgid "OPTIONS"
+msgstr "OPTIONEN"
+
+#: libopenicc/openicc_args.c:1192
 msgid "OpenICC Module Author"
 msgstr "Autor des OpenICC Modules"
 
-#: libopenicc/openicc_args.c:454
+#: tools/openicc_device.c:144
+msgid "OpenICC devices handling tool"
+msgstr "OpenICC Gerätebearbeitungswerkzeug"
+
+#: libopenicc/openicc_args.c:542
 msgid "Option has a different value range"
 msgstr "Die Option besitzt einen anderen Wertebereich"
 
-#: libopenicc/openicc_args.c:296 libopenicc/openicc_args.c:351
+#: libopenicc/openicc_args.c:383 libopenicc/openicc_args.c:438
 msgid "Option has a unexpected argument"
 msgstr "Die Option hat einen unerwartetes Argument"
 
-#: libopenicc/openicc_args.c:274 libopenicc/openicc_args.c:328
+#: libopenicc/openicc_args.c:357 libopenicc/openicc_args.c:415
 msgid "Option needs a argument"
 msgstr "Die Option erwartet ein Argument"
 
-#: libopenicc/openicc_args.c:253 libopenicc/openicc_args.c:310
+#: libopenicc/openicc_args.c:336 libopenicc/openicc_args.c:397
 msgid "Option not supported"
 msgstr "Die Option ist nicht unterstützt"
 
-#: libopenicc/openicc_db.c:153
+#: libopenicc/openicc_db.c:153 tools/openicc_device.c:172
 msgid "Paths:"
 msgstr "Pfade:"
 
@@ -144,57 +345,138 @@ msgstr "Pfade:"
 msgid "Print a help text:"
 msgstr "Zeige einen Hilfetext an:"
 
+#: tools/openicc_device.c:133
+msgid "Print the Devices in the DB"
+msgstr "Zeige die Geräte aus der DB"
+
+#: tools/openicc_device.c:100
+msgid "Printer"
+msgstr "Drucker"
+
 #: tools/openicc_json.c:218
 msgid "Rendering Intent"
 msgstr "Übertragungsart"
 
-#: libopenicc/openicc_args.c:972
+#: libopenicc/openicc_args.c:1382
+msgid "SEE AS WELL"
+msgstr "SIEHE AUCH"
+
+#: libopenicc/openicc_args.c:1489 libopenicc/openicc_args.c:1664
+msgid "SYNOPSIS"
+msgstr "ÜBERSICHT"
+
+#: tools/openicc_device.c:102
+msgid "Scanner"
+msgstr "Scanner"
+
+#: tools/openicc_device.c:136
+msgid "Show DB Path"
+msgstr "Zeige DB Pfad"
+
+#: tools/openicc_device.c:136
+msgid "Show Filepath to the DB"
+msgstr "Zeige den Dateipfad zur DB"
+
+#: tools/openicc_device.c:121
+msgid "Show Path"
+msgstr "Zeige Pfad"
+
+#: libopenicc/openicc_args.c:1190
 msgid "Sources"
 msgstr "Quellen"
 
-#: libopenicc/openicc_args.c:970
+#: libopenicc/openicc_args.c:1188
 msgid "Support"
 msgstr "Unterstützung"
 
-#: libopenicc/openicc_args.c:673
+#: libopenicc/openicc_args.c:807
 msgid "Synopsis"
 msgstr "Übersicht"
 
-#: libopenicc/openicc_args.c:945
+#: tools/openicc_device.c:122
+msgid "System"
+msgstr "System"
+
+#: libopenicc/openicc_args.c:1163
 msgid "Tool"
 msgstr "Werkzeug"
 
-#: libopenicc/openicc_args.c:969
+#: libopenicc/openicc_args.c:180
+msgid "Unix Man page"
+msgstr "Unix Handbuchseite"
+
+#: libopenicc/openicc_args.c:1187
 msgid "Url"
 msgstr "Url"
 
-#: libopenicc/openicc_args.c:681 tools/openicc_json.c:37
+#: libopenicc/openicc_args.c:814 tools/openicc_json.c:37
 #: tools/openicc_json.c:145
 msgid "Usage"
 msgstr "Benutzung"
 
-#: libopenicc/openicc_args.c:200 libopenicc/openicc_args.c:253
-#: libopenicc/openicc_args.c:274 libopenicc/openicc_args.c:296
-#: libopenicc/openicc_args.c:310 libopenicc/openicc_args.c:328
-#: libopenicc/openicc_args.c:351 libopenicc/openicc_args.c:454
+#: libopenicc/openicc_args.c:283 libopenicc/openicc_args.c:336
+#: libopenicc/openicc_args.c:357 libopenicc/openicc_args.c:383
+#: libopenicc/openicc_args.c:397 libopenicc/openicc_args.c:415
+#: libopenicc/openicc_args.c:438 libopenicc/openicc_args.c:542
 msgid "Usage Error:"
 msgstr "Benutzerfehler:"
 
-#: libopenicc/openicc_args.c:976
+#: libopenicc/openicc_args.c:1195
 msgid "Version"
 msgstr "Version"
 
-#: libopenicc/openicc_core.c:125
+#: libopenicc/openicc_core.c:130
 msgid "WARNING"
 msgstr "WARNUNG"
+
+#: tools/openicc_device.c:126
+msgid "Write DB File"
+msgstr "Schreibe DB Datei"
 
 #: libopenicc/openicc_db.c:469
 msgid "Writing failed for"
 msgstr "Schreiben mislungen für"
 
-#: libopenicc/openicc_args.c:1090
+#: libopenicc/openicc_args.c:1319
 msgid "Yes"
 msgstr "Ja"
+
+#. type,   flags, o,  option,          key,  name,             description,         help, value_name,    value_type,        values, variable_type, result
+#: tools/openicc_device.c:111
+msgid "add"
+msgstr "addiere"
+
+#: tools/openicc_device.c:112
+msgid "db-file"
+msgstr "db-datei"
+
+#: tools/openicc_device.c:114
+msgid "device"
+msgstr "gerät"
+
+#: tools/openicc_device.c:113
+msgid "device-class"
+msgstr "geräteklasse"
+
+#: tools/openicc_device.c:118
+msgid "dump-json"
+msgstr "schreibe-json"
+
+#: tools/openicc_device.c:115
+msgid "erase-device"
+msgstr "lösche-gerät"
+
+#: libopenicc/openicc_args.c:191
+msgid "export"
+msgstr "exportiere"
+
+#: tools/openicc_device.c:116
+msgid "file-name"
+msgstr "dateiname"
+
+#: tools/openicc_device.c:117
+msgid "help"
+msgstr "Hilfe"
 
 #: tools/openicc_json.c:33
 msgid "is a JSON helper tool"
@@ -203,6 +485,10 @@ msgstr "ist ein JSON Hilfswerkzeug"
 #: tools/openicc_json.c:55
 msgid "language specific wrap; -w C for C static char"
 msgstr "sprachspezifische Hülle; -w C für C static char"
+
+#: tools/openicc_device.c:119
+msgid "list-devices"
+msgstr "liste-geräte"
 
 #: tools/openicc_json.c:46
 msgid ""
@@ -216,6 +502,10 @@ msgstr ""
 msgid "locales in a comma separated list"
 msgstr "Sprachen in einer kommagetrennten Liste"
 
+#: tools/openicc_device.c:120
+msgid "long"
+msgstr "lang"
+
 #: tools/openicc_json.c:53
 msgid "output"
 msgstr "Ausgabe"
@@ -223,6 +513,14 @@ msgstr "Ausgabe"
 #: tools/openicc_json.c:40
 msgid "output format string"
 msgstr "Ausgabeformat"
+
+#: tools/openicc_device.c:122
+msgid "scope"
+msgstr "bereich"
+
+#: tools/openicc_device.c:121
+msgid "show-path"
+msgstr "zeige-pfad"
 
 #: tools/openicc_json.c:52
 msgid "specify JSON file"
@@ -236,9 +534,17 @@ msgstr "Text ID für das Projekt"
 msgid "to be used key names in a comma separated list"
 msgstr "zu benutzende Schlüsselwörter in einer kommagetrennten Liste"
 
-#: tools/openicc_json.c:56
+#: tools/openicc_device.c:185
+msgid "unable to open data base"
+msgstr "kann Datenbank nicht öffnen"
+
+#: tools/openicc_device.c:123 tools/openicc_json.c:56
 msgid "verbose"
 msgstr "plaudernd"
+
+#: tools/openicc_device.c:126
+msgid "write"
+msgstr "Schreibe"
 
 #~ msgid ""
 #~ "    ICC Examin is licensed under the GPL version 2.    Especially all "
@@ -778,9 +1084,6 @@ msgstr "plaudernd"
 #~ msgid "Call next filter in node"
 #~ msgstr "Führe nächsten Filter im Knoten aus"
 
-#~ msgid "CameraRaw"
-#~ msgstr "Kamerarohdaten"
-
 #~ msgid "CameraRaw image"
 #~ msgstr "Kamera Rohdaten"
 
@@ -1153,9 +1456,6 @@ msgstr "plaudernd"
 #~ msgid "Data:"
 #~ msgstr "Daten:"
 
-#~ msgid "Date"
-#~ msgstr "Datum"
-
 #~ msgid "Date:"
 #~ msgstr "Datum:"
 
@@ -1196,9 +1496,6 @@ msgstr "plaudernd"
 #~ msgid "Detail mode"
 #~ msgstr "Detailierte Informationen"
 
-#~ msgid "Device"
-#~ msgstr "Gerät"
-
 #~ msgid "Device Colors"
 #~ msgstr "Gerätefarben"
 
@@ -1207,9 +1504,6 @@ msgstr "plaudernd"
 
 #~ msgid "Device Model"
 #~ msgstr "Geräte Model"
-
-#~ msgid "Device Related"
-#~ msgstr "Gerätepassend"
 
 #~ msgid "Device Serial:"
 #~ msgstr "Serien Nr.:"
@@ -1222,9 +1516,6 @@ msgstr "plaudernd"
 
 #~ msgid "Device manufacturerer description"
 #~ msgstr "Geräteherstellerbeschreibung"
-
-#~ msgid "Device model description"
-#~ msgstr "Gerätebeschreibung"
 
 #~ msgid "Devices"
 #~ msgstr "Geräte"
@@ -1346,9 +1637,6 @@ msgstr "plaudernd"
 #~ msgid "Example"
 #~ msgstr "Beispiel"
 
-#~ msgid "Example Device"
-#~ msgstr "Beispiel Gerät"
-
 #~ msgid "Example Devices, for testing and learning purposes only."
 #~ msgstr "Beispielgerät, nur zum Testen."
 
@@ -1363,12 +1651,6 @@ msgstr "plaudernd"
 
 #~ msgid "Extract ICC profile:"
 #~ msgstr "Extrahiere ICC Profil:"
-
-#~ msgid "FILE"
-#~ msgstr "DATEI"
-
-#~ msgid "FILENAME"
-#~ msgstr "DATEINAME"
 
 #~ msgid "FILE_NAME"
 #~ msgstr "DATEINAME"
@@ -1428,12 +1710,6 @@ msgstr "plaudernd"
 
 #~ msgid "Filename (other data type)"
 #~ msgstr "Dateiname (anderer Datentyp)"
-
-#~ msgid "Filename:"
-#~ msgstr "Dateiname:"
-
-#~ msgid "Files"
-#~ msgstr "Dateien"
 
 #~ msgid "Film scanner"
 #~ msgstr "Filmscanner"
@@ -1602,9 +1878,6 @@ msgstr "plaudernd"
 
 #~ msgid "Header"
 #~ msgstr "Kopf"
-
-#~ msgid "Help"
-#~ msgstr "Hilfe"
 
 #~ msgid "High Precission"
 #~ msgstr "Hohe Präzission"
@@ -1932,9 +2205,6 @@ msgstr "plaudernd"
 #~ msgid "List device classes:"
 #~ msgstr "Zeige Geräteklassen:"
 
-#~ msgid "List devices:"
-#~ msgstr "Geräteliste:"
-
 #~ msgid "List included ICC tags:"
 #~ msgstr "Liste der enthaltenen ICC Elemente:"
 
@@ -2020,9 +2290,6 @@ msgstr "plaudernd"
 
 #~ msgid "Macintosh"
 #~ msgstr "Macintosh"
-
-#~ msgid "Magenta"
-#~ msgstr "Magenta"
 
 #~ msgid "Magic"
 #~ msgstr "Signatur"
@@ -2115,9 +2382,6 @@ msgstr "plaudernd"
 #~ msgid "Modify Profile:"
 #~ msgstr "Verändere Prmprofil"
 
-#~ msgid "Monitor"
-#~ msgstr "Bildschirm"
-
 #~ msgid ""
 #~ "Monitors, which can be detected through the video card driver and "
 #~ "windowing system."
@@ -2167,9 +2431,6 @@ msgstr "plaudernd"
 
 #~ msgid "NAME"
 #~ msgstr "NAME"
-
-#~ msgid "NUMBER"
-#~ msgstr "NUMMER"
 
 #~ msgid "Name"
 #~ msgstr "Name"
@@ -2438,9 +2699,6 @@ msgstr "plaudernd"
 #~ msgid "Passive matrix monitor"
 #~ msgstr "Passivmatrixmonitor"
 
-#~ msgid "Path"
-#~ msgstr "Pfad"
-
 #~ msgid "Path can not be written"
 #~ msgstr "Verzeichnis kann nicht beschrieben werden."
 
@@ -2560,9 +2818,6 @@ msgstr "plaudernd"
 
 #~ msgid "Preview, saturated"
 #~ msgstr "Voransicht, farbgesättigt"
-
-#~ msgid "Printer"
-#~ msgstr "Drucker"
 
 #~ msgid "Printer CUPS"
 #~ msgstr "CUPS Drucker"
@@ -2782,9 +3037,6 @@ msgstr "plaudernd"
 #~ msgid "Rotate around slice"
 #~ msgstr "Drehen um Schnitt"
 
-#~ msgid "SGI"
-#~ msgstr "SGI"
-
 #~ msgid "SMPTE RP145-1994"
 #~ msgstr "SMPTE RP145-1994"
 
@@ -2814,9 +3066,6 @@ msgstr "plaudernd"
 
 #~ msgid "Scale Image Filter Object"
 #~ msgstr "Skalierfilterobjekt"
-
-#~ msgid "Scanner"
-#~ msgstr "Scanner"
 
 #~ msgid "Scanner data, which come from SANE library."
 #~ msgstr "Scanndaten von der SANE Bibliothek."
@@ -3608,14 +3857,8 @@ msgstr "plaudernd"
 #~ msgid "Unexpected object type:"
 #~ msgstr "Unerwarteter Objekttyp:"
 
-#~ msgid "Unix and derivatives"
-#~ msgstr "Unix und unixartige"
-
 #~ msgid "Unknown argument"
 #~ msgstr "Unbekanntes Argument"
-
-#~ msgid "Unset device:"
-#~ msgstr "Setze Gerät zurück:"
 
 #~ msgid "Use Black Point Compensation"
 #~ msgstr "Benutze Schwarzpunktkompensation (BPC)"
@@ -3682,9 +3925,6 @@ msgstr "plaudernd"
 
 #~ msgid "Work Space"
 #~ msgstr "Arbeitsfarbraum"
-
-#~ msgid "Write"
-#~ msgstr "Schreibe"
 
 #~ msgid "Write Model:"
 #~ msgstr "Schreibe Modell:"
@@ -3829,9 +4069,6 @@ msgstr "plaudernd"
 #~ msgid "default profile type does not exist:"
 #~ msgstr "Standard Profiltyp existiert nicht:"
 
-#~ msgid "device class"
-#~ msgstr "Geräteklasse"
-
 #~ msgid "device position start from zero"
 #~ msgstr "Geräteposition started von Null"
 
@@ -3963,9 +4200,6 @@ msgstr "plaudernd"
 #~ msgid "gray"
 #~ msgstr "grau"
 
-#~ msgid "help"
-#~ msgstr "Hilfe"
-
 #~ msgid "high contrast"
 #~ msgstr "kontrastreich"
 
@@ -4023,9 +4257,6 @@ msgstr "plaudernd"
 
 #~ msgid "is not valid for an"
 #~ msgstr "ist nocht gültig für ein"
-
-#~ msgid "key/value pairs found:"
-#~ msgstr "Schlüssel/Wertepaare gefunden:"
 
 #~ msgid "left mouse button -> go back"
 #~ msgstr "linke Maustaste -> zurueck"
@@ -4423,9 +4654,6 @@ msgstr "plaudernd"
 
 #~ msgid "write profile with correct ID"
 #~ msgstr "schreibe Profil mit korrekter ID"
-
-#~ msgid "write to file"
-#~ msgstr "schreibe nach Datei"
 
 #~ msgid "write to file, currently only PPM and PNG formats"
 #~ msgstr "schreibe zu einer Datei, derzeit nur im Format PPM und PNG"

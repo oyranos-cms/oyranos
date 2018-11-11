@@ -91,6 +91,10 @@ typedef struct openiccArray_s openiccArray_s;
 int      openiccArray_Count          ( openiccArray_s    * array );
 int      openiccArray_Push           ( openiccArray_s    * array );
 
+openiccOBJECT_e    openiccObjectToType(const void        * contextObject );
+const char *       openiccObjectTypeToString (
+                                       openiccOBJECT_e     type );
+
 #define STRING_ADD( t, append ) oyjlStringAdd( &t, 0,0, append )
 void         oyjlTreeSetValueString  ( oyjl_val            root,
                                        const char        * key,

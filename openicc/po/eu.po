@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: openicc\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2018-08-20 23:14+0200\n"
+"POT-Creation-Date: 2018-11-11 10:31+0100\n"
 "PO-Revision-Date: 2007-11-07 11:11+0100\n"
 "Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@zundan.com>\n"
 "Language-Team: Basque <itzulpena@euskalgnu.org>\n"
@@ -19,23 +19,49 @@ msgstr ""
 "X-Generator: KBabel 1.11.4\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: libopenicc/openicc_core.c:128
+#: libopenicc/openicc_core.c:133
 msgid "!!! ERROR"
 msgstr ""
 
-#: libopenicc/openicc_args.c:864
+#: libopenicc/openicc_args.c:1014
 msgid "... try with --help|-h option for usage text. give up"
+msgstr ""
+
+#: libopenicc/openicc_args.c:1585 libopenicc/openicc_args.c:1756
+msgid "AUTHOR"
+msgstr ""
+
+#: tools/openicc_device.c:134
+#, fuzzy
+msgid "Add Device"
+msgstr "Gailu-klasea"
+
+#: tools/openicc_device.c:111 tools/openicc_device.c:134
+msgid "Add Device to DB"
 msgstr ""
 
 #: tools/openicc_json.c:42
 msgid "Add gettext translated keys to JSON:"
 msgstr ""
 
+#: libopenicc/openicc_args.c:1595 libopenicc/openicc_args.c:1766
+#: libopenicc/openicc_args.c:1768
+msgid "BUGS"
+msgstr ""
+
+#: libopenicc/openicc_args.c:1589 libopenicc/openicc_args.c:1760
+msgid "COPYRIGHT"
+msgstr ""
+
+#: tools/openicc_device.c:101
+msgid "Camera"
+msgstr ""
+
 #: tools/openicc_json.c:38
 msgid "Convert JSON to gettext ready C strings:"
 msgstr ""
 
-#: libopenicc/openicc_args.c:967
+#: libopenicc/openicc_args.c:1185
 msgid "Copyright"
 msgstr "Copyright-a"
 
@@ -74,47 +100,228 @@ msgstr ""
 msgid "Could not setup db objetc"
 msgstr "Ezin izan da letra-tipoa ireki:"
 
-#: libopenicc/openicc_args.c:671
+#. declare some option choices
+#: tools/openicc_device.c:97
+#, fuzzy
+msgid "DB File"
+msgstr "Fitxategia"
+
+#: tools/openicc_device.c:112
+#, fuzzy
+msgid "DB File Name"
+msgstr "Fitxategi-izena:"
+
+#: libopenicc/openicc_args.c:1500 libopenicc/openicc_args.c:1675
+msgid "DESCRIPTION"
+msgstr ""
+
+#: libopenicc/openicc_args.c:1194
+#, fuzzy
+msgid "Date"
+msgstr "Data"
+
+#: libopenicc/openicc_args.c:805
 #, fuzzy
 msgid "Description"
 msgstr "Azalpena"
 
-#: libopenicc/openicc_args.c:973
+#: libopenicc/openicc_args.c:1191
 msgid "Development"
 msgstr ""
 
-#: libopenicc/openicc_args.c:975
+#: tools/openicc_device.c:113
+#, fuzzy
+msgid "Device Class"
+msgstr "Gailuaren koloreak"
+
+#: tools/openicc_device.c:104
+#, fuzzy
+msgid "Device File"
+msgstr "Seriekoa:"
+
+#: tools/openicc_device.c:114
+#, fuzzy
+msgid "Device position"
+msgstr "Gailu modeloaren azalpena"
+
+#: libopenicc/openicc_args.c:1193
 msgid "Documentation"
 msgstr "Dokumentazioa"
 
-#: libopenicc/openicc_args.c:200
+#: libopenicc/openicc_args.c:283
 msgid "Double occuring option"
 msgstr ""
 
-#: libopenicc/openicc_args.c:971
+#: libopenicc/openicc_args.c:1189
 msgid "Download"
 msgstr ""
+
+#: tools/openicc_device.c:118
+msgid "Dump JSON"
+msgstr ""
+
+#: libopenicc/openicc_args.c:1376
+msgid "ENVIRONMENT VARIABLES"
+msgstr ""
+
+#: libopenicc/openicc_args.c:1372
+msgid "EXAMPLES"
+msgstr ""
+
+#: libopenicc/openicc_args.c:1374
+msgid "EXIT-STATE"
+msgstr ""
+
+#: tools/openicc_device.c:135
+#, fuzzy
+msgid "Erase Device"
+msgstr "Gailu-klasea"
+
+#: tools/openicc_device.c:115
+#, fuzzy
+msgid "Erase Devices"
+msgstr "Gailu-klasea"
+
+#: tools/openicc_device.c:135
+msgid "Erase a Devices from the DB"
+msgstr ""
+
+#: libopenicc/openicc_args.c:194
+msgid "Export formated text"
+msgstr ""
+
+#: tools/openicc_device.c:112 tools/openicc_device.c:116
+msgid "FILENAME"
+msgstr ""
+
+#: libopenicc/openicc_args.c:1380
+msgid "FILES"
+msgstr ""
+
+#: tools/openicc_device.c:116
+#, fuzzy
+msgid "File Name"
+msgstr "Fitxategi-izena:"
+
+#: tools/openicc_device.c:104
+msgid "File Name of Device JSON"
+msgstr ""
+
+#: tools/openicc_device.c:97
+msgid "File Name of device JSON Data Base"
+msgstr ""
+
+#: libopenicc/openicc_args.c:183
+msgid "Formated text"
+msgstr ""
+
+#: libopenicc/openicc_args.c:174
+#, fuzzy
+msgid "GUI"
+msgstr "SGI"
+
+#: libopenicc/openicc_args.c:177
+msgid "GUI + Command"
+msgstr ""
+
+#: tools/openicc_device.c:137
+#, fuzzy
+msgid "General options"
+msgstr "Bereizketa"
 
 #: tools/openicc_json.c:51
 #, fuzzy
 msgid "General options:"
 msgstr "Bereizketa"
 
-#: libopenicc/openicc_args.c:968
+#: libopenicc/openicc_args.c:178
+msgid "Get OpenICC Json UI declaration incuding command"
+msgstr ""
+
+#: libopenicc/openicc_args.c:196
+msgid "Get UI converted into text formats"
+msgstr ""
+
+#: libopenicc/openicc_args.c:175
+msgid "Get a OpenICC Json UI declaration"
+msgstr ""
+
+#: libopenicc/openicc_args.c:181
+msgid "Get a unix man page"
+msgstr ""
+
+#: libopenicc/openicc_args.c:184
+msgid "Get formated text"
+msgstr ""
+
+#: libopenicc/openicc_args.c:1378
+msgid "HISTORY"
+msgstr ""
+
+#: tools/openicc_device.c:117
+msgid "Help"
+msgstr ""
+
+#: libopenicc/openicc_args.c:173
+msgid "Json"
+msgstr ""
+
+#: libopenicc/openicc_args.c:176
+msgid "Json + Command"
+msgstr ""
+
+#: libopenicc/openicc_args.c:1186 libopenicc/openicc_args.c:1591
+#: libopenicc/openicc_args.c:1762
 msgid "License"
 msgstr "Lizentzia"
 
-#: libopenicc/openicc_args.c:966
+#. type,   flags, name,              description,                          help, mandatory, optional, detail
+#: tools/openicc_device.c:119 tools/openicc_device.c:133
+#, fuzzy
+msgid "List Devices"
+msgstr "Oyranos-en ezarpenak"
+
+#: tools/openicc_device.c:120
+msgid "List all key/values pairs"
+msgstr ""
+
+#: libopenicc/openicc_args.c:179
+#, fuzzy
+msgid "Man"
+msgstr "Magenta"
+
+#: tools/openicc_device.c:142
+msgid "Manipulation of OpenICC color management data base device entries."
+msgstr ""
+
+#: libopenicc/openicc_args.c:1184
 #, fuzzy
 msgid "Manufacturer"
 msgstr "Hornitzailea:   "
 
-#: libopenicc/openicc_args.c:947
+#: libopenicc/openicc_args.c:182
+msgid "Markdown"
+msgstr ""
+
+#: tools/openicc_device.c:137
+msgid "Misc"
+msgstr ""
+
+#: libopenicc/openicc_args.c:1165
 #, fuzzy
 msgid "Module"
 msgstr "Bereizketa"
 
-#: libopenicc/openicc_args.c:1090
+#: tools/openicc_device.c:99
+#, fuzzy
+msgid "Monitor"
+msgstr "Bideo-monitorea"
+
+#: tools/openicc_device.c:114
+msgid "NUMBER"
+msgstr ""
+
+#: libopenicc/openicc_args.c:1319
 msgid "No"
 msgstr ""
 
@@ -126,27 +333,35 @@ msgstr ""
 msgid "No JSON obtained for"
 msgstr ""
 
-#: libopenicc/openicc_args.c:974
+#: libopenicc/openicc_args.c:1502 libopenicc/openicc_args.c:1677
+msgid "OPTIONS"
+msgstr ""
+
+#: libopenicc/openicc_args.c:1192
 msgid "OpenICC Module Author"
 msgstr ""
 
-#: libopenicc/openicc_args.c:454
+#: tools/openicc_device.c:144
+msgid "OpenICC devices handling tool"
+msgstr ""
+
+#: libopenicc/openicc_args.c:542
 msgid "Option has a different value range"
 msgstr ""
 
-#: libopenicc/openicc_args.c:296 libopenicc/openicc_args.c:351
+#: libopenicc/openicc_args.c:383 libopenicc/openicc_args.c:438
 msgid "Option has a unexpected argument"
 msgstr ""
 
-#: libopenicc/openicc_args.c:274 libopenicc/openicc_args.c:328
+#: libopenicc/openicc_args.c:357 libopenicc/openicc_args.c:415
 msgid "Option needs a argument"
 msgstr ""
 
-#: libopenicc/openicc_args.c:253 libopenicc/openicc_args.c:310
+#: libopenicc/openicc_args.c:336 libopenicc/openicc_args.c:397
 msgid "Option not supported"
 msgstr ""
 
-#: libopenicc/openicc_db.c:153
+#: libopenicc/openicc_db.c:153 tools/openicc_device.c:172
 #, fuzzy
 msgid "Paths:"
 msgstr "Pausarazi"
@@ -155,59 +370,148 @@ msgstr "Pausarazi"
 msgid "Print a help text:"
 msgstr ""
 
+#: tools/openicc_device.c:133
+msgid "Print the Devices in the DB"
+msgstr ""
+
+#: tools/openicc_device.c:100
+#, fuzzy
+msgid "Printer"
+msgstr "Puntua"
+
 #: tools/openicc_json.c:218
 #, fuzzy
 msgid "Rendering Intent"
 msgstr "Oyranos-en ezarpenak"
 
-#: libopenicc/openicc_args.c:972
+#: libopenicc/openicc_args.c:1382
+msgid "SEE AS WELL"
+msgstr ""
+
+#: libopenicc/openicc_args.c:1489 libopenicc/openicc_args.c:1664
+msgid "SYNOPSIS"
+msgstr ""
+
+#: tools/openicc_device.c:102
+#, fuzzy
+msgid "Scanner"
+msgstr "Film-eskanerra"
+
+#: tools/openicc_device.c:136
+msgid "Show DB Path"
+msgstr ""
+
+#: tools/openicc_device.c:136
+msgid "Show Filepath to the DB"
+msgstr ""
+
+#: tools/openicc_device.c:121
+msgid "Show Path"
+msgstr ""
+
+#: libopenicc/openicc_args.c:1190
 msgid "Sources"
 msgstr ""
 
-#: libopenicc/openicc_args.c:970
+#: libopenicc/openicc_args.c:1188
 msgid "Support"
 msgstr ""
 
-#: libopenicc/openicc_args.c:673
+#: libopenicc/openicc_args.c:807
 msgid "Synopsis"
 msgstr ""
 
-#: libopenicc/openicc_args.c:945
+#: tools/openicc_device.c:122
+msgid "System"
+msgstr ""
+
+#: libopenicc/openicc_args.c:1163
 msgid "Tool"
 msgstr ""
 
-#: libopenicc/openicc_args.c:969
+#: libopenicc/openicc_args.c:180
+msgid "Unix Man page"
+msgstr ""
+
+#: libopenicc/openicc_args.c:1187
 msgid "Url"
 msgstr ""
 
-#: libopenicc/openicc_args.c:681 tools/openicc_json.c:37
+#: libopenicc/openicc_args.c:814 tools/openicc_json.c:37
 #: tools/openicc_json.c:145
 msgid "Usage"
 msgstr ""
 
-#: libopenicc/openicc_args.c:200 libopenicc/openicc_args.c:253
-#: libopenicc/openicc_args.c:274 libopenicc/openicc_args.c:296
-#: libopenicc/openicc_args.c:310 libopenicc/openicc_args.c:328
-#: libopenicc/openicc_args.c:351 libopenicc/openicc_args.c:454
+#: libopenicc/openicc_args.c:283 libopenicc/openicc_args.c:336
+#: libopenicc/openicc_args.c:357 libopenicc/openicc_args.c:383
+#: libopenicc/openicc_args.c:397 libopenicc/openicc_args.c:415
+#: libopenicc/openicc_args.c:438 libopenicc/openicc_args.c:542
 msgid "Usage Error:"
 msgstr ""
 
-#: libopenicc/openicc_args.c:976
+#: libopenicc/openicc_args.c:1195
 #, fuzzy
 msgid "Version"
 msgstr "ICC Examin-en bertsioa"
 
-#: libopenicc/openicc_core.c:125
+#: libopenicc/openicc_core.c:130
 msgid "WARNING"
 msgstr ""
+
+#: tools/openicc_device.c:126
+#, fuzzy
+msgid "Write DB File"
+msgstr "Ezin izan da letra-tipoa ireki:"
 
 #: libopenicc/openicc_db.c:469
 msgid "Writing failed for"
 msgstr ""
 
-#: libopenicc/openicc_args.c:1090
+#: libopenicc/openicc_args.c:1319
 msgid "Yes"
 msgstr "Bai"
+
+#. type,   flags, o,  option,          key,  name,             description,         help, value_name,    value_type,        values, variable_type, result
+#: tools/openicc_device.c:111
+msgid "add"
+msgstr ""
+
+#: tools/openicc_device.c:112
+msgid "db-file"
+msgstr ""
+
+#: tools/openicc_device.c:114
+#, fuzzy
+msgid "device"
+msgstr "Gailu-klasea"
+
+#: tools/openicc_device.c:113
+#, fuzzy
+msgid "device-class"
+msgstr "Gailuaren koloreak"
+
+#: tools/openicc_device.c:118
+msgid "dump-json"
+msgstr ""
+
+#: tools/openicc_device.c:115
+#, fuzzy
+msgid "erase-device"
+msgstr "Oyranos-en ezarpenak"
+
+#: libopenicc/openicc_args.c:191
+msgid "export"
+msgstr ""
+
+#: tools/openicc_device.c:116
+#, fuzzy
+msgid "file-name"
+msgstr "Fitxategi-izena:"
+
+#: tools/openicc_device.c:117
+#, fuzzy
+msgid "help"
+msgstr "Laguntza"
 
 #: tools/openicc_json.c:33
 msgid "is a JSON helper tool"
@@ -216,6 +520,11 @@ msgstr ""
 #: tools/openicc_json.c:55
 msgid "language specific wrap; -w C for C static char"
 msgstr ""
+
+#: tools/openicc_device.c:119
+#, fuzzy
+msgid "list-devices"
+msgstr "Oyranos-en ezarpenak"
 
 #: tools/openicc_json.c:46
 msgid ""
@@ -227,6 +536,10 @@ msgstr ""
 msgid "locales in a comma separated list"
 msgstr ""
 
+#: tools/openicc_device.c:120
+msgid "long"
+msgstr ""
+
 #: tools/openicc_json.c:53
 #, fuzzy
 msgid "output"
@@ -234,6 +547,14 @@ msgstr "Irteera"
 
 #: tools/openicc_json.c:40
 msgid "output format string"
+msgstr ""
+
+#: tools/openicc_device.c:122
+msgid "scope"
+msgstr ""
+
+#: tools/openicc_device.c:121
+msgid "show-path"
 msgstr ""
 
 #: tools/openicc_json.c:52
@@ -248,9 +569,18 @@ msgstr ""
 msgid "to be used key names in a comma separated list"
 msgstr ""
 
-#: tools/openicc_json.c:56
+#: tools/openicc_device.c:185
+msgid "unable to open data base"
+msgstr ""
+
+#: tools/openicc_device.c:123 tools/openicc_json.c:56
 msgid "verbose"
 msgstr ""
+
+#: tools/openicc_device.c:126
+#, fuzzy
+msgid "write"
+msgstr "Puntua"
 
 #~ msgid ""
 #~ "    ICC Examin is licensed under the GPL version 2.    Especially all "
@@ -894,10 +1224,6 @@ msgstr ""
 #~ msgstr "Data"
 
 #, fuzzy
-#~ msgid "Date"
-#~ msgstr "Data"
-
-#, fuzzy
 #~ msgid "Date:"
 #~ msgstr "Data"
 
@@ -909,10 +1235,6 @@ msgstr ""
 #~ msgid "Description:     "
 #~ msgstr "Azalpena"
 
-#, fuzzy
-#~ msgid "Device"
-#~ msgstr "Gailu-klasea"
-
 #~ msgid "Device Colors"
 #~ msgstr "Gailuaren koloreak"
 
@@ -922,10 +1244,6 @@ msgstr ""
 
 #, fuzzy
 #~ msgid "Device Model"
-#~ msgstr "Seriekoa:"
-
-#, fuzzy
-#~ msgid "Device Related"
 #~ msgstr "Seriekoa:"
 
 #, fuzzy
@@ -941,13 +1259,6 @@ msgstr ""
 
 #~ msgid "Device manufacturerer description"
 #~ msgstr "Gailuaren hornitzailearen azalpena"
-
-#~ msgid "Device model description"
-#~ msgstr "Gailu modeloaren azalpena"
-
-#, fuzzy
-#~ msgid "Devices"
-#~ msgstr "Gailu-klasea"
 
 #~ msgid "Digital camera"
 #~ msgstr "Kamera digitala"
@@ -1051,13 +1362,6 @@ msgstr ""
 
 #~ msgid "Filename (other data type)"
 #~ msgstr "Fitxategi-izena (beste datu mota)"
-
-#~ msgid "Filename:"
-#~ msgstr "Fitxategi-izena:"
-
-#, fuzzy
-#~ msgid "Files"
-#~ msgstr "Fitxategia"
 
 #~ msgid "Film scanner"
 #~ msgstr "Film-eskanerra"
@@ -1366,10 +1670,6 @@ msgstr ""
 #~ msgstr "Oyranos-en ezarpenak"
 
 #, fuzzy
-#~ msgid "List devices:"
-#~ msgstr "Oyranos-en ezarpenak"
-
-#, fuzzy
 #~ msgid "List modules:"
 #~ msgstr "Oyranos-en ezarpenak"
 
@@ -1421,9 +1721,6 @@ msgstr ""
 
 #~ msgid "Macintosh"
 #~ msgstr "Macintosh"
-
-#~ msgid "Magenta"
-#~ msgstr "Magenta"
 
 #, fuzzy
 #~ msgid "Magic:           "
@@ -1509,10 +1806,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Modify Profile:"
 #~ msgstr "Monitorearen profila"
-
-#, fuzzy
-#~ msgid "Monitor"
-#~ msgstr "Bideo-monitorea"
 
 #~ msgid "My Computer"
 #~ msgstr "Ordenagailua"
@@ -1796,10 +2089,6 @@ msgstr ""
 #~ msgstr "Aurrebista, saturatua"
 
 #, fuzzy
-#~ msgid "Printer"
-#~ msgstr "Puntua"
-
-#, fuzzy
 #~ msgid "Printer CUPS"
 #~ msgstr "Puntua"
 
@@ -1956,9 +2245,6 @@ msgstr ""
 #~ msgid "Rotate around slice"
 #~ msgstr "Biratu zatiaren inguruan"
 
-#~ msgid "SGI"
-#~ msgstr "SGI"
-
 #~ msgid "SMPTE RP145-1994"
 #~ msgstr "SMPTE RP145-1994"
 
@@ -1988,10 +2274,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Save to a new policy:"
 #~ msgstr "profilik ez"
-
-#, fuzzy
-#~ msgid "Scanner"
-#~ msgstr "Film-eskanerra"
 
 #, fuzzy
 #~ msgid "Screening"
@@ -2204,10 +2486,6 @@ msgstr ""
 #~ msgid "Unknown argument"
 #~ msgstr "Aitorpena"
 
-#, fuzzy
-#~ msgid "Unset device:"
-#~ msgstr "Oyranos-en ezarpenak"
-
 #~ msgid "VRML Files (*.wrl)"
 #~ msgstr "VRML fitxategiak (*.wrl)"
 
@@ -2263,10 +2541,6 @@ msgstr ""
 
 #~ msgid "Work Space"
 #~ msgstr "Laneko area"
-
-#, fuzzy
-#~ msgid "Write"
-#~ msgstr "Puntua"
 
 #, fuzzy
 #~ msgid "Write Model:"
@@ -2419,10 +2693,6 @@ msgstr ""
 #~ msgstr "dE2000"
 
 #, fuzzy
-#~ msgid "device class"
-#~ msgstr "Gailuaren koloreak"
-
-#, fuzzy
 #~ msgid "device_class not found:"
 #~ msgstr "Profila-kolorea"
 
@@ -2474,10 +2744,6 @@ msgstr ""
 
 #~ msgid "gray"
 #~ msgstr "grisa"
-
-#, fuzzy
-#~ msgid "help"
-#~ msgstr "Laguntza"
 
 #~ msgid "high contrast"
 #~ msgstr "kontraste altua"
@@ -2779,10 +3045,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "write assigned ICC profile"
 #~ msgstr "Zein ICC profila?"
-
-#, fuzzy
-#~ msgid "write to file"
-#~ msgstr "Ezin izan da letra-tipoa ireki:"
 
 #, fuzzy
 #~ msgid "write to specified file"

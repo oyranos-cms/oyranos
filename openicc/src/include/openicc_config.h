@@ -55,7 +55,12 @@ extern "C" {
 typedef enum {
   openiccOBJECT_NONE,
   openiccOBJECT_CONFIG = 312,
-  openiccOBJECT_DB
+  openiccOBJECT_DB,
+  openiccOBJECT_OPTION = 1769433455,   /**< @brief openiccOption_s */
+  openiccOBJECT_OPTION_GROUP = 1735879023, /**< @brief openiccOptionGroup_s */
+  openiccOBJECT_OPTIONS = 1937205615,  /**< @brief openiccOptions_s */
+  openiccOBJECT_UI_HEADER_SECTION = 1936222575, /**< @brief openiccUiHeaderSection_s */
+  openiccOBJECT_UI = 1769302383        /**< @brief openiccUi_s */
 } openiccOBJECT_e;
 
 typedef struct openiccConfig_s openiccConfig_s;

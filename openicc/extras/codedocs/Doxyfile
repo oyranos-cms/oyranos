@@ -1,7 +1,7 @@
 # Doxyfile 1.3.8
 
 PROJECT_NUMBER         = git-devel
-INPUT                  = . docs src/include src/libopenicc
+INPUT                  = . docs src/include src/libopenicc src/tools
 
 #---------------------------------------------------------------------------
 # Project related configuration options

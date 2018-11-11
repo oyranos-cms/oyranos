@@ -15,7 +15,8 @@ Part of that is a file format based on JSON and a implementation of a
 according library for easy access.
 
 ### Features
-* access to OpenICC device JSON DB
+* Access to OpenICC device JSON DB
+* [Command Line Tools](src/tools/README.md)
 
 ### Links
 * [Copyright](docs/COPYING.md) - MIT
