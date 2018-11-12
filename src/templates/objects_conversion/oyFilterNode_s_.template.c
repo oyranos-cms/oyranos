@@ -40,7 +40,7 @@
 
   /* referenences from members has to be substracted
    * from this objects ref count */
-  if(oyObject_GetRefCount( s->oy_ ) > (int)(sn_n + pn_n + observer_refs*2))
+  if(oyObject_GetRefCount( s->oy_ ) > (int)(sn_n + pn_n + observer_refs))
     return 0;
 
   if(oy_debug_objects >= 0 && s->oy_)

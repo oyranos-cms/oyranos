@@ -551,7 +551,7 @@ int oyBlob_Release_( oyBlob_s_ **blob )
   }
 
   
-  if((oyObject_UnRef(s->oy_) - 2 * observer_refs) > 0)
+  if((oyObject_UnRef(s->oy_) - observer_refs) > 0)
     return 0;
   /* ---- end of common object destructor ------- */
 

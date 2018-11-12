@@ -604,7 +604,7 @@ int oyCMMapi7_Release_( oyCMMapi7_s_ **cmmapi7 )
   }
 
   
-  if((oyObject_UnRef(s->oy_) - 2 * observer_refs) > 0)
+  if((oyObject_UnRef(s->oy_) - observer_refs) > 0)
     return 0;
   /* ---- end of common object destructor ------- */
 

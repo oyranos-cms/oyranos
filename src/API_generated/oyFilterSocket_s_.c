@@ -564,7 +564,7 @@ int oyFilterSocket_Release_( oyFilterSocket_s_ **filtersocket )
 
   /* referenences from members has to be substracted
    * from this objects ref count */
-  if(oyObject_GetRefCount( s->oy_ ) > (int)(n + observer_refs*2))
+  if(oyObject_GetRefCount( s->oy_ ) > (int)(n + observer_refs))
     return 0;
 
   /* ref before oyXXX_Release__Members(), so the

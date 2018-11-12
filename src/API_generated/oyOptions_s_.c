@@ -522,7 +522,7 @@ int oyOptions_Release_( oyOptions_s_ **options )
   }
 
   
-  if((oyObject_UnRef(s->oy_) - 2 * observer_refs) > 0)
+  if((oyObject_UnRef(s->oy_) - observer_refs) > 0)
     return 0;
   /* ---- end of common object destructor ------- */
 

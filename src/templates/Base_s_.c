@@ -509,7 +509,7 @@ int oy{{ class.baseName }}_Release_( {{ class.privName }} **{{ class.baseName|lo
   }
 
   {% block refCount %}
-  if((oyObject_UnRef(s->oy_) - 2 * observer_refs) > 0)
+  if((oyObject_UnRef(s->oy_) - observer_refs) > 0)
     return 0;{% endblock %}
   /* ---- end of common object destructor ------- */
 
