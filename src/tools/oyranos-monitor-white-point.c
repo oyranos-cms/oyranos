@@ -263,7 +263,7 @@ const char * jcommands = "{\n\
   \"comment\": \"command_set_delimiter - build key:value; default is '=' key=value\",\n\
   \"comment\": \"command_set_option - use \\\"-s\\\" \\\"key\\\"; skip \\\"--\\\" direct in front of key\",\n\
   \"command_get\": \"oyranos-monitor-white-point\",\n\
-  \"command_get_args\": [\"-j\"]\n\
+  \"command_get_args\": [\"-X\",\"json\"]\n\
 }";
 void myOptionsRelease                ( openiccOptions_s   ** opts )
 {
