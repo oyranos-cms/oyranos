@@ -46,7 +46,7 @@ const char * jcommands = "{\n\
   \"comment\": \"command_set_delimiter - build key:value; default is '=' key=value\",\n\
   \"comment\": \"command_set_option - use \\\"-s\\\" \\\"key\\\"; skip \\\"--\\\" direct in front of key\",\n\
   \"command_get\": \"oyranos-profiles\",\n\
-  \"command_get_args\": [\"-j\"]\n\
+  \"command_get_args\": [\"-X\", \"json\"]\n\
 }";
 
 int main( int argc , char** argv )
