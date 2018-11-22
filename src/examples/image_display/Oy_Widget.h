@@ -59,10 +59,11 @@ public:
   }
   virtual oyConversion_s * conversion() { return context; }
 
-  virtual void ticket( oyPixelAccess_s * t ) 
+  virtual void ticket( oyPixelAccess_s ** t ) 
   {
     oyPixelAccess_Release( &pixel_access );
-    pixel_access = oyPixelAccess_Copy( t, 0 );
+    pixel_access = *t;
+    *t = NULL;
   }
   virtual oyPixelAccess_s * ticket() { return pixel_access; }
 
