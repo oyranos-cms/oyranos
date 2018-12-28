@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cinepaint_icc-examin_eu\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2018-11-11 14:21+0100\n"
+"POT-Creation-Date: 2018-11-12 07:35+0100\n"
 "PO-Revision-Date: 2007-11-07 11:11+0100\n"
 "Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@zundan.com>\n"
 "Language-Team: Basque <itzulpena@euskalgnu.org>\n"
@@ -4273,7 +4273,7 @@ msgstr ""
 msgid "Show white point modes"
 msgstr "Puntu-zuria euskarria"
 
-#: API_generated/oyFilterNode_s_.c:1522 API_generated/oyObserver_s.c:361
+#: API_generated/oyFilterNode_s_.c:1520 API_generated/oyObserver_s.c:361
 #: API_generated/oyObserver_s.c:372 API_generated/oyObserver_s.c:573
 #: API_generated/oyObserver_s.c:651 API_generated/oyObserver_s_.c:53
 #: examples/image_display/oyranos_display_helper_classes_fltk.cpp:47
@@ -5468,7 +5468,7 @@ msgstr ""
 msgid "enable simple defaults"
 msgstr ""
 
-#: API_generated/oyConversion_s.c:207 API_generated/oyFilterNode_s_.c:900
+#: API_generated/oyConversion_s.c:207 API_generated/oyFilterNode_s_.c:898
 #: API_generated/oyranos_devices.c:2604 API_generated/oyranos_devices.c:2616
 #: API_generated/oyranos_devices.c:2649 API_generated/oyranos_devices.c:3167
 #: API_generated/oyranos_module.c:2022

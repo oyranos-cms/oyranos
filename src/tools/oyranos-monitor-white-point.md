@@ -21,7 +21,7 @@ The tool can set the actual white point or set it by local day and night time. A
 
 * \-s|\-\-sun\-white\-point *0|1|2|3|4|5|6|7*	Set day time mode
    * \-s 0		# No
-   * \-s 1		# Automatic 3000 Kelvin 
+   * \-s 1		# Automatic
    * \-s 2		# Illuminant D50
    * \-s 3		# Illuminant D55
    * \-s 4		# Illuminant D65
@@ -39,7 +39,7 @@ The Night white point mode shall allow to reduce influence of blue light during 
 
 * \-n|\-\-night\-white\-point *0|1|2|3|4|5|6|7*	Set night time mode: A white point temperature of around 4000K and lower allows to get easier into sleep. Enable by setting this option to Automatic (\-n=1) and Temperature to 3000 (\-a=3000).
    * \-n 0		# No
-   * \-n 1		# Automatic 3000 Kelvin 
+   * \-n 1		# Automatic
    * \-n 2		# Illuminant D50
    * \-n 3		# Illuminant D55
    * \-n 4		# Illuminant D65
@@ -56,7 +56,7 @@ The Night white point mode shall allow to reduce influence of blue light during 
 
 * \-w|\-\-white\-point *0|1|2|3|4|5|6|7*	Set white point mode
    * \-w 0		# No
-   * \-w 1		# Automatic 3000 Kelvin 
+   * \-w 1		# Automatic
    * \-w 2		# Illuminant D50
    * \-w 3		# Illuminant D55
    * \-w 4		# Illuminant D65

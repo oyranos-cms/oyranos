@@ -21,13 +21,13 @@ Das Werkzeug kann den momentanen Weißpunkt setzen oder ihn abhängig von der Ta
 
 * \-s|\-\-sun\-white\-point *0|1|2|3|4|5|6|7*	Setze den Tagesmodus
    * \-s 0		# Nein
-   * \-s 1		# Automatisch 3000 Kelvin 
+   * \-s 1		# Automatisch
    * \-s 2		# Lichtart D50
    * \-s 3		# Lichtart D55
    * \-s 4		# Lichtart D65
    * \-s 5		# Lichtart D75
    * \-s 6		# Lichtart D93
-* \-e|\-\-sunlight\-effect *ICC\_PROFIL*	Setze den Tages Effect: Ein ICC Farbprofil der Klasse Abstrakter Farbraum. Günstig wäre ein Effektprofil, welches nur eindimensionalen RGB Kurven benutzt und mit meta:EFFECT\_linear=yes gekennzeichnet ist.
+* \-e|\-\-sunlight\-effect *ICC\_PROFIL*	Setze den Tages Effect: Ein ICC Farbprofil der Klasse Abstrakter Farbraum. Günstig wäre ein Effektprofil, welches nur eindimensionale RGB Kurven benutzt und mit meta:EFFECT\_linear=yes gekennzeichnet ist.
    * \-e \-		# [kein]
    * \-e Effect 1		# Example Effect 1
    * \-e Effect 2		# Example Effect 2
@@ -39,13 +39,13 @@ Der Nachtweißpunkmodus soll den Einfluß von blauen Licht auf das menschliche H
 
 * \-n|\-\-night\-white\-point *0|1|2|3|4|5|6|7*	Setze den Nachtmodus: Ein Weißpunkt mit einer Strahlungstemperatur von 4000 Kelvin und weniger erleichtert den natürlichen Schlafrhytmus zu finden. Dazu wird diese Einstellung auf Automatisch (\-n=1) und die Temperatur auf 3000 (\-a=3000) gestellt.
    * \-n 0		# Nein
-   * \-n 1		# Automatisch 3000 Kelvin 
+   * \-n 1		# Automatisch
    * \-n 2		# Lichtart D50
    * \-n 3		# Lichtart D55
    * \-n 4		# Lichtart D65
    * \-n 5		# Lichtart D75
    * \-n 6		# Lichtart D93
-* \-g|\-\-night\-effect *ICC\_PROFIL*	Setze den Nacht Effect: Ein ICC Farbprofil der Klasse Abstrakter Farbraum. Günstig wäre ein Effektprofil, welches nur eindimensionalen RGB Kurven benutzt und mit meta:EFFECT\_linear=yes gekennzeichnet ist.
+* \-g|\-\-night\-effect *ICC\_PROFIL*	Setze den Nacht Effect: Ein ICC Farbprofil der Klasse Abstrakter Farbraum. Günstig wäre ein Effektprofil, welches nur eindimensionale RGB Kurven benutzt und mit meta:EFFECT\_linear=yes gekennzeichnet ist.
    * \-g \-		# [kein]
    * \-g Effect 1		# Example Effect 1
    * \-g Effect 2		# Example Effect 2
@@ -56,7 +56,7 @@ Der Nachtweißpunkmodus soll den Einfluß von blauen Licht auf das menschliche H
 
 * \-w|\-\-white\-point *0|1|2|3|4|5|6|7*	Setze Weißpunktmodus
    * \-w 0		# Nein
-   * \-w 1		# Automatisch 3000 Kelvin 
+   * \-w 1		# Automatisch
    * \-w 2		# Lichtart D50
    * \-w 3		# Lichtart D55
    * \-w 4		# Lichtart D65
