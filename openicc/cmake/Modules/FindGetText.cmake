@@ -106,7 +106,9 @@ MACRO(GETTEXT_CREATE_TRANSLATIONS _potFile _firstPoFileArg)
          DEPENDS ${_absPotFile} ${_absFile}
       )
 
-      INSTALL(FILES ${_gmoFile} DESTINATION share/locale/${_lang}/LC_MESSAGES RENAME ${_potBasename}.mo)
+      IF(ENABLE_INSTALL_${PROJECT_UP_NAME})
+        INSTALL(FILES ${_gmoFile} DESTINATION share/locale/${_lang}/LC_MESSAGES RENAME ${_potBasename}.mo)
+      ENDIF(ENABLE_INSTALL_${PROJECT_UP_NAME})
       SET(_gmoFiles ${_gmoFiles} ${_gmoFile})
 
    ENDFOREACH (_currentPoFile )
@@ -152,9 +154,11 @@ FUNCTION(GETTEXT_PROCESS_POT_FILE _potFile)
          DEPENDS ${_absPotFile} ${_poFile}
       )
 
-      IF(_parsedArguments_INSTALL_DESTINATION)
-         INSTALL(FILES ${_gmoFile} DESTINATION ${_parsedArguments_INSTALL_DESTINATION}/${_lang}/LC_MESSAGES RENAME ${_potBasename}.mo)
-      ENDIF(_parsedArguments_INSTALL_DESTINATION)
+      IF(ENABLE_INSTALL_${PROJECT_UP_NAME})
+        IF(_parsedArguments_INSTALL_DESTINATION)
+          INSTALL(FILES ${_gmoFile} DESTINATION ${_parsedArguments_INSTALL_DESTINATION}/${_lang}/LC_MESSAGES RENAME ${_potBasename}.mo)
+        ENDIF(_parsedArguments_INSTALL_DESTINATION)
+      ENDIF(ENABLE_INSTALL_${PROJECT_UP_NAME})
       LIST(APPEND _gmoFiles ${_gmoFile})
    ENDFOREACH (_lang )
 
@@ -193,9 +197,11 @@ FUNCTION(GETTEXT_PROCESS_PO_FILES _lang)
             DEPENDS ${_current_PO_FILE}
          )
 
-      IF(_parsedArguments_INSTALL_DESTINATION)
-         INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/${_basename}.gmo DESTINATION ${_parsedArguments_INSTALL_DESTINATION}/${_lang}/LC_MESSAGES/ RENAME ${_basename}.mo)
-      ENDIF(_parsedArguments_INSTALL_DESTINATION)
+      IF(ENABLE_INSTALL_${PROJECT_UP_NAME})
+        IF(_parsedArguments_INSTALL_DESTINATION)
+          INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/${_basename}.gmo DESTINATION ${_parsedArguments_INSTALL_DESTINATION}/${_lang}/LC_MESSAGES/ RENAME ${_basename}.mo)
+        ENDIF(_parsedArguments_INSTALL_DESTINATION)
+      ENDIF(ENABLE_INSTALL_${PROJECT_UP_NAME})
       LIST(APPEND _gmoFiles ${_gmoFile})
    ENDFOREACH(_current_PO_FILE)
 

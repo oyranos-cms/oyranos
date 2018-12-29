@@ -46,9 +46,11 @@ CONFIGURE_FILE (
           @ONLY
                )
 
-INSTALL ( FILES
-          "${CMAKE_CURRENT_BINARY_DIR}/OpenIccConfig.cmake"
-          DESTINATION ${CMAKE_MODULES_INSTALL_DIR}
-          COMPONENT dev
-        )
+IF(ENABLE_INSTALL_${PROJECT_UP_NAME})
+  INSTALL ( FILES
+            "${CMAKE_CURRENT_BINARY_DIR}/OpenIccConfig.cmake"
+            DESTINATION ${CMAKE_MODULES_INSTALL_DIR}
+            COMPONENT dev
+          )
+ENDIF(ENABLE_INSTALL_${PROJECT_UP_NAME})
 

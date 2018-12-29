@@ -125,10 +125,10 @@ CONFIGURE_FILE(
     IMMEDIATE @ONLY)
 
 IF(ENABLE_INSTALL_${PROJECT_UP_NAME})
-ADD_CUSTOM_TARGET( uninstall
+  ADD_CUSTOM_TARGET( uninstall
 	"${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_BINARY_DIR}/cmake/OpenIccUninstall.cmake")
 
-ADD_CUSTOM_TARGET( dist
+  ADD_CUSTOM_TARGET( dist
 		COMMAND cd ${CMAKE_CURRENT_SOURCE_DIR}/ && git archive --prefix=${PACKAGE_NAME}-${${PROJECT_NAME}_VERSION}/ --format=tar HEAD > ${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}-${${PROJECT_NAME}_VERSION}.tar 
                 COMMAND echo "git:       git clone git://guthub.com/openicc-cms/${PACKAGE_NAME}.git" > ${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}-${${PROJECT_NAME}_VERSION}.tar.bz2.hashsum
                 COMMAND echo "git sha1:  " | tr -d "\\n" >> ${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}-${${PROJECT_NAME}_VERSION}.tar.bz2.hashsum
@@ -148,12 +148,12 @@ ADD_CUSTOM_TARGET( dist
 		VERBATIM
 		WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
 		)
-EXECUTE_PROCESS(COMMAND rpmbuild --showrc
+  EXECUTE_PROCESS(COMMAND rpmbuild --showrc
                 COMMAND awk '/^build arch/ {print $$4}'
                 OUTPUT_VARIABLE RPMARCH
                 ERROR_VARIABLE RPMBUILD_ERROR
                )
-ADD_CUSTOM_TARGET( rpm
+  ADD_CUSTOM_TARGET( rpm
 		COMMAND test -d ${PACKAGE_NAME}-${${PROJECT_NAME}_VERSION}/ && rm -rf ${PACKAGE_NAME}-${${PROJECT_NAME}_VERSION}/
 		COMMAND tar xjf ${PACKAGE_NAME}-${${PROJECT_NAME}_VERSION}.tar.bz2
                 COMMAND mkdir -p rpmdir/BUILD rpmdir/SPECS rpmdir/SOURCES rpmdir/SRPMS rpmdir/RPMS/${RPMARCH}
@@ -164,7 +164,7 @@ ADD_CUSTOM_TARGET( rpm
 		VERBATIM
 		)
 
-ADD_CUSTOM_TARGET( debsrc
+  ADD_CUSTOM_TARGET( debsrc
 		COMMAND test -d ${PACKAGE_NAME}-${${PROJECT_NAME}_VERSION}/ && rm -rf ${PACKAGE_NAME}-${${PROJECT_NAME}_VERSION}/
 		COMMAND tar xjf ${PACKAGE_NAME}-${${PROJECT_NAME}_VERSION}.tar.bz2
                 COMMAND mv ${PACKAGE_NAME}-${${PROJECT_NAME}_VERSION}.tar.bz2 ${PACKAGE_NAME}_${${PROJECT_NAME}_VERSION}.orig.tar.bz2
@@ -174,7 +174,7 @@ ADD_CUSTOM_TARGET( debsrc
 		COMMENT Make a ${PACKAGE_NAME}# DEB source package
 		VERBATIM
 		)
-ADD_CUSTOM_TARGET( debian
+  ADD_CUSTOM_TARGET( debian
 		COMMAND cd ${PACKAGE_NAME}-${${PROJECT_NAME}_VERSION}/ && debuild
                 DEPENDS debsrc
 		COMMENT Make a ${PACKAGE_NAME} DEB package
