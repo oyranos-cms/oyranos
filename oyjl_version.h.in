@@ -14,6 +14,9 @@
 #cmakedefine HAVE_YAJL
 #cmakedefine HAVE_YAJL_VERSION_H
 
+#cmakedefine OYJL_HAVE_YAML
+#cmakedefine OYJL_HAVE_LIBXML2
+
 #cmakedefine HAVE_LOCALE_H
 
 #endif /*OYJL_VERSION_H*/
