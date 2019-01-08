@@ -416,8 +416,18 @@ SET( DOC_SOURCES
 	${CMAKE_SOURCE_DIR}/src/modules/oyranos-meta/*.c
 	${CMAKE_SOURCE_DIR}/src/modules/oyranos-meta/*.h
   ${CMAKE_SOURCE_DIR}/src/tools/oyranos*.md
-        PARENT_SCOPE
    )
+IF(NOT HAVE_OYJL)
+  SET( DOC_SOURCES ${DOC_SOURCES}
+        ${CMAKE_SOURCE_DIR}/openicc/oyjl/oyjl.h
+        ${CMAKE_SOURCE_DIR}/openicc/oyjl/oyjl_test.h
+        ${CMAKE_SOURCE_DIR}/openicc/oyjl/oyjl_test_main.h
+        ${CMAKE_SOURCE_DIR}/openicc/oyjl/oyjl_core.c
+        ${CMAKE_SOURCE_DIR}/openicc/oyjl/oyjl_tree.c
+        ${CMAKE_SOURCE_DIR}/openicc/oyjl/oyjl_yajl.c
+     )
+ENDIF(NOT HAVE_OYJL)
+SET( DOC_SOURCES ${DOC_SOURCES} PARENT_SCOPE )
 
 
 # i18n
@@ -456,7 +466,7 @@ IF( GETTEXT_FOUND )
   GETTEXT_CREATE_TRANSLATIONS( ${_potFile} ALL ${LINGUAS} )
 
   ADD_CUSTOM_COMMAND( OUTPUT gmo-cp
-    COMMAND for oy_lang in ${OY_LINGUAS}\; do mkdir -p "${CMAKE_BINARY_DIR}/locale/$$oy_lang/LC_MESSAGES/" \; cp "${CMAKE_BINARY_DIR}/src/$$oy_lang.gmo" "${CMAKE_BINARY_DIR}/locale/$$oy_lang/LC_MESSAGES/oyranos.mo" \; done
+    COMMAND for oy_lang in ${OY_LINGUAS}\; do mkdir -p "${CMAKE_BINARY_DIR}/locale/$$oy_lang/LC_MESSAGES/" \; cp "${CMAKE_CURRENT_BINARY_DIR}/$$oy_lang.gmo" "${CMAKE_BINARY_DIR}/locale/$$oy_lang/LC_MESSAGES/${PACKAGE_NAME}.mo" \; done
     COMMENT "put gmo files into build path for testing with OY_LOCALEDIR"
                     )
   ADD_CUSTOM_TARGET( gmo ALL
