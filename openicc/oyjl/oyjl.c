@@ -3,7 +3,7 @@
  *  oyjl - Yajl tree extension
  *
  *  @par Copyright:
- *            2016-2018 (C) Kai-Uwe Behrmann
+ *            2016-2019 (C) Kai-Uwe Behrmann
  *
  *  @brief    Oyjl command line
  *  @internal
@@ -36,6 +36,19 @@ void printfHelp(int argc OYJL_UNUSED, char ** argv)
     return;
   }
 
+  if(strstr(argv[0],"jsontoxml"))
+  {
+  fprintf( stderr, "\n");
+  fprintf( stderr, "%s %s\n",   argv[0],
+                                _("is a JSON to XML converter"));
+  fprintf( stderr, "\n");
+  fprintf( stderr, "%s\n",                 _("Usage"));
+  fprintf( stderr, "      %s FILE_NAME\n",        argv[0]);
+  fprintf( stderr, "\n");
+  fprintf( stderr, "\n");
+    return;
+  }
+
 
   fprintf( stderr, "\n");
   fprintf( stderr, "%s %s\n",   argv[0],
@@ -46,6 +59,7 @@ void printfHelp(int argc OYJL_UNUSED, char ** argv)
   fprintf( stderr, "      %s [-j|-c|-k|-p|-s STRING] [-v] [-i FILE_NAME] [-x PATH]\n",        argv[0]);
   fprintf( stderr, "        -j\tprint JSON - default mode\n");
   fprintf( stderr, "        -y\tprint YAML - better human readable\n");
+  fprintf( stderr, "        -m\tprint XML  - for XML parsers\n");
   fprintf( stderr, "        -c\tprint node count\n");
   fprintf( stderr, "        -k\tprint key name\n");
   fprintf( stderr, "        -p\tprint all matching paths\n");
@@ -82,6 +96,7 @@ void printfHelp(int argc OYJL_UNUSED, char ** argv)
 typedef enum {
   JSON,
   YAML,
+  XML,
   COUNT,
   TYPE,
   KEY,
@@ -118,6 +133,18 @@ int main(int argc, char ** argv)
     show = YAML;
   }
   else
+  if(strstr(argv[0],"jsontoxml"))
+  {
+    if(argc > 1)
+      input_file_name = argv[1];
+    else
+    {
+      printfHelp(argc, argv);
+      exit (0);
+    }
+    show = XML;
+  }
+  else
   if(argc >= 2)
   {
     int pos = 1, i;
@@ -135,6 +162,7 @@ int main(int argc, char ** argv)
               case 'c': show = COUNT; break;
               case 'j': show = JSON; break;
               case 'k': show = KEY; break;
+              case 'm': show = XML; break;
               case 'p': show = PATHS; break;
               case 's': OY_PARSE_STRING_ARG(value_string); break;
               case 't': show = TYPE; break;
@@ -227,7 +255,7 @@ int main(int argc, char ** argv)
         if(value)
           oyjlValueSetString( value, value_string );
         else
-          oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT_"obtained no leave for xpath \"%s\" from JSON:\t\"%s\"",
+          oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT_"obtained no leaf for xpath \"%s\" from JSON:\t\"%s\"",
                          OYJL_DBG_ARGS_, xpath, input_file_name );
       }
 
@@ -245,6 +273,7 @@ int main(int argc, char ** argv)
   {
     case JSON:
     case YAML:
+    case XML:
       {
         char * text = NULL;
         int level = 0;
@@ -253,6 +282,11 @@ int main(int argc, char ** argv)
         else if(show == YAML)
         {
           oyjlTreeToYaml( value_string ? root : value, &level, &text );
+          oyjlStringAdd( &text, 0,0, "\n" );
+        }
+        else if(show == XML)
+        {
+          oyjlTreeToXml( value_string ? root : value, &level, &text );
           oyjlStringAdd( &text, 0,0, "\n" );
         }
         if(text)
