@@ -12,6 +12,10 @@
  *  @since    2008/12/04
  */
 
+#ifndef OYJL_TEST_MAIN_H
+#define OYJL_TEST_MAIN_H
+
+#include "oyjl_test.h"
 
 /*  main */
 int main(int argc, char** argv)
@@ -90,3 +94,4 @@ int main(int argc, char** argv)
   return error;
 }
 
+#endif /* OYJL_TEST_MAIN_H */
