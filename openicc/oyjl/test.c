@@ -1,8 +1,8 @@
 /** @file test.c
  *
- *  Oyranos is an open source Color Management System 
+ *  Oyranos is an open source Color Management System
  *
- *  Copyright (C) 2004-2018  Kai-Uwe Behrmann
+ *  Copyright (C) 2004-2019  Kai-Uwe Behrmann
  *
  *  @brief    Oyranos test suite
  *  @internal
@@ -14,11 +14,13 @@
 
 #define TESTS_RUN \
   TEST_RUN( testVersion, "Version matching", 1 ); \
-  TEST_RUN( testJson, "JSON handling", 1 );
+  TEST_RUN( testJson, "JSON handling", 1 ); \
+  TEST_RUN( testFromJson, "Data Writers", 1 ); \
+  TEST_RUN( testJsonRoundtrip, "Data Readers", 1 );
 
-#include "oyjl_test.h"
-#include "oyjl.h"
+#include "oyjl_test_main.h"
 #include "oyjl_version.h"
+#include "oyjl.h"
 #ifdef HAVE_LOCALE_H
 #include <locale.h>
 #endif
@@ -211,9 +213,155 @@ oyjlTESTRESULT_e testJson ()
   return result;
 }
 
+oyjlTESTRESULT_e testFromJson ()
+{
+  oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
+
+  fprintf(stdout, "\n" );
+
+  const char * json = "{\"org\":{\"free\":[{\"s1key_a\":\"val_a\",\"s1key_b\":\"val_b\"},{\"@s2attribute_c\":\"val_c\",\"@text\":\"inner string d\"}],\"key_e\":\"val_e\",\"@attribute_f\":\"val_f\",\"dc.node\":{\"@text\":\"inner string g\",\"@attr_h\":\"val_h\"},\"val_i\":1234,\"val_j\":true,\"val_k\":false,\"val_l\":12.34,\"val_m\":[1,2,3,4.5]}}";
+  char error_buffer[128];
+  char * text = 0;
+  int level = 0;
+
+  oyjl_val root = 0;
+
+  root = oyjlTreeParse( json, error_buffer, 128 );
+
+  oyjlTreeToJson( root, &level, &text );
+  if(text && text[0] && strlen(text) > 20)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlTreeToJson()                     %lu", (unsigned long)strlen(text) );
+    fprintf( zout, "%s\n", text );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlTreeToJson()                                " );
+  }
+  myDeAllocFunc(text);
+
+  text = NULL;
+  oyjlTreeToYaml( root, &level, &text );
+  if(text && text[0] && strlen(text) > 20)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlTreeToYaml()                     %lu", (unsigned long)strlen(text) );
+    fprintf( zout, "%s\n", text );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlTreeToYaml()                                " );
+  }
+  myDeAllocFunc(text);
+
+  text = NULL;
+  oyjlTreeToXml( root, &level, &text );
+  if(text && text[0] && strlen(text) > 20)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlTreeToXml ()                     %lu", (unsigned long)strlen(text) );
+    fprintf( zout, "%s\n", text );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlTreeToXml ()                                " );
+  }
+  myDeAllocFunc(text);
+
+  oyjlTreeFree( root );
+
+  return result;
+}
+
+oyjlTESTRESULT_e testJsonRoundtrip ()
+{
+  oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
+
+  fprintf(stdout, "\n" );
+
+  const char * json = "{\"org\":{\"free\":[{\"s1key_a\":\"val_a\",\"s1key_b\":\"val_b\"},{\"@s2attribute_c\":\"val_c\",\"@text\":\"inner string d\"}],\"key_e\":\"val_e\",\"@xmlns:xsi\":\"http://www.w3.org/2001/XMLSchema-instance\",\"@attribute_f\":\"val_f\",\"xsi:node\":{\"@text\":\"inner string g\",\"@attr_h\":\"val_h\"},\"val_i\":1234,\"val_j\":true,\"val_k\":false,\"val_l\":12.34,\"val_m\":[0.0,1,2,3,4.5]}}";
+  char error_buffer[128] = {0};
+  char * text = NULL,
+       * text_to_xml = NULL,
+       * text_from_xml = NULL;
+  int level = 0;
+
+  oyjl_val root = 0;
+
+  root = oyjlTreeParse( json, error_buffer, 128 );
+
+  oyjlTreeToJson( root, &level, &text );
+  if(text && text[0] && strlen(text) > 20)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlTreeToJson()                     %lu", (unsigned long)strlen(text) );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlTreeToJson()                                " );
+  }
+
+  oyjlTreeToXml( root, &level, &text_to_xml );
+  oyjlTreeFree( root ); root = NULL;
+
+
+#if defined(OYJL_HAVE_LIBXML2)
+  root = oyjlTreeParseXml( text_to_xml, OYJL_NUMBER_DETECTION, error_buffer, 128 );
+  level = 0;
+  oyjlTreeToJson( root, &level, &text_from_xml );
+  if(text && text_from_xml && strlen(text_from_xml) == strlen(text))
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlTreeToXml () <-> oyjlTreeParseXml ()        " );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlTreeToXml () <-> oyjlTreeParseXml ()        " );
+    fprintf( zout, "%s\n", text );
+    fprintf( zout, "%s\n", text_from_xml );
+  }
+  oyjlTreeFree( root ); root = NULL;
+  myDeAllocFunc(text_from_xml); text_from_xml = NULL;
+  myDeAllocFunc(text_to_xml); text_to_xml = NULL;
+  myDeAllocFunc(text); text = NULL;
+
+  char * xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n\
+<org xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" attribute_f=\"val_f\">\n\
+  <free>\n\
+    <s1key_a>val_a</s1key_a>\n\
+    <s1key_b>val_b</s1key_b>\n\
+  </free>\n\
+  <free s2attribute_c=\"val_c\">inner string d</free>\n\
+  <key_e>val_e</key_e>\n\
+  <xsi:node attr_h=\"val_h\">inner string g</xsi:node>\n\
+  <val_i>1234</val_i>\n\
+  <val_j>1</val_j>\n\
+  <val_k>0</val_k>\n\
+  <val_l>12.34</val_l>\n\
+  <val_m>0.0</val_m>\n\
+  <val_m>1</val_m>\n\
+  <val_m>2</val_m>\n\
+  <val_m>3</val_m>\n\
+  <val_m>4.5</val_m>\n\
+</org>";
+  root = oyjlTreeParseXml( xml, OYJL_NUMBER_DETECTION, error_buffer, 128 );
+  level = 0;
+  oyjlTreeToJson( root, &level, &text_from_xml );
+  oyjlTreeFree( root ); root = NULL;
+  root = oyjlTreeParse( text_from_xml, error_buffer, 128 );
+  level = 0;
+  oyjlTreeToXml( root, &level, &text_to_xml );
+  oyjlTreeFree( root ); root = NULL;
+  if(xml && text_to_xml && strlen(text_to_xml) == strlen(xml))
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlTreeParseXml () <-> oyjlTreeToXml ()        " );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlTreeParseXml () <-> oyjlTreeToXml ()        " );
+    fprintf( zout, "%s\n", xml );
+    fprintf( zout, "%s\n", text_from_xml );
+    fprintf( zout, "%s\n", text_to_xml );
+  }
+#endif
+  myDeAllocFunc(text_from_xml); text_from_xml = NULL;
+  myDeAllocFunc(text_to_xml); text_to_xml = NULL;
+  myDeAllocFunc(text); text = NULL;
+
+  return result;
+}
 
 
 /* --- end actual tests --- */
 
-#include "oyjl_test_main.h"
 
