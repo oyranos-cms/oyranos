@@ -1,6 +1,6 @@
 /** @file test.c
  *
- *  Oyranos is an open source Color Management System 
+ *  Oyranos is an open source Color Management System
  *
  *  Copyright (C) 2004-2018  Kai-Uwe Behrmann
  *
@@ -211,6 +211,37 @@ oyjlTESTRESULT_e testTree ()
   fprintf( zout, "%s\n", rjson );
   myDeAllocFunc( rjson ); rjson = NULL;
 
+  value = oyjlTreeGetValue( root, 0, "new/[0]" );
+  int count = oyjlValueCount( value );
+  if(count == 1)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlTreeGetValue(root, 0, \"new/[0]\") oyjlValueCount() %i", count );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlTreeGetValue(root, 0, \"new/[0]\") oyjlValueCount() %i", count );
+  }
+
+  value = oyjlTreeGetValue( root, 0, "new/[]" );
+  count = oyjlValueCount( value );
+  if(count == 1)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlTreeGetValue(root, 0, \"new/[]\")  oyjlValueCount() %i", count );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlTreeGetValue(root, 0, \"new/[]\")  oyjlValueCount() %i", count );
+  }
+
+  value = oyjlTreeGetValue( root, OYJL_CREATE_NEW, "new/[]" );
+  count = oyjlValueCount( value );
+  if(count == 1)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlTreeGetValue(root, OYJL_CREATE_NEW, \"new/[]\") oyjlValueCount() %i", count );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlTreeGetValue(root, OYJL_CREATE_NEW, \"new/[]\") oyjlValueCount() %i", count );
+  }
+
+
   value = oyjlTreeGetValue( root, 0, "new/tree/key" );
 #define VALUE "value-\"one\""
   oyjlValueSetString( value, VALUE );
@@ -226,6 +257,7 @@ oyjlTESTRESULT_e testTree ()
   len = strlen(rjson);
   myDeAllocFunc( rjson ); rjson = NULL;
 
+  value = oyjlTreeGetValue( root, 0, "new/tree/key" );
   char * v = oyjlValueText(value, myAllocFunc);
   if(v && strlen(v) == strlen(VALUE))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
