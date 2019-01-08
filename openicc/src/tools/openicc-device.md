@@ -19,21 +19,23 @@ Manipulation of OpenICC color management data base device entries.
 
 * \-l|\-\-list\-devices	List Devices
 * \-d|\-\-device *NUMBER*	Device position
-* \-j|\-\-dump\-json	Dump JSON
+* \-j|\-\-dump\-json	Dump OpenICC JSON
 * \-n|\-\-long	List all key/values pairs
+* \-b|\-\-db\-file *FILENAME*	DB File Name: File Name of OpenICC Device Data Base JSON
 
 ### Add Device to DB
 **openicc\-device** \-a \-f *FILENAME* [\-b *FILENAME*] [\-v]
 
 * \-a|\-\-add	Add Device to DB
-* \-f|\-\-file\-name *FILENAME*	File Name
-   * \-f device\-file\-name.json		# Device File
+* \-f|\-\-file\-name *FILENAME*	File Name: The File Name of the OpenICC Device in Json format.
+* \-b|\-\-db\-file *FILENAME*	DB File Name: File Name of OpenICC Device Data Base JSON
 
 ### Erase a Devices from the DB
 **openicc\-device** \-e \-d *NUMBER* [\-b *FILENAME*] [\-v]
 
 * \-e|\-\-erase\-device	Erase Devices
 * \-d|\-\-device *NUMBER*	Device position
+* \-b|\-\-db\-file *FILENAME*	DB File Name: File Name of OpenICC Device Data Base JSON
 
 ### Show Filepath to the DB
 **openicc\-device** \-p [\-s] [\-v]
@@ -43,8 +45,7 @@ Manipulation of OpenICC color management data base device entries.
 
 ### General options
 
-* \-b|\-\-db\-file *FILENAME*	DB File Name
-   * \-b DB\-file\-name.json		# DB File
+* \-b|\-\-db\-file *FILENAME*	DB File Name: File Name of OpenICC Device Data Base JSON
 * \-X|\-\-export *json|json+command|man|markdown*	Export formated text: Get UI converted into text formats
    * \-X json		# Json
    * \-X json+command		# Json + Command

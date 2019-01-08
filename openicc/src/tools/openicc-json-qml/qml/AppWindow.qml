@@ -89,9 +89,7 @@ ApplicationWindow {
     property string logo;
     property string icon;
     onIconChanged: {
-        var name = icon
         appData.setWindowIcon( icon ) // set window icon
-        statusText = "new icon: " + name
     }
 
     // DEBUG

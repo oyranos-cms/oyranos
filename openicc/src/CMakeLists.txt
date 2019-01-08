@@ -111,6 +111,26 @@ MESSAGE( "GetText: ${GETTEXT_FOUND}" )
 IF( GETTEXT_FOUND )
   SET( USE_GETTEXT TRUE )
   SET( OI_LOCALEDIR "${CMAKE_INSTALL_FULL_LOCALEDIR}" )
+
+  SET( LINGUAS ${CMAKE_SOURCE_DIR}/po/cs.po
+               ${CMAKE_SOURCE_DIR}/po/de.po
+               ${CMAKE_SOURCE_DIR}/po/eo.po
+               ${CMAKE_SOURCE_DIR}/po/eu.po
+               ${CMAKE_SOURCE_DIR}/po/fr.po
+               ${CMAKE_SOURCE_DIR}/po/ru.po
+     )
+  FOREACH( lang ${LINGUAS} )
+    GET_FILENAME_COMPONENT(_absFile ${lang} ABSOLUTE)
+    GET_FILENAME_COMPONENT(_abs_PATH ${_absFile} PATH)
+    GET_FILENAME_COMPONENT(_lang ${_absFile} NAME_WE)
+    SET( OI_LINGUAS ${OI_LINGUAS} ${_lang} )
+    SET( OI_LINGUAS_GMO_FILES ${OI_LINGUAS_GMO_FILES} " ${CMAKE_BINARY_DIR}/src/${_lang}.gmo" )
+  ENDFOREACH( lang )
+  SET( OI_LINGUAS_FULL cs_CZ de_DE eo eu fr_FR ru_RU )
+  SET( OI_LINGUAS ${OI_LINGUAS} PARENT_SCOPE )
+  SET( OI_LINGUAS_FULL ${OI_LINGUAS_FULL} PARENT_SCOPE )
+  SET( OI_LINGUAS_PO_FILES ${LINGUAS} PARENT_SCOPE )
+  SET( OI_LINGUAS_GMO_FILES ${OI_LINGUAS_GMO_FILES} PARENT_SCOPE )
 ENDIF()
 
 # debug
@@ -150,9 +170,9 @@ SET( DOC_SOURCES
 
 # i18n
 IF( GETTEXT_FOUND )
-  SET(_potFile ${CMAKE_SOURCE_DIR}/po/${PROJECT_NAME}.pot)
-  #SET( _xgettext_option_list --language=C --keyword=_ --keyword=N_ --keyword=C_:1c,2 --keyword=NC_:1c,2 -s --package-name=${PROJECT_NAME} --package-version=${${PROJECT_NAME}_MAJOR_VERSION}.${${PROJECT_NAME}_MINOR_VERSION} )
-  SET( _xgettext_option_list --add-comments --keyword=gettext --flag=gettext:1:pass-c-format --keyword=_ --flag=_:1:pass-c-format --keyword=N_ --flag=N_:1:pass-c-format  --copyright-holder='Kai-Uwe Behrmann'  --msgid-bugs-address='ku.b@gmx.de' --from-code=utf-8 --package-name=${PROJECT_NAME} --package-version=${${PROJECT_NAME}_MAJOR_VERSION}.${${PROJECT_NAME}_MINOR_VERSION} )
+  SET(_potFile ${CMAKE_CURRENT_SOURCE_DIR}/../po/${PROJECT_DOWN_NAME}.pot)
+  #SET( _xgettext_option_list --language=C --keyword=_ --keyword=N_ --keyword=C_:1c,2 --keyword=NC_:1c,2 -s --package-name=${PROJECT_DOWN_NAME} --package-version=${${PROJECT_NAME}_MAJOR_VERSION}.${${PROJECT_NAME}_MINOR_VERSION} )
+  SET( _xgettext_option_list --add-comments --keyword=gettext --flag=gettext:1:pass-c-format --keyword=_ --flag=_:1:pass-c-format --keyword=N_ --flag=N_:1:pass-c-format  --copyright-holder='Kai-Uwe Behrmann'  --msgid-bugs-address='ku.b@gmx.de' --from-code=utf-8 --package-name=${PROJECT_DOWN_NAME} --package-version=${${PROJECT_NAME}_MAJOR_VERSION}.${${PROJECT_NAME}_MINOR_VERSION} )
   SET( XGETTEXT_CMD xgettext )
   FILE( GLOB SRC_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
         libopenicc/*.c
@@ -170,5 +190,12 @@ IF( GETTEXT_FOUND )
   SET( LINGUAS ../po/cs.po ../po/de.po ../po/eo.po ../po/eu.po  ../po/fr.po ../po/ru.po )
   # compile translations always to have them ready for installation
   GETTEXT_CREATE_TRANSLATIONS( ${_potFile} ALL ${LINGUAS} )
+
+  ADD_CUSTOM_COMMAND( OUTPUT ${PROJECT_DOWN_NAME}_gmo-cp
+    COMMAND for lang in ${OI_LINGUAS}\; do mkdir -p "${CMAKE_BINARY_DIR}/locale/$$lang/LC_MESSAGES/" \; cp "${CMAKE_CURRENT_BINARY_DIR}/$$lang.gmo" "${CMAKE_BINARY_DIR}/locale/$$lang/LC_MESSAGES/${PROJECT_DOWN_NAME}.mo" \; done
+    COMMENT "put ${PROJECT_DOWN_NAME}.mo files into ${CMAKE_BINARY_DIR}/locale/lang/LC_MESSAGES/ path for testing with LOCDIR"
+                    )
+  ADD_CUSTOM_TARGET( ${PROJECT_DOWN_NAME}_gmo ALL
+                     DEPENDS translations ${PROJECT_DOWN_NAME}_gmo-cp  )
 ENDIF()
 

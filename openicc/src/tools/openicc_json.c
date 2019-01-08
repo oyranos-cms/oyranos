@@ -145,7 +145,7 @@ int main(int argc, char ** argv)
     fprintf(stderr, "i18n test:\t\"%s\" %s\n", _("Usage"), textdomain(NULL) );
 
   if(file_name)
-    json = openiccOpenFile( file_name, &size );
+    json = openiccReadFile( file_name, &size );
 
   if(json)
   {

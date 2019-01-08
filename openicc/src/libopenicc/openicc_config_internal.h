@@ -33,7 +33,7 @@
 #ifdef USE_GETTEXT
 # include <libintl.h>
 # include <locale.h>
-# define _(text) dgettext( "OpenICC", text )
+# define _(text) dgettext( "openicc", text )
 #else
 # define _(text) text
 #endif
@@ -109,7 +109,7 @@ int  openiccMessageFunc              ( int/*openiccMSG_e*/ code,
                                        ... );
 
 
-char * openiccOpenFile( const char * file_name,
+char * openiccReadFile( const char * file_name,
                         int        * size_ptr );
 int    openiccWriteFile(const char * file_name,
                         void       * ptr,

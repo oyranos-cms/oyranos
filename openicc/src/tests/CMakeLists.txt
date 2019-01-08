@@ -10,7 +10,7 @@ ADD_CUSTOM_TARGET(check
 
 ADD_CUSTOM_COMMAND( OUTPUT test_openicc
                     DEPENDS test-openicc-static
-                    COMMAND valgrind --leak-check=full ./test-openicc-static )
+                    COMMAND OI_LOCALEDIR=${CMAKE_BINARY_DIR}/locale OI_DEBUG=1 valgrind --leak-check=full ./test-openicc-static )
 
 IF(USE_GCOV)
   MESSAGE("testing coverage using gcc's gcov; try target: coverage")

@@ -25,7 +25,7 @@
 
 
 
-char * openiccOpenFile( const char * file_name,
+char * openiccReadFile( const char * file_name,
                         int        * size_ptr )
 {
   FILE * fp = NULL;

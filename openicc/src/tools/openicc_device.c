@@ -101,38 +101,36 @@ int main(int argc, char ** argv)
                                        {"camera", _("Camera"), _("Camera"), ""},
                                        {"scanner", _("Scanner"), _("Scanner"), ""},
                                        {"","","",""}};
-  openiccOptionChoice_s f_choices[] = {{"device-file-name.json", _("Device File"), _("File Name of Device JSON"), ""},
-                                       {"","","",""}};
 
 
   /* declare options - the core information; use previously declared choices */
   openiccOption_s oarray[] = {
   /* type,   flags, o,  option,          key,  name,             description,         help, value_name,    value_type,        values, variable_type, result */
-    {"oiwi", 0,    'a', "add",           NULL, _("add"),         _("Add Device to DB"),NULL,NULL, openiccOPTIONTYPE_NONE,     {}, openiccINT,{.i=&add_device} },
-    {"oiwi", 0,    'b', "db-file",       NULL, _("db-file"),     _("DB File Name"),   NULL, _("FILENAME"), openiccOPTIONTYPE_CHOICE, {.choices.list = openiccMemDup(b_choices,sizeof(b_choices))}, openiccSTRING,{.s=&db_file} },
-    {"oiwi", 0,    'c', "device-class",  NULL, _("device-class"),_("Device Class"),   NULL, "monitor|printer|camera|scanner", openiccOPTIONTYPE_CHOICE, {.choices.list = openiccMemDup( c_choices, sizeof(c_choices) )}, openiccSTRING, {.s = &device_class} },
-    {"oiwi", 0,    'd', "device",        NULL, _("device"),      _("Device position"),NULL, _("NUMBER"), openiccOPTIONTYPE_DOUBLE, {.dbl.tick=1,.dbl.start=0,.dbl.end=10000}, openiccINT,{.i=&list_pos} },
-    {"oiwi", 0,    'e', "erase-device",  NULL, _("erase-device"),_("Erase Devices"),  NULL, NULL, openiccOPTIONTYPE_NONE,     {},      openiccINT,   {.i=&erase_device} },
-    {"oiwi", 0,    'f', "file-name",     NULL, _("file-name"),   _("File Name"),      NULL, _("FILENAME"), openiccOPTIONTYPE_CHOICE, {.choices.list = openiccMemDup(f_choices,sizeof(f_choices))}, openiccSTRING,{.s=&file_name} },
-    {"oiwi", 0,    'h', "help",          NULL, _("help"),        _("Help"),           NULL, NULL, openiccOPTIONTYPE_NONE,     {},      openiccINT,   {.i=&help} },
-    {"oiwi", 0,    'j', "dump-json",     NULL, _("dump-json"),   _("Dump JSON"),      NULL, NULL, openiccOPTIONTYPE_NONE,     {},      openiccINT,   {.i=&dump_json} },
-    {"oiwi", 0,    'l', "list-devices",  NULL, _("list-devices"),_("List Devices"),   NULL, NULL, openiccOPTIONTYPE_NONE,     {},     openiccINT,    {.i=&list_devices} },
-    {"oiwi", 0,    'n', "long",          NULL, _("long"),        _("List all key/values pairs"),  NULL, NULL, openiccOPTIONTYPE_NONE,     {},      openiccINT,   {.i=&list_long} },
-    {"oiwi", 0,    'p', "show-path",     NULL, _("show-path"),   _("Show Path"),      NULL, NULL, openiccOPTIONTYPE_NONE,     {},      openiccINT,   {.i=&show_path} },
-    {"oiwi", 0,    's', "scope",         NULL, _("scope"),       _("System"),         NULL, NULL, openiccOPTIONTYPE_NONE,     {},      openiccINT,   {.i=(int*)&scope} },
-    {"oiwi", 0,    'v', "verbose",       NULL, _("verbose"),     _("verbose"),        NULL, NULL, openiccOPTIONTYPE_NONE,     {},      openiccINT,   {.i=&verbose} },
+    {"oiwi", 0,    'a', "add",           NULL, _("Add"),         _("Add Device to DB"),NULL,NULL, openiccOPTIONTYPE_NONE,     {}, openiccINT,{.i=&add_device} },
+    {"oiwi", 0,    'b', "db-file",       NULL, _("DB File"),     _("DB File Name"),   _("File Name of OpenICC Device Data Base JSON"), _("FILENAME"), openiccOPTIONTYPE_STRING, {.suggest = "OpenICC_device_config_DB.json"}, openiccSTRING,{.s=&db_file} },
+    {"oiwi", 0,    'c', "device-class",  NULL, _("Device Class"),_("Device Class"),   NULL, "monitor|printer|camera|scanner", openiccOPTIONTYPE_CHOICE, {.choices.list = openiccMemDup( c_choices, sizeof(c_choices) )}, openiccSTRING, {.s = &device_class} },
+    {"oiwi", 0,    'd', "device",        NULL, _("Device"),      _("Device position"),NULL, _("NUMBER"), openiccOPTIONTYPE_DOUBLE, {.dbl.tick=1,.dbl.start=0,.dbl.end=100}, openiccINT,{.i=&list_pos} },
+    {"oiwi", 0,    'e', "erase-device",  NULL, _("Erase Device"),_("Erase Devices"),  NULL, NULL, openiccOPTIONTYPE_NONE,     {},      openiccINT,   {.i=&erase_device} },
+    {"oiwi", 0,    'f', "file-name",     NULL, _("File Name"),   _("File Name"),      _("The File Name of the OpenICC Device in Json format."), _("FILENAME"), openiccOPTIONTYPE_STRING, {.suggest = "device.json"}, openiccSTRING,{.s=&file_name} },
+    {"oiwi", 0,    'j', "dump-json",     NULL, _("OpenICC Json"),_("Dump OpenICC JSON"),NULL,NULL,openiccOPTIONTYPE_NONE,     {},      openiccINT,   {.i=&dump_json} },
+    {"oiwi", 0,    'h', "help",          NULL, _("Help"),        _("Help"),           NULL, NULL, openiccOPTIONTYPE_NONE,     {},      openiccINT,   {.i=&help} },
+    {"oiwi", 0,    'l', "list-devices",  NULL, _("List Devices"),_("List Devices"),   NULL, NULL, openiccOPTIONTYPE_NONE,     {},      openiccINT,   {.i=&list_devices} },
+    {"oiwi", 0,    'n', "long",          NULL, _("Long Format"), _("List all key/values pairs"),  NULL, NULL, openiccOPTIONTYPE_NONE, {},openiccINT, {.i=&list_long} },
+    {"oiwi", 0,    'p', "show-path",     NULL, _("Show Path"),   _("Show Path"),      NULL, NULL, openiccOPTIONTYPE_NONE,     {},      openiccINT,   {.i=&show_path} },
+    {"oiwi", 0,    's', "scope",         NULL, _("Scope"),       _("System"),         NULL, NULL, openiccOPTIONTYPE_NONE,     {},      openiccINT,   {.i=(int*)&scope} },
+    {"oiwi", 0,    'v', "verbose",       NULL, _("Verbose"),     _("verbose"),        NULL, NULL, openiccOPTIONTYPE_NONE,     {},      openiccINT,   {.i=&verbose} },
     /* default option template -X|--export */
     {"oiwi", 0,    'X', "export",        NULL, NULL,             NULL,                NULL, NULL, openiccOPTIONTYPE_CHOICE,   {},      openiccSTRING,{.s=&export} },
-    {"oiwi", 0,    'w', "write",         NULL, _("write"),       _("Write DB File"),  NULL, NULL, openiccOPTIONTYPE_NONE,     {},      openiccINT,   {.i=&write_db_file} },
+    {"oiwi", 0,    'w', "write",         NULL, _("Write"),       _("Write DB File"),  NULL, NULL, openiccOPTIONTYPE_NONE,     {},      openiccINT,   {.i=&write_db_file} },
     {"",0,0,0,0,0,0,0, NULL, 0,{},0,{}}
   };
 
   /* declare option groups, for better syntax checking and UI groups */
   openiccOptionGroup_s groups[] = {
   /* type,   flags, name,              description,                          help, mandatory, optional, detail */
-    {"oiwg", 0,     _("List Devices"), _("Print the Devices in the DB"),     NULL, "l",       "djnbv",  "ldjn" },
-    {"oiwg", 0,     _("Add Device"),   _("Add Device to DB"),                NULL, "af",      "bv",     "af" },
-    {"oiwg", 0,     _("Erase Device"), _("Erase a Devices from the DB"),     NULL, "ed",      "bv",     "ed" },
+    {"oiwg", 0,     _("List Devices"), _("Print the Devices in the DB"),     NULL, "l",       "djnbv",  "ldjnb" },
+    {"oiwg", 0,     _("Add Device"),   _("Add Device to DB"),                NULL, "af",      "bv",     "afb" },
+    {"oiwg", 0,     _("Erase Device"), _("Erase a Devices from the DB"),     NULL, "ed",      "bv",     "edb" },
     {"oiwg", 0,     _("Show DB Path"), _("Show Filepath to the DB"),         NULL, "p",       "sv",     "ps" },
     {"oiwg", 0,     _("Misc"),         _("General options"),                 NULL, "",        "",       "bXvh" },
     {"",0,0,0,0,0,0,0}
@@ -144,6 +142,24 @@ int main(int argc, char ** argv)
       "openicc-device", "OpenICC Device", _("OpenICC devices handling tool"), "openicc-logo",
       info, oarray, groups, NULL );
   if(!ui) return 0;
+
+  if((export && strcmp(export,"json+command") == 0))
+  {
+    const char * jcommands = "{\n\
+  \"command_set\": \"openicc-device\",\n\
+  \"comment\": \"command_set_delimiter - build key:value; default is '=' key=value\",\n\
+  \"comment\": \"command_set_option - use \\\"-s\\\" \\\"key\\\"; skip \\\"--\\\" direct in front of key\",\n\
+  \"command_get\": \"openicc-device\",\n\
+  \"command_get_args\": [\"-X\", \"json\"]\n\
+}";
+    char * json = openiccUi_ToJson( ui, 0 ),
+         * json_commands = strdup(jcommands);
+    json_commands[strlen(json_commands)-2] = ',';
+    json_commands[strlen(json_commands)-1] = '\000';
+    oyjlStringAdd( &json_commands, malloc, free, "%s", &json[1] );
+    puts( json_commands );
+    exit(0);
+  }
 
   if(!db_file)
   {
@@ -189,7 +205,7 @@ int main(int argc, char ** argv)
  
   {
     /* read JSON input file */
-    text = openiccOpenFile( db_file, &size );
+    text = openiccReadFile( db_file, &size );
 
     /* parse JSON */
     config = openiccConfig_FromMem( text );
@@ -212,7 +228,7 @@ int main(int argc, char ** argv)
   if(add_device)
   {
     if(file_name)
-      text = openiccOpenFile( file_name, &size );
+      text = openiccReadFile( file_name, &size );
     else
       error = openiccReadFileSToMem( stdin, &text, &size );
 

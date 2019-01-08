@@ -71,34 +71,34 @@
 <context>
     <name>AppWindow</name>
     <message>
-        <location filename="../qml/AppWindow.qml" line="117"/>
-        <location filename="../qml/AppWindow.qml" line="135"/>
+        <location filename="../qml/AppWindow.qml" line="115"/>
+        <location filename="../qml/AppWindow.qml" line="133"/>
         <source>discharging</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/AppWindow.qml" line="117"/>
+        <location filename="../qml/AppWindow.qml" line="115"/>
         <source>charging</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/AppWindow.qml" line="117"/>
+        <location filename="../qml/AppWindow.qml" line="115"/>
         <source>full</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/AppWindow.qml" line="118"/>
-        <location filename="../qml/AppWindow.qml" line="135"/>
+        <location filename="../qml/AppWindow.qml" line="116"/>
+        <location filename="../qml/AppWindow.qml" line="133"/>
         <source>Battery</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/AppWindow.qml" line="135"/>
+        <location filename="../qml/AppWindow.qml" line="133"/>
         <source>not used</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/AppWindow.qml" line="155"/>
+        <location filename="../qml/AppWindow.qml" line="153"/>
         <source>Busy</source>
         <translation type="unfinished"></translation>
     </message>
@@ -122,13 +122,13 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="263"/>
-        <location filename="../qml/main.qml" line="293"/>
+        <location filename="../qml/main.qml" line="272"/>
+        <location filename="../qml/main.qml" line="302"/>
         <source>Launched app for </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="418"/>
+        <location filename="../qml/main.qml" line="427"/>
         <source>Load failed</source>
         <translation type="unfinished"></translation>
     </message>

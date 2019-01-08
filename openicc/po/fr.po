@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: openicc\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2018-11-11 10:31+0100\n"
+"POT-Creation-Date: 2018-11-14 10:10+0100\n"
 "PO-Revision-Date: 2006-06-29 19:31+0200\n"
 "Last-Translator: Pascal LACROIX <lacroixpascal at vfemail.net>\n"
 "Language-Team: <fr@li.org>\n"
@@ -28,12 +28,17 @@ msgstr ""
 msgid "AUTHOR"
 msgstr ""
 
-#: tools/openicc_device.c:134
+#. type,   flags, o,  option,          key,  name,             description,         help, value_name,    value_type,        values, variable_type, result
+#: tools/openicc_device.c:109
+msgid "Add"
+msgstr ""
+
+#: tools/openicc_device.c:132
 #, fuzzy
 msgid "Add Device"
 msgstr "Couleur"
 
-#: tools/openicc_device.c:111 tools/openicc_device.c:134
+#: tools/openicc_device.c:109 tools/openicc_device.c:132
 msgid "Add Device to DB"
 msgstr ""
 
@@ -98,12 +103,12 @@ msgid "Could not setup db objetc"
 msgstr "Ouvrir Profil"
 
 #. declare some option choices
-#: tools/openicc_device.c:97
+#: tools/openicc_device.c:97 tools/openicc_device.c:110
 #, fuzzy
 msgid "DB File"
 msgstr "Fichier"
 
-#: tools/openicc_device.c:112
+#: tools/openicc_device.c:110
 msgid "DB File Name"
 msgstr ""
 
@@ -124,17 +129,17 @@ msgstr "Description"
 msgid "Development"
 msgstr ""
 
-#: tools/openicc_device.c:113
+#: tools/openicc_device.c:112
+#, fuzzy
+msgid "Device"
+msgstr "Couleur"
+
+#: tools/openicc_device.c:111
 #, fuzzy
 msgid "Device Class"
 msgstr "Couleur"
 
-#: tools/openicc_device.c:104
-#, fuzzy
-msgid "Device File"
-msgstr "Oyranos Préférences"
-
-#: tools/openicc_device.c:114
+#: tools/openicc_device.c:112
 #, fuzzy
 msgid "Device position"
 msgstr "Description"
@@ -151,8 +156,8 @@ msgstr ""
 msgid "Download"
 msgstr ""
 
-#: tools/openicc_device.c:118
-msgid "Dump JSON"
+#: tools/openicc_device.c:115
+msgid "Dump OpenICC JSON"
 msgstr ""
 
 #: libopenicc/openicc_args.c:1376
@@ -167,17 +172,17 @@ msgstr ""
 msgid "EXIT-STATE"
 msgstr ""
 
-#: tools/openicc_device.c:135
+#: tools/openicc_device.c:113 tools/openicc_device.c:133
 #, fuzzy
 msgid "Erase Device"
 msgstr "Couleur"
 
-#: tools/openicc_device.c:115
+#: tools/openicc_device.c:113
 #, fuzzy
 msgid "Erase Devices"
 msgstr "Couleur"
 
-#: tools/openicc_device.c:135
+#: tools/openicc_device.c:133
 msgid "Erase a Devices from the DB"
 msgstr ""
 
@@ -185,7 +190,7 @@ msgstr ""
 msgid "Export formated text"
 msgstr ""
 
-#: tools/openicc_device.c:112 tools/openicc_device.c:116
+#: tools/openicc_device.c:110 tools/openicc_device.c:114
 msgid "FILENAME"
 msgstr ""
 
@@ -193,14 +198,15 @@ msgstr ""
 msgid "FILES"
 msgstr ""
 
-#: tools/openicc_device.c:116
+#: tools/openicc_device.c:114
 #, fuzzy
 msgid "File Name"
 msgstr "Fichier"
 
-#: tools/openicc_device.c:104
-msgid "File Name of Device JSON"
-msgstr ""
+#: tools/openicc_device.c:110
+#, fuzzy
+msgid "File Name of OpenICC Device Data Base JSON"
+msgstr "Couleur"
 
 #: tools/openicc_device.c:97
 msgid "File Name of device JSON Data Base"
@@ -218,7 +224,7 @@ msgstr ""
 msgid "GUI + Command"
 msgstr ""
 
-#: tools/openicc_device.c:137
+#: tools/openicc_device.c:135
 #, fuzzy
 msgid "General options"
 msgstr "Options"
@@ -252,7 +258,7 @@ msgstr ""
 msgid "HISTORY"
 msgstr ""
 
-#: tools/openicc_device.c:117
+#: tools/openicc_device.c:116
 msgid "Help"
 msgstr ""
 
@@ -270,13 +276,17 @@ msgid "License"
 msgstr ""
 
 #. type,   flags, name,              description,                          help, mandatory, optional, detail
-#: tools/openicc_device.c:119 tools/openicc_device.c:133
+#: tools/openicc_device.c:117 tools/openicc_device.c:131
 #, fuzzy
 msgid "List Devices"
 msgstr "Oyranos Préférences"
 
-#: tools/openicc_device.c:120
+#: tools/openicc_device.c:118
 msgid "List all key/values pairs"
+msgstr ""
+
+#: tools/openicc_device.c:118
+msgid "Long Format"
 msgstr ""
 
 #: libopenicc/openicc_args.c:179
@@ -284,7 +294,7 @@ msgstr ""
 msgid "Man"
 msgstr "Magenta"
 
-#: tools/openicc_device.c:142
+#: tools/openicc_device.c:140
 msgid "Manipulation of OpenICC color management data base device entries."
 msgstr ""
 
@@ -297,7 +307,7 @@ msgstr "Fabricant:   "
 msgid "Markdown"
 msgstr ""
 
-#: tools/openicc_device.c:137
+#: tools/openicc_device.c:135
 msgid "Misc"
 msgstr ""
 
@@ -311,7 +321,7 @@ msgstr "Options"
 msgid "Monitor"
 msgstr "Écran Profil"
 
-#: tools/openicc_device.c:114
+#: tools/openicc_device.c:112
 msgid "NUMBER"
 msgstr ""
 
@@ -331,11 +341,16 @@ msgstr ""
 msgid "OPTIONS"
 msgstr ""
 
+#: tools/openicc_device.c:115
+#, fuzzy
+msgid "OpenICC Json"
+msgstr "ICC Examin Version"
+
 #: libopenicc/openicc_args.c:1192
 msgid "OpenICC Module Author"
 msgstr ""
 
-#: tools/openicc_device.c:144
+#: tools/openicc_device.c:142
 msgid "OpenICC devices handling tool"
 msgstr ""
 
@@ -355,7 +370,7 @@ msgstr ""
 msgid "Option not supported"
 msgstr ""
 
-#: libopenicc/openicc_db.c:153 tools/openicc_device.c:172
+#: libopenicc/openicc_db.c:153 tools/openicc_device.c:188
 msgid "Paths:"
 msgstr ""
 
@@ -363,7 +378,7 @@ msgstr ""
 msgid "Print a help text:"
 msgstr ""
 
-#: tools/openicc_device.c:133
+#: tools/openicc_device.c:131
 msgid "Print the Devices in the DB"
 msgstr ""
 
@@ -389,15 +404,19 @@ msgstr ""
 msgid "Scanner"
 msgstr "Oyranos Préférences"
 
-#: tools/openicc_device.c:136
+#: tools/openicc_device.c:120
+msgid "Scope"
+msgstr ""
+
+#: tools/openicc_device.c:134
 msgid "Show DB Path"
 msgstr ""
 
-#: tools/openicc_device.c:136
+#: tools/openicc_device.c:134
 msgid "Show Filepath to the DB"
 msgstr ""
 
-#: tools/openicc_device.c:121
+#: tools/openicc_device.c:119
 msgid "Show Path"
 msgstr ""
 
@@ -413,8 +432,12 @@ msgstr ""
 msgid "Synopsis"
 msgstr ""
 
-#: tools/openicc_device.c:122
+#: tools/openicc_device.c:120
 msgid "System"
+msgstr ""
+
+#: tools/openicc_device.c:114
+msgid "The File Name of the OpenICC Device in Json format."
 msgstr ""
 
 #: libopenicc/openicc_args.c:1163
@@ -441,6 +464,10 @@ msgstr ""
 msgid "Usage Error:"
 msgstr ""
 
+#: tools/openicc_device.c:121
+msgid "Verbose"
+msgstr ""
+
 #: libopenicc/openicc_args.c:1195
 #, fuzzy
 msgid "Version"
@@ -450,7 +477,12 @@ msgstr "ICC Examin Version"
 msgid "WARNING"
 msgstr ""
 
-#: tools/openicc_device.c:126
+#: tools/openicc_device.c:124
+#, fuzzy
+msgid "Write"
+msgstr "Model:"
+
+#: tools/openicc_device.c:124
 #, fuzzy
 msgid "Write DB File"
 msgstr "Ouvrir Profil"
@@ -463,47 +495,9 @@ msgstr ""
 msgid "Yes"
 msgstr "Oui"
 
-#. type,   flags, o,  option,          key,  name,             description,         help, value_name,    value_type,        values, variable_type, result
-#: tools/openicc_device.c:111
-msgid "add"
-msgstr ""
-
-#: tools/openicc_device.c:112
-msgid "db-file"
-msgstr ""
-
-#: tools/openicc_device.c:114
-#, fuzzy
-msgid "device"
-msgstr "Couleur"
-
-#: tools/openicc_device.c:113
-#, fuzzy
-msgid "device-class"
-msgstr "Couleur"
-
-#: tools/openicc_device.c:118
-msgid "dump-json"
-msgstr ""
-
-#: tools/openicc_device.c:115
-#, fuzzy
-msgid "erase-device"
-msgstr "Oyranos Préférences"
-
 #: libopenicc/openicc_args.c:191
 msgid "export"
 msgstr ""
-
-#: tools/openicc_device.c:116
-#, fuzzy
-msgid "file-name"
-msgstr "Fichier"
-
-#: tools/openicc_device.c:117
-#, fuzzy
-msgid "help"
-msgstr "Aide"
 
 #: tools/openicc_json.c:33
 msgid "is a JSON helper tool"
@@ -512,11 +506,6 @@ msgstr ""
 #: tools/openicc_json.c:55
 msgid "language specific wrap; -w C for C static char"
 msgstr ""
-
-#: tools/openicc_device.c:119
-#, fuzzy
-msgid "list-devices"
-msgstr "Oyranos Préférences"
 
 #: tools/openicc_json.c:46
 msgid ""
@@ -528,10 +517,6 @@ msgstr ""
 msgid "locales in a comma separated list"
 msgstr ""
 
-#: tools/openicc_device.c:120
-msgid "long"
-msgstr ""
-
 #: tools/openicc_json.c:53
 #, fuzzy
 msgid "output"
@@ -539,14 +524,6 @@ msgstr "Sortie"
 
 #: tools/openicc_json.c:40
 msgid "output format string"
-msgstr ""
-
-#: tools/openicc_device.c:122
-msgid "scope"
-msgstr ""
-
-#: tools/openicc_device.c:121
-msgid "show-path"
 msgstr ""
 
 #: tools/openicc_json.c:52
@@ -561,16 +538,12 @@ msgstr ""
 msgid "to be used key names in a comma separated list"
 msgstr ""
 
-#: tools/openicc_device.c:185
+#: tools/openicc_device.c:201
 msgid "unable to open data base"
 msgstr ""
 
-#: tools/openicc_device.c:123 tools/openicc_json.c:56
+#: tools/openicc_device.c:121 tools/openicc_json.c:56
 msgid "verbose"
-msgstr ""
-
-#: tools/openicc_device.c:126
-msgid "write"
 msgstr ""
 
 #~ msgid " with "
@@ -983,6 +956,10 @@ msgstr ""
 #~ msgstr "Couleur"
 
 #, fuzzy
+#~ msgid "Device File"
+#~ msgstr "Oyranos Préférences"
+
+#, fuzzy
 #~ msgid "Device Manufacturer"
 #~ msgstr "Fabricant:   "
 
@@ -1152,10 +1129,6 @@ msgstr ""
 
 #, fuzzy
 #~ msgid "ICC Examin: Report"
-#~ msgstr "ICC Examin Version"
-
-#, fuzzy
-#~ msgid "ICC Version"
 #~ msgstr "ICC Examin Version"
 
 #, fuzzy
@@ -1762,10 +1735,6 @@ msgstr ""
 #~ msgstr "Blanc"
 
 #, fuzzy
-#~ msgid "Write PPM"
-#~ msgstr "Model:"
-
-#, fuzzy
 #~ msgid "Write to ICC profile:"
 #~ msgstr "ICC Profils"
 
@@ -1800,10 +1769,6 @@ msgstr ""
 #~ msgstr "Espace colorimétrique"
 
 #, fuzzy
-#~ msgid "create OpenICC device color state JSON"
-#~ msgstr "Couleur"
-
-#, fuzzy
 #~ msgid "create OpenICC device color state JSON including the rank map"
 #~ msgstr "Couleur"
 
@@ -1818,6 +1783,10 @@ msgstr ""
 #, fuzzy
 #~ msgid "create_profile"
 #~ msgstr "Ouvrir Profil"
+
+#, fuzzy
+#~ msgid "device-class"
+#~ msgstr "Couleur"
 
 #, fuzzy
 #~ msgid "device_class not found:"
@@ -1840,8 +1809,16 @@ msgstr ""
 #~ msgstr "Couleur"
 
 #, fuzzy
+#~ msgid "erase-device"
+#~ msgstr "Oyranos Préférences"
+
+#, fuzzy
 #~ msgid "extract ICC color profile"
 #~ msgstr "ICC Profils"
+
+#, fuzzy
+#~ msgid "file-name"
+#~ msgstr "Fichier"
 
 #, fuzzy
 #~ msgid "gamma"
@@ -1852,6 +1829,10 @@ msgstr ""
 
 #~ msgid "gray"
 #~ msgstr "gris"
+
+#, fuzzy
+#~ msgid "help"
+#~ msgstr "Aide"
 
 #, fuzzy
 #~ msgid "input class"
@@ -1899,6 +1880,10 @@ msgstr ""
 
 #, fuzzy
 #~ msgid "is a policy administration tool"
+#~ msgstr "Oyranos Préférences"
+
+#, fuzzy
+#~ msgid "list-devices"
 #~ msgstr "Oyranos Préférences"
 
 #, fuzzy

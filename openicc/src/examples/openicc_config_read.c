@@ -93,7 +93,7 @@ int main(int argc, char ** argv)
 
   /* read JSON input file */
   if(file) file_name = file;
-  text = openiccOpenFile( file_name, &size );
+  text = openiccReadFile( file_name, &size );
   if(!text)
   {
     openiccOptions_PrintHelp( ui->opts, ui, verbose, "%s example tool", argv[0] );

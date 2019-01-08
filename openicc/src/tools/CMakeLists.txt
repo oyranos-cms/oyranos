@@ -6,7 +6,7 @@ TARGET_LINK_LIBRARIES( openicc-device OpenICC ${EXTRA_LIBS} )
 ADD_EXECUTABLE( oi-json "${CMAKE_CURRENT_SOURCE_DIR}/openicc_json.c" )
 TARGET_LINK_LIBRARIES( oi-json OpenICC ${EXTRA_LIBS} )
 
-IF( ENABLE_INSTALL_OPENICC )
+IF( ENABLE_INSTALL_${PROJECT_UP_NAME} )
   INSTALL (TARGETS openicc-device DESTINATION ${CMAKE_INSTALL_BINDIR})
   INSTALL (TARGETS oi-json DESTINATION ${CMAKE_INSTALL_BINDIR})
   ADD_CUSTOM_TARGET( openicc-device.md ALL
@@ -16,11 +16,11 @@ IF( ENABLE_INSTALL_OPENICC )
     COMMENT "Extract markdown formated manual page from tool"
   )
   ADD_CUSTOM_TARGET( openicc-device-de.md ALL
-    COMMAND PATH=. LANG=de_DE.UTF8 openicc-device -X markdown > ${CMAKE_CURRENT_SOURCE_DIR}/openicc-device-de.md
+    COMMAND PATH=. LANG=de_DE.UTF8 OI_LOCALEDIR=${CMAKE_BINARY_DIR}/locale openicc-device -X markdown > ${CMAKE_CURRENT_SOURCE_DIR}/openicc-device-de.md
     DEPENDS openicc-device
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     COMMENT "Extrahiere markdown formatiertes Handbuch von Werkzeug"
   )
-ENDIF( ENABLE_INSTALL_OPENICC )
+ENDIF( ENABLE_INSTALL_${PROJECT_UP_NAME} )
 
 ADD_SUBDIRECTORY( openicc-json-qml )

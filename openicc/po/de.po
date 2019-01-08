@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2018-11-11 10:31+0100\n"
+"POT-Creation-Date: 2018-11-14 10:10+0100\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -31,11 +31,16 @@ msgstr "... versuche bitte die --help|-h Option für einen Hilfetext. Gebe auf"
 msgid "AUTHOR"
 msgstr "AUTOR"
 
-#: tools/openicc_device.c:134
+#. type,   flags, o,  option,          key,  name,             description,         help, value_name,    value_type,        values, variable_type, result
+#: tools/openicc_device.c:109
+msgid "Add"
+msgstr "Addiere"
+
+#: tools/openicc_device.c:132
 msgid "Add Device"
 msgstr "Trage Gerät ein"
 
-#: tools/openicc_device.c:111 tools/openicc_device.c:134
+#: tools/openicc_device.c:109 tools/openicc_device.c:132
 msgid "Add Device to DB"
 msgstr "Trage Gerät in die DB ein"
 
@@ -94,11 +99,11 @@ msgid "Could not setup db objetc"
 msgstr "Konnte DB Objekt nicht erstellen"
 
 #. declare some option choices
-#: tools/openicc_device.c:97
+#: tools/openicc_device.c:97 tools/openicc_device.c:110
 msgid "DB File"
 msgstr "DB Datei"
 
-#: tools/openicc_device.c:112
+#: tools/openicc_device.c:110
 msgid "DB File Name"
 msgstr "DB Dateiname"
 
@@ -118,15 +123,15 @@ msgstr "Beschreibung"
 msgid "Development"
 msgstr "Entwicklung"
 
-#: tools/openicc_device.c:113
+#: tools/openicc_device.c:112
+msgid "Device"
+msgstr "Geräte"
+
+#: tools/openicc_device.c:111
 msgid "Device Class"
 msgstr "Geräteklasse"
 
-#: tools/openicc_device.c:104
-msgid "Device File"
-msgstr "Gerätedatei"
-
-#: tools/openicc_device.c:114
+#: tools/openicc_device.c:112
 msgid "Device position"
 msgstr "Gerätebeposition"
 
@@ -142,9 +147,9 @@ msgstr "Doppelte Option"
 msgid "Download"
 msgstr "Bezugsquelle"
 
-#: tools/openicc_device.c:118
-msgid "Dump JSON"
-msgstr "Schreibe Json"
+#: tools/openicc_device.c:115
+msgid "Dump OpenICC JSON"
+msgstr "Schreibe OpenICC Json"
 
 #: libopenicc/openicc_args.c:1376
 msgid "ENVIRONMENT VARIABLES"
@@ -158,15 +163,15 @@ msgstr "BEISPIELE"
 msgid "EXIT-STATE"
 msgstr "EXIT-STATUS"
 
-#: tools/openicc_device.c:135
+#: tools/openicc_device.c:113 tools/openicc_device.c:133
 msgid "Erase Device"
 msgstr "Lösche Gerät"
 
-#: tools/openicc_device.c:115
+#: tools/openicc_device.c:113
 msgid "Erase Devices"
 msgstr "Lösche Geräte"
 
-#: tools/openicc_device.c:135
+#: tools/openicc_device.c:133
 msgid "Erase a Devices from the DB"
 msgstr "Lösche Gerät von der DB"
 
@@ -174,7 +179,7 @@ msgstr "Lösche Gerät von der DB"
 msgid "Export formated text"
 msgstr "Exportiere formatierten Text"
 
-#: tools/openicc_device.c:112 tools/openicc_device.c:116
+#: tools/openicc_device.c:110 tools/openicc_device.c:114
 msgid "FILENAME"
 msgstr "DATEINAME"
 
@@ -182,13 +187,13 @@ msgstr "DATEINAME"
 msgid "FILES"
 msgstr "DATEIEN"
 
-#: tools/openicc_device.c:116
+#: tools/openicc_device.c:114
 msgid "File Name"
 msgstr "Dateiname"
 
-#: tools/openicc_device.c:104
-msgid "File Name of Device JSON"
-msgstr "Dateiname des Geräte Json"
+#: tools/openicc_device.c:110
+msgid "File Name of OpenICC Device Data Base JSON"
+msgstr "Dateiname der OpenICC Json Gerätedatenbank"
 
 #: tools/openicc_device.c:97
 msgid "File Name of device JSON Data Base"
@@ -206,7 +211,7 @@ msgstr "GUI"
 msgid "GUI + Command"
 msgstr "GUI + Kommando"
 
-#: tools/openicc_device.c:137
+#: tools/openicc_device.c:135
 msgid "General options"
 msgstr "Allgemeine Optionen"
 
@@ -238,7 +243,7 @@ msgstr "Hole formatierten Text"
 msgid "HISTORY"
 msgstr "GESCHICHTE"
 
-#: tools/openicc_device.c:117
+#: tools/openicc_device.c:116
 msgid "Help"
 msgstr "Hilfe"
 
@@ -256,19 +261,23 @@ msgid "License"
 msgstr "Lizenz"
 
 #. type,   flags, name,              description,                          help, mandatory, optional, detail
-#: tools/openicc_device.c:119 tools/openicc_device.c:133
+#: tools/openicc_device.c:117 tools/openicc_device.c:131
 msgid "List Devices"
 msgstr "Zeige Geräte"
 
-#: tools/openicc_device.c:120
+#: tools/openicc_device.c:118
 msgid "List all key/values pairs"
 msgstr "Zeige alle Schlüssel/Wertepaare"
+
+#: tools/openicc_device.c:118
+msgid "Long Format"
+msgstr "Langes Format"
 
 #: libopenicc/openicc_args.c:179
 msgid "Man"
 msgstr "Handbuch"
 
-#: tools/openicc_device.c:142
+#: tools/openicc_device.c:140
 msgid "Manipulation of OpenICC color management data base device entries."
 msgstr ""
 "Bearbeitung von Geräteeinträgen in der Datenbank für OpenICC Farbmanagement"
@@ -281,7 +290,7 @@ msgstr "Hersteller"
 msgid "Markdown"
 msgstr "Markdown"
 
-#: tools/openicc_device.c:137
+#: tools/openicc_device.c:135
 msgid "Misc"
 msgstr "Verschiedenes"
 
@@ -293,7 +302,7 @@ msgstr "Modul"
 msgid "Monitor"
 msgstr "Bildschirm"
 
-#: tools/openicc_device.c:114
+#: tools/openicc_device.c:112
 msgid "NUMBER"
 msgstr "NUMMER"
 
@@ -313,11 +322,15 @@ msgstr "Kein JSON erhalten für"
 msgid "OPTIONS"
 msgstr "OPTIONEN"
 
+#: tools/openicc_device.c:115
+msgid "OpenICC Json"
+msgstr "OpenICC Json"
+
 #: libopenicc/openicc_args.c:1192
 msgid "OpenICC Module Author"
 msgstr "Autor des OpenICC Modules"
 
-#: tools/openicc_device.c:144
+#: tools/openicc_device.c:142
 msgid "OpenICC devices handling tool"
 msgstr "OpenICC Gerätebearbeitungswerkzeug"
 
@@ -337,7 +350,7 @@ msgstr "Die Option erwartet ein Argument"
 msgid "Option not supported"
 msgstr "Die Option ist nicht unterstützt"
 
-#: libopenicc/openicc_db.c:153 tools/openicc_device.c:172
+#: libopenicc/openicc_db.c:153 tools/openicc_device.c:188
 msgid "Paths:"
 msgstr "Pfade:"
 
@@ -345,7 +358,7 @@ msgstr "Pfade:"
 msgid "Print a help text:"
 msgstr "Zeige einen Hilfetext an:"
 
-#: tools/openicc_device.c:133
+#: tools/openicc_device.c:131
 msgid "Print the Devices in the DB"
 msgstr "Zeige die Geräte aus der DB"
 
@@ -369,15 +382,19 @@ msgstr "ÜBERSICHT"
 msgid "Scanner"
 msgstr "Scanner"
 
-#: tools/openicc_device.c:136
+#: tools/openicc_device.c:120
+msgid "Scope"
+msgstr "Bereich"
+
+#: tools/openicc_device.c:134
 msgid "Show DB Path"
 msgstr "Zeige DB Pfad"
 
-#: tools/openicc_device.c:136
+#: tools/openicc_device.c:134
 msgid "Show Filepath to the DB"
 msgstr "Zeige den Dateipfad zur DB"
 
-#: tools/openicc_device.c:121
+#: tools/openicc_device.c:119
 msgid "Show Path"
 msgstr "Zeige Pfad"
 
@@ -393,9 +410,13 @@ msgstr "Unterstützung"
 msgid "Synopsis"
 msgstr "Übersicht"
 
-#: tools/openicc_device.c:122
+#: tools/openicc_device.c:120
 msgid "System"
 msgstr "System"
+
+#: tools/openicc_device.c:114
+msgid "The File Name of the OpenICC Device in Json format."
+msgstr "Der Dateiname des OpenICC Gerätes im Json Format."
 
 #: libopenicc/openicc_args.c:1163
 msgid "Tool"
@@ -421,6 +442,10 @@ msgstr "Benutzung"
 msgid "Usage Error:"
 msgstr "Benutzerfehler:"
 
+#: tools/openicc_device.c:121
+msgid "Verbose"
+msgstr "Plaudernd"
+
 #: libopenicc/openicc_args.c:1195
 msgid "Version"
 msgstr "Version"
@@ -429,7 +454,11 @@ msgstr "Version"
 msgid "WARNING"
 msgstr "WARNUNG"
 
-#: tools/openicc_device.c:126
+#: tools/openicc_device.c:124
+msgid "Write"
+msgstr "Schreibe"
+
+#: tools/openicc_device.c:124
 msgid "Write DB File"
 msgstr "Schreibe DB Datei"
 
@@ -441,42 +470,9 @@ msgstr "Schreiben mislungen für"
 msgid "Yes"
 msgstr "Ja"
 
-#. type,   flags, o,  option,          key,  name,             description,         help, value_name,    value_type,        values, variable_type, result
-#: tools/openicc_device.c:111
-msgid "add"
-msgstr "addiere"
-
-#: tools/openicc_device.c:112
-msgid "db-file"
-msgstr "db-datei"
-
-#: tools/openicc_device.c:114
-msgid "device"
-msgstr "gerät"
-
-#: tools/openicc_device.c:113
-msgid "device-class"
-msgstr "geräteklasse"
-
-#: tools/openicc_device.c:118
-msgid "dump-json"
-msgstr "schreibe-json"
-
-#: tools/openicc_device.c:115
-msgid "erase-device"
-msgstr "lösche-gerät"
-
 #: libopenicc/openicc_args.c:191
 msgid "export"
 msgstr "exportiere"
-
-#: tools/openicc_device.c:116
-msgid "file-name"
-msgstr "dateiname"
-
-#: tools/openicc_device.c:117
-msgid "help"
-msgstr "Hilfe"
 
 #: tools/openicc_json.c:33
 msgid "is a JSON helper tool"
@@ -485,10 +481,6 @@ msgstr "ist ein JSON Hilfswerkzeug"
 #: tools/openicc_json.c:55
 msgid "language specific wrap; -w C for C static char"
 msgstr "sprachspezifische Hülle; -w C für C static char"
-
-#: tools/openicc_device.c:119
-msgid "list-devices"
-msgstr "liste-geräte"
 
 #: tools/openicc_json.c:46
 msgid ""
@@ -502,10 +494,6 @@ msgstr ""
 msgid "locales in a comma separated list"
 msgstr "Sprachen in einer kommagetrennten Liste"
 
-#: tools/openicc_device.c:120
-msgid "long"
-msgstr "lang"
-
 #: tools/openicc_json.c:53
 msgid "output"
 msgstr "Ausgabe"
@@ -513,14 +501,6 @@ msgstr "Ausgabe"
 #: tools/openicc_json.c:40
 msgid "output format string"
 msgstr "Ausgabeformat"
-
-#: tools/openicc_device.c:122
-msgid "scope"
-msgstr "bereich"
-
-#: tools/openicc_device.c:121
-msgid "show-path"
-msgstr "zeige-pfad"
 
 #: tools/openicc_json.c:52
 msgid "specify JSON file"
@@ -534,17 +514,13 @@ msgstr "Text ID für das Projekt"
 msgid "to be used key names in a comma separated list"
 msgstr "zu benutzende Schlüsselwörter in einer kommagetrennten Liste"
 
-#: tools/openicc_device.c:185
+#: tools/openicc_device.c:201
 msgid "unable to open data base"
 msgstr "kann Datenbank nicht öffnen"
 
-#: tools/openicc_device.c:123 tools/openicc_json.c:56
+#: tools/openicc_device.c:121 tools/openicc_json.c:56
 msgid "verbose"
 msgstr "plaudernd"
-
-#: tools/openicc_device.c:126
-msgid "write"
-msgstr "Schreibe"
 
 #~ msgid ""
 #~ "    ICC Examin is licensed under the GPL version 2.    Especially all "
@@ -1499,6 +1475,9 @@ msgstr "Schreibe"
 #~ msgid "Device Colors"
 #~ msgstr "Gerätefarben"
 
+#~ msgid "Device File"
+#~ msgstr "Gerätedatei"
+
 #~ msgid "Device Manufacturer"
 #~ msgstr "Geräte Hersteller"
 
@@ -1516,9 +1495,6 @@ msgstr "Schreibe"
 
 #~ msgid "Device manufacturerer description"
 #~ msgstr "Geräteherstellerbeschreibung"
-
-#~ msgid "Devices"
-#~ msgstr "Geräte"
 
 #~ msgid "Did not find a type for option:"
 #~ msgstr "Fand keinen Typ für Option:"
@@ -1675,6 +1651,9 @@ msgstr "Schreibe"
 
 #~ msgid "File Magic"
 #~ msgstr "Dateisignatur"
+
+#~ msgid "File Name of Device JSON"
+#~ msgstr "Dateiname des Geräte Json"
 
 #~ msgid "File Types"
 #~ msgstr "Datei Typen"
@@ -1927,9 +1906,6 @@ msgstr "Schreibe"
 #, fuzzy
 #~ msgid "ICC Examin: Report"
 #~ msgstr "ICC Examin"
-
-#~ msgid "ICC Version"
-#~ msgstr "ICC Version"
 
 #~ msgid "ICC color profile for color transformations"
 #~ msgstr "ICC Farbprofil zur Farbraumtransformation."
@@ -4066,11 +4042,20 @@ msgstr "Schreibe"
 #~ msgid "created by:  "
 #~ msgstr "erzeugt von: "
 
+#~ msgid "db-file"
+#~ msgstr "db-datei"
+
 #~ msgid "default profile type does not exist:"
 #~ msgstr "Standard Profiltyp existiert nicht:"
 
+#~ msgid "device"
+#~ msgstr "gerät"
+
 #~ msgid "device position start from zero"
 #~ msgstr "Geräteposition started von Null"
+
+#~ msgid "device-class"
+#~ msgstr "geräteklasse"
 
 #~ msgid "device_class not found:"
 #~ msgstr "Geräteklasse nicht gefunden:"
@@ -4090,6 +4075,9 @@ msgstr "Schreibe"
 #~ msgid "dump OpenICC device color state rank map JSON"
 #~ msgstr "erzeuge OpenICC Wichtungstabelle JSON zu Gerätefarbeinstellungen"
 
+#~ msgid "dump-json"
+#~ msgstr "schreibe-json"
+
 #~ msgid "embed OpenICC device JSON from file"
 #~ msgstr "bette OpenICC JSON Gerät von Datei ein"
 
@@ -4101,6 +4089,9 @@ msgstr "Schreibe"
 
 #~ msgid "enable simple defaults"
 #~ msgstr "benutze einfache Grundeinstellungen"
+
+#~ msgid "erase-device"
+#~ msgstr "lösche-gerät"
 
 #~ msgid "error in module:"
 #~ msgstr "Fehler in Modul:"
@@ -4155,6 +4146,9 @@ msgstr "Schreibe"
 #~ msgid "file size 0 for "
 #~ msgstr "Dateigröße 0 für "
 
+#~ msgid "file-name"
+#~ msgstr "dateiname"
+
 #~ msgid "fine with: "
 #~ msgstr "gut mit: "
 
@@ -4199,6 +4193,9 @@ msgstr "Schreibe"
 
 #~ msgid "gray"
 #~ msgstr "grau"
+
+#~ msgid "help"
+#~ msgstr "Hilfe"
 
 #~ msgid "high contrast"
 #~ msgstr "kontrastreich"
@@ -4285,6 +4282,9 @@ msgstr "Schreibe"
 #~ msgid "list possible choices"
 #~ msgstr "Liste der verfügbaren Auswahlmöglichkeiten"
 
+#~ msgid "list-devices"
+#~ msgstr "liste-geräte"
+
 #~ msgid "littleCMS"
 #~ msgstr "littleCMS"
 
@@ -4314,6 +4314,9 @@ msgstr "Schreibe"
 
 #~ msgid "locale directory containing"
 #~ msgstr "locale Verzeichnis enthaltend"
+
+#~ msgid "long"
+#~ msgstr "lang"
 
 #~ msgid "machine specific path"
 #~ msgstr "rechnerspezifischer Pfad"
@@ -4558,6 +4561,9 @@ msgstr "Schreibe"
 
 #~ msgid "show profiles with duplicate profile ID"
 #~ msgstr "zeige Profile mit gleicher ICC Profil ID"
+
+#~ msgid "show-path"
+#~ msgstr "zeige-pfad"
 
 #~ msgid "showing"
 #~ msgstr "zeigen"

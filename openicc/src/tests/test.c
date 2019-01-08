@@ -60,12 +60,12 @@ oyjlTESTRESULT_e testVersion()
 
 oyjlTESTRESULT_e testI18N()
 {
-  const char * lang = 0;
+  const char * lang = 0, * text;
   oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
 
   fprintf(stdout, "\n" );
 
-  setlocale(LC_ALL,"");
+  setlocale(LC_ALL,"de_DE.UTF8");
   openiccInit();
 
   lang = setlocale(LC_ALL, NULL);
@@ -76,6 +76,17 @@ oyjlTESTRESULT_e testI18N()
   { PRINT_SUB( oyjlTESTRESULT_XFAIL, 
     "setlocale() initialised failed %s          ", lang );
   }
+
+  text = _("DESCRIPTION");
+  if(strcmp(text,"BESCHREIBUNG") == 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "dgettext() good \"%s\"                      ", text );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_XFAIL, 
+    "dgettext() failed \"%s\"                    ", text );
+  }
+
+  setlocale(LC_ALL,"");
 
   return result;
 }
@@ -304,23 +315,23 @@ oyjlTESTRESULT_e testIO ()
     "openiccIsFileFull_()                          " );
   }
 
-  t1 = openiccOpenFile( file_name, &size );
+  t1 = openiccReadFile( file_name, &size );
   if(t1 && size == 2394)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "openiccOpenFile() &size %d                    ", size );
+    "openiccReadFile() &size %d                    ", size );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "openiccOpenFile() %s    ", file_name );
+    "openiccReadFile() %s    ", file_name );
   }
   free_m_(t1);
 
-  t1 = openiccOpenFile( "not_existing.file", &size );
+  t1 = openiccReadFile( "not_existing.file", &size );
   if(t1 == NULL)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "openiccOpenFile(not existing) &size %d           ", size );
+    "openiccReadFile(not existing) &size %d           ", size );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "openiccOpenFile(not existing) %s    ", file_name );
+    "openiccReadFile(not existing) %s    ", file_name );
   }
   free_m_(t1);
 
@@ -361,7 +372,7 @@ oyjlTESTRESULT_e testIO ()
   }
   *openicc_debug = odo;
 
-  t1 = openiccOpenFile( file_name, &size );
+  t1 = openiccReadFile( file_name, &size );
   file_name = "test.txt";
   size = openiccWriteFile( file_name,
                            t1,
@@ -571,7 +582,7 @@ oyjlTESTRESULT_e testOiArgs()
   size = openiccWriteFile( "test.json",
                            text,
                            strlen(text) );
-  if(text) {free(text);} text = NULL;
+  if(text && size) {free(text);} text = NULL;
 
   text = openiccUi_ToMan( ui, 0 );
   if(text && strlen(text))
@@ -663,7 +674,7 @@ oyjlTESTRESULT_e testConfig()
   file_name = oiGetConfigFileName();
 
   /* read JSON input file */
-  text = openiccOpenFile( file_name, &size );
+  text = openiccReadFile( file_name, &size );
 
   /* parse json ... */
   root = oyjlTreeParse( text, NULL, 0 );
@@ -801,7 +812,7 @@ oyjlTESTRESULT_e testDeviceJSON ()
 
   file_name = oiGetConfigFileName();
   /* read JSON input file */
-  text = openiccOpenFile( file_name, &size );
+  text = openiccReadFile( file_name, &size );
 
   /* parse JSON */
   config = openiccConfig_FromMem( text );
@@ -1004,7 +1015,7 @@ oyjlTESTRESULT_e testODB()
 
     /* read JSON input file */
     int size = 0;
-    char * text = openiccOpenFile( db_file, &size );
+    char * text = openiccReadFile( db_file, &size );
 
     /* parse JSON */
     if(text)

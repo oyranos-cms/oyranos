@@ -163,7 +163,7 @@ int           openiccDB_AddScope     ( openiccDB_s       * db,
     char * text = NULL;
 
     if(openiccIsFileFull_( db_file, "r" ))
-      text = openiccOpenFile( db_file, &size );
+      text = openiccReadFile( db_file, &size );
 
     /* parse JSON */
     if(text)

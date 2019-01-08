@@ -264,6 +264,9 @@ int openicc_i18n_init = 0;
 /** @brief   init the library; optionally
  *
  *  Additionally use setlocale() somewhere in your application.
+ *  The message catalog search path is detected from the OI_LOCALEDIR and
+ *  the LOCPATH environment variables. If those are not present;
+ *  the inbuild ::OPENICC_LOCALEDIR macro is used.
  *
  *  return -1 for no USE_GETTEXT defined, otherwise 1
  *
@@ -284,19 +287,56 @@ int            openiccInit           ( void )
 #ifdef USE_GETTEXT
   if(!openicc_i18n_init)
   {
-    char * var = 0;
+    char * var = NULL;
     ++openicc_i18n_init;
+    const char * oi_localedir = NULL,
+               * locpath = NULL,
+               * path = NULL;
 
     if(getenv("OI_LOCALEDIR") && strlen(getenv("OI_LOCALEDIR")))
-      openicc_domain_path = strdup(getenv("OI_LOCALEDIR"));
+    {
+      oi_localedir = openicc_domain_path = strdup(getenv("OI_LOCALEDIR"));
+      if(*openicc_debug)
+        WARNc_S("found environment variable: OI_LOCALEDIR=%s", openicc_domain_path );
+    } else
+      if(oi_localedir == NULL && getenv("LOCPATH") && strlen(getenv("LOCPATH")))
+    {
+      openicc_domain_path = NULL;
+      locpath = getenv("LOCPATH");
+      if(*openicc_debug)
+        WARNc_S("found environment variable: LOCPATH=%s", locpath );
+    } else
+      if(*openicc_debug)
+      WARNc_S("no OI_LOCALEDIR or LOCPATH environment variable found; using default path: %s", openicc_domain_path );
 
-    STRING_ADD( var, "NLSPATH=");
-    STRING_ADD( var, openicc_domain_path);
-    putenv(var); /* Solaris */
+    if(openicc_domain_path || locpath)
+    {
+      STRING_ADD( var, "NLSPATH=");
+      STRING_ADD( var, openicc_domain_path ? openicc_domain_path : locpath);
+    }
+    if(var)
+      putenv(var); /* Solaris */
 
-    bindtextdomain( "OpenICC", openicc_domain_path );
+    /* LOCPATH appears to be ignored by bindtextdomain("domain", NULL),
+     * so it is set here to bindtextdomain(). */
+    path = openicc_domain_path ? openicc_domain_path : locpath;
+    bindtextdomain( "openicc", path );
     if(*openicc_debug)
-      WARNc_S("bindtextdomain() to \"%s\"", openicc_domain_path );
+    {
+      char * fn = NULL;
+      int stat = -1;
+      const char * path = openicc_domain_path ? openicc_domain_path : locpath;
+      #define ToString2_M(t) ToString_M(t)
+      #define ToString_M(t) #t
+      const char * gettext_call = ToString2_M(_());
+
+      if(path)
+        oyjlStringAdd( &fn, 0,0, "%s/de/LC_MESSAGES/openicc.mo", path ? path : "");
+      if(fn)
+        stat = openiccIsFileFull_( fn, "r" );
+      WARNc_S("bindtextdomain(\"openicc\") to %s\"%s\" %s for %s", locpath?"effectively ":"", path ? path : "", (stat > 0)?"Looks good":"Might fail", gettext_call );
+      if(fn) free(fn);
+    }
   }
   return openicc_i18n_init;
 #endif
