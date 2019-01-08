@@ -241,8 +241,12 @@ static int context_add_value (context_t *ctx, oyjl_val v)
     }
 }
 
+#if (YAJL_VERSION) > 20000
 static int handle_string (void *ctx,
-                          const unsigned char *string, unsigned int string_length)
+                          const unsigned char *string, long unsigned int string_length)
+#else
+static int handle_number (void *ctx, const char *string, unsigned int string_length)
+#endif
 {
     oyjl_val v;
 
@@ -414,7 +418,7 @@ static int handle_null (void *ctx)
     @endverbatim
  *  Some API's accept extended paths expressions. Those can contain empty
  *  terms, like "//", which matches all keys in the above example. Those
- *  are oyjl_tree_to_paths() and oyjl_path_match(). oyjl_tree_to_paths()
+ *  are oyjlTreeToPaths() and oyjlPathMatch(). oyjlTreeToPaths()
  *  works on the whole tree to match a extended xpath.
  *
  *  \b Programming \b Tutorial
@@ -428,9 +432,9 @@ static int handle_null (void *ctx)
 /** @brief read a json text string into a C data structure
  *
  *  @dontinclude tutorial_json_options.c
- *  @skipline text
+ *  @skipline const char * text
  *  @skip error_buffer
- *  @until oyjl_tree_parse
+ *  @until oyjlTreeParse
  */
 oyjl_val oyjlTreeParse   (const char *input,
                           char *error_buffer, size_t error_buffer_size)
@@ -442,9 +446,9 @@ static yajl_callbacks oyjl_tree_callbacks = {
   NULL, //handle_integer,
   NULL, //handle_double,
   handle_number,
-  (int(*)(void*,const unsigned char*,size_t))handle_string,
+  handle_string,
   handle_start_map,
-  (int(*)(void*,const unsigned char*,size_t))handle_string,
+  handle_string,
   handle_end_map,
   handle_start_array,
   handle_end_array
@@ -508,19 +512,20 @@ static yajl_callbacks oyjl_tree_callbacks = {
     status = yajl_parse(handle,
                         (unsigned char *) input,
                         strlen (input));
-    if (status != yajl_status_ok) {
-        if (error_buffer != NULL && error_buffer_size > 0)
-        {
-            internal_err_str = (char *) yajl_get_error(handle, 1,
+    if (status != yajl_status_ok)
+    {
+        internal_err_str = (char *) yajl_get_error(handle, 1,
                      (const unsigned char *) input,
                      strlen(input));
+        if (error_buffer != NULL && error_buffer_size > 0)
              snprintf(error_buffer, error_buffer_size, "%s", internal_err_str);
-             yajl_free_error( handle, (unsigned char*)internal_err_str );
-             internal_err_str = 0;
-        }
 #if YAJL_VERSION > 19999
         status = yajl_complete_parse (handle);
 #endif
+        oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT_ "%s", OYJL_DBG_ARGS_,
+                       internal_err_str );
+        yajl_free_error( handle, (unsigned char*)internal_err_str );
+        internal_err_str = 0;
         yajl_free (handle);
         return NULL;
     }
@@ -532,6 +537,377 @@ static yajl_callbacks oyjl_tree_callbacks = {
     return (ctx.root);
 }
 
+#if defined(OYJL_HAVE_LIBXML2)
+/** @brief read a XML text string into a C data structure
+ */
+#include <libxml/parser.h>
+#include <libxml/xmlmemory.h>
+#include <libxml/xpath.h>
+#include <libxml/xpathInternals.h>
+
+#include "oyjl.h"
+
+
+char *             oyjlXML2NodeName  ( xmlNodePtr          cur )
+{
+  char * name = NULL;
+  const xmlChar * prefix = cur->ns && cur->ns->prefix ? cur->ns->prefix : 0;
+  if(prefix)
+  {
+    oyjlStringAdd( &name, 0,0, (char*)prefix );
+    oyjlStringAdd( &name, 0,0, ":" );
+  }
+  oyjlStringAdd( &name, 0,0, (char*)cur->name );
+  return name;
+}
+
+/** @brief obtain a new node object possibly in array
+ *
+ *  The node can even have the same name. It works only for flat path level.
+ *
+ *  @param[in.out] root                the node
+ *  @param[in]     name                flat path, without leveling slash
+ *  @param[out]    array_ret           tell if the node is child of that array
+ *  @param[out]    pos_ret             position of returned node in array_ret
+ *                                     - -1 means object is direct child without array
+ *                                     - >= 0 -> index in array
+ *  @return                            new node
+ */
+oyjl_val oyjlTreeGetNewValueFromArray( oyjl_val root, const char * name, oyjl_val * array_ret, int * pos_ret )
+{
+  oyjl_val array = NULL, node;
+  int pos = -1;
+  node = oyjlTreeGetValue( root, 0, name );
+  if(node)
+  {
+    pos = oyjlValueCount( node );
+    if(node->type != oyjl_t_array)
+    {
+      oyjl_val copy;
+      size_t size = sizeof(*copy);
+      copy = calloc( 1, size );
+      if(!copy) return NULL;
+      memcpy( copy, node, size );
+      memset( node, 0, size );
+      array = node;
+      array->type = oyjl_t_array;
+      node = oyjlTreeGetValuef( root, OYJL_CREATE_NEW, "%s/[0]", name);
+      memcpy( node, copy, size );
+      free(copy); copy = NULL;
+      pos = 1;
+      node = oyjlTreeGetValuef( root, OYJL_CREATE_NEW, "%s/[%d]", name, pos);
+    }
+    else
+    {
+      array = oyjlTreeGetValue( root, 0, name );
+      node = oyjlTreeGetValuef( root, OYJL_CREATE_NEW, "%s/[%d]", name, pos);
+    }
+  }
+  else
+    node = oyjlTreeGetValue( root, OYJL_CREATE_NEW, name );
+
+  if(array_ret)
+    *array_ret = array;
+  if(pos_ret)
+    *pos_ret = pos;
+
+  return node;
+}
+
+int              oyjlXMLNodeIsText   ( xmlNodePtr          cur )
+{
+  return cur->type == XML_TEXT_NODE && !(cur->next || cur->prev) &&
+         cur->content ;
+}
+
+static int oyjl_number_detection = 1;
+void             oyjlParseXMLDoc_    ( xmlDocPtr           doc,
+                                       xmlNodePtr          cur,
+                                       oyjl_val            root )
+{
+  while(cur != NULL)
+  {
+    char * name = 0;
+    oyjl_val node = NULL;
+
+    if(cur->type == XML_ELEMENT_NODE)
+    {
+      oyjl_val array = NULL;
+      int count = -1;
+      name = oyjlXML2NodeName( cur );
+      node = oyjlTreeGetNewValueFromArray( root, name, &array, &count );
+
+      if(cur->nsDef)
+      {
+        xmlNsPtr xcur = cur->nsDef; 
+        while(xcur != NULL)
+        {
+          const char * prefix = (const char *) xcur->prefix;
+          const char * val = (const char *) xcur->href;
+          char * attr = NULL;
+          oyjl_val prop;
+          oyjlStringAdd( &attr, 0,0, "xmlns:%s", prefix );
+          if(!attr) return;
+          if(array)
+            prop = oyjlTreeGetValuef( root, OYJL_CREATE_NEW, "%s/[%d]/@%s", name, count, attr );
+          else
+            prop = oyjlTreeGetValuef( root, OYJL_CREATE_NEW, "%s/@%s", name, attr );
+          oyjlValueSetString( prop, val );
+          free( attr );
+          xcur = xcur->next;
+        }
+      }
+
+      if(cur->properties)
+      {
+        xmlAttrPtr xcur = cur->properties; 
+        while(xcur != NULL)
+        {
+          const char * attr = (const char *) xcur->name;
+          const char * val = (const char *) xcur->children->content;
+          oyjl_val prop;
+          if(array)
+            prop = oyjlTreeGetValuef( root, OYJL_CREATE_NEW, "%s/[%d]/@%s", name, count, attr );
+          else
+            prop = oyjlTreeGetValuef( root, OYJL_CREATE_NEW, "%s/@%s", name, attr );
+          oyjlValueSetString( prop, val );
+          xcur = xcur->next;
+        }
+      }
+    }
+    else
+    if( oyjlXMLNodeIsText(cur) )
+    {
+      const char * val = (const char *) cur->content;
+      double d;
+      int err = -1;
+      if(oyjl_number_detection)
+        err = oyjlStringToDouble( val, &d );
+      if(err == 0)
+      {
+        root->type = oyjl_t_number;
+        root->u.number.r = strdup(val);
+        root->u.number.d = d;
+        root->u.number.flags |= OYJL_NUMBER_DOUBLE_VALID;
+        errno = 0;
+        root->u.number.i = strtol(root->u.number.r, 0, 10);
+        if (errno == 0)
+          root->u.number.flags |= OYJL_NUMBER_INT_VALID;
+      }
+      else
+        oyjlValueSetString( root, val );
+    }
+
+    if(cur->xmlChildrenNode)
+    {
+      oyjl_val text = NULL;
+      xmlNodePtr cur_ = cur->xmlChildrenNode;
+      if( oyjlXMLNodeIsText(cur_) && node->type == oyjl_t_object )
+        text = oyjlTreeGetValue( node, OYJL_CREATE_NEW, "@text" );
+      oyjlParseXMLDoc_( doc, cur->xmlChildrenNode,
+                        text ? text : node );
+    }
+
+    if(name)
+      free( name );
+
+    cur = cur->next;
+  }
+}
+
+oyjl_val   oyjlTreeParseXml          ( const char        * xml,
+                                       int                 flags,
+                                       char              * error_buffer,
+                                       size_t              error_buffer_size)
+{
+  xmlDocPtr doc = NULL;
+  xmlNodePtr cur = NULL;
+  oyjl_val jroot =  NULL;
+
+  if(!xml) return jroot;
+
+  if(flags & OYJL_NUMBER_DETECTION)
+    oyjl_number_detection = 1;
+  else
+    oyjl_number_detection = 0;
+
+  doc = xmlParseMemory( xml, strlen(xml) );
+  cur = xmlDocGetRootElement(doc);
+
+  if(doc && cur)
+  {
+    jroot = oyjlTreeNew( NULL );
+    oyjlParseXMLDoc_( doc, cur, jroot );
+    xmlFreeDoc( doc );
+  }
+  else if(error_buffer)
+    snprintf( error_buffer, error_buffer_size, "XML loading failed" );
+
+  if(error_buffer && error_buffer[0])
+    oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT_ "%s",
+                         OYJL_DBG_ARGS_, error_buffer );
+
+  return jroot;
+}
+#endif
+#if defined(OYJL_HAVE_YAML)
+#include <yaml.h>
+int oyjlYamlGetCount( yaml_node_t * n )
+{
+  int i = 0;
+  if( !n ) return i;
+  switch( n->type )
+  {
+    case YAML_SCALAR_NODE: i = n->data.scalar.length; break;
+    case YAML_SEQUENCE_NODE: i = n->data.sequence.items.top - n->data.sequence.items.start; break;
+    case YAML_MAPPING_NODE: i = n->data.mapping.pairs.top - n->data.mapping.pairs.start; break;
+    default: break;
+  }
+  return i;
+}
+
+int oyjlYamlGetId( yaml_node_t * n, int index, int key )
+{
+  int id = 0;
+  if( !n ) return id;
+  if( n->type == YAML_SEQUENCE_NODE )
+    id = n->data.sequence.items.start[index];
+
+  if( n->type == YAML_MAPPING_NODE )
+  {
+    if(key == 1)
+      id = n->data.mapping.pairs.start[index].key;
+    else
+      id = n->data.mapping.pairs.start[index].value;
+  }
+
+  return id;
+}
+
+static int oyjlYamlReadNode( yaml_document_t * doc, yaml_node_t * node, int is_key, char ** json )
+{
+  int error = 0;
+  int count, i;
+  if( !node ) return 1;
+  count = oyjlYamlGetCount( node );
+  if( node->type == YAML_SCALAR_NODE )
+  {
+    char * t = (char*)node->data.scalar.value, * tmp = NULL;
+    if(t && strstr(t, ":\\ "))
+      t = tmp = oyjlStringReplace( t, ":\\ ", ": ", 0, 0);
+    if(t)
+    {
+      double d;
+      int err = -1;
+      if(oyjl_number_detection && is_key != 1)
+        err = oyjlStringToDouble( t, &d );
+      if(err == 0)
+        oyjlStringAdd( json, 0,0, "%s", t );
+      else
+        oyjlStringAdd( json, 0,0, "\"%s\"", t );
+    }
+    if(tmp) free(tmp);
+  }
+  if( node->type == YAML_SEQUENCE_NODE )
+  {
+    oyjlStringAdd( json, 0,0, "[");
+    for(i = 0; i < count && !error; ++i)
+    {
+      int id = oyjlYamlGetId( node, i, 0 );
+      yaml_node_t * n =
+      yaml_document_get_node( doc, id );
+      error = oyjlYamlReadNode(doc, n, 0, json);
+      if(i < count - 1) oyjlStringAdd( json, 0,0, ",");
+    }
+    oyjlStringAdd( json, 0,0, "]");
+  }
+  if( node->type == YAML_MAPPING_NODE )
+    for(i = 0; i < count; ++i)
+    {
+      int key_id = oyjlYamlGetId( node, i, 1 );
+      int val_id = oyjlYamlGetId( node, i, 0 );
+      yaml_node_t * key =
+      yaml_document_get_node( doc, key_id );
+      yaml_node_t * val =
+      yaml_document_get_node( doc, val_id );
+
+      if(i == 0) oyjlStringAdd( json, 0,0, "{");
+
+      error = oyjlYamlReadNode(doc, key, 1, json);
+      if( key->type == YAML_SCALAR_NODE &&
+          !error )
+      {
+        oyjlStringAdd( json, 0,0, ":");
+      }
+
+      error = oyjlYamlReadNode(doc, val, 0, json);
+      if(i < count - 1) oyjlStringAdd( json, 0,0, ",");
+      else if( i == count - 1 ) oyjlStringAdd( json, 0,0, "}");
+    }
+  return error;
+}
+/** @brief read a YAML text string into a C data structure
+ */
+oyjl_val   oyjlTreeParseYaml         ( const char        * yaml,
+                                       int                 flags,
+                                       char              * error_buffer,
+                                       size_t              error_buffer_size)
+{
+  yaml_parser_t parser;
+  yaml_document_t document;
+  yaml_node_t * root = NULL;
+  char * json = NULL;
+  oyjl_val jroot = NULL;
+  int error = 0;
+
+  if(!yaml) return jroot;
+
+  if(!yaml_parser_initialize(&parser))
+  {
+    if(error_buffer)
+      snprintf( error_buffer, error_buffer_size, "YAML initialisation failed" );
+    oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT_ "%s", OYJL_DBG_ARGS_,
+                   "YAML initialisation failed" );
+    return jroot;
+  }
+
+  if(flags & OYJL_NUMBER_DETECTION)
+    oyjl_number_detection = 1;
+  else
+    oyjl_number_detection = 0;
+
+  yaml_parser_set_input_string( &parser, (const unsigned char*) yaml, strlen(yaml));
+
+  yaml_parser_load( &parser, &document );
+  if( parser.error != YAML_NO_ERROR)
+  {
+    if(error_buffer)
+      snprintf( error_buffer, error_buffer_size, "%s\n", parser.problem ? parser.problem : "" );
+    oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT_ "%s", OYJL_DBG_ARGS_,
+                   parser.problem ? parser.problem : "" );
+
+    return jroot;
+  }
+
+  root = yaml_document_get_root_node(&document);
+  error = oyjlYamlReadNode( &document, root, 1, &json );
+  if( error )
+  {
+    if(error_buffer)
+      snprintf( error_buffer, error_buffer_size, "Found problem while parsing document tree.\n" );
+    oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT_ "%s", OYJL_DBG_ARGS_,
+                   "Found problem while parsing document tree." );
+    return jroot;
+  }
+
+  jroot = oyjlTreeParse( json, error_buffer, error_buffer_size );
+
+  yaml_parser_delete(&parser);
+  yaml_document_delete(&document);
+
+  return jroot;
+}
+#endif
 
 /** @} *//* oyjl */
 /** @} *//* misc */
