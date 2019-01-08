@@ -12,6 +12,9 @@
  *  @since    2008/12/04
  */
 
+#ifndef OYJL_TEST_H
+#define OYJL_TEST_H
+
 #include <stdarg.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -98,7 +101,9 @@ const char * oyTestResultToString    ( oyjlTESTRESULT_e      error )
 
 FILE * zout;  /* printed inbetween results */
 static int test_number = 0;
-#define TEST_RUN( prog, text, do_it ) { \
+#define TEST_RUN( prog, text, do_it ) \
+oyjlTESTRESULT_e prog(); \
+{ \
   if(argc > argpos && do_it) { \
       for(i = argpos; i < argc; ++i) \
         if(strstr(text, argv[i]) != 0 || \
@@ -271,3 +276,6 @@ double             oyjlSeconds       ( )
 }
 double             oyjlClock         ( )
 { return oyjlSeconds()*1000000; }
+
+
+#endif /* OYJL_TEST_H */
