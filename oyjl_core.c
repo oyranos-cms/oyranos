@@ -1,4 +1,16 @@
-/*
+/*  @file oyjl_core.c
+ *
+ *  oyjl - string, file i/o and other basic helpers
+ *
+ *  @par Copyright:
+ *            2016-2019 (C) Kai-Uwe Behrmann
+ *
+ *  @brief    Oyjl core functions
+ *  @internal
+ *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
+ *  @par License:
+ *            MIT <http://www.opensource.org/licenses/mit-license.php>
+ *
  * Copyright (c) 2004-2018  Kai-Uwe Behrmann  <ku.b@gmx.de>
  *
  * Permission to use, copy, modify, and/or distribute this software for any
@@ -28,6 +40,11 @@
 #ifdef HAVE_LOCALE_H
 #include <locale.h>
 #endif
+
+/** \addtogroup misc
+ *  @{ *//* misc */
+/** \addtogroup oyjl
+ *  @{ *//* oyjl */
 
 int          oyjlMessageFunc         ( int/*oyjlMSG_e*/    error_code,
                                        const void        * context_object OYJL_UNUSED,
@@ -563,3 +580,6 @@ int            oyjlVersion           ( int                 type )
 
   return OYJL_VERSION;
 }
+
+/** @} *//* oyjl */
+/** @} *//* misc */
