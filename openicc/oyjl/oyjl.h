@@ -15,7 +15,7 @@
  */
 
 /**
- *   * \file oyjl_tree.h
+ *   * \file oyjl.h
  *
  * Parses JSON data and returns the data in tree form.
  *
@@ -28,8 +28,14 @@
  * \include example/parse_config.c
  */
 
-#ifndef OYJL_TREE_H
-#define OYJL_TREE_H 1
+/** \addtogroup misc
+ *  @{ *//* misc */
+/** \addtogroup oyjl
+ *  @{ *//* oyjl */
+
+
+#ifndef OYJL_H
+#define OYJL_H 1
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -45,16 +51,16 @@ extern "C" {
 /**
  *  possible data types that a oyjl_val_s can hold */
 typedef enum {
-    oyjl_t_string = 1,
-    oyjl_t_number = 2,
-    oyjl_t_object = 3,
-    oyjl_t_array = 4,
-    oyjl_t_true = 5,
-    oyjl_t_false = 6,
-    oyjl_t_null = 7,
+    oyjl_t_string = 1,                 /**< @brief a text in UTF-8 */
+    oyjl_t_number = 2,                 /**< @brief floating or integer number */
+    oyjl_t_object = 3,                 /**< @brief a JSON object */
+    oyjl_t_array = 4,                  /**< @brief a JSON array */
+    oyjl_t_true = 5,                   /**< @brief boolean true or 1 */
+    oyjl_t_false = 6,                  /**< @brief boolean false or 0 */
+    oyjl_t_null = 7,                   /**< @brief empty value */
     /** @internal
      *  The any type isn't valid for oyjl_val_s.type, but can be
-     *  used as an argument to routines like oyjl_tree_get().
+     *  used as an argument to routines like oyjlTreeGet().
      */
     oyjl_t_any = 8
 } oyjl_type;
@@ -74,34 +80,34 @@ typedef struct oyjl_val_s * oyjl_val;
  */
 struct oyjl_val_s
 {
-    /** @internal
+    /**
      *  Type of the value contained. Use the "OYJL_IS_*" macros to check for a
      * specific type. */
     oyjl_type type;
-    /** @internal
+    /**
      *  Type-specific data. You may use the "OYJL_GET_*" macros to access these
      * members. */
     union
     {
-        char * string;
+        char * string;   /**< @brief UTF-8 text */
         struct {
-            long long i; /*< integer value, if representable. */
-            double  d;   /*< double value, if representable. */
-            char   *r;   /*< unparsed number in string form. */
+            long long i; /**< @brief integer value, if representable. */
+            double  d;   /**< @brief double value, if representable. */
+            char   *r;   /**< @brief unparsed number in string form. */
             /** Signals whether the \em i and \em d members are
              * valid. See \c OYJL_NUMBER_INT_VALID and
              * \c OYJL_NUMBER_DOUBLE_VALID. */
             unsigned int flags;
-        } number;
+        } number;        /**< @brief raw and parsed number types */
         struct {
-            char **keys; /*< Array of keys */
-            oyjl_val *values; /*< Array of values. */
-            size_t len; /*< Number of key-value-pairs. */
-        } object;
+            char **keys; /**< @brief Array of keys */
+            oyjl_val *values; /**< @brief Array of values. */
+            size_t len; /**< @brief Number of key-value-pairs. */
+        } object;        /**< @brief objects with key/value pairs */
         struct {
-            oyjl_val *values; /*< Array of elements. */
-            size_t len; /*< Number of elements. */
-        } array;
+            oyjl_val *values; /**< @brief Array of elements. */
+            size_t len; /**< @brief Number of elements. */
+        } array;         /**< @brief series of values */
     } u;
 };
 
@@ -114,16 +120,16 @@ struct oyjl_val_s
  * \param input              Pointer to a null-terminated utf8 string containing
  *                           JSON data.
  * \param error_buffer       Pointer to a buffer in which an error message will
- *                           be stored if \em oyjl_tree_parse fails, or
+ *                           be stored if \em oyjlTreeParse() fails, or
  *                           \c NULL. The buffer will be initialized before
  *                           parsing, so its content will be destroyed even if
- *                           \em oyjl_tree_parse succeeds.
+ *                           \em oyjlTreeParse() succeeds.
  * \param error_buffer_size  Size of the memory area pointed to by
  *                           \em error_buffer_size. If \em error_buffer_size is
  *                           \c NULL, this argument is ignored.
  *
  * \returns Pointer to the top-level value or \c NULL on error. The memory
- * pointed to must be freed using \em oyjl_tree_free. In case of an error, a
+ * pointed to must be freed using \em oyjlTreeFree(). In case of an error, a
  * null terminated message describing the error in more detail is stored in
  * \em error_buffer if it is not \c NULL.
  */
@@ -131,9 +137,9 @@ OYJL_API oyjl_val oyjlTreeParse  ( const char *input,
                                    char *error_buffer, size_t error_buffer_size);
 
 /**
- * Free a parse tree returned by "oyjl_tree_parse".
+ * Free a parse tree returned by oyjlTreeParse().
  *
- * \param v Pointer to a JSON value returned by "oyjl_tree_parse". Passing NULL
+ * \param v Pointer to a JSON value returned by oyjlTreeParse(). Passing NULL
  * is valid and results in a no-op.
  */
 OYJL_API void oyjlTreeFree ( oyjl_val v );
@@ -194,6 +200,20 @@ OYJL_API oyjl_val oyjlTreeGet ( oyjl_val parent, const char ** path, oyjl_type t
  *  Get a pointer to a oyjl_val_array or NULL if the value is not an object. */
 #define OYJL_GET_ARRAY(v)  (OYJL_IS_ARRAY(v)  ? &(v)->u.array  : NULL)
 
+#define OYJL_NUMBER_DETECTION 0x01
+#if defined(OYJL_HAVE_LIBXML2)
+oyjl_val   oyjlTreeParseXml          ( const char        * xml,
+                                       int                 flags,
+                                       char              * error_buffer,
+                                       size_t              error_buffer_size);
+#endif
+#if defined(OYJL_HAVE_YAML)
+oyjl_val   oyjlTreeParseYaml         ( const char        * yaml,
+                                       int                 flags,
+                                       char              * error_buffer,
+                                       size_t              error_buffer_size);
+#endif
+
 oyjl_val   oyjlTreeNew               ( const char        * path );
 void       oyjlTreeClearValue        ( oyjl_val            root,
                                        const char        * xpath );
@@ -203,14 +223,17 @@ void       oyjlTreeToJson            ( oyjl_val            v,
 void       oyjlTreeToYaml            ( oyjl_val            v,
                                        int               * level,
                                        char             ** yaml );
-#define    OYJL_PATH                   0x08
-#define    OYJL_KEY                    0x10
+void       oyjlTreeToXml             ( oyjl_val            v,
+                                       int               * level,
+                                       char             ** xml );
+#define    OYJL_PATH                   0x08   /**< @brief  flag to obtain only path */
+#define    OYJL_KEY                    0x10   /**< @brief  flat to obtain only keys */
 void       oyjlTreeToPaths           ( oyjl_val            v,
                                        int                 child_levels,
                                        const char        * xpath,
                                        int                 flags,
                                        char            *** paths );
-#define    OYJL_CREATE_NEW             0x02
+#define    OYJL_CREATE_NEW             0x02   /**< @brief  flag to allocate a new tree node, in case it is not inside */
 oyjl_val   oyjlTreeGetValue          ( oyjl_val            v,
                                        int                 flags,
                                        const char        * path );
@@ -226,8 +249,8 @@ oyjl_val   oyjlValuePosGet           ( oyjl_val            v,
 int        oyjlValueSetString        ( oyjl_val            v,
                                        const char        * string );
 void       oyjlValueClear            ( oyjl_val            v );
-#define    OYJL_PATH_MATCH_LEN         0x20
-#define    OYJL_PATH_MATCH_LAST_ITEMS  0x40
+#define    OYJL_PATH_MATCH_LEN         0x20   /**< @brief  flag to test if the specified path match with the full length. */
+#define    OYJL_PATH_MATCH_LAST_ITEMS  0x40   /**< @brief  flag to test only the last path segments, which are separated by slash '/'. */
 int        oyjlPathMatch             ( const char        * path,
                                        const char        * xpath,
                                        int                 flags );
@@ -295,12 +318,14 @@ char *     oyjlReadFileStreamToMem   ( FILE              * fp,
                                        int               * size );
 
 /* --- message helpers --- */
+/** @brief message type */
 typedef enum {
-  oyjlMSG_INFO = 400,
-  oyjlMSG_CLIENT_CANCELED,
-  oyjlMSG_INSUFFICIENT_DATA,
-  oyjlMSG_ERROR
+  oyjlMSG_INFO = 400,                  /**< @brief informational, for debugging */
+  oyjlMSG_CLIENT_CANCELED,             /**< @brief user side requested stop */
+  oyjlMSG_INSUFFICIENT_DATA,           /**< @brief missing or insufficient data */
+  oyjlMSG_ERROR                        /**< @brief error */
 } oyjlMSG_e;
+/** @brief custom message function type */
 typedef int (* oyjlMessage_f)        ( int/*oyjlMSG_e*/    error_code,
                                        const void        * context,
                                        const char        * format,
@@ -338,4 +363,7 @@ int            oyjlMessageFuncSet    ( oyjlMessage_f      message_func );
 }
 #endif
 
-#endif /* OYJL_TREE_H */
+/** @} *//* oyjl */
+/** @} *//* misc */
+
+#endif /* OYJL_H */
