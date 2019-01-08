@@ -64,21 +64,45 @@ void oyI18NInit_()
 #ifdef USE_GETTEXT
   if(!oy_country_ || !oy_language_)
   {
-    char * temp = 0;
-    if(getenv("OY_LOCALEDIR") && oyStrlen_(getenv("OY_LOCALEDIR")))
-      oy_domain_path = oyStringCopy_(getenv("OY_LOCALEDIR"), oyAllocateFunc_);
+    char * var = NULL, * temp = NULL;
+    const char * oi_localedir = NULL,
+               * locpath = NULL,
+               * path = NULL;
 
-    oyStringAdd_( &temp, "NLSPATH=", oyAllocateFunc_, oyDeAllocateFunc_);
-    oyStringAdd_( &temp, oy_domain_path, oyAllocateFunc_, oyDeAllocateFunc_);
-    putenv(temp); /* Solaris */
+    if(getenv("OY_LOCALEDIR") && strlen(getenv("OY_LOCALEDIR")))
+    {
+      oi_localedir = oy_domain_path = strdup(getenv("OY_LOCALEDIR"));
+      if(oy_debug)
+        WARNc1_S("found environment variable: OY_LOCALEDIR=%s", oy_domain_path );
+    } else
+      if(oi_localedir == NULL && getenv("LOCPATH") && strlen(getenv("LOCPATH")))
+    {
+      oy_domain_path = NULL;
+      locpath = getenv("LOCPATH");
+      if(oy_debug)
+        WARNc1_S("found environment variable: LOCPATH=%s", locpath );
+    } else
+      if(oy_debug)
+      WARNc1_S("no OY_LOCALEDIR or LOCPATH environment variable found; using default path: %s", oy_domain_path );
+
+    if(oy_domain_path || locpath)
+    {
+      STRING_ADD( var, "NLSPATH=");
+      STRING_ADD( var, oy_domain_path ? oy_domain_path : locpath);
+    }
+    if(var)
+      putenv(var); /* Solaris */
 #if 0
     if(oy_debug_memory)
-      oyFree_m_(temp);  /* putenv requires a static string ??? */
+      oyFree_m_(var);  /* putenv requires a static string ??? */
 #endif
 
+    /* LOCPATH appears to be ignored by bindtextdomain("domain", NULL),
+     * so it is set here to bindtextdomain(). */
+    path = oy_domain_path ? oy_domain_path : locpath;
     if(oy_debug)
-      WARNc2_S("bindtextdomain( %s, %s )", oy_domain, oy_domain_path );
-    bindtextdomain( oy_domain, oy_domain_path );
+      WARNc2_S("bindtextdomain( %s, %s )", oy_domain, path );
+    bindtextdomain( oy_domain, path );
     DBG_NUM2_S("oy_domain_path %s %s", oy_domain, oy_domain_path)
     if(oy_domain_codeset)
     {
