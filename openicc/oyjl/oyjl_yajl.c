@@ -580,16 +580,16 @@ oyjl_val oyjlTreeGetNewValueFromArray( oyjl_val root, const char * name, oyjl_va
       memset( node, 0, size );
       array = node;
       array->type = oyjl_t_array;
-      node = oyjlTreeGetValuef( root, OYJL_CREATE_NEW, "%s/[0]", name);
+      node = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, "%s/[0]", name);
       memcpy( node, copy, size );
       free(copy); copy = NULL;
       pos = 1;
-      node = oyjlTreeGetValuef( root, OYJL_CREATE_NEW, "%s/[%d]", name, pos);
+      node = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, "%s/[%d]", name, pos);
     }
     else
     {
       array = oyjlTreeGetValue( root, 0, name );
-      node = oyjlTreeGetValuef( root, OYJL_CREATE_NEW, "%s/[%d]", name, pos);
+      node = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, "%s/[%d]", name, pos);
     }
   }
   else
@@ -660,9 +660,9 @@ void             oyjlParseXMLDoc_    ( xmlDocPtr           doc,
           oyjlStringAdd( &attr, 0,0, "xmlns:%s", prefix );
           if(!attr) return;
           if(array)
-            prop = oyjlTreeGetValuef( root, OYJL_CREATE_NEW, "%s/[%d]/@%s", name, count, attr );
+            prop = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, "%s/[%d]/@%s", name, count, attr );
           else
-            prop = oyjlTreeGetValuef( root, OYJL_CREATE_NEW, "%s/@%s", name, attr );
+            prop = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, "%s/@%s", name, attr );
           oyjlValueSetString( prop, val );
           free( attr );
           xcur = xcur->next;
@@ -678,9 +678,9 @@ void             oyjlParseXMLDoc_    ( xmlDocPtr           doc,
           const char * val = (const char *) xcur->children->content;
           oyjl_val prop;
           if(array)
-            prop = oyjlTreeGetValuef( root, OYJL_CREATE_NEW, "%s/[%d]/@%s", name, count, attr );
+            prop = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, "%s/[%d]/@%s", name, count, attr );
           else
-            prop = oyjlTreeGetValuef( root, OYJL_CREATE_NEW, "%s/@%s", name, attr );
+            prop = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, "%s/@%s", name, attr );
           oyjlValueSetString( prop, val );
           xcur = xcur->next;
         }

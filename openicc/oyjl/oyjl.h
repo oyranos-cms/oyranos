@@ -237,7 +237,7 @@ void       oyjlTreeToPaths           ( oyjl_val            v,
 oyjl_val   oyjlTreeGetValue          ( oyjl_val            v,
                                        int                 flags,
                                        const char        * path );
-oyjl_val   oyjlTreeGetValuef         ( oyjl_val            v,
+oyjl_val   oyjlTreeGetValueF         ( oyjl_val            v,
                                        int                 flags,
                                        const char        * format,
                                                            ... );
