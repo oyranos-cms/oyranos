@@ -6,7 +6,6 @@
  *            2016-2019 (C) Kai-Uwe Behrmann
  *
  *  @brief    Oyjl tree functions
- *  @internal
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            MIT <http://www.opensource.org/licenses/mit-license.php>
@@ -47,10 +46,8 @@
 #include <locale.h>
 #endif
 
-/** \addtogroup misc
- *  @{ *//* misc */
-/** \addtogroup oyjl
- *  @{ *//* oyjl */
+/** \addtogroup oyjl_tree
+ *  @{ *//* oyjl_tree */
 static oyjl_val oyjlValueAlloc (oyjl_type type)
 {
     oyjl_val v;
@@ -269,7 +266,7 @@ static void  oyjlTreeFind_           ( oyjl_val            root,
  *                                     - ::OYJL_KEY: only keys
  *                                     - ::OYJL_PATH: only paths
  *                                     - 0 for both, paths and keys
- *  @param         xpaths              the resulting string list
+ *  @param         paths               the resulting string list
  *
  *  @version Oyranos: 0.9.7
  *  @date    2017/11/12
@@ -339,7 +336,10 @@ static void oyjlJsonIndent ( char ** json, const char * before, int level, const
   *json = njson;
 }
 
-/** @brief convert a C tree into a JSON string */
+/** @brief convert a C tree into a JSON string
+ *
+ *  @see oyjlTreeParse()
+ */
 void oyjlTreeToJson (oyjl_val v, int * level, char ** json)
 {
   if(v)
@@ -439,8 +439,21 @@ char * oyjlTreePrint (oyjl_val v)
   return json;
 }
 
-/** @brief convert a C tree into a YAML string */
-void oyjlTreeToYaml (oyjl_val v, int * level, char ** text)
+/** @brief convert a C tree into a YAML string
+ *
+ *  @see oyjlTreeParseYaml()
+ *
+ *  @param         v                   node
+ *  @param         level               desired level depth
+ *  @param         text                the resulting string
+ *
+ *  @version Oyranos: 0.9.7
+ *  @date    2019/01/01
+ *  @since   2019/01/01 (Oyranos: 0.9.7)
+ */
+void               oyjlTreeToYaml    ( oyjl_val            v,
+                                       int               * level,
+                                       char             ** text)
 {
 #define YAML_INDENT " "
   if(*level == 0)
@@ -710,15 +723,19 @@ void oyjlTreeToXml2 (oyjl_val v, const char * parent_key, int * level, char ** t
  *  '@' are mapped to a attribute of the parent key. A object key of
  *  "@text" is mapped to the inner XML content of the parent tree object.
  *
+ *  @see oyjlTreeParseXml()
+ *
  *  @param         v                   node
- *  @param         levels              desired level depth
+ *  @param         level               desired level depth
  *  @param         text                the resulting string
  *
  *  @version Oyranos: 0.9.7
  *  @date    2019/01/01
  *  @since   2019/01/01 (Oyranos: 0.9.7)
  */
-void oyjlTreeToXml (oyjl_val v, int * level, char ** text)
+void               oyjlTreeToXml     ( oyjl_val            v,
+                                       int               * level,
+                                       char             ** text)
 {
   oyjlStringAdd( text, 0,0, "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" );
   if(v)
@@ -1326,5 +1343,4 @@ void oyjlTreeFree (oyjl_val v)
     free(v);
 }
 
-/** @} *//* oyjl */
-/** @} *//* misc */
+/** @} *//* oyjl_tree */

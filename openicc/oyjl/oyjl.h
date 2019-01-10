@@ -23,15 +23,11 @@
  * \date August 2010
  *
  * This interface makes quick parsing and extraction of
- * smallish JSON docs trivial:
+ * smallish JSON docs trivial.
  *
- * \include example/parse_config.c
+ * The original yajl_val_s structure was renamed to oyjl_val_s by
+ * Kai-Uwe Behrmann for libOyjl.
  */
-
-/** \addtogroup misc
- *  @{ *//* misc */
-/** \addtogroup oyjl
- *  @{ *//* oyjl */
 
 
 #ifndef OYJL_H
@@ -47,6 +43,10 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+/** \addtogroup oyjl_tree Tree
+ *  @brief Tree data structure manipulation and I/O
+ *  @{ *//* oyjl_tree */
 
 /**
  *  possible data types that a oyjl_val_s can hold */
@@ -200,7 +200,7 @@ OYJL_API oyjl_val oyjlTreeGet ( oyjl_val parent, const char ** path, oyjl_type t
  *  Get a pointer to a oyjl_val_array or NULL if the value is not an object. */
 #define OYJL_GET_ARRAY(v)  (OYJL_IS_ARRAY(v)  ? &(v)->u.array  : NULL)
 
-#define OYJL_NUMBER_DETECTION 0x01
+#define OYJL_NUMBER_DETECTION 0x01     /**< @brief try to parse values as number */
 #if defined(OYJL_HAVE_LIBXML2)
 oyjl_val   oyjlTreeParseXml          ( const char        * xml,
                                        int                 flags,
@@ -254,11 +254,29 @@ void       oyjlValueClear            ( oyjl_val            v );
 int        oyjlPathMatch             ( const char        * path,
                                        const char        * xpath,
                                        int                 flags );
+/** @} *//* oyjl_tree */
 
 /* --- Core --- */
+/** \addtogroup misc
+ *  @{ *//* misc */
+/** \addtogroup oyjl
+ *  @{ *//* oyjl */
+/** \addtogroup oyjl_core
+ *  @{ */
+/** @} */
+/** \addtogroup oyjl_tree
+ *  @{ */
+/** @} */
+
+
 int        oyjlVersion               ( int                 type );
+/** @} *//* oyjl */
+/** @} *//* misc */
 
 /* --- string helpers --- */
+/** \addtogroup oyjl_core Core
+ *  @brief Messaging, I/O and String Handling
+ *  @{ *//* oyjl_core */
 char **    oyjlStringSplit           ( const char        * text,
                                        const char          delimiter,
                                        int               * count,
@@ -316,7 +334,6 @@ int        oyjlStringToDouble        ( const char        * text,
 /* --- I/O helpers --- */
 char *     oyjlReadFileStreamToMem   ( FILE              * fp,
                                        int               * size );
-
 /* --- message helpers --- */
 /** @brief message type */
 typedef enum {
@@ -331,6 +348,8 @@ typedef int (* oyjlMessage_f)        ( int/*oyjlMSG_e*/    error_code,
                                        const char        * format,
                                        ... );
 int            oyjlMessageFuncSet    ( oyjlMessage_f      message_func );
+
+/** @} *//* oyjl_core */
 
 
 /* --- compile helpers --- */
@@ -363,7 +382,5 @@ int            oyjlMessageFuncSet    ( oyjlMessage_f      message_func );
 }
 #endif
 
-/** @} *//* oyjl */
-/** @} *//* misc */
 
 #endif /* OYJL_H */

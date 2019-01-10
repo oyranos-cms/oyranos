@@ -41,11 +41,15 @@
 #include <locale.h>
 #endif
 
-/** \addtogroup misc
- *  @{ *//* misc */
-/** \addtogroup oyjl
- *  @{ *//* oyjl */
+/** \addtogroup oyjl_core
+ *  @{ *//* oyjl_core */
 
+/** @brief   the default message handler to stderr
+ *
+ *  @version OpenICC: 0.1.0
+ *  @date    2011/10/21
+ *  @since   2008/04/03 (OpenICC: 0.1.0)
+ */
 int          oyjlMessageFunc         ( int/*oyjlMSG_e*/    error_code,
                                        const void        * context_object OYJL_UNUSED,
                                        const char        * format,
@@ -107,6 +111,14 @@ int            oyjlMessageFuncSet    ( oyjlMessage_f       message_func )
   return 0;
 }
 
+/** @brief   convert a string into list
+ *
+ *  @param[in]     text                source string
+ *  @param[in]     delimiter           the char which marks the split; e.g. comma ','
+ *  @param[out]    count               number of detected string segments; optional
+ *  @param[in]     alloc               custom allocator; optional, default is malloc
+ *  @return                            array of detected string segments
+ */
 char **        oyjlStringSplit       ( const char        * text,
                                        const char          delimiter,
                                        int               * count,
@@ -160,6 +172,14 @@ char **        oyjlStringSplit       ( const char        * text,
   return list;
 }
 
+/** @brief   duplicate a string with custom allocator
+ *
+ *  The function adds the allocator over standard strdup().
+ *
+ *  @param[in]     string              source string
+ *  @param[in]     alloc               custom allocator; optional, default is malloc
+ *  @return                            copy
+ */
 char *     oyjlStringCopy            ( const char        * string,
                                        void*            (* alloc)(size_t))
 {
@@ -175,6 +195,17 @@ char *     oyjlStringCopy            ( const char        * string,
   return text_copy;
 }
 
+/** @brief   sprintf with de-/allocator
+ *
+ *  The function adds memory management over standard sprintf().
+ *
+ *  @param[in]     string              source string
+ *  @param[in]     alloc               custom allocator; optional, default is malloc
+ *  @param[in]     deAlloc             custom deallocator matching alloc; optional, default is free
+ *  @param[in]     format              printf style format string
+ *  @param[in]     ...                 argument list for format
+ *  @return                            constructed string
+ */
 int        oyjlStringAdd             ( char             ** string,
                                        void*            (* alloc)(size_t size),
                                        void             (* deAlloc)(void * data ),
@@ -221,6 +252,14 @@ int        oyjlStringAdd             ( char             ** string,
   return 0;
 }
 
+/** @brief   append to the string end
+ *
+ *  @param[in]     text                source string
+ *  @param[in]     append              to be added text to string
+ *  @param[in]     append_len          length of append
+ *  @param[in]     alloc               custom allocator; optional, default is malloc
+ *  @return                            constructed string+append
+ */
 char*      oyjlStringAppendN         ( const char        * text,
                                        const char        * append,
                                        int                 append_len,
@@ -250,6 +289,15 @@ char*      oyjlStringAppendN         ( const char        * text,
   return text_copy;
 }
 
+/** @brief   append to the string end
+ *
+ *  @param[in]     text                source string
+ *  @param[in]     append              to be added text to string
+ *  @param[in]     append_len          length of append
+ *  @param[in]     alloc               custom allocator; optional, default is malloc
+ *  @param[in]     deAlloc             custom deallocator matching alloc; optional, default is free
+ *  @return                            constructed string+append
+ */
 void       oyjlStringAddN            ( char             ** text,
                                        const char        * append,
                                        int                 append_len,
@@ -270,6 +318,15 @@ void       oyjlStringAddN            ( char             ** text,
   return;
 }
 
+/** @brief   substitute pattern in a string
+ *
+ *  @param[in]     text                source string
+ *  @param[in]     search              pattern to be tested in text
+ *  @param[in]     replacement         string to be put in place of search sub string
+ *  @param[in]     alloc               custom allocator; optional, default is malloc
+ *  @param[in]     deAlloc             custom deallocator matching alloc; optional, default is free
+ *  @return                            manipulated result
+ */
 char*      oyjlStringReplace         ( const char        * text,
                                        const char        * search,
                                        const char        * replacement,
@@ -309,6 +366,7 @@ char*      oyjlStringReplace         ( const char        * text,
 }
 
 
+/** @brief append a string list to an other string list */
 char **    oyjlStringListCatList     ( const char       ** list,
                                        int                 n_alt,
                                        const char       ** append,
@@ -345,6 +403,7 @@ char **    oyjlStringListCatList     ( const char       ** list,
   return nlist;
 }
 
+/** @brief free a string list */
 void       oyjlStringListRelease  ( char            *** l,
                                        int                 size,
                                        void             (* deAlloc)(void*) )
@@ -367,6 +426,7 @@ void       oyjlStringListRelease  ( char            *** l,
   }
 }
 
+/** @brief append a string to a string list */
 void       oyjlStringListAddStaticString (
                                        char            *** list,
                                        int               * n,
@@ -395,8 +455,7 @@ void       oyjlStringListAddStaticString (
   *list = nlist;
 }
 
-/** @internal
- *  @brief filter doubles out
+/** @brief filter doubles out
  *
  *  @version Oyranos: 0.9.6
  *  @date    2015/08/04
@@ -443,6 +502,8 @@ void       oyjlStringListFreeDoubles (
 
   *list_n = pos;
 }
+
+/** @brief append a string list to an other and handle memory */
 void     oyjlStringListAddList       ( char            *** list,
                                        int               * n,
                                        const char       ** append,
@@ -465,7 +526,7 @@ void     oyjlStringListAddList       ( char            *** list,
 }
 
 
-/* show better const behaviour and return instant error status */
+/** show better const behaviour and return instant error status */
 int      oyjlStringToLong            ( const char        * text,
                                        long              * value )
 {
@@ -477,8 +538,7 @@ int      oyjlStringToLong            ( const char        * text,
     return 1;
 }
 
-/** @internal 
- *  @brief   text to double conversion
+/** @brief   text to double conversion
  *
  *  @return                            error
  *
@@ -529,6 +589,8 @@ int          oyjlStringToDouble      ( const char        * text,
 }
 
 
+/** @brief read FILE into memory
+ */
 char *     oyjlReadFileStreamToMem   ( FILE              * fp,
                                        int               * size )
 {
@@ -563,13 +625,18 @@ char *     oyjlReadFileStreamToMem   ( FILE              * fp,
   return mem;
 }
 
+/** @} *//* oyjl_core */
+
 #include "oyjl_version.h"
 #include <yajl/yajl_parse.h>
 #include <yajl/yajl_version.h>
+/** \addtogroup oyjl
+ *  @{ *//* oyjl */
 /** @brief  give the compiled in library version
  *
- *  @param[in]  type           0 - Oyjl API
- *                             1 - Yajl API
+ *  @param[in]  type           request API type
+ *                             - 0 - Oyjl API
+ *                             - 1 - Yajl API
  *
  *  @return                    OYJL_VERSION at library compile time
  */
@@ -582,4 +649,3 @@ int            oyjlVersion           ( int                 type )
 }
 
 /** @} *//* oyjl */
-/** @} *//* misc */
