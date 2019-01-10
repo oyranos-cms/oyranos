@@ -1,3 +1,17 @@
+/*  @file oyjl_yajl.c
+ *
+ *  oyjl - Yajl tree extension
+ *
+ *  @par Copyright:
+ *            2016-2019 (C) Kai-Uwe Behrmann
+ *
+ *  @brief    Oyjl parsing functions
+ *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
+ *  @par License:
+ *            MIT <http://www.opensource.org/licenses/mit-license.php>
+ *  @since    2016/12/17
+ */
+
 /*
  * Copyright (c) 2010-2011  Florian Forster  <ff at octo.it>
  *
@@ -30,7 +44,6 @@
 #endif
 
 #include "oyjl.h"
-#include "oyjl_version.h"
 #include "oyjl_tree_internal.h"
 #ifdef HAVE_LOCALE_H
 #include <locale.h>
@@ -392,9 +405,7 @@ static int handle_null (void *ctx)
  * Public functions
  */
 
-/** \addtogroup misc
- *  @{ *//* misc */
-/** \addtogroup oyjl Oyjl JSON Parsing
+/** \addtogroup oyjl_tree Oyjl JSON Parsing
  *  @brief   Easy to use JSON API
  *
  *  The API is designed to be easily useable without much boilerplate.
@@ -427,7 +438,7 @@ static int handle_null (void *ctx)
  *  @dontinclude tutorial_json_options.c
  *  @skip testOyjl(void)
  *  @until oyjlTreeFree(
- *  @{ *//* oyjl */
+ *  @{ *//* oyjl_tree */
 
 /** @brief read a json text string into a C data structure
  *
@@ -435,6 +446,8 @@ static int handle_null (void *ctx)
  *  @skipline const char * text
  *  @skip error_buffer
  *  @until oyjlTreeParse
+ *
+ *  @see oyjlTreeToJson()
  */
 oyjl_val oyjlTreeParse   (const char *input,
                           char *error_buffer, size_t error_buffer_size)
@@ -537,35 +550,11 @@ static yajl_callbacks oyjl_tree_callbacks = {
     return (ctx.root);
 }
 
-#if defined(OYJL_HAVE_LIBXML2)
-/** @brief read a XML text string into a C data structure
- */
-#include <libxml/parser.h>
-#include <libxml/xmlmemory.h>
-#include <libxml/xpath.h>
-#include <libxml/xpathInternals.h>
-
-#include "oyjl.h"
-
-
-char *             oyjlXML2NodeName  ( xmlNodePtr          cur )
-{
-  char * name = NULL;
-  const xmlChar * prefix = cur->ns && cur->ns->prefix ? cur->ns->prefix : 0;
-  if(prefix)
-  {
-    oyjlStringAdd( &name, 0,0, (char*)prefix );
-    oyjlStringAdd( &name, 0,0, ":" );
-  }
-  oyjlStringAdd( &name, 0,0, (char*)cur->name );
-  return name;
-}
-
 /** @brief obtain a new node object possibly in array
  *
  *  The node can even have the same name. It works only for flat path level.
  *
- *  @param[in.out] root                the node
+ *  @param[in,out] root                the node
  *  @param[in]     name                flat path, without leveling slash
  *  @param[out]    array_ret           tell if the node is child of that array
  *  @param[out]    pos_ret             position of returned node in array_ret
@@ -612,6 +601,28 @@ oyjl_val oyjlTreeGetNewValueFromArray( oyjl_val root, const char * name, oyjl_va
     *pos_ret = pos;
 
   return node;
+}
+
+#if defined(OYJL_HAVE_LIBXML2) || defined(DOXYGEN)
+#include <libxml/parser.h>
+#include <libxml/xmlmemory.h>
+#include <libxml/xpath.h>
+#include <libxml/xpathInternals.h>
+
+#include "oyjl.h"
+
+
+char *             oyjlXML2NodeName  ( xmlNodePtr          cur )
+{
+  char * name = NULL;
+  const xmlChar * prefix = cur->ns && cur->ns->prefix ? cur->ns->prefix : 0;
+  if(prefix)
+  {
+    oyjlStringAdd( &name, 0,0, (char*)prefix );
+    oyjlStringAdd( &name, 0,0, ":" );
+  }
+  oyjlStringAdd( &name, 0,0, (char*)cur->name );
+  return name;
 }
 
 int              oyjlXMLNodeIsText   ( xmlNodePtr          cur )
@@ -715,6 +726,23 @@ void             oyjlParseXMLDoc_    ( xmlDocPtr           doc,
   }
 }
 
+/** @brief read a XML text string into a C data structure
+ *
+ *  XML attributes are prefixed with the at '@' char. Inner strings are placed
+ *  as objects with key '\@text'. Repeating XML nodes are placed into a array
+ *  below a object with the key name of the nodes.
+ *
+ *  @see oyjlTreeToXml()
+ *
+ *  @param[in]     xml                 the XML text
+ *  @param[in]     flags               for processing
+ *                                     - ::OYJL_NUMBER_DETECTION for parsing
+ *                                       of inner strings as possibly numbers
+ *  @param[out]    error_buffer        place a error message
+ *  @param[out]    error_buffer_size   size of error_buffer
+ *  @return                            object tree on success,
+ *                                     else check error_buffer
+ */
 oyjl_val   oyjlTreeParseXml          ( const char        * xml,
                                        int                 flags,
                                        char              * error_buffer,
@@ -745,7 +773,7 @@ oyjl_val   oyjlTreeParseXml          ( const char        * xml,
   return jroot;
 }
 #endif
-#if defined(OYJL_HAVE_YAML)
+#if defined(OYJL_HAVE_YAML) || defined(DOXYGEN)
 #include <yaml.h>
 int oyjlYamlGetCount( yaml_node_t * n )
 {
@@ -841,7 +869,19 @@ static int oyjlYamlReadNode( yaml_document_t * doc, yaml_node_t * node, int flag
     }
   return error;
 }
+
 /** @brief read a YAML text string into a C data structure
+ *
+ *  @see oyjlTreeToYaml()
+ *
+ *  @param[in]     yaml                the YAML text
+ *  @param[in]     flags               for processing
+ *                                     - ::OYJL_NUMBER_DETECTION for parsing
+ *                                       of values as possibly numbers
+ *  @param[out]    error_buffer        place a error message
+ *  @param[out]    error_buffer_size   size of error_buffer
+ *  @return                            object tree on success,
+ *                                     else check error_buffer
  */
 oyjl_val   oyjlTreeParseYaml         ( const char        * yaml,
                                        int                 flags,
@@ -899,5 +939,4 @@ oyjl_val   oyjlTreeParseYaml         ( const char        * yaml,
 }
 #endif
 
-/** @} *//* oyjl */
-/** @} *//* misc */
+/** @} *//* oyjl_tree */
