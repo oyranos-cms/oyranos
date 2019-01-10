@@ -67,3 +67,30 @@
 
 #define verbose oy_debug
 
+#define OYJL_CREATE_VA_STRING(format_, text_, alloc_, error_action) \
+{ \
+  va_list list; \
+  size_t sz = 0; \
+  int len = 0; \
+  void*(* allocate)(size_t size) = alloc_; \
+  if(!allocate) allocate = malloc; \
+\
+  text_ = NULL; \
+  \
+  va_start( list, format_); \
+  len = vsnprintf( text_, sz, format_, list); \
+  va_end  ( list ); \
+\
+  { \
+    text_ = allocate( sizeof(char) * len + 2 ); \
+    if(!text_) \
+    { \
+      oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT_ "could not allocate memory", OYJL_DBG_ARGS_ ); \
+      error_action; \
+    } \
+    va_start( list, format_); \
+    len = vsnprintf( text, len+1, format_, list); \
+    va_end  ( list ); \
+  } \
+}
+
