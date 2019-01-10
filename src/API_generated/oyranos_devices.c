@@ -1698,10 +1698,10 @@ OYAPI int  OYEXPORT
       for(i = 0; i < count; ++i)
       {
         if(short_name)
-          v = oyjlTreeGetValuef( root, 0,
+          v = oyjlTreeGetValueF( root, 0,
                               "[%d]/short_name", i );
         else if(long_name)
-          v = oyjlTreeGetValuef( root, 0, 
+          v = oyjlTreeGetValueF( root, 0, 
                               "[%d]/longName", i );
 
         val = oyjlValueText( v, oyAllocateFunc_ );
@@ -1756,7 +1756,7 @@ OYAPI int  OYEXPORT
                                  "//" OY_TYPE_STD "/argv/underline_key_suffix",
                                  "TAXI", OY_CREATE_NEW );
 
-        tv = oyjlTreeGetValuef( root, 0, "org/freedesktop/openicc/device/[0]" );
+        tv = oyjlTreeGetValueF( root, 0, "org/freedesktop/openicc/device/[0]" );
         count = oyjlValueCount(tv);
         for(i = 0; i < count; ++i)
         {
@@ -1764,7 +1764,7 @@ OYAPI int  OYEXPORT
                                  "//" OY_TYPE_STD "/argv/pos",
                                  i, 0, OY_CREATE_NEW );
 
-          v = oyjlTreeGetValuef( root, 0, "org/freedesktop/openicc/device/[0]/[%d]/_id/$oid", i );
+          v = oyjlTreeGetValueF( root, 0, "org/freedesktop/openicc/device/[0]/[%d]/_id/$oid", i );
           val = oyjlValueText( v, oyAllocateFunc_ );
           error = oyDeviceFromJSON( device_db, opts, &dev );
 
@@ -1774,11 +1774,11 @@ OYAPI int  OYEXPORT
             oyConfig_AddDBData( dev, "TAXI_id", val, OY_CREATE_NEW );
             if(val) { oyDeAllocateFunc_(val); val = 0; }
 
-            v = oyjlTreeGetValuef( root, 0, "org/freedesktop/openicc/device/[0]/[%d]/profile_description", i );
+            v = oyjlTreeGetValueF( root, 0, "org/freedesktop/openicc/device/[0]/[%d]/profile_description", i );
             n = oyjlValueCount(v);
             for(j = 0; j < n; ++j)
             {
-              v = oyjlTreeGetValuef( root, 0, "org/freedesktop/openicc/device/[0]/[%d]/profile_description/[%d]", i, j );
+              v = oyjlTreeGetValueF( root, 0, "org/freedesktop/openicc/device/[0]/[%d]/profile_description/[%d]", i, j );
               val = oyjlValueText( v, oyAllocateFunc_ );
               oyConfig_AddDBData( dev, "TAXI_profile_description", val, OY_CREATE_NEW );
               if(val) { oyDeAllocateFunc_(val); val = 0; }
@@ -2662,9 +2662,9 @@ int            oyFilterNode_GetUi    ( oyFilterNode_s     * node,
         n4 = oyjlValueCount( g4 ), i;
     for(i = 0; i < n9; ++i)
     {
-      oyjl_val group9 = oyjlTreeGetValuef( root9, 0, "org/freedesktop/openicc/modules/[0]/groups/[%d]", i );
+      oyjl_val group9 = oyjlTreeGetValueF( root9, 0, "org/freedesktop/openicc/modules/[0]/groups/[%d]", i );
       /* allocate new array member */
-      oyjl_val g4new = oyjlTreeGetValuef( root4, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/groups/[%d]", n4 + i );
+      oyjl_val g4new = oyjlTreeGetValueF( root4, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/groups/[%d]", n4 + i );
       /* move the node to the new tree */
       if(g4new && OYJL_IS_ARRAY(g4) && g4->u.array.values)
       {

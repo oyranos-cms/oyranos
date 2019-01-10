@@ -784,11 +784,11 @@ int findLocation(oySCOPE_e scope, int dry)
     {
       char * json = NULL;
       int level = 0;
-      v = oyjlTreeGetValuef( root, 0, "latitude", NULL );
+      v = oyjlTreeGetValueF( root, 0, "latitude", NULL );
       value = oyjlValueText( v, oyAllocateFunc_ );
       if(oyStringToDouble( value, &lat ))
         error = 1;
-      v = oyjlTreeGetValuef( root, 0, "longitude", NULL );
+      v = oyjlTreeGetValueF( root, 0, "longitude", NULL );
       value = oyjlValueText( v, oyAllocateFunc_ );
       if(oyStringToDouble( value, &lon ))
         error = 1;
@@ -798,7 +798,7 @@ int findLocation(oySCOPE_e scope, int dry)
       if(lat != 0.0 && lon != 0.0)
       {
         #define PRINT_VAL( key, name )\
-        v = oyjlTreeGetValuef( root, 0, key, NULL ); \
+        v = oyjlTreeGetValueF( root, 0, key, NULL ); \
         value = oyjlValueText( v, oyAllocateFunc_ ); \
 	if(value) \
         { if(value[0]) \

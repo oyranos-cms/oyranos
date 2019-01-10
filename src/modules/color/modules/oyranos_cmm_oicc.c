@@ -119,7 +119,7 @@ oyOptions_s* oicc_defaultICCValidateOptions
 
 #define jADD( value_, key_, ... ) \
 { \
-  oyjl_val v = oyjlTreeGetValuef( group, OYJL_CREATE_NEW, key_, __VA_ARGS__ ); \
+  oyjl_val v = oyjlTreeGetValueF( group, OYJL_CREATE_NEW, key_, __VA_ARGS__ ); \
   oyjlValueSetString( v, value_ ); \
 }
 
@@ -264,7 +264,7 @@ int  oiccGetDefaultColorIccOptionsUI ( oyCMMapiFilter_s  * module OY_UNUSED,
               if(aflags & oyNAME_JSON)
               {
                 ++jgroup;
-                group = oyjlTreeGetValuef( root, OYJL_CREATE_NEW, OY_STD "/modules/[0]/groups/[%d]", jgroup );
+                group = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OY_STD "/modules/[0]/groups/[%d]", jgroup );
                 jADD( "Oyranos", "%s", "name" )
                 jADD( section_names[0], "%s", "description" )
                 jADD( section_description[0], "%s", "help" )
@@ -305,7 +305,7 @@ int  oiccGetDefaultColorIccOptionsUI ( oyCMMapiFilter_s  * module OY_UNUSED,
               if(aflags & oyNAME_JSON)
               {
                 ++jgroup2;
-                group = oyjlTreeGetValuef( root, OYJL_CREATE_NEW, OY_STD "/modules/[0]/groups/[%d]/groups/[%d]", jgroup, jgroup2 );
+                group = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OY_STD "/modules/[0]/groups/[%d]/groups/[%d]", jgroup, jgroup2 );
                 jADD( section_names[1], "%s", "name" )
                 //jADD( section_tooltips[1], OY_STD "/modules/[0]/groups/[0]/groups/[%d]/%s", i, "description" )
                 jADD( section_description[1], "%s", "help" )

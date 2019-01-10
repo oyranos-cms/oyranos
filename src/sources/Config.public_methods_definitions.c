@@ -1229,7 +1229,7 @@ OYAPI int  OYEXPORT oyRankMapFromJSON( const char        * json_text,
     oyFree_m_(t);
 
     oyOptions_FindInt( options, "pos", 0, &pos );
-    json_rankm = oyjlTreeGetValuef( json, 0, xpath, pos );
+    json_rankm = oyjlTreeGetValueF( json, 0, xpath, pos );
 
     count = oyjlValueCount( json_rankm );
     oyAllocHelper_m_( map, oyRankMap, count + 1, allocateFunc, error = 1 );

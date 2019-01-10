@@ -119,7 +119,7 @@ char *       oyJsonFromModelAndUi    ( const char        * data,
     {
       char * t = strrchr(path,'/');
       t[0] = 0;
-      v = oyjlTreeGetValuef( uiroot, OYJL_CREATE_NEW, "%s/default", path );
+      v = oyjlTreeGetValueF( uiroot, OYJL_CREATE_NEW, "%s/default", path );
       oyjlValueSetString( v, value );
     }
     if(key) oyFree_m_( key );

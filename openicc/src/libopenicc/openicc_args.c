@@ -1174,9 +1174,9 @@ char *       openiccUi_ToJson        ( openiccUi_s       * ui,
   for(i = 0; i < n; ++i)
   {
     openiccUiHeaderSection_s * s = &ui->sections[i];
-    key = oyjlTreeGetValuef( root, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/information/[%d]/%s", i, "type" );
+    key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/information/[%d]/%s", i, "type" );
     oyjlValueSetString( key, s->nick );
-    key = oyjlTreeGetValuef( root, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/information/[%d]/%s", i, "label" );
+    key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/information/[%d]/%s", i, "label" );
     if(s->label)
       oyjlValueSetString( key, s->label );
     else
@@ -1195,11 +1195,11 @@ char *       openiccUi_ToJson        ( openiccUi_s       * ui,
       else if(strcmp(s->nick, "version") == 0) oyjlValueSetString( key, _("Version") );
       else oyjlValueSetString( key, _(s->nick) );
     }
-    key = oyjlTreeGetValuef( root, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/information/[%d]/%s", i, "name" );
+    key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/information/[%d]/%s", i, "name" );
     oyjlValueSetString( key, s->name );
     if(s->description)
     {
-      key = oyjlTreeGetValuef( root, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/information/[%d]/%s", i, "description" );
+      key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/information/[%d]/%s", i, "description" );
       oyjlValueSetString( key, s->description );
     }
   }
@@ -1213,18 +1213,18 @@ char *       openiccUi_ToJson        ( openiccUi_s       * ui,
     if(!(g->mandatory && g->mandatory[0]))
       continue;
 
-    key = oyjlTreeGetValuef( root, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/groups/[%d]/%s", i, "name" );
+    key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/groups/[%d]/%s", i, "name" );
     oyjlValueSetString( key, g->name );
-    key = oyjlTreeGetValuef( root, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/groups/[%d]/%s", i, "description" );
+    key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/groups/[%d]/%s", i, "description" );
     oyjlValueSetString( key, g->description );
     if(g->help)
     {
-      key = oyjlTreeGetValuef( root, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/groups/[%d]/%s", i, "help" );
+      key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/groups/[%d]/%s", i, "help" );
       oyjlValueSetString( key, g->help );
         fprintf(stderr, "found help: %s\n", g->help);
     }
 
-    key = oyjlTreeGetValuef( root, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/groups/[%d]/%s", i, "mandatory" );
+    key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/groups/[%d]/%s", i, "mandatory" );
     oyjlValueSetString( key, g->mandatory );
     int d = g->detail ? strlen(g->detail) : 0,
         j;
@@ -1232,17 +1232,17 @@ char *       openiccUi_ToJson        ( openiccUi_s       * ui,
     {
       char oc = g->detail[j];
       openiccOption_s * o = openiccOptions_GetOption( opts, oc );
-      key = oyjlTreeGetValuef( root, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "key" );
+      key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "key" );
       if(!o->key)
         sprintf(num, "%c", o->o);
       oyjlValueSetString( key, o->key?o->key:num );
-      key = oyjlTreeGetValuef( root, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "name" );
+      key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "name" );
       oyjlValueSetString( key, o->name );
-      key = oyjlTreeGetValuef( root, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "description" );
+      key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "description" );
       oyjlValueSetString( key, o->description );
       if(o->help)
       {
-        key = oyjlTreeGetValuef( root, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "help" );
+        key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "help" );
         oyjlValueSetString( key, o->help );
       }
 
@@ -1251,20 +1251,20 @@ char *       openiccUi_ToJson        ( openiccUi_s       * ui,
         case openiccOPTIONTYPE_CHOICE:
           {
             int n = 0,l;
-            key = oyjlTreeGetValuef( root, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "default" );
+            key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "default" );
             sprintf( num, "%d", o->values.choices.selected );
             oyjlValueSetString( key, num );
             while(o->values.choices.list[n].nick[0] != '\000')
               ++n;
             for(l = 0; l < n; ++l)
             {
-              key = oyjlTreeGetValuef( root, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/groups/[%d]/options/[%d]/choices/[%d]/%s", i,j,l, "nick" );
+              key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/groups/[%d]/options/[%d]/choices/[%d]/%s", i,j,l, "nick" );
               oyjlValueSetString( key, o->values.choices.list[l].nick );
-              key = oyjlTreeGetValuef( root, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/groups/[%d]/options/[%d]/choices/[%d]/%s", i,j,l, "name" );
+              key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/groups/[%d]/options/[%d]/choices/[%d]/%s", i,j,l, "name" );
               oyjlValueSetString( key, o->values.choices.list[l].name );
             }
           }
-          key = oyjlTreeGetValuef( root, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "type" );
+          key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "type" );
           oyjlValueSetString( key, "choice" );
           break;
         case openiccOPTIONTYPE_FUNCTION:
@@ -1276,46 +1276,46 @@ char *       openiccUi_ToJson        ( openiccUi_s       * ui,
                 ++n;
             if(0 <= selected && selected < n && strlen(list[selected].nick))
             {
-              key = oyjlTreeGetValuef( root, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "default" );
+              key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "default" );
               oyjlValueSetString( key, list[selected].nick );
             }
             for(l = 0; l < n; ++l)
             {
-              key = oyjlTreeGetValuef( root, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/groups/[%d]/options/[%d]/choices/[%d]/%s", i,j,l, "nick" );
+              key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/groups/[%d]/options/[%d]/choices/[%d]/%s", i,j,l, "nick" );
               oyjlValueSetString( key, list[l].nick );
-              key = oyjlTreeGetValuef( root, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/groups/[%d]/options/[%d]/choices/[%d]/%s", i,j,l, "name" );
+              key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/groups/[%d]/options/[%d]/choices/[%d]/%s", i,j,l, "name" );
               oyjlValueSetString( key, list[l].name );
             }
             /* not possible, as the result of openiccOption_GetChoices_() is cached - openiccOptionChoice_Release( &list ); */
           }
-          key = oyjlTreeGetValuef( root, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "type" );
+          key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "type" );
           oyjlValueSetString( key, "choice" );
           break;
         case openiccOPTIONTYPE_DOUBLE:
-          key = oyjlTreeGetValuef( root, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "default" );
+          key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "default" );
           sprintf( num, "%g", o->values.dbl.d ); oyjlValueSetString( key, num );
-          key = oyjlTreeGetValuef( root, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "start" );
+          key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "start" );
           sprintf( num, "%g", o->values.dbl.start ); oyjlValueSetString( key, num );
-          key = oyjlTreeGetValuef( root, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "end" );
+          key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "end" );
           sprintf( num, "%g", o->values.dbl.end ); oyjlValueSetString( key, num );
-          key = oyjlTreeGetValuef( root, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "tick" );
+          key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "tick" );
           sprintf( num, "%g", o->values.dbl.tick ); oyjlValueSetString( key, num );
-          key = oyjlTreeGetValuef( root, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "type" );
+          key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "type" );
           oyjlValueSetString( key, "double" );
           break;
         case openiccOPTIONTYPE_NONE:
-          key = oyjlTreeGetValuef( root, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "default" );
+          key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "default" );
           oyjlValueSetString( key, "0" );
-          key = oyjlTreeGetValuef( root, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "type" );
+          key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "type" );
           oyjlValueSetString( key, "bool" );
           {
             int l; char t[12];
             for(l = 0; l < 2; ++l)
             {
               sprintf(t, "%d", l);
-              key = oyjlTreeGetValuef( root, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/groups/[%d]/options/[%d]/choices/[%d]/%s", i,j,l, "nick" );
+              key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/groups/[%d]/options/[%d]/choices/[%d]/%s", i,j,l, "nick" );
               oyjlValueSetString( key, t );
-              key = oyjlTreeGetValuef( root, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/groups/[%d]/options/[%d]/choices/[%d]/%s", i,j,l, "name" );
+              key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/groups/[%d]/options/[%d]/choices/[%d]/%s", i,j,l, "name" );
               oyjlValueSetString( key, l?_("Yes"):_("No") );
             }
           }
@@ -1323,10 +1323,10 @@ char *       openiccUi_ToJson        ( openiccUi_s       * ui,
         case openiccOPTIONTYPE_STRING:
           if(o->values.suggest)
           {
-            key = oyjlTreeGetValuef( root, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "suggest" );
+            key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "suggest" );
             oyjlValueSetString( key, o->values.suggest );
           }
-          key = oyjlTreeGetValuef( root, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "type" );
+          key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "type" );
           oyjlValueSetString( key, "string" );
           break;
         case openiccOPTIONTYPE_START: break;

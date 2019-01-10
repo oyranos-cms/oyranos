@@ -619,7 +619,7 @@ int        oyJSON2XFORMsFLTKSelect1Handler (
     int count = oyjlValueCount( choices );
     for(int i = 0; i < count; ++i)
     {
-      oyjl_val item = oyjlTreeGetValuef( choices, 0, "[%d]", i );
+      oyjl_val item = oyjlTreeGetValueF( choices, 0, "[%d]", i );
       oyjl_val v;
 
       is_default = 0;

@@ -65,7 +65,7 @@ void testOyjl(void)
     free(json); json = NULL;
 
   /* use a xpath to obtain a node */
-  value = oyjlTreeGetValuef( root, 0, "org/test/[%d]", 1 );
+  value = oyjlTreeGetValueF( root, 0, "org/test/[%d]", 1 );
 
     oyjlTreeToJson( value, &level, &json );
     fprintf( stderr, "%s\n", json );
