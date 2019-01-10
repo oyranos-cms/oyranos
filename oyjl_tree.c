@@ -1090,7 +1090,7 @@ clean:
  *
  *  A NULL argument allocates just a node of type oyjl_t_null.
  *
- *  @see oyjlTreeGetValuef() */
+ *  @see oyjlTreeGetValueF() */
 oyjl_val   oyjlTreeNew               ( const char        * path )
 {
   if(path && path[0])
@@ -1101,7 +1101,7 @@ oyjl_val   oyjlTreeNew               ( const char        * path )
 
 /** @brief obtain a node by a path expression
  *
- *  @see oyjlTreeGetValuef() */
+ *  @see oyjlTreeGetValueF() */
 oyjl_val   oyjlTreeGetValue          ( oyjl_val            v,
                                        int                 flags,
                                        const char        * xpath )
@@ -1113,19 +1113,19 @@ oyjl_val   oyjlTreeGetValue          ( oyjl_val            v,
 }
 
 
-/** Function oyjlTreeGetValuef
+/** Function oyjlTreeGetValueF
  *  @brief   get a child node by a path expression
  *
  *  Creating a new node inside a existing tree needs just a root node - v.
  *  The flags should contain ::OYJL_CREATE_NEW.
  *  @code
-    oyjl_val new_node = oyjlTreeGetValuef( root, OYJL_CREATE_NEW, "my/new/node" );
+    oyjl_val new_node = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, "my/new/node" );
     @endcode
  *
  *  Example: "foo/[]/bar" will append a node to the foo array and create
  *  the bar node, which is empty.
  *  @code
-    oyjl_val new_node = oyjlTreeGetValuef( root, OYJL_CREATE_NEW, "foo/[]/bar" );
+    oyjl_val new_node = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, "foo/[]/bar" );
     @endcode
  *
  *
@@ -1140,7 +1140,7 @@ oyjl_val   oyjlTreeGetValue          ( oyjl_val            v,
  *  @date    2017/10/12
  *  @since   2011/09/24 (Oyranos: 0.3.3)
  */
-oyjl_val   oyjlTreeGetValuef         ( oyjl_val            v,
+oyjl_val   oyjlTreeGetValueF         ( oyjl_val            v,
                                        int                 flags,
                                        const char        * format,
                                                            ... )
