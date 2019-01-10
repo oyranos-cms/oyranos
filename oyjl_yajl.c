@@ -620,9 +620,9 @@ int              oyjlXMLNodeIsText   ( xmlNodePtr          cur )
          cur->content ;
 }
 
-static int oyjl_number_detection = 1;
 void             oyjlParseXMLDoc_    ( xmlDocPtr           doc,
                                        xmlNodePtr          cur,
+                                       int                 flags,
                                        oyjl_val            root )
 {
   while(cur != NULL)
@@ -681,7 +681,7 @@ void             oyjlParseXMLDoc_    ( xmlDocPtr           doc,
       const char * val = (const char *) cur->content;
       double d;
       int err = -1;
-      if(oyjl_number_detection)
+      if(flags & OYJL_NUMBER_DETECTION)
         err = oyjlStringToDouble( val, &d );
       if(err == 0)
       {
@@ -704,7 +704,7 @@ void             oyjlParseXMLDoc_    ( xmlDocPtr           doc,
       xmlNodePtr cur_ = cur->xmlChildrenNode;
       if( oyjlXMLNodeIsText(cur_) && node->type == oyjl_t_object )
         text = oyjlTreeGetValue( node, OYJL_CREATE_NEW, "@text" );
-      oyjlParseXMLDoc_( doc, cur->xmlChildrenNode,
+      oyjlParseXMLDoc_( doc, cur->xmlChildrenNode, flags,
                         text ? text : node );
     }
 
@@ -726,18 +726,13 @@ oyjl_val   oyjlTreeParseXml          ( const char        * xml,
 
   if(!xml) return jroot;
 
-  if(flags & OYJL_NUMBER_DETECTION)
-    oyjl_number_detection = 1;
-  else
-    oyjl_number_detection = 0;
-
   doc = xmlParseMemory( xml, strlen(xml) );
   cur = xmlDocGetRootElement(doc);
 
   if(doc && cur)
   {
     jroot = oyjlTreeNew( NULL );
-    oyjlParseXMLDoc_( doc, cur, jroot );
+    oyjlParseXMLDoc_( doc, cur, flags, jroot );
     xmlFreeDoc( doc );
   }
   else if(error_buffer)
@@ -784,7 +779,7 @@ int oyjlYamlGetId( yaml_node_t * n, int index, int key )
   return id;
 }
 
-static int oyjlYamlReadNode( yaml_document_t * doc, yaml_node_t * node, int is_key, char ** json )
+static int oyjlYamlReadNode( yaml_document_t * doc, yaml_node_t * node, int flags, int is_key, char ** json )
 {
   int error = 0;
   int count, i;
@@ -799,7 +794,7 @@ static int oyjlYamlReadNode( yaml_document_t * doc, yaml_node_t * node, int is_k
     {
       double d;
       int err = -1;
-      if(oyjl_number_detection && is_key != 1)
+      if(flags & OYJL_NUMBER_DETECTION && is_key != 1)
         err = oyjlStringToDouble( t, &d );
       if(err == 0)
         oyjlStringAdd( json, 0,0, "%s", t );
@@ -816,7 +811,7 @@ static int oyjlYamlReadNode( yaml_document_t * doc, yaml_node_t * node, int is_k
       int id = oyjlYamlGetId( node, i, 0 );
       yaml_node_t * n =
       yaml_document_get_node( doc, id );
-      error = oyjlYamlReadNode(doc, n, 0, json);
+      error = oyjlYamlReadNode(doc, n, flags, 0, json);
       if(i < count - 1) oyjlStringAdd( json, 0,0, ",");
     }
     oyjlStringAdd( json, 0,0, "]");
@@ -833,14 +828,14 @@ static int oyjlYamlReadNode( yaml_document_t * doc, yaml_node_t * node, int is_k
 
       if(i == 0) oyjlStringAdd( json, 0,0, "{");
 
-      error = oyjlYamlReadNode(doc, key, 1, json);
+      error = oyjlYamlReadNode(doc, key, flags, 1, json);
       if( key->type == YAML_SCALAR_NODE &&
           !error )
       {
         oyjlStringAdd( json, 0,0, ":");
       }
 
-      error = oyjlYamlReadNode(doc, val, 0, json);
+      error = oyjlYamlReadNode(doc, val, flags, 0, json);
       if(i < count - 1) oyjlStringAdd( json, 0,0, ",");
       else if( i == count - 1 ) oyjlStringAdd( json, 0,0, "}");
     }
@@ -871,11 +866,6 @@ oyjl_val   oyjlTreeParseYaml         ( const char        * yaml,
     return jroot;
   }
 
-  if(flags & OYJL_NUMBER_DETECTION)
-    oyjl_number_detection = 1;
-  else
-    oyjl_number_detection = 0;
-
   yaml_parser_set_input_string( &parser, (const unsigned char*) yaml, strlen(yaml));
 
   yaml_parser_load( &parser, &document );
@@ -890,7 +880,7 @@ oyjl_val   oyjlTreeParseYaml         ( const char        * yaml,
   }
 
   root = yaml_document_get_root_node(&document);
-  error = oyjlYamlReadNode( &document, root, 1, &json );
+  error = oyjlYamlReadNode( &document, root, flags, 1, &json );
   if( error )
   {
     if(error_buffer)
