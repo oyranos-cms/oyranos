@@ -1155,20 +1155,20 @@ char *       openiccUi_ToJson        ( openiccUi_s       * ui,
   int i,n,ng;
 
   root = oyjlTreeNew( "" );
-  oyjlTreeSetValueString( root, "org/freedesktop/openicc/modules/[0]/openicc_module_api_version", "1" );
+  oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "1", "org/freedesktop/openicc/modules/[0]/openicc_module_api_version" );
   if(ui->app_type && ui->app_type[0])
   {
-    oyjlTreeSetValueString( root, "org/freedesktop/openicc/modules/[0]/type", ui->app_type );
+    oyjlTreeSetStringF( root, OYJL_CREATE_NEW, ui->app_type, "org/freedesktop/openicc/modules/[0]/type" );
     if(strcmp( ui->app_type, "tool" ) == 0)
-      oyjlTreeSetValueString( root, "org/freedesktop/openicc/modules/[0]/label", _("Tool") );
+      oyjlTreeSetStringF( root, OYJL_CREATE_NEW, _("Tool"), "org/freedesktop/openicc/modules/[0]/label" );
     else if(strcmp( ui->app_type, "module" ) == 0)
-      oyjlTreeSetValueString( root, "org/freedesktop/openicc/modules/[0]/label", _("Module") );
+      oyjlTreeSetStringF( root, OYJL_CREATE_NEW, _("Module"), "org/freedesktop/openicc/modules/[0]/label" );
   }
-  oyjlTreeSetValueString( root, "org/freedesktop/openicc/modules/[0]/nick", ui->nick );
-  oyjlTreeSetValueString( root, "org/freedesktop/openicc/modules/[0]/name", ui->name );
-  oyjlTreeSetValueString( root, "org/freedesktop/openicc/modules/[0]/description", ui->description );
+  oyjlTreeSetStringF( root, OYJL_CREATE_NEW, ui->nick, "org/freedesktop/openicc/modules/[0]/nick" );
+  oyjlTreeSetStringF( root, OYJL_CREATE_NEW, ui->name, "org/freedesktop/openicc/modules/[0]/name" );
+  oyjlTreeSetStringF( root, OYJL_CREATE_NEW, ui->description, "org/freedesktop/openicc/modules/[0]/description" );
   if(ui->logo)
-    oyjlTreeSetValueString( root, "org/freedesktop/openicc/modules/[0]/logo", ui->logo );
+    oyjlTreeSetStringF( root, OYJL_CREATE_NEW, ui->logo, "org/freedesktop/openicc/modules/[0]/logo" );
 
   n = openiccUi_CountHeaderSections( ui );
   for(i = 0; i < n; ++i)

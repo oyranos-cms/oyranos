@@ -96,9 +96,6 @@ const char *       openiccObjectTypeToString (
                                        openiccOBJECT_e     type );
 
 #define STRING_ADD( t, append ) oyjlStringAdd( &t, 0,0, append )
-void         oyjlTreeSetValueString  ( oyjl_val            root,
-                                       const char        * key,
-                                       const char        * value );
 #define openiccNoEmptyString_m_(t) (t?t:"")
 
 
