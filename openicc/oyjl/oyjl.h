@@ -241,6 +241,11 @@ oyjl_val   oyjlTreeGetValuef         ( oyjl_val            v,
                                        int                 flags,
                                        const char        * format,
                                                            ... );
+int        oyjlTreeSetStringF        ( oyjl_val            root,
+                                       int                 flags,
+                                       const char        * value_text,
+                                       const char        * format,
+                                                           ... );
 char *     oyjlValueText             ( oyjl_val            v,
                                        void*             (*alloc)(size_t));
 int        oyjlValueCount            ( oyjl_val            v );

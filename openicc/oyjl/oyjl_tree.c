@@ -38,9 +38,8 @@
 #include <unistd.h>
 
 #include "oyjl_version.h"
-
 #include "oyjl.h"
-#include "oyjl_version.h"
+#include "oyjl_macros.h"
 #include "oyjl_tree_internal.h"
 #ifdef HAVE_LOCALE_H
 #include <locale.h>
@@ -1146,40 +1145,59 @@ oyjl_val   oyjlTreeGetValuef         ( oyjl_val            v,
                                        const char        * format,
                                                            ... )
 {
-  oyjl_val value = 0;
+  oyjl_val value = NULL;
+  char * text = NULL;
 
-  char * text = 0;
-  va_list list;
-  int len;
-  size_t sz = strlen(format) * 2;
-
-  text = malloc( sz );
-  if(!text)
-  {
-    oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT_ "could not allocate memory", OYJL_DBG_ARGS_ );
-    return 0;
-  }
-
-  text[0] = 0;
-
-  va_start( list, format);
-  len = vsnprintf( text, sz, format, list );
-  va_end  ( list );
-
-  if ((size_t)len >= sz)
-  {
-    text = realloc( text, (len+1)*sizeof(char) );
-    if(!text) return NULL;
-    va_start( list, format);
-    len = vsnprintf( text, len+1, format, list );
-    va_end  ( list );
-  }
+  OYJL_CREATE_VA_STRING(format, text, malloc, return value)
 
   value = oyjlTreeGetValue( v, flags, text );
 
   if(text) free(text);
 
   return value;
+}
+
+/** Function oyjlTreeSetValuef
+ *  @brief   set a child node to a string value
+ *
+ *  @param[in,out] root                the oyjl node
+ *  @param[in]     flags               ::OYJL_CREATE_NEW - allocates nodes even
+ *                                     if they did not yet exist
+ *  @param[in]     value_text          a string
+ *  @param[in]     format              the format for the slashed xpath string
+ *  @param[in]     ...                 the variable argument list; optional
+ *  @return                            error
+ *                                     - -1 - if not found
+ *                                     - 0 on success
+ *                                     - else error
+ *
+ *  @version Oyranos: 0.9.7
+ *  @date    2019/01/10
+ *  @since   2019/01/10 (Oyranos: 0.9.7)
+ */
+int        oyjlTreeSetStringF        ( oyjl_val            root,
+                                       int                 flags,
+                                       const char        * value_text,
+                                       const char        * format,
+                                                           ... )
+{
+  oyjl_val value_node = NULL;
+
+  char * text = NULL;
+  int error = 0;
+
+  OYJL_CREATE_VA_STRING(format, text, malloc, return 1)
+
+  value_node = oyjlTreeGetValue( root, flags, text );
+
+  if(text) free(text);
+
+  if(value_node)
+    oyjlValueSetString( value_node, value_text );
+  else
+    error = -1;
+
+  return error;
 }
 
 /** @brief set the node value to a string */
