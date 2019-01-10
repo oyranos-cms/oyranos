@@ -18,7 +18,7 @@ IF( GETTEXT_FOUND )
 
   ADD_CUSTOM_TARGET( i18n.c
     COMMAND LANG=en PATH=$(PATH):${CMAKE_BINARY_DIR}/openicc/src/tools LD_LIBRARY_PATH=${CMAKE_BINARY_DIR}/openicc/src/libopenicc oi-json -i ${CMAKE_CURRENT_SOURCE_DIR}/${CMM}.json -ek name,label,description,help -o i18n.c
-    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${CMM}.json
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${CMM}.json ${OPENICC_JSON_TOOL}
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     COMMENT "Extract translatable messages to i18n.c"
   )
