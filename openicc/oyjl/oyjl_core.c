@@ -35,6 +35,7 @@
 #include <unistd.h>
 
 #include "oyjl.h"
+#include "oyjl_macros.h"
 #include "oyjl_version.h"
 #include "oyjl_tree_internal.h"
 #ifdef HAVE_LOCALE_H
@@ -55,30 +56,11 @@ int          oyjlMessageFunc         ( int/*oyjlMSG_e*/    error_code,
                                        const char        * format,
                                        ... )
 {
-  char * text = 0;
+  char * text = NULL;
   int error = 0;
-  va_list list;
-  size_t sz = 0;
-  int len = 0;
   const char * status_text = NULL;
 
-
-  va_start( list, format);
-  len = vsnprintf( text, sz, format, list);
-  va_end  ( list );
-
-  {
-    text = calloc( sizeof(char), len+2 );
-    if(!text)
-    {
-      fprintf(stderr,
-      OYJL_DBG_FORMAT_"Could not allocate 256 byte of memory.\n",OYJL_DBG_ARGS_);
-      return 1;
-    }
-    va_start( list, format);
-    len = vsnprintf( text, len+1, format, list);
-    va_end  ( list );
-  }
+  OYJL_CREATE_VA_STRING(format, text, malloc, return 1)
 
   if(error_code == oyjlMSG_INFO) status_text = "Info: ";
   if(error_code == oyjlMSG_CLIENT_CANCELED) status_text = "Client Canceled: ";
@@ -214,28 +196,17 @@ int        oyjlStringAdd             ( char             ** string,
 {
   char * text_copy = NULL;
   char * text = 0;
-  va_list list;
-  int len;
-  size_t sz = 0;
 
   void*(* allocate)(size_t size) = alloc?alloc:malloc;
   void (* deAllocate)(void * data ) = deAlloc?deAlloc:free;
 
-  va_start( list, format);
-  len = vsnprintf( text, sz, format, list );
-  va_end  ( list );
-
-  {
-    oyjlAllocHelper_m_(text, char, len + 1, allocate, return 1);
-    va_start( list, format);
-    len = vsnprintf( text, len+1, format, list );
-    va_end  ( list );
-  }
+  OYJL_CREATE_VA_STRING(format, text, alloc, return 1)
 
   if(string && *string)
   {
-    int l = strlen(*string);
-    text_copy = allocate( len + l + 1 );
+    int l = strlen(*string),
+        l2 = strlen(text);
+    text_copy = allocate( l2 + l + 1 );
     strcpy( text_copy, *string );
     strcpy( &text_copy[l], text );
 
