@@ -1,0 +1,74 @@
+/**
+    @mainpage Oyjl API Documentation
+
+    @section text_contents Descriptive Contents
+    @ref intro |
+    @ref api |
+    @ref api_tutorial |
+    @ref links
+
+ *  @par License
+ *            MIT http://www.opensource.org/licenses/mit-license.php
+
+    @author Kai-Uwe Behrmann and others
+    @since  September 2006-2019
+
+    @par Development
+          https://github.com/oyranos-cms/oyranos
+
+
+    @n@n
+    @section intro Introduction
+  
+    Oyjl API provides a platformindependent C interface for JSON I/O, conversion to and from
+    XML + YAML, string helpers and file reading.
+
+    @section api API Documentation
+    The Oyjl API is declared in the oyjl.h header file.
+    - @ref oyjl_tree - JSON modeled C data structure with data I/O API
+    - @ref oyjl_core - Core API
+
+    @section tools Tools Documentation
+    Oyjl comes with a few tools, which use the Oyjl API's.
+    - @ref openiccdevice - color device configuration
+    - oi-json - localisation helper tool
+
+    @subsection api_tutorial Programming Tutorial
+    Frist you have to put a
+    @code
+    #include <oyjl.h> @endcode
+    in your source text, in order to use the Oyjl API. 
+    @code
+    int main( int argc, char ** argv ) {
+      int oyjl_version = oyjlVersion( 0 );
+      return 0;
+    }@endcode
+
+    Then you can put Oyjl functions in your code and compile with:
+    @verbatim
+    cc `cmake --find-package -DNAME=$@ -DLANGUAGE=C -DCOMPILER_ID=GNU -DMODE=COMPILE Oyjl` `cmake --find-package -DNAME=$@ -DLANGUAGE=C -DCOMPILER_ID=GNU -DMODE=LINK Oyjl`  @endverbatim
+    to link Oyjl and OyjlCore into your application.
+ */
+
+/**
+ *  @example test-core.c
+ *  The code shows many of the Core API's.
+ *  This code is used for testing API and can show use cases at the same time.
+ *  Be careful to only use the publicly declared and cross referenced APIs.
+ *  Some APIs are internal only.
+ */
+/**
+ *  @example test.c
+ *  This code sample will show how to read a JSON file and convert to a XML stream and many more aspects of the Oyjl API.
+ *  This code is used for testing API and can show use cases at the same time.
+ *  Be careful to only use the publicly declared and cross referenced APIs.
+ *  Some APIs are internal only.
+ */
+
+/** @page links References
+    @section projects_links Links
+    - Oyranos: http://www.oyranos.org
+    - Bug reports: https://github.com/oyranos-cms/oyranos
+    - Original Yajl: https://lloyd.github.io/yajl/
+ */
+

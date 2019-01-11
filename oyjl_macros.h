@@ -1,4 +1,4 @@
-/** openicc_macros.h
+/** oyjl_macros.h
  *
  *  @par License: 
  *             MIT <http://www.opensource.org/licenses/mit-license.php>

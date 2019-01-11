@@ -225,8 +225,13 @@ int        oyjlStringAdd             ( char             ** string,
 
 /** @brief   append to the string end
  *
- *  @param[in]     text                source string
- *  @param[in]     append              to be added text to string
+ *  For a plain memory duplication use:
+ *  @code
+    void * copy = oyjlStringAppendN( NULL, (const char*)ptr, ptr_len, malloc );
+    @endcode
+ *
+ *  @param[in]     text                source string; optional
+ *  @param[in]     append              to be added text to string; optional
  *  @param[in]     append_len          length of append
  *  @param[in]     alloc               custom allocator; optional, default is malloc
  *  @return                            constructed string+append
@@ -558,7 +563,6 @@ int          oyjlStringToDouble      ( const char        * text,
 
   return error;
 }
-
 
 /** @brief read FILE into memory
  */

@@ -44,8 +44,7 @@
 extern "C" {
 #endif
 
-/** \addtogroup oyjl_tree Tree
- *  @brief Tree data structure manipulation and I/O
+/** \addtogroup oyjl_tree
  *  @{ *//* oyjl_tree */
 
 /**
