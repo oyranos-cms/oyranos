@@ -20,6 +20,7 @@ OPTION(ENABLE_TESTS "Build tests (requires static libs)" ON)
 OPTION(ENABLE_TOOLS "Build tools" ON)
 OPTION(ENABLE_SHARED_LIBS "Build dynamic link libs" ON)
 OPTION(ENABLE_STATIC_LIBS "Build static libs" ON)
+OPTION(ENABLE_DOCU "Build HTML documentation out of sources" ON)
 
 IF(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR})
   OPTION(ENABLE_INSTALL_${PROJECT_UP_NAME} "Install files" ON)
@@ -33,6 +34,7 @@ ELSE()
   SET(ENABLE_SHARED_LIBS OFF)
   SET(ENABLE_TESTS OFF)
   SET(ENABLE_TOOLS OFF)
+  SET(ENABLE_DOCU OFF)
 ENDIF()
 
 # if our static code lands inside a shared lib, we need -fPIC
@@ -68,12 +70,6 @@ SET (TARGET_PKGCONFIG_FOLDER
 		"pkgconfig"
 		CACHE STRING
 		"The folder below system library folder where to install pkgconfig files."
-    )
-
-SET (${PROJECT_UP_NAME}_DOCUMENTATION_FOLDER
-		"share/doc/${PACKAGE_NAME}-api"
-		CACHE STRING
-		"The folder below system prefix where to install api documentation files."
     )
 
 # additional cmake modules for loading libraries
@@ -337,4 +333,9 @@ IF(ENABLE_INSTALL_${PROJECT_UP_NAME})
 	)
 ENDIF(ENABLE_INSTALL_${PROJECT_UP_NAME})
 
+IF(ENABLE_DOCU)
+  ADD_SUBDIRECTORY( docs )
+ENDIF(ENABLE_DOCU)
 
+INCLUDE(FeatureSummary)
+FEATURE_SUMMARY(WHAT ALL INCLUDE_QUIET_PACKAGES FATAL_ON_MISSING_REQUIRED_PACKAGES)

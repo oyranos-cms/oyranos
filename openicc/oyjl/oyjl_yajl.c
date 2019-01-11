@@ -406,7 +406,7 @@ static int handle_null (void *ctx)
  */
 
 /** \addtogroup oyjl_tree Oyjl JSON Parsing
- *  @brief   Easy to use JSON API
+ *  @brief Tree data structure manipulation and I/O
  *
  *  The API is designed to be easily useable without much boilerplate.
  *  It includes a xpath alike syntax to obtain or create nodes inside
