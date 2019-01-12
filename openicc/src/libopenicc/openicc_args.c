@@ -87,7 +87,7 @@ void openiccOptionChoice_Release     ( openiccOptionChoice_s**choices )
 int openiccOptions_Count             ( openiccOptions_s  * opts )
 {
   int n = 0;
-  while(openiccObjectToType( &opts->array[n] ) /*"oiwi"*/ == openiccOBJECT_OPTION) ++n;
+  while( *(openiccOBJECT_e*)&opts->array[n] /*"oiwi"*/ == openiccOBJECT_OPTION) ++n;
   return n;
 }
 
@@ -101,7 +101,7 @@ int openiccOptions_Count             ( openiccOptions_s  * opts )
 int openiccOptions_CountGroups       ( openiccOptions_s  * opts )
 {
   int n = 0;
-  while(openiccObjectToType( &opts->groups[n] ) /*"oiwg"*/ == openiccOBJECT_OPTION_GROUP) ++n;
+  while( *(openiccOBJECT_e*)&opts->groups[n] /*"oiwg"*/ == openiccOBJECT_OPTION_GROUP) ++n;
   return n;
 }
 
@@ -1086,12 +1086,11 @@ void           openiccUi_Release     ( openiccUi_s      ** ui )
   char ** list;
   int pos = 0;
   if(!ui || !*ui) return;
-  if(openiccObjectToType( *ui ) != openiccOBJECT_UI)
+  if( *(openiccOBJECT_e*)*ui != openiccOBJECT_UI)
   {
     char * a = (char*)*ui;
     char type[5] = {a[0],a[1],a[2],a[3],0};
-    fprintf(stderr, "Unexpected object: \"%s\"(expected: \"%s\")\n", type, 
-            openiccObjectTypeToString( openiccOBJECT_UI ) );
+    fprintf(stderr, "Unexpected object: \"%s\"(expected: \"openiccUi_s\")\n", type );
     return;
   }
   list = (*ui)->opts->private_data;
@@ -1115,7 +1114,7 @@ void           openiccUi_Release     ( openiccUi_s      ** ui )
 int     openiccUi_CountHeaderSections( openiccUi_s       * ui )
 {
   int n = 0;
-  while(openiccObjectToType( &ui->sections[n] ) /*"oihs"*/ == openiccOBJECT_UI_HEADER_SECTION) ++n;
+  while( *(openiccOBJECT_e*)&ui->sections[n] /*"oihs"*/ == openiccOBJECT_UI_HEADER_SECTION) ++n;
   return n;
 }
 
@@ -1810,6 +1809,6 @@ openiccUiHeaderSection_s * oiUiInfo  ( const char          * documentation )
     { "oihs", "date", NULL, "1970-01-01T12:00:00", "" },
     { "", NULL, NULL, NULL, NULL }
   };
-  return openiccMemDup( s, sizeof(s) );
+  return (openiccUiHeaderSection_s*) oyjlStringAppendN( NULL, (const char*)s, sizeof(s), malloc );
 }
 
