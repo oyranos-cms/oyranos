@@ -31,6 +31,17 @@
 #include <math.h>
 #endif
 
+/** \addtogroup oyjl
+ *  @{ *//* oyjl */
+/** \addtogroup oyjl_test Testing
+ *  @brief API testing for prototyping and regression checking in CI
+ *
+ *  The API is designed to be easily useable without much boilerplate.
+ *
+ *  \b Example @ref test.c
+ *  @{ *//* oyjl_test */
+
+
 #ifdef USE_NEW
 void* myAllocFunc(size_t size) { return new char [size]; }
 void  myDeAllocFunc( void * ptr ) { delete [] (char*)ptr; }
@@ -42,12 +53,13 @@ void  myDeAllocFunc( void * ptr ) { free( ptr ); }
 
 /* --- general test routines --- */
 
+/** test result categories */
 typedef enum {
-  oyjlTESTRESULT_SYSERROR,
-  oyjlTESTRESULT_FAIL,
-  oyjlTESTRESULT_XFAIL,
-  oyjlTESTRESULT_SUCCESS,
-  oyjlTESTRESULT_UNKNOWN
+  oyjlTESTRESULT_SYSERROR,           /**< system error */
+  oyjlTESTRESULT_FAIL,               /**< test failed and will error */
+  oyjlTESTRESULT_XFAIL,              /**< non critical failure */
+  oyjlTESTRESULT_SUCCESS,            /**< tested and verified feature */
+  oyjlTESTRESULT_UNKNOWN             /**< unknown error */
 } oyjlTESTRESULT_e;
 
 /* true color codes */
@@ -99,8 +111,15 @@ const char * oyTestResultToString    ( oyjlTESTRESULT_e      error )
   return text;
 }
 
-FILE * zout;  /* printed inbetween results */
+/** printed inbetween results */
+FILE * zout;
 static int test_number = 0;
+/** macro to register a test
+ *  @see TESTS_RUN
+ *  @param         prog                test function: oyjlTESTRESULT_e  (*test)(void)
+ *  @param         text                name of the test
+ *  @param         do_it               enable the test - usually 1
+ */
 #define TEST_RUN( prog, text, do_it ) \
 oyjlTESTRESULT_e prog(); \
 { \
@@ -121,7 +140,12 @@ int results[oyjlTESTRESULT_UNKNOWN+1];
 char * tests_failed[tn];
 char * tests_xfailed[tn];
 
-oyjlTESTRESULT_e oyTestRun             ( oyjlTESTRESULT_e    (*test)(void),
+/** run a test and print results on end
+ *  @param         test                test function
+ *  @param         test_name           short string for status line
+ *  @param         number              internal test number
+ */
+oyjlTESTRESULT_e oyTestRun           ( oyjlTESTRESULT_e  (*test)(void),
                                        const char        * test_name,
                                        int                 number )
 {
@@ -150,6 +174,10 @@ oyjlTESTRESULT_e oyTestRun             ( oyjlTESTRESULT_e    (*test)(void),
 
 
 int oy_test_sub_count = 0;
+/** Print a custom line to stdout followed by the status and count state.
+ *  @param         result_             use oyjlTESTRESULT_e for
+ *  @param         ...                 the argument list to fprint(stdout, ...)
+ */
 #define PRINT_SUB( result_, ... ) { \
   if((result_) < result) \
     result = result_; \
@@ -161,6 +189,7 @@ int oy_test_sub_count = 0;
   ++oy_test_sub_count; \
 }
 
+/** helper to print a number inside ::PRINT_SUB(...) */
 const char  *  oyIntToString         ( int                 integer )
 {
   static char texts[3][255];
@@ -177,6 +206,7 @@ const char  *  oyIntToString         ( int                 integer )
   return texts[a++];
 }
 
+/** helper to print tempo in ::PRINT_SUB(...) */
 const char  *  oyProfilingToString   ( int                 integer,
                                        double              duration,
                                        const char        * term )
@@ -205,6 +235,7 @@ const char  *  oyProfilingToString   ( int                 integer,
   return texts[a++];
 }
 
+/** helper to check for availablity of display environment for test status */
 oyjlTESTRESULT_e displayFail()
 {
   oyjlTESTRESULT_e fail_type = oyjlTESTRESULT_XFAIL;
@@ -277,5 +308,7 @@ double             oyjlSeconds       ( )
 double             oyjlClock         ( )
 { return oyjlSeconds()*1000000; }
 
+/** @} *//* oyjl_test */
+/** @} *//* oyjl */
 
 #endif /* OYJL_TEST_H */

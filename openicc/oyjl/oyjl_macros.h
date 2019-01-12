@@ -67,6 +67,7 @@
 
 #define verbose oy_debug
 
+/** convert ( const char * format, ... ) function args into a string */
 #define OYJL_CREATE_VA_STRING(format_, text_, alloc_, error_action) \
 { \
   va_list list; \
