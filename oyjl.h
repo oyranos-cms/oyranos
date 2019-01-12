@@ -261,9 +261,8 @@ int        oyjlPathMatch             ( const char        * path,
 /** @} *//* oyjl_tree */
 
 /* --- Core --- */
-/** \addtogroup misc
- *  @{ *//* misc */
-/** \addtogroup oyjl
+/** \addtogroup oyjl Oyranos JSON Library
+ *  Basic low level API's
  *  @{ *//* oyjl */
 /** \addtogroup oyjl_core
  *  @{ */
@@ -275,7 +274,6 @@ int        oyjlPathMatch             ( const char        * path,
 
 int        oyjlVersion               ( int                 type );
 /** @} *//* oyjl */
-/** @} *//* misc */
 
 /* --- string helpers --- */
 /** \addtogroup oyjl_core Core

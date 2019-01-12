@@ -5,9 +5,8 @@
  *  Copyright (C) 2004-2018  Kai-Uwe Behrmann
  *
  *  @brief    Oyjl test suite
- *  @internal
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
- *  @par License:\n
+ *  @par License:
  *  new BSD <http://www.opensource.org/licenses/BSD-3-Clause>
  *  @since    2008/12/04
  */
@@ -17,7 +16,24 @@
 
 #include "oyjl_test.h"
 
-/*  main */
+/** \addtogroup oyjl_test
+ *
+ *  Define somewhere in your test.c file a TESTS_RUN
+ *  with your test functions like:
+ *  @code
+#define TESTS_RUN \
+  TEST_RUN( testVersion, "Version matching", 1 ); \
+  TEST_RUN( testJson, "JSON handling", 1 ); \
+  TEST_RUN( testFromJson, "Data Writers", 1 ); \
+  TEST_RUN( testJsonRoundtrip, "Data Readers", 1 );
+    @endcode
+ *  Then include simply the oyjl_test_main.h header and it defines
+ *  a main() function for you to handle command line parsing, statistics
+ *  and summary printing after test program finish.
+ *
+ *  @example test.c
+ *  @{ *//* oyjl */
+/** @brief simple start function for testing program */
 int main(int argc, char** argv)
 {
   int i, error = 0,
@@ -93,5 +109,6 @@ int main(int argc, char** argv)
 
   return error;
 }
+/*  @} *//* oyjl */
 
 #endif /* OYJL_TEST_MAIN_H */

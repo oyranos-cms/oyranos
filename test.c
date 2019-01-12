@@ -5,7 +5,6 @@
  *  Copyright (C) 2004-2019  Kai-Uwe Behrmann
  *
  *  @brief    Oyranos test suite
- *  @internal
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:\n
  *  new BSD <http://www.opensource.org/licenses/BSD-3-Clause>
@@ -50,6 +49,7 @@ oyjlTESTRESULT_e testVersion()
   return result;
 }
 
+#define end_example
 
 oyjlTESTRESULT_e testJson ()
 {
