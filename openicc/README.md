@@ -48,9 +48,13 @@ Supported are cmake builds and a very simple makefile.
 
 * CMAKE\_INSTALL\_PREFIX to install into paths and so on. Use on the command 
   line through -DCMAKE\_INSTALL\_PREFIX=/my/path .
-* LIB\_SUFFIX - allows to append a architecture specific suffix like 
-  LIB\_SUFFIX=64 for 64bit RedHat style Linux systems.
 * USE\_GCOV - enable gcov/lcov compiler flags on the Unix platform and the coverage target
+* USE\_SYSTEM\_OYJL - fail if not found; default is shipped fallback version
+* USE\_SYSTEM\_YAJL - fail if not found; default is shipped fallback version
+* USE\_SYSTEM\_LIBXML2 - fail if not found; default is shipped fallback version
+* ENABLE\_TESTS - default is ON
+* ENABLE\_TOOLS - default is ON
+* ENABLE\_QT - detect Qt5 and Qt4i; default is ON
 
 ### Known Bugs
 * The source code provides currently no mechanism for a write lock.
