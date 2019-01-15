@@ -38,12 +38,15 @@
 #include "oyjl_macros.h"
 #include "oyjl_version.h"
 #include "oyjl_tree_internal.h"
-#ifdef HAVE_LOCALE_H
-#include <locale.h>
+#ifdef OYJL_HAVE_LOCALE_H
+#include <locale.h>           /* setlocale LC_NUMERIC */
 #endif
+int oyjl_debug_local = 0;
+int * oyjl_debug = &oyjl_debug_local;
 
-/** \addtogroup oyjl_core
- *  @{ *//* oyjl_core */
+/** @brief   set own debug variable */
+void       oyjlDebugVariableSet      ( int               * debug )
+{ oyjl_debug = debug; }
 
 /** @brief   the default message handler to stderr
  *
@@ -92,6 +95,9 @@ int            oyjlMessageFuncSet    ( oyjlMessage_f       message_func )
     oyjlMessage_p = message_func;
   return 0;
 }
+
+/** \addtogroup oyjl_core
+ *  @{ *//* oyjl_core */
 
 /** @brief   convert a string into list
  *
@@ -169,7 +175,7 @@ char *     oyjlStringCopy            ( const char        * string,
 
   if(string)
   {
-    oyjlAllocHelper_m_( text_copy, char, strlen(string) + 1,
+    oyjlAllocHelper_m( text_copy, char, strlen(string) + 1,
                         alloc, return NULL );
     strcpy( text_copy, string );
   }
@@ -249,7 +255,7 @@ char*      oyjlStringAppendN         ( const char        * text,
 
   if(text_len || append_len)
   {
-    oyjlAllocHelper_m_( text_copy, char,
+    oyjlAllocHelper_m( text_copy, char,
                         text_len + append_len + 1,
                         alloc, return NULL );
 
@@ -357,7 +363,7 @@ char **    oyjlStringListCatList     ( const char       ** list,
     int n = 0;
 
     if(n_alt || n_app)
-      oyjlAllocHelper_m_(nlist, char*, n_alt + n_app +1, alloc, return NULL);
+      oyjlAllocHelper_m(nlist, char*, n_alt + n_app +1, alloc, return NULL);
 
     for(i = 0; i < n_alt; ++i)
     {
@@ -417,7 +423,7 @@ void       oyjlStringListAddStaticString (
 
   n_alt = *n;
 
-  oyjlAllocHelper_m_(nlist, char*, n_alt + 2, alloc, return);
+  oyjlAllocHelper_m(nlist, char*, n_alt + 2, alloc, return);
 
   memmove( nlist, *list, sizeof(char*) * n_alt);
   nlist[n_alt] = oyjlStringCopy( string, alloc );
@@ -528,7 +534,7 @@ int          oyjlStringToDouble      ( const char        * text,
   char * p = NULL, * t = NULL;
   int len;
   int error = -1;
-#ifdef HAVE_LOCALE_H
+#ifdef OYJL_HAVE_LOCALE_H
   char * save_locale = oyjlStringCopy( setlocale(LC_NUMERIC, 0 ), malloc );
   setlocale(LC_NUMERIC, "C");
 #endif
@@ -544,14 +550,14 @@ int          oyjlStringToDouble      ( const char        * text,
 
   /* avoid irritating valgrind output of "Invalid read of size 8"
    * might be a glibc error or a false positive in valgrind */
-  oyjlAllocHelper_m_( t, char, len + 2*sizeof(double) + 1, malloc, return 1);
+  oyjlAllocHelper_m( t, char, len + 2*sizeof(double) + 1, malloc, return 1);
   memset( t, 0, len + 2*sizeof(double) + 1 );
 
   memcpy( t, text, len );
 
   *value = strtod( t, &p );
 
-#ifdef HAVE_LOCALE_H
+#ifdef OYJL_HAVE_LOCALE_H
   setlocale(LC_NUMERIC, save_locale);
   if(save_locale) free( save_locale );
 #endif
@@ -600,19 +606,173 @@ char *     oyjlReadFileStreamToMem   ( FILE              * fp,
   return mem;
 }
 
+#include <errno.h>
+#include <sys/stat.h> /* stat() */
+#define WARNc_S(...) oyjlMessage_p( oyjlMSG_ERROR, 0, __VA_ARGS__ )
+int oyjlIsFileFull_ (const char* fullFileName, const char * read_mode)
+{
+  struct stat status;
+  int r = 0;
+  const char* name = fullFileName;
+
+  memset(&status,0,sizeof(struct stat));
+  r = stat (name, &status);
+
+  if(r != 0 && *oyjl_debug > 1)
+  switch (errno)
+  {
+    case EACCES:       WARNc_S("Permission denied: %s", name); break;
+    case EIO:          WARNc_S("EIO : %s", name); break;
+    case ENAMETOOLONG: WARNc_S("ENAMETOOLONG : %s", name); break;
+    case ENOENT:       WARNc_S("A component of the name/file_name does not exist, or the file_name is an empty string: \"%s\"", name); break;
+    case ENOTDIR:      WARNc_S("ENOTDIR : %s", name); break;
+    case ELOOP:        WARNc_S("Too many symbolic links encountered while traversing the name: %s", name); break;
+    case EOVERFLOW:    WARNc_S("EOVERFLOW : %s", name); break;
+    default:           WARNc_S("%s : %s", strerror(errno), name); break;
+  }
+
+  r = !r &&
+       (   ((status.st_mode & S_IFMT) & S_IFREG)
+        || ((status.st_mode & S_IFMT) & S_IFLNK)
+                                                );
+
+  if (r)
+  {
+    FILE* fp = fopen (name, read_mode);
+    if (!fp) {
+      oyjlMessage_p( oyjlMSG_INFO, 0, "not existent: %s", name );
+      r = 0;
+    } else {
+      fclose (fp);
+    }
+  }
+
+  return r;
+}
 /** @} *//* oyjl_core */
+
+/** \addtogroup oyjl
+ *  @{ *//* oyjl */
+
+
+#define OyjlToString2_M(t) OyjlToString_M(t)
+#define OyjlToString_M(t) #t
+/** @brief   init the libraries language; optionaly
+ *
+ *  Additionally use setlocale() somewhere in your application.
+ *  The message catalog search path is detected from the project specific
+ *  environment variable specified in \em env_var_locdir and
+ *  the LOCPATH environment variables. If those are not present
+ *  a expected fall back directory from \em default_locdir is used.
+ *
+ *  @param         project_name        project name display string; e.g. "MyProject"
+ *  @param         environment_debug_variable string; e.g. "MP_DEBUG"
+ *  @param         debug_variable      int C variable; e.g. my_project_debug
+ *  @param         use_gettext         switch gettext support on or off
+ *  @param         env_var_locdir      environment variable string for locale path; e.g. "MP_LOCALEDIR"
+ *  @param         default_locdir      default locale path C string; e.g. "/usr/local/share/locale"
+ *  @param         loc_domain          locale domain string related to your pot, po and mo files; e.g. "myproject"
+ *  @param         msg                 your message function of type oyjlMessage_f
+ *  @return                            error
+ *                                     - -1 : issue
+ *                                     - 0 : success
+ *                                     - >= 1 : found error
+ *
+ *  @version Oyjl: 1.0.0
+ *  @date    2019/01/13
+ *  @since   2019/01/13 (Oyjl: 1.0.0)
+ */
+int oyjlInitLanguageDebug            ( const char        * project_name,
+                                       const char        * env_var_debug,
+                                       int               * debug_variable,
+                                       int                 use_gettext,
+                                       const char        * env_var_locdir,
+                                       const char        * default_locdir,
+                                       const char        * loc_domain,
+                                       oyjlMessage_f       msg )
+{
+  int error = -1;
+
+  if(getenv(env_var_debug))
+  {
+    *debug_variable = atoi(getenv(env_var_debug));
+    if(*debug_variable)
+    {
+      int v = oyjlVersion(0);
+      if(*debug_variable)
+        msg( oyjlMSG_INFO, 0, "%s (Oyjl compile v: %s runtime v: %d)", project_name, OYJL_VERSION_NAME, v );
+    }
+  }
+
+#ifdef OYJL_USE_GETTEXT
+  {
+    if( use_gettext )
+    {
+      char * var = NULL;
+      const char * environment_locale_dir = NULL,
+                 * locpath = NULL,
+                 * path = NULL,
+                 * domain_path = default_locdir;
+
+      if(getenv(env_var_locdir) && strlen(getenv(env_var_locdir)))
+      {
+        environment_locale_dir = domain_path = strdup(getenv(env_var_locdir));
+        if(*debug_variable)
+          msg( oyjlMSG_INFO, 0,"found environment variable: %s=%s", env_var_locdir, domain_path );
+      } else
+        if(environment_locale_dir == NULL && getenv("LOCPATH") && strlen(getenv("LOCPATH")))
+      {
+        domain_path = NULL;
+        locpath = getenv("LOCPATH");
+        if(*debug_variable)
+          msg( oyjlMSG_INFO, 0,"found environment variable: LOCPATH=%s", locpath );
+      } else
+        if(*debug_variable)
+        msg( oyjlMSG_INFO, 0,"no %s or LOCPATH environment variable found; using default path: %s", env_var_locdir, domain_path );
+
+      if(domain_path || locpath)
+      {
+        oyjlStringAdd( &var, 0,0, "NLSPATH=");
+        oyjlStringAdd( &var, 0,0, domain_path ? domain_path : locpath);
+      }
+      if(var)
+        putenv(var); /* Solaris */
+
+      /* LOCPATH appears to be ignored by bindtextdomain("domain", NULL),
+       * so it is set here to bindtextdomain(). */
+      path = domain_path ? domain_path : locpath;
+# ifdef OYJL_HAVE_LIBINTL_H
+      bindtextdomain( loc_domain, path );
+#endif
+      if(*debug_variable)
+      {\
+        char * fn = NULL;
+        int stat = -1;
+        const char * gettext_call = OyjlToString2_M(_());
+
+        if(path)
+          oyjlStringAdd( &fn, 0,0, "%s/de/LC_MESSAGES/%s.mo", path ? path : "", loc_domain);
+        if(fn)
+          stat = oyjlIsFileFull_( fn, "r" );
+        msg( oyjlMSG_INFO, 0,"bindtextdomain(\"%s\") to %s\"%s\" %s for %s", loc_domain, locpath?"effectively ":"", path ? path : "", (stat > 0)?"Looks good":"Might fail", gettext_call );
+        if(fn) free(fn);
+      }
+    }
+  }
+#endif /* OYJL_USE_GETTEXT */
+
+  return error;
+}
+
 
 #include "oyjl_version.h"
 #include <yajl/yajl_parse.h>
 #include <yajl/yajl_version.h>
-/** \addtogroup oyjl
- *  @{ *//* oyjl */
 /** @brief  give the compiled in library version
  *
  *  @param[in]  type           request API type
  *                             - 0 - Oyjl API
  *                             - 1 - Yajl API
- *
  *  @return                    OYJL_VERSION at library compile time
  */
 int            oyjlVersion           ( int                 type )

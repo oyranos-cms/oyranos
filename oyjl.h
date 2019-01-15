@@ -273,6 +273,34 @@ int        oyjlPathMatch             ( const char        * path,
 
 
 int        oyjlVersion               ( int                 type );
+
+/* --- message helpers --- */
+/** @brief message type */
+typedef enum {
+  oyjlMSG_INFO = 400,                  /**< @brief informational, for debugging */
+  oyjlMSG_CLIENT_CANCELED,             /**< @brief user side requested stop */
+  oyjlMSG_INSUFFICIENT_DATA,           /**< @brief missing or insufficient data */
+  oyjlMSG_ERROR                        /**< @brief error */
+} oyjlMSG_e;
+/** @brief custom message function type */
+typedef int (* oyjlMessage_f)        ( int/*oyjlMSG_e*/    error_code,
+                                       const void        * context,
+                                       const char        * format,
+                                       ... );
+int            oyjlMessageFuncSet    ( oyjlMessage_f      message_func );
+
+/* --- i18n helpers --- */
+int oyjlInitLanguageDebug            ( const char        * project_name,
+                                       const char        * env_var_debug,
+                                       int               * debug_variable,
+                                       int                 use_gettext,
+                                       const char        * env_var_locdir,
+                                       const char        * default_locdir,
+                                       const char        * loc_domain,
+                                       oyjlMessage_f       msg );
+
+void       oyjlDebugVariableSet      ( int               * debug );
+
 /** @} *//* oyjl */
 
 /* --- string helpers --- */
@@ -336,21 +364,6 @@ int        oyjlStringToDouble        ( const char        * text,
 /* --- I/O helpers --- */
 char *     oyjlReadFileStreamToMem   ( FILE              * fp,
                                        int               * size );
-/* --- message helpers --- */
-/** @brief message type */
-typedef enum {
-  oyjlMSG_INFO = 400,                  /**< @brief informational, for debugging */
-  oyjlMSG_CLIENT_CANCELED,             /**< @brief user side requested stop */
-  oyjlMSG_INSUFFICIENT_DATA,           /**< @brief missing or insufficient data */
-  oyjlMSG_ERROR                        /**< @brief error */
-} oyjlMSG_e;
-/** @brief custom message function type */
-typedef int (* oyjlMessage_f)        ( int/*oyjlMSG_e*/    error_code,
-                                       const void        * context,
-                                       const char        * format,
-                                       ... );
-int            oyjlMessageFuncSet    ( oyjlMessage_f      message_func );
-
 /** @} *//* oyjl_core */
 
 
