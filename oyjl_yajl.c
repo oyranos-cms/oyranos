@@ -44,8 +44,9 @@
 #endif
 
 #include "oyjl.h"
+#include "oyjl_macros.h"
 #include "oyjl_tree_internal.h"
-#ifdef HAVE_LOCALE_H
+#ifdef OYJL_HAVE_LOCALE_H
 #include <locale.h>
 #endif
 
@@ -312,12 +313,12 @@ static int handle_number (void *ctx, const char *string, unsigned int string_len
 
     endptr = NULL;
     errno = 0;
-#ifdef HAVE_LOCALE_H
+#ifdef OYJL_HAVE_LOCALE_H
     char * save_locale = oyjlStringCopy( setlocale(LC_NUMERIC, 0 ), malloc );
     setlocale(LC_NUMERIC, "C");
 #endif
     v->u.number.d = strtod(v->u.number.r, &endptr);
-#ifdef HAVE_LOCALE_H
+#ifdef OYJL_HAVE_LOCALE_H
     setlocale(LC_NUMERIC, save_locale);
     if(save_locale)
       free( save_locale );

@@ -21,9 +21,10 @@
 #include "oyjl_test.h"
 #include "oyjl.h"
 #include "oyjl_version.h"
-#ifdef HAVE_LOCALE_H
+#ifdef OYJL_HAVE_LOCALE_H
 #include <locale.h>
 #endif
+#include "oyjl_i18n.h"
 
 
 /* --- actual tests --- */
@@ -45,6 +46,7 @@ oyjlTESTRESULT_e testVersion()
   return result;
 }
 
+extern oyjlMessage_f oyjlMessage_p;
 oyjlTESTRESULT_e testI18N()
 {
   const char * clang;
@@ -80,6 +82,35 @@ oyjlTESTRESULT_e testI18N()
   { PRINT_SUB( oyjlTESTRESULT_XFAIL, 
     "Language initialised failed %s          ", clang?clang:"---" );
   }
+
+  setlocale(LC_ALL,"de_DE.UTF8");
+  int use_gettext = 0;
+#ifdef OYJL_USE_GETTEXT
+  use_gettext = 1;
+#endif
+  int debug = 0;
+  oyjlInitLanguageDebug( "Oyjl", "OYJL_DEBUG", &debug, use_gettext, "OYJL_LOCALEDIR", OYJL_LOCALEDIR, OYJL_DOMAIN, oyjlMessage_p );
+
+  const char * lang = setlocale(LC_ALL, NULL);
+  if(lang && (strcmp(lang, "C") != 0))
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "setlocale() initialised good %s            ", lang );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_XFAIL, 
+    "setlocale() initialised failed %s          ", lang );
+  }
+
+  const char * text = _("Example");
+  if(strcmp(text,"Beispiel") == 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "dgettext() good \"%s\"                      ", text );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_XFAIL, 
+    "dgettext() failed \"%s\"                    ", text );
+  }
+
+  setlocale(LC_ALL,"");
+
 
   return result;
 }
