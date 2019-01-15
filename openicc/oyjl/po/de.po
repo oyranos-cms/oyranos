@@ -1,0 +1,4574 @@
+# translation of de.po to 
+# German translations for icc_examin
+# Copyright (C) 2005-2019 Kai-Uwe Behrmann
+# Kai-Uwe Behrmann <ku.b@gmx.de>, 2005-2012.
+# This file is distributed under the BSD licence (http://www.opensource.org/licenses/bsd-license.php)
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: de\n"
+"Report-Msgid-Bugs-To: ku.b@gmx.de\n"
+"POT-Creation-Date: 2019-01-14 10:18+0100\n"
+"PO-Revision-Date: 2005-08-13 17:35+0200\n"
+"Last-Translator: Kai-Uwe Behrmann\n"
+"Language-Team:  Deutsch <de@li.org>\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: vim 6.0\n"
+
+#: oyjl.c:76
+msgid "Example"
+msgstr "Beispiel"
+
+#: oyjl.c:73
+msgid "General options:"
+msgstr "Allgemeine Optionen:"
+
+#: oyjl.c:67
+msgid "JSON file"
+msgstr "JSON Datei"
+
+#: oyjl.c:77
+msgid "Print JSON:"
+msgstr "Zeige JSON:"
+
+#: oyjl.c:70
+msgid "Print a help text:"
+msgstr "Zeige einen Hilfetext an:"
+
+#: oyjl.c:80
+msgid "Print count:"
+msgstr "Zeige Anzahl:"
+
+#: oyjl.c:83
+msgid "Print key name:"
+msgstr "Zeige Schlüsselname:"
+
+#: oyjl.c:86
+msgid "Print path:"
+msgstr "Zeige Pfad:"
+
+#: oyjl.c:58
+msgid "Print:"
+msgstr "Zeige:"
+
+#: oyjl.c:89
+msgid "Set key/value:"
+msgstr "Setze Schlüssel-/Wertpaar"
+
+#: oyjl.c:32 oyjl.c:45 oyjl.c:57
+msgid "Usage"
+msgstr "Benutzung"
+
+#: oyjl.c:55
+msgid "is a JSON parse tool"
+msgstr "ist ein JSON Werkzeug"
+
+#: oyjl.c:43
+msgid "is a JSON to XML converter"
+msgstr "ist ein JSON nach XML Umwandler"
+
+#: oyjl.c:30
+msgid "is a JSON to YAML converter"
+msgstr "ist ein JSON nach YAML Umwandler"
+
+#: oyjl.c:74
+msgid "verbose"
+msgstr "plaudernd"
+
+#~ msgid ""
+#~ "    ICC Examin is licensed under the GPL version 2.    Especially all "
+#~ "icc_* files are licensed under the GPL.<br>    The other source files may "
+#~ "contain devergine licenses, which are detectable from file headers. "
+#~ msgstr ""
+#~ "    ICC Examin ist unter der GPL Version 2 lizensiert.<br> Insbesondere "
+#~ "alle icc_* Dateien sind lizenziert unter der GPL.<br>     Die anderen "
+#~ "Dateien k&ouml;nnen abweichende Lizenzbedingungen in den Dateik&ouml;pfen "
+#~ "enthalten."
+
+#~ msgid "    head  head    128 File header"
+#~ msgstr "    Kopf  Kopf    128 Dateikopf"
+
+#~ msgid "  (dE CIE 2000) averaging: "
+#~ msgstr "  (dE CIE 2000) durchschnittlich: "
+
+#~ msgid "  FLTK: Bill Spitzack and others www.fltk.org<br>\n"
+#~ msgstr "  FLTK: Bill Spitzack und andere www.fltk.org<br>\n"
+
+#~ msgid ""
+#~ "  freeglut: freeglut.sf.net<br>\n"
+#~ "   (partialy used) <br>"
+#~ msgstr ""
+#~ "  freeglut: freeglut.sf.net<br>\n"
+#~ "   (partiell eingebunden)<br>"
+
+#~ msgid "  maximum: "
+#~ msgstr "  maximal: "
+
+#~ msgid "  minimum: "
+#~ msgstr "  minimal: "
+
+#~ msgid " typ - no text output"
+#~ msgstr " Typ - keine Textausgabe"
+
+#~ msgid " used too early!"
+#~ msgstr " zu zeitig benutzt!"
+
+#~ msgid " with "
+#~ msgstr " mit "
+
+#~ msgid " with Gamma: 1.0"
+#~ msgstr " mit Gamma: 1.0"
+
+#~ msgid " with one entry for gamma: "
+#~ msgstr " mit einem Eintrag für Gamma: "
+
+#~ msgid "!!! ERROR"
+#~ msgstr "!!! Fehler"
+
+#~ msgid "%d. path %s does not exist"
+#~ msgstr "%d. Pfad %s existiert nicht"
+
+#~ msgid "%s Profile"
+#~ msgstr "%s Profil"
+
+#~ msgid "%s:%d %s() nothing allocated %s\n"
+#~ msgstr "%s:%d %s() nichts zu reservieren %s\n"
+
+#~ msgid "&Done"
+#~ msgstr "&Fertig"
+
+#~ msgid "(device) link class"
+#~ msgstr "(Geräte) Farbraumverknüpfung"
+
+#~ msgid "----"
+#~ msgstr "----"
+
+#~ msgid "--module name"
+#~ msgstr "--module Name"
+
+#, fuzzy
+#~ msgid "--path print the full file name"
+#~ msgstr "zeige den vollständigen Modulnamen"
+
+#~ msgid "--short print only the file name"
+#~ msgstr "--short zeige nur den Dateinamen"
+
+#~ msgid "-d device_position_start_from_zero"
+#~ msgstr "-d garäte_position_startet_von_null"
+
+#~ msgid "-v verbose"
+#~ msgstr "-v plauders"
+
+#~ msgid "... try with --help|-h option for usage text. give up"
+#~ msgstr ""
+#~ "... versuche bitte die --help|-h Option für einen Hilfetext. Gebe auf"
+
+#~ msgid "/"
+#~ msgstr "/"
+
+#~ msgid "/Default Profiles/"
+#~ msgstr "/Standard Profile/"
+
+#~ msgid "0"
+#~ msgstr "0"
+
+#~ msgid "0/45, 45/0"
+#~ msgstr "0/45, 45/0"
+
+#~ msgid "0/d or d/0"
+#~ msgstr "0/d oder d/0"
+
+#~ msgid "1. Channel"
+#~ msgstr "1. Kanal"
+
+#~ msgid "10 degree (1964)"
+#~ msgstr "10 Grad (1964)"
+
+#~ msgid "10. Channel"
+#~ msgstr "10. Kanal"
+
+#~ msgid "100"
+#~ msgstr "100"
+
+#~ msgid "10color"
+#~ msgstr "10farbig"
+
+#~ msgid "11. Channel"
+#~ msgstr "11. Kanal"
+
+#~ msgid "11color"
+#~ msgstr "11farbig"
+
+#~ msgid "12. Channel"
+#~ msgstr "12. Kanal"
+
+#~ msgid "12color"
+#~ msgstr "12farbig"
+
+#~ msgid "13. Channel"
+#~ msgstr "13. Kanal"
+
+#~ msgid "13color"
+#~ msgstr "13farbig"
+
+#~ msgid "14. Channel"
+#~ msgstr "14. Kanal"
+
+#~ msgid "14color"
+#~ msgstr "14farbig"
+
+#~ msgid "15. Channel"
+#~ msgstr "15. Kanal"
+
+#~ msgid "15color"
+#~ msgstr "15farbig"
+
+#~ msgid "16-bit"
+#~ msgstr "16-bit"
+
+#~ msgid "16. Channel"
+#~ msgstr "16. Kanal"
+
+#~ msgid "1964 10° Observer Graph:"
+#~ msgstr "1964 10° Betrachter Zeichnung:"
+
+#~ msgid "2 degree (1931)"
+#~ msgstr "2 Grad (1931)"
+
+#~ msgid "2. Channel"
+#~ msgstr "2. Kanal"
+
+#~ msgid "2D Graph from profiles:"
+#~ msgstr "2D Zeichnung vom Farbprofil"
+
+#~ msgid "2color"
+#~ msgstr "2farbig"
+
+#~ msgid "3. Channel"
+#~ msgstr "3. Kanal"
+
+#~ msgid "3D Lockup table with"
+#~ msgstr "3D Farbtabelle mit"
+
+#~ msgid "3color"
+#~ msgstr "3farbig"
+
+#~ msgid "4. Channel"
+#~ msgstr "4. Kanal"
+
+#~ msgid "4color"
+#~ msgstr "4farbig"
+
+#~ msgid "5. Channel"
+#~ msgstr "5. Kanal"
+
+#~ msgid "5color"
+#~ msgstr "5farbig"
+
+#~ msgid "6. Channel"
+#~ msgstr "6. Kanal"
+
+#~ msgid "6color"
+#~ msgstr "6farbig"
+
+#~ msgid "7. Channel"
+#~ msgstr "7. Kanal"
+
+#~ msgid "7color"
+#~ msgstr "7farbig"
+
+#~ msgid "8-bit"
+#~ msgstr "8-bit"
+
+#~ msgid "8. Channel"
+#~ msgstr "8. Kanal"
+
+#~ msgid "8color"
+#~ msgstr "8farbig"
+
+#~ msgid "9. Channel"
+#~ msgstr "9. Kanal"
+
+#~ msgid "9color"
+#~ msgstr "9farbig"
+
+#~ msgid "</b>  maximum: "
+#~ msgstr "</b>  maximal: "
+
+#~ msgid "</b> Measurement"
+#~ msgstr "</b> Messdaten"
+
+#~ msgid "?"
+#~ msgstr "?"
+
+#~ msgid "?? Nothing to add ??"
+#~ msgstr "?? Nichts hinzuzufügen ??"
+
+#~ msgid "???"
+#~ msgstr "???"
+
+#~ msgid "@-3+"
+#~ msgstr "@-3+"
+
+#~ msgid "@-3reload"
+#~ msgstr "@-3reload"
+
+#~ msgid ""
+#~ "A Color Matching Module (CMM) does the computational work to transform "
+#~ "colors. It can provide alternative features regarding appearance, "
+#~ "security, speed or resource overhead."
+#~ msgstr ""
+#~ "Ein Farbübertragungsmodul (CMM) berechnet Übertragungsfunktionen und "
+#~ "Farben. Es kann alternative Eigenschaften anbieten bezüglich "
+#~ "Farbanmutung, Sicherheit, Geschwiundigkeit oder Resourcenverbrauch."
+
+#~ msgid "A single path option is required"
+#~ msgstr "Eine einzelne Pfadangabe wird benötigt"
+
+#~ msgid "AUTHOR"
+#~ msgstr "AUTOR"
+
+#~ msgid "About"
+#~ msgstr "Über"
+
+#~ msgid "About ICC Examin"
+#~ msgstr "Über ICC Examin"
+
+#~ msgid "About ICC_Examin"
+#~ msgstr "&Uuml;ber ICC_Examin"
+
+#~ msgid "About Oyranos"
+#~ msgstr "Über Oyranos"
+
+#~ msgid "Absolute Colorimetric"
+#~ msgstr "Absolut Farbmetrisch"
+
+#~ msgid "Abstract"
+#~ msgstr "Abstrakter Farbraum"
+
+#~ msgid "Acknowledgement"
+#~ msgstr "Dank"
+
+#~ msgid "Action for Image profile and Editing profile mismatches."
+#~ msgstr "Verhalten bei Ungleichheit von Bild- und Editierfarbraum"
+
+#~ msgid "Activate profiles:"
+#~ msgstr "Aktivieren eines Profiles:"
+
+#~ msgid "Active Policy:"
+#~ msgstr "Aktive Richtlinie:"
+
+#~ msgid "Active matrix monitor"
+#~ msgstr "Aktivmatrixmonitor"
+
+#~ msgid "Adaptation State"
+#~ msgstr "Farbanpassungsgrad"
+
+#~ msgid "Adaptation state for absolute colorimetric intent"
+#~ msgstr "Farbanpassungsgrad für die absolut farbmetrische Übertragung"
+
+#~ msgid "Add"
+#~ msgstr "Addiere"
+
+#~ msgid "Add Device"
+#~ msgstr "Trage Gerät ein"
+
+#~ msgid "Add Device to DB"
+#~ msgstr "Trage Gerät in die DB ein"
+
+#~ msgid "Add Path containing ICC profiles"
+#~ msgstr "Pfad mit ICC Profilen hinzufügen"
+
+#~ msgid "Add gettext translated keys to JSON:"
+#~ msgstr "Füge mit gettext übersetzte Schlüssel to JSON hinzu:"
+
+#~ msgid "Add this directory to my favorites"
+#~ msgstr "zu Lesezeichen"
+
+#~ msgid "Add to Favorites"
+#~ msgstr "Füge Lesezeichen hinzu"
+
+#~ msgid "All"
+#~ msgstr "Alle"
+
+#~ msgid "All Files (*)"
+#~ msgstr "Alle Dateien (*)"
+
+#~ msgid "All the small details for using this module."
+#~ msgstr "All die kleinen Details für dieses Modul"
+
+#~ msgid "Allowed option values are -f openicc and -f xml. unknown format:"
+#~ msgstr "Erlaubte Werte sind -f openicc und -f xml. Unbekanntes Format:"
+
+#~ msgid "Already enabled"
+#~ msgstr "Bereits eingeschalten"
+
+#~ msgid "An error ocurred while trying to delete '%s'."
+#~ msgstr "Konnte Datei '%s' nicht löschen."
+
+#~ msgid "Analyze ICC profile information on your system."
+#~ msgstr "Details zu ICC Profilen in Ihrem System"
+
+#~ msgid "Apply regions of interesst in form of simple rectangles."
+#~ msgstr "Wende Regionen an in Form von einfachen Rechtecken."
+
+#~ msgid "ArgyllCMS"
+#~ msgstr "ArgyllCMS"
+
+#~ msgid "ArgyllCMS color management module"
+#~ msgstr "ArgyllCMS Farbumwandlungmodul"
+
+#~ msgid "Assign Assumed Profile"
+#~ msgstr "Vermutetes Profil Zuweisen"
+
+#~ msgid "Assign No Profile"
+#~ msgstr "Weise kein Profil zu"
+
+#~ msgid "Assign profile to device:"
+#~ msgstr "Weise Farbprofil einem Gerät zu:"
+
+#~ msgid "Assigns an untagged CIE*Lab Image this color space"
+#~ msgstr "Weise einem CIE*Lab Bild ohne Profil ein Farbraum zu"
+
+#~ msgid "Assigns an untagged Cmyk Image this color space"
+#~ msgstr "Weise einem nicht festgeschriebenen Cmyk Bild diesen Farbraum zu"
+
+#~ msgid "Assigns an untagged Gray Image this color space"
+#~ msgstr "Weise einem nicht festgeschriebenen Grau Bild diesen Farbraum zu"
+
+#~ msgid "Assigns an untagged Rgb Image this color space"
+#~ msgstr "Weise einem Rgb Bild ohne Profil ein Farbraum zu"
+
+#~ msgid ""
+#~ "Assigns an untagged Rgb Image with source from the WWW this color space"
+#~ msgstr "Weise einem Rgb Bild ihne ICC Profil aus dem WWW diesen Farbraum zu"
+
+#~ msgid ""
+#~ "Assigns an untagged Rgb Image with source from the WWW this color space. "
+#~ "This will always be sRGB as defined by W3C."
+#~ msgstr ""
+#~ "Weise einem Rgb Bild ohne ICC Profile aus dem WWW diesen Farbraum zu. Das "
+#~ "wird sRGB wie vom W3C vorgegeben sein."
+
+#~ msgid "Assigns an untagged XYZ Image this color space"
+#~ msgstr "Weise einem XYZ Bild ohne Profil ein Farbraum zu"
+
+#~ msgid "Assumed Cmyk source"
+#~ msgstr "Vermutete Cmyk Quelle"
+
+#~ msgid "Assumed Color Space"
+#~ msgstr "Vermuteter Farbraum"
+
+#~ msgid "Assumed Color Space for untagged colors"
+#~ msgstr "Erwarteter Farbraum für Farben ohne Farbprofil"
+
+#~ msgid "Assumed Gray source"
+#~ msgstr "Vermutete Grau Quelle"
+
+#~ msgid "Assumed Lab source"
+#~ msgstr "Vermutete Lab Quelle"
+
+#~ msgid "Assumed Rgb source"
+#~ msgstr "Vermutete Rgb Quelle"
+
+#~ msgid "Assumed Web source"
+#~ msgstr "Vermutete Web Quelle"
+
+#~ msgid "Assumed XYZ source"
+#~ msgstr "Vermutete XYZ Quelle"
+
+#~ msgid "Attributes"
+#~ msgstr "Attribute"
+
+#~ msgid "Attributes:      "
+#~ msgstr "Attribute:       "
+
+#~ msgid "Available Device Profiles from Taxi DB"
+#~ msgstr "Verfügbare Geräteprofile von Taxi DB"
+
+#~ msgid "Available Device Profiles:"
+#~ msgstr "Verfügbare Geräteprofile:"
+
+#~ msgid "Available devices"
+#~ msgstr "Verfügbare Geräte"
+
+#~ msgid "BPC affects often only the Relative Colorimetric Rendering intent."
+#~ msgstr "BPC beeinflusst oft nur die Relativ Farbmetrische Übertragungsart."
+
+#~ msgid "BUGS"
+#~ msgstr "FEHLER"
+
+#~ msgid "Back side"
+#~ msgstr "Rückseite"
+
+#~ msgid "Background color"
+#~ msgstr "Hintergrundfarbe"
+
+#~ msgid "Behaviour"
+#~ msgstr "Verhalten"
+
+#~ msgid "Behaviour for Softproofing view at application startup"
+#~ msgstr ""
+#~ "Verhalten für die Gerätenachbildung mit dem Standardsimulationsprofil am "
+#~ "Bildschirm beim Programmstart"
+
+#~ msgid ""
+#~ "Behaviour for preselecting Hardproofing with a Proofing Profile at print "
+#~ "time"
+#~ msgstr ""
+#~ "Verhalten für die Gerätenachbildung mit dem Standardsimulationsprofil auf "
+#~ "dem Drucker"
+
+#~ msgid "Behaviour of color space transformation for proofing"
+#~ msgstr "Verhalten von Farbtransformationen bei der Gerätesimulation"
+
+#~ msgid ""
+#~ "Behaviour of color space transformation for proofing. Most people want a "
+#~ "preview on screen only. The Relative Colorimetric intent is right for "
+#~ "that. The Absolute Colorimetric intent needs a very careful profiling and "
+#~ "non-trivial setup, but allows for side-by-side comparisons."
+#~ msgstr ""
+#~ "Verhalten der Farbübertragung bei der Simulation. Die meisten Nutzer "
+#~ "wünschen eine Simulation nur an einem Bildschirm. Die relativ "
+#~ "farbmetrische Übertragung ist richtig dafür. Die absolut farbmetrische "
+#~ "Übertragung benötigt eine sorgfältige komplizierte Einrichtung für Seit "
+#~ "an Seit Vergleiche."
+
+#~ msgid "Bits per Sample"
+#~ msgstr "Bit pro Farbkanal"
+
+#~ msgid "Black"
+#~ msgstr "Schwarz"
+
+#~ msgid "Black Preservation"
+#~ msgstr "Schwarzerhalt"
+
+#~ msgid "Blackbody Radiator Spectrum Graph:"
+#~ msgstr "Spektrum eines Lambertstrahlers"
+
+#~ msgid "Blue"
+#~ msgstr "Blau"
+
+#~ msgid "Blue Colorant"
+#~ msgstr "Blaue Grundfarbe"
+
+#~ msgid "Blue Gamma:"
+#~ msgstr "Blaue Tonwertkurve:"
+
+#~ msgid "Blue tone reproduction curve"
+#~ msgstr "Blaue Farbwiedergabekurve"
+
+#~ msgid "Blue xy:"
+#~ msgstr "Blau xy:"
+
+#~ msgid "CGATS View"
+#~ msgstr "CGATS Ansicht"
+
+#~ msgid "CIE *L"
+#~ msgstr "CIE *L"
+
+#~ msgid "CIE *a"
+#~ msgstr "CIE *a"
+
+#~ msgid "CIE *b"
+#~ msgstr "CIE *b"
+
+#~ msgid "CIE *u"
+#~ msgstr "CIE *u"
+
+#~ msgid "CIE *v"
+#~ msgstr "CIE *v"
+
+#~ msgid "CIE A spectral power distribution"
+#~ msgstr "CIE A Strahlungsverteilung"
+
+#~ msgid "CIE D65 spectral power distribution"
+#~ msgstr "CIE D65 Strahlungsverteilung"
+
+#~ msgid "CIE X"
+#~ msgstr "CIE X"
+
+#~ msgid "CIE Y (Luminance)"
+#~ msgstr "CIE Y (Leuchtdichte)"
+
+#~ msgid "CIE Z"
+#~ msgstr "CIE Z"
+
+#~ msgid "CIE x"
+#~ msgstr "CIE x"
+
+#~ msgid "CIE y"
+#~ msgstr "CIE y"
+
+#~ msgid "CIE*Lab"
+#~ msgstr "CIE*Lab"
+
+#~ msgid "CLASS"
+#~ msgstr "KLASSE"
+
+#~ msgid "CLUT"
+#~ msgstr "3D Interpolationstabelle"
+
+#~ msgid ""
+#~ "CLUT is a levels x levels*levels sized PPM, --levels defaults for clut to "
+#~ "64"
+#~ msgstr ""
+#~ "3D Interpolationstabellen sind Rastergröße x Rastergröße*Rastergröße "
+#~ "dimensionierte PPM-Bilder. --levels (Rastergröße) nutzt initial 64 für -f "
+#~ "clut"
+
+#~ msgid "CMM"
+#~ msgstr "CMM"
+
+#~ msgid "CMM Core"
+#~ msgstr "CMM Kern"
+
+#~ msgid "CMM Core Fallback"
+#~ msgstr "CMM Kern Notbehelf"
+
+#~ msgid "CMM Renderer"
+#~ msgstr "CMM Rechner"
+
+#~ msgid "CMM Renderer Fallback"
+#~ msgstr "CMM Rechner Notbehelf"
+
+#~ msgid "COPYRIGHT"
+#~ msgstr "KOPIERRECHT"
+
+#~ msgid "Calibration date"
+#~ msgstr "Kalibrationsdatum"
+
+#~ msgid "Call next filter in node"
+#~ msgstr "Führe nächsten Filter im Knoten aus"
+
+#~ msgid "Camera"
+#~ msgstr "Kamera"
+
+#~ msgid "CameraRaw image"
+#~ msgstr "Kamera Rohdaten"
+
+#~ msgid "Can not allocate memory for:"
+#~ msgstr "Kann nicht reservieren für:"
+
+#~ msgid "Can not read hardware information from device."
+#~ msgstr "Kann Geräteinformation nicht auslesen."
+
+#~ msgid "Can not write profile"
+#~ msgstr "Kann Profildatei nicht schreiben"
+
+#~ msgid "Cancel"
+#~ msgstr "Abbrechen"
+
+#~ msgid "Cant read hardware information from device."
+#~ msgstr "Kann Geräteinformation nicht auslesen."
+
+#~ msgid "Cathode ray tube display"
+#~ msgstr "Kathodenstrahlmonitor"
+
+#~ msgid "Chain -texts"
+#~ msgstr "Kette -Texte"
+
+#~ msgid "Chain selection"
+#~ msgstr "Kettenauswahl"
+
+#~ msgid "Channels"
+#~ msgstr "Kanäle"
+
+#~ msgid "Check if LittleCMS can handle a certain command."
+#~ msgstr "Prüfe ob LittleCMS ein bestimmtes Kommando behandeln kann."
+
+#~ msgid "Check if this module can handle a certain command."
+#~ msgstr "Prüfe ob dieses Modul ein bestimmtes Kommando behandeln kann."
+
+#~ msgid "Choose File"
+#~ msgstr "Wählen Sie eine Datei"
+
+#~ msgid "Choose one profile tag"
+#~ msgstr "Wählen Sie einen Profilbaustein"
+
+#~ msgid "Chromaticity"
+#~ msgstr "Primärfarben"
+
+#~ msgid "Class"
+#~ msgstr "Klasse"
+
+#~ msgid "Class:       "
+#~ msgstr "Klasse:      "
+
+#~ msgid "Close"
+#~ msgstr "Schliessen"
+
+#~ msgid "Cmm:             "
+#~ msgstr "CMM:             "
+
+#~ msgid "Cmy"
+#~ msgstr "Cmy"
+
+#~ msgid "Cmyk"
+#~ msgstr "Cmyk"
+
+#~ msgid "Cmyk to Cmyk transformation"
+#~ msgstr "Cmyk nach Cmyk Umwandlung"
+
+#~ msgid "Collections of settings in Oyranos"
+#~ msgstr "Voreinstellungen in Oyranos"
+
+#~ msgid "Color"
+#~ msgstr "Farbe"
+
+#~ msgid "Color Managed Devices"
+#~ msgstr "farbverbindlich eingestellte Geräte"
+
+#~ msgid "Color Space"
+#~ msgstr "Farbraum"
+
+#~ msgid "Color Space for Simulating real devices"
+#~ msgstr "Farbraum für die Nachbildung eines Gerätes (Simulation)"
+
+#~ msgid "Color Transform"
+#~ msgstr "Farbumwandlung"
+
+#~ msgid "Color Transform CLUT's can additionally use curves for special cases"
+#~ msgstr ""
+#~ "Farbtransformationstabellen können für spezielle Fälle zusätzlich mit "
+#~ "Kurven kombiniert werden"
+
+#~ msgid "Color Transform Create"
+#~ msgstr "Farbumwandlung Anlegen"
+
+#~ msgid "Color Transforms can be differently stored internally"
+#~ msgstr "Farbumwandlung können intern unterschiedlich gespeichert werden"
+
+#~ msgid "Color adaption matrix"
+#~ msgstr "Farbanpassungsmatrix"
+
+#~ msgid "Color b"
+#~ msgstr "Farbanteil b"
+
+#~ msgid "Color channel names"
+#~ msgstr "Farbkanalnamen"
+
+#~ msgid "Color channel order"
+#~ msgstr "Farbkanalordnung"
+
+#~ msgid "Color channel output names"
+#~ msgstr "Farbkanalnamen Ausgang"
+
+#~ msgid ""
+#~ "Color content can sometimes have no ICC profile assigned. This is a "
+#~ "critical situation as the system can not properly convert these colors. "
+#~ "Therefore the color processing parts need to pick some profile as a "
+#~ "guess. These settings allow to change the picked ICC profile to guide the "
+#~ "processing components and allow proper conversion and compositing."
+#~ msgstr ""
+#~ "Farben können mitunter ohne Farbprofil auftreten. Das ist eine schwierige "
+#~ "Situation, da das System solche Farben nicht korrekt umwandeln kann. "
+#~ "Deshalb sollte ein vermutlich treffendes ICC Profil als Ersatz zugewiesen "
+#~ "werden. Die Einstellungen beinflussen die Auswahl des Ersatzprofiles, "
+#~ "damit eine Weiterverarbeitung und Mischung mit anderen Farben möglich "
+#~ "wird."
+
+#~ msgid "Color line"
+#~ msgstr "Farbkreis"
+
+#~ msgid ""
+#~ "Color management has in some situations to resolve unclear situations. "
+#~ "This can be done by automatic applying preselected choices or on a case "
+#~ "to case base. In unclear situations users can get alerted if they wish "
+#~ "and perform manual control."
+#~ msgstr ""
+#~ "Farbmanagement muss gelegentlich in unklare Situationen auflösen. Das "
+#~ "kann geschehen in dem Richlinien angewendet werden oder einzelne Optionen "
+#~ "gesetzt werden. Benutzer können über Konflikte informiert werden, so sie "
+#~ "dies wünschen, und händisch eingreifen."
+
+#~ msgid ""
+#~ "Color matching between different devices is possible, provided that the "
+#~ "color characteristics of the involved devices are known. The quality of a "
+#~ "color transform for devices from one color space to an other depends "
+#~ "particularly on the quality of the color measurement and the profiling "
+#~ "algorithm used during ICC profile creation. Each color space definition "
+#~ "happens in reference to a Profile Connection Spaces (PCS). The PCS is a "
+#~ "well known color space, based on the average \"human observer\" as "
+#~ "defined by CIE."
+#~ msgstr ""
+#~ "Farbabgleich zwischen verschiedenen Geräten ist möglich, vorausgesetzt "
+#~ "die farbmetrischen Eigenschaften der beteiligten Geräte sind bekannt. Die "
+#~ "Qualität einer Farbumwandlung von einem Farbgerät zu einem anderen hängt "
+#~ "überwiegend von der Genauigkeit der Farbmessung und dem "
+#~ "Berechnungsverfahren  für das Erstellen des Farbprofiles ab. "
+#~ "Farbraumdefinitionen geschehen in Bezug zu dem Profilverbindungsfarbraum "
+#~ "(PCS). Der PCS wurde von der CIE auf Grund der Farbeindrücke von "
+#~ "menschlichen Beobachtern ermittelt."
+
+#~ msgid "Color measurement data"
+#~ msgstr "Farbmessdaten"
+
+#~ msgid ""
+#~ "Color profiles are often available from manufacturers of imaging devices "
+#~ "as digital cameras, monitors and printers. In Oyranos, ICC profiles are "
+#~ "assigned to calibration states of color devices, to get close to the "
+#~ "device behaviour as was present during ICC profile creation."
+#~ msgstr ""
+#~ "Farbprofile sind oftmals erhältlich von Herstellern solcher Farbgeräte "
+#~ "wie Digitalkameras, Bildschirmen oder Druckern. In Oyranos wird ein ICC "
+#~ "Profil mit dem Kalibrierzustand dieser Geräte verknüpft, um möglichst "
+#~ "nahe an das  Farbverhalten wärend der ICC Profilerzeugung zu gelangen."
+
+#~ msgid ""
+#~ "Color profiles are often available from manufacturers of optical devices "
+#~ "(digital camera, scanner, printer). With ICC Examin you can get an "
+#~ "impression of the internal data , stored in a ICC profile. For profiles "
+#~ "containing measurement data, ICC Examin can generate a quality report. "
+#~ "The deviation, calculated from the measurement data is shown as well in "
+#~ "the three dimensional gamut viewer.<br>"
+#~ msgstr ""
+#~ "Farbprofile sind erh&auml;ltlich ofmals von Herstellern optischer "
+#~ "Ger&auml;te (digitale Kameras, Scanner, Drucker). Mit ICC Examin haben "
+#~ "Sie die M&ouml;glichkeit einen Eindruck von den internen Daten zu "
+#~ "erlangen. ICC Examin kann, falls Messdaten im Profil hinterlegt sind, "
+#~ "einen Qualit&auml;tsbericht erstellen. Die aus den Messdaten errechneten "
+#~ "Farbabweichungen werden auch im dreidimensionalen Farbraumbetrachter "
+#~ "dargestellt. <br>"
+
+#~ msgid "Color r"
+#~ msgstr "Farbanteil r"
+
+#~ msgid "Color space for Simulating an Output Device"
+#~ msgstr "Farbraum zur Nachbildung eines Ausgabegerätes"
+
+#~ msgid "Compact Disk"
+#~ msgstr "CD"
+
+#~ msgid "Compare Measurement <-> Profile Colors"
+#~ msgstr "Vergleich Mess- und Profilfarben"
+
+#~ msgid "Configure Paths"
+#~ msgstr "Konfiguriere Pfade"
+
+#~ msgid "Conversion"
+#~ msgstr "Farbumwandlung"
+
+#~ msgid "Conversion table with 16-bit precission:"
+#~ msgstr "Konvertierungskette mit 16-bit Präzission:"
+
+#~ msgid "Conversion table with 8-bit precission:"
+#~ msgstr "Konvertierungskette mit 8-bit Präzission:"
+
+#~ msgid "Convert CameraRaw image to Rgb image:"
+#~ msgstr "Wandle Kamera Rohdaten in Rgb Bild um:"
+
+#~ msgid "Convert Image:"
+#~ msgstr "Wandle Bild um:"
+
+#~ msgid "Convert JSON to gettext ready C strings:"
+#~ msgstr "Wandle JSON in gettext lesbare C Texte:"
+
+#~ msgid "Convert automatically"
+#~ msgstr "Wandle automatisch"
+
+#~ msgid "Convert image through ICC device link profile"
+#~ msgstr "Wandle Bild mittels Geräteverknüpfung um"
+
+#~ msgid "Convert image to ICC Color Space"
+#~ msgstr "Wandle Bild nach Farbraum um"
+
+#~ msgid "Convert to Default Cmyk Editing Space"
+#~ msgstr "Übertrage in voreingestellten Cmyk Editierfarbraum"
+
+#~ msgid "Convert to Default Rgb Editing Space"
+#~ msgstr "Umwandeln zum voreingestellten Rgb Editierfarbraum"
+
+#~ msgid "Convert to WWW (sRGB)"
+#~ msgstr "Umwandeln für's WWW (sRGB)"
+
+#~ msgid "Convert to untagged Cmyk, preserving Cmyk numbers"
+#~ msgstr "Wandle in unspezifziertes Cmyk, erhalte Cmyk Zahlen"
+
+#~ msgid "Copyright"
+#~ msgstr "Kopierrecht"
+
+#~ msgid "Copyright &copy;"
+#~ msgstr "Kopierrecht &copy;"
+
+#~ msgid "Copyright:       "
+#~ msgstr "Kopierrecht:     "
+
+#~ msgid "Could not alloc memory"
+#~ msgstr "Kann keinen Speicher reservieren"
+
+#~ msgid "Could not create a intermediate db object for"
+#~ msgstr "Konnte temporäres DB Objekt nicht erstellen für"
+
+#~ msgid ""
+#~ "Could not create directory '%s'. You may not have permission to perform "
+#~ "this operation."
+#~ msgstr "Ordner '%s' konnte nicht erstellt werden"
+
+#~ msgid "Could not create root JSON node for"
+#~ msgstr "Konnte kein JSON Wurzelknoten erzeugen für"
+
+#~ msgid "Could not download from WWW. Please install curl or wget."
+#~ msgstr ""
+#~ "Konnte nicht aus dem Netz kopieren. Bitte installieren Sie curl oder wget."
+
+#~ msgid ""
+#~ "Could not find\n"
+#~ "Oyranos configuration dialog\n"
+#~ "in the actual\n"
+#~ "executable path."
+#~ msgstr ""
+#~ "Konnte\n"
+#~ "Oyranos Konfigurationsdialog\n"
+#~ "nicht im aktuellen\n"
+#~ "Ausfuehrungspfad finden."
+
+#~ msgid ""
+#~ "Could not find any meta module. Did you set the OY_MODULE_PATH variable, "
+#~ "to point to a Oyranos module loader library?"
+#~ msgstr ""
+#~ "Konnte keine Metamodul finden. Ist die OY_MODULE_PATH Variable gesetzt? "
+#~ "Sie zeigt auf Verzeichnisse in welchen die Moduleladebibliothek liegt."
+
+#~ msgid "Could not find config"
+#~ msgstr "Konnte Konfiguration nicht finden"
+
+#~ msgid "Could not find db::config object for"
+#~ msgstr "Konnte db::config nicht finden für"
+
+#~ msgid "Could not get Xatom \"%s\""
+#~ msgstr "Nicht gefunden: Xatom \"%s\""
+
+#~ msgid "Could not get Xatom, probably your monitor profile is not set:"
+#~ msgstr ""
+#~ "Konnte Xatom nicht finden. Wahrscheinlich ist das Monitorprofil nicht "
+#~ "gesetzt."
+
+#~ msgid "Could not obtain JSON node for"
+#~ msgstr "Konnte kein JSON Knoten erhalten für"
+
+#~ msgid "Could not open ICC profile"
+#~ msgstr "Konnte Profil nicht öffnen"
+
+#~ msgid "Could not open default ICC profile"
+#~ msgstr "Konnte voreingestelltes Profil nicht laden"
+
+#~ msgid "Could not open device"
+#~ msgstr "Konnte Gerät nicht öffnen"
+
+#~ msgid "Could not open instrument"
+#~ msgstr "Konnte Instrument nicht öffnen"
+
+#~ msgid "Could not open or invalid data: "
+#~ msgstr "Konnte nicht öffnen oder ungültige Daten: "
+
+#~ msgid "Could not open profile"
+#~ msgstr "Konnte Profil nicht laden"
+
+#~ msgid "Could not open: "
+#~ msgstr "Konnte nicht öffnen: "
+
+#~ msgid "Could not resolve device."
+#~ msgstr "Konnte Gerät nicht auflösen."
+
+#~ msgid "Could not resolve device_json"
+#~ msgstr "Konnte device_json nicht auflösen"
+
+#~ msgid "Could not resolve device_name"
+#~ msgstr "Konnte device_name nicht auflösen"
+
+#~ msgid "Could not set JSON string for"
+#~ msgstr "Konnte keinen JSON Text setzen für"
+
+#~ msgid "Could not setup db objetc"
+#~ msgstr "Konnte DB Objekt nicht erstellen"
+
+#~ msgid "Could not write to file"
+#~ msgstr "Konnte Datei nicht schreiben"
+
+#~ msgid "Count all profiles with Lab PCS"
+#~ msgstr "Zähle alle Profile mit Lab PCS"
+
+#~ msgid "Create 3D CLUT"
+#~ msgstr "Erzeuge eine 3D Interpolationstabelle"
+
+#~ msgid "Create a ICC abstract proofing profile."
+#~ msgstr "Erstelle ein abstraktes ICC Simulationsprofile"
+
+#~ msgid "Create a ICC matrix profile."
+#~ msgstr "Erstelle ein ICC Matrixprofile"
+
+#~ msgid "Create a ICC proofing profile."
+#~ msgstr "Erstelle ein ICC Simulationsprofile"
+
+#~ msgid "Created new_ticket"
+#~ msgstr "Erzeugte new_ticket"
+
+#~ msgid "Creation Date:   "
+#~ msgstr "Datum:           "
+
+#~ msgid "Creation Time in UTC"
+#~ msgstr "Erstelldatum in UTC"
+
+#~ msgid "Creator"
+#~ msgstr "Ersteller"
+
+#~ msgid "Currently active policy:"
+#~ msgstr "Aktive Richtlinie:"
+
+#~ msgid "Curve Channels:"
+#~ msgstr "Kurvenkanäle:"
+
+#~ msgid "Curve Precission:"
+#~ msgstr "Kurvenpräzission:"
+
+#~ msgid "Curve Segments:"
+#~ msgstr "Kurventeile:"
+
+#~ msgid "Curves"
+#~ msgstr "Kurven"
+
+#~ msgid "Curves for Optimization"
+#~ msgstr "Kurven für Optimierungen"
+
+#~ msgid "Cyan"
+#~ msgstr "Zyan"
+
+#~ msgid "DB File"
+#~ msgstr "DB Datei"
+
+#~ msgid "DB File Name"
+#~ msgstr "DB Dateiname"
+
+#~ msgid "DESCRIPTION"
+#~ msgstr "BESCHREIBUNG"
+
+#~ msgid "DISPLAY variable not set: giving up."
+#~ msgstr "DISPLAY Variable nicht gesetzt: gebe auf."
+
+#~ msgid "Data Color Space:"
+#~ msgstr "Farbraum:        "
+
+#~ msgid "Data:"
+#~ msgstr "Daten:"
+
+#~ msgid "Date"
+#~ msgstr "Datum"
+
+#~ msgid "Date:"
+#~ msgstr "Datum:"
+
+#~ msgid "Debug"
+#~ msgstr "Fehlersuche"
+
+#~ msgid "Decide how to preserve the black channel for Cmyk to Cmyk transforms"
+#~ msgstr ""
+#~ "Entscheide wie der Schwarzkanal erhalten wird bei Umwandlungen von einem "
+#~ "Druckfarbraum in einen Anderen"
+
+#~ msgid ""
+#~ "Decide how to resolve conflicts with input color spaces and current "
+#~ "settings."
+#~ msgstr ""
+#~ "Was ist zu tuen falls Standardfarbräume nicht mit den Eingestellten "
+#~ "übereinstimmen."
+
+#~ msgid ""
+#~ "Decide what to do when the default color spaces don't match the current "
+#~ "ones."
+#~ msgstr ""
+#~ "Was ist zu tuen falls Standardfarbräume nicht mit den Eingestellten "
+#~ "übereinstimmen."
+
+#~ msgid "Default Profiles"
+#~ msgstr "Voreingestellte ICC Profile"
+
+#~ msgid "Delete"
+#~ msgstr "Löschen"
+
+#~ msgid "Description"
+#~ msgstr "Beschreibung"
+
+#~ msgid "Description:     "
+#~ msgstr "Beschreibung:    "
+
+#~ msgid "Desktop"
+#~ msgstr "Desktop"
+
+#~ msgid "Detail mode"
+#~ msgstr "Detailierte Informationen"
+
+#~ msgid "Development"
+#~ msgstr "Entwicklung"
+
+#~ msgid "Device"
+#~ msgstr "Geräte"
+
+#~ msgid "Device Class"
+#~ msgstr "Geräteklasse"
+
+#~ msgid "Device Colors"
+#~ msgstr "Gerätefarben"
+
+#~ msgid "Device File"
+#~ msgstr "Gerätedatei"
+
+#~ msgid "Device Manufacturer"
+#~ msgstr "Geräte Hersteller"
+
+#~ msgid "Device Model"
+#~ msgstr "Geräte Model"
+
+#~ msgid "Device Serial:"
+#~ msgstr "Serien Nr.:"
+
+#~ msgid "Device Settings"
+#~ msgstr "Geräte Einstellungen"
+
+#~ msgid "Device colors"
+#~ msgstr "Farbmessflächen"
+
+#~ msgid "Device manufacturerer description"
+#~ msgstr "Geräteherstellerbeschreibung"
+
+#~ msgid "Device position"
+#~ msgstr "Gerätebeposition"
+
+#~ msgid "Did not find a type for option:"
+#~ msgstr "Fand keinen Typ für Option:"
+
+#~ msgid "Digital camera"
+#~ msgstr "Digitale Kamera"
+
+#~ msgid "Display"
+#~ msgstr "Monitor"
+
+#~ msgid "Documentation"
+#~ msgstr "Dokumente"
+
+#~ msgid "Documents"
+#~ msgstr "Dokumente"
+
+#~ msgid "Double occuring option"
+#~ msgstr "Doppelte Option"
+
+#~ msgid "Download"
+#~ msgstr "Bezugsquelle"
+
+#~ msgid "Driver signature/encoding:"
+#~ msgstr "Gerätetreiberdatentyp:"
+
+#~ msgid "Driver version:"
+#~ msgstr "Gerätetreiberversion:"
+
+#~ msgid "Dump Device Infos to OpenICC device JSON:"
+#~ msgstr "Schreibe Geräteinformationen nach OpenICC JSON:"
+
+#~ msgid "Dump OpenICC JSON"
+#~ msgstr "Schreibe OpenICC Json"
+
+#~ msgid "Dump data:"
+#~ msgstr "Schreibe Daten:"
+
+#~ msgid "Dump device color state:"
+#~ msgstr "Schreibe Farbeinstellungen:"
+
+#~ msgid "Dump out the actual settings:"
+#~ msgstr "Die aktuellen Einstellungen als XML ausgeben"
+
+#~ msgid "Dye sublimation printer"
+#~ msgstr "Thermosublimationsdrucker"
+
+#~ msgid "EBU Tech.3213-E"
+#~ msgstr "EBU Tech.3213-E"
+
+#~ msgid "ENVIRONMENT VARIABLES"
+#~ msgstr "UMGEBUNGSVARIABLEN"
+
+#~ msgid "EXAMPLES"
+#~ msgstr "BEISPIELE"
+
+#~ msgid "EXIT-STATE"
+#~ msgstr "EXIT-STATUS"
+
+#~ msgid "Edit Options ..."
+#~ msgstr "Editiere Optionen ..."
+
+#~ msgid "Editing Cmyk"
+#~ msgstr "Editier Cmyk"
+
+#~ msgid "Editing Color Space"
+#~ msgstr "Editierfarbraum"
+
+#~ msgid "Editing Gray"
+#~ msgstr "Editier Grau"
+
+#~ msgid "Editing Lab"
+#~ msgstr "Editier Lab"
+
+#~ msgid "Editing Rgb"
+#~ msgstr "Editier Rgb"
+
+#~ msgid "Editing XYZ"
+#~ msgstr "Editier XYZ"
+
+#~ msgid "Effect abtract Color Space"
+#~ msgstr "Effectfarbraum"
+
+#~ msgid "Electrophotographic printer"
+#~ msgstr "Elektrofotografischer Drucker"
+
+#~ msgid "Electrostatic printer"
+#~ msgstr "Electrostatischer Drucker"
+
+#~ msgid ""
+#~ "Enable simulation of an output color space on a local printer. Most users "
+#~ "do not work for a certain media and leave color handling to the system. "
+#~ "They want no simulation."
+#~ msgstr ""
+#~ "Simuliere einen Ausgabefarbraum auf einem lokalen Drucker. Die meisten "
+#~ "Benutzer arbeiten nicht für spezielle Ausgabemedien und überlassen die "
+#~ "Farbanpassung dem System. Sie möchten keine Simulation."
+
+#~ msgid ""
+#~ "Enable simulation of output print on the monitor. Most users do not work "
+#~ "for a certain media and leave color handling to the system. They want no "
+#~ "simulation."
+#~ msgstr ""
+#~ "Simuliere einen Ausgabefarbraum auf dem Bildschirm. Die meisten Benutzer "
+#~ "arbeiten nicht für spezielle Ausgabemedien und überlassen die "
+#~ "Farbanpassung dem System. Sie möchten keine Simulation."
+
+#~ msgid "Erase"
+#~ msgstr "Löschen"
+
+#~ msgid "Erase Device"
+#~ msgstr "Lösche Gerät"
+
+#~ msgid "Erase Devices"
+#~ msgstr "Lösche Geräte"
+
+#~ msgid "Erase a Devices from the DB"
+#~ msgstr "Lösche Gerät von der DB"
+
+#~ msgid "Erase profile:"
+#~ msgstr "Melde Profil ab:"
+
+#~ msgid "Error"
+#~ msgstr "Fehler"
+
+#~ msgid "Error getting atom"
+#~ msgstr "Fehler beim Suchen des Xatoms"
+
+#~ msgid "Error in ICC profile tag found!"
+#~ msgstr "Fehler in ICC Profilbaustein gefunden!"
+
+#~ msgid "Error obtaining profile"
+#~ msgstr "Fehler beim Erhalten des Profiles"
+
+#~ msgid "Error setting up atom"
+#~ msgstr "Fehler beim Setzen eines Xatoms"
+
+#~ msgid "Error setting up atom \"%s\""
+#~ msgstr "Fehler beim Setzen des Xatoms \"%s\""
+
+#~ msgid "Examine ICC Profile ..."
+#~ msgstr "Untersuche ICC Profil ..."
+
+#~ msgid "Example Devices, for testing and learning purposes only."
+#~ msgstr "Beispielgerät, nur zum Testen."
+
+#~ msgid "Exclude this path"
+#~ msgstr "Diesen Pfad ausschließen"
+
+#~ msgid "Exit!"
+#~ msgstr "Beenden!"
+
+#~ msgid "Export formated text"
+#~ msgstr "Exportiere formatierten Text"
+
+#~ msgid "Extended Options"
+#~ msgstr "Erweiterte Optionen"
+
+#~ msgid "Extract ICC profile:"
+#~ msgstr "Extrahiere ICC Profil:"
+
+#~ msgid "FILENAME"
+#~ msgstr "DATEINAME"
+
+#~ msgid "FILES"
+#~ msgstr "DATEIEN"
+
+#~ msgid "FILE_NAME"
+#~ msgstr "DATEINAME"
+
+#~ msgid ""
+#~ "FLU is not installed\n"
+#~ "and is needed for the\n"
+#~ "Oyranos configuration dialog."
+#~ msgstr ""
+#~ "FLU ist nicht installiert\n"
+#~ "und wird benoetigt von\n"
+#~ "Oyranos Konfigurationsdialog"
+
+#~ msgid "FORMAT"
+#~ msgstr "FORMAT"
+
+#~ msgid "Favorites"
+#~ msgstr "Lesezeichen"
+
+#~ msgid "File '%s' already exists!"
+#~ msgstr "Datei '%s' existiert bereits."
+
+#~ msgid "File Magic"
+#~ msgstr "Dateisignatur"
+
+#~ msgid "File Name"
+#~ msgstr "Dateiname"
+
+#~ msgid "File Name of Device JSON"
+#~ msgstr "Dateiname des Geräte Json"
+
+#~ msgid "File Name of OpenICC Device Data Base JSON"
+#~ msgstr "Dateiname der OpenICC Json Gerätedatenbank"
+
+#~ msgid "File Name of device JSON Data Base"
+#~ msgstr "Dateiname der Json Gerätedatenbank"
+
+#~ msgid "File Types"
+#~ msgstr "Datei Typen"
+
+#~ msgid "File exists"
+#~ msgstr "Datei existiert"
+
+#~ msgid "File header invalid"
+#~ msgstr "Dateikopf ungültig"
+
+#~ msgid "File name is missed"
+#~ msgstr "Dateiname wird vermißt"
+
+#~ msgid "File not loaded!"
+#~ msgstr "Datei nicht geladen!"
+
+#~ msgid "File:            "
+#~ msgstr "Datei:           "
+
+#~ msgid "Filename (ICC data type)"
+#~ msgstr "Dateiname (ICC Daten)"
+
+#, fuzzy
+#~ msgid "Filename (VRML)"
+#~ msgstr "Dateiname"
+
+#~ msgid "Filename (corrupted ICC data type)"
+#~ msgstr "Dateiname (beschädigte ICC Daten)"
+
+#, fuzzy
+#~ msgid "Filename (measurement)"
+#~ msgstr "Messdatei öffnen"
+
+#~ msgid "Filename (other data type)"
+#~ msgstr "Dateiname (anderer Datentyp)"
+
+#~ msgid "Film scanner"
+#~ msgstr "Filmscanner"
+
+#~ msgid "Film writer"
+#~ msgstr "Filmbelichter"
+
+#~ msgid "Flags:           "
+#~ msgstr "Optionen:        "
+
+#~ msgid "Flare"
+#~ msgstr "Überstrahlung"
+
+#~ msgid "Flexography"
+#~ msgstr "Flexodruck"
+
+#~ msgid "Floppy Disk"
+#~ msgstr "Diskette"
+
+#~ msgid "Folder"
+#~ msgstr "Ordner"
+
+#~ msgid "For Print"
+#~ msgstr "Für den Druck"
+
+#~ msgid "For Screen"
+#~ msgstr "Bildschirm"
+
+#~ msgid "For more informations read the man page:"
+#~ msgstr "Mehr Informationen stehen im Handbuch:"
+
+#~ msgid "For the visualisation of gamut (external):<br>\n"
+#~ msgstr ""
+#~ "F&uuml;r die Visualisation des Farbumfangs (Erzeugung extern):<br>\n"
+
+#~ msgid "Formated text"
+#~ msgstr "Formatierter Text"
+
+#~ msgid "Found no node in conversion. give up"
+#~ msgstr "Fand keinen Knoten im Graph. Gebe auf."
+
+#~ msgid "Function for Creating a Color Space Transformation."
+#~ msgstr "Funktion zur Erzeugung einer Farbraumtransformation."
+
+#~ msgid "GUI"
+#~ msgstr "GUI"
+
+#~ msgid "GUI + Command"
+#~ msgstr "GUI + Kommando"
+
+#~ msgid "Gamma"
+#~ msgstr "Gamma"
+
+#~ msgid "Gamma Blue:  "
+#~ msgstr "Gamma Blau:  "
+
+#~ msgid "Gamma Green:"
+#~ msgstr "Gamma Grün: "
+
+#~ msgid "Gamma Green: "
+#~ msgstr "Gamma Grün:  "
+
+#~ msgid "Gamma Red:   "
+#~ msgstr "Gamma Rot:   "
+
+#~ msgid "Gamut"
+#~ msgstr "Farbhülle"
+
+#~ msgid "Gamut View"
+#~ msgstr "Farbhüllansicht"
+
+#~ msgid "Gamut Warning"
+#~ msgstr "Farbumfangswarnung"
+
+#~ msgid "Gamut selector"
+#~ msgstr "Darstellungsoptionen"
+
+#~ msgid "General options"
+#~ msgstr "Allgemeine Optionen"
+
+#~ msgid "Generate CLUT Image:"
+#~ msgstr "Erzeuge 3D Interpolationstabelle:"
+
+#~ msgid "Generate Device Link Profile:"
+#~ msgstr "Erzeuge Verknüpfungsprofil:"
+
+#~ msgid "Generate Image:"
+#~ msgstr "Erzeuge Bild:"
+
+#~ msgid "Get Conversion"
+#~ msgstr "Hole Farbumwandlung"
+
+#~ msgid "Get ICC profile"
+#~ msgstr "Hole ICC Profil"
+
+#~ msgid "Get OpenICC Json UI declaration incuding command"
+#~ msgstr "Hole OpenICC Json Benutzerschnittstelle mit Kommando"
+
+#~ msgid "Get UI converted into text formats"
+#~ msgstr "Hole Benutzerschnittstelle als Text"
+
+#~ msgid "Get XFORMS:"
+#~ msgstr "Hole XFORMS"
+
+#~ msgid "Get a OpenICC Json UI declaration"
+#~ msgstr "Hole OpenICC Json Benutzerschnittstelle"
+
+#~ msgid "Get a unix man page"
+#~ msgstr "Hole Unix Handbuchseite"
+
+#~ msgid "Get formated text"
+#~ msgstr "Hole formatierten Text"
+
+#~ msgid "Go back one directory in the history"
+#~ msgstr "vorheriges Verzeichnis"
+
+#~ msgid "Go forward one directory in the history"
+#~ msgstr "nächstes Verzeichnis"
+
+#~ msgid "Go to the parent directory"
+#~ msgstr "nächsthöheres Verzeichnis"
+
+#~ msgid "Grafic Card Gamma Table"
+#~ msgstr "Grafik Karten Gamma Tabelle (vcgt)"
+
+#~ msgid "Graphic Designers"
+#~ msgstr "Grafische Gestalter"
+
+#~ msgid "Gravure"
+#~ msgstr "Tiefdruck"
+
+#~ msgid "Gray"
+#~ msgstr "Grau"
+
+#~ msgid "Gray tone reproduction curve"
+#~ msgstr "Schwarze Wiedergabekurve"
+
+#~ msgid "Green"
+#~ msgstr "Grün"
+
+#~ msgid "Green Colorant"
+#~ msgstr "Grüne Grundfarbe"
+
+#~ msgid "Green Gamma:"
+#~ msgstr "Grünes Tonwertkurve:"
+
+#~ msgid "Green tone reproduction curve"
+#~ msgstr "Grüne Farbwiedergabekurve"
+
+#~ msgid "Green xy:"
+#~ msgstr "Grün xy:"
+
+#~ msgid "HISTORY"
+#~ msgstr "GESCHICHTE"
+
+#~ msgid "HTML Documents (*.htm*)"
+#~ msgstr "HTML Dokumente (*.htm*)"
+
+#~ msgid "Handle mixed color spaces in preparing a document for print output."
+#~ msgstr ""
+#~ "Behandlung von uneinheitlichen Farbräumen in Vorbereitung eines "
+#~ "Dokumentes für die Druckausgabe"
+
+#~ msgid ""
+#~ "Handle mixed color spaces in preparing a document for print output. A "
+#~ "conversion to the default editing color space is typically what most "
+#~ "users want."
+#~ msgstr ""
+#~ "Behandlung von uneinheitlichen Farbräumen in Vorbereitung eines "
+#~ "Dokumentes für die Druckausgabe. Die Umwandlung in den voreingestellten "
+#~ "Editierfarbraum ist, was die meisten Benutzer benötigen."
+
+#~ msgid "Handle mixed color spaces in preparing a document for screen output."
+#~ msgstr ""
+#~ "Behandlung von uneinheitlichen Farbräumen in Vorbereitung eines "
+#~ "Dokumentes für die Bildschirmausgabe"
+
+#~ msgid ""
+#~ "Handle mixed color spaces in preparing a document for screen output. A "
+#~ "conversion to sRGB helps in easy data exchange and is what most users "
+#~ "want."
+#~ msgstr ""
+#~ "Behandlung von uneinheitlichen Farbräumen in Vorbereitung eines "
+#~ "Dokumentes für die Bildschirmausgabe. Eine Umwandlung nach sRGB hilft für "
+#~ "einen einfacheren Datenaustausch und ist, was die meisten Benutzer "
+#~ "wünschen."
+
+#~ msgid "Handle options."
+#~ msgstr "Moduloptionen."
+
+#~ msgid "Handling of Mixed Color Spaces inside one single Document"
+#~ msgstr "Behandlung von gemischten Farbräumen in einem einzelnen Dokument"
+
+#~ msgid "Hardproof"
+#~ msgstr "Nachbildung beim Ausdruck"
+
+#~ msgid "Header"
+#~ msgstr "Kopf"
+
+#~ msgid "Help"
+#~ msgstr "Hilfe"
+
+#~ msgid "High Precission"
+#~ msgstr "Hohe Präzission"
+
+#~ msgid ""
+#~ "Hint: search paths are influenced by the XDG_CONFIG_HOME shell variable."
+#~ msgstr ""
+#~ "Hinweis: Suchpfade werden durch die XDG_CONFIG_HOME "
+#~ "Kommandozeilenvariable\n"
+#~ "         beeinflusst."
+
+#~ msgid "Hints"
+#~ msgstr "Hinweise"
+
+#~ msgid "Hls"
+#~ msgstr "Hls"
+
+#~ msgid "Home"
+#~ msgstr "Heimverzeichnis"
+
+#~ msgid "Hsv"
+#~ msgstr "Hsv"
+
+#~ msgid "Huch, unknown exception"
+#~ msgstr "Huch, unbekannte Ausnahme"
+
+#~ msgid "Hue"
+#~ msgstr "Farbton"
+
+#~ msgid "ICC Class"
+#~ msgstr "ICC Klasse"
+
+#~ msgid "ICC Examin"
+#~ msgstr "ICC Examin"
+
+#~ msgid ""
+#~ "ICC Examin is a viewer for color profiles according to ICC standard  - "
+#~ "www.color.org . At the moment version 2 profiles are supported."
+#~ msgstr ""
+#~ "ICC Examin ist ein Betrachter von Farbprofilen gem&auml;&szlig; ICC "
+#~ "Standard  - www.color.org . Im Moment werden Version 2 Profile "
+#~ "unterst&uuml;tzt."
+
+#~ msgid "ICC Examin uses following libraries:<br>\n"
+#~ msgstr "ICC Examin benutzt folgende Bibliotheken:<br>\n"
+
+#, fuzzy
+#~ msgid "ICC Examin: Report"
+#~ msgstr "ICC Examin"
+
+#~ msgid "ICC color profile for color transformations"
+#~ msgstr "ICC Farbprofil zur Farbraumtransformation."
+
+#~ msgid "ICC color profiles (*.{I,i}{C,c}{M,m,C,c})"
+#~ msgstr "ICC Farbprofile (*.{I,i}{C,c}{M,m,C,c})"
+
+#~ msgid ""
+#~ "ICC color profiles (*.{I,i}{C,c}{M,m,C,c})\tMeasurement (*.{txt,it8,IT8,"
+#~ "RGB,CMYK,ti*,cgats,CIE,cie,nCIE,oRPT,DLY,LAB,Q60})\tArgyll Gamuts (*.{wrl,"
+#~ "vrml}"
+#~ msgstr ""
+#~ "ICC Farbprofile (*.{I,i}{C,c}{M,m,C,c})\tMessdaten (*.{txt,it8,IT8,RGB,"
+#~ "CMYK,ti*,cgats,CIE,cie,nCIE,oRPT,DLY,LAB,Q60})\tArgyll Farbraumhüllen (*."
+#~ "{wrl,vrml}"
+
+#~ msgid "ICC color profiles for color transformations"
+#~ msgstr "ICC Farbprofile zur Farbraumumwandlung"
+
+#~ msgid "ICC header Attributes"
+#~ msgstr "ICC Dateiattribute"
+
+#~ msgid "ICC header Flags"
+#~ msgstr "ICC "
+
+#~ msgid "ICC profile"
+#~ msgstr "ICC Profil"
+
+#~ msgid "ICC profile id written"
+#~ msgstr "ICC Profil ID geschrieben"
+
+#~ msgid "ICC profile search paths"
+#~ msgstr "ICC Profilesuchpfade"
+
+#~ msgid "ICC profiles"
+#~ msgstr "ICC Profile"
+
+#~ msgid ""
+#~ "ICC profiles reside in known paths. They are defined by OpenICC and can "
+#~ "be used by every complying system or application."
+#~ msgstr ""
+#~ "ICC Profile befinden sich in bekannten Verzeichnissen. Die Pfade sind "
+#~ "durch OpenICC definiert und stehen allen unterstützenden Systemen und "
+#~ "Anwendungen zur Verfügung."
+
+#~ msgid ""
+#~ "ICC profiles reside in known paths. They are defined by OpenICC and can "
+#~ "be used by every complying system or application. XDG_DATA_HOME and "
+#~ "XDG_DATA_DIRS environment variables route Oyranos to top directories "
+#~ "containing resources. The derived paths for ICC profiles have a \"color/"
+#~ "icc\" appended."
+#~ msgstr ""
+#~ "ICC Profile befinden sich in bekannten Verzeichnissen. Die Pfade sind "
+#~ "durch OpenICC definiert und stehen allen unterstützenden Systemen und "
+#~ "Anwendungen zur Verfügung. Die XDG_DATA_HOME und XDG_DATA_DIRS "
+#~ "Umgebungsvariablen leiten Oyranos zu den oberen Verzeichnissen mit "
+#~ "Resourcen. Die daraus gebildeten Pfade für ICC Farbprofile werden durch "
+#~ "ein \"color/icc\" ergänzt."
+
+#~ msgid ""
+#~ "ICC profiles should always be attached to all colors. In the case that "
+#~ "colors are undefined, users can set various default ICC profiles in "
+#~ "Oyranos settings."
+#~ msgstr ""
+#~ "Alle Farben sollten auf einem Rechner mit ICC Farbprofilen definiert "
+#~ "sein. Für nicht definierte Farben können Benutzer ICC Farbprofile in "
+#~ "Oyranos voreinstellen."
+
+#~ msgid "ICC_FILE_NAME"
+#~ msgstr "ICC_DATEINAME"
+
+#~ msgid "ITU-R BT.709"
+#~ msgstr "ITU-R BT.709"
+
+#~ msgid "Idendity"
+#~ msgstr "Idendität"
+
+#~ msgid "Illuminant"
+#~ msgstr "Beleuchtung"
+
+#~ msgid "Illuminant ---"
+#~ msgstr "Farbtemperatur ---"
+
+#~ msgid "Illuminant A"
+#~ msgstr "Farbtemperatur A"
+
+#~ msgid "Illuminant D50"
+#~ msgstr "Farbtemperatur D50"
+
+#~ msgid "Illuminant D55"
+#~ msgstr "Farbtemperatur D55"
+
+#~ msgid "Illuminant D65"
+#~ msgstr "Farbtemperatur D65"
+
+#~ msgid "Illuminant D93"
+#~ msgstr "Farbtemperatur D93"
+
+#~ msgid "Illuminant F2"
+#~ msgstr "Farbtemperatur F2"
+
+#~ msgid "Illuminant F8"
+#~ msgstr "Farbtemperatur F8"
+
+#~ msgid "Illuminant Spectrum Graph:"
+#~ msgstr "Beleuchtungsspektrum A"
+
+#~ msgid "Illuminant Type"
+#~ msgstr "Beleuchtungstyp"
+
+#~ msgid "Illuminant unknown"
+#~ msgstr "Illuminant unbekannt"
+
+#~ msgid "Illuminant with equal energy E"
+#~ msgstr "Farbtemperatur mit ausgeglichener Energie E"
+
+#~ msgid "Illuminant:      "
+#~ msgstr "Beleuchtung:     "
+
+#~ msgid "Illustration"
+#~ msgstr "Darstellung"
+
+#~ msgid "Image"
+#~ msgstr "Bild"
+
+#~ msgid "Image PNG Socket"
+#~ msgstr "PNG Bilddose"
+
+#~ msgid "Image Plug"
+#~ msgstr "Bildstecker"
+
+#~ msgid "Image Socket"
+#~ msgstr "Bilddose"
+
+#~ msgid ""
+#~ "Image has no color space embedded. What default action shall be performed?"
+#~ msgstr ""
+#~ "Bild enthält kein Farbprofil. Welche Standardhandlung soll ausgeführt "
+#~ "werden?"
+
+#~ msgid "Image/Simple Image[scale]"
+#~ msgstr "Bild/Einfaches Bild[Skalierung]"
+
+#, fuzzy
+#~ msgid "Image[cmm_loader]"
+#~ msgstr "Bild[my_filter]"
+
+#~ msgid "Image[input_libraw-lite]"
+#~ msgstr "Bild[input_libraw-lite]"
+
+#~ msgid "Image[input_png]"
+#~ msgstr "Bild[input_png]"
+
+#~ msgid "Image[input_ppm]"
+#~ msgstr "Bild[input_ppm]"
+
+#~ msgid "Image[lraw]"
+#~ msgstr "Bild[lraw]"
+
+#~ msgid "Image[out]"
+#~ msgstr "Bild[Ausgang]"
+
+#~ msgid "Image[scale]"
+#~ msgstr "Bild[Skalierung]"
+
+#~ msgid "Image[write_png]"
+#~ msgstr "Bild[write_png]"
+
+#~ msgid "Image[write_ppm]"
+#~ msgstr "Bild[write_ppm]"
+
+#~ msgid "Img"
+#~ msgstr "Bild"
+
+#~ msgid ""
+#~ "Incoming color spaces can differ from the default editing color space. "
+#~ "For most users, an automatic conversion is fine. However, for more "
+#~ "demanding work, the numbers need to be preserved."
+#~ msgstr ""
+#~ "Eingehende Farbräume können von der Voreinstellung abweichen. Für viele "
+#~ "Benutzer ist eine automatische Umwandlung kein Problem. Für "
+#~ "anspruchsvollere Anwendungen sollten die Zahlenwerte stets erhalten "
+#~ "bleiben."
+
+#~ msgid "Information"
+#~ msgstr "Informationen"
+
+#~ msgid "InkJet printer"
+#~ msgstr "Tintenstrahldrucker"
+
+#~ msgid "Input"
+#~ msgstr "Eingabe"
+
+#~ msgid "Input Color Space"
+#~ msgstr "Eingabefarbraum"
+
+#~ msgid "Input PNG Image Filter Object"
+#~ msgstr "Filterobjekt eines zu lesendes PNG Bildes"
+
+#~ msgid "Input PPM Image Filter Object"
+#~ msgstr "Filterobjekt eines zu lesendes PPM Bildes"
+
+#~ msgid "Input libraw Image Filter Object"
+#~ msgstr "Filterobjekt für libraw Eingangsbilder"
+
+#~ msgid "Inspect"
+#~ msgstr "Inspektor"
+
+#~ msgid "Install ICC profile:"
+#~ msgstr "Installiere ICC Profil:"
+
+#~ msgid "Install profile"
+#~ msgstr "Installiere Profil"
+
+#~ msgid "Install selected profile"
+#~ msgstr "Installiere ICC Profil"
+
+#~ msgid "Install the missing profile in the OpenIccDirectory path."
+#~ msgstr "Installieren Sie das fehlende Profil in den OpenIccDirectory Pfad."
+
+#~ msgid "Install the selected profile."
+#~ msgstr "Installiere das ausgewählte ICC Profil."
+
+#~ msgid "Installed"
+#~ msgstr "Installiert"
+
+#~ msgid "Intent"
+#~ msgstr "Übertragung"
+
+#~ msgid "Intent:      "
+#~ msgstr "Übertragung: "
+
+#~ msgid "Internal Error"
+#~ msgstr "Interner Fehler"
+
+#~ msgid "Internal stored Size"
+#~ msgstr "Interne Größe"
+
+#~ msgid "Internet: <a href=\"http://www.oyranos.org\">www.oyranos.org</a><br>"
+#~ msgstr ""
+#~ "Internet: <a href=\"http://www.oyranos.org\">www.oyranos.org</a><br>"
+
+#~ msgid "Json + Command"
+#~ msgstr "Json + Kommando"
+
+#~ msgid "Lab"
+#~ msgstr "Lab"
+
+#~ msgid "License"
+#~ msgstr "Lizenz"
+
+#~ msgid "Light gray"
+#~ msgstr "Hellgrau"
+
+#~ msgid "Lightness"
+#~ msgstr "Helligkeit"
+
+#~ msgid "Linear output curve"
+#~ msgstr "lineare Ausgangskurve"
+
+#~ msgid "Linearisation"
+#~ msgstr "Linearisierung"
+
+#~ msgid "Link"
+#~ msgstr "Verknüpfung"
+
+#~ msgid "Links"
+#~ msgstr "Verknüpfung"
+
+#~ msgid "List Devices"
+#~ msgstr "Zeige Geräte"
+
+#~ msgid "List Taxi DB profiles for selected device:"
+#~ msgstr "Liste Profile von Taxi für gewähltes Gerät:"
+
+#~ msgid "List all key/values pairs"
+#~ msgstr "Zeige alle Schlüssel/Wertepaare"
+
+#~ msgid "List available ICC profiles:"
+#~ msgstr "Liste der verfügbaren ICC Farbprofile"
+
+#~ msgid "List available policies:"
+#~ msgstr "Liste der verfügbaren Richtlinien:"
+
+#~ msgid "List device classes:"
+#~ msgstr "Zeige Geräteklassen:"
+
+#~ msgid "List included ICC tags:"
+#~ msgstr "Liste der enthaltenen ICC Elemente:"
+
+#~ msgid "List local DB profiles for selected device:"
+#~ msgstr "Liste lokale DB Profile für gewähltes Gerät:"
+
+#~ msgid "List modules:"
+#~ msgstr "Modulliste:"
+
+#~ msgid "List search paths:"
+#~ msgstr "Zeige Suchpfade:"
+
+#~ msgid "Little CMS"
+#~ msgstr "Little CMS"
+
+#~ msgid "Little CMS 2"
+#~ msgstr "Little CMS 2"
+
+#~ msgid ""
+#~ "Little CMS can use curves before and after CLUT's for special cases like "
+#~ "gamma encoded values to and from linear gamma values. Performance will "
+#~ "suffer."
+#~ msgstr ""
+#~ "Little CMS kann Kurven vor und nach 3D Interpolationstabellen benutzen. "
+#~ "Dadurch zeigen sich weniger Fehler bei der Übertragung zwischen linearen "
+#~ "und gammabehafteten Werten auf Kosten der Geschwindigkeit."
+
+#~ msgid "Load"
+#~ msgstr "Lade"
+
+#~ msgid "Load Image File Object"
+#~ msgstr "Lade Bilddateiobjekt"
+
+#~ msgid "Load the current monitor profile"
+#~ msgstr "Das aktuelle Monitor Profile laden"
+
+#~ msgid "Loading .."
+#~ msgstr "Lade ..."
+
+#~ msgid "Local Disk"
+#~ msgstr "Localer Speicher"
+
+#~ msgid "Long Format"
+#~ msgstr "Langes Format"
+
+#~ msgid "Lookup table, PCS to device, intent perceptual"
+#~ msgstr "Farbtabelle, Kontaktfarbraum an Gerät, Anpassung Fotografisch"
+
+#~ msgid "Lookup table, PCS to device, intent relative colorimetric"
+#~ msgstr ""
+#~ "Farbtabelle, Kontaktfarbraum an Gerät, Anpassung Relativ Farbmetrisch"
+
+#~ msgid "Lookup table, PCS to device, intent saturation"
+#~ msgstr "Farbtabelle, Kontaktfarbraum an Gerät, Anpassung Sättigung"
+
+#~ msgid "Lookup table, device to PCS, intent perceptual"
+#~ msgstr "Farbtabelle, Gerät an Kontaktfarbraum, Anpassung Fotografisch"
+
+#~ msgid "Lookup table, device to PCS, intent relative colorimetric"
+#~ msgstr ""
+#~ "Farbtabelle, Gerät an Kontaktfarbraum, Anpassung Relativ Farbmetrisch"
+
+#~ msgid "Lookup table, device to PCS, intent saturation"
+#~ msgstr "Farbtabelle, Gerät an Kontaktfarbraum, Anpassung Sättigung"
+
+#~ msgid "Luminance"
+#~ msgstr "Leuchtdichte"
+
+#~ msgid "Luminance Y"
+#~ msgstr "Leuchtdichte Y"
+
+#~ msgid "Luv"
+#~ msgstr "Luv"
+
+#~ msgid "MEM Error."
+#~ msgstr "Speicher Fehler"
+
+#~ msgid "MIT"
+#~ msgstr "MIT"
+
+#~ msgid "MIT license: http://www.opensource.org/licenses/mit-license.php"
+#~ msgstr "MIT Lizenz: http://www.opensource.org/licenses/mit-license.php"
+
+#~ msgid "MODULE_NAME"
+#~ msgstr "MODULE_NAME"
+
+#~ msgid "Macintosh"
+#~ msgstr "Macintosh"
+
+#~ msgid "Magic"
+#~ msgstr "Signatur"
+
+#~ msgid "Magic:           "
+#~ msgstr "Signatur:        "
+
+#~ msgid "Man"
+#~ msgstr "Handbuch"
+
+#~ msgid "Manage Favorites"
+#~ msgstr "Bearbeite Lesezeichen"
+
+#~ msgid "Manipulation of OpenICC color management data base device entries."
+#~ msgstr ""
+#~ "Bearbeitung von Geräteeinträgen in der Datenbank für OpenICC "
+#~ "Farbmanagement"
+
+#~ msgid "Manufacturer"
+#~ msgstr "Hersteller"
+
+#~ msgid "Manufacturer:"
+#~ msgstr "Hersteller:"
+
+#~ msgid "Manufacturer:    "
+#~ msgstr "Hersteller:      "
+
+#~ msgid "Mark Out Of Gamut colors"
+#~ msgstr "Markiere nicht darstellbare Farben"
+
+#~ msgid "Mark out of gamut colors for the proofing profile."
+#~ msgstr "Kennzeichne Farben ausserhalb des nachgebildeten Gerätes"
+
+#~ msgid "Markdown"
+#~ msgstr "Markdown"
+
+#~ msgid "Matrix"
+#~ msgstr "Matrix"
+
+#~ msgid "May 2004 - January 2008"
+#~ msgstr "Mai 2004 - Januar 2008"
+
+#~ msgid "Me"
+#~ msgstr "Ich"
+
+#~ msgid "Meas color"
+#~ msgstr "Messfarbe"
+
+#~ msgid "Measured colors"
+#~ msgstr "Farbmessergebnisse"
+
+#~ msgid "Measurement"
+#~ msgstr "Messart"
+
+#~ msgid "Measurement patch"
+#~ msgstr "Messfeld"
+
+#~ msgid "Measurment- and profile colors from <b>"
+#~ msgstr "Mess- und Profilfarben aus <b>"
+
+#~ msgid "Media black point"
+#~ msgstr "Medienschwarzpunkt"
+
+#~ msgid "Media white point"
+#~ msgstr "Medienweißpunkt"
+
+#~ msgid "Meta Data"
+#~ msgstr "Allgemeine Daten"
+
+#~ msgid "Microsoft"
+#~ msgstr "Microsoft"
+
+#~ msgid "Misc"
+#~ msgstr "Verschiedenes"
+
+#~ msgid "Mismatching"
+#~ msgstr "Abweichung"
+
+#~ msgid ""
+#~ "Mixed color spaces inside one single document can be difficult to handle "
+#~ "for some systems. The settings can give the option to flatten document "
+#~ "color spaces."
+#~ msgstr ""
+#~ "Gemischte Farbräume in einem Dokument können in einigen Systemen zu "
+#~ "Problemen führen. Die Einstellung bietet die Möglichkeit den Farbraum zu "
+#~ "vereinheitlichen."
+
+#~ msgid "Model"
+#~ msgstr "Modell"
+
+#~ msgid "Model:"
+#~ msgstr "Modell:"
+
+#~ msgid "Model:      "
+#~ msgstr "Modell:     "
+
+#~ msgid "Model:           "
+#~ msgstr "Modell:          "
+
+#, fuzzy
+#~ msgid "Modell"
+#~ msgstr "Modell:"
+
+#~ msgid "Modell:"
+#~ msgstr "Modell:"
+
+#~ msgid "Modify Profile:"
+#~ msgstr "Verändere Prmprofil"
+
+#~ msgid "Module"
+#~ msgstr "Modul"
+
+#~ msgid "Monitor"
+#~ msgstr "Bildschirm"
+
+#~ msgid ""
+#~ "Monitors, which can be detected through the video card driver and "
+#~ "windowing system."
+#~ msgstr "Bildschirme, welche durch das Modul erkannt werden."
+
+#~ msgid "More bits mean more precission for processing and more size."
+#~ msgstr "Mehr Bit bedeutet mehr Daten für höhere Genauigkeit zu verarbeiten."
+
+#~ msgid "More indepth help  for My example filter."
+#~ msgstr "Mehr Hilfetext für den Mein Beispielfilter."
+
+#~ msgid ""
+#~ "Most users want a simple display of colors and will not check if colors "
+#~ "match the simulation color space."
+#~ msgstr ""
+#~ "Viele Benutzer möchten eine einfache Farbdarstellungen und wollen nicht "
+#~ "prüfen ob Farben in den Simulationsfarbraum passen."
+
+#~ msgid "My Computer"
+#~ msgstr "Mein Rechner"
+
+#~ msgid "My Filter"
+#~ msgstr "Mein Filter"
+
+#~ msgid "My Filter Object"
+#~ msgstr "Filterobjekt Mein"
+
+#~ msgid "My Name"
+#~ msgstr "Mein Name"
+
+#~ msgid ""
+#~ "My cordially thank is especially dedicated to Marti Maria and the many "
+#~ "writers of the Lcms-user email list."
+#~ msgstr ""
+#~ "Mein herzlicher Dank gilt insbesondere Marti Maria und den vielen "
+#~ "Schreibenden der Lcms-user Emailliste."
+
+#~ msgid "My filter introduction."
+#~ msgstr "Meine Filter Einführung."
+
+#~ msgid ""
+#~ "My project; www: http://www.my-adress.com; support/email: my@adress.com; "
+#~ "sources: http://www.my-adress.com/download"
+#~ msgstr ""
+#~ "Oyranos Projekt: www: http://www.oyranos.com; Support/email: ku.b@gmx.de; "
+#~ "Quellen: http://www.oyranos.com/wiki/index.php?title=Oyranos/Download"
+
+#~ msgid "NAME"
+#~ msgstr "NAME"
+
+#~ msgid "NUMBER"
+#~ msgstr "NUMMER"
+
+#~ msgid "Name"
+#~ msgstr "Name"
+
+#~ msgid "Named Color"
+#~ msgstr "Einzelarben"
+
+#~ msgid "Named Color 2"
+#~ msgstr "Einzelfarben 2"
+
+#~ msgid "Named Coulor"
+#~ msgstr "Einzelfarben"
+
+#~ msgid "Native Gamut"
+#~ msgstr "Native Farbhülle"
+
+#~ msgid "Need a ICC profile argument."
+#~ msgstr "Benötige ein ICC Profil Argument."
+
+#~ msgid "Need a ICC profile to modify."
+#~ msgstr "Benötige ein ICC Profil zum Verändern."
+
+#~ msgid "Network Disk"
+#~ msgstr "Netzwerk Speicher"
+
+#~ msgid "New"
+#~ msgstr "Neu"
+
+#~ msgid "New Directory?"
+#~ msgstr "Verzeichnis erstellen"
+
+#~ msgid "New Folder"
+#~ msgstr "Neuer Ordner"
+
+#~ msgid "No"
+#~ msgstr "Nein"
+
+#~ msgid "No Color"
+#~ msgstr "keine Farbe"
+
+#~ msgid "No ICC profile id detected"
+#~ msgstr "kein ICC Profil ID gefunden"
+
+#~ msgid "No Image profile"
+#~ msgstr "Kein Profil am Bild"
+
+#~ msgid "No JSON content obtained for"
+#~ msgstr "Kein JSON Inhalt erhalten für"
+
+#~ msgid "No JSON obtained for"
+#~ msgstr "Kein JSON erhalten für"
+
+#~ msgid "No active drawable found."
+#~ msgstr "Keine aktive Zeichenebene gefunden."
+
+#~ msgid "No monitor gamma curves by profile:"
+#~ msgstr "Keine Grafikkartengammakurven im Profil:"
+
+#~ msgid "No profil assigned to image."
+#~ msgstr "Kein Profil am Bild."
+
+#~ msgid "No. Tag   Type   Size Description"
+#~ msgstr "Nr. Teil  Typ   Größe Beschreibung"
+
+#~ msgid "NoNo"
+#~ msgstr "NeinNein"
+
+#~ msgid "Number of colors:"
+#~ msgstr "Anzahl Farben:"
+
+#~ msgid "Number of input channels"
+#~ msgstr "Eingangskanäle"
+
+#~ msgid "Number of output channels"
+#~ msgstr "Ausgangskanäle"
+
+#~ msgid "OK"
+#~ msgstr "Ja"
+
+#~ msgid "OPTIONS"
+#~ msgstr "OPTIONEN"
+
+#~ msgid "Office + Home"
+#~ msgstr "Büro + Heim"
+
+#~ msgid "Offset Lithography"
+#~ msgstr "Offsetdruck"
+
+#~ msgid "On Cmyk Mismatch"
+#~ msgstr "Bei Cmyk Ungleichheit"
+
+#~ msgid "On Rgb Mismatch"
+#~ msgstr "Bei Rgb Ungleichheit"
+
+#~ msgid "Onion skins"
+#~ msgstr "Zwiebelhäutchen"
+
+#~ msgid "Open"
+#~ msgstr "Öffnen"
+
+#~ msgid "Open Measurement"
+#~ msgstr "Messdatei öffnen"
+
+#~ msgid "OpenICC Json"
+#~ msgstr "OpenICC Json"
+
+#~ msgid "OpenICC Module Author"
+#~ msgstr "Autor des OpenICC Modules"
+
+#~ msgid "OpenICC devices handling tool"
+#~ msgstr "OpenICC Gerätebearbeitungswerkzeug"
+
+#~ msgid "Operating System"
+#~ msgstr "Betriebssystem"
+
+#~ msgid "Optimization"
+#~ msgstr "Optimierung"
+
+#~ msgid "Option"
+#~ msgstr "Option"
+
+#~ msgid "Option \"filename\", a valid filename"
+#~ msgstr "Option \"filename\", ein gültiger Dateiname"
+
+#~ msgid "Option \"filename\", a valid filename of a existing PNG image"
+#~ msgstr ""
+#~ "Option \"filename\", ein gültiger Dateiname eines existierenden PNG Bildes"
+
+#~ msgid "Option \"filename\", a valid filename of a existing PPM image"
+#~ msgstr ""
+#~ "Option \"filename\", ein gültiger Dateiname eines existierenden PPM Bildes"
+
+#~ msgid "Option has a different value range"
+#~ msgstr "Die Option besitzt einen anderen Wertebereich"
+
+#~ msgid "Option has a unexpected argument"
+#~ msgstr "Die Option hat einen unerwartetes Argument"
+
+#~ msgid "Option needs a argument"
+#~ msgstr "Die Option erwartet ein Argument"
+
+#~ msgid "Option not supported"
+#~ msgstr "Die Option ist nicht unterstützt"
+
+#~ msgid "Options"
+#~ msgstr "Optionen"
+
+#~ msgid "Output Color Space"
+#~ msgstr "Ausgabefarbraum"
+
+#~ msgid "Output Image Filter Object"
+#~ msgstr "Filterobjekt eines Ausgangsbildes"
+
+#~ msgid "Oyranos "
+#~ msgstr "Oyranos "
+
+#~ msgid "Oyranos CUPS"
+#~ msgstr "Oyranos CUPS"
+
+#~ msgid "Oyranos Color Management"
+#~ msgstr "Oyranos Farbmanagement"
+
+#~ msgid "Oyranos Configuration"
+#~ msgstr "Oyranos Konfiguration"
+
+#~ msgid "Oyranos Configuration "
+#~ msgstr "Oyranos Konfiguration "
+
+#~ msgid "Oyranos Control Panel"
+#~ msgstr "Oyranos Konfiguration"
+
+#~ msgid "Oyranos Dummy"
+#~ msgstr "Oyranos Beispiel"
+
+#~ msgid "Oyranos Help"
+#~ msgstr "Oyranos Hilfe"
+
+#~ msgid "Oyranos ICC policy"
+#~ msgstr "Oyranos ICC Richtlinie"
+
+#~ msgid "Oyranos ICC policy module"
+#~ msgstr "Oyranos ICC Richtlinien Modul"
+
+#~ msgid "Oyranos RAW Image"
+#~ msgstr "Oyranos RAW Bild"
+
+#~ msgid "Oyranos Scanner"
+#~ msgstr "Oyranos Scanner"
+
+#~ msgid "Oyranos Settings"
+#~ msgstr "Oyranos Einstellungen"
+
+#~ msgid "Oyranos Settings Group"
+#~ msgstr "Oyranos Einstellungen"
+
+#~ msgid "Oyranos Version"
+#~ msgstr "Oyranos Version"
+
+#~ msgid "Oyranos X11"
+#~ msgstr "Oyranos X11"
+
+#~ msgid ""
+#~ "Oyranos allowes detailed settings like preferred editing color spaces and "
+#~ "the behaviour of color conversions or simulation. Oyranos reduces the "
+#~ "work involved in all color management related decisions through "
+#~ "automation, useful defaults and grouping of settings in selectable "
+#~ "policies."
+#~ msgstr ""
+#~ "Oyranos erlaubt detailierte Einstellungen, wie z.B. zu bevorzugten "
+#~ "Editierfarbräumen, das Verhalten von Farbumwandlungen oder Simulation. "
+#~ "Oyranos verringert den Aufwand für Farbmanagemententscheidungen durch "
+#~ "Automation, sinnvolle Voreinstellungen und wählbare Richtlinien."
+
+#~ msgid "Oyranos allows to fine tune handling of ICC color management."
+#~ msgstr "Oyranos erlaubt detailierte ICC Farbmanagementeinstellungen."
+
+#~ msgid ""
+#~ "Oyranos and FLU are not installed.\n"
+#~ "They are needed by\n"
+#~ "Oyranos configuration dialog."
+#~ msgstr ""
+#~ "Oyranos und FLU sind nicht installiert\n"
+#~ "und werden benoetigt von\n"
+#~ "Oyranos mit seinem Konfigurationsdialog"
+
+#~ msgid "Oyranos display filter"
+#~ msgstr "Oyranos Monitor Modul"
+
+#~ msgid ""
+#~ "Oyranos is a Color Management System (CMS), which relies one the ICC file "
+#~ "format standard (<a href=\"http://www.color.org\">www.color.org</a>) for "
+#~ "color space definitions. The use of ICC color profiles shall enable a "
+#~ "flawless and automated color data exchange between different color spaces "
+#~ "and various devices with their respective physical color behaviours."
+#~ msgstr ""
+#~ "Oyranos ist ein auf dem ICC Standard (<a href=\"http://www.color.org"
+#~ "\">www.color.org</a>) für Farbraumbescheibungen beruhendes "
+#~ "Farbmanagementsystem (CMS). Die Benutzung von ICC Farbprofilen soll einen "
+#~ "reibungslosen und automatisierten Datenaustausch zwischen "
+#~ "unterschiedlichen Farbräumen und den Abgleich auf verschiedenen Geräten "
+#~ "mit ihren jeweiligen physikalischen Gegebenheiten ermöglichen."
+
+#~ msgid ""
+#~ "Oyranos is not installed.\n"
+#~ "The Oyranos configuration dialog\n"
+#~ "is not available."
+#~ msgstr ""
+#~ "Oyranos ist nicht installiert.\n"
+#~ "Der Oyranos Konfigurationsdialog\n"
+#~ "ist nicht verfügbar."
+
+#~ msgid "Oyranos modules"
+#~ msgstr "Oyranos Module"
+
+#~ msgid ""
+#~ "Oyranos project; www: http://www.oyranos.com; support/email: ku.b@gmx.de; "
+#~ "sources: http://www.oyranos.com/wiki/index.php?title=Oyranos/Download"
+#~ msgstr ""
+#~ "Oyranos Projekt: www: http://www.oyranos.com; Support/email: ku.b@gmx.de; "
+#~ "Quellen: http://www.oyranos.com/wiki/index.php?title=Oyranos/Download"
+
+#~ msgid ""
+#~ "Oyranos project; www: http://www.oyranos.org; support/email: ku.b@gmx.de; "
+#~ "sources: http://www.oyranos.org/downloads/"
+#~ msgstr ""
+#~ "Oyranos Projekt: www: http://www.oyranos.org; Support/email: ku.b@gmx.de; "
+#~ "Quellen: http://www.oyranos.org/downloads/"
+
+#~ msgid ""
+#~ "Oyranos settings let you configure ICC color management behaviour for a "
+#~ "local computer. The settings can be per user and per system."
+#~ msgstr ""
+#~ "Oyranos Einstellungen erlauben Farbmanagementverhalten auf dem lokalen "
+#~ "Rechner zu konfigurieren. Die Einstellungen erfolgen für den Benutzer und "
+#~ "für das System."
+
+#~ msgid "Oyranos supplied modules"
+#~ msgstr "Oyranos mitgelieferte Module"
+
+#~ msgid "P22"
+#~ msgstr "P22"
+
+#~ msgid "PCS"
+#~ msgstr "PCS"
+
+#~ msgid "PCS Color Space: "
+#~ msgstr "PCS Farbraum:    "
+
+#, fuzzy
+#~ msgid "PCS Type"
+#~ msgstr "Typ"
+
+#~ msgid "PCS:         "
+#~ msgstr "PCS:         "
+
+#~ msgid "PROFILENAMES"
+#~ msgstr "PROFILNAMEN"
+
+#~ msgid "Passive matrix monitor"
+#~ msgstr "Passivmatrixmonitor"
+
+#~ msgid "Path can not be written"
+#~ msgstr "Verzeichnis kann nicht beschrieben werden."
+
+#~ msgid "Paths where ICC Profiles can be found"
+#~ msgstr "Pfad zu ICC Farbprofilen"
+
+#~ msgid "Paths:"
+#~ msgstr "Pfade:"
+
+#~ msgid "Pause"
+#~ msgstr "Pause"
+
+#~ msgid "Perceptual"
+#~ msgstr "Fotografisch"
+
+#~ msgid "Photo CD"
+#~ msgstr "Foto CD"
+
+#~ msgid "PhotoImageSetter"
+#~ msgstr "Fotofilmbelichter"
+
+#~ msgid "Photographers"
+#~ msgstr "Fotografen"
+
+#~ msgid "Photographic paper printer"
+#~ msgstr "Photographischer Papierdrucker"
+
+#~ msgid "Platform"
+#~ msgstr "Plattform"
+
+#~ msgid "Platform:        "
+#~ msgstr "Plattform:       "
+
+#~ msgid ""
+#~ "Please add first a image node to the graph before adding other filters"
+#~ msgstr ""
+#~ "Bitte fügen Sie erst ein Bildknoten in den Graphen vor andere Filtern"
+
+#~ msgid "Please choose an existing file!"
+#~ msgstr "Bitte wählen Sie eine existierende Datei!"
+
+#~ msgid "Please specify a monitor with the -d option."
+#~ msgstr "Bitte einen Monitor mit der Option -d wählen."
+
+#~ msgid ""
+#~ "Policies summarise common settings for different user groups. Such "
+#~ "settings make it easy to switch back to simple defaults. Other groups can "
+#~ "define own settings and share them accross Oyranos enabled systems."
+#~ msgstr ""
+#~ "Richtlinien fassen gemeinsame Einstellungen für Benutzergruppen zusammen. "
+#~ "Solche Richtlinien ermöglichen ein einfaches zurückschalten zu den "
+#~ "jeweiligen Voreinstellungen. Gruppen können eigene Richtlinien erstellen "
+#~ "und zwischen Oyranos unterstützenden Systemen austauschen."
+
+#~ msgid "Policy"
+#~ msgstr "Richtlinie"
+
+#~ msgid "Policy search paths"
+#~ msgstr "Richtliniensuchpfade"
+
+#~ msgid "Postscript 2 CRD, absolute colorimetric"
+#~ msgstr "Postscript 2 CRD, Absolut Farbmetrisch"
+
+#~ msgid "Postscript 2 CRD, perceptual"
+#~ msgstr "Postscript 2 CRD, fotografisch"
+
+#~ msgid "Postscript 2 CRD, relative colorimetric"
+#~ msgstr "Postscript 2 CRD, relativ farbmetrisch"
+
+#~ msgid "Postscript 2 CRD, saturated"
+#~ msgstr "Postscript 2 CRD, farbgesättigt"
+
+#~ msgid "Postscript 2 CSA"
+#~ msgstr "Postscript 2 CSA"
+
+#~ msgid "Postscript 2 Rendering Intent"
+#~ msgstr "Postscript 2 Übertragungsart"
+
+#~ msgid "Postscript CRD Information"
+#~ msgstr "Postscript CRD Information"
+
+#~ msgid "PrePress"
+#~ msgstr "Druckvorstufe"
+
+#~ msgid "Prefered CMM"
+#~ msgstr "Bevorzugte CMM"
+
+#~ msgid "Preferred CIE*Lab Editing Color Space"
+#~ msgstr "Bevorzugter CIE*Lab Editierfarbraum"
+
+#~ msgid "Preferred Cmyk Editing Color Space"
+#~ msgstr "Bevorzugter Cmyk Editierfarbraum"
+
+#~ msgid "Preferred Gray Editing Color Space"
+#~ msgstr "Bevorzugter Grau Editierfarbraum"
+
+#~ msgid "Preferred Rgb Editing Color Space"
+#~ msgstr "Bevorzugter Rgb Editierfarbraum"
+
+#~ msgid "Preferred XYZ Editing Color Space"
+#~ msgstr "Bevorzugter XYZ Editierfarbraum"
+
+#~ msgid "Preserve Numbers"
+#~ msgstr "Erhalte Zahlen"
+
+#~ msgid "Preview"
+#~ msgstr "Vorschau"
+
+#~ msgid "Preview files"
+#~ msgstr "Vorschau"
+
+#~ msgid "Preview, perceptual"
+#~ msgstr "Voransicht, fotografisch"
+
+#~ msgid "Preview, photografic"
+#~ msgstr "Voransicht, fotografisch"
+
+#~ msgid "Preview, relative colorimetric"
+#~ msgstr "Voransicht, relativ farbmetrisch"
+
+#~ msgid "Preview, saturated"
+#~ msgstr "Voransicht, farbgesättigt"
+
+#~ msgid "Print the Devices in the DB"
+#~ msgstr "Zeige die Geräte aus der DB"
+
+#~ msgid "Printers, which are accessible through the CUPS spooling system."
+#~ msgstr "Drucker, die durch das CUPS Drucksystem erreichbar sind."
+
+#~ msgid "Priority:"
+#~ msgstr "Priorität:"
+
+#~ msgid "Profile Connection Space"
+#~ msgstr "Profileverbindungsfarbraum"
+
+#~ msgid "Profile Creator ID"
+#~ msgstr "Profilerzeuger"
+
+#~ msgid "Profile ID:      "
+#~ msgstr "Profil ID:       "
+
+#~ msgid "Profile Illuminant"
+#~ msgstr "Profile Beleuchtung"
+
+#~ msgid "Profile Information"
+#~ msgstr "Profilinformation"
+
+#~ msgid "Profile Tags"
+#~ msgstr "Profilbausteine"
+
+#~ msgid "Profile already installed"
+#~ msgstr "Profil ist bereits installiert"
+
+#~ msgid "Profile at the moment\"."
+#~ msgstr "Profil im Moment\"."
+
+#~ msgid "Profile contains no description"
+#~ msgstr "Profilbeschreibung vermisst"
+
+#~ msgid "Profile description"
+#~ msgstr "Profilbeschreibung"
+
+#~ msgid "Profile description, multilingual"
+#~ msgstr "Profilbeschreibung mehrsprachig"
+
+#~ msgid "Profile exists already"
+#~ msgstr "Profil ist bereits installiert"
+
+#~ msgid ""
+#~ "Profile installation can be done using oyranos-profile-install or oyranos-"
+#~ "profiles."
+#~ msgstr ""
+#~ "Profile können mit oyranos-profile-install oder oyranos-profiles "
+#~ "installiert werden."
+
+#~ msgid "Profile is embedded and "
+#~ msgstr "Farbprofil ist eingebettet und "
+
+#~ msgid "Profile not useable"
+#~ msgstr "Profil nicht benutzbar"
+
+#~ msgid "Profile sequence description"
+#~ msgstr "Beschreibung der Profilverknüpfung"
+
+#~ msgid "Profile sequence identification"
+#~ msgstr "Identifizierung der Profilverknüpfung"
+
+#~ msgid "Profile\" is designed for an other device"
+#~ msgstr "Profil\" ist für eine anderes Gerät bestimmt"
+
+#~ msgid "Profile\"."
+#~ msgstr "ICC Profil\"."
+
+#~ msgid "Profile:         "
+#~ msgstr "Profil:          "
+
+#~ msgid "Profiling parameters"
+#~ msgstr "Profilierungsparameter"
+
+#~ msgid "Projection Television"
+#~ msgstr "Fernsehprojektion"
+
+#~ msgid "Prompt"
+#~ msgstr "Abfragedialog"
+
+#~ msgid "Proof Profile..."
+#~ msgstr "Simulationsprofil..."
+
+#~ msgid "Proofing"
+#~ msgstr "Simulation"
+
+#~ msgid "Proofing Color Space"
+#~ msgstr "Simulationsfarbraum"
+
+#~ msgid "Proofing Rendering Intent"
+#~ msgstr "Nachbildungsübertragung"
+
+#~ msgid "Proofing Settings"
+#~ msgstr "Einstellungen für Nachbildung (Simulation) von einem Ausgabegerät"
+
+#~ msgid ""
+#~ "Proofing Settings allows one to decide about the simulation color space."
+#~ msgstr ""
+#~ "Simulationseinstellungen erlauben die Simulation eines zusätzlichen "
+#~ "Farbraumes."
+
+#~ msgid "Query device data base profile:"
+#~ msgstr "Befrage Gerätedatenbank nach Profil:"
+
+#~ msgid "Query server profile:"
+#~ msgstr "Frage nach Serverprofil:"
+
+#~ msgid "Quit"
+#~ msgstr "Beenden"
+
+#~ msgid "RAM Disk"
+#~ msgstr "RAM Speicher"
+
+#~ msgid "RGB primaries missed"
+#~ msgstr "RGB Primärfarben nicht gefunden"
+
+#~ msgid "RGB result not available"
+#~ msgstr "RGB Ergebnis nicht verfügbar"
+
+#~ msgid ""
+#~ "Raw camera data, which are in file containing raw sensor data from a "
+#~ "camera still picture."
+#~ msgstr ""
+#~ "Rohe Kamerasaten, welche in Dateien mit unbearbeiteten Kamerasensordaten "
+#~ "enthalten sind."
+
+#~ msgid "RawCamera"
+#~ msgstr "Kamerarohdaten"
+
+#~ msgid "Read PNG"
+#~ msgstr "Lese PNG"
+
+#~ msgid "Read PPM"
+#~ msgstr "Lese PPM"
+
+#~ msgid "Rectangles"
+#~ msgstr "Rechtecke"
+
+#~ msgid "Rectangles Splitter Object"
+#~ msgstr "Rechteck Regionen Objekt"
+
+#~ msgid "Red"
+#~ msgstr "Rot"
+
+#~ msgid "Red Colorant"
+#~ msgstr "Rote Grundfarbe"
+
+#~ msgid "Red Gamma:"
+#~ msgstr "Rote Tonwertkurve:"
+
+#~ msgid "Red tone reproduction curve"
+#~ msgstr "Rote Farbwiedergabekurve"
+
+#~ msgid "Red xy:"
+#~ msgstr "Rot xy:"
+
+#~ msgid "Reflective scanner"
+#~ msgstr "Auflichtscanner"
+
+#~ msgid "Reflective, "
+#~ msgstr "Aufsicht, "
+
+#~ msgid "Refresh"
+#~ msgstr "Erneuern"
+
+#~ msgid "Refresh this directory"
+#~ msgstr "Auffrischen"
+
+#~ msgid "Relative Colorimetric"
+#~ msgstr "Relativ Farbmetrisch"
+
+#~ msgid "Removable Disk"
+#~ msgstr "Mobiler Speicher"
+
+#~ msgid "Remove included ICC tag:"
+#~ msgstr "Lösche enthaltenes ICC Element"
+
+#~ msgid "Rename"
+#~ msgstr "Umbenennen"
+
+#~ msgid "Rendering"
+#~ msgstr "Übertragung"
+
+#~ msgid "Rendering Intent"
+#~ msgstr "Übertragungsart"
+
+#~ msgid "Rendering Intent for Color Space Transformations."
+#~ msgstr "Übertragungsart für Farbtransformationen."
+
+#~ msgid "Rendering Intent:"
+#~ msgstr "Übertragungsart: "
+
+#~ msgid "Rendering intent for color space transformations."
+#~ msgstr "Übertragungsart für Farbtransformationen."
+
+#~ msgid "Rendering with High Precission in opposite to fast processing"
+#~ msgstr "Berechne mit hoher Präzission, dafür langsamer"
+
+#~ msgid "Report View"
+#~ msgstr "Qualitäts Bericht"
+
+#~ msgid "Reset"
+#~ msgstr "Standard"
+
+#~ msgid "Reset to a standard Policy for Oyranos."
+#~ msgstr "Zurücksetzen auf Oyranos' Standardrichtlinie"
+
+#~ msgid "Rgb"
+#~ msgstr "Rgb"
+
+#~ msgid "Root Image"
+#~ msgstr "Quellbild"
+
+#~ msgid "Root Image Filter Object"
+#~ msgstr "iFilterObjekt eines Quellbildes"
+
+#~ msgid "Rotate around slice"
+#~ msgstr "Drehen um Schnitt"
+
+#~ msgid "SEE AS WELL"
+#~ msgstr "SIEHE AUCH"
+
+#~ msgid "SMPTE RP145-1994"
+#~ msgstr "SMPTE RP145-1994"
+
+#~ msgid "SYNOPSIS"
+#~ msgstr "ÜBERSICHT"
+
+#~ msgid "Saturation"
+#~ msgstr "Sättigung"
+
+#~ msgid "Saturation Graph:"
+#~ msgstr "Sättigungs Zeichnung:"
+
+#~ msgid "Save"
+#~ msgstr "Sichern"
+
+#~ msgid "Save Gamut as Profile"
+#~ msgstr "Speichere Farbhülle als Profil"
+
+#~ msgid "Save Gamut as VRML"
+#~ msgstr "Speichere Farbhülle als VRML"
+
+#~ msgid "Save Mixed Color Space Documents"
+#~ msgstr "Speichere Dokumente mit gemischten Farbräumen"
+
+#~ msgid "Save Report"
+#~ msgstr "Bericht Speichern"
+
+#~ msgid "Save to a new policy:"
+#~ msgstr "Speichern in eine neue Richtlinie:"
+
+#~ msgid "Scale Image Filter Object"
+#~ msgstr "Skalierfilterobjekt"
+
+#~ msgid "Scanner"
+#~ msgstr "Scanner"
+
+#~ msgid "Scanner data, which come from SANE library."
+#~ msgstr "Scanndaten von der SANE Bibliothek."
+
+#~ msgid "Scope"
+#~ msgstr "Bereich"
+
+#~ msgid "Screening"
+#~ msgstr "Rasterung"
+
+#~ msgid "Screening Description"
+#~ msgstr "Rasterung Beschreibung"
+
+#~ msgid "Segmented Curve"
+#~ msgstr "Stückweise Kurve"
+
+#~ msgid "Seldom used Profile claimed Intent"
+#~ msgstr "Selten benutzte profilbestimmte Übertragungsart"
+
+#~ msgid "Select Behaviour"
+#~ msgstr "Wählen Sie das Verhalten"
+
+#~ msgid "Select Profile"
+#~ msgstr "Wähle Profil"
+
+#~ msgid "Select a CMM in Oyranos"
+#~ msgstr "Wähle eine CMM in Oyranos"
+
+#~ msgid ""
+#~ "Select a color profile representing a device to be simulated. This "
+#~ "profile will only be applied if proofing is enabled."
+#~ msgstr ""
+#~ "Diese Option wählt ein Farbprofil, welches ein zu simulierendes Gerät "
+#~ "farblich abbildet. Das Profile wird nur wirksam bei aktivierter "
+#~ "Simulation."
+
+#~ msgid "Select a directory with ICC profiles"
+#~ msgstr "Wählen Sie ein Verzeichnis mit ICC Profilen"
+
+#~ msgid "Select active policy:"
+#~ msgstr "Wählen der Richtlinie:"
+
+#~ msgid "Select the core CMM"
+#~ msgstr "Wähle die Kern CMM"
+
+#~ msgid "Select the processing CMM"
+#~ msgstr "Wähle die Rechner CMM"
+
+#~ msgid "Separation"
+#~ msgstr "Separation"
+
+#~ msgid "Serial:"
+#~ msgstr "Serien Nr.:"
+
+#~ msgid "Set"
+#~ msgstr "Setze"
+
+#~ msgid "Set ICC profiles in Oyranos for device Color Management."
+#~ msgstr "ICC Profileinstellungen in Oyranos für Gerätefarbmanagement"
+
+#~ msgid "Set a X Color Management region."
+#~ msgstr "Setze eine X Color Management Region."
+
+#~ msgid "Set new profile:"
+#~ msgstr "Setze neues Profil:"
+
+#~ msgid ""
+#~ "Set the current profile as monitor profile and upload vcgt tag to the "
+#~ "video card"
+#~ msgstr ""
+#~ "Das aktuelle Profile als Monitorprofil setzen und die Gamma Tabelle in "
+#~ "die Grafikkarte laden"
+
+#~ msgid "Settings"
+#~ msgstr "Einstellungen"
+
+#~ msgid "Settings affecting the Behaviour in various situations"
+#~ msgstr "Einstellungen für das Verhalten unter verschiedenen Umständen"
+
+#~ msgid ""
+#~ "Settings can be grouped in Oyranos policies for easier adaption to "
+#~ "demands, better remembering and synchronisation."
+#~ msgstr ""
+#~ "Einstellungen können zur Vereinfachung in Richtlinien zusammengefasst "
+#~ "werden. Diese lassen sich besser merken und einfacher austauschen."
+
+#~ msgid "Setup device:"
+#~ msgstr "Initialisiere Gerät:"
+
+#~ msgid "Show CIE*xy chromaticities:"
+#~ msgstr "Zeige CIE*xy Primärfarben"
+
+#~ msgid "Show DB Path"
+#~ msgstr "Zeige DB Pfad"
+
+#~ msgid "Show Filepath to the DB"
+#~ msgstr "Zeige den Dateipfad zur DB"
+
+#~ msgid "Show Help:"
+#~ msgstr "Zeige Hilfe:"
+
+#~ msgid "Show Main Window"
+#~ msgstr "Zeige Hauptfenster"
+
+#~ msgid "Show Path"
+#~ msgstr "Zeige Pfad"
+
+#~ msgid "Show Profile ID:"
+#~ msgstr "Zeige Profil ID:"
+
+#~ msgid "Show Profile failed. iccexamin not found"
+#~ msgstr "Anzeige des Profiles misslungen. iccexamin nicht gefunden."
+
+#~ msgid "Show all channels of this table a own window."
+#~ msgstr "Zeige alle Kanäle dieser Tabelle in einem eigenen Fenster an."
+
+#~ msgid ""
+#~ "Show available Device Profiles from remote Taxi DB for a selected device. "
+#~ "The metadata from Taxi DB and from the device must fit."
+#~ msgstr ""
+#~ "Zeige für ein gewähltes Gerät alle verfügbaren Geräteprofile aus der "
+#~ "Internet Taxi Datenbank. Die Metadaten aus Taxi DB und vom Geräte müssen "
+#~ "passen."
+
+#~ msgid "Show in external Viewer"
+#~ msgstr "Anzeige in exteren Betrachter"
+
+#~ msgid "Show only ICC profiles, which have metadata matching a given device."
+#~ msgstr "Zeige nur Farbprofile, deren Metadaten zum Gerät passen."
+
+#~ msgid "Show only device related ICC profiles"
+#~ msgstr "Zeige nur zum Gerät passende ICC Profile"
+
+#~ msgid "Show options"
+#~ msgstr "Zeige Optionen"
+
+#~ msgid "Show options [include policy]"
+#~ msgstr "Zeige Optionen [mit Richtlinie]"
+
+#~ msgid "Show which policy matches by combining all involved settings."
+#~ msgstr ""
+#~ "Zeige an, welche Richtlinie zur Kombination aller Einstellungen passt."
+
+#~ msgid "Show:"
+#~ msgstr "Zeige:"
+
+#~ msgid "Signal"
+#~ msgstr "Signal"
+
+#~ msgid "Silkscreen"
+#~ msgstr "Siebdruck"
+
+#~ msgid "Simulate the output print on the monitor"
+#~ msgstr "Bilde einen Ausdruck auf dem Bildschirm nach"
+
+#~ msgid "Simulation/Proof Color Space"
+#~ msgstr "Simulationsfarbraum"
+
+#~ msgid "Size"
+#~ msgstr "Größe"
+
+#~ msgid "Size:"
+#~ msgstr "Größe:"
+
+#~ msgid "Size:            "
+#~ msgstr "Größe:           "
+
+#~ msgid "Slice"
+#~ msgstr "Schnitt"
+
+#~ msgid "Slice plane"
+#~ msgstr "Querschnitt"
+
+#~ msgid "SoftProof"
+#~ msgstr "Nachbildung am Bildschirm"
+
+#~ msgid "Solaris"
+#~ msgstr "Solaris"
+
+#~ msgid "Some help for My example filter."
+#~ msgstr "Hilfe für den Mein Beispielfilter."
+
+#~ msgid "Source and Target Profiles for various situations"
+#~ msgstr "Quell- und Zielprofile für verschiedene Situationen"
+
+#~ msgid "Sources"
+#~ msgstr "Quellen"
+
+#~ msgid "Sphere 1dE"
+#~ msgstr "Kugel 1dE"
+
+#~ msgid "Sphere 2dE"
+#~ msgstr "Kugel 2dE"
+
+#~ msgid "Sphere 4dE"
+#~ msgstr "Kugel 4dE"
+
+#~ msgid "Standard Observer 1931 2° Graph:"
+#~ msgstr "Standard Betrachter 1931 2° Zeichnung:"
+
+#~ msgid "Start"
+#~ msgstr "Start"
+
+#~ msgid "Std-exception occured: "
+#~ msgstr "Std-Ausnahme: "
+
+#~ msgid "Stop loading "
+#~ msgstr "Laden angehalten: "
+
+#~ msgid "Support"
+#~ msgstr "Unterstützung"
+
+#~ msgid "Synopsis"
+#~ msgstr "Übersicht"
+
+#~ msgid "System"
+#~ msgstr "System"
+
+#~ msgid "Tag Version:"
+#~ msgstr "Element Version:"
+
+#~ msgid "Tags"
+#~ msgstr "Baustein"
+
+#~ msgid "Taligent"
+#~ msgstr "Taligent"
+
+#~ msgid "Taxi DB Profiles"
+#~ msgstr "Verfügbare Taxiprofile"
+
+#~ msgid "Taxi DB entries for device"
+#~ msgstr "Taxi DB Einträge für das Gerät"
+
+#~ msgid "Taxi ID"
+#~ msgstr "Taxi ID"
+
+#~ msgid "Technologie"
+#~ msgstr "Technologie"
+
+#~ msgid "Technology:"
+#~ msgstr "Technologie:"
+
+#~ msgid "Texts"
+#~ msgstr "Texte"
+
+#~ msgid "Texts/Arrows on/off"
+#~ msgstr "Texte/Pfeile an/aus"
+
+#~ msgid ""
+#~ "The \"display\" filter supports applications to show image content on "
+#~ "single and multi monitor displays. It cares about the server "
+#~ "communication in declaring the region as prematched. So a X11 server side "
+#~ "color correction does not disturb the displayed colors and omits the "
+#~ "provided rectangle. The \"display\" filter matches the provided image "
+#~ "content to each monitor it can find. Of course this has limitations to "
+#~ "distorted windows, like wobbly effects or matrix deformed windows."
+#~ msgstr ""
+#~ "Das \"display\" Modul unterstützt Anwendungen bei der Darstellung von "
+#~ "Bildern auf einfachen- und Mehrfachmonitorkonfigurationen. Es teilt dem X "
+#~ "Server mit, daß ein bearbeitete Region farbkorrigiert ist. Somit wird bei "
+#~ "einer spätenserverseitigen Farbkorrektur eine doppelte Anwendung "
+#~ "vermieden. Das \"display\" Modul korrigiert für jeden gefundenen Monitor "
+#~ "einzeln. Dies hat allerding Nachteile bei deformierten Regionen wie "
+#~ "wackelnden oder verzerrten Fenstern."
+
+#~ msgid "The CUPS module supports the generic device protocol."
+#~ msgstr "Das CUPS Modul unterstützt Oyranos’ allgemeines Geräteprotokoll."
+
+#~ msgid "The CUPS/printer module for Oyranos."
+#~ msgstr "Das CUPS/Drucker Modul für Oyranos"
+
+#~ msgid ""
+#~ "The Editing Color Spaces shall be well behaving in order to allow editing "
+#~ "of per channel curves. Well behaving means for Rgb, that editing of all "
+#~ "three curves maintains gray neutrality. Hint: editing color spaces are "
+#~ "sometimes called a working space."
+#~ msgstr ""
+#~ "Der Editierfarbraum sollte wohlgeformt sein, um das Editieren von "
+#~ "Farbkanälen zu erleichtern. Wohlgeformt meint für Rgb, daß ein "
+#~ "gleichzeitiges Verändern aller drei Farbkanäle die Neutralität der "
+#~ "Grauachse nicht beeinflusst."
+
+#~ msgid "The File Name of the OpenICC Device in Json format."
+#~ msgstr "Der Dateiname des OpenICC Gerätes im Json Format."
+
+#~ msgid ""
+#~ "The Option \"filename\" should contain a valid filename to read the png "
+#~ "data from. If the file does not exist, a error will occure.\n"
+#~ "The iCCP chunk is searched for or a oyASSUMED_WEB/oyASSUMED_GRAY ICC "
+#~ "profile will be attached to the resulting image. A embedded renering "
+#~ "intent will be ignored."
+#~ msgstr ""
+#~ "Die Option \"filename\" sollte einen gültigen Dateinamen zum Lesen des "
+#~ "PNG Bildes enthalten. Falls die Datei nicht existiert wird ein Fehler "
+#~ "gemeldet.\n"
+#~ "Es wird nach dem iCCP Element gesucht. Falls dieses nicht gefunden "
+#~ "werden  kann, wird ein oyASSUMED_WEB/oyASSUMED_GRAY ICC Farbprofil an das "
+#~ "erzeugte Bild angehangen. Eine interne Farbübertragungsart wird ignoriert."
+
+#~ msgid ""
+#~ "The Option \"filename\" should contain a valid filename to read the ppm "
+#~ "data from. If the file does not exist, a error will occure.\n"
+#~ "The oyEDITING_RGB ICC profile is attached."
+#~ msgstr ""
+#~ "Die Option \"filename\" sollte einen gültigen Dateinamen zum Lesen des "
+#~ "PPM Bildes enthalten. Falls die Datei nicht existiert wird ein Fehler "
+#~ "gemeldet.\n"
+#~ "Das oyEDITING_RGB ICC Farbprofil wird angehangen."
+
+#~ msgid ""
+#~ "The Option \"filename\" should contain a valid filename to write the png "
+#~ "data into. A existing file will be overwritten without notice."
+#~ msgstr ""
+#~ "Die Option \"filename\" sollte einen gültigen Dateinamen zum Erstellen "
+#~ "des PNG Bildes enthalten. Eine existierende Datei wird ohne Warnung "
+#~ "überschrieben."
+
+#~ msgid ""
+#~ "The Option \"filename\" should contain a valid filename to write the ppm "
+#~ "data into. A existing file will be overwritten without notice."
+#~ msgstr ""
+#~ "Die Option \"filename\" sollte einen gültigen Dateinamen zum Erstellen "
+#~ "des PPM Bildes enthalten. Eine existierende Datei wird ohne Warnung "
+#~ "überschrieben."
+
+#~ msgid ""
+#~ "The adaption state should be between 0 and 1.0 and will apply to the "
+#~ "absolute colorimetric intent."
+#~ msgstr ""
+#~ "Der Farbanpassungsgrad sollte zwischen 0 und 1.0 liegen und wird auf die "
+#~ "absolut farbmetrische Übertragung angewendet."
+
+#~ msgid ""
+#~ "The appliance of color profiles shall help to achive an easy color data "
+#~ "exchange, regardless which application or what kind of operating system "
+#~ "is used. As well color adaption between different devices is possible, "
+#~ "provided the color characteristics of both devices are known. The qulity "
+#~ "of a color transform from one to an other device depends mainly on the "
+#~ "quality of the color measurement and the used profiling algorithm during "
+#~ "profile creation."
+#~ msgstr ""
+#~ " Die Anwendung von Farbprofilen soll einen reibungslosen Datenaustausch "
+#~ "zwischen unterschiedlichen Farbr&auml;umen und den Abgleich auf "
+#~ "unterschiedlichen Ger&auml;ten mit Ihren jeweiligen physikalischen "
+#~ "Gegebenheiten erm&ouml;glichen. Das Gelingen h&auml;ngt insbesondere von "
+#~ "der Qualit&auml;t der Farbmessungen und dem verwendeten Algorithmus "
+#~ "wärend der Erstellung der Farbprofile ab."
+
+#~ msgid "The client side window data handler of Oyranos."
+#~ msgstr "Die benutzerseitige Fensterdatenagent von Oyranos."
+
+#~ msgid ""
+#~ "The conversion between color spaces of different shape and size can "
+#~ "happen in various ways. The Perceptual rendering intent is usually the "
+#~ "best choice for photographs and artistic imagery. It is used in many "
+#~ "automatic systems. The Relative Colorimetric rendering intent provides a "
+#~ "well-defined standard, one-to-one color mapping, but without applying "
+#~ "white point adaption. This can lead to color clipping in case of colors "
+#~ "falling outside the target gamut as a price for the otherwise "
+#~ "colorimetric correctness. The Relative Colorimetric intent is often used "
+#~ "in combination with Black Point Compensation. The Saturation rendering "
+#~ "intent shall provide an optimal use of saturated device colors. The "
+#~ "Absolute Colorimetric rendering intent works like the relative "
+#~ "colorimetric one except the white point is adapted. All rendering intents "
+#~ "beside the colorimetric ones rely on the color tables designed by the "
+#~ "profile vendor."
+#~ msgstr ""
+#~ "Die Umwandlung zwischen Farbräumen mit verschiedener Form und Größe kann "
+#~ "auf verschiedene Arten stattfinden. Die Fotografische Übertragungsart ist "
+#~ "oftmals die beste Wahl für Fotos und künstlerische Inhalte. Sie wird in "
+#~ "vielen automatischen Systemen verwendet. Die Relativ Farbmetrische "
+#~ "Übertragung bietet eine vorhersehbare standardisierte eins zu eins "
+#~ "Übertragung mit unverändertem Weißpunkt. Die Relativ Farbmetrisch "
+#~ "Übertragung wird oft zusammen mit der Schwarzpunktkompensation verwendet. "
+#~ "Die Sättigende Übertragung soll eine optimale Ausnutzung von satten "
+#~ "Gerätefarben ermöglichen. Die Absolut Farbmetrische Übertragung wirkt wie "
+#~ "die Relativ Farbmetrische Übertragung, nur mit Weißpunktanpassung. Die "
+#~ "Farbtabellen allen Übertragungsarten,  ausser die der Farbmetrischen, "
+#~ "werden von den Profilerstellern gestaltet."
+
+#~ msgid ""
+#~ "The core Color Matching Module (CMM) takes individual profiles and "
+#~ "options and backes a device link. It can provide alternative features "
+#~ "regarding appearance, security, speed or resource overhead."
+#~ msgstr ""
+#~ "Das Kernfarbübertragungsmodul (CMM) nimmt einzelne Farbprofile und "
+#~ "Optionen und erzeugt eine Geräteverknüpfung. Es kann alternative "
+#~ "Eigenschaften anbieten bezüglich Farbanmutung, Sicherheit, "
+#~ "Geschwiundigkeit oder Resourcenverbrauch."
+
+#~ msgid "The dummy useless module of Oyranos."
+#~ msgstr "Das Beispielmodul für Oyranos"
+
+#~ msgid ""
+#~ "The filter can query pixels from its successors in a graph. The results "
+#~ "are stored in the internal buffer."
+#~ msgstr ""
+#~ "Der Filter erfragt Rasterbildpunkte von seinem Vorgänger im Graphen. Das "
+#~ "Ergebnis wird in internen Datenfeldern gespeichert."
+
+#~ msgid "The filter is a libraw image reader."
+#~ msgstr "Der Filter ließt Camera Rohbilder mittels libraw."
+
+#~ msgid "The filter is a possible pixel target in a graph."
+#~ msgstr "Der Filter ist ein mögliches Rasterbildziel in einem Graphen."
+
+#~ msgid "The filter is used to reduce pixels."
+#~ msgstr "Der Filter verringert die Pixelanzahl."
+
+#~ msgid ""
+#~ "The filter needs some informations attached to the output image tags of "
+#~ "the \"output\" image filter. The following list describes the X11/Xorg "
+#~ "requirements.\n"
+#~ " A \"window_id\" option shall consist of a oyBlob_s object containing the "
+#~ "X11 \"Window\" type in its pointer element.\n"
+#~ " A \"display_id\" option shall consist of a oyBlob_s object containing "
+#~ "the X11 \"Display\" of the application. This is typically exposed as "
+#~ "system specific pointer by each individual toolkit.\n"
+#~ " A \"display_rectangle\" option of type oyRectangle_s shall represent the "
+#~ "application image region in pixel of the absolute display coordinates. \n"
+#~ " In the \"datatype\" option, a oyDATATYPE_e encoded as integer is "
+#~ "expected, to deliver that data type in a not yet allocated output image. "
+#~ "The output data type is by default not changed. A newly not yet allocated "
+#~ "output image will be stored as processing data in the socket.\n"
+#~ " \"preserve_alpha\" is a integer option to keep a given alpha in a not "
+#~ "yet allocated output image. "
+#~ msgstr ""
+#~ "Das Modul benötigt einige Informationen, welche es in den Bilddaten des "
+#~ "\"output\" Bildmodules sucht. Die folgende Liste beschreibt die "
+#~ "Bedürfnisse unter Xorg/X11.\n"
+#~ "Die \"window_id\" Option, aus einem oyBlob_s Object bestehend, soll einen "
+#~ "X11 \"Window\" Zeiger enthalten.\n"
+#~ "Die \"display_id\" Option, aus einem oyBlob_s Object bestehend, soll "
+#~ "einen X11 \"Display\" Zeiger enthalten. Dieser beiden obigen Zeiger "
+#~ "werden typischerweise auch von Toolkits bereitgestellt.\n"
+#~ "Die \"display_rectangle\" Option, bestehend aus einem oyRectangle_s "
+#~ "Objekt, soll die darzustellenden absoluten Bildschirmkoordinaten in Pixel "
+#~ "enthalten.\n"
+#~ " Die \"datatype\" Option, soll einen oyDATATYPE_e als Ganzzahloption "
+#~ "enthalten, um ein noch nicht reserviertes Ausgabebild neu zu erstellen. "
+#~ "Standardmäßig wird der Datentyp nicht geändert. Ein neu erzeugtes Bild "
+#~ "wird als Prozessdaten an den Sockel geheftet.\n"
+#~ " \"preserve_alpha\" ist eine Ganzzahloption die Deckkraft in einem neuen "
+#~ "Bild zu erhalten."
+
+#~ msgid "The filter obtains a image from libraw."
+#~ msgstr "Der Filter erhält Bilder von libraw."
+
+#~ msgid "The filter provides a generic image source."
+#~ msgstr "Der Filter bietet eine allgemeine Bildquelle."
+
+#~ msgid ""
+#~ "The filter provides policy settings. These settings can be applied to a "
+#~ "graph through the user function oyConversion_Correct()."
+#~ msgstr ""
+#~ "Das Modul bietet Einstellungen für Richtlinien. Diese Einstelungen können "
+#~ "mit Hilfe der oyConversion_Correct() Funktion auf einen Grafen angewendet "
+#~ "werden."
+
+#~ msgid ""
+#~ "The filter will expect a \"rectangle\" option and will create, fill and "
+#~ "process a according rectangle with a new job ticket."
+#~ msgstr ""
+#~ "Der Filter erwartet eine \"rectangle\" Option und erstellt, füllt und "
+#~ "verarbeitet die bezüglichen Rechtecke in jeweils eigenen Arbeitsaufträgen."
+
+#~ msgid ""
+#~ "The filter will expect a \"scale\" option and will create, fill and "
+#~ "process a according data version with a new job ticket."
+#~ msgstr ""
+#~ "Der Filter erwartet eine \"scale\" Option und erstellt, füllt und "
+#~ "verarbeitet die bezüglichen daten in jeweils neuen Arbeitsauftrag."
+
+#~ msgid ""
+#~ "The following options are available to create color contexts:\n"
+#~ " \"profiles_simulation\", a option of type oyProfiles_s, can contain "
+#~ "device profiles for proofing.\n"
+#~ " \"profiles_effect\", a option of type oyProfiles_s, can contain abstract "
+#~ "color profiles.\n"
+#~ " The following Oyranos options are supported: \"rendering_gamut_warning"
+#~ "\", \"rendering_intent_proof\", \"rendering_bpc\", \"rendering_intent\", "
+#~ "\"proof_soft\" and \"proof_hard\".\n"
+#~ " The additional lcms option is supported \"cmyk_cmyk_black_preservation"
+#~ "\" [0 - none; 1 - LCMS_PRESERVE_PURE_K; 2 - LCMS_PRESERVE_K_PLANE], "
+#~ "\"precalculation\": [0 - normal; 1 - cmsFLAGS_NOOPTIMIZE; 2 - "
+#~ "cmsFLAGS_HIGHRESPRECALC, 3 - cmsFLAGS_LOWRESPRECALC], "
+#~ "\"precalculation_curves\": [0 - none; 1 - "
+#~ "cmsFLAGS_CLUT_POST_LINEARIZATION + cmsFLAGS_CLUT_PRE_LINEARIZATION] and "
+#~ "\"adaption_state\": [0.0 - not adapted to screen, 1.0 - full adapted to "
+#~ "screen]."
+#~ msgstr ""
+#~ "Die folgenden Optionen stehen für die Erstellung von Farbübertragungen "
+#~ "zur Verfügung:\n"
+#~ " \"profiles_simulation\", ist eine Option des Types oyProfiles_s, welche  "
+#~ "Geräteprofile einthalten kann zur Simulation.\n"
+#~ " \"profiles_effect\", ist eine Option des Types oyProfiles_s, welche  "
+#~ "Abstrakte Profile enthalten kann.\n"
+#~ " Die folgenden Optionen werden unterstützt: \"rendering_gamut_warning\", "
+#~ "\"rendering_intent_proof\", \"rendering_bpc\", \"rendering_intent\", "
+#~ "\"proof_soft\" and \"proof_hard\".\n"
+#~ " Die folgenden zusätzlichen lcms Optionen werden unterstützt: "
+#~ "\"cmyk_cmyk_black_preservation\" [0 - none; 1 - LCMS_PRESERVE_PURE_K; 2 - "
+#~ "LCMS_PRESERVE_K_PLANE], \"precalculation_curves\": [0 - none; 1 - "
+#~ "cmsFLAGS_CLUT_POST_LINEARIZATION + cmsFLAGS_CLUT_PRE_LINEARIZATION] und "
+#~ "\"adaption_state\": [0.0 - not adapted to screen, 1.0 - full adapted to "
+#~ "screen]."
+
+#~ msgid ""
+#~ "The following options are available to create color contexts:\n"
+#~ " \"profiles_simulation\", a option of type oyProfiles_s, can contain "
+#~ "device profiles for proofing.\n"
+#~ " \"profiles_effect\", a option of type oyProfiles_s, can contain abstract "
+#~ "color profiles.\n"
+#~ " The following Oyranos options are supported: \"rendering_gamut_warning"
+#~ "\", \"rendering_intent_proof\", \"rendering_bpc\", \"rendering_intent\", "
+#~ "\"proof_soft\" and \"proof_hard\".\n"
+#~ " The additional lcms options are supported \"cmyk_cmyk_black_preservation"
+#~ "\" [0 - none; 1 - LCMS_PRESERVE_PURE_K; 2 - LCMS_PRESERVE_K_PLANE] and "
+#~ "\"precalculation\"."
+#~ msgstr ""
+#~ "Die folgenden Optionen stehen für die Erstellung von Farbübertragungen "
+#~ "zur Verfügung:\n"
+#~ " \"profiles_simulation\", ist eine Option des Types oyProfiles_s, welche  "
+#~ "Geräteprofile einthalten kann zur Simulation.\n"
+#~ " \"profiles_effect\", ist eine Option des Types oyProfiles_s, welche  "
+#~ "Abstrakte Profile enthalten kann.\n"
+#~ " Die folgenden Optionen werden unterstützt: \"rendering_gamut_warning\", "
+#~ "\"rendering_intent_proof\", \"rendering_bpc\", \"rendering_intent\", "
+#~ "\"proof_soft\" and \"proof_hard\".\n"
+#~ " The additional lcms option is supported \"cmyk_cmyk_black_preservation"
+#~ "\" [0 - none; 1 - LCMS_PRESERVE_PURE_K; 2 - LCMS_PRESERVE_K_PLANE]."
+
+#~ msgid ""
+#~ "The internal color transformations are currently realised with functions "
+#~ "of the littleCMS program library."
+#~ msgstr ""
+#~ " Die Farbumwandlungen werden zur Zeit durch Funktionen der littleCMS "
+#~ "Programmbibliothek realisiert."
+
+#~ msgid ""
+#~ "The kind of ICC gamut mapping for transforming colors between differently "
+#~ "sized color spaces"
+#~ msgstr ""
+#~ "Die Art der Farbübertragung für verschieden große Farbräume nach ICC "
+#~ "Standard"
+
+#~ msgid ""
+#~ "The lcms \"color.icc\" filter is a one dimensional color conversion "
+#~ "filter. It can both create a color conversion context, some precalculated "
+#~ "for processing speed up, and the color conversion with the help of that "
+#~ "context. The adaption part of this filter transforms the Oyranos color "
+#~ "context, which is ICC device link based, to the internal lcms format."
+#~ msgstr ""
+#~ "Das lcms \"color.icc\" Modul kann eindimensional Farben übertragen. Die "
+#~ "CMM, Farbübertragungsmodul, berechnet die Farbübertragungsdaten vor und "
+#~ "kann Farben mit deren Hilfe auch übertragen. Es gibt einen Anpassungsteil "
+#~ "im Modul, welcher die interne lcms Farbübertragungsdaten an das Oyranos' "
+#~ "Format anpasst, welches auf ICC Geräteverknüpfungen, engl. device links, "
+#~ "beruht."
+
+#~ msgid ""
+#~ "The lcms \"color_icc\" filter is a one dimensional color conversion "
+#~ "filter. It can both create a color conversion context, some precalculated "
+#~ "for processing speed up, and the color conversion with the help of that "
+#~ "context. The adaption part of this filter transforms the Oyranos color "
+#~ "context, which is ICC device link based, to the internal lcms format."
+#~ msgstr ""
+#~ "Das lcms \"color_icc\" Modul kann eindimensional Farben übertragen. Die "
+#~ "CMM, Farbübertragungsmodul, berechnet die Farbübertragungsdaten vor und "
+#~ "kann Farben mit deren Hilfe auch übertragen. Es gibt einen Anpassungsteil "
+#~ "im Modul, welcher die interne lcms Farbübertragungsdaten an das Oyranos' "
+#~ "Format anpasst, welches auf ICC Geräteverknüpfungen, engl. device links, "
+#~ "beruht."
+
+#~ msgid ""
+#~ "The littleCMS \"create_profile.color_matrix\" command lets you create ICC "
+#~ "profiles from some given colorimetric coordinates. See the "
+#~ "\"create_profile\" info item."
+#~ msgstr ""
+#~ "Das littleCMS \"create_profile.color_matrix\" Kommando erlaubt die "
+#~ "Erstellung eines ICC Farbprofiles von farbmetrischen Koordinaten. Siehe "
+#~ "auch den \"create_profile\" Info Eintrag. "
+
+#~ msgid ""
+#~ "The littleCMS \"create_profile.color_matrix\" command lets you create ICC "
+#~ "profiles from some given colorimetric coordinates. The filter expects a "
+#~ "oyOption_s object with name \"color_matrix."
+#~ "redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma\" containing 9 "
+#~ "floats in the order of CIE*x for red, CIE*y for red, CIE*x for green, "
+#~ "CIE*y for green, CIE*x for blue, CIE*y for blue, CIE*x for white, CIE*y "
+#~ "for white and a gamma value."
+#~ msgstr ""
+#~ "Das littleCMS \"create_profile.color_matrix\" Kommando erlaubt die "
+#~ "Erstellung eines ICC Farbprofiles von farbmetrischen Koordinaten der "
+#~ "Primärfarben. Der Filter erwartet ein Objekt des Types oyOptions_s mit "
+#~ "dem Namen \"color_matrix."
+#~ "redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma\". Dieses Wert "
+#~ "soll aus 9 Fließkommazahlen bestehen in der Reihenfolge: CIE*x für Rot, "
+#~ "CIE*y für Rot, CIE*x für Grün, CIE*y für Grün, CIE*x für Blau, CIE*y für "
+#~ "Blau, CIE*x für Weiß, CIE*y für Weiß und ein Gamma Wert."
+
+#~ msgid ""
+#~ "The littleCMS \"create_profile.color_matrix\" command lets you create ICC "
+#~ "profiles from some given colorimetric coordinates. The filter expects a "
+#~ "oyOption_s object with name \"color_matrix."
+#~ "redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma\" containing 9 "
+#~ "floats in the order of CIE*x for red, CIE*y for red, CIE*x for green, "
+#~ "CIE*y for green, CIE*x for blue, CIE*y for blue, CIE*x for white, CIE*y "
+#~ "for white and a gamma value. The result will appear in \"icc_profile\" "
+#~ "with the additional attributes \"create_profile.color_matrix\"."
+#~ msgstr ""
+#~ "Das littleCMS \"create_profile.color_matrix\" Kommando erlaubt die "
+#~ "Erstellung eines ICC Farbprofiles von farbmetrischen Koordinaten der "
+#~ "Primärfarben. Der Filter erwartet ein Objekt des Types oyOptions_s mit "
+#~ "dem Namen \"color_matrix."
+#~ "redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma\". Dieses Wert "
+#~ "soll aus 9 Fließkommazahlen bestehen in der Reihenfolge: CIE*x für Rot, "
+#~ "CIE*y für Rot, CIE*x für Grün, CIE*y für Grün, CIE*x für Blau, CIE*y für "
+#~ "Blau, CIE*x für Weiß, CIE*y für Weiß und ein Gamma Wert. Das Ergebnis "
+#~ "wird in \"icc_profile\" mit den Attributen \"create_profile.color_matrix"
+#~ "\" erscheinen."
+
+#~ msgid ""
+#~ "The littleCMS \"create_profile.proofing_effect\" command lets you create "
+#~ "ICC abstract profiles from a given ICC profile for proofing. The filter "
+#~ "expects a oyOption_s object with name \"proofing_profile\" containing a "
+#~ "oyProfile_s as value. The options \"rendering_intent\", "
+#~ "\"rendering_intent_proof\", \"rendering_bpc\", \"rendering_gamut_warning"
+#~ "\", \"precalculation\" and \"cmyk_cmyk_black_preservation\" are honoured. "
+#~ "The result will appear in \"icc_profile\" with the additional attributes "
+#~ "\"create_profile.proofing_effect\" as a oyProfile_s object."
+#~ msgstr ""
+#~ "Das littleCMS \"create_profile.proofing_effect\" Kommando erlaubt die "
+#~ "Erstellung eines abstrakten ICC Farbprofiles von von einem gegebenen "
+#~ "Farbprofil für Garätesimulationen. Der Filter erwartet ein Objekt des "
+#~ "Types oyProfile_s mit dem Namen \"proofing_profile\". Die Optionen "
+#~ "\"rendering_intent\", \"rendering_intent_proof\", \"rendering_bpc\", "
+#~ "\"rendering_gamut_warning\", \"precalculation\" und "
+#~ "\"cmyk_cmyk_black_preservation\" werden berücksichtigt. Das Ergebnis wird "
+#~ "in \"icc_profile\" mit den zusätzlichen Attributen \"create_profile."
+#~ "proofing_effect\" erscheinen."
+
+#~ msgid ""
+#~ "The littleCMS \"create_profile.proofing_effect\" command lets you create "
+#~ "ICC abstract profiles from a given ICC profile for proofing. The filter "
+#~ "expects a oyOption_s object with name \"proofing_profile\" containing a "
+#~ "oyProfile_s as value. The options \"rendering_intent\", "
+#~ "\"rendering_intent_proof\", \"rendering_bpc\", \"rendering_gamut_warning"
+#~ "\", \"precalculation\", \"precalculation_curves\", "
+#~ "\"cmyk_cmyk_black_preservation\" and \"adaption_state\" are honoured. The "
+#~ "result will appear in \"icc_profile\" with the additional attributes "
+#~ "\"create_profile.proofing_effect\" as a oyProfile_s object."
+#~ msgstr ""
+#~ "Das littleCMS \"create_profile.proofing_effect\" Kommando erlaubt die "
+#~ "Erstellung eines abstrakten ICC Farbprofiles von von einem gegebenen "
+#~ "Farbprofil für Garätesimulationen. Der Filter erwartet ein Objekt des "
+#~ "Types oyProfile_s mit dem Namen \"proofing_profile\". Die Optionen "
+#~ "\"rendering_intent\", \"rendering_intent_proof\", \"rendering_bpc\", "
+#~ "\"rendering_gamut_warning\", \"precalculation\", \"precalculation_curves"
+#~ "\" und \"cmyk_cmyk_black_preservation\" und \"adaption_state\" werden "
+#~ "berücksichtigt. Das Ergebnis wird in \"icc_profile\" mit den zusätzlichen "
+#~ "Attributen \"create_profile.proofing_effect\" as ein oyProfile_s Objekt "
+#~ "erscheinen."
+
+#~ msgid ""
+#~ "The littleCMS \"create_profile.proofing_effect\" command lets you create "
+#~ "ICC abstract profiles from some given ICC profile. See the "
+#~ "\"proofing_effect\" info item."
+#~ msgstr ""
+#~ "Das littleCMS \"create_profile.proofing_effect\" Kommando erlaubt die "
+#~ "Erstellung eines abstrakten ICC Farbprofiles von einem Gerätefarbprofil. "
+#~ "Siehe auch den \"proofing_effect\" Info Eintrag. "
+
+#~ msgid ""
+#~ "The module is responsible for many settings in the Oyranos color "
+#~ "management settings panel. If applied the module care about rendering "
+#~ "intents, simulation, mixed color documents and default profiles."
+#~ msgstr ""
+#~ "Das Modul ist für viele Einstellungen in Oyranos’ "
+#~ "Farbmanagementeinstellungsdialog verantwortlich. Falls benutzt kümmert "
+#~ "sich das Modul automatisch um Farbübertragungsart, Simulation, gemischte "
+#~ "Dokumente und voreingestellte Profile."
+
+#~ msgid "The oyX1 module supports the generic device protocol."
+#~ msgstr "Das oyX1 Modul unterstützt Oyranos’ allgemeines Geräteprotokoll."
+
+#~ msgid ""
+#~ "The preferred CIE*Lab Editing Color Space shall describe the CIE*Lab."
+#~ msgstr "Der bevorzugter CIE*Lab Editierfarbraum soll CIE*Lab beschreiben."
+
+#~ msgid ""
+#~ "The preferred Cmyk Editing Color Space should represent a color space "
+#~ "that complies to well defined printing conditions like FOGRA or SWOP."
+#~ msgstr ""
+#~ "Der bevorzugte Cmyk Editierfarbraum sollte standard Druckbedingungen wie "
+#~ "FOGRA oder SWOP representieren."
+
+#~ msgid ""
+#~ "The preferred Gray Editing Color Space shall describe a single lightness "
+#~ "channel color space for grayscale images."
+#~ msgstr ""
+#~ "Der bevorzugte Grautonfarbraum soll Farben mit einem einzigen "
+#~ "Helligkeitsfarbkanal beschreiben."
+
+#~ msgid ""
+#~ "The preferred Rgb Editing Color Space should represent a well behaving "
+#~ "color space like sRGB."
+#~ msgstr "Der bevorzugte Rgb Editierfarbraum sollte wohlgeformt sein."
+
+#~ msgid "The preferred XYZ Editing Color Space shall describe CIE*XYZ."
+#~ msgstr "Der bevorzugter XYZ Editierfarbraum soll CIE*XYZ definieren."
+
+#~ msgid ""
+#~ "The processing Color Matching Module (CMM) takes one device link as "
+#~ "argument. It can provide alternative features regarding security, speed "
+#~ "or resource overhead."
+#~ msgstr ""
+#~ "Das Rechnende Farbübertragungsmodul (CMM) nimmt eine Geräteverknüpfung "
+#~ "als Argument. Es kann alternative Eigenschaften anbieten bezüglich "
+#~ "Sicherheit, Geschwiundigkeit oder Resourcenverbrauch."
+
+#~ msgid ""
+#~ "The proofing color space represents a real color device for simulation. "
+#~ "Possible use cases are to simulate a print machine, a viewing environment "
+#~ "in a theater or a expected small monitor gamut."
+#~ msgstr ""
+#~ "Der Simulationsfarbraum stellt das Farbverhalten eines realen Gerätes "
+#~ "dar. Mögliche Anwendungen sind die Simulation einer Druckmaschine, von "
+#~ "Betrachtungsbedingungen in einem Theater oder der kleinere Farbumfang "
+#~ "eines Bildschirmes."
+
+#~ msgid "The qarz module supports the generic device protocol."
+#~ msgstr "Das qarz Modul unterstützt Oyranos’ allgemeines Geräteprotokoll."
+
+#~ msgid "The raw image backend of Oyranos."
+#~ msgstr "Das KameraRAW Bild Modul für Oyranos."
+
+#~ msgid "The root image filter can hold pixel data for processing in a graph."
+#~ msgstr ""
+#~ "Der Quellbildfilter kann Rasterdaten zur Bearbeitung in einen Graphen "
+#~ "enthalten."
+
+#~ msgid "The scanner (hopefully)usefull backend of Oyranos."
+#~ msgstr "The Scanner Modul für Oyranos."
+
+#~ msgid ""
+#~ "The selected color space will be assigned to untagged CIE*Lab color "
+#~ "content and define colors for further processing."
+#~ msgstr ""
+#~ "Der gewählte Farbraum wird CIE*Lab ohne ICC Farbprofil zugewiesen werden "
+#~ "und Farben für die weitere Verarbeitung bestimmen."
+
+#~ msgid ""
+#~ "The selected color space will be assigned to untagged Cmyk color content "
+#~ "and define colors for further processing."
+#~ msgstr ""
+#~ "Der gewählte Farbraum wird Cmyk ohne ICC Farbprofil zugewiesen werden und "
+#~ "Farben für die weitere Verarbeitung bestimmen."
+
+#~ msgid ""
+#~ "The selected color space will be assigned to untagged Gray color content "
+#~ "and define colors for further processing."
+#~ msgstr ""
+#~ "Der gewählte Farbraum wird einen Helligkeitsfarbraum ohne ICC Farbprofil "
+#~ "zugewiesen werden und Farben für die weitere Verarbeitung bestimmen."
+
+#~ msgid ""
+#~ "The selected color space will be assigned to untagged Rgb color content "
+#~ "and define colors for further processing. Typical sRGB should be assumed."
+#~ msgstr ""
+#~ "Der gewählte Farbraum wird Rgb ohne ICC Farbprofil zugewiesen werden und "
+#~ "Farben für die weitere Verarbeitung bestimmen."
+
+#~ msgid ""
+#~ "The selected color space will be assigned to untagged XYZ color content "
+#~ "and define colors for further processing."
+#~ msgstr ""
+#~ "Der gewählte Farbraum wird einem XYZ ohne ICC Farbprofil zugewiesen "
+#~ "werden und Farben für die weitere Verarbeitung bestimmen."
+
+#~ msgid "The window support module of Oyranos."
+#~ msgstr "Die Fenstersystemunterstützung für Oyranos"
+
+#~ msgid "Thermal wax printer"
+#~ msgstr "Thermischer Wachsdrucker"
+
+#~ msgid ""
+#~ "This setting decides what to do in the case that colors have no color "
+#~ "space assigned. Typically the according assumed ICC profile should be "
+#~ "assigned."
+#~ msgstr ""
+#~ "Die Einstellung entscheidet was mit Farben ohne Farbprofil geschehen "
+#~ "soll. Typischerweise wird das vermutete Farbprofil automatisch zugewiesen."
+
+#~ msgid "Tool"
+#~ msgstr "Werkzeug"
+
+#~ msgid "Transparent, "
+#~ msgstr "Durchsicht, "
+
+#~ msgid "Type"
+#~ msgstr "Typ"
+
+#~ msgid "Type:            "
+#~ msgstr "Klasse:          "
+
+#~ msgid "Unable to rename '%s' to '%s'"
+#~ msgstr "Konnte '%s' nicht nach '%s' umbenennen"
+
+#~ msgid "Unassign profile from device:"
+#~ msgstr "Löse Profil vom Gerät:"
+
+#~ msgid "Undefined"
+#~ msgstr "undefiniert"
+
+#~ msgid "Under Color Removal (UCR)"
+#~ msgstr "Unterfarbreduktion (UCR)"
+
+#~ msgid "Unexpected object type:"
+#~ msgstr "Unerwarteter Objekttyp:"
+
+#~ msgid "Unix Man page"
+#~ msgstr "Unix Handbuchseite"
+
+#~ msgid "Unknown argument"
+#~ msgstr "Unbekanntes Argument"
+
+#~ msgid "Url"
+#~ msgstr "Url"
+
+#~ msgid "Usage Error:"
+#~ msgstr "Benutzerfehler:"
+
+#~ msgid "Use Black Point Compensation"
+#~ msgstr "Benutze Schwarzpunktkompensation (BPC)"
+
+#~ msgid "VRML Files (*.wrl)"
+#~ msgstr "VRML Dateien (*.wrl)"
+
+#~ msgid "Value"
+#~ msgstr "Wert"
+
+#~ msgid "Verbose"
+#~ msgstr "Plaudernd"
+
+#~ msgid "Version"
+#~ msgstr "Version"
+
+#~ msgid "Version:         "
+#~ msgstr "Version:         "
+
+#~ msgid "Video Monitor"
+#~ msgstr "Video Bildschirm"
+
+#~ msgid "Video camera"
+#~ msgstr "Video Kamera"
+
+#~ msgid "VideoCardGammaTable"
+#~ msgstr "Grafik Karten Gamma Tabelle (vcgt)"
+
+#~ msgid "View"
+#~ msgstr "Ansicht"
+
+#~ msgid "Viewing Conditions"
+#~ msgstr "Betrachtungsbedingungen"
+
+#~ msgid "Viewing conditions description"
+#~ msgstr "Beschreibung der Betrachtungbedingungen"
+
+#~ msgid "WARNING"
+#~ msgstr "WARNUNG"
+
+#~ msgid "WARNING: Could not load corrupt or damaged profile."
+#~ msgstr "WARNUNG: Konnte koruptes oder beschädigtes Profil nicht laden."
+
+#~ msgid "Warning"
+#~ msgstr "Warnung"
+
+#~ msgid "Warning : "
+#~ msgstr "Warnung : "
+
+#~ msgid "Watch Colors 3D..."
+#~ msgstr "3D Farbansicht..."
+
+#~ msgid "Watch Colors 3D.2..."
+#~ msgstr "3D Farbansicht2..."
+
+#~ msgid "Well behaving Color Space for Editing"
+#~ msgstr "Gleichmäßiger Farbraum für die Bearbeitung"
+
+#~ msgid "What kind of image is this?"
+#~ msgstr "Was für ein Bild ist dies?"
+
+#~ msgid "What kind of image is this?\n"
+#~ msgstr "Was für ein Bild ist dies?\n"
+
+#~ msgid "White xy:"
+#~ msgstr "Weiß xy:"
+
+#~ msgid "Wide list mode"
+#~ msgstr "Weite Anzeige"
+
+#~ msgid "Windows"
+#~ msgstr "Fenster"
+
+#~ msgid "Work Space"
+#~ msgstr "Arbeitsfarbraum"
+
+#~ msgid "Write"
+#~ msgstr "Schreibe"
+
+#~ msgid "Write DB File"
+#~ msgstr "Schreibe DB Datei"
+
+#~ msgid "Write Model:"
+#~ msgstr "Schreibe Modell:"
+
+#~ msgid "Write PNG"
+#~ msgstr "Schreibe PNG"
+
+#~ msgid "Write PNG Image Filter Object"
+#~ msgstr "Filterobjekt zum Schreiben eines PNG Bildes"
+
+#~ msgid "Write PPM"
+#~ msgstr "Schreibe PPM"
+
+#~ msgid "Write PPM Image Filter Object"
+#~ msgstr "Filterobjekt zum Schreiben eines PPM Bildes"
+
+#~ msgid "Write to ICC profile:"
+#~ msgstr "Schreibe ICC Profil:"
+
+#~ msgid "Writing failed for"
+#~ msgstr "Schreiben mislungen für"
+
+#~ msgid "Wrong ICC profile id detected"
+#~ msgstr "Fehler in ICC Profil ID gefunden!"
+
+#~ msgid "Wrong profil assigned to image."
+#~ msgstr "Falsches Profil am Bild."
+
+#~ msgid "XRandR CrtcInfo request failed"
+#~ msgstr "XRandR CrtcInfo Anfrage daneben"
+
+#~ msgid "XYZ"
+#~ msgstr "XYZ"
+
+#~ msgid "Xinerama request failed"
+#~ msgstr "Xineramaanfrage daneben"
+
+#~ msgid "XineramaScreen:"
+#~ msgstr "XineramaSchirm:"
+
+#~ msgid "YCbCr"
+#~ msgstr "YCbCr"
+
+#~ msgid "Yellow"
+#~ msgstr "Gelb"
+
+#~ msgid "Yes"
+#~ msgstr "Ja"
+
+#~ msgid "You can get them from http://sf.net/projects/openicc"
+#~ msgstr "Sie können es erhalten von http://sf.net/projects/openicc"
+
+#~ msgid "Your"
+#~ msgstr "Ihr"
+
+#~ msgid "Yxy"
+#~ msgstr "Yxy"
+
+#~ msgid "Zero profiles found in Taxi ICC DB"
+#~ msgstr "Keine Profile in Taxi ICC DB gefunden"
+
+#~ msgid "[none]"
+#~ msgstr "[kein]"
+
+#~ msgid "abstract class"
+#~ msgstr "Abstrakter Farbraum"
+
+#~ msgid "add prefix"
+#~ msgstr "füge Vorsilbe hinzu"
+
+#~ msgid "allocation failed"
+#~ msgstr "kein Speicher"
+
+#~ msgid "alternatively specify the name of a device"
+#~ msgstr "geben Sie alternativ den Namen des Gerätes an"
+
+#~ msgid "attempt to add a incomplete filter"
+#~ msgstr "Versuch einen unvollständigen Filter hinzuzufügen"
+
+#~ msgid "attempt to add a non linear filter to a linear graph"
+#~ msgstr ""
+#~ "Versuch ein nicht linearen Filter zu einem linearen Grafen hinzuzufügen"
+
+#~ msgid "averaging deviations (dE CIE*Lab):<b> "
+#~ msgstr "Abweichungen (dE CIE*Lab) durchschnittlich:<b> "
+
+#~ msgid "axis"
+#~ msgstr "Achse"
+
+#~ msgid "black/white"
+#~ msgstr "schwarz/weiss"
+
+#~ msgid "bytes"
+#~ msgstr "Bytes"
+
+#~ msgid "bytes of  memory for"
+#~ msgstr "Bytes Speicher für"
+
+#~ msgid ""
+#~ "can be file name, internal description string, ICC profile ID or wildcard "
+#~ "\"rgb\", \"cmyk\", \"gray\", \"lab\", \"xyz\", \"web\", \"rgbi\", \"cmyki"
+#~ "\", \"grayi\", \"labi\", \"xyzi\". Wildcards ending with \"i\" are "
+#~ "assumed profiles. \"web\" is a sRGB profile. The other wildcards are "
+#~ "editing profiles."
+#~ msgstr ""
+#~ "kann ein Dateiname, interner Name, ICC Profil ID oder ein Namenkürzel "
+#~ "sein \"rgb\", \"cmyk\", \"gray\", \"lab\", \"xyz\", \"web\", \"rgbi\", "
+#~ "\"cmyki\", \"grayi\", \"labi\", \"xyzi\". Kürzel endend auf \"i\" sind "
+#~ "vermutete Profile. \"web\" ist ein sRGB Profile. Die anderen Kürzel sind "
+#~ "Editierprofile."
+
+#~ msgid "can be used independently from image."
+#~ msgstr "kann unabhängig vom Bild verwendet werden."
+
+#~ msgid "can not be used independently from image."
+#~ msgstr "kann nicht unabhängig vom Bild verwendet werden."
+
+#~ msgid "check"
+#~ msgstr "prüfe"
+
+#~ msgid "color"
+#~ msgstr "farbig"
+
+#~ msgid "color adjust"
+#~ msgstr "Farbe einstellen"
+
+#~ msgid "color space class"
+#~ msgstr "Farbraum"
+
+#~ msgid "colored"
+#~ msgstr "farbig"
+
+#~ msgid "create OpenICC device color state JSON"
+#~ msgstr "erzeuge OpenICC Gerätefarbeinstellungs JSON"
+
+#~ msgid "create OpenICC device color state JSON including the rank map"
+#~ msgstr "erzeuge OpenICC Gerätefarbeinstellungs JSON mit Wichtungstabelle"
+
+#~ msgid "create OpenICC device color state rank map JSON"
+#~ msgstr "erzeuge OpenICC Wichtungstabelle JSON zu Gerätefarbeinstellungen"
+
+#~ msgid "create fallback ICC profile"
+#~ msgstr "erzeuge alternatives ICC Profil"
+
+#~ msgid "created by:  "
+#~ msgstr "erzeugt von: "
+
+#~ msgid "db-file"
+#~ msgstr "db-datei"
+
+#~ msgid "default profile type does not exist:"
+#~ msgstr "Standard Profiltyp existiert nicht:"
+
+#~ msgid "device"
+#~ msgstr "gerät"
+
+#~ msgid "device position start from zero"
+#~ msgstr "Geräteposition started von Null"
+
+#~ msgid "device-class"
+#~ msgstr "geräteklasse"
+
+#~ msgid "device_class not found:"
+#~ msgstr "Geräteklasse nicht gefunden:"
+
+#~ msgid "display class"
+#~ msgstr "Monitor"
+
+#~ msgid "download ID from Taxi data base"
+#~ msgstr "Identifikation in Taxi Datenbank"
+
+#~ msgid "draw gray"
+#~ msgstr "zeichne grau"
+
+#~ msgid "dump ICC profile"
+#~ msgstr "schreibe ICC Profil"
+
+#~ msgid "dump OpenICC device color state rank map JSON"
+#~ msgstr "erzeuge OpenICC Wichtungstabelle JSON zu Gerätefarbeinstellungen"
+
+#~ msgid "dump-json"
+#~ msgstr "schreibe-json"
+
+#~ msgid "embed OpenICC device JSON from file"
+#~ msgstr "bette OpenICC JSON Gerät von Datei ein"
+
+#~ msgid "embedd device and driver information into ICC meta tag"
+#~ msgstr "bette Geräte-und Treiberinformationen in ICC meta Block ein"
+
+#~ msgid "empty"
+#~ msgstr "leer"
+
+#~ msgid "enable simple defaults"
+#~ msgstr "benutze einfache Grundeinstellungen"
+
+#~ msgid "erase-device"
+#~ msgstr "lösche-gerät"
+
+#~ msgid "error in module:"
+#~ msgstr "Fehler in Modul:"
+
+#~ msgid "error setting path: %s"
+#~ msgstr "Fehler beim Setzen des Pfades: \"%s\""
+
+#~ msgid "exception occured: "
+#~ msgstr "Ausnahme: "
+
+#~ msgid "export"
+#~ msgstr "exportiere"
+
+#~ msgid "extract ICC color profile"
+#~ msgstr "extrahiere ICC Farbprofil"
+
+#~ msgid "f(X)=(a*X+b)^gamma + c for X>=-b/a"
+#~ msgstr "f(X)=(a*X+b)^gamma + c für X>=-b/a"
+
+#~ msgid "f(X)=(a*X+b)^gamma + e for X>=d"
+#~ msgstr "f(X)=(a*X+b)^gamma + e für X>=d"
+
+#~ msgid "f(X)=(a*X+b)^gamma for X>=-b/a"
+#~ msgstr "f(X)=(a*X+b)^gamma für X>=-b/a"
+
+#~ msgid "f(X)=(a*X+b)^gamma for X>=d"
+#~ msgstr "f(X)=(a*X+b)^gamma für X>=d"
+
+#~ msgid "f(X)=0 for (X<-b/a)"
+#~ msgstr "f(X)=0 für (X<-b/a)"
+
+#~ msgid "f(X)=X^gamma"
+#~ msgstr "f(X)=X^gamma"
+
+#~ msgid "f(X)=c for (X<-b/a)"
+#~ msgstr "f(X)=c für (X<-b/a)"
+
+#~ msgid "f(X)=c*X for (X<d)"
+#~ msgstr "f(X)=c*X für (X<d)"
+
+#~ msgid "f(X)=c*X+f for (X<d)"
+#~ msgstr "f(X)=c*X+f für (X<d)"
+
+#~ msgid "failed!"
+#~ msgstr "daneben!"
+
+#~ msgid "file exists, please remove befor installing new profile."
+#~ msgstr ""
+#~ "Datei existiert, Bitte vor der Installation eines neuen Profiles "
+#~ "entfernen."
+
+#~ msgid "file name is too long %d\n"
+#~ msgstr "Dateiname ist zu lang %d\n"
+
+#~ msgid "file size 0 for "
+#~ msgstr "Dateigröße 0 für "
+
+#~ msgid "file-name"
+#~ msgstr "dateiname"
+
+#~ msgid "fine with: "
+#~ msgstr "gut mit: "
+
+#~ msgid "found issues"
+#~ msgstr "fand Probleme"
+
+#~ msgid "found issues parsing JSON"
+#~ msgstr "Fand Probleme beim Lesen des JSON"
+
+#~ msgid "found issues while moving in profile"
+#~ msgstr "fand Probleme beim schreiben in Profil"
+
+#~ msgid "found list of wrong type"
+#~ msgstr "fand Liste falschen Typs"
+
+#~ msgid "found no content for"
+#~ msgstr "keine Inhalte gefunden für"
+
+#~ msgid "found no observer"
+#~ msgstr "keinen Beobachter gefunden"
+
+#~ msgid "found observer list of wrong type"
+#~ msgstr "fand Beobachterliste falschen Typs"
+
+#~ msgid "found observer of wrong type"
+#~ msgstr "Fand Beobachter falschen Typs"
+
+#~ msgid "full path and file name"
+#~ msgstr "kompletter Pfad- und Dateiname"
+
+#~ msgid "gamma"
+#~ msgstr "gamma"
+
+#~ msgid "gamut"
+#~ msgstr "Farbumfang"
+
+#~ msgid "generate OpenICC device color reproduction JSON"
+#~ msgstr "erzeuge OpenICC JSON zu Gerätefarbeinstellungen"
+
+#~ msgid "glossy, "
+#~ msgstr "glänzend, "
+
+#~ msgid "gray"
+#~ msgstr "grau"
+
+#~ msgid "help"
+#~ msgstr "Hilfe"
+
+#~ msgid "high contrast"
+#~ msgstr "kontrastreich"
+
+#~ msgid "input class"
+#~ msgstr "Eingabefarbraum"
+
+#~ msgid "install in the OpenIccDirectory icc path"
+#~ msgstr "Installieren Sie in den OpenIccDirectory icc Pfad"
+
+#~ msgid "installation of new policy file failed with error:"
+#~ msgstr "Speicherung der neuen Richtline schlug fehl mit Fehler:"
+
+#~ msgid "installed new policy"
+#~ msgstr "neue Richtlinie erfolgreich gespeichert"
+
+#~ msgid ""
+#~ "integrated sources, lock at the according files for licence conditions:"
+#~ "<br>\n"
+#~ msgstr ""
+#~ "integrierte Quelltexte, die jeweiligen Lizenzbedingungen sind den "
+#~ "entsprechended Dateien zu entnehmen:<br>\n"
+
+#~ msgid "internal name"
+#~ msgstr "interner Name"
+
+#~ msgid "internet: www.behrmann.name <br>"
+#~ msgstr "Internet: www.behrmann.name <br>"
+
+#~ msgid "is a CameraRaw conversion tool"
+#~ msgstr "ist ein Kamera Rohdatenumwandlungswerkzeug"
+
+#~ msgid "is a ICC color conversion tool"
+#~ msgstr "ist ein Farbumwandlungswerkzeug"
+
+#~ msgid "is a ICC color profile grapher"
+#~ msgstr "ist ein ICC Farbprofile Zeichner"
+
+#~ msgid "is a ICC profile information tool"
+#~ msgstr "ist ein ICC Profilinformationswerkzeug"
+
+#~ msgid "is a Oyranos module options tool"
+#~ msgstr "ist ein Optionswerkzeug für Oyranosmodule"
+
+#~ msgid "is a Oyranos o(X)FORMS options tool"
+#~ msgstr "ist ein o(X)FORMS Optionswerkzeug für Oyranos"
+
+#~ msgid "is a color profile administration tool for color devices"
+#~ msgstr "ist ein Farbprofilverwaltungswerkzeug für Farbgeräte"
+
+#~ msgid "is a color profile administration tool for monitors"
+#~ msgstr "ist ein Farbprofilverwaltungswerkzeug für Bildschirme"
+
+#~ msgid "is a policy administration tool"
+#~ msgstr "ist ein Richtlinienverwaltungswerkzeug"
+
+#~ msgid "is not valid for an"
+#~ msgstr "ist nocht gültig für ein"
+
+#~ msgid "language specific wrap; -w C for C static char"
+#~ msgstr "sprachspezifische Hülle; -w C für C static char"
+
+#~ msgid "left mouse button -> go back"
+#~ msgstr "linke Maustaste -> zurueck"
+
+#~ msgid "left-/middle-/right mouse button -> rotate/cut/menu"
+#~ msgstr "linke-/mittlere-/rechte Maustaste -> Drehen/Schneiden/Menue"
+
+#~ msgid "less Xinerama monitors than XRandR ones"
+#~ msgstr "weniger Xinerama als XRandR Monitore"
+
+#~ msgid "levels from 4-16 make sense"
+#~ msgstr "Werte von 4-16 sind sinnvoll"
+
+#~ msgid "libraw input filter"
+#~ msgstr "LibRaw Eingangsmodul"
+
+#~ msgid "lineare entrance curve with 256 steps"
+#~ msgstr "Lineare Eingangskurve mit 256 Stufungen"
+
+#~ msgid "lineare exit curve with 256 steps"
+#~ msgstr "Lineare Ausgangskurve mit 256 Stufungen"
+
+#~ msgid "linux system path"
+#~ msgstr "Linux Systempfad"
+
+#~ msgid "list possible choices"
+#~ msgstr "Liste der verfügbaren Auswahlmöglichkeiten"
+
+#~ msgid "list-devices"
+#~ msgstr "liste-geräte"
+
+#~ msgid "littleCMS"
+#~ msgstr "littleCMS"
+
+#~ msgid ""
+#~ "littleCMS 2 project; www: http://www.littlecms.com; support/email: "
+#~ "support@littlecms.com; sources: http://www.littlecms.com/downloads.htm; "
+#~ "Oyranos wrapper: Kai-Uwe Behrmann for the Oyranos project"
+#~ msgstr ""
+#~ "littleCMS 2 Projekt; www: http://www.littlecms.com; Support/email: "
+#~ "support@littlecms.com; Quellen: http://www.littlecms.com/downloads.htm; "
+#~ "Oyranos Einbindung: Kai-Uwe Behrmann"
+
+#~ msgid "littleCMS Function for Color Space Transformations"
+#~ msgstr "littleCMS Funktion zur Farbraumtransformation."
+
+#~ msgid "littleCMS color management module"
+#~ msgstr "littleCMS Farbumwandlungmodul"
+
+#~ msgid ""
+#~ "littleCMS project; www: http://www.littlecms.com; support/email: "
+#~ "support@littlecms.com; sources: http://www.littlecms.com/downloads.htm; "
+#~ "Oyranos wrapper: Kai-Uwe Behrmann for the Oyranos project"
+#~ msgstr ""
+#~ "littleCMS Projekt; www: http://www.littlecms.com; Support/email: "
+#~ "support@littlecms.com; Quellen: http://www.littlecms.com/downloads.htm; "
+#~ "Oyranos Einbindung: Kai-Uwe Behrmann"
+
+#~ msgid "locale directory containing"
+#~ msgstr "locale Verzeichnis enthaltend"
+
+#~ msgid ""
+#~ "locale directory containing the your-locale/LC_MESSAGES/your-textdomain."
+#~ "mo gettext translations"
+#~ msgstr ""
+#~ "locale Verzeichnis mit deine-locale/LC_MESSAGES/deine-textdomain.mo "
+#~ "gettext Übersetzungen"
+
+#~ msgid "locales in a comma separated list"
+#~ msgstr "Sprachen in einer kommagetrennten Liste"
+
+#~ msgid "long"
+#~ msgstr "lang"
+
+#~ msgid "machine specific path"
+#~ msgstr "rechnerspezifischer Pfad"
+
+#~ msgid "match value"
+#~ msgstr "Übereinstimmungswert"
+
+#~ msgid "matte, "
+#~ msgstr "matt, "
+
+#~ msgid "missed -w option to write a ICC profile"
+#~ msgstr "vermisse -w Option für das Schreiben eines ICC Profiles"
+
+#~ msgid "module name"
+#~ msgstr "Modulname"
+
+#, fuzzy
+#~ msgid "mouse"
+#~ msgstr "Pause"
+
+#~ msgid "multiple occurencies of default profile"
+#~ msgstr "mehrmaliges Erscheinen des Standard Profiles"
+
+#~ msgid ""
+#~ "multiple occurencies of default profile\n"
+#~ "  Did you install multiple times?"
+#~ msgstr ""
+#~ "mehrmaliges Erscheinen des Standard Profiles\n"
+#~ "  Wurde es mehrfach installiert?"
+
+#~ msgid "nLUT"
+#~ msgstr "nLUT"
+
+#, fuzzy
+#~ msgid "nLut"
+#~ msgstr "Eingabe"
+
+#~ msgid "name longer than"
+#~ msgstr "Name ist länger als"
+
+#~ msgid "named color class"
+#~ msgstr "Einzelfarben 2"
+
+#~ msgid "negative, "
+#~ msgstr "negativ, "
+
+#~ msgid "new BSD license: http://www.opensource.org/licenses/bsd-license.php"
+#~ msgstr "Neue BSD Lizenz: http://www.opensource.org/licenses/bsd-license.php"
+
+#~ msgid "no EDID available from"
+#~ msgstr "kein EDID verfügbari von"
+
+#~ msgid "no EDID available from X properties"
+#~ msgstr "kein EDID von X Atomen verfügbar"
+
+#~ msgid "no Screen found"
+#~ msgstr "keine Anzeige gefunden"
+
+#~ msgid "no choices"
+#~ msgstr "keine Auswahl"
+
+#~ msgid "no measurment data or correct profile conversion available"
+#~ msgstr "keine Messdaten oder korrekte Farbtransformation verfügbar"
+
+#~ msgid "no net found in VRML file"
+#~ msgstr "kein Netz in VRML Datei gefunden"
+
+#~ msgid "no net found. Is Argyll installed?"
+#~ msgstr "kein Netz gefunden. Ist Argyll installiert?"
+
+#~ msgid "no oyX1Monitor_s created"
+#~ msgstr "kein oyX1Monitor_s erzeugt"
+
+#~ msgid "no qarzMonitor_s from"
+#~ msgstr "kein qarzMonitor_s von"
+
+#~ msgid "no wcsDMonitor_s created"
+#~ msgstr "kein wcsDMonitor_s erzeugt"
+
+#~ msgid "not a profile:"
+#~ msgstr "kein Profil:"
+
+#~ msgid "not available"
+#~ msgstr "nicht verfügbar"
+
+#~ msgid "not found:"
+#~ msgstr "nicht gefunden:"
+
+#~ msgid "not inside memory block"
+#~ msgstr "nicht innerhalb des Speicherblocks"
+
+#~ msgid "nothing allocated"
+#~ msgstr "nichts reserviert"
+
+#~ msgid "nothing to allocate - size:"
+#~ msgstr "kein Speicher reservierbar - Größe:"
+
+#~ msgid "nothing to delete"
+#~ msgstr "nichts zu löschen"
+
+#~ msgid "o'clock"
+#~ msgstr "Uhr"
+
+#~ msgid "omit border"
+#~ msgstr "lasse Rand aus"
+
+#~ msgid "omit the spectral line"
+#~ msgstr "lasse Spektrallinie fort"
+
+#~ msgid "omit white line of lambert light emitters"
+#~ msgstr "lasse Weißlinie von Lambertstrahlern fort"
+
+#~ msgid "open X Display failed"
+#~ msgstr "Öffnen des X Displays daneben"
+
+#~ msgid "open X Screen failed"
+#~ msgstr "Öffnen des X Screens daneben"
+
+#~ msgid "output"
+#~ msgstr "Ausgabe"
+
+#~ msgid "output class"
+#~ msgstr "Ausgabefarbraum"
+
+#~ msgid "output format string"
+#~ msgstr "Ausgabeformat"
+
+#~ msgid "oyranos install path"
+#~ msgstr "Oyranos Installationspfad"
+
+#~ msgid "parametric function type"
+#~ msgstr "Parametrischer Funktionstyp"
+
+#, fuzzy
+#~ msgid "path is a directory"
+#~ msgstr "Pfad ist kein Verzeichnis"
+
+#~ msgid "path is a link: ignored"
+#~ msgstr "Pfad ist eine Verknüpfung: ignoriert"
+
+#~ msgid "path is not a directory"
+#~ msgstr "Pfad ist kein Verzeichnis"
+
+#~ msgid "path is not readable"
+#~ msgstr "Pfad ist nicht lesbar"
+
+#~ msgid "points length per side"
+#~ msgstr "Punkten Seitenlänge"
+
+#~ msgid "policy name"
+#~ msgstr "Richtlinienname"
+
+#~ msgid "policy or filename"
+#~ msgstr "Richtlinie oder Dateiname"
+
+#~ msgid "positive, "
+#~ msgstr "positiv, "
+
+#~ msgid "print only the file name"
+#~ msgstr "zeige nur den Profilnamen"
+
+#~ msgid "print only the profile name"
+#~ msgstr "zeige nur den Profilnamen"
+
+#~ msgid "print the full file name"
+#~ msgstr "zeige den vollständigen Dateiname"
+
+#~ msgid "print the full module name"
+#~ msgstr "zeige den vollständigen Modulnamen"
+
+#~ msgid "print the module ID"
+#~ msgstr "zeige die Modulsignatur"
+
+#~ msgid "print the modules device class"
+#~ msgstr "zeige die Geräteklasse des Modules"
+
+#~ msgid "profile file name"
+#~ msgstr "Profildateiname"
+
+#~ msgid "profile name"
+#~ msgstr "Profilname"
+
+#~ msgid "profile not found in color path:"
+#~ msgstr "Profil nicht im Profilepfad gefunden:"
+
+#~ msgid "profile not found:"
+#~ msgstr "Farbprofil nicht gefunden:"
+
+#~ msgid "program is not properly installed or missed"
+#~ msgstr "Das Programm ist nicht korrekt installiert oder nicht vorhanden."
+
+#~ msgid "read XFORMS"
+#~ msgstr "lese XFORMS"
+
+#~ msgid "read from file"
+#~ msgstr "Lese von Datei"
+
+#~ msgid "read input stream"
+#~ msgstr "lese Daten von Eingangsstrom"
+
+#~ msgid "refresh gamma table from video card"
+#~ msgstr "Gammatabelle aus Grafikkarte auslesen"
+
+#~ msgid "relative colorimetric RI"
+#~ msgstr "Relativ Farbmetrisch"
+
+#~ msgid "reset to standard gamma"
+#~ msgstr "Auf Standard Gamma zurücksetzen"
+
+#~ msgid "running new ticket failed"
+#~ msgstr "neue Ausführung schlug fehl"
+
+#~ msgid "seconds"
+#~ msgstr "Sekunden"
+
+#~ msgid "select ICC v2 profiles"
+#~ msgstr "wähle ICC V2 Profile"
+
+#~ msgid "select ICC v4 profiles"
+#~ msgstr "wähle ICC V4 Profile"
+
+#~ msgid "select a ICC v2 profile"
+#~ msgstr "wähle ein ICC V2 Profil"
+
+#~ msgid "select a ICC v4 profile"
+#~ msgstr "wähle ein ICC V4 Profil"
+
+#~ msgid "select format, currently only clut"
+#~ msgstr "wähle Format, z.Z. nur clut möglich"
+
+#~ msgid "select format, currently only icc"
+#~ msgstr "wähle Format, z.Z. nur icc möglich"
+
+#~ msgid "select tag"
+#~ msgstr "wähle Eintrag"
+
+#~ msgid "show as well non matching profiles"
+#~ msgstr "zeige auch nicht passende Profile"
+
+#~ msgid "show help texts"
+#~ msgstr "Zeige einen Hilfetext"
+
+#~ msgid "show hints and question GUI"
+#~ msgstr "zeigt Hinweise und Fragen Benutzeroberfläche"
+
+#~ msgid "show policy options"
+#~ msgstr "zeige Richtlinienoptionen"
+
+#~ msgid "show profiles with duplicate profile ID"
+#~ msgstr "zeige Profile mit gleicher ICC Profil ID"
+
+#~ msgid "show-path"
+#~ msgstr "zeige-pfad"
+
+#~ msgid "showing"
+#~ msgstr "zeigen"
+
+#~ msgid "skip X Color Management device profile"
+#~ msgstr "ignoriere X Color Management Geräteprofil"
+
+#~ msgid "skip repair of profile ID"
+#~ msgstr "lasse Reparatur der Profil ID weg"
+
+#~ msgid "specify incemental increase of the thickness of the graph lines"
+#~ msgstr "gib die Dickenzunahme zwischen verschiedenen Linien an"
+
+#~ msgid "specify increase of the thickness of the graph lines"
+#~ msgstr "gib die Verstärkung der Liniendicke an"
+
+#~ msgid "specify output file name, default is output.png"
+#~ msgstr "gib Ausgabedateiname an, voreingestellt ist output.png"
+
+#~ msgid "specify output image width in pixel"
+#~ msgstr "gib Ausgabebildbreite in Pixel an"
+
+#~ msgid "steps"
+#~ msgstr "Stufungen"
+
+#~ msgid "system path"
+#~ msgstr "Systempfad"
+
+#~ msgid "tag list is corrupted for tag"
+#~ msgstr "die Elementliste ist beschädigt für Element"
+
+#~ msgid "text domain of your project"
+#~ msgstr "Text ID für das Projekt"
+
+#~ msgid "the Data Object"
+#~ msgstr "das Datenobjekt"
+
+#~ msgid "to be used key names in a comma separated list"
+#~ msgstr "zu benutzende Schlüsselwörter in einer kommagetrennten Liste"
+
+#~ msgid "unable to open data base"
+#~ msgstr "kann Datenbank nicht öffnen"
+
+#~ msgid "unexpected EDID lenght"
+#~ msgstr "unerwartetet EDID Größe"
+
+#~ msgid "unexpected user_data type"
+#~ msgstr "Unerwarteter user_data Typ"
+
+#~ msgid "unfinished"
+#~ msgstr "unvollendet"
+
+#~ msgid "unknown"
+#~ msgstr "unbekannt"
+
+#~ msgid "unknown Color"
+#~ msgstr "unbekannte Farbe"
+
+#~ msgid "use CIE*xyY *x*y plane for saturation line projection"
+#~ msgstr "benutze CIE*xyY *x*y Ebene für Projektion"
+
+#~ msgid "use IccXML format"
+#~ msgstr "benutze IccXML Format"
+
+#~ msgid "use device JSON alternatively to -c and -d options"
+#~ msgstr "benutze Geräte JSON alternativ zu den -c und -d Optionen"
+
+#~ msgid "use device class"
+#~ msgstr "benutze Geräteklasse"
+
+#~ msgid "use device sub path"
+#~ msgstr "benutze Geräteunterpfad"
+
+#~ msgid "use new name"
+#~ msgstr "nutze neuen Namen"
+
+#~ msgid "use only DB keys for -f=openicc"
+#~ msgstr "benutze nur DB Schlüssel/Wertepaare für -f=openicc"
+
+#~ msgid "use sRGB"
+#~ msgstr "benutze sRGB"
+
+#~ msgid "user path"
+#~ msgstr "Benutzerpfad"
+
+#~ msgid "will overwrite policy file"
+#~ msgstr "werde Richtliniendatei überschreiben"
+
+#~ msgid "with"
+#~ msgstr "mit"
+
+#~ msgid "with '.' is not allowed"
+#~ msgstr "mit '.' ist nicht erlaubt"
+
+#~ msgid "with following choices"
+#~ msgstr "mit folgenden Alternativen"
+
+#~ msgid "without markers"
+#~ msgstr "ohne Farborte"
+
+#~ msgid "write assigned ICC profile"
+#~ msgstr "Schreibe zugewiesenes ICC Profil"
+
+#~ msgid "write profile with correct ID"
+#~ msgstr "schreibe Profil mit korrekter ID"
+
+#~ msgid "write to file, currently only PPM and PNG formats"
+#~ msgstr "schreibe zu einer Datei, derzeit nur im Format PPM und PNG"
+
+#~ msgid "write to file, currently only PPM format"
+#~ msgstr "schreibe zu einer Datei, derzeit nur im Format PPM"
+
+#~ msgid "write to specified file"
+#~ msgstr "schreibe nach Datei"
+
+#~ msgid "wrong argument to option:"
+#~ msgstr "Falsches Argument für Option:"
+
+#~ msgid "wrong profile for static web color space selected, need sRGB"
+#~ msgstr "Falsches Profil für statischen WWW Farbraum, benötige sRGB"

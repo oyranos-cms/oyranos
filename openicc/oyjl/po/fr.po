@@ -1,0 +1,1646 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2006 Kai-Uwe Behrmann
+# This file is distributed under BSD license.
+# Pascal LACROIX <lacroixpascal at vfemail.net>, 2006.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: openicc\n"
+"Report-Msgid-Bugs-To: ku.b@gmx.de\n"
+"POT-Creation-Date: 2019-01-14 10:18+0100\n"
+"PO-Revision-Date: 2006-06-29 19:31+0200\n"
+"Last-Translator: Pascal LACROIX <lacroixpascal at vfemail.net>\n"
+"Language-Team: <fr@li.org>\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: oyjl.c:76
+msgid "Example"
+msgstr ""
+
+#: oyjl.c:73
+#, fuzzy
+msgid "General options:"
+msgstr "Options"
+
+#: oyjl.c:67
+msgid "JSON file"
+msgstr ""
+
+#: oyjl.c:77
+msgid "Print JSON:"
+msgstr ""
+
+#: oyjl.c:70
+msgid "Print a help text:"
+msgstr ""
+
+#: oyjl.c:80
+msgid "Print count:"
+msgstr ""
+
+#: oyjl.c:83
+#, fuzzy
+msgid "Print key name:"
+msgstr "Fichier"
+
+#: oyjl.c:86
+msgid "Print path:"
+msgstr ""
+
+#: oyjl.c:58
+msgid "Print:"
+msgstr ""
+
+#: oyjl.c:89
+msgid "Set key/value:"
+msgstr ""
+
+#: oyjl.c:32 oyjl.c:45 oyjl.c:57
+msgid "Usage"
+msgstr ""
+
+#: oyjl.c:55
+msgid "is a JSON parse tool"
+msgstr ""
+
+#: oyjl.c:43
+msgid "is a JSON to XML converter"
+msgstr ""
+
+#: oyjl.c:30
+msgid "is a JSON to YAML converter"
+msgstr ""
+
+#: oyjl.c:74
+msgid "verbose"
+msgstr ""
+
+#~ msgid " with "
+#~ msgstr " avec "
+
+#~ msgid " with Gamma: 1.0"
+#~ msgstr " avec Gamma: 1.0"
+
+#~ msgid " with one entry for gamma: "
+#~ msgstr " avec un entrée pour gamma: "
+
+#, fuzzy
+#~ msgid "--module name"
+#~ msgstr "Fichier"
+
+#, fuzzy
+#~ msgid "1. Channel"
+#~ msgstr "Canal"
+
+#, fuzzy
+#~ msgid "10. Channel"
+#~ msgstr "Canal"
+
+#~ msgid "10color"
+#~ msgstr "10couleurs"
+
+#, fuzzy
+#~ msgid "11. Channel"
+#~ msgstr "Canal"
+
+#~ msgid "11color"
+#~ msgstr "11couleurs"
+
+#, fuzzy
+#~ msgid "12. Channel"
+#~ msgstr "Canal"
+
+#~ msgid "12color"
+#~ msgstr "12couleurs"
+
+#, fuzzy
+#~ msgid "13. Channel"
+#~ msgstr "Canal"
+
+#~ msgid "13color"
+#~ msgstr "13couleurs"
+
+#, fuzzy
+#~ msgid "14. Channel"
+#~ msgstr "Canal"
+
+#~ msgid "14color"
+#~ msgstr "14couleurs"
+
+#, fuzzy
+#~ msgid "15. Channel"
+#~ msgstr "Canal"
+
+#~ msgid "15color"
+#~ msgstr "15couleurs"
+
+#, fuzzy
+#~ msgid "16. Channel"
+#~ msgstr "Canal"
+
+#, fuzzy
+#~ msgid "2. Channel"
+#~ msgstr "Canal"
+
+#, fuzzy
+#~ msgid "2D Graph from profiles:"
+#~ msgstr "Ouvrir Profil"
+
+#~ msgid "2color"
+#~ msgstr "2couleurs"
+
+#, fuzzy
+#~ msgid "3. Channel"
+#~ msgstr "Canal"
+
+#~ msgid "3color"
+#~ msgstr "3couleurs"
+
+#, fuzzy
+#~ msgid "4. Channel"
+#~ msgstr "Canal"
+
+#~ msgid "4color"
+#~ msgstr "4couleurs"
+
+#, fuzzy
+#~ msgid "5. Channel"
+#~ msgstr "Canal"
+
+#~ msgid "5color"
+#~ msgstr "5couleurs"
+
+#, fuzzy
+#~ msgid "6. Channel"
+#~ msgstr "Canal"
+
+#~ msgid "6color"
+#~ msgstr "6couleurs"
+
+#, fuzzy
+#~ msgid "7. Channel"
+#~ msgstr "Canal"
+
+#~ msgid "7color"
+#~ msgstr "7couleurs"
+
+#, fuzzy
+#~ msgid "8. Channel"
+#~ msgstr "Canal"
+
+#~ msgid "8color"
+#~ msgstr "8couleurs"
+
+#, fuzzy
+#~ msgid "9. Channel"
+#~ msgstr "Canal"
+
+#~ msgid "9color"
+#~ msgstr "9couleurs"
+
+#~ msgid "About"
+#~ msgstr "À propos"
+
+#~ msgid "About ICC Examin"
+#~ msgstr "À propos ICC Examin"
+
+#~ msgid "Absolute Colorimetric"
+#~ msgstr "Colorimétrie absolue"
+
+#~ msgid "Abstract"
+#~ msgstr "Soustraction"
+
+#, fuzzy
+#~ msgid "Activate profiles:"
+#~ msgstr "Ouvrir Profil"
+
+#, fuzzy
+#~ msgid "Active Policy:"
+#~ msgstr "Ouvrir Profil"
+
+#, fuzzy
+#~ msgid "Add Device"
+#~ msgstr "Couleur"
+
+#, fuzzy
+#~ msgid "Analyze ICC profile information on your system."
+#~ msgstr "Oyranos Préférences"
+
+#, fuzzy
+#~ msgid "Assign Assumed Profile"
+#~ msgstr "Ouvrir Profil"
+
+#, fuzzy
+#~ msgid "Assign No Profile"
+#~ msgstr "Ouvrir Profil"
+
+#, fuzzy
+#~ msgid "Assign profile to device:"
+#~ msgstr "Ouvrir Profil"
+
+#, fuzzy
+#~ msgid "Assumed Cmyk source"
+#~ msgstr "Espace colorimétrique"
+
+#, fuzzy
+#~ msgid "Assumed Color Space"
+#~ msgstr "Espace colorimétrique"
+
+#, fuzzy
+#~ msgid "Assumed Color Space for untagged colors"
+#~ msgstr "Espace colorimétrique"
+
+#, fuzzy
+#~ msgid "Assumed Gray source"
+#~ msgstr "Espace colorimétrique"
+
+#, fuzzy
+#~ msgid "Assumed Lab source"
+#~ msgstr "Espace colorimétrique"
+
+#, fuzzy
+#~ msgid "Assumed Rgb source"
+#~ msgstr "Espace colorimétrique"
+
+#, fuzzy
+#~ msgid "Assumed Web source"
+#~ msgstr "Espace colorimétrique"
+
+#, fuzzy
+#~ msgid "Assumed XYZ source"
+#~ msgstr "Espace colorimétrique"
+
+#, fuzzy
+#~ msgid "Attributes"
+#~ msgstr "Attributs:   "
+
+#, fuzzy
+#~ msgid "Attributes:      "
+#~ msgstr "Attributs:   "
+
+#, fuzzy
+#~ msgid "Available Device Profiles:"
+#~ msgstr "ICC Profils"
+
+#~ msgid "Background color"
+#~ msgstr "Couleur Arrière-plan"
+
+#~ msgid "Black"
+#~ msgstr "Noir"
+
+#~ msgid "Blue"
+#~ msgstr "Bleu"
+
+#, fuzzy
+#~ msgid "Blue Gamma:"
+#~ msgstr "Bleu"
+
+#, fuzzy
+#~ msgid "Blue xy:"
+#~ msgstr "Bleu"
+
+#~ msgid "CIE *L"
+#~ msgstr "CIE *L"
+
+#~ msgid "CIE *a"
+#~ msgstr "CIE *a"
+
+#~ msgid "CIE *b"
+#~ msgstr "CIE *b"
+
+#~ msgid "CIE *u"
+#~ msgstr "CIE *u"
+
+#~ msgid "CIE *v"
+#~ msgstr "CIE *v"
+
+#~ msgid "CIE X"
+#~ msgstr "CIE X"
+
+#~ msgid "CIE Y (Luminance)"
+#~ msgstr "CIE Y (Luminance)"
+
+#~ msgid "CIE Z"
+#~ msgstr "CIE Z"
+
+#~ msgid "CIE x"
+#~ msgstr "CIE x"
+
+#~ msgid "CIE y"
+#~ msgstr "CIE y"
+
+#, fuzzy
+#~ msgid "Can not write profile"
+#~ msgstr "Ouvrir Profil"
+
+#~ msgid "Cancel"
+#~ msgstr "Annuler"
+
+#, fuzzy
+#~ msgid "Channels"
+#~ msgstr "Canal"
+
+#~ msgid "Close"
+#~ msgstr "Fermer"
+
+#, fuzzy
+#~ msgid "Cmm:             "
+#~ msgstr "Taille:      "
+
+#~ msgid "Cmy"
+#~ msgstr "Cmy"
+
+#~ msgid "Cmyk"
+#~ msgstr "Cmyk"
+
+#~ msgid "Color"
+#~ msgstr "Couleur"
+
+#~ msgid "Color Space"
+#~ msgstr "Espace colorimétrique"
+
+#~ msgid "Color b"
+#~ msgstr "Couleur b"
+
+#, fuzzy
+#~ msgid "Color channel names"
+#~ msgstr "Couleur r"
+
+#, fuzzy
+#~ msgid "Color channel order"
+#~ msgstr "Couleur r"
+
+#, fuzzy
+#~ msgid "Color channel output names"
+#~ msgstr "Couleur r"
+
+#~ msgid "Color r"
+#~ msgstr "Couleur r"
+
+#, fuzzy
+#~ msgid "Conversion"
+#~ msgstr "ICC Examin Version"
+
+#, fuzzy
+#~ msgid "Convert to Default Cmyk Editing Space"
+#~ msgstr "Espace colorimétrique"
+
+#, fuzzy
+#~ msgid "Convert to Default Rgb Editing Space"
+#~ msgstr "Espace colorimétrique"
+
+#~ msgid "Copyright"
+#~ msgstr "Copyright"
+
+#, fuzzy
+#~ msgid "Copyright &copy;"
+#~ msgstr "Copyright"
+
+#, fuzzy
+#~ msgid "Copyright:       "
+#~ msgstr "Copyright"
+
+#, fuzzy
+#~ msgid "Could not alloc memory"
+#~ msgstr "Ouvrir Profil"
+
+#, fuzzy
+#~ msgid "Could not create a intermediate db object for"
+#~ msgstr "Ouvrir Profil"
+
+#, fuzzy
+#~ msgid "Could not create root JSON node for"
+#~ msgstr "Ouvrir Profil"
+
+#, fuzzy
+#~ msgid "Could not find config"
+#~ msgstr "Ouvrir Profil"
+
+#, fuzzy
+#~ msgid "Could not find db::config object for"
+#~ msgstr "Ouvrir Profil"
+
+#, fuzzy
+#~ msgid "Could not obtain JSON node for"
+#~ msgstr "Ouvrir Profil"
+
+#, fuzzy
+#~ msgid "Could not open ICC profile"
+#~ msgstr "Ouvrir Profil"
+
+#, fuzzy
+#~ msgid "Could not open default ICC profile"
+#~ msgstr "Ouvrir Profil"
+
+#, fuzzy
+#~ msgid "Could not open device"
+#~ msgstr "Ouvrir Profil"
+
+#, fuzzy
+#~ msgid "Could not open instrument"
+#~ msgstr "Ouvrir Profil"
+
+#, fuzzy
+#~ msgid "Could not open or invalid data: "
+#~ msgstr "Ouvrir Profil"
+
+#, fuzzy
+#~ msgid "Could not open profile"
+#~ msgstr "Ouvrir Profil"
+
+#, fuzzy
+#~ msgid "Could not open: "
+#~ msgstr "Ouvrir Profil"
+
+#, fuzzy
+#~ msgid "Could not resolve device."
+#~ msgstr "Ouvrir Profil"
+
+#, fuzzy
+#~ msgid "Could not resolve device_json"
+#~ msgstr "Ouvrir Profil"
+
+#, fuzzy
+#~ msgid "Could not resolve device_name"
+#~ msgstr "Ouvrir Profil"
+
+#, fuzzy
+#~ msgid "Could not setup db objetc"
+#~ msgstr "Ouvrir Profil"
+
+#, fuzzy
+#~ msgid "Could not write to file"
+#~ msgstr "Ouvrir Profil"
+
+#, fuzzy
+#~ msgid "Create a ICC matrix profile."
+#~ msgstr "ICC Profils"
+
+#, fuzzy
+#~ msgid "Create a ICC proofing profile."
+#~ msgstr "ICC Profils"
+
+#, fuzzy
+#~ msgid "Curve Channels:"
+#~ msgstr "Canal"
+
+#, fuzzy
+#~ msgid "Curve Precission:"
+#~ msgstr "Profils"
+
+#, fuzzy
+#~ msgid "Curve Segments:"
+#~ msgstr "Canal"
+
+#, fuzzy
+#~ msgid "Curves for Optimization"
+#~ msgstr "Options"
+
+#~ msgid "Cyan"
+#~ msgstr "Cyan"
+
+#, fuzzy
+#~ msgid "DB File"
+#~ msgstr "Fichier"
+
+#, fuzzy
+#~ msgid "Data Color Space:"
+#~ msgstr "Espace color:"
+
+#, fuzzy
+#~ msgid "Default Profiles"
+#~ msgstr "Profils"
+
+#, fuzzy
+#~ msgid "Description"
+#~ msgstr "Description"
+
+#, fuzzy
+#~ msgid "Description:     "
+#~ msgstr "Description"
+
+#, fuzzy
+#~ msgid "Device"
+#~ msgstr "Couleur"
+
+#, fuzzy
+#~ msgid "Device Class"
+#~ msgstr "Couleur"
+
+#, fuzzy
+#~ msgid "Device Colors"
+#~ msgstr "Couleur"
+
+#, fuzzy
+#~ msgid "Device File"
+#~ msgstr "Oyranos Préférences"
+
+#, fuzzy
+#~ msgid "Device Manufacturer"
+#~ msgstr "Fabricant:   "
+
+#, fuzzy
+#~ msgid "Device Model"
+#~ msgstr "Oyranos Préférences"
+
+#, fuzzy
+#~ msgid "Device Serial:"
+#~ msgstr "Oyranos Préférences"
+
+#, fuzzy
+#~ msgid "Device Settings"
+#~ msgstr "Oyranos Préférences"
+
+#, fuzzy
+#~ msgid "Device colors"
+#~ msgstr "Couleur"
+
+#, fuzzy
+#~ msgid "Device position"
+#~ msgstr "Description"
+
+#~ msgid "Display"
+#~ msgstr "Écran"
+
+#, fuzzy
+#~ msgid "Driver version:"
+#~ msgstr "Fichier"
+
+#, fuzzy
+#~ msgid "Dump device color state:"
+#~ msgstr "Couleur"
+
+#, fuzzy
+#~ msgid "Edit Options ..."
+#~ msgstr "Options"
+
+#, fuzzy
+#~ msgid "Editing Color Space"
+#~ msgstr "Espace colorimétrique"
+
+#, fuzzy
+#~ msgid "Editing Gray"
+#~ msgstr "Espace colorimétrique"
+
+#, fuzzy
+#~ msgid "Editing Lab"
+#~ msgstr "Espace colorimétrique"
+
+#, fuzzy
+#~ msgid "Effect abtract Color Space"
+#~ msgstr "Espace colorimétrique"
+
+#~ msgid "Erase"
+#~ msgstr "Gomme"
+
+#, fuzzy
+#~ msgid "Erase Device"
+#~ msgstr "Couleur"
+
+#, fuzzy
+#~ msgid "Erase Devices"
+#~ msgstr "Couleur"
+
+#, fuzzy
+#~ msgid "Erase profile:"
+#~ msgstr "Ouvrir Profil"
+
+#, fuzzy
+#~ msgid "Error in ICC profile tag found!"
+#~ msgstr "Fichier"
+
+#, fuzzy
+#~ msgid "Error obtaining profile"
+#~ msgstr "ICC Profils"
+
+#, fuzzy
+#~ msgid "Exit!"
+#~ msgstr "Édition"
+
+#, fuzzy
+#~ msgid "Extended Options"
+#~ msgstr "Options"
+
+#, fuzzy
+#~ msgid "Extract ICC profile:"
+#~ msgstr "ICC Profils"
+
+#, fuzzy
+#~ msgid "File Name"
+#~ msgstr "Fichier"
+
+#, fuzzy
+#~ msgid "File Name of OpenICC Device Data Base JSON"
+#~ msgstr "Couleur"
+
+#, fuzzy
+#~ msgid "File exists"
+#~ msgstr "Fichier"
+
+#, fuzzy
+#~ msgid "File:            "
+#~ msgstr "Taille:      "
+
+#, fuzzy
+#~ msgid "Flags:           "
+#~ msgstr "Model:       "
+
+#~ msgid "G"
+#~ msgstr "V"
+
+#, fuzzy
+#~ msgid "Gamma"
+#~ msgstr "Gamut"
+
+#~ msgid "Gamma Blue:  "
+#~ msgstr "Gamma Bleu"
+
+#~ msgid "Gamma Green:"
+#~ msgstr "Gamma Vert:"
+
+#~ msgid "Gamma Green: "
+#~ msgstr "Gamma Vert"
+
+#~ msgid "Gamma Red:   "
+#~ msgstr "Gamma Rouge"
+
+#, fuzzy
+#~ msgid "Gamut View"
+#~ msgstr "Gamut"
+
+#, fuzzy
+#~ msgid "Gamut Warning"
+#~ msgstr "Avertissement Gamut"
+
+#, fuzzy
+#~ msgid "General options"
+#~ msgstr "Options"
+
+#, fuzzy
+#~ msgid "Generate Device Link Profile:"
+#~ msgstr "ICC Profils"
+
+#, fuzzy
+#~ msgid "Get Conversion"
+#~ msgstr "Fichier"
+
+#, fuzzy
+#~ msgid "Get ICC profile"
+#~ msgstr "ICC Profils"
+
+#~ msgid "Gray"
+#~ msgstr "Gris"
+
+#~ msgid "Green"
+#~ msgstr "Vert"
+
+#, fuzzy
+#~ msgid "Green Gamma:"
+#~ msgstr "Vert"
+
+#, fuzzy
+#~ msgid "Green xy:"
+#~ msgstr "Vert"
+
+#, fuzzy
+#~ msgid "Handle options."
+#~ msgstr "Options"
+
+#, fuzzy
+#~ msgid "High Precission"
+#~ msgstr "Profils"
+
+#, fuzzy
+#~ msgid "Hints"
+#~ msgstr " points"
+
+#~ msgid "Hls"
+#~ msgstr "Hls"
+
+#~ msgid "Hsv"
+#~ msgstr "Hsv"
+
+#~ msgid "Hue"
+#~ msgstr "Teinte"
+
+#, fuzzy
+#~ msgid "ICC Examin: Report"
+#~ msgstr "ICC Examin Version"
+
+#, fuzzy
+#~ msgid "ICC header Attributes"
+#~ msgstr "Attributs:   "
+
+#, fuzzy
+#~ msgid "ICC profile"
+#~ msgstr "ICC Profils"
+
+#, fuzzy
+#~ msgid "ICC profile id written"
+#~ msgstr "ICC Profils"
+
+#, fuzzy
+#~ msgid "ICC profile search paths"
+#~ msgstr "ICC Profils"
+
+#, fuzzy
+#~ msgid "ICC profiles"
+#~ msgstr "ICC Profils"
+
+#, fuzzy
+#~ msgid "Illuminant"
+#~ msgstr "Luminance Y"
+
+#, fuzzy
+#~ msgid "Illuminant A"
+#~ msgstr "Luminance Y"
+
+#, fuzzy
+#~ msgid "Illuminant Spectrum Graph:"
+#~ msgstr "Luminance Y"
+
+#, fuzzy
+#~ msgid "Illuminant:      "
+#~ msgstr "Luminance Y"
+
+#~ msgid "Input"
+#~ msgstr "Entrée"
+
+#, fuzzy
+#~ msgid "Input Color Space"
+#~ msgstr "Espace colorimétrique"
+
+#, fuzzy
+#~ msgid "Install ICC profile:"
+#~ msgstr "ICC Profils"
+
+#, fuzzy
+#~ msgid "Install profile"
+#~ msgstr "ICC Profils"
+
+#, fuzzy
+#~ msgid "Install selected profile"
+#~ msgstr "ICC Profils"
+
+#, fuzzy
+#~ msgid "Install the selected profile."
+#~ msgstr "ICC Profils"
+
+#, fuzzy
+#~ msgid "Intent"
+#~ msgstr "Intention:"
+
+#~ msgid "Intent:      "
+#~ msgstr "Intention:   "
+
+#~ msgid "Lab"
+#~ msgstr "Lab"
+
+#~ msgid "Lightness"
+#~ msgstr "Clarté"
+
+#~ msgid "Link"
+#~ msgstr "Lien"
+
+#, fuzzy
+#~ msgid "List Devices"
+#~ msgstr "Oyranos Préférences"
+
+#, fuzzy
+#~ msgid "List available ICC profiles:"
+#~ msgstr "ICC Profils"
+
+#, fuzzy
+#~ msgid "List device classes:"
+#~ msgstr "Oyranos Préférences"
+
+#, fuzzy
+#~ msgid "List modules:"
+#~ msgstr "Oyranos Préférences"
+
+#, fuzzy
+#~ msgid "List search paths:"
+#~ msgstr "ICC Profils"
+
+#~ msgid "Load"
+#~ msgstr "Ouvrir"
+
+#, fuzzy
+#~ msgid "Lookup table, PCS to device, intent perceptual"
+#~ msgstr "Aperçu, colorimétrie relative"
+
+#, fuzzy
+#~ msgid "Lookup table, PCS to device, intent relative colorimetric"
+#~ msgstr "Aperçu, colorimétrie relative"
+
+#, fuzzy
+#~ msgid "Lookup table, PCS to device, intent saturation"
+#~ msgstr "Aperçu, colorimétrie relative"
+
+#, fuzzy
+#~ msgid "Lookup table, device to PCS, intent perceptual"
+#~ msgstr "Aperçu, colorimétrie relative"
+
+#, fuzzy
+#~ msgid "Lookup table, device to PCS, intent relative colorimetric"
+#~ msgstr "Aperçu, colorimétrie relative"
+
+#, fuzzy
+#~ msgid "Lookup table, device to PCS, intent saturation"
+#~ msgstr "Aperçu, colorimétrie relative"
+
+#~ msgid "Luminance"
+#~ msgstr "Luminance"
+
+#~ msgid "Luminance Y"
+#~ msgstr "Luminance Y"
+
+#~ msgid "Luv"
+#~ msgstr "Luv"
+
+#, fuzzy
+#~ msgid "Magic:           "
+#~ msgstr "Taille:      "
+
+#, fuzzy
+#~ msgid "Man"
+#~ msgstr "Magenta"
+
+#, fuzzy
+#~ msgid "Manufacturer"
+#~ msgstr "Fabricant:   "
+
+#~ msgid "Manufacturer:"
+#~ msgstr "Fabricant:   "
+
+#, fuzzy
+#~ msgid "Manufacturer:    "
+#~ msgstr "Fabricant:   "
+
+#, fuzzy
+#~ msgid "Measured colors"
+#~ msgstr "Couleur désignée 2"
+
+#, fuzzy
+#~ msgid "Model"
+#~ msgstr "Model:"
+
+#, fuzzy
+#~ msgid "Model:"
+#~ msgstr "Model:"
+
+#, fuzzy
+#~ msgid "Model:           "
+#~ msgstr "Model:       "
+
+#, fuzzy
+#~ msgid "Modell"
+#~ msgstr "Model:"
+
+#, fuzzy
+#~ msgid "Modell:"
+#~ msgstr "Model:"
+
+#, fuzzy
+#~ msgid "Modify Profile:"
+#~ msgstr "Ouvrir Profil"
+
+#, fuzzy
+#~ msgid "Module"
+#~ msgstr "Options"
+
+#, fuzzy
+#~ msgid "Monitor"
+#~ msgstr "Écran Profil"
+
+#, fuzzy
+#~ msgid "My Filter"
+#~ msgstr "Ouvrir Profil"
+
+#, fuzzy
+#~ msgid "My Filter Object"
+#~ msgstr "Ouvrir Profil"
+
+#, fuzzy
+#~ msgid "My Name"
+#~ msgstr "Nom"
+
+#~ msgid "Name"
+#~ msgstr "Nom"
+
+#~ msgid "Named Color"
+#~ msgstr "Couleur désignée"
+
+#~ msgid "Named Color 2"
+#~ msgstr "Couleur désignée 2"
+
+#~ msgid "Named Coulor"
+#~ msgstr "Couleur désignée"
+
+#, fuzzy
+#~ msgid "Need a ICC profile argument."
+#~ msgstr "Oyranos Préférences"
+
+#, fuzzy
+#~ msgid "Need a ICC profile to modify."
+#~ msgstr "Oyranos Préférences"
+
+#~ msgid "New"
+#~ msgstr "Nouveau"
+
+#~ msgid "No Color"
+#~ msgstr "Non Couleur"
+
+#, fuzzy
+#~ msgid "No ICC profile id detected"
+#~ msgstr "ICC Profils"
+
+#, fuzzy
+#~ msgid "No Image profile"
+#~ msgstr "ICC Profils"
+
+#~ msgid "Open"
+#~ msgstr "Ouvrir"
+
+#, fuzzy
+#~ msgid "OpenICC Json"
+#~ msgstr "ICC Examin Version"
+
+#, fuzzy
+#~ msgid "Optimization"
+#~ msgstr "Options"
+
+#, fuzzy
+#~ msgid "Optimization Curves"
+#~ msgstr "Options"
+
+#, fuzzy
+#~ msgid "Option"
+#~ msgstr "Options"
+
+#, fuzzy
+#~ msgid "Options"
+#~ msgstr "Options"
+
+#, fuzzy
+#~ msgid "Output Color Space"
+#~ msgstr "Espace colorimétrique"
+
+#, fuzzy
+#~ msgid "Oyranos "
+#~ msgstr "Oyranos Préférences"
+
+#, fuzzy
+#~ msgid "Oyranos CUPS"
+#~ msgstr "Oyranos Préférences"
+
+#, fuzzy
+#~ msgid "Oyranos Dummy"
+#~ msgstr "Oyranos Préférences"
+
+#, fuzzy
+#~ msgid "Oyranos Help"
+#~ msgstr "Oyranos Préférences"
+
+#, fuzzy
+#~ msgid "Oyranos ICC policy"
+#~ msgstr "Oyranos Préférences"
+
+#, fuzzy
+#~ msgid "Oyranos ICC policy module"
+#~ msgstr "Oyranos Préférences"
+
+#, fuzzy
+#~ msgid "Oyranos RAW Image"
+#~ msgstr "Oyranos Préférences"
+
+#, fuzzy
+#~ msgid "Oyranos Scanner"
+#~ msgstr "Oyranos Préférences"
+
+#~ msgid "Oyranos Settings"
+#~ msgstr "Oyranos Préférences"
+
+#, fuzzy
+#~ msgid "Oyranos Settings Group"
+#~ msgstr "Oyranos Préférences"
+
+#, fuzzy
+#~ msgid "Oyranos Version"
+#~ msgstr "Oyranos Préférences"
+
+#, fuzzy
+#~ msgid "Oyranos X11"
+#~ msgstr "Oyranos Préférences"
+
+#, fuzzy
+#~ msgid "Oyranos display filter"
+#~ msgstr "Oyranos Préférences"
+
+#, fuzzy
+#~ msgid "Oyranos modules"
+#~ msgstr "Oyranos Préférences"
+
+#, fuzzy
+#~ msgid "Oyranos supplied modules"
+#~ msgstr "Oyranos Préférences"
+
+#, fuzzy
+#~ msgid "PCS Color Space: "
+#~ msgstr "Espace color:"
+
+#, fuzzy
+#~ msgid "PCS Type"
+#~ msgstr "Type"
+
+#, fuzzy
+#~ msgid "Perceptual"
+#~ msgstr "Aperçu, saturation"
+
+#, fuzzy
+#~ msgid "PhotoImageSetter"
+#~ msgstr "Perceptuel"
+
+#, fuzzy
+#~ msgid "Platform:        "
+#~ msgstr "Model:       "
+
+#, fuzzy
+#~ msgid "Policy search paths"
+#~ msgstr "ICC Profils"
+
+#, fuzzy
+#~ msgid "Postscript 2 CRD, absolute colorimetric"
+#~ msgstr "Colorimétrie absolue"
+
+#, fuzzy
+#~ msgid "Postscript 2 CRD, perceptual"
+#~ msgstr "Aperçu, saturation"
+
+#, fuzzy
+#~ msgid "Postscript 2 CRD, relative colorimetric"
+#~ msgstr "Aperçu, colorimétrie relative"
+
+#, fuzzy
+#~ msgid "Postscript 2 CRD, saturated"
+#~ msgstr "Aperçu, saturation"
+
+#, fuzzy
+#~ msgid "Postscript 2 Rendering Intent"
+#~ msgstr "Oyranos Préférences"
+
+#, fuzzy
+#~ msgid "Postscript CRD Information"
+#~ msgstr "Aperçu, saturation"
+
+#, fuzzy
+#~ msgid "Preferred CIE*Lab Editing Color Space"
+#~ msgstr "Espace colorimétrique"
+
+#, fuzzy
+#~ msgid "Preferred Cmyk Editing Color Space"
+#~ msgstr "Espace colorimétrique"
+
+#, fuzzy
+#~ msgid "Preferred Gray Editing Color Space"
+#~ msgstr "Espace colorimétrique"
+
+#, fuzzy
+#~ msgid "Preferred Rgb Editing Color Space"
+#~ msgstr "Espace colorimétrique"
+
+#, fuzzy
+#~ msgid "Preferred XYZ Editing Color Space"
+#~ msgstr "Espace colorimétrique"
+
+#, fuzzy
+#~ msgid "Preview, perceptual"
+#~ msgstr "Aperçu, saturation"
+
+#~ msgid "Preview, photografic"
+#~ msgstr "Aperçu, perceptuel"
+
+#~ msgid "Preview, relative colorimetric"
+#~ msgstr "Aperçu, colorimétrie relative"
+
+#~ msgid "Preview, saturated"
+#~ msgstr "Aperçu, saturation"
+
+#, fuzzy
+#~ msgid "Profile Connection Space"
+#~ msgstr "Espace colorimétrique"
+
+#, fuzzy
+#~ msgid "Profile ID:      "
+#~ msgstr "Ouvrir Profil"
+
+#, fuzzy
+#~ msgid "Profile Illuminant"
+#~ msgstr "Luminance Y"
+
+#, fuzzy
+#~ msgid "Profile Information"
+#~ msgstr "Description"
+
+#, fuzzy
+#~ msgid "Profile Tags"
+#~ msgstr "Fichier"
+
+#, fuzzy
+#~ msgid "Profile description"
+#~ msgstr "Description"
+
+#, fuzzy
+#~ msgid "Profile not useable"
+#~ msgstr "Fichier"
+
+#~ msgid "Profile\"."
+#~ msgstr "Profils"
+
+#, fuzzy
+#~ msgid "Profile:         "
+#~ msgstr "Taille:      "
+
+#, fuzzy
+#~ msgid "Prompt"
+#~ msgstr "Point"
+
+#, fuzzy
+#~ msgid "Proof Profile..."
+#~ msgstr "Écran Profil"
+
+#, fuzzy
+#~ msgid "Proofing"
+#~ msgstr "Profils"
+
+#, fuzzy
+#~ msgid "Proofing Color Space"
+#~ msgstr "Espace colorimétrique"
+
+#, fuzzy
+#~ msgid "Proofing Rendering Intent"
+#~ msgstr "Oyranos Préférences"
+
+#, fuzzy
+#~ msgid "Proofing Settings"
+#~ msgstr "Oyranos Préférences"
+
+#~ msgid "Quit"
+#~ msgstr "Quitter"
+
+#~ msgid "RGB"
+#~ msgstr "RVB"
+
+#~ msgid "Red"
+#~ msgstr "Rouge"
+
+#, fuzzy
+#~ msgid "Red Colorant"
+#~ msgstr "Couleur désignée"
+
+#, fuzzy
+#~ msgid "Red Gamma:"
+#~ msgstr "Gamut"
+
+#, fuzzy
+#~ msgid "Red xy:"
+#~ msgstr "Rouge"
+
+#~ msgid "Refresh"
+#~ msgstr "Rafraîchir"
+
+#~ msgid "Relative Colorimetric"
+#~ msgstr "Colorimétrie relative"
+
+#, fuzzy
+#~ msgid "Rendering Intent"
+#~ msgstr "Oyranos Préférences"
+
+#~ msgid "Reset"
+#~ msgstr "Réinitialiser"
+
+#~ msgid "Rgb"
+#~ msgstr "Rvb"
+
+#~ msgid "Saturation"
+#~ msgstr "Saturation"
+
+#, fuzzy
+#~ msgid "Saturation Graph:"
+#~ msgstr "Saturation"
+
+#, fuzzy
+#~ msgid "Save to a new policy:"
+#~ msgstr "Ouvrir Profil"
+
+#, fuzzy
+#~ msgid "Scanner"
+#~ msgstr "Oyranos Préférences"
+
+#, fuzzy
+#~ msgid "Screening Description"
+#~ msgstr "Description"
+
+#, fuzzy
+#~ msgid "Select Profile"
+#~ msgstr "Profils"
+
+#, fuzzy
+#~ msgid "Select active policy:"
+#~ msgstr "Ouvrir Profil"
+
+#~ msgid "Set"
+#~ msgstr "Définir"
+
+#, fuzzy
+#~ msgid "Set new profile:"
+#~ msgstr "Ouvrir Profil"
+
+#, fuzzy
+#~ msgid "Settings"
+#~ msgstr "Oyranos Préférences"
+
+#, fuzzy
+#~ msgid "Setup device:"
+#~ msgstr "Oyranos Préférences"
+
+#, fuzzy
+#~ msgid "Show Help:"
+#~ msgstr "Model:"
+
+#, fuzzy
+#~ msgid "Show Profile ID:"
+#~ msgstr "Ouvrir Profil"
+
+#, fuzzy
+#~ msgid "Show only device related ICC profiles"
+#~ msgstr "ICC Profils"
+
+#, fuzzy
+#~ msgid "Simulation/Proof Color Space"
+#~ msgstr "Espace colorimétrique"
+
+#, fuzzy
+#~ msgid "Size"
+#~ msgstr "Taille"
+
+#, fuzzy
+#~ msgid "Size:"
+#~ msgstr "Taille"
+
+#, fuzzy
+#~ msgid "Size:            "
+#~ msgstr "Taille:      "
+
+#, fuzzy
+#~ msgid "Tag Version:"
+#~ msgstr "Version:     "
+
+#, fuzzy
+#~ msgid "Taligent"
+#~ msgstr "Magenta"
+
+#, fuzzy
+#~ msgid "Taxi DB Profiles"
+#~ msgstr "Profils"
+
+#, fuzzy
+#~ msgid ""
+#~ "The preferred CIE*Lab Editing Color Space shall describe the CIE*Lab."
+#~ msgstr "Espace colorimétrique"
+
+#, fuzzy
+#~ msgid ""
+#~ "The preferred Cmyk Editing Color Space should represent a color space "
+#~ "that complies to well defined printing conditions like FOGRA or SWOP."
+#~ msgstr "Espace colorimétrique"
+
+#, fuzzy
+#~ msgid ""
+#~ "The preferred Gray Editing Color Space shall describe a single lightness "
+#~ "channel color space for grayscale images."
+#~ msgstr "Espace colorimétrique"
+
+#, fuzzy
+#~ msgid ""
+#~ "The preferred Rgb Editing Color Space should represent a well behaving "
+#~ "color space like sRGB."
+#~ msgstr "Espace colorimétrique"
+
+#, fuzzy
+#~ msgid "The preferred XYZ Editing Color Space shall describe CIE*XYZ."
+#~ msgstr "Espace colorimétrique"
+
+#~ msgid "Transparent, "
+#~ msgstr "Transparent, "
+
+#~ msgid "Type"
+#~ msgstr "Type"
+
+#, fuzzy
+#~ msgid "Type:            "
+#~ msgstr "Taille:      "
+
+#~ msgid "VRML Files (*.wrl)"
+#~ msgstr "VRML Fichier (*.wrl)"
+
+#~ msgid "Value"
+#~ msgstr "Valeur"
+
+#, fuzzy
+#~ msgid "Version"
+#~ msgstr "ICC Examin Version"
+
+#, fuzzy
+#~ msgid "Version:         "
+#~ msgstr "Taille:      "
+
+#, fuzzy
+#~ msgid "Video Monitor"
+#~ msgstr "Écran Profil"
+
+#~ msgid "View"
+#~ msgstr "Vue"
+
+#, fuzzy
+#~ msgid "White xy:"
+#~ msgstr "Blanc"
+
+#, fuzzy
+#~ msgid "Write"
+#~ msgstr "Model:"
+
+#, fuzzy
+#~ msgid "Write DB File"
+#~ msgstr "Ouvrir Profil"
+
+#, fuzzy
+#~ msgid "Write to ICC profile:"
+#~ msgstr "ICC Profils"
+
+#, fuzzy
+#~ msgid "Wrote file"
+#~ msgstr "Ouvrir Profil"
+
+#~ msgid "XYZ"
+#~ msgstr "XYZ"
+
+#~ msgid "YCbCr"
+#~ msgstr "YCbCr"
+
+#~ msgid "Yellow"
+#~ msgstr "Jaune"
+
+#~ msgid "Yes"
+#~ msgstr "Oui"
+
+#~ msgid "Yxy"
+#~ msgstr "Yxy"
+
+#, fuzzy
+#~ msgid "abstract class"
+#~ msgstr "Soustraction"
+
+#~ msgid "black/white"
+#~ msgstr "noir et blanc"
+
+#~ msgid "bytes"
+#~ msgstr "bytes"
+
+#, fuzzy
+#~ msgid "color space class"
+#~ msgstr "Espace colorimétrique"
+
+#, fuzzy
+#~ msgid "create OpenICC device color state JSON including the rank map"
+#~ msgstr "Couleur"
+
+#, fuzzy
+#~ msgid "create OpenICC device color state rank map JSON"
+#~ msgstr "Couleur"
+
+#, fuzzy
+#~ msgid "create fallback ICC profile"
+#~ msgstr "ICC Profils"
+
+#, fuzzy
+#~ msgid "create_profile"
+#~ msgstr "Ouvrir Profil"
+
+#, fuzzy
+#~ msgid "device-class"
+#~ msgstr "Couleur"
+
+#, fuzzy
+#~ msgid "device_class not found:"
+#~ msgstr "Fichier"
+
+#, fuzzy
+#~ msgid "display class"
+#~ msgstr "Écran"
+
+#, fuzzy
+#~ msgid "draw gray"
+#~ msgstr "Gris sombre"
+
+#, fuzzy
+#~ msgid "dump ICC profile"
+#~ msgstr "ICC Profils"
+
+#, fuzzy
+#~ msgid "dump OpenICC device color state rank map JSON"
+#~ msgstr "Couleur"
+
+#, fuzzy
+#~ msgid "erase-device"
+#~ msgstr "Oyranos Préférences"
+
+#, fuzzy
+#~ msgid "extract ICC color profile"
+#~ msgstr "ICC Profils"
+
+#, fuzzy
+#~ msgid "file-name"
+#~ msgstr "Fichier"
+
+#, fuzzy
+#~ msgid "gamma"
+#~ msgstr "gamut"
+
+#~ msgid "gamut"
+#~ msgstr "gamut"
+
+#~ msgid "gray"
+#~ msgstr "gris"
+
+#, fuzzy
+#~ msgid "help"
+#~ msgstr "Aide"
+
+#, fuzzy
+#~ msgid "input class"
+#~ msgstr "Écran"
+
+#, fuzzy
+#~ msgid "installed new policy"
+#~ msgstr "Ouvrir Profil"
+
+#, fuzzy
+#~ msgid "internal name"
+#~ msgstr "Fichier"
+
+#, fuzzy
+#~ msgid "is a CameraRaw conversion tool"
+#~ msgstr "Oyranos Préférences"
+
+#, fuzzy
+#~ msgid "is a ICC color conversion tool"
+#~ msgstr "Oyranos Préférences"
+
+#, fuzzy
+#~ msgid "is a ICC color profile grapher"
+#~ msgstr "ICC couleur profile (*.ic*)"
+
+#, fuzzy
+#~ msgid "is a ICC profile information tool"
+#~ msgstr "Oyranos Préférences"
+
+#, fuzzy
+#~ msgid "is a Oyranos module options tool"
+#~ msgstr "Oyranos Préférences"
+
+#, fuzzy
+#~ msgid "is a Oyranos o(X)FORMS options tool"
+#~ msgstr "Oyranos Préférences"
+
+#, fuzzy
+#~ msgid "is a color profile administration tool for color devices"
+#~ msgstr "Oyranos Préférences"
+
+#, fuzzy
+#~ msgid "is a color profile administration tool for monitors"
+#~ msgstr "Oyranos Préférences"
+
+#, fuzzy
+#~ msgid "is a policy administration tool"
+#~ msgstr "Oyranos Préférences"
+
+#, fuzzy
+#~ msgid "list-devices"
+#~ msgstr "Oyranos Préférences"
+
+#, fuzzy
+#~ msgid "module name"
+#~ msgstr "Fichier"
+
+#, fuzzy
+#~ msgid "mouse"
+#~ msgstr "Fermer"
+
+#, fuzzy
+#~ msgid "nLut"
+#~ msgstr "Entrée"
+
+#, fuzzy
+#~ msgid "named color class"
+#~ msgstr "Couleur désignée 2"
+
+#~ msgid "negative, "
+#~ msgstr "négatif"
+
+#, fuzzy
+#~ msgid "not a profile:"
+#~ msgstr "Ouvrir Profil"
+
+#, fuzzy
+#~ msgid "output"
+#~ msgstr "Sortie"
+
+#, fuzzy
+#~ msgid "output class"
+#~ msgstr "Soustraction"
+
+#, fuzzy
+#~ msgid "policy name"
+#~ msgstr "Fichier"
+
+#, fuzzy
+#~ msgid "policy or filename"
+#~ msgstr "Fichier"
+
+#, fuzzy
+#~ msgid "print only the file name"
+#~ msgstr "Fichier"
+
+#, fuzzy
+#~ msgid "print only the profile name"
+#~ msgstr "Fichier"
+
+#, fuzzy
+#~ msgid "print the full file name"
+#~ msgstr "Fichier"
+
+#, fuzzy
+#~ msgid "print the modules device class"
+#~ msgstr "Oyranos Préférences"
+
+#, fuzzy
+#~ msgid "profile file name"
+#~ msgstr "Fichier"
+
+#, fuzzy
+#~ msgid "profile not found:"
+#~ msgstr "Fichier"
+
+#, fuzzy
+#~ msgid "read from file"
+#~ msgstr "Ouvrir Profil"
+
+#, fuzzy
+#~ msgid "select ICC v2 profiles"
+#~ msgstr "ICC Profils"
+
+#, fuzzy
+#~ msgid "select ICC v4 profiles"
+#~ msgstr "ICC Profils"
+
+#, fuzzy
+#~ msgid "select a ICC v2 profile"
+#~ msgstr "ICC Profils"
+
+#, fuzzy
+#~ msgid "select a ICC v4 profile"
+#~ msgstr "ICC Profils"
+
+#, fuzzy
+#~ msgid "show as well non matching profiles"
+#~ msgstr "ICC Profils"
+
+#~ msgid "unknown"
+#~ msgstr "inconnue"
+
+#, fuzzy
+#~ msgid "unknown Color"
+#~ msgstr "Non Couleur"
+
+#, fuzzy
+#~ msgid "use new name"
+#~ msgstr "Fichier"
+
+#, fuzzy
+#~ msgid "will overwrite policy file"
+#~ msgstr "Ouvrir Profil"
+
+#~ msgid "with"
+#~ msgstr "avec"
+
+#, fuzzy
+#~ msgid "write assigned ICC profile"
+#~ msgstr "ICC Profils"
+
+#, fuzzy
+#~ msgid "write to specified file"
+#~ msgstr "Ouvrir Profil"

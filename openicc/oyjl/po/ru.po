@@ -1,0 +1,115 @@
+# translation of ru.po to
+# Russian translations for oyranos
+# Copyright (C) 2015 Kai-Uwe Behrmann
+# This file is distributed under the same license as the oyranos package.
+# Kai-Uwe Behrmann <ku.b@gmx.de>, 2015.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: openicc\n"
+"Report-Msgid-Bugs-To: ku.b@gmx.de\n"
+"POT-Creation-Date: 2019-01-14 10:18+0100\n"
+"PO-Revision-Date: 2015-02-20 17:32+0100\n"
+"Last-Translator: Kai-Uwe Behrmann <ku.b@gmx.de>\n"
+"Language-Team: russian <ru@li.org>\n"
+"Language: ru\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.5.4\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Language: ru_RU\n"
+
+#: oyjl.c:76
+msgid "Example"
+msgstr "приме́р"
+
+#: oyjl.c:73
+msgid "General options:"
+msgstr ""
+
+#: oyjl.c:67
+msgid "JSON file"
+msgstr ""
+
+#: oyjl.c:77
+msgid "Print JSON:"
+msgstr ""
+
+#: oyjl.c:70
+msgid "Print a help text:"
+msgstr ""
+
+#: oyjl.c:80
+msgid "Print count:"
+msgstr ""
+
+#: oyjl.c:83
+msgid "Print key name:"
+msgstr ""
+
+#: oyjl.c:86
+msgid "Print path:"
+msgstr ""
+
+#: oyjl.c:58
+msgid "Print:"
+msgstr ""
+
+#: oyjl.c:89
+msgid "Set key/value:"
+msgstr ""
+
+#: oyjl.c:32 oyjl.c:45 oyjl.c:57
+msgid "Usage"
+msgstr "по́льзование"
+
+#: oyjl.c:55
+msgid "is a JSON parse tool"
+msgstr ""
+
+#: oyjl.c:43
+msgid "is a JSON to XML converter"
+msgstr ""
+
+#: oyjl.c:30
+msgid "is a JSON to YAML converter"
+msgstr ""
+
+#: oyjl.c:74
+msgid "verbose"
+msgstr ""
+
+#~ msgid "About Oyranos"
+#~ msgstr "О программе Oyranos"
+
+#~ msgid "Exit!"
+#~ msgstr "Выход!"
+
+#~ msgid "File:            "
+#~ msgstr "файл: "
+
+#~ msgid "Help"
+#~ msgstr "Справка"
+
+#~ msgid "ICC profile"
+#~ msgstr "ICC-профиль"
+
+#~ msgid "ICC profiles"
+#~ msgstr "ICC-профили"
+
+#~ msgid "Size"
+#~ msgstr "Размер"
+
+#~ msgid "Size:"
+#~ msgstr "Размер:"
+
+#~ msgid "Size:            "
+#~ msgstr "Размер: "
+
+#~ msgid "Value"
+#~ msgstr "значе́ние"
+
+#~ msgid "Version:         "
+#~ msgstr "ве́рсия:          "

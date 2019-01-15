@@ -138,7 +138,31 @@ CHECK_LIBRARY_EXISTS(m pow "math.h" HAVE_M)
 IF(HAVE_M)
   SET( EXTRA_CORE_LIBS ${EXTRA_CORE_LIBS} m )
 ENDIF(HAVE_M)
-CHECK_INCLUDE_FILE(locale.h     HAVE_LOCALE_H)
+CHECK_INCLUDE_FILE(locale.h     OYJL_HAVE_LOCALE_H)
+CHECK_INCLUDE_FILE(libintl.h    OYJL_HAVE_LIBINTL_H)
+FIND_PACKAGE( GetText )
+MESSAGE( "GetText: ${GETTEXT_FOUND}" )
+IF( GETTEXT_FOUND )
+  SET( USE_GETTEXT TRUE )
+  SET( ${PROJECT_UP_NAME}_USE_GETTEXT TRUE )
+  SET( ${PROJECT_UP_NAME}_LOCALEDIR "${CMAKE_INSTALL_FULL_LOCALEDIR}" )
+
+  SET( LINGUAS ${CMAKE_SOURCE_DIR}/po/cs.po
+               ${CMAKE_SOURCE_DIR}/po/de.po
+               ${CMAKE_SOURCE_DIR}/po/eo.po
+               ${CMAKE_SOURCE_DIR}/po/eu.po
+               ${CMAKE_SOURCE_DIR}/po/fr.po
+               ${CMAKE_SOURCE_DIR}/po/ru.po
+     )
+  FOREACH( lang ${LINGUAS} )
+    GET_FILENAME_COMPONENT(_absFile ${lang} ABSOLUTE)
+    GET_FILENAME_COMPONENT(_abs_PATH ${_absFile} PATH)
+    GET_FILENAME_COMPONENT(_lang ${_absFile} NAME_WE)
+    SET( LINGUAS_SHORT ${LINGUAS_SHORT} ${_lang} )
+    SET( LINGUAS_GMO_FILES ${LINGUAS_GMO_FILES} " ${CMAKE_BINARY_DIR}/src/${_lang}.gmo" )
+  ENDFOREACH( lang )
+  SET( LINGUAS_FULL cs_CZ de_DE eo eu fr_FR ru_RU )
+ENDIF()
 
 CONFIGURE_FILE(
     "${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_DOWN_NAME}_version.h.in"
@@ -296,7 +320,7 @@ IF( ENABLE_TESTS )
   ADD_EXECUTABLE( oyjl-test-static "${CMAKE_CURRENT_SOURCE_DIR}/test.c" )
   TARGET_LINK_LIBRARIES( oyjl-test-static ${PACKAGE_NAME}-static ${PACKAGE_NAME}-core-static ${EXTRA_LIBS} )
   ADD_CUSTOM_TARGET(check-core
-        ./oyjl-test-core
+        OYJL_LOCALEDIR=${CMAKE_BINARY_DIR}/locale ./oyjl-test-core
         DEPENDS oyjl-test-core
         COMMENT "Test libOyjlCore" VERBATIM )
   ADD_CUSTOM_TARGET(check
@@ -314,6 +338,38 @@ IF(ENABLE_INSTALL_${PROJECT_UP_NAME})
   ADD_CUSTOM_TARGET( uninstall
 	  "${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_BINARY_DIR}/cmake/${PROJECT_NAME}Uninstall.cmake")
 ENDIF(ENABLE_INSTALL_${PROJECT_UP_NAME})
+
+# i18n
+IF( GETTEXT_FOUND )
+  SET(_potFile ${CMAKE_CURRENT_SOURCE_DIR}/po/${PROJECT_DOWN_NAME}.pot)
+  #SET( _xgettext_option_list --language=C --keyword=_ --keyword=N_ --keyword=C_:1c,2 --keyword=NC_:1c,2 -s --package-name=${PROJECT_DOWN_NAME} --package-version=${${PROJECT_NAME}_MAJOR_VERSION}.${${PROJECT_NAME}_MINOR_VERSION} )
+  SET( _xgettext_option_list --add-comments --keyword=gettext --flag=gettext:1:pass-c-format --keyword=_ --flag=_:1:pass-c-format --keyword=N_ --flag=N_:1:pass-c-format  --copyright-holder='Kai-Uwe Behrmann'  --msgid-bugs-address='ku.b@gmx.de' --from-code=utf-8 --package-name=${PROJECT_DOWN_NAME} --package-version=${${PROJECT_NAME}_MAJOR_VERSION}.${${PROJECT_NAME}_MINOR_VERSION} )
+  SET( XGETTEXT_CMD xgettext )
+  FILE( GLOB SRC_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+        oyjl*.c
+        xml2json.c
+        yaml2json.c
+      )
+
+  ADD_CUSTOM_COMMAND(OUTPUT ${_potFile}
+    COMMAND ${XGETTEXT_CMD} ${_xgettext_option_list} -o ${_potFile} ${SRC_FILES}
+    DEPENDS ${SRC_FILES}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    COMMENT "Extract translatable messages to ${_potFile}"
+  )
+
+  SET( LINGUAS po/cs.po po/de.po po/eo.po po/eu.po po/fr.po po/ru.po )
+  # compile translations always to have them ready for installation
+  GETTEXT_CREATE_TRANSLATIONS( ${_potFile} ALL ${LINGUAS} )
+
+  ADD_CUSTOM_COMMAND( OUTPUT ${PROJECT_DOWN_NAME}_gmo-cp
+    COMMAND for lang in ${LINGUAS_SHORT}\; do mkdir -p "${CMAKE_BINARY_DIR}/locale/$$lang/LC_MESSAGES/" \; cp "${CMAKE_CURRENT_BINARY_DIR}/$$lang.gmo" "${CMAKE_BINARY_DIR}/locale/$$lang/LC_MESSAGES/${PROJECT_DOWN_NAME}.mo" \; done
+    COMMENT "put ${PROJECT_DOWN_NAME}.mo files into ${CMAKE_BINARY_DIR}/locale/lang/LC_MESSAGES/ path for testing with LOCDIR"
+                    )
+  ADD_CUSTOM_TARGET( ${PROJECT_DOWN_NAME}_gmo ALL
+                     DEPENDS translations ${PROJECT_DOWN_NAME}_gmo-cp  )
+ENDIF()
+
 
 #
 # Misc.
