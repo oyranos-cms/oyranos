@@ -20,10 +20,6 @@ SET( oyTEST_HEADERS "oyTest.h" )
 qt4_wrap_cpp( oyTEST_MOC_SOURCES ${oyTEST_HEADERS} )
 #Setup MOC
 
-SET( OYRANOS_OBJECT_LIBRARIES
-  ${LIBXML2_LIBRARIES}
-  )
-
 #New oyranos object system
 ADD_LIBRARY( oyranos_object SHARED
 {% for class in classes %}

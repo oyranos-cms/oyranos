@@ -25,11 +25,6 @@
 #ifdef HAVE_LANGINFO_H
 #include <langinfo.h>
 #endif
-#ifdef USE_GETTEXT
-int use_gettext = 1;
-#else
-int use_gettext = 0;
-#endif
 
 /** \addtogroup args Options Handling
  *  @brief   Structured Options and Arguments for more than the command line
@@ -997,7 +992,6 @@ openiccUi_s *  openiccUi_Create      ( int                 argc,
   openiccOption_s * h, * v, * X;
   openiccOPTIONSTATE_e opt_state = openiccOPTION_NONE;
 
-  //openiccInit();
   int use_gettext = 0;
 #ifdef OYJL_USE_GETTEXT
   use_gettext = 1;

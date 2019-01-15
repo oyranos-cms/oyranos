@@ -28,7 +28,9 @@
 #include "oyranos_json.h"
 #include "oyranos_string.h"
 
-#ifdef HAVE_LIBXML2
+#include <oyjl_version.h>
+
+#ifdef OYJL_HAVE_LIBXML2
 #include <libxml/parser.h>
 #include <libxml/xmlmemory.h>
 #include <libxml/xpath.h>
@@ -48,7 +50,7 @@ char** oyXMLgetArray_  (const char       *xml,
                  const char       *key,
                  int              *count);
 
-#ifdef HAVE_LIBXML2
+#ifdef OYJL_HAVE_LIBXML2
 void               oyParseXMLDoc_    ( xmlDocPtr           doc,
                                        xmlNodePtr          cur,
                                        oyUiHandler_s    ** ui_handlers,
@@ -1318,7 +1320,7 @@ int          oyXFORMsRenderUi        ( const char        * xforms,
   oyjl_val root = NULL,
            value = NULL;
   int has_xml = 0;
-#ifdef HAVE_LIBXML2
+#ifdef OYJL_HAVE_LIBXML2
   xmlDocPtr doc = NULL;
   xmlNodePtr cur = NULL;
   const char * text = xforms;
@@ -1482,7 +1484,7 @@ char *       oyXFORMsFromModelAndUi  ( const char        * data,
 }
 
 
-#ifdef HAVE_LIBXML2
+#ifdef OYJL_HAVE_LIBXML2
 /** @internal
  *  Function oyXML2NodeName
  *  @brief   join namespace and node name

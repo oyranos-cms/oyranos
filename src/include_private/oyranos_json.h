@@ -22,7 +22,7 @@ extern "C" {
 #endif /* __cplusplus */
 
 #include "oyranos_string.h"
-#include "oyjl/oyjl.h"
+#include "oyjl.h"
 
 int          oyJson                  ( const char        * json );
 oyjl_val     oyJsonParse             ( const char        * json );
