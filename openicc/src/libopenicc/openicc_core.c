@@ -14,7 +14,7 @@
  */
 
 #include "openicc_config_internal.h"
-#include "oyjl_tree_internal.h"
+#include "oyjl_macros.h"
 
 int openicc_debug_local = 0;
 int * openicc_debug = &openicc_debug_local;
@@ -110,7 +110,7 @@ int                openiccMessageFormat (
     id_text = id_text_tmp;
   }
 
-  oyjlAllocHelper_m_(text, char, 256, malloc, if(id_text_tmp) free(id_text_tmp); return 1);
+  oyjlAllocHelper_m(text, char, 256, malloc, if(id_text_tmp) free(id_text_tmp); return 1);
 
 # define MAX_LEVEL 20
   if(level_PROG < 0)

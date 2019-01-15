@@ -13,7 +13,7 @@
  */
 
 #include "openicc_config_internal.h"
-#include "oyjl_tree_internal.h"
+#include "oyjl_macros.h"
 #include "openicc_db.h"
 #include "xdg_bds.h"
 
@@ -204,14 +204,14 @@ openiccDB_s * openiccDB_NewFrom      ( const char        * top_key_name,
   openiccDB_s * db;
   int error = 0;
 
-  oyjlAllocHelper_m_(db, openiccDB_s, 1, malloc, return db);
+  oyjlAllocHelper_m(db, openiccDB_s, 1, malloc, return db);
 
   db->type = openiccOBJECT_DB;
   db->top_key_name = oyjlStringCopy( top_key_name, malloc );
   if( !db->top_key_name ) { openiccDB_Release( &db ); return db; };
   db->scope = scope;
   db->ks_array_reserved_n = 10;
-  oyjlAllocHelper_m_( db->ks, openiccConfig_s*, db->ks_array_reserved_n, malloc, openiccDB_Release( &db ); return db );
+  oyjlAllocHelper_m( db->ks, openiccConfig_s*, db->ks_array_reserved_n, malloc, openiccDB_Release( &db ); return db );
 
   if(!error &&
      (db->scope == openiccSCOPE_USER_SYS || db->scope == openiccSCOPE_USER))

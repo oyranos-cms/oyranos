@@ -12,15 +12,23 @@
  *  @since    2018/06/00
  */
 
+#include "openicc_conf.h"
 #include "openicc_core.h"
 #include "openicc_config_internal.h"
 
 #include <oyjl.h>
+#include <oyjl_macros.h>
+#include <oyjl_version.h>
 
 #include <stddef.h>
 #include <ctype.h> /* toupper() */
 #ifdef HAVE_LANGINFO_H
 #include <langinfo.h>
+#endif
+#ifdef USE_GETTEXT
+int use_gettext = 1;
+#else
+int use_gettext = 0;
 #endif
 
 /** \addtogroup args Options Handling
@@ -988,7 +996,13 @@ openiccUi_s *  openiccUi_Create      ( int                 argc,
   const char * export = NULL;
   openiccOption_s * h, * v, * X;
   openiccOPTIONSTATE_e opt_state = openiccOPTION_NONE;
-  openiccInit();
+
+  //openiccInit();
+  int use_gettext = 0;
+#ifdef OYJL_USE_GETTEXT
+  use_gettext = 1;
+#endif
+  oyjlInitLanguageDebug( "OpenICC", OI_DEBUG, openicc_debug, use_gettext, "OI_LOCALEDIR", OPENICC_LOCALEDIR, "openicc", openiccMessage_p );
 
   /* allocate options structure */
   openiccUi_s * ui = openiccUi_New( argc, argv ); /* argc+argv are required for parsing the command line options */

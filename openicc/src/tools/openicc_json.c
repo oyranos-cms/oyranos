@@ -23,6 +23,14 @@
 #include "openicc_macros.h"
 #include "openicc_config_internal.h"
 
+#include <oyjl_macros.h>
+
+#ifdef USE_GETTEXT
+int use_gettext = 1;
+#else
+int use_gettext = 0;
+#endif
+
 void printfHelp(int argc, char ** argv, int verbose_)
 {
   int pos = 0;
@@ -81,7 +89,8 @@ int main(int argc, char ** argv)
 #ifdef USE_GETTEXT
   setlocale(LC_ALL,"");
 #endif
-  openiccInit();
+  //openiccInit();
+  oyjlInitLanguageDebug( "OpenICC", OI_DEBUG, openicc_debug, use_gettext, "OI_LOCALEDIR", OPENICC_LOCALEDIR, "openicc", openiccMessage_p );
 
   if(argc >= 2)
   {

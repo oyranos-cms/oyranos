@@ -13,7 +13,7 @@
  */
 
 #include "openicc_config_internal.h"
-#include "oyjl_tree_internal.h"
+#include "oyjl_macros.h"
 
 #if HAVE_POSIX
 #include <unistd.h>  /* getpid() */
@@ -35,7 +35,7 @@ openiccConfig_s *  openiccConfig_FromMem( const char       * data )
   openiccConfig_s * config = NULL;
   if(data && data[0])
   {
-    oyjlAllocHelper_m_(config, openiccConfig_s, 1, malloc, return config);
+    oyjlAllocHelper_m(config, openiccConfig_s, 1, malloc, return config);
 
     config->type = openiccOBJECT_CONFIG;
     config->json_text = strdup( (char*)data );
@@ -50,7 +50,7 @@ openiccConfig_s *  openiccConfig_FromMem( const char       * data )
     if(!config->oyjl)
     {
       char * msg = NULL;
-      oyjlAllocHelper_m_(msg, char, 1024, malloc, );
+      oyjlAllocHelper_m(msg, char, 1024, malloc, );
       config->oyjl = oyjlTreeParse( data, msg, 1024 );
       WARNcc_S( config, "%s\n", msg?msg:"" );
       if( msg ) free(msg);
@@ -233,13 +233,13 @@ const char *       openiccConfig_DeviceGet (
                 if(OYJL_IS_OBJECT( device ))
                 {
                   count = device->u.object.len;
-                  oyjlAllocHelper_m_(*keys, char*, count + 1, alloc, return NULL);
-                  oyjlAllocHelper_m_(*values, char*, count + 1, alloc, goto clean_openiccConfig_DeviceGet);
+                  oyjlAllocHelper_m(*keys, char*, count + 1, alloc, return NULL);
+                  oyjlAllocHelper_m(*values, char*, count + 1, alloc, goto clean_openiccConfig_DeviceGet);
                   for(i = 0; i < count; ++i)
                   {
                     if(device->u.object.keys[i] && device->u.object.keys[i][0])
                     {
-                      oyjlAllocHelper_m_((*keys)[i], char, strlen(device->u.object.keys[i]) + 1, alloc, goto clean_openiccConfig_DeviceGet);
+                      oyjlAllocHelper_m((*keys)[i], char, strlen(device->u.object.keys[i]) + 1, alloc, goto clean_openiccConfig_DeviceGet);
                       strcpy( (*keys)[i], device->u.object.keys[i] );
                     }
                     if(device->u.object.values[i])
@@ -288,7 +288,7 @@ const char *       openiccConfig_DeviceGet (
                       }
                       if(!tmp)
                         tmp = "no value found";
-                      oyjlAllocHelper_m_((*values)[i], char, strlen(tmp) + 1, alloc, goto clean_openiccConfig_DeviceGet);
+                      oyjlAllocHelper_m((*values)[i], char, strlen(tmp) + 1, alloc, goto clean_openiccConfig_DeviceGet);
                       strcpy( (*values)[i], tmp );
                     }
                   }

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2019-01-13 08:13+0100\n"
+"POT-Creation-Date: 2019-01-15 10:10+0100\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -23,11 +23,11 @@ msgstr ""
 msgid "!!! ERROR"
 msgstr "!!! Fehler"
 
-#: libopenicc/openicc_args.c:1014
+#: libopenicc/openicc_args.c:1028
 msgid "... try with --help|-h option for usage text. give up"
 msgstr "... versuche bitte die --help|-h Option für einen Hilfetext. Gebe auf"
 
-#: libopenicc/openicc_args.c:1584 libopenicc/openicc_args.c:1755
+#: libopenicc/openicc_args.c:1598 libopenicc/openicc_args.c:1769
 msgid "AUTHOR"
 msgstr "AUTOR"
 
@@ -44,16 +44,16 @@ msgstr "Trage Gerät ein"
 msgid "Add Device to DB"
 msgstr "Trage Gerät in die DB ein"
 
-#: tools/openicc_json.c:42
+#: tools/openicc_json.c:50
 msgid "Add gettext translated keys to JSON:"
 msgstr "Füge mit gettext übersetzte Schlüssel to JSON hinzu:"
 
-#: libopenicc/openicc_args.c:1594 libopenicc/openicc_args.c:1765
-#: libopenicc/openicc_args.c:1767
+#: libopenicc/openicc_args.c:1608 libopenicc/openicc_args.c:1779
+#: libopenicc/openicc_args.c:1781
 msgid "BUGS"
 msgstr "FEHLER"
 
-#: libopenicc/openicc_args.c:1588 libopenicc/openicc_args.c:1759
+#: libopenicc/openicc_args.c:1602 libopenicc/openicc_args.c:1773
 msgid "COPYRIGHT"
 msgstr "KOPIERRECHT"
 
@@ -61,11 +61,11 @@ msgstr "KOPIERRECHT"
 msgid "Camera"
 msgstr "Kamera"
 
-#: tools/openicc_json.c:38
+#: tools/openicc_json.c:46
 msgid "Convert JSON to gettext ready C strings:"
 msgstr "Wandle JSON in gettext lesbare C Texte:"
 
-#: libopenicc/openicc_args.c:1184
+#: libopenicc/openicc_args.c:1198
 msgid "Copyright"
 msgstr "Kopierrecht"
 
@@ -107,19 +107,19 @@ msgstr "DB Datei"
 msgid "DB File Name"
 msgstr "DB Dateiname"
 
-#: libopenicc/openicc_args.c:1499 libopenicc/openicc_args.c:1674
+#: libopenicc/openicc_args.c:1513 libopenicc/openicc_args.c:1688
 msgid "DESCRIPTION"
 msgstr "BESCHREIBUNG"
 
-#: libopenicc/openicc_args.c:1193
+#: libopenicc/openicc_args.c:1207
 msgid "Date"
 msgstr "Datum"
 
-#: libopenicc/openicc_args.c:805
+#: libopenicc/openicc_args.c:813
 msgid "Description"
 msgstr "Beschreibung"
 
-#: libopenicc/openicc_args.c:1190
+#: libopenicc/openicc_args.c:1204
 msgid "Development"
 msgstr "Entwicklung"
 
@@ -135,15 +135,15 @@ msgstr "Geräteklasse"
 msgid "Device position"
 msgstr "Gerätebeposition"
 
-#: libopenicc/openicc_args.c:1192
+#: libopenicc/openicc_args.c:1206
 msgid "Documentation"
 msgstr "Dokumente"
 
-#: libopenicc/openicc_args.c:283
+#: libopenicc/openicc_args.c:291
 msgid "Double occuring option"
 msgstr "Doppelte Option"
 
-#: libopenicc/openicc_args.c:1188
+#: libopenicc/openicc_args.c:1202
 msgid "Download"
 msgstr "Bezugsquelle"
 
@@ -151,15 +151,15 @@ msgstr "Bezugsquelle"
 msgid "Dump OpenICC JSON"
 msgstr "Schreibe OpenICC Json"
 
-#: libopenicc/openicc_args.c:1375
+#: libopenicc/openicc_args.c:1389
 msgid "ENVIRONMENT VARIABLES"
 msgstr "UMGEBUNGSVARIABLEN"
 
-#: libopenicc/openicc_args.c:1371
+#: libopenicc/openicc_args.c:1385
 msgid "EXAMPLES"
 msgstr "BEISPIELE"
 
-#: libopenicc/openicc_args.c:1373
+#: libopenicc/openicc_args.c:1387
 msgid "EXIT-STATE"
 msgstr "EXIT-STATUS"
 
@@ -175,7 +175,7 @@ msgstr "Lösche Geräte"
 msgid "Erase a Devices from the DB"
 msgstr "Lösche Gerät von der DB"
 
-#: libopenicc/openicc_args.c:194
+#: libopenicc/openicc_args.c:202
 msgid "Export formated text"
 msgstr "Exportiere formatierten Text"
 
@@ -183,7 +183,7 @@ msgstr "Exportiere formatierten Text"
 msgid "FILENAME"
 msgstr "DATEINAME"
 
-#: libopenicc/openicc_args.c:1379
+#: libopenicc/openicc_args.c:1393
 msgid "FILES"
 msgstr "DATEIEN"
 
@@ -199,15 +199,15 @@ msgstr "Dateiname der OpenICC Json Gerätedatenbank"
 msgid "File Name of device JSON Data Base"
 msgstr "Dateiname der Json Gerätedatenbank"
 
-#: libopenicc/openicc_args.c:183
+#: libopenicc/openicc_args.c:191
 msgid "Formated text"
 msgstr "Formatierter Text"
 
-#: libopenicc/openicc_args.c:174
+#: libopenicc/openicc_args.c:182
 msgid "GUI"
 msgstr "GUI"
 
-#: libopenicc/openicc_args.c:177
+#: libopenicc/openicc_args.c:185
 msgid "GUI + Command"
 msgstr "GUI + Kommando"
 
@@ -215,31 +215,31 @@ msgstr "GUI + Kommando"
 msgid "General options"
 msgstr "Allgemeine Optionen"
 
-#: tools/openicc_json.c:51
+#: tools/openicc_json.c:59
 msgid "General options:"
 msgstr "Allgemeine Optionen:"
 
-#: libopenicc/openicc_args.c:178
+#: libopenicc/openicc_args.c:186
 msgid "Get OpenICC Json UI declaration incuding command"
 msgstr "Hole OpenICC Json Benutzerschnittstelle mit Kommando"
 
-#: libopenicc/openicc_args.c:196
+#: libopenicc/openicc_args.c:204
 msgid "Get UI converted into text formats"
 msgstr "Hole Benutzerschnittstelle als Text"
 
-#: libopenicc/openicc_args.c:175
+#: libopenicc/openicc_args.c:183
 msgid "Get a OpenICC Json UI declaration"
 msgstr "Hole OpenICC Json Benutzerschnittstelle"
 
-#: libopenicc/openicc_args.c:181
+#: libopenicc/openicc_args.c:189
 msgid "Get a unix man page"
 msgstr "Hole Unix Handbuchseite"
 
-#: libopenicc/openicc_args.c:184
+#: libopenicc/openicc_args.c:192
 msgid "Get formated text"
 msgstr "Hole formatierten Text"
 
-#: libopenicc/openicc_args.c:1377
+#: libopenicc/openicc_args.c:1391
 msgid "HISTORY"
 msgstr "GESCHICHTE"
 
@@ -247,16 +247,16 @@ msgstr "GESCHICHTE"
 msgid "Help"
 msgstr "Hilfe"
 
-#: libopenicc/openicc_args.c:173
+#: libopenicc/openicc_args.c:181
 msgid "Json"
 msgstr ""
 
-#: libopenicc/openicc_args.c:176
+#: libopenicc/openicc_args.c:184
 msgid "Json + Command"
 msgstr "Json + Kommando"
 
-#: libopenicc/openicc_args.c:1185 libopenicc/openicc_args.c:1590
-#: libopenicc/openicc_args.c:1761
+#: libopenicc/openicc_args.c:1199 libopenicc/openicc_args.c:1604
+#: libopenicc/openicc_args.c:1775
 msgid "License"
 msgstr "Lizenz"
 
@@ -273,7 +273,7 @@ msgstr "Zeige alle Schlüssel/Wertepaare"
 msgid "Long Format"
 msgstr "Langes Format"
 
-#: libopenicc/openicc_args.c:179
+#: libopenicc/openicc_args.c:187
 msgid "Man"
 msgstr "Handbuch"
 
@@ -282,11 +282,11 @@ msgid "Manipulation of OpenICC color management data base device entries."
 msgstr ""
 "Bearbeitung von Geräteeinträgen in der Datenbank für OpenICC Farbmanagement"
 
-#: libopenicc/openicc_args.c:1183
+#: libopenicc/openicc_args.c:1197
 msgid "Manufacturer"
 msgstr "Hersteller"
 
-#: libopenicc/openicc_args.c:182
+#: libopenicc/openicc_args.c:190
 msgid "Markdown"
 msgstr "Markdown"
 
@@ -294,7 +294,7 @@ msgstr "Markdown"
 msgid "Misc"
 msgstr "Verschiedenes"
 
-#: libopenicc/openicc_args.c:1164
+#: libopenicc/openicc_args.c:1178
 msgid "Module"
 msgstr "Modul"
 
@@ -306,7 +306,7 @@ msgstr "Bildschirm"
 msgid "NUMBER"
 msgstr "NUMMER"
 
-#: libopenicc/openicc_args.c:1318
+#: libopenicc/openicc_args.c:1332
 msgid "No"
 msgstr "Nein"
 
@@ -318,7 +318,7 @@ msgstr "Kein JSON Inhalt erhalten für"
 msgid "No JSON obtained for"
 msgstr "Kein JSON erhalten für"
 
-#: libopenicc/openicc_args.c:1501 libopenicc/openicc_args.c:1676
+#: libopenicc/openicc_args.c:1515 libopenicc/openicc_args.c:1690
 msgid "OPTIONS"
 msgstr "OPTIONEN"
 
@@ -326,7 +326,7 @@ msgstr "OPTIONEN"
 msgid "OpenICC Json"
 msgstr "OpenICC Json"
 
-#: libopenicc/openicc_args.c:1191
+#: libopenicc/openicc_args.c:1205
 msgid "OpenICC Module Author"
 msgstr "Autor des OpenICC Modules"
 
@@ -334,19 +334,19 @@ msgstr "Autor des OpenICC Modules"
 msgid "OpenICC devices handling tool"
 msgstr "OpenICC Gerätebearbeitungswerkzeug"
 
-#: libopenicc/openicc_args.c:542
+#: libopenicc/openicc_args.c:550
 msgid "Option has a different value range"
 msgstr "Die Option besitzt einen anderen Wertebereich"
 
-#: libopenicc/openicc_args.c:383 libopenicc/openicc_args.c:438
+#: libopenicc/openicc_args.c:391 libopenicc/openicc_args.c:446
 msgid "Option has a unexpected argument"
 msgstr "Die Option hat einen unerwartetes Argument"
 
-#: libopenicc/openicc_args.c:357 libopenicc/openicc_args.c:415
+#: libopenicc/openicc_args.c:365 libopenicc/openicc_args.c:423
 msgid "Option needs a argument"
 msgstr "Die Option erwartet ein Argument"
 
-#: libopenicc/openicc_args.c:336 libopenicc/openicc_args.c:397
+#: libopenicc/openicc_args.c:344 libopenicc/openicc_args.c:405
 msgid "Option not supported"
 msgstr "Die Option ist nicht unterstützt"
 
@@ -354,7 +354,7 @@ msgstr "Die Option ist nicht unterstützt"
 msgid "Paths:"
 msgstr "Pfade:"
 
-#: tools/openicc_json.c:48
+#: tools/openicc_json.c:56
 msgid "Print a help text:"
 msgstr "Zeige einen Hilfetext an:"
 
@@ -366,15 +366,15 @@ msgstr "Zeige die Geräte aus der DB"
 msgid "Printer"
 msgstr "Drucker"
 
-#: tools/openicc_json.c:218
+#: tools/openicc_json.c:227
 msgid "Rendering Intent"
 msgstr "Übertragungsart"
 
-#: libopenicc/openicc_args.c:1381
+#: libopenicc/openicc_args.c:1395
 msgid "SEE AS WELL"
 msgstr "SIEHE AUCH"
 
-#: libopenicc/openicc_args.c:1488 libopenicc/openicc_args.c:1663
+#: libopenicc/openicc_args.c:1502 libopenicc/openicc_args.c:1677
 msgid "SYNOPSIS"
 msgstr "ÜBERSICHT"
 
@@ -398,15 +398,15 @@ msgstr "Zeige den Dateipfad zur DB"
 msgid "Show Path"
 msgstr "Zeige Pfad"
 
-#: libopenicc/openicc_args.c:1189
+#: libopenicc/openicc_args.c:1203
 msgid "Sources"
 msgstr "Quellen"
 
-#: libopenicc/openicc_args.c:1187
+#: libopenicc/openicc_args.c:1201
 msgid "Support"
 msgstr "Unterstützung"
 
-#: libopenicc/openicc_args.c:807
+#: libopenicc/openicc_args.c:815
 msgid "Synopsis"
 msgstr "Übersicht"
 
@@ -418,27 +418,27 @@ msgstr "System"
 msgid "The File Name of the OpenICC Device in Json format."
 msgstr "Der Dateiname des OpenICC Gerätes im Json Format."
 
-#: libopenicc/openicc_args.c:1162
+#: libopenicc/openicc_args.c:1176
 msgid "Tool"
 msgstr "Werkzeug"
 
-#: libopenicc/openicc_args.c:180
+#: libopenicc/openicc_args.c:188
 msgid "Unix Man page"
 msgstr "Unix Handbuchseite"
 
-#: libopenicc/openicc_args.c:1186
+#: libopenicc/openicc_args.c:1200
 msgid "Url"
 msgstr "Url"
 
-#: libopenicc/openicc_args.c:814 tools/openicc_json.c:37
-#: tools/openicc_json.c:145
+#: libopenicc/openicc_args.c:822 tools/openicc_json.c:45
+#: tools/openicc_json.c:154
 msgid "Usage"
 msgstr "Benutzung"
 
-#: libopenicc/openicc_args.c:283 libopenicc/openicc_args.c:336
-#: libopenicc/openicc_args.c:357 libopenicc/openicc_args.c:383
-#: libopenicc/openicc_args.c:397 libopenicc/openicc_args.c:415
-#: libopenicc/openicc_args.c:438 libopenicc/openicc_args.c:542
+#: libopenicc/openicc_args.c:291 libopenicc/openicc_args.c:344
+#: libopenicc/openicc_args.c:365 libopenicc/openicc_args.c:391
+#: libopenicc/openicc_args.c:405 libopenicc/openicc_args.c:423
+#: libopenicc/openicc_args.c:446 libopenicc/openicc_args.c:550
 msgid "Usage Error:"
 msgstr "Benutzerfehler:"
 
@@ -446,7 +446,7 @@ msgstr "Benutzerfehler:"
 msgid "Verbose"
 msgstr "Plaudernd"
 
-#: libopenicc/openicc_args.c:1194
+#: libopenicc/openicc_args.c:1208
 msgid "Version"
 msgstr "Version"
 
@@ -466,23 +466,23 @@ msgstr "Schreibe DB Datei"
 msgid "Writing failed for"
 msgstr "Schreiben mislungen für"
 
-#: libopenicc/openicc_args.c:1318
+#: libopenicc/openicc_args.c:1332
 msgid "Yes"
 msgstr "Ja"
 
-#: libopenicc/openicc_args.c:191
+#: libopenicc/openicc_args.c:199
 msgid "export"
 msgstr "exportiere"
 
-#: tools/openicc_json.c:33
+#: tools/openicc_json.c:41
 msgid "is a JSON helper tool"
 msgstr "ist ein JSON Hilfswerkzeug"
 
-#: tools/openicc_json.c:55
+#: tools/openicc_json.c:63
 msgid "language specific wrap; -w C for C static char"
 msgstr "sprachspezifische Hülle; -w C für C static char"
 
-#: tools/openicc_json.c:46
+#: tools/openicc_json.c:54
 msgid ""
 "locale directory containing the your-locale/LC_MESSAGES/your-textdomain.mo "
 "gettext translations"
@@ -490,27 +490,27 @@ msgstr ""
 "locale Verzeichnis mit deine-locale/LC_MESSAGES/deine-textdomain.mo gettext "
 "Übersetzungen"
 
-#: tools/openicc_json.c:45
+#: tools/openicc_json.c:53
 msgid "locales in a comma separated list"
 msgstr "Sprachen in einer kommagetrennten Liste"
 
-#: tools/openicc_json.c:53
+#: tools/openicc_json.c:61
 msgid "output"
 msgstr "Ausgabe"
 
-#: tools/openicc_json.c:40
+#: tools/openicc_json.c:48
 msgid "output format string"
 msgstr "Ausgabeformat"
 
-#: tools/openicc_json.c:52
+#: tools/openicc_json.c:60
 msgid "specify JSON file"
 msgstr "gebe eine JSON Datei an"
 
-#: tools/openicc_json.c:44
+#: tools/openicc_json.c:52
 msgid "text domain of your project"
 msgstr "Text ID für das Projekt"
 
-#: tools/openicc_json.c:54
+#: tools/openicc_json.c:62
 msgid "to be used key names in a comma separated list"
 msgstr "zu benutzende Schlüsselwörter in einer kommagetrennten Liste"
 
@@ -518,7 +518,7 @@ msgstr "zu benutzende Schlüsselwörter in einer kommagetrennten Liste"
 msgid "unable to open data base"
 msgstr "kann Datenbank nicht öffnen"
 
-#: tools/openicc_device.c:121 tools/openicc_json.c:56
+#: tools/openicc_device.c:121 tools/openicc_json.c:64
 msgid "verbose"
 msgstr "plaudernd"
 
