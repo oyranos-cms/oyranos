@@ -1,8 +1,6 @@
 IF(ENABLE_DOCU)
   SET( DOC_SOURCES ${DOC_SOURCES}
-        ${CMAKE_SOURCE_DIR}/oyjl.h
-        ${CMAKE_SOURCE_DIR}/oyjl_test.h
-        ${CMAKE_SOURCE_DIR}/oyjl_test_main.h
+        ${CHEADERS_OYJL_PUBLIC}
         ${CMAKE_SOURCE_DIR}/oyjl_core.c
         ${CMAKE_SOURCE_DIR}/oyjl_tree.c
         ${CMAKE_SOURCE_DIR}/oyjl_yajl.c
