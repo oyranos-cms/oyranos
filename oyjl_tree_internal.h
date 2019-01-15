@@ -18,6 +18,7 @@
 #define OYJL_TREE_INTERNAL_H 1
 
 #include "oyjl.h"
+#include "oyjl_i18n.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -26,20 +27,6 @@ extern "C" {
 #if defined(_MSC_VER) 
 #define snprintf sprintf_s
 #endif
-#define oyjlAllocHelper_m_(ptr_, type, size_, alloc_func, action) { \
-  if ((size_) <= 0) {                                       \
-      oyjlMessage_p( oyjlMSG_INSUFFICIENT_DATA, 0, "Nothing to allocate"); \
-  } else {                                                  \
-      void*(*a)(size_t size) = alloc_func;                  \
-      if(!a) a = malloc;                                    \
-      ptr_ = (type*) a(sizeof (type) * (size_t)(size_));    \
-      memset( ptr_, 0, sizeof (type) * (size_t)(size_) );   \
-  }                                                         \
-  if (ptr_ == NULL) {                                       \
-      oyjlMessage_p( oyjlMSG_ERROR, 0, "Out of memory"); \
-    action;                                                 \
-  }                                                         \
-}
 
 #if defined(__GNUC__)
 # define  OYJL_DBG_FORMAT_ "%s:%d %s() "
@@ -49,7 +36,6 @@ extern "C" {
 # define  OYJL_DBG_ARGS_   strrchr(__FILE__,'/') ? strrchr(__FILE__,'/')+1 : __FILE__,__LINE__
 #endif
 
-extern oyjlMessage_f oyjlMessage_p;
 
 int        oyjlTreePathsGetIndex     ( const char        * term,
                                        int               * index );
