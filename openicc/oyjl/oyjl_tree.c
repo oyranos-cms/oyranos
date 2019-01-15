@@ -41,7 +41,7 @@
 #include "oyjl.h"
 #include "oyjl_macros.h"
 #include "oyjl_tree_internal.h"
-#ifdef HAVE_LOCALE_H
+#ifdef OYJL_HAVE_LOCALE_H
 #include <locale.h>
 #endif
 
@@ -972,7 +972,7 @@ static oyjl_val  oyjlTreeGetValue_   ( oyjl_val            v,
           {
             oyjlValueClear( parent );
             parent->type = oyjl_t_array;
-            oyjlAllocHelper_m_( parent->u.array.values, oyjl_val, 2, malloc, oyjlTreeFree( level ); goto clean );
+            oyjlAllocHelper_m( parent->u.array.values, oyjl_val, 2, malloc, oyjlTreeFree( level ); goto clean );
             parent->u.array.len = 0;
           } else
           {
@@ -1021,8 +1021,8 @@ static oyjl_val  oyjlTreeGetValue_   ( oyjl_val            v,
           {
             oyjlValueClear( parent );
             parent->type = oyjl_t_object;
-            oyjlAllocHelper_m_( parent->u.object.values, oyjl_val, 2, malloc, oyjlTreeFree( level ); goto clean );
-            oyjlAllocHelper_m_( parent->u.object.keys, char*, 2, malloc, oyjlTreeFree( level ); goto clean );
+            oyjlAllocHelper_m( parent->u.object.values, oyjl_val, 2, malloc, oyjlTreeFree( level ); goto clean );
+            oyjlAllocHelper_m( parent->u.object.keys, char*, 2, malloc, oyjlTreeFree( level ); goto clean );
             parent->u.object.len = 0;
           } else
           {

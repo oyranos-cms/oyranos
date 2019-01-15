@@ -1,4 +1,4 @@
-/** oyjl_macros.h
+/** \file oyjl_macros.h
  *
  *  @par License: 
  *             MIT <http://www.opensource.org/licenses/mit-license.php>
@@ -6,10 +6,10 @@
  *             (c) 2011 - Kai-Uwe Behrmann <ku.b@gmx.de>
  */
 
-#if !defined(USE_GETTEXT) && !defined(_)
-#define _(text) text
-#endif
+#ifndef OYJL_MACROS_H
+#define OYJL_MACROS_H
 
+#include "oyjl_version.h"
 
 /* command line parsing macros */
 /* allow "-opt val" and "-opt=val" syntax */
@@ -67,6 +67,7 @@
 
 #define verbose oy_debug
 
+extern oyjlMessage_f oyjlMessage_p;
 /** convert ( const char * format, ... ) function args into a string */
 #define OYJL_CREATE_VA_STRING(format_, text_, alloc_, error_action) \
 { \
@@ -95,3 +96,20 @@
   } \
 }
 
+#define oyjlAllocHelper_m(ptr_, type, size_, alloc_func, action) { \
+  if ((size_) <= 0) {                                       \
+      oyjlMessage_p( oyjlMSG_INSUFFICIENT_DATA, 0, "Nothing to allocate"); \
+  } else {                                                  \
+      void*(*a)(size_t size) = alloc_func;                  \
+      if(!a) a = malloc;                                    \
+      ptr_ = (type*) a(sizeof (type) * (size_t)(size_));    \
+      memset( ptr_, 0, sizeof (type) * (size_t)(size_) );   \
+  }                                                         \
+  if (ptr_ == NULL) {                                       \
+      oyjlMessage_p( oyjlMSG_ERROR, 0, "Out of memory"); \
+    action;                                                 \
+  }                                                         \
+}
+
+
+#endif /* OYJL_MACROS_H */
