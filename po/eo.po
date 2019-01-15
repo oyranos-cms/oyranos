@@ -1,0 +1,597 @@
+# translation of de.po to 
+# Esperanto translations for icc_examin
+# Copyright (C) 2005 Kai-Uwe Behrmann
+# Kai-Uwe Behrmann <ku.b@gmx.de>, 2005.
+# This file is distributed under the BSD licence (http://www.opensource.org/licenses/bsd-license.php
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: eo\n"
+"Report-Msgid-Bugs-To: ku.b@gmx.de\n"
+"POT-Creation-Date: 2019-01-14 10:18+0100\n"
+"PO-Revision-Date: 2005-08-13 17:35+0200\n"
+"Last-Translator: Kai-Uwe Behrmann\n"
+"Language-Team:  <eo@li.org>\n"
+"Language: eo\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: KBabel 1.9\n"
+
+#: oyjl.c:76
+msgid "Example"
+msgstr ""
+
+#: oyjl.c:73
+msgid "General options:"
+msgstr ""
+
+#: oyjl.c:67
+msgid "JSON file"
+msgstr ""
+
+#: oyjl.c:77
+msgid "Print JSON:"
+msgstr ""
+
+#: oyjl.c:70
+msgid "Print a help text:"
+msgstr ""
+
+#: oyjl.c:80
+msgid "Print count:"
+msgstr ""
+
+#: oyjl.c:83
+msgid "Print key name:"
+msgstr ""
+
+#: oyjl.c:86
+msgid "Print path:"
+msgstr ""
+
+#: oyjl.c:58
+#, fuzzy
+msgid "Print:"
+msgstr "verda"
+
+#: oyjl.c:89
+msgid "Set key/value:"
+msgstr ""
+
+#: oyjl.c:32 oyjl.c:45 oyjl.c:57
+msgid "Usage"
+msgstr ""
+
+#: oyjl.c:55
+msgid "is a JSON parse tool"
+msgstr ""
+
+#: oyjl.c:43
+msgid "is a JSON to XML converter"
+msgstr ""
+
+#: oyjl.c:30
+msgid "is a JSON to YAML converter"
+msgstr ""
+
+#: oyjl.c:74
+msgid "verbose"
+msgstr ""
+
+#~ msgid " with "
+#~ msgstr " kaj "
+
+#, fuzzy
+#~ msgid "1. Channel"
+#~ msgstr "kanalo"
+
+#, fuzzy
+#~ msgid "10. Channel"
+#~ msgstr "kanalo"
+
+#~ msgid "10color"
+#~ msgstr "10koloroj"
+
+#, fuzzy
+#~ msgid "11. Channel"
+#~ msgstr "kanalo"
+
+#~ msgid "11color"
+#~ msgstr "11koloroj"
+
+#, fuzzy
+#~ msgid "12. Channel"
+#~ msgstr "kanalo"
+
+#~ msgid "12color"
+#~ msgstr "12koloroj"
+
+#, fuzzy
+#~ msgid "13. Channel"
+#~ msgstr "kanalo"
+
+#~ msgid "13color"
+#~ msgstr "13koloroj"
+
+#, fuzzy
+#~ msgid "14. Channel"
+#~ msgstr "kanalo"
+
+#~ msgid "14color"
+#~ msgstr "14koloroj"
+
+#, fuzzy
+#~ msgid "15. Channel"
+#~ msgstr "kanalo"
+
+#~ msgid "15color"
+#~ msgstr "15koloroj"
+
+#, fuzzy
+#~ msgid "16. Channel"
+#~ msgstr "kanalo"
+
+#, fuzzy
+#~ msgid "2. Channel"
+#~ msgstr "kanalo"
+
+#~ msgid "2color"
+#~ msgstr "2koloroj"
+
+#, fuzzy
+#~ msgid "3. Channel"
+#~ msgstr "kanalo"
+
+#~ msgid "3color"
+#~ msgstr "3koloroj"
+
+#, fuzzy
+#~ msgid "4. Channel"
+#~ msgstr "kanalo"
+
+#~ msgid "4color"
+#~ msgstr "4koloroj"
+
+#, fuzzy
+#~ msgid "5. Channel"
+#~ msgstr "kanalo"
+
+#~ msgid "5color"
+#~ msgstr "5koloroj"
+
+#, fuzzy
+#~ msgid "6. Channel"
+#~ msgstr "kanalo"
+
+#~ msgid "6color"
+#~ msgstr "6koloroj"
+
+#, fuzzy
+#~ msgid "7. Channel"
+#~ msgstr "kanalo"
+
+#~ msgid "7color"
+#~ msgstr "7koloroj"
+
+#, fuzzy
+#~ msgid "8. Channel"
+#~ msgstr "kanalo"
+
+#~ msgid "8color"
+#~ msgstr "8koloroj"
+
+#, fuzzy
+#~ msgid "9. Channel"
+#~ msgstr "kanalo"
+
+#~ msgid "9color"
+#~ msgstr "9koloroj"
+
+#, fuzzy
+#~ msgid "Add Device"
+#~ msgstr "kolora"
+
+#, fuzzy
+#~ msgid "Assumed Cmyk source"
+#~ msgstr "kolora"
+
+#, fuzzy
+#~ msgid "Assumed Color Space"
+#~ msgstr "kolora"
+
+#, fuzzy
+#~ msgid "Assumed Color Space for untagged colors"
+#~ msgstr "kolora"
+
+#, fuzzy
+#~ msgid "Assumed Gray source"
+#~ msgstr "kolora"
+
+#, fuzzy
+#~ msgid "Assumed Lab source"
+#~ msgstr "kolora"
+
+#, fuzzy
+#~ msgid "Assumed Rgb source"
+#~ msgstr "kolora"
+
+#, fuzzy
+#~ msgid "Assumed Web source"
+#~ msgstr "kolora"
+
+#, fuzzy
+#~ msgid "Assumed XYZ source"
+#~ msgstr "kolora"
+
+#~ msgid "Black"
+#~ msgstr "Nigra"
+
+#~ msgid "Blue"
+#~ msgstr "Blua"
+
+#, fuzzy
+#~ msgid "Blue Gamma:"
+#~ msgstr "Blua"
+
+#, fuzzy
+#~ msgid "Blue xy:"
+#~ msgstr "Blua"
+
+#, fuzzy
+#~ msgid "Channels"
+#~ msgstr "kanalo"
+
+#~ msgid "Color"
+#~ msgstr "kolora"
+
+#, fuzzy
+#~ msgid "Color Space"
+#~ msgstr "kolora"
+
+#~ msgid "Color b"
+#~ msgstr "Koloro b"
+
+#, fuzzy
+#~ msgid "Color channel names"
+#~ msgstr "kolora"
+
+#, fuzzy
+#~ msgid "Color channel order"
+#~ msgstr "kolora"
+
+#, fuzzy
+#~ msgid "Color channel output names"
+#~ msgstr "kolora"
+
+#~ msgid "Color r"
+#~ msgstr "Koloro r"
+
+#~ msgid "Conversion table with 16-bit precission:"
+#~ msgstr "kun 8-bitoj"
+
+#~ msgid "Conversion table with 8-bit precission:"
+#~ msgstr "kun 16-bitoj"
+
+#, fuzzy
+#~ msgid "Curve Channels:"
+#~ msgstr "kanalo"
+
+#, fuzzy
+#~ msgid "Curve Segments:"
+#~ msgstr "kanalo"
+
+#~ msgid "Cyan"
+#~ msgstr "Cejana"
+
+#, fuzzy
+#~ msgid "Data Color Space:"
+#~ msgstr "kolora"
+
+#, fuzzy
+#~ msgid "Device"
+#~ msgstr "kolora"
+
+#, fuzzy
+#~ msgid "Device Class"
+#~ msgstr "kolora"
+
+#, fuzzy
+#~ msgid "Device File"
+#~ msgstr "kolora"
+
+#, fuzzy
+#~ msgid "Device Manufacturer"
+#~ msgstr "kolora"
+
+#, fuzzy
+#~ msgid "Device Model"
+#~ msgstr "kolora"
+
+#, fuzzy
+#~ msgid "Device colors"
+#~ msgstr "kolora"
+
+#, fuzzy
+#~ msgid "Device position"
+#~ msgstr "kolora"
+
+#~ msgid "Display"
+#~ msgstr "Ekrano"
+
+#, fuzzy
+#~ msgid "Dump device color state:"
+#~ msgstr "kolora"
+
+#, fuzzy
+#~ msgid "Editing Color Space"
+#~ msgstr "kolora"
+
+#, fuzzy
+#~ msgid "Editing Gray"
+#~ msgstr "kolora"
+
+#, fuzzy
+#~ msgid "Editing Lab"
+#~ msgstr "kolora"
+
+#, fuzzy
+#~ msgid "Effect abtract Color Space"
+#~ msgstr "kolora"
+
+#, fuzzy
+#~ msgid "Erase Device"
+#~ msgstr "kolora"
+
+#, fuzzy
+#~ msgid "Erase Devices"
+#~ msgstr "kolora"
+
+#, fuzzy
+#~ msgid "File Name"
+#~ msgstr "nomo"
+
+#, fuzzy
+#~ msgid "File Name of OpenICC Device Data Base JSON"
+#~ msgstr "kolora"
+
+#, fuzzy
+#~ msgid "For Print"
+#~ msgstr "verda"
+
+#, fuzzy
+#~ msgid "For Screen"
+#~ msgstr "verda"
+
+#~ msgid "G"
+#~ msgstr "V"
+
+#~ msgid "Gray"
+#~ msgstr "Griza"
+
+#~ msgid "Green"
+#~ msgstr "Verda"
+
+#, fuzzy
+#~ msgid "Green Gamma:"
+#~ msgstr "Verda"
+
+#, fuzzy
+#~ msgid "Green xy:"
+#~ msgstr "Verda"
+
+#, fuzzy
+#~ msgid "Hints"
+#~ msgstr "punktoj"
+
+#~ msgid "Hue"
+#~ msgstr "tono"
+
+#, fuzzy
+#~ msgid "Input Color Space"
+#~ msgstr "kolora"
+
+#, fuzzy
+#~ msgid "List Devices"
+#~ msgstr "kolora"
+
+#, fuzzy
+#~ msgid "Man"
+#~ msgstr "Fuksina"
+
+#, fuzzy
+#~ msgid "Manufacturer"
+#~ msgstr "kolora"
+
+#, fuzzy
+#~ msgid "Measured colors"
+#~ msgstr "kolora"
+
+#~ msgid "Media black point"
+#~ msgstr "nigro punkto"
+
+#~ msgid "Media white point"
+#~ msgstr "blanco punkto"
+
+#~ msgid "Name"
+#~ msgstr "nomo"
+
+#, fuzzy
+#~ msgid "Named Color"
+#~ msgstr "kolora"
+
+#, fuzzy
+#~ msgid "Named Color 2"
+#~ msgstr "kolora"
+
+#~ msgid "Number of colors:"
+#~ msgstr "nombro koloroj:"
+
+#~ msgid "Number of input channels"
+#~ msgstr "numbro kanaloj"
+
+#, fuzzy
+#~ msgid "Output Color Space"
+#~ msgstr "kolora"
+
+#, fuzzy
+#~ msgid "PCS Color Space: "
+#~ msgstr "kolora"
+
+#, fuzzy
+#~ msgid "PhotoImageSetter"
+#~ msgstr "fotografico"
+
+#, fuzzy
+#~ msgid "Photografic"
+#~ msgstr "fotografico"
+
+#, fuzzy
+#~ msgid "Postscript CRD Information"
+#~ msgstr "kolora"
+
+#, fuzzy
+#~ msgid "Preferred CIE*Lab Editing Color Space"
+#~ msgstr "kolora"
+
+#, fuzzy
+#~ msgid "Preferred Cmyk Editing Color Space"
+#~ msgstr "kolora"
+
+#, fuzzy
+#~ msgid "Preferred Gray Editing Color Space"
+#~ msgstr "kolora"
+
+#, fuzzy
+#~ msgid "Preferred Rgb Editing Color Space"
+#~ msgstr "kolora"
+
+#, fuzzy
+#~ msgid "Preferred XYZ Editing Color Space"
+#~ msgstr "kolora"
+
+#, fuzzy
+#~ msgid "Profile Connection Space"
+#~ msgstr "kolora"
+
+#, fuzzy
+#~ msgid "Profile Information"
+#~ msgstr "kolora"
+
+#, fuzzy
+#~ msgid "Proofing Color Space"
+#~ msgstr "kolora"
+
+#~ msgid "RGB"
+#~ msgstr "RVB"
+
+#~ msgid "Red"
+#~ msgstr "Ruĝa"
+
+#, fuzzy
+#~ msgid "Red Colorant"
+#~ msgstr "kolora"
+
+#, fuzzy
+#~ msgid "Red xy:"
+#~ msgstr "Ruĝa"
+
+#~ msgid "Saturation"
+#~ msgstr "pureco"
+
+#, fuzzy
+#~ msgid "Saturation Graph:"
+#~ msgstr "pureco"
+
+#, fuzzy
+#~ msgid "Screening"
+#~ msgstr "verda"
+
+#, fuzzy
+#~ msgid "Silkscreen"
+#~ msgstr "verda"
+
+#, fuzzy
+#~ msgid "Simulation/Proof Color Space"
+#~ msgstr "kolora"
+
+#, fuzzy
+#~ msgid "Taligent"
+#~ msgstr "Fuksina"
+
+#, fuzzy
+#~ msgid "White xy:"
+#~ msgstr "Blanka"
+
+#~ msgid "Yellow"
+#~ msgstr "Flava"
+
+#~ msgid "Yes"
+#~ msgstr "Jes"
+
+#~ msgid "black/white"
+#~ msgstr "nigro/blanco"
+
+#, fuzzy
+#~ msgid "color space class"
+#~ msgstr "kolora"
+
+#, fuzzy
+#~ msgid "create OpenICC device color state JSON including the rank map"
+#~ msgstr "kolora"
+
+#, fuzzy
+#~ msgid "create OpenICC device color state rank map JSON"
+#~ msgstr "kolora"
+
+#, fuzzy
+#~ msgid "device-class"
+#~ msgstr "kolora"
+
+#, fuzzy
+#~ msgid "device_class not found:"
+#~ msgstr "kolora"
+
+#, fuzzy
+#~ msgid "display class"
+#~ msgstr "Ekrano"
+
+#, fuzzy
+#~ msgid "draw gray"
+#~ msgstr "Griza"
+
+#, fuzzy
+#~ msgid "dump OpenICC device color state rank map JSON"
+#~ msgstr "kolora"
+
+#, fuzzy
+#~ msgid "input class"
+#~ msgstr "Ekrano"
+
+#, fuzzy
+#~ msgid "list-devices"
+#~ msgstr "kolora"
+
+#, fuzzy
+#~ msgid "named color class"
+#~ msgstr "kolora"
+
+#, fuzzy
+#~ msgid "no Screen found"
+#~ msgstr "verda"
+
+#, fuzzy
+#~ msgid "omit the spectral line"
+#~ msgstr "spektra linio"
+
+#, fuzzy
+#~ msgid "open X Screen failed"
+#~ msgstr "verda"
+
+#, fuzzy
+#~ msgid "unknown"
+#~ msgstr "kolora"
+
+#~ msgid "with"
+#~ msgstr "kun"

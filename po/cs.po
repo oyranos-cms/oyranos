@@ -1,0 +1,4408 @@
+# Czech translation of icc_examin
+# Copyright (c) 2008 Milan Knizek
+# This file is distributed under the BSD licence (http://www.opensource.org/licenses/bsd-license.php)
+# First translator Milan Knizek <knizek@volny.cz>, 2008
+msgid ""
+msgstr ""
+"Project-Id-Version: openicc\n"
+"Report-Msgid-Bugs-To: ku.b@gmx.de\n"
+"POT-Creation-Date: 2019-01-14 10:18+0100\n"
+"PO-Revision-Date: 2012-10-19 15:10+0100\n"
+"Last-Translator: Milan Knížek <knizek@volny.cz>\n"
+"Language-Team: Czech <cs@li.org>\n"
+"Language: cs\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: oyjl.c:76
+msgid "Example"
+msgstr "Příklad"
+
+#: oyjl.c:73
+msgid "General options:"
+msgstr "Obecné volby:"
+
+#: oyjl.c:67
+msgid "JSON file"
+msgstr ""
+
+#: oyjl.c:77
+#, fuzzy
+msgid "Print JSON:"
+msgstr "Tiskárna CUPS"
+
+#: oyjl.c:70
+msgid "Print a help text:"
+msgstr "Vytisknout nápovědu:"
+
+#: oyjl.c:80
+msgid "Print count:"
+msgstr ""
+
+#: oyjl.c:83
+#, fuzzy
+msgid "Print key name:"
+msgstr "Jméno ovladače:"
+
+#: oyjl.c:86
+#, fuzzy
+msgid "Print path:"
+msgstr "Vytisknout nápovědu:"
+
+#: oyjl.c:58
+#, fuzzy
+msgid "Print:"
+msgstr "Tiskárna"
+
+#: oyjl.c:89
+msgid "Set key/value:"
+msgstr ""
+
+#: oyjl.c:32 oyjl.c:45 oyjl.c:57
+msgid "Usage"
+msgstr "Použití"
+
+#: oyjl.c:55
+msgid "is a JSON parse tool"
+msgstr ""
+
+#: oyjl.c:43
+msgid "is a JSON to XML converter"
+msgstr ""
+
+#: oyjl.c:30
+msgid "is a JSON to YAML converter"
+msgstr ""
+
+#: oyjl.c:74
+msgid "verbose"
+msgstr "upovídaný výstup"
+
+#~ msgid ""
+#~ "    ICC Examin is licensed under the GPL version 2.    Especially all "
+#~ "icc_* files are licensed under the GPL.<br>    The other source files may "
+#~ "contain devergine licenses, which are detectable from file headers. "
+#~ msgstr ""
+#~ "    ICC Examin podleha licenci GPL verze 2. Zvlaste vsechny icc_* soubory "
+#~ "podlehaji licenci GPL.<br> Ostatni zdrojove soubory mohou obsahovat "
+#~ "odchylene licence, ktera jsou patrne z hlavicek souboru."
+
+#~ msgid "  (dE CIE 2000) averaging: "
+#~ msgstr " (dE CIE 2000) prumery: "
+
+#~ msgid "  FLTK: Bill Spitzack and others www.fltk.org<br>\n"
+#~ msgstr " FLTK: Bill Spitzack a dalsi www.fltk.org<br>\n"
+
+#~ msgid "  FLU: Jason Bryan www.osc.edu/~jbryan/FLU/<br>\n"
+#~ msgstr " FLU: Jason Bryan www.osc.edu/~jbryan/FLU/<br>\n"
+
+#~ msgid ""
+#~ "  FTGL: Henry Maddocks homepages.paradise.net.nz/henryj/code/#FTGL<br>\n"
+#~ msgstr ""
+#~ "  FTGL: Henry Maddocks homepages.paradise.net.nz/henryj/code/#FTGL<br>\n"
+
+#~ msgid "  agv 3D Navigation: Philip Winston<br>\n"
+#~ msgstr "  agv 3D Navigation: Philip Winston<br>\n"
+
+#~ msgid ""
+#~ "  argyll: Greame Gill web.access.net.au/argyll/argyllcms.html<br<br><br>\n"
+#~ msgstr ""
+#~ "  argyll: Greame Gill web.access.net.au/argyll/argyllcms."
+#~ "html<br><br><br>\n"
+
+#~ msgid "  littleCMS: Marti Maria www.littlecms.com<br>\n"
+#~ msgstr " littleCMS: Marti Maria www.littlecms.com<br>\n"
+
+#~ msgid "  maximum: "
+#~ msgstr " maximum: "
+
+#~ msgid "  minimum: "
+#~ msgstr " minimum: "
+
+#~ msgid " bsp rendering: Norman Chin<br>\n"
+#~ msgstr " bsp vykreslovani: Norman Chin<br>\n"
+
+#~ msgid " typ - no text output"
+#~ msgstr "typ - zadny textovy výstup"
+
+#~ msgid " used too early!"
+#~ msgstr " pouzito prilis brzy!"
+
+#~ msgid " with "
+#~ msgstr " s"
+
+#~ msgid " with Gamma: 1.0"
+#~ msgstr " s gama: 1.0"
+
+#~ msgid " with one entry for gamma: "
+#~ msgstr " s jednim vstupem pro gama: "
+
+#~ msgid "!!! ERROR"
+#~ msgstr "!!! CHYBA"
+
+#~ msgid "!!! Warning !!!"
+#~ msgstr "!!! Varovani !!!"
+
+#~ msgid "&Done"
+#~ msgstr "&Hotovo"
+
+#~ msgid "(device) link class"
+#~ msgstr "třída spojovacího profilu"
+
+#~ msgid "---"
+#~ msgstr "---"
+
+#~ msgid "----"
+#~ msgstr "----"
+
+#~ msgid "--module name"
+#~ msgstr "--module jméno"
+
+#~ msgid "-d device_position_start_from_zero"
+#~ msgstr "-d device_position_start_from_zero"
+
+#~ msgid "-v verbose"
+#~ msgstr "-v upovídaný výstup"
+
+#~ msgid "..."
+#~ msgstr "..."
+
+#~ msgid "/"
+#~ msgstr "/"
+
+#~ msgid "0"
+#~ msgstr "0"
+
+#~ msgid "0,0,0"
+#~ msgstr "0,0,0"
+
+#~ msgid "0/45, 45/0"
+#~ msgstr "0/45, 45/0"
+
+#~ msgid "0/d or d/0"
+#~ msgstr "0/d nebo d/0"
+
+#~ msgid "1. Channel"
+#~ msgstr "1. kanál"
+
+#~ msgid "10 degree (1964)"
+#~ msgstr "10stupňový (1964)"
+
+#~ msgid "10. Channel"
+#~ msgstr "10. kanál"
+
+#~ msgid "100"
+#~ msgstr "100"
+
+#~ msgid "10color"
+#~ msgstr "10-barevný"
+
+#~ msgid "11. Channel"
+#~ msgstr "11. kanál"
+
+#~ msgid "11color"
+#~ msgstr "11-barevný"
+
+#~ msgid "12. Channel"
+#~ msgstr "12. kanál"
+
+#~ msgid "12color"
+#~ msgstr "12-barevný"
+
+#~ msgid "13. Channel"
+#~ msgstr "13. kanál"
+
+#~ msgid "13color"
+#~ msgstr "13-barevný"
+
+#~ msgid "14. Channel"
+#~ msgstr "14. kanál"
+
+#~ msgid "14color"
+#~ msgstr "14-barevný"
+
+#~ msgid "15. Channel"
+#~ msgstr "15. kanál"
+
+#~ msgid "15color"
+#~ msgstr "15-barevný"
+
+#~ msgid "16-bit"
+#~ msgstr "16-bitů"
+
+#~ msgid "16. Channel"
+#~ msgstr "16. kanál"
+
+#, fuzzy
+#~ msgid "1964 10° Observer Graph:"
+#~ msgstr "Graf standardního pozorovatele:"
+
+#~ msgid "2 degree (1931)"
+#~ msgstr "2stupňový (1931)"
+
+#~ msgid "2. Channel"
+#~ msgstr "2. kanál"
+
+#~ msgid "2D Graph from profiles:"
+#~ msgstr "2D grafy z profilů:"
+
+#~ msgid "2color"
+#~ msgstr "2-barevný"
+
+#~ msgid "3. Channel"
+#~ msgstr "3. kanál"
+
+#~ msgid "3D Lockup table with"
+#~ msgstr "3D vyhledávací tabulka s"
+
+#~ msgid "3color"
+#~ msgstr "3-barevný"
+
+#~ msgid "4. Channel"
+#~ msgstr "4. kanál"
+
+#~ msgid "4color"
+#~ msgstr "4-barevný"
+
+#~ msgid "5. Channel"
+#~ msgstr "5. kanál"
+
+#~ msgid "5color"
+#~ msgstr "5-barevný"
+
+#~ msgid "6. Channel"
+#~ msgstr "6. kanál"
+
+#~ msgid "6color"
+#~ msgstr "6-barevný"
+
+#~ msgid "7. Channel"
+#~ msgstr "7. kanál"
+
+#~ msgid "7color"
+#~ msgstr "7-barevný"
+
+#~ msgid "8-bit"
+#~ msgstr "8-bitů"
+
+#~ msgid "8. Channel"
+#~ msgstr "8. kanál"
+
+#~ msgid "8color"
+#~ msgstr "8-barevný"
+
+#~ msgid "9. Channel"
+#~ msgstr "9. kanál"
+
+#~ msgid "9color"
+#~ msgstr "9-barevný"
+
+#~ msgid "</b>  maximum: "
+#~ msgstr "</b>  maximum: "
+
+#~ msgid "</b> Measurement"
+#~ msgstr "</b> mereni"
+
+#~ msgid "?"
+#~ msgstr "?"
+
+#~ msgid "?? Nothing to add ??"
+#~ msgstr "?? Nic k přidání ??"
+
+#~ msgid "???"
+#~ msgstr "???"
+
+#~ msgid "A single path option is required"
+#~ msgstr "Volba vyžaduje pouze jednu cestu"
+
+#~ msgid "About"
+#~ msgstr "O programu"
+
+#~ msgid "About ICC Examin"
+#~ msgstr "O programu ICC Examin"
+
+#~ msgid "About Oyranos"
+#~ msgstr "O Oyranosu"
+
+#~ msgid "Absolute Colorimetric"
+#~ msgstr "Absolutní kolorimetrický"
+
+#~ msgid "Abstract"
+#~ msgstr "Abstraktní"
+
+#~ msgid "Acknowledgement"
+#~ msgstr "Podekovani"
+
+#~ msgid "Action for Image profile and Editing profile mismatches."
+#~ msgstr "Akce v případě nesouladu profilu obrázku a editace."
+
+#~ msgid "Activate profiles:"
+#~ msgstr "Aktivovat profily:"
+
+#~ msgid "Active Policy:"
+#~ msgstr "Aktivní politika:"
+
+#~ msgid "Active matrix monitor"
+#~ msgstr "Monitor s aktivní maticí"
+
+#~ msgid "Adaptation State"
+#~ msgstr "Stav adaptace"
+
+#~ msgid "Adaptation state for absolute colorimetric intent"
+#~ msgstr "Adaptační stav pro absolutní kolorimetrický záměr"
+
+#, fuzzy
+#~ msgid "Add Device"
+#~ msgstr "Zařízení"
+
+#~ msgid "Add Path containing ICC profiles"
+#~ msgstr "Pridat cestu obsahujici ICC profily"
+
+#~ msgid "Add to Favorites"
+#~ msgstr "Pridat k oblibenym zalozkam"
+
+#~ msgid "All"
+#~ msgstr "Vše"
+
+#~ msgid "All Files (*)"
+#~ msgstr "Vsechny soubory (*)"
+
+#~ msgid "All the small details for using this module."
+#~ msgstr "Všechny ty malé detaily pro používání tohoto modulu."
+
+#~ msgid "Already enabled"
+#~ msgstr "Již aktivováno"
+
+#, fuzzy
+#~ msgid "Analyze ICC profile information on your system."
+#~ msgstr "umí zobrazit informace o profilu ICC"
+
+#, fuzzy
+#~ msgid "Apply regions of interesst in form of simple rectangles."
+#~ msgstr "Apply regions of interesst in form of simple rectangles."
+
+#~ msgid "Assign Assumed Profile"
+#~ msgstr "Přiřadit předpokládaný profil"
+
+#~ msgid "Assign No Profile"
+#~ msgstr "Nepřiřadit žádný profil"
+
+#, fuzzy
+#~ msgid "Assign profile to device:"
+#~ msgstr "Vypsat profil Taxi pro vybrané zařízení:"
+
+#~ msgid "Assigns an untagged CIE*Lab Image this color space"
+#~ msgstr "Přiřadí tento barvový prostor neoznačenému obrázku CIE*Lab"
+
+#~ msgid "Assigns an untagged Cmyk Image this color space"
+#~ msgstr "Přiřadí tento barvový prostor neoznačenému obrázku CMYK"
+
+#~ msgid "Assigns an untagged Gray Image this color space"
+#~ msgstr ""
+#~ "Přiřadí tento barvový prostor neoznačenému obrázku v šedi "
+#~ "(monochromatickému)"
+
+#~ msgid "Assigns an untagged Rgb Image this color space"
+#~ msgstr "Přiřadí tento barvový prostor neoznačenému obrázku RGB"
+
+#~ msgid ""
+#~ "Assigns an untagged Rgb Image with source from the WWW this color space"
+#~ msgstr ""
+#~ "Přiřadí tento barvový prostor neoznačenému obrázku RGB pocházejícího z WWW"
+
+#~ msgid ""
+#~ "Assigns an untagged Rgb Image with source from the WWW this color space. "
+#~ "This will always be sRGB as defined by W3C."
+#~ msgstr ""
+#~ "Přiřadí tento barvový prostor neoznačenému obrázku RGB pocházejícího z "
+#~ "WWW. Toto bude vždy sRGB dle definice W3C."
+
+#~ msgid "Assigns an untagged XYZ Image this color space"
+#~ msgstr "Přiřadí tento barvový prostor neoznačenému obrázku XYZ"
+
+#~ msgid "Assumed Cmyk source"
+#~ msgstr "Předpokládaný vstupní CMYK"
+
+#~ msgid "Assumed Color Space"
+#~ msgstr "Předpokladaný barvový prostor"
+
+#~ msgid "Assumed Color Space for untagged colors"
+#~ msgstr "Předpokládaný barvový prostor pro neoznačené barvy"
+
+#~ msgid "Assumed Gray source"
+#~ msgstr "Předpokládaný pr. vstup. šedi"
+
+#~ msgid "Assumed Lab source"
+#~ msgstr "Předpokládaný vstupní Lab"
+
+#~ msgid "Assumed Rgb source"
+#~ msgstr "Předpokládaný vstupní RGB"
+
+#~ msgid "Assumed Web source"
+#~ msgstr "Předpokládaný vstupní Web"
+
+#~ msgid "Assumed XYZ source"
+#~ msgstr "Předpokládaný vstupní XYZ"
+
+#, fuzzy
+#~ msgid "Attributes"
+#~ msgstr "Atributy:    "
+
+#, fuzzy
+#~ msgid "Attributes:      "
+#~ msgstr "Atributy:    "
+
+#, fuzzy
+#~ msgid "Available Device Profiles:"
+#~ msgstr "Dostupná zařízení"
+
+#~ msgid "Available devices"
+#~ msgstr "Dostupná zařízení"
+
+#~ msgid "B"
+#~ msgstr "B"
+
+#~ msgid "BPC"
+#~ msgstr "BPC"
+
+#~ msgid "BPC affects often only the Relative Colorimetric Rendering intent."
+#~ msgstr "BPC ovlivňuje pouze relativní kolorimetrický záměr transformace."
+
+#~ msgid "Background color"
+#~ msgstr "Barva pozadi"
+
+#~ msgid "Backsite"
+#~ msgstr "Zadni strana"
+
+#~ msgid "Behaviour"
+#~ msgstr "Chování"
+
+#~ msgid "Behaviour for Softproofing view at application startup"
+#~ msgstr "Chovani pro Softproofing pri spusteni aplikace"
+
+#~ msgid ""
+#~ "Behaviour for preselecting Hardproofing with a Proofing Profile at print "
+#~ "time"
+#~ msgstr "Chování pro předvolbu Hardproofingu s profilem simulace při tisku"
+
+#~ msgid "Behaviour of color space transformation for proofing"
+#~ msgstr "Chování záměru transformace barvového prostoru pro simulaci"
+
+#~ msgid ""
+#~ "Behaviour of color space transformation for proofing. Most people want a "
+#~ "preview on screen only. The Relative Colorimetric intent is right for "
+#~ "that. The Absolute Colorimetric intent needs a very careful profiling and "
+#~ "non-trivial setup, but allows for side-by-side comparisons."
+#~ msgstr ""
+#~ "Způsob transformace barev pro simulaci. Většina uživatelů použije funkci "
+#~ "simulace pouze na obrazovce, pro což se hodí relativní kolorimetrický "
+#~ "záměr. Absolutní kolorimetrický záměr přepodkládá velmi pečlivou "
+#~ "charakterizaci zařízení a komplikované nastavení, nicméně umožňuje "
+#~ "porovnání barev \"vedle sebe\" (např. na monitoru a výtisku)."
+
+#~ msgid "Bits per Sample"
+#~ msgstr "Bitů ve vzorku"
+
+#~ msgid "Black"
+#~ msgstr "Černá"
+
+#~ msgid "Black Preservation"
+#~ msgstr "Zachování černé"
+
+#~ msgid "Blue"
+#~ msgstr "Modrá"
+
+#~ msgid "Blue Colorant"
+#~ msgstr "Modrý kolorant"
+
+#~ msgid "Blue Gamma:"
+#~ msgstr "Modrá gama:"
+
+#~ msgid "Blue tone reproduction curve"
+#~ msgstr "Křivka reprodukce modrých tónů"
+
+#~ msgid "Blue xy:"
+#~ msgstr "Modrá xy:"
+
+#~ msgid "C"
+#~ msgstr "C"
+
+#~ msgid "CGATS View"
+#~ msgstr "Zobrazeni CGATS"
+
+#~ msgid "CIE *L"
+#~ msgstr "CIE *L"
+
+#~ msgid "CIE *a"
+#~ msgstr "CIE *a"
+
+#~ msgid "CIE *b"
+#~ msgstr "CIE *b"
+
+#~ msgid "CIE *u"
+#~ msgstr "CIE *u"
+
+#~ msgid "CIE *v"
+#~ msgstr "CIE *v"
+
+#~ msgid "CIE X"
+#~ msgstr "CIE X"
+
+#~ msgid "CIE Y (Luminance)"
+#~ msgstr "CIE Y (Jas)"
+
+#~ msgid "CIE Z"
+#~ msgstr "CIE Z"
+
+#~ msgid "CIE x"
+#~ msgstr "CIE x"
+
+#~ msgid "CIE y"
+#~ msgstr "CIE y"
+
+#~ msgid "CIE*Lab"
+#~ msgstr "CIE*Lab"
+
+#~ msgid "CLUT"
+#~ msgstr "CLUT"
+
+#~ msgid ""
+#~ "CLUT is a levels x levels*levels sized PPM, --levels defaults for clut to "
+#~ "64"
+#~ msgstr ""
+#~ "CLUT je PPM o velikosti úrovně x úrovně x úrovně, --levels má výchozí "
+#~ "hodnotu pro CLUT rovnu 64"
+
+#~ msgid "CMM"
+#~ msgstr "CMM"
+
+#, fuzzy
+#~ msgid "CMM Core"
+#~ msgstr "nacteno"
+
+#, fuzzy
+#~ msgid "CMM Core Fallback"
+#~ msgstr "nacteno"
+
+#, fuzzy
+#~ msgid "CMM Renderer"
+#~ msgstr "nacteno"
+
+#, fuzzy
+#~ msgid "CMM Renderer Fallback"
+#~ msgstr "nacteno"
+
+#~ msgid "CMM: <b>lcms</b>"
+#~ msgstr "CMM: <b>lcms</b>"
+
+#~ msgid "CMYK"
+#~ msgstr "CMYK"
+
+#~ msgid "Calibration date"
+#~ msgstr "Datum kalibrace"
+
+#, fuzzy
+#~ msgid "Camera"
+#~ msgstr "CameraRaw"
+
+#, fuzzy
+#~ msgid "CameraRaw image"
+#~ msgstr "CameraRaw"
+
+#~ msgid "Can not allocate memory for:"
+#~ msgstr "Nelze alokovat paměť pro:"
+
+#~ msgid "Can not read hardware information from device."
+#~ msgstr "Ze zařízení nelze přečíst informaci o hardware."
+
+#, fuzzy
+#~ msgid "Can not write profile"
+#~ msgstr "Nelze zapisovat do souboru"
+
+#~ msgid "Cancel"
+#~ msgstr "Cancel"
+
+#~ msgid "Cant read hardware information from device."
+#~ msgstr "Ze zařízení nelze přečíst informaci o hardware."
+
+#~ msgid "Cathode ray tube display"
+#~ msgstr "Obrazovka CRT"
+
+#~ msgid "Chain selection"
+#~ msgstr "Vyber retezu"
+
+#~ msgid "Channels"
+#~ msgstr "Kanály"
+
+#~ msgid "Check if LittleCMS can handle a certain command."
+#~ msgstr "Zkontrolovat, zda Little CMS podporuje určitý příkaz."
+
+#~ msgid "Check if this module can handle a certain command."
+#~ msgstr "Ověřit, zda tento modul zvládne určitý příkaz."
+
+#~ msgid "Choose File"
+#~ msgstr "Vyberte soubor"
+
+#~ msgid "Choose one profile tag"
+#~ msgstr "Vyberte jeden tag profilu"
+
+#~ msgid "Chromaticity"
+#~ msgstr "Chromaticita"
+
+#~ msgid "Close"
+#~ msgstr "Zavrit"
+
+#, fuzzy
+#~ msgid "Cmm:             "
+#~ msgstr "Trida:       "
+
+#~ msgid "Cmy"
+#~ msgstr "Cmy"
+
+#~ msgid "Cmyk"
+#~ msgstr "Cmyk"
+
+#~ msgid ""
+#~ "Cmyk to Cmyk transforms can provide various strategies to preserve the "
+#~ "black only channel. None means, black might change to Cmy and thus text "
+#~ "prints not very well. LittleCMS 2 has added two different modes to deal "
+#~ "with that: Black-ink-only preservation and black-plane preservation. The "
+#~ "first is simple and effective: do all the colorimetric transforms but "
+#~ "keep only K (preserving L*) where the source image is only black. The "
+#~ "second mode is fair more complex and tries to preserve the WHOLE K plane."
+#~ msgstr ""
+#~ "Při transformaci CMYK -> CMYK lze použít různé strategie pro zachování "
+#~ "černého kanálu. \"Žádný\" znamená, že černá se může změnit na CMY a text "
+#~ "se tedy nevytiskne nejlépe. LittleCMS 2 to řeší dvěma způsoby: zachování "
+#~ "pouze černého inkoustu nebo zachování roviny černé. První způsob je "
+#~ "jednoduchý a účinný: provedou se všechny kolorimetrické transformace, ale "
+#~ "zachová se jen K (světlost L*) v případech, kdy vstupní obrázek je pouze "
+#~ "černý. Druhý způsob je značně komplexní a snaží se zachovat celou rovinu "
+#~ "černé (K)."
+
+#~ msgid ""
+#~ "Cmyk to Cmyk transforms can provide various strategies to preserve the "
+#~ "black only channel. None means, black might change to Cmy and thus text "
+#~ "prints not very well. LittleCMS has added two different modes to deal "
+#~ "with that: Black-ink-only preservation and black-plane preservation. The "
+#~ "first is simple and effective: do all the colorimetric transforms but "
+#~ "keep only K (preserving L*) where the source image is only black. The "
+#~ "second mode is fair more complex and tries to preserve the WHOLE K plane."
+#~ msgstr ""
+#~ "Při transformaci CMYK -> CMYK lze použít různé strategie pro zachování "
+#~ "černého kanálu. \"Žádný\" znamená, že černá se může změnit na CMY a text "
+#~ "se tudíž nevytiskne nejlépe. Little CMS to řeší dvěma způsoby: zachování "
+#~ "pouze černého inkoustu nebo zachování roviny černé. První způsob je "
+#~ "jednoduchý a účinný: provedou se všechny kolorimetrické transformace, ale "
+#~ "zachová se K (světlost L*) jen v případech, kdy vstupní obrázek je pouze "
+#~ "černý. Druhý způsob je značně komplexní a snaží se zachovat celou rovinu "
+#~ "černé (K)."
+
+#~ msgid "Collections of settings in Oyranos"
+#~ msgstr "Sbírky nastavení Oyranosu"
+
+#~ msgid "Color"
+#~ msgstr "Barva"
+
+#~ msgid "Color Space"
+#~ msgstr "Barvový prostor"
+
+#~ msgid "Color Space for Simulating real devices"
+#~ msgstr "Barvový prostor pro simulaci skutečných zařízení"
+
+#~ msgid "Color Transform CLUT's can additionally use curves for special cases"
+#~ msgstr ""
+#~ "Transformace barev typu CLUT může ve zvláštních případech využít i křivky."
+
+#~ msgid "Color Transforms can be differently stored internally"
+#~ msgstr "Transformace barev mohou být interně uloženy různými způsoby"
+
+#~ msgid "Color adaption matrix"
+#~ msgstr "Matice přizpůsobení barev"
+
+#~ msgid "Color b"
+#~ msgstr "Barva b"
+
+#~ msgid "Color channel names"
+#~ msgstr "Jména barevných kanálů"
+
+#~ msgid "Color channel order"
+#~ msgstr "Pořadí barevných kanálů"
+
+#~ msgid "Color channel output names"
+#~ msgstr "Výstupní jména barevných kanálů"
+
+#~ msgid ""
+#~ "Color content can sometimes have no ICC profile assigned. This is a "
+#~ "critical situation as the system can not properly convert these colors. "
+#~ "Therefore the color processing parts need to pick some profile as a "
+#~ "guess. These settings allow to change the picked ICC profile to guide the "
+#~ "processing components and allow proper conversion and compositing."
+#~ msgstr ""
+#~ "Stane se, že barevná data nemají přiřazen žádný profil ICC. Aby systém "
+#~ "správy barev mohl správně transformovat barvy (pro monitor, tiskárnu), "
+#~ "musí těmto neoznačeným datům přiřadit nějaký profil ICC. Tato nastavení "
+#~ "umožňují změnit výchozí profil ICC a tím ulehčit modulu správy barev "
+#~ "transformaci a skládání barev."
+
+#~ msgid ""
+#~ "Color management has in some situations to resolve unclear situations. "
+#~ "This can be done by automatic applying preselected choices or on a case "
+#~ "to case base. In unclear situations users can get alerted if they wish "
+#~ "and perform manual control."
+#~ msgstr ""
+#~ "V některých situacích musí správa barev řešit nejasnosti. To lze provést "
+#~ "využitím přednastavených voleb nebo individuálně. V nejasných případech "
+#~ "jsou uživatelé varováni - pokud si to přejí - a mohou situaci vyřešit "
+#~ "ručně."
+
+#~ msgid ""
+#~ "Color matching between different devices is possible, provided that the "
+#~ "color characteristics of the involved devices are known. The quality of a "
+#~ "color transform for devices from one color space to an other depends "
+#~ "particularly on the quality of the color measurement and the profiling "
+#~ "algorithm used during ICC profile creation. Each color space definition "
+#~ "happens in reference to a Profile Connection Spaces (PCS). The PCS is a "
+#~ "well known color space, based on the average \"human observer\" as "
+#~ "defined by CIE."
+#~ msgstr ""
+#~ "Mapování barev mezi různými zařízeními je možné za předpokladu, že známe "
+#~ "barvovou charakteristiku dotčených zařízení. Kvalita transformace barev "
+#~ "pro zařízení z jednoho barvového prostoru do druhého závisí zvláště na "
+#~ "kvalitě měření barev a charakterizačních algoritmů použitých při přípravě "
+#~ "profilu ICC. Definice každého barvového prostoru obsahuje referenci na "
+#~ "tzv. propojovací prostory (PCS). PCS je dobře známý barvový prostor "
+#~ "založený na průměrném \"lidském pozorovateli\" dle definice CIE."
+
+#~ msgid "Color measurement data"
+#~ msgstr "Data z měření barev"
+
+#~ msgid ""
+#~ "Color profiles are often available from manufacturers of imaging devices "
+#~ "as digital cameras, monitors and printers. In Oyranos, ICC profiles are "
+#~ "assigned to calibration states of color devices, to get close to the "
+#~ "device behaviour as was present during ICC profile creation."
+#~ msgstr ""
+#~ "Barvové profily jsou poskytnuty výrobci obrazových zařízení jako jsou "
+#~ "digitální fotoaparáty, monitory a tiskárny. V Oyranosu jsou profily ICC "
+#~ "přiřazeny ke kalibrovaným stavům jednotlivých zařízení, aby se zajistilo "
+#~ "shodné chování zařízení jako při přípravě profilu ICC."
+
+#~ msgid ""
+#~ "Color profiles are often available from manufacturers of optical devices "
+#~ "(digital camera, scanner, printer). With ICC Examin you can get an "
+#~ "impression of the internal data , stored in a ICC profile. For profiles "
+#~ "containing measurement data, ICC Examin can generate a quality report. "
+#~ "The deviation, calculated from the measurement data is shown as well in "
+#~ "the three dimensional gamut viewer.<br>"
+#~ msgstr ""
+#~ "Barvove profily jsou casto k dispozici od vyrobcu optickych zařízení "
+#~ "(digitalnich fotoaparatu, skeneru, tiskaren). S ICC Examinem muzete "
+#~ "ziskat predstavu o interních datech ulozeny v ICC profilu. Pro profily "
+#~ "obsahujici i zmerena data, ICC Examin muze vygenerovat report kvality. "
+#~ "Odchylka vypoctena ze zmerenych dat je tez zobrazena v tri rozmernem "
+#~ "prohlizeci gamutu.<br>"
+
+#~ msgid "Color r"
+#~ msgstr "Barva r"
+
+#~ msgid "Color space for Simulating an Output Device"
+#~ msgstr "Barvový prostor pro simulaci výstupniho zařízení"
+
+#~ msgid "Compare Measurement <-> Profile Colors"
+#~ msgstr "Porovnat Mereni <-> Barvy profilu"
+
+#, fuzzy
+#~ msgid "Conversion"
+#~ msgstr "ICC Examin Verze"
+
+#~ msgid "Conversion table with 16-bit precission:"
+#~ msgstr "Konverzni tabulka s 16 bitovou presnosti:"
+
+#~ msgid "Conversion table with 8-bit precission:"
+#~ msgstr "Konverzni tabulka s 8 bitovou presnosti:"
+
+#~ msgid "Convert Image:"
+#~ msgstr "Konvertovat obrázek:"
+
+#~ msgid "Convert automatically"
+#~ msgstr "Automaticky konvertovat"
+
+#, fuzzy
+#~ msgid "Convert image through ICC device link profile"
+#~ msgstr "Konvertovat obrázek do barvového prostoru ICC"
+
+#~ msgid "Convert image to ICC Color Space"
+#~ msgstr "Konvertovat obrázek do barvového prostoru ICC"
+
+#~ msgid "Convert to Default Cmyk Editing Space"
+#~ msgstr "Konvertovat do výchozího barvového prostoru editace CMYK"
+
+#~ msgid "Convert to Default Rgb Editing Space"
+#~ msgstr "Konvertovat do výchozího prostoru editace RGB"
+
+#~ msgid "Convert to WWW (sRGB)"
+#~ msgstr "Konvertovat do WWW (sRGB)"
+
+#~ msgid "Convert to untagged Cmyk, preserving Cmyk numbers"
+#~ msgstr "Konvertovat do neoznačeného CMYK se zachováním CMYK hodnot"
+
+#~ msgid "Copyright"
+#~ msgstr "Copyright"
+
+#~ msgid "Copyright &copy;"
+#~ msgstr "Copyright &copy;"
+
+#~ msgid "Copyright (c) 1998-2008 Marti Maria Saguer; MIT"
+#~ msgstr "Copyright (c) 1998-2008 Marti Maria Saguer; MIT"
+
+#~ msgid "Copyright (c) 1998-2013 Marti Maria Saguer; MIT"
+#~ msgstr "Copyright (c) 1998-2013 Marti Maria Saguer; MIT"
+
+#~ msgid "Copyright (c) 2005-2009 Kai-Uwe Behrmann; newBSD"
+#~ msgstr "Copyright (c) 2005-2009 Kai-Uwe Behrmann; newBSD"
+
+#~ msgid "Copyright (c) 2005-2010 Kai-Uwe Behrmann; newBSD"
+#~ msgstr "Copyright (c) 2005-2010 Kai-Uwe Behrmann; newBSD"
+
+#~ msgid "Copyright (c) 2005-2013 Kai-Uwe Behrmann; newBSD"
+#~ msgstr "Copyright (c) 2005-2013 Kai-Uwe Behrmann; newBSD"
+
+#, fuzzy
+#~ msgid "Copyright (c) 2005-2014 Kai-Uwe Behrmann; newBSD"
+#~ msgstr "Copyright (c) 2005-2010 Kai-Uwe Behrmann; newBSD"
+
+#~ msgid "Copyright (c) 2009 Joseph Simon; MIT"
+#~ msgstr "Copyright (c) 2009 Joseph Simon; MIT"
+
+#~ msgid "Copyright (c) 2009 Kai-Uwe Behrmann; MIT"
+#~ msgstr "Copyright (c) 2009 Kai-Uwe Behrmann; MIT"
+
+#~ msgid "Copyright (c) 2009 Kai-Uwe Behrmann; newBSD"
+#~ msgstr "Copyright (c) 2009 Kai-Uwe Behrmann; newBSD"
+
+#~ msgid "Copyright (c) 2009 My Name; newBSD"
+#~ msgstr "Copyright (c) 2009 Mé Jméno; newBSD"
+
+#, fuzzy
+#~ msgid "Copyright (c) 2013 Kai-Uwe Behrmann; newBSD"
+#~ msgstr "Copyright (c) 2009 Kai-Uwe Behrmann; newBSD"
+
+#~ msgid "Copyright:       "
+#~ msgstr "Copyright:       "
+
+#, fuzzy
+#~ msgid "Could not alloc memory"
+#~ msgstr "Nelze alokovat paměť pro:"
+
+#, fuzzy
+#~ msgid "Could not create a intermediate db object for"
+#~ msgstr "Nelze rozpoznat zařízení"
+
+#, fuzzy
+#~ msgid "Could not create root JSON node for"
+#~ msgstr "Nelze otevřít meta modul API"
+
+#~ msgid "Could not download from WWW. Please install curl or wget."
+#~ msgstr "Nelze stáhnout z WWW. Nainstalujte prosím \"curl\" nebo \"wget\"."
+
+#~ msgid ""
+#~ "Could not find any meta module. Did you set the OY_MODULE_PATH variable, "
+#~ "to point to a Oyranos module loader library?"
+#~ msgstr ""
+#~ "Nenalezen žádný meta modul. Nastavili jste proměnnou OY_MODULE_PATH, aby "
+#~ "odkazovala na knihovnu zavaděče modulu Oyranos?"
+
+#, fuzzy
+#~ msgid "Could not find config"
+#~ msgstr "Nelze otevřít profil"
+
+#, fuzzy
+#~ msgid "Could not find db::config object for"
+#~ msgstr "Nelze otevřít profil"
+
+#~ msgid "Could not get Xatom, probably your monitor profile is not set:"
+#~ msgstr "Nelze ziskat Xatom, pravdepodobne neni nastaven profil monitru:"
+
+#, fuzzy
+#~ msgid "Could not obtain JSON node for"
+#~ msgstr "Nelze otevřít meta modul API"
+
+#~ msgid "Could not open ICC profile"
+#~ msgstr "Nelze otevřít profil ICC"
+
+#~ msgid "Could not open default ICC profile"
+#~ msgstr "Nelze otevřít výchozí profil ICC"
+
+#~ msgid "Could not open device"
+#~ msgstr "Nelze otevřít zařízení"
+
+#, fuzzy
+#~ msgid "Could not open instrument"
+#~ msgstr "Nemohu načíst písmeno v:"
+
+#, fuzzy
+#~ msgid "Could not open or invalid data: "
+#~ msgstr "Nelze otevřít profil"
+
+#~ msgid "Could not open profile"
+#~ msgstr "Nelze otevřít profil"
+
+#~ msgid "Could not open: "
+#~ msgstr "Nelze otevřít:"
+
+#, fuzzy
+#~ msgid "Could not resolve device."
+#~ msgstr "Nelze rozpoznat zařízení"
+
+#, fuzzy
+#~ msgid "Could not resolve device_json"
+#~ msgstr "Nelze rozpoznat zařízení"
+
+#, fuzzy
+#~ msgid "Could not resolve device_name"
+#~ msgstr "Nelze rozpoznat zařízení"
+
+#, fuzzy
+#~ msgid "Could not setup db objetc"
+#~ msgstr "Nelze rozpoznat zařízení"
+
+#~ msgid "Could not write to file"
+#~ msgstr "Nelze zapisovat do souboru"
+
+#~ msgid "Create 3D CLUT"
+#~ msgstr "Vytvořit 3D CLUT"
+
+#~ msgid "Create a ICC abstract proofing profile."
+#~ msgstr "Vytvořit abstraktní profil ICC pro simulaci."
+
+#~ msgid "Create a ICC matrix profile."
+#~ msgstr "Vytvořit maticový profil ICC."
+
+#~ msgid "Create a ICC proofing profile."
+#~ msgstr "Vytvořit profil simulace."
+
+#, fuzzy
+#~ msgid "Creation Date:   "
+#~ msgstr "Datum kalibrace"
+
+#~ msgid "Currently active policy:"
+#~ msgstr "Aktuálně aktivní politika:"
+
+#~ msgid "Curve Channels:"
+#~ msgstr "Kanály křivky:"
+
+#~ msgid "Curve Precission:"
+#~ msgstr "Přesnost křivky:"
+
+#~ msgid "Curve Segments:"
+#~ msgstr "Segmenty křivky:"
+
+#~ msgid "Curves"
+#~ msgstr "Křivky"
+
+#~ msgid "Curves for Optimization"
+#~ msgstr "Křivky pro optimalizaci"
+
+#~ msgid "Cyan"
+#~ msgstr "Azurová"
+
+#, fuzzy
+#~ msgid "DB File"
+#~ msgstr "Soubory"
+
+#, fuzzy
+#~ msgid "DB File Name"
+#~ msgstr "Jmeno souboru:"
+
+#~ msgid "DISPLAY variable not set: giving up."
+#~ msgstr "Proměnná DISPLAY není nastavena: ukončeno."
+
+#, fuzzy
+#~ msgid "Data Color Space:"
+#~ msgstr "Bar. prostor:"
+
+#~ msgid "Data:"
+#~ msgstr "Data:"
+
+#~ msgid "Date"
+#~ msgstr "Datum"
+
+#~ msgid "Date:"
+#~ msgstr "Datum:"
+
+#~ msgid "Debug"
+#~ msgstr "Ladění"
+
+#~ msgid "Decide how to preserve the black channel for Cmyk to Cmyk transforms"
+#~ msgstr ""
+#~ "Rozhodnout, jakým způsobem zachovat černý kanál při transformaci CMYK -> "
+#~ "CMYK."
+
+#~ msgid ""
+#~ "Decide how to resolve conflicts with input color spaces and current "
+#~ "settings."
+#~ msgstr ""
+#~ "Rozhodnout co dělat, když se vstupní barvový prostor nerovná aktuálnímu "
+#~ "nastavení."
+
+#~ msgid ""
+#~ "Decide what to do when the default color spaces don't match the current "
+#~ "ones."
+#~ msgstr ""
+#~ "Rozhodnout co dělat, když se výchozí barvový prostor nerovná aktuálnímu."
+
+#~ msgid "Default Profiles"
+#~ msgstr "Výchozí profily"
+
+#, fuzzy
+#~ msgid "Description"
+#~ msgstr "popis"
+
+#, fuzzy
+#~ msgid "Description:     "
+#~ msgstr "popis"
+
+#, fuzzy
+#~ msgid "Device"
+#~ msgstr "Zařízení"
+
+#, fuzzy
+#~ msgid "Device Class"
+#~ msgstr "použít třídu zařízení"
+
+#~ msgid "Device Colors"
+#~ msgstr "Barvy zařízení"
+
+#, fuzzy
+#~ msgid "Device File"
+#~ msgstr "Sériové číslo zař.:"
+
+#, fuzzy
+#~ msgid "Device Manufacturer"
+#~ msgstr "Výrobce"
+
+#, fuzzy
+#~ msgid "Device Model"
+#~ msgstr "Sériové číslo zař.:"
+
+#~ msgid "Device Serial:"
+#~ msgstr "Sériové číslo zař.:"
+
+#~ msgid "Device Settings"
+#~ msgstr "Nastavení zařízení"
+
+#~ msgid "Device colors"
+#~ msgstr "Barvy zařízení"
+
+#~ msgid "Device manufacturerer description"
+#~ msgstr "Popis výrobce zařízení"
+
+#, fuzzy
+#~ msgid "Device position"
+#~ msgstr "Popis modelu zařízení"
+
+#~ msgid "Did not find a type for option:"
+#~ msgstr "nenalezen typ pro volbu:"
+
+#~ msgid "Digital camera"
+#~ msgstr "Digitálni fotoaparát"
+
+#~ msgid "Display"
+#~ msgstr "Displej"
+
+#~ msgid "Documentation"
+#~ msgstr "Dokumentace"
+
+#~ msgid "Driver signature/encoding:"
+#~ msgstr "Kódování/podpis ovladače:"
+
+#~ msgid "Driver version:"
+#~ msgstr "Verze ovladače:"
+
+#~ msgid "Dump Device Infos to OpenICC device JSON:"
+#~ msgstr "Vypsat informace o zařízení do JSON OpenICC:"
+
+#~ msgid "Dump data:"
+#~ msgstr "Vypsat data:"
+
+#, fuzzy
+#~ msgid "Dump device color state:"
+#~ msgstr "Barvy zařízení"
+
+#~ msgid "Dump out the actual settings:"
+#~ msgstr "Vypsat aktuální nastavení:"
+
+#~ msgid "Dye sublimation printer"
+#~ msgstr "Sublimační tiskárna"
+
+#~ msgid "EBU Tech.3213-E"
+#~ msgstr "EBU Tech.3213-E"
+
+#~ msgid "Edit Options ..."
+#~ msgstr "Upravit volby ..."
+
+#~ msgid "Editing Cmyk"
+#~ msgstr "Editace CMYK"
+
+#~ msgid "Editing Color Space"
+#~ msgstr "Barvový prostor pro editaci"
+
+#~ msgid "Editing Gray"
+#~ msgstr "Editace v šedi"
+
+#~ msgid "Editing Lab"
+#~ msgstr "Editace Lab"
+
+#~ msgid "Editing Rgb"
+#~ msgstr "Editace RGB"
+
+#~ msgid "Editing XYZ"
+#~ msgstr "Editace XYZ"
+
+#~ msgid "Effect abtract Color Space"
+#~ msgstr "Efektový abstraktní barvový prostor"
+
+#~ msgid "Electrophotographic printer"
+#~ msgstr "Elektrofotografická tiskárna"
+
+#~ msgid "Electrostatic printer"
+#~ msgstr "Elektrostatická tiskárna"
+
+#~ msgid ""
+#~ "Enable simulation of an output color space on a local printer. Most users "
+#~ "do not work for a certain media and leave color handling to the system. "
+#~ "They want no simulation."
+#~ msgstr ""
+#~ "Umožní simulaci výstupního barvového profilu na místní tiskárně. Většina "
+#~ "uživatelů nepracuje se záměrem výstupu na konkrétním médiu a proto "
+#~ "ponechává správu barev na systému. Tzn., že nepotřebují použít tuto "
+#~ "simulaci."
+
+#~ msgid ""
+#~ "Enable simulation of output print on the monitor. Most users do not work "
+#~ "for a certain media and leave color handling to the system. They want no "
+#~ "simulation."
+#~ msgstr ""
+#~ "Umožnit simulaci tiskového výstupu na monitoru. Většina uživatelů "
+#~ "nepracuje s preferencí konkrétního média (papíru, inkoustu) a ponechá "
+#~ "zpracování na systému. Tzn., že nepotřebují simulaci."
+
+#, fuzzy
+#~ msgid "Erase Device"
+#~ msgstr "Testovací zařízení"
+
+#, fuzzy
+#~ msgid "Erase Devices"
+#~ msgstr "Testovací zařízení"
+
+#~ msgid "Erase profile:"
+#~ msgstr "Smazat profil:"
+
+#~ msgid "Error"
+#~ msgstr "Chyba"
+
+#~ msgid "Error getting atom"
+#~ msgstr "Chyba při získávání atomu"
+
+#~ msgid "Error in ICC profile tag found!"
+#~ msgstr "Nalezena chyba ve štítku profilu ICC!"
+
+#~ msgid "Error obtaining profile"
+#~ msgstr "Chyba při získávání profilu"
+
+#~ msgid "Error setting up atom"
+#~ msgstr "Chyba při nastavování atomu"
+
+#~ msgid "Examine ICC Profile ..."
+#~ msgstr "Prozkoumat profil ICC ..."
+
+#~ msgid "Example Devices, for testing and learning purposes only."
+#~ msgstr "Testovací zařízení, pouze pro účely testování a učení se."
+
+#~ msgid "Exclude this path"
+#~ msgstr "Vyloucit tuto cestu"
+
+#~ msgid "Exit!"
+#~ msgstr "Ukončit!"
+
+#~ msgid "Extended Options"
+#~ msgstr "Rozšířené volby:"
+
+#~ msgid "Extract ICC profile:"
+#~ msgstr "Extrahovat profil ICC:"
+
+#~ msgid "Favorites"
+#~ msgstr "Oblibene"
+
+#, fuzzy
+#~ msgid "File Name"
+#~ msgstr "Jmeno souboru:"
+
+#, fuzzy
+#~ msgid "File Name of OpenICC Device Data Base JSON"
+#~ msgstr "vložit JSON OpenICC ze souboru"
+
+#~ msgid "File exists"
+#~ msgstr "Soubor existuje"
+
+#~ msgid "File header invalid"
+#~ msgstr "Hlavička souboru neplatna"
+
+#~ msgid "File name is missed"
+#~ msgstr "Chybí soubor"
+
+#~ msgid "File not loaded!"
+#~ msgstr "Soubor nenacten!"
+
+#, fuzzy
+#~ msgid "File:            "
+#~ msgstr "Velikost:    "
+
+#~ msgid "Filename (ICC data type)"
+#~ msgstr "Nazev souboru (ICC typ)"
+
+#~ msgid "Filename (corrupted ICC data type)"
+#~ msgstr "Jmeno souboru (poruseny typ ICC dat)"
+
+#~ msgid "Filename (other data type)"
+#~ msgstr "Jmeno souboru (jiny typ)"
+
+#~ msgid "Film scanner"
+#~ msgstr "Filmový skener"
+
+#~ msgid "Film writer"
+#~ msgstr "Zapisovač na film"
+
+#, fuzzy
+#~ msgid "Flags:           "
+#~ msgstr "Priznaky:    "
+
+#~ msgid "Flare"
+#~ msgstr "Presvetleni"
+
+#~ msgid "Flexography"
+#~ msgstr "Flexografie"
+
+#~ msgid "For Print"
+#~ msgstr "Pro tisk"
+
+#~ msgid "For Screen"
+#~ msgstr "Pro obrazovku"
+
+#~ msgid "For more informations read the man page:"
+#~ msgstr "Pro více informací viz manuálová stránka:"
+
+#~ msgid "For the visualisation of gamut (external):<br>\n"
+#~ msgstr "Pro vizualizaci gamutu (externe):<br>\n"
+
+#~ msgid "Found no node in conversion. give up"
+#~ msgstr "Nenalezen žádný uzel při transformaci. Ukončeno."
+
+#~ msgid "G"
+#~ msgstr "G"
+
+#, fuzzy
+#~ msgid "GUI"
+#~ msgstr "SGI"
+
+#~ msgid "Gamma"
+#~ msgstr "Gama"
+
+#~ msgid "Gamma Blue:  "
+#~ msgstr "Gama modrá: "
+
+#~ msgid "Gamma Green:"
+#~ msgstr "Gama zelená:"
+
+#~ msgid "Gamma Green: "
+#~ msgstr "Gama zelená: "
+
+#~ msgid "Gamma Red:   "
+#~ msgstr "Gama červená:"
+
+#~ msgid "Gamut"
+#~ msgstr "Gamut"
+
+#~ msgid "Gamut View"
+#~ msgstr "Zobrazeni gamutu"
+
+#~ msgid "Gamut Warning"
+#~ msgstr "Varování gamutu"
+
+#~ msgid "Gamut selector"
+#~ msgstr "Volba gamutu"
+
+#, fuzzy
+#~ msgid "General options"
+#~ msgstr "Obecné volby:"
+
+#~ msgid "Generate CLUT Image:"
+#~ msgstr "Generovat obrázek CLUT:"
+
+#, fuzzy
+#~ msgid "Generate Device Link Profile:"
+#~ msgstr "Dostupná zařízení"
+
+#~ msgid "Generate Image:"
+#~ msgstr "Generovat obrázek:"
+
+#~ msgid "Geometrie"
+#~ msgstr "Geometrie"
+
+#, fuzzy
+#~ msgid "Get Conversion"
+#~ msgstr "Verze ovladače:"
+
+#~ msgid "Get ICC profile"
+#~ msgstr "Získat profil ICC"
+
+#~ msgid "Get XFORMS:"
+#~ msgstr "Získat XFORMS:"
+
+#, fuzzy
+#~ msgid "Get a unix man page"
+#~ msgstr "Unix a deriváty"
+
+#~ msgid "Grafic Card Gamma Table"
+#~ msgstr "Gama tabulka graficke karty"
+
+#~ msgid "Gravure"
+#~ msgstr "Gravura"
+
+#~ msgid "Gray"
+#~ msgstr "Seda stupnice"
+
+#~ msgid "Gray tone reproduction curve"
+#~ msgstr "Křivka reprodukce šedých tónů"
+
+#~ msgid "Green"
+#~ msgstr "Zelená"
+
+#~ msgid "Green Colorant"
+#~ msgstr "Zelený kolorant"
+
+#~ msgid "Green Gamma:"
+#~ msgstr "Zelená gama:"
+
+#~ msgid "Green tone reproduction curve"
+#~ msgstr "Křivka reprodukce zelených tónů"
+
+#~ msgid "Green xy:"
+#~ msgstr "Zelená xy:"
+
+#~ msgid "HTML Documents (*.htm*)"
+#~ msgstr "HTML Dokumenty (*.htm*)"
+
+#~ msgid "Handle mixed color spaces in preparing a document for print output."
+#~ msgstr ""
+#~ "Zacházení se smíšenými barvovými prostory při přípravě dokumentu pro "
+#~ "tiskový výstup."
+
+#~ msgid ""
+#~ "Handle mixed color spaces in preparing a document for print output. A "
+#~ "conversion to the default editing color space is typically what most "
+#~ "users want."
+#~ msgstr ""
+#~ "Zacházení se smíšenými barvovými prostory při přípravě dokumentu pro "
+#~ "tiskový výstup. Většina uživatelů použije transformaci do barvového "
+#~ "prostoru pro editaci."
+
+#~ msgid "Handle mixed color spaces in preparing a document for screen output."
+#~ msgstr ""
+#~ "Zacházení se smíšenými barvovými prostory při přípravě dokumentu pro "
+#~ "výstup na obrazovku."
+
+#~ msgid ""
+#~ "Handle mixed color spaces in preparing a document for screen output. A "
+#~ "conversion to sRGB helps in easy data exchange and is what most users "
+#~ "want."
+#~ msgstr ""
+#~ "Zacházení se smíšenými barvovými prostory při přípravě dokumentu pro "
+#~ "výstup na obrazovku. Většina uživatelů použije transformaci do sRGB "
+#~ "(vhodné pro snadnou výměnu dat)."
+
+#~ msgid "Handle options."
+#~ msgstr "Volby obslužné rutiny."
+
+#~ msgid "Handling of Mixed Color Spaces inside one single Document"
+#~ msgstr ""
+#~ "Výchozí zacházení se smíšenými barvovými prostory v rámci jednoho "
+#~ "dokumentu"
+
+#~ msgid "Hardproof"
+#~ msgstr "Hardproof"
+
+#, fuzzy
+#~ msgid "High Precission"
+#~ msgstr "Výchozí profily"
+
+#~ msgid ""
+#~ "Hint: search paths are influenced by the XDG_CONFIG_HOME shell variable."
+#~ msgstr ""
+#~ "Nápověda: adresářové cesty pro hledání jsou ovlivněny proměnnou shellu "
+#~ "XDG_CONFIG_HOME."
+
+#, fuzzy
+#~ msgid "Hints"
+#~ msgstr " bodu"
+
+#~ msgid "Hls"
+#~ msgstr "Hls"
+
+#~ msgid "Hsv"
+#~ msgstr "Hsv"
+
+#~ msgid "Huch, unknown exception"
+#~ msgstr "Uf, neznama vyjimka"
+
+#~ msgid "Hue"
+#~ msgstr "Odstín"
+
+#~ msgid "ICC Examin"
+#~ msgstr "ICC Examin"
+
+#~ msgid ""
+#~ "ICC Examin is a viewer for color profiles according to ICC standard  - "
+#~ "www.color.org . At the moment version 2 profiles are supported."
+#~ msgstr ""
+#~ "ICC Examin je prohlizec pro barvove profily dle ICC standardu - www.color."
+#~ "org. V soucasnosti jsou podporovany profily verze 2."
+
+#~ msgid "ICC Examin uses following libraries:<br>\n"
+#~ msgstr "ICC Examin pouziva nasledujici knihovny:<br>\n"
+
+#~ msgid "ICC color profile for color transformations"
+#~ msgstr "Barvový profil ICC pro barvové transformace"
+
+#~ msgid ""
+#~ "ICC color profiles (*.{I,i}{C,c}{M,m,C,c})\tMeasurement (*.{txt,it8,IT8,"
+#~ "RGB,CMYK,ti*,cgats,CIE,cie,nCIE,oRPT,DLY,LAB,Q60})\tArgyll Gamuts (*.{wrl,"
+#~ "vrml}"
+#~ msgstr ""
+#~ "ICC barvove profily (*.{I,i}{C,c}{M,m,C,c})\tMereni (*.{txt,it8,IT8,RGB,"
+#~ "CMYK,ti*,cgats,CIE,cie,nCIE,oRPT,DLY,LAB,Q60})\tGamuty Argyll (*.{wrl,"
+#~ "vrml}"
+
+#~ msgid "ICC color profiles for color transformations"
+#~ msgstr "Barvový profil ICC pro barvové transformace"
+
+#, fuzzy
+#~ msgid "ICC header Attributes"
+#~ msgstr "Zvolte atribut"
+
+#~ msgid "ICC profile"
+#~ msgstr "profil ICC"
+
+#~ msgid "ICC profile id written"
+#~ msgstr "ID profilu ICC zapsáno"
+
+#~ msgid "ICC profile search paths"
+#~ msgstr "prohledávaná cesta pro profily ICC"
+
+#~ msgid "ICC profiles"
+#~ msgstr "Profily ICC"
+
+#~ msgid ""
+#~ "ICC profiles reside in known paths. They are defined by OpenICC and can "
+#~ "be used by every complying system or application."
+#~ msgstr ""
+#~ "Profily ICC jsou uloženy v definovaných cestách souborového systému dle "
+#~ "standardu OpenICC a mohou být využity každým kompatibilním systémem či "
+#~ "aplikací."
+
+#~ msgid ""
+#~ "ICC profiles reside in known paths. They are defined by OpenICC and can "
+#~ "be used by every complying system or application. XDG_DATA_HOME and "
+#~ "XDG_DATA_DIRS environment variables route Oyranos to top directories "
+#~ "containing resources. The derived paths for ICC profiles have a \"color/"
+#~ "icc\" appended."
+#~ msgstr ""
+#~ "Profily ICC jsou uloženy v definovaných úložištích dle standardů OpenICC "
+#~ "a mohou být využity každým kompatibilním systémem či aplikací. Proměnné "
+#~ "prostředí XDG_DATA_HOME a XDG_DATA_DIRS dovedou Oyranos k nadřazeným "
+#~ "adresářům obsahujícím tato úložiště. Odvozené adresářové cesty pro "
+#~ "profily ICC mají přidán apendix  \"color/icc\"."
+
+#~ msgid ""
+#~ "ICC profiles should always be attached to all colors. In the case that "
+#~ "colors are undefined, users can set various default ICC profiles in "
+#~ "Oyranos settings."
+#~ msgstr ""
+#~ "Profily ICC by vždy měly být přiřazeny ke všem barvám. Pro nedefinované "
+#~ "barvy mohou uživatelé nastavit různé výchozí profily ICC v nastaveních "
+#~ "Oyranosu."
+
+#~ msgid "ITU-R BT.709"
+#~ msgstr "ITU-R BT.709"
+
+#~ msgid "Idendity"
+#~ msgstr "Identita"
+
+#~ msgid "Illuminant"
+#~ msgstr "Iluminant"
+
+#~ msgid "Illuminant ---"
+#~ msgstr "Iluminant ---"
+
+#~ msgid "Illuminant A"
+#~ msgstr "Iluminant A"
+
+#~ msgid "Illuminant D50"
+#~ msgstr "Iluminant D50"
+
+#~ msgid "Illuminant D55"
+#~ msgstr "Iluminant D55"
+
+#~ msgid "Illuminant D65"
+#~ msgstr "Iluminant D65"
+
+#~ msgid "Illuminant D93"
+#~ msgstr "Iluminant D93"
+
+#~ msgid "Illuminant F2"
+#~ msgstr "Iluminant F2"
+
+#~ msgid "Illuminant F8"
+#~ msgstr "Iluminant F8"
+
+#, fuzzy
+#~ msgid "Illuminant Spectrum Graph:"
+#~ msgstr "Iluminant A"
+
+#~ msgid "Illuminant Type"
+#~ msgstr "Typ iluminantu"
+
+#~ msgid "Illuminant unknown"
+#~ msgstr "Iluminant neznámý"
+
+#~ msgid "Illuminant with equal energy E"
+#~ msgstr "Iluminant s rovnoměrnou energií E"
+
+#, fuzzy
+#~ msgid "Illuminant:      "
+#~ msgstr "Osvetleni:   "
+
+#~ msgid "Illustration"
+#~ msgstr "Ilustrace"
+
+#~ msgid "Image"
+#~ msgstr "Obrázek"
+
+#, fuzzy
+#~ msgid "Image Plug"
+#~ msgstr "Obrázek"
+
+#, fuzzy
+#~ msgid "Image Socket"
+#~ msgstr "Image[out]"
+
+#~ msgid ""
+#~ "Image has no color space embedded. What default action shall be performed?"
+#~ msgstr ""
+#~ "Obrázek nemá vložený barvový prostor. Jaká výchozí akce má být provedena?"
+
+#, fuzzy
+#~ msgid "Image/Simple Image[scale]"
+#~ msgstr "Image[lraw]"
+
+#, fuzzy
+#~ msgid "Image[cmm_loader]"
+#~ msgstr "Image[my_filter]"
+
+#, fuzzy
+#~ msgid "Image[input_png]"
+#~ msgstr "Image[input_png]"
+
+#, fuzzy
+#~ msgid "Image[input_ppm]"
+#~ msgstr "Image[input_ppm]"
+
+#, fuzzy
+#~ msgid "Image[lraw]"
+#~ msgstr "Image[lraw]"
+
+#, fuzzy
+#~ msgid "Image[out]"
+#~ msgstr "Image[out]"
+
+#, fuzzy
+#~ msgid "Image[scale]"
+#~ msgstr "Image[lraw]"
+
+#, fuzzy
+#~ msgid "Image[write_png]"
+#~ msgstr "Image[write_png]"
+
+#, fuzzy
+#~ msgid "Image[write_ppm]"
+#~ msgstr "Image[write_ppm]"
+
+#~ msgid "Img"
+#~ msgstr "Img"
+
+#~ msgid ""
+#~ "Incoming color spaces can differ from the default editing color space. "
+#~ "For most users, an automatic conversion is fine. However, for more "
+#~ "demanding work, the numbers need to be preserved."
+#~ msgstr ""
+#~ "Vstupní barvové prostory se mohou lišit od výchozího prostoru pro "
+#~ "editaci. Pro většinu uživatelů je vhodná automatická transformace. Avšak "
+#~ "pro náročnější práci může být vhodné zachovat hodnoty barev."
+
+#, fuzzy
+#~ msgid "Information"
+#~ msgstr "Informace:"
+
+#~ msgid "InkJet printer"
+#~ msgstr "Inkoustová tiskárna"
+
+#~ msgid "Input"
+#~ msgstr "Vstupní"
+
+#, fuzzy
+#~ msgid "Input Color Space"
+#~ msgstr "Výstupní barvový prostor"
+
+#, fuzzy
+#~ msgid "Input PNG Image Filter Object"
+#~ msgstr "Input PNG Image Filter Object"
+
+#, fuzzy
+#~ msgid "Input PPM Image Filter Object"
+#~ msgstr "Input PPM Image Filter Object"
+
+#, fuzzy
+#~ msgid "Input libraw Image Filter Object"
+#~ msgstr "Input libraw Image Filter Object"
+
+#~ msgid "Install ICC profile:"
+#~ msgstr "Instalovat profil ICC:"
+
+#, fuzzy
+#~ msgid "Install profile"
+#~ msgstr "Instalovat profil ICC:"
+
+#, fuzzy
+#~ msgid "Install selected profile"
+#~ msgstr "Instalovat profil ICC:"
+
+#~ msgid "Install the missing profile in the OpenIccDirectory path."
+#~ msgstr "Nainstalujte chybějící profil do cesty \"OpenIccDirectory\"."
+
+#, fuzzy
+#~ msgid "Install the selected profile."
+#~ msgstr "Instalovat profil ICC:"
+
+#~ msgid "Installed"
+#~ msgstr "Nainstalováno"
+
+#, fuzzy
+#~ msgid "Intent"
+#~ msgstr "Záměr:"
+
+#~ msgid "Intent:      "
+#~ msgstr "Záměr:       "
+
+#~ msgid "Internet: <a href=\"http://www.oyranos.org\">www.oyranos.org</a><br>"
+#~ msgstr ""
+#~ "Internet: <a href=\"http://www.oyranos.org\">www.oyranos.org</a><br>"
+
+#~ msgid "Joe"
+#~ msgstr "Joe"
+
+#~ msgid "Joseph Simon III"
+#~ msgstr "Joseph Simon III"
+
+#~ msgid "K"
+#~ msgstr "K"
+
+#~ msgid "Kai-Uwe"
+#~ msgstr "Kai-Uwe"
+
+#~ msgid "Kai-Uwe Behrmann"
+#~ msgstr "Kai-Uwe Behrmann"
+
+#~ msgid "L"
+#~ msgstr "L"
+
+#~ msgid "L'"
+#~ msgstr "L'"
+
+#~ msgid "LANG"
+#~ msgstr "LANG"
+
+#~ msgid "Lab"
+#~ msgstr "Lab"
+
+#~ msgid "License"
+#~ msgstr "Licence"
+
+#~ msgid "Light gray"
+#~ msgstr "Svetla sed"
+
+#~ msgid "Lightness"
+#~ msgstr "Světlost"
+
+#~ msgid "Linear output curve"
+#~ msgstr "Linearni výstupni křivka"
+
+#~ msgid "Linearisation"
+#~ msgstr "Linearizace"
+
+#~ msgid "Link"
+#~ msgstr "Spojovací"
+
+#~ msgid "Links"
+#~ msgstr "Odkazy"
+
+#, fuzzy
+#~ msgid "List Devices"
+#~ msgstr "Vypsat zařízení:"
+
+#, fuzzy
+#~ msgid "List Taxi DB profiles for selected device:"
+#~ msgstr "Vypsat profil Taxi pro vybrané zařízení:"
+
+#~ msgid "List Taxi profile for selected device:"
+#~ msgstr "Vypsat profil Taxi pro vybrané zařízení:"
+
+#, fuzzy
+#~ msgid "List all key/values pairs"
+#~ msgstr "nalezené key/value dvojice:"
+
+#~ msgid "List available ICC profiles:"
+#~ msgstr "Vypsat dostupné profily ICC:"
+
+#~ msgid "List available policies:"
+#~ msgstr "Vypsat dostupné politiky:"
+
+#, fuzzy
+#~ msgid "List device classes:"
+#~ msgstr "Vypsat zařízení:"
+
+#~ msgid "List included ICC tags:"
+#~ msgstr "Vypsat zahrnuté štítky ICC:"
+
+#, fuzzy
+#~ msgid "List local DB profiles for selected device:"
+#~ msgstr "Vypsat profil Taxi pro vybrané zařízení:"
+
+#~ msgid "List modules:"
+#~ msgstr "Vypsat moduly:"
+
+#~ msgid "List search paths:"
+#~ msgstr "Vypsat prohledávané cesty:"
+
+#~ msgid "Little CMS"
+#~ msgstr "Little CMS"
+
+#~ msgid "Little CMS 2"
+#~ msgstr "Little CMS 2"
+
+#~ msgid ""
+#~ "Little CMS can use curves before and after CLUT's for special cases like "
+#~ "gamma encoded values to and from linear gamma values. Performance will "
+#~ "suffer."
+#~ msgstr ""
+#~ "Ve zvláštních případech jako hodnoty kódované v gama do a z lineárních "
+#~ "hodnot může Little CMS využít křivky před a po CLUT. Výkon však poklesne."
+
+#, fuzzy
+#~ msgid ""
+#~ "Little CMS tries to optimize profile chains whatever possible. There are "
+#~ "some built-in optimization schemes, and you can add new schemas by using "
+#~ "a plug-in. This generally improves the performance of the transform, but "
+#~ "may introduce a small delay of 1-2 seconds when creating the transform. "
+#~ "If you are going to transform just few colors, you don't need this "
+#~ "precalculations. Then, the flag cmsFLAGS_NOOPTIMIZE in "
+#~ "cmsCreateTransform() can be used to inhibit the optimization process. "
+#~ "Same for cmsFLAGS_NOCACHE. See the API reference for a more detailed "
+#~ "discussion of the flags."
+#~ msgstr ""
+#~ "Little CMS se snaží optimalizovat řetězení profilů kdykoliv je to možné. "
+#~ "Některá optimalizační schémata jsou již přednastavena, nová schémata "
+#~ "můžete přidat skrze plug-in. Obvykle dojde ke zlepšení výkonu "
+#~ "transformace, ale může dojít ke zpoždění při vytváření metody "
+#~ "transformace. Pokud budete transformovat pouze několik barev, pak "
+#~ "nepotřebujete tyto předběžné výpočty. V takovém případě lze použít "
+#~ "příznak cmsFLAGS_NOOPTIMIZE v cmsCreateTransform() k zabránění procesu "
+#~ "optimalizace. Viz reference API pro detailnější diskuzi ohledně příznaků."
+
+#~ msgid ""
+#~ "Little CMS tries to optimize profile chains whatever possible. There are "
+#~ "some built-in optimization schemes, and you can add new schemas by using "
+#~ "a plug-in. This generally improves the performance of the transform, but "
+#~ "may introduce a small delay of 1-2 seconds when creating the transform. "
+#~ "If you are going to transform just few colors, you don't need this "
+#~ "precalculations. Then, the flag cmsFLAGS_NOOPTIMIZE in "
+#~ "cmsCreateTransform() can be used to inhibit the optimization process. See "
+#~ "the API reference for a more detailed discussion of the flags."
+#~ msgstr ""
+#~ "Little CMS se snaží optimalizovat řetězení profilů kdykoliv je to možné. "
+#~ "Některá optimalizační schémata jsou již přednastavena, nová schémata "
+#~ "můžete přidat skrze plug-in. Obvykle dojde ke zlepšení výkonu "
+#~ "transformace, ale může dojít ke zpoždění při vytváření metody "
+#~ "transformace. Pokud budete transformovat pouze několik barev, pak "
+#~ "nepotřebujete tyto předběžné výpočty. V takovém případě lze použít "
+#~ "příznak cmsFLAGS_NOOPTIMIZE v cmsCreateTransform() k zabránění procesu "
+#~ "optimalizace. Viz reference API pro detailnější diskuzi ohledně příznaků."
+
+#~ msgid ""
+#~ "LittleCMS 2 is a CMM, a color management engine; it implements fast "
+#~ "transforms between ICC profiles. \"Little\" stands for its small "
+#~ "overhead. With a typical footprint of about 100K including C runtime, you "
+#~ "can color-enable your application without the pain of ActiveX, OCX, "
+#~ "redistributables or binaries of any kind. We are using little cms in "
+#~ "several commercial projects, however, we are offering lcms library free "
+#~ "for anybody under an extremely liberal open source license."
+#~ msgstr ""
+#~ "Little CMS je modul správy barev (CMM); implementuje rychlé transformace "
+#~ "mezi profily ICC. \"Little\" znamená malou režii. Přidáním cca 100 kB "
+#~ "včetně spustitelného kódu v C můžete umožnit správu barev ve své "
+#~ "aplikaci, aniž byste se otravovali s ActiveX, OCX, distribuovanými "
+#~ "programy či binárkami jakéhokoliv druhu. Little CMS je používáno v "
+#~ "několika komerčních projektech, nicméně knihovna lcms je k dispozici "
+#~ "zdarma pro kohokoliv pod extrémně liberální licencí pro otevřený zdrojový "
+#~ "kód."
+
+#~ msgid ""
+#~ "LittleCMS is a CMM, a color management engine; it implements fast "
+#~ "transforms between ICC profiles. \"Little\" stands for its small "
+#~ "overhead. With a typical footprint of about 100K including C runtime, you "
+#~ "can color-enable your application without the pain of ActiveX, OCX, "
+#~ "redistributables or binaries of any kind. We are using little cms in "
+#~ "several commercial projects, however, we are offering lcms library free "
+#~ "for anybody under an extremely liberal open source license."
+#~ msgstr ""
+#~ "Little CMS je modul správy barev (CMM); implementuje rychlé transformace "
+#~ "mezi profily ICC. \"Little\" znamená malou režii. Přidáním cca 100 kB "
+#~ "včetně spustitelného kódu v C můžete umožnit správu barev ve své "
+#~ "aplikaci, aniž byste se otravovali s ActiveX, OCX, distribuovanými "
+#~ "programy či binárkami jakéhokoliv druhu. Little CMS je používáno v "
+#~ "několika komerčních projektech, nicméně knihovna lcms je k dispozici "
+#~ "zdarma pro kohokoliv pod extrémně liberální licencí pro otevřený zdrojový "
+#~ "kód."
+
+#~ msgid "Load"
+#~ msgstr "Načíst"
+
+#~ msgid "Load Image File Object"
+#~ msgstr "Načíst objekt obrázkového souboru"
+
+#~ msgid "Load the current monitor profile"
+#~ msgstr "Načíst aktualni profil monitoru"
+
+#~ msgid "Loading .."
+#~ msgstr "Nacitam ..."
+
+#~ msgid "Log"
+#~ msgstr "Zurnal"
+
+#~ msgid "Log:"
+#~ msgstr "Zurnal:"
+
+#~ msgid "Lookup table, PCS to device, intent perceptual"
+#~ msgstr "Vyhledávací tabulka, PCS do zařízení, záměr perceptuální"
+
+#~ msgid "Lookup table, PCS to device, intent relative colorimetric"
+#~ msgstr ""
+#~ "Vyhledávací tabulka, PCS do zařízení, záměr relativní kolorimetrický"
+
+#~ msgid "Lookup table, PCS to device, intent saturation"
+#~ msgstr "Vyhledávací tabulka, PCS do zařízení, záměr saturace"
+
+#~ msgid "Lookup table, device to PCS, intent perceptual"
+#~ msgstr "Vyhledávací tabulka, zařízení do PCS, záměr perceptuální"
+
+#~ msgid "Lookup table, device to PCS, intent relative colorimetric"
+#~ msgstr ""
+#~ "Vyhledávací tabulka, zařízení do PCS, záměr relativní kolorimetrický"
+
+#~ msgid "Lookup table, device to PCS, intent saturation"
+#~ msgstr "Vyhledávací tabulka, zařízení do PCS, záměr saturace"
+
+#~ msgid "Luminance"
+#~ msgstr "Jas"
+
+#~ msgid "Luminance Y"
+#~ msgstr "Jas Y"
+
+#~ msgid "Luv"
+#~ msgstr "Luv"
+
+#~ msgid "MIT"
+#~ msgstr "MIT"
+
+#~ msgid "MIT license: http://www.opensource.org/licenses/mit-license.php"
+#~ msgstr "Licence MIT: http://www.opensource.org/licenses/mit-license.php"
+
+#~ msgid "Macintosh"
+#~ msgstr "Macintosh"
+
+#, fuzzy
+#~ msgid "Magic:           "
+#~ msgstr "Datum:       "
+
+#, fuzzy
+#~ msgid "Man"
+#~ msgstr "Purpurová"
+
+#~ msgid "Manage Favorites"
+#~ msgstr "Organizovat oblibene"
+
+#~ msgid "Manufacturer"
+#~ msgstr "Výrobce"
+
+#~ msgid "Manufacturer:"
+#~ msgstr "Výrobce:     "
+
+#, fuzzy
+#~ msgid "Manufacturer:    "
+#~ msgstr "Vyrobce:      "
+
+#~ msgid "Mark Out Of Gamut colors"
+#~ msgstr "Označit barvy mimo gamut"
+
+#~ msgid "Marti"
+#~ msgstr "Marti"
+
+#~ msgid "Marti Maria"
+#~ msgstr "Marti Maria"
+
+#~ msgid "Matrix"
+#~ msgstr "Matice"
+
+#~ msgid "May 2004 - September 2007"
+#~ msgstr "kveten 2004 - zari 2007"
+
+#~ msgid "Me"
+#~ msgstr "Já"
+
+#~ msgid "Meas color"
+#~ msgstr "Zmerene barvy"
+
+#~ msgid "Measured colors"
+#~ msgstr "Změřené barvy"
+
+#~ msgid "Measurement"
+#~ msgstr "Měření"
+
+#~ msgid "Measurement patch"
+#~ msgstr "Mereny vzorek"
+
+#~ msgid "Measurment- and profile colors from <b>"
+#~ msgstr "Zmerene barvy a barvy profilu z <b>"
+
+#~ msgid "Media black point"
+#~ msgstr "Černý bod média"
+
+#~ msgid "Media white point"
+#~ msgstr "Bílý bod média"
+
+#~ msgid "Meta Data"
+#~ msgstr "Metadata"
+
+#~ msgid "Microsoft"
+#~ msgstr "Microsoft"
+
+#~ msgid "Mismatching"
+#~ msgstr "Nesoulad"
+
+#~ msgid ""
+#~ "Mixed color spaces inside one single document can be difficult to handle "
+#~ "for some systems. The settings can give the option to flatten document "
+#~ "color spaces."
+#~ msgstr ""
+#~ "Smíšené barvové prostory v rámci jednoho dokumentu mohou být pro některé "
+#~ "systémy obtížně zpracovatelné. Je možné nastavit preferenci pro převod do "
+#~ "jediného prostoru barev."
+
+#, fuzzy
+#~ msgid "Model"
+#~ msgstr "Model:"
+
+#, fuzzy
+#~ msgid "Model:"
+#~ msgstr "Model:"
+
+#~ msgid "Model:      "
+#~ msgstr "Model:      "
+
+#, fuzzy
+#~ msgid "Model:           "
+#~ msgstr "Model:       "
+
+#, fuzzy
+#~ msgid "Modell"
+#~ msgstr "Model:"
+
+#~ msgid "Modell:"
+#~ msgstr "Model:"
+
+#, fuzzy
+#~ msgid "Modify Profile:"
+#~ msgstr "Profil monitoru"
+
+#, fuzzy
+#~ msgid "Module"
+#~ msgstr "Volby modulu:"
+
+#~ msgid "Monitor"
+#~ msgstr "Monitor"
+
+#~ msgid ""
+#~ "Monitors, which can be detected through the video card driver and "
+#~ "windowing system."
+#~ msgstr ""
+#~ "Monitory, které lze detekovat prostřednictvím ovladače grafické karty a "
+#~ "okenního systému."
+
+#~ msgid "More bits mean more precission for processing and more size."
+#~ msgstr "Více bitů znamená větší přesnost při zpracování a větší velikost."
+
+#~ msgid "More indepth help  for My example filter."
+#~ msgstr "Detailnější nápověda pro můj testovací filtr."
+
+#~ msgid ""
+#~ "Most users want a simple display of colors and will not check if colors "
+#~ "match the simulation color space."
+#~ msgstr ""
+#~ "Většina uživatelů nemá potřebu kontrolovat, zda se jednotlivé barvy "
+#~ "vejdou do barvového prostoru simulace."
+
+#~ msgid "My Computer"
+#~ msgstr "Muj pocitac"
+
+#~ msgid "My Filter"
+#~ msgstr "Můj filtr"
+
+#~ msgid "My Filter Object"
+#~ msgstr "My Filter Object"
+
+#~ msgid "My Name"
+#~ msgstr "Mé jméno"
+
+#~ msgid ""
+#~ "My cordially thank is especially dedicated to Marti Maria and the many "
+#~ "writers of the Lcms-user email list."
+#~ msgstr ""
+#~ "Muj srdecny dik je zvlaste venovan Marti Mariovi a mnoha prispevatelum "
+#~ "postovni konference LCMS-user."
+
+#~ msgid "My filter introduction."
+#~ msgstr "Úvod k filtrům."
+
+#~ msgid ""
+#~ "My project; www: http://www.my-adress.com; support/email: my@adress.com; "
+#~ "sources: http://www.my-adress.com/download"
+#~ msgstr ""
+#~ "Můj projekt; www: http://www.moje-adresa.com; podpora/email: moje@adresa."
+#~ "com; zdrojové kódy: http://www.moje-adresa.com/download"
+
+#~ msgid "Name"
+#~ msgstr "Jméno"
+
+#~ msgid "Named Color"
+#~ msgstr "Pojmenovaná barva"
+
+#~ msgid "Named Color 2"
+#~ msgstr "Pojmenovaná barva 2"
+
+#~ msgid "Named color order"
+#~ msgstr "Poradi pojménovaných barev"
+
+#~ msgid "Native Gamut"
+#~ msgstr "Ulozit gamut jako VRML"
+
+#, fuzzy
+#~ msgid "Need a ICC profile argument."
+#~ msgstr "Pro úpravu je třeba profil ICC."
+
+#~ msgid "Need a ICC profile to modify."
+#~ msgstr "Pro úpravu je třeba profil ICC."
+
+#~ msgid "New Directory?"
+#~ msgstr "Novy adresar?"
+
+#~ msgid "No"
+#~ msgstr "Ne"
+
+#~ msgid "No Color"
+#~ msgstr "Bez barvy"
+
+#~ msgid "No ICC profile id detected"
+#~ msgstr "Nedetekován žádný profil ICC"
+
+#~ msgid "No Image profile"
+#~ msgstr "Žádný profil obrázku"
+
+#~ msgid "No active drawable found."
+#~ msgstr "Nenalezen zadny aktivni obrazek."
+
+#~ msgid "No monitor gamma curves by profile:"
+#~ msgstr "Žádné gama křivky monitoru v profilu:"
+
+#~ msgid "No profil assigned to image."
+#~ msgstr "Obrazek nema prirazen profil."
+
+#~ msgid "No. Tag   Type   Size Description"
+#~ msgstr "C.  Tag   Typ     Vel. Popis"
+
+#~ msgid "Number of colors:"
+#~ msgstr "Pocet barev:"
+
+#~ msgid "Number of input channels"
+#~ msgstr "Pocet vstupnich kanálu"
+
+#~ msgid "Number of output channels"
+#~ msgstr "Pocet výstupnich kanálu"
+
+#~ msgid "OK"
+#~ msgstr "OK"
+
+#~ msgid "Offset Lithography"
+#~ msgstr "Offsetová litografie"
+
+#~ msgid "On Cmyk Mismatch"
+#~ msgstr "V případě nesouladu CMYK"
+
+#~ msgid "On Rgb Mismatch"
+#~ msgstr "V případě nesouladu RGB"
+
+#~ msgid "Onion skins"
+#~ msgstr "Pruklepovy papir"
+
+#~ msgid "Open"
+#~ msgstr "Otevrit"
+
+#, fuzzy
+#~ msgid "OpenICC Json"
+#~ msgstr "ICC Examin Verze"
+
+#~ msgid "Optimization"
+#~ msgstr "Optimalizace"
+
+#, fuzzy
+#~ msgid "Optimization Curves"
+#~ msgstr "Separace"
+
+#~ msgid "Option"
+#~ msgstr "Volba"
+
+#~ msgid "Option \"filename\", a valid filename"
+#~ msgstr "Volba \"filename\", platné jméno souboru"
+
+#~ msgid "Option \"filename\", a valid filename of a existing PNG image"
+#~ msgstr "Volba \"filename\", platný název souboru existujícího PNG obrázku"
+
+#~ msgid "Option \"filename\", a valid filename of a existing PPM image"
+#~ msgstr "Volba \"soubor\", platné jméno souboru existujícího obrázku PPM"
+
+#, fuzzy
+#~ msgid "Option not supported"
+#~ msgstr "Volba nepodporovaného typu:"
+
+#, fuzzy
+#~ msgid "Options"
+#~ msgstr "Volba"
+
+#~ msgid "Output Color Space"
+#~ msgstr "Výstupní barvový prostor"
+
+#, fuzzy
+#~ msgid "Output Image Filter Object"
+#~ msgstr "Output Image Filter Object"
+
+#, fuzzy
+#~ msgid "Oyranos "
+#~ msgstr "Oyranos X11"
+
+#~ msgid "Oyranos CUPS"
+#~ msgstr "Oyranos CUPS"
+
+#~ msgid "Oyranos Configuration"
+#~ msgstr "Konfigurace Oyranosu"
+
+#~ msgid "Oyranos Dummy"
+#~ msgstr "Oyranos Dummy"
+
+#~ msgid "Oyranos Help"
+#~ msgstr "Nápověda Oyranosu"
+
+#~ msgid "Oyranos ICC policy"
+#~ msgstr "Politika Oyranosu pro ICC"
+
+#~ msgid "Oyranos ICC policy module"
+#~ msgstr "Modul politiky Oyranosu pro ICC"
+
+#, fuzzy
+#~ msgid "Oyranos RAW Image"
+#~ msgstr "Oyranos RAW Image"
+
+#~ msgid "Oyranos Scanner"
+#~ msgstr "Oyranos skener"
+
+#~ msgid "Oyranos Settings"
+#~ msgstr "Nastavení Oyranosu"
+
+#~ msgid "Oyranos Settings Group"
+#~ msgstr "Skupina nastavení Oyranosu"
+
+#~ msgid "Oyranos Version"
+#~ msgstr "Verze Oyranosu"
+
+#~ msgid "Oyranos X11"
+#~ msgstr "Oyranos X11"
+
+#, fuzzy
+#~ msgid ""
+#~ "Oyranos allowes detailed settings like preferred editing color spaces and "
+#~ "the behaviour of color conversions or simulation. Oyranos reduces the "
+#~ "work involved in all color management related decisions through "
+#~ "automation, useful defaults and grouping of settings in selectable "
+#~ "policies."
+#~ msgstr ""
+#~ "Oyranos umožňuje nastavit např. barvový prostor pro editaci a způsob "
+#~ "transformace či simulace barev. Oyranos sníží množství práce spojené se "
+#~ "správou barev pomocí automatizace, užitečných výchozích hodnot a "
+#~ "seskupování nastavení do volitelných politik."
+
+#, fuzzy
+#~ msgid "Oyranos allows to fine tune handling of ICC color management."
+#~ msgstr "Nastavení Oyranosu umožňují doladit chování správy barev."
+
+#~ msgid "Oyranos display filter"
+#~ msgstr "Filter Oyranosu pro displej"
+
+#~ msgid ""
+#~ "Oyranos is a Color Management System (CMS), which relies one the ICC file "
+#~ "format standard (<a href=\"http://www.color.org\">www.color.org</a>) for "
+#~ "color space definitions. The use of ICC color profiles shall enable a "
+#~ "flawless and automated color data exchange between different color spaces "
+#~ "and various devices with their respective physical color behaviours."
+#~ msgstr ""
+#~ "Oyranos je systém pro správu barev (CMS), který využívá jeden ze "
+#~ "standardů souborového formátu ICC (<a href=\"http://www.color.org\">www."
+#~ "color.org</a>) pro definice barvových prostorů. Použití barvových profilů "
+#~ "ICC má umožnit bezproblémovou a automatizovanou výměnu dat o barvách mezi "
+#~ "různými barvovými prostory a různými zařízeními s ohledem na jejich "
+#~ "schopnost reprodukce barev."
+
+#~ msgid "Oyranos modules"
+#~ msgstr "Moduly Oyranosu"
+
+#~ msgid ""
+#~ "Oyranos project; www: http://www.oyranos.com; support/email: ku.b@gmx.de; "
+#~ "sources: http://www.oyranos.com/wiki/index.php?title=Oyranos/Download"
+#~ msgstr ""
+#~ "Projekt Oyranos; www: http://www.oyranos.com; podpora/email: ku.b@gmx.de; "
+#~ "zdrojové soubory: http://www.oyranos.com/wiki/index.php?title=Oyranos/"
+#~ "Download"
+
+#, fuzzy
+#~ msgid ""
+#~ "Oyranos project; www: http://www.oyranos.org; support/email: ku.b@gmx.de; "
+#~ "sources: http://www.oyranos.org/downloads/"
+#~ msgstr ""
+#~ "Projekt Oyranos; www: http://www.oyranos.com; podpora/email: ku.b@gmx.de; "
+#~ "zdrojové soubory: http://www.oyranos.com/wiki/index.php?title=Oyranos/"
+#~ "Download"
+
+#~ msgid ""
+#~ "Oyranos settings let you configure ICC color management behaviour for a "
+#~ "local computer. The settings can be per user and per system."
+#~ msgstr ""
+#~ "Nastavení Oyranosu umožňuje konfiguraci správy barev dle ICC pro místní "
+#~ "počítač. Nastavení mohou být zvlášť pro uživatele a pro systém."
+
+#~ msgid "Oyranos supplied modules"
+#~ msgstr "Moduly poskytované Oyranosem"
+
+#~ msgid "P22"
+#~ msgstr "P22"
+
+#, fuzzy
+#~ msgid "PCS"
+#~ msgstr "PCS: "
+
+#, fuzzy
+#~ msgid "PCS Color Space: "
+#~ msgstr "Bar. prostor:"
+
+#, fuzzy
+#~ msgid "PCS Type"
+#~ msgstr "Typ"
+
+#~ msgid "Passive matrix monitor"
+#~ msgstr "Monitor s pasívní maticí"
+
+#, fuzzy
+#~ msgid "Path can not be written"
+#~ msgstr "Profil neni ulozen."
+
+#~ msgid "Paths where ICC Profiles can be found"
+#~ msgstr "Cesty, kde jsou uloženy profily ICC"
+
+#, fuzzy
+#~ msgid "Paths:"
+#~ msgstr "Cesty"
+
+#~ msgid "Perceptual"
+#~ msgstr "Perceptuální"
+
+#~ msgid "Photo CD"
+#~ msgstr "Photo CD"
+
+#~ msgid "PhotoImageSetter"
+#~ msgstr "PhotoImageSetter"
+
+#~ msgid "Photographic paper printer"
+#~ msgstr "Tiskárna na fotografický papír"
+
+#~ msgid "Photometric"
+#~ msgstr "Fotometricky"
+
+#, fuzzy
+#~ msgid "Platform"
+#~ msgstr "Platforma:   "
+
+#, fuzzy
+#~ msgid "Platform:        "
+#~ msgstr "Datum:       "
+
+#~ msgid ""
+#~ "Please add first a image node to the graph before adding other filters"
+#~ msgstr ""
+#~ "Prosim pridejte nejprve image node ke grafu pred pridanim ostatnich filtru"
+
+#~ msgid "Please choose an existing file!"
+#~ msgstr "Prosim vyberte existujici soubor!"
+
+#~ msgid "Please specify a monitor with the -d option."
+#~ msgstr "Prosím specifikujte monitor pomocí volby -d."
+
+#~ msgid ""
+#~ "Policies summarise common settings for different user groups. Such "
+#~ "settings make it easy to switch back to simple defaults. Other groups can "
+#~ "define own settings and share them accross Oyranos enabled systems."
+#~ msgstr ""
+#~ "Politiky shrnují obvyklá nastavení pro různé skupiny uživatelů a "
+#~ "usnadňují návrat k výchozímu nastavení. Jiní uživatelé mohou definovat "
+#~ "vlastní nastavení a sdílet je napříč systémy s nainstalovaným Oyranosem."
+
+#~ msgid "Policy"
+#~ msgstr "Politika"
+
+#~ msgid "Policy search paths"
+#~ msgstr "Prohledávané cesty pro politiky"
+
+#~ msgid "Pos"
+#~ msgstr "Poz."
+
+#, fuzzy
+#~ msgid "Postscript 2 CRD, absolute colorimetric"
+#~ msgstr "Absolutní kolorimetrický"
+
+#, fuzzy
+#~ msgid "Postscript 2 CRD, perceptual"
+#~ msgstr "Náhled, perceptuální"
+
+#, fuzzy
+#~ msgid "Postscript 2 CRD, relative colorimetric"
+#~ msgstr "Náhled, relativní kolorimetrický"
+
+#, fuzzy
+#~ msgid "Postscript 2 CRD, saturated"
+#~ msgstr "Náhled, saturace"
+
+#, fuzzy
+#~ msgid "Postscript 2 Rendering Intent"
+#~ msgstr "Záměr transformace pro simulaci"
+
+#, fuzzy
+#~ msgid "Postscript CRD Information"
+#~ msgstr "Náhled, saturace"
+
+#~ msgid "Preferred CIE*Lab Editing Color Space"
+#~ msgstr "Preferovaný CIE*Lab barvový prostor pro editaci"
+
+#~ msgid "Preferred Cmyk Editing Color Space"
+#~ msgstr "Preferovaný barvový prostor CMYK pro editaci"
+
+#~ msgid "Preferred Gray Editing Color Space"
+#~ msgstr "Preferovaný barvový prostor pro editaci v šedi."
+
+#~ msgid "Preferred Rgb Editing Color Space"
+#~ msgstr "Preferovaný barvový prostor RGB pro editaci"
+
+#~ msgid "Preferred XYZ Editing Color Space"
+#~ msgstr "Preferovaný barvový prostor XYZ pro editaci"
+
+#~ msgid "Preserve Numbers"
+#~ msgstr "Zachovat hodnoty"
+
+#~ msgid "Preview"
+#~ msgstr "Nahled"
+
+#~ msgid "Preview, perceptual"
+#~ msgstr "Náhled, perceptuální"
+
+#~ msgid "Preview, photografic"
+#~ msgstr "Nahled, fotograficky"
+
+#~ msgid "Preview, relative colorimetric"
+#~ msgstr "Náhled, relativní kolorimetrický"
+
+#~ msgid "Preview, saturated"
+#~ msgstr "Náhled, saturace"
+
+#~ msgid "Printers, which are accessible through the CUPS spooling system."
+#~ msgstr "Tiskárny, které jsou přístupné přes tiskovou frontu CUPS."
+
+#~ msgid "Priority:"
+#~ msgstr "Priorita:"
+
+#, fuzzy
+#~ msgid "Profile Connection Space"
+#~ msgstr "Barvový prostor pro simulaci"
+
+#, fuzzy
+#~ msgid "Profile ID:      "
+#~ msgstr "Zobrazení profilu selhalo"
+
+#, fuzzy
+#~ msgid "Profile Illuminant"
+#~ msgstr "Iluminant A"
+
+#, fuzzy
+#~ msgid "Profile Information"
+#~ msgstr "Informace:"
+
+#, fuzzy
+#~ msgid "Profile Tags"
+#~ msgstr "jméno profilu"
+
+#~ msgid "Profile already installed"
+#~ msgstr "Profil je již nainstalován"
+
+#~ msgid "Profile at the moment\"."
+#~ msgstr "Profil v tento okamzik\"."
+
+#, fuzzy
+#~ msgid "Profile contains no description"
+#~ msgstr "Popis profilu"
+
+#, fuzzy
+#~ msgid "Profile description"
+#~ msgstr "Popis sekvence profilu"
+
+#~ msgid "Profile description, multilingual"
+#~ msgstr "Popis profilu, vícejazyčný"
+
+#~ msgid "Profile exists already"
+#~ msgstr "Profil již existuje"
+
+#~ msgid ""
+#~ "Profile installation can be done using oyranos-profile-install or oyranos-"
+#~ "profiles."
+#~ msgstr ""
+#~ "Profil lze nainstalovat pomocí programu oyranos-profile-install nebo "
+#~ "oyranos-profiles."
+
+#~ msgid "Profile is not embedded and "
+#~ msgstr "Profil neni vložen a "
+
+#, fuzzy
+#~ msgid "Profile not useable"
+#~ msgstr "profil nenalezen:"
+
+#~ msgid "Profile sequence description"
+#~ msgstr "Popis sekvence profilu"
+
+#~ msgid "Profile sequence identification"
+#~ msgstr "Identifikace sekvence profilu"
+
+#~ msgid "Profile\" is designed for an other device"
+#~ msgstr "Profil\" je navrzen pro jine zařízení"
+
+#~ msgid "Profile\"."
+#~ msgstr "Profil\"."
+
+#, fuzzy
+#~ msgid "Profile:         "
+#~ msgstr "Velikost:    "
+
+#~ msgid "Profiling parameters"
+#~ msgstr "Parametry charakterizace"
+
+#~ msgid "Projection Television"
+#~ msgstr "Projekční televize"
+
+#~ msgid "Prompt"
+#~ msgstr "Dotázat se"
+
+#~ msgid "Proof Profile..."
+#~ msgstr "Profil nahledu tisku..."
+
+#~ msgid "Proofing"
+#~ msgstr "Simulace"
+
+#~ msgid "Proofing Color Space"
+#~ msgstr "Barvový prostor pro simulaci"
+
+#~ msgid "Proofing Rendering Intent"
+#~ msgstr "Záměr transformace pro simulaci"
+
+#~ msgid "Proofing Settings"
+#~ msgstr "Nastavení simulace"
+
+#~ msgid ""
+#~ "Proofing Settings allows one to decide about the simulation color space."
+#~ msgstr ""
+#~ "Nastavení simulace umožňují stanovit barvový prostor pro napodobení "
+#~ "jiného zařízení."
+
+#~ msgid "Query device data base profile:"
+#~ msgstr "Dotazat se na profil databaze zařízení:"
+
+#~ msgid "Query server profile:"
+#~ msgstr "Dotazat se na profil serveru:"
+
+#~ msgid "Quit"
+#~ msgstr "Ukončit"
+
+#~ msgid "R"
+#~ msgstr "R"
+
+#~ msgid "RGB"
+#~ msgstr "RGB"
+
+#, fuzzy
+#~ msgid "RGB primaries missed"
+#~ msgstr "RGB primarni barvy"
+
+#~ msgid "RGB result not available"
+#~ msgstr "RGB vysledek neni k dispozici"
+
+#~ msgid ""
+#~ "Raw camera data, which are in file containing raw sensor data from a "
+#~ "camera still picture."
+#~ msgstr ""
+#~ "Data z fotoaparátu (RAW), která jsou v souboru obsahujícím surová data ze "
+#~ "senzoru fotoaparátu."
+
+#, fuzzy
+#~ msgid "RawCamera"
+#~ msgstr "RawCamera"
+
+#~ msgid "Read PNG"
+#~ msgstr "Číst PNG"
+
+#~ msgid "Read PPM"
+#~ msgstr "Načíst PPM"
+
+#, fuzzy
+#~ msgid "Rectangles"
+#~ msgstr "Rectangles"
+
+#, fuzzy
+#~ msgid "Rectangles Splitter Object"
+#~ msgstr "Rectangles Splitter Object"
+
+#~ msgid "Red"
+#~ msgstr "Červená"
+
+#~ msgid "Red Colorant"
+#~ msgstr "Červený kolorant"
+
+#~ msgid "Red Gamma:"
+#~ msgstr "Červená gama:"
+
+#~ msgid "Red tone reproduction curve"
+#~ msgstr "Křivka reprodukce červených tónů"
+
+#~ msgid "Red xy:"
+#~ msgstr "Červená xy:"
+
+#~ msgid "Reflective scanner"
+#~ msgstr "Odrazný skener"
+
+#~ msgid "Reflective, "
+#~ msgstr "Odrazny, "
+
+#~ msgid "Refresh"
+#~ msgstr "Znovu načíst"
+
+#~ msgid "Relative Colorimetric"
+#~ msgstr "Relativní kolorimetrický"
+
+#, fuzzy
+#~ msgid "Remove included ICC tag:"
+#~ msgstr "Vypsat zahrnuté štítky ICC:"
+
+#~ msgid "Rendering"
+#~ msgstr "Transformace"
+
+#~ msgid "Rendering Intent"
+#~ msgstr "Záměr transformace"
+
+#, fuzzy
+#~ msgid "Rendering Intent:"
+#~ msgstr "Záměr transformace"
+
+#~ msgid ""
+#~ "Rendering intent for color space transformations is typically the "
+#~ "Relative Colorimetric intent plus Black Point Compensation or the "
+#~ "Perceptual intent."
+#~ msgstr ""
+#~ "Záměr pro transformace mezi různými barvovými prostory se obvykle volí "
+#~ "relativní kolorimetrický vč. kompenzace černého bodu nebo perceptuální."
+
+#~ msgid "Rendering intent for color space transformations."
+#~ msgstr "Záměr transformace mezi barvovými prostory."
+
+#~ msgid "Report View"
+#~ msgstr "Zobrazeni reportu"
+
+#~ msgid "Reset"
+#~ msgstr "Obnovit"
+
+#~ msgid "Reset to a standard Policy for Oyranos."
+#~ msgstr "Obnovit standardní politiku Oyranosu."
+
+#~ msgid "Rgb"
+#~ msgstr "Rgb"
+
+#, fuzzy
+#~ msgid "Root Image"
+#~ msgstr "Root Image"
+
+#, fuzzy
+#~ msgid "Root Image Filter Object"
+#~ msgstr "Root Image Filter Object"
+
+#~ msgid "Rotate around slice"
+#~ msgstr "Rotovat okolo rezu"
+
+#~ msgid "SMPTE RP145-1994"
+#~ msgstr "SMPTE RP145-1994"
+
+#~ msgid "Saturation"
+#~ msgstr "Saturační"
+
+#~ msgid "Saturation Graph:"
+#~ msgstr "Saturační graf:"
+
+#~ msgid "Save"
+#~ msgstr "Ulozit"
+
+#~ msgid "Save Gamut as VRML"
+#~ msgstr "Ulozit gamut jako VRML"
+
+#~ msgid "Save Mixed Color Space Documents"
+#~ msgstr "Uložit dokumenty se smíšenými barvovými prostory"
+
+#~ msgid "Save Report"
+#~ msgstr "Ulozit report"
+
+#~ msgid "Save and install to a new policy:"
+#~ msgstr "Ulozit a instalovat do nove politiky:"
+
+#~ msgid "Save as VRML"
+#~ msgstr "Ulozit gamut jako VRML"
+
+#~ msgid "Save to a new policy:"
+#~ msgstr "Uložit jako novou politiku:"
+
+#, fuzzy
+#~ msgid "Scale Image Filter Object"
+#~ msgstr "Root Image Filter Object"
+
+#~ msgid "Scanner"
+#~ msgstr "Skener"
+
+#~ msgid "Scanner data, which come from SANE library."
+#~ msgstr "Data skeneru, která přichází od knihovny SANE."
+
+#, fuzzy
+#~ msgid "Screening"
+#~ msgstr "Pro obrazovku"
+
+#, fuzzy
+#~ msgid "Screening Description"
+#~ msgstr "Popis sekvence profilu"
+
+#~ msgid "Segmented Curve"
+#~ msgstr "Rozdělená křivka"
+
+#~ msgid "Select Behaviour"
+#~ msgstr "Zvolit chování"
+
+#~ msgid "Select Profile"
+#~ msgstr "Zvolit profil"
+
+#~ msgid ""
+#~ "Select a color profile representing a device to be simulated. This "
+#~ "profile will only be applied if proofing is enabled."
+#~ msgstr ""
+#~ "Zvolte barvový profil charakterizující zařízení, které má být simulováno. "
+#~ "Tento profil bude použit pouze v případě použití funkce simulace."
+
+#~ msgid "Select a directory with ICC profiles"
+#~ msgstr "Zvolit adresar s ICC profily"
+
+#~ msgid "Select active policy:"
+#~ msgstr "Zvolit aktivní politiku:"
+
+#~ msgid "Serial:"
+#~ msgstr "Sériové číslo:"
+
+#~ msgid "Set"
+#~ msgstr "Nastavit"
+
+#~ msgid "Set new profile:"
+#~ msgstr "Nastavit nový profil:"
+
+#~ msgid ""
+#~ "Set the current profile as monitor profile and upload vcgt tag to the "
+#~ "video card"
+#~ msgstr ""
+#~ "Nastavit aktualni profil jako profil monitoru a načíst VCGT tag do video "
+#~ "karty"
+
+#, fuzzy
+#~ msgid "Settings"
+#~ msgstr "nastavení"
+
+#~ msgid "Settings affecting the Behaviour in various situations"
+#~ msgstr "Nastavení ovlivňující chování v různých situacích"
+
+#~ msgid ""
+#~ "Settings can be grouped in Oyranos policies for easier adaption to "
+#~ "demands, better remembering and synchronisation."
+#~ msgstr ""
+#~ "Pro snadnější přizpůsobení požadavkům, zapamatování a synchronizaci mezi "
+#~ "systému mohou být nastavení seskupena dle politik Oyranosu."
+
+#, fuzzy
+#~ msgid "Setup device:"
+#~ msgstr "Vypsat zařízení:"
+
+#, fuzzy
+#~ msgid "Show Help:"
+#~ msgstr "Ukázat model:"
+
+#~ msgid "Show Main Window"
+#~ msgstr "Ukazat hlavni okno"
+
+#, fuzzy
+#~ msgid "Show Path"
+#~ msgstr "Cesta"
+
+#, fuzzy
+#~ msgid "Show Profile ID:"
+#~ msgstr "Zobrazení profilu selhalo"
+
+#~ msgid "Show Profile failed. iccexamin not found"
+#~ msgstr "Zobrazení profilu selhalo. iccexamin nenalezen"
+
+#~ msgid "Show all channels of this table a own window."
+#~ msgstr "Ukazat vsechny kanály teto tabulky v samostatnem okne."
+
+#~ msgid "Show in external Viewer"
+#~ msgstr "Zobrazit v externím prohlížeči"
+
+#, fuzzy
+#~ msgid "Show only device related ICC profiles"
+#~ msgstr "Zapsat do profilu ICC:"
+
+#~ msgid "Show options"
+#~ msgstr "Ukázat volby"
+
+#~ msgid "Show options [include policy]"
+#~ msgstr "Ukázat volby [zahrnout politiku]"
+
+#~ msgid "Show:"
+#~ msgstr "Ukazat:"
+
+#~ msgid "Signal"
+#~ msgstr "Signál"
+
+#~ msgid "Silkscreen"
+#~ msgstr "Sítotisk"
+
+#~ msgid "Simulate the output print on the monitor"
+#~ msgstr "Simulovat tisk na monitoru"
+
+#~ msgid "Simulation/Proof Color Space"
+#~ msgstr "Barvový prostor pro simulaci (proof)"
+
+#, fuzzy
+#~ msgid "Size"
+#~ msgstr "Velikost:"
+
+#~ msgid "Size:"
+#~ msgstr "Velikost:"
+
+#, fuzzy
+#~ msgid "Size:            "
+#~ msgstr "Velikost:    "
+
+#~ msgid "Slice"
+#~ msgstr "Rez"
+
+#~ msgid "Slice plane"
+#~ msgstr "Rovina rezu"
+
+#~ msgid "So something with options."
+#~ msgstr "Takže něco s volbami."
+
+#~ msgid "SoftProof"
+#~ msgstr "SofProof"
+
+#~ msgid "Solaris"
+#~ msgstr "Solaris"
+
+#~ msgid "Some help for My example filter."
+#~ msgstr "Nějaká nápověda pro můj testovací filtr."
+
+#~ msgid "Source and Target Profiles for various situations"
+#~ msgstr "Vstupní a výstupní profily pro různé situace"
+
+#~ msgid "Sphere 1dE"
+#~ msgstr "Koule 1dE"
+
+#~ msgid "Sphere 2dE"
+#~ msgstr "Koule 2dE"
+
+#~ msgid "Sphere 4dE"
+#~ msgstr "Koule 4dE"
+
+#, fuzzy
+#~ msgid "Standard Observer 1931 2° Graph:"
+#~ msgstr "Graf standardního pozorovatele:"
+
+#~ msgid "Start"
+#~ msgstr "Začátek"
+
+#~ msgid "Std-exception occured: "
+#~ msgstr "Nastala std. vyjimka: "
+
+#~ msgid "Stop loading "
+#~ msgstr "Zastavit nacitani"
+
+#~ msgid "Tag Version:"
+#~ msgstr "Verze štítků:"
+
+#~ msgid "Taligent"
+#~ msgstr "Taligent"
+
+#, fuzzy
+#~ msgid "Taxi DB Profiles"
+#~ msgstr "Výchozí profily"
+
+#~ msgid "Taxi DB entries for device"
+#~ msgstr "Záznamy pro zařízení v Taxi DB"
+
+#~ msgid "Taxi ID"
+#~ msgstr "Taxi ID"
+
+#~ msgid "Technologie"
+#~ msgstr "Technologie"
+
+#~ msgid "Technology:"
+#~ msgstr "Technologie:"
+
+#~ msgid "Texts"
+#~ msgstr "Texty"
+
+#~ msgid "Texts/Arrows on/off"
+#~ msgstr "Texty/Sipky zap./vyp."
+
+#~ msgid ""
+#~ "The \"display\" filter supports applications to show image content on "
+#~ "single and multi monitor displays. It cares about the server "
+#~ "communication in declaring the region as prematched. So a X11 server side "
+#~ "color correction does not disturb the displayed colors and omits the "
+#~ "provided rectangle. The \"display\" filter matches the provided image "
+#~ "content to each monitor it can find. Of course this has limitations to "
+#~ "distorted windows, like wobbly effects or matrix deformed windows."
+#~ msgstr ""
+#~ "Filtr \"displej\" umožňuje aplikacím zobrazit obsah obrázku na jednom či "
+#~ "více displejích. Postará se o komunikaci se serverem ohledně deklarace "
+#~ "regionu, který již má správné barvy. Tzn., že barvová korekce na straně "
+#~ "serveru X11 již neovlivní zobrazené barvy, neboť oblast daného obdélníku "
+#~ "je z korekce vynechána. Filtr \"displej\" spojí daný obsah obrázku s "
+#~ "každým monitorem, který nalezne. Toto samozřejmě nebude fungovat pro okna "
+#~ "se zkreslenou geometrií jako např. efekty \"wobbly\" nebo okna "
+#~ "deformovaná dle matic."
+
+#~ msgid "The CUPS module supports the generic device protocol."
+#~ msgstr "Module CUPS podporuje protokol obecného zařízení."
+
+#~ msgid "The CUPS/printer module for Oyranos."
+#~ msgstr "Tiskový/CUPS modul pro Oyranos."
+
+#~ msgid ""
+#~ "The Editing Color Spaces shall be well behaving in order to allow editing "
+#~ "of per channel curves. Well behaving means for Rgb, that editing of all "
+#~ "three curves maintains gray neutrality. Hint: editing color spaces are "
+#~ "sometimes called a working space."
+#~ msgstr ""
+#~ "Barvové prostory pro editaci mají být \"dobře se chovající\", aby "
+#~ "umožňovaly editaci pomocí křivek pro jednotlivé kanály. Pro RGB znamená "
+#~ "\"dobře se chovající\", že při současných úpravách všech tří křivek "
+#~ "zůstane zachována neutrální šedá. Poznámka: barvový prostor pro editaci "
+#~ "je totéž co pracovní prostor."
+
+#~ msgid ""
+#~ "The Option \"filename\" should contain a valid filename to read the png "
+#~ "data from. If the file does not exist, a error will occure.\n"
+#~ "The iCCP chunk is searched for or a oyASSUMED_WEB/oyASSUMED_GRAY ICC "
+#~ "profile will be attached to the resulting image. A embedded renering "
+#~ "intent will be ignored."
+#~ msgstr ""
+#~ "Volba \"filename\" by měla obsahovat platný název souboru pro čtení dat "
+#~ "PNG. Pokud soubor neexistuje, nastane chyba.\n"
+#~ "iCCP chunk je prohledán pro oyASSUMED_WEB/oyASSUMED_GRAY. Profil ICC bude "
+#~ "připojen k výslednému obrázku. Vložený záměr transformace bude ignorován."
+
+#~ msgid ""
+#~ "The Option \"filename\" should contain a valid filename to read the ppm "
+#~ "data from. If the file does not exist, a error will occure.\n"
+#~ "The oyEDITING_RGB ICC profile is attached."
+#~ msgstr ""
+#~ "Volba \"filename\" by měla obsahovat platný název souboru pro čtení dat "
+#~ "PPM. Pokud soubor neexistuje, nastane chyba.\n"
+#~ "Profil ICC oyEDITING_RGB je připojen."
+
+#~ msgid ""
+#~ "The Option \"filename\" should contain a valid filename to write the png "
+#~ "data into. A existing file will be overwritten without notice."
+#~ msgstr ""
+#~ "Volba \"filename\" by měla obsahovat platný název souboru pro zápis dat "
+#~ "PNG. Existující soubor bude bez upozornění přepsán."
+
+#~ msgid ""
+#~ "The Option \"filename\" should contain a valid filename to write the ppm "
+#~ "data into. A existing file will be overwritten without notice."
+#~ msgstr ""
+#~ "Volba \"filename\" by měla obsahovat platné jméno souboru k zápisu dat "
+#~ "PPM. Existující soubor bude přepsán bez výstrahy."
+
+#~ msgid ""
+#~ "The adaption state should be between 0 and 1.0 and will apply to the "
+#~ "absolute colorimetric intent."
+#~ msgstr ""
+#~ "Adaptační stav by měl být mezi 0 a 1.0 a týká se absolutního "
+#~ "kolorimetrického záměru."
+
+#~ msgid ""
+#~ "The appliance of color profiles shall help to achive an easy color data "
+#~ "exchange, regardless which application or what kind of operating system "
+#~ "is used. As well color adaption between different devices is possible, "
+#~ "provided the color characteristics of both devices are known. The qulity "
+#~ "of a color transform from one to an other device depends mainly on the "
+#~ "quality of the color measurement and the used profiling algorithm during "
+#~ "profile creation."
+#~ msgstr ""
+#~ "Pouzivani barvových profilu napomuze k dosazeni snadne vymeny barevných "
+#~ "dat bez ohledu na to, ktera aplikace nebo jaky typ operacniho systemu je "
+#~ "pouzivan. Tez je mozne prizpusobeni barev mezi ruznymi zařízeními za "
+#~ "predpokladu, ze barevna charakteristika obou zařízení je znama. Kvalita "
+#~ "barevne transformace z jednoho na druhe zařízení zavisi predevsim na "
+#~ "kvalite mereni barev a pouziteho algoritmu pro tvorbu profilu."
+
+#, fuzzy
+#~ msgid "The client side window data handler of Oyranos."
+#~ msgstr "The client side window data handler of Oyranos."
+
+#~ msgid ""
+#~ "The conversion between color spaces of different shape and size can "
+#~ "happen in various ways. The Perceptual rendering intent is usually the "
+#~ "best choice for photographs and artistic imagery. It is used in many "
+#~ "automatic systems. The Relative Colorimetric rendering intent provides a "
+#~ "well-defined standard, one-to-one color mapping, but without applying "
+#~ "white point adaption. This can lead to color clipping in case of colors "
+#~ "falling outside the target gamut as a price for the otherwise "
+#~ "colorimetric correctness. The Relative Colorimetric intent is often used "
+#~ "in combination with Black Point Compensation. The Saturation rendering "
+#~ "intent shall provide an optimal use of saturated device colors. The "
+#~ "Absolute Colorimetric rendering intent works like the relative "
+#~ "colorimetric one except the white point is adapted. All rendering intents "
+#~ "beside the colorimetric ones rely on the color tables designed by the "
+#~ "profile vendor."
+#~ msgstr ""
+#~ "Transformace mezi barvovými prostory rozdílných tvarů a velikostí lze "
+#~ "provádět různými způsoby. Perceptuální záměr transformace je obvykle "
+#~ "nejlepší volbou pro fotografie a umělecké obrazy. Používá se v mnoha "
+#~ "automatizovaných systémech. Relativní kolorimetrický záměr poskytuje "
+#~ "dobře definovaný standard, mapování barev jedna-k-jedné spolu s adaptací "
+#~ "bílého bodu. To může vést k \"oříznutí\" barev mimo cílový gamut, což je "
+#~ "cena za jinak kolorimetrickou přesnost. Relativní kolorimetrický záměr se "
+#~ "často používá spolu s kompenzací černého bodu. Záměr dle saturace má "
+#~ "poskytnout optimální využití sytých barev zařízení. Absolutní "
+#~ "kolorimetrický záměr transformace funguje stejně jako relativní "
+#~ "kolorimetrický záměr s tím rozdílem, že bílý bod není přizpůsoben "
+#~ "(zůstává zachován). Všechny záměry transformace kromě těch "
+#~ "kolorimetrických závisejí na tabulkách mapování barev vložených do "
+#~ "profilu ICC jejich tvůrcem."
+
+#~ msgid "The dummy useless module of Oyranos."
+#~ msgstr "Hloupý a neužitečný modul Oyranosu."
+
+#, fuzzy
+#~ msgid ""
+#~ "The filter can query pixels from its successors in a graph. The results "
+#~ "are stored in the internal buffer."
+#~ msgstr ""
+#~ "The filter can query pixels from its successors in a graph. The results "
+#~ "are stored in the internal buffer."
+
+#, fuzzy
+#~ msgid ""
+#~ "The filter is a libraw image reader. The option \"device\" with value "
+#~ "\"1\" requestests a oyConfig_s object containing typical device "
+#~ "informations about the cameraRAW file. The option \"render\" with value "
+#~ "\"0\" will skip some of the data processing. The resulting image will be "
+#~ "tagged with \"filename\"=string."
+#~ msgstr ""
+#~ "Filtr načítá obrázek pomocí libraw. Volba \"device\" s hodnotou \"1\" "
+#~ "vyžádá objekt oyConfig_s obsahující typické informace zařízení o souboru "
+#~ "cameraRAW. Volba \"render\" s hodnotou \"0\" přeskočí některá zpracování "
+#~ "dat."
+
+#, fuzzy
+#~ msgid "The filter is a possible pixel target in a graph."
+#~ msgstr "The filter is a possible pixel target in a graph."
+
+#, fuzzy
+#~ msgid ""
+#~ "The filter needs some informations attached to the output image tags of "
+#~ "the \"output\" image filter. The following list describes the X11/Xorg "
+#~ "requirements.\n"
+#~ " A \"window_id\" option shall consist of a oyBlob_s object containing the "
+#~ "X11 \"Window\" type in its pointer element.\n"
+#~ " A \"display_id\" option shall consist of a oyBlob_s object containing "
+#~ "the X11 \"Display\" of the application. This is typically exposed as "
+#~ "system specific pointer by each individual toolkit.\n"
+#~ " A \"display_rectangle\" option of type oyRectangle_s shall represent the "
+#~ "application image region in pixel of the absolute display coordinates. \n"
+#~ " In the \"datatype\" option, a oyDATATYPE_e encoded as integer is "
+#~ "expected, to deliver that data type in a not yet allocated output image. "
+#~ "The output data type is by default not changed. A newly not yet allocated "
+#~ "output image will be stored as processing data in the socket.\n"
+#~ " \"preserve_alpha\" is a integer option to keep a given alpha in a not "
+#~ "yet allocated output image. "
+#~ msgstr ""
+#~ "The filter needs some informations attached to the output image tags of "
+#~ "the \"output\" image filter. The following list describes the X11/Xorg "
+#~ "requirements.\n"
+#~ " A \"window_id\" option shall consist of a oyBlob_s object containing the "
+#~ "X11 \"Window\" type in its pointer element.\n"
+#~ " A \"display_id\" option shall consist of a oyBlob_s object containing "
+#~ "the X11 \"Display\" of the application. This is typically exposed as "
+#~ "system specific pointer by each individual toolkit.\n"
+#~ " A \"display_rectangle\" option of type oyRectangle_s shall represent the "
+#~ "application image region in pixel of the absolute display coordinates. \n"
+#~ " In the \"datatype\" option, a oyDATATYPE_e encoded as integer is "
+#~ "expected, to deliver that data type in a not yet allocated output image. "
+#~ "The output data type is by default not changed. A newly not yet allocated "
+#~ "output image will be stored as processing data in the socket.\n"
+#~ " \"preserve_alpha\" is a integer option to keep a given alpha in a not "
+#~ "yet allocated output image. "
+
+#~ msgid "The filter obtains a image from libraw."
+#~ msgstr "Filtr získá obrázek z libraw."
+
+#, fuzzy
+#~ msgid "The filter provides a generic image source."
+#~ msgstr "The filter provides a generic image source."
+
+#, fuzzy
+#~ msgid ""
+#~ "The filter provides policy settings. These settings can be applied to a "
+#~ "graph through the user function oyConversion_Correct()."
+#~ msgstr ""
+#~ "Filtr poskytuje nastavení politiky. Tato nastavení mohou být použita v "
+#~ "grafu pomocí uživatelské funkce oyConversion_Correct()."
+
+#, fuzzy
+#~ msgid ""
+#~ "The filter will expect a \"rectangle\" option and will create, fill and "
+#~ "process a according rectangle with a new job ticket."
+#~ msgstr ""
+#~ "The filter will expect a \"rectangle\" option and will create, fill and "
+#~ "process a according rectangle with a new job ticket."
+
+#, fuzzy
+#~ msgid ""
+#~ "The filter will expect a \"scale\" option and will create, fill and "
+#~ "process a according data version with a new job ticket."
+#~ msgstr ""
+#~ "The filter will expect a \"rectangle\" option and will create, fill and "
+#~ "process a according rectangle with a new job ticket."
+
+#, fuzzy
+#~ msgid ""
+#~ "The following options are available to create color contexts:\n"
+#~ " \"profiles_simulation\", a option of type oyProfiles_s, can contain "
+#~ "device profiles for proofing.\n"
+#~ " \"profiles_effect\", a option of type oyProfiles_s, can contain abstract "
+#~ "color profiles.\n"
+#~ " The following Oyranos options are supported: \"rendering_gamut_warning"
+#~ "\", \"rendering_intent_proof\", \"rendering_bpc\", \"rendering_intent\", "
+#~ "\"proof_soft\" and \"proof_hard\".\n"
+#~ " The additional lcms option is supported \"cmyk_cmyk_black_preservation"
+#~ "\" [0 - none; 1 - LCMS_PRESERVE_PURE_K; 2 - LCMS_PRESERVE_K_PLANE], "
+#~ "\"precalculation\": [0 - normal; 1 - cmsFLAGS_NOOPTIMIZE; 2 - "
+#~ "cmsFLAGS_HIGHRESPRECALC, 3 - cmsFLAGS_LOWRESPRECALC], "
+#~ "\"precalculation_curves\": [0 - none; 1 - "
+#~ "cmsFLAGS_CLUT_POST_LINEARIZATION + cmsFLAGS_CLUT_PRE_LINEARIZATION] and "
+#~ "\"adaption_state\": [0.0 - not adapted to screen, 1.0 - full adapted to "
+#~ "screen]."
+#~ msgstr ""
+#~ "K dispozici jsou následující volby pro vytvoření barvových kontextů:\n"
+#~ " \"profiles_simulation\", volba typu oyProfiles_s, může obsahovat profily "
+#~ "zařízení pro simulaci.\n"
+#~ " \"profiles_effect\", volba typu oyProfiles_s, může obsahovat abstraktní "
+#~ "barvové profily.\n"
+#~ " Jsou podporovány následující volby Oyranosu: \"rendering_gamut_warning"
+#~ "\", \"rendering_intent_proof\", \"rendering_bpc\", \"rendering_intent\", "
+#~ "\"proof_soft\" a \"proof_hard\".\n"
+#~ " Jsou podporovány dodatečné volby lcms: \"cmyk_cmyk_black_preservation"
+#~ "\" [0 - none; 1 - LCMS_PRESERVE_PURE_K; 2 - LCMS_PRESERVE_K_PLANE], "
+#~ "\"precalculation\": [0 - cmsFLAGS_NOOPTIMIZE; 1 - normal; 2 - "
+#~ "cmsFLAGS_HIGHRESPRECALC, 3 - cmsFLAGS_LOWRESPRECALC], "
+#~ "\"precalculation_curves\": [0 - none; 1 - "
+#~ "cmsFLAGS_CLUT_POST_LINEARIZATION + cmsFLAGS_CLUT_PRE_LINEARIZATION] a "
+#~ "\"adaption_state\": [0.0 - nepřizpůsobeno obrazovce, 1.0 - plně "
+#~ "přizpůsobeno obrazovce]."
+
+#~ msgid ""
+#~ "The following options are available to create color contexts:\n"
+#~ " \"profiles_simulation\", a option of type oyProfiles_s, can contain "
+#~ "device profiles for proofing.\n"
+#~ " \"profiles_effect\", a option of type oyProfiles_s, can contain abstract "
+#~ "color profiles.\n"
+#~ " The following Oyranos options are supported: \"rendering_gamut_warning"
+#~ "\", \"rendering_intent_proof\", \"rendering_bpc\", \"rendering_intent\", "
+#~ "\"proof_soft\" and \"proof_hard\".\n"
+#~ " The additional lcms options are supported \"cmyk_cmyk_black_preservation"
+#~ "\" [0 - none; 1 - LCMS_PRESERVE_PURE_K; 2 - LCMS_PRESERVE_K_PLANE] and "
+#~ "\"precalculation\"."
+#~ msgstr ""
+#~ "K dispozici jsou následující volby pro vytvoření barvových kontextů:\n"
+#~ " \"profiles_simulation\", volba typu oyProfiles_s, může obsahovat profily "
+#~ "zařízení pro simulaci.\n"
+#~ " \"profiles_effect\", volba typu oyProfiles_s, může obsahovat abstraktní "
+#~ "profily ICC.\n"
+#~ " Jsou podporovány následující volby Oyranosu: \"rendering_gamut_warning"
+#~ "\", \"rendering_intent_proof\", \"rendering_bpc\", \"rendering_intent\", "
+#~ "\"proof_soft\" a \"proof_hard\".\n"
+#~ " Jsou podporovány dodatečné volby lcms \"cmyk_cmyk_black_preservation"
+#~ "\" [0 - none; 1 - LCMS_PRESERVE_PURE_K; 2 - LCMS_PRESERVE_K_PLANE] a "
+#~ "\"precalculation\"."
+
+#~ msgid ""
+#~ "The internal color transformations are currently realised with functions "
+#~ "of the littleCMS program library."
+#~ msgstr ""
+#~ "Interní barvove transformace jsou realizovany funkcemi knihoven programu "
+#~ "LittleCMS."
+
+#~ msgid ""
+#~ "The kind of ICC gamut mapping for transforming colors between differently "
+#~ "sized color spaces"
+#~ msgstr ""
+#~ "Typ mapování gamutu ICC pro transformaci barev mezi barvovými prostory "
+#~ "ruzných velikostí"
+
+#~ msgid ""
+#~ "The lcms \"color.icc\" filter is a one dimensional color conversion "
+#~ "filter. It can both create a color conversion context, some precalculated "
+#~ "for processing speed up, and the color conversion with the help of that "
+#~ "context. The adaption part of this filter transforms the Oyranos color "
+#~ "context, which is ICC device link based, to the internal lcms format."
+#~ msgstr ""
+#~ "Filter lcms \"color.icc\" je jednorozměrný filtr pro transformaci barev. "
+#~ "Umí vytvořit jak kontext transformace barev, některé předvypočtené pro "
+#~ "urychlení následné transformace, tak i transformaci barev s pomocí toho "
+#~ "kontextu. Adaptační část filtru transformuje barvový kontext Oyranosu, "
+#~ "který je založen na tzv. spojovacích profilech ICC, do interního formátu "
+#~ "lcms."
+
+#, fuzzy
+#~ msgid ""
+#~ "The lcms \"color_icc\" filter is a one dimensional color conversion "
+#~ "filter. It can both create a color conversion context, some precalculated "
+#~ "for processing speed up, and the color conversion with the help of that "
+#~ "context. The adaption part of this filter transforms the Oyranos color "
+#~ "context, which is ICC device link based, to the internal lcms format."
+#~ msgstr ""
+#~ "Filter lcms \"color.icc\" je jednorozměrný filtr pro transformaci barev. "
+#~ "Umí vytvořit jak kontext transformace barev, některé předvypočtené pro "
+#~ "urychlení následné transformace, tak i transformaci barev s pomocí toho "
+#~ "kontextu. Adaptační část filtru transformuje barvový kontext Oyranosu, "
+#~ "který je založen na tzv. spojovacích profilech ICC, do interního formátu "
+#~ "lcms."
+
+#~ msgid ""
+#~ "The littleCMS \"create_profile.color_matrix\" command lets you create ICC "
+#~ "profiles from some given colorimetric coordinates. See the "
+#~ "\"create_profile\" info item."
+#~ msgstr ""
+#~ "Příkaz Little CMS \"create_profile.color_matrix\" umožňuje vytvořit "
+#~ "profily ICC z určených kolorimetrických souřadnic. Viz položka "
+#~ "\"create_profile\"."
+
+#~ msgid ""
+#~ "The littleCMS \"create_profile.color_matrix\" command lets you create ICC "
+#~ "profiles from some given colorimetric coordinates. The filter expects a "
+#~ "oyOption_s object with name \"color_matrix."
+#~ "redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma\" containing 9 "
+#~ "floats in the order of CIE*x for red, CIE*y for red, CIE*x for green, "
+#~ "CIE*y for green, CIE*x for blue, CIE*y for blue, CIE*x for white, CIE*y "
+#~ "for white and a gamma value."
+#~ msgstr ""
+#~ "Příkaz littleCMS \"create_profile.color_matrix\" umožní vytvořit profily "
+#~ "ICC z daných kolorimetrických souřadnic. Filter očekává objekt oyOption_s "
+#~ "se jménem \"color_matrix."
+#~ "redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma\" obsahujícím 9 "
+#~ "hodnot v plovoucí čárce v pořadí CIE*x pro červenou, CIE*y pro červenou, "
+#~ "CIE*x pro zelenou, CIE*y pro zelenou, CIE*x pro modrou, CIE*y pro modrou, "
+#~ "CIE*x pro bílou, CIE*y pro bílou a hodnotu gama."
+
+#~ msgid ""
+#~ "The littleCMS \"create_profile.color_matrix\" command lets you create ICC "
+#~ "profiles from some given colorimetric coordinates. The filter expects a "
+#~ "oyOption_s object with name \"color_matrix."
+#~ "redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma\" containing 9 "
+#~ "floats in the order of CIE*x for red, CIE*y for red, CIE*x for green, "
+#~ "CIE*y for green, CIE*x for blue, CIE*y for blue, CIE*x for white, CIE*y "
+#~ "for white and a gamma value. The result will appear in \"icc_profile\" "
+#~ "with the additional attributes \"create_profile.color_matrix\"."
+#~ msgstr ""
+#~ "Příkaz Little CMS \"create_profile.color_matrix\" umožňuje vytvořit "
+#~ "profily ICC z určených kolorimetrických souřadnic. Filter očekává objekt "
+#~ "oyOption_s se jménem \"color_matrix."
+#~ "redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma\" obsahujícím 9 "
+#~ "hodnot v plovoucí čárce v pořadí CIE*x pro červenou, CIE*y pro červenou, "
+#~ "CIE*x pro zelenou, CIE*y pro zelenou, CIE*x pro modrou, CIE*y pro modrou, "
+#~ "CIE*x pro bílou, CIE*y pro bílou a hodnotu gama. Výsledek bude v "
+#~ "\"icc_profile\" s dodatečnými atributy \"create_profile.color_matrix\"."
+
+#~ msgid ""
+#~ "The littleCMS \"create_profile.proofing_effect\" command lets you create "
+#~ "ICC abstract profiles from a given ICC profile for proofing. The filter "
+#~ "expects a oyOption_s object with name \"proofing_profile\" containing a "
+#~ "oyProfile_s as value. The options \"rendering_intent\", "
+#~ "\"rendering_intent_proof\", \"rendering_bpc\", \"rendering_gamut_warning"
+#~ "\", \"precalculation\" and \"cmyk_cmyk_black_preservation\" are honoured. "
+#~ "The result will appear in \"icc_profile\" with the additional attributes "
+#~ "\"create_profile.proofing_effect\" as a oyProfile_s object."
+#~ msgstr ""
+#~ "Příkaz Little CMS \"create_profile.proofing_effect\" umožní vytvořit "
+#~ "abstraktní profily ICC z daného simulačního profilu ICC (proof). Filter "
+#~ "očekává objekt oyOption_s se jménem \"proofing_profile\" obsahujícím jako "
+#~ "hodnotu oyProfile_s. Volby \"rendering_intent\", \"rendering_intent_proof"
+#~ "\", \"rendering_bpc\", \"rendering_gamut_warning\", \"precalculation\" a "
+#~ "\"cmyk_cmyk_black_preservation\" jsou respektovány. Výsledek se objeví v "
+#~ "\"icc_profile\" s dodatečnými atributy \"create_profile.proofing_effect\" "
+#~ "jako objekt oyProfile_s."
+
+#~ msgid ""
+#~ "The littleCMS \"create_profile.proofing_effect\" command lets you create "
+#~ "ICC abstract profiles from a given ICC profile for proofing. The filter "
+#~ "expects a oyOption_s object with name \"proofing_profile\" containing a "
+#~ "oyProfile_s as value. The options \"rendering_intent\", "
+#~ "\"rendering_intent_proof\", \"rendering_bpc\", \"rendering_gamut_warning"
+#~ "\", \"precalculation\", \"precalculation_curves\", "
+#~ "\"cmyk_cmyk_black_preservation\" and \"adaption_state\" are honoured. The "
+#~ "result will appear in \"icc_profile\" with the additional attributes "
+#~ "\"create_profile.proofing_effect\" as a oyProfile_s object."
+#~ msgstr ""
+#~ "Příkaz littleCMS \"create_profile.proofing_effect\" umožnuje vytvořit "
+#~ "abstraktní profily ICC z určeného simulačního profilu ICC (proof). Filter "
+#~ "očekává objekt oyOption_s se jménem \"proofing_profile\" obsahujícím  "
+#~ "jako hodnotu oyProfile_s. Volby \"rendering_intent\", "
+#~ "\"rendering_intent_proof\", \"rendering_bpc\", \"rendering_gamut_warning"
+#~ "\", \"precalculation\", \"precalculation_curves\", "
+#~ "\"cmyk_cmyk_black_preservation\" a \"adaption_state\" jsou respektovány. "
+#~ "Výsledek bude v \"icc_profile\" s dodatečnými atributy \"create_profile."
+#~ "proofing_effect\" jako objekt oyProfile_s."
+
+#~ msgid ""
+#~ "The littleCMS \"create_profile.proofing_effect\" command lets you create "
+#~ "ICC abstract profiles from some given ICC profile. See the "
+#~ "\"proofing_effect\" info item."
+#~ msgstr ""
+#~ "Příkaz Little CMS \"create_profile.proofing_effect\" umožňuje vytvořit "
+#~ "abstraktní profil ICC z daného profilu ICC. Viz položka \"proofing_effect"
+#~ "\"."
+
+#~ msgid ""
+#~ "The module is responsible for many settings in the Oyranos color "
+#~ "management settings panel. If applied the module care about rendering "
+#~ "intents, simulation, mixed color documents and default profiles."
+#~ msgstr ""
+#~ "Module je odpovědný za mnohá nastavení v ovládacím panelu správy barev "
+#~ "Oyranosu. Pokud bude použit, modul se postará o záměry transformace, "
+#~ "simulace, dokumenty se smíšenými barvami a výchozí profily."
+
+#~ msgid "The my_handler takes a option with key name \"print\" and prints it."
+#~ msgstr "my_handler akceptuje volbu se jménem klíče \"print\" a vytiskne ji."
+
+#~ msgid "The oyX1 module supports the generic device protocol."
+#~ msgstr "Modul oyX1 podporuje protokol obecného zařízení."
+
+#~ msgid ""
+#~ "The oyX1 modules \"set_xcm_region\" handler lets you set X Color "
+#~ "Management compatible client side color regions. The implementation uses "
+#~ "libXcm and Oyranos."
+#~ msgstr ""
+#~ "Obslužná rutina \"set_xcm_region\" modulů Oyranosu umožňuje nastavit "
+#~ "regiony barev pro klientskou stranu kompatibilní se správou barev v X."
+
+#~ msgid ""
+#~ "The preferred CIE*Lab Editing Color Space shall describe the CIE*Lab."
+#~ msgstr ""
+#~ "Preferovaný barvový prostor editace CIE*Lab by měl popisovat CIE*Lab."
+
+#~ msgid ""
+#~ "The preferred Cmyk Editing Color Space should represent a color space "
+#~ "that complies to well defined printing conditions like FOGRA or SWOP."
+#~ msgstr ""
+#~ "Preferovaný barvový prostor editace CMYK by měl popisovat barvový "
+#~ "prostor, který je kompatibilní s dobře definovaným standardem jako např. "
+#~ "FOGRA či SWOP."
+
+#~ msgid ""
+#~ "The preferred Gray Editing Color Space shall describe a single lightness "
+#~ "channel color space for grayscale images."
+#~ msgstr ""
+#~ "Preferovaný barvový prostor editace v šedi by měl popisovat barvový "
+#~ "prostor s jedním kanálem jasu pro monochromatické obrázky."
+
+#~ msgid ""
+#~ "The preferred Rgb Editing Color Space should represent a well behaving "
+#~ "color space like sRGB."
+#~ msgstr ""
+#~ "Preferovaný barvový prostor editace RGB by měl popisovat dobře se "
+#~ "chovající barvový prostor jako např. sRGB."
+
+#~ msgid "The preferred XYZ Editing Color Space shall describe CIE*XYZ."
+#~ msgstr "Preferovaný barvový prostor editace XYZ by měl popisovat CIE*XYZ."
+
+#~ msgid ""
+#~ "The proofing color space represents a real color device for simulation. "
+#~ "Possible use cases are to simulate a print machine, a viewing environment "
+#~ "in a theater or a expected small monitor gamut."
+#~ msgstr ""
+#~ "Barvový prostor pro simulaci zastupuje skutečné zařízení, jež má být "
+#~ "napodobeno. Tímto lze umožnit například simulaci barev skutečné tiskárny, "
+#~ "pozorovacích podmínek v divadle nebo předpokládaného malého gamutu "
+#~ "monitoru."
+
+#~ msgid "The qarz module supports the generic device protocol."
+#~ msgstr "Module qarz podporuje protokol obecného zařízení."
+
+#~ msgid "The raw image backend of Oyranos."
+#~ msgstr "Backend Oyranosu pro RAW snímky."
+
+#, fuzzy
+#~ msgid "The root image filter can hold pixel data for processing in a graph."
+#~ msgstr ""
+#~ "The root image filter can hold pixel data for processing in a graph."
+
+#~ msgid "The scanner (hopefully)usefull backend of Oyranos."
+#~ msgstr "Užitečný (doufejme) backend Oyranosu pro skener."
+
+#~ msgid ""
+#~ "The selected color space will be assigned to untagged CIE*Lab color "
+#~ "content and define colors for further processing."
+#~ msgstr ""
+#~ "Vybraný barvový prostor bude přiřazen k neoznačeným barvám modelu CIE*Lab "
+#~ "a definuje barvy pro další zpracování."
+
+#~ msgid ""
+#~ "The selected color space will be assigned to untagged Cmyk color content "
+#~ "and define colors for further processing."
+#~ msgstr ""
+#~ "Vybraný barvový prostor bude přiřazen k neoznačeným barvám CMYK a "
+#~ "definuje barvy pro další zpracování."
+
+#~ msgid ""
+#~ "The selected color space will be assigned to untagged Gray color content "
+#~ "and define colors for further processing."
+#~ msgstr ""
+#~ "Vybraný barvový prostor bude přiřazen k neoznačeným barvám modelu Gray "
+#~ "(šeď) a definuje odstíny pro další zpracování."
+
+#~ msgid ""
+#~ "The selected color space will be assigned to untagged Rgb color content "
+#~ "and define colors for further processing. Typical sRGB should be assumed."
+#~ msgstr ""
+#~ "Vybraný barvový prostor bude přiřazen k neoznačeným barvám RGB a definuje "
+#~ "barvy pro další zpracování."
+
+#~ msgid ""
+#~ "The selected color space will be assigned to untagged XYZ color content "
+#~ "and define colors for further processing."
+#~ msgstr ""
+#~ "Vybraný barvový prostor bude přiřazen k neoznačeným barvám modelu XYZ a "
+#~ "definuje barvy pro další zpracování."
+
+#~ msgid ""
+#~ "The set_xcm_region takes minimal three options. The key name "
+#~ "\"window_rectangle\" specifies in a oyRectangle_s object the requested "
+#~ "window region in coordinates relative to the window. If its parameters "
+#~ "are all set to zero, then the rectangle is ignored. The "
+#~ "\"old_window_rectangle\" is similiar to the \"window_rectangle\" option "
+#~ "but optionally specifies to remove a old rectangle. The \"window_id\" "
+#~ "specifies a X11 window id as oyBlob_s. The \"display_id\" specifies a X11 "
+#~ "Display struct as oyBlob_s. The \"icc_profile\" option of type "
+#~ "oyProfile_s optionally provides a ICC profile to upload to the server."
+#~ msgstr ""
+#~ "set_xcm_region vyžaduje minimálně tři volby. Klíčové jméno "
+#~ "\"window_rectangle\" určuje v objektu oyRectangle_s požadovanou okenní "
+#~ "oblast se souřadnicemi relativními k oknu. Pokud jsou všechny jeho "
+#~ "parametry nastaveny na nulu, pak je obdélník ignorován. "
+#~ "\"old_window_rectangle\" je obdobou volby \"window_rectangle\", ale "
+#~ "volitelně lze určit odstranění starého obdélníku. \"window_id\" určuje ID "
+#~ "okna X11 jako oyBlob_s. \"display_id\" určuje X11 Display struct jako "
+#~ "oyBlob_s. Volba \"icc_profile\" typu oyProfile_s volitelně poskytuje "
+#~ "profil ICC, který má být nahrán na server."
+
+#~ msgid "The window support module of Oyranos."
+#~ msgstr "Okenní podpůrný modul Oyranosu."
+
+#~ msgid "Thermal wax printer"
+#~ msgstr "Tepelná vosková tiskárna"
+
+#~ msgid "This example module \"my_handler\" lets you print a option."
+#~ msgstr "Tento testovací modul \"my_handler\" umožní vytisknout volbu."
+
+#~ msgid ""
+#~ "This setting decides what to do in the case that colors have no color "
+#~ "space assigned. Typically the according assumed ICC profile should be "
+#~ "assigned."
+#~ msgstr ""
+#~ "Toto nastavení rozhoduje, co se má dělat v případě, že barvy nemají "
+#~ "přiřazen žádný barvový prostor. Obvykle by měl být přiřazen příslušný "
+#~ "předpokládaný profil ICC."
+
+#~ msgid "Transparent, "
+#~ msgstr "Pruhledny, "
+
+#~ msgid "Type"
+#~ msgstr "Typ"
+
+#, fuzzy
+#~ msgid "Type:            "
+#~ msgstr "Datum:       "
+
+#, fuzzy
+#~ msgid "Unassign profile from device:"
+#~ msgstr "Vypsat profil Taxi pro vybrané zařízení:"
+
+#~ msgid "Undefined"
+#~ msgstr "Nedefinováno"
+
+#~ msgid "Unexpected object type:"
+#~ msgstr "Neočekávaný typ objektu:"
+
+#, fuzzy
+#~ msgid "Unix Man page"
+#~ msgstr "Unix a deriváty"
+
+#~ msgid "Unknown argument"
+#~ msgstr "Neznámý argument"
+
+#~ msgid "Use Black Point Compensation"
+#~ msgstr "Použít kompenzaci černého bodu (BPC)"
+
+#~ msgid "VRML Files (*.wrl)"
+#~ msgstr "VRML soubory (*.wrl)"
+
+#~ msgid "Value"
+#~ msgstr "Hodnota"
+
+#, fuzzy
+#~ msgid "Verbose"
+#~ msgstr "upovídaný výstup"
+
+#, fuzzy
+#~ msgid "Version"
+#~ msgstr "ICC Examin Verze"
+
+#, fuzzy
+#~ msgid "Version:         "
+#~ msgstr "Datum:       "
+
+#~ msgid "Video Monitor"
+#~ msgstr "Video monitor"
+
+#~ msgid "Video camera"
+#~ msgstr "Video kamera"
+
+#~ msgid "VideoCardGammaTable"
+#~ msgstr "VideoCardGammaTable"
+
+#~ msgid "View"
+#~ msgstr "Zobrazit"
+
+#~ msgid "Viewing Conditions"
+#~ msgstr "Pozorovací podmínky"
+
+#~ msgid "Viewing conditions description"
+#~ msgstr "Popis pozorovacích podmínek"
+
+#~ msgid "WARNING"
+#~ msgstr "VAROVÁNÍ"
+
+#~ msgid "WARNING: Could not load corrupt or damaged profile."
+#~ msgstr "Varovani: nelze načíst poskozeny profil."
+
+#~ msgid "WARNING: Could not load profile."
+#~ msgstr "Varovani: Nelze načíst profil."
+
+#~ msgid "Watch Colors 3D..."
+#~ msgstr "Sledovat Barvy 3D..."
+
+#~ msgid "Watch Colors 3D.2..."
+#~ msgstr "Sledovat Barvy 3D.2..."
+
+#~ msgid "Well behaving Color Space for Editing"
+#~ msgstr "Dobře se chovající barvový prostor pro editaci"
+
+#~ msgid "What kind of image is this?"
+#~ msgstr "O jaky druh obrazku se jedna?"
+
+#~ msgid "What kind of image is this?\n"
+#~ msgstr "O jaky druh obrazku se jedna?\n"
+
+#~ msgid "White xy:"
+#~ msgstr "Bílá xy:"
+
+#~ msgid "Windows"
+#~ msgstr "Okna"
+
+#~ msgid "Work Space"
+#~ msgstr "Pracovni prostor"
+
+#, fuzzy
+#~ msgid "Write"
+#~ msgstr "Zapsat"
+
+#, fuzzy
+#~ msgid "Write DB File"
+#~ msgstr "zapsat do souboru"
+
+#~ msgid "Write Model:"
+#~ msgstr "Zapsat model:"
+
+#~ msgid "Write PNG"
+#~ msgstr "Zapsat PNG"
+
+#, fuzzy
+#~ msgid "Write PNG Image Filter Object"
+#~ msgstr "Write PNG Image Filter Object"
+
+#~ msgid "Write PPM"
+#~ msgstr "Zapsat PPM"
+
+#, fuzzy
+#~ msgid "Write PPM Image Filter Object"
+#~ msgstr "Write PPM Image Filter Object"
+
+#~ msgid "Write to ICC profile:"
+#~ msgstr "Zapsat do profilu ICC:"
+
+#~ msgid "Wrong ICC profile id detected"
+#~ msgstr "Zjištěno chybné ID profilu ICC"
+
+#~ msgid "Wrong profil assigned to image."
+#~ msgstr "Obrazek ma prirazen chybny profil."
+
+#, fuzzy
+#~ msgid "Wrote file"
+#~ msgstr "zapsat do souboru"
+
+#~ msgid "X"
+#~ msgstr "X"
+
+#~ msgid "X'"
+#~ msgstr "X'"
+
+#~ msgid "XFORMS in FLTK"
+#~ msgstr "XFORMS ve FLTK"
+
+#~ msgid "XRandR CrtcInfo request failed"
+#~ msgstr "Požadavek XRandR CrtcInfo selhal"
+
+#~ msgid "XYZ"
+#~ msgstr "XYZ"
+
+#~ msgid "Xinerama request failed"
+#~ msgstr "Požadavek Xinerama selhal"
+
+#~ msgid "XineramaScreen:"
+#~ msgstr "Xinerama obrazovka:"
+
+#~ msgid "Y"
+#~ msgstr "Y"
+
+#~ msgid "Y'"
+#~ msgstr "Y'"
+
+#~ msgid "YCbCr"
+#~ msgstr "YCbCr"
+
+#~ msgid "Yellow"
+#~ msgstr "Žlutá"
+
+#~ msgid "Yes"
+#~ msgstr "Ano"
+
+#~ msgid "Yiannis Belias"
+#~ msgstr "Yiannis Belias"
+
+#~ msgid "You can get them from http://sf.net/projects/openicc"
+#~ msgstr "Můžete je získat na http://sf.net/projects/openicc"
+
+#~ msgid "Your"
+#~ msgstr "Vas"
+
+#~ msgid "Yxy"
+#~ msgstr "Yxy"
+
+#~ msgid "Z"
+#~ msgstr "Z"
+
+#~ msgid "Z'"
+#~ msgstr "Z'"
+
+#~ msgid "Zero profiles found in Taxi ICC DB"
+#~ msgstr "V Taxi ICC DB nebyly nalezeny žádné profily"
+
+#~ msgid "[none]"
+#~ msgstr "[žádný]"
+
+#~ msgid "a"
+#~ msgstr "a"
+
+#~ msgid "a'"
+#~ msgstr "a'"
+
+#~ msgid "abstract class"
+#~ msgstr "třída abstrakce"
+
+#~ msgid "add prefix"
+#~ msgstr "přidat prefix"
+
+#~ msgid "allocation failed"
+#~ msgstr "alokace selhala"
+
+#~ msgid "attempt to add a incomplete filter"
+#~ msgstr "pokus o přidání neúplného filtru"
+
+#~ msgid "attempt to add a non linear filter to a linear graph"
+#~ msgstr "pokus o pridani nelinearniho filtru k linearnimu grafu"
+
+#~ msgid "averaging deviations (dE CIE*Lab):<b> "
+#~ msgstr "prumerovane odchylky (dE CIE*Lab):<b> "
+
+#~ msgid "axis"
+#~ msgstr "osa"
+
+#~ msgid "b"
+#~ msgstr "b"
+
+#~ msgid "b'"
+#~ msgstr "b'"
+
+#~ msgid "bfd"
+#~ msgstr "bfd"
+
+#~ msgid "black/white"
+#~ msgstr "cerno/bily"
+
+#~ msgid "bytes"
+#~ msgstr "bajtů"
+
+#~ msgid "can be used independently from image."
+#~ msgstr "muze byt pouzit nezavisle na obrazku."
+
+#~ msgid "can not be used independently from image."
+#~ msgstr "nemuze byt pouzit nezavisle na obrazku."
+
+#~ msgid "check"
+#~ msgstr "kontrola"
+
+#~ msgid "color"
+#~ msgstr "barevný"
+
+#~ msgid "color space class"
+#~ msgstr "třída barvového prostoru"
+
+#~ msgid "colored"
+#~ msgstr "barevne"
+
+#~ msgid "crdi"
+#~ msgstr "crdi"
+
+#, fuzzy
+#~ msgid "create OpenICC device color state JSON including the rank map"
+#~ msgstr "vložit JSON OpenICC ze souboru"
+
+#, fuzzy
+#~ msgid "create OpenICC device color state rank map JSON"
+#~ msgstr "vložit JSON OpenICC ze souboru"
+
+#, fuzzy
+#~ msgid "create fallback ICC profile"
+#~ msgstr "profil ICC"
+
+#, fuzzy
+#~ msgid "create_profile"
+#~ msgstr "Aktivovat profily:"
+
+#~ msgid "created by:  "
+#~ msgstr "Vytvoreno:   "
+
+#~ msgid "dE Lab"
+#~ msgstr "dE Lab"
+
+#~ msgid "dE2000"
+#~ msgstr "dE2000"
+
+#~ msgid "default profile type does not exist:"
+#~ msgstr "výchozí typ profilu neexistuje:"
+
+#, fuzzy
+#~ msgid "device"
+#~ msgstr "Zařízení"
+
+#, fuzzy
+#~ msgid "device position start from zero"
+#~ msgstr "-d device_position_start_from_zero"
+
+#, fuzzy
+#~ msgid "device-class"
+#~ msgstr "použít třídu zařízení"
+
+#, fuzzy
+#~ msgid "device_class not found:"
+#~ msgstr "profil nenalezen:"
+
+#~ msgid "display class"
+#~ msgstr "třída displeje"
+
+#~ msgid "download ID from Taxi data base"
+#~ msgstr "stáhnout ID z databáze Taxi"
+
+#, fuzzy
+#~ msgid "draw gray"
+#~ msgstr "Tmava sed"
+
+#, fuzzy
+#~ msgid "dump ICC profile"
+#~ msgstr "profil ICC"
+
+#, fuzzy
+#~ msgid "dump OpenICC device color reproduction rank map JSON"
+#~ msgstr "vložit JSON OpenICC ze souboru"
+
+#, fuzzy
+#~ msgid "dump OpenICC device color state rank map JSON"
+#~ msgstr "vložit JSON OpenICC ze souboru"
+
+#~ msgid "embed OpenICC device JSON from file"
+#~ msgstr "vložit JSON OpenICC ze souboru"
+
+#~ msgid "empty"
+#~ msgstr "prazdne"
+
+#~ msgid "enable simple defaults"
+#~ msgstr "aktivovat jednoduché výchozí hodnoty"
+
+#, fuzzy
+#~ msgid "erase-device"
+#~ msgstr "Vypsat zařízení:"
+
+#~ msgid "error in module:"
+#~ msgstr "chyba v modulu:"
+
+#~ msgid "error setting path: %s"
+#~ msgstr "chyba pri nastavení cesty: %s"
+
+#~ msgid "examin_invisible"
+#~ msgstr "examin_neviditelny"
+
+#~ msgid "exception occured: "
+#~ msgstr "nastala vyjimka:"
+
+#, fuzzy
+#~ msgid "extract ICC color profile"
+#~ msgstr "Extrahovat profil ICC:"
+
+#~ msgid "f(X)=(a*X+b)^gamma + c for X>=-b/a"
+#~ msgstr "f(X)=(a*X+b)^gama + c pro X>=-b/a"
+
+#~ msgid "f(X)=(a*X+b)^gamma + e for X>=d"
+#~ msgstr "f(X)=(a*X+b)^gama + e pro X>=d"
+
+#~ msgid "f(X)=(a*X+b)^gamma for X>=-b/a"
+#~ msgstr "f(X)=(a*X+b)^gama pro X>=-b/a"
+
+#~ msgid "f(X)=(a*X+b)^gamma for X>=d"
+#~ msgstr "f(X)=(a*X+b)^gama pro X>=d"
+
+#~ msgid "f(X)=0 for (X<-b/a)"
+#~ msgstr "f(X)=0 pro (X<-b/a)"
+
+#~ msgid "f(X)=X^gamma"
+#~ msgstr "f(X)=X^gama"
+
+#~ msgid "f(X)=c for (X<-b/a)"
+#~ msgstr "f(X)=c pro (X<-b/a)"
+
+#~ msgid "f(X)=c*X for (X<d)"
+#~ msgstr "f(X)=c*X pro (X<d)"
+
+#~ msgid "f(X)=c*X+f for (X<d)"
+#~ msgstr "f(X)=c*X+f pro (X<d)"
+
+#~ msgid "failed!"
+#~ msgstr "selhalo!"
+
+#~ msgid "file exists, please remove befor installing new profile."
+#~ msgstr ""
+#~ "soubor existuje, odstraňte jej prosím před instalací nového profilu."
+
+#~ msgid "file size 0 for "
+#~ msgstr "velikost souboru 0 pro"
+
+#, fuzzy
+#~ msgid "file-name"
+#~ msgstr "Jmeno souboru:"
+
+#~ msgid "found issues"
+#~ msgstr "nalezené problémy"
+
+#~ msgid "found issues parsing JSON"
+#~ msgstr "zjištěny problémy při analýze JSON"
+
+#~ msgid "found issues while moving in profile"
+#~ msgstr "zjištěny problémy při přesouvání profilu"
+
+#~ msgid "found list of wrong type"
+#~ msgstr "zjištěn seznam chybného typu"
+
+#~ msgid "found no content for"
+#~ msgstr "nenalezen zadny obsah pro"
+
+#~ msgid "found no observer"
+#~ msgstr "nenalezen žádný pozorovatel"
+
+#~ msgid "found observer of wrong type"
+#~ msgstr "zjištěn pozorovatel chybného typu"
+
+#~ msgid "full path and file name"
+#~ msgstr "plná cesta a název souboru"
+
+#~ msgid "gamma"
+#~ msgstr "gama"
+
+#~ msgid "gamut"
+#~ msgstr "gamut"
+
+#~ msgid "glossy, "
+#~ msgstr "leskly, "
+
+#~ msgid "gray"
+#~ msgstr "sede"
+
+#~ msgid "help"
+#~ msgstr "nápověda"
+
+#~ msgid "high contrast"
+#~ msgstr "vysoky kontrast"
+
+#~ msgid "input class"
+#~ msgstr "třída vstupu"
+
+#~ msgid "install in the OpenIccDirectory icc path"
+#~ msgstr "Nainstalujte do cesty \"OpenIccDirectory\""
+
+#~ msgid "installation of new policy file failed with error:"
+#~ msgstr "instalace nové politiky selhalo s chybou:"
+
+#~ msgid "installed new policy"
+#~ msgstr "instalována nová politika"
+
+#~ msgid ""
+#~ "integrated sources, lock at the according files for licence conditions:"
+#~ "<br>\n"
+#~ msgstr "vclenene zdroje, viz prislusne soubory s podminkami licenci:<br>\n"
+
+#~ msgid "internal name"
+#~ msgstr "interní jméno"
+
+#~ msgid "internet: www.behrmann.name <br>"
+#~ msgstr "internet: www.behrmann.name <br>"
+
+#, fuzzy
+#~ msgid "is a CameraRaw conversion tool"
+#~ msgstr "je nástroj na transformace ICC"
+
+#~ msgid "is a ICC color conversion tool"
+#~ msgstr "je nástroj na transformace ICC"
+
+#~ msgid "is a ICC color profile grapher"
+#~ msgstr "zobrazí graf barvového profilu ICC"
+
+#~ msgid "is a ICC profile information tool"
+#~ msgstr "umí zobrazit informace o profilu ICC"
+
+#~ msgid "is a Oyranos module options tool"
+#~ msgstr "je nástroj voleb modulu Oyranosu"
+
+#~ msgid "is a Oyranos o(X)FORMS options tool"
+#~ msgstr "je nástroj voleb o(X)FORMS Oyranosu"
+
+#, fuzzy
+#~ msgid "is a color profile administration tool for color devices"
+#~ msgstr "je nástroj pro barvové profily monitorů"
+
+#~ msgid "is a color profile administration tool for monitors"
+#~ msgstr "je nástroj pro barvové profily monitorů"
+
+#~ msgid "is a policy administration tool"
+#~ msgstr "je nástroj pro správu politik"
+
+#~ msgid "is not valid for an"
+#~ msgstr "neni platna pro"
+
+#~ msgid "kein Fl_Widget??"
+#~ msgstr "zadny Fl_Widget??"
+
+#~ msgid "kein ICCwaehlerProfil??"
+#~ msgstr "zadny ICCwaehlerProfil??"
+
+#~ msgid "left mouse button -> go back"
+#~ msgstr "leve tlacitko mysi -> jit zpet"
+
+#~ msgid "left-/middle-/right mouse button -> rotate/cut/menu"
+#~ msgstr "leve/prostredni/prave tlacitko mysi -> rotovat/vystrihnout/menu"
+
+#~ msgid "less Xinerama monitors than XRandR ones"
+#~ msgstr "Xinerama hlásí méně monitorů než XRandR"
+
+#~ msgid "levels from 4-16 make sense"
+#~ msgstr "rozumné jsou úrovně od 4 - 16"
+
+#~ msgid "libraw input filter"
+#~ msgstr "vstupní filtr libraw"
+
+#~ msgid "lineare entrance curve with 256 steps"
+#~ msgstr "linearni vstupni křivka s 256 kroky"
+
+#~ msgid "lineare exit curve with 256 steps"
+#~ msgstr "linearni koncova křivka s 256 kroky"
+
+#~ msgid "linux system path"
+#~ msgstr "linuxová systémová cesta"
+
+#~ msgid "list possible choices"
+#~ msgstr "vypsat možné volby"
+
+#, fuzzy
+#~ msgid "list-devices"
+#~ msgstr "Vypsat zařízení:"
+
+#~ msgid "littleCMS"
+#~ msgstr "littleCMS"
+
+#~ msgid ""
+#~ "littleCMS 2 project; www: http://www.littlecms.com; support/email: "
+#~ "support@littlecms.com; sources: http://www.littlecms.com/downloads.htm; "
+#~ "Oyranos wrapper: Kai-Uwe Behrmann for the Oyranos project"
+#~ msgstr ""
+#~ "Projekt littleCMS 2; www: http://www.littlecms.com; support/email: "
+#~ "support@littlecms.com; zdrojové kódy: http://www.littlecms.com/downloads."
+#~ "htm; Oyranos wrapper: Kai-Uwe Behrmann pro projekt Oyranos"
+
+#~ msgid ""
+#~ "littleCMS project; www: http://www.littlecms.com; support/email: "
+#~ "support@littlecms.com; sources: http://www.littlecms.com/downloads.htm; "
+#~ "Oyranos wrapper: Kai-Uwe Behrmann for the Oyranos project"
+#~ msgstr ""
+#~ "Projekt littleCMS; www: http://www.littlecms.com; support/email: "
+#~ "support@littlecms.com; zdrojové kódy: http://www.littlecms.com/downloads."
+#~ "htm; Oyranos wrapper: Kai-Uwe Behrmann pro projekt Oyranos"
+
+#~ msgid "machine specific path"
+#~ msgstr "cesta příslušného počítače"
+
+#~ msgid "match value"
+#~ msgstr "hledat hodnotu"
+
+#~ msgid "matte, "
+#~ msgstr "matny, "
+
+#~ msgid "missed -w option to write a ICC profile"
+#~ msgstr "chybějící volba -w pro zápis do profilu ICC"
+
+#~ msgid "module name"
+#~ msgstr "jméno modulu"
+
+#~ msgid "mouse"
+#~ msgstr "mys"
+
+#~ msgid "multiple occurencies of default profile"
+#~ msgstr "vicenasobne vyskyty výchozího profilu"
+
+#~ msgid "nLUT"
+#~ msgstr "nLUT"
+
+#, fuzzy
+#~ msgid "nLut"
+#~ msgstr "Vstup"
+
+#~ msgid "name longer than"
+#~ msgstr "jméno delší než"
+
+#~ msgid "named color class"
+#~ msgstr "třída pojmenovaných barev"
+
+#~ msgid "negative, "
+#~ msgstr "negativni, "
+
+#~ msgid "new BSD license: http://www.opensource.org/licenses/bsd-license.php"
+#~ msgstr "Licence new BSD: http://www.opensource.org/licenses/bsd-license.php"
+
+#~ msgid "newBSD"
+#~ msgstr "newBSD"
+
+#~ msgid "no EDID available from"
+#~ msgstr "EDID není k dispozici z"
+
+#~ msgid "no EDID available from X properties"
+#~ msgstr "z X vlastností není dostupné EDID."
+
+#~ msgid "no Screen found"
+#~ msgstr "nenalezena žádná obrazovka"
+
+#~ msgid "no gammagradient information obtained"
+#~ msgstr "nenalezena informace o gama prechodu"
+
+#~ msgid "no measurment data or correct profile conversion available"
+#~ msgstr "zadna zmerena data nebo nemozna konverze profilu"
+
+#~ msgid "no net found in VRML file"
+#~ msgstr "nenalezena zadna sit ve VRML souboru"
+
+#~ msgid "no net found. Is Argyll installed?"
+#~ msgstr "nenalezena zadna sit. Je nainstalovan Argyll?"
+
+#~ msgid "no oyX1Monitor_s created"
+#~ msgstr "oyX1Monitor_s nebyl vytvořen"
+
+#~ msgid "no qarzMonitor_s from"
+#~ msgstr "žádný qarzMonitor_s z"
+
+#, fuzzy
+#~ msgid "no wcsDMonitor_s created"
+#~ msgstr "oyX1Monitor_s nebyl vytvořen"
+
+#~ msgid "noName"
+#~ msgstr "beze jmena"
+
+#~ msgid "not a profile:"
+#~ msgstr "není profil:"
+
+#~ msgid "not found:"
+#~ msgstr "nenalezeno:"
+
+#~ msgid "not inside memory block"
+#~ msgstr "ne uvnitr bloku pameti"
+
+#~ msgid "nothing allocated"
+#~ msgstr "nic nealokováno"
+
+#~ msgid "nothing to allocate - size:"
+#~ msgstr "nic k alokaci - velikost:"
+
+#~ msgid "nothing to delete"
+#~ msgstr "nic ke smazání"
+
+#~ msgid "o'clock"
+#~ msgstr "hodin"
+
+#~ msgid "omit border"
+#~ msgstr "vynechat okraj"
+
+#~ msgid "omit the spectral line"
+#~ msgstr "vynechat spektrální linii"
+
+#~ msgid "open X Display failed"
+#~ msgstr "selhalo otevření X displeje"
+
+#~ msgid "open X Screen failed"
+#~ msgstr "selhalo otevření X obrazovky"
+
+#~ msgid "orionas"
+#~ msgstr "orionas"
+
+#, fuzzy
+#~ msgid "output"
+#~ msgstr "Výstupní"
+
+#~ msgid "output class"
+#~ msgstr "třída výstupu"
+
+#~ msgid "oyranos install path"
+#~ msgstr "cesta instalace Oyranosu"
+
+#~ msgid "parametric function type"
+#~ msgstr "typ parametrické funkce"
+
+#, fuzzy
+#~ msgid "path is a directory"
+#~ msgstr "cesta není adresář"
+
+#~ msgid "path is a link: ignored"
+#~ msgstr "cesta je odkaz: ignorováno"
+
+#~ msgid "path is not a directory"
+#~ msgstr "cesta není adresář"
+
+#~ msgid "path is not readable"
+#~ msgstr "nelze číst cestu"
+
+#~ msgid "points length per side"
+#~ msgstr "bodu delky jedne strany"
+
+#~ msgid "policy name"
+#~ msgstr "jméno politiky"
+
+#~ msgid "policy or filename"
+#~ msgstr "politika nebo jméno souboru"
+
+#~ msgid "positive, "
+#~ msgstr "pozitivni, "
+
+#~ msgid "print only the file name"
+#~ msgstr "vytisknout pouze název souboru"
+
+#, fuzzy
+#~ msgid "print only the profile name"
+#~ msgstr "--short vytisknout pouze název souboru"
+
+#, fuzzy
+#~ msgid "print the full file name"
+#~ msgstr "--short vytisknout pouze název souboru"
+
+#, fuzzy
+#~ msgid "print the full module name"
+#~ msgstr "--short vytisknout pouze název souboru"
+
+#, fuzzy
+#~ msgid "print the modules device class"
+#~ msgstr "použít třídu zařízení"
+
+#, fuzzy
+#~ msgid "profile file name"
+#~ msgstr "jméno profilu"
+
+#~ msgid "profile name"
+#~ msgstr "jméno profilu"
+
+#~ msgid "profile not found in color path:"
+#~ msgstr "profil nenalezen v předdefinovaném adresáři:"
+
+#~ msgid "profile not found:"
+#~ msgstr "profil nenalezen:"
+
+#~ msgid "profiles where originally involved"
+#~ msgstr "profily byly puvodne pouzity"
+
+#~ msgid "ps2i"
+#~ msgstr "ps2i"
+
+#~ msgid "ps2s"
+#~ msgstr "ps2s"
+
+#~ msgid "psd0"
+#~ msgstr "psd0"
+
+#~ msgid "psd1"
+#~ msgstr "psd1"
+
+#~ msgid "psd2"
+#~ msgstr "psd2"
+
+#~ msgid "psd3"
+#~ msgstr "psd3"
+
+#~ msgid "read XFORMS"
+#~ msgstr "číst XFORMS"
+
+#~ msgid "read from file"
+#~ msgstr "číst ze souboru"
+
+#, fuzzy
+#~ msgid "read input stream"
+#~ msgstr "Linearni vstupni křivka"
+
+#~ msgid "reset to standard gamma"
+#~ msgstr "obnovit standardni gamma"
+
+#~ msgid "scrd"
+#~ msgstr "scrd"
+
+#~ msgid "scrn"
+#~ msgstr "scrn"
+
+#~ msgid "seconds"
+#~ msgstr "vterin"
+
+#, fuzzy
+#~ msgid "select ICC v2 profiles"
+#~ msgstr "Získat profil ICC"
+
+#, fuzzy
+#~ msgid "select ICC v4 profiles"
+#~ msgstr "Získat profil ICC"
+
+#, fuzzy
+#~ msgid "select a ICC v2 profile"
+#~ msgstr "Získat profil ICC"
+
+#, fuzzy
+#~ msgid "select a ICC v4 profile"
+#~ msgstr "Získat profil ICC"
+
+#~ msgid "select format, currently only clut"
+#~ msgstr "zvolte formát, v současnosti pouze CLUT"
+
+#, fuzzy
+#~ msgid "select format, currently only icc"
+#~ msgstr "zvolte formát, v současnosti pouze CLUT"
+
+#~ msgid "select tag"
+#~ msgstr "vybrat štítek"
+
+#~ msgid "shells"
+#~ msgstr "plaste"
+
+#, fuzzy
+#~ msgid "show as well non matching profiles"
+#~ msgstr "Žádný profil obrázku"
+
+#~ msgid "show help texts"
+#~ msgstr "ukázat nápovědu"
+
+#~ msgid "show hints and question GUI"
+#~ msgstr "ukázat GUI nápovědy a otázek"
+
+#~ msgid "show policy options"
+#~ msgstr "ukázat volby politiky"
+
+#~ msgid "showing"
+#~ msgstr "zobrazování"
+
+#~ msgid "specify incemental increase of the thickness of the graph lines"
+#~ msgstr "specifikovat inkrementální zvýšení tloušťky čar grafu"
+
+#~ msgid "specify increase of the thickness of the graph lines"
+#~ msgstr "specifikovat zvýšení tloušťky čar grafu"
+
+#~ msgid "specify output file name, default is output.png"
+#~ msgstr "specifikujte výstupní jméno souboru, výchozí je output.png"
+
+#~ msgid "specify output image width in pixel"
+#~ msgstr "specifikujte šířku výstupního obrázku v pixelech"
+
+#~ msgid "steps"
+#~ msgstr "kroky"
+
+#~ msgid "system path"
+#~ msgstr "systémová cesta"
+
+#~ msgid "tag list is corrupted for tag"
+#~ msgstr "Seznam tagu je poskozen u tagu"
+
+#~ msgid "tag_browser_invisible"
+#~ msgstr "tag_prohlizec_neviditelny"
+
+#~ msgid "unexpected EDID lenght"
+#~ msgstr "neočekávaná délka EDID"
+
+#~ msgid "unexpected user_data type"
+#~ msgstr "neočekávaný typ user_data"
+
+#~ msgid "unfinished"
+#~ msgstr "nedokončeno"
+
+#~ msgid "unknown"
+#~ msgstr "neznámý"
+
+#~ msgid "unknown Color"
+#~ msgstr "neznama barva"
+
+#~ msgid "use CIE*xyY *x*y plane for saturation line projection"
+#~ msgstr "použít rovinu CIE*xyY *x*y pro projekci saturační linie"
+
+#~ msgid "use device class"
+#~ msgstr "použít třídu zařízení"
+
+#, fuzzy
+#~ msgid "use device sub path"
+#~ msgstr "použít třídu zařízení"
+
+#~ msgid "use new name"
+#~ msgstr "použít nové jméno"
+
+#~ msgid "use sRGB"
+#~ msgstr "pouzit sRGB"
+
+#~ msgid "user path"
+#~ msgstr "uživatelská cesta"
+
+#~ msgid "will overwrite policy file"
+#~ msgstr "přepíše soubor politiky"
+
+#~ msgid "with"
+#~ msgstr "s"
+
+#~ msgid "with '.' is not allowed"
+#~ msgstr "s '.' není povoleno"
+
+#~ msgid "without markers"
+#~ msgstr "bez znacek"
+
+#, fuzzy
+#~ msgid "write assigned ICC profile"
+#~ msgstr "Zapsat do profilu ICC:"
+
+#, fuzzy
+#~ msgid "write to file, currently only PPM and PNG formats"
+#~ msgstr "zapsat do souboru, v současnosti pouze ve formátu PPM"
+
+#~ msgid "write to file, currently only PPM format"
+#~ msgstr "zapsat do souboru, v současnosti pouze ve formátu PPM"
+
+#, fuzzy
+#~ msgid "write to specified file"
+#~ msgstr "zapsat do souboru"
+
+#~ msgid "wrong argument to option:"
+#~ msgstr "chybný argument pro volbu:"
+
+#~ msgid "wrong profile for static web color space selected, need sRGB"
+#~ msgstr "špatný profil pro statický barvový prostor webu, vyžadováno sRGB"
