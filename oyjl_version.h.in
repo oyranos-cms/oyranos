@@ -17,7 +17,10 @@
 #cmakedefine OYJL_HAVE_YAML
 #cmakedefine OYJL_HAVE_LIBXML2
 
-#cmakedefine HAVE_LOCALE_H
+#cmakedefine OYJL_HAVE_LOCALE_H
+#cmakedefine OYJL_HAVE_LIBINTL_H
+#cmakedefine OYJL_USE_GETTEXT
+#define OYJL_DOMAIN "@PROJECT_DOWN_NAME@"
 
 #endif /*OYJL_VERSION_H*/
 
