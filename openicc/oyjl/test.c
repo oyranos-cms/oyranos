@@ -20,7 +20,7 @@
 #include "oyjl_test_main.h"
 #include "oyjl_version.h"
 #include "oyjl.h"
-#ifdef HAVE_LOCALE_H
+#ifdef OYJL_HAVE_LOCALE_H
 #include <locale.h>
 #endif
 
