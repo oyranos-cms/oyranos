@@ -121,6 +121,7 @@ IF(LIBXML2_FOUND)
   INCLUDE_DIRECTORIES( ${LIBXML2_INCLUDE_DIR} )
   LINK_DIRECTORIES( ${LIBXML2_LIBRARY_DIRS} )
   SET( HAVE_LIBXML2 1 )
+  SET( CONFIG_LIBXML2_LIBRARIES ${LIBXML2_LIBRARIES} )
 ELSE( LIBXML2_FOUND )
   IF(CMAKE_VERSION VERSION_GREATER 2.8.0)
     SET( HAVE_LIBXML2 TRUE  )
@@ -139,6 +140,7 @@ IF( OYJL_HAVE_YAML )
     FIND_LIBRARY(YAML_LIBRARIES NAMES yaml libyaml PATH)
     FIND_PATH(YAML_INCLUDE_DIR yaml.h)
     INCLUDE_DIRECTORIES( ${YAML_INCLUDE_DIR} )
+    SET( CONFIG_YAML_LIBRARIES ${YAML_LIBRARIES} )
     MESSAGE("-- yaml: ${YAML_INCLUDE_DIR} : ${YAML_LIBRARIES}")
 ENDIF( OYJL_HAVE_YAML )
 
@@ -167,21 +169,21 @@ IF( GETTEXT_FOUND )
   SET( ${PROJECT_UP_NAME}_USE_GETTEXT TRUE )
   SET( ${PROJECT_UP_NAME}_LOCALEDIR "${CMAKE_INSTALL_FULL_LOCALEDIR}" )
 
-  SET( LINGUAS ${CMAKE_SOURCE_DIR}/po/cs.po
+  SET( ${PROJECT_UP_NAME}_LINGUAS ${CMAKE_SOURCE_DIR}/po/cs.po
                ${CMAKE_SOURCE_DIR}/po/de.po
                ${CMAKE_SOURCE_DIR}/po/eo.po
                ${CMAKE_SOURCE_DIR}/po/eu.po
                ${CMAKE_SOURCE_DIR}/po/fr.po
                ${CMAKE_SOURCE_DIR}/po/ru.po
      )
-  FOREACH( lang ${LINGUAS} )
+  FOREACH( lang ${${PROJECT_UP_NAME}_LINGUAS} )
     GET_FILENAME_COMPONENT(_absFile ${lang} ABSOLUTE)
     GET_FILENAME_COMPONENT(_abs_PATH ${_absFile} PATH)
     GET_FILENAME_COMPONENT(_lang ${_absFile} NAME_WE)
-    SET( LINGUAS_SHORT ${LINGUAS_SHORT} ${_lang} )
+    SET( ${PROJECT_UP_NAME}_LINGUAS_SHORT ${${PROJECT_UP_NAME}_LINGUAS_SHORT} ${_lang} )
     SET( LINGUAS_GMO_FILES ${LINGUAS_GMO_FILES} " ${CMAKE_BINARY_DIR}/src/${_lang}.gmo" )
   ENDFOREACH( lang )
-  SET( LINGUAS_FULL cs_CZ de_DE eo eu fr_FR ru_RU )
+  SET( OYJL_LINGUAS_FULL cs_CZ de_DE eo eu fr_FR ru_RU )
 ENDIF()
 
 CONFIGURE_FILE(
@@ -378,12 +380,12 @@ IF( GETTEXT_FOUND )
     COMMENT "Extract translatable messages to ${_potFile}"
   )
 
-  SET( LINGUAS po/cs.po po/de.po po/eo.po po/eu.po po/fr.po po/ru.po )
+  SET( ${PROJECT_UP_NAME}_LINGUAS po/cs.po po/de.po po/eo.po po/eu.po po/fr.po po/ru.po )
   # compile translations always to have them ready for installation
-  GETTEXT_CREATE_TRANSLATIONS( ${_potFile} ALL ${LINGUAS} )
+  GETTEXT_CREATE_TRANSLATIONS( ${_potFile} ALL ${${PROJECT_UP_NAME}_LINGUAS} )
 
   ADD_CUSTOM_COMMAND( OUTPUT ${PROJECT_DOWN_NAME}_gmo-cp
-    COMMAND for lang in ${LINGUAS_SHORT}\; do mkdir -p "${CMAKE_BINARY_DIR}/locale/$$lang/LC_MESSAGES/" \; cp "${CMAKE_CURRENT_BINARY_DIR}/$$lang.gmo" "${CMAKE_BINARY_DIR}/locale/$$lang/LC_MESSAGES/${PROJECT_DOWN_NAME}.mo" \; done
+    COMMAND for lang in ${${PROJECT_UP_NAME}_LINGUAS_SHORT}\; do mkdir -p "${CMAKE_BINARY_DIR}/locale/$$lang/LC_MESSAGES/" \; cp "${CMAKE_CURRENT_BINARY_DIR}/$$lang.gmo" "${CMAKE_BINARY_DIR}/locale/$$lang/LC_MESSAGES/${PROJECT_DOWN_NAME}.mo" \; done
     COMMENT "put ${PROJECT_DOWN_NAME}.mo files into ${CMAKE_BINARY_DIR}/locale/lang/LC_MESSAGES/ path for testing with LOCDIR"
                     )
   ADD_CUSTOM_TARGET( ${PROJECT_DOWN_NAME}_gmo ALL
