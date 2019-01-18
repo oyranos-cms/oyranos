@@ -672,7 +672,7 @@ int oyjlIsFileFull_ (const char* fullFileName, const char * read_mode)
  *  @param         env_var_locdir      environment variable string for locale path; e.g. "MP_LOCALEDIR"
  *  @param         default_locdir      default locale path C string; e.g. "/usr/local/share/locale"
  *  @param         loc_domain          locale domain string related to your pot, po and mo files; e.g. "myproject"
- *  @param         msg                 your message function of type oyjlMessage_f
+ *  @param         msg                 your message function of type oyjlMessage_f; optional - default is Oyjl message function
  *  @return                            error
  *                                     - -1 : issue
  *                                     - 0 : success
@@ -692,6 +692,8 @@ int oyjlInitLanguageDebug            ( const char        * project_name,
                                        oyjlMessage_f       msg )
 {
   int error = -1;
+
+  if(!msg) msg = oyjlMessage_p;
 
   if(getenv(env_var_debug))
   {
