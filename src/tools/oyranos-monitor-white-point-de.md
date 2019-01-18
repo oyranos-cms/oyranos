@@ -3,11 +3,11 @@
 ## NAME
 oyranos\-monitor\-white\-point v0.9.7 \- Nacht Manager
 ## ÜBERSICHT
-**oyranos\-monitor\-white\-point** \-s *0|1|2|3|4|5|6|7* [\-e *ICC\_PROFIL*] [\-z] [\-v]
-<br />
 **oyranos\-monitor\-white\-point** \-n *0|1|2|3|4|5|6|7* [\-g *ICC\_PROFIL*] [\-b *PROZENT*] [\-z] [\-v]
 <br />
 **oyranos\-monitor\-white\-point** \-w *0|1|2|3|4|5|6|7* \-a *KELVIN* [\-z] [\-v]
+<br />
+**oyranos\-monitor\-white\-point** \-s *0|1|2|3|4|5|6|7* [\-e *ICC\_PROFIL*] [\-z] [\-v]
 <br />
 **oyranos\-monitor\-white\-point** \-l|  \-o *WINKEL\_IN\_GRAD* \-i *WINKEL\_IN\_GRAD* [\-t *WINKEL\_IN\_GRAD|0:Auf\-/Untergang|\-6:zivil|\-12:nautisch|\-18:astronomisch*] [\-z] [\-v]
 <br />
@@ -16,22 +16,6 @@ oyranos\-monitor\-white\-point v0.9.7 \- Nacht Manager
 ## BESCHREIBUNG
 Das Werkzeug kann den momentanen Weißpunkt setzen oder ihn abhängig von der Tages\- und Nachzeit festlegen. Ein zusätzliches Effektprofil kann eingestellt werden.
 ## OPTIONEN
-### Setze Tagesmodus
-**oyranos\-monitor\-white\-point** \-s *0|1|2|3|4|5|6|7* [\-e *ICC\_PROFIL*] [\-z] [\-v]
-
-* \-s|\-\-sun\-white\-point *0|1|2|3|4|5|6|7*	Setze den Tagesmodus
-   * \-s 0		# Nein
-   * \-s 1		# Automatisch
-   * \-s 2		# Lichtart D50
-   * \-s 3		# Lichtart D55
-   * \-s 4		# Lichtart D65
-   * \-s 5		# Lichtart D75
-   * \-s 6		# Lichtart D93
-* \-e|\-\-sunlight\-effect *ICC\_PROFIL*	Setze den Tages Effect: Ein ICC Farbprofil der Klasse Abstrakter Farbraum. Günstig wäre ein Effektprofil, welches nur eindimensionale RGB Kurven benutzt und mit meta:EFFECT\_linear=yes gekennzeichnet ist.
-   * \-e \-		# [kein]
-   * \-e Effect 1		# Example Effect 1
-   * \-e Effect 2		# Example Effect 2
-
 ### Nächtliche Anmutung
 **oyranos\-monitor\-white\-point** \-n *0|1|2|3|4|5|6|7* [\-g *ICC\_PROFIL*] [\-b *PROZENT*] [\-z] [\-v]
 
@@ -64,6 +48,22 @@ Der Nachtweißpunkmodus soll den Einfluß von blauen Licht auf das menschliche H
    * \-w 6		# Lichtart D93
 * \-a|\-\-automatic *KELVIN*	Werte zwischen 2700 bis 8000 Kelvin sollten keine Darstellungsfehler hervorrufen
 
+### Setze Tagesmodus
+**oyranos\-monitor\-white\-point** \-s *0|1|2|3|4|5|6|7* [\-e *ICC\_PROFIL*] [\-z] [\-v]
+
+* \-s|\-\-sun\-white\-point *0|1|2|3|4|5|6|7*	Setze den Tagesmodus
+   * \-s 0		# Nein
+   * \-s 1		# Automatisch
+   * \-s 2		# Lichtart D50
+   * \-s 3		# Lichtart D55
+   * \-s 4		# Lichtart D65
+   * \-s 5		# Lichtart D75
+   * \-s 6		# Lichtart D93
+* \-e|\-\-sunlight\-effect *ICC\_PROFIL*	Setze den Tages Effect: Ein ICC Farbprofil der Klasse Abstrakter Farbraum. Günstig wäre ein Effektprofil, welches nur eindimensionale RGB Kurven benutzt und mit meta:EFFECT\_linear=yes gekennzeichnet ist.
+   * \-e \-		# [kein]
+   * \-e Effect 1		# Example Effect 1
+   * \-e Effect 2		# Example Effect 2
+
 ### Ort und Dämmerung
 **oyranos\-monitor\-white\-point** \-l|  \-o *WINKEL\_IN\_GRAD* \-i *WINKEL\_IN\_GRAD* [\-t *WINKEL\_IN\_GRAD|0:Auf\-/Untergang|\-6:zivil|\-12:nautisch|\-18:astronomisch*] [\-z] [\-v]
 
@@ -93,15 +93,15 @@ Der Nachtweißpunkmodus soll den Einfluß von blauen Licht auf das menschliche H
 * \-v|\-\-verbose	plaudernd
 * \-h|\-\-help	Hilfe
 
-# UMGEBUNGSVARIABLEN
-## OY\_DEBUG
+## UMGEBUNGSVARIABLEN
+### OY\_DEBUG
 Setze das Oyranos Fehlersuchniveau. Die \-v Option kann alternativ benutzt werden. Der gültige Bereich ist 1\-20.
-## OY\_MODULE\_PATH
+### OY\_MODULE\_PATH
 zeige Oyranos zusätzliche Verzeichnisse mit Modulen.  
-# BEISPIELE
-## Starte den Wächter, setze nächtlichen Weißpunkt zu 3000 Kelvin und benutze diesen im Nachtmodus
+## BEISPIELE
+### Starte den Wächter, setze nächtlichen Weißpunkt zu 3000 Kelvin und benutze diesen im Nachtmodus
 oyranos\-monitor\-white\-point \-d 2 \-a 3000 \-n 1 
-## Schalte alle Tagesbeeinflussung aus, wie Weißpunkt und Effekt
+### Schalte alle Tagesbeeinflussung aus, wie Weißpunkt und Effekt
 oyranos\-monitor\-white\-point \-s 0 \-e 0 
 ## AUTOR
 Kai\-Uwe Behrmann http://www.oyranos.org

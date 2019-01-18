@@ -61,23 +61,23 @@ The tool can list installed profiles, search paths and can help install a ICC co
 * \-v|\-\-verbose	verbose
 * \-h|\-\-help	Help
 
-# ENVIRONMENT VARIABLES
-## OY\_DEBUG
+## ENVIRONMENT VARIABLES
+### OY\_DEBUG
 set the Oyranos debug level. Alternatively the \-v option can be used. Valid integer range is from 1\-20.
-## XDG\_DATA\_HOME XDG\_DATA\_DIRS
+### XDG\_DATA\_HOME XDG\_DATA\_DIRS
 route Oyranos to top directories containing resources. The derived paths for ICC profiles have a "color/icc" appended. http://www.oyranos.com/wiki/index.php?title=OpenIccDirectoryProposal  
-# EXAMPLES
-## List all installed profiles by internal name
+## EXAMPLES
+### List all installed profiles by internal name
 oyranos\-profiles \-le 
-## List all installed profiles of the display and output device classes
+### List all installed profiles of the display and output device classes
 oyranos\-profiles \-l \-od 
-## List all installed profiles in user path
+### List all installed profiles in user path
 oyranos\-profiles \-lfu 
-## Install a profile for the actual user and show error messages in a GUI
+### Install a profile for the actual user and show error messages in a GUI
 oyranos\-profiles \-\-install profilename \-u \-\-gui 
-## Install a profile for the actual user and show error messages in a GUI
+### Install a profile for the actual user and show error messages in a GUI
 oyranos\-profiles \-\-install \- \-\-taxi=taxi\_id/0 \-\-gui \-d \-u 
-## Show file infos
+### Show file infos
 SAVEIFS=$IFS ; IFS=$'\n\b'; profiles=(\`oyranos\-profiles \-ldf\`); IFS=$SAVEIFS; for file in "${profiles[@]}"; do ls "$file"; done  
 ## AUTHOR
 Kai\-Uwe Behrmann http://www.oyranos.org

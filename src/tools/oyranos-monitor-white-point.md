@@ -3,11 +3,11 @@
 ## NAME
 oyranos\-monitor\-white\-point v0.9.7 \- Night Manager
 ## SYNOPSIS
-**oyranos\-monitor\-white\-point** \-s *0|1|2|3|4|5|6|7* [\-e *ICC\_PROFILE*] [\-z] [\-v]
-<br />
 **oyranos\-monitor\-white\-point** \-n *0|1|2|3|4|5|6|7* [\-g *ICC\_PROFILE*] [\-b *PERCENT*] [\-z] [\-v]
 <br />
 **oyranos\-monitor\-white\-point** \-w *0|1|2|3|4|5|6|7* \-a *KELVIN* [\-z] [\-v]
+<br />
+**oyranos\-monitor\-white\-point** \-s *0|1|2|3|4|5|6|7* [\-e *ICC\_PROFILE*] [\-z] [\-v]
 <br />
 **oyranos\-monitor\-white\-point** \-l|  \-o *ANGLE\_IN\_DEGREE* \-i *ANGLE\_IN\_DEGREE* [\-t *ANGLE\_IN\_DEGREE|0:rise/set|\-6:civil|\-12:nautical|\-18:astronomical*] [\-z] [\-v]
 <br />
@@ -16,22 +16,6 @@ oyranos\-monitor\-white\-point v0.9.7 \- Night Manager
 ## DESCRIPTION
 The tool can set the actual white point or set it by local day and night time. A additional effect profile can be selected.
 ## OPTIONS
-### Sun light appearance
-**oyranos\-monitor\-white\-point** \-s *0|1|2|3|4|5|6|7* [\-e *ICC\_PROFILE*] [\-z] [\-v]
-
-* \-s|\-\-sun\-white\-point *0|1|2|3|4|5|6|7*	Set day time mode
-   * \-s 0		# No
-   * \-s 1		# Automatic
-   * \-s 2		# Illuminant D50
-   * \-s 3		# Illuminant D55
-   * \-s 4		# Illuminant D65
-   * \-s 5		# Illuminant D75
-   * \-s 6		# Illuminant D93
-* \-e|\-\-sunlight\-effect *ICC\_PROFILE*	Set day time effect: A ICC profile of class abstract. Ideally the effect profile works on 1D RGB curves only and is marked meta:EFFECT\_linear=yes .
-   * \-e \-		# [none]
-   * \-e Effect 1		# Example Effect 1
-   * \-e Effect 2		# Example Effect 2
-
 ### Nightly appearance
 **oyranos\-monitor\-white\-point** \-n *0|1|2|3|4|5|6|7* [\-g *ICC\_PROFILE*] [\-b *PERCENT*] [\-z] [\-v]
 
@@ -64,6 +48,22 @@ The Night white point mode shall allow to reduce influence of blue light during 
    * \-w 6		# Illuminant D93
 * \-a|\-\-automatic *KELVIN*	A value from 2700 till 8000 Kelvin is expected to show no artefacts
 
+### Sun light appearance
+**oyranos\-monitor\-white\-point** \-s *0|1|2|3|4|5|6|7* [\-e *ICC\_PROFILE*] [\-z] [\-v]
+
+* \-s|\-\-sun\-white\-point *0|1|2|3|4|5|6|7*	Set day time mode
+   * \-s 0		# No
+   * \-s 1		# Automatic
+   * \-s 2		# Illuminant D50
+   * \-s 3		# Illuminant D55
+   * \-s 4		# Illuminant D65
+   * \-s 5		# Illuminant D75
+   * \-s 6		# Illuminant D93
+* \-e|\-\-sunlight\-effect *ICC\_PROFILE*	Set day time effect: A ICC profile of class abstract. Ideally the effect profile works on 1D RGB curves only and is marked meta:EFFECT\_linear=yes .
+   * \-e \-		# [none]
+   * \-e Effect 1		# Example Effect 1
+   * \-e Effect 2		# Example Effect 2
+
 ### Location and Twilight
 **oyranos\-monitor\-white\-point** \-l|  \-o *ANGLE\_IN\_DEGREE* \-i *ANGLE\_IN\_DEGREE* [\-t *ANGLE\_IN\_DEGREE|0:rise/set|\-6:civil|\-12:nautical|\-18:astronomical*] [\-z] [\-v]
 
@@ -93,15 +93,15 @@ The Night white point mode shall allow to reduce influence of blue light during 
 * \-v|\-\-verbose	verbose
 * \-h|\-\-help	Help
 
-# ENVIRONMENT VARIABLES
-## OY\_DEBUG
+## ENVIRONMENT VARIABLES
+### OY\_DEBUG
 set the Oyranos debug level. Alternatively the \-v option can be used. Valid integer range is from 1\-20.
-## OY\_MODULE\_PATH
+### OY\_MODULE\_PATH
 route Oyranos to additional directories containing modules.  
-# EXAMPLES
-## Enable the daemon, set night white point to 3000 Kelvin and use that in night mode
+## EXAMPLES
+### Enable the daemon, set night white point to 3000 Kelvin and use that in night mode
 oyranos\-monitor\-white\-point \-d 2 \-a 3000 \-n 1 
-## Switch all day light intereference off such as white point and effect
+### Switch all day light intereference off such as white point and effect
 oyranos\-monitor\-white\-point \-s 0 \-e 0 
 ## AUTHOR
 Kai\-Uwe Behrmann http://www.oyranos.org
