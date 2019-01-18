@@ -1388,12 +1388,12 @@ char *       openiccExtraManSection  ( openiccOptions_s  * opts,
         else if(strcmp(section,"SEE AS WELL") == 0)
           section = _("SEE AS WELL");
         if(flags & openiccOPTIONSTYLE_MARKDOWN)
-          oyjlStringAdd( &text, malloc, free, "# %s\n", _(section) );
+          oyjlStringAdd( &text, malloc, free, "## %s\n", _(section) );
         else
           oyjlStringAdd( &text, malloc, free, ".SH %s\n", _(section) );
         for(l = 0; l < n; ++l)
           if(flags & openiccOPTIONSTYLE_MARKDOWN)
-            oyjlStringAdd( &text, malloc, free, "## %s\n%s %s %s\n", list[l].nick, list[l].name, list[l].description, list[l].help );
+            oyjlStringAdd( &text, malloc, free, "### %s\n%s %s %s\n", list[l].nick, list[l].name, list[l].description, list[l].help );
           else
             oyjlStringAdd( &text, malloc, free, ".TP\n%s\n.br\n%s %s %s\n", list[l].nick, list[l].name, list[l].description, list[l].help );
         free(sect);
