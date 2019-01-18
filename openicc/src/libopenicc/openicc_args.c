@@ -996,7 +996,7 @@ openiccUi_s *  openiccUi_Create      ( int                 argc,
 #ifdef OYJL_USE_GETTEXT
   use_gettext = 1;
 #endif
-  oyjlInitLanguageDebug( "OpenICC", OI_DEBUG, openicc_debug, use_gettext, "OI_LOCALEDIR", OPENICC_LOCALEDIR, "openicc", openiccMessage_p );
+  oyjlInitLanguageDebug( "OpenICC", OI_DEBUG, openicc_debug, use_gettext, "OI_LOCALEDIR", OPENICC_LOCALEDIR, "openicc", NULL );
 
   /* allocate options structure */
   openiccUi_s * ui = openiccUi_New( argc, argv ); /* argc+argv are required for parsing the command line options */
