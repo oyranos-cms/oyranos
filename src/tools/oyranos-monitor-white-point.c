@@ -213,6 +213,8 @@ openiccOptionChoice_s * getWhitePointChoices    ( openiccOption_s   * o,
       int i;
       long l = -1;
       char * value = NULL;
+      const char * man_page = getenv("DISPLAY");
+      int skip_temperature_info = man_page && strcmp(man_page,"man_page") == 0;
       openiccOptionChoice_s * c = calloc(choices+1, sizeof(openiccOptionChoice_s));
       if(c)
       {
@@ -227,7 +229,7 @@ openiccOptionChoice_s * getWhitePointChoices    ( openiccOption_s   * o,
           c[i].description = strdup("");
           c[i].help = strdup("");
 
-          if(i == 1) /* automatic */
+          if(i == 1 && !skip_temperature_info) /* automatic */
           {
             double temperature = getTemperature(0);
             if(temperature)
@@ -391,6 +393,9 @@ int main( int argc , char** argv )
   };
   double night = isNight(0);
   openiccOptionGroup_s ng;
+  const char * man_page = getenv("DISPLAY");
+  if(man_page && strcmp(man_page,"man_page") == 0)
+    night = 1;
   if(night == 1)
   {
     memcpy( &ng, &groups[0], sizeof(openiccOptionGroup_s) );
