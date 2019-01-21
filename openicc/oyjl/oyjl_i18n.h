@@ -27,6 +27,10 @@
 # define _(text) text
 #endif
 
+#ifdef OYJL_HAVE_LOCALE_H
+#include <locale.h>           /* setlocale LC_NUMERIC */
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
