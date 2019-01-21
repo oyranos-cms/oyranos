@@ -36,6 +36,17 @@ extern "C" {
 # define  OYJL_DBG_ARGS_   strrchr(__FILE__,'/') ? strrchr(__FILE__,'/')+1 : __FILE__,__LINE__
 #endif
 
+#if (defined(__APPLE__) && defined(__MACH__)) || defined(__unix__) || (!defined(_WIN32) && !defined(_MSC_VER)) || (defined(_WIN32) && defined(__CYGWIN__)) || defined(__MINGW32__) || defined(__MINGW32)
+# include <unistd.h>
+# if defined(_POSIX_VERSION)
+#  define HAVE_POSIX 1
+# endif
+#endif
+
+#define OYJL_LOCALE_VAR "OYJL_LOCALEDIR"
+#define OYJL_DEBUG "OYJL_DEBUG"
+extern int * oyjl_debug;
+int oyjlIsDirFull_ (const char* name);
 
 int        oyjlTreePathsGetIndex     ( const char        * term,
                                        int               * index );
