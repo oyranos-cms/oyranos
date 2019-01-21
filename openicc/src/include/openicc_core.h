@@ -130,7 +130,7 @@ typedef union openiccVariable_u {
  *
  *  The type is declared inside the ::openiccOPTIONTYPE_e enum range. */
 typedef union openiccOption_u {
-  struct choices {
+  struct {
     openiccOptionChoice_s * list;      /**< used for openiccOPTIONTYPE_CHOICE */
     int selected;                      /**< the currently selected choice */
   } choices;                           /**< @brief openiccOPTIONTYPE_CHOICE */
@@ -141,7 +141,7 @@ typedef union openiccOption_u {
    *  @result                          the same as for the *choices::list* member; caller owns the memory
    */
   openiccOptionChoice_s * (*getChoices)( openiccOption_s * opt, int * selected, openiccOptions_s * context );
-  struct dbl {
+  struct {
     double d;                          /**< default / recommendation */
     double start;
     double end;
