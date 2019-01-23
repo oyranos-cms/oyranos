@@ -1,13 +1,11 @@
 # Json Ui renderer in Qt's QML+JavaScript
-SET( PROJECT_NAME openicc-json-qml )
+SET( PROJECT_NAME oyjl-args-qml )
 
 IF( NOT HAVE_OYJL )
-  INCLUDE_DIRECTORIES( ../../../oyjl )
+  INCLUDE_DIRECTORIES( .. )
   SET( EXTRA_LIBS ${EXTRA_LIBS} oyjl-static oyjl-core-static )
-  LINK_DIRECTORIES( ../../../build/oyjl )
+  LINK_DIRECTORIES( build/ )
   INCLUDE_DIRECTORIES( ../../../src/include )
-  INCLUDE_DIRECTORIES( ../../../build/src/include )
-  LINK_DIRECTORIES( ../../../build/src/libopenicc )
 ENDIF()
 
 FIND_PACKAGE(Qt5 COMPONENTS Widgets Qml Quick Svg LinguistTools)
@@ -54,7 +52,7 @@ IF( HAVE_QT)
                 Qt5::Widgets
                 Qt5::Qml
                 Qt5::Quick
-                OpenICC
+                Oyjl
                 ${EXTRA_LIBS}
                 yajl )
     IF(ENABLE_INSTALL_${PROJECT_UP_NAME})

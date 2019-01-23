@@ -1,11 +1,11 @@
-/*  @file openicc_json.c
+/*  @file oyjl_translate.c
  *
- *  libOpenICC - JSON helper tool
+ *  libOyjl - JSON helper tool
  *
  *  @par Copyright:
  *            2018 (C) Kai-Uwe Behrmann
  *
- *  @brief    OpenICC Colour Management configuration helpers
+ *  @brief    Oyjl JSON translation helper
  *  @internal
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
@@ -17,15 +17,13 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "openicc_conf.h"
-#include "openicc_version.h"
-#include "openicc_config.h"
-#include "openicc_macros.h"
-#include "openicc_config_internal.h"
+#include "oyjl_version.h"
+#include "oyjl.h"
+#include "oyjl_macros.h"
+#include "oyjl_i18n.h"
+#include "oyjl_tree_internal.h"
 
-#include <oyjl_macros.h>
-
-#ifdef USE_GETTEXT
+#ifdef OYJL_USE_GETTEXT
 int use_gettext = 1;
 #else
 int use_gettext = 0;
@@ -40,7 +38,7 @@ void printfHelp(int argc, char ** argv, int verbose_)
   fprintf( stderr, "%s %s\n",   argv[0],
                                 _("is a JSON helper tool"));
   fprintf( stderr, "  v%s\n",
-                  OPENICC_VERSION_NAME );
+                  OYJL_VERSION_NAME );
   fprintf( stderr, "\n");
   fprintf( stderr, "%s\n",                 _("Usage"));
   fprintf( stderr, "  %s\n",               _("Convert JSON to gettext ready C strings:"));
@@ -66,6 +64,7 @@ void printfHelp(int argc, char ** argv, int verbose_)
   fprintf( stderr, "\n");
 }
 
+#define WARNc_S(...) oyjlMessage_p( oyjlMSG_ERROR, 0, __VA_ARGS__ )
 
 int main(int argc, char ** argv)
 {
@@ -81,16 +80,15 @@ int main(int argc, char ** argv)
              * key_list = NULL,
              * lang_list = NULL,
              * localedir = NULL,
-             * ctextdomain = "OpenICC";
+             * ctextdomain = OYJL_DOMAIN;
   char * json = NULL;
   oyjl_val root = NULL,v;
   char * text = NULL;
 
-#ifdef USE_GETTEXT
+#ifdef OYJL_USE_GETTEXT
   setlocale(LC_ALL,"");
 #endif
-  //openiccInit();
-  oyjlInitLanguageDebug( "OpenICC", OI_DEBUG, openicc_debug, use_gettext, "OI_LOCALEDIR", OPENICC_LOCALEDIR, "openicc", openiccMessage_p );
+  oyjlInitLanguageDebug( "Oyjl", OYJL_DEBUG, oyjl_debug, use_gettext, OYJL_LOCALE_VAR, OYJL_LOCALEDIR, OYJL_DOMAIN, NULL );
 
   if(argc >= 2)
   {
@@ -115,30 +113,30 @@ int main(int argc, char ** argv)
               case 'o': OY_PARSE_STRING_ARG(output); break;
               case 'p': OY_PARSE_STRING_ARG(localedir); break;
               case 'w': OY_PARSE_STRING_ARG(wrap); break;
-              case 'v': ++verbose; ++*openicc_debug; break;
+              case 'v': ++verbose; ++*oyjl_debug; break;
               case 'h':
               case '-':
                         if(i == 1)
                         {
                              if(OY_IS_ARG("verbose"))
-                        { ++*openicc_debug; ++verbose; i=100; break; }
-                        } OI_FALLTHROUGH
+                        { ++*oyjl_debug; ++verbose; i=100; break; }
+                        } OYJL_FALLTHROUGH
               default:
-                        WARN( 0, "%s %s", "wrong option:", argv[pos]);
+                        WARNc_S( "%s %s", "wrong option:", argv[pos]);
                         printfHelp(argc, argv, verbose);
                         exit (0);
                         break;
             }
             break;
         default:
-                        WARN( 0, "%s %s", "wrong option:", argv[pos]);
+                        WARNc_S( "%s %s", "wrong option:", argv[pos]);
                         printfHelp(argc, argv, verbose);
                         exit (0);
                         break;
       }
       if( wrong_arg )
       {
-       WARN( 0, "%s %s", "wrong argument to option:", wrong_arg);
+       WARNc_S( "%s %s", "wrong argument to option:", wrong_arg);
        printfHelp(argc, argv, verbose);
        exit(1);
       }
@@ -154,7 +152,7 @@ int main(int argc, char ** argv)
     fprintf(stderr, "i18n test:\t\"%s\" %s\n", _("Usage"), textdomain(NULL) );
 
   if(file_name)
-    json = openiccReadFile( file_name, &size );
+    json = oyjlReadFile( file_name, &size );
 
   if(json)
   {
@@ -219,36 +217,35 @@ int main(int argc, char ** argv)
       int ln = 0, n = 0;
       char ** langs = oyjlStringSplit( lang_list, ',', &ln, malloc );
       char * var = NULL;
-      const char * openicc_domain_path = OPENICC_LOCALEDIR;
+      const char * oyjl_domain_path = OYJL_LOCALEDIR;
       char ** list = oyjlStringSplit( key_list, ',', &n, malloc );
       char * dir;
 
       if(verbose)
-        fprintf(stderr, "use:\t%d langs - %s\n", ln, dgettext( ctextdomain, "Rendering Intent" ));
+        fprintf(stderr, "use:\t%d langs - %s : %s\n", ln, ctextdomain, dgettext( ctextdomain, "Rendering Intent" ));
       if(verbose)
         fprintf(stderr, "use:\t%d keys\n", n);
 
       if(localedir)
       {
-        if(!openiccIsDirFull_ (localedir))
+        if(!oyjlIsDirFull_ (localedir))
         {
           fprintf(stderr, "ERROR: Can not find absolute path:\t%s\n", localedir);
           exit(1);
         }
-        openicc_domain_path = localedir;
+        oyjl_domain_path = localedir;
       }
-      if(!openicc_domain_path && getenv("OI_LOCALEDIR") && strlen(getenv("OI_LOCALEDIR")))
-        openicc_domain_path = strdup(getenv("OI_LOCALEDIR"));
+      if(!oyjl_domain_path && getenv(OYJL_LOCALE_VAR) && strlen(getenv(OYJL_LOCALE_VAR)))
+        oyjl_domain_path = strdup(getenv(OYJL_LOCALE_VAR));
 
       var = textdomain( ctextdomain );
-      dir = bindtextdomain( ctextdomain, openicc_domain_path );
+      dir = bindtextdomain( ctextdomain, oyjl_domain_path );
 
-      if(*openicc_debug)
-        fprintf(stdout, "%s = bindtextdomain() to \"%s\"\ntextdomain: %s == %s\n", dir, openicc_domain_path, ctextdomain, var );
+      if(*oyjl_debug)
+        fprintf(stdout, "%s = bindtextdomain() to \"%s\"\ntextdomain: %s == %s\n", dir, oyjl_domain_path, ctextdomain, var );
       var = NULL;
 
-      STRING_ADD( var, "NLSPATH=");
-      STRING_ADD( var, openicc_domain_path);
+      oyjlStringAdd( &var, 0,0, "NLSPATH=%s", oyjl_domain_path );
       putenv(var); /* Solaris */
 
       for(i = 0; i < ln; ++i)
@@ -257,7 +254,7 @@ int main(int argc, char ** argv)
         int j;
 
         const char * checklocale = setlocale( LC_MESSAGES, lang );
-        if(*openicc_debug)
+        if(*oyjl_debug)
           fprintf(stdout, "setlocale(%s) == %s\n", lang, checklocale );
 
         for(j = 0; j < count; ++j)
@@ -303,7 +300,7 @@ int main(int argc, char ** argv)
 
     } else
       for(i = 0; i < count; ++i)
-        fprintf(stdout,"%s\n", paths[i]);
+        fprintf( stdout, "%s\n", paths[i] );
 
     oyjlStringListRelease( &paths, count, free );
 
@@ -329,7 +326,7 @@ int main(int argc, char ** argv)
       if(!output || strcmp(output,"-") == 0)
         fputs( text, stdout );
       else
-        openiccWriteFile( output, text, strlen(text) );
+        oyjlWriteFile( output, text, strlen(text) );
     }
   }
 

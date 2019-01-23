@@ -20,7 +20,7 @@
 #include <QApplication>
 #include <QIcon>
 #include <QByteArray>
-#include <oyjl.h>
+#include "oyjl.h"
 
 #include <QFile>
 #include <QDir>

@@ -1,6 +1,6 @@
 /** @file main.qml
  *
- *  OpenICC JSON QML is a graphical renderer of UI files.
+ *  Oyjl JSON QML is a graphical renderer of UI files.
  *
  *  @par Copyright:
  *            2018 (C) Kai-Uwe Behrmann
@@ -81,7 +81,7 @@ AppWindow {
                 command_set_option = ""
         }
 
-        statusText = "commands enabled = " + url
+        statusText = qsTr("commands enabled") + " = " + url
     }
 
     Process { id: processGet; onReadChannelFinished: { textArea2.text = readAll(); setDataText(textArea2.text);} }
@@ -422,10 +422,10 @@ AppWindow {
             loc = j.LOCALE_info;
         if(typeof j.org === "undefined" ||
            typeof j.org.freedesktop === "undefined" ||
-           typeof j.org.freedesktop.openicc === "undefined" ||
-           typeof j.org.freedesktop.openicc.modules === "undefined")
+           typeof j.org.freedesktop.oyjl === "undefined" ||
+           typeof j.org.freedesktop.oyjl.modules === "undefined")
             introText = qsTr("Load failed") + "<br />" + t
-        var cmm = j.org.freedesktop.openicc.modules[0];
+        var cmm = j.org.freedesktop.oyjl.modules[0];
 
         uiLogo = appData.findLogo( cmm.logo )
         var name = uiLogo

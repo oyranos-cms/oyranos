@@ -1,12 +1,13 @@
-IF(ENABLE_DOCU)
+IF(ENABLE_DOCU_${PROJECT_UP_NAME})
   SET( DOC_SOURCES ${DOC_SOURCES}
         ${CHEADERS_OYJL_PUBLIC}
+        ${CMAKE_SOURCE_DIR}/oyjl_args.c
         ${CMAKE_SOURCE_DIR}/oyjl_core.c
         ${CMAKE_SOURCE_DIR}/oyjl_tree.c
         ${CMAKE_SOURCE_DIR}/oyjl_yajl.c
         ${CMAKE_CURRENT_SOURCE_DIR}/doxymentation.dox
      )
-ENDIF(ENABLE_DOCU)
+ENDIF(ENABLE_DOCU_${PROJECT_UP_NAME})
 
 CONFIGURE_FILE(
                 "${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in"

@@ -17,8 +17,8 @@ IF( GETTEXT_FOUND )
   SET(_potFile ${CMAKE_SOURCE_DIR}/po/${PACKAGE_NAME}.pot)
 
   ADD_CUSTOM_TARGET( i18n.c
-    COMMAND LANG=en PATH=$(PATH):${CMAKE_BINARY_DIR}/openicc/src/tools LD_LIBRARY_PATH=${CMAKE_BINARY_DIR}/openicc/src/libopenicc:${OYJL_LIBRARY_DIRS} oi-json -i ${CMAKE_CURRENT_SOURCE_DIR}/${CMM}.json -ek name,label,description,help -o i18n.c
-    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${CMM}.json ${OPENICC_JSON_TOOL}
+    COMMAND LANG=C PATH=$(PATH):${CMAKE_BINARY_DIR}/openicc/oyjl LD_LIBRARY_PATH=${CMAKE_BINARY_DIR}/openicc/oyjl:${OYJL_LIBRARY_DIRS} oyjl-translate -i ${CMAKE_CURRENT_SOURCE_DIR}/${CMM}.json -ek name,label,description,help -o i18n.c
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${CMM}.json ${OYJL_JSON_TOOL}
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     COMMENT "Extract translatable messages to i18n.c"
   )
@@ -39,8 +39,8 @@ IF( GETTEXT_FOUND )
   ENDFOREACH( my_lang )
   MESSAGE( "Lingua: ${MY_LINGUAS_COMMA}" )
   ADD_CUSTOM_TARGET( ${CMM}.i18n.c
-    COMMAND mkdir ${CMAKE_BINARY_DIR}/locale || echo path exists
-    COMMAND LANG=en PATH=$(PATH):${CMAKE_BINARY_DIR}/openicc/src/tools LD_LIBRARY_PATH=${CMAKE_BINARY_DIR}/openicc/src/libopenicc:${OYJL_LIBRARY_DIRS} oi-json -ai ${CMAKE_CURRENT_SOURCE_DIR}/${CMM}.json -k name,label,description,help -o ${CMAKE_CURRENT_SOURCE_DIR}/${CMM}.i18n.c -w C -d ${PACKAGE_NAME} -l ${MY_LINGUAS_COMMA} -p ${CMAKE_BINARY_DIR}/locale
+    COMMAND test -d || mkdir ${CMAKE_BINARY_DIR}/locale && echo path exists
+    COMMAND LANG=C PATH=$(PATH):${CMAKE_BINARY_DIR}/openicc/oyjl LD_LIBRARY_PATH=${CMAKE_BINARY_DIR}/openicc/oyjl:${OYJL_LIBRARY_DIRS} oyjl-translate -ai ${CMAKE_CURRENT_SOURCE_DIR}/${CMM}.json -k name,label,description,help -o ${CMAKE_CURRENT_SOURCE_DIR}/${CMM}.i18n.c -w C -d ${PACKAGE_NAME} -l ${MY_LINGUAS_COMMA} -p ${CMAKE_BINARY_DIR}/locale
     DEPENDS i18n.c
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     COMMENT "Add ${MY_LINGUAS_COMMA} translated messages to ${CMM} declaration"

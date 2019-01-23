@@ -28,11 +28,12 @@
     - @ref oyjl_tree - JSON modeled C data structure with data I/O API
     - @ref oyjl_core - Core API
     - @ref oyjl_test - Test API
+    - @ref oyjl_args - Argument Handling API
 
     @section tools Tools Documentation
     Oyjl comes with a few tools, which use the Oyjl API's.
-    - @ref openiccdevice - color device configuration
-    - oi-json - localisation helper tool
+    - @ref oyjl - JSON manipulation
+    - oyjl-translate - localisation helper tool
 
     @subsection api_tutorial Programming Tutorial
     Frist you have to put a

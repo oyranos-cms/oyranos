@@ -173,7 +173,7 @@ char * openiccPathGetParent_         ( const char        * name );
 # define OS_DL_CACHE_SYSTEM_DIR        OS_MACHINE_DIR        OS_CACHE_PATH
 # define OS_DL_CACHE_MACHINE_DIR       OS_MACHINE_DIR        OS_CACHE_PATH
 
-openiccUiHeaderSection_s * oiUiInfo  ( const char          * documentation );
+oyjlUiHeaderSection_s *  oiUiInfo    ( const char          * documentation );
 
 #ifdef __cplusplus
 } /* extern "C" */

@@ -2,7 +2,7 @@
  *
  *  Oyranos is an open source Color Management System 
  *
- *  Copyright (C) 2008-2018  Kai-Uwe Behrmann
+ *  Copyright (C) 2008-2019  Kai-Uwe Behrmann
  *
  */
 
@@ -18,11 +18,11 @@
 #include "oyranos_version.h"
 
 #include <string.h>
-openiccUiHeaderSection_s * oyUiInfo  ( const char          * documentation,
+oyjlUiHeaderSection_s *    oyUiInfo  ( const char          * documentation,
                                        const char          * iso_dateTtime,
                                        const char          * date_description )
 {
-  openiccUiHeaderSection_s s[] = {
+  oyjlUiHeaderSection_s s[] = {
     /* type,  nick,      label,name,                 description */
     { "oihs", "version", NULL, OYRANOS_VERSION_NAME, NULL },
     { "oihs", "date", NULL, iso_dateTtime, date_description },
@@ -38,6 +38,6 @@ openiccUiHeaderSection_s * oyUiInfo  ( const char          * documentation,
     { "oihs", "documentation", NULL, "http://www.openicc.info", documentation },
     { "", NULL, NULL, NULL, NULL }
   };
-  return openiccMemDup( s, sizeof(s) );
+  return (oyjlUiHeaderSection_s*) oyjlStringAppendN( NULL, (const char*)s, sizeof(s), malloc );
 }
 

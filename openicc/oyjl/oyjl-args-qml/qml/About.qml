@@ -1,9 +1,9 @@
 /** @file About.qml
  *
- *  OpenICC JSON QML is a graphical renderer of UI files.
+ *  Oyjl JSON QML is a graphical renderer of UI files.
  *
  *  @par Copyright:
- *            2018 (C) Kai-Uwe Behrmann
+ *            2018-2019 (C) Kai-Uwe Behrmann
  *            All Rights reserved.
  *
  *  @par License:
@@ -62,10 +62,10 @@ Rectangle {
             readOnly: true // obviously no edits
             text: "<html><head></head><body> <p align=\"center\">" +
                           "Version " + ApplicationVersion + "<br \>" +
-                          qsTr("OpenICC Options Renderer") +
-                          "<br \>Copyright (c) 2018 Kai-Uwe Behrmann<br \>" +
+                          qsTr("Oyjl Options Renderer") +
+                          "<br \>Copyright (c) 2018-2019 Kai-Uwe Behrmann<br \>" +
                           qsTr("All Rights reserved.") +
-                          "<br \><a href=\"http://www.openicc.org\">www.openicc.org</a></p>" +
+                          "<br \><a href=\"http://www.oyranos.org\">www.oyranos.org</a></p>" +
                           "<hr /><p align=\"center\">" +
                           "<table border=\"0\" style=\"border-spacing:10px\">" +
                           "<tr><td align=\"right\" style=\"padding-right:10;\">" + qsTr("Platform") + "</td>" +

@@ -359,3 +359,28 @@ void *         openiccMemDup         ( const void        * src,
 }
 
 /*  @} *//* misc */
+
+/* private stuff */
+
+oyjlUiHeaderSection_s * oiUiInfo     ( const char          * documentation )
+{
+  oyjlUiHeaderSection_s s[] = {
+    /* type,  nick,      label,name,                 description */
+    { "oihs", "version", NULL, OPENICC_VERSION_NAME, NULL },
+    { "oihs", "manufacturer", NULL, "Kai-Uwe Behrmann", "http://www.openicc.org" },
+    { "oihs", "copyright", NULL, "Copyright 2018 Kai-Uwe Behrmann", NULL },
+    { "oihs", "license", NULL, "newBSD", "http://www.openicc.org" },
+    { "oihs", "url",     NULL, "http://www.openicc.org", NULL },
+    { "oihs", "support", NULL, "https://www.github.com/OpenICC/config/issues", NULL },
+    { "oihs", "download",NULL, "https://github.com/OpenICC/config/releases", NULL },
+    { "oihs", "sources", NULL, "https://github.com/OpenICC/config", NULL },
+    { "oihs", "development", NULL, "https://github.com/OpenICC/config", NULL },
+    { "oihs", "openicc_module_author", NULL, "Kai-Uwe Behrmann", "http://www.behrmann.name" },
+    { "oihs", "documentation", NULL, "http://www.openicc.info", documentation },
+    { "oihs", "date", NULL, "1970-01-01T12:00:00", "" },
+    { "", NULL, NULL, NULL, NULL }
+  };
+  return (oyjlUiHeaderSection_s*) oyjlStringAppendN( NULL, (const char*)s, sizeof(s), malloc );
+}
+
+

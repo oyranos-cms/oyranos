@@ -1,6 +1,6 @@
 /** @file app_data.cpp
  *
- *  OpenICC JSON QML is a graphical renderer of UI files.
+ *  Oyjl JSON QML is a graphical renderer of UI files.
  *
  *  @par Copyright:
  *            2018 (C) Kai-Uwe Behrmann
@@ -24,8 +24,7 @@
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QJsonDocument>
-#include <openicc_config.h>
-#include <openicc_version.h>
+#include <oyjl_version.h>
 #include <oyjl.h>
 
 /** @brief start a process
@@ -129,15 +128,51 @@ void AppData::writeJSON( QString url )
     }
 }
 
+#define OYJL_PIXMAPSDIRNAME "pixmaps"
+#if defined(__APPLE__)
+
+# define OS_USER_DIR    "~/Library"
+# define OS_GLOBAL_DIR  "/Library"
+
+# define OS_LOGO_PATH     "/org.freedesktop.oyjl/" OYJL_PIXMAPSDIRNAME
+
+# define OS_LOGO_USER_DIR              OS_USER_DIR           OS_LOGO_PATH
+# define OS_LOGO_SYSTEM_DIR            OS_GLOBAL_DIR         OS_LOGO_PATH
+
+#else
+
+# define OS_USER_DIR    "~/."
+# define OS_GLOBAL_DIR  "/usr/share/"
+
+# define OS_LOGO_PATH        OYJL_PIXMAPSDIRNAME
+
+# define OS_LOGO_USER_DIR              OS_USER_DIR "local/share/" OS_LOGO_PATH
+# define OS_LOGO_SYSTEM_DIR            OS_GLOBAL_DIR         OS_LOGO_PATH
+
+#endif
+
+#define OYJL_LOGO_DIR OYJL_DATADIR "/" OYJL_PIXMAPSDIRNAME
+
+typedef enum {
+  oyjlSCOPE_USER,
+  oyjlSCOPE_SYSTEM,
+  oyjlSCOPE_OYJL
+} oyjlSCOPE_e;
+
 /** @brief get the first file name in the logo search path
  */
-QString findFile(QString pattern, openiccSCOPE_e scope)
+QString findFile(QString pattern, oyjlSCOPE_e scope)
 {
     QString fn;
 
-    char * p = openiccGetInstallPath(openiccPATH_LOGO, scope, malloc);
+    const char * p = NULL;
+    switch(scope)
+    {
+      case oyjlSCOPE_USER:   p = OS_LOGO_USER_DIR; break;
+      case oyjlSCOPE_SYSTEM: p = OS_LOGO_SYSTEM_DIR; break;
+      case oyjlSCOPE_OYJL:   p = OYJL_LOGO_DIR; break;
+    }
     QString path(p);
-    if(p) free(p);
     path.replace(QString("~"), QString(QDir::homePath()));
 
     QStringList search = QStringList() << pattern + "*";
@@ -162,11 +197,11 @@ QString AppData::findLogo(QString pattern)
     if (pattern.isEmpty())
         return fn;
 
-    fn = findFile(pattern, openiccSCOPE_USER);
+    fn = findFile(pattern, oyjlSCOPE_USER);
     if(fn.length() == 0)
-        fn = findFile(pattern, openiccSCOPE_SYSTEM);
+        fn = findFile(pattern, oyjlSCOPE_SYSTEM);
     if(fn.length() == 0)
-        fn = findFile(pattern, (openiccSCOPE_e)openiccSCOPE_OPENICC);
+        fn = findFile(pattern, oyjlSCOPE_OYJL);
     return fn;
 }
 
@@ -180,8 +215,8 @@ QString AppData::findLogo(QString pattern)
  */
 QString AppData::getLibDescription(int type)
 {
-    QString v(OPENICC_VERSION_NAME);
-    QString p("libOpenICC");
+    QString v(OYJL_VERSION_NAME);
+    QString p("libOyjl");
     if(p[0].isLower())
         p[0] = p[0].toUpper();
 
@@ -194,7 +229,7 @@ QString AppData::getLibDescription(int type)
     case 2:
         return QString(tr("%1 Version")).arg(p);
     case 3:
-        return QString::number(openiccVersion());
+        return QString::number(oyjlVersion(0));
     case 4:
     {
         QString qv(tr("NONE"));
@@ -207,9 +242,9 @@ QString AppData::getLibDescription(int type)
 /** @brief modify the JSON model
  *
  *  @param key    object name levels separated by slash '/';
- *                e.g.: "org/freedesktop/openicc/keyA" ;
+ *                e.g.: "org/freedesktop/oyjl/keyA" ;
  *                The key can contain as well array indices:
- *                e.g.: "org/freedesktop/openicc/[0]/firstKey"
+ *                e.g.: "org/freedesktop/oyjl/[0]/firstKey"
  *  @param value  the actual string for the object
  */
 void AppData::setOption(QString key, QString value)

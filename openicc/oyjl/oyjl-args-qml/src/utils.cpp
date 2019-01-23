@@ -1,6 +1,6 @@
 /** @file utils.cpp
  *
- *  OpenICC JSON QML is a graphical renderer of UI files.
+ *  Oyjl JSON QML is a graphical renderer of UI files.
  *
  *  @par Copyright:
  *            2018 (C) Kai-Uwe Behrmann
@@ -25,10 +25,10 @@
 void app_log( QString log_text )
 {
     QTextStream s(stderr);
-    s << "openicc-json-qml("<< QDateTime::currentDateTime().toString("hh:mm:ss.zzz") <<"): "
+    s << "oyjl-args-qml("<< QDateTime::currentDateTime().toString("hh:mm:ss.zzz") <<"): "
       << log_text << endl;
 #if defined(Q_OS_ANDROID)
-    __android_log_print(ANDROID_LOG_INFO, "openicc-json-qml", "%s", log_text.toLocal8Bit().data() );
+    __android_log_print(ANDROID_LOG_INFO, "oyjl-args-qml", "%s", log_text.toLocal8Bit().data() );
 #endif
 }
 

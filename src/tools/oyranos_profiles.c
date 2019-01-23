@@ -75,67 +75,67 @@ int main( int argc , char** argv )
 #endif
   oyExportStart_(EXPORT_CHECK_NO);
 
-  openiccOptions_s * opts;
-  openiccOption_s * o;
-  openiccUi_s * ui;
-  openiccUiHeaderSection_s * info;
+  oyjlOptions_s * opts;
+  oyjlOption_s * o;
+  oyjlUi_s * ui;
+  oyjlUiHeaderSection_s * info;
   const char * export = NULL;
   int help = 0;
   int verbose = 0;
   int state = 0;
 
-  opts = openiccOptions_New( argc, argv );
+  opts = oyjlOptions_New( argc, argv );
   /* nick, name, description, help */
-  openiccOptionChoice_s env_vars[]={{"OY_DEBUG", _("set the Oyranos debug level."), _("Alternatively the -v option can be used."), _("Valid integer range is from 1-20.")},
+  oyjlOptionChoice_s env_vars[]={{"OY_DEBUG", _("set the Oyranos debug level."), _("Alternatively the -v option can be used."), _("Valid integer range is from 1-20.")},
                                     {"XDG_DATA_HOME XDG_DATA_DIRS", _("route Oyranos to top directories containing resources. The derived paths for ICC profiles have a \"color/icc\" appended. http://www.oyranos.com/wiki/index.php?title=OpenIccDirectoryProposal"), "", ""},
                                     {"","","",""}};
-  openiccOptionChoice_s examples[]={{_("List all installed profiles by internal name"), "oyranos-profiles", "-le", ""},
+  oyjlOptionChoice_s examples[]={{_("List all installed profiles by internal name"), "oyranos-profiles", "-le", ""},
                                     {_("List all installed profiles of the display and output device classes"), "oyranos-profiles", "-l -od", ""},
                                     {_("List all installed profiles in user path"), "oyranos-profiles", "-lfu", ""},
                                     {_("Install a profile for the actual user and show error messages in a GUI"), "oyranos-profiles", "--install profilename -u --gui", ""},
                                     {_("Install a profile for the actual user and show error messages in a GUI"), "oyranos-profiles", "--install - --taxi=taxi_id/0 --gui -d -u", ""},
                                     {_("Show file infos"),"SAVEIFS=$IFS ; IFS=$'\\n\\b'; profiles=(`oyranos-profiles -ldf`); IFS=$SAVEIFS; for file in \"${profiles[@]}\"; do ls \"$file\"; done", "", ""},
                                     {"","","",""}};
-  openiccOption_s oarray[] = {
+  oyjlOption_s oarray[] = {
   /* type,   flags, o, option, key, name, description, help, value_name, value_type, values, var_type, variable */
-    {"oiwi", 0, '2', "icc-version-2", NULL, _("ICC Version 2"), _("Select ICC v2 Profiles"), NULL, NULL, openiccOPTIONTYPE_NONE, {}, openiccINT, {.i=&v2} },
-    {"oiwi", 0, '4', "icc-version-4", NULL, _("ICC Version 4"), _("Select ICC v4 Profiles"), NULL, NULL, openiccOPTIONTYPE_NONE, {}, openiccINT, {.i=&v4} },
-    {"oiwi", 0, 'l', "list-profiles", NULL, _("List Profiles"), _("List Profiles"), NULL, NULL, openiccOPTIONTYPE_NONE, {}, openiccINT,{.i=&list_profiles} },
-    {"oiwi", 0, 'f', "full-names", NULL, _("Full Names"), _("List profile full names"), _("Show path name and file name."), NULL, openiccOPTIONTYPE_NONE, {}, openiccINT, {.i=&list_profile_full_names} },
-    {"oiwi", 0, 'e', "internale-names", NULL, _("Internal Name"), _("List profile internal names"), _("The text string comes from the 'desc' tag."), NULL, openiccOPTIONTYPE_NONE, {}, openiccINT, {.i=&list_profile_internal_names} },
-    {"oiwi", 0, 'c', "color-space", NULL, _("Color Space Class"), _("Select Color Space profiles"), NULL, NULL, openiccOPTIONTYPE_NONE, {}, openiccINT, {.i=&color_space} },
-    {"oiwi", 0, 'd', "display", NULL, _("Display Class"), _("Select Monitor profiles"), NULL, NULL, openiccOPTIONTYPE_NONE, {}, openiccINT, {.i=&display} },
-    {"oiwi", 0, 'i', "input", NULL, _("Input Class"), _("Select Input profiles"), NULL, NULL, openiccOPTIONTYPE_NONE, {}, openiccINT, {.i=&input} },
-    {"oiwi", 0, 'o', "output", NULL, _("Output Class"), _("Select Output profiles"), NULL, NULL, openiccOPTIONTYPE_NONE, {}, openiccINT, {.i=&output} },
-    {"oiwi", 0, 'a', "abstract", NULL, _("Abstract Class"), _("Select Abstract profiles"), NULL, NULL, openiccOPTIONTYPE_NONE, {}, openiccINT, {.i=&abstract} },
-    {"oiwi", 0, 'k', "device-link", NULL, _("(Device) Link Class"), _("Select Device Link profiles"), NULL, NULL, openiccOPTIONTYPE_NONE, {}, openiccINT, {.i=&device_link} },
-    {"oiwi", 0, 'n', "named-color", NULL, _("Named Color Class"), _("Select Named Color profiles"), NULL, NULL, openiccOPTIONTYPE_NONE, {}, openiccINT, {.i=&named_color} },
-    {"oiwi", 0, 'p', "list-paths", NULL, _("List Paths"), _("List ICC Profile Paths"), NULL, NULL, openiccOPTIONTYPE_NONE, {}, openiccINT, {.i=&list_paths} },
-    {"oiwi", 0, 'I', "install", NULL, _("Install"), _("Install Profile"), NULL, _("ICC_PROFILE"), openiccOPTIONTYPE_STRING, {}, openiccSTRING, {.s=&install} },
-    {"oiwi", 0, 't', "taxi", NULL, _("Taxi DB"), _("ICC Taxi Profile DB"), NULL, _("TAXI_ID"), openiccOPTIONTYPE_STRING, {}, openiccSTRING, {.s=&taxi_id} },
-    {"oiwi", 0, 'g', "gui", NULL, _("GUI"), _("Use Graphical User Interface"), NULL, NULL, openiccOPTIONTYPE_NONE, {}, openiccINT, {.i=&show_gui} },
-    {"oiwi", 0, 'u', "user", NULL, _("User"), _("User path"), NULL, NULL, openiccOPTIONTYPE_NONE, {}, openiccINT, {.i=&user_path} },
-    {"oiwi", 0, 'y', "oyranos", NULL, _("Oyranos"), _("Oyranos path"), NULL, NULL, openiccOPTIONTYPE_NONE, {}, openiccINT, {.i=&oyranos_path} },
-    {"oiwi", 0, 's', "system", NULL, _("System"), _("System path"), NULL, NULL, openiccOPTIONTYPE_NONE, {}, openiccINT, {.i=&system_path} },
-    {"oiwi", 0, 'm', "machine", NULL, _("Machine"), _("Machine path"), NULL, NULL, openiccOPTIONTYPE_NONE, {}, openiccINT, {.i=&machine_path} },
-    {"oiwi", 0, 'P', "path", NULL, _("Path filter"), _("Show profiles containing a string as part of their full name"), _("PATH_SUB_STRING"), NULL, openiccOPTIONTYPE_STRING, {}, openiccSTRING, {.s=&path} },
-    {"oiwi", 0, 'T', "meta", NULL, _("Meta"), _("Filter for meta tag key/value pair"), _("Show profiles containing a certain key/value pair of their meta tag. VALUE can contain '*' to allow for substring matching."), _("KEY;VALUE"), openiccOPTIONTYPE_STRING, {.suggest = "EFFECT_class;sepia"}, openiccSTRING, {.s=&meta} },
-    {"oiwi", 0, 'r', "no-repair", NULL, _("No repair"), _("No Profile repair of ICC profile ID"), NULL, NULL, openiccOPTIONTYPE_NONE, {}, openiccINT, {.i=&no_repair} },
-    {"oiwi", 0, 'D', "duplicates", NULL, _("Duplicates"), _("Allow for identical multiple installed profiles"), NULL, NULL, openiccOPTIONTYPE_NONE, {}, openiccINT, {.i=&duplicates} },
+    {"oiwi", 0, '2', "icc-version-2", NULL, _("ICC Version 2"), _("Select ICC v2 Profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&v2} },
+    {"oiwi", 0, '4', "icc-version-4", NULL, _("ICC Version 4"), _("Select ICC v4 Profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&v4} },
+    {"oiwi", 0, 'l', "list-profiles", NULL, _("List Profiles"), _("List Profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT,{.i=&list_profiles} },
+    {"oiwi", 0, 'f', "full-names", NULL, _("Full Names"), _("List profile full names"), _("Show path name and file name."), NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&list_profile_full_names} },
+    {"oiwi", 0, 'e', "internale-names", NULL, _("Internal Name"), _("List profile internal names"), _("The text string comes from the 'desc' tag."), NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&list_profile_internal_names} },
+    {"oiwi", 0, 'c', "color-space", NULL, _("Color Space Class"), _("Select Color Space profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&color_space} },
+    {"oiwi", 0, 'd', "display", NULL, _("Display Class"), _("Select Monitor profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&display} },
+    {"oiwi", 0, 'i', "input", NULL, _("Input Class"), _("Select Input profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&input} },
+    {"oiwi", 0, 'o', "output", NULL, _("Output Class"), _("Select Output profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&output} },
+    {"oiwi", 0, 'a', "abstract", NULL, _("Abstract Class"), _("Select Abstract profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&abstract} },
+    {"oiwi", 0, 'k', "device-link", NULL, _("(Device) Link Class"), _("Select Device Link profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&device_link} },
+    {"oiwi", 0, 'n', "named-color", NULL, _("Named Color Class"), _("Select Named Color profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&named_color} },
+    {"oiwi", 0, 'p', "list-paths", NULL, _("List Paths"), _("List ICC Profile Paths"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&list_paths} },
+    {"oiwi", 0, 'I', "install", NULL, _("Install"), _("Install Profile"), NULL, _("ICC_PROFILE"), oyjlOPTIONTYPE_STRING, {}, oyjlSTRING, {.s=&install} },
+    {"oiwi", 0, 't', "taxi", NULL, _("Taxi DB"), _("ICC Taxi Profile DB"), NULL, _("TAXI_ID"), oyjlOPTIONTYPE_STRING, {}, oyjlSTRING, {.s=&taxi_id} },
+    {"oiwi", 0, 'g', "gui", NULL, _("GUI"), _("Use Graphical User Interface"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&show_gui} },
+    {"oiwi", 0, 'u', "user", NULL, _("User"), _("User path"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&user_path} },
+    {"oiwi", 0, 'y', "oyranos", NULL, _("Oyranos"), _("Oyranos path"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&oyranos_path} },
+    {"oiwi", 0, 's', "system", NULL, _("System"), _("System path"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&system_path} },
+    {"oiwi", 0, 'm', "machine", NULL, _("Machine"), _("Machine path"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&machine_path} },
+    {"oiwi", 0, 'P', "path", NULL, _("Path filter"), _("Show profiles containing a string as part of their full name"), _("PATH_SUB_STRING"), NULL, oyjlOPTIONTYPE_STRING, {}, oyjlSTRING, {.s=&path} },
+    {"oiwi", 0, 'T', "meta", NULL, _("Meta"), _("Filter for meta tag key/value pair"), _("Show profiles containing a certain key/value pair of their meta tag. VALUE can contain '*' to allow for substring matching."), _("KEY;VALUE"), oyjlOPTIONTYPE_STRING, {.suggest = "EFFECT_class;sepia"}, oyjlSTRING, {.s=&meta} },
+    {"oiwi", 0, 'r', "no-repair", NULL, _("No repair"), _("No Profile repair of ICC profile ID"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&no_repair} },
+    {"oiwi", 0, 'D', "duplicates", NULL, _("Duplicates"), _("Allow for identical multiple installed profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&duplicates} },
 
     /* default options -h and -v */
-    {"oiwi", 0, 'h', "help", NULL, _("help"), _("Help"), NULL, NULL, openiccOPTIONTYPE_NONE, {}, openiccINT, {.i=&help} },
-    {"oiwi", 0, 'v', "verbose", NULL, _("verbose"), _("verbose"), NULL, NULL, openiccOPTIONTYPE_NONE, {}, openiccINT, {.i=&verbose} },
+    {"oiwi", 0, 'h', "help", NULL, _("help"), _("Help"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&help} },
+    {"oiwi", 0, 'v', "verbose", NULL, _("verbose"), _("verbose"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&verbose} },
     /* default option template -X|--export */
-    {"oiwi", 0, 'X', "export", NULL, NULL, NULL, NULL, NULL, openiccOPTIONTYPE_CHOICE, {.choices.list = NULL}, openiccSTRING, {.s=&export} },
+    {"oiwi", 0, 'X', "export", NULL, NULL, NULL, NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = NULL}, oyjlSTRING, {.s=&export} },
     /* blind options, useful only for man page generation */
-    {"oiwi", 0, '.', "man-environment_variables", NULL, "", "", NULL, NULL, openiccOPTIONTYPE_CHOICE, {.choices.list = openiccMemDup( env_vars, sizeof(env_vars) )}, openiccNONE, {.i=NULL} },
-    {"oiwi", 0, ',', "man-examples", NULL, "", "", NULL, NULL, openiccOPTIONTYPE_CHOICE, {.choices.list = openiccMemDup( examples, sizeof(examples) )}, openiccNONE, {.i=NULL} },
-    {"",0,0,0,0,0,0,0, NULL, openiccOPTIONTYPE_END, {},0,{}}
+    {"oiwi", 0, '.', "man-environment_variables", NULL, "", "", NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)env_vars, sizeof(env_vars), 0 )}, oyjlNONE, {.i=NULL} },
+    {"oiwi", 0, ',', "man-examples", NULL, "", "", NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)examples, sizeof(examples), 0 )}, oyjlNONE, {.i=NULL} },
+    {"",0,0,0,0,0,0,0, NULL, oyjlOPTIONTYPE_END, {},0,{}}
   };
-  opts->array = openiccMemDup( oarray, sizeof(oarray) );
+  opts->array = (oyjlOption_s*)oyjlStringAppendN( NULL, (const char*)oarray, sizeof(oarray), 0 );
 
-  openiccOptionGroup_s groups[] = {
+  oyjlOptionGroup_s groups[] = {
   /* type,   flags, name, description, help, mandatory, optional, detail */
     {"oiwg", 0, _("List"), _("List of available ICC color profiles"), NULL, "l", "feacdknoi24PTv", "lfeacdknoi24PT" },
     {"oiwg", 0, _("Paths"), _("List search paths"), NULL, "p", "u|s|y|mv", "pusym" },
@@ -143,19 +143,19 @@ int main( int argc , char** argv )
     {"oiwg", 0, _("Misc"), _("General options"), NULL, "", "", "rXvh" },
     {"",0,0,0,0,0,0,0}
   };
-  opts->groups = openiccMemDup( groups, sizeof(groups));
+  opts->groups = (oyjlOptionGroup_s*)oyjlStringAppendN( NULL, (const char*)groups, sizeof(groups), 0);
 
   info = oyUiInfo(_("The tool can list installed profiles, search paths and can help install a ICC color profile in a search path."),
                   "2018-10-11T12:00:00", "October 11, 2018");
-  ui = openiccUi_Create( argc, argv,
+  ui = oyjlUi_Create( argc, argv,
       "oyranos-profiles", _("Oyranos Profiles"), _("The Tool gives information around installed ICC color profiles."),
       "oyranos_logo",
       info, opts->array, opts->groups, &state );
-  if( state & openiccUI_STATE_EXPORT &&
+  if( state & oyjlUI_STATE_EXPORT &&
       export &&
       strcmp(export,"json+command") != 0)
     return 0;
-  if(state & openiccUI_STATE_HELP)
+  if(state & oyjlUI_STATE_HELP)
   {
     fprintf( stderr, "%s\n\tman oyranos-profiles\n\n", _("For more information read the man page:"));
     return 0;
@@ -166,18 +166,18 @@ int main( int argc , char** argv )
     int n = 0,i;
     char ** path_names =  oyProfilePathsGet_( &n, oyAllocateFunc_ );
     char * text = NULL;
-    o = openiccOptions_GetOptionL( opts, "list-paths" );
+    o = oyjlOptions_GetOptionL( opts, "list-paths" );
     for(i = 0; i < n; ++i)
       oyjlStringAdd( &text, malloc, free, "%s%s", i?"\n":"",path_names[i] );
     o->help = text;
   }
-  o = openiccOptions_GetOptionL( opts, "user" );
+  o = oyjlOptions_GetOptionL( opts, "user" );
   o->help = oyGetInstallPath( oyPATH_ICC, oySCOPE_USER, malloc );
-  o = openiccOptions_GetOptionL( opts, "system" );
+  o = oyjlOptions_GetOptionL( opts, "system" );
   o->help = oyGetInstallPath( oyPATH_ICC, oySCOPE_SYSTEM, malloc );
-  o = openiccOptions_GetOptionL( opts, "oyranos" );
+  o = oyjlOptions_GetOptionL( opts, "oyranos" );
   o->help = oyGetInstallPath( oyPATH_ICC, oySCOPE_OYRANOS, malloc );
-  o = openiccOptions_GetOptionL( opts, "machine" );
+  o = oyjlOptions_GetOptionL( opts, "machine" );
   o->help = oyGetInstallPath( oyPATH_ICC, oySCOPE_MACHINE, malloc );
 
   if(verbose > 1)
@@ -185,12 +185,12 @@ int main( int argc , char** argv )
 
   if(verbose)
   {
-    char * json = openiccOptions_ResultsToJson( opts );
+    char * json = oyjlOptions_ResultsToJson( opts );
     if(json)
       fputs( json, stderr );
     fputs( "\n", stderr );
 
-    char * text = openiccOptions_ResultsToText( opts );
+    char * text = oyjlOptions_ResultsToText( opts );
     if(text)
       fputs( text, stderr );
     fputs( "\n", stderr );
@@ -198,7 +198,7 @@ int main( int argc , char** argv )
 
   if((export && strcmp(export,"json+command") == 0))
   {
-    char * json = openiccUi_ToJson( ui, 0 ),
+    char * json = oyjlUi_ToJson( ui, 0 ),
          * json_commands = strdup(jcommands);
     json_commands[strlen(json_commands)-2] = ',';
     json_commands[strlen(json_commands)-1] = '\000';
@@ -275,7 +275,7 @@ int main( int argc , char** argv )
           if(!pattern)
           {
             fprintf(stderr, "%s %s\n", _("wrong argument to option:"), meta);
-            openiccOptions_PrintHelp( opts, ui, verbose, NULL );
+            oyjlOptions_PrintHelp( opts, ui, verbose, NULL );
             exit(1);
           }
           patterns = oyProfiles_New(0);
@@ -465,7 +465,7 @@ int main( int argc , char** argv )
       oyStringListRelease_(&names, count, oyDeAllocateFunc_);
   }
   else
-    openiccOptions_PrintHelp( opts, ui, verbose, NULL );
+    oyjlOptions_PrintHelp( opts, ui, verbose, NULL );
 #undef flags
 
 

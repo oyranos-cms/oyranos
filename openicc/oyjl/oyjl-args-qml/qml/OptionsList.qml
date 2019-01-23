@@ -102,7 +102,7 @@ Rectangle {
                     var nick = item.nick
                     if(nick === currentValue)
                         return;
-                    statusText = key + ":" + nick + " " + combo.textAt(combo.currentIndex) + " " + "selected " + " " + qsTr("new/old") + ": " + nick + "/" + currentValue
+                    statusText = key + ":" + nick + " " + combo.textAt(combo.currentIndex) + " " + qsTr("selected") + "  " + qsTr("new/old") + ": " + nick + "/" + currentValue
                     currentValue = nick;
                     appData.setOption(key, item.nick)
                     var k = key
@@ -141,7 +141,7 @@ Rectangle {
                     var sv = slider.value
                     if(slider.value === currentValue || init)
                         return;
-                    statusText = key + ":" + currentValue + " " + slider.value + " " + "selected " + " " + qsTr("new/old") + ": " + slider.value + "/" + currentValue
+                    statusText = key + ":" + currentValue + " " + slider.value + " " + qsTr("selected") + "  " + qsTr("new/old") + ": " + slider.value + "/" + currentValue
                     currentValue = slider.value;
                     appData.setOption(key, slider.value)
                     var k = key
@@ -177,7 +177,7 @@ Rectangle {
                     var sv = switcher.checked
                     if(sv === currentValue || init)
                         return;
-                    statusText = key + ":" + currentValue + " " + sv + " " + "selected " + " " + qsTr("new/old") + ": " + sv + "/" + currentValue
+                    statusText = key + ":" + currentValue + " " + sv + " " + qsTr("selected") + "  " + qsTr("new/old") + ": " + sv + "/" + currentValue
                     currentValue = sv;
                     appData.setOption(key, sv)
                     var k = key
@@ -212,7 +212,7 @@ Rectangle {
                     var sv = value
                     if(value === currentValue || init)
                         return;
-                    statusText = key + ":" + currentValue + " " + value + " " + "selected " + " " + qsTr("new/old") + ": " + value + "/" + currentValue
+                    statusText = key + ":" + currentValue + " " + value + " " + qsTr("selected") + "  " + qsTr("new/old") + ": " + value + "/" + currentValue
                     currentValue = value;
                     appData.setOption(key, value)
                     var k = key
@@ -246,8 +246,8 @@ Rectangle {
             logText = "Parsing failed: " + t;
         var j = appJsonObject;
         loc = j.LOCALE_info;
-        var cmm = j.org.freedesktop.openicc.cmms[0];
-        var groups = cmm.groups;
+        var modules = j.org.freedesktop.oyjl.modules[0];
+        var groups = modules.groups;
         var group = groups[0];
         var options= group.options;
         for( var index in options )

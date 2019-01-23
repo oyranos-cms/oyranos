@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2019-01-14 10:18+0100\n"
+"POT-Creation-Date: 2019-01-22 20:34+0100\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -19,23 +19,240 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: vim 6.0\n"
 
-#: oyjl.c:76
+#: oyjl_args.c:1033
+msgid "... try with --help|-h option for usage text. give up"
+msgstr "... versuche bitte die --help|-h Option für einen Hilfetext. Gebe auf"
+
+#: oyjl_args.c:1605 oyjl_args.c:1776
+msgid "AUTHOR"
+msgstr "AUTOR"
+
+#: test-core.c:247
+msgid "Actual mode"
+msgstr "Aktueller Modus"
+
+#: oyjl_translate.c:48
+msgid "Add gettext translated keys to JSON:"
+msgstr "Füge mit gettext übersetzte Schlüssel to JSON hinzu:"
+
+#: oyjl_args.c:1615 oyjl_args.c:1786 oyjl_args.c:1788
+msgid "BUGS"
+msgstr "FEHLER"
+
+#: oyjl_args.c:1609 oyjl_args.c:1780
+msgid "COPYRIGHT"
+msgstr "KOPIERRECHT"
+
+#: test-core.c:238
+msgid "Control Output"
+msgstr "Ausgabeneinstellungen"
+
+#: oyjl_translate.c:44
+msgid "Convert JSON to gettext ready C strings:"
+msgstr "Wandle JSON in gettext lesbare C Texte:"
+
+#: oyjl_args.c:1205
+msgid "Copyright"
+msgstr "Kopierrecht"
+
+#: oyjl_args.c:1520 oyjl_args.c:1695
+msgid "DESCRIPTION"
+msgstr "BESCHREIBUNG"
+
+#: oyjl_args.c:1214
+msgid "Date"
+msgstr "Datum"
+
+#: oyjl_args.c:819
+msgid "Description"
+msgstr "Beschreibung"
+
+#: oyjl_args.c:1211
+msgid "Development"
+msgstr "Entwicklung"
+
+#: oyjl_args.c:1213
+msgid "Documentation"
+msgstr "Dokumente"
+
+#: oyjl_args.c:297
+msgid "Double occuring option"
+msgstr "Doppelte Option"
+
+#: oyjl_args.c:1209
+msgid "Download"
+msgstr "Bezugsquelle"
+
+#: oyjl_args.c:1396
+msgid "ENVIRONMENT VARIABLES"
+msgstr "UMGEBUNGSVARIABLEN"
+
+#: oyjl_args.c:1392
+msgid "EXAMPLES"
+msgstr "BEISPIELE"
+
+#: oyjl_args.c:1394
+msgid "EXIT-STATE"
+msgstr "EXIT-STATUS"
+
+#: oyjl.c:76 test-core.c:104
 msgid "Example"
 msgstr "Beispiel"
 
-#: oyjl.c:73
+#: oyjl_args.c:208
+msgid "Export formated text"
+msgstr "Exportiere formatierten Text"
+
+#: test-core.c:237
+msgid "FILENAME"
+msgstr "DATEINAME"
+
+#: oyjl_args.c:1400
+msgid "FILES"
+msgstr "DATEIEN"
+
+#: oyjl_args.c:197
+msgid "Formated text"
+msgstr "Formatierter Text"
+
+#: oyjl_args.c:188
+msgid "GUI"
+msgstr "GUI"
+
+#: oyjl_args.c:191
+msgid "GUI + Command"
+msgstr "GUI + Kommando"
+
+#: test-core.c:248
+msgid "General options"
+msgstr "Allgemeine Optionen"
+
+#: oyjl.c:73 oyjl_translate.c:57
 msgid "General options:"
 msgstr "Allgemeine Optionen:"
+
+#: oyjl_args.c:192
+msgid "Get Oyjl Json UI declaration incuding command"
+msgstr "Hole Oyjl Json Benutzerschnittstelle mit Kommando"
+
+#: oyjl_args.c:210
+msgid "Get UI converted into text formats"
+msgstr "Hole Benutzerschnittstelle als Text"
+
+#: oyjl_args.c:189
+msgid "Get a Oyjl Json UI declaration"
+msgstr "Hole Oyjl Json Benutzerschnittstelle"
+
+#: oyjl_args.c:195
+msgid "Get a unix man page"
+msgstr "Hole Unix Handbuchseite"
+
+#: oyjl_args.c:198
+msgid "Get formated text"
+msgstr "Hole formatierten Text"
+
+#: oyjl_args.c:1398
+msgid "HISTORY"
+msgstr "GESCHICHTE"
+
+#: test-core.c:239
+msgid "Help"
+msgstr "Hilfe"
 
 #: oyjl.c:67
 msgid "JSON file"
 msgstr "JSON Datei"
 
+#: oyjl_args.c:187
+msgid "Json"
+msgstr "Json"
+
+#: oyjl_args.c:190
+msgid "Json + Command"
+msgstr "Json + Kommando"
+
+#: oyjl_args.c:1206 oyjl_args.c:1611 oyjl_args.c:1782
+msgid "License"
+msgstr "Lizenz"
+
+#: oyjl_args.c:193
+msgid "Man"
+msgstr "Handbuch"
+
+#: oyjl_args.c:1204
+msgid "Manufacturer"
+msgstr "Hersteller"
+
+#: oyjl_args.c:196
+msgid "Markdown"
+msgstr "Markdown"
+
+#: test-core.c:248
+msgid "Misc"
+msgstr "Verschiedenes"
+
+#. type,   flags, name,      description,          help, mandatory, optional, detail
+#: test-core.c:247
+msgid "Mode"
+msgstr "Modus"
+
+#: oyjl_args.c:1185
+msgid "Module"
+msgstr "Modul"
+
+#: oyjl_args.c:1339
+msgid "No"
+msgstr "Nein"
+
+#: oyjl_args.c:1522 oyjl_args.c:1697
+msgid "OPTIONS"
+msgstr "OPTIONEN"
+
+#: test-core.c:223
+msgid "October 10, 2018"
+msgstr ""
+
+#: oyjl_args.c:556
+msgid "Option has a different value range"
+msgstr "Die Option besitzt einen anderen Wertebereich"
+
+#: oyjl_args.c:397 oyjl_args.c:452
+msgid "Option has a unexpected argument"
+msgstr "Die Option hat einen unerwartetes Argument"
+
+#: oyjl_args.c:371 oyjl_args.c:429
+msgid "Option needs a argument"
+msgstr "Die Option erwartet ein Argument"
+
+#: oyjl_args.c:350 oyjl_args.c:411
+msgid "Option not supported"
+msgstr "Die Option ist nicht unterstützt"
+
+#: oyjl_args.c:1212
+msgid "Oyjl Module Author"
+msgstr "Autor des Oyjl Modules"
+
+#: test-core.c:229
+msgid "Print All"
+msgstr "Zeige Alle"
+
+#: test-core.c:230
+msgid "Print Camera"
+msgstr "Zeige Kamera"
+
+#: test-core.c:230
+msgid "Print Camera JSON"
+msgstr "Zeige Kamera JSON"
+
 #: oyjl.c:77
 msgid "Print JSON:"
 msgstr "Zeige JSON:"
 
-#: oyjl.c:70
+#: test-core.c:231
+msgid "Print None"
+msgstr "Zeige Nichts"
+
+#: oyjl.c:70 oyjl_translate.c:54
 msgid "Print a help text:"
 msgstr "Zeige einen Hilfetext an:"
 
@@ -55,13 +272,95 @@ msgstr "Zeige Pfad:"
 msgid "Print:"
 msgstr "Zeige:"
 
+#: oyjl_translate.c:225
+msgid "Rendering Intent"
+msgstr "Übertragungsart"
+
+#: oyjl_args.c:1402
+msgid "SEE AS WELL"
+msgstr "SIEHE AUCH"
+
+#: oyjl_args.c:1509 oyjl_args.c:1684
+msgid "SYNOPSIS"
+msgstr "ÜBERSICHT"
+
+#: test-core.c:237
+msgid "Set Input"
+msgstr "Setze Eingabe"
+
 #: oyjl.c:89
 msgid "Set key/value:"
 msgstr "Setze Schlüssel-/Wertpaar"
 
-#: oyjl.c:32 oyjl.c:45 oyjl.c:57
+#. tell about the tool
+#. argc+argv are required for parsing the command line options
+#: test-core.c:254 test-core.c:268 test-core.c:282 test-core.c:295
+#: test-core.c:308 test-core.c:322
+msgid "Short example tool using libOyjl"
+msgstr "Einfaches Beispielwerkzeug mit libOyjl"
+
+#: oyjl_args.c:1210
+msgid "Sources"
+msgstr "Quellen"
+
+#: oyjl_args.c:1208
+msgid "Support"
+msgstr "Unterstützung"
+
+#: oyjl_args.c:821
+msgid "Synopsis"
+msgstr "Übersicht"
+
+#: test-core.c:222
+msgid "The example tool demontrates the usage of the libOyjl API's."
+msgstr "Das Beispielwerkzeug zeigt die Benutzung der libOyjl APIs."
+
+#: oyjl_args.c:1183
+msgid "Tool"
+msgstr "Werkzeug"
+
+#: oyjl_args.c:194
+msgid "Unix Man page"
+msgstr "Unix Handbuchseite"
+
+#: oyjl_args.c:1207
+msgid "Url"
+msgstr "Url"
+
+#: oyjl.c:32 oyjl.c:45 oyjl.c:57 oyjl_args.c:828 oyjl_translate.c:43
+#: oyjl_translate.c:152
 msgid "Usage"
 msgstr "Benutzung"
+
+#: oyjl_args.c:297 oyjl_args.c:350 oyjl_args.c:371 oyjl_args.c:397
+#: oyjl_args.c:411 oyjl_args.c:429 oyjl_args.c:452 oyjl_args.c:556
+msgid "Usage Error:"
+msgstr "Benutzerfehler:"
+
+#: oyjl_args.c:1215
+msgid "Version"
+msgstr "Version"
+
+#: oyjl_args.c:1339
+msgid "Yes"
+msgstr "Ja"
+
+#: oyjl_args.c:205
+msgid "export"
+msgstr "exportiere"
+
+#: test-core.c:239
+msgid "help"
+msgstr "Hilfe"
+
+#. type,   flags, o,   option,    key,  name,         description,         help, value_name,    value_type,               values,                                                          variable_type, output variable
+#: test-core.c:237
+msgid "input"
+msgstr "Eingabe"
+
+#: oyjl_translate.c:39
+msgid "is a JSON helper tool"
+msgstr "ist ein JSON Hilfswerkzeug"
 
 #: oyjl.c:55
 msgid "is a JSON parse tool"
@@ -75,7 +374,48 @@ msgstr "ist ein JSON nach XML Umwandler"
 msgid "is a JSON to YAML converter"
 msgstr "ist ein JSON nach YAML Umwandler"
 
-#: oyjl.c:74
+#: oyjl_translate.c:61
+msgid "language specific wrap; -w C for C static char"
+msgstr "sprachspezifische Hülle; -w C für C static char"
+
+#: oyjl_translate.c:52
+msgid ""
+"locale directory containing the your-locale/LC_MESSAGES/your-textdomain.mo "
+"gettext translations"
+msgstr ""
+"locale Verzeichnis mit deine-locale/LC_MESSAGES/deine-textdomain.mo gettext "
+"Übersetzungen"
+
+#: oyjl_translate.c:51
+msgid "locales in a comma separated list"
+msgstr "Sprachen in einer kommagetrennten Liste"
+
+#: oyjl_translate.c:59 test-core.c:238
+msgid "output"
+msgstr "Ausgabe"
+
+#: oyjl_translate.c:46
+msgid "output format string"
+msgstr "Ausgabeformat"
+
+#. declare some option choices
+#: test-core.c:227
+msgid "oyjl.json"
+msgstr ""
+
+#: oyjl_translate.c:58
+msgid "specify JSON file"
+msgstr "gib JSON Datei an"
+
+#: oyjl_translate.c:50
+msgid "text domain of your project"
+msgstr "Text ID für das Projekt"
+
+#: oyjl_translate.c:60
+msgid "to be used key names in a comma separated list"
+msgstr "zu benutzende Schlüsselwörter in einer kommagetrennten Liste"
+
+#: oyjl.c:74 oyjl_translate.c:62 test-core.c:240
 msgid "verbose"
 msgstr "plaudernd"
 
@@ -162,10 +502,6 @@ msgstr "plaudernd"
 
 #~ msgid "-v verbose"
 #~ msgstr "-v plauders"
-
-#~ msgid "... try with --help|-h option for usage text. give up"
-#~ msgstr ""
-#~ "... versuche bitte die --help|-h Option für einen Hilfetext. Gebe auf"
 
 #~ msgid "/"
 #~ msgstr "/"
@@ -329,9 +665,6 @@ msgstr "plaudernd"
 #~ msgid "A single path option is required"
 #~ msgstr "Eine einzelne Pfadangabe wird benötigt"
 
-#~ msgid "AUTHOR"
-#~ msgstr "AUTOR"
-
 #~ msgid "About"
 #~ msgstr "Über"
 
@@ -382,9 +715,6 @@ msgstr "plaudernd"
 
 #~ msgid "Add Path containing ICC profiles"
 #~ msgstr "Pfad mit ICC Profilen hinzufügen"
-
-#~ msgid "Add gettext translated keys to JSON:"
-#~ msgstr "Füge mit gettext übersetzte Schlüssel to JSON hinzu:"
 
 #~ msgid "Add this directory to my favorites"
 #~ msgstr "zu Lesezeichen"
@@ -498,9 +828,6 @@ msgstr "plaudernd"
 
 #~ msgid "BPC affects often only the Relative Colorimetric Rendering intent."
 #~ msgstr "BPC beeinflusst oft nur die Relativ Farbmetrische Übertragungsart."
-
-#~ msgid "BUGS"
-#~ msgstr "FEHLER"
 
 #~ msgid "Back side"
 #~ msgstr "Rückseite"
@@ -635,9 +962,6 @@ msgstr "plaudernd"
 
 #~ msgid "CMM Renderer Fallback"
 #~ msgstr "CMM Rechner Notbehelf"
-
-#~ msgid "COPYRIGHT"
-#~ msgstr "KOPIERRECHT"
 
 #~ msgid "Calibration date"
 #~ msgstr "Kalibrationsdatum"
@@ -865,9 +1189,6 @@ msgstr "plaudernd"
 #~ msgid "Convert Image:"
 #~ msgstr "Wandle Bild um:"
 
-#~ msgid "Convert JSON to gettext ready C strings:"
-#~ msgstr "Wandle JSON in gettext lesbare C Texte:"
-
 #~ msgid "Convert automatically"
 #~ msgstr "Wandle automatisch"
 
@@ -888,9 +1209,6 @@ msgstr "plaudernd"
 
 #~ msgid "Convert to untagged Cmyk, preserving Cmyk numbers"
 #~ msgstr "Wandle in unspezifziertes Cmyk, erhalte Cmyk Zahlen"
-
-#~ msgid "Copyright"
-#~ msgstr "Kopierrecht"
 
 #~ msgid "Copyright &copy;"
 #~ msgstr "Kopierrecht &copy;"
@@ -1044,9 +1362,6 @@ msgstr "plaudernd"
 #~ msgid "DB File Name"
 #~ msgstr "DB Dateiname"
 
-#~ msgid "DESCRIPTION"
-#~ msgstr "BESCHREIBUNG"
-
 #~ msgid "DISPLAY variable not set: giving up."
 #~ msgstr "DISPLAY Variable nicht gesetzt: gebe auf."
 
@@ -1055,9 +1370,6 @@ msgstr "plaudernd"
 
 #~ msgid "Data:"
 #~ msgstr "Daten:"
-
-#~ msgid "Date"
-#~ msgstr "Datum"
 
 #~ msgid "Date:"
 #~ msgstr "Datum:"
@@ -1090,20 +1402,11 @@ msgstr "plaudernd"
 #~ msgid "Delete"
 #~ msgstr "Löschen"
 
-#~ msgid "Description"
-#~ msgstr "Beschreibung"
-
 #~ msgid "Description:     "
 #~ msgstr "Beschreibung:    "
 
 #~ msgid "Desktop"
 #~ msgstr "Desktop"
-
-#~ msgid "Detail mode"
-#~ msgstr "Detailierte Informationen"
-
-#~ msgid "Development"
-#~ msgstr "Entwicklung"
 
 #~ msgid "Device"
 #~ msgstr "Geräte"
@@ -1147,17 +1450,8 @@ msgstr "plaudernd"
 #~ msgid "Display"
 #~ msgstr "Monitor"
 
-#~ msgid "Documentation"
-#~ msgstr "Dokumente"
-
 #~ msgid "Documents"
 #~ msgstr "Dokumente"
-
-#~ msgid "Double occuring option"
-#~ msgstr "Doppelte Option"
-
-#~ msgid "Download"
-#~ msgstr "Bezugsquelle"
 
 #~ msgid "Driver signature/encoding:"
 #~ msgstr "Gerätetreiberdatentyp:"
@@ -1185,15 +1479,6 @@ msgstr "plaudernd"
 
 #~ msgid "EBU Tech.3213-E"
 #~ msgstr "EBU Tech.3213-E"
-
-#~ msgid "ENVIRONMENT VARIABLES"
-#~ msgstr "UMGEBUNGSVARIABLEN"
-
-#~ msgid "EXAMPLES"
-#~ msgstr "BEISPIELE"
-
-#~ msgid "EXIT-STATE"
-#~ msgstr "EXIT-STATUS"
 
 #~ msgid "Edit Options ..."
 #~ msgstr "Editiere Optionen ..."
@@ -1288,20 +1573,11 @@ msgstr "plaudernd"
 #~ msgid "Exit!"
 #~ msgstr "Beenden!"
 
-#~ msgid "Export formated text"
-#~ msgstr "Exportiere formatierten Text"
-
 #~ msgid "Extended Options"
 #~ msgstr "Erweiterte Optionen"
 
 #~ msgid "Extract ICC profile:"
 #~ msgstr "Extrahiere ICC Profil:"
-
-#~ msgid "FILENAME"
-#~ msgstr "DATEINAME"
-
-#~ msgid "FILES"
-#~ msgstr "DATEIEN"
 
 #~ msgid "FILE_NAME"
 #~ msgstr "DATEINAME"
@@ -1408,20 +1684,11 @@ msgstr "plaudernd"
 #~ msgstr ""
 #~ "F&uuml;r die Visualisation des Farbumfangs (Erzeugung extern):<br>\n"
 
-#~ msgid "Formated text"
-#~ msgstr "Formatierter Text"
-
 #~ msgid "Found no node in conversion. give up"
 #~ msgstr "Fand keinen Knoten im Graph. Gebe auf."
 
 #~ msgid "Function for Creating a Color Space Transformation."
 #~ msgstr "Funktion zur Erzeugung einer Farbraumtransformation."
-
-#~ msgid "GUI"
-#~ msgstr "GUI"
-
-#~ msgid "GUI + Command"
-#~ msgstr "GUI + Kommando"
 
 #~ msgid "Gamma"
 #~ msgstr "Gamma"
@@ -1450,9 +1717,6 @@ msgstr "plaudernd"
 #~ msgid "Gamut selector"
 #~ msgstr "Darstellungsoptionen"
 
-#~ msgid "General options"
-#~ msgstr "Allgemeine Optionen"
-
 #~ msgid "Generate CLUT Image:"
 #~ msgstr "Erzeuge 3D Interpolationstabelle:"
 
@@ -1468,23 +1732,8 @@ msgstr "plaudernd"
 #~ msgid "Get ICC profile"
 #~ msgstr "Hole ICC Profil"
 
-#~ msgid "Get OpenICC Json UI declaration incuding command"
-#~ msgstr "Hole OpenICC Json Benutzerschnittstelle mit Kommando"
-
-#~ msgid "Get UI converted into text formats"
-#~ msgstr "Hole Benutzerschnittstelle als Text"
-
 #~ msgid "Get XFORMS:"
 #~ msgstr "Hole XFORMS"
-
-#~ msgid "Get a OpenICC Json UI declaration"
-#~ msgstr "Hole OpenICC Json Benutzerschnittstelle"
-
-#~ msgid "Get a unix man page"
-#~ msgstr "Hole Unix Handbuchseite"
-
-#~ msgid "Get formated text"
-#~ msgstr "Hole formatierten Text"
 
 #~ msgid "Go back one directory in the history"
 #~ msgstr "vorheriges Verzeichnis"
@@ -1524,9 +1773,6 @@ msgstr "plaudernd"
 
 #~ msgid "Green xy:"
 #~ msgstr "Grün xy:"
-
-#~ msgid "HISTORY"
-#~ msgstr "GESCHICHTE"
 
 #~ msgid "HTML Documents (*.htm*)"
 #~ msgstr "HTML Dokumente (*.htm*)"
@@ -1571,9 +1817,6 @@ msgstr "plaudernd"
 
 #~ msgid "Header"
 #~ msgstr "Kopf"
-
-#~ msgid "Help"
-#~ msgstr "Hilfe"
 
 #~ msgid "High Precission"
 #~ msgstr "Hohe Präzission"
@@ -1813,9 +2056,6 @@ msgstr "plaudernd"
 #~ msgid "InkJet printer"
 #~ msgstr "Tintenstrahldrucker"
 
-#~ msgid "Input"
-#~ msgstr "Eingabe"
-
 #~ msgid "Input Color Space"
 #~ msgstr "Eingabefarbraum"
 
@@ -1865,14 +2105,8 @@ msgstr "plaudernd"
 #~ msgstr ""
 #~ "Internet: <a href=\"http://www.oyranos.org\">www.oyranos.org</a><br>"
 
-#~ msgid "Json + Command"
-#~ msgstr "Json + Kommando"
-
 #~ msgid "Lab"
 #~ msgstr "Lab"
-
-#~ msgid "License"
-#~ msgstr "Lizenz"
 
 #~ msgid "Light gray"
 #~ msgstr "Hellgrau"
@@ -2005,9 +2239,6 @@ msgstr "plaudernd"
 #~ msgid "Magic:           "
 #~ msgstr "Signatur:        "
 
-#~ msgid "Man"
-#~ msgstr "Handbuch"
-
 #~ msgid "Manage Favorites"
 #~ msgstr "Bearbeite Lesezeichen"
 
@@ -2015,9 +2246,6 @@ msgstr "plaudernd"
 #~ msgstr ""
 #~ "Bearbeitung von Geräteeinträgen in der Datenbank für OpenICC "
 #~ "Farbmanagement"
-
-#~ msgid "Manufacturer"
-#~ msgstr "Hersteller"
 
 #~ msgid "Manufacturer:"
 #~ msgstr "Hersteller:"
@@ -2030,9 +2258,6 @@ msgstr "plaudernd"
 
 #~ msgid "Mark out of gamut colors for the proofing profile."
 #~ msgstr "Kennzeichne Farben ausserhalb des nachgebildeten Gerätes"
-
-#~ msgid "Markdown"
-#~ msgstr "Markdown"
 
 #~ msgid "Matrix"
 #~ msgstr "Matrix"
@@ -2070,9 +2295,6 @@ msgstr "plaudernd"
 #~ msgid "Microsoft"
 #~ msgstr "Microsoft"
 
-#~ msgid "Misc"
-#~ msgstr "Verschiedenes"
-
 #~ msgid "Mismatching"
 #~ msgstr "Abweichung"
 
@@ -2084,9 +2306,6 @@ msgstr "plaudernd"
 #~ "Gemischte Farbräume in einem Dokument können in einigen Systemen zu "
 #~ "Problemen führen. Die Einstellung bietet die Möglichkeit den Farbraum zu "
 #~ "vereinheitlichen."
-
-#~ msgid "Model"
-#~ msgstr "Modell"
 
 #~ msgid "Model:"
 #~ msgstr "Modell:"
@@ -2106,9 +2325,6 @@ msgstr "plaudernd"
 
 #~ msgid "Modify Profile:"
 #~ msgstr "Verändere Prmprofil"
-
-#~ msgid "Module"
-#~ msgstr "Modul"
 
 #~ msgid "Monitor"
 #~ msgstr "Bildschirm"
@@ -2199,9 +2415,6 @@ msgstr "plaudernd"
 #~ msgid "New Folder"
 #~ msgstr "Neuer Ordner"
 
-#~ msgid "No"
-#~ msgstr "Nein"
-
 #~ msgid "No Color"
 #~ msgstr "keine Farbe"
 
@@ -2244,9 +2457,6 @@ msgstr "plaudernd"
 #~ msgid "OK"
 #~ msgstr "Ja"
 
-#~ msgid "OPTIONS"
-#~ msgstr "OPTIONEN"
-
 #~ msgid "Office + Home"
 #~ msgstr "Büro + Heim"
 
@@ -2271,9 +2481,6 @@ msgstr "plaudernd"
 #~ msgid "OpenICC Json"
 #~ msgstr "OpenICC Json"
 
-#~ msgid "OpenICC Module Author"
-#~ msgstr "Autor des OpenICC Modules"
-
 #~ msgid "OpenICC devices handling tool"
 #~ msgstr "OpenICC Gerätebearbeitungswerkzeug"
 
@@ -2296,18 +2503,6 @@ msgstr "plaudernd"
 #~ msgid "Option \"filename\", a valid filename of a existing PPM image"
 #~ msgstr ""
 #~ "Option \"filename\", ein gültiger Dateiname eines existierenden PPM Bildes"
-
-#~ msgid "Option has a different value range"
-#~ msgstr "Die Option besitzt einen anderen Wertebereich"
-
-#~ msgid "Option has a unexpected argument"
-#~ msgstr "Die Option hat einen unerwartetes Argument"
-
-#~ msgid "Option needs a argument"
-#~ msgstr "Die Option erwartet ein Argument"
-
-#~ msgid "Option not supported"
-#~ msgstr "Die Option ist nicht unterstützt"
 
 #~ msgid "Options"
 #~ msgstr "Optionen"
@@ -2774,9 +2969,6 @@ msgstr "plaudernd"
 #~ msgid "Rendering"
 #~ msgstr "Übertragung"
 
-#~ msgid "Rendering Intent"
-#~ msgstr "Übertragungsart"
-
 #~ msgid "Rendering Intent for Color Space Transformations."
 #~ msgstr "Übertragungsart für Farbtransformationen."
 
@@ -2810,14 +3002,8 @@ msgstr "plaudernd"
 #~ msgid "Rotate around slice"
 #~ msgstr "Drehen um Schnitt"
 
-#~ msgid "SEE AS WELL"
-#~ msgstr "SIEHE AUCH"
-
 #~ msgid "SMPTE RP145-1994"
 #~ msgstr "SMPTE RP145-1994"
-
-#~ msgid "SYNOPSIS"
-#~ msgstr "ÜBERSICHT"
 
 #~ msgid "Saturation"
 #~ msgstr "Sättigung"
@@ -2937,6 +3123,9 @@ msgstr "plaudernd"
 #~ msgid "Setup device:"
 #~ msgstr "Initialisiere Gerät:"
 
+#~ msgid "Short example tool using liboyjl"
+#~ msgstr "Einfaches Beispielwerkzeug mit libOyjl"
+
 #~ msgid "Show CIE*xy chromaticities:"
 #~ msgstr "Zeige CIE*xy Primärfarben"
 
@@ -3033,9 +3222,6 @@ msgstr "plaudernd"
 #~ msgid "Source and Target Profiles for various situations"
 #~ msgstr "Quell- und Zielprofile für verschiedene Situationen"
 
-#~ msgid "Sources"
-#~ msgstr "Quellen"
-
 #~ msgid "Sphere 1dE"
 #~ msgstr "Kugel 1dE"
 
@@ -3056,12 +3242,6 @@ msgstr "plaudernd"
 
 #~ msgid "Stop loading "
 #~ msgstr "Laden angehalten: "
-
-#~ msgid "Support"
-#~ msgstr "Unterstützung"
-
-#~ msgid "Synopsis"
-#~ msgstr "Übersicht"
 
 #~ msgid "System"
 #~ msgstr "System"
@@ -3642,9 +3822,6 @@ msgstr "plaudernd"
 #~ "Die Einstellung entscheidet was mit Farben ohne Farbprofil geschehen "
 #~ "soll. Typischerweise wird das vermutete Farbprofil automatisch zugewiesen."
 
-#~ msgid "Tool"
-#~ msgstr "Werkzeug"
-
 #~ msgid "Transparent, "
 #~ msgstr "Durchsicht, "
 
@@ -3669,17 +3846,8 @@ msgstr "plaudernd"
 #~ msgid "Unexpected object type:"
 #~ msgstr "Unerwarteter Objekttyp:"
 
-#~ msgid "Unix Man page"
-#~ msgstr "Unix Handbuchseite"
-
 #~ msgid "Unknown argument"
 #~ msgstr "Unbekanntes Argument"
-
-#~ msgid "Url"
-#~ msgstr "Url"
-
-#~ msgid "Usage Error:"
-#~ msgstr "Benutzerfehler:"
 
 #~ msgid "Use Black Point Compensation"
 #~ msgstr "Benutze Schwarzpunktkompensation (BPC)"
@@ -3692,9 +3860,6 @@ msgstr "plaudernd"
 
 #~ msgid "Verbose"
 #~ msgstr "Plaudernd"
-
-#~ msgid "Version"
-#~ msgstr "Version"
 
 #~ msgid "Version:         "
 #~ msgstr "Version:         "
@@ -3806,9 +3971,6 @@ msgstr "plaudernd"
 
 #~ msgid "Yellow"
 #~ msgstr "Gelb"
-
-#~ msgid "Yes"
-#~ msgstr "Ja"
 
 #~ msgid "You can get them from http://sf.net/projects/openicc"
 #~ msgstr "Sie können es erhalten von http://sf.net/projects/openicc"
@@ -3968,9 +4130,6 @@ msgstr "plaudernd"
 #~ msgid "exception occured: "
 #~ msgstr "Ausnahme: "
 
-#~ msgid "export"
-#~ msgstr "exportiere"
-
 #~ msgid "extract ICC color profile"
 #~ msgstr "extrahiere ICC Farbprofil"
 
@@ -4063,9 +4222,6 @@ msgstr "plaudernd"
 #~ msgid "gray"
 #~ msgstr "grau"
 
-#~ msgid "help"
-#~ msgstr "Hilfe"
-
 #~ msgid "high contrast"
 #~ msgstr "kontrastreich"
 
@@ -4123,9 +4279,6 @@ msgstr "plaudernd"
 
 #~ msgid "is not valid for an"
 #~ msgstr "ist nocht gültig für ein"
-
-#~ msgid "language specific wrap; -w C for C static char"
-#~ msgstr "sprachspezifische Hülle; -w C für C static char"
 
 #~ msgid "left mouse button -> go back"
 #~ msgstr "linke Maustaste -> zurueck"
@@ -4186,16 +4339,6 @@ msgstr "plaudernd"
 
 #~ msgid "locale directory containing"
 #~ msgstr "locale Verzeichnis enthaltend"
-
-#~ msgid ""
-#~ "locale directory containing the your-locale/LC_MESSAGES/your-textdomain."
-#~ "mo gettext translations"
-#~ msgstr ""
-#~ "locale Verzeichnis mit deine-locale/LC_MESSAGES/deine-textdomain.mo "
-#~ "gettext Übersetzungen"
-
-#~ msgid "locales in a comma separated list"
-#~ msgstr "Sprachen in einer kommagetrennten Liste"
 
 #~ msgid "long"
 #~ msgstr "lang"
@@ -4317,14 +4460,8 @@ msgstr "plaudernd"
 #~ msgid "open X Screen failed"
 #~ msgstr "Öffnen des X Screens daneben"
 
-#~ msgid "output"
-#~ msgstr "Ausgabe"
-
 #~ msgid "output class"
 #~ msgstr "Ausgabefarbraum"
-
-#~ msgid "output format string"
-#~ msgstr "Ausgabeformat"
 
 #~ msgid "oyranos install path"
 #~ msgstr "Oyranos Installationspfad"
@@ -4483,14 +4620,8 @@ msgstr "plaudernd"
 #~ msgid "tag list is corrupted for tag"
 #~ msgstr "die Elementliste ist beschädigt für Element"
 
-#~ msgid "text domain of your project"
-#~ msgstr "Text ID für das Projekt"
-
 #~ msgid "the Data Object"
 #~ msgstr "das Datenobjekt"
-
-#~ msgid "to be used key names in a comma separated list"
-#~ msgstr "zu benutzende Schlüsselwörter in einer kommagetrennten Liste"
 
 #~ msgid "unable to open data base"
 #~ msgstr "kann Datenbank nicht öffnen"

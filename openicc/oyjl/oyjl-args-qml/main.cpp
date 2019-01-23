@@ -1,9 +1,9 @@
 /** @file main.cpp
  *
- *  OpenICC JSON QML is a graphical renderer of UI files.
+ *  Oyjl JSON QML is a graphical renderer of UI files.
  *
  *  @par Copyright:
- *            2018 (C) Kai-Uwe Behrmann
+ *            2018-2019 (C) Kai-Uwe Behrmann
  *            All Rights reserved.
  *
  *  @par License:
@@ -70,10 +70,10 @@ int main(int argc, char *argv[])
         screen->setOrientationUpdateMask(Qt::LandscapeOrientation | Qt::PortraitOrientation |
                                          Qt::InvertedLandscapeOrientation | Qt::InvertedPortraitOrientation);
 
-    app.setApplicationName(QString("openicc-json-qml"));
-    app.setApplicationDisplayName(QString("OpenICC Options"));
-    app.setApplicationVersion("0.4");
-    app.setOrganizationName(QString("openicc.org"));
+    app.setApplicationName(QString("oyjl-json-qml"));
+    app.setApplicationDisplayName(QString("Oyl Options"));
+    app.setApplicationVersion("0.5");
+    app.setOrganizationName(QString("oyranos.org"));
 
     QCommandLineParser parser;
     parser.setApplicationDescription(QCoreApplication::translate("main", "QML Renderer for JSON Options"));
@@ -123,7 +123,7 @@ int main(int argc, char *argv[])
         printf( "%s %s\t%s\n",
   qPrintable( app.applicationName() ),
   qPrintable( app.applicationVersion() ),
-  qPrintable( QCoreApplication::translate("main", "is a QML renderer for OpenICC JSON options.") ));
+  qPrintable( QCoreApplication::translate("main", "is a QML renderer for Oyjl JSON options.") ));
         return 0;
     }
 

@@ -467,7 +467,7 @@ IF( GETTEXT_FOUND )
 
   ADD_CUSTOM_COMMAND( OUTPUT gmo-cp
     COMMAND for oy_lang in ${OY_LINGUAS}\; do mkdir -p "${CMAKE_BINARY_DIR}/locale/$$oy_lang/LC_MESSAGES/" \; cp "${CMAKE_CURRENT_BINARY_DIR}/$$oy_lang.gmo" "${CMAKE_BINARY_DIR}/locale/$$oy_lang/LC_MESSAGES/${PACKAGE_NAME}.mo" \; done
-    COMMENT "put gmo files into build path for testing with OY_LOCALEDIR"
+    COMMENT "put ${PROJECT_DOWN_NAME}.mo files into ${CMAKE_BINARY_DIR}/locale/lang/LC_MESSAGES/ path for testing with LOCDIR"
                     )
   ADD_CUSTOM_TARGET( gmo ALL
                      DEPENDS translations gmo-cp  )

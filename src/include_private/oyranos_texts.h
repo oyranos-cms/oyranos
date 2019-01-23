@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2004-2018 (C) Kai-Uwe Behrmann
+ *            2004-2019 (C) Kai-Uwe Behrmann
  *
  *  @brief    pure text handling functions
  *  @internal
@@ -17,7 +17,7 @@
 #define OYRANOS_TEXTS_H
 
 #include "oyranos.h"
-#include <openicc_core.h>
+#include <oyjl.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -96,7 +96,7 @@ oyGROUP_e       oyGroupAdd_              (const char *id, const char *cmm,
                                         const char *name, const char *tooltips);
 int           oyGroupRemove_           (oyGROUP_e     id);
 
-openiccUiHeaderSection_s * oyUiInfo  ( const char          * documentation,
+oyjlUiHeaderSection_s *  oyUiInfo    ( const char          * documentation,
                                        const char          * iso_dateTtime,
                                        const char          * date_description );
 

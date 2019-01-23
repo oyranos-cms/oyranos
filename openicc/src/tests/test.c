@@ -26,7 +26,6 @@
   TEST_RUN( testI18N, "i18n", 1 ); \
   TEST_RUN( testIO, "file i/o", 1 ); \
   TEST_RUN( testStringRun, "String handling", 1 ); \
-  TEST_RUN( testOiArgs, "Options handling", 1 ); \
   TEST_RUN( testConfig, "JSON handling", 1 ); \
   TEST_RUN( testDeviceJSON, "Device JSON handling", 1 ); \
   TEST_RUN( testPaths, "Paths", 1 ); \
@@ -158,7 +157,12 @@ const char * oiGetConfigFileName()
             file_name = "../../../config/OpenICC_device_config_DB.json";
             fp = fopen( file_name, "r" );
             if(!fp)
-              file_name = NULL;
+            {
+              file_name = "../../../openicc/OpenICC_device_config_DB.json";
+              fp = fopen( file_name, "r" );
+              if(!fp)
+                file_name = NULL;
+            }
           }
         }
       }
@@ -169,6 +173,10 @@ const char * oiGetConfigFileName()
   {
     fclose(fp);
     fprintf(zout, "\tfile_name: %s\n", file_name );
+  } else
+  {
+    fprintf(zout, "\tfile_name: \"\"\npwd: " );
+    system("pwd");
   }
 
   return file_name;
@@ -374,9 +382,11 @@ oyjlTESTRESULT_e testIO ()
 
   t1 = openiccReadFile( file_name, &size );
   file_name = "test.txt";
+  if(t1)
+    size = strlen(t1);
   size = openiccWriteFile( file_name,
                            t1,
-                           strlen(t1) );
+                           size );
   if(size)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "openiccWriteFile() size %d                    ", size );
@@ -443,191 +453,6 @@ oyjlTESTRESULT_e testStringRun ()
     "openiccStringAdd_() ...                            " );
   }
   free_m_(t);
-
-  return result;
-}
-
-oyjlTESTRESULT_e testOiArgs()
-{
-  oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
-
-  fprintf(stdout, "\n" );
-
-  int output = 0;
-  const char * file = NULL;
-  int help = 0;
-  int verbose = 0;
-  int state = 0;
-  int argc = 1;
-  char * argv[] = {"test","-v","--input","file-name.json", "-z"};
-
-  /* handle options */
-  /* Select from *version*, *manufacturer*, *copyright*, *license*, *url*,
-   * *support*, *download*, *sources*, *openicc_modules_author* and
-   * *documentation* what you see fit. Add new ones as needed. */
-  openiccUiHeaderSection_s sections[] = {
-    /* type, nick,            label, name,                  description  */
-    {"oihs", "version",       NULL,  "1.0",                 NULL},
-    {"oihs", "documentation", NULL,  "",                    _("The example tool demontrates the usage of the libOpenIcc config and options API's.")},
-    {"oihs", "date",          NULL,  "2018-10-10T12:00:00", _("October 10, 2018")},
-    {"",0,0,0,0}};
-
-  /* declare some option choices */
-  openiccOptionChoice_s i_choices[] = {{"openicc.json", _("openicc.json"), _("openicc.json"), ""},
-                                    {"","","",""}};
-  openiccOptionChoice_s o_choices[] = {{"0", _("Print All"), _("Print All"), ""},
-                                    {"1", _("Print Camera"), _("Print Camera JSON"), ""},
-                                    {"2", _("Print None"), _("Print None"), ""},
-                                    {"","","",""}};
-
-  /* declare options - the core information; use previously declared choices */
-  openiccOption_s oarray[] = {
-  /* type,   flags, o,   option,    key,  name,         description,         help, value_name,    value_type,               values,                                                          variable_type, output variable */
-    {"oiwi", 0,     'i', "input",   NULL, _("input"),   _("Set Input"),      NULL, _("FILENAME"), openiccOPTIONTYPE_CHOICE, {.choices.list = openiccMemDup( i_choices, sizeof(i_choices) )}, openiccSTRING, {.s = &file} },
-    {"oiwi", 0,     'o', "output",  NULL, _("output"),  _("Control Output"), NULL, "0|1|2",       openiccOPTIONTYPE_CHOICE, {.choices.list = openiccMemDup( o_choices, sizeof(o_choices) )}, openiccINT, {.i = &output} },
-    {"oiwi", 0,     'h', "help",    NULL, _("help"),    _("Help"),           NULL, NULL,          openiccOPTIONTYPE_NONE, {}, openiccINT, {.i = &help} },
-    {"oiwi", 0,     'v', "verbose", NULL, _("verbose"), _("verbose"),        NULL, NULL,          openiccOPTIONTYPE_NONE, {}, openiccINT, {.i = &verbose} },
-    {"",0,0,0,0,0,0,0, NULL, openiccOPTIONTYPE_END, {},0,{}}
-  };
-
-  /* declare option groups, for better syntax checking and UI groups */
-  openiccOptionGroup_s groups[] = {
-  /* type,   flags, name,      description,          help, mandatory, optional, detail */
-    {"oiwg", 0,     _("Mode"), _("Actual mode"),     NULL, "i",       "ov",     "io" },
-    {"oiwg", 0,     _("Misc"), _("General options"), NULL, "",        "",       "vh" },
-    {"",0,0,0,0,0,0,0}
-  };
-
-  /* tell about the tool */
-  openiccUi_s * ui = openiccUi_Create( argc, argv, /* argc+argv are required for parsing the command line options */
-                                       "oiCR", "openicc-config-read", _("Short example tool using libOpenIcc"), "oi-logo",
-                                       sections, oarray, groups, NULL );
-
-  if(ui)
-  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "ui created - no args                           " );
-  } else
-  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "ui created - no args                           " );
-  }
-  openiccUi_Release( &ui);
-
-  argc = 2;
-  ui = openiccUi_Create( argc, argv, /* argc+argv are required for parsing the command line options */
-                                       "oiCR", "openicc-config-read", _("Short example tool using libOpenIcc"), "oi-logo",
-                                       sections, oarray, groups, NULL );
-
-  if(ui)
-  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "ui created - correct args                      " );
-  } else
-  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "ui created - correct args                      " );
-  }
-  openiccUi_Release( &ui);
-
-  argc = 3;
-  ui = openiccUi_Create( argc, argv, /* argc+argv are required for parsing the command line options */
-                                       "oiCR", "openicc-config-read", _("Short example tool using libOpenIcc"), "oi-logo",
-                                       sections, oarray, groups, &state );
-  if(!ui)
-  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "ui not created - missing arg %d                " , state >> openiccUI_STATE_OPTION );
-  } else
-  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "ui not created - missing arg                   " );
-  }
-  openiccUi_Release( &ui);
-
-  argc = 4;
-  ui = openiccUi_Create( argc, argv, /* argc+argv are required for parsing the command line options */
-                                       "oiCR", "openicc-config-read", _("Short example tool using libOpenIcc"), "oi-logo",
-                                       sections, oarray, groups, NULL );
-  if(ui && strcmp(file,"file-name.json") == 0)
-  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "ui created - parse string                      " );
-  } else
-  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "ui created - parse string                      " );
-  }
-  openiccUi_Release( &ui);
-
-  argc = 5;
-  ui = openiccUi_Create( argc, argv, /* argc+argv are required for parsing the command line options */
-                                       "oiCR", "openicc-config-read", _("Short example tool using libOpenIcc"), "oi-logo",
-                                       sections, oarray, groups, &state );
-  if(!ui)
-  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "ui not created - wrong arg  %d                 ", state >> openiccUI_STATE_OPTION );
-  } else
-  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "ui not created - wrong arg                     " );
-  }
-  openiccUi_Release( &ui);
-
-
-  argc = 4;
-  ui = openiccUi_Create( argc, argv, /* argc+argv are required for parsing the command line options */
-                                       "openicc-config-read", "OpenICC Config Reader", _("Short example tool using libOpenIcc"), "oi-logo",
-                                       sections, oarray, groups, NULL );
-  int size = 0;
-  char * text = openiccUi_ToJson( ui, 0 );
-  if(text && strlen(text))
-  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "openiccUi_ToJson() %lu                        ", strlen(text) );
-  } else
-  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "openiccUi_ToJson() %lu                        ", strlen(text) );
-  }
-  size = openiccWriteFile( "test.json",
-                           text,
-                           strlen(text) );
-  if(text && size) {free(text);} text = NULL;
-
-  text = openiccUi_ToMan( ui, 0 );
-  if(text && strlen(text))
-  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "openiccUi_ToMan()  %lu                        ", strlen(text) );
-  } else
-  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "openiccUi_ToMan()  %lu                        ", strlen(text) );
-  }
-  size = openiccWriteFile( "test.1",
-                           text,
-                           strlen(text) );
-  if(text) {free(text);} text = NULL;
-
-  text = openiccOptions_ResultsToJson( ui->opts );
-  if(text && strlen(text) == 39)
-  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "openiccOptions_ResultsToJson() %lu              ", strlen(text) );
-  } else
-  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "openiccOptions_ResultsToJson() %lu              ", strlen(text) );
-  }
-  if(text) {free(text);} text = NULL;
-
-  text = openiccOptions_ResultsToText( ui->opts );
-  if(text && strlen(text) == 21)
-  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "openiccOptions_ResultsToText() %lu              ", strlen(text) );
-  } else
-  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "openiccOptions_ResultsToText() %lu              ", strlen(text) );
-  }
-  if(text) {free(text);} text = NULL;
-
-  fprintf(stdout, "Help text -> stderr:\n" );
-  openiccOptions_PrintHelp( ui->opts, ui, 1, "%s v%s - %s", argv[0],
-                            "1.0", "Test Tool for testing" );
-
-  openiccUi_Release( &ui);
-  char * wrong = "test";
-  fprintf(stdout, "openiccUi_Release(&\"test\")\n" );
-  openiccUi_Release( (openiccUi_s **)&wrong);
-
-  free(oarray[0].values.choices.list);
-  free(oarray[1].values.choices.list);
 
   return result;
 }
