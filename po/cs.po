@@ -4,9 +4,9 @@
 # First translator Milan Knizek <knizek@volny.cz>, 2008
 msgid ""
 msgstr ""
-"Project-Id-Version: openicc\n"
+"Project-Id-Version: cs\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2019-01-14 10:18+0100\n"
+"POT-Creation-Date: 2019-01-22 20:34+0100\n"
 "PO-Revision-Date: 2012-10-19 15:10+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -15,24 +15,256 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: oyjl.c:76
+#: oyjl_args.c:1033
+msgid "... try with --help|-h option for usage text. give up"
+msgstr ""
+
+#: oyjl_args.c:1605 oyjl_args.c:1776
+msgid "AUTHOR"
+msgstr ""
+
+#: test-core.c:247
+msgid "Actual mode"
+msgstr ""
+
+#: oyjl_translate.c:48
+msgid "Add gettext translated keys to JSON:"
+msgstr ""
+
+#: oyjl_args.c:1615 oyjl_args.c:1786 oyjl_args.c:1788
+msgid "BUGS"
+msgstr ""
+
+#: oyjl_args.c:1609 oyjl_args.c:1780
+msgid "COPYRIGHT"
+msgstr ""
+
+#: test-core.c:238
+#, fuzzy
+msgid "Control Output"
+msgstr "Výstupní"
+
+#: oyjl_translate.c:44
+msgid "Convert JSON to gettext ready C strings:"
+msgstr ""
+
+#: oyjl_args.c:1205
+msgid "Copyright"
+msgstr "Copyright"
+
+#: oyjl_args.c:1520 oyjl_args.c:1695
+msgid "DESCRIPTION"
+msgstr ""
+
+#: oyjl_args.c:1214
+msgid "Date"
+msgstr "Datum"
+
+#: oyjl_args.c:819
+#, fuzzy
+msgid "Description"
+msgstr "popis"
+
+#: oyjl_args.c:1211
+msgid "Development"
+msgstr ""
+
+#: oyjl_args.c:1213
+msgid "Documentation"
+msgstr "Dokumentace"
+
+#: oyjl_args.c:297
+#, fuzzy
+msgid "Double occuring option"
+msgstr "popis"
+
+#: oyjl_args.c:1209
+msgid "Download"
+msgstr ""
+
+#: oyjl_args.c:1396
+msgid "ENVIRONMENT VARIABLES"
+msgstr ""
+
+#: oyjl_args.c:1392
+msgid "EXAMPLES"
+msgstr ""
+
+#: oyjl_args.c:1394
+msgid "EXIT-STATE"
+msgstr ""
+
+#: oyjl.c:76 test-core.c:104
 msgid "Example"
 msgstr "Příklad"
 
-#: oyjl.c:73
+#: oyjl_args.c:208
+msgid "Export formated text"
+msgstr ""
+
+#: test-core.c:237
+msgid "FILENAME"
+msgstr ""
+
+#: oyjl_args.c:1400
+msgid "FILES"
+msgstr ""
+
+#: oyjl_args.c:197
+msgid "Formated text"
+msgstr ""
+
+#: oyjl_args.c:188
+#, fuzzy
+msgid "GUI"
+msgstr "SGI"
+
+#: oyjl_args.c:191
+msgid "GUI + Command"
+msgstr ""
+
+#: test-core.c:248
+#, fuzzy
+msgid "General options"
+msgstr "Obecné volby:"
+
+#: oyjl.c:73 oyjl_translate.c:57
 msgid "General options:"
 msgstr "Obecné volby:"
+
+#: oyjl_args.c:192
+msgid "Get Oyjl Json UI declaration incuding command"
+msgstr ""
+
+#: oyjl_args.c:210
+msgid "Get UI converted into text formats"
+msgstr ""
+
+#: oyjl_args.c:189
+msgid "Get a Oyjl Json UI declaration"
+msgstr ""
+
+#: oyjl_args.c:195
+#, fuzzy
+msgid "Get a unix man page"
+msgstr "Unix a deriváty"
+
+#: oyjl_args.c:198
+msgid "Get formated text"
+msgstr ""
+
+#: oyjl_args.c:1398
+msgid "HISTORY"
+msgstr ""
+
+#: test-core.c:239
+msgid "Help"
+msgstr ""
 
 #: oyjl.c:67
 msgid "JSON file"
 msgstr ""
+
+#: oyjl_args.c:187
+msgid "Json"
+msgstr ""
+
+#: oyjl_args.c:190
+msgid "Json + Command"
+msgstr ""
+
+#: oyjl_args.c:1206 oyjl_args.c:1611 oyjl_args.c:1782
+msgid "License"
+msgstr "Licence"
+
+#: oyjl_args.c:193
+#, fuzzy
+msgid "Man"
+msgstr "Purpurová"
+
+#: oyjl_args.c:1204
+msgid "Manufacturer"
+msgstr "Výrobce"
+
+#: oyjl_args.c:196
+msgid "Markdown"
+msgstr ""
+
+#: test-core.c:248
+msgid "Misc"
+msgstr ""
+
+#. type,   flags, name,      description,          help, mandatory, optional, detail
+#: test-core.c:247
+#, fuzzy
+msgid "Mode"
+msgstr "Model:"
+
+#: oyjl_args.c:1185
+#, fuzzy
+msgid "Module"
+msgstr "Volby modulu:"
+
+#: oyjl_args.c:1339
+msgid "No"
+msgstr "Ne"
+
+#: oyjl_args.c:1522 oyjl_args.c:1697
+msgid "OPTIONS"
+msgstr ""
+
+#: test-core.c:223
+msgid "October 10, 2018"
+msgstr ""
+
+#: oyjl_args.c:556
+msgid "Option has a different value range"
+msgstr ""
+
+#: oyjl_args.c:397 oyjl_args.c:452
+msgid "Option has a unexpected argument"
+msgstr ""
+
+#: oyjl_args.c:371 oyjl_args.c:429
+msgid "Option needs a argument"
+msgstr ""
+
+#: oyjl_args.c:350 oyjl_args.c:411
+#, fuzzy
+msgid "Option not supported"
+msgstr "Volba nepodporovaného typu:"
+
+#: oyjl_args.c:1212
+#, fuzzy
+msgid "Oyjl Module Author"
+msgstr "Moduly Oyranosu"
+
+#: test-core.c:229
+#, fuzzy
+msgid "Print All"
+msgstr "Tiskárna"
+
+#: test-core.c:230
+#, fuzzy
+msgid "Print Camera"
+msgstr "Jméno ovladače:"
+
+#: test-core.c:230
+#, fuzzy
+msgid "Print Camera JSON"
+msgstr "Tiskárna CUPS"
 
 #: oyjl.c:77
 #, fuzzy
 msgid "Print JSON:"
 msgstr "Tiskárna CUPS"
 
-#: oyjl.c:70
+#: test-core.c:231
+#, fuzzy
+msgid "Print None"
+msgstr "Tiskárna CUPS"
+
+#: oyjl.c:70 oyjl_translate.c:54
 msgid "Print a help text:"
 msgstr "Vytisknout nápovědu:"
 
@@ -55,13 +287,99 @@ msgstr "Vytisknout nápovědu:"
 msgid "Print:"
 msgstr "Tiskárna"
 
+#: oyjl_translate.c:225
+msgid "Rendering Intent"
+msgstr "Záměr transformace"
+
+#: oyjl_args.c:1402
+msgid "SEE AS WELL"
+msgstr ""
+
+#: oyjl_args.c:1509 oyjl_args.c:1684
+msgid "SYNOPSIS"
+msgstr ""
+
+#: test-core.c:237
+#, fuzzy
+msgid "Set Input"
+msgstr "Vstupní"
+
 #: oyjl.c:89
 msgid "Set key/value:"
 msgstr ""
 
-#: oyjl.c:32 oyjl.c:45 oyjl.c:57
+#. tell about the tool
+#. argc+argv are required for parsing the command line options
+#: test-core.c:254 test-core.c:268 test-core.c:282 test-core.c:295
+#: test-core.c:308 test-core.c:322
+msgid "Short example tool using libOyjl"
+msgstr ""
+
+#: oyjl_args.c:1210
+msgid "Sources"
+msgstr ""
+
+#: oyjl_args.c:1208
+msgid "Support"
+msgstr ""
+
+#: oyjl_args.c:821
+msgid "Synopsis"
+msgstr ""
+
+#: test-core.c:222
+msgid "The example tool demontrates the usage of the libOyjl API's."
+msgstr ""
+
+#: oyjl_args.c:1183
+msgid "Tool"
+msgstr ""
+
+#: oyjl_args.c:194
+#, fuzzy
+msgid "Unix Man page"
+msgstr "Unix a deriváty"
+
+#: oyjl_args.c:1207
+msgid "Url"
+msgstr ""
+
+#: oyjl.c:32 oyjl.c:45 oyjl.c:57 oyjl_args.c:828 oyjl_translate.c:43
+#: oyjl_translate.c:152
 msgid "Usage"
 msgstr "Použití"
+
+#: oyjl_args.c:297 oyjl_args.c:350 oyjl_args.c:371 oyjl_args.c:397
+#: oyjl_args.c:411 oyjl_args.c:429 oyjl_args.c:452 oyjl_args.c:556
+msgid "Usage Error:"
+msgstr ""
+
+#: oyjl_args.c:1215
+#, fuzzy
+msgid "Version"
+msgstr "ICC Examin Verze"
+
+#: oyjl_args.c:1339
+msgid "Yes"
+msgstr "Ano"
+
+#: oyjl_args.c:205
+msgid "export"
+msgstr ""
+
+#: test-core.c:239
+msgid "help"
+msgstr "nápověda"
+
+#. type,   flags, o,   option,    key,  name,         description,         help, value_name,    value_type,               values,                                                          variable_type, output variable
+#: test-core.c:237
+#, fuzzy
+msgid "input"
+msgstr "Vstupní"
+
+#: oyjl_translate.c:39
+msgid "is a JSON helper tool"
+msgstr ""
 
 #: oyjl.c:55
 msgid "is a JSON parse tool"
@@ -75,7 +393,47 @@ msgstr ""
 msgid "is a JSON to YAML converter"
 msgstr ""
 
-#: oyjl.c:74
+#: oyjl_translate.c:61
+msgid "language specific wrap; -w C for C static char"
+msgstr ""
+
+#: oyjl_translate.c:52
+msgid ""
+"locale directory containing the your-locale/LC_MESSAGES/your-textdomain.mo "
+"gettext translations"
+msgstr ""
+
+#: oyjl_translate.c:51
+msgid "locales in a comma separated list"
+msgstr ""
+
+#: oyjl_translate.c:59 test-core.c:238
+#, fuzzy
+msgid "output"
+msgstr "Výstupní"
+
+#: oyjl_translate.c:46
+msgid "output format string"
+msgstr ""
+
+#. declare some option choices
+#: test-core.c:227
+msgid "oyjl.json"
+msgstr ""
+
+#: oyjl_translate.c:58
+msgid "specify JSON file"
+msgstr ""
+
+#: oyjl_translate.c:50
+msgid "text domain of your project"
+msgstr ""
+
+#: oyjl_translate.c:60
+msgid "to be used key names in a comma separated list"
+msgstr ""
+
+#: oyjl.c:74 oyjl_translate.c:62 test-core.c:240
 msgid "verbose"
 msgstr "upovídaný výstup"
 
@@ -848,9 +1206,6 @@ msgstr "upovídaný výstup"
 #~ msgid "Convert to untagged Cmyk, preserving Cmyk numbers"
 #~ msgstr "Konvertovat do neoznačeného CMYK se zachováním CMYK hodnot"
 
-#~ msgid "Copyright"
-#~ msgstr "Copyright"
-
 #~ msgid "Copyright &copy;"
 #~ msgstr "Copyright &copy;"
 
@@ -1026,9 +1381,6 @@ msgstr "upovídaný výstup"
 #~ msgid "Data:"
 #~ msgstr "Data:"
 
-#~ msgid "Date"
-#~ msgstr "Datum"
-
 #~ msgid "Date:"
 #~ msgstr "Datum:"
 
@@ -1055,10 +1407,6 @@ msgstr "upovídaný výstup"
 
 #~ msgid "Default Profiles"
 #~ msgstr "Výchozí profily"
-
-#, fuzzy
-#~ msgid "Description"
-#~ msgstr "popis"
 
 #, fuzzy
 #~ msgid "Description:     "
@@ -1111,9 +1459,6 @@ msgstr "upovídaný výstup"
 
 #~ msgid "Display"
 #~ msgstr "Displej"
-
-#~ msgid "Documentation"
-#~ msgstr "Dokumentace"
 
 #~ msgid "Driver signature/encoding:"
 #~ msgstr "Kódování/podpis ovladače:"
@@ -1303,10 +1648,6 @@ msgstr "upovídaný výstup"
 #~ msgid "G"
 #~ msgstr "G"
 
-#, fuzzy
-#~ msgid "GUI"
-#~ msgstr "SGI"
-
 #~ msgid "Gamma"
 #~ msgstr "Gama"
 
@@ -1334,10 +1675,6 @@ msgstr "upovídaný výstup"
 #~ msgid "Gamut selector"
 #~ msgstr "Volba gamutu"
 
-#, fuzzy
-#~ msgid "General options"
-#~ msgstr "Obecné volby:"
-
 #~ msgid "Generate CLUT Image:"
 #~ msgstr "Generovat obrázek CLUT:"
 
@@ -1360,10 +1697,6 @@ msgstr "upovídaný výstup"
 
 #~ msgid "Get XFORMS:"
 #~ msgstr "Získat XFORMS:"
-
-#, fuzzy
-#~ msgid "Get a unix man page"
-#~ msgstr "Unix a deriváty"
 
 #~ msgid "Grafic Card Gamma Table"
 #~ msgstr "Gama tabulka graficke karty"
@@ -1658,9 +1991,6 @@ msgstr "upovídaný výstup"
 #~ msgid "InkJet printer"
 #~ msgstr "Inkoustová tiskárna"
 
-#~ msgid "Input"
-#~ msgstr "Vstupní"
-
 #, fuzzy
 #~ msgid "Input Color Space"
 #~ msgstr "Výstupní barvový prostor"
@@ -1735,9 +2065,6 @@ msgstr "upovídaný výstup"
 
 #~ msgid "Lab"
 #~ msgstr "Lab"
-
-#~ msgid "License"
-#~ msgstr "Licence"
 
 #~ msgid "Light gray"
 #~ msgstr "Svetla sed"
@@ -1945,15 +2272,8 @@ msgstr "upovídaný výstup"
 #~ msgid "Magic:           "
 #~ msgstr "Datum:       "
 
-#, fuzzy
-#~ msgid "Man"
-#~ msgstr "Purpurová"
-
 #~ msgid "Manage Favorites"
 #~ msgstr "Organizovat oblibene"
-
-#~ msgid "Manufacturer"
-#~ msgstr "Výrobce"
 
 #~ msgid "Manufacturer:"
 #~ msgstr "Výrobce:     "
@@ -2020,10 +2340,6 @@ msgstr "upovídaný výstup"
 #~ "jediného prostoru barev."
 
 #, fuzzy
-#~ msgid "Model"
-#~ msgstr "Model:"
-
-#, fuzzy
 #~ msgid "Model:"
 #~ msgstr "Model:"
 
@@ -2044,10 +2360,6 @@ msgstr "upovídaný výstup"
 #, fuzzy
 #~ msgid "Modify Profile:"
 #~ msgstr "Profil monitoru"
-
-#, fuzzy
-#~ msgid "Module"
-#~ msgstr "Volby modulu:"
 
 #~ msgid "Monitor"
 #~ msgstr "Monitor"
@@ -2126,9 +2438,6 @@ msgstr "upovídaný výstup"
 #~ msgid "New Directory?"
 #~ msgstr "Novy adresar?"
 
-#~ msgid "No"
-#~ msgstr "Ne"
-
 #~ msgid "No Color"
 #~ msgstr "Bez barvy"
 
@@ -2199,10 +2508,6 @@ msgstr "upovídaný výstup"
 
 #~ msgid "Option \"filename\", a valid filename of a existing PPM image"
 #~ msgstr "Volba \"soubor\", platné jméno souboru existujícího obrázku PPM"
-
-#, fuzzy
-#~ msgid "Option not supported"
-#~ msgstr "Volba nepodporovaného typu:"
 
 #, fuzzy
 #~ msgid "Options"
@@ -2289,9 +2594,6 @@ msgstr "upovídaný výstup"
 #~ "ICC má umožnit bezproblémovou a automatizovanou výměnu dat o barvách mezi "
 #~ "různými barvovými prostory a různými zařízeními s ohledem na jejich "
 #~ "schopnost reprodukce barev."
-
-#~ msgid "Oyranos modules"
-#~ msgstr "Moduly Oyranosu"
 
 #~ msgid ""
 #~ "Oyranos project; www: http://www.oyranos.com; support/email: ku.b@gmx.de; "
@@ -2644,9 +2946,6 @@ msgstr "upovídaný výstup"
 
 #~ msgid "Rendering"
 #~ msgstr "Transformace"
-
-#~ msgid "Rendering Intent"
-#~ msgstr "Záměr transformace"
 
 #, fuzzy
 #~ msgid "Rendering Intent:"
@@ -3514,10 +3813,6 @@ msgstr "upovídaný výstup"
 #~ msgid "Unexpected object type:"
 #~ msgstr "Neočekávaný typ objektu:"
 
-#, fuzzy
-#~ msgid "Unix Man page"
-#~ msgstr "Unix a deriváty"
-
 #~ msgid "Unknown argument"
 #~ msgstr "Neznámý argument"
 
@@ -3533,10 +3828,6 @@ msgstr "upovídaný výstup"
 #, fuzzy
 #~ msgid "Verbose"
 #~ msgstr "upovídaný výstup"
-
-#, fuzzy
-#~ msgid "Version"
-#~ msgstr "ICC Examin Verze"
 
 #, fuzzy
 #~ msgid "Version:         "
@@ -3663,9 +3954,6 @@ msgstr "upovídaný výstup"
 
 #~ msgid "Yellow"
 #~ msgstr "Žlutá"
-
-#~ msgid "Yes"
-#~ msgstr "Ano"
 
 #~ msgid "Yiannis Belias"
 #~ msgstr "Yiannis Belias"
@@ -3926,9 +4214,6 @@ msgstr "upovídaný výstup"
 #~ msgid "gray"
 #~ msgstr "sede"
 
-#~ msgid "help"
-#~ msgstr "nápověda"
-
 #~ msgid "high contrast"
 #~ msgstr "vysoky kontrast"
 
@@ -4157,10 +4442,6 @@ msgstr "upovídaný výstup"
 
 #~ msgid "orionas"
 #~ msgstr "orionas"
-
-#, fuzzy
-#~ msgid "output"
-#~ msgstr "Výstupní"
 
 #~ msgid "output class"
 #~ msgstr "třída výstupu"

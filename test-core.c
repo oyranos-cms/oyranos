@@ -16,6 +16,7 @@
   TEST_RUN( testVersion, "Version matching", 1 ); \
   TEST_RUN( testI18N, "Internationalisation", 1 ); \
   TEST_RUN( testStringRun, "String handling", 1 ); \
+  TEST_RUN( testArgs, "Options handling", 1 ); \
   TEST_RUN( testTree, "Tree handling", 1 );
 
 #include "oyjl_test.h"
@@ -196,6 +197,191 @@ oyjlTESTRESULT_e testStringRun ()
   return result;
 }
 
+
+oyjlTESTRESULT_e testArgs()
+{
+  oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
+
+  fprintf(stdout, "\n" );
+
+  int output = 0;
+  const char * file = NULL;
+  int help = 0;
+  int verbose = 0;
+  int state = 0;
+  int argc = 1;
+  char * argv[] = {"test","-v","--input","file-name.json", "-z"};
+
+  /* handle options */
+  /* Select from *version*, *manufacturer*, *copyright*, *license*, *url*,
+   * *support*, *download*, *sources*, *oyjl_modules_author* and
+   * *documentation* what you see fit. Add new ones as needed. */
+  oyjlUiHeaderSection_s sections[] = {
+    /* type, nick,            label, name,                  description  */
+    {"oihs", "version",       NULL,  "1.0",                 NULL},
+    {"oihs", "documentation", NULL,  "",                    _("The example tool demontrates the usage of the libOyjl API's.")},
+    {"oihs", "date",          NULL,  "2018-10-10T12:00:00", _("October 10, 2018")},
+    {"",0,0,0,0}};
+
+  /* declare some option choices */
+  oyjlOptionChoice_s i_choices[] = {{"oyjl.json", _("oyjl.json"), _("oyjl.json"), ""},
+                                    {"","","",""}};
+  oyjlOptionChoice_s o_choices[] = {{"0", _("Print All"), _("Print All"), ""},
+                                    {"1", _("Print Camera"), _("Print Camera JSON"), ""},
+                                    {"2", _("Print None"), _("Print None"), ""},
+                                    {"","","",""}};
+
+  /* declare options - the core information; use previously declared choices */
+  oyjlOption_s oarray[] = {
+  /* type,   flags, o,   option,    key,  name,         description,         help, value_name,    value_type,               values,                                                          variable_type, output variable */
+    {"oiwi", 0,     'i', "input",   NULL, _("input"),   _("Set Input"),      NULL, _("FILENAME"), oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)i_choices, sizeof(i_choices), malloc )}, oyjlSTRING, {.s = &file} },
+    {"oiwi", 0,     'o', "output",  NULL, _("output"),  _("Control Output"), NULL, "0|1|2",       oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)o_choices, sizeof(o_choices), malloc )}, oyjlINT, {.i = &output} },
+    {"oiwi", 0,     'h', "help",    NULL, _("help"),    _("Help"),           NULL, NULL,          oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i = &help} },
+    {"oiwi", 0,     'v', "verbose", NULL, _("verbose"), _("verbose"),        NULL, NULL,          oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i = &verbose} },
+    {"",0,0,0,0,0,0,0, NULL, oyjlOPTIONTYPE_END, {},0,{}}
+  };
+
+  /* declare option groups, for better syntax checking and UI groups */
+  oyjlOptionGroup_s groups[] = {
+  /* type,   flags, name,      description,          help, mandatory, optional, detail */
+    {"oiwg", 0,     _("Mode"), _("Actual mode"),     NULL, "i",       "ov",     "io" },
+    {"oiwg", 0,     _("Misc"), _("General options"), NULL, "",        "",       "vh" },
+    {"",0,0,0,0,0,0,0}
+  };
+
+  /* tell about the tool */
+  oyjlUi_s * ui = oyjlUi_Create( argc, argv, /* argc+argv are required for parsing the command line options */
+                                       "oiCR", "oyjl-config-read", _("Short example tool using libOyjl"), "oi-logo",
+                                       sections, oarray, groups, NULL );
+
+  if(ui)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "ui created - no args                           " );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    "ui created - no args                           " );
+  }
+  oyjlUi_Release( &ui);
+
+  argc = 2;
+  ui = oyjlUi_Create( argc, argv, /* argc+argv are required for parsing the command line options */
+                                       "oiCR", "oyjl-config-read", _("Short example tool using libOyjl"), "oi-logo",
+                                       sections, oarray, groups, NULL );
+
+  if(ui)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "ui created - correct args                      " );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    "ui created - correct args                      " );
+  }
+  oyjlUi_Release( &ui);
+
+  argc = 3;
+  ui = oyjlUi_Create( argc, argv, /* argc+argv are required for parsing the command line options */
+                                       "oiCR", "oyjl-config-read", _("Short example tool using libOyjl"), "oi-logo",
+                                       sections, oarray, groups, &state );
+  if(!ui)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "ui not created - missing arg %d                " , state >> oyjlUI_STATE_OPTION );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    "ui not created - missing arg                   " );
+  }
+  oyjlUi_Release( &ui);
+
+  argc = 4;
+  ui = oyjlUi_Create( argc, argv, /* argc+argv are required for parsing the command line options */
+                                       "oiCR", "oyjl-config-read", _("Short example tool using libOyjl"), "oi-logo",
+                                       sections, oarray, groups, NULL );
+  if(ui && strcmp(file,"file-name.json") == 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "ui created - parse string                      " );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    "ui created - parse string                      " );
+  }
+  oyjlUi_Release( &ui);
+
+  argc = 5;
+  ui = oyjlUi_Create( argc, argv, /* argc+argv are required for parsing the command line options */
+                                       "oiCR", "oyjl-config-read", _("Short example tool using libOyjl"), "oi-logo",
+                                       sections, oarray, groups, &state );
+  if(!ui)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "ui not created - wrong arg  %d                 ", state >> oyjlUI_STATE_OPTION );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    "ui not created - wrong arg                     " );
+  }
+  oyjlUi_Release( &ui);
+
+
+  argc = 4;
+  ui = oyjlUi_Create( argc, argv, /* argc+argv are required for parsing the command line options */
+                                       "oyjl-config-read", "Oyjl Config Reader", _("Short example tool using libOyjl"), "oi-logo",
+                                       sections, oarray, groups, NULL );
+  int size = 0;
+  char * text = oyjlUi_ToJson( ui, 0 );
+  if(text && strlen(text))
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyjlUi_ToJson() %lu                           ", strlen(text) );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    "oyjlUi_ToJson() %lu                           ", strlen(text) );
+  }
+  size = oyjlWriteFile( "test.json",
+                           text,
+                           strlen(text) );
+  if(text && size) {free(text);} text = NULL;
+
+  text = oyjlUi_ToMan( ui, 0 );
+  if(text && strlen(text))
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyjlUi_ToMan()  %lu                           ", strlen(text) );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    "oyjlUi_ToMan()  %lu                           ", strlen(text) );
+  }
+  size = oyjlWriteFile( "test.1",
+                           text,
+                           strlen(text) );
+  if(text) {free(text);} text = NULL;
+
+  text = oyjlOptions_ResultsToJson( ui->opts );
+  if(text && strlen(text) == 39)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyjlOptions_ResultsToJson() %lu                 ", strlen(text) );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    "oyjlOptions_ResultsToJson() %lu                 ", strlen(text) );
+  }
+  if(text) {free(text);} text = NULL;
+
+  text = oyjlOptions_ResultsToText( ui->opts );
+  if(text && strlen(text) == 21)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyjlOptions_ResultsToText() %lu                 ", strlen(text) );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    "oyjlOptions_ResultsToText() %lu                 ", strlen(text) );
+  }
+  if(text) {free(text);} text = NULL;
+
+  fprintf(stdout, "Help text -> stderr:\n" );
+  oyjlOptions_PrintHelp( ui->opts, ui, 1, "%s v%s - %s", argv[0],
+                            "1.0", "Test Tool for testing" );
+
+  oyjlUi_Release( &ui);
+  char * wrong = "test";
+  fprintf(stdout, "oyjlUi_Release(&\"test\")\n" );
+  oyjlUi_Release( (oyjlUi_s **)&wrong);
+
+  free(oarray[0].values.choices.list);
+  free(oarray[1].values.choices.list);
+
+  return result;
+}
 
 
 oyjlTESTRESULT_e testTree ()

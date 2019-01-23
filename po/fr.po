@@ -5,9 +5,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: openicc\n"
+"Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2019-01-14 10:18+0100\n"
+"POT-Creation-Date: 2019-01-22 20:34+0100\n"
 "PO-Revision-Date: 2006-06-29 19:31+0200\n"
 "Last-Translator: Pascal LACROIX <lacroixpascal at vfemail.net>\n"
 "Language-Team: <fr@li.org>\n"
@@ -16,24 +16,252 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: oyjl.c:76
+#: oyjl_args.c:1033
+msgid "... try with --help|-h option for usage text. give up"
+msgstr ""
+
+#: oyjl_args.c:1605 oyjl_args.c:1776
+msgid "AUTHOR"
+msgstr ""
+
+#: test-core.c:247
+msgid "Actual mode"
+msgstr ""
+
+#: oyjl_translate.c:48
+msgid "Add gettext translated keys to JSON:"
+msgstr ""
+
+#: oyjl_args.c:1615 oyjl_args.c:1786 oyjl_args.c:1788
+msgid "BUGS"
+msgstr ""
+
+#: oyjl_args.c:1609 oyjl_args.c:1780
+msgid "COPYRIGHT"
+msgstr ""
+
+#: test-core.c:238
+#, fuzzy
+msgid "Control Output"
+msgstr "Sortie"
+
+#: oyjl_translate.c:44
+msgid "Convert JSON to gettext ready C strings:"
+msgstr ""
+
+#: oyjl_args.c:1205
+msgid "Copyright"
+msgstr "Copyright"
+
+#: oyjl_args.c:1520 oyjl_args.c:1695
+msgid "DESCRIPTION"
+msgstr ""
+
+#: oyjl_args.c:1214
+msgid "Date"
+msgstr ""
+
+#: oyjl_args.c:819
+#, fuzzy
+msgid "Description"
+msgstr "Description"
+
+#: oyjl_args.c:1211
+msgid "Development"
+msgstr ""
+
+#: oyjl_args.c:1213
+msgid "Documentation"
+msgstr ""
+
+#: oyjl_args.c:297
+#, fuzzy
+msgid "Double occuring option"
+msgstr "Description"
+
+#: oyjl_args.c:1209
+msgid "Download"
+msgstr ""
+
+#: oyjl_args.c:1396
+msgid "ENVIRONMENT VARIABLES"
+msgstr ""
+
+#: oyjl_args.c:1392
+msgid "EXAMPLES"
+msgstr ""
+
+#: oyjl_args.c:1394
+msgid "EXIT-STATE"
+msgstr ""
+
+#: oyjl.c:76 test-core.c:104
 msgid "Example"
 msgstr ""
 
-#: oyjl.c:73
+#: oyjl_args.c:208
+msgid "Export formated text"
+msgstr ""
+
+#: test-core.c:237
+msgid "FILENAME"
+msgstr ""
+
+#: oyjl_args.c:1400
+msgid "FILES"
+msgstr ""
+
+#: oyjl_args.c:197
+msgid "Formated text"
+msgstr ""
+
+#: oyjl_args.c:188
+msgid "GUI"
+msgstr ""
+
+#: oyjl_args.c:191
+msgid "GUI + Command"
+msgstr ""
+
+#: test-core.c:248
+#, fuzzy
+msgid "General options"
+msgstr "Options"
+
+#: oyjl.c:73 oyjl_translate.c:57
 #, fuzzy
 msgid "General options:"
 msgstr "Options"
 
+#: oyjl_args.c:192
+msgid "Get Oyjl Json UI declaration incuding command"
+msgstr ""
+
+#: oyjl_args.c:210
+msgid "Get UI converted into text formats"
+msgstr ""
+
+#: oyjl_args.c:189
+msgid "Get a Oyjl Json UI declaration"
+msgstr ""
+
+#: oyjl_args.c:195
+msgid "Get a unix man page"
+msgstr ""
+
+#: oyjl_args.c:198
+msgid "Get formated text"
+msgstr ""
+
+#: oyjl_args.c:1398
+msgid "HISTORY"
+msgstr ""
+
+#: test-core.c:239
+msgid "Help"
+msgstr ""
+
 #: oyjl.c:67
 msgid "JSON file"
+msgstr ""
+
+#: oyjl_args.c:187
+msgid "Json"
+msgstr ""
+
+#: oyjl_args.c:190
+msgid "Json + Command"
+msgstr ""
+
+#: oyjl_args.c:1206 oyjl_args.c:1611 oyjl_args.c:1782
+msgid "License"
+msgstr ""
+
+#: oyjl_args.c:193
+#, fuzzy
+msgid "Man"
+msgstr "Magenta"
+
+#: oyjl_args.c:1204
+#, fuzzy
+msgid "Manufacturer"
+msgstr "Fabricant:   "
+
+#: oyjl_args.c:196
+msgid "Markdown"
+msgstr ""
+
+#: test-core.c:248
+msgid "Misc"
+msgstr ""
+
+#. type,   flags, name,      description,          help, mandatory, optional, detail
+#: test-core.c:247
+#, fuzzy
+msgid "Mode"
+msgstr "Model:"
+
+#: oyjl_args.c:1185
+#, fuzzy
+msgid "Module"
+msgstr "Options"
+
+#: oyjl_args.c:1339
+msgid "No"
+msgstr ""
+
+#: oyjl_args.c:1522 oyjl_args.c:1697
+msgid "OPTIONS"
+msgstr ""
+
+#: test-core.c:223
+msgid "October 10, 2018"
+msgstr ""
+
+#: oyjl_args.c:556
+msgid "Option has a different value range"
+msgstr ""
+
+#: oyjl_args.c:397 oyjl_args.c:452
+msgid "Option has a unexpected argument"
+msgstr ""
+
+#: oyjl_args.c:371 oyjl_args.c:429
+msgid "Option needs a argument"
+msgstr ""
+
+#: oyjl_args.c:350 oyjl_args.c:411
+msgid "Option not supported"
+msgstr ""
+
+#: oyjl_args.c:1212
+#, fuzzy
+msgid "Oyjl Module Author"
+msgstr "Oyranos Préférences"
+
+#: test-core.c:229
+msgid "Print All"
+msgstr ""
+
+#: test-core.c:230
+#, fuzzy
+msgid "Print Camera"
+msgstr "Fichier"
+
+#: test-core.c:230
+msgid "Print Camera JSON"
 msgstr ""
 
 #: oyjl.c:77
 msgid "Print JSON:"
 msgstr ""
 
-#: oyjl.c:70
+#: test-core.c:231
+#, fuzzy
+msgid "Print None"
+msgstr "Fichier"
+
+#: oyjl.c:70 oyjl_translate.c:54
 msgid "Print a help text:"
 msgstr ""
 
@@ -54,12 +282,99 @@ msgstr ""
 msgid "Print:"
 msgstr ""
 
+#: oyjl_translate.c:225
+#, fuzzy
+msgid "Rendering Intent"
+msgstr "Oyranos Préférences"
+
+#: oyjl_args.c:1402
+msgid "SEE AS WELL"
+msgstr ""
+
+#: oyjl_args.c:1509 oyjl_args.c:1684
+msgid "SYNOPSIS"
+msgstr ""
+
+#: test-core.c:237
+#, fuzzy
+msgid "Set Input"
+msgstr "Entrée"
+
 #: oyjl.c:89
 msgid "Set key/value:"
 msgstr ""
 
-#: oyjl.c:32 oyjl.c:45 oyjl.c:57
+#. tell about the tool
+#. argc+argv are required for parsing the command line options
+#: test-core.c:254 test-core.c:268 test-core.c:282 test-core.c:295
+#: test-core.c:308 test-core.c:322
+msgid "Short example tool using libOyjl"
+msgstr ""
+
+#: oyjl_args.c:1210
+msgid "Sources"
+msgstr ""
+
+#: oyjl_args.c:1208
+msgid "Support"
+msgstr ""
+
+#: oyjl_args.c:821
+msgid "Synopsis"
+msgstr ""
+
+#: test-core.c:222
+msgid "The example tool demontrates the usage of the libOyjl API's."
+msgstr ""
+
+#: oyjl_args.c:1183
+msgid "Tool"
+msgstr ""
+
+#: oyjl_args.c:194
+msgid "Unix Man page"
+msgstr ""
+
+#: oyjl_args.c:1207
+msgid "Url"
+msgstr ""
+
+#: oyjl.c:32 oyjl.c:45 oyjl.c:57 oyjl_args.c:828 oyjl_translate.c:43
+#: oyjl_translate.c:152
 msgid "Usage"
+msgstr ""
+
+#: oyjl_args.c:297 oyjl_args.c:350 oyjl_args.c:371 oyjl_args.c:397
+#: oyjl_args.c:411 oyjl_args.c:429 oyjl_args.c:452 oyjl_args.c:556
+msgid "Usage Error:"
+msgstr ""
+
+#: oyjl_args.c:1215
+#, fuzzy
+msgid "Version"
+msgstr "ICC Examin Version"
+
+#: oyjl_args.c:1339
+msgid "Yes"
+msgstr "Oui"
+
+#: oyjl_args.c:205
+msgid "export"
+msgstr ""
+
+#: test-core.c:239
+#, fuzzy
+msgid "help"
+msgstr "Aide"
+
+#. type,   flags, o,   option,    key,  name,         description,         help, value_name,    value_type,               values,                                                          variable_type, output variable
+#: test-core.c:237
+#, fuzzy
+msgid "input"
+msgstr "Entrée"
+
+#: oyjl_translate.c:39
+msgid "is a JSON helper tool"
 msgstr ""
 
 #: oyjl.c:55
@@ -74,7 +389,47 @@ msgstr ""
 msgid "is a JSON to YAML converter"
 msgstr ""
 
-#: oyjl.c:74
+#: oyjl_translate.c:61
+msgid "language specific wrap; -w C for C static char"
+msgstr ""
+
+#: oyjl_translate.c:52
+msgid ""
+"locale directory containing the your-locale/LC_MESSAGES/your-textdomain.mo "
+"gettext translations"
+msgstr ""
+
+#: oyjl_translate.c:51
+msgid "locales in a comma separated list"
+msgstr ""
+
+#: oyjl_translate.c:59 test-core.c:238
+#, fuzzy
+msgid "output"
+msgstr "Sortie"
+
+#: oyjl_translate.c:46
+msgid "output format string"
+msgstr ""
+
+#. declare some option choices
+#: test-core.c:227
+msgid "oyjl.json"
+msgstr ""
+
+#: oyjl_translate.c:58
+msgid "specify JSON file"
+msgstr ""
+
+#: oyjl_translate.c:50
+msgid "text domain of your project"
+msgstr ""
+
+#: oyjl_translate.c:60
+msgid "to be used key names in a comma separated list"
+msgstr ""
+
+#: oyjl.c:74 oyjl_translate.c:62 test-core.c:240
 msgid "verbose"
 msgstr ""
 
@@ -392,9 +747,6 @@ msgstr ""
 #~ msgid "Convert to Default Rgb Editing Space"
 #~ msgstr "Espace colorimétrique"
 
-#~ msgid "Copyright"
-#~ msgstr "Copyright"
-
 #, fuzzy
 #~ msgid "Copyright &copy;"
 #~ msgstr "Copyright"
@@ -513,10 +865,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Default Profiles"
 #~ msgstr "Profils"
-
-#, fuzzy
-#~ msgid "Description"
-#~ msgstr "Description"
 
 #, fuzzy
 #~ msgid "Description:     "
@@ -676,10 +1024,6 @@ msgstr ""
 #~ msgstr "Avertissement Gamut"
 
 #, fuzzy
-#~ msgid "General options"
-#~ msgstr "Options"
-
-#, fuzzy
 #~ msgid "Generate Device Link Profile:"
 #~ msgstr "ICC Profils"
 
@@ -765,9 +1109,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Illuminant:      "
 #~ msgstr "Luminance Y"
-
-#~ msgid "Input"
-#~ msgstr "Entrée"
 
 #, fuzzy
 #~ msgid "Input Color Space"
@@ -865,14 +1206,6 @@ msgstr ""
 #~ msgid "Magic:           "
 #~ msgstr "Taille:      "
 
-#, fuzzy
-#~ msgid "Man"
-#~ msgstr "Magenta"
-
-#, fuzzy
-#~ msgid "Manufacturer"
-#~ msgstr "Fabricant:   "
-
 #~ msgid "Manufacturer:"
 #~ msgstr "Fabricant:   "
 
@@ -883,10 +1216,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Measured colors"
 #~ msgstr "Couleur désignée 2"
-
-#, fuzzy
-#~ msgid "Model"
-#~ msgstr "Model:"
 
 #, fuzzy
 #~ msgid "Model:"
@@ -907,10 +1236,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Modify Profile:"
 #~ msgstr "Ouvrir Profil"
-
-#, fuzzy
-#~ msgid "Module"
-#~ msgstr "Options"
 
 #, fuzzy
 #~ msgid "Monitor"
@@ -1038,10 +1363,6 @@ msgstr ""
 
 #, fuzzy
 #~ msgid "Oyranos display filter"
-#~ msgstr "Oyranos Préférences"
-
-#, fuzzy
-#~ msgid "Oyranos modules"
 #~ msgstr "Oyranos Préférences"
 
 #, fuzzy
@@ -1215,10 +1536,6 @@ msgstr ""
 #~ msgid "Relative Colorimetric"
 #~ msgstr "Colorimétrie relative"
 
-#, fuzzy
-#~ msgid "Rendering Intent"
-#~ msgstr "Oyranos Préférences"
-
 #~ msgid "Reset"
 #~ msgstr "Réinitialiser"
 
@@ -1351,10 +1668,6 @@ msgstr ""
 #~ msgstr "Valeur"
 
 #, fuzzy
-#~ msgid "Version"
-#~ msgstr "ICC Examin Version"
-
-#, fuzzy
 #~ msgid "Version:         "
 #~ msgstr "Taille:      "
 
@@ -1393,9 +1706,6 @@ msgstr ""
 
 #~ msgid "Yellow"
 #~ msgstr "Jaune"
-
-#~ msgid "Yes"
-#~ msgstr "Oui"
 
 #~ msgid "Yxy"
 #~ msgstr "Yxy"
@@ -1477,10 +1787,6 @@ msgstr ""
 #~ msgstr "gris"
 
 #, fuzzy
-#~ msgid "help"
-#~ msgstr "Aide"
-
-#, fuzzy
 #~ msgid "input class"
 #~ msgstr "Écran"
 
@@ -1554,10 +1860,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "not a profile:"
 #~ msgstr "Ouvrir Profil"
-
-#, fuzzy
-#~ msgid "output"
-#~ msgstr "Sortie"
 
 #, fuzzy
 #~ msgid "output class"
