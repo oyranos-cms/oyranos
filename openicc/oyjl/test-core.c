@@ -194,6 +194,87 @@ oyjlTESTRESULT_e testStringRun ()
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyjlStringToDouble(\"0.2\") = %g  error = %d            ", d, error );
   }
+
+  double * doubles = NULL;
+  int count = 0;
+  error = oyjlStringsToDoubles( "0.2 1 3.5", ' ', &count, malloc, &doubles );
+  if( !error &&
+      doubles[0] == 0.2 &&
+      doubles[1] == 1.0 &&
+      doubles[2] == 3.5 &&
+      count == 3)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlStringsToDoubles(\"0.2 1 3.5\") error = %d          ", error );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlStringsToDoubles(\"0.2 1 3.5\") error = %d          ", error );
+  }
+  if(doubles) { free(doubles); } doubles = NULL;
+
+  error = oyjlStringsToDoubles( "0.2", ' ', &count, malloc, &doubles );
+  if( !error &&
+      doubles[0] == 0.2 &&
+      count == 1)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlStringsToDoubles(\"0.2\") error = %d                ", error );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlStringsToDoubles(\"0.2\") error = %d                ", error );
+  }
+  if(doubles) { free(doubles); } doubles = NULL;
+
+  error = oyjlStringsToDoubles( "0.2;1;3.5", ';', &count, malloc, &doubles );
+  if( !error &&
+      doubles[0] == 0.2 &&
+      doubles[1] == 1.0 &&
+      doubles[2] == 3.5 &&
+      count == 3)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlStringsToDoubles(\"0.2;1;3.5\") error = %d          ", error );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlStringsToDoubles(\"0.2;1;3.5\") error = %d          ", error );
+  }
+  if(doubles) { free(doubles); } doubles = NULL;
+
+  error = oyjlStringsToDoubles( "0.2 ; 1; 3.5 cm", ';', &count, malloc, &doubles );
+  if( doubles[0] == 0.2 &&
+      doubles[1] == 1.0 &&
+      doubles[2] == 3.5 &&
+      count == 3)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlStringsToDoubles(\"0.2 ; 1; 3.5 cm\") error = %d   ", error );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlStringsToDoubles(\"0.2 ; 1; 3.5 cm\") error = %d   ", error );
+  }
+  if(doubles) { free(doubles); } doubles = NULL;
+
+  error = oyjlStringsToDoubles( "0.2,1,3.5", ',', &count, malloc, &doubles );
+  if( !error &&
+      doubles[0] == 0.2 &&
+      doubles[1] == 1.0 &&
+      doubles[2] == 3.5 &&
+      count == 3)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlStringsToDoubles(\"0.2,1,3.5\") error = %d          ", error );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlStringsToDoubles(\"0.2,1,3.5\") error = %d          ", error );
+  }
+  if(doubles) { free(doubles); } doubles = NULL;
+
+  error = oyjlStringsToDoubles( "x=0.2,one dot five,", ',', &count, malloc, &doubles );
+  if( error > 0 &&
+      count == 3)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlStringsToDoubles(\"x=0.2:,one dot five,\") error = %d ", error );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlStringsToDoubles(\"x=0.2:,one dot five,\") error = %d ", error );
+  }
+  if(doubles) { free(doubles); } doubles = NULL;
+
   return result;
 }
 
