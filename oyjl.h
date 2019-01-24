@@ -363,6 +363,11 @@ int        oyjlStringToLong          ( const char        * text,
                                        long              * value );
 int        oyjlStringToDouble        ( const char        * text,
                                        double            * value );
+int        oyjlStringsToDoubles      ( const char        * text,
+                                       char                delimiter,
+                                       int               * count,
+                                       void*            (* alloc)(size_t),
+                                       double           ** value );
 
 /* --- I/O helpers --- */
 char *     oyjlReadFileStreamToMem   ( FILE              * fp,

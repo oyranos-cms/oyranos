@@ -521,7 +521,13 @@ int      oyjlStringToLong            ( const char        * text,
 
 /** @brief   text to double conversion
  *
+ *  @param[in]     text                string
+ *  @param[out]    value               resulting number
  *  @return                            error
+ *                                     - 0 : text input was completely read as number
+ *                                     - -1 : text input was read as number with white space or other text after
+ *                                     - 1 : missed text input
+ *                                     - 2 : no number detected
  *
  *  @version Oyranos: 0.9.7
  *  @date    2018/03/18
@@ -561,13 +567,63 @@ int          oyjlStringToDouble      ( const char        * text,
   if(save_locale) free( save_locale );
 #endif
 
-  if(p && p != text && p[0] == '\000')
+  if(p && p != t && p[0] == '\000')
     error = 0;
+  else if(p && p == t)
+  {
+    *value = NAN;
+    error = 2;
+  }
 
   free( t );
 
   return error;
 }
+
+/** @brief   text to double list
+ *
+ *  @param[in]     text                source string
+ *  @param[in]     delimiter           the char which marks the split; e.g. comma ','
+ *  @param[out]    count               number of detected string segments; optional
+ *  @param[in]     alloc               custom allocator; optional, default is malloc
+ *  @return                            error
+ *                                     - 0 : text input was completely read as number
+ *                                     - -1 : text input was read as number with white space or other text after
+ *                                     - 1 : missed text input
+ *                                     - 2 : no number detected
+ *
+ *  @version Oyranos: 0.9.7
+ *  @date    2019/01/23
+ *  @since   2019/01/23 (Oyranos: 0.9.7)
+ */
+int          oyjlStringsToDoubles    ( const char        * text,
+                                       char                delimiter,
+                                       int               * count,
+                                       void*            (* alloc)(size_t),
+                                       double           ** value )
+{
+  int error = 0, l_error = 0;
+  char ** list = NULL;
+  int n = 0, i;
+  double d;
+  char * val;
+  list = oyjlStringSplit( text, delimiter, &n, alloc );
+  if(n)
+    oyjlAllocHelper_m( *value, double, n + 1, alloc, return 1);
+  for( i = 0; i < n; ++i )
+  {
+    val = list[i];
+    l_error = oyjlStringToDouble( val, &d );
+    (*value)[i] = d;
+    if(!error || l_error > 0) error = l_error;
+    if(l_error > 0) break;
+  }
+  if(count)
+    *count = n;
+
+  return error;
+}
+
 
 /** @brief read FILE into memory
  */
