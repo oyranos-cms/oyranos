@@ -350,17 +350,19 @@ ENDIF(ENABLE_TOOLS_${PROJECT_UP_NAME})
 IF( ENABLE_TESTS_${PROJECT_UP_NAME} )
   ADD_EXECUTABLE( oyjl-test-core "${CMAKE_CURRENT_SOURCE_DIR}/test-core.c" )
   TARGET_LINK_LIBRARIES( oyjl-test-core ${OYJL_CORE_LIB} ${EXTRA_CORE_LIBS} )
+  ADD_EXECUTABLE( oyjl-test-core-static "${CMAKE_CURRENT_SOURCE_DIR}/test-core.c" )
+  TARGET_LINK_LIBRARIES( oyjl-test-core-static ${PACKAGE_NAME}-core-static ${EXTRA_CORE_LIBS} )
   ADD_EXECUTABLE( oyjl-test "${CMAKE_CURRENT_SOURCE_DIR}/test.c" )
   TARGET_LINK_LIBRARIES( oyjl-test ${OYJL_TARGET_LIB} ${EXTRA_LIBS} )
   ADD_EXECUTABLE( oyjl-test-static "${CMAKE_CURRENT_SOURCE_DIR}/test.c" )
   TARGET_LINK_LIBRARIES( oyjl-test-static ${PACKAGE_NAME}-static ${PACKAGE_NAME}-core-static ${EXTRA_LIBS} )
   ADD_CUSTOM_TARGET(check-core
-        OYJL_LOCALEDIR=${CMAKE_BINARY_DIR}/locale ./oyjl-test-core
-        DEPENDS oyjl-test-core
+        OYJL_LOCALEDIR=${CMAKE_BINARY_DIR}/locale ./oyjl-test-core-static
+        DEPENDS oyjl-test-core-static
         COMMENT "Test libOyjlCore" VERBATIM )
   ADD_CUSTOM_TARGET(check
-        ./oyjl-test
-        DEPENDS oyjl-test check-core
+        ./oyjl-test-static
+        DEPENDS oyjl-test-static check-core
         COMMENT "Test libOyjl" VERBATIM )
 ENDIF( ENABLE_TESTS_${PROJECT_UP_NAME} )
 
