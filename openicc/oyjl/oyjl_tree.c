@@ -47,6 +47,40 @@
 
 /** \addtogroup oyjl_tree
  *  @{ *//* oyjl_tree */
+
+/** @brief   detect data type
+ *
+ *  @param         text                string
+ *  @return                            format
+ *                                     - 7 : JSON
+ *                                     - 8 : XML
+ *                                     - 9 : YAML
+ *                                     - 0 : not detected
+ *                                     - -1 : no input
+ *                                     - -2 : no data
+ */
+int          oyjlDataFormat          ( const char        * text )
+{
+  int c,i = 0;
+  if(!text)
+    return -1;
+  /* first simple check */
+  while( (c = text[i]) != 0 && (c == ' ' || c == '\t' || c == '\n' || c == '\r' ))
+    i++;
+  if(strlen(&text[i]) > 5 &&
+      ( memcmp( &text[i], "<?xml", 5 ) == 0 ||
+        ( text[i] == '<' && text[i+1] != '<' ) ) )
+    return 8;
+  if(c == '[' || c == '{')
+    return 7;
+  if((i == 0 || text[i-1] == '\n') && strlen(&text[i]) > 4 && memcmp( &text[i], "---\n", 4 ) == 0)
+    return 9;
+  if(!c)
+    return -2;
+  else
+    return 0;
+}
+
 static oyjl_val oyjlValueAlloc (oyjl_type type)
 {
     oyjl_val v;

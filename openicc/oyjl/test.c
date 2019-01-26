@@ -13,6 +13,7 @@
 
 #define TESTS_RUN \
   TEST_RUN( testVersion, "Version matching", 1 ); \
+  TEST_RUN( testDataFormat, "Data Format Detection", 1 ); \
   TEST_RUN( testJson, "JSON handling", 1 ); \
   TEST_RUN( testFromJson, "Data Writers", 1 ); \
   TEST_RUN( testJsonRoundtrip, "Data Readers", 1 );
@@ -45,6 +46,125 @@ oyjlTESTRESULT_e testVersion()
     result = oyjlTESTRESULT_SUCCESS;
   else
     result = oyjlTESTRESULT_FAIL;
+
+  return result;
+}
+
+oyjlTESTRESULT_e testDataFormat ()
+{
+  oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
+
+  fprintf(stdout, "\n" );
+
+  const char * data = NULL;
+  int format = oyjlDataFormat(data);
+  if(format == -1)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlDataFormat (%s) = %d guessed                ", data?data:"NULL", format );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlDataFormat (%s) = %d guessed                ", data?data:"NULL", format );
+  }
+
+  data = "";
+  format = oyjlDataFormat(data);
+  if(format == -2)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlDataFormat (\"%s\") = %d guessed                ", data, format );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlDataFormat (\"%s\") = %d guessed                ", data, format );
+  }
+
+  data = "  \t ";
+  format = oyjlDataFormat(data);
+  if(format == -2)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlDataFormat (\"%s\") = %d guessed           ", data, format );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlDataFormat (\"%s\") = %d guessed           ", data, format );
+  }
+
+  data = "\t XYZ";
+  format = oyjlDataFormat(data);
+  if(format == 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlDataFormat (\"%s\") = %d guessed        ", data, format );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlDataFormat (\"%s\") = %d guessed        ", data, format );
+  }
+
+  data = " {\"a\":}";
+  format = oyjlDataFormat(data);
+  if(format == 7)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlDataFormat (\"%s\") = %d guessed             ", data, format );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlDataFormat (\"%s\") = %d guessed             ", data, format );
+  }
+
+  data = " [{\"a\":}]";
+  format = oyjlDataFormat(data);
+  if(format == 7)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlDataFormat (\"%s\") = %d guessed          ", data, format );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlDataFormat (\"%s\") = %d guessed          ", data, format );
+  }
+
+  data = "  <?xml attr=\"XX\"><p>";
+  format = oyjlDataFormat(data);
+  if(format == 8)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlDataFormat (\"%s\") = %d guessed", data, format );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlDataFormat (\"%s\") = %d guessed", data, format );
+  }
+
+  data = "  <p>XYZ";
+  format = oyjlDataFormat(data);
+  if(format == 8)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlDataFormat (\"%s\") = %d guessed         ", data, format );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlDataFormat (\"%s\") = %d guessed         ", data, format );
+  }
+
+  data = "  \n---\na:";
+  format = oyjlDataFormat(data);
+  if(format == 9)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlDataFormat (\"%s\") = %d guessed             ", data, format );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlDataFormat (\"%s\") = %d guessed             ", data, format );
+  }
+
+  data = "---a:";
+  format = oyjlDataFormat(data);
+  if(format == 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlDataFormat (\"%s\") = %d guessed             ", data, format );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlDataFormat (\"%s\") = %d guessed             ", data, format );
+  }
+
+  data = "  ---\na:";
+  format = oyjlDataFormat(data);
+  if(format == 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlDataFormat (\"%s\") = %d guessed             ", data, format );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlDataFormat (\"%s\") = %d guessed             ", data, format );
+  }
 
   return result;
 }
@@ -223,13 +343,15 @@ oyjlTESTRESULT_e testFromJson ()
   char error_buffer[128];
   char * text = 0;
   int level = 0;
+  int format;
 
   oyjl_val root = 0;
 
   root = oyjlTreeParse( json, error_buffer, 128 );
 
   oyjlTreeToJson( root, &level, &text );
-  if(text && text[0] && strlen(text) > 20)
+  format = oyjlDataFormat(text);
+  if(text && text[0] && strlen(text) > 20 && format == 7)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "oyjlTreeToJson()                     %lu", (unsigned long)strlen(text) );
     fprintf( zout, "%s\n", text );
@@ -241,7 +363,8 @@ oyjlTESTRESULT_e testFromJson ()
 
   text = NULL;
   oyjlTreeToYaml( root, &level, &text );
-  if(text && text[0] && strlen(text) > 20)
+  format = oyjlDataFormat(text);
+  if(text && text[0] && strlen(text) > 20 && format == 9)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "oyjlTreeToYaml()                     %lu", (unsigned long)strlen(text) );
     fprintf( zout, "%s\n", text );
@@ -253,7 +376,8 @@ oyjlTESTRESULT_e testFromJson ()
 
   text = NULL;
   oyjlTreeToXml( root, &level, &text );
-  if(text && text[0] && strlen(text) > 20)
+  format = oyjlDataFormat(text);
+  if(text && text[0] && strlen(text) > 20 && format == 8)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "oyjlTreeToXml ()                     %lu", (unsigned long)strlen(text) );
     fprintf( zout, "%s\n", text );
