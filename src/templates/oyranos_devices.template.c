@@ -2553,9 +2553,9 @@ int            oyFilterNode_GetUi    ( oyFilterNode_s     * node,
 
   if(!error && (*node_)->core->api4_->ui->oyCMMuiGet)
     error = (*node_)->core->api4_->ui->oyCMMuiGet( (oyCMMapiFilter_s*) (*node_)->core->api4_, options, flags, &tmp4, oyAllocateFunc_ );
-  if(!(flags & oyNAME_JSON) && tmp4 && oyJson(tmp4))
+  if(!(flags & oyNAME_JSON) && tmp4 && oyjlDataFormat(tmp4) == oyNAME_JSON)
     flags |= oyNAME_JSON;
-  if(flags & oyNAME_JSON && tmp4 && !oyJson(tmp4))
+  if(flags & oyNAME_JSON && tmp4 && oyjlDataFormat(tmp4) != oyNAME_JSON)
     flags = flags & (~oyNAME_JSON);
 
   if(!error)

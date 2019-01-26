@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2016-2018 (C) Kai-Uwe Behrmann
+ *            2016-2019 (C) Kai-Uwe Behrmann
  *
  *  @brief    JSON functions
  *  @internal
@@ -24,7 +24,6 @@ extern "C" {
 #include "oyranos_string.h"
 #include "oyjl.h"
 
-int          oyJson                  ( const char        * json );
 oyjl_val     oyJsonParse             ( const char        * json );
 char *       oyJsonFromModelAndUi    ( const char        * data,
                                        const char        * ui_text,

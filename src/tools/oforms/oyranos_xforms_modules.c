@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2012-2015 (C) Kai-Uwe Behrmann
+ *            2012-2019 (C) Kai-Uwe Behrmann
  *
  *  @brief    module options tool
  *  @internal
@@ -299,9 +299,9 @@ int main (int argc, char ** argv)
     /* ... then get the UI for this filters options. */
     error = oyFilterNode_GetUi( node, flags, &ui_text, &namespaces, malloc );
     oyFilterNode_Release( &node );
-    if(!(flags & oyNAME_JSON) && ui_text && oyJson(ui_text))
+    if(!(flags & oyNAME_JSON) && ui_text && oyjlDataFormat(ui_text) == oyNAME_JSON)
       flags |= oyNAME_JSON;
-    if(flags & oyNAME_JSON && ui_text && !oyJson(ui_text))
+    if(flags & oyNAME_JSON && ui_text && oyjlDataFormat(ui_text) != oyNAME_JSON)
       flags = flags & (~oyNAME_JSON);
 
     data = oyOptions_GetText( opts, oyNAME_NAME );

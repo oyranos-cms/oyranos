@@ -265,7 +265,7 @@ oyOptions_s *  oyOptions_FromText    ( const char        * text,
 {
   oyOptions_s * s = 0;
   int error = !text;
-  int is_json = !error && oyJson(text);
+  int is_json = !error && oyjlDataFormat(text) == oyNAME_JSON;
 #ifdef HAVE_LIBXML2
   xmlDocPtr doc = 0;
   xmlNodePtr cur = 0;
