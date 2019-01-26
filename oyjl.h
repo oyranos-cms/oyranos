@@ -40,6 +40,8 @@
 #define OYJL_API
 #endif
 
+#include "oyjl_version.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -258,6 +260,8 @@ void       oyjlValueClear            ( oyjl_val            v );
 int        oyjlPathMatch             ( const char        * path,
                                        const char        * xpath,
                                        int                 flags );
+
+int        oyjlDataFormat            ( const char        * text );
 /** @} *//* oyjl_tree */
 
 /* --- Core --- */
