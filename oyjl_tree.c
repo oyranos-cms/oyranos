@@ -1191,7 +1191,7 @@ oyjl_val   oyjlTreeGetValueF         ( oyjl_val            v,
   return value;
 }
 
-/** Function oyjlTreeSetValuef
+/** Function oyjlTreeSetStringF
  *  @brief   set a child node to a string value
  *
  *  @param[in,out] root                the oyjl node
@@ -1228,6 +1228,60 @@ int        oyjlTreeSetStringF        ( oyjl_val            root,
 
   if(value_node)
     oyjlValueSetString( value_node, value_text );
+  else
+    error = -1;
+
+  return error;
+}
+
+/** Function oyjlTreeSetDoubleF
+ *  @brief   set a child node to a string value
+ *
+ *  @param[in,out] root                the oyjl node
+ *  @param[in]     flags               ::OYJL_CREATE_NEW - allocates nodes even
+ *                                     if they did not yet exist
+ *  @param[in]     value               IEEE floating point number with double precission
+ *  @param[in]     format              the format for the slashed xpath string
+ *  @param[in]     ...                 the variable argument list; optional
+ *  @return                            error
+ *                                     - -1 - if not found
+ *                                     - 0 on success
+ *                                     - else error
+ *
+ *  @version Oyranos: 0.9.7
+ *  @date    2019/01/26
+ *  @since   2019/01/26 (Oyranos: 0.9.7)
+ */
+int        oyjlTreeSetDoubleF        ( oyjl_val            root,
+                                       int                 flags,
+                                       double              value,
+                                       const char        * format,
+                                                           ... )
+{
+  oyjl_val value_node = NULL;
+
+  char * text = NULL;
+  int error = 0;
+
+  OYJL_CREATE_VA_STRING(format, text, malloc, return 1)
+
+  value_node = oyjlTreeGetValue( root, flags, text );
+
+  if(text) { free(text); text = NULL; }
+
+  if(value_node)
+  {
+    oyjl_val v = value_node;
+    oyjlValueClear( v );
+    v->type = oyjl_t_number;
+    v->u.number.d = value;
+    error = oyjlStringAdd( &v->u.number.r, 0,0, "%g", value );
+    v->u.number.flags |= OYJL_NUMBER_DOUBLE_VALID;
+    errno = 0;
+    v->u.number.i = strtol(v->u.number.r, 0, 10);
+    if(errno == 0)
+      v->u.number.flags |= OYJL_NUMBER_INT_VALID;
+  }
   else
     error = -1;
 
