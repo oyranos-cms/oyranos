@@ -247,6 +247,11 @@ int        oyjlTreeSetStringF        ( oyjl_val            root,
                                        const char        * value_text,
                                        const char        * format,
                                                            ... );
+int        oyjlTreeSetDoubleF        ( oyjl_val            root,
+                                       int                 flags,
+                                       double              value,
+                                       const char        * format,
+                                                           ... );
 char *     oyjlValueText             ( oyjl_val            v,
                                        void*             (*alloc)(size_t));
 int        oyjlValueCount            ( oyjl_val            v );
