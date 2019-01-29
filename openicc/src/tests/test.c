@@ -76,8 +76,8 @@ oyjlTESTRESULT_e testI18N()
     "setlocale() initialised failed %s          ", lang );
   }
 
-  text = _("DESCRIPTION");
-  if(strcmp(text,"BESCHREIBUNG") == 0)
+  text = _("Camera");
+  if(strcmp(text,"Kamera") == 0)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "dgettext() good \"%s\"                      ", text );
   } else
