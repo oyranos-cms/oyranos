@@ -189,11 +189,11 @@ int main(int argc, char *argv[])
                         else if(OY_IS_ARG("num-version"))
                         { fprintf( stdout, "%d\n", OYRANOS_VERSION ); return 0; }
                         else if(OY_IS_ARG("cflags"))
-                        { return system( "pkg-config --cflags oyranos" ); }
+                        { system( "pkg-config --cflags oyranos" ); i=100; break; }
                         else if(OY_IS_ARG("ldflags"))
-                        { return system( "pkg-config --libs oyranos" ); }
+                        { system( "pkg-config --libs oyranos" ); i=100; break; }
                         else if(OY_IS_ARG("ldstaticflags"))
-                        { puts( "-L" OY_LIBDIR " -loyranos-static\n" ); return 0; }
+                        { puts( "-L" OY_LIBDIR " -loyranos-static" ); i=100; break; }
                         else if(OY_IS_ARG("syscolordir"))
                         { puts( OY_SYSCOLORDIR "\n" ); return 0; }
                         else if(OY_IS_ARG("usercolordir"))
