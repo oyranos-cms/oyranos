@@ -201,7 +201,7 @@ const char *   oyOption_GetText      ( oyOption_s        * obj,
  *
  *  @param         obj                 the option
  *  @param         text                the text to set
- *  @param         flags               possible is ::OY_STRING_LIST
+ *  @param         flags               possible is ::OY_STRING_LIST with newline '\n' delimiter
  *  @return                            0 - success, 1 - error
  *
  *  @version Oyranos: 0.2.1
