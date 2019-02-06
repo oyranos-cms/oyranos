@@ -348,6 +348,9 @@ static cmsContext (*l2cmsGetProfileContextID)(cmsHPROFILE hProfile) = NULL;
 static cmsContext (*l2cmsGetTransformContextID)(cmsHPROFILE hProfile) = NULL;
 static int dummyGetEncodedCMMversion() {return LCMS_VERSION;}
 static int (*l2cmsGetEncodedCMMversion)(void) = dummyGetEncodedCMMversion;
+static cmsHANDLE         (*l2cmsIT8LoadFromMem)(cmsContext ContextID, const void *Ptr, cmsUInt32Number len);
+static cmsUInt32Number   (*l2cmsIT8EnumProperties)(cmsHANDLE hIT8, char ***PropertyNames);
+static cmsUInt32Number   (*l2cmsIT8EnumPropertyMulti)(cmsHANDLE hIT8, const char* cProp, const char ***SubpropertyNames);
 
 #if !defined(COMPILE_STATIC)
 #define LOAD_FUNC( func, fallback_func ) l2##func = dlsym(l2cms_handle, #func ); \
@@ -520,6 +523,9 @@ int                l2cmsCMMInit       ( oyStruct_s        * filter OY_UNUSED )
           l2cms_msg( oyMSG_WARN, (oyStruct_s*)NULL,
                     OY_DBG_FORMAT_" compile and run time version differ %d %d",
                     OY_DBG_ARGS_, l2cmsGetEncodedCMMversion, LCMS_VERSION );
+      LOAD_FUNC( cmsIT8LoadFromMem, NULL );
+      LOAD_FUNC( cmsIT8EnumProperties, NULL );
+      LOAD_FUNC( cmsIT8EnumPropertyMulti, NULL );
           
 #if !defined(COMPILE_STATIC)
       if(error)
@@ -623,6 +629,9 @@ int                l2cmsCMMInit       ( oyStruct_s        * filter OY_UNUSED )
 #define cmsGetProfileContextID l2cmsGetProfileContextID
 #define cmsGetTransformContextID l2cmsGetTransformContextID
 #define cmsGetEncodedCMMversion l2cmsGetEncodedCMMversion
+#define cmsIT8LoadFromMem l2cmsIT8LoadFromMem
+#define cmsIT8EnumProperties l2cmsIT8EnumProperties
+#define cmsIT8EnumPropertyMulti l2cmsIT8EnumPropertyMulti
 
 #include "lcm2_profiler.c"
 
@@ -3220,23 +3229,38 @@ int l2cmsGetOptionsUI                ( oyCMMapiFilter_s   * module OY_UNUSED,
  *
  *  @version Oyranos: 0.9.7
  *  @since   2017/11/26 (Oyranos: 0.9.7)
- *  @date    2017/11/26
+ *  @date    2019/02/04
  */
-oyImage_s* lcm2ParseCGATS          ( const char        * cgats )
+oyPointer_s* lcm2ParseCGATS          ( const char        * cgats )
 {
   int error = !cgats;
-  oyImage_s * spec = NULL;
-  if(error) return spec;
+  oyPointer_s * ptr = NULL;
+  oyjl_val root = NULL;
+  char ** props = NULL;
+  cmsHANDLE lcgats;
+
+  if(error) return ptr;
+  cmsContext tc = l2cmsCreateContext( NULL, NULL ); /* threading context */
+  lcgats = l2cmsIT8LoadFromMem(tc, cgats, strlen(cgats));
+  int n = l2cmsIT8EnumProperties( lcgats, &props ), i;
+  for(i = 0; i < n; ++i)
+    l2cms_msg( oyMSG_DBG, NULL, OY_DBG_FORMAT_
+               "Properties: %s", OY_DBG_ARGS_, props[i] );
+  /* lcms has no API to analyse BEGIN_DATA_FORMAT END_DATA_FORMAT section - very limiting in order to understand the meaning of the table values */
+  n = l2cmsIT8EnumPropertyMulti( lcgats, "BEGIN_DATA_FORMAT", &props );
 
   /** @todo implement CGATS parsing with cmsCGATS */
+  ptr = oyPointer_New(0);
+  oyPointer_Set( ptr, __FILE__,
+                 "oyjl_val", root, 0, 0 );
 
-  return spec;
+  return ptr;
 }
 
 #define OY_LCM2_PARSE_CGATS OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH \
   "parse_cgats.cgats._" CMM_NICK "._CPU"
 
-/** @brief  lcm2ParseCGATS()
+/** @brief  l2cmsMOptions_Handle5()
  *  This function implements oyMOptions_Handle_f.
  *
  *  @param[in]     options             expects at least one options
@@ -3248,7 +3272,7 @@ oyImage_s* lcm2ParseCGATS          ( const char        * cgats )
  *
  *  @version Oyranos: 0.9.7
  *  @since   2017/11/26 (Oyranos: 0.9.7)
- *  @date    2017/11/26
+ *  @date    2019/02/04
  */
 int          l2cmsMOptions_Handle5   ( oyOptions_s       * options,
                                        const char        * command,
@@ -3267,9 +3291,9 @@ int          l2cmsMOptions_Handle5   ( oyOptions_s       * options,
     else
       return -1;
   }
-  else if(oyFilterRegistrationMatch(command,"parse_cgats.cgats", 0))
+  else if(oyFilterRegistrationMatch(command,"parse_cgats", 0))
   {
-    oyImage_s * spec = NULL;
+    oyPointer_s * spec = NULL;
     const char * cgats = NULL;
 
     cgats = oyOptions_FindString( options, "cgats", 0 );
@@ -3278,7 +3302,7 @@ int          l2cmsMOptions_Handle5   ( oyOptions_s       * options,
 
     if(spec)
     {
-      oyOption_s * o = oyOption_FromRegistration( ".colors", 0 );
+      oyOption_s * o = oyOption_FromRegistration( OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "cgats.data._" CMM_NICK, 0 );
       error = oyOption_MoveInStruct( o, (oyStruct_s**) &spec );
       if(!*result)
         *result = oyOptions_New(0);
@@ -3296,7 +3320,7 @@ int          l2cmsMOptions_Handle5   ( oyOptions_s       * options,
  *
  *  @version Oyranos: 0.9.7
  *  @since   2017/06/06 (Oyranos: 0.9.7)
- *  @date    2017/06/06
+ *  @date    2019/02/04
  */
 const char * l2cmsInfoGetTextProfileC5(const char        * select,
                                        oyNAME_e            type,
@@ -3317,7 +3341,7 @@ const char * l2cmsInfoGetTextProfileC5(const char        * select,
     else if(type == oyNAME_NAME)
       return _("Parse CGATS text.");
     else
-      return _("The littleCMS \"parse_cgats\" command lets you parse CGATS files. The filter expects a oyOption_s object with name \"cgats\" containing a string value. The result will appear in \"colors\" as a oyImage_s.");
+      return _("The littleCMS \"parse_cgats\" command lets you parse CGATS files. The filter expects a oyOption_s object with name \"cgats\" containing a string value. The result will appear in \"data\" as a oyPointer_s containing a oyjl_val.");
   } else if(strcmp(select, "help")==0)
   {
          if(type == oyNAME_NICK)
@@ -3341,7 +3365,7 @@ const char *l2cms_texts_parse_cgats[4] = {"can_handle","parse_cgats","help",0};
  *
  *  @version Oyranos: 0.9.7
  *  @since   2017/06/05 (Oyranos: 0.9.7)
- *  @date    2017/06/05
+ *  @date    2019/02/04
  */
 oyCMMapi10_s_    l2cms_api10_cmm5 = {
 
