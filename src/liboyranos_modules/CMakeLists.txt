@@ -2,6 +2,7 @@ SET( CFILES_OBJECT_MODULES_PUBLIC
 	${GENDIR}oyCMMapi_s.c
 	${GENDIR}oyCMMapi4_s.c
 	${GENDIR}oyCMMapi7_s.c
+	${GENDIR}oyCMMapi10_s.c
 	${GENDIR}oyCMMapis_s.c
 	${GENDIR}oyCMMapiFilter_s.c
 	${GENDIR}oyCMMapiFilters_s.c
@@ -33,7 +34,6 @@ SET( CFILES_OBJECT_MODULES
 	${GENDIR}oyCMMapi8_s_.c
 	${GENDIR}oyCMMapi9_s.c
 	${GENDIR}oyCMMapi9_s_.c
-	${GENDIR}oyCMMapi10_s.c
 	${GENDIR}oyCMMapi10_s_.c
 	${GENDIR}oyCMMapis_s_.c
 	${GENDIR}oyCMMapiFilter_s_.c
@@ -57,6 +57,7 @@ SET( CHEADERS_OBJECT_MODULES_PUBLIC
 	${GENDIR}oyCMMapi_s.h
 	${GENDIR}oyCMMapi4_s.h
 	${GENDIR}oyCMMapi7_s.h
+	${GENDIR}oyCMMapi10_s.h
 	${GENDIR}oyCMMapis_s.h
 	${GENDIR}oyCMMapiFilter_s.h
 	${GENDIR}oyCMMapiFilters_s.h
@@ -81,7 +82,6 @@ SET( CHEADERS_OBJECT_MODULES
 	${GENDIR}oyCMMapi6_s.h
 	${GENDIR}oyCMMapi8_s.h
 	${GENDIR}oyCMMapi9_s.h
-	${GENDIR}oyCMMapi10_s.h
 	${GENDIR}oyCMMinfo_s.h
 	${GENDIR}oyCMMobjectType_s.h
 	${GENDIR}oyCMMapi_s_.h
