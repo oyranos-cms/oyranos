@@ -420,6 +420,7 @@ void       oyjlStringListAddStaticString (
 
   if(!list || !n) return;
 
+  if(!deAlloc) deAlloc = free;
   n_alt = *n;
 
   oyjlAllocHelper_m(nlist, char*, n_alt + 2, alloc, return);
