@@ -1275,7 +1275,16 @@ int        oyjlTreeSetDoubleF        ( oyjl_val            root,
     oyjlValueClear( v );
     v->type = oyjl_t_number;
     v->u.number.d = value;
+#ifdef OYJL_HAVE_LOCALE_H
+    char * save_locale = oyjlStringCopy( setlocale(LC_NUMERIC, 0 ), malloc );
+    setlocale(LC_NUMERIC, "C");
+#endif
     error = oyjlStringAdd( &v->u.number.r, 0,0, "%g", value );
+#ifdef OYJL_HAVE_LOCALE_H
+    setlocale(LC_NUMERIC, save_locale);
+    if(save_locale)
+      free( save_locale );
+#endif
     v->u.number.flags |= OYJL_NUMBER_DOUBLE_VALID;
     errno = 0;
     v->u.number.i = strtol(v->u.number.r, 0, 10);
