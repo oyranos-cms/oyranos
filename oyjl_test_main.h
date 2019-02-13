@@ -16,23 +16,15 @@
 
 #include "oyjl_test.h"
 
-/** \addtogroup oyjl_test
- *
- *  Define somewhere in your test.c file a TESTS_RUN
- *  with your test functions like:
- *  @code
-#define TESTS_RUN \
-  TEST_RUN( testVersion, "Version matching", 1 ); \
-  TEST_RUN( testJson, "JSON handling", 1 ); \
-  TEST_RUN( testFromJson, "Data Writers", 1 ); \
-  TEST_RUN( testJsonRoundtrip, "Data Readers", 1 );
-    @endcode
- *  Then include simply the oyjl_test_main.h header and it defines
- *  a main() function for you to handle command line parsing, statistics
- *  and summary printing after test program finish.
- *
- *  @example test.c
+/** \addtogroup oyjl
  *  @{ *//* oyjl */
+
+/** \addtogroup oyjl_test
+ *  @{ *//* oyjl_test */
+
+/** @brief print more results, when the -v argument is passed to the test program. */
+int verbose = 0;
+
 /** @brief simple start function for testing program */
 int main(int argc, char** argv)
 {
@@ -57,6 +49,23 @@ int main(int argc, char** argv)
   i = 1; while(i < argc) if( strcmp(argv[i++],"--silent") == 0 )
   { ++argpos;
     zout = stderr;
+  }
+
+  /** Use the verbose variable in your test code to enable additional result printing.
+   *  The test command argument '-v' will set the verbose variable to 1, default is 0.
+   */
+  i = 1; while(i < argc) if( strcmp(argv[i++],"-v") == 0 )
+  { ++argpos;
+    verbose = 1;
+  }
+
+  i = 1; while(i < argc) if( strcmp(argv[i++],"-h") == 0 )
+  { ++argpos;
+    fprintf( stdout, "    Hint: the '-l' option will list all test names\n" );
+    fprintf( stdout, "    Hint: the '-v' option enables the 'verbose' variable\n" );
+    fprintf( stdout, "    Hint: the '--silent' option sends all zout printing to stderr\n" );
+    fprintf( stdout, "    Hint: the '-h' option prints this help text\n" );
+    return 0;
   }
 
   fprintf( zout, "\nTests"
@@ -109,6 +118,7 @@ int main(int argc, char** argv)
 
   return error;
 }
-/*  @} *//* oyjl */
+/*  @} *//* oyjl_test */
+/** @} *//* oyjl */
 
 #endif /* OYJL_TEST_MAIN_H */
