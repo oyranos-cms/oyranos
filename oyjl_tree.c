@@ -186,7 +186,7 @@ char * oyjlValueText (oyjl_val v, void*(*alloc)(size_t size))
     case oyjl_t_object:
          break;
     default:
-         oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT_ "unknown type: %d", OYJL_DBG_ARGS_, v->type );
+         oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "unknown type: %d", OYJL_DBG_ARGS, v->type );
          break;
   }
 
@@ -283,7 +283,7 @@ static void  oyjlTreeFind_           ( oyjl_val            root,
          }
          break;
     default:
-         oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT_ "unknown type: %d", OYJL_DBG_ARGS_, root->type );
+         oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "unknown type: %d", OYJL_DBG_ARGS, root->type );
          break;
   }
 }
@@ -436,7 +436,7 @@ void oyjlTreeToJson (oyjl_val v, int * level, char ** json)
              oyjlJsonIndent( json, "\n", *level, NULL );
              if(!v->u.object.keys || !v->u.object.keys[i])
              {
-               oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT_ "missing key", OYJL_DBG_ARGS_ );
+               oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "missing key", OYJL_DBG_ARGS );
                if(json && *json)
                {
                  free(*json);
@@ -458,7 +458,7 @@ void oyjlTreeToJson (oyjl_val v, int * level, char ** json)
          }
          break;
     default:
-         oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT_ "unknown type: %d", OYJL_DBG_ARGS_, v->type );
+         oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "unknown type: %d", OYJL_DBG_ARGS, v->type );
          break;
   }
   return;
@@ -540,7 +540,7 @@ void               oyjlTreeToYaml    ( oyjl_val            v,
              oyjlJsonIndent( text, "\n", *level, NULL );
              if(!v->u.object.keys || !v->u.object.keys[i])
              {
-               oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT_ "missing key", OYJL_DBG_ARGS_ );
+               oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "missing key", OYJL_DBG_ARGS );
                if(text && *text)
                {
                  free(*text);
@@ -556,7 +556,7 @@ void               oyjlTreeToYaml    ( oyjl_val            v,
          }
          break;
     default:
-         oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT_ "unknown type: %d", OYJL_DBG_ARGS_, v->type );
+         oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "unknown type: %d", OYJL_DBG_ARGS, v->type );
          break;
   }
   return;
@@ -634,7 +634,7 @@ void oyjlTreeToXml2 (oyjl_val v, const char * parent_key, int * level, char ** t
           {
             if(!v->u.object.keys || !v->u.object.keys[i])
             {
-              oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT_ "missing key", OYJL_DBG_ARGS_ );
+              oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "missing key", OYJL_DBG_ARGS );
               if(text && *text)
               {
                 free(*text);
@@ -743,7 +743,7 @@ void oyjlTreeToXml2 (oyjl_val v, const char * parent_key, int * level, char ** t
          }
          break;
     default:
-          oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT_ "unknown type: %d", OYJL_DBG_ARGS_, v->type );
+          oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "unknown type: %d", OYJL_DBG_ARGS, v->type );
          break;
   }
 }
@@ -780,7 +780,7 @@ void               oyjlTreeToXml     ( oyjl_val            v,
     case oyjl_t_false:
     case oyjl_t_string:
     case oyjl_t_array:
-          oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT_ "Need one key as root element! This object has no key. type: %d", OYJL_DBG_ARGS_, v->type );
+          oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "Need one key as root element! This object has no key. type: %d", OYJL_DBG_ARGS, v->type );
          break;
     case oyjl_t_object:
          {
@@ -788,12 +788,12 @@ void               oyjlTreeToXml     ( oyjl_val            v,
 
           if(count != 1)
           {
-            oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT_ "Need one single object as root element! count: %d", OYJL_DBG_ARGS_, count );
+            oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "Need one single object as root element! count: %d", OYJL_DBG_ARGS, count );
             break;
           }
           if(!v->u.object.keys || !v->u.object.keys[0])
           {
-            oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT_ "missing key", OYJL_DBG_ARGS_ );
+            oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "missing key", OYJL_DBG_ARGS );
             if(text && *text)
             {
               free(*text);
@@ -805,7 +805,7 @@ void               oyjlTreeToXml     ( oyjl_val            v,
          }
          break;
     default:
-          oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT_ "unknown type: %d", OYJL_DBG_ARGS_, v->type );
+          oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "unknown type: %d", OYJL_DBG_ARGS, v->type );
          break;
   }
   return;
@@ -1016,7 +1016,7 @@ static oyjl_val  oyjlTreeGetValue_   ( oyjl_val            v,
                     sizeof(*(parent->u.array.values)) * (parent->u.array.len + 1));
             if (tmp == NULL)
             {
-              oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT_ "could not allocate memory", OYJL_DBG_ARGS_ );
+              oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "could not allocate memory", OYJL_DBG_ARGS );
               oyjlTreeFree( level );
               goto  clean;
             }
@@ -1067,7 +1067,7 @@ static oyjl_val  oyjlTreeGetValue_   ( oyjl_val            v,
                     sizeof(*(parent->u.object.values)) * (parent->u.object.len + 1));
             if (tmp == NULL)
             {
-              oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT_ "could not allocate memory", OYJL_DBG_ARGS_ );
+              oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "could not allocate memory", OYJL_DBG_ARGS );
               oyjlTreeFree( level );
               goto clean;
             }
@@ -1077,7 +1077,7 @@ static oyjl_val  oyjlTreeGetValue_   ( oyjl_val            v,
                     sizeof(*(parent->u.object.keys)) * (parent->u.object.len + 1));
             if (keys == NULL)
             {
-              oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT_ "could not allocate memory", OYJL_DBG_ARGS_ );
+              oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "could not allocate memory", OYJL_DBG_ARGS );
               oyjlTreeFree( level );
               goto clean;
             }
