@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2019-01-24 08:59+0100\n"
+"POT-Creation-Date: 2019-02-10 05:01+0100\n"
 "PO-Revision-Date: 2006-06-29 19:31+0200\n"
 "Last-Translator: Pascal LACROIX <lacroixpascal at vfemail.net>\n"
 "Language-Team: <fr@li.org>\n"
@@ -20,11 +20,11 @@ msgstr ""
 msgid "... try with --help|-h option for usage text. give up"
 msgstr ""
 
-#: oyjl_args.c:1605 oyjl_args.c:1776
+#: oyjl_args.c:1604 oyjl_args.c:1774
 msgid "AUTHOR"
 msgstr ""
 
-#: test-core.c:328
+#: test-core.c:383
 msgid "Actual mode"
 msgstr ""
 
@@ -32,15 +32,15 @@ msgstr ""
 msgid "Add gettext translated keys to JSON:"
 msgstr ""
 
-#: oyjl_args.c:1615 oyjl_args.c:1786 oyjl_args.c:1788
+#: oyjl_args.c:1614 oyjl_args.c:1784 oyjl_args.c:1786
 msgid "BUGS"
 msgstr ""
 
-#: oyjl_args.c:1609 oyjl_args.c:1780
+#: oyjl_args.c:1608 oyjl_args.c:1778
 msgid "COPYRIGHT"
 msgstr ""
 
-#: test-core.c:319
+#: test-core.c:374
 #, fuzzy
 msgid "Control Output"
 msgstr "Sortie"
@@ -53,7 +53,7 @@ msgstr ""
 msgid "Copyright"
 msgstr "Copyright"
 
-#: oyjl_args.c:1520 oyjl_args.c:1695
+#: oyjl_args.c:1519 oyjl_args.c:1693
 msgid "DESCRIPTION"
 msgstr ""
 
@@ -103,7 +103,7 @@ msgstr ""
 msgid "Export formated text"
 msgstr ""
 
-#: test-core.c:318
+#: test-core.c:373
 msgid "FILENAME"
 msgstr ""
 
@@ -123,7 +123,7 @@ msgstr ""
 msgid "GUI + Command"
 msgstr ""
 
-#: test-core.c:329
+#: test-core.c:384
 #, fuzzy
 msgid "General options"
 msgstr "Options"
@@ -157,7 +157,7 @@ msgstr ""
 msgid "HISTORY"
 msgstr ""
 
-#: test-core.c:320
+#: test-core.c:375
 msgid "Help"
 msgstr ""
 
@@ -173,7 +173,7 @@ msgstr ""
 msgid "Json + Command"
 msgstr ""
 
-#: oyjl_args.c:1206 oyjl_args.c:1611 oyjl_args.c:1782
+#: oyjl_args.c:1206 oyjl_args.c:1610 oyjl_args.c:1780
 msgid "License"
 msgstr ""
 
@@ -191,12 +191,12 @@ msgstr "Fabricant:   "
 msgid "Markdown"
 msgstr ""
 
-#: test-core.c:329
+#: test-core.c:384
 msgid "Misc"
 msgstr ""
 
 #. type,   flags, name,      description,          help, mandatory, optional, detail
-#: test-core.c:328
+#: test-core.c:383
 #, fuzzy
 msgid "Mode"
 msgstr "Model:"
@@ -210,11 +210,11 @@ msgstr "Options"
 msgid "No"
 msgstr ""
 
-#: oyjl_args.c:1522 oyjl_args.c:1697
+#: oyjl_args.c:1521 oyjl_args.c:1695
 msgid "OPTIONS"
 msgstr ""
 
-#: test-core.c:304
+#: test-core.c:359
 msgid "October 10, 2018"
 msgstr ""
 
@@ -239,16 +239,16 @@ msgstr ""
 msgid "Oyjl Module Author"
 msgstr "Oyranos Préférences"
 
-#: test-core.c:310
+#: test-core.c:365
 msgid "Print All"
 msgstr ""
 
-#: test-core.c:311
+#: test-core.c:366
 #, fuzzy
 msgid "Print Camera"
 msgstr "Fichier"
 
-#: test-core.c:311
+#: test-core.c:366
 msgid "Print Camera JSON"
 msgstr ""
 
@@ -256,7 +256,7 @@ msgstr ""
 msgid "Print JSON:"
 msgstr ""
 
-#: test-core.c:312
+#: test-core.c:367
 #, fuzzy
 msgid "Print None"
 msgstr "Fichier"
@@ -291,11 +291,11 @@ msgstr "Oyranos Préférences"
 msgid "SEE AS WELL"
 msgstr ""
 
-#: oyjl_args.c:1509 oyjl_args.c:1684
+#: oyjl_args.c:1508 oyjl_args.c:1682
 msgid "SYNOPSIS"
 msgstr ""
 
-#: test-core.c:318
+#: test-core.c:373
 #, fuzzy
 msgid "Set Input"
 msgstr "Entrée"
@@ -306,8 +306,8 @@ msgstr ""
 
 #. tell about the tool
 #. argc+argv are required for parsing the command line options
-#: test-core.c:335 test-core.c:349 test-core.c:363 test-core.c:376
-#: test-core.c:389 test-core.c:403
+#: test-core.c:390 test-core.c:404 test-core.c:418 test-core.c:431
+#: test-core.c:444 test-core.c:458
 msgid "Short example tool using libOyjl"
 msgstr ""
 
@@ -323,7 +323,7 @@ msgstr ""
 msgid "Synopsis"
 msgstr ""
 
-#: test-core.c:303
+#: test-core.c:358
 msgid "The example tool demontrates the usage of the libOyjl API's."
 msgstr ""
 
@@ -362,13 +362,13 @@ msgstr "Oui"
 msgid "export"
 msgstr ""
 
-#: test-core.c:320
+#: test-core.c:375
 #, fuzzy
 msgid "help"
 msgstr "Aide"
 
 #. type,   flags, o,   option,    key,  name,         description,         help, value_name,    value_type,               values,                                                          variable_type, output variable
-#: test-core.c:318
+#: test-core.c:373
 #, fuzzy
 msgid "input"
 msgstr "Entrée"
@@ -403,7 +403,7 @@ msgstr ""
 msgid "locales in a comma separated list"
 msgstr ""
 
-#: oyjl_translate.c:59 test-core.c:319
+#: oyjl_translate.c:59 test-core.c:374
 #, fuzzy
 msgid "output"
 msgstr "Sortie"
@@ -413,7 +413,7 @@ msgid "output format string"
 msgstr ""
 
 #. declare some option choices
-#: test-core.c:308
+#: test-core.c:363
 msgid "oyjl.json"
 msgstr ""
 
@@ -429,7 +429,7 @@ msgstr ""
 msgid "to be used key names in a comma separated list"
 msgstr ""
 
-#: oyjl.c:74 oyjl_translate.c:62 test-core.c:321
+#: oyjl.c:74 oyjl_translate.c:62 test-core.c:376
 msgid "verbose"
 msgstr ""
 

@@ -1386,8 +1386,8 @@ char *       oyjlExtraManSection  ( oyjlOptions_s  * opts,
       if(n)
       {
         char * up = oyjlStringToUpper( &opt_name[4] );
-        char * sect = oyjlStringReplace( up, "_", " ", malloc, free );
-        const char * section = sect;
+        oyjlStringReplace( &up, "_", " ", malloc, free );
+        const char * section = up;
         if(strcmp(section,"EXAMPLES") == 0)
           section = _("EXAMPLES");
         else if(strcmp(section,"EXIT-STATE") == 0)
@@ -1409,7 +1409,6 @@ char *       oyjlExtraManSection  ( oyjlOptions_s  * opts,
             oyjlStringAdd( &text, malloc, free, "### %s\n%s %s %s\n", list[l].nick, list[l].name, list[l].description, list[l].help );
           else
             oyjlStringAdd( &text, malloc, free, ".TP\n%s\n.br\n%s %s %s\n", list[l].nick, list[l].name, list[l].description, list[l].help );
-        free(sect);
         free(up);
       }
     }
@@ -1666,8 +1665,7 @@ char *       oyjlUi_ToMarkdown    ( oyjlUi_s       * ui,
 #endif
 
   oyjlStringAdd( &doxy_link, malloc, free, "{#%s%s}", ui->nick, country?country:"" );
-  tmp = oyjlStringReplace( doxy_link, "-", "", malloc, free );
-  free(doxy_link); doxy_link = tmp; tmp = NULL;
+  oyjlStringReplace( &doxy_link, "-", "", malloc, free );
 
   oyjlStringAdd( &text, malloc, free, "# %s %s%s %s\n", ui->nick, vers?"v":"", vers?vers:"", doxy_link );
 
@@ -1787,13 +1785,9 @@ char *       oyjlUi_ToMarkdown    ( oyjlUi_s       * ui,
   else if(bugs)
     oyjlStringAdd( &text, malloc, free, "## %s\n[%s](%s)\n", _("BUGS"), bugs, bugs );
 
-  {
-    char * tmp = oyjlStringReplace( text, "`", "\\`", malloc, free );
-    text = oyjlStringReplace( tmp, "-", "\\-", malloc, free );
-    tmp = oyjlStringReplace( text, "_", "\\_", malloc, free );
-    free(text);
-    text = tmp;
-  }
+  oyjlStringReplace( &text, "`", "\\`", malloc, free );
+  oyjlStringReplace( &text, "-", "\\-", malloc, free );
+  oyjlStringReplace( &text, "_", "\\_", malloc, free );
 
   return text;
 }

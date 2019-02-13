@@ -316,9 +316,9 @@ int main(int argc, char ** argv)
           exit(1);
         }
 
-        text = oyjlStringReplace( text, "\"", "\\\"", NULL,NULL );
-        text = oyjlStringReplace( text, "\n", "\\n\\\n", NULL,NULL );
-        sname = oyjlStringReplace( sname, "-", "_", NULL,NULL );
+        oyjlStringReplace( &text, "\"", "\\\"", NULL,NULL );
+        oyjlStringReplace( &text, "\n", "\\n\\\n", NULL,NULL );
+        oyjlStringReplace( &sname, "-", "_", NULL,NULL );
         oyjlStringAdd( &tmp, malloc, free, "#define %s_json \"%s\"\n", sname, text );
         free(text); text = tmp; tmp = NULL;
       }

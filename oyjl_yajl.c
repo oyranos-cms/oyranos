@@ -816,19 +816,19 @@ static int oyjlYamlReadNode( yaml_document_t * doc, yaml_node_t * node, int flag
   count = oyjlYamlGetCount( node );
   if( node->type == YAML_SCALAR_NODE )
   {
-    char * t = (char*)node->data.scalar.value, * tmp = NULL;
-    if(t && strstr(t, ":\\ "))
-      t = tmp = oyjlStringReplace( t, ":\\ ", ": ", 0, 0);
-    if(t)
+    char * t = (char*)node->data.scalar.value,
+         * tmp = oyjlStringCopy(t,malloc);
+    oyjlStringReplace( &tmp, ":\\ ", ": ", 0, 0);
+    if(tmp)
     {
       double d;
       int err = -1;
       if(flags & OYJL_NUMBER_DETECTION && is_key != 1)
-        err = oyjlStringToDouble( t, &d );
+        err = oyjlStringToDouble( tmp, &d );
       if(err == 0)
-        oyjlStringAdd( json, 0,0, "%s", t );
+        oyjlStringAdd( json, 0,0, "%s", tmp );
       else
-        oyjlStringAdd( json, 0,0, "\"%s\"", t );
+        oyjlStringAdd( json, 0,0, "\"%s\"", tmp );
     }
     if(tmp) free(tmp);
   }

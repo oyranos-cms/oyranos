@@ -301,33 +301,39 @@ void       oyjlStringAddN            ( char             ** text,
 
 /** @brief   substitute pattern in a string
  *
- *  @param[in]     text                source string
+ *  @param[in,out] text                source string for in place manipulation
  *  @param[in]     search              pattern to be tested in text
  *  @param[in]     replacement         string to be put in place of search sub string
  *  @param[in]     alloc               custom allocator; optional, default is malloc
  *  @param[in]     deAlloc             custom deallocator matching alloc; optional, default is free
- *  @return                            manipulated result
+ *  @return                            number of occurences
  */
-char*      oyjlStringReplace         ( const char        * text,
+int        oyjlStringReplace         ( char             ** text,
                                        const char        * search,
                                        const char        * replacement,
                                        void*            (* alloc)(size_t),
                                        void             (* deAlloc)(void*) )
 {
   char * t = 0;
-  const char * start = text,
-             * end = text;
+  const char * start, * end;
+  int n = 0;
 
   void*(* allocate)(size_t size) = alloc?alloc:malloc;
   void (* deAllocate)(void * data ) = deAlloc?deAlloc:free;
 
-  if(text && search && replacement)
+  if(!text)
+    return 0;
+
+  start = end = *text;
+
+  if(start && search && replacement)
   {
     int s_len = strlen(search);
     while((end = strstr(start,search)) != 0)
     {
       oyjlStringAddN( &t, start, end-start, allocate, deAllocate );
       oyjlStringAddN( &t, replacement, strlen(replacement), allocate, deAllocate );
+      ++n;
       if(strlen(end) >= (size_t)s_len)
         start = end + s_len;
       else
@@ -338,12 +344,17 @@ char*      oyjlStringReplace         ( const char        * text,
         break;
       }
     }
+    if(n && start && end == NULL)
+      oyjlStringAddN( &t, start, strlen(start), allocate, deAllocate );
   }
 
-  if(start && strlen(start))
-    oyjlStringAddN( &t, start, strlen(start), allocate, deAllocate );
+  if(t)
+  {
+    deAllocate(*text);
+    *text = t;
+  }
 
-  return t;
+  return n;
 }
 
 

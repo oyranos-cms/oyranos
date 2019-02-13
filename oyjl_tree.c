@@ -390,15 +390,15 @@ void oyjlTreeToJson (oyjl_val v, int * level, char ** json)
     case oyjl_t_string:
          {
           const char * t = v->u.string;
-          char * tmp = NULL;
-          if(t && strstr(t, "\\")) t = tmp = oyjlStringReplace( t, "\\", "\\\\", 0, 0);
-          if(t && strstr(t, "\"")) t = tmp = oyjlStringReplace( t, "\"", "\\\"", 0, 0);
-          if(t && strstr(t, "\b")) t = tmp = oyjlStringReplace( t, "\b", "\\b", 0, 0);
-          if(t && strstr(t, "\f")) t = tmp = oyjlStringReplace( t, "\f", "\\f", 0, 0);
-          if(t && strstr(t, "\n")) t = tmp = oyjlStringReplace( t, "\n", "\\n", 0, 0);
-          if(t && strstr(t, "\r")) t = tmp = oyjlStringReplace( t, "\r", "\\r", 0, 0);
-          if(t && strstr(t, "\t")) t = tmp = oyjlStringReplace( t, "\t", "\\t", 0, 0);
-          oyjlStringAdd (json, 0,0, "\"%s\"", t);
+          char * tmp = oyjlStringCopy(t,malloc);
+          oyjlStringReplace( &tmp, "\\", "\\\\", 0, 0);
+          oyjlStringReplace( &tmp, "\"", "\\\"", 0, 0);
+          oyjlStringReplace( &tmp, "\b", "\\b", 0, 0);
+          oyjlStringReplace( &tmp, "\f", "\\f", 0, 0);
+          oyjlStringReplace( &tmp, "\n", "\\n", 0, 0);
+          oyjlStringReplace( &tmp, "\r", "\\r", 0, 0);
+          oyjlStringReplace( &tmp, "\t", "\\t", 0, 0);
+          oyjlStringAdd (json, 0,0, "\"%s\"", tmp);
           if(tmp) free(tmp);
          }
          break;
@@ -507,12 +507,10 @@ void               oyjlTreeToYaml    ( oyjl_val            v,
     case oyjl_t_string:
          {
           const char * t = v->u.string;
-          char * tmp = NULL;
-          if(t && strstr(t, "\""))
-            t = tmp = oyjlStringReplace( t, "\"", "\\\"", 0, 0);
-          if(t && strstr(t, ": "))
-            t = tmp = oyjlStringReplace( t, ": ", ":\\ ", 0, 0);
-          oyjlStringAdd (text, 0,0, YAML_INDENT "%s", t);
+          char * tmp = oyjlStringCopy(t,malloc);
+          oyjlStringReplace( &tmp, "\"", "\\\"", 0, 0);
+          oyjlStringReplace( &tmp, ": ", ":\\ ", 0, 0);
+          oyjlStringAdd (text, 0,0, YAML_INDENT "%s", tmp);
           if(tmp) free(tmp);
          }
          break;
@@ -581,15 +579,15 @@ void oyjlTreeToXml2 (oyjl_val v, const char * parent_key, int * level, char ** t
     case oyjl_t_string:
          {
           const char * t = v->u.string;
-          char * tmp = NULL;
-          if(t && strstr(t, "\\")) t = tmp = oyjlStringReplace( t, "\\", "\\\\", 0, 0);
-          if(t && strstr(t, "\"")) t = tmp = oyjlStringReplace( t, "\"", "\\\"", 0, 0);
-          if(t && strstr(t, "\b")) t = tmp = oyjlStringReplace( t, "\b", "\\b", 0, 0);
-          if(t && strstr(t, "\f")) t = tmp = oyjlStringReplace( t, "\f", "\\f", 0, 0);
-          if(t && strstr(t, "\n")) t = tmp = oyjlStringReplace( t, "\n", "\\n", 0, 0);
-          if(t && strstr(t, "\r")) t = tmp = oyjlStringReplace( t, "\r", "\\r", 0, 0);
-          if(t && strstr(t, "\t")) t = tmp = oyjlStringReplace( t, "\t", "\\t", 0, 0);
-          oyjlStringAdd (text, 0,0, "%s", t);
+          char * tmp = oyjlStringCopy(t,malloc);
+          oyjlStringReplace( &tmp, "\\", "\\\\", 0, 0);
+          oyjlStringReplace( &tmp, "\"", "\\\"", 0, 0);
+          oyjlStringReplace( &tmp, "\b", "\\b", 0, 0);
+          oyjlStringReplace( &tmp, "\f", "\\f", 0, 0);
+          oyjlStringReplace( &tmp, "\n", "\\n", 0, 0);
+          oyjlStringReplace( &tmp, "\r", "\\r", 0, 0);
+          oyjlStringReplace( &tmp, "\t", "\\t", 0, 0);
+          oyjlStringAdd (text, 0,0, "%s", tmp);
           if(tmp) free(tmp);
          }
          break;
