@@ -2717,7 +2717,7 @@ OYAPI char * OYEXPORT
                                        oyAlloc_f           allocateFunc OY_UNUSED )
 {
   char * text = NULL, * temp = NULL, * temp2 = NULL,
-       * tmp = NULL, * txt = NULL, * t = NULL, * t2 = NULL;
+       * tmp = NULL, * txt = NULL, * t = NULL;
   oyFilterNode_s * node = 0;
 #ifdef USE_GETTEXT
   char * save_locale = 0;
@@ -2862,17 +2862,14 @@ OYAPI char * OYEXPORT
     tc = oyOptions_GetText( node_opts, oyNAME_NICK );
     oyOptions_Release( &node_opts );
 #endif
-    t2 = oyStringReplace( tc, "\n\n", "\n", NULL,NULL );
-    t = oyStringReplace( t2, "\n", "\\n", NULL,NULL );
-    if(t2) oyFree_m_(t2);
-    t2 = oyStringReplace( t, "\"", "\\\"", NULL,NULL );
-    if(t) oyFree_m_(t);
-    t = oyStringReplace( t2, "<", "*", NULL,NULL );
-    if(t2) oyFree_m_(t2);
-    t2 = oyStringReplace( t, ">", "*", NULL,NULL );
-    if(t) oyFree_m_(t);
+    t = oyjlStringCopy(tc, 0);
+    oyjlStringReplace( &t, "\n\n", "\n", NULL,NULL );
+    oyjlStringReplace( &t, "\n", "\\n", NULL,NULL );
+    oyjlStringReplace( &t, "\"", "\\\"", NULL,NULL );
+    oyjlStringReplace( &t, "<", "*", NULL,NULL );
+    oyjlStringReplace( &t, ">", "*", NULL,NULL );
     oyMessageFunc_p( oyMSG_DBG,(oyStruct_s*)node,
-                     OY_DBG_FORMAT_ "%s\n%s", OY_DBG_ARGS_, oyNoEmptyString_m_(t2), oyNoEmptyString_m_(tc) );
+                     OY_DBG_FORMAT_ "%s\n%s", OY_DBG_ARGS_, oyNoEmptyString_m_(t), oyNoEmptyString_m_(tc) );
     sprintf( temp,   "  %d [ label=\"{<plug> %d| Filter Node %d\\n"
                      " Category: \\\"%s\\\"\\n CMM: \\\"%s\\\"\\n"
                      " Type: \\\"%s\\\"\\n"
@@ -2885,11 +2882,11 @@ OYAPI char * OYEXPORT
                      oyFilterNode_GetRegistration( node ),
                      oyNoEmptyString_m_(oyPointer_GetResourceName( backend_data )),
                      oyPointer_GetSize( backend_data ),
-                     oyNoEmptyString_m_(t2));
+                     oyNoEmptyString_m_(t));
 
     STRING_ADD( text, temp );
     oyFree_m_(txt);
-    if(t2) oyFree_m_(t2);
+    if(t) oyFree_m_(t);
 
     oyFilterNode_Release( &node );
     oyFilterCore_Release( (oyFilterCore_s**)&node_core );

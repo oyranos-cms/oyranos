@@ -459,7 +459,8 @@ oyProfile_s * createMatrixProfile      ( libraw_colordata_t & color,
       const char * ts = oyStringCopy_(oyOption_GetText( matrix, oyNAME_NICK ), oyAllocateFunc_ );
       oyOption_Release( &matrix );
       ts = strstr( ts, "color_matrix:" ) + strlen("color_matrix:");
-      char * t = oyStringReplace( ts, ",", " ", NULL,NULL );
+      char * t = oyjlStringCopy(ts,0);
+      oyjlStringReplace( &t, ",", " ", NULL,NULL );
       const char * mnf = NULL;
       if(manufacturer && model)
         mnf = strstr(model, manufacturer);

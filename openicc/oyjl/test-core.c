@@ -19,7 +19,7 @@
   TEST_RUN( testArgs, "Options handling", 1 ); \
   TEST_RUN( testTree, "Tree handling", 1 );
 
-#include "oyjl_test.h"
+#include "oyjl_test_main.h"
 #include "oyjl.h"
 #include "oyjl_version.h"
 #ifdef OYJL_HAVE_LOCALE_H
@@ -128,44 +128,99 @@ oyjlTESTRESULT_e testStringRun ()
 
   int i;
 
-  const char * test = TEST_DOMAIN "/display.oydi/display_name_long";
+  const char * test;
   
 
-  test = "//openicc/display.oydi/";
-  fprintf(zout, "\"%s\"\n", test );
-
   test = TEST_DOMAIN "/display.oydi/display_name";
-  char * test_out = oyjlStringReplace( test, TEST_DOMAIN, TEST_DOMAIN2, 0,0 );
-  //fprintf(zout, "test %s \"%s\"\n", test, test_out);
-  if( strstr(test_out, TEST_DOMAIN2 ) != NULL )
+  fprintf(zout, "test \"%s\" %d\n", test, (int)strlen(test));
+  char * test_out = oyjlStringCopy(test,malloc);
+  int n = oyjlStringReplace( &test_out, TEST_DOMAIN, TEST_DOMAIN2, 0,0 );
+  if(verbose)
+    fprintf(zout, "test %s \"%s\"\n", test, test_out);
+  if( strstr(test_out, TEST_DOMAIN2 ) != NULL &&
+      strlen(test_out) == 59 )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlStringReplace(start)                             " );
+    "oyjlStringReplace(start) %d 59 == %d                  ", n, (int)strlen(test_out) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlStringReplace(start)                             " );
+    "oyjlStringReplace(start) %d 59 == %d                  ", n, (int)strlen(test_out) );
   }
   myDeAllocFunc(test_out);
 
-  test_out = oyjlStringReplace( test, "display.", "foo.", 0,0 );
-  //fprintf(zout, "test %s \"%s\"\n", test, test_out);
-  if( strstr(test_out, "foo" ) != NULL )
+  test_out = oyjlStringCopy(test,malloc);
+  n = oyjlStringReplace( &test_out, "display.", "foo.", 0,0 );
+  if(verbose)
+    fprintf(zout, "test %s \"%s\"\n", test, test_out);
+  if( strstr(test_out, "foo" ) != NULL &&
+      strlen(test_out) == 51 &&
+      n == 1 )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlStringReplace(middle)                            " );
+    "oyjlStringReplace(middle) 51 == %d                   ", (int)strlen(test_out) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlStringReplace(middle)                            " );
+    "oyjlStringReplace(middle) 51 == %d                   ", (int)strlen(test_out) );
   }
   myDeAllocFunc(test_out);
 
-  test_out = oyjlStringReplace( test, "display_name", "bar", 0,0 );
-  //fprintf(zout, "test %s \"%s\"\n", test, test_out);
+  test_out = oyjlStringCopy(test,malloc);
+  n = oyjlStringReplace( &test_out, "display_name", "bar", 0,0 );
+  if(verbose)
+    fprintf(zout, "test %s \"%s\"\n", test, test_out);
   if( strstr(test_out, "bar" ) != NULL &&
-      strstr(test_out, "barbar" ) == NULL)
+      strstr(test_out, "barbar" ) == NULL &&
+      strlen(test_out) == 46 &&
+      n == 1 )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlStringReplace(end)                               " );
+    "oyjlStringReplace(end)    46 == %d                   ", (int)strlen(test_out) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlStringReplace(end)                               " );
+    "oyjlStringReplace(end)    46 == %d                   ", (int)strlen(test_out) );
+  }
+  myDeAllocFunc(test_out);
+
+  char * compare;
+  compare = test_out = oyjlStringCopy(test,malloc);
+  n = oyjlStringReplace( &test_out, "not_inside", "bar", 0,0 );
+  if(verbose)
+    fprintf(zout, "test %s \"%s\"\n", test, test_out);
+  if( compare && compare == test_out &&
+      n == 0 &&
+      strcmp(compare,test) == 0 )
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlStringReplace(none)                              " );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlStringReplace(none)                              " );
+  }
+  myDeAllocFunc(test_out);
+
+  test_out = oyjlStringCopy(test,malloc);
+  n = oyjlStringReplace( &test_out, "display", "moni", 0,0 );
+  if(verbose)
+    fprintf(zout, "test %s \"%s\"\n", test, test_out);
+  if( strlen(test) > strlen(test_out) &&
+      strlen(test_out) == 49 &&
+      n == 2 )
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlStringReplace(shorter) 49 == %d                  ", (int)strlen(test_out) );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlStringReplace(shorter) 49 == %d                  ", (int)strlen(test_out) );
+  }
+  myDeAllocFunc(test_out);
+
+  test_out = oyjlStringCopy(test,malloc);
+  n = oyjlStringReplace( &test_out, "display", "monitorXYZ", 0,0 );
+  if(verbose)
+    fprintf(zout, "test %s \"%s\"\n", test, test_out);
+  if( strlen(test) < strlen(test_out) &&
+      strlen(test_out) == 61 &&
+      n == 2 )
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlStringReplace(longer) 61 == %d                   ", (int)strlen(test_out) );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlStringReplace(longer) 61 == %d                   ", (int)strlen(test_out) );
   }
   myDeAllocFunc(test_out);
 
@@ -455,7 +510,7 @@ oyjlTESTRESULT_e testArgs()
 
   oyjlUi_Release( &ui);
   char * wrong = "test";
-  fprintf(stdout, "oyjlUi_Release(&\"test\")\n" );
+  fprintf(stdout, "oyjlUi_Release(&\"test\") - should give a warning message:\n" );
   oyjlUi_Release( (oyjlUi_s **)&wrong);
 
   free(oarray[0].values.choices.list);
@@ -506,7 +561,8 @@ oyjlTESTRESULT_e testTree ()
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyjlTreeNew( \"new/tree/key\" )       %d", (int)len );
   }
-  fprintf( zout, "%s\n", rjson );
+  if(verbose)
+    fprintf( zout, "%s\n", rjson );
   myDeAllocFunc( rjson ); rjson = NULL;
 
   value = oyjlTreeGetValue( root, 0, "new/[0]" );
@@ -551,7 +607,8 @@ oyjlTESTRESULT_e testTree ()
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyjlValueSetString( %s )         %d", VALUE, (int)strlen(rjson) );
   }
-  fprintf( zout, "%s\n", rjson );
+  if(verbose)
+    fprintf( zout, "%s\n", rjson );
   len = strlen(rjson);
   myDeAllocFunc( rjson ); rjson = NULL;
 
@@ -583,5 +640,4 @@ oyjlTESTRESULT_e testTree ()
 
 /* --- end actual tests --- */
 
-#include "oyjl_test_main.h"
 
