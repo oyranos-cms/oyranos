@@ -255,15 +255,15 @@ int main(int argc, char ** argv)
         if(value)
           oyjlValueSetString( value, value_string );
         else
-          oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT_"obtained no leaf for xpath \"%s\" from JSON:\t\"%s\"",
-                         OYJL_DBG_ARGS_, xpath, input_file_name );
+          oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "obtained no leaf for xpath \"%s\" from JSON:\t\"%s\"",
+                         OYJL_DBG_ARGS, xpath, input_file_name );
       }
 
       if(verbose)
         fprintf(stderr, "processed:\t\"%s\"\n", input_file_name);
     }
     else if(value_string)
-      oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT_"set argument needs as well a xpath argument", OYJL_DBG_ARGS_ );
+      oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "set argument needs as well a xpath argument", OYJL_DBG_ARGS );
     else
       value = root;
   }

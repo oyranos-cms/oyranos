@@ -536,7 +536,7 @@ static yajl_callbacks oyjl_tree_callbacks = {
 #if YAJL_VERSION > 19999
         status = yajl_complete_parse (handle);
 #endif
-        oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT_ "%s", OYJL_DBG_ARGS_,
+        oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "%s", OYJL_DBG_ARGS,
                        internal_err_str );
         yajl_free_error( handle, (unsigned char*)internal_err_str );
         internal_err_str = 0;
@@ -768,8 +768,8 @@ oyjl_val   oyjlTreeParseXml          ( const char        * xml,
     snprintf( error_buffer, error_buffer_size, "XML loading failed" );
 
   if(error_buffer && error_buffer[0])
-    oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT_ "%s",
-                         OYJL_DBG_ARGS_, error_buffer );
+    oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "%s",
+                         OYJL_DBG_ARGS, error_buffer );
 
   return jroot;
 }
@@ -902,7 +902,7 @@ oyjl_val   oyjlTreeParseYaml         ( const char        * yaml,
   {
     if(error_buffer)
       snprintf( error_buffer, error_buffer_size, "YAML initialisation failed" );
-    oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT_ "%s", OYJL_DBG_ARGS_,
+    oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "%s", OYJL_DBG_ARGS,
                    "YAML initialisation failed" );
     return jroot;
   }
@@ -914,7 +914,7 @@ oyjl_val   oyjlTreeParseYaml         ( const char        * yaml,
   {
     if(error_buffer)
       snprintf( error_buffer, error_buffer_size, "%s\n", parser.problem ? parser.problem : "" );
-    oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT_ "%s", OYJL_DBG_ARGS_,
+    oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "%s", OYJL_DBG_ARGS,
                    parser.problem ? parser.problem : "" );
 
     return jroot;
@@ -926,7 +926,7 @@ oyjl_val   oyjlTreeParseYaml         ( const char        * yaml,
   {
     if(error_buffer)
       snprintf( error_buffer, error_buffer_size, "Found problem while parsing document tree.\n" );
-    oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT_ "%s", OYJL_DBG_ARGS_,
+    oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "%s", OYJL_DBG_ARGS,
                    "Found problem while parsing document tree." );
     return jroot;
   }

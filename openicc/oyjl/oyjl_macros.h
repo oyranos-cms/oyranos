@@ -65,6 +65,14 @@
                         (strlen(argv[pos])-2 >= strlen(arg) && \
                          memcmp(&argv[pos][2],arg, strlen(arg)) == 0)
 
+#if defined(__GNUC__)
+# define  OYJL_DBG_FORMAT "%s:%d %s() "
+# define  OYJL_DBG_ARGS   strrchr(__FILE__,'/') ? strrchr(__FILE__,'/')+1 : __FILE__,__LINE__,__func__
+#else
+# define  OYJL_DBG_FORMAT "%s:%d "
+# define  OYJL_DBG_ARGS   strrchr(__FILE__,'/') ? strrchr(__FILE__,'/')+1 : __FILE__,__LINE__
+#endif
+
 
 extern oyjlMessage_f oyjlMessage_p;
 /** convert ( const char * format, ... ) function args into a string */
@@ -86,7 +94,7 @@ extern oyjlMessage_f oyjlMessage_p;
     text_ = allocate( sizeof(char) * len + 2 ); \
     if(!text_) \
     { \
-      oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT_ "could not allocate memory", OYJL_DBG_ARGS_ ); \
+      oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "could not allocate memory", OYJL_DBG_ARGS ); \
       error_action; \
     } \
     va_start( list, format_); \

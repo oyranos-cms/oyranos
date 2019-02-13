@@ -28,14 +28,6 @@ extern "C" {
 #define snprintf sprintf_s
 #endif
 
-#if defined(__GNUC__)
-# define  OYJL_DBG_FORMAT_ "%s:%d %s() "
-# define  OYJL_DBG_ARGS_   strrchr(__FILE__,'/') ? strrchr(__FILE__,'/')+1 : __FILE__,__LINE__,__func__
-#else
-# define  OYJL_DBG_FORMAT_ "%s:%d "
-# define  OYJL_DBG_ARGS_   strrchr(__FILE__,'/') ? strrchr(__FILE__,'/')+1 : __FILE__,__LINE__
-#endif
-
 #if (defined(__APPLE__) && defined(__MACH__)) || defined(__unix__) || (!defined(_WIN32) && !defined(_MSC_VER)) || (defined(_WIN32) && defined(__CYGWIN__)) || defined(__MINGW32__) || defined(__MINGW32)
 # include <unistd.h>
 # if defined(_POSIX_VERSION)
