@@ -38,7 +38,19 @@
  *
  *  The API is designed to be easily useable without much boilerplate.
  *
- *  \b Example @ref test.c
+ *  Define somewhere in your test.c file a TESTS_RUN
+ *  with your test functions like:
+ *  @code
+#define TESTS_RUN \
+  TEST_RUN( testVersion, "Version matching", 1 ); \
+  TEST_RUN( testJson, "JSON handling", 1 ); \
+  TEST_RUN( testFromJson, "Data Writers", 1 ); \
+  TEST_RUN( testJsonRoundtrip, "Data Readers", 1 );
+    @endcode
+ *  Then include simply the oyjl_test_main.h header and it defines
+ *  a main() function for you to handle command line parsing, statistics
+ *  and summary printing after test program finish.
+ *
  *  @{ *//* oyjl_test */
 
 
