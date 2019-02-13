@@ -3223,6 +3223,8 @@ int l2cmsGetOptionsUI                ( oyCMMapiFilter_s   * module OY_UNUSED,
  *
  *  @{ */
 
+#if 0
+/* the OY_LCM2_PARSE_CGATS filter can not be implemented as described in lcm2ParseCGATS */
 /* OY_LCM2_PARSE_CGATS -------------------------- */
 
 /** @brief   TODO: Parse a CGATS text
@@ -3247,7 +3249,7 @@ oyPointer_s* lcm2ParseCGATS          ( const char        * cgats )
     l2cms_msg( oyMSG_DBG, NULL, OY_DBG_FORMAT_
                "Properties: %s", OY_DBG_ARGS_, props[i] );
   /* lcms has no API to analyse BEGIN_DATA_FORMAT END_DATA_FORMAT section - very limiting in order to understand the meaning of the table values */
-  n = l2cmsIT8EnumPropertyMulti( lcgats, "BEGIN_DATA_FORMAT", &props );
+  n = l2cmsIT8EnumPropertyMulti( lcgats, "BEGIN_DATA_FORMAT", (const char***)&props );
 
   /** @todo implement CGATS parsing with cmsCGATS */
   ptr = oyPointer_New(0);
@@ -3266,7 +3268,7 @@ oyPointer_s* lcm2ParseCGATS          ( const char        * cgats )
  *  @param[in]     options             expects at least one options
  *                                     - "cgats": The option shall be a string.
  *  @param[in]     command             "//" OY_TYPE_STD "/parse_cgats"
- *  @param[out]    result              will contain a oyImage_s in "colors"
+ *  @param[out]    result              will contain a oyPointer_s in "data"
  *
  *  The Handler uses internally lcm2ParseCGATS().
  *
@@ -3391,6 +3393,7 @@ oyCMMapi10_s_    l2cms_api10_cmm5 = {
 };
 
 /* OY_LCM2_PARSE_CGATS -------------------------- */
+#endif
 
 const char *l2cms_texts_profile_create[4] = {"can_handle","create_profile","help",0};
 
@@ -3619,7 +3622,7 @@ oyCMMapi10_s_    l2cms_api10_cmm4 = {
 
   oyOBJECT_CMM_API10_S,
   0,0,0,
-  (oyCMMapi_s*) & l2cms_api10_cmm5,
+  0,//(oyCMMapi_s*) & l2cms_api10_cmm5,
 
   l2cmsCMMInit,
   l2cmsCMMMessageFuncSet,
