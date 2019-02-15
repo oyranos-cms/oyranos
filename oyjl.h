@@ -377,6 +377,23 @@ int        oyjlStringsToDoubles      ( const char        * text,
                                        int               * count,
                                        void*            (* alloc)(size_t),
                                        double           ** value );
+typedef struct oyjl_string_s * oyjl_str;
+oyjl_str   oyjlStrNew                ( size_t              length,
+                                       void*            (* alloc)(size_t),
+                                       void             (* deAlloc)(void*) );
+oyjl_str   oyjlStrNewFrom            ( char             ** text,
+                                       size_t              length,
+                                       void*            (* alloc)(size_t),
+                                       void             (* deAlloc)(void*) );
+void       oyjlStrRelease            ( oyjl_str          * string_ptr );
+const char*oyjlStr                   ( oyjl_str            string );
+char *     oyjlStrPull               ( oyjl_str            str );
+int        oyjlStrAppendN            ( oyjl_str            string,
+                                       const char        * append,
+                                       int                 append_len );
+int        oyjlStrReplace            ( oyjl_str            text,
+                                       const char        * search,
+                                       const char        * replacement );
 
 /* --- I/O helpers --- */
 char *     oyjlReadFileStreamToMem   ( FILE              * fp,

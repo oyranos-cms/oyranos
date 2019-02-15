@@ -330,6 +330,54 @@ oyjlTESTRESULT_e testStringRun ()
   }
   if(doubles) { free(doubles); } doubles = NULL;
 
+  double clck = oyjlClock();
+  char * t = NULL;
+  n = 10000;
+  for(i = 0; i < n; ++i)
+    oyjlStringAdd( &t, 0,0, "/%s/%s", "more", "and" );
+  clck = oyjlClock() - clck;
+  fprintf( zout, "oyjlStringAdd()\t%dx9  %d               \t\%s\n", n, (int)strlen(t),
+                 oyProfilingToString(n,clck/(double)CLOCKS_PER_SEC,"ops"));
+  if(t) { free(t); t = NULL; }
+
+  clck = oyjlClock();
+  for(i = 0; i < n; ++i)
+    oyjlStringAddN( &t, "/more/and", 9, malloc,free );
+  clck = oyjlClock() - clck;
+  fprintf( zout, "oyjlStringAddN()\t%dx9  %d       \t\%s\n", n, (int)strlen(t),
+                 oyProfilingToString(n,clck/(double)CLOCKS_PER_SEC,"ops"));
+
+  n = 1000;
+  clck = oyjlClock();
+  int len OYJL_UNUSED;
+  for(i = 0; i < n; ++i)
+    len = strlen( t );
+  clck = oyjlClock() - clck;
+  fprintf( zout, "strlen()\t%dx  %d             \t\%s\n", n, (int)strlen(t),
+                 oyProfilingToString(n,clck/(double)CLOCKS_PER_SEC,"ops"));
+
+  if(t) { free(t); t = NULL; }
+
+  n = 1000000;
+  t = calloc(10*n,sizeof(char));
+  clck = oyjlClock();
+  for(i = 0; i < n; ++i)
+    memcpy( &t[9*i], "/more/and", 9 );
+  clck = oyjlClock() - clck;
+  fprintf( zout, "memcpy()\t%dx9  %d           \t\%s\n", n, (int)strlen(t),
+                 oyProfilingToString(n,clck/(double)CLOCKS_PER_SEC,"ops"));
+  if(t) { free(t); t = NULL; }
+
+  oyjl_str string = oyjlStrNew(10, 0,0);
+  clck = oyjlClock();
+  n = 1000000;
+  for(i = 0; i < n; ++i)
+    oyjlStrAppendN( string, "/more/and", 9 );
+  clck = oyjlClock() - clck;
+  fprintf( zout, "oyjlStrAppendN()\t%dx9  %d    \t\%s\n", n, (int)strlen(oyjlStr(string)),
+                 oyProfilingToString(n,clck/(double)CLOCKS_PER_SEC,"ops"));
+  oyjlStrRelease( &string );
+
   return result;
 }
 
@@ -520,6 +568,8 @@ oyjlTESTRESULT_e testArgs()
 }
 
 
+void oyjlTreeToJson2 (oyjl_val v, int * level, char ** json);
+
 oyjlTESTRESULT_e testTree ()
 {
   oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
@@ -633,6 +683,30 @@ oyjlTESTRESULT_e testTree ()
     "oyjlTreeClearValue( \"new/tree/key\" ) " );
   }
   oyjlTreeFree( root );
+
+  double clck = oyjlClock();
+  root = oyjlTreeNew("");
+  int n = 10000;
+  for(i = 0; i < n; ++i)
+    oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "value", "data/key-%d", i );
+  clck = oyjlClock() - clck;
+  fprintf( zout, "oyjTreeSetStringF()\t%dx              \t\%s\n", n,
+                 oyProfilingToString(n,clck/(double)CLOCKS_PER_SEC,"node"));
+  i = 0;
+
+  clck = oyjlClock();
+  oyjlTreeToJson2( root, &i, &rjson ); i = 0;
+  clck = oyjlClock() - clck;
+  fprintf( zout, "oyjTreeToJson2()       \t1x %d            \t\%s\n", (int)strlen(rjson),
+                 oyProfilingToString(1,clck/(double)CLOCKS_PER_SEC,"dump"));
+  myDeAllocFunc( rjson ); rjson = NULL;
+
+  clck = oyjlClock();
+  oyjlTreeToJson( root, &i, &rjson ); i = 0;
+  clck = oyjlClock() - clck;
+  fprintf( zout, "oyjTreeToJson()        \t1x %d            \t\%s\n", (int)strlen(rjson),
+                 oyProfilingToString(1,clck/(double)CLOCKS_PER_SEC,"dump"));
+  myDeAllocFunc( rjson ); rjson = NULL;
 
   return result;
 }
