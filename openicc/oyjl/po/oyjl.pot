@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: oyjl .\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2019-02-13 07:30+0100\n"
+"POT-Creation-Date: 2019-02-15 08:00+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -50,7 +50,7 @@ msgstr ""
 msgid "General options:"
 msgstr ""
 
-#: oyjl.c:74 oyjl_translate.c:62 test-core.c:321
+#: oyjl.c:74 oyjl_translate.c:62 test-core.c:424
 msgid "verbose"
 msgstr ""
 
@@ -191,7 +191,7 @@ msgstr ""
 msgid "Copyright"
 msgstr ""
 
-#: oyjl_args.c:1206 oyjl_args.c:1611 oyjl_args.c:1782
+#: oyjl_args.c:1206 oyjl_args.c:1610 oyjl_args.c:1780
 msgid "License"
 msgstr ""
 
@@ -263,27 +263,27 @@ msgstr ""
 msgid "SEE AS WELL"
 msgstr ""
 
-#: oyjl_args.c:1509 oyjl_args.c:1684
+#: oyjl_args.c:1508 oyjl_args.c:1682
 msgid "SYNOPSIS"
 msgstr ""
 
-#: oyjl_args.c:1520 oyjl_args.c:1695
+#: oyjl_args.c:1519 oyjl_args.c:1693
 msgid "DESCRIPTION"
 msgstr ""
 
-#: oyjl_args.c:1522 oyjl_args.c:1697
+#: oyjl_args.c:1521 oyjl_args.c:1695
 msgid "OPTIONS"
 msgstr ""
 
-#: oyjl_args.c:1605 oyjl_args.c:1776
+#: oyjl_args.c:1604 oyjl_args.c:1774
 msgid "AUTHOR"
 msgstr ""
 
-#: oyjl_args.c:1609 oyjl_args.c:1780
+#: oyjl_args.c:1608 oyjl_args.c:1778
 msgid "COPYRIGHT"
 msgstr ""
 
-#: oyjl_args.c:1615 oyjl_args.c:1786 oyjl_args.c:1788
+#: oyjl_args.c:1614 oyjl_args.c:1784 oyjl_args.c:1786
 msgid "BUGS"
 msgstr ""
 
@@ -321,7 +321,7 @@ msgstr ""
 msgid "specify JSON file"
 msgstr ""
 
-#: oyjl_translate.c:59 test-core.c:319
+#: oyjl_translate.c:59 test-core.c:422
 msgid "output"
 msgstr ""
 
@@ -337,80 +337,80 @@ msgstr ""
 msgid "Rendering Intent"
 msgstr ""
 
-#: test-core.c:303
+#: test-core.c:406
 msgid "The example tool demontrates the usage of the libOyjl API's."
 msgstr ""
 
-#: test-core.c:304
+#: test-core.c:407
 msgid "October 10, 2018"
 msgstr ""
 
 #. declare some option choices
-#: test-core.c:308
+#: test-core.c:411
 msgid "oyjl.json"
 msgstr ""
 
-#: test-core.c:310
+#: test-core.c:413
 msgid "Print All"
 msgstr ""
 
-#: test-core.c:311
+#: test-core.c:414
 msgid "Print Camera"
 msgstr ""
 
-#: test-core.c:311
+#: test-core.c:414
 msgid "Print Camera JSON"
 msgstr ""
 
-#: test-core.c:312
+#: test-core.c:415
 msgid "Print None"
 msgstr ""
 
 #. type,   flags, o,   option,    key,  name,         description,         help, value_name,    value_type,               values,                                                          variable_type, output variable
-#: test-core.c:318
+#: test-core.c:421
 msgid "input"
 msgstr ""
 
-#: test-core.c:318
+#: test-core.c:421
 msgid "Set Input"
 msgstr ""
 
-#: test-core.c:318
+#: test-core.c:421
 msgid "FILENAME"
 msgstr ""
 
-#: test-core.c:319
+#: test-core.c:422
 msgid "Control Output"
 msgstr ""
 
-#: test-core.c:320
+#: test-core.c:423
 msgid "help"
 msgstr ""
 
-#: test-core.c:320
+#: test-core.c:423
 msgid "Help"
 msgstr ""
 
 #. type,   flags, name,      description,          help, mandatory, optional, detail
-#: test-core.c:328
+#: test-core.c:431
 msgid "Mode"
 msgstr ""
 
-#: test-core.c:328
+#: test-core.c:431
 msgid "Actual mode"
 msgstr ""
 
-#: test-core.c:329
+#: test-core.c:432
 msgid "Misc"
 msgstr ""
 
-#: test-core.c:329
+#: test-core.c:432
 msgid "General options"
 msgstr ""
 
 #. tell about the tool
 #. argc+argv are required for parsing the command line options
-#: test-core.c:335 test-core.c:349 test-core.c:363 test-core.c:376
-#: test-core.c:389 test-core.c:403
+#: test-core.c:438 test-core.c:452 test-core.c:466 test-core.c:479
+#: test-core.c:492 test-core.c:506
 msgid "Short example tool using libOyjl"
 msgstr ""

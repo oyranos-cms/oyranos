@@ -369,11 +369,119 @@ static void oyjlJsonIndent ( char ** json, const char * before, int level, const
   *json = njson;
 }
 
+int  oyjlTreeToJson21 (oyjl_val v, int * level, oyjl_str json)
+{
+  int error = 0;
+  if(v)
+  switch(v->type)
+  {
+    case oyjl_t_null:
+         break;
+    case oyjl_t_number:
+         oyjlStrAppendN (json, v->u.number.r, strlen(v->u.number.r));
+         break;
+    case oyjl_t_true:
+         oyjlStrAppendN (json, "1", 1); break;
+    case oyjl_t_false:
+         oyjlStrAppendN (json, "0", 1); break;
+    case oyjl_t_string:
+         {
+          const char * t = v->u.string;
+          oyjl_str tmp = oyjlStrNew(10,0,0);
+          oyjlStrAppendN( tmp, t, strlen(t) );
+          oyjlStrReplace( tmp, "\\", "\\\\");
+          oyjlStrReplace( tmp, "\"", "\\\"");
+          oyjlStrReplace( tmp, "\b", "\\b");
+          oyjlStrReplace( tmp, "\f", "\\f");
+          oyjlStrReplace( tmp, "\n", "\\n");
+          oyjlStrReplace( tmp, "\r", "\\r");
+          oyjlStrReplace( tmp, "\t", "\\t");
+          t = oyjlStr(tmp); 
+          oyjlStrAppendN( json, "\"", 1 );
+          oyjlStrAppendN( json, t, strlen(t) );
+          oyjlStrAppendN( json, "\"", 1 );
+          oyjlStrRelease( &tmp );
+         }
+         break;
+    case oyjl_t_array:
+         {
+           int i,
+               count = v->u.array.len;
+
+           oyjlStrAppendN( json, "[", 1 );
+
+           *level += 2;
+           for(i = 0; i < count; ++i)
+           {
+             oyjlTreeToJson21( v->u.array.values[i], level, json );
+             if(count > 1)
+             {
+               if(i < count - 1)
+                 oyjlStrAppendN( json, ",", 1 );
+             }
+           }
+           *level -= 2;
+
+           oyjlStrAppendN( json, "]", 1 );
+         } break;
+    case oyjl_t_object:
+         {
+           int i,j,
+               count = v->u.object.len;
+
+           oyjlStrAppendN( json, "{", 1 );
+
+           *level += 2;
+           for(i = 0; i < count; ++i)
+           {
+             oyjlStrAppendN( json, "\n", 1 );
+             for(j = 0; j < *level; ++j) oyjlStrAppendN( json, " ", 1 );
+             if(!v->u.object.keys || !v->u.object.keys[i])
+             {
+               oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "missing key", OYJL_DBG_ARGS );
+               return 1;
+             }
+             oyjlStrAppendN( json, "\"", 1 );
+             oyjlStrAppendN( json, v->u.object.keys[i], strlen(v->u.object.keys[i]) );
+             oyjlStrAppendN( json, "\": ", 3 );
+             error = oyjlTreeToJson21( v->u.object.values[i], level, json );
+             if(error) return error;
+             if(count > 1)
+             {
+               if(i < count - 1)
+                 oyjlStrAppendN( json, ",", 1 );
+             }
+           }
+           *level -= 2;
+
+           oyjlStrAppendN( json, "\n", 1 );
+           for(j = 0; j < *level; ++j) oyjlStrAppendN( json, " ", 1 );
+           oyjlStrAppendN( json, "}", 1 );
+         }
+         break;
+    default:
+         oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "unknown type: %d", OYJL_DBG_ARGS, v->type );
+         break;
+  }
+  return 0;
+}
+void oyjlTreeToJson (oyjl_val v, int * level, char ** json)
+{
+  oyjl_str string = oyjlStrNew(10, 0,0);
+  oyjlTreeToJson21( v, level, string );
+  const char * result = oyjlStr(string);
+  char * text = NULL;
+  if(result && result[0])
+    text = oyjlStringCopy(result,0);
+  oyjlStrRelease( &string );
+  *json = text;;
+}
+
 /** @brief convert a C tree into a JSON string
  *
  *  @see oyjlTreeParse()
  */
-void oyjlTreeToJson (oyjl_val v, int * level, char ** json)
+void oyjlTreeToJson2 (oyjl_val v, int * level, char ** json)
 {
   if(v)
   switch(v->type)
@@ -412,7 +520,7 @@ void oyjlTreeToJson (oyjl_val v, int * level, char ** json)
            *level += 2;
            for(i = 0; i < count; ++i)
            {
-             oyjlTreeToJson( v->u.array.values[i], level, json );
+             oyjlTreeToJson2( v->u.array.values[i], level, json );
              if(count > 1)
              {
                if(i < count - 1)
@@ -445,7 +553,7 @@ void oyjlTreeToJson (oyjl_val v, int * level, char ** json)
                return;
              }
              oyjlStringAdd( json, 0,0, "\"%s\": ", v->u.object.keys[i] );
-             oyjlTreeToJson( v->u.object.values[i], level, json );
+             oyjlTreeToJson2( v->u.object.values[i], level, json );
              if(count > 1)
              {
                if(i < count - 1)
