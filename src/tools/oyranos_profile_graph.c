@@ -156,6 +156,7 @@ void  printfHelp (int argc, char** argv)
   fprintf( stderr, "      --illuminant A\t%s\n",   _("CIE A spectral power distribution"));
   fprintf( stderr, "      --illuminant D50\t%s\n", _("CIE D50 spectral power distribution (computed)"));
   fprintf( stderr, "      --illuminant D65\t%s\n", _("CIE D65 spectral power distribution"));
+  fprintf( stderr, "      --illuminant %s\t%s\n", _("NUMBER"), _("Kelvin derived CIE spectral power distribution"));
   fprintf( stderr, "      \t--no-color\t%s\n",    _("draw gray"));
   fprintf( stderr, "\n");
   fprintf( stderr,  "  %s\n",             _("CSV Spectrum Graph:"));
