@@ -435,7 +435,7 @@ oyjlTESTRESULT_e testArgs()
 
   /* tell about the tool */
   oyjlUi_s * ui = oyjlUi_Create( argc, argv, /* argc+argv are required for parsing the command line options */
-                                       "oiCR", "oyjl-config-read", _("Short example tool using libOyjl"), "oi-logo",
+                                       "oiCR", "oyjl-config-read", _("Short example tool using libOyjl"), "logo",
                                        sections, oarray, groups, NULL );
 
   if(ui)
@@ -449,7 +449,7 @@ oyjlTESTRESULT_e testArgs()
 
   argc = 2;
   ui = oyjlUi_Create( argc, argv, /* argc+argv are required for parsing the command line options */
-                                       "oiCR", "oyjl-config-read", _("Short example tool using libOyjl"), "oi-logo",
+                                       "oiCR", "oyjl-config-read", _("Short example tool using libOyjl"), "logo",
                                        sections, oarray, groups, NULL );
 
   if(ui)
@@ -463,7 +463,7 @@ oyjlTESTRESULT_e testArgs()
 
   argc = 3;
   ui = oyjlUi_Create( argc, argv, /* argc+argv are required for parsing the command line options */
-                                       "oiCR", "oyjl-config-read", _("Short example tool using libOyjl"), "oi-logo",
+                                       "oiCR", "oyjl-config-read", _("Short example tool using libOyjl"), "logo",
                                        sections, oarray, groups, &state );
   if(!ui)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
@@ -476,7 +476,7 @@ oyjlTESTRESULT_e testArgs()
 
   argc = 4;
   ui = oyjlUi_Create( argc, argv, /* argc+argv are required for parsing the command line options */
-                                       "oiCR", "oyjl-config-read", _("Short example tool using libOyjl"), "oi-logo",
+                                       "oiCR", "oyjl-config-read", _("Short example tool using libOyjl"), "logo",
                                        sections, oarray, groups, NULL );
   if(ui && strcmp(file,"file-name.json") == 0)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
@@ -489,7 +489,7 @@ oyjlTESTRESULT_e testArgs()
 
   argc = 5;
   ui = oyjlUi_Create( argc, argv, /* argc+argv are required for parsing the command line options */
-                                       "oiCR", "oyjl-config-read", _("Short example tool using libOyjl"), "oi-logo",
+                                       "oiCR", "oyjl-config-read", _("Short example tool using libOyjl"), "logo",
                                        sections, oarray, groups, &state );
   if(!ui)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
@@ -503,7 +503,7 @@ oyjlTESTRESULT_e testArgs()
 
   argc = 4;
   ui = oyjlUi_Create( argc, argv, /* argc+argv are required for parsing the command line options */
-                                       "oyjl-config-read", "Oyjl Config Reader", _("Short example tool using libOyjl"), "oi-logo",
+                                       "oyjl-config-read", "Oyjl Config Reader", _("Short example tool using libOyjl"), "logo",
                                        sections, oarray, groups, NULL );
   int size = 0;
   char * text = oyjlUi_ToJson( ui, 0 );
