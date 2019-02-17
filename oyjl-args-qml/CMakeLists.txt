@@ -2,10 +2,7 @@
 SET( PROJECT_NAME oyjl-args-qml )
 
 IF( NOT HAVE_OYJL )
-  INCLUDE_DIRECTORIES( .. )
-  SET( EXTRA_LIBS ${EXTRA_LIBS} oyjl-static oyjl-core-static )
-  LINK_DIRECTORIES( build/ )
-  INCLUDE_DIRECTORIES( ../../../src/include )
+  INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_SOURCE_DIR}/.. )
 ENDIF()
 
 FIND_PACKAGE(Qt5 COMPONENTS Widgets Qml Quick Svg LinguistTools)
@@ -52,9 +49,9 @@ IF( HAVE_QT)
                 Qt5::Widgets
                 Qt5::Qml
                 Qt5::Quick
-                Oyjl
                 ${EXTRA_LIBS}
-                yajl )
+                ${OYJL_CORE_LIB}
+                )
     IF(ENABLE_INSTALL_${PROJECT_UP_NAME})
       INSTALL (TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_BINDIR})
     ENDIF(ENABLE_INSTALL_${PROJECT_UP_NAME})
