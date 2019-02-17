@@ -86,6 +86,12 @@ ApplicationWindow {
         property alias accent: mainWindow.accent
     }
 
+    property string appName;
+    onAppNameChanged: {
+        if(appName.length)
+            mainWindow.setTitle(appName)
+    }
+
     property string logo;
     property string icon;
     onIconChanged: {
