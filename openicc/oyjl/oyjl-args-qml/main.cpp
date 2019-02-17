@@ -23,6 +23,7 @@
 #include "include/app_manager.h"
 #include "include/process.h"
 
+// QApplication * a = NULL; not needed, as only static member functions are called
 
 #include <QTranslator>
 #include <QUrl>
@@ -58,6 +59,7 @@ int main(int argc, char *argv[])
     Q_INIT_RESOURCE(app);
 
     QApplication app(argc, argv);
+    // a = &app; see comment above
 
     QTranslator translator;
     QString lname( ":/translations/app_" + QLocale::system().name() );
@@ -71,9 +73,10 @@ int main(int argc, char *argv[])
                                          Qt::InvertedLandscapeOrientation | Qt::InvertedPortraitOrientation);
 
     app.setApplicationName(QString("oyjl-json-qml"));
-    app.setApplicationDisplayName(QString("Oyl Options"));
+    app.setApplicationDisplayName(QString("Oyjl"));
     app.setApplicationVersion("0.5");
     app.setOrganizationName(QString("oyranos.org"));
+    app.setWindowIcon(QIcon(":/images/logo-sw.svg"));
 
     QCommandLineParser parser;
     parser.setApplicationDescription(QCoreApplication::translate("main", "QML Renderer for JSON Options"));
