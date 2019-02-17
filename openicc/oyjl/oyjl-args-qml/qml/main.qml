@@ -432,6 +432,7 @@ AppWindow {
         icon = name
         // CMM head line - long
         introText = P.getTranslatedItem( cmm, "name", loc );
+        appName = introText
         // extract CMM infos
         var html
         cmmHelp = ""
