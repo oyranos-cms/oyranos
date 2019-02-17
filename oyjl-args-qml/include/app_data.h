@@ -73,8 +73,8 @@ public:
         emit logMessage();
     }
     Q_INVOKABLE void setWindowIcon(QString name) { QUrl url = name; QIcon icon(url.toLocalFile());
-                                                   if(icon.isNull()) LOG( "Icon does not exist ???" );
-                                                   a->setWindowIcon(icon); }
+                                                   if(icon.isNull()) { LOG( "Icon does not exist ??? " + name );
+                                                   } else { LOG( "Set Icon: " + name ); a->setWindowIcon(icon); }}
 
     Q_INVOKABLE QString getJSON(QString url);
     Q_INVOKABLE void  writeJSON(QString url);
