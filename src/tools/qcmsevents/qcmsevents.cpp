@@ -164,7 +164,7 @@ void QcmseDialog::setIcon(int index)
 
 void QcmseDialog::showNM()
 {
-  system("oyranos-monitor-white-point -J | openicc-json-qml -i - -c +");
+  system("oyranos-night-manager");
 }
 
 void QcmseDialog::showConfig()
