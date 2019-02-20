@@ -316,8 +316,7 @@ void       oyjlDebugVariableSet      ( int               * debug );
 /** @} *//* oyjl */
 
 /* --- string helpers --- */
-/** \addtogroup oyjl_core Core
- *  @brief Messaging, I/O and String Handling
+/** \addtogroup oyjl_core
  *  @{ *//* oyjl_core */
 char **    oyjlStringSplit           ( const char        * text,
                                        const char          delimiter,
