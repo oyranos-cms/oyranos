@@ -55,7 +55,7 @@
 #include "oyranos_string.h"
 #include "oyranos_texts.h"
 
-#include "ciexyz31_2.h"
+#include "ciexyz31_2.h" /* cieXYZ_31_2 1931 2° */
 #include "ciexyz64_1.h"
 #include "bb_100K.h"
 #include "spd_A_5.h"
@@ -78,7 +78,12 @@
 
 double * getSaturationLine_(oyProfile_s * profile, int intent, size_t * size_, oyProfile_s * outspace);
 double   bb_spectrum( double wavelength, double bbTemp );
-int      dXXCIEfromTemperature( double kelvin, float ** SPD );
+int      oyDXXCIEfromTemperature( double kelvin, float ** SPD );
+int      oyXYZtoSRGB ( double * rgb );
+
+typedef struct { /* oyF3 three floats */
+  float f[3];
+} oyF3;
 
 oyImage_s * oySpectrumCreateEmpty ( int min, int max, int lambda, int columns );
 float    oySpectrumFillFromArrayF  ( oyImage_s * spec, float * curve, int pos );
@@ -200,6 +205,8 @@ int main( int argc , char** argv )
 
   double max_x,max_y,min_x,min_y;
   oyImage_s * spectra = NULL;
+  oyF3 * spectra_XYZ = NULL;
+  oyF3 white = {{0.0,0.0,0.0}};
   oyjl_val specT = NULL;
   char * string = NULL;
   int spectral_channels = 0;
@@ -375,6 +382,12 @@ int main( int argc , char** argv )
     {
       spectral_channels = oySpectrumGetParam( spectra, oySPECTRUM_CHANNELS );
       spectral_count = oySpectrumGetParam( spectra, oySPECTRUM_COLUMNS );
+      spectra_XYZ = calloc( spectral_count, sizeof(oyF3) );
+      float * illu_5 = NULL; /* 300-830@5nm */
+      double kelvin = 5000;
+      int error = oyDXXCIEfromTemperature( kelvin, &illu_5 );
+      if(error)
+        oyMessageFunc_p(oyMSG_ERROR,0,"not CIE illuminant for %g", kelvin);
       for(i = 0; i < spectral_channels; ++i)
       {
         float x = oySpectrumGet( spectra, -1, i );
@@ -383,6 +396,32 @@ int main( int argc , char** argv )
         for(j = 0; j < spectral_count; ++j)
         {
           double y = oySpectrumGet( spectra, j, i );
+          if(verbose)
+          {
+            int lambda = oySpectrumGetParam( spectra, oySPECTRUM_LAMBDA );
+            int start = oySpectrumGetParam( spectra, oySPECTRUM_START );
+            int cieXYZ_31_2_startNM = cieXYZ_31_2[0][0];
+            int cieXYZ_31_2_start_pos = start - cieXYZ_31_2_startNM;
+            int illu_startNM = 300;
+            int illu_start_pos = (start - illu_startNM) / 5;
+            if(lambda%5 == 0 && start >= cieXYZ_31_2_startNM)
+            {
+              double illu = illu_5[illu_start_pos + i*lambda/5] / 100.0; /* D50 max ~103 */
+              int k;
+              for(k = 0; k < 3; ++k)
+              {
+                double spd = cieXYZ_31_2[1 + cieXYZ_31_2_start_pos + i*lambda][k];
+                double weigthed = y * illu * spd;
+                spectra_XYZ[j].f[k] += weigthed;
+                if(j == 0)
+                {
+                  weigthed = 1.0 * illu * spd;
+                  white.f[k] += weigthed;
+                }
+              }
+            } else
+              oyMessageFunc_p( oyMSG_ERROR,0, "need lambda of %5, got: %d; start: %d spd_start: %d", lambda%5, start, cieXYZ_31_2_startNM );
+          }
           if(isnan(y))
             continue;
           if(y < spectra_rect[2]) spectra_rect[2] = y;
@@ -399,9 +438,24 @@ int main( int argc , char** argv )
       max_y = 1.0;
 
       if(verbose)
-      fprintf( stderr, "channels: %d (%d) count: %d (%f %f - %f %f / %f %f)\n",
+      fprintf( stderr, "channels: %d (%d) count: %d (%f %f - %f %f / %f %f) scale: %f\n",
                (int)spectral_channels, (int)size, spectral_count,
-               spectra_rect[0], spectra_rect[1], spectra_rect[2], spectra_rect[3], min_y, max_y );
+               spectra_rect[0], spectra_rect[1], spectra_rect[2], spectra_rect[3], min_y, max_y, scale );
+      if(verbose)
+      {
+        fprintf( stderr, "%s\n", oySpectrumGetString( spectra, oySPECTRUM_CHANNELS ) );
+        fprintf( stderr, "white:\t%f %f %f\n", white.f[0], white.f[1], white.f[2] );
+        for(j = 0; j < spectral_count; ++j)
+        {
+          double rgb[4] = { spectra_XYZ[j].f[0]/white.f[0], spectra_XYZ[j].f[1]/white.f[0], spectra_XYZ[j].f[2]/white.f[0], 1.0 };
+          oyXYZtoSRGB( rgb );
+          if(j < 10)
+          fprintf( stderr, "%d\t%f %f %f -> %f %f %f\n", j, spectra_XYZ[j].f[0]/white.f[0]*100.0, spectra_XYZ[j].f[1]/white.f[0]*100.0, spectra_XYZ[j].f[2]/white.f[0]*100.0,
+                   rgb[0], rgb[1], rgb[2] );
+          else if(j == 10)
+          fprintf( stderr, "%d\t... more might follow\n", j );
+        }
+      }
     }
   }
 
@@ -758,6 +812,7 @@ int main( int argc , char** argv )
     {
       oyImage_s * a = oySpectrumCreateEmpty ( 300, 830, 5, 1 );
       float max = oySpectrumFillFromArrayF( a, spd_A_5, 0 );
+      if(verbose) fprintf( stderr, "max: %f\n", max );
       oySpectrumNormalise ( a, 1.0/max ); max = 1.0;
       drawIlluminant( cr,
                       a, 0,
@@ -766,11 +821,12 @@ int main( int argc , char** argv )
                       color ? COLOR_SPECTRAL : COLOR_GRAY, rgba,
                       flags, "A" );
       oyImage_Release( &a );
-    }
+    } else
     if(oyStringCaseCmp_(illuminant,"SPD") == 0)
     {
       oyImage_s * a = oySpectrumCreateEmpty ( 300, 830, 5, 3 );
       float max = oySpectrumFillFromArrayF3( a, spd_S1S2S3_5 );
+      if(verbose) fprintf( stderr, "max: %f\n", max );
       oySpectrumNormalise ( a, 1.0/max ); max = 1.0;
       drawIlluminant( cr, a, 0, xO, yO, width, height,
                       min_x, max_x,  min_y < 0 ? min_y : 0.0, max,
@@ -785,27 +841,29 @@ int main( int argc , char** argv )
                       color ? COLOR_SPECTRAL : COLOR_GRAY, rgba,
                       flags, "S3" );
       oyImage_Release( &a );
-    }
+    } else
     if(oyStringCaseCmp_(illuminant,"D50") == 0)
     {
       oyImage_s * a = oySpectrumCreateEmpty ( 300, 830, 5, 1 );
       float * spd_5 = NULL;
       double kelvin = 5000;
-      int error = dXXCIEfromTemperature( kelvin, &spd_5 );
+      int error = oyDXXCIEfromTemperature( kelvin, &spd_5 );
       if(error)
         oyMessageFunc_p(oyMSG_ERROR,(oyStruct_s*)a,"not CIE illuminant for %g", kelvin);
       float max = oySpectrumFillFromArrayF( a, spd_5, 0 );
+      if(verbose) fprintf( stderr, "max: %f\n", max );
       oySpectrumNormalise ( a, 1.0/max ); max = 1.0;
       drawIlluminant( cr, a, 0, xO, yO, width, height,
                       min_x, max_x,  min_y < 0 ? min_y : 0.0, max,
                       color ? COLOR_SPECTRAL : COLOR_GRAY, rgba,
                       flags, "D50" );
       oyImage_Release( &a );
-    }
+    } else
     if(oyStringCaseCmp_(illuminant,"D65") == 0)
     {
       oyImage_s * a = oySpectrumCreateEmpty ( 300, 830, 5, 1 );
       float max = oySpectrumFillFromArrayF( a, spd_D65_5, 0 );
+      if(verbose) fprintf( stderr, "max: %f\n", max );
       oySpectrumNormalise ( a, 1.0/max ); max = 1.0;
       drawIlluminant( cr,
                       a, 0,
@@ -814,25 +872,28 @@ int main( int argc , char** argv )
                       color ? COLOR_SPECTRAL : COLOR_GRAY, rgba,
                       flags, "D65" );
       oyImage_Release( &a );
-    }
+    } else
+    {
     long kelvin = 0, err;
     if((err = oyjlStringToLong(illuminant,&kelvin)) == 0)
     {
       oyImage_s * a = oySpectrumCreateEmpty ( 300, 830, 5, 1 );
       float * spd_5 = NULL;
-      int error = dXXCIEfromTemperature( kelvin, &spd_5 );
+      int error = oyDXXCIEfromTemperature( kelvin, &spd_5 );
       if(error)
       {
         oyMessageFunc_p(oyMSG_ERROR,(oyStruct_s*)a,"not CIE illuminant for %ld K (valid range: 4000-25000 K)", kelvin);
         return 1;
       }
       float max = oySpectrumFillFromArrayF( a, spd_5, 0 );
+      if(verbose) fprintf( stderr, "max: %f\n", max );
       oySpectrumNormalise ( a, 1.0/max ); max = 1.0;
       drawIlluminant( cr, a, 0, xO, yO, width, height,
                       min_x, max_x,  min_y < 0 ? min_y : 0.0, max,
                       color ? COLOR_SPECTRAL : COLOR_GRAY, rgba,
                       flags, "D50" );
       oyImage_Release( &a );
+    }
     }
   }
   if(spectra)
@@ -842,32 +903,13 @@ int main( int argc , char** argv )
                  rgba[0] = r_; rgba[1] = g_; rgba[2] = b_; rgba[3] = a_;
     for(j = 0; j < spectral_count; ++j)
     {
-      switch(j)
-      {
-        case 0: setColor( .8,.0,.0,1. ) break;
-        case 1: setColor( .0,.8,.0,1. ) break;
-        case 2: setColor( .0,.0,.8,1. ) break;
-        case 3: setColor( .0,.8,.8,1. ) break;
-        case 4: setColor( .8,.8,.0,1. ) break;
-        case 5: setColor( .8,.0,.8,1. ) break;
-        case 6: setColor( .5,.0,.0,1. ) break;
-        case 7: setColor( .0,.5,.0,1. ) break;
-        case 8: setColor( .0,.0,.5,1. ) break;
-        case 9: setColor( .0,.5,.5,1. ) break;
-        case 10: setColor( .5,.5,.0,1. ) break;
-        case 11: setColor( .5,.0,.5,1. ) break;
-        case 12: setColor( 1.,1.,1.,1. ) break;
-        case 13: setColor( .8,.8,.8,1. ) break;
-        case 14: setColor( .6,.6,.6,1. ) break;
-        case 15: setColor( .4,.4,.4,1. ) break;
-        case 16: setColor( .2,.2,.2,1. ) break;
-        case 17: setColor( .0,.0,.0,1. ) break;
-      }
+      double rgb[4] = { spectra_XYZ[j].f[0]/white.f[0], spectra_XYZ[j].f[1]/white.f[0], spectra_XYZ[j].f[2]/white.f[0], 1.0 };
+      oyXYZtoSRGB( rgb );
       drawIlluminant( cr,
                       spectra, j,
                       xO, yO, width, height,
                       min_x, max_x, min_y < 0 ? min_y : 0.0, max_y,
-                      spectral_count == 1 && color ? COLOR_SPECTRAL : COLOR_COLOR, rgba,
+                      spectral_count == 1 && color ? COLOR_SPECTRAL : COLOR_COLOR, rgb,
                       flags, input );
     }
     oyImage_Release( &spectra );
@@ -1096,6 +1138,29 @@ double   oySpectrumGet( oyImage_s * spec, int pos, int channel )
   dbl = (double*) oyImage_GetPointF(spec)( spec, pos,0,-1, &is_allocated );
   return dbl[channel];
 }
+oyConversion_s * oy_xyz_srgb = NULL;
+int oyXYZtoSRGB ( double * rgb )
+{
+  int error = 0;
+  int icc_profile_flags = 0;
+
+  if(!oy_xyz_srgb)
+  {
+    oyProfile_s * pXYZ = oyProfile_FromStd( oyASSUMED_XYZ, icc_profile_flags, 0 ),
+                * sRGB = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, 0 );
+    oy_xyz_srgb = oyConversion_CreateBasicPixelsFromBuffers (
+                                       pXYZ, rgb, oyDataType_m(oyDOUBLE),
+                                       sRGB, rgb, oyDataType_m(oyDOUBLE),
+                                       0, 1 );
+    oyProfile_Release( &sRGB );
+    oyProfile_Release( &pXYZ );
+  }
+  error = !oy_xyz_srgb;
+  rgb[3] = 1.0;
+  oyConversion_RunPixels( oy_xyz_srgb, 0 );
+  return error;
+}
+
 void drawIlluminant( cairo_t * cr,
                       oyImage_s * spec, int index,
                       float xO, float yO, float width, float height,
@@ -1230,7 +1295,6 @@ void drawIlluminant( cairo_t * cr,
 }
 
 
-
 /*                            BB_SPECTRUM
 
     Calculate, by Planck's radiation law, the emittance of a black body
@@ -1255,7 +1319,7 @@ double bb_spectrum(double wavelength, double bbTemp)
 }
 
 /* xD yD calculation for CIE DXX illuminant */
-int      xDyDCIEfromTemperature( double kelvin, double * xD, double * yD )
+int      oyxDyDCIEfromTemperature( double kelvin, double * xD, double * yD )
 {
   int error = -1;
   double xd = 0.0;
@@ -1279,21 +1343,21 @@ int      xDyDCIEfromTemperature( double kelvin, double * xD, double * yD )
   return error;
 }
 /* M1 M2 calculation for CIE DXX illuminant */
-int      M1M2CIEfromTemperature( double kelvin, double * M1, double * M2 )
+int      oyM1M2CIEfromTemperature( double kelvin, double * M1, double * M2 )
 {
   double xD = 0, yD = 0;
-  int error = xDyDCIEfromTemperature( kelvin, &xD, &yD );
+  int error = oyxDyDCIEfromTemperature( kelvin, &xD, &yD );
   double M = 0.0241 + 0.2562*xD - 0.7341*yD;
   *M1 = (-1.3515 - 1.7703*xD + 5.9114*yD) / M;
   *M2 = (0.0300 - 31.4424*xD + 30.0717*yD) / M;
   return error;
 }
 /* standard CIE DXX illuminant computation, (300-830nm 107step 5nm) */
-int      dXXCIEfromTemperature( double kelvin, float ** SPD )
+int      oyDXXCIEfromTemperature( double kelvin, float ** SPD )
 {
   int i;
   double M1,M2;
-  int error = M1M2CIEfromTemperature( kelvin, &M1, &M2 );
+  int error = oyM1M2CIEfromTemperature( kelvin, &M1, &M2 );
   float * spd = NULL;
 
   if(!error)
