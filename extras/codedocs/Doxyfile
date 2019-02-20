@@ -1,7 +1,7 @@
 # Doxyfile 1.3.8
 
 PROJECT_NUMBER         = git-devel
-INPUT                  = . doc src/API_generated src/include src/include_private src/liboyranos src/liboyranos_core src/liboyranos_object src/liboyranos_modules src/liboyranos_config src/oyjl src/modules/color/modules/lcms2 src/tools
+INPUT                  = . doc src/API_generated src/include src/include_private src/liboyranos src/liboyranos_core src/liboyranos_object src/liboyranos_modules src/liboyranos_config src/oyjl src/modules/color/modules/lcms2 src/tools openicc/oyjl
 
 #---------------------------------------------------------------------------
 # Project related configuration options
