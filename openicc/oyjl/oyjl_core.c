@@ -95,7 +95,26 @@ int            oyjlMessageFuncSet    ( oyjlMessage_f       message_func )
   return 0;
 }
 
-/** \addtogroup oyjl_core
+/** \addtogroup oyjl_core Core
+ *  @brief I/O and String Handling
+ *
+ *  Basic C FILE input and outpit is provided by oyjlWriteFile(), oyjlReadFile()
+ *  and oyjlReadFileStreamToMem().
+ *
+ *  A convinient set of string API's is available in the oyjlStringXXX family.
+ *  Those API's handle plain string arrays. oyjlStringAdd() uses variable args
+*   to format and append to a existing string. oyjlStringListXXX
+ *  API's handle plain arrays of strings.
+ *
+ *  The oyjl_str based oyStrXXX API's use a more carful memory
+ *  management and thus perform way faster on larger memory arrays as they
+ *  need fewer allocations and copies. oyjlStrNew() allocates a new object,
+ *  or oyjlStrNewFrom() wrappes a existing string array into a new object.
+ *  oyjlStr() lets you see the contained char array. oyjlStrAppendN()
+ *  performs fast concatenation. oyjlStrReplace() uses the object advantages.
+ *  oyjlStrPull() directly takes the char array out of control of the oyjl_str
+ *  object and oyjlStrRelease() frees the object and all memory.
+ *
  *  @{ *//* oyjl_core */
 
 /** @brief   convert a string into list
@@ -662,6 +681,9 @@ oyjl_str   oyjlStrNew                ( size_t              length,
 
 /** @brief   allocate string object from chars
  *
+ *  Use this function to avoid allocation of already in memory char array.
+ *  Be careful, that the memory alloc and deAlloc args match the text storage.
+ *
  *  @param[in]     text                text to pull into new object
  *  @param[in]     length              the preallocation size of text or zero if unknown
  *  @param[in]     alloc               custom allocator; optional, default is malloc
@@ -695,7 +717,7 @@ oyjl_str   oyjlStrNewFrom            ( char             ** text,
   return (oyjl_str) string;
 }
 
-/** @brief   append to the string end
+/** @brief   fast append to the string end
  *
  *  @param[in]     string              string object
  *  @param[in]     append              to be added text to string
@@ -801,6 +823,11 @@ int        oyjlStrReplace            ( oyjl_str            text,
 
 /** @brief   move the wrapped char array out of the object
  *
+ *  This function might be usefull if a plain string copy is too
+ *  expensive and the object memory allocation can be further
+ *  handled for the returned char pointer. After the operation
+ *  the objects internal char array will be reset to zero length.
+ *
  *  @param[in,out] str                 the object, which will be reseted
  *  @return                            the char array from str
  *
@@ -831,6 +858,8 @@ char *     oyjlStrPull               ( oyjl_str            str )
 
 /** @brief   release a string object
  *
+ *  All references from previous oyjlStr() calls will be void.
+ *
  *  @version Oyjl: 1.0.0
  *  @date    2019/02/14
  *  @since   2019/02/14 (Oyjl: 1.0.0)
@@ -847,6 +876,9 @@ void       oyjlStrRelease            ( oyjl_str          * string_ptr )
 }
 
 /** @brief   read only the wrapped char array
+ *
+ *  The returned array might become invalid with each
+ *  further call to the string object.
  *
  *  @version Oyjl: 1.0.0
  *  @date    2019/02/14
