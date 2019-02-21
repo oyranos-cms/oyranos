@@ -45,6 +45,7 @@ int main(int argc, char** argv)
   }
 
   colorterm = getenv("COLORTERM");
+  if(!colorterm) colorterm = getenv("TERM");
 
   i = 1; while(i < argc) if( strcmp(argv[i++],"--silent") == 0 )
   { ++argpos;
