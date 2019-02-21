@@ -2,7 +2,7 @@
  *
  *  Oyranos is an open source Color Management System 
  *
- *  Copyright (C) 2004-2017  Kai-Uwe Behrmann
+ *  Copyright (C) 2004-2019  Kai-Uwe Behrmann
  *
  *  @brief    Oyranos test suite
  *  @internal
@@ -23,13 +23,18 @@
   TEST_RUN( testRegistrationMatch,  "Registration matching", 1 );\
   TEST_RUN( testObserver,  "Generic Object Observation", 1 );
 
-#include "oy_test.h"
+#include <oyjl_test_main.h>
+
+#include "oyranos.h"
+#include "oyranos_string.h"
+#include "oyranos_version.h"
+oyObject_s testobj = NULL;
 
 /* --- actual tests --- */
 
-oyTESTRESULT_e testVersion()
+oyjlTESTRESULT_e testVersion()
 {
-  oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
+  oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
 
   fprintf(stdout, "\n" );
   fprintf(zout, "compiled version:     %d\n", OYRANOS_VERSION );
@@ -39,9 +44,9 @@ oyTESTRESULT_e testVersion()
   fprintf(zout, " OY_MODULE_PATH: %s\n", oyNoEmptyString_m_(getenv("OY_MODULE_PATH")));
 
   if(OYRANOS_VERSION == oyVersion(0))
-    result = oyTESTRESULT_SUCCESS;
+    result = oyjlTESTRESULT_SUCCESS;
   else
-    result = oyTESTRESULT_FAIL;
+    result = oyjlTESTRESULT_FAIL;
 
   testobj = oyObject_NewWithAllocators( myAllocFunc, myDeAllocFunc );
 
@@ -51,10 +56,10 @@ oyTESTRESULT_e testVersion()
 #include <locale.h>
 #include "oyranos_sentinel.h"
 
-oyTESTRESULT_e testI18N()
+oyjlTESTRESULT_e testI18N()
 {
   const char * lang = 0;
-  oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
+  oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
 
   fprintf(stderr, "\n" );
 
@@ -62,10 +67,10 @@ oyTESTRESULT_e testI18N()
 
   lang = oyLanguage();
   if((lang && strcmp(lang, "C") == 0) || !lang)
-  { PRINT_SUB( oyTESTRESULT_SUCCESS, 
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyLanguage() uninitialised good %s                ", lang?lang:"---" );
   } else
-  { PRINT_SUB( oyTESTRESULT_FAIL, 
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
     "oyLanguage() uninitialised failed                 " );
   }
 
@@ -103,10 +108,10 @@ oyTESTRESULT_e testI18N()
 
   lang = oyLanguage();
   if(lang && (strcmp(lang, "C") != 0))
-  { PRINT_SUB( oyTESTRESULT_SUCCESS, 
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyLanguage() initialised good %s                  ", lang?lang:"---" );
   } else
-  { PRINT_SUB( oyTESTRESULT_XFAIL, 
+  { PRINT_SUB( oyjlTESTRESULT_XFAIL, 
     "oyLanguage() initialised failed %s                ", lang?lang:"---" );
   }
 
@@ -115,12 +120,12 @@ oyTESTRESULT_e testI18N()
 
 #include "oyranos_db.h"
 #include "oyranos_texts.h"
-oyTESTRESULT_e testElektra()
+oyjlTESTRESULT_e testElektra()
 {
   int error = 0;
   char * value = 0,
        * start = 0;
-  oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
+  oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
 
   oyExportReset_(EXPORT_SETTING);
 
@@ -139,7 +144,7 @@ oyTESTRESULT_e testElektra()
     start = oyGetPersistentString("sw/Oyranos/Tests/test_key", 0,
                                   oySCOPE_USER_SYS, 0);
     
-    PRINT_SUB( start?oyTESTRESULT_SUCCESS:oyTESTRESULT_XFAIL,
+    PRINT_SUB( start?oyjlTESTRESULT_SUCCESS:oyjlTESTRESULT_XFAIL,
     "Elektra not initialised? try oyExportStart_(EXPORT_CHECK_NO)" );
   }
   if(!start || !start[0])
@@ -150,7 +155,7 @@ oyTESTRESULT_e testElektra()
                                  "NULLTestValue", "NULLTestComment" );
     start = oyGetPersistentString("sw/Oyranos/Tests/test_key", 0,
                                   oySCOPE_USER_SYS, 0);
-    PRINT_SUB( start?oyTESTRESULT_SUCCESS:oyTESTRESULT_XFAIL, 
+    PRINT_SUB( start?oyjlTESTRESULT_SUCCESS:oyjlTESTRESULT_XFAIL, 
     "Elektra not initialised? try oyExportStart_(EXPORT_SETTING)" );
   }
   if(start && start[0])
@@ -167,32 +172,32 @@ oyTESTRESULT_e testElektra()
 
   if(error)
   {
-    PRINT_SUB( oyTESTRESULT_SYSERROR, 
+    PRINT_SUB( oyjlTESTRESULT_SYSERROR, 
     "Elektra error: %d", error );
   } else
   if(start && start[0] && value && strcmp(start,value) == 0)
   {
-    PRINT_SUB( oyTESTRESULT_FAIL, 
+    PRINT_SUB( oyjlTESTRESULT_FAIL, 
     "Elektra (start!=value) failed: %s|%s", start, value );
   } else
   if(!value)
   {
     if(!value)
-      PRINT_SUB( oyTESTRESULT_FAIL, 
+      PRINT_SUB( oyjlTESTRESULT_FAIL, 
       "Elektra (value) failed" );
     if(!start || !start[0])
-      PRINT_SUB( oyTESTRESULT_FAIL, 
+      PRINT_SUB( oyjlTESTRESULT_FAIL, 
       "Elektra (init) failed" );
   } else
   if(value)
   {
     if(strcmp(value,"myTestValue") == 0)
     {
-      PRINT_SUB( oyTESTRESULT_SUCCESS, 
+      PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
       "Elektra (value): %s", value );
     } else
     {
-      PRINT_SUB( oyTESTRESULT_FAIL, 
+      PRINT_SUB( oyjlTESTRESULT_FAIL, 
       "Elektra (value) wrong: %s", value );
     }
   }
@@ -208,9 +213,9 @@ oyTESTRESULT_e testElektra()
 
 #include "oyOption_s.h"
 
-oyTESTRESULT_e testOption ()
+oyjlTESTRESULT_e testOption ()
 {
-  oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
+  oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
 
   int error = 0;
   oyOption_s * o;
@@ -224,29 +229,29 @@ oyTESTRESULT_e testOption ()
 
   o = oyOption_FromRegistration( "blabla", 0 );
   if(!o)
-  { PRINT_SUB( oyTESTRESULT_SUCCESS, 
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyOption_New() with wrong registration rejected: ok");
   } else
-  { PRINT_SUB( oyTESTRESULT_FAIL, 
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
     "oyOption_New() with wrong registration not rejected");
   }
 
   o = oyOption_FromRegistration( 0, 0 );
   if(o)
-  { PRINT_SUB( oyTESTRESULT_SUCCESS, 
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyOption_New() good                               " );
   } else
-  { PRINT_SUB( oyTESTRESULT_FAIL, 
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
     "oyOption_New() failed                             " );
   }
 
   memcpy( ptr, test_buffer, size );
   error = oyOption_SetFromData( o, ptr, size );
   if(!error)
-  { PRINT_SUB( oyTESTRESULT_SUCCESS, 
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyOption_SetFromData() good                       " );
   } else
-  { PRINT_SUB( oyTESTRESULT_FAIL, 
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
     "oyOption_SetFromData() failed                     " );
   }
 
@@ -255,10 +260,10 @@ oyTESTRESULT_e testOption ()
 
   ptr = oyOption_GetData( o, &size, oyAllocateFunc_ );
   if(ptr && size && memcmp( ptr, test_buffer, 4 ) == 0)
-  { PRINT_SUB( oyTESTRESULT_SUCCESS, 
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyOption_GetData() good                           " );
   } else
-  { PRINT_SUB( oyTESTRESULT_FAIL, 
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
     "oyOption_GetData() failed                         " );
   }
 
@@ -277,9 +282,9 @@ oyTESTRESULT_e testOption ()
 #endif
 #endif
 
-oyTESTRESULT_e testSettings ()
+oyjlTESTRESULT_e testSettings ()
 {
-  oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
+  oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
 
   int i;
   uint32_t size = 0;
@@ -310,7 +315,7 @@ oyTESTRESULT_e testSettings ()
   count = oyOptions_Count( opts );
   if(!count)
   {
-    PRINT_SUB( oyTESTRESULT_FAIL, 
+    PRINT_SUB( oyjlTESTRESULT_FAIL, 
     "No options found for lcm2" );
   } else
   {
@@ -332,16 +337,16 @@ oyTESTRESULT_e testSettings ()
 
     if(!size)
     {
-      PRINT_SUB( oyTESTRESULT_FAIL, 
+      PRINT_SUB( oyjlTESTRESULT_FAIL, 
       "oyOptions_FindString() could not find option" );
     } else
     if(size > 1)
     {
-      PRINT_SUB( oyTESTRESULT_FAIL, 
+      PRINT_SUB( oyjlTESTRESULT_FAIL, 
       "oyOptions_FindString() returned doubled options %u",
                        (unsigned int)size );
     } else
-      PRINT_SUB( oyTESTRESULT_SUCCESS, 
+      PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
       "oyOptions_FindString() returned one option" );
   }
 
@@ -353,11 +358,11 @@ oyTESTRESULT_e testSettings ()
   {
     if(!text || !strlen(text))
     {
-      PRINT_SUB( oyTESTRESULT_FAIL, 
+      PRINT_SUB( oyjlTESTRESULT_FAIL, 
       "oyOptions_GetText() returned no text             " );
     } else
     {
-      PRINT_SUB( oyTESTRESULT_SUCCESS, 
+      PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
       "oyOptions_GetText() returned text               %d", (int)strlen(text) );
     }
   }
@@ -371,12 +376,12 @@ oyTESTRESULT_e testSettings ()
   {
     if(count == countB)
     {
-      PRINT_SUB( oyTESTRESULT_SUCCESS, 
+      PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
       "obtained same count from oyOptions_FromText %d|%d  ",
                       count, countB );
     } else
     {
-      PRINT_SUB( oyTESTRESULT_FAIL, 
+      PRINT_SUB( oyjlTESTRESULT_FAIL, 
       "oyOptions_FromText() returned different count %d|%d",
                       count, countB );
     }
@@ -403,11 +408,11 @@ oyTESTRESULT_e testSettings ()
   {
     if(error)
     {
-      PRINT_SUB( oyTESTRESULT_FAIL, 
+      PRINT_SUB( oyjlTESTRESULT_FAIL, 
       "libxml2::xmlParseMemory() returned could not parse the document" );
     } else
     {
-      PRINT_SUB( oyTESTRESULT_SUCCESS, 
+      PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
       "libxml2 returned document                        " );
     }
   }
@@ -428,9 +433,9 @@ oyTESTRESULT_e testSettings ()
 
 #include "oyProfiles_s.h"
 
-oyTESTRESULT_e testProfiles ()
+oyjlTESTRESULT_e testProfiles ()
 {
-  oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
+  oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
 
   int i;
   uint32_t size = 0;
@@ -451,11 +456,11 @@ oyTESTRESULT_e testProfiles ()
   count = oyProfiles_Count( profs );
   if(!count)
   {
-    PRINT_SUB( oyTESTRESULT_FAIL, 
+    PRINT_SUB( oyjlTESTRESULT_FAIL, 
     "No profiles found for oyDEFAULT_PROFILE_START" );
   } else
   {
-    PRINT_SUB( oyTESTRESULT_SUCCESS, 
+    PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "profiles found for oyDEFAULT_PROFILE_START: %d (%d)", count, current );
   }
   oyProfiles_Release( &profs );
@@ -463,26 +468,26 @@ oyTESTRESULT_e testProfiles ()
   texts = oyProfileListGet( 0, &size, 0 );
   if(!size)
   {
-    PRINT_SUB( oyTESTRESULT_FAIL, 
+    PRINT_SUB( oyjlTESTRESULT_FAIL, 
     "No profiles found for oyProfileListGet()" );
   } else
   {
-    PRINT_SUB( oyTESTRESULT_SUCCESS, 
+    PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "profiles found for oyProfileListGet:        %u", (unsigned int)size );
   }
   oyStringListRelease_( &texts, size, oyDeAllocateFunc_ );
 
   if(size < (size_t)count)
   {
-    PRINT_SUB( oyTESTRESULT_FAIL, 
+    PRINT_SUB( oyjlTESTRESULT_FAIL, 
     "oyProfileListGet() returned less than oyDEFAULT_PROFILE_START %u|%d", (unsigned int)size, count );
   } else if(count)
   {
-    PRINT_SUB( oyTESTRESULT_SUCCESS,
+    PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "oyProfileListGet and oyDEFAULT_PROFILE_START ok %u|%d", (unsigned int)size, count );
   } else
   {
-    PRINT_SUB( oyTESTRESULT_FAIL,
+    PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyProfileListGet and/or oyDEFAULT_PROFILE_START are wrong %u|%d", (unsigned int)size, count );
   }
 
@@ -496,13 +501,13 @@ oyTESTRESULT_e testProfiles ()
     countB += count;
     if(!count)
     {
-      PRINT_SUB( oyTESTRESULT_XFAIL, 
+      PRINT_SUB( oyjlTESTRESULT_XFAIL, 
       "No profiles found for oyPROFILE_e %d             ", i );
     } else
     {
       p = oyProfiles_Get( profs, current );
       tmp = oyProfile_GetText( p, oyNAME_DESCRIPTION );
-      PRINT_SUB( oyTESTRESULT_SUCCESS, 
+      PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
       "profiles found for oyPROFILE_e %d: %d \"%s\"", i, count, tmp ? tmp :"");
     }
 
@@ -510,11 +515,11 @@ oyTESTRESULT_e testProfiles ()
   }
   if(size < (size_t)countB)
   {
-    PRINT_SUB( oyTESTRESULT_FAIL, 
+    PRINT_SUB( oyjlTESTRESULT_FAIL, 
     "oyProfileListGet() returned less than oyPROFILE_e %u|%d", (unsigned int)size, count );
   } else
   {
-    PRINT_SUB( oyTESTRESULT_SUCCESS,
+    PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "oyProfileListGet and oyPROFILE_e ok %u|%d", (unsigned int)size, countB );
   }
 
@@ -525,9 +530,9 @@ oyTESTRESULT_e testProfiles ()
 #include "oyRectangle_s.h"
 #include "oyranos_devices.h"
 
-oyTESTRESULT_e testMonitor ()
+oyjlTESTRESULT_e testMonitor ()
 {
-  oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
+  oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
 
   int n, i, error = 0;
   char * block, * text = 0, * display_name;
@@ -545,24 +550,24 @@ oyTESTRESULT_e testMonitor ()
 
   /* get all monitors */
   error = oyDevicesGet( 0, "monitor", 0, &devices );
-  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyDevicesGet() error: %d", error )
+  if(error) PRINT_SUB( oyjlTESTRESULT_XFAIL, "oyDevicesGet() error: %d", error )
   /* see how many are included */
   n = oyConfigs_Count( devices );
   if(n)
-    PRINT_SUB( oyTESTRESULT_SUCCESS,
+    PRINT_SUB( oyjlTESTRESULT_SUCCESS,
                "\"list\" device(s): %d                    ", n )
   else
-    PRINT_SUB( oyTESTRESULT_XFAIL,
+    PRINT_SUB( oyjlTESTRESULT_XFAIL,
                "\"list\" device(s): ---                   " )
 
   error = oyOptions_SetFromString( &options,
                                "//"OY_TYPE_STD"/config/icc_profile.x_color_region_target",
                                        "yes", OY_CREATE_NEW );
-  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromString() error: %d", error )
+  if(error) PRINT_SUB( oyjlTESTRESULT_XFAIL, "oyOptions_SetFromString() error: %d", error )
   error = oyOptions_SetFromString( &options,
                                  "//"OY_TYPE_STD"/config/command",
                                  "list", OY_CREATE_NEW );
-  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromString() error: %d", error )
+  if(error) PRINT_SUB( oyjlTESTRESULT_XFAIL, "oyOptions_SetFromString() error: %d", error )
 
   for( i = 0; i < n; ++i )
   {
@@ -572,12 +577,12 @@ oyTESTRESULT_e testMonitor ()
     if(p)
     {
       tmp = oyProfile_GetText( p, oyNAME_DESCRIPTION );
-    PRINT_SUB( oyTESTRESULT_SUCCESS,
+    PRINT_SUB( oyjlTESTRESULT_SUCCESS,
                "device[%d]: \"%s\"              ", i,
                tmp ? tmp :"" );
     } else
     {
-    PRINT_SUB( oyTESTRESULT_FAIL,
+    PRINT_SUB( oyjlTESTRESULT_FAIL,
                "device[%d]: no profile                             ", i );
     }
 
@@ -592,20 +597,20 @@ oyTESTRESULT_e testMonitor ()
   /* get all monitors */
   error = oyOptions_SetFromString( &options, "//" OY_TYPE_STD "/config/command",
                                  "list", OY_CREATE_NEW );
-  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromString() error: %d", error )
+  if(error) PRINT_SUB( oyjlTESTRESULT_XFAIL, "oyOptions_SetFromString() error: %d", error )
   error = oyOptions_SetFromString( &options, "//" OY_TYPE_STD "/config/device_rectangle",
                                  "true", OY_CREATE_NEW );
-  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromString() error: %d", error )
+  if(error) PRINT_SUB( oyjlTESTRESULT_XFAIL, "oyOptions_SetFromString() error: %d", error )
   error = oyDevicesGet( 0, "monitor", options, &devices );
-  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyDevicesGet() error: %d", error )
+  if(error) PRINT_SUB( oyjlTESTRESULT_XFAIL, "oyDevicesGet() error: %d", error )
   oyOptions_Release( &options );
   /* see how many are included */
   n = oyConfigs_Count( devices );
   if(n)
-    PRINT_SUB( oyTESTRESULT_SUCCESS,
+    PRINT_SUB( oyjlTESTRESULT_SUCCESS,
                "\"list\" + device_rectangle device(s): %d    ", n )
   else
-    PRINT_SUB( oyTESTRESULT_XFAIL,
+    PRINT_SUB( oyjlTESTRESULT_XFAIL,
                "\"list\" device(s): ---                   " )
 
   for( i = 0; i < n; ++i )
@@ -616,12 +621,12 @@ oyTESTRESULT_e testMonitor ()
 
     if(r)
     {
-    PRINT_SUB( oyTESTRESULT_SUCCESS,
+    PRINT_SUB( oyjlTESTRESULT_SUCCESS,
                "device[%d]: %s    ", i,
                oyRectangle_Show(r) );
     } else
     {
-    PRINT_SUB( oyTESTRESULT_FAIL,
+    PRINT_SUB( oyjlTESTRESULT_FAIL,
                "device[%d]: no rectangle                          ", i );
     }
 
@@ -641,22 +646,22 @@ oyTESTRESULT_e testMonitor ()
   error = oyOptions_SetFromString( &options,
                                "//"OY_TYPE_STD"/config/icc_profile.x_color_region_target",
                                        "yes", OY_CREATE_NEW );
-  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromString() error: %d", error )
+  if(error) PRINT_SUB( oyjlTESTRESULT_XFAIL, "oyOptions_SetFromString() error: %d", error )
   error = oyOptions_SetFromString( &options,
                                  "//"OY_TYPE_STD"/config/command",
                                  "properties", OY_CREATE_NEW );
-  if(error) PRINT_SUB( oyTESTRESULT_XFAIL, "oyOptions_SetFromString() error: %d", error )
+  if(error) PRINT_SUB( oyjlTESTRESULT_XFAIL, "oyOptions_SetFromString() error: %d", error )
 
   error = oyDevicesGet( OY_TYPE_STD, "monitor", options, &devices );
   if(error)
-    PRINT_SUB( oyTESTRESULT_XFAIL, "oyDevicesGet() error: %d", error )
+    PRINT_SUB( oyjlTESTRESULT_XFAIL, "oyDevicesGet() error: %d", error )
 
   n = oyConfigs_Count( devices );
   if(n)
-    PRINT_SUB( oyTESTRESULT_SUCCESS,
+    PRINT_SUB( oyjlTESTRESULT_SUCCESS,
                "\"properties\" device(s): %d              ", n )
   else
-    PRINT_SUB( oyTESTRESULT_XFAIL,
+    PRINT_SUB( oyjlTESTRESULT_XFAIL,
                "\"properties\" device(s): ---             " )
 
   if(!error)
@@ -667,26 +672,26 @@ oyTESTRESULT_e testMonitor ()
 
       error = oyDeviceGetInfo( c, oyNAME_NAME, 0, &text, 0 );
       if(error)
-        PRINT_SUB( oyTESTRESULT_XFAIL, "oyDeviceGetInfo() error: %d", error )
+        PRINT_SUB( oyjlTESTRESULT_XFAIL, "oyDeviceGetInfo() error: %d", error )
 
       if(text && text[0])
-        PRINT_SUB( oyTESTRESULT_SUCCESS, "device: %s", text)
+        PRINT_SUB( oyjlTESTRESULT_SUCCESS, "device: %s", text)
       else
-        PRINT_SUB( oyTESTRESULT_XFAIL, "device: --- %d", error )
+        PRINT_SUB( oyjlTESTRESULT_XFAIL, "device: --- %d", error )
 
       if(text)
         oyDeAllocateFunc_( text );
 
       error = oyDeviceGetInfo( c, oyNAME_DESCRIPTION, options, &text, 0 );
       if(error)
-        PRINT_SUB( oyTESTRESULT_XFAIL, "oyDeviceGetInfo() error: %d", error )
+        PRINT_SUB( oyjlTESTRESULT_XFAIL, "oyDeviceGetInfo() error: %d", error )
 
       if(text && text[0])
       {
         char * list = text, * tmp = 0, * line = malloc(128);
         int even = 1;
 
-        PRINT_SUB( oyTESTRESULT_SUCCESS, "device    " )
+        PRINT_SUB( oyjlTESTRESULT_SUCCESS, "device    " )
 
         tmp = list;
         while(list && list[0])
@@ -708,7 +713,7 @@ oyTESTRESULT_e testMonitor ()
         free( line );
 
       } else
-        PRINT_SUB( oyTESTRESULT_XFAIL, "device: ---" )
+        PRINT_SUB( oyjlTESTRESULT_XFAIL, "device: ---" )
 
       if(text)
       { oyDeAllocateFunc_( text ); text = 0; }
@@ -717,43 +722,43 @@ oyTESTRESULT_e testMonitor ()
       /* get the old oyMonitorxxx API conforming display name */
       error = oyDeviceGetInfo( c, oyNAME_NICK, 0, &text, 0 );
       if(error)
-        PRINT_SUB( oyTESTRESULT_XFAIL, "oyDeviceGetInfo() error: %d", error )
+        PRINT_SUB( oyjlTESTRESULT_XFAIL, "oyDeviceGetInfo() error: %d", error )
 
       if(text && text[0])
-        PRINT_SUB( oyTESTRESULT_SUCCESS, "device: %s", text )
+        PRINT_SUB( oyjlTESTRESULT_SUCCESS, "device: %s", text )
       else
-        PRINT_SUB( oyTESTRESULT_XFAIL, "device: ---" )
+        PRINT_SUB( oyjlTESTRESULT_XFAIL, "device: ---" )
 
       display_name = text; text = 0;
 
       size = 0;
       error = oyDeviceGetProfile( c, options, &p );
       if(error)
-        PRINT_SUB( oyTESTRESULT_XFAIL, "oyDeviceGetProfile() error: %d", error )
+        PRINT_SUB( oyjlTESTRESULT_XFAIL, "oyDeviceGetProfile() error: %d", error )
       block = oyProfile_GetMem( p, &size, 0, malloc );
 
       if(block)
       {
-        PRINT_SUB( oyTESTRESULT_SUCCESS,
+        PRINT_SUB( oyjlTESTRESULT_SUCCESS,
         "monitor profile from server \"%s\" %d",
         oyProfile_GetText( p, oyNAME_DESCRIPTION ), (int)size );
       } else
       {
-        PRINT_SUB( oyTESTRESULT_SUCCESS,
+        PRINT_SUB( oyjlTESTRESULT_SUCCESS,
         "no default monitor profile %d", (int)size );
       }
 
       error = oyDeviceProfileFromDB( c, &text, malloc );
       if(error)
-        PRINT_SUB( oyTESTRESULT_XFAIL, "oyDeviceProfileFromDB() error: %d", error )
+        PRINT_SUB( oyjlTESTRESULT_XFAIL, "oyDeviceProfileFromDB() error: %d", error )
       if(display_name) { free(display_name); display_name = 0; }
       if(text)
       {
-        PRINT_SUB( oyTESTRESULT_SUCCESS,
+        PRINT_SUB( oyjlTESTRESULT_SUCCESS,
         "monitor profile from Oyranos DB %s", text );
       } else
       {
-        PRINT_SUB( oyTESTRESULT_XFAIL,
+        PRINT_SUB( oyjlTESTRESULT_XFAIL,
         "no monitor profile from Oyranos DB" );
       }
 
@@ -765,11 +770,11 @@ oyTESTRESULT_e testMonitor ()
                  oyNoEmptyString_m_(oyProfile_GetText( p ,oyNAME_DESCRIPTION )))
          == 0)
       {
-        PRINT_SUB( oyTESTRESULT_SUCCESS,
+        PRINT_SUB( oyjlTESTRESULT_SUCCESS,
         "monitor profile from Oyranos DB matches the server one" );
       } else
       {
-        PRINT_SUB( oyTESTRESULT_XFAIL,
+        PRINT_SUB( oyjlTESTRESULT_XFAIL,
         "monitor profile from Oyranos DB differs from the server one" );
       }
 
@@ -790,68 +795,68 @@ oyTESTRESULT_e testMonitor ()
   return result;
 }
 
-oyTESTRESULT_e testRegistrationMatch ()
+oyjlTESTRESULT_e testRegistrationMatch ()
 {
-  oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
+  oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
 
   fprintf(stderr, "\n" );
 
   if( oyFilterRegistrationMatch(OY_INTERNAL "/icc_color.lcms",
                                 "//" OY_TYPE_STD "/icc_color",
                                 oyOBJECT_CMM_API4_S ))
-  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "simple CMM selection                  " );
   } else
-  { PRINT_SUB( oyTESTRESULT_FAIL,
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "simple CMM selection                  " );
   }
 
   if(!oyFilterRegistrationMatch( OY_INTERNAL "/icc_color.lcms",
                                 "//" OY_TYPE_STD "/icc_color.octl",
                                 oyOBJECT_CMM_API4_S ))
-  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "simple CMM selection no match         " );
   } else
-  { PRINT_SUB( oyTESTRESULT_FAIL,
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "simple CMM selection no match         " );
   }
 
   if( oyFilterRegistrationMatch( OY_INTERNAL "/icc_color.lcms",
                                 "//" OY_TYPE_STD "/icc_color.4+lcms",
                                 oyOBJECT_CMM_API4_S ))
-  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "special CMM selection                 " );
   } else
-  { PRINT_SUB( oyTESTRESULT_FAIL,
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "special CMM selection                 " );
   }
 
   if(!oyFilterRegistrationMatch( OY_INTERNAL "/icc_color.lcms",
                                 "//" OY_TYPE_STD "/icc_color.4-lcms",
                                 oyOBJECT_CMM_API4_S ))
-  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "special CMM avoiding                  " );
   } else
-  { PRINT_SUB( oyTESTRESULT_FAIL,
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "special CMM avoiding                  " );
   }
 
   if( oyFilterRegistrationMatch( OY_INTERNAL "/icc_color.lcms",
                                 "//" OY_TYPE_STD "/icc_color.7-lcms",
                                 oyOBJECT_CMM_API4_S ))
-  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "special CMM avoiding, other API       " );
   } else
-  { PRINT_SUB( oyTESTRESULT_FAIL,
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "special CMM avoiding, other API       " );
   }
 
   if( oyFilterRegistrationMatch( OY_INTERNAL "/icc_color.lcms",
                                 "lcms", 0 ))
-  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "select by keyname                     " );
   } else
-  { PRINT_SUB( oyTESTRESULT_FAIL,
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "select by keyname                     " );
   }
 
@@ -934,9 +939,9 @@ int myFilterSignalHandler            ( oyObserver_s      * observer,
   return handled;
 }
 
-oyTESTRESULT_e testObserver ()
+oyjlTESTRESULT_e testObserver ()
 {
-  oyTESTRESULT_e result = oyTESTRESULT_UNKNOWN;
+  oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
   oyOption_s * o = oyOption_FromRegistration( "a/b/c/d/my_key", 0 );
   oyFilterNode_s * node = oyFilterNode_NewWith( "//" OY_TYPE_STD "/icc_color", 0, 0 );
 
@@ -946,10 +951,10 @@ oyTESTRESULT_e testObserver ()
 
   if( !oyStruct_ObserverAdd( (oyStruct_s*)o, (oyStruct_s*)node, 0,
                              myFilterSignalHandler ) )
-  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "Added Observer                        " );
   } else
-  { PRINT_SUB( oyTESTRESULT_FAIL,
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "Added Observer                        " );
   }
 
@@ -957,10 +962,10 @@ oyTESTRESULT_e testObserver ()
 
   if( !oyStruct_ObserverRemove( (oyStruct_s*)o, (oyStruct_s*)node,
                                 myFilterSignalHandler ))
-  { PRINT_SUB( oyTESTRESULT_SUCCESS,
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "Removed Observer                      " );
   } else
-  { PRINT_SUB( oyTESTRESULT_FAIL,
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "Removed Observer                      " );
   }
 
@@ -974,4 +979,3 @@ oyTESTRESULT_e testObserver ()
 /* --- end actual tests --- */
 
 
-#include "oy_test_main.h"
