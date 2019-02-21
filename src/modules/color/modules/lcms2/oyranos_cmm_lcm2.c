@@ -1814,7 +1814,7 @@ oyPointer l2cmsFilterNode_CmmIccContextToMem (
   size_t size_ = 0;
   oyFilterPlug_s * plug = oyFilterNode_GetPlug( node, 0 );
   oyFilterSocket_s * socket = oyFilterNode_GetSocket( node, 0 ),
-                   * remote_socket = oyFilterPlug_GetSocket( plug );
+                   * src_socket = oyFilterPlug_GetSocket( plug );
   oyImage_s * image_input = 0,
             * image_output = 0;
   cmsHPROFILE * lps = 0;
@@ -1837,7 +1837,7 @@ oyPointer l2cmsFilterNode_CmmIccContextToMem (
       effect_switch = 0;
   int verbose = oyOptions_FindString( node_tags, "verbose", "true" ) ? 1 : 0;
 
-  image_input = (oyImage_s*)oyFilterSocket_GetData( remote_socket );
+  image_input = (oyImage_s*)oyFilterSocket_GetData( src_socket );
   image_output = (oyImage_s*)oyFilterSocket_GetData( socket );
   image_input_profile = oyImage_GetProfile( image_input );
   image_output_profile = oyImage_GetProfile( image_output );
@@ -2121,7 +2121,7 @@ oyPointer l2cmsFilterNode_CmmIccContextToMem (
 l2cmsFilterNode_CmmIccContextToMemClean:
   oyFilterPlug_Release( &plug );
   oyFilterSocket_Release( &socket );
-  oyFilterSocket_Release( & remote_socket );
+  oyFilterSocket_Release( & src_socket );
   oyOptions_Release( &node_tags );
   oyImage_Release( &image_input );
   oyImage_Release( &image_output );
@@ -2237,15 +2237,15 @@ char * l2cmsFilterNode_GetText       ( oyFilterNode_s    * node,
   oyFilterCore_s * node_core = oyFilterNode_GetCore( node );
   oyFilterPlug_s * plug = oyFilterNode_GetPlug( node, 0 );
   oyFilterSocket_s * socket = oyFilterNode_GetSocket( node, 0 ),
-                   * remote_socket = oyFilterPlug_GetSocket( plug );
+                   * src_socket = oyFilterPlug_GetSocket( plug );
   oyProfiles_s * profiles;
   oyProfile_s * p;
   int effect_switch, proof, profiles_display_n, i,n;
 
-  /* pick all sockets (output) data */
-  out_image = (oyImage_s*)oyFilterSocket_GetData( remote_socket );
   /* pick all plug (input) data */
-  in_image = (oyImage_s*)oyFilterSocket_GetData( socket );
+  in_image = (oyImage_s*)oyFilterSocket_GetData( src_socket );
+  /* pick all socket (output) data */
+  out_image = (oyImage_s*)oyFilterSocket_GetData( socket );
 
   if(!node)
     return 0;
@@ -2372,7 +2372,7 @@ char * l2cmsFilterNode_GetText       ( oyFilterNode_s    * node,
   oyFilterCore_Release( &node_core );
   oyFilterPlug_Release( &plug );
   oyFilterSocket_Release( &socket );
-  oyFilterSocket_Release( &remote_socket );
+  oyFilterSocket_Release( &src_socket );
   oyImage_Release( &in_image );
   oyImage_Release( &out_image );
 
@@ -2440,10 +2440,10 @@ int  l2cmsModuleData_Convert          ( oyPointer_s       * data_in,
   cmsHPROFILE lps[2] = {0,0};
   oyFilterPlug_s * plug = oyFilterNode_GetPlug( node, 0 );
   oyFilterSocket_s * socket = oyFilterNode_GetSocket( node, 0 ),
-                   * remote_socket = oyFilterPlug_GetSocket( plug );
+                   * src_socket = oyFilterPlug_GetSocket( plug );
   oyOptions_s * node_options = oyFilterNode_GetOptions( node, 0 ),
               * node_tags = oyFilterNode_GetTags( node );
-  oyImage_s * image_input = (oyImage_s*)oyFilterSocket_GetData( remote_socket ),
+  oyImage_s * image_input = (oyImage_s*)oyFilterSocket_GetData( src_socket ),
             * image_output = (oyImage_s*)oyFilterSocket_GetData( socket );
   int verbose = oyOptions_FindString( node_tags, "verbose", "true" ) ? 1 : 0;
 
@@ -2529,7 +2529,7 @@ int  l2cmsModuleData_Convert          ( oyPointer_s       * data_in,
   }
   oyFilterPlug_Release( &plug );
   oyFilterSocket_Release( &socket );
-  oyFilterSocket_Release( & remote_socket );
+  oyFilterSocket_Release( & src_socket );
   oyImage_Release( &image_input );
   oyImage_Release( &image_output );
   oyOptions_Release( &node_options );
