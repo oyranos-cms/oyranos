@@ -337,7 +337,7 @@ int        oyjlStringReplace         ( char             ** text,
   oyjl_str str;
   int n = 0;
 
-  if(!text)
+  if(!text || !*text || !(*text)[0])
     return 0;
 
   str = oyjlStrNewFrom(text, 10, alloc,deAlloc);
