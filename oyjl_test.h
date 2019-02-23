@@ -75,22 +75,22 @@ typedef enum {
 } oyjlTESTRESULT_e;
 
 /* true color codes */
-#define RED_TC "\033[38;2;240;0;0m"
-#define GREEN_TC "\033[38;2;0;250;100m"
-#define BLUE_TC "\033[38;2;0;150;255m"
+#define OYJL_RED_TC "\033[38;2;240;0;0m"
+#define OYJL_GREEN_TC "\033[38;2;0;250;100m"
+#define OYJL_BLUE_TC "\033[38;2;0;150;255m"
 /* basic color codes */
-#define RED_B "\033[0;31m"
-#define GREEN_B "\033[0;32m"
-#define BLUE_B "\033[0;34m"
+#define OYJL_RED_B "\033[0;31m"
+#define OYJL_GREEN_B "\033[0;32m"
+#define OYJL_BLUE_B "\033[0;34m"
 /* switch back */
-#define CTEND "\033[0m"
+#define OYJL_CTEND "\033[0m"
 typedef enum {
-  oyRED,
-  oyGREEN,
-  oyBLUE
-} oyCOLORTERM_e;
+  oyjlRED,
+  oyjlGREEN,
+  oyjlBLUE
+} oyjlCOLORTERM_e;
 const char * colorterm = NULL;
-static const char * oyjlTermColor_( oyCOLORTERM_e rgb, const char * text) {
+static const char * oyjlTermColor_( oyjlCOLORTERM_e rgb, const char * text) {
   int len = strlen(text);
   static char t[256];
   int truecolor = colorterm && strcmp(colorterm,"truecolor") == 0;
@@ -99,9 +99,9 @@ static const char * oyjlTermColor_( oyCOLORTERM_e rgb, const char * text) {
   {
     switch(rgb)
     {
-      case oyRED: sprintf( t, "%s%s%s", truecolor ? RED_TC : color ? RED_B : "", text, CTEND ); break;
-      case oyGREEN: sprintf( t, "%s%s%s", truecolor ? GREEN_TC : color ? GREEN_B : "", text, CTEND ); break;
-      case oyBLUE: sprintf( t, "%s%s%s", truecolor ? BLUE_TC : color ? BLUE_B : "", text, CTEND ); break;
+      case oyjlRED: sprintf( t, "%s%s%s", truecolor ? OYJL_RED_TC : color ? OYJL_RED_B : "", text, OYJL_CTEND ); break;
+      case oyjlGREEN: sprintf( t, "%s%s%s", truecolor ? OYJL_GREEN_TC : color ? OYJL_GREEN_B : "", text, OYJL_CTEND ); break;
+      case oyjlBLUE: sprintf( t, "%s%s%s", truecolor ? OYJL_BLUE_TC : color ? OYJL_BLUE_B : "", text, OYJL_CTEND ); break;
     }
     return t;
   } else
@@ -113,12 +113,12 @@ const char * oyTestResultToString    ( oyjlTESTRESULT_e      error )
   const char * text = "";
   switch(error)
   {
-    case oyjlTESTRESULT_SYSERROR:text = oyjlTermColor_(oyRED,"SYSERROR"); break;
-    case oyjlTESTRESULT_FAIL:    text = oyjlTermColor_(oyRED,"FAIL"); break;
-    case oyjlTESTRESULT_XFAIL:   text = oyjlTermColor_(oyBLUE,"XFAIL"); break;
-    case oyjlTESTRESULT_SUCCESS: text = oyjlTermColor_(oyGREEN,"SUCCESS"); break;
-    case oyjlTESTRESULT_UNKNOWN: text = oyjlTermColor_(oyBLUE,"UNKNOWN"); break;
-    default:                   text = oyjlTermColor_(oyBLUE,"Huuch, what's that?"); break;
+    case oyjlTESTRESULT_SYSERROR:text = oyjlTermColor_(oyjlRED,"SYSERROR"); break;
+    case oyjlTESTRESULT_FAIL:    text = oyjlTermColor_(oyjlRED,"FAIL"); break;
+    case oyjlTESTRESULT_XFAIL:   text = oyjlTermColor_(oyjlBLUE,"XFAIL"); break;
+    case oyjlTESTRESULT_SUCCESS: text = oyjlTermColor_(oyjlGREEN,"SUCCESS"); break;
+    case oyjlTESTRESULT_UNKNOWN: text = oyjlTermColor_(oyjlBLUE,"UNKNOWN"); break;
+    default:                   text = oyjlTermColor_(oyjlBLUE,"Huuch, what's that?"); break;
   }
   return text;
 }
@@ -202,7 +202,7 @@ int oy_test_sub_count = 0;
 }
 
 /** helper to print a number inside ::PRINT_SUB(...) */
-const char  *  oyIntToString         ( int                 integer )
+const char  *  oyjlIntToString      ( int                 integer )
 {
   static char texts[3][255];
   static int a = 0;
@@ -219,7 +219,7 @@ const char  *  oyIntToString         ( int                 integer )
 }
 
 /** helper to print tempo in ::PRINT_SUB(...) */
-const char  *  oyProfilingToString   ( int                 integer,
+const char  *  oyjlProfilingToString ( int                 integer,
                                        double              duration,
                                        const char        * term )
 {

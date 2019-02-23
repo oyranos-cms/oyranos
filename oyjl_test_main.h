@@ -110,9 +110,9 @@ int main(int argc, char** argv)
                  oyTestResultToString( oyjlTESTRESULT_FAIL), i, tests_failed[i] );
 
     if(error)
-      fprintf( stdout, "    Tests %s\n", oyjlTermColor_( oyRED, "FAILED" ) );
+      fprintf( stdout, "    Tests %s\n", oyjlTermColor_( oyjlRED, "FAILED" ) );
     else
-      fprintf( stdout, "    Tests %s\n", oyjlTermColor_( oyGREEN, "SUCCEEDED" ) );
+      fprintf( stdout, "    Tests %s\n", oyjlTermColor_( oyjlGREEN, "SUCCEEDED" ) );
 
     fprintf( stdout, "\n    Hint: the '-l' option will list all test names\n" );
   }
