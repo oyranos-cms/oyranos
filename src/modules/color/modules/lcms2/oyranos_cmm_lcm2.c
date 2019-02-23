@@ -41,7 +41,7 @@
 #include "oyranos_object_internal.h"
 #include "oyranos_string.h"
 
-#include "oyranos_cmm_lcm2.i18n.c"
+#include "oyranos_cmm_lcm2.i18n.c" /* oyranos_json define */
 
 #ifdef _OPENMP
 #define USE_OPENMP 1

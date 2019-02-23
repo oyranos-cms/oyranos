@@ -457,7 +457,10 @@ IF( GETTEXT_FOUND )
       )
 
   # set to be generated source target
-  SET( SRC_FILES ${SRC_FILES} modules/color/modules/lcms2/lcm2-i18n.c )
+  SET( SRC_FILES ${SRC_FILES}
+        modules/color/modules/lcms2/lcm2-i18n.c
+        modules/color/modules//lcms-i18n.c
+     )
 
   ADD_CUSTOM_COMMAND(OUTPUT ${_potFile}
     COMMAND ${XGETTEXT_CMD} ${_xgettext_option_list} -o ${_potFile} ${SRC_FILES}

@@ -39,6 +39,8 @@
 #include "oyranos_object_internal.h"
 #include "oyranos_string.h"
 
+#include "oyranos_cmm_lcms.i18n.c" /* oyranos_json define */
+
 #ifdef _OPENMP
 #define USE_OPENMP 1
 #include <omp.h>
@@ -2238,17 +2240,18 @@ int            lcmsCMMMessageFuncSet ( oyMessage_f         message_func )
 }
 
 char lcms_extra_options[] = {
- "\n\
-  <" OY_TOP_SHARED ">\n\
-   <" OY_DOMAIN_INTERNAL ">\n\
-    <" OY_TYPE_STD ">\n\
-     <" "icc_color" ">\n\
-      <cmyk_cmyk_black_preservation.advanced>0</cmyk_cmyk_black_preservation.advanced>\n\
-      <precalculation.advanced>0</precalculation.advanced>\n\
-     </" "icc_color" ">\n\
-    </" OY_TYPE_STD ">\n\
-   </" OY_DOMAIN_INTERNAL ">\n\
-  </" OY_TOP_SHARED ">\n"
+"{\n\
+  \"" OY_TOP_SHARED "\": {\n\
+   \"" OY_DOMAIN_INTERNAL "\": {\n\
+    \"" OY_TYPE_STD "\": {\n\
+     \"" "icc_color" "\": {\n\
+      \"cmyk_cmyk_black_preservation.advanced\": \"0\",\n\
+      \"precalculation.advanced\": \"0\"\n\
+     }\n\
+    }\n\
+   }\n\
+  }\n\
+}\n"
 };
 
 #define A(long_text) STRING_ADD( tmp, long_text)
@@ -2256,8 +2259,8 @@ char lcms_extra_options[] = {
 /** Function lcmsGetOptionsUI
  *  @brief   return XFORMS for matching options
  *
- *  @version Oyranos: 0.9.5
- *  @date    2014/01/08
+ *  @version Oyranos: 0.9.7
+ *  @date    2019/02/23
  *  @since   2009/07/29 (Oyranos: 0.1.10)
  */
 int lcmsGetOptionsUI                 ( oyCMMapiFilter_s   * module OY_UNUSED,
@@ -2273,6 +2276,7 @@ int lcmsGetOptionsUI                 ( oyCMMapiFilter_s   * module OY_UNUSED,
   if(tmp == 0)
     return 0;
 
+#if 0
   tmp = oyStringCopy_( "\
   <xf:group type=\"frame\">\
     <xf:label>little CMS ", oyAllocateFunc_ );
@@ -2336,6 +2340,9 @@ int lcmsGetOptionsUI                 ( oyCMMapiFilter_s   * module OY_UNUSED,
       </xf:choices>\n\
      </xf:select1>\n\
    </xf:group>\n");
+#else
+  tmp = oyStringCopy( oyranos_json, allocateFunc );
+#endif
 
   if(allocateFunc && tmp)
   {
