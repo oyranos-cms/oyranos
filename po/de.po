@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2019-02-19 06:02+0100\n"
+"POT-Creation-Date: 2019-02-23 14:32+0100\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -2587,7 +2587,7 @@ msgstr ""
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/description
 #: modules/color/modules/lcms2/i18n.c:8
 msgid "Little Color Management System"
-msgstr ""
+msgstr "Little Color Management System"
 
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4580
 msgid ""
@@ -5566,7 +5566,7 @@ msgstr "Hilfe"
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/information/[8]/description
 #: modules/color/modules/lcms2/i18n.c:71
 msgid "http://www.behrmann.name"
-msgstr "http://www.behrmann.name <br>"
+msgstr "http://www.behrmann.name"
 
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/information/[0]/description
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/information/[2]/description
@@ -5574,7 +5574,7 @@ msgstr "http://www.behrmann.name <br>"
 #: modules/color/modules/lcms2/i18n.c:17 modules/color/modules/lcms2/i18n.c:32
 #: modules/color/modules/lcms2/i18n.c:38
 msgid "http://www.littlecms.com"
-msgstr ""
+msgstr "http://www.littlecms.com"
 
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/information/[4]/name
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/information/[5]/name
@@ -5582,12 +5582,12 @@ msgstr ""
 #: modules/color/modules/lcms2/i18n.c:44 modules/color/modules/lcms2/i18n.c:50
 #: modules/color/modules/lcms2/i18n.c:56
 msgid "http://www.littlecms.com/"
-msgstr ""
+msgstr "http://www.littlecms.com"
 
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/information/[9]/name
 #: modules/color/modules/lcms2/i18n.c:77
 msgid "http://www.openicc.info"
-msgstr ""
+msgstr "http://www.openicc.info"
 
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/information/[7]/name
 #: modules/color/modules/lcms2/i18n.c:62

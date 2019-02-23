@@ -18,7 +18,7 @@ IF( GETTEXT_FOUND )
 
   ADD_CUSTOM_TARGET( i18n.c
     COMMAND LANG=C PATH=$(PATH):${CMAKE_BINARY_DIR}/openicc/oyjl LD_LIBRARY_PATH=${CMAKE_BINARY_DIR}/openicc/oyjl:${OYJL_LIBRARY_DIRS} oyjl-translate -i ${CMAKE_CURRENT_SOURCE_DIR}/${CMM}.json -ek name,label,description,help -o i18n.c
-    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${CMM}.json ${OYJL_JSON_TOOL}
+    DEPENDS ${CMM}.json ${OYJL_JSON_TOOL}
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     COMMENT "Extract translatable messages to i18n.c"
   )
@@ -38,15 +38,17 @@ IF( GETTEXT_FOUND )
     SET( GMO_FILES ${GMO_FILES} ${CMAKE_BINARY_DIR}/src/${_lang}.gmo )
   ENDFOREACH( my_lang )
   MESSAGE( "Lingua: ${MY_LINGUAS_COMMA}" )
-  ADD_CUSTOM_TARGET( ${CMM}.i18n.c
-    COMMAND test -d || mkdir ${CMAKE_BINARY_DIR}/locale && echo path exists
+  ADD_CUSTOM_COMMAND( OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/${CMM}.i18n.c
+    COMMAND test -d || mkdir ${CMAKE_BINARY_DIR}/locale && echo ""
     COMMAND LANG=C PATH=$(PATH):${CMAKE_BINARY_DIR}/openicc/oyjl LD_LIBRARY_PATH=${CMAKE_BINARY_DIR}/openicc/oyjl:${OYJL_LIBRARY_DIRS} oyjl-translate -ai ${CMAKE_CURRENT_SOURCE_DIR}/${CMM}.json -k name,label,description,help -o ${CMAKE_CURRENT_SOURCE_DIR}/${CMM}.i18n.c -w C -d ${PACKAGE_NAME} -l ${MY_LINGUAS_COMMA} -p ${CMAKE_BINARY_DIR}/locale
-    DEPENDS i18n.c
+    DEPENDS ${CMM}.json
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     COMMENT "Add ${MY_LINGUAS_COMMA} translated messages to ${CMM} declaration"
   )
+  ADD_CUSTOM_TARGET( ${CMM}.i18n
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${CMM}.i18n.c)
   IF(ENABLE_SHARED_LIBS)
-    ADD_DEPENDENCIES( ${OY_MODULE_LIB} ${CMM}.i18n.c )
+    ADD_DEPENDENCIES( ${OY_MODULE_LIB} ${CMM}.i18n )
   ENDIF()
 ENDIF()
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cinepaint_icc-examin_eu\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2019-02-19 06:02+0100\n"
+"POT-Creation-Date: 2019-02-23 14:32+0100\n"
 "PO-Revision-Date: 2007-11-07 11:11+0100\n"
 "Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@zundan.com>\n"
 "Language-Team: Basque <itzulpena@euskalgnu.org>\n"
@@ -5587,21 +5587,24 @@ msgstr "web gunea: www.behrmann.name <br>"
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/information/[3]/name
 #: modules/color/modules/lcms2/i18n.c:17 modules/color/modules/lcms2/i18n.c:32
 #: modules/color/modules/lcms2/i18n.c:38
+#, fuzzy
 msgid "http://www.littlecms.com"
-msgstr ""
+msgstr "web gunea: www.behrmann.name <br>"
 
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/information/[4]/name
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/information/[5]/name
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/information/[6]/name
 #: modules/color/modules/lcms2/i18n.c:44 modules/color/modules/lcms2/i18n.c:50
 #: modules/color/modules/lcms2/i18n.c:56
+#, fuzzy
 msgid "http://www.littlecms.com/"
-msgstr ""
+msgstr "web gunea: www.behrmann.name <br>"
 
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/information/[9]/name
 #: modules/color/modules/lcms2/i18n.c:77
+#, fuzzy
 msgid "http://www.openicc.info"
-msgstr ""
+msgstr "web gunea: www.behrmann.name <br>"
 
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/information/[7]/name
 #: modules/color/modules/lcms2/i18n.c:62
