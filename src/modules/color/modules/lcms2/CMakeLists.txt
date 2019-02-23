@@ -16,11 +16,11 @@ IF( GETTEXT_FOUND )
   SET( CMM ${PACKAGE_NAME}_cmm_${OY_MODULE} )
   SET(_potFile ${CMAKE_SOURCE_DIR}/po/${PACKAGE_NAME}.pot)
 
-  ADD_CUSTOM_TARGET( i18n.c
-    COMMAND LANG=C PATH=$(PATH):${CMAKE_BINARY_DIR}/openicc/oyjl LD_LIBRARY_PATH=${CMAKE_BINARY_DIR}/openicc/oyjl:${OYJL_LIBRARY_DIRS} oyjl-translate -i ${CMAKE_CURRENT_SOURCE_DIR}/${CMM}.json -ek name,label,description,help -o i18n.c
+  ADD_CUSTOM_TARGET( ${OY_MODULE}-i18n.c
+    COMMAND LANG=C PATH=$(PATH):${CMAKE_BINARY_DIR}/openicc/oyjl LD_LIBRARY_PATH=${CMAKE_BINARY_DIR}/openicc/oyjl:${OYJL_LIBRARY_DIRS} oyjl-translate -i ${CMAKE_CURRENT_SOURCE_DIR}/${CMM}.json -ek name,label,description,help -o ${OY_MODULE}-i18n.c
     DEPENDS ${CMM}.json ${OYJL_JSON_TOOL}
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-    COMMENT "Extract translatable messages to i18n.c"
+    COMMENT "Extract translatable messages to ${OY_MODULE}-i18n.c"
   )
 
   # add translations to the declaration JSON

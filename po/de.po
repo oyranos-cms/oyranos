@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2019-02-23 14:32+0100\n"
+"POT-Creation-Date: 2019-02-23 18:03+0100\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -90,7 +90,7 @@ msgid "0"
 msgstr "0"
 
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/groups/[0]/groups/[0]/options/[3]/choices/[0]/name
-#: modules/color/modules/lcms2/i18n.c:155
+#: modules/color/modules/lcms2/lcm2-i18n.c:155
 msgid "0.0"
 msgstr "0,0"
 
@@ -111,7 +111,7 @@ msgid "1. Channel"
 msgstr "1. Kanal"
 
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/groups/[0]/groups/[0]/options/[3]/choices/[1]/name
-#: modules/color/modules/lcms2/i18n.c:158
+#: modules/color/modules/lcms2/lcm2-i18n.c:158
 msgid "1.0"
 msgstr "1,0"
 
@@ -368,19 +368,19 @@ msgid "Actual white point mode"
 msgstr "Aktueller Weißpunktmodus"
 
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/groups/[0]/groups/[0]/options/[3]/name
-#: modules/color/modules/lcms2/i18n.c:161
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:3152
+#: modules/color/modules/lcms2/lcm2-i18n.c:161
 msgid "Adaptation State"
 msgstr "Farbanpassungsgrad"
 
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/groups/[0]/groups/[0]/options/[3]/description
-#: modules/color/modules/lcms2/i18n.c:164
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:3155
+#: modules/color/modules/lcms2/lcm2-i18n.c:164
 msgid "Adaptation state for absolute colorimetric intent"
 msgstr "Farbanpassungsgrad für die absolut farbmetrische Übertragung"
 
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/groups/[0]/help
-#: modules/color/modules/lcms2/i18n.c:89
+#: modules/color/modules/lcms2/lcm2-i18n.c:89
 msgid "Additional options."
 msgstr "Zusätzliche Optionen."
 
@@ -584,8 +584,8 @@ msgid "Available devices"
 msgstr "Verfügbare Geräte"
 
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/groups/[0]/groups/[0]/options/[4]/help
-#: modules/color/modules/lcms2/i18n.c:182
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:3180
+#: modules/color/modules/lcms2/lcm2-i18n.c:182
 msgid ""
 "Avoid force of White on White mapping. Default for absolute rendering intent."
 msgstr ""
@@ -637,9 +637,9 @@ msgid "Black"
 msgstr "Schwarz"
 
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/groups/[0]/groups/[0]/options/[0]/name
-#: modules/color/modules/lcms2/i18n.c:110
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:3070
 #: modules/color/modules/oyranos_cmm_lcms.c:2285
+#: modules/color/modules/lcms2/lcm2-i18n.c:110
 msgid "Black Preservation"
 msgstr "Schwarzerhalt"
 
@@ -723,15 +723,14 @@ msgstr ""
 "dimensionierte PPM-Bilder. --levels (Rastergröße) nutzt initial 64 für -f "
 "clut"
 
-#. ------------------------------------------------------------------------
-#. added from Tom Lanes jpegicc.c and modified by ku.b
+#. CMM: abbreviation for Color Matching Module
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/label
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/groups/[0]/groups/[0]/name
-#. CMM: abbreviation for Color Matching Module
 #: API_generated/oyranos_profile.c:37 liboyranos_config/oyranos_texts.c:273
-#: modules/color/modules/lcms2/i18n.c:2 modules/color/modules/lcms2/i18n.c:92
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4475
 #: modules/color/modules/oyranos_cmm_lcms.c:2738
+#: modules/color/modules/lcms2/lcm2-i18n.c:2
+#: modules/color/modules/lcms2/lcm2-i18n.c:92
 msgid "CMM"
 msgstr ""
 
@@ -752,7 +751,7 @@ msgid "CMM Renderer Fallback"
 msgstr "CMM Rechner Notbehelf"
 
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/groups/[0]/groups/[0]/help
-#: modules/color/modules/lcms2/i18n.c:98
+#: modules/color/modules/lcms2/lcm2-i18n.c:98
 msgid "CMM behaviour options for color rendering, precission and fixes."
 msgstr "CMM Verhalten für Farbumwandlung, Präzission und Verbesserungen."
 
@@ -851,8 +850,8 @@ msgid "Cmyk"
 msgstr "Cmyk"
 
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/groups/[0]/groups/[0]/options/[0]/help
-#: modules/color/modules/lcms2/i18n.c:116
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:3076
+#: modules/color/modules/lcms2/lcm2-i18n.c:116
 msgid ""
 "Cmyk to Cmyk transforms can provide various strategies to preserve the black "
 "only channel. None means, black might change to Cmy and thus text prints not "
@@ -904,17 +903,17 @@ msgid "Color Space Class"
 msgstr "Farbraum Klasse"
 
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/groups/[0]/groups/[0]/options/[2]/description
-#: modules/color/modules/lcms2/i18n.c:149
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:3131
+#: modules/color/modules/lcms2/lcm2-i18n.c:149
 msgid "Color Transform CLUT's can additionally use curves for special cases"
 msgstr ""
 "Farbtransformationstabellen können für spezielle Fälle zusätzlich mit Kurven "
 "kombiniert werden"
 
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/groups/[0]/groups/[0]/options/[1]/description
-#: modules/color/modules/lcms2/i18n.c:134
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:3101
 #: modules/color/modules/oyranos_cmm_lcms.c:2314
+#: modules/color/modules/lcms2/lcm2-i18n.c:134
 msgid "Color Transforms can be differently stored internally"
 msgstr "Farbumwandlung können intern unterschiedlich gespeichert werden"
 
@@ -1083,7 +1082,7 @@ msgstr "Wandle in unspezifziertes Cmyk, erhalte Cmyk Zahlen"
 
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/information/[1]/label
 #: API_generated/oyranos_module.c:1409 liboyranos_config/oyranos_icc.c:457
-#: modules/color/modules/lcms2/i18n.c:20
+#: modules/color/modules/lcms2/lcm2-i18n.c:20
 msgid "Copyright"
 msgstr "Kopierrecht"
 
@@ -1142,7 +1141,7 @@ msgid "Copyright (c) 2016 Kai-Uwe Behrmann; new BSD"
 msgstr ""
 
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/information/[1]/name
-#: modules/color/modules/lcms2/i18n.c:23
+#: modules/color/modules/lcms2/lcm2-i18n.c:23
 msgid "Copyright 2018 Marti Maria"
 msgstr "Kopierrecht 2018 Marti Maria"
 
@@ -1303,8 +1302,8 @@ msgid "Curve Set"
 msgstr "Kurvensatz"
 
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/groups/[0]/groups/[0]/options/[2]/name
-#: modules/color/modules/lcms2/i18n.c:146
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:3128
+#: modules/color/modules/lcms2/lcm2-i18n.c:146
 msgid "Curves for Optimization"
 msgstr "Kurven für Optimierungen"
 
@@ -1354,9 +1353,9 @@ msgid "Debug"
 msgstr "Fehlersuche"
 
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/groups/[0]/groups/[0]/options/[0]/description
-#: modules/color/modules/lcms2/i18n.c:113
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:3073
 #: modules/color/modules/oyranos_cmm_lcms.c:2288
+#: modules/color/modules/lcms2/lcm2-i18n.c:113
 msgid "Decide how to preserve the black channel for Cmyk to Cmyk transforms"
 msgstr ""
 "Entscheide wie der Schwarzkanal erhalten wird bei Umwandlungen von einem "
@@ -1390,7 +1389,7 @@ msgid "Detect location by IP adress"
 msgstr "Erhalte Position von IP Adresse"
 
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/information/[7]/label
-#: modules/color/modules/lcms2/i18n.c:59
+#: modules/color/modules/lcms2/lcm2-i18n.c:59
 msgid "Development"
 msgstr "Entwicklung"
 
@@ -1490,12 +1489,12 @@ msgid "Display White Point for all screens"
 msgstr "Bildschirmweißpunkt für alle Monitore"
 
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/information/[9]/label
-#: modules/color/modules/lcms2/i18n.c:74
+#: modules/color/modules/lcms2/lcm2-i18n.c:74
 msgid "Documentation"
 msgstr "Dokumente"
 
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/information/[5]/label
-#: modules/color/modules/lcms2/i18n.c:47
+#: modules/color/modules/lcms2/lcm2-i18n.c:47
 msgid "Download"
 msgstr "Bezugsquelle"
 
@@ -1682,9 +1681,9 @@ msgid "Exposure:"
 msgstr "Belichtung:"
 
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/groups/[0]/description
-#: modules/color/modules/lcms2/i18n.c:86
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:3065
 #: modules/color/modules/oyranos_cmm_lcms.c:2280
+#: modules/color/modules/lcms2/lcm2-i18n.c:86
 msgid "Extended Options"
 msgstr "Erweiterte Optionen"
 
@@ -2364,7 +2363,7 @@ msgid "Kai-Uwe"
 msgstr ""
 
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/information/[8]/name
-#: examples/oyranos_cmm_dDev.c:827 modules/color/modules/lcms2/i18n.c:68
+#: examples/oyranos_cmm_dDev.c:827 modules/color/modules/lcms2/lcm2-i18n.c:68
 msgid "Kai-Uwe Behrmann"
 msgstr ""
 
@@ -2388,32 +2387,32 @@ msgid "Konica Minolta CMM"
 msgstr ""
 
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/groups/[0]/groups/[0]/options/[1]/choices/[2]/name
-#: modules/color/modules/lcms2/i18n.c:125
+#: modules/color/modules/lcms2/lcm2-i18n.c:125
 msgid "LCMS2_HIGHRESPRECALC"
 msgstr ""
 
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/groups/[0]/groups/[0]/options/[1]/choices/[3]/name
-#: modules/color/modules/lcms2/i18n.c:128
+#: modules/color/modules/lcms2/lcm2-i18n.c:128
 msgid "LCMS2_LOWRESPRECALC"
 msgstr ""
 
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/groups/[0]/groups/[0]/options/[1]/choices/[1]/name
-#: modules/color/modules/lcms2/i18n.c:122
+#: modules/color/modules/lcms2/lcm2-i18n.c:122
 msgid "LCMS2_NOOPTIMIZE"
 msgstr ""
 
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/groups/[0]/groups/[0]/options/[2]/choices/[1]/name
-#: modules/color/modules/lcms2/i18n.c:143
+#: modules/color/modules/lcms2/lcm2-i18n.c:143
 msgid "LCMS2_POST+PRE_CURVES"
 msgstr ""
 
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/groups/[0]/groups/[0]/options/[0]/choices/[2]/name
-#: modules/color/modules/lcms2/i18n.c:107
+#: modules/color/modules/lcms2/lcm2-i18n.c:107
 msgid "LCMS_PRESERVE_K_PLANE"
 msgstr ""
 
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/groups/[0]/groups/[0]/options/[0]/choices/[1]/name
-#: modules/color/modules/lcms2/i18n.c:104
+#: modules/color/modules/lcms2/lcm2-i18n.c:104
 msgid "LCMS_PRESERVE_PURE_K"
 msgstr ""
 
@@ -2435,7 +2434,7 @@ msgid "Latitude"
 msgstr "Geographische Breite"
 
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/information/[2]/label
-#: modules/color/modules/lcms2/i18n.c:26
+#: modules/color/modules/lcms2/lcm2-i18n.c:26
 msgid "License"
 msgstr "Lizenz"
 
@@ -2547,8 +2546,9 @@ msgstr "Little CMS"
 
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/name
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/groups/[0]/name
-#: modules/color/modules/lcms2/i18n.c:5 modules/color/modules/lcms2/i18n.c:83
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4578
+#: modules/color/modules/lcms2/lcm2-i18n.c:5
+#: modules/color/modules/lcms2/lcm2-i18n.c:83
 msgid "Little CMS 2"
 msgstr "Little CMS 2"
 
@@ -2558,8 +2558,8 @@ msgid "Little CMS CMM"
 msgstr "Little CMS CMM"
 
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/groups/[0]/groups/[0]/options/[2]/help
-#: modules/color/modules/lcms2/i18n.c:152
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:3134
+#: modules/color/modules/lcms2/lcm2-i18n.c:152
 msgid ""
 "Little CMS can use curves before and after CLUT's for special cases like "
 "gamma encoded values to and from linear gamma values. Performance will "
@@ -2570,9 +2570,9 @@ msgstr ""
 "gammabehafteten Werten auf Kosten der Geschwindigkeit."
 
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/groups/[0]/groups/[0]/options/[1]/help
-#: modules/color/modules/lcms2/i18n.c:137
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:3104
 #: modules/color/modules/oyranos_cmm_lcms.c:2317
+#: modules/color/modules/lcms2/lcm2-i18n.c:137
 msgid ""
 "Little CMS tries to optimize profile chains whatever possible. There are "
 "some built-in optimization schemes, and you can add new schemas by using a "
@@ -2585,7 +2585,7 @@ msgid ""
 msgstr ""
 
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/description
-#: modules/color/modules/lcms2/i18n.c:8
+#: modules/color/modules/lcms2/lcm2-i18n.c:8
 msgid "Little Color Management System"
 msgstr "Little Color Management System"
 
@@ -2733,7 +2733,7 @@ msgid "MEM Error."
 msgstr "Speicher Fehler"
 
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/information/[2]/name
-#: examples/oyranos_cmm_dDev.c:833 modules/color/modules/lcms2/i18n.c:29
+#: examples/oyranos_cmm_dDev.c:833 modules/color/modules/lcms2/lcm2-i18n.c:29
 msgid "MIT"
 msgstr ""
 
@@ -2779,7 +2779,7 @@ msgstr "Signatur:        "
 
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/information/[0]/label
 #: API_generated/oyranos_module.c:1408 API_generated/oyranos_profile.c:43
-#: modules/color/modules/lcms2/i18n.c:11
+#: modules/color/modules/lcms2/lcm2-i18n.c:11
 msgid "Manufacturer"
 msgstr "Hersteller"
 
@@ -2793,7 +2793,7 @@ msgid "Mark Out Of Gamut colors"
 msgstr "Markiere nicht darstellbare Farben"
 
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/information/[0]/name
-#: modules/color/modules/lcms2/i18n.c:14
+#: modules/color/modules/lcms2/lcm2-i18n.c:14
 msgid "Marti Maria"
 msgstr ""
 
@@ -3023,8 +3023,9 @@ msgstr "Nächtliche Anmutung"
 #: liboyranos_config/oyranos_texts.c:506 liboyranos_config/oyranos_texts.c:520
 #: liboyranos_config/oyranos_texts.c:601 liboyranos_config/oyranos_texts.c:621
 #: liboyranos_config/oyranos_texts.c:631 liboyranos_config/oyranos_texts.c:641
-#: liboyranos_config/oyranos_texts.c:651 modules/color/modules/lcms2/i18n.c:170
+#: liboyranos_config/oyranos_texts.c:651
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:3186
+#: modules/color/modules/lcms2/lcm2-i18n.c:170
 msgid "No"
 msgstr "Nein"
 
@@ -3041,8 +3042,8 @@ msgid "No Profile repair of ICC profile ID"
 msgstr "Lasse Reparatur der Profil ID weg"
 
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/groups/[0]/groups/[0]/options/[4]/name
-#: modules/color/modules/lcms2/i18n.c:176
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:3174
+#: modules/color/modules/lcms2/lcm2-i18n.c:176
 msgid "No White on White Fix"
 msgstr "Keine Weiß zu Weiß Reparatur"
 
@@ -3072,7 +3073,7 @@ msgid "On Rgb Mismatch"
 msgstr "Bei Rgb Ungleichheit"
 
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/information/[8]/label
-#: modules/color/modules/lcms2/i18n.c:65
+#: modules/color/modules/lcms2/lcm2-i18n.c:65
 msgid "OpenICC CMM Author"
 msgstr "OpenICC CMM Autor"
 
@@ -3090,9 +3091,9 @@ msgid "Operating System"
 msgstr "Betriebssystem"
 
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/groups/[0]/groups/[0]/options/[1]/name
-#: modules/color/modules/lcms2/i18n.c:131
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:3098
 #: modules/color/modules/oyranos_cmm_lcms.c:2311
+#: modules/color/modules/lcms2/lcm2-i18n.c:131
 msgid "Optimization"
 msgstr "Optimierung"
 
@@ -3125,7 +3126,7 @@ msgid "Option not supported type:"
 msgstr "Option nicht unterstützten Typs:"
 
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/groups/[0]/groups/[0]/description
-#: modules/color/modules/lcms2/i18n.c:95
+#: modules/color/modules/lcms2/lcm2-i18n.c:95
 msgid "Options"
 msgstr "Optionen"
 
@@ -4095,8 +4096,8 @@ msgid "Size:            "
 msgstr "Größe:           "
 
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/groups/[0]/groups/[0]/options/[4]/description
-#: modules/color/modules/lcms2/i18n.c:179
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:3177
+#: modules/color/modules/lcms2/lcm2-i18n.c:179
 msgid "Skip White Point on White point alignment"
 msgstr "Lasse Weiß auf Weiß Einpassung weg"
 
@@ -4121,7 +4122,7 @@ msgid "Source and Target Profiles for various situations"
 msgstr "Quell- und Zielprofile für verschiedene Situationen"
 
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/information/[6]/label
-#: modules/color/modules/lcms2/i18n.c:53
+#: modules/color/modules/lcms2/lcm2-i18n.c:53
 msgid "Sources"
 msgstr "Quellen"
 
@@ -4155,7 +4156,7 @@ msgid "Sunset"
 msgstr "Sonnenuntergang"
 
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/information/[4]/label
-#: modules/color/modules/lcms2/i18n.c:41
+#: modules/color/modules/lcms2/lcm2-i18n.c:41
 msgid "Support"
 msgstr "Unterstützung"
 
@@ -4357,8 +4358,8 @@ msgid "The Tool gives information around installed ICC color profiles."
 msgstr "Das Werkzeug zeigt installierte ICC Farbprofile an."
 
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/groups/[0]/groups/[0]/options/[3]/help
-#: modules/color/modules/lcms2/i18n.c:167
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:3158
+#: modules/color/modules/lcms2/lcm2-i18n.c:167
 msgid ""
 "The adaption state should be between 0 and 1.0 and will apply to the "
 "absolute colorimetric intent."
@@ -4853,7 +4854,7 @@ msgid ""
 msgstr ""
 
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/information/[9]/description
-#: modules/color/modules/lcms2/i18n.c:80
+#: modules/color/modules/lcms2/lcm2-i18n.c:80
 msgid ""
 "The module expects options for profiles and rendering_intent. Optional are "
 "rendering_bpc, cmyk_cmyk_black_preservation, precalculation_curves, "
@@ -5114,7 +5115,7 @@ msgid "Type:            "
 msgstr "Klasse:          "
 
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/information/[3]/label
-#: modules/color/modules/lcms2/i18n.c:35
+#: modules/color/modules/lcms2/lcm2-i18n.c:35
 msgid "URL"
 msgstr ""
 
@@ -5301,8 +5302,9 @@ msgstr "Gelb"
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/groups/[0]/groups/[0]/options/[4]/choices/[1]/name
 #: liboyranos_config/oyranos_texts.c:601 liboyranos_config/oyranos_texts.c:621
 #: liboyranos_config/oyranos_texts.c:631 liboyranos_config/oyranos_texts.c:641
-#: liboyranos_config/oyranos_texts.c:651 modules/color/modules/lcms2/i18n.c:173
+#: liboyranos_config/oyranos_texts.c:651
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:3192
+#: modules/color/modules/lcms2/lcm2-i18n.c:173
 msgid "Yes"
 msgstr "Ja"
 
@@ -5337,12 +5339,13 @@ msgstr "Zoran CMM"
 #.
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/groups/[0]/groups/[0]/options/[0]/choices/[0]/name
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/groups/[0]/groups/[0]/options/[2]/choices/[0]/name
-#: include/oyranos_definitions.h:120 modules/color/modules/lcms2/i18n.c:101
-#: modules/color/modules/lcms2/i18n.c:140
+#: include/oyranos_definitions.h:120
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:3082
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:3140
 #: tools/oyranos-monitor-white-point.c:102
 #: tools/oyranos-monitor-white-point.c:143
+#: modules/color/modules/lcms2/lcm2-i18n.c:101
+#: modules/color/modules/lcms2/lcm2-i18n.c:140
 msgid "[none]"
 msgstr "[kein]"
 
@@ -5564,33 +5567,35 @@ msgid "help"
 msgstr "Hilfe"
 
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/information/[8]/description
-#: modules/color/modules/lcms2/i18n.c:71
+#: modules/color/modules/lcms2/lcm2-i18n.c:71
 msgid "http://www.behrmann.name"
 msgstr "http://www.behrmann.name"
 
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/information/[0]/description
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/information/[2]/description
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/information/[3]/name
-#: modules/color/modules/lcms2/i18n.c:17 modules/color/modules/lcms2/i18n.c:32
-#: modules/color/modules/lcms2/i18n.c:38
+#: modules/color/modules/lcms2/lcm2-i18n.c:17
+#: modules/color/modules/lcms2/lcm2-i18n.c:32
+#: modules/color/modules/lcms2/lcm2-i18n.c:38
 msgid "http://www.littlecms.com"
 msgstr "http://www.littlecms.com"
 
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/information/[4]/name
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/information/[5]/name
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/information/[6]/name
-#: modules/color/modules/lcms2/i18n.c:44 modules/color/modules/lcms2/i18n.c:50
-#: modules/color/modules/lcms2/i18n.c:56
+#: modules/color/modules/lcms2/lcm2-i18n.c:44
+#: modules/color/modules/lcms2/lcm2-i18n.c:50
+#: modules/color/modules/lcms2/lcm2-i18n.c:56
 msgid "http://www.littlecms.com/"
 msgstr "http://www.littlecms.com"
 
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/information/[9]/name
-#: modules/color/modules/lcms2/i18n.c:77
+#: modules/color/modules/lcms2/lcm2-i18n.c:77
 msgid "http://www.openicc.info"
 msgstr "http://www.openicc.info"
 
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/information/[7]/name
-#: modules/color/modules/lcms2/i18n.c:62
+#: modules/color/modules/lcms2/lcm2-i18n.c:62
 msgid "https://github.com/mm2/little-cms"
 msgstr ""
 
@@ -5725,7 +5730,7 @@ msgid "no qarzMonitor_s from"
 msgstr "kein qarzMonitor_s von"
 
 #. /home/kuwe/programme/oyranos/src/modules/color/modules/lcms2/oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/groups/[0]/groups/[0]/options/[1]/choices/[0]/name
-#: modules/color/modules/lcms2/i18n.c:119
+#: modules/color/modules/lcms2/lcm2-i18n.c:119
 msgid "normal"
 msgstr ""
 

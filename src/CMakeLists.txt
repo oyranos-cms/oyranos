@@ -448,14 +448,16 @@ IF( GETTEXT_FOUND )
         modules/color/modules/*.c
         modules/color/modules/devices/*.c
         modules/color/modules/lcms2/oyranos_cmm_lcm2.c
-        modules/color/modules/lcms2/lcm2*
-        modules/color/modules/lcms2/i18n.c
+        modules/color/modules/lcms2/lcm2_profiler.*
         modules/color/modules/*.cpp
         modules/color/modules/devices/*.cpp
         tools/*.c tools/qcmsevents/*.cpp tools/qcmsevents/*.cxx
         examples/*.c examples/devices/*.c examples/libraw/*.cpp
         examples/image_display/*.c* examples/image_display/*.h
       )
+
+  # set to be generated source target
+  SET( SRC_FILES ${SRC_FILES} modules/color/modules/lcms2/lcm2-i18n.c )
 
   ADD_CUSTOM_COMMAND(OUTPUT ${_potFile}
     COMMAND ${XGETTEXT_CMD} ${_xgettext_option_list} -o ${_potFile} ${SRC_FILES}
