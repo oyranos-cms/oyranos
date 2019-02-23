@@ -7469,22 +7469,29 @@ oyBlob_s * writeDL( oyConversion_s * cc, const char * reg_nick, int i )
   return blob;
 }
 
-int      oyConversionOneColor        ( oyProfile_s       * p_in,
-                                       oyDATATYPE_e        buf_in_type,
+int      oyConversionColors          ( oyProfile_s       * p_in,
                                        oyPointer           buf_in,
+                                       oyDATATYPE_e        buf_in_type,
                                        oyProfile_s       * p_out,
-                                       oyDATATYPE_e        buf_out_type,
                                        oyPointer           buf_out,
-                                       oyOptions_s       * options )
+                                       oyDATATYPE_e        buf_out_type,
+                                       oyOptions_s       * options,
+                                       int                 count,
+                                       int                 correct_flags )
 {
   int error = 0;
   oyConversion_s * cc = oyConversion_CreateBasicPixelsFromBuffers (
                               p_in,  buf_in,  oyDataType_m(buf_in_type),
                               p_out, buf_out, oyDataType_m(buf_out_type),
-                              options, 1 );
+                              options, count );
   if(!cc) error = 1;
   else
-    error = oyConversion_RunPixels( cc, NULL );
+  {
+    if(correct_flags)
+      error = oyConversion_Correct( cc, "//" OY_TYPE_STD "/icc_color", correct_flags == 1 ? oyOPTIONATTRIBUTE_BASIC : correct_flags, NULL);
+    if(!error)
+      error = oyConversion_RunPixels( cc, NULL );
+  }
   oyConversion_Release( &cc );
   return error;
 }
@@ -7662,7 +7669,8 @@ oyjlTESTRESULT_e testICCsCheck()
                   blue[1] != buf_f32out2x2[1] ||
                   blue[2] != buf_f32out2x2[2]    ))
     { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-      "relative colorimetric intent, simulation blue  %g %g", blue[0], buf_f32out2x2[0] );
+      "relative colorimetric intent, simulation blue  %g %g %g -> %g %g %g", blue[0], blue[1], blue[2], buf_f32out2x2[0], buf_f32out2x2[1], buf_f32out2x2[2] );
+      show_details = 0;
     } else
     { PRINT_SUB( oyjlTESTRESULT_XFAIL,
       "relative colorimetric intent, simulation blue  %g %g", blue[0], buf_f32out2x2[0] );
@@ -7719,12 +7727,20 @@ oyjlTESTRESULT_e testICCsCheck()
     char * ui_text = NULL;
     char ** namespaces = NULL;
     oyFilterNode_GetUi( icc, oyNAME_JSON, &ui_text, &namespaces, malloc );
-    const char * data = oyOptions_GetText( node_opts, (oyNAME_e) oyNAME_JSON );
-    char * text = NULL;
-    text = oyJsonFromModelAndUi( data, ui_text, malloc );
-    fprintf( stderr, "JSON: %d\n", (int)(text?strlen(text):0) );
+    const char * data = NULL;
+    int text_type = oyjlDataFormat(ui_text);
+    if(text_type != oyNAME_JSON)
+    { PRINT_SUB( oyjlTESTRESULT_FAIL,
+      "text type of oyFilterNode_GetUi(%s) not JSON: 7|%d", reg_nick, text_type );
+    } else
+    {
+      data = oyOptions_GetText( node_opts, (oyNAME_e) oyNAME_JSON );
+      char * text = NULL;
+      text = oyJsonFromModelAndUi( data, ui_text, malloc );
+      fprintf( stderr, "JSON: %d\n", (int)(text?strlen(text):0) );
+      oyFree_m_( text );
+    }
     oyOptions_Release( &node_opts );
-    oyFree_m_( text );
     oyFree_m_( ui_text );
 
     oyOptions_Release( &options );
