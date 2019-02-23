@@ -283,7 +283,7 @@ oyjlTESTRESULT_e testJson ()
       if( k == n )
       { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
         "oyjlValueText(%s) %s", p,
-                   oyProfilingToString(n,clck/(double)CLOCKS_PER_SEC,"key"));
+                   oyjlProfilingToString(n,clck/(double)CLOCKS_PER_SEC,"key"));
       } else
       { PRINT_SUB( oyjlTESTRESULT_FAIL,
         "oyjlValueText(%s) (%d) (%s)", p, k, value?"oyjlTreeGetValue() good":"oyjlTreeGetValue() failed" );

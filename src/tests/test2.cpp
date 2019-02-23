@@ -834,7 +834,7 @@ oyjlTESTRESULT_e testJson ()
       if( k == n )
       { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
         "oyjlValueText(%s)%s", p,
-                   oyProfilingToString(n,clck/(double)CLOCKS_PER_SEC,"key"));
+                   oyjlProfilingToString(n,clck/(double)CLOCKS_PER_SEC,"key"));
       } else
       { PRINT_SUB( oyjlTESTRESULT_FAIL,
         "oyjlValueText(%s) (%d) (%s)", p, k, value?"oyjlTreeGetValue() good":"oyjlTreeGetValue() failed" );
@@ -2572,11 +2572,11 @@ oyjlTESTRESULT_e testProfileLists ()
 #ifdef __cplusplus
   std::cout << std::endl;
   std::cout << repeat << " + 1 calls to oyProfileListGet() "
-            << oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "calls")
+            << oyjlProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "calls")
             << std::endl;
 #else
   fprintf(zout, "\n%d + 1 calls to oyProfileListGet() %s\n",
-                repeat,  oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "calls") );
+                repeat,  oyjlProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "calls") );
 #endif
 
   return result;
@@ -3462,7 +3462,7 @@ oyjlTESTRESULT_e testClut ()
   if( count )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "clut new             \t%d\t%s", count,
-                   oyProfilingToString(1,clck/(double)CLOCKS_PER_SEC,"Tex"));
+                   oyjlProfilingToString(1,clck/(double)CLOCKS_PER_SEC,"Tex"));
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "clut cache empty                      " );
@@ -3476,11 +3476,11 @@ oyjlTESTRESULT_e testClut ()
   if( count == 1 )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "clut cached          \t%d\t%s", count,
-                   oyProfilingToString(1,clck/(double)CLOCKS_PER_SEC," Tex"));
+                   oyjlProfilingToString(1,clck/(double)CLOCKS_PER_SEC," Tex"));
   } else
   { PRINT_SUB( oyjlTESTRESULT_XFAIL,
     "clut cached          \t%d\t%s", count,
-                   oyProfilingToString(1,clck/(double)CLOCKS_PER_SEC," Tex"));
+                   oyjlProfilingToString(1,clck/(double)CLOCKS_PER_SEC," Tex"));
   }
 
   int i;
@@ -3491,7 +3491,7 @@ oyjlTESTRESULT_e testClut ()
     setupColourConversion( pc.dst_profile, pc.src_profile, 0, pc.output_name, clut );
   clck = oyClock() - clck;
   fprintf( zout, "setupColourConversion()\t10\t\%s\n",
-                 oyProfilingToString(10,clck/(double)CLOCKS_PER_SEC,"node"));
+                 oyjlProfilingToString(10,clck/(double)CLOCKS_PER_SEC,"node"));
 
   oyProfile_Release( &pc.dst_profile );
   pc.dst_profile = oyProfile_FromName( "Lab.icc", icc_profile_flags, NULL );
@@ -3506,7 +3506,7 @@ oyjlTESTRESULT_e testClut ()
   }
   clck = oyClock() - clck;
   fprintf( zout, "getColourNode()+options\t10\t%s\n",
-                 oyProfilingToString(10,clck/(double)CLOCKS_PER_SEC,"node"));
+                 oyjlProfilingToString(10,clck/(double)CLOCKS_PER_SEC,"node"));
 
   oyFilterNode_s * icc = getColourNode( cc );
   clck = oyClock();
@@ -3516,7 +3516,7 @@ oyjlTESTRESULT_e testClut ()
   oyJob_Add( &job, 0, 0 );
   clck = oyClock() - clck;
   fprintf( zout, "setupColourJob()      \t1\t%s\n",
-                 oyProfilingToString(1,clck/(double)CLOCKS_PER_SEC," job"));
+                 oyjlProfilingToString(1,clck/(double)CLOCKS_PER_SEC," job"));
 
   clck = oyClock();
   for(i = 0; i < 10; ++i)
@@ -3527,7 +3527,7 @@ oyjlTESTRESULT_e testClut ()
   clck = oyClock() - clck;
   oyFilterNode_Release( &icc );
   fprintf( zout, "getColourHash()       \t%d\t%s\n",i,
-                 oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC,"hash"));
+                 oyjlProfilingToString(i,clck/(double)CLOCKS_PER_SEC,"hash"));
 
   clck = oyClock();
   for(i = 0; i < 10; ++i)
@@ -3536,7 +3536,7 @@ oyjlTESTRESULT_e testClut ()
   }
   clck = oyClock() - clck;
   fprintf( zout, "fillColourClut()      \t%d\t%s\n",i,
-                 oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC,"fill"));
+                 oyjlProfilingToString(i,clck/(double)CLOCKS_PER_SEC,"fill"));
 
   clut = oyArray2d_Create( NULL, 3, GRIDPOINTS*GRIDPOINTS*GRIDPOINTS,
                                  oyUINT16, NULL );
@@ -3548,7 +3548,7 @@ oyjlTESTRESULT_e testClut ()
   }
   clck = oyClock() - clck;
   fprintf( zout, "fillColourClut2 %d\t%d\t%s\n", n,i,
-                 oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC,"fill"));
+                 oyjlProfilingToString(i,clck/(double)CLOCKS_PER_SEC,"fill"));
 
   cc = setupColourConversion( pc.dst_profile, pc.src_profile, 0, pc.output_name, clut );
   clck = oyClock();
@@ -3558,7 +3558,7 @@ oyjlTESTRESULT_e testClut ()
   }
   clck = oyClock() - clck;
   fprintf( zout, "runColourClut()       \t%d\t%s\n",i,
-                 oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC," run"));
+                 oyjlProfilingToString(i,clck/(double)CLOCKS_PER_SEC," run"));
 
   clck = oyClock();
   for(i = 0; i < 10; ++i)
@@ -3567,7 +3567,7 @@ oyjlTESTRESULT_e testClut ()
   }
   clck = oyClock() - clck;
   fprintf( zout, "oyConversion_RunPixels\t%d\t%s\n",i,
-                 oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC," run"));
+                 oyjlProfilingToString(i,clck/(double)CLOCKS_PER_SEC," run"));
 
   oyConversion_Release( &cc );
   oyProfile_Release( &pc.dst_profile );
@@ -3578,18 +3578,18 @@ oyjlTESTRESULT_e testClut ()
   n = fillColourClut2( clut ); i = 1;
   clck = oyClock() - clck;
   fprintf( zout, "PP+fillColourClut2\t%d\t%s\n", i,
-                 oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC,"fill"));
+                 oyjlProfilingToString(i,clck/(double)CLOCKS_PER_SEC,"fill"));
 
   clck = oyClock();
   cc = setupColourConversion( pc.dst_profile, pc.src_profile, 0, pc.output_name, clut );
   clck = oyClock() - clck;
   fprintf( zout, "setupColourConversionPP\t\t%s\n",
-                 oyProfilingToString(1,clck/(double)CLOCKS_PER_SEC,"node"));
+                 oyjlProfilingToString(1,clck/(double)CLOCKS_PER_SEC,"node"));
   clck = oyClock();
   runColourClut( &pc, cc );
   clck = oyClock() - clck;
   fprintf( zout, "runColourClut(PP)     \t%d\t%s\n",i,
-                 oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC," run"));
+                 oyjlProfilingToString(i,clck/(double)CLOCKS_PER_SEC," run"));
 
   clck = oyClock();
   icc = getColourNode( cc );
@@ -3597,7 +3597,7 @@ oyjlTESTRESULT_e testClut ()
   oyHash_SetPointer( hash, (oyStruct_s*) clut );
   clck = oyClock() - clck;
   fprintf( zout, "oyHash_SetPointer(PP) \t%d\t%s\n",i,
-                 oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC,"hash"));
+                 oyjlProfilingToString(i,clck/(double)CLOCKS_PER_SEC,"hash"));
 
   free(hash_text); hash_text = NULL;
   oyFilterNode_Release( &icc );
@@ -3607,7 +3607,7 @@ oyjlTESTRESULT_e testClut ()
 
   clck2 = oyClock() - clck2;
   fprintf( zout, "PP fill node run hash -\t%d\t%s\n",i,
-                 oyProfilingToString(i,clck2/(double)CLOCKS_PER_SEC,"clut"));
+                 oyjlProfilingToString(i,clck2/(double)CLOCKS_PER_SEC,"clut"));
 
   // test outside DB change
   char * old_daemon = oyGetPersistentString(OY_DEFAULT_DISPLAY_WHITE_POINT_DAEMON, 0, oySCOPE_USER_SYS, 0);
@@ -4820,7 +4820,7 @@ oyjlTESTRESULT_e testCMMMonitorListing ()
   if( !error )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "oyDevicesGet() \"monitor\": %d                      %s", devices_n,
-                   oyProfilingToString(1,clck/(double)CLOCKS_PER_SEC,"Obj."));
+                   oyjlProfilingToString(1,clck/(double)CLOCKS_PER_SEC,"Obj."));
   } else if(displayFail() == oyjlTESTRESULT_FAIL)
   { PRINT_SUB( displayFail(),
     "oyDevicesGet() \"monitor\": %d     ", devices_n );
@@ -4840,7 +4840,7 @@ oyjlTESTRESULT_e testCMMMonitorListing ()
     clck = oyClock() - clck;
     if(text)
       fprintf( zout, "  %d oyDeviceProfileFromDB(): %s %s\n", i, text,
-                   oyProfilingToString(1,clck/(double)CLOCKS_PER_SEC,"Obj."));
+                   oyjlProfilingToString(1,clck/(double)CLOCKS_PER_SEC,"Obj."));
     else
       fprintf( zout, "  %d oyDeviceProfileFromDB(): ---\n", i );
 
@@ -4850,14 +4850,14 @@ oyjlTESTRESULT_e testCMMMonitorListing ()
     clck = oyClock() - clck;
     fprintf( zout, "  %d oyDeviceGetInfo)(..oyNAME_NICK..): \"%s\" %s\n",
              i, text? text:"???",
-                   oyProfilingToString(1,clck/(double)CLOCKS_PER_SEC,"Obj."));
+                   oyjlProfilingToString(1,clck/(double)CLOCKS_PER_SEC,"Obj."));
     clck = oyClock();
     error = oyDeviceGetInfo( config, oyNAME_NAME, 0, &text, 0 );
     if(error) PRINT_SUB( oyjlTESTRESULT_XFAIL, "oyDeviceGetInfo() error: %d", error )
     clck = oyClock() - clck;
     fprintf( zout, "  %d oyDeviceGetInfo)(..oyNAME_NAME..): \"%s\" %s\n",
              i, text? text:"???",
-                   oyProfilingToString(1,clck/(double)CLOCKS_PER_SEC,"Obj."));
+                   oyjlProfilingToString(1,clck/(double)CLOCKS_PER_SEC,"Obj."));
 
     oyConfig_Release( &config );
   }
@@ -5010,7 +5010,7 @@ oyjlTESTRESULT_e testCMMmonitorDBmatch ()
   if( !error )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "oyDeviceGet(..\"monitor\" \"%s\".. &device) %d %s", device_name, k_n,
-                   oyProfilingToString(1,clck/(double)CLOCKS_PER_SEC,"Obj."));
+                   oyjlProfilingToString(1,clck/(double)CLOCKS_PER_SEC,"Obj."));
   } else if(displayFail() == oyjlTESTRESULT_FAIL)
   { PRINT_SUB( displayFail(),
     "oyDeviceGet(..\"monitor\" \"%s\".. &device) %d", device_name, k_n );
@@ -5023,11 +5023,11 @@ oyjlTESTRESULT_e testCMMmonitorDBmatch ()
   if( !error )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "oyConfig_GetDB( device )                  %d %s", (int)rank,
-                   oyProfilingToString(1,clck/(double)CLOCKS_PER_SEC,"Obj."));
+                   oyjlProfilingToString(1,clck/(double)CLOCKS_PER_SEC,"Obj."));
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyConfig_GetDB( device )                    %s",
-                   oyProfilingToString(1,clck/(double)CLOCKS_PER_SEC,"Obj."));
+                   oyjlProfilingToString(1,clck/(double)CLOCKS_PER_SEC,"Obj."));
   }
   if(device && rank > 0)
   {
@@ -5461,7 +5461,7 @@ oyjlTESTRESULT_e testCMMnmRun ()
   if( c )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "oyNamedColor_Create( )             %s",
-                   oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Obj."));
+                   oyjlProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Obj."));
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyNamedColor_Create( )                            " );
@@ -5485,7 +5485,7 @@ oyjlTESTRESULT_e testCMMnmRun ()
   if( i )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "oyDB_getString()                   %s",
-                  oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "key"));
+                  oyjlProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "key"));
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyDB_getString_(%s)", key_name );
@@ -5508,7 +5508,7 @@ oyjlTESTRESULT_e testCMMnmRun ()
   if( i )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "oyDB_getString() shared            %s",
-                  oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "key"));
+                  oyjlProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "key"));
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyDB_getString_(%s)", key_name );
@@ -5537,7 +5537,7 @@ oyjlTESTRESULT_e testCMMnmRun ()
   if( i>n )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "oyGetPersistentString() cached     %s",
-                  oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "key"));
+                  oyjlProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "key"));
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyGetPersistentString(%s)", key_name );
@@ -5558,7 +5558,7 @@ oyjlTESTRESULT_e testCMMnmRun ()
   if( i > 1 && error <= 0 )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "oyOption_SetValueFromDB()           %s",
-                  oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Opt."));
+                  oyjlProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Opt."));
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyOption_SetValueFromDB(%s)", oyOption_GetText(option, oyNAME_NICK) );
@@ -5578,7 +5578,7 @@ oyjlTESTRESULT_e testCMMnmRun ()
   if( i )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "oyOptions_ForFilter() first        %s",
-                  oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Filter"));
+                  oyjlProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Filter"));
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyOptions_ForFilter() first                       " );
@@ -5598,7 +5598,7 @@ oyjlTESTRESULT_e testCMMnmRun ()
   if( i )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "oyOptions_ForFilter()              %s",
-                  oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Filter"));
+                  oyjlProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Filter"));
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyOptions_ForFilter()                             " );
@@ -5620,7 +5620,7 @@ oyjlTESTRESULT_e testCMMnmRun ()
   if( i )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "oyFilterCore_New()                  %s",
-                 oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Cores"));
+                 oyjlProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Cores"));
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyFilterCore_New()                                 " );
@@ -5643,7 +5643,7 @@ oyjlTESTRESULT_e testCMMnmRun ()
   if( !error )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "oyFilterCore_New() oyCMMapi4_s      %s",
-                 oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Cores"));
+                 oyjlProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Cores"));
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyFilterCore_New() oyCMMapi4_s                     " );
@@ -5692,7 +5692,7 @@ oyjlTESTRESULT_e testCMMnmRun ()
   if( !error )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "oyConversion_CreateBasicPixels()    %s",
-                    oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Obj."));
+                    oyjlProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Obj."));
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyConversion_CreateBasicPixels()                   " );
@@ -5735,7 +5735,7 @@ oyjlTESTRESULT_e testCMMnmRun ()
   if( !error )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "oyConversion_RunPixels( oyPixelAcce.%s",
-                          oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Pixel"));
+                          oyjlProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Pixel"));
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyConversion_RunPixels()                           " );
@@ -5758,11 +5758,11 @@ oyjlTESTRESULT_e testCMMnmRun ()
   if( !oy_debug_image_read_array_count )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "oyConversion_RunPixels( array fast )%s",
-                          oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Pixel"));
+                          oyjlProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Pixel"));
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyConversion_RunPixels( array fast )%s",
-                          oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Pixel"));
+                          oyjlProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Pixel"));
   }
 
   oyConversion_Release ( &s );
@@ -5784,7 +5784,7 @@ oyjlTESTRESULT_e testCMMnmRun ()
   if( !error )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "oyConversion_RunPixels()          %s",
-                          oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Pixel"));
+                          oyjlProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Pixel"));
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyConversion_RunPixels()                         " );
@@ -5806,7 +5806,7 @@ oyjlTESTRESULT_e testCMMnmRun ()
   if( !error )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "oyNamedColor_SetColorStd()        %s",
-                          oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Pixel"));
+                          oyjlProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Pixel"));
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyNamedColor_SetColorStd() oyASSUMED_WEB         " );
@@ -5850,7 +5850,7 @@ oyjlTESTRESULT_e testCMMnmRun ()
   if( !error )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "oyColorConvert_()                  %s",
-                          oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Pixel"));
+                          oyjlProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Pixel"));
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyColorConvert_()                                 " );
@@ -5898,7 +5898,7 @@ oyjlTESTRESULT_e testCMMnmRun ()
   if( !error )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "oyColorConvert_() with oyPixelAcce.%s",
-                          oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Pixel"));
+                          oyjlProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Pixel"));
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyColorConvert_() with oyPixelAccess_Create()     " );
@@ -5920,11 +5920,11 @@ oyjlTESTRESULT_e testCMMnmRun ()
   if( !error  && d[3] != 0.0 )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "oyConversion_GetOnePixel( oyPix. )  %s %.02g %.02g %.02g",
-                          oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Pixel"), d[3], d[4], d[5]);
+                          oyjlProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Pixel"), d[3], d[4], d[5]);
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyConversion_GetOnePixel( oyPix. )  %s %.02g %.02g %.02g" ,
-                          oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Pixel"), d[3], d[4], d[5]);
+                          oyjlProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Pixel"), d[3], d[4], d[5]);
   }
 
 
@@ -5966,7 +5966,7 @@ oyjlTESTRESULT_e testCMMnmRun ()
   if( !error )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "oyConversion_RunPixels (2 nodes)    %s",
-                          oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Pixel"));
+                          oyjlProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Pixel"));
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyConversion_RunPixels (2 nodes)                   " );
@@ -6014,7 +6014,7 @@ oyjlTESTRESULT_e testCMMnmRun ()
     if( !error )
     { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
       "oyNamedColor_CreateWithName()     %s",
-                          oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Ncl"));
+                          oyjlProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Ncl"));
     } else
     { PRINT_SUB( oyjlTESTRESULT_FAIL,
       "oyNamedColor_CreateWithName()            " );
@@ -6091,14 +6091,14 @@ oyjlTESTRESULT_e testImagePixel()
   if(clck1/2.0 > clck/i)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "oyConversion_RunPixels() caches %s %s",
-                          oyProfilingToString(1,clck1/(double)CLOCKS_PER_SEC, "1th"),
-                          oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "X")
+                          oyjlProfilingToString(1,clck1/(double)CLOCKS_PER_SEC, "1th"),
+                          oyjlProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "X")
                           );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyConversion_RunPixels() caches %s %s",
-                          oyProfilingToString(1,clck1/(double)CLOCKS_PER_SEC, "1th"),
-                          oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "X")
+                          oyjlProfilingToString(1,clck1/(double)CLOCKS_PER_SEC, "1th"),
+                          oyjlProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "X")
                           );
   }
 
@@ -6114,7 +6114,7 @@ oyjlTESTRESULT_e testImagePixel()
       )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "Plain Image                              %s",
-                          oyProfilingToString(4*i,clck/(double)CLOCKS_PER_SEC, "Pixel"));
+                          oyjlProfilingToString(4*i,clck/(double)CLOCKS_PER_SEC, "Pixel"));
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "Plain Image                                        " );
@@ -6169,7 +6169,7 @@ oyjlTESTRESULT_e testImagePixel()
       )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "lower right source pixel in 1 pixel RoI  %s",
-                          oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Pixel"));
+                          oyjlProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Pixel"));
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "lower right source pixel in 1 pixel RoI            " );
@@ -6221,7 +6221,7 @@ oyjlTESTRESULT_e testImagePixel()
       )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "lower right source in lower right output %s",
-                          oyProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Pixel"));
+                          oyjlProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Pixel"));
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "lower right source in lower right output           " );
@@ -6563,7 +6563,7 @@ oyjlTESTRESULT_e testScreenPixel()
                          testobj );
   clck = oyClock() - clck;
   fprintf( zout, "Preparation finished                     %s\n",
-                 oyProfilingToString(1,clck/(double)CLOCKS_PER_SEC, "in+out-images"));
+                 oyjlProfilingToString(1,clck/(double)CLOCKS_PER_SEC, "in+out-images"));
 
   if(getenv("OY_DEBUG_WRITE"))
   {
@@ -6583,7 +6583,7 @@ oyjlTESTRESULT_e testScreenPixel()
                                          oyUINT16, NULL, testobj );
   clck = oyClock() - clck;
   fprintf( zout, "Preparation finished                 %s\n",
-                 oyProfilingToString(1,clck/(double)CLOCKS_PER_SEC, "context"));
+                 oyjlProfilingToString(1,clck/(double)CLOCKS_PER_SEC, "context"));
 
   oyFilterNode_s * out = oyConversion_GetNode( cc, OY_OUTPUT );
   if(cc && out)
@@ -6608,7 +6608,7 @@ oyjlTESTRESULT_e testScreenPixel()
                                 output );
   clck = oyClock() - clck;
   fprintf( zout, "First draw finished               %s\n",
-                 oyProfilingToString(1,clck/(double)CLOCKS_PER_SEC, "draw"));
+                 oyjlProfilingToString(1,clck/(double)CLOCKS_PER_SEC, "draw"));
 
   if(getenv("OY_DEBUG_WRITE"))
   {
@@ -6671,7 +6671,7 @@ oyjlTESTRESULT_e testScreenPixel()
     )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "oyDrawScreenImage                  %s",
-                 oyProfilingToString(n,clck/(double)CLOCKS_PER_SEC, "draws"));
+                 oyjlProfilingToString(n,clck/(double)CLOCKS_PER_SEC, "draws"));
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyDrawScreenImage                                  " );
@@ -7469,6 +7469,26 @@ oyBlob_s * writeDL( oyConversion_s * cc, const char * reg_nick, int i )
   return blob;
 }
 
+int      oyConversionOneColor        ( oyProfile_s       * p_in,
+                                       oyDATATYPE_e        buf_in_type,
+                                       oyPointer           buf_in,
+                                       oyProfile_s       * p_out,
+                                       oyDATATYPE_e        buf_out_type,
+                                       oyPointer           buf_out,
+                                       oyOptions_s       * options )
+{
+  int error = 0;
+  oyConversion_s * cc = oyConversion_CreateBasicPixelsFromBuffers (
+                              p_in,  buf_in,  oyDataType_m(buf_in_type),
+                              p_out, buf_out, oyDataType_m(buf_out_type),
+                              options, 1 );
+  if(!cc) error = 1;
+  else
+    error = oyConversion_RunPixels( cc, NULL );
+  oyConversion_Release( &cc );
+  return error;
+}
+
 oyjlTESTRESULT_e testICCsCheck()
 {
   oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
@@ -7895,7 +7915,7 @@ oyjlTESTRESULT_e testCache()
   if( i == count )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "oyCacheListGetEntry_(unique long entry) %s",
-                          oyProfilingToString(i*repeat,clck/(double)CLOCKS_PER_SEC, "entries"));
+                          oyjlProfilingToString(i*repeat,clck/(double)CLOCKS_PER_SEC, "entries"));
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyCacheListGetEntry_(unique long entry)  " );
@@ -7920,7 +7940,7 @@ oyjlTESTRESULT_e testCache()
   if( i == count )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "oyCacheListGetEntry_(unique long entry) %s",
-                          oyProfilingToString(i*repeat,clck/(double)CLOCKS_PER_SEC, "entries"));
+                          oyjlProfilingToString(i*repeat,clck/(double)CLOCKS_PER_SEC, "entries"));
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyCacheListGetEntry_(unique long entry)  " );
@@ -7946,7 +7966,7 @@ oyjlTESTRESULT_e testCache()
   if( i == count )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "oyCacheListGetEntry_(unique vlong entry) %s",
-                          oyProfilingToString(i*repeat,clck/(double)CLOCKS_PER_SEC, "entries"));
+                          oyjlProfilingToString(i*repeat,clck/(double)CLOCKS_PER_SEC, "entries"));
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyCacheListGetEntry_(unique vlong entry)  " );
@@ -7971,7 +7991,7 @@ oyjlTESTRESULT_e testCache()
   if( i == count )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "oyCacheListGetEntry_(unique vlong entry) %s",
-                          oyProfilingToString(i*repeat,clck/(double)CLOCKS_PER_SEC, "entries"));
+                          oyjlProfilingToString(i*repeat,clck/(double)CLOCKS_PER_SEC, "entries"));
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyCacheListGetEntry_(unique vlong entry)  " );
@@ -7997,7 +8017,7 @@ oyjlTESTRESULT_e testCache()
   if( i == count )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "oyCacheListGetEntry_(unique short entry) %s",
-                          oyProfilingToString(i*repeat,clck/(double)CLOCKS_PER_SEC, "entries"));
+                          oyjlProfilingToString(i*repeat,clck/(double)CLOCKS_PER_SEC, "entries"));
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyCacheListGetEntry_(unique short entry) " );
@@ -8022,7 +8042,7 @@ oyjlTESTRESULT_e testCache()
   if( i == count )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "oyCacheListGetEntry_(unique short entry) %s",
-                          oyProfilingToString(i*repeat,clck/(double)CLOCKS_PER_SEC, "entries"));
+                          oyjlProfilingToString(i*repeat,clck/(double)CLOCKS_PER_SEC, "entries"));
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyCacheListGetEntry_(unique short entry) " );
