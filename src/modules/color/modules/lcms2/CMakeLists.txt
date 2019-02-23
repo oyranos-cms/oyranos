@@ -9,47 +9,7 @@ IF( HAVE_LCMS2 )
   OY_CREATE_MODULE(ENABLE_SHARED_LIBS FALSE)
   SET( MODULE_EXTRA_LIBS ${EXTRA_LIBS} ${LCMS2_LIBRARIES} )
   OY_CREATE_MODULE(FALSE ENABLE_STATIC_LIBS)
-ENDIF()
-
-# i18n
-IF( GETTEXT_FOUND )
-  SET( CMM ${PACKAGE_NAME}_cmm_${OY_MODULE} )
-  SET(_potFile ${CMAKE_SOURCE_DIR}/po/${PACKAGE_NAME}.pot)
-
-  ADD_CUSTOM_TARGET( ${OY_MODULE}-i18n.c
-    COMMAND LANG=C PATH=$(PATH):${CMAKE_BINARY_DIR}/openicc/oyjl LD_LIBRARY_PATH=${CMAKE_BINARY_DIR}/openicc/oyjl:${OYJL_LIBRARY_DIRS} oyjl-translate -i ${CMAKE_CURRENT_SOURCE_DIR}/${CMM}.json -ek name,label,description,help -o ${OY_MODULE}-i18n.c
-    DEPENDS ${CMM}.json ${OYJL_JSON_TOOL}
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-    COMMENT "Extract translatable messages to ${OY_MODULE}-i18n.c"
-  )
-
-  # add translations to the declaration JSON
-  FOREACH( my_lang ${OY_LINGUAS_FULL} )
-    GET_FILENAME_COMPONENT(_absFile ${my_lang} ABSOLUTE)
-    GET_FILENAME_COMPONENT(_abs_PATH ${_absFile} PATH)
-    GET_FILENAME_COMPONENT(_lang ${_absFile} NAME_WE)
-    SET( MY_LINGUAS ${MY_LINGUAS} ${_lang} )
-    IF(NOT MY_LINGUAS_COMMA)
-      SET( MY_LINGUAS_COMMA "${_lang}" )
-    ELSE()
-      SET( MY_LINGUAS_COMMA "${MY_LINGUAS_COMMA},${_lang}" )
-    ENDIF()
-    SET( MY_LINGUAS_GMO_FILES ${MY_LINGUAS_GMO_FILES} " ${CMAKE_BINARY_DIR}/src/${_lang}.gmo" )
-    SET( GMO_FILES ${GMO_FILES} ${CMAKE_BINARY_DIR}/src/${_lang}.gmo )
-  ENDFOREACH( my_lang )
-  MESSAGE( "Lingua: ${MY_LINGUAS_COMMA}" )
-  ADD_CUSTOM_COMMAND( OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/${CMM}.i18n.c
-    COMMAND test -d || mkdir ${CMAKE_BINARY_DIR}/locale && echo ""
-    COMMAND LANG=C PATH=$(PATH):${CMAKE_BINARY_DIR}/openicc/oyjl LD_LIBRARY_PATH=${CMAKE_BINARY_DIR}/openicc/oyjl:${OYJL_LIBRARY_DIRS} oyjl-translate -ai ${CMAKE_CURRENT_SOURCE_DIR}/${CMM}.json -k name,label,description,help -o ${CMAKE_CURRENT_SOURCE_DIR}/${CMM}.i18n.c -w C -d ${PACKAGE_NAME} -l ${MY_LINGUAS_COMMA} -p ${CMAKE_BINARY_DIR}/locale
-    DEPENDS ${CMM}.json
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-    COMMENT "Add ${MY_LINGUAS_COMMA} translated messages to ${CMM} declaration"
-  )
-  ADD_CUSTOM_TARGET( ${CMM}.i18n
-    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${CMM}.i18n.c)
-  IF(ENABLE_SHARED_LIBS)
-    ADD_DEPENDENCIES( ${OY_MODULE_LIB} ${CMM}.i18n )
-  ENDIF()
+  OY_TRANSLATE_MODULE()
 ENDIF()
 
 
