@@ -7718,19 +7718,36 @@ oyjlTESTRESULT_e testICCsCheck()
                                 input, options,
                                 p_out, oyUINT16, 0, 0 );
     oyBlob_s * blob = getDL( cc, reg_nick, show_details?i:-1 );
+    if(!show_details)
+      oyWriteMemToFile_( "test-getDL-non-verbose.icc", oyBlob_GetPointer( blob ), oyBlob_GetSize( blob) );
+
     oyProfile_s * dl;
     dl = oyProfile_FromMem( oyBlob_GetSize( blob ),
                             oyBlob_GetPointer( blob ), 0,0 );
     const char * fn;
     j = 0;
-    while((fn = oyProfile_GetFileName( dl, j )) != NULL)
-    {
-      if(verbose)
-        fprintf( zout, " -> \"%s\"[%d]", oyNoEmptyString_m_(fn), j );
-      ++j;
-    }
     if(verbose)
+    {
+      while((fn = oyProfile_GetFileName( dl, j )) != NULL)
+        fprintf( zout, " -> \"%s\"[%d]", oyNoEmptyString_m_(fn), j++ );
       fprintf( zout, "\n" );
+    } else
+    {
+      oyProfileTag_s * psid = oyProfile_GetTagById( dl, (icTagSignature)icSigProfileSequenceIdentifierTag );
+      int texts_n = 0;
+      char ** texts = oyProfileTag_GetText( psid, &texts_n, 0,0,0,0);
+      if(texts_n && texts[0])
+      {
+        long l = 0;
+        if(oyjlStringToLong( texts[0], &l ) == 0)
+          j = l;
+      }
+      oyjlStringListRelease( &texts, texts_n, oyDeAllocateFunc_ );
+      if((texts_n -1) / 5 != j)
+      { PRINT_SUB( oyjlTESTRESULT_XFAIL,
+        "dl psid texts = %d (1+5*nProfiles) but announced psid profiles: %d", texts_n, j );
+      }
+    }
     oyBlob_Release( &blob );
 
     if(!error && j == 3)
