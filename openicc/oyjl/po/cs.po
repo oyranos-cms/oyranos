@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cs\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2019-02-14 09:45+0100\n"
+"POT-Creation-Date: 2019-02-24 09:11+0100\n"
 "PO-Revision-Date: 2012-10-19 15:10+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -23,7 +23,7 @@ msgstr ""
 msgid "AUTHOR"
 msgstr ""
 
-#: test-core.c:431
+#: test-core.c:433
 msgid "Actual mode"
 msgstr ""
 
@@ -39,7 +39,7 @@ msgstr ""
 msgid "COPYRIGHT"
 msgstr ""
 
-#: test-core.c:422
+#: test-core.c:424
 #, fuzzy
 msgid "Control Output"
 msgstr "Výstupní"
@@ -94,7 +94,7 @@ msgstr ""
 msgid "EXIT-STATE"
 msgstr ""
 
-#: oyjl.c:76 test-core.c:104
+#: oyjl.c:76 test-core.c:106
 msgid "Example"
 msgstr "Příklad"
 
@@ -102,7 +102,7 @@ msgstr "Příklad"
 msgid "Export formated text"
 msgstr ""
 
-#: test-core.c:421
+#: test-core.c:423
 msgid "FILENAME"
 msgstr ""
 
@@ -123,7 +123,7 @@ msgstr "SGI"
 msgid "GUI + Command"
 msgstr ""
 
-#: test-core.c:432
+#: test-core.c:434
 #, fuzzy
 msgid "General options"
 msgstr "Obecné volby:"
@@ -157,7 +157,7 @@ msgstr ""
 msgid "HISTORY"
 msgstr ""
 
-#: test-core.c:423
+#: test-core.c:425
 msgid "Help"
 msgstr ""
 
@@ -190,12 +190,12 @@ msgstr "Výrobce"
 msgid "Markdown"
 msgstr ""
 
-#: test-core.c:432
+#: test-core.c:434
 msgid "Misc"
 msgstr ""
 
 #. type,   flags, name,      description,          help, mandatory, optional, detail
-#: test-core.c:431
+#: test-core.c:433
 #, fuzzy
 msgid "Mode"
 msgstr "Model:"
@@ -213,7 +213,7 @@ msgstr "Ne"
 msgid "OPTIONS"
 msgstr ""
 
-#: test-core.c:407
+#: test-core.c:409
 msgid "October 10, 2018"
 msgstr ""
 
@@ -239,17 +239,17 @@ msgstr "Volba nepodporovaného typu:"
 msgid "Oyjl Module Author"
 msgstr "Moduly Oyranosu"
 
-#: test-core.c:413
+#: test-core.c:415
 #, fuzzy
 msgid "Print All"
 msgstr "Tiskárna"
 
-#: test-core.c:414
+#: test-core.c:416
 #, fuzzy
 msgid "Print Camera"
 msgstr "Jméno ovladače:"
 
-#: test-core.c:414
+#: test-core.c:416
 #, fuzzy
 msgid "Print Camera JSON"
 msgstr "Tiskárna CUPS"
@@ -259,7 +259,7 @@ msgstr "Tiskárna CUPS"
 msgid "Print JSON:"
 msgstr "Tiskárna CUPS"
 
-#: test-core.c:415
+#: test-core.c:417
 #, fuzzy
 msgid "Print None"
 msgstr "Tiskárna CUPS"
@@ -299,7 +299,7 @@ msgstr ""
 msgid "SYNOPSIS"
 msgstr ""
 
-#: test-core.c:421
+#: test-core.c:423
 #, fuzzy
 msgid "Set Input"
 msgstr "Vstupní"
@@ -310,8 +310,8 @@ msgstr ""
 
 #. tell about the tool
 #. argc+argv are required for parsing the command line options
-#: test-core.c:438 test-core.c:452 test-core.c:466 test-core.c:479
-#: test-core.c:492 test-core.c:506
+#: test-core.c:440 test-core.c:454 test-core.c:468 test-core.c:481
+#: test-core.c:494 test-core.c:508
 msgid "Short example tool using libOyjl"
 msgstr ""
 
@@ -327,7 +327,7 @@ msgstr ""
 msgid "Synopsis"
 msgstr ""
 
-#: test-core.c:406
+#: test-core.c:408
 msgid "The example tool demontrates the usage of the libOyjl API's."
 msgstr ""
 
@@ -367,12 +367,12 @@ msgstr "Ano"
 msgid "export"
 msgstr ""
 
-#: test-core.c:423
+#: test-core.c:425
 msgid "help"
 msgstr "nápověda"
 
 #. type,   flags, o,   option,    key,  name,         description,         help, value_name,    value_type,               values,                                                          variable_type, output variable
-#: test-core.c:421
+#: test-core.c:423
 #, fuzzy
 msgid "input"
 msgstr "Vstupní"
@@ -407,7 +407,7 @@ msgstr ""
 msgid "locales in a comma separated list"
 msgstr ""
 
-#: oyjl_translate.c:59 test-core.c:422
+#: oyjl_translate.c:59 test-core.c:424
 #, fuzzy
 msgid "output"
 msgstr "Výstupní"
@@ -417,7 +417,7 @@ msgid "output format string"
 msgstr ""
 
 #. declare some option choices
-#: test-core.c:411
+#: test-core.c:413
 msgid "oyjl.json"
 msgstr ""
 
@@ -433,7 +433,7 @@ msgstr ""
 msgid "to be used key names in a comma separated list"
 msgstr ""
 
-#: oyjl.c:74 oyjl_translate.c:62 test-core.c:424
+#: oyjl.c:74 oyjl_translate.c:62 test-core.c:426
 msgid "verbose"
 msgstr "upovídaný výstup"
 

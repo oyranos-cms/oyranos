@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2019-02-14 09:45+0100\n"
+"POT-Creation-Date: 2019-02-24 09:11+0100\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -27,7 +27,7 @@ msgstr "... versuche bitte die --help|-h Option für einen Hilfetext. Gebe auf"
 msgid "AUTHOR"
 msgstr "AUTOR"
 
-#: test-core.c:431
+#: test-core.c:433
 msgid "Actual mode"
 msgstr "Aktueller Modus"
 
@@ -43,7 +43,7 @@ msgstr "FEHLER"
 msgid "COPYRIGHT"
 msgstr "KOPIERRECHT"
 
-#: test-core.c:422
+#: test-core.c:424
 msgid "Control Output"
 msgstr "Ausgabeneinstellungen"
 
@@ -95,7 +95,7 @@ msgstr "BEISPIELE"
 msgid "EXIT-STATE"
 msgstr "EXIT-STATUS"
 
-#: oyjl.c:76 test-core.c:104
+#: oyjl.c:76 test-core.c:106
 msgid "Example"
 msgstr "Beispiel"
 
@@ -103,7 +103,7 @@ msgstr "Beispiel"
 msgid "Export formated text"
 msgstr "Exportiere formatierten Text"
 
-#: test-core.c:421
+#: test-core.c:423
 msgid "FILENAME"
 msgstr "DATEINAME"
 
@@ -123,7 +123,7 @@ msgstr "GUI"
 msgid "GUI + Command"
 msgstr "GUI + Kommando"
 
-#: test-core.c:432
+#: test-core.c:434
 msgid "General options"
 msgstr "Allgemeine Optionen"
 
@@ -155,7 +155,7 @@ msgstr "Hole formatierten Text"
 msgid "HISTORY"
 msgstr "GESCHICHTE"
 
-#: test-core.c:423
+#: test-core.c:425
 msgid "Help"
 msgstr "Hilfe"
 
@@ -187,12 +187,12 @@ msgstr "Hersteller"
 msgid "Markdown"
 msgstr "Markdown"
 
-#: test-core.c:432
+#: test-core.c:434
 msgid "Misc"
 msgstr "Verschiedenes"
 
 #. type,   flags, name,      description,          help, mandatory, optional, detail
-#: test-core.c:431
+#: test-core.c:433
 msgid "Mode"
 msgstr "Modus"
 
@@ -208,7 +208,7 @@ msgstr "Nein"
 msgid "OPTIONS"
 msgstr "OPTIONEN"
 
-#: test-core.c:407
+#: test-core.c:409
 msgid "October 10, 2018"
 msgstr ""
 
@@ -232,15 +232,15 @@ msgstr "Die Option ist nicht unterstützt"
 msgid "Oyjl Module Author"
 msgstr "Autor des Oyjl Modules"
 
-#: test-core.c:413
+#: test-core.c:415
 msgid "Print All"
 msgstr "Zeige Alle"
 
-#: test-core.c:414
+#: test-core.c:416
 msgid "Print Camera"
 msgstr "Zeige Kamera"
 
-#: test-core.c:414
+#: test-core.c:416
 msgid "Print Camera JSON"
 msgstr "Zeige Kamera JSON"
 
@@ -248,7 +248,7 @@ msgstr "Zeige Kamera JSON"
 msgid "Print JSON:"
 msgstr "Zeige JSON:"
 
-#: test-core.c:415
+#: test-core.c:417
 msgid "Print None"
 msgstr "Zeige Nichts"
 
@@ -284,7 +284,7 @@ msgstr "SIEHE AUCH"
 msgid "SYNOPSIS"
 msgstr "ÜBERSICHT"
 
-#: test-core.c:421
+#: test-core.c:423
 msgid "Set Input"
 msgstr "Setze Eingabe"
 
@@ -294,8 +294,8 @@ msgstr "Setze Schlüssel-/Wertpaar"
 
 #. tell about the tool
 #. argc+argv are required for parsing the command line options
-#: test-core.c:438 test-core.c:452 test-core.c:466 test-core.c:479
-#: test-core.c:492 test-core.c:506
+#: test-core.c:440 test-core.c:454 test-core.c:468 test-core.c:481
+#: test-core.c:494 test-core.c:508
 msgid "Short example tool using libOyjl"
 msgstr "Einfaches Beispielwerkzeug mit libOyjl"
 
@@ -311,7 +311,7 @@ msgstr "Unterstützung"
 msgid "Synopsis"
 msgstr "Übersicht"
 
-#: test-core.c:406
+#: test-core.c:408
 msgid "The example tool demontrates the usage of the libOyjl API's."
 msgstr "Das Beispielwerkzeug zeigt die Benutzung der libOyjl APIs."
 
@@ -349,12 +349,12 @@ msgstr "Ja"
 msgid "export"
 msgstr "exportiere"
 
-#: test-core.c:423
+#: test-core.c:425
 msgid "help"
 msgstr "Hilfe"
 
 #. type,   flags, o,   option,    key,  name,         description,         help, value_name,    value_type,               values,                                                          variable_type, output variable
-#: test-core.c:421
+#: test-core.c:423
 msgid "input"
 msgstr "Eingabe"
 
@@ -390,7 +390,7 @@ msgstr ""
 msgid "locales in a comma separated list"
 msgstr "Sprachen in einer kommagetrennten Liste"
 
-#: oyjl_translate.c:59 test-core.c:422
+#: oyjl_translate.c:59 test-core.c:424
 msgid "output"
 msgstr "Ausgabe"
 
@@ -399,7 +399,7 @@ msgid "output format string"
 msgstr "Ausgabeformat"
 
 #. declare some option choices
-#: test-core.c:411
+#: test-core.c:413
 msgid "oyjl.json"
 msgstr ""
 
@@ -415,7 +415,7 @@ msgstr "Text ID für das Projekt"
 msgid "to be used key names in a comma separated list"
 msgstr "zu benutzende Schlüsselwörter in einer kommagetrennten Liste"
 
-#: oyjl.c:74 oyjl_translate.c:62 test-core.c:424
+#: oyjl.c:74 oyjl_translate.c:62 test-core.c:426
 msgid "verbose"
 msgstr "plaudernd"
 

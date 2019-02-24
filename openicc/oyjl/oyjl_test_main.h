@@ -108,9 +108,6 @@ int main(int argc, char** argv)
     return 0;
   }
 
-  fprintf( zout, "\nTests"
-           "\n\n" );
-
   memset(tests_xfailed, 0, sizeof(char*) * tn);
   memset(tests_failed, 0, sizeof(char*) * tn);
   /* do tests */
@@ -130,7 +127,7 @@ int main(int argc, char** argv)
     {
       if(!results[i]) colorterm = NULL;
       fprintf( stdout, "    Tests with status %s:\t%d\n",
-                       oyTestResultToString( (oyjlTESTRESULT_e)i ), results[i] );
+                       oyjlTestResultToString( (oyjlTESTRESULT_e)i ), results[i] );
       colorterm = colorterm_;
     }
 
@@ -142,11 +139,11 @@ int main(int argc, char** argv)
     for(i = 0; i < tn; ++i)
       if(tests_xfailed[i])
         fprintf( stdout, "    %s: [%d] \"%s\"\n",
-                 oyTestResultToString( oyjlTESTRESULT_XFAIL), i, tests_xfailed[i] );
+                 oyjlTestResultToString( oyjlTESTRESULT_XFAIL), i, tests_xfailed[i] );
     for(i = 0; i < tn; ++i)
       if(tests_failed[i])
         fprintf( stdout, "    %s: [%d] \"%s\"\n",
-                 oyTestResultToString( oyjlTESTRESULT_FAIL), i, tests_failed[i] );
+                 oyjlTestResultToString( oyjlTESTRESULT_FAIL), i, tests_failed[i] );
 
     if(error)
       fprintf( stdout, "    Tests %s\n", oyjlTermColor_( oyjlRED, "FAILED" ) );
