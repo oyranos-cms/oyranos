@@ -108,7 +108,7 @@ static const char * oyjlTermColor_( oyjlCOLORTERM_e rgb, const char * text) {
     return text;
 }
 
-const char * oyTestResultToString    ( oyjlTESTRESULT_e      error )
+const char * oyjlTestResultToString  ( oyjlTESTRESULT_e      error )
 {
   const char * text = "";
   switch(error)
@@ -168,7 +168,7 @@ oyjlTESTRESULT_e oyTestRun           ( oyjlTESTRESULT_e  (*test)(void),
 
   error = test();
 
-  fprintf(stdout, "\t%s", oyTestResultToString(error));
+  fprintf(stdout, "\t%s", oyjlTestResultToString(error));
 
   if(error == oyjlTESTRESULT_FAIL)
     tests_failed[number] = (char*)test_name;
@@ -194,7 +194,7 @@ int oy_test_sub_count = 0;
   if((result_) < result) \
     result = result_; \
   fprintf(stdout, ## __VA_ARGS__ ); \
-  fprintf(stdout, " ..\t%s", oyTestResultToString(result_)); \
+  fprintf(stdout, " ..\t%s", oyjlTestResultToString(result_)); \
   if((result_) <= oyjlTESTRESULT_FAIL) \
     fprintf(stdout, " !!! ERROR !!!" ); \
   fprintf(stdout, "\n" ); \
