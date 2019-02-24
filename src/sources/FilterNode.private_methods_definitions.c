@@ -349,6 +349,7 @@ int          oyFilterNode_SetContext_( oyFilterNode_s_    * node,
               /* write the cmm4 context to memory */
               if(blob)
               {
+                if(oy_debug)
                 error = oyOptions_SetFromString( &node->tags, "////verbose",
                                                "true", OY_CREATE_NEW );
 
@@ -356,6 +357,7 @@ int          oyFilterNode_SetContext_( oyFilterNode_s_    * node,
                 ptr = oyFilterNode_ContextToMem_( node, &size, oyAllocateFunc_);
                 oyBlob_SetFromData( (oyBlob_s*)blob, ptr, size,
                                     core_->api4_->context_type );
+                if(oy_debug)
                 error = oyOptions_SetFromString( &node->tags, "////verbose",
                                                "false", 0 );
 
