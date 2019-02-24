@@ -25,12 +25,49 @@
 /** @brief print more results, when the -v argument is passed to the test program. */
 int verbose = 0;
 
+extern int * oyjl_debug;
+
+#ifndef OYJL_TEST_MAIN_SETUP
+/** @brief setup Oyjl to your needs by defining this macro
+ *
+ *  The macro is called as first entry inside oyjl_test_main.h defined main().
+ *  @code
+    #include <oyjl.h> // declare oyjlDebugVariableSet()
+    int my_debug_variable = 0;
+
+    #define OYJL_TEST_MAIN_SETUP oyjlDebugVariableSet( &my_debug_variable ); printf("\n    My Test Program\n");
+    #include <oyjl_test_main.h> // inject code from OYJL_TEST_MAIN_SETUP into main() start
+    @endcode
+ *
+ *  The above example let your code set your own debug variable. So you can
+ *  see if the -v -v option was set, as that increases *oyjl_debug += 1.
+ *  Or you can e.g. redefine zout to default to a FILE pointer instead of
+ *  stdout.
+ */
+#define OYJL_TEST_MAIN_SETUP
+#endif
+
+#ifndef OYJL_TEST_MAIN_FINISH
+/** @brief end your test program as you need by defining this macro
+ *
+ *  Place this macro in front of your #include oyjl_test_main.h.
+ *  The macro is called as last entry inside oyjl_test_main.h defined main().
+ *  @code
+    #define OYJL_TEST_MAIN_FINISH printf("\n    My Test Program finished\n\n");
+    @endcode
+ */
+#define OYJL_TEST_MAIN_FINISH
+#endif
+
 /** @brief simple start function for testing program */
 int main(int argc, char** argv)
 {
   int i, error = 0,
       argpos = 1,
       list = 0;
+
+  /** The ::OYJL_TEST_MAIN_SETUP macro can be used to do something initially. */
+  OYJL_TEST_MAIN_SETUP
 
   zout = stdout;  /* printed inbetween results */
 
@@ -57,6 +94,8 @@ int main(int argc, char** argv)
    */
   i = 1; while(i < argc) if( strcmp(argv[i++],"-v") == 0 )
   { ++argpos;
+    if(verbose)
+      *oyjl_debug += 1;
     verbose = 1;
   }
 
@@ -116,6 +155,9 @@ int main(int argc, char** argv)
 
     fprintf( stdout, "\n    Hint: the '-l' option will list all test names\n" );
   }
+
+  /** The ::OYJL_TEST_MAIN_FINISH macro can be used to do something after all tests. */
+  OYJL_TEST_MAIN_FINISH
 
   return error;
 }
