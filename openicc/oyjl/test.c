@@ -18,6 +18,8 @@
   TEST_RUN( testFromJson, "Data Writers", 1 ); \
   TEST_RUN( testJsonRoundtrip, "Data Readers", 1 );
 
+#define OYJL_TEST_MAIN_SETUP  printf("\n    Oyjl Test Program\n");
+#define OYJL_TEST_MAIN_FINISH printf("\n    Oyjl Test Program finished\n\n");
 #include "oyjl_test_main.h"
 #include "oyjl_version.h"
 #include "oyjl.h"
