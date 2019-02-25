@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eu\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2019-02-24 09:11+0100\n"
+"POT-Creation-Date: 2019-02-25 12:16+0100\n"
 "PO-Revision-Date: 2007-11-07 11:11+0100\n"
 "Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@zundan.com>\n"
 "Language-Team: Basque <itzulpena@euskalgnu.org>\n"
@@ -27,7 +27,7 @@ msgstr ""
 msgid "AUTHOR"
 msgstr ""
 
-#: test-core.c:433
+#: test-core.c:432
 msgid "Actual mode"
 msgstr ""
 
@@ -43,7 +43,7 @@ msgstr ""
 msgid "COPYRIGHT"
 msgstr ""
 
-#: test-core.c:424
+#: test-core.c:423
 #, fuzzy
 msgid "Control Output"
 msgstr "Irteera"
@@ -99,7 +99,7 @@ msgstr ""
 msgid "EXIT-STATE"
 msgstr ""
 
-#: oyjl.c:76 test-core.c:106
+#: oyjl.c:76 test-core.c:105
 msgid "Example"
 msgstr ""
 
@@ -107,7 +107,7 @@ msgstr ""
 msgid "Export formated text"
 msgstr ""
 
-#: test-core.c:423
+#: test-core.c:422
 msgid "FILENAME"
 msgstr ""
 
@@ -128,7 +128,7 @@ msgstr "SGI"
 msgid "GUI + Command"
 msgstr ""
 
-#: test-core.c:434
+#: test-core.c:433
 #, fuzzy
 msgid "General options"
 msgstr "Bereizketa"
@@ -162,7 +162,7 @@ msgstr ""
 msgid "HISTORY"
 msgstr ""
 
-#: test-core.c:425
+#: test-core.c:424
 msgid "Help"
 msgstr ""
 
@@ -196,12 +196,12 @@ msgstr "Hornitzailea:   "
 msgid "Markdown"
 msgstr ""
 
-#: test-core.c:434
+#: test-core.c:433
 msgid "Misc"
 msgstr ""
 
 #. type,   flags, name,      description,          help, mandatory, optional, detail
-#: test-core.c:433
+#: test-core.c:432
 #, fuzzy
 msgid "Mode"
 msgstr "Modeloa:"
@@ -219,7 +219,7 @@ msgstr ""
 msgid "OPTIONS"
 msgstr ""
 
-#: test-core.c:409
+#: test-core.c:408
 msgid "October 10, 2018"
 msgstr ""
 
@@ -244,17 +244,17 @@ msgstr ""
 msgid "Oyjl Module Author"
 msgstr "Oyranos-en ezarpenak"
 
-#: test-core.c:415
+#: test-core.c:414
 #, fuzzy
 msgid "Print All"
 msgstr "Puntua"
 
-#: test-core.c:416
+#: test-core.c:415
 #, fuzzy
 msgid "Print Camera"
 msgstr "Fitxategi-izena"
 
-#: test-core.c:416
+#: test-core.c:415
 #, fuzzy
 msgid "Print Camera JSON"
 msgstr "Puntua"
@@ -264,7 +264,7 @@ msgstr "Puntua"
 msgid "Print JSON:"
 msgstr "Puntua"
 
-#: test-core.c:417
+#: test-core.c:416
 #, fuzzy
 msgid "Print None"
 msgstr "Puntua"
@@ -304,7 +304,7 @@ msgstr ""
 msgid "SYNOPSIS"
 msgstr ""
 
-#: test-core.c:423
+#: test-core.c:422
 #, fuzzy
 msgid "Set Input"
 msgstr "Sarrera"
@@ -315,8 +315,8 @@ msgstr ""
 
 #. tell about the tool
 #. argc+argv are required for parsing the command line options
-#: test-core.c:440 test-core.c:454 test-core.c:468 test-core.c:481
-#: test-core.c:494 test-core.c:508
+#: test-core.c:439 test-core.c:453 test-core.c:467 test-core.c:480
+#: test-core.c:493 test-core.c:507
 msgid "Short example tool using libOyjl"
 msgstr ""
 
@@ -332,7 +332,7 @@ msgstr ""
 msgid "Synopsis"
 msgstr ""
 
-#: test-core.c:408
+#: test-core.c:407
 msgid "The example tool demontrates the usage of the libOyjl API's."
 msgstr ""
 
@@ -371,13 +371,13 @@ msgstr "Bai"
 msgid "export"
 msgstr ""
 
-#: test-core.c:425
+#: test-core.c:424
 #, fuzzy
 msgid "help"
 msgstr "Laguntza"
 
 #. type,   flags, o,   option,    key,  name,         description,         help, value_name,    value_type,               values,                                                          variable_type, output variable
-#: test-core.c:423
+#: test-core.c:422
 #, fuzzy
 msgid "input"
 msgstr "Sarrera"
@@ -412,7 +412,7 @@ msgstr ""
 msgid "locales in a comma separated list"
 msgstr ""
 
-#: oyjl_translate.c:59 test-core.c:424
+#: oyjl_translate.c:59 test-core.c:423
 #, fuzzy
 msgid "output"
 msgstr "Irteera"
@@ -422,7 +422,7 @@ msgid "output format string"
 msgstr ""
 
 #. declare some option choices
-#: test-core.c:413
+#: test-core.c:412
 msgid "oyjl.json"
 msgstr ""
 
@@ -438,7 +438,7 @@ msgstr ""
 msgid "to be used key names in a comma separated list"
 msgstr ""
 
-#: oyjl.c:74 oyjl_translate.c:62 test-core.c:426
+#: oyjl.c:74 oyjl_translate.c:62 test-core.c:425
 msgid "verbose"
 msgstr ""
 
