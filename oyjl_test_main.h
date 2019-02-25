@@ -138,12 +138,20 @@ int main(int argc, char** argv)
 
     for(i = 0; i < tn; ++i)
       if(tests_xfailed[i])
+      {
         fprintf( stdout, "    %s: [%d] \"%s\"\n",
                  oyjlTestResultToString( oyjlTESTRESULT_XFAIL), i, tests_xfailed[i] );
+        free(tests_xfailed[i]);
+        tests_xfailed[i] = NULL;
+      }
     for(i = 0; i < tn; ++i)
       if(tests_failed[i])
+      {
         fprintf( stdout, "    %s: [%d] \"%s\"\n",
                  oyjlTestResultToString( oyjlTESTRESULT_FAIL), i, tests_failed[i] );
+        free(tests_failed[i]);
+        tests_failed[i] = NULL;
+      }
 
     if(error)
       fprintf( stdout, "    Tests %s\n", oyjlTermColor_( oyjlRED, "FAILED" ) );
