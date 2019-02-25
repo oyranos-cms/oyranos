@@ -39,7 +39,6 @@ oyjlTESTRESULT_e testVersion()
   fprintf(stdout, "\n" );
   fprintf(zout, "compiled version:     %d\n", OYJL_VERSION );
   fprintf(zout, " runtime version:     %d\n", oyjlVersion(0) );
-  fprintf(zout, "sta yajl version:     %d\n", oyjlVersion(1) );
 
   if(OYJL_VERSION == oyjlVersion(0))
     result = oyjlTESTRESULT_SUCCESS;
