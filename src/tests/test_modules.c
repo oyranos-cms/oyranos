@@ -43,21 +43,21 @@ int main( int argc OY_UNUSED, char ** argv OY_UNUSED)
           oyMessageFunc_p(oyMSG_WARN,cmm_info,"oyCMMinfoFromLibName_p(file[%d]): success \"%s\"", i, files[i]);
 
           tmp = oyCMMinfo_GetApi( cmm_info );
-	  if(!tmp)
-	  {
+          if(!tmp)
+          {
             oyMessageFunc_p(oyMSG_ERROR, cmm_info, "[%d]: no meta API obtained from API info", i);
-	    return 1;
-	  }
+          	return 1;
+          }
 
-	  while(tmp && tmp->type_ != oyOBJECT_CMM_API5_S)
+          while(tmp && tmp->type_ != oyOBJECT_CMM_API5_S)
             tmp = oyCMMapi_GetNext(tmp);
 
-	  if(tmp && tmp->type_ == oyOBJECT_CMM_API5_S)
-	  {
+          if(tmp && tmp->type_ == oyOBJECT_CMM_API5_S)
+          {
             oyCMMapi5_s_ * api5 = (oyCMMapi5_s_*) tmp;
             int j;
             oyOBJECT_e type = oyCMMapi_Check_( tmp );
-	    if(type != oyOBJECT_CMM_API5_S)
+            if(type != oyOBJECT_CMM_API5_S)
             {
               oyMessageFunc_p(oyMSG_ERROR,NULL,"[%d]: API check failed from \"%s\"", i, files[i]);
               break;
@@ -68,35 +68,36 @@ int main( int argc OY_UNUSED, char ** argv OY_UNUSED)
             for(j = 0; (uint32_t)j < files2_n; ++j)
             {
               oyCMMinfo_s * cmm_info2 = oyCMMinfoFromLibName_p(files2[j]);
-	      if(cmm_info2)
+              if(cmm_info2)
                 oyMessageFunc_p(oyMSG_WARN,api5,"[%d][%d]: success %s %s %d \"%s\"", i,j, oyCMMinfo_GetCMM(cmm_info2), oyCMMinfo_GetVersion(cmm_info2), oyCMMinfo_GetCompatibility(cmm_info2), files2[j]);
-	      else
+              else
                 oyMessageFunc_p(oyMSG_ERROR,NULL,"[%d][%d]: no API info obtained from \"%s\"", i,j, files2[j]);
-	    }
+            }
 
-	    if(!files2_n)
-	    {
+            if(!files2_n)
+            {
               error = 1;
               oyMessageFunc_p(oyMSG_ERROR,api5,"[%d]: no libraries found by meta module", i);
-	    }
+            }
 
-	  } else
-	  {
+          } else
+          {
             oyMessageFunc_p(oyMSG_ERROR,tmp,"[%d]: %s - not a meta module in \"%s\"", i, oyStruct_GetText((oyStruct_s*)tmp, oyNAME_NAME, 0x00), files[i]);
             error = 1;
-	  }
-	} else
-	{
+          }
+        } else
+        {
           oyMessageFunc_p(oyMSG_ERROR,NULL,"[%d]: no API info obtained from \"%s\"", i, files[i]);
-	  error = 1;
-	}
+      	  error = 1;
+        }
       }
     } else
     {
       const char * t = getenv("OY_MODULE_PATH");
       error = 1;
-      oy_debug = 4;
-      files = oyCMMsGetLibNames_p(&files_n);
+      //oy_debug = 4;
+      //files = oyCMMsGetLibNames_p(&files_n);
+      error = system("ls -R");
       oyMessageFunc_p(oyMSG_ERROR,NULL,"no  meta module (OY_MODULE_PATH=%s)", t?t:"");
     }
   }
