@@ -180,7 +180,7 @@ oyjlTESTRESULT_e oyTestRun           ( oyjlTESTRESULT_e  (*test)(void),
                                        int                 number )
 {
   oyjlTESTRESULT_e error = oyjlTESTRESULT_UNKNOWN;
-  char * text = (char*) malloc(strlen(test_name) + (MAX_PATH) + 80);
+  char * text = NULL;
 
   oyjl_test_file = NULL;
   oyjl_test_file_line = -1;
@@ -192,14 +192,20 @@ oyjlTESTRESULT_e oyTestRun           ( oyjlTESTRESULT_e  (*test)(void),
 
   fprintf(stdout, "\t%s", oyjlTestResultToString(error));
 
-  if(oyjl_test_file && oyjl_test_file_line)
-    sprintf( text, "%s (%s:%d)", test_name, strchr(oyjl_test_file,'/')?strrchr(oyjl_test_file,'/') + 1 : oyjl_test_file, oyjl_test_file_line );
-  else
-    sprintf( text, "%s", test_name );
-  if(error == oyjlTESTRESULT_FAIL)
-    tests_failed[number] = text;
-  if(error == oyjlTESTRESULT_XFAIL)
-    tests_xfailed[number] = text;
+  if(error == oyjlTESTRESULT_FAIL || error == oyjlTESTRESULT_XFAIL)
+  {
+    text = (char*) malloc(strlen(test_name) + (MAX_PATH) + 80);
+
+    if(oyjl_test_file && oyjl_test_file_line)
+      sprintf( text, "%s (%s:%d)", test_name, strchr(oyjl_test_file,'/')?strrchr(oyjl_test_file,'/') + 1 : oyjl_test_file, oyjl_test_file_line );
+    else
+      sprintf( text, "%s", test_name );
+    if(error == oyjlTESTRESULT_FAIL)
+      tests_failed[number] = text;
+    if(error == oyjlTESTRESULT_XFAIL)
+      tests_xfailed[number] = text;
+  }
+
   results[error] += 1;
 
   /* print */
