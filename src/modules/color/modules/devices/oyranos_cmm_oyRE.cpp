@@ -155,7 +155,7 @@ int CMMInit( oyStruct_s * filter )
   const char * rfilter = "config.icc_profile.raw-image.oyRE";
 
   if(!_initialised)
-    error = oyDeviceCMMInit( filter, rfilter );
+    error = oyDeviceCMMInit( filter, rfilter, 0 );
 
   return error;
 }

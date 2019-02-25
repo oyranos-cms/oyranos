@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2008-2012 (C) Kai-Uwe Behrmann
+ *            2008-2019 (C) Kai-Uwe Behrmann
  *
  *  @brief    CMM core APIs
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
@@ -24,6 +24,10 @@
 #include "oyranos_sentinel.h"
 #include "oyranos_string.h"
 #include "oyranos_texts.h"
+#include "config.icc_profile.printer.CUPS.json.h"
+#include "config.icc_profile.raw-image.oyRE.json.h"
+#include "config.icc_profile.scanner.SANE.json.h"
+
 
 #include "oyConnectorImaging_s.h"
 #include "oyRectangle_s_.h"
@@ -180,7 +184,6 @@ int      oyFilterPlug_ImageRootRun   ( oyFilterPlug_s    * requestor_plug,
   return result;
 }
 
-
 /** @brief   load Rank Map from disk
  *
  *  The rank map is selected by __rank_file_pattern__ and searched with
@@ -190,26 +193,43 @@ int      oyFilterPlug_ImageRootRun   ( oyFilterPlug_s    * requestor_plug,
  *
  *  @param[in]     filter              the oyCMMapi8_s device config filter
  *  @param[in]     rank_file_pattern   the ID or class name
+ *  @param[in]     rank_optional       no serious warnings as the filter can add a rankmap by itself
  *  @return                            error
  *
- *  @version Oyranos: 0.9.6
- *  @date    2017/10/11
+ *  @version Oyranos: 0.9.7
+ *  @date    2019/02/25
  *  @since   2015/08/05 (Oyranos: 0.9.6)
  */
 int oyDeviceCMMInit                  ( oyStruct_s        * filter,
-                                       const char        * rank_file_pattern )
+                                       const char        * rank_file_pattern,
+                                       int                 rank_optional )
 {
   int error = !filter || !rank_file_pattern;
   char ** rank_name = NULL;
   const char * rfilter = rank_file_pattern;
   oyCMMapi8_s_ * s = (oyCMMapi8_s_*) filter;
+  const char * rank_json = NULL;
 
   if(!error)
   {
     error = oyRankMapList( rfilter, NULL, &rank_name, oyAllocateFunc_ );
+
     if(error > 0 || !rank_name || !rank_name[0])
     {
-      WARNc2_S("Problems loading rank map: %s %d", rfilter, error);
+      if(strstr(rank_file_pattern, "CUPS"))
+        rank_json = (const char *) config_icc_profile_printer_CUPS_json;
+      else
+      if(strstr(rank_file_pattern, "oyRE"))
+        rank_json = (const char *) config_icc_profile_raw_image_oyRE_json;
+      else
+      if(strstr(rank_file_pattern, "SANE"))
+        rank_json = (const char *) config_icc_profile_scanner_SANE_json;
+    }
+
+    if(!rank_json && (error > 0 || !rank_name || !rank_name[0]))
+    {
+      if(rank_optional == 0)
+        WARNc2_S("Problems loading rank map: %s %d", rfilter, error);
 
     } else
     {
@@ -217,16 +237,19 @@ int oyDeviceCMMInit                  ( oyStruct_s        * filter,
       char * json_text = NULL;
       size_t json_size = 0;
 
-      json_text = oyReadFileToMem_( rank_name[0], &json_size, oyAllocateFunc_ );
-      if(!json_text || !json_text[0])
+      if(!rank_json && rank_name && rank_name[0])
+        json_text = oyReadFileToMem_( rank_name[0], &json_size, oyAllocateFunc_ );
+      if(!rank_json && (!json_text || !json_text[0]))
         oyMessageFunc_p( oyMSG_WARN, filter, "%s() %s: %s", __func__,
                          _("File not loaded!"), rank_name[0] );
+      else if(json_text)
+        rank_json = json_text;
 
-      error = oyRankMapFromJSON ( json_text, NULL, &rank_map, oyAllocateFunc_ );
+      error = oyRankMapFromJSON ( rank_json, NULL, &rank_map, oyAllocateFunc_ );
 
       if(!rank_map || error || !rank_map[0].key)
         oyMessageFunc_p( oyMSG_WARN, filter, "%s() %s: %s  %d", __func__,
-                         _("Creation of rank_map failed from"), rank_name[0], error );
+                         _("Creation of rank_map failed from"), rank_name?rank_name[0]:rank_json, error );
       else
         s->rank_map = rank_map;
 

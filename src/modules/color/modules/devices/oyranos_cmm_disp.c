@@ -84,9 +84,23 @@ int                CMMInit           ( oyStruct_s        * filter )
 {
   int error = 0;
   const char * rfilter = "config.icc_profile.monitor.oyX1.qarz";
+  const char * rank_json = hooks3->rank_map;
+  oyCMMapi8_s_ * s = (oyCMMapi8_s_*) filter;
 
   if(!_initialised)
-    error = oyDeviceCMMInit( filter, rfilter );
+    error = oyDeviceCMMInit( filter, rfilter, 1 );
+
+  if(s->rank_map == NULL)
+  {
+    oyRankMap * rank_map = NULL;
+    error = oyRankMapFromJSON ( rank_json, NULL, &rank_map, oyAllocateFunc_ );
+
+    if(!rank_map || error || !rank_map[0].key)
+      oyMessageFunc_p( oyMSG_WARN, filter, "%s() %s: %s  %d", __func__,
+                       _("Creation of rank_map failed from"), rank_json, error );
+    else
+      s->rank_map = rank_map;
+  }
 
   return error;
 }
