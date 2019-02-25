@@ -37,6 +37,8 @@
  *  @brief API testing for prototyping and regression checking in CI
  *
  *  The API is designed to be easily useable without much boilerplate.
+ *  The implementation is declared and defined in header only. No
+ *  extra linking is needed, except of libm and libc where required.
  *
  *  Define somewhere in your test.c file a TESTS_RUN
  *  with your test functions like:
@@ -123,9 +125,20 @@ const char * oyjlTestResultToString  ( oyjlTESTRESULT_e      error )
   return text;
 }
 
-/** printed inbetween results */
+/** FILE descriptor for printed inbetween results
+ *
+ *  A good default might be stdout for a CLI program.
+ */
 FILE * zout;
 static int test_number = 0;
+const char * oyjl_test_file = NULL;
+int oyjl_test_file_line = -1;
+void oyjlSetDbgPosition( const char * file, int line )
+{
+  oyjl_test_file = file;
+  oyjl_test_file_line = line;
+}
+#define OYJL_TEST_START oyjlSetDbgPosition(__FILE__,__LINE__-1);
 /** macro to register a test
  *  @see TESTS_RUN
  *  @param         prog                test function: oyjlTESTRESULT_e  (*test)(void)
@@ -152,6 +165,11 @@ int results[oyjlTESTRESULT_UNKNOWN+1];
 char * tests_failed[tn];
 char * tests_xfailed[tn];
 
+#ifndef MAX_PATH
+/* maximal path lenght, if not allready defined elsewhere */
+#define MAX_PATH 1024
+#endif
+
 /** run a test and print results on end
  *  @param         test                test function
  *  @param         test_name           short string for status line
@@ -162,6 +180,10 @@ oyjlTESTRESULT_e oyTestRun           ( oyjlTESTRESULT_e  (*test)(void),
                                        int                 number )
 {
   oyjlTESTRESULT_e error = oyjlTESTRESULT_UNKNOWN;
+  char * text = malloc(strlen(test_name) + (MAX_PATH) + 80);
+
+  oyjl_test_file = NULL;
+  oyjl_test_file_line = -1;
 
   fprintf( stdout, "\n________________________________________________________________\n" );
   fprintf(stdout, "Test[%d]: %s ... ", test_number, test_name );
@@ -170,10 +192,14 @@ oyjlTESTRESULT_e oyTestRun           ( oyjlTESTRESULT_e  (*test)(void),
 
   fprintf(stdout, "\t%s", oyjlTestResultToString(error));
 
+  if(oyjl_test_file && oyjl_test_file_line)
+    sprintf( text, "%s (%s:%d)", test_name, strchr(oyjl_test_file,'/')?strrchr(oyjl_test_file,'/') + 1 : oyjl_test_file, oyjl_test_file_line );
+  else
+    sprintf( text, "%s", test_name );
   if(error == oyjlTESTRESULT_FAIL)
-    tests_failed[number] = (char*)test_name;
+    tests_failed[number] = text;
   if(error == oyjlTESTRESULT_XFAIL)
-    tests_xfailed[number] = (char*)test_name;
+    tests_xfailed[number] = text;
   results[error] += 1;
 
   /* print */
@@ -186,11 +212,38 @@ oyjlTESTRESULT_e oyTestRun           ( oyjlTESTRESULT_e  (*test)(void),
 
 
 int oy_test_sub_count = 0;
-/** Print a custom line to stdout followed by the status and count state.
+/** @brief register status and print info of sub test
+ *
+ *  Print a custom line to stdout followed by the status. Register state.
+ *
+ *  The PRINT_SUB macro remembers the first file position of similar strongly
+ *  failed sub tests. As macros count the last closing brace ')', the
+ *  line number is set to (\_\_LINE\_\_ - 1). So it is suggested to place
+ *  the status macro in one line to let the position fall in front or use
+ *  a two line macro with falling the debug position in the start of the
+ *  macro. Here two examples:
+ *  @code
+    int i = 4; // debugging hint will show this line
+    if(i != 2) PRINT_SUB(oyjlTESTRESULT_FAIL, "i = %d", i);
+
+    if(i == 2)
+    {
+      PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+      "i = %d", i );
+    }
+    else
+    {
+      // debugging hint will point to line below
+      PRINT_SUB( oyjlTESTRESULT_XFAIL,
+      "i = %d", i );
+    }
+    @endcode
+ *
  *  @param         result_             use oyjlTESTRESULT_e for
  *  @param         ...                 the argument list to fprint(stdout, ...)
  */
 #define PRINT_SUB( result_, ... ) { \
+  if((result_) < oyjlTESTRESULT_SUCCESS && (result_) < result) OYJL_TEST_START \
   if((result_) < result) \
     result = result_; \
   fprintf(stdout, ## __VA_ARGS__ ); \
