@@ -180,7 +180,7 @@ oyjlTESTRESULT_e oyTestRun           ( oyjlTESTRESULT_e  (*test)(void),
                                        int                 number )
 {
   oyjlTESTRESULT_e error = oyjlTESTRESULT_UNKNOWN;
-  char * text = malloc(strlen(test_name) + (MAX_PATH) + 80);
+  char * text = (char*) malloc(strlen(test_name) + (MAX_PATH) + 80);
 
   oyjl_test_file = NULL;
   oyjl_test_file_line = -1;
