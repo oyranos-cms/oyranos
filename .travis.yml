@@ -26,6 +26,7 @@ script:
       make;
     fi
   - if [[ $TRAVIS_BRANCH != coverity_scan ]] && [[ "$CC" == "gcc" ]]; then
+      pwd
       OY_MODULE_PATH=../modules XDG_DATA_DIRS=$TRAVIS_BUILD_DIR make check;
       OY_MODULE_PATH=../modules XDG_DATA_DIRS=$TRAVIS_BUILD_DIR make test-2;
       OY_MODULE_PATH=../modules XDG_DATA_DIRS=$TRAVIS_BUILD_DIR make coverage;
