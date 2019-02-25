@@ -4517,10 +4517,10 @@ oyjlTESTRESULT_e testCMMRankMap ()
   while( list && list[count]) ++count;
   if( count >= 3 )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "found rank maps                 %d    ", count );
+    "found installed rank maps       %d    ", count );
   } else
-  { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "found too few rank maps         %d %d ", count, error );
+  { PRINT_SUB( oyjlTESTRESULT_XFAIL,
+    "found too few installed rank m. %d %d ", count, error );
   }
 
   for( i = 0; i < count; ++i )
