@@ -26,9 +26,9 @@ script:
       make;
     fi
   - if [[ $TRAVIS_BRANCH != coverity_scan ]] && [[ "$CC" == "gcc" ]]; then
-      OY_MODULE_PATH=$TRAVIS_BUILD_DIR/src/modules XDG_DATA_DIRS=$TRAVIS_BUILD_DIR make check;
-      OY_MODULE_PATH=$TRAVIS_BUILD_DIR/src/modules XDG_DATA_DIRS=$TRAVIS_BUILD_DIR make test-2;
-      OY_MODULE_PATH=$TRAVIS_BUILD_DIR/src/modules XDG_DATA_DIRS=$TRAVIS_BUILD_DIR make coverage;
+      OY_MODULE_PATH=../modules XDG_DATA_DIRS=$TRAVIS_BUILD_DIR make check;
+      OY_MODULE_PATH=../modules XDG_DATA_DIRS=$TRAVIS_BUILD_DIR make test-2;
+      OY_MODULE_PATH=../modules XDG_DATA_DIRS=$TRAVIS_BUILD_DIR make coverage;
       bash <(curl -s https://codecov.io/bash) -f coverage.info -R $TRAVIS_BUILD_DIR/.. -X gcov;
     fi
 
