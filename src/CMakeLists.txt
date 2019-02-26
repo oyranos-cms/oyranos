@@ -457,10 +457,10 @@ IF( GETTEXT_FOUND )
       )
 
   # set to be generated source target
-  SET( ${PROJECT_UP_NAME}_SRC_FILES_EXTRA
-        modules/color/modules/lcms2/lcm2-i18n.c
-        modules/color/modules/lcms-i18n.c
-     )
+  FILE( GLOB ${PROJECT_UP_NAME}_SRC_FILES_EXTRA RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+        modules/*-i18n.c
+      )
+  MESSAGE( "${PROJECT_UP_NAME}_SRC_FILES_EXTRA: ${${PROJECT_UP_NAME}_SRC_FILES_EXTRA}" )
 
   ADD_CUSTOM_COMMAND(OUTPUT ${_potFile}
     COMMAND ${XGETTEXT_CMD} ${_xgettext_option_list} -o ${_potFile} ${${PROJECT_UP_NAME}_SRC_FILES} ${${PROJECT_UP_NAME}_SRC_FILES_EXTRA}
