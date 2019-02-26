@@ -457,14 +457,14 @@ IF( GETTEXT_FOUND )
       )
 
   # set to be generated source target
-  SET( ${PROJECT_UP_NAME}_SRC_FILES ${${PROJECT_UP_NAME}_SRC_FILES}
+  SET( ${PROJECT_UP_NAME}_SRC_FILES_EXTRA
         modules/color/modules/lcms2/lcm2-i18n.c
         modules/color/modules/lcms-i18n.c
      )
 
   ADD_CUSTOM_COMMAND(OUTPUT ${_potFile}
-    COMMAND ${XGETTEXT_CMD} ${_xgettext_option_list} -o ${_potFile} ${${PROJECT_UP_NAME}_SRC_FILES}
-    DEPENDS ${${PROJECT_UP_NAME}_SRC_FILES}
+    COMMAND ${XGETTEXT_CMD} ${_xgettext_option_list} -o ${_potFile} ${${PROJECT_UP_NAME}_SRC_FILES} ${${PROJECT_UP_NAME}_SRC_FILES_EXTRA}
+    DEPENDS ${${PROJECT_UP_NAME}_SRC_FILES} lcm2-i18n.c lcms-i18n.c
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     COMMENT "Extract translatable messages to ${_potFile}"
   )

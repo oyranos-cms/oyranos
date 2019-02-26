@@ -39,6 +39,7 @@
                 \"label.cs_CZ\": \"Licence\",\n\
                 \"name.cs_CZ\": \"MIT\",\n\
                 \"label.de_DE\": \"Lizenz\",\n\
+                \"name.de_DE\": \"MIT\",\n\
                 \"description.de_DE\": \"http://www.littlecms.com\"\n\
               },{\n\
                 \"type\": \"url\",\n\

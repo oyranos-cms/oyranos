@@ -38,7 +38,9 @@
                 \"description\": \"http://www.opensource.org/licenses/mit-license.php\",\n\
                 \"label.cs_CZ\": \"Licence\",\n\
                 \"name.cs_CZ\": \"MIT\",\n\
-                \"label.de_DE\": \"Lizenz\"\n\
+                \"label.de_DE\": \"Lizenz\",\n\
+                \"name.de_DE\": \"MIT\",\n\
+                \"description.de_DE\": \"http://www.opensource.org/licenses/mit-license.php\"\n\
               },{\n\
                 \"type\": \"url\",\n\
                 \"label\": \"URL\",\n\
@@ -60,12 +62,14 @@
                 \"type\": \"sources\",\n\
                 \"label\": \"Sources\",\n\
                 \"name\": \"http://www.littlecms.com/downloads.htm\",\n\
-                \"label.de_DE\": \"Quellen\"\n\
+                \"label.de_DE\": \"Quellen\",\n\
+                \"name.de_DE\": \"http://www.littlecms.com/downloads.htm\"\n\
               },{\n\
                 \"type\": \"development\",\n\
                 \"label\": \"Development\",\n\
                 \"name\": \"stalled\",\n\
-                \"label.de_DE\": \"Entwicklung\"\n\
+                \"label.de_DE\": \"Entwicklung\",\n\
+                \"name.de_DE\": \"nicht aktiv\"\n\
               },{\n\
                 \"type\": \"openicc_module_author\",\n\
                 \"label\": \"OpenICC CMM Author\",\n\
@@ -81,7 +85,8 @@
                 \"description\": \"The lcms filter is a one by one color conversion filter. It can both create a color conversion context, some precalculated for processing speed up, and the color conversion with the help of that context. The adaption part of this filter transforms the Oyranos color context, which is ICC device link based, to the internal lcms format.\",\n\
                 \"label.cs_CZ\": \"Dokumentace\",\n\
                 \"label.de_DE\": \"Dokumente\",\n\
-                \"name.de_DE\": \"http://www.openicc.info\"\n\
+                \"name.de_DE\": \"http://www.openicc.info\",\n\
+                \"description.de_DE\": \"Das lcms Modul kann eindimensional Farben übertragen. Die CMM, Farbübertragungsmodul, berechnet die Farbübertragungsdaten vor und kann Farben mit deren Hilfe auch übertragen. Es gibt einen Anpassungsteil im Modul, welcher die interne lcms Farbübertragungsdaten an das Oyranos' Format anpasst, welches auf ICC Geräteverknüpfungen, engl. device links, beruht.\"\n\
               }],\n\
             \"logo\": \"lcms_logo2\",\n\
             \"groups\": [{\n\
