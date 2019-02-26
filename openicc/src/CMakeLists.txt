@@ -189,6 +189,7 @@ IF( GETTEXT_FOUND )
 
   SET( LINGUAS ../po/cs.po ../po/de.po ../po/eo.po ../po/eu.po  ../po/fr.po ../po/ru.po )
   # compile translations always to have them ready for installation
+  SET( GETTEXT_TRANSLATIONS_TARGET_PREFIX ${PROJECT_DOWN_NAME}_ )
   GETTEXT_CREATE_TRANSLATIONS( ${_potFile} ALL ${LINGUAS} )
 
   ADD_CUSTOM_COMMAND( OUTPUT ${PROJECT_DOWN_NAME}_gmo-cp
@@ -196,6 +197,6 @@ IF( GETTEXT_FOUND )
     COMMENT "put ${PROJECT_DOWN_NAME}.mo files into ${CMAKE_BINARY_DIR}/locale/lang/LC_MESSAGES/ path for testing with LOCDIR"
                     )
   ADD_CUSTOM_TARGET( ${PROJECT_DOWN_NAME}_gmo ALL
-                     DEPENDS translations ${PROJECT_DOWN_NAME}_gmo-cp  )
+                     DEPENDS ${GETTEXT_TRANSLATIONS_TARGET_PREFIX}translations ${PROJECT_DOWN_NAME}_gmo-cp  )
 ENDIF()
 

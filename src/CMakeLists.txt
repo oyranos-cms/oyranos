@@ -436,7 +436,7 @@ IF( GETTEXT_FOUND )
   #SET( _xgettext_option_list --language=C --keyword=_ --keyword=N_ --keyword=C_:1c,2 --keyword=NC_:1c,2 -s --package-name=${PROJECT_NAME} --package-version=${OYRANOS_VERSION_MAJOR}.${OYRANOS_VERSION_MINOR} )
   SET( _xgettext_option_list --add-comments --keyword=gettext --flag=gettext:1:pass-c-format --keyword=_ --flag=_:1:pass-c-format --keyword=N_ --flag=N_:1:pass-c-format  --copyright-holder='Kai-Uwe Behrmann'  --msgid-bugs-address='ku.b@gmx.de' --from-code=utf-8 --package-name=${PROJECT_NAME} --package-version=${OYRANOS_VERSION_MAJOR}.${OYRANOS_VERSION_MINOR} )
   SET( XGETTEXT_CMD xgettext )
-  FILE( GLOB SRC_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+  FILE( GLOB ${PROJECT_UP_NAME}_SRC_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
         include/*.h
         API_generated/*.c API_generated/*.h
         liboyranos/*.c
@@ -457,27 +457,28 @@ IF( GETTEXT_FOUND )
       )
 
   # set to be generated source target
-  SET( SRC_FILES ${SRC_FILES}
+  SET( ${PROJECT_UP_NAME}_SRC_FILES ${${PROJECT_UP_NAME}_SRC_FILES}
         modules/color/modules/lcms2/lcm2-i18n.c
         modules/color/modules/lcms-i18n.c
      )
 
   ADD_CUSTOM_COMMAND(OUTPUT ${_potFile}
-    COMMAND ${XGETTEXT_CMD} ${_xgettext_option_list} -o ${_potFile} ${SRC_FILES}
-    DEPENDS ${SRC_FILES}
+    COMMAND ${XGETTEXT_CMD} ${_xgettext_option_list} -o ${_potFile} ${${PROJECT_UP_NAME}_SRC_FILES}
+    DEPENDS ${${PROJECT_UP_NAME}_SRC_FILES}
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     COMMENT "Extract translatable messages to ${_potFile}"
   )
 
   # compile translations always to have them ready for installation
+  SET( GETTEXT_TRANSLATIONS_TARGET_PREFIX ${PROJECT_DOWN_NAME}_ )
   GETTEXT_CREATE_TRANSLATIONS( ${_potFile} ALL ${LINGUAS} )
 
-  ADD_CUSTOM_COMMAND( OUTPUT gmo-cp
+  ADD_CUSTOM_COMMAND( OUTPUT ${PROJECT_DOWN_NAME}_gmo-cp
     COMMAND for oy_lang in ${OY_LINGUAS}\; do mkdir -p "${CMAKE_BINARY_DIR}/locale/$$oy_lang/LC_MESSAGES/" \; cp "${CMAKE_CURRENT_BINARY_DIR}/$$oy_lang.gmo" "${CMAKE_BINARY_DIR}/locale/$$oy_lang/LC_MESSAGES/${PACKAGE_NAME}.mo" \; done
     COMMENT "put ${PROJECT_DOWN_NAME}.mo files into ${CMAKE_BINARY_DIR}/locale/lang/LC_MESSAGES/ path for testing with LOCDIR"
                     )
-  ADD_CUSTOM_TARGET( gmo ALL
-                     DEPENDS translations gmo-cp  )
+  ADD_CUSTOM_TARGET( ${PROJECT_DOWN_NAME}_gmo ALL
+                     DEPENDS ${GETTEXT_TRANSLATIONS_TARGET_PREFIX}translations ${PROJECT_DOWN_NAME}_gmo-cp  )
 
 ENDIF()
 
