@@ -11,7 +11,8 @@
 #    This will create a target "translations" which will convert the
 #    given input po files into the binary output mo file. If the
 #    ALL option is used, the translations will also be created when
-#    building the default target.
+#    building the default target. GETTEXT_TRANSLATIONS_TARGET_PREFIX will be
+#    used as prefix for the "translations" target name.
 # GETTEXT_PROCESS_POT( <potfile> [ALL] [INSTALL_DESTINATION <destdir>] LANGUAGES <lang1> <lang2> ... )
 #     Process the given pot file to mo files.
 #     If INSTALL_DESTINATION is given then automatically install rules will be created,
@@ -113,15 +114,15 @@ MACRO(GETTEXT_CREATE_TRANSLATIONS _potFile _firstPoFileArg)
 
    ENDFOREACH (_currentPoFile )
 
-   IF(NOT TARGET translations)
-      ADD_CUSTOM_TARGET(translations)
+   IF(NOT TARGET ${GETTEXT_TRANSLATIONS_TARGET_PREFIX}translations)
+      ADD_CUSTOM_TARGET(${GETTEXT_TRANSLATIONS_TARGET_PREFIX}translations)
    ENDIF()
 
-  _GETTEXT_GET_UNIQUE_TARGET_NAME(translations uniqueTargetName)
+  _GETTEXT_GET_UNIQUE_TARGET_NAME(${GETTEXT_TRANSLATIONS_TARGET_PREFIX}translations uniqueTargetName)
 
    ADD_CUSTOM_TARGET(${uniqueTargetName} ${_addToAll} DEPENDS ${_gmoFiles})
 
-   ADD_DEPENDENCIES(translations ${uniqueTargetName})
+   ADD_DEPENDENCIES(${GETTEXT_TRANSLATIONS_TARGET_PREFIX}translations ${uniqueTargetName})
 
 ENDMACRO(GETTEXT_CREATE_TRANSLATIONS )
 
