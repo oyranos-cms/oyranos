@@ -3050,8 +3050,8 @@ char l2cms_extra_options[] = {
  *  @since   2009/07/29 (Oyranos: 0.1.10)
  */
 int l2cmsGetOptionsUI                ( oyCMMapiFilter_s   * module OY_UNUSED,
-                                       oyOptions_s        * options,
-                                       int                  flags,
+                                       oyOptions_s        * options OY_UNUSED,
+                                       int                  flags OY_UNUSED,
                                        char              ** ui_text,
                                        oyAlloc_f            allocateFunc )
 {
