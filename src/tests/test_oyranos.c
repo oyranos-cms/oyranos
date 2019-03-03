@@ -55,10 +55,11 @@ oyjlTESTRESULT_e testVersion()
 
 #include <locale.h>
 #include "oyranos_sentinel.h"
+#include "oyranos_i18n.h"
 
 oyjlTESTRESULT_e testI18N()
 {
-  const char * lang = 0;
+  const char * lang = 0, * t = 0;
   oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
 
   fprintf(stderr, "\n" );
@@ -114,6 +115,28 @@ oyjlTESTRESULT_e testI18N()
   { PRINT_SUB( oyjlTESTRESULT_XFAIL, 
     "oyLanguage() initialised failed %s                ", lang?lang:"---" );
   }
+
+  lang = setlocale(LC_ALL,"de_DE.UTF-8");
+  oyI18Nreset();
+  lang = oyLanguage();
+  if(lang && (strcmp(lang, "de") == 0))
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyLanguage() initialised good %s                  ", lang?lang:"---" );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_XFAIL, 
+    "oyLanguage() initialised failed %s                ", lang?lang:"---" );
+  }
+
+  t = _("Sunrise");
+  if(strcmp(t,"Sonnenaufgang") == 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "dgettext() good \"%s\"                   ", t );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_XFAIL, 
+    "dgettext() failed \"%s\"                    ", t );
+  }
+
+  setlocale(LC_ALL,"");
 
   return result;
 }
