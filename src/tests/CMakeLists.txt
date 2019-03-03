@@ -1,6 +1,6 @@
 # Test for liboyranos_core
 LINK_DIRECTORIES( ${LINK_DIRECTORIES} "${CMAKE_BINARY_DIR}/src/liboyranos_core/" )
-IF(ENABLE_SHARED_LIBS)
+IF(ENABLE_SHARED_LIBS_${PROJECT_UP_NAME})
   ADD_EXECUTABLE( test_core "${CMAKE_CURRENT_SOURCE_DIR}/test_core.c" )
   TARGET_LINK_LIBRARIES( test_core OyranosCore )
   ADD_CUSTOM_TARGET(test-core
@@ -8,9 +8,9 @@ IF(ENABLE_SHARED_LIBS)
         DEPENDS test_core
         COMMENT "Test basic linking against liboyranos_core." VERBATIM )
   SET( TEST2_DEPS ${TEST2_DEPS} test-core )
-ENDIF(ENABLE_SHARED_LIBS)
+ENDIF(ENABLE_SHARED_LIBS_${PROJECT_UP_NAME})
 
-IF(ENABLE_STATIC_LIBS)
+IF(ENABLE_STATIC_LIBS_${PROJECT_UP_NAME})
   ADD_EXECUTABLE( test_core-static "${CMAKE_CURRENT_SOURCE_DIR}/test_core.c" )
   TARGET_LINK_LIBRARIES( test_core-static oyranos_core-static )
   ADD_CUSTOM_TARGET(test-core-static
@@ -18,11 +18,11 @@ IF(ENABLE_STATIC_LIBS)
         DEPENDS test_core-static
         COMMENT "Test basic linking against liboyranos_core." VERBATIM )
   SET( TEST2_DEPS ${TEST2_DEPS} test-core-static )
-ENDIF(ENABLE_STATIC_LIBS)
+ENDIF(ENABLE_STATIC_LIBS_${PROJECT_UP_NAME})
 
 
 LINK_DIRECTORIES( ${LINK_DIRECTORIES} "${CMAKE_BINARY_DIR}/src/liboyranos_object/" )
-IF(ENABLE_SHARED_LIBS)
+IF(ENABLE_SHARED_LIBS_${PROJECT_UP_NAME})
   ADD_EXECUTABLE( test_object "${CMAKE_CURRENT_SOURCE_DIR}/test_object.c" )
   TARGET_LINK_LIBRARIES( test_object OyranosObject )
   ADD_CUSTOM_TARGET(test-object
@@ -30,9 +30,9 @@ IF(ENABLE_SHARED_LIBS)
         DEPENDS test_object test_core
         COMMENT "Test basic linking against liboyranos_object." VERBATIM )
   SET( TEST2_DEPS ${TEST2_DEPS} test-object )
-ENDIF(ENABLE_SHARED_LIBS)
+ENDIF(ENABLE_SHARED_LIBS_${PROJECT_UP_NAME})
 
-IF(ENABLE_STATIC_LIBS)
+IF(ENABLE_STATIC_LIBS_${PROJECT_UP_NAME})
   ADD_EXECUTABLE( test_object-static "${CMAKE_CURRENT_SOURCE_DIR}/test_object.c" )
   TARGET_LINK_LIBRARIES( test_object-static oyranos_object-static )
   ADD_CUSTOM_TARGET(test-object-static
@@ -40,11 +40,11 @@ IF(ENABLE_STATIC_LIBS)
         DEPENDS test_object-static test-core-static
         COMMENT "Test basic linking against liboyranos_object." VERBATIM )
   SET( TEST2_DEPS ${TEST2_DEPS} test-object-static )
-ENDIF(ENABLE_STATIC_LIBS)
+ENDIF(ENABLE_STATIC_LIBS_${PROJECT_UP_NAME})
 
 
 LINK_DIRECTORIES( ${LINK_DIRECTORIES} "${CMAKE_BINARY_DIR}/src/liboyranos_modules/" )
-IF(ENABLE_SHARED_LIBS)
+IF(ENABLE_SHARED_LIBS_${PROJECT_UP_NAME})
   ADD_EXECUTABLE( test_modules "${CMAKE_CURRENT_SOURCE_DIR}/test_modules.c" )
   TARGET_LINK_LIBRARIES( test_modules OyranosModules )
   ADD_CUSTOM_TARGET(test-modules
@@ -52,11 +52,11 @@ IF(ENABLE_SHARED_LIBS)
         DEPENDS test_modules test_object
         COMMENT "Test basic linking against liboyranos_modules." VERBATIM )
   SET( TEST2_DEPS ${TEST2_DEPS} test_modules )
-ENDIF(ENABLE_SHARED_LIBS)
+ENDIF(ENABLE_SHARED_LIBS_${PROJECT_UP_NAME})
 
 
 LINK_DIRECTORIES( ${LINK_DIRECTORIES} "${CMAKE_BINARY_DIR}/src/liboyranos_config/" )
-IF(ENABLE_SHARED_LIBS)
+IF(ENABLE_SHARED_LIBS_${PROJECT_UP_NAME})
   ADD_EXECUTABLE( test_config "${CMAKE_CURRENT_SOURCE_DIR}/test_config.c" )
   TARGET_LINK_LIBRARIES( test_config OyranosConfig )
   ADD_CUSTOM_TARGET(test-config
@@ -64,11 +64,11 @@ IF(ENABLE_SHARED_LIBS)
         DEPENDS test_config test_modules
         COMMENT "Test basic linking against liboyranos_config." VERBATIM )
   SET( TEST2_DEPS ${TEST2_DEPS} test_config )
-ENDIF(ENABLE_SHARED_LIBS)
+ENDIF(ENABLE_SHARED_LIBS_${PROJECT_UP_NAME})
 
 
 LINK_DIRECTORIES( ${LINK_DIRECTORIES} "${CMAKE_BINARY_DIR}/src/liboyranos/" )
-IF(ENABLE_SHARED_LIBS)
+IF(ENABLE_SHARED_LIBS_${PROJECT_UP_NAME})
   ADD_EXECUTABLE( test2
                 "${CMAKE_CURRENT_SOURCE_DIR}/test2.cpp"
                 "${CMAKE_SOURCE_DIR}/src/examples/image_display/oyranos_display_helpers.c"
@@ -76,9 +76,9 @@ IF(ENABLE_SHARED_LIBS)
   TARGET_LINK_LIBRARIES( test2 Oyranos )
   SET( TEST2 test2 )
   SET( TEST2_DEPS ${TEST2_DEPS} test2 )
-ENDIF(ENABLE_SHARED_LIBS)
+ENDIF(ENABLE_SHARED_LIBS_${PROJECT_UP_NAME})
 
-IF(ENABLE_STATIC_LIBS)
+IF(ENABLE_STATIC_LIBS_${PROJECT_UP_NAME})
   ADD_EXECUTABLE( test2-static
                 "${CMAKE_CURRENT_SOURCE_DIR}/test2.cpp"
                 "${CMAKE_SOURCE_DIR}/src/examples/image_display/oyranos_display_helpers.c"
@@ -87,7 +87,7 @@ IF(ENABLE_STATIC_LIBS)
   TARGET_LINK_LIBRARIES( test2-static ${PACKAGE_NAME}-static )
   SET( TEST2_STATIC test2-static )
   SET( TEST2_DEPS ${TEST2_DEPS} test2-static )
-ENDIF(ENABLE_STATIC_LIBS)
+ENDIF(ENABLE_STATIC_LIBS_${PROJECT_UP_NAME})
 ADD_CUSTOM_TARGET(test-2
 	"echo"
 	DEPENDS test-oyranos2 ${TEST2} ${TEST2_STATIC}
@@ -110,7 +110,7 @@ ENDIF(USE_GCOV)
 
 
 LINK_DIRECTORIES( ${LINK_DIRECTORIES} "${CMAKE_BINARY_DIR}/src/liboyranos/" )
-IF(ENABLE_SHARED_LIBS)
+IF(ENABLE_SHARED_LIBS_${PROJECT_UP_NAME})
   ADD_EXECUTABLE( test_oyranos "${CMAKE_CURRENT_SOURCE_DIR}/test_oyranos.c" )
   TARGET_LINK_LIBRARIES( test_oyranos Oyranos )
   ADD_CUSTOM_TARGET(check
@@ -118,9 +118,9 @@ IF(ENABLE_SHARED_LIBS)
         DEPENDS test-oyranos test2
         COMMENT "Test liboyranos." VERBATIM )
   SET( TEST2_DEPS ${TEST2_DEPS} test_oyranos )
-ENDIF(ENABLE_SHARED_LIBS)
+ENDIF(ENABLE_SHARED_LIBS_${PROJECT_UP_NAME})
 
-IF(ENABLE_STATIC_LIBS)
+IF(ENABLE_STATIC_LIBS_${PROJECT_UP_NAME})
   ADD_EXECUTABLE( test_oyranos-static "${CMAKE_CURRENT_SOURCE_DIR}/test_oyranos.c" )
   TARGET_LINK_LIBRARIES( test_oyranos-static ${PACKAGE_NAME}-static )
   ADD_CUSTOM_TARGET(check-static
@@ -128,7 +128,7 @@ IF(ENABLE_STATIC_LIBS)
         DEPENDS test-oyranos test2-static
         COMMENT "Test liboyranos." VERBATIM )
   SET( TEST2_DEPS ${TEST2_DEPS} test_oyranos-static )
-ENDIF(ENABLE_STATIC_LIBS)
+ENDIF(ENABLE_STATIC_LIBS_${PROJECT_UP_NAME})
 
 ADD_CUSTOM_COMMAND( OUTPUT test-oyranos
                     DEPENDS ${TEST2_DEPS}
