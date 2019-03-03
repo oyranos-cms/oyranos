@@ -158,9 +158,9 @@ device specific Informations (ICC profiles) und system wide settings.
 * ENABLE\_QT - detect Qt5 and Qt4i; default is ON
 * ENABLE\_OPENMP - detect OpenMP support; default is ON
 * ENABLE\_FLTK - default is ON
-* ENABLE\_DOCU - generate with doxygen; default is ON
-* ENABLE\_TESTS - default is ON
-* ENABLE\_EXAMPLES - default is ON
-* ENABLE\_SHARED\_LIBS - default is ON
-* ENABLE\_STATIC\_LIBS - default is ON
+* ENABLE\_DOCU\_OYRANOS - generate with doxygen; default is ON
+* ENABLE\_TESTS\_OYRANOS - default is ON
+* ENABLE\_EXAMPLES\_OYRANOS - default is ON
+* ENABLE\_SHARED\_LIBS\_OYRANOS - default is ON
+* ENABLE\_STATIC\_LIBS\_OYRANOS - default is ON
 
