@@ -304,6 +304,7 @@ static cmsUInt32Number   (*l2cmsStageInputChannels)         (const cmsStage* sta
 static cmsUInt32Number   (*l2cmsStageOutputChannels)        (const cmsStage* stage) = NULL;
 static cmsStage*(*l2cmsStageAllocCLut16bit)(cmsContext ContextID, cmsUInt32Number nGridPoints, cmsUInt32Number inputChan, cmsUInt32Number outputChan, const cmsUInt16Number* Table) = NULL;
 static cmsStage*(*l2cmsStageAllocCLutFloat)(cmsContext ContextID, cmsUInt32Number nGridPoints, cmsUInt32Number inputChan, cmsUInt32Number outputChan, const cmsFloat32Number* Table) = NULL;
+static cmsStage*         (*l2cmsStageAllocMatrix)(cmsContext ContextID, cmsUInt32Number Rows, cmsUInt32Number Cols, const cmsFloat64Number* Matrix, const cmsFloat64Number* Offset) = NULL;
 static cmsBool (*l2cmsStageSampleCLut16bit)(cmsStage* mpe,    cmsSAMPLER16 Sampler, void* Cargo, cmsUInt32Number dwFlags) = NULL;
 static cmsBool (*l2cmsStageSampleCLutFloat)(cmsStage* mpe, cmsSAMPLERFLOAT Sampler, void* Cargo, cmsUInt32Number dwFlags) = NULL;
 static cmsStage*(*l2cmsStageAllocToneCurves)(cmsContext ContextID, cmsUInt32Number nChannels, cmsToneCurve* const Curves[]) = NULL;
@@ -475,6 +476,7 @@ int                l2cmsCMMInit       ( oyStruct_s        * filter OY_UNUSED )
       LOAD_FUNC( cmsStageOutputChannels, NULL );
       LOAD_FUNC( cmsStageAllocCLut16bit, NULL );
       LOAD_FUNC( cmsStageAllocCLutFloat, NULL );
+      LOAD_FUNC( cmsStageAllocMatrix, NULL );
       LOAD_FUNC( cmsStageSampleCLut16bit, NULL );
       LOAD_FUNC( cmsStageSampleCLutFloat, NULL );
       LOAD_FUNC( cmsStageAllocToneCurves, NULL );
@@ -598,6 +600,7 @@ int                l2cmsCMMInit       ( oyStruct_s        * filter OY_UNUSED )
 #define cmsStageOutputChannels l2cmsStageOutputChannels
 #define cmsStageAllocCLut16bit l2cmsStageAllocCLut16bit
 #define cmsStageAllocCLutFloat l2cmsStageAllocCLutFloat
+#define cmsStageAllocMatrix    l2cmsStageAllocMatrix
 #define cmsStageSampleCLut16bit l2cmsStageSampleCLut16bit
 #define cmsStageSampleCLutFloat l2cmsStageSampleCLutFloat
 #define cmsStageAllocToneCurves l2cmsStageAllocToneCurves

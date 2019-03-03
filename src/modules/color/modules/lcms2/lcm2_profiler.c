@@ -1256,6 +1256,77 @@ lcm2CreateProfileLutByFuncAndCurvesClean:
   return error;
 }
 
+/** Function  lcm2CreateProfileLutByMatrixAndCurves
+ *  @brief    Generate a ICC Lut profile
+ *
+ *  This function takes a series of parameters to create a
+ *  ICC profile from. It is possible to create effect profiles of class abstract
+ *  or LUT profiles in any other color space including device links.
+ *  The LUT will contain B curves, a matrix and M curves. The allowed number
+ *  of color channels is 3.
+ *
+ *  @param[in,out] profile             profile to add LUT table;
+ *                                     requires a version 4.3 profile
+ *  @param[in]     in_curves           input curves
+ *  @param[in]     matrix              the 3x3 matrix
+ *  @param[in]     out_curves          output curves
+ *  @param[in]     in_space_profile    input color space
+ *                                     for wildcards see lcm2OpenProfileFile()
+ *  @param[in]     out_space_profile   output color space
+ *                                     for wildcards see lcm2OpenProfileFile()
+ *
+ *  @version Oyranos: 0.9.7
+ *  @date    2019/03/03
+ *  @since   2019/03/01 (Oyranos: 0.9.7)
+ */
+int          lcm2CreateProfileLutByMatrixAndCurves (
+                                       cmsHPROFILE         profile,
+                                       cmsToneCurve      * in_curves[],
+                                       const double      * matrix,
+                                       cmsToneCurve      * out_curves[],
+                                       const char        * in_space_profile,
+                                       const char        * out_space_profile,
+                                       cmsTagSignature     tag_sig
+                                     )
+{
+  cmsHPROFILE h_in_space = 0,
+              h_out_space = 0;
+  int channelsIn, channelsOut;
+  cmsPipeline * pl = cmsPipelineAlloc( 0,3,3 );
+ 
+  int error = 0;
+
+  if(!profile) return 1;
+
+  if(in_space_profile) h_in_space  = lcm2OpenProfileFile( in_space_profile, NULL );
+  if(out_space_profile)h_out_space = lcm2OpenProfileFile( out_space_profile, NULL );
+
+  channelsIn = h_in_space ? cmsChannelsOf( cmsGetColorSpace( h_in_space ) ) : 3;
+  channelsOut = h_out_space ? cmsChannelsOf( cmsGetColorSpace( h_out_space ) ) : 3;
+  if(channelsIn == 0 || channelsOut == 0 || !matrix)
+  {
+    error = 1;
+    goto lcm2CreateProfileLutByMatrixAndCurvesClean;
+  }
+
+  cmsPipelineInsertStage( pl, cmsAT_BEGIN,
+                          cmsStageAllocToneCurves( 0, channelsIn, in_curves ) );
+  cmsPipelineInsertStage( pl, cmsAT_END,
+                          cmsStageAllocMatrix(0, channelsIn, channelsOut,
+                          (const cmsFloat64Number*) matrix, NULL) );
+  cmsPipelineInsertStage( pl, cmsAT_END,
+                          cmsStageAllocToneCurves( 0, channelsOut, out_curves ) );
+  cmsWriteTag( profile, (tag_sig!=0)?tag_sig:cmsSigAToB0Tag, pl );
+
+lcm2CreateProfileLutByMatrixAndCurvesClean:
+  if(h_in_space) {cmsCloseProfile( h_in_space );} h_in_space = 0;
+  if(h_out_space) {cmsCloseProfile( h_out_space );} h_out_space = 0;
+  if(pl) cmsPipelineFree( pl );
+
+  return error;
+}
+
+
 /** Function  lcm2CreateAbstractProfile
  *  @brief    Create a effect profile of type abstract in ICC*Lab PCS
  *
@@ -1691,27 +1762,27 @@ lcm2CreateAbstractWhitePointProfileClean:
 }
 
 /** Function  lcm2CreateAbstractWhitePointProfileBradford
- *  @brief    Create a effect profile of type abstract in ICC*Lab PCS for white point adjustment
+ *  @brief    Create a effect profile of type abstract in ICC*XYZ PCS for white point adjustment
  *
  *  These profiles can be applied to 1D / per single channel only adjustments.
  *  It will be marked with EFFECT_linear=yes in the meta tag.
  *
  *  @param[in]    src_iccXYZ           source media white point
  *  @param[in]    illu_iccXYZ          ICC*XYZ illuminant in 0.0 - 2.0 range
- *  @param[in]    grid_size            dimensions of the created LUT; e.g. 33
- *  @param[in]    icc_profile_version  2.3 or 4.3
+ *  @param[in]    dummy                unused
+ *  @param[in]    icc_profile_version  4.3 is supported
  *  @param[in]    flags                - 0x01 : return only fast my_abstract_file_name, without expensive profile computation
  *  @param[out]   my_abstract_file_name                    profile file name
  *  @param[out]   h_profile            the resulting profile; If omitted the function will write the profile to my_abstract_file_name.
  *
  *  @version Oyranos: 0.9.7
- *  @date    2018/07/25
+ *  @date    2019/03/02
  *  @since   2017/06/02 (Oyranos: 0.9.7)
  */
 int          lcm2CreateAbstractWhitePointProfileBradford (
                                        double            * src_iccXYZ,
                                        double            * illu_iccXYZ,
-                                       int                 grid_size,
+                                       int                 dummy OY_UNUSED,
                                        double              icc_profile_version,
                                        int                 flags,
                                        char             ** my_abstract_file_name,
@@ -1720,8 +1791,11 @@ int          lcm2CreateAbstractWhitePointProfileBradford (
 {
   cmsHPROFILE profile = NULL;
   cmsToneCurve * i_curve[3] = {NULL,NULL,NULL}, * o_curve[3] = {NULL,NULL,NULL};
-  /* type[6]  Y = (a * X + b) ^ Gamma + c  order: {g, a, b, c} */
-  double curve_params[4] = {1,1,0,0}, curve_params_low[4] = {1,0.95,0,0};
+  /* type[4]  Y = (a * X + b) ^ Gamma  (X ≥ d)
+              Y =  c * X               (X < d)
+     order:   {g, a, b, c, d} 
+   */
+  double curve_params_low[5] = {1,0.95,0,1,0};
   int i;
 
   const char * kelvin_meta[] = {
@@ -1736,9 +1810,13 @@ int          lcm2CreateAbstractWhitePointProfileBradford (
   };
   char * kelvin_name = malloc(1024);
   int error = !kelvin_name;
-  double icc_XYZ[6] = { src_iccXYZ[0],  src_iccXYZ[1],  src_iccXYZ[2],
-                       illu_iccXYZ[0], illu_iccXYZ[1], illu_iccXYZ[2]};
+
+  cmsCIEXYZ SourceWhitePt = { src_iccXYZ[0],  src_iccXYZ[1],  src_iccXYZ[2]},
+            Illuminant    = {illu_iccXYZ[0], illu_iccXYZ[1], illu_iccXYZ[2]};
   double icc_ab[2] = {0,0};
+  double matrix[3][3] = {{1.0, 0.0, 0.0},
+                         {0.0, 1.0, 0.0},
+                         {0.0, 0.0, 1.0}};
 
   if(error) return 1;
 
@@ -1764,14 +1842,14 @@ int          lcm2CreateAbstractWhitePointProfileBradford (
     lcm2iccXYZ2iccLab( illu_iccXYZ, dst_Lab );
     icc_ab[0] = dst_Lab[1] - src_Lab[1];
     icc_ab[1] = dst_Lab[2] - src_Lab[2];
-    max_brightness = 1.0 - OY_HYP(icc_ab[0],icc_ab[1]/1.5);
+    max_brightness = OY_HYP(icc_ab[0],icc_ab[1]/1.5);
 
     if(!(flags & 0x01)) /* skip computation */
     {
       /* avoid color clipping around the white point */
-      curve_params_low[1] = max_brightness;
-      o_curve[0] = cmsBuildParametricToneCurve(0, 6, curve_params_low);
-      o_curve[1] = o_curve[2] = cmsBuildParametricToneCurve(0, 6, curve_params);
+      curve_params_low[1] = OY_MAX( 1.0 - max_brightness*2, 0.03 );
+      o_curve[0] = cmsBuildParametricToneCurve(0, 4, curve_params_low);
+      o_curve[1] = o_curve[2] = cmsBuildParametricToneCurve(0, 4, curve_params_low);
       if(!o_curve[0] || !o_curve[1]) error = 1;
     }
   }
@@ -1780,13 +1858,13 @@ int          lcm2CreateAbstractWhitePointProfileBradford (
 
   if(icc_ab[1] > 0)
   {
-    sprintf( kelvin_name, "Bradford Reddish CIE*a %g CIE*b %g v1 lcm2", icc_ab[0], icc_ab[1] );
+    sprintf( kelvin_name, "Bradford Reddish CIE*a %g CIE*b %g v2 lcm2", icc_ab[0], icc_ab[1] );
   } else if(-0.001 < icc_ab[1] && icc_ab[0] < 0.001) {
-    sprintf( kelvin_name, "Bradford CIE*a %g CIE*b %g v1 lcm2", icc_ab[0], icc_ab[1] );
+    sprintf( kelvin_name, "Bradford CIE*a %g CIE*b %g v2 lcm2", icc_ab[0], icc_ab[1] );
     kelvin_meta[1] = "neutral,type,white_point,atom";
     kelvin_meta[3] = "yes,D50,kelvin";
   } else {
-    sprintf( kelvin_name, "Bradford Bluish CIE*a %g CIE*b %g v1 lcm2", icc_ab[0], icc_ab[1] );
+    sprintf( kelvin_name, "Bradford Bluish CIE*a %g CIE*b %g v2 lcm2", icc_ab[0], icc_ab[1] );
     kelvin_meta[1] = "bluish,type,white_point,atom";
     kelvin_meta[3] = "yes,bluish,kelvin";
   }
@@ -1798,11 +1876,11 @@ int          lcm2CreateAbstractWhitePointProfileBradford (
   }
 
   profile = lcm2CreateProfileFragment (
-                             "*lab", // CIE*Lab
-                             "*lab", // CIE*Lab
-                             icc_profile_version,
+                             "*xyz", // CIE*XYZ
+                             "*xyz", // CIE*XYZ
+                             4.3, //icc_profile_version,
                              kelvin_name,
-                             "Oyranos project 2018",
+                             "Oyranos project 2019",
                              "Kai-Uwe Behrmann",
                              ICC_2011_LICENSE,
                              "Bradford",
@@ -1810,11 +1888,16 @@ int          lcm2CreateAbstractWhitePointProfileBradford (
                              NULL);
   if(!profile) goto lcm2CreateAbstractWhitePointProfileBClean;
 
-  error = lcm2CreateProfileLutByFuncAndCurves( profile,
-                                      lcm2SamplerWhitePointBradford, icc_XYZ,
-                                      o_curve, i_curve,
-                                      "*lab", "*lab", "*lab",
-                                      grid_size, cmsSigAToB0Tag );
+  lcm2MAT3 Bradford;
+  if( !lcm2AdaptationMatrix(&Bradford, NULL, &SourceWhitePt, &Illuminant) ) goto lcm2CreateAbstractWhitePointProfileBClean;
+  matrix[0][0] = Bradford.v[0].n[0]; matrix[0][1] = Bradford.v[0].n[1]; matrix[0][2] = Bradford.v[0].n[2];
+  matrix[1][0] = Bradford.v[1].n[0]; matrix[1][1] = Bradford.v[1].n[1]; matrix[1][2] = Bradford.v[1].n[2];
+  matrix[2][0] = Bradford.v[2].n[0]; matrix[2][1] = Bradford.v[2].n[1]; matrix[2][2] = Bradford.v[2].n[2];
+
+  error = lcm2CreateProfileLutByMatrixAndCurves( profile,
+                                      o_curve, &matrix[0][0], i_curve,
+                                      "*xyz", "*xyz",
+                                      cmsSigAToB0Tag );
 
   if(!error)
     lcm2AddMetaTexts ( profile, "EFFECT_,COLORIMETRY_,CMF_", kelvin_meta, cmsSigMetaTag );
@@ -2454,6 +2537,227 @@ int            lcm2Version           ( )
 {
   return LCM2PROFILER_API;
 }
+
+// Compute chromatic adaptation matrix using Chad as cone matrix
+
+static cmsBool ComputeChromaticAdaptation(lcm2MAT3* Conversion,
+                                const cmsCIEXYZ* SourceWhitePoint,
+                                const cmsCIEXYZ* DestWhitePoint,
+                                const lcm2MAT3* Chad)
+
+{
+
+    lcm2MAT3 Chad_Inv;
+    lcm2VEC3 ConeSourceXYZ, ConeSourceRGB;
+    lcm2VEC3 ConeDestXYZ, ConeDestRGB;
+    lcm2MAT3 Cone, Tmp;
+
+
+    Tmp = *Chad;
+    if (!lcm2MAT3inverse(&Tmp, &Chad_Inv)) return FALSE;
+
+    lcm2VEC3init(&ConeSourceXYZ, SourceWhitePoint -> X,
+                             SourceWhitePoint -> Y,
+                             SourceWhitePoint -> Z);
+
+    lcm2VEC3init(&ConeDestXYZ,   DestWhitePoint -> X,
+                             DestWhitePoint -> Y,
+                             DestWhitePoint -> Z);
+
+    lcm2MAT3eval(&ConeSourceRGB, Chad, &ConeSourceXYZ);
+    lcm2MAT3eval(&ConeDestRGB,   Chad, &ConeDestXYZ);
+
+    // Build matrix
+    lcm2VEC3init(&Cone.v[0], ConeDestRGB.n[0]/ConeSourceRGB.n[0],    0.0,  0.0);
+    lcm2VEC3init(&Cone.v[1], 0.0,   ConeDestRGB.n[1]/ConeSourceRGB.n[1],   0.0);
+    lcm2VEC3init(&Cone.v[2], 0.0,   0.0,   ConeDestRGB.n[2]/ConeSourceRGB.n[2]);
+
+
+    // Normalize
+    lcm2MAT3per(&Tmp, &Cone, Chad);
+    lcm2MAT3per(Conversion, &Chad_Inv, &Tmp);
+
+    return TRUE;
+}
+/** Returns the final chrmatic adaptation from illuminant FromIll to Illuminant ToIll.
+ *  The cone matrix can be specified in ConeMatrix. If NULL, Bradford is assumed
+ */
+cmsBool  lcm2AdaptationMatrix(lcm2MAT3* r, const lcm2MAT3* ConeMatrix, const cmsCIEXYZ* FromIll, const cmsCIEXYZ* ToIll)
+{
+    lcm2MAT3 LamRigg   = {{ // Bradford matrix
+        {{  0.8951,  0.2664, -0.1614 }},
+        {{ -0.7502,  1.7135,  0.0367 }},
+        {{  0.0389, -0.0685,  1.0296 }}
+    }};
+
+    if (ConeMatrix == NULL)
+        ConeMatrix = &LamRigg;
+
+    return ComputeChromaticAdaptation(r, FromIll, ToIll, ConeMatrix);
+}
+
+/* The lcm2VEC3, lcm2MAT3, lcm2MAT3inverse, lcm2VEC3init and lcm2MAT3per definitions 
+ * origin from lcms2' cmsmtrx.c written by Marti Maria www.littlecms.com 
+ * and is MIT licensed there
+ * Vectors
+ */
+#define MATRIX_DET_TOLERANCE    0.0001
+/** Inverse of a matrix b = a^(-1) */
+int lcm2MAT3inverse(const lcm2MAT3* a, lcm2MAT3* b)
+{
+   double det, c0, c1, c2;
+
+   c0 =  a -> v[1].n[1]*a -> v[2].n[2] - a -> v[1].n[2]*a -> v[2].n[1];
+   c1 = -a -> v[1].n[0]*a -> v[2].n[2] + a -> v[1].n[2]*a -> v[2].n[0];
+   c2 =  a -> v[1].n[0]*a -> v[2].n[1] - a -> v[1].n[1]*a -> v[2].n[0];
+
+   det = a -> v[0].n[0]*c0 + a -> v[0].n[1]*c1 + a -> v[0].n[2]*c2;
+
+   if (fabs(det) < MATRIX_DET_TOLERANCE) return 0;  // singular matrix; can't invert
+
+   b -> v[0].n[0] = c0/det;
+   b -> v[0].n[1] = (a -> v[0].n[2]*a -> v[2].n[1] - a -> v[0].n[1]*a -> v[2].n[2])/det;
+   b -> v[0].n[2] = (a -> v[0].n[1]*a -> v[1].n[2] - a -> v[0].n[2]*a -> v[1].n[1])/det;
+   b -> v[1].n[0] = c1/det;
+   b -> v[1].n[1] = (a -> v[0].n[0]*a -> v[2].n[2] - a -> v[0].n[2]*a -> v[2].n[0])/det;
+   b -> v[1].n[2] = (a -> v[0].n[2]*a -> v[1].n[0] - a -> v[0].n[0]*a -> v[1].n[2])/det;
+   b -> v[2].n[0] = c2/det;
+   b -> v[2].n[1] = (a -> v[0].n[1]*a -> v[2].n[0] - a -> v[0].n[0]*a -> v[2].n[1])/det;
+   b -> v[2].n[2] = (a -> v[0].n[0]*a -> v[1].n[1] - a -> v[0].n[1]*a -> v[1].n[0])/det;
+
+   return 1;
+}
+/* Axis of the matrix/array. No specific meaning at all. */
+#define VX      0
+#define VY      1
+#define VZ      2
+/** Initiate a vector */
+void lcm2VEC3init(lcm2VEC3* r, double x, double y, double z)
+{
+    r -> n[VX] = x;
+    r -> n[VY] = y;
+    r -> n[VZ] = z;
+}
+/** Multiply two matrices */
+void lcm2MAT3per(lcm2MAT3* r, const lcm2MAT3* a, const lcm2MAT3* b)
+{
+#define ROWCOL(i, j) \
+    a->v[i].n[0]*b->v[0].n[j] + a->v[i].n[1]*b->v[1].n[j] + a->v[i].n[2]*b->v[2].n[j]
+
+    lcm2VEC3init(&r-> v[0], ROWCOL(0,0), ROWCOL(0,1), ROWCOL(0,2));
+    lcm2VEC3init(&r-> v[1], ROWCOL(1,0), ROWCOL(1,1), ROWCOL(1,2));
+    lcm2VEC3init(&r-> v[2], ROWCOL(2,0), ROWCOL(2,1), ROWCOL(2,2));
+
+#undef ROWCOL //(i, j)
+}
+
+/** Evaluate a vector across a matrix */
+void CMSEXPORT lcm2MAT3eval(lcm2VEC3* r, const lcm2MAT3* a, const lcm2VEC3* v)
+{
+    r->n[VX] = a->v[0].n[VX]*v->n[VX] + a->v[0].n[VY]*v->n[VY] + a->v[0].n[VZ]*v->n[VZ];
+    r->n[VY] = a->v[1].n[VX]*v->n[VX] + a->v[1].n[VY]*v->n[VY] + a->v[1].n[VZ]*v->n[VZ];
+    r->n[VZ] = a->v[2].n[VX]*v->n[VX] + a->v[2].n[VY]*v->n[VY] + a->v[2].n[VZ]*v->n[VZ];
+}
+
+
+/* end of lcms code */
+
+/** convert a matrix to CIE * xy triple */
+int lcm2MAT3toCIExyYTriple ( const lcm2MAT3* a, lcm2CIExyYTriple * triple )
+{
+  int i,j,
+      fail=0;
+  double sum;
+    for(i = 0; i < 3; ++i)
+    {
+      for(j = 0; j < 3; ++j)
+      {
+        if(i < 3 && a->v[i].n[j] == 0)
+          fail = 1;
+      }
+      sum = a->v[i].n[0]+a->v[i].n[1]+a->v[i].n[2];
+      if(sum != 0)
+      {
+        triple->v[i].xy[0] = a->v[i].n[0]/sum;
+        triple->v[i].xy[1] = a->v[i].n[1]/sum;
+      } else
+      {
+        triple->v[i].xy[0] = 1;
+        triple->v[i].xy[1] = 1;
+      }
+    }
+  return fail;
+}
+
+const char * lcm2MAT3show ( const lcm2MAT3* a )
+{
+  static char * t = NULL;
+  if(!t) t = (char*) malloc(1024);
+  int i,j;
+  t[0] = 0;
+  for(i = 0; i < 3; ++i)
+  {
+    for(j = 0; j < 3; ++j)
+      sprintf( &t[strlen(t)], " %g", a->v[i].n[j]);
+    sprintf( &t[strlen(t)], "\n" );
+  }
+  return t;
+}
+const char * lcm2Mat34show ( const float a[3][4] )
+{
+  static char * t = NULL;
+  if(!t) t = (char*) malloc(1024);
+  int i,j;
+  t[0] = 0;
+  for(i = 0; i < 3; ++i)
+  {
+    for(j = 0; j < 4; ++j)
+      sprintf( &t[strlen(t)], " %g", a[i][j]);
+    sprintf( &t[strlen(t)], "\n" );
+  }
+  return t;
+}
+const char * lcm2Mat4show ( const float a[4] )
+{
+  static char * t = NULL;
+  if(!t) t = (char*) malloc(1024);
+  int i;
+  t[0] = 0;
+  for(i = 0; i < 4; ++i)
+    sprintf( &t[strlen(t)], " %g", a[i]);
+  sprintf( &t[strlen(t)], "\n" );
+  return t;
+}
+const char * lcm2Mat43show ( const float a[4][3] )
+{
+  static char * t = NULL;
+  if(!t) t = (char*) malloc(1024);
+  int i,j;
+  t[0] = 0;
+  for(i = 0; i < 4; ++i)
+  {
+    for(j = 0; j < 3; ++j)
+      sprintf( &t[strlen(t)], " %g", a[i][j]);
+    sprintf( &t[strlen(t)], "\n" );
+  }
+  return t;
+}
+const char * lcm2CIExyYTriple_Show( lcm2CIExyYTriple * triple )
+{
+  static char * t = NULL;
+  if(!t) t = (char*) malloc(1024);
+  int i;
+  t[0] = 0;
+  for(i = 0; i < 3; ++i)
+  {
+    sprintf( &t[strlen(t)], " x:%g y:%g", triple->v[i].xy[0],
+                                          triple->v[i].xy[1]);
+    sprintf( &t[strlen(t)], "\n" );
+  }
+  return t;
+}
+
+
 /** @} */ /* profiler */
 
 /** \addtogroup profiler
@@ -2485,7 +2789,10 @@ int            lcm2Version           ( )
  *  The lower level APIs can be used to customise the profile generation.
  *  Basic matrix/shaper profiles can be created with
  *  lcm2CreateICCMatrixProfile2() and filled with custom texts in
- *  lcm2CreateProfileFragment().
+ *  lcm2CreateProfileFragment(). LUT elements can be added with,
+ *  lcm2CreateProfileLutByMatrixAndCurves() and 
+ *  lcm2CreateProfileLutByFuncAndCurves(). The later expects a ::lcm2Sampler_f
+ *  function to fill in the LUT.
  *
  *  The following low level code sample comes from @ref lcm2_profiler.c.
  *  The code sets up a basic profile description and color spaces:
