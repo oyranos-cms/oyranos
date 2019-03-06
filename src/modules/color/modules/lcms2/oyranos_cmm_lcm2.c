@@ -3410,7 +3410,9 @@ const char *l2cms_texts_profile_create[4] = {"can_handle","create_profile","help
  *  @see lcm2CreateAbstractWhitePointProfileBradford()
  *
  *  @param         src_iccXYZ          the source white point
+ *  @param         src_name            source whitepoint or profile name; optional, not usedd for file_name
  *  @param         illu_iccXYZ         the illumination white point
+ *  @param         illu_name           target illuminant name; optional, not usedd for file_name
  *  @param         icc_profile_flags   profile flags
  *  @param         file_name           return the file name
  *
@@ -3420,7 +3422,9 @@ const char *l2cms_texts_profile_create[4] = {"can_handle","create_profile","help
  */
 oyProfile_s* lcm2AbstractWhitePointBradford (
                                        double            * src_iccXYZ,
+                                       const char        * src_name,
                                        double            * illu_iccXYZ,
+                                       const char        * illu_name,
                                        uint32_t            icc_profile_flags,
                                        char             ** file_name )
 {
@@ -3436,8 +3440,8 @@ oyProfile_s* lcm2AbstractWhitePointBradford (
   if(icc_profile_flags & OY_ICC_VERSION_2)
     profile_version = 4.3;
 
-  error = lcm2CreateAbstractWhitePointProfileBradford( src_iccXYZ, illu_iccXYZ,
-                                                15,
+  error = lcm2CreateAbstractWhitePointProfileBradford( src_iccXYZ, src_name,
+                                                illu_iccXYZ, illu_name,
                                                 profile_version, file_name?0x01:0,
                                                 & my_abstract_file_name,
                                                 &abs );
@@ -3527,7 +3531,7 @@ int          l2cmsMOptions_Handle4   ( oyOptions_s       * options,
         oyOptions_FindDouble( options, "illu_iccXYZ", 0, &illu_iccXYZ[0] ) == 0 &&
         oyOptions_FindDouble( options, "illu_iccXYZ", 1, &illu_iccXYZ[1] ) == 0 &&
         oyOptions_FindDouble( options, "illu_iccXYZ", 2, &illu_iccXYZ[2] ) == 0 )
-      lcm2AbstractWhitePointBradford( src_iccXYZ, illu_iccXYZ, icc_profile_flags, &file_name );
+      lcm2AbstractWhitePointBradford( src_iccXYZ, NULL, illu_iccXYZ, NULL, icc_profile_flags, &file_name );
 
     if(file_name)
     {
@@ -3542,9 +3546,11 @@ int          l2cmsMOptions_Handle4   ( oyOptions_s       * options,
   }
   else if(oyFilterRegistrationMatch(command,"create_profile.white_point_adjust.bradford", 0))
   {
+    oyProfile_s * p = NULL;
+    const char * illu_name = oyOptions_FindString( options, "illu_name", 0 );
+    const char * src_name = oyOptions_FindString( options, "src_name", 0 );
     int32_t icc_profile_flags = 0;
     oyOptions_FindInt( options, "icc_profile_flags", 0, &icc_profile_flags ); 
-    oyProfile_s * p = NULL;
 
     if( oyOptions_FindDouble( options,  "src_iccXYZ", 0, &src_iccXYZ[0] ) == 0 &&
         oyOptions_FindDouble( options,  "src_iccXYZ", 1, &src_iccXYZ[1] ) == 0 &&
@@ -3552,7 +3558,7 @@ int          l2cmsMOptions_Handle4   ( oyOptions_s       * options,
         oyOptions_FindDouble( options, "illu_iccXYZ", 0, &illu_iccXYZ[0] ) == 0 &&
         oyOptions_FindDouble( options, "illu_iccXYZ", 1, &illu_iccXYZ[1] ) == 0 &&
         oyOptions_FindDouble( options, "illu_iccXYZ", 2, &illu_iccXYZ[2] ) == 0 )
-      p = lcm2AbstractWhitePointBradford( src_iccXYZ, illu_iccXYZ, icc_profile_flags, NULL );
+      p = lcm2AbstractWhitePointBradford( src_iccXYZ, src_name, illu_iccXYZ, illu_name, icc_profile_flags, NULL );
 
     if(p)
     {
