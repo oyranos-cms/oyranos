@@ -68,6 +68,22 @@ int          lcm2CreateAbstractProfile (
                                        const char       ** my_meta_data,
                                        cmsHPROFILE       * h_profile
                                      );
+int          lcm2CreateAbstractProfileM (
+                                       cmsToneCurve      * in_curve,
+                                       const double      * matrix,
+                                       cmsToneCurve      * out_curve,
+                                       double              icc_profile_version,
+                                       const char        * my_abstract_description,
+                                       const char       ** my_abstract_descriptions,
+                                       const char        * my_abstract_file_name,
+                                       const char        * provider,
+                                       const char        * vendor,
+                                       const char        * my_license,
+                                       const char        * device_model,
+                                       const char        * device_manufacturer,
+                                       const char       ** my_meta_data,
+                                       cmsHPROFILE       * h_profile
+                                     );
 int          lcm2CreateAbstractTemperatureProfile (
                                        float               kelvin,
                                        cmsHPROFILE         source_white_profile,

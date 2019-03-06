@@ -326,7 +326,7 @@ static double CIE_C_scaler = M_SQRT2; /* fit all Lab into LCh */
  *
  *  @param[in]     i                   input Lab triple
  *  @param[out]    o                   output LCh triple
- *  @param[out]    none                unused
+ *  @param         none                unused
  *
  *  @version Oyranos: 0.9.6
  *  @date    2016/03/13
@@ -356,7 +356,7 @@ void         lcm2SamplerLab2LCh      ( const double        i[],
  *
  *  @param[in]     i                   input LCh triple
  *  @param[out]    o                   output Lab triple
- *  @param[out]    none                unused
+ *  @param         none                unused
  *
  *  @version Oyranos: 0.9.7
  *  @date    2017/12/05
@@ -635,7 +635,7 @@ static void scaleYCbCrToLinear( ITU_Std_e ITU_Std, double max, double * Y, doubl
  *
  *  @param[in]     i                   input RGB triple
  *  @param[out]    o                   output REC.601 YCbCr in JPEG range triple
- *  @param[out]    none                unused
+ *  @param         none                unused
  *
  *  @version Oyranos: 0.9.6
  *  @date    2016/03/13
@@ -672,7 +672,7 @@ void         lcm2SamplerRGB2JpegYCbCr (
  *
  *  @param[in]     i                   input REC.601 YCbCr in JPEG range triple
  *  @param[out]    o                   output RGB triple
- *  @param[out]    none                unused
+ *  @param         none                unused
  *
  *  @version Oyranos: 0.9.6
  *  @date    2016/03/13
@@ -708,7 +708,7 @@ void         lcm2SamplerJpegYCbCr2RGB( const double        i[],
  *
  *  @param[in]     i                   input PCS.Lab triple
  *  @param[out]    o                   output PCS.Lab triple
- *  @param[out]    none                unused
+ *  @param         none                unused
  *
  *  @version Oyranos: 0.9.7
  *  @date    2018/02/26
@@ -730,7 +730,7 @@ void         lcm2SamplerIdendity     ( const double        i[],
  *
  *  @param[in]     i                   input PCS.Lab triple
  *  @param[out]    o                   output PCS.Lab triple
- *  @param[out]    none                unused
+ *  @param         none                unused
  *
  *  @version Oyranos: 0.9.6
  *  @date    2016/03/13
@@ -752,7 +752,7 @@ void         lcm2SamplerGrayer       ( const double        i[],
  *
  *  @param[in]     i                   input PCS.Lab triple
  *  @param[out]    o                   output PCS.Lab triple
- *  @param[out]    none                unused
+ *  @param         none                unused
  *
  *  @version Oyranos: 0.9.6
  *  @date    2016/03/13
@@ -778,7 +778,7 @@ void         lcm2SamplerBlacknWhite  ( const double        i[],
  *
  *  @param[in]     i                   input PCS.Lab triple
  *  @param[out]    o                   output PCS.Lab triple
- *  @param[out]    none                unused
+ *  @param         none                unused
  *
  *  @version Oyranos: 0.9.6
  *  @date    2016/03/14
@@ -806,7 +806,7 @@ void         lcm2SamplerSepia        ( const double        i[],
  *
  *  @param[in]     i                   input PCS.Lab triple
  *  @param[out]    o                   output PCS.Lab triple
- *  @param[out]    none                unused
+ *  @param         none                unused
  *
  *  @version Oyranos: 0.9.6
  *  @date    2016/03/15
@@ -1322,6 +1322,140 @@ lcm2CreateProfileLutByMatrixAndCurvesClean:
   if(h_in_space) {cmsCloseProfile( h_in_space );} h_in_space = 0;
   if(h_out_space) {cmsCloseProfile( h_out_space );} h_out_space = 0;
   if(pl) cmsPipelineFree( pl );
+
+  return error;
+}
+
+/** Function  lcm2CreateAbstractProfileM
+ *  @brief    Create a effect profile of type abstract in ICC*XYZ PCS
+ *
+ *  Here a code example:
+ *  @code
+double matrix[3][3] = {
+      { 0.0000000,  0.9642957,  0.0000000},
+      { 0.0000000,  1.0000000,  0.0000000},
+      { 0.0000000,  0.8251046,  0.0000000}
+};
+const char * name_i18n[] = {
+      "de", "DE", "Graustufen (MyProject)",
+      "en", "US", "Grayer (MyProject)"
+};
+lcm2CreateAbstractProfileM ( NULL,
+                             &matrix[0][0],
+                             NULL,
+                             4.3,
+                             "Grayer (MyProject)",
+                             name_i18n,
+                             "Grayer myna",
+                             "My Project 2019",
+                             "My Name",
+                             ICC_2011_LICENSE,
+                             "CIE*XYZ",
+                             "http://www.cie.co.at",
+			     NULL,
+			     NULL
+                           );
+    @endcode
+ *
+ *  @param[in]    in_curve             optional input curve for all CIE*XYZ channels
+ *  @param[in]    matrix               the 3x3 matrix
+ *  @param[in]    out_curve            optional output curve for all CIE*XYZ channels
+ *  @param[in]    icc_profile_version  4.3
+ *  @param[in]    my_abstract_description                 internal profile name
+ *  @param[in]    my_abstract_descriptions                internal profile name translated
+ *  @param[in]    my_abstract_file_name                   profile file name. If present a ICC profile will be written to that name. optional
+ *  @param[in]    provider             e.g. "My Project 2019"
+ *  @param[in]    vendor               e.g. "My Name"
+ *  @param[in]    my_license           e.g. "This profile is made available by %s, with permission of %s, and may be copied, distributed, embedded, made, used, and sold without restriction. Altered versions of this profile shall have the original identification and copyright information removed and shall not be misrepresented as the original profile."
+ *                                     - first %%s is replaced by the provider string arg and
+ *                                     - second %%s is replaced by the vendor string arg
+ *  @param[in]    device_model         e.g. "My Set"
+ *  @param[in]    device_manufacturer  e.g. "www.mydomain.net"
+ *  @param[in]    my_meta_data         e.g. {"DOMAIN_,GROUP_","DOMAIN_key1","value1","GROUP_key2","value2"}
+ *  @param[out]   h_profile            the resulting profile
+ *
+ *  @version Oyranos: 0.9.7
+ *  @date    2019/03/05
+ *  @since   2019/03/03 (Oyranos: 0.9.7)
+ */
+int          lcm2CreateAbstractProfileM (
+                                       cmsToneCurve      * in_curve,
+                                       const double      * matrix,
+                                       cmsToneCurve      * out_curve,
+                                       double              icc_profile_version,
+                                       const char        * my_abstract_description,
+                                       const char       ** my_abstract_descriptions,
+                                       const char        * my_abstract_file_name,
+                                       const char        * provider,
+                                       const char        * vendor,
+                                       const char        * my_license,
+                                       const char        * device_model,
+                                       const char        * device_manufacturer,
+                                       const char       ** my_meta_data,
+                                       cmsHPROFILE       * h_profile
+                                     )
+{
+  cmsHPROFILE profile = 0;
+  int error = !matrix;
+  cmsToneCurve * in_curves[3] = {NULL,NULL,NULL},
+               * out_curves[3] = {NULL,NULL,NULL},
+               * allocated_curve = NULL;
+  int i;
+
+  if(in_curve == NULL || out_curve == NULL)
+    allocated_curve = cmsBuildGamma(0, 1.0);
+  if(!allocated_curve) error = 1;
+  if(error) goto lcm2CreateAbstractProfileMClean;
+
+  for(i = 0; i < 3; ++i)
+  {
+    if(in_curve)
+      in_curves[i] = in_curve;
+    else
+      in_curves[i] = allocated_curve;
+
+    if(out_curve)
+      out_curves[i] = out_curve;
+    else
+      out_curves[i] = allocated_curve;
+  }
+
+  profile = lcm2CreateProfileFragment (
+                             "*xyz", // CIE*XYZ
+                             "*xyz", // CIE*XYZ
+                             icc_profile_version,
+                             my_abstract_description,
+                             provider, vendor, my_license, 
+                             device_model, device_manufacturer, NULL);
+  if(!profile) goto lcm2CreateAbstractProfileMClean;
+
+  if(my_meta_data)
+    lcm2AddMetaTexts ( profile, my_meta_data[0], &my_meta_data[1], cmsSigMetaTag );
+
+  error = lcm2CreateProfileLutByMatrixAndCurves( profile,
+                                      in_curves, matrix, out_curves,
+                                      "*xyz", "*xyz", 
+                                      cmsSigAToB0Tag );
+  if(error) goto lcm2CreateAbstractProfileMClean;
+
+
+  lcm2AddMluDescription ( profile, my_abstract_descriptions,
+                          cmsSigProfileDescriptionMLTag
+                        );
+
+  if(my_abstract_file_name)
+  {
+    char * fn = lcm2WriteProfileToFile( profile, my_abstract_file_name, 0,0 );
+    lcm2msg_p( 302, NULL, "wrote to: %s", fn?fn:"----");
+    lcm2Free_m(fn);
+  }
+
+  if(h_profile)
+    *h_profile = profile;
+  else
+    cmsCloseProfile( profile );
+lcm2CreateAbstractProfileMClean:
+  if(allocated_curve) cmsFreeToneCurve( allocated_curve );
 
   return error;
 }
@@ -1846,6 +1980,9 @@ int          lcm2CreateAbstractWhitePointProfileBradford (
     #define OY_SQRT(a,b)   ((a)*(a) + (b)*(b))
     #define OY_HYP(a,b)    pow(OY_SQRT(a,b),1.0/2.0)
 #endif
+#ifndef OY_MAX
+    #define OY_MAX(a,b)    (((a) > (b)) ? (a) : (b))
+#endif
     /* reduce brightness remaining inside a cone with a roof angle of 30° */
     double src_Lab[3], dst_Lab[3];
 
@@ -1854,6 +1991,7 @@ int          lcm2CreateAbstractWhitePointProfileBradford (
     icc_ab[0] = dst_Lab[1] - src_Lab[1];
     icc_ab[1] = dst_Lab[2] - src_Lab[2];
     max_brightness = OY_HYP(icc_ab[0],icc_ab[1]/1.5);
+    /* avoid color clipping around the white point */
     b_scale = OY_MAX( 1.0 - max_brightness*2, 0.03 );
 
 #ifdef HAVE_LOCALE_H
@@ -1865,14 +2003,6 @@ int          lcm2CreateAbstractWhitePointProfileBradford (
 #ifdef HAVE_LOCALE_H
     setlocale(LC_ALL,old_loc);
 #endif
-
-    if(!(flags & 0x01)) /* skip computation */
-    {
-      /* avoid color clipping around the white point */
-#ifndef OY_MAX
-      #define OY_MAX(a,b)    (((a) > (b)) ? (a) : (b))
-#endif
-    }
   }
 
   if(error) goto lcm2CreateAbstractWhitePointProfileBClean;
@@ -1959,7 +2089,9 @@ lcm2CreateAbstractWhitePointProfileBClean:
     lcm2Free_m(fn);
     cmsCloseProfile( profile );
   }
+#ifdef HAVE_LOCALE_H
   if(old_loc) free(old_loc);
+#endif
 
   return error;
 }
