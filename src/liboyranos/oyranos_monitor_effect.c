@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2018 (C) Kai-Uwe Behrmann
+ *            2018-2019 (C) Kai-Uwe Behrmann
  *
  *  @internal
  *  @brief    monitor effect APIs
@@ -40,21 +40,24 @@
 #include "oyranos_texts.h"
 #include "oyConversion_s.h"
 #include "oyProfile_s_.h"
+#include "bb_100K.h"
 
 #define USE_BRADFORD 1
 #ifndef USE_BRADFORD
 #define USE_LAB
 #endif
 
+/* The function allows only a effect profile with meta:"EFFECT_linear", "yes". */
 int      oyAddLinearDisplayEffect    ( oyOptions_s      ** module_options )
 {
   /* 2. get display effect profile and decide if it can be embedded into a VGCT tag */
   const char * fn = oyGetPersistentString( OY_DEFAULT_DISPLAY_EFFECT_PROFILE, 0, oySCOPE_USER_SYS, oyAllocateFunc_ );
   oyProfile_s * effect = (fn && fn[0]) ? oyProfile_FromName ( fn, 0, NULL ) : NULL;
   int is_linear = effect ? oyProfile_FindMeta( effect, "EFFECT_linear", "yes" ) != NULL : 0;
-  int error = is_linear && !effect;
-  oyMessageFunc_p( oyMSG_DBG,(oyStruct_s*)effect, OY_DBG_FORMAT_
-                   "EFFECT_linear=yes: %d %s", OY_DBG_ARGS_, is_linear, fn );
+  int error = (is_linear == 0 && effect) ? 1 : 0;
+  if(!effect) error = -1;
+  oyMessageFunc_p( error > 0 ? oyMSG_ERROR : error < 0 ? oyMSG_WARN : oyMSG_DBG,(oyStruct_s*)*module_options, OY_DBG_FORMAT_
+                   "EFFECT_linear=yes: %d %s", OY_DBG_ARGS_, is_linear, oyNoEmptyString_m_(fn) );
   if(is_linear)
     oyOptions_MoveInStruct( module_options,
                           OY_STD "/icc_color/display.icc_profile.abstract.effect.automatic.oy-monitor",
@@ -63,6 +66,46 @@ int      oyAddLinearDisplayEffect    ( oyOptions_s      ** module_options )
     oyProfile_Release( &effect );
 
   return error;
+}
+
+double oyEstimateTemperature( double cie_a_, double cie_b_ )
+{
+  double temperature = 0;
+
+  if(cie_a_ != 0.0 && cie_b_ != 0.0)
+  {
+    int i;
+    for(i = 1; i <= bb_100K[0][2]; ++i)
+    {
+      double xyz[3] = { bb_100K[i][0], bb_100K[i][1], bb_100K[i][2] };
+      double XYZ[3] = { xyz[0]/xyz[1], 1.0, xyz[2]/xyz[1] };
+      double Lab[3];
+      double cie_a = 0.0, cie_b = 0.0;
+      oyXYZ2Lab( XYZ, Lab);
+
+      cie_a = Lab[1]/256.0 + 0.5;
+      cie_b = Lab[2]/256.0 + 0.5;
+      if(fabs(cie_a - cie_a_) < 0.0001 &&
+         fabs(cie_b - cie_b_) < 0.0001)
+      {
+        temperature = bb_100K[0][0] + i * bb_100K[0][1];
+        break;
+      }
+    }
+  }
+
+  return temperature;
+}
+double oyGetTemperature                ( double              d )
+{
+  double cie_a = 0.0, cie_b = 0.0, XYZ[3], Lab[3];
+  oyGetDisplayWhitePoint( 1 /* automatic */, XYZ );
+  oyXYZ2Lab(XYZ,Lab); cie_a = Lab[1]/256.0+0.5; cie_b = Lab[2]/256.0+0.5;
+  double temperature = oyEstimateTemperature( cie_a, cie_b );
+  if(temperature)
+    return temperature;
+  else
+    return d;
 }
 
 #define DBG_S_ if(oy_debug >= 1)DBG_S
@@ -83,6 +126,7 @@ int      oyProfileAddWhitePointEffect( oyProfile_s       * monitor_profile,
   int error = oyProfile_GetWhitePoint( monitor_profile, src_XYZ );
   int32_t display_white_point = oyGetBehaviour( oyBEHAVIOUR_DISPLAY_WHITE_POINT );
   oyOptions_s * result_opts = NULL, * opts = NULL;
+  const char * desc = NULL;
 
   if(*module_options)
   {
@@ -102,13 +146,36 @@ int      oyProfileAddWhitePointEffect( oyProfile_s       * monitor_profile,
     error = oyGetDisplayWhitePoint( display_white_point, dst_XYZ );
 
 #ifdef USE_BRADFORD
+  desc = oyProfile_GetText( monitor_profile, oyNAME_DESCRIPTION );
   oyMessageFunc_p( error ? oyMSG_WARN:oyMSG_DBG,(oyStruct_s*)monitor_profile, OY_DBG_FORMAT_
                    "%s display_white_point: %d [%g %g %g] -> [%g %g %g]", OY_DBG_ARGS_,
-          oyProfile_GetText( monitor_profile, oyNAME_DESCRIPTION ), display_white_point,
+          desc, display_white_point,
           src_XYZ[0], src_XYZ[1], src_XYZ[2], dst_XYZ[0], dst_XYZ[1], dst_XYZ[2]);
+  error = oyOptions_SetFromString( &opts, "//" OY_TYPE_STD "/src_name", desc, OY_CREATE_NEW );
   if(error)
     return error;
   DBG_S_( oyPrintTime() );
+  {
+    int current = -1, choices = 0;
+    const char ** choices_string_list = NULL;
+    uint32_t flags = 0;
+    error = oyOptionChoicesGet2( oyWIDGET_DISPLAY_WHITE_POINT, flags,
+                                 oyNAME_NAME, &choices,
+                                 &choices_string_list, &current );
+    if(current > 0 && current < choices && choices_string_list)
+    {
+      if(current == 1) /* automatic */
+      {
+        double temperature = oyGetTemperature(0);
+        char k[12];
+        sprintf(k, "%dK", (int)temperature);
+        error = oyOptions_SetFromString( &opts, "//" OY_TYPE_STD "/illu_name", k, OY_CREATE_NEW );
+      }
+      else
+        error = oyOptions_SetFromString( &opts, "//" OY_TYPE_STD "/illu_name", choices_string_list[current], OY_CREATE_NEW );
+    }
+    oyOptionChoicesFree( oyWIDGET_DISPLAY_WHITE_POINT, &choices_string_list, choices );
+  }
   error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/src_iccXYZ", src_XYZ[0], 0, OY_CREATE_NEW );
   error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/src_iccXYZ", src_XYZ[1], 1, OY_CREATE_NEW );
   error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/src_iccXYZ", src_XYZ[2], 2, OY_CREATE_NEW );
@@ -263,7 +330,7 @@ int        oyAddDisplayEffects       ( oyOptions_s      ** module_options )
   }
   error = oyAddLinearDisplayEffect( module_options );
   if( error || oy_debug )
-        oyMessageFunc_p( oyMSG_WARN, (oyStruct_s*)f_options,
+        oyMessageFunc_p( error > 0 ? oyMSG_ERROR : error < 0 ? oyMSG_WARN : oyMSG_DBG, (oyStruct_s*)f_options,
                   OY_DBG_FORMAT_"display_white_point: %d", OY_DBG_ARGS_, error );
 
   return error;
