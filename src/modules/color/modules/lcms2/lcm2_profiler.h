@@ -11,6 +11,9 @@
  *  @since    2009/10/24
  */
 
+#ifndef LCM2_PROFILER_H
+#define LCM2_PROFILER_H
+
 #include <lcms2.h>
 
 /** \addtogroup profiler
@@ -83,8 +86,9 @@ int          lcm2CreateAbstractWhitePointProfileLab (
                                      );
 int          lcm2CreateAbstractWhitePointProfileBradford (
                                        double            * src_iccXYZ,
+                                       const char        * src_name,
                                        double            * illu_iccXYZ,
-                                       int                 grid_size,
+                                       const char        * illu_name,
                                        double              icc_profile_version,
                                        int                 flags,
                                        char             ** my_abstract_file_name,
@@ -286,3 +290,4 @@ const char * lcm2Mat4show ( const float a[4] );
 const char * lcm2Mat43show ( const float a[4][3] );
 const char * lcm2CIExyYTriple_Show( lcm2CIExyYTriple * triple );
 
+#endif /* LCM2_PROFILER_H */
