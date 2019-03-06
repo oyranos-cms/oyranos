@@ -1767,22 +1767,26 @@ lcm2CreateAbstractWhitePointProfileClean:
  *  These profiles can be applied to 1D / per single channel only adjustments.
  *  It will be marked with EFFECT_linear=yes in the meta tag.
  *
- *  @param[in]    src_iccXYZ           source media white point
- *  @param[in]    illu_iccXYZ          ICC*XYZ illuminant in 0.0 - 2.0 range
- *  @param[in]    dummy                unused
+ *  @param[in]    src_iccXYZ           source media white point;
+ *                                     The triple is stored in meta:COLORIMETRY_white_point_xyz_src.
+ *  @param[in]    src_name             source media white point name or profile; optional
+ *  @param[in]    illu_iccXYZ          ICC*XYZ illuminant in 0.0 - 2.0 range;
+ *                                     The triple stored in meta:COLORIMETRY_white_point_xyz_dst.
+ *  @param[in]    illu_name            target illuminant name; optional
  *  @param[in]    icc_profile_version  4.3 is supported
  *  @param[in]    flags                - 0x01 : return only fast my_abstract_file_name, without expensive profile computation
  *  @param[out]   my_abstract_file_name                    profile file name
  *  @param[out]   h_profile            the resulting profile; If omitted the function will write the profile to my_abstract_file_name.
  *
  *  @version Oyranos: 0.9.7
- *  @date    2019/03/02
+ *  @date    2019/03/05
  *  @since   2017/06/02 (Oyranos: 0.9.7)
  */
 int          lcm2CreateAbstractWhitePointProfileBradford (
                                        double            * src_iccXYZ,
+                                       const char        * src_name,
                                        double            * illu_iccXYZ,
-                                       int                 dummy OY_UNUSED,
+                                       const char        * illu_name,
                                        double              icc_profile_version,
                                        int                 flags,
                                        char             ** my_abstract_file_name,
@@ -1790,22 +1794,25 @@ int          lcm2CreateAbstractWhitePointProfileBradford (
                                      )
 {
   cmsHPROFILE profile = NULL;
-  cmsToneCurve * i_curve[3] = {NULL,NULL,NULL}, * o_curve[3] = {NULL,NULL,NULL};
-  /* type[4]  Y = (a * X + b) ^ Gamma  (X ≥ d)
-              Y =  c * X               (X < d)
-     order:   {g, a, b, c, d} 
-   */
-  double curve_params_low[5] = {1,0.95,0,1,0};
+  cmsToneCurve * i_curve[3] = {NULL,NULL,NULL};
   int i;
 
+  char white_point_xyz_src[64] = {0},
+       white_point_xyz_dst[64] = {0},
+       brightness_scale[16] = {0};
   const char * kelvin_meta[] = {
     "EFFECT_class", "reddish,type,white_point,linear,atom",
     "EFFECT_linear", "yes", /* can be used for 1D curves like VCGT */
     "COLORIMETRY_white_point", "yes,reddish,kelvin",
+    "COLORIMETRY_white_point_xyz_src", white_point_xyz_src,
+    "COLORIMETRY_white_point_xyz_dst", white_point_xyz_dst,
+    "COLORIMETRY_white_point_scale", brightness_scale,
     "EFFECT_type", "bradford",
     "CMF_binary", "create-abstract",
     "CMF_version", "0.9.7",
     "CMF_product", "Oyranos",
+    0,0,
+    0,0,
     0,0
   };
   char * kelvin_name = malloc(1024);
@@ -1817,6 +1824,10 @@ int          lcm2CreateAbstractWhitePointProfileBradford (
   double matrix[3][3] = {{1.0, 0.0, 0.0},
                          {0.0, 1.0, 0.0},
                          {0.0, 0.0, 1.0}};
+  double max_brightness, b_scale;
+#ifdef HAVE_LOCALE_H
+  char * old_loc = strdup(setlocale(LC_ALL,NULL));
+#endif
 
   if(error) return 1;
 
@@ -1828,6 +1839,7 @@ int          lcm2CreateAbstractWhitePointProfileBradford (
     { i_curve[i] = i_curve[0]; }
   }
 
+
   if(!error)
   {
 #ifndef OY_HYP
@@ -1835,7 +1847,6 @@ int          lcm2CreateAbstractWhitePointProfileBradford (
     #define OY_HYP(a,b)    pow(OY_SQRT(a,b),1.0/2.0)
 #endif
     /* reduce brightness remaining inside a cone with a roof angle of 30° */
-    double max_brightness;
     double src_Lab[3], dst_Lab[3];
 
     lcm2iccXYZ2iccLab(  src_iccXYZ, src_Lab );
@@ -1843,19 +1854,32 @@ int          lcm2CreateAbstractWhitePointProfileBradford (
     icc_ab[0] = dst_Lab[1] - src_Lab[1];
     icc_ab[1] = dst_Lab[2] - src_Lab[2];
     max_brightness = OY_HYP(icc_ab[0],icc_ab[1]/1.5);
+    b_scale = OY_MAX( 1.0 - max_brightness*2, 0.03 );
+
+#ifdef HAVE_LOCALE_H
+    setlocale(LC_ALL,"C");
+#endif
+    sprintf( white_point_xyz_src, "%f,%f,%f", src_iccXYZ[0], src_iccXYZ[1], src_iccXYZ[2] );
+    sprintf( white_point_xyz_dst, "%f,%f,%f", illu_iccXYZ[0], illu_iccXYZ[1], illu_iccXYZ[2] );
+    sprintf( brightness_scale, "%f", b_scale );
+#ifdef HAVE_LOCALE_H
+    setlocale(LC_ALL,old_loc);
+#endif
 
     if(!(flags & 0x01)) /* skip computation */
     {
       /* avoid color clipping around the white point */
-      curve_params_low[1] = OY_MAX( 1.0 - max_brightness*2, 0.03 );
-      o_curve[0] = cmsBuildParametricToneCurve(0, 4, curve_params_low);
-      o_curve[1] = o_curve[2] = cmsBuildParametricToneCurve(0, 4, curve_params_low);
-      if(!o_curve[0] || !o_curve[1]) error = 1;
+#ifndef OY_MAX
+      #define OY_MAX(a,b)    (((a) > (b)) ? (a) : (b))
+#endif
     }
   }
 
   if(error) goto lcm2CreateAbstractWhitePointProfileBClean;
 
+#ifdef HAVE_LOCALE_H
+  setlocale(LC_ALL,"C");
+#endif
   if(icc_ab[1] > 0)
   {
     sprintf( kelvin_name, "Bradford Reddish CIE*a %g CIE*b %g v2 lcm2", icc_ab[0], icc_ab[1] );
@@ -1868,6 +1892,9 @@ int          lcm2CreateAbstractWhitePointProfileBradford (
     kelvin_meta[1] = "bluish,type,white_point,atom";
     kelvin_meta[3] = "yes,bluish,kelvin";
   }
+#ifdef HAVE_LOCALE_H
+  setlocale(LC_ALL,old_loc);
+#endif
 
   *my_abstract_file_name = kelvin_name;
   if(flags & 0x01) /* skip computation */
@@ -1888,24 +1915,38 @@ int          lcm2CreateAbstractWhitePointProfileBradford (
                              NULL);
   if(!profile) goto lcm2CreateAbstractWhitePointProfileBClean;
 
-  lcm2MAT3 Bradford;
+  lcm2MAT3 Bradford, BB, Brightness = {{ {{b_scale,0,0}}, {{0,b_scale,0}}, {{0,0,b_scale}} }};
   if( !lcm2AdaptationMatrix(&Bradford, NULL, &SourceWhitePt, &Illuminant) ) goto lcm2CreateAbstractWhitePointProfileBClean;
-  matrix[0][0] = Bradford.v[0].n[0]; matrix[0][1] = Bradford.v[0].n[1]; matrix[0][2] = Bradford.v[0].n[2];
-  matrix[1][0] = Bradford.v[1].n[0]; matrix[1][1] = Bradford.v[1].n[1]; matrix[1][2] = Bradford.v[1].n[2];
-  matrix[2][0] = Bradford.v[2].n[0]; matrix[2][1] = Bradford.v[2].n[1]; matrix[2][2] = Bradford.v[2].n[2];
+
+  /** Scale the adaption matrix to avoid clipping. Scale factor is stored in meta:COLORIMETRY_white_point_scale. */
+  lcm2MAT3per(&BB, &Bradford, &Brightness);
+  matrix[0][0] = BB.v[0].n[0]; matrix[0][1] = BB.v[0].n[1]; matrix[0][2] = BB.v[0].n[2];
+  matrix[1][0] = BB.v[1].n[0]; matrix[1][1] = BB.v[1].n[1]; matrix[1][2] = BB.v[1].n[2];
+  matrix[2][0] = BB.v[2].n[0]; matrix[2][1] = BB.v[2].n[1]; matrix[2][2] = BB.v[2].n[2];
 
   error = lcm2CreateProfileLutByMatrixAndCurves( profile,
-                                      o_curve, &matrix[0][0], i_curve,
+                                      i_curve, &matrix[0][0], i_curve,
                                       "*xyz", "*xyz",
                                       cmsSigAToB0Tag );
 
   if(!error)
+  {
+    int pos = 2*10;
+    if(src_name)
+    {
+      kelvin_meta[pos++] = "COLORIMETRY_white_point_name_src";
+      kelvin_meta[pos++] = src_name;
+    }
+    if(illu_name)
+    {
+      kelvin_meta[pos++] = "COLORIMETRY_white_point_name_dst";
+      kelvin_meta[pos++] = illu_name;
+    }
     lcm2AddMetaTexts ( profile, "EFFECT_,COLORIMETRY_,CMF_", kelvin_meta, cmsSigMetaTag );
+  }
 
 lcm2CreateAbstractWhitePointProfileBClean:
   if(i_curve[0]) cmsFreeToneCurve( i_curve[0] );
-  if(o_curve[0]) cmsFreeToneCurve( o_curve[0] );
-  if(o_curve[1]) cmsFreeToneCurve( o_curve[1] );
 
   if(h_profile)
     *h_profile = profile;
@@ -1918,6 +1959,7 @@ lcm2CreateAbstractWhitePointProfileBClean:
     lcm2Free_m(fn);
     cmsCloseProfile( profile );
   }
+  if(old_loc) free(old_loc);
 
   return error;
 }
