@@ -1787,7 +1787,7 @@ int          lcm2CreateAbstractWhitePointProfileBradford (
                                        const char        * src_name,
                                        double            * illu_iccXYZ,
                                        const char        * illu_name,
-                                       double              icc_profile_version,
+                                       double              icc_profile_version OY_UNUSED,
                                        int                 flags,
                                        char             ** my_abstract_file_name,
                                        cmsHPROFILE       * h_profile
@@ -1804,8 +1804,8 @@ int          lcm2CreateAbstractWhitePointProfileBradford (
     "EFFECT_class", "reddish,type,white_point,linear,atom",
     "EFFECT_linear", "yes", /* can be used for 1D curves like VCGT */
     "COLORIMETRY_white_point", "yes,reddish,kelvin",
-    "COLORIMETRY_white_point_xyz_src", white_point_xyz_src,
-    "COLORIMETRY_white_point_xyz_dst", white_point_xyz_dst,
+    "COLORIMETRY_white_point_icc_xyz_src", white_point_xyz_src,
+    "COLORIMETRY_white_point_icc_xyz_dst", white_point_xyz_dst,
     "COLORIMETRY_white_point_scale", brightness_scale,
     "EFFECT_type", "bradford",
     "CMF_binary", "create-abstract",
