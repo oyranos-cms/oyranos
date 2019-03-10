@@ -166,7 +166,7 @@
 
     <!-- Effect
          Color space for showing a effect -->
-    <oyPROFILE_EFFECT>Grayer_oyra.icc</oyPROFILE_EFFECT>
+    <oyPROFILE_EFFECT>Grayer_v2_oyra.icc</oyPROFILE_EFFECT>
 
     <!-- Use Effect
          Enable effect profile
