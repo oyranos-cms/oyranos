@@ -121,7 +121,7 @@ int main( int argc , char** argv )
     {"oiwi", 0, 'P', "path", NULL, _("Path filter"), _("Show profiles containing a string as part of their full name"), _("PATH_SUB_STRING"), NULL, oyjlOPTIONTYPE_STRING, {}, oyjlSTRING, {.s=&path} },
     {"oiwi", 0, 'T', "meta", NULL, _("Meta"), _("Filter for meta tag key/value pair"), _("Show profiles containing a certain key/value pair of their meta tag. VALUE can contain '*' to allow for substring matching."), _("KEY;VALUE"), oyjlOPTIONTYPE_STRING, {.suggest = "EFFECT_class;sepia"}, oyjlSTRING, {.s=&meta} },
     {"oiwi", 0, 'r', "no-repair", NULL, _("No repair"), _("No Profile repair of ICC profile ID"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&no_repair} },
-    {"oiwi", 0, 'D', "duplicates", NULL, _("Duplicates"), _("Allow for identical multiple installed profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&duplicates} },
+    {"oiwi", 0, 'D', "duplicates", NULL, _("Duplicates"), _("Show identical multiple installed profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&duplicates} },
 
     /* default options -h and -v */
     {"oiwi", 0, 'h', "help", NULL, _("help"), _("Help"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&help} },
@@ -137,7 +137,7 @@ int main( int argc , char** argv )
 
   oyjlOptionGroup_s groups[] = {
   /* type,   flags, name, description, help, mandatory, optional, detail */
-    {"oiwg", 0, _("List"), _("List of available ICC color profiles"), NULL, "l", "feacdknoi24PTv", "lfeacdknoi24PT" },
+    {"oiwg", 0, _("List"), _("List of available ICC color profiles"), NULL, "l", "feacdknoi24PTv", "lfeacdknoi24PTD" },
     {"oiwg", 0, _("Paths"), _("List search paths"), NULL, "p", "u|s|y|mv", "pusym" },
     {"oiwg", 0, _("Install"), _("Install Profile"), NULL, "I|t", "u|s|y|mgv", "Itusymg" },
     {"oiwg", 0, _("Misc"), _("General options"), NULL, "", "", "rXvh" },

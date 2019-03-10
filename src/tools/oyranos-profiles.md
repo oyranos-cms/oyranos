@@ -29,6 +29,7 @@ The tool can list installed profiles, search paths and can help install a ICC co
 * \-4|\-\-icc\-version\-4	Select ICC v4 Profiles
 * \-P|\-\-path	Show profiles containing a string as part of their full name: PATH\_SUB\_STRING
 * \-T|\-\-meta *KEY;VALUE*	Filter for meta tag key/value pair: Show profiles containing a certain key/value pair of their meta tag. VALUE can contain '*' to allow for substring matching.
+* \-D|\-\-duplicates	Show identical multiple installed profiles
 
 ### List search paths
 **oyranos\-profiles** \-p [\-u|\-s|\-y|\-m] [\-v]

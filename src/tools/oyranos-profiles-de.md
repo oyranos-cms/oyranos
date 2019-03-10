@@ -29,6 +29,7 @@ Das Werkzeug kann installierte Profile und Suchpfade anzeigen. Es kann ein Profi
 * \-4|\-\-icc\-version\-4	Wähle ICC V4 Profile
 * \-P|\-\-path	Zeige Profile, welche ein Wort in ihrem Pfadnamen enthalten.: PFAD\_WORT\_TEIL
 * \-T|\-\-meta *SCHLÜSSEL;WERT*	Suche nach Schlüssel/Werte Paar in Meta Element: Zeige Profile welche ein bestimmtes Schlüssel/Werte Paar im meta Tag enthalten. WERT kann '*' enthalten für das Filtern von Wortteilen.
+* \-D|\-\-duplicates	Zeige identische mehrfach installierte Profile an
 
 ### Zeige Suchpfade
 **oyranos\-profiles** \-p [\-u|\-s|\-y|\-m] [\-v]
