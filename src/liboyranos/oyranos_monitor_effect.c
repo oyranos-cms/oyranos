@@ -144,13 +144,17 @@ int      oyProfileAddWhitePointEffect( oyProfile_s       * monitor_profile,
 
   if(!error)
     error = oyGetDisplayWhitePoint( display_white_point, dst_XYZ );
+  if(isnan(dst_XYZ[0]))
+    error = 1;
 
 #ifdef USE_BRADFORD
   desc = oyProfile_GetText( monitor_profile, oyNAME_DESCRIPTION );
   oyMessageFunc_p( error ? oyMSG_WARN:oyMSG_DBG,(oyStruct_s*)monitor_profile, OY_DBG_FORMAT_
-                   "%s display_white_point: %d [%g %g %g] -> [%g %g %g]", OY_DBG_ARGS_,
+                   "%s display_white_point: %d [%g %g %g] -> [%g %g %g] %d", OY_DBG_ARGS_,
           desc, display_white_point,
-          src_XYZ[0], src_XYZ[1], src_XYZ[2], dst_XYZ[0], dst_XYZ[1], dst_XYZ[2]);
+          src_XYZ[0], src_XYZ[1], src_XYZ[2], dst_XYZ[0], dst_XYZ[1], dst_XYZ[2], error);
+  if(error > 0)
+    return error;
   error = oyOptions_SetFromString( &opts, "//" OY_TYPE_STD "/src_name", desc, OY_CREATE_NEW );
   if(error)
     return error;
@@ -331,7 +335,7 @@ int        oyAddDisplayEffects       ( oyOptions_s      ** module_options )
   error = oyAddLinearDisplayEffect( module_options );
   if( error || oy_debug )
         oyMessageFunc_p( error > 0 ? oyMSG_ERROR : error < 0 ? oyMSG_WARN : oyMSG_DBG, (oyStruct_s*)f_options,
-                  OY_DBG_FORMAT_"display_white_point: %d", OY_DBG_ARGS_, error );
+                  OY_DBG_FORMAT_"display_white_point error: %d", OY_DBG_ARGS_, error );
 
   return error;
 }
@@ -790,6 +794,9 @@ int      oyGetDisplayWhitePoint      ( int                 mode,
     {
       value = oyGetPersistentString( OY_DEFAULT_DISPLAY_WHITE_POINT_X, 0,
                                      oySCOPE_USER_SYS, oyAllocateFunc_ );
+      if(!value)
+        oyMessageFunc_p( oyMSG_ERROR,NULL, OY_DBG_FORMAT_
+                         "Can not obtain white point! Try CLI command: oyranos-monitor-white-point -a 5000", OY_DBG_ARGS_ );
       if(oyStringToDouble( value, &XYZ[0] ))
         return error;
       oyFree_m_( value );
