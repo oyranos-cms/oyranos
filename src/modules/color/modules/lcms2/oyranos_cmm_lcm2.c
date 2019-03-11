@@ -328,6 +328,8 @@ static const cmsDICTentry* (*l2cmsDictNextEntry)(const cmsDICTentry* e);
 static cmsHPROFILE (*l2cmsCreateRGBProfile)(const cmsCIExyY* WhitePoint,
                                         const cmsCIExyYTRIPLE* Primaries,
                                         cmsToneCurve* const TransferFunction[3]) = NULL;
+static cmsHPROFILE (*l2cmsCreateLinearizationDeviceLink)(cmsColorSpaceSignature ColorSpace,
+                                                                cmsToneCurve* const TransferFunctions[]) = NULL;
 static void (*l2cmsLabEncoded2Float)(cmsCIELab* Lab, const cmsUInt16Number wLab[3]) = NULL;
 static void (*l2cmsFloat2LabEncoded)(cmsUInt16Number wLab[3], const cmsCIELab* Lab) = NULL;
 static const cmsCIEXYZ*  (*l2cmsD50_XYZ)(void);
@@ -455,6 +457,7 @@ int                l2cmsCMMInit       ( oyStruct_s        * filter OY_UNUSED )
       LOAD_FUNC( cmsCreateXYZProfile, NULL );
       LOAD_FUNC( cmsCreate_sRGBProfile, NULL );
       LOAD_FUNC( cmsCreateRGBProfile, NULL );
+      LOAD_FUNC( cmsCreateLinearizationDeviceLink, NULL );
       LOAD_FUNC( cmsSetDeviceClass, NULL );
       LOAD_FUNC( cmsSetColorSpace, NULL );
       LOAD_FUNC( cmsSetPCS, NULL );
@@ -579,6 +582,7 @@ int                l2cmsCMMInit       ( oyStruct_s        * filter OY_UNUSED )
 #define cmsCreateXYZProfile l2cmsCreateXYZProfile
 #define cmsCreate_sRGBProfile l2cmsCreate_sRGBProfile
 #define cmsCreateRGBProfile l2cmsCreateRGBProfile
+#define cmsCreateLinearizationDeviceLink l2cmsCreateLinearizationDeviceLink
 #define cmsSetDeviceClass l2cmsSetDeviceClass
 #define cmsSetColorSpace l2cmsSetColorSpace
 #define cmsSetPCS l2cmsSetPCS
@@ -1055,6 +1059,7 @@ uint32_t       l2cmsFlagsFromOptions  ( oyOptions_s       * opts )
       case 1: flags |= cmsFLAGS_NOOPTIMIZE; break;
       case 2: flags |= cmsFLAGS_HIGHRESPRECALC; break;
       case 3: flags |= cmsFLAGS_LOWRESPRECALC; break;
+      case 4: flags |= cmsFLAGS_NULLTRANSFORM; break;
       }
 
       if(l2cmsGetEncodedCMMversion() >= 2070)
@@ -1160,6 +1165,7 @@ cmsHTRANSFORM  l2cmsCMMConversionContextCreate_ (
     cmsUInt32Number * intents=0;
     cmsBool * bpc=0;
     cmsFloat64Number * adaption_states=0;
+
          if(profiles_n == 1 || profile_class_in == icSigLinkClass)
     {
         /* we have to erase the color space */
@@ -1799,6 +1805,67 @@ oyProfiles_s * l2cmsProfilesFromOptions( oyFilterNode_s * node, oyFilterPlug_s *
   return profiles;
 }
 
+/* create a linear device link for null color transform */
+oyPointer l2cmsPassThroughDL         ( icColorSpaceSignature csp_in,
+                                       icColorSpaceSignature csp_out,
+                                       size_t            * size,
+                                       oyAlloc_f           allocateFunc )
+{
+  int cchann_in, cchann_out;
+  oyPointer block = NULL;
+
+  cchann_in = cmsChannelsOf(csp_in);
+  cchann_out = cmsChannelsOf(csp_out);
+  if(cchann_in == cchann_out)
+  {
+    cmsToneCurve * carr[16] = {0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0},
+                 * null_curve = cmsBuildGamma(0, 1.0);
+    if(null_curve)
+    {
+      cmsHPROFILE pass_through = NULL;
+      int i;
+      for(i = 0; i < 16; ++i) carr[i] = null_curve;
+      pass_through = cmsCreateLinearizationDeviceLink( csp_in, carr );
+      if(pass_through)
+      {
+        cmsMLU * mlu = cmsMLUalloc(0,1);
+        if(mlu)
+        {
+          char desc[32];
+          sprintf(desc, "pass through %d", abs(cchann_in)<=1024?cchann_in:-1 );
+          cmsMLUsetASCII(mlu, "EN", "us", desc);
+          cmsWriteTag( pass_through, cmsSigProfileDescriptionTag, mlu );
+          cmsMLUfree(mlu); mlu = NULL;
+        }
+        *size = 0;
+        block = lcm2WriteProfileToMem( pass_through, size, oy_debug?oyAllocateFunc_:allocateFunc );
+        cmsCloseProfile(pass_through); pass_through = NULL;
+      }
+      else
+      {
+        l2cms_msg( oyMSG_ERROR, NULL, OY_DBG_FORMAT_
+                 "cmsCreateLinearizationDeviceLink() failed",
+                 OY_DBG_ARGS_ );
+      }
+      cmsFreeToneCurve( null_curve );
+      null_curve = NULL;
+    } else
+    {
+      l2cms_msg( oyMSG_ERROR, NULL, OY_DBG_FORMAT_
+                 "cmsBuildGamma(0, 1.0) failed",
+                 OY_DBG_ARGS_ );
+    }
+  }
+  else
+  {
+    l2cms_msg( oyMSG_ERROR, NULL, OY_DBG_FORMAT_
+                 "channels_in %d == channels_out %d for linear device link failed",
+                 OY_DBG_ARGS_, cchann_in, cchann_out );
+  }
+
+  return block;
+}
+
 /** l2cmsFilterNode_CmmIccContextToMem()
  *  @brief   implement oyCMMFilterNode_CreateContext_f()
  *
@@ -1973,13 +2040,38 @@ oyPointer l2cmsFilterNode_CmmIccContextToMem (
   error = oyProfiles_MoveIn( profs, &p, -1 );
 
   *size = 0;
+  int flags = l2cmsFlagsFromOptions( node_options );
 
   /* create the context */
-  xform = l2cmsCMMConversionContextCreate_( node, lps, profiles_n,
+  if(flags & cmsFLAGS_NULLTRANSFORM)
+  {
+    icColorSpaceSignature csp_in = 0, csp_out = 0;
+
+    csp_in = (icColorSpaceSignature) l2cmsGetColorSpace( lps[0] );
+
+    if(profiles_n > 1)
+      csp_out = (icColorSpaceSignature) l2cmsGetColorSpace( lps[profiles_n-1] );
+    else
+      csp_out = (icColorSpaceSignature) l2cmsGetPCS( lps[profiles_n-1] );
+
+    block = l2cmsPassThroughDL( csp_in, csp_out, size, allocateFunc );
+    error = !block;
+
+    l2cms_msg( block?oy_debug?oyMSG_DBG:oyMSG_WARN:oyMSG_ERROR,NULL, OY_DBG_FORMAT_
+                 "skipping on cmsFLAGS_NULLTRANSFORM (optimisation=4 NOTRANSFORM) %s",
+                 OY_DBG_ARGS_, block?"use pass_through device link":"failed" );
+  }
+  else
+  {
+    xform = l2cmsCMMConversionContextCreate_( node, lps, profiles_n,
                                            profiles, profiles_simulation_n, proof,
                                 oyImage_GetPixelLayout( image_input, oyLAYOUT ),
                                 oyImage_GetPixelLayout( image_output, oyLAYOUT ),
                                            node_options, 0, 0, verbose );
+
+    error = !xform;
+  }
+
   error = !xform;
   if(oy_debug > 3)
     l2cms_msg( oyMSG_DBG, (oyStruct_s*)node, OY_DBG_FORMAT_"\n%s",
@@ -1990,7 +2082,7 @@ oyPointer l2cmsFilterNode_CmmIccContextToMem (
       l2cms_msg( oyMSG_DBG, (oyStruct_s*)node, OY_DBG_FORMAT_"start oyDL %d",
               OY_DBG_ARGS_, error );
 
-  if(!error)
+  if(!block && !error)
   {
     if(oy_debug)
       block = l2cmsCMMColorConversion_ToMem_( xform, node_options,
