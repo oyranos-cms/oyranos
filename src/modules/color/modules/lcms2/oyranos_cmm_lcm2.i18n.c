@@ -139,6 +139,9 @@
                           },{\n\
                             \"nick\": \"3\",\n\
                             \"name\": \"LCMS2_LOWRESPRECALC\"\n\
+                          },{\n\
+                            \"nick\": \"4\",\n\
+                            \"name\": \"LCMS2_NOTRANSFORM\"\n\
                           }],\n\
                         \"name\": \"Optimization\",\n\
                         \"description\": \"Color Transforms can be differently stored internally\",\n\
