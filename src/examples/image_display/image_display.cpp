@@ -367,6 +367,22 @@ void callback ( Fl_Widget* w, void* daten )
     printf("could not find a suitable program structure\n");
 }
 
+char * getIccViewer()
+{
+  char * app = NULL;
+  const char * bins[] = {"ICCExamin", "icc-examin", "iccexamin", NULL};
+  int i = 0;
+#if _GNU_SOURCE
+  const char * gui_app = secure_getenv("OYRANOS_ICC_GUI");
+#else
+  const char * gui_app = getenv("OYRANOS_ICC_GUI");
+#endif
+  if(gui_app && gui_app[0])
+    app = strdup(gui_app);
+  while(!app && bins[i])
+    app = oyFindApplication( bins[i++] );
+  return app;
+}
 void view_cb ( Fl_Widget* w, void* daten )
 {
   struct box_n_opts * arg = (box_n_opts*) daten;
@@ -396,7 +412,7 @@ void view_cb ( Fl_Widget* w, void* daten )
     }
 
     /* export the options values */
-    sprintf( command, "iccexamin -g \"%s\" &", fn );
+    sprintf( command, "%s -g \"%s\" &", "iccexamin", fn );
 
     error = system(command);
     if(error)
@@ -404,6 +420,43 @@ void view_cb ( Fl_Widget* w, void* daten )
 
     oyFilterNode_Release( &in );
     oyOptions_Release( &opts );
+    if(command) delete [] command;
+  }
+  else
+    printf("could not find a suitable program structure\n");
+}
+void cc_cb ( Fl_Widget* w, void* daten )
+{
+  struct box_n_opts * arg = (box_n_opts*) daten;
+  oyStruct_s * object = (oyStruct_s*) arg->node;
+
+  if(!w->parent())
+    printf("Could not find parents.\n");
+  else
+  if(!object)
+    printf("Oyranos argument missed.\n");
+  else
+  if(object && object->type_ == oyOBJECT_FILTER_NODE_S)
+  {
+    int error = 0;
+    char * command = new char [1024];
+    char * fn = oyGetTempFileName_( "image-display-dl.icc", NULL, OY_FILE_APPEND | OY_FILE_TEMP_DIR, oyAllocateFunc_ );
+    int old_oy_debug = oy_debug;
+    oy_debug = 1;
+    oyBlob_s * blob = oyFilterNode_ToBlob( icc, NULL );
+    oy_debug = old_oy_debug;
+    oyWriteMemToFile_( fn, oyBlob_GetPointer( blob ), oyBlob_GetSize( blob) );
+    oyBlob_Release( &blob );
+
+    char * app = getIccViewer();
+    /* export the options values */
+    sprintf( command, "%s \"%s\" &", app, fn );
+    if(app) free(app);
+
+    error = system(command);
+    if(error)
+      fprintf(stderr, "error %d for \"%s\"", error, command );
+
     if(command) delete [] command;
   }
   else
@@ -591,6 +644,9 @@ void info_cb ( Fl_Widget* w, void* daten )
  
     oyStringAdd_( &text, "\n", oyAllocateFunc_, oyDeAllocateFunc_ );
     oyStringAdd_( &text, image_text, oyAllocateFunc_, oyDeAllocateFunc_ );
+
+    oyjlStringAdd( &text, oyAllocateFunc_, oyDeAllocateFunc_, "\n\n\n%s",
+                  oyFilterNode_GetText( icc, oyNAME_NAME ) );
 
 
     oyFilterNode_Release( &in );
@@ -1181,6 +1237,8 @@ void setWindowMenue                  ( Oy_Fl_Double_Window * win,
                    FL_CTRL + 'e', callback, (void*)arg, 0 );
         menue_->add( _("Examine ICC Profile ..."),
                    FL_CTRL + 'i', view_cb, (void*)arg, 0 );
+        menue_->add( _("Examine ICC Conversion ..."),
+                   FL_CTRL + 'r', cc_cb, (void*)arg, 0 );
         menue_->add( _("Debug"),
                    FL_CTRL + 'd', dbg_cb, (void*)arg, 0 );
         menue_->add( _("Show Infos"),
