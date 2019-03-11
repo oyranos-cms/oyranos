@@ -905,8 +905,6 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
                  OY_DBG_ARGS_, i, oyRectangle_Show( (oyRectangle_s*)&roi_pix ) );
       }
 
-      o = oyOptions_Find( f_options, "display_white_point", oyNAME_PATTERN );
-
       /* set the device profile of all CMM's image data */
       if(init)
       {
@@ -998,6 +996,7 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
         }
       }
 
+      o = oyOptions_Find( f_options, "display_white_point", oyNAME_PATTERN );
       if(o)
       {
         const char * value = oyOption_GetValueString(o,0);
@@ -1011,8 +1010,6 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
       }
 
       {
-        const char * old_monitor_effect = NULL;
-        const char * monitor_effect = NULL;
         int32_t old_display_white_point = 0;
 
         oyOptions_FindInt( node_options,"old_display_white_point", 0, &old_display_white_point );
@@ -1026,29 +1023,12 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
           oyOptions_SetFromInt( &node_options,
                                 "//" OY_TYPE_STD "/display/old_display_white_point",
                                 display_white_point, 0, OY_CREATE_NEW );
-          error = oyAddDisplayEffects( &f_options );
 
-          if(error || oy_debug)
-              oydi_msg( oyMSG_WARN, (oyStruct_s*)ticket, 
-                    OY_DBG_FORMAT_"display_white_point: %d %s", OY_DBG_ARGS_, display_white_point, oyProfile_GetText( p, oyNAME_DESCRIPTION ));
-
-          error = oyPixelAccess_SetFromString ( ticket,
-                     "//" OY_TYPE_STD "/profile/dirty", "true", OY_CREATE_NEW );
-          ++dirty;
-        }
-
-        old_monitor_effect = oyOptions_FindString( node_options,"old_monitor_effect", 0 );
-        if((old_monitor_effect?1:0 != monitor_effect?1:0) ||
-           (old_monitor_effect && monitor_effect && strcmp(old_monitor_effect,monitor_effect) != 0))
-        {
-          oyOptions_SetFromString( &node_options,
-                                "//" OY_TYPE_STD "/display/old_monitor_effect",
-                                monitor_effect, OY_CREATE_NEW );
           error = oyAddMonitorEffects( p, &f_options );
 
           if(error || oy_debug)
               oydi_msg( oyMSG_WARN, (oyStruct_s*)ticket, 
-                    OY_DBG_FORMAT_"monitor_effect: %d %s", OY_DBG_ARGS_, monitor_effect, oyProfile_GetText( p, oyNAME_DESCRIPTION ));
+                    OY_DBG_FORMAT_"display_white_point: %d %s", OY_DBG_ARGS_, display_white_point, oyProfile_GetText( p, oyNAME_DESCRIPTION ));
 
           error = oyPixelAccess_SetFromString ( ticket,
                      "//" OY_TYPE_STD "/profile/dirty", "true", OY_CREATE_NEW );
