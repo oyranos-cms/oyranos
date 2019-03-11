@@ -1329,6 +1329,9 @@ lcm2CreateProfileLutByMatrixAndCurvesClean:
 /** Function  lcm2CreateAbstractProfileM
  *  @brief    Create a effect profile of type abstract in ICC*XYZ PCS
  *
+ *  Possible computation emlements are m_curve + matrix + b_curve or
+ *  matrix only or b_curve only;
+ *
  *  Here a code example:
  *  @code
 double matrix[3][3] = {
@@ -1357,9 +1360,12 @@ lcm2CreateAbstractProfileM ( NULL,
                            );
     @endcode
  *
- *  @param[in]    in_curve             optional input curve for all CIE*XYZ channels
- *  @param[in]    matrix               the 3x3 matrix
- *  @param[in]    out_curve            optional output curve for all CIE*XYZ channels
+ *  @param[in]    m_curve              optional input curve for all CIE*XYZ;
+ *                                     channels in range 0.0 ... PCS*XYZ_MAX
+ *  @param[in]    matrix               the 3x3 matrix; optional if one of b_curve or both curves are specified
+ *  @param[in]    b_curve              output curve for all PCS*XYZ; optional if matrix is specified;
+ *                                     channels in range 0.0 ... 1.0;
+ *                                     use LCM2_ADAPT_TO_PCS_XYZ
  *  @param[in]    icc_profile_version  4.3
  *  @param[in]    my_abstract_description                 internal profile name
  *  @param[in]    my_abstract_descriptions                internal profile name translated
@@ -1375,13 +1381,13 @@ lcm2CreateAbstractProfileM ( NULL,
  *  @param[out]   h_profile            the resulting profile
  *
  *  @version Oyranos: 0.9.7
- *  @date    2019/03/05
+ *  @date    2019/03/06
  *  @since   2019/03/03 (Oyranos: 0.9.7)
  */
 int          lcm2CreateAbstractProfileM (
-                                       cmsToneCurve      * in_curve,
+                                       cmsToneCurve      * m_curve,
                                        const double      * matrix,
-                                       cmsToneCurve      * out_curve,
+                                       cmsToneCurve      * b_curve,
                                        double              icc_profile_version,
                                        const char        * my_abstract_description,
                                        const char       ** my_abstract_descriptions,
@@ -1396,28 +1402,32 @@ int          lcm2CreateAbstractProfileM (
                                      )
 {
   cmsHPROFILE profile = 0;
-  int error = !matrix;
-  cmsToneCurve * in_curves[3] = {NULL,NULL,NULL},
-               * out_curves[3] = {NULL,NULL,NULL},
-               * allocated_curve = NULL;
+  int error = !matrix && !m_curve && !b_curve;
+  cmsToneCurve * m_curves[3] = {NULL,NULL,NULL},
+               * b_curves[3] = {NULL,NULL,NULL},
+               * allocated_m_curve = NULL, * allocated_b_curve = NULL;
   int i;
+  double idendity[9] = {1.0, 0.0, 0.0,
+                        0.0, 1.0, 0.0,
+                        0.0, 0.0, 1.0};
 
-  if(in_curve == NULL || out_curve == NULL)
-    allocated_curve = cmsBuildGamma(0, 1.0);
-  if(!allocated_curve) error = 1;
+  if(m_curve == NULL)
+    allocated_m_curve = cmsBuildGamma(0, 1.0);
+  if(b_curve == NULL)
+    allocated_b_curve = cmsBuildGamma(0, 1.0);
   if(error) goto lcm2CreateAbstractProfileMClean;
 
   for(i = 0; i < 3; ++i)
   {
-    if(in_curve)
-      in_curves[i] = in_curve;
+    if(m_curve)
+      m_curves[i] = m_curve;
     else
-      in_curves[i] = allocated_curve;
+      m_curves[i] = allocated_m_curve;
 
-    if(out_curve)
-      out_curves[i] = out_curve;
+    if(b_curve)
+      b_curves[i] = b_curve;
     else
-      out_curves[i] = allocated_curve;
+      b_curves[i] = allocated_b_curve;
   }
 
   profile = lcm2CreateProfileFragment (
@@ -1432,8 +1442,19 @@ int          lcm2CreateAbstractProfileM (
   if(my_meta_data)
     lcm2AddMetaTexts ( profile, my_meta_data[0], &my_meta_data[1], cmsSigMetaTag );
 
-  error = lcm2CreateProfileLutByMatrixAndCurves( profile,
-                                      in_curves, matrix, out_curves,
+  if(m_curve == NULL && matrix == NULL)
+  {
+    cmsPipeline * pl = cmsPipelineAlloc( 0,3,3 );
+ 
+    cmsPipelineInsertStage( pl, cmsAT_END,
+                            cmsStageAllocToneCurves( 0, 3, b_curves ) );
+    cmsWriteTag( profile, cmsSigAToB0Tag, pl );
+
+    if(pl) cmsPipelineFree( pl );
+  }
+  else
+    error = lcm2CreateProfileLutByMatrixAndCurves( profile,
+                                      m_curves, matrix?matrix:idendity, b_curves,
                                       "*xyz", "*xyz", 
                                       cmsSigAToB0Tag );
   if(error) goto lcm2CreateAbstractProfileMClean;
@@ -1455,7 +1476,8 @@ int          lcm2CreateAbstractProfileM (
   else
     cmsCloseProfile( profile );
 lcm2CreateAbstractProfileMClean:
-  if(allocated_curve) cmsFreeToneCurve( allocated_curve );
+  if(allocated_m_curve) cmsFreeToneCurve( allocated_m_curve );
+  if(allocated_b_curve) cmsFreeToneCurve( allocated_b_curve );
 
   return error;
 }
@@ -1928,7 +1950,7 @@ int          lcm2CreateAbstractWhitePointProfileBradford (
                                      )
 {
   cmsHPROFILE profile = NULL;
-  cmsToneCurve * i_curve[3] = {NULL,NULL,NULL};
+  cmsToneCurve * m_curves[3] = {NULL,NULL,NULL}, * b_curves[3] = {NULL,NULL,NULL};
   int i;
 
   char white_point_xyz_src[64] = {0},
@@ -1967,10 +1989,15 @@ int          lcm2CreateAbstractWhitePointProfileBradford (
 
   if(!(flags & 0x01)) /* skip computation */
   {
-    i_curve[0] = cmsBuildGamma(0, 1.0);
-    if(!i_curve[0]) error = 1;
+    m_curves[0] = cmsBuildGamma(0, 1.0);
+    if(!m_curves[0]) error = 1;
     for(i = 1; i < 3; ++i)
-    { i_curve[i] = i_curve[0]; }
+    { m_curves[i] = m_curves[0]; }
+
+    b_curves[0] = cmsBuildGamma(0, 1.0);
+    if(!b_curves[0]) error = 1;
+    for(i = 1; i < 3; ++i)
+    { b_curves[i] = b_curves[0]; }
   }
 
 
@@ -1990,9 +2017,9 @@ int          lcm2CreateAbstractWhitePointProfileBradford (
     lcm2iccXYZ2iccLab( illu_iccXYZ, dst_Lab );
     icc_ab[0] = dst_Lab[1] - src_Lab[1];
     icc_ab[1] = dst_Lab[2] - src_Lab[2];
-    max_brightness = OY_HYP(icc_ab[0],icc_ab[1]/1.5);
+    max_brightness = OY_HYP(icc_ab[0],icc_ab[1]/1.2);
     /* avoid color clipping around the white point */
-    b_scale = OY_MAX( 1.0 - max_brightness*2, 0.03 );
+    b_scale = OY_MAX( 1.0 - max_brightness, 0.2 );
 
 #ifdef HAVE_LOCALE_H
     setlocale(LC_ALL,"C");
@@ -2003,6 +2030,8 @@ int          lcm2CreateAbstractWhitePointProfileBradford (
 #ifdef HAVE_LOCALE_H
     setlocale(LC_ALL,old_loc);
 #endif
+    /* avoid color clipping around the white point, with PCS*XYZ scaling */
+    b_scale = OY_MAX( 1.0 - max_brightness * LCM2_ADAPT_TO_PCS_XYZ, 0.2 );
   }
 
   if(error) goto lcm2CreateAbstractWhitePointProfileBClean;
@@ -2055,7 +2084,7 @@ int          lcm2CreateAbstractWhitePointProfileBradford (
   matrix[2][0] = BB.v[2].n[0]; matrix[2][1] = BB.v[2].n[1]; matrix[2][2] = BB.v[2].n[2];
 
   error = lcm2CreateProfileLutByMatrixAndCurves( profile,
-                                      i_curve, &matrix[0][0], i_curve,
+                                      m_curves, &matrix[0][0], b_curves,
                                       "*xyz", "*xyz",
                                       cmsSigAToB0Tag );
 
@@ -2076,7 +2105,8 @@ int          lcm2CreateAbstractWhitePointProfileBradford (
   }
 
 lcm2CreateAbstractWhitePointProfileBClean:
-  if(i_curve[0]) cmsFreeToneCurve( i_curve[0] );
+  if(m_curves[0]) cmsFreeToneCurve( m_curves[0] );
+  if(b_curves[0]) cmsFreeToneCurve( b_curves[0] );
 
   if(h_profile)
     *h_profile = profile;

@@ -68,10 +68,15 @@ int          lcm2CreateAbstractProfile (
                                        const char       ** my_meta_data,
                                        cmsHPROFILE       * h_profile
                                      );
+/** @brief *xyz range alignment
+ *
+ *  This must be used for cmsToneCurve and matrix scaling.
+ */
+#define LCM2_ADAPT_TO_PCS_XYZ (1.0 + (32767.0/32768.0))
 int          lcm2CreateAbstractProfileM (
-                                       cmsToneCurve      * in_curve,
+                                       cmsToneCurve      * m_curve,
                                        const double      * matrix,
-                                       cmsToneCurve      * out_curve,
+                                       cmsToneCurve      * b_curve,
                                        double              icc_profile_version,
                                        const char        * my_abstract_description,
                                        const char       ** my_abstract_descriptions,
