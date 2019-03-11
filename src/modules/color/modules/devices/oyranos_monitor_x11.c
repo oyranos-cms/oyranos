@@ -1083,7 +1083,7 @@ int      oyX1SetupMonitorCalibration ( oyMonitor_s       * display,
       {
       /* OS X handles VGCT fine, no need for xcalib */
 #if !defined(__APPLE__)
-        //error = system(clear); // causes flicker
+        error = system(clear); // causes flicker, but profile without VCGT tag will not change any curves.
         error = system(text);
 #endif
       }
