@@ -1410,9 +1410,6 @@ int          lcm2CreateAbstractProfileM (
                * b_curves[3] = {NULL,NULL,NULL},
                * allocated_m_curve = NULL, * allocated_b_curve = NULL;
   int i;
-  double idendity[9] = {1.0, 0.0, 0.0,
-                        0.0, 1.0, 0.0,
-                        0.0, 0.0, 1.0};
   const char * csp = "*xyz"; // color space CIE*XYZ with PCS*XYZ encoding range
 
   if(m_curve == NULL)
@@ -1468,7 +1465,7 @@ int          lcm2CreateAbstractProfileM (
   }
   else
     error = lcm2CreateProfileLutByMatrixAndCurves( profile,
-                                      m_curves, matrix?matrix:idendity, b_curves,
+                                      m_curves, matrix, b_curves,
                                       "*xyz", "*xyz", 
                                       cmsSigAToB0Tag );
   if(error) goto lcm2CreateAbstractProfileMClean;
