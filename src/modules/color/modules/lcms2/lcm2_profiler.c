@@ -1330,7 +1330,10 @@ lcm2CreateProfileLutByMatrixAndCurvesClean:
  *  @brief    Create a effect profile of type abstract in ICC*XYZ PCS
  *
  *  Possible computation emlements are m_curve + matrix + b_curve or
- *  matrix only or b_curve only;
+ *  matrix only or b_curve only for PCS*XYZ.
+ *  In case m_curve and b_curve are passed in, then
+ *  PCS*Lab is assumed and m_curve is mapped to PSC*L and
+ *  b_curve is mapped to PCS*ab.
  *
  *  Here a code example:
  *  @code
@@ -1381,7 +1384,7 @@ lcm2CreateAbstractProfileM ( NULL,
  *  @param[out]   h_profile            the resulting profile
  *
  *  @version Oyranos: 0.9.7
- *  @date    2019/03/06
+ *  @date    2019/03/09
  *  @since   2019/03/03 (Oyranos: 0.9.7)
  */
 int          lcm2CreateAbstractProfileM (
@@ -1410,6 +1413,7 @@ int          lcm2CreateAbstractProfileM (
   double idendity[9] = {1.0, 0.0, 0.0,
                         0.0, 1.0, 0.0,
                         0.0, 0.0, 1.0};
+  const char * csp = "*xyz"; // color space CIE*XYZ with PCS*XYZ encoding range
 
   if(m_curve == NULL)
     allocated_m_curve = cmsBuildGamma(0, 1.0);
@@ -1417,22 +1421,31 @@ int          lcm2CreateAbstractProfileM (
     allocated_b_curve = cmsBuildGamma(0, 1.0);
   if(error) goto lcm2CreateAbstractProfileMClean;
 
-  for(i = 0; i < 3; ++i)
+  if(m_curve && matrix == NULL && b_curve)
   {
-    if(m_curve)
-      m_curves[i] = m_curve;
-    else
-      m_curves[i] = allocated_m_curve;
+    csp = "*lab";          // CIE*Lab with PCS*Lab encoding range
+    b_curves[0] = m_curve; // CIE*L   with PCS*Lab encoding range
+    b_curves[1] = b_curve; // CIE*a   with PCS*Lab encoding range
+    b_curves[2] = b_curve; // CIE*b   with PCS*Lab encoding range
+  }
+  else
+  {
+    for(i = 0; i < 3; ++i)
+    {
+      if(m_curve)
+        m_curves[i] = m_curve;
+      else
+        m_curves[i] = allocated_m_curve;
 
-    if(b_curve)
-      b_curves[i] = b_curve;
-    else
-      b_curves[i] = allocated_b_curve;
+      if(b_curve)
+        b_curves[i] = b_curve;
+      else
+        b_curves[i] = allocated_b_curve;
+    }
   }
 
   profile = lcm2CreateProfileFragment (
-                             "*xyz", // CIE*XYZ
-                             "*xyz", // CIE*XYZ
+                             csp, csp,
                              icc_profile_version,
                              my_abstract_description,
                              provider, vendor, my_license, 
@@ -1442,7 +1455,8 @@ int          lcm2CreateAbstractProfileM (
   if(my_meta_data)
     lcm2AddMetaTexts ( profile, my_meta_data[0], &my_meta_data[1], cmsSigMetaTag );
 
-  if(m_curve == NULL && matrix == NULL)
+  if((m_curve && matrix == NULL && b_curve) || // L*ab
+     (m_curve == NULL && matrix == NULL))      // XYZ
   {
     cmsPipeline * pl = cmsPipelineAlloc( 0,3,3 );
  
