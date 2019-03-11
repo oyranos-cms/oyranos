@@ -150,7 +150,7 @@ int main( int argc , char** argv )
   oyProfile_s * p = NULL;
   oyOptions_s * module_options = 0;
 
-  int levels = 0;
+  int levels = 0, i;
 
   char ** other_args = 0;
   int other_args_n = 0;
@@ -280,6 +280,11 @@ int main( int argc , char** argv )
                         exit (0);
   }
 
+  if(oy_debug)
+  for(i = 0; i < argc; ++i)
+    fprintf(stderr, "argv[%d] = %s\n", i, argv[i] );
+
+
   if(help)
   {
     printfHelp(argc, argv);
@@ -390,15 +395,23 @@ int main( int argc , char** argv )
     if(!icc_defaults_simple)
       flags |= oyOPTIONATTRIBUTE_ADVANCED;
     if(oyProfiles_Count(effects))
+    {
       error = oyOptions_MoveInStruct( &module_options,
                                       OY_PROFILES_EFFECT,
                                        (oyStruct_s**) &effects,
                                        OY_CREATE_NEW );
+      oyOptions_SetFromString( &module_options, OY_DEFAULT_EFFECT,
+                             "1", OY_CREATE_NEW );
+    }
     if(oyProfiles_Count(proofing))
+    {
       error = oyOptions_MoveInStruct( &module_options,
                                       OY_PROFILES_SIMULATION,
                                        (oyStruct_s**) &proofing,
                                        OY_CREATE_NEW );
+      oyOptions_SetFromString( &module_options, OY_DEFAULT_PROOF_SOFT,
+                             "1", OY_CREATE_NEW );
+    }
 
 
     if(format && strcmp(format,"clut") == 0)
@@ -503,7 +516,10 @@ int main( int argc , char** argv )
         icc = oyFilterGraph_GetNode( graph, -1, node_name, NULL );
       if(icc)
       {
+        int old_oy_debug = oy_debug;
+        oy_debug = 1;
         blob = oyFilterNode_ToBlob( icc, 0 );
+        oy_debug = old_oy_debug;
         if(blob && oyBlob_GetSize( blob ))
         {
           size_t size = oyBlob_GetSize( blob);
@@ -588,6 +604,14 @@ int main( int argc , char** argv )
 
       error = oyConversion_RunPixels( cc, 0 );
       image = oyConversion_GetImage( cc, OY_OUTPUT );
+      if(verbose)
+      {
+        oyFilterGraph_s * cc_graph = oyConversion_GetGraph( cc );
+        oyFilterNode_s * icc = oyFilterGraph_GetNode( cc_graph, -1, node_name, 0 );
+        oyFilterGraph_Release( &cc_graph );
+        fprintf( stderr, "node hash:\n%s\n", oyFilterNode_GetText( icc, oyNAME_NAME ) );
+        oyFilterNode_Release( &icc );
+      }
       oyConversion_Release( &cc );
 
       STRING_ADD( comment, "source image was " );
