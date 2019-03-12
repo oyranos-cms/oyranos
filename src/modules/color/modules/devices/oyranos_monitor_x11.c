@@ -1083,8 +1083,32 @@ int      oyX1SetupMonitorCalibration ( oyMonitor_s       * display,
       {
       /* OS X handles VGCT fine, no need for xcalib */
 #if !defined(__APPLE__)
-        error = system(clear); // causes flicker, but profile without VCGT tag will not change any curves.
-        error = system(text);
+        FILE * fp = popen(text, "r");
+        t = NULL;
+        if(fp)
+        {
+          int n;
+          oyX1Alloc( t, 48, pclose(fp); free(dpy_name); return 1;)
+          n = fread( t, sizeof(char), 48, fp );
+          if(0 <= n && n < 48) t[n] = '\000';
+          else t[47] = '\000';
+          pclose(fp);
+        }
+        if(strstr(t,"No calibration data in ICC profile"))
+        {
+          fprintf( stderr,OY_DBG_FORMAT_ "%s %s %d\n", OY_DBG_ARGS_, "No monitor gamma curves by profile:",
+                noE(profile_name), error );
+          status |= OY_CALIB_VCGT_NOT_CONTAINED;
+        }
+        if(strstr(t, "Unable to read file"))
+        {
+          fprintf( stderr,OY_DBG_FORMAT_ "%s %s %d\n", OY_DBG_ARGS_, "Not found profile:",
+                noE(profile_name), error );
+          status |= OY_CALIB_VCGT_NOT_CONTAINED;
+        }
+        printf("%s : %s\n", text, t);
+        if(status & OY_CALIB_VCGT_NOT_CONTAINED)
+          error = system(clear); // causes flicker, but profile without VCGT tag will not change any curves.
 #endif
       }
       if(!can_gamma)
@@ -1092,9 +1116,8 @@ int      oyX1SetupMonitorCalibration ( oyMonitor_s       * display,
       if(error &&
          error != 65280)
       { /* hack */
-        fprintf( stderr,OY_DBG_FORMAT_ "%s %s %d\n", OY_DBG_ARGS_, "No monitor gamma curves by profile:",
+        fprintf( stderr,OY_DBG_FORMAT_ "%s %s %d\n", OY_DBG_ARGS_, "found issue",
                 noE(profile_name), error );
-        status |= OY_CALIB_VCGT_NOT_CONTAINED;
       } else
       {
         /* take xcalib error not serious, turn into a issue */
