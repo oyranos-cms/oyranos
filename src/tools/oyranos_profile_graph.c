@@ -2,7 +2,7 @@
  *
  *  Oyranos is an open source Color Management System 
  *
- *  Copyright (C) 2012-2017  Kai-Uwe Behrmann
+ *  Copyright (C) 2012-2019  Kai-Uwe Behrmann
  *
  */
 
@@ -213,6 +213,7 @@ int main( int argc , char** argv )
   int spectral_count = 0;
   double spectra_rect[4] = {1000000.,-1000000.,1000000.,-1000000.}; /* x_min,x_max, y_min,y_max */
 
+  oyImage_s * image = NULL;
   const char * filename = 0;
 
   int i,j,
@@ -377,6 +378,8 @@ int main( int argc , char** argv )
       if(verbose && spectra) fprintf( stderr, "CGATS parsed\n" );
       if(oy_debug) fprintf( stderr, "%s", oyStruct_GetText((oyStruct_s*)spectra, oyNAME_NAME, 0));
     }
+    if(!spectra && text)
+      oyImage_FromFile( input, flags, &image, NULL );
 
     if(spectra)
     {
@@ -565,10 +568,10 @@ int main( int argc , char** argv )
         XYZ[0] = cieXYZ_64_10[i][0]; XYZ[1] = cieXYZ_64_10[i][1]; XYZ[2] = cieXYZ_64_10[i][2];
         oyXYZ2Lab( XYZ, Lab);
         if(i == 0)
-          cairo_move_to(cr, xToImage(Lab[1]/256.0+.5),
+          cairo_move_to(cr, xToImage(Lab[1]/256.0+0.5),
                             yToImage(Lab[2]/256.0+0.5));
         else
-          cairo_line_to(cr, xToImage(Lab[1]/256.0+.5),
+          cairo_line_to(cr, xToImage(Lab[1]/256.0+0.5),
                             yToImage(Lab[2]/256.0+0.5));
       }
       cairo_close_path(cr);
@@ -597,10 +600,10 @@ int main( int argc , char** argv )
         double Lab[3];
         oyXYZ2Lab( XYZ, Lab);
         if(i == 0)
-          cairo_move_to(cr, xToImage(Lab[1]/256.0+.5),
+          cairo_move_to(cr, xToImage(Lab[1]/256.0+0.5),
                             yToImage(Lab[2]/256.0+0.5));
         else
-          cairo_line_to(cr, xToImage(Lab[1]/256.0+.5),
+          cairo_line_to(cr, xToImage(Lab[1]/256.0+0.5),
                             yToImage(Lab[2]/256.0+0.5));
       }
     }
@@ -709,7 +712,44 @@ int main( int argc , char** argv )
       oyProfile_Release( &p );
     }
   }
+  if(image) /* support first line RGB and draw each channel */
+  {
+    float t = thickness;
+    cairo_set_line_width (cr, 0.5*t);
+    int channels = oyImage_GetPixelLayout( image, oyCHANS );
+    oyDATATYPE_e data_type = oyToDataType_m( oyImage_GetPixelLayout( image, oyLAYOUT) );
+    double byteps = oyDataTypeGetSize( data_type );
+    double image_width = oyImage_GetWidth(image);
+    int iheight = 0, is_allocated = 0;
+    char * pixels = oyImage_GetLineF(image)( image, 0, &iheight, -1, &is_allocated );
+    for( j=0; j < channels; ++j )
+    {
+      uint16_t * line = (uint16_t*) pixels;
+      uint8_t * line8 = (uint8_t*) pixels;
 
+      cairo_new_path(cr);
+      if(line || line8)
+      {
+        for(i = 0; i < image_width; ++i)
+        {
+          double pos = i/image_width;
+          double v = byteps == 1 ? line[i*channels+j]/256.0 : line[i*channels+j]/65536.0;
+          if(i == 0)
+          cairo_move_to(cr, xToImage(pos),
+                            yToImage(v));
+          else
+          cairo_line_to(cr, xToImage(pos),
+                            yToImage(v));
+        }
+      }
+      /* set RGB channel colors */
+      if(j == 0) cairo_set_source_rgba( cr, 1.0, 0.0, 0.0, 1.0);
+      if(j == 1) cairo_set_source_rgba( cr, 0.0, 1.0, 0.0, 1.0);
+      if(j == 2) cairo_set_source_rgba( cr, 0.0, 0.0, 1.0, 1.0);
+      if(j > 2) cairo_set_source_rgba( cr, 1.0, 1.0, 1.0, 1.0);
+      cairo_stroke(cr);
+    }
+  }
 
   /* default spectral range to draw */
   min_x = 300.;
@@ -746,6 +786,7 @@ int main( int argc , char** argv )
       cairo_stroke(cr);
     }
   }
+
 
 #define drawSpectralCurve(spectra, index, r,g,b,a_) \
     { \
