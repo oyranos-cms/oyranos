@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2008-2012 (C) Kai-Uwe Behrmann
+ *            2008-2019 (C) Kai-Uwe Behrmann
  *
  *  @internal
  *  @brief    misc color APIs
@@ -15,6 +15,8 @@
 
 
 #include <math.h>
+#include <stdio.h>
+#include <string.h>
 
 #include "oyranos_color.h"
 
@@ -151,6 +153,224 @@ void         oyICCXYZrel2CIEabsXYZ   ( const double      * ICCXYZ,
   int i = 0;
   for( ; i < 3; ++i )
     CIEXYZ[i] = (ICCXYZ[i] * (XYZmax[i] - XYZmin[i]) + XYZmin[i]) / XYZwhite[i];
+}
+
+// Compute chromatic adaptation matrix using Chad as cone matrix
+
+static int ComputeChromaticAdaptation(oyMAT3* Conversion,
+                                const oyCIEXYZ* SourceWhitePoint,
+                                const oyCIEXYZ* DestWhitePoint,
+                                const oyMAT3* Chad)
+
+{
+
+    oyMAT3 Chad_Inv;
+    oyVEC3 ConeSourceXYZ, ConeSourceRGB;
+    oyVEC3 ConeDestXYZ, ConeDestRGB;
+    oyMAT3 Cone, Tmp;
+
+
+    Tmp = *Chad;
+    if (!oyMAT3inverse(&Tmp, &Chad_Inv)) return 0;
+
+    oyVEC3init(&ConeSourceXYZ, SourceWhitePoint -> X,
+                             SourceWhitePoint -> Y,
+                             SourceWhitePoint -> Z);
+
+    oyVEC3init(&ConeDestXYZ,   DestWhitePoint -> X,
+                             DestWhitePoint -> Y,
+                             DestWhitePoint -> Z);
+
+    oyMAT3eval(&ConeSourceRGB, Chad, &ConeSourceXYZ);
+    oyMAT3eval(&ConeDestRGB,   Chad, &ConeDestXYZ);
+
+    // Build matrix
+    oyVEC3init(&Cone.v[0], ConeDestRGB.n[0]/ConeSourceRGB.n[0],    0.0,  0.0);
+    oyVEC3init(&Cone.v[1], 0.0,   ConeDestRGB.n[1]/ConeSourceRGB.n[1],   0.0);
+    oyVEC3init(&Cone.v[2], 0.0,   0.0,   ConeDestRGB.n[2]/ConeSourceRGB.n[2]);
+
+
+    // Normalize
+    oyMAT3per(&Tmp, &Cone, Chad);
+    oyMAT3per(Conversion, &Chad_Inv, &Tmp);
+
+    return 1;
+}
+/** Returns the final chrmatic adaptation from illuminant FromIll to Illuminant ToIll.
+ *  The cone matrix can be specified in ConeMatrix. If NULL, Bradford is assumed
+ */
+int  oyAdaptationMatrix(oyMAT3* r, const oyMAT3* ConeMatrix, const oyCIEXYZ* FromIll, const oyCIEXYZ* ToIll)
+{
+    oyMAT3 LamRigg   = {{ // Bradford matrix
+        {{  0.8951,  0.2664, -0.1614 }},
+        {{ -0.7502,  1.7135,  0.0367 }},
+        {{  0.0389, -0.0685,  1.0296 }}
+    }};
+
+    if (ConeMatrix == NULL)
+        ConeMatrix = &LamRigg;
+
+    return ComputeChromaticAdaptation(r, FromIll, ToIll, ConeMatrix);
+}
+
+/* The oyVEC3, oyMAT3, oyMAT3inverse, oyVEC3init and oyMAT3per definitions 
+ * origin from lcms' cmsmtrx.c written by Marti Maria www.littlecms.com 
+ * and is MIT licensed there
+ * Vectors
+ */
+#define MATRIX_DET_TOLERANCE    0.0001
+/** Inverse of a matrix b = a^(-1) */
+int oyMAT3inverse(const oyMAT3* a, oyMAT3* b)
+{
+   double det, c0, c1, c2;
+
+   c0 =  a -> v[1].n[1]*a -> v[2].n[2] - a -> v[1].n[2]*a -> v[2].n[1];
+   c1 = -a -> v[1].n[0]*a -> v[2].n[2] + a -> v[1].n[2]*a -> v[2].n[0];
+   c2 =  a -> v[1].n[0]*a -> v[2].n[1] - a -> v[1].n[1]*a -> v[2].n[0];
+
+   det = a -> v[0].n[0]*c0 + a -> v[0].n[1]*c1 + a -> v[0].n[2]*c2;
+
+   if (fabs(det) < MATRIX_DET_TOLERANCE) return 0;  // singular matrix; can't invert
+
+   b -> v[0].n[0] = c0/det;
+   b -> v[0].n[1] = (a -> v[0].n[2]*a -> v[2].n[1] - a -> v[0].n[1]*a -> v[2].n[2])/det;
+   b -> v[0].n[2] = (a -> v[0].n[1]*a -> v[1].n[2] - a -> v[0].n[2]*a -> v[1].n[1])/det;
+   b -> v[1].n[0] = c1/det;
+   b -> v[1].n[1] = (a -> v[0].n[0]*a -> v[2].n[2] - a -> v[0].n[2]*a -> v[2].n[0])/det;
+   b -> v[1].n[2] = (a -> v[0].n[2]*a -> v[1].n[0] - a -> v[0].n[0]*a -> v[1].n[2])/det;
+   b -> v[2].n[0] = c2/det;
+   b -> v[2].n[1] = (a -> v[0].n[1]*a -> v[2].n[0] - a -> v[0].n[0]*a -> v[2].n[1])/det;
+   b -> v[2].n[2] = (a -> v[0].n[0]*a -> v[1].n[1] - a -> v[0].n[1]*a -> v[1].n[0])/det;
+
+   return 1;
+}
+/* Axis of the matrix/array. No specific meaning at all. */
+#define VX      0
+#define VY      1
+#define VZ      2
+/** Initiate a vector */
+void oyVEC3init(oyVEC3* r, double x, double y, double z)
+{
+    r -> n[VX] = x;
+    r -> n[VY] = y;
+    r -> n[VZ] = z;
+}
+/** Multiply two matrices */
+void oyMAT3per(oyMAT3* r, const oyMAT3* a, const oyMAT3* b)
+{
+#define ROWCOL(i, j) \
+    a->v[i].n[0]*b->v[0].n[j] + a->v[i].n[1]*b->v[1].n[j] + a->v[i].n[2]*b->v[2].n[j]
+
+    oyVEC3init(&r-> v[0], ROWCOL(0,0), ROWCOL(0,1), ROWCOL(0,2));
+    oyVEC3init(&r-> v[1], ROWCOL(1,0), ROWCOL(1,1), ROWCOL(1,2));
+    oyVEC3init(&r-> v[2], ROWCOL(2,0), ROWCOL(2,1), ROWCOL(2,2));
+
+#undef ROWCOL //(i, j)
+}
+
+/** Evaluate a vector across a matrix */
+void oyMAT3eval(oyVEC3* r, const oyMAT3* a, const oyVEC3* v)
+{
+    r->n[VX] = a->v[0].n[VX]*v->n[VX] + a->v[0].n[VY]*v->n[VY] + a->v[0].n[VZ]*v->n[VZ];
+    r->n[VY] = a->v[1].n[VX]*v->n[VX] + a->v[1].n[VY]*v->n[VY] + a->v[1].n[VZ]*v->n[VZ];
+    r->n[VZ] = a->v[2].n[VX]*v->n[VX] + a->v[2].n[VY]*v->n[VY] + a->v[2].n[VZ]*v->n[VZ];
+}
+
+/* end of lcms code */
+
+/** convert a matrix to CIE * xy triple */
+int oyMAT3toCIExyYTriple ( const oyMAT3* a, oyCIExyYTriple * triple )
+{
+  int i,j,
+      fail=0;
+  double sum;
+    for(i = 0; i < 3; ++i)
+    {
+      for(j = 0; j < 3; ++j)
+      {
+        if(i < 3 && a->v[i].n[j] == 0)
+          fail = 1;
+      }
+      sum = a->v[i].n[0]+a->v[i].n[1]+a->v[i].n[2];
+      if(sum != 0)
+      {
+        triple->v[i].xy[0] = a->v[i].n[0]/sum;
+        triple->v[i].xy[1] = a->v[i].n[1]/sum;
+      } else
+      {
+        triple->v[i].xy[0] = 1;
+        triple->v[i].xy[1] = 1;
+      }
+    }
+  return fail;
+}
+
+const char * oyMAT3show ( const oyMAT3* a )
+{
+  static char * t = NULL;
+  if(!t) t = (char*) malloc(1024);
+  int i,j;
+  t[0] = 0;
+  for(i = 0; i < 3; ++i)
+  {
+    for(j = 0; j < 3; ++j)
+      sprintf( &t[strlen(t)], " %g", a->v[i].n[j]);
+    sprintf( &t[strlen(t)], "\n" );
+  }
+  return t;
+}
+const char * oyMat34show ( const float a[3][4] )
+{
+  static char * t = NULL;
+  if(!t) t = (char*) malloc(1024);
+  int i,j;
+  t[0] = 0;
+  for(i = 0; i < 3; ++i)
+  {
+    for(j = 0; j < 4; ++j)
+      sprintf( &t[strlen(t)], " %g", a[i][j]);
+    sprintf( &t[strlen(t)], "\n" );
+  }
+  return t;
+}
+const char * oyMat4show ( const float a[4] )
+{
+  static char * t = NULL;
+  if(!t) t = (char*) malloc(1024);
+  int i;
+  t[0] = 0;
+  for(i = 0; i < 4; ++i)
+    sprintf( &t[strlen(t)], " %g", a[i]);
+  sprintf( &t[strlen(t)], "\n" );
+  return t;
+}
+const char * oyMat43show ( const float a[4][3] )
+{
+  static char * t = NULL;
+  if(!t) t = (char*) malloc(1024);
+  int i,j;
+  t[0] = 0;
+  for(i = 0; i < 4; ++i)
+  {
+    for(j = 0; j < 3; ++j)
+      sprintf( &t[strlen(t)], " %g", a[i][j]);
+    sprintf( &t[strlen(t)], "\n" );
+  }
+  return t;
+}
+const char * oyCIExyYTriple_Show( oyCIExyYTriple * triple )
+{
+  static char * t = NULL;
+  if(!t) t = (char*) malloc(1024);
+  int i;
+  t[0] = 0;
+  for(i = 0; i < 3; ++i)
+  {
+    sprintf( &t[strlen(t)], " x:%g y:%g", triple->v[i].xy[0],
+                                          triple->v[i].xy[1]);
+    sprintf( &t[strlen(t)], "\n" );
+  }
+  return t;
 }
 
 
