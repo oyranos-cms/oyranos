@@ -219,7 +219,7 @@ int  oyAdaptationMatrix(oyMAT3* r, const oyMAT3* ConeMatrix, const oyCIEXYZ* Fro
  * Vectors
  */
 #define MATRIX_DET_TOLERANCE    0.0001
-/** Inverse of a matrix b = a^(-1) */
+/** @brief Inverse of a matrix b = a^(-1) */
 int oyMAT3inverse(const oyMAT3* a, oyMAT3* b)
 {
    double det, c0, c1, c2;
@@ -248,14 +248,14 @@ int oyMAT3inverse(const oyMAT3* a, oyMAT3* b)
 #define VX      0
 #define VY      1
 #define VZ      2
-/** Initiate a vector */
+/** @brief Initiate a vector */
 void oyVEC3init(oyVEC3* r, double x, double y, double z)
 {
     r -> n[VX] = x;
     r -> n[VY] = y;
     r -> n[VZ] = z;
 }
-/** Multiply two matrices */
+/** @brief Multiply two matrices */
 void oyMAT3per(oyMAT3* r, const oyMAT3* a, const oyMAT3* b)
 {
 #define ROWCOL(i, j) \
@@ -268,7 +268,7 @@ void oyMAT3per(oyMAT3* r, const oyMAT3* a, const oyMAT3* b)
 #undef ROWCOL //(i, j)
 }
 
-/** Evaluate a vector across a matrix */
+/** @brief Evaluate a vector across a matrix */
 void oyMAT3eval(oyVEC3* r, const oyMAT3* a, const oyVEC3* v)
 {
     r->n[VX] = a->v[0].n[VX]*v->n[VX] + a->v[0].n[VY]*v->n[VY] + a->v[0].n[VZ]*v->n[VZ];
