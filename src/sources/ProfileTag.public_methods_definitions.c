@@ -248,6 +248,7 @@ oyStructList_s *   oyProfileTag_Get  ( oyProfileTag_s    * tag )
   oyCMMapiQuery_s query = {oyQUERY_PROFILE_TAG_TYPE_READ, 0, oyREQUEST_HARD};
   oyCMMapiQuery_s *query_[2] = {0,0};
   oyCMMapiQueries_s queries = {1,0,{0}};
+  const char * sig, * tag_type; /* use for debugging */
 
   if(!s)
     return 0;
@@ -260,6 +261,8 @@ oyStructList_s *   oyProfileTag_Get  ( oyProfileTag_s    * tag )
     query_[0] = &query;
     queries.queries = query_;
     error = !memcpy( queries.prefered_cmm, s->profile_cmm_, 4 );
+    sig = oyICCTagName(s->use);
+    tag_type = oyICCTagTypeName(s->tag_type_);
   }
 
   if(error <= 0)
@@ -280,6 +283,8 @@ oyStructList_s *   oyProfileTag_Get  ( oyProfileTag_s    * tag )
 
     error = !memcpy( s->last_cmm_, cmm, 4 );
   }
+
+  sig = tag_type = NULL;
 
   return values;
 }
