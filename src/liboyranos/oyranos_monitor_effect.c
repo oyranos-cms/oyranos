@@ -40,7 +40,7 @@
 #include "oyranos_texts.h"
 #include "oyConversion_s.h"
 #include "oyProfile_s_.h"
-#include "bb_100K.h"
+#include "oyranos_color_internal.h"
 
 #define USE_BRADFORD 1
 #ifndef USE_BRADFORD
@@ -68,44 +68,17 @@ int      oyAddLinearDisplayEffect    ( oyOptions_s      ** module_options )
   return error;
 }
 
-double oyEstimateTemperature( double cie_a_, double cie_b_ )
-{
-  double temperature = 0;
-
-  if(cie_a_ != 0.0 && cie_b_ != 0.0)
-  {
-    int i;
-    for(i = 1; i <= bb_100K[0][2]; ++i)
-    {
-      double xyz[3] = { bb_100K[i][0], bb_100K[i][1], bb_100K[i][2] };
-      double XYZ[3] = { xyz[0]/xyz[1], 1.0, xyz[2]/xyz[1] };
-      double Lab[3];
-      double cie_a = 0.0, cie_b = 0.0;
-      oyXYZ2Lab( XYZ, Lab);
-
-      cie_a = Lab[1]/256.0 + 0.5;
-      cie_b = Lab[2]/256.0 + 0.5;
-      if(fabs(cie_a - cie_a_) < 0.0001 &&
-         fabs(cie_b - cie_b_) < 0.0001)
-      {
-        temperature = bb_100K[0][0] + i * bb_100K[0][1];
-        break;
-      }
-    }
-  }
-
-  return temperature;
-}
-double oyGetTemperature                ( double              d )
+double oyGetTemperature                ( double              default_ )
 {
   double cie_a = 0.0, cie_b = 0.0, XYZ[3], Lab[3];
   oyGetDisplayWhitePoint( 1 /* automatic */, XYZ );
   oyXYZ2Lab(XYZ,Lab); cie_a = Lab[1]/256.0+0.5; cie_b = Lab[2]/256.0+0.5;
-  double temperature = oyEstimateTemperature( cie_a, cie_b );
-  if(temperature)
+  double dist = 1.0;
+  double temperature = oyEstimateTemperature( cie_a, cie_b, &dist );
+  if(temperature && dist < 0.0001)
     return temperature;
   else
-    return d;
+    return default_;
 }
 
 #define DBG_S_ if(oy_debug >= 1)DBG_S
@@ -344,9 +317,8 @@ uint16_t * oyProfileGetWhitePointRamp( int                 width,
                                        oyProfile_s       * p,
                                        oyOptions_s       * options )
 {
-  oyProfile_s * w      = oyProfile_FromStd ( oyASSUMED_WEB, 0, NULL );
   uint16_t    * ramp   = calloc( sizeof(uint16_t), width*3);
-  oyImage_s   * input  = oyImage_Create( width, 1, ramp, OY_TYPE_123_16, w, 0 );
+  oyImage_s   * input  = oyImage_Create( width, 1, ramp, OY_TYPE_123_16, p, 0 );
   oyImage_s   * output = oyImage_Create( width, 1, ramp, OY_TYPE_123_16, p, 0 );
   int i,j, error, mul = 65536/width;
 
@@ -359,7 +331,8 @@ uint16_t * oyProfileGetWhitePointRamp( int                 width,
   }
 
   if(getenv("OY_DEBUG_WRITE"))
-    oyImage_WritePPM( input, "wtpt-effect-gray.ppm", "gray ramp" );
+    oyImage_WritePPM( input, "wtpt-effect-raw.ppm", "unaltered gray ramp" );
+
 
   oyConversion_Correct( cc, "//" OY_TYPE_STD "/icc_color", 0, NULL);
   error = oyConversion_RunPixels( cc, 0 );
@@ -367,7 +340,19 @@ uint16_t * oyProfileGetWhitePointRamp( int                 width,
     oyMessageFunc_p( oyMSG_WARN,(oyStruct_s*)p, OY_DBG_FORMAT_
                      "found issue while converting ramp: %d", OY_DBG_ARGS_, error );
 
-  oyProfile_Release( &w );
+  if(getenv("OY_DEBUG_WRITE"))
+  {
+    oyFilterGraph_s * cc_graph = oyConversion_GetGraph( cc );
+    oyFilterNode_s * icc = oyFilterGraph_GetNode( cc_graph, -1, "///icc_color", 0 );
+    char * comment = oyjlStringCopy("gray ramp", oyAllocateFunc_);
+    const char * ndesc = oyFilterNode_GetText( icc, oyNAME_NAME );
+    oyjlStringAdd( &comment, oyAllocateFunc_, oyDeAllocateFunc_, "\n%s", ndesc );
+    oyImage_WritePPM( input, "wtpt-effect-gray.ppm", comment );
+    oyFree_m_(comment);
+    oyFilterGraph_Release( &cc_graph );
+    oyFilterNode_Release( &icc );
+  }
+
   oyImage_Release( &input );
   oyImage_Release( &output );
 
@@ -526,16 +511,16 @@ int      oyProfile_CreateEffectVCGT  ( oyProfile_s       * prof )
   int width = 256;
   uint16_t * vcgt = oyProfile_GetVCGT( prof, &width );
   oyImage_s * img;
-  if(getenv("OY_DEBUG_WRITE"))
+  if(vcgt && getenv("OY_DEBUG_WRITE"))
   {
-    img = oyImage_Create( width, 1, vcgt, OY_TYPE_123_16, prof, 0 );
+    img = oyImage_Create( width, 1, vcgt, OY_TYPE_123_16 | oyPlanar_m(1), prof, 0 );
     oyImage_WritePPM( img, "wtpt-vcgt.ppm", "vcgt ramp" );
     oyImage_Release( &img );
   }
 
   /* 4. create conversion, fill ramp and convert */
   uint16_t * ramp = oyProfileGetWhitePointRamp( width, prof, module_options );
-  if(getenv("OY_DEBUG_WRITE"))
+  if(ramp && getenv("OY_DEBUG_WRITE"))
   {
     img = oyImage_Create( width, 1, ramp, OY_TYPE_123_16, prof, 0 );
     oyImage_WritePPM( img, "wtpt-effect.ppm", "white point ramp" );
@@ -544,16 +529,16 @@ int      oyProfile_CreateEffectVCGT  ( oyProfile_s       * prof )
 
   /* 5. mix the two ramps */
   uint16_t * mix = NULL;
-  if(mix)
+  if(vcgt)
     mix = calloc( sizeof(uint16_t), width*3);
   int i,j;
   if(mix)
   for(i = 0; i < width; ++i)
     for(j = 0; j < 3; ++j)
       mix[i*3+j] = OY_ROUNDp( oyLinInterpolateRampU16c( vcgt, width, j,3, oyLinInterpolateRampU16c( ramp, width, j, 3, (double)i/width )/65535.) );
-  if(getenv("OY_DEBUG_WRITE"))
+  if(mix && getenv("OY_DEBUG_WRITE"))
   {
-    img  = oyImage_Create( width, 1, mix, OY_TYPE_123_16, prof, 0 );
+    img  = oyImage_Create( width, 1, mix, OY_TYPE_123_16 | oyPlanar_m(1), prof, 0 );
     oyImage_WritePPM( img, "wtpt-mix.ppm", "white point + vcgt" );
     oyImage_Release( &img );
   }
