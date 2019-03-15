@@ -102,9 +102,10 @@ int        oyIMProfileCanHandle      ( oyCMMQUERY_e      type,
          break;
     case oyQUERY_PROFILE_TAG_TYPE_READ:
          switch(value) {
+         case icSigS15Fixed16ArrayType:
          case icSigColorantOrderType:
          case icSigColorantTableType:
-         case 0x74726C63:
+         case 0x74726C63: /* trlc */
          case icSigCurveType:
          case icSigDeviceSettingsType:
          case icSigDescriptiveNameValueMuArrayType_:
@@ -486,6 +487,11 @@ int  oyWriteIcSigLutAtoBType         ( oyStructList_s    * texts,
  *
  *  The output depends on the tags type signature in tag->tag_type_ as follows:
  *
+ *   - icSigS15Fixed16ArrayType:
+ *    - since Oyranos 0.9.7 (API 0.9.7)
+ *      - a string describing the values
+ *      - a option with name array containing the doubles
+ *
  *  - icSigColorantOrderType and :
  *    - since Oyranos 0.1.12 (API 0.9.7)
  *    - returns: text list
@@ -655,6 +661,19 @@ oyStructList_s * oyIMProfileTag_GetValues(
   if(!tag)
   {
     oyStructList_s * list = oyStructList_New( 0 );
+
+    oyName_s description_chad = {
+      oyOBJECT_NAME_S, 0,0,0,
+      CMM_NICK,
+      "chad",
+      "\
+- icSigS15Fixed16ArrayType and :\
+  - since Oyranos 0.9.7 (API 0.9.7)\
+  - returns:\
+    - a string describing the values\
+    - a option with name array containing the doubles",
+      {0}
+    };
 
     oyName_s description_clro = {
       oyOBJECT_NAME_S, 0,0,0,
@@ -891,6 +910,10 @@ oyStructList_s * oyIMProfileTag_GetValues(
     description = (oyStruct_s*) &description_mluc;
     error = oyStructList_MoveIn( list, &description, -1, 0 );
 
+    description = (oyStruct_s*) &description_chad;
+    if(!error)
+      error = oyStructList_MoveIn( list, &description, -1, 0 );
+
     description = (oyStruct_s*) &description_clro;
     if(!error)
       error = oyStructList_MoveIn( list, &description, -1, 0 );
@@ -971,6 +994,30 @@ oyStructList_s * oyIMProfileTag_GetValues(
     if(!error)
     switch( (uint32_t)sig )
     {
+      case icSigS15Fixed16ArrayType:
+
+           if (tag_size < 12)
+           { return texts; }
+
+           if(error <= 0)
+           {
+             icS15Fixed16Array * array = (icS15Fixed16Array*)&mem[8];
+             int i, count = (tag_size - 8)/4;            
+
+             opt = oyOption_FromRegistration( "////array", 0 );
+             for(i = 0; i < count; ++i)
+             {
+               oyOption_SetFromDouble( opt, oyValueInt32(array->data[i])/65536.0, i, 0 );
+               oyjlStringAdd( &tmp, AD, "%s%f", i?" ":"", oyOption_GetValueDouble(opt,i) );
+             }
+
+             oyStructList_AddName( texts, tmp, -1, oyNAME_NAME );
+             oyStructList_MoveIn( texts, (oyStruct_s**)&opt, -1, 0 );
+
+             if(tmp) oyFree_m_(tmp);
+           }
+           
+           break;
       case icSigColorantOrderType:
            if (tag_size <= 12)
            { return texts; }
