@@ -27,8 +27,8 @@
 #include <time.h>
 #include <unistd.h> /* usleep() */
 
-#include "bb_100K.h"
 #include "oyranos_color.h"
+#include "oyranos_color_internal.h"
 #include "oyranos_conversion.h"
 #include "oyranos_debug.h"
 #include "oyranos_helper.h"
@@ -61,8 +61,6 @@ int setWtptMode( oySCOPE_e scope, int wtpt_mode, int dry );
 void pingNativeDisplay();
 int checkWtptState();
 void updateVCGT();
-double estimateTemperature( double cie_a, double cie_b );
-double getTemperature                ( double              d );
 
 static uint32_t icc_profile_flags = 0;
 static oyjlOptionChoice_s * linear_effect_choices_ = NULL;
@@ -169,17 +167,6 @@ static oyjlOptionChoice_s * getLinearEffectProfileChoices (
     } else
       return NULL;
 }
-double getTemperature                ( double              d )
-{
-  double cie_a = 0.0, cie_b = 0.0, XYZ[3], Lab[3];
-  oyGetDisplayWhitePoint( 1 /* automatic */, XYZ );
-  oyXYZ2Lab(XYZ,Lab); cie_a = Lab[1]/256.0+0.5; cie_b = Lab[2]/256.0+0.5;
-  double temperature = estimateTemperature( cie_a, cie_b );
-  if(temperature)
-    return temperature;
-  else
-    return d;
-}
 double getDoubleFromDB               ( const char        * key,
                                        double              fallback )
 {
@@ -231,7 +218,7 @@ oyjlOptionChoice_s * getWhitePointChoices       ( oyjlOption_s      * o,
 
           if(i == 1 && !skip_temperature_info) /* automatic */
           {
-            double temperature = getTemperature(0);
+            double temperature = oyGetTemperature(0);
             if(temperature)
               oyStringAddPrintf( &c[i].name, 0,0, " %g %s ", temperature, _("Kelvin") );
           }
@@ -349,7 +336,7 @@ int main( int argc , char** argv )
       /*  The white point profiles will be generated in many different shades, which will explode
        *  conversion cache. Thus we limit the possible shades to 100 kelvin steps, which in turn
        *  limits to around 100 profiles per monitor white point. */
-      _("KELVIN"), oyjlOPTIONTYPE_DOUBLE, {.dbl.start = 1100, .dbl.end = 10100, .dbl.tick = 100, .dbl.d = getTemperature(5000)}, oyjlDOUBLE, {.d=&temperature} },
+      _("KELVIN"), oyjlOPTIONTYPE_DOUBLE, {.dbl.start = 1100, .dbl.end = 10100, .dbl.tick = 100, .dbl.d = oyGetTemperature(5000)}, oyjlDOUBLE, {.d=&temperature} },
     {"oiwi", 0, 'g', "night-effect", NULL, _("Night effect"), _("Set night time effect"), _("A ICC profile of class abstract. Ideally the effect profile works on 1D RGB curves only and is marked meta:EFFECT_linear=yes ."), _("ICC_PROFILE"), oyjlOPTIONTYPE_FUNCTION, {.getChoices = getLinearEffectProfileChoices}, oyjlSTRING, {.s=&night_effect} },
     {"oiwi", 0, 'e', "sunlight-effect", NULL, _("Sun light effect"), _("Set day time effect"), _("A ICC profile of class abstract. Ideally the effect profile works on 1D RGB curves only and is marked meta:EFFECT_linear=yes ."), _("ICC_PROFILE"), oyjlOPTIONTYPE_FUNCTION, {.getChoices = getLinearEffectProfileChoices}, oyjlSTRING, {.s=&sunlight_effect} },
     {"oiwi", 0, 'b', "night-backlight", NULL, _("Night Backlight"), _("Set Nightly Backlight"), _("The option needs xbacklight installed and supporting your device for dimming the monitor lamp."), _("PERCENT"), oyjlOPTIONTYPE_DOUBLE,
@@ -459,6 +446,7 @@ int main( int argc , char** argv )
     double cie_a = 0.0, cie_b = 0.0;
     char * comment = NULL;
     double old_temperature = 0;
+    double dist = 1.0;
     oyXYZ2Lab( XYZ, Lab);
 
     oyGetDisplayWhitePoint( 1 /* automatic */, oldXYZ );
@@ -466,8 +454,8 @@ int main( int argc , char** argv )
     cie_a = oldLab[1]/256.0 + 0.5;
     cie_b = oldLab[2]/256.0 + 0.5;
 
-    old_temperature = estimateTemperature( cie_a, cie_b );
-    if(old_temperature)
+    old_temperature = oyEstimateTemperature( cie_a, cie_b, &dist );
+    if(old_temperature && dist < 0.0001)
       oyStringAddPrintf( &comment, 0,0, "Old Temperature:: %g ", old_temperature );
     oyStringAddPrintf( &comment, 0,0, "Old cie_a: %f cie_b: %f ", cie_a, cie_b );
     cie_a = Lab[1]/256.0 + 0.5;
@@ -507,7 +495,7 @@ int main( int argc , char** argv )
         char * tmp = NULL;
         if(i == 1) /* automatic */
         {
-          double temperature = getTemperature(0);
+          double temperature = oyGetTemperature(0);
           if(temperature)
           {
             oyStringAddPrintf( &tmp, 0,0, "%g %s ", temperature, _("Kelvin") );
@@ -717,10 +705,12 @@ void updateVCGT()
   for(i = 0; i < count; ++i)
   {
     int r OY_UNUSED;
+    /* write VCGT to temporary profile */
     oyStringAddPrintf(&cmd, 0,0, "oyranos-monitor -c -f vcgt -d %d -o %s", i, tmpname);
     fputs(cmd, stderr); fputs("\n", stderr );
     r = system( cmd );
     oyFree_m_(cmd);
+    /* upload VCGT tag from temporary profile */
     oyStringAddPrintf(&cmd, 0,0, "oyranos-monitor -g -d %d %s", i, tmpname);
     fputs(cmd, stderr); fputs("\n", stderr );
     r = system( cmd );
@@ -730,35 +720,6 @@ void updateVCGT()
   DBG_S_( oyPrintTime() );
 }
 
-double estimateTemperature( double cie_a_, double cie_b_ )
-{
-  double temperature = 0;
-
-  if(cie_a_ != 0.0 && cie_b_ != 0.0)
-  {
-    int i;
-    for(i = 1; i <= bb_100K[0][2]; ++i)
-    {
-      double xyz[3] = { bb_100K[i][0], bb_100K[i][1], bb_100K[i][2] };
-      double XYZ[3] = { xyz[0]/xyz[1], 1.0, xyz[2]/xyz[1] };
-      double Lab[3];
-      double cie_a = 0.0, cie_b = 0.0;
-      oyXYZ2Lab( XYZ, Lab);
-
-      cie_a = Lab[1]/256.0 + 0.5;
-      cie_b = Lab[2]/256.0 + 0.5;
-      if(fabs(cie_a - cie_a_) < 0.0001 &&
-         fabs(cie_b - cie_b_) < 0.0001)
-      {
-        temperature = bb_100K[0][0] + i * bb_100K[0][1];
-        break;
-      }
-    }
-  }
-
-  return temperature;
-}
-
 int findLocation(oySCOPE_e scope, int dry)
 {
   int error = 0;
@@ -766,7 +727,7 @@ int findLocation(oySCOPE_e scope, int dry)
   {
     size_t size = 0;
     char * geo_json = oyReadUrlToMemf_( &size, "r", oyAllocateFunc_,
-                                        "http://freegeoip.net/json/", NULL ),
+                                        "https://location.services.mozilla.com/v1/geolocate?key=test", NULL ),
 	 * value = NULL;
     oyjl_val root = 0;
     oyjl_val v = 0;
@@ -789,11 +750,11 @@ int findLocation(oySCOPE_e scope, int dry)
     {
       char * json = NULL;
       int level = 0;
-      v = oyjlTreeGetValueF( root, 0, "latitude", NULL );
+      v = oyjlTreeGetValueF( root, 0, "location/lat" );
       value = oyjlValueText( v, oyAllocateFunc_ );
       if(oyStringToDouble( value, &lat ))
         error = 1;
-      v = oyjlTreeGetValueF( root, 0, "longitude", NULL );
+      v = oyjlTreeGetValueF( root, 0, "location/lng" );
       value = oyjlValueText( v, oyAllocateFunc_ );
       if(oyStringToDouble( value, &lon ))
         error = 1;
