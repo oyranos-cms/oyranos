@@ -2555,6 +2555,7 @@ int                oyProfile_AddDevice(oyProfile_s       * profile,
 }
 #endif
 
+
 /**
  *  @brief get the ICC*XYZ coordinates of a white point
  *
@@ -2563,18 +2564,20 @@ int                oyProfile_AddDevice(oyProfile_s       * profile,
  *  @return                            0 - success; -1 - no white point available; < 1 - error
  *
  *  @version Oyranos: 0.9.7
- *  @date    2018/02/28
+ *  @date    2019/03/14
  *  @since   2017/06/06 (Oyranos: 0.9.7)
  */
 int      oyProfile_GetWhitePoint     ( oyProfile_s       * profile,
                                        double            * ICC_XYZ )
 {
   int error = -1;
+  oyMAT3 CHAD = {{ {{1,0,0}},{{0,1,0}},{{0,0,1}} }},
+         CHAD_INVERSE;
   if(profile)
   {
-    oyProfileTag_s * wtpt = NULL;
+    oyProfileTag_s * wtpt = NULL, * chad = NULL;
     oyStructList_s * s = NULL;
-    int count, j;
+    int count, i,j;
     wtpt = oyProfile_GetTagById( profile, icSigMediaWhitePointTag ); 
 
     s = oyProfileTag_Get( wtpt );
@@ -2584,7 +2587,7 @@ int      oyProfile_GetWhitePoint     ( oyProfile_s       * profile,
       oyOption_s * opt = (oyOption_s*) oyStructList_GetType( s, j,
                                                             oyOBJECT_OPTION_S );
       if(opt && strstr( oyOption_GetRegistration( opt ), "icSigXYZType" ) != NULL)
-      { int i;
+      {
         double XYZ[3] = { oyOption_GetValueDouble( opt, 0 ),
                           oyOption_GetValueDouble( opt, 1 ),
                           oyOption_GetValueDouble( opt, 2 ) };
@@ -2595,6 +2598,57 @@ int      oyProfile_GetWhitePoint     ( oyProfile_s       * profile,
     }
 
     oyProfileTag_Release( &wtpt );
+    oyStructList_Release( &s );
+
+
+    /* apply inverse chromatic adaption,
+     * it is used to adapt ICC v4 default D50 white point to absolute XYZ */
+    chad = oyProfile_GetTagById( profile, icSigChromaticAdaptionMatrix ); 
+
+    s = oyProfileTag_Get( chad );
+    count = oyStructList_Count( s );
+    for(j = 0; j < count; ++j)
+    {
+      oyOption_s * opt = (oyOption_s*) oyStructList_GetType( s, j,
+                                                             oyOBJECT_OPTION_S );
+      const char * reg = oyOption_GetRegistration( opt );
+      if(opt && strstr( reg, "array" ) != NULL)
+      {
+        int k;
+        int count = oyOption_GetValueDouble(opt, -1) + 0.5;
+        if(count != 9)
+        {
+          WARNc1_S("\"chad\" expected to have 9 values but contained: %s", count);
+        } else
+          for(k = 0; k < 3; ++k)
+            for(i = 0; i < 3; ++i)
+              CHAD.v[k].n[i] = oyOption_GetValueDouble( opt, k*3+i );
+      }
+    }
+    if(oy_debug)
+      oyMessageFunc_p( oyMSG_DBG, NULL, OY_DBG_FORMAT_ "found chad:\n%s",
+                       OY_DBG_ARGS_, oyMAT3show(&CHAD) );
+    if(chad)
+    {
+      oyVEC3 D50, r;
+      for(i = 0; i < 3; ++i)
+        D50.n[i] = ICC_XYZ[i];
+      oyMAT3inverse( &CHAD, &CHAD_INVERSE );
+      oyMAT3eval( &r, &CHAD_INVERSE, &D50 );
+      for(i = 0; i < 3; ++i)
+        ICC_XYZ[i] = r.n[i];
+      if(oy_debug)
+      {
+        double cie_a = 0.0, cie_b = 0.0, Lab[3];
+        oyXYZ2Lab(ICC_XYZ,Lab); cie_a = Lab[1]/256.0+0.5; cie_b = Lab[2]/256.0+0.5;
+        double temperature = oyEstimateTemperature( cie_a, cie_b, NULL );
+        oyMessageFunc_p( oyMSG_DBG, NULL,
+                       OY_DBG_FORMAT_ "ICC absolute wtpt: %f %f %f  ~ %d Kelvin", OY_DBG_ARGS_,
+                       ICC_XYZ[0], ICC_XYZ[1], ICC_XYZ[2], cie_a, cie_b, (int)temperature );
+      }
+    }
+
+    oyProfileTag_Release( &chad );
     oyStructList_Release( &s );
   }
 
