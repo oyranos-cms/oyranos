@@ -19,6 +19,8 @@
 #include <string.h>
 
 #include "oyranos_color.h"
+#include "oyranos_helper_macros.h"
+#include "bb_100K.h"
 
 /** \addtogroup color Color
  *  @brief Color and Color Management APIs
@@ -153,6 +155,42 @@ void         oyICCXYZrel2CIEabsXYZ   ( const double      * ICCXYZ,
   int i = 0;
   for( ; i < 3; ++i )
     CIEXYZ[i] = (ICCXYZ[i] * (XYZmax[i] - XYZmin[i]) + XYZmin[i]) / XYZwhite[i];
+}
+
+double oyEstimateTemperature( double cie_a_, double cie_b_, double * dist )
+{
+  double temperature = 0;
+
+  if(cie_a_ != 0.0 && cie_b_ != 0.0)
+  {
+    int i;
+    int pos = -1;
+    double min = 1.0;
+    for(i = 1; i <= bb_100K[0][2]; ++i)
+    {
+      double xyz[3] = { bb_100K[i][0], bb_100K[i][1], bb_100K[i][2] };
+      double XYZ[3] = { xyz[0]/xyz[1], 1.0, xyz[2]/xyz[1] };
+      double Lab[3];
+      double cie_a = 0.0, cie_b = 0.0;
+      oyXYZ2Lab( XYZ, Lab);
+
+      cie_a = Lab[1]/256.0 + 0.5;
+      cie_b = Lab[2]/256.0 + 0.5;
+      {
+        double dist_ = OY_HYP(fabs(cie_a - cie_a_),fabs(cie_b - cie_b_));
+        if(dist_ < min)
+        {
+          min = dist_;
+          pos = i;
+        }
+        if(dist) *dist = dist_;
+      }
+    }
+    if(i > 0)
+      temperature = bb_100K[0][0] + pos * bb_100K[0][1];
+  }
+
+  return temperature;
 }
 
 // Compute chromatic adaptation matrix using Chad as cone matrix
