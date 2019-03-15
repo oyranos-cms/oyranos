@@ -45,6 +45,7 @@
 
 
 #include "oyranos_color.h"
+#include "oyranos_color_internal.h"
 #include "oyranos_debug.h"
 #include "oyranos_helper.h"
 #include "oyranos_helper_macros.h"
@@ -57,7 +58,6 @@
 
 #include "ciexyz31_2.h" /* cieXYZ_31_2 1931 2° */
 #include "ciexyz64_1.h"
-#include "bb_100K.h"
 #include "spd_A_5.h"
 #include "spd_D65_5.h"
 #include "spd_S1S2S3_5.h"
