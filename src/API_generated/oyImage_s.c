@@ -293,29 +293,26 @@ oyPointer oyImage_GetArray2dPointPlanar( oyImage_s       * image,
  *  We assume a channel after channel behaviour without line interweaving.
  *  Will be used by default.
  *
- *  @version Oyranos: 0.1.8
+ *  @version Oyranos: 0.9.7
+ *  @date    2019/03/11
  *  @since   2008/08/23 (Oyranos: 0.1.8)
- *  @date    2008/08/24
  */
 oyPointer oyImage_GetArray2dLinePlanar ( oyImage_s       * image,
-                                         int               point_y OY_UNUSED,
+                                         int               point_y,
                                          int             * height,
-                                         int               channel OY_UNUSED,
+                                         int               channel,
                                          int             * is_allocated OY_UNUSED )
 {
   if(height) *height = 1;
-  WARNcc_S(image, "planar pixel access not implemented")
-  return 0;
-#if 0 /* SunC: warning: statement not reached */
-  oyArray2d_s * a = (oyArray2d_s*) image->pixel_data;
+  oyImage_s_ * image_ = oyImagePriv_m(image);
+  oyArray2d_s_ * a = (oyArray2d_s_*) image_->pixel_data;
   unsigned char ** array2d = a->array2d;
   if(is_allocated) *is_allocated = 0;
+  if(channel < 0)
+    channel = 0;
+  int pos = channel * image_->width * image_->layout_[oyDATA_SIZE];
   /* it makes no sense to use more than one line */                   
-  return &array2d[ 0 ][   image->width
-                        * image->layout_[oyCOFF]
-                        * image->layout_[oyCHAN0+channel]
-                        * image->layout_[oyDATA_SIZE] ];
-#endif
+  return &array2d[ point_y ][ pos ];
 }
 
 
@@ -1141,6 +1138,7 @@ int            oyImage_ReadArray     ( oyImage_s         * image,
  *  @param[in]     file_name           a writeable file name, The file can 
  *                                     contain "%d" to include the image ID.
  *  @param[in]     free_text           A text to include as comment.
+ *  @return                            error
  *
  *  @version Oyranos: 0.3.1
  *  @date    2011/05/12
@@ -1187,6 +1185,7 @@ int          oyImage_WritePPM        ( oyImage_s         * image,
 
       int cchan_n = oyProfile_GetChannelsCount( s->profile_ );
       int channels = oyToChannels_m( s->layout_[oyLAYOUT] );
+      int planar = oyToPlanar_m( s->layout_[oyLAYOUT] );
       int bigendian = oyToByteswap_m( s->layout_[oyLAYOUT] ) != (uint8_t)oyBigEndian();
       oyDATATYPE_e data_type = oyToDataType_m( s->layout_[oyLAYOUT] );
       int alpha = channels - cchan_n;
@@ -1242,6 +1241,9 @@ int          oyImage_WritePPM        ( oyImage_s         * image,
       oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
                 " oyImage_s: %d\n",
                 oyObject_GetId( image->oy_ ) );
+      if(planar)
+        oyjlStringAdd( &t, oyAllocateFunc_, oyDeAllocateFunc_,
+                " PLANAR: 1\n" );
       if(vs) { free(vs); vs = 0; }
       len = strlen( t );
       do { fputc ( t[pt] , fp); if(t[pt] == '\n') fputc( '#', fp ); pt++; } while (--len); pt = 0;
@@ -1335,6 +1337,7 @@ int          oyImage_WritePPM        ( oyImage_s         * image,
                                             &is_allocated );
         len = n * byteps;
 
+        if(out_values)
         for( l = 0; l < height; ++l )
         {
           if(byteps == 8)
@@ -1350,6 +1353,13 @@ int          oyImage_WritePPM        ( oyImage_s         * image,
           for(i = 0; i < len; ++i)
             fputc ( out_values[l * len + i] , fp);
         }
+        else
+        {
+          oyMessageFunc_p( oyMSG_WARN, (oyStruct_s*)image,
+             OY_DBG_FORMAT_ " no line obtained for: %s",
+             OY_DBG_ARGS_, file_name );
+          error = 1;
+        }
 
         if(is_allocated)
           image->oy_->deallocateFunc_(out_values);
@@ -1357,6 +1367,8 @@ int          oyImage_WritePPM        ( oyImage_s         * image,
 
       fflush( fp );
       fclose (fp);
+      if(error)
+        remove(file_name);
   }
 
   return error;
