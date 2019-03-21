@@ -1137,9 +1137,6 @@ int          oyImage_WritePPM        ( oyImage_s         * image,
       oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
                 " oyImage_s: %d\n",
                 oyObject_GetId( image->oy_ ) );
-      if(planar)
-        oyjlStringAdd( &t, oyAllocateFunc_, oyDeAllocateFunc_,
-                " PLANAR: 1\n" );
       if(vs) { free(vs); vs = 0; }
       len = strlen( t );
       do { fputc ( t[pt] , fp); if(t[pt] == '\n') fputc( '#', fp ); pt++; } while (--len); pt = 0;
@@ -1186,7 +1183,8 @@ int          oyImage_WritePPM        ( oyImage_s         * image,
 
       if(alpha ||
          cchan_n > 3 ||
-         !bigendian)
+         !bigendian ||
+         planar)
       {
         const char *tupl = "RGB_ALPHA";
 
@@ -1202,9 +1200,9 @@ int          oyImage_WritePPM        ( oyImage_s         * image,
           tupl = "DEVN";
 
         snprintf( text, 128, "WIDTH %d\nHEIGHT %d\nDEPTH %d\nMAXVAL "
-                  "%s\nTUPLTYPE %s\nBIGENDIAN %d\nENDHDR\n",
+                  "%s\nTUPLTYPE %s\n" /*planar*/ "%sBIGENDIAN %d\nENDHDR\n",
                   s->width, s->height,
-                  channels, bytes, tupl, bigendian );
+                  channels, bytes, tupl, planar?"PLANAR 1\n":"", bigendian );
         len = strlen( text );
         do { fputc ( text[pt++] , fp); } while (--len); pt = 0;
 
