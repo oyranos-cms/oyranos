@@ -32,7 +32,7 @@ float        oyLinInterpolateRampU16c( uint16_t          * ramp,
     return ramp[0];
 
   if(pos >= 1.0)
-    return ramp[ramp_size-1];
+    return ramp[ramp_size*ramp_channels-ramp_channels+ramp_channel];
 
   dist = modff( pos*(ramp_size-1), &start );
   val1 = ramp[(int)start*ramp_channels+ramp_channel];
