@@ -42,10 +42,6 @@
 #include "oyProfile_s_.h"
 #include "oyranos_color_internal.h"
 
-#define USE_BRADFORD 1
-#ifndef USE_BRADFORD
-#define USE_LAB
-#endif
 
 /* The function allows only a effect profile with meta:"EFFECT_linear", "yes". */
 int      oyAddLinearDisplayEffect    ( oyOptions_s      ** module_options )
@@ -75,7 +71,8 @@ double oyGetTemperature                ( double              default_ )
   oyXYZ2Lab(XYZ,Lab); cie_a = Lab[1]/256.0+0.5; cie_b = Lab[2]/256.0+0.5;
   double dist = 1.0;
   double temperature = oyEstimateTemperature( cie_a, cie_b, &dist );
-  if(temperature && dist < 0.0001)
+  if( (temperature && dist < 0.0001) ||
+      default_ < 0 )
     return temperature;
   else
     return default_;
@@ -90,12 +87,9 @@ double oyGetTemperature                ( double              default_ )
 int      oyProfileAddWhitePointEffect( oyProfile_s       * monitor_profile,
                                        oyOptions_s      ** module_options )
 {
-#ifdef USE_LAB
-  double        src_cie_a = 0.5, src_cie_b = 0.5, dst_cie_a = 0.5, dst_cie_b = 0.5;
-  double Lab[3];
-#endif
   oyProfile_s * wtpt = NULL;
-  double        src_XYZ[3] = {0.0, 0.0, 0.0}, dst_XYZ[3] = {0.0, 0.0, 0.0};
+  double        src_XYZ[3] = {0.0, 0.0, 0.0}, dst_XYZ[3] = {0.0, 0.0, 0.0},
+                scale = 1.0;
   int error = oyProfile_GetWhitePoint( monitor_profile, src_XYZ );
   int32_t display_white_point = oyGetBehaviour( oyBEHAVIOUR_DISPLAY_WHITE_POINT );
   oyOptions_s * result_opts = NULL, * opts = NULL;
@@ -120,14 +114,8 @@ int      oyProfileAddWhitePointEffect( oyProfile_s       * monitor_profile,
   if(isnan(dst_XYZ[0]))
     error = 1;
 
-#ifdef USE_BRADFORD
   desc = oyProfile_GetText( monitor_profile, oyNAME_DESCRIPTION );
-  oyMessageFunc_p( error ? oyMSG_WARN:oyMSG_DBG,(oyStruct_s*)monitor_profile, OY_DBG_FORMAT_
-                   "%s display_white_point: %d [%g %g %g] -> [%g %g %g] %d", OY_DBG_ARGS_,
-          desc, display_white_point,
-          src_XYZ[0], src_XYZ[1], src_XYZ[2], dst_XYZ[0], dst_XYZ[1], dst_XYZ[2], error);
-  if(error > 0)
-    return error;
+
   error = oyOptions_SetFromString( &opts, "//" OY_TYPE_STD "/src_name", desc, OY_CREATE_NEW );
   if(error)
     return error;
@@ -136,23 +124,42 @@ int      oyProfileAddWhitePointEffect( oyProfile_s       * monitor_profile,
     int current = -1, choices = 0;
     const char ** choices_string_list = NULL;
     uint32_t flags = 0;
+#ifdef HAVE_LOCALE_H
+    char * old_loc = strdup(setlocale(LC_ALL,NULL));
+    setlocale(LC_ALL,"C");
+#endif
     error = oyOptionChoicesGet2( oyWIDGET_DISPLAY_WHITE_POINT, flags,
                                  oyNAME_NAME, &choices,
                                  &choices_string_list, &current );
+#ifdef HAVE_LOCALE_H
+    setlocale(LC_ALL,old_loc);
+#endif
     if(current > 0 && current < choices && choices_string_list)
     {
       if(current == 1) /* automatic */
       {
-        double temperature = oyGetTemperature(0);
+        double temperature = oyGetTemperature(-1);
         char k[12];
         sprintf(k, "%dK", (int)temperature);
         error = oyOptions_SetFromString( &opts, "//" OY_TYPE_STD "/illu_name", k, OY_CREATE_NEW );
+        if(temperature <= 0.1)
+          oyMessageFunc_p( oyMSG_WARN,(oyStruct_s*)monitor_profile, OY_DBG_FORMAT_
+                   "automatic display_white_point: [%g %g %g] %s", OY_DBG_ARGS_,
+                   dst_XYZ[0], dst_XYZ[1], dst_XYZ[2], k);
       }
       else
         error = oyOptions_SetFromString( &opts, "//" OY_TYPE_STD "/illu_name", choices_string_list[current], OY_CREATE_NEW );
+      oyMessageFunc_p( oyMSG_WARN,(oyStruct_s*)monitor_profile, OY_DBG_FORMAT_
+                   "illu_name: %s", OY_DBG_ARGS_,
+                   oyOptions_FindString( opts, "illu_name", 0) );
     }
     oyOptionChoicesFree( oyWIDGET_DISPLAY_WHITE_POINT, &choices_string_list, choices );
   }
+
+  if(oy_debug)
+    oyMessageFunc_p( oyMSG_WARN, NULL, OY_DBG_FORMAT_
+                   "src_name: %s -> illu_name: %s",
+                   OY_DBG_ARGS_, oyOptions_FindString(opts, "src_name", 0), oyOptions_FindString(opts, "illu_name", 0) );
   error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/src_iccXYZ", src_XYZ[0], 0, OY_CREATE_NEW );
   error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/src_iccXYZ", src_XYZ[1], 1, OY_CREATE_NEW );
   error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/src_iccXYZ", src_XYZ[2], 2, OY_CREATE_NEW );
@@ -164,6 +171,8 @@ int      oyProfileAddWhitePointEffect( oyProfile_s       * monitor_profile,
                             opts,             "create_profile.white_point_adjust.bradford.file_name",
                             &result_opts );
   DBG_S_( oyPrintTime() );
+
+  /* write cache profile for slightly better speed and useful for debugging */
   if(error == 0)
   {
     const char * file_name = oyOptions_FindString( result_opts, "file_name", 0 );
@@ -182,8 +191,98 @@ int      oyProfileAddWhitePointEffect( oyProfile_s       * monitor_profile,
                      "found file_name: %s -> %s\n", OY_DBG_ARGS_, file_name, cache_path );
       wtpt = oyProfile_FromFile( cache_path, 0,0 );
       DBG_S_( oyPrintTime() );
-    } else
+    }
+  }
+
+  if(!error && wtpt)
+  {
+    oyOptions_MoveInStruct( module_options,
+                          OY_STD "/icc_color/display.icc_profile.abstract.white_point.automatic.oy-monitor",
+                          (oyStruct_s**) &wtpt, OY_CREATE_NEW );
+    oyOptions_Release( &result_opts );
+    oyOptions_Release( &opts );
+
+    return error;
+  }
+
+  if(!error && !wtpt)
+  {
+    /* detect scaling factor
+     * - convert monitor device RGB to XYZ,
+     * - apply white point adaption matrix,
+     * - convert back to monitor device RGB and
+     * - again to XYZ to detect clipping and
+     * - use that information for scaling inside the white point effect profile */
+    oyProfile_s * xyz_profile = oyProfile_FromStd( oyASSUMED_XYZ, 0, 0 );
+    float rgb[9] = {1,0,0, 0,1,0, 0,0,1},
+          xyz[9] = {0,0,0, 0,0,0, 0,0,0};
+    oyDATATYPE_e buf_type = oyFLOAT;
+    oyConversion_s * cc_moni2xyz = oyConversion_CreateBasicPixelsFromBuffers(
+                              monitor_profile, rgb, oyDataType_m(buf_type),
+                              xyz_profile, xyz, oyDataType_m(buf_type),
+                              0, 3 );
+    oyConversion_s * cc_xyz2moni = oyConversion_CreateBasicPixelsFromBuffers(
+                              xyz_profile, xyz, oyDataType_m(buf_type),
+                              monitor_profile, rgb, oyDataType_m(buf_type),
+                              0, 3 );
+    oyMAT3 wtpt_adapt;
+    oyCIEXYZ srcWtpt = {src_XYZ[0], src_XYZ[1], src_XYZ[2]},
+             dstIllu = {dst_XYZ[0], dst_XYZ[1], dst_XYZ[2]};
+    error = !oyAdaptationMatrix( &wtpt_adapt, NULL, &srcWtpt, &dstIllu );
+    int i,j;
+    for(j = 0; j < 100; ++j)
     {
+      oyConversion_RunPixels( cc_moni2xyz, 0 );
+      if(oy_debug)
+        oyMessageFunc_p( oyMSG_DBG,(oyStruct_s*)cc_moni2xyz, OY_DBG_FORMAT_
+                   "rgb->xyz:\nR[%g %g %g] G[%g %g %g] B[%g %g %g]",
+                   OY_DBG_ARGS_, xyz[0], xyz[1], xyz[2], xyz[3], xyz[4], xyz[5], xyz[6], xyz[7], xyz[8]);
+      oyVEC3 rXYZ, srcXYZ[3] = { {{xyz[0], xyz[1], xyz[2]}}, {{xyz[3], xyz[4], xyz[5]}}, {{xyz[6], xyz[7], xyz[8]}} };
+      oyMAT3 wtpt_adapt_scaled,
+             scale_mat = {{ {{scale,0,0}}, {{0,scale,0}}, {{0,0,scale}} }};
+      oyMAT3per( &wtpt_adapt_scaled, &wtpt_adapt, &scale_mat );
+      oyMAT3eval( &rXYZ, &wtpt_adapt_scaled, &srcXYZ[0] ); for(i = 0; i < 3; ++i) xyz[0+i] = rXYZ.n[i];
+      oyMAT3eval( &rXYZ, &wtpt_adapt_scaled, &srcXYZ[1] ); for(i = 0; i < 3; ++i) xyz[3+i] = rXYZ.n[i];
+      oyMAT3eval( &rXYZ, &wtpt_adapt_scaled, &srcXYZ[2] ); for(i = 0; i < 3; ++i) xyz[6+i] = rXYZ.n[i];
+      if(oy_debug)
+        oyMessageFunc_p( oyMSG_DBG,(oyStruct_s*)cc_moni2xyz, OY_DBG_FORMAT_
+                   "srcWtpt->Illu:\nR[%g %g %g] G[%g %g %g] B[%g %g %g]", OY_DBG_ARGS_,
+          xyz[0], xyz[1], xyz[2], xyz[3], xyz[4], xyz[5], xyz[6], xyz[7], xyz[8]);
+      oyConversion_RunPixels( cc_xyz2moni, 0 );
+      if(oy_debug)
+        oyMessageFunc_p( oyMSG_WARN,(oyStruct_s*)cc_moni2xyz, OY_DBG_FORMAT_
+                   "xyz->rgb:\nR[%g %g %g] G[%g %g %g] B[%g %g %g] %g",
+                   OY_DBG_ARGS_, rgb[0], rgb[1], rgb[2], rgb[3], rgb[4], rgb[5], rgb[6], rgb[7], rgb[8], scale);
+      if(rgb[0+0] < 0.99 && rgb[3+1] < 0.99 && rgb[6+2] < 0.99)
+      {
+        if(scale < 1.00) scale += 0.01;
+        break;
+      }
+      scale -= 0.01;
+    }
+  }
+
+  oyMessageFunc_p( /*error ?*/ oyMSG_WARN/*:oyMSG_DBG*/,(oyStruct_s*)monitor_profile, OY_DBG_FORMAT_
+                   "%s display_white_point: %d [%g %g %g] -> [%g %g %g] * %g %d", OY_DBG_ARGS_,
+          desc, display_white_point,
+          src_XYZ[0], src_XYZ[1], src_XYZ[2], dst_XYZ[0], dst_XYZ[1], dst_XYZ[2], scale, error);
+  if(error > 0)
+    return error;
+
+  /* write cache profile for slightly better speed and useful for debugging */
+  if(error == 0)
+  {
+    const char * file_name = oyOptions_FindString( result_opts, "file_name", 0 );
+    char * cache_path = oyGetInstallPath( oyPATH_CACHE, oySCOPE_USER, oyAllocateFunc_ ), *t;
+    if(strstr( cache_path, "device_link") != NULL)
+    {
+      t = strstr( cache_path, "device_link");
+      t[0] = '\000';
+      oyStringAddPrintf( &cache_path, 0,0, "white_point_adjust/%s.icc", file_name );
+    }
+
+    {
+      error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/scale", scale, 0, OY_CREATE_NEW );
       if(oy_debug)
         oyMessageFunc_p( oyMSG_DBG,(oyStruct_s*)monitor_profile, OY_DBG_FORMAT_
                      "creating file_name: %s -> %s\n", OY_DBG_ARGS_, file_name, cache_path );
@@ -193,35 +292,15 @@ int      oyProfileAddWhitePointEffect( oyProfile_s       * monitor_profile,
       wtpt = (oyProfile_s*) oyOptions_GetType( result_opts, -1, "icc_profile",
                                            oyOBJECT_PROFILE_S );
       error = !wtpt;
-      oyProfile_ToFile_( (oyProfile_s_*) wtpt, cache_path );
+      if(!error)
+        oyProfile_ToFile_( (oyProfile_s_*) wtpt, cache_path );
       DBG_S_( oyPrintTime() );
     }
   }
-#else
-  oyXYZ2Lab( src_XYZ, Lab );
-  src_cie_a = Lab[1]/256.0+0.5;
-  src_cie_b = Lab[2]/256.0+0.5;
 
-  oyXYZ2Lab( dst_XYZ, Lab );
-  dst_cie_a = Lab[1]/256.0+0.5;
-  dst_cie_b = Lab[2]/256.0+0.5;
-
-  oyMessageFunc_p( oyMSG_WARN,(oyStruct_s*)monitor_profile, OY_DBG_FORMAT_
-                   "%s display_white_point: %d [%g %g] -> [%g %g]", OY_DBG_ARGS_,
-          oyProfile_GetText( monitor_profile, oyNAME_DESCRIPTION ), display_white_point,
-          src_cie_a, src_cie_b, dst_cie_a, dst_cie_b);
-  error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/cie_a",
-                                   dst_cie_a - src_cie_a, 0, OY_CREATE_NEW );
-  error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/cie_b",
-                                   dst_cie_b - src_cie_b, 0, OY_CREATE_NEW );
-  error = oyOptions_Handle( "//" OY_TYPE_STD "/create_profile.white_point_adjust.lab",
-                                         opts,"create_profile.white_point_adjust.lab",
-                                         &result_opts );
-  wtpt = (oyProfile_s*) oyOptions_GetType( result_opts, -1, "icc_profile",
-                                           oyOBJECT_PROFILE_S );
-#endif
   error = !wtpt;
-  oyOptions_MoveInStruct( module_options,
+  if(error == 0)
+    oyOptions_MoveInStruct( module_options,
                           OY_STD "/icc_color/display.icc_profile.abstract.white_point.automatic.oy-monitor",
                           (oyStruct_s**) &wtpt, OY_CREATE_NEW );
   oyOptions_Release( &result_opts );
@@ -513,7 +592,7 @@ int      oyProfile_CreateEffectVCGT  ( oyProfile_s       * prof )
   oyImage_s * img;
   if(vcgt && getenv("OY_DEBUG_WRITE"))
   {
-    img = oyImage_Create( width, 1, vcgt, OY_TYPE_123_16 | oyPlanar_m(1), prof, 0 );
+    img = oyImage_Create( width, 1, vcgt, OY_TYPE_123_16, prof, 0 );
     oyImage_WritePPM( img, "wtpt-vcgt.ppm", "vcgt ramp" );
     oyImage_Release( &img );
   }
@@ -535,10 +614,14 @@ int      oyProfile_CreateEffectVCGT  ( oyProfile_s       * prof )
   if(mix)
   for(i = 0; i < width; ++i)
     for(j = 0; j < 3; ++j)
-      mix[i*3+j] = OY_ROUNDp( oyLinInterpolateRampU16c( vcgt, width, j,3, oyLinInterpolateRampU16c( ramp, width, j, 3, (double)i/width )/65535.) );
+    {
+      uint16_t v = oyLinInterpolateRampU16c( ramp, width, j, 3, (double)i/(double)width );
+      double vd = v / 65535.0;
+      mix[i*3+j] = OY_ROUNDp( oyLinInterpolateRampU16c( vcgt, width, j,3, vd ) );
+    }
   if(mix && getenv("OY_DEBUG_WRITE"))
   {
-    img  = oyImage_Create( width, 1, mix, OY_TYPE_123_16 | oyPlanar_m(1), prof, 0 );
+    img  = oyImage_Create( width, 1, mix, OY_TYPE_123_16, prof, 0 );
     oyImage_WritePPM( img, "wtpt-mix.ppm", "white point + vcgt" );
     oyImage_Release( &img );
   }
