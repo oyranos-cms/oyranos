@@ -1934,19 +1934,22 @@ lcm2CreateAbstractWhitePointProfileClean:
  *  These profiles can be applied to 1D / per single channel only adjustments.
  *  It will be marked with EFFECT_linear=yes in the meta tag.
  *
- *  @param[in]    src_iccXYZ           source media white point;
+ *  @param[in]     src_iccXYZ          source media white point;
  *                                     The triple is stored in meta:COLORIMETRY_white_point_xyz_src.
- *  @param[in]    src_name             source media white point name or profile; optional
- *  @param[in]    illu_iccXYZ          ICC*XYZ illuminant in 0.0 - 2.0 range;
+ *  @param[in]     src_name            source media white point name or profile; optional
+ *  @param[in]     illu_iccXYZ         ICC*XYZ illuminant in 0.0 - 2.0 range;
  *                                     The triple stored in meta:COLORIMETRY_white_point_xyz_dst.
- *  @param[in]    illu_name            target illuminant name; optional
- *  @param[in]    icc_profile_version  4.3 is supported
- *  @param[in]    flags                - 0x01 : return only fast my_abstract_file_name, without expensive profile computation
- *  @param[out]   my_abstract_file_name                    profile file name
- *  @param[out]   h_profile            the resulting profile; If omitted the function will write the profile to my_abstract_file_name.
+ *  @param[in]     illu_name           target illuminant name; optional
+ *  @param[in]     scale               scale factor to multiply the chromatice outgoing white point;
+ *                                     optional, It is usually be set to the scale factor. Can be set to
+ *                                     *scale == 0 for a generic scale factor, which might be good for a sRGB gamut.
+ *  @param[in,out] icc_profile_version 4.3 is supported
+ *  @param[in]     flags               - 0x01 : return only fast my_abstract_file_name, without expensive profile computation
+ *  @param[out]    my_abstract_file_name                    profile file name
+ *  @param[out]    h_profile           the resulting profile; If omitted the function will write the profile to my_abstract_file_name.
  *
  *  @version Oyranos: 0.9.7
- *  @date    2019/03/05
+ *  @date    2019/03/17
  *  @since   2017/06/02 (Oyranos: 0.9.7)
  */
 int          lcm2CreateAbstractWhitePointProfileBradford (
@@ -1954,6 +1957,7 @@ int          lcm2CreateAbstractWhitePointProfileBradford (
                                        const char        * src_name,
                                        double            * illu_iccXYZ,
                                        const char        * illu_name,
+                                       double            * scale,
                                        double              icc_profile_version OY_UNUSED,
                                        int                 flags,
                                        char             ** my_abstract_file_name,
@@ -1982,7 +1986,8 @@ int          lcm2CreateAbstractWhitePointProfileBradford (
     0,0,
     0,0
   };
-  char * kelvin_name = malloc(1024);
+  int len = (src_name ? strlen(src_name) : 0) + (illu_name ? strlen(illu_name) : 0) + 1024;
+  char * kelvin_name = malloc(len);
   int error = !kelvin_name;
 
   cmsCIEXYZ SourceWhitePt = { src_iccXYZ[0],  src_iccXYZ[1],  src_iccXYZ[2]},
@@ -1997,6 +2002,11 @@ int          lcm2CreateAbstractWhitePointProfileBradford (
 #endif
 
   if(error) return 1;
+
+  if(scale)
+    b_scale = *scale;
+  else
+    b_scale = 0.0;
 
   if(!(flags & 0x01)) /* skip computation */
   {
@@ -2030,7 +2040,8 @@ int          lcm2CreateAbstractWhitePointProfileBradford (
     icc_ab[1] = dst_Lab[2] - src_Lab[2];
     max_brightness = OY_HYP(icc_ab[0],icc_ab[1]/1.2);
     /* avoid color clipping around the white point */
-    b_scale = OY_MAX( 1.0 - max_brightness, 0.2 );
+    if(b_scale == 0.0)
+      b_scale = OY_MAX( 1.0 - max_brightness, 0.2 );
 
 #ifdef HAVE_LOCALE_H
     setlocale(LC_ALL,"C");
@@ -2042,7 +2053,10 @@ int          lcm2CreateAbstractWhitePointProfileBradford (
     setlocale(LC_ALL,old_loc);
 #endif
     /* avoid color clipping around the white point, with PCS*XYZ scaling */
-    b_scale = OY_MAX( 1.0 - max_brightness * LCM2_ADAPT_TO_PCS_XYZ, 0.2 );
+    if(scale && *scale != 0.0)
+      b_scale = OY_MAX( 1.0 - max_brightness * LCM2_ADAPT_TO_PCS_XYZ, 0.2 );
+    if(scale)
+      *scale = b_scale;
   }
 
   if(error) goto lcm2CreateAbstractWhitePointProfileBClean;
@@ -2052,19 +2066,24 @@ int          lcm2CreateAbstractWhitePointProfileBradford (
 #endif
   if(icc_ab[1] > 0)
   {
-    sprintf( kelvin_name, "Bradford Reddish CIE*a %g CIE*b %g v2 lcm2", icc_ab[0], icc_ab[1] );
+    sprintf( kelvin_name, "Bradford Reddish CIE*a %g CIE*b %g", icc_ab[0], icc_ab[1] );
   } else if(-0.001 < icc_ab[1] && icc_ab[0] < 0.001) {
-    sprintf( kelvin_name, "Bradford CIE*a %g CIE*b %g v2 lcm2", icc_ab[0], icc_ab[1] );
+    sprintf( kelvin_name, "Bradford CIE*a %g CIE*b %g", icc_ab[0], icc_ab[1] );
     kelvin_meta[1] = "neutral,type,white_point,atom";
     kelvin_meta[3] = "yes,D50,kelvin";
   } else {
-    sprintf( kelvin_name, "Bradford Bluish CIE*a %g CIE*b %g v2 lcm2", icc_ab[0], icc_ab[1] );
+    sprintf( kelvin_name, "Bradford Bluish CIE*a %g CIE*b %g", icc_ab[0], icc_ab[1] );
     kelvin_meta[1] = "bluish,type,white_point,atom";
     kelvin_meta[3] = "yes,bluish,kelvin";
   }
 #ifdef HAVE_LOCALE_H
   setlocale(LC_ALL,old_loc);
 #endif
+  if(src_name)
+    sprintf( &kelvin_name[strlen(kelvin_name)], " src:%s", src_name );
+  if(illu_name)
+    sprintf( &kelvin_name[strlen(kelvin_name)], " illu:%s", illu_name );
+  sprintf( &kelvin_name[strlen(kelvin_name)], " v2 lcm2" );
 
   *my_abstract_file_name = kelvin_name;
   if(flags & 0x01) /* skip computation */

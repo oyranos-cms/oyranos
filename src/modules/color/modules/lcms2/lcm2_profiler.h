@@ -110,6 +110,7 @@ int          lcm2CreateAbstractWhitePointProfileBradford (
                                        const char        * src_name,
                                        double            * illu_iccXYZ,
                                        const char        * illu_name,
+                                       double            * scale,
                                        double              icc_profile_version,
                                        int                 flags,
                                        char             ** my_abstract_file_name,
