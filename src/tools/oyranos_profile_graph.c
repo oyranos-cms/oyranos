@@ -717,23 +717,28 @@ int main( int argc , char** argv )
     float t = thickness;
     cairo_set_line_width (cr, 0.5*t);
     int channels = oyImage_GetPixelLayout( image, oyCHANS );
-    oyDATATYPE_e data_type = oyToDataType_m( oyImage_GetPixelLayout( image, oyLAYOUT) );
+    int layout = oyImage_GetPixelLayout( image, oyLAYOUT);
+    oyDATATYPE_e data_type = oyToDataType_m( layout );
+    int planar = oyToPlanar_m( layout );
     double byteps = oyDataTypeGetSize( data_type );
     double image_width = oyImage_GetWidth(image);
     int iheight = 0, is_allocated = 0;
     char * pixels = oyImage_GetLineF(image)( image, 0, &iheight, -1, &is_allocated );
+    uint16_t * line16 = (uint16_t*) pixels;
+    uint8_t * line8 = (uint8_t*) pixels;
+    printf("byteps: %d\n", (int)byteps);
     for( j=0; j < channels; ++j )
     {
-      uint16_t * line = (uint16_t*) pixels;
-      uint8_t * line8 = (uint8_t*) pixels;
-
       cairo_new_path(cr);
-      if(line || line8)
+      if(line16 || line8)
       {
         for(i = 0; i < image_width; ++i)
         {
           double pos = i/image_width;
-          double v = byteps == 1 ? line[i*channels+j]/256.0 : line[i*channels+j]/65536.0;
+          int index = planar ? (i + j*image_width) : (i*channels + j);
+          double v = byteps == 1 ? line8[index]/256.0 : line16[index]/65536.0;
+          if(oy_debug)
+            printf("(%d %d)->%d: %g %d\n", i, j, index, v, line16[index]);
           if(i == 0)
           cairo_move_to(cr, xToImage(pos),
                             yToImage(v));
@@ -1601,6 +1606,7 @@ oyjl_val    oyTreeFromCgats( const char * text )
   return specT;
 }
 
+// @TODO reference ColorSpecification with TristimulusSpec and MeasurementSpec
 oyjl_val    oyTreeFromCxf( const char * text )
 {
   char error_buffer[128];
