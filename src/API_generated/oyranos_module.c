@@ -907,7 +907,7 @@ oyPointer    oyCMMdsoGet_            ( const char        * lib_name )
     {
       int r OY_UNUSED;
       WARNc2_S( "\n  dlopen( %s, RTLD_LAZY):\n  \"%s\"", lib_name, dlerror() );
-      r = system("  echo $LD_LIBRARY_PATH");
+      r = system("  echo 1>&2 $LD_LIBRARY_PATH");
     }
 
     /* initialise module type lookup */
