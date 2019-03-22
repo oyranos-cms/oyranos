@@ -183,7 +183,7 @@ double oyEstimateTemperature( double cie_a_, double cie_b_, double * dist )
           min = dist_;
           pos = i;
         }
-        if(dist) *dist = dist_;
+        if(dist) *dist = min;
       }
     }
     if(i > 0)
