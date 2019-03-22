@@ -2634,25 +2634,29 @@ oyjlTESTRESULT_e testEffects ()
 
   double XYZ[3] = {-1, -1, -1};
   double Lab[3], cie_a, cie_b, dst_cie_a, dst_cie_b;
-  error = oyGetDisplayWhitePoint( 2, XYZ );
-  oyXYZ2Lab( XYZ, Lab );
-  cie_a = Lab[1]/256.0+0.5; cie_b = Lab[2]/256.0+0.5;
-  error = oyGetDisplayWhitePoint( 5, XYZ );
-  oyXYZ2Lab( XYZ, Lab );
-  dst_cie_a = Lab[1]/256.0+0.5; dst_cie_b = Lab[2]/256.0+0.5;
-  error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/cie_a",
-                                   dst_cie_a - cie_a, 0, OY_CREATE_NEW );
-  if(error) PRINT_SUB( oyjlTESTRESULT_XFAIL, "oyOptions_SetFromDouble() error: %d", error )
-  error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/cie_b",
-                                   dst_cie_b - cie_b, 0, OY_CREATE_NEW );
-  if(error) PRINT_SUB( oyjlTESTRESULT_XFAIL, "oyOptions_SetFromDouble() error: %d", error )
+  int count = 10,i;
+  double clck = oyClock();
+  for(i = 0; i < count; ++i)
+  {
+    error = oyGetDisplayWhitePoint( 2, XYZ );
+    oyXYZ2Lab( XYZ, Lab );
+    cie_a = Lab[1]/256.0+0.5; cie_b = Lab[2]/256.0+0.5;
+    error = oyGetDisplayWhitePoint( 5, XYZ );
+    oyXYZ2Lab( XYZ, Lab );
+    dst_cie_a = Lab[1]/256.0+0.5; dst_cie_b = Lab[2]/256.0+0.5;
+    error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/cie_a",
+                                     dst_cie_a - cie_a, 0, OY_CREATE_NEW );
+    error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/cie_b",
+                                     dst_cie_b - cie_b, 0, OY_CREATE_NEW );
+    error = oyOptions_Handle( "//" OY_TYPE_STD "/create_profile.white_point_adjust.lab",
+                              opts,"create_profile.white_point_adjust.lab",
+                              &result_opts );
+    abstract = (oyProfile_s*)oyOptions_GetType( result_opts, -1, "icc_profile",
+                                                oyOBJECT_PROFILE_S );
+  }
+  clck = oyClock() - clck;
   if(verbose) fprintf(zout,"source white point cie_ab %g %g -> %g %g\n", cie_a, cie_b, dst_cie_a, dst_cie_b );
-  error = oyOptions_Handle( "//" OY_TYPE_STD "/create_profile.white_point_adjust.lab",
-                            opts,"create_profile.white_point_adjust.lab",
-                            &result_opts );
   if(error) PRINT_SUB( oyjlTESTRESULT_XFAIL, "oyOptions_Handle() error: %d", error )
-  abstract = (oyProfile_s*)oyOptions_GetType( result_opts, -1, "icc_profile",
-                                              oyOBJECT_PROFILE_S );
   oyOptions_Release( &result_opts );
   oyOptions_Release( &opts );
 
@@ -2661,7 +2665,8 @@ oyjlTESTRESULT_e testEffects ()
   if(abstract)
   {
     PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyOptions_Handle(\"create_profile\"): %s", text );
+    "oyOptions_Handle(\"create_profile\"): %s %s", text,
+                   oyjlProfilingToString(count,clck/(double)CLOCKS_PER_SEC,"Prof") );
   } else if(error == -1)
   {
     PRINT_SUB( oyjlTESTRESULT_XFAIL,
@@ -2675,26 +2680,33 @@ oyjlTESTRESULT_e testEffects ()
   oyProfile_Release( &abstract );
 
 
+  clck = oyClock();
   double        src_XYZ[3] = {0.0, 0.0, 0.0}, dst_XYZ[3] = {0.0, 0.0, 0.0};
-  error = oyGetDisplayWhitePoint( 2, src_XYZ );
-  error = oyGetDisplayWhitePoint( 5, dst_XYZ );
-  error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/src_iccXYZ", src_XYZ[0], 0, OY_CREATE_NEW );
-  error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/src_iccXYZ", src_XYZ[1], 1, OY_CREATE_NEW );
-  error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/src_iccXYZ", src_XYZ[2], 2, OY_CREATE_NEW );
-  error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/illu_iccXYZ", dst_XYZ[0], 0, OY_CREATE_NEW );
-  error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/illu_iccXYZ", dst_XYZ[1], 1, OY_CREATE_NEW );
-  error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/illu_iccXYZ", dst_XYZ[2], 2, OY_CREATE_NEW );
-  if(error) PRINT_SUB( oyjlTESTRESULT_XFAIL, "oyOptions_SetFromDouble() error: %d", error )
+  count = 1000;
+  for(i = 0; i < count; ++i)
+  {
+    error = oyGetDisplayWhitePoint( 2, src_XYZ );
+    error = oyGetDisplayWhitePoint( 5, dst_XYZ );
+    error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/src_iccXYZ", src_XYZ[0], 0, OY_CREATE_NEW );
+    error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/src_iccXYZ", src_XYZ[1], 1, OY_CREATE_NEW );
+    error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/src_iccXYZ", src_XYZ[2], 2, OY_CREATE_NEW );
+    error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/illu_iccXYZ", dst_XYZ[0], 0, OY_CREATE_NEW );
+    error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/illu_iccXYZ", dst_XYZ[1], 1, OY_CREATE_NEW );
+    error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/illu_iccXYZ", dst_XYZ[2], 2, OY_CREATE_NEW );
+    if(error) PRINT_SUB( oyjlTESTRESULT_XFAIL, "oyOptions_SetFromDouble() error: %d", error )
+    error = oyOptions_Handle( "//" OY_TYPE_STD "/create_profile.white_point_adjust.bradford",
+                              opts,"create_profile.white_point_adjust.bradford.file_name",
+                              &result_opts );
+  }
+  clck = oyClock() - clck;
   if(verbose) fprintf(zout,"white point XYZ %g %g %g -> %g %g %g\n", src_XYZ[0], src_XYZ[1], src_XYZ[2], dst_XYZ[0], dst_XYZ[1], dst_XYZ[2] );
-  error = oyOptions_Handle( "//" OY_TYPE_STD "/create_profile.white_point_adjust.bradford",
-                            opts,"create_profile.white_point_adjust.bradford.file_name",
-                            &result_opts );
   if(error) PRINT_SUB( oyjlTESTRESULT_XFAIL, "oyOptions_Handle() error: %d", error )
   text = oyOptions_FindString(result_opts, "file_name", 0);
   if(text)
   {
     PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyOptions_Handle(\"create_profile.file_name\"): %s", text );
+    "oyOptions_Handle(\"create_profile.file_name\"): %s %s", text,
+                   oyjlProfilingToString(count,clck/(double)CLOCKS_PER_SEC,"Prof") );
   } else if(error == -1)
   {
     PRINT_SUB( oyjlTESTRESULT_XFAIL,
@@ -2705,21 +2717,40 @@ oyjlTESTRESULT_e testEffects ()
     "oyOptions_Handle(\"create_profile.filename\") zero" );
   }
 
-  error = oyOptions_Handle( "//" OY_TYPE_STD "/create_profile.white_point_adjust.bradford",
-                            opts,"create_profile.white_point_adjust.bradford",
-                            &result_opts );
+  clck = oyClock();
+  count = 100;
+  for(i = 0; i < count; ++i)
+  {
+    error = oyGetDisplayWhitePoint( 2, src_XYZ );
+    error = oyGetDisplayWhitePoint( 5, dst_XYZ );
+    error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/src_iccXYZ", src_XYZ[0], 0, OY_CREATE_NEW );
+    error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/src_iccXYZ", src_XYZ[1], 1, OY_CREATE_NEW );
+    error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/src_iccXYZ", src_XYZ[2], 2, OY_CREATE_NEW );
+    error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/illu_iccXYZ", dst_XYZ[0], 0, OY_CREATE_NEW );
+    error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/illu_iccXYZ", dst_XYZ[1], 1, OY_CREATE_NEW );
+    error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/illu_iccXYZ", dst_XYZ[2], 2, OY_CREATE_NEW );
+    error = oyOptions_Handle( "//" OY_TYPE_STD "/create_profile.white_point_adjust.bradford",
+                              opts,"create_profile.white_point_adjust.bradford",
+                              &result_opts );
+  }
+  clck = oyClock() - clck;
   if(error) PRINT_SUB( oyjlTESTRESULT_XFAIL, "oyOptions_Handle() error: %d", error )
   abstract = (oyProfile_s*)oyOptions_GetType( result_opts, -1, "icc_profile",
                                               oyOBJECT_PROFILE_S );
   oyOptions_Release( &result_opts );
   oyOptions_Release( &opts );
 
+  /* "Bradford Bluish CIE*a -0.00979487 CIE*b -0.10989" */
   text = oyProfile_GetText( abstract, oyNAME_DESCRIPTION );
-
-  if(abstract)
+  if(abstract && strlen(text) >= 49)
   {
     PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyOptions_Handle(\"create_profile\"): %s", text );
+    "oyOptions_Handle(\"create_profile\"): %s %s", text,
+                   oyjlProfilingToString(count,clck/(double)CLOCKS_PER_SEC,"Prof"));
+  } else if(abstract)
+  {
+    PRINT_SUB( oyjlTESTRESULT_XFAIL,
+    "oyOptions_Handle(\"create_profile\") %s", text );
   } else if(error == -1)
   {
     PRINT_SUB( oyjlTESTRESULT_XFAIL,
