@@ -715,7 +715,8 @@ void updateVCGT()
     fputs(cmd, stderr); fputs("\n", stderr );
     r = system( cmd );
     oyFree_m_(cmd);
-    //remove( tmpname );
+    if(getenv("OY_DEBUG_WRITE") == NULL)
+      remove( tmpname );
   }
   DBG_S_( oyPrintTime() );
 }
