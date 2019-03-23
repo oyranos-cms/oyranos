@@ -1177,6 +1177,7 @@ int            Configs_Modify        ( oyConfigs_s       * devices,
           size_t size = oyProfile_GetSize( p, 0 );
           char * data = oyProfile_GetMem( p, &size, 0, oyAllocateFunc_ );
           int gamma_only = oyOptions_FindString( options, "gamma_only", "yes" ) != NULL;
+          const char * profile_fullname = oyProfile_GetFileName( p, -1 );
 
           _msg(oyMSG_DBG, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n "
                   "command: setup on device_name: %s \"%s\" %lu %s",
@@ -1184,8 +1185,8 @@ int            Configs_Modify        ( oyConfigs_s       * devices,
                   gamma_only?"only VCGT":"" );
 
           if(!gamma_only)
-            error = SetupMonitorProfile( moni, oprofile_name, data, size );
-          error = SetupMonitorCalibration( moni, oprofile_name, data, size );
+            error = SetupMonitorProfile( moni, profile_fullname, data, size );
+          error = SetupMonitorCalibration( moni, profile_fullname, data, size );
           oyProfile_Release( &p );
         }
         oyConfig_Release( &device );
