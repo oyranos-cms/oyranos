@@ -383,6 +383,8 @@ int main( int argc , char** argv )
 
     if(spectra)
     {
+      int lambda = oySpectrumGetParam( spectra, oySPECTRUM_LAMBDA );
+      int start = oySpectrumGetParam( spectra, oySPECTRUM_START );
       spectral_channels = oySpectrumGetParam( spectra, oySPECTRUM_CHANNELS );
       spectral_count = oySpectrumGetParam( spectra, oySPECTRUM_COLUMNS );
       spectra_XYZ = calloc( spectral_count, sizeof(oyF3) );
@@ -399,10 +401,7 @@ int main( int argc , char** argv )
         for(j = 0; j < spectral_count; ++j)
         {
           double y = oySpectrumGet( spectra, j, i );
-          if(verbose)
           {
-            int lambda = oySpectrumGetParam( spectra, oySPECTRUM_LAMBDA );
-            int start = oySpectrumGetParam( spectra, oySPECTRUM_START );
             int cieXYZ_31_2_startNM = cieXYZ_31_2[0][0];
             int cieXYZ_31_2_start_pos = start - cieXYZ_31_2_startNM;
             int illu_startNM = 300;
@@ -1565,7 +1564,7 @@ oyjl_val    oyTreeFromCsv( const char * text )
         if(text && text < endl && text[0] != '\r' && text[1] != '\r')
         {
           d = oyCSVparseDouble(++text);
-          oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, d, "collection/[0]/colors/[%d]/spectral/[%d]", index, i );
+          oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, d, "collection/[0]/colors/[%d]/spectral/0/data/[%d]", index, i );
         }
       }
 
@@ -1577,10 +1576,10 @@ oyjl_val    oyTreeFromCsv( const char * text )
         if(verbose > 1) fprintf( stderr, "\n" );
       }
     }
-    oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, start, "collection/[0]/spectral/startNM" );
-    oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, end, "collection/[0]/spectral/endNM" );
-    oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, lambda, "collection/[0]/spectral/lambda" );
-    oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, (end-start+lambda)/lambda, "collection/[0]/spectral/steps" );
+    oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, start, "collection/[0]/spectral/[0]/startNM" );
+    oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, end, "collection/[0]/spectral/[0]/endNM" );
+    oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, lambda, "collection/[0]/spectral/[0]/lambda" );
+    oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, (end-start+lambda)/lambda, "collection/[0]/spectral/[0]/steps" );
   }
 
   return specT;
@@ -1606,33 +1605,76 @@ oyjl_val    oyTreeFromCgats( const char * text )
   return specT;
 }
 
-// @TODO reference ColorSpecification with TristimulusSpec and MeasurementSpec
+/** @brief copy nodes
+ *
+ *  @param[in]     src                 source tree
+ *  @param[in]     in                  source path
+ *  @param[out]    dst                 destination tree
+ *  @param[in]     out                 destination path
+ *  @return                            error: 0 - success; 1 - not found; 2 - no text; 3 - JSON error
+ */
+int         oyjlCopyNode             ( oyjl_val            src,
+                                       const char        * in,
+                                       oyjl_val            dst,
+                                       const char        * out)
+{
+  oyjl_val v = oyjlTreeGetValue(src, 0, in);
+  char * value;
+  if(!v) return 1;
+  value = oyjlValueText( v, 0 );
+  if(!value) return 2;
+  if(oyjlTreeSetStringF( dst, OYJL_CREATE_NEW, value, out ))
+    return 3;
+  free(value);
+  return 0;
+}
+
+/* CxF NCC conversion table */
+const char * oy_cxf_json[][3] = {
+  {"cc:CxF/cc:FileInformation/cc:Description",  "description",  "DESCRIPTOR"},
+  {"cc:CxF/cc:FileInformation/cc:CreationDate", "date",         "CREATED"},
+  {"cc:CxF/cc:FileInformation/cc:Creator",      "creator",      "ORIGINATOR"},
+  {"cc:CxF/cc:Resources/cc:ColorSpecificationCollection/cc:ColorSpecification/@Id",                               "collection/[0]/spectral/[0]/id", ""},
+  {"cc:CxF/cc:Resources/cc:ColorSpecificationCollection/cc:ColorSpecification/cc:TristimulusSpec/cc:Illuminant",  "collection/[0]/spectral/[0]/tristimulus/illuminant", ""},
+  {"cc:CxF/cc:Resources/cc:ColorSpecificationCollection/cc:ColorSpecification/cc:TristimulusSpec/cc:Observer",    "collection/[0]/spectral/[0]/tristimulus/observer", ""},
+  {"cc:CxF/cc:Resources/cc:ColorSpecificationCollection/cc:ColorSpecification/cc:TristimulusSpec/cc:Method",      "collection/[0]/spectral/[0]/tristimulus/method", ""},
+  {"cc:CxF/cc:Resources/cc:ColorSpecificationCollection/cc:ColorSpecification/cc:MeasurementSpec/cc:GeometryChoice/cc:SingleAngle/cc:IlluminationAngle", "collection/[0]/spectral/[0]/measurement/illumination_angle", ""},
+  {"cc:CxF/cc:Resources/cc:ColorSpecificationCollection/cc:ColorSpecification/cc:MeasurementSpec/cc:GeometryChoice/cc:SingleAngle/cc:MeasurementAngle", "collection/[0]/spectral/[0]/measurement/observer_angle", ""},
+  {"cc:CxF/cc:Resources/cc:ColorSpecificationCollection/cc:ColorSpecification/cc:MeasurementSpec/cc:CalibrationStandard", "collection/[0]/spectral/[0]/measurement/calibration", ""},
+  {"cc:CxF/cc:Resources/cc:ColorSpecificationCollection/cc:ColorSpecification/cc:MeasurementSpec/cc:Aperture",    "collection/[0]/spectral/[0]/measurement/aperture", ""},
+  {"cc:CxF/cc:Resources/cc:ColorSpecificationCollection/cc:ColorSpecification/cc:MeasurementSpec/cc:Device/cc:Model", "collection/[0]/spectral/[0]/measurement/device/model", ""},
+  {"cc:CxF/cc:Resources/cc:ColorSpecificationCollection/cc:ColorSpecification/cc:MeasurementSpec/cc:Device/cc:DeviceFilter", "collection/[0]/spectral/[0]/measurement/device/filter", ""},
+  {"cc:CxF/cc:Resources/cc:ColorSpecificationCollection/cc:ColorSpecification/cc:MeasurementSpec/cc:Device/cc:DeviceIllumination", "collection/[0]/spectral/[0]/measurement/device/illumination", ""},
+  {NULL, NULL, NULL}
+};
 oyjl_val    oyTreeFromCxf( const char * text )
 {
   char error_buffer[128];
   size_t error_buffer_size = 128;
   oyjl_val root = oyjlTreeParseXml( text, 0, error_buffer, error_buffer_size ),
-           node = oyjlTreeGetValue( root, 0, "cc:CxF/cc:FileInformation/cc:Description" ),
            collection = oyjlTreeGetValue( root, 0, "cc:CxF/cc:Resources/cc:ObjectCollection/cc:Object" ),
            specT = oyjlTreeNew("");
   int count = oyjlValueCount( collection ), i;
   oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, "ncc1", "type" );
   oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, "Named Color Collection v1", "comment" );
-  char * v = oyjlValueText( node, 0 );
-  if(v) oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, v, "description" ); /* DESCRIPTOR */
-  node = oyjlTreeGetValue( root, 0, "cc:CxF/cc:FileInformation/cc:CreationDate" );
-  v = oyjlValueText( node, 0 );
-  if(v) oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, v, "date" ); /*  */
-  node = oyjlTreeGetValue( root, 0, "cc:CxF/cc:FileInformation/cc:Creator" );
-  v = oyjlValueText( node, 0 );
-  if(v) oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, v, "creator" ); /* ORIGINATOR */
   char * startWL = oyjlValueText( oyjlTreeGetValue(root, 0, "cc:CxF/cc:Resources/cc:ColorSpecificationCollection/cc:ColorSpecification/cc:MeasurementSpec/cc:WavelengthRange/@StartWL"), 0 );
-  long startNM = 0, lambda = 0, endNM = 0, n_max = 0;
   char * increment = oyjlValueText( oyjlTreeGetValue(root, 0, "cc:CxF/cc:Resources/cc:ColorSpecificationCollection/cc:ColorSpecification/cc:MeasurementSpec/cc:WavelengthRange/@Increment"), 0 );
+  long startNM = 0, lambda = 0, endNM = 0, n_max = 0;
+  i = 0;
+  while(oy_cxf_json[i][0])
+  {
+    int error = 0;
+    const char * in = oy_cxf_json[i][0], * out = oy_cxf_json[i][1];
+    error = oyjlCopyNode(root, in, specT, out);
+    if(i <= 2 && error)
+      oyMessageFunc_p( oyMSG_WARN, NULL, "copy from CxF node to NCC node failed: %s %s", in, out );
+    ++i;
+  }; 
   oyjlStringToLong(startWL, &startNM);
   oyjlStringToLong(increment, &lambda);
-  oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, startNM, "collection/[0]/spectral/startNM" );
-  oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, lambda, "collection/[0]/spectral/lambda" );
+  oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, startNM, "collection/[0]/spectral/[0]/startNM" );
+  oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, lambda, "collection/[0]/spectral/[0]/lambda" );
+
 
 #ifdef USE_GETTEXT
   char * old_loc = strdup(setlocale(LC_ALL,NULL));
@@ -1647,20 +1689,22 @@ oyjl_val    oyTreeFromCxf( const char * text )
     int n = 0, j;
     long startNm = 0;
     double * list = NULL;
+    char * colorSpec = oyjlValueText( oyjlTreeGetValue( obj, 0, "cc:ColorValues//@ColorSpecification" ), 0 );
     if(oyjlStringsToDoubles( reflSpec_text, ' ', &n, 0, &list ))
       fprintf( stderr, "ERROR parsing: %d %s ", i, name );
 
+    oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, colorSpec, "collection/[0]/colors/[%d]/spectral/[0]/id" );
     oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, name, "collection/[0]/colors/[%d]/name", i );
 
     oyjlStringToLong(startWl, &startNm);
     //fprintf( stderr, "  %d: %s - %ld-%ld ", i, name, startNM, startNM+n*lambda );
     for(j = 0; j < n; ++j)
-      oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, list[j], "collection/[0]/colors/[%d]/spectral/[%d]", i, j );
+      oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, list[j], "collection/[0]/colors/[%d]/spectral/[0]/data/[%d]", i, j );
     if(n_max < j-1) n_max = j-1;
   }
   endNM = startNM + lambda * n_max;
-  oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, endNM, "collection/[0]/spectral/endNM" );
-  oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, (endNM-startNM+lambda)/lambda, "collection/[0]/spectral/steps" );
+  oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, endNM, "collection/[0]/spectral/[0]/endNM" );
+  oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, (endNM-startNM+lambda)/lambda, "collection/[0]/spectral/[0]/steps" );
 
 #ifdef USE_GETTEXT
   setlocale(LC_ALL,old_loc);
@@ -1682,15 +1726,15 @@ oyjl_val oyTreeGetParam( oyjl_val root, double *lambda, double *startNM, double 
   v = oyjlTreeGetValueF( root, 0, "type" );
   if(v) { char * name = OYJL_GET_STRING(v); if(strcmp(name,"ncc1") == 0) is_ncc1 = 1; }
 
-  v = oyjlTreeGetValue( root, 0, "collection/[0]/spectral/startNM" );
+  v = oyjlTreeGetValue( root, 0, "collection/[0]/spectral/[0]/startNM" );
   if(!v) { oyMessageFunc_p(oyMSG_ERROR,NULL,"startNM missed"); return NULL; }
   else *startNM = v->u.number.d;
 
-  v = oyjlTreeGetValue( root, 0, "collection/[0]/spectral/endNM" );
+  v = oyjlTreeGetValue( root, 0, "collection/[0]/spectral/[0]/endNM" );
   if(!v) { oyMessageFunc_p(oyMSG_ERROR,NULL,"endNM missed"); return NULL; }
   else *endNM = v->u.number.d;
 
-  v = oyjlTreeGetValue( root, 0, "collection/[0]/spectral/lambda" );
+  v = oyjlTreeGetValue( root, 0, "collection/[0]/spectral/[0]/lambda" );
   if(!v) { oyMessageFunc_p(oyMSG_ERROR,NULL,"lambda missed"); return NULL; }
   else *lambda = v->u.number.d;
 
@@ -1752,7 +1796,7 @@ oyImage_s * oySpectrumFromTree       ( oyjl_val root )
       dbl = (double*) oyImage_GetPointF(spec)( spec, index,0,-1, &is_allocated );
       for(i = 0; i < samples; ++i)
       {
-        v = oyjlTreeGetValueF( data, 0, "[%d]/spectral/[%d]", index, i );
+        v = oyjlTreeGetValueF( data, 0, "[%d]/spectral/[0]/data/[%d]", index, i );
         if(!v)
         {
           fprintf(stderr, "ERROR with i = %d index = %d\n", i, index);
@@ -1795,6 +1839,31 @@ int oyTreeToCgats( oyjl_val root, int * level OYJL_UNUSED, char ** text )
       description?description:"Spectral Data", creator?creator:"Oyranos CMS" );
     if(creation_date)
       oyjlStringAdd( &tmp, 0,0, "CREATED \"%s\"\n", creation_date?creation_date:"" );
+
+    /* compile a INSTRUMENTATION line */
+    oyjl_val v = oyjlTreeGetValue( root, 0, "collection/[0]/spectral/[0]/tristimulus/illuminant" );
+    const char  * illuminant = v ? v->u.string : NULL;
+    v = oyjlTreeGetValue( root, 0, "collection/[0]/spectral/[0]/tristimulus/observer" );
+    const char  * observer = v ? v->u.string : NULL;
+    v = oyjlTreeGetValue( root, 0, "collection/[0]/spectral/[0]/measurement/illumination_angle" );
+    const char  * illumination_angle = v ? v->u.string : NULL;
+    v = oyjlTreeGetValue( root, 0, "collection/[0]/spectral/[0]/measurement/observer_angle" );
+    const char  * observer_angle = v ? v->u.string : NULL;
+    v = oyjlTreeGetValue( root, 0, "collection/[0]/spectral/[0]/measurement/device/model" );
+    const char  * model = v ? v->u.string : NULL;
+    v = oyjlTreeGetValue( root, 0, "collection/[0]/spectral/[0]/measurement/device/filter" );
+    const char  * filter = v ? v->u.string : NULL;
+    if(illuminant || observer || (illumination_angle && observer_angle) || model)
+      oyjlStringAdd( &tmp, 0,0, "INSTRUMENTATION \"%s %s %s %s%s%s%s %s\"\n",
+          model?model:"", illuminant?illuminant:"", observer?observer:"",
+          illumination_angle?"geometry_":"", illumination_angle?illumination_angle:"", observer_angle?"/":"", observer_angle?observer_angle:"",
+          filter?filter:"" );
+    /* compile a MEASUREMENT_SOURCE line */
+    v = oyjlTreeGetValue( root, 0, "collection/[0]/spectral/[0]/measurement/device/illumination" );
+    const char  * illumination = v ? v->u.string : NULL;
+    if(illumination)
+      oyjlStringAdd( &tmp, 0,0, "MEASUREMENT_SOURCE \"%s\"\n", illumination );
+
     oyjlStringAdd( &tmp, 0,0, "SPECTRAL_BANDS \"%d\"\nSPECTRAL_START_NM \"%f\"\nSPECTRAL_END_NM \"%f\"\nSPECTRAL_NORM \"%f\"\n\nKEYWORD \"SAMPLE_NAME\"\nNUMBER_OF_FIELDS %d\nBEGIN_DATA_FORMAT\nSAMPLE_NAME ",
       samples, start, end, lambda, 1 + samples );
 
@@ -1819,7 +1888,7 @@ int oyTreeToCgats( oyjl_val root, int * level OYJL_UNUSED, char ** text )
       for(i = 0; i < samples; ++i)
       {
         char f[32];
-        v = oyjlTreeGetValueF( data, 0, "[%d]/spectral/[%d]", index, i );
+        v = oyjlTreeGetValueF( data, 0, "[%d]/spectral/[0]/data/[%d]", index, i );
         if(!v)
         {
           fprintf(stderr, "ERROR with i = %d index = %d (spp = %d pixels = %d)\n", i, index, samples, pixels);
@@ -1919,7 +1988,7 @@ int oyTreeToCsv( oyjl_val root, int * level OYJL_UNUSED, char ** text )
           oyjlStrAppendN( t, f, strlen(f) );
         }
 
-        v = oyjlTreeGetValueF( data, 0, "[%d]/spectral/[%d]", index, i );
+        v = oyjlTreeGetValueF( data, 0, "[%d]/spectral/[0]/data/[%d]", index, i );
         if(!v)
         {
           fprintf(stderr, "ERROR with i = %d index = %d (spp = %d pixels = %d)\n", i, index, samples, pixels);
