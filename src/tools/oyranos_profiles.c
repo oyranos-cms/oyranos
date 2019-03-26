@@ -84,7 +84,7 @@ int main( int argc , char** argv )
   int verbose = 0;
   int state = 0;
 
-  opts = oyjlOptions_New( argc, argv );
+  opts = oyjlOptions_New( argc, (const char**)argv );
   /* nick, name, description, help */
   oyjlOptionChoice_s env_vars[]={{"OY_DEBUG", _("set the Oyranos debug level."), _("Alternatively the -v option can be used."), _("Valid integer range is from 1-20.")},
                                     {"XDG_DATA_HOME XDG_DATA_DIRS", _("route Oyranos to top directories containing resources. The derived paths for ICC profiles have a \"color/icc\" appended. http://www.oyranos.com/wiki/index.php?title=OpenIccDirectoryProposal"), "", ""},
@@ -147,7 +147,7 @@ int main( int argc , char** argv )
 
   info = oyUiInfo(_("The tool can list installed profiles, search paths and can help install a ICC color profile in a search path."),
                   "2018-10-11T12:00:00", "October 11, 2018");
-  ui = oyjlUi_Create( argc, argv,
+  ui = oyjlUi_Create( argc, (const char**)argv,
       "oyranos-profiles", _("Oyranos Profiles"), _("The Tool gives information around installed ICC color profiles."),
       "oyranos_logo",
       info, opts->array, opts->groups, &state );
