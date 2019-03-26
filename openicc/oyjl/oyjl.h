@@ -437,10 +437,10 @@ typedef enum oyjlVARIABLETYPE_e {
 
 /** @brief Choice item */
 typedef struct oyjlOptionChoice_s {
-  char * nick;                         /**< nick / ID as argument for a option */
-  char * name;                         /**< i18n short name for labels */
-  char * description;                  /**< i18n description sentence; can be "" */
-  char * help;                         /**< i18n longer help text; can be "" */
+  char * nick;                         /**< @brief nick / ID as argument for a option */
+  char * name;                         /**< @brief i18n short name for labels */
+  char * description;                  /**< @brief i18n description sentence; can be "" */
+  char * help;                         /**< @brief i18n longer help text; can be "" */
 } oyjlOptionChoice_s;
 void oyjlOptionChoice_Release        ( oyjlOptionChoice_s**choices );
 
@@ -480,47 +480,51 @@ typedef union oyjlOption_u {
   char * suggest;                      /**< @brief oyjlOPTIONTYPE_STRING initial suggested string of a text field */
 } oyjlOption_u;
 
-/** @brief abstract UI option */
+/** @brief abstract UI option
+ *
+ *  A oyjlOption_s::o is inside of oyjlOptionGroup_s::detail to be displayed and oyjlOptionGroup_s::mandatory/optional for syntax checking.
+ */
 struct oyjlOption_s {
-  char type[4];                        /**< must be 'oiwi' */
+  char type[4];                        /**< @brief must be 'oiwi' */
   unsigned int flags;                  /**< unused */
-  char o;                              /**< one letter option name; '-' and ' ' are reserved */
-  const char * option;                 /**< string without white space, "my-option"; optional if *o* is present */
-  const char * key;                    /**< DB key; optional */
-  const char * name;                   /**< i18n label string */
-  const char * description;            /**< i18n short sentence about the option */
-  const char * help;                   /**< i18n longer text to explain what the option does; optional */
-  const char * value_name;             /**< i18n value string; used only for option args; consider using upper case, e.g. FILENAME, NUMBER ... */
-  oyjlOPTIONTYPE_e value_type;         /**< type for *values* */
-  oyjlOption_u values;                 /**< the selectable values for the option; not used for oyjlOPTIONTYPE_NONE */
-  oyjlVARIABLE_e variable_type;        /**< type for *variable* */
-  oyjlVariable_u variable;             /**< automatically filled variable depending on *value_type* */
+  /** '#' is used as default option like a command without any arguments. '@' together with value_name expects arbitrary arguments as described in oyjlOption_s::value_name. minus '-' and space ' ' are reserved; This letter is handled like a ID. */
+  char o;                              /**< @brief one letter option name */
+  const char * option;                 /**< @brief string without white space, "my-option"; optional if *o* is present */
+  const char * key;                    /**< @brief DB key; optional */
+  const char * name;                   /**< @brief i18n label string */
+  const char * description;            /**< @brief i18n short sentence about the option */
+  const char * help;                   /**< @brief i18n longer text to explain what the option does; optional */
+  const char * value_name;             /**< @brief i18n value string; used only for option args; consider using upper case, e.g. FILENAME, NUMBER ... */
+  oyjlOPTIONTYPE_e value_type;         /**< @brief type for *values* */
+  oyjlOption_u values;                 /**< @brief the selectable values for the option; not used for oyjlOPTIONTYPE_NONE */
+  oyjlVARIABLE_e variable_type;        /**< @brief type for *variable* */
+  oyjlVariable_u variable;             /**< @brief automatically filled variable depending on *value_type* */
 };
 
 /**
     @brief info to compile a Syntax line and check missing arguments
  */
 typedef struct oyjlOptionGroup_s {
-  char type [4];                       /**< must be 'oiwg' */
+  char type [4];                       /**< @brief must be 'oiwg' */
   unsigned int flags;                  /**< unused */
-  const char * name;                   /**< i18n label string */
-  const char * description;            /**< i18n short sentence about the option */
-  const char * help;                   /**< i18n longer text to explain what the option does; optional */
-  const char * mandatory;              /**< list of mandatory one letter options for this group of associated options */
-  const char * optional;               /**< list of non mandatory one letter options for this group of associated options */
-  const char * detail;                 /**< list of one letter options for this group of associated options to display */
+  const char * name;                   /**< @brief i18n label string */
+  const char * description;            /**< @brief i18n short sentence about the option */
+  const char * help;                   /**< @brief i18n longer text to explain what the option does; optional */
+  const char * mandatory;              /**< @brief list of mandatory one letter options from a oyjlOption_s::o for this group of associated options */
+  const char * optional;               /**< @brief list of non mandatory one letter options from a oyjlOption_s::o for this group of associated options */
+  const char * detail;                 /**< @brief list of one letter options from a oyjlOption_s::o for this group of associated options to display */
 } oyjlOptionGroup_s;
 
 /**
  *   @brief main command line, options and groups
  */
 struct oyjlOptions_s {
-  char type [4];                       /**< must be 'oiws' */
-  oyjlOption_s * array;                /**< the options; make shure to add -h|--help and -v|--verbose options */
-  oyjlOptionGroup_s * groups;          /**< groups of options, which form a command */
-  void * user_data;                    /**< will be passed to functions; optional */
-  int argc;                            /**< plain reference from main(argc,argv) */
-  char ** argv;                        /**< plain reference from main(argc,argv) */
+  char type [4];                       /**< @brief must be 'oiws' */
+  oyjlOption_s * array;                /**< @brief the options; make shure to add -h|--help and -v|--verbose options */
+  oyjlOptionGroup_s * groups;          /**< @brief groups of options, which form a command */
+  void * user_data;                    /**< @brief will be passed to functions; optional */
+  int argc;                            /**< @brief plain reference from main(argc,argv) */
+  const char ** argv;                  /**< @brief plain reference from main(argc,argv) */
   void * private_data;                 /**< internal state; private, do not use */
 };
 int    oyjlOptions_Count             ( oyjlOptions_s     * opts );
@@ -537,10 +541,10 @@ typedef enum {
   oyjlOPTION_MISSING_VALUE,            /**< user error */
   oyjlOPTION_UNEXPECTED_VALUE,         /**< user error */
   oyjlOPTION_NOT_SUPPORTED,            /**< user error */
-  oyjlOPTION_DOUBLE_OCCURENCE          /**< user error */
+  oyjlOPTION_DOUBLE_OCCURENCE          /**< user error; except '@' is specified */
 } oyjlOPTIONSTATE_e;
 oyjlOptions_s *    oyjlOptions_New   ( int                 argc,
-                                       char             ** argv );
+                                       const char       ** argv );
 oyjlOPTIONSTATE_e  oyjlOptions_Parse ( oyjlOptions_s     * opts );
 oyjlOPTIONSTATE_e  oyjlOptions_GetResult (
                                        oyjlOptions_s     * opts,
@@ -548,8 +552,11 @@ oyjlOPTIONSTATE_e  oyjlOptions_GetResult (
                                        const char       ** result_string,
                                        double            * result_dbl,
                                        int               * result_int );
-char * oyjlOptions_ResultsToJson     ( oyjlOptions_s     * opts );
-char * oyjlOptions_ResultsToText     ( oyjlOptions_s     * opts );
+char *   oyjlOptions_ResultsToJson   ( oyjlOptions_s     * opts );
+char *   oyjlOptions_ResultsToText   ( oyjlOptions_s     * opts );
+char **  oyjlOptions_ResultsToList   ( oyjlOptions_s     * opts,
+                                       char                oc,
+                                       int               * count );
 typedef struct oyjlUi_s oyjlUi_s;
 void   oyjlOptions_PrintHelp         ( oyjlOptions_s     * opts,
                                        oyjlUi_s          * ui,
@@ -558,36 +565,36 @@ void   oyjlOptions_PrintHelp         ( oyjlOptions_s     * opts,
                                                            ... );
 /** @brief Header section */
 typedef struct oyjlUiHeaderSection_s {
-  char type [4];                       /**< must be 'oihs' */
-  const char * nick;                   /**< single word well known identifier; *version*, *manufacturer*, *copyright*, *license*, *url*, *support*, *download*, *sources*, *oyjl_modules_author*, *documentation* */
-  const char * label;                  /**< i18n short string, in case this section nick is not well known; optional */
-  const char * name;                   /**< i18n short content */
-  const char * description;            /**< i18n optional second string; might contain a browsable url for further information, e.g. a link to the full text license, home page; optional */
+  char type [4];                       /**< @brief must be 'oihs' */
+  const char * nick;                   /**< @brief single word well known identifier; *version*, *manufacturer*, *copyright*, *license*, *url*, *support*, *download*, *sources*, *oyjl_modules_author*, *documentation* */
+  const char * label;                  /**< @brief i18n short string, in case this section nick is not well known; optional */
+  const char * name;                   /**< @brief i18n short content */
+  const char * description;            /**< @brief i18n optional second string; might contain a browsable url for further information, e.g. a link to the full text license, home page; optional */
 } oyjlUiHeaderSection_s;
 
 /** @brief Info for graphic UI's containing options, additional info sections and other bells and whistles */
 struct oyjlUi_s {
-  char type [4];                       /**< must be 'oiui' */
-  const char * app_type;               /**< "tool" or "module" */
-  const char * nick;                   /**< four byte ID for module or plain comand line tool name, e.g. "oyjl-tool" */
-  const char * name;                   /**< i18n short name for tool bars, app lists */
-  const char * description;            /**< i18n name, version, maybe more for a prominent one liner */
-  const char * logo;                   /**< file name body without path, for relocation, nor file type ending; typical a PNG or SVG icon; e.g. "lcms_icon" for lcms_icon.png or lcms_icon.svg; optional */
+  char type [4];                       /**< @brief must be 'oiui' */
+  const char * app_type;               /**< @brief "tool" or "module" */
+  const char * nick;                   /**< @brief four byte ID for module or plain comand line tool name, e.g. "oyjl-tool" */
+  const char * name;                   /**< @brief i18n short name for tool bars, app lists */
+  const char * description;            /**< @brief i18n name, version, maybe more for a prominent one liner */
+  const char * logo;                   /**< @brief file name body without path, for relocation, nor file type ending; typical a PNG or SVG icon; e.g. "lcms_icon" for lcms_icon.png or lcms_icon.svg; optional */
   /** We describe here a particular tool/module. Each property object contains at least one 'name' key. All values shall be strings. *nick* or *description* keys are optional. If they are not contained, fall back to *name*. Well known objects are *version*, *manufacturer*, *copyright*, *license*, *url*, *support*, *download*, *sources*, *development*, *oyjl_modules_author*, *documentation*, *date* and *logo*. The *modules/[]/nick* shall contain a four byte string in as the CMM identifier. */
   oyjlUiHeaderSection_s * sections;
-  oyjlOptions_s * opts;                /**< info for UI logic */
+  oyjlOptions_s * opts;                /**< @brief info for UI logic */
 };
 oyjlUi_s *         oyjlUi_New        ( int                 argc,
-                                       char             ** argv );
+                                       const char       ** argv );
 enum {
-  oyjlUI_STATE_NONE,                   /**< nothing to report */
-  oyjlUI_STATE_HELP,                   /**< --help printed */
-  oyjlUI_STATE_VERBOSE = 2,            /**< --verbose option detected */
-  oyjlUI_STATE_EXPORT = 4,             /**< --export=XXX printed */
-  oyjlUI_STATE_OPTION = 24,            /**< bit shift for detected error from option parser */
+  oyjlUI_STATE_NONE,                   /**< @brief nothing to report */
+  oyjlUI_STATE_HELP,                   /**< @brief --help printed */
+  oyjlUI_STATE_VERBOSE = 2,            /**< @brief --verbose option detected */
+  oyjlUI_STATE_EXPORT = 4,             /**< @brief --export=XXX printed */
+  oyjlUI_STATE_OPTION = 24,            /**< @brief bit shift for detected error from option parser */
 };
 oyjlUi_s *         oyjlUi_Create     ( int                 argc,
-                                       char             ** argv,
+                                       const char       ** argv,
                                        const char        * nick,
                                        const char        * name,
                                        const char        * description,

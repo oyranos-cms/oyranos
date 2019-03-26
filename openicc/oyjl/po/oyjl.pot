@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: oyjl .\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2019-02-26 17:23+0100\n"
+"POT-Creation-Date: 2019-03-25 22:28+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,7 +21,7 @@ msgstr ""
 msgid "is a JSON to YAML converter"
 msgstr ""
 
-#: oyjl.c:32 oyjl.c:45 oyjl.c:57 oyjl_args.c:828 oyjl_translate.c:43
+#: oyjl.c:32 oyjl.c:45 oyjl.c:57 oyjl_args.c:926 oyjl_translate.c:43
 #: oyjl_translate.c:152
 msgid "Usage"
 msgstr ""
@@ -50,7 +50,7 @@ msgstr ""
 msgid "General options:"
 msgstr ""
 
-#: oyjl.c:74 oyjl_translate.c:62 test-core.c:425
+#: oyjl.c:74 oyjl_translate.c:62 test-core.c:429
 msgid "verbose"
 msgstr ""
 
@@ -78,212 +78,212 @@ msgstr ""
 msgid "Set key/value:"
 msgstr ""
 
-#: oyjl_args.c:187
+#: oyjl_args.c:191
 msgid "Json"
 msgstr ""
 
-#: oyjl_args.c:188
+#: oyjl_args.c:192
 msgid "GUI"
 msgstr ""
 
-#: oyjl_args.c:189
+#: oyjl_args.c:193
 msgid "Get a Oyjl Json UI declaration"
 msgstr ""
 
-#: oyjl_args.c:190
+#: oyjl_args.c:194
 msgid "Json + Command"
 msgstr ""
 
-#: oyjl_args.c:191
+#: oyjl_args.c:195
 msgid "GUI + Command"
 msgstr ""
 
-#: oyjl_args.c:192
+#: oyjl_args.c:196
 msgid "Get Oyjl Json UI declaration incuding command"
 msgstr ""
 
-#: oyjl_args.c:193
+#: oyjl_args.c:197
 msgid "Man"
 msgstr ""
 
-#: oyjl_args.c:194
+#: oyjl_args.c:198
 msgid "Unix Man page"
 msgstr ""
 
-#: oyjl_args.c:195
+#: oyjl_args.c:199
 msgid "Get a unix man page"
 msgstr ""
 
-#: oyjl_args.c:196
+#: oyjl_args.c:200
 msgid "Markdown"
 msgstr ""
 
-#: oyjl_args.c:197
+#: oyjl_args.c:201
 msgid "Formated text"
 msgstr ""
 
-#: oyjl_args.c:198
+#: oyjl_args.c:202
 msgid "Get formated text"
 msgstr ""
 
-#: oyjl_args.c:205
+#: oyjl_args.c:209
 msgid "export"
 msgstr ""
 
-#: oyjl_args.c:208
+#: oyjl_args.c:212
 msgid "Export formated text"
 msgstr ""
 
-#: oyjl_args.c:210
+#: oyjl_args.c:214
 msgid "Get UI converted into text formats"
 msgstr ""
 
-#: oyjl_args.c:297 oyjl_args.c:350 oyjl_args.c:371 oyjl_args.c:397
-#: oyjl_args.c:411 oyjl_args.c:429 oyjl_args.c:452 oyjl_args.c:556
+#: oyjl_args.c:301 oyjl_args.c:354 oyjl_args.c:375 oyjl_args.c:401
+#: oyjl_args.c:415 oyjl_args.c:433 oyjl_args.c:456 oyjl_args.c:580
 msgid "Usage Error:"
 msgstr ""
 
-#: oyjl_args.c:297
+#: oyjl_args.c:301
 msgid "Double occuring option"
 msgstr ""
 
-#: oyjl_args.c:350 oyjl_args.c:411
+#: oyjl_args.c:354 oyjl_args.c:415
 msgid "Option not supported"
 msgstr ""
 
-#: oyjl_args.c:371 oyjl_args.c:429
+#: oyjl_args.c:375 oyjl_args.c:433
 msgid "Option needs a argument"
 msgstr ""
 
-#: oyjl_args.c:397 oyjl_args.c:452
+#: oyjl_args.c:401 oyjl_args.c:456
 msgid "Option has a unexpected argument"
 msgstr ""
 
-#: oyjl_args.c:556
+#: oyjl_args.c:580
 msgid "Option has a different value range"
 msgstr ""
 
-#: oyjl_args.c:819
+#: oyjl_args.c:917
 msgid "Description"
 msgstr ""
 
-#: oyjl_args.c:821
+#: oyjl_args.c:919
 msgid "Synopsis"
 msgstr ""
 
-#: oyjl_args.c:1033
+#: oyjl_args.c:1131
 msgid "... try with --help|-h option for usage text. give up"
 msgstr ""
 
-#: oyjl_args.c:1183
+#: oyjl_args.c:1281
 msgid "Tool"
 msgstr ""
 
-#: oyjl_args.c:1185
+#: oyjl_args.c:1283
 msgid "Module"
 msgstr ""
 
-#: oyjl_args.c:1204
+#: oyjl_args.c:1302
 msgid "Manufacturer"
 msgstr ""
 
-#: oyjl_args.c:1205
+#: oyjl_args.c:1303
 msgid "Copyright"
 msgstr ""
 
-#: oyjl_args.c:1206 oyjl_args.c:1610 oyjl_args.c:1780
+#: oyjl_args.c:1304 oyjl_args.c:1708 oyjl_args.c:1878
 msgid "License"
 msgstr ""
 
-#: oyjl_args.c:1207
+#: oyjl_args.c:1305
 msgid "Url"
 msgstr ""
 
-#: oyjl_args.c:1208
+#: oyjl_args.c:1306
 msgid "Support"
 msgstr ""
 
-#: oyjl_args.c:1209
+#: oyjl_args.c:1307
 msgid "Download"
 msgstr ""
 
-#: oyjl_args.c:1210
+#: oyjl_args.c:1308
 msgid "Sources"
 msgstr ""
 
-#: oyjl_args.c:1211
+#: oyjl_args.c:1309
 msgid "Development"
 msgstr ""
 
-#: oyjl_args.c:1212
+#: oyjl_args.c:1310
 msgid "Oyjl Module Author"
 msgstr ""
 
-#: oyjl_args.c:1213
+#: oyjl_args.c:1311
 msgid "Documentation"
 msgstr ""
 
-#: oyjl_args.c:1214
+#: oyjl_args.c:1312
 msgid "Date"
 msgstr ""
 
-#: oyjl_args.c:1215
+#: oyjl_args.c:1313
 msgid "Version"
 msgstr ""
 
-#: oyjl_args.c:1339
+#: oyjl_args.c:1437
 msgid "Yes"
 msgstr ""
 
-#: oyjl_args.c:1339
+#: oyjl_args.c:1437
 msgid "No"
 msgstr ""
 
-#: oyjl_args.c:1392
+#: oyjl_args.c:1490
 msgid "EXAMPLES"
 msgstr ""
 
-#: oyjl_args.c:1394
+#: oyjl_args.c:1492
 msgid "EXIT-STATE"
 msgstr ""
 
-#: oyjl_args.c:1396
+#: oyjl_args.c:1494
 msgid "ENVIRONMENT VARIABLES"
 msgstr ""
 
-#: oyjl_args.c:1398
+#: oyjl_args.c:1496
 msgid "HISTORY"
 msgstr ""
 
-#: oyjl_args.c:1400
+#: oyjl_args.c:1498
 msgid "FILES"
 msgstr ""
 
-#: oyjl_args.c:1402
+#: oyjl_args.c:1500
 msgid "SEE AS WELL"
 msgstr ""
 
-#: oyjl_args.c:1508 oyjl_args.c:1682
+#: oyjl_args.c:1606 oyjl_args.c:1780
 msgid "SYNOPSIS"
 msgstr ""
 
-#: oyjl_args.c:1519 oyjl_args.c:1693
+#: oyjl_args.c:1617 oyjl_args.c:1791
 msgid "DESCRIPTION"
 msgstr ""
 
-#: oyjl_args.c:1521 oyjl_args.c:1695
+#: oyjl_args.c:1619 oyjl_args.c:1793
 msgid "OPTIONS"
 msgstr ""
 
-#: oyjl_args.c:1604 oyjl_args.c:1774
+#: oyjl_args.c:1702 oyjl_args.c:1872
 msgid "AUTHOR"
 msgstr ""
 
-#: oyjl_args.c:1608 oyjl_args.c:1778
+#: oyjl_args.c:1706 oyjl_args.c:1876
 msgid "COPYRIGHT"
 msgstr ""
 
-#: oyjl_args.c:1614 oyjl_args.c:1784 oyjl_args.c:1786
+#: oyjl_args.c:1712 oyjl_args.c:1882 oyjl_args.c:1884
 msgid "BUGS"
 msgstr ""
 
@@ -321,7 +321,7 @@ msgstr ""
 msgid "specify JSON file"
 msgstr ""
 
-#: oyjl_translate.c:59 test-core.c:423
+#: oyjl_translate.c:59 test-core.c:427
 msgid "output"
 msgstr ""
 
@@ -337,80 +337,112 @@ msgstr ""
 msgid "Rendering Intent"
 msgstr ""
 
-#: test-core.c:407
+#: test-core.c:409
 msgid "The example tool demontrates the usage of the libOyjl API's."
 msgstr ""
 
-#: test-core.c:408
+#: test-core.c:410
 msgid "October 10, 2018"
 msgstr ""
 
 #. declare some option choices
-#: test-core.c:412
+#: test-core.c:414
 msgid "oyjl.json"
 msgstr ""
 
-#: test-core.c:414
+#: test-core.c:416
 msgid "Print All"
 msgstr ""
 
-#: test-core.c:415
+#: test-core.c:417
 msgid "Print Camera"
 msgstr ""
 
-#: test-core.c:415
+#: test-core.c:417
 msgid "Print Camera JSON"
 msgstr ""
 
-#: test-core.c:416
+#: test-core.c:418
 msgid "Print None"
 msgstr ""
 
 #. type,   flags, o,   option,    key,  name,         description,         help, value_name,    value_type,               values,                                                          variable_type, output variable
-#: test-core.c:422
+#: test-core.c:424
+msgid "status"
+msgstr ""
+
+#: test-core.c:424
+msgid "Show Status"
+msgstr ""
+
+#: test-core.c:425 test-core.c:426
 msgid "input"
 msgstr ""
 
-#: test-core.c:422
+#: test-core.c:425 test-core.c:426
 msgid "Set Input"
 msgstr ""
 
-#: test-core.c:422
+#: test-core.c:425 test-core.c:426
 msgid "FILENAME"
 msgstr ""
 
-#: test-core.c:423
+#: test-core.c:427
 msgid "Control Output"
 msgstr ""
 
-#: test-core.c:424
+#: test-core.c:428
 msgid "help"
 msgstr ""
 
-#: test-core.c:424
+#: test-core.c:428
 msgid "Help"
 msgstr ""
 
 #. type,   flags, name,      description,          help, mandatory, optional, detail
-#: test-core.c:432
-msgid "Mode"
+#: test-core.c:436
+msgid "Mode1"
 msgstr ""
 
-#: test-core.c:432
+#: test-core.c:436
+msgid "Simple mode"
+msgstr ""
+
+#. accepted even if none of the mandatory options is set
+#: test-core.c:437
+msgid "Mode2"
+msgstr ""
+
+#: test-core.c:437
+msgid "Any arg mode"
+msgstr ""
+
+#. accepted if anonymous arguments are set
+#: test-core.c:438
+msgid "Mode3"
+msgstr ""
+
+#: test-core.c:438 test-core.c:495
 msgid "Actual mode"
 msgstr ""
 
-#: test-core.c:433
+#. parsed and checked with -i option
+#: test-core.c:439 test-core.c:496
 msgid "Misc"
 msgstr ""
 
-#: test-core.c:433
+#: test-core.c:439 test-core.c:496
 msgid "General options"
 msgstr ""
 
 #. tell about the tool
 #. argc+argv are required for parsing the command line options
-#: test-core.c:439 test-core.c:453 test-core.c:467 test-core.c:480
-#: test-core.c:493 test-core.c:507
+#: test-core.c:445 test-core.c:465 test-core.c:502 test-core.c:516
+#: test-core.c:529 test-core.c:542 test-core.c:556
 msgid "Short example tool using libOyjl"
+msgstr ""
+
+#. type,   flags, name,      description,          help, mandatory, optional, detail
+#: test-core.c:495
+msgid "Mode"
 msgstr ""
