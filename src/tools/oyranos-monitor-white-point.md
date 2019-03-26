@@ -33,7 +33,7 @@ The Night white point mode shall allow to reduce influence of blue light during 
    * \-g \-		# [none]
    * \-g Effect 1		# Example Effect 1
    * \-g Effect 2		# Example Effect 2
-* \-b|\-\-night\-backlight *PERCENT*	Set Nightly Backlight: The option needs xbacklight installed and supporting your device for dimming the monitor lamp.
+* \-b|\-\-night\-backlight *PERCENT*	Set Nightly Backlight: The option needs xbacklight installed and supporting your device for dimming the monitor lamp. (PERCENT:4 [≥0 ≤100])
 
 ### Actual mode
 **oyranos\-monitor\-white\-point** \-w *0|1|2|3|4|5|6|7* \-a *KELVIN* [\-z] [\-v]
@@ -46,7 +46,7 @@ The Night white point mode shall allow to reduce influence of blue light during 
    * \-w 4		# Illuminant D65
    * \-w 5		# Illuminant D75
    * \-w 6		# Illuminant D93
-* \-a|\-\-automatic *KELVIN*	A value from 2700 till 8000 Kelvin is expected to show no artefacts
+* \-a|\-\-automatic *KELVIN*	A value from 2700 till 8000 Kelvin is expected to show no artefacts (KELVIN:2800 [≥1100 ≤10100])
 
 ### Sun light appearance
 **oyranos\-monitor\-white\-point** \-s *0|1|2|3|4|5|6|7* [\-e *ICC\_PROFILE*] [\-z] [\-v]
@@ -68,9 +68,9 @@ The Night white point mode shall allow to reduce influence of blue light during 
 **oyranos\-monitor\-white\-point** \-l|  \-o *ANGLE\_IN\_DEGREE* \-i *ANGLE\_IN\_DEGREE* [\-t *ANGLE\_IN\_DEGREE|0:rise/set|\-6:civil|\-12:nautical|\-18:astronomical*] [\-z] [\-v]
 
 * \-l|\-\-location	Detect location by IP adress
-* \-o|\-\-longitude *ANGLE\_IN\_DEGREE*	Set Longitude
-* \-i|\-\-latitude *ANGLE\_IN\_DEGREE*	Set Latitude
-* \-t|\-\-twilight *ANGLE\_IN\_DEGREE|0:rise/set|\-6:civil|\-12:nautical|\-18:astronomical*	Set Twilight angle
+* \-o|\-\-longitude *ANGLE\_IN\_DEGREE*	Set Longitude (ANGLE\_IN\_DEGREE:12.0658 [≥\-180 ≤180])
+* \-i|\-\-latitude *ANGLE\_IN\_DEGREE*	Set Latitude (ANGLE\_IN\_DEGREE:51.2954 [≥\-90 ≤90])
+* \-t|\-\-twilight *ANGLE\_IN\_DEGREE|0:rise/set|\-6:civil|\-12:nautical|\-18:astronomical*	Set Twilight angle (ANGLE\_IN\_DEGREE|0:rise/set|\-6:civil|\-12:nautical|\-18:astronomical:0 [≥18 ≤\-18])
 
 ### Run sunset daemon
 **oyranos\-monitor\-white\-point** \-d *0|1|2* [\-v]

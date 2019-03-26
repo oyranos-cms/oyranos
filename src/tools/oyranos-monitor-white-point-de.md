@@ -33,7 +33,7 @@ Der Nachtweißpunkmodus soll den Einfluß von blauen Licht auf das menschliche H
    * \-g \-		# [kein]
    * \-g Effect 1		# Example Effect 1
    * \-g Effect 2		# Example Effect 2
-* \-b|\-\-night\-backlight *PROZENT*	Setze Nächtiches Monitorlicht: Die Einstellung benötigt xbacklight für das Abdunkeln der Bildschirmlampe.
+* \-b|\-\-night\-backlight *PROZENT*	Setze Nächtiches Monitorlicht: Die Einstellung benötigt xbacklight für das Abdunkeln der Bildschirmlampe. (PROZENT:4 [≥0 ≤100])
 
 ### Aktueller Modus
 **oyranos\-monitor\-white\-point** \-w *0|1|2|3|4|5|6|7* \-a *KELVIN* [\-z] [\-v]
@@ -46,7 +46,7 @@ Der Nachtweißpunkmodus soll den Einfluß von blauen Licht auf das menschliche H
    * \-w 4		# Lichtart D65
    * \-w 5		# Lichtart D75
    * \-w 6		# Lichtart D93
-* \-a|\-\-automatic *KELVIN*	Werte zwischen 2700 bis 8000 Kelvin sollten keine Darstellungsfehler hervorrufen
+* \-a|\-\-automatic *KELVIN*	Werte zwischen 2700 bis 8000 Kelvin sollten keine Darstellungsfehler hervorrufen (KELVIN:2800 [≥1100 ≤10100])
 
 ### Setze Tagesmodus
 **oyranos\-monitor\-white\-point** \-s *0|1|2|3|4|5|6|7* [\-e *ICC\_PROFIL*] [\-z] [\-v]
@@ -68,9 +68,9 @@ Der Nachtweißpunkmodus soll den Einfluß von blauen Licht auf das menschliche H
 **oyranos\-monitor\-white\-point** \-l|  \-o *WINKEL\_IN\_GRAD* \-i *WINKEL\_IN\_GRAD* [\-t *WINKEL\_IN\_GRAD|0:Auf\-/Untergang|\-6:zivil|\-12:nautisch|\-18:astronomisch*] [\-z] [\-v]
 
 * \-l|\-\-location	Erhalte Position von IP Adresse
-* \-o|\-\-longitude *WINKEL\_IN\_GRAD*	Setze Geographische Länge
-* \-i|\-\-latitude *WINKEL\_IN\_GRAD*	Setze Geographische Breite
-* \-t|\-\-twilight *WINKEL\_IN\_GRAD|0:Auf\-/Untergang|\-6:zivil|\-12:nautisch|\-18:astronomisch*	Setze Dämmerungswinkel
+* \-o|\-\-longitude *WINKEL\_IN\_GRAD*	Setze Geographische Länge (WINKEL\_IN\_GRAD:12,0658 [≥\-180 ≤180])
+* \-i|\-\-latitude *WINKEL\_IN\_GRAD*	Setze Geographische Breite (WINKEL\_IN\_GRAD:51,2954 [≥\-90 ≤90])
+* \-t|\-\-twilight *WINKEL\_IN\_GRAD|0:Auf\-/Untergang|\-6:zivil|\-12:nautisch|\-18:astronomisch*	Setze Dämmerungswinkel (WINKEL\_IN\_GRAD|0:Auf\-/Untergang|\-6:zivil|\-12:nautisch|\-18:astronomisch:0 [≥18 ≤\-18])
 
 ### Setze Sonnenuntergangsdienst
 **oyranos\-monitor\-white\-point** \-d *0|1|2* [\-v]
