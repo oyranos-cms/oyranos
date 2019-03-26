@@ -55,16 +55,21 @@
 /**
  *  @example test-core.c
  *  The code shows many of the Core API's.
- *  This code is used for testing API and can show use cases at the same time.
+ *  This code is used for testing the API and can show use cases at the same time.
  *  Be careful to only use the publicly declared and cross referenced APIs.
  *  Some APIs are internal only.
  */
 /**
  *  @example test.c
  *  This code sample will show how to read a JSON file and convert to a XML stream and many more aspects of the Oyjl API.
- *  This code is used for testing API and can show use cases at the same time.
+ *  This code is used for testing the API and can show use cases at the same time.
  *  Be careful to only use the publicly declared and cross referenced APIs.
  *  Some APIs are internal only.
+ */
+/**
+ *  @example test-test.c
+ *  A header only test file.
+ *  This code is used for testing the API and shows its own use.
  */
 
 /** @page links References
