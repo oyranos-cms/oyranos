@@ -52,14 +52,15 @@ extern int * oyjl_debug;
  *  Generation of other formats is simple.
  *  Translations are supported.
  *
- *  Command line options support single letter and long options without
+ *  Command line options support single letter in oyjlOption_s::o and
+ *  long options in oyjlOption_s::option without
  *  and with empty space and equal sign style single argument.
  *  @verbatim
     > myProgramm -o --option -w=1 --with-argument 1
     @endverbatim
  *
- *  **Basic Tutorial** from @ref openicc_config_read.c :
-    @dontinclude openicc_config_read.c
+ *  **Basic Tutorial** from @ref test-core.c :
+    @dontinclude test-core.c
     @skip handle options
     @until done with options handling
  *
@@ -159,12 +160,15 @@ const char * oyjlOption_PrintArg  ( oyjlOption_s   * o,
   {
     if(style & oyjlOPTIONSTYLE_MAN)
       oyjlStringAdd( &text, malloc, free, " \\fI%s\\fR", o->value_name );
-    if(style & oyjlOPTIONSTYLE_MARKDOWN)
-      oyjlStringAdd( &text, malloc, free, " *%s*", o->value_name );
-    else if(style & oyjlOPTIONSTYLE_OPTIONAL_INSIDE_GROUP)
-      oyjlStringAdd( &text, malloc, free, "%s", o->value_name );
     else
-      oyjlStringAdd( &text, malloc, free, " %s", o->value_name );
+    {
+      if(style & oyjlOPTIONSTYLE_MARKDOWN)
+        oyjlStringAdd( &text, malloc, free, " *%s*", o->value_name );
+      else if(style & oyjlOPTIONSTYLE_OPTIONAL_INSIDE_GROUP)
+        oyjlStringAdd( &text, malloc, free, "%s", o->value_name );
+      else
+        oyjlStringAdd( &text, malloc, free, " %s", o->value_name );
+    }
   }
   if(style & oyjlOPTIONSTYLE_OPTIONAL_END)
     oyjlStringAdd( &text, malloc, free, "]" );
@@ -331,11 +335,11 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse (
       goto clean_parse;
     for(i = 1; i < opts->argc; ++i)
     {
-      char * str = opts->argv[i];
+      const char * str = opts->argv[i];
       int l = strlen(str);
       char arg = ' ';
-      char * long_arg = NULL;
-      char * value = NULL;
+      const char * long_arg = NULL;
+      const char * value = NULL;
 
       /* parse -a | -a value | -a=value | -ba | -ba value | -ba=value */
            if(l > 1 && str[0] == '-' && str[1] != '-')
@@ -457,7 +461,16 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse (
       /* parse anonymous value, if requested */
       else
       {
-        result[0][pos] = '-';
+        result[0][pos] = '@';
+        o = oyjlOptions_GetOption( opts, '@' );
+        if(o)
+          value = str;
+        if(value)
+        {
+          int llen = 0;
+          while(result[llen]) ++llen;
+          oyjlStringListAddStaticString( &result, &llen, value, malloc, free );
+        }
         ++pos;
       }
     }
@@ -476,6 +489,17 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse (
         case oyjlINT:    oyjlOptions_GetResult( opts, o->o, 0, 0, o->variable.i ); break;
       }
       ++pos;
+    }
+
+    /** Put the count of found anonymous arguments into '@' options variable.i of variable_type oyjlINT. */
+    o = oyjlOptions_GetOption( opts, '@' );
+    if(o && o->variable_type == oyjlINT && o->variable.i)
+    {
+      int count = 0;
+      /* detect all '@' anonymous arguments */
+      char ** results = oyjlOptions_ResultsToList( opts, '@', &count );
+      *o->variable.i = count;
+      oyjlStringListRelease( &results, count, free );
     }
   }
 
@@ -505,7 +529,7 @@ clean_parse:
  *  @since   2018/08/14 (OpenICC: 0.1.1)
  */
 oyjlOPTIONSTATE_e oyjlOptions_GetResult (
-                                       oyjlOptions_s  * opts,
+                                       oyjlOptions_s     * opts,
                                        char                oc,
                                        const char       ** result_string,
                                        double            * result_dbl,
@@ -620,6 +644,67 @@ char * oyjlOptions_ResultsToJson  ( oyjlOptions_s  * opts )
   return rjson;
 }
 
+/** @brief    Convert the parsed content to a text list
+ *  @memberof oyjlOptions_s
+ *
+ *  @param[in]     opts                the argument object
+ *  @param[in]     oc                  a filter; use '\000' to get all results;
+ *                                     e.g. use '@' for all anonymous results
+ *  @param[out]    count               the number of matched results
+ *  @return                            a possibly filterd string list of results;
+ *                                     Without a filter it contains the argument
+ *                                     Id followed by double point and the
+ *                                     result starting at index 3.
+ *                                     With filter it contains only results if
+ *                                     apply and without Id.
+ *                                     The memory is owned by caller.
+ *
+ *  @version Oyjl: 1.0.0
+ *  @date    2019/03/25
+ *  @since   2019/03/25 (Oyjl: 1.0.0)
+ */
+char **  oyjlOptions_ResultsToList   ( oyjlOptions_s     * opts,
+                                       char                oc,
+                                       int               * count )
+{
+  char * args = NULL,
+       * text = NULL,
+       ** list = NULL;
+  char ** results = opts->private_data;
+  int i,n,llen = 0;
+
+  if(!results)
+  {
+    if(oyjlOptions_Parse( opts ))
+      return NULL;
+
+    results = opts->private_data;
+    if(!results)
+      return NULL;
+  }
+
+  args = results[0];
+  n = strlen( args );
+  for(i = 0; i < n; ++i)
+  {
+    char a[4] = {args[i],0,0,0};
+    char * value = results[i+1];
+    if(oc == '\000')
+      oyjlStringAdd( &text, malloc, free, "%s:%s", a, value );
+    else if(oc == a[0])
+      oyjlStringAdd( &text, malloc, free, "%s", value );
+    if(text)
+    {
+      oyjlStringListAddStaticString( &list, &llen, text, malloc, free );
+      free(text); text = NULL;
+    }
+  }
+  if(count)
+    *count = llen;
+
+  return list;
+}
+
 /** @brief    Convert the parsed content to simple text
  *  @memberof oyjlOptions_s
  *
@@ -702,7 +787,8 @@ const char * oyjlOptions_PrintHelpSynopsis (
       fprintf(stderr, "\n%s: option not declared: %c\n", g->name, oc);
       exit(1);
     }
-    oyjlStringAdd( &text, malloc, free, " %s", oyjlOption_PrintArg(o, style) );
+    if(oc != '@' && oc != '#')
+      oyjlStringAdd( &text, malloc, free, " %s", oyjlOption_PrintArg(o, style) );
   }
   for(i = 0; i < on; ++i)
   {
@@ -734,6 +820,18 @@ const char * oyjlOptions_PrintHelpSynopsis (
     }
 
     oyjlStringAdd( &text, malloc, free, "%s%s", gstyle & oyjlOPTIONSTYLE_OPTIONAL_START ? " ":"", oyjlOption_PrintArg(o, gstyle) );
+  }
+  for(i = 0; i < m; ++i)
+  {
+    char oc = g->mandatory[i];
+    oyjlOption_s * o = oyjlOptions_GetOption( opts, oc );
+    if(oc != '|' && !o)
+    {
+      fprintf(stderr, "\n%s: option not declared: %c\n", g->name, oc);
+      exit(1);
+    }
+    if(oc == '@')
+      oyjlStringAdd( &text, malloc, free, " %s", o->value_name?o->value_name:"..." );
   }
   return text;
 }
@@ -774,7 +872,7 @@ oyjlOptionChoice_s * oyjlOption_GetChoices_ (
  *  @param   motto_format              prints a customised intoduction line
  *
  *  @version Oyjl: 1.0.0
- *  @date    2018/08/14
+ *  @date    2019/03/25
  *  @since   2018/08/14 (OpenICC: 0.1.1)
  */
 void  oyjlOptions_PrintHelp       ( oyjlOptions_s  * opts,
@@ -864,7 +962,7 @@ void  oyjlOptions_PrintHelp       ( oyjlOptions_s  * opts,
                   o->o,
                   o->values.choices.list[l].nick,
                   o->values.choices.list[l].name && o->values.choices.list[l].nick[0] ? o->values.choices.list[l].name : o->values.choices.list[l].description,
-                  o->values.choices.list[l].help?" - ":"",
+                  o->values.choices.list[l].help&&o->values.choices.list[l].help[0]?" - ":"",
                   o->values.choices.list[l].help?o->values.choices.list[l].help:"" );
           }
           break;
@@ -883,7 +981,7 @@ void  oyjlOptions_PrintHelp       ( oyjlOptions_s  * opts,
         case oyjlOPTIONTYPE_DOUBLE:
           fprintf( stderr, "\t" );
           fprintf( stderr, "%s", oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING) );
-          fprintf( stderr, "\t%s%s%s\n", o->description ? o->description:"", o->help?": ":"", o->help?o->help :"" );
+          fprintf( stderr, "\t%s%s%s (%s%s%g [≥%g ≤%g])\n", o->description ? o->description:"", o->help?": ":"", o->help?o->help :"", o->value_name?o->value_name:"", o->value_name?":":"", o->values.dbl.d, o->values.dbl.start, o->values.dbl.end );
           break;
         case oyjlOPTIONTYPE_STRING:
           fprintf( stderr, "\t" );
@@ -908,11 +1006,11 @@ void  oyjlOptions_PrintHelp       ( oyjlOptions_s  * opts,
  *  @memberof oyjlOptions_s
  *
  *  @version Oyjl: 1.0.0
- *  @date    2018/08/14
+ *  @date    2019/03/24
  *  @since   2018/08/14 (OpenICC: 0.1.1)
  */
-oyjlOptions_s * oyjlOptions_New( int                 argc,
-                                       char             ** argv )
+oyjlOptions_s * oyjlOptions_New      ( int                 argc,
+                                       const char       ** argv )
 {
   oyjlOptions_s * opts = calloc( sizeof(oyjlOptions_s), 1 );
   memcpy( opts->type, "oiws", 4 );
@@ -928,11 +1026,11 @@ oyjlOptions_s * oyjlOptions_New( int                 argc,
  *  The oyjlUi_s contains already options in the opts member.
  *
  *  @version Oyjl: 1.0.0
- *  @date    2018/08/14
+ *  @date    2019/03/24
  *  @since   2018/08/14 (OpenICC: 0.1.1)
  */
-oyjlUi_s* oyjlUi_New           ( int                 argc,
-                                       char             ** argv )
+oyjlUi_s* oyjlUi_New                 ( int                 argc,
+                                       const char       ** argv )
 {
   oyjlUi_s * ui = calloc( sizeof(oyjlUi_s), 1 );
   memcpy( ui->type, "oiui", 4 );
@@ -984,11 +1082,11 @@ oyjlUi_s* oyjlUi_New           ( int                 argc,
  *  @return                            UI object for later use
  *
  *  @version Oyjl: 1.0.0
- *  @date    2018/11/09
+ *  @date    2019/03/24
  *  @since   2018/08/20 (OpenICC: 0.1.1)
  */
-oyjlUi_s *  oyjlUi_Create      ( int                 argc,
-                                       char             ** argv,
+oyjlUi_s *  oyjlUi_Create            ( int                 argc,
+                                       const char       ** argv,
                                        const char        * nick,
                                        const char        * name,
                                        const char        * description,
@@ -1577,7 +1675,7 @@ char *       oyjlUi_ToMan         ( oyjlUi_s       * ui,
           break;
         case oyjlOPTIONTYPE_DOUBLE:
           oyjlStringAdd( &text, malloc, free, "%s", oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MAN) );
-          oyjlStringAdd( &text, malloc, free, "\t%s%s%s\n.br\n", o->description ? o->description:"", o->help?": ":"", o->help?o->help :"" );
+          oyjlStringAdd( &text, malloc, free, "\t%s%s%s (%s%s%g [≥%g ≤%g])\n.br\n", o->description ? o->description:"", o->help?": ":"", o->help?o->help :"", o->value_name?o->value_name:"", o->value_name?":":"", o->values.dbl.d, o->values.dbl.start, o->values.dbl.end );
           break;
         case oyjlOPTIONTYPE_STRING:
           oyjlStringAdd( &text, malloc, free, "%s", oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MAN) );
@@ -1746,7 +1844,7 @@ char *       oyjlUi_ToMarkdown    ( oyjlUi_s       * ui,
           break;
         case oyjlOPTIONTYPE_DOUBLE:
           oyjlStringAdd( &text, malloc, free, "* %s", oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MARKDOWN) );
-          oyjlStringAdd( &text, malloc, free, "\t%s%s%s\n", o->description ? o->description:"", o->help?": ":"", o->help?o->help :"" );
+          oyjlStringAdd( &text, malloc, free, "\t%s%s%s (%s%s%g [≥%g ≤%g])\n", o->description ? o->description:"", o->help?": ":"", o->help?o->help :"", o->value_name?o->value_name:"", o->value_name?":":"", o->values.dbl.d, o->values.dbl.start, o->values.dbl.end );
           break;
         case oyjlOPTIONTYPE_STRING:
           oyjlStringAdd( &text, malloc, free, "* %s", oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MARKDOWN) );
