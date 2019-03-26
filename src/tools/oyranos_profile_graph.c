@@ -125,83 +125,33 @@ void drawIlluminant ( cairo_t * cr,
 
 int verbose = 0;
 
-void  printfHelp (int argc, char** argv)
-{
-  int i;
-  fprintf( stderr, "\n");
-  for(i = 0; i < argc; ++i)
-    fprintf( stderr, "%s ", argv[i]);
-  fprintf( stderr, "\n");
-  fprintf( stderr, "%s v%d.%d.%d %s\n", argv[0],
-                        OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C,
-                                _("is a ICC color profile grapher"));
-  fprintf( stderr, "%s:\n",               _("Usage"));
-  fprintf( stderr, "  %s\n",              _("2D Graph from profiles:"));
-  fprintf( stderr, "      %s [-o %s] [-x [-c]] [-s] [-vbowt] %s\n", argv[0],
-                          _("FILE"),_("PROFILENAMES") );
-  fprintf( stderr, "      -x \t%s\n",     _("use CIE*xyY *x*y plane for saturation line projection"));
-  fprintf( stderr, "      \t-c\t%s\n",    _("omit white line of lambert light emitters"));
-  fprintf( stderr, "      -s \t%s\n",     _("omit the spectral line"));
-  fprintf( stderr, "      -d %s\t%s\n",   _("NUMBER"), _("specify incremental increase of the thickness of the graph lines"));
-  fprintf( stderr, "\n");
-  fprintf( stderr,  "  %s\n",             _("Standard Observer 1931 2° Graph:"));
-  fprintf( stderr,  "      %s --standard-observer [-vbowtr]\n", argv[0]);
-  fprintf( stderr, "      \t--no-color\t%s\n",    _("draw gray"));
-  fprintf( stderr, "\n");
-  fprintf( stderr,  "  %s\n",             _("1964 10° Observer Graph:"));
-  fprintf( stderr,  "      %s --standard-observer-64 [-vbowtr]\n", argv[0]);
-  fprintf( stderr, "      \t--no-color\t%s\n",    _("draw gray"));
-  fprintf( stderr, "\n");
-  fprintf( stderr,  "  %s\n",             _("Blackbody Radiator Spectrum Graph:"));
-  fprintf( stderr,  "      %s --kelvin %s [-vbowtr]\n", argv[0], _("NUMBER"));
-  fprintf( stderr, "      \t--no-color\t%s\n",    _("draw gray"));
-  fprintf( stderr, "\n");
-  fprintf( stderr,  "  %s\n",             _("Illuminant Spectrum Graph:"));
-  fprintf( stderr,  "      %s --illuminant A|D65 [-vbowtr]\n", argv[0]);
-  fprintf( stderr, "      --illuminant A\t%s\n",   _("CIE A spectral power distribution"));
-  fprintf( stderr, "      --illuminant D50\t%s\n", _("CIE D50 spectral power distribution (computed)"));
-  fprintf( stderr, "      --illuminant D65\t%s\n", _("CIE D65 spectral power distribution"));
-  fprintf( stderr, "      --illuminant %s\t%s\n", _("NUMBER"), _("Kelvin derived CIE spectral power distribution"));
-  fprintf( stderr, "      \t--no-color\t%s\n",    _("draw gray"));
-  fprintf( stderr, "\n");
-  fprintf( stderr,  "  %s\n",             _("CSV Spectrum Graph:"));
-  fprintf( stderr,  "      %s --input %s [-vbowtr]\n", argv[0], _("FILE"));
-  fprintf( stderr, "      \t--no-color\t%s\n",    _("draw gray"));
-  fprintf( stderr, "\n");
-  fprintf( stderr, "  %s\n",              _("General options:"));
-  fprintf( stderr, "      -v \t%s\n",     _("verbose"));
-  fprintf( stderr, "      -w %s\t%s\n",   _("NUMBER"), _("specify output image width in pixel"));
-  fprintf( stderr, "      -o %s\t%s\n",   _("FILE"),   _("specify output file name, default is output.png"));
-  fprintf( stderr, "      -f %s\t%s\n",   _("FORMAT"),   _("specify output file format png or svg, default is png"));
-  fprintf( stderr, "      -b \t%s\n",     _("omit border"));
-  fprintf( stderr, "      -t %s\t%s\n",   _("NUMBER"), _("specify increase of the thickness of the graph lines"));
-  fprintf( stderr, "      -r \t%s\n",     _("draw grid"));
-  fprintf( stderr, "      -2 \t%s\n",     _("select a ICC v2 profile"));
-  fprintf( stderr, "      -4 \t%s\n",     _("select a ICC v4 profile"));
-  fprintf( stderr, "\n");
-  fprintf( stderr, _("For more information read the man page:"));
-  fprintf( stderr, "\n");
-  fprintf( stderr, "      man oyranos-profile-graph\n");
-}
-
+const char * jcommands = "{\n\
+  \"command_set\": \"oyranos-profile-graph\",\n\
+  \"comment\": \"command_set_delimiter - build key:value; default is '=' key=value\",\n\
+  \"comment\": \"command_set_option - use \\\"-s\\\" \\\"key\\\"; skip \\\"--\\\" direct in front of key\",\n\
+  \"command_get\": \"oyranos-profile-graph\",\n\
+  \"command_get_args\": [\"-X\", \"json\"]\n\
+}";
 int main( int argc , char** argv )
 {
   /* the functional switches */
-  char * format = 0;
-  char * output = 0;
-  char * input = NULL;
-  int spectral = 1;
-  int blackbody = 1;
+  const char * format = NULL;
+  const char * sformat = NULL;
+  const char * output = NULL;
+  const char * output_file = NULL;
+  const char * input = NULL;
+  int no_spectral = 0;
+  int no_blackbody = 1;
   double thickness = 1.0;
   double change_thickness = 0.7;
-  int border = 1;
+  int no_border = 0;
   int raster = 0;
-  int standardobs = 0;
-  int saturation = 1;
+  int standardobs = 0, observer64 = 0;
   double kelvin = 0.0;
-  char * illuminant = 0;
-  int color = 1;
+  const char * illuminant = NULL;
+  int no_color = 0;
   int flags = 0;
+  int v2 = 0, v4 = 0, no_repair = 0;
 
   double max_x,max_y,min_x,min_y;
   oyImage_s * spectra = NULL;
@@ -214,21 +164,23 @@ int main( int argc , char** argv )
   double spectra_rect[4] = {1000000.,-1000000.,1000000.,-1000000.}; /* x_min,x_max, y_min,y_max */
 
   oyImage_s * image = NULL;
-  const char * filename = 0;
+  char ** profile_names = 0;
+  int profile_count = 0;
 
-  int i,j,
-      o = 0;
+  int i,j;
   cairo_t * cr = 0;
   cairo_surface_t * surface = NULL;
   cairo_status_t status;
   double scale = 1.0,
          frame = 0;
-  int pixel_w=128, pixel_h=128,  /* size in pixel */
-      x,y,w=0,h=0;               /* image dimensions */
+  double pixel_width = 128.0;
+  int pixel_w=pixel_width, pixel_h=pixel_width,  /* size in pixel */
+      x,y,w=0,h=0;                               /* image dimensions */
   oyProfile_s * p_xyz = oyProfile_FromStd(oyASSUMED_XYZ, flags, 0),
               * p_lab = oyProfile_FromStd(oyASSUMED_LAB, flags, 0),
-              * proj = p_lab;
-  double xs_xyz = 1.2,           /* scaling of CIE*xy graph */
+              * proj = p_lab; /* xyy_plane=0 */
+  int xyy_plane = 0;
+  double xs_xyz = 1.2,                           /* scaling of CIE*xy graph */
          ys_xyz = 1.2;
 
   /* spectal variables */
@@ -254,87 +206,163 @@ int main( int argc , char** argv )
 #endif
   oyI18NInit_();
 
+  oyjlOptions_s * opts;
+  oyjlUi_s * ui;
+  oyjlUiHeaderSection_s * info;
+  const char * export = NULL;
+  int help = 0;
+  int verbose = 0;
+  int state = 0;
 
-  if(argc != 1)
+  opts = oyjlOptions_New( argc, (const char**)argv );
+  /* nick, name, description, help */
+  oyjlOptionChoice_s env_vars[]={ {"OY_DEBUG", _("set the Oyranos debug level."), _("Alternatively the -v option can be used."), _("Valid integer range is from 1-20.")},
+                                  {"XDG_DATA_HOME XDG_DATA_DIRS", _("route Oyranos to top directories containing resources. The derived paths for ICC profiles have a \"color/icc\" appended. http://www.oyranos.com/wiki/index.php?title=OpenIccDirectoryProposal"), "", ""},
+                                  {"","","",""}};
+  oyjlOptionChoice_s examples[]={ {_("Show graph of a ICC profile"), "oyranos-profile-graph", "ICC_PROFILE", ""},
+                                  {_("Show the saturation lines of two profiles in CIE*ab 256 pixel width, without spectral line and with thicker lines:"), "oyranos-profile-graph", "-w 256 -s -t 3 sRGB.icc ProPhoto-RGB.icc", ""},
+                                  {_("Show the standard observer spectral function as curves:"),"oyranos-profile-graph","--standard-observer -o CIE-StdObserver.png",""},
+                                  {"","","",""}};
+  oyjlOptionChoice_s illu_dxx[]={ {"A", _("Illuminant A"), _("CIE A spectral power distribution"), ""},
+                                  {"D50",_("Illuminant D50"),_("CIE D50 spectral power distribution (computed)"),""},
+                                  {"D55",_("Illuminant D55"),_("CIE D55 spectral power distribution (computed)"),""},
+                                  {"D65",_("Illuminant D65"),_("CIE D65 spectral power distribution"),""},
+                                  {"D75",_("Illuminant D75"),_("CIE D75 spectral power distribution (computed)"),""},
+                                  {"D93",_("Illuminant D93"),_("CIE D93 spectral power distribution (computed)"),""},
+                                  {"","","",""}};
+  oyjlOptionChoice_s out_form[]={ {"png",_("PNG"),_("PNG Raster"), ""},
+                                  {"svg",_("SVG"),_("SVG Vector"),""},
+                                  {"","","",""}};
+  oyjlOptionChoice_s spe_form[]={ {"png",_("PNG"),_("PNG Raster"), ""},
+                                  {"svg",_("SVG"),_("SVG Vector"),""},
+                                  {"csv",_("CSV"),_("CSV Values"),""},
+                                  {"ncc",_("NCC"),_("Named Color Collection"),""},
+                                  {"cgast",_("CGATS"),_("CGATS Values"),""},
+                                  {"ppm",_("PPM"),_("Spectral PAM Image"),""},
+                                  {"","","",""}};
+  oyjlOption_s oarray[] = {
+  /* type,   flags, o, option, key, name, description, help, value_name, value_type, values, var_type, variable */
+    {"oiwi", 0, '2', "icc-version-2", NULL, _("ICC Version 2"), _("Select ICC v2 Profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&v2} },
+    {"oiwi", 0, '4', "icc-version-4", NULL, _("ICC Version 4"), _("Select ICC v4 Profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&v4} },
+    {"oiwi", 0, '@', "",              NULL, _("Input"),         _("Profile"),                NULL, _("ICC_PROFILES"), oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&profile_count} },
+    {"oiwi", 0, 'b', "no-border",     NULL, _("Omit border"),   _("Omit border in graph"),   NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&no_border} },
+    {"oiwi", 0, 'c', "no-blackbody",  NULL, _("No black body"), _("Omit white line of lambert light emitters"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&no_blackbody} },
+    {"oiwi", 0, 'd', "change-thickness",NULL,_("Thickness increase"),_("Specify increase of the thickness of the graph lines"), NULL, _("NUMBER"), oyjlOPTIONTYPE_DOUBLE,
+      {.dbl.start = -1000.0, .dbl.end = 1000.0, .dbl.tick = 0.05, .dbl.d = 0.7}, oyjlDOUBLE, {.d=&change_thickness} },
+    {"oiwi", 0, 'f', "format",        NULL, _("Format"),        _("Specify output file format png or svg, default is png"), NULL, _("FORMAT"), oyjlOPTIONTYPE_CHOICE,
+      {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)out_form, sizeof(out_form), 0 )}, oyjlSTRING, {.s=&format} },
+    {"oiwi", 0, 'g', "no-color",      NULL, _("Gray"),          _("Draw Gray"),              NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&no_color} },
+    {"oiwi", 0, 'i', "illuminant",    NULL, _("Illuminant"),    _("Illuminant Spectrum"),    NULL, _("STRING"), oyjlOPTIONTYPE_CHOICE,
+      {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)illu_dxx, sizeof(illu_dxx), 0 )}, oyjlSTRING, {.s=&illuminant} },
+    {"oiwi", 0, 'k', "kelvin",        NULL, _("Kelvin"),        _("Blackbody Radiator"),     NULL, _("NUMBER"), oyjlOPTIONTYPE_DOUBLE,
+      {.dbl.start = 0.0, .dbl.end = 25000.0, .dbl.tick = 100, .dbl.d = 0.0}, oyjlDOUBLE, {.d=&kelvin} },
+    {"oiwi", 0, 'n', "no-spectral-line",NULL,_("No spectral"),  _("Omit the spectral line"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&no_spectral} },
+    {"oiwi", 0, 'o', "output",        NULL, _("Output"),        _("Specify output file name, default is output.png"), NULL, _("FILE"), oyjlOPTIONTYPE_NONE, {}, oyjlSTRING, {.s=&output} },
+    {"oiwi", 0, 'p', "spectral-format",NULL,_("Spectral Output"),_("Specify spectral output file format"), NULL, _("FORMAT"), oyjlOPTIONTYPE_CHOICE,
+      {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)spe_form, sizeof(spe_form), 0 )}, oyjlSTRING, {.s=&sformat} },
+    {"oiwi", 0, 's', "spectral",      NULL, _("Spectral"),      _("Spectral Input"),         NULL, _("FILE"), oyjlOPTIONTYPE_NONE, {}, oyjlSTRING, {.s=&input} },
+    {"oiwi", 0, 'S', "standard-observer",NULL,_("Standard Observer"),_("CIE Standard Observer 1931 2°"), NULL,NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&standardobs} },
+    {"oiwi", 0, 'O', "observer-64",   NULL, _("10° Observer"),  _("CIE Observer 1964 10°"),  NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&observer64} },
+
+    {"oiwi", 0, 'r', "no-repair",     NULL, _("No repair"),     _("No Profile repair of ICC profile ID"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&no_repair} },
+    {"oiwi", 0, 'R', "raster",        NULL, _("Raster"),        _("Draw Raster"),            NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&raster} },
+    {"oiwi", 0, 't', "thickness",     NULL, _("Thickness"),     _("Specify the thickness of the graph lines"), NULL, _("NUMBER"), oyjlOPTIONTYPE_DOUBLE,
+      {.dbl.start = 0.0001, .dbl.end = 10.0, .dbl.tick = 0.01, .dbl.d = 1.0}, oyjlDOUBLE, {.d=&thickness} },
+    {"oiwi", 0, 'w', "width",         NULL, _("Width"),         _("Specify output image width in pixel"), NULL, _("NUMBER"), oyjlOPTIONTYPE_DOUBLE,
+      {.dbl.start = 64.0, .dbl.end = 4096.0, .dbl.tick = 1, .dbl.d = 128.0}, oyjlDOUBLE, {.d=&pixel_width} },
+    {"oiwi", 0, 'x', "xyy",           NULL, _("xyY"),           _("Use CIE*xyY *x*y plane for saturation line projection"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&xyy_plane} },
+
+    /* default options -h and -v */
+    {"oiwi", 0, 'h', "help", NULL, _("help"), _("Help"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&help} },
+    {"oiwi", 0, 'v', "verbose", NULL, _("verbose"), _("verbose"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&verbose} },
+    /* default option template -X|--export */
+    {"oiwi", 0, 'X', "export", NULL, NULL, NULL, NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = NULL}, oyjlSTRING, {.s=&export} },
+    /* blind options, useful only for man page generation */
+    {"oiwi", 0, '.', "man-environment_variables", NULL, "", "", NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)env_vars, sizeof(env_vars), 0 )}, oyjlNONE, {.i=0} },
+    {"oiwi", 0, ',', "man-examples", NULL, "", "", NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)examples, sizeof(examples), 0 )}, oyjlNONE, {.i=0} },
+    {"",0,0,0,0,0,0,0, NULL, oyjlOPTIONTYPE_END, {},0,{}}
+  };
+  opts->array = (oyjlOption_s*)oyjlStringAppendN( NULL, (const char*)oarray, sizeof(oarray), 0 );
+
+  oyjlOptionGroup_s groups[] = {
+  /* type,   flags, name, description, help, mandatory, optional, detail */
+    {"oiwg", 0, _("Saturation"), _("2D Graph from profiles"), NULL, "@", "tbgwofcxdn24rv", "dxcn24r" },
+    {"oiwg", 0, _("StdObs2°"), _("Standard Observer 1931 2° Graph"), NULL, "S", "tbgwRofv", "S" },
+    {"oiwg", 0, _("Obs10°"), _("1964 10° Observer Graph"), NULL, "O", "tbgwRofv", "O" },
+    {"oiwg", 0, _("Blackbody Radiator"), _("Blackbody Radiator Spectrum Graph"), NULL, "k", "tbgwRofv", "k" },
+    {"oiwg", 0, _("Illuminant Spectrum"), _("Illuminant Spectrum Graph"), NULL, "i", "tbgwRofv", "i" },
+    {"oiwg", 0, _("Spectral Input"), _("Spectral Input Graph"), NULL, "s", "tbgwRof|pv", "sp" },
+    {"oiwg", 0, _("Misc"), _("General options"), NULL, "", "", "tbgwRofXvh" },
+    {"",0,0,0,0,0,0,0}
+  };
+  opts->groups = (oyjlOptionGroup_s*)oyjlStringAppendN( NULL, (const char*)groups, sizeof(groups), 0);
+
+  info = oyUiInfo(_("The  oyranos-profile-graph programm converts ICC profiles or embedded ICC profiles from images to a graph image. By default the program shows the saturation line of the specified profiles and writes to output.png."),
+                  "2019-03-24T12:00:00", "March 24, 2019");
+  ui = oyjlUi_Create( argc, (const char**)argv,
+      "oyranos-profile-graph", _("Oyranos Profile Graph"), _("The tool is a ICC color profile grapher."),
+      "oyPG-logo",
+      info, opts->array, opts->groups, &state );
+  if( state & oyjlUI_STATE_EXPORT &&
+      export &&
+      strcmp(export,"json+command") != 0)
+    return 0;
+  if(!ui) return 1;
+
+  if(!export && !input && !profile_count && !standardobs && !observer64 && !kelvin && !illuminant)
   {
-    int pos = 1;
-    const char *wrong_arg = 0;
-    while(pos < argc)
-    {
-      switch(argv[pos][0])
-      {
-        case '-':
-            for(i = 1; i < (int)strlen(argv[pos]); ++i)
-            switch (argv[pos][i])
-            {
-              case '2': flags |= OY_ICC_VERSION_2; break;
-              case '4': flags |= OY_ICC_VERSION_4; break;
-              case 'b': border = 0; break;
-              case 'c': blackbody = 0; break;
-              case 'd': i=0; OY_PARSE_FLOAT_ARG2( change_thickness, "d", -1000.0, 1000.0, .7 ); break;
-              case 'f': OY_PARSE_STRING_ARG(format); break;
-              case 'o': OY_PARSE_STRING_ARG(output); break;
-              case 'r': raster = 1; break;
-              case 'w': OY_PARSE_INT_ARG( pixel_w ); break;
-              case 'v': if(verbose++) oy_debug += 1; break;
-              case 'x': proj = p_xyz; break;
-              case 's': spectral = 0; break;
-              case 't': i=0; OY_PARSE_FLOAT_ARG2( thickness, "t", 0.001, 10.0 , 1.0 ); break;
-              case 'h':
-              case '-':
-                        if(i == 1)
-                        {
-                             if(OY_IS_ARG("format"))
-                        { OY_PARSE_STRING_ARG2(format, "format"); break; }
-                        else if(OY_IS_ARG("output"))
-                        { OY_PARSE_STRING_ARG2(output, "output"); break; }
-                        else if(OY_IS_ARG("profile"))
-                        { OY_PARSE_STRING_ARG2(filename, "profile"); break; }
-                        else if(OY_IS_ARG("standard-observer"))
-                        { blackbody = spectral = saturation = 0; standardobs = 1; i=100; break;}
-                        else if(OY_IS_ARG("standard-observer-64"))
-                        { blackbody = spectral = saturation = 0; standardobs = 2; i=100; break;}
-                        else if(OY_IS_ARG("kelvin"))
-                        { blackbody = spectral = saturation = 0;
-                          OY_PARSE_FLOAT_ARG2(kelvin, "kelvin", 800.0,15000.0,5000.0); i=100; break;}
-                        else if(OY_IS_ARG("illuminant"))
-                        { blackbody = spectral = saturation = 0;
-                          OY_PARSE_STRING_ARG2(illuminant, "illuminant"); break; }
-                        else if(OY_IS_ARG("input"))
-                        { blackbody = spectral = saturation = 0;
-                          OY_PARSE_STRING_ARG2(input, "input"); break; }
-                        else if(OY_IS_ARG("no-color"))
-                        { color = 0; i=100; break;}
-                        else if(OY_IS_ARG("verbose"))
-                        { if(verbose++) oy_debug += 1; i=100; break;}
-                        } OY_FALLTHROUGH
-              default:
-                        printfHelp(argc, argv);
-                        exit (0);
-                        break;
-            }
-            break;
-        default: ++o; break;
-      }
-      if( wrong_arg )
-      {
-        fprintf( stderr, "%s %s\n", _("wrong argument to option:"), wrong_arg);
-        printfHelp(argc, argv);
-        exit(1);
-      }
-      ++pos;
-    }
-    if(oy_debug) fprintf( stderr,  "%s\n", argv[1] );
+    oyjlUiHeaderSection_s * version = oyjlUi_GetHeaderSection( ui,
+                                                               "version" );
+    oyjlOptions_PrintHelp( ui->opts, ui, verbose, "%s v%s - %s", argv[0],
+                              version && version->name ? version->name : "",
+                              ui->description ? ui->description : "" );
+    state = oyjlUI_STATE_HELP;
   }
-  else
+
+  if(state & oyjlUI_STATE_HELP)
   {
-                        printfHelp(argc, argv);
-                        exit (0);
+    fprintf( stderr, "%s\n\tman oyranos-profile-graph\n\n", _("For more information read the man page:"));
+    return 0;
   }
+
+  if(verbose)
+  {
+    char * json = oyjlOptions_ResultsToJson( opts );
+    if(json)
+      fputs( json, stderr );
+    fputs( "\n", stderr );
+
+    char * text = oyjlOptions_ResultsToText( opts );
+    if(text)
+      fputs( text, stderr );
+    fputs( "\n", stderr );
+  }
+
+  if((export && strcmp(export,"json+command") == 0))
+  {
+    char * json = oyjlUi_ToJson( ui, 0 ),
+         * json_commands = strdup(jcommands);
+    json_commands[strlen(json_commands)-2] = ',';
+    json_commands[strlen(json_commands)-1] = '\000';
+    oyjlStringAdd( &json_commands, malloc, free, "%s", &json[1] );
+    puts( json_commands );
+    exit(0);
+  }
+
+  /* detect all anonymous arguments for saturation */
+  profile_names = oyjlOptions_ResultsToList( ui->opts, '@', &profile_count );
+  pixel_w = pixel_width+0.5;
+  if(xyy_plane) proj = p_xyz;
+  if(sformat) format = sformat;
+
 
   if(oy_debug)
     fprintf( stderr, "  Oyranos v%s\n",
                   oyNoEmptyName_m_(oyVersionString(1,0)));
+
+
+
+#define flags (v2?OY_ICC_VERSION_2:0 | v4?OY_ICC_VERSION_4:0 | no_repair?OY_NO_REPAIR:0)
 
   if(input)
   {
@@ -469,8 +497,11 @@ int main( int argc , char** argv )
   if(format == NULL || oyStringCaseCmp_(format, "png") == 0)
     surface = cairo_image_surface_create( CAIRO_FORMAT_ARGB32, pixel_w,pixel_h);
   else if(oyStringCaseCmp_(format, "svg") == 0)
-    surface = cairo_svg_surface_create( output?output:"output.svg",
+  {
+    output_file = output?output:"output.svg";
+    surface = cairo_svg_surface_create( output_file,
                                         (double)pixel_w, (double)pixel_h);
+  }
   else
   {
     if(oyStringCaseCmp_(format, "csv") == 0)
@@ -479,7 +510,8 @@ int main( int argc , char** argv )
       {
         int level = 0;
         oyTreeToCsv( specT, &level, &string );
-        oyjlWriteFile( output?output:"output.csv", string, strlen(string) );
+        output_file = output?output:"output.csv";
+        oyjlWriteFile( output_file, string, strlen(string) );
       } else
         oyMessageFunc_p(oyMSG_ERROR,NULL,"no input tree found");
     }
@@ -489,13 +521,15 @@ int main( int argc , char** argv )
       {
         int level = 0;
         oyjlTreeToJson( specT, &level, &string );
-        oyjlWriteFile( output?output:"output.ncc", string, strlen(string) );
+        output_file = output?output:"output.ncc";
+        oyjlWriteFile( output_file, string, strlen(string) );
       } else
         oyMessageFunc_p(oyMSG_ERROR,NULL,"no input tree found");
     }
     else if(oyStringCaseCmp_(format, "ppm") == 0)
     {
-      oySpectrumToPpm( spectra, input, output?output:"output.ppm" );
+      output_file = output?output:"output.ppm";
+      oySpectrumToPpm( spectra, input, output_file );
     }
     else if(oyStringCaseCmp_(format, "cgats") == 0)
     {
@@ -506,7 +540,10 @@ int main( int argc , char** argv )
         if(!string)
           oyMessageFunc_p(oyMSG_ERROR,NULL,"error in oyTreeToCgats()");
         else
-          oyjlWriteFile( output?output:"output.cgats", string, strlen(string) );
+        {
+          output_file = output?output:"output.cgats";
+          oyjlWriteFile( output_file, string, strlen(string) );
+        }
       } else
         oyMessageFunc_p(oyMSG_ERROR,NULL,"no input tree found");
     }
@@ -543,7 +580,7 @@ int main( int argc , char** argv )
   height_=(float)(pixel_h- 2*y - 2*tab_border_y - lower_text_border); /* height of diagram */
   height = MAX( 0, height_ );
 
-  if(spectral)
+  if(profile_count && no_spectral == 0)
   {
     cairo_set_source_rgba( cr, .0, .0, .0, 1.0);
     if(proj == p_xyz)
@@ -578,7 +615,7 @@ int main( int argc , char** argv )
     cairo_stroke(cr);
   }
 
-  if(blackbody && proj == p_xyz)
+  if(profile_count && no_blackbody == 0 && proj == p_xyz)
   {
     cairo_set_source_rgba( cr, .0, .0, .0, 1.0);
     if(proj == p_xyz)
@@ -613,11 +650,11 @@ int main( int argc , char** argv )
   frame = pixel_w/40.0;
   cairo_set_source_rgba( cr, .0, .0, .0, 1.0);
   cairo_set_line_width (cr, 0.7*thickness);
-  if(border)
+  if(!no_border)
   cairo_rectangle( cr, x - frame, y - frame,
                          w*scale + 2*frame, h*scale + 2*frame);
   cairo_stroke(cr);
-  if(border && proj == p_lab && saturation)
+  if(profile_count && no_border == 0 && proj == p_lab)
   {
     /* draw cross */
     cairo_move_to(cr, xToImage(.0), yToImage(.5));
@@ -633,11 +670,11 @@ int main( int argc , char** argv )
   cairo_stroke( cr );
 #endif
 
-  if(saturation)
+  if(profile_count)
   {
     float t = thickness;
     cairo_set_line_width (cr, 1.*thickness);
-    if(proj == p_lab && !spectral)
+    if(proj == p_lab && no_spectral == 0)
     {
       cairo_set_source_rgba( cr, 1., 1., 1., 1.0);
       cairo_move_to(cr, xToImage(.0), yToImage(.5));
@@ -648,9 +685,9 @@ int main( int argc , char** argv )
     }
 
     cairo_set_line_width (cr, 3.*t);
-    for ( j=argc-o; j < argc; ++j )
+    for ( j=0; j < profile_count; ++j )
     {
-      const char * filename = argv[j];
+      const char * filename = profile_names[j];
       size_t size = 0;
 
       oyProfile_s * p = oyProfile_FromName( filename, flags, NULL );
@@ -665,7 +702,7 @@ int main( int argc , char** argv )
 
       saturation = getSaturationLine_( p, 3, &size, p_lab );
 
-      t = pow( change_thickness, j-(argc-o)) * thickness;
+      t = pow( change_thickness, j ) * thickness;
       cairo_set_line_width (cr, 3.*t);
 
       cairo_new_path(cr);
@@ -760,7 +797,7 @@ int main( int argc , char** argv )
   max_x = 780.;
 
   if(raster &&
-     ( standardobs || illuminant || kelvin > 0.0 || spectra ) )
+     ( standardobs || observer64 || illuminant || kelvin > 0.0 || spectra ) )
   {
     /* draw some coordinate system hints */
     cairo_set_line_width (cr, 0.35*thickness);
@@ -799,11 +836,11 @@ int main( int argc , char** argv )
                       a, index, \
                       xO, yO, width, height, \
                       min_x, max_x,  min_y < 0 ? min_y : 0.0, max, \
-                      color ? COLOR_COLOR : COLOR_GRAY, rgba, \
+                      no_color ? COLOR_GRAY : COLOR_COLOR, rgba, \
                       flags, id ); \
     }
   cairo_set_line_width (cr, 3.*thickness);
-  if(standardobs == 1)
+  if(standardobs)
   {
     const char * id = "StdObs 31";
     oyImage_s * a = oySpectrumCreateEmpty ( 360, 830, 1, 3 );
@@ -816,7 +853,7 @@ int main( int argc , char** argv )
     cairo_stroke(cr);
     oyImage_Release( &a );
   }
-  if(standardobs == 2)
+  if(observer64)
   {
     oyImage_s * a = oySpectrumCreateEmpty ( 360, 830, 1, 3 );
     float max = oySpectrumFillFromArrayF3 ( a, cieXYZ_64_10 );
@@ -847,7 +884,7 @@ int main( int argc , char** argv )
                       a, 0,
                       xO, yO, width, height,
                       min_x, max_x,  min_y < 0 ? min_y : 0.0, max,
-                      color ? COLOR_SPECTRAL : COLOR_GRAY, rgba,
+                      no_color ? COLOR_GRAY : COLOR_SPECTRAL, rgba,
                       flags, "kelvin" );
     oyImage_Release( &a );
   }
@@ -863,7 +900,7 @@ int main( int argc , char** argv )
                       a, 0,
                       xO, yO, width, height,
                       min_x, max_x,  min_y < 0 ? min_y : 0.0, max,
-                      color ? COLOR_SPECTRAL : COLOR_GRAY, rgba,
+                      no_color ? COLOR_GRAY : COLOR_SPECTRAL, rgba,
                       flags, "A" );
       oyImage_Release( &a );
     } else
@@ -875,15 +912,15 @@ int main( int argc , char** argv )
       oySpectrumNormalise ( a, 1.0/max ); max = 1.0;
       drawIlluminant( cr, a, 0, xO, yO, width, height,
                       min_x, max_x,  min_y < 0 ? min_y : 0.0, max,
-                      color ? COLOR_SPECTRAL : COLOR_GRAY, rgba,
+                      no_color ? COLOR_GRAY : COLOR_SPECTRAL, rgba,
                       flags, "S1" );
       drawIlluminant( cr, a, 1, xO, yO, width, height,
                       min_x, max_x,  min_y < 0 ? min_y : 0.0, max,
-                      color ? COLOR_SPECTRAL : COLOR_GRAY, rgba,
+                      no_color ? COLOR_GRAY : COLOR_SPECTRAL, rgba,
                       flags, "S2" );
       drawIlluminant( cr, a, 2, xO, yO, width, height,
                       min_x, max_x,  min_y < 0 ? min_y : 0.0, max,
-                      color ? COLOR_SPECTRAL : COLOR_GRAY, rgba,
+                      no_color ? COLOR_GRAY : COLOR_SPECTRAL, rgba,
                       flags, "S3" );
       oyImage_Release( &a );
     } else
@@ -900,7 +937,7 @@ int main( int argc , char** argv )
       oySpectrumNormalise ( a, 1.0/max ); max = 1.0;
       drawIlluminant( cr, a, 0, xO, yO, width, height,
                       min_x, max_x,  min_y < 0 ? min_y : 0.0, max,
-                      color ? COLOR_SPECTRAL : COLOR_GRAY, rgba,
+                      no_color ? COLOR_GRAY : COLOR_SPECTRAL, rgba,
                       flags, "D50" );
       oyImage_Release( &a );
     } else
@@ -914,7 +951,7 @@ int main( int argc , char** argv )
                       a, 0,
                       xO, yO, width, height,
                       min_x, max_x,  min_y < 0 ? min_y : 0.0, max,
-                      color ? COLOR_SPECTRAL : COLOR_GRAY, rgba,
+                      no_color ? COLOR_GRAY : COLOR_SPECTRAL, rgba,
                       flags, "D65" );
       oyImage_Release( &a );
     } else
@@ -935,7 +972,7 @@ int main( int argc , char** argv )
       oySpectrumNormalise ( a, 1.0/max ); max = 1.0;
       drawIlluminant( cr, a, 0, xO, yO, width, height,
                       min_x, max_x,  min_y < 0 ? min_y : 0.0, max,
-                      color ? COLOR_SPECTRAL : COLOR_GRAY, rgba,
+                      no_color ? COLOR_GRAY : COLOR_SPECTRAL, rgba,
                       flags, "D50" );
       oyImage_Release( &a );
     }
@@ -954,7 +991,7 @@ int main( int argc , char** argv )
                       spectra, j,
                       xO, yO, width, height,
                       min_x, max_x, min_y < 0 ? min_y : 0.0, max_y,
-                      spectral_count == 1 && color ? COLOR_SPECTRAL : COLOR_COLOR, rgb,
+                      spectral_count == 1 && no_color ? COLOR_COLOR : COLOR_SPECTRAL, rgb,
                       flags, input );
     }
     oyImage_Release( &spectra );
@@ -966,7 +1003,10 @@ int main( int argc , char** argv )
   cairo_restore( cr );
 
   if(format == NULL || oyStringCaseCmp_(format, "png") == 0)
-    status = cairo_surface_write_to_png( surface, output?output:"output.png" );
+  {
+    output_file = output?output:"output.png";
+    status = cairo_surface_write_to_png( surface, output_file );
+  }
   if(status != CAIRO_STATUS_SUCCESS)
   {
     fprintf( stderr, "%s\n", cairo_status_to_string( status ));
