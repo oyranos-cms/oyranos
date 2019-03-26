@@ -21,6 +21,7 @@ INSTALL( FILES icons/oyranos_logo.png DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/p
 # KDE has problems rendering SVG blur
 #INSTALL( FILES icons/oyranos_logo.svg DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/scalable/apps )
 INSTALL( FILES icons/oyNM-logo.png DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pixmaps )
+INSTALL( FILES icons/oyPG-logo.png DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pixmaps )
 INSTALL( FILES icons/lcms_logo2.png DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pixmaps )
 
 # needs to go to the autostart directory - hack hack hack
