@@ -5,7 +5,6 @@
  *  Copyright (C) 2019  Kai-Uwe Behrmann
  *
  *  @brief    Oyjl test suite
- *  @internal
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:\n
  *  new BSD <http://www.opensource.org/licenses/BSD-3-Clause>
@@ -31,7 +30,7 @@ oyjlTESTRESULT_e testA()
 
   fprintf(stdout, "\n" );
 
-  if(__LINE__ == 34)
+  if(__LINE__ == 33)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "line %d                                        ", (__LINE__-2) );
   } else
