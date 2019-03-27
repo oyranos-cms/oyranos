@@ -39,11 +39,17 @@ SET( MAN1_PAGES
      man/qcmsevents.1
      man/qcmsevents-qt4.1
    )
+SET( MAN1DE_PAGES
+     man/de/oyranos-monitor-white-point.1
+     man/de/oyranos-profile-graph.1
+     man/de/oyranos-profiles.1
+   )
 SET( MAN3_PAGES
      man/oyranos.3
    )
 
 INSTALL( FILES ${MAN1_PAGES} DESTINATION ${CMAKE_INSTALL_MANDIR}/man1 )
+INSTALL( FILES ${MAN1DE_PAGES} DESTINATION ${CMAKE_INSTALL_MANDIR}/de/man1 )
 INSTALL( FILES ${MAN3_PAGES} DESTINATION ${CMAKE_INSTALL_MANDIR}/man3 )
 
 FIND_PACKAGE( Doxygen )

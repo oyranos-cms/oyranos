@@ -1,126 +1,159 @@
-.TH oyranos-profile-graph 1 "November 27, 2017" "User Commands"
+.TH "oyranos-profile-graph" 1 "March 24, 2019" "User Commands"
 .SH NAME
-oyranos-profile-graph \- ICC profile graph tool
+oyranos-profile-graph v0.9.7 \- Oyranos Profile Graph
 .SH SYNOPSIS
-\fBoyranos-profile-graph\fR [-o \fIFILENAME\fR] [-x [-c]] [-w NUMBER] [-b] [-s] \fIPROFILENAMES\fR
-.fi
-\fBoyranos-profile-graph\fR [ -h ]
+\fBoyranos-profile-graph\fR [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-o \fIFILE\fR] [\-f \fIFORMAT\fR] [\-c] [\-x] [\-d \fINUMBER\fR] [\-n] [\-2] [\-4] [\-r] [\-v] ICC_PROFILES
+.br
+\fBoyranos-profile-graph\fR \-S [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-R] [\-o \fIFILE\fR] [\-f \fIFORMAT\fR] [\-v]
+.br
+\fBoyranos-profile-graph\fR \-O [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-R] [\-o \fIFILE\fR] [\-f \fIFORMAT\fR] [\-v]
+.br
+\fBoyranos-profile-graph\fR \-k \fINUMBER\fR [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-R] [\-o \fIFILE\fR] [\-f \fIFORMAT\fR] [\-v]
+.br
+\fBoyranos-profile-graph\fR \-i \fISTRING\fR [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-R] [\-o \fIFILE\fR] [\-f \fIFORMAT\fR] [\-v]
+.br
+\fBoyranos-profile-graph\fR \-s \fIFILE\fR [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-R] [\-o \fIFILE\fR] [\-f \fIFORMAT\fR|\-p \fIFORMAT\fR] [\-v]
+.br
 .SH DESCRIPTION
-The oyranos-profile-graph programm converts ICC profiles or embedded 
-ICC profiles from images to a graph image. By default the program shows the 
-saturation line of the specified profiles and writes to output.png .
+The  oyranos-profile-graph programm converts ICC profiles or embedded ICC profiles from images to a graph image. By default the program shows the saturation line of the specified profiles and writes to output.png.
 .SH OPTIONS
 .TP
-\fIPROFILENAMES\fR
 2D Graph from profiles
-.sp
+\fBoyranos-profile-graph\fR [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-o \fIFILE\fR] [\-f \fIFORMAT\fR] [\-c] [\-x] [\-d \fINUMBER\fR] [\-n] [\-2] [\-4] [\-r] [\-v] ICC_PROFILES
 .br
-\fB\-x\fR
-use CIE*xyY *x*y plane for saturation line projection.
-.sp
+\-d|\-\-change-thickness \fINUMBER\fR	Specify increase of the thickness of the graph lines (NUMBER:0.7 [≥-1000 ≤1000])
 .br
-\fB\-c\fR
-\twith -x omit white line of lambert light emitters in CIE*xyY *x*y plane
-.sp
+\-x|\-\-xyy	Use CIE*xyY *x*y plane for saturation line projection
 .br
-\fB-s\fR
-omit the spectral line.
-.sp
-\fB-d\fR \fIFLOATINGPOINTNUMBER\fR
-incrementally increase the thickness of the graph lines. The default is 0.7 .
-.TP
-.B \-\-standard-observer
-show the standard observer 1931 2° color matching function (CMF) as curves.
-.sp
+\-c|\-\-no-blackbody	Omit white line of lambert light emitters
 .br
-\fB--no-color\fR
-draw in gray
-.TP
-.B \-\-standard-observer-64
-show the standard observer 1964 2° color matching function (CMF) as curves.
-.sp
+\-n|\-\-no-spectral-line	Omit the spectral line
 .br
-\fB--no-color\fR
-draw in gray
-.TP
-.B \-\-kelvin \fINUMBER\fR
-show the blackbody radiator spectrum as curves.
-.sp
+\-2|\-\-icc-version-2	Select ICC v2 Profiles
 .br
-\fB--no-color\fR
-draw in gray
-.TP
-.B \-\-illuminant \fINAME\fR
-show illuminant spectrum as curves.
-.sp
+\-4|\-\-icc-version-4	Select ICC v4 Profiles
 .br
-\fB--illuminant A\fR
-show the CIE A spectral power distribution (SPD)
-.sp
+\-r|\-\-no-repair	No Profile repair of ICC profile ID
 .br
-\fB--illuminant D65\fR
-show the CIE D65 spectral power distribution, ~ 6500 Kelvin daylight
-.sp
+.TP
+Standard Observer 1931 2° Graph
+\fBoyranos-profile-graph\fR \-S [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-R] [\-o \fIFILE\fR] [\-f \fIFORMAT\fR] [\-v]
 .br
-\fB--no-color\fR
-draw in gray
-.TP
-.B \-\-input \fIFILENAME\fR
-show a comma separated value text file containing spectrums (CMF, SPD,...) as curves.
-.sp
+\-S|\-\-standard-observer	CIE Standard Observer 1931 2°
 .br
-\fB--no-color\fR
-draw in gray
-.SH GENERAL OPTIONS
 .TP
-.B \-v, \-\-verbose
-increase verbosity
+1964 10° Observer Graph
+\fBoyranos-profile-graph\fR \-O [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-R] [\-o \fIFILE\fR] [\-f \fIFORMAT\fR] [\-v]
+.br
+\-O|\-\-observer-64	CIE Observer 1964 10°
+.br
 .TP
-\fB-w\fR \fINUMBER\fR
-set output image width in pixel
+Blackbody Radiator Spectrum Graph
+\fBoyranos-profile-graph\fR \-k \fINUMBER\fR [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-R] [\-o \fIFILE\fR] [\-f \fIFORMAT\fR] [\-v]
+.br
+\-k|\-\-kelvin \fINUMBER\fR	Blackbody Radiator (NUMBER:0 [≥0 ≤25000])
+.br
 .TP
-\fB\-o\fR \fIFILENAME\fR
-write resulting image to file name.
+Illuminant Spectrum Graph
+\fBoyranos-profile-graph\fR \-i \fISTRING\fR [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-R] [\-o \fIFILE\fR] [\-f \fIFORMAT\fR] [\-v]
+.br
+\-i|\-\-illuminant \fISTRING\fR	Illuminant Spectrum
+.br
+	\-i A		# Illuminant A  -  CIE A spectral power distribution
+.br
+	\-i D50		# Illuminant D50  -  CIE D50 spectral power distribution (computed)
+.br
+	\-i D55		# Illuminant D55  -  CIE D55 spectral power distribution (computed)
+.br
+	\-i D65		# Illuminant D65  -  CIE D65 spectral power distribution
+.br
+	\-i D75		# Illuminant D75  -  CIE D75 spectral power distribution (computed)
+.br
+	\-i D93		# Illuminant D93  -  CIE D93 spectral power distribution (computed)
+.br
 .TP
-.B \-b
-omit border.
+Spectral Input Graph
+\fBoyranos-profile-graph\fR \-s \fIFILE\fR [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-R] [\-o \fIFILE\fR] [\-f \fIFORMAT\fR|\-p \fIFORMAT\fR] [\-v]
+.br
+\-s|\-\-spectral \fIFILE\fR	Spectral Input
+.br
+\-p|\-\-spectral-format \fIFORMAT\fR	Specify spectral output file format
+.br
+	\-p png		# PNG  -  PNG Raster
+.br
+	\-p svg		# SVG  -  SVG Vector
+.br
+	\-p csv		# CSV  -  CSV Values
+.br
+	\-p ncc		# NCC  -  Named Color Collection
+.br
+	\-p cgast		# CGATS  -  CGATS Values
+.br
+	\-p ppm		# PPM  -  Spectral PAM Image
+.br
 .TP
-.B \-r
-show grid in spectral graphs.
+General options
+.br
+\-t|\-\-thickness \fINUMBER\fR	Specify the thickness of the graph lines (NUMBER:1 [≥0.0001 ≤10])
+.br
+\-b|\-\-no-border	Omit border in graph
+.br
+\-g|\-\-no-color	Draw Gray
+.br
+\-w|\-\-width \fINUMBER\fR	Specify output image width in pixel (NUMBER:128 [≥64 ≤4096])
+.br
+\-R|\-\-raster	Draw Raster
+.br
+\-o|\-\-output \fIFILE\fR	Specify output file name, default is output.png
+.br
+\-f|\-\-format \fIFORMAT\fR	Specify output file format png or svg, default is png
+.br
+	\-f png		# PNG  -  PNG Raster
+.br
+	\-f svg		# SVG  -  SVG Vector
+.br
+\-X|\-\-export \fIjson|json+command|man|markdown\fR	Export formated text: Get UI converted into text formats
+.br
+	\-X json		# Json  -  Get a Oyjl Json UI declaration
+.br
+	\-X json+command		# Json + Command  -  Get Oyjl Json UI declaration incuding command
+.br
+	\-X man		# Man  -  Get a unix man page
+.br
+	\-X markdown		# Markdown  -  Get formated text
+.br
+\-v|\-\-verbose	verbose
+.br
+\-h|\-\-help	Help
+.br
+.SH ENVIRONMENT VARIABLES
 .TP
-\fB-t\fR \fIFLOATINGPOINTNUMBER\fR
-increase the thickness of the graph lines
+OY_DEBUG
+.br
+set the Oyranos debug level. Alternatively the -v option can be used. Valid integer range is from 1-20.
 .TP
-.B \-h, \-\-help
-print a help text
-.SH ENVIRONMENT
-.TP
-.B OY_DEBUG
-set the Oyranos debug level. Alternatively the -v option can be used.
-.TP
-.B XDG_DATA_HOME XDG_DATA_DIRS
-route Oyranos to top directories containing resources. The derived paths for
-ICC profiles have a "color/icc" appended.
-.nf
-http://www.oyranos.com/wiki/index.php?title=OpenIccDirectoryProposal
+XDG_DATA_HOME XDG_DATA_DIRS
+.br
+route Oyranos to top directories containing resources. The derived paths for ICC profiles have a "color/icc" appended. http://www.oyranos.com/wiki/index.php?title=OpenIccDirectoryProposal  
 .SH EXAMPLES
 .TP
-Show the saturation lines of two profile in CIE*ab 256 pixel width, without spectral line and with thicker lines:
-.B oyranos-profile-graph -w 256 -s -t 3 sRGB.icc ProPhoto-RGB.icc
-.PP
+Show graph of a ICC profile
+.br
+oyranos-profile-graph ICC_PROFILE 
+.TP
+Show the saturation lines of two profiles in CIE*ab 256 pixel width, without spectral line and with thicker lines:
+.br
+oyranos-profile-graph -w 256 -s -t 3 sRGB.icc ProPhoto-RGB.icc 
 .TP
 Show the standard observer spectral function as curves:
-.B oyranos-profile-graph --standard-observer -o CIE-StdObserver.png
-.PP
+.br
+oyranos-profile-graph --standard-observer -o CIE-StdObserver.png 
 .SH AUTHOR
-Kai-Uwe Behrmann (ku.b (at) gmx.de)
+Kai-Uwe Behrmann http://www.oyranos.org
 .SH COPYRIGHT
-(c) 2012-2017 Kai-Uwe Behrmann and others
-.fi
-License: BSD-3-Clause <http://www.opensource.org/licenses/BSD-3-Clause>
-.SH "SEE ALSO"
-oyranos(3) oyranos-profile(1)
-.fi
-http://www.oyranos.org
-.SH "BUGS"
-at: https://github.com/oyranos-cms/oyranos/issues
+Copyright 2018 Kai-Uwe Behrmann
+.br
+License: newBSD
+.SH BUGS
+https://www.github.com/oyranos-cms/oyranos/issues 
+

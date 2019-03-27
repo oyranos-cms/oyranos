@@ -1,0 +1,175 @@
+.TH "oyranos-monitor-white-point" 1 "October 11, 2018" "User Commands"
+.SH NAME
+oyranos-monitor-white-point v0.9.7 \- Nacht Manager
+.SH ÜBERSICHT
+\fBoyranos-monitor-white-point\fR \-n \fI0|1|2|3|4|5|6|7\fR [\-g \fIICC_PROFIL\fR] [\-b \fIPROZENT\fR] [\-z] [\-v]
+.br
+\fBoyranos-monitor-white-point\fR \-w \fI0|1|2|3|4|5|6|7\fR \-a \fIKELVIN\fR [\-z] [\-v]
+.br
+\fBoyranos-monitor-white-point\fR \-s \fI0|1|2|3|4|5|6|7\fR [\-e \fIICC_PROFIL\fR] [\-z] [\-v]
+.br
+\fBoyranos-monitor-white-point\fR \-l|  \-o \fIWINKEL_IN_GRAD\fR \-i \fIWINKEL_IN_GRAD\fR [\-t \fIWINKEL_IN_GRAD|0:Auf-/Untergang|-6:zivil|-12:nautisch|-18:astronomisch\fR] [\-z] [\-v]
+.br
+\fBoyranos-monitor-white-point\fR \-d \fI0|1|2\fR [\-v]
+.br
+.SH BESCHREIBUNG
+Das Werkzeug kann den momentanen Weißpunkt setzen oder ihn abhängig von der Tages- und Nachzeit festlegen. Ein zusätzliches Effektprofil kann eingestellt werden.
+.SH OPTIONEN
+.TP
+Nächtliche Anmutung
+\fBoyranos-monitor-white-point\fR \-n \fI0|1|2|3|4|5|6|7\fR [\-g \fIICC_PROFIL\fR] [\-b \fIPROZENT\fR] [\-z] [\-v]
+.br
+Der Nachtweißpunkmodus soll den Einfluß von blauen Licht auf das menschliche Hormonsystem reduzieren. Ein Weißpunkt mit einer Strahlungstemperatur von 4000 Kelvin und weniger erleichtert den natürlichen Schlafrhytmus zu finden. Dieser wird zusammen mit einem warmen Lichtton für die allgemeine Zimmerbeleuchtung wärend der Abend-und Nachtstunden empfohlen.
+.br
+.sp
+.br
+\-n|\-\-night-white-point \fI0|1|2|3|4|5|6|7\fR	Setze den Nachtmodus: Ein Weißpunkt mit einer Strahlungstemperatur von 4000 Kelvin und weniger erleichtert den natürlichen Schlafrhytmus zu finden. Dazu wird diese Einstellung auf Automatisch (-n=1) und die Temperatur auf 3000 (-a=3000) gestellt.
+.br
+	\-n 0		# Nein
+.br
+	\-n 1		# Automatisch
+.br
+	\-n 2		# Lichtart D50
+.br
+	\-n 3		# Lichtart D55
+.br
+	\-n 4		# Lichtart D65
+.br
+	\-n 5		# Lichtart D75
+.br
+	\-n 6		# Lichtart D93
+.br
+\-g|\-\-night-effect \fIICC_PROFIL\fR	Setze den Nacht Effect: Ein ICC Farbprofil der Klasse Abstrakter Farbraum. Günstig wäre ein Effektprofil, welches nur eindimensionale RGB Kurven benutzt und mit meta:EFFECT_linear=yes gekennzeichnet ist.
+.br
+	\-g -		# [kein]
+.br
+	\-g Effect 1		# Example Effect 1
+.br
+	\-g Effect 2		# Example Effect 2
+.br
+\-b|\-\-night-backlight \fIPROZENT\fR	Setze Nächtiches Monitorlicht: Die Einstellung benötigt xbacklight für das Abdunkeln der Bildschirmlampe. (PROZENT:4 [≥0 ≤100])
+.br
+.TP
+Aktueller Modus
+\fBoyranos-monitor-white-point\fR \-w \fI0|1|2|3|4|5|6|7\fR \-a \fIKELVIN\fR [\-z] [\-v]
+.br
+\-w|\-\-white-point \fI0|1|2|3|4|5|6|7\fR	Setze Weißpunktmodus
+.br
+	\-w 0		# Nein
+.br
+	\-w 1		# Automatisch
+.br
+	\-w 2		# Lichtart D50
+.br
+	\-w 3		# Lichtart D55
+.br
+	\-w 4		# Lichtart D65
+.br
+	\-w 5		# Lichtart D75
+.br
+	\-w 6		# Lichtart D93
+.br
+\-a|\-\-automatic \fIKELVIN\fR	Werte zwischen 2700 bis 8000 Kelvin sollten keine Darstellungsfehler hervorrufen (KELVIN:2800 [≥1100 ≤10100])
+.br
+.TP
+Setze Tagesmodus
+\fBoyranos-monitor-white-point\fR \-s \fI0|1|2|3|4|5|6|7\fR [\-e \fIICC_PROFIL\fR] [\-z] [\-v]
+.br
+\-s|\-\-sun-white-point \fI0|1|2|3|4|5|6|7\fR	Setze den Tagesmodus
+.br
+	\-s 0		# Nein
+.br
+	\-s 1		# Automatisch
+.br
+	\-s 2		# Lichtart D50
+.br
+	\-s 3		# Lichtart D55
+.br
+	\-s 4		# Lichtart D65
+.br
+	\-s 5		# Lichtart D75
+.br
+	\-s 6		# Lichtart D93
+.br
+\-e|\-\-sunlight-effect \fIICC_PROFIL\fR	Setze den Tages Effect: Ein ICC Farbprofil der Klasse Abstrakter Farbraum. Günstig wäre ein Effektprofil, welches nur eindimensionale RGB Kurven benutzt und mit meta:EFFECT_linear=yes gekennzeichnet ist.
+.br
+	\-e -		# [kein]
+.br
+	\-e Effect 1		# Example Effect 1
+.br
+	\-e Effect 2		# Example Effect 2
+.br
+.TP
+Ort und Dämmerung
+\fBoyranos-monitor-white-point\fR \-l|  \-o \fIWINKEL_IN_GRAD\fR \-i \fIWINKEL_IN_GRAD\fR [\-t \fIWINKEL_IN_GRAD|0:Auf-/Untergang|-6:zivil|-12:nautisch|-18:astronomisch\fR] [\-z] [\-v]
+.br
+\-l|\-\-location	Erhalte Position von IP Adresse
+.br
+\-o|\-\-longitude \fIWINKEL_IN_GRAD\fR	Setze Geographische Länge (WINKEL_IN_GRAD:12,0658 [≥-180 ≤180])
+.br
+\-i|\-\-latitude \fIWINKEL_IN_GRAD\fR	Setze Geographische Breite (WINKEL_IN_GRAD:51,2954 [≥-90 ≤90])
+.br
+\-t|\-\-twilight \fIWINKEL_IN_GRAD|0:Auf-/Untergang|-6:zivil|-12:nautisch|-18:astronomisch\fR	Setze Dämmerungswinkel (WINKEL_IN_GRAD|0:Auf-/Untergang|-6:zivil|-12:nautisch|-18:astronomisch:0 [≥18 ≤-18])
+.br
+.TP
+Setze Sonnenuntergangsdienst
+\fBoyranos-monitor-white-point\fR \-d \fI0|1|2\fR [\-v]
+.br
+\-d|\-\-daemon \fI0|1|2\fR	Setze Sonnenuntergangsdienst
+.br
+	\-d 0		# Deaktiviere  
+.br
+	\-d 1		# Automatischer Start  
+.br
+	\-d 2		# Aktiviere  
+.br
+.TP
+Allgemeine Optionen
+.br
+\-z|\-\-system-wide	Einstellung in der systemweiten DB
+.br
+\-m|\-\-modes	Zeige Weißpunktmodus
+.br
+\-r|\-\-sunrise	Zeige lokale Zeit, benutzte geografische Position, Dämmerungswinkel, Sonnenauf-und untergangszeiten
+.br
+\-X|\-\-export \fIjson|json+command|man|markdown\fR	Exportiere formatierten Text: Hole Benutzerschnittstelle als Text
+.br
+	\-X json		# Json  -  Hole Oyjl Json Benutzerschnittstelle
+.br
+	\-X json+command		# Json + Kommando  -  Hole Oyjl Json Benutzerschnittstelle mit Kommando
+.br
+	\-X man		# Handbuch  -  Hole Unix Handbuchseite
+.br
+	\-X markdown		# Markdown  -  Hole formatierten Text
+.br
+\-v|\-\-verbose	plaudernd
+.br
+\-h|\-\-help	Hilfe
+.br
+.SH UMGEBUNGSVARIABLEN
+.TP
+OY_DEBUG
+.br
+Setze das Oyranos Fehlersuchniveau. Die -v Option kann alternativ benutzt werden. Der gültige Bereich ist 1-20.
+.TP
+OY_MODULE_PATH
+.br
+zeige Oyranos zusätzliche Verzeichnisse mit Modulen.  
+.SH BEISPIELE
+.TP
+Starte den Wächter, setze nächtlichen Weißpunkt zu 3000 Kelvin und benutze diesen im Nachtmodus
+.br
+oyranos-monitor-white-point -d 2 -a 3000 -n 1 
+.TP
+Schalte alle Tagesbeeinflussung aus, wie Weißpunkt und Effekt
+.br
+oyranos-monitor-white-point -s 0 -e 0 
+.SH AUTOR
+Kai-Uwe Behrmann http://www.oyranos.org
+.SH KOPIERRECHT
+Copyright 2018 Kai-Uwe Behrmann
+.br
+Lizenz: newBSD
+.SH FEHLER
+https://www.github.com/oyranos-cms/oyranos/issues 
+

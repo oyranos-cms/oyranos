@@ -1,0 +1,141 @@
+.TH "oyranos-profiles" 1 "October 11, 2018" "User Commands"
+.SH NAME
+oyranos-profiles v0.9.7 \- Oyranos Profile
+.SH ÜBERSICHT
+\fBoyranos-profiles\fR \-l [\-f] [\-e] [\-a] [\-c] [\-d] [\-k] [\-n] [\-o] [\-i] [\-2] [\-4] [\-P] [\-T \fISCHLÜSSEL;WERT\fR] [\-v]
+.br
+\fBoyranos-profiles\fR \-p [\-u|\-s|\-y|\-m] [\-v]
+.br
+\fBoyranos-profiles\fR \-I \fIICC_PROFIL\fR|  \-t \fITAXI_ID\fR [\-u|\-s|\-y|\-m] [\-g] [\-v]
+.br
+.SH BESCHREIBUNG
+Das Werkzeug kann installierte Profile und Suchpfade anzeigen. Es kann ein Profil in einen Suchpfad installieren.
+.SH OPTIONEN
+.TP
+Liste der verfügbaren ICC Farbprofile
+\fBoyranos-profiles\fR \-l [\-f] [\-e] [\-a] [\-c] [\-d] [\-k] [\-n] [\-o] [\-i] [\-2] [\-4] [\-P] [\-T \fISCHLÜSSEL;WERT\fR] [\-v]
+.br
+\-l|\-\-list-profiles	Liste Profile
+.br
+\-f|\-\-full-names	Profildateiname: Zeige kompletten Pfad- und Dateinamen
+.br
+\-e|\-\-internale-names	Interne Namen: Der Text kommt vom 'desc' Profilelement.
+.br
+\-a|\-\-abstract	Wähle abstrakte Profile
+.br
+\-c|\-\-color-space	Wähle Farbraumprofile
+.br
+\-d|\-\-display	Wähle Monitorprofile
+.br
+\-k|\-\-device-link	Wähle Verknüpfungsprofil
+.br
+\-n|\-\-named-color	Wähle Einzelfarbprofile
+.br
+\-o|\-\-output	Wähle Ausgabeprofil
+.br
+\-i|\-\-input	Wähle Eingangsprofile
+.br
+\-2|\-\-icc-version-2	Wähle ICC V2 Profile
+.br
+\-4|\-\-icc-version-4	Wähle ICC V4 Profile
+.br
+\-P|\-\-path	Zeige Profile, welche ein Wort in ihrem Pfadnamen enthalten.: PFAD_WORT_TEIL
+.br
+\-T|\-\-meta \fISCHLÜSSEL;WERT\fR	Suche nach Schlüssel/Werte Paar in Meta Element: Zeige Profile welche ein bestimmtes Schlüssel/Werte Paar im meta Tag enthalten. WERT kann '*' enthalten für das Filtern von Wortteilen.
+.br
+\-D|\-\-duplicates	Zeige identische mehrfach installierte Profile an
+.br
+.TP
+Zeige Suchpfade
+\fBoyranos-profiles\fR \-p [\-u|\-s|\-y|\-m] [\-v]
+.br
+\-p|\-\-list-paths	Liste der ICC Farbprofilpfade
+.br
+\-u|\-\-user	Benutzerpfad
+.br
+\-s|\-\-system	Systempfad
+.br
+\-y|\-\-oyranos	Oyranospfad
+.br
+\-m|\-\-machine	Maschinenpfad
+.br
+.TP
+Installiere Profil
+\fBoyranos-profiles\fR \-I \fIICC_PROFIL\fR|  \-t \fITAXI_ID\fR [\-u|\-s|\-y|\-m] [\-g] [\-v]
+.br
+\-I|\-\-install \fIICC_PROFIL\fR	Installiere Profil
+.br
+\-t|\-\-taxi \fITAXI_ID\fR	ICC Taxi Profile DB
+.br
+\-u|\-\-user	Benutzerpfad
+.br
+\-s|\-\-system	Systempfad
+.br
+\-y|\-\-oyranos	Oyranospfad
+.br
+\-m|\-\-machine	Maschinenpfad
+.br
+\-g|\-\-gui	Zeige Grafische Benutzerschnittstelle
+.br
+.TP
+Allgemeine Optionen
+.br
+\-r|\-\-no-repair	Lasse Reparatur der Profil ID weg
+.br
+\-X|\-\-export \fIjson|json+command|man|markdown\fR	Exportiere formatierten Text: Hole Benutzerschnittstelle als Text
+.br
+	\-X json		# Json  -  Hole Oyjl Json Benutzerschnittstelle
+.br
+	\-X json+command		# Json + Kommando  -  Hole Oyjl Json Benutzerschnittstelle mit Kommando
+.br
+	\-X man		# Handbuch  -  Hole Unix Handbuchseite
+.br
+	\-X markdown		# Markdown  -  Hole formatierten Text
+.br
+\-v|\-\-verbose	plaudernd
+.br
+\-h|\-\-help	Hilfe
+.br
+.SH UMGEBUNGSVARIABLEN
+.TP
+OY_DEBUG
+.br
+Setze das Oyranos Fehlersuchniveau. Die -v Option kann alternativ benutzt werden. Der gültige Bereich ist 1-20.
+.TP
+XDG_DATA_HOME XDG_DATA_DIRS
+.br
+route Oyranos to top directories containing resources. The derived paths for ICC profiles have a "color/icc" appended. http://www.oyranos.com/wiki/index.php?title=OpenIccDirectoryProposal  
+.SH BEISPIELE
+.TP
+Liste alle installierten Profile mit internem Namen
+.br
+oyranos-profiles -le 
+.TP
+Liste alle installierten Profile mit Monitor-und Ausgabeklasse
+.br
+oyranos-profiles -l -od 
+.TP
+Liste alle installierten Profile im Benutzerpfad
+.br
+oyranos-profiles -lfu 
+.TP
+Installiere ein Profile für den aktuellen Benutzer und zeige eine Fehlermeldung grafische an
+.br
+oyranos-profiles --install profilename -u --gui 
+.TP
+Installiere ein Profile für den aktuellen Benutzer und zeige eine Fehlermeldung grafische an
+.br
+oyranos-profiles --install - --taxi=taxi_id/0 --gui -d -u 
+.TP
+Zeige Dateiinfos
+.br
+SAVEIFS=$IFS ; IFS=$'\n\b'; profiles=(`oyranos-profiles -ldf`); IFS=$SAVEIFS; for file in "${profiles[@]}"; do ls "$file"; done  
+.SH AUTOR
+Kai-Uwe Behrmann http://www.oyranos.org
+.SH KOPIERRECHT
+Copyright 2018 Kai-Uwe Behrmann
+.br
+Lizenz: newBSD
+.SH FEHLER
+https://www.github.com/oyranos-cms/oyranos/issues 
+

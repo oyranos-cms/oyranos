@@ -1,0 +1,159 @@
+.TH "oyranos-profile-graph" 1 "March 24, 2019" "User Commands"
+.SH NAME
+oyranos-profile-graph v0.9.7 \- Oyranos Profile Zeichner
+.SH ÜBERSICHT
+\fBoyranos-profile-graph\fR [\-t \fINUMMER\fR] [\-b] [\-g] [\-w \fINUMMER\fR] [\-o \fIDATEI\fR] [\-f \fIFORMAT\fR] [\-c] [\-x] [\-d \fINUMMER\fR] [\-n] [\-2] [\-4] [\-r] [\-v] ICC_PROFILE
+.br
+\fBoyranos-profile-graph\fR \-S [\-t \fINUMMER\fR] [\-b] [\-g] [\-w \fINUMMER\fR] [\-R] [\-o \fIDATEI\fR] [\-f \fIFORMAT\fR] [\-v]
+.br
+\fBoyranos-profile-graph\fR \-O [\-t \fINUMMER\fR] [\-b] [\-g] [\-w \fINUMMER\fR] [\-R] [\-o \fIDATEI\fR] [\-f \fIFORMAT\fR] [\-v]
+.br
+\fBoyranos-profile-graph\fR \-k \fINUMMER\fR [\-t \fINUMMER\fR] [\-b] [\-g] [\-w \fINUMMER\fR] [\-R] [\-o \fIDATEI\fR] [\-f \fIFORMAT\fR] [\-v]
+.br
+\fBoyranos-profile-graph\fR \-i \fISTRING\fR [\-t \fINUMMER\fR] [\-b] [\-g] [\-w \fINUMMER\fR] [\-R] [\-o \fIDATEI\fR] [\-f \fIFORMAT\fR] [\-v]
+.br
+\fBoyranos-profile-graph\fR \-s \fIDATEI\fR [\-t \fINUMMER\fR] [\-b] [\-g] [\-w \fINUMMER\fR] [\-R] [\-o \fIDATEI\fR] [\-f \fIFORMAT\fR|\-p \fIFORMAT\fR] [\-v]
+.br
+.SH BESCHREIBUNG
+Das oyranos-profile-graph Programm erzeugt aus einem ICC Profil oder eingebetteten ICC Profil in eine Grafik. Vorgabemäßig malt es die Sättigungslinie eines anzugebenden ICC Profiles und schreibt die Grafik nach output.png.
+.SH OPTIONEN
+.TP
+2D Zeichnung vom Farbprofil
+\fBoyranos-profile-graph\fR [\-t \fINUMMER\fR] [\-b] [\-g] [\-w \fINUMMER\fR] [\-o \fIDATEI\fR] [\-f \fIFORMAT\fR] [\-c] [\-x] [\-d \fINUMMER\fR] [\-n] [\-2] [\-4] [\-r] [\-v] ICC_PROFILE
+.br
+\-d|\-\-change-thickness \fINUMMER\fR	Gib die Verstärkung der Liniendicke an (NUMMER:0,7 [≥-1000 ≤1000])
+.br
+\-x|\-\-xyy	Benutze CIE*xyY *x*y Ebene für Projektion
+.br
+\-c|\-\-no-blackbody	Lasse Weißlinie von Lambertstrahlern fort
+.br
+\-n|\-\-no-spectral-line	Lasse Spektrallinie fort
+.br
+\-2|\-\-icc-version-2	Wähle ICC V2 Profile
+.br
+\-4|\-\-icc-version-4	Wähle ICC V4 Profile
+.br
+\-r|\-\-no-repair	Lasse Reparatur der Profil ID weg
+.br
+.TP
+Standard Betrachter 1931 2° Zeichnung
+\fBoyranos-profile-graph\fR \-S [\-t \fINUMMER\fR] [\-b] [\-g] [\-w \fINUMMER\fR] [\-R] [\-o \fIDATEI\fR] [\-f \fIFORMAT\fR] [\-v]
+.br
+\-S|\-\-standard-observer	CIE Standard Betrachter 1931 2°
+.br
+.TP
+1964 10° Betrachter Zeichnung
+\fBoyranos-profile-graph\fR \-O [\-t \fINUMMER\fR] [\-b] [\-g] [\-w \fINUMMER\fR] [\-R] [\-o \fIDATEI\fR] [\-f \fIFORMAT\fR] [\-v]
+.br
+\-O|\-\-observer-64	CIE Betrachter 1064 10°
+.br
+.TP
+Spektrumgraph eines Lambertstrahlers
+\fBoyranos-profile-graph\fR \-k \fINUMMER\fR [\-t \fINUMMER\fR] [\-b] [\-g] [\-w \fINUMMER\fR] [\-R] [\-o \fIDATEI\fR] [\-f \fIFORMAT\fR] [\-v]
+.br
+\-k|\-\-kelvin \fINUMMER\fR	Lambertstrahler (NUMMER:0 [≥0 ≤25000])
+.br
+.TP
+Beleuchtungsspektrumzeichnung
+\fBoyranos-profile-graph\fR \-i \fISTRING\fR [\-t \fINUMMER\fR] [\-b] [\-g] [\-w \fINUMMER\fR] [\-R] [\-o \fIDATEI\fR] [\-f \fIFORMAT\fR] [\-v]
+.br
+\-i|\-\-illuminant \fISTRING\fR	Beleuchtungsspektrum
+.br
+	\-i A		# Lichtart A  -  CIE A Strahlungsverteilung
+.br
+	\-i D50		# Lichtart D50  -  CIE D50 Strahlungsverteilung (berechnet)
+.br
+	\-i D55		# Lichtart D55  -  CIE D55 Strahlungsverteilung (berechnet)
+.br
+	\-i D65		# Lichtart D65  -  CIE D65 Strahlungsverteilung
+.br
+	\-i D75		# Lichtart D75  -  CIE D75 Strahlungsverteilung (berechnet)
+.br
+	\-i D93		# Lichtart D93  -  CIE D93 Strahlungsverteilung (berechnet)
+.br
+.TP
+Spektrumgraph
+\fBoyranos-profile-graph\fR \-s \fIDATEI\fR [\-t \fINUMMER\fR] [\-b] [\-g] [\-w \fINUMMER\fR] [\-R] [\-o \fIDATEI\fR] [\-f \fIFORMAT\fR|\-p \fIFORMAT\fR] [\-v]
+.br
+\-s|\-\-spectral \fIDATEI\fR	Spektrale Eingabe
+.br
+\-p|\-\-spectral-format \fIFORMAT\fR	Gib spektrales Ausgabeformat an
+.br
+	\-p png		# PNG  -  PNG Raster
+.br
+	\-p svg		# SVG  -  SVG Vektor
+.br
+	\-p csv		# CSV  -  CSV Werte
+.br
+	\-p ncc		# NCC  -  Einzelfarbsammlung (NCC)
+.br
+	\-p cgast		# CGATS  -  CGATS Werte
+.br
+	\-p ppm		# PPM  -  Spektrales PAM Bild
+.br
+.TP
+Allgemeine Optionen
+.br
+\-t|\-\-thickness \fINUMMER\fR	Gib die Liniendicke an (NUMMER:1 [≥0,0001 ≤10])
+.br
+\-b|\-\-no-border	Lasse Rand aus in Zeichnung
+.br
+\-g|\-\-no-color	Zeichne grau
+.br
+\-w|\-\-width \fINUMMER\fR	Gib Ausgabebildbreite in Pixel an (NUMMER:128 [≥64 ≤4096])
+.br
+\-R|\-\-raster	Zeichne Gitter
+.br
+\-o|\-\-output \fIDATEI\fR	Gib Ausgabedateiname an, voreingestellt ist output.png
+.br
+\-f|\-\-format \fIFORMAT\fR	Gib Ausgabeformat PNG oder SVG an, voreingestellt ist PNG
+.br
+	\-f png		# PNG  -  PNG Raster
+.br
+	\-f svg		# SVG  -  SVG Vektor
+.br
+\-X|\-\-export \fIjson|json+command|man|markdown\fR	Exportiere formatierten Text: Hole Benutzerschnittstelle als Text
+.br
+	\-X json		# Json  -  Hole Oyjl Json Benutzerschnittstelle
+.br
+	\-X json+command		# Json + Kommando  -  Hole Oyjl Json Benutzerschnittstelle mit Kommando
+.br
+	\-X man		# Handbuch  -  Hole Unix Handbuchseite
+.br
+	\-X markdown		# Markdown  -  Hole formatierten Text
+.br
+\-v|\-\-verbose	plaudernd
+.br
+\-h|\-\-help	Hilfe
+.br
+.SH UMGEBUNGSVARIABLEN
+.TP
+OY_DEBUG
+.br
+Setze das Oyranos Fehlersuchniveau. Die -v Option kann alternativ benutzt werden. Der gültige Bereich ist 1-20.
+.TP
+XDG_DATA_HOME XDG_DATA_DIRS
+.br
+route Oyranos to top directories containing resources. The derived paths for ICC profiles have a "color/icc" appended. http://www.oyranos.com/wiki/index.php?title=OpenIccDirectoryProposal  
+.SH BEISPIELE
+.TP
+Zeichne ICC Profil
+.br
+oyranos-profile-graph ICC_PROFILE 
+.TP
+Zeige Sättigungslinien von zwei Profilen in CIE*ab 256 Bildpunkte breit, ohne Spectrallinie und mit dickeren Linien:
+.br
+oyranos-profile-graph -w 256 -s -t 3 sRGB.icc ProPhoto-RGB.icc 
+.TP
+Zeige die Standard Betrachter Spektralfunktion als Kurven:
+.br
+oyranos-profile-graph --standard-observer -o CIE-StdObserver.png 
+.SH AUTOR
+Kai-Uwe Behrmann http://www.oyranos.org
+.SH KOPIERRECHT
+Copyright 2018 Kai-Uwe Behrmann
+.br
+Lizenz: newBSD
+.SH FEHLER
+https://www.github.com/oyranos-cms/oyranos/issues 
+
