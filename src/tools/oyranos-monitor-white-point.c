@@ -77,18 +77,6 @@ static oyjlOptionChoice_s * getLinearEffectProfileChoices (
     if(!selected && linear_effect_choices_)
       return linear_effect_choices_;
 
-    // only linear effects
-    oyProfile_s * pattern = oyProfile_FromFile( "meta:EFFECT_linear;yes", OY_NO_LOAD, NULL );
-    oyProfiles_MoveIn( patterns, &pattern, -1 );
-
-    if(icc_profile_flags == 0)
-      icc_profile_flags = oyICCProfileSelectionFlagsFromOptions( 
-                                      OY_CMM_STD, "//" OY_TYPE_STD "/icc_color",
-                                                                     NULL, 0 );
-    profiles = oyProfiles_Create( patterns, icc_profile_flags, NULL );
-    oyProfiles_Release( &patterns );
-    choices = oyProfiles_Count( profiles );
-
     if(man_page && strcmp(man_page,"man_page") == 0)
     {
       oyjlOptionChoice_s * c = calloc(1+2+1, sizeof(oyjlOptionChoice_s));
@@ -122,7 +110,21 @@ static oyjlOptionChoice_s * getLinearEffectProfileChoices (
     {
       int i;
       char * value = NULL;
-      oyjlOptionChoice_s * c = calloc(1+choices+1, sizeof(oyjlOptionChoice_s));
+      oyjlOptionChoice_s * c;
+
+      // only linear effects
+      oyProfile_s * pattern = oyProfile_FromFile( "meta:EFFECT_linear;yes", OY_NO_LOAD, NULL );
+      oyProfiles_MoveIn( patterns, &pattern, -1 );
+
+      if(icc_profile_flags == 0)
+        icc_profile_flags = oyICCProfileSelectionFlagsFromOptions( 
+                                      OY_CMM_STD, "//" OY_TYPE_STD "/icc_color",
+                                                                     NULL, 0 );
+      profiles = oyProfiles_Create( patterns, icc_profile_flags, NULL );
+      oyProfiles_Release( &patterns );
+      choices = oyProfiles_Count( profiles );
+
+      c = calloc(1+choices+1, sizeof(oyjlOptionChoice_s));
 
       if(o->o == 'g' && selected)
         value = oyGetPersistentString( OY_DISPLAY_STD "/night_effect", 0, oySCOPE_USER_SYS, oyAllocateFunc_ );
@@ -313,7 +315,7 @@ int main( int argc , char** argv )
   oyI18NInit_();
 
   DBG_S_( oyPrintTime() );
-  opts = oyjlOptions_New( argc, argv );
+  opts = oyjlOptions_New( argc, (const char **)argv );
   /* nick, name, description, help */
   oyjlOptionChoice_s d_choices[] = {{"0", _("Deactivate"), _("Deactivate"), ""},
                                     {"1", _("Autostart"), _("Autostart"), ""},
@@ -398,7 +400,7 @@ int main( int argc , char** argv )
 
   info = oyUiInfo(_("The tool can set the actual white point or set it by local day and night time. A additional effect profile can be selected."),
                   "2018-10-11T12:00:00", "October 11, 2018");
-  ui = oyjlUi_Create( argc, argv,
+  ui = oyjlUi_Create( argc, (const char **)argv,
       "oyranos-monitor-white-point", _("Night Manager"), _("Oyranos Night Manager handles the monitor white point"),
       "oyNM-logo",
       info, opts->array, opts->groups, &state );
