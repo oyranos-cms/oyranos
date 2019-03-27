@@ -223,22 +223,22 @@ int main( int argc , char** argv )
                                   {_("Show the saturation lines of two profiles in CIE*ab 256 pixel width, without spectral line and with thicker lines:"), "oyranos-profile-graph", "-w 256 -s -t 3 sRGB.icc ProPhoto-RGB.icc", ""},
                                   {_("Show the standard observer spectral function as curves:"),"oyranos-profile-graph","--standard-observer -o CIE-StdObserver.png",""},
                                   {"","","",""}};
-  oyjlOptionChoice_s illu_dxx[]={ {"A", _("Illuminant A"), _("CIE A spectral power distribution"), ""},
-                                  {"D50",_("Illuminant D50"),_("CIE D50 spectral power distribution (computed)"),""},
-                                  {"D55",_("Illuminant D55"),_("CIE D55 spectral power distribution (computed)"),""},
-                                  {"D65",_("Illuminant D65"),_("CIE D65 spectral power distribution"),""},
-                                  {"D75",_("Illuminant D75"),_("CIE D75 spectral power distribution (computed)"),""},
-                                  {"D93",_("Illuminant D93"),_("CIE D93 spectral power distribution (computed)"),""},
+  oyjlOptionChoice_s illu_dxx[]={ {"A",  _("Illuminant A"),  "", _("CIE A spectral power distribution")},
+                                  {"D50",_("Illuminant D50"),"", _("CIE D50 spectral power distribution (computed)")},
+                                  {"D55",_("Illuminant D55"),"", _("CIE D55 spectral power distribution (computed)")},
+                                  {"D65",_("Illuminant D65"),"", _("CIE D65 spectral power distribution")},
+                                  {"D75",_("Illuminant D75"),"", _("CIE D75 spectral power distribution (computed)")},
+                                  {"D93",_("Illuminant D93"),"", _("CIE D93 spectral power distribution (computed)")},
                                   {"","","",""}};
-  oyjlOptionChoice_s out_form[]={ {"png",_("PNG"),_("PNG Raster"), ""},
-                                  {"svg",_("SVG"),_("SVG Vector"),""},
+  oyjlOptionChoice_s out_form[]={ {"png",_("PNG"),"", _("PNG Raster")},
+                                  {"svg",_("SVG"),"",_("SVG Vector")},
                                   {"","","",""}};
-  oyjlOptionChoice_s spe_form[]={ {"png",_("PNG"),_("PNG Raster"), ""},
-                                  {"svg",_("SVG"),_("SVG Vector"),""},
-                                  {"csv",_("CSV"),_("CSV Values"),""},
-                                  {"ncc",_("NCC"),_("Named Color Collection"),""},
-                                  {"cgast",_("CGATS"),_("CGATS Values"),""},
-                                  {"ppm",_("PPM"),_("Spectral PAM Image"),""},
+  oyjlOptionChoice_s spe_form[]={ {"png",_("PNG"),"",_("PNG Raster")},
+                                  {"svg",_("SVG"),"",_("SVG Vector")},
+                                  {"csv",_("CSV"),"",_("CSV Values")},
+                                  {"ncc",_("NCC"),"",_("Named Color Collection")},
+                                  {"cgast",_("CGATS"),"",_("CGATS Values")},
+                                  {"ppm",_("PPM"),"",_("Spectral PAM Image")},
                                   {"","","",""}};
   oyjlOption_s oarray[] = {
   /* type,   flags, o, option, key, name, description, help, value_name, value_type, values, var_type, variable */
