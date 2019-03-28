@@ -26,7 +26,7 @@ public:
     {
         QByteArray a = QProcess::readAllStandardOutput();
         // test for PNG and convert to base64 for QML::Image::source Url
-        if(a.length() && a[0] == 137 && a[1] == 80 && a[2] == 78 && a[3] == 71 && a[4] == 13 && a[5] == 10 && a[6] == 26 && a[7] == 10)
+        if(a.length() > 16 && (int)a[0] == -119 && (int)a[1] == 80 && (int)a[2] == 78 && (int)a[3] == 71 && (int)a[4] == 13 && (int)a[5] == 10 && (int)a[6] == 26 && (int)a[7] == 10)
         {
             QString s = QString("data:image/png;base64,") + a.toBase64();
             a = s.toUtf8();
