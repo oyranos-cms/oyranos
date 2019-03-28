@@ -3,23 +3,23 @@
 ## NAME
 oyranos\-profile\-graph v0.9.7 \- Oyranos Profile Zeichner
 ## ÜBERSICHT
-**oyranos\-profile\-graph** [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-o *DATEI*] [\-f *FORMAT*] [\-c] [\-x] [\-d *NUMMER*] [\-n] [\-2] [\-4] [\-r] [\-v] ICC\_PROFILE
+**oyranos\-profile\-graph** [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-o *\-|DATEI*] [\-f *FORMAT*] [\-c] [\-x] [\-d *NUMMER*] [\-n] [\-2] [\-4] [\-r] [\-v] ICC\_PROFILE
 <br />
-**oyranos\-profile\-graph** \-S [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-R] [\-o *DATEI*] [\-f *FORMAT*] [\-v]
+**oyranos\-profile\-graph** \-S [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-R] [\-o *\-|DATEI*] [\-f *FORMAT*] [\-v]
 <br />
-**oyranos\-profile\-graph** \-O [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-R] [\-o *DATEI*] [\-f *FORMAT*] [\-v]
+**oyranos\-profile\-graph** \-O [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-R] [\-o *\-|DATEI*] [\-f *FORMAT*] [\-v]
 <br />
-**oyranos\-profile\-graph** \-k *NUMMER* [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-R] [\-o *DATEI*] [\-f *FORMAT*] [\-v]
+**oyranos\-profile\-graph** \-k *NUMMER* [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-R] [\-o *\-|DATEI*] [\-f *FORMAT*] [\-v]
 <br />
-**oyranos\-profile\-graph** \-i *STRING* [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-R] [\-o *DATEI*] [\-f *FORMAT*] [\-v]
+**oyranos\-profile\-graph** \-i *STRING* [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-R] [\-o *\-|DATEI*] [\-f *FORMAT*] [\-v]
 <br />
-**oyranos\-profile\-graph** \-s *DATEI* [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-R] [\-o *DATEI*] [\-f *FORMAT*|\-p *FORMAT*] [\-v]
+**oyranos\-profile\-graph** \-s *DATEI* [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-R] [\-o *\-|DATEI*] [\-f *FORMAT*|\-p *FORMAT*] [\-v]
 <br />
 ## BESCHREIBUNG
-Das oyranos\-profile\-graph Programm erzeugt aus einem ICC Profil oder eingebetteten ICC Profil in eine Grafik. Vorgabemäßig malt es die Sättigungslinie eines anzugebenden ICC Profiles und schreibt die Grafik nach output.png.
+Das oyranos\-profile\-graph Programm erzeugt aus einem ICC Profil oder eingebetteten ICC Profil in eine Grafik. Vorgabemäßig malt es die Sättigungslinie eines anzugebenden ICC Profiles und schreibt die Grafik nach stdout.
 ## OPTIONEN
 ### 2D Zeichnung vom Farbprofil
-**oyranos\-profile\-graph** [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-o *DATEI*] [\-f *FORMAT*] [\-c] [\-x] [\-d *NUMMER*] [\-n] [\-2] [\-4] [\-r] [\-v] ICC\_PROFILE
+**oyranos\-profile\-graph** [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-o *\-|DATEI*] [\-f *FORMAT*] [\-c] [\-x] [\-d *NUMMER*] [\-n] [\-2] [\-4] [\-r] [\-v] ICC\_PROFILE
 
 * \-d|\-\-change\-thickness *NUMMER*	Gib die Verstärkung der Liniendicke an (NUMMER:0,7 [≥\-1000 ≤1000])
 * \-x|\-\-xyy	Benutze CIE*xyY *x*y Ebene für Projektion
@@ -30,22 +30,22 @@ Das oyranos\-profile\-graph Programm erzeugt aus einem ICC Profil oder eingebett
 * \-r|\-\-no\-repair	Lasse Reparatur der Profil ID weg
 
 ### Standard Betrachter 1931 2° Zeichnung
-**oyranos\-profile\-graph** \-S [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-R] [\-o *DATEI*] [\-f *FORMAT*] [\-v]
+**oyranos\-profile\-graph** \-S [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-R] [\-o *\-|DATEI*] [\-f *FORMAT*] [\-v]
 
 * \-S|\-\-standard\-observer	CIE Standard Betrachter 1931 2°
 
 ### 1964 10° Betrachter Zeichnung
-**oyranos\-profile\-graph** \-O [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-R] [\-o *DATEI*] [\-f *FORMAT*] [\-v]
+**oyranos\-profile\-graph** \-O [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-R] [\-o *\-|DATEI*] [\-f *FORMAT*] [\-v]
 
 * \-O|\-\-observer\-64	CIE Betrachter 1064 10°
 
 ### Spektrumgraph eines Lambertstrahlers
-**oyranos\-profile\-graph** \-k *NUMMER* [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-R] [\-o *DATEI*] [\-f *FORMAT*] [\-v]
+**oyranos\-profile\-graph** \-k *NUMMER* [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-R] [\-o *\-|DATEI*] [\-f *FORMAT*] [\-v]
 
 * \-k|\-\-kelvin *NUMMER*	Lambertstrahler (NUMMER:0 [≥0 ≤25000])
 
 ### Beleuchtungsspektrumzeichnung
-**oyranos\-profile\-graph** \-i *STRING* [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-R] [\-o *DATEI*] [\-f *FORMAT*] [\-v]
+**oyranos\-profile\-graph** \-i *STRING* [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-R] [\-o *\-|DATEI*] [\-f *FORMAT*] [\-v]
 
 * \-i|\-\-illuminant *STRING*	Beleuchtungsspektrum
    * \-i A		# Lichtart A
@@ -56,7 +56,7 @@ Das oyranos\-profile\-graph Programm erzeugt aus einem ICC Profil oder eingebett
    * \-i D93		# Lichtart D93
 
 ### Spektrumgraph
-**oyranos\-profile\-graph** \-s *DATEI* [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-R] [\-o *DATEI*] [\-f *FORMAT*|\-p *FORMAT*] [\-v]
+**oyranos\-profile\-graph** \-s *DATEI* [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-R] [\-o *\-|DATEI*] [\-f *FORMAT*|\-p *FORMAT*] [\-v]
 
 * \-s|\-\-spectral *DATEI*	Spektrale Eingabe
 * \-p|\-\-spectral\-format *FORMAT*	Gib spektrales Ausgabeformat an
@@ -74,7 +74,7 @@ Das oyranos\-profile\-graph Programm erzeugt aus einem ICC Profil oder eingebett
 * \-g|\-\-no\-color	Zeichne grau
 * \-w|\-\-width *NUMMER*	Gib Ausgabebildbreite in Pixel an (NUMMER:128 [≥64 ≤4096])
 * \-R|\-\-raster	Zeichne Gitter
-* \-o|\-\-output *DATEI*	Gib Ausgabedateiname an, voreingestellt ist output.png
+* \-o|\-\-output *\-|DATEI*	Gib Ausgabedateiname an, voreingestellt ist stdout
 * \-f|\-\-format *FORMAT*	Gib Ausgabeformat PNG oder SVG an, voreingestellt ist PNG
    * \-f png		# PNG
    * \-f svg		# SVG

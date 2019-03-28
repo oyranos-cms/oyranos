@@ -124,6 +124,14 @@ void drawIlluminant ( cairo_t * cr,
                       uint32_t icc_profile_flags, const char * id );
 
 int verbose = 0;
+/* implement cairo_write_func_t */
+cairo_status_t oyCairoToStdout(void *closure OYJL_UNUSED,
+                       const unsigned char *data,
+                       unsigned int length)
+{
+  fwrite( data, sizeof(unsigned char), length, stdout );
+  return CAIRO_STATUS_SUCCESS;
+}
 
 const char * jcommands = "{\n\
   \"command_set\": \"oyranos-profile-graph\",\n\
@@ -138,7 +146,6 @@ int main( int argc , char** argv )
   const char * format = NULL;
   const char * sformat = NULL;
   const char * output = NULL;
-  const char * output_file = NULL;
   const char * input = NULL;
   int no_spectral = 0;
   int no_blackbody = 1;
@@ -257,7 +264,7 @@ int main( int argc , char** argv )
     {"oiwi", 0, 'k', "kelvin",        NULL, _("Kelvin"),        _("Blackbody Radiator"),     NULL, _("NUMBER"), oyjlOPTIONTYPE_DOUBLE,
       {.dbl.start = 0.0, .dbl.end = 25000.0, .dbl.tick = 100, .dbl.d = 0.0}, oyjlDOUBLE, {.d=&kelvin} },
     {"oiwi", 0, 'n', "no-spectral-line",NULL,_("No spectral"),  _("Omit the spectral line"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&no_spectral} },
-    {"oiwi", 0, 'o', "output",        NULL, _("Output"),        _("Specify output file name, default is output.png"), NULL, _("FILE"), oyjlOPTIONTYPE_NONE, {}, oyjlSTRING, {.s=&output} },
+    {"oiwi", 0, 'o', "output",        NULL, _("Output"),        _("Specify output file name, default is stdout"), NULL, _("-|FILE"), oyjlOPTIONTYPE_STRING, {}, oyjlSTRING, {.s=&output} },
     {"oiwi", 0, 'p', "spectral-format",NULL,_("Spectral Output"),_("Specify spectral output file format"), NULL, _("FORMAT"), oyjlOPTIONTYPE_CHOICE,
       {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)spe_form, sizeof(spe_form), 0 )}, oyjlSTRING, {.s=&sformat} },
     {"oiwi", 0, 's', "spectral",      NULL, _("Spectral"),      _("Spectral Input"),         NULL, _("FILE"), oyjlOPTIONTYPE_NONE, {}, oyjlSTRING, {.s=&input} },
@@ -297,7 +304,7 @@ int main( int argc , char** argv )
   };
   opts->groups = (oyjlOptionGroup_s*)oyjlStringAppendN( NULL, (const char*)groups, sizeof(groups), 0);
 
-  info = oyUiInfo(_("The  oyranos-profile-graph programm converts ICC profiles or embedded ICC profiles from images to a graph image. By default the program shows the saturation line of the specified profiles and writes to output.png."),
+  info = oyUiInfo(_("The  oyranos-profile-graph programm converts ICC profiles or embedded ICC profiles from images to a graph image. By default the program shows the saturation line of the specified profiles and writes to stdout."),
                   "2019-03-24T12:00:00", "March 24, 2019");
   ui = oyjlUi_Create( argc, (const char**)argv,
       "oyranos-profile-graph", _("Oyranos Profile Graph"), _("The tool is a ICC color profile grapher."),
@@ -498,9 +505,13 @@ int main( int argc , char** argv )
     surface = cairo_image_surface_create( CAIRO_FORMAT_ARGB32, pixel_w,pixel_h);
   else if(oyStringCaseCmp_(format, "svg") == 0)
   {
-    output_file = output?output:"output.svg";
-    surface = cairo_svg_surface_create( output_file,
-                                        (double)pixel_w, (double)pixel_h);
+    if(!output || strcmp(output,"-") == 0)
+      surface = cairo_svg_surface_create_for_stream(
+                                          oyCairoToStdout, NULL,
+                                          (double)pixel_w, (double)pixel_h);
+    else
+      surface = cairo_svg_surface_create( output,
+                                          (double)pixel_w, (double)pixel_h);
   }
   else
   {
@@ -510,8 +521,10 @@ int main( int argc , char** argv )
       {
         int level = 0;
         oyTreeToCsv( specT, &level, &string );
-        output_file = output?output:"output.csv";
-        oyjlWriteFile( output_file, string, strlen(string) );
+        if(!output || strcmp(output,"-") == 0)
+          fwrite( string, sizeof(char), strlen(string), stdout );
+        else
+          oyjlWriteFile( output, string, strlen(string) );
       } else
         oyMessageFunc_p(oyMSG_ERROR,NULL,"no input tree found");
     }
@@ -521,15 +534,16 @@ int main( int argc , char** argv )
       {
         int level = 0;
         oyjlTreeToJson( specT, &level, &string );
-        output_file = output?output:"output.ncc";
-        oyjlWriteFile( output_file, string, strlen(string) );
+        if(!output || strcmp(output,"-") == 0)
+          fwrite( string, sizeof(char), strlen(string), stdout );
+        else
+          oyjlWriteFile( output, string, strlen(string) );
       } else
         oyMessageFunc_p(oyMSG_ERROR,NULL,"no input tree found");
     }
     else if(oyStringCaseCmp_(format, "ppm") == 0)
     {
-      output_file = output?output:"output.ppm";
-      oySpectrumToPpm( spectra, input, output_file );
+      oySpectrumToPpm( spectra, input, output );
     }
     else if(oyStringCaseCmp_(format, "cgats") == 0)
     {
@@ -541,8 +555,10 @@ int main( int argc , char** argv )
           oyMessageFunc_p(oyMSG_ERROR,NULL,"error in oyTreeToCgats()");
         else
         {
-          output_file = output?output:"output.cgats";
-          oyjlWriteFile( output_file, string, strlen(string) );
+          if(!output || strcmp(output,"-") == 0)
+            fwrite( string, sizeof(char), strlen(string), stdout );
+          else
+            oyjlWriteFile( output, string, strlen(string) );
         }
       } else
         oyMessageFunc_p(oyMSG_ERROR,NULL,"no input tree found");
@@ -1004,8 +1020,11 @@ int main( int argc , char** argv )
 
   if(format == NULL || oyStringCaseCmp_(format, "png") == 0)
   {
-    output_file = output?output:"output.png";
-    status = cairo_surface_write_to_png( surface, output_file );
+    if(!output || strcmp(output,"-") == 0)
+      status = cairo_surface_write_to_png_stream( surface, oyCairoToStdout,
+                                                  NULL);
+    else
+      status = cairo_surface_write_to_png( surface, output );
   }
   if(status != CAIRO_STATUS_SUCCESS)
   {

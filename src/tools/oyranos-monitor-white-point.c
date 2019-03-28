@@ -106,7 +106,7 @@ static oyjlOptionChoice_s * getLinearEffectProfileChoices (
       }
       return c;
     }
-    else if(choices)
+    else
     {
       int i;
       char * value = NULL;
@@ -123,6 +123,11 @@ static oyjlOptionChoice_s * getLinearEffectProfileChoices (
       profiles = oyProfiles_Create( patterns, icc_profile_flags, NULL );
       oyProfiles_Release( &patterns );
       choices = oyProfiles_Count( profiles );
+      if(!choices)
+      {
+        oyProfiles_Release( &profiles );
+        return NULL;
+      }
 
       c = calloc(1+choices+1, sizeof(oyjlOptionChoice_s));
 
@@ -166,8 +171,8 @@ static oyjlOptionChoice_s * getLinearEffectProfileChoices (
       }
 
       return c;
-    } else
-      return NULL;
+    }
+    return NULL;
 }
 double getDoubleFromDB               ( const char        * key,
                                        double              fallback )

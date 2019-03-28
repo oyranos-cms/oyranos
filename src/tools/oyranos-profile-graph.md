@@ -3,23 +3,23 @@
 ## NAME
 oyranos\-profile\-graph v0.9.7 \- Oyranos Profile Graph
 ## SYNOPSIS
-**oyranos\-profile\-graph** [\-t *NUMBER*] [\-b] [\-g] [\-w *NUMBER*] [\-o *FILE*] [\-f *FORMAT*] [\-c] [\-x] [\-d *NUMBER*] [\-n] [\-2] [\-4] [\-r] [\-v] ICC\_PROFILES
+**oyranos\-profile\-graph** [\-t *NUMBER*] [\-b] [\-g] [\-w *NUMBER*] [\-o *\-|FILE*] [\-f *FORMAT*] [\-c] [\-x] [\-d *NUMBER*] [\-n] [\-2] [\-4] [\-r] [\-v] ICC\_PROFILES
 <br />
-**oyranos\-profile\-graph** \-S [\-t *NUMBER*] [\-b] [\-g] [\-w *NUMBER*] [\-R] [\-o *FILE*] [\-f *FORMAT*] [\-v]
+**oyranos\-profile\-graph** \-S [\-t *NUMBER*] [\-b] [\-g] [\-w *NUMBER*] [\-R] [\-o *\-|FILE*] [\-f *FORMAT*] [\-v]
 <br />
-**oyranos\-profile\-graph** \-O [\-t *NUMBER*] [\-b] [\-g] [\-w *NUMBER*] [\-R] [\-o *FILE*] [\-f *FORMAT*] [\-v]
+**oyranos\-profile\-graph** \-O [\-t *NUMBER*] [\-b] [\-g] [\-w *NUMBER*] [\-R] [\-o *\-|FILE*] [\-f *FORMAT*] [\-v]
 <br />
-**oyranos\-profile\-graph** \-k *NUMBER* [\-t *NUMBER*] [\-b] [\-g] [\-w *NUMBER*] [\-R] [\-o *FILE*] [\-f *FORMAT*] [\-v]
+**oyranos\-profile\-graph** \-k *NUMBER* [\-t *NUMBER*] [\-b] [\-g] [\-w *NUMBER*] [\-R] [\-o *\-|FILE*] [\-f *FORMAT*] [\-v]
 <br />
-**oyranos\-profile\-graph** \-i *STRING* [\-t *NUMBER*] [\-b] [\-g] [\-w *NUMBER*] [\-R] [\-o *FILE*] [\-f *FORMAT*] [\-v]
+**oyranos\-profile\-graph** \-i *STRING* [\-t *NUMBER*] [\-b] [\-g] [\-w *NUMBER*] [\-R] [\-o *\-|FILE*] [\-f *FORMAT*] [\-v]
 <br />
-**oyranos\-profile\-graph** \-s *FILE* [\-t *NUMBER*] [\-b] [\-g] [\-w *NUMBER*] [\-R] [\-o *FILE*] [\-f *FORMAT*|\-p *FORMAT*] [\-v]
+**oyranos\-profile\-graph** \-s *FILE* [\-t *NUMBER*] [\-b] [\-g] [\-w *NUMBER*] [\-R] [\-o *\-|FILE*] [\-f *FORMAT*|\-p *FORMAT*] [\-v]
 <br />
 ## DESCRIPTION
-The  oyranos\-profile\-graph programm converts ICC profiles or embedded ICC profiles from images to a graph image. By default the program shows the saturation line of the specified profiles and writes to output.png.
+The  oyranos\-profile\-graph programm converts ICC profiles or embedded ICC profiles from images to a graph image. By default the program shows the saturation line of the specified profiles and writes to stdout.
 ## OPTIONS
 ### 2D Graph from profiles
-**oyranos\-profile\-graph** [\-t *NUMBER*] [\-b] [\-g] [\-w *NUMBER*] [\-o *FILE*] [\-f *FORMAT*] [\-c] [\-x] [\-d *NUMBER*] [\-n] [\-2] [\-4] [\-r] [\-v] ICC\_PROFILES
+**oyranos\-profile\-graph** [\-t *NUMBER*] [\-b] [\-g] [\-w *NUMBER*] [\-o *\-|FILE*] [\-f *FORMAT*] [\-c] [\-x] [\-d *NUMBER*] [\-n] [\-2] [\-4] [\-r] [\-v] ICC\_PROFILES
 
 * \-d|\-\-change\-thickness *NUMBER*	Specify increase of the thickness of the graph lines (NUMBER:0.7 [≥\-1000 ≤1000])
 * \-x|\-\-xyy	Use CIE*xyY *x*y plane for saturation line projection
@@ -30,22 +30,22 @@ The  oyranos\-profile\-graph programm converts ICC profiles or embedded ICC prof
 * \-r|\-\-no\-repair	No Profile repair of ICC profile ID
 
 ### Standard Observer 1931 2° Graph
-**oyranos\-profile\-graph** \-S [\-t *NUMBER*] [\-b] [\-g] [\-w *NUMBER*] [\-R] [\-o *FILE*] [\-f *FORMAT*] [\-v]
+**oyranos\-profile\-graph** \-S [\-t *NUMBER*] [\-b] [\-g] [\-w *NUMBER*] [\-R] [\-o *\-|FILE*] [\-f *FORMAT*] [\-v]
 
 * \-S|\-\-standard\-observer	CIE Standard Observer 1931 2°
 
 ### 1964 10° Observer Graph
-**oyranos\-profile\-graph** \-O [\-t *NUMBER*] [\-b] [\-g] [\-w *NUMBER*] [\-R] [\-o *FILE*] [\-f *FORMAT*] [\-v]
+**oyranos\-profile\-graph** \-O [\-t *NUMBER*] [\-b] [\-g] [\-w *NUMBER*] [\-R] [\-o *\-|FILE*] [\-f *FORMAT*] [\-v]
 
 * \-O|\-\-observer\-64	CIE Observer 1964 10°
 
 ### Blackbody Radiator Spectrum Graph
-**oyranos\-profile\-graph** \-k *NUMBER* [\-t *NUMBER*] [\-b] [\-g] [\-w *NUMBER*] [\-R] [\-o *FILE*] [\-f *FORMAT*] [\-v]
+**oyranos\-profile\-graph** \-k *NUMBER* [\-t *NUMBER*] [\-b] [\-g] [\-w *NUMBER*] [\-R] [\-o *\-|FILE*] [\-f *FORMAT*] [\-v]
 
 * \-k|\-\-kelvin *NUMBER*	Blackbody Radiator (NUMBER:0 [≥0 ≤25000])
 
 ### Illuminant Spectrum Graph
-**oyranos\-profile\-graph** \-i *STRING* [\-t *NUMBER*] [\-b] [\-g] [\-w *NUMBER*] [\-R] [\-o *FILE*] [\-f *FORMAT*] [\-v]
+**oyranos\-profile\-graph** \-i *STRING* [\-t *NUMBER*] [\-b] [\-g] [\-w *NUMBER*] [\-R] [\-o *\-|FILE*] [\-f *FORMAT*] [\-v]
 
 * \-i|\-\-illuminant *STRING*	Illuminant Spectrum
    * \-i A		# Illuminant A
@@ -56,7 +56,7 @@ The  oyranos\-profile\-graph programm converts ICC profiles or embedded ICC prof
    * \-i D93		# Illuminant D93
 
 ### Spectral Input Graph
-**oyranos\-profile\-graph** \-s *FILE* [\-t *NUMBER*] [\-b] [\-g] [\-w *NUMBER*] [\-R] [\-o *FILE*] [\-f *FORMAT*|\-p *FORMAT*] [\-v]
+**oyranos\-profile\-graph** \-s *FILE* [\-t *NUMBER*] [\-b] [\-g] [\-w *NUMBER*] [\-R] [\-o *\-|FILE*] [\-f *FORMAT*|\-p *FORMAT*] [\-v]
 
 * \-s|\-\-spectral *FILE*	Spectral Input
 * \-p|\-\-spectral\-format *FORMAT*	Specify spectral output file format
@@ -74,7 +74,7 @@ The  oyranos\-profile\-graph programm converts ICC profiles or embedded ICC prof
 * \-g|\-\-no\-color	Draw Gray
 * \-w|\-\-width *NUMBER*	Specify output image width in pixel (NUMBER:128 [≥64 ≤4096])
 * \-R|\-\-raster	Draw Raster
-* \-o|\-\-output *FILE*	Specify output file name, default is output.png
+* \-o|\-\-output *\-|FILE*	Specify output file name, default is stdout
 * \-f|\-\-format *FORMAT*	Specify output file format png or svg, default is png
    * \-f png		# PNG
    * \-f svg		# SVG

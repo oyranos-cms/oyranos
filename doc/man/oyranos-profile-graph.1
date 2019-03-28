@@ -2,24 +2,24 @@
 .SH NAME
 oyranos-profile-graph v0.9.7 \- Oyranos Profile Graph
 .SH SYNOPSIS
-\fBoyranos-profile-graph\fR [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-o \fIFILE\fR] [\-f \fIFORMAT\fR] [\-c] [\-x] [\-d \fINUMBER\fR] [\-n] [\-2] [\-4] [\-r] [\-v] ICC_PROFILES
+\fBoyranos-profile-graph\fR [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-o \fI-|FILE\fR] [\-f \fIFORMAT\fR] [\-c] [\-x] [\-d \fINUMBER\fR] [\-n] [\-2] [\-4] [\-r] [\-v] ICC_PROFILES
 .br
-\fBoyranos-profile-graph\fR \-S [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-R] [\-o \fIFILE\fR] [\-f \fIFORMAT\fR] [\-v]
+\fBoyranos-profile-graph\fR \-S [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-R] [\-o \fI-|FILE\fR] [\-f \fIFORMAT\fR] [\-v]
 .br
-\fBoyranos-profile-graph\fR \-O [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-R] [\-o \fIFILE\fR] [\-f \fIFORMAT\fR] [\-v]
+\fBoyranos-profile-graph\fR \-O [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-R] [\-o \fI-|FILE\fR] [\-f \fIFORMAT\fR] [\-v]
 .br
-\fBoyranos-profile-graph\fR \-k \fINUMBER\fR [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-R] [\-o \fIFILE\fR] [\-f \fIFORMAT\fR] [\-v]
+\fBoyranos-profile-graph\fR \-k \fINUMBER\fR [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-R] [\-o \fI-|FILE\fR] [\-f \fIFORMAT\fR] [\-v]
 .br
-\fBoyranos-profile-graph\fR \-i \fISTRING\fR [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-R] [\-o \fIFILE\fR] [\-f \fIFORMAT\fR] [\-v]
+\fBoyranos-profile-graph\fR \-i \fISTRING\fR [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-R] [\-o \fI-|FILE\fR] [\-f \fIFORMAT\fR] [\-v]
 .br
-\fBoyranos-profile-graph\fR \-s \fIFILE\fR [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-R] [\-o \fIFILE\fR] [\-f \fIFORMAT\fR|\-p \fIFORMAT\fR] [\-v]
+\fBoyranos-profile-graph\fR \-s \fIFILE\fR [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-R] [\-o \fI-|FILE\fR] [\-f \fIFORMAT\fR|\-p \fIFORMAT\fR] [\-v]
 .br
 .SH DESCRIPTION
-The  oyranos-profile-graph programm converts ICC profiles or embedded ICC profiles from images to a graph image. By default the program shows the saturation line of the specified profiles and writes to output.png.
+The  oyranos-profile-graph programm converts ICC profiles or embedded ICC profiles from images to a graph image. By default the program shows the saturation line of the specified profiles and writes to stdout.
 .SH OPTIONS
 .TP
 2D Graph from profiles
-\fBoyranos-profile-graph\fR [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-o \fIFILE\fR] [\-f \fIFORMAT\fR] [\-c] [\-x] [\-d \fINUMBER\fR] [\-n] [\-2] [\-4] [\-r] [\-v] ICC_PROFILES
+\fBoyranos-profile-graph\fR [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-o \fI-|FILE\fR] [\-f \fIFORMAT\fR] [\-c] [\-x] [\-d \fINUMBER\fR] [\-n] [\-2] [\-4] [\-r] [\-v] ICC_PROFILES
 .br
 \-d|\-\-change-thickness \fINUMBER\fR	Specify increase of the thickness of the graph lines (NUMBER:0.7 [≥-1000 ≤1000])
 .br
@@ -37,25 +37,25 @@ The  oyranos-profile-graph programm converts ICC profiles or embedded ICC profil
 .br
 .TP
 Standard Observer 1931 2° Graph
-\fBoyranos-profile-graph\fR \-S [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-R] [\-o \fIFILE\fR] [\-f \fIFORMAT\fR] [\-v]
+\fBoyranos-profile-graph\fR \-S [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-R] [\-o \fI-|FILE\fR] [\-f \fIFORMAT\fR] [\-v]
 .br
 \-S|\-\-standard-observer	CIE Standard Observer 1931 2°
 .br
 .TP
 1964 10° Observer Graph
-\fBoyranos-profile-graph\fR \-O [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-R] [\-o \fIFILE\fR] [\-f \fIFORMAT\fR] [\-v]
+\fBoyranos-profile-graph\fR \-O [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-R] [\-o \fI-|FILE\fR] [\-f \fIFORMAT\fR] [\-v]
 .br
 \-O|\-\-observer-64	CIE Observer 1964 10°
 .br
 .TP
 Blackbody Radiator Spectrum Graph
-\fBoyranos-profile-graph\fR \-k \fINUMBER\fR [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-R] [\-o \fIFILE\fR] [\-f \fIFORMAT\fR] [\-v]
+\fBoyranos-profile-graph\fR \-k \fINUMBER\fR [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-R] [\-o \fI-|FILE\fR] [\-f \fIFORMAT\fR] [\-v]
 .br
 \-k|\-\-kelvin \fINUMBER\fR	Blackbody Radiator (NUMBER:0 [≥0 ≤25000])
 .br
 .TP
 Illuminant Spectrum Graph
-\fBoyranos-profile-graph\fR \-i \fISTRING\fR [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-R] [\-o \fIFILE\fR] [\-f \fIFORMAT\fR] [\-v]
+\fBoyranos-profile-graph\fR \-i \fISTRING\fR [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-R] [\-o \fI-|FILE\fR] [\-f \fIFORMAT\fR] [\-v]
 .br
 \-i|\-\-illuminant \fISTRING\fR	Illuminant Spectrum
 .br
@@ -73,7 +73,7 @@ Illuminant Spectrum Graph
 .br
 .TP
 Spectral Input Graph
-\fBoyranos-profile-graph\fR \-s \fIFILE\fR [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-R] [\-o \fIFILE\fR] [\-f \fIFORMAT\fR|\-p \fIFORMAT\fR] [\-v]
+\fBoyranos-profile-graph\fR \-s \fIFILE\fR [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-R] [\-o \fI-|FILE\fR] [\-f \fIFORMAT\fR|\-p \fIFORMAT\fR] [\-v]
 .br
 \-s|\-\-spectral \fIFILE\fR	Spectral Input
 .br
@@ -104,7 +104,7 @@ General options
 .br
 \-R|\-\-raster	Draw Raster
 .br
-\-o|\-\-output \fIFILE\fR	Specify output file name, default is output.png
+\-o|\-\-output \fI-|FILE\fR	Specify output file name, default is stdout
 .br
 \-f|\-\-format \fIFORMAT\fR	Specify output file format png or svg, default is png
 .br
