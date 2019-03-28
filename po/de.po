@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2019-03-28 16:12+0100\n"
+"POT-Creation-Date: 2019-03-28 19:17+0100\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -1299,8 +1299,7 @@ msgstr "Erzeuge eine 3D Interpolationstabelle"
 
 #: tools/oyranos_profile_graph.c:296
 msgid "Create a 2D Graph containing the saturation line from a ICC Profile."
-msgstr "Erzeuge aus einem ICC Profil eine eine Grafik mit seiner "
-"Sättigungslinie."
+msgstr "Erzeuge aus einem ICC Profil eine Grafik mit seiner Sättigungslinie."
 
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4203
 #: modules/color/modules/oyranos_cmm_lcms.c:2530
@@ -2064,6 +2063,10 @@ msgstr "Farbton"
 msgid "ICC Class"
 msgstr "ICC Klasse"
 
+#: tools/oyranos_profile_graph.c:254
+msgid "ICC Profile"
+msgstr "ICC Profil"
+
 #: tools/oyranos_profiles.c:115
 msgid "ICC Taxi Profile DB"
 msgstr "ICC Taxi Profile DB"
@@ -2165,10 +2168,6 @@ msgstr "ICC_DATEINAME"
 #: tools/oyranos-monitor-white-point.c:348 tools/oyranos_profiles.c:114
 msgid "ICC_PROFILE"
 msgstr "ICC_PROFIL"
-
-#: tools/oyranos_profile_graph.c:254
-msgid "ICC_PROFILES"
-msgstr "ICC_PROFILE"
 
 #: liboyranos_config/oyranos_icc.c:824
 msgid "ITU-R BT.709"
@@ -3708,10 +3707,6 @@ msgstr "CUPS Drucker"
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:866
 msgid "Printers, which are accessible through the CUPS spooling system."
 msgstr "Drucker, die durch das CUPS Drucksystem erreichbar sind."
-
-#: tools/oyranos_profile_graph.c:254
-msgid "Profile"
-msgstr "Profil"
 
 #: API_generated/oyranos_profile.c:71
 msgid "Profile Connection Space"
@@ -6888,6 +6883,9 @@ msgstr "xyY"
 #~ msgid "ICC header Flags"
 #~ msgstr "ICC "
 
+#~ msgid "ICC_PROFILES"
+#~ msgstr "ICC_PROFILE"
+
 #~ msgid "Illuminant ---"
 #~ msgstr "Farbtemperatur ---"
 
@@ -7175,6 +7173,9 @@ msgstr "xyY"
 
 #~ msgid "Priority:"
 #~ msgstr "Priorität:"
+
+#~ msgid "Profile"
+#~ msgstr "Profil"
 
 #~ msgid "Profile at the moment\"."
 #~ msgstr "Profil im Moment\"."

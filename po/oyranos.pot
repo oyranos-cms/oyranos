@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Oyranos 0.9\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2019-03-28 16:12+0100\n"
+"POT-Creation-Date: 2019-03-28 19:26+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -4997,11 +4997,7 @@ msgid "ICC Version 4"
 msgstr ""
 
 #: tools/oyranos_profile_graph.c:254
-msgid "Profile"
-msgstr ""
-
-#: tools/oyranos_profile_graph.c:254
-msgid "ICC_PROFILES"
+msgid "ICC Profile"
 msgstr ""
 
 #: tools/oyranos_profile_graph.c:255

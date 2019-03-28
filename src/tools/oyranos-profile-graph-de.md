@@ -3,7 +3,7 @@
 ## NAME
 oyranos\-profile\-graph v0.9.7 \- Oyranos Profile Zeichner
 ## ÜBERSICHT
-**oyranos\-profile\-graph** [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-o *\-|DATEI*] [\-f *FORMAT*] [\-c] [\-x] [\-d *NUMMER*] [\-n] [\-2] [\-4] [\-r] [\-v] ICC\_PROFILE
+**oyranos\-profile\-graph** [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-o *\-|DATEI*] [\-f *FORMAT*] [\-c] [\-x] [\-d *NUMMER*] [\-n] [\-2] [\-4] [\-r] [\-v] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
 <br />
 **oyranos\-profile\-graph** \-S [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-R] [\-o *\-|DATEI*] [\-f *FORMAT*] [\-v]
 <br />
@@ -13,16 +13,17 @@ oyranos\-profile\-graph v0.9.7 \- Oyranos Profile Zeichner
 <br />
 **oyranos\-profile\-graph** \-i *STRING* [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-R] [\-o *\-|DATEI*] [\-f *FORMAT*] [\-v]
 <br />
-**oyranos\-profile\-graph** \-s *DATEI* [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-R] [\-o *\-|DATEI*] [\-f *FORMAT*|\-p *FORMAT*] [\-v]
+**oyranos\-profile\-graph** \-s *DATEI* [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-R] [\-o *\-|DATEI*] [\-p *FORMAT*] [\-v]
 <br />
 ## BESCHREIBUNG
 Das oyranos\-profile\-graph Programm erzeugt aus einem ICC Profil oder eingebetteten ICC Profil in eine Grafik. Vorgabemäßig malt es die Sättigungslinie eines anzugebenden ICC Profiles und schreibt die Grafik nach stdout.
 ## OPTIONEN
 ### 2D Zeichnung vom Farbprofil
-**oyranos\-profile\-graph** [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-o *\-|DATEI*] [\-f *FORMAT*] [\-c] [\-x] [\-d *NUMMER*] [\-n] [\-2] [\-4] [\-r] [\-v] ICC\_PROFILE
+**oyranos\-profile\-graph** [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-o *\-|DATEI*] [\-f *FORMAT*] [\-c] [\-x] [\-d *NUMMER*] [\-n] [\-2] [\-4] [\-r] [\-v] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
 
-Erzeuge aus einem ICC Profil eine eine Grafik mit seiner Sättigungslinie.
+Erzeuge aus einem ICC Profil eine Grafik mit seiner Sättigungslinie.
 
+*  *l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE*	ICC Profil
 * \-d|\-\-change\-thickness *NUMMER*	Gib die Verstärkung der Liniendicke an (NUMMER:0,7 [≥\-1000 ≤1000])
 * \-x|\-\-xyy	Benutze CIE*xyY *x*y Ebene für Projektion
 * \-c|\-\-no\-blackbody	Lasse Weißlinie von Lambertstrahlern fort
@@ -58,7 +59,7 @@ Erzeuge aus einem ICC Profil eine eine Grafik mit seiner Sättigungslinie.
    * \-i D93		# Lichtart D93
 
 ### Spektrumgraph
-**oyranos\-profile\-graph** \-s *DATEI* [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-R] [\-o *\-|DATEI*] [\-f *FORMAT*|\-p *FORMAT*] [\-v]
+**oyranos\-profile\-graph** \-s *DATEI* [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-R] [\-o *\-|DATEI*] [\-p *FORMAT*] [\-v]
 
 * \-s|\-\-spectral *DATEI*	Spektrale Eingabe
 * \-p|\-\-spectral\-format *FORMAT*	Gib spektrales Ausgabeformat an

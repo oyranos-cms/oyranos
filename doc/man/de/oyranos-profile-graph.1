@@ -2,7 +2,7 @@
 .SH NAME
 oyranos-profile-graph v0.9.7 \- Oyranos Profile Zeichner
 .SH ÜBERSICHT
-\fBoyranos-profile-graph\fR [\-t \fINUMMER\fR] [\-b] [\-g] [\-w \fINUMMER\fR] [\-o \fI-|DATEI\fR] [\-f \fIFORMAT\fR] [\-c] [\-x] [\-d \fINUMMER\fR] [\-n] [\-2] [\-4] [\-r] [\-v] ICC_PROFILE
+\fBoyranos-profile-graph\fR [\-t \fINUMMER\fR] [\-b] [\-g] [\-w \fINUMMER\fR] [\-o \fI-|DATEI\fR] [\-f \fIFORMAT\fR] [\-c] [\-x] [\-d \fINUMMER\fR] [\-n] [\-2] [\-4] [\-r] [\-v] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
 .br
 \fBoyranos-profile-graph\fR \-S [\-t \fINUMMER\fR] [\-b] [\-g] [\-w \fINUMMER\fR] [\-R] [\-o \fI-|DATEI\fR] [\-f \fIFORMAT\fR] [\-v]
 .br
@@ -12,18 +12,20 @@ oyranos-profile-graph v0.9.7 \- Oyranos Profile Zeichner
 .br
 \fBoyranos-profile-graph\fR \-i \fISTRING\fR [\-t \fINUMMER\fR] [\-b] [\-g] [\-w \fINUMMER\fR] [\-R] [\-o \fI-|DATEI\fR] [\-f \fIFORMAT\fR] [\-v]
 .br
-\fBoyranos-profile-graph\fR \-s \fIDATEI\fR [\-t \fINUMMER\fR] [\-b] [\-g] [\-w \fINUMMER\fR] [\-R] [\-o \fI-|DATEI\fR] [\-f \fIFORMAT\fR|\-p \fIFORMAT\fR] [\-v]
+\fBoyranos-profile-graph\fR \-s \fIDATEI\fR [\-t \fINUMMER\fR] [\-b] [\-g] [\-w \fINUMMER\fR] [\-R] [\-o \fI-|DATEI\fR] [\-p \fIFORMAT\fR] [\-v]
 .br
 .SH BESCHREIBUNG
 Das oyranos-profile-graph Programm erzeugt aus einem ICC Profil oder eingebetteten ICC Profil in eine Grafik. Vorgabemäßig malt es die Sättigungslinie eines anzugebenden ICC Profiles und schreibt die Grafik nach stdout.
 .SH OPTIONEN
 .TP
 2D Zeichnung vom Farbprofil
-\fBoyranos-profile-graph\fR [\-t \fINUMMER\fR] [\-b] [\-g] [\-w \fINUMMER\fR] [\-o \fI-|DATEI\fR] [\-f \fIFORMAT\fR] [\-c] [\-x] [\-d \fINUMMER\fR] [\-n] [\-2] [\-4] [\-r] [\-v] ICC_PROFILE
+\fBoyranos-profile-graph\fR [\-t \fINUMMER\fR] [\-b] [\-g] [\-w \fINUMMER\fR] [\-o \fI-|DATEI\fR] [\-f \fIFORMAT\fR] [\-c] [\-x] [\-d \fINUMMER\fR] [\-n] [\-2] [\-4] [\-r] [\-v] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
 .br
-Erzeuge aus einem ICC Profil eine eine Grafik mit seiner Sättigungslinie.
+Erzeuge aus einem ICC Profil eine Grafik mit seiner Sättigungslinie.
 .br
 .sp
+.br
+ \fIl|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE\fR	ICC Profil
 .br
 \-d|\-\-change-thickness \fINUMMER\fR	Gib die Verstärkung der Liniendicke an (NUMMER:0,7 [≥-1000 ≤1000])
 .br
@@ -77,7 +79,7 @@ Beleuchtungsspektrumzeichnung
 .br
 .TP
 Spektrumgraph
-\fBoyranos-profile-graph\fR \-s \fIDATEI\fR [\-t \fINUMMER\fR] [\-b] [\-g] [\-w \fINUMMER\fR] [\-R] [\-o \fI-|DATEI\fR] [\-f \fIFORMAT\fR|\-p \fIFORMAT\fR] [\-v]
+\fBoyranos-profile-graph\fR \-s \fIDATEI\fR [\-t \fINUMMER\fR] [\-b] [\-g] [\-w \fINUMMER\fR] [\-R] [\-o \fI-|DATEI\fR] [\-p \fIFORMAT\fR] [\-v]
 .br
 \-s|\-\-spectral \fIDATEI\fR	Spektrale Eingabe
 .br

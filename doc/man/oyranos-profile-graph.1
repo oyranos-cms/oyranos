@@ -2,7 +2,7 @@
 .SH NAME
 oyranos-profile-graph v0.9.7 \- Oyranos Profile Graph
 .SH SYNOPSIS
-\fBoyranos-profile-graph\fR [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-o \fI-|FILE\fR] [\-f \fIFORMAT\fR] [\-c] [\-x] [\-d \fINUMBER\fR] [\-n] [\-2] [\-4] [\-r] [\-v] ICC_PROFILES
+\fBoyranos-profile-graph\fR [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-o \fI-|FILE\fR] [\-f \fIFORMAT\fR] [\-c] [\-x] [\-d \fINUMBER\fR] [\-n] [\-2] [\-4] [\-r] [\-v] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
 .br
 \fBoyranos-profile-graph\fR \-S [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-R] [\-o \fI-|FILE\fR] [\-f \fIFORMAT\fR] [\-v]
 .br
@@ -12,18 +12,20 @@ oyranos-profile-graph v0.9.7 \- Oyranos Profile Graph
 .br
 \fBoyranos-profile-graph\fR \-i \fISTRING\fR [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-R] [\-o \fI-|FILE\fR] [\-f \fIFORMAT\fR] [\-v]
 .br
-\fBoyranos-profile-graph\fR \-s \fIFILE\fR [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-R] [\-o \fI-|FILE\fR] [\-f \fIFORMAT\fR|\-p \fIFORMAT\fR] [\-v]
+\fBoyranos-profile-graph\fR \-s \fIFILE\fR [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-R] [\-o \fI-|FILE\fR] [\-p \fIFORMAT\fR] [\-v]
 .br
 .SH DESCRIPTION
 The  oyranos-profile-graph programm converts ICC profiles or embedded ICC profiles from images to a graph image. By default the program shows the saturation line of the specified profiles and writes to stdout.
 .SH OPTIONS
 .TP
 2D Graph from profiles
-\fBoyranos-profile-graph\fR [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-o \fI-|FILE\fR] [\-f \fIFORMAT\fR] [\-c] [\-x] [\-d \fINUMBER\fR] [\-n] [\-2] [\-4] [\-r] [\-v] ICC_PROFILES
+\fBoyranos-profile-graph\fR [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-o \fI-|FILE\fR] [\-f \fIFORMAT\fR] [\-c] [\-x] [\-d \fINUMBER\fR] [\-n] [\-2] [\-4] [\-r] [\-v] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
 .br
 Create a 2D Graph containing the saturation line from a ICC Profile.
 .br
 .sp
+.br
+ \fIl|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE\fR	ICC Profile
 .br
 \-d|\-\-change-thickness \fINUMBER\fR	Specify increase of the thickness of the graph lines (NUMBER:0.7 [≥-1000 ≤1000])
 .br
@@ -77,7 +79,7 @@ Illuminant Spectrum Graph
 .br
 .TP
 Spectral Input Graph
-\fBoyranos-profile-graph\fR \-s \fIFILE\fR [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-R] [\-o \fI-|FILE\fR] [\-f \fIFORMAT\fR|\-p \fIFORMAT\fR] [\-v]
+\fBoyranos-profile-graph\fR \-s \fIFILE\fR [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-R] [\-o \fI-|FILE\fR] [\-p \fIFORMAT\fR] [\-v]
 .br
 \-s|\-\-spectral \fIFILE\fR	Spectral Input
 .br

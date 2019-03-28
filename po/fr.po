@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ICC Examin 0.41\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2019-03-28 16:12+0100\n"
+"POT-Creation-Date: 2019-03-28 19:17+0100\n"
 "PO-Revision-Date: 2006-06-29 19:31+0200\n"
 "Last-Translator: Pascal LACROIX <lacroixpascal at vfemail.net>\n"
 "Language-Team: <fr@li.org>\n"
@@ -2123,6 +2123,11 @@ msgstr "Teinte"
 msgid "ICC Class"
 msgstr ""
 
+#: tools/oyranos_profile_graph.c:254
+#, fuzzy
+msgid "ICC Profile"
+msgstr "ICC Profils"
+
 #: tools/oyranos_profiles.c:115
 #, fuzzy
 msgid "ICC Taxi Profile DB"
@@ -2222,10 +2227,6 @@ msgstr ""
 #: tools/oyranos-monitor-white-point.c:347
 #: tools/oyranos-monitor-white-point.c:348 tools/oyranos_profiles.c:114
 msgid "ICC_PROFILE"
-msgstr ""
-
-#: tools/oyranos_profile_graph.c:254
-msgid "ICC_PROFILES"
 msgstr ""
 
 #: liboyranos_config/oyranos_icc.c:824
@@ -3864,11 +3865,6 @@ msgstr ""
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:866
 msgid "Printers, which are accessible through the CUPS spooling system."
 msgstr ""
-
-#: tools/oyranos_profile_graph.c:254
-#, fuzzy
-msgid "Profile"
-msgstr "Fichier"
 
 #: API_generated/oyranos_profile.c:71
 #, fuzzy
@@ -6400,6 +6396,10 @@ msgstr ""
 #, fuzzy
 #~ msgid "Oyranos Night Manager"
 #~ msgstr "Oyranos Préférences"
+
+#, fuzzy
+#~ msgid "Profile"
+#~ msgstr "Fichier"
 
 #, fuzzy
 #~ msgid "Select ICC Standard Version 2 Profiles"

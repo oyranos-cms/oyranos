@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cinepaint_icc-examin_eu\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2019-03-28 16:12+0100\n"
+"POT-Creation-Date: 2019-03-28 19:17+0100\n"
 "PO-Revision-Date: 2007-11-07 11:11+0100\n"
 "Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@zundan.com>\n"
 "Language-Team: Basque <itzulpena@euskalgnu.org>\n"
@@ -2143,6 +2143,11 @@ msgstr "Ñabardura"
 msgid "ICC Class"
 msgstr ""
 
+#: tools/oyranos_profile_graph.c:254
+#, fuzzy
+msgid "ICC Profile"
+msgstr "Zein ICC profila?"
+
 #: tools/oyranos_profiles.c:115
 #, fuzzy
 msgid "ICC Taxi Profile DB"
@@ -2242,10 +2247,6 @@ msgstr ""
 #: tools/oyranos-monitor-white-point.c:347
 #: tools/oyranos-monitor-white-point.c:348 tools/oyranos_profiles.c:114
 msgid "ICC_PROFILE"
-msgstr ""
-
-#: tools/oyranos_profile_graph.c:254
-msgid "ICC_PROFILES"
 msgstr ""
 
 #: liboyranos_config/oyranos_icc.c:824
@@ -3887,11 +3888,6 @@ msgstr "Puntua"
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:866
 msgid "Printers, which are accessible through the CUPS spooling system."
 msgstr ""
-
-#: tools/oyranos_profile_graph.c:254
-#, fuzzy
-msgid "Profile"
-msgstr "profila\"."
 
 #: API_generated/oyranos_profile.c:71
 #, fuzzy
@@ -6957,6 +6953,10 @@ msgstr "Yxy"
 
 #~ msgid "Preview, photografic"
 #~ msgstr "Aurrebista, fotografikoa"
+
+#, fuzzy
+#~ msgid "Profile"
+#~ msgstr "profila\"."
 
 #~ msgid "Profile at the moment\"."
 #~ msgstr "Uneko profila\"."

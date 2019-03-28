@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: oyranos\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2019-03-28 16:12+0100\n"
+"POT-Creation-Date: 2019-03-28 19:17+0100\n"
 "PO-Revision-Date: 2012-10-19 15:10+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -2149,6 +2149,11 @@ msgstr "Odstín"
 msgid "ICC Class"
 msgstr ""
 
+#: tools/oyranos_profile_graph.c:254
+#, fuzzy
+msgid "ICC Profile"
+msgstr "profil ICC"
+
 #: tools/oyranos_profiles.c:115
 #, fuzzy
 msgid "ICC Taxi Profile DB"
@@ -2255,10 +2260,6 @@ msgstr ""
 #: tools/oyranos-monitor-white-point.c:347
 #: tools/oyranos-monitor-white-point.c:348 tools/oyranos_profiles.c:114
 msgid "ICC_PROFILE"
-msgstr ""
-
-#: tools/oyranos_profile_graph.c:254
-msgid "ICC_PROFILES"
 msgstr ""
 
 #: liboyranos_config/oyranos_icc.c:824
@@ -3937,11 +3938,6 @@ msgstr "Tiskárna CUPS"
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:866
 msgid "Printers, which are accessible through the CUPS spooling system."
 msgstr "Tiskárny, které jsou přístupné přes tiskovou frontu CUPS."
-
-#: tools/oyranos_profile_graph.c:254
-#, fuzzy
-msgid "Profile"
-msgstr "Profil\"."
 
 #: API_generated/oyranos_profile.c:71
 #, fuzzy
@@ -7353,6 +7349,10 @@ msgstr "Yxy"
 
 #~ msgid "Priority:"
 #~ msgstr "Priorita:"
+
+#, fuzzy
+#~ msgid "Profile"
+#~ msgstr "Profil\"."
 
 #~ msgid "Profile at the moment\"."
 #~ msgstr "Profil v tento okamzik\"."

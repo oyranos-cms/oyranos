@@ -237,7 +237,7 @@ int main( int argc , char** argv )
                                   {"D75",_("Illuminant D75"),"", _("CIE D75 spectral power distribution (computed)")},
                                   {"D93",_("Illuminant D93"),"", _("CIE D93 spectral power distribution (computed)")},
                                   {"","","",""}};
-  oyjlOptionChoice_s out_form[]={ {"png",_("PNG"),"", _("PNG Raster")},
+  oyjlOptionChoice_s out_form[]={ {"png",_("PNG"),"",_("PNG Raster")},
                                   {"svg",_("SVG"),"",_("SVG Vector")},
                                   {"","","",""}};
   oyjlOptionChoice_s spe_form[]={ {"png",_("PNG"),"",_("PNG Raster")},
@@ -251,7 +251,7 @@ int main( int argc , char** argv )
   /* type,   flags, o, option, key, name, description, help, value_name, value_type, values, var_type, variable */
     {"oiwi", 0, '2', "icc-version-2", NULL, _("ICC Version 2"), _("Select ICC v2 Profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&v2} },
     {"oiwi", 0, '4', "icc-version-4", NULL, _("ICC Version 4"), _("Select ICC v4 Profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&v4} },
-    {"oiwi", 0, '@', "",              NULL, _("Input"),         _("Profile"),                NULL, _("ICC_PROFILES"), oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&profile_count} },
+    {"oiwi", 0, '@', NULL,            NULL, _("Input"),         _("ICC Profile"),            NULL, "l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE", oyjlOPTIONTYPE_STRING, {}, oyjlINT, {.i=&profile_count} },
     {"oiwi", 0, 'b', "no-border",     NULL, _("Omit border"),   _("Omit border in graph"),   NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&no_border} },
     {"oiwi", 0, 'c', "no-blackbody",  NULL, _("No black body"), _("Omit white line of lambert light emitters"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&no_blackbody} },
     {"oiwi", 0, 'd', "change-thickness",NULL,_("Thickness increase"),_("Specify increase of the thickness of the graph lines"), NULL, _("NUMBER"), oyjlOPTIONTYPE_DOUBLE,
@@ -267,7 +267,7 @@ int main( int argc , char** argv )
     {"oiwi", 0, 'o', "output",        NULL, _("Output"),        _("Specify output file name, default is stdout"), NULL, _("-|FILE"), oyjlOPTIONTYPE_STRING, {}, oyjlSTRING, {.s=&output} },
     {"oiwi", 0, 'p', "spectral-format",NULL,_("Spectral Output"),_("Specify spectral output file format"), NULL, _("FORMAT"), oyjlOPTIONTYPE_CHOICE,
       {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)spe_form, sizeof(spe_form), 0 )}, oyjlSTRING, {.s=&sformat} },
-    {"oiwi", 0, 's', "spectral",      NULL, _("Spectral"),      _("Spectral Input"),         NULL, _("FILE"), oyjlOPTIONTYPE_NONE, {}, oyjlSTRING, {.s=&input} },
+    {"oiwi", 0, 's', "spectral",      NULL, _("Spectral"),      _("Spectral Input"),         NULL, _("FILE"), oyjlOPTIONTYPE_STRING, {}, oyjlSTRING, {.s=&input} },
     {"oiwi", 0, 'S', "standard-observer",NULL,_("Standard Observer"),_("CIE Standard Observer 1931 2°"), NULL,NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&standardobs} },
     {"oiwi", 0, 'O', "observer-64",   NULL, _("10° Observer"),  _("CIE Observer 1964 10°"),  NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&observer64} },
 
@@ -293,12 +293,12 @@ int main( int argc , char** argv )
 
   oyjlOptionGroup_s groups[] = {
   /* type,   flags, name, description, help, mandatory, optional, detail */
-    {"oiwg", 0, _("Saturation"), _("2D Graph from profiles"), _("Create a 2D Graph containing the saturation line from a ICC Profile."), "@", "tbgwofcxdn24rv", "dxcn24r" },
+    {"oiwg", 0, _("Saturation"), _("2D Graph from profiles"), _("Create a 2D Graph containing the saturation line from a ICC Profile."), "@", "tbgwofcxdn24rv", "@dxcn24r" },
     {"oiwg", 0, _("StdObs2°"), _("Standard Observer 1931 2° Graph"), NULL, "S", "tbgwRofv", "S" },
     {"oiwg", 0, _("Obs10°"), _("1964 10° Observer Graph"), NULL, "O", "tbgwRofv", "O" },
     {"oiwg", 0, _("Blackbody Radiator"), _("Blackbody Radiator Spectrum Graph"), NULL, "k", "tbgwRofv", "k" },
     {"oiwg", 0, _("Illuminant Spectrum"), _("Illuminant Spectrum Graph"), NULL, "i", "tbgwRofv", "i" },
-    {"oiwg", 0, _("Spectral Input"), _("Spectral Input Graph"), NULL, "s", "tbgwRof|pv", "sp" },
+    {"oiwg", 0, _("Spectral Input"), _("Spectral Input Graph"), NULL, "s", "tbgwRopv", "sp" },
     {"oiwg", 0, _("Misc"), _("General options"), NULL, "", "", "tbgwRofXvh" },
     {"",0,0,0,0,0,0,0}
   };

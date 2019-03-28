@@ -3,7 +3,7 @@
 ## NAME
 oyranos\-profile\-graph v0.9.7 \- Oyranos Profile Graph
 ## SYNOPSIS
-**oyranos\-profile\-graph** [\-t *NUMBER*] [\-b] [\-g] [\-w *NUMBER*] [\-o *\-|FILE*] [\-f *FORMAT*] [\-c] [\-x] [\-d *NUMBER*] [\-n] [\-2] [\-4] [\-r] [\-v] ICC\_PROFILES
+**oyranos\-profile\-graph** [\-t *NUMBER*] [\-b] [\-g] [\-w *NUMBER*] [\-o *\-|FILE*] [\-f *FORMAT*] [\-c] [\-x] [\-d *NUMBER*] [\-n] [\-2] [\-4] [\-r] [\-v] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
 <br />
 **oyranos\-profile\-graph** \-S [\-t *NUMBER*] [\-b] [\-g] [\-w *NUMBER*] [\-R] [\-o *\-|FILE*] [\-f *FORMAT*] [\-v]
 <br />
@@ -13,16 +13,17 @@ oyranos\-profile\-graph v0.9.7 \- Oyranos Profile Graph
 <br />
 **oyranos\-profile\-graph** \-i *STRING* [\-t *NUMBER*] [\-b] [\-g] [\-w *NUMBER*] [\-R] [\-o *\-|FILE*] [\-f *FORMAT*] [\-v]
 <br />
-**oyranos\-profile\-graph** \-s *FILE* [\-t *NUMBER*] [\-b] [\-g] [\-w *NUMBER*] [\-R] [\-o *\-|FILE*] [\-f *FORMAT*|\-p *FORMAT*] [\-v]
+**oyranos\-profile\-graph** \-s *FILE* [\-t *NUMBER*] [\-b] [\-g] [\-w *NUMBER*] [\-R] [\-o *\-|FILE*] [\-p *FORMAT*] [\-v]
 <br />
 ## DESCRIPTION
 The  oyranos\-profile\-graph programm converts ICC profiles or embedded ICC profiles from images to a graph image. By default the program shows the saturation line of the specified profiles and writes to stdout.
 ## OPTIONS
 ### 2D Graph from profiles
-**oyranos\-profile\-graph** [\-t *NUMBER*] [\-b] [\-g] [\-w *NUMBER*] [\-o *\-|FILE*] [\-f *FORMAT*] [\-c] [\-x] [\-d *NUMBER*] [\-n] [\-2] [\-4] [\-r] [\-v] ICC\_PROFILES
+**oyranos\-profile\-graph** [\-t *NUMBER*] [\-b] [\-g] [\-w *NUMBER*] [\-o *\-|FILE*] [\-f *FORMAT*] [\-c] [\-x] [\-d *NUMBER*] [\-n] [\-2] [\-4] [\-r] [\-v] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
 
 Create a 2D Graph containing the saturation line from a ICC Profile.
 
+*  *l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE*	ICC Profile
 * \-d|\-\-change\-thickness *NUMBER*	Specify increase of the thickness of the graph lines (NUMBER:0.7 [≥\-1000 ≤1000])
 * \-x|\-\-xyy	Use CIE*xyY *x*y plane for saturation line projection
 * \-c|\-\-no\-blackbody	Omit white line of lambert light emitters
@@ -58,7 +59,7 @@ Create a 2D Graph containing the saturation line from a ICC Profile.
    * \-i D93		# Illuminant D93
 
 ### Spectral Input Graph
-**oyranos\-profile\-graph** \-s *FILE* [\-t *NUMBER*] [\-b] [\-g] [\-w *NUMBER*] [\-R] [\-o *\-|FILE*] [\-f *FORMAT*|\-p *FORMAT*] [\-v]
+**oyranos\-profile\-graph** \-s *FILE* [\-t *NUMBER*] [\-b] [\-g] [\-w *NUMBER*] [\-R] [\-o *\-|FILE*] [\-p *FORMAT*] [\-v]
 
 * \-s|\-\-spectral *FILE*	Spectral Input
 * \-p|\-\-spectral\-format *FORMAT*	Specify spectral output file format
