@@ -21,6 +21,8 @@ Das oyranos\-profile\-graph Programm erzeugt aus einem ICC Profil oder eingebett
 ### 2D Zeichnung vom Farbprofil
 **oyranos\-profile\-graph** [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-o *\-|DATEI*] [\-f *FORMAT*] [\-c] [\-x] [\-d *NUMMER*] [\-n] [\-2] [\-4] [\-r] [\-v] ICC\_PROFILE
 
+Erzeuge aus einem ICC Profil eine eine Grafik mit seiner Sättigungslinie.
+
 * \-d|\-\-change\-thickness *NUMMER*	Gib die Verstärkung der Liniendicke an (NUMMER:0,7 [≥\-1000 ≤1000])
 * \-x|\-\-xyy	Benutze CIE*xyY *x*y Ebene für Projektion
 * \-c|\-\-no\-blackbody	Lasse Weißlinie von Lambertstrahlern fort

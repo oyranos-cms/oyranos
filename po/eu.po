@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cinepaint_icc-examin_eu\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2019-03-28 07:24+0100\n"
+"POT-Creation-Date: 2019-03-28 16:12+0100\n"
 "PO-Revision-Date: 2007-11-07 11:11+0100\n"
 "Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@zundan.com>\n"
 "Language-Team: Basque <itzulpena@euskalgnu.org>\n"
@@ -1342,6 +1342,10 @@ msgstr ""
 
 #: tools/oyranos_convert.c:120
 msgid "Create 3D CLUT"
+msgstr ""
+
+#: tools/oyranos_profile_graph.c:296
+msgid "Create a 2D Graph containing the saturation line from a ICC Profile."
 msgstr ""
 
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4203

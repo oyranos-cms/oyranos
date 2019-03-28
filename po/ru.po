@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Oyranos 0.9\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2019-03-28 07:24+0100\n"
+"POT-Creation-Date: 2019-03-28 16:12+0100\n"
 "PO-Revision-Date: 2015-02-20 17:32+0100\n"
 "Last-Translator: Kai-Uwe Behrmann <ku.b@gmx.de>\n"
 "Language-Team: russian <ru@li.org>\n"
@@ -1252,6 +1252,10 @@ msgstr ""
 
 #: tools/oyranos_convert.c:120
 msgid "Create 3D CLUT"
+msgstr ""
+
+#: tools/oyranos_profile_graph.c:296
+msgid "Create a 2D Graph containing the saturation line from a ICC Profile."
 msgstr ""
 
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4203

@@ -293,7 +293,7 @@ int main( int argc , char** argv )
 
   oyjlOptionGroup_s groups[] = {
   /* type,   flags, name, description, help, mandatory, optional, detail */
-    {"oiwg", 0, _("Saturation"), _("2D Graph from profiles"), NULL, "@", "tbgwofcxdn24rv", "dxcn24r" },
+    {"oiwg", 0, _("Saturation"), _("2D Graph from profiles"), _("Create a 2D Graph containing the saturation line from a ICC Profile."), "@", "tbgwofcxdn24rv", "dxcn24r" },
     {"oiwg", 0, _("StdObs2°"), _("Standard Observer 1931 2° Graph"), NULL, "S", "tbgwRofv", "S" },
     {"oiwg", 0, _("Obs10°"), _("1964 10° Observer Graph"), NULL, "O", "tbgwRofv", "O" },
     {"oiwg", 0, _("Blackbody Radiator"), _("Blackbody Radiator Spectrum Graph"), NULL, "k", "tbgwRofv", "k" },
@@ -904,6 +904,24 @@ int main( int argc , char** argv )
                       flags, "kelvin" );
     oyImage_Release( &a );
   }
+#define ILLUMINANT( DXX ) \
+    if(oyStringCaseCmp_(illuminant, "D" #DXX) == 0) \
+    { \
+      oyImage_s * a = oySpectrumCreateEmpty ( 300, 830, 5, 1 ); \
+      float * spd_5 = NULL; \
+      double kelvin = DXX*100; \
+      int error = oyDXXCIEfromTemperature( kelvin, &spd_5 ); \
+      if(error) \
+        oyMessageFunc_p(oyMSG_ERROR,(oyStruct_s*)a,"not CIE illuminant for %g", kelvin); \
+      float max = oySpectrumFillFromArrayF( a, spd_5, 0 ); \
+      if(verbose) fprintf( stderr, "max: %f\n", max ); \
+      oySpectrumNormalise ( a, 1.0/max ); max = 1.0; \
+      drawIlluminant( cr, a, 0, xO, yO, width, height, \
+                      min_x, max_x,  min_y < 0 ? min_y : 0.0, max, \
+                      no_color ? COLOR_GRAY : COLOR_SPECTRAL, rgba, \
+                      flags, "D" #DXX ); \
+      oyImage_Release( &a ); \
+    } else
   if(illuminant != 0)
   {
     if(oyStringCaseCmp_(illuminant,"A") == 0)
@@ -940,37 +958,11 @@ int main( int argc , char** argv )
                       flags, "S3" );
       oyImage_Release( &a );
     } else
-    if(oyStringCaseCmp_(illuminant,"D50") == 0)
-    {
-      oyImage_s * a = oySpectrumCreateEmpty ( 300, 830, 5, 1 );
-      float * spd_5 = NULL;
-      double kelvin = 5000;
-      int error = oyDXXCIEfromTemperature( kelvin, &spd_5 );
-      if(error)
-        oyMessageFunc_p(oyMSG_ERROR,(oyStruct_s*)a,"not CIE illuminant for %g", kelvin);
-      float max = oySpectrumFillFromArrayF( a, spd_5, 0 );
-      if(verbose) fprintf( stderr, "max: %f\n", max );
-      oySpectrumNormalise ( a, 1.0/max ); max = 1.0;
-      drawIlluminant( cr, a, 0, xO, yO, width, height,
-                      min_x, max_x,  min_y < 0 ? min_y : 0.0, max,
-                      no_color ? COLOR_GRAY : COLOR_SPECTRAL, rgba,
-                      flags, "D50" );
-      oyImage_Release( &a );
-    } else
-    if(oyStringCaseCmp_(illuminant,"D65") == 0)
-    {
-      oyImage_s * a = oySpectrumCreateEmpty ( 300, 830, 5, 1 );
-      float max = oySpectrumFillFromArrayF( a, spd_D65_5, 0 );
-      if(verbose) fprintf( stderr, "max: %f\n", max );
-      oySpectrumNormalise ( a, 1.0/max ); max = 1.0;
-      drawIlluminant( cr,
-                      a, 0,
-                      xO, yO, width, height,
-                      min_x, max_x,  min_y < 0 ? min_y : 0.0, max,
-                      no_color ? COLOR_GRAY : COLOR_SPECTRAL, rgba,
-                      flags, "D65" );
-      oyImage_Release( &a );
-    } else
+    ILLUMINANT( 50 )
+    ILLUMINANT( 55 )
+    ILLUMINANT( 65 )
+    ILLUMINANT( 75 )
+    ILLUMINANT( 93 )
     {
     long kelvin = 0, err;
     if((err = oyjlStringToLong(illuminant,&kelvin)) == 0)

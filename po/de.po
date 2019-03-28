@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2019-03-28 07:24+0100\n"
+"POT-Creation-Date: 2019-03-28 16:12+0100\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -1296,6 +1296,11 @@ msgstr "Land"
 #: tools/oyranos_convert.c:120
 msgid "Create 3D CLUT"
 msgstr "Erzeuge eine 3D Interpolationstabelle"
+
+#: tools/oyranos_profile_graph.c:296
+msgid "Create a 2D Graph containing the saturation line from a ICC Profile."
+msgstr "Erzeuge aus einem ICC Profil eine eine Grafik mit seiner "
+"Sättigungslinie."
 
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4203
 #: modules/color/modules/oyranos_cmm_lcms.c:2530

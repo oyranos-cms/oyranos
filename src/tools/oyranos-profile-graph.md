@@ -21,6 +21,8 @@ The  oyranos\-profile\-graph programm converts ICC profiles or embedded ICC prof
 ### 2D Graph from profiles
 **oyranos\-profile\-graph** [\-t *NUMBER*] [\-b] [\-g] [\-w *NUMBER*] [\-o *\-|FILE*] [\-f *FORMAT*] [\-c] [\-x] [\-d *NUMBER*] [\-n] [\-2] [\-4] [\-r] [\-v] ICC\_PROFILES
 
+Create a 2D Graph containing the saturation line from a ICC Profile.
+
 * \-d|\-\-change\-thickness *NUMBER*	Specify increase of the thickness of the graph lines (NUMBER:0.7 [≥\-1000 ≤1000])
 * \-x|\-\-xyy	Use CIE*xyY *x*y plane for saturation line projection
 * \-c|\-\-no\-blackbody	Omit white line of lambert light emitters

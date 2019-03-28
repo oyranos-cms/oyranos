@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Oyranos 0.9\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2019-03-28 07:24+0100\n"
+"POT-Creation-Date: 2019-03-28 16:12+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -5142,6 +5142,10 @@ msgstr ""
 
 #: tools/oyranos_profile_graph.c:296
 msgid "2D Graph from profiles"
+msgstr ""
+
+#: tools/oyranos_profile_graph.c:296
+msgid "Create a 2D Graph containing the saturation line from a ICC Profile."
 msgstr ""
 
 #: tools/oyranos_profile_graph.c:297
