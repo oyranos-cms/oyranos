@@ -1033,28 +1033,29 @@ int            oyImage_ReadArray     ( oyImage_s         * image,
  *  @param[in]     image               the image
  *  @param[in]     file_name           a writeable file name, The file can 
  *                                     contain "%d" to include the image ID.
+ *                                     optional - default is stdout
  *  @param[in]     free_text           A text to include as comment.
  *  @return                            error
  *
- *  @version Oyranos: 0.3.1
- *  @date    2011/05/12
+ *  @version Oyranos: 0.9.7
+ *  @date    2019/03/28
  *  @since   2008/10/07 (Oyranos: 0.1.8)
  */
 int          oyImage_WritePPM        ( oyImage_s         * image,
                                        const char        * file_name,
                                        const char        * free_text )
 {
-  int error = !file_name;
-  FILE * fp = 0;
-  char * filename = 0;
+  int error = 0;
+  FILE * fp = stdout;
+  char * filename = NULL;
   oyImage_s_ * s = (oyImage_s_*)image;
 
   oyCheckType__m( oyOBJECT_IMAGE_S, return 1 )
 
-  if(!error)
+  if(!error && file_name)
     oyAllocHelper_m_( filename, char, strlen(file_name)+80, 0, return 1 );
 
-  if(!error)
+  if(!error && file_name)
   {
     if(strstr(file_name, "%d"))
       sprintf( filename, file_name, oyStruct_GetId( (oyStruct_s*)s ) );
@@ -1251,7 +1252,7 @@ int          oyImage_WritePPM        ( oyImage_s         * image,
         {
           oyMessageFunc_p( oyMSG_WARN, (oyStruct_s*)image,
              OY_DBG_FORMAT_ " no line obtained for: %s",
-             OY_DBG_ARGS_, file_name );
+             OY_DBG_ARGS_, file_name?file_name:"stdout" );
           error = 1;
         }
 
@@ -1260,8 +1261,9 @@ int          oyImage_WritePPM        ( oyImage_s         * image,
       }
 
       fflush( fp );
-      fclose (fp);
-      if(error)
+      if(fp != stdout)
+        fclose (fp);
+      if(error && file_name)
         remove(file_name);
   }
 
