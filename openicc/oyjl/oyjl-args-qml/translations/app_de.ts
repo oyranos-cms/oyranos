@@ -135,13 +135,13 @@
         <translation>Kommandos geladen</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="291"/>
-        <location filename="../qml/main.qml" line="321"/>
+        <location filename="../qml/main.qml" line="296"/>
+        <location filename="../qml/main.qml" line="326"/>
         <source>Launched app for </source>
         <translation>Starte Programm für </translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="446"/>
+        <location filename="../qml/main.qml" line="451"/>
         <source>Load failed</source>
         <translation>Laden daneben</translation>
     </message>

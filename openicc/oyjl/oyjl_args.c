@@ -132,7 +132,7 @@ enum {
 };
 #define oyjlOPTIONSTYLE_OPTIONAL (oyjlOPTIONSTYLE_OPTIONAL_START | oyjlOPTIONSTYLE_OPTIONAL_END)
 static
-const char * oyjlOption_PrintArg  ( oyjlOption_s   * o,
+const char * oyjlOption_PrintArg     ( oyjlOption_s      * o,
                                        int                 style )
 {
   static char * text = NULL;
@@ -140,16 +140,16 @@ const char * oyjlOption_PrintArg  ( oyjlOption_s   * o,
   if(!o) return "";
   if(style & oyjlOPTIONSTYLE_OPTIONAL_START)
     oyjlStringAdd( &text, malloc, free, "[" );
-  if(style & oyjlOPTIONSTYLE_ONELETTER)
+  if(style & oyjlOPTIONSTYLE_ONELETTER && o->o != '@')
   {
     if(style & oyjlOPTIONSTYLE_MAN)
       oyjlStringAdd( &text, malloc, free, "\\-%c", o->o );
     else
       oyjlStringAdd( &text, malloc, free, "-%c", o->o );
   }
-  if(style & oyjlOPTIONSTYLE_ONELETTER && style & oyjlOPTIONSTYLE_STRING)
+  if(style & oyjlOPTIONSTYLE_ONELETTER && style & oyjlOPTIONSTYLE_STRING && o->o != '@')
     oyjlStringAdd( &text, malloc, free, "|" );
-  if(style & oyjlOPTIONSTYLE_STRING)
+  if(style & oyjlOPTIONSTYLE_STRING && o->o != '@')
   {
     if(style & oyjlOPTIONSTYLE_MAN)
       oyjlStringAdd( &text, malloc, free, "\\-\\-%s", o->option );
