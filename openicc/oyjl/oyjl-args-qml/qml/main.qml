@@ -3,7 +3,7 @@
  *  Oyjl JSON QML is a graphical renderer of UI files.
  *
  *  @par Copyright:
- *            2018 (C) Kai-Uwe Behrmann
+ *            2018-2019 (C) Kai-Uwe Behrmann
  *            All Rights reserved.
  *
  *  @par License:
@@ -13,7 +13,7 @@
  *  QML ApplicationWindow mainWindow
  */
 
-// developed with Qt 5.7-5.10
+// developed with Qt 5.7-5.12
 
 import QtQuick 2.7
 //import QtQml.Models 2.2
@@ -88,7 +88,21 @@ AppWindow {
     property string processGetCommand: ""
     property var processGetArgs: [ ]
 
-    Process { id: processSet; onReadChannelFinished: helpText = readAll(); }
+    property string image_data: ""
+    Process { id: processSet;
+        onReadChannelFinished: {
+            var data = readAll();
+            image_data = data
+            if(image_data.substr(0,22) === "data:image/png;base64,")
+            {
+                helpTextArea.opacity = 0.01
+                image.source = image_data
+                image.opacity = 1.0
+            }
+            else
+                helpText = data;
+        }
+    }
     property string processSetCommand: ""
     property var processSetArgs: [ ]
     property string command_set_delimiter: "="
@@ -162,6 +176,8 @@ AppWindow {
         var text = helpText.replace(/\n/g,"<br />")
         helpText = text
         helpTextChanging = false
+        image.opacity = 0.01
+        helpTextArea.opacity = 1.0
     }
 
     property var groupDescriptions: []
@@ -218,22 +234,30 @@ AppWindow {
 
                     flickableDirection: Flickable.VerticalFlick
 
-                TextArea.flickable: TextArea {
-                    id: helpTextArea
-                    objectName: "helpTextArea"
-                    width: helpFlickable.width
-                    height: helpFlickable.height
+                    Image {
+                        id: image
+                        objectName: "image"
+                        width: firstPage.width
+                        horizontalAlignment: Image.AlignHCenter
+                        fillMode: Image.PreserveAspectFit
+                    }
 
-                    Accessible.name: "Text Area Help"
+                    TextArea.flickable: TextArea {
+                        id: helpTextArea
+                        objectName: "helpTextArea"
+                        width: helpFlickable.width
+                        height: helpFlickable.height
 
-                    textFormat: Qt.RichText // Html
-                    wrapMode: TextEdit.Wrap
-                    readOnly: true
-                    text: helpText
+                        Accessible.name: "Text Area Help"
 
-                    color: fg
-                    background: Rectangle { color: bg }
-                }
+                        textFormat: Qt.RichText // Html
+                        wrapMode: TextEdit.Wrap
+                        readOnly: true
+                        text: helpText
+
+                        color: fg
+                        background: Rectangle { color: bg }
+                    }
                 }
             }
         }
