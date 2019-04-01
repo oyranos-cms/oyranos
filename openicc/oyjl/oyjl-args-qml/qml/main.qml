@@ -173,8 +173,10 @@ AppWindow {
         if(helpTextChanging)
             return
         helpTextChanging = true
-        var text = helpText.replace(/\n/g,"<br />")
-        helpText = text
+        if(helpText.charAt(0) === '<') // assume rich text
+            helpTextArea.textFormat = Qt.RichText
+        else
+            helpTextArea.textFormat = Qt.PlainText
         helpTextChanging = false
         image.opacity = 0.01
         helpTextArea.opacity = 1.0
