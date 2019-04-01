@@ -96,6 +96,7 @@ AppWindow {
             if(image_data.substr(0,22) === "data:image/png;base64,")
             {
                 helpTextArea.opacity = 0.01
+                helpText = ""
                 image.source = image_data
                 image.opacity = 1.0
             }
@@ -194,6 +195,7 @@ AppWindow {
 
         HalfPage {
             id: firstPage
+            objectName: "firstPage"
 
             Column {
                 height: firstPage.height - 2*h
@@ -231,6 +233,7 @@ AppWindow {
                 }
                 Flickable {
                     id: helpFlickable
+                    objectName: "helpFlickable"
                     width: firstPage.width - dens
                     height: firstPage.height - introTextField.height - dens - optList.height - dens
 
@@ -240,6 +243,7 @@ AppWindow {
                         id: image
                         objectName: "image"
                         width: firstPage.width
+                        height: firstPage.height - introTextField.height - optList.height - dens
                         horizontalAlignment: Image.AlignHCenter
                         fillMode: Image.PreserveAspectFit
                     }
@@ -260,11 +264,13 @@ AppWindow {
                         color: fg
                         background: Rectangle { color: bg }
                     }
+                    ScrollBar.vertical: ScrollBar { }
                 }
             }
         }
         HalfPage {
             id: twoPage
+            objectName: "twoPage"
 
             Image {
                 id: logoImage
@@ -280,32 +286,34 @@ AppWindow {
                 height: twoPage.height - logoImage.height
                 flickableDirection: Flickable.VerticalFlick
                 clip: true
-            TextArea.flickable: TextArea { // our content
-                id: textArea
+                TextArea.flickable: TextArea { // our content
+                    id: textArea
 
-                Accessible.name: "about text"
-                //backgroundVisible: false // keep the area visually simple
-                //frameVisible: false      // keep the area visually simple
+                    Accessible.name: "about text"
+                    //backgroundVisible: false // keep the area visually simple
+                    //frameVisible: false      // keep the area visually simple
 
-                textFormat: Qt.RichText // Html
-                textMargin: font.pixelSize
-                readOnly: true // obviously no edits
-                wrapMode: TextEdit.Wrap
-                text: cmmText
-                onLinkActivated: {
-                    setBusyTimer.start()
-                    if(Qt.openUrlExternally(link))
-                        statusText = qsTr("Launched app for ") + link
-                    else
-                        statusText = "Launching external app failed"
-                    unsetBusyTimer.start()
+                    textFormat: Qt.RichText // Html
+                    textMargin: font.pixelSize
+                    readOnly: true // obviously no edits
+                    wrapMode: TextEdit.Wrap
+                    text: cmmText
+                    onLinkActivated: {
+                        setBusyTimer.start()
+                        if(Qt.openUrlExternally(link))
+                            statusText = qsTr("Launched app for ") + link
+                        else
+                            statusText = "Launching external app failed"
+                        unsetBusyTimer.start()
+                    }
+                    onLinkHovered: (Qt.platform.os === "android") ? Qt.openUrlExternally(link) : statusText = link
                 }
-                onLinkHovered: (Qt.platform.os === "android") ? Qt.openUrlExternally(link) : statusText = link
-            }
+                ScrollBar.vertical: ScrollBar { }
             }
         }
         Rectangle {
             id: threePage
+            objectName: "threePage"
             width: pages.width
             height: pages.height
             color: "transparent"
@@ -314,30 +322,32 @@ AppWindow {
                 width: threePage.width
                 height: threePage.height
                 flickableDirection: Flickable.VerticalFlick
-            TextArea.flickable: TextArea {
-                id: textArea2
+                TextArea.flickable: TextArea {
+                    id: textArea2
 
-                Accessible.name: "Text Area 2"
-                anchors.fill: parent
-                textFormat: text[0] !== '<' ? Qt.PlainText : Qt.RichText
-                wrapMode: TextEdit.Wrap
-                readOnly: true
-                onLinkActivated: {
-                    setBusyTimer.start()
-                    if(Qt.openUrlExternally(link))
-                        statusText = qsTr("Launched app for ") + link
-                    else
-                        statusText = "Launching external app failed"
-                    unsetBusyTimer.start()
+                    Accessible.name: "Text Area 2"
+                    anchors.fill: parent
+                    textFormat: text[0] !== '<' ? Qt.PlainText : Qt.RichText
+                    wrapMode: TextEdit.Wrap
+                    readOnly: true
+                    onLinkActivated: {
+                        setBusyTimer.start()
+                        if(Qt.openUrlExternally(link))
+                            statusText = qsTr("Launched app for ") + link
+                        else
+                            statusText = "Launching external app failed"
+                        unsetBusyTimer.start()
+                    }
+                    onLinkHovered: (Qt.platform.os === "android") ? Qt.openUrlExternally(link) : statusText = link
                 }
-                onLinkHovered: (Qt.platform.os === "android") ? Qt.openUrlExternally(link) : statusText = link
-            }
+                ScrollBar.vertical: ScrollBar { }
             }
         }
         Rectangle {
             width: pages.width
             height: pages.height
             id: aboutPage
+            objectName: "aboutPage"
             About {
                 objectName: "About";
                 image: logo
