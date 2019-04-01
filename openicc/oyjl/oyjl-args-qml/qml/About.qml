@@ -90,6 +90,7 @@ Rectangle {
             }
             onLinkHovered: (Qt.platform.os === "android") ? Qt.openUrlExternally(link) : statusText = link
         }
+        ScrollBar.vertical: ScrollBar { }
     }
 
     Button { // finish button
