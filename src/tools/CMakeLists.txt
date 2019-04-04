@@ -1,34 +1,47 @@
 SET( OY_LINGUAS_TOOL de_DE.UTF8 )
 MACRO(OY_DOCUMENT_TOOL)
-  ADD_CUSTOM_TARGET( ${TOOL}.1 ALL
+  ADD_CUSTOM_COMMAND( OUTPUT ${CMAKE_SOURCE_DIR}/doc/man/${TOOL}.1
         COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH} OY_MODULE_PATH=${CMAKE_BINARY_DIR}/src/modules XDG_DATA_HOME=${CMAKE_SOURCE_DIR} LANG=en DISPLAY="man_page" ${TOOL} -X man > ${CMAKE_SOURCE_DIR}/doc/man/${TOOL}.1
-        DEPENDS ${TOOL}
+        DEPENDS ${TOOL} ${TOOL_SRC}
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-        COMMENT "Extract manual page from ${TOOL}"
+  )
+  ADD_CUSTOM_TARGET( ${TOOL}.man ALL
+        DEPENDS ${CMAKE_SOURCE_DIR}/doc/man/${TOOL}.1
+#        COMMENT "Extract manual page to ${TOOL}.1"
+  )
+  ADD_CUSTOM_COMMAND( OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/${TOOL}.md
+        COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH} OY_MODULE_PATH=${CMAKE_BINARY_DIR}/src/modules XDG_DATA_HOME=${CMAKE_SOURCE_DIR} LANG=en DISPLAY="man_page" ${TOOL} -X markdown > ${CMAKE_CURRENT_SOURCE_DIR}/${TOOL}.md
+        DEPENDS ${TOOL} ${TOOL_SRC}
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   )
   ADD_CUSTOM_TARGET( ${TOOL}.md ALL
-        COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH} OY_MODULE_PATH=${CMAKE_BINARY_DIR}/src/modules XDG_DATA_HOME=${CMAKE_SOURCE_DIR} LANG=en DISPLAY="man_page" ${TOOL} -X markdown > ${CMAKE_CURRENT_SOURCE_DIR}/${TOOL}.md
-        DEPENDS ${TOOL}
-        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-        COMMENT "Extract markdown formated manual page from ${TOOL}"
+        DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${TOOL}.md
+#        COMMENT "Extract markdown formated manual page to ${TOOL}.md"
   )
   IF( GETTEXT_FOUND )
     # add translations
 #    FOREACH( _lang ${OY_LINGUAS_TOOL} )
     SET( _lang de_DE.UTF8 )
     SET( short_lang de )
-      ADD_CUSTOM_TARGET( ${TOOL}-${_lang}.1 ALL
+      ADD_CUSTOM_COMMAND( OUTPUT ${CMAKE_SOURCE_DIR}/doc/man/${short_lang}/${TOOL}.1
         COMMAND mkdir -p "${CMAKE_SOURCE_DIR}/doc/man/de/"
-        COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH} OY_MODULE_PATH=${CMAKE_BINARY_DIR}/src/modules XDG_DATA_HOME=${CMAKE_SOURCE_DIR} LANG=${_lang} DISPLAY="man_page" ${TOOL} -X man > ${CMAKE_SOURCE_DIR}/doc/man/${short_lang}/${TOOL}.1
-        DEPENDS ${TOOL}
+        COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH} LOCPATH=${CMAKE_BINARY_DIR}/locale OY_MODULE_PATH=${CMAKE_BINARY_DIR}/src/modules XDG_DATA_HOME=${CMAKE_SOURCE_DIR} LANG=${_lang} DISPLAY="man_page" ${TOOL} -X man > ${CMAKE_SOURCE_DIR}/doc/man/${short_lang}/${TOOL}.1
+        DEPENDS ${TOOL} ${TOOL_SRC}
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-        COMMENT "Extract ${_lang} manual page to ${CMAKE_SOURCE_DIR}/doc/man/${short_lang}/${TOOL}.1"
       )
-      ADD_CUSTOM_TARGET( ${TOOL}-${_lang}.md ALL
-        COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH} OY_MODULE_PATH=${CMAKE_BINARY_DIR}/src/modules XDG_DATA_HOME=${CMAKE_SOURCE_DIR} LANG=${_lang} DISPLAY="man_page" ${TOOL} -X markdown > ${CMAKE_CURRENT_SOURCE_DIR}/${TOOL}-${short_lang}.md
-        DEPENDS ${TOOL}
+      ADD_CUSTOM_TARGET( ${TOOL}-${short_lang}.1 ALL
+        DEPENDS ${CMAKE_SOURCE_DIR}/doc/man/${short_lang}/${TOOL}.1
+#        COMMENT "Extract ${_lang} manual page to ${CMAKE_SOURCE_DIR}/doc/man/${short_lang}/${TOOL}.1"
+      )
+
+      ADD_CUSTOM_COMMAND( OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/${TOOL}-${short_lang}.md
+        COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH} LOCPATH=${CMAKE_BINARY_DIR}/locale OY_MODULE_PATH=${CMAKE_BINARY_DIR}/src/modules XDG_DATA_HOME=${CMAKE_SOURCE_DIR} LANG=${_lang} DISPLAY="man_page" ${TOOL} -X markdown > ${CMAKE_CURRENT_SOURCE_DIR}/${TOOL}-${short_lang}.md
+        DEPENDS ${TOOL} ${TOOL_SRC}
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-        COMMENT "Extract markdown formated ${_lang} manual page to ${TOOL}-${short_lang}.md"
+      )
+      ADD_CUSTOM_TARGET( ${TOOL}-${short_lang}.md ALL
+        DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${TOOL}-${short_lang}.md
+#        COMMENT "Extract markdown formated ${_lang} manual page to ${TOOL}-${short_lang}.md"
       )
 #    ENDFOREACH( _lang )
   ENDIF( GETTEXT_FOUND )
@@ -37,7 +50,8 @@ ENDMACRO(OY_DOCUMENT_TOOL)
 SET( LD_LIBRARY_PATH "${CMAKE_BINARY_DIR}:${CMAKE_BINARY_DIR}/src/liboyranos:${CMAKE_BINARY_DIR}/src/liboyranos_config:${CMAKE_BINARY_DIR}/src/liboyranos_modules:${CMAKE_BINARY_DIR}/src/liboyranos_object:${CMAKE_BINARY_DIR}/src/liboyranos_core" )
 # ICC profiles listing
 SET( TOOL "oyranos-profiles" )
-ADD_EXECUTABLE( ${TOOL} "${CMAKE_CURRENT_SOURCE_DIR}/oyranos_profiles.c" )
+SET( TOOL_SRC "${CMAKE_CURRENT_SOURCE_DIR}/oyranos_profiles.c" )
+ADD_EXECUTABLE( ${TOOL} ${TOOL_SRC} )
 TARGET_LINK_LIBRARIES( ${TOOL} ${TARGET_LIB} ${EXTRA_LIBS} )
 INSTALL (TARGETS ${TOOL} DESTINATION ${CMAKE_INSTALL_BINDIR})
 OY_DOCUMENT_TOOL()
@@ -65,7 +79,8 @@ INSTALL (TARGETS oyranos-monitor DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 # Oyranos monitor white point handling
 SET( TOOL "oyranos-monitor-white-point" )
-ADD_EXECUTABLE( ${TOOL} "${CMAKE_CURRENT_SOURCE_DIR}/oyranos-monitor-white-point.c" )
+SET( TOOL_SRC "${CMAKE_CURRENT_SOURCE_DIR}/oyranos-monitor-white-point.c" )
+ADD_EXECUTABLE( ${TOOL} ${TOOL_SRC} )
 TARGET_LINK_LIBRARIES( ${TOOL} ${TARGET_LIB} ${EXTRA_LIBS} ${DBUS_LIBS} )
 INSTALL (TARGETS ${TOOL} DESTINATION ${CMAKE_INSTALL_BINDIR})
 OY_DOCUMENT_TOOL()
@@ -79,7 +94,8 @@ TARGET_LINK_LIBRARIES( oyranos-device ${TARGET_LIB} ${EXTRA_LIBS} )
 # 2D grapher for ICC profiles
 IF( CAIRO_FOUND )
   SET( TOOL "oyranos-profile-graph" )
-  ADD_EXECUTABLE( ${TOOL} "${CMAKE_CURRENT_SOURCE_DIR}/oyranos_profile_graph.c" )
+  SET( TOOL_SRC "${CMAKE_CURRENT_SOURCE_DIR}/oyranos_profile_graph.c" )
+  ADD_EXECUTABLE( ${TOOL} ${TOOL_SRC} )
   TARGET_LINK_LIBRARIES ( ${TOOL} ${TARGET_LIB} ${EXTRA_LIBS}
                  ${CAIRO_LIBRARIES} )
   INSTALL (TARGETS ${TOOL} DESTINATION ${CMAKE_INSTALL_BINDIR})
