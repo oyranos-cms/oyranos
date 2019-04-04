@@ -97,6 +97,7 @@ oyjlTESTRESULT_e testVersion()
 
 #include <locale.h>
 #include "oyranos_sentinel.h"
+#include "oyranos_i18n.h"
 
 oyjlTESTRESULT_e testI18N()
 {
@@ -139,6 +140,35 @@ oyjlTESTRESULT_e testI18N()
   { PRINT_SUB( oyjlTESTRESULT_XFAIL, 
     "oyLanguage() initialised failed %s                ", lang?lang:"---" );
   }
+
+  setlocale(LC_ALL,"de_DE.UTF8");
+  int use_gettext = 0;
+#ifdef USE_GETTEXT
+  use_gettext = 1;
+#endif
+  int debug = 0;
+  oyjlInitLanguageDebug( "Oyranos", "OY_DEBUG", &debug, use_gettext, "OY_LOCALEDIR", OY_LOCALEDIR, OY_TEXTDOMAIN, oyMessageFunc_p );
+
+  lang = setlocale(LC_ALL, NULL);
+  if(lang && (strcmp(lang, "C") != 0))
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "setlocale() initialised good %s            ", lang );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_XFAIL, 
+    "setlocale() initialised failed %s          ", lang );
+  }
+
+  const char * text = _("Example");
+  if(strcmp(text,"Beispiel") == 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "dgettext() good \"%s\"                      ", text );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_XFAIL, 
+    "dgettext() failed \"%s\"                    ", text );
+  }
+
+  setlocale(LC_ALL,"");
+
 
   return result;
 }
