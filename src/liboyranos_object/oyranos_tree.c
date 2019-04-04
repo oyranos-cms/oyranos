@@ -428,7 +428,7 @@ int                oyStruct_GetChildren (
 
   {
     int i = 0;
-    while(c[i] && i < 120) ++i;
+    while(c[i] && i < (120-1)) ++i;
     if(i != n)
     {
       fprintf( stderr, OY_DBG_FORMAT_ "%s[%d] collected ambigous child count: %d == %d ", OY_DBG_ARGS_, oyStructTypeToText( obj->type_ ), oyStruct_GetId(obj), i,n );
