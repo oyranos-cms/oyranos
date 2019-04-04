@@ -46,5 +46,5 @@ addons:
       description: "Build submitted via Travis CI"
     notification_email: ku.b@gmx.de
     build_command_prepend: "cmake -DCMAKE_INSTALL_PREFIX=$TRAVIS_BUILD_DIR/../install $TRAVIS_BUILD_DIR; make clean"
-    build_command:   "make"
+    build_command:   "make; cat $TRAVIS_BUILD_DIR/cov-int/scm_log.txt"
     branch_pattern: coverity_scan
