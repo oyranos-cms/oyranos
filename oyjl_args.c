@@ -40,6 +40,7 @@ extern int * oyjl_debug;
 /** \addtogroup oyjl_args Options Handling
  *  @brief   Structured Options and Arguments for more than the command line
  *
+ *  @section args_intro Introduction
  *  Argument handling uses a compact, table like creation syntax.
  *  oyjlUi_Create() is a high level API for tools to feed only the
  *  declarations and obtain the results in one call. On a lower level parsing
@@ -59,10 +60,122 @@ extern int * oyjl_debug;
     > myProgramm -o --option -w=1 --with-argument 1
     @endverbatim
  *
- *  **Basic Tutorial** from @ref test-core.c :
+ *  @section args_tut Tutorial
+ *  from @ref test-core.c :
     @dontinclude test-core.c
     @skip handle options
     @until done with options handling
+ *
+ *  @section args_orga Option Organisation - Groups
+ *  Options can be read pure informational or express constraints.
+ *  A **action** is a way to place the affected option(s) into the result, where
+ *  the **result** can be the return of a textual structure or a executed
+ *  command line call.
+ *  The oyjlOptionGroup_s declares the layout and a simple syntax.
+ *  In case the oyjlOptionGroup_s::mandatory or
+ *  oyjlOptionGroup_s::optional members contain options, a action should be
+ *  displayed inside the group. In absence of oyjlOptionGroup_s::mandatory
+ *  options, the oyjlOptionGroup_s::optional options are handled like a
+ *  single group and a widget for starting a action is needed.
+ *  The oyjlOptionGroup_s::detail simply
+ *  tells about displaying of a option inside a group.
+ *  All oyjlOptionGroup_s::mandatory options shall be inside the
+ *  oyjlOptionGroup_s::detail array for simplicity of man page generation.
+ *
+ *  @subsection args_single_call One Action Group
+ *  Very simple tools might have few optional arguments. It makes
+ *  sense to have no constraints in groups. So there is no mandatory
+ *  option at all needed. All options shall be applied at once. Example:
+ *  @verbatim
+    tool [-a] [-b] [-c] [-v]
+    @endverbatim
+ @code
+    oyjlOptionGroup_s groups[] = {
+    // type,   flags, name,     description,help, mandatory,  optional, detail
+      // place here the action widget; all optional options [a+b+c+v] are in this action group
+      {"oiwg", 0,     "Group1", 0,0,              "",         "abcv",   "ab" },
+      // only description; no action
+      {"oiwg", 0,     "Group2", 0,0,              "",         "",       "c" },
+      // only description; no action
+      {"oiwg", 0,     "Common", 0,0,              "",         "",       "v" },
+      {0,0,0,0,0,0,0,0}
+    } // note: no mandatory option is named
+ @endcode
+ *  The GUI should show one over all action widget, e.g. press button, in the
+ *  group(s) with optional options.
+ *  This mode implies the empty option mark '#' needs to be specified, as the
+ *  tool needs no mandatory option(s).
+ *
+ *  @subsection args_group_modes Grouped Modes
+ *  More complex tools might have different modes, in order to do one
+ *  task. The 'tar' tool is organised to do belonging tasks as a task.
+ *  Each group is introduced by a mandatory option and might be followed
+ *  by some more optional options. Options can be expluced from groups.
+ *  Some more options can by applied to all groups. Example:
+ *  @verbatim
+    tool -a -b [-c] [-v]
+    tool -h [-v]
+    @endverbatim
+ @code
+    oyjlOptionGroup_s groups[] = {
+    // type,   flags, name,     description,help, mandatory,  optional, detail
+      // a separate action widget is needed, so 'a' and 'b' can be set before action; a+b+c+[v] are in this action group
+      {"oiwg", 0,     "Group1", 0,0,              "ab",       "cv",     "abc" },
+      // the 'h' option could be handled as the action widget; h+[v] are in this action group
+      {"oiwg", 0,     "Group2", 0,0,              "h",        "v",      "h" },
+      // only description; no action
+      {"oiwg", 0,     "Common", 0,0,              "",         "",       "v" },
+      {0,0,0,0,0,0,0,0}
+    }
+ @endcode
+ *  The GUI should show one action widget, e.g. press button, per group.
+ *
+ *  @subsection args_group_independence Independent Options
+ *  Each option is independent. However it is possible to group them
+ *  in a pure informational way. E.g.
+ *  @verbatim
+    tool -a|-b [-v]
+    tool -h [-v]
+    @endverbatim
+ *  The above example knows three basic modes: a, b and h. The -v
+ *  option might be applied to all of them. Each of a,b,h is called
+ *  independently and that means the GUI reacts instantly on any changed state
+ *  in them. A group object might look like:
+ @code
+    oyjlOptionGroup_s groups[] = {
+    // type,   flags, name,     description,help, mandatory,  optional, detail
+      // 'a' and 'b' can be action widgets, as they are independent; a+[v] or b+[v] are in this action group
+      {"oiwg", 0,     "Group1", 0,0,              "a|b",      "v",      "ab" },
+      // 'h' can be action widget; h+[v] are in this action group
+      {"oiwg", 0,     "Group2", 0,0,              "h",        "v",      "h" },
+      // only description; no action
+      {"oiwg", 0,     "Common", 0,0,              "",         "",       "v" },
+      {0,0,0,0,0,0,0,0}
+    } // note: all manatory options are ored '|' or single in the group
+ @endcode
+ *  The GUI should show one action widget, e.g. press button, per option.
+ *  All options in oyjlOptionGroup_s::mandatory should be or'ed with '|',
+ *  otherwise the individial actions make no sense.
+ *
+ *  @section args_renderer Viewers
+ *  The option tables allow for different views. Those can be pure
+ *  informational, like man pages created with the *cli -X man* command.
+ *  Or a view can be interactive and call the command with the options.
+ *
+ *  @subsection args_interactive Interactive Viewers
+ *  A example of a interactive viewer is the included oyjl-args-json renderer.
+ *  Tools have to be more careful, in case they want to be displayed by
+ *  by a interactive viewer. They should declare, in which order options
+ *  apply and consider the timing.
+ *
+ *  A GUI renderer might display the result of a command immediately. The
+ *  simplest form is plain text output. The text font should eventually be
+ *  a monotyped on, like typical for interactive shells. This builds as well
+ *  a command like aesthetic. Some tools return graphics in multiline
+ *  ASCII or use color codes.
+ *  The tool might output HTML and should be displayed formatted. Some tools
+ *  stream their result as image to stdout. A oyjl-args-json viewer supports
+ *  PNG image output.
  *
  *  @{ */
 
