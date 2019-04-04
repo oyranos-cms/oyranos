@@ -1576,7 +1576,7 @@ OYAPI const oyChar* OYEXPORT oyProfile_GetText (
     if(!found)
     {
       text = oyProfile_GetID( (oyProfile_s*)s );
-      if(text[0])
+      if(text && text[0])
         found = 1;
     }
 
