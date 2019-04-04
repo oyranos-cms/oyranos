@@ -85,7 +85,7 @@ int main(int argc, char ** argv)
     {"oihs", "documentation", NULL,  "",          _("The example tool demontrates the usage of the libOpenIcc config and options API's.")},
     {"",0,0,0,0}};
 
-  oyjlUi_s * ui = oyjlUi_Create( argc, argv,
+  oyjlUi_s * ui = oyjlUi_Create( argc, (const char**) argv,
       "openicc-config-read", "OpenICC Config Read", _("Short example tool using libOpenIcc"), "openicc-logo",
       sections, oarray, groups, NULL );
   if(!ui) return 0;
