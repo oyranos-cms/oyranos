@@ -1410,7 +1410,7 @@ oyjlTESTRESULT_e testOptionsSet ()
     "oyOptions_GetText(oyNAME_JSON)                   " );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyOptions_GetText(oyNAME_JSON) %d              %s", (int)strlen(t), error_buffer );
+    "oyOptions_GetText(oyNAME_JSON) %d              %s", t?(int)strlen(t):-1, error_buffer );
   }
   oyjlTreeFree( root );
 
@@ -2888,6 +2888,52 @@ oyjlTESTRESULT_e testDeviceLinkProfile ()
   if(verbose) fprintf(zout,"oyProfile_GetText( dl, oyNAME_NAME ): %s\n", fn );
 
   error = oyConversion_Release( &cc );
+
+  oyOptions_SetFromString( &options, OY_CMM_STD"/precalculation", "4", OY_CREATE_NEW );
+  cc = oyConversion_CreateBasicPixels( in, out, options, testobj );
+  if(cc)
+    graph = oyConversion_GetGraph( cc );
+  if(graph)
+    n = oyFilterGraph_CountEdges( graph );
+  for(i = 0; i < n; ++i)
+  {
+    node = oyFilterGraph_GetNode( graph, i, NULL, NULL );
+    blob = oyFilterNode_ToBlob( node, NULL );
+    if(blob && oyBlob_GetSize( blob ))
+    {
+      char name[64];
+      sprintf( name, "oy_dl_null_test_%d_", i );
+      len = strlen(name);
+      memcpy( &name[len], oyBlob_GetType( blob ), 4 );
+      name[len+4] = 0;
+      len = strlen(name);
+      sprintf( &name[len], ".icc" );
+      error = oyWriteMemToFile_( name, oyBlob_GetPointer( blob ),
+                                 oyBlob_GetSize( blob) );
+      if(!error)
+        fprintf(zout,"wrote: %s\n", name );
+      else
+        fprintf(zout,"writing failed: %s\n", name );
+      dl = oyProfile_FromMem( oyBlob_GetSize( blob ),
+                              oyBlob_GetPointer( blob ), 0,0 );
+    }
+
+    oyBlob_Release( &blob );
+    oyFilterNode_Release( &node );
+  }
+
+  const char * desc = oyProfile_GetText( dl, oyNAME_DESCRIPTION);
+  if(desc && strstr(desc,"pass through"))
+  {
+    PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "pass through created \"%s\"", desc );
+  } else
+  {
+    PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "pass through created \"%s\"", oyNoEmptyString_m_(desc) );
+  }
+
+
   if(error) PRINT_SUB( oyjlTESTRESULT_XFAIL, "oyConversion_Release() error: %d", error )
   error = oyImage_Release( &in );
   if(error) PRINT_SUB( oyjlTESTRESULT_XFAIL, "oyImage_Release() error: %d", error )
