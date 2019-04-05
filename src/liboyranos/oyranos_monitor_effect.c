@@ -635,6 +635,9 @@ int      oyProfile_CreateEffectVCGT  ( oyProfile_s       * prof )
     error = 1;
   }
 
+  if(mix) oyDeAllocateFunc_(mix);
+  if(ramp) oyDeAllocateFunc_(ramp);
+
   return error;
 }
 
