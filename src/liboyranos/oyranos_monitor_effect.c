@@ -52,7 +52,7 @@ int      oyAddLinearDisplayEffect    ( oyOptions_s      ** module_options )
   int is_linear = effect ? oyProfile_FindMeta( effect, "EFFECT_linear", "yes" ) != NULL : 0;
   int error = (is_linear == 0 && effect) ? 1 : 0;
   if(!effect) error = -1;
-  oyMessageFunc_p( error > 0 ? oyMSG_ERROR : error < 0 ? oyMSG_WARN : oyMSG_DBG,(oyStruct_s*)*module_options, OY_DBG_FORMAT_
+  oyMessageFunc_p( error > 0 ? oyMSG_WARN : oyMSG_DBG,(oyStruct_s*)*module_options, OY_DBG_FORMAT_
                    "EFFECT_linear=yes: %d %s", OY_DBG_ARGS_, is_linear, oyNoEmptyString_m_(fn) );
   if(is_linear)
     oyOptions_MoveInStruct( module_options,
@@ -152,7 +152,8 @@ int      oyProfileAddWhitePointEffect( oyProfile_s       * monitor_profile,
       }
       else
         error = oyOptions_SetFromString( &opts, "//" OY_TYPE_STD "/illu_name", choices_string_list[current], OY_CREATE_NEW );
-      oyMessageFunc_p( oyMSG_WARN,(oyStruct_s*)monitor_profile, OY_DBG_FORMAT_
+      if(oy_debug)
+        oyMessageFunc_p( oyMSG_DBG,(oyStruct_s*)monitor_profile, OY_DBG_FORMAT_
                    "illu_name: %s", OY_DBG_ARGS_,
                    oyOptions_FindString( opts, "illu_name", 0) );
     }
@@ -388,8 +389,8 @@ int        oyAddDisplayEffects       ( oyOptions_s      ** module_options )
     oyOption_Release( &o );
   }
   error = oyAddLinearDisplayEffect( module_options );
-  if( error || oy_debug )
-        oyMessageFunc_p( error > 0 ? oyMSG_ERROR : error < 0 ? oyMSG_WARN : oyMSG_DBG, (oyStruct_s*)f_options,
+  if( error > 0 || oy_debug )
+    oyMessageFunc_p( error > 0 ? oyMSG_WARN : oyMSG_DBG, (oyStruct_s*)f_options,
                   OY_DBG_FORMAT_"display_white_point error: %d", OY_DBG_ARGS_, error );
 
   return error;
