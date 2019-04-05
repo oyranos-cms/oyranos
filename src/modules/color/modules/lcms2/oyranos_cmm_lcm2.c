@@ -2057,8 +2057,9 @@ oyPointer l2cmsFilterNode_CmmIccContextToMem (
     block = l2cmsPassThroughDL( csp_in, csp_out, size, allocateFunc );
     error = !block;
 
-    l2cms_msg( block?oy_debug?oyMSG_DBG:oyMSG_WARN:oyMSG_ERROR,NULL, OY_DBG_FORMAT_
-                 "skipping on cmsFLAGS_NULLTRANSFORM (optimisation=4 NOTRANSFORM) %s",
+    if(oy_debug || verbose)
+      l2cms_msg( block?oy_debug?oyMSG_DBG:oyMSG_WARN:oyMSG_ERROR,NULL, OY_DBG_FORMAT_
+                 "skipping on cmsFLAGS_NULLTRANSFORM (precalculation=4 NOTRANSFORM) %s",
                  OY_DBG_ARGS_, block?"use pass_through device link":"failed" );
   }
   else
@@ -2072,7 +2073,6 @@ oyPointer l2cmsFilterNode_CmmIccContextToMem (
     error = !xform;
   }
 
-  error = !xform;
   if(oy_debug > 3)
     l2cms_msg( oyMSG_DBG, (oyStruct_s*)node, OY_DBG_FORMAT_"\n%s",
               OY_DBG_ARGS_,
@@ -2082,7 +2082,7 @@ oyPointer l2cmsFilterNode_CmmIccContextToMem (
       l2cms_msg( oyMSG_DBG, (oyStruct_s*)node, OY_DBG_FORMAT_"start oyDL %d",
               OY_DBG_ARGS_, error );
 
-  if(!block && !error)
+  if(!block && xform)
   {
     if(oy_debug)
       block = l2cmsCMMColorConversion_ToMem_( xform, node_options,
@@ -2095,7 +2095,7 @@ oyPointer l2cmsFilterNode_CmmIccContextToMem (
     if(oy_debug || verbose)
       l2cms_msg( oyMSG_DBG, (oyStruct_s*)node, OY_DBG_FORMAT_"created oyDL %d",
               OY_DBG_ARGS_, error );
-  } else
+  } else if(!block)
   {
     l2cms_msg( oyMSG_WARN, (oyStruct_s*)node, OY_DBG_FORMAT_"\n"
               "loading failed profiles_n:%d profiles_simulation_n:%d profiles:%d",
@@ -4717,7 +4717,7 @@ const char * l2cmsInfoGetText         ( const char        * select,
     else if(type == oyNAME_NAME)
       return _("The lcms \"color_icc\" filter is a one dimensional color conversion filter. It can both create a color conversion context, some precalculated for processing speed up, and the color conversion with the help of that context. The adaption part of this filter transforms the Oyranos color context, which is ICC device link based, to the internal lcms format.");
     else
-      return _("The following options are available to create color contexts:\n \"profiles_simulation\", a option of type oyProfiles_s, can contain device profiles for proofing.\n \"profiles_effect\", a option of type oyProfiles_s, can contain abstract color profiles.\n The following Oyranos options are supported: \"rendering_gamut_warning\", \"rendering_intent_proof\", \"rendering_bpc\", \"rendering_intent\", \"proof_soft\" and \"proof_hard\".\n The additional lcms option is supported \"cmyk_cmyk_black_preservation\" [0 - none; 1 - LCMS_PRESERVE_PURE_K; 2 - LCMS_PRESERVE_K_PLANE], \"precalculation\": [0 - normal; 1 - cmsFLAGS_NOOPTIMIZE; 2 - cmsFLAGS_HIGHRESPRECALC, 3 - cmsFLAGS_LOWRESPRECALC], \"precalculation_curves\": [0 - none; 1 - cmsFLAGS_CLUT_POST_LINEARIZATION + cmsFLAGS_CLUT_PRE_LINEARIZATION], \"adaption_state\": [0.0 - not adapted to screen, 1.0 - full adapted to screen] and \"no_white_on_white_fixup\": [0 - force white on white, 1 - keep as is]." );
+      return _("The following options are available to create color contexts:\n \"profiles_simulation\", a option of type oyProfiles_s, can contain device profiles for proofing.\n \"profiles_effect\", a option of type oyProfiles_s, can contain abstract color profiles.\n The following Oyranos options are supported: \"rendering_gamut_warning\", \"rendering_intent_proof\", \"rendering_bpc\", \"rendering_intent\", \"proof_soft\" and \"proof_hard\".\n The additional lcms option is supported \"cmyk_cmyk_black_preservation\" [0 - none; 1 - LCMS_PRESERVE_PURE_K; 2 - LCMS_PRESERVE_K_PLANE], \"precalculation\": [0 - normal; 1 - cmsFLAGS_NOOPTIMIZE; 2 - cmsFLAGS_HIGHRESPRECALC, 3 - cmsFLAGS_LOWRESPRECALC, 4 - cmsFLAGS_NULLTRANSFORM], \"precalculation_curves\": [0 - none; 1 - cmsFLAGS_CLUT_POST_LINEARIZATION + cmsFLAGS_CLUT_PRE_LINEARIZATION], \"adaption_state\": [0.0 - not adapted to screen, 1.0 - full adapted to screen] and \"no_white_on_white_fixup\": [0 - force white on white, 1 - keep as is]." );
   }
   return 0;
 }
