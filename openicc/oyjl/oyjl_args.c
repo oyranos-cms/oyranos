@@ -1378,12 +1378,14 @@ oyjlUiHeaderSection_s * oyjlUi_GetHeaderSection (
  *  @date    2018/08/14
  *  @since   2018/08/14 (OpenICC: 0.1.1)
  */
-char *       oyjlUi_ToJson        ( oyjlUi_s       * ui,
+char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
                                        int                 flags OYJL_UNUSED )
 {
   char * t = NULL, num[64];
   oyjl_val root, key;
   int i,n,ng;
+
+  if(!ui) return t;
 
   root = oyjlTreeNew( "" );
   oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "1", OYJL_REG "/modules/[0]/oyjl_module_api_version" );
@@ -1672,7 +1674,7 @@ char *       oyjlExtraManSections ( oyjlOptions_s  * opts, int flags )
  *  @date    2018/10/15
  *  @since   2018/10/10 (OpenICC: 0.1.1)
  */
-char *       oyjlUi_ToMan         ( oyjlUi_s       * ui,
+char *       oyjlUi_ToMan            ( oyjlUi_s          * ui,
                                        int                 flags OYJL_UNUSED )
 {
   char * text = NULL, * tmp;
@@ -1683,7 +1685,10 @@ char *       oyjlUi_ToMan         ( oyjlUi_s       * ui,
              * bugs = NULL, * bugs_url = NULL,
              * vers = NULL;
   int i,n,ng;
-  oyjlOptions_s * opts = ui->opts;
+  oyjlOptions_s * opts;
+ 
+  if(!ui) return text;
+  opts = ui->opts;
 
   n = oyjlUi_CountHeaderSections( ui );
   for(i = 0; i < n; ++i)
@@ -1713,8 +1718,7 @@ char *       oyjlUi_ToMan         ( oyjlUi_s       * ui,
                    tool?1:7, date?date:"", tool?"User Commands":"Misc" );
   }
 
-  if( ui )
-    oyjlStringAdd( &text, malloc, free, ".SH NAME\n%s %s%s \\- %s\n", ui->nick, vers?"v":"", vers?vers:"", ui->name );
+  oyjlStringAdd( &text, malloc, free, ".SH NAME\n%s %s%s \\- %s\n", ui->nick, vers?"v":"", vers?vers:"", ui->name );
 
   oyjlStringAdd( &text, malloc, free, ".SH %s\n", _("SYNOPSIS") );
   for(i = 0; i < ng; ++i)
@@ -1836,7 +1840,7 @@ char *       oyjlUi_ToMan         ( oyjlUi_s       * ui,
  *  @date    2018/11/07
  *  @since   2018/11/07 (OpenICC: 0.1.1)
  */
-char *       oyjlUi_ToMarkdown    ( oyjlUi_s       * ui,
+char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
                                        int                 flags OYJL_UNUSED )
 {
   char * text = NULL, * tmp, * doxy_link = NULL;
@@ -1848,8 +1852,11 @@ char *       oyjlUi_ToMarkdown    ( oyjlUi_s       * ui,
              * vers = NULL,
              * country = NULL;
   int i,n,ng;
-  oyjlOptions_s * opts = ui->opts;
+  oyjlOptions_s * opts;
 
+  if( !ui ) return text;
+
+  opts = ui->opts;
   n = oyjlUi_CountHeaderSections( ui );
   for(i = 0; i < n; ++i)
   {
@@ -1887,8 +1894,7 @@ char *       oyjlUi_ToMarkdown    ( oyjlUi_s       * ui,
                    tool?1:7, date?date:"", tool?"User Commands":"Misc" );
   }
 
-  if( ui )
-    oyjlStringAdd( &text, malloc, free, "## NAME\n%s %s%s - %s\n", ui->nick, vers?"v":"", vers?vers:"", ui->name );
+  oyjlStringAdd( &text, malloc, free, "## NAME\n%s %s%s - %s\n", ui->nick, vers?"v":"", vers?vers:"", ui->name );
 
   oyjlStringAdd( &text, malloc, free, "## %s\n", _("SYNOPSIS") );
   for(i = 0; i < ng; ++i)
