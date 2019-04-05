@@ -2684,7 +2684,9 @@ int      oyProfile_GetWhitePoint     ( oyProfile_s       * profile,
                                        double            * ICC_XYZ )
 {
   int error = -1;
-  oyMAT3 CHAD = {{ {{1,0,0}},{{0,1,0}},{{0,0,1}} }},
+  oyMAT3 CHAD = { { { {1,0,0} },
+                    { {0,1,0} },
+                    { {0,0,1} } } },
          CHAD_INVERSE;
   if(profile)
   {
