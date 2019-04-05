@@ -113,6 +113,9 @@ int      oyProfileAddWhitePointEffect( oyProfile_s       * monitor_profile,
     error = oyGetDisplayWhitePoint( display_white_point, dst_XYZ );
   if(isnan(dst_XYZ[0]))
     error = 1;
+  if(error)
+    oyMessageFunc_p( oyMSG_WARN,(oyStruct_s*)monitor_profile, OY_DBG_FORMAT_
+                   "automatic display_white_point: not readable", OY_DBG_ARGS_);
 
   desc = oyProfile_GetText( monitor_profile, oyNAME_DESCRIPTION );
 
