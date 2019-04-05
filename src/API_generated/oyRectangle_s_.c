@@ -446,7 +446,7 @@ int oyRectangle_Release_( oyRectangle_s_ **rectangle )
       id_ = oy_debug_objects;
 
     if((id_ >= 0 && s->oy_->id_ == id_) ||
-       (t && s && (strstr(oyStructTypeToText(s->type_), t) != 0)) ||
+       (t && (strstr(oyStructTypeToText(s->type_), t) != 0)) ||
        id_ == 1)
     {
       oyStruct_s ** parents = NULL;
