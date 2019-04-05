@@ -994,7 +994,7 @@ int      oyX1SetupMonitorCalibration ( oyMonitor_s       * display,
       pclose(fp);
     } else
     {
-      fprintf( stderr, OY_DBG_FORMAT_ "xcalib not found for setting with %s\n", OY_DBG_ARGS_, profile_name?profile_name:"" );
+      fprintf( stderr, OY_DBG_FORMAT_ "xcalib not found for setting with %s\n", OY_DBG_ARGS_, profile_name );
       status |= OY_CALIB_ERROR;
     }
     if(t && strstr(t, "xcalib "))
@@ -1365,7 +1365,7 @@ oyExtractHostName_           (const char* display_name)
     oyX1Alloc(host_name, strlen( display_name ) + 48, return NULL;)
     strcpy( host_name, display_name );
     ptr = strchr( host_name, ':' );
-    ptr[0] = 0;
+    if(ptr) ptr[0] = 0;
   } else
     host_name = strdup( "" );
 
