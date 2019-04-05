@@ -122,9 +122,11 @@ oyCMM_s oPNG_cmm_module = {
   NULL                                 /**< init() */
 };
 
+static int oPNG_error = 0;
 
 void oPNGerror( png_structp png OY_UNUSED, const char * text )
 {
+  oPNG_error = 1;
   oPNG_msg( oyMSG_ERROR, (oyStruct_s*)NULL/*node*/,
              OY_DBG_FORMAT_ "%s",
              OY_DBG_ARGS_, text );
@@ -252,6 +254,7 @@ int  oyImage_WritePNG                ( oyImage_s         * image,
     oPNG_msg( oyMSG_WARN, image,
              OY_DBG_FORMAT_ "not profile available for %s",
              OY_DBG_ARGS_, file_name );
+    if(fp) fclose(fp);
     return (1);
   }
 
@@ -954,6 +957,11 @@ oyImage_s *  oyImage_FromPNG         ( const char        * filename,
       for( y = 0; y < height; ++y )
         png_read_row( png_ptr, array2d[y], NULL );
 
+    if(oPNG_error)
+    {
+      oPNG_error = 0;
+      return NULL;
+    }
     oyImage_SetData ( image_in, (oyStruct_s**) &a, 0,0,0,0,0,0 );
   }
 
