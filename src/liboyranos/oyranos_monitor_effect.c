@@ -134,8 +134,13 @@ int      oyProfileAddWhitePointEffect( oyProfile_s       * monitor_profile,
     error = oyOptionChoicesGet2( oyWIDGET_DISPLAY_WHITE_POINT, flags,
                                  oyNAME_NAME, &choices,
                                  &choices_string_list, &current );
+    if(error > 0)
+      oyMessageFunc_p( oyMSG_WARN,(oyStruct_s*)monitor_profile, OY_DBG_FORMAT_
+                   "oyOptionChoicesGet2 failed %d", OY_DBG_ARGS_,
+                   error);
 #ifdef HAVE_LOCALE_H
     setlocale(LC_ALL,old_loc);
+    if(old_loc) { free(old_loc); } old_loc = NULL;
 #endif
     if(current > 0 && current < choices && choices_string_list)
     {
@@ -144,14 +149,14 @@ int      oyProfileAddWhitePointEffect( oyProfile_s       * monitor_profile,
         double temperature = oyGetTemperature(-1);
         char k[12];
         sprintf(k, "%dK", (int)temperature);
-        error = oyOptions_SetFromString( &opts, "//" OY_TYPE_STD "/illu_name", k, OY_CREATE_NEW );
+        oyOptions_SetFromString( &opts, "//" OY_TYPE_STD "/illu_name", k, OY_CREATE_NEW );
         if(temperature <= 0.1)
           oyMessageFunc_p( oyMSG_WARN,(oyStruct_s*)monitor_profile, OY_DBG_FORMAT_
                    "automatic display_white_point: [%g %g %g] %s", OY_DBG_ARGS_,
                    dst_XYZ[0], dst_XYZ[1], dst_XYZ[2], k);
       }
       else
-        error = oyOptions_SetFromString( &opts, "//" OY_TYPE_STD "/illu_name", choices_string_list[current], OY_CREATE_NEW );
+        oyOptions_SetFromString( &opts, "//" OY_TYPE_STD "/illu_name", choices_string_list[current], OY_CREATE_NEW );
       if(oy_debug)
         oyMessageFunc_p( oyMSG_DBG,(oyStruct_s*)monitor_profile, OY_DBG_FORMAT_
                    "illu_name: %s", OY_DBG_ARGS_,
@@ -164,17 +169,21 @@ int      oyProfileAddWhitePointEffect( oyProfile_s       * monitor_profile,
     oyMessageFunc_p( oyMSG_WARN, NULL, OY_DBG_FORMAT_
                    "src_name: %s -> illu_name: %s",
                    OY_DBG_ARGS_, oyOptions_FindString(opts, "src_name", 0), oyOptions_FindString(opts, "illu_name", 0) );
-  error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/src_iccXYZ", src_XYZ[0], 0, OY_CREATE_NEW );
-  error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/src_iccXYZ", src_XYZ[1], 1, OY_CREATE_NEW );
-  error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/src_iccXYZ", src_XYZ[2], 2, OY_CREATE_NEW );
-  error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/illu_iccXYZ", dst_XYZ[0], 0, OY_CREATE_NEW );
-  error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/illu_iccXYZ", dst_XYZ[1], 1, OY_CREATE_NEW );
-  error = oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/illu_iccXYZ", dst_XYZ[2], 2, OY_CREATE_NEW );
+  oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/src_iccXYZ", src_XYZ[0], 0, OY_CREATE_NEW );
+  oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/src_iccXYZ", src_XYZ[1], 1, OY_CREATE_NEW );
+  oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/src_iccXYZ", src_XYZ[2], 2, OY_CREATE_NEW );
+  oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/illu_iccXYZ", dst_XYZ[0], 0, OY_CREATE_NEW );
+  oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/illu_iccXYZ", dst_XYZ[1], 1, OY_CREATE_NEW );
+  oyOptions_SetFromDouble( &opts, "//" OY_TYPE_STD "/illu_iccXYZ", dst_XYZ[2], 2, OY_CREATE_NEW );
   /* cache the display white point abstract profile */
   error = oyOptions_Handle( "//" OY_TYPE_STD "/create_profile.white_point_adjust.bradford",
                             opts,             "create_profile.white_point_adjust.bradford.file_name",
                             &result_opts );
   DBG_S_( oyPrintTime() );
+  if(error > 0)
+    oyMessageFunc_p( oyMSG_WARN,(oyStruct_s*)monitor_profile, OY_DBG_FORMAT_
+                   "oyOptions_Handle(white_point_adjust.bradford.file_name) failed %d", OY_DBG_ARGS_,
+                   error);
 
   /* write cache profile for slightly better speed and useful for debugging */
   if(error == 0)
@@ -509,7 +518,7 @@ uint16_t *   oyProfile_GetVCGT       ( oyProfile_s       * profile,
       goto clean_oyProfile_GetVCGT;
     }
 
-    ramp = calloc( byte, segmente * nkurven);
+    ramp = calloc( byte, (unsigned long)segmente * (unsigned long)nkurven);
     for (j = 0; j < nkurven; j++)
       for (i = segmente * j; i < segmente * (j+1); i++)
         ramp[(i - segmente*j) * nkurven + j] = oyValueUInt16 (*(icUInt16Number*)&data_[start + byte*i]);
@@ -556,6 +565,7 @@ int          oyProfile_SetVCGT       ( oyProfile_s       * profile,
                         "VCGT Tag creation failed",
                         OY_DBG_ARGS_ );
   }
+  free(data_); data_ = NULL; u = NULL;
 
   if(!error)
   {
@@ -641,6 +651,7 @@ int      oyProfile_CreateEffectVCGT  ( oyProfile_s       * prof )
 
   if(mix) oyDeAllocateFunc_(mix);
   if(ramp) oyDeAllocateFunc_(ramp);
+  if(vcgt) oyDeAllocateFunc_(vcgt);
 
   return error;
 }
@@ -811,7 +822,7 @@ OYAPI int  OYEXPORT
   p = 0;
 
   if(error <= 0) 
-    l_error = oyDeviceAskProfile2( device, options, profile ); OY_ERR
+  { l_error = oyDeviceAskProfile2( device, options, profile ); OY_ERR }
 
   /** As a last means oyASSUMED_WEB is delivered. */
   if(!*profile)
