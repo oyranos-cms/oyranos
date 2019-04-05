@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2019-04-01 10:15+0200\n"
+"POT-Creation-Date: 2019-04-05 11:14+0200\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -23,7 +23,7 @@ msgstr ""
 msgid "... try with --help|-h option for usage text. give up"
 msgstr "... versuche bitte die --help|-h Option für einen Hilfetext. Gebe auf"
 
-#: oyjl_args.c:1815 oyjl_args.c:1985
+#: oyjl_args.c:1819 oyjl_args.c:1991
 msgid "AUTHOR"
 msgstr "AUTOR"
 
@@ -39,11 +39,11 @@ msgstr "Füge mit gettext übersetzte Schlüssel to JSON hinzu:"
 msgid "Any arg mode"
 msgstr "Modus mit jedem Argument"
 
-#: oyjl_args.c:1825 oyjl_args.c:1995 oyjl_args.c:1997
+#: oyjl_args.c:1829 oyjl_args.c:2001 oyjl_args.c:2003
 msgid "BUGS"
 msgstr "FEHLER"
 
-#: oyjl_args.c:1819 oyjl_args.c:1989
+#: oyjl_args.c:1823 oyjl_args.c:1995
 msgid "COPYRIGHT"
 msgstr "KOPIERRECHT"
 
@@ -55,15 +55,15 @@ msgstr "Ausgabeneinstellungen"
 msgid "Convert JSON to gettext ready C strings:"
 msgstr "Wandle JSON in gettext lesbare C Texte:"
 
-#: oyjl_args.c:1416
+#: oyjl_args.c:1418
 msgid "Copyright"
 msgstr "Kopierrecht"
 
-#: oyjl_args.c:1730 oyjl_args.c:1904
+#: oyjl_args.c:1734 oyjl_args.c:1910
 msgid "DESCRIPTION"
 msgstr "BESCHREIBUNG"
 
-#: oyjl_args.c:1425
+#: oyjl_args.c:1427
 msgid "Date"
 msgstr "Datum"
 
@@ -71,11 +71,11 @@ msgstr "Datum"
 msgid "Description"
 msgstr "Beschreibung"
 
-#: oyjl_args.c:1422
+#: oyjl_args.c:1424
 msgid "Development"
 msgstr "Entwicklung"
 
-#: oyjl_args.c:1424
+#: oyjl_args.c:1426
 msgid "Documentation"
 msgstr "Dokumente"
 
@@ -83,19 +83,19 @@ msgstr "Dokumente"
 msgid "Double occuring option"
 msgstr "Doppelte Option"
 
-#: oyjl_args.c:1420
+#: oyjl_args.c:1422
 msgid "Download"
 msgstr "Bezugsquelle"
 
-#: oyjl_args.c:1607
+#: oyjl_args.c:1609
 msgid "ENVIRONMENT VARIABLES"
 msgstr "UMGEBUNGSVARIABLEN"
 
-#: oyjl_args.c:1603
+#: oyjl_args.c:1605
 msgid "EXAMPLES"
 msgstr "BEISPIELE"
 
-#: oyjl_args.c:1605
+#: oyjl_args.c:1607
 msgid "EXIT-STATE"
 msgstr "EXIT-STATUS"
 
@@ -111,7 +111,7 @@ msgstr "Exportiere formatierten Text"
 msgid "FILENAME"
 msgstr "DATEINAME"
 
-#: oyjl_args.c:1611
+#: oyjl_args.c:1613
 msgid "FILES"
 msgstr "DATEIEN"
 
@@ -155,7 +155,7 @@ msgstr "Hole Unix Handbuchseite"
 msgid "Get formated text"
 msgstr "Hole formatierten Text"
 
-#: oyjl_args.c:1609
+#: oyjl_args.c:1611
 msgid "HISTORY"
 msgstr "GESCHICHTE"
 
@@ -175,7 +175,7 @@ msgstr "Json"
 msgid "Json + Command"
 msgstr "Json + Kommando"
 
-#: oyjl_args.c:1417 oyjl_args.c:1821 oyjl_args.c:1991
+#: oyjl_args.c:1419 oyjl_args.c:1825 oyjl_args.c:1997
 msgid "License"
 msgstr "Lizenz"
 
@@ -183,7 +183,7 @@ msgstr "Lizenz"
 msgid "Man"
 msgstr "Handbuch"
 
-#: oyjl_args.c:1415
+#: oyjl_args.c:1417
 msgid "Manufacturer"
 msgstr "Hersteller"
 
@@ -216,15 +216,15 @@ msgstr "Modus2"
 msgid "Mode3"
 msgstr "Modus3"
 
-#: oyjl_args.c:1396
+#: oyjl_args.c:1398
 msgid "Module"
 msgstr "Modul"
 
-#: oyjl_args.c:1550
+#: oyjl_args.c:1552
 msgid "No"
 msgstr "Nein"
 
-#: oyjl_args.c:1732 oyjl_args.c:1906
+#: oyjl_args.c:1736 oyjl_args.c:1912
 msgid "OPTIONS"
 msgstr "OPTIONEN"
 
@@ -248,7 +248,7 @@ msgstr "Die Option erwartet ein Argument"
 msgid "Option not supported"
 msgstr "Die Option ist nicht unterstützt"
 
-#: oyjl_args.c:1423
+#: oyjl_args.c:1425
 msgid "Oyjl Module Author"
 msgstr "Autor des Oyjl Modules"
 
@@ -296,11 +296,11 @@ msgstr "Zeige:"
 msgid "Rendering Intent"
 msgstr "Übertragungsart"
 
-#: oyjl_args.c:1613
+#: oyjl_args.c:1615
 msgid "SEE AS WELL"
 msgstr "SIEHE AUCH"
 
-#: oyjl_args.c:1719 oyjl_args.c:1893
+#: oyjl_args.c:1723 oyjl_args.c:1899
 msgid "SYNOPSIS"
 msgstr "ÜBERSICHT"
 
@@ -327,11 +327,11 @@ msgstr "Zeige Status"
 msgid "Simple mode"
 msgstr "Einfacher Modus"
 
-#: oyjl_args.c:1421
+#: oyjl_args.c:1423
 msgid "Sources"
 msgstr "Quellen"
 
-#: oyjl_args.c:1419
+#: oyjl_args.c:1421
 msgid "Support"
 msgstr "Unterstützung"
 
@@ -343,7 +343,7 @@ msgstr "Übersicht"
 msgid "The example tool demontrates the usage of the libOyjl API's."
 msgstr "Das Beispielwerkzeug zeigt die Benutzung der libOyjl APIs."
 
-#: oyjl_args.c:1394
+#: oyjl_args.c:1396
 msgid "Tool"
 msgstr "Werkzeug"
 
@@ -351,7 +351,7 @@ msgstr "Werkzeug"
 msgid "Unix Man page"
 msgstr "Unix Handbuchseite"
 
-#: oyjl_args.c:1418
+#: oyjl_args.c:1420
 msgid "Url"
 msgstr "Url"
 
@@ -365,11 +365,11 @@ msgstr "Benutzung"
 msgid "Usage Error:"
 msgstr "Benutzerfehler:"
 
-#: oyjl_args.c:1426
+#: oyjl_args.c:1428
 msgid "Version"
 msgstr "Version"
 
-#: oyjl_args.c:1550
+#: oyjl_args.c:1552
 msgid "Yes"
 msgstr "Ja"
 

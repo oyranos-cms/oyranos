@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cs\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2019-04-01 10:15+0200\n"
+"POT-Creation-Date: 2019-04-05 11:14+0200\n"
 "PO-Revision-Date: 2012-10-19 15:10+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -19,7 +19,7 @@ msgstr ""
 msgid "... try with --help|-h option for usage text. give up"
 msgstr ""
 
-#: oyjl_args.c:1815 oyjl_args.c:1985
+#: oyjl_args.c:1819 oyjl_args.c:1991
 msgid "AUTHOR"
 msgstr ""
 
@@ -35,11 +35,11 @@ msgstr ""
 msgid "Any arg mode"
 msgstr ""
 
-#: oyjl_args.c:1825 oyjl_args.c:1995 oyjl_args.c:1997
+#: oyjl_args.c:1829 oyjl_args.c:2001 oyjl_args.c:2003
 msgid "BUGS"
 msgstr ""
 
-#: oyjl_args.c:1819 oyjl_args.c:1989
+#: oyjl_args.c:1823 oyjl_args.c:1995
 msgid "COPYRIGHT"
 msgstr ""
 
@@ -52,15 +52,15 @@ msgstr "Výstupní"
 msgid "Convert JSON to gettext ready C strings:"
 msgstr ""
 
-#: oyjl_args.c:1416
+#: oyjl_args.c:1418
 msgid "Copyright"
 msgstr "Copyright"
 
-#: oyjl_args.c:1730 oyjl_args.c:1904
+#: oyjl_args.c:1734 oyjl_args.c:1910
 msgid "DESCRIPTION"
 msgstr ""
 
-#: oyjl_args.c:1425
+#: oyjl_args.c:1427
 msgid "Date"
 msgstr "Datum"
 
@@ -69,11 +69,11 @@ msgstr "Datum"
 msgid "Description"
 msgstr "popis"
 
-#: oyjl_args.c:1422
+#: oyjl_args.c:1424
 msgid "Development"
 msgstr ""
 
-#: oyjl_args.c:1424
+#: oyjl_args.c:1426
 msgid "Documentation"
 msgstr "Dokumentace"
 
@@ -82,19 +82,19 @@ msgstr "Dokumentace"
 msgid "Double occuring option"
 msgstr "popis"
 
-#: oyjl_args.c:1420
+#: oyjl_args.c:1422
 msgid "Download"
 msgstr ""
 
-#: oyjl_args.c:1607
+#: oyjl_args.c:1609
 msgid "ENVIRONMENT VARIABLES"
 msgstr ""
 
-#: oyjl_args.c:1603
+#: oyjl_args.c:1605
 msgid "EXAMPLES"
 msgstr ""
 
-#: oyjl_args.c:1605
+#: oyjl_args.c:1607
 msgid "EXIT-STATE"
 msgstr ""
 
@@ -110,7 +110,7 @@ msgstr ""
 msgid "FILENAME"
 msgstr ""
 
-#: oyjl_args.c:1611
+#: oyjl_args.c:1613
 msgid "FILES"
 msgstr ""
 
@@ -157,7 +157,7 @@ msgstr "Unix a deriváty"
 msgid "Get formated text"
 msgstr ""
 
-#: oyjl_args.c:1609
+#: oyjl_args.c:1611
 msgid "HISTORY"
 msgstr ""
 
@@ -177,7 +177,7 @@ msgstr ""
 msgid "Json + Command"
 msgstr ""
 
-#: oyjl_args.c:1417 oyjl_args.c:1821 oyjl_args.c:1991
+#: oyjl_args.c:1419 oyjl_args.c:1825 oyjl_args.c:1997
 msgid "License"
 msgstr "Licence"
 
@@ -186,7 +186,7 @@ msgstr "Licence"
 msgid "Man"
 msgstr "Purpurová"
 
-#: oyjl_args.c:1415
+#: oyjl_args.c:1417
 msgid "Manufacturer"
 msgstr "Výrobce"
 
@@ -223,16 +223,16 @@ msgstr "Model:"
 msgid "Mode3"
 msgstr "Model:"
 
-#: oyjl_args.c:1396
+#: oyjl_args.c:1398
 #, fuzzy
 msgid "Module"
 msgstr "Volby modulu:"
 
-#: oyjl_args.c:1550
+#: oyjl_args.c:1552
 msgid "No"
 msgstr "Ne"
 
-#: oyjl_args.c:1732 oyjl_args.c:1906
+#: oyjl_args.c:1736 oyjl_args.c:1912
 msgid "OPTIONS"
 msgstr ""
 
@@ -257,7 +257,7 @@ msgstr ""
 msgid "Option not supported"
 msgstr "Volba nepodporovaného typu:"
 
-#: oyjl_args.c:1423
+#: oyjl_args.c:1425
 #, fuzzy
 msgid "Oyjl Module Author"
 msgstr "Moduly Oyranosu"
@@ -314,11 +314,11 @@ msgstr "Tiskárna"
 msgid "Rendering Intent"
 msgstr "Záměr transformace"
 
-#: oyjl_args.c:1613
+#: oyjl_args.c:1615
 msgid "SEE AS WELL"
 msgstr ""
 
-#: oyjl_args.c:1719 oyjl_args.c:1893
+#: oyjl_args.c:1723 oyjl_args.c:1899
 msgid "SYNOPSIS"
 msgstr ""
 
@@ -347,11 +347,11 @@ msgstr "Cesta"
 msgid "Simple mode"
 msgstr ""
 
-#: oyjl_args.c:1421
+#: oyjl_args.c:1423
 msgid "Sources"
 msgstr ""
 
-#: oyjl_args.c:1419
+#: oyjl_args.c:1421
 msgid "Support"
 msgstr ""
 
@@ -363,7 +363,7 @@ msgstr ""
 msgid "The example tool demontrates the usage of the libOyjl API's."
 msgstr ""
 
-#: oyjl_args.c:1394
+#: oyjl_args.c:1396
 msgid "Tool"
 msgstr ""
 
@@ -372,7 +372,7 @@ msgstr ""
 msgid "Unix Man page"
 msgstr "Unix a deriváty"
 
-#: oyjl_args.c:1418
+#: oyjl_args.c:1420
 msgid "Url"
 msgstr ""
 
@@ -386,12 +386,12 @@ msgstr "Použití"
 msgid "Usage Error:"
 msgstr ""
 
-#: oyjl_args.c:1426
+#: oyjl_args.c:1428
 #, fuzzy
 msgid "Version"
 msgstr "ICC Examin Verze"
 
-#: oyjl_args.c:1550
+#: oyjl_args.c:1552
 msgid "Yes"
 msgstr "Ano"
 
