@@ -1865,7 +1865,7 @@ oyImage_s * oySpectrumFromTree       ( oyjl_val root )
 
 int oyTreeToCgats( oyjl_val root, int * level OYJL_UNUSED, char ** text )
 {
-  oyjl_str t;
+  oyjl_str t = NULL;
   int i,index;
 
   int pixels = 0,
@@ -1889,7 +1889,7 @@ int oyTreeToCgats( oyjl_val root, int * level OYJL_UNUSED, char ** text )
     oyjlStringAdd( &tmp, 0,0, "CGATS\n\nDESCRIPTOR \"%s\"\nORIGINATOR \"%s\"\n",
       description?description:"Spectral Data", creator?creator:"Oyranos CMS" );
     if(creation_date)
-      oyjlStringAdd( &tmp, 0,0, "CREATED \"%s\"\n", creation_date?creation_date:"" );
+      oyjlStringAdd( &tmp, 0,0, "CREATED \"%s\"\n", creation_date );
 
     /* compile a INSTRUMENTATION line */
     oyjl_val v = oyjlTreeGetValue( root, 0, "collection/[0]/spectral/[0]/tristimulus/illuminant" );
@@ -1995,7 +1995,7 @@ void oySpectrumToPpm( oyImage_s * spectra, const char * input, const char * outp
 /* convert two dimensional array to CSV */
 int oyTreeToCsv( oyjl_val root, int * level OYJL_UNUSED, char ** text )
 {
-  oyjl_str t;
+  oyjl_str t = NULL;
   int i,index;
 
   int pixels = 0,
