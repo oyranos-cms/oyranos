@@ -157,7 +157,8 @@ int openiccIsDirFull_ (const char* name)
   if(!name) return 0;
 
   memset(&status,0,sizeof(struct stat));
-  r = stat (name, &status);
+  if(name && name[0])
+    r = stat(name, &status);
 
   if(r != 0 && *openicc_debug > 1)
   switch (errno)
@@ -260,7 +261,8 @@ int openiccIsFileFull_ (const char* fullFileName, const char * read_mode)
   const char* name = fullFileName;
 
   memset(&status,0,sizeof(struct stat));
-  r = stat (name, &status);
+  if(name && name[0])
+    r = stat(name, &status);
 
   if(r != 0 && *openicc_debug > 1)
   switch (errno)
