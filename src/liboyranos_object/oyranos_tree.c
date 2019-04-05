@@ -551,9 +551,9 @@ oyLeave_s ** oyDebugLevelCacheGetForThread()
 {
   int thread_id = oyObjectGetThreadId();
   if(!oy_debug_leave_cache_)
-    oy_debug_leave_cache_ = (oyLeave_s***) myCalloc_m( sizeof( oyLeave_s** ), 1024 );
+  { oy_debug_leave_cache_ = (oyLeave_s***) myCalloc_m( sizeof( oyLeave_s** ), 1024 ); }
   if(!oy_debug_leave_cache_[thread_id])
-    oy_debug_leave_cache_[thread_id] = (oyLeave_s**) myCalloc_m( sizeof( oyLeave_s* ), oy_object_list_max_count_ + 1 );
+  { oy_debug_leave_cache_[thread_id] = (oyLeave_s**) myCalloc_m( sizeof( oyLeave_s* ), oy_object_list_max_count_ + 1 ); }
   return oy_debug_leave_cache_[thread_id];
 }
 
