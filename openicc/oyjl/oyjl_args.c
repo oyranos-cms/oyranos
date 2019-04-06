@@ -1569,6 +1569,7 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
   }
   i = 0;
   oyjlTreeToJson( root, &i, &t );
+  oyjlTreeFree( root );
 
   return t;
 }

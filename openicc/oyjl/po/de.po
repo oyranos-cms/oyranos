@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2019-04-05 11:14+0200\n"
+"POT-Creation-Date: 2019-04-05 23:49+0200\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -23,7 +23,7 @@ msgstr ""
 msgid "... try with --help|-h option for usage text. give up"
 msgstr "... versuche bitte die --help|-h Option für einen Hilfetext. Gebe auf"
 
-#: oyjl_args.c:1819 oyjl_args.c:1991
+#: oyjl_args.c:1820 oyjl_args.c:1992
 msgid "AUTHOR"
 msgstr "AUTOR"
 
@@ -39,11 +39,11 @@ msgstr "Füge mit gettext übersetzte Schlüssel to JSON hinzu:"
 msgid "Any arg mode"
 msgstr "Modus mit jedem Argument"
 
-#: oyjl_args.c:1829 oyjl_args.c:2001 oyjl_args.c:2003
+#: oyjl_args.c:1830 oyjl_args.c:2002 oyjl_args.c:2004
 msgid "BUGS"
 msgstr "FEHLER"
 
-#: oyjl_args.c:1823 oyjl_args.c:1995
+#: oyjl_args.c:1824 oyjl_args.c:1996
 msgid "COPYRIGHT"
 msgstr "KOPIERRECHT"
 
@@ -59,7 +59,7 @@ msgstr "Wandle JSON in gettext lesbare C Texte:"
 msgid "Copyright"
 msgstr "Kopierrecht"
 
-#: oyjl_args.c:1734 oyjl_args.c:1910
+#: oyjl_args.c:1735 oyjl_args.c:1911
 msgid "DESCRIPTION"
 msgstr "BESCHREIBUNG"
 
@@ -87,15 +87,15 @@ msgstr "Doppelte Option"
 msgid "Download"
 msgstr "Bezugsquelle"
 
-#: oyjl_args.c:1609
+#: oyjl_args.c:1610
 msgid "ENVIRONMENT VARIABLES"
 msgstr "UMGEBUNGSVARIABLEN"
 
-#: oyjl_args.c:1605
+#: oyjl_args.c:1606
 msgid "EXAMPLES"
 msgstr "BEISPIELE"
 
-#: oyjl_args.c:1607
+#: oyjl_args.c:1608
 msgid "EXIT-STATE"
 msgstr "EXIT-STATUS"
 
@@ -111,7 +111,7 @@ msgstr "Exportiere formatierten Text"
 msgid "FILENAME"
 msgstr "DATEINAME"
 
-#: oyjl_args.c:1613
+#: oyjl_args.c:1614
 msgid "FILES"
 msgstr "DATEIEN"
 
@@ -155,7 +155,7 @@ msgstr "Hole Unix Handbuchseite"
 msgid "Get formated text"
 msgstr "Hole formatierten Text"
 
-#: oyjl_args.c:1611
+#: oyjl_args.c:1612
 msgid "HISTORY"
 msgstr "GESCHICHTE"
 
@@ -175,7 +175,7 @@ msgstr "Json"
 msgid "Json + Command"
 msgstr "Json + Kommando"
 
-#: oyjl_args.c:1419 oyjl_args.c:1825 oyjl_args.c:1997
+#: oyjl_args.c:1419 oyjl_args.c:1826 oyjl_args.c:1998
 msgid "License"
 msgstr "Lizenz"
 
@@ -224,7 +224,7 @@ msgstr "Modul"
 msgid "No"
 msgstr "Nein"
 
-#: oyjl_args.c:1736 oyjl_args.c:1912
+#: oyjl_args.c:1737 oyjl_args.c:1913
 msgid "OPTIONS"
 msgstr "OPTIONEN"
 
@@ -296,11 +296,11 @@ msgstr "Zeige:"
 msgid "Rendering Intent"
 msgstr "Übertragungsart"
 
-#: oyjl_args.c:1615
+#: oyjl_args.c:1616
 msgid "SEE AS WELL"
 msgstr "SIEHE AUCH"
 
-#: oyjl_args.c:1723 oyjl_args.c:1899
+#: oyjl_args.c:1724 oyjl_args.c:1900
 msgid "SYNOPSIS"
 msgstr "ÜBERSICHT"
 
