@@ -1095,7 +1095,7 @@ int      oyX1SetupMonitorCalibration ( oyMonitor_s       * display,
         }
         else
         {
-          fprintf( stderr,OY_DBG_FORMAT_ "ERROR: %s\n", OY_DBG_ARGS_, "calling failed: ", text);
+          fprintf( stderr,OY_DBG_FORMAT_ "ERROR: %s: %s\n", OY_DBG_ARGS_, "calling failed", text);
           goto Clean;
         }
 
