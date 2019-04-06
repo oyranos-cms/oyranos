@@ -25,10 +25,12 @@ oyjl_val     oyJsonParse             ( const char        * json )
 {
   int error = !json;
   oyjl_val root;
-  char * error_buffer = (char*)oyAllocateFunc_( 256 );
+  char * error_buffer;
+ 
+  if(error) return NULL;
 
-  if(error || !error_buffer)
-    return NULL;
+  error_buffer = (char*)oyAllocateFunc_( 256 );
+  if(!error_buffer) return NULL;
 
   error_buffer[0] = '\000';
 
