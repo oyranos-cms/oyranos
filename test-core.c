@@ -739,7 +739,7 @@ oyjlTESTRESULT_e testTree ()
 
   double clck = oyjlClock();
   root = oyjlTreeNew("");
-  int n = 10000;
+  int n = 2000;
   for(i = 0; i < n; ++i)
     oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "value", "data/key-%d", i );
   clck = oyjlClock() - clck;
