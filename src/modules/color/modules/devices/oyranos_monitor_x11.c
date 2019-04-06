@@ -1058,7 +1058,6 @@ int      oyX1SetupMonitorCalibration ( oyMonitor_s       * display,
       if(!display)
       {
         fprintf( stderr,OY_DBG_FORMAT_ "ERROR: %s %s %s\n", OY_DBG_ARGS_, "open X Display failed", dpy_name, display_name);
-        free( text );
         goto Clean;
       }
 
@@ -1109,6 +1108,7 @@ int      oyX1SetupMonitorCalibration ( oyMonitor_s       * display,
         printf("%s : %s\n", text, t);
         if(status & OY_CALIB_VCGT_NOT_CONTAINED)
           error = system(clear); // causes flicker, but profile without VCGT tag will not change any curves.
+        if(t) { free(t); t = NULL; }
 #endif
       }
       if(!can_gamma)
@@ -1128,13 +1128,12 @@ int      oyX1SetupMonitorCalibration ( oyMonitor_s       * display,
 
     if(oy_debug) fprintf( stderr, OY_DBG_FORMAT_ "system: %s\n", OY_DBG_ARGS_, clear );
     if(oy_debug) fprintf( stderr, OY_DBG_FORMAT_ "system: %s\n", OY_DBG_ARGS_, text );
-
-    free( clear );
-    free( text );
   }
 
   Clean:
   if(dpy_name) free( dpy_name );
+  if(text) free( text );
+  if(clear) free( clear );
 
   return status;
 }
