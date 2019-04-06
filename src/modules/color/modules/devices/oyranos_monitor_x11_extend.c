@@ -79,11 +79,12 @@ int      oyX1ColorServerActive       ( int                 flags )
       flags & oySOURCE_DATA )
   {
     Display * display = XOpenDisplay(NULL);
+    if(!display) return active;
+
     active = XcmColorServerCapabilities( display );
     z = oySeconds();
     DBG_NUM2_S("color server active: %d %g\n", active, z);
-    if(display)
-      XCloseDisplay(display);
+    XCloseDisplay(display);
   }
 #endif
   return active;
