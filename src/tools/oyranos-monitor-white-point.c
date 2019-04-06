@@ -235,6 +235,7 @@ oyjlOptionChoice_s * getWhitePointChoices       ( oyjlOption_s      * o,
         c[i].nick = malloc(4);
         c[i].nick[0] = '\000';
       }
+      oyOptionChoicesFree( oyWIDGET_DISPLAY_WHITE_POINT, &choices_string_list, choices );
       white_point_choices_selected_ = current;
       if(selected)
         *selected = current;
