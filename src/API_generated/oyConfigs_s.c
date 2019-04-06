@@ -741,7 +741,7 @@ OYAPI int OYEXPORT oyConfigs_FromDB  ( const char        * registration,
     if(strrchr( db_registration, '.' ))
     {
       char * t = strchr( db_registration, '.' );
-      t[0] = 0;
+      if(t) t[0] = 0;
     }
       
     db = oyDB_newFrom( db_registration, oySCOPE_USER_SYS, oyAllocateFunc_, oyDeAllocateFunc_ );
