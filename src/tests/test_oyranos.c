@@ -167,7 +167,7 @@ oyjlTESTRESULT_e testElektra()
     start = oyGetPersistentString("sw/Oyranos/Tests/test_key", 0,
                                   oySCOPE_USER_SYS, 0);
     
-    PRINT_SUB( start?oyjlTESTRESULT_SUCCESS:oyjlTESTRESULT_XFAIL,
+    PRINT_SUB( error == 0?oyjlTESTRESULT_SUCCESS:oyjlTESTRESULT_XFAIL,
     "Elektra not initialised? try oyExportStart_(EXPORT_CHECK_NO)" );
   }
   if(!start || !start[0])
@@ -178,7 +178,7 @@ oyjlTESTRESULT_e testElektra()
                                  "NULLTestValue", "NULLTestComment" );
     start = oyGetPersistentString("sw/Oyranos/Tests/test_key", 0,
                                   oySCOPE_USER_SYS, 0);
-    PRINT_SUB( start?oyjlTESTRESULT_SUCCESS:oyjlTESTRESULT_XFAIL, 
+    PRINT_SUB( error == 0?oyjlTESTRESULT_SUCCESS:oyjlTESTRESULT_XFAIL, 
     "Elektra not initialised? try oyExportStart_(EXPORT_SETTING)" );
   }
   if(start && start[0])
