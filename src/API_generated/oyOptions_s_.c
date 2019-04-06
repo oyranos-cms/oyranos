@@ -437,12 +437,15 @@ int oyOptions_Release_( oyOptions_s_ **options )
     return 0;
 
   s = *options;
+  /* static object */
+  if(!s->oy_)
+    return 0;
 
   *options = 0;
 
   observer_refs = oyStruct_ObservationCount( (oyStruct_s*)s, 0 );
 
-  if(oy_debug_objects >= 0 && s->oy_)
+  if(oy_debug_objects >= 0)
   {
     const char * t = getenv(OY_DEBUG_OBJECTS);
     int id_ = -1;

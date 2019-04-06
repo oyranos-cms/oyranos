@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cinepaint_icc-examin_eu\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2019-04-05 23:49+0200\n"
+"POT-Creation-Date: 2019-04-06 06:43+0200\n"
 "PO-Revision-Date: 2007-11-07 11:11+0100\n"
 "Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@zundan.com>\n"
 "Language-Team: Basque <itzulpena@euskalgnu.org>\n"
@@ -2192,7 +2192,7 @@ msgstr "Zein ICC profila?"
 msgid "ICC profile directory name"
 msgstr "Fitxategi-izena"
 
-#: API_generated/oyProfile_s_.c:1107
+#: API_generated/oyProfile_s_.c:1110
 #, fuzzy
 msgid "ICC profile id written"
 msgstr "ICC profilaren goiburua"
@@ -3295,7 +3295,7 @@ msgstr "Puntu-zuria euskarria"
 msgid "No"
 msgstr ""
 
-#: API_generated/oyProfile_s_.c:1092
+#: API_generated/oyProfile_s_.c:1095
 #, fuzzy
 msgid "No ICC profile id detected"
 msgstr "ICC profilaren goiburua"
@@ -4505,7 +4505,7 @@ msgstr ""
 msgid "Show white point modes"
 msgstr "Puntu-zuria euskarria"
 
-#: API_generated/oyFilterNode_s_.c:1522 API_generated/oyObserver_s.c:361
+#: API_generated/oyFilterNode_s_.c:1525 API_generated/oyObserver_s.c:361
 #: API_generated/oyObserver_s.c:372 API_generated/oyObserver_s.c:573
 #: API_generated/oyObserver_s.c:651 API_generated/oyObserver_s_.c:53
 #: examples/image_display/oyranos_display_helper_classes_fltk.cpp:47
@@ -5584,7 +5584,7 @@ msgstr "Puntua"
 msgid "Write to ICC profile:"
 msgstr "Zein ICC profila?"
 
-#: API_generated/oyProfile_s_.c:1084
+#: API_generated/oyProfile_s_.c:1087
 #, fuzzy
 msgid "Wrong ICC profile id detected"
 msgstr "Errorea aurkitu da ICC profilako etiketan."
@@ -5783,7 +5783,7 @@ msgstr ""
 msgid "enable simple defaults"
 msgstr ""
 
-#: API_generated/oyConversion_s.c:207 API_generated/oyFilterNode_s_.c:898
+#: API_generated/oyConversion_s.c:207 API_generated/oyFilterNode_s_.c:901
 #: API_generated/oyranos_devices.c:2604 API_generated/oyranos_devices.c:2616
 #: API_generated/oyranos_devices.c:2649 API_generated/oyranos_devices.c:3164
 #: API_generated/oyranos_module.c:2022

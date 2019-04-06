@@ -466,12 +466,15 @@ int oyBlob_Release_( oyBlob_s_ **blob )
     return 0;
 
   s = *blob;
+  /* static object */
+  if(!s->oy_)
+    return 0;
 
   *blob = 0;
 
   observer_refs = oyStruct_ObservationCount( (oyStruct_s*)s, 0 );
 
-  if(oy_debug_objects >= 0 && s->oy_)
+  if(oy_debug_objects >= 0)
   {
     const char * t = getenv(OY_DEBUG_OBJECTS);
     int id_ = -1;

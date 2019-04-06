@@ -463,12 +463,15 @@ int oyImage_Release_( oyImage_s_ **image )
     return 0;
 
   s = *image;
+  /* static object */
+  if(!s->oy_)
+    return 0;
 
   *image = 0;
 
   observer_refs = oyStruct_ObservationCount( (oyStruct_s*)s, 0 );
 
-  if(oy_debug_objects >= 0 && s->oy_)
+  if(oy_debug_objects >= 0)
   {
     const char * t = getenv(OY_DEBUG_OBJECTS);
     int id_ = -1;
