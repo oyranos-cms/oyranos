@@ -1093,16 +1093,22 @@ int      oyX1SetupMonitorCalibration ( oyMonitor_s       * display,
           else t[47] = '\000';
           pclose(fp);
         }
+        else
+        {
+          fprintf( stderr,OY_DBG_FORMAT_ "ERROR: %s\n", OY_DBG_ARGS_, "calling failed: ", text);
+          goto Clean;
+        }
+
         if(strstr(t,"No calibration data in ICC profile"))
         {
           fprintf( stderr,OY_DBG_FORMAT_ "%s %s %d\n", OY_DBG_ARGS_, "No monitor gamma curves by profile:",
-                noE(profile_name), error );
+                   noE(profile_name), error );
           status |= OY_CALIB_VCGT_NOT_CONTAINED;
         }
         if(strstr(t, "Unable to read file"))
         {
           fprintf( stderr,OY_DBG_FORMAT_ "%s %s %d\n", OY_DBG_ARGS_, "Not found profile:",
-                noE(profile_name), error );
+                   noE(profile_name), error );
           status |= OY_CALIB_VCGT_NOT_CONTAINED;
         }
         printf("%s : %s\n", text, t);
@@ -1117,7 +1123,7 @@ int      oyX1SetupMonitorCalibration ( oyMonitor_s       * display,
          error != 65280)
       { /* hack */
         fprintf( stderr,OY_DBG_FORMAT_ "%s %s %d\n", OY_DBG_ARGS_, "found issue",
-                noE(profile_name), error );
+                 noE(profile_name), error );
       } else
       {
         /* take xcalib error not serious, turn into a issue */
