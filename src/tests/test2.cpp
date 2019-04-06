@@ -7233,7 +7233,7 @@ oyjlTESTRESULT_e testConversion()
                                      "///icc_color.notX", "non existent CMM" );
   if(error) PRINT_SUB( oyjlTESTRESULT_XFAIL, "oySetPersistentString() error: %d", error )
   char * test_config_cmm = oyGetPersistentString( OY_DEFAULT_CMM_CONTEXT, 0, oySCOPE_USER_SYS, 0 );
-  if(strcmp(test_config_cmm,"///icc_color.notX") == 0)
+  if(test_config_cmm && strcmp(test_config_cmm,"///icc_color.notX") == 0)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "set intermediate global context = %s", oyNoEmptyString_m_(test_config_cmm) );
   } else

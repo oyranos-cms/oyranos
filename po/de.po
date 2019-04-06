@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2019-04-06 06:43+0200\n"
+"POT-Creation-Date: 2019-04-06 08:36+0200\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -470,7 +470,7 @@ msgstr "Wende Regionen an in Form von einfachen Rechtecken."
 msgid "Argyll CMS CMM"
 msgstr "Argyll CMS CMM"
 
-#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:156
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:157
 msgid "Ask about _ICC_COLOR_DESKTOP activity."
 msgstr "Frage nach _ICC_COLOR_DESKTOP Aktivität."
 
@@ -842,11 +842,11 @@ msgid "Channels:"
 msgstr "Kanäle:"
 
 #: examples/oyranos_cmm_dFil.c:616
-#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:148
-#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:329
-#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:518
-#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:708
-#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:965
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:149
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:330
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:519
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:709
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:966
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:3433
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:3704
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:3910
@@ -1928,7 +1928,7 @@ msgstr "Hole ICC Profil:"
 msgid "Get ICC profile"
 msgstr "Hole ICC Profil"
 
-#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:154
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:155
 msgid "Get X Color Management activity state."
 msgstr "Erfrage X Color Management Farbserver Status."
 
@@ -1992,7 +1992,7 @@ msgstr ""
 "für die Bildschirmausgabe. Eine Umwandlung nach sRGB hilft für einen "
 "einfacheren Datenaustausch und ist, was die meisten Benutzer wünschen."
 
-#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:526
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:527
 msgid "Handle naive and XCM aware CM apps device profiles."
 msgstr ""
 "Behandle Geräteprofile für naive und XCM kennende farbmanagementfähige "
@@ -2025,11 +2025,11 @@ msgid "Heidelberg CMM"
 msgstr ""
 
 #: examples/image_display/image_display.cpp:1249
-#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:162
-#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:343
-#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:532
-#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:722
-#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:989
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:163
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:344
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:533
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:723
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:990
 #: tools/oyranos-monitor-white-point.c:363 tools/oyranos_profile_graph.c:283
 #: tools/oyranos_profiles.c:127
 msgid "Help"
@@ -3585,7 +3585,7 @@ msgstr "Fotofilmbelichter"
 msgid "Photographic paper printer"
 msgstr "Photographischer Papierdrucker"
 
-#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:716
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:717
 msgid "Ping the XCM_COLOUR_DESKTOP_ADVANCED X11 atom."
 msgstr "Berühre die XCM_COLOUR_DESKTOP_ADVANCED X11 Atomeigenschaft"
 
@@ -3885,7 +3885,7 @@ msgstr "Relativ Farbmetrisch"
 msgid "Remote filter or plug not available."
 msgstr "Gegenüberliegender Filter oder Stecker nicht verfügbar."
 
-#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:335
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:336
 msgid "Remove all X Color Management profiles."
 msgstr "Entferne alle X Color Management Geräteprofil"
 
@@ -3893,7 +3893,7 @@ msgstr "Entferne alle X Color Management Geräteprofil"
 msgid "Remove included ICC tag:"
 msgstr "Lösche enthaltenes ICC Element"
 
-#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:337
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:338
 msgid "Remove naive and XCM aware CM apps profiles."
 msgstr "Entferne naive and XCM Profile"
 
@@ -4104,15 +4104,15 @@ msgstr "Setze Dämmerungswinkel"
 msgid "Set a Value"
 msgstr "Setze einen Wert"
 
-#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:971
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:972
 msgid "Set a X Color Management region."
 msgstr "Setze eine X Color Management Region."
 
-#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:714
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:715
 msgid "Set a X Color Management update toggle."
 msgstr "Setze eine X Color Management Schalter."
 
-#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:524
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:525
 msgid "Set all X Color Management device profiles."
 msgstr "Setze alle X Color Management Geräteprofile."
 
@@ -5173,7 +5173,7 @@ msgid ""
 msgstr ""
 "Die Einstellung benötigt xbacklight für das Abdunkeln der Bildschirmlampe."
 
-#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:345
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:346
 msgid ""
 "The oyX1 modules \"clean_profiles\" handler removes X Color Management "
 "device profile and screen document profile properties. The handler expects a "
@@ -5185,7 +5185,7 @@ msgstr ""
 "Option mit einem Text für die X11 Display Verbindung, The Implementierung "
 "nutzt Xlib und die XRandR Erweiterung."
 
-#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:164
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:165
 msgid ""
 "The oyX1 modules \"color_server_active\" handler lets you ask for the X "
 "Color Management _ICC_COLOR_DESKTOP X11 atom. Use \"color_server_active."
@@ -5196,7 +5196,7 @@ msgstr ""
 "\" wird das vorgabemäßige Zwischenspeichern vermieden. Die Implementation "
 "nutzt Xlib."
 
-#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:534
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:535
 msgid ""
 "The oyX1 modules \"move_color_server_profiles\" handler sets up X Color "
 "Management device profile and screen document profile properties. The "
@@ -5214,7 +5214,7 @@ msgstr ""
 "das initialisieren verlangt. Die Implementierung nutzt Xlib und die XRandR "
 "Erweiterung."
 
-#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:724
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:725
 msgid ""
 "The oyX1 modules \"send_native_update_event\" handler lets you ping X Color "
 "Management advanced X11 atom. The implementation uses Xlib."
@@ -5222,7 +5222,7 @@ msgstr ""
 "Das \"send_native_update_event\" Kommando des oyX1 Modules setzt X Color "
 "Management kompatible erweitert X11 atom. Die Implementation nutzt Xlib."
 
-#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:991
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:992
 msgid ""
 "The oyX1 modules \"set_xcm_region\" handler lets you set X Color Management "
 "compatible client side color regions. The implementation uses libXcm and "
@@ -5326,7 +5326,7 @@ msgstr ""
 "Der gewählte Farbraum wird einem XYZ ohne ICC Farbprofil zugewiesen werden "
 "und Farben für die weitere Verarbeitung bestimmen."
 
-#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:973
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:974
 msgid ""
 "The set_xcm_region takes minimal three options. The key name "
 "\"window_rectangle\" specifies in a oyRectangle_s object the requested "
@@ -5686,11 +5686,11 @@ msgstr ""
 "Editierprofile."
 
 #: examples/oyranos_cmm_dFil.c:614
-#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:146
-#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:327
-#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:516
-#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:706
-#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:963
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:147
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:328
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:517
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:707
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:964
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:3431
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:3702
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:3908
@@ -5857,11 +5857,11 @@ msgstr "h - Passe Bildhöhe in Fenster ein"
 #. default options -h and -v
 #: examples/oyranos_cmm_dDev.c:841 examples/oyranos_cmm_dFil.c:168
 #: examples/oyranos_cmm_dFil.c:628
-#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:160
-#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:341
-#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:530
-#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:720
-#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:987
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:161
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:342
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:531
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:721
+#: modules/color/modules/devices/oyranos_monitor_x11_extend.c:988
 #: tools/oyranos-monitor-white-point.c:363 tools/oyranos_profile_graph.c:283
 #: tools/oyranos_profiles.c:127
 msgid "help"
