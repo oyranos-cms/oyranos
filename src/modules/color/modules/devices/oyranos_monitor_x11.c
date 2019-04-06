@@ -1087,7 +1087,7 @@ int      oyX1SetupMonitorCalibration ( oyMonitor_s       * display,
         if(fp)
         {
           int n;
-          oyX1Alloc( t, 48, pclose(fp); free(dpy_name); return 1;)
+          oyX1Alloc( t, 48, pclose(fp); free(dpy_name); free(text); free(clear); return 1;)
           n = fread( t, sizeof(char), 48, fp );
           if(0 <= n && n < 48) t[n] = '\000';
           else t[47] = '\000';

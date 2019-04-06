@@ -2092,6 +2092,9 @@ int          lcm2CreateAbstractWhitePointProfileBradford (
   *my_abstract_file_name = kelvin_name;
   if(flags & 0x01) /* skip computation */
   {
+#ifdef HAVE_LOCALE_H
+    if(old_loc) free(old_loc);
+#endif
     return error;
   }
 
