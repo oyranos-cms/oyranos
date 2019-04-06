@@ -1726,6 +1726,8 @@ oyjl_val    oyTreeFromCxf( const char * text )
   oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, startNM, "collection/[0]/spectral/[0]/startNM" );
   oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, lambda, "collection/[0]/spectral/[0]/lambda" );
 
+  if(increment) free(increment);
+  if(startWL) free(startWL);
 
 #ifdef USE_GETTEXT
   char * old_loc = strdup(setlocale(LC_ALL,NULL));
