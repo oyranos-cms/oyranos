@@ -1998,10 +1998,14 @@ int          lcm2CreateAbstractWhitePointProfileBradford (
                          {0.0, 0.0, 1.0}};
   double max_brightness, b_scale;
 #ifdef HAVE_LOCALE_H
-  char * old_loc = strdup(setlocale(LC_ALL,NULL));
+  char * old_loc;
 #endif
 
   if(error) return 1;
+
+#ifdef HAVE_LOCALE_H
+  old_loc = strdup(setlocale(LC_ALL,NULL));
+#endif
 
   if(scale)
     b_scale = *scale;
@@ -2102,6 +2106,7 @@ int          lcm2CreateAbstractWhitePointProfileBradford (
                              "Bradford",
                              "http://www.cie.co.at",
                              NULL);
+  kelvin_name = NULL;
   if(!profile) goto lcm2CreateAbstractWhitePointProfileBClean;
 
   lcm2MAT3 Bradford, BB, Brightness = {{ {{b_scale,0,0}}, {{0,b_scale,0}}, {{0,0,b_scale}} }};
@@ -2149,6 +2154,7 @@ lcm2CreateAbstractWhitePointProfileBClean:
     lcm2Free_m(fn);
     cmsCloseProfile( profile );
   }
+  lcm2Free_m(kelvin_name);
 #ifdef HAVE_LOCALE_H
   if(old_loc) free(old_loc);
 #endif
