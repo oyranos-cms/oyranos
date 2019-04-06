@@ -1721,13 +1721,22 @@ oyjl_val    oyTreeFromCxf( const char * text )
       oyMessageFunc_p( oyMSG_WARN, NULL, "copy from CxF node to NCC node failed: %s %s", in, out );
     ++i;
   }; 
-  oyjlStringToLong(startWL, &startNM);
-  oyjlStringToLong(increment, &lambda);
-  oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, startNM, "collection/[0]/spectral/[0]/startNM" );
-  oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, lambda, "collection/[0]/spectral/[0]/lambda" );
 
-  if(increment) free(increment);
-  if(startWL) free(startWL);
+  if(startWL)
+  {
+    oyjlStringToLong(startWL, &startNM);
+    oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, startNM, "collection/[0]/spectral/[0]/startNM" );
+    free(startWL);
+    startWL = NULL;
+  }
+  if(increment)
+  {
+    oyjlStringToLong(increment, &lambda);
+    oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, lambda, "collection/[0]/spectral/[0]/lambda" );
+    free(increment);
+    increment = NULL;
+  }
+
 
 #ifdef USE_GETTEXT
   char * old_loc = strdup(setlocale(LC_ALL,NULL));
@@ -1746,10 +1755,13 @@ oyjl_val    oyTreeFromCxf( const char * text )
     if(oyjlStringsToDoubles( reflSpec_text, ' ', &n, 0, &list ))
       fprintf( stderr, "ERROR parsing: %d %s ", i, name );
 
-    oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, colorSpec, "collection/[0]/colors/[%d]/spectral/[0]/id" );
-    oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, name, "collection/[0]/colors/[%d]/name", i );
+    if(colorSpec)
+      oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, colorSpec, "collection/[0]/colors/[%d]/spectral/[0]/id" );
+    if(name)
+      oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, name, "collection/[0]/colors/[%d]/name", i );
 
-    oyjlStringToLong(startWl, &startNm);
+    if(startWl)
+      oyjlStringToLong(startWl, &startNm);
     //fprintf( stderr, "  %d: %s - %ld-%ld ", i, name, startNM, startNM+n*lambda );
     for(j = 0; j < n; ++j)
       oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, list[j], "collection/[0]/colors/[%d]/spectral/[0]/data/[%d]", i, j );
@@ -1929,7 +1941,7 @@ int oyTreeToCgats( oyjl_val root, int * level OYJL_UNUSED, char ** text )
     t = oyjlStrNewFrom(&tmp,0,0,0);
   }
 
-  if(data && pixels >= 1)
+  if(t && pixels >= 1)
   {
     for(index = 0; index < pixels; ++index)
     {
@@ -1962,6 +1974,8 @@ int oyTreeToCgats( oyjl_val root, int * level OYJL_UNUSED, char ** text )
   setlocale(LC_ALL,old_loc);
   free(old_loc);
 #endif
+
+  if(!t) return 1;
 
   *text = oyjlStrPull( t );
   oyjlStrRelease( &t );
@@ -2017,8 +2031,9 @@ int oyTreeToCsv( oyjl_val root, int * level OYJL_UNUSED, char ** text )
 #endif
 
   if(data && pixels >= 1)
-  {
     t = oyjlStrNew(0,0,0);
+  if(t)
+  {
     oyjlStrAppendN( t, "\"Wavelength (nm)/Name\"", 22 );
     for(index = 0; index < pixels; ++index)
     {
@@ -2060,6 +2075,8 @@ int oyTreeToCsv( oyjl_val root, int * level OYJL_UNUSED, char ** text )
   setlocale(LC_ALL,old_loc);
   free(old_loc);
 #endif
+
+  if(!t) return 1;
 
   *text = oyjlStrPull( t );
   oyjlStrRelease( &t );
