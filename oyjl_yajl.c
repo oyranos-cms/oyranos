@@ -714,7 +714,7 @@ void             oyjlParseXMLDoc_    ( xmlDocPtr           doc,
     {
       oyjl_val text = NULL;
       xmlNodePtr cur_ = cur->xmlChildrenNode;
-      if( oyjlXMLNodeIsText(cur_) && node->type == oyjl_t_object )
+      if( oyjlXMLNodeIsText(cur_) && node && node->type == oyjl_t_object )
         text = oyjlTreeGetValue( node, OYJL_CREATE_NEW, "@text" );
       oyjlParseXMLDoc_( doc, cur->xmlChildrenNode, flags,
                         text ? text : node );
