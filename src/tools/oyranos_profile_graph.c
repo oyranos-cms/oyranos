@@ -136,9 +136,7 @@ cairo_status_t oyCairoToStdout(void *closure OYJL_UNUSED,
 const char * jcommands = "{\n\
   \"command_set\": \"oyranos-profile-graph\",\n\
   \"comment\": \"command_set_delimiter - build key:value; default is '=' key=value\",\n\
-  \"comment\": \"command_set_option - use \\\"-s\\\" \\\"key\\\"; skip \\\"--\\\" direct in front of key\",\n\
-  \"command_get\": \"oyranos-profile-graph\",\n\
-  \"command_get_args\": [\"-X\", \"json\"]\n\
+  \"comment\": \"command_set_option - use \\\"-s\\\" \\\"key\\\"; skip \\\"--\\\" direct in front of key\"\n\
 }";
 int main( int argc , char** argv )
 {
@@ -244,7 +242,7 @@ int main( int argc , char** argv )
                                   {"svg",_("SVG"),"",_("SVG Vector")},
                                   {"csv",_("CSV"),"",_("CSV Values")},
                                   {"ncc",_("NCC"),"",_("Named Color Collection")},
-                                  {"cgast",_("CGATS"),"",_("CGATS Values")},
+                                  {"cgats",_("CGATS"),"",_("CGATS Values")},
                                   {"ppm",_("PPM"),"",_("Spectral PAM Image")},
                                   {"","","",""}};
   oyjlOption_s oarray[] = {
@@ -361,6 +359,12 @@ int main( int argc , char** argv )
   pixel_w = pixel_width+0.5;
   if(xyy_plane) proj = p_xyz;
   if(sformat) format = sformat;
+
+  if(profile_count && profile_names && profile_names[0] && profile_names[0][0] == 'l' && profile_names[0][1] == '\000')
+  {
+    system("oyranos-profiles -le");
+    exit(0);
+  }
 
 
   if(oy_debug)
@@ -1769,7 +1773,8 @@ oyjl_val    oyTreeFromCxf( const char * text )
   }
   endNM = startNM + lambda * n_max;
   oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, endNM, "collection/[0]/spectral/[0]/endNM" );
-  oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, (endNM-startNM+lambda)/lambda, "collection/[0]/spectral/[0]/steps" );
+  if(lambda)
+    oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, (endNM-startNM+lambda)/lambda, "collection/[0]/spectral/[0]/steps" );
 
 #ifdef USE_GETTEXT
   setlocale(LC_ALL,old_loc);
