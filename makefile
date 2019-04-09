@@ -1,16 +1,19 @@
 prefix=/usr
 
-CC = gcc
+CC = cc
 DEBUG= -Wall -Wextra -g
-INCL = -I$(prefix)/include
-LDFLAGS = -L$(prefix)/lib64
-TARGET = oyjl_tree_test
+INCL = -I$(prefix)/include -I./
+LDFLAGS = -L$(prefix)/lib64 -lm
+TARGET = oyjl-test-core
 CFLAGS=$(DEBUG) $(INCL) -fPIC
 SOURCES = \
+	oyjl_args.c \
 	oyjl_core.c \
 	oyjl_tree.c
 OBJECTS = $(SOURCES:.c=.o)
-TSOURCES = $(TARGET).c
+YSOURCES = oyjl_yajl.c $(SOURCES)
+YOBJECTS = $(YSOURCES:.c=.o)
+TSOURCES = test-core.c
 TOBJECTS = $(TSOURCES:.c=.o)
 OSOURCES = oyjl.c
 OOBJECTS = $(OSOURCES:.c=.o)
@@ -21,20 +24,19 @@ $(TARGET):	$(OBJECTS) $(TOBJECTS)
 	$(CC) $(CFLAGS) -o $@ $(TOBJECTS) $(OBJECTS) $(LDFLAGS) -lyajl
 
 check:
-	./oyjl_tree_test
-	./oyjl_tree_test org/freedesktop/openicc/device/[0]/[0]
+	./oyjl-test-core
 
-oyjl: $(OBJECTS) $(OOBJECTS)
-	$(CC) $(CFLAGS) -o $@ $(OOBJECTS) $(OBJECTS) $(LDFLAGS) -lyajl
+oyjl: $(YOBJECTS) $(OOBJECTS)
+	$(CC) $(CFLAGS) -o $@ $(OOBJECTS) $(YOBJECTS) $(LDFLAGS) -lyajl -lxml2 -lyaml
 
-jsontoyaml: $(OBJECTS) $(OOBJECTS)
-	$(CC) $(CFLAGS) -o $@ $(OOBJECTS) $(OBJECTS) $(LDFLAGS) -lyajl
+jsontoyaml: $(YOBJECTS) $(OOBJECTS)
+	$(CC) $(CFLAGS) -o $@ $(OOBJECTS) $(YOBJECTS) $(LDFLAGS) -lyajl -lxml2 -lyaml
 
-yamltojson: yaml2json.o $(OBJECTS)
-	$(CC) $(CFLAGS) -o $@ $(OBJECTS) $< $(LDFLAGS) -lyajl -lyaml
+yamltojson: yaml2json.o $(YOBJECTS)
+	$(CC) $(CFLAGS) -o $@ $(YOBJECTS) $< $(LDFLAGS) -lyajl -lxml2 -lyaml
 
 clean:
-	$(RM) $(OBJECTS) $(TOBJECTS) $(OOBJECTS) $(TARGET) oyjl
+	$(RM) $(OBJECTS) $(TOBJECTS) $(OOBJECTS) $(YOBJECTS) jsontoyaml yaml2json.o yamltojson $(TARGET) oyjl
 
 .SUFFIXES: .c.o
 
