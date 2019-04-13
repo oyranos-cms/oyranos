@@ -827,6 +827,15 @@ int main( int argc , char** argv )
   /* default spectral range to draw */
   min_x = 300.;
   max_x = 780.;
+  if(standardobs || observer64)
+    min_x = 360;
+  if(spectra)
+  {
+    int startNM = oySpectrumGetParam( spectra, oySPECTRUM_START );
+    int endNM = oySpectrumGetParam( spectra, oySPECTRUM_END );
+    min_x = startNM;
+    max_x = endNM;
+  }
 
   if(raster &&
      ( standardobs || observer64 || illuminant || kelvin > 0.0 || spectra ) )
@@ -837,6 +846,7 @@ int main( int argc , char** argv )
     /* 25 nm */
     for(i = 300; i < max_x; i += 25)
     {
+      if(i < min_x) continue;
       cairo_move_to(cr, xToImage(i), yToImage(min_y));
       cairo_line_to(cr, xToImage(i), yToImage(max_y));
     }
@@ -846,6 +856,7 @@ int main( int argc , char** argv )
     cairo_set_line_width (cr, 0.7*thickness);
     for(i = 300; i < max_x; i += 100)
     {
+      if(i < min_x) continue;
       cairo_move_to(cr, xToImage(i), yToImage(min_y));
       cairo_line_to(cr, xToImage(i), yToImage(max_y));
     }
@@ -1319,7 +1330,7 @@ void drawIlluminant( cairo_t * cr,
   if(verbose && index < 10)
     fprintf( stderr, "drawing*sprectrum %s %d %d nm - %d nm %d nm precission %f", id, index, start, end, lambda, max_y );
 
-  cairo_move_to(cr, xToImage( oySpectrumGetParam( spec, oySPECTRUM_START )), yToImage( oySpectrumGet(spec, index, 0)));
+  cairo_move_to(cr, xToImage( OY_MAX(start, min_x) ), yToImage( oySpectrumGet(spec, index, 0)));
 
   for(i = 0; i < channels-1; ++i)
   {
