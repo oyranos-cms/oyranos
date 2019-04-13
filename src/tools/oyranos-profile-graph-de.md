@@ -67,8 +67,9 @@ Erzeuge aus einem ICC Profil eine Grafik mit seiner Sättigungslinie.
    * \-p svg		# SVG
    * \-p csv		# CSV
    * \-p ncc		# NCC
-   * \-p cgast		# CGATS
+   * \-p cgats		# CGATS
    * \-p ppm		# PPM
+* \-P|\-\-pattern *STRING*	Filter für Farbnamen
 
 ### Allgemeine Optionen
 

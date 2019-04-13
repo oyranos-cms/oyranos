@@ -19,6 +19,7 @@
  */
 
 # include <stddef.h>
+#include <regex.h>
 
 #define __USE_POSIX2 1
 #include <stdio.h>                /* popen() */
@@ -111,6 +112,8 @@ oyjl_val    oyTreeFromCgats( const char * text );
 int         oyTreeToCgats( oyjl_val root, int * level OYJL_UNUSED, char ** text );
 int         oyTreeToCsv( oyjl_val root, int * level, char ** text );
 
+void        oyTreeFilterColors( oyjl_val root, const char * pattern );
+
 typedef enum {
   COLOR_COLOR,
   COLOR_GRAY,
@@ -171,6 +174,7 @@ int main( int argc , char** argv )
   oyImage_s * image = NULL;
   char ** profile_names = 0;
   int profile_count = 0;
+  const char * pattern = NULL;
 
   int i,j;
   cairo_t * cr = 0;
@@ -265,6 +269,7 @@ int main( int argc , char** argv )
     {"oiwi", 0, 'o', "output",        NULL, _("Output"),        _("Specify output file name, default is stdout"), NULL, _("-|FILE"), oyjlOPTIONTYPE_STRING, {}, oyjlSTRING, {.s=&output} },
     {"oiwi", 0, 'p', "spectral-format",NULL,_("Spectral Output"),_("Specify spectral output file format"), NULL, _("FORMAT"), oyjlOPTIONTYPE_CHOICE,
       {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)spe_form, sizeof(spe_form), 0 )}, oyjlSTRING, {.s=&sformat} },
+    {"oiwi", 0, 'P', "pattern",       NULL, _("Pattern"),       _("Filter of Color Names"),  NULL, _("STRING"), oyjlOPTIONTYPE_STRING, {}, oyjlSTRING, {.s=&pattern} },
     {"oiwi", 0, 's', "spectral",      NULL, _("Spectral"),      _("Spectral Input"),         NULL, _("FILE"), oyjlOPTIONTYPE_STRING, {}, oyjlSTRING, {.s=&input} },
     {"oiwi", 0, 'S', "standard-observer",NULL,_("Standard Observer"),_("CIE Standard Observer 1931 2°"), NULL,NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&standardobs} },
     {"oiwi", 0, 'O', "observer-64",   NULL, _("10° Observer"),  _("CIE Observer 1964 10°"),  NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&observer64} },
@@ -296,7 +301,7 @@ int main( int argc , char** argv )
     {"oiwg", 0, _("Obs10°"), _("1964 10° Observer Graph"), NULL, "O", "tbgwRofv", "O" },
     {"oiwg", 0, _("Blackbody Radiator"), _("Blackbody Radiator Spectrum Graph"), NULL, "k", "tbgwRofv", "k" },
     {"oiwg", 0, _("Illuminant Spectrum"), _("Illuminant Spectrum Graph"), NULL, "i", "tbgwRofv", "i" },
-    {"oiwg", 0, _("Spectral Input"), _("Spectral Input Graph"), NULL, "s", "tbgwRopv", "sp" },
+    {"oiwg", 0, _("Spectral Input"), _("Spectral Input Graph"), NULL, "s", "tbgwRopv", "spP" },
     {"oiwg", 0, _("Misc"), _("General options"), NULL, "", "", "tbgwRofXvh" },
     {"",0,0,0,0,0,0,0}
   };
@@ -386,8 +391,9 @@ int main( int argc , char** argv )
     if(data_format == oyNAME_JSON)
     {
       specT = oyjlTreeParse( text, error_buffer, error_buffer_size ),
+      oyTreeFilterColors( specT, pattern );
       spectra = oySpectrumFromTree( specT );
-      if(verbose && spectra) fprintf( stderr, "JSON parsed\n" );
+      if(verbose && spectra) fprintf( stderr, "NCC parsed\n" );
       if(oy_debug) fprintf( stderr, "%s", oyStruct_GetText((oyStruct_s*)spectra, oyNAME_NAME, 0));
     }
     else
@@ -397,6 +403,7 @@ int main( int argc , char** argv )
       if(verbose)
         fprintf( stderr, "XML detected: %s\n", input );
 
+      oyTreeFilterColors( specT, pattern );
       spectra = oySpectrumFromTree( specT );
       if(verbose && spectra) fprintf( stderr, "CxF parsed\n" );
       if(oy_debug) fprintf( stderr, "%s", oyStruct_GetText((oyStruct_s*)spectra, oyNAME_NAME, 0));
@@ -405,6 +412,7 @@ int main( int argc , char** argv )
     {
       specT = oyTreeFromCsv( text );
       oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, input, "description" );
+      oyTreeFilterColors( specT, pattern );
       spectra = oySpectrumFromTree( specT );
       if(verbose && spectra)
       if(verbose && spectra) fprintf( stderr, "CSV parsed\n" );
@@ -413,6 +421,7 @@ int main( int argc , char** argv )
     if(!spectra && text)
     {
       specT = oyTreeFromCgats( text );
+      oyTreeFilterColors( specT, pattern );
       spectra = oySpectrumFromTree( specT );
       if(verbose && spectra) fprintf( stderr, "CGATS parsed\n" );
       if(oy_debug) fprintf( stderr, "%s", oyStruct_GetText((oyStruct_s*)spectra, oyNAME_NAME, 0));
@@ -489,9 +498,12 @@ int main( int argc , char** argv )
         for(j = 0; j < spectral_count; ++j)
         {
           double rgb[4] = { spectra_XYZ[j].f[0]/white.f[0], spectra_XYZ[j].f[1]/white.f[0], spectra_XYZ[j].f[2]/white.f[0], 1.0 };
+          oyjl_val v = oyjlTreeGetValueF(specT, 0, "collection/[0]/colors/[%d]/name", j);
+          const char * name = OYJL_GET_STRING(v);
+
           oyXYZtoSRGB( rgb );
           if(j < 10)
-          fprintf( stderr, "%d\t%f %f %f -> %f %f %f\n", j, spectra_XYZ[j].f[0]/white.f[0]*100.0, spectra_XYZ[j].f[1]/white.f[0]*100.0, spectra_XYZ[j].f[2]/white.f[0]*100.0,
+          fprintf( stderr, "%d %s\t%f %f %f -> %f %f %f\n", j, name, spectra_XYZ[j].f[0]/white.f[0]*100.0, spectra_XYZ[j].f[1]/white.f[0]*100.0, spectra_XYZ[j].f[2]/white.f[0]*100.0,
                    rgb[0], rgb[1], rgb[2] );
           else if(j == 10)
           fprintf( stderr, "%d\t... more might follow\n", j );
@@ -1305,7 +1317,7 @@ void drawIlluminant( cairo_t * cr,
   }
 
   if(verbose && index < 10)
-  fprintf( stderr, "drawing*sprectrum %d %d nm - %d nm %d nm precission %f", index, start, end, lambda, max_y );
+    fprintf( stderr, "drawing*sprectrum %s %d %d nm - %d nm %d nm precission %f", id, index, start, end, lambda, max_y );
 
   cairo_move_to(cr, xToImage( oySpectrumGetParam( spec, oySPECTRUM_START )), yToImage( oySpectrumGet(spec, index, 0)));
 
@@ -2084,5 +2096,48 @@ int oyTreeToCsv( oyjl_val root, int * level OYJL_UNUSED, char ** text )
   *text = oyjlStrPull( t );
   oyjlStrRelease( &t );
   return 0;
+}
+
+int oyRegExpMatch( const char * text, const char * pattern )
+{
+  int status = 0;
+  regex_t re;
+  if(regcomp(&re, pattern, REG_EXTENDED|REG_NOSUB) != 0)
+    return 0;
+  status = regexec( &re, text, (size_t)0, NULL, 0 );
+  regfree( &re );
+  if(status != 0)
+    return 0;
+  return 1;
+}
+
+void        oyTreeFilterColors( oyjl_val root, const char * pattern )
+{
+  oyjl_val data, v;
+  int index, pixels, match;
+  const char * name;
+  char * num;
+
+  if(!pattern) return;
+  data = oyjlTreeGetValue(root, 0, "collection/[0]/colors");
+  if(!data) { oyMessageFunc_p(oyMSG_WARN,NULL,"colors missed"); return; }
+  pixels = oyjlValueCount( data );
+
+  num = oyjlStringCopy( "10000000000000000", 0 );
+  if(!num) return;
+  for(index = pixels - 1; index >= 0; --index)
+  {
+
+    v = oyjlTreeGetValueF( data, 0, "[%d]/name", index );
+    name = OYJL_GET_STRING(v);
+    if(!name) continue;
+    match = oyRegExpMatch( name, pattern );
+    if(pattern && !match )
+    {
+      sprintf( num, "[%d]", index );
+      oyjlTreeClearValue(data, num);
+    }
+  }
+  free(num);
 }
 

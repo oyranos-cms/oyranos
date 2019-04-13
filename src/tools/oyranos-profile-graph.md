@@ -67,8 +67,9 @@ Create a 2D Graph containing the saturation line from a ICC Profile.
    * \-p svg		# SVG
    * \-p csv		# CSV
    * \-p ncc		# NCC
-   * \-p cgast		# CGATS
+   * \-p cgats		# CGATS
    * \-p ppm		# PPM
+* \-P|\-\-pattern *STRING*	Filter of Color Names
 
 ### General options
 
