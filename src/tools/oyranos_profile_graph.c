@@ -993,8 +993,6 @@ int main( int argc , char** argv )
   if(spectra)
   {
     int j;
-#define setColor(r_,g_,b_,a_) \
-                 rgba[0] = r_; rgba[1] = g_; rgba[2] = b_; rgba[3] = a_;
     for(j = 0; j < spectral_count; ++j)
     {
       double rgb[4] = { spectra_XYZ[j].f[0]/white.f[0], spectra_XYZ[j].f[1]/white.f[0], spectra_XYZ[j].f[2]/white.f[0], 1.0 };
@@ -1003,7 +1001,7 @@ int main( int argc , char** argv )
                       spectra, j,
                       xO, yO, width, height,
                       min_x, max_x, min_y < 0 ? min_y : 0.0, max_y,
-                      spectral_count == 1 && no_color ? COLOR_COLOR : COLOR_SPECTRAL, rgb,
+                      no_color ? COLOR_GRAY : spectral_count == 1 ? COLOR_SPECTRAL : COLOR_COLOR, rgb,
                       flags, input );
     }
     oyImage_Release( &spectra );
