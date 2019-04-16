@@ -196,31 +196,46 @@ Rectangle {
                 Component.onCompleted: {
                     if(type === "string")
                     {
-                        var j = JSON.parse(text)
+                        var t = text
+                        var j = JSON.parse(t)
                         key = j.key
                         if(typeof j.suggest !== "undefined")
                             defaultValue = j.suggest
                         if(app_debug)
                             statusText = key + " string"
+                        setDataText2( this, text )
                         visible = true
                         init = false
                     } else
                         visible = false
                 }
-                input.onCurrentTextChanged: {
+                combo.onCurrentTextChanged: {
                     var cV = currentValue
-                    var sv = value
-                    if(value === currentValue || init)
+                    var sv = combo.currentText
+                    var k = key;
+                    if(sv === cV || sv.length === 0 || init)
                         return;
-                    statusText = key + ":" + currentValue + " " + value + " " + qsTr("selected") + "  " + qsTr("new/old") + ": " + value + "/" + currentValue
-                    currentValue = value;
-                    appData.setOption(key, value)
-                    var k = key
-                    callback( k, currentValue, 1 )
+                    statusText = k + ":" + cV + " " + sv + " " + qsTr("selected")
+                    cV = sv;
+                    appData.setOption(k, cV);
+                    callback( k, cV, 1 )
                 }
-                input.onPressedChanged: {
-                    callback( k, value, 1 )
+                combo.onAccepted: {
+                    var i = combo
+                    var t = i.editText
+                    var k = key;
+                    var ind  = combo.find(t)
+                    var model = combo.model
+                    if (ind === -1)
+                    {
+                        if( typeof model !== "undefined")
+                            model.append({key: t})
+                    }
+                    statusText = k + ":" + t
+                    callback( k, t, 1 )
                 }
+                //combo.onAcceptableInputChanged:  statusText = "AI: "+combo.currentText
+                //combo.onEditTextChanged: statusText = "ET: "+combo.editText
             }
             MouseArea {
                 width: comboBox.width - comboBox.combo.width
@@ -264,6 +279,7 @@ Rectangle {
         var loc = j.loc;
         var def = j.default;
         var name = j.key;
-        P.setComboItems( combo, j.choices, name, def, loc );
+        var choices = j.choices
+        P.setComboItems( combo, choices, name, def, loc );
     }
 }
