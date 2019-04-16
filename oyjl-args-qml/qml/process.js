@@ -96,6 +96,7 @@ function getTranslatedItem( item, base, loc )
 function setComboItems( combo, choices, key, defaultValue, loc )
 {
     var current = -1;
+    var model = combo.model
     for( var index in choices )
     {
         if( typeof choices[index].name != "string" )
@@ -108,7 +109,7 @@ function setComboItems( combo, choices, key, defaultValue, loc )
         var nick = item.nick;
         if(nick === defaultValue)
             current = name;
-        combo.model.append({ "key": name, "nick": nick });
+        model.append({ "key": name, "nick": nick });
     }
     combo.key = key;
     if(typeof defaultValue !== "undefined")

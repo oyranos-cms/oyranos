@@ -34,7 +34,7 @@
         <translation>Starte Programm für </translation>
     </message>
     <message>
-        <location filename="../qml/About.qml" line="96"/>
+        <location filename="../qml/About.qml" line="97"/>
         <source>OK</source>
         <translation>Ja</translation>
     </message>
@@ -106,18 +106,17 @@
 <context>
     <name>OptionsList</name>
     <message>
-        <location filename="../qml/OptionsList.qml" line="105"/>
-        <location filename="../qml/OptionsList.qml" line="144"/>
+        <location filename="../qml/OptionsList.qml" line="114"/>
+        <location filename="../qml/OptionsList.qml" line="150"/>
         <location filename="../qml/OptionsList.qml" line="180"/>
-        <location filename="../qml/OptionsList.qml" line="215"/>
         <source>new/old</source>
         <translation>neu/alt</translation>
     </message>
     <message>
-        <location filename="../qml/OptionsList.qml" line="105"/>
-        <location filename="../qml/OptionsList.qml" line="144"/>
+        <location filename="../qml/OptionsList.qml" line="114"/>
+        <location filename="../qml/OptionsList.qml" line="150"/>
         <location filename="../qml/OptionsList.qml" line="180"/>
-        <location filename="../qml/OptionsList.qml" line="215"/>
+        <location filename="../qml/OptionsList.qml" line="218"/>
         <source>selected</source>
         <translation>gewählt</translation>
     </message>
@@ -135,13 +134,13 @@
         <translation>Kommandos geladen</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="296"/>
-        <location filename="../qml/main.qml" line="326"/>
+        <location filename="../qml/main.qml" line="314"/>
+        <location filename="../qml/main.qml" line="346"/>
         <source>Launched app for </source>
         <translation>Starte Programm für </translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="451"/>
+        <location filename="../qml/main.qml" line="473"/>
         <source>Load failed</source>
         <translation>Laden daneben</translation>
     </message>
