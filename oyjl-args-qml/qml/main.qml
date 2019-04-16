@@ -119,7 +119,7 @@ AppWindow {
             {
                 if(key.length > 1)
                     arg = "--" + key
-                else
+                else if(key.length === 1)
                     arg = "-" + key
             }
             var v = JSON.stringify(value);
@@ -129,10 +129,20 @@ AppWindow {
                     if(typeof value === "string")
                     {
                         if(value.length)
-                            arg += command_set_delimiter + value
+                        {
+                            if(arg.length > 0)
+                                arg += command_set_delimiter + value
+                            else
+                                arg += value
+                        }
                     }
                     else
-                        arg += command_set_delimiter + v
+                    {
+                        if(arg.length > 0)
+                            arg += command_set_delimiter + v
+                        else
+                            arg += v
+                    }
                 }
             var args = []
             args = processSetArgs.slice()
