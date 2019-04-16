@@ -423,7 +423,6 @@ typedef enum oyjlOPTIONTYPE_e {
     oyjlOPTIONTYPE_CHOICE,             /**< list of choices */
     oyjlOPTIONTYPE_FUNCTION,           /**< computed list of choices */
     oyjlOPTIONTYPE_DOUBLE,             /**< IEEE floating point number with double precission */
-    oyjlOPTIONTYPE_STRING,             /**< text string */
     oyjlOPTIONTYPE_NONE,               /**< no value possible - the option is a flag like -v/--verbose */
     oyjlOPTIONTYPE_END                 /**< */
 } oyjlOPTIONTYPE_e;
@@ -461,9 +460,9 @@ typedef union oyjlVariable_u {
  *  The type is declared inside the ::oyjlOPTIONTYPE_e enum range. */
 typedef union oyjlOption_u {
   struct {
-    oyjlOptionChoice_s * list;         /**< used for oyjlOPTIONTYPE_CHOICE */
+    oyjlOptionChoice_s * list;         /**< used for oyjlOPTIONTYPE_CHOICE | oyjlOPTIONTYPE_EDIT */
     int selected;                      /**< the currently selected choice */
-  } choices;                           /**< @brief oyjlOPTIONTYPE_CHOICE */
+  } choices;                           /**< @brief oyjlOPTIONTYPE_CHOICE | oyjlOPTIONTYPE_EDIT */
   /** @brief oyjlOPTIONTYPE_FUNCTION
    *  @param[in]   opt                 the option context
    *  @param[out]  selected            show the default; optional
@@ -477,16 +476,17 @@ typedef union oyjlOption_u {
     double end;
     double tick;
   } dbl;                               /**< @brief oyjlOPTIONTYPE_DOUBLE */
-  char * suggest;                      /**< @brief oyjlOPTIONTYPE_STRING initial suggested string of a text field */
 } oyjlOption_u;
 
+#define OYJL_OPTION_FLAG_EDITABLE      0x01 /**< @brief The oyjlOption_s choices are merely a hint. Let users fill other strings too. */
 /** @brief abstract UI option
  *
  *  A oyjlOption_s::o is inside of oyjlOptionGroup_s::detail to be displayed and oyjlOptionGroup_s::mandatory/optional for syntax checking.
  */
 struct oyjlOption_s {
   char type[4];                        /**< @brief must be 'oiwi' */
-  unsigned int flags;                  /**< unused */
+  /** - ::OYJL_OPTION_FLAG_EDITABLE : flag for oyjlOPTIONTYPE_CHOICE and oyjlOPTIONTYPE_FUNCTION. Hints a not closely specified intput. The content is typically not useful for a overview in a help or man page. These can print a overview with oyjlOption_s::value_type. This flag is intented for convinience suggestions or very verbose dictionaries used in scrollable pull down GUI elements. */
+  unsigned int flags;                  /**< @brief rendering hint */
   /** '#' is used as default option like a command without any arguments. '@' together with value_name expects arbitrary arguments as described in oyjlOption_s::value_name. minus '-' and space ' ' are reserved; This letter is handled like a ID. */
   char o;                              /**< @brief one letter option name */
   const char * option;                 /**< @brief string without white space, "my-option"; optional if *o* is present */
