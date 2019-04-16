@@ -38,10 +38,10 @@
 extern int * oyjl_debug;
 
 /** \addtogroup oyjl_args Options Handling
- *  @brief   Structured Options and Arguments for more than the command line
+ *  @brief   Structured Options and Arguments for more many aspects on command line and more
  *
  *  @section args_intro Introduction
- *  Argument handling uses a compact, table like creation syntax.
+ *  Oyjl argument handling uses a compact, table like creation syntax.
  *  oyjlUi_Create() is a high level API for tools to feed only the
  *  declarations and obtain the results in one call. On a lower level parsing
  *  with oyjlOptions_Parse() detects conflicts during programming and
@@ -51,7 +51,7 @@ extern int * oyjl_debug;
  *  (G)UI's and further processing. oyjlUi_ToMan() creates unix manual pages.
  *  oyjlUi_ToMarkdown() lets you produce a man page for your web page.
  *  Generation of other formats is simple.
- *  Translations are supported.
+ *  Translations are supported by oyjl-tanslate tool through gettext.
  *
  *  Command line options support single letter in oyjlOption_s::o and
  *  long options in oyjlOption_s::option without
@@ -165,8 +165,8 @@ extern int * oyjl_debug;
  *  @subsection args_interactive Interactive Viewers
  *  A example of a interactive viewer is the included oyjl-args-json renderer.
  *  Tools have to be more careful, in case they want to be displayed by
- *  by a interactive viewer. They should declare, in which order options
- *  apply and consider the timing.
+ *  a interactive viewer. They should declare, in which order options
+ *  apply and add command line information for the -X json+command option.
  *
  *  A GUI renderer might display the result of a command immediately. The
  *  simplest form is plain text output. The text font should eventually be
@@ -192,7 +192,7 @@ void oyjlOptionChoice_Release     ( oyjlOptionChoice_s**choices )
   oyjlOptionChoice_s * ca;
   if(!choices || !*choices) return;
   ca = *choices;
-  while(ca[n].nick[0] != '\000') ++n;
+  while(ca[n].nick && ca[n].nick[0] != '\000') ++n;
   for(i = 0; i < n; ++i)
   {
     oyjlOptionChoice_s * c = &ca[i];
@@ -1068,7 +1068,9 @@ void  oyjlOptions_PrintHelp       ( oyjlOptions_s  * opts,
               fprintf( stderr, "%s", oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING) );
               fprintf( stderr, "\t%s%s%s\n", o->description ? o->description:"", o->help?": ":"", o->help?o->help :"" );
             }
-            while(o->values.choices.list[n].nick[0] != '\000')
+            if(o->flags & OYJL_OPTION_FLAG_EDITABLE)
+              break;
+            while(o->values.choices.list[n].nick && o->values.choices.list[n].nick[0] != '\000')
               ++n;
             for(l = 0; l < n; ++l)
               fprintf( stderr, "\t  -%c %s\t\t# %s%s%s\n",
@@ -1082,9 +1084,18 @@ void  oyjlOptions_PrintHelp       ( oyjlOptions_s  * opts,
         case oyjlOPTIONTYPE_FUNCTION:
           {
             int n = 0,l;
-            oyjlOptionChoice_s * list = oyjlOption_GetChoices_(o, NULL, opts );
+            oyjlOptionChoice_s * list;
+            if(o->value_name)
+            {
+              fprintf( stderr, "\t" );
+              fprintf( stderr, "%s", oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING) );
+              fprintf( stderr, "\t%s%s%s\n", o->description ? o->description:"", o->help?": ":"", o->help?o->help :"" );
+            }
+            if(o->flags & OYJL_OPTION_FLAG_EDITABLE)
+              break;
+            list = oyjlOption_GetChoices_(o, NULL, opts );
             if(list)
-              while(list[n].nick[0] != '\000')
+              while(list[n].nick && list[n].nick[0] != '\000')
                 ++n;
             for(l = 0; l < n; ++l)
               fprintf( stderr, "\t  -%c %s\t\t# %s\n", o->o, list[l].nick, list[l].name && list[l].nick[0] ? list[l].name : list[l].description );
@@ -1095,11 +1106,6 @@ void  oyjlOptions_PrintHelp       ( oyjlOptions_s  * opts,
           fprintf( stderr, "\t" );
           fprintf( stderr, "%s", oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING) );
           fprintf( stderr, "\t%s%s%s (%s%s%g [≥%g ≤%g])\n", o->description ? o->description:"", o->help?": ":"", o->help?o->help :"", o->value_name?o->value_name:"", o->value_name?":":"", o->values.dbl.d, o->values.dbl.start, o->values.dbl.end );
-          break;
-        case oyjlOPTIONTYPE_STRING:
-          fprintf( stderr, "\t" );
-          fprintf( stderr, "%s", oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING) );
-          fprintf( stderr, "\t%s%s%s\n", o->description ? o->description:"", o->help?": ":"", o->help?o->help :"" );
           break;
         case oyjlOPTIONTYPE_NONE:
           fprintf( stderr, "\t" );
@@ -1482,12 +1488,13 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
       switch(o->value_type)
       {
         case oyjlOPTIONTYPE_CHOICE:
+          if(o->values.choices.list)
           {
             int n = 0,l;
             key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "default" );
             sprintf( num, "%d", o->values.choices.selected );
             oyjlValueSetString( key, num );
-            while(o->values.choices.list[n].nick[0] != '\000')
+            while(o->values.choices.list[n].nick && o->values.choices.list[n].nick[0] != '\000')
               ++n;
             for(l = 0; l < n; ++l)
             {
@@ -1496,16 +1503,26 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
               key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/choices/[%d]/%s", i,j,l, "name" );
               oyjlValueSetString( key, o->values.choices.list[l].name );
             }
-          }
+          } else
+            if(!(o->flags & OYJL_OPTION_FLAG_EDITABLE))
+            {
+              oyjlTreeFree( root );
+              if(t) { free(t); t = NULL; }
+              oyjlStringAdd( &t, malloc, free, "Option '%c' has no choices but is not editable (flag&OYJL_OPTION_FLAG_EDITABLE)", o->o );
+              return t;
+            }
           key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "type" );
-          oyjlValueSetString( key, "choice" );
+          if(o->flags & OYJL_OPTION_FLAG_EDITABLE)
+            oyjlValueSetString( key, "string" );
+          else
+            oyjlValueSetString( key, "choice" );
           break;
         case oyjlOPTIONTYPE_FUNCTION:
           {
             int n = 0,l, selected;
             oyjlOptionChoice_s * list = oyjlOption_GetChoices_(o, &selected, opts );
             if(list)
-              while(list[n].nick[0] != '\000')
+              while(list[n].nick && list[n].nick[0] != '\000')
                 ++n;
             if(0 <= selected && selected < n && strlen(list[selected].nick))
             {
@@ -1522,7 +1539,10 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
             /* not possible, as the result of oyjlOption_GetChoices_() is cached - oyjlOptionChoice_Release( &list ); */
           }
           key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "type" );
-          oyjlValueSetString( key, "choice" );
+          if(o->flags & OYJL_OPTION_FLAG_EDITABLE)
+            oyjlValueSetString( key, "string" );
+          else
+            oyjlValueSetString( key, "choice" );
           break;
         case oyjlOPTIONTYPE_DOUBLE:
           key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "default" );
@@ -1552,15 +1572,6 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
               oyjlValueSetString( key, l?_("Yes"):_("No") );
             }
           }
-          break;
-        case oyjlOPTIONTYPE_STRING:
-          if(o->values.suggest)
-          {
-            key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "suggest" );
-            oyjlValueSetString( key, o->values.suggest );
-          }
-          key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "type" );
-          oyjlValueSetString( key, "string" );
           break;
         case oyjlOPTIONTYPE_START: break;
         case oyjlOPTIONTYPE_END: break;
@@ -1596,7 +1607,7 @@ char *       oyjlExtraManSection  ( oyjlOptions_s  * opts,
     if(o->value_type == oyjlOPTIONTYPE_CHOICE)
     {
       oyjlOptionChoice_s * list = o->values.choices.list;
-      while(o->values.choices.list[n].nick[0] != '\000') ++n;
+      while(o->values.choices.list[n].nick && o->values.choices.list[n].nick[0] != '\000') ++n;
       if(n)
       {
         char * up = oyjlStringToUpper( &opt_name[4] );
@@ -1766,7 +1777,9 @@ char *       oyjlUi_ToMan            ( oyjlUi_s          * ui,
             int n = 0,l;
             oyjlStringAdd( &text, malloc, free, "%s", oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MAN) );
             oyjlStringAdd( &text, malloc, free, "\t%s%s%s\n.br\n", o->description ? o->description:"", o->help?": ":"", o->help?o->help :"" );
-            while(o->values.choices.list[n].nick[0] != '\000')
+            if(o->flags & OYJL_OPTION_FLAG_EDITABLE)
+              break;
+            while(o->values.choices.list[n].nick && o->values.choices.list[n].nick[0] != '\000')
               ++n;
             for(l = 0; l < n; ++l)
               oyjlStringAdd( &text, malloc, free, "\t\\-%c %s\t\t# %s %s %s\n.br\n",
@@ -1780,11 +1793,14 @@ char *       oyjlUi_ToMan            ( oyjlUi_s          * ui,
         case oyjlOPTIONTYPE_FUNCTION:
           {
             int n = 0,l;
-            oyjlOptionChoice_s * list = oyjlOption_GetChoices_(o, NULL, opts );
+            oyjlOptionChoice_s * list;
             oyjlStringAdd( &text, malloc, free, "%s", oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MAN) );
             oyjlStringAdd( &text, malloc, free, "\t%s%s%s\n.br\n", o->description ? o->description:"", o->help?": ":"", o->help?o->help :"" );
+            if(o->flags & OYJL_OPTION_FLAG_EDITABLE)
+              break;
+            list = oyjlOption_GetChoices_(o, NULL, opts );
             if(list)
-              while(list[n].nick[0] != '\000')
+              while(list[n].nick && list[n].nick[0] != '\000')
                 ++n;
             for(l = 0; l < n; ++l)
               oyjlStringAdd( &text, malloc, free, "\t\\-%c %s\t\t# %s\n.br\n", o->o, list[l].nick, list[l].name && list[l].nick[0] ? list[l].name : list[l].description );
@@ -1794,10 +1810,6 @@ char *       oyjlUi_ToMan            ( oyjlUi_s          * ui,
         case oyjlOPTIONTYPE_DOUBLE:
           oyjlStringAdd( &text, malloc, free, "%s", oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MAN) );
           oyjlStringAdd( &text, malloc, free, "\t%s%s%s (%s%s%g [≥%g ≤%g])\n.br\n", o->description ? o->description:"", o->help?": ":"", o->help?o->help :"", o->value_name?o->value_name:"", o->value_name?":":"", o->values.dbl.d, o->values.dbl.start, o->values.dbl.end );
-          break;
-        case oyjlOPTIONTYPE_STRING:
-          oyjlStringAdd( &text, malloc, free, "%s", oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MAN) );
-          oyjlStringAdd( &text, malloc, free, "\t%s%s%s\n.br\n", o->description ? o->description:"", o->help?": ":"", o->help?o->help :"" );
           break;
         case oyjlOPTIONTYPE_NONE:
           oyjlStringAdd( &text, malloc, free, "%s", oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MAN) );
@@ -1942,7 +1954,9 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
             int n = 0,l;
             oyjlStringAdd( &text, malloc, free, "* %s", oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MARKDOWN) );
             oyjlStringAdd( &text, malloc, free, "\t%s%s%s\n", o->description ? o->description:"", o->help?": ":"", o->help?o->help :"" );
-            while(o->values.choices.list[n].nick[0] != '\000')
+            if(o->flags & OYJL_OPTION_FLAG_EDITABLE)
+              break;
+            while(o->values.choices.list[n].nick && o->values.choices.list[n].nick[0] != '\000')
               ++n;
             for(l = 0; l < n; ++l)
               oyjlStringAdd( &text, malloc, free, "   * -%c %s\t\t# %s\n", o->o, o->values.choices.list[l].nick, o->values.choices.list[l].name && o->values.choices.list[l].nick[0] ? o->values.choices.list[l].name : o->values.choices.list[l].description );
@@ -1951,11 +1965,14 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
         case oyjlOPTIONTYPE_FUNCTION:
           {
             int n = 0,l;
-            oyjlOptionChoice_s * list = oyjlOption_GetChoices_(o, NULL, opts );
+            oyjlOptionChoice_s * list;
             oyjlStringAdd( &text, malloc, free, "* %s", oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MARKDOWN) );
             oyjlStringAdd( &text, malloc, free, "\t%s%s%s\n", o->description ? o->description:"", o->help?": ":"", o->help?o->help :"" );
+            if(o->flags & OYJL_OPTION_FLAG_EDITABLE)
+              break;
+            list = oyjlOption_GetChoices_(o, NULL, opts );
             if(list)
-              while(list[n].nick[0] != '\000')
+              while(list[n].nick && list[n].nick[0] != '\000')
                 ++n;
             for(l = 0; l < n; ++l)
               oyjlStringAdd( &text, malloc, free, "   * -%c %s\t\t# %s\n", o->o, list[l].nick, list[l].name && list[l].nick[0] ? list[l].name : list[l].description );
@@ -1965,10 +1982,6 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
         case oyjlOPTIONTYPE_DOUBLE:
           oyjlStringAdd( &text, malloc, free, "* %s", oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MARKDOWN) );
           oyjlStringAdd( &text, malloc, free, "\t%s%s%s (%s%s%g [≥%g ≤%g])\n", o->description ? o->description:"", o->help?": ":"", o->help?o->help :"", o->value_name?o->value_name:"", o->value_name?":":"", o->values.dbl.d, o->values.dbl.start, o->values.dbl.end );
-          break;
-        case oyjlOPTIONTYPE_STRING:
-          oyjlStringAdd( &text, malloc, free, "* %s", oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MARKDOWN) );
-          oyjlStringAdd( &text, malloc, free, "\t%s%s%s\n", o->description ? o->description:"", o->help?": ":"", o->help?o->help :"" );
           break;
         case oyjlOPTIONTYPE_NONE:
           oyjlStringAdd( &text, malloc, free, "* %s", oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MARKDOWN) );
@@ -2009,8 +2022,7 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
 
   return text;
 }
-// TODO: explicite allow for non option bound arguments, for syntax checking - use '-' as special option inside oyjlOptionGroup_s::mandatory
-// TODO: implement mandatory checks and support group::flags 0x01 - call group options independently
+// TODO: allow for very long lists of choices for GUI's, while hiding in help/man pages, to avoid clutter in the later
 // TODO: make the qml renderer aware of mandatory options as part of sending a call to the tool; add action button to all manatory options except bool options; render mandatory switch as a button
 // TODO: the renderer keeps as simple as possible like the command line
 // TODO: MAN page synopsis logic ...

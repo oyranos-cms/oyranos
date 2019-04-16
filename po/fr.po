@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2019-04-05 23:49+0200\n"
+"POT-Creation-Date: 2019-04-15 22:01+0200\n"
 "PO-Revision-Date: 2006-06-29 19:31+0200\n"
 "Last-Translator: Pascal LACROIX <lacroixpascal at vfemail.net>\n"
 "Language-Team: <fr@li.org>\n"
@@ -16,11 +16,11 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: oyjl_args.c:1244
+#: oyjl_args.c:1250
 msgid "... try with --help|-h option for usage text. give up"
 msgstr ""
 
-#: oyjl_args.c:1820 oyjl_args.c:1992
+#: oyjl_args.c:1832 oyjl_args.c:2005
 msgid "AUTHOR"
 msgstr ""
 
@@ -36,11 +36,11 @@ msgstr ""
 msgid "Any arg mode"
 msgstr ""
 
-#: oyjl_args.c:1830 oyjl_args.c:2002 oyjl_args.c:2004
+#: oyjl_args.c:1842 oyjl_args.c:2015 oyjl_args.c:2017
 msgid "BUGS"
 msgstr ""
 
-#: oyjl_args.c:1824 oyjl_args.c:1996
+#: oyjl_args.c:1836 oyjl_args.c:2009
 msgid "COPYRIGHT"
 msgstr ""
 
@@ -53,15 +53,15 @@ msgstr "Sortie"
 msgid "Convert JSON to gettext ready C strings:"
 msgstr ""
 
-#: oyjl_args.c:1418
+#: oyjl_args.c:1424
 msgid "Copyright"
 msgstr "Copyright"
 
-#: oyjl_args.c:1735 oyjl_args.c:1911
+#: oyjl_args.c:1746 oyjl_args.c:1923
 msgid "DESCRIPTION"
 msgstr ""
 
-#: oyjl_args.c:1427
+#: oyjl_args.c:1433
 msgid "Date"
 msgstr ""
 
@@ -70,11 +70,11 @@ msgstr ""
 msgid "Description"
 msgstr "Description"
 
-#: oyjl_args.c:1424
+#: oyjl_args.c:1430
 msgid "Development"
 msgstr ""
 
-#: oyjl_args.c:1426
+#: oyjl_args.c:1432
 msgid "Documentation"
 msgstr ""
 
@@ -83,19 +83,19 @@ msgstr ""
 msgid "Double occuring option"
 msgstr "Description"
 
-#: oyjl_args.c:1422
+#: oyjl_args.c:1428
 msgid "Download"
 msgstr ""
 
-#: oyjl_args.c:1610
+#: oyjl_args.c:1621
 msgid "ENVIRONMENT VARIABLES"
 msgstr ""
 
-#: oyjl_args.c:1606
+#: oyjl_args.c:1617
 msgid "EXAMPLES"
 msgstr ""
 
-#: oyjl_args.c:1608
+#: oyjl_args.c:1619
 msgid "EXIT-STATE"
 msgstr ""
 
@@ -111,7 +111,7 @@ msgstr ""
 msgid "FILENAME"
 msgstr ""
 
-#: oyjl_args.c:1614
+#: oyjl_args.c:1625
 msgid "FILES"
 msgstr ""
 
@@ -157,7 +157,7 @@ msgstr ""
 msgid "Get formated text"
 msgstr ""
 
-#: oyjl_args.c:1612
+#: oyjl_args.c:1623
 msgid "HISTORY"
 msgstr ""
 
@@ -177,7 +177,7 @@ msgstr ""
 msgid "Json + Command"
 msgstr ""
 
-#: oyjl_args.c:1419 oyjl_args.c:1826 oyjl_args.c:1998
+#: oyjl_args.c:1425 oyjl_args.c:1838 oyjl_args.c:2011
 msgid "License"
 msgstr ""
 
@@ -186,7 +186,7 @@ msgstr ""
 msgid "Man"
 msgstr "Magenta"
 
-#: oyjl_args.c:1417
+#: oyjl_args.c:1423
 #, fuzzy
 msgid "Manufacturer"
 msgstr "Fabricant:   "
@@ -224,16 +224,16 @@ msgstr "Model:"
 msgid "Mode3"
 msgstr "Model:"
 
-#: oyjl_args.c:1398
+#: oyjl_args.c:1404
 #, fuzzy
 msgid "Module"
 msgstr "Options"
 
-#: oyjl_args.c:1552
+#: oyjl_args.c:1572
 msgid "No"
 msgstr ""
 
-#: oyjl_args.c:1737 oyjl_args.c:1913
+#: oyjl_args.c:1748 oyjl_args.c:1925
 msgid "OPTIONS"
 msgstr ""
 
@@ -257,7 +257,7 @@ msgstr ""
 msgid "Option not supported"
 msgstr ""
 
-#: oyjl_args.c:1425
+#: oyjl_args.c:1431
 #, fuzzy
 msgid "Oyjl Module Author"
 msgstr "Oyranos Préférences"
@@ -310,11 +310,11 @@ msgstr ""
 msgid "Rendering Intent"
 msgstr "Oyranos Préférences"
 
-#: oyjl_args.c:1616
+#: oyjl_args.c:1627
 msgid "SEE AS WELL"
 msgstr ""
 
-#: oyjl_args.c:1724 oyjl_args.c:1900
+#: oyjl_args.c:1735 oyjl_args.c:1912
 msgid "SYNOPSIS"
 msgstr ""
 
@@ -342,11 +342,11 @@ msgstr ""
 msgid "Simple mode"
 msgstr ""
 
-#: oyjl_args.c:1423
+#: oyjl_args.c:1429
 msgid "Sources"
 msgstr ""
 
-#: oyjl_args.c:1421
+#: oyjl_args.c:1427
 msgid "Support"
 msgstr ""
 
@@ -358,7 +358,7 @@ msgstr ""
 msgid "The example tool demontrates the usage of the libOyjl API's."
 msgstr ""
 
-#: oyjl_args.c:1396
+#: oyjl_args.c:1402
 msgid "Tool"
 msgstr ""
 
@@ -366,7 +366,7 @@ msgstr ""
 msgid "Unix Man page"
 msgstr ""
 
-#: oyjl_args.c:1420
+#: oyjl_args.c:1426
 msgid "Url"
 msgstr ""
 
@@ -380,12 +380,12 @@ msgstr ""
 msgid "Usage Error:"
 msgstr ""
 
-#: oyjl_args.c:1428
+#: oyjl_args.c:1434
 #, fuzzy
 msgid "Version"
 msgstr "ICC Examin Version"
 
-#: oyjl_args.c:1552
+#: oyjl_args.c:1572
 msgid "Yes"
 msgstr "Oui"
 
