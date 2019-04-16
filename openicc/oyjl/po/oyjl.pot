@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: oyjl .\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2019-04-05 23:49+0200\n"
+"POT-Creation-Date: 2019-04-15 22:03+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -171,119 +171,119 @@ msgstr ""
 msgid "Synopsis"
 msgstr ""
 
-#: oyjl_args.c:1244
+#: oyjl_args.c:1250
 msgid "... try with --help|-h option for usage text. give up"
 msgstr ""
 
-#: oyjl_args.c:1396
+#: oyjl_args.c:1402
 msgid "Tool"
 msgstr ""
 
-#: oyjl_args.c:1398
+#: oyjl_args.c:1404
 msgid "Module"
 msgstr ""
 
-#: oyjl_args.c:1417
+#: oyjl_args.c:1423
 msgid "Manufacturer"
 msgstr ""
 
-#: oyjl_args.c:1418
+#: oyjl_args.c:1424
 msgid "Copyright"
 msgstr ""
 
-#: oyjl_args.c:1419 oyjl_args.c:1826 oyjl_args.c:1998
+#: oyjl_args.c:1425 oyjl_args.c:1838 oyjl_args.c:2011
 msgid "License"
 msgstr ""
 
-#: oyjl_args.c:1420
+#: oyjl_args.c:1426
 msgid "Url"
 msgstr ""
 
-#: oyjl_args.c:1421
+#: oyjl_args.c:1427
 msgid "Support"
 msgstr ""
 
-#: oyjl_args.c:1422
+#: oyjl_args.c:1428
 msgid "Download"
 msgstr ""
 
-#: oyjl_args.c:1423
+#: oyjl_args.c:1429
 msgid "Sources"
 msgstr ""
 
-#: oyjl_args.c:1424
+#: oyjl_args.c:1430
 msgid "Development"
 msgstr ""
 
-#: oyjl_args.c:1425
+#: oyjl_args.c:1431
 msgid "Oyjl Module Author"
 msgstr ""
 
-#: oyjl_args.c:1426
+#: oyjl_args.c:1432
 msgid "Documentation"
 msgstr ""
 
-#: oyjl_args.c:1427
+#: oyjl_args.c:1433
 msgid "Date"
 msgstr ""
 
-#: oyjl_args.c:1428
+#: oyjl_args.c:1434
 msgid "Version"
 msgstr ""
 
-#: oyjl_args.c:1552
+#: oyjl_args.c:1572
 msgid "Yes"
 msgstr ""
 
-#: oyjl_args.c:1552
+#: oyjl_args.c:1572
 msgid "No"
 msgstr ""
 
-#: oyjl_args.c:1606
+#: oyjl_args.c:1617
 msgid "EXAMPLES"
 msgstr ""
 
-#: oyjl_args.c:1608
+#: oyjl_args.c:1619
 msgid "EXIT-STATE"
 msgstr ""
 
-#: oyjl_args.c:1610
+#: oyjl_args.c:1621
 msgid "ENVIRONMENT VARIABLES"
 msgstr ""
 
-#: oyjl_args.c:1612
+#: oyjl_args.c:1623
 msgid "HISTORY"
 msgstr ""
 
-#: oyjl_args.c:1614
+#: oyjl_args.c:1625
 msgid "FILES"
 msgstr ""
 
-#: oyjl_args.c:1616
+#: oyjl_args.c:1627
 msgid "SEE AS WELL"
 msgstr ""
 
-#: oyjl_args.c:1724 oyjl_args.c:1900
+#: oyjl_args.c:1735 oyjl_args.c:1912
 msgid "SYNOPSIS"
 msgstr ""
 
-#: oyjl_args.c:1735 oyjl_args.c:1911
+#: oyjl_args.c:1746 oyjl_args.c:1923
 msgid "DESCRIPTION"
 msgstr ""
 
-#: oyjl_args.c:1737 oyjl_args.c:1913
+#: oyjl_args.c:1748 oyjl_args.c:1925
 msgid "OPTIONS"
 msgstr ""
 
-#: oyjl_args.c:1820 oyjl_args.c:1992
+#: oyjl_args.c:1832 oyjl_args.c:2005
 msgid "AUTHOR"
 msgstr ""
 
-#: oyjl_args.c:1824 oyjl_args.c:1996
+#: oyjl_args.c:1836 oyjl_args.c:2009
 msgid "COPYRIGHT"
 msgstr ""
 
-#: oyjl_args.c:1830 oyjl_args.c:2002 oyjl_args.c:2004
+#: oyjl_args.c:1842 oyjl_args.c:2015 oyjl_args.c:2017
 msgid "BUGS"
 msgstr ""
 
