@@ -96,6 +96,7 @@ int main( int argc , char** argv )
                                     {_("Install a profile for the actual user and show error messages in a GUI"), "oyranos-profiles", "--install - --taxi=taxi_id/0 --gui -d -u", ""},
                                     {_("Show file infos"),"SAVEIFS=$IFS ; IFS=$'\\n\\b'; profiles=(`oyranos-profiles -ldf`); IFS=$SAVEIFS; for file in \"${profiles[@]}\"; do ls \"$file\"; done", "", ""},
                                     {"","","",""}};
+  oyjlOptionChoice_s effect_meta[]={{"EFFECT_class;sepia","","",""},{"","","",""}};
   oyjlOption_s oarray[] = {
   /* type,   flags, o, option, key, name, description, help, value_name, value_type, values, var_type, variable */
     {"oiwi", 0, '2', "icc-version-2", NULL, _("ICC Version 2"), _("Select ICC v2 Profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&v2} },
@@ -111,15 +112,15 @@ int main( int argc , char** argv )
     {"oiwi", 0, 'k', "device-link", NULL, _("(Device) Link Class"), _("Select Device Link profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&device_link} },
     {"oiwi", 0, 'n', "named-color", NULL, _("Named Color Class"), _("Select Named Color profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&named_color} },
     {"oiwi", 0, 'p', "list-paths", NULL, _("List Paths"), _("List ICC Profile Paths"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&list_paths} },
-    {"oiwi", 0, 'I', "install", NULL, _("Install"), _("Install Profile"), NULL, _("ICC_PROFILE"), oyjlOPTIONTYPE_STRING, {}, oyjlSTRING, {.s=&install} },
-    {"oiwi", 0, 't', "taxi", NULL, _("Taxi DB"), _("ICC Taxi Profile DB"), NULL, _("TAXI_ID"), oyjlOPTIONTYPE_STRING, {}, oyjlSTRING, {.s=&taxi_id} },
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, 'I', "install", NULL, _("Install"), _("Install Profile"), NULL, _("ICC_PROFILE"), oyjlOPTIONTYPE_CHOICE, {}, oyjlSTRING, {.s=&install} },
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, 't', "taxi", NULL, _("Taxi DB"), _("ICC Taxi Profile DB"), NULL, _("TAXI_ID"), oyjlOPTIONTYPE_CHOICE, {}, oyjlSTRING, {.s=&taxi_id} },
     {"oiwi", 0, 'g', "gui", NULL, _("GUI"), _("Use Graphical User Interface"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&show_gui} },
     {"oiwi", 0, 'u', "user", NULL, _("User"), _("User path"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&user_path} },
     {"oiwi", 0, 'y', "oyranos", NULL, _("Oyranos"), _("Oyranos path"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&oyranos_path} },
     {"oiwi", 0, 's', "system", NULL, _("System"), _("System path"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&system_path} },
     {"oiwi", 0, 'm', "machine", NULL, _("Machine"), _("Machine path"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&machine_path} },
-    {"oiwi", 0, 'P', "path", NULL, _("Path filter"), _("Show profiles containing a string as part of their full name"), _("PATH_SUB_STRING"), NULL, oyjlOPTIONTYPE_STRING, {}, oyjlSTRING, {.s=&path} },
-    {"oiwi", 0, 'T', "meta", NULL, _("Meta"), _("Filter for meta tag key/value pair"), _("Show profiles containing a certain key/value pair of their meta tag. VALUE can contain '*' to allow for substring matching."), _("KEY;VALUE"), oyjlOPTIONTYPE_STRING, {.suggest = "EFFECT_class;sepia"}, oyjlSTRING, {.s=&meta} },
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, 'P', "path", NULL, _("Path filter"), _("Show profiles containing a string as part of their full name"), _("PATH_SUB_STRING"), NULL, oyjlOPTIONTYPE_CHOICE, {}, oyjlSTRING, {.s=&path} },
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, 'T', "meta", NULL, _("Meta"), _("Filter for meta tag key/value pair"), _("Show profiles containing a certain key/value pair of their meta tag. VALUE can contain '*' to allow for substring matching."), _("KEY;VALUE"), oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)effect_meta, sizeof(effect_meta), 0 )}, oyjlSTRING, {.s=&meta} },
     {"oiwi", 0, 'r', "no-repair", NULL, _("No repair"), _("No Profile repair of ICC profile ID"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&no_repair} },
     {"oiwi", 0, 'D', "duplicates", NULL, _("Duplicates"), _("Show identical multiple installed profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&duplicates} },
 

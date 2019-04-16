@@ -29,7 +29,7 @@
 #include <cairo-svg.h>            /* Cairo SVG headers */
 
 #include "oyConversion_s.h"
-#include "oyProfile_s.h"
+#include "oyProfiles_s.h"
 #include "oyImage_s.h"
 #include "oyranos_alpha_internal.h"
 
@@ -134,6 +134,26 @@ cairo_status_t oyCairoToStdout(void *closure OYJL_UNUSED,
 {
   fwrite( data, sizeof(unsigned char), length, stdout );
   return CAIRO_STATUS_SUCCESS;
+}
+
+static oyjlOptionChoice_s * listProfiles ( oyjlOption_s * x OYJL_UNUSED, int * y OYJL_UNUSED, oyjlOptions_s * z OYJL_UNUSED )
+{
+  oyProfiles_s * ps = oyProfiles_Create( NULL, 0, 0 );
+  int n = oyProfiles_Count( ps ), i;
+  oyjlOptionChoice_s * cs = (oyjlOptionChoice_s*) calloc( n+1, sizeof(oyjlOptionChoice_s) );
+  for(i = 0; i < n; ++i)
+  {
+    oyProfile_s * p = oyProfiles_Get(ps, i);
+    const char * desc = oyProfile_GetText(p, oyNAME_DESCRIPTION);
+    const char * fn = oyProfile_GetFileName(p, -1);
+    if(desc)
+      cs[i].name = oyjlStringCopy( desc, 0 );
+    if(fn)
+      cs[i].nick = oyjlStringCopy( fn, 0 );
+    oyProfile_Release( &p );
+  }
+  oyProfiles_Release( &ps );
+  return cs;
 }
 
 const char * jcommands = "{\n\
@@ -251,9 +271,9 @@ int main( int argc , char** argv )
                                   {"","","",""}};
   oyjlOption_s oarray[] = {
   /* type,   flags, o, option, key, name, description, help, value_name, value_type, values, var_type, variable */
-    {"oiwi", 0, '2', "icc-version-2", NULL, _("ICC Version 2"), _("Select ICC v2 Profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&v2} },
-    {"oiwi", 0, '4', "icc-version-4", NULL, _("ICC Version 4"), _("Select ICC v4 Profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&v4} },
-    {"oiwi", 0, '@', NULL,            NULL, _("Input"),         _("ICC Profile"),            NULL, "l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE", oyjlOPTIONTYPE_STRING, {}, oyjlINT, {.i=&profile_count} },
+    {"oiwi", 0,                         '2', "icc-version-2", NULL, _("ICC Version 2"), _("Select ICC v2 Profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&v2} },
+    {"oiwi", 0,                         '4', "icc-version-4", NULL, _("ICC Version 4"), _("Select ICC v4 Profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&v4} },
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, '@', NULL,            NULL, _("Input"),         _("ICC Profile"),            NULL, "l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE", oyjlOPTIONTYPE_FUNCTION, {.getChoices = listProfiles}, oyjlINT, {.i=&profile_count} },
     {"oiwi", 0, 'b', "no-border",     NULL, _("Omit border"),   _("Omit border in graph"),   NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&no_border} },
     {"oiwi", 0, 'c', "no-blackbody",  NULL, _("No black body"), _("Omit white line of lambert light emitters"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&no_blackbody} },
     {"oiwi", 0, 'd', "change-thickness",NULL,_("Thickness increase"),_("Specify increase of the thickness of the graph lines"), NULL, _("NUMBER"), oyjlOPTIONTYPE_DOUBLE,
@@ -266,11 +286,11 @@ int main( int argc , char** argv )
     {"oiwi", 0, 'k', "kelvin",        NULL, _("Kelvin"),        _("Blackbody Radiator"),     NULL, _("NUMBER"), oyjlOPTIONTYPE_DOUBLE,
       {.dbl.start = 0.0, .dbl.end = 25000.0, .dbl.tick = 100, .dbl.d = 0.0}, oyjlDOUBLE, {.d=&kelvin} },
     {"oiwi", 0, 'n', "no-spectral-line",NULL,_("No spectral"),  _("Omit the spectral line"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&no_spectral} },
-    {"oiwi", 0, 'o', "output",        NULL, _("Output"),        _("Specify output file name, default is stdout"), NULL, _("-|FILE"), oyjlOPTIONTYPE_STRING, {}, oyjlSTRING, {.s=&output} },
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, 'o', "output",        NULL, _("Output"),        _("Specify output file name, default is stdout"), NULL, _("-|FILE"), oyjlOPTIONTYPE_CHOICE, {}, oyjlSTRING, {.s=&output} },
     {"oiwi", 0, 'p', "spectral-format",NULL,_("Spectral Output"),_("Specify spectral output file format"), NULL, _("FORMAT"), oyjlOPTIONTYPE_CHOICE,
       {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)spe_form, sizeof(spe_form), 0 )}, oyjlSTRING, {.s=&sformat} },
-    {"oiwi", 0, 'P', "pattern",       NULL, _("Pattern"),       _("Filter of Color Names"),  NULL, _("STRING"), oyjlOPTIONTYPE_STRING, {}, oyjlSTRING, {.s=&pattern} },
-    {"oiwi", 0, 's', "spectral",      NULL, _("Spectral"),      _("Spectral Input"),         NULL, _("FILE"), oyjlOPTIONTYPE_STRING, {}, oyjlSTRING, {.s=&input} },
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, 'P', "pattern",       NULL, _("Pattern"),       _("Filter of Color Names"),  NULL, _("STRING"), oyjlOPTIONTYPE_CHOICE, {}, oyjlSTRING, {.s=&pattern} },
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, 's', "spectral",      NULL, _("Spectral"),      _("Spectral Input"),         NULL, _("FILE"), oyjlOPTIONTYPE_CHOICE, {}, oyjlSTRING, {.s=&input} },
     {"oiwi", 0, 'S', "standard-observer",NULL,_("Standard Observer"),_("CIE Standard Observer 1931 2°"), NULL,NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&standardobs} },
     {"oiwi", 0, 'O', "observer-64",   NULL, _("10° Observer"),  _("CIE Observer 1964 10°"),  NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&observer64} },
 
