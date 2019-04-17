@@ -38,7 +38,7 @@
 extern int * oyjl_debug;
 
 /** \addtogroup oyjl_args Options Handling
- *  @brief   Structured Options and Arguments for more many aspects on command line and more
+ *  @brief   Structured Options and Arguments for many aspects on command line and more
  *
  *  @section args_intro Introduction
  *  Oyjl argument handling uses a compact, table like creation syntax.
@@ -1449,7 +1449,7 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
     oyjlOptionGroup_s * g = &ui->opts->groups[i];
     oyjlOptions_s * opts = ui->opts;
 
-    if(!(g->mandatory && g->mandatory[0]))
+    if(!(g->detail && g->detail[0]))
       continue;
 
     key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/%s", i, "name" );

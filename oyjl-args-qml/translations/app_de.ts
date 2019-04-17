@@ -106,15 +106,15 @@
 <context>
     <name>OptionsList</name>
     <message>
-        <location filename="../qml/OptionsList.qml" line="114"/>
-        <location filename="../qml/OptionsList.qml" line="150"/>
+        <location filename="../qml/OptionsList.qml" line="105"/>
+        <location filename="../qml/OptionsList.qml" line="144"/>
         <location filename="../qml/OptionsList.qml" line="180"/>
         <source>new/old</source>
         <translation>neu/alt</translation>
     </message>
     <message>
-        <location filename="../qml/OptionsList.qml" line="114"/>
-        <location filename="../qml/OptionsList.qml" line="150"/>
+        <location filename="../qml/OptionsList.qml" line="105"/>
+        <location filename="../qml/OptionsList.qml" line="144"/>
         <location filename="../qml/OptionsList.qml" line="180"/>
         <location filename="../qml/OptionsList.qml" line="218"/>
         <source>selected</source>
