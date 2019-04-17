@@ -557,7 +557,7 @@ oyjlTESTRESULT_e testArgs()
                                        sections, oarray, groups, NULL );
   int size = 0;
   char * text = oyjlUi_ToJson( ui, 0 );
-  if(text && strlen(text) == 2078)
+  if(text && strlen(text) == 3145)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlUi_ToJson() %lu                           ", strlen(text) );
   } else
