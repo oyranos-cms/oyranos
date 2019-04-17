@@ -402,8 +402,9 @@ int main( int argc , char** argv )
 
   if(input)
   {
+    char * fn = oyMakeFullFileDirName_( input );
     size_t size = 0;
-    char * text = oyReadFileToMem_( input, &size, NULL );
+    char * text = oyReadFileToMem_( fn, &size, NULL );
     double scale = 1.0;
     int data_format = oyjlDataFormat( text );
     char error_buffer[128];
@@ -447,7 +448,7 @@ int main( int argc , char** argv )
       if(oy_debug) fprintf( stderr, "%s", oyStruct_GetText((oyStruct_s*)spectra, oyNAME_NAME, 0));
     }
     if(!spectra && text)
-      oyImage_FromFile( input, flags, &image, NULL );
+      oyImage_FromFile( fn, flags, &image, NULL );
 
     if(spectra)
     {
