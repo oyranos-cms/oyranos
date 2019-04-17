@@ -14,5 +14,6 @@
         <file>qml/LSlider.qml</file>
         <file>qml/LSwitch.qml</file>
         <file>qml/OptionsList.qml</file>
+        <file>qml/SplitView.qml</file>
     </qresource>
 </RCC>

@@ -207,45 +207,50 @@ AppWindow {
             id: firstPage
             objectName: "firstPage"
 
-            Column {
-                height: firstPage.height - 2*h
-                padding: dens
+            SplitView {
+                id: split
+                objectName: "split"
+                width: firstPage.width
+                height: firstPage.height
+                orientation: Qt.Vertical
 
-                TextArea {
-                    id: introTextField
-                    objectName: "introTextField"
-                    width: firstPage.width
+                Column {
+                    id: column
+                    objectName: "column"
+                    width: parent.width
+                    height: firstPage.height * 0.67
+                    padding: dens
 
-                    textFormat: Qt.RichText // Html
-                    textMargin: font.pixelSize
-                    readOnly: true // obviously no edits
-                    wrapMode: TextEdit.Wrap
-                    text: "<html><head></head><body> <h3><p align=\"center\">" + introText + "</p></h3></body></html>"
+                    TextArea {
+                        id: introTextField
+                        objectName: "introTextField"
+                        width: firstPage.width
 
-                    color: fg
-                    background: Rectangle { color: bg }
+                        textFormat: Qt.RichText // Html
+                        textMargin: font.pixelSize
+                        readOnly: true // obviously no edits
+                        wrapMode: TextEdit.Wrap
+                        text: "<html><head></head><body> <h3><p align=\"center\">" + introText + "</p></h3></body></html>"
+
+                        color: fg
+                        background: Rectangle { color: bg }
+                    }
+                    OptionsList {
+                        id: optList
+                        objectName: "optList"
+                        anchors.bottomMargin: 0
+                        width: firstPage.width - 2*dens
+                        height: firstPage.height - introTextField.height - helpFlickable.height - 2*dens
+                        model: optionsModel
+                        callback: interactiveCallback
+                        color: bg
+                    }
                 }
-                OptionsList {
-                    id: optList
-                    objectName: "optList"
-                    anchors.bottomMargin: 0
-                    width: firstPage.width - 2*dens
-                    height: Math.min( firstPage.height - introTextField.height - dens - firstPage.height/4,
-                                      optionsModel.count * h + groupCount * h )
-                    model: optionsModel
-                    callback: interactiveCallback
-                    color: bg
-                }
-                Rectangle {
-                    color: fg
-                    width: firstPage.width - 2*dens
-                    height: 1
-                }
+
                 Flickable {
                     id: helpFlickable
                     objectName: "helpFlickable"
                     width: firstPage.width - dens
-                    height: firstPage.height - introTextField.height - dens - optList.height - dens
 
                     flickableDirection: Flickable.VerticalFlick
 
@@ -253,7 +258,7 @@ AppWindow {
                         id: image
                         objectName: "image"
                         width: firstPage.width
-                        height: firstPage.height - introTextField.height - optList.height - dens
+                        height: helpFlickable.height
                         horizontalAlignment: Image.AlignHCenter
                         fillMode: Image.PreserveAspectFit
                     }
