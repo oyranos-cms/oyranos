@@ -557,7 +557,7 @@ oyjlTESTRESULT_e testArgs()
                                        sections, oarray, groups, NULL );
   int size = 0;
   char * text = oyjlUi_ToJson( ui, 0 );
-  if(text && strlen(text))
+  if(text && strlen(text) == 2078)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlUi_ToJson() %lu                           ", strlen(text) );
   } else
@@ -567,10 +567,12 @@ oyjlTESTRESULT_e testArgs()
   size = oyjlWriteFile( "test.json",
                            text,
                            strlen(text) );
+  if(verbose)
+    fprintf( zout, "%s\n", text );
   if(text && size) {free(text);} text = NULL;
 
   text = oyjlUi_ToMan( ui, 0 );
-  if(text && strlen(text))
+  if(text && strlen(text) == 656)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlUi_ToMan()  %lu                           ", strlen(text) );
   } else
@@ -580,6 +582,8 @@ oyjlTESTRESULT_e testArgs()
   size = oyjlWriteFile( "test.1",
                            text,
                            strlen(text) );
+  if(verbose)
+    fprintf( zout, "%s\n", text );
   if(text) {free(text);} text = NULL;
 
   text = oyjlOptions_ResultsToJson( ui->opts );
@@ -590,6 +594,8 @@ oyjlTESTRESULT_e testArgs()
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
     "oyjlOptions_ResultsToJson() %lu                 ", strlen(text) );
   }
+  if(verbose)
+    fprintf( zout, "%s\n", text );
   if(text) {free(text);} text = NULL;
 
   text = oyjlOptions_ResultsToText( ui->opts );
@@ -600,6 +606,8 @@ oyjlTESTRESULT_e testArgs()
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
     "oyjlOptions_ResultsToText() %lu                 ", strlen(text) );
   }
+  if(verbose)
+    fprintf( zout, "%s\n", text );
   if(text) {free(text);} text = NULL;
 
   if(verbose)
