@@ -152,10 +152,10 @@ ELSE(HAVE_OYJL)
   SET( OYJL_LIBRARIES oyjl-static )
   SET( OYJL_CORE_LIBRARY oyjl-core-static )
   SET( OYJL_JSON_TOOL oyjl-translate )
-  INSTALL (TARGETS oyjl-translate DESTINATION ${CMAKE_INSTALL_BINDIR})
+  INSTALL (FILES ${CMAKE_CURRENT_BINARY_DIR}/openicc/oyjl/oyjl-translate  DESTINATION ${CMAKE_INSTALL_BINDIR})
   FIND_PACKAGE(Qt5 COMPONENTS Widgets Qml Quick Svg LinguistTools)
   IF(Qt5Qml_FOUND)
-    INSTALL (TARGETS oyjl-args-qml  DESTINATION ${CMAKE_INSTALL_BINDIR})
+    INSTALL (FILES ${CMAKE_CURRENT_BINARY_DIR}/openicc/oyjl/oyjl-args-qml/oyjl-args-qml DESTINATION ${CMAKE_INSTALL_BINDIR})
   ENDIF()
   SET( CHEADERS_OYJL_PUBLIC
   openicc/oyjl/oyjl_macros.h
