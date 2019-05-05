@@ -21,7 +21,7 @@
     @section intro Introduction
   
     Oyjl API provides a platformindependent C interface for JSON I/O, conversion to and from
-    XML + YAML, string helpers and file reading.
+    XML + YAML, string helpers, file reading, testing and argument handling.
 
     @section api API Documentation
     The Oyjl API is declared in the oyjl.h header file.

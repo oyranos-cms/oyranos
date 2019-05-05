@@ -6,7 +6,9 @@ INPUT                  = @CMAKE_SOURCE_DIR@ @CMAKE_CURRENT_SOURCE_DIR@ @CMAKE_BI
 #---------------------------------------------------------------------------
 # Project related configuration options
 #---------------------------------------------------------------------------
-PROJECT_NAME           = @PROJECT_NAME@-API
+PROJECT_NAME           = @PROJECT_NAME@
+PROJECT_BRIEF          = "Oyjl is a low level shared helper library"
+PROJECT_LOGO           = logo-sw.svg
 OUTPUT_DIRECTORY       = ./
 CREATE_SUBDIRS         = NO
 OUTPUT_LANGUAGE        = English

@@ -16,10 +16,17 @@
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
 <div id="titlearea">
-<table class="title">
-<tr>
-<td class='logo' rowspan="2"><a href='http://www.oyranos.org'><img src='oyranos_logo.png' alt="Oyranos Icon" border="0"/></a></td>
-<td>$projectname - Version $projectnumber</td>
-</tr>
+<table cellspacing="10" cellpadding="2">
+ <tbody>
+ <tr>
+  <td class='logo' rowspan="2" id="projectlogo"><img alt="Logo" src=$projectlogo/></td>
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">$projectname
+   &#160;<span id="projectnumber">$projectnumber</span>
+   </div>
+   <div id="projectbrief">$projectbrief</div>
+  </td>
+ </tr>
+ </tbody>
 </table>
 </div>
