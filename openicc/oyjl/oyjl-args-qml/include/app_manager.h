@@ -32,7 +32,7 @@ public:
     void setUri( QString uri )
     {
         uri_ = uri;
-        LOG( QString("emit uriChanged(%1)").arg(uri) );
+        LOG( QString("emit uriChanged(%1)").arg(uri[0] != '{'?uri:"---") );
         emit uriChanged(uri_);
     }
     QString getUri() { return uri_; }
