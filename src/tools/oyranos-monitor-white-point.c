@@ -504,9 +504,13 @@ int main( int argc , char** argv )
         if(i == 1) /* automatic */
         {
           double temperature = oyGetTemperature(0);
+          const char * man_page = getenv("DISPLAY");
+          int man = 1;
+          if(man_page && strcmp(man_page,"man_page") == 0)
+            man = 1;
           if(temperature)
           {
-            oyStringAddPrintf( &tmp, 0,0, "%g %s ", temperature, _("Kelvin") );
+            oyStringAddPrintf( &tmp, 0,0, "%g %s ", man?3000:temperature, _("Kelvin") );
             t = tmp;
           }
         }
