@@ -34,7 +34,8 @@ AppWindow {
                100*dens
 
     signal fileChanged(var url) // Input
-    onFileChanged: { setDataText( appData.getJSON( url ) ); statusText = qsTr("Loaded") + " " + url
+    onFileChanged: { setDataText( appData.getJSON( url ) ); var fn = "---"; if(url[0] !== '{') fn = url;
+        statusText = qsTr("Loaded") + " " + fn
         if(processSetCommand.length)
             processSet.start( processSetCommand, processSetArgs );
     }
@@ -49,7 +50,12 @@ AppWindow {
         if(url === "+")
           commandsJSON = appDataJsonString
         else
-          commandsJSON = appData.readFile( url );
+        {
+          if(url[0] === '{')
+            commandsJSON = url;
+          else
+            commandsJSON = appData.readFile( url );
+        }
         textArea2.text = commandsJSON
         if( commandsJSON.length )
         {
@@ -93,7 +99,8 @@ AppWindow {
         onReadChannelFinished: {
             var data = readAll();
             image_data = data
-            if(image_data.substr(0,22) === "data:image/png;base64,")
+            if(image_data.substr(0,22) === "data:image/png;base64," ||
+               image_data.substr(0,19) === "data:image/svg+xml;")
             {
                 helpTextArea.opacity = 0.01
                 helpText = ""
@@ -110,8 +117,16 @@ AppWindow {
     property string command_set_option: ""
 
 
-    function interactiveCallback( key, value, setOnly )
+    function interactiveCallback( key, value, type, group, setOnly )
     {
+        // skip "detail" only groups
+        if(group.mandatory.length === 0 && group.optional.length === 0)
+            return
+
+        // skip optional options from groups with mandatory requirement
+        if(group.mandatory.length && !group.mandatory.match(key))
+            return
+
         if(processSetCommand.length && setOnly >= 0)
         {
             var arg = key
@@ -126,9 +141,9 @@ AppWindow {
             if(v.length)
                 if(typeof command_set_delimiter !== "undefined")
                 {
-                    if(typeof value === "string")
+                    if(typeof value === "string" && type !== "bool")
                     {
-                        if(value.length)
+                        if(value.length !== 0)
                         {
                             if(arg.length > 0)
                                 arg += command_set_delimiter + value
@@ -136,7 +151,7 @@ AppWindow {
                                 arg += value
                         }
                     }
-                    else
+                    else if(type === "bool" && value === "false")
                     {
                         if(arg.length > 0)
                             arg += command_set_delimiter + v
@@ -156,6 +171,69 @@ AppWindow {
             }
             if(app_debug)
                 statusText = "command_set: " + processSetCommand + " " + args
+
+            // create the args from group::optional options and add them to the mandatory arg from above
+            // TODO: detect mandatory exclusion, e.g. a|b
+            var n = optionsModel.count
+            var i
+            for( i = 0; i < n; ++i )
+            {
+                var opt = optionsModel.get(i)
+                arg = opt.key
+                if(arg.match(key))
+                    continue
+
+                if(!(group.mandatory.match(arg) || group.optional.match(arg)))
+                    continue
+
+                if(!(opt.value.length !== 0 &&
+                       !(opt.type === "bool" &&
+                         opt.value === "false")))
+                    continue
+
+                if(command_set_option.length === 0)
+                {
+                    if(key.length > 1)
+                        arg = "--" + opt.key
+                    else if(key.length === 1)
+                        arg = "-" + opt.key
+                }
+                v = JSON.stringify(opt.value);
+                if(v.length &&
+                    !(opt.type === "bool"))
+                    if(typeof command_set_delimiter !== "undefined")
+                    {
+                        if(typeof opt.value === "string")
+                        {
+                            if(opt.value.length &&
+                                !(opt.type === "bool" && opt.value === "false"))
+                            {
+                                if(arg.length > 0)
+                                    arg += command_set_delimiter + opt.value
+                                else
+                                    arg += opt.value
+                            }
+                        }
+                        else
+                        {
+                            if(arg.length > 0)
+                                arg += command_set_delimiter + v
+                            else
+                                arg += v
+                        }
+                    }
+
+                count = args.length
+                if(command_set_option.length === 0)
+                    args[args.length] = arg
+                else
+                {
+                    args[args.length] = command_set_option
+                    args[args.length] = arg
+                }
+            }
+
+            statusText = JSON.stringify(args)
             processSet.start( processSetCommand, args )
             processSet.waitForFinished()
         }
@@ -224,7 +302,7 @@ AppWindow {
                     TextArea {
                         id: introTextField
                         objectName: "introTextField"
-                        width: firstPage.width
+                        width: firstPage.width - 2*dens
 
                         textFormat: Qt.RichText // Html
                         textMargin: font.pixelSize
@@ -375,11 +453,12 @@ AppWindow {
     property real deviceLabelWidth: 20;
     property string loc: "";
 
-    function setOptions( options, groupName, groupDescription )
+    function setOptions( group, groupName, groupDescription )
     {
         if(typeof groupDescriptions[groupName] === "undefined")
             groupDescriptions[groupName] = groupDescription
 
+        var options = group.options
         for( var index in options )
         {
             var opt = options[index];
@@ -389,6 +468,13 @@ AppWindow {
             var choices = opt.choices
             var type = opt.type
             var dbl = {"start":0,"end":1}
+            var run = 0
+            // see mandatory key
+            if(group.mandatory.length && group.mandatory.match(opt.key))
+                run = 1
+            // detect optonal active role
+            else if(group.mandatory.length === 0 && group.optional.length && group.optional.match(opt.key))
+                run = 2
             if( type === "double" )
                 // try slider
             {
@@ -444,13 +530,14 @@ AppWindow {
                 groupName: groupName,
                 description: desc,
                 help: help,
-                default: opt.default
+                default: opt.default,
+                group: group,
+                run: run,
+                value: ""
             }
             var text = JSON.stringify(o);
             o.text = text;
             optionsModel.append(o)
-            var count = optionsModel.count
-            var c = count
         }
     }
 
@@ -518,6 +605,8 @@ AppWindow {
         {
             var group = groups[g1];
             var options= group.options;
+            var mandatory = group.mandatory
+            var optional  = group.optional
             var groupName = P.getTranslatedItem( group, "name", loc );
             var help = P.getTranslatedItem( group, "help", loc );
             if( typeof options === "undefined" )
@@ -532,14 +621,14 @@ AppWindow {
                     var help2 = help
                     if(typeof groupName2 !== "undefined")
                         help2 += " <i>" + P.getTranslatedItem( g, "help", loc ) + "</i>";
-                    setOptions( options, groupName2, help2 )
+                    setOptions( group, groupName2, help2 )
                 }
             else
             {
                 desc = P.getTranslatedItem( group, "description", loc )
                 if(typeof desc !== "undefined")
                     groupName = desc
-                setOptions( options, groupName, help )
+                setOptions( group, groupName, help )
             }
         }
     }
