@@ -11,9 +11,10 @@ IF(Qt5Qml_FOUND)
     INCLUDE_DIRECTORIES( ${QT_INCLUDE_DIRS} )
     LINK_DIRECTORIES( ${QT_LIBRARY_DIRS} )
 ENDIF()
+
 IF( HAVE_QT)
     SET( CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS}  ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS} )
-    FILE( GLOB ${PROJECT_NAME}_SOURCES *.cpp src/*.cpp )
+    FILE( GLOB ${PROJECT_NAME}_SOURCES src/*.cpp )
 #    MESSAGE( "${PROJECT_NAME}_SOURCES: " ${${PROJECT_NAME}_SOURCES} )
     FILE( GLOB ${PROJECT_NAME}_HEADERS include/*.h )
     FILE( GLOB ${PROJECT_NAME}_QML qml/*.qml )
@@ -39,8 +40,15 @@ IF( HAVE_QT)
     SET(CMAKE_AUTORCC ON)
     INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_SOURCE_DIR} ${Qt5Qml_INCLUDE_DIRS} )
 
+    SET(SVG_PlUGIN "")
+    FOREACH(plugin ${Qt5Svg_PLUGINS})
+      GET_TARGET_PROPERTY(_loc ${plugin} LOCATION)
+      MESSAGE("Plugin ${plugin} is at location ${_loc}")
+      SET(SVG_PlUGIN "${_loc}")
+    ENDFOREACH()
     ADD_EXECUTABLE( ${PROJECT_NAME}
                     ${${PROJECT_NAME}_HEADERS}
+                    main.cpp
                     ${${PROJECT_NAME}_SOURCES}
                     ${${PROJECT_NAME}_QRC_SOURCES}
                   )
@@ -49,11 +57,74 @@ IF( HAVE_QT)
                 Qt5::Widgets
                 Qt5::Qml
                 Qt5::Quick
+                Qt5::Svg
+                Qt5::QSvgPlugin
+#${QT5SVG_LIBRARIES}
                 ${EXTRA_LIBS}
                 ${OYJL_CORE_LIB}
                 )
     IF(ENABLE_INSTALL_${PROJECT_UP_NAME})
       INSTALL (TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_BINDIR})
     ENDIF(ENABLE_INSTALL_${PROJECT_UP_NAME})
+
+    IF(ENABLE_SHARED_LIBS_${PROJECT_UP_NAME})
+      SET( PROJECT_LIB OyjlArgsQml )
+      FILE( GLOB ${PROJECT_LIB}_SOURCES src/*.cpp )
+      FILE( GLOB ${PROJECT_LIB}_HEADERS include/*.h )
+      FILE( GLOB ${PROJECT_LIB}_QML qml/*.qml )
+      SET( ${PROJECT_LIB}_TS translations/app_de.ts )
+      SOURCE_GROUP("Header Files" FILES ${${PROJECT_LIB}_HEADERS})
+      SOURCE_GROUP("Source Files" FILES ${${PROJECT_LIB}_SOURCES})
+      SET( ${PROJECT_LIB}_QRC app.qrc )
+
+      SET( GLOB TS_SOURCES ${${PROJECT_LIB}_SOURCES} ${${PROJECT_LIB}_HEADERS} ${${PROJECT_LIB}_QML} )
+      QT5_CREATE_TRANSLATION( QM_FILES
+        ${${PROJECT_LIB}_SOURCES}
+        ${${PROJECT_LIB}_HEADER}
+        ${${PROJECT_LIB}_QML}
+        ${${PROJECT_LIB}_TS} )
+      SET_SOURCE_FILES_PROPERTIES( ${${PROJECT_LIB}_TS} PROPERTIES OUTPUT_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/translations)
+      QT5_ADD_TRANSLATION( QM_FILES ${${PROJECT_LIB}_TS} )
+
+      ADD_DEFINITIONS(${Qt5Widgets_DEFINITIONS} ${QtQml_DEFINITIONS} ${Qt5Quick_DEFINITIONS})
+      QT5_ADD_RESOURCES( ${PROJECT_LIB}_QRC_SOURCES ${${PROJECT_LIB}_QRC} )
+      ADD_LIBRARY( ${PROJECT_LIB} SHARED
+                    ${${PROJECT_LIB}_HEADERS}
+                    lib.cpp
+                    ${${PROJECT_LIB}_SOURCES}
+                    ${${PROJECT_LIB}_QRC_SOURCES}
+                  )
+      TARGET_LINK_LIBRARIES( ${PROJECT_LIB}
+                Qt5::Widgets
+                Qt5::Qml
+                Qt5::Quick
+                ${EXTRA_LIBS}
+                ${OYJL_CORE_LIB}
+                )
+      SET_TARGET_PROPERTIES( ${PROJECT_LIB} PROPERTIES
+      PRIVATE_HEADER ""
+      PUBLIC_HEADER "${CHEADERS_OYJL_PUBLIC}"
+      RESOURCE ""
+      )
+      IF(ENABLE_INSTALL_${PROJECT_UP_NAME})
+        INSTALL(
+         TARGETS       ${PROJECT_LIB}
+         RUNTIME       DESTINATION ${CMAKE_INSTALL_BINDIR}
+         FRAMEWORK     DESTINATION ${FRAMEWORK_DIR}
+         LIBRARY       DESTINATION ${CMAKE_INSTALL_LIBDIR}
+         ARCHIVE       DESTINATION ${CMAKE_INSTALL_LIBDIR}
+         PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_DOWN_NAME}
+         RESOURCE      DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}
+         )
+      ENDIF(ENABLE_INSTALL_${PROJECT_UP_NAME})
+
+      IF( ENABLE_TESTS_${PROJECT_UP_NAME} )
+        ADD_EXECUTABLE( oyjl-test-args-qml
+                    ${CMAKE_CURRENT_SOURCE_DIR}/test.c
+                  )
+        TARGET_LINK_LIBRARIES( oyjl-test-args-qml ${PROJECT_LIB} )
+      ENDIF( ENABLE_TESTS_${PROJECT_UP_NAME} )
+
+    ENDIF(ENABLE_SHARED_LIBS_${PROJECT_UP_NAME})
 ENDIF()
 
