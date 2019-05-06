@@ -163,7 +163,7 @@ extern int * oyjl_debug;
  *  Or a view can be interactive and call the command with the options.
  *
  *  @subsection args_interactive Interactive Viewers
- *  A example of a interactive viewer is the included oyjl-args-json renderer.
+ *  A example of a interactive viewer is the included oyjl-args-qml renderer.
  *  Tools have to be more careful, in case they want to be displayed by
  *  a interactive viewer. They should declare, in which order options
  *  apply and add command line information for the -X json+command option.
@@ -174,7 +174,7 @@ extern int * oyjl_debug;
  *  a command like aesthetic. Some tools return graphics in multiline
  *  ASCII or use color codes.
  *  The tool might output HTML and should be displayed formatted. Some tools
- *  stream their result as image to stdout. A oyjl-args-json viewer supports
+ *  stream their result as image to stdout. A oyjl-args-qml viewer supports
  *  PNG image output.
  *
  *  @{ */
@@ -414,6 +414,21 @@ oyjlOPTIONSTATE_e oyjlOptions_Check (
         fprintf( stderr, "%s %s \'%c\'\n", _("Usage Error:"), _("Double occuring option"), b->o );
         return oyjlOPTION_DOUBLE_OCCURENCE;
       }
+
+    }
+    /* some error checking */
+    if(o->o != '#' && o->value_name && o->value_name[0] && o->value_type == oyjlOPTIONTYPE_NONE)
+    {
+      fprintf( stderr, "%s %s \'%c\' %s\n", _("Usage Error:"), _("Option not supported"), o->o, _("need a value_type") );
+      return oyjlOPTION_NOT_SUPPORTED;
+    }
+    if( o->o != '#' &&
+        o->o != 'X' &&
+        o->value_type == oyjlOPTIONTYPE_CHOICE &&
+        !((o->flags & OYJL_OPTION_FLAG_EDITABLE) || o->values.choices.list))
+    {
+      fprintf( stderr, "%s %s \'%c\' %s\n", _("Usage Error:"), _("Option not supported"), o->o, _("needs OYJL_OPTION_FLAG_EDITABLE or choices") );
+      return oyjlOPTION_NOT_SUPPORTED;
     }
   }
   return oyjlOPTION_NONE;
@@ -439,7 +454,7 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse (
   char ** result;
 
   /* parse the command line arguments */
-  if(!opts->private_data)
+  if(opts && !opts->private_data)
   {
     int i, pos = 0;
     result = (char**) calloc( 2, sizeof(char*) );
@@ -783,9 +798,12 @@ char **  oyjlOptions_ResultsToList   ( oyjlOptions_s     * opts,
   char * args = NULL,
        * text = NULL,
        ** list = NULL;
-  char ** results = opts->private_data;
+  char ** results = NULL;
   int i,n,llen = 0;
 
+  if(!opts)
+    return results;
+  results = opts->private_data;
   if(!results)
   {
     if(oyjlOptions_Parse( opts ))
@@ -1157,6 +1175,118 @@ oyjlUi_s* oyjlUi_New                 ( int                 argc,
   return ui;
 }
 
+oyjlOPTIONSTATE_e  oyjlUi_Check      ( oyjlUi_s          * ui,
+                                       int                 flags OYJL_UNUSED )
+{
+  oyjlOPTIONSTATE_e status = oyjlOPTION_NONE;
+  const char * date = NULL,
+             * desc = NULL,
+             * mnft = NULL, * mnft_url = NULL,
+             * copy = NULL, * lice = NULL,
+             * bugs = NULL, * bugs_url = NULL,
+             * vers = NULL;
+  int i,n,ng;
+  oyjlOptions_s * opts;
+ 
+  if(!ui) return status;
+  opts = ui->opts;
+
+  n = oyjlUi_CountHeaderSections( ui );
+  for(i = 0; i < n; ++i)
+  {
+    oyjlUiHeaderSection_s * s = &ui->sections[i];
+    if(strcmp(s->nick, "manufacturer") == 0) { mnft = s->name; mnft_url = s->description; }
+    else if(strcmp(s->nick, "copyright") == 0) copy = s->name;
+    else if(strcmp(s->nick, "license") == 0) lice = s->name;
+    else if(strcmp(s->nick, "url") == 0) continue;
+    else if(strcmp(s->nick, "support") == 0) { bugs = s->name; bugs_url = s->description; }
+    else if(strcmp(s->nick, "download") == 0) continue;
+    else if(strcmp(s->nick, "sources") == 0) continue;
+    else if(strcmp(s->nick, "development") == 0) continue;
+    else if(strcmp(s->nick, "oyjl_module_author") == 0) continue;
+    else if(strcmp(s->nick, "documentation") == 0) desc = s->description ? s->description : s->name;
+    else if(strcmp(s->nick, "version") == 0) vers = s->name;
+    else if(strcmp(s->nick, "date") == 0) date = s->description ? s->description : s->name;
+  }
+
+  ng = oyjlOptions_CountGroups(opts);
+  if(!ng)
+  {
+    fprintf(stderr, "no ui::opts::groups\n");
+    status = oyjlOPTION_MISSING_VALUE;
+  }
+
+  if(!ui->nick || !ui->nick[0])
+  {
+    fprintf(stderr, "no ui::nick\n");
+    status = oyjlOPTION_MISSING_VALUE;
+  }
+
+  if(!ui->name || !ui->name[0])
+  {
+    fprintf(stderr, "no ui::name\n");
+    status = oyjlOPTION_MISSING_VALUE;
+  }
+
+  for(i = 0; i < ng; ++i)
+  {
+    oyjlOptionGroup_s * g = &opts->groups[i];
+    int d = g->detail ? strlen(g->detail) : 0,
+        j;
+    if(g->mandatory && g->mandatory[0])
+    {
+      int n = strlen(g->mandatory);
+      for( j = 0; j  < n; ++j )
+      {
+        char o = g->mandatory[j];
+        if( !g->detail || (!strchr(g->detail, o) &&
+            o != '|' &&
+            o != '#'))
+        {
+          fprintf(stderr, "\'%c\' not found in group->details\n", o);
+          status = oyjlOPTION_MISSING_VALUE;
+        }
+      }
+    }
+    for(j = 0; j < d; ++j)
+    {
+      char oc = g->detail[j];
+      oyjlOption_s * o = oyjlOptions_GetOption( opts, oc );
+      if(!o)
+      {
+        fprintf(stderr, "\n%s: option not declared: %c\n", g->name, oc);
+        exit(1);
+      }
+      switch(o->value_type)
+      {
+        case oyjlOPTIONTYPE_CHOICE:
+          {
+            int n = 0;
+            while(o->values.choices.list && o->values.choices.list[n].nick && o->values.choices.list[n].nick[0] != '\000')
+              ++n;
+            if( !n && !(o->flags & OYJL_OPTION_FLAG_EDITABLE) &&
+                o->o != 'X')
+            {
+              fprintf( stderr, "%s %s \'%c\' %s\n", _("Usage Error:"), _("Option not supported"), o->o, _("needs OYJL_OPTION_FLAG_EDITABLE or choices") );
+              status = oyjlOPTION_NOT_SUPPORTED;
+            }
+          }
+          break;
+        case oyjlOPTIONTYPE_FUNCTION:
+          break;
+        case oyjlOPTIONTYPE_DOUBLE:
+          break;
+        case oyjlOPTIONTYPE_NONE:
+        break;
+        case oyjlOPTIONTYPE_START: break;
+        case oyjlOPTIONTYPE_END: break;
+      }
+    }
+  }
+
+  return status;
+}
+
 /** @brief    Create a new UI structure
  *  @memberof oyjlUi_s
  *
@@ -1194,10 +1324,10 @@ oyjlUi_s* oyjlUi_New                 ( int                 argc,
  *  @param[in]     groups              the option grouping declares
  *                 dependencies of options and provides a UI layout
  *  @param[out]    state               inform about processing
- *                                     - oyjlUI_STATE_HELP : help was detected, printed and oyjlUi_s was released
- *                                     - oyjlUI_STATE_EXPORT : export of json, man or markdown was detected, printed and oyjlUi_s was released
- *                                     - oyjlUI_STATE_VERBOSE : verbose was detected
- *                                     - oyjlUI_STATE_OPTION+ : error occured in option parser, message printed, oyjlOPTIONSTATE_e is placed in >> oyjlUI_STATE_OPTION and oyjlUi_s was released
+ *                                     - ::oyjlUI_STATE_HELP : help was detected, printed and oyjlUi_s was released
+ *                                     - ::oyjlUI_STATE_EXPORT : export of json, man or markdown was detected, printed and oyjlUi_s was released
+ *                                     - ::oyjlUI_STATE_VERBOSE : verbose was detected
+ *                                     - ::oyjlUI_STATE_OPTION+ : error occured in option parser, message printed, ::oyjlOPTIONSTATE_e is placed in >> ::oyjlUI_STATE_OPTION and oyjlUi_s was released
  *  @return                            UI object for later use
  *
  *  @version Oyjl: 1.0.0
@@ -1244,6 +1374,8 @@ oyjlUi_s *  oyjlUi_Create            ( int                 argc,
 
   /* get results and check syntax ... */
   opt_state = oyjlOptions_Parse( ui->opts );
+  if(opt_state == oyjlOPTION_NONE)
+    opt_state = oyjlUi_Check(ui, 0);
   /* ... and report detected errors */
   if(opt_state != oyjlOPTION_NONE)
   {
@@ -1378,7 +1510,7 @@ oyjlUiHeaderSection_s * oyjlUi_GetHeaderSection (
 /** @brief    Return a JSON representation from options
  *  @memberof oyjlUi_s
  *
- *  The JSON data shall be useable with oyjl-json-qml options renderer.
+ *  The JSON data shall be useable with oyjl-args-qml options renderer.
  *
  *  @version Oyjl: 1.0.0
  *  @date    2018/08/14
@@ -1465,6 +1597,8 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
 
     key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/%s", i, "mandatory" );
     oyjlValueSetString( key, g->mandatory );
+    key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/%s", i, "optional" );
+    oyjlValueSetString( key, g->optional );
     int d = g->detail ? strlen(g->detail) : 0,
         j;
     for(j = 0; j < d; ++j)
