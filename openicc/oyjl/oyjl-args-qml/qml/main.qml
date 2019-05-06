@@ -368,7 +368,6 @@ AppWindow {
             Image {
                 id: logoImage
                 width: parent.width
-                y: 10
                 horizontalAlignment: Image.AlignHCenter
                 fillMode: Image.PreserveAspectFit
                 source: uiLogo
