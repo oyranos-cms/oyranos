@@ -30,7 +30,7 @@ Rectangle {
 
     width: parent.width
     height: textMetrics.font.pixelSize * 3
-    color: bg
+    color: "transparent"
 
     TextMetrics {
         id: textMetrics
@@ -66,6 +66,7 @@ Rectangle {
         Rectangle {
             width : all.width - row.labelWidth_ - space
             height: slider.height
+            color: "transparent"
             Text {
                 id: value_
                 objectName: "value"
