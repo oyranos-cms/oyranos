@@ -13,8 +13,9 @@ oyranos\-profile\-graph v0.9.7 \- Oyranos Profile Graph
 <br />
 **oyranos\-profile\-graph** \-i *STRING* [\-t *NUMBER*] [\-b] [\-g] [\-w *NUMBER*] [\-R] [\-o *\-|FILE*] [\-f *FORMAT*] [\-v]
 <br />
-**oyranos\-profile\-graph** \-s *FILE* [\-t *NUMBER*] [\-b] [\-g] [\-w *NUMBER*] [\-R] [\-o *\-|FILE*] [\-p *FORMAT*] [\-v]
+**oyranos\-profile\-graph** \-s *FILE* [\-t *NUMBER*] [\-b] [\-g] [\-w *NUMBER*] [\-R] [\-P *STRING*] [\-o *\-|FILE*] [\-p *FORMAT*] [\-v]
 <br />
+**oyranos\-profile\-graph** \-X *json|json+command|man|markdown*|  \-h [\-v]
 ## DESCRIPTION
 The  oyranos\-profile\-graph programm converts ICC profiles or embedded ICC profiles from images to a graph image. By default the program shows the saturation line of the specified profiles and writes to stdout.
 ## OPTIONS
@@ -59,7 +60,7 @@ Create a 2D Graph containing the saturation line from a ICC Profile.
    * \-i D93		# Illuminant D93
 
 ### Spectral Input Graph
-**oyranos\-profile\-graph** \-s *FILE* [\-t *NUMBER*] [\-b] [\-g] [\-w *NUMBER*] [\-R] [\-o *\-|FILE*] [\-p *FORMAT*] [\-v]
+**oyranos\-profile\-graph** \-s *FILE* [\-t *NUMBER*] [\-b] [\-g] [\-w *NUMBER*] [\-R] [\-P *STRING*] [\-o *\-|FILE*] [\-p *FORMAT*] [\-v]
 
 * \-s|\-\-spectral *FILE*	Spectral Input
 * \-p|\-\-spectral\-format *FORMAT*	Specify spectral output file format
@@ -72,8 +73,9 @@ Create a 2D Graph containing the saturation line from a ICC Profile.
 * \-P|\-\-pattern *STRING*	Filter of Color Names
 
 ### General options
+**oyranos\-profile\-graph** \-X *json|json+command|man|markdown*|  \-h [\-v]
 
-* \-t|\-\-thickness *NUMBER*	Specify the thickness of the graph lines (NUMBER:1 [≥0.0001 ≤10])
+* \-t|\-\-thickness *NUMBER*	Specify the thickness of the graph lines (NUMBER:1 [≥0 ≤10])
 * \-b|\-\-no\-border	Omit border in graph
 * \-g|\-\-no\-color	Draw Gray
 * \-w|\-\-width *NUMBER*	Specify output image width in pixel (NUMBER:128 [≥64 ≤4096])
@@ -82,13 +84,13 @@ Create a 2D Graph containing the saturation line from a ICC Profile.
 * \-f|\-\-format *FORMAT*	Specify output file format png or svg, default is png
    * \-f png		# PNG
    * \-f svg		# SVG
+* \-h|\-\-help	Help
 * \-X|\-\-export *json|json+command|man|markdown*	Export formated text: Get UI converted into text formats
    * \-X json		# Json
    * \-X json+command		# Json + Command
    * \-X man		# Man
    * \-X markdown		# Markdown
 * \-v|\-\-verbose	verbose
-* \-h|\-\-help	Help
 
 ## ENVIRONMENT VARIABLES
 ### OY\_DEBUG

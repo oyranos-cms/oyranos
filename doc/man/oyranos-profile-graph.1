@@ -12,8 +12,9 @@ oyranos-profile-graph v0.9.7 \- Oyranos Profile Graph
 .br
 \fBoyranos-profile-graph\fR \-i \fISTRING\fR [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-R] [\-o \fI-|FILE\fR] [\-f \fIFORMAT\fR] [\-v]
 .br
-\fBoyranos-profile-graph\fR \-s \fIFILE\fR [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-R] [\-o \fI-|FILE\fR] [\-p \fIFORMAT\fR] [\-v]
+\fBoyranos-profile-graph\fR \-s \fIFILE\fR [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-R] [\-P \fISTRING\fR] [\-o \fI-|FILE\fR] [\-p \fIFORMAT\fR] [\-v]
 .br
+\fBoyranos-profile-graph\fR \-X \fIjson|json+command|man|markdown\fR|  \-h [\-v]
 .SH DESCRIPTION
 The  oyranos-profile-graph programm converts ICC profiles or embedded ICC profiles from images to a graph image. By default the program shows the saturation line of the specified profiles and writes to stdout.
 .SH OPTIONS
@@ -79,7 +80,7 @@ Illuminant Spectrum Graph
 .br
 .TP
 Spectral Input Graph
-\fBoyranos-profile-graph\fR \-s \fIFILE\fR [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-R] [\-o \fI-|FILE\fR] [\-p \fIFORMAT\fR] [\-v]
+\fBoyranos-profile-graph\fR \-s \fIFILE\fR [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-R] [\-P \fISTRING\fR] [\-o \fI-|FILE\fR] [\-p \fIFORMAT\fR] [\-v]
 .br
 \-s|\-\-spectral \fIFILE\fR	Spectral Input
 .br
@@ -101,8 +102,9 @@ Spectral Input Graph
 .br
 .TP
 General options
+\fBoyranos-profile-graph\fR \-X \fIjson|json+command|man|markdown\fR|  \-h [\-v]
 .br
-\-t|\-\-thickness \fINUMBER\fR	Specify the thickness of the graph lines (NUMBER:1 [≥0.0001 ≤10])
+\-t|\-\-thickness \fINUMBER\fR	Specify the thickness of the graph lines (NUMBER:1 [≥0 ≤10])
 .br
 \-b|\-\-no-border	Omit border in graph
 .br
@@ -120,6 +122,8 @@ General options
 .br
 	\-f svg		# SVG  -  SVG Vector
 .br
+\-h|\-\-help	Help
+.br
 \-X|\-\-export \fIjson|json+command|man|markdown\fR	Export formated text: Get UI converted into text formats
 .br
 	\-X json		# Json  -  Get a Oyjl Json UI declaration
@@ -131,8 +135,6 @@ General options
 	\-X markdown		# Markdown  -  Get formated text
 .br
 \-v|\-\-verbose	verbose
-.br
-\-h|\-\-help	Help
 .br
 .SH ENVIRONMENT VARIABLES
 .TP

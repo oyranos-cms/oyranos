@@ -169,7 +169,7 @@ int main( int argc , char** argv )
   const char * output = NULL;
   const char * input = NULL;
   int no_spectral = 0;
-  int no_blackbody = 1;
+  int no_blackbody = 0;
   double thickness = 1.0;
   double change_thickness = 0.7;
   int no_border = 0;
@@ -297,7 +297,7 @@ int main( int argc , char** argv )
     {"oiwi", 0, 'r', "no-repair",     NULL, _("No repair"),     _("No Profile repair of ICC profile ID"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&no_repair} },
     {"oiwi", 0, 'R', "raster",        NULL, _("Raster"),        _("Draw Raster"),            NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&raster} },
     {"oiwi", 0, 't', "thickness",     NULL, _("Thickness"),     _("Specify the thickness of the graph lines"), NULL, _("NUMBER"), oyjlOPTIONTYPE_DOUBLE,
-      {.dbl.start = 0.0001, .dbl.end = 10.0, .dbl.tick = 0.01, .dbl.d = 1.0}, oyjlDOUBLE, {.d=&thickness} },
+      {.dbl.start = 0.0, .dbl.end = 10.0, .dbl.tick = 0.05, .dbl.d = 1.0}, oyjlDOUBLE, {.d=&thickness} },
     {"oiwi", 0, 'w', "width",         NULL, _("Width"),         _("Specify output image width in pixel"), NULL, _("NUMBER"), oyjlOPTIONTYPE_DOUBLE,
       {.dbl.start = 64.0, .dbl.end = 4096.0, .dbl.tick = 1, .dbl.d = 128.0}, oyjlDOUBLE, {.d=&pixel_width} },
     {"oiwi", 0, 'x', "xyy",           NULL, _("xyY"),           _("Use CIE*xyY *x*y plane for saturation line projection"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&xyy_plane} },
@@ -321,8 +321,8 @@ int main( int argc , char** argv )
     {"oiwg", 0, _("Obs10°"), _("1964 10° Observer Graph"), NULL, "O", "tbgwRofv", "O" },
     {"oiwg", 0, _("Blackbody Radiator"), _("Blackbody Radiator Spectrum Graph"), NULL, "k", "tbgwRofv", "k" },
     {"oiwg", 0, _("Illuminant Spectrum"), _("Illuminant Spectrum Graph"), NULL, "i", "tbgwRofv", "i" },
-    {"oiwg", 0, _("Spectral Input"), _("Spectral Input Graph"), NULL, "s", "tbgwRopv", "spP" },
-    {"oiwg", 0, _("Misc"), _("General options"), NULL, "", "", "tbgwRofXvh" },
+    {"oiwg", 0, _("Spectral Input"), _("Spectral Input Graph"), NULL, "s", "tbgwRPopv", "spP" },
+    {"oiwg", 0, _("Misc"), _("General options"), NULL, "X|h", "v", "tbgwRofhXv" },
     {"",0,0,0,0,0,0,0}
   };
   opts->groups = (oyjlOptionGroup_s*)oyjlStringAppendN( NULL, (const char*)groups, sizeof(groups), 0);
@@ -368,7 +368,7 @@ int main( int argc , char** argv )
     fputs( "\n", stderr );
   }
 
-  if((export && strcmp(export,"json+command") == 0))
+  if(export && strcmp(export,"json+command") == 0)
   {
     char * json = oyjlUi_ToJson( ui, 0 ),
          * json_commands = strdup(jcommands);
@@ -633,6 +633,7 @@ int main( int argc , char** argv )
   height_=(float)(pixel_h- 2*y - 2*tab_border_y - lower_text_border); /* height of diagram */
   height = MAX( 0, height_ );
 
+  cairo_set_line_width (cr, thickness);
   if(profile_count && no_spectral == 0)
   {
     cairo_set_source_rgba( cr, .0, .0, .0, 1.0);
@@ -668,6 +669,7 @@ int main( int argc , char** argv )
     cairo_stroke(cr);
   }
 
+  cairo_set_line_width (cr, 0.5*thickness);
   if(profile_count && no_blackbody == 0 && proj == p_xyz)
   {
     cairo_set_source_rgba( cr, .0, .0, .0, 1.0);
@@ -726,16 +728,6 @@ int main( int argc , char** argv )
   if(profile_count)
   {
     float t = thickness;
-    cairo_set_line_width (cr, 1.*thickness);
-    if(proj == p_lab && no_spectral == 0)
-    {
-      cairo_set_source_rgba( cr, 1., 1., 1., 1.0);
-      cairo_move_to(cr, xToImage(.0), yToImage(.5));
-      cairo_line_to(cr, xToImage(1.0), yToImage(.5));
-      cairo_move_to(cr, xToImage(.5), yToImage(0));
-      cairo_line_to(cr, xToImage(.5), yToImage(1.0));
-      cairo_stroke(cr);
-    }
 
     cairo_set_line_width (cr, 3.*t);
     for ( j=0; j < profile_count; ++j )

@@ -13,8 +13,9 @@ oyranos\-profile\-graph v0.9.7 \- Oyranos Profile Zeichner
 <br />
 **oyranos\-profile\-graph** \-i *STRING* [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-R] [\-o *\-|DATEI*] [\-f *FORMAT*] [\-v]
 <br />
-**oyranos\-profile\-graph** \-s *DATEI* [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-R] [\-o *\-|DATEI*] [\-p *FORMAT*] [\-v]
+**oyranos\-profile\-graph** \-s *DATEI* [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-R] [\-P *STRING*] [\-o *\-|DATEI*] [\-p *FORMAT*] [\-v]
 <br />
+**oyranos\-profile\-graph** \-X *json|json+command|man|markdown*|  \-h [\-v]
 ## BESCHREIBUNG
 Das oyranos\-profile\-graph Programm erzeugt aus einem ICC Profil oder eingebetteten ICC Profil in eine Grafik. Vorgabemäßig malt es die Sättigungslinie eines anzugebenden ICC Profiles und schreibt die Grafik nach stdout.
 ## OPTIONEN
@@ -59,7 +60,7 @@ Erzeuge aus einem ICC Profil eine Grafik mit seiner Sättigungslinie.
    * \-i D93		# Lichtart D93
 
 ### Spektrumgraph
-**oyranos\-profile\-graph** \-s *DATEI* [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-R] [\-o *\-|DATEI*] [\-p *FORMAT*] [\-v]
+**oyranos\-profile\-graph** \-s *DATEI* [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-R] [\-P *STRING*] [\-o *\-|DATEI*] [\-p *FORMAT*] [\-v]
 
 * \-s|\-\-spectral *DATEI*	Spektrale Eingabe
 * \-p|\-\-spectral\-format *FORMAT*	Gib spektrales Ausgabeformat an
@@ -72,8 +73,9 @@ Erzeuge aus einem ICC Profil eine Grafik mit seiner Sättigungslinie.
 * \-P|\-\-pattern *STRING*	Filter für Farbnamen
 
 ### Allgemeine Optionen
+**oyranos\-profile\-graph** \-X *json|json+command|man|markdown*|  \-h [\-v]
 
-* \-t|\-\-thickness *NUMMER*	Gib die Liniendicke an (NUMMER:1 [≥0,0001 ≤10])
+* \-t|\-\-thickness *NUMMER*	Gib die Liniendicke an (NUMMER:1 [≥0 ≤10])
 * \-b|\-\-no\-border	Lasse Rand aus in Zeichnung
 * \-g|\-\-no\-color	Zeichne grau
 * \-w|\-\-width *NUMMER*	Gib Ausgabebildbreite in Pixel an (NUMMER:128 [≥64 ≤4096])
@@ -82,13 +84,13 @@ Erzeuge aus einem ICC Profil eine Grafik mit seiner Sättigungslinie.
 * \-f|\-\-format *FORMAT*	Gib Ausgabeformat PNG oder SVG an, voreingestellt ist PNG
    * \-f png		# PNG
    * \-f svg		# SVG
+* \-h|\-\-help	Hilfe
 * \-X|\-\-export *json|json+command|man|markdown*	Exportiere formatierten Text: Hole Benutzerschnittstelle als Text
    * \-X json		# Json
    * \-X json+command		# Json + Kommando
    * \-X man		# Handbuch
    * \-X markdown		# Markdown
 * \-v|\-\-verbose	plaudernd
-* \-h|\-\-help	Hilfe
 
 ## UMGEBUNGSVARIABLEN
 ### OY\_DEBUG
