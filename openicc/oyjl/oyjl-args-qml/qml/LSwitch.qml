@@ -27,10 +27,12 @@ Rectangle {
     property var getLabelWidth: function() { return all.labelWidth }
 
     property alias switcher: switcher
+    property int button: 0
+    property alias butt: butt
 
     width: parent.width
     height: textMetrics.font.pixelSize * 3
-    color: bg
+    color: "transparent"
 
     TextMetrics {
         id: textMetrics
@@ -50,6 +52,7 @@ Rectangle {
             y: (all.height - height) / 2
             width: row.labelWidth_
             height: label_.height
+            color: "transparent"
             Text {
                 id: label_
                 objectName: "label_"
@@ -65,11 +68,19 @@ Rectangle {
             width : all.width - row.labelWidth_ - space
             height: switcher.height
             y: (all.height - height) / 2
+            color: "transparent"
             Switch {
                 id: switcher
                 objectName: "switcher"
                 width: parent.width
+                visible: button !== 1
                 property real s: space
+            }
+            Button {
+                id: butt
+                width: parent.width
+                visible: button === 1
+                text: qsTr("Ok")
             }
         }
     }
