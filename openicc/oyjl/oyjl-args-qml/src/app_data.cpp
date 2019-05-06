@@ -18,7 +18,6 @@
 #include <QFileInfo>
 #include <QDirIterator>
 #include <QLocale>
-#include <QProcess>
 #include <QUrl>
 #include <QTextStream>
 #include <QJsonArray>
@@ -27,25 +26,8 @@
 #include <oyjl_version.h>
 #include <oyjl.h>
 
-/** @brief start a process
- *
- *  @param prog    executeable in file path
- *  @param args    passed to the *prog* [ "--optionA", "optionAarg", "-o", "shortOptOarg", "other" ]
- *  @return        the data from *prog*
- */
-QByteArray qpOpen( QString prog, QStringList args )
-{
-    QProcess qp;
-    QByteArray ba;
-    qp.start(prog, args);
-    if (!qp.waitForStarted())
-            return ba;
-    if (!qp.waitForFinished())
-            return ba;
-    ba = qp.readAll();
-
-    return ba;
-}
+/* Function pointer hook for Process class. If set, this function replaces shell out. */
+int (*processCallback_p)(int argc, const char ** argv) = NULL;
 
 /** @brief open a local file from disc */
 QString AppData::readFile(QString url)
@@ -80,7 +62,12 @@ QString AppData::readFile(QString url)
 QString AppData::getJSON(QString url)
 {
     QString jui = readFile( url );
-    QByteArray a = jui.toLocal8Bit();
+    QByteArray a;
+
+    if(jui.length() == 0)
+      a = url.toLocal8Bit();
+    else
+      a = jui.toLocal8Bit();
 
     QJsonParseError e;
     QJsonDocument jdoc = QJsonDocument::fromJson(a,&e);
