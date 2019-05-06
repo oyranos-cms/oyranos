@@ -615,6 +615,14 @@ char *             oyjlUi_ToMan      ( oyjlUi_s          * ui,
 char *             oyjlUi_ToMarkdown ( oyjlUi_s          * ui,
                                        int                 flags );
 
+/** link with libOyjlArgsQml and use oyjl-args-qml renderer as library @see oyjlUi_ToJson() */
+int                oyjlArgsQmlStart  ( int                 argc,
+                                       char             ** argv,
+                                       const char        * json,
+                                       int                 debug,
+                                       oyjlUi_s          * ui,
+                                       int               (*callback)(int argc, const char ** argv) );
+
 /** 
  *  @} *//* oyjl_args
  */
