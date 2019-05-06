@@ -350,10 +350,10 @@ int main( int argc , char** argv )
     {"oiwi", 0, 'b', "night-backlight", NULL, _("Night Backlight"), _("Set Nightly Backlight"), _("The option needs xbacklight installed and supporting your device for dimming the monitor lamp."), _("PERCENT"), oyjlOPTIONTYPE_DOUBLE,
       {.dbl.start = 0, .dbl.end = 100, .dbl.tick = 1, .dbl.d = getDoubleFromDB( OY_DISPLAY_STD "/display_backlight_night", 0 )}, oyjlDOUBLE, {.d=&night_backlight} },
     {"oiwi", 0, 'l', "location", NULL, _("location"), _("Detect location by IP adress"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&location} },
-    {"oiwi", 0, 'o', "longitude", NULL, _("Longitude"), _("Set Longitude"), NULL, _("ANGLE_IN_DEGREE"), oyjlOPTIONTYPE_DOUBLE,
-      {.dbl.start = -180, .dbl.end = 180, .dbl.tick = 1, .dbl.d = getDoubleFromDB( OY_DISPLAY_STD "/longitude", 0 )}, oyjlDOUBLE, {.d=&longitude} },
     {"oiwi", 0, 'i', "latitude", NULL, _("Latitude"), _("Set Latitude"), NULL, _("ANGLE_IN_DEGREE"), oyjlOPTIONTYPE_DOUBLE,
       {.dbl.start = -90, .dbl.end = 90, .dbl.tick = 1, .dbl.d = getDoubleFromDB( OY_DISPLAY_STD "/latitude", 0 )}, oyjlDOUBLE, {.d=&latitude} },
+    {"oiwi", 0, 'o', "longitude", NULL, _("Longitude"), _("Set Longitude"), NULL, _("ANGLE_IN_DEGREE"), oyjlOPTIONTYPE_DOUBLE,
+      {.dbl.start = -180, .dbl.end = 180, .dbl.tick = 1, .dbl.d = getDoubleFromDB( OY_DISPLAY_STD "/longitude", 0 )}, oyjlDOUBLE, {.d=&longitude} },
     {"oiwi", 0, 'r', "sunrise", NULL, _("Sunrise"), _("Show local time, used geographical location, twilight height angles, sun rise and sun set times"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&sunrise} },
     {"oiwi", 0, 't', "twilight", NULL, _("Twilight"), _("Set Twilight angle"), NULL, _("ANGLE_IN_DEGREE|0:rise/set|-6:civil|-12:nautical|-18:astronomical"), oyjlOPTIONTYPE_DOUBLE,
       {.dbl.start = 18, .dbl.end = -18, .dbl.tick = 1, .dbl.d = getDoubleFromDB( OY_DISPLAY_STD "/twilight", 0 )}, oyjlDOUBLE, {.d=&twilight} },
@@ -381,9 +381,9 @@ int main( int argc , char** argv )
     {"oiwg", 0, _("Night Mode"), _("Nightly appearance"), _("The Night white point mode shall allow to reduce influence of blue light during night time. A white point temperature of around 4000K and lower allows to get easier into sleep and is recommended along with warm room illumination in evening and night times."), "n", "gzv", "ng" },
 #endif
     {"oiwg", 0, _("Day Mode"), _("Sun light appearance"), NULL, "s", "ezv", "se" },
-    {"oiwg", 0, _("Location"), _("Location and Twilight"), NULL, "l|oi", "tzv", "loit"},
+    {"oiwg", 0, _("Location"), _("Location and Twilight"), NULL, "l|io", "tzv", "liot"},
     {"oiwg", 0, _("Daemon Service"), _("Run sunset daemon"), NULL, "d", "v", "d" },
-    {"oiwg", 0, _("Misc"), _("General options"), NULL, "", "", "zmrXvh" },
+    {"oiwg", 0, _("Misc"), _("General options"), NULL, "m|r|X|h", "v", "hmrXzv" },
     {"",0,0,0,0,0,0,0}
   };
   double night = isNight(0);
@@ -421,6 +421,21 @@ int main( int argc , char** argv )
   }
   if(!ui) return 1;
 
+  if((export && strcmp(export,"json+command") == 0))
+  {
+    char * json = NULL,
+         * json_commands = strdup(jcommands),
+         * text = NULL;
+    error = getSunriseSunset( &rise, &set, dry, &text );
+    ui->opts->groups[3].help = text;
+    json = oyjlUi_ToJson( ui, 0 ),
+    json_commands[strlen(json_commands)-2] = ',';
+    json_commands[strlen(json_commands)-1] = '\000';
+    oyjlStringAdd( &json_commands, malloc, free, "%s", &json[1] );
+    puts( json_commands );
+    return 0;
+  }
+
   DBG_S_( oyPrintTime() );
   if(verbose > 1)
     oy_debug += verbose -1;
@@ -441,6 +456,7 @@ int main( int argc , char** argv )
   if(oy_debug)
     fprintf( stderr, "  Oyranos v%s\n",
                   oyNoEmptyName_m_(oyVersionString(1,0)));
+
 
   if(system_wide)
     scope = oySCOPE_SYSTEM;
@@ -505,7 +521,7 @@ int main( int argc , char** argv )
         {
           double temperature = oyGetTemperature(0);
           const char * man_page = getenv("DISPLAY");
-          int man = 1;
+          int man = 0;
           if(man_page && strcmp(man_page,"man_page") == 0)
             man = 1;
           if(temperature)
@@ -609,21 +625,6 @@ int main( int argc , char** argv )
   if(daemon != -1)
   {
     error = runDaemon(daemon);
-    ++worked;
-  }
-
-  if((export && strcmp(export,"json+command") == 0))
-  {
-    char * json = NULL,
-         * json_commands = strdup(jcommands),
-         * text = NULL;
-    error = getSunriseSunset( &rise, &set, dry, &text );
-    ui->opts->groups[3].help = text;
-    json = oyjlUi_ToJson( ui, 0 ),
-    json_commands[strlen(json_commands)-2] = ',';
-    json_commands[strlen(json_commands)-1] = '\000';
-    oyjlStringAdd( &json_commands, malloc, free, "%s", &json[1] );
-    puts( json_commands );
     ++worked;
   }
 
@@ -894,7 +895,7 @@ int getSunriseSunset( double * rise, double * set, int dry, char ** text )
   { oyFree_m_(value);
   }
 
-  r = __sunriset__( year,month,day, lon,lat,
+  r = __sunriset__( year,month,day, lat,lon,
                     (twilight==0)?-35.0/60.0:twilight, 0, rise, set );
   if(r > 0)
     fprintf(stderr, "sun will not get below twilight today\n");

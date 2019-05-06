@@ -8,10 +8,11 @@ oyranos-monitor-white-point v0.9.7 \- Nacht Manager
 .br
 \fBoyranos-monitor-white-point\fR \-s \fI0|1|2|3|4|5|6|7\fR [\-e \fIICC_PROFIL\fR] [\-z] [\-v]
 .br
-\fBoyranos-monitor-white-point\fR \-l|  \-o \fIWINKEL_IN_GRAD\fR \-i \fIWINKEL_IN_GRAD\fR [\-t \fIWINKEL_IN_GRAD|0:Auf-/Untergang|-6:zivil|-12:nautisch|-18:astronomisch\fR] [\-z] [\-v]
+\fBoyranos-monitor-white-point\fR \-l|  \-i \fIWINKEL_IN_GRAD\fR \-o \fIWINKEL_IN_GRAD\fR [\-t \fIWINKEL_IN_GRAD|0:Auf-/Untergang|-6:zivil|-12:nautisch|-18:astronomisch\fR] [\-z] [\-v]
 .br
 \fBoyranos-monitor-white-point\fR \-d \fI0|1|2\fR [\-v]
 .br
+\fBoyranos-monitor-white-point\fR \-m|  \-r|  \-X \fIjson|json+command|man|markdown\fR|  \-h [\-v]
 .SH BESCHREIBUNG
 Das Werkzeug kann den momentanen Weißpunkt setzen oder ihn abhängig von der Tages- und Nachzeit festlegen. Ein zusätzliches Effektprofil kann eingestellt werden.
 .SH OPTIONEN
@@ -101,13 +102,13 @@ Setze Tagesmodus
 .br
 .TP
 Ort und Dämmerung
-\fBoyranos-monitor-white-point\fR \-l|  \-o \fIWINKEL_IN_GRAD\fR \-i \fIWINKEL_IN_GRAD\fR [\-t \fIWINKEL_IN_GRAD|0:Auf-/Untergang|-6:zivil|-12:nautisch|-18:astronomisch\fR] [\-z] [\-v]
+\fBoyranos-monitor-white-point\fR \-l|  \-i \fIWINKEL_IN_GRAD\fR \-o \fIWINKEL_IN_GRAD\fR [\-t \fIWINKEL_IN_GRAD|0:Auf-/Untergang|-6:zivil|-12:nautisch|-18:astronomisch\fR] [\-z] [\-v]
 .br
 \-l|\-\-location	Erhalte Position von IP Adresse
 .br
-\-o|\-\-longitude \fIWINKEL_IN_GRAD\fR	Setze Geographische Länge (WINKEL_IN_GRAD:12,0658 [≥-180 ≤180])
+\-i|\-\-latitude \fIWINKEL_IN_GRAD\fR	Setze Geographische Breite (WINKEL_IN_GRAD:53 [≥-90 ≤90])
 .br
-\-i|\-\-latitude \fIWINKEL_IN_GRAD\fR	Setze Geographische Breite (WINKEL_IN_GRAD:51,2954 [≥-90 ≤90])
+\-o|\-\-longitude \fIWINKEL_IN_GRAD\fR	Setze Geographische Länge (WINKEL_IN_GRAD:12 [≥-180 ≤180])
 .br
 \-t|\-\-twilight \fIWINKEL_IN_GRAD|0:Auf-/Untergang|-6:zivil|-12:nautisch|-18:astronomisch\fR	Setze Dämmerungswinkel (WINKEL_IN_GRAD|0:Auf-/Untergang|-6:zivil|-12:nautisch|-18:astronomisch:0 [≥18 ≤-18])
 .br
@@ -125,8 +126,9 @@ Setze Sonnenuntergangsdienst
 .br
 .TP
 Allgemeine Optionen
+\fBoyranos-monitor-white-point\fR \-m|  \-r|  \-X \fIjson|json+command|man|markdown\fR|  \-h [\-v]
 .br
-\-z|\-\-system-wide	Einstellung in der systemweiten DB
+\-h|\-\-help	Hilfe
 .br
 \-m|\-\-modes	Zeige Weißpunktmodus
 .br
@@ -142,9 +144,9 @@ Allgemeine Optionen
 .br
 	\-X markdown		# Markdown  -  Hole formatierten Text
 .br
-\-v|\-\-verbose	plaudernd
+\-z|\-\-system-wide	Einstellung in der systemweiten DB
 .br
-\-h|\-\-help	Hilfe
+\-v|\-\-verbose	plaudernd
 .br
 .SH UMGEBUNGSVARIABLEN
 .TP

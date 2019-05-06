@@ -8,10 +8,11 @@ oyranos-monitor-white-point v0.9.7 \- Night Manager
 .br
 \fBoyranos-monitor-white-point\fR \-s \fI0|1|2|3|4|5|6|7\fR [\-e \fIICC_PROFILE\fR] [\-z] [\-v]
 .br
-\fBoyranos-monitor-white-point\fR \-l|  \-o \fIANGLE_IN_DEGREE\fR \-i \fIANGLE_IN_DEGREE\fR [\-t \fIANGLE_IN_DEGREE|0:rise/set|-6:civil|-12:nautical|-18:astronomical\fR] [\-z] [\-v]
+\fBoyranos-monitor-white-point\fR \-l|  \-i \fIANGLE_IN_DEGREE\fR \-o \fIANGLE_IN_DEGREE\fR [\-t \fIANGLE_IN_DEGREE|0:rise/set|-6:civil|-12:nautical|-18:astronomical\fR] [\-z] [\-v]
 .br
 \fBoyranos-monitor-white-point\fR \-d \fI0|1|2\fR [\-v]
 .br
+\fBoyranos-monitor-white-point\fR \-m|  \-r|  \-X \fIjson|json+command|man|markdown\fR|  \-h [\-v]
 .SH DESCRIPTION
 The tool can set the actual white point or set it by local day and night time. A additional effect profile can be selected.
 .SH OPTIONS
@@ -101,13 +102,13 @@ Sun light appearance
 .br
 .TP
 Location and Twilight
-\fBoyranos-monitor-white-point\fR \-l|  \-o \fIANGLE_IN_DEGREE\fR \-i \fIANGLE_IN_DEGREE\fR [\-t \fIANGLE_IN_DEGREE|0:rise/set|-6:civil|-12:nautical|-18:astronomical\fR] [\-z] [\-v]
+\fBoyranos-monitor-white-point\fR \-l|  \-i \fIANGLE_IN_DEGREE\fR \-o \fIANGLE_IN_DEGREE\fR [\-t \fIANGLE_IN_DEGREE|0:rise/set|-6:civil|-12:nautical|-18:astronomical\fR] [\-z] [\-v]
 .br
 \-l|\-\-location	Detect location by IP adress
 .br
-\-o|\-\-longitude \fIANGLE_IN_DEGREE\fR	Set Longitude (ANGLE_IN_DEGREE:12.0658 [≥-180 ≤180])
+\-i|\-\-latitude \fIANGLE_IN_DEGREE\fR	Set Latitude (ANGLE_IN_DEGREE:53 [≥-90 ≤90])
 .br
-\-i|\-\-latitude \fIANGLE_IN_DEGREE\fR	Set Latitude (ANGLE_IN_DEGREE:51.2954 [≥-90 ≤90])
+\-o|\-\-longitude \fIANGLE_IN_DEGREE\fR	Set Longitude (ANGLE_IN_DEGREE:12 [≥-180 ≤180])
 .br
 \-t|\-\-twilight \fIANGLE_IN_DEGREE|0:rise/set|-6:civil|-12:nautical|-18:astronomical\fR	Set Twilight angle (ANGLE_IN_DEGREE|0:rise/set|-6:civil|-12:nautical|-18:astronomical:0 [≥18 ≤-18])
 .br
@@ -125,8 +126,9 @@ Run sunset daemon
 .br
 .TP
 General options
+\fBoyranos-monitor-white-point\fR \-m|  \-r|  \-X \fIjson|json+command|man|markdown\fR|  \-h [\-v]
 .br
-\-z|\-\-system-wide	System wide DB setting
+\-h|\-\-help	Help
 .br
 \-m|\-\-modes	Show white point modes
 .br
@@ -142,9 +144,9 @@ General options
 .br
 	\-X markdown		# Markdown  -  Get formated text
 .br
-\-v|\-\-verbose	verbose
+\-z|\-\-system-wide	System wide DB setting
 .br
-\-h|\-\-help	Help
+\-v|\-\-verbose	verbose
 .br
 .SH ENVIRONMENT VARIABLES
 .TP

@@ -9,10 +9,11 @@ oyranos\-monitor\-white\-point v0.9.7 \- Night Manager
 <br />
 **oyranos\-monitor\-white\-point** \-s *0|1|2|3|4|5|6|7* [\-e *ICC\_PROFILE*] [\-z] [\-v]
 <br />
-**oyranos\-monitor\-white\-point** \-l|  \-o *ANGLE\_IN\_DEGREE* \-i *ANGLE\_IN\_DEGREE* [\-t *ANGLE\_IN\_DEGREE|0:rise/set|\-6:civil|\-12:nautical|\-18:astronomical*] [\-z] [\-v]
+**oyranos\-monitor\-white\-point** \-l|  \-i *ANGLE\_IN\_DEGREE* \-o *ANGLE\_IN\_DEGREE* [\-t *ANGLE\_IN\_DEGREE|0:rise/set|\-6:civil|\-12:nautical|\-18:astronomical*] [\-z] [\-v]
 <br />
 **oyranos\-monitor\-white\-point** \-d *0|1|2* [\-v]
 <br />
+**oyranos\-monitor\-white\-point** \-m|  \-r|  \-X *json|json+command|man|markdown*|  \-h [\-v]
 ## DESCRIPTION
 The tool can set the actual white point or set it by local day and night time. A additional effect profile can be selected.
 ## OPTIONS
@@ -65,11 +66,11 @@ The Night white point mode shall allow to reduce influence of blue light during 
    * \-e Effect 2		# Example Effect 2
 
 ### Location and Twilight
-**oyranos\-monitor\-white\-point** \-l|  \-o *ANGLE\_IN\_DEGREE* \-i *ANGLE\_IN\_DEGREE* [\-t *ANGLE\_IN\_DEGREE|0:rise/set|\-6:civil|\-12:nautical|\-18:astronomical*] [\-z] [\-v]
+**oyranos\-monitor\-white\-point** \-l|  \-i *ANGLE\_IN\_DEGREE* \-o *ANGLE\_IN\_DEGREE* [\-t *ANGLE\_IN\_DEGREE|0:rise/set|\-6:civil|\-12:nautical|\-18:astronomical*] [\-z] [\-v]
 
 * \-l|\-\-location	Detect location by IP adress
-* \-o|\-\-longitude *ANGLE\_IN\_DEGREE*	Set Longitude (ANGLE\_IN\_DEGREE:12.0658 [≥\-180 ≤180])
-* \-i|\-\-latitude *ANGLE\_IN\_DEGREE*	Set Latitude (ANGLE\_IN\_DEGREE:51.2954 [≥\-90 ≤90])
+* \-i|\-\-latitude *ANGLE\_IN\_DEGREE*	Set Latitude (ANGLE\_IN\_DEGREE:53 [≥\-90 ≤90])
+* \-o|\-\-longitude *ANGLE\_IN\_DEGREE*	Set Longitude (ANGLE\_IN\_DEGREE:12 [≥\-180 ≤180])
 * \-t|\-\-twilight *ANGLE\_IN\_DEGREE|0:rise/set|\-6:civil|\-12:nautical|\-18:astronomical*	Set Twilight angle (ANGLE\_IN\_DEGREE|0:rise/set|\-6:civil|\-12:nautical|\-18:astronomical:0 [≥18 ≤\-18])
 
 ### Run sunset daemon
@@ -81,8 +82,9 @@ The Night white point mode shall allow to reduce influence of blue light during 
    * \-d 2		# Activate
 
 ### General options
+**oyranos\-monitor\-white\-point** \-m|  \-r|  \-X *json|json+command|man|markdown*|  \-h [\-v]
 
-* \-z|\-\-system\-wide	System wide DB setting
+* \-h|\-\-help	Help
 * \-m|\-\-modes	Show white point modes
 * \-r|\-\-sunrise	Show local time, used geographical location, twilight height angles, sun rise and sun set times
 * \-X|\-\-export *json|json+command|man|markdown*	Export formated text: Get UI converted into text formats
@@ -90,8 +92,8 @@ The Night white point mode shall allow to reduce influence of blue light during 
    * \-X json+command		# Json + Command
    * \-X man		# Man
    * \-X markdown		# Markdown
+* \-z|\-\-system\-wide	System wide DB setting
 * \-v|\-\-verbose	verbose
-* \-h|\-\-help	Help
 
 ## ENVIRONMENT VARIABLES
 ### OY\_DEBUG
