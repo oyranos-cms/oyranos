@@ -180,9 +180,21 @@ oyjlTESTRESULT_e testJson ()
   fprintf(stdout, "\n" );
 
   int i;
-  const char * json = "{\"org\":{\"free\":[{\"s1key_a\":\"val_a\",\"s1key_b\":\"val_b\"},{\"s2key_c\":\"val_c\",\"s2key_d\":\"val_d\"}],\"key_e\":\"val_e_yyy\",\"key_f\":\"val_f\"}}";
+  const char * json = "{\n\
+  \"org\": {\n\
+    \"free\": [{\n\
+        \"s1key_a\": \"val_a\",\n\
+        \"s1key_b\": \"val_b\"\n\
+      },{\n\
+        \"s2key_c\": \"val_c\",\n\
+        \"s2key_d\": \"val_d\"\n\
+      }],\n\
+    \"key_e\": \"val_e_yyy\",\n\
+    \"key_f\": \"val_f\"\n\
+  }\n\
+}";
 
-  fprintf( zout, "%s\n", json );
+  if(verbose) fprintf( zout, "%s\n", json );
 
   oyjl_val value = 0;
   oyjl_val root = 0;
@@ -207,34 +219,59 @@ oyjlTESTRESULT_e testJson ()
 
     if(!xpath)
     {
-      char * json = 0;
-      oyjlTreeToJson( root, &level, &json );
-      if(json && json[0] && strlen(json) == 210)
+      char * rjson = 0;
+      oyjlTreeToJson( root, &level, &rjson );
+      if(json && json[0] && strlen(rjson) == 210 && strcmp(json,rjson) == 0)
       { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-        "oyjlTreeToJson()                     %lu", (unsigned long)strlen(json) );
-        fprintf( zout, "%s\n", json );
+        "oyjlTreeToJson()                     %lu", (unsigned long)strlen(rjson) );
+        if(verbose) fprintf( zout, "%s\n", rjson );
       } else
       { PRINT_SUB( oyjlTESTRESULT_FAIL,
         "oyjlTreeToJson()                                " );
       }
-      myDeAllocFunc(json);
+      myDeAllocFunc(rjson);
 
       char ** paths = NULL;
       oyjlTreeToPaths( root, 10, NULL, 0, &paths );
       int count = 0; while(paths && paths[count]) ++count;
-      if(count == 10)
+      int j = 0;
+      if( count == 10 &&
+          strcmp(paths[j++],"org") == 0 &&
+          strcmp(paths[j++],"org/free") == 0 &&
+          strcmp(paths[j++],"org/free/[0]") == 0 &&
+          strcmp(paths[j++],"org/free/[0]/s1key_a") == 0 &&
+          strcmp(paths[j++],"org/free/[0]/s1key_b") == 0 &&
+          strcmp(paths[j++],"org/free/[1]") == 0 &&
+          strcmp(paths[j++],"org/free/[1]/s2key_c") == 0 &&
+          strcmp(paths[j++],"org/free/[1]/s2key_d") == 0 &&
+          strcmp(paths[j++],"org/key_e") == 0 &&
+          strcmp(paths[j++],"org/key_f") == 0
+        )
       { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
         "oyjlTreeToPaths()                     %d", count );
       } else
       { PRINT_SUB( oyjlTESTRESULT_FAIL,
         "oyjlTreeToPaths()                     %d", count );
+        for(j = 0; j < count; ++j)
+          fprintf( zout, "paths[%d]: %s\n", j, paths[j]);
       }
+      if(verbose)
+        for(j = 0; j < count; ++j)
+          fprintf( zout, "%d: %s\n", j, paths[j] );
       if(paths && count)
         oyjlStringListRelease( &paths, count, free );
 
       oyjlTreeToPaths( root, 10, NULL, OYJL_KEY, &paths );
       count = 0; while(paths && paths[count]) ++count;
-      if(count == 6)
+      j = 0;
+      if( count == 6 &&
+          strcmp(paths[j++],"org/free/[0]/s1key_a") == 0 &&
+          strcmp(paths[j++],"org/free/[0]/s1key_b") == 0 &&
+          strcmp(paths[j++],"org/free/[1]/s2key_c") == 0 &&
+          strcmp(paths[j++],"org/free/[1]/s2key_d") == 0 &&
+          strcmp(paths[j++],"org/key_e") == 0 &&
+          strcmp(paths[j++],"org/key_f") == 0
+        )
       { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
         "oyjlTreeToPaths( OYJL_KEY )           %d", count );
       } else
@@ -247,7 +284,7 @@ oyjlTESTRESULT_e testJson ()
       {
         if(oyjlPathMatch( paths[j], xpath, 0 ))
           match = paths[j];
-        fprintf( zout, "%d: %s\n", j, paths[j] );
+        if(verbose) fprintf( zout, "%d: %s\n", j, paths[j] );
       }
       if(match && strcmp(match,"org/free/[1]/s2key_d") == 0)
       { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
@@ -261,13 +298,20 @@ oyjlTESTRESULT_e testJson ()
 
       oyjlTreeToPaths( root, 10, NULL, OYJL_PATH, &paths );
       count = 0; while(paths && paths[count]) ++count;
-      if(count == 4)
+      j = 0;
+      if(count == 4 &&
+          strcmp(paths[j++],"org") == 0 &&
+          strcmp(paths[j++],"org/free") == 0 &&
+          strcmp(paths[j++],"org/free/[0]") == 0 &&
+          strcmp(paths[j++],"org/free/[1]") == 0
+        )
       { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
         "oyjlTreeToPaths( OYJL_PATH )          %d", count );
       } else
       { PRINT_SUB( oyjlTESTRESULT_FAIL,
         "oyjlTreeToPaths( OYJL_PATH )          %d", count );
       }
+      if(verbose)
       for(int j = 0; j < count; ++j)
         fprintf( zout, "%d: %s\n", j, paths[j] );
 
@@ -298,6 +342,11 @@ oyjlTESTRESULT_e testJson ()
     {
       int success = 0;
       char * rjson = NULL;
+      const char * xjson =
+"{\n\
+  \"s2key_c\": \"val_c\",\n\
+  \"s2key_d\": \"val_d\"\n\
+}";
       value = oyjlTreeGetValue( root, flags, xpath );
       if( value  )
       {
@@ -311,19 +360,23 @@ oyjlTESTRESULT_e testJson ()
         success = 1;
       else if(i == 2 || i == 3)
         success = 1;
-      if(success)
+      if( success &&
+          ((i == 1 && strcmp(rjson, xjson) == 0) ||
+           (i == 2 && strcmp(rjson, "\"val_c\"") == 0) ||
+           (i == 3 && !rjson) ||
+           (i == 4 && strlen(rjson) == 252)
+          )
+        )
       { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
         "oyjlTreeGetValue(flags=%d)            ", flags );
       } else
       { PRINT_SUB( oyjlTESTRESULT_FAIL,
-        "oyjlTreeGetValue(flags=%d)            ", flags );
+        "oyjlTreeGetValue(flags=%d) %d %lu", flags, i, rjson?(unsigned long)strlen(rjson):0 );
       }
+      if(verbose)
       fprintf( zout, "%s xpath \"%s\" %s\n", value?"found":"found not", xpath, success?"ok":"" );
-      if(rjson && rjson[0])
-      {
-        success = 1;
-        fprintf( zout, "%s\n", rjson );
-      }
+      if(verbose)
+        fprintf( zout, "%d %s\n", i, rjson?rjson:"---" );
       if(rjson) myDeAllocFunc(rjson);
       rjson = NULL;
       if(!root) oyjlTreeFree( value );
@@ -353,10 +406,10 @@ oyjlTESTRESULT_e testFromJson ()
 
   oyjlTreeToJson( root, &level, &text );
   format = oyjlDataFormat(text);
-  if(text && text[0] && strlen(text) > 20 && format == 7)
+  if(text && text[0] && strlen(text) > 20 && format == 7 && strlen(text) == 406)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "oyjlTreeToJson()                     %lu", (unsigned long)strlen(text) );
-    fprintf( zout, "%s\n", text );
+    if(verbose) fprintf( zout, "%s\n", text );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyjlTreeToJson()                                " );
@@ -366,10 +419,10 @@ oyjlTESTRESULT_e testFromJson ()
   text = NULL;
   oyjlTreeToYaml( root, &level, &text );
   format = oyjlDataFormat(text);
-  if(text && text[0] && strlen(text) > 20 && format == 9)
+  if(text && text[0] && strlen(text) > 20 && format == 9 && strlen(text) == 305)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "oyjlTreeToYaml()                     %lu", (unsigned long)strlen(text) );
-    fprintf( zout, "%s\n", text );
+    if(verbose) fprintf( zout, "%s\n", text );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyjlTreeToYaml()                                " );
@@ -379,10 +432,10 @@ oyjlTESTRESULT_e testFromJson ()
   text = NULL;
   oyjlTreeToXml( root, &level, &text );
   format = oyjlDataFormat(text);
-  if(text && text[0] && strlen(text) > 20 && format == 8)
+  if(text && text[0] && strlen(text) > 20 && format == 8 && strlen(text) == 436)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "oyjlTreeToXml ()                     %lu", (unsigned long)strlen(text) );
-    fprintf( zout, "%s\n", text );
+    if(verbose) fprintf( zout, "%s\n", text );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyjlTreeToXml ()                                " );

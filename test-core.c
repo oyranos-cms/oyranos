@@ -388,6 +388,7 @@ oyjlTESTRESULT_e testArgs()
   oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
 
   fprintf(stdout, "\n" );
+  setlocale(LC_ALL,"en_GB.UTF8");
 
   int output = 0;
   const char * file = NULL;
@@ -412,6 +413,7 @@ oyjlTESTRESULT_e testArgs()
 
   /* declare some option choices */
   oyjlOptionChoice_s i_choices[] = {{"oyjl.json", _("oyjl.json"), _("oyjl.json"), ""},
+                                    {"oyjl2.json", _("oyjl2.json"), _("oyjl2.json"), ""},
                                     {"","","",""}};
   oyjlOptionChoice_s o_choices[] = {{"0", _("Print All"), _("Print All"), ""},
                                     {"1", _("Print Camera"), _("Print Camera JSON"), ""},
@@ -422,7 +424,7 @@ oyjlTESTRESULT_e testArgs()
   oyjlOption_s oarray[] = {
   /* type,   flags, o,   option,    key,  name,         description,         help, value_name,    value_type,               values,                                                          variable_type, output variable */
     {"oiwi", 0,     '#', "",        NULL, _("status"),  _("Show Status"),    NULL, NULL,          oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i = &show_status} },
-    {"oiwi", 0,     '@', "",        NULL, _("input"),   _("Set Input"),      NULL, _("FILENAME"), oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i = &file_count} },
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,'@',"",NULL,_("input"),_("Set Input"),NULL, _("FILENAME"), oyjlOPTIONTYPE_CHOICE, {}, oyjlINT, {.i = &file_count} },
     {"oiwi", 0,     'i', "input",   NULL, _("input"),   _("Set Input"),      NULL, _("FILENAME"), oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)i_choices, sizeof(i_choices), malloc )}, oyjlSTRING, {.s = &file} },
     {"oiwi", 0,     'o', "output",  NULL, _("output"),  _("Control Output"), NULL, "0|1|2",       oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)o_choices, sizeof(o_choices), malloc )}, oyjlINT, {.i = &output} },
     {"oiwi", 0,     'h', "help",    NULL, _("help"),    _("Help"),           NULL, NULL,          oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i = &help} },
@@ -434,7 +436,7 @@ oyjlTESTRESULT_e testArgs()
   oyjlOptionGroup_s groups_no_args[] = {
   /* type,   flags, name,      description,          help, mandatory, optional, detail */
     {"oiwg", 0,     _("Mode1"),_("Simple mode"),     NULL, "#",       "ov",     "o" }, /* accepted even if none of the mandatory options is set */
-    {"oiwg", 0,     _("Mode2"),_("Any arg mode"),    NULL, "@",       "ov",     "o" }, /* accepted if anonymous arguments are set */
+    {"oiwg", OYJL_OPTION_FLAG_EDITABLE,_("Mode2"),_("Any arg mode"),NULL,"@","ov","@o"},/* accepted if anonymous arguments are set */
     {"oiwg", 0,     _("Mode3"),_("Actual mode"),     NULL, "i",       "ov",     "io" },/* parsed and checked with -i option */
     {"oiwg", 0,     _("Misc"), _("General options"), NULL, "",        "",       "vh" },/* just show in documentation */
     {"",0,0,0,0,0,0,0}
@@ -456,6 +458,15 @@ oyjlTESTRESULT_e testArgs()
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
     "ui created - no args                           " );
   }
+  int size = 0;
+  char * text = oyjlUi_ToJson( ui, 0 );
+  if(text)
+    size = oyjlWriteFile( "test3.json",
+                           text,
+                           strlen(text) );
+  if(verbose)
+    fprintf( zout, "%s\n", text );
+  if(text && size) {free(text);} text = NULL;
   oyjlUi_Release( &ui);
 
 
@@ -473,7 +484,7 @@ oyjlTESTRESULT_e testArgs()
   }
   int count = 0, i;
   /* detect all anonymous arguments */
-  char ** results = oyjlOptions_ResultsToList( ui->opts, '@', &count );
+  char ** results = oyjlOptions_ResultsToList( ui?ui->opts:NULL, '@', &count );
   if(count == 2 &&
      file_count == count &&
      strcmp(argv_anonymous[2],results[0]) == 0 &&
@@ -555,14 +566,14 @@ oyjlTESTRESULT_e testArgs()
   ui = oyjlUi_Create( argc, argv, /* argc+argv are required for parsing the command line options */
                                        "oyjl-config-read", "Oyjl Config Reader", _("Short example tool using libOyjl"), "logo",
                                        sections, oarray, groups, NULL );
-  int size = 0;
-  char * text = oyjlUi_ToJson( ui, 0 );
-  if(text && strlen(text) == 3145)
+  size = 0;
+  text = oyjlUi_ToJson( ui, 0 );
+  if(text && strlen(text) == 3280)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlUi_ToJson() %lu                           ", strlen(text) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "oyjlUi_ToJson() %lu                           ", strlen(text) );
+    "oyjlUi_ToJson() 3280 == %lu                   ", strlen(text) );
   }
   size = oyjlWriteFile( "test.json",
                            text,
@@ -572,12 +583,12 @@ oyjlTESTRESULT_e testArgs()
   if(text && size) {free(text);} text = NULL;
 
   text = oyjlUi_ToMan( ui, 0 );
-  if(text && strlen(text) == 656)
+  if(text && strlen(text) == 662)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyjlUi_ToMan()  %lu                           ", strlen(text) );
+    "oyjlUi_ToMan() %lu                            ", strlen(text) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "oyjlUi_ToMan()  %lu                           ", strlen(text) );
+    "oyjlUi_ToMan() 662 == %lu                     ", strlen(text) );
   }
   size = oyjlWriteFile( "test.1",
                            text,
@@ -597,6 +608,7 @@ oyjlTESTRESULT_e testArgs()
   if(verbose)
     fprintf( zout, "%s\n", text );
   if(text) {free(text);} text = NULL;
+  setlocale(LC_ALL,"");
 
   text = oyjlOptions_ResultsToText( ui->opts );
   if(text && strlen(text) == 21)
