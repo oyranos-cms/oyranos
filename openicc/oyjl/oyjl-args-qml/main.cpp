@@ -15,6 +15,7 @@
 
 #include <QApplication>
 #include <QIcon>
+#include <QImageReader>
 #include <QMessageBox>
 #include <QQmlApplicationEngine>
 #include <QtQml> // qmlRegisterType<>()
@@ -60,6 +61,11 @@ int main(int argc, char *argv[])
 
     QApplication app(argc, argv);
     // a = &app; see comment above
+    printf( "image plugins:\n");
+    foreach (QByteArray io, QImageReader::supportedImageFormats())
+      printf( "\t%s", qPrintable( QString(io) ));
+    printf( "\n");
+
 
     QTranslator translator;
     QString lname( ":/translations/app_" + QLocale::system().name() );
@@ -72,7 +78,7 @@ int main(int argc, char *argv[])
         screen->setOrientationUpdateMask(Qt::LandscapeOrientation | Qt::PortraitOrientation |
                                          Qt::InvertedLandscapeOrientation | Qt::InvertedPortraitOrientation);
 
-    app.setApplicationName(QString("oyjl-json-qml"));
+    app.setApplicationName(QString("oyjl-args-qml"));
     app.setApplicationDisplayName(QString("Oyjl"));
     app.setApplicationVersion("0.5");
     app.setOrganizationName(QString("oyranos.org"));
@@ -116,17 +122,17 @@ int main(int argc, char *argv[])
     {
         printf(qPrintable(parser.helpText()));
         printf( "%s:\n\t%s\n\t%s\n",
-  qPrintable( QCoreApplication::translate("main", "Example") ),
-  qPrintable( QCoreApplication::translate("main", "Open JSON from stdin and give result JSON to stdout:\n\t\tcat options.json | %1 -i - -o - | xargs echo").arg(app.applicationName()) ),
-  qPrintable( QCoreApplication::translate("main", "Open JSON from stdin and specify commands:\n\t\tcat options.json | %1 -i - -c commands.json").arg(app.applicationName()) ));
+        qPrintable( QCoreApplication::translate("main", "Example") ),
+        qPrintable( QCoreApplication::translate("main", "Open JSON from stdin and give result JSON to stdout:\n\t\tcat options.json | %1 -i - -o - | xargs echo").arg(app.applicationName()) ),
+        qPrintable( QCoreApplication::translate("main", "Open JSON from stdin and specify commands:\n\t\tcat options.json | %1 -i - -c commands.json").arg(app.applicationName()) ));
         return 0;
     }
     if(parser.isSet(aboutOption))
     {
         printf( "%s %s\t%s\n",
-  qPrintable( app.applicationName() ),
-  qPrintable( app.applicationVersion() ),
-  qPrintable( QCoreApplication::translate("main", "is a QML renderer for Oyjl JSON options.") ));
+        qPrintable( app.applicationName() ),
+        qPrintable( app.applicationVersion() ),
+        qPrintable( QCoreApplication::translate("main", "is a QML renderer for Oyjl JSON options.") ));
         return 0;
     }
 
