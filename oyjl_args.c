@@ -892,17 +892,20 @@ const char * oyjlOptions_PrintHelpSynopsis (
   static char * text = NULL;
   int opt_group = 0;
   int gstyle = style;
+  const char * prog = opts->argv[0];
+  if(prog && strchr(prog,'/'))
+    prog = strrchr(prog,'/') + 1;
 
   if(text) text[0] = 0;
 
   if( m || on )
   {
     if(style & oyjlOPTIONSTYLE_MAN)
-      oyjlStringAdd( &text, malloc, free, "\\fB%s\\fR", opts->argv[0] );
+      oyjlStringAdd( &text, malloc, free, "\\fB%s\\fR", prog );
     else if(style & oyjlOPTIONSTYLE_MARKDOWN)
-      oyjlStringAdd( &text, malloc, free, "**%s**", opts->argv[0] );
+      oyjlStringAdd( &text, malloc, free, "**%s**", prog );
     else
-      oyjlStringAdd( &text, malloc, free, "%s", opts->argv[0] );
+      oyjlStringAdd( &text, malloc, free, "%s", prog );
   }
   else
     return text;
@@ -1003,11 +1006,11 @@ oyjlOptionChoice_s * oyjlOption_GetChoices_ (
  *  @param   motto_format              prints a customised intoduction line
  *
  *  @version Oyjl: 1.0.0
- *  @date    2019/03/25
+ *  @date    2019/05/06
  *  @since   2018/08/14 (OpenICC: 0.1.1)
  */
-void  oyjlOptions_PrintHelp       ( oyjlOptions_s  * opts,
-                                       oyjlUi_s       * ui,
+void  oyjlOptions_PrintHelp          ( oyjlOptions_s     * opts,
+                                       oyjlUi_s          * ui,
                                        int                 verbose,
                                        const char        * motto_format,
                                                            ... )
@@ -1404,7 +1407,10 @@ oyjlUi_s *  oyjlUi_Create            ( int                 argc,
   {
     oyjlUiHeaderSection_s * version = oyjlUi_GetHeaderSection( ui,
                                                                "version" );
-    oyjlOptions_PrintHelp( ui->opts, ui, verbose, "%s v%s - %s", argv[0],
+    const char * prog = argv[0];
+    if(!verbose && prog && strchr(prog,'/'))
+      prog = strrchr(prog,'/') + 1;
+    oyjlOptions_PrintHelp( ui->opts, ui, verbose, "%s v%s - %s", prog,
                               version && version->name ? version->name : "",
                               ui->description ? ui->description : "" );
     oyjlUi_Release( &ui);
@@ -1494,7 +1500,7 @@ int     oyjlUi_CountHeaderSections( oyjlUi_s       * ui )
  *  @since   2018/08/14 (OpenICC: 0.1.1)
  */
 oyjlUiHeaderSection_s * oyjlUi_GetHeaderSection (
-                                       oyjlUi_s       * ui,
+                                       oyjlUi_s          * ui,
                                        const char        * nick )
 {
   oyjlUiHeaderSection_s * section = NULL;
