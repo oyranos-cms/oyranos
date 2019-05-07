@@ -895,7 +895,7 @@ int getSunriseSunset( double * rise, double * set, int dry, char ** text )
   { oyFree_m_(value);
   }
 
-  r = __sunriset__( year,month,day, lat,lon,
+  r = __sunriset__( year,month,day, lon,lat,
                     (twilight==0)?-35.0/60.0:twilight, 0, rise, set );
   if(r > 0)
     fprintf(stderr, "sun will not get below twilight today\n");
