@@ -437,8 +437,8 @@ int main( int argc , char** argv )
   }
 
   DBG_S_( oyPrintTime() );
-  if(verbose > 1)
-    oy_debug += verbose -1;
+  if(verbose >= 1)
+    oy_debug += verbose;
 
   if(verbose)
   {
@@ -756,7 +756,7 @@ int findLocation(oySCOPE_e scope, int dry)
         WARNc2_S( "%s: %s\n", _("found issues parsing JSON"), t );
       oyFree_m_(t);
       if(oy_debug)
-        fprintf(stderr, "%s\n", geo_json);
+        fprintf(stdout, "%s\n", geo_json);
     } else
       error = 1;
 
@@ -1653,37 +1653,37 @@ double getSunHeight( double year, double month, double day, double gmt_hours,
   int hour,minute,second;
   oySplitHour( oyGetCurrentLocalHour( gmt_hours, 0 ), &hour, &minute, &second );
   if(oy_debug)
-  fprintf( stderr, "GMT:\t%02d:%02d:%02d\n", hour,minute,second );
+  fprintf( stdout, "GMT:\t%02d:%02d:%02d\n", hour,minute,second );
   if(oy_debug)
-  fprintf( stderr, "JD (GMT 12:00):\t%fd\n", d + 2451545.0 + lon/360.0 );
+  fprintf( stdout, "JD (GMT 12:00):\t%fd\n", d + 2451545.0 + lon/360.0 );
   if(oy_debug)
-  fprintf( stderr, "JD0 (GMT 12:00):\t%fd\n", d + lon/360.0 );
+  fprintf( stdout, "JD0 (GMT 12:00):\t%fd\n", d + lon/360.0 );
   if(oy_debug)
-  fprintf( stderr, "LMST:\t%fd\n", d + gmt_hours/24.0*365.25/366.25 );
+  fprintf( stdout, "LMST:\t%fd\n", d + gmt_hours/24.0*365.25/366.25 );
 
   /* Compute local sideral time of this moment */
   sidtime = revolution( GMST0(d) + 360.*gmt_hours/24.*365.25/366.25 + lon );
   oySplitHour( oyGetCurrentLocalHour( sidtime/15., 0 ), &hour, &minute, &second );
   if(oy_debug)
-  fprintf( stderr, "Local Mean Sidereal Time:\t%02d:%02d:%02d\n", hour,minute,second );
+  fprintf( stdout, "Local Mean Sidereal Time:\t%02d:%02d:%02d\n", hour,minute,second );
 
   sun_RA_dec( d, &sRA, &sdec, &sr );
   if(oy_debug)
-  fprintf( stderr, "Rectaszension:\t%g°\n", sRA);
+  fprintf( stdout, "Rectaszension:\t%g°\n", sRA);
   if(oy_debug)
-  fprintf( stderr, "Declination:\t%g°\n", sdec);
+  fprintf( stdout, "Declination:\t%g°\n", sdec);
   t = sidtime - sRA;
   if(oy_debug)
-  fprintf( stderr, "Sun's Hourly Angle:\t%g° (%gh)\n", t, t/15.);
+  fprintf( stdout, "Sun's Hourly Angle:\t%g° (%gh)\n", t, t/15.);
   A = atand( sind( t ) /
              ( cosd( t )*sind( lon ) - tand( sdec )*cosd( lon ) )
            );
   if(oy_debug)
-  fprintf( stderr, "Sun's Azimut:\t%g°\n", revolution(A-180.0) );
+  fprintf( stdout, "Sun's Azimut:\t%g°\n", revolution(A-180.0) );
   hs = cosd( sdec )*cosd( t )*cosd( lat ) + sind( sdec )*sind( lat );
   h = asind( hs );
   if(oy_debug)
-  fprintf( stderr, "Sun's Height:\t%g° sin(%g)\n", h, hs );
+  fprintf( stdout, "Sun's Height:\t%g° sin(%g)\n", h, hs );
 
   return h;
 }
