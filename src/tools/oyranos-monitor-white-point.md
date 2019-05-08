@@ -69,8 +69,8 @@ The Night white point mode shall allow to reduce influence of blue light during 
 **oyranos\-monitor\-white\-point** \-l|  \-i *ANGLE\_IN\_DEGREE* \-o *ANGLE\_IN\_DEGREE* [\-t *ANGLE\_IN\_DEGREE|0:rise/set|\-6:civil|\-12:nautical|\-18:astronomical*] [\-z] [\-v]
 
 * \-l|\-\-location	Detect location by IP adress
-* \-i|\-\-latitude *ANGLE\_IN\_DEGREE*	Set Latitude (ANGLE\_IN\_DEGREE:53 [≥\-90 ≤90])
-* \-o|\-\-longitude *ANGLE\_IN\_DEGREE*	Set Longitude (ANGLE\_IN\_DEGREE:12 [≥\-180 ≤180])
+* \-i|\-\-latitude *ANGLE\_IN\_DEGREE*	Set Latitude (ANGLE\_IN\_DEGREE:0 [≥\-90 ≤90])
+* \-o|\-\-longitude *ANGLE\_IN\_DEGREE*	Set Longitude (ANGLE\_IN\_DEGREE:0 [≥\-180 ≤180])
 * \-t|\-\-twilight *ANGLE\_IN\_DEGREE|0:rise/set|\-6:civil|\-12:nautical|\-18:astronomical*	Set Twilight angle (ANGLE\_IN\_DEGREE|0:rise/set|\-6:civil|\-12:nautical|\-18:astronomical:0 [≥18 ≤\-18])
 
 ### Run sunset daemon

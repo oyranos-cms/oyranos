@@ -69,8 +69,8 @@ Der Nachtweißpunkmodus soll den Einfluß von blauen Licht auf das menschliche H
 **oyranos\-monitor\-white\-point** \-l|  \-i *WINKEL\_IN\_GRAD* \-o *WINKEL\_IN\_GRAD* [\-t *WINKEL\_IN\_GRAD|0:Auf\-/Untergang|\-6:zivil|\-12:nautisch|\-18:astronomisch*] [\-z] [\-v]
 
 * \-l|\-\-location	Erhalte Position von IP Adresse
-* \-i|\-\-latitude *WINKEL\_IN\_GRAD*	Setze Geographische Breite (WINKEL\_IN\_GRAD:53 [≥\-90 ≤90])
-* \-o|\-\-longitude *WINKEL\_IN\_GRAD*	Setze Geographische Länge (WINKEL\_IN\_GRAD:12 [≥\-180 ≤180])
+* \-i|\-\-latitude *WINKEL\_IN\_GRAD*	Setze Geographische Breite (WINKEL\_IN\_GRAD:0 [≥\-90 ≤90])
+* \-o|\-\-longitude *WINKEL\_IN\_GRAD*	Setze Geographische Länge (WINKEL\_IN\_GRAD:0 [≥\-180 ≤180])
 * \-t|\-\-twilight *WINKEL\_IN\_GRAD|0:Auf\-/Untergang|\-6:zivil|\-12:nautisch|\-18:astronomisch*	Setze Dämmerungswinkel (WINKEL\_IN\_GRAD|0:Auf\-/Untergang|\-6:zivil|\-12:nautisch|\-18:astronomisch:0 [≥18 ≤\-18])
 
 ### Setze Sonnenuntergangsdienst

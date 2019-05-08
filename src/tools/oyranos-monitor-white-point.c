@@ -304,6 +304,11 @@ int main( int argc , char** argv )
   oyjlOptions_s * opts;
   oyjlUi_s * ui;
   oyjlUiHeaderSection_s * info;
+  const char * man_page = getenv("DISPLAY");
+  int man = 0;
+
+  if( man_page && strcmp(man_page,"man_page") == 0 )
+      man = 1;
 
   if(getenv(OY_DEBUG))
   {
@@ -348,15 +353,15 @@ int main( int argc , char** argv )
     {"oiwi", 0, 'g', "night-effect", NULL, _("Night effect"), _("Set night time effect"), _("A ICC profile of class abstract. Ideally the effect profile works on 1D RGB curves only and is marked meta:EFFECT_linear=yes ."), _("ICC_PROFILE"), oyjlOPTIONTYPE_FUNCTION, {.getChoices = getLinearEffectProfileChoices}, oyjlSTRING, {.s=&night_effect} },
     {"oiwi", 0, 'e', "sunlight-effect", NULL, _("Sun light effect"), _("Set day time effect"), _("A ICC profile of class abstract. Ideally the effect profile works on 1D RGB curves only and is marked meta:EFFECT_linear=yes ."), _("ICC_PROFILE"), oyjlOPTIONTYPE_FUNCTION, {.getChoices = getLinearEffectProfileChoices}, oyjlSTRING, {.s=&sunlight_effect} },
     {"oiwi", 0, 'b', "night-backlight", NULL, _("Night Backlight"), _("Set Nightly Backlight"), _("The option needs xbacklight installed and supporting your device for dimming the monitor lamp."), _("PERCENT"), oyjlOPTIONTYPE_DOUBLE,
-      {.dbl.start = 0, .dbl.end = 100, .dbl.tick = 1, .dbl.d = getDoubleFromDB( OY_DISPLAY_STD "/display_backlight_night", 0 )}, oyjlDOUBLE, {.d=&night_backlight} },
+      {.dbl.start = 0, .dbl.end = 100, .dbl.tick = 1, .dbl.d = man?4:getDoubleFromDB( OY_DISPLAY_STD "/display_backlight_night", 0 )}, oyjlDOUBLE, {.d=&night_backlight} },
     {"oiwi", 0, 'l', "location", NULL, _("location"), _("Detect location by IP adress"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&location} },
     {"oiwi", 0, 'i', "latitude", NULL, _("Latitude"), _("Set Latitude"), NULL, _("ANGLE_IN_DEGREE"), oyjlOPTIONTYPE_DOUBLE,
-      {.dbl.start = -90, .dbl.end = 90, .dbl.tick = 1, .dbl.d = getDoubleFromDB( OY_DISPLAY_STD "/latitude", 0 )}, oyjlDOUBLE, {.d=&latitude} },
+      {.dbl.start = -90, .dbl.end = 90, .dbl.tick = 1, .dbl.d = man?0.0:getDoubleFromDB( OY_DISPLAY_STD "/latitude", 0 )}, oyjlDOUBLE, {.d=&latitude} },
     {"oiwi", 0, 'o', "longitude", NULL, _("Longitude"), _("Set Longitude"), NULL, _("ANGLE_IN_DEGREE"), oyjlOPTIONTYPE_DOUBLE,
-      {.dbl.start = -180, .dbl.end = 180, .dbl.tick = 1, .dbl.d = getDoubleFromDB( OY_DISPLAY_STD "/longitude", 0 )}, oyjlDOUBLE, {.d=&longitude} },
+      {.dbl.start = -180, .dbl.end = 180, .dbl.tick = 1, .dbl.d = man?0.0:getDoubleFromDB( OY_DISPLAY_STD "/longitude", 0 )}, oyjlDOUBLE, {.d=&longitude} },
     {"oiwi", 0, 'r', "sunrise", NULL, _("Sunrise"), _("Show local time, used geographical location, twilight height angles, sun rise and sun set times"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&sunrise} },
     {"oiwi", 0, 't', "twilight", NULL, _("Twilight"), _("Set Twilight angle"), NULL, _("ANGLE_IN_DEGREE|0:rise/set|-6:civil|-12:nautical|-18:astronomical"), oyjlOPTIONTYPE_DOUBLE,
-      {.dbl.start = 18, .dbl.end = -18, .dbl.tick = 1, .dbl.d = getDoubleFromDB( OY_DISPLAY_STD "/twilight", 0 )}, oyjlDOUBLE, {.d=&twilight} },
+      {.dbl.start = 18, .dbl.end = -18, .dbl.tick = 1, .dbl.d = man?0.0:getDoubleFromDB( OY_DISPLAY_STD "/twilight", 0 )}, oyjlDOUBLE, {.d=&twilight} },
     {"oiwi", 0, 'z', "system-wide", NULL, _("system wide"), _("System wide DB setting"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&system_wide} },
     /* default option template -X|--export */
     {"oiwi", 0, 'X', "export", NULL, NULL, NULL, NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = NULL}, oyjlSTRING, {.s=&export} },
@@ -388,9 +393,7 @@ int main( int argc , char** argv )
   };
   double night = isNight(0);
   oyjlOptionGroup_s ng;
-  const char * man_page = getenv("DISPLAY");
-  if(man_page && strcmp(man_page,"man_page") == 0)
-    night = 1;
+  if(man) night = 1;
   if(night == 1)
   {
     memcpy( &ng, &groups[0], sizeof(oyjlOptionGroup_s) );
