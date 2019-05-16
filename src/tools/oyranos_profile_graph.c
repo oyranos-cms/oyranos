@@ -1968,13 +1968,13 @@ int oyTreeToCgats( oyjl_val root, int * level OYJL_UNUSED, char ** text )
     if(illumination)
       oyjlStringAdd( &tmp, 0,0, "MEASUREMENT_SOURCE \"%s\"\n", illumination );
 
-    oyjlStringAdd( &tmp, 0,0, "SPECTRAL_BANDS \"%d\"\nSPECTRAL_START_NM \"%f\"\nSPECTRAL_END_NM \"%f\"\nSPECTRAL_NORM \"%f\"\n\nKEYWORD \"SAMPLE_NAME\"\nNUMBER_OF_FIELDS %d\nBEGIN_DATA_FORMAT\nSAMPLE_NAME ",
+    oyjlStringAdd( &tmp, 0,0, "SPECTRAL_BANDS \"%d\"\nSPECTRAL_START_NM \"%f\"\nSPECTRAL_END_NM \"%f\"\nSPECTRAL_NORM \"%f\"\n\nKEYWORD \"SAMPLE_NAME\"\nNUMBER_OF_FIELDS %d\nBEGIN_DATA_FORMAT\nSAMPLE_NAME\t",
       samples, start, end, lambda, 1 + samples );
 
     for(i = 0; i < samples; ++i)
     {
       int nm = start + i*lambda;
-      oyjlStringAdd( &tmp, 0,0, "%sSPEC_%d", i?" ":"", nm );
+      oyjlStringAdd( &tmp, 0,0, "%sSPEC_%d", i?"\t":"", nm );
     }
     oyjlStringAdd( &tmp, 0,0, "\nEND_DATA_FORMAT\n\nNUMBER_OF_SETS %d\nBEGIN_DATA\n", (int)pixels );
     t = oyjlStrNewFrom(&tmp,0,0,0);
@@ -1988,7 +1988,7 @@ int oyTreeToCgats( oyjl_val root, int * level OYJL_UNUSED, char ** text )
       name = OYJL_GET_STRING(v);
       oyjlStrAppendN( t, "\"", 1 );
       oyjlStrAppendN( t, name, strlen(name) );
-      oyjlStrAppendN( t, "\" ", 2 );
+      oyjlStrAppendN( t, "\"\t", 2 );
       for(i = 0; i < samples; ++i)
       {
         char f[32];
@@ -2000,7 +2000,7 @@ int oyTreeToCgats( oyjl_val root, int * level OYJL_UNUSED, char ** text )
         } else
           d = OYJL_GET_DOUBLE(v);
         if(i)
-          oyjlStrAppendN( t, " ", 1 );
+          oyjlStrAppendN( t, "\t", 1 );
         sprintf(f, "%f", d);
         oyjlStrAppendN( t, f, strlen(f) );
       }
