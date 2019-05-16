@@ -1182,35 +1182,11 @@ oyjlOPTIONSTATE_e  oyjlUi_Check      ( oyjlUi_s          * ui,
                                        int                 flags OYJL_UNUSED )
 {
   oyjlOPTIONSTATE_e status = oyjlOPTION_NONE;
-  const char * date = NULL,
-             * desc = NULL,
-             * mnft = NULL, * mnft_url = NULL,
-             * copy = NULL, * lice = NULL,
-             * bugs = NULL, * bugs_url = NULL,
-             * vers = NULL;
-  int i,n,ng;
+  int i,ng;
   oyjlOptions_s * opts;
  
   if(!ui) return status;
   opts = ui->opts;
-
-  n = oyjlUi_CountHeaderSections( ui );
-  for(i = 0; i < n; ++i)
-  {
-    oyjlUiHeaderSection_s * s = &ui->sections[i];
-    if(strcmp(s->nick, "manufacturer") == 0) { mnft = s->name; mnft_url = s->description; }
-    else if(strcmp(s->nick, "copyright") == 0) copy = s->name;
-    else if(strcmp(s->nick, "license") == 0) lice = s->name;
-    else if(strcmp(s->nick, "url") == 0) continue;
-    else if(strcmp(s->nick, "support") == 0) { bugs = s->name; bugs_url = s->description; }
-    else if(strcmp(s->nick, "download") == 0) continue;
-    else if(strcmp(s->nick, "sources") == 0) continue;
-    else if(strcmp(s->nick, "development") == 0) continue;
-    else if(strcmp(s->nick, "oyjl_module_author") == 0) continue;
-    else if(strcmp(s->nick, "documentation") == 0) desc = s->description ? s->description : s->name;
-    else if(strcmp(s->nick, "version") == 0) vers = s->name;
-    else if(strcmp(s->nick, "date") == 0) date = s->description ? s->description : s->name;
-  }
 
   ng = oyjlOptions_CountGroups(opts);
   if(!ng)
@@ -1628,53 +1604,87 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
       switch(o->value_type)
       {
         case oyjlOPTIONTYPE_CHOICE:
-          if(o->values.choices.list)
           {
-            int n = 0,l;
-            key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "default" );
-            sprintf( num, "%d", o->values.choices.selected );
-            oyjlValueSetString( key, num );
-            while(o->values.choices.list[n].nick && o->values.choices.list[n].nick[0] != '\000')
-              ++n;
-            for(l = 0; l < n; ++l)
+            int l = 0, pos = 0;
+            if(o->flags & OYJL_OPTION_FLAG_EDITABLE)
             {
-              key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/choices/[%d]/%s", i,j,l, "nick" );
-              oyjlValueSetString( key, o->values.choices.list[l].nick );
-              key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/choices/[%d]/%s", i,j,l, "name" );
-              oyjlValueSetString( key, o->values.choices.list[l].name );
+              int count = 0;
+              char ** results = oyjlOptions_ResultsToList( opts, o->o, &count );
+              for( l = 0; l < count; ++l )
+              {
+                key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/choices/[%d]/%s", i,j,l, "nick" );
+                oyjlValueSetString( key, results[l] );
+                key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/choices/[%d]/%s", i,j,l, "name" );
+                oyjlValueSetString( key, results[l] );
+              }
+              oyjlStringListRelease( &results, count, free );
+              pos = l;
             }
-          } else
-            if(!(o->flags & OYJL_OPTION_FLAG_EDITABLE))
+
+            if(o->values.choices.list)
             {
-              oyjlTreeFree( root );
-              if(t) { free(t); t = NULL; }
-              oyjlStringAdd( &t, malloc, free, "Option '%c' has no choices but is not editable (flag&OYJL_OPTION_FLAG_EDITABLE)", o->o );
-              return t;
-            }
-          key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "type" );
-          if(o->flags & OYJL_OPTION_FLAG_EDITABLE)
-            oyjlValueSetString( key, "string" );
-          else
-            oyjlValueSetString( key, "choice" );
+              int n = 0;
+              key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "default" );
+              sprintf( num, "%d", o->values.choices.selected );
+              oyjlValueSetString( key, num );
+              while(o->values.choices.list[n].nick && o->values.choices.list[n].nick[0] != '\000')
+                ++n;
+              for(l = pos; l < n+pos; ++l)
+              {
+                key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/choices/[%d]/%s", i,j,l, "nick" );
+                oyjlValueSetString( key, o->values.choices.list[l-pos].nick );
+                key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/choices/[%d]/%s", i,j,l, "name" );
+                oyjlValueSetString( key, o->values.choices.list[l-pos].name );
+              }
+            } else
+              if(!(o->flags & OYJL_OPTION_FLAG_EDITABLE))
+              {
+                oyjlTreeFree( root );
+                if(t) { free(t); t = NULL; }
+                oyjlStringAdd( &t, malloc, free, "Option '%c' has no choices but is not editable (flag&OYJL_OPTION_FLAG_EDITABLE)", o->o );
+                return t;
+              }
+            key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "type" );
+            if(o->flags & OYJL_OPTION_FLAG_EDITABLE)
+              oyjlValueSetString( key, "string" );
+            else
+              oyjlValueSetString( key, "choice" );
+          }
           break;
         case oyjlOPTIONTYPE_FUNCTION:
           {
-            int n = 0,l, selected;
+            int n = 0,l, selected, pos = 0;
             oyjlOptionChoice_s * list = oyjlOption_GetChoices_(o, &selected, opts );
             if(list)
               while(list[n].nick && list[n].nick[0] != '\000')
                 ++n;
+
+            if(o->flags & OYJL_OPTION_FLAG_EDITABLE)
+            {
+              int count = 0;
+              char ** results = oyjlOptions_ResultsToList( opts, o->o, &count );
+              for( l = 0; l < count; ++l )
+              {
+                key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/choices/[%d]/%s", i,j,l, "nick" );
+                oyjlValueSetString( key, results[l] );
+                key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/choices/[%d]/%s", i,j,l, "name" );
+                oyjlValueSetString( key, results[l] );
+              }
+              oyjlStringListRelease( &results, count, free );
+              pos = l;
+            }
+
             if(0 <= selected && selected < n && strlen(list[selected].nick))
             {
               key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "default" );
               oyjlValueSetString( key, list[selected].nick );
             }
-            for(l = 0; l < n; ++l)
+            for(l = pos; l < n+pos; ++l)
             {
               key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/choices/[%d]/%s", i,j,l, "nick" );
-              oyjlValueSetString( key, list[l].nick );
+              oyjlValueSetString( key, list[l-pos].nick );
               key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/choices/[%d]/%s", i,j,l, "name" );
-              oyjlValueSetString( key, list[l].name );
+              oyjlValueSetString( key, list[l-pos].name );
             }
             /* not possible, as the result of oyjlOption_GetChoices_() is cached - oyjlOptionChoice_Release( &list ); */
           }
