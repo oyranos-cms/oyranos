@@ -893,7 +893,10 @@ int getSunriseSunset( double * rise, double * set, int dry, char ** text )
   value =
       oyGetPersistentString(OY_DISPLAY_STD "/twilight", 0, oySCOPE_USER_SYS, oyAllocateFunc_);
   if(value && oyStringToDouble( value, &twilight ))
+  {
     fprintf(stderr, "twilight = %g / %s\n", twilight, value);
+    twilight = 0.0;
+  }
   if(value)
   { oyFree_m_(value);
   }
