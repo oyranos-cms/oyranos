@@ -282,7 +282,7 @@ int main( int argc , char** argv )
   const char * sunlight_effect = NULL;
   const char * night_effect = NULL;
   double night_backlight = -1;
-  double temperature = 0.0;
+  double temperature = 0.0, temperature_man = 2800.0; // 2800 kelvin is near candel light
   int show = 0;
   const char * export = NULL;
   int dry = 0;
@@ -325,6 +325,9 @@ int main( int argc , char** argv )
 #endif
   oyI18NInit_();
 
+  if(!man)
+    temperature_man = oyGetTemperature(5000);
+
   DBG_S_( oyPrintTime() );
   opts = oyjlOptions_New( argc, (const char **)argv );
   /* nick, name, description, help */
@@ -349,7 +352,7 @@ int main( int argc , char** argv )
       /*  The white point profiles will be generated in many different shades, which will explode
        *  conversion cache. Thus we limit the possible shades to 100 kelvin steps, which in turn
        *  limits to around 100 profiles per monitor white point. */
-      _("KELVIN"), oyjlOPTIONTYPE_DOUBLE, {.dbl.start = 1100, .dbl.end = 10100, .dbl.tick = 100, .dbl.d = oyGetTemperature(5000)}, oyjlDOUBLE, {.d=&temperature} },
+      _("KELVIN"), oyjlOPTIONTYPE_DOUBLE, {.dbl.start = 1100, .dbl.end = 10100, .dbl.tick = 100, .dbl.d = temperature_man}, oyjlDOUBLE, {.d=&temperature} },
     {"oiwi", 0, 'g', "night-effect", NULL, _("Night effect"), _("Set night time effect"), _("A ICC profile of class abstract. Ideally the effect profile works on 1D RGB curves only and is marked meta:EFFECT_linear=yes ."), _("ICC_PROFILE"), oyjlOPTIONTYPE_FUNCTION, {.getChoices = getLinearEffectProfileChoices}, oyjlSTRING, {.s=&night_effect} },
     {"oiwi", 0, 'e', "sunlight-effect", NULL, _("Sun light effect"), _("Set day time effect"), _("A ICC profile of class abstract. Ideally the effect profile works on 1D RGB curves only and is marked meta:EFFECT_linear=yes ."), _("ICC_PROFILE"), oyjlOPTIONTYPE_FUNCTION, {.getChoices = getLinearEffectProfileChoices}, oyjlSTRING, {.s=&sunlight_effect} },
     {"oiwi", 0, 'b', "night-backlight", NULL, _("Night Backlight"), _("Set Nightly Backlight"), _("The option needs xbacklight installed and supporting your device for dimming the monitor lamp."), _("PERCENT"), oyjlOPTIONTYPE_DOUBLE,
@@ -529,7 +532,7 @@ int main( int argc , char** argv )
             man = 1;
           if(temperature)
           {
-            oyStringAddPrintf( &tmp, 0,0, "%g %s ", man?3000:temperature, _("Kelvin") );
+            oyStringAddPrintf( &tmp, 0,0, "%g %s ", man?temperature_man:temperature, _("Kelvin") );
             t = tmp;
           }
         }
