@@ -7,7 +7,7 @@ oyranos\-monitor\-white\-point v0.9.7 \- Night Manager
 <br />
 **oyranos\-monitor\-white\-point** \-w *0|1|2|3|4|5|6|7* \-a *KELVIN* [\-z] [\-v]
 <br />
-**oyranos\-monitor\-white\-point** \-s *0|1|2|3|4|5|6|7* [\-e *ICC\_PROFILE*] [\-z] [\-v]
+**oyranos\-monitor\-white\-point** \-s *0|1|2|3|4|5|6|7* \-e *ICC\_PROFILE* [\-z] [\-v]
 <br />
 **oyranos\-monitor\-white\-point** \-l|  \-i *ANGLE\_IN\_DEGREE* \-o *ANGLE\_IN\_DEGREE* [\-t *ANGLE\_IN\_DEGREE|0:rise/set|\-6:civil|\-12:nautical|\-18:astronomical*] [\-z] [\-v]
 <br />
@@ -50,7 +50,7 @@ The Night white point mode shall allow to reduce influence of blue light during 
 * \-a|\-\-automatic *KELVIN*	A value from 2700 till 8000 Kelvin is expected to show no artefacts (KELVIN:2800 [≥1100 ≤10100])
 
 ### Sun light appearance
-**oyranos\-monitor\-white\-point** \-s *0|1|2|3|4|5|6|7* [\-e *ICC\_PROFILE*] [\-z] [\-v]
+**oyranos\-monitor\-white\-point** \-s *0|1|2|3|4|5|6|7* \-e *ICC\_PROFILE* [\-z] [\-v]
 
 * \-s|\-\-sun\-white\-point *0|1|2|3|4|5|6|7*	Set day time mode
    * \-s 0		# No

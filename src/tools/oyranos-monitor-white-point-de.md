@@ -7,7 +7,7 @@ oyranos\-monitor\-white\-point v0.9.7 \- Nacht Manager
 <br />
 **oyranos\-monitor\-white\-point** \-w *0|1|2|3|4|5|6|7* \-a *KELVIN* [\-z] [\-v]
 <br />
-**oyranos\-monitor\-white\-point** \-s *0|1|2|3|4|5|6|7* [\-e *ICC\_PROFIL*] [\-z] [\-v]
+**oyranos\-monitor\-white\-point** \-s *0|1|2|3|4|5|6|7* \-e *ICC\_PROFIL* [\-z] [\-v]
 <br />
 **oyranos\-monitor\-white\-point** \-l|  \-i *WINKEL\_IN\_GRAD* \-o *WINKEL\_IN\_GRAD* [\-t *WINKEL\_IN\_GRAD|0:Auf\-/Untergang|\-6:zivil|\-12:nautisch|\-18:astronomisch*] [\-z] [\-v]
 <br />
@@ -50,7 +50,7 @@ Der Nachtweißpunkmodus soll den Einfluß von blauen Licht auf das menschliche H
 * \-a|\-\-automatic *KELVIN*	Werte zwischen 2700 bis 8000 Kelvin sollten keine Darstellungsfehler hervorrufen (KELVIN:2800 [≥1100 ≤10100])
 
 ### Setze Tagesmodus
-**oyranos\-monitor\-white\-point** \-s *0|1|2|3|4|5|6|7* [\-e *ICC\_PROFIL*] [\-z] [\-v]
+**oyranos\-monitor\-white\-point** \-s *0|1|2|3|4|5|6|7* \-e *ICC\_PROFIL* [\-z] [\-v]
 
 * \-s|\-\-sun\-white\-point *0|1|2|3|4|5|6|7*	Setze den Tagesmodus
    * \-s 0		# Nein

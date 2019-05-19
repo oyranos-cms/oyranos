@@ -386,9 +386,9 @@ int main( int argc , char** argv )
 #if defined( XCM_HAVE_X11 )
     {"oiwg", 0, _("Night Mode"), _("Nightly appearance"), _("The Night white point mode shall allow to reduce influence of blue light during night time. A white point temperature of around 4000K and lower allows to get easier into sleep and is recommended along with warm room illumination in evening and night times."), "n", "gbzv", "ngb" },
 #else
-    {"oiwg", 0, _("Night Mode"), _("Nightly appearance"), _("The Night white point mode shall allow to reduce influence of blue light during night time. A white point temperature of around 4000K and lower allows to get easier into sleep and is recommended along with warm room illumination in evening and night times."), "n", "gzv", "ng" },
+    {"oiwg", 0, _("Night Mode"), _("Nightly appearance"), _("The Night white point mode shall allow to reduce influence of blue light during night time. A white point temperature of around 4000K and lower allows to get easier into sleep and is recommended along with warm room illumination in evening and night times."), "ng", "zv", "ng" },
 #endif
-    {"oiwg", 0, _("Day Mode"), _("Sun light appearance"), NULL, "s", "ezv", "se" },
+    {"oiwg", 0, _("Day Mode"), _("Sun light appearance"), NULL, "se", "zv", "se" },
     {"oiwg", 0, _("Location"), _("Location and Twilight"), NULL, "l|io", "tzv", "liot"},
     {"oiwg", 0, _("Daemon Service"), _("Run sunset daemon"), NULL, "d", "v", "d" },
     {"oiwg", 0, _("Misc"), _("General options"), NULL, "m|r|X|h", "v", "hmrXzv" },
