@@ -3191,12 +3191,12 @@ int                oySizeOfMluc      ( const char        * mem,
                                        uint32_t            max_tag_size )
 {
   int size_ = 0;
-  int count = oyValueUInt32( *(icUInt32Number*)&mem[8] );
-  int size = oyValueUInt32( *(icUInt32Number*)&mem[12] ); /* 12 */
+  long long count = oyValueUInt32( *(icUInt32Number*)&mem[8] );
+  long long size = oyValueUInt32( *(icUInt32Number*)&mem[12] ); /* 12 */
   int i;
   int len = 0;
 
-  int error = (int)max_tag_size < 24 + count * size;
+  int error = ((long long)max_tag_size) < (24 + count * size);
 
   icTagTypeSignature tag_sig = (icTagTypeSignature)0;
   tag_sig = *(icUInt32Number*)(mem);
