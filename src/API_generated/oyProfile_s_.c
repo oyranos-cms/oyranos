@@ -821,6 +821,8 @@ oyProfile_s_* oyProfile_FromMemMove_  ( size_t              size,
   oyProfile_s_ * s = oyProfile_New_( object );
   int error = 0,
       l_error = 0;
+  icSignature vs;
+  char * v = (char*)&vs;
 
   if(block  && *block && size)
   {
@@ -883,13 +885,15 @@ oyProfile_s_* oyProfile_FromMemMove_  ( size_t              size,
     }
   }
 
+  vs = (icSignature) oyValueUInt32( oyProfile_GetSignature((oyProfile_s*)s,oySIGNATURE_VERSION) );      
+
   if(error <= 0)
   {
     l_error = !oyProfile_GetSignature ( (oyProfile_s*)s, oySIGNATURE_COLOR_SPACE );
 
-    if(l_error)
+    if(l_error && v[0] < 5)
       WARNc1_S( "signature error %d", error )
-    if(error <= 0 && l_error != 0)
+    if(error <= 0 && l_error != 0 && v[0] < 5)
       error = l_error;
   }
 
@@ -898,7 +902,7 @@ oyProfile_s_* oyProfile_FromMemMove_  ( size_t              size,
     s->names_chan_ = 0;
     s->channels_n_ = oyProfile_GetChannelsCount( (oyProfile_s*)s );
     l_error = (s->channels_n_ <= 0);
-    if(error <= 0 && l_error != 0)
+    if(error <= 0 && l_error != 0 && v[0] < 5)
       error = l_error;
   }
 
