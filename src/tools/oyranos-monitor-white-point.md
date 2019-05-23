@@ -3,7 +3,7 @@
 ## NAME
 oyranos\-monitor\-white\-point v0.9.7 \- Night Manager
 ## SYNOPSIS
-**oyranos\-monitor\-white\-point** \-n *0|1|2|3|4|5|6|7* [\-g *ICC\_PROFILE*] [\-b *PERCENT*] [\-z] [\-v]
+**oyranos\-monitor\-white\-point** \-n *0|1|2|3|4|5|6|7* \-g *ICC\_PROFILE* [\-b *PERCENT*] [\-z] [\-v]
 <br />
 **oyranos\-monitor\-white\-point** \-w *0|1|2|3|4|5|6|7* \-a *KELVIN* [\-z] [\-v]
 <br />
@@ -18,7 +18,7 @@ oyranos\-monitor\-white\-point v0.9.7 \- Night Manager
 The tool can set the actual white point or set it by local day and night time. A additional effect profile can be selected.
 ## OPTIONS
 ### Nightly appearance
-**oyranos\-monitor\-white\-point** \-n *0|1|2|3|4|5|6|7* [\-g *ICC\_PROFILE*] [\-b *PERCENT*] [\-z] [\-v]
+**oyranos\-monitor\-white\-point** \-n *0|1|2|3|4|5|6|7* \-g *ICC\_PROFILE* [\-b *PERCENT*] [\-z] [\-v]
 
 The Night white point mode shall allow to reduce influence of blue light during night time. A white point temperature of around 4000K and lower allows to get easier into sleep and is recommended along with warm room illumination in evening and night times.
 

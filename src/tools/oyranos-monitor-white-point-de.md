@@ -3,7 +3,7 @@
 ## NAME
 oyranos\-monitor\-white\-point v0.9.7 \- Nacht Manager
 ## ÜBERSICHT
-**oyranos\-monitor\-white\-point** \-n *0|1|2|3|4|5|6|7* [\-g *ICC\_PROFIL*] [\-b *PROZENT*] [\-z] [\-v]
+**oyranos\-monitor\-white\-point** \-n *0|1|2|3|4|5|6|7* \-g *ICC\_PROFIL* [\-b *PROZENT*] [\-z] [\-v]
 <br />
 **oyranos\-monitor\-white\-point** \-w *0|1|2|3|4|5|6|7* \-a *KELVIN* [\-z] [\-v]
 <br />
@@ -18,7 +18,7 @@ oyranos\-monitor\-white\-point v0.9.7 \- Nacht Manager
 Das Werkzeug kann den momentanen Weißpunkt setzen oder ihn abhängig von der Tages\- und Nachzeit festlegen. Ein zusätzliches Effektprofil kann eingestellt werden.
 ## OPTIONEN
 ### Nächtliche Anmutung
-**oyranos\-monitor\-white\-point** \-n *0|1|2|3|4|5|6|7* [\-g *ICC\_PROFIL*] [\-b *PROZENT*] [\-z] [\-v]
+**oyranos\-monitor\-white\-point** \-n *0|1|2|3|4|5|6|7* \-g *ICC\_PROFIL* [\-b *PROZENT*] [\-z] [\-v]
 
 Der Nachtweißpunkmodus soll den Einfluß von blauen Licht auf das menschliche Hormonsystem reduzieren. Ein Weißpunkt mit einer Strahlungstemperatur von 4000 Kelvin und weniger erleichtert den natürlichen Schlafrhytmus zu finden. Dieser wird zusammen mit einem warmen Lichtton für die allgemeine Zimmerbeleuchtung wärend der Abend\-und Nachtstunden empfohlen.
 

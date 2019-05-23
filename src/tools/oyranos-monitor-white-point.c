@@ -384,7 +384,7 @@ int main( int argc , char** argv )
   /* type,   flags, name, description, help, mandatory, optional, detail */
     {"oiwg", 0, _("Mode"), _("Actual mode"), NULL, "wa", "zv", "wa" },
 #if defined( XCM_HAVE_X11 )
-    {"oiwg", 0, _("Night Mode"), _("Nightly appearance"), _("The Night white point mode shall allow to reduce influence of blue light during night time. A white point temperature of around 4000K and lower allows to get easier into sleep and is recommended along with warm room illumination in evening and night times."), "n", "gbzv", "ngb" },
+    {"oiwg", 0, _("Night Mode"), _("Nightly appearance"), _("The Night white point mode shall allow to reduce influence of blue light during night time. A white point temperature of around 4000K and lower allows to get easier into sleep and is recommended along with warm room illumination in evening and night times."), "ng", "bzv", "ngb" },
 #else
     {"oiwg", 0, _("Night Mode"), _("Nightly appearance"), _("The Night white point mode shall allow to reduce influence of blue light during night time. A white point temperature of around 4000K and lower allows to get easier into sleep and is recommended along with warm room illumination in evening and night times."), "ng", "zv", "ng" },
 #endif
