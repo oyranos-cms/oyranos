@@ -484,7 +484,7 @@ typedef union oyjlOption_u {
  *  A oyjlOption_s::o is inside of oyjlOptionGroup_s::detail to be displayed and oyjlOptionGroup_s::mandatory/optional for syntax checking.
  */
 struct oyjlOption_s {
-  char type[4];                        /**< @brief must be 'oiwi' */
+  char type[8];                        /**< @brief must be 'oiwi' */
   /** - ::OYJL_OPTION_FLAG_EDITABLE : flag for oyjlOPTIONTYPE_CHOICE and oyjlOPTIONTYPE_FUNCTION. Hints a not closely specified intput. The content is typically not useful for a overview in a help or man page. These can print a overview with oyjlOption_s::value_type. This flag is intented for convinience suggestions or very verbose dictionaries used in scrollable pull down GUI elements. */
   unsigned int flags;                  /**< @brief rendering hint */
   /** '#' is used as default option like a command without any arguments. '@' together with value_name expects arbitrary arguments as described in oyjlOption_s::value_name. minus '-' and space ' ' are reserved; This letter is handled like a ID. */
@@ -505,7 +505,7 @@ struct oyjlOption_s {
     @brief info to compile a Syntax line and check missing arguments
  */
 typedef struct oyjlOptionGroup_s {
-  char type [4];                       /**< @brief must be 'oiwg' */
+  char type [8];                       /**< @brief must be 'oiwg' */
   unsigned int flags;                  /**< unused */
   const char * name;                   /**< @brief i18n label string */
   const char * description;            /**< @brief i18n short sentence about the option */
@@ -519,7 +519,7 @@ typedef struct oyjlOptionGroup_s {
  *   @brief main command line, options and groups
  */
 struct oyjlOptions_s {
-  char type [4];                       /**< @brief must be 'oiws' */
+  char type [8];                       /**< @brief must be 'oiws' */
   oyjlOption_s * array;                /**< @brief the options; make shure to add -h|--help and -v|--verbose options */
   oyjlOptionGroup_s * groups;          /**< @brief groups of options, which form a command */
   void * user_data;                    /**< @brief will be passed to functions; optional */
@@ -565,7 +565,7 @@ void   oyjlOptions_PrintHelp         ( oyjlOptions_s     * opts,
                                                            ... );
 /** @brief Header section */
 typedef struct oyjlUiHeaderSection_s {
-  char type [4];                       /**< @brief must be 'oihs' */
+  char type [8];                       /**< @brief must be 'oihs' */
   const char * nick;                   /**< @brief single word well known identifier; *version*, *manufacturer*, *copyright*, *license*, *url*, *support*, *download*, *sources*, *oyjl_modules_author*, *documentation* */
   const char * label;                  /**< @brief i18n short string, in case this section nick is not well known; optional */
   const char * name;                   /**< @brief i18n short content */
@@ -574,7 +574,7 @@ typedef struct oyjlUiHeaderSection_s {
 
 /** @brief Info for graphic UI's containing options, additional info sections and other bells and whistles */
 struct oyjlUi_s {
-  char type [4];                       /**< @brief must be 'oiui' */
+  char type [8];                       /**< @brief must be 'oiui' */
   const char * app_type;               /**< @brief "tool" or "module" */
   const char * nick;                   /**< @brief four byte ID for module or plain comand line tool name, e.g. "oyjl-tool" */
   const char * name;                   /**< @brief i18n short name for tool bars, app lists */
@@ -617,8 +617,16 @@ char *             oyjlUi_ToMarkdown ( oyjlUi_s          * ui,
 
 /** link with libOyjlArgsQml and use oyjl-args-qml renderer as library @see oyjlUi_ToJson() */
 int                oyjlArgsQmlStart  ( int                 argc,
-                                       char             ** argv,
+                                       const char       ** argv,
                                        const char        * json,
+                                       int                 debug,
+                                       oyjlUi_s          * ui,
+                                       int               (*callback)(int argc, const char ** argv) );
+int                oyjlArgsQmlStart2 ( int                 argc,
+                                       const char       ** argv,
+                                       const char        * json,
+                                       const char        * commands,
+                                       const char        * output,
                                        int                 debug,
                                        oyjlUi_s          * ui,
                                        int               (*callback)(int argc, const char ** argv) );
