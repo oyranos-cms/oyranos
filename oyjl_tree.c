@@ -376,6 +376,7 @@ int  oyjlTreeToJson21 (oyjl_val v, int * level, oyjl_str json)
   switch(v->type)
   {
     case oyjl_t_null:
+         oyjlStrAppendN (json, "null", 4); break;
          break;
     case oyjl_t_number:
          oyjlStrAppendN (json, v->u.number.r, strlen(v->u.number.r));
@@ -687,16 +688,7 @@ void oyjlTreeToXml2 (oyjl_val v, const char * parent_key, int * level, char ** t
     case oyjl_t_string:
          {
           const char * t = v->u.string;
-          char * tmp = oyjlStringCopy(t,malloc);
-          oyjlStringReplace( &tmp, "\\", "\\\\", 0, 0);
-          oyjlStringReplace( &tmp, "\"", "\\\"", 0, 0);
-          oyjlStringReplace( &tmp, "\b", "\\b", 0, 0);
-          oyjlStringReplace( &tmp, "\f", "\\f", 0, 0);
-          oyjlStringReplace( &tmp, "\n", "\\n", 0, 0);
-          oyjlStringReplace( &tmp, "\r", "\\r", 0, 0);
-          oyjlStringReplace( &tmp, "\t", "\\t", 0, 0);
-          oyjlStringAdd (text, 0,0, "%s", tmp);
-          if(tmp) free(tmp);
+          oyjlStringAdd (text, 0,0, "%s", t);
          }
          break;
     case oyjl_t_array:
@@ -730,6 +722,7 @@ void oyjlTreeToXml2 (oyjl_val v, const char * parent_key, int * level, char ** t
               count = v->u.object.len;
           int is_inner_string;
 #define XML_TEXT "@text"
+#define XML_CDATA "@cdata"
           int is_attribute;
 #define XML_ATTR '@'
           int is_array, is_object, last_is_content;
@@ -769,7 +762,8 @@ void oyjlTreeToXml2 (oyjl_val v, const char * parent_key, int * level, char ** t
               else
               if( v->u.object.values[i]->type == oyjl_t_string &&
                   v->u.object.values[i]->u.string &&
-                  strcmp(v->u.object.keys[i], XML_TEXT) == 0 )
+                  ( strcmp(v->u.object.keys[i], XML_CDATA) == 0 ||
+                    strcmp(v->u.object.keys[i], XML_TEXT) == 0 ) )
                 is_inner_string = 1;
               else
               if( v->u.object.values[i]->type == oyjl_t_string &&
@@ -804,7 +798,8 @@ void oyjlTreeToXml2 (oyjl_val v, const char * parent_key, int * level, char ** t
             else
             if( v->u.object.values[i]->type == oyjl_t_string &&
                 v->u.object.values[i]->u.string &&
-                strcmp(key, XML_TEXT) == 0 )
+                ( strcmp(key, XML_CDATA) == 0 ||
+                  strcmp(key, XML_TEXT) == 0 ) )
               is_inner_string = 1;
             else
             if( v->u.object.values[i]->type == oyjl_t_string &&
@@ -824,7 +819,13 @@ void oyjlTreeToXml2 (oyjl_val v, const char * parent_key, int * level, char ** t
                 !is_inner_string )
               oyjlStringAdd( text, 0,0, "<%s>", key );
 
+            if( strcmp(key, XML_CDATA) == 0 )
+              oyjlStringAdd( text, 0,0, "<![CDATA[" );
+
             oyjlTreeToXml2( v->u.object.values[i], key, level, text );
+
+            if( strcmp(key, XML_CDATA) == 0 )
+              oyjlStringAdd( text, 0,0, "]]>" );
 
             if( !is_array &&
                 !is_object &&
