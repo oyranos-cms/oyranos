@@ -14,13 +14,15 @@ ENDIF()
 
 IF( HAVE_QT)
     SET( CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS}  ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS} )
+
+    SET(CMAKE_AUTOMOC ON)
+    SET(CMAKE_AUTORCC ON)
+    INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_SOURCE_DIR} ${Qt5Qml_INCLUDE_DIRS} )
+
     FILE( GLOB ${PROJECT_NAME}_SOURCES src/*.cpp )
-#    MESSAGE( "${PROJECT_NAME}_SOURCES: " ${${PROJECT_NAME}_SOURCES} )
     FILE( GLOB ${PROJECT_NAME}_HEADERS include/*.h )
     FILE( GLOB ${PROJECT_NAME}_QML qml/*.qml )
     SET( ${PROJECT_NAME}_TS translations/app_de.ts )
-#    MESSAGE( "${PROJECT_NAME}_QML: " ${${PROJECT_NAME}_QML} )
-#    MESSAGE( "${PROJECT_NAME}_TS: " ${${PROJECT_NAME}_TS} )
     SOURCE_GROUP("Header Files" FILES ${${PROJECT_NAME}_HEADERS})
     SOURCE_GROUP("Source Files" FILES ${${PROJECT_NAME}_SOURCES})
     SET( ${PROJECT_NAME}_QRC app.qrc )
@@ -36,79 +38,30 @@ IF( HAVE_QT)
 
     ADD_DEFINITIONS(${Qt5Widgets_DEFINITIONS} ${QtQml_DEFINITIONS} ${Qt5Quick_DEFINITIONS})
     QT5_ADD_RESOURCES( ${PROJECT_NAME}_QRC_SOURCES ${${PROJECT_NAME}_QRC} )
-    SET(CMAKE_AUTOMOC ON)
-    SET(CMAKE_AUTORCC ON)
-    INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_SOURCE_DIR} ${Qt5Qml_INCLUDE_DIRS} )
-
-    SET(SVG_PlUGIN "")
-    FOREACH(plugin ${Qt5Svg_PLUGINS})
-      GET_TARGET_PROPERTY(_loc ${plugin} LOCATION)
-      MESSAGE("Plugin ${plugin} is at location ${_loc}")
-      SET(SVG_PlUGIN "${_loc}")
-    ENDFOREACH()
-    ADD_EXECUTABLE( ${PROJECT_NAME}
+    IF(ENABLE_SHARED_LIBS_${PROJECT_UP_NAME})
+      SET( PROJECT_LIB_SHARED OyjlArgsQml )
+      ADD_LIBRARY( ${PROJECT_LIB_SHARED} SHARED
                     ${${PROJECT_NAME}_HEADERS}
-                    main.cpp
+                    lib.cpp
                     ${${PROJECT_NAME}_SOURCES}
                     ${${PROJECT_NAME}_QRC_SOURCES}
                   )
-#SET_PROPERTY(TARGET ${PROJECT_NAME} PROPERTY POSITION_INDEPENDENT_CODE ON)
-    TARGET_LINK_LIBRARIES( ${PROJECT_NAME}
-                Qt5::Widgets
-                Qt5::Qml
-                Qt5::Quick
-                Qt5::Svg
-                Qt5::QSvgPlugin
-#${QT5SVG_LIBRARIES}
-                ${EXTRA_LIBS}
-                ${OYJL_CORE_LIB}
-                )
-    IF(ENABLE_INSTALL_${PROJECT_UP_NAME})
-      INSTALL (TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_BINDIR})
-    ENDIF(ENABLE_INSTALL_${PROJECT_UP_NAME})
-
-    IF(ENABLE_SHARED_LIBS_${PROJECT_UP_NAME})
-      SET( PROJECT_LIB OyjlArgsQml )
-      FILE( GLOB ${PROJECT_LIB}_SOURCES src/*.cpp )
-      FILE( GLOB ${PROJECT_LIB}_HEADERS include/*.h )
-      FILE( GLOB ${PROJECT_LIB}_QML qml/*.qml )
-      SET( ${PROJECT_LIB}_TS translations/app_de.ts )
-      SOURCE_GROUP("Header Files" FILES ${${PROJECT_LIB}_HEADERS})
-      SOURCE_GROUP("Source Files" FILES ${${PROJECT_LIB}_SOURCES})
-      SET( ${PROJECT_LIB}_QRC app.qrc )
-
-      SET( GLOB TS_SOURCES ${${PROJECT_LIB}_SOURCES} ${${PROJECT_LIB}_HEADERS} ${${PROJECT_LIB}_QML} )
-      QT5_CREATE_TRANSLATION( QM_FILES
-        ${${PROJECT_LIB}_SOURCES}
-        ${${PROJECT_LIB}_HEADER}
-        ${${PROJECT_LIB}_QML}
-        ${${PROJECT_LIB}_TS} )
-      SET_SOURCE_FILES_PROPERTIES( ${${PROJECT_LIB}_TS} PROPERTIES OUTPUT_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/translations)
-      QT5_ADD_TRANSLATION( QM_FILES ${${PROJECT_LIB}_TS} )
-
-      ADD_DEFINITIONS(${Qt5Widgets_DEFINITIONS} ${QtQml_DEFINITIONS} ${Qt5Quick_DEFINITIONS})
-      QT5_ADD_RESOURCES( ${PROJECT_LIB}_QRC_SOURCES ${${PROJECT_LIB}_QRC} )
-      ADD_LIBRARY( ${PROJECT_LIB} SHARED
-                    ${${PROJECT_LIB}_HEADERS}
-                    lib.cpp
-                    ${${PROJECT_LIB}_SOURCES}
-                    ${${PROJECT_LIB}_QRC_SOURCES}
-                  )
-      TARGET_LINK_LIBRARIES( ${PROJECT_LIB}
+      TARGET_LINK_LIBRARIES( ${PROJECT_LIB_SHARED}
                 Qt5::Widgets
                 Qt5::Qml
                 Qt5::Quick
                 ${EXTRA_LIBS}
                 ${OYJL_CORE_LIB}
                 )
-      SET_TARGET_PROPERTIES( ${PROJECT_LIB} PROPERTIES
+      SET_TARGET_PROPERTIES( ${PROJECT_LIB_SHARED} PROPERTIES
       PRIVATE_HEADER ""
       PUBLIC_HEADER "${CHEADERS_OYJL_PUBLIC}"
       RESOURCE ""
       )
+
       IF(ENABLE_INSTALL_${PROJECT_UP_NAME})
         INSTALL(
-         TARGETS       ${PROJECT_LIB}
+         TARGETS       ${PROJECT_LIB_SHARED}
          RUNTIME       DESTINATION ${CMAKE_INSTALL_BINDIR}
          FRAMEWORK     DESTINATION ${FRAMEWORK_DIR}
          LIBRARY       DESTINATION ${CMAKE_INSTALL_LIBDIR}
@@ -119,12 +72,88 @@ IF( HAVE_QT)
       ENDIF(ENABLE_INSTALL_${PROJECT_UP_NAME})
 
       IF( ENABLE_TESTS_${PROJECT_UP_NAME} )
-        ADD_EXECUTABLE( oyjl-test-args-qml
-                    ${CMAKE_CURRENT_SOURCE_DIR}/test.c
-                  )
-        TARGET_LINK_LIBRARIES( oyjl-test-args-qml ${PROJECT_LIB} )
+        ADD_EXECUTABLE( oyjl-test-args-qml test.c )
+        TARGET_LINK_LIBRARIES( oyjl-test-args-qml ${PROJECT_LIB_SHARED} )
       ENDIF( ENABLE_TESTS_${PROJECT_UP_NAME} )
 
     ENDIF(ENABLE_SHARED_LIBS_${PROJECT_UP_NAME})
+
+    IF(ENABLE_STATIC_LIBS_${PROJECT_UP_NAME})
+      SET( PROJECT_LIB_STATIC oyjl-args-qml-static )
+      ADD_LIBRARY( ${PROJECT_LIB_STATIC} STATIC
+                    ${${PROJECT_NAME}_HEADERS}
+                    lib.cpp
+                    ${${PROJECT_NAME}_SOURCES}
+                    ${${PROJECT_NAME}_QRC_SOURCES}
+                  )
+      TARGET_LINK_LIBRARIES( ${PROJECT_LIB_STATIC}
+                Qt5::Widgets
+                Qt5::Qml
+                Qt5::Quick
+                ${EXTRA_LIBS}
+                ${OYJL_CORE_LIB}
+                )
+      SET_TARGET_PROPERTIES( ${PROJECT_LIB_STATIC} PROPERTIES
+      PRIVATE_HEADER ""
+      PUBLIC_HEADER "${CHEADERS_OYJL_PUBLIC}"
+      RESOURCE ""
+      )
+
+      IF(ENABLE_INSTALL_${PROJECT_UP_NAME})
+        INSTALL(
+         TARGETS       ${PROJECT_LIB_STATIC}
+         RUNTIME       DESTINATION ${CMAKE_INSTALL_BINDIR}
+         FRAMEWORK     DESTINATION ${FRAMEWORK_DIR}
+         LIBRARY       DESTINATION ${CMAKE_INSTALL_LIBDIR}
+         ARCHIVE       DESTINATION ${CMAKE_INSTALL_LIBDIR}
+         PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_DOWN_NAME}
+         RESOURCE      DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}
+         )
+      ENDIF(ENABLE_INSTALL_${PROJECT_UP_NAME})
+
+      IF( ENABLE_TESTS_${PROJECT_UP_NAME} )
+        ADD_EXECUTABLE( oyjl-test-args-qml-static test.c )
+        TARGET_LINK_LIBRARIES( oyjl-test-args-qml-static ${PROJECT_LIB_STATIC} )
+      ENDIF( ENABLE_TESTS_${PROJECT_UP_NAME} )
+
+    ENDIF(ENABLE_STATIC_LIBS_${PROJECT_UP_NAME})
+
+    SET(SVG_PlUGIN "")
+    FOREACH(plugin ${Qt5Svg_PLUGINS})
+      GET_TARGET_PROPERTY(_loc ${plugin} LOCATION)
+      MESSAGE("Plugin ${plugin} is at location ${_loc}")
+      SET(SVG_PlUGIN "${_loc}")
+    ENDFOREACH()
+#SET_PROPERTY(TARGET ${PROJECT_NAME} PROPERTY POSITION_INDEPENDENT_CODE ON)
+    IF(ENABLE_SHARED_LIBS_${PROJECT_UP_NAME})
+      ADD_EXECUTABLE( ${PROJECT_NAME} main.cpp )
+      TARGET_LINK_LIBRARIES( ${PROJECT_NAME} ${PROJECT_LIB_SHARED})
+    ENDIF ()
+    IF (ENABLE_STATIC_LIBS_${PROJECT_UP_NAME} AND NOT ENABLE_SHARED_LIBS_${PROJECT_UP_NAME})
+      ADD_EXECUTABLE( ${PROJECT_NAME} main.cpp )
+      TARGET_LINK_LIBRARIES( ${PROJECT_NAME} ${PROJECT_LIB_STATIC})
+    ENDIF ()
+    IF (NOT ENABLE_STATIC_LIBS_${PROJECT_UP_NAME} AND NOT ENABLE_SHARED_LIBS_${PROJECT_UP_NAME})
+      ADD_EXECUTABLE( ${PROJECT_NAME}
+                    ${${PROJECT_NAME}_HEADERS}
+                    main.cpp
+                    ${${PROJECT_NAME}_SOURCES}
+                    ${${PROJECT_NAME}_QRC_SOURCES}
+                  )
+      TARGET_LINK_LIBRARIES( ${PROJECT_NAME}
+                Qt5::Widgets
+                Qt5::Qml
+                Qt5::Quick
+                Qt5::Svg
+                Qt5::QSvgPlugin
+#${QT5SVG_LIBRARIES}
+                ${EXTRA_LIBS}
+                ${OYJL_CORE_LIB}
+                )
+    ENDIF ()
+    IF(ENABLE_INSTALL_${PROJECT_UP_NAME})
+      INSTALL (TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_BINDIR})
+    ENDIF(ENABLE_INSTALL_${PROJECT_UP_NAME})
+
 ENDIF()
 
