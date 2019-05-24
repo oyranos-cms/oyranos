@@ -145,6 +145,17 @@ const char   * oyICCMeasurementFlareDescription ( icMeasurementFlare sig );
 #define icSigChromaticAdaptionMatrix 1667785060 /* chad */
 #endif
 
+#ifndef icSigMultiProcessElementType
+#define icSigMultiProcessElementType 0x6D706574 /* 'mpet' */
+#endif
+
+#ifndef icSigSpectralViewingConditionsType
+#define icSigSpectralViewingConditionsType 0x7376636e  /* 'svcn' */
+#endif
+
+#ifndef icSigSpectralViewingConditionsTag
+#define icSigSpectralViewingConditionsTag 0x7376636e  /* 'svcn' */
+#endif
 
 /** @internal
  *  @brief deviceSettingsType tag for ICC profiles

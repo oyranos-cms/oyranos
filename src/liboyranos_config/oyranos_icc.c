@@ -510,6 +510,8 @@ const oyChar *   oyICCTagDescription ( icTagSignature      sig )
     case icSigColorantTableType: return _("Color channel names");
     /*clrt*/
     case icSigColorantTableOutType: return _("Color channel output names");
+    /*svcn*/
+    case icSigSpectralViewingConditionsTag: return _("Spectral viewing conditions");
     case 0: return _("----");
     default: { icUInt32Number i = oyValueUInt32(sig);
                static oyChar t[5];
@@ -587,6 +589,7 @@ const oyChar *   oyICCTagName        ( icTagSignature      sig )
     case 1668051572: return "clrt";
     /* binuscan targ data */
     case 0x62303135: return "b015";
+    case icSigSpectralViewingConditionsTag: return "svcn";
     case 0: return "----";
     default: { icUInt32Number i = oyValueUInt32( sig );
                static oyChar t[5];
@@ -739,6 +742,7 @@ const oyChar *   oyICCTagTypeName    ( icTagTypeSignature  sig )
     /*??? (Imacon)*/
     case icSigCopyrightTag: return "cprt?";
     case 1835824483: return "mluc";
+    case icSigSpectralViewingConditionsType: return "svcn";
     default: { icUInt32Number i = oyValueUInt32( sig );
                static oyChar t[8];
                memcpy (t,(char*)&i, 4);
