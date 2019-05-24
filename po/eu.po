@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eu\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2019-05-15 22:06+0200\n"
+"POT-Creation-Date: 2019-05-22 17:08+0200\n"
 "PO-Revision-Date: 2007-11-07 11:11+0100\n"
 "Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@zundan.com>\n"
 "Language-Team: Basque <itzulpena@euskalgnu.org>\n"
@@ -19,11 +19,11 @@ msgstr ""
 "X-Generator: KBabel 1.11.4\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: oyjl_args.c:1361
+#: oyjl_args.c:1364
 msgid "... try with --help|-h option for usage text. give up"
 msgstr ""
 
-#: oyjl_args.c:1982 oyjl_args.c:2155
+#: oyjl_args.c:1985 oyjl_args.c:2158
 msgid "AUTHOR"
 msgstr ""
 
@@ -39,11 +39,11 @@ msgstr ""
 msgid "Any arg mode"
 msgstr ""
 
-#: oyjl_args.c:1992 oyjl_args.c:2165 oyjl_args.c:2167
+#: oyjl_args.c:1995 oyjl_args.c:2168 oyjl_args.c:2170
 msgid "BUGS"
 msgstr ""
 
-#: oyjl_args.c:1986 oyjl_args.c:2159
+#: oyjl_args.c:1989 oyjl_args.c:2162
 msgid "COPYRIGHT"
 msgstr ""
 
@@ -56,29 +56,29 @@ msgstr "Irteera"
 msgid "Convert JSON to gettext ready C strings:"
 msgstr ""
 
-#: oyjl_args.c:1538
+#: oyjl_args.c:1541
 msgid "Copyright"
 msgstr "Copyright-a"
 
-#: oyjl_args.c:1896 oyjl_args.c:2073
+#: oyjl_args.c:1899 oyjl_args.c:2076
 msgid "DESCRIPTION"
 msgstr ""
 
-#: oyjl_args.c:1547
+#: oyjl_args.c:1550
 #, fuzzy
 msgid "Date"
 msgstr "Data"
 
-#: oyjl_args.c:1051
+#: oyjl_args.c:1054
 #, fuzzy
 msgid "Description"
 msgstr "Azalpena"
 
-#: oyjl_args.c:1544
+#: oyjl_args.c:1547
 msgid "Development"
 msgstr ""
 
-#: oyjl_args.c:1546
+#: oyjl_args.c:1549
 msgid "Documentation"
 msgstr "Dokumentazioa"
 
@@ -87,19 +87,19 @@ msgstr "Dokumentazioa"
 msgid "Double occuring option"
 msgstr "Azalpena"
 
-#: oyjl_args.c:1542
+#: oyjl_args.c:1545
 msgid "Download"
 msgstr ""
 
-#: oyjl_args.c:1771
+#: oyjl_args.c:1774
 msgid "ENVIRONMENT VARIABLES"
 msgstr ""
 
-#: oyjl_args.c:1767
+#: oyjl_args.c:1770
 msgid "EXAMPLES"
 msgstr ""
 
-#: oyjl_args.c:1769
+#: oyjl_args.c:1772
 msgid "EXIT-STATE"
 msgstr ""
 
@@ -115,7 +115,7 @@ msgstr ""
 msgid "FILENAME"
 msgstr ""
 
-#: oyjl_args.c:1775
+#: oyjl_args.c:1778
 msgid "FILES"
 msgstr ""
 
@@ -162,7 +162,7 @@ msgstr ""
 msgid "Get formated text"
 msgstr ""
 
-#: oyjl_args.c:1773
+#: oyjl_args.c:1776
 msgid "HISTORY"
 msgstr ""
 
@@ -182,7 +182,7 @@ msgstr ""
 msgid "Json + Command"
 msgstr ""
 
-#: oyjl_args.c:1539 oyjl_args.c:1988 oyjl_args.c:2161
+#: oyjl_args.c:1542 oyjl_args.c:1991 oyjl_args.c:2164
 msgid "License"
 msgstr "Lizentzia"
 
@@ -191,7 +191,7 @@ msgstr "Lizentzia"
 msgid "Man"
 msgstr "Magenta"
 
-#: oyjl_args.c:1537
+#: oyjl_args.c:1540
 #, fuzzy
 msgid "Manufacturer"
 msgstr "Hornitzailea:   "
@@ -229,16 +229,16 @@ msgstr "Modeloa:"
 msgid "Mode3"
 msgstr "Modeloa:"
 
-#: oyjl_args.c:1518
+#: oyjl_args.c:1521
 #, fuzzy
 msgid "Module"
 msgstr "Bereizketa"
 
-#: oyjl_args.c:1722
+#: oyjl_args.c:1725
 msgid "No"
 msgstr ""
 
-#: oyjl_args.c:1898 oyjl_args.c:2075
+#: oyjl_args.c:1901 oyjl_args.c:2078
 msgid "OPTIONS"
 msgstr ""
 
@@ -246,24 +246,24 @@ msgstr ""
 msgid "October 10, 2018"
 msgstr ""
 
-#: oyjl_args.c:708
+#: oyjl_args.c:711
 msgid "Option has a different value range"
 msgstr ""
 
-#: oyjl_args.c:529 oyjl_args.c:584
+#: oyjl_args.c:532 oyjl_args.c:587
 msgid "Option has a unexpected argument"
 msgstr ""
 
-#: oyjl_args.c:503 oyjl_args.c:561
+#: oyjl_args.c:506 oyjl_args.c:564
 msgid "Option needs a argument"
 msgstr ""
 
-#: oyjl_args.c:422 oyjl_args.c:430 oyjl_args.c:482 oyjl_args.c:543
-#: oyjl_args.c:1249
+#: oyjl_args.c:422 oyjl_args.c:430 oyjl_args.c:485 oyjl_args.c:546
+#: oyjl_args.c:1252
 msgid "Option not supported"
 msgstr ""
 
-#: oyjl_args.c:1545
+#: oyjl_args.c:1548
 #, fuzzy
 msgid "Oyjl Module Author"
 msgstr "Oyranos-en ezarpenak"
@@ -320,11 +320,11 @@ msgstr "Puntua"
 msgid "Rendering Intent"
 msgstr "Oyranos-en ezarpenak"
 
-#: oyjl_args.c:1777
+#: oyjl_args.c:1780
 msgid "SEE AS WELL"
 msgstr ""
 
-#: oyjl_args.c:1885 oyjl_args.c:2062
+#: oyjl_args.c:1888 oyjl_args.c:2065
 msgid "SYNOPSIS"
 msgstr ""
 
@@ -352,15 +352,15 @@ msgstr ""
 msgid "Simple mode"
 msgstr ""
 
-#: oyjl_args.c:1543
+#: oyjl_args.c:1546
 msgid "Sources"
 msgstr ""
 
-#: oyjl_args.c:1541
+#: oyjl_args.c:1544
 msgid "Support"
 msgstr ""
 
-#: oyjl_args.c:1053
+#: oyjl_args.c:1056
 msgid "Synopsis"
 msgstr ""
 
@@ -368,7 +368,7 @@ msgstr ""
 msgid "The example tool demontrates the usage of the libOyjl API's."
 msgstr ""
 
-#: oyjl_args.c:1516
+#: oyjl_args.c:1519
 msgid "Tool"
 msgstr ""
 
@@ -376,27 +376,27 @@ msgstr ""
 msgid "Unix Man page"
 msgstr ""
 
-#: oyjl_args.c:1540
+#: oyjl_args.c:1543
 msgid "Url"
 msgstr ""
 
-#: oyjl.c:32 oyjl.c:45 oyjl.c:57 oyjl_args.c:1060 oyjl_translate.c:43
+#: oyjl.c:32 oyjl.c:45 oyjl.c:57 oyjl_args.c:1063 oyjl_translate.c:43
 #: oyjl_translate.c:152
 msgid "Usage"
 msgstr ""
 
-#: oyjl_args.c:414 oyjl_args.c:422 oyjl_args.c:430 oyjl_args.c:482
-#: oyjl_args.c:503 oyjl_args.c:529 oyjl_args.c:543 oyjl_args.c:561
-#: oyjl_args.c:584 oyjl_args.c:708 oyjl_args.c:1249
+#: oyjl_args.c:414 oyjl_args.c:422 oyjl_args.c:430 oyjl_args.c:485
+#: oyjl_args.c:506 oyjl_args.c:532 oyjl_args.c:546 oyjl_args.c:564
+#: oyjl_args.c:587 oyjl_args.c:711 oyjl_args.c:1252
 msgid "Usage Error:"
 msgstr ""
 
-#: oyjl_args.c:1548
+#: oyjl_args.c:1551
 #, fuzzy
 msgid "Version"
 msgstr "ICC Examin-en bertsioa"
 
-#: oyjl_args.c:1722
+#: oyjl_args.c:1725
 msgid "Yes"
 msgstr "Bai"
 
@@ -448,7 +448,7 @@ msgstr ""
 msgid "need a value_type"
 msgstr ""
 
-#: oyjl_args.c:430 oyjl_args.c:1249
+#: oyjl_args.c:430 oyjl_args.c:1252
 msgid "needs OYJL_OPTION_FLAG_EDITABLE or choices"
 msgstr ""
 
