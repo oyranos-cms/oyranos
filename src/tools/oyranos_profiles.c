@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2010-2018 (C) Kai-Uwe Behrmann
+ *            2010-2019 (C) Kai-Uwe Behrmann
  *
  *  @brief    ICC profile informations - on the command line
  *  @internal
@@ -44,9 +44,7 @@ void* oyAllocFunc(size_t size) {return malloc (size);}
 const char * jcommands = "{\n\
   \"command_set\": \"oyranos-profiles\",\n\
   \"comment\": \"command_set_delimiter - build key:value; default is '=' key=value\",\n\
-  \"comment\": \"command_set_option - use \\\"-s\\\" \\\"key\\\"; skip \\\"--\\\" direct in front of key\",\n\
-  \"command_get\": \"oyranos-profiles\",\n\
-  \"command_get_args\": [\"-X\", \"json\"]\n\
+  \"comment\": \"command_set_option - use \\\"-s\\\" \\\"key\\\"; skip \\\"--\\\" direct in front of key\"\n\
 }";
 
 int main( int argc , char** argv )
@@ -141,7 +139,7 @@ int main( int argc , char** argv )
     {"oiwg", 0, _("List"), _("List of available ICC color profiles"), NULL, "l", "feacdknoi24PTv", "lfeacdknoi24PTD" },
     {"oiwg", 0, _("Paths"), _("List search paths"), NULL, "p", "u|s|y|mv", "pusym" },
     {"oiwg", 0, _("Install"), _("Install Profile"), NULL, "I|t", "u|s|y|mgv", "Itusymg" },
-    {"oiwg", 0, _("Misc"), _("General options"), NULL, "", "", "rXvh" },
+    {"oiwg", 0, _("Misc"), _("General options"), NULL, "hX", "", "hXrv" },
     {"",0,0,0,0,0,0,0}
   };
   opts->groups = (oyjlOptionGroup_s*)oyjlStringAppendN( NULL, (const char*)groups, sizeof(groups), 0);

@@ -9,6 +9,7 @@ oyranos\-profiles v0.9.7 \- Oyranos Profiles
 <br />
 **oyranos\-profiles** \-I *ICC\_PROFILE*|  \-t *TAXI\_ID* [\-u|\-s|\-y|\-m] [\-g] [\-v]
 <br />
+**oyranos\-profiles** \-h \-X *json|json+command|man|markdown*
 ## DESCRIPTION
 The tool can list installed profiles, search paths and can help install a ICC color profile in a search path.
 ## OPTIONS
@@ -52,15 +53,16 @@ The tool can list installed profiles, search paths and can help install a ICC co
 * \-g|\-\-gui	Use Graphical User Interface
 
 ### General options
+**oyranos\-profiles** \-h \-X *json|json+command|man|markdown*
 
-* \-r|\-\-no\-repair	No Profile repair of ICC profile ID
+* \-h|\-\-help	Help
 * \-X|\-\-export *json|json+command|man|markdown*	Export formated text: Get UI converted into text formats
    * \-X json		# Json
    * \-X json+command		# Json + Command
    * \-X man		# Man
    * \-X markdown		# Markdown
+* \-r|\-\-no\-repair	No Profile repair of ICC profile ID
 * \-v|\-\-verbose	verbose
-* \-h|\-\-help	Help
 
 ## ENVIRONMENT VARIABLES
 ### OY\_DEBUG

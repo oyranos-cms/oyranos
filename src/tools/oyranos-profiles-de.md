@@ -9,6 +9,7 @@ oyranos\-profiles v0.9.7 \- Oyranos Profile
 <br />
 **oyranos\-profiles** \-I *ICC\_PROFIL*|  \-t *TAXI\_ID* [\-u|\-s|\-y|\-m] [\-g] [\-v]
 <br />
+**oyranos\-profiles** \-h \-X *json|json+command|man|markdown*
 ## BESCHREIBUNG
 Das Werkzeug kann installierte Profile und Suchpfade anzeigen. Es kann ein Profil in einen Suchpfad installieren.
 ## OPTIONEN
@@ -52,15 +53,16 @@ Das Werkzeug kann installierte Profile und Suchpfade anzeigen. Es kann ein Profi
 * \-g|\-\-gui	Zeige Grafische Benutzerschnittstelle
 
 ### Allgemeine Optionen
+**oyranos\-profiles** \-h \-X *json|json+command|man|markdown*
 
-* \-r|\-\-no\-repair	Lasse Reparatur der Profil ID weg
+* \-h|\-\-help	Hilfe
 * \-X|\-\-export *json|json+command|man|markdown*	Exportiere formatierten Text: Hole Benutzerschnittstelle als Text
    * \-X json		# Json
    * \-X json+command		# Json + Kommando
    * \-X man		# Handbuch
    * \-X markdown		# Markdown
+* \-r|\-\-no\-repair	Lasse Reparatur der Profil ID weg
 * \-v|\-\-verbose	plaudernd
-* \-h|\-\-help	Hilfe
 
 ## UMGEBUNGSVARIABLEN
 ### OY\_DEBUG
