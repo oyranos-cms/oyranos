@@ -469,6 +469,9 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse (
       const char * long_arg = NULL;
       const char * value = NULL;
 
+      if(strstr(str,"-qmljsdebugger") != NULL) /* detect a QML option */
+        continue;
+
       /* parse -a | -a value | -a=value | -ba | -ba value | -ba=value */
            if(l > 1 && str[0] == '-' && str[1] != '-')
       {
