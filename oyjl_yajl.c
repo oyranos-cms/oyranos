@@ -632,6 +632,12 @@ int              oyjlXMLNodeIsText   ( xmlNodePtr          cur )
          cur->content ;
 }
 
+int              oyjlXMLNodeIsCData  ( xmlNodePtr          cur )
+{
+  return cur->type == XML_CDATA_SECTION_NODE && !(cur->next || cur->prev) &&
+         cur->content ;
+}
+
 void             oyjlParseXMLDoc_    ( xmlDocPtr           doc,
                                        xmlNodePtr          cur,
                                        int                 flags,
@@ -708,14 +714,29 @@ void             oyjlParseXMLDoc_    ( xmlDocPtr           doc,
       }
       else
         oyjlValueSetString( root, val );
+    } else
+    if( oyjlXMLNodeIsCData(cur) )
+    {
+      const char * val = (const char *) cur->content;
+      oyjlValueSetString( root, val );
     }
 
     if(cur->xmlChildrenNode)
     {
       oyjl_val text = NULL;
       xmlNodePtr cur_ = cur->xmlChildrenNode;
+
       if( oyjlXMLNodeIsText(cur_) && node && node->type == oyjl_t_object )
         text = oyjlTreeGetValue( node, OYJL_CREATE_NEW, "@text" );
+      else
+      if( oyjlXMLNodeIsCData(cur_) && node && (node->type == oyjl_t_object ||
+                                               node->type == oyjl_t_null) )
+        text = oyjlTreeGetValue( node, OYJL_CREATE_NEW, "@cdata" );
+      /*else
+      if( cur->children && cur->children->type == XML_CDATA_SECTION_NODE && !(cur->children->next || cur->children->prev) &&
+         cur->children->content )
+        text = oyjlTreeGetValue( node, OYJL_CREATE_NEW, "@cdata" );*/
+
       oyjlParseXMLDoc_( doc, cur->xmlChildrenNode, flags,
                         text ? text : node );
     }
