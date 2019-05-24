@@ -13,182 +13,74 @@
  *  basic QML handling and environment setup
  */
 
-#include <QApplication>
-#include <QIcon>
-#include <QImageReader>
-#include <QMessageBox>
-#include <QQmlApplicationEngine>
-#include <QtQml> // qmlRegisterType<>()
-
-#include "include/app_data.h"
-#include "include/app_manager.h"
-#include "include/process.h"
-
-// QApplication * a = NULL; not needed, as only static member functions are called
-
-#include <QTranslator>
-#include <QUrl>
-#include <QObject>
-#include <QSysInfo>
-#include <QtGui/QScreen>
+#include "oyjl.h"
+#include "oyjl_i18n.h"
 
 
-#if defined(Q_OS_ANDROID)
-#include <android/log.h>
-#endif
-
-// startup stuff
-AppManager mgr;
-AppManager * m = &mgr;
-int app_init = 0;
-int app_debug = 0;
-
-void printObjectClassNames( QObject * o )
+int main(int argc, const char *argv[])
 {
-  const QObjectList list = o->children();
-  for(int i= 0; i < list.count(); ++i)
+  const char * json = NULL,
+             * command = NULL,
+             * output = NULL;
+  int help = 0;
+  int verbose = 0;
+  int state = 0;
+  const char * exportX = NULL;
+
+  /* handle options */
+  /* Select from *version*, *manufacturer*, *copyright*, *license*, *url*,
+   * *support*, *download*, *sources*, *oyjl_modules_author* and
+   * *documentation* what you see fit. Add new ones as needed. */
+  oyjlUiHeaderSection_s sections[] = {
+    /* type, nick,            label, name,                  description  */
+    {"oihs", "version",       NULL,  "1.0",                 NULL},
+    {"oihs", "documentation", NULL,  "",                    _("The tool graphicaly renders Oyjl JSON UI files using QML.")},
+    {"oihs", "date",          NULL,  "2019-05-23T12:00:00", _("May 23, 2019")},
+    {"",0,0,0,0}};
+
+  /* declare options - the core information; use previously declared choices */
+  oyjlOption_s oarray[] = {
+  /* type,   flags, o,   option,    key,  name,         description,         help, value_name,    value_type,               values,                                                          variable_type, output variable */
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, 'i', "input", NULL, NULL,_("JSON UI Description"), NULL, _("STRING"), oyjlOPTIONTYPE_CHOICE, {}, oyjlSTRING, {.s = &json} },
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, 'c', "command", NULL, NULL, _("JSON Command"), NULL, _("STRING"), oyjlOPTIONTYPE_CHOICE, {}, oyjlSTRING, {.s = &command} },
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, 'o', "output", NULL, NULL,_("Results JSON"), NULL, _("STRING"), oyjlOPTIONTYPE_CHOICE, {}, oyjlSTRING, {.s = &output} },
+    {"oiwi", 0,     'h', "help",    NULL, _("help"),    _("Help"),           NULL, NULL,          oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i = &help} },
+    {"oiwi", 0,     'v', "verbose", NULL, _("verbose"), _("verbose"),        NULL, NULL,          oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i = &verbose} },
+    {"oiwi", 0,     'X', "export",  NULL, NULL,         NULL,                NULL, NULL,          oyjlOPTIONTYPE_CHOICE, {}, oyjlSTRING, {.s = &exportX} },
+    {"",0,0,0,0,0,0,0, NULL, oyjlOPTIONTYPE_END, {},oyjlNONE,{}}
+  };
+
+  /* declare option groups, for better syntax checking and UI groups */
+  oyjlOptionGroup_s groups_no_args[] = {
+  /* type,   flags, name,      description,          help, mandatory, optional, detail */
+    {"oiwg", 0,     _("GUI"),  _("QML UI"),          NULL, "i",       "cov",    "ico" },/* parsed and checked with -i option */
+    {"oiwg", 0,     _("Misc"), _("General options"), NULL, "h",       "v",      "hvX" },/* just show in documentation */
+    {"",0,0,0,0,0,0,0}
+  };
+
+  /* tell about the tool */
+  oyjlUi_s * ui = oyjlUi_Create( argc, argv, /* argc+argv are required for parsing the command line options */
+                                       "oiAQ", "oyjl-args-qml", _("Small JSON UI tool using libOyjl and QML"), "logo",
+                                       sections, oarray, groups_no_args, &state );
+  if( state & oyjlUI_STATE_EXPORT &&
+      exportX)
+    return 0;
+  if(state & oyjlUI_STATE_HELP)
   {
-    LOG(QString("QML object[") + QString::number(i) + QString("] ") + list[i]->objectName()
-        + " " + list[i]->metaObject()->className() );
-    printObjectClassNames( list[i] );
+    fprintf( stderr, "%s\n\tman oyjl-args-qml\n\n", _("For more information read the man page:"));
+    return 0;
   }
-}
+  if(!ui) return 1;
+  /* done with options handling */
 
+  if(ui && verbose)
+    oyjlOptions_PrintHelp( ui->opts, ui, 4, "%s v%s - %s", argv[0],
+                            "1.0", "Test Tool for testing" );
 
-int main(int argc, char *argv[])
-{
-    Q_INIT_RESOURCE(app);
+  int debug = 0;
+  oyjlArgsQmlStart2( argc, argv, json, command, output, debug, ui, NULL );
 
-    QApplication app(argc, argv);
-    // a = &app; see comment above
-    printf( "image plugins:\n");
-    foreach (QByteArray io, QImageReader::supportedImageFormats())
-      printf( "\t%s", qPrintable( QString(io) ));
-    printf( "\n");
+  oyjlUi_Release( &ui);
 
-
-    QTranslator translator;
-    QString lname( ":/translations/app_" + QLocale::system().name() );
-    if(!translator.load( lname ))
-        LOG( QString("failed loading locale: ") + lname );
-    else
-        app.installTranslator(&translator);
-
-    foreach (QScreen * screen, QGuiApplication::screens())
-        screen->setOrientationUpdateMask(Qt::LandscapeOrientation | Qt::PortraitOrientation |
-                                         Qt::InvertedLandscapeOrientation | Qt::InvertedPortraitOrientation);
-
-    app.setApplicationName(QString("oyjl-args-qml"));
-    app.setApplicationDisplayName(QString("Oyjl"));
-    app.setApplicationVersion("0.5");
-    app.setOrganizationName(QString("oyranos.org"));
-    app.setWindowIcon(QIcon(":/images/logo-sw.svg"));
-
-    QCommandLineParser parser;
-    parser.setApplicationDescription(QCoreApplication::translate("main", "QML Renderer for JSON Options"));
-    QCommandLineOption ho = parser.addHelpOption();
-
-    QCommandLineOption inputOption(QStringList() << "i" << "input",
-              QCoreApplication::translate("main", "specify input JSON file; '-' stands for stdin stream"),
-              QCoreApplication::translate("main", "path/to/options.json"));
-    parser.addOption(inputOption);
-    QCommandLineOption outputOption(QStringList() << "o" << "output",
-              QCoreApplication::translate("main", "specify output JSON file; '-' stands for stdout stream"),
-              QCoreApplication::translate("main", "path/to/options.json"));
-    parser.addOption(outputOption);
-    QCommandLineOption commandsOption(QStringList() << "c" << "command",
-              QCoreApplication::translate("main", "specify commands JSON file; '-' stands for stdin stream; '+' stands for read from -i file"),
-              QCoreApplication::translate("main", "path/to/commands.json"));
-    parser.addOption(commandsOption);
-    QCommandLineOption verboseOption("v",
-              QCoreApplication::translate("main", "Verbose mode. Prints out more information."));
-    parser.addOption(verboseOption);
-    QCommandLineOption aboutOption("verbose",
-              QCoreApplication::translate("main", "Prints basic information."));
-    parser.addOption(aboutOption);
-
-    parser.parse(QApplication::arguments());
-    if(parser.isSet(verboseOption))
-        ++app_debug;
-
-    if(app_debug)
-    {
-        LOG( QString("app args[") + QString::number(argc) + "]:" );
-        for(int i = 0; i < argc; ++i)
-            LOG( QString(argv[i]) );
-    }
-
-    if(parser.isSet(ho))
-    {
-        printf(qPrintable(parser.helpText()));
-        printf( "%s:\n\t%s\n\t%s\n",
-        qPrintable( QCoreApplication::translate("main", "Example") ),
-        qPrintable( QCoreApplication::translate("main", "Open JSON from stdin and give result JSON to stdout:\n\t\tcat options.json | %1 -i - -o - | xargs echo").arg(app.applicationName()) ),
-        qPrintable( QCoreApplication::translate("main", "Open JSON from stdin and specify commands:\n\t\tcat options.json | %1 -i - -c commands.json").arg(app.applicationName()) ));
-        return 0;
-    }
-    if(parser.isSet(aboutOption))
-    {
-        printf( "%s %s\t%s\n",
-        qPrintable( app.applicationName() ),
-        qPrintable( app.applicationVersion() ),
-        qPrintable( QCoreApplication::translate("main", "is a QML renderer for Oyjl JSON options.") ));
-        return 0;
-    }
-
-    parser.process(app);
-
-    QString inputJSON = parser.value(inputOption);
-    QString outputJSON = parser.value(outputOption);
-    QString commandsJSON = parser.value(commandsOption);
-
-
-    qmlRegisterType<AppData>("AppData", 1, 0, "AppData");
-    qmlRegisterType<Process>("Process", 1, 0, "Process");
-
-    QQmlApplicationEngine engine;
-    engine.load(QUrl(QStringLiteral("qrc:qml/main.qml")));
-
-    // extract the app data from QML
-      // get all objects from QML
-    QList<QObject*> qmlObjects = engine.rootObjects();
-    if(!qmlObjects.count())
-      LOG( QString("no QML objects") );
-    else
-    {
-      QObject * o = qmlObjects[0];
-      QObject::connect( &mgr, SIGNAL(fullLogMessage(QVariant)), o, SIGNAL(fullLogMessage(QVariant)) );
-
-      QObject::connect( &mgr, SIGNAL(batteryInfo(QVariant)), o, SIGNAL(batteryInfo(QVariant)) );
-      if( mgr.getBatteryInfo().length() )
-          mgr.setBatteryInfo( mgr.getBatteryInfo() ); // update QML
-
-      QObject::connect( &mgr, SIGNAL(uriChanged(QVariant)), o, SIGNAL(fileChanged(QVariant)) );
-      QObject::connect( &mgr, SIGNAL(outputChanged(QVariant)), o, SIGNAL(outputChanged(QVariant)) );
-      QObject::connect( &mgr, SIGNAL(commandsChanged(QVariant)), o, SIGNAL(commandsChanged(QVariant)) );
-
-      app_init = 1;
-      if(app_debug)
-          LOG( QString("qml root objects: ") + QString::number( qmlObjects.count() ) );
-    }
-
-    app_init = 1;
-
-
-    if(inputJSON.length())
-        mgr.setUri( inputJSON );
-    else
-        mgr.setUri( "-" );
-    if(outputJSON.length())
-        mgr.setOutput( outputJSON );
-    if(commandsJSON.length())
-        mgr.setCommands( commandsJSON );
-
-    QQmlContext *ctxt = engine.rootContext();
-    ctxt->setContextProperty("ApplicationVersion", QVariant::fromValue( app.applicationVersion() ));
-    ctxt->setContextProperty("SysProductInfo", QVariant::fromValue( QSysInfo::prettyProductName() ));
-    ctxt->setContextProperty("QtRuntimeVersion", QVariant::fromValue( QString(qVersion()) ));
-    ctxt->setContextProperty("QtCompileVersion", QVariant::fromValue( QString(QT_VERSION_STR) ));
-
-    return app.exec();
+  return 0;
 }
