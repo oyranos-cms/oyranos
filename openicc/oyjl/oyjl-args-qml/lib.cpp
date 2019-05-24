@@ -53,15 +53,17 @@ void printObjectClassNames( QObject * o )
 }
 
 int oyjlArgsQmlStart_                ( int                 argc,
-                                       char             ** argv,
+                                       const char       ** argv,
                                        const char        * json,
+                                       const char        * commands,
+                                       const char        * output,
                                        int                 debug,
                                        oyjlUi_s          * ui,
                                        int               (*callback)(int argc, const char ** argv))
 {
     Q_INIT_RESOURCE(app);
 
-    QApplication app(argc, argv);
+    QApplication app(argc, (char**)argv);
     // a = &app; see comment above
 
     QTranslator translator;
@@ -123,8 +125,18 @@ int oyjlArgsQmlStart_                ( int                 argc,
     app_init = 1;
 
 
-    mgr.setUri( QString(json) );
-    mgr.setCommands("{\"command_set\": \"dummy-callback-placeholder_needed-to-trigger-calling-Process-in-main.qml\"}");
+    if( json && strlen( json ) )
+      mgr.setUri( QString(json) );
+    else
+      mgr.setUri( "-" );
+
+    if( commands )
+      mgr.setCommands( commands );
+    else
+      mgr.setCommands("{\"command_set\": \"dummy-callback-placeholder_needed-to-trigger-calling-Process-in-main.qml\"}");
+
+    if( output )
+      mgr.setOutput( output );
 
     QQmlContext *ctxt = engine.rootContext();
     ctxt->setContextProperty("ApplicationVersion", QVariant::fromValue( app.applicationVersion() ));
@@ -137,15 +149,31 @@ int oyjlArgsQmlStart_                ( int                 argc,
 }
 
 extern "C" { // "C" API wrapper 
+int oyjlArgsQmlStart2                ( int                 argc,
+                                       const char       ** argv,
+                                       const char        * json,
+                                       const char        * commands,
+                                       const char        * output,
+                                       int                 debug,
+                                       oyjlUi_s          * ui,
+                                       int               (*callback)(int argc, const char ** argv))
+{
+  int result;
+  result = oyjlArgsQmlStart_(argc, argv, json, commands, output, debug, ui, callback );
+  fflush(stdout);
+  fflush(stderr);
+  return result;
+}
+
 int oyjlArgsQmlStart                 ( int                 argc,
-                                       char             ** argv,
+                                       const char       ** argv,
                                        const char        * json,
                                        int                 debug,
                                        oyjlUi_s          * ui,
                                        int               (*callback)(int argc, const char ** argv))
 {
   int result;
-  result = oyjlArgsQmlStart_(argc, argv, json, debug, ui, callback );
+  result = oyjlArgsQmlStart_(argc, argv, json, NULL, NULL, debug, ui, callback );
   fflush(stdout);
   fflush(stderr);
   return result;
