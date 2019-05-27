@@ -25,6 +25,7 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+#include <ctype.h>   /* isspace() */
 #include <math.h>    /* NAN */
 #include <stdarg.h>  /* va_list */
 #include <stddef.h>  /* ptrdiff_t size_t */
@@ -340,7 +341,7 @@ int        oyjlStringReplace         ( char             ** text,
   if(!text || !*text || !(*text)[0])
     return 0;
 
-  str = oyjlStrNewFrom(text, 10, alloc,deAlloc);
+  str = oyjlStrNewFrom(text, 0, alloc,deAlloc);
   n = oyjlStrReplace( str, search, replacement );
   t = oyjlStrPull(str);
   *text = t;
@@ -541,7 +542,7 @@ int          oyjlStringToDouble      ( const char        * text,
                                        double            * value )
 {
   char * p = NULL, * t = NULL;
-  int len;
+  int len, pos = 0;
   int error = -1;
 #ifdef OYJL_HAVE_LOCALE_H
   char * save_locale = oyjlStringCopy( setlocale(LC_NUMERIC, 0 ), malloc );
@@ -562,7 +563,9 @@ int          oyjlStringToDouble      ( const char        * text,
   oyjlAllocHelper_m( t, char, len + 2*sizeof(double) + 1, malloc, return 1);
   memset( t, 0, len + 2*sizeof(double) + 1 );
 
-  memcpy( t, text, len );
+  /* remove leading empty space */
+  while(text[pos] && isspace(text[pos])) pos++;
+  memcpy( t, &text[pos], len );
 
   *value = strtod( t, &p );
 
@@ -611,6 +614,10 @@ int          oyjlStringsToDoubles    ( const char        * text,
   int n = 0, i;
   double d;
   char * val;
+
+  if(!text || !text[0])
+    return 0;
+
   list = oyjlStringSplit( text, delimiter, &n, alloc );
   if(n)
     oyjlAllocHelper_m( *value, double, n + 1, alloc, return 1);
