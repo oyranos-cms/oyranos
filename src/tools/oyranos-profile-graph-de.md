@@ -13,7 +13,7 @@ oyranos\-profile\-graph v0.9.7 \- Oyranos Profile Zeichner
 <br />
 **oyranos\-profile\-graph** \-i *STRING* [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-R] [\-o *\-|DATEI*] [\-f *FORMAT*] [\-v]
 <br />
-**oyranos\-profile\-graph** \-s *DATEI* [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-R] [\-P *STRING*] [\-o *\-|DATEI*] [\-p *FORMAT*] [\-v]
+**oyranos\-profile\-graph** \-s *DATEI* \-p *FORMAT* [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-R] [\-P *STRING*] [\-o *\-|DATEI*] [\-v]
 <br />
 **oyranos\-profile\-graph** \-X *json|json+command|man|markdown*|  \-h [\-v]
 ## BESCHREIBUNG
@@ -60,7 +60,7 @@ Erzeuge aus einem ICC Profil eine Grafik mit seiner Sättigungslinie.
    * \-i D93		# Lichtart D93
 
 ### Spektrumgraph
-**oyranos\-profile\-graph** \-s *DATEI* [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-R] [\-P *STRING*] [\-o *\-|DATEI*] [\-p *FORMAT*] [\-v]
+**oyranos\-profile\-graph** \-s *DATEI* \-p *FORMAT* [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-R] [\-P *STRING*] [\-o *\-|DATEI*] [\-v]
 
 * \-s|\-\-spectral *DATEI*	Spektrale Eingabe
 * \-p|\-\-spectral\-format *FORMAT*	Gib spektrales Ausgabeformat an
@@ -69,6 +69,7 @@ Erzeuge aus einem ICC Profil eine Grafik mit seiner Sättigungslinie.
    * \-p csv		# CSV
    * \-p ncc		# NCC
    * \-p cgats		# CGATS
+   * \-p icc\-xml		# Icc XML
    * \-p ppm		# PPM
 * \-P|\-\-pattern *STRING*	Filter für Farbnamen
 

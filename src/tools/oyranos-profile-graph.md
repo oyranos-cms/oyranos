@@ -13,7 +13,7 @@ oyranos\-profile\-graph v0.9.7 \- Oyranos Profile Graph
 <br />
 **oyranos\-profile\-graph** \-i *STRING* [\-t *NUMBER*] [\-b] [\-g] [\-w *NUMBER*] [\-R] [\-o *\-|FILE*] [\-f *FORMAT*] [\-v]
 <br />
-**oyranos\-profile\-graph** \-s *FILE* [\-t *NUMBER*] [\-b] [\-g] [\-w *NUMBER*] [\-R] [\-P *STRING*] [\-o *\-|FILE*] [\-p *FORMAT*] [\-v]
+**oyranos\-profile\-graph** \-s *FILE* \-p *FORMAT* [\-t *NUMBER*] [\-b] [\-g] [\-w *NUMBER*] [\-R] [\-P *STRING*] [\-o *\-|FILE*] [\-v]
 <br />
 **oyranos\-profile\-graph** \-X *json|json+command|man|markdown*|  \-h [\-v]
 ## DESCRIPTION
@@ -60,7 +60,7 @@ Create a 2D Graph containing the saturation line from a ICC Profile.
    * \-i D93		# Illuminant D93
 
 ### Spectral Input Graph
-**oyranos\-profile\-graph** \-s *FILE* [\-t *NUMBER*] [\-b] [\-g] [\-w *NUMBER*] [\-R] [\-P *STRING*] [\-o *\-|FILE*] [\-p *FORMAT*] [\-v]
+**oyranos\-profile\-graph** \-s *FILE* \-p *FORMAT* [\-t *NUMBER*] [\-b] [\-g] [\-w *NUMBER*] [\-R] [\-P *STRING*] [\-o *\-|FILE*] [\-v]
 
 * \-s|\-\-spectral *FILE*	Spectral Input
 * \-p|\-\-spectral\-format *FORMAT*	Specify spectral output file format
@@ -69,6 +69,7 @@ Create a 2D Graph containing the saturation line from a ICC Profile.
    * \-p csv		# CSV
    * \-p ncc		# NCC
    * \-p cgats		# CGATS
+   * \-p icc\-xml		# Icc XML
    * \-p ppm		# PPM
 * \-P|\-\-pattern *STRING*	Filter of Color Names
 

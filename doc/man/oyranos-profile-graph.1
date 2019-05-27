@@ -12,7 +12,7 @@ oyranos-profile-graph v0.9.7 \- Oyranos Profile Graph
 .br
 \fBoyranos-profile-graph\fR \-i \fISTRING\fR [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-R] [\-o \fI-|FILE\fR] [\-f \fIFORMAT\fR] [\-v]
 .br
-\fBoyranos-profile-graph\fR \-s \fIFILE\fR [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-R] [\-P \fISTRING\fR] [\-o \fI-|FILE\fR] [\-p \fIFORMAT\fR] [\-v]
+\fBoyranos-profile-graph\fR \-s \fIFILE\fR \-p \fIFORMAT\fR [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-R] [\-P \fISTRING\fR] [\-o \fI-|FILE\fR] [\-v]
 .br
 \fBoyranos-profile-graph\fR \-X \fIjson|json+command|man|markdown\fR|  \-h [\-v]
 .SH DESCRIPTION
@@ -80,7 +80,7 @@ Illuminant Spectrum Graph
 .br
 .TP
 Spectral Input Graph
-\fBoyranos-profile-graph\fR \-s \fIFILE\fR [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-R] [\-P \fISTRING\fR] [\-o \fI-|FILE\fR] [\-p \fIFORMAT\fR] [\-v]
+\fBoyranos-profile-graph\fR \-s \fIFILE\fR \-p \fIFORMAT\fR [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-R] [\-P \fISTRING\fR] [\-o \fI-|FILE\fR] [\-v]
 .br
 \-s|\-\-spectral \fIFILE\fR	Spectral Input
 .br
@@ -95,6 +95,8 @@ Spectral Input Graph
 	\-p ncc		# NCC  -  Named Color Collection
 .br
 	\-p cgats		# CGATS  -  CGATS Values
+.br
+	\-p icc-xml		# Icc XML  -  ICC Named Color Values
 .br
 	\-p ppm		# PPM  -  Spectral PAM Image
 .br
