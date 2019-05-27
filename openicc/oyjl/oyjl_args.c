@@ -883,9 +883,8 @@ char * oyjlOptions_ResultsToText  ( oyjlOptions_s  * opts )
  *  @date    2018/08/14
  *  @since   2018/08/14 (OpenICC: 0.1.1)
  */
-static
-const char * oyjlOptions_PrintHelpSynopsis (
-                                       oyjlOptions_s  * opts,
+static const char * oyjlOptions_PrintHelpSynopsis (
+                                       oyjlOptions_s  *    opts,
                                        oyjlOptionGroup_s * g,
                                        int                 style )
 {
@@ -1699,7 +1698,16 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
           break;
         case oyjlOPTIONTYPE_DOUBLE:
           key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "default" );
-          sprintf( num, "%g", o->values.dbl.d ); oyjlValueSetString( key, num );
+          {
+              int count = 0;
+              char ** results = oyjlOptions_ResultsToList( opts, o->o, &count );
+              if( count )
+                sprintf( num, "%s", results[0] );
+              else
+                sprintf( num, "%g", o->values.dbl.d );
+              oyjlValueSetString( key, num );
+              oyjlStringListRelease( &results, count, free );
+          }
           key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "start" );
           sprintf( num, "%g", o->values.dbl.start ); oyjlValueSetString( key, num );
           key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "end" );
