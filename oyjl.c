@@ -157,14 +157,14 @@ int main(int argc, char ** argv)
             for(i = 1; pos < argc && i < (int)strlen(argv[pos]); ++i)
             switch (argv[pos][i])
             {
-              case 'i': OY_PARSE_STRING_ARG(input_file_name); break;
-              case 'x': OY_PARSE_STRING_ARG(xpath); break;
+              case 'i': OYJL_PARSE_STRING_ARG(input_file_name); break;
+              case 'x': OYJL_PARSE_STRING_ARG(xpath); break;
               case 'c': show = COUNT; break;
               case 'j': show = JSON; break;
               case 'k': show = KEY; break;
               case 'm': show = XML; break;
               case 'p': show = PATHS; break;
-              case 's': OY_PARSE_STRING_ARG(value_string); break;
+              case 's': OYJL_PARSE_STRING_ARG(value_string); break;
               case 't': show = TYPE; break;
               case 'v': ++verbose; break;
               case 'y': show = YAML; break;
@@ -172,7 +172,7 @@ int main(int argc, char ** argv)
               case '-':
                         if(i == 1)
                         {
-                             if(OY_IS_ARG("verbose"))
+                             if(OYJL_IS_ARG("verbose"))
                         { ++verbose; i=100; break; }
                         } OYJL_FALLTHROUGH
               default:

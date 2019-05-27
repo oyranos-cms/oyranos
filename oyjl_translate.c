@@ -104,21 +104,21 @@ int main(int argc, char ** argv)
             switch (argv[pos][i])
             {
               case 'a': add = 1; break;
-              case 'd': OY_PARSE_STRING_ARG(ctextdomain); break;
+              case 'd': OYJL_PARSE_STRING_ARG(ctextdomain); break;
               case 'e': extract = 1; break;
-              case 'f': OY_PARSE_STRING_ARG(format); break;
-              case 'i': OY_PARSE_STRING_ARG(file_name); break;
-              case 'k': OY_PARSE_STRING_ARG(key_list); break;
-              case 'l': OY_PARSE_STRING_ARG(lang_list); break;
-              case 'o': OY_PARSE_STRING_ARG(output); break;
-              case 'p': OY_PARSE_STRING_ARG(localedir); break;
-              case 'w': OY_PARSE_STRING_ARG(wrap); break;
+              case 'f': OYJL_PARSE_STRING_ARG(format); break;
+              case 'i': OYJL_PARSE_STRING_ARG(file_name); break;
+              case 'k': OYJL_PARSE_STRING_ARG(key_list); break;
+              case 'l': OYJL_PARSE_STRING_ARG(lang_list); break;
+              case 'o': OYJL_PARSE_STRING_ARG(output); break;
+              case 'p': OYJL_PARSE_STRING_ARG(localedir); break;
+              case 'w': OYJL_PARSE_STRING_ARG(wrap); break;
               case 'v': ++verbose; ++*oyjl_debug; break;
               case 'h':
               case '-':
                         if(i == 1)
                         {
-                             if(OY_IS_ARG("verbose"))
+                             if(OYJL_IS_ARG("verbose"))
                         { ++*oyjl_debug; ++verbose; i=100; break; }
                         } OYJL_FALLTHROUGH
               default:
