@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: oyjl .\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2019-05-24 14:42+0200\n"
+"POT-Creation-Date: 2019-05-26 08:27+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,7 +21,7 @@ msgstr ""
 msgid "is a JSON to YAML converter"
 msgstr ""
 
-#: oyjl.c:32 oyjl.c:45 oyjl.c:57 oyjl_args.c:1063 oyjl_translate.c:43
+#: oyjl.c:32 oyjl.c:45 oyjl.c:57 oyjl_args.c:1062 oyjl_translate.c:43
 #: oyjl_translate.c:152
 msgid "Usage"
 msgstr ""
@@ -140,7 +140,7 @@ msgstr ""
 
 #: oyjl_args.c:414 oyjl_args.c:422 oyjl_args.c:430 oyjl_args.c:485
 #: oyjl_args.c:506 oyjl_args.c:532 oyjl_args.c:546 oyjl_args.c:564
-#: oyjl_args.c:587 oyjl_args.c:711 oyjl_args.c:1252
+#: oyjl_args.c:587 oyjl_args.c:711 oyjl_args.c:1251
 msgid "Usage Error:"
 msgstr ""
 
@@ -149,7 +149,7 @@ msgid "Double occuring option"
 msgstr ""
 
 #: oyjl_args.c:422 oyjl_args.c:430 oyjl_args.c:485 oyjl_args.c:546
-#: oyjl_args.c:1252
+#: oyjl_args.c:1251
 msgid "Option not supported"
 msgstr ""
 
@@ -157,7 +157,7 @@ msgstr ""
 msgid "need a value_type"
 msgstr ""
 
-#: oyjl_args.c:430 oyjl_args.c:1252
+#: oyjl_args.c:430 oyjl_args.c:1251
 msgid "needs OYJL_OPTION_FLAG_EDITABLE or choices"
 msgstr ""
 
@@ -173,127 +173,127 @@ msgstr ""
 msgid "Option has a different value range"
 msgstr ""
 
-#: oyjl_args.c:1054
+#: oyjl_args.c:1053
 msgid "Description"
 msgstr ""
 
-#: oyjl_args.c:1056
+#: oyjl_args.c:1055
 msgid "Synopsis"
 msgstr ""
 
-#: oyjl_args.c:1364
+#: oyjl_args.c:1363
 msgid "... try with --help|-h option for usage text. give up"
 msgstr ""
 
-#: oyjl_args.c:1519
+#: oyjl_args.c:1518
 msgid "Tool"
 msgstr ""
 
-#: oyjl_args.c:1521
+#: oyjl_args.c:1520
 msgid "Module"
 msgstr ""
 
-#: oyjl_args.c:1540
+#: oyjl_args.c:1539
 msgid "Manufacturer"
 msgstr ""
 
-#: oyjl_args.c:1541
+#: oyjl_args.c:1540
 msgid "Copyright"
 msgstr ""
 
-#: oyjl_args.c:1542 oyjl_args.c:1991 oyjl_args.c:2164
+#: oyjl_args.c:1541 oyjl_args.c:1999 oyjl_args.c:2172
 msgid "License"
 msgstr ""
 
-#: oyjl_args.c:1543
+#: oyjl_args.c:1542
 msgid "Url"
 msgstr ""
 
-#: oyjl_args.c:1544
+#: oyjl_args.c:1543
 msgid "Support"
 msgstr ""
 
-#: oyjl_args.c:1545
+#: oyjl_args.c:1544
 msgid "Download"
 msgstr ""
 
-#: oyjl_args.c:1546
+#: oyjl_args.c:1545
 msgid "Sources"
 msgstr ""
 
-#: oyjl_args.c:1547
+#: oyjl_args.c:1546
 msgid "Development"
 msgstr ""
 
-#: oyjl_args.c:1548
+#: oyjl_args.c:1547
 msgid "Oyjl Module Author"
 msgstr ""
 
-#: oyjl_args.c:1549
+#: oyjl_args.c:1548
 msgid "Documentation"
 msgstr ""
 
-#: oyjl_args.c:1550
+#: oyjl_args.c:1549
 msgid "Date"
 msgstr ""
 
-#: oyjl_args.c:1551
+#: oyjl_args.c:1550
 msgid "Version"
 msgstr ""
 
-#: oyjl_args.c:1725
+#: oyjl_args.c:1733
 msgid "Yes"
 msgstr ""
 
-#: oyjl_args.c:1725
+#: oyjl_args.c:1733
 msgid "No"
 msgstr ""
 
-#: oyjl_args.c:1770
+#: oyjl_args.c:1778
 msgid "EXAMPLES"
 msgstr ""
 
-#: oyjl_args.c:1772
+#: oyjl_args.c:1780
 msgid "EXIT-STATE"
 msgstr ""
 
-#: oyjl_args.c:1774
+#: oyjl_args.c:1782
 msgid "ENVIRONMENT VARIABLES"
 msgstr ""
 
-#: oyjl_args.c:1776
+#: oyjl_args.c:1784
 msgid "HISTORY"
 msgstr ""
 
-#: oyjl_args.c:1778
+#: oyjl_args.c:1786
 msgid "FILES"
 msgstr ""
 
-#: oyjl_args.c:1780
+#: oyjl_args.c:1788
 msgid "SEE AS WELL"
 msgstr ""
 
-#: oyjl_args.c:1888 oyjl_args.c:2065
+#: oyjl_args.c:1896 oyjl_args.c:2073
 msgid "SYNOPSIS"
 msgstr ""
 
-#: oyjl_args.c:1899 oyjl_args.c:2076
+#: oyjl_args.c:1907 oyjl_args.c:2084
 msgid "DESCRIPTION"
 msgstr ""
 
-#: oyjl_args.c:1901 oyjl_args.c:2078
+#: oyjl_args.c:1909 oyjl_args.c:2086
 msgid "OPTIONS"
 msgstr ""
 
-#: oyjl_args.c:1985 oyjl_args.c:2158
+#: oyjl_args.c:1993 oyjl_args.c:2166
 msgid "AUTHOR"
 msgstr ""
 
-#: oyjl_args.c:1989 oyjl_args.c:2162
+#: oyjl_args.c:1997 oyjl_args.c:2170
 msgid "COPYRIGHT"
 msgstr ""
 
-#: oyjl_args.c:1995 oyjl_args.c:2168 oyjl_args.c:2170
+#: oyjl_args.c:2003 oyjl_args.c:2176 oyjl_args.c:2178
 msgid "BUGS"
 msgstr ""
 
