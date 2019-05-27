@@ -13,7 +13,7 @@
 
 /* command line parsing macros */
 /* allow "-opt val" and "-opt=val" syntax */
-#define OY_PARSE_INT_ARG( opt ) \
+#define OYJL_PARSE_INT_ARG( opt ) \
                         if( pos + 1 < argc && argv[pos][i+1] == 0 ) \
                         { opt = atoi( argv[pos+1] ); \
                           if( opt == 0 && strcmp(argv[pos+1],"0") ) \
@@ -27,7 +27,7 @@
                           i = 1000; \
                         } else wrong_arg = "-" #opt; \
                         if(*oyjl_debug) fprintf(stderr,#opt "=%d\n",opt)
-#define OY_PARSE_INT_ARG2( opt, arg ) \
+#define OYJL_PARSE_INT_ARG2( opt, arg ) \
                         if( pos + 1 < argc && argv[pos][i+strlen(arg)+1] == 0 ) \
                         { opt = atoi(argv[pos+1]); \
                           ++pos; \
@@ -37,7 +37,7 @@
                           i = 1000; \
                         } else wrong_arg = "-" arg; \
                         if(*oyjl_debug) fprintf(stderr,arg "=%d\n",opt)
-#define OY_PARSE_STRING_ARG( opt ) \
+#define OYJL_PARSE_STRING_ARG( opt ) \
                         if( pos + 1 < argc && argv[pos][i+1] == 0 ) \
                         { opt = argv[pos+1]; \
                           if( opt == 0 && strcmp(argv[pos+1],"0") ) \
@@ -51,7 +51,7 @@
                           i = 1000; \
                         } else wrong_arg = "-" #opt; \
                         if(*oyjl_debug) fprintf(stderr, #opt "=%s\n",opt)
-#define OY_PARSE_STRING_ARG2( opt, arg ) \
+#define OYJL_PARSE_STRING_ARG2( opt, arg ) \
                         if( pos + 1 < argc && argv[pos][i+strlen(arg)+1] == 0 ) \
                         { opt = argv[pos+1]; \
                           ++pos; \
@@ -61,7 +61,7 @@
                           i = 1000; \
                         } else wrong_arg = "-" arg; \
                         if(*oyjl_debug) fprintf(stderr,arg "=%s\n",opt)
-#define OY_IS_ARG( arg ) \
+#define OYJL_IS_ARG( arg ) \
                         (strlen(argv[pos])-2 >= strlen(arg) && \
                          memcmp(&argv[pos][2],arg, strlen(arg)) == 0)
 
