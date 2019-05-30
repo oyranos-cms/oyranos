@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eo\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2019-05-25 17:37+0200\n"
+"POT-Creation-Date: 2019-05-30 06:21+0200\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  <eo@li.org>\n"
@@ -23,7 +23,7 @@ msgstr ""
 msgid "... try with --help|-h option for usage text. give up"
 msgstr ""
 
-#: oyjl_args.c:1993 oyjl_args.c:2166
+#: oyjl_args.c:2007 oyjl_args.c:2180
 msgid "AUTHOR"
 msgstr ""
 
@@ -39,11 +39,11 @@ msgstr ""
 msgid "Any arg mode"
 msgstr ""
 
-#: oyjl_args.c:2003 oyjl_args.c:2176 oyjl_args.c:2178
+#: oyjl_args.c:2017 oyjl_args.c:2190 oyjl_args.c:2192
 msgid "BUGS"
 msgstr ""
 
-#: oyjl_args.c:1997 oyjl_args.c:2170
+#: oyjl_args.c:2011 oyjl_args.c:2184
 msgid "COPYRIGHT"
 msgstr ""
 
@@ -59,7 +59,7 @@ msgstr ""
 msgid "Copyright"
 msgstr ""
 
-#: oyjl_args.c:1907 oyjl_args.c:2084
+#: oyjl_args.c:1921 oyjl_args.c:2098
 msgid "DESCRIPTION"
 msgstr ""
 
@@ -88,15 +88,15 @@ msgstr ""
 msgid "Download"
 msgstr ""
 
-#: oyjl_args.c:1782
+#: oyjl_args.c:1796
 msgid "ENVIRONMENT VARIABLES"
 msgstr ""
 
-#: oyjl_args.c:1778
+#: oyjl_args.c:1792
 msgid "EXAMPLES"
 msgstr ""
 
-#: oyjl_args.c:1780
+#: oyjl_args.c:1794
 msgid "EXIT-STATE"
 msgstr ""
 
@@ -112,7 +112,7 @@ msgstr ""
 msgid "FILENAME"
 msgstr ""
 
-#: oyjl_args.c:1786
+#: oyjl_args.c:1800
 msgid "FILES"
 msgstr ""
 
@@ -156,7 +156,7 @@ msgstr ""
 msgid "Get formated text"
 msgstr ""
 
-#: oyjl_args.c:1784
+#: oyjl_args.c:1798
 msgid "HISTORY"
 msgstr ""
 
@@ -176,7 +176,7 @@ msgstr ""
 msgid "Json + Command"
 msgstr ""
 
-#: oyjl_args.c:1541 oyjl_args.c:1999 oyjl_args.c:2172
+#: oyjl_args.c:1541 oyjl_args.c:2013 oyjl_args.c:2186
 msgid "License"
 msgstr ""
 
@@ -223,11 +223,11 @@ msgstr ""
 msgid "Module"
 msgstr ""
 
-#: oyjl_args.c:1733
+#: oyjl_args.c:1747
 msgid "No"
 msgstr ""
 
-#: oyjl_args.c:1909 oyjl_args.c:2086
+#: oyjl_args.c:1923 oyjl_args.c:2100
 msgid "OPTIONS"
 msgstr ""
 
@@ -303,11 +303,11 @@ msgstr "verda"
 msgid "Rendering Intent"
 msgstr ""
 
-#: oyjl_args.c:1788
+#: oyjl_args.c:1802
 msgid "SEE AS WELL"
 msgstr ""
 
-#: oyjl_args.c:1896 oyjl_args.c:2073
+#: oyjl_args.c:1910 oyjl_args.c:2087
 msgid "SYNOPSIS"
 msgstr ""
 
@@ -377,7 +377,7 @@ msgstr ""
 msgid "Version"
 msgstr ""
 
-#: oyjl_args.c:1733
+#: oyjl_args.c:1747
 msgid "Yes"
 msgstr "Jes"
 

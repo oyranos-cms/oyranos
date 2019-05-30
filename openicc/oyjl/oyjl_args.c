@@ -1497,7 +1497,7 @@ oyjlUiHeaderSection_s * oyjlUi_GetHeaderSection (
  *  The JSON data shall be useable with oyjl-args-qml options renderer.
  *
  *  @version Oyjl: 1.0.0
- *  @date    2018/08/14
+ *  @date    2019/05/30
  *  @since   2018/08/14 (OpenICC: 0.1.1)
  */
 char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
@@ -1505,7 +1505,7 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
 {
   char * t = NULL, num[64];
   oyjl_val root, key;
-  int i,n,ng;
+  int i,j,n,ng;
 
   if(!ui) return t;
 
@@ -1583,8 +1583,22 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
     oyjlValueSetString( key, g->mandatory );
     key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/%s", i, "optional" );
     oyjlValueSetString( key, g->optional );
-    int d = g->detail ? strlen(g->detail) : 0,
-        j;
+    {
+      char ** results = oyjlOptions_ResultsToList( opts, 0, &n );
+      char * changed = NULL;
+      for(j = 0; j < n; ++j)
+        oyjlStringAdd( &changed, 0,0, "%c", results[j][0] );
+      if(changed)
+      {
+        key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/%s", i, "changed" );
+        oyjlValueSetString( key, changed );
+        for(j = 0; j < n; ++j)
+          fprintf(stderr, "%s\n", results[j] );
+      }
+      if(changed) free(changed);
+      oyjlStringListRelease( &results, n, free );
+    }
+    int d = g->detail ? strlen(g->detail) : 0;
     for(j = 0; j < d; ++j)
     {
       char oc = g->detail[j];
