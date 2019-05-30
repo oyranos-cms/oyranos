@@ -186,9 +186,14 @@ AppWindow {
                 if(!(group.mandatory.match(arg) || group.optional.match(arg)))
                     continue
 
+                var changed = group.changed.match(arg)
+                if(changed !== null &&
+                   !opt.value.length)
+                    opt.value = opt.default
+
                 if(!(opt.value.length !== 0 &&
-                       !(opt.type === "bool" &&
-                         opt.value === "false")))
+                     !(opt.type === "bool" &&
+                       opt.value === "false")))
                     continue
 
                 if(command_set_option.length === 0)
