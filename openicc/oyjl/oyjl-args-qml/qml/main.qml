@@ -186,8 +186,11 @@ AppWindow {
                 if(!(group.mandatory.match(arg) || group.optional.match(arg)))
                     continue
 
-                var changed = group.changed.match(arg)
-                if(changed !== null &&
+                // activate value using default from JSON
+                var changed = false
+                if(typeof group.changed !== "undefined")
+                    changed = (group.changed.match(arg) !== null)
+                if(changed === true &&
                    !opt.value.length)
                     opt.value = opt.default
 
