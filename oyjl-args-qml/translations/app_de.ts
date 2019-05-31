@@ -143,13 +143,13 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="396"/>
-        <location filename="../qml/main.qml" line="428"/>
+        <location filename="../qml/main.qml" line="404"/>
+        <location filename="../qml/main.qml" line="436"/>
         <source>Launched app for </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="564"/>
+        <location filename="../qml/main.qml" line="572"/>
         <source>Load failed</source>
         <translation type="unfinished"></translation>
     </message>

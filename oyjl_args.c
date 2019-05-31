@@ -1587,13 +1587,12 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
       char ** results = oyjlOptions_ResultsToList( opts, 0, &n );
       char * changed = NULL;
       for(j = 0; j < n; ++j)
-        oyjlStringAdd( &changed, 0,0, "%c", results[j][0] );
+        if(results[j][0] != 'X')
+          oyjlStringAdd( &changed, 0,0, "%c", results[j][0] );
       if(changed)
       {
         key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/%s", i, "changed" );
         oyjlValueSetString( key, changed );
-        for(j = 0; j < n; ++j)
-          fprintf(stderr, "%s\n", results[j] );
       }
       if(changed) free(changed);
       oyjlStringListRelease( &results, n, free );
