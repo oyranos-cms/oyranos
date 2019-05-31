@@ -10,9 +10,9 @@ oyranos-profile-graph v0.9.7 \- Oyranos Profile Zeichner
 .br
 \fBoyranos-profile-graph\fR \-k \fINUMMER\fR [\-t \fINUMMER\fR] [\-b] [\-g] [\-w \fINUMMER\fR] [\-R] [\-o \fI-|DATEI\fR] [\-f \fIFORMAT\fR] [\-v]
 .br
-\fBoyranos-profile-graph\fR \-i \fISTRING\fR [\-t \fINUMMER\fR] [\-b] [\-g] [\-w \fINUMMER\fR] [\-R] [\-o \fI-|DATEI\fR] [\-f \fIFORMAT\fR] [\-v]
+\fBoyranos-profile-graph\fR \-i \fIWORT\fR [\-t \fINUMMER\fR] [\-b] [\-g] [\-w \fINUMMER\fR] [\-R] [\-o \fI-|DATEI\fR] [\-f \fIFORMAT\fR] [\-v]
 .br
-\fBoyranos-profile-graph\fR \-s \fIDATEI\fR \-p \fIFORMAT\fR [\-t \fINUMMER\fR] [\-b] [\-g] [\-w \fINUMMER\fR] [\-R] [\-P \fISTRING\fR] [\-o \fI-|DATEI\fR] [\-v]
+\fBoyranos-profile-graph\fR \-s \fIDATEI\fR \-p \fIFORMAT\fR \-z [\-t \fINUMMER\fR] [\-b] [\-g] [\-w \fINUMMER\fR] [\-R] [\-P \fIWORT\fR] [\-o \fI-|DATEI\fR] [\-v]
 .br
 \fBoyranos-profile-graph\fR \-X \fIjson|json+command|man|markdown\fR|  \-h [\-v]
 .SH BESCHREIBUNG
@@ -62,9 +62,9 @@ Spektrumgraph eines Lambertstrahlers
 .br
 .TP
 Beleuchtungsspektrumzeichnung
-\fBoyranos-profile-graph\fR \-i \fISTRING\fR [\-t \fINUMMER\fR] [\-b] [\-g] [\-w \fINUMMER\fR] [\-R] [\-o \fI-|DATEI\fR] [\-f \fIFORMAT\fR] [\-v]
+\fBoyranos-profile-graph\fR \-i \fIWORT\fR [\-t \fINUMMER\fR] [\-b] [\-g] [\-w \fINUMMER\fR] [\-R] [\-o \fI-|DATEI\fR] [\-f \fIFORMAT\fR] [\-v]
 .br
-\-i|\-\-illuminant \fISTRING\fR	Beleuchtungsspektrum
+\-i|\-\-illuminant \fIWORT\fR	Beleuchtungsspektrum
 .br
 	\-i A		# Lichtart A  -  CIE A Strahlungsverteilung
 .br
@@ -80,7 +80,7 @@ Beleuchtungsspektrumzeichnung
 .br
 .TP
 Spektrumgraph
-\fBoyranos-profile-graph\fR \-s \fIDATEI\fR \-p \fIFORMAT\fR [\-t \fINUMMER\fR] [\-b] [\-g] [\-w \fINUMMER\fR] [\-R] [\-P \fISTRING\fR] [\-o \fI-|DATEI\fR] [\-v]
+\fBoyranos-profile-graph\fR \-s \fIDATEI\fR \-p \fIFORMAT\fR \-z [\-t \fINUMMER\fR] [\-b] [\-g] [\-w \fINUMMER\fR] [\-R] [\-P \fIWORT\fR] [\-o \fI-|DATEI\fR] [\-v]
 .br
 \-s|\-\-spectral \fIDATEI\fR	Spektrale Eingabe
 .br
@@ -96,11 +96,13 @@ Spektrumgraph
 .br
 	\-p cgats		# CGATS  -  CGATS Werte
 .br
-	\-p icc-xml		# Icc XML  -  ICC Named Color Values
+	\-p icc-xml		# Icc XML  -  ICC Einzelfarben Werte
 .br
 	\-p ppm		# PPM  -  Spektrales PAM Bild
 .br
-\-P|\-\-pattern \fISTRING\fR	Filter für Farbnamen
+\-P|\-\-pattern \fIWORT\fR	Filter für Farbnamen
+.br
+\-z|\-\-scale	Skaliere die Höhe der Spektrumkurve
 .br
 .TP
 Allgemeine Optionen

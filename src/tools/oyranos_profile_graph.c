@@ -103,7 +103,7 @@ const char* oySpectrumGetString ( oyImage_s * spec, oySPECTRUM_PARAM_e mode );
 double   oySpectrumGet( oyImage_s * spec, int column, int channel );
 void        oySpectrumSetString ( oyImage_s * spec, oySPECTRUM_PARAM_e mode, char * names );
 int         oySpectrumComputeWhite( oyImage_s * spec, oyF3 *white, double * spectra_rect );
-int         oySpectrumComputeXyz( oyImage_s * spectra, int index, oyF3 *xyz );
+int         oySpectrumComputeXYZ( oyImage_s * spectra, int index, oyF3 *xyz );
 
 oyImage_s * oySpectrumFromTree    ( oyjl_val root );
 void        oySpectrumToPpm( oyImage_s * spectra, const char * input, const char * output );
@@ -214,6 +214,7 @@ int main( int argc , char** argv )
   cairo_status_t status;
   double scale = 1.0,
          frame = 0;
+  int scale_spectrum = 0;
   double pixel_width = 128.0;
   int pixel_w=pixel_width, pixel_h=pixel_width,  /* size in pixel */
       x,y,w=0,h=0;                               /* image dimensions */
@@ -314,6 +315,7 @@ int main( int argc , char** argv )
     {"oiwi", 0, 'w', "width",         NULL, _("Width"),         _("Specify output image width in pixel"), NULL, _("NUMBER"), oyjlOPTIONTYPE_DOUBLE,
       {.dbl.start = 64.0, .dbl.end = 4096.0, .dbl.tick = 1, .dbl.d = 128.0}, oyjlDOUBLE, {.d=&pixel_width} },
     {"oiwi", 0, 'x', "xyy",           NULL, _("xyY"),           _("Use CIE*xyY *x*y plane for saturation line projection"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&xyy_plane} },
+    {"oiwi", 0, 'z', "scale",         NULL, _("Scale"),         _("Scale the height of the spectrum graph"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&scale_spectrum} },
 
     /* default options -h and -v */
     {"oiwi", 0, 'h', "help", NULL, _("help"), _("Help"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&help} },
@@ -334,7 +336,7 @@ int main( int argc , char** argv )
     {"oiwg", 0, _("Obs10°"), _("1964 10° Observer Graph"), NULL, "O", "tbgwRofv", "O" },
     {"oiwg", 0, _("Blackbody Radiator"), _("Blackbody Radiator Spectrum Graph"), NULL, "k", "tbgwRofv", "k" },
     {"oiwg", 0, _("Illuminant Spectrum"), _("Illuminant Spectrum Graph"), NULL, "i", "tbgwRofv", "i" },
-    {"oiwg", 0, _("Spectral Input"), _("Spectral Input Graph"), NULL, "sp", "tbgwRPov", "spP" },
+    {"oiwg", 0, _("Spectral Input"), _("Spectral Input Graph"), NULL, "spz", "tbgwRPov", "spPz" },
     {"oiwg", 0, _("Misc"), _("General options"), NULL, "X|h", "v", "tbgwRofhXv" },
     {"",0,0,0,0,0,0,0}
   };
@@ -471,14 +473,15 @@ int main( int argc , char** argv )
 
       oySpectrumComputeWhite( spectra, &white, spectra_rect );
       for(j = 0; j < spectral_count; ++j)
-        oySpectrumComputeXyz ( spectra, j, &spectra_XYZ[j] );
+        oySpectrumComputeXYZ ( spectra, j, &spectra_XYZ[j] );
 
       if(fabs(spectra_rect[3]) > fabs(spectra_rect[2]))
         scale = spectra_rect[3];
       else if(spectra_rect[2])
         scale = - spectra_rect[2];
 
-      oySpectrumNormalise( spectra, fabs(1.0/scale) );
+      if(scale_spectrum)
+        oySpectrumNormalise( spectra, fabs(1.0/scale) );
 
       if(spectra_rect[2] < 0.0)
         min_y = spectra_rect[2] / scale;
@@ -494,14 +497,42 @@ int main( int argc , char** argv )
         fprintf( stderr, "white:\t%f %f %f\n", white.f[0], white.f[1], white.f[2] );
         for(j = 0; j < spectral_count; ++j)
         {
-          double rgb[4] = { spectra_XYZ[j].f[0]/white.f[0], spectra_XYZ[j].f[1]/white.f[0], spectra_XYZ[j].f[2]/white.f[0], 1.0 };
+          double rgb[4] = { spectra_XYZ[j].f[0]/white.f[0], spectra_XYZ[j].f[1]/white.f[0], spectra_XYZ[j].f[2]/white.f[0], 1.0 },
+                 lab[3], XYZ[3] = {-1,-1,-1}, Lab[3], srgb[3] = {-1,-1,-1};
+          char * L = oyjlValueText( oyjlTreeGetValueF( specT, 0, "collection/[0]/colors/[%d]/lab/[%d]", j, 0 ), 0 ),
+               * a = oyjlValueText( oyjlTreeGetValueF( specT, 0, "collection/[0]/colors/[%d]/lab/[%d]", j, 1 ), 0 ),
+               * b = oyjlValueText( oyjlTreeGetValueF( specT, 0, "collection/[0]/colors/[%d]/lab/[%d]", j, 2 ), 0 ),
+               * R = oyjlValueText( oyjlTreeGetValueF( specT, 0, "collection/[0]/colors/[%d]/rgb/[%d]", j, 0 ), 0 ),
+               * G = oyjlValueText( oyjlTreeGetValueF( specT, 0, "collection/[0]/colors/[%d]/rgb/[%d]", j, 1 ), 0 ),
+               * B = oyjlValueText( oyjlTreeGetValueF( specT, 0, "collection/[0]/colors/[%d]/rgb/[%d]", j, 2 ), 0 );
+          int r = -10;
+          if(L) r = oyStringToDouble( L, &lab[0] );
+          if(a) r = oyStringToDouble( a, &lab[1] );
+          if(b) r = oyStringToDouble( b, &lab[2] );
+          if(R) r = oyStringToDouble( R, &srgb[0] );
+          if(G) r = oyStringToDouble( G, &srgb[1] );
+          if(B) r = oyStringToDouble( B, &srgb[2] );
+          Lab[0] = lab[0]*100.0;
+          Lab[1] = lab[1]*256.0-127.0;
+          Lab[2] = lab[2]*256.0-127.0;
+          if(r == 0)
+            oyLab2XYZ( Lab, XYZ );
+
           oyjl_val v = oyjlTreeGetValueF(specT, 0, "collection/[0]/colors/[%d]/name", j);
           const char * name = OYJL_GET_STRING(v);
 
           oyXYZtoSRGB( rgb );
           if(j < 10)
-          fprintf( stderr, "%d %s\t%f %f %f -> %f %f %f\n", j, name, spectra_XYZ[j].f[0]/white.f[0]*100.0, spectra_XYZ[j].f[1]/white.f[0]*100.0, spectra_XYZ[j].f[2]/white.f[0]*100.0,
-                   rgb[0], rgb[1], rgb[2] );
+          {
+          fprintf( stderr, "%d \"%s\" white/scale: %f    computedScaledXYZ:\t%f %f %f ",
+                   j, name, white.f[0], spectra_XYZ[j].f[0]/white.f[0], spectra_XYZ[j].f[1]/white.f[0], spectra_XYZ[j].f[2]/white.f[0] );
+          fprintf( stderr, "-> %f %f %f %d %d %d (rgb)\n",
+                   rgb[0], rgb[1], rgb[2], (int)(rgb[0]*255.), (int)(rgb[1]*255.), (int)(rgb[2]*255.) );
+          fprintf( stderr, "computed XYZ:\t%f %f %f found XYZ:\t%f %f %f ",
+                   spectra_XYZ[j].f[0], spectra_XYZ[j].f[1], spectra_XYZ[j].f[2], XYZ[0], XYZ[1], XYZ[2] );
+          fprintf( stderr, ":: %f %f %f %d %d %d (srgb)\n",
+                   srgb[0], srgb[1], srgb[2], (int)(srgb[0]*255.), (int)(srgb[1]*255.), (int)(srgb[2]*255.) );
+          }
           else if(j == 10)
           fprintf( stderr, "%d\t... more might follow\n", j );
         }
@@ -1017,6 +1048,7 @@ int main( int argc , char** argv )
                       no_color ? COLOR_GRAY : COLOR_SPECTRAL, rgba,
                       flags, "D50" );
       oyImage_Release( &a );
+      if(spd_5) free(spd_5);
     }
     }
   }
@@ -1319,7 +1351,7 @@ int         oySpectrumComputeWhite( oyImage_s * spectra, oyF3 *white, double * s
     int spectral_channels = oySpectrumGetParam( spectra, oySPECTRUM_CHANNELS );
     int spectral_count = oySpectrumGetParam( spectra, oySPECTRUM_COLUMNS );
     float * illu_D50 = NULL; /* 300-830@5nm */
-    double kelvin = 5000;
+    double kelvin = 5000.0;
     int error = oyDXXCIEfromTemperature( kelvin, &illu_D50 );
     if(error)
       oyMessageFunc_p(oyMSG_ERROR,0,"not CIE illuminant for %g", kelvin);
@@ -1338,6 +1370,7 @@ int         oySpectrumComputeWhite( oyImage_s * spectra, oyF3 *white, double * s
         if(y > spectra_rect[3]) spectra_rect[3] = y;
       }
     }
+    if(illu_D50) free(illu_D50);
   }
 
   return error;
@@ -1349,7 +1382,7 @@ int         oySpectrumComputeWhite( oyImage_s * spectra, oyF3 *white, double * s
  *  @param[in]     index               position in color list
  *  @param[out]    xyz                 ICC*XYZ triple
  */
-int         oySpectrumComputeXyz( oyImage_s * spectra, int index, oyF3 *xyz )
+int         oySpectrumComputeXYZ( oyImage_s * spectra, int index, oyF3 *xyz )
 {
   int error = 0, i, j = index;
 
@@ -1360,7 +1393,7 @@ int         oySpectrumComputeXyz( oyImage_s * spectra, int index, oyF3 *xyz )
     int spectral_channels = oySpectrumGetParam( spectra, oySPECTRUM_CHANNELS );
     int spectral_count = oySpectrumGetParam( spectra, oySPECTRUM_COLUMNS );
     float * illu_D50 = NULL; /* 300-830@5nm */
-    double kelvin = 5000;
+    double kelvin = 5000.0;
     error = oyDXXCIEfromTemperature( kelvin, &illu_D50 );
 
     if(error)
@@ -1398,12 +1431,15 @@ int oyXYZtoSRGB ( double * rgb )
   {
     oyProfile_s * pXYZ = oyProfile_FromStd( oyASSUMED_XYZ, icc_profile_flags, 0 ),
                 * sRGB = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, 0 );
+    oyOptions_s * options = NULL;
+    oyOptions_SetFromString( &options, OY_DEFAULT_RENDERING_INTENT, "1", OY_CREATE_NEW );
     oy_xyz_srgb = oyConversion_CreateBasicPixelsFromBuffers (
                                        pXYZ, rgb, oyDataType_m(oyDOUBLE),
                                        sRGB, rgb, oyDataType_m(oyDOUBLE),
-                                       0, 1 );
+                                       options, 1 );
     oyProfile_Release( &sRGB );
     oyProfile_Release( &pXYZ );
+    oyOptions_Release( &options );
   }
   error = !oy_xyz_srgb;
   rgb[3] = 1.0;
@@ -1610,12 +1646,19 @@ int      oyDXXCIEfromTemperature( double kelvin, float ** SPD )
   int error = oyM1M2CIEfromTemperature( kelvin, &M1, &M2 );
   float * spd = NULL;
 
+  if(kelvin <= 10.0) error = 0;
+
   if(!error)
     oyAllocHelper_m_( spd, float, 108, oyAllocateFunc_, return 1 )
 
   if(spd)
+  {
     for(i = 0; i < 107; ++i)
-      spd[i] = spd_S1S2S3_5[i][0] + M1 * spd_S1S2S3_5[i][1] + M2* spd_S1S2S3_5[i][2];
+      if(kelvin > 10)
+        spd[i] = spd_S1S2S3_5[i][0] + M1 * spd_S1S2S3_5[i][1] + M2* spd_S1S2S3_5[i][2];
+      else
+        spd[i] = kelvin;
+  }
 
   *SPD = spd;
 
@@ -1881,17 +1924,28 @@ oyjl_val    oyTreeFromCxf( const char * text )
   char error_buffer[128] = {0};
   size_t error_buffer_size = 128;
   oyjl_val root = oyjlTreeParseXml( text, 0, error_buffer, error_buffer_size ),
-           collection = oyjlTreeGetValueFilteredF( root, 0, "cc:", "cc:CxF/cc:Resources/cc:ObjectCollection/cc:Object" ),
-           specT = oyjlTreeNew("");
+           specT = oyjlTreeNew(""),
+           collection = oyjlTreeGetValueFilteredF( root, 0, "cc:", "cc:CxF/cc:Resources/cc:ObjectCollection/cc:Object//cc:ColorValues" ); /* detect the array or single */
   int count = oyjlValueCount( collection ), i;
-  oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, "ncc1", "type" );
-  oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, "Named Color Collection v1", "comment" );
   oyjl_val color_spec = oyjlTreeGetValueFilteredF( root, 0, "cc:", "cc:CxF/cc:Resources/cc:ColorSpecificationCollection/cc:ColorSpecification/cc:MeasurementSpec/cc:WavelengthRange" );
+  int color_spec_count = oyjlValueCount( color_spec );
   long startNM = 0, lambda = 0, endNM = 0, n_max = 0;
   char * startWL, * increment;
-  int color_spec_count = oyjlValueCount( color_spec );
 
-  /* search for spectral parameters in ore than one MeasurementSpec */
+  oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, "ncc1", "type" );
+  oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, "Named Color Collection v1", "comment" );
+
+  if(count == 0)
+  { /* single color */
+    collection = oyjlTreeGetValueFilteredF( root, 0, "cc:", "cc:CxF/cc:Resources/cc:ObjectCollection" );
+    count = 1;
+  } else
+  { /* array of colors */
+    collection = oyjlTreeGetValueFilteredF( root, 0, "cc:", "cc:CxF/cc:Resources/cc:ObjectCollection/cc:Object" );
+    count = oyjlValueCount( collection );
+  }
+
+  /* search for spectral parameters in more than one MeasurementSpec */
   if(color_spec_count < 1)
   {
     color_spec  = oyjlTreeGetValueFilteredF( root, 0, "cc:", "cc:CxF/cc:Resources/cc:ColorSpecificationCollection/cc:ColorSpecification" );
@@ -2007,7 +2061,7 @@ oyjl_val    oyTreeFromCxf( const char * text )
         fprintf( stderr, "ERROR parsing: %d %s %s n=%d ", i, name, t, n );
 
       if(colorSpec)
-        oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, colorSpec, "collection/[0]/colors/[%d]/spectral/[0]/id" );
+        oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, colorSpec, "collection/[0]/colors/[%d]/spectral/[0]/id", i );
 
       if(startWl)
         oyjlStringToLong(startWl, &startNm);
@@ -2023,11 +2077,11 @@ oyjl_val    oyTreeFromCxf( const char * text )
       y = oyjlValueText( oyjlTreeGetValueFilteredF( xyz, 0, "cc:", "cc:Y" ), 0 );
       z = oyjlValueText( oyjlTreeGetValueFilteredF( xyz, 0, "cc:", "cc:Z" ), 0 );
       if(x) r = oyStringToDouble( x, &d );
-      if(r <= 0) oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, d, "collection/[0]/colors/[%d]/xyz/[0]", i );
+      if(r <= 0) oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, d/100.0, "collection/[0]/colors/[%d]/xyz/[0]", i );
       if(y) r = oyStringToDouble( y, &d );
-      if(r <= 0) oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, d, "collection/[0]/colors/[%d]/xyz/[1]", i );
+      if(r <= 0) oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, d/100.0, "collection/[0]/colors/[%d]/xyz/[1]", i );
       if(z) r = oyStringToDouble( z, &d );
-      if(r <= 0) oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, d, "collection/[0]/colors/[%d]/xyz/[2]", i );
+      if(r <= 0) oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, d/100.0, "collection/[0]/colors/[%d]/xyz/[2]", i );
     }
     if(lab)
     {
@@ -2035,11 +2089,11 @@ oyjl_val    oyTreeFromCxf( const char * text )
       a = oyjlValueText( oyjlTreeGetValueFilteredF( lab, 0, "cc:", "cc:A" ), 0 );
       b = oyjlValueText( oyjlTreeGetValueFilteredF( lab, 0, "cc:", "cc:B" ), 0 );
       if(L) r = oyStringToDouble( L, &d );
-      if(r <= 0) oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, d, "collection/[0]/colors/[%d]/lab/[0]", i );
+      if(r <= 0) oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, d/100.0, "collection/[0]/colors/[%d]/lab/[0]", i );
       if(a) r = oyStringToDouble( a, &d );
-      if(r <= 0) oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, d, "collection/[0]/colors/[%d]/lab/[1]", i );
+      if(r <= 0) oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, d/100.0 + 0.5, "collection/[0]/colors/[%d]/lab/[1]", i );
       if(b) r = oyStringToDouble( b, &d );
-      if(r <= 0) oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, d, "collection/[0]/colors/[%d]/lab/[2]", i );
+      if(r <= 0) oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, d/100.0 + 0.5, "collection/[0]/colors/[%d]/lab/[2]", i );
     }
     if(rgb)
     {
@@ -2047,11 +2101,11 @@ oyjl_val    oyTreeFromCxf( const char * text )
       G = oyjlValueText( oyjlTreeGetValueFilteredF( rgb, 0, "cc:", "cc:G" ), 0 );
       B = oyjlValueText( oyjlTreeGetValueFilteredF( rgb, 0, "cc:", "cc:B" ), 0 );
       if(R) r = oyStringToDouble( R, &d );
-      if(r <= 0) oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, d, "collection/[0]/colors/[%d]/rgb/[0]", i );
+      if(r <= 0) oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, d/255.0, "collection/[0]/colors/[%d]/rgb/[0]", i );
       if(G) r = oyStringToDouble( G, &d );
-      if(r <= 0) oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, d, "collection/[0]/colors/[%d]/rgb/[1]", i );
+      if(r <= 0) oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, d/255.0, "collection/[0]/colors/[%d]/rgb/[1]", i );
       if(B) r = oyStringToDouble( B, &d );
-      if(r <= 0) oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, d, "collection/[0]/colors/[%d]/rgb/[2]", i );
+      if(r <= 0) oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, d/255.0, "collection/[0]/colors/[%d]/rgb/[2]", i );
     }
     if(cmyk)
     {
@@ -2060,13 +2114,13 @@ oyjl_val    oyTreeFromCxf( const char * text )
       Y = oyjlValueText( oyjlTreeGetValueFilteredF( cmyk, 0, "cc:", "cc:Y" ), 0 );
       K = oyjlValueText( oyjlTreeGetValueFilteredF( cmyk, 0, "cc:", "cc:K" ), 0 );
       if(C) r = oyStringToDouble( C, &d );
-      if(r <= 0) oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, d, "collection/[0]/colors/[%d]/cmyk/[0]", i );
+      if(r <= 0) oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, d/100.0, "collection/[0]/colors/[%d]/cmyk/[0]", i );
       if(M) r = oyStringToDouble( M, &d );
-      if(r <= 0) oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, d, "collection/[0]/colors/[%d]/cmyk/[1]", i );
+      if(r <= 0) oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, d/100.0, "collection/[0]/colors/[%d]/cmyk/[1]", i );
       if(Y) r = oyStringToDouble( Y, &d );
-      if(r <= 0) oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, d, "collection/[0]/colors/[%d]/cmyk/[2]", i );
+      if(r <= 0) oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, d/100.0, "collection/[0]/colors/[%d]/cmyk/[2]", i );
       if(K) r = oyStringToDouble( K, &d );
-      if(r <= 0) oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, d, "collection/[0]/colors/[%d]/cmyk/[3]", i );
+      if(r <= 0) oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, d/100.0, "collection/[0]/colors/[%d]/cmyk/[3]", i );
     }
   }
   endNM = startNM + lambda * n_max;
@@ -2232,13 +2286,29 @@ int oyTreeToCgats( oyjl_val root, int * level OYJL_UNUSED, char ** text )
     if(illumination)
       oyjlStringAdd( &tmp, 0,0, "MEASUREMENT_SOURCE \"%s\"\n", illumination );
 
-    oyjlStringAdd( &tmp, 0,0, "SPECTRAL_BANDS \"%d\"\nSPECTRAL_START_NM \"%f\"\nSPECTRAL_END_NM \"%f\"\nSPECTRAL_NORM \"%f\"\n\nKEYWORD \"SAMPLE_NAME\"\nNUMBER_OF_FIELDS %d\nBEGIN_DATA_FORMAT\nSAMPLE_NAME\t",
+    oyjlStringAdd( &tmp, 0,0, "SPECTRAL_BANDS \"%d\"\nSPECTRAL_START_NM \"%f\"\nSPECTRAL_END_NM \"%f\"\nSPECTRAL_NORM \"%f\"\n\nKEYWORD \"SAMPLE_NAME\"\nNUMBER_OF_FIELDS %d\nBEGIN_DATA_FORMAT\nSAMPLE_NAME",
       samples, start, end, lambda, 1 + samples );
+
+    v = oyjlTreeGetValueF( data, 0, "[0]/lab" );
+    if(v)
+    {
+      oyjlStringAdd( &tmp, 0,0, "\tLAB_L" );
+      oyjlStringAdd( &tmp, 0,0, "\tLAB_A" );
+      oyjlStringAdd( &tmp, 0,0, "\tLAB_B" );
+    }
+
+    v = oyjlTreeGetValueF( data, 0, "[0]/rgb" );
+    if(v)
+    {
+      oyjlStringAdd( &tmp, 0,0, "\tRGB_R" );
+      oyjlStringAdd( &tmp, 0,0, "\tRGB_G" );
+      oyjlStringAdd( &tmp, 0,0, "\tRGB_B" );
+    }
 
     for(i = 0; i < samples; ++i)
     {
       int nm = start + i*lambda;
-      oyjlStringAdd( &tmp, 0,0, "%sSPEC_%d", i?"\t":"", nm );
+      oyjlStringAdd( &tmp, 0,0, "\tSPEC_%d", nm );
     }
     oyjlStringAdd( &tmp, 0,0, "\nEND_DATA_FORMAT\n\nNUMBER_OF_SETS %d\nBEGIN_DATA\n", (int)pixels );
     t = oyjlStrNewFrom(&tmp,0,0,0);
@@ -2248,14 +2318,54 @@ int oyTreeToCgats( oyjl_val root, int * level OYJL_UNUSED, char ** text )
   {
     for(index = 0; index < pixels; ++index)
     {
+      char f[32];
       v = oyjlTreeGetValueF( data, 0, "[%d]/name", index );
       name = OYJL_GET_STRING(v);
       oyjlStrAppendN( t, "\"", 1 );
       oyjlStrAppendN( t, name, strlen(name) );
-      oyjlStrAppendN( t, "\"\t", 2 );
+      oyjlStrAppendN( t, "\"", 1 );
+
+      v = oyjlTreeGetValueF( data, 0, "[%d]/lab", index );
+      if(v)
+      {
+        for(i = 0; i < 3; ++i)
+        {
+          v = oyjlTreeGetValueF( data, 0, "[%d]/lab/[%d]", index, i );
+          if(!v)
+          {
+            fprintf(stderr, "ERROR with i = %d index = %d (spp = %d pixels = %d)\n", i, index, 3, pixels);
+            d = NAN;
+          } else
+            d = OYJL_GET_DOUBLE(v);
+          oyjlStrAppendN( t, "\t", 1 );
+          if(i == 0)
+            sprintf(f, "%f", d*100.0);
+          else
+            sprintf(f, "%f", (d-0.5)*100.0);
+          oyjlStrAppendN( t, f, strlen(f) );
+        }
+      }
+
+      v = oyjlTreeGetValueF( data, 0, "[%d]/rgb", index );
+      if(v)
+      {
+        for(i = 0; i < 3; ++i)
+        {
+          v = oyjlTreeGetValueF( data, 0, "[%d]/rgb/[%d]", index, i );
+          if(!v)
+          {
+            fprintf(stderr, "ERROR with i = %d index = %d (spp = %d pixels = %d)\n", i, index, 3, pixels);
+            d = NAN;
+          } else
+            d = OYJL_GET_DOUBLE(v);
+          oyjlStrAppendN( t, "\t", 1 );
+          sprintf(f, "%f", d*255.0);
+          oyjlStrAppendN( t, f, strlen(f) );
+        }
+      }
+
       for(i = 0; i < samples; ++i)
       {
-        char f[32];
         v = oyjlTreeGetValueF( data, 0, "[%d]/spectral/[0]/data/[%d]", index, i );
         if(!v)
         {
@@ -2263,8 +2373,7 @@ int oyTreeToCgats( oyjl_val root, int * level OYJL_UNUSED, char ** text )
           d = NAN;
         } else
           d = OYJL_GET_DOUBLE(v);
-        if(i)
-          oyjlStrAppendN( t, "\t", 1 );
+        oyjlStrAppendN( t, "\t", 1 );
         sprintf(f, "%f", d);
         oyjlStrAppendN( t, f, strlen(f) );
       }

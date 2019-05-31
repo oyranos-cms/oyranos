@@ -11,9 +11,9 @@ oyranos\-profile\-graph v0.9.7 \- Oyranos Profile Zeichner
 <br />
 **oyranos\-profile\-graph** \-k *NUMMER* [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-R] [\-o *\-|DATEI*] [\-f *FORMAT*] [\-v]
 <br />
-**oyranos\-profile\-graph** \-i *STRING* [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-R] [\-o *\-|DATEI*] [\-f *FORMAT*] [\-v]
+**oyranos\-profile\-graph** \-i *WORT* [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-R] [\-o *\-|DATEI*] [\-f *FORMAT*] [\-v]
 <br />
-**oyranos\-profile\-graph** \-s *DATEI* \-p *FORMAT* [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-R] [\-P *STRING*] [\-o *\-|DATEI*] [\-v]
+**oyranos\-profile\-graph** \-s *DATEI* \-p *FORMAT* \-z [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-R] [\-P *WORT*] [\-o *\-|DATEI*] [\-v]
 <br />
 **oyranos\-profile\-graph** \-X *json|json+command|man|markdown*|  \-h [\-v]
 ## BESCHREIBUNG
@@ -49,9 +49,9 @@ Erzeuge aus einem ICC Profil eine Grafik mit seiner Sättigungslinie.
 * \-k|\-\-kelvin *NUMMER*	Lambertstrahler (NUMMER:0 [≥0 ≤25000])
 
 ### Beleuchtungsspektrumzeichnung
-**oyranos\-profile\-graph** \-i *STRING* [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-R] [\-o *\-|DATEI*] [\-f *FORMAT*] [\-v]
+**oyranos\-profile\-graph** \-i *WORT* [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-R] [\-o *\-|DATEI*] [\-f *FORMAT*] [\-v]
 
-* \-i|\-\-illuminant *STRING*	Beleuchtungsspektrum
+* \-i|\-\-illuminant *WORT*	Beleuchtungsspektrum
    * \-i A		# Lichtart A
    * \-i D50		# Lichtart D50
    * \-i D55		# Lichtart D55
@@ -60,7 +60,7 @@ Erzeuge aus einem ICC Profil eine Grafik mit seiner Sättigungslinie.
    * \-i D93		# Lichtart D93
 
 ### Spektrumgraph
-**oyranos\-profile\-graph** \-s *DATEI* \-p *FORMAT* [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-R] [\-P *STRING*] [\-o *\-|DATEI*] [\-v]
+**oyranos\-profile\-graph** \-s *DATEI* \-p *FORMAT* \-z [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-R] [\-P *WORT*] [\-o *\-|DATEI*] [\-v]
 
 * \-s|\-\-spectral *DATEI*	Spektrale Eingabe
 * \-p|\-\-spectral\-format *FORMAT*	Gib spektrales Ausgabeformat an
@@ -71,7 +71,8 @@ Erzeuge aus einem ICC Profil eine Grafik mit seiner Sättigungslinie.
    * \-p cgats		# CGATS
    * \-p icc\-xml		# Icc XML
    * \-p ppm		# PPM
-* \-P|\-\-pattern *STRING*	Filter für Farbnamen
+* \-P|\-\-pattern *WORT*	Filter für Farbnamen
+* \-z|\-\-scale	Skaliere die Höhe der Spektrumkurve
 
 ### Allgemeine Optionen
 **oyranos\-profile\-graph** \-X *json|json+command|man|markdown*|  \-h [\-v]
