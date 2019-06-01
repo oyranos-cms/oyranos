@@ -2532,7 +2532,11 @@ int         oyTreeToIccXml( oyjl_val root, int * level OYJL_UNUSED, char ** text
     oyjlTreeSetStringF( icc, OYJL_CREATE_NEW, "5.00",           "IccProfile/Header/ProfileVersion" );
     oyjlTreeSetStringF( icc, OYJL_CREATE_NEW, "nmcl",           "IccProfile/Header/ProfileDeviceClass" );
     oyjlTreeGetValue( icc, OYJL_CREATE_NEW,                     "IccProfile/Header/DataColourSpace" );
-    oyjlTreeSetStringF( icc, OYJL_CREATE_NEW, "Lab ",           "IccProfile/Header/PCS" );
+    v = oyjlTreeGetValueF( data, 0, "[%d]/xyz", 0 );
+    if(v)
+      oyjlTreeSetStringF(icc,OYJL_CREATE_NEW, "XYZ ",           "IccProfile/Header/PCS" );
+    else
+      oyjlTreeSetStringF(icc,OYJL_CREATE_NEW, "Lab ",           "IccProfile/Header/PCS" );
     oyjlTreeSetStringF( icc, OYJL_CREATE_NEW, "now",            "IccProfile/Header/CreationDateTime" );
     oyjlTreeSetStringF( icc, OYJL_CREATE_NEW, "true",           "IccProfile/Header/ProfileFlags/@EmbeddedInFile" );
     oyjlTreeSetStringF( icc, OYJL_CREATE_NEW, "false",          "IccProfile/Header/ProfileFlags/@UseWithEmbeddedDataOnly" );
@@ -2588,8 +2592,26 @@ int         oyTreeToIccXml( oyjl_val root, int * level OYJL_UNUSED, char ** text
         oyjlStringAdd( &spec, 0,0, "%f", d );
       }
 
+
       oyjlTreeSetStringF( nmcl, OYJL_CREATE_NEW, "pcs ",        "[%d]/MemberTags/float16NumberType/[0]/TagSignature", index );
-      oyjlTreeSetStringF( nmcl, OYJL_CREATE_NEW, "50 0 0",      "[%d]/MemberTags/float16NumberType/[0]/Data", index );
+      v = oyjlTreeGetValueF( data, 0, "[%d]/lab", index );
+      if(v)
+      {
+        char * pcs = NULL;
+        int j;
+        for(j = 0; j < 3; ++j)
+        {
+          v = oyjlTreeGetValueF( data, 0, "[%d]/lab/[%d]", index, j );
+          d = OYJL_GET_DOUBLE(v);
+          if(j)
+            oyjlStringAdd( &pcs, 0,0, "\t" );
+          oyjlStringAdd( &pcs, 0,0, "%f", d );
+        }
+        oyjlTreeSetStringF( nmcl, OYJL_CREATE_NEW, pcs,         "[%d]/MemberTags/float16NumberType/[0]/Data", index );
+        if(pcs) free( pcs );
+      }
+      else
+        oyjlTreeSetStringF( nmcl, OYJL_CREATE_NEW, "50 0 0",    "[%d]/MemberTags/float16NumberType/[0]/Data", index );
       oyjlTreeSetStringF( nmcl, OYJL_CREATE_NEW, "spec",        "[%d]/MemberTags/float16NumberType/[1]/TagSignature", index );
       oyjlTreeSetStringF( nmcl, OYJL_CREATE_NEW, spec,          "[%d]/MemberTags/float16NumberType/[1]/Data", index );
       if(spec) free( spec );
