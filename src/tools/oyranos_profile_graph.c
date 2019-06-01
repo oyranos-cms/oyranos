@@ -1930,11 +1930,12 @@ oyjl_val    oyTreeFromCxf( const char * text )
   oyjl_val color_spec = oyjlTreeGetValueFilteredF( root, 0, "cc:", "cc:CxF/cc:Resources/cc:ColorSpecificationCollection/cc:ColorSpecification/cc:MeasurementSpec/cc:WavelengthRange" );
   int color_spec_count = oyjlValueCount( color_spec );
   long startNM = 0, lambda = 0, endNM = 0, n_max = 0;
-  char * startWL, * increment;
+  char * startWL, * increment, * spec_id;
 
   oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, "ncc1", "type" );
   oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, "Named Color Collection v1", "comment" );
 
+  spec_id = oyjlValueText( oyjlTreeGetValueFilteredF( root, 0, "cc:", "cc:CxF/cc:Resources/cc:ColorSpecificationCollection/cc:ColorSpecification/@Id" ), 0 );
   if(count == 0)
   { /* single color */
     collection = oyjlTreeGetValueFilteredF( root, 0, "cc:", "cc:CxF/cc:Resources/cc:ObjectCollection" );
@@ -1956,6 +1957,7 @@ oyjl_val    oyTreeFromCxf( const char * text )
       if(color_spec)
       {
         color_spec = oyjlTreeGetValueFilteredF( root, 0, "cc:", "cc:CxF/cc:Resources/cc:ColorSpecificationCollection/cc:ColorSpecification/[%i]/cc:MeasurementSpec/cc:WavelengthRange", i );
+        spec_id = oyjlValueText( oyjlTreeGetValueFilteredF( root, 0, "cc:", "cc:CxF/cc:Resources/cc:ColorSpecificationCollection/cc:ColorSpecification/[%i]/@Id", i ), 0 );
         break;
       }
     }
@@ -1973,6 +1975,8 @@ oyjl_val    oyTreeFromCxf( const char * text )
     ++i;
   }; 
 
+  if(spec_id)
+    oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, spec_id, "collection/[0]/spectral/[0]/id" );
   if(startWL)
   {
     oyjlStringToLong(startWL, &startNM);
@@ -2321,9 +2325,12 @@ int oyTreeToCgats( oyjl_val root, int * level OYJL_UNUSED, char ** text )
       char f[32];
       v = oyjlTreeGetValueF( data, 0, "[%d]/name", index );
       name = OYJL_GET_STRING(v);
-      oyjlStrAppendN( t, "\"", 1 );
-      oyjlStrAppendN( t, name, strlen(name) );
-      oyjlStrAppendN( t, "\"", 1 );
+      if(name)
+      {
+        oyjlStrAppendN( t, "\"", 1 );
+        oyjlStrAppendN( t, name, strlen(name) );
+        oyjlStrAppendN( t, "\"", 1 );
+      }
 
       v = oyjlTreeGetValueF( data, 0, "[%d]/lab", index );
       if(v)
