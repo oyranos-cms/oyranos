@@ -1333,11 +1333,11 @@ OYAPI int OYEXPORT
  *  - oyNAME_NAME - a readable XML element
  *  - oyNAME_NICK - the hash ID
  *  - oyNAME_DESCRIPTION - profile internal name (icSigProfileDescriptionTag)
- *  - oyNAME_JSON - contains non expensive "id" and internal "name" keys,
- *    "id" can be use type, file name, if already present, or ICC hash
+ *  - oyNAME_JSON - contains non expensive "id", internal "name" + "hash" keys,
+ *    "id" can be use type, file name and ICC hash if already present
  *
  *  @version Oyranos: 0.9.7
- *  @date    2018/07/18
+ *  @date    2019/06/02
  *  @since   2007/11/26 (Oyranos: 0.1.8)
  */
 OYAPI const oyChar* OYEXPORT oyProfile_GetText (
@@ -1445,6 +1445,8 @@ OYAPI const oyChar* OYEXPORT oyProfile_GetText (
       const char * name = oyProfile_GetText( profile, oyNAME_DESCRIPTION );
       const char * id = oyProfile_GetText( profile, oyNAME_NICK );
       char * json = NULL; int i = 0;
+      uint32_t * h = (uint32_t*)s->oy_->hash_ptr_;
+
       if(id)
       {
         val = oyjlTreeGetValue( root, OYJL_CREATE_NEW, "id" );
@@ -1454,6 +1456,15 @@ OYAPI const oyChar* OYEXPORT oyProfile_GetText (
       {
         val = oyjlTreeGetValue( root, OYJL_CREATE_NEW, "name" );
         oyjlValueSetString( val, name );
+      }
+      if(h)
+      {
+        char * hash = NULL;
+        oyjlStringAdd( &hash, 0,0, "%08x%08x%08x%08x",
+             h[0], h[1], h[2], h[3] );
+        val = oyjlTreeGetValue( root, OYJL_CREATE_NEW, "hash" );
+        oyjlValueSetString( val, hash );
+        free(hash);
       }
       oyjlTreeToJson( root, &i, &json );
       if(json && strlen(json) < 1024)
