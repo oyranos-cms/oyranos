@@ -568,12 +568,12 @@ oyjlTESTRESULT_e testArgs()
                                        sections, oarray, groups, NULL );
   size = 0;
   text = oyjlUi_ToJson( ui, 0 );
-  if(text && strlen(text) == 3280)
+  if(text && strlen(text) == 3346)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlUi_ToJson() %lu                           ", strlen(text) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "oyjlUi_ToJson() 3280 == %lu                   ", strlen(text) );
+    "oyjlUi_ToJson() 3346 == %lu                   ", strlen(text) );
   }
   size = oyjlWriteFile( "test.json",
                            text,
@@ -748,7 +748,7 @@ oyjlTESTRESULT_e testTree ()
 
   oyjlTreeClearValue( root,"new/tree/key" );
   oyjlTreeToJson( root, &i, &rjson ); i = 0;
-  if(!rjson)
+  if(!rjson || strcmp(rjson, "null") == 0)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "oyjlTreeClearValue( \"new/tree/key\" ) " );
   } else
