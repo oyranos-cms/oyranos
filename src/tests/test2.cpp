@@ -937,7 +937,7 @@ oyjlTESTRESULT_e testJson ()
   char * rjson = NULL; i = 0;
   oyjlTreeToJson( root, &i, &rjson ); i = 0;
   size_t len = strlen(rjson);
-  if(root && len == 52)
+  if(root && len == 56)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "oyjlTreeNew( \"new/tree/key\" )       %d", (int)len );
   } else
@@ -973,13 +973,14 @@ oyjlTESTRESULT_e testJson ()
 
   oyjlTreeClearValue( root,"new/tree/key" );
   oyjlTreeToJson( root, &i, &rjson ); i = 0;
-  if(!rjson)
+  if(rjson && strcmp(rjson,"null") == 0)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "oyjlTreeClearValue( \"new/tree/key\" ) " );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyjlTreeClearValue( \"new/tree/key\" ) " );
   }
+  if(verbose) fprintf( zout, "%s\n", rjson?rjson:"----" );
   oyjlTreeFree( root );
 
   return result;
