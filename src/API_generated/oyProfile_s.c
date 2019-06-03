@@ -1356,7 +1356,7 @@ OYAPI const oyChar* OYEXPORT
     }
 
     /* Do we have a hash_? */
-    if(!found && error <= 0)
+    if(error <= 0)
     {
       if(!oyProfile_Hashed_(s))
         error = oyProfile_GetHash_( s, 0 );
@@ -1365,9 +1365,9 @@ OYAPI const oyChar* OYEXPORT
       {
         uint32_t * i = (uint32_t*)s->oy_->hash_ptr_;
         if(i)
-          oySprintf_(temp, "%08x%08x%08x%08x", i[0], i[1], i[2], i[3]);
+          oySprintf_(!temp[0] ? temp : &temp[strlen(temp)], "%08x%08x%08x%08x", i[0], i[1], i[2], i[3]);
         else
-          oySprintf_(temp, "                " );
+          oySprintf_(!temp[0] ? temp : &temp[strlen(temp)], "                " );
         if(temp[0])
           found = 1;
       }
