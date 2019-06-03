@@ -18,7 +18,7 @@ The tool can list installed profiles, search paths and can help install a ICC co
 
 * \-l|\-\-list\-profiles	List Profiles
 * \-f|\-\-full\-names	List profile full names: Show path name and file name.
-* \-e|\-\-internale\-names	List profile internal names: The text string comes from the 'desc' tag.
+* \-e|\-\-internal\-names	List profile internal names: The text string comes from the 'desc' tag.
 * \-a|\-\-abstract	Select Abstract profiles
 * \-c|\-\-color\-space	Select Color Space profiles
 * \-d|\-\-display	Select Monitor profiles

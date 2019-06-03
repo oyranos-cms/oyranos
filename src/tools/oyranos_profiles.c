@@ -101,7 +101,7 @@ int main( int argc , char** argv )
     {"oiwi", 0, '4', "icc-version-4", NULL, _("ICC Version 4"), _("Select ICC v4 Profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&v4} },
     {"oiwi", 0, 'l', "list-profiles", NULL, _("List Profiles"), _("List Profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT,{.i=&list_profiles} },
     {"oiwi", 0, 'f', "full-names", NULL, _("Full Names"), _("List profile full names"), _("Show path name and file name."), NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&list_profile_full_names} },
-    {"oiwi", 0, 'e', "internale-names", NULL, _("Internal Name"), _("List profile internal names"), _("The text string comes from the 'desc' tag."), NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&list_profile_internal_names} },
+    {"oiwi", 0, 'e', "internal-names", NULL, _("Internal Name"), _("List profile internal names"), _("The text string comes from the 'desc' tag."), NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&list_profile_internal_names} },
     {"oiwi", 0, 'c', "color-space", NULL, _("Color Space Class"), _("Select Color Space profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&color_space} },
     {"oiwi", 0, 'd', "display", NULL, _("Display Class"), _("Select Monitor profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&display} },
     {"oiwi", 0, 'i', "input", NULL, _("Input Class"), _("Select Input profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&input} },

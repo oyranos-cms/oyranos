@@ -18,7 +18,7 @@ Das Werkzeug kann installierte Profile und Suchpfade anzeigen. Es kann ein Profi
 
 * \-l|\-\-list\-profiles	Liste Profile
 * \-f|\-\-full\-names	Profildateiname: Zeige kompletten Pfad\- und Dateinamen
-* \-e|\-\-internale\-names	Interne Namen: Der Text kommt vom 'desc' Profilelement.
+* \-e|\-\-internal\-names	Interne Namen: Der Text kommt vom 'desc' Profilelement.
 * \-a|\-\-abstract	Wähle abstrakte Profile
 * \-c|\-\-color\-space	Wähle Farbraumprofile
 * \-d|\-\-display	Wähle Monitorprofile
