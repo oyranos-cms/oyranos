@@ -445,9 +445,10 @@ OYAPI oyProfile_s * OYEXPORT oyProfile_FromName (
  *    the string is parsed right after the prefix as key until the semicolon ';' sign appears.
  *    after that the string is taken as value. A star '*', at begin or end, is kept in the profile
  *    name property for following sub string matching, but it is removed from the value string.
+ *  - ::OY_SKIP_MTIME_CHECK ignore checking time stamp; old bahaviour for faster caching 
  *
  *  @version Oyranos: 0.9.7
- *  @date    2017/02/17
+ *  @date    2019/06/03
  *  @since   2007/11/0 (Oyranos: 0.1.9)
  */
 OYAPI oyProfile_s * OYEXPORT

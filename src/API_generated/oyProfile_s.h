@@ -63,6 +63,7 @@ typedef struct oyProfile_s oyProfile_s;
 #define OY_SKIP_NON_DEFAULT_PATH 0x40           /**< ignore profiles outside of default paths */
 #define OY_NO_REPAIR     0x80                   /**< do not try to repair or fix profiles */
 #define OY_NO_LOAD       0x100                  /**< do not load profile, create fragment */
+#define OY_SKIP_MTIME_CHECK 0x200               /**< ignore checking time stamp; old bahaviour for faster caching */
 /** @} *//* objects_profile */
 
 /* } Include "Profile.public.h" */

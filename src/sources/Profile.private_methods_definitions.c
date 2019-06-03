@@ -225,7 +225,7 @@ oyProfile_s_* oyProfile_FromMemMove_  ( size_t              size,
  *  @brief    Create from file
  *
  *  @param[in]    name           profile file name
- *  @param[in]    flags          for future extension
+ *  @param[in]    flags          see oyProfile_FromFile()
  *  @param[in]    object         the optional base
  *
  *  flags supports OY_NO_CACHE_READ and OY_NO_CACHE_WRITE to disable cache
@@ -247,7 +247,8 @@ oyProfile_s_ *  oyProfile_FromFile_  ( const char        * name,
   oyPointer block = 0;
   oyAlloc_f allocateFunc = 0;
   oyHash_s_ * entry = 0;
-  char * file_name = 0;
+  char * file_name = NULL;
+  char * hash = oyjlStringCopy( name, oyAllocateFunc_ );
 
   if(object)
     allocateFunc = object->allocateFunc_;
@@ -259,10 +260,24 @@ oyProfile_s_ *  oyProfile_FromFile_  ( const char        * name,
 
     if(!object)
     {
-      entry = (oyHash_s_*)oyCacheListGetEntry_ ( (oyStructList_s*)oy_profile_s_file_cache_, 0, name );
+      if(!(flags & OY_SKIP_MTIME_CHECK))
+      {
+        char * info = NULL;
+        oyFree_m_( hash );
+        hash = NULL;
+        oyjlAllocHelper_m( info, char, 128, malloc, return NULL );
+
+        file_name = oyFindProfile_( name, flags );
+        oyjlIsFile( file_name, "r", info, 128 );
+        oyjlStringAdd( &hash, 0,0, "%s:%s", name, info );
+        oyFree_m_( info );
+      }
+      entry = (oyHash_s_*)oyCacheListGetEntry_ ( (oyStructList_s*)oy_profile_s_file_cache_, 0, hash );
 
       if(!oyToNoCacheRead_m(flags))
       {
+        if(!file_name)
+          file_name = oyFindProfile_( name, flags );
         s = (oyProfile_s_*) oyHash_GetPointer_( entry, oyOBJECT_PROFILE_S);
         if(s &&
            (flags & OY_ICC_VERSION_2 || flags & OY_ICC_VERSION_4))
@@ -440,6 +455,7 @@ oyProfile_s_ *  oyProfile_FromFile_  ( const char        * name,
     oyProfile_Release( (oyProfile_s**)&s );
 
   oyHash_Release_( &entry );
+  oyFree_m_( hash );
 
   return s;
 }

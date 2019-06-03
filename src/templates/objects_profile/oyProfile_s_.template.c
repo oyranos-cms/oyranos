@@ -8,6 +8,8 @@
 #include "oyranos_cache.h"
 #include "oyranos_io.h"
 #include "oyranos_generic_internal.h"
+
+#include <oyjl_macros.h>
 {% endblock %}
 
 {% block GlobalIncludeFiles %}
