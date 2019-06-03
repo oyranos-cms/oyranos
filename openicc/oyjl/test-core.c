@@ -17,7 +17,8 @@
   TEST_RUN( testI18N, "Internationalisation", 1 ); \
   TEST_RUN( testStringRun, "String handling", 1 ); \
   TEST_RUN( testArgs, "Options handling", 1 ); \
-  TEST_RUN( testTree, "Tree handling", 1 );
+  TEST_RUN( testTree, "Tree handling", 1 ); \
+  TEST_RUN( testIO, "File handling", 1 );
 
 #define OYJL_TEST_MAIN_SETUP  printf("\n    OyjlCore Test Program\n");
 #define OYJL_TEST_MAIN_FINISH printf("\n    OyjlCore Test Program finished\n\n");
@@ -784,6 +785,41 @@ oyjlTESTRESULT_e testTree ()
   return result;
 }
 
+oyjlTESTRESULT_e testIO ()
+{
+  oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
+
+  fprintf(stdout, "\n" );
+
+  int len = 48;
+  int size = oyjlWriteFile( "test.txt", "test", 5 );
+  char info[len];
+  int r = oyjlIsFile( "test.txt", "r", info, len );
+  int size2 = oyjlWriteFile( "test2.txt", "test2", 6 );
+  char info2[len];
+  int r2 = oyjlIsFile( "test2.txt", "r", info2, len );
+
+  if(r && r2 && size == 5 && size2 == 6)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlWriteFile()                         " );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlWriteFile()                         " );
+  }
+
+  if(strlen(info) && strlen(info2))
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlIsFile()                            " );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlIsFile()                            " );
+  }
+
+  if( verbose )
+    fprintf( zout, "info: %s %s\n", info, info2 );
+
+  return result;
+}
 
 /* --- end actual tests --- */
 

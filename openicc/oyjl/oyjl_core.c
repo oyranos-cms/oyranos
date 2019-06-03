@@ -1063,6 +1063,37 @@ int oyjlIsDirFull_ (const char* name)
   return r;
 }
 
+int   oyjlIsFile                     ( const char        * fullname,
+                                       const char        * mode,
+                                       char              * info,
+                                       int                 info_len )
+{
+  struct stat status;
+  int r;
+  memset(&status,0,sizeof(struct stat));
+  double mod_time = 0.0;
+
+  r = oyjlIsFileFull_( fullname, mode );
+
+  if (r)
+  {
+    stat(fullname, &status);
+#   if defined(__APPLE__) || defined(BSD)
+    mod_time = status.st_mtime ;
+    mod_time += status.st_mtimespec.tv_nsec/1000000. ;
+#   elif defined(WIN32)
+    mod_time = (double)status.st_mtime ;
+#   else
+    mod_time = status.st_mtim.tv_sec ;
+    mod_time += status.st_mtim.tv_nsec/1000000. ;
+#   endif
+    if(info)
+      snprintf( info, info_len, "%.30f", mod_time );
+  }
+
+  return r;
+}
+
 char* oyjlExtractPathFromFileName_ (const char* file_name)
 {
   char * path_name = NULL;
