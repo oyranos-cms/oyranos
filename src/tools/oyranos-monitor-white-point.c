@@ -153,7 +153,7 @@ static oyjlOptionChoice_s * getLinearEffectProfileChoices (
         for(i = 0; i < choices; ++i)
         {
           oyProfile_s * p = oyProfiles_Get( profiles, i );
-          const char * nick = oyProfile_GetText( p, oyNAME_NICK );
+          const char * nick = oyProfile_GetFileName( p, -1 );
 
           c[i+1].nick = strdup(nick);
           c[i+1].name = strdup(oyProfile_GetText( p, oyNAME_DESCRIPTION ));
