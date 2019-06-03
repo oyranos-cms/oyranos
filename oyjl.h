@@ -402,6 +402,10 @@ char *     oyjlReadFile              ( const char        * file_name,
 int        oyjlWriteFile             ( const char        * filename,
                                        void              * mem,
                                        int                 size );
+int        oyjlIsFile                ( const char        * fullname,
+                                       const char        * mode,
+                                       char              * info,
+                                       int                 info_len );
 /** @} *//* oyjl_core */
 
 /** \addtogroup oyjl_args
