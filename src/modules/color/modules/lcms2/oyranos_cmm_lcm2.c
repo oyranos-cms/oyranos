@@ -789,7 +789,7 @@ int          l2cmsCMMData_Open        ( oyStruct_s        * data,
       s->dbg_profile = oyProfile_Copy( p, 0 );
       l2cms_msg( oyMSG_DBG, data,
                 OY_DBG_FORMAT_" going to open %s", OY_DBG_ARGS_,
-                p?oyProfile_GetFileName( p,-1 ):"????" );
+                oyProfile_GetText(p, oyNAME_JSON) );
     }
 
 #if LCMS_VERSION < 2060
@@ -1612,7 +1612,7 @@ cmsHPROFILE  l2cmsAddProfile          ( oyProfile_s       * p )
   {
     l2cms_msg( oyMSG_DBG, (oyStruct_s*)p,
               OY_DBG_FORMAT_" going to open %s cmm_ptr: %d", OY_DBG_ARGS_,
-              oyProfile_GetFileName( p,-1 ), oyStruct_GetId((oyStruct_s*)cmm_ptr) );
+              oyProfile_GetText(p, oyNAME_JSON), oyStruct_GetId((oyStruct_s*)cmm_ptr) );
   }
 
   if(!cmm_ptr)
