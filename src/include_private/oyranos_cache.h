@@ -28,7 +28,6 @@ extern oyStructList_s  * oy_cmm_infos_;
 extern oyStructList_s  * oy_cmm_handles_;
 extern oyConfigs_s     * oy_monitors_cache_;
 extern oyProfiles_s    * oy_profile_list_cache_;
-extern oyProfile_s_   ** oy_profile_s_std_cache_;
 extern oyOptions_s     * oy_db_cache_;
 
 int      oyObjectUsedByCache_        ( int                 id );

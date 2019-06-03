@@ -117,13 +117,6 @@ void     oyAlphaFinish_              ( int                 unused OY_UNUSED )
   oyStructList_Release( &oy_cmm_infos_ );
   oyStructList_Release( &oy_cmm_handles_ );
   oyStructList_Release_( &oy_profile_s_file_cache_ );
-  if(oy_profile_s_std_cache_)
-  {
-     int i, count = oyDEFAULT_PROFILE_END - oyDEFAULT_PROFILE_START;
-     for(i = 0; i < count; ++i)
-       if(oy_profile_s_std_cache_[i])
-         oy_profile_s_std_cache_[i]->release( (oyStruct_s**) &oy_profile_s_std_cache_[i] );
-  }
   oyOptions_Release( &oy_db_cache_ );
   *get_oy_db_cache_init_() = 0;
 }

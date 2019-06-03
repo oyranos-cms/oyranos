@@ -104,13 +104,6 @@ oyStructList_s_ * oy_profile_s_file_cache_ = NULL;
  */
 oyProfiles_s * oy_profile_list_cache_ = NULL;
 /** @internal
-*  @brief internal Oyranos enumerated color profile list
-*
-*  @since Oyranos: version 0.1.8
-*  @date  6 december 2007 (API 0.1.8)
-*/
-oyProfile_s_ ** oy_profile_s_std_cache_ = NULL;
-/** @internal
  *  @brief internal DB strings
  *
  *  The key name is used as hash value.
@@ -163,16 +156,6 @@ int      oyObjectUsedByCache_        ( int                 id )
     found = oyObjectUsedByStructList_( id, oy_cmm_handles_ );
   if(!found && oy_profile_list_cache_)
     found = oyObjectUsedByStructList_( id, ((oyProfiles_s_*)oy_profile_list_cache_)->list_ );
-  if(!found && oy_profile_s_std_cache_)
-  {
-     int i, count = oyDEFAULT_PROFILE_END - oyDEFAULT_PROFILE_START;
-     for(i = 0; i < count; ++i)
-     {
-       oyStruct_s * st = (oyStruct_s*) oy_profile_s_std_cache_[i];
-       if(st && st->oy_ && st->oy_->id_ == id)
-         found = 1;
-     }
-  }
   if(!found && oy_monitors_cache_)
     found = oyObjectUsedByStructList_( id, ((oyConfigs_s_*)oy_monitors_cache_)->list_ );
 

@@ -17,34 +17,9 @@ OYAPI oyProfile_s * OYEXPORT oyProfile_FromStd (
 {
   oyProfile_s_ * s = 0;
   char * name = 0;
-  oyAlloc_f allocateFunc = 0;
-  int pos = type - oyDEFAULT_PROFILE_START;
-
-  if(!oy_profile_s_std_cache_)
-  {
-    oyAllocHelper_m_( oy_profile_s_std_cache_, oyProfile_s_*,
-                      oyDEFAULT_PROFILE_END - oyDEFAULT_PROFILE_START,
-                      oyAllocateFunc_, return NULL );
-  }
-
-  if(object)
-    allocateFunc = object->allocateFunc_;
 
   if(type)
-    name = oyGetDefaultProfileName ( type, allocateFunc );
-
-  if(oyDEFAULT_PROFILE_START < type && type < oyDEFAULT_PROFILE_END)
-    if(oy_profile_s_std_cache_[pos] &&
-       oy_profile_s_std_cache_[pos]->file_name_ && name &&
-       strcmp(oy_profile_s_std_cache_[pos]->file_name_, name) == 0 )
-    {
-      if(object && object->deallocateFunc_)
-        object->deallocateFunc_( name );
-      else
-        oyDeAllocateFunc_( name );
-      oyProfile_Copy( (oyProfile_s*)oy_profile_s_std_cache_[pos], 0 );
-      return (oyProfile_s*)oy_profile_s_std_cache_[pos];
-    }
+    name = oyGetDefaultProfileName ( type, oyAllocateFunc_ );
 
   if(name)
     s = oyProfile_FromFile_( name, flags, object );
@@ -108,7 +83,7 @@ OYAPI oyProfile_s * OYEXPORT oyProfile_FromStd (
       const char * t = NULL;
       oyMSG_e msg_type = oyMSG_ERROR;
       if(!name || !name[0])
-        name = oyGetDefaultProfileName ( type, allocateFunc );
+        name = oyGetDefaultProfileName ( type, oyAllocateFunc_ );
       oyWidgetTitleGet( (oyWIDGET_e) type, NULL, &t, NULL, NULL );
       /* without name from core we can ignore proof, effect and above profile types */
       if(type >= oyPROFILE_PROOF && (!name || !name[0]))
@@ -118,12 +93,6 @@ OYAPI oyProfile_s * OYEXPORT oyProfile_FromStd (
                 _("Could not open default ICC profile"), t, name,
                 name&&name[0]?_("install in the OpenIccDirectory icc path"):"", name&&name[0]?text:"" );
     }
-  }
-
-  if(oyDEFAULT_PROFILE_START < type && type < oyDEFAULT_PROFILE_END)
-  {
-    oyProfile_Release( (oyProfile_s**)&oy_profile_s_std_cache_[pos] );
-    oy_profile_s_std_cache_[pos] = (oyProfile_s_*)oyProfile_Copy( (oyProfile_s*)s, 0 );
   }
 
   oyProfile_GetID( (oyProfile_s*)s );

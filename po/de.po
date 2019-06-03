@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2019-05-30 05:21+0200\n"
+"POT-Creation-Date: 2019-06-02 21:13+0200\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -817,7 +817,7 @@ msgstr "Kamerarohdaten"
 msgid "CameraRaw image"
 msgstr "Kamera Rohdaten"
 
-#: API_generated/oyProfile_s.c:926
+#: API_generated/oyProfile_s.c:895
 msgid "Can not write profile"
 msgstr "Kann Profildatei nicht schreiben"
 
@@ -1249,7 +1249,7 @@ msgstr ""
 msgid "Could not open ICC profile"
 msgstr "Konnte Profil nicht öffnen"
 
-#: API_generated/oyProfile_s.c:216 API_generated/oyProfile_s.c:231
+#: API_generated/oyProfile_s.c:191 API_generated/oyProfile_s.c:206
 msgid "Could not open default ICC profile"
 msgstr "Konnte voreingestelltes Profil nicht laden"
 
@@ -1266,7 +1266,7 @@ msgstr "Konnte Meta Schnittstelle nicht öffnen"
 msgid "Could not open or invalid data: "
 msgstr "Konnte nicht öffnen oder ungültige Daten: "
 
-#: API_generated/oyProfile_s.c:937 API_generated/oyranos_devices.c:962
+#: API_generated/oyProfile_s.c:906 API_generated/oyranos_devices.c:962
 #: liboyranos_core/oyranos_io_core.c:111 liboyranos_core/oyranos_io_core.c:279
 msgid "Could not open profile"
 msgstr "Konnte Profil nicht laden"
@@ -3774,12 +3774,12 @@ msgstr "Profilinformation"
 msgid "Profile Tags"
 msgstr "Profilbausteine"
 
-#: API_generated/oyProfile_s.c:891 API_generated/oyProfile_s.c:897
+#: API_generated/oyProfile_s.c:860 API_generated/oyProfile_s.c:866
 #: tools/oyranos_profiles.c:498
 msgid "Profile already installed"
 msgstr "Profil ist bereits installiert"
 
-#: API_generated/oyProfile_s.c:878
+#: API_generated/oyProfile_s.c:847
 msgid "Profile contains no description"
 msgstr "Profilbeschreibung vermisst"
 
@@ -3792,7 +3792,7 @@ msgstr "Profilbeschreibung"
 msgid "Profile description, multilingual"
 msgstr "Profilbeschreibung mehrsprachig"
 
-#: API_generated/oyProfile_s.c:913 tools/oyranos_profile_tool.c:353
+#: API_generated/oyProfile_s.c:882 tools/oyranos_profile_tool.c:353
 msgid "Profile exists already"
 msgstr "Profil ist bereits installiert"
 
@@ -5676,7 +5676,7 @@ msgstr "Gelb"
 msgid "Yes"
 msgstr "Ja"
 
-#: API_generated/oyProfile_s.c:217
+#: API_generated/oyProfile_s.c:192
 msgid "You can get them from http://sf.net/projects/openicc"
 msgstr "Sie können es erhalten von http://sf.net/projects/openicc"
 
@@ -5972,7 +5972,7 @@ msgstr "http://www.opensource.org/licenses/mit-license.php"
 msgid "https://github.com/mm2/little-cms"
 msgstr ""
 
-#: API_generated/oyProfile_s.c:218 API_generated/oyProfile_s.c:232
+#: API_generated/oyProfile_s.c:193 API_generated/oyProfile_s.c:207
 #: API_generated/oyranos_devices.c:500
 msgid "install in the OpenIccDirectory icc path"
 msgstr "Installieren Sie in den OpenIccDirectory icc Pfad"
@@ -6192,7 +6192,7 @@ msgstr "Profilname"
 msgid "profile not found in color path:"
 msgstr "Profil nicht im Profilepfad gefunden:"
 
-#: API_generated/oyProfile_s.c:450 liboyranos_config/oyranos_io.c:205
+#: API_generated/oyProfile_s.c:419 liboyranos_config/oyranos_io.c:205
 msgid "profile not found:"
 msgstr "Farbprofil nicht gefunden:"
 
