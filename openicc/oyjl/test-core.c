@@ -15,7 +15,7 @@
 #define TESTS_RUN \
   TEST_RUN( testVersion, "Version matching", 1 ); \
   TEST_RUN( testI18N, "Internationalisation", 1 ); \
-  TEST_RUN( testStringRun, "String handling", 1 ); \
+  TEST_RUN( testString, "String handling", 1 ); \
   TEST_RUN( testArgs, "Options handling", 1 ); \
   TEST_RUN( testTree, "Tree handling", 1 ); \
   TEST_RUN( testIO, "File handling", 1 );
@@ -122,7 +122,7 @@ oyjlTESTRESULT_e testI18N()
 #define TEST_DOMAIN2 "org2/freedesktop2/openicc2/tests2"
 #define TEST_KEY "/test_key"
 
-oyjlTESTRESULT_e testStringRun ()
+oyjlTESTRESULT_e testString ()
 {
   oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
 
@@ -318,6 +318,46 @@ oyjlTESTRESULT_e testStringRun ()
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyjlStringsToDoubles(\"0.2,1,3.5\") error = %d          ", error );
+  }
+  if(doubles) { free(doubles); } doubles = NULL;
+
+  error = oyjlStringsToDoubles( "2\t1.2\t 27", 0, &count, malloc, &doubles );
+  if( error == 0 &&
+      doubles[0] == 2 &&
+      doubles[1] == 1.2 &&
+      doubles[2] == 27 &&
+      count == 3)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlStringsToDoubles(\"2\\t1.2\\t 27\") error = %d ", error );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlStringsToDoubles(\"2\\t1.2\\t 27\") error = %d ", error );
+  }
+  if(verbose)
+  {
+    for(i = 0; i < count; ++i)
+      fprintf( zout, "%d:%f ", i, doubles[i] );
+    fprintf( zout, "\n" );
+  }
+  if(doubles) { free(doubles); } doubles = NULL;
+
+  error = oyjlStringsToDoubles( "\n \t2\t 1.2\t 27\t\n", 0, &count, malloc, &doubles );
+  if( error == 0 &&
+      doubles[0] == 2 &&
+      doubles[1] == 1.2 &&
+      doubles[2] == 27 &&
+      count == 3)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlStringsToDoubles(\"\\n \\t2\\t 1.2\\t 27\\t\\n\") error = %d ", error );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlStringsToDoubles(\"\\n \\t2\\t 1.2\\t 27\\t\\n\") error = %d ", error );
+  }
+  if(verbose)
+  {
+    for(i = 0; i < count; ++i)
+      fprintf( zout, "%d:%f ", i, doubles[i] );
+    fprintf( zout, "\n" );
   }
   if(doubles) { free(doubles); } doubles = NULL;
 
