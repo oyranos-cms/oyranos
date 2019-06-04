@@ -364,7 +364,7 @@ oyjlTESTRESULT_e testJson ()
           ((i == 1 && strcmp(rjson, xjson) == 0) ||
            (i == 2 && strcmp(rjson, "\"val_c\"") == 0) ||
            (i == 3 && !rjson) ||
-           (i == 4 && strlen(rjson) == 252)
+           (i == 4 && strlen(rjson) == 256)
           )
         )
       { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
