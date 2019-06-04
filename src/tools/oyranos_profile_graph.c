@@ -2008,13 +2008,10 @@ oyjl_val    oyTreeFromCxf( const char * text )
              lab = oyjlTreeGetValueFilteredF( obj, 0, "cc:", "cc:ColorValues/cc:ColorCIELab" ),
              rgb = oyjlTreeGetValueFilteredF( obj, 0, "cc:", "cc:ColorValues/cc:ColorSRGB" ),
              cmyk = oyjlTreeGetValueFilteredF( obj, 0, "cc:", "cc:ColorValues/cc:ColorCMYK" );
-    int n = 0, j, pos, r;
+    int n = 0, j, r;
     long startNm = 0;
     double * list = NULL, d;
     char * colorSpec = oyjlValueText( oyjlTreeGetValueFilteredF( obj, 0, "cc:", "cc:ColorValues//@ColorSpecification" ), 0 );
-
-    char * t;
-    oyjl_str str;
 
     if(!reflSpec_text)
     {
@@ -2040,29 +2037,9 @@ oyjl_val    oyTreeFromCxf( const char * text )
 
     if(reflSpec_text)
     {
-      t = oyjlStringCopy( reflSpec_text, 0 );
-
-      /* normalise by replacing all space characters other than ' ' */
-      str = oyjlStrNewFrom( &t, 0, 0,0 );
-      n = oyjlStrReplace( str, "\n", " " );
-      n = oyjlStrReplace( str, "\t", " " );
-      n = oyjlStrReplace( str, "\r", " " );
-      n = oyjlStrReplace( str, "\v", " " );
-      n = oyjlStrReplace( str, "\f", " " );
-      n = oyjlStrReplace( str, "  ", "" );
-      t = oyjlStrPull(str);
-      oyjlStrRelease( &str );
-
-      /* remove trailing empty space */
-      pos = strlen(t); if(pos) --pos;
-      while(pos >= 0 && t[pos] && isspace(t[pos])) t[pos--] = '\000';
-      /* remove leading empty space */
-      pos = 0;
-      while(t[pos] && isspace(t[pos])) pos++;
-
       n = 0;
-      if(oyjlStringsToDoubles( &t[pos], ' ', &n, 0, &list ))
-        fprintf( stderr, "ERROR parsing: %d %s %s n=%d ", i, name, t, n );
+      if(oyjlStringsToDoubles( reflSpec_text, 0, &n, 0, &list ))
+        fprintf( stderr, "ERROR parsing: %d %s %s n=%d ", i, name, reflSpec_text, n );
 
       if(colorSpec)
         oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, colorSpec, "collection/[0]/colors/[%d]/spectral/[0]/id", i );
