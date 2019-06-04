@@ -1252,8 +1252,8 @@ OYAPI const oyChar* OYEXPORT
       {
         uint32_t * i = (uint32_t*)s->oy_->hash_ptr_;
         if(i)
-          oySprintf_(!temp[0] ? temp : &temp[strlen(temp)], "%08x%08x%08x%08x", i[0], i[1], i[2], i[3]);
-        else
+          oySprintf_(!temp[0] ? temp : &temp[strlen(temp)], ":%08x%08x%08x%08x", i[0], i[1], i[2], i[3]);
+        else if(!(temp && strlen(temp)))
           oySprintf_(!temp[0] ? temp : &temp[strlen(temp)], "                " );
         if(temp[0])
           found = 1;
@@ -1413,7 +1413,7 @@ OYAPI const oyChar* OYEXPORT oyProfile_GetText (
     {
       oyjl_val root = oyjlTreeNew(""), val;
       const char * name = oyProfile_GetText( profile, oyNAME_DESCRIPTION );
-      const char * id = oyProfile_GetText( profile, oyNAME_NICK );
+      const char * id = oyProfile_GetFileName( profile, -1 );
       char * json = NULL; int i = 0;
       uint32_t * h = (uint32_t*)s->oy_->hash_ptr_;
 
