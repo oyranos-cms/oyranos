@@ -118,10 +118,85 @@ int            oyjlMessageFuncSet    ( oyjlMessage_f       message_func )
  *
  *  @{ *//* oyjl_core */
 
+/* return the beginning of the next word */
+const char *   oyjlStringGetNext     ( const char        * text )
+{
+  /* remove leading white space */
+  if(text && text[0] && isspace(text[0]))
+  {
+    while( text && text[0] && isspace(text[0]) ) text++;
+    return text;
+  }
+
+  /* find the end of the word */
+  while( text && text[0] && !isspace(text[0]) ) text++;
+
+  /* find the next word */
+  while( text && text[0] && isspace(text[0]) ) text++;
+
+  return text && text[0] ? text : NULL;
+}
+int            oyjlStringLen         ( const char        * text )
+{
+  int len = 0;
+  while( text && text[len] && !isspace(text[len]) ) len++;
+  return len;
+}
+
+/**
+ *   Assume some text and extract the found words.
+ *   The words can be separated by white space as 
+ *   seen by isspace().
+ */
+char **        oyjlStringSplit2      ( const char        * text,
+                                       int               * count,
+                                       void*            (* alloc)(size_t))
+{
+  char ** list = NULL;
+  int n = 0, i;
+
+  /* split the string by empty space */
+  if(text && text[0])
+  {
+    const char * tmp = text;
+
+    if(!alloc) alloc = malloc;
+
+    if(tmp && tmp[0] && !isspace(tmp[0])) ++n;
+    while( tmp && tmp[0] && (tmp = oyjlStringGetNext( tmp )) != NULL ) ++n;
+
+    if((list = alloc( (n+1) * sizeof(char*) )) == 0) return NULL;
+    memset( list, 0, (n+1) * sizeof(char*) );
+
+    {
+      const char * start = text;
+      if(start && isspace(start[0]))
+        start = oyjlStringGetNext( start );
+
+      for(i = 0; i < n; ++i)
+      {
+        int len = oyjlStringLen( start );
+
+        if((list[i] = alloc( len+1 )) == 0) return NULL;
+
+        memcpy( list[i], start, len );
+        list[i][len] = 0;
+        start = oyjlStringGetNext( start );
+      }
+    }
+  }
+
+  if(count)
+    *count = n;
+
+  return list;
+}
 /** @brief   convert a string into list
  *
  *  @param[in]     text                source string
- *  @param[in]     delimiter           the char which marks the split; e.g. comma ','
+ *  @param[in]     delimiter           the char which marks the split;
+ *                                     e.g. comma ','; optional;
+ *                                     default zero: extract white space separated words
  *  @param[out]    count               number of detected string segments; optional
  *  @param[in]     alloc               custom allocator; optional, default is malloc
  *  @return                            array of detected string segments
@@ -135,11 +210,14 @@ char **        oyjlStringSplit       ( const char        * text,
   int n = 0, i;
 
   /* split the path search string by a delimiter */
-  if(text && text[0] && delimiter)
+  if(text && text[0])
   {
     const char * tmp = text;
 
     if(!alloc) alloc = malloc;
+
+    if(!delimiter)
+      return oyjlStringSplit2( text, count, alloc );
 
     if(tmp[0] == delimiter) ++n;
     do { ++n;
