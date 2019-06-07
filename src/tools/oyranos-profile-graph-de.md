@@ -56,6 +56,7 @@ Erzeuge aus einem ICC Profil eine Grafik mit seiner Sättigungslinie.
    * \-i D50		# Lichtart D50
    * \-i D55		# Lichtart D55
    * \-i D65		# Lichtart D65
+   * \-i D65T		# Lichtart D65 T
    * \-i D75		# Lichtart D75
    * \-i D93		# Lichtart D93
 

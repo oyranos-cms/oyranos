@@ -56,6 +56,7 @@ Create a 2D Graph containing the saturation line from a ICC Profile.
    * \-i D50		# Illuminant D50
    * \-i D55		# Illuminant D55
    * \-i D65		# Illuminant D65
+   * \-i D65T		# Illuminant D65 T
    * \-i D75		# Illuminant D75
    * \-i D93		# Illuminant D93
 
