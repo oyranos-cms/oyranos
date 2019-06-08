@@ -445,7 +445,7 @@ int main( int argc , char** argv )
       if(verbose && spectra) fprintf( stderr, "CxF parsed\n" );
       if(oy_debug) fprintf( stderr, "%s", oyStruct_GetText((oyStruct_s*)spectra, oyNAME_NAME, 0));
     }
-    if(!spectra && text)
+    if(!specT && text)
     {
       specT = oyTreeFromCsv( text );
       oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, strchr(input,'/')?strrchr(input,'/')+1:input, "description" );
@@ -455,7 +455,7 @@ int main( int argc , char** argv )
       if(verbose && spectra) fprintf( stderr, "CSV parsed\n" );
       if(oy_debug) fprintf( stderr, "%s", oyStruct_GetText((oyStruct_s*)spectra, oyNAME_NAME, 0));
     }
-    if(!spectra && text && data_format <= 0)
+    if(!specT && text && data_format <= 0)
     {
       specT = oyTreeFromCgats( text );
       oyTreeFilterColors( specT, pattern );
@@ -596,10 +596,15 @@ int main( int argc , char** argv )
       {
         int level = 0;
         oyTreeToCsv( specT, &level, &string );
-        if(!output || strcmp(output,"-") == 0)
-          fwrite( string, sizeof(char), strlen(string), stdout );
+        if(!string)
+          oyMessageFunc_p(oyMSG_ERROR,NULL,"error in oyTreeToCsv()");
         else
-          oyjlWriteFile( output, string, strlen(string) );
+        {
+          if(!output || strcmp(output,"-") == 0)
+            fwrite( string, sizeof(char), strlen(string), stdout );
+         else
+            oyjlWriteFile( output, string, strlen(string) );
+        }
       } else
         oyMessageFunc_p(oyMSG_ERROR,NULL,"no input tree found");
     }
@@ -2182,18 +2187,6 @@ oyjl_val oyTreeGetParam( oyjl_val root, double *lambda, double *startNM, double 
   v = oyjlTreeGetValueF( root, 0, "type" );
   if(v) { char * name = OYJL_GET_STRING(v); if(strcmp(name,"ncc1") == 0) is_ncc1 = 1; }
 
-  v = oyjlTreeGetValue( root, 0, "collection/[0]/spectral/[0]/startNM" );
-  if(!v) { oyMessageFunc_p(oyMSG_ERROR,NULL,"startNM missed"); return NULL; }
-  else *startNM = v->u.number.d;
-
-  v = oyjlTreeGetValue( root, 0, "collection/[0]/spectral/[0]/endNM" );
-  if(!v) { oyMessageFunc_p(oyMSG_ERROR,NULL,"endNM missed"); return NULL; }
-  else *endNM = v->u.number.d;
-
-  v = oyjlTreeGetValue( root, 0, "collection/[0]/spectral/[0]/lambda" );
-  if(!v) { oyMessageFunc_p(oyMSG_ERROR,NULL,"lambda missed"); return NULL; }
-  else *lambda = v->u.number.d;
-
   v = oyjlTreeGetValue( root, 0, "creator" );
   if(!v) { oyMessageFunc_p(oyMSG_WARN,NULL,"creator missed"); *creator = NULL; }
   else *creator = oyjlStringCopy( v->u.string, 0 );
@@ -2206,11 +2199,23 @@ oyjl_val oyTreeGetParam( oyjl_val root, double *lambda, double *startNM, double 
   if(!v) { oyMessageFunc_p(oyMSG_WARN,NULL,"description missed"); *description = NULL; }
   else *description = oyjlStringCopy( v->u.string, 0 );
 
-  *spp = (*endNM - *startNM) / *lambda + 1;
-
   v = oyjlTreeGetValue( root, 0, "collection/[0]/colors" );
   if(!v) { oyMessageFunc_p(oyMSG_WARN,NULL,"colors missed"); return NULL; }
   *pixels = oyjlValueCount( v );
+
+  v = oyjlTreeGetValue( root, 0, "collection/[0]/spectral/[0]/startNM" );
+  if(!v) { oyMessageFunc_p(oyMSG_ERROR,NULL,"startNM missed"); return NULL; }
+  else *startNM = v->u.number.d;
+
+  v = oyjlTreeGetValue( root, 0, "collection/[0]/spectral/[0]/endNM" );
+  if(!v) { oyMessageFunc_p(oyMSG_ERROR,NULL,"endNM missed"); return NULL; }
+  else *endNM = v->u.number.d;
+
+  v = oyjlTreeGetValue( root, 0, "collection/[0]/spectral/[0]/lambda" );
+  if(!v) { oyMessageFunc_p(oyMSG_ERROR,NULL,"lambda missed"); return NULL; }
+  else *lambda = v->u.number.d;
+
+  *spp = (*endNM - *startNM) / *lambda + 1;
 
   if(verbose)
     oyMessageFunc_p( oyMSG_DBG,NULL, "colors: %d samples: %d isncc1: %d", pixels, spp, is_ncc1 );
@@ -2282,6 +2287,8 @@ int oyTreeToCgats( oyjl_val root, int * level OYJL_UNUSED, char ** text )
 
   if(!root) return 1;
   data = oyTreeGetParam( root, &lambda, &start, &end, &pixels, &samples, &creator, &creation_date, &description );
+  if(!data)
+    data = oyjlTreeGetValue( root, 0, "collection/[0]/colors" );
 
 #ifdef USE_GETTEXT
   char * old_loc = strdup(setlocale(LC_ALL,NULL));
@@ -2320,8 +2327,11 @@ int oyTreeToCgats( oyjl_val root, int * level OYJL_UNUSED, char ** text )
     if(illumination)
       oyjlStringAdd( &tmp, 0,0, "MEASUREMENT_SOURCE \"%s\"\n", illumination );
 
-    oyjlStringAdd( &tmp, 0,0, "SPECTRAL_BANDS \"%d\"\nSPECTRAL_START_NM \"%f\"\nSPECTRAL_END_NM \"%f\"\nSPECTRAL_NORM \"%f\"\n\nKEYWORD \"SAMPLE_NAME\"\nNUMBER_OF_FIELDS %d\nBEGIN_DATA_FORMAT\nSAMPLE_NAME",
+    if(start)
+      oyjlStringAdd( &tmp, 0,0, "SPECTRAL_BANDS \"%d\"\nSPECTRAL_START_NM \"%f\"\nSPECTRAL_END_NM \"%f\"\nSPECTRAL_NORM \"%f\"\n\nKEYWORD \"SAMPLE_NAME\"\nNUMBER_OF_FIELDS %d\nBEGIN_DATA_FORMAT\nSAMPLE_NAME",
       samples, start, end, lambda, 1 + samples );
+    else
+      oyjlStringAdd( &tmp, 0,0, "\nKEYWORD \"SAMPLE_NAME\"\nNUMBER_OF_FIELDS %d\nBEGIN_DATA_FORMAT\nSAMPLE_NAME", 1 + samples );
 
     v = oyjlTreeGetValueF( data, 0, "[0]/lab/data" );
     if(v)
