@@ -549,6 +549,8 @@ void shortcuts_cb ( Fl_Widget*, void* )
   "<ul>"
   "<li>%s</li>"
   "<li>%s</li>"
+  "<li>%s</li>"
+  "<li>%s</li>"
   "</ul>"
   "<h4>%s</h4>"
   "<ul>"
@@ -582,6 +584,10 @@ void shortcuts_cb ( Fl_Widget*, void* )
   _("&gt; - next image"),
   /* '<' */
   _("&lt; - previous image"),
+  /* Enter */
+  _("Enter - next page"),
+  /* BackSpace */
+  _("BackSpace - previous page"),
   _("Zoom:"),
   _("f - fit to window"),
   _("1 - map one image pixel to one screen pixel"),
@@ -1156,8 +1162,10 @@ event_handler(int e)
         oyOption_SetFromDouble( opt, scale, 0,0 );
         oy_widget->damage( FL_DAMAGE_USER1 );
         break;
-      case FL_ENTER:
+      case FL_Enter:
       case 13:
+      case FL_BackSpace:
+      case 8:
         {
           int32_t frames = 0, frame = 0;
           oyConversion_s * cc = oy_widget->conversion();
@@ -1165,9 +1173,16 @@ event_handler(int e)
           opts = oyImage_GetTags(image);
           oyOptions_FindInt( opts, "//" OY_TYPE_STD "/file_read/frames", 0, &frames );
           oyOptions_FindInt( opts, "//" OY_TYPE_STD "/file_read/frame", 0, &frame );
-          if(frame < 0) frame = 0;
-          ++frame;
-          if(frame >= frames) frame = 0;
+          if(k == FL_Enter || k == 13)
+          { // forward
+            if(frame < 0) frame = 0;
+            ++frame;
+            if(frame >= frames) frame = 0;
+          } else { // backward
+            if(frame > frames) frame = frames;
+            --frame;
+            if(frame < 0) frame = frames - 1;
+          }
           oyOptions_SetFromInt( &opts,"//" OY_TYPE_STD "/file_read/frame",
                                 frame, 0, OY_CREATE_NEW );
           oyOptions_Release( &opts );
