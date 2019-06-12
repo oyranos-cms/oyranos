@@ -574,6 +574,7 @@ int main( int argc , char** argv )
 
           oyjl_val v = oyjlTreeGetValueF(specT, 0, "collection/[0]/colors/[%d]/name", j);
           const char * name = OYJL_GET_STRING(v);
+          if(!name) name = "";
 
           oyXYZtoSRGB( rgb );
           {
@@ -593,7 +594,7 @@ int main( int argc , char** argv )
                        j, name, strlen(name) < 10 ? "\t": "", white.f[0], spectra_XYZ[j].f[0]/white.f[0]/CIE_Y_max, spectra_XYZ[j].f[1]/white.f[0]/CIE_Y_max, spectra_XYZ[j].f[2]/white.f[0]/CIE_Y_max );
               fprintf( stderr, "-> Lab:%d %d %d\t%d %d %d (rgb)\n",
                        (int)(computedLab[0]+.5), (int)(computedLab[1]+.5), (int)(computedLab[2]+.5), (int)(rgb[0]*255.), (int)(rgb[1]*255.), (int)(rgb[2]*255.) );
-              if(name && strlen(name) > 8) fprintf( stderr, "\t" );
+              if(strlen(name) > 8) fprintf( stderr, "\t" );
               fprintf( stderr, "\t\t\t\t\tfound XYZ:\t%f %f %f ",
                        XYZ[0], XYZ[1], XYZ[2] );
               fprintf( stderr, ":: Lab:%d %d %d\t%d %d %d (srgb) DE: %f\n",
