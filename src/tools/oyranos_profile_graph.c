@@ -471,7 +471,7 @@ int main( int argc , char** argv )
     if(spectra)
     {
       int luminance_spec = 0;
-      char * device_class = oyjlValueText( oyjlTreeGetValueF( specT, 0, "device_class" ), 0 );
+      char * device_class = oyjlValueText( oyjlTreeGetValueF( specT, 0, "collection/[0]/spectral/[0]/measurement/device/class" ), 0 );
       if( (device_class && oyStringCaseCmp_(device_class, "display") == 0) ||
           oyjlValueText( oyjlTreeGetValueF( specT, 0, "luminance" ), 0 ) )
         luminance_spec = 1;
@@ -2368,12 +2368,22 @@ int oyTreeToCgats( oyjl_val root, int * level OYJL_UNUSED, char ** text )
           model?model:"", illuminant?illuminant:"", observer?observer:"",
           illumination_angle?"geometry_":"", illumination_angle?illumination_angle:"", observer_angle?"/":"", observer_angle?observer_angle:"",
           filter?filter:"" );
-    /* compile a MEASUREMENT_SOURCE line */
+    else
+    {
+    /* copy INSTRUMENTATION line */
+      v = oyjlTreeGetValue( root, 0, "collection/[0]/spectral/[0]/measurement/device/instrumentation" );
+      const char  * instrumentation = v ? v->u.string : NULL;
+      if(instrumentation)
+        oyjlStringAdd( &tmp, 0,0, "INSTRUMENTATION \"%s\"\n", instrumentation );
+    }
+
+    /* copy MEASUREMENT_SOURCE line */
     v = oyjlTreeGetValue( root, 0, "collection/[0]/spectral/[0]/measurement/device/illumination" );
     const char  * illumination = v ? v->u.string : NULL;
     if(illumination)
       oyjlStringAdd( &tmp, 0,0, "MEASUREMENT_SOURCE \"%s\"\n", illumination );
-    char * device_class = oyjlValueText( oyjlTreeGetValueF( root, 0, "device_class" ), 0 );
+    /* copy DEVICE_CLASS line */
+    char * device_class = oyjlValueText( oyjlTreeGetValueF( root, 0, "collection/[0]/spectral/[0]/measurement/device/class" ), 0 );
     if(device_class)
       oyjlStringAdd( &tmp, 0,0, "KEYWORD \"DEVICE_CLASS\"\nDEVICE_CLASS \"%s\"\n", device_class );
 
