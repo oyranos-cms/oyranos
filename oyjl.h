@@ -387,9 +387,13 @@ oyjl_str   oyjlStrNewFrom            ( char             ** text,
 void       oyjlStrRelease            ( oyjl_str          * string_ptr );
 const char*oyjlStr                   ( oyjl_str            string );
 char *     oyjlStrPull               ( oyjl_str            str );
+void       oyjlStrClear              ( oyjl_str            string );
 int        oyjlStrAppendN            ( oyjl_str            string,
                                        const char        * append,
                                        int                 append_len );
+int        oyjlStrAdd                ( oyjl_str            string,
+                                       const char        * format,
+                                                           ... );
 int        oyjlStrReplace            ( oyjl_str            text,
                                        const char        * search,
                                        const char        * replacement );

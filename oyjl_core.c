@@ -289,7 +289,7 @@ char *     oyjlStringCopy            ( const char        * string,
  *  @param[in]     deAlloc             custom deallocator matching alloc; optional, default is free
  *  @param[in]     format              printf style format string
  *  @param[in]     ...                 argument list for format
- *  @return                            constructed string
+ *  @return                            error
  */
 int        oyjlStringAdd             ( char             ** string,
                                        void*            (* alloc)(size_t size),
@@ -834,6 +834,37 @@ int        oyjlStrAppendN            ( oyjl_str            string,
   return error;
 }
 
+/** @brief   sprintf for oyjl_str
+ *
+ *  The function adds memory management over standard sprintf().
+ *
+ *  @param[in]     string              source string
+ *  @param[in]     format              printf style format string
+ *  @param[in]     ...                 argument list for format
+ *  @return                            error
+ */
+int        oyjlStrAdd                ( oyjl_str            string,
+                                       const char        * format,
+                                                           ... )
+{
+  struct oyjl_string_s * str = string;
+  char * text = 0;
+
+  void*(* allocate)(size_t size) = str->alloc;
+  void (* deAllocate)(void * data ) = str->deAlloc;
+
+  OYJL_CREATE_VA_STRING(format, text, allocate, return 1)
+
+  if(text)
+  {
+    oyjlStrAppendN( string, text, strlen(text) );
+    deAllocate( text );
+  }
+
+  return 0;
+}
+
+
 /** @brief   substitute pattern in a string
  *
  *  @param[in,out] text                source string for in place manipulation
@@ -939,6 +970,20 @@ char *     oyjlStrPull               ( oyjl_str            str )
   string->alloc_count = 1;
   
   return t;
+}
+
+/** @brief   clear text in a string object
+ *
+ *  @version Oyjl: 1.0.0
+ *  @date    2019/06/14
+ *  @since   2019/06/14 (Oyjl: 1.0.0)
+ */
+void       oyjlStrClear              ( oyjl_str            string )
+{
+  struct oyjl_string_s * str = string;
+  void (* deAlloc)(void*) = str->deAlloc;
+  char * s = oyjlStrPull( string );
+  if(s) deAlloc(s);
 }
 
 /** @brief   release a string object
