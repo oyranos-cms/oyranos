@@ -670,7 +670,7 @@ void               oyjlTreeToYaml    ( oyjl_val            v,
 #undef YAML_INDENT
 }
 
-void oyjlTreeToXml2 (oyjl_val v, const char * parent_key, int * level, char ** text)
+void oyjlTreeToXml2 (oyjl_val v, const char * parent_key, int * level, oyjl_str text)
 {
   if(!v) return;
 
@@ -679,21 +679,21 @@ void oyjlTreeToXml2 (oyjl_val v, const char * parent_key, int * level, char ** t
     case oyjl_t_null:
          break;
     case oyjl_t_number:
-          oyjlStringAdd (text, 0,0, "%s", v->u.number.r);
+         oyjlStrAppendN (text, v->u.number.r, strlen(v->u.number.r));
          break;
     case oyjl_t_true:
-          oyjlStringAdd (text, 0,0, "1"); break;
+         oyjlStrAppendN (text, "1", 1); break;
     case oyjl_t_false:
-          oyjlStringAdd (text, 0,0, "0"); break;
+         oyjlStrAppendN (text, "0", 1); break;
     case oyjl_t_string:
          {
           const char * t = v->u.string;
-          oyjlStringAdd (text, 0,0, "%s", t);
+          oyjlStrAppendN (text, t, strlen(t));
          }
          break;
     case oyjl_t_array:
          {
-          int i,
+          int i,j,
               count = v->u.array.len;
 
           for(i = 0; i < count; ++i)
@@ -705,12 +705,13 @@ void oyjlTreeToXml2 (oyjl_val v, const char * parent_key, int * level, char ** t
               /* print only values and the closing */
               for(i = 0; i < count; ++i)
               {
-                oyjlJsonIndent( text, "\n", *level, NULL );
-                oyjlStringAdd( text, 0,0, "<%s>", parent_key );
+                oyjlStrAppendN( text, "\n", 1 );
+                for(j = 0; j < *level; ++j) oyjlStrAppendN( text, " ", 1 );
+                oyjlStrAdd( text, "<%s>", parent_key );
 
                 oyjlTreeToXml2( v->u.array.values[i], parent_key, level, text );
 
-                oyjlStringAdd( text, 0,0, "</%s>", parent_key );
+                oyjlStrAdd( text, "</%s>", parent_key );
               }
             }
           }
@@ -718,7 +719,7 @@ void oyjlTreeToXml2 (oyjl_val v, const char * parent_key, int * level, char ** t
          break;
     case oyjl_t_object:
          {
-          int i,
+          int i,j,
               count = v->u.object.len;
           int is_inner_string;
 #define XML_TEXT "@text"
@@ -734,11 +735,7 @@ void oyjlTreeToXml2 (oyjl_val v, const char * parent_key, int * level, char ** t
             if(!v->u.object.keys || !v->u.object.keys[i])
             {
               oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "missing key", OYJL_DBG_ARGS );
-              if(text && *text)
-              {
-                free(*text);
-                *text = NULL;
-              }
+              oyjlStrClear( text );
               return;
             }
           }
@@ -746,8 +743,9 @@ void oyjlTreeToXml2 (oyjl_val v, const char * parent_key, int * level, char ** t
           /* print key name of parent object */
           if(parent_key)
           {
-            oyjlJsonIndent( text, "\n", *level, NULL );
-            oyjlStringAdd( text, 0,0, "<%s", parent_key );
+            oyjlStrAppendN( text, "\n", 1 );
+            for(j = 0; j < *level; ++j) oyjlStrAppendN( text, " ", 1 );
+            oyjlStrAdd( text, "<%s", parent_key );
 
             /* insert attributes to key */
             for(i = 0; i < count; ++i)
@@ -777,13 +775,13 @@ void oyjlTreeToXml2 (oyjl_val v, const char * parent_key, int * level, char ** t
                 continue;
 
               if(v->u.object.values[i]->type == oyjl_t_string)
-                oyjlStringAdd( text, 0,0, " %s=\"%s\"", &v->u.object.keys[i][1], v->u.object.values[i]->u.string );
+                oyjlStrAdd( text, " %s=\"%s\"", &v->u.object.keys[i][1], v->u.object.values[i]->u.string );
               else
-                oyjlStringAdd( text, 0,0, " %s=\"%s\"", &v->u.object.keys[i][1], v->u.object.values[i]->u.number.r );
+                oyjlStrAdd( text, " %s=\"%s\"", &v->u.object.keys[i][1], v->u.object.values[i]->u.number.r );
             }
 
             /* close key name */
-            oyjlStringAdd( text, 0,0, ">" );
+            oyjlStrAppendN( text, ">", 1 );
           }
 
           *level += 2;
@@ -819,26 +817,29 @@ void oyjlTreeToXml2 (oyjl_val v, const char * parent_key, int * level, char ** t
             if( !is_array &&
                 !is_object &&
                 !is_inner_string )
-              oyjlJsonIndent( text, "\n", *level, NULL );
+            {
+              oyjlStrAppendN( text, "\n", 1 );
+              for(j = 0; j < *level; ++j) oyjlStrAppendN( text, " ", 1 );
+            }
 
             if( !is_array &&
                 !is_object &&
                 !is_inner_string )
-              oyjlStringAdd( text, 0,0, "<%s>", key );
+              oyjlStrAdd( text, "<%s>", key );
 
             if( strcmp(key, XML_CDATA) == 0 )
-              oyjlStringAdd( text, 0,0, "<![CDATA[" );
+              oyjlStrAppendN( text, "<![CDATA[", 9 );
 
             oyjlTreeToXml2( v->u.object.values[i], key, level, text );
 
             if( strcmp(key, XML_CDATA) == 0 )
-              oyjlStringAdd( text, 0,0, "]]>" );
+              oyjlStrAppendN( text, "]]>", 3 );
 
             if( !is_array &&
                 !is_object &&
                 !is_inner_string )
             {
-              oyjlStringAdd( text, 0,0, "</%s>", key );
+              oyjlStrAdd( text, "</%s>", key );
               last_is_content = 0;
             }
             else
@@ -851,8 +852,11 @@ void oyjlTreeToXml2 (oyjl_val v, const char * parent_key, int * level, char ** t
           if(parent_key)
           {
             if( !last_is_content )
-              oyjlJsonIndent( text, "\n", *level, NULL );
-            oyjlStringAdd( text, 0,0, "</%s>", parent_key );
+            {
+              oyjlStrAppendN( text, "\n", 1 );
+              for(j = 0; j < *level; ++j) oyjlStrAppendN( text, " ", 1 );
+            }
+            oyjlStrAdd( text, "</%s>", parent_key );
           }
          }
          break;
@@ -877,7 +881,7 @@ void oyjlTreeToXml2 (oyjl_val v, const char * parent_key, int * level, char ** t
  *  @param         text                the resulting string
  *
  *  @version Oyranos: 0.9.7
- *  @date    2019/01/01
+ *  @date    2019/06/14
  *  @since   2019/01/01 (Oyranos: 0.9.7)
  */
 void               oyjlTreeToXml     ( oyjl_val            v,
@@ -885,7 +889,7 @@ void               oyjlTreeToXml     ( oyjl_val            v,
                                        char             ** text)
 {
   oyjlStringAdd( text, 0,0, "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" );
-  if(v)
+  if(v && text && *text)
   switch(v->type)
   {
     case oyjl_t_null:
@@ -908,14 +912,14 @@ void               oyjlTreeToXml     ( oyjl_val            v,
           if(!v->u.object.keys || !v->u.object.keys[0])
           {
             oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "missing key", OYJL_DBG_ARGS );
-            if(text && *text)
-            {
-              free(*text);
-              *text = NULL;
-            }
+            free(*text);
+            *text = NULL;
             return;
           }
-          oyjlTreeToXml2( v->u.object.values[0], v->u.object.keys[0], level, text );
+          oyjl_str str = oyjlStrNewFrom(text, 0, 0,0);
+          oyjlTreeToXml2( v->u.object.values[0], v->u.object.keys[0], level, str );
+          *text = oyjlStrPull( str );
+          oyjlStrRelease( &str );
          }
          break;
     default:
