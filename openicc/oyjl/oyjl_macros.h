@@ -81,8 +81,8 @@ extern oyjlMessage_f oyjlMessage_p;
   va_list list; \
   size_t sz = 0; \
   int len = 0; \
-  void*(* allocate)(size_t size) = alloc_; \
-  if(!allocate) allocate = malloc; \
+  void*(* allocate_)(size_t size) = alloc_; \
+  if(!allocate_) allocate_ = malloc; \
 \
   text_ = NULL; \
   \
@@ -91,7 +91,7 @@ extern oyjlMessage_f oyjlMessage_p;
   va_end  ( list ); \
 \
   { \
-    text_ = allocate( sizeof(char) * len + 2 ); \
+    text_ = allocate_( sizeof(char) * len + 2 ); \
     if(!text_) \
     { \
       oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "could not allocate memory", OYJL_DBG_ARGS ); \
