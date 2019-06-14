@@ -2717,7 +2717,7 @@ int         oyTreeToIccXml( oyjl_val root, int * level OYJL_UNUSED, char ** text
       if(spec) free( spec );
     }
     int level = 0;
-    oyjlTreeToJson( icc, &level, &json );
+    oyjlTreeToXml( icc, &level, &json );
   }
   else
     error = 1;
