@@ -274,6 +274,25 @@ AppWindow {
             helpTextArea.textFormat = Qt.RichText
         else
             helpTextArea.textFormat = Qt.PlainText
+
+        var t = helpText
+        if(t.match(/\033\[/)) // convert ansi color + format codes to HTML markup
+        {
+            t = t.replace(/\033\[1m/g, "<b>")
+            t = t.replace(/\033\[3m/g, "<i>")
+            t = t.replace(/\033\[4m/g, "<u>")
+            t = t.replace(/\033\[0;31m/g, "<b>")
+            t = t.replace(/\033\[0;32m/g, "<b>")
+            t = t.replace(/\033\[0;34m/g, "<b>")
+            t = t.replace(/\033\[0m/g, "</u></b></i>")
+            t = t.replace(/ /g, '&nbsp;')
+            t = t.replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;')
+            t = t.replace(/\n/g, "<br />")
+            t = "<div style\"word-wrap:nowhere;font-family:monospace;\"" + t + "</div>"
+            helpText = t
+            helpTextArea.textFormat = Qt.RichText
+        }
+
         helpTextChanging = false
         image.opacity = 0.01
         helpTextArea.opacity = 1.0

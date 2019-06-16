@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cs\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2019-06-04 13:08+0200\n"
+"POT-Creation-Date: 2019-06-16 00:22+0200\n"
 "PO-Revision-Date: 2012-10-19 15:10+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -15,11 +15,11 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: oyjl_args.c:1363
+#: oyjl_args.c:1417
 msgid "... try with --help|-h option for usage text. give up"
 msgstr ""
 
-#: oyjl_args.c:2006 oyjl_args.c:2179
+#: oyjl_args.c:2060 oyjl_args.c:2233
 msgid "AUTHOR"
 msgstr ""
 
@@ -35,11 +35,11 @@ msgstr ""
 msgid "Any arg mode"
 msgstr ""
 
-#: oyjl_args.c:2016 oyjl_args.c:2189 oyjl_args.c:2191
+#: oyjl_args.c:2070 oyjl_args.c:2243 oyjl_args.c:2245
 msgid "BUGS"
 msgstr ""
 
-#: oyjl_args.c:2010 oyjl_args.c:2183
+#: oyjl_args.c:2064 oyjl_args.c:2237
 msgid "COPYRIGHT"
 msgstr ""
 
@@ -52,49 +52,49 @@ msgstr "Výstupní"
 msgid "Convert JSON to gettext ready C strings:"
 msgstr ""
 
-#: oyjl_args.c:1540
+#: oyjl_args.c:1594
 msgid "Copyright"
 msgstr "Copyright"
 
-#: oyjl_args.c:1920 oyjl_args.c:2097
+#: oyjl_args.c:1974 oyjl_args.c:2151
 msgid "DESCRIPTION"
 msgstr ""
 
-#: oyjl_args.c:1549
+#: oyjl_args.c:1603
 msgid "Date"
 msgstr "Datum"
 
-#: oyjl_args.c:1053
+#: oyjl_args.c:1107
 #, fuzzy
 msgid "Description"
 msgstr "popis"
 
-#: oyjl_args.c:1546
+#: oyjl_args.c:1600
 msgid "Development"
 msgstr ""
 
-#: oyjl_args.c:1548
+#: oyjl_args.c:1602
 msgid "Documentation"
 msgstr "Dokumentace"
 
-#: oyjl_args.c:414
+#: oyjl_args.c:467
 #, fuzzy
 msgid "Double occuring option"
 msgstr "popis"
 
-#: oyjl_args.c:1544
+#: oyjl_args.c:1598
 msgid "Download"
 msgstr ""
 
-#: oyjl_args.c:1795
+#: oyjl_args.c:1849
 msgid "ENVIRONMENT VARIABLES"
 msgstr ""
 
-#: oyjl_args.c:1791
+#: oyjl_args.c:1845
 msgid "EXAMPLES"
 msgstr ""
 
-#: oyjl_args.c:1793
+#: oyjl_args.c:1847
 msgid "EXIT-STATE"
 msgstr ""
 
@@ -102,7 +102,7 @@ msgstr ""
 msgid "Example"
 msgstr "Příklad"
 
-#: oyjl_args.c:325
+#: oyjl_args.c:378
 msgid "Export formated text"
 msgstr ""
 
@@ -110,20 +110,20 @@ msgstr ""
 msgid "FILENAME"
 msgstr ""
 
-#: oyjl_args.c:1799
+#: oyjl_args.c:1853
 msgid "FILES"
 msgstr ""
 
-#: oyjl_args.c:314
+#: oyjl_args.c:367
 msgid "Formated text"
 msgstr ""
 
-#: oyjl_args.c:305
+#: oyjl_args.c:358
 #, fuzzy
 msgid "GUI"
 msgstr "SGI"
 
-#: oyjl_args.c:308
+#: oyjl_args.c:361
 msgid "GUI + Command"
 msgstr ""
 
@@ -136,28 +136,28 @@ msgstr "Obecné volby:"
 msgid "General options:"
 msgstr "Obecné volby:"
 
-#: oyjl_args.c:309
+#: oyjl_args.c:362
 msgid "Get Oyjl Json UI declaration incuding command"
 msgstr ""
 
-#: oyjl_args.c:327
+#: oyjl_args.c:380
 msgid "Get UI converted into text formats"
 msgstr ""
 
-#: oyjl_args.c:306
+#: oyjl_args.c:359
 msgid "Get a Oyjl Json UI declaration"
 msgstr ""
 
-#: oyjl_args.c:312
+#: oyjl_args.c:365
 #, fuzzy
 msgid "Get a unix man page"
 msgstr "Unix a deriváty"
 
-#: oyjl_args.c:315
+#: oyjl_args.c:368
 msgid "Get formated text"
 msgstr ""
 
-#: oyjl_args.c:1797
+#: oyjl_args.c:1851
 msgid "HISTORY"
 msgstr ""
 
@@ -169,28 +169,28 @@ msgstr ""
 msgid "JSON file"
 msgstr ""
 
-#: oyjl_args.c:304
+#: oyjl_args.c:357
 msgid "Json"
 msgstr ""
 
-#: oyjl_args.c:307
+#: oyjl_args.c:360
 msgid "Json + Command"
 msgstr ""
 
-#: oyjl_args.c:1541 oyjl_args.c:2012 oyjl_args.c:2185
+#: oyjl_args.c:1595 oyjl_args.c:2066 oyjl_args.c:2239
 msgid "License"
 msgstr "Licence"
 
-#: oyjl_args.c:310
+#: oyjl_args.c:363
 #, fuzzy
 msgid "Man"
 msgstr "Purpurová"
 
-#: oyjl_args.c:1539
+#: oyjl_args.c:1593
 msgid "Manufacturer"
 msgstr "Výrobce"
 
-#: oyjl_args.c:313
+#: oyjl_args.c:366
 msgid "Markdown"
 msgstr ""
 
@@ -223,16 +223,16 @@ msgstr "Model:"
 msgid "Mode3"
 msgstr "Model:"
 
-#: oyjl_args.c:1520
+#: oyjl_args.c:1574
 #, fuzzy
 msgid "Module"
 msgstr "Volby modulu:"
 
-#: oyjl_args.c:1746
+#: oyjl_args.c:1800
 msgid "No"
 msgstr "Ne"
 
-#: oyjl_args.c:1922 oyjl_args.c:2099
+#: oyjl_args.c:1976 oyjl_args.c:2153
 msgid "OPTIONS"
 msgstr ""
 
@@ -240,25 +240,25 @@ msgstr ""
 msgid "October 10, 2018"
 msgstr ""
 
-#: oyjl_args.c:711
+#: oyjl_args.c:764
 msgid "Option has a different value range"
 msgstr ""
 
-#: oyjl_args.c:532 oyjl_args.c:587
+#: oyjl_args.c:585 oyjl_args.c:640
 msgid "Option has a unexpected argument"
 msgstr ""
 
-#: oyjl_args.c:506 oyjl_args.c:564
+#: oyjl_args.c:559 oyjl_args.c:617
 msgid "Option needs a argument"
 msgstr ""
 
-#: oyjl_args.c:422 oyjl_args.c:430 oyjl_args.c:485 oyjl_args.c:546
-#: oyjl_args.c:1251
+#: oyjl_args.c:475 oyjl_args.c:483 oyjl_args.c:538 oyjl_args.c:599
+#: oyjl_args.c:1305
 #, fuzzy
 msgid "Option not supported"
 msgstr "Volba nepodporovaného typu:"
 
-#: oyjl_args.c:1547
+#: oyjl_args.c:1601
 #, fuzzy
 msgid "Oyjl Module Author"
 msgstr "Moduly Oyranosu"
@@ -315,11 +315,11 @@ msgstr "Tiskárna"
 msgid "Rendering Intent"
 msgstr "Záměr transformace"
 
-#: oyjl_args.c:1801
+#: oyjl_args.c:1855
 msgid "SEE AS WELL"
 msgstr ""
 
-#: oyjl_args.c:1909 oyjl_args.c:2086
+#: oyjl_args.c:1963 oyjl_args.c:2140
 msgid "SYNOPSIS"
 msgstr ""
 
@@ -348,15 +348,15 @@ msgstr "Cesta"
 msgid "Simple mode"
 msgstr ""
 
-#: oyjl_args.c:1545
+#: oyjl_args.c:1599
 msgid "Sources"
 msgstr ""
 
-#: oyjl_args.c:1543
+#: oyjl_args.c:1597
 msgid "Support"
 msgstr ""
 
-#: oyjl_args.c:1055
+#: oyjl_args.c:1109
 msgid "Synopsis"
 msgstr ""
 
@@ -364,40 +364,40 @@ msgstr ""
 msgid "The example tool demontrates the usage of the libOyjl API's."
 msgstr ""
 
-#: oyjl_args.c:1518
+#: oyjl_args.c:1572
 msgid "Tool"
 msgstr ""
 
-#: oyjl_args.c:311
+#: oyjl_args.c:364
 #, fuzzy
 msgid "Unix Man page"
 msgstr "Unix a deriváty"
 
-#: oyjl_args.c:1542
+#: oyjl_args.c:1596
 msgid "Url"
 msgstr ""
 
-#: oyjl.c:32 oyjl.c:45 oyjl.c:57 oyjl_args.c:1062 oyjl_translate.c:43
+#: oyjl.c:32 oyjl.c:45 oyjl.c:57 oyjl_args.c:1116 oyjl_translate.c:43
 #: oyjl_translate.c:152
 msgid "Usage"
 msgstr "Použití"
 
-#: oyjl_args.c:414 oyjl_args.c:422 oyjl_args.c:430 oyjl_args.c:485
-#: oyjl_args.c:506 oyjl_args.c:532 oyjl_args.c:546 oyjl_args.c:564
-#: oyjl_args.c:587 oyjl_args.c:711 oyjl_args.c:1251
+#: oyjl_args.c:467 oyjl_args.c:475 oyjl_args.c:483 oyjl_args.c:538
+#: oyjl_args.c:559 oyjl_args.c:585 oyjl_args.c:599 oyjl_args.c:617
+#: oyjl_args.c:640 oyjl_args.c:764 oyjl_args.c:1305
 msgid "Usage Error:"
 msgstr ""
 
-#: oyjl_args.c:1550
+#: oyjl_args.c:1604
 #, fuzzy
 msgid "Version"
 msgstr "ICC Examin Verze"
 
-#: oyjl_args.c:1746
+#: oyjl_args.c:1800
 msgid "Yes"
 msgstr "Ano"
 
-#: oyjl_args.c:322
+#: oyjl_args.c:375
 msgid "export"
 msgstr ""
 
@@ -440,11 +440,11 @@ msgstr ""
 msgid "locales in a comma separated list"
 msgstr ""
 
-#: oyjl_args.c:422
+#: oyjl_args.c:475
 msgid "need a value_type"
 msgstr ""
 
-#: oyjl_args.c:430 oyjl_args.c:1251
+#: oyjl_args.c:483 oyjl_args.c:1305
 msgid "needs OYJL_OPTION_FLAG_EDITABLE or choices"
 msgstr ""
 
