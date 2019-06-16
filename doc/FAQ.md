@@ -6,7 +6,7 @@ The feature list can be found on the
 * [Where comes the name Oyranos from?](#where-comes-the-name-oyranos-from)
 * [License(s)](#licenses)
 * [Where can I get Oyranos?](#where-can-i-get-oyranos)
-* [Where Can I find ICC Profiles](#where-can-i-find-icc-profiles)
+* [Where can I find ICC Profiles](#where-can-i-find-icc-profiles)
 * [Who is developing Oyranos?](#who-is-developing-oyranos)
 * [How can I help with the Oyranos CMS?](#how-can-i-help-with-the-oyranos-cms)
 * [Which applications use Oyranos?](#which-applications-use-oyranos)
@@ -17,7 +17,7 @@ The feature list can be found on the
 * [What about "Mixing the configuration, with the UI, with the back end."?](#what-about-mixing-the-configuration-with-the-ui-with-the-back-end)
 * [What about "Reliance on compiz for full screen color management."?](#what-about-reliance-on-compiz-for-full-screen-color-management)
 * [Why has Oyranos a own type and object system?](#why-has-oyranos-a-own-type-and-object-system)
-* [What about "No distribution is planning to ship elektra or Oyranos."?](#what-about-no-distribution-is-planning-to-ship-elektra-or-oyranos)
+* [Distribution Packages](#distribution-packages)
 
 If you have the impression an important question is missed, feel free to
 add it.
@@ -59,8 +59,7 @@ to stay with the name.
 
 ### License(s)
 
-Oyranos is licensed under [new
-BSD](http://opensource.org/licenses/bsd-license.php). It is possible
+Oyranos is licensed under [BSD-3-Clause](http://www.opensource.org/licenses/BSD-3-Clause). It is possible
 that parts will be released under different licenses. But that is open.
 The goal is to not exclude anyone from using Oyranos. The ICC profiles
 are licensed under
@@ -70,18 +69,18 @@ They are separately packaged in the OpenICC-data package.
 ### Where can I get Oyranos?
 
 Oyranos is officially published on
-[Oyranos/Download](http://www.oyranos.org/wiki/index.php?title=Oyranos/Download "wikilink").
+[Oyranos/Download](http://www.oyranos.org/downloads/ "Link").
 
-### Where Can I find ICC Profiles
+### Where can I find ICC Profiles
 
 Some are already packaged in OpenICC on www.sourceforge.net, like sRGB,
 ECI- and a Adobe RGB as well as Gray, CIE\*Lab, CIE\*XYZ, ITU-Lab and
 some press profiles like for FOGRA, SWOP, SNAP and GRACoL printing
 conditions. The used printing condition character sets are as well
 included. More profiles can be found on this [link
-collection](http://www.behrmann.name/index.php?option=com_weblinks&catid=73&Itemid=95).
+collection](http://www.behrmann.name/index.php%3Foption=com_weblinks&catid=73&Itemid=95.html).
 They should be installed in the [system
-paths](http://www.oyranos.org/wiki/index.php?title=OpenIccDirectoryProposal "wikilink") to be seen by most
+paths](http://www.oyranos.org/wiki/index.php%3Ftitle=OpenIccDirectoryProposal.html "wikilink") to be seen by most
 applications.
 
 ### Who is developing Oyranos?
@@ -89,48 +88,41 @@ applications.
 Oyranos was started by [Kai-Uwe Behrmann](http://www.behrmann.name).
 Yiannis Belias has joined. More details can be read in the AUTHORS file
 in the sources. Still we are searching for
-[help](http://www.oyranos.org/wiki/index.php?title=#How_can_I_help_with_the_Oyranos_CMS.3F "wikilink"). Code
+[help](https://github.com/oyranos-cms "github development page"). Code
 contributions came from students through their
-[Summer](http://www.freedesktop.org/wiki/OpenIcc/ColorManagementNearX)
+[Summer](http://www.freedesktop.org/wiki/OpenIccForGoogleSoC2008/#colormanagementnearx)
 of
 [Code](http://code.google.com/p/google-summer-of-code-2008-openicc/downloads/list)
 [projects](http://freedesktop.org/wiki/OpenIccForGoogleSoC2008) at
-[OpenICC](http://www.oyranos.org/wiki/index.php?title=OpenICC "wikilink"). OpenICC people help very much around
+[OpenICC](http://www.openicc.info "wikilink"). OpenICC people help very much around
 organisation of GSoC.
 
 ### How can I help with the Oyranos CMS?
 
-You could help by testing,
+You could help by:
 
--   reporting bugs or
--   providing according patches,
--   doing translations,
--   suggesting useful changes or
--   proofreading, updating and extenting the documentation or
--   write a tutorial on installing and using or
+-   testing
+-   reporting bugs
+-   providing according patches
+-   doing translations
+-   suggesting useful changes
+-   proofreading, updating and extenting the documentation
+-   write a tutorial on installing and using
 -   package Oyranos, the OpenICC profiles and the other depending
     projects
 
 Becoming part of the development team is easy, just ask.
 
-We need people with fantasy for going possibly new paths, meticulousness
-for assuring quality, analytical, didactic and aesthetic skills and
-thinking around the corner or all together. Ideally Oyranos shall be
-invisible to most users and simply work for their colour devices. So if
-your have a question around Oyranos thats a good sign to start ask that.
+So if your have a question around Oyranos thats a good sign to 
+start ask that.
 
-See as well [here](http://www.oyranos.org/wiki/index.php?title=Oyranos#Development "wikilink").
+See as well [here](https://github.com/oyranos-cms/oyranos/labels/help%20wanted "wikilink").
 
-A TODO list can be found [here](http://www.oyranos.org/wiki/index.php?title=Oyranos/FeatureWish "wikilink"). More
-project ideas can be found on the [OpenICC GSoC
-pages](http://www.freedesktop.org/wiki/OpenIcc/GoogleSoC2009).
+A suggestion list can be found [here](https://github.com/oyranos-cms/oyranos/labels/enhancement "wikilink").
 
 ### Which applications use Oyranos?
 
-A list of Oyranos users is [here](http://www.oyranos.org/#audience).
-
-A list of Linux/BSD relevant colour managed applications can be found
-[here](http://www.oyranos.org/wiki/index.php?title=Applications).
+A list of Oyranos users is [here](http://www.oyranos.org/about/index.html).
 
 ### Can Oyranos replace other Colour management Systems?
 
@@ -160,14 +152,14 @@ to Oyranos instead. A Gtk front end would be great too.
 No. Elektra provides just a API to store settings in a data base. Thats
 a very common task and available through gconf or the Qt framework. But
 Elektra is cross desktop. The Elektra API calls are abstracted in
-Oyranos. So Elektra could be replaced by an other desktop independent
-configuration engine. But as the Elektra project sees continuing
-development there is currently no reason. It is planed to formalise
-settings storage and share that among CMS's.
+Oyranos. So Elektra can be replaced by an other desktop independent
+configuration engine, e.g. "oiDB". But as the Elektra project sees
+continuing development there is currently no reason. It is planed to
+formalise settings storage and share that among CMS's.
 
 ### Elektra is a lively project?
 
-As of writing, in 2011, Elektra exists after more than 5 years
+As of writing, in 2019, Elektra exists after more than 15 years
 continually development. The noise on email lists is not very loud, but
 there is academic interest and industry use for Elektra. Its a small and
 specialised project with a very focused problem to solve. Thus is is not
@@ -188,7 +180,8 @@ full desktop on multiple monitors. So naturally it is recommended,
 because it is technical superior to most other desktop colour correction
 strategies. E.g. The loading or the 'vcgt' tag is only a calibration,
 which helps not much with wide gamut displays. However the underlying
-net-color spec is open and free to be implemented in say Xorg.
+net-color spec is open and free to be implemented in say Xorg. The KDE
+KWin window manager has seen [two](https://www.freedesktop.org/wiki/OpenIcc/GoogleSoC2012/#kwincolourcorrection) efforts too.
 
 ### Why has Oyranos a own type and object system?
 
@@ -201,8 +194,9 @@ and so on where realised outside of the core C language specification in
 a Macro called second language, which is commonly referred to as bad
 style programming. So Glib would have come with lots of disadvantages.
 
-### What about "No distribution is planning to ship elektra or Oyranos"?
+### Distribution Packages
 
-Many distributions plan or have considered shipping Oyranos. Like Fedora
-does since years.
+Please see the related distribution packages. You might find the [Open
+Build Service](https://www.oyranos.org/downloads/index.html) packages
+useful. There are stable and development versions available.
 
