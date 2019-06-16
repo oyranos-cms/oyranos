@@ -1,7 +1,7 @@
 /** @file oyranos-compat-gnome.c
  *
  *  @par Copyright:
- *            2016 (C) Kai-Uwe Behrmann
+ *            2016-2019 (C) Kai-Uwe Behrmann
  *
  *  @brief    compatibility tool for handling gnome monitor profiles
  *  @internal
@@ -280,7 +280,7 @@ int main(int argc, char **argv_)
     {
       error = lcd_edid_get_profile( edid, size, &profile_fn );
       if(verbose)
-        fprintf( stdout, "%s", profile_fn );
+        fprintf( stdout, "%s", profile_fn?profile_fn:"no profile file name" );
       if(!error)
         return 0;
     } 
@@ -299,7 +299,7 @@ int main(int argc, char **argv_)
     fprintf( stderr, "\t-p ICC_FILENAME\t\tthe file to handle\n");
     fprintf( stderr, "\t-i EDID_FILENAME\tread EDID blob from file\n");
     fprintf( stderr, "\t-i -\t\t\tread EDID blob from input stream\n");
-    fprintf( stderr, "\t-q\t\t\tquiet mode\n");
+    fprintf( stderr, "\t\t-q\t\t\tquiet mode\n");
     fprintf( stderr, "example: oyranos-monitor -d 0 -f edid | oyranos-compat-gnome -a -i - -p \"`oyranos-profile -l --path sRGB`\"\n" );
     fprintf( stderr, "note: arguments are order dependent\n");
   }
