@@ -205,6 +205,59 @@ void oyjlOptionChoice_Release     ( oyjlOptionChoice_s**choices )
   free(*choices);
 }
 
+/* true color codes */
+#define OYJL_RED_TC "\033[38;2;240;0;0m"
+#define OYJL_GREEN_TC "\033[38;2;0;250;100m"
+#define OYJL_BLUE_TC "\033[38;2;0;150;255m"
+/* basic color codes */
+#define OYJL_BOLD "\033[1m"
+#define OYJL_ITALIC "\033[3m"
+#define OYJL_UNDERLINE "\033[4m"
+#define OYJL_RED_B "\033[0;31m"
+#define OYJL_GREEN_B "\033[0;32m"
+#define OYJL_BLUE_B "\033[0;34m"
+/* switch back */
+#define OYJL_CTEND "\033[0m"
+typedef enum {
+  oyjlRED,
+  oyjlGREEN,
+  oyjlBLUE,
+  oyjlBOLD,
+  oyjlITALIC,
+  oyjlUNDERLINE
+} oyjlCOLORTERM_e;
+static const char * oyjlTermColor( oyjlCOLORTERM_e rgb, const char * text) {
+  int len = strlen(text);
+  static char t[256];
+  static int colorterm_init = 0;
+  static const char * oyjl_colorterm = NULL;
+  static int truecolor = 0,
+             color = 0;
+  if(!colorterm_init)
+  {
+    colorterm_init = 1;
+    oyjl_colorterm = getenv("COLORTERM");
+    color = oyjl_colorterm != NULL ? 1 : 0;
+    if(!oyjl_colorterm) oyjl_colorterm = getenv("TERM");
+    truecolor = oyjl_colorterm && strcmp(oyjl_colorterm,"truecolor") == 0;
+  }
+  if(len < 200)
+  {
+    switch(rgb)
+    {
+      case oyjlRED: sprintf( t, "%s%s%s", truecolor ? OYJL_RED_TC : color ? OYJL_RED_B : "", text, OYJL_CTEND ); break;
+      case oyjlGREEN: sprintf( t, "%s%s%s", truecolor ? OYJL_GREEN_TC : color ? OYJL_GREEN_B : "", text, OYJL_CTEND ); break;
+      case oyjlBLUE: sprintf( t, "%s%s%s", truecolor ? OYJL_BLUE_TC : color ? OYJL_BLUE_B : "", text, OYJL_CTEND ); break;
+      case oyjlBOLD: sprintf( t, "%s%s%s", truecolor || color ? OYJL_BOLD : "", text, truecolor || color ? OYJL_CTEND : "" ); break;
+      case oyjlITALIC: sprintf( t, "%s%s%s", truecolor || color ? OYJL_ITALIC : "", text, truecolor || color ? OYJL_CTEND : "" ); break;
+      case oyjlUNDERLINE: sprintf( t, "%s%s%s", truecolor || color ? OYJL_UNDERLINE : "", text, truecolor || color ? OYJL_CTEND : "" ); break;
+    }
+    return t;
+  } else
+    return text;
+}
+
+
 /** @brief    Return number of "oiwi" array elements
  *  @memberof oyjlOptions_s
  *
@@ -278,9 +331,9 @@ const char * oyjlOption_PrintArg     ( oyjlOption_s      * o,
       if(style & oyjlOPTIONSTYLE_MARKDOWN)
         oyjlStringAdd( &text, malloc, free, " *%s*", o->value_name );
       else if(style & oyjlOPTIONSTYLE_OPTIONAL_INSIDE_GROUP)
-        oyjlStringAdd( &text, malloc, free, "%s", o->value_name );
+        oyjlStringAdd( &text, malloc, free, "%s", oyjlTermColor(oyjlITALIC,o->value_name) );
       else
-        oyjlStringAdd( &text, malloc, free, " %s", o->value_name );
+        oyjlStringAdd( &text, malloc, free, " %s", oyjlTermColor(oyjlITALIC,o->value_name) );
     }
   }
   if(style & oyjlOPTIONSTYLE_OPTIONAL_END)
@@ -907,7 +960,7 @@ static const char * oyjlOptions_PrintHelpSynopsis (
     else if(style & oyjlOPTIONSTYLE_MARKDOWN)
       oyjlStringAdd( &text, malloc, free, "**%s**", prog );
     else
-      oyjlStringAdd( &text, malloc, free, "%s", prog );
+      oyjlStringAdd( &text, malloc, free, "%s", oyjlTermColor(oyjlBOLD,prog) );
   }
   else
     return text;
@@ -998,6 +1051,7 @@ oyjlOptionChoice_s * oyjlOption_GetChoices_ (
   return oyjl_get_choices_list_[(int)o->o];
 }
 
+
 #include <stdarg.h> /* va_list */
 /** @brief    Print help text to stderr
  *  @memberof oyjlOptions_s
@@ -1025,7 +1079,7 @@ void  oyjlOptions_PrintHelp          ( oyjlOptions_s     * opts,
   if(verbose)
   {
     for(i = 0; i < opts->argc; ++i)
-      fprintf( stdout, "\'%s\' ", opts->argv[i]);
+      fprintf( stdout, "\'%s\' ", oyjlTermColor( oyjlITALIC, opts->argv[i] ));
     fprintf( stdout, "\n");
   }
 
@@ -1033,7 +1087,7 @@ void  oyjlOptions_PrintHelp          ( oyjlOptions_s     * opts,
   {
     oyjlUiHeaderSection_s * version = oyjlUi_GetHeaderSection( ui,
                                                                "version" );
-    fprintf( stdout, "%s v%s - %s", opts->argv[0],
+    fprintf( stdout, "%s v%s - %s", oyjlTermColor( oyjlBOLD, opts->argv[0] ),
                               version && version->name ? version->name : "",
                               ui->description ? ui->description : "" );
   }
@@ -1043,29 +1097,29 @@ void  oyjlOptions_PrintHelp          ( oyjlOptions_s     * opts,
     vfprintf( stdout, motto_format, list );
     va_end  ( list );
   }
-  fprintf( stderr, "\n");
+  fprintf( stdout, "\n");
 
   ng = oyjlOptions_CountGroups(opts);
   if(!ng) return;
 
   if( ui && (section = oyjlUi_GetHeaderSection(ui, "documentation")) != NULL &&
       section->description )
-    fprintf( stdout, "\n%s:\n  %s\n", _("Description"), section->description );
+    fprintf( stdout, "\n%s:\n  %s\n", oyjlTermColor(oyjlBOLD,_("Description")), section->description );
 
-  fprintf( stdout, "\n%s:\n", _("Synopsis") );
+  fprintf( stdout, "\n%s:\n", oyjlTermColor(oyjlBOLD,_("Synopsis")) );
   for(i = 0; i < ng; ++i)
   {
     oyjlOptionGroup_s * g = &opts->groups[i];
     fprintf( stdout, "  %s\n", oyjlOptions_PrintHelpSynopsis( opts, g, oyjlOPTIONSTYLE_ONELETTER ) );
   }
 
-  fprintf( stdout, "\n%s:\n", _("Usage")  );
+  fprintf( stdout, "\n%s:\n", oyjlTermColor(oyjlBOLD,_("Usage"))  );
   for(i = 0; i < ng; ++i)
   {
     oyjlOptionGroup_s * g = &opts->groups[i];
     int d = g->detail ? strlen(g->detail) : 0,
         j,k;
-    fprintf( stdout, "  %s\n", g->description  );
+    fprintf( stdout, "  %s\n", oyjlTermColor(oyjlUNDERLINE,g->description) );
     if(g->mandatory && g->mandatory[0])
     {
       fprintf( stdout, "\t%s\n", oyjlOptions_PrintHelpSynopsis( opts, g, oyjlOPTIONSTYLE_ONELETTER ) );
@@ -1079,7 +1133,7 @@ void  oyjlOptions_PrintHelp          ( oyjlOptions_s     * opts,
         fprintf(stdout, "\n%s: option not declared: %c\n", g->name, oc);
         exit(1);
       }
-      for(k = 0; k < indent; ++k) fprintf( stderr, " " );
+      for(k = 0; k < indent; ++k) fprintf( stdout, " " );
       switch(o->value_type)
       {
         case oyjlOPTIONTYPE_CHOICE:
@@ -1096,7 +1150,7 @@ void  oyjlOptions_PrintHelp          ( oyjlOptions_s     * opts,
             while(o->values.choices.list[n].nick && o->values.choices.list[n].nick[0] != '\000')
               ++n;
             for(l = 0; l < n; ++l)
-              fprintf( stdout, "\t  -%c %s\t\t# %s%s%s\n",
+              fprintf( stdout, "\t\t-%c %s\t\t# %s%s%s\n",
                   o->o,
                   o->values.choices.list[l].nick,
                   o->values.choices.list[l].name && o->values.choices.list[l].nick[0] ? o->values.choices.list[l].name : o->values.choices.list[l].description,
@@ -2196,7 +2250,6 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
 
   return text;
 }
-// TODO: allow for very long lists of choices for GUI's, while hiding in help/man pages, to avoid clutter in the later
 // TODO: make the qml renderer aware of mandatory options as part of sending a call to the tool; add action button to all manatory options except bool options; render mandatory switch as a button
 // TODO: the renderer keeps as simple as possible like the command line
 // TODO: MAN page synopsis logic ...
