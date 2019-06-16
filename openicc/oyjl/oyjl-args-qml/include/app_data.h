@@ -29,6 +29,7 @@
 
 #include "utils.h"
 extern QApplication * a;
+extern int app_debug;
 
 class AppData : public QObject
 {
@@ -82,6 +83,7 @@ public:
     Q_INVOKABLE void setOption(QString key, QString value);
     Q_INVOKABLE QString findLogo(QString pattern);
     Q_INVOKABLE QString readFile(QString url);
+    Q_INVOKABLE void setDebug( int debug ) { app_debug = debug; LOG(QString::number(debug)); }
 
 public slots:
     void readBattery();
