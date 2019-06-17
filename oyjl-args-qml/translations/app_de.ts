@@ -36,7 +36,7 @@
     <message>
         <location filename="../qml/About.qml" line="97"/>
         <source>OK</source>
-        <translation>Ja</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -108,7 +108,7 @@
     <message>
         <location filename="../qml/LSwitch.qml" line="83"/>
         <source>Ok</source>
-        <translation>Ja</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

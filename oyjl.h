@@ -450,6 +450,7 @@ typedef struct oyjlOptionChoice_s {
   char * help;                         /**< @brief i18n longer help text; can be "" */
 } oyjlOptionChoice_s;
 void oyjlOptionChoice_Release        ( oyjlOptionChoice_s**choices );
+int  oyjlOptionChoice_Count          ( oyjlOptionChoice_s* list );
 
 typedef struct oyjlOptions_s oyjlOptions_s;
 typedef struct oyjlOption_s oyjlOption_s;
@@ -621,6 +622,8 @@ char *             oyjlUi_ToJson     ( oyjlUi_s          * ui,
 char *             oyjlUi_ToMan      ( oyjlUi_s          * ui,
                                        int                 flags );
 char *             oyjlUi_ToMarkdown ( oyjlUi_s          * ui,
+                                       int                 flags );
+char *             oyjlUi_ExportToJson(oyjlUi_s          * ui,
                                        int                 flags );
 
 /** link with libOyjlArgsQml and use oyjl-args-qml renderer as library @see oyjlUi_ToJson() */
