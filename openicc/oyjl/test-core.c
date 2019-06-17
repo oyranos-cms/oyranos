@@ -2,7 +2,7 @@
  *
  *  Oyranos is an open source Color Management System
  *
- *  Copyright (C) 2004-2018  Kai-Uwe Behrmann
+ *  Copyright (C) 2004-2019  Kai-Uwe Behrmann
  *
  *  @brief    Oyranos test suite
  *  @internal
@@ -669,6 +669,18 @@ oyjlTESTRESULT_e testArgs()
     oyjlOptions_PrintHelp( ui->opts, ui, 1, "%s v%s - %s", argv[0],
                             "1.0", "Test Tool for testing" );
   }
+
+  text = oyjlUi_ExportToJson( ui, 0 );
+  if(text && strlen(text) == 6026)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyjlUi_ExportToJson()       %lu                 ", strlen(text) );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    "oyjlUi_ExportToJson()       %lu                 ", strlen(text) );
+  }
+  if(verbose)
+    fprintf( zout, "%s\n", text );
+  if(text) {free(text);} text = NULL;
 
   oyjlUi_Release( &ui);
   char * wrong = "test";

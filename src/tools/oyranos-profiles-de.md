@@ -2,7 +2,7 @@
 *"oyranos\-profiles"* *1* *"October 11, 2018"* "User Commands"
 ## NAME
 oyranos\-profiles v0.9.7 \- Oyranos Profile
-## ÜBERSICHT
+## SYNOPSIS
 **oyranos\-profiles** \-l [\-f] [\-e] [\-a] [\-c] [\-d] [\-k] [\-n] [\-o] [\-i] [\-2] [\-4] [\-P] [\-T *SCHLÜSSEL;WERT*] [\-v]
 <br />
 **oyranos\-profiles** \-p [\-u|\-s|\-y|\-m] [\-v]
@@ -10,9 +10,9 @@ oyranos\-profiles v0.9.7 \- Oyranos Profile
 **oyranos\-profiles** \-I *ICC\_PROFIL*|  \-t *TAXI\_ID* [\-u|\-s|\-y|\-m] [\-g] [\-v]
 <br />
 **oyranos\-profiles** \-h \-X *json|json+command|man|markdown*
-## BESCHREIBUNG
+## DESCRIPTION
 Das Werkzeug kann installierte Profile und Suchpfade anzeigen. Es kann ein Profil in einen Suchpfad installieren.
-## OPTIONEN
+## OPTIONS
 ### Liste der verfügbaren ICC Farbprofile
 **oyranos\-profiles** \-l [\-f] [\-e] [\-a] [\-c] [\-d] [\-k] [\-n] [\-o] [\-i] [\-2] [\-4] [\-P] [\-T *SCHLÜSSEL;WERT*] [\-v]
 
@@ -56,20 +56,21 @@ Das Werkzeug kann installierte Profile und Suchpfade anzeigen. Es kann ein Profi
 **oyranos\-profiles** \-h \-X *json|json+command|man|markdown*
 
 * \-h|\-\-help	Hilfe
-* \-X|\-\-export *json|json+command|man|markdown*	Exportiere formatierten Text: Hole Benutzerschnittstelle als Text
+* \-X|\-\-export *json|json+command|man|markdown*	Export formated text: Get UI converted into text formats
    * \-X json		# Json
-   * \-X json+command		# Json + Kommando
-   * \-X man		# Handbuch
+   * \-X json+command		# Json + Command
+   * \-X man		# Man
    * \-X markdown		# Markdown
+   * \-X export		# Export
 * \-r|\-\-no\-repair	Lasse Reparatur der Profil ID weg
 * \-v|\-\-verbose	plaudernd
 
-## UMGEBUNGSVARIABLEN
+## ENVIRONMENT VARIABLES
 ### OY\_DEBUG
 Setze das Oyranos Fehlersuchniveau. Die \-v Option kann alternativ benutzt werden. Der gültige Bereich ist 1\-20.
 ### XDG\_DATA\_HOME XDG\_DATA\_DIRS
 route Oyranos to top directories containing resources. The derived paths for ICC profiles have a "color/icc" appended. http://www.oyranos.com/wiki/index.php?title=OpenIccDirectoryProposal  
-## BEISPIELE
+## EXAMPLES
 ### Liste alle installierten Profile mit internem Namen
 oyranos\-profiles \-le 
 ### Liste alle installierten Profile mit Monitor\-und Ausgabeklasse
@@ -82,14 +83,14 @@ oyranos\-profiles \-\-install profilename \-u \-\-gui
 oyranos\-profiles \-\-install \- \-\-taxi=taxi\_id/0 \-\-gui \-d \-u 
 ### Zeige Dateiinfos
 SAVEIFS=$IFS ; IFS=$'\n\b'; profiles=(\`oyranos\-profiles \-ldf\`); IFS=$SAVEIFS; for file in "${profiles[@]}"; do ls "$file"; done  
-## AUTOR
+## AUTHOR
 Kai\-Uwe Behrmann http://www.oyranos.org
-## KOPIERRECHT
+## COPYRIGHT
 *Copyright 2018 Kai\-Uwe Behrmann*
 
 
-### Lizenz
+### License
 newBSD
-## FEHLER
+## BUGS
 [https://www.github.com/oyranos\-cms/oyranos/issues](https://www.github.com/oyranos\-cms/oyranos/issues)
 

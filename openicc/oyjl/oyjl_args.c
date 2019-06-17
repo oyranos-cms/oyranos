@@ -32,7 +32,7 @@
 #include <stddef.h>
 #include <ctype.h> /* toupper() */
 #ifdef OYJL_HAVE_LANGINFO_H
-#include <langinfo.h>
+#include <langinfo.h> /* nl_langinfo() */
 #endif
 
 extern int * oyjl_debug;
@@ -177,6 +177,11 @@ extern int * oyjl_debug;
  *  stream their result as image to stdout. A oyjl-args-qml viewer supports
  *  PNG image output.
  *
+ *  @subsection args_developer Developer Support
+ *  The oyjlUi_ExportToJson() API allows to dump all data toward a JSON
+ *  representation. The oyjlUiJsonToCode() API converts a JSON UI data
+ *  representation to source code.
+ *
  *  @{ */
 
 /** @brief    Release dynamic structure
@@ -255,6 +260,22 @@ static const char * oyjlTermColor( oyjlCOLORTERM_e rgb, const char * text) {
     return t;
   } else
     return text;
+}
+
+/** @brief    Return number of array elements
+ *  @memberof oyjlOptionChoice_s
+ *
+ *  @version Oyjl: 1.0.0
+ *  @date    2019/06/17
+ *  @since   2019/06/17 (Oyjl: 1.0.0)
+ */
+int  oyjlOptionChoice_Count          ( oyjlOptionChoice_s* list )
+{
+  int n = 0;
+  if(list)
+    while(list[n].nick && list[n].nick[0] != '\000')
+      ++n;
+  return n;
 }
 
 
@@ -345,6 +366,7 @@ oyjlOptionChoice_s oyjl_X_choices[] = {{"json", "", "", ""},
                                     {"json+command", "", "", ""},
                                     {"man", "", "", ""},
                                     {"markdown", "", "", ""},
+                                    {"export", "", "", ""},
                                     {"","","",""}};
 void oyjlOptions_EnrichInbuild( oyjlOption_s * o )
 {
@@ -366,6 +388,9 @@ void oyjlOptions_EnrichInbuild( oyjlOption_s * o )
       oyjl_X_choices[3].name = _("Markdown");
       oyjl_X_choices[3].description = _("Formated text");
       oyjl_X_choices[3].help = _("Get formated text");
+      oyjl_X_choices[4].name = _("Export");
+      oyjl_X_choices[4].description = _("All available data");
+      oyjl_X_choices[4].help = _("Get UI data for developers");
       o->values.choices.list = oyjl_X_choices;
       if(o->value_name == NULL)
       {
@@ -1472,6 +1497,12 @@ oyjlUi_s *  oyjlUi_Create            ( int                 argc,
       oyjlUi_Release( &ui);
       return NULL;
     }
+    if(strcmp(export, "export") == 0)
+    {
+      puts( oyjlUi_ExportToJson( ui, 0 ) );
+      oyjlUi_Release( &ui);
+      return NULL;
+    }
   }
   /* done with options handling */
 
@@ -1543,7 +1574,156 @@ oyjlUiHeaderSection_s * oyjlUi_GetHeaderSection (
   return section;
 }
 
+#define CASE_RETURN_ENUM( text_ ) case text_: return #text_;
+static const char * oyjlOPTIONTYPE_eToString ( oyjlOPTIONTYPE_e e )
+{
+  switch( e )
+  {
+    CASE_RETURN_ENUM(oyjlOPTIONTYPE_START)
+    CASE_RETURN_ENUM(oyjlOPTIONTYPE_CHOICE)
+    CASE_RETURN_ENUM(oyjlOPTIONTYPE_FUNCTION)
+    CASE_RETURN_ENUM(oyjlOPTIONTYPE_DOUBLE)
+    CASE_RETURN_ENUM(oyjlOPTIONTYPE_NONE)
+    CASE_RETURN_ENUM(oyjlOPTIONTYPE_END)
+  }
+  return NULL;
+}
+static const char * oyjlVARIABLE_eToString ( oyjlVARIABLE_e e )
+{
+  switch( e )
+  {
+    CASE_RETURN_ENUM(oyjlNONE)
+    CASE_RETURN_ENUM(oyjlSTRING)
+    CASE_RETURN_ENUM(oyjlDOUBLE)
+    CASE_RETURN_ENUM(oyjlINT)
+  }
+  return NULL;
+}
+
 #define OYJL_REG "org/freedesktop/oyjl"
+
+/** @brief    Return a JSON dump
+ *  @memberof oyjlUi_s
+ *
+ *  The returned JSON is a complete dump of all oyjlUi_s data.
+ *
+ *  @version Oyjl: 1.0.0
+ *  @date    2019/06/16
+ *  @since   2019/06/16 (Oyjl: 1.0.0)
+ */
+char *             oyjlUi_ExportToJson(oyjlUi_s          * ui,
+                                       int                 flags OYJL_UNUSED )
+{
+  char * t = NULL;
+  oyjl_val root;
+  int i,j,n,ng;
+
+  if(!ui) return t;
+
+  root = oyjlTreeNew( "" );
+  oyjlTreeSetStringF(   root, OYJL_CREATE_NEW, "1", OYJL_REG "/ui/oyjl_args_api_version" );
+  oyjlTreeSetStringF(   root, OYJL_CREATE_NEW, "This is a dump of the oyjlUi_s data structure", OYJL_REG "/ui/comment" );
+  oyjlTreeSetStringF(   root, OYJL_CREATE_NEW, ui->type, OYJL_REG "/ui/type" );
+  if(ui->app_type && ui->app_type[0])
+    oyjlTreeSetStringF( root, OYJL_CREATE_NEW, ui->app_type, OYJL_REG "/ui/app_type" );
+  oyjlTreeSetStringF(   root, OYJL_CREATE_NEW, ui->nick, OYJL_REG "/ui/nick" );
+  oyjlTreeSetStringF(   root, OYJL_CREATE_NEW, ui->name, OYJL_REG "/ui/name" );
+  oyjlTreeSetStringF(   root, OYJL_CREATE_NEW, ui->description, OYJL_REG "/ui/description" );
+  if(ui->logo)
+    oyjlTreeSetStringF( root, OYJL_CREATE_NEW, ui->logo, OYJL_REG "/ui/logo" );
+
+  oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "oyjlHeaderSection_s", OYJL_REG "/ui/header/%s", "comment" );
+  n = oyjlUi_CountHeaderSections( ui );
+  for(i = 0; i < n; ++i)
+  {
+    oyjlUiHeaderSection_s * s = &ui->sections[i];
+    oyjlTreeSetStringF( root, OYJL_CREATE_NEW, s->type, OYJL_REG "/ui/header/sections/[%d]/%s", i, "type" );
+    oyjlTreeSetStringF( root, OYJL_CREATE_NEW, s->nick, OYJL_REG "/ui/header/sections/[%d]/%s", i, "nick" );
+    if(s->label)
+      oyjlTreeSetStringF(root,OYJL_CREATE_NEW, s->label, OYJL_REG "/ui/header/sections/[%d]/%s", i, "label" );
+    if(s->name)
+      oyjlTreeSetStringF(root,OYJL_CREATE_NEW, s->name, OYJL_REG "/ui/header/sections/[%d]/%s", i, "name" );
+    if(s->description)
+      oyjlTreeSetStringF(root,OYJL_CREATE_NEW, s->description, OYJL_REG "/ui/header/sections/[%d]/%s", i, "description" );
+  }
+
+  oyjlTreeSetStringF( root, OYJL_CREATE_NEW,   ui->opts->type, OYJL_REG "/ui/options/type" );
+  oyjlTreeSetStringF( root, OYJL_CREATE_NEW,   "oyjlOptions_s", OYJL_REG "/ui/options/comment" );
+  if(ui->opts->user_data)
+    oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "1", OYJL_REG "/ui/options/user_data" );
+  int nopts = oyjlOptions_Count( ui->opts );
+  for(i = 0; i < nopts; ++i)
+  {
+    char oo[8];
+    oyjlOption_s * o = &ui->opts->array[i];
+    sprintf(oo, "%c", o->o);
+    oyjlTreeSetStringF( root, OYJL_CREATE_NEW, o->type, OYJL_REG "/ui/options/array/[%d]/%s", i, "type" );
+    oyjlTreeSetStringF( root, OYJL_CREATE_NEW, oo, OYJL_REG "/ui/options/array/[%d]/%s", i, "o" );
+    oyjlTreeSetStringF( root, OYJL_CREATE_NEW, o->option, OYJL_REG "/ui/options/array/[%d]/%s", i, "option" );
+    oyjlTreeSetStringF( root, OYJL_CREATE_NEW, o->key, OYJL_REG "/ui/options/array/[%d]/%s", i, "key" );
+    oyjlTreeSetStringF( root, OYJL_CREATE_NEW, o->name, OYJL_REG "/ui/options/array/[%d]/%s", i, "name" );
+    oyjlTreeSetStringF( root, OYJL_CREATE_NEW, o->description, OYJL_REG "/ui/options/array/[%d]/%s", i, "description" );
+    oyjlTreeSetStringF( root, OYJL_CREATE_NEW, o->help, OYJL_REG "/ui/options/array/[%d]/%s", i, "help" );
+    oyjlTreeSetStringF( root, OYJL_CREATE_NEW, o->value_name, OYJL_REG "/ui/options/array/[%d]/%s", i, "value_name" );
+    oyjlTreeSetStringF( root, OYJL_CREATE_NEW, oyjlOPTIONTYPE_eToString(o->value_type), OYJL_REG "/ui/options/array/[%d]/%s", i, "value_type" );
+    switch(o->value_type)
+    {
+      case oyjlOPTIONTYPE_CHOICE:
+        oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "oyjlOptionChoice_s * list", OYJL_REG "/ui/options/array/[%d]/values/choices/%s", i, "comment" );
+        n = oyjlOptionChoice_Count( o->values.choices.list );
+        if(n)
+          for(j = 0; j < n; ++j)
+          {
+            oyjlOptionChoice_s * c = &o->values.choices.list[j];
+            oyjlTreeSetStringF( root, OYJL_CREATE_NEW, c->nick, OYJL_REG "/ui/options/array/[%d]/values/choices/list/[%d]/%s", i, j, "nick" );
+            oyjlTreeSetStringF( root, OYJL_CREATE_NEW, c->name, OYJL_REG "/ui/options/array/[%d]/values/choices/list/[%d]/%s", i, j, "name" );
+            oyjlTreeSetStringF( root, OYJL_CREATE_NEW, c->description, OYJL_REG "/ui/options/array/[%d]/values/choices/list/[%d]/%s", i, j, "description" );
+            oyjlTreeSetStringF( root, OYJL_CREATE_NEW, c->help, OYJL_REG "/ui/options/array/[%d]/values/choices/list/[%d]/%s", i, j, "help" );
+          }
+        else
+          oyjlTreeSetStringF( root, OYJL_CREATE_NEW, NULL, OYJL_REG "/ui/options/array/[%d]/values/choices/list", i );
+        oyjlTreeSetDoubleF( root, OYJL_CREATE_NEW, o->values.choices.selected, OYJL_REG "/ui/options/array/[%d]/values/choices/%s", i, "selected" );
+        break;
+      case oyjlOPTIONTYPE_FUNCTION:
+        oyjlTreeSetStringF( root, OYJL_CREATE_NEW, o->values.getChoices ? "getChoices":NULL, OYJL_REG "/ui/options/array/[%d]/values/%s", i, "getChoices" );
+        break;
+      case oyjlOPTIONTYPE_DOUBLE:
+        oyjlTreeSetDoubleF( root, OYJL_CREATE_NEW, o->values.dbl.d, OYJL_REG "/ui/options/array/[%d]/values/dbl/%s", i, "d" );
+        oyjlTreeSetDoubleF( root, OYJL_CREATE_NEW, o->values.dbl.start, OYJL_REG "/ui/options/array/[%d]/values/dbl/%s", i, "start" );
+        oyjlTreeSetDoubleF( root, OYJL_CREATE_NEW, o->values.dbl.end, OYJL_REG "/ui/options/array/[%d]/values/dbl/%s", i, "end" );
+        oyjlTreeSetDoubleF( root, OYJL_CREATE_NEW, o->values.dbl.tick, OYJL_REG "/ui/options/array/[%d]/values/dbl/%s", i, "tick" );
+        break;
+      case oyjlOPTIONTYPE_NONE:
+        oyjlTreeSetStringF( root, OYJL_CREATE_NEW, NULL, OYJL_REG "/ui/options/array/[%d]/%s", i, "values" );
+        break;
+      case oyjlOPTIONTYPE_START:
+      case oyjlOPTIONTYPE_END:
+        break;
+    }
+    oyjlTreeSetStringF( root, OYJL_CREATE_NEW, oyjlVARIABLE_eToString(o->variable_type), OYJL_REG "/ui/options/array/[%d]/%s", i, "variable_type" );
+    if(o->variable_type != oyjlNONE)
+      oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "dummy", OYJL_REG "/ui/options/array/[%d]/%s", i, "variable_name" );
+  }
+
+  ng = oyjlOptions_CountGroups( ui->opts );
+  for(i = 0; i < ng; ++i)
+  {
+    oyjlOptionGroup_s * g = &ui->opts->groups[i];
+    oyjlTreeSetStringF( root, OYJL_CREATE_NEW, g->type, OYJL_REG "/ui/options/groups/[%d]/%s", i, "type" );
+    oyjlTreeSetStringF( root, OYJL_CREATE_NEW, g->name, OYJL_REG "/ui/options/groups/[%d]/%s", i, "name" );
+    oyjlTreeSetStringF( root, OYJL_CREATE_NEW, g->description, OYJL_REG "/ui/options/groups/[%d]/%s", i, "description" );
+    oyjlTreeSetStringF( root, OYJL_CREATE_NEW, g->help, OYJL_REG "/ui/options/groups/[%d]/%s", i, "help" );
+    oyjlTreeSetStringF( root, OYJL_CREATE_NEW, g->mandatory, OYJL_REG "/ui/options/groups/[%d]/%s", i, "mandatory" );
+    oyjlTreeSetStringF( root, OYJL_CREATE_NEW, g->optional, OYJL_REG "/ui/options/groups/[%d]/%s", i, "optional" );
+    oyjlTreeSetStringF( root, OYJL_CREATE_NEW, g->detail, OYJL_REG "/ui/options/groups/[%d]/%s", i, "detail" );
+  }
+
+  i = 0;
+  oyjlTreeToJson( root, &i, &t );
+  oyjlTreeFree( root );
+
+  return t;
+}
 
 /** @brief    Return a JSON representation from options
  *  @memberof oyjlUi_s

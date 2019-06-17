@@ -61,6 +61,7 @@ The tool can list installed profiles, search paths and can help install a ICC co
    * \-X json+command		# Json + Command
    * \-X man		# Man
    * \-X markdown		# Markdown
+   * \-X export		# Export
 * \-r|\-\-no\-repair	No Profile repair of ICC profile ID
 * \-v|\-\-verbose	verbose
 

@@ -2,7 +2,7 @@
 *"oyranos\-monitor\-white\-point"* *1* *"October 11, 2018"* "User Commands"
 ## NAME
 oyranos\-monitor\-white\-point v0.9.7 \- Nacht Manager
-## ÜBERSICHT
+## SYNOPSIS
 **oyranos\-monitor\-white\-point** \-n *0|1|2|3|4|5|6|7* \-g *ICC\_PROFIL* [\-b *PROZENT*] [\-z] [\-v]
 <br />
 **oyranos\-monitor\-white\-point** \-w *0|1|2|3|4|5|6|7* \-a *KELVIN* [\-z] [\-v]
@@ -14,9 +14,9 @@ oyranos\-monitor\-white\-point v0.9.7 \- Nacht Manager
 **oyranos\-monitor\-white\-point** \-d *0|1|2* [\-v]
 <br />
 **oyranos\-monitor\-white\-point** \-m|  \-r|  \-X *json|json+command|man|markdown*|  \-h [\-v]
-## BESCHREIBUNG
+## DESCRIPTION
 Das Werkzeug kann den momentanen Weißpunkt setzen oder ihn abhängig von der Tages\- und Nachzeit festlegen. Ein zusätzliches Effektprofil kann eingestellt werden.
-## OPTIONEN
+## OPTIONS
 ### Nächtliche Anmutung
 **oyranos\-monitor\-white\-point** \-n *0|1|2|3|4|5|6|7* \-g *ICC\_PROFIL* [\-b *PROZENT*] [\-z] [\-v]
 
@@ -87,32 +87,33 @@ Der Nachtweißpunkmodus soll den Einfluß von blauen Licht auf das menschliche H
 * \-h|\-\-help	Hilfe
 * \-m|\-\-modes	Zeige Weißpunktmodus
 * \-r|\-\-sunrise	Zeige lokale Zeit, benutzte geografische Position, Dämmerungswinkel, Sonnenauf\-und untergangszeiten
-* \-X|\-\-export *json|json+command|man|markdown*	Exportiere formatierten Text: Hole Benutzerschnittstelle als Text
+* \-X|\-\-export *json|json+command|man|markdown*	Export formated text: Get UI converted into text formats
    * \-X json		# Json
-   * \-X json+command		# Json + Kommando
-   * \-X man		# Handbuch
+   * \-X json+command		# Json + Command
+   * \-X man		# Man
    * \-X markdown		# Markdown
+   * \-X export		# Export
 * \-z|\-\-system\-wide	Einstellung in der systemweiten DB
 * \-v|\-\-verbose	plaudernd
 
-## UMGEBUNGSVARIABLEN
+## ENVIRONMENT VARIABLES
 ### OY\_DEBUG
 Setze das Oyranos Fehlersuchniveau. Die \-v Option kann alternativ benutzt werden. Der gültige Bereich ist 1\-20.
 ### OY\_MODULE\_PATH
 zeige Oyranos zusätzliche Verzeichnisse mit Modulen.  
-## BEISPIELE
+## EXAMPLES
 ### Starte den Wächter, setze nächtlichen Weißpunkt zu 3000 Kelvin und benutze diesen im Nachtmodus
 oyranos\-monitor\-white\-point \-d 2 \-a 3000 \-n 1 
 ### Schalte alle Tagesbeeinflussung aus, wie Weißpunkt und Effekt
 oyranos\-monitor\-white\-point \-s 0 \-e 0 
-## AUTOR
+## AUTHOR
 Kai\-Uwe Behrmann http://www.oyranos.org
-## KOPIERRECHT
+## COPYRIGHT
 *Copyright 2018 Kai\-Uwe Behrmann*
 
 
-### Lizenz
+### License
 newBSD
-## FEHLER
+## BUGS
 [https://www.github.com/oyranos\-cms/oyranos/issues](https://www.github.com/oyranos\-cms/oyranos/issues)
 

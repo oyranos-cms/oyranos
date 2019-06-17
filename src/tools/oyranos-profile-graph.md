@@ -93,6 +93,7 @@ Create a 2D Graph containing the saturation line from a ICC Profile.
    * \-X json+command		# Json + Command
    * \-X man		# Man
    * \-X markdown		# Markdown
+   * \-X export		# Export
 * \-v|\-\-verbose	verbose
 
 ## ENVIRONMENT VARIABLES

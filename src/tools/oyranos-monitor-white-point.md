@@ -92,6 +92,7 @@ The Night white point mode shall allow to reduce influence of blue light during 
    * \-X json+command		# Json + Command
    * \-X man		# Man
    * \-X markdown		# Markdown
+   * \-X export		# Export
 * \-z|\-\-system\-wide	System wide DB setting
 * \-v|\-\-verbose	verbose
 
