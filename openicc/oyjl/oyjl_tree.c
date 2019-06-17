@@ -1420,7 +1420,7 @@ int        oyjlValueSetString        ( oyjl_val            v,
                                        const char        * string )
 {
   int error = -1;
-  if(v)
+  if(v && string)
   {
     oyjlValueClear( v );
     v->type = oyjl_t_string;
