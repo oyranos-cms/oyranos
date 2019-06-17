@@ -24,7 +24,8 @@ MACRO(OY_DOCUMENT_TOOL)
     SET( _lang de_DE.UTF8 )
     SET( short_lang de )
       ADD_CUSTOM_COMMAND( OUTPUT ${CMAKE_SOURCE_DIR}/doc/man/${short_lang}/${TOOL}.1
-        COMMAND mkdir -p "${CMAKE_SOURCE_DIR}/doc/man/de/"
+        COMMAND mkdir -p "${CMAKE_SOURCE_DIR}/doc/man/${short_lang}/"
+        COMMAND cp -a ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LOCALEDIR}/${short_lang}/LC_MESSAGES/openicc.mo ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LOCALEDIR}/${short_lang}/LC_MESSAGES/oyjl.mo ${CMAKE_BINARY_DIR}/locale/${short_lang}/LC_MESSAGES/ || echo nothing to copy
         COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH} LOCPATH=${CMAKE_BINARY_DIR}/locale OY_MODULE_PATH=${CMAKE_BINARY_DIR}/src/modules XDG_DATA_HOME=${CMAKE_SOURCE_DIR} LANG=${_lang} DISPLAY="man_page" ${TOOL} -X man > ${CMAKE_SOURCE_DIR}/doc/man/${short_lang}/${TOOL}.1
         DEPENDS ${TOOL} ${TOOL_SRC}
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
