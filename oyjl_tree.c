@@ -1345,7 +1345,7 @@ int        oyjlTreeSetStringF        ( oyjl_val            root,
   if(text) free(text);
 
   if(value_node)
-    oyjlValueSetString( value_node, value_text );
+    error = oyjlValueSetString( value_node, value_text );
   else
     error = -1;
 
