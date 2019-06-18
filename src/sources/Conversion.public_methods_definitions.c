@@ -128,7 +128,7 @@ int                oyConversion_Correct (
  *                                     defined by plugable policy modules,
  *                                     e.g. "oicc", and a filters own options.
  *                                     OY_DEFAULT_CMM_CONTEXT and 
- *                                     OY_DEFAULT_CMM_RENDERER can contain  
+ *                                     OY_DEFAULT_CMM_RENDERER can contain a 
  *                                     string to explicitely select the icc 
  *                                     module.
  *  @param         object              the optional object
