@@ -2,7 +2,7 @@
 *"oyranos\-profile\-graph"* *1* *"March 24, 2019"* "User Commands"
 ## NAME
 oyranos\-profile\-graph v0.9.7 \- Oyranos Profile Zeichner
-## SYNOPSIS
+## ÜBERSICHT
 **oyranos\-profile\-graph** [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-o *\-|DATEI*] [\-f *FORMAT*] [\-c] [\-x] [\-d *NUMMER*] [\-n] [\-2] [\-4] [\-r] [\-v] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
 <br />
 **oyranos\-profile\-graph** \-S [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-R] [\-o *\-|DATEI*] [\-f *FORMAT*] [\-v]
@@ -16,9 +16,9 @@ oyranos\-profile\-graph v0.9.7 \- Oyranos Profile Zeichner
 **oyranos\-profile\-graph** \-s *DATEI* \-p *FORMAT* \-z [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-R] [\-P *WORT*] [\-o *\-|DATEI*] [\-v]
 <br />
 **oyranos\-profile\-graph** \-X *json|json+command|man|markdown*|  \-h [\-v]
-## DESCRIPTION
+## BESCHREIBUNG
 Das oyranos\-profile\-graph Programm erzeugt aus einem ICC Profil oder eingebetteten ICC Profil in eine Grafik. Vorgabemäßig malt es die Sättigungslinie eines anzugebenden ICC Profiles und schreibt die Grafik nach stdout.
-## OPTIONS
+## OPTIONEN
 ### 2D Zeichnung vom Farbprofil
 **oyranos\-profile\-graph** [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-o *\-|DATEI*] [\-f *FORMAT*] [\-c] [\-x] [\-d *NUMMER*] [\-n] [\-2] [\-4] [\-r] [\-v] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
 
@@ -88,34 +88,34 @@ Erzeuge aus einem ICC Profil eine Grafik mit seiner Sättigungslinie.
    * \-f png		# PNG
    * \-f svg		# SVG
 * \-h|\-\-help	Hilfe
-* \-X|\-\-export *json|json+command|man|markdown*	Export formated text: Get UI converted into text formats
+* \-X|\-\-export *json|json+command|man|markdown*	Exportiere formatierten Text: Hole Benutzerschnittstelle als Text
    * \-X json		# Json
-   * \-X json+command		# Json + Command
-   * \-X man		# Man
+   * \-X json+command		# Json + Kommando
+   * \-X man		# Handbuch
    * \-X markdown		# Markdown
    * \-X export		# Export
 * \-v|\-\-verbose	plaudernd
 
-## ENVIRONMENT VARIABLES
+## UMGEBUNGSVARIABLEN
 ### OY\_DEBUG
 Setze das Oyranos Fehlersuchniveau. Die \-v Option kann alternativ benutzt werden. Der gültige Bereich ist 1\-20.
 ### XDG\_DATA\_HOME XDG\_DATA\_DIRS
 route Oyranos to top directories containing resources. The derived paths for ICC profiles have a "color/icc" appended. http://www.oyranos.com/wiki/index.php?title=OpenIccDirectoryProposal  
-## EXAMPLES
+## BEISPIELE
 ### Zeichne ICC Profil
 oyranos\-profile\-graph ICC\_PROFILE 
 ### Zeige Sättigungslinien von zwei Profilen in CIE*ab 256 Bildpunkte breit, ohne Spectrallinie und mit dickeren Linien:
 oyranos\-profile\-graph \-w 256 \-s \-t 3 sRGB.icc ProPhoto\-RGB.icc 
 ### Zeige die Standard Betrachter Spektralfunktion als Kurven:
 oyranos\-profile\-graph \-\-standard\-observer \-o CIE\-StdObserver.png 
-## AUTHOR
+## AUTOR
 Kai\-Uwe Behrmann http://www.oyranos.org
-## COPYRIGHT
+## KOPIERRECHT
 *Copyright 2018 Kai\-Uwe Behrmann*
 
 
-### License
+### Lizenz
 newBSD
-## BUGS
+## FEHLER
 [https://www.github.com/oyranos\-cms/oyranos/issues](https://www.github.com/oyranos\-cms/oyranos/issues)
 
