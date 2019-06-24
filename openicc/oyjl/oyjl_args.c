@@ -25,9 +25,6 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "oyjl.h"
-#include "oyjl_macros.h"
-#include "oyjl_i18n.h"
 
 #include <stddef.h>
 #include <ctype.h> /* toupper() */
@@ -35,7 +32,481 @@
 #include <langinfo.h> /* nl_langinfo() */
 #endif
 
+#if defined(OYJL_INTERNAL)
+#include "oyjl.h"
+#include "oyjl_macros.h"
 extern int * oyjl_debug;
+#include "oyjl_i18n.h"
+
+#else /* OYJL_INTERNAL */
+int my_debug = 0;
+int * oyjl_debug = &my_debug;
+#if defined(__GNUC__)
+# define  OYJL_DBG_FORMAT "%s:%d %s() "
+# define  OYJL_DBG_ARGS   strrchr(__FILE__,'/') ? strrchr(__FILE__,'/')+1 : __FILE__,__LINE__,__func__
+#else
+# define  OYJL_DBG_FORMAT "%s:%d "
+# define  OYJL_DBG_ARGS   strrchr(__FILE__,'/') ? strrchr(__FILE__,'/')+1 : __FILE__,__LINE__
+#endif
+#define OYJL_CREATE_VA_STRING(format_, text_, alloc_, error_action) \
+{ \
+  va_list list; \
+  size_t sz = 0; \
+  int len = 0; \
+  void*(* allocate_)(size_t size) = alloc_; \
+  if(!allocate_) allocate_ = malloc; \
+\
+  text_ = NULL; \
+  \
+  va_start( list, format_); \
+  len = vsnprintf( text_, sz, format_, list); \
+  va_end  ( list ); \
+\
+  { \
+    text_ = allocate_( sizeof(char) * len + 2 ); \
+    if(!text_) \
+    { \
+      oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "could not allocate memory", OYJL_DBG_ARGS ); \
+      error_action; \
+    } \
+    va_start( list, format_); \
+    len = vsnprintf( text, len+1, format_, list); \
+    va_end  ( list ); \
+  } \
+}
+
+#define oyjlAllocHelper_m(ptr_, type, size_, alloc_func, action) { \
+  if ((size_) <= 0) {                                       \
+      oyjlMessage_p( oyjlMSG_INSUFFICIENT_DATA, 0, "Nothing to allocate"); \
+  } else {                                                  \
+      void*(*a)(size_t size) = alloc_func;                  \
+      if(!a) a = malloc;                                    \
+      ptr_ = (type*) a(sizeof (type) * (size_t)(size_));    \
+      memset( ptr_, 0, sizeof (type) * (size_t)(size_) );   \
+  }                                                         \
+  if (ptr_ == NULL) {                                       \
+      oyjlMessage_p( oyjlMSG_ERROR, 0, "Out of memory"); \
+    action;                                                 \
+  }                                                         \
+}
+
+extern oyjlMessage_f oyjlMessage_p;
+int          oyjlMessageFunc         ( int/*oyjlMSG_e*/    error_code,
+                                       const void        * context_object OYJL_UNUSED,
+                                       const char        * format,
+                                       ... )
+{
+  char * text = NULL;
+  int error = 0;
+  const char * status_text = NULL;
+
+  OYJL_CREATE_VA_STRING(format, text, malloc, return 1)
+
+  if(error_code == oyjlMSG_INFO) status_text = "Info: ";
+  if(error_code == oyjlMSG_CLIENT_CANCELED) status_text = "Client Canceled: ";
+  if(error_code == oyjlMSG_INSUFFICIENT_DATA) status_text = "Insufficient data: ";
+  if(error_code == oyjlMSG_ERROR) status_text = "!!! ERROR: ";
+
+  if(status_text)
+    fprintf( stderr, "%s", status_text );
+  if(text)
+    fprintf( stderr, "%s\n", text );
+  fflush( stderr );
+
+  free( text ); text = 0;
+
+  return error;
+}
+oyjlMessage_f oyjlMessage_p = oyjlMessageFunc;
+char *     oyjlStringCopy            ( const char        * string,
+                                       void*            (* alloc)(size_t))
+{
+  char * text_copy = NULL;
+
+  if(string)
+  {
+    oyjlAllocHelper_m( text_copy, char, strlen(string) + 1,
+                        alloc, return NULL );
+    strcpy( text_copy, string );
+  }
+    
+  return text_copy;
+}
+int        oyjlStringAdd             ( char             ** string,
+                                       void*            (* alloc)(size_t size),
+                                       void             (* deAlloc)(void * data ),
+                                       const char        * format,
+                                                           ... )
+{
+  char * text_copy = NULL;
+  char * text = 0;
+
+  void*(* allocate)(size_t size) = alloc?alloc:malloc;
+  void (* deAllocate)(void * data ) = deAlloc?deAlloc:free;
+
+  OYJL_CREATE_VA_STRING(format, text, alloc, return 1)
+
+  if(string && *string)
+  {
+    int l = strlen(*string),
+        l2 = strlen(text);
+    text_copy = allocate( l2 + l + 1 );
+    strcpy( text_copy, *string );
+    strcpy( &text_copy[l], text );
+
+    deAllocate(*string);
+    *string = text_copy;
+
+    deAllocate(text);
+
+  } else if(string)
+    *string = text;
+  else if(text)
+    deAllocate( text );
+
+  return 0;
+}
+char*      oyjlStringAppendN         ( const char        * text,
+                                       const char        * append,
+                                       int                 append_len,
+                                       void*            (* alloc)(size_t size) )
+{
+  char * text_copy = NULL;
+  int text_len = 0;
+
+  if(text)
+    text_len = strlen(text);
+
+  if(text_len || append_len)
+  {
+    oyjlAllocHelper_m( text_copy, char,
+                        text_len + append_len + 1,
+                        alloc, return NULL );
+
+    if(text_len)
+      memcpy( text_copy, text, text_len );
+
+    if(append_len)
+      memcpy( &text_copy[text_len], append, append_len );
+
+    text_copy[text_len+append_len] = '\000';
+  }
+
+  return text_copy;
+}
+void       oyjlStringAddN            ( char             ** text,
+                                       const char        * append,
+                                       int                 append_len,
+                                       void*            (* alloc)(size_t),
+                                       void             (* deAlloc)(void*) )
+{
+  char * text_copy = NULL;
+
+  if(!text) return;
+
+  text_copy = oyjlStringAppendN(*text, append, append_len, alloc);
+
+  if(*text && deAlloc)
+    deAlloc(*text);
+
+  *text = text_copy;
+
+  return;
+}
+int        oyjlStringReplace         ( char             ** text,
+                                       const char        * search,
+                                       const char        * replacement,
+                                       void*            (* alloc)(size_t),
+                                       void             (* deAlloc)(void*) )
+{
+  char * t = 0;
+  const char * start, * end;
+  int n = 0;
+
+  void*(* allocate)(size_t size) = alloc?alloc:malloc;
+  void (* deAllocate)(void * data ) = deAlloc?deAlloc:free;
+
+  if(!text)
+    return 0;
+
+  start = end = *text;
+
+  if(start && search && replacement)
+  {
+    int s_len = strlen(search);
+    while((end = strstr(start,search)) != 0)
+    {
+      oyjlStringAddN( &t, start, end-start, allocate, deAllocate );
+      oyjlStringAddN( &t, replacement, strlen(replacement), allocate, deAllocate );
+      ++n;
+      if(strlen(end) >= (size_t)s_len)
+        start = end + s_len;
+      else
+      {
+        if(strstr(start,search) != 0)
+          oyjlStringAddN( &t, replacement, strlen(replacement), allocate, deAllocate );
+        start = end = end + s_len;
+        break;
+      }
+    }
+    if(n && start && end == NULL)
+      oyjlStringAddN( &t, start, strlen(start), allocate, deAllocate );
+  }
+
+  if(t)
+  {
+    deAllocate(*text);
+    *text = t;
+  }
+
+  return n;
+}
+int      oyjlStringToLong            ( const char        * text,
+                                       long              * value )
+{
+  char * end = 0;
+  *value = strtol( text, &end, 0 );
+  if(end && end != text && end[0] == '\000' )
+    return 0;
+  else
+    return 1;
+}
+int          oyjlStringToDouble      ( const char        * text,
+                                       double            * value )
+{
+  char * p = NULL, * t = NULL;
+  int len, pos = 0;
+  int error = -1;
+#ifdef OYJL_HAVE_LOCALE_H
+  char * save_locale = oyjlStringCopy( setlocale(LC_NUMERIC, 0 ), malloc );
+  setlocale(LC_NUMERIC, "C");
+#endif
+
+  if(text && text[0])
+    len = strlen(text);
+  else
+  {
+    *value = NAN;
+    error = 1;
+    return error;
+  }
+
+  /* avoid irritating valgrind output of "Invalid read of size 8"
+   * might be a glibc error or a false positive in valgrind */
+  oyjlAllocHelper_m( t, char, len + 2*sizeof(double) + 1, malloc, return 1);
+  memset( t, 0, len + 2*sizeof(double) + 1 );
+
+  /* remove leading empty space */
+  while(text[pos] && isspace(text[pos])) pos++;
+  memcpy( t, &text[pos], len );
+
+  *value = strtod( t, &p );
+
+#ifdef OYJL_HAVE_LOCALE_H
+  setlocale(LC_NUMERIC, save_locale);
+  if(save_locale) free( save_locale );
+#endif
+
+  if(p && p != t && p[0] == '\000')
+    error = 0;
+  else if(p && p == t)
+  {
+    *value = NAN;
+    error = 2;
+  }
+
+  free( t );
+
+  return error;
+}
+void       oyjlStringListAddStaticString (
+                                       char            *** list,
+                                       int               * n,
+                                       const char        * string,
+                                       void*            (* alloc)(size_t),
+                                       void             (* deAlloc)(void*) )
+{
+  char ** nlist = 0;
+  int n_alt;
+
+  if(!list || !n) return;
+
+  if(!deAlloc) deAlloc = free;
+  n_alt = *n;
+
+  oyjlAllocHelper_m(nlist, char*, n_alt + 2, alloc, return);
+
+  memmove( nlist, *list, sizeof(char*) * n_alt);
+  nlist[n_alt] = oyjlStringCopy( string, alloc );
+  nlist[n_alt+1] = NULL;
+
+  *n = n_alt + 1;
+
+  if(*list)
+    deAlloc(*list);
+
+  *list = nlist;
+}
+void       oyjlStringListRelease  ( char            *** l,
+                                       int                 size,
+                                       void             (* deAlloc)(void*) )
+{
+  if(!deAlloc) deAlloc = free;
+
+  if( l )
+  {
+    char ** list = *l;
+
+    if(list)
+    {
+      size_t i;
+      for(i = 0; (int)i < size; ++i)
+        if((list)[i])
+          deAlloc( (list)[i] );
+      deAlloc( list );
+      *l = NULL;
+    }
+  }
+}
+#include "oyjl_version.h"
+int            oyjlVersion           ( int                 type OYJL_UNUSED )
+{
+  return OYJL_VERSION;
+}
+#define WARNc_S(...) oyjlMessage_p( oyjlMSG_ERROR, 0, __VA_ARGS__ )
+#include <sys/stat.h> /* stat() */
+#include <errno.h>
+int oyjlIsFileFull_ (const char* fullFileName, const char * read_mode)
+{
+  struct stat status;
+  int r = 0;
+  const char* name = fullFileName;
+
+  memset(&status,0,sizeof(struct stat));
+  if(name && name[0])
+    r = stat(name, &status);
+
+  if(r != 0 && *oyjl_debug > 1)
+  switch (errno)
+  {
+    case EACCES:       WARNc_S("Permission denied: %s", name); break;
+    case EIO:          WARNc_S("EIO : %s", name); break;
+    case ENAMETOOLONG: WARNc_S("ENAMETOOLONG : %s", name); break;
+    case ENOENT:       WARNc_S("A component of the name/file_name does not exist, or the file_name is an empty string: \"%s\"", name); break;
+    case ENOTDIR:      WARNc_S("ENOTDIR : %s", name); break;
+    case ELOOP:        WARNc_S("Too many symbolic links encountered while traversing the name: %s", name); break;
+    case EOVERFLOW:    WARNc_S("EOVERFLOW : %s", name); break;
+    default:           WARNc_S("%s : %s", strerror(errno), name); break;
+  }
+
+  r = !r &&
+       (   ((status.st_mode & S_IFMT) & S_IFREG)
+        || ((status.st_mode & S_IFMT) & S_IFLNK)
+                                                );
+
+  if (r)
+  {
+    FILE* fp = fopen (name, read_mode);
+    if (!fp) {
+      oyjlMessage_p( oyjlMSG_INFO, 0, "not existent: %s", name );
+      r = 0;
+    } else {
+      fclose (fp);
+    }
+  }
+
+  return r;
+}
+#define OyjlToString2_M(t) OyjlToString_M(t)
+#define OyjlToString_M(t) #t
+int oyjlInitLanguageDebug            ( const char        * project_name,
+                                       const char        * env_var_debug,
+                                       int               * debug_variable,
+                                       int                 use_gettext,
+                                       const char        * env_var_locdir,
+                                       const char        * default_locdir,
+                                       const char        * loc_domain,
+                                       oyjlMessage_f       msg )
+{
+  int error = -1;
+
+  if(!msg) msg = oyjlMessage_p;
+
+  if(getenv(env_var_debug))
+  {
+    *debug_variable = atoi(getenv(env_var_debug));
+    if(*debug_variable)
+    {
+      int v = oyjlVersion(0);
+      if(*debug_variable)
+        msg( oyjlMSG_INFO, 0, "%s (Oyjl compile v: %s runtime v: %d)", project_name, OYJL_VERSION_NAME, v );
+    }
+  }
+
+#ifdef OYJL_USE_GETTEXT
+  {
+    if( use_gettext )
+    {
+      char * var = NULL;
+      const char * environment_locale_dir = NULL,
+                 * locpath = NULL,
+                 * path = NULL,
+                 * domain_path = default_locdir;
+
+      if(getenv(env_var_locdir) && strlen(getenv(env_var_locdir)))
+      {
+        environment_locale_dir = domain_path = strdup(getenv(env_var_locdir));
+        if(*debug_variable)
+          msg( oyjlMSG_INFO, 0,"found environment variable: %s=%s", env_var_locdir, domain_path );
+      } else
+        if(environment_locale_dir == NULL && getenv("LOCPATH") && strlen(getenv("LOCPATH")))
+      {
+        domain_path = NULL;
+        locpath = getenv("LOCPATH");
+        if(*debug_variable)
+          msg( oyjlMSG_INFO, 0,"found environment variable: LOCPATH=%s", locpath );
+      } else
+        if(*debug_variable)
+        msg( oyjlMSG_INFO, 0,"no %s or LOCPATH environment variable found; using default path: %s", env_var_locdir, domain_path );
+
+      if(domain_path || locpath)
+      {
+        oyjlStringAdd( &var, 0,0, "NLSPATH=");
+        oyjlStringAdd( &var, 0,0, domain_path ? domain_path : locpath);
+      }
+      if(var)
+        putenv(var); /* Solaris */
+
+      /* LOCPATH appears to be ignored by bindtextdomain("domain", NULL),
+       * so it is set here to bindtextdomain(). */
+      path = domain_path ? domain_path : locpath;
+# ifdef OYJL_HAVE_LIBINTL_H
+      bindtextdomain( loc_domain, path );
+#endif
+      if(*debug_variable)
+      {\
+        char * fn = NULL;
+        int stat = -1;
+        const char * gettext_call = OyjlToString2_M(_());
+
+        if(path)
+          oyjlStringAdd( &fn, 0,0, "%s/de/LC_MESSAGES/%s.mo", path ? path : "", loc_domain);
+        if(fn)
+          stat = oyjlIsFileFull_( fn, "r" );
+        msg( oyjlMSG_INFO, 0,"bindtextdomain(\"%s\") to %s\"%s\" %s for %s", loc_domain, locpath?"effectively ":"", path ? path : "", (stat > 0)?"Looks good":"Might fail", gettext_call );
+        if(fn) free(fn);
+      }
+    }
+  }
+#endif /* OYJL_USE_GETTEXT */
+
+  return error;
+}
+#endif /* OYJL_INTERNAL */
+
+#ifdef OYJL_HAVE_LANGINFO_H
+#include <langinfo.h> /* nl_langinfo() */
+#endif
 
 /** \addtogroup oyjl_args Options Handling
  *  @brief   Structured Options and Arguments for many aspects on command line and more
@@ -210,6 +681,7 @@ void oyjlOptionChoice_Release     ( oyjlOptionChoice_s**choices )
   free(*choices);
 }
 
+#ifndef OYJL_CTEND
 /* true color codes */
 #define OYJL_RED_TC "\033[38;2;240;0;0m"
 #define OYJL_GREEN_TC "\033[38;2;0;250;100m"
@@ -231,6 +703,7 @@ typedef enum {
   oyjlITALIC,
   oyjlUNDERLINE
 } oyjlCOLORTERM_e;
+#endif
 static const char * oyjlTermColor( oyjlCOLORTERM_e rgb, const char * text) {
   int len = strlen(text);
   static char t[256];
@@ -362,10 +835,11 @@ const char * oyjlOption_PrintArg     ( oyjlOption_s      * o,
   return text;
 }
 
-oyjlOptionChoice_s oyjl_X_choices[] = {{"json", "", "", ""},
-                                    {"json+command", "", "", ""},
+oyjlOptionChoice_s oyjl_X_choices[] = {
                                     {"man", "", "", ""},
                                     {"markdown", "", "", ""},
+                                    {"json", "", "", ""},
+                                    {"json+command", "", "", ""},
                                     {"export", "", "", ""},
                                     {"","","",""}};
 void oyjlOptions_EnrichInbuild( oyjlOption_s * o )
@@ -376,25 +850,35 @@ void oyjlOptions_EnrichInbuild( oyjlOption_s * o )
   {
     if(o->value_type == oyjlOPTIONTYPE_CHOICE && o->values.choices.list == NULL)
     {
-      oyjl_X_choices[0].name = _("Json");
-      oyjl_X_choices[0].description = _("GUI");
-      oyjl_X_choices[0].help = _("Get a Oyjl Json UI declaration");
-      oyjl_X_choices[1].name = _("Json + Command");
-      oyjl_X_choices[1].description = _("GUI + Command");
-      oyjl_X_choices[1].help = _("Get Oyjl Json UI declaration incuding command");
-      oyjl_X_choices[2].name = _("Man");
-      oyjl_X_choices[2].description = _("Unix Man page");
-      oyjl_X_choices[2].help = _("Get a unix man page");
-      oyjl_X_choices[3].name = _("Markdown");
-      oyjl_X_choices[3].description = _("Formated text");
-      oyjl_X_choices[3].help = _("Get formated text");
+      oyjl_X_choices[0].name = _("Man");
+      oyjl_X_choices[0].description = _("Unix Man page");
+      oyjl_X_choices[0].help = _("Get a unix man page");
+      oyjl_X_choices[1].name = _("Markdown");
+      oyjl_X_choices[1].description = _("Formated text");
+      oyjl_X_choices[1].help = _("Get formated text");
+#if defined(OYJL_INTERNAL)
+      oyjl_X_choices[2].name = _("Json");
+      oyjl_X_choices[2].description = _("GUI");
+      oyjl_X_choices[2].help = _("Get a Oyjl Json UI declaration");
+      oyjl_X_choices[3].name = _("Json + Command");
+      oyjl_X_choices[3].description = _("GUI + Command");
+      oyjl_X_choices[3].help = _("Get Oyjl Json UI declaration incuding command");
       oyjl_X_choices[4].name = _("Export");
       oyjl_X_choices[4].description = _("All available data");
       oyjl_X_choices[4].help = _("Get UI data for developers");
+#else
+      oyjl_X_choices[2].nick = "";
+      oyjl_X_choices[3].nick = "";
+      oyjl_X_choices[4].nick = "";
+#endif
       o->values.choices.list = oyjl_X_choices;
       if(o->value_name == NULL)
       {
+#if defined(OYJL_INTERNAL)
         o->value_name = "json|json+command|man|markdown";
+#else
+        o->value_name = "man|markdown";
+#endif
         if(o->name == NULL)
         {
           o->name = _("export");
@@ -810,49 +1294,6 @@ oyjlOPTIONSTATE_e oyjlOptions_GetResult (
   return state;
 }
 
-/** @brief    Convert the parsed content to JSON
- *  @memberof oyjlOptions_s
- *
- *  @version Oyjl: 1.0.0
- *  @date    2018/08/14
- *  @since   2018/08/14 (OpenICC: 0.1.1)
- */
-char * oyjlOptions_ResultsToJson  ( oyjlOptions_s  * opts )
-{
-  char * args = NULL,
-       * rjson = NULL;
-  char ** results = opts->private_data;
-  oyjl_val root, value;
-  int i,n;
-
-  if(!results)
-  {
-    if(oyjlOptions_Parse( opts ))
-      return NULL;
-
-    results = opts->private_data;
-    if(!results)
-      return NULL;
-  }
-
-  args = results[0];
-  n = strlen( args );
-  root = oyjlTreeNew( "" );
-  for(i = 0; i < n; ++i)
-  {
-    char a[4] = {0,0,0,0};
-    a[0] = args[i];
-    value = oyjlTreeGetValue( root, OYJL_CREATE_NEW, a );
-    oyjlValueSetString( value, results[i+1] );
-  }
-
-  i = 0;
-  oyjlTreeToJson( root, &i, &rjson );
-  oyjlTreeFree( root );
-
-  return rjson;
-}
-
 /** @brief    Convert the parsed content to a text list
  *  @memberof oyjlOptions_s
  *
@@ -1052,7 +1493,6 @@ static const char * oyjlOptions_PrintHelpSynopsis (
 
 static oyjlOptionChoice_s ** oyjl_get_choices_list_ = NULL;
 static int oyjl_get_choices_list_selected_[256];
-static
 oyjlOptionChoice_s * oyjlOption_GetChoices_ (
                                        oyjlOption_s      * o,
                                        int               * selected,
@@ -1479,12 +1919,14 @@ oyjlUi_s *  oyjlUi_Create            ( int                 argc,
   {
     if(status)
       *status |= oyjlUI_STATE_EXPORT;
+#if defined(OYJL_INTERNAL)
     if(strcmp(export, "json") == 0)
     {
       puts( oyjlUi_ToJson( ui, 0 ) );
       oyjlUi_Release( &ui);
       return NULL;
     }
+#endif
     if(strcmp(export, "man") == 0)
     {
       puts( oyjlUi_ToMan( ui, 0 ) );
@@ -1497,12 +1939,14 @@ oyjlUi_s *  oyjlUi_Create            ( int                 argc,
       oyjlUi_Release( &ui);
       return NULL;
     }
+#if defined(OYJL_INTERNAL)
     if(strcmp(export, "export") == 0)
     {
       puts( oyjlUi_ExportToJson( ui, 0 ) );
       oyjlUi_Release( &ui);
       return NULL;
     }
+#endif
   }
   /* done with options handling */
 
@@ -1572,425 +2016,6 @@ oyjlUiHeaderSection_s * oyjlUi_GetHeaderSection (
     if( strcmp(ui->sections[i].nick, nick) == 0 )
       section = &ui->sections[i];
   return section;
-}
-
-#define CASE_RETURN_ENUM( text_ ) case text_: return #text_;
-static const char * oyjlOPTIONTYPE_eToString ( oyjlOPTIONTYPE_e e )
-{
-  switch( e )
-  {
-    CASE_RETURN_ENUM(oyjlOPTIONTYPE_START)
-    CASE_RETURN_ENUM(oyjlOPTIONTYPE_CHOICE)
-    CASE_RETURN_ENUM(oyjlOPTIONTYPE_FUNCTION)
-    CASE_RETURN_ENUM(oyjlOPTIONTYPE_DOUBLE)
-    CASE_RETURN_ENUM(oyjlOPTIONTYPE_NONE)
-    CASE_RETURN_ENUM(oyjlOPTIONTYPE_END)
-  }
-  return NULL;
-}
-static const char * oyjlVARIABLE_eToString ( oyjlVARIABLE_e e )
-{
-  switch( e )
-  {
-    CASE_RETURN_ENUM(oyjlNONE)
-    CASE_RETURN_ENUM(oyjlSTRING)
-    CASE_RETURN_ENUM(oyjlDOUBLE)
-    CASE_RETURN_ENUM(oyjlINT)
-  }
-  return NULL;
-}
-
-#define OYJL_REG "org/freedesktop/oyjl"
-
-/** @brief    Return a JSON dump
- *  @memberof oyjlUi_s
- *
- *  The returned JSON is a complete dump of all oyjlUi_s data.
- *
- *  @version Oyjl: 1.0.0
- *  @date    2019/06/16
- *  @since   2019/06/16 (Oyjl: 1.0.0)
- */
-char *             oyjlUi_ExportToJson(oyjlUi_s          * ui,
-                                       int                 flags OYJL_UNUSED )
-{
-  char * t = NULL;
-  oyjl_val root;
-  int i,j,n,ng;
-
-  if(!ui) return t;
-
-  root = oyjlTreeNew( "" );
-  oyjlTreeSetStringF(   root, OYJL_CREATE_NEW, "1", OYJL_REG "/ui/oyjl_args_api_version" );
-  oyjlTreeSetStringF(   root, OYJL_CREATE_NEW, "This is a dump of the oyjlUi_s data structure", OYJL_REG "/ui/comment" );
-  oyjlTreeSetStringF(   root, OYJL_CREATE_NEW, ui->type, OYJL_REG "/ui/type" );
-  if(ui->app_type && ui->app_type[0])
-    oyjlTreeSetStringF( root, OYJL_CREATE_NEW, ui->app_type, OYJL_REG "/ui/app_type" );
-  oyjlTreeSetStringF(   root, OYJL_CREATE_NEW, ui->nick, OYJL_REG "/ui/nick" );
-  oyjlTreeSetStringF(   root, OYJL_CREATE_NEW, ui->name, OYJL_REG "/ui/name" );
-  oyjlTreeSetStringF(   root, OYJL_CREATE_NEW, ui->description, OYJL_REG "/ui/description" );
-  if(ui->logo)
-    oyjlTreeSetStringF( root, OYJL_CREATE_NEW, ui->logo, OYJL_REG "/ui/logo" );
-
-  oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "oyjlHeaderSection_s", OYJL_REG "/ui/header/%s", "comment" );
-  n = oyjlUi_CountHeaderSections( ui );
-  for(i = 0; i < n; ++i)
-  {
-    oyjlUiHeaderSection_s * s = &ui->sections[i];
-    oyjlTreeSetStringF( root, OYJL_CREATE_NEW, s->type, OYJL_REG "/ui/header/sections/[%d]/%s", i, "type" );
-    oyjlTreeSetStringF( root, OYJL_CREATE_NEW, s->nick, OYJL_REG "/ui/header/sections/[%d]/%s", i, "nick" );
-    if(s->label)
-      oyjlTreeSetStringF(root,OYJL_CREATE_NEW, s->label, OYJL_REG "/ui/header/sections/[%d]/%s", i, "label" );
-    if(s->name)
-      oyjlTreeSetStringF(root,OYJL_CREATE_NEW, s->name, OYJL_REG "/ui/header/sections/[%d]/%s", i, "name" );
-    if(s->description)
-      oyjlTreeSetStringF(root,OYJL_CREATE_NEW, s->description, OYJL_REG "/ui/header/sections/[%d]/%s", i, "description" );
-  }
-
-  oyjlTreeSetStringF( root, OYJL_CREATE_NEW,   ui->opts->type, OYJL_REG "/ui/options/type" );
-  oyjlTreeSetStringF( root, OYJL_CREATE_NEW,   "oyjlOptions_s", OYJL_REG "/ui/options/comment" );
-  if(ui->opts->user_data)
-    oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "1", OYJL_REG "/ui/options/user_data" );
-  int nopts = oyjlOptions_Count( ui->opts );
-  for(i = 0; i < nopts; ++i)
-  {
-    char oo[8];
-    oyjlOption_s * o = &ui->opts->array[i];
-    sprintf(oo, "%c", o->o);
-    oyjlTreeSetStringF( root, OYJL_CREATE_NEW, o->type, OYJL_REG "/ui/options/array/[%d]/%s", i, "type" );
-    oyjlTreeSetStringF( root, OYJL_CREATE_NEW, oo, OYJL_REG "/ui/options/array/[%d]/%s", i, "o" );
-    oyjlTreeSetStringF( root, OYJL_CREATE_NEW, o->option, OYJL_REG "/ui/options/array/[%d]/%s", i, "option" );
-    oyjlTreeSetStringF( root, OYJL_CREATE_NEW, o->key, OYJL_REG "/ui/options/array/[%d]/%s", i, "key" );
-    oyjlTreeSetStringF( root, OYJL_CREATE_NEW, o->name, OYJL_REG "/ui/options/array/[%d]/%s", i, "name" );
-    oyjlTreeSetStringF( root, OYJL_CREATE_NEW, o->description, OYJL_REG "/ui/options/array/[%d]/%s", i, "description" );
-    oyjlTreeSetStringF( root, OYJL_CREATE_NEW, o->help, OYJL_REG "/ui/options/array/[%d]/%s", i, "help" );
-    oyjlTreeSetStringF( root, OYJL_CREATE_NEW, o->value_name, OYJL_REG "/ui/options/array/[%d]/%s", i, "value_name" );
-    oyjlTreeSetStringF( root, OYJL_CREATE_NEW, oyjlOPTIONTYPE_eToString(o->value_type), OYJL_REG "/ui/options/array/[%d]/%s", i, "value_type" );
-    switch(o->value_type)
-    {
-      case oyjlOPTIONTYPE_CHOICE:
-        oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "oyjlOptionChoice_s * list", OYJL_REG "/ui/options/array/[%d]/values/choices/%s", i, "comment" );
-        n = oyjlOptionChoice_Count( o->values.choices.list );
-        if(n)
-          for(j = 0; j < n; ++j)
-          {
-            oyjlOptionChoice_s * c = &o->values.choices.list[j];
-            oyjlTreeSetStringF( root, OYJL_CREATE_NEW, c->nick, OYJL_REG "/ui/options/array/[%d]/values/choices/list/[%d]/%s", i, j, "nick" );
-            oyjlTreeSetStringF( root, OYJL_CREATE_NEW, c->name, OYJL_REG "/ui/options/array/[%d]/values/choices/list/[%d]/%s", i, j, "name" );
-            oyjlTreeSetStringF( root, OYJL_CREATE_NEW, c->description, OYJL_REG "/ui/options/array/[%d]/values/choices/list/[%d]/%s", i, j, "description" );
-            oyjlTreeSetStringF( root, OYJL_CREATE_NEW, c->help, OYJL_REG "/ui/options/array/[%d]/values/choices/list/[%d]/%s", i, j, "help" );
-          }
-        else
-          oyjlTreeSetStringF( root, OYJL_CREATE_NEW, NULL, OYJL_REG "/ui/options/array/[%d]/values/choices/list", i );
-        oyjlTreeSetDoubleF( root, OYJL_CREATE_NEW, o->values.choices.selected, OYJL_REG "/ui/options/array/[%d]/values/choices/%s", i, "selected" );
-        break;
-      case oyjlOPTIONTYPE_FUNCTION:
-        oyjlTreeSetStringF( root, OYJL_CREATE_NEW, o->values.getChoices ? "getChoices":NULL, OYJL_REG "/ui/options/array/[%d]/values/%s", i, "getChoices" );
-        break;
-      case oyjlOPTIONTYPE_DOUBLE:
-        oyjlTreeSetDoubleF( root, OYJL_CREATE_NEW, o->values.dbl.d, OYJL_REG "/ui/options/array/[%d]/values/dbl/%s", i, "d" );
-        oyjlTreeSetDoubleF( root, OYJL_CREATE_NEW, o->values.dbl.start, OYJL_REG "/ui/options/array/[%d]/values/dbl/%s", i, "start" );
-        oyjlTreeSetDoubleF( root, OYJL_CREATE_NEW, o->values.dbl.end, OYJL_REG "/ui/options/array/[%d]/values/dbl/%s", i, "end" );
-        oyjlTreeSetDoubleF( root, OYJL_CREATE_NEW, o->values.dbl.tick, OYJL_REG "/ui/options/array/[%d]/values/dbl/%s", i, "tick" );
-        break;
-      case oyjlOPTIONTYPE_NONE:
-        oyjlTreeSetStringF( root, OYJL_CREATE_NEW, NULL, OYJL_REG "/ui/options/array/[%d]/%s", i, "values" );
-        break;
-      case oyjlOPTIONTYPE_START:
-      case oyjlOPTIONTYPE_END:
-        break;
-    }
-    oyjlTreeSetStringF( root, OYJL_CREATE_NEW, oyjlVARIABLE_eToString(o->variable_type), OYJL_REG "/ui/options/array/[%d]/%s", i, "variable_type" );
-    if(o->variable_type != oyjlNONE)
-      oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "dummy", OYJL_REG "/ui/options/array/[%d]/%s", i, "variable_name" );
-  }
-
-  ng = oyjlOptions_CountGroups( ui->opts );
-  for(i = 0; i < ng; ++i)
-  {
-    oyjlOptionGroup_s * g = &ui->opts->groups[i];
-    oyjlTreeSetStringF( root, OYJL_CREATE_NEW, g->type, OYJL_REG "/ui/options/groups/[%d]/%s", i, "type" );
-    oyjlTreeSetStringF( root, OYJL_CREATE_NEW, g->name, OYJL_REG "/ui/options/groups/[%d]/%s", i, "name" );
-    oyjlTreeSetStringF( root, OYJL_CREATE_NEW, g->description, OYJL_REG "/ui/options/groups/[%d]/%s", i, "description" );
-    oyjlTreeSetStringF( root, OYJL_CREATE_NEW, g->help, OYJL_REG "/ui/options/groups/[%d]/%s", i, "help" );
-    oyjlTreeSetStringF( root, OYJL_CREATE_NEW, g->mandatory, OYJL_REG "/ui/options/groups/[%d]/%s", i, "mandatory" );
-    oyjlTreeSetStringF( root, OYJL_CREATE_NEW, g->optional, OYJL_REG "/ui/options/groups/[%d]/%s", i, "optional" );
-    oyjlTreeSetStringF( root, OYJL_CREATE_NEW, g->detail, OYJL_REG "/ui/options/groups/[%d]/%s", i, "detail" );
-  }
-
-  i = 0;
-  oyjlTreeToJson( root, &i, &t );
-  oyjlTreeFree( root );
-
-  return t;
-}
-
-/** @brief    Return a JSON representation from options
- *  @memberof oyjlUi_s
- *
- *  The JSON data shall be useable with oyjl-args-qml options renderer.
- *
- *  @version Oyjl: 1.0.0
- *  @date    2019/05/30
- *  @since   2018/08/14 (OpenICC: 0.1.1)
- */
-char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
-                                       int                 flags OYJL_UNUSED )
-{
-  char * t = NULL, num[64];
-  oyjl_val root, key;
-  int i,j,n,ng;
-
-  if(!ui) return t;
-
-  root = oyjlTreeNew( "" );
-  oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "1", OYJL_REG "/modules/[0]/oyjl_module_api_version" );
-  if(ui->app_type && ui->app_type[0])
-  {
-    oyjlTreeSetStringF( root, OYJL_CREATE_NEW, ui->app_type, OYJL_REG "/modules/[0]/type" );
-    if(strcmp( ui->app_type, "tool" ) == 0)
-      oyjlTreeSetStringF( root, OYJL_CREATE_NEW, _("Tool"), OYJL_REG "/modules/[0]/label" );
-    else if(strcmp( ui->app_type, "module" ) == 0)
-      oyjlTreeSetStringF( root, OYJL_CREATE_NEW, _("Module"), OYJL_REG "/modules/[0]/label" );
-  }
-  oyjlTreeSetStringF( root, OYJL_CREATE_NEW, ui->nick, OYJL_REG "/modules/[0]/nick" );
-  oyjlTreeSetStringF( root, OYJL_CREATE_NEW, ui->name, OYJL_REG "/modules/[0]/name" );
-  oyjlTreeSetStringF( root, OYJL_CREATE_NEW, ui->description, OYJL_REG "/modules/[0]/description" );
-  if(ui->logo)
-    oyjlTreeSetStringF( root, OYJL_CREATE_NEW, ui->logo, OYJL_REG "/modules/[0]/logo" );
-
-  n = oyjlUi_CountHeaderSections( ui );
-  for(i = 0; i < n; ++i)
-  {
-    oyjlUiHeaderSection_s * s = &ui->sections[i];
-    key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/information/[%d]/%s", i, "type" );
-    oyjlValueSetString( key, s->nick );
-    key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/information/[%d]/%s", i, "label" );
-    if(s->label)
-      oyjlValueSetString( key, s->label );
-    else
-    {
-      if(strcmp(s->nick, "manufacturer") == 0) oyjlValueSetString( key, _("Manufacturer") );
-      else if(strcmp(s->nick, "copyright") == 0) oyjlValueSetString( key, _("Copyright") );
-      else if(strcmp(s->nick, "license") == 0) oyjlValueSetString( key, _("License") );
-      else if(strcmp(s->nick, "url") == 0) oyjlValueSetString( key, _("Url") );
-      else if(strcmp(s->nick, "support") == 0) oyjlValueSetString( key, _("Support") );
-      else if(strcmp(s->nick, "download") == 0) oyjlValueSetString( key, _("Download") );
-      else if(strcmp(s->nick, "sources") == 0) oyjlValueSetString( key, _("Sources") );
-      else if(strcmp(s->nick, "development") == 0) oyjlValueSetString( key, _("Development") );
-      else if(strcmp(s->nick, "oyjl_module_author") == 0) oyjlValueSetString( key, _("Oyjl Module Author") );
-      else if(strcmp(s->nick, "documentation") == 0) oyjlValueSetString( key, _("Documentation") );
-      else if(strcmp(s->nick, "date") == 0) oyjlValueSetString( key, _("Date") );
-      else if(strcmp(s->nick, "version") == 0) oyjlValueSetString( key, _("Version") );
-      else oyjlValueSetString( key, _(s->nick) );
-    }
-    key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/information/[%d]/%s", i, "name" );
-    oyjlValueSetString( key, s->name );
-    if(s->description)
-    {
-      key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/information/[%d]/%s", i, "description" );
-      oyjlValueSetString( key, s->description );
-    }
-  }
-
-  ng = oyjlOptions_CountGroups( ui->opts );
-  for(i = 0; i < ng; ++i)
-  {
-    oyjlOptionGroup_s * g = &ui->opts->groups[i];
-    oyjlOptions_s * opts = ui->opts;
-
-    if(!(g->detail && g->detail[0]))
-      continue;
-
-    key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/%s", i, "name" );
-    oyjlValueSetString( key, g->name );
-    key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/%s", i, "description" );
-    oyjlValueSetString( key, g->description );
-    if(g->help)
-    {
-      key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/%s", i, "help" );
-      oyjlValueSetString( key, g->help );
-        fprintf(stderr, "found help: %s\n", g->help);
-    }
-
-    key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/%s", i, "mandatory" );
-    oyjlValueSetString( key, g->mandatory );
-    key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/%s", i, "optional" );
-    oyjlValueSetString( key, g->optional );
-    {
-      char ** results = oyjlOptions_ResultsToList( opts, 0, &n );
-      char * changed = NULL;
-      for(j = 0; j < n; ++j)
-        if(results[j][0] != 'X')
-          oyjlStringAdd( &changed, 0,0, "%c", results[j][0] );
-      if(changed)
-      {
-        key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/%s", i, "changed" );
-        oyjlValueSetString( key, changed );
-      }
-      if(changed) free(changed);
-      oyjlStringListRelease( &results, n, free );
-    }
-    int d = g->detail ? strlen(g->detail) : 0;
-    for(j = 0; j < d; ++j)
-    {
-      char oc = g->detail[j];
-      oyjlOption_s * o = oyjlOptions_GetOption( opts, oc );
-      key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "key" );
-      if(!o->key)
-        sprintf(num, "%c", o->o);
-      oyjlValueSetString( key, o->key?o->key:num );
-      key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "name" );
-      oyjlValueSetString( key, o->name );
-      key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "description" );
-      oyjlValueSetString( key, o->description );
-      if(o->help)
-      {
-        key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "help" );
-        oyjlValueSetString( key, o->help );
-      }
-
-      switch(o->value_type)
-      {
-        case oyjlOPTIONTYPE_CHOICE:
-          {
-            int l = 0, pos = 0;
-            if(o->flags & OYJL_OPTION_FLAG_EDITABLE)
-            {
-              int count = 0;
-              char ** results = oyjlOptions_ResultsToList( opts, o->o, &count );
-              for( l = 0; l < count; ++l )
-              {
-                key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/choices/[%d]/%s", i,j,l, "nick" );
-                oyjlValueSetString( key, results[l] );
-                key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/choices/[%d]/%s", i,j,l, "name" );
-                oyjlValueSetString( key, results[l] );
-              }
-              oyjlStringListRelease( &results, count, free );
-              pos = l;
-            }
-
-            if(o->values.choices.list)
-            {
-              int n = 0;
-              key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "default" );
-              sprintf( num, "%d", o->values.choices.selected );
-              oyjlValueSetString( key, num );
-              while(o->values.choices.list[n].nick && o->values.choices.list[n].nick[0] != '\000')
-                ++n;
-              for(l = pos; l < n+pos; ++l)
-              {
-                key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/choices/[%d]/%s", i,j,l, "nick" );
-                oyjlValueSetString( key, o->values.choices.list[l-pos].nick );
-                key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/choices/[%d]/%s", i,j,l, "name" );
-                oyjlValueSetString( key, o->values.choices.list[l-pos].name );
-              }
-            } else
-              if(!(o->flags & OYJL_OPTION_FLAG_EDITABLE))
-              {
-                oyjlTreeFree( root );
-                if(t) { free(t); t = NULL; }
-                oyjlStringAdd( &t, malloc, free, "Option '%c' has no choices but is not editable (flag&OYJL_OPTION_FLAG_EDITABLE)", o->o );
-                return t;
-              }
-            key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "type" );
-            if(o->flags & OYJL_OPTION_FLAG_EDITABLE)
-              oyjlValueSetString( key, "string" );
-            else
-              oyjlValueSetString( key, "choice" );
-          }
-          break;
-        case oyjlOPTIONTYPE_FUNCTION:
-          {
-            int n = 0,l, selected, pos = 0;
-            oyjlOptionChoice_s * list = oyjlOption_GetChoices_(o, &selected, opts );
-            if(list)
-              while(list[n].nick && list[n].nick[0] != '\000')
-                ++n;
-
-            if(o->flags & OYJL_OPTION_FLAG_EDITABLE)
-            {
-              int count = 0;
-              char ** results = oyjlOptions_ResultsToList( opts, o->o, &count );
-              for( l = 0; l < count; ++l )
-              {
-                key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/choices/[%d]/%s", i,j,l, "nick" );
-                oyjlValueSetString( key, results[l] );
-                key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/choices/[%d]/%s", i,j,l, "name" );
-                oyjlValueSetString( key, results[l] );
-              }
-              oyjlStringListRelease( &results, count, free );
-              pos = l;
-            }
-
-            if(0 <= selected && selected < n && strlen(list[selected].nick))
-            {
-              key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "default" );
-              oyjlValueSetString( key, list[selected].nick );
-            }
-            for(l = pos; l < n+pos; ++l)
-            {
-              key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/choices/[%d]/%s", i,j,l, "nick" );
-              oyjlValueSetString( key, list[l-pos].nick );
-              key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/choices/[%d]/%s", i,j,l, "name" );
-              oyjlValueSetString( key, list[l-pos].name );
-            }
-            /* not possible, as the result of oyjlOption_GetChoices_() is cached - oyjlOptionChoice_Release( &list ); */
-          }
-          key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "type" );
-          if(o->flags & OYJL_OPTION_FLAG_EDITABLE)
-            oyjlValueSetString( key, "string" );
-          else
-            oyjlValueSetString( key, "choice" );
-          break;
-        case oyjlOPTIONTYPE_DOUBLE:
-          key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "default" );
-          {
-              int count = 0;
-              char ** results = oyjlOptions_ResultsToList( opts, o->o, &count );
-              if( count )
-                sprintf( num, "%s", results[0] );
-              else
-                sprintf( num, "%g", o->values.dbl.d );
-              oyjlValueSetString( key, num );
-              oyjlStringListRelease( &results, count, free );
-          }
-          key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "start" );
-          sprintf( num, "%g", o->values.dbl.start ); oyjlValueSetString( key, num );
-          key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "end" );
-          sprintf( num, "%g", o->values.dbl.end ); oyjlValueSetString( key, num );
-          key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "tick" );
-          sprintf( num, "%g", o->values.dbl.tick ); oyjlValueSetString( key, num );
-          key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "type" );
-          oyjlValueSetString( key, "double" );
-          break;
-        case oyjlOPTIONTYPE_NONE:
-          key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "default" );
-          oyjlValueSetString( key, "0" );
-          key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "type" );
-          oyjlValueSetString( key, "bool" );
-          {
-            int l; char t[12];
-            for(l = 0; l < 2; ++l)
-            {
-              sprintf(t, "%d", l);
-              key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/choices/[%d]/%s", i,j,l, "nick" );
-              oyjlValueSetString( key, t );
-              key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/choices/[%d]/%s", i,j,l, "name" );
-              oyjlValueSetString( key, l?_("Yes"):_("No") );
-            }
-          }
-          break;
-        case oyjlOPTIONTYPE_START: break;
-        case oyjlOPTIONTYPE_END: break;
-      }
-    }
-  }
-  i = 0;
-  oyjlTreeToJson( root, &i, &t );
-  oyjlTreeFree( root );
-
-  return t;
 }
 
 char *       oyjlStringToUpper       ( const char        * t )
