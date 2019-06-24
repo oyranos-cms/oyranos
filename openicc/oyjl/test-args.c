@@ -15,8 +15,8 @@
 #define TESTS_RUN \
   TEST_RUN( testArgs, "Options handling", 1 );
 
-#define OYJL_TEST_MAIN_SETUP  printf("\n    OyjlCore Test Program\n");
-#define OYJL_TEST_MAIN_FINISH printf("\n    OyjlCore Test Program finished\n\n");
+#define OYJL_TEST_MAIN_SETUP  printf("\n    Oyjl Args Test Program\n");
+#define OYJL_TEST_MAIN_FINISH printf("\n    Oyjl Args Test Program finished\n\n");
 #include "oyjl_test_main.h"
 #include "oyjl.h"
 #include "oyjl_version.h"

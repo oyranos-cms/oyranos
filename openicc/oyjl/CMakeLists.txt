@@ -370,9 +370,13 @@ IF( ENABLE_TESTS_${PROJECT_UP_NAME} )
         OYJL_LOCALEDIR=${CMAKE_BINARY_DIR}/locale ./oyjl-test-test
         DEPENDS oyjl-test-test
         COMMENT "Test header only test framework" VERBATIM )
+  ADD_CUSTOM_TARGET(check-args
+        OYJL_LOCALEDIR=${CMAKE_BINARY_DIR}/locale ./oyjl-test-args
+        DEPENDS oyjl-test-args check-test
+        COMMENT "Test header only test framework" VERBATIM )
   ADD_CUSTOM_TARGET(check-core
         OYJL_LOCALEDIR=${CMAKE_BINARY_DIR}/locale ./oyjl-test-core-static
-        DEPENDS oyjl-test-core-static check-test
+        DEPENDS oyjl-test-core-static check-args
         COMMENT "Test libOyjlCore" VERBATIM )
   ADD_CUSTOM_TARGET(check
         ./oyjl-test-static
