@@ -81,6 +81,9 @@ typedef enum {
 #define OYJL_GREEN_TC "\033[38;2;0;250;100m"
 #define OYJL_BLUE_TC "\033[38;2;0;150;255m"
 /* basic color codes */
+#define OYJL_BOLD "\033[1m"
+#define OYJL_ITALIC "\033[3m"
+#define OYJL_UNDERLINE "\033[4m"
 #define OYJL_RED_B "\033[0;31m"
 #define OYJL_GREEN_B "\033[0;32m"
 #define OYJL_BLUE_B "\033[0;34m"
@@ -89,7 +92,10 @@ typedef enum {
 typedef enum {
   oyjlRED,
   oyjlGREEN,
-  oyjlBLUE
+  oyjlBLUE,
+  oyjlBOLD,
+  oyjlITALIC,
+  oyjlUNDERLINE
 } oyjlCOLORTERM_e;
 const char * colorterm = NULL;
 static const char * oyjlTermColor_( oyjlCOLORTERM_e rgb, const char * text) {
@@ -104,6 +110,7 @@ static const char * oyjlTermColor_( oyjlCOLORTERM_e rgb, const char * text) {
       case oyjlRED: sprintf( t, "%s%s%s", truecolor ? OYJL_RED_TC : color ? OYJL_RED_B : "", text, OYJL_CTEND ); break;
       case oyjlGREEN: sprintf( t, "%s%s%s", truecolor ? OYJL_GREEN_TC : color ? OYJL_GREEN_B : "", text, OYJL_CTEND ); break;
       case oyjlBLUE: sprintf( t, "%s%s%s", truecolor ? OYJL_BLUE_TC : color ? OYJL_BLUE_B : "", text, OYJL_CTEND ); break;
+      default: sprintf( t, "%s", text ); break;
     }
     return t;
   } else
