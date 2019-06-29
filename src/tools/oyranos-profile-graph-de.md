@@ -89,10 +89,10 @@ Erzeuge aus einem ICC Profil eine Grafik mit seiner Sättigungslinie.
    * \-f svg		# SVG
 * \-h|\-\-help	Hilfe
 * \-X|\-\-export *json|json+command|man|markdown*	Exportiere formatierten Text: Hole Benutzerschnittstelle als Text
-   * \-X json		# Json
-   * \-X json+command		# Json + Kommando
    * \-X man		# Handbuch
    * \-X markdown		# Markdown
+   * \-X json		# Json
+   * \-X json+command		# Json + Kommando
    * \-X export		# Export
 * \-v|\-\-verbose	plaudernd
 

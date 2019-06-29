@@ -88,10 +88,10 @@ The Night white point mode shall allow to reduce influence of blue light during 
 * \-m|\-\-modes	Show white point modes
 * \-r|\-\-sunrise	Show local time, used geographical location, twilight height angles, sun rise and sun set times
 * \-X|\-\-export *json|json+command|man|markdown*	Export formated text: Get UI converted into text formats
-   * \-X json		# Json
-   * \-X json+command		# Json + Command
    * \-X man		# Man
    * \-X markdown		# Markdown
+   * \-X json		# Json
+   * \-X json+command		# Json + Command
    * \-X export		# Export
 * \-z|\-\-system\-wide	System wide DB setting
 * \-v|\-\-verbose	verbose

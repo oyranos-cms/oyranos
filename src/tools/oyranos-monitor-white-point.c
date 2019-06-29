@@ -374,8 +374,8 @@ int main( int argc , char** argv )
     {"oiwi", 0, 'u', "hour", NULL, "hour", "hour", NULL, NULL, oyjlOPTIONTYPE_DOUBLE, {.dbl.start = 0, .dbl.end = 48, .dbl.tick = 1, .dbl.d = 0}, oyjlDOUBLE, {.d=&hour_} },
     {"oiwi", 0, 'c', "check", NULL, "check", "check", NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&check} },
     /* blind options, useful only for man page generation */
-    {"oiwi", 0, '.', "man-environment_variables", NULL, "", "", NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)env_vars, sizeof(env_vars), 0 )}, oyjlNONE, {.i=NULL} },
-    {"oiwi", 0, ',', "man-examples", NULL, "", "", NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)examples, sizeof(examples), 0 )}, oyjlNONE, {.i=NULL} },
+    {"oiwi", 0, 'E', "man-environment_variables", NULL, "", "", NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)env_vars, sizeof(env_vars), 0 )}, oyjlNONE, {.i=NULL} },
+    {"oiwi", 0, 'A', "man-examples", NULL, "", "", NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)examples, sizeof(examples), 0 )}, oyjlNONE, {.i=NULL} },
     {"",0,0,0,0,0,0,0, NULL, oyjlOPTIONTYPE_END, {},0,{}}
   };
   opts->array = (oyjlOption_s*)oyjlStringAppendN( NULL, (const char*)oarray, sizeof(oarray), 0 );

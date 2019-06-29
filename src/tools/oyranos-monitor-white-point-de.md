@@ -88,10 +88,10 @@ Der Nachtweißpunkmodus soll den Einfluß von blauen Licht auf das menschliche H
 * \-m|\-\-modes	Zeige Weißpunktmodus
 * \-r|\-\-sunrise	Zeige lokale Zeit, benutzte geografische Position, Dämmerungswinkel, Sonnenauf\-und untergangszeiten
 * \-X|\-\-export *json|json+command|man|markdown*	Exportiere formatierten Text: Hole Benutzerschnittstelle als Text
-   * \-X json		# Json
-   * \-X json+command		# Json + Kommando
    * \-X man		# Handbuch
    * \-X markdown		# Markdown
+   * \-X json		# Json
+   * \-X json+command		# Json + Kommando
    * \-X export		# Export
 * \-z|\-\-system\-wide	Einstellung in der systemweiten DB
 * \-v|\-\-verbose	plaudernd

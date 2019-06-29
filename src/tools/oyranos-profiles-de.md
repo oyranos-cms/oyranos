@@ -57,10 +57,10 @@ Das Werkzeug kann installierte Profile und Suchpfade anzeigen. Es kann ein Profi
 
 * \-h|\-\-help	Hilfe
 * \-X|\-\-export *json|json+command|man|markdown*	Exportiere formatierten Text: Hole Benutzerschnittstelle als Text
-   * \-X json		# Json
-   * \-X json+command		# Json + Kommando
    * \-X man		# Handbuch
    * \-X markdown		# Markdown
+   * \-X json		# Json
+   * \-X json+command		# Json + Kommando
    * \-X export		# Export
 * \-r|\-\-no\-repair	Lasse Reparatur der Profil ID weg
 * \-v|\-\-verbose	plaudernd
