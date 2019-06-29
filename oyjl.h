@@ -550,7 +550,8 @@ typedef enum {
   oyjlOPTION_MISSING_VALUE,            /**< user error */
   oyjlOPTION_UNEXPECTED_VALUE,         /**< user error */
   oyjlOPTION_NOT_SUPPORTED,            /**< user error */
-  oyjlOPTION_DOUBLE_OCCURENCE          /**< user error; except '@' is specified */
+  oyjlOPTION_DOUBLE_OCCURENCE,         /**< user error; except '@' is specified */
+  oyjlOPTIONS_MISSING                  /**< user error; except '#' is specified */
 } oyjlOPTIONSTATE_e;
 oyjlOptions_s *    oyjlOptions_New   ( int                 argc,
                                        const char       ** argv );
@@ -624,6 +625,10 @@ char *             oyjlUi_ToMan      ( oyjlUi_s          * ui,
 char *             oyjlUi_ToMarkdown ( oyjlUi_s          * ui,
                                        int                 flags );
 char *             oyjlUi_ExportToJson(oyjlUi_s          * ui,
+                                       int                 flags );
+#define OYJL_OPTION_FLAG_EDITABLE      0x01 /**< @brief The oyjlOption_s choices are merely a hint. Let users fill other strings too. */
+#define OYJL_SOURCE_CODE_C             0x01 /**< @brief C programming language source code */
+char *             oyjlUiJsonToCode  ( oyjl_val            root,
                                        int                 flags );
 
 /** link with libOyjlArgsQml and use oyjl-args-qml renderer as library @see oyjlUi_ToJson() */
