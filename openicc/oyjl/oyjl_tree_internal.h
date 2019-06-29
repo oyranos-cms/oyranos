@@ -43,6 +43,12 @@ int oyjlIsDirFull_ (const char* name);
 int        oyjlTreePathsGetIndex     ( const char        * term,
                                        int               * index );
 
+typedef struct {
+  const char ** results; /* the vanilla args from main(argv[]) */
+  char * args; /* detected args */
+} oyjlOptsPrivate_s;
+
+
 #ifdef __cplusplus
 }
 #endif
