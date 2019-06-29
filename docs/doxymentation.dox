@@ -23,17 +23,21 @@
     Oyjl API provides a platformindependent C interface for JSON I/O, conversion to and from
     XML + YAML, string helpers, file reading, testing and argument handling.
 
+    The API's are quite independent. 
+
     @section api API Documentation
     The API of the @ref oyjl is declared in the oyjl.h header file.
-    - @ref oyjl_tree - JSON modeled C data structure with data I/O API
-    - @ref oyjl_core - Core API
-    - @ref oyjl_test - Test API
-    - @ref oyjl_args - Argument Handling API
+    - @ref oyjl_tree - JSON modeled C data structure with data I/O API: *libOyjlCore*, all parsers (JSON,YAML,XML) reside in *libOyjl*
+    - @ref oyjl_core - Core API: *libOyjlCore*
+    - @ref oyjl_test - Test API: header only implementation in *oyjl_test.h* and *oyjl_test_main.h*
+    - @ref oyjl_args - Argument Handling API: link to *libOyjlCore* or with slightly reduced functionality in the stand alone *oyjl_args.c* version
 
     @section tools Tools Documentation
     Oyjl comes with a few tools, which use the Oyjl API's.
     - oyjl - JSON manipulation
     - oyjl-translate - localisation helper tool
+    - oyjl-args - code generation tool
+    - oyjl-args-qml - interactive option renderer written in Qt's QML
 
     @subsection api_tutorial Programming Tutorial
     Frist you have to put a
