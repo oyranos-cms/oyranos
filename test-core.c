@@ -671,7 +671,7 @@ oyjlTESTRESULT_e testArgs()
   }
 
   text = oyjlUi_ExportToJson( ui, 0 );
-  if(text && strlen(text) == 6026)
+  if(text && strlen(text) == 6176)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlUi_ExportToJson()       %lu                 ", strlen(text) );
   } else
@@ -680,7 +680,6 @@ oyjlTESTRESULT_e testArgs()
   }
   if(verbose)
     fprintf( zout, "%s\n", text );
-  if(text) {free(text);} text = NULL;
 
   oyjlUi_Release( &ui);
   char * wrong = "test";
