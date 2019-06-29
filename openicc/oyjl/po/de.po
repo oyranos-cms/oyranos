@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2019-06-24 10:24+0200\n"
+"POT-Creation-Date: 2019-06-29 13:26+0200\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -19,15 +19,15 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: vim 6.0\n"
 
-#: oyjl_args.c:1882
+#: oyjl_args.c:1956
 msgid "... try with --help|-h option for usage text. give up"
 msgstr "... versuche bitte die --help|-h Option für einen Hilfetext. Gebe auf"
 
-#: oyjl_args.c:2265 oyjl_args.c:2438
+#: oyjl_args.c:2341 oyjl_args.c:2514
 msgid "AUTHOR"
 msgstr "AUTOR"
 
-#: test-args.c:87 test-args.c:145 test-core.c:481 test-core.c:547
+#: test-args.c:87 test-args.c:145 test-core.c:481 test-core.c:547 test.c:597
 msgid "Actual mode"
 msgstr "Aktueller Modus"
 
@@ -35,71 +35,80 @@ msgstr "Aktueller Modus"
 msgid "Add gettext translated keys to JSON:"
 msgstr "Füge mit gettext übersetzte Schlüssel to JSON hinzu:"
 
-#: oyjl_args.c:867
+#: oyjl_args.c:879
 msgid "All available data"
 msgstr "Alle verfügbarne Daten"
 
-#: test-args.c:86 test-core.c:480
+#: test-args.c:86 test-core.c:480 test.c:596
 msgid "Any arg mode"
 msgstr "Modus mit jedem Argument"
 
-#: oyjl_args.c:2275 oyjl_args.c:2448 oyjl_args.c:2450
+#: oyjl_args.c:2351 oyjl_args.c:2524 oyjl_args.c:2526
 msgid "BUGS"
 msgstr "FEHLER"
 
-#: oyjl_args.c:2269 oyjl_args.c:2442
+#: oyjl_args.c:2345 oyjl_args.c:2518
 msgid "COPYRIGHT"
 msgstr "KOPIERRECHT"
 
-#: test-args.c:76 test-core.c:470
+#: test-args.c:76 test-core.c:470 test.c:586
 msgid "Control Output"
 msgstr "Ausgabeneinstellungen"
+
+#. type,   flags, name,      description,          help, mandatory, optional, detail
+#: oyjl-args.c:56
+msgid "Convert"
+msgstr "Umwandlung"
 
 #: oyjl_translate.c:44
 msgid "Convert JSON to gettext ready C strings:"
 msgstr "Wandle JSON in gettext lesbare C Texte:"
 
-#: oyjl_args_tree.c:299
+#: oyjl-args.c:63
+msgid "Convert UI JSON to C code using libOyjl"
+msgstr "Wandele UI JSON nach C Quelltext mit libOyjl"
+
+#: oyjl_args_tree.c:722
 msgid "Copyright"
 msgstr "Kopierrecht"
 
-#: oyjl_args.c:2179 oyjl_args.c:2356
+#: oyjl_args.c:2255 oyjl_args.c:2432
 msgid "DESCRIPTION"
 msgstr "BESCHREIBUNG"
 
-#: oyjl_args_tree.c:308
+#: oyjl_args_tree.c:731
 msgid "Date"
 msgstr "Datum"
 
-#: oyjl_args.c:1572
+#: oyjl_args.c:1631
 msgid "Description"
 msgstr "Beschreibung"
 
-#: oyjl_args_tree.c:305
+#: oyjl_args_tree.c:728
 msgid "Development"
 msgstr "Entwicklung"
 
-#: oyjl_args_tree.c:307
+#: oyjl_args_tree.c:730
 msgid "Documentation"
 msgstr "Dokumente"
 
-#: oyjl_args.c:976
+#: oyjl_args.c:988
 msgid "Double occuring option"
 msgstr "Doppelte Option"
 
-#: oyjl_args_tree.c:303
+#: oyjl_args_tree.c:726
 msgid "Download"
 msgstr "Bezugsquelle"
 
-#: oyjl_args.c:2054
+#: oyjl_args.c:2130
 msgid "ENVIRONMENT VARIABLES"
 msgstr "UMGEBUNGSVARIABLEN"
 
-#: oyjl_args.c:2050
+#: oyjl_args.c:2126
 msgid "EXAMPLES"
 msgstr "BEISPIELE"
 
-#: oyjl_args.c:2052
+#: oyjl_args.c:2128
 msgid "EXIT-STATE"
 msgstr "EXIT-STATUS"
 
@@ -107,35 +116,37 @@ msgstr "EXIT-STATUS"
 msgid "Example"
 msgstr "Beispiel"
 
-#: oyjl_args.c:866
+#: oyjl_args.c:878
 msgid "Export"
 msgstr "Export"
 
-#: oyjl_args.c:887
+#: oyjl_args.c:899
 msgid "Export formated text"
 msgstr "Exportiere formatierten Text"
 
-#: test-args.c:74 test-args.c:75 test-core.c:468 test-core.c:469
+#: oyjl-args.c:46 test-args.c:74 test-args.c:75 test-core.c:468 test-core.c:469
+#: test.c:584 test.c:585
 msgid "FILENAME"
 msgstr "DATEINAME"
 
-#: oyjl_args.c:2058
+#: oyjl_args.c:2134
 msgid "FILES"
 msgstr "DATEIEN"
 
-#: oyjl_args.c:857
+#: oyjl_args.c:869
 msgid "Formated text"
 msgstr "Formatierter Text"
 
-#: oyjl_args.c:861
+#: oyjl_args.c:873
 msgid "GUI"
 msgstr "GUI"
 
-#: oyjl_args.c:864
+#: oyjl_args.c:876
 msgid "GUI + Command"
 msgstr "GUI + Kommando"
 
-#: test-args.c:88 test-args.c:146 test-core.c:482 test-core.c:548
+#: oyjl-args.c:57 test-args.c:88 test-args.c:146 test-core.c:482
+#: test-core.c:548 test.c:598
 msgid "General options"
 msgstr "Allgemeine Optionen"
 
@@ -143,35 +154,39 @@ msgstr "Allgemeine Optionen"
 msgid "General options:"
 msgstr "Allgemeine Optionen:"
 
-#: oyjl_args.c:865
+#: oyjl-args.c:56
+msgid "Generate source code"
+msgstr ""
+
+#: oyjl_args.c:877
 msgid "Get Oyjl Json UI declaration incuding command"
 msgstr "Hole Oyjl Json Benutzerschnittstelle mit Kommando"
 
-#: oyjl_args.c:889
+#: oyjl_args.c:901
 msgid "Get UI converted into text formats"
 msgstr "Hole Benutzerschnittstelle als Text"
 
-#: oyjl_args.c:868
+#: oyjl_args.c:880
 msgid "Get UI data for developers"
 msgstr "Erhalte Daten für Entwickler"
 
-#: oyjl_args.c:862
+#: oyjl_args.c:874
 msgid "Get a Oyjl Json UI declaration"
 msgstr "Hole Oyjl Json Benutzerschnittstelle"
 
-#: oyjl_args.c:855
+#: oyjl_args.c:867
 msgid "Get a unix man page"
 msgstr "Hole Unix Handbuchseite"
 
-#: oyjl_args.c:858
+#: oyjl_args.c:870
 msgid "Get formated text"
 msgstr "Hole formatierten Text"
 
-#: oyjl_args.c:2056
+#: oyjl_args.c:2132
 msgid "HISTORY"
 msgstr "GESCHICHTE"
 
-#: test-args.c:77 test-core.c:471
+#: oyjl-args.c:47 test-args.c:77 test-core.c:471 test.c:587
 msgid "Help"
 msgstr "Hilfe"
 
@@ -179,32 +194,37 @@ msgstr "Hilfe"
 msgid "JSON file"
 msgstr "JSON Datei"
 
-#: oyjl_args.c:860
+#: oyjl_args.c:872
 msgid "Json"
 msgstr "Json"
 
-#: oyjl_args.c:863
+#: oyjl_args.c:875
 msgid "Json + Command"
 msgstr "Json + Kommando"
 
-#: oyjl_args.c:2271 oyjl_args.c:2444 oyjl_args_tree.c:300
+#: oyjl-args.c:40
+msgid "June 26, 2019"
+msgstr ""
+
+#: oyjl_args.c:2347 oyjl_args.c:2520 oyjl_args_tree.c:723
 msgid "License"
 msgstr "Lizenz"
 
-#: oyjl_args.c:853
+#: oyjl_args.c:865
 msgid "Man"
 msgstr "Handbuch"
 
-#: oyjl_args_tree.c:298
+#: oyjl_args_tree.c:721
 msgid "Manufacturer"
 msgstr "Hersteller"
 
-#: oyjl_args.c:856
+#: oyjl_args.c:868
 msgid "Markdown"
 msgstr "Markdown"
 
 #. parsed and checked with -i option
-#: test-args.c:88 test-args.c:146 test-core.c:482 test-core.c:548
+#: oyjl-args.c:57 test-args.c:88 test-args.c:146 test-core.c:482
+#: test-core.c:548 test.c:598
 msgid "Misc"
 msgstr "Verschiedenes"
 
@@ -214,66 +234,71 @@ msgid "Mode"
 msgstr "Modus"
 
 #. type,   flags, name,      description,          help, mandatory, optional, detail
-#: test-args.c:85 test-core.c:479
+#: test-args.c:85 test-core.c:479 test.c:595
 msgid "Mode1"
 msgstr "Modus1"
 
 #. accepted even if none of the mandatory options is set
-#: test-args.c:86 test-core.c:480
+#: test-args.c:86 test-core.c:480 test.c:596
 msgid "Mode2"
 msgstr "Modus2"
 
 #. accepted if anonymous arguments are set
-#: test-args.c:87 test-core.c:481
+#: test-args.c:87 test-core.c:481 test.c:597
 msgid "Mode3"
 msgstr "Modus3"
 
-#: oyjl_args_tree.c:279
+#: oyjl_args_tree.c:702
 msgid "Module"
 msgstr "Modul"
 
-#: oyjl_args_tree.c:505
+#: oyjl_args_tree.c:928
 msgid "No"
 msgstr "Nein"
 
-#: oyjl_args.c:2181 oyjl_args.c:2358
+#: oyjl_args.c:2257 oyjl_args.c:2434
 msgid "OPTIONS"
 msgstr "OPTIONEN"
 
-#: test-args.c:58 test-core.c:452
+#: test-args.c:58 test-core.c:452 test.c:568
 msgid "October 10, 2018"
 msgstr "10. Oktober 2018"
 
-#: oyjl_args.c:1273
+#: oyjl_args.c:1332
 msgid "Option has a different value range"
 msgstr "Die Option besitzt einen anderen Wertebereich"
 
-#: oyjl_args.c:1094 oyjl_args.c:1149
+#: oyjl_args.c:1144 oyjl_args.c:1199
 msgid "Option has a unexpected argument"
 msgstr "Die Option hat einen unerwartetes Argument"
 
-#: oyjl_args.c:1068 oyjl_args.c:1126
+#: oyjl_args.c:1118 oyjl_args.c:1176
 msgid "Option needs a argument"
 msgstr "Die Option erwartet ein Argument"
 
-#: oyjl_args.c:984 oyjl_args.c:992 oyjl_args.c:1047 oyjl_args.c:1108
-#: oyjl_args.c:1770
+#: oyjl_args.c:999 oyjl_args.c:1004 oyjl_args.c:1012 oyjl_args.c:1097
+#: oyjl_args.c:1158 oyjl_args.c:1829
 msgid "Option not supported"
 msgstr "Die Option ist nicht unterstützt"
 
-#: oyjl_args_tree.c:306
+#: oyjl_args.c:1240
+msgid ""
+"Optionless mode not supported. (That would need '#' option declaration.)"
+msgstr ""
+
+#: oyjl_args_tree.c:729
 msgid "Oyjl Module Author"
 msgstr "Autor des Oyjl Modules"
 
-#: test-args.c:65 test-core.c:459
+#: test-args.c:65 test-core.c:459 test.c:575
 msgid "Print All"
 msgstr "Zeige Alle"
 
-#: test-args.c:66 test-core.c:460
+#: test-args.c:66 test-core.c:460 test.c:576
 msgid "Print Camera"
 msgstr "Zeige Kamera"
 
-#: test-args.c:66 test-core.c:460
+#: test-args.c:66 test-core.c:460 test.c:576
 msgid "Print Camera JSON"
 msgstr "Zeige Kamera JSON"
 
@@ -281,7 +306,7 @@ msgstr "Zeige Kamera JSON"
 msgid "Print JSON:"
 msgstr "Zeige JSON:"
 
-#: test-args.c:67 test-core.c:461
+#: test-args.c:67 test-core.c:461 test.c:577
 msgid "Print None"
 msgstr "Zeige Nichts"
 
@@ -309,15 +334,16 @@ msgstr "Zeige:"
 msgid "Rendering Intent"
 msgstr "Übertragungsart"
 
-#: oyjl_args.c:2060
+#: oyjl_args.c:2136
 msgid "SEE AS WELL"
 msgstr "SIEHE AUCH"
 
-#: oyjl_args.c:2168 oyjl_args.c:2345
+#: oyjl_args.c:2244 oyjl_args.c:2421
 msgid "SYNOPSIS"
 msgstr "ÜBERSICHT"
 
-#: test-args.c:74 test-args.c:75 test-core.c:468 test-core.c:469
+#: oyjl-args.c:46 test-args.c:74 test-args.c:75 test-core.c:468 test-core.c:469
+#: test.c:584 test.c:585
 msgid "Set Input"
 msgstr "Setze Eingabe"
 
@@ -330,74 +356,91 @@ msgstr "Setze Schlüssel-/Wertpaar"
 #: test-args.c:94 test-args.c:115 test-args.c:152 test-args.c:166
 #: test-args.c:179 test-args.c:192 test-args.c:206 test-core.c:488
 #: test-core.c:517 test-core.c:554 test-core.c:568 test-core.c:581
-#: test-core.c:594 test-core.c:608
+#: test-core.c:594 test-core.c:608 test.c:605
 msgid "Short example tool using libOyjl"
 msgstr "Einfaches Beispielwerkzeug mit libOyjl"
 
-#: test-args.c:73 test-core.c:467
+#: test-args.c:73 test-core.c:467 test.c:583
 msgid "Show Status"
 msgstr "Zeige Status"
 
-#: test-args.c:85 test-core.c:479
+#: test-args.c:85 test-core.c:479 test.c:595
 msgid "Simple mode"
 msgstr "Einfacher Modus"
 
-#: oyjl_args_tree.c:304
+#: oyjl_args_tree.c:727
 msgid "Sources"
 msgstr "Quellen"
 
-#: oyjl_args_tree.c:302
+#: oyjl_args_tree.c:725
 msgid "Support"
 msgstr "Unterstützung"
 
-#: oyjl_args.c:1574
+#: oyjl_args.c:1633
 msgid "Synopsis"
 msgstr "Übersicht"
+
+#: test.c:567
+msgid "The example tool demonstrates the usage of the libOyjl API's."
+msgstr "Das Beispielwerkzeug zeigt die Benutzung der libOyjl APIs."
 
 #: test-args.c:57 test-core.c:451
 msgid "The example tool demontrates the usage of the libOyjl API's."
 msgstr "Das Beispielwerkzeug zeigt die Benutzung der libOyjl APIs."
 
-#: oyjl_args_tree.c:277
+#: oyjl_args_tree.c:700
 msgid "Tool"
 msgstr "Werkzeug"
 
-#: oyjl_args.c:854
+#: oyjl-args.c:39
+msgid "Tool to convert UI JSON description from *-X export* into source code."
+msgstr ""
+
+#. tell about the tool
+#. argc+argv are required for parsing the command line options
+#: oyjl-args.c:63
+msgid "Ui to source code"
+msgstr ""
+
+#: oyjl_args.c:866
 msgid "Unix Man page"
 msgstr "Unix Handbuchseite"
 
-#: oyjl_args_tree.c:301
+#: oyjl_args_tree.c:724
 msgid "Url"
 msgstr "Url"
 
-#: oyjl.c:32 oyjl.c:45 oyjl.c:57 oyjl_args.c:1581 oyjl_translate.c:43
+#: oyjl.c:32 oyjl.c:45 oyjl.c:57 oyjl_args.c:1640 oyjl_translate.c:43
 #: oyjl_translate.c:152
 msgid "Usage"
 msgstr "Benutzung"
 
-#: oyjl_args.c:976 oyjl_args.c:984 oyjl_args.c:992 oyjl_args.c:1047
-#: oyjl_args.c:1068 oyjl_args.c:1094 oyjl_args.c:1108 oyjl_args.c:1126
-#: oyjl_args.c:1149 oyjl_args.c:1273 oyjl_args.c:1770
+#: oyjl_args.c:988 oyjl_args.c:999 oyjl_args.c:1004 oyjl_args.c:1012
+#: oyjl_args.c:1097 oyjl_args.c:1118 oyjl_args.c:1144 oyjl_args.c:1158
+#: oyjl_args.c:1176 oyjl_args.c:1199 oyjl_args.c:1240 oyjl_args.c:1332
+#: oyjl_args.c:1829
 msgid "Usage Error:"
 msgstr "Benutzerfehler:"
 
-#: oyjl_args_tree.c:309
+#: oyjl_args_tree.c:732
 msgid "Version"
 msgstr "Version"
 
-#: oyjl_args_tree.c:505
+#: oyjl_args_tree.c:928
 msgid "Yes"
 msgstr "Ja"
 
-#: oyjl_args.c:884
+#: oyjl_args.c:896
 msgid "export"
 msgstr "exportiere"
 
-#: test-args.c:77 test-core.c:471
+#: oyjl-args.c:47 test-args.c:77 test-core.c:471 test.c:587
 msgid "help"
 msgstr "Hilfe"
 
-#: test-args.c:74 test-args.c:75 test-core.c:468 test-core.c:469
+#. type,   flags, o,   option,    key,  name,         description,         help, value_name,    value_type,               values,                                                          variable_type, output variable
+#: oyjl-args.c:46 test-args.c:74 test-args.c:75 test-core.c:468 test-core.c:469
+#: test.c:584 test.c:585
 msgid "input"
 msgstr "Eingabe"
 
@@ -433,15 +476,19 @@ msgstr ""
 msgid "locales in a comma separated list"
 msgstr "Sprachen in einer kommagetrennten Liste"
 
-#: oyjl_args.c:984
+#: oyjl_args.c:1004
 msgid "need a value_type"
 msgstr "benötige einen value_type"
 
-#: oyjl_args.c:992 oyjl_args.c:1770
+#: oyjl_args.c:999
+msgid "need range 0-9 or a-z or A-Z"
+msgstr ""
+
+#: oyjl_args.c:1012 oyjl_args.c:1829
 msgid "needs OYJL_OPTION_FLAG_EDITABLE or choices"
 msgstr "benötige OYJL_OPTION_FLAG_EDITABLE oder choices"
 
-#: oyjl_translate.c:59 test-args.c:76 test-core.c:470
+#: oyjl_translate.c:59 test-args.c:76 test-core.c:470 test.c:586
 msgid "output"
 msgstr "Ausgabe"
 
@@ -450,11 +497,11 @@ msgid "output format string"
 msgstr "Ausgabeformat"
 
 #. declare some option choices
-#: test-args.c:62 test-core.c:456
+#: test-args.c:62 test-core.c:456 test.c:572
 msgid "oyjl.json"
 msgstr ""
 
-#: test-args.c:63 test-core.c:457
+#: test-args.c:63 test-core.c:457 test.c:573
 msgid "oyjl2.json"
 msgstr ""
 
@@ -463,7 +510,7 @@ msgid "specify JSON file"
 msgstr "gib JSON Datei an"
 
 #. type,   flags, o,   option,    key,  name,         description,         help, value_name,    value_type,               values,                                                          variable_type, output variable
-#: test-args.c:73 test-core.c:467
+#: test-args.c:73 test-core.c:467 test.c:583
 msgid "status"
 msgstr "Status"
 
@@ -475,7 +522,8 @@ msgstr "Text ID für das Projekt"
 msgid "to be used key names in a comma separated list"
 msgstr "zu benutzende Schlüsselwörter in einer kommagetrennten Liste"
 
-#: oyjl.c:74 oyjl_translate.c:62 test-args.c:78 test-core.c:472
+#: oyjl-args.c:48 oyjl.c:74 oyjl_translate.c:62 test-args.c:78 test-core.c:472
+#: test.c:588
 msgid "verbose"
 msgstr "plaudernd"
 
@@ -749,7 +797,8 @@ msgstr "plaudernd"
 #~ msgid "Action for Image profile and Editing profile mismatches."
 #~ msgstr "Verhalten bei Ungleichheit von Bild- und Editierfarbraum"
 
-#~ msgid "Activate profiles:"
+#, fuzzy
+#~ msgid "Activate"
 #~ msgstr "Aktivieren eines Profiles:"
 
 #~ msgid "Active Policy:"
@@ -1234,9 +1283,6 @@ msgstr "plaudernd"
 #~ msgid "Configure Paths"
 #~ msgstr "Konfiguriere Pfade"
 
-#~ msgid "Conversion"
-#~ msgstr "Farbumwandlung"
-
 #~ msgid "Conversion table with 16-bit precission:"
 #~ msgstr "Konvertierungskette mit 16-bit Präzission:"
 
@@ -1425,6 +1471,10 @@ msgstr "plaudernd"
 #~ msgid "DISPLAY variable not set: giving up."
 #~ msgstr "DISPLAY Variable nicht gesetzt: gebe auf."
 
+#, fuzzy
+#~ msgid "Daemon Service"
+#~ msgstr "Lösche Gerät"
+
 #~ msgid "Data Color Space:"
 #~ msgstr "Farbraum:        "
 
@@ -1433,6 +1483,10 @@ msgstr "plaudernd"
 
 #~ msgid "Date:"
 #~ msgstr "Datum:"
+
+#, fuzzy
+#~ msgid "Day Mode"
+#~ msgstr "Modus"
 
 #~ msgid "Debug"
 #~ msgstr "Fehlersuche"
@@ -1591,9 +1645,6 @@ msgstr "plaudernd"
 #~ msgid "Erase"
 #~ msgstr "Löschen"
 
-#~ msgid "Erase Device"
-#~ msgstr "Lösche Gerät"
-
 #~ msgid "Erase Devices"
 #~ msgstr "Lösche Geräte"
 
@@ -1737,7 +1788,8 @@ msgstr "plaudernd"
 #~ msgid "For Screen"
 #~ msgstr "Bildschirm"
 
-#~ msgid "For more informations read the man page:"
+#, fuzzy
+#~ msgid "For more information read the man page:"
 #~ msgstr "Mehr Informationen stehen im Handbuch:"
 
 #~ msgid "For the visualisation of gamut (external):<br>\n"
@@ -1994,7 +2046,8 @@ msgstr "plaudernd"
 #~ "sein. Für nicht definierte Farben können Benutzer ICC Farbprofile in "
 #~ "Oyranos voreinstellen."
 
-#~ msgid "ICC_FILE_NAME"
+#, fuzzy
+#~ msgid "ICC_PROFILE"
 #~ msgstr "ICC_DATEINAME"
 
 #~ msgid "ITU-R BT.709"
@@ -2246,6 +2299,10 @@ msgstr "plaudernd"
 #~ msgid "Local Disk"
 #~ msgstr "Localer Speicher"
 
+#, fuzzy
+#~ msgid "Location"
+#~ msgstr "Dokumente"
+
 #~ msgid "Long Format"
 #~ msgstr "Langes Format"
 
@@ -2346,9 +2403,6 @@ msgstr "plaudernd"
 #~ msgid "Media black point"
 #~ msgstr "Medienschwarzpunkt"
 
-#~ msgid "Media white point"
-#~ msgstr "Medienweißpunkt"
-
 #~ msgid "Meta Data"
 #~ msgstr "Allgemeine Daten"
 
@@ -2382,6 +2436,10 @@ msgstr "plaudernd"
 
 #~ msgid "Modell:"
 #~ msgstr "Modell:"
+
+#, fuzzy
+#~ msgid "Modes"
+#~ msgstr "Modus"
 
 #~ msgid "Modify Profile:"
 #~ msgstr "Verändere Prmprofil"
@@ -2475,6 +2533,14 @@ msgstr "plaudernd"
 #~ msgid "New Folder"
 #~ msgstr "Neuer Ordner"
 
+#, fuzzy
+#~ msgid "Night Manager"
+#~ msgstr "Unix Handbuchseite"
+
+#, fuzzy
+#~ msgid "Night Mode"
+#~ msgstr "Schreibe Modell:"
+
 #~ msgid "No Color"
 #~ msgstr "keine Farbe"
 
@@ -2516,6 +2582,10 @@ msgstr "plaudernd"
 
 #~ msgid "OK"
 #~ msgstr "Ja"
+
+#, fuzzy
+#~ msgid "October 11, 2018"
+#~ msgstr "10. Oktober 2018"
 
 #~ msgid "Office + Home"
 #~ msgstr "Büro + Heim"
@@ -3157,8 +3227,16 @@ msgstr "plaudernd"
 #~ msgid "Set a X Color Management region."
 #~ msgstr "Setze eine X Color Management Region."
 
+#, fuzzy
+#~ msgid "Set day time mode"
+#~ msgstr "Einfacher Modus"
+
 #~ msgid "Set new profile:"
 #~ msgstr "Setze neues Profil:"
+
+#, fuzzy
+#~ msgid "Set night time mode"
+#~ msgstr "Einfacher Modus"
 
 #~ msgid ""
 #~ "Set the current profile as monitor profile and upload vcgt tag to the "
@@ -3166,6 +3244,10 @@ msgstr "plaudernd"
 #~ msgstr ""
 #~ "Das aktuelle Profile als Monitorprofil setzen und die Gamma Tabelle in "
 #~ "die Grafikkarte laden"
+
+#, fuzzy
+#~ msgid "Set white point mode"
+#~ msgstr "Medienweißpunkt"
 
 #~ msgid "Settings"
 #~ msgstr "Einstellungen"
@@ -3236,6 +3318,10 @@ msgstr "plaudernd"
 #~ msgid "Show which policy matches by combining all involved settings."
 #~ msgstr ""
 #~ "Zeige an, welche Richtlinie zur Kombination aller Einstellungen passt."
+
+#, fuzzy
+#~ msgid "Show white point modes"
+#~ msgstr "Medienweißpunkt"
 
 #~ msgid "Show:"
 #~ msgstr "Zeige:"
@@ -3984,9 +4070,6 @@ msgstr "plaudernd"
 #~ msgid "Write DB File"
 #~ msgstr "Schreibe DB Datei"
 
-#~ msgid "Write Model:"
-#~ msgstr "Schreibe Modell:"
-
 #~ msgid "Write PNG"
 #~ msgstr "Schreibe PNG"
 
@@ -4282,6 +4365,10 @@ msgstr "plaudernd"
 #~ msgid "high contrast"
 #~ msgstr "kontrastreich"
 
+#, fuzzy
+#~ msgid "http://www.behrmann.name"
+#~ msgstr "Internet: www.behrmann.name <br>"
+
 #~ msgid "input class"
 #~ msgstr "Eingabefarbraum"
 
@@ -4303,9 +4390,6 @@ msgstr "plaudernd"
 
 #~ msgid "internal name"
 #~ msgstr "interner Name"
-
-#~ msgid "internet: www.behrmann.name <br>"
-#~ msgstr "Internet: www.behrmann.name <br>"
 
 #~ msgid "is a CameraRaw conversion tool"
 #~ msgstr "ist ein Kamera Rohdatenumwandlungswerkzeug"
@@ -4396,6 +4480,10 @@ msgstr "plaudernd"
 
 #~ msgid "locale directory containing"
 #~ msgstr "locale Verzeichnis enthaltend"
+
+#, fuzzy
+#~ msgid "location"
+#~ msgstr "Dokumente"
 
 #~ msgid "long"
 #~ msgstr "lang"
@@ -4668,7 +4756,8 @@ msgstr "plaudernd"
 #~ msgid "steps"
 #~ msgstr "Stufungen"
 
-#~ msgid "system path"
+#, fuzzy
+#~ msgid "system wide"
 #~ msgstr "Systempfad"
 
 #~ msgid "tag list is corrupted for tag"
