@@ -37,6 +37,7 @@
 #include "oyjl_macros.h"
 extern int * oyjl_debug;
 #include "oyjl_i18n.h"
+#include "oyjl_tree_internal.h"
 
 #else /* OYJL_INTERNAL */
 int my_debug = 0;
@@ -502,6 +503,11 @@ int oyjlInitLanguageDebug            ( const char        * project_name,
 
   return error;
 }
+
+typedef struct {
+  const char ** results; /* the vanilla args from main(argv[]) */
+  char * args; /* detected args */
+} oyjlOptsPrivate_s;
 #endif /* OYJL_INTERNAL */
 
 #ifdef OYJL_HAVE_LANGINFO_H
@@ -509,7 +515,7 @@ int oyjlInitLanguageDebug            ( const char        * project_name,
 #endif
 
 /** \addtogroup oyjl_args Options Handling
- *  @brief   Structured Options and Arguments for many aspects on command line and more
+ *  @brief   Structured Options and Arguments for many aspects on command line and more in a single file
  *
  *  @section args_intro Introduction
  *  Oyjl argument handling uses a compact, table like creation syntax.
@@ -521,8 +527,9 @@ int oyjlInitLanguageDebug            ( const char        * project_name,
  *  output from oyjlUi_ToJson() is useable for automatical generated
  *  (G)UI's and further processing. oyjlUi_ToMan() creates unix manual pages.
  *  oyjlUi_ToMarkdown() lets you produce a man page for your web page.
- *  Generation of other formats is simple.
- *  Translations are supported by oyjl-tanslate tool through gettext.
+ *  Generation of other formats is simple. The implementation in *oyjl_args.c*
+ *  can simply be included or use oyjl.h and link to *libOyjlCore*.
+ *  Translations are supported by *oyjl-tanslate* tool through gettext.
  *
  *  Command line options support single letter in oyjlOption_s::o and
  *  long options in oyjlOption_s::option without
@@ -634,10 +641,10 @@ int oyjlInitLanguageDebug            ( const char        * project_name,
  *  Or a view can be interactive and call the command with the options.
  *
  *  @subsection args_interactive Interactive Viewers
- *  A example of a interactive viewer is the included oyjl-args-qml renderer.
+ *  A example of a interactive viewer is the included *oyjl-args-qml* renderer.
  *  Tools have to be more careful, in case they want to be displayed by
  *  a interactive viewer. They should declare, in which order options
- *  apply and add command line information for the -X json+command option.
+ *  apply and add command line information for the *-X json+command* option.
  *
  *  A GUI renderer might display the result of a command immediately. The
  *  simplest form is plain text output. The text font should eventually be
@@ -648,10 +655,15 @@ int oyjlInitLanguageDebug            ( const char        * project_name,
  *  stream their result as image to stdout. A oyjl-args-qml viewer supports
  *  PNG image output.
  *
+ *  The *-X json* and *-X json+command* options are only available with
+ *  *libOyjlCore* and **not** in the stand alone version with *oyjl_args.c*
+ *  inclusion.
+ *
  *  @subsection args_developer Developer Support
  *  The oyjlUi_ExportToJson() API allows to dump all data toward a JSON
- *  representation. The oyjlUiJsonToCode() API converts a JSON UI data
- *  representation to source code.
+ *  representation. The function is contained in *libOyjlCore*.
+ *  The oyjlUiJsonToCode() API converts a JSON UI data representation to
+ *  source code. It is used inside the *oyjl-args* tool.
  *
  *  @{ */
 
@@ -979,6 +991,14 @@ oyjlOPTIONSTATE_e oyjlOptions_Check (
 
     }
     /* some error checking */
+    if(!(('0' <= o->o && o->o <= '9') ||
+         ('a' <= o->o && o->o <= 'z') ||
+         ('A' <= o->o && o->o <= 'Z') ||
+         o->o == '@' || o->o == '#'))
+    {
+      fprintf( stderr, "%s %s \'%c\' %s\n", _("Usage Error:"), _("Option not supported"), o->o, _("need range 0-9 or a-z or A-Z") );
+      return oyjlOPTION_NOT_SUPPORTED;
+    }
     if(o->o != '#' && o->value_name && o->value_name[0] && o->value_type == oyjlOPTIONTYPE_NONE)
     {
       fprintf( stderr, "%s %s \'%c\' %s\n", _("Usage Error:"), _("Option not supported"), o->o, _("need a value_type") );
@@ -994,6 +1014,35 @@ oyjlOPTIONSTATE_e oyjlOptions_Check (
     }
   }
   return oyjlOPTION_NONE;
+}
+
+/* list of static strings */
+void       oyjlStringListStaticAdd   ( const char      *** list,
+                                       int               * n,
+                                       const char        * string,
+                                       void*            (* alloc)(size_t),
+                                       void             (* deAlloc)(void*) )
+{
+  const char ** nlist = 0;
+  int n_alt;
+
+  if(!list || !n) return;
+
+  if(!deAlloc) deAlloc = free;
+  n_alt = *n;
+
+  oyjlAllocHelper_m(nlist, const char*, n_alt + 2, alloc, return);
+
+  memmove( nlist, *list, sizeof(const char*) * n_alt);
+  nlist[n_alt] = string;
+  nlist[n_alt+1] = NULL;
+
+  *n = n_alt + 1;
+
+  if(*list)
+    deAlloc(*list);
+
+  *list = nlist;
 }
 
 /** @brief    Parse the options into a private data structure
@@ -1013,14 +1062,15 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse (
 {
   oyjlOPTIONSTATE_e state = oyjlOPTION_NONE;
   oyjlOption_s * o;
-  char ** result;
+  oyjlOptsPrivate_s * result;
 
   /* parse the command line arguments */
   if(opts && !opts->private_data)
   {
-    int i, pos = 0;
-    result = (char**) calloc( 2, sizeof(char*) );
-    result[0] = (char*) calloc( 65536, sizeof(char) );
+    int i, pos = 0, len = opts->argc + 1;
+    result = (oyjlOptsPrivate_s*) calloc( 1, sizeof(oyjlOptsPrivate_s) );
+    /* The first string contains the detected single char options */
+    result->args = (char*) calloc( len, sizeof(char) );
     if((state = oyjlOptions_Check(opts)) != oyjlOPTION_NONE)
       goto clean_parse;
     for(i = 1; i < opts->argc; ++i)
@@ -1071,19 +1121,19 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse (
             if(value)
             {
               int llen = 0;
-              while(result[llen]) ++llen;
-              result[0][pos] = arg;
+              while(result->results && result->results[llen]) ++llen;
+              result->args[pos] = arg;
               ++pos;
-              oyjlStringListAddStaticString( &result, &llen, value, malloc, free );
+              oyjlStringListStaticAdd( &result->results, &llen, value, malloc, free );
             }
           }
           else if(!require_value && !(j < l-1 && str[j+1] == '='))
           {
             int llen = 0;
-            while(result[llen]) ++llen;
-            result[0][pos] = arg;
+            while(result->results && result->results[llen]) ++llen;
+            result->args[pos] = arg;
             ++pos;
-            oyjlStringListAddStaticString( &result, &llen, "1", malloc, free );
+            oyjlStringListStaticAdd( &result->results, &llen, "1", malloc, free );
           }
           else
           {
@@ -1130,20 +1180,20 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse (
           if(value)
           {
             int llen = 0;
-            while(result[llen]) ++llen;
-            result[0][pos] = o->o;
+            while(result->results && result->results[llen]) ++llen;
+            result->args[pos] = o->o;
             ++pos;
-            oyjlStringListAddStaticString( &result, &llen, value, malloc, free );
+            oyjlStringListStaticAdd( &result->results, &llen, value, malloc, free );
           }
         } else
         {
           if(!( strchr(str, '=') != NULL || (opts->argc > i+1 && opts->argv[i+1][0] != '-') ))
           {
             int llen = 0;
-            while(result[llen]) ++llen;
-            result[0][pos] = o->o;
+            while(result->results && result->results[llen]) ++llen;
+            result->args[pos] = o->o;
             ++pos;
-            oyjlStringListAddStaticString( &result, &llen, "1", malloc, free );
+            oyjlStringListStaticAdd( &result->results, &llen, "1", malloc, free );
           } else
           {
             fprintf( stderr, "%s %s \'%s\'\n", _("Usage Error:"), _("Option has a unexpected argument"), opts->argv[i+1] );
@@ -1154,15 +1204,15 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse (
       /* parse anonymous value, if requested */
       else
       {
-        result[0][pos] = '@';
+        result->args[pos] = '@';
         o = oyjlOptions_GetOption( opts, '@' );
         if(o)
           value = str;
         if(value)
         {
           int llen = 0;
-          while(result[llen]) ++llen;
-          oyjlStringListAddStaticString( &result, &llen, value, malloc, free );
+          while(result->results && result->results[llen]) ++llen;
+          oyjlStringListStaticAdd( &result->results, &llen, value, malloc, free );
         }
         ++pos;
       }
@@ -1170,9 +1220,9 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse (
     opts->private_data = result;
 
     pos = 0;
-    while(result[0][pos])
+    while(result->args[pos])
     {
-      oyjlOption_s * o = oyjlOptions_GetOption( opts, result[0][pos] );
+      oyjlOption_s * o = oyjlOptions_GetOption( opts, result->args[pos] );
       if(o)
       switch(o->variable_type)
       {
@@ -1182,6 +1232,14 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse (
         case oyjlINT:    oyjlOptions_GetResult( opts, o->o, 0, 0, o->variable.i ); break;
       }
       ++pos;
+    }
+
+    o = oyjlOptions_GetOption( opts, '#' );
+    if(opts->argc == 1 && !o)
+    {
+      fprintf( stderr, "%s %s\n", _("Usage Error:"), _("Optionless mode not supported. (That would need '#' option declaration.)") );
+      state = oyjlOPTIONS_MISSING;
+      return state;
     }
 
     /** Put the count of found anonymous arguments into '@' options variable.i of variable_type oyjlINT. */
@@ -1199,7 +1257,8 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse (
   return state;
 
 clean_parse:
-  free(result[0]);
+  free(result->results);
+  free(result->args);
   free(result);
   return state;
 }
@@ -1231,7 +1290,7 @@ oyjlOPTIONSTATE_e oyjlOptions_GetResult (
   oyjlOPTIONSTATE_e state = oyjlOPTION_NONE;
   ptrdiff_t pos = -1;
   const char * t;
-  const char ** results;
+  oyjlOptsPrivate_s * results;
   const char * list;
 
   /* parse the command line arguments */
@@ -1241,7 +1300,7 @@ oyjlOPTIONSTATE_e oyjlOptions_GetResult (
     return state;
 
   results = opts->private_data;
-  list = results[0];
+  list = results->args;
   t = strrchr( list, oc );
   if(t)
   {
@@ -1257,7 +1316,7 @@ oyjlOPTIONSTATE_e oyjlOptions_GetResult (
   else
     return oyjlOPTION_NONE;
 
-  t = results[1 + pos];
+  t = results->results[pos];
 
   if(result_string)
     *result_string = t;
@@ -1320,11 +1379,11 @@ char **  oyjlOptions_ResultsToList   ( oyjlOptions_s     * opts,
   char * args = NULL,
        * text = NULL,
        ** list = NULL;
-  char ** results = NULL;
+  oyjlOptsPrivate_s * results = NULL;
   int i,n,llen = 0;
 
   if(!opts)
-    return results;
+    return NULL;
   results = opts->private_data;
   if(!results)
   {
@@ -1336,12 +1395,12 @@ char **  oyjlOptions_ResultsToList   ( oyjlOptions_s     * opts,
       return NULL;
   }
 
-  args = results[0];
+  args = results->args;
   n = strlen( args );
   for(i = 0; i < n; ++i)
   {
     char a[4] = {args[i],0,0,0};
-    char * value = results[i+1];
+    const char * value = results->results[i];
     if(oc == '\000')
       oyjlStringAdd( &text, malloc, free, "%s:%s", a, value );
     else if(oc == a[0])
@@ -1369,7 +1428,7 @@ char * oyjlOptions_ResultsToText  ( oyjlOptions_s  * opts )
 {
   char * args = NULL,
        * text = NULL;
-  char ** results = opts->private_data;
+  oyjlOptsPrivate_s * results = opts->private_data;
   int i,n;
 
   if(!results)
@@ -1382,12 +1441,12 @@ char * oyjlOptions_ResultsToText  ( oyjlOptions_s  * opts )
       return NULL;
   }
 
-  args = results[0];
+  args = results->args;
   n = strlen( args );
   for(i = 0; i < n; ++i)
   {
     char a[4] = {args[i],0,0,0};
-    char * value = results[i+1];
+    const char * value = results->results[i];
     oyjlStringAdd( &text, malloc, free, "%s:%s\n", a, value );
   }
 
@@ -1874,6 +1933,21 @@ oyjlUi_s *  oyjlUi_Create            ( int                 argc,
 
   /* get results and check syntax ... */
   opt_state = oyjlOptions_Parse( ui->opts );
+  if(opt_state == oyjlOPTIONS_MISSING)
+  {
+    oyjlUiHeaderSection_s * version = oyjlUi_GetHeaderSection( ui,
+                                                               "version" );
+    const char * prog = argv[0];
+    if(!verbose && prog && strchr(prog,'/'))
+      prog = strrchr(prog,'/') + 1;
+    oyjlOptions_PrintHelp( ui->opts, ui, verbose, "%s v%s - %s", prog,
+                              version && version->name ? version->name : "",
+                              ui->description ? ui->description : "" );
+    oyjlUi_Release( &ui);
+    if(status)
+      *status |= oyjlUI_STATE_HELP;
+    return NULL;
+  }
   if(opt_state == oyjlOPTION_NONE)
     opt_state = oyjlUi_Check(ui, 0);
   /* ... and report detected errors */
@@ -1964,8 +2038,7 @@ oyjlUi_s *  oyjlUi_Create            ( int                 argc,
  */
 void           oyjlUi_Release     ( oyjlUi_s      ** ui )
 {
-  char ** list;
-  int pos = 0;
+  oyjlOptsPrivate_s * results;
   if(!ui || !*ui) return;
   if( *(oyjlOBJECT_e*)*ui != oyjlOBJECT_UI)
   {
@@ -1974,10 +2047,13 @@ void           oyjlUi_Release     ( oyjlUi_s      ** ui )
     fprintf(stderr, "Unexpected object: \"%s\"(expected: \"oyjlUi_s\")\n", type );
     return;
   }
-  list = (*ui)->opts->private_data;
-  while( list && list[pos] )
-    free(list[pos++]);
-  if((*ui)->opts->private_data) free((*ui)->opts->private_data);
+  if((*ui)->opts->private_data)
+  {
+    results = (*ui)->opts->private_data;
+    free(results->args);
+    free(results->results);
+    free((*ui)->opts->private_data);
+  }
   if((*ui)->opts) free((*ui)->opts);
   free((*ui));
   *ui = NULL;
