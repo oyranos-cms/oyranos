@@ -52,7 +52,7 @@
 
     Then you can put Oyjl functions in your code and compile with:
     @verbatim
-    cc `cmake --find-package -DNAME=$@ -DLANGUAGE=C -DCOMPILER_ID=GNU -DMODE=COMPILE Oyjl` `cmake --find-package -DNAME=$@ -DLANGUAGE=C -DCOMPILER_ID=GNU -DMODE=LINK Oyjl`  @endverbatim
+    cc `cmake --find-package -DNAME=Oyjl -DLANGUAGE=C -DCOMPILER_ID=GNU -DMODE=COMPILE` `cmake --find-package -DNAME=Oyjl -DLANGUAGE=C -DCOMPILER_ID=GNU -DMODE=LINK` @endverbatim
     to link Oyjl and OyjlCore into your application.
  */
 
