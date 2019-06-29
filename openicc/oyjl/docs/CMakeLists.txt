@@ -2,6 +2,7 @@ IF(ENABLE_DOCU_${PROJECT_UP_NAME})
   SET( DOC_SOURCES ${DOC_SOURCES}
         ${CHEADERS_OYJL_PUBLIC}
         ${CMAKE_SOURCE_DIR}/oyjl_args.c
+        ${CMAKE_SOURCE_DIR}/oyjl_args_tree.c
         ${CMAKE_SOURCE_DIR}/oyjl_core.c
         ${CMAKE_SOURCE_DIR}/oyjl_tree.c
         ${CMAKE_SOURCE_DIR}/oyjl_yajl.c
