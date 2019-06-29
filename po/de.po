@@ -1952,9 +1952,8 @@ msgid "General options:"
 msgstr "Allgemeine Optionen:"
 
 #: tools/oyranos_convert.c:240
-#, fuzzy
 msgid "Generate CLUT Image"
-msgstr "Erzeuge 3D Interpolationstabelle:"
+msgstr "Erzeuge 3D Interpolationstabelle"
 
 #: tools/oyranos_convert.c:71
 msgid "Generate CLUT Image:"
@@ -2148,9 +2147,8 @@ msgid "ICC Version 4"
 msgstr "ICC Version 4"
 
 #: tools/oyranos_convert.c:246
-#, fuzzy
 msgid "ICC color conversion tool for images."
-msgstr "ist ein Farbumwandlungswerkzeug"
+msgstr "ICC Farbumwandlungswerkzeug für Bilder."
 
 #: modules/color/modules/oyranos_cmm_oicc.c:568
 msgid "ICC color profile for color transformations"
@@ -2606,9 +2604,8 @@ msgid "LCMS_PRESERVE_PURE_K"
 msgstr ""
 
 #: tools/oyranos_convert.c:218
-#, fuzzy
 msgid "LUT Format"
-msgstr "Format"
+msgstr "LUT Format"
 
 #: liboyranos_config/oyranos_icc.c:192
 msgid "Lab"
@@ -3415,9 +3412,8 @@ msgid "Oyranos Help"
 msgstr "Oyranos Hilfe"
 
 #: tools/oyranos_convert.c:249
-#, fuzzy
 msgid "Oyranos ICC Conversion"
-msgstr "Oyranos Version"
+msgstr "Oyranos ICC Umwandlung"
 
 #: modules/color/modules/oyranos_cmm_oicc.c:1186
 msgid "Oyranos ICC policy"
@@ -4176,9 +4172,8 @@ msgid "Select active policy:"
 msgstr "Wählen der Richtlinie:"
 
 #: tools/oyranos_convert.c:218
-#, fuzzy
 msgid "Select format, currently only clut"
-msgstr "wähle Format, z.Z. nur clut möglich"
+msgstr "Wähle Format, z.Z. nur clut möglich"
 
 #: liboyranos_config/oyranos_texts.c:658 liboyranos_config/oyranos_texts.c:678
 msgid "Select the core CMM"
@@ -4395,14 +4390,12 @@ msgid "Silkscreen"
 msgstr "Siebdruck"
 
 #: tools/oyranos_convert.c:217
-#, fuzzy
 msgid "Simple"
-msgstr "Beispiel"
+msgstr "Einfach"
 
 #: tools/oyranos_convert.c:217
-#, fuzzy
 msgid "Simple default settings"
-msgstr "benutze einfache Grundeinstellungen"
+msgstr "Einfache Grundeinstellungen"
 
 #: liboyranos_config/oyranos_texts.c:618
 msgid "Simulate the output print on the monitor"
@@ -4477,9 +4470,8 @@ msgid "Specify spectral output file format"
 msgstr "Gib spektrales Ausgabeformat an"
 
 #: tools/oyranos_convert.c:220
-#, fuzzy
 msgid "Specify target file name"
-msgstr "Gebe Eingangsdateiname an"
+msgstr "Gebe Zieldateiname an"
 
 #: tools/oyranos_profile_graph.c:316
 msgid "Specify the thickness of the graph lines"
@@ -4582,9 +4574,8 @@ msgid "Taligent"
 msgstr "Taligent"
 
 #: tools/oyranos_convert.c:220
-#, fuzzy
 msgid "Target Profile"
-msgstr "Voreingestellte ICC Profile"
+msgstr "Ziel Profil"
 
 #: tools/oyranos_profiles.c:114
 msgid "Taxi DB"
