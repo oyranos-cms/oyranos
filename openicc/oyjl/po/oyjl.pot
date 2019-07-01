@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: oyjl .\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2019-06-29 13:26+0200\n"
+"POT-Creation-Date: 2019-07-01 09:42+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -314,7 +314,7 @@ msgstr ""
 msgid "COPYRIGHT"
 msgstr ""
 
-#: oyjl_args.c:2347 oyjl_args.c:2520 oyjl_args_tree.c:723
+#: oyjl_args.c:2347 oyjl_args.c:2520 oyjl_args_tree.c:747
 msgid "License"
 msgstr ""
 
@@ -322,63 +322,63 @@ msgstr ""
 msgid "BUGS"
 msgstr ""
 
-#: oyjl_args_tree.c:700
+#: oyjl_args_tree.c:724
 msgid "Tool"
 msgstr ""
 
-#: oyjl_args_tree.c:702
+#: oyjl_args_tree.c:726
 msgid "Module"
 msgstr ""
 
-#: oyjl_args_tree.c:721
+#: oyjl_args_tree.c:745
 msgid "Manufacturer"
 msgstr ""
 
-#: oyjl_args_tree.c:722
+#: oyjl_args_tree.c:746
 msgid "Copyright"
 msgstr ""
 
-#: oyjl_args_tree.c:724
+#: oyjl_args_tree.c:748
 msgid "Url"
 msgstr ""
 
-#: oyjl_args_tree.c:725
+#: oyjl_args_tree.c:749
 msgid "Support"
 msgstr ""
 
-#: oyjl_args_tree.c:726
+#: oyjl_args_tree.c:750
 msgid "Download"
 msgstr ""
 
-#: oyjl_args_tree.c:727
+#: oyjl_args_tree.c:751
 msgid "Sources"
 msgstr ""
 
-#: oyjl_args_tree.c:728
+#: oyjl_args_tree.c:752
 msgid "Development"
 msgstr ""
 
-#: oyjl_args_tree.c:729
+#: oyjl_args_tree.c:753
 msgid "Oyjl Module Author"
 msgstr ""
 
-#: oyjl_args_tree.c:730
+#: oyjl_args_tree.c:754
 msgid "Documentation"
 msgstr ""
 
-#: oyjl_args_tree.c:731
+#: oyjl_args_tree.c:755
 msgid "Date"
 msgstr ""
 
-#: oyjl_args_tree.c:732
+#: oyjl_args_tree.c:756
 msgid "Version"
 msgstr ""
 
-#: oyjl_args_tree.c:928
+#: oyjl_args_tree.c:952
 msgid "Yes"
 msgstr ""
 
-#: oyjl_args_tree.c:928
+#: oyjl_args_tree.c:952
 msgid "No"
 msgstr ""
 
