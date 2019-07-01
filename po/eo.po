@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eo\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2019-06-29 13:26+0200\n"
+"POT-Creation-Date: 2019-06-29 21:51+0200\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  <eo@li.org>\n"
@@ -68,7 +68,7 @@ msgstr ""
 msgid "Convert UI JSON to C code using libOyjl"
 msgstr ""
 
-#: oyjl_args_tree.c:722
+#: oyjl_args_tree.c:746
 msgid "Copyright"
 msgstr ""
 
@@ -76,7 +76,7 @@ msgstr ""
 msgid "DESCRIPTION"
 msgstr ""
 
-#: oyjl_args_tree.c:731
+#: oyjl_args_tree.c:755
 msgid "Date"
 msgstr ""
 
@@ -85,11 +85,11 @@ msgstr ""
 msgid "Description"
 msgstr "kolora"
 
-#: oyjl_args_tree.c:728
+#: oyjl_args_tree.c:752
 msgid "Development"
 msgstr ""
 
-#: oyjl_args_tree.c:730
+#: oyjl_args_tree.c:754
 msgid "Documentation"
 msgstr ""
 
@@ -97,7 +97,7 @@ msgstr ""
 msgid "Double occuring option"
 msgstr ""
 
-#: oyjl_args_tree.c:726
+#: oyjl_args_tree.c:750
 msgid "Download"
 msgstr ""
 
@@ -207,7 +207,7 @@ msgstr ""
 msgid "June 26, 2019"
 msgstr ""
 
-#: oyjl_args.c:2347 oyjl_args.c:2520 oyjl_args_tree.c:723
+#: oyjl_args.c:2347 oyjl_args.c:2520 oyjl_args_tree.c:747
 msgid "License"
 msgstr ""
 
@@ -216,7 +216,7 @@ msgstr ""
 msgid "Man"
 msgstr "Fuksina"
 
-#: oyjl_args_tree.c:721
+#: oyjl_args_tree.c:745
 #, fuzzy
 msgid "Manufacturer"
 msgstr "kolora"
@@ -251,11 +251,11 @@ msgstr ""
 msgid "Mode3"
 msgstr ""
 
-#: oyjl_args_tree.c:702
+#: oyjl_args_tree.c:726
 msgid "Module"
 msgstr ""
 
-#: oyjl_args_tree.c:928
+#: oyjl_args_tree.c:952
 msgid "No"
 msgstr ""
 
@@ -289,7 +289,7 @@ msgid ""
 "Optionless mode not supported. (That would need '#' option declaration.)"
 msgstr ""
 
-#: oyjl_args_tree.c:729
+#: oyjl_args_tree.c:753
 msgid "Oyjl Module Author"
 msgstr ""
 
@@ -374,11 +374,11 @@ msgstr ""
 msgid "Simple mode"
 msgstr ""
 
-#: oyjl_args_tree.c:727
+#: oyjl_args_tree.c:751
 msgid "Sources"
 msgstr ""
 
-#: oyjl_args_tree.c:725
+#: oyjl_args_tree.c:749
 msgid "Support"
 msgstr ""
 
@@ -394,7 +394,7 @@ msgstr ""
 msgid "The example tool demontrates the usage of the libOyjl API's."
 msgstr ""
 
-#: oyjl_args_tree.c:700
+#: oyjl_args_tree.c:724
 msgid "Tool"
 msgstr ""
 
@@ -412,7 +412,7 @@ msgstr ""
 msgid "Unix Man page"
 msgstr ""
 
-#: oyjl_args_tree.c:724
+#: oyjl_args_tree.c:748
 msgid "Url"
 msgstr ""
 
@@ -428,11 +428,11 @@ msgstr ""
 msgid "Usage Error:"
 msgstr ""
 
-#: oyjl_args_tree.c:732
+#: oyjl_args_tree.c:756
 msgid "Version"
 msgstr ""
 
-#: oyjl_args_tree.c:928
+#: oyjl_args_tree.c:952
 msgid "Yes"
 msgstr "Jes"
 

@@ -545,7 +545,7 @@ oyjlTESTRESULT_e testArgs()
   oyjlOptionGroup_s groups[] = {
   /* type,   flags, name,      description,          help, mandatory, optional, detail */
     {"oiwg", 0,     _("Mode"), _("Actual mode"),     NULL, "i",       "ov",     "io" },
-    {"oiwg", 0,     _("Misc"), _("General options"), NULL, "",        "",       "vh" },
+    {"oiwg", 0,     _("Misc"), _("General options"), NULL, "h",        "",       "hv" },
     {"",0,0,0,0,0,0,0}
   };
 
@@ -609,7 +609,7 @@ oyjlTESTRESULT_e testArgs()
                                        sections, oarray, groups, NULL );
   size = 0;
   text = oyjlUi_ToJson( ui, 0 );
-  if(text && strlen(text) == 3346)
+  if(text && strlen(text) == 3347)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlUi_ToJson() %lu                           ", strlen(text) );
   } else
@@ -624,7 +624,7 @@ oyjlTESTRESULT_e testArgs()
   if(text && size) {free(text);} text = NULL;
 
   text = oyjlUi_ToMan( ui, 0 );
-  if(text && strlen(text) == 662)
+  if(text && strlen(text) == 692)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlUi_ToMan() %lu                            ", strlen(text) );
   } else
@@ -671,7 +671,7 @@ oyjlTESTRESULT_e testArgs()
   }
 
   text = oyjlUi_ExportToJson( ui, 0 );
-  if(text && strlen(text) == 6176)
+  if(text && strlen(text) == 6177)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlUi_ExportToJson()       %lu                 ", strlen(text) );
   } else

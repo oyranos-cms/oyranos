@@ -257,7 +257,7 @@ char *             oyjlUi_ExportToJson(oyjlUi_s          * ui,
 #define OYJL_QUOTE     0x02
 #define OYJL_SQUOTE    0x04
 #define OYJL_LAST      0x08
-void oyjlStrAddSpaced( oyjl_str s, const char * text, int flags, int space )
+static void oyjlStrAddSpaced( oyjl_str s, const char * text, int flags, int space )
 {
   int len = 0, i,n;
 
@@ -316,7 +316,7 @@ void oyjlStrAddSpaced( oyjl_str s, const char * text, int flags, int space )
       oyjlStrAdd( s, " " );
 }
 
-char *         oyjlUiGetVariableName ( oyjl_val            val,
+static char *  oyjlUiGetVariableName ( oyjl_val            val,
                                        const char       ** type )
 {
   oyjl_val v;
@@ -393,7 +393,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
       {
         const char * getChoices;
         v = oyjlTreeGetValue( val, 0, "values/getChoices" ); getChoices = OYJL_GET_STRING(v);
-        oyjlStrAdd( s, "oyjlOptionChoice_s * %s( oyjlOption_s * opt OYJL_UNUSED, int * selected OYJL_UNUSED, oyjlOptions_s * context OYJL_UNUSED )\n{ return NULL; }\n", getChoices );
+        oyjlStrAdd( s, "oyjlOptionChoice_s * %s( oyjlOption_s * opt OYJL_UNUSED, int * selected OYJL_UNUSED, oyjlOptions_s * context OYJL_UNUSED )\n{ fprintf(stderr, \"%%s\\n\", __func__); return NULL; }\n", getChoices );
       }
     }
     oyjlStrAdd( s, "\n" );
@@ -661,6 +661,30 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
     oyjlStrAdd( s, "    fprintf( stderr, \"%%s\\n\\tman %s\\n\\n\", _(\"For more information read the man page:\") );\n", nick, nick );
     oyjlStrAdd( s, "    return 0;\n" );
     oyjlStrAdd( s, "  }\n" );
+    oyjlStrAdd( s, "\n" );
+    oyjlStrAdd( s, "  if(verbose)\n" );
+    oyjlStrAdd( s, "  {\n" );
+    oyjlStrAdd( s, "    char * json = oyjlOptions_ResultsToJson( ui->opts );\n" );
+    oyjlStrAdd( s, "    if(json)\n" );
+    oyjlStrAdd( s, "      fputs( json, stderr );\n" );
+    oyjlStrAdd( s, "    fputs( \"\\n\", stderr );\n" );
+    oyjlStrAdd( s, "\n" );
+    oyjlStrAdd( s, "    char * text = oyjlOptions_ResultsToText( ui->opts );\n" );
+    oyjlStrAdd( s, "    if(text)\n" );
+    oyjlStrAdd( s, "      fputs( text, stderr );\n" );
+    oyjlStrAdd( s, "    fputs( \"\\n\", stderr );\n" );
+    oyjlStrAdd( s, "  }\n" );
+    oyjlStrAdd( s, "\n" );
+    oyjlStrAdd( s, "  if((export && strcmp(export,\"json+command\") == 0))\n" );
+    oyjlStrAdd( s, "  {\n" );
+    oyjlStrAdd( s, "    char * json = oyjlUi_ToJson( ui, 0 ),\n" );
+    oyjlStrAdd( s, "         * json_commands = NULL;\n" );
+    oyjlStrAdd( s, "    oyjlStringAdd( &json_commands, malloc, free, \"{\\n  \\\"command_set\\\": \\\"%s\\\",\" );\n", nick );
+    oyjlStrAdd( s, "    oyjlStringAdd( &json_commands, malloc, free, \"%%s\", &json[1] );\n" );
+    oyjlStrAdd( s, "    puts( json_commands );\n" );
+    oyjlStrAdd( s, "    exit(0);\n" );
+    oyjlStrAdd( s, "  }\n" );
+    oyjlStrAdd( s, "\n" );
     oyjlStrAdd( s, "  if(!ui) return 1;\n" );
     oyjlStrAdd( s, "\n  return 0;\n" );
     oyjlStrAdd( s, "}\n" );

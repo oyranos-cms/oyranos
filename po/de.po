@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2019-06-29 13:26+0200\n"
+"POT-Creation-Date: 2019-06-29 21:51+0200\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -68,7 +68,7 @@ msgstr "Wandle JSON in gettext lesbare C Texte:"
 msgid "Convert UI JSON to C code using libOyjl"
 msgstr "Wandele UI JSON nach C Quelltext mit libOyjl"
 
-#: oyjl_args_tree.c:722
+#: oyjl_args_tree.c:746
 msgid "Copyright"
 msgstr "Kopierrecht"
 
@@ -76,7 +76,7 @@ msgstr "Kopierrecht"
 msgid "DESCRIPTION"
 msgstr "BESCHREIBUNG"
 
-#: oyjl_args_tree.c:731
+#: oyjl_args_tree.c:755
 msgid "Date"
 msgstr "Datum"
 
@@ -84,11 +84,11 @@ msgstr "Datum"
 msgid "Description"
 msgstr "Beschreibung"
 
-#: oyjl_args_tree.c:728
+#: oyjl_args_tree.c:752
 msgid "Development"
 msgstr "Entwicklung"
 
-#: oyjl_args_tree.c:730
+#: oyjl_args_tree.c:754
 msgid "Documentation"
 msgstr "Dokumente"
 
@@ -96,7 +96,7 @@ msgstr "Dokumente"
 msgid "Double occuring option"
 msgstr "Doppelte Option"
 
-#: oyjl_args_tree.c:726
+#: oyjl_args_tree.c:750
 msgid "Download"
 msgstr "Bezugsquelle"
 
@@ -206,7 +206,7 @@ msgstr "Json + Kommando"
 msgid "June 26, 2019"
 msgstr ""
 
-#: oyjl_args.c:2347 oyjl_args.c:2520 oyjl_args_tree.c:723
+#: oyjl_args.c:2347 oyjl_args.c:2520 oyjl_args_tree.c:747
 msgid "License"
 msgstr "Lizenz"
 
@@ -214,7 +214,7 @@ msgstr "Lizenz"
 msgid "Man"
 msgstr "Handbuch"
 
-#: oyjl_args_tree.c:721
+#: oyjl_args_tree.c:745
 msgid "Manufacturer"
 msgstr "Hersteller"
 
@@ -248,11 +248,11 @@ msgstr "Modus2"
 msgid "Mode3"
 msgstr "Modus3"
 
-#: oyjl_args_tree.c:702
+#: oyjl_args_tree.c:726
 msgid "Module"
 msgstr "Modul"
 
-#: oyjl_args_tree.c:928
+#: oyjl_args_tree.c:952
 msgid "No"
 msgstr "Nein"
 
@@ -286,7 +286,7 @@ msgid ""
 "Optionless mode not supported. (That would need '#' option declaration.)"
 msgstr ""
 
-#: oyjl_args_tree.c:729
+#: oyjl_args_tree.c:753
 msgid "Oyjl Module Author"
 msgstr "Autor des Oyjl Modules"
 
@@ -368,11 +368,11 @@ msgstr "Zeige Status"
 msgid "Simple mode"
 msgstr "Einfacher Modus"
 
-#: oyjl_args_tree.c:727
+#: oyjl_args_tree.c:751
 msgid "Sources"
 msgstr "Quellen"
 
-#: oyjl_args_tree.c:725
+#: oyjl_args_tree.c:749
 msgid "Support"
 msgstr "Unterstützung"
 
@@ -388,7 +388,7 @@ msgstr "Das Beispielwerkzeug zeigt die Benutzung der libOyjl APIs."
 msgid "The example tool demontrates the usage of the libOyjl API's."
 msgstr "Das Beispielwerkzeug zeigt die Benutzung der libOyjl APIs."
 
-#: oyjl_args_tree.c:700
+#: oyjl_args_tree.c:724
 msgid "Tool"
 msgstr "Werkzeug"
 
@@ -406,7 +406,7 @@ msgstr ""
 msgid "Unix Man page"
 msgstr "Unix Handbuchseite"
 
-#: oyjl_args_tree.c:724
+#: oyjl_args_tree.c:748
 msgid "Url"
 msgstr "Url"
 
@@ -422,11 +422,11 @@ msgstr "Benutzung"
 msgid "Usage Error:"
 msgstr "Benutzerfehler:"
 
-#: oyjl_args_tree.c:732
+#: oyjl_args_tree.c:756
 msgid "Version"
 msgstr "Version"
 
-#: oyjl_args_tree.c:928
+#: oyjl_args_tree.c:952
 msgid "Yes"
 msgstr "Ja"
 
