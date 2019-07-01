@@ -393,7 +393,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
       {
         const char * getChoices;
         v = oyjlTreeGetValue( val, 0, "values/getChoices" ); getChoices = OYJL_GET_STRING(v);
-        oyjlStrAdd( s, "oyjlOptionChoice_s * %s( oyjlOption_s * opt OYJL_UNUSED, int * selected OYJL_UNUSED, oyjlOptions_s * context OYJL_UNUSED )\n{ fprintf(stderr, \"%%s\\n\", __func__); return NULL; }\n", getChoices );
+        oyjlStrAdd( s, "oyjlOptionChoice_s * %s( oyjlOption_s * opt OYJL_UNUSED, int * selected OYJL_UNUSED, oyjlOptions_s * context OYJL_UNUSED )\n{ fprintf(stderr, \"\\t%%s()\\n\", __func__); return NULL; }\n", getChoices );
       }
     }
     oyjlStrAdd( s, "\n" );
@@ -571,7 +571,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
         v = oyjlTreeGetValue( val, 0, "values/dbl/start" ); start = OYJL_GET_DOUBLE(v);
         v = oyjlTreeGetValue( val, 0, "values/dbl/tick" ); tick = OYJL_GET_DOUBLE(v);
         v = oyjlTreeGetValue( val, 0, "values/dbl/end" ); end = OYJL_GET_DOUBLE(v);
-        oyjlStrAdd( s,   "{.dbl.d = %g, .dbl.start = %g, .dbl.end = %g, .dbl.tick = %g}, ", d, start, tick, end );
+        oyjlStrAdd( s,   "{.dbl.d = %g, .dbl.start = %g, .dbl.end = %g, .dbl.tick = %g}, ", d, start, end, tick );
       } else
       if(value_type && strcmp(value_type, "oyjlOPTIONTYPE_NONE") == 0)
       {
