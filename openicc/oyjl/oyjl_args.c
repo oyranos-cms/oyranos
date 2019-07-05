@@ -1213,6 +1213,11 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse (
           int llen = 0;
           while(result->results && result->results[llen]) ++llen;
           oyjlStringListStaticAdd( &result->results, &llen, value, malloc, free );
+        } else
+        {
+          fprintf( stderr, "%s %s: \"%s\"\n", _("Usage Error:"), _("Unbound options are not supported"), opts->argv[i] );
+          state = oyjlOPTION_NOT_SUPPORTED;
+          goto clean_parse;
         }
         ++pos;
       }

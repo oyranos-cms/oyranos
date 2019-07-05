@@ -99,7 +99,7 @@ int            oyjlMessageFuncSet    ( oyjlMessage_f       message_func )
 /** \addtogroup oyjl_core Core
  *  @brief I/O and String Handling
  *
- *  Basic C FILE input and outpit is provided by oyjlWriteFile(), oyjlReadFile()
+ *  Basic C FILE input and output is provided by oyjlWriteFile(), oyjlReadFile()
  *  and oyjlReadFileStreamToMem().
  *
  *  A convinient set of string API's is available in the oyjlStringXXX family.
@@ -420,7 +420,7 @@ int        oyjlStringReplace         ( char             ** text,
     return 0;
 
   str = oyjlStrNewFrom(text, 0, alloc,deAlloc);
-  n = oyjlStrReplace( str, search, replacement );
+  n = oyjlStrReplace( str, search, replacement, 0 );
   t = oyjlStrPull(str);
   *text = t;
   oyjlStrRelease( &str );
@@ -590,7 +590,10 @@ void     oyjlStringListAddList       ( char            *** list,
 }
 
 
-/** show better const behaviour and return instant error status */
+/** show better const behaviour and return instant error status over strtol()
+ *
+ *  @return                            error
+ */
 int      oyjlStringToLong            ( const char        * text,
                                        long              * value )
 {
@@ -870,11 +873,18 @@ int        oyjlStrAdd                ( oyjl_str            string,
  *  @param[in,out] text                source string for in place manipulation
  *  @param[in]     search              pattern to be tested in text
  *  @param[in]     replacement         string to be put in place of search sub string
+ *  @param[in]     modifyReplacement   hook to dynamically modify the replacement text; optional
+ *                                     - text: the full search text
+ *                                     - start: current start inside text
+ *                                     - end: current end inside text
+ *                                     - search: used term to find actual start
+ *                                     - replace: possibly modified replacement text
  *  @return                            number of occurences
  */
 int        oyjlStrReplace            ( oyjl_str            text,
                                        const char        * search,
-                                       const char        * replacement )
+                                       const char        * replacement,
+                                       void             (* modifyReplacement)(const char * text, const char * start, const char * end, const char * search, const char ** replace) )
 {
   struct oyjl_string_s * str = text;
   oyjl_str t = NULL;
@@ -893,6 +903,7 @@ int        oyjlStrReplace            ( oyjl_str            text,
     {
       if(!t) t = oyjlStrNew(10,0,0);
       oyjlStrAppendN( t, start, end-start );
+      if(modifyReplacement) modifyReplacement( oyjlStr(text), start, end, search, &replacement );
       oyjlStrAppendN( t, replacement, strlen(replacement) );
       ++n;
       if(strlen(end) >= (size_t)s_len)
