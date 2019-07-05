@@ -208,8 +208,8 @@ char *             oyjlUi_ExportToJson(oyjlUi_s          * ui,
           else if(o->option)
             oyjlStrAppendN( tmp, o->option, strlen(o->option) );
           oyjlStrAdd( tmp, "GetChoices" );
-          oyjlStrReplace( tmp, "-", "_");
-          oyjlStrReplace( tmp, "+", "_plus_");
+          oyjlStrReplace( tmp, "-", "_", 0 );
+          oyjlStrReplace( tmp, "+", "_plus_", 0 );
           txt = oyjlStr(tmp); 
           oyjlTreeSetStringF( root, OYJL_CREATE_NEW, o->values.getChoices ? txt:NULL, OYJL_REG "/ui/options/array/[%d]/values/%s", i, "getChoices" );
           oyjlStrRelease( &tmp );
@@ -279,13 +279,13 @@ static void oyjlStrAddSpaced( oyjl_str s, const char * text, int flags, int spac
       const char * t = text;
       oyjl_str tmp = oyjlStrNew(10,0,0);
       oyjlStrAppendN( tmp, t, strlen(t) );
-      oyjlStrReplace( tmp, "\\", "\\\\");
-      oyjlStrReplace( tmp, "\"", "\\\"");
-      oyjlStrReplace( tmp, "\b", "\\b");
-      oyjlStrReplace( tmp, "\f", "\\f");
-      oyjlStrReplace( tmp, "\n", "\\n");
-      oyjlStrReplace( tmp, "\r", "\\r");
-      oyjlStrReplace( tmp, "\t", "\\t");
+      oyjlStrReplace( tmp, "\\", "\\\\", 0 );
+      oyjlStrReplace( tmp, "\"", "\\\"", 0 );
+      oyjlStrReplace( tmp, "\b", "\\b", 0 );
+      oyjlStrReplace( tmp, "\f", "\\f", 0 );
+      oyjlStrReplace( tmp, "\n", "\\n", 0 );
+      oyjlStrReplace( tmp, "\r", "\\r", 0 );
+      oyjlStrReplace( tmp, "\t", "\\t", 0 );
       t = oyjlStr(tmp); 
       oyjlStrAdd( s, "%s", t );
       oyjlStrRelease( &tmp );
@@ -345,8 +345,8 @@ static char *  oyjlUiGetVariableName ( oyjl_val            val,
         const char * txt;
         oyjl_str tmp = oyjlStrNew(10,0,0);
         oyjlStrAppendN( tmp, option, strlen(option) );
-        oyjlStrReplace( tmp, "-", "_");
-        oyjlStrReplace( tmp, "+", "_plus_");
+        oyjlStrReplace( tmp, "-", "_", 0 );
+        oyjlStrReplace( tmp, "+", "_plus_", 0 );
         txt = oyjlStr(tmp); 
         oyjlStringAdd( &t, 0,0, "%s", txt );
         oyjlStrRelease( &tmp );
@@ -516,7 +516,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
       int flg;
       const char *o, *option, *key, *name, *desc, *help, *value_name, *value_type, *variable_type, *variable_name;
       val = oyjlTreeGetValueF( root, 0, "org/freedesktop/oyjl/ui/options/array/[%d]", i );
-      v = oyjlTreeGetValue( val, 0, "flags" ); flg = OYJL_GET_INTEGER(v);
+      v = oyjlTreeGetValue( val, 0, "flags" ); flg = OYJL_IS_INTEGER(v) ? OYJL_GET_INTEGER(v) : 0;
       if(flg & OYJL_OPTION_FLAG_EDITABLE)
         oyjlStringAdd( &flags, 0,0, "%s", "OYJL_OPTION_FLAG_EDITABLE" );
       else
@@ -567,11 +567,12 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
       if(value_type && strcmp(value_type, "oyjlOPTIONTYPE_DOUBLE") == 0)
       {
         double d, start, tick, end;
-        v = oyjlTreeGetValue( val, 0, "values/dbl/d" ); d = OYJL_GET_DOUBLE(v);
-        v = oyjlTreeGetValue( val, 0, "values/dbl/start" ); start = OYJL_GET_DOUBLE(v);
-        v = oyjlTreeGetValue( val, 0, "values/dbl/tick" ); tick = OYJL_GET_DOUBLE(v);
-        v = oyjlTreeGetValue( val, 0, "values/dbl/end" ); end = OYJL_GET_DOUBLE(v);
-        oyjlStrAdd( s,   "{.dbl.d = %g, .dbl.start = %g, .dbl.end = %g, .dbl.tick = %g}, ", d, start, end, tick );
+        v = oyjlTreeGetValue( val, 0, "values/dbl/d" ); d = OYJL_IS_DOUBLE(v) ? OYJL_GET_DOUBLE(v) : -1.0;
+        v = oyjlTreeGetValue( val, 0, "values/dbl/start" ); start = OYJL_IS_DOUBLE(v) ? OYJL_GET_DOUBLE(v) : -1.0;
+        v = oyjlTreeGetValue( val, 0, "values/dbl/tick" ); tick = OYJL_IS_DOUBLE(v) ? OYJL_GET_DOUBLE(v) : -1.0;
+        v = oyjlTreeGetValue( val, 0, "values/dbl/end" ); end = OYJL_IS_DOUBLE(v) ? OYJL_GET_DOUBLE(v) : -1.0;
+        if(start != -1.0 && end != -1.0)
+          oyjlStrAdd( s,   "{.dbl.d = %g, .dbl.start = %g, .dbl.end = %g, .dbl.tick = %g}, ", d == -1.0 ? 0 : d, start, end, tick == -1.0 ? 0.0 : tick );
       } else
       if(value_type && strcmp(value_type, "oyjlOPTIONTYPE_NONE") == 0)
       {

@@ -396,7 +396,8 @@ int        oyjlStrAdd                ( oyjl_str            string,
                                                            ... );
 int        oyjlStrReplace            ( oyjl_str            text,
                                        const char        * search,
-                                       const char        * replacement );
+                                       const char        * replacement,
+                                       void             (* modifyReplacement)(const char * text, const char * start, const char * end, const char * search, const char ** replace) );
 
 /* --- I/O helpers --- */
 char *     oyjlReadFileStreamToMem   ( FILE              * fp,
