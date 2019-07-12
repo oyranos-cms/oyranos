@@ -629,6 +629,7 @@ char *             oyjlUi_ExportToJson(oyjlUi_s          * ui,
                                        int                 flags );
 #define OYJL_OPTION_FLAG_EDITABLE      0x01 /**< @brief The oyjlOption_s choices are merely a hint. Let users fill other strings too. */
 #define OYJL_SOURCE_CODE_C             0x01 /**< @brief C programming language source code */
+#define OYJL_NO_DEFAULT_OPTIONS        0x02 /**< @brief omit automatic options generation for --help, --X export or --verbose */
 char *             oyjlUiJsonToCode  ( oyjl_val            root,
                                        int                 flags );
 
