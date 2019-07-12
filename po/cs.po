@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cs\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2019-07-04 13:46+0200\n"
+"POT-Creation-Date: 2019-07-12 05:44+0200\n"
 "PO-Revision-Date: 2012-10-19 15:10+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -15,15 +15,15 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: oyjl_args.c:1961
+#: oyjl_args.c:1963
 msgid "... try with --help|-h option for usage text. give up"
 msgstr ""
 
-#: oyjl_args.c:2346 oyjl_args.c:2519
+#: oyjl_args.c:2366 oyjl_args.c:2539
 msgid "AUTHOR"
 msgstr ""
 
-#: test-args.c:87 test-args.c:145 test-core.c:481 test-core.c:547 test.c:597
+#: test-args.c:87 test-args.c:145 test-core.c:501 test-core.c:567 test.c:597
 msgid "Actual mode"
 msgstr ""
 
@@ -31,30 +31,30 @@ msgstr ""
 msgid "Add gettext translated keys to JSON:"
 msgstr ""
 
-#: oyjl_args.c:879
+#: oyjl_args.c:881
 #, fuzzy
 msgid "All available data"
 msgstr "Dostupná zařízení"
 
-#: test-args.c:86 test-core.c:480 test.c:596
+#: test-args.c:86 test-core.c:500 test.c:596
 msgid "Any arg mode"
 msgstr ""
 
-#: oyjl_args.c:2356 oyjl_args.c:2529 oyjl_args.c:2531
+#: oyjl_args.c:2376 oyjl_args.c:2549 oyjl_args.c:2551
 msgid "BUGS"
 msgstr ""
 
-#: oyjl_args.c:2350 oyjl_args.c:2523
+#: oyjl_args.c:2370 oyjl_args.c:2543
 msgid "COPYRIGHT"
 msgstr ""
 
-#: test-args.c:76 test-core.c:470 test.c:586
+#: test-args.c:76 test-core.c:490 test.c:586
 #, fuzzy
 msgid "Control Output"
 msgstr "Výstupní"
 
 #. type,   flags, name,      description,          help, mandatory, optional, detail
-#: oyjl-args.c:94
+#: oyjl-args.c:1173
 #, fuzzy
 msgid "Convert"
 msgstr "ICC Examin Verze"
@@ -63,53 +63,53 @@ msgstr "ICC Examin Verze"
 msgid "Convert JSON to gettext ready C strings:"
 msgstr ""
 
-#: oyjl-args.c:101
+#: oyjl-args.c:1180
 msgid "Convert UI JSON to C code using libOyjl"
 msgstr ""
 
-#: oyjl_args_tree.c:773
+#: oyjl_args_tree.c:940
 msgid "Copyright"
 msgstr "Copyright"
 
-#: oyjl_args.c:2260 oyjl_args.c:2437
+#: oyjl_args.c:2274 oyjl_args.c:2457
 msgid "DESCRIPTION"
 msgstr ""
 
-#: oyjl_args_tree.c:782
+#: oyjl_args_tree.c:949
 msgid "Date"
 msgstr "Datum"
 
-#: oyjl_args.c:1636
+#: oyjl_args.c:1638
 #, fuzzy
 msgid "Description"
 msgstr "popis"
 
-#: oyjl_args_tree.c:779
+#: oyjl_args_tree.c:946
 msgid "Development"
 msgstr ""
 
-#: oyjl_args_tree.c:781
+#: oyjl_args_tree.c:948
 msgid "Documentation"
 msgstr "Dokumentace"
 
-#: oyjl_args.c:988
+#: oyjl_args.c:990
 #, fuzzy
 msgid "Double occuring option"
 msgstr "popis"
 
-#: oyjl_args_tree.c:777
+#: oyjl_args_tree.c:944
 msgid "Download"
 msgstr ""
 
-#: oyjl_args.c:2135
+#: oyjl_args.c:2137
 msgid "ENVIRONMENT VARIABLES"
 msgstr ""
 
-#: oyjl_args.c:2131
+#: oyjl_args.c:2133
 msgid "EXAMPLES"
 msgstr ""
 
-#: oyjl_args.c:2133
+#: oyjl_args.c:2135
 msgid "EXIT-STATE"
 msgstr ""
 
@@ -117,38 +117,38 @@ msgstr ""
 msgid "Example"
 msgstr "Příklad"
 
-#: oyjl_args.c:878
+#: oyjl_args.c:880
 msgid "Export"
 msgstr ""
 
-#: oyjl_args.c:899
+#: oyjl_args.c:901
 msgid "Export formated text"
 msgstr ""
 
-#: oyjl-args.c:84 test-args.c:74 test-args.c:75 test-core.c:468 test-core.c:469
-#: test.c:584 test.c:585
+#: oyjl-args.c:1163 test-args.c:74 test-args.c:75 test-core.c:488
+#: test-core.c:489 test.c:584 test.c:585
 msgid "FILENAME"
 msgstr ""
 
-#: oyjl_args.c:2139
+#: oyjl_args.c:2141
 msgid "FILES"
 msgstr ""
 
-#: oyjl_args.c:869
+#: oyjl_args.c:871
 msgid "Formated text"
 msgstr ""
 
-#: oyjl_args.c:873
+#: oyjl_args.c:875
 #, fuzzy
 msgid "GUI"
 msgstr "SGI"
 
-#: oyjl_args.c:876
+#: oyjl_args.c:878
 msgid "GUI + Command"
 msgstr ""
 
-#: oyjl-args.c:95 test-args.c:88 test-args.c:146 test-core.c:482
-#: test-core.c:548 test.c:598
+#: oyjl-args.c:1174 test-args.c:88 test-args.c:146 test-core.c:502
+#: test-core.c:568 test.c:598
 #, fuzzy
 msgid "General options"
 msgstr "Obecné volby:"
@@ -157,40 +157,40 @@ msgstr "Obecné volby:"
 msgid "General options:"
 msgstr "Obecné volby:"
 
-#: oyjl-args.c:94
+#: oyjl-args.c:1173
 msgid "Generate source code"
 msgstr ""
 
-#: oyjl_args.c:877
+#: oyjl_args.c:879
 msgid "Get Oyjl Json UI declaration incuding command"
 msgstr ""
 
-#: oyjl_args.c:901
+#: oyjl_args.c:903
 msgid "Get UI converted into text formats"
 msgstr ""
 
-#: oyjl_args.c:880
+#: oyjl_args.c:882
 msgid "Get UI data for developers"
 msgstr ""
 
-#: oyjl_args.c:874
+#: oyjl_args.c:876
 msgid "Get a Oyjl Json UI declaration"
 msgstr ""
 
-#: oyjl_args.c:867
+#: oyjl_args.c:869
 #, fuzzy
 msgid "Get a unix man page"
 msgstr "Unix a deriváty"
 
-#: oyjl_args.c:870
+#: oyjl_args.c:872
 msgid "Get formated text"
 msgstr ""
 
-#: oyjl_args.c:2137
+#: oyjl_args.c:2139
 msgid "HISTORY"
 msgstr ""
 
-#: oyjl-args.c:85 test-args.c:77 test-core.c:471 test.c:587
+#: oyjl-args.c:1164 test-args.c:77 test-core.c:491 test.c:587
 msgid "Help"
 msgstr ""
 
@@ -198,121 +198,121 @@ msgstr ""
 msgid "JSON file"
 msgstr ""
 
-#: oyjl_args.c:872
+#: oyjl_args.c:874
 msgid "Json"
 msgstr ""
 
-#: oyjl_args.c:875
+#: oyjl_args.c:877
 msgid "Json + Command"
 msgstr ""
 
-#: oyjl-args.c:78
+#: oyjl-args.c:1157
 msgid "June 26, 2019"
 msgstr ""
 
-#: oyjl_args.c:2352 oyjl_args.c:2525 oyjl_args_tree.c:774
+#: oyjl_args.c:2372 oyjl_args.c:2545 oyjl_args_tree.c:941
 msgid "License"
 msgstr "Licence"
 
-#: oyjl_args.c:865
+#: oyjl_args.c:867
 #, fuzzy
 msgid "Man"
 msgstr "Purpurová"
 
-#: oyjl_args_tree.c:772
+#: oyjl_args_tree.c:939
 msgid "Manufacturer"
 msgstr "Výrobce"
 
-#: oyjl_args.c:868
+#: oyjl_args.c:870
 msgid "Markdown"
 msgstr ""
 
 #. parsed and checked with -i option
-#: oyjl-args.c:95 test-args.c:88 test-args.c:146 test-core.c:482
-#: test-core.c:548 test.c:598
+#: oyjl-args.c:1174 test-args.c:88 test-args.c:146 test-core.c:502
+#: test-core.c:568 test.c:598
 msgid "Misc"
 msgstr ""
 
 #. type,   flags, name,      description,          help, mandatory, optional, detail
-#: test-args.c:145 test-core.c:547
+#: test-args.c:145 test-core.c:567
 #, fuzzy
 msgid "Mode"
 msgstr "Model:"
 
 #. type,   flags, name,      description,          help, mandatory, optional, detail
-#: test-args.c:85 test-core.c:479 test.c:595
+#: test-args.c:85 test-core.c:499 test.c:595
 #, fuzzy
 msgid "Mode1"
 msgstr "Model:"
 
 #. accepted even if none of the mandatory options is set
-#: test-args.c:86 test-core.c:480 test.c:596
+#: test-args.c:86 test-core.c:500 test.c:596
 #, fuzzy
 msgid "Mode2"
 msgstr "Model:"
 
 #. accepted if anonymous arguments are set
-#: test-args.c:87 test-core.c:481 test.c:597
+#: test-args.c:87 test-core.c:501 test.c:597
 #, fuzzy
 msgid "Mode3"
 msgstr "Model:"
 
-#: oyjl_args_tree.c:753
+#: oyjl_args_tree.c:920
 #, fuzzy
 msgid "Module"
 msgstr "Volby modulu:"
 
-#: oyjl_args_tree.c:979
+#: oyjl_args_tree.c:1146
 msgid "No"
 msgstr "Ne"
 
-#: oyjl_args.c:2262 oyjl_args.c:2439
+#: oyjl_args.c:2276 oyjl_args.c:2459
 msgid "OPTIONS"
 msgstr ""
 
-#: test-args.c:58 test-core.c:452 test.c:568
+#: test-args.c:58 test-core.c:472 test.c:568
 msgid "October 10, 2018"
 msgstr ""
 
-#: oyjl_args.c:1337
+#: oyjl_args.c:1339
 msgid "Option has a different value range"
 msgstr ""
 
-#: oyjl_args.c:1144 oyjl_args.c:1199
+#: oyjl_args.c:1146 oyjl_args.c:1201
 msgid "Option has a unexpected argument"
 msgstr ""
 
-#: oyjl_args.c:1118 oyjl_args.c:1176
+#: oyjl_args.c:1120 oyjl_args.c:1178
 msgid "Option needs a argument"
 msgstr ""
 
-#: oyjl_args.c:999 oyjl_args.c:1004 oyjl_args.c:1012 oyjl_args.c:1097
-#: oyjl_args.c:1158 oyjl_args.c:1834
+#: oyjl_args.c:1001 oyjl_args.c:1006 oyjl_args.c:1014 oyjl_args.c:1099
+#: oyjl_args.c:1160 oyjl_args.c:1836
 #, fuzzy
 msgid "Option not supported"
 msgstr "Volba nepodporovaného typu:"
 
-#: oyjl_args.c:1245
+#: oyjl_args.c:1247
 msgid ""
 "Optionless mode not supported. (That would need '#' option declaration.)"
 msgstr ""
 
-#: oyjl_args_tree.c:780
+#: oyjl_args_tree.c:947
 #, fuzzy
 msgid "Oyjl Module Author"
 msgstr "Moduly Oyranosu"
 
-#: test-args.c:65 test-core.c:459 test.c:575
+#: test-args.c:65 test-core.c:479 test.c:575
 #, fuzzy
 msgid "Print All"
 msgstr "Tiskárna"
 
-#: test-args.c:66 test-core.c:460 test.c:576
+#: test-args.c:66 test-core.c:480 test.c:576
 #, fuzzy
 msgid "Print Camera"
 msgstr "Jméno ovladače:"
 
-#: test-args.c:66 test-core.c:460 test.c:576
+#: test-args.c:66 test-core.c:480 test.c:576
 #, fuzzy
 msgid "Print Camera JSON"
 msgstr "Tiskárna CUPS"
@@ -322,7 +322,7 @@ msgstr "Tiskárna CUPS"
 msgid "Print JSON:"
 msgstr "Tiskárna CUPS"
 
-#: test-args.c:67 test-core.c:461 test.c:577
+#: test-args.c:67 test-core.c:481 test.c:577
 #, fuzzy
 msgid "Print None"
 msgstr "Tiskárna CUPS"
@@ -354,16 +354,20 @@ msgstr "Tiskárna"
 msgid "Rendering Intent"
 msgstr "Záměr transformace"
 
-#: oyjl_args.c:2141
+#: oyjl_args.c:2145
+msgid "SEE ALSO"
+msgstr ""
+
+#: oyjl_args.c:2143
 msgid "SEE AS WELL"
 msgstr ""
 
-#: oyjl_args.c:2249 oyjl_args.c:2426
+#: oyjl_args.c:2263 oyjl_args.c:2446
 msgid "SYNOPSIS"
 msgstr ""
 
-#: oyjl-args.c:84 test-args.c:74 test-args.c:75 test-core.c:468 test-core.c:469
-#: test.c:584 test.c:585
+#: oyjl-args.c:1163 test-args.c:74 test-args.c:75 test-core.c:488
+#: test-core.c:489 test.c:584 test.c:585
 #, fuzzy
 msgid "Set Input"
 msgstr "Vstupní"
@@ -375,30 +379,30 @@ msgstr ""
 #. tell about the tool
 #. argc+argv are required for parsing the command line options
 #: test-args.c:94 test-args.c:115 test-args.c:152 test-args.c:166
-#: test-args.c:179 test-args.c:192 test-args.c:206 test-core.c:488
-#: test-core.c:517 test-core.c:554 test-core.c:568 test-core.c:581
-#: test-core.c:594 test-core.c:608 test.c:605
+#: test-args.c:179 test-args.c:192 test-args.c:206 test-core.c:508
+#: test-core.c:537 test-core.c:574 test-core.c:588 test-core.c:601
+#: test-core.c:614 test-core.c:628 test.c:605
 msgid "Short example tool using libOyjl"
 msgstr ""
 
-#: test-args.c:73 test-core.c:467 test.c:583
+#: test-args.c:73 test-core.c:487 test.c:583
 #, fuzzy
 msgid "Show Status"
 msgstr "Cesta"
 
-#: test-args.c:85 test-core.c:479 test.c:595
+#: test-args.c:85 test-core.c:499 test.c:595
 msgid "Simple mode"
 msgstr ""
 
-#: oyjl_args_tree.c:778
+#: oyjl_args_tree.c:945
 msgid "Sources"
 msgstr ""
 
-#: oyjl_args_tree.c:776
+#: oyjl_args_tree.c:943
 msgid "Support"
 msgstr ""
 
-#: oyjl_args.c:1638
+#: oyjl_args.c:1640
 msgid "Synopsis"
 msgstr ""
 
@@ -406,70 +410,70 @@ msgstr ""
 msgid "The example tool demonstrates the usage of the libOyjl API's."
 msgstr ""
 
-#: test-args.c:57 test-core.c:451
+#: test-args.c:57 test-core.c:471
 msgid "The example tool demontrates the usage of the libOyjl API's."
 msgstr ""
 
-#: oyjl_args_tree.c:751
+#: oyjl_args_tree.c:918
 msgid "Tool"
 msgstr ""
 
-#: oyjl-args.c:77
+#: oyjl-args.c:1156
 msgid "Tool to convert UI JSON description from *-X export* into source code."
 msgstr ""
 
 #. tell about the tool
 #. argc+argv are required for parsing the command line options
-#: oyjl-args.c:101
+#: oyjl-args.c:1180
 msgid "Ui to source code"
 msgstr ""
 
-#: oyjl_args.c:1218
+#: oyjl_args.c:1220
 #, fuzzy
 msgid "Unbound options are not supported"
 msgstr "Volba nepodporovaného typu:"
 
-#: oyjl_args.c:866
+#: oyjl_args.c:868
 #, fuzzy
 msgid "Unix Man page"
 msgstr "Unix a deriváty"
 
-#: oyjl_args_tree.c:775
+#: oyjl_args_tree.c:942
 msgid "Url"
 msgstr ""
 
-#: oyjl.c:32 oyjl.c:45 oyjl.c:57 oyjl_args.c:1645 oyjl_translate.c:43
+#: oyjl.c:32 oyjl.c:45 oyjl.c:57 oyjl_args.c:1647 oyjl_translate.c:43
 #: oyjl_translate.c:152
 msgid "Usage"
 msgstr "Použití"
 
-#: oyjl_args.c:988 oyjl_args.c:999 oyjl_args.c:1004 oyjl_args.c:1012
-#: oyjl_args.c:1097 oyjl_args.c:1118 oyjl_args.c:1144 oyjl_args.c:1158
-#: oyjl_args.c:1176 oyjl_args.c:1199 oyjl_args.c:1218 oyjl_args.c:1245
-#: oyjl_args.c:1337 oyjl_args.c:1834
+#: oyjl_args.c:990 oyjl_args.c:1001 oyjl_args.c:1006 oyjl_args.c:1014
+#: oyjl_args.c:1099 oyjl_args.c:1120 oyjl_args.c:1146 oyjl_args.c:1160
+#: oyjl_args.c:1178 oyjl_args.c:1201 oyjl_args.c:1220 oyjl_args.c:1247
+#: oyjl_args.c:1339 oyjl_args.c:1836
 msgid "Usage Error:"
 msgstr ""
 
-#: oyjl_args_tree.c:783
+#: oyjl_args_tree.c:950
 #, fuzzy
 msgid "Version"
 msgstr "ICC Examin Verze"
 
-#: oyjl_args_tree.c:979
+#: oyjl_args_tree.c:1146
 msgid "Yes"
 msgstr "Ano"
 
-#: oyjl_args.c:896
+#: oyjl_args.c:898
 msgid "export"
 msgstr ""
 
-#: oyjl-args.c:85 test-args.c:77 test-core.c:471 test.c:587
+#: oyjl-args.c:1164 test-args.c:77 test-core.c:491 test.c:587
 msgid "help"
 msgstr "nápověda"
 
 #. type,   flags, o,   option,    key,  name,         description,         help, value_name,    value_type,               values,                                                          variable_type, output variable
-#: oyjl-args.c:84 test-args.c:74 test-args.c:75 test-core.c:468 test-core.c:469
-#: test.c:584 test.c:585
+#: oyjl-args.c:1163 test-args.c:74 test-args.c:75 test-core.c:488
+#: test-core.c:489 test.c:584 test.c:585
 #, fuzzy
 msgid "input"
 msgstr "Vstupní"
@@ -504,19 +508,19 @@ msgstr ""
 msgid "locales in a comma separated list"
 msgstr ""
 
-#: oyjl_args.c:1004
+#: oyjl_args.c:1006
 msgid "need a value_type"
 msgstr ""
 
-#: oyjl_args.c:999
+#: oyjl_args.c:1001
 msgid "need range 0-9 or a-z or A-Z"
 msgstr ""
 
-#: oyjl_args.c:1012 oyjl_args.c:1834
+#: oyjl_args.c:1014 oyjl_args.c:1836
 msgid "needs OYJL_OPTION_FLAG_EDITABLE or choices"
 msgstr ""
 
-#: oyjl_translate.c:59 test-args.c:76 test-core.c:470 test.c:586
+#: oyjl_translate.c:59 test-args.c:76 test-core.c:490 test.c:586
 #, fuzzy
 msgid "output"
 msgstr "Výstupní"
@@ -526,11 +530,11 @@ msgid "output format string"
 msgstr ""
 
 #. declare some option choices
-#: test-args.c:62 test-core.c:456 test.c:572
+#: test-args.c:62 test-core.c:476 test.c:572
 msgid "oyjl.json"
 msgstr ""
 
-#: test-args.c:63 test-core.c:457 test.c:573
+#: test-args.c:63 test-core.c:477 test.c:573
 msgid "oyjl2.json"
 msgstr ""
 
@@ -539,7 +543,7 @@ msgid "specify JSON file"
 msgstr ""
 
 #. type,   flags, o,   option,    key,  name,         description,         help, value_name,    value_type,               values,                                                          variable_type, output variable
-#: test-args.c:73 test-core.c:467 test.c:583
+#: test-args.c:73 test-core.c:487 test.c:583
 msgid "status"
 msgstr ""
 
@@ -551,8 +555,8 @@ msgstr ""
 msgid "to be used key names in a comma separated list"
 msgstr ""
 
-#: oyjl-args.c:86 oyjl.c:74 oyjl_translate.c:62 test-args.c:78 test-core.c:472
-#: test.c:588
+#: oyjl-args.c:1165 oyjl.c:74 oyjl_translate.c:62 test-args.c:78
+#: test-core.c:492 test.c:588
 msgid "verbose"
 msgstr "upovídaný výstup"
 
@@ -623,6 +627,10 @@ msgstr "upovídaný výstup"
 
 #~ msgid "&Done"
 #~ msgstr "&Hotovo"
+
+#, fuzzy
+#~ msgid "(c) 2011-2015, Kai-Uwe Behrmann and others"
+#~ msgstr "Copyright (c) 2005-2010 Kai-Uwe Behrmann; newBSD"
 
 #~ msgid "(device) link class"
 #~ msgstr "třída spojovacího profilu"
@@ -1331,9 +1339,6 @@ msgstr "upovídaný výstup"
 #~ msgid "Copyright (c) 2005-2009 Kai-Uwe Behrmann; newBSD"
 #~ msgstr "Copyright (c) 2005-2009 Kai-Uwe Behrmann; newBSD"
 
-#~ msgid "Copyright (c) 2005-2010 Kai-Uwe Behrmann; newBSD"
-#~ msgstr "Copyright (c) 2005-2010 Kai-Uwe Behrmann; newBSD"
-
 #~ msgid "Copyright (c) 2005-2013 Kai-Uwe Behrmann; newBSD"
 #~ msgstr "Copyright (c) 2005-2013 Kai-Uwe Behrmann; newBSD"
 
@@ -1496,9 +1501,6 @@ msgstr "upovídaný výstup"
 #~ msgid "Data Color Space:"
 #~ msgstr "Bar. prostor:"
 
-#~ msgid "Data:"
-#~ msgstr "Data:"
-
 #~ msgid "Date:"
 #~ msgstr "Datum:"
 
@@ -1587,9 +1589,6 @@ msgstr "upovídaný výstup"
 
 #~ msgid "Driver version:"
 #~ msgstr "Verze ovladače:"
-
-#~ msgid "Dump Device Infos to OpenICC device JSON:"
-#~ msgstr "Vypsat informace o zařízení do JSON OpenICC:"
 
 #~ msgid "Dump data:"
 #~ msgstr "Vypsat data:"
@@ -2170,7 +2169,8 @@ msgstr "upovídaný výstup"
 #~ msgid "Kai-Uwe"
 #~ msgstr "Kai-Uwe"
 
-#~ msgid "Kai-Uwe Behrmann"
+#, fuzzy
+#~ msgid "Kai-Uwe Behrmann (ku.b (at) gmx.de)"
 #~ msgstr "Kai-Uwe Behrmann"
 
 #~ msgid "L"
@@ -2537,6 +2537,14 @@ msgstr "upovídaný výstup"
 #~ "Můj projekt; www: http://www.moje-adresa.com; podpora/email: moje@adresa."
 #~ "com; zdrojové kódy: http://www.moje-adresa.com/download"
 
+#, fuzzy
+#~ msgid "NAME select tag"
+#~ msgstr "vybrat štítek"
+
+#, fuzzy
+#~ msgid "NUMBER select tag"
+#~ msgstr "vybrat štítek"
+
 #~ msgid "Name"
 #~ msgstr "Jméno"
 
@@ -2656,6 +2664,10 @@ msgstr "upovídaný výstup"
 #~ msgid "Oyranos "
 #~ msgstr "Oyranos X11"
 
+#, fuzzy
+#~ msgid "Oyranos CMS ICC profile tool"
+#~ msgstr "Modul politiky Oyranosu pro ICC"
+
 #~ msgid "Oyranos CUPS"
 #~ msgstr "Oyranos CUPS"
 
@@ -2670,9 +2682,6 @@ msgstr "upovídaný výstup"
 
 #~ msgid "Oyranos ICC policy"
 #~ msgstr "Politika Oyranosu pro ICC"
-
-#~ msgid "Oyranos ICC policy module"
-#~ msgstr "Modul politiky Oyranosu pro ICC"
 
 #, fuzzy
 #~ msgid "Oyranos RAW Image"
@@ -4127,6 +4136,10 @@ msgstr "upovídaný výstup"
 #~ msgid "allocation failed"
 #~ msgstr "alokace selhala"
 
+#, fuzzy
+#~ msgid "at:"
+#~ msgstr "Data:"
+
 #~ msgid "attempt to add a incomplete filter"
 #~ msgstr "pokus o přidání neúplného filtru"
 
@@ -4241,7 +4254,8 @@ msgstr "upovídaný výstup"
 #~ msgid "dump OpenICC device color state rank map JSON"
 #~ msgstr "vložit JSON OpenICC ze souboru"
 
-#~ msgid "embed OpenICC device JSON from file"
+#, fuzzy
+#~ msgid "embed OpenICC JSON device from file"
 #~ msgstr "vložit JSON OpenICC ze souboru"
 
 #~ msgid "empty"
@@ -4505,7 +4519,8 @@ msgstr "upovídaný výstup"
 #~ msgid "negative, "
 #~ msgstr "negativni, "
 
-#~ msgid "new BSD license: http://www.opensource.org/licenses/bsd-license.php"
+#, fuzzy
+#~ msgid "new BSD <http://www.opensource.org/licenses/BSD-3-Clause>"
 #~ msgstr "Licence new BSD: http://www.opensource.org/licenses/bsd-license.php"
 
 #~ msgid "newBSD"
@@ -4615,6 +4630,10 @@ msgstr "upovídaný výstup"
 #~ msgid "positive, "
 #~ msgstr "pozitivni, "
 
+#, fuzzy
+#~ msgid "print a help text"
+#~ msgstr "Vytisknout nápovědu:"
+
 #~ msgid "print only the file name"
 #~ msgstr "vytisknout pouze název souboru"
 
@@ -4713,9 +4732,6 @@ msgstr "upovídaný výstup"
 #~ msgid "select format, currently only icc"
 #~ msgstr "zvolte formát, v současnosti pouze CLUT"
 
-#~ msgid "select tag"
-#~ msgstr "vybrat štítek"
-
 #~ msgid "shells"
 #~ msgstr "plaste"
 
@@ -4811,6 +4827,10 @@ msgstr "upovídaný výstup"
 #~ msgstr "Zapsat do profilu ICC:"
 
 #, fuzzy
+#~ msgid "write device informations to OpenICC JSON."
+#~ msgstr "Vypsat informace o zařízení do JSON OpenICC:"
+
+#, fuzzy
 #~ msgid "write to file, currently only PPM and PNG formats"
 #~ msgstr "zapsat do souboru, v současnosti pouze ve formátu PPM"
 
@@ -4826,3 +4846,7 @@ msgstr "upovídaný výstup"
 
 #~ msgid "wrong profile for static web color space selected, need sRGB"
 #~ msgstr "špatný profil pro statický barvový prostor webu, vyžadováno sRGB"
+
+#, fuzzy
+#~ msgid "xml"
+#~ msgstr "Příklad"
