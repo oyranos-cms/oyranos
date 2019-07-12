@@ -433,7 +433,12 @@ static char *  oyjlUiGetVariableName ( oyjl_val            val,
           oyjlUiCanonicaliseVariableName( &t );
         }
         if(!t)
-          oyjlStringAdd( &t, 0,0, "%c", o[0] );
+        {
+          if(o[0] == '@')
+            t = oyjlStringCopy( "count", 0 );
+          else
+            oyjlStringAdd( &t, 0,0, "%c", o[0] );
+        }
       }
     }
   }
