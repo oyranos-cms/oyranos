@@ -812,16 +812,18 @@ const char * oyjlOption_PrintArg     ( oyjlOption_s      * o,
   if(!o) return "";
   if(style & oyjlOPTIONSTYLE_OPTIONAL_START)
     oyjlStringAdd( &text, malloc, free, "[" );
-  if(style & oyjlOPTIONSTYLE_ONELETTER && o->o != '@')
+  if(style & oyjlOPTIONSTYLE_ONELETTER && o->o != '@' && o->o != '#')
   {
     if(style & oyjlOPTIONSTYLE_MAN)
       oyjlStringAdd( &text, malloc, free, "\\-%c", o->o );
     else
       oyjlStringAdd( &text, malloc, free, "-%c", o->o );
   }
-  if(style & oyjlOPTIONSTYLE_ONELETTER && style & oyjlOPTIONSTYLE_STRING && o->o != '@')
+  if(style & oyjlOPTIONSTYLE_ONELETTER && o->o == '#')
     oyjlStringAdd( &text, malloc, free, "|" );
-  if(style & oyjlOPTIONSTYLE_STRING && o->o != '@')
+  if(style & oyjlOPTIONSTYLE_ONELETTER && style & oyjlOPTIONSTYLE_STRING && o->o != '@' && o->o != '#')
+    oyjlStringAdd( &text, malloc, free, "|" );
+  if(style & oyjlOPTIONSTYLE_STRING && o->o != '@' && o->o != '#')
   {
     if(style & oyjlOPTIONSTYLE_MAN)
       oyjlStringAdd( &text, malloc, free, "\\-\\-%s", o->option );
@@ -1001,7 +1003,7 @@ oyjlOPTIONSTATE_e oyjlOptions_Check (
     }
     if(o->o != '#' && o->value_name && o->value_name[0] && o->value_type == oyjlOPTIONTYPE_NONE)
     {
-      fprintf( stderr, "%s %s \'%c\' %s\n", _("Usage Error:"), _("Option not supported"), o->o, _("need a value_type") );
+      fprintf( stderr, "%s %s \'%c\': %s\n", _("Usage Error:"), _("Option not supported"), o->o, _("need a value_type") );
       return oyjlOPTION_NOT_SUPPORTED;
     }
     if( o->o != '#' &&
@@ -1506,7 +1508,7 @@ static const char * oyjlOptions_PrintHelpSynopsis (
       fprintf(stderr, "\n%s: option not declared: %c\n", g->name, oc);
       exit(1);
     }
-    if(oc != '@' && oc != '#')
+    if(oc != '@' && !(oc == '#' && m == 1))
       oyjlStringAdd( &text, malloc, free, " %s", oyjlOption_PrintArg(o, style) );
   }
   for(i = 0; i < on; ++i)
@@ -1618,7 +1620,7 @@ void  oyjlOptions_PrintHelp          ( oyjlOptions_s     * opts,
                                                                "version" );
     fprintf( stdout, "%s v%s - %s", oyjlTermColor( oyjlBOLD, opts->argv[0] ),
                               version && version->name ? version->name : "",
-                              ui->description ? ui->description : "" );
+                              ui->description ? ui->description : ui->name ? ui->name : "" );
   }
   else
   {
@@ -1648,7 +1650,7 @@ void  oyjlOptions_PrintHelp          ( oyjlOptions_s     * opts,
     oyjlOptionGroup_s * g = &opts->groups[i];
     int d = g->detail ? strlen(g->detail) : 0,
         j,k;
-    fprintf( stdout, "  %s\n", oyjlTermColor(oyjlUNDERLINE,g->description) );
+    fprintf( stdout, "  %s\n", g->description?oyjlTermColor(oyjlUNDERLINE,g->description):"" );
     if(g->mandatory && g->mandatory[0])
     {
       fprintf( stdout, "\t%s\n", oyjlOptions_PrintHelpSynopsis( opts, g, oyjlOPTIONSTYLE_ONELETTER ) );
@@ -2109,7 +2111,7 @@ char *       oyjlStringToUpper       ( const char        * t )
 }
 
 static
-char *       oyjlExtraManSection  ( oyjlOptions_s  * opts,
+char *       oyjlExtraManSection     ( oyjlOptions_s     * opts,
                                        const char        * opt_name,
                                        int                 flags )
 {
@@ -2139,15 +2141,27 @@ char *       oyjlExtraManSection  ( oyjlOptions_s  * opts,
           section = _("FILES");
         else if(strcmp(section,"SEE AS WELL") == 0)
           section = _("SEE AS WELL");
+        else if(strcmp(section,"SEE ALSO") == 0)
+          section = _("SEE ALSO");
         if(flags & oyjlOPTIONSTYLE_MARKDOWN)
           oyjlStringAdd( &text, malloc, free, "## %s\n", _(section) );
         else
           oyjlStringAdd( &text, malloc, free, ".SH %s\n", _(section) );
         for(l = 0; l < n; ++l)
+        {
           if(flags & oyjlOPTIONSTYLE_MARKDOWN)
-            oyjlStringAdd( &text, malloc, free, "### %s\n%s %s %s\n", list[l].nick, list[l].name, list[l].description, list[l].help );
+          {
+            oyjlStringAdd( &text, malloc, free, "### %s\n", list[l].nick );
+            if(list[l].name || list[l].description || list[l].help)
+            oyjlStringAdd( &text, malloc, free, "%s %s %s\n", list[l].name?list[l].name:"", list[l].description?list[l].description:"", list[l].help?list[l].help:"" );
+          }
           else
-            oyjlStringAdd( &text, malloc, free, ".TP\n%s\n.br\n%s %s %s\n", list[l].nick, list[l].name, list[l].description, list[l].help );
+          {
+            oyjlStringAdd( &text, malloc, free, ".TP\n%s\n.br\n", list[l].nick );
+            if(list[l].name || list[l].description || list[l].help)
+            oyjlStringAdd( &text, malloc, free, "%s %s %s\n", list[l].name?list[l].name:"", list[l].description?list[l].description:"", list[l].help?list[l].help:"" );
+          }
+        }
         free(up);
       }
     }
@@ -2265,11 +2279,15 @@ char *       oyjlUi_ToMan            ( oyjlUi_s          * ui,
     oyjlOptionGroup_s * g = &opts->groups[i];
     int d = g->detail ? strlen(g->detail) : 0,
         j;
-    oyjlStringAdd( &text, malloc, free, ".TP\n%s\n", g->description  );
+    if(g->description)
+      oyjlStringAdd( &text, malloc, free, ".TP\n%s\n", g->description  );
+    else
+    if(g->name)
+      oyjlStringAdd( &text, malloc, free, ".TP\n%s\n", g->name );
+    else
+      oyjlStringAdd( &text, malloc, free, ".TP\n"  );
     if(g->mandatory && g->mandatory[0])
-    {
       oyjlStringAdd( &text, malloc, free, "%s\n", oyjlOptions_PrintHelpSynopsis( opts, g, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MAN ) );
-    }
     oyjlStringAdd( &text, malloc, free, ".br\n"  );
     if(g->help)
     {
@@ -2290,6 +2308,8 @@ char *       oyjlUi_ToMan            ( oyjlUi_s          * ui,
           {
             int n = 0,l;
             oyjlStringAdd( &text, malloc, free, "%s", oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MAN) );
+            if(o->name && !o->description)
+              oyjlStringAdd( &text, malloc, free, "\t%s", o->name );
             oyjlStringAdd( &text, malloc, free, "\t%s%s%s\n.br\n", o->description ? o->description:"", o->help?": ":"", o->help?o->help :"" );
             if(o->flags & OYJL_OPTION_FLAG_EDITABLE)
               break;
