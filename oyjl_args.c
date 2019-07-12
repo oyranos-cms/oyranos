@@ -2374,6 +2374,8 @@ char *       oyjlUi_ToMan            ( oyjlUi_s          * ui,
 
   if(bugs)
     oyjlStringAdd( &text, malloc, free, ".SH %s\n%s %s\n", _("BUGS"), bugs, bugs_url?bugs_url:"" );
+  else if(bugs_url)
+    oyjlStringAdd( &text, malloc, free, ".SH %s\n%s\n", _("BUGS"), bugs_url );
 
   return text;
 }
