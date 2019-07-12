@@ -178,6 +178,26 @@ oyjlTESTRESULT_e testString ()
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyjlStringReplace(end)    46 == %d                   ", (int)strlen(test_out) );
   }
+  if(verbose)
+    fprintf( stderr, "%s \"display_name\"->\"bar\" %s\n", test, test_out );
+  myDeAllocFunc(test_out);
+
+  test_out = oyjlStringCopy("abc]",malloc);
+  n = oyjlStringReplace( &test_out, "]", " ] ", 0,0 );
+  if(verbose)
+    fprintf(zout, "test %s \"%s\"\n", test, test_out);
+  if( strstr(test_out, " ] " ) != NULL &&
+      strstr(test_out, "c]" ) == NULL &&
+      strlen(test_out) == 6 &&
+      n == 1 )
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlStringReplace(end)      6 == %d                   ", (int)strlen(test_out) );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlStringReplace(end)      6 == %d                   ", (int)strlen(test_out) );
+  }
+  if(verbose)
+    fprintf( stderr, "\"%s\" \"]\"->\" ] \" \"%s\"\n", "abc]", test_out );
   myDeAllocFunc(test_out);
 
   char * compare;
