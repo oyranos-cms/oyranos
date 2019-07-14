@@ -486,7 +486,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
   if(flags & OYJL_SOURCE_CODE_C)
   {
     oyjl_val val;
-    int i,n, export_found = 0, help_found = 0, verbose_found = 0;
+    int i,n, export_found = 0, help_found = 0, verbose_found = 0, version_found = 0;
 
     oyjlStrAdd( s, "#include \"oyjl.h\"\n" );
     oyjlStrAdd( s, "#ifndef _\n" );
@@ -525,6 +525,8 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
           help_found = 1;
         if(strcmp(t,"verbose") == 0)
           verbose_found = 1;
+        if(strcmp(t,"version") == 0)
+          version_found = 1;
       }
       if(t) free(t);
     }
@@ -534,6 +536,8 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
         oyjlStrAdd( s, "  int help = 0;\n" );
       if(!verbose_found)
         oyjlStrAdd( s, "  int verbose = 0;\n" );
+      if(!version_found)
+        oyjlStrAdd( s, "  int version = 0;\n" );
     }
     if(!export_found)
     oyjlStrAdd( s, "  const char * export = 0;\n" );
@@ -790,7 +794,9 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
       if(!help_found && !oyjlFindOption( root, 'h' ))
       oyjlStrAdd(s,"    {\"oiwi\", 0, 'h', \"help\", NULL, _(\"help\"), _(\"Help\"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&help} },\n" );
       if(!verbose_found && !oyjlFindOption( root, 'v' ))
-      oyjlStrAdd(s,"    {\"oiwi\", 0, 'v', \"verbose\", NULL, _(\"verbose\"), _(\"verbose\"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&verbose} },\n" );
+      oyjlStrAdd(s,"    {\"oiwi\", 0, 'v', \"verbose\", NULL, _(\"verbose\"), _(\"Verbose\"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&verbose} },\n" );
+      if(!version_found && !oyjlFindOption( root, 'V' ))
+      oyjlStrAdd(s,"    {\"oiwi\", 0, 'V', \"version\", NULL, _(\"version\"), _(\"Version\"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&version} },\n" );
       oyjlStrAdd(s,"    /* default option template -X|--export */\n" );
       if(!export_found)
       oyjlStrAdd(s,"    {\"oiwi\", 0, 'X', \"export\", NULL, NULL, NULL, NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = NULL}, oyjlSTRING, {.s=&export} },\n" );
