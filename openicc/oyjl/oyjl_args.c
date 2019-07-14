@@ -833,7 +833,7 @@ const char * oyjlOption_PrintArg     ( oyjlOption_s      * o,
   if(o->value_name)
   {
     if(style & oyjlOPTIONSTYLE_MAN)
-      oyjlStringAdd( &text, malloc, free, " \\fI%s\\fR", o->value_name );
+      oyjlStringAdd( &text, malloc, free, "%s\\fI%s\\fR", (o->o != '@' && o->o != '#') ? " ":"", o->value_name );
     else
     {
       if(style & oyjlOPTIONSTYLE_MARKDOWN)
@@ -1911,9 +1911,9 @@ oyjlUi_s *  oyjlUi_Create            ( int                 argc,
                                        oyjlOptionGroup_s * groups,
                                        int               * status )
 {
-  int help = 0, verbose = 0;
+  int help = 0, verbose = 0, version = 0;
   const char * export = NULL;
-  oyjlOption_s * h, * v, * X;
+  oyjlOption_s * h, * v, * X, * V;
   oyjlOPTIONSTATE_e opt_state = oyjlOPTION_NONE;
 
   int use_gettext = 0;
@@ -1991,6 +1991,29 @@ oyjlUi_s *  oyjlUi_Create            ( int                 argc,
     oyjlOptions_PrintHelp( ui->opts, ui, verbose, "%s v%s - %s", prog,
                               version && version->name ? version->name : "",
                               ui->description ? ui->description : "" );
+    oyjlUi_Release( &ui);
+    if(status)
+      *status |= oyjlUI_STATE_HELP;
+    return NULL;
+  }
+  V = oyjlOptions_GetOption( ui->opts, 'V' );
+  if(V && V->variable_type == oyjlINT && V->variable.i)
+    version = *V->variable.i;
+  if(version)
+  {
+    oyjlUiHeaderSection_s * version = oyjlUi_GetHeaderSection( ui, "version" );
+    oyjlUiHeaderSection_s * author = oyjlUi_GetHeaderSection( ui, "manufacturer" );
+    oyjlUiHeaderSection_s * copyright = oyjlUi_GetHeaderSection( ui, "copyright" );
+    oyjlUiHeaderSection_s * license = oyjlUi_GetHeaderSection( ui, "license" );
+    const char * prog = argv[0];
+    if(!verbose && prog && strchr(prog,'/'))
+      prog = strrchr(prog,'/') + 1;
+    fprintf( stdout, "%s v%s - %s\n%s\n%s%s%s\n%s%s%s\n\n", prog,
+                                      version && version->name ? version->name : "",
+                                      ui->description ? ui->description : ui->name ? ui->name : "",
+                                      copyright && copyright->name ? copyright->name : "",
+                                      license ? _("License"):"", license?":\t":"", license && license->name ? license->name : "",
+                                      author ? _("Author"):"", author?": \t":"", author && author->name ? author->name : "" );
     oyjlUi_Release( &ui);
     if(status)
       *status |= oyjlUI_STATE_HELP;
@@ -2277,15 +2300,15 @@ char *       oyjlUi_ToMan            ( oyjlUi_s          * ui,
   for(i = 0; i < ng; ++i)
   {
     oyjlOptionGroup_s * g = &opts->groups[i];
-    int d = g->detail ? strlen(g->detail) : 0,
+    int dn = g->detail ? strlen(g->detail) : 0,
         j;
     if(g->description)
-      oyjlStringAdd( &text, malloc, free, ".TP\n%s\n", g->description  );
+      oyjlStringAdd( &text, malloc, free, ".SS\n%s\n", g->description  );
     else
     if(g->name)
-      oyjlStringAdd( &text, malloc, free, ".TP\n%s\n", g->name );
+      oyjlStringAdd( &text, malloc, free, ".SS\n%s\n", g->name );
     else
-      oyjlStringAdd( &text, malloc, free, ".TP\n"  );
+      oyjlStringAdd( &text, malloc, free, "\n"  );
     if(g->mandatory && g->mandatory[0])
       oyjlStringAdd( &text, malloc, free, "%s\n", oyjlOptions_PrintHelpSynopsis( opts, g, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MAN ) );
     oyjlStringAdd( &text, malloc, free, ".br\n"  );
@@ -2293,7 +2316,7 @@ char *       oyjlUi_ToMan            ( oyjlUi_s          * ui,
     {
       oyjlStringAdd( &text, malloc, free, "%s\n.br\n.sp\n.br\n", g->help );
     }
-    for(j = 0; j < d; ++j)
+    for(j = 0; j < dn; ++j)
     {
       char oc = g->detail[j];
       oyjlOption_s * o = oyjlOptions_GetOption( opts, oc );
@@ -2310,7 +2333,7 @@ char *       oyjlUi_ToMan            ( oyjlUi_s          * ui,
             oyjlStringAdd( &text, malloc, free, "%s", oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MAN) );
             if(o->name && !o->description)
               oyjlStringAdd( &text, malloc, free, "\t%s", o->name );
-            oyjlStringAdd( &text, malloc, free, "\t%s%s%s\n.br\n", o->description ? o->description:"", o->help?": ":"", o->help?o->help :"" );
+            oyjlStringAdd( &text, malloc, free, "\t%s%s%s%s", o->description ? o->description:"", o->help?"\n.RS\n":"", o->help?o->help:"", o->help?"\n.RE\n":"\n.br\n" );
             if(o->flags & OYJL_OPTION_FLAG_EDITABLE)
               break;
             while(o->values.choices.list[n].nick && o->values.choices.list[n].nick[0] != '\000')
@@ -2320,7 +2343,7 @@ char *       oyjlUi_ToMan            ( oyjlUi_s          * ui,
                   o->o,
                   o->values.choices.list[l].nick,
                   o->values.choices.list[l].name && o->values.choices.list[l].nick[0] ? o->values.choices.list[l].name : o->values.choices.list[l].description,
-                  o->values.choices.list[l].help&&o->values.choices.list[l].help[0]?" - ":"",
+                  o->values.choices.list[l].help&&o->values.choices.list[l].help[0]?"\n.br\n\t":"",
                   o->values.choices.list[l].help?o->values.choices.list[l].help:"" );
           }
           break;
@@ -2329,7 +2352,7 @@ char *       oyjlUi_ToMan            ( oyjlUi_s          * ui,
             int n = 0,l;
             oyjlOptionChoice_s * list;
             oyjlStringAdd( &text, malloc, free, "%s", oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MAN) );
-            oyjlStringAdd( &text, malloc, free, "\t%s%s%s\n.br\n", o->description ? o->description:"", o->help?": ":"", o->help?o->help :"" );
+            oyjlStringAdd( &text, malloc, free, "\t%s%s%s%s", o->description ? o->description:"", o->help && o->help[0]?"\n.RS\n":"", o->help?o->help:"", o->help?"\n.RE\n":"\n.br\n" );
             if(o->flags & OYJL_OPTION_FLAG_EDITABLE)
               break;
             list = oyjlOption_GetChoices_(o, NULL, opts );
@@ -2343,11 +2366,11 @@ char *       oyjlUi_ToMan            ( oyjlUi_s          * ui,
           break;
         case oyjlOPTIONTYPE_DOUBLE:
           oyjlStringAdd( &text, malloc, free, "%s", oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MAN) );
-          oyjlStringAdd( &text, malloc, free, "\t%s%s%s (%s%s%g [≥%g ≤%g])\n.br\n", o->description ? o->description:"", o->help?": ":"", o->help?o->help :"", o->value_name?o->value_name:"", o->value_name?":":"", o->values.dbl.d, o->values.dbl.start, o->values.dbl.end );
+          oyjlStringAdd( &text, malloc, free, "\t%s (%s%s%g [≥%g ≤%g])%s%s%s", o->description ? o->description:"", o->value_name?o->value_name:"", o->value_name?":":"", o->values.dbl.d, o->values.dbl.start, o->values.dbl.end, o->help?"\n.RS\n":"", o->help?o->help:"", o->help?"\n.RE\n":"\n.br\n" );
           break;
         case oyjlOPTIONTYPE_NONE:
           oyjlStringAdd( &text, malloc, free, "%s", oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MAN) );
-          oyjlStringAdd( &text, malloc, free, "\t%s%s%s\n.br\n", o->description ? o->description:"", o->help?": ":"", o->help?o->help :"" );
+          oyjlStringAdd( &text, malloc, free, "\t%s%s%s%s", o->description ? o->description:"", o->help?"\n.RS\n":"", o->help?o->help:"", o->help?"\n.RE\n":"\n.br\n" );
         break;
         case oyjlOPTIONTYPE_START: break;
         case oyjlOPTIONTYPE_END: break;
@@ -2577,7 +2600,7 @@ oyjlUiHeaderSection_s * oyjlUiInfo   ( const char          * documentation )
     /* type,  nick,      label,name,                 description */
     { "oihs", "version", NULL, OYJL_VERSION_NAME, NULL },
     { "oihs", "manufacturer", NULL, "Kai-Uwe Behrmann", "http://www.oyranos.org" },
-    { "oihs", "copyright", NULL, "Copyright 2018-2019 Kai-Uwe Behrmann", NULL },
+    { "oihs", "copyright", NULL, "Copyright © 2018-2019 Kai-Uwe Behrmann", NULL },
     { "oihs", "license", NULL, "newBSD", "http://www.oyranos.org" },
     { "oihs", "url", NULL, "http://www.oyranos.org", NULL },
     { "oihs", "support", NULL, "https://www.github.com/oyranos-cms/oyranos/issues", NULL },
