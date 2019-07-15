@@ -321,7 +321,7 @@ static char * oyjlGuessSingleWordFromChar ( char o, const char * text )
 { /* guess from name */
   int words_n = 0, i, len, found = 0;
   char * name = NULL;
-  char ** words = oyjlStringSplit2( text, &words_n, malloc );
+  char ** words = oyjlStringSplit( text, 0, &words_n, malloc );
   /* search first letter of word for a match */
   for(i = 0; i < words_n; ++i)
   {
