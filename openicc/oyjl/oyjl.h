@@ -1,32 +1,16 @@
-/*
- * Copyright (c) 2010-2011  Florian Forster  <ff at octo.it>
+/** @file oyjl.h
  *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
+ *  oyjl - Basic helper C API's
  *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
- */
-
-/**
- *   * \file oyjl.h
+ *  @par Copyright:
+ *            2010-2019 (C) Kai-Uwe Behrmann
  *
- * Parses JSON data and returns the data in tree form.
- *
- * \author Florian Forster
- * \date August 2010
- *
- * This interface makes quick parsing and extraction of
- * smallish JSON docs trivial.
- *
- * The original yajl_val_s structure was renamed to oyjl_val_s by
- * Kai-Uwe Behrmann for libOyjl.
+ *  @brief    Oyjl API provides a platformindependent C interface for JSON I/O, conversion to and from
+ *            XML + YAML, string helpers, file reading, testing and argument handling.
+ *  @author   Kai-Uwe Behrmann <ku.b@gmx.de> and Florian Forster  <ff at octo.it>
+ *  @par License:
+ *            MIT <http://www.opensource.org/licenses/mit-license.php>
+ *  @since    2010/09/15
  */
 
 
@@ -48,6 +32,28 @@ extern "C" {
 
 /** \addtogroup oyjl_tree
  *  @{ *//* oyjl_tree */
+
+#define Florian_Forster_SOURCE_GUARD
+/*
+ * Copyright (c) 2010-2011  Florian Forster  <ff at octo.it>
+ *
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ */
+
+/**
+ * The original yajl_val_s structure was renamed to oyjl_val_s by
+ * Kai-Uwe Behrmann for libOyjl.
+ */
 
 /**
  *  possible data types that a oyjl_val_s can hold */
@@ -113,10 +119,14 @@ struct oyjl_val_s
 };
 
 /**
- * Parse a string.
+ * @brief Parse a string. (libOyjl)
  *
  * Parses an null-terminated string containing JSON data and returns a pointer
  * to the top-level value (root of the parse tree).
+ *
+ *  This function needs linking to libOyjl.
+ *
+ *  @see oyjlTreeToJson()
  *
  * \param input              Pointer to a null-terminated utf8 string containing
  *                           JSON data.
@@ -200,6 +210,8 @@ OYJL_API oyjl_val oyjlTreeGet ( oyjl_val parent, const char ** path, oyjl_type t
 /** @internal
  *  Get a pointer to a oyjl_val_array or NULL if the value is not an object. */
 #define OYJL_GET_ARRAY(v)  (OYJL_IS_ARRAY(v)  ? &(v)->u.array  : NULL)
+
+#undef Florian_Forster_SOURCE_GUARD
 
 #define OYJL_NUMBER_DETECTION 0x01     /**< @brief try to parse values as number */
 #if defined(OYJL_HAVE_LIBXML2)
@@ -627,7 +639,6 @@ char *             oyjlUi_ToMarkdown ( oyjlUi_s          * ui,
                                        int                 flags );
 char *             oyjlUi_ExportToJson(oyjlUi_s          * ui,
                                        int                 flags );
-#define OYJL_OPTION_FLAG_EDITABLE      0x01 /**< @brief The oyjlOption_s choices are merely a hint. Let users fill other strings too. */
 #define OYJL_SOURCE_CODE_C             0x01 /**< @brief C programming language source code */
 #define OYJL_NO_DEFAULT_OPTIONS        0x02 /**< @brief omit automatic options generation for --help, --X export or --verbose */
 char *             oyjlUiJsonToCode  ( oyjl_val            root,
