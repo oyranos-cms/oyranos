@@ -1,4 +1,4 @@
-/*  @file oyjl_args.c
+/** @file oyjl_args.c
  *
  *  oyjl - UI helpers
  *

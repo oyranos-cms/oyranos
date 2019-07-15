@@ -1,4 +1,4 @@
-/*  @file oyjl.c
+/** @file oyjl.c
  *
  *  oyjl - Yajl tree extension
  *
