@@ -466,6 +466,10 @@ int  oyjlTreeToJson21 (oyjl_val v, int * level, oyjl_str json)
   }
   return 0;
 }
+/** @brief convert a C tree into a JSON string
+ *
+ *  @see oyjlTreeParse()
+ */
 void oyjlTreeToJson (oyjl_val v, int * level, char ** json)
 {
   oyjl_str string = oyjlStrNew(10, 0,0);
@@ -478,10 +482,6 @@ void oyjlTreeToJson (oyjl_val v, int * level, char ** json)
   *json = text;;
 }
 
-/** @brief convert a C tree into a JSON string
- *
- *  @see oyjlTreeParse()
- */
 void oyjlTreeToJson2 (oyjl_val v, int * level, char ** json)
 {
   if(v)
