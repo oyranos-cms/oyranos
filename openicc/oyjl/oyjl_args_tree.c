@@ -1,4 +1,4 @@
-/*  @file oyjl_args.c
+/** @file oyjl_args.c
  *
  *  oyjl - UI helpers
  *
@@ -444,6 +444,41 @@ static char *  oyjlUiGetVariableName ( oyjl_val            val,
   }
   return t;
 }
+static char *  oyjlUiGetVariableNameC( oyjl_val            val,
+                                       const char       ** type )
+{
+  char * t = oyjlUiGetVariableName( val, type );
+  if(!t) return t;
+  /* replace some reserved C names */
+  if(strcmp(t,"break") == 0) { free(t); t = oyjlStringCopy("break_var",0); }
+  if(strcmp(t,"case") == 0) { free(t); t = oyjlStringCopy("case_var",0); }
+  if(strcmp(t,"char") == 0) { free(t); t = oyjlStringCopy("char_var",0); }
+  if(strcmp(t,"class") == 0) { free(t); t = oyjlStringCopy("class_var",0); }
+  if(strcmp(t,"const") == 0) { free(t); t = oyjlStringCopy("const_var",0); }
+  if(strcmp(t,"do") == 0) { free(t); t = oyjlStringCopy("do_var",0); }
+  if(strcmp(t,"double") == 0) { free(t); t = oyjlStringCopy("double_var",0); }
+  if(strcmp(t,"else") == 0) { free(t); t = oyjlStringCopy("else_var",0); }
+  if(strcmp(t,"enum") == 0) { free(t); t = oyjlStringCopy("enum_var",0); }
+  if(strcmp(t,"extern") == 0) { free(t); t = oyjlStringCopy("extern_var",0); }
+  if(strcmp(t,"float") == 0) { free(t); t = oyjlStringCopy("float_var",0); }
+  if(strcmp(t,"for") == 0) { free(t); t = oyjlStringCopy("for_var",0); }
+  if(strcmp(t,"goto") == 0) { free(t); t = oyjlStringCopy("goto_var",0); }
+  if(strcmp(t,"if") == 0) { free(t); t = oyjlStringCopy("if_var",0); }
+  if(strcmp(t,"int") == 0) { free(t); t = oyjlStringCopy("int_var",0); }
+  if(strcmp(t,"long") == 0) { free(t); t = oyjlStringCopy("long_var",0); }
+  if(strcmp(t,"register") == 0) { free(t); t = oyjlStringCopy("register_var",0); }
+  if(strcmp(t,"short") == 0) { free(t); t = oyjlStringCopy("short_var",0); }
+  if(strcmp(t,"signed") == 0) { free(t); t = oyjlStringCopy("signed_var",0); }
+  if(strcmp(t,"static") == 0) { free(t); t = oyjlStringCopy("static_var",0); }
+  if(strcmp(t,"struct") == 0) { free(t); t = oyjlStringCopy("struct_var",0); }
+  if(strcmp(t,"switch") == 0) { free(t); t = oyjlStringCopy("switch_var",0); }
+  if(strcmp(t,"system") == 0) { free(t); t = oyjlStringCopy("system_var",0); }
+  if(strcmp(t,"typedef") == 0) { free(t); t = oyjlStringCopy("typedef_var",0); }
+  if(strcmp(t,"unsigned") == 0) { free(t); t = oyjlStringCopy("unsigned_var",0); }
+  if(strcmp(t,"void") == 0) { free(t); t = oyjlStringCopy("void_var",0); }
+  if(strcmp(t,"while") == 0) { free(t); t = oyjlStringCopy("while_var",0); }
+  return t;
+}
 
 static oyjl_val oyjlFindOption( oyjl_val root, char o )
 {
@@ -515,7 +550,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
     for(i = 0; i < n; ++i)
     {
       const char * type = NULL;
-      char * t = oyjlUiGetVariableName( oyjlTreeGetValueF( root, 0, "org/freedesktop/oyjl/ui/options/array/[%d]", i ), &type );
+      char * t = oyjlUiGetVariableNameC( oyjlTreeGetValueF( root, 0, "org/freedesktop/oyjl/ui/options/array/[%d]", i ), &type );
       if(type && t)
       {
         oyjlStrAdd( s, "  %s %s = 0;\n", type, t );
@@ -653,7 +688,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
       if(!option && o && o[0] != '@')
       {
         const char * ctype = NULL;
-        tmp_variable_name = oyjlUiGetVariableName( val, &ctype );
+        tmp_variable_name = oyjlUiGetVariableNameC( val, &ctype );
         if(tmp_variable_name)
         {
           len = strlen(tmp_variable_name);
@@ -776,7 +811,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
         if(type)
         {
           const char * ctype = NULL;
-          char * vname = oyjlUiGetVariableName( val, &ctype );
+          char * vname = oyjlUiGetVariableNameC( val, &ctype );
           if(ctype && vname)
             oyjlStringAdd( &t, 0,0, "{.%c=&%s}", type, vname );
           if(vname) free(vname);
