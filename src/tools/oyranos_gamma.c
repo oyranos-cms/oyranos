@@ -780,7 +780,7 @@ int main( int argc , char** argv )
           }
 
           if(verbose)
-          fprintf(stderr,"------------------------ %d ---------------------------\n",i);
+          fprintf(stdout,"------------------------ %d ---------------------------\n",i);
 
           error = oyDeviceGetInfo( c, oyNAME_NICK, cs_options, &text,
                                    oyAllocFunc );
@@ -810,7 +810,7 @@ int main( int argc , char** argv )
           {
             error = oyDeviceGetInfo( c, oyNAME_DESCRIPTION, cs_options, &text,
                                      oyAllocFunc );
-            fprintf( stderr,"%s\n", text ? text : "???" );
+            fprintf( stdout,"%s\n", text ? text : "???" );
           }
 
           if(text)
@@ -824,12 +824,12 @@ int main( int argc , char** argv )
             if(size && data)
               oyDeAllocFunc( data );
             filename = oyProfile_GetFileName( prof, -1 );
-            fprintf( stderr, " server profile \"%s\" size: %d\n",
+            fprintf( stdout, " server profile \"%s\" size: %d\n",
                     filename?filename:OY_PROFILE_NONE, (int)size );
 
             text = 0;
             oyDeviceProfileFromDB( c, &text, oyAllocFunc );
-            fprintf( stderr, " DB profile \"%s\"\n  keys: %s\n",
+            fprintf( stdout, " DB profile \"%s\"\n  keys: %s\n",
                     text?text:OY_PROFILE_NONE,
                     oyConfig_FindString( c, "key_set_name", 0 ) ?
                       oyConfig_FindString( c, "key_set_name", 0 ) :
