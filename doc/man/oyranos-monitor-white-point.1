@@ -16,7 +16,7 @@ oyranos-monitor-white-point v0.9.7 \- Night Manager
 .SH DESCRIPTION
 The tool can set the actual white point or set it by local day and night time. A additional effect profile can be selected.
 .SH OPTIONS
-.TP
+.SS
 Nightly appearance
 \fBoyranos-monitor-white-point\fR \-n \fI0|1|2|3|4|5|6|7\fR \-g \fIICC_PROFILE\fR [\-b \fIPERCENT\fR] [\-z] [\-v]
 .br
@@ -24,8 +24,10 @@ The Night white point mode shall allow to reduce influence of blue light during 
 .br
 .sp
 .br
-\-n|\-\-night-white-point \fI0|1|2|3|4|5|6|7\fR	Set night time mode: A white point temperature of around 4000K and lower allows to get easier into sleep. Enable by setting this option to Automatic (-n=1) and Temperature to 3000 (-a=3000).
-.br
+\-n|\-\-night-white-point \fI0|1|2|3|4|5|6|7\fR	Set night time mode
+.RS
+A white point temperature of around 4000K and lower allows to get easier into sleep. Enable by setting this option to Automatic (-n=1) and Temperature to 3000 (-a=3000).
+.RE
 	\-n 0		# No
 .br
 	\-n 1		# Automatic
@@ -40,17 +42,21 @@ The Night white point mode shall allow to reduce influence of blue light during 
 .br
 	\-n 6		# Illuminant D93
 .br
-\-g|\-\-night-effect \fIICC_PROFILE\fR	Set night time effect: A ICC profile of class abstract. Ideally the effect profile works on 1D RGB curves only and is marked meta:EFFECT_linear=yes .
-.br
+\-g|\-\-night-effect \fIICC_PROFILE\fR	Set night time effect
+.RS
+A ICC profile of class abstract. Ideally the effect profile works on 1D RGB curves only and is marked meta:EFFECT_linear=yes .
+.RE
 	\-g -		# [none]
 .br
 	\-g Effect 1		# Example Effect 1
 .br
 	\-g Effect 2		# Example Effect 2
 .br
-\-b|\-\-night-backlight \fIPERCENT\fR	Set Nightly Backlight: The option needs xbacklight installed and supporting your device for dimming the monitor lamp. (PERCENT:4 [≥0 ≤100])
-.br
-.TP
+\-b|\-\-night-backlight \fIPERCENT\fR	Set Nightly Backlight (PERCENT:4 [≥0 ≤100])
+.RS
+The option needs xbacklight installed and supporting your device for dimming the monitor lamp.
+.RE
+.SS
 Actual mode
 \fBoyranos-monitor-white-point\fR \-w \fI0|1|2|3|4|5|6|7\fR \-a \fIKELVIN\fR [\-z] [\-v]
 .br
@@ -72,7 +78,7 @@ Actual mode
 .br
 \-a|\-\-automatic \fIKELVIN\fR	A value from 2700 till 8000 Kelvin is expected to show no artefacts (KELVIN:2800 [≥1100 ≤10100])
 .br
-.TP
+.SS
 Sun light appearance
 \fBoyranos-monitor-white-point\fR \-s \fI0|1|2|3|4|5|6|7\fR \-e \fIICC_PROFILE\fR [\-z] [\-v]
 .br
@@ -92,15 +98,17 @@ Sun light appearance
 .br
 	\-s 6		# Illuminant D93
 .br
-\-e|\-\-sunlight-effect \fIICC_PROFILE\fR	Set day time effect: A ICC profile of class abstract. Ideally the effect profile works on 1D RGB curves only and is marked meta:EFFECT_linear=yes .
-.br
+\-e|\-\-sunlight-effect \fIICC_PROFILE\fR	Set day time effect
+.RS
+A ICC profile of class abstract. Ideally the effect profile works on 1D RGB curves only and is marked meta:EFFECT_linear=yes .
+.RE
 	\-e -		# [none]
 .br
 	\-e Effect 1		# Example Effect 1
 .br
 	\-e Effect 2		# Example Effect 2
 .br
-.TP
+.SS
 Location and Twilight
 \fBoyranos-monitor-white-point\fR \-l|  \-i \fIANGLE_IN_DEGREE\fR \-o \fIANGLE_IN_DEGREE\fR [\-t \fIANGLE_IN_DEGREE|0:rise/set|-6:civil|-12:nautical|-18:astronomical\fR] [\-z] [\-v]
 .br
@@ -112,7 +120,7 @@ Location and Twilight
 .br
 \-t|\-\-twilight \fIANGLE_IN_DEGREE|0:rise/set|-6:civil|-12:nautical|-18:astronomical\fR	Set Twilight angle (ANGLE_IN_DEGREE|0:rise/set|-6:civil|-12:nautical|-18:astronomical:0 [≥18 ≤-18])
 .br
-.TP
+.SS
 Run sunset daemon
 \fBoyranos-monitor-white-point\fR \-d \fI0|1|2\fR [\-v]
 .br
@@ -124,7 +132,7 @@ Run sunset daemon
 .br
 	\-d 2		# Activate  
 .br
-.TP
+.SS
 General options
 \fBoyranos-monitor-white-point\fR \-m|  \-r|  \-X \fIjson|json+command|man|markdown\fR|  \-h [\-v]
 .br
@@ -134,17 +142,29 @@ General options
 .br
 \-r|\-\-sunrise	Show local time, used geographical location, twilight height angles, sun rise and sun set times
 .br
-\-X|\-\-export \fIjson|json+command|man|markdown\fR	Export formated text: Get UI converted into text formats
+\-X|\-\-export \fIjson|json+command|man|markdown\fR	Export formated text
+.RS
+Get UI converted into text formats
+.RE
+	\-X man		# Man 
 .br
-	\-X man		# Man  -  Get a unix man page
+	 Get a unix man page
 .br
-	\-X markdown		# Markdown  -  Get formated text
+	\-X markdown		# Markdown 
 .br
-	\-X json		# Json  -  Get a Oyjl Json UI declaration
+	 Get formated text
 .br
-	\-X json+command		# Json + Command  -  Get Oyjl Json UI declaration incuding command
+	\-X json		# Json 
 .br
-	\-X export		# Export  -  Get UI data for developers
+	 Get a Oyjl Json UI declaration
+.br
+	\-X json+command		# Json + Command 
+.br
+	 Get Oyjl Json UI declaration incuding command
+.br
+	\-X export		# Export 
+.br
+	 Get UI data for developers
 .br
 \-z|\-\-system-wide	System wide DB setting
 .br

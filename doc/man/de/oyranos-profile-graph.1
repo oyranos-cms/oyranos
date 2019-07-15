@@ -18,7 +18,7 @@ oyranos-profile-graph v0.9.7 \- Oyranos Profile Zeichner
 .SH BESCHREIBUNG
 Das oyranos-profile-graph Programm erzeugt aus einem ICC Profil oder eingebetteten ICC Profil in eine Grafik. Vorgabemäßig malt es die Sättigungslinie eines anzugebenden ICC Profiles und schreibt die Grafik nach stdout.
 .SH OPTIONEN
-.TP
+.SS
 2D Zeichnung vom Farbprofil
 \fBoyranos-profile-graph\fR [\-t \fINUMMER\fR] [\-b] [\-g] [\-w \fINUMMER\fR] [\-o \fI-|DATEI\fR] [\-f \fIFORMAT\fR] [\-c] [\-x] [\-d \fINUMMER\fR] [\-n] [\-2] [\-4] [\-r] [\-v] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
 .br
@@ -26,7 +26,7 @@ Erzeuge aus einem ICC Profil eine Grafik mit seiner Sättigungslinie.
 .br
 .sp
 .br
- \fIl|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE\fR	ICC Profil
+\fIl|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE\fR	ICC Profil
 .br
 \-d|\-\-change-thickness \fINUMMER\fR	Gib die Verstärkung der Liniendicke an (NUMMER:0,7 [≥-1000 ≤1000])
 .br
@@ -42,45 +42,59 @@ Erzeuge aus einem ICC Profil eine Grafik mit seiner Sättigungslinie.
 .br
 \-r|\-\-no-repair	Lasse Reparatur der Profil ID weg
 .br
-.TP
+.SS
 Standard Betrachter 1931 2° Zeichnung
 \fBoyranos-profile-graph\fR \-S [\-t \fINUMMER\fR] [\-b] [\-g] [\-w \fINUMMER\fR] [\-R] [\-o \fI-|DATEI\fR] [\-f \fIFORMAT\fR] [\-v]
 .br
 \-S|\-\-standard-observer	CIE Standard Betrachter 1931 2°
 .br
-.TP
+.SS
 1964 10° Betrachter Zeichnung
 \fBoyranos-profile-graph\fR \-O [\-t \fINUMMER\fR] [\-b] [\-g] [\-w \fINUMMER\fR] [\-R] [\-o \fI-|DATEI\fR] [\-f \fIFORMAT\fR] [\-v]
 .br
 \-O|\-\-observer-64	CIE Betrachter 1064 10°
 .br
-.TP
+.SS
 Spektrumgraph eines Lambertstrahlers
 \fBoyranos-profile-graph\fR \-k \fINUMMER\fR [\-t \fINUMMER\fR] [\-b] [\-g] [\-w \fINUMMER\fR] [\-R] [\-o \fI-|DATEI\fR] [\-f \fIFORMAT\fR] [\-v]
 .br
 \-k|\-\-kelvin \fINUMMER\fR	Lambertstrahler (NUMMER:0 [≥0 ≤25000])
 .br
-.TP
+.SS
 Beleuchtungsspektrumzeichnung
 \fBoyranos-profile-graph\fR \-i \fIWORT\fR [\-t \fINUMMER\fR] [\-b] [\-g] [\-w \fINUMMER\fR] [\-R] [\-o \fI-|DATEI\fR] [\-f \fIFORMAT\fR] [\-v]
 .br
 \-i|\-\-illuminant \fIWORT\fR	Beleuchtungsspektrum
 .br
-	\-i A		# Lichtart A  -  CIE A Strahlungsverteilung
+	\-i A		# Lichtart A 
 .br
-	\-i D50		# Lichtart D50  -  CIE D50 Strahlungsverteilung (berechnet)
+	 CIE A Strahlungsverteilung
 .br
-	\-i D55		# Lichtart D55  -  CIE D55 Strahlungsverteilung (berechnet)
+	\-i D50		# Lichtart D50 
 .br
-	\-i D65		# Lichtart D65  -  CIE D65 Strahlungsverteilung (berechnet)
+	 CIE D50 Strahlungsverteilung (berechnet)
 .br
-	\-i D65T		# Lichtart D65 T  -  CIE D65 Strahlungsverteilung
+	\-i D55		# Lichtart D55 
 .br
-	\-i D75		# Lichtart D75  -  CIE D75 Strahlungsverteilung (berechnet)
+	 CIE D55 Strahlungsverteilung (berechnet)
 .br
-	\-i D93		# Lichtart D93  -  CIE D93 Strahlungsverteilung (berechnet)
+	\-i D65		# Lichtart D65 
 .br
-.TP
+	 CIE D65 Strahlungsverteilung (berechnet)
+.br
+	\-i D65T		# Lichtart D65 T 
+.br
+	 CIE D65 Strahlungsverteilung
+.br
+	\-i D75		# Lichtart D75 
+.br
+	 CIE D75 Strahlungsverteilung (berechnet)
+.br
+	\-i D93		# Lichtart D93 
+.br
+	 CIE D93 Strahlungsverteilung (berechnet)
+.br
+.SS
 Spektrumgraph
 \fBoyranos-profile-graph\fR \-s \fIDATEI\fR \-p \fIFORMAT\fR \-z [\-t \fINUMMER\fR] [\-b] [\-g] [\-w \fINUMMER\fR] [\-R] [\-P \fIWORT\fR] [\-o \fI-|DATEI\fR] [\-v]
 .br
@@ -88,25 +102,39 @@ Spektrumgraph
 .br
 \-p|\-\-spectral-format \fIFORMAT\fR	Gib spektrales Ausgabeformat an
 .br
-	\-p png		# PNG  -  PNG Raster
+	\-p png		# PNG 
 .br
-	\-p svg		# SVG  -  SVG Vektor
+	 PNG Raster
 .br
-	\-p csv		# CSV  -  CSV Werte
+	\-p svg		# SVG 
 .br
-	\-p ncc		# NCC  -  Einzelfarbsammlung (NCC)
+	 SVG Vektor
 .br
-	\-p cgats		# CGATS  -  CGATS Werte
+	\-p csv		# CSV 
 .br
-	\-p icc-xml		# Icc XML  -  ICC Einzelfarben Werte
+	 CSV Werte
 .br
-	\-p ppm		# PPM  -  Spektrales PAM Bild
+	\-p ncc		# NCC 
+.br
+	 Einzelfarbsammlung (NCC)
+.br
+	\-p cgats		# CGATS 
+.br
+	 CGATS Werte
+.br
+	\-p icc-xml		# Icc XML 
+.br
+	 ICC Einzelfarben Werte
+.br
+	\-p ppm		# PPM 
+.br
+	 Spektrales PAM Bild
 .br
 \-P|\-\-pattern \fIWORT\fR	Filter für Farbnamen
 .br
 \-z|\-\-scale	Skaliere die Höhe der Spektrumkurve
 .br
-.TP
+.SS
 Allgemeine Optionen
 \fBoyranos-profile-graph\fR \-X \fIjson|json+command|man|markdown\fR|  \-h [\-v]
 .br
@@ -124,23 +152,39 @@ Allgemeine Optionen
 .br
 \-f|\-\-format \fIFORMAT\fR	Gib Ausgabeformat PNG oder SVG an, voreingestellt ist PNG
 .br
-	\-f png		# PNG  -  PNG Raster
+	\-f png		# PNG 
 .br
-	\-f svg		# SVG  -  SVG Vektor
+	 PNG Raster
+.br
+	\-f svg		# SVG 
+.br
+	 SVG Vektor
 .br
 \-h|\-\-help	Hilfe
 .br
-\-X|\-\-export \fIjson|json+command|man|markdown\fR	Exportiere formatierten Text: Hole Benutzerschnittstelle als Text
+\-X|\-\-export \fIjson|json+command|man|markdown\fR	Exportiere formatierten Text
+.RS
+Hole Benutzerschnittstelle als Text
+.RE
+	\-X man		# Handbuch 
 .br
-	\-X man		# Handbuch  -  Hole Unix Handbuchseite
+	 Hole Unix Handbuchseite
 .br
-	\-X markdown		# Markdown  -  Hole formatierten Text
+	\-X markdown		# Markdown 
 .br
-	\-X json		# Json  -  Hole Oyjl Json Benutzerschnittstelle
+	 Hole formatierten Text
 .br
-	\-X json+command		# Json + Kommando  -  Hole Oyjl Json Benutzerschnittstelle mit Kommando
+	\-X json		# Json 
 .br
-	\-X export		# Export  -  Erhalte Daten für Entwickler
+	 Hole Oyjl Json Benutzerschnittstelle
+.br
+	\-X json+command		# Json + Kommando 
+.br
+	 Hole Oyjl Json Benutzerschnittstelle mit Kommando
+.br
+	\-X export		# Export 
+.br
+	 Erhalte Daten für Entwickler
 .br
 \-v|\-\-verbose	plaudernd
 .br

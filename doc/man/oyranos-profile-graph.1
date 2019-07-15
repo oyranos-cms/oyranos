@@ -18,7 +18,7 @@ oyranos-profile-graph v0.9.7 \- Oyranos Profile Graph
 .SH DESCRIPTION
 The  oyranos-profile-graph programm converts ICC profiles or embedded ICC profiles from images to a graph image. By default the program shows the saturation line of the specified profiles and writes to stdout.
 .SH OPTIONS
-.TP
+.SS
 2D Graph from profiles
 \fBoyranos-profile-graph\fR [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-o \fI-|FILE\fR] [\-f \fIFORMAT\fR] [\-c] [\-x] [\-d \fINUMBER\fR] [\-n] [\-2] [\-4] [\-r] [\-v] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
 .br
@@ -26,7 +26,7 @@ Create a 2D Graph containing the saturation line from a ICC Profile.
 .br
 .sp
 .br
- \fIl|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE\fR	ICC Profile
+\fIl|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE\fR	ICC Profile
 .br
 \-d|\-\-change-thickness \fINUMBER\fR	Specify increase of the thickness of the graph lines (NUMBER:0.7 [≥-1000 ≤1000])
 .br
@@ -42,45 +42,59 @@ Create a 2D Graph containing the saturation line from a ICC Profile.
 .br
 \-r|\-\-no-repair	No Profile repair of ICC profile ID
 .br
-.TP
+.SS
 Standard Observer 1931 2° Graph
 \fBoyranos-profile-graph\fR \-S [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-R] [\-o \fI-|FILE\fR] [\-f \fIFORMAT\fR] [\-v]
 .br
 \-S|\-\-standard-observer	CIE Standard Observer 1931 2°
 .br
-.TP
+.SS
 1964 10° Observer Graph
 \fBoyranos-profile-graph\fR \-O [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-R] [\-o \fI-|FILE\fR] [\-f \fIFORMAT\fR] [\-v]
 .br
 \-O|\-\-observer-64	CIE Observer 1964 10°
 .br
-.TP
+.SS
 Blackbody Radiator Spectrum Graph
 \fBoyranos-profile-graph\fR \-k \fINUMBER\fR [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-R] [\-o \fI-|FILE\fR] [\-f \fIFORMAT\fR] [\-v]
 .br
 \-k|\-\-kelvin \fINUMBER\fR	Blackbody Radiator (NUMBER:0 [≥0 ≤25000])
 .br
-.TP
+.SS
 Illuminant Spectrum Graph
 \fBoyranos-profile-graph\fR \-i \fISTRING\fR [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-R] [\-o \fI-|FILE\fR] [\-f \fIFORMAT\fR] [\-v]
 .br
 \-i|\-\-illuminant \fISTRING\fR	Illuminant Spectrum
 .br
-	\-i A		# Illuminant A  -  CIE A spectral power distribution
+	\-i A		# Illuminant A 
 .br
-	\-i D50		# Illuminant D50  -  CIE D50 spectral power distribution (computed)
+	 CIE A spectral power distribution
 .br
-	\-i D55		# Illuminant D55  -  CIE D55 spectral power distribution (computed)
+	\-i D50		# Illuminant D50 
 .br
-	\-i D65		# Illuminant D65  -  CIE D65 spectral power distribution (computed)
+	 CIE D50 spectral power distribution (computed)
 .br
-	\-i D65T		# Illuminant D65 T  -  CIE D65 spectral power distribution
+	\-i D55		# Illuminant D55 
 .br
-	\-i D75		# Illuminant D75  -  CIE D75 spectral power distribution (computed)
+	 CIE D55 spectral power distribution (computed)
 .br
-	\-i D93		# Illuminant D93  -  CIE D93 spectral power distribution (computed)
+	\-i D65		# Illuminant D65 
 .br
-.TP
+	 CIE D65 spectral power distribution (computed)
+.br
+	\-i D65T		# Illuminant D65 T 
+.br
+	 CIE D65 spectral power distribution
+.br
+	\-i D75		# Illuminant D75 
+.br
+	 CIE D75 spectral power distribution (computed)
+.br
+	\-i D93		# Illuminant D93 
+.br
+	 CIE D93 spectral power distribution (computed)
+.br
+.SS
 Spectral Input Graph
 \fBoyranos-profile-graph\fR \-s \fIFILE\fR \-p \fIFORMAT\fR \-z [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-R] [\-P \fISTRING\fR] [\-o \fI-|FILE\fR] [\-v]
 .br
@@ -88,25 +102,39 @@ Spectral Input Graph
 .br
 \-p|\-\-spectral-format \fIFORMAT\fR	Specify spectral output file format
 .br
-	\-p png		# PNG  -  PNG Raster
+	\-p png		# PNG 
 .br
-	\-p svg		# SVG  -  SVG Vector
+	 PNG Raster
 .br
-	\-p csv		# CSV  -  CSV Values
+	\-p svg		# SVG 
 .br
-	\-p ncc		# NCC  -  Named Color Collection
+	 SVG Vector
 .br
-	\-p cgats		# CGATS  -  CGATS Values
+	\-p csv		# CSV 
 .br
-	\-p icc-xml		# Icc XML  -  ICC Named Color Values
+	 CSV Values
 .br
-	\-p ppm		# PPM  -  Spectral PAM Image
+	\-p ncc		# NCC 
+.br
+	 Named Color Collection
+.br
+	\-p cgats		# CGATS 
+.br
+	 CGATS Values
+.br
+	\-p icc-xml		# Icc XML 
+.br
+	 ICC Named Color Values
+.br
+	\-p ppm		# PPM 
+.br
+	 Spectral PAM Image
 .br
 \-P|\-\-pattern \fISTRING\fR	Filter of Color Names
 .br
 \-z|\-\-scale	Scale the height of the spectrum graph
 .br
-.TP
+.SS
 General options
 \fBoyranos-profile-graph\fR \-X \fIjson|json+command|man|markdown\fR|  \-h [\-v]
 .br
@@ -124,23 +152,39 @@ General options
 .br
 \-f|\-\-format \fIFORMAT\fR	Specify output file format png or svg, default is png
 .br
-	\-f png		# PNG  -  PNG Raster
+	\-f png		# PNG 
 .br
-	\-f svg		# SVG  -  SVG Vector
+	 PNG Raster
+.br
+	\-f svg		# SVG 
+.br
+	 SVG Vector
 .br
 \-h|\-\-help	Help
 .br
-\-X|\-\-export \fIjson|json+command|man|markdown\fR	Export formated text: Get UI converted into text formats
+\-X|\-\-export \fIjson|json+command|man|markdown\fR	Export formated text
+.RS
+Get UI converted into text formats
+.RE
+	\-X man		# Man 
 .br
-	\-X man		# Man  -  Get a unix man page
+	 Get a unix man page
 .br
-	\-X markdown		# Markdown  -  Get formated text
+	\-X markdown		# Markdown 
 .br
-	\-X json		# Json  -  Get a Oyjl Json UI declaration
+	 Get formated text
 .br
-	\-X json+command		# Json + Command  -  Get Oyjl Json UI declaration incuding command
+	\-X json		# Json 
 .br
-	\-X export		# Export  -  Get UI data for developers
+	 Get a Oyjl Json UI declaration
+.br
+	\-X json+command		# Json + Command 
+.br
+	 Get Oyjl Json UI declaration incuding command
+.br
+	\-X export		# Export 
+.br
+	 Get UI data for developers
 .br
 \-v|\-\-verbose	verbose
 .br

@@ -12,16 +12,20 @@ oyranos-profiles v0.9.7 \- Oyranos Profile
 .SH BESCHREIBUNG
 Das Werkzeug kann installierte Profile und Suchpfade anzeigen. Es kann ein Profil in einen Suchpfad installieren.
 .SH OPTIONEN
-.TP
+.SS
 Liste der verfügbaren ICC Farbprofile
 \fBoyranos-profiles\fR \-l [\-f] [\-e] [\-a] [\-c] [\-d] [\-k] [\-n] [\-o] [\-i] [\-2] [\-4] [\-P] [\-T \fISCHLÜSSEL;WERT\fR] [\-v]
 .br
 \-l|\-\-list-profiles	Liste Profile
 .br
-\-f|\-\-full-names	Profildateiname: Zeige kompletten Pfad- und Dateinamen
-.br
-\-e|\-\-internal-names	Interne Namen: Der Text kommt vom 'desc' Profilelement.
-.br
+\-f|\-\-full-names	Profildateiname
+.RS
+Zeige kompletten Pfad- und Dateinamen
+.RE
+\-e|\-\-internal-names	Interne Namen
+.RS
+Der Text kommt vom 'desc' Profilelement.
+.RE
 \-a|\-\-abstract	Wähle abstrakte Profile
 .br
 \-c|\-\-color-space	Wähle Farbraumprofile
@@ -40,13 +44,17 @@ Liste der verfügbaren ICC Farbprofile
 .br
 \-4|\-\-icc-version-4	Wähle ICC V4 Profile
 .br
-\-P|\-\-path	Zeige Profile, welche ein Wort in ihrem Pfadnamen enthalten.: PFAD_WORT_TEIL
-.br
-\-T|\-\-meta \fISCHLÜSSEL;WERT\fR	Suche nach Schlüssel/Werte Paar in Meta Element: Zeige Profile welche ein bestimmtes Schlüssel/Werte Paar im meta Tag enthalten. WERT kann '*' enthalten für das Filtern von Wortteilen.
-.br
+\-P|\-\-path	Zeige Profile, welche ein Wort in ihrem Pfadnamen enthalten.
+.RS
+PFAD_WORT_TEIL
+.RE
+\-T|\-\-meta \fISCHLÜSSEL;WERT\fR	Suche nach Schlüssel/Werte Paar in Meta Element
+.RS
+Zeige Profile welche ein bestimmtes Schlüssel/Werte Paar im meta Tag enthalten. WERT kann '*' enthalten für das Filtern von Wortteilen.
+.RE
 \-D|\-\-duplicates	Zeige identische mehrfach installierte Profile an
 .br
-.TP
+.SS
 Zeige Suchpfade
 \fBoyranos-profiles\fR \-p [\-u|\-s|\-y|\-m] [\-v]
 .br
@@ -60,7 +68,7 @@ Zeige Suchpfade
 .br
 \-m|\-\-machine	Maschinenpfad
 .br
-.TP
+.SS
 Installiere Profil
 \fBoyranos-profiles\fR \-I \fIICC_PROFIL\fR|  \-t \fITAXI_ID\fR [\-u|\-s|\-y|\-m] [\-g] [\-v]
 .br
@@ -78,23 +86,35 @@ Installiere Profil
 .br
 \-g|\-\-gui	Zeige Grafische Benutzerschnittstelle
 .br
-.TP
+.SS
 Allgemeine Optionen
 \fBoyranos-profiles\fR \-h \-X \fIjson|json+command|man|markdown\fR
 .br
 \-h|\-\-help	Hilfe
 .br
-\-X|\-\-export \fIjson|json+command|man|markdown\fR	Exportiere formatierten Text: Hole Benutzerschnittstelle als Text
+\-X|\-\-export \fIjson|json+command|man|markdown\fR	Exportiere formatierten Text
+.RS
+Hole Benutzerschnittstelle als Text
+.RE
+	\-X man		# Handbuch 
 .br
-	\-X man		# Handbuch  -  Hole Unix Handbuchseite
+	 Hole Unix Handbuchseite
 .br
-	\-X markdown		# Markdown  -  Hole formatierten Text
+	\-X markdown		# Markdown 
 .br
-	\-X json		# Json  -  Hole Oyjl Json Benutzerschnittstelle
+	 Hole formatierten Text
 .br
-	\-X json+command		# Json + Kommando  -  Hole Oyjl Json Benutzerschnittstelle mit Kommando
+	\-X json		# Json 
 .br
-	\-X export		# Export  -  Erhalte Daten für Entwickler
+	 Hole Oyjl Json Benutzerschnittstelle
+.br
+	\-X json+command		# Json + Kommando 
+.br
+	 Hole Oyjl Json Benutzerschnittstelle mit Kommando
+.br
+	\-X export		# Export 
+.br
+	 Erhalte Daten für Entwickler
 .br
 \-r|\-\-no-repair	Lasse Reparatur der Profil ID weg
 .br

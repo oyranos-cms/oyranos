@@ -16,7 +16,7 @@ oyranos-monitor-white-point v0.9.7 \- Nacht Manager
 .SH BESCHREIBUNG
 Das Werkzeug kann den momentanen Weißpunkt setzen oder ihn abhängig von der Tages- und Nachzeit festlegen. Ein zusätzliches Effektprofil kann eingestellt werden.
 .SH OPTIONEN
-.TP
+.SS
 Nächtliche Anmutung
 \fBoyranos-monitor-white-point\fR \-n \fI0|1|2|3|4|5|6|7\fR \-g \fIICC_PROFIL\fR [\-b \fIPROZENT\fR] [\-z] [\-v]
 .br
@@ -24,8 +24,10 @@ Der Nachtweißpunkmodus soll den Einfluß von blauen Licht auf das menschliche H
 .br
 .sp
 .br
-\-n|\-\-night-white-point \fI0|1|2|3|4|5|6|7\fR	Setze den Nachtmodus: Ein Weißpunkt mit einer Strahlungstemperatur von 4000 Kelvin und weniger erleichtert den natürlichen Schlafrhytmus zu finden. Dazu wird diese Einstellung auf Automatisch (-n=1) und die Temperatur auf 3000 (-a=3000) gestellt.
-.br
+\-n|\-\-night-white-point \fI0|1|2|3|4|5|6|7\fR	Setze den Nachtmodus
+.RS
+Ein Weißpunkt mit einer Strahlungstemperatur von 4000 Kelvin und weniger erleichtert den natürlichen Schlafrhytmus zu finden. Dazu wird diese Einstellung auf Automatisch (-n=1) und die Temperatur auf 3000 (-a=3000) gestellt.
+.RE
 	\-n 0		# Nein
 .br
 	\-n 1		# Automatisch
@@ -40,17 +42,21 @@ Der Nachtweißpunkmodus soll den Einfluß von blauen Licht auf das menschliche H
 .br
 	\-n 6		# Lichtart D93
 .br
-\-g|\-\-night-effect \fIICC_PROFIL\fR	Setze den Nacht Effect: Ein ICC Farbprofil der Klasse Abstrakter Farbraum. Günstig wäre ein Effektprofil, welches nur eindimensionale RGB Kurven benutzt und mit meta:EFFECT_linear=yes gekennzeichnet ist.
-.br
+\-g|\-\-night-effect \fIICC_PROFIL\fR	Setze den Nacht Effect
+.RS
+Ein ICC Farbprofil der Klasse Abstrakter Farbraum. Günstig wäre ein Effektprofil, welches nur eindimensionale RGB Kurven benutzt und mit meta:EFFECT_linear=yes gekennzeichnet ist.
+.RE
 	\-g -		# [kein]
 .br
 	\-g Effect 1		# Example Effect 1
 .br
 	\-g Effect 2		# Example Effect 2
 .br
-\-b|\-\-night-backlight \fIPROZENT\fR	Setze Nächtiches Monitorlicht: Die Einstellung benötigt xbacklight für das Abdunkeln der Bildschirmlampe. (PROZENT:4 [≥0 ≤100])
-.br
-.TP
+\-b|\-\-night-backlight \fIPROZENT\fR	Setze Nächtiches Monitorlicht (PROZENT:4 [≥0 ≤100])
+.RS
+Die Einstellung benötigt xbacklight für das Abdunkeln der Bildschirmlampe.
+.RE
+.SS
 Aktueller Modus
 \fBoyranos-monitor-white-point\fR \-w \fI0|1|2|3|4|5|6|7\fR \-a \fIKELVIN\fR [\-z] [\-v]
 .br
@@ -72,7 +78,7 @@ Aktueller Modus
 .br
 \-a|\-\-automatic \fIKELVIN\fR	Werte zwischen 2700 bis 8000 Kelvin sollten keine Darstellungsfehler hervorrufen (KELVIN:2800 [≥1100 ≤10100])
 .br
-.TP
+.SS
 Setze Tagesmodus
 \fBoyranos-monitor-white-point\fR \-s \fI0|1|2|3|4|5|6|7\fR \-e \fIICC_PROFIL\fR [\-z] [\-v]
 .br
@@ -92,15 +98,17 @@ Setze Tagesmodus
 .br
 	\-s 6		# Lichtart D93
 .br
-\-e|\-\-sunlight-effect \fIICC_PROFIL\fR	Setze den Tages Effect: Ein ICC Farbprofil der Klasse Abstrakter Farbraum. Günstig wäre ein Effektprofil, welches nur eindimensionale RGB Kurven benutzt und mit meta:EFFECT_linear=yes gekennzeichnet ist.
-.br
+\-e|\-\-sunlight-effect \fIICC_PROFIL\fR	Setze den Tages Effect
+.RS
+Ein ICC Farbprofil der Klasse Abstrakter Farbraum. Günstig wäre ein Effektprofil, welches nur eindimensionale RGB Kurven benutzt und mit meta:EFFECT_linear=yes gekennzeichnet ist.
+.RE
 	\-e -		# [kein]
 .br
 	\-e Effect 1		# Example Effect 1
 .br
 	\-e Effect 2		# Example Effect 2
 .br
-.TP
+.SS
 Ort und Dämmerung
 \fBoyranos-monitor-white-point\fR \-l|  \-i \fIWINKEL_IN_GRAD\fR \-o \fIWINKEL_IN_GRAD\fR [\-t \fIWINKEL_IN_GRAD|0:Auf-/Untergang|-6:zivil|-12:nautisch|-18:astronomisch\fR] [\-z] [\-v]
 .br
@@ -112,7 +120,7 @@ Ort und Dämmerung
 .br
 \-t|\-\-twilight \fIWINKEL_IN_GRAD|0:Auf-/Untergang|-6:zivil|-12:nautisch|-18:astronomisch\fR	Setze Dämmerungswinkel (WINKEL_IN_GRAD|0:Auf-/Untergang|-6:zivil|-12:nautisch|-18:astronomisch:0 [≥18 ≤-18])
 .br
-.TP
+.SS
 Setze Sonnenuntergangsdienst
 \fBoyranos-monitor-white-point\fR \-d \fI0|1|2\fR [\-v]
 .br
@@ -124,7 +132,7 @@ Setze Sonnenuntergangsdienst
 .br
 	\-d 2		# Aktiviere  
 .br
-.TP
+.SS
 Allgemeine Optionen
 \fBoyranos-monitor-white-point\fR \-m|  \-r|  \-X \fIjson|json+command|man|markdown\fR|  \-h [\-v]
 .br
@@ -134,17 +142,29 @@ Allgemeine Optionen
 .br
 \-r|\-\-sunrise	Zeige lokale Zeit, benutzte geografische Position, Dämmerungswinkel, Sonnenauf-und untergangszeiten
 .br
-\-X|\-\-export \fIjson|json+command|man|markdown\fR	Exportiere formatierten Text: Hole Benutzerschnittstelle als Text
+\-X|\-\-export \fIjson|json+command|man|markdown\fR	Exportiere formatierten Text
+.RS
+Hole Benutzerschnittstelle als Text
+.RE
+	\-X man		# Handbuch 
 .br
-	\-X man		# Handbuch  -  Hole Unix Handbuchseite
+	 Hole Unix Handbuchseite
 .br
-	\-X markdown		# Markdown  -  Hole formatierten Text
+	\-X markdown		# Markdown 
 .br
-	\-X json		# Json  -  Hole Oyjl Json Benutzerschnittstelle
+	 Hole formatierten Text
 .br
-	\-X json+command		# Json + Kommando  -  Hole Oyjl Json Benutzerschnittstelle mit Kommando
+	\-X json		# Json 
 .br
-	\-X export		# Export  -  Erhalte Daten für Entwickler
+	 Hole Oyjl Json Benutzerschnittstelle
+.br
+	\-X json+command		# Json + Kommando 
+.br
+	 Hole Oyjl Json Benutzerschnittstelle mit Kommando
+.br
+	\-X export		# Export 
+.br
+	 Erhalte Daten für Entwickler
 .br
 \-z|\-\-system-wide	Einstellung in der systemweiten DB
 .br

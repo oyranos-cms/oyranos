@@ -8,7 +8,7 @@ oyranos-monitor \- Oyranos CMS monitor configuration
 .fi
 \fBoyranos-monitor\fR -e [[-x num] [-y num]|-d \fINUMBER\fR] [--system-wide] [-v]
 .fi
-\fBoyranos-monitor\fR -l [[-x num] [-y num]|-d \fINUMBER\fR] [-v]
+\fBoyranos-monitor\fR -l [[-x num] [-y num]|-d \fINUMBER\fR] [--short] [--path] [-c] [-v]
                 [ --module \fIMODULENAME\fR ]
 .fi
 \fBoyranos-monitor\fR --modules [-v]
@@ -75,6 +75,8 @@ do system wide, might need admin or root privileges
 \fB--short\fR show only the ICC profiles file name
 .br
 \fB--path\fR show the full ICC profile path and file name
+.br
+\fB-c, --x-color-region-target\fR show the X Color Management (XCM) device profile
 .TP
 .B \-\-modules
 list monitor modules
