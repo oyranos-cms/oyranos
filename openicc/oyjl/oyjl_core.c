@@ -1,4 +1,4 @@
-/*  @file oyjl_core.c
+/** @file oyjl_core.c
  *
  *  oyjl - string, file i/o and other basic helpers
  *
