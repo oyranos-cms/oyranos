@@ -25,7 +25,6 @@
 /** @brief print more results, when the -v argument is passed to the test program. */
 int verbose = 0;
 
-extern int * oyjl_debug;
 
 #ifndef OYJL_TEST_MAIN_SETUP
 /** @brief setup Oyjl to your needs by defining this macro
@@ -108,8 +107,8 @@ int main(int argc, char** argv)
     return 0;
   }
 
-  memset(tests_xfailed, 0, sizeof(char*) * tn);
-  memset(tests_failed, 0, sizeof(char*) * tn);
+  memset(tests_xfailed, 0, sizeof(char*) * OYJL_TEST_MAX_COUNT);
+  memset(tests_failed, 0, sizeof(char*) * OYJL_TEST_MAX_COUNT);
   /* do tests */
 
   TESTS_RUN
@@ -127,7 +126,7 @@ int main(int argc, char** argv)
     {
       if(!results[i]) colorterm = NULL;
       fprintf( stdout, "    Tests with status %s:\t%d\n",
-                       oyjlTestResultToString( (oyjlTESTRESULT_e)i ), results[i] );
+                       oyjlTestResultToString( (oyjlTESTRESULT_e)i, 1 ), results[i] );
       colorterm = colorterm_;
     }
 
@@ -136,19 +135,19 @@ int main(int argc, char** argv)
              results[oyjlTESTRESULT_UNKNOWN]
             );
 
-    for(i = 0; i < tn; ++i)
+    for(i = 0; i < OYJL_TEST_MAX_COUNT; ++i)
       if(tests_xfailed[i])
       {
         fprintf( stdout, "    %s: [%d] \"%s\"\n",
-                 oyjlTestResultToString( oyjlTESTRESULT_XFAIL), i, tests_xfailed[i] );
+                 oyjlTestResultToString( oyjlTESTRESULT_XFAIL, 1 ), i, tests_xfailed[i] );
         free(tests_xfailed[i]);
         tests_xfailed[i] = NULL;
       }
-    for(i = 0; i < tn; ++i)
+    for(i = 0; i < OYJL_TEST_MAX_COUNT; ++i)
       if(tests_failed[i])
       {
         fprintf( stdout, "    %s: [%d] \"%s\"\n",
-                 oyjlTestResultToString( oyjlTESTRESULT_FAIL), i, tests_failed[i] );
+                 oyjlTestResultToString( oyjlTESTRESULT_FAIL, 1 ), i, tests_failed[i] );
         free(tests_failed[i]);
         tests_failed[i] = NULL;
       }
