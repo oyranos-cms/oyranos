@@ -2,7 +2,7 @@
  *
  *  Oyranos is an open source Color Management System 
  *
- *  Copyright (C) 2004-2018  Kai-Uwe Behrmann
+ *  Copyright (C) 2004-2019  Kai-Uwe Behrmann
  *
  *  @brief    Oyranos test suite
  *  @internal
@@ -19,6 +19,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <errno.h>
 
 
 /* C++ includes and definitions */
@@ -30,6 +31,8 @@
 #else
 #include <math.h>
 #endif
+
+extern int * oyjl_debug;
 
 /** \addtogroup oyjl
  *  @{ *//* oyjl */
@@ -117,18 +120,20 @@ static const char * oyjlTermColor_( oyjlCOLORTERM_e rgb, const char * text) {
     return text;
 }
 
-const char * oyjlTestResultToString  ( oyjlTESTRESULT_e      error )
+const char * oyjlTestResultToString  ( oyjlTESTRESULT_e      error, int use_color )
 {
   const char * text = "";
+#define S( color, string ) use_color ? oyjlTermColor_(color,string) : string
   switch(error)
   {
-    case oyjlTESTRESULT_SYSERROR:text = oyjlTermColor_(oyjlRED,"SYSERROR"); break;
-    case oyjlTESTRESULT_FAIL:    text = oyjlTermColor_(oyjlRED,"FAIL"); break;
-    case oyjlTESTRESULT_XFAIL:   text = oyjlTermColor_(oyjlBLUE,"XFAIL"); break;
-    case oyjlTESTRESULT_SUCCESS: text = oyjlTermColor_(oyjlGREEN,"SUCCESS"); break;
-    case oyjlTESTRESULT_UNKNOWN: text = oyjlTermColor_(oyjlBLUE,"UNKNOWN"); break;
-    default:                   text = oyjlTermColor_(oyjlBLUE,"Huuch, what's that?"); break;
+    case oyjlTESTRESULT_SYSERROR:text = S(oyjlRED,"SYSERROR"); break;
+    case oyjlTESTRESULT_FAIL:    text = S(oyjlRED,"FAIL"); break;
+    case oyjlTESTRESULT_XFAIL:   text = S(oyjlBLUE,"XFAIL"); break;
+    case oyjlTESTRESULT_SUCCESS: text = S(oyjlGREEN,"SUCCESS"); break;
+    case oyjlTESTRESULT_UNKNOWN: text = S(oyjlBLUE,"UNKNOWN"); break;
+    default:                   text = S(oyjlBLUE,"Huuch, what's that?"); break;
   }
+#undef S
   return text;
 }
 
@@ -137,7 +142,7 @@ const char * oyjlTestResultToString  ( oyjlTESTRESULT_e      error )
  *  A good default might be stdout for a CLI program.
  */
 FILE * zout;
-static int test_number = 0;
+int oyjl_test_number = 0;
 const char * oyjl_test_file = NULL;
 int oyjl_test_file_line = -1;
 void oyjlSetDbgPosition( const char * file, int line )
@@ -158,25 +163,28 @@ oyjlTESTRESULT_e prog(); \
   if(argc > argpos && do_it) { \
       for(i = argpos; i < argc; ++i) \
         if(strstr(text, argv[i]) != 0 || \
-           atoi(argv[i]) == test_number ) \
-          oyTestRun( prog, text, test_number ); \
+           atoi(argv[i]) == oyjl_test_number ) \
+          oyTestRun( prog, text, oyjl_test_number ); \
   } else if(list) \
-    printf( "[%d] %s\n", test_number, text); \
+    printf( "[%d] %s\n", oyjl_test_number, text); \
   else if(do_it) \
-    oyTestRun( prog, text, test_number ); \
-  ++test_number; \
+    oyTestRun( prog, text, oyjl_test_number ); \
+  ++oyjl_test_number; \
 }
 
 int results[oyjlTESTRESULT_UNKNOWN+1];
-#define tn 64
-char * tests_failed[tn];
-char * tests_xfailed[tn];
+#ifndef OYJL_TEST_MAX_COUNT
+#define OYJL_TEST_MAX_COUNT 64
+#endif
+char * tests_failed[OYJL_TEST_MAX_COUNT];
+char * tests_xfailed[OYJL_TEST_MAX_COUNT];
 
 #ifndef MAX_PATH
 /* maximal path lenght, if not allready defined elsewhere */
 #define MAX_PATH 1024
 #endif
 
+int oy_test_current_sub_count;
 /** run a test and print results on end
  *  @param         test                test function
  *  @param         test_name           short string for status line
@@ -191,13 +199,14 @@ oyjlTESTRESULT_e oyTestRun           ( oyjlTESTRESULT_e  (*test)(void),
 
   oyjl_test_file = NULL;
   oyjl_test_file_line = -1;
+  oy_test_current_sub_count = 0;
 
   fprintf( stdout, "\n________________________________________________________________\n" );
-  fprintf(stdout, "Test[%d]: %s ... ", test_number, test_name );
+  fprintf(stdout, "Test[%d]: %s ... ", number, test_name );
 
   error = test();
 
-  fprintf(stdout, "\t%s", oyjlTestResultToString(error));
+  fprintf(stdout, "\t%s", oyjlTestResultToString(error,1));
 
   if(error == oyjlTESTRESULT_FAIL || error == oyjlTESTRESULT_XFAIL)
   {
@@ -225,6 +234,7 @@ oyjlTESTRESULT_e oyTestRun           ( oyjlTESTRESULT_e  (*test)(void),
 
 
 int oy_test_sub_count = 0;
+oyjlTESTRESULT_e oy_test_last_result = oyjlTESTRESULT_UNKNOWN;
 /** @brief register status and print info of sub test
  *
  *  Print a custom line to stdout followed by the status. Register state.
@@ -256,15 +266,106 @@ int oy_test_sub_count = 0;
  *  @param         ...                 the argument list to fprint(stdout, ...)
  */
 #define PRINT_SUB( result_, ... ) { \
+  oy_test_last_result = result_; \
   if((result_) < oyjlTESTRESULT_SUCCESS && (result_) < result) OYJL_TEST_START \
   if((result_) < result) \
     result = result_; \
   fprintf(stdout, ## __VA_ARGS__ ); \
-  fprintf(stdout, " ..\t%s", oyjlTestResultToString(result_)); \
+  fprintf(stdout, " ..\t%s", oyjlTestResultToString(result_,1)); \
   if((result_) <= oyjlTESTRESULT_FAIL) \
     fprintf(stdout, " !!! ERROR !!!" ); \
   fprintf(stdout, "\n" ); \
   ++oy_test_sub_count; \
+  ++oy_test_current_sub_count; \
+}
+int  oyjlWriteTestFile               ( const char        * filename,
+                                       void              * mem,
+                                       int                 size )
+{
+  FILE *fp = 0;
+  int r = !filename;
+  int written_n = 0;
+
+  if(!r)
+  {
+    fp = fopen(filename, "wb");
+    if ((fp != 0)
+     && mem
+     && size)
+    {
+      written_n = fwrite( mem, 1, size, fp );
+      if(written_n != size)
+        r = errno;
+    } else 
+      if(mem && size)
+        r = errno;
+      else
+        fprintf( zout, "no data to write into: \"%s\"", filename );
+
+    if(r && *oyjl_debug > 1)
+    {
+      switch (errno)
+      {
+        case EACCES:       fprintf( zout, "Permission denied: %s", filename); break;
+        case EIO:          fprintf( zout, "EIO : %s", filename); break;
+        case ENAMETOOLONG: fprintf( zout, "ENAMETOOLONG : %s", filename); break;
+        case ENOENT:       fprintf( zout, "A component of the path/file_name does not exist, or the file_name is an empty string: \"%s\"", filename); break;
+        case ENOTDIR:      fprintf( zout, "ENOTDIR : %s", filename); break;
+#ifdef HAVE_POSIX
+        case ELOOP:        fprintf( zout, "Too many symbolic links encountered while traversing the path: %s", filename); break;
+        case EOVERFLOW:    fprintf( zout, "EOVERFLOW : %s", filename); break;
+#endif
+        default:           fprintf( zout, "%s : %s", strerror(errno), filename);break;
+      }
+    }
+
+    if (fp) fclose (fp);
+  }
+
+  return written_n;
+}
+
+/** @brief Store test data
+ *
+ *  Write test data to a file for easy error comparision. Use the macro after
+ *  the PRINT_SUB() of the belonging sub test. The macro will generate the
+ *  file name containing test related infos, like test number and sub test
+ *  number, status and possibly your provided hint. That way you can easily
+ *  find your test data in the writeable test directory. In case one test
+ *  was successful followed by a failed test and the suffix is "txt", then
+ *  the diff of the successful and the failed file will be shown.
+ *
+ *  @code
+    char * text = myApiTesting(); // shall return "good result"
+    if(strcmp(text,"good result") == 0) // good
+      PRINT_SUB( oyjlTESTRESULT_SUCCESS, "myApiTesting()" );
+    else // fail
+      PRINT_SUB( oyjlTESTRESULT_FAIL, "myApiTesting()" );
+    OYJL_TEST_WRITE_RESULT( data, strlen(text), "myApiTesting", "txt" )
+    @endcode
+ *
+ *  @param         mem                 memory pointer
+ *  @param         size                size of mem to write to file
+ *  @param         hint                optional text to place inside the file name
+ *  @param         suffix              file name suffix
+ */
+#define OYJL_TEST_WRITE_RESULT( mem, size, hint, suffix ) { \
+  char * fn = malloc(64); \
+  sprintf( fn, "test-%d-%d-%s-%s.%s", oyjl_test_number, oy_test_current_sub_count, hint?hint:"", oyjlTestResultToString(oy_test_last_result,0), suffix ); \
+  oyjlWriteTestFile( fn, mem, size ); \
+  if(oy_test_last_result == oyjlTESTRESULT_FAIL) { \
+    char * fns = malloc(64); \
+    sprintf( fns, "test-%d-%d-%s-%s.%s", oyjl_test_number, oy_test_current_sub_count, hint?hint:"", oyjlTestResultToString(oyjlTESTRESULT_SUCCESS,0), suffix ); \
+    FILE * fp = fopen(fns, "r"); \
+    if(fp && strcmp(suffix, "txt") == 0) { \
+      char * diff = malloc(128); \
+      sprintf( diff, "diff -aur %s %s", fns, fn ); \
+      system(diff); \
+      free(diff); \
+      fclose(fp); \
+    } \
+  } \
+  free(fn); \
 }
 
 /** helper to print a number inside ::PRINT_SUB(...) */
