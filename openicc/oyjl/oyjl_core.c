@@ -104,7 +104,7 @@ int            oyjlMessageFuncSet    ( oyjlMessage_f       message_func )
  *
  *  A convinient set of string API's is available in the oyjlStringXXX family.
  *  Those API's handle plain string arrays. oyjlStringAdd() uses variable args
-*   to format and append to a existing string. oyjlStringListXXX
+ *  to format and append to a existing string. oyjlStringListXXX
  *  API's handle plain arrays of strings.
  *
  *  The oyjl_str based oyStrXXX API's use a more carful memory
@@ -136,7 +136,7 @@ const char *   oyjlStringGetNext     ( const char        * text )
 
   return text && text[0] ? text : NULL;
 }
-int            oyjlStringLen         ( const char        * text )
+int            oyjlStringNextSpace   ( const char        * text )
 {
   int len = 0;
   while( text && text[len] && !isspace(text[len]) ) len++;
@@ -148,7 +148,7 @@ int            oyjlStringLen         ( const char        * text )
  *   The words can be separated by white space as 
  *   seen by isspace().
  */
-char **        oyjlStringSplit2      ( const char        * text,
+char **        oyjlStringSplitSpace  ( const char        * text,
                                        int               * count,
                                        void*            (* alloc)(size_t))
 {
@@ -175,7 +175,7 @@ char **        oyjlStringSplit2      ( const char        * text,
 
       for(i = 0; i < n; ++i)
       {
-        int len = oyjlStringLen( start );
+        int len = oyjlStringNextSpace( start );
 
         if((list[i] = alloc( len+1 )) == 0) return NULL;
 
@@ -191,6 +191,21 @@ char **        oyjlStringSplit2      ( const char        * text,
 
   return list;
 }
+
+static const char * oyjlStringDelimiter ( const char * text, const char * delimiter, int * length )
+{
+  int i,j, dn = delimiter ? strlen(delimiter) : 0, len = text?strlen(text):0;
+  for(j = 0; j < len; ++j)
+    for(i = 0; i < dn; ++i)
+      if(text[j] && text[j] == delimiter[i])
+      {
+        if(length)
+          *length = j;
+        return &text[j];
+      }
+  return NULL;
+}
+
 /** @brief   convert a string into list
  *
  *  @param[in]     text                source string
@@ -206,6 +221,27 @@ char **        oyjlStringSplit       ( const char        * text,
                                        int               * count,
                                        void*            (* alloc)(size_t))
 {
+  char d[2] = { delimiter, '\000' };
+  return oyjlStringSplit2( text, d, count, NULL, alloc );
+}
+
+/** @brief   convert a string into list
+ *
+ *  @param[in]     text                source string
+ *  @param[in]     delimiter           the ASCII char which marks the split;
+ *                                     e.g. comma ","; optional;
+ *                                     default zero: extract white space separated words
+ *  @param[out]    count               number of detected string segments; optional
+ *  @param[out]    index               to be allocated array of detected delimiter indexes; The array will contain the list of indexes in text, which lead to the actual split positional index.; optional
+ *  @param[in]     alloc               custom allocator; optional, default is malloc
+ *  @return                            array of detected string segments
+ */
+char **        oyjlStringSplit2      ( const char        * text,
+                                       const char        * delimiter,
+                                       int               * count,
+                                       int              ** index,
+                                       void*            (* alloc)(size_t))
+{
   char ** list = 0;
   int n = 0, i;
 
@@ -217,23 +253,29 @@ char **        oyjlStringSplit       ( const char        * text,
     if(!alloc) alloc = malloc;
 
     if(!delimiter)
-      return oyjlStringSplit2( text, count, alloc );
+      return oyjlStringSplitSpace( text, count, alloc );
 
-    if(tmp[0] == delimiter) ++n;
+    tmp = oyjlStringDelimiter(tmp, delimiter, NULL);
+    if(tmp == text) ++n;
+    tmp = text;
     do { ++n;
-    } while( (tmp = strchr(tmp + 1, delimiter)) );
+    } while( (tmp = oyjlStringDelimiter(tmp + 1, delimiter, NULL)) );
 
     tmp = 0;
 
-    if((list = alloc( (n+1) * sizeof(char*) )) == 0) return NULL;
+    if((list = alloc( (n+1) * sizeof(char*) )) == NULL) return NULL;
     memset( list, 0, (n+1) * sizeof(char*) );
+    if(index && (*index = alloc( n * sizeof(int) )) == NULL) { free(list); return NULL; }
+    if(index) memset( *index, 0, n * sizeof(int) );
 
     {
       const char * start = text;
       for(i = 0; i < n; ++i)
       {
         intptr_t len = 0;
-        char * end = strchr(start, delimiter);
+        int length = 0;
+        const char * end = oyjlStringDelimiter(start, delimiter, &length);
+        if(index && length) (*index)[i] = length + start - text;
 
         if(end > start)
           len = end - start;
@@ -671,7 +713,7 @@ int          oyjlStringToDouble      ( const char        * text,
 /** @brief   text to double list
  *
  *  @param[in]     text                source string
- *  @param[in]     delimiter           the char which marks the split; e.g. comma ','
+ *  @param[in]     delimiter           the ASCII char(s) which mark the split; e.g. comma ","
  *  @param[out]    count               number of detected string segments; optional
  *  @param[in]     alloc               custom allocator; optional, default is malloc
  *  @return                            error
@@ -681,11 +723,11 @@ int          oyjlStringToDouble      ( const char        * text,
  *                                     - 2 : no number detected
  *
  *  @version Oyranos: 0.9.7
- *  @date    2019/01/23
+ *  @date    2019/07/30
  *  @since   2019/01/23 (Oyranos: 0.9.7)
  */
 int          oyjlStringsToDoubles    ( const char        * text,
-                                       char                delimiter,
+                                       const char        * delimiter,
                                        int               * count,
                                        void*            (* alloc)(size_t),
                                        double           ** value )
@@ -699,7 +741,7 @@ int          oyjlStringsToDoubles    ( const char        * text,
   if(!text || !text[0])
     return 0;
 
-  list = oyjlStringSplit( text, delimiter, &n, alloc );
+  list = oyjlStringSplit2( text, delimiter, &n, NULL, alloc );
   if(n)
     oyjlAllocHelper_m( *value, double, n + 1, alloc, return 1);
   for( i = 0; i < n; ++i )

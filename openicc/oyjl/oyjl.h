@@ -334,6 +334,11 @@ char **    oyjlStringSplit           ( const char        * text,
                                        const char          delimiter,
                                        int               * count,
                                        void*            (* alloc)(size_t));
+char **    oyjlStringSplit2          ( const char        * text,
+                                       const char        * delimiter,
+                                       int               * count,
+                                       int              ** index,
+                                       void*            (* alloc)(size_t));
 char *     oyjlStringCopy            ( const char        * string,
                                        void*            (* alloc)(size_t));
 int        oyjlStringAdd             ( char             ** string,
@@ -384,7 +389,7 @@ int        oyjlStringToLong          ( const char        * text,
 int        oyjlStringToDouble        ( const char        * text,
                                        double            * value );
 int        oyjlStringsToDoubles      ( const char        * text,
-                                       char                delimiter,
+                                       const char        * delimiter,
                                        int               * count,
                                        void*            (* alloc)(size_t),
                                        double           ** value );
