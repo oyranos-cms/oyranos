@@ -262,9 +262,9 @@ static void oyjlStrAddSpaced( oyjl_str s, const char * text, int flags, int spac
   int len = 0, i,n;
 
   if(text) len = strlen(text);
-  if(len && (flags & OYJL_TRANSLATE)) len += 2+1;
-  if(len && (flags & OYJL_QUOTE))     len += 1+1;
-  if(len && (flags & OYJL_SQUOTE))    len += 1+1;
+  if(text && (flags & OYJL_TRANSLATE)) len += 2+1;
+  if(text && (flags & OYJL_QUOTE))     len += 1+1;
+  if(text && (flags & OYJL_SQUOTE))    len += 1+1;
 
   if(len)
   {
@@ -291,7 +291,7 @@ static void oyjlStrAddSpaced( oyjl_str s, const char * text, int flags, int spac
       oyjlStrRelease( &tmp );
     }
     else
-      oyjlStrAdd( s, "%s", text );
+      oyjlStrAdd( s, "%s", (text && strlen(text) == 0 && flags & OYJL_SQUOTE) ? "\\000" : text );
     if(flags & OYJL_SQUOTE)
       oyjlStrAdd( s, "'" );
     if(flags & OYJL_QUOTE)
@@ -507,7 +507,7 @@ static oyjl_val oyjlFindOption( oyjl_val root, char o )
  *  The input is the JSON data from oyjlUi_ExportToJson().
  *
  *  @param[in]     root                the parsed JSON tree to convert
- *  @param[in]     flags               ::OYJL_SOURCE_CODE_C and ::OYJL_NO_DEFAULT_OPTIONS are supported
+ *  @param[in]     flags               ::OYJL_SOURCE_CODE_C, ::OYJL_SUGGEST_VARIABLE_NAMES and ::OYJL_NO_DEFAULT_OPTIONS are supported
  *
  *  @version Oyjl: 1.0.0
  *  @date    2019/06/24
@@ -617,16 +617,16 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
     for(i = 0; i < n; ++i)
     {
       oyjl_val v;
-      const char *value_type, *o;
+      const char *value_type, *o, *o_fallback;
       val = oyjlTreeGetValueF( root, 0, "org/freedesktop/oyjl/ui/options/array/[%d]", i );
-      v = oyjlTreeGetValue( val, 0, "o" ); o = OYJL_GET_STRING(v);
+      v = oyjlTreeGetValue( val, 0, "o" ); o_fallback = o = OYJL_GET_STRING(v);
       v = oyjlTreeGetValue( val, 0, "value_type" ); value_type = OYJL_GET_STRING(v);
       if(value_type && strcmp(value_type, "oyjlOPTIONTYPE_CHOICE") == 0)
       {
         const char *nick, *name, *desc, *help;
         int count = oyjlValueCount( oyjlTreeGetValue( val, 0, "values/choices/list" ) ), j;
         if(count)
-          oyjlStrAdd( s, "  oyjlOptionChoice_s %s_choices[] = {", o );
+          oyjlStrAdd( s, "  oyjlOptionChoice_s %s_choices[] = {", o_fallback );
         for(j = 0; j < count; ++j)
         {
           oyjl_val c = oyjlTreeGetValueF( val, 0, "values/choices/list/[%d]", j );
@@ -672,20 +672,20 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
     for(i = 0; i < n; ++i)
     {
       oyjl_val v;
-      char * flags = NULL;
+      char * flag_string = NULL;
       int flg, j, len;
       char oo[4] = {0,0,0,0}, *tmp_name = NULL, *tmp_variable_name = NULL;
-      const char *o, *option, *key, *name, *desc, *help, *value_name, *value_type, *variable_type, *variable_name;
+      const char *o, *o_fallback, *option, *option_fallback, *key, *name, *desc, *help, *value_name, *value_type, *variable_type, *variable_name;
       val = oyjlTreeGetValueF( root, 0, "org/freedesktop/oyjl/ui/options/array/[%d]", i );
       v = oyjlTreeGetValue( val, 0, "flags" ); flg = OYJL_IS_INTEGER(v) ? OYJL_GET_INTEGER(v) : 0;
       if(flg & OYJL_OPTION_FLAG_EDITABLE)
-        oyjlStringAdd( &flags, 0,0, "%s", "OYJL_OPTION_FLAG_EDITABLE" );
+        oyjlStringAdd( &flag_string, 0,0, "%s", "OYJL_OPTION_FLAG_EDITABLE" );
       else
-        flags = oyjlStringCopy("0",0);
-      v = oyjlTreeGetValue( val, 0, "option" ); option = OYJL_GET_STRING(v); /* "option" is needed as fallback for "name" */
+        flag_string = oyjlStringCopy("0",0);
+      v = oyjlTreeGetValue( val, 0, "option" ); option_fallback = option = OYJL_GET_STRING(v); /* "option" is needed as fallback for "name" */
       v = oyjlTreeGetValue( val, 0, "variable_name" ); variable_name = OYJL_GET_STRING(v); /* "variable_name" is needed as fallback for "option" */
-      v = oyjlTreeGetValue( val, 0, "o" ); o = OYJL_GET_STRING(v);
-      if(!option && o && o[0] != '@')
+      v = oyjlTreeGetValue( val, 0, "o" ); o_fallback = o = OYJL_GET_STRING(v);
+      if(!option_fallback && o && o[0] != '@' && flags & OYJL_SUGGEST_VARIABLE_NAMES)
       {
         const char * ctype = NULL;
         tmp_variable_name = oyjlUiGetVariableNameC( val, &ctype );
@@ -697,14 +697,15 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
             if(tmp_variable_name[j] == '_')
               tmp_variable_name[j] = '-';
           }
-          option = tmp_variable_name;
+          option_fallback = tmp_variable_name;
         }
       }
       v = oyjlTreeGetValue( val, 0, "name" ); name = OYJL_GET_STRING(v);
-      if(!name && option && o && o[0] != '@')
+      /* The UI has to provide something. So guess anyway. */
+      if(!name && option_fallback && o && o[0] != '@')
       {
-        len = strlen( option );
-        tmp_name = oyjlStringCopy( option, 0 );
+        len = strlen( option_fallback );
+        tmp_name = oyjlStringCopy( option_fallback, 0 );
         if(tmp_name)
         {
           len = strlen(tmp_name);
@@ -727,17 +728,22 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
         int len = name?strlen(name):0,
             j;
         char no = 0;
-        for(j = 0; j < len; ++j)
+        if(flags & OYJL_SUGGEST_VARIABLE_NAMES)
         {
-          oyjl_val nv = oyjlFindOption( root, name[j] );
-          if(!nv)
+          for(j = 0; j < len; ++j)
           {
-            oo[0] = name[j];
-            o = oo;
-            oyjlTreeSetStringF( val, OYJL_CREATE_NEW, oo, "o" );
-            break;
+            oyjl_val nv = oyjlFindOption( root, name[j] );
+            if(!nv)
+            {
+              oo[0] = name[j];
+              o = oo;
+              oyjlTreeSetStringF( val, OYJL_CREATE_NEW, oo, "o" );
+              break;
+            }
           }
         }
+        else
+          oyjlTreeSetStringF( val, OYJL_CREATE_NEW, "", "o" );
       }
       v = oyjlTreeGetValue( val, 0, "key" ); key = OYJL_GET_STRING(v);
       v = oyjlTreeGetValue( val, 0, "description" ); desc = OYJL_GET_STRING(v);
@@ -746,8 +752,10 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
       v = oyjlTreeGetValue( val, 0, "value_type" ); value_type = OYJL_GET_STRING(v);
       v = oyjlTreeGetValue( val, 0, "variable_type" ); variable_type = OYJL_GET_STRING(v);
       oyjlStrAdd( s, "    {\"oiwi\", ");
-      oyjlStrAddSpaced( s, flags,       0,                         28 );
-      oyjlStrAddSpaced( s, o,           OYJL_SQUOTE,               4 );
+      oyjlStrAddSpaced( s, flag_string, 0,                         28 );
+      if(*oyjl_debug)
+        fprintf( stderr, "o: \"%s\" / %s\n", o, option );
+      oyjlStrAddSpaced( s, o?o:"\\000", OYJL_SQUOTE,               4 );
       oyjlStrAddSpaced( s, option,      OYJL_QUOTE,                17 );
       oyjlStrAddSpaced( s, key,         OYJL_QUOTE,                10 );
       oyjlStrAddSpaced( s, name,        OYJL_QUOTE|OYJL_TRANSLATE, 15 );
@@ -1048,6 +1056,7 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
     {
       char oc = g->detail[j];
       oyjlOption_s * o = oyjlOptions_GetOption( opts, oc );
+      if(!o) continue;
       key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "key" );
       if(!o->key)
         sprintf(num, "%c", o->o);
