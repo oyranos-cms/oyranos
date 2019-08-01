@@ -252,7 +252,7 @@ char **        oyjlStringSplit2      ( const char        * text,
 
     if(!alloc) alloc = malloc;
 
-    if(!delimiter)
+    if(!delimiter || !delimiter[0])
       return oyjlStringSplitSpace( text, count, alloc );
 
     tmp = oyjlStringDelimiter(tmp, delimiter, NULL);
