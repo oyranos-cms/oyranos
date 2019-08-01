@@ -514,7 +514,10 @@ struct oyjlOption_s {
   char type[8];                        /**< @brief must be 'oiwi' */
   /** - ::OYJL_OPTION_FLAG_EDITABLE : flag for oyjlOPTIONTYPE_CHOICE and oyjlOPTIONTYPE_FUNCTION. Hints a not closely specified intput. The content is typically not useful for a overview in a help or man page. These can print a overview with oyjlOption_s::value_type. This flag is intented for convinience suggestions or very verbose dictionaries used in scrollable pull down GUI elements. */
   unsigned int flags;                  /**< @brief rendering hint */
-  /** '#' is used as default option like a command without any arguments. '@' together with value_name expects arbitrary arguments as described in oyjlOption_s::value_name. minus '-' and space ' ' are reserved; This letter is handled like a ID. */
+  /** '#' is used as default option like a command without any arguments.
+   *  '@' together with value_name expects arbitrary arguments as described in oyjlOption_s::value_name.
+   *  The letter shall be in range A-Z,a-z,0-9.
+   *  If zero '\000' this short :o: option name is not enabled and a long :option: name shall be provided. */
   char o;                              /**< @brief one letter option name */
   const char * option;                 /**< @brief string without white space, "my-option"; optional if *o* is present */
   const char * key;                    /**< @brief DB key; optional */
@@ -529,7 +532,9 @@ struct oyjlOption_s {
 };
 
 /**
-    @brief info to compile a Syntax line and check missing arguments
+ *  @brief Info to compile a Syntax line and check missing arguments
+ *
+ *  Options listed in mandatory, optional and detail are comma(,) separated.
  */
 typedef struct oyjlOptionGroup_s {
   char type [8];                       /**< @brief must be 'oiwg' */
@@ -537,13 +542,13 @@ typedef struct oyjlOptionGroup_s {
   const char * name;                   /**< @brief i18n label string */
   const char * description;            /**< @brief i18n short sentence about the option */
   const char * help;                   /**< @brief i18n longer text to explain what the option does; optional */
-  const char * mandatory;              /**< @brief list of mandatory one letter options from a oyjlOption_s::o for this group of associated options */
-  const char * optional;               /**< @brief list of non mandatory one letter options from a oyjlOption_s::o for this group of associated options */
-  const char * detail;                 /**< @brief list of one letter options from a oyjlOption_s::o for this group of associated options to display */
+  const char * mandatory;              /**< @brief list of mandatory options from a oyjlOption_s::o or oyjlOption_s::option for this group of associated options */
+  const char * optional;               /**< @brief list of non mandatory options from a oyjlOption_s::o or oyjlOption_s::option for this group of associated options */
+  const char * detail;                 /**< @brief list of options from a oyjlOption_s::o or oyjlOption_s::option for this group of associated options to display */
 } oyjlOptionGroup_s;
 
 /**
- *   @brief main command line, options and groups
+ *   @brief Main command line, options and groups
  */
 struct oyjlOptions_s {
   char type [8];                       /**< @brief must be 'oiws' */
@@ -646,6 +651,7 @@ char *             oyjlUi_ExportToJson(oyjlUi_s          * ui,
                                        int                 flags );
 #define OYJL_SOURCE_CODE_C             0x01 /**< @brief C programming language source code */
 #define OYJL_NO_DEFAULT_OPTIONS        0x02 /**< @brief omit automatic options generation for --help, --X export or --verbose */
+#define OYJL_SUGGEST_VARIABLE_NAMES    0x04 /**< @brief automatic suggestion of variable names for missing ::o and ::option members */
 char *             oyjlUiJsonToCode  ( oyjl_val            root,
                                        int                 flags );
 
