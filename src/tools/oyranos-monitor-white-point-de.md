@@ -9,11 +9,11 @@ oyranos\-monitor\-white\-point v0.9.7 \- Nacht Manager
 <br />
 **oyranos\-monitor\-white\-point** \-s *0|1|2|3|4|5|6|7* \-e *ICC\_PROFIL* [\-z] [\-v]
 <br />
-**oyranos\-monitor\-white\-point** \-l|  \-i *WINKEL\_IN\_GRAD* \-o *WINKEL\_IN\_GRAD* [\-t *WINKEL\_IN\_GRAD|0:Auf\-/Untergang|\-6:zivil|\-12:nautisch|\-18:astronomisch*] [\-z] [\-v]
+**oyranos\-monitor\-white\-point** \-l | \-i *WINKEL\_IN\_GRAD* \-o *WINKEL\_IN\_GRAD* [\-t *WINKEL\_IN\_GRAD|0:Auf\-/Untergang|\-6:zivil|\-12:nautisch|\-18:astronomisch*] [\-z] [\-v]
 <br />
 **oyranos\-monitor\-white\-point** \-d *0|1|2* [\-v]
 <br />
-**oyranos\-monitor\-white\-point** \-m|  \-r|  \-X *json|json+command|man|markdown*|  \-h [\-v]
+**oyranos\-monitor\-white\-point** \-m | \-r | \-X *json|json+command|man|markdown* | \-h [\-v]
 ## BESCHREIBUNG
 Das Werkzeug kann den momentanen Weißpunkt setzen oder ihn abhängig von der Tages\- und Nachzeit festlegen. Ein zusätzliches Effektprofil kann eingestellt werden.
 ## OPTIONEN
@@ -66,7 +66,7 @@ Der Nachtweißpunkmodus soll den Einfluß von blauen Licht auf das menschliche H
    * \-e Effect 2		# Example Effect 2
 
 ### Ort und Dämmerung
-**oyranos\-monitor\-white\-point** \-l|  \-i *WINKEL\_IN\_GRAD* \-o *WINKEL\_IN\_GRAD* [\-t *WINKEL\_IN\_GRAD|0:Auf\-/Untergang|\-6:zivil|\-12:nautisch|\-18:astronomisch*] [\-z] [\-v]
+**oyranos\-monitor\-white\-point** \-l | \-i *WINKEL\_IN\_GRAD* \-o *WINKEL\_IN\_GRAD* [\-t *WINKEL\_IN\_GRAD|0:Auf\-/Untergang|\-6:zivil|\-12:nautisch|\-18:astronomisch*] [\-z] [\-v]
 
 * \-l|\-\-location	Erhalte Position von IP Adresse
 * \-i|\-\-latitude *WINKEL\_IN\_GRAD*	Setze Geographische Breite (WINKEL\_IN\_GRAD:0 [≥\-90 ≤90])
@@ -82,7 +82,7 @@ Der Nachtweißpunkmodus soll den Einfluß von blauen Licht auf das menschliche H
    * \-d 2		# Aktiviere
 
 ### Allgemeine Optionen
-**oyranos\-monitor\-white\-point** \-m|  \-r|  \-X *json|json+command|man|markdown*|  \-h [\-v]
+**oyranos\-monitor\-white\-point** \-m | \-r | \-X *json|json+command|man|markdown* | \-h [\-v]
 
 * \-h|\-\-help	Hilfe
 * \-m|\-\-modes	Zeige Weißpunktmodus

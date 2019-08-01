@@ -334,13 +334,13 @@ int main( int argc , char** argv )
 
   oyjlOptionGroup_s groups[] = {
   /* type,   flags, name, description, help, mandatory, optional, detail */
-    {"oiwg", 0, _("Saturation"), _("2D Graph from profiles"), _("Create a 2D Graph containing the saturation line from a ICC Profile."), "@", "tbgwofcxdn24rv", "@dxcn24r" },
-    {"oiwg", 0, _("StdObs2°"), _("Standard Observer 1931 2° Graph"), NULL, "S", "tbgwRofv", "S" },
-    {"oiwg", 0, _("Obs10°"), _("1964 10° Observer Graph"), NULL, "O", "tbgwRofv", "O" },
-    {"oiwg", 0, _("Blackbody Radiator"), _("Blackbody Radiator Spectrum Graph"), NULL, "k", "tbgwRofv", "k" },
-    {"oiwg", 0, _("Illuminant Spectrum"), _("Illuminant Spectrum Graph"), NULL, "i", "tbgwRofv", "i" },
-    {"oiwg", 0, _("Spectral Input"), _("Spectral Input Graph"), NULL, "spz", "tbgwRPov", "spPz" },
-    {"oiwg", 0, _("Misc"), _("General options"), NULL, "X|h", "v", "tbgwRofhXv" },
+    {"oiwg", 0, _("Saturation"), _("2D Graph from profiles"), _("Create a 2D Graph containing the saturation line from a ICC Profile."), "@", "t,b,g,w,o,f,c,x,d,n,2,4,r,v", "@,d,x,c,n,2,4,r" },
+    {"oiwg", 0, _("StdObs2°"), _("Standard Observer 1931 2° Graph"), NULL, "S", "t,b,g,w,R,o,f,v", "S" },
+    {"oiwg", 0, _("Obs10°"), _("1964 10° Observer Graph"), NULL, "O", "t,b,g,w,R,o,f,v", "O" },
+    {"oiwg", 0, _("Blackbody Radiator"), _("Blackbody Radiator Spectrum Graph"), NULL, "k", "t,b,g,w,R,o,f,v", "k" },
+    {"oiwg", 0, _("Illuminant Spectrum"), _("Illuminant Spectrum Graph"), NULL, "i", "t,b,g,w,R,o,f,v", "i" },
+    {"oiwg", 0, _("Spectral Input"), _("Spectral Input Graph"), NULL, "s,p,z", "t,b,g,w,R,P,o,v", "s,p,P,z" },
+    {"oiwg", 0, _("Misc"), _("General options"), NULL, "X|h", "v", "t,b,g,w,R,o,f,h,X,v" },
     {"",0,0,0,0,0,0,0}
   };
   opts->groups = (oyjlOptionGroup_s*)oyjlStringAppendN( NULL, (const char*)groups, sizeof(groups), 0);

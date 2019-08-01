@@ -15,7 +15,7 @@ oyranos\-profile\-graph v0.9.7 \- Oyranos Profile Zeichner
 <br />
 **oyranos\-profile\-graph** \-s *DATEI* \-p *FORMAT* \-z [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-R] [\-P *WORT*] [\-o *\-|DATEI*] [\-v]
 <br />
-**oyranos\-profile\-graph** \-X *json|json+command|man|markdown*|  \-h [\-v]
+**oyranos\-profile\-graph** \-X *json|json+command|man|markdown* | \-h [\-v]
 ## BESCHREIBUNG
 Das oyranos\-profile\-graph Programm erzeugt aus einem ICC Profil oder eingebetteten ICC Profil in eine Grafik. Vorgabemäßig malt es die Sättigungslinie eines anzugebenden ICC Profiles und schreibt die Grafik nach stdout.
 ## OPTIONEN
@@ -76,7 +76,7 @@ Erzeuge aus einem ICC Profil eine Grafik mit seiner Sättigungslinie.
 * \-z|\-\-scale	Skaliere die Höhe der Spektrumkurve
 
 ### Allgemeine Optionen
-**oyranos\-profile\-graph** \-X *json|json+command|man|markdown*|  \-h [\-v]
+**oyranos\-profile\-graph** \-X *json|json+command|man|markdown* | \-h [\-v]
 
 * \-t|\-\-thickness *NUMMER*	Gib die Liniendicke an (NUMMER:1 [≥0 ≤10])
 * \-b|\-\-no\-border	Lasse Rand aus in Zeichnung

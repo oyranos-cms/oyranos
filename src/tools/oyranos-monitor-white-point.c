@@ -382,16 +382,16 @@ int main( int argc , char** argv )
 
   oyjlOptionGroup_s groups[] = {
   /* type,   flags, name, description, help, mandatory, optional, detail */
-    {"oiwg", 0, _("Mode"), _("Actual mode"), NULL, "wa", "zv", "wa" },
+    {"oiwg", 0, _("Mode"), _("Actual mode"), NULL, "w,a", "z,v", "w,a" },
 #if defined( XCM_HAVE_X11 )
-    {"oiwg", 0, _("Night Mode"), _("Nightly appearance"), _("The Night white point mode shall allow to reduce influence of blue light during night time. A white point temperature of around 4000K and lower allows to get easier into sleep and is recommended along with warm room illumination in evening and night times."), "ng", "bzv", "ngb" },
+    {"oiwg", 0, _("Night Mode"), _("Nightly appearance"), _("The Night white point mode shall allow to reduce influence of blue light during night time. A white point temperature of around 4000K and lower allows to get easier into sleep and is recommended along with warm room illumination in evening and night times."), "n,g", "b,z,v", "n,g,b" },
 #else
-    {"oiwg", 0, _("Night Mode"), _("Nightly appearance"), _("The Night white point mode shall allow to reduce influence of blue light during night time. A white point temperature of around 4000K and lower allows to get easier into sleep and is recommended along with warm room illumination in evening and night times."), "ng", "zv", "ng" },
+    {"oiwg", 0, _("Night Mode"), _("Nightly appearance"), _("The Night white point mode shall allow to reduce influence of blue light during night time. A white point temperature of around 4000K and lower allows to get easier into sleep and is recommended along with warm room illumination in evening and night times."), "n,g", "z,v", "n,g" },
 #endif
-    {"oiwg", 0, _("Day Mode"), _("Sun light appearance"), NULL, "se", "zv", "se" },
-    {"oiwg", 0, _("Location"), _("Location and Twilight"), NULL, "l|io", "tzv", "liot"},
+    {"oiwg", 0, _("Day Mode"), _("Sun light appearance"), NULL, "s,e", "z,v", "s,e" },
+    {"oiwg", 0, _("Location"), _("Location and Twilight"), NULL, "l|i,o", "t,z,v", "l,i,o,t"},
     {"oiwg", 0, _("Daemon Service"), _("Run sunset daemon"), NULL, "d", "v", "d" },
-    {"oiwg", 0, _("Misc"), _("General options"), NULL, "m|r|X|h", "v", "hmrXzv" },
+    {"oiwg", 0, _("Misc"), _("General options"), NULL, "m|r|X|h", "v", "h,m,r,X,z,v" },
     {"",0,0,0,0,0,0,0}
   };
   double night = isNight(0);

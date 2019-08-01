@@ -15,7 +15,7 @@ oyranos\-profile\-graph v0.9.7 \- Oyranos Profile Graph
 <br />
 **oyranos\-profile\-graph** \-s *FILE* \-p *FORMAT* \-z [\-t *NUMBER*] [\-b] [\-g] [\-w *NUMBER*] [\-R] [\-P *STRING*] [\-o *\-|FILE*] [\-v]
 <br />
-**oyranos\-profile\-graph** \-X *json|json+command|man|markdown*|  \-h [\-v]
+**oyranos\-profile\-graph** \-X *json|json+command|man|markdown* | \-h [\-v]
 ## DESCRIPTION
 The  oyranos\-profile\-graph programm converts ICC profiles or embedded ICC profiles from images to a graph image. By default the program shows the saturation line of the specified profiles and writes to stdout.
 ## OPTIONS
@@ -76,7 +76,7 @@ Create a 2D Graph containing the saturation line from a ICC Profile.
 * \-z|\-\-scale	Scale the height of the spectrum graph
 
 ### General options
-**oyranos\-profile\-graph** \-X *json|json+command|man|markdown*|  \-h [\-v]
+**oyranos\-profile\-graph** \-X *json|json+command|man|markdown* | \-h [\-v]
 
 * \-t|\-\-thickness *NUMBER*	Specify the thickness of the graph lines (NUMBER:1 [≥0 ≤10])
 * \-b|\-\-no\-border	Omit border in graph

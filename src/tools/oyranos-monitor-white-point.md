@@ -9,11 +9,11 @@ oyranos\-monitor\-white\-point v0.9.7 \- Night Manager
 <br />
 **oyranos\-monitor\-white\-point** \-s *0|1|2|3|4|5|6|7* \-e *ICC\_PROFILE* [\-z] [\-v]
 <br />
-**oyranos\-monitor\-white\-point** \-l|  \-i *ANGLE\_IN\_DEGREE* \-o *ANGLE\_IN\_DEGREE* [\-t *ANGLE\_IN\_DEGREE|0:rise/set|\-6:civil|\-12:nautical|\-18:astronomical*] [\-z] [\-v]
+**oyranos\-monitor\-white\-point** \-l | \-i *ANGLE\_IN\_DEGREE* \-o *ANGLE\_IN\_DEGREE* [\-t *ANGLE\_IN\_DEGREE|0:rise/set|\-6:civil|\-12:nautical|\-18:astronomical*] [\-z] [\-v]
 <br />
 **oyranos\-monitor\-white\-point** \-d *0|1|2* [\-v]
 <br />
-**oyranos\-monitor\-white\-point** \-m|  \-r|  \-X *json|json+command|man|markdown*|  \-h [\-v]
+**oyranos\-monitor\-white\-point** \-m | \-r | \-X *json|json+command|man|markdown* | \-h [\-v]
 ## DESCRIPTION
 The tool can set the actual white point or set it by local day and night time. A additional effect profile can be selected.
 ## OPTIONS
@@ -66,7 +66,7 @@ The Night white point mode shall allow to reduce influence of blue light during 
    * \-e Effect 2		# Example Effect 2
 
 ### Location and Twilight
-**oyranos\-monitor\-white\-point** \-l|  \-i *ANGLE\_IN\_DEGREE* \-o *ANGLE\_IN\_DEGREE* [\-t *ANGLE\_IN\_DEGREE|0:rise/set|\-6:civil|\-12:nautical|\-18:astronomical*] [\-z] [\-v]
+**oyranos\-monitor\-white\-point** \-l | \-i *ANGLE\_IN\_DEGREE* \-o *ANGLE\_IN\_DEGREE* [\-t *ANGLE\_IN\_DEGREE|0:rise/set|\-6:civil|\-12:nautical|\-18:astronomical*] [\-z] [\-v]
 
 * \-l|\-\-location	Detect location by IP adress
 * \-i|\-\-latitude *ANGLE\_IN\_DEGREE*	Set Latitude (ANGLE\_IN\_DEGREE:0 [≥\-90 ≤90])
@@ -82,7 +82,7 @@ The Night white point mode shall allow to reduce influence of blue light during 
    * \-d 2		# Activate
 
 ### General options
-**oyranos\-monitor\-white\-point** \-m|  \-r|  \-X *json|json+command|man|markdown*|  \-h [\-v]
+**oyranos\-monitor\-white\-point** \-m | \-r | \-X *json|json+command|man|markdown* | \-h [\-v]
 
 * \-h|\-\-help	Help
 * \-m|\-\-modes	Show white point modes

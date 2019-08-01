@@ -7,7 +7,7 @@ oyranos\-profiles v0.9.7 \- Oyranos Profile
 <br />
 **oyranos\-profiles** \-p [\-u|\-s|\-y|\-m] [\-v]
 <br />
-**oyranos\-profiles** \-I *ICC\_PROFIL*|  \-t *TAXI\_ID* [\-u|\-s|\-y|\-m] [\-g] [\-v]
+**oyranos\-profiles** \-I *ICC\_PROFIL* | \-t *TAXI\_ID* [\-u|\-s|\-y|\-m] [\-g] [\-v]
 <br />
 **oyranos\-profiles** \-h \-X *json|json+command|man|markdown*
 ## BESCHREIBUNG
@@ -42,7 +42,7 @@ Das Werkzeug kann installierte Profile und Suchpfade anzeigen. Es kann ein Profi
 * \-m|\-\-machine	Maschinenpfad
 
 ### Installiere Profil
-**oyranos\-profiles** \-I *ICC\_PROFIL*|  \-t *TAXI\_ID* [\-u|\-s|\-y|\-m] [\-g] [\-v]
+**oyranos\-profiles** \-I *ICC\_PROFIL* | \-t *TAXI\_ID* [\-u|\-s|\-y|\-m] [\-g] [\-v]
 
 * \-I|\-\-install *ICC\_PROFIL*	Installiere Profil
 * \-t|\-\-taxi *TAXI\_ID*	ICC Taxi Profile DB

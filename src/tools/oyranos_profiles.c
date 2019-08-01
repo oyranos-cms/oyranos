@@ -136,10 +136,10 @@ int main( int argc , char** argv )
 
   oyjlOptionGroup_s groups[] = {
   /* type,   flags, name, description, help, mandatory, optional, detail */
-    {"oiwg", 0, _("List"), _("List of available ICC color profiles"), NULL, "l", "feacdknoi24PTv", "lfeacdknoi24PTD" },
-    {"oiwg", 0, _("Paths"), _("List search paths"), NULL, "p", "u|s|y|mv", "pusym" },
-    {"oiwg", 0, _("Install"), _("Install Profile"), NULL, "I|t", "u|s|y|mgv", "Itusymg" },
-    {"oiwg", 0, _("Misc"), _("General options"), NULL, "hX", "", "hXrv" },
+    {"oiwg", 0, _("List"), _("List of available ICC color profiles"), NULL, "l", "f,e,a,c,d,k,n,o,i,2,4,P,T,v", "l,f,e,a,c,d,k,n,o,i,2,4,P,T,D" },
+    {"oiwg", 0, _("Paths"), _("List search paths"), NULL, "p", "u|s|y|m,v", "p,u,s,y,m" },
+    {"oiwg", 0, _("Install"), _("Install Profile"), NULL, "I|t", "u|s|y|m,g,v", "I,t,u,s,y,m,g" },
+    {"oiwg", 0, _("Misc"), _("General options"), NULL, "h,X", "", "h,X,r,v" },
     {"",0,0,0,0,0,0,0}
   };
   opts->groups = (oyjlOptionGroup_s*)oyjlStringAppendN( NULL, (const char*)groups, sizeof(groups), 0);
