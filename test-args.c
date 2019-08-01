@@ -45,7 +45,7 @@ oyjlTESTRESULT_e testArgs()
   int verbose_ = 0;
   int state = 0;
   int argc = 1;
-  const char * argv[] = {"test","-v","--input","file-name.json", "-z"};
+  const char * argv[] = {"test-args","-v","--input","file-name.json", "-z"};
 
   /* handle options */
   /* Select from *version*, *manufacturer*, *copyright*, *license*, *url*,
@@ -82,10 +82,14 @@ oyjlTESTRESULT_e testArgs()
   /* declare option groups, for better syntax checking and UI groups */
   oyjlOptionGroup_s groups_no_args[] = {
   /* type,   flags, name,      description,          help, mandatory, optional, detail */
-    {"oiwg", 0,     _("Mode1"),_("Simple mode"),     NULL, "#",       "ov",     "o" }, /* accepted even if none of the mandatory options is set */
-    {"oiwg", OYJL_OPTION_FLAG_EDITABLE,_("Mode2"),_("Any arg mode"),NULL,"@","ov","@o"},/* accepted if anonymous arguments are set */
-    {"oiwg", 0,     _("Mode3"),_("Actual mode"),     NULL, "i",       "ov",     "io" },/* parsed and checked with -i option */
-    {"oiwg", 0,     _("Misc"), _("General options"), NULL, "",        "",       "vh" },/* just show in documentation */
+    {"oiwg", 0,     _("Mode1"),_("Simple mode"),     NULL, "#",       "o,v",    "o" }, /* accepted even if none of the mandatory options is set */
+    {"oiwg", 0,     _("Mode2"),_("Simple mode"),     NULL, "#",       "o,v",    "#,o" }, /* accepted even if none of the mandatory options is set */
+    {"oiwg", 0,     _("Mode3"),_("Simple mode"),     NULL, "#",       "",       "#" }, /* accepted even if none of the mandatory options is set */
+    {"oiwg", 0,     _("Mode4"),_("Simple mode"),     NULL, "#",       "",       "" }, /* accepted even if none of the mandatory options is set */
+    {"oiwg", OYJL_OPTION_FLAG_EDITABLE,_("Mode5"),_("Any arg mode"),NULL,"@","o,v","@,o"},/* accepted if anonymous arguments are set */
+    {"oiwg", 0,     _("Mode6"),_("Actual mode"),     NULL, "i",       "o,v",    "i,o" },/* parsed and checked with -i option */
+    {"oiwg", 0,     _("Mode7"),_("Alternate"),       NULL, "i|o",     "h|v",    "i,o,h,v" },
+    {"oiwg", 0,     _("Misc"), _("General options"), NULL, "",        "",       "v,h" },/* just show in documentation */
     {"",0,0,0,0,0,0,0}
   };
 
@@ -105,6 +109,91 @@ oyjlTESTRESULT_e testArgs()
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
     "ui created - no args                           " );
   }
+
+  const char * syn = oyjlOptions_PrintHelpSynopsis( ui->opts, &ui->opts->groups[0], oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MARKDOWN );
+  if(strcmp(syn,"**test-args** | [-o *0|1|2*] [-v]") == 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "SynopsisMode1  #       o,v    o                " );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    "SynopsisMode1  #       o,v    o                " );
+  }
+  OYJL_TEST_WRITE_RESULT( syn, strlen(syn), "SynopsisMode1", "txt" )
+  if(oy_test_last_result == oyjlTESTRESULT_FAIL || verbose)
+    fprintf( zout, "SynopsisMode1: %s\n", syn );
+
+  syn = oyjlOptions_PrintHelpSynopsis( ui->opts, &ui->opts->groups[1], oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MARKDOWN );
+  if(strcmp(syn,"**test-args** | [-o *0|1|2*] [-v]") == 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "SynopsisMode2  #       o,v    #,o              " );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    "SynopsisMode2  #       o,v    #,o              " );
+  }
+  OYJL_TEST_WRITE_RESULT( syn, strlen(syn), "SynopsisMode2", "txt" )
+  if(oy_test_last_result == oyjlTESTRESULT_FAIL || verbose)
+    fprintf( zout, "SynopsisMode2: %s\n", syn );
+
+  syn = oyjlOptions_PrintHelpSynopsis( ui->opts, &ui->opts->groups[2], oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MARKDOWN );
+  if(strcmp(syn,"**test-args**") == 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "SynopsisMode3  #              #                " );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    "SynopsisMode3  #              #                " );
+  }
+  OYJL_TEST_WRITE_RESULT( syn, strlen(syn), "SynopsisMode3", "txt" )
+  if(oy_test_last_result == oyjlTESTRESULT_FAIL || verbose)
+    fprintf( zout, "SynopsisMode3: %s\n", syn );
+
+  syn = oyjlOptions_PrintHelpSynopsis( ui->opts, &ui->opts->groups[3], oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MARKDOWN );
+  if(strcmp(syn,"**test-args**") == 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "SynopsisMode4  #                               " );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    "SynopsisMode4  #                               " );
+  }
+  OYJL_TEST_WRITE_RESULT( syn, strlen(syn), "SynopsisMode4", "txt" )
+  if(oy_test_last_result == oyjlTESTRESULT_FAIL || verbose)
+    fprintf( zout, "SynopsisMode4: %s\n", syn );
+
+  syn = oyjlOptions_PrintHelpSynopsis( ui->opts, &ui->opts->groups[4], oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MARKDOWN );
+  if(strcmp(syn,"**test-args** [-o *0|1|2*] [-v] FILENAME") == 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "SynopsisMode5  @       o,v    @,o              " );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    "SynopsisMode5  @       o,v    @,o              " );
+  }
+  OYJL_TEST_WRITE_RESULT( syn, strlen(syn), "SynopsisMode5", "txt" )
+  if(oy_test_last_result == oyjlTESTRESULT_FAIL || verbose)
+    fprintf( zout, "SynopsisMode5: %s\n", syn );
+
+  syn = oyjlOptions_PrintHelpSynopsis( ui->opts, &ui->opts->groups[5], oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MARKDOWN );
+  if(strcmp(syn,"**test-args** -i *FILENAME* [-o *0|1|2*] [-v]") == 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "SynopsisMode6  i       o,v    i,o              " );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    "SynopsisMode6  i       o,v    i,o              " );
+  }
+  OYJL_TEST_WRITE_RESULT( syn, strlen(syn), "SynopsisMode6", "txt" )
+  if(oy_test_last_result == oyjlTESTRESULT_FAIL || verbose)
+    fprintf( zout, "SynopsisMode6: %s\n", syn );
+
+  syn = oyjlOptions_PrintHelpSynopsis( ui->opts, &ui->opts->groups[6], oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MARKDOWN );
+  if(strcmp(syn,"**test-args** -i *FILENAME* | -o *0|1|2* [-h|-v]") == 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "SynopsisMode7  i|o     h|v    i,o,h,v          " );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    "SynopsisMode7  i|o     h|v    i,o,h,v          " );
+  }
+  OYJL_TEST_WRITE_RESULT( syn, strlen(syn), "SynopsisMode7", "txt" )
+  if(oy_test_last_result == oyjlTESTRESULT_FAIL || verbose)
+    fprintf( zout, "SynopsisMode7: %s\n", syn );
+
   oyjlUi_Release( &ui);
 
 
@@ -134,7 +223,7 @@ oyjlTESTRESULT_e testArgs()
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
     "anonymous args correctly detected  %d          ", count );
   }
-  if(verbose)
+  if(oy_test_last_result == oyjlTESTRESULT_FAIL || verbose)
   for(i = 0; i < count; ++i)
     fprintf( zout, "%s\n", results[i] );
   oyjlUi_Release( &ui);
@@ -142,8 +231,8 @@ oyjlTESTRESULT_e testArgs()
   /* declare option groups, for better syntax checking and UI groups */
   oyjlOptionGroup_s groups[] = {
   /* type,   flags, name,      description,          help, mandatory, optional, detail */
-    {"oiwg", 0,     _("Mode"), _("Actual mode"),     NULL, "i",       "ov",     "io" },
-    {"oiwg", 0,     _("Misc"), _("General options"), NULL, "",        "",       "vh" },
+    {"oiwg", 0,     _("Mode"), _("Actual mode"),     NULL, "i",       "o,v",    "i,o" },
+    {"oiwg", 0,     _("Misc"), _("General options"), NULL, "",        "",       "v,h" },
     {"",0,0,0,0,0,0,0}
   };
 
@@ -207,13 +296,14 @@ oyjlTESTRESULT_e testArgs()
                                        sections, oarray, groups, NULL );
 
   text = oyjlUi_ToMan( ui, 0 );
-  if(text && strlen(text) == 662)
+  if(text && strlen(text) == 672)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlUi_ToMan() %lu                            ", strlen(text) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "oyjlUi_ToMan() 662 == %lu                     ", strlen(text) );
+    "oyjlUi_ToMan() 672 == %lu                     ", strlen(text) );
   }
+  OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlUi_ToMan", "txt" )
   if(verbose)
     fprintf( zout, "%s\n", text );
   if(text) {free(text);} text = NULL;
