@@ -172,6 +172,13 @@ oyjlTESTRESULT_e prog(); \
   ++oyjl_test_number; \
 }
 
+#ifndef OYJL_TEST_NAME
+/** Macro to set the global test name. It will be used as file name component.
+ *  in ::OYJL_TEST_WRITE_RESULT.
+ */
+#define OYJL_TEST_NAME argv[0]
+#endif /* OYJL_TEST_NAME */
+
 int results[oyjlTESTRESULT_UNKNOWN+1];
 #ifndef OYJL_TEST_MAX_COUNT
 #define OYJL_TEST_MAX_COUNT 64
@@ -279,7 +286,7 @@ oyjlTESTRESULT_e oy_test_last_result = oyjlTESTRESULT_UNKNOWN;
   ++oy_test_current_sub_count; \
 }
 int  oyjlWriteTestFile               ( const char        * filename,
-                                       void              * mem,
+                                       const void        * mem,
                                        int                 size )
 {
   FILE *fp = 0;
@@ -351,11 +358,12 @@ int  oyjlWriteTestFile               ( const char        * filename,
  */
 #define OYJL_TEST_WRITE_RESULT( mem, size, hint, suffix ) { \
   char * fn = malloc(64); \
-  sprintf( fn, "test-%d-%d-%s-%s.%s", oyjl_test_number, oy_test_current_sub_count, hint?hint:"", oyjlTestResultToString(oy_test_last_result,0), suffix ); \
+  sprintf( fn, "%s-%d-%d-%s-%s.%s", OYJL_TEST_NAME, oyjl_test_number, oy_test_current_sub_count, hint?hint:"", oyjlTestResultToString(oy_test_last_result,0), suffix ); \
   oyjlWriteTestFile( fn, mem, size ); \
+  if(verbose) fprintf(zout, "%s\n", fn); \
   if(oy_test_last_result == oyjlTESTRESULT_FAIL) { \
     char * fns = malloc(64); \
-    sprintf( fns, "test-%d-%d-%s-%s.%s", oyjl_test_number, oy_test_current_sub_count, hint?hint:"", oyjlTestResultToString(oyjlTESTRESULT_SUCCESS,0), suffix ); \
+    sprintf( fns, "%s-%d-%d-%s-%s.%s", OYJL_TEST_NAME, oyjl_test_number, oy_test_current_sub_count, hint?hint:"", oyjlTestResultToString(oyjlTESTRESULT_SUCCESS,0), suffix ); \
     FILE * fp = fopen(fns, "r"); \
     if(fp && strcmp(suffix, "txt") == 0) { \
       char * diff = malloc(128); \
