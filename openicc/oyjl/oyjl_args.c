@@ -348,6 +348,148 @@ void       oyjlStringListAddStaticString (
 
   *list = nlist;
 }
+const char *   oyjlStringGetNext     ( const char        * text )
+{
+  /* remove leading white space */
+  if(text && text[0] && isspace(text[0]))
+  {
+    while( text && text[0] && isspace(text[0]) ) text++;
+    return text;
+  }
+
+  /* find the end of the word */
+  while( text && text[0] && !isspace(text[0]) ) text++;
+
+  /* find the next word */
+  while( text && text[0] && isspace(text[0]) ) text++;
+
+  return text && text[0] ? text : NULL;
+}
+int            oyjlStringNextSpace   ( const char        * text )
+{
+  int len = 0;
+  while( text && text[len] && !isspace(text[len]) ) len++;
+  return len;
+}
+char **        oyjlStringSplitSpace  ( const char        * text,
+                                       int               * count,
+                                       void*            (* alloc)(size_t))
+{
+  char ** list = NULL;
+  int n = 0, i;
+
+  /* split the string by empty space */
+  if(text && text[0])
+  {
+    const char * tmp = text;
+
+    if(!alloc) alloc = malloc;
+
+    if(tmp && tmp[0] && !isspace(tmp[0])) ++n;
+    while( tmp && tmp[0] && (tmp = oyjlStringGetNext( tmp )) != NULL ) ++n;
+
+    if((list = alloc( (n+1) * sizeof(char*) )) == 0) return NULL;
+    memset( list, 0, (n+1) * sizeof(char*) );
+
+    {
+      const char * start = text;
+      if(start && isspace(start[0]))
+        start = oyjlStringGetNext( start );
+
+      for(i = 0; i < n; ++i)
+      {
+        int len = oyjlStringNextSpace( start );
+
+        if((list[i] = alloc( len+1 )) == 0) return NULL;
+
+        memcpy( list[i], start, len );
+        list[i][len] = 0;
+        start = oyjlStringGetNext( start );
+      }
+    }
+  }
+
+  if(count)
+    *count = n;
+
+  return list;
+}
+
+static const char * oyjlStringDelimiter ( const char * text, const char * delimiter, int * length )
+{
+  int i,j, dn = delimiter ? strlen(delimiter) : 0, len = text?strlen(text):0;
+  for(j = 0; j < len; ++j)
+    for(i = 0; i < dn; ++i)
+      if(text[j] && text[j] == delimiter[i])
+      {
+        if(length)
+          *length = j;
+        return &text[j];
+      }
+  return NULL;
+}
+char **        oyjlStringSplit2      ( const char        * text,
+                                       const char        * delimiter,
+                                       int               * count,
+                                       int              ** index,
+                                       void*            (* alloc)(size_t))
+{
+  char ** list = 0;
+  int n = 0, i;
+
+  /* split the path search string by a delimiter */
+  if(text && text[0])
+  {
+    const char * tmp = text;
+
+    if(!alloc) alloc = malloc;
+
+    if(!delimiter)
+      return oyjlStringSplitSpace( text, count, alloc );
+
+    tmp = oyjlStringDelimiter(tmp, delimiter, NULL);
+    if(tmp == text) ++n;
+    tmp = text;
+    do { ++n;
+    } while( (tmp = oyjlStringDelimiter(tmp + 1, delimiter, NULL)) );
+
+    tmp = 0;
+
+    if((list = alloc( (n+1) * sizeof(char*) )) == NULL) return NULL;
+    memset( list, 0, (n+1) * sizeof(char*) );
+    if(index && (*index = alloc( n * sizeof(int) )) == NULL) { free(list); return NULL; }
+    if(index) memset( *index, 0, n * sizeof(int) );
+
+    {
+      const char * start = text;
+      for(i = 0; i < n; ++i)
+      {
+        intptr_t len = 0;
+        int length = 0;
+        const char * end = oyjlStringDelimiter(start, delimiter, &length);
+        if(index && length) (*index)[i] = length + start - text;
+
+        if(end > start)
+          len = end - start;
+        else if (end == start)
+          len = 0;
+        else
+          len = strlen(start);
+
+        if((list[i] = alloc( len+1 )) == 0) return NULL;
+
+        memcpy( list[i], start, len );
+        list[i][len] = 0;
+        start += len + 1;
+      }
+    }
+  }
+
+  if(count)
+    *count = n;
+
+  return list;
+}
 void       oyjlStringListRelease  ( char            *** l,
                                        int                 size,
                                        void             (* deAlloc)(void*) )
@@ -571,7 +713,7 @@ typedef struct {
     oyjlOptionGroup_s groups[] = {
     // type,   flags, name,     description,help, mandatory,  optional, detail
       // place here the action widget; all optional options [a+b+c+v] are in this action group
-      {"oiwg", 0,     "Group1", 0,0,              "",         "abcv",   "ab" },
+      {"oiwg", 0,     "Group1", 0,0,              "",         "a,b,c,v","a,b" },
       // only description; no action
       {"oiwg", 0,     "Group2", 0,0,              "",         "",       "c" },
       // only description; no action
@@ -598,7 +740,7 @@ typedef struct {
     oyjlOptionGroup_s groups[] = {
     // type,   flags, name,     description,help, mandatory,  optional, detail
       // a separate action widget is needed, so 'a' and 'b' can be set before action; a+b+c+[v] are in this action group
-      {"oiwg", 0,     "Group1", 0,0,              "ab",       "cv",     "abc" },
+      {"oiwg", 0,     "Group1", 0,0,              "a,b",      "c,v",    "a,b,c" },
       // the 'h' option could be handled as the action widget; h+[v] are in this action group
       {"oiwg", 0,     "Group2", 0,0,              "h",        "v",      "h" },
       // only description; no action
@@ -623,7 +765,7 @@ typedef struct {
     oyjlOptionGroup_s groups[] = {
     // type,   flags, name,     description,help, mandatory,  optional, detail
       // 'a' and 'b' can be action widgets, as they are independent; a+[v] or b+[v] are in this action group
-      {"oiwg", 0,     "Group1", 0,0,              "a|b",      "v",      "ab" },
+      {"oiwg", 0,     "Group1", 0,0,              "a|b",      "v",      "a,b" },
       // 'h' can be action widget; h+[v] are in this action group
       {"oiwg", 0,     "Group2", 0,0,              "h",        "v",      "h" },
       // only description; no action
@@ -821,9 +963,9 @@ const char * oyjlOption_PrintArg     ( oyjlOption_s      * o,
   }
   if(style & oyjlOPTIONSTYLE_ONELETTER && o->o == '#')
     oyjlStringAdd( &text, malloc, free, "|" );
-  if(style & oyjlOPTIONSTYLE_ONELETTER && style & oyjlOPTIONSTYLE_STRING && o->o != '@' && o->o != '#')
+  if(style & oyjlOPTIONSTYLE_ONELETTER && style & oyjlOPTIONSTYLE_STRING && o->o != '@' && o->o != '#' && o->option)
     oyjlStringAdd( &text, malloc, free, "|" );
-  if(style & oyjlOPTIONSTYLE_STRING && o->o != '@' && o->o != '#')
+  if((style & oyjlOPTIONSTYLE_STRING || o->o == '\000') && o->o != '@' && o->o != '#' && o->option)
   {
     if(style & oyjlOPTIONSTYLE_MAN)
       oyjlStringAdd( &text, malloc, free, "\\-\\-%s", o->option );
@@ -908,6 +1050,17 @@ void oyjlOptions_EnrichInbuild( oyjlOption_s * o )
   }
 }
 
+static int oyjlStringDelimiterCount ( const char * text, const char * delimiter )
+{
+  int i,j, dn = delimiter ? strlen(delimiter) : 0, len = text?strlen(text):0, n = 0;
+  if(len) ++n;
+  for(j = 0; j < len; ++j)
+    for(i = 0; i < dn; ++i)
+      if(text[j] && text[j] == delimiter[i])
+        ++n;
+  return n;
+}
+
 /** @brief    Obtain the specified option from option char
  *  @memberof oyjlOptions_s
  *
@@ -915,8 +1068,7 @@ void oyjlOptions_EnrichInbuild( oyjlOption_s * o )
  *  @date    2018/08/14
  *  @since   2018/08/14 (OpenICC: 0.1.1)
  */
-oyjlOption_s * oyjlOptions_GetOption (
-                                       oyjlOptions_s  * opts,
+oyjlOption_s * oyjlOptions_GetOption ( oyjlOptions_s     * opts,
                                        char                oc )
 {
   int i;
@@ -943,11 +1095,10 @@ oyjlOption_s * oyjlOptions_GetOption (
  *  @memberof oyjlOptions_s
  *
  *  @version Oyjl: 1.0.0
- *  @date    2018/08/14
+ *  @date    2019/07/20
  *  @since   2018/08/14 (OpenICC: 0.1.1)
  */
-oyjlOption_s * oyjlOptions_GetOptionL (
-                                       oyjlOptions_s  * opts,
+oyjlOption_s * oyjlOptions_GetOptionL( oyjlOptions_s     * opts,
                                        const char        * ostring )
 {
   int i;
@@ -955,14 +1106,26 @@ oyjlOption_s * oyjlOptions_GetOptionL (
   oyjlOption_s * o = NULL;
   char * str = oyjlStringCopy(ostring, malloc);
   char * t = strchr(str, '=');
+  char oc = '\000';
 
   if(t)
     t[0] = '\000';
 
+  if(str[0] && (str[1] == '\000' || str[1] == ',' || str[1] == '|'))
+    oc = str[0];
+  else
+  {
+    char * c = strchr(str, ',');
+    if(c)
+      c[0] = '\000';
+  }
+
   for(i = 0; i < nopts; ++i)
   {
     o = &opts->array[i];
-    if(o->option && strcmp(o->option, str) == 0)
+    if( (oc && o->o && o->o == oc) ||
+        (!oc && o->option && strcmp(o->option, str) == 0)
+      )
       return o;
     else
       o = NULL;
@@ -985,7 +1148,7 @@ oyjlOPTIONSTATE_e oyjlOptions_Check (
     for(j = i+1; j < nopts; ++j)
     {
       b = &opts->array[j];
-      if(o->o == b->o)
+      if(o->o && o->o == b->o)
       {
         fprintf( stderr, "%s %s \'%c\'\n", _("Usage Error:"), _("Double occuring option"), b->o );
         return oyjlOPTION_DOUBLE_OCCURENCE;
@@ -996,7 +1159,7 @@ oyjlOPTIONSTATE_e oyjlOptions_Check (
     if(!(('0' <= o->o && o->o <= '9') ||
          ('a' <= o->o && o->o <= 'z') ||
          ('A' <= o->o && o->o <= 'Z') ||
-         o->o == '@' || o->o == '#'))
+         o->o == '@' || o->o == '#' || o->o == '\000' || o->o == '|'))
     {
       fprintf( stderr, "%s %s \'%c\' %s\n", _("Usage Error:"), _("Option not supported"), o->o, _("need range 0-9 or a-z or A-Z") );
       return oyjlOPTION_NOT_SUPPORTED;
@@ -1474,8 +1637,10 @@ static const char * oyjlOptions_PrintHelpSynopsis (
                                        int                 style )
 {
   int i;
-  int m = g->mandatory ? strlen(g->mandatory) : 0;
-  int on = g->optional ? strlen(g->optional) : 0;
+  char ** m_list = NULL, ** on_list = NULL;
+  int * m_index = NULL, * on_index = NULL;
+  int m = oyjlStringDelimiterCount(g->mandatory, ",|");
+  int on = oyjlStringDelimiterCount(g->optional, ",|");
   static char * text = NULL;
   int opt_group = 0;
   int gstyle = style;
@@ -1497,37 +1662,37 @@ static const char * oyjlOptions_PrintHelpSynopsis (
   else
     return text;
 
+  m_list = oyjlStringSplit2( g->mandatory, "|,", &m, &m_index, malloc );
   for(i = 0; i < m; ++i)
   {
-    char oc = g->mandatory[i];
-    oyjlOption_s * o = oyjlOptions_GetOption( opts, oc );
-    if(oc == '|')
-      oyjlStringAdd( &text, malloc, free, "|" );
-    else if(!o)
+    char * option = m_list[i];
+    oyjlOption_s * o = oyjlOptions_GetOptionL( opts, option );
+    char next_delimiter = g->mandatory[m_index[i]];
+    if(!o)
     {
-      fprintf(stderr, "\n%s: option not declared: %c\n", g->name, oc);
+      fprintf(stderr, "\n%s: option not declared: %s\n", g->name, option);
       exit(1);
     }
-    if(oc != '@' && !(oc == '#' && m == 1))
+    if(option[0] != '@' && !(option[0] == '#' && m+on == 1))
       oyjlStringAdd( &text, malloc, free, " %s", oyjlOption_PrintArg(o, style) );
+    if(next_delimiter == '|')
+      oyjlStringAdd( &text, malloc, free, " |" );
   }
+
+  on_list = oyjlStringSplit2( g->optional, "|,", &on, &on_index, malloc );
   for(i = 0; i < on; ++i)
   {
-    char oc = g->optional[i];
-    oyjlOption_s * o = oyjlOptions_GetOption( opts, oc );
+    char * option = on_list[i];
+    oyjlOption_s * o = oyjlOptions_GetOptionL( opts, option );
+    char next_delimiter = g->optional[on_index[i]];
     gstyle = style | oyjlOPTIONSTYLE_OPTIONAL;
-    if(i < on - 1 && g->optional[i+1] == '|')
+    if(i < on - 1 && next_delimiter == '|')
     {
       if(opt_group == 0)
         gstyle = style | oyjlOPTIONSTYLE_OPTIONAL_START | oyjlOPTIONSTYLE_OPTIONAL_INSIDE_GROUP;
       else
         gstyle = style | oyjlOPTIONSTYLE_OPTIONAL_INSIDE_GROUP;
       opt_group = 1;
-    }
-    else if(oc == '|')
-    {
-      oyjlStringAdd( &text, malloc, free, "|" );
-      continue;
     }
     else if(opt_group)
     {
@@ -1536,24 +1701,32 @@ static const char * oyjlOptions_PrintHelpSynopsis (
     }
     else if(!o)
     {
-      fprintf(stderr, "\n%s: option not declared: %c\n", g->name, oc);
+      fprintf(stderr, "\n%s: option not declared: %s\n", g->name, &g->optional[i]);
       exit(1);
     }
-
     oyjlStringAdd( &text, malloc, free, "%s%s", gstyle & oyjlOPTIONSTYLE_OPTIONAL_START ? " ":"", oyjlOption_PrintArg(o, gstyle) );
+    if(next_delimiter == '|')
+    {
+      oyjlStringAdd( &text, malloc, free, "|" );
+    }
   }
   for(i = 0; i < m; ++i)
   {
-    char oc = g->mandatory[i];
-    oyjlOption_s * o = oyjlOptions_GetOption( opts, oc );
-    if(oc != '|' && !o)
+    char * option = m_list[i];
+    oyjlOption_s * o = oyjlOptions_GetOptionL( opts, option );
+    char next_delimiter = g->mandatory[m_index[i]];
+    if(next_delimiter != '|' && !o)
     {
-      fprintf(stderr, "\n%s: option not declared: %c\n", g->name, oc);
+      fprintf(stderr, "\n%s: option not declared: %s\n", g->name, option);
       exit(1);
     }
-    if(oc == '@')
+    if(strcmp(option, "@") == 0)
       oyjlStringAdd( &text, malloc, free, " %s", o->value_name?o->value_name:"..." );
   }
+  oyjlStringListRelease( &m_list, m, free );
+  oyjlStringListRelease( &on_list, on, free );
+  free( m_index ); m_index = NULL;
+  free( on_index ); on_index = NULL;
   return text;
 }
 
@@ -1648,7 +1821,7 @@ void  oyjlOptions_PrintHelp          ( oyjlOptions_s     * opts,
   for(i = 0; i < ng; ++i)
   {
     oyjlOptionGroup_s * g = &opts->groups[i];
-    int d = g->detail ? strlen(g->detail) : 0,
+    int d = oyjlStringDelimiterCount(g->detail, ",|"),
         j,k;
     fprintf( stdout, "  %s\n", g->description?oyjlTermColor(oyjlUNDERLINE,g->description):"" );
     if(g->mandatory && g->mandatory[0])
@@ -1657,11 +1830,10 @@ void  oyjlOptions_PrintHelp          ( oyjlOptions_s     * opts,
     }
     for(j = 0; j < d; ++j)
     {
-      char oc = g->detail[j];
-      oyjlOption_s * o = oyjlOptions_GetOption( opts, oc );
+      oyjlOption_s * o = oyjlOptions_GetOptionL( opts, &g->detail[j] );
       if(!o)
       {
-        fprintf(stdout, "\n%s: option not declared: %c\n", g->name, oc);
+        fprintf(stdout, "\n%s: option not declared: %s\n", g->name, &g->detail[j]);
         exit(1);
       }
       for(k = 0; k < indent; ++k) fprintf( stdout, " " );
@@ -1678,7 +1850,7 @@ void  oyjlOptions_PrintHelp          ( oyjlOptions_s     * opts,
             }
             if(o->flags & OYJL_OPTION_FLAG_EDITABLE)
               break;
-            while(o->values.choices.list[n].nick && o->values.choices.list[n].nick[0] != '\000')
+            while(o->values.choices.list && o->values.choices.list[n].nick && o->values.choices.list[n].nick[0] != '\000')
               ++n;
             for(l = 0; l < n; ++l)
               fprintf( stdout, "\t\t-%c %s\t\t# %s%s%s\n",
@@ -1723,6 +1895,7 @@ void  oyjlOptions_PrintHelp          ( oyjlOptions_s     * opts,
         case oyjlOPTIONTYPE_START: break;
         case oyjlOPTIONTYPE_END: break;
       }
+      while(g->detail[j] && g->detail[j] != ',') ++j;
     }
     if(d) fprintf( stdout, "\n" );
   }
@@ -1797,7 +1970,7 @@ oyjlOPTIONSTATE_e  oyjlUi_Check      ( oyjlUi_s          * ui,
   for(i = 0; i < ng; ++i)
   {
     oyjlOptionGroup_s * g = &opts->groups[i];
-    int d = g->detail ? strlen(g->detail) : 0,
+    int d = oyjlStringDelimiterCount(g->detail, ",|"),
         j;
     if(g->mandatory && g->mandatory[0])
     {
@@ -1816,11 +1989,10 @@ oyjlOPTIONSTATE_e  oyjlUi_Check      ( oyjlUi_s          * ui,
     }
     for(j = 0; j < d; ++j)
     {
-      char oc = g->detail[j];
-      oyjlOption_s * o = oyjlOptions_GetOption( opts, oc );
+      oyjlOption_s * o = oyjlOptions_GetOptionL( opts, &g->detail[j] );
       if(!o)
       {
-        fprintf(stderr, "\n%s: option not declared: %c\n", g->name, oc);
+        fprintf(stderr, "\n%s: option not declared: %s\n", g->name, &g->detail[j]);
         exit(1);
       }
       switch(o->value_type)
@@ -1847,6 +2019,7 @@ oyjlOPTIONSTATE_e  oyjlUi_Check      ( oyjlUi_s          * ui,
         case oyjlOPTIONTYPE_START: break;
         case oyjlOPTIONTYPE_END: break;
       }
+      while(g->detail[j] && g->detail[j] != ',') ++j;
     }
   }
 
@@ -2318,11 +2491,10 @@ char *       oyjlUi_ToMan            ( oyjlUi_s          * ui,
     }
     for(j = 0; j < dn; ++j)
     {
-      char oc = g->detail[j];
-      oyjlOption_s * o = oyjlOptions_GetOption( opts, oc );
+      oyjlOption_s * o = oyjlOptions_GetOptionL( opts, &g->detail[j] );
       if(!o)
       {
-        fprintf(stderr, "\n%s: option not declared: %c\n", g->name, oc);
+        fprintf(stderr, "\n%s: option not declared: %s\n", g->name, &g->detail[j]);
         exit(1);
       }
       switch(o->value_type)
@@ -2375,6 +2547,7 @@ char *       oyjlUi_ToMan            ( oyjlUi_s          * ui,
         case oyjlOPTIONTYPE_START: break;
         case oyjlOPTIONTYPE_END: break;
       }
+      while(g->detail[j] && g->detail[j] != ',') ++j;
     }
   }
 
@@ -2499,11 +2672,10 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
     }
     for(j = 0; j < d; ++j)
     {
-      char oc = g->detail[j];
-      oyjlOption_s * o = oyjlOptions_GetOption( opts, oc );
+      oyjlOption_s * o = oyjlOptions_GetOptionL( opts, &g->detail[j] );
       if(!o)
       {
-        fprintf(stderr, "\n%s: option not declared: %c\n", g->name, oc);
+        fprintf(stderr, "\n%s: option not declared: %s\n", g->name, &g->detail[j]);
         exit(1);
       }
       switch(o->value_type)
@@ -2549,6 +2721,7 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
         case oyjlOPTIONTYPE_START: break;
         case oyjlOPTIONTYPE_END: break;
       }
+      while(g->detail[j] && g->detail[j] != ',') ++j;
     }
     oyjlStringAdd( &text, malloc, free, "\n"  );
   }
