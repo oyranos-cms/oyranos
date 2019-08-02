@@ -2744,7 +2744,7 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
   }
 
   if(bugs && bugs_url)
-    oyjlStringAdd( &text, malloc, free, "## %s\n[%s](%s)\n", _("BUGS"), bugs, bugs_url?bugs_url:"" );
+    oyjlStringAdd( &text, malloc, free, "## %s\n%s [%s](%s)\n", _("BUGS"), bugs, bugs_url, bugs_url );
   else if(bugs)
     oyjlStringAdd( &text, malloc, free, "## %s\n[%s](%s)\n", _("BUGS"), bugs, bugs );
 
