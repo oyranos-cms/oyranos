@@ -76,6 +76,8 @@ oyjlTESTRESULT_e testArgs()
     {"oiwi", 0,     'o', "output",  NULL, _("output"),  _("Control Output"), NULL, "0|1|2",       oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)o_choices, sizeof(o_choices), malloc )}, oyjlINT, {.i = &output} },
     {"oiwi", 0,     'h', "help",    NULL, _("help"),    _("Help"),           NULL, NULL,          oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i = &help} },
     {"oiwi", 0,     'v', "verbose", NULL, _("verbose"), _("verbose"),        NULL, NULL,          oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i = &verbose_} },
+    {"oiwi", 0,     'b', NULL,      NULL, "blabla",     "BlaBla",            NULL, NULL,          oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i = &output} },
+    {"oiwi", 0,     '\000',"candle",NULL, "candel",     "Candel",            NULL, NULL,          oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i = &output} },
     {"",0,0,0,0,0,0,0, NULL, oyjlOPTIONTYPE_END, {},0,{}}
   };
 
@@ -89,6 +91,7 @@ oyjlTESTRESULT_e testArgs()
     {"oiwg", OYJL_OPTION_FLAG_EDITABLE,_("Mode5"),_("Any arg mode"),NULL,"@","o,v","@,o"},/* accepted if anonymous arguments are set */
     {"oiwg", 0,     _("Mode6"),_("Actual mode"),     NULL, "i",       "o,v",    "i,o" },/* parsed and checked with -i option */
     {"oiwg", 0,     _("Mode7"),_("Alternate"),       NULL, "i|o",     "h|v",    "i,o,h,v" },
+    {"oiwg", 0,     _("Mode8"),_("Long"),            NULL, "b",       "candle,v","b,candle,v" },
     {"oiwg", 0,     _("Misc"), _("General options"), NULL, "",        "",       "v,h" },/* just show in documentation */
     {"",0,0,0,0,0,0,0}
   };
@@ -193,6 +196,18 @@ oyjlTESTRESULT_e testArgs()
   OYJL_TEST_WRITE_RESULT( syn, strlen(syn), "SynopsisMode7", "txt" )
   if(oy_test_last_result == oyjlTESTRESULT_FAIL || verbose)
     fprintf( zout, "SynopsisMode7: %s\n", syn );
+
+  syn = oyjlOptions_PrintHelpSynopsis( ui->opts, &ui->opts->groups[7], oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MARKDOWN );
+  if(strcmp(syn,"**test-args** -b [--candle] [-v]") == 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "SynopsisMode8  b,      candle, b,candle,v      " );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    "SynopsisMode8  b,      candle, b,candle,v      " );
+  }
+  OYJL_TEST_WRITE_RESULT( syn, strlen(syn), "SynopsisMode8", "txt" )
+  if(oy_test_last_result == oyjlTESTRESULT_FAIL || verbose)
+    fprintf( zout, "SynopsisMode8: %s\n", syn );
 
   oyjlUi_Release( &ui);
 

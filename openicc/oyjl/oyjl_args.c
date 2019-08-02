@@ -954,7 +954,7 @@ const char * oyjlOption_PrintArg     ( oyjlOption_s      * o,
   if(!o) return "";
   if(style & oyjlOPTIONSTYLE_OPTIONAL_START)
     oyjlStringAdd( &text, malloc, free, "[" );
-  if(style & oyjlOPTIONSTYLE_ONELETTER && o->o != '@' && o->o != '#')
+  if(style & oyjlOPTIONSTYLE_ONELETTER && o->o && o->o != '@' && o->o != '#')
   {
     if(style & oyjlOPTIONSTYLE_MAN)
       oyjlStringAdd( &text, malloc, free, "\\-%c", o->o );
@@ -963,7 +963,7 @@ const char * oyjlOption_PrintArg     ( oyjlOption_s      * o,
   }
   if(style & oyjlOPTIONSTYLE_ONELETTER && o->o == '#')
     oyjlStringAdd( &text, malloc, free, "|" );
-  if(style & oyjlOPTIONSTYLE_ONELETTER && style & oyjlOPTIONSTYLE_STRING && o->o != '@' && o->o != '#' && o->option)
+  if(style & oyjlOPTIONSTYLE_ONELETTER && o->o && style & oyjlOPTIONSTYLE_STRING && o->o != '@' && o->o != '#' && o->option)
     oyjlStringAdd( &text, malloc, free, "|" );
   if((style & oyjlOPTIONSTYLE_STRING || o->o == '\000') && o->o != '@' && o->o != '#' && o->option)
   {
