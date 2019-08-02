@@ -958,6 +958,8 @@ const char * oyjlOption_PrintArg     ( oyjlOption_s      * o,
   {
     if(style & oyjlOPTIONSTYLE_MAN)
       oyjlStringAdd( &text, malloc, free, "\\-%c", o->o );
+    else if(style & oyjlOPTIONSTYLE_MARKDOWN)
+      oyjlStringAdd( &text, malloc, free, "<strong>-%c</strong>", o->o );
     else
       oyjlStringAdd( &text, malloc, free, "-%c", o->o );
   }
@@ -969,6 +971,8 @@ const char * oyjlOption_PrintArg     ( oyjlOption_s      * o,
   {
     if(style & oyjlOPTIONSTYLE_MAN)
       oyjlStringAdd( &text, malloc, free, "\\-\\-%s", o->option );
+    else if(style & oyjlOPTIONSTYLE_MARKDOWN)
+      oyjlStringAdd( &text, malloc, free, "<strong>--%s</strong>", o->option );
     else
       oyjlStringAdd( &text, malloc, free, "--%s", o->option );
   }
@@ -2348,14 +2352,22 @@ char *       oyjlExtraManSection     ( oyjlOptions_s     * opts,
           if(flags & oyjlOPTIONSTYLE_MARKDOWN)
           {
             oyjlStringAdd( &text, malloc, free, "### %s\n", list[l].nick );
-            if(list[l].name || list[l].description || list[l].help)
-            oyjlStringAdd( &text, malloc, free, "%s %s %s\n", list[l].name?list[l].name:"", list[l].description?list[l].description:"", list[l].help?list[l].help:"" );
+            if(list[l].name && list[l].name[0])
+            oyjlStringAdd( &text, malloc, free, "&nbsp;&nbsp;%s\n", list[l].name );
+            if(list[l].description && list[l].description[0])
+            oyjlStringAdd( &text, malloc, free, "  <br />\n&nbsp;&nbsp;%s\n", list[l].description );
+            if(list[l].help && list[l].help[0])
+            oyjlStringAdd( &text, malloc, free, "  <br />\n&nbsp;&nbsp;%s\n", list[l].help );
           }
           else
           {
             oyjlStringAdd( &text, malloc, free, ".TP\n%s\n.br\n", list[l].nick );
-            if(list[l].name || list[l].description || list[l].help)
-            oyjlStringAdd( &text, malloc, free, "%s %s %s\n", list[l].name?list[l].name:"", list[l].description?list[l].description:"", list[l].help?list[l].help:"" );
+            if(list[l].name && list[l].name[0])
+            oyjlStringAdd( &text, malloc, free, "%s\n", list[l].name );
+            if(list[l].description && list[l].description[0])
+            oyjlStringAdd( &text, malloc, free, ".br\n%s\n", list[l].description );
+            if(list[l].help && list[l].help[0])
+            oyjlStringAdd( &text, malloc, free, ".br\n%s\n", list[l].help );
           }
         }
         free(up);
@@ -2660,10 +2672,11 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
     oyjlOptionGroup_s * g = &opts->groups[i];
     int d = g->detail ? strlen(g->detail) : 0,
         j;
-    oyjlStringAdd( &text, malloc, free, "### %s\n", g->description  );
+    if(g->description)
+      oyjlStringAdd( &text, malloc, free, "### %s\n", g->description  );
     if(g->mandatory && g->mandatory[0])
     {
-      oyjlStringAdd( &text, malloc, free, "%s\n", oyjlOptions_PrintHelpSynopsis( opts, g, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MARKDOWN ) );
+      oyjlStringAdd( &text, malloc, free, "&nbsp;&nbsp;%s\n", oyjlOptions_PrintHelpSynopsis( opts, g, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MARKDOWN ) );
     }
     oyjlStringAdd( &text, malloc, free, "\n"  );
     if(g->help)
@@ -2690,7 +2703,7 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
             while(o->values.choices.list[n].nick && o->values.choices.list[n].nick[0] != '\000')
               ++n;
             for(l = 0; l < n; ++l)
-              oyjlStringAdd( &text, malloc, free, "   * -%c %s\t\t# %s\n", o->o, o->values.choices.list[l].nick, o->values.choices.list[l].name && o->values.choices.list[l].nick[0] ? o->values.choices.list[l].name : o->values.choices.list[l].description );
+              oyjlStringAdd( &text, malloc, free, "   * <strong>-%c %s</strong>\t\t# %s\n", o->o, o->values.choices.list[l].nick, o->values.choices.list[l].name && o->values.choices.list[l].nick[0] ? o->values.choices.list[l].name : o->values.choices.list[l].description );
           }
           break;
         case oyjlOPTIONTYPE_FUNCTION:
@@ -2706,7 +2719,7 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
               while(list[n].nick && list[n].nick[0] != '\000')
                 ++n;
             for(l = 0; l < n; ++l)
-              oyjlStringAdd( &text, malloc, free, "   * -%c %s\t\t# %s\n", o->o, list[l].nick, list[l].name && list[l].nick[0] ? list[l].name : list[l].description );
+              oyjlStringAdd( &text, malloc, free, "   * <strong>-%c %s</strong>\t\t# %s\n", o->o, list[l].nick, list[l].name && list[l].nick[0] ? list[l].name : list[l].description );
             /* not possible, as the result of oyjlOption_GetChoices_() is cached - oyjlOptionChoice_Release( &list ); */
           }
           break;
