@@ -820,6 +820,7 @@ oyjl_str   oyjlStrNew                ( size_t              length,
  *  @param[in]     deAlloc             custom deallocator; optional, default is free
  *  @return                            the object
  *
+ *
  *  @version Oyjl: 1.0.0
  *  @date    2019/02/15
  *  @since   2019/02/15 (Oyjl: 1.0.0)
@@ -922,6 +923,10 @@ int        oyjlStrAdd                ( oyjl_str            string,
  *                                     - search: used term to find actual start
  *                                     - replace: possibly modified replacement text
  *  @return                            number of occurences
+ *
+ *  @version Oyjl: 1.0.0
+ *  @date    2019/02/15
+ *  @since   2019/02/15 (Oyjl: 1.0.0)
  */
 int        oyjlStrReplace            ( oyjl_str            text,
                                        const char        * search,

@@ -192,24 +192,28 @@ Hole Benutzerschnittstelle als Text
 .TP
 OY_DEBUG
 .br
-Setze das Oyranos Fehlersuchniveau. Die -v Option kann alternativ benutzt werden. Der gültige Bereich ist 1-20.
+Setze das Oyranos Fehlersuchniveau.
+.br
+Die -v Option kann alternativ benutzt werden.
+.br
+Der gültige Bereich ist 1-20.
 .TP
 XDG_DATA_HOME XDG_DATA_DIRS
 .br
-route Oyranos to top directories containing resources. The derived paths for ICC profiles have a "color/icc" appended. http://www.oyranos.com/wiki/index.php?title=OpenIccDirectoryProposal  
+route Oyranos to top directories containing resources. The derived paths for ICC profiles have a "color/icc" appended. http://www.oyranos.com/wiki/index.php?title=OpenIccDirectoryProposal
 .SH BEISPIELE
 .TP
 Zeichne ICC Profil
 .br
-oyranos-profile-graph ICC_PROFILE 
+oyranos-profile-graph ICC_PROFILE
 .TP
 Zeige Sättigungslinien von zwei Profilen in CIE*ab 256 Bildpunkte breit, ohne Spectrallinie und mit dickeren Linien:
 .br
-oyranos-profile-graph -w 256 -s -t 3 sRGB.icc ProPhoto-RGB.icc 
+oyranos-profile-graph -w 256 -s -t 3 sRGB.icc ProPhoto-RGB.icc
 .TP
 Zeige die Standard Betrachter Spektralfunktion als Kurven:
 .br
-oyranos-profile-graph --standard-observer -o CIE-StdObserver.png 
+oyranos-profile-graph --standard-observer -o CIE-StdObserver.png
 .SH AUTOR
 Kai-Uwe Behrmann http://www.oyranos.org
 .SH KOPIERRECHT

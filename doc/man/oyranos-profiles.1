@@ -124,36 +124,40 @@ Get UI converted into text formats
 .TP
 OY_DEBUG
 .br
-set the Oyranos debug level. Alternatively the -v option can be used. Valid integer range is from 1-20.
+set the Oyranos debug level.
+.br
+Alternatively the -v option can be used.
+.br
+Valid integer range is from 1-20.
 .TP
 XDG_DATA_HOME XDG_DATA_DIRS
 .br
-route Oyranos to top directories containing resources. The derived paths for ICC profiles have a "color/icc" appended. http://www.oyranos.com/wiki/index.php?title=OpenIccDirectoryProposal  
+route Oyranos to top directories containing resources. The derived paths for ICC profiles have a "color/icc" appended. http://www.oyranos.com/wiki/index.php?title=OpenIccDirectoryProposal
 .SH EXAMPLES
 .TP
 List all installed profiles by internal name
 .br
-oyranos-profiles -le 
+oyranos-profiles -le
 .TP
 List all installed profiles of the display and output device classes
 .br
-oyranos-profiles -l -od 
+oyranos-profiles -l -od
 .TP
 List all installed profiles in user path
 .br
-oyranos-profiles -lfu 
+oyranos-profiles -lfu
 .TP
 Install a profile for the actual user and show error messages in a GUI
 .br
-oyranos-profiles --install profilename -u --gui 
+oyranos-profiles --install profilename -u --gui
 .TP
 Install a profile for the actual user and show error messages in a GUI
 .br
-oyranos-profiles --install - --taxi=taxi_id/0 --gui -d -u 
+oyranos-profiles --install --taxi=taxi_id/0 --gui -d -u
 .TP
 Show file infos
 .br
-SAVEIFS=$IFS ; IFS=$'\n\b'; profiles=(`oyranos-profiles -ldf`); IFS=$SAVEIFS; for file in "${profiles[@]}"; do ls "$file"; done  
+SAVEIFS=$IFS ; IFS=$'\n\b'; profiles=(`oyranos-profiles -ldf`); IFS=$SAVEIFS; for file in "${profiles[@]}"; do ls "$file"; done
 .SH AUTHOR
 Kai-Uwe Behrmann http://www.oyranos.org
 .SH COPYRIGHT

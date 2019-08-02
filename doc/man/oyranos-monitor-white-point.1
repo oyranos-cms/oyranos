@@ -174,20 +174,24 @@ Get UI converted into text formats
 .TP
 OY_DEBUG
 .br
-set the Oyranos debug level. Alternatively the -v option can be used. Valid integer range is from 1-20.
+set the Oyranos debug level.
+.br
+Alternatively the -v option can be used.
+.br
+Valid integer range is from 1-20.
 .TP
 OY_MODULE_PATH
 .br
-route Oyranos to additional directories containing modules.  
+route Oyranos to additional directories containing modules.
 .SH EXAMPLES
 .TP
 Enable the daemon, set night white point to 3000 Kelvin and use that in night mode
 .br
-oyranos-monitor-white-point -d 2 -a 3000 -n 1 
+oyranos-monitor-white-point -d 2 -a 3000 -n 1
 .TP
 Switch all day light intereference off such as white point and effect
 .br
-oyranos-monitor-white-point -s 0 -e 0 
+oyranos-monitor-white-point -s 0 -e 0
 .SH AUTHOR
 Kai-Uwe Behrmann http://www.oyranos.org
 .SH COPYRIGHT

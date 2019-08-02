@@ -192,24 +192,28 @@ Get UI converted into text formats
 .TP
 OY_DEBUG
 .br
-set the Oyranos debug level. Alternatively the -v option can be used. Valid integer range is from 1-20.
+set the Oyranos debug level.
+.br
+Alternatively the -v option can be used.
+.br
+Valid integer range is from 1-20.
 .TP
 XDG_DATA_HOME XDG_DATA_DIRS
 .br
-route Oyranos to top directories containing resources. The derived paths for ICC profiles have a "color/icc" appended. http://www.oyranos.com/wiki/index.php?title=OpenIccDirectoryProposal  
+route Oyranos to top directories containing resources. The derived paths for ICC profiles have a "color/icc" appended. http://www.oyranos.com/wiki/index.php?title=OpenIccDirectoryProposal
 .SH EXAMPLES
 .TP
 Show graph of a ICC profile
 .br
-oyranos-profile-graph ICC_PROFILE 
+oyranos-profile-graph ICC_PROFILE
 .TP
 Show the saturation lines of two profiles in CIE*ab 256 pixel width, without spectral line and with thicker lines:
 .br
-oyranos-profile-graph -w 256 -s -t 3 sRGB.icc ProPhoto-RGB.icc 
+oyranos-profile-graph -w 256 -s -t 3 sRGB.icc ProPhoto-RGB.icc
 .TP
 Show the standard observer spectral function as curves:
 .br
-oyranos-profile-graph --standard-observer -o CIE-StdObserver.png 
+oyranos-profile-graph --standard-observer -o CIE-StdObserver.png
 .SH AUTHOR
 Kai-Uwe Behrmann http://www.oyranos.org
 .SH COPYRIGHT

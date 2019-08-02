@@ -124,36 +124,40 @@ Hole Benutzerschnittstelle als Text
 .TP
 OY_DEBUG
 .br
-Setze das Oyranos Fehlersuchniveau. Die -v Option kann alternativ benutzt werden. Der gültige Bereich ist 1-20.
+Setze das Oyranos Fehlersuchniveau.
+.br
+Die -v Option kann alternativ benutzt werden.
+.br
+Der gültige Bereich ist 1-20.
 .TP
 XDG_DATA_HOME XDG_DATA_DIRS
 .br
-route Oyranos to top directories containing resources. The derived paths for ICC profiles have a "color/icc" appended. http://www.oyranos.com/wiki/index.php?title=OpenIccDirectoryProposal  
+route Oyranos to top directories containing resources. The derived paths for ICC profiles have a "color/icc" appended. http://www.oyranos.com/wiki/index.php?title=OpenIccDirectoryProposal
 .SH BEISPIELE
 .TP
 Liste alle installierten Profile mit internem Namen
 .br
-oyranos-profiles -le 
+oyranos-profiles -le
 .TP
 Liste alle installierten Profile mit Monitor-und Ausgabeklasse
 .br
-oyranos-profiles -l -od 
+oyranos-profiles -l -od
 .TP
 Liste alle installierten Profile im Benutzerpfad
 .br
-oyranos-profiles -lfu 
+oyranos-profiles -lfu
 .TP
 Installiere ein Profile für den aktuellen Benutzer und zeige eine Fehlermeldung grafische an
 .br
-oyranos-profiles --install profilename -u --gui 
+oyranos-profiles --install profilename -u --gui
 .TP
 Installiere ein Profile für den aktuellen Benutzer und zeige eine Fehlermeldung grafische an
 .br
-oyranos-profiles --install - --taxi=taxi_id/0 --gui -d -u 
+oyranos-profiles --install --taxi=taxi_id/0 --gui -d -u
 .TP
 Zeige Dateiinfos
 .br
-SAVEIFS=$IFS ; IFS=$'\n\b'; profiles=(`oyranos-profiles -ldf`); IFS=$SAVEIFS; for file in "${profiles[@]}"; do ls "$file"; done  
+SAVEIFS=$IFS ; IFS=$'\n\b'; profiles=(`oyranos-profiles -ldf`); IFS=$SAVEIFS; for file in "${profiles[@]}"; do ls "$file"; done
 .SH AUTOR
 Kai-Uwe Behrmann http://www.oyranos.org
 .SH KOPIERRECHT

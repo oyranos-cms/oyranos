@@ -263,9 +263,9 @@ int main( int argc , char** argv )
   oyjlOptionChoice_s env_vars[]={ {"OY_DEBUG", _("set the Oyranos debug level."), _("Alternatively the -v option can be used."), _("Valid integer range is from 1-20.")},
                                   {"XDG_DATA_HOME XDG_DATA_DIRS", _("route Oyranos to top directories containing resources. The derived paths for ICC profiles have a \"color/icc\" appended. http://www.oyranos.com/wiki/index.php?title=OpenIccDirectoryProposal"), "", ""},
                                   {"","","",""}};
-  oyjlOptionChoice_s examples[]={ {_("Show graph of a ICC profile"), "oyranos-profile-graph", "ICC_PROFILE", ""},
-                                  {_("Show the saturation lines of two profiles in CIE*ab 256 pixel width, without spectral line and with thicker lines:"), "oyranos-profile-graph", "-w 256 -s -t 3 sRGB.icc ProPhoto-RGB.icc", ""},
-                                  {_("Show the standard observer spectral function as curves:"),"oyranos-profile-graph","--standard-observer -o CIE-StdObserver.png",""},
+  oyjlOptionChoice_s examples[]={ {_("Show graph of a ICC profile"), "oyranos-profile-graph ICC_PROFILE", "", ""},
+                                  {_("Show the saturation lines of two profiles in CIE*ab 256 pixel width, without spectral line and with thicker lines:"), "oyranos-profile-graph -w 256 -s -t 3 sRGB.icc ProPhoto-RGB.icc", "", ""},
+                                  {_("Show the standard observer spectral function as curves:"),"oyranos-profile-graph --standard-observer -o CIE-StdObserver.png","", ""},
                                   {"","","",""}};
   oyjlOptionChoice_s illu_dxx[]={ {"A",  _("Illuminant A"),  "", _("CIE A spectral power distribution")},
                                   {"D50",_("Illuminant D50"),"", _("CIE D50 spectral power distribution (computed)")},

@@ -3,109 +3,113 @@
 ## NAME
 oyranos\-monitor\-white\-point v0.9.7 \- Nacht Manager
 ## ÜBERSICHT
-**oyranos\-monitor\-white\-point** \-n *0|1|2|3|4|5|6|7* \-g *ICC\_PROFIL* [\-b *PROZENT*] [\-z] [\-v]
+**oyranos\-monitor\-white\-point** <strong>\-n</strong> *0|1|2|3|4|5|6|7* <strong>\-g</strong> *ICC\_PROFIL* [<strong>\-b</strong> *PROZENT*] [<strong>\-z</strong>] [<strong>\-v</strong>]
 <br />
-**oyranos\-monitor\-white\-point** \-w *0|1|2|3|4|5|6|7* \-a *KELVIN* [\-z] [\-v]
+**oyranos\-monitor\-white\-point** <strong>\-w</strong> *0|1|2|3|4|5|6|7* <strong>\-a</strong> *KELVIN* [<strong>\-z</strong>] [<strong>\-v</strong>]
 <br />
-**oyranos\-monitor\-white\-point** \-s *0|1|2|3|4|5|6|7* \-e *ICC\_PROFIL* [\-z] [\-v]
+**oyranos\-monitor\-white\-point** <strong>\-s</strong> *0|1|2|3|4|5|6|7* <strong>\-e</strong> *ICC\_PROFIL* [<strong>\-z</strong>] [<strong>\-v</strong>]
 <br />
-**oyranos\-monitor\-white\-point** \-l | \-i *WINKEL\_IN\_GRAD* \-o *WINKEL\_IN\_GRAD* [\-t *WINKEL\_IN\_GRAD|0:Auf\-/Untergang|\-6:zivil|\-12:nautisch|\-18:astronomisch*] [\-z] [\-v]
+**oyranos\-monitor\-white\-point** <strong>\-l</strong> | <strong>\-i</strong> *WINKEL\_IN\_GRAD* <strong>\-o</strong> *WINKEL\_IN\_GRAD* [<strong>\-t</strong> *WINKEL\_IN\_GRAD|0:Auf\-/Untergang|\-6:zivil|\-12:nautisch|\-18:astronomisch*] [<strong>\-z</strong>] [<strong>\-v</strong>]
 <br />
-**oyranos\-monitor\-white\-point** \-d *0|1|2* [\-v]
+**oyranos\-monitor\-white\-point** <strong>\-d</strong> *0|1|2* [<strong>\-v</strong>]
 <br />
-**oyranos\-monitor\-white\-point** \-m | \-r | \-X *json|json+command|man|markdown* | \-h [\-v]
+**oyranos\-monitor\-white\-point** <strong>\-m</strong> | <strong>\-r</strong> | <strong>\-X</strong> *json|json+command|man|markdown* | <strong>\-h</strong> [<strong>\-v</strong>]
 ## BESCHREIBUNG
 Das Werkzeug kann den momentanen Weißpunkt setzen oder ihn abhängig von der Tages\- und Nachzeit festlegen. Ein zusätzliches Effektprofil kann eingestellt werden.
 ## OPTIONEN
 ### Nächtliche Anmutung
-**oyranos\-monitor\-white\-point** \-n *0|1|2|3|4|5|6|7* \-g *ICC\_PROFIL* [\-b *PROZENT*] [\-z] [\-v]
+&nbsp;&nbsp;**oyranos\-monitor\-white\-point** <strong>\-n</strong> *0|1|2|3|4|5|6|7* <strong>\-g</strong> *ICC\_PROFIL* [<strong>\-b</strong> *PROZENT*] [<strong>\-z</strong>] [<strong>\-v</strong>]
 
 Der Nachtweißpunkmodus soll den Einfluß von blauen Licht auf das menschliche Hormonsystem reduzieren. Ein Weißpunkt mit einer Strahlungstemperatur von 4000 Kelvin und weniger erleichtert den natürlichen Schlafrhytmus zu finden. Dieser wird zusammen mit einem warmen Lichtton für die allgemeine Zimmerbeleuchtung wärend der Abend\-und Nachtstunden empfohlen.
 
-* \-n|\-\-night\-white\-point *0|1|2|3|4|5|6|7*	Setze den Nachtmodus: Ein Weißpunkt mit einer Strahlungstemperatur von 4000 Kelvin und weniger erleichtert den natürlichen Schlafrhytmus zu finden. Dazu wird diese Einstellung auf Automatisch (\-n=1) und die Temperatur auf 3000 (\-a=3000) gestellt.
-   * \-n 0		# Nein
-   * \-n 1		# Automatisch
-   * \-n 2		# Lichtart D50
-   * \-n 3		# Lichtart D55
-   * \-n 4		# Lichtart D65
-   * \-n 5		# Lichtart D75
-   * \-n 6		# Lichtart D93
-* \-g|\-\-night\-effect *ICC\_PROFIL*	Setze den Nacht Effect: Ein ICC Farbprofil der Klasse Abstrakter Farbraum. Günstig wäre ein Effektprofil, welches nur eindimensionale RGB Kurven benutzt und mit meta:EFFECT\_linear=yes gekennzeichnet ist.
-   * \-g \-		# [kein]
-   * \-g Effect 1		# Example Effect 1
-   * \-g Effect 2		# Example Effect 2
-* \-b|\-\-night\-backlight *PROZENT*	Setze Nächtiches Monitorlicht: Die Einstellung benötigt xbacklight für das Abdunkeln der Bildschirmlampe. (PROZENT:4 [≥0 ≤100])
+* <strong>\-n</strong>|<strong>\-\-night\-white\-point</strong> *0|1|2|3|4|5|6|7*	Setze den Nachtmodus: Ein Weißpunkt mit einer Strahlungstemperatur von 4000 Kelvin und weniger erleichtert den natürlichen Schlafrhytmus zu finden. Dazu wird diese Einstellung auf Automatisch (\-n=1) und die Temperatur auf 3000 (\-a=3000) gestellt.
+   * <strong>\-n 0</strong>		# Nein
+   * <strong>\-n 1</strong>		# Automatisch
+   * <strong>\-n 2</strong>		# Lichtart D50
+   * <strong>\-n 3</strong>		# Lichtart D55
+   * <strong>\-n 4</strong>		# Lichtart D65
+   * <strong>\-n 5</strong>		# Lichtart D75
+   * <strong>\-n 6</strong>		# Lichtart D93
+* <strong>\-g</strong>|<strong>\-\-night\-effect</strong> *ICC\_PROFIL*	Setze den Nacht Effect: Ein ICC Farbprofil der Klasse Abstrakter Farbraum. Günstig wäre ein Effektprofil, welches nur eindimensionale RGB Kurven benutzt und mit meta:EFFECT\_linear=yes gekennzeichnet ist.
+   * <strong>\-g \-</strong>		# [kein]
+   * <strong>\-g Effect 1</strong>		# Example Effect 1
+   * <strong>\-g Effect 2</strong>		# Example Effect 2
+* <strong>\-b</strong>|<strong>\-\-night\-backlight</strong> *PROZENT*	Setze Nächtiches Monitorlicht: Die Einstellung benötigt xbacklight für das Abdunkeln der Bildschirmlampe. (PROZENT:4 [≥0 ≤100])
 
 ### Aktueller Modus
-**oyranos\-monitor\-white\-point** \-w *0|1|2|3|4|5|6|7* \-a *KELVIN* [\-z] [\-v]
+&nbsp;&nbsp;**oyranos\-monitor\-white\-point** <strong>\-w</strong> *0|1|2|3|4|5|6|7* <strong>\-a</strong> *KELVIN* [<strong>\-z</strong>] [<strong>\-v</strong>]
 
-* \-w|\-\-white\-point *0|1|2|3|4|5|6|7*	Setze Weißpunktmodus
-   * \-w 0		# Nein
-   * \-w 1		# Automatisch
-   * \-w 2		# Lichtart D50
-   * \-w 3		# Lichtart D55
-   * \-w 4		# Lichtart D65
-   * \-w 5		# Lichtart D75
-   * \-w 6		# Lichtart D93
-* \-a|\-\-automatic *KELVIN*	Werte zwischen 2700 bis 8000 Kelvin sollten keine Darstellungsfehler hervorrufen (KELVIN:2800 [≥1100 ≤10100])
+* <strong>\-w</strong>|<strong>\-\-white\-point</strong> *0|1|2|3|4|5|6|7*	Setze Weißpunktmodus
+   * <strong>\-w 0</strong>		# Nein
+   * <strong>\-w 1</strong>		# Automatisch
+   * <strong>\-w 2</strong>		# Lichtart D50
+   * <strong>\-w 3</strong>		# Lichtart D55
+   * <strong>\-w 4</strong>		# Lichtart D65
+   * <strong>\-w 5</strong>		# Lichtart D75
+   * <strong>\-w 6</strong>		# Lichtart D93
+* <strong>\-a</strong>|<strong>\-\-automatic</strong> *KELVIN*	Werte zwischen 2700 bis 8000 Kelvin sollten keine Darstellungsfehler hervorrufen (KELVIN:2800 [≥1100 ≤10100])
 
 ### Setze Tagesmodus
-**oyranos\-monitor\-white\-point** \-s *0|1|2|3|4|5|6|7* \-e *ICC\_PROFIL* [\-z] [\-v]
+&nbsp;&nbsp;**oyranos\-monitor\-white\-point** <strong>\-s</strong> *0|1|2|3|4|5|6|7* <strong>\-e</strong> *ICC\_PROFIL* [<strong>\-z</strong>] [<strong>\-v</strong>]
 
-* \-s|\-\-sun\-white\-point *0|1|2|3|4|5|6|7*	Setze den Tagesmodus
-   * \-s 0		# Nein
-   * \-s 1		# Automatisch
-   * \-s 2		# Lichtart D50
-   * \-s 3		# Lichtart D55
-   * \-s 4		# Lichtart D65
-   * \-s 5		# Lichtart D75
-   * \-s 6		# Lichtart D93
-* \-e|\-\-sunlight\-effect *ICC\_PROFIL*	Setze den Tages Effect: Ein ICC Farbprofil der Klasse Abstrakter Farbraum. Günstig wäre ein Effektprofil, welches nur eindimensionale RGB Kurven benutzt und mit meta:EFFECT\_linear=yes gekennzeichnet ist.
-   * \-e \-		# [kein]
-   * \-e Effect 1		# Example Effect 1
-   * \-e Effect 2		# Example Effect 2
+* <strong>\-s</strong>|<strong>\-\-sun\-white\-point</strong> *0|1|2|3|4|5|6|7*	Setze den Tagesmodus
+   * <strong>\-s 0</strong>		# Nein
+   * <strong>\-s 1</strong>		# Automatisch
+   * <strong>\-s 2</strong>		# Lichtart D50
+   * <strong>\-s 3</strong>		# Lichtart D55
+   * <strong>\-s 4</strong>		# Lichtart D65
+   * <strong>\-s 5</strong>		# Lichtart D75
+   * <strong>\-s 6</strong>		# Lichtart D93
+* <strong>\-e</strong>|<strong>\-\-sunlight\-effect</strong> *ICC\_PROFIL*	Setze den Tages Effect: Ein ICC Farbprofil der Klasse Abstrakter Farbraum. Günstig wäre ein Effektprofil, welches nur eindimensionale RGB Kurven benutzt und mit meta:EFFECT\_linear=yes gekennzeichnet ist.
+   * <strong>\-e \-</strong>		# [kein]
+   * <strong>\-e Effect 1</strong>		# Example Effect 1
+   * <strong>\-e Effect 2</strong>		# Example Effect 2
 
 ### Ort und Dämmerung
-**oyranos\-monitor\-white\-point** \-l | \-i *WINKEL\_IN\_GRAD* \-o *WINKEL\_IN\_GRAD* [\-t *WINKEL\_IN\_GRAD|0:Auf\-/Untergang|\-6:zivil|\-12:nautisch|\-18:astronomisch*] [\-z] [\-v]
+&nbsp;&nbsp;**oyranos\-monitor\-white\-point** <strong>\-l</strong> | <strong>\-i</strong> *WINKEL\_IN\_GRAD* <strong>\-o</strong> *WINKEL\_IN\_GRAD* [<strong>\-t</strong> *WINKEL\_IN\_GRAD|0:Auf\-/Untergang|\-6:zivil|\-12:nautisch|\-18:astronomisch*] [<strong>\-z</strong>] [<strong>\-v</strong>]
 
-* \-l|\-\-location	Erhalte Position von IP Adresse
-* \-i|\-\-latitude *WINKEL\_IN\_GRAD*	Setze Geographische Breite (WINKEL\_IN\_GRAD:0 [≥\-90 ≤90])
-* \-o|\-\-longitude *WINKEL\_IN\_GRAD*	Setze Geographische Länge (WINKEL\_IN\_GRAD:0 [≥\-180 ≤180])
-* \-t|\-\-twilight *WINKEL\_IN\_GRAD|0:Auf\-/Untergang|\-6:zivil|\-12:nautisch|\-18:astronomisch*	Setze Dämmerungswinkel (WINKEL\_IN\_GRAD|0:Auf\-/Untergang|\-6:zivil|\-12:nautisch|\-18:astronomisch:0 [≥18 ≤\-18])
+* <strong>\-l</strong>|<strong>\-\-location</strong>	Erhalte Position von IP Adresse
+* <strong>\-i</strong>|<strong>\-\-latitude</strong> *WINKEL\_IN\_GRAD*	Setze Geographische Breite (WINKEL\_IN\_GRAD:0 [≥\-90 ≤90])
+* <strong>\-o</strong>|<strong>\-\-longitude</strong> *WINKEL\_IN\_GRAD*	Setze Geographische Länge (WINKEL\_IN\_GRAD:0 [≥\-180 ≤180])
+* <strong>\-t</strong>|<strong>\-\-twilight</strong> *WINKEL\_IN\_GRAD|0:Auf\-/Untergang|\-6:zivil|\-12:nautisch|\-18:astronomisch*	Setze Dämmerungswinkel (WINKEL\_IN\_GRAD|0:Auf\-/Untergang|\-6:zivil|\-12:nautisch|\-18:astronomisch:0 [≥18 ≤\-18])
 
 ### Setze Sonnenuntergangsdienst
-**oyranos\-monitor\-white\-point** \-d *0|1|2* [\-v]
+&nbsp;&nbsp;**oyranos\-monitor\-white\-point** <strong>\-d</strong> *0|1|2* [<strong>\-v</strong>]
 
-* \-d|\-\-daemon *0|1|2*	Setze Sonnenuntergangsdienst
-   * \-d 0		# Deaktiviere
-   * \-d 1		# Automatischer Start
-   * \-d 2		# Aktiviere
+* <strong>\-d</strong>|<strong>\-\-daemon</strong> *0|1|2*	Setze Sonnenuntergangsdienst
+   * <strong>\-d 0</strong>		# Deaktiviere
+   * <strong>\-d 1</strong>		# Automatischer Start
+   * <strong>\-d 2</strong>		# Aktiviere
 
 ### Allgemeine Optionen
-**oyranos\-monitor\-white\-point** \-m | \-r | \-X *json|json+command|man|markdown* | \-h [\-v]
+&nbsp;&nbsp;**oyranos\-monitor\-white\-point** <strong>\-m</strong> | <strong>\-r</strong> | <strong>\-X</strong> *json|json+command|man|markdown* | <strong>\-h</strong> [<strong>\-v</strong>]
 
-* \-h|\-\-help	Hilfe
-* \-m|\-\-modes	Zeige Weißpunktmodus
-* \-r|\-\-sunrise	Zeige lokale Zeit, benutzte geografische Position, Dämmerungswinkel, Sonnenauf\-und untergangszeiten
-* \-X|\-\-export *json|json+command|man|markdown*	Exportiere formatierten Text: Hole Benutzerschnittstelle als Text
-   * \-X man		# Handbuch
-   * \-X markdown		# Markdown
-   * \-X json		# Json
-   * \-X json+command		# Json + Kommando
-   * \-X export		# Export
-* \-z|\-\-system\-wide	Einstellung in der systemweiten DB
-* \-v|\-\-verbose	plaudernd
+* <strong>\-h</strong>|<strong>\-\-help</strong>	Hilfe
+* <strong>\-m</strong>|<strong>\-\-modes</strong>	Zeige Weißpunktmodus
+* <strong>\-r</strong>|<strong>\-\-sunrise</strong>	Zeige lokale Zeit, benutzte geografische Position, Dämmerungswinkel, Sonnenauf\-und untergangszeiten
+* <strong>\-X</strong>|<strong>\-\-export</strong> *json|json+command|man|markdown*	Exportiere formatierten Text: Hole Benutzerschnittstelle als Text
+   * <strong>\-X man</strong>		# Handbuch
+   * <strong>\-X markdown</strong>		# Markdown
+   * <strong>\-X json</strong>		# Json
+   * <strong>\-X json+command</strong>		# Json + Kommando
+   * <strong>\-X export</strong>		# Export
+* <strong>\-z</strong>|<strong>\-\-system\-wide</strong>	Einstellung in der systemweiten DB
+* <strong>\-v</strong>|<strong>\-\-verbose</strong>	plaudernd
 
 ## UMGEBUNGSVARIABLEN
 ### OY\_DEBUG
-Setze das Oyranos Fehlersuchniveau. Die \-v Option kann alternativ benutzt werden. Der gültige Bereich ist 1\-20.
+&nbsp;&nbsp;Setze das Oyranos Fehlersuchniveau.
+  <br />
+&nbsp;&nbsp;Die \-v Option kann alternativ benutzt werden.
+  <br />
+&nbsp;&nbsp;Der gültige Bereich ist 1\-20.
 ### OY\_MODULE\_PATH
-zeige Oyranos zusätzliche Verzeichnisse mit Modulen.  
+&nbsp;&nbsp;zeige Oyranos zusätzliche Verzeichnisse mit Modulen.
 ## BEISPIELE
 ### Starte den Wächter, setze nächtlichen Weißpunkt zu 3000 Kelvin und benutze diesen im Nachtmodus
-oyranos\-monitor\-white\-point \-d 2 \-a 3000 \-n 1 
+&nbsp;&nbsp;oyranos\-monitor\-white\-point \-d 2 \-a 3000 \-n 1
 ### Schalte alle Tagesbeeinflussung aus, wie Weißpunkt und Effekt
-oyranos\-monitor\-white\-point \-s 0 \-e 0 
+&nbsp;&nbsp;oyranos\-monitor\-white\-point \-s 0 \-e 0
 ## AUTOR
 Kai\-Uwe Behrmann http://www.oyranos.org
 ## KOPIERRECHT

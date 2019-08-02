@@ -3,86 +3,90 @@
 ## NAME
 oyranos\-profiles v0.9.7 \- Oyranos Profile
 ## ÜBERSICHT
-**oyranos\-profiles** \-l [\-f] [\-e] [\-a] [\-c] [\-d] [\-k] [\-n] [\-o] [\-i] [\-2] [\-4] [\-P] [\-T *SCHLÜSSEL;WERT*] [\-v]
+**oyranos\-profiles** <strong>\-l</strong> [<strong>\-f</strong>] [<strong>\-e</strong>] [<strong>\-a</strong>] [<strong>\-c</strong>] [<strong>\-d</strong>] [<strong>\-k</strong>] [<strong>\-n</strong>] [<strong>\-o</strong>] [<strong>\-i</strong>] [<strong>\-2</strong>] [<strong>\-4</strong>] [<strong>\-P</strong>] [<strong>\-T</strong> *SCHLÜSSEL;WERT*] [<strong>\-v</strong>]
 <br />
-**oyranos\-profiles** \-p [\-u|\-s|\-y|\-m] [\-v]
+**oyranos\-profiles** <strong>\-p</strong> [<strong>\-u</strong>|<strong>\-s</strong>|<strong>\-y</strong>|<strong>\-m</strong>] [<strong>\-v</strong>]
 <br />
-**oyranos\-profiles** \-I *ICC\_PROFIL* | \-t *TAXI\_ID* [\-u|\-s|\-y|\-m] [\-g] [\-v]
+**oyranos\-profiles** <strong>\-I</strong> *ICC\_PROFIL* | <strong>\-t</strong> *TAXI\_ID* [<strong>\-u</strong>|<strong>\-s</strong>|<strong>\-y</strong>|<strong>\-m</strong>] [<strong>\-g</strong>] [<strong>\-v</strong>]
 <br />
-**oyranos\-profiles** \-h \-X *json|json+command|man|markdown*
+**oyranos\-profiles** <strong>\-h</strong> <strong>\-X</strong> *json|json+command|man|markdown*
 ## BESCHREIBUNG
 Das Werkzeug kann installierte Profile und Suchpfade anzeigen. Es kann ein Profil in einen Suchpfad installieren.
 ## OPTIONEN
 ### Liste der verfügbaren ICC Farbprofile
-**oyranos\-profiles** \-l [\-f] [\-e] [\-a] [\-c] [\-d] [\-k] [\-n] [\-o] [\-i] [\-2] [\-4] [\-P] [\-T *SCHLÜSSEL;WERT*] [\-v]
+&nbsp;&nbsp;**oyranos\-profiles** <strong>\-l</strong> [<strong>\-f</strong>] [<strong>\-e</strong>] [<strong>\-a</strong>] [<strong>\-c</strong>] [<strong>\-d</strong>] [<strong>\-k</strong>] [<strong>\-n</strong>] [<strong>\-o</strong>] [<strong>\-i</strong>] [<strong>\-2</strong>] [<strong>\-4</strong>] [<strong>\-P</strong>] [<strong>\-T</strong> *SCHLÜSSEL;WERT*] [<strong>\-v</strong>]
 
-* \-l|\-\-list\-profiles	Liste Profile
-* \-f|\-\-full\-names	Profildateiname: Zeige kompletten Pfad\- und Dateinamen
-* \-e|\-\-internal\-names	Interne Namen: Der Text kommt vom 'desc' Profilelement.
-* \-a|\-\-abstract	Wähle abstrakte Profile
-* \-c|\-\-color\-space	Wähle Farbraumprofile
-* \-d|\-\-display	Wähle Monitorprofile
-* \-k|\-\-device\-link	Wähle Verknüpfungsprofil
-* \-n|\-\-named\-color	Wähle Einzelfarbprofile
-* \-o|\-\-output	Wähle Ausgabeprofil
-* \-i|\-\-input	Wähle Eingangsprofile
-* \-2|\-\-icc\-version\-2	Wähle ICC V2 Profile
-* \-4|\-\-icc\-version\-4	Wähle ICC V4 Profile
-* \-P|\-\-path	Zeige Profile, welche ein Wort in ihrem Pfadnamen enthalten.: PFAD\_WORT\_TEIL
-* \-T|\-\-meta *SCHLÜSSEL;WERT*	Suche nach Schlüssel/Werte Paar in Meta Element: Zeige Profile welche ein bestimmtes Schlüssel/Werte Paar im meta Tag enthalten. WERT kann '*' enthalten für das Filtern von Wortteilen.
-* \-D|\-\-duplicates	Zeige identische mehrfach installierte Profile an
+* <strong>\-l</strong>|<strong>\-\-list\-profiles</strong>	Liste Profile
+* <strong>\-f</strong>|<strong>\-\-full\-names</strong>	Profildateiname: Zeige kompletten Pfad\- und Dateinamen
+* <strong>\-e</strong>|<strong>\-\-internal\-names</strong>	Interne Namen: Der Text kommt vom 'desc' Profilelement.
+* <strong>\-a</strong>|<strong>\-\-abstract</strong>	Wähle abstrakte Profile
+* <strong>\-c</strong>|<strong>\-\-color\-space</strong>	Wähle Farbraumprofile
+* <strong>\-d</strong>|<strong>\-\-display</strong>	Wähle Monitorprofile
+* <strong>\-k</strong>|<strong>\-\-device\-link</strong>	Wähle Verknüpfungsprofil
+* <strong>\-n</strong>|<strong>\-\-named\-color</strong>	Wähle Einzelfarbprofile
+* <strong>\-o</strong>|<strong>\-\-output</strong>	Wähle Ausgabeprofil
+* <strong>\-i</strong>|<strong>\-\-input</strong>	Wähle Eingangsprofile
+* <strong>\-2</strong>|<strong>\-\-icc\-version\-2</strong>	Wähle ICC V2 Profile
+* <strong>\-4</strong>|<strong>\-\-icc\-version\-4</strong>	Wähle ICC V4 Profile
+* <strong>\-P</strong>|<strong>\-\-path</strong>	Zeige Profile, welche ein Wort in ihrem Pfadnamen enthalten.: PFAD\_WORT\_TEIL
+* <strong>\-T</strong>|<strong>\-\-meta</strong> *SCHLÜSSEL;WERT*	Suche nach Schlüssel/Werte Paar in Meta Element: Zeige Profile welche ein bestimmtes Schlüssel/Werte Paar im meta Tag enthalten. WERT kann '*' enthalten für das Filtern von Wortteilen.
+* <strong>\-D</strong>|<strong>\-\-duplicates</strong>	Zeige identische mehrfach installierte Profile an
 
 ### Zeige Suchpfade
-**oyranos\-profiles** \-p [\-u|\-s|\-y|\-m] [\-v]
+&nbsp;&nbsp;**oyranos\-profiles** <strong>\-p</strong> [<strong>\-u</strong>|<strong>\-s</strong>|<strong>\-y</strong>|<strong>\-m</strong>] [<strong>\-v</strong>]
 
-* \-p|\-\-list\-paths	Liste der ICC Farbprofilpfade
-* \-u|\-\-user	Benutzerpfad
-* \-s|\-\-system	Systempfad
-* \-y|\-\-oyranos	Oyranospfad
-* \-m|\-\-machine	Maschinenpfad
+* <strong>\-p</strong>|<strong>\-\-list\-paths</strong>	Liste der ICC Farbprofilpfade
+* <strong>\-u</strong>|<strong>\-\-user</strong>	Benutzerpfad
+* <strong>\-s</strong>|<strong>\-\-system</strong>	Systempfad
+* <strong>\-y</strong>|<strong>\-\-oyranos</strong>	Oyranospfad
+* <strong>\-m</strong>|<strong>\-\-machine</strong>	Maschinenpfad
 
 ### Installiere Profil
-**oyranos\-profiles** \-I *ICC\_PROFIL* | \-t *TAXI\_ID* [\-u|\-s|\-y|\-m] [\-g] [\-v]
+&nbsp;&nbsp;**oyranos\-profiles** <strong>\-I</strong> *ICC\_PROFIL* | <strong>\-t</strong> *TAXI\_ID* [<strong>\-u</strong>|<strong>\-s</strong>|<strong>\-y</strong>|<strong>\-m</strong>] [<strong>\-g</strong>] [<strong>\-v</strong>]
 
-* \-I|\-\-install *ICC\_PROFIL*	Installiere Profil
-* \-t|\-\-taxi *TAXI\_ID*	ICC Taxi Profile DB
-* \-u|\-\-user	Benutzerpfad
-* \-s|\-\-system	Systempfad
-* \-y|\-\-oyranos	Oyranospfad
-* \-m|\-\-machine	Maschinenpfad
-* \-g|\-\-gui	Zeige Grafische Benutzerschnittstelle
+* <strong>\-I</strong>|<strong>\-\-install</strong> *ICC\_PROFIL*	Installiere Profil
+* <strong>\-t</strong>|<strong>\-\-taxi</strong> *TAXI\_ID*	ICC Taxi Profile DB
+* <strong>\-u</strong>|<strong>\-\-user</strong>	Benutzerpfad
+* <strong>\-s</strong>|<strong>\-\-system</strong>	Systempfad
+* <strong>\-y</strong>|<strong>\-\-oyranos</strong>	Oyranospfad
+* <strong>\-m</strong>|<strong>\-\-machine</strong>	Maschinenpfad
+* <strong>\-g</strong>|<strong>\-\-gui</strong>	Zeige Grafische Benutzerschnittstelle
 
 ### Allgemeine Optionen
-**oyranos\-profiles** \-h \-X *json|json+command|man|markdown*
+&nbsp;&nbsp;**oyranos\-profiles** <strong>\-h</strong> <strong>\-X</strong> *json|json+command|man|markdown*
 
-* \-h|\-\-help	Hilfe
-* \-X|\-\-export *json|json+command|man|markdown*	Exportiere formatierten Text: Hole Benutzerschnittstelle als Text
-   * \-X man		# Handbuch
-   * \-X markdown		# Markdown
-   * \-X json		# Json
-   * \-X json+command		# Json + Kommando
-   * \-X export		# Export
-* \-r|\-\-no\-repair	Lasse Reparatur der Profil ID weg
-* \-v|\-\-verbose	plaudernd
+* <strong>\-h</strong>|<strong>\-\-help</strong>	Hilfe
+* <strong>\-X</strong>|<strong>\-\-export</strong> *json|json+command|man|markdown*	Exportiere formatierten Text: Hole Benutzerschnittstelle als Text
+   * <strong>\-X man</strong>		# Handbuch
+   * <strong>\-X markdown</strong>		# Markdown
+   * <strong>\-X json</strong>		# Json
+   * <strong>\-X json+command</strong>		# Json + Kommando
+   * <strong>\-X export</strong>		# Export
+* <strong>\-r</strong>|<strong>\-\-no\-repair</strong>	Lasse Reparatur der Profil ID weg
+* <strong>\-v</strong>|<strong>\-\-verbose</strong>	plaudernd
 
 ## UMGEBUNGSVARIABLEN
 ### OY\_DEBUG
-Setze das Oyranos Fehlersuchniveau. Die \-v Option kann alternativ benutzt werden. Der gültige Bereich ist 1\-20.
+&nbsp;&nbsp;Setze das Oyranos Fehlersuchniveau.
+  <br />
+&nbsp;&nbsp;Die \-v Option kann alternativ benutzt werden.
+  <br />
+&nbsp;&nbsp;Der gültige Bereich ist 1\-20.
 ### XDG\_DATA\_HOME XDG\_DATA\_DIRS
-route Oyranos to top directories containing resources. The derived paths for ICC profiles have a "color/icc" appended. http://www.oyranos.com/wiki/index.php?title=OpenIccDirectoryProposal  
+&nbsp;&nbsp;route Oyranos to top directories containing resources. The derived paths for ICC profiles have a "color/icc" appended. http://www.oyranos.com/wiki/index.php?title=OpenIccDirectoryProposal
 ## BEISPIELE
 ### Liste alle installierten Profile mit internem Namen
-oyranos\-profiles \-le 
+&nbsp;&nbsp;oyranos\-profiles \-le
 ### Liste alle installierten Profile mit Monitor\-und Ausgabeklasse
-oyranos\-profiles \-l \-od 
+&nbsp;&nbsp;oyranos\-profiles \-l \-od
 ### Liste alle installierten Profile im Benutzerpfad
-oyranos\-profiles \-lfu 
+&nbsp;&nbsp;oyranos\-profiles \-lfu
 ### Installiere ein Profile für den aktuellen Benutzer und zeige eine Fehlermeldung grafische an
-oyranos\-profiles \-\-install profilename \-u \-\-gui 
+&nbsp;&nbsp;oyranos\-profiles \-\-install profilename \-u \-\-gui
 ### Installiere ein Profile für den aktuellen Benutzer und zeige eine Fehlermeldung grafische an
-oyranos\-profiles \-\-install \- \-\-taxi=taxi\_id/0 \-\-gui \-d \-u 
+&nbsp;&nbsp;oyranos\-profiles \-\-install \-\-taxi=taxi\_id/0 \-\-gui \-d \-u
 ### Zeige Dateiinfos
-SAVEIFS=$IFS ; IFS=$'\n\b'; profiles=(\`oyranos\-profiles \-ldf\`); IFS=$SAVEIFS; for file in "${profiles[@]}"; do ls "$file"; done  
+&nbsp;&nbsp;SAVEIFS=$IFS ; IFS=$'\n\b'; profiles=(\`oyranos\-profiles \-ldf\`); IFS=$SAVEIFS; for file in "${profiles[@]}"; do ls "$file"; done
 ## AUTOR
 Kai\-Uwe Behrmann http://www.oyranos.org
 ## KOPIERRECHT

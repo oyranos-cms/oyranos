@@ -338,8 +338,8 @@ int main( int argc , char** argv )
   oyjlOptionChoice_s env_vars[]={{"OY_DEBUG", _("set the Oyranos debug level."), _("Alternatively the -v option can be used."), _("Valid integer range is from 1-20.")},
                                     {"OY_MODULE_PATH", _("route Oyranos to additional directories containing modules."), "", ""},
                                     {"","","",""}};
-  oyjlOptionChoice_s examples[]={{_("Enable the daemon, set night white point to 3000 Kelvin and use that in night mode"), "oyranos-monitor-white-point", "-d 2 -a 3000 -n 1", ""},
-                                    {_("Switch all day light intereference off such as white point and effect"), "oyranos-monitor-white-point", "-s 0 -e 0", ""},
+  oyjlOptionChoice_s examples[]={{_("Enable the daemon, set night white point to 3000 Kelvin and use that in night mode"), "oyranos-monitor-white-point -d 2 -a 3000 -n 1", "", ""},
+                                    {_("Switch all day light intereference off such as white point and effect"), "oyranos-monitor-white-point -s 0 -e 0", "", ""},
                                     {"","","",""}};
   oyjlOption_s oarray[] = {
   /* type,   flags, o, option, key, name, description, help, value_name, value_type, values, var_type, variable */

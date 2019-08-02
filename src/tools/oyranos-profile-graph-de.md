@@ -3,111 +3,115 @@
 ## NAME
 oyranos\-profile\-graph v0.9.7 \- Oyranos Profile Zeichner
 ## ÜBERSICHT
-**oyranos\-profile\-graph** [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-o *\-|DATEI*] [\-f *FORMAT*] [\-c] [\-x] [\-d *NUMMER*] [\-n] [\-2] [\-4] [\-r] [\-v] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
+**oyranos\-profile\-graph** [<strong>\-t</strong> *NUMMER*] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong> *NUMMER*] [<strong>\-o</strong> *\-|DATEI*] [<strong>\-f</strong> *FORMAT*] [<strong>\-c</strong>] [<strong>\-x</strong>] [<strong>\-d</strong> *NUMMER*] [<strong>\-n</strong>] [<strong>\-2</strong>] [<strong>\-4</strong>] [<strong>\-r</strong>] [<strong>\-v</strong>] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
 <br />
-**oyranos\-profile\-graph** \-S [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-R] [\-o *\-|DATEI*] [\-f *FORMAT*] [\-v]
+**oyranos\-profile\-graph** <strong>\-S</strong> [<strong>\-t</strong> *NUMMER*] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong> *NUMMER*] [<strong>\-R</strong>] [<strong>\-o</strong> *\-|DATEI*] [<strong>\-f</strong> *FORMAT*] [<strong>\-v</strong>]
 <br />
-**oyranos\-profile\-graph** \-O [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-R] [\-o *\-|DATEI*] [\-f *FORMAT*] [\-v]
+**oyranos\-profile\-graph** <strong>\-O</strong> [<strong>\-t</strong> *NUMMER*] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong> *NUMMER*] [<strong>\-R</strong>] [<strong>\-o</strong> *\-|DATEI*] [<strong>\-f</strong> *FORMAT*] [<strong>\-v</strong>]
 <br />
-**oyranos\-profile\-graph** \-k *NUMMER* [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-R] [\-o *\-|DATEI*] [\-f *FORMAT*] [\-v]
+**oyranos\-profile\-graph** <strong>\-k</strong> *NUMMER* [<strong>\-t</strong> *NUMMER*] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong> *NUMMER*] [<strong>\-R</strong>] [<strong>\-o</strong> *\-|DATEI*] [<strong>\-f</strong> *FORMAT*] [<strong>\-v</strong>]
 <br />
-**oyranos\-profile\-graph** \-i *WORT* [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-R] [\-o *\-|DATEI*] [\-f *FORMAT*] [\-v]
+**oyranos\-profile\-graph** <strong>\-i</strong> *WORT* [<strong>\-t</strong> *NUMMER*] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong> *NUMMER*] [<strong>\-R</strong>] [<strong>\-o</strong> *\-|DATEI*] [<strong>\-f</strong> *FORMAT*] [<strong>\-v</strong>]
 <br />
-**oyranos\-profile\-graph** \-s *DATEI* \-p *FORMAT* \-z [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-R] [\-P *WORT*] [\-o *\-|DATEI*] [\-v]
+**oyranos\-profile\-graph** <strong>\-s</strong> *DATEI* <strong>\-p</strong> *FORMAT* <strong>\-z</strong> [<strong>\-t</strong> *NUMMER*] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong> *NUMMER*] [<strong>\-R</strong>] [<strong>\-P</strong> *WORT*] [<strong>\-o</strong> *\-|DATEI*] [<strong>\-v</strong>]
 <br />
-**oyranos\-profile\-graph** \-X *json|json+command|man|markdown* | \-h [\-v]
+**oyranos\-profile\-graph** <strong>\-X</strong> *json|json+command|man|markdown* | <strong>\-h</strong> [<strong>\-v</strong>]
 ## BESCHREIBUNG
 Das oyranos\-profile\-graph Programm erzeugt aus einem ICC Profil oder eingebetteten ICC Profil in eine Grafik. Vorgabemäßig malt es die Sättigungslinie eines anzugebenden ICC Profiles und schreibt die Grafik nach stdout.
 ## OPTIONEN
 ### 2D Zeichnung vom Farbprofil
-**oyranos\-profile\-graph** [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-o *\-|DATEI*] [\-f *FORMAT*] [\-c] [\-x] [\-d *NUMMER*] [\-n] [\-2] [\-4] [\-r] [\-v] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
+&nbsp;&nbsp;**oyranos\-profile\-graph** [<strong>\-t</strong> *NUMMER*] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong> *NUMMER*] [<strong>\-o</strong> *\-|DATEI*] [<strong>\-f</strong> *FORMAT*] [<strong>\-c</strong>] [<strong>\-x</strong>] [<strong>\-d</strong> *NUMMER*] [<strong>\-n</strong>] [<strong>\-2</strong>] [<strong>\-4</strong>] [<strong>\-r</strong>] [<strong>\-v</strong>] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
 
 Erzeuge aus einem ICC Profil eine Grafik mit seiner Sättigungslinie.
 
 *  *l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE*	ICC Profil
-* \-d|\-\-change\-thickness *NUMMER*	Gib die Verstärkung der Liniendicke an (NUMMER:0,7 [≥\-1000 ≤1000])
-* \-x|\-\-xyy	Benutze CIE*xyY *x*y Ebene für Projektion
-* \-c|\-\-no\-blackbody	Lasse Weißlinie von Lambertstrahlern fort
-* \-n|\-\-no\-spectral\-line	Lasse Spektrallinie fort
-* \-2|\-\-icc\-version\-2	Wähle ICC V2 Profile
-* \-4|\-\-icc\-version\-4	Wähle ICC V4 Profile
-* \-r|\-\-no\-repair	Lasse Reparatur der Profil ID weg
+* <strong>\-d</strong>|<strong>\-\-change\-thickness</strong> *NUMMER*	Gib die Verstärkung der Liniendicke an (NUMMER:0,7 [≥\-1000 ≤1000])
+* <strong>\-x</strong>|<strong>\-\-xyy</strong>	Benutze CIE*xyY *x*y Ebene für Projektion
+* <strong>\-c</strong>|<strong>\-\-no\-blackbody</strong>	Lasse Weißlinie von Lambertstrahlern fort
+* <strong>\-n</strong>|<strong>\-\-no\-spectral\-line</strong>	Lasse Spektrallinie fort
+* <strong>\-2</strong>|<strong>\-\-icc\-version\-2</strong>	Wähle ICC V2 Profile
+* <strong>\-4</strong>|<strong>\-\-icc\-version\-4</strong>	Wähle ICC V4 Profile
+* <strong>\-r</strong>|<strong>\-\-no\-repair</strong>	Lasse Reparatur der Profil ID weg
 
 ### Standard Betrachter 1931 2° Zeichnung
-**oyranos\-profile\-graph** \-S [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-R] [\-o *\-|DATEI*] [\-f *FORMAT*] [\-v]
+&nbsp;&nbsp;**oyranos\-profile\-graph** <strong>\-S</strong> [<strong>\-t</strong> *NUMMER*] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong> *NUMMER*] [<strong>\-R</strong>] [<strong>\-o</strong> *\-|DATEI*] [<strong>\-f</strong> *FORMAT*] [<strong>\-v</strong>]
 
-* \-S|\-\-standard\-observer	CIE Standard Betrachter 1931 2°
+* <strong>\-S</strong>|<strong>\-\-standard\-observer</strong>	CIE Standard Betrachter 1931 2°
 
 ### 1964 10° Betrachter Zeichnung
-**oyranos\-profile\-graph** \-O [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-R] [\-o *\-|DATEI*] [\-f *FORMAT*] [\-v]
+&nbsp;&nbsp;**oyranos\-profile\-graph** <strong>\-O</strong> [<strong>\-t</strong> *NUMMER*] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong> *NUMMER*] [<strong>\-R</strong>] [<strong>\-o</strong> *\-|DATEI*] [<strong>\-f</strong> *FORMAT*] [<strong>\-v</strong>]
 
-* \-O|\-\-observer\-64	CIE Betrachter 1064 10°
+* <strong>\-O</strong>|<strong>\-\-observer\-64</strong>	CIE Betrachter 1064 10°
 
 ### Spektrumgraph eines Lambertstrahlers
-**oyranos\-profile\-graph** \-k *NUMMER* [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-R] [\-o *\-|DATEI*] [\-f *FORMAT*] [\-v]
+&nbsp;&nbsp;**oyranos\-profile\-graph** <strong>\-k</strong> *NUMMER* [<strong>\-t</strong> *NUMMER*] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong> *NUMMER*] [<strong>\-R</strong>] [<strong>\-o</strong> *\-|DATEI*] [<strong>\-f</strong> *FORMAT*] [<strong>\-v</strong>]
 
-* \-k|\-\-kelvin *NUMMER*	Lambertstrahler (NUMMER:0 [≥0 ≤25000])
+* <strong>\-k</strong>|<strong>\-\-kelvin</strong> *NUMMER*	Lambertstrahler (NUMMER:0 [≥0 ≤25000])
 
 ### Beleuchtungsspektrumzeichnung
-**oyranos\-profile\-graph** \-i *WORT* [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-R] [\-o *\-|DATEI*] [\-f *FORMAT*] [\-v]
+&nbsp;&nbsp;**oyranos\-profile\-graph** <strong>\-i</strong> *WORT* [<strong>\-t</strong> *NUMMER*] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong> *NUMMER*] [<strong>\-R</strong>] [<strong>\-o</strong> *\-|DATEI*] [<strong>\-f</strong> *FORMAT*] [<strong>\-v</strong>]
 
-* \-i|\-\-illuminant *WORT*	Beleuchtungsspektrum
-   * \-i A		# Lichtart A
-   * \-i D50		# Lichtart D50
-   * \-i D55		# Lichtart D55
-   * \-i D65		# Lichtart D65
-   * \-i D65T		# Lichtart D65 T
-   * \-i D75		# Lichtart D75
-   * \-i D93		# Lichtart D93
+* <strong>\-i</strong>|<strong>\-\-illuminant</strong> *WORT*	Beleuchtungsspektrum
+   * <strong>\-i A</strong>		# Lichtart A
+   * <strong>\-i D50</strong>		# Lichtart D50
+   * <strong>\-i D55</strong>		# Lichtart D55
+   * <strong>\-i D65</strong>		# Lichtart D65
+   * <strong>\-i D65T</strong>		# Lichtart D65 T
+   * <strong>\-i D75</strong>		# Lichtart D75
+   * <strong>\-i D93</strong>		# Lichtart D93
 
 ### Spektrumgraph
-**oyranos\-profile\-graph** \-s *DATEI* \-p *FORMAT* \-z [\-t *NUMMER*] [\-b] [\-g] [\-w *NUMMER*] [\-R] [\-P *WORT*] [\-o *\-|DATEI*] [\-v]
+&nbsp;&nbsp;**oyranos\-profile\-graph** <strong>\-s</strong> *DATEI* <strong>\-p</strong> *FORMAT* <strong>\-z</strong> [<strong>\-t</strong> *NUMMER*] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong> *NUMMER*] [<strong>\-R</strong>] [<strong>\-P</strong> *WORT*] [<strong>\-o</strong> *\-|DATEI*] [<strong>\-v</strong>]
 
-* \-s|\-\-spectral *DATEI*	Spektrale Eingabe
-* \-p|\-\-spectral\-format *FORMAT*	Gib spektrales Ausgabeformat an
-   * \-p png		# PNG
-   * \-p svg		# SVG
-   * \-p csv		# CSV
-   * \-p ncc		# NCC
-   * \-p cgats		# CGATS
-   * \-p icc\-xml		# Icc XML
-   * \-p ppm		# PPM
-* \-P|\-\-pattern *WORT*	Filter für Farbnamen
-* \-z|\-\-scale	Skaliere die Höhe der Spektrumkurve
+* <strong>\-s</strong>|<strong>\-\-spectral</strong> *DATEI*	Spektrale Eingabe
+* <strong>\-p</strong>|<strong>\-\-spectral\-format</strong> *FORMAT*	Gib spektrales Ausgabeformat an
+   * <strong>\-p png</strong>		# PNG
+   * <strong>\-p svg</strong>		# SVG
+   * <strong>\-p csv</strong>		# CSV
+   * <strong>\-p ncc</strong>		# NCC
+   * <strong>\-p cgats</strong>		# CGATS
+   * <strong>\-p icc\-xml</strong>		# Icc XML
+   * <strong>\-p ppm</strong>		# PPM
+* <strong>\-P</strong>|<strong>\-\-pattern</strong> *WORT*	Filter für Farbnamen
+* <strong>\-z</strong>|<strong>\-\-scale</strong>	Skaliere die Höhe der Spektrumkurve
 
 ### Allgemeine Optionen
-**oyranos\-profile\-graph** \-X *json|json+command|man|markdown* | \-h [\-v]
+&nbsp;&nbsp;**oyranos\-profile\-graph** <strong>\-X</strong> *json|json+command|man|markdown* | <strong>\-h</strong> [<strong>\-v</strong>]
 
-* \-t|\-\-thickness *NUMMER*	Gib die Liniendicke an (NUMMER:1 [≥0 ≤10])
-* \-b|\-\-no\-border	Lasse Rand aus in Zeichnung
-* \-g|\-\-no\-color	Zeichne grau
-* \-w|\-\-width *NUMMER*	Gib Ausgabebildbreite in Pixel an (NUMMER:128 [≥64 ≤4096])
-* \-R|\-\-raster	Zeichne Gitter
-* \-o|\-\-output *\-|DATEI*	Gib Ausgabedateiname an, voreingestellt ist stdout
-* \-f|\-\-format *FORMAT*	Gib Ausgabeformat PNG oder SVG an, voreingestellt ist PNG
-   * \-f png		# PNG
-   * \-f svg		# SVG
-* \-h|\-\-help	Hilfe
-* \-X|\-\-export *json|json+command|man|markdown*	Exportiere formatierten Text: Hole Benutzerschnittstelle als Text
-   * \-X man		# Handbuch
-   * \-X markdown		# Markdown
-   * \-X json		# Json
-   * \-X json+command		# Json + Kommando
-   * \-X export		# Export
-* \-v|\-\-verbose	plaudernd
+* <strong>\-t</strong>|<strong>\-\-thickness</strong> *NUMMER*	Gib die Liniendicke an (NUMMER:1 [≥0 ≤10])
+* <strong>\-b</strong>|<strong>\-\-no\-border</strong>	Lasse Rand aus in Zeichnung
+* <strong>\-g</strong>|<strong>\-\-no\-color</strong>	Zeichne grau
+* <strong>\-w</strong>|<strong>\-\-width</strong> *NUMMER*	Gib Ausgabebildbreite in Pixel an (NUMMER:128 [≥64 ≤4096])
+* <strong>\-R</strong>|<strong>\-\-raster</strong>	Zeichne Gitter
+* <strong>\-o</strong>|<strong>\-\-output</strong> *\-|DATEI*	Gib Ausgabedateiname an, voreingestellt ist stdout
+* <strong>\-f</strong>|<strong>\-\-format</strong> *FORMAT*	Gib Ausgabeformat PNG oder SVG an, voreingestellt ist PNG
+   * <strong>\-f png</strong>		# PNG
+   * <strong>\-f svg</strong>		# SVG
+* <strong>\-h</strong>|<strong>\-\-help</strong>	Hilfe
+* <strong>\-X</strong>|<strong>\-\-export</strong> *json|json+command|man|markdown*	Exportiere formatierten Text: Hole Benutzerschnittstelle als Text
+   * <strong>\-X man</strong>		# Handbuch
+   * <strong>\-X markdown</strong>		# Markdown
+   * <strong>\-X json</strong>		# Json
+   * <strong>\-X json+command</strong>		# Json + Kommando
+   * <strong>\-X export</strong>		# Export
+* <strong>\-v</strong>|<strong>\-\-verbose</strong>	plaudernd
 
 ## UMGEBUNGSVARIABLEN
 ### OY\_DEBUG
-Setze das Oyranos Fehlersuchniveau. Die \-v Option kann alternativ benutzt werden. Der gültige Bereich ist 1\-20.
+&nbsp;&nbsp;Setze das Oyranos Fehlersuchniveau.
+  <br />
+&nbsp;&nbsp;Die \-v Option kann alternativ benutzt werden.
+  <br />
+&nbsp;&nbsp;Der gültige Bereich ist 1\-20.
 ### XDG\_DATA\_HOME XDG\_DATA\_DIRS
-route Oyranos to top directories containing resources. The derived paths for ICC profiles have a "color/icc" appended. http://www.oyranos.com/wiki/index.php?title=OpenIccDirectoryProposal  
+&nbsp;&nbsp;route Oyranos to top directories containing resources. The derived paths for ICC profiles have a "color/icc" appended. http://www.oyranos.com/wiki/index.php?title=OpenIccDirectoryProposal
 ## BEISPIELE
 ### Zeichne ICC Profil
-oyranos\-profile\-graph ICC\_PROFILE 
+&nbsp;&nbsp;oyranos\-profile\-graph ICC\_PROFILE
 ### Zeige Sättigungslinien von zwei Profilen in CIE*ab 256 Bildpunkte breit, ohne Spectrallinie und mit dickeren Linien:
-oyranos\-profile\-graph \-w 256 \-s \-t 3 sRGB.icc ProPhoto\-RGB.icc 
+&nbsp;&nbsp;oyranos\-profile\-graph \-w 256 \-s \-t 3 sRGB.icc ProPhoto\-RGB.icc
 ### Zeige die Standard Betrachter Spektralfunktion als Kurven:
-oyranos\-profile\-graph \-\-standard\-observer \-o CIE\-StdObserver.png 
+&nbsp;&nbsp;oyranos\-profile\-graph \-\-standard\-observer \-o CIE\-StdObserver.png
 ## AUTOR
 Kai\-Uwe Behrmann http://www.oyranos.org
 ## KOPIERRECHT
