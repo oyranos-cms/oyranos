@@ -288,6 +288,22 @@ oyjlTESTRESULT_e testString ()
   }
   oyjlStringListRelease( &list, list_n, myDeAllocFunc );
 
+  list_n = 0;
+  list = oyjlStringSplit( "a a b c\td\ne", 0, &list_n, myAllocFunc );
+  if(list_n == 6)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlStringSplit(0)                                   " );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlStringSplit(0)                                   " );
+  }
+  if(oy_test_last_result == oyjlTESTRESULT_FAIL || verbose)
+  {
+    for(i = 0; i < list_n; ++i)
+      fprintf(zout, " list[%d] \"%s\"\n", i, list[i] );
+  }
+  oyjlStringListRelease( &list, list_n, myDeAllocFunc );
+
   double d = 0.0;
   int error = oyjlStringToDouble( "0.2", &d );
   if( !error &&
