@@ -56,7 +56,7 @@ FIND_PACKAGE( Doxygen )
 IF( DOXYGEN_FOUND )
 
   ADD_CUSTOM_COMMAND( OUTPUT html
-    COMMAND cat ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile.files | sed 's%\;${CMAKE_SOURCE_DIR}/src/API_generated/% %g \; s%\;% %g' >> Doxyfile \; doxygen Doxyfile \; cp ${CMAKE_SOURCE_DIR}/extras/icons/${PACKAGE_NAME}_logo.png html/ \; cp ${CMAKE_CURRENT_SOURCE_DIR}/customdoxygen.css html/ 
+    COMMAND cat ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile.files | sed 's%\;${CMAKE_SOURCE_DIR}/src/API_generated/% %g \; s%\;% %g' >> Doxyfile \; doxygen Doxyfile \; cp ${CMAKE_SOURCE_DIR}/extras/icons/${PACKAGE_NAME}_logo.png html/ \; cp ${CMAKE_CURRENT_SOURCE_DIR}/customdoxygen.css html/\; cp ${CMAKE_CURRENT_SOURCE_DIR}/layout.css html/ 
     DEPENDS oyranos-monitor-white-point.md
                     )
   ADD_CUSTOM_COMMAND( OUTPUT html_alpha
