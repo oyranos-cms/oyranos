@@ -208,8 +208,8 @@ char *             oyjlUi_ExportToJson(oyjlUi_s          * ui,
           else if(o->option)
             oyjlStrAppendN( tmp, o->option, strlen(o->option) );
           oyjlStrAdd( tmp, "GetChoices" );
-          oyjlStrReplace( tmp, "-", "_", 0 );
-          oyjlStrReplace( tmp, "+", "_plus_", 0 );
+          oyjlStrReplace( tmp, "-", "_", 0, NULL );
+          oyjlStrReplace( tmp, "+", "_plus_", 0, NULL );
           txt = oyjlStr(tmp); 
           oyjlTreeSetStringF( root, OYJL_CREATE_NEW, o->values.getChoices ? txt:NULL, OYJL_REG "/ui/options/array/[%d]/values/%s", i, "getChoices" );
           oyjlStrRelease( &tmp );
@@ -279,13 +279,13 @@ static void oyjlStrAddSpaced( oyjl_str s, const char * text, int flags, int spac
       const char * t = text;
       oyjl_str tmp = oyjlStrNew(10,0,0);
       oyjlStrAppendN( tmp, t, strlen(t) );
-      oyjlStrReplace( tmp, "\\", "\\\\", 0 );
-      oyjlStrReplace( tmp, "\"", "\\\"", 0 );
-      oyjlStrReplace( tmp, "\b", "\\b", 0 );
-      oyjlStrReplace( tmp, "\f", "\\f", 0 );
-      oyjlStrReplace( tmp, "\n", "\\n", 0 );
-      oyjlStrReplace( tmp, "\r", "\\r", 0 );
-      oyjlStrReplace( tmp, "\t", "\\t", 0 );
+      oyjlStrReplace( tmp, "\\", "\\\\", 0, NULL );
+      oyjlStrReplace( tmp, "\"", "\\\"", 0, NULL );
+      oyjlStrReplace( tmp, "\b", "\\b", 0, NULL );
+      oyjlStrReplace( tmp, "\f", "\\f", 0, NULL );
+      oyjlStrReplace( tmp, "\n", "\\n", 0, NULL );
+      oyjlStrReplace( tmp, "\r", "\\r", 0, NULL );
+      oyjlStrReplace( tmp, "\t", "\\t", 0, NULL );
       t = oyjlStr(tmp); 
       oyjlStrAdd( s, "%s", t );
       oyjlStrRelease( &tmp );
@@ -378,10 +378,10 @@ void oyjlUiCanonicaliseVariableName( char ** name )
     return;
   tmp = oyjlStrNew(10,0,0);
   oyjlStrAppendN( tmp, *name, strlen(*name) );
-  oyjlStrReplace( tmp, "-", "_", 0 );
-  oyjlStrReplace( tmp, "+", "_plus_", 0 );
-  oyjlStrReplace( tmp, "=", "_", 0 );
-  oyjlStrReplace( tmp, "(", "_", 0 );
+  oyjlStrReplace( tmp, "-", "_", 0, NULL );
+  oyjlStrReplace( tmp, "+", "_plus_", 0, NULL );
+  oyjlStrReplace( tmp, "=", "_", 0, NULL );
+  oyjlStrReplace( tmp, "(", "_", 0, NULL );
   txt = oyjlStr(tmp);
   free(*name); *name = NULL;
   i = 0;
