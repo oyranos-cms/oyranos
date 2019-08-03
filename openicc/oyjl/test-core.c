@@ -122,6 +122,27 @@ oyjlTESTRESULT_e testI18N()
 #define TEST_DOMAIN2 "org2/freedesktop2/openicc2/tests2"
 #define TEST_KEY "/test_key"
 
+static void replaceCb(const char * text, const char * start, const char * end, const char * search, const char ** replace, void * data)
+{
+  if(start < end)
+  {
+    const char * word = start;
+    int * test = (int*) data;
+    while(word && (word = strstr(word+1,"nd")) != NULL && word < end)
+      ++test[0];
+    word = start;
+    while(word && (word = strstr(word+1,"or")) != NULL && word < end)
+      --test[0];
+    if(test[0] < 0) test[0] = 0;
+    word = start;
+
+    if( test[0] )
+      *replace = search;
+    else
+      *replace = "\\/";
+  }
+}
+
 oyjlTESTRESULT_e testString ()
 {
   oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
@@ -482,6 +503,22 @@ oyjlTESTRESULT_e testString ()
   fprintf( zout, "oyjlStrAppendN()\t%dx9  %d    \t\%s\n", n, (int)strlen(oyjlStr(string)),
                  oyjlProfilingToString(n,clck/(double)CLOCKS_PER_SEC,"ops"));
   oyjlStrRelease( &string );
+
+  int inside = 0;
+  string = oyjlStrNew(10, 0,0);
+  for(i = 0; i < 10; ++i)
+    oyjlStrAppendN( string, "/more/and", 9 );
+  oyjlStrReplace( string, "/", "\\/", replaceCb, &inside );
+  const char * tmp = oyjlStr(string);
+  if(strstr(tmp, "/more\\/and/more"))
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlStrReplace(callback,user_data)                   " );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlStrReplace(callback,user_data)                   " );
+  }
+  oyjlStrRelease( &string );
+
 
   return result;
 }

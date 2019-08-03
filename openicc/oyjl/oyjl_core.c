@@ -462,7 +462,7 @@ int        oyjlStringReplace         ( char             ** text,
     return 0;
 
   str = oyjlStrNewFrom(text, 0, alloc,deAlloc);
-  n = oyjlStrReplace( str, search, replacement, 0 );
+  n = oyjlStrReplace( str, search, replacement, 0, NULL );
   t = oyjlStrPull(str);
   *text = t;
   oyjlStrRelease( &str );
@@ -922,16 +922,19 @@ int        oyjlStrAdd                ( oyjl_str            string,
  *                                     - end: current end inside text
  *                                     - search: used term to find actual start
  *                                     - replace: possibly modified replacement text
+ *                                     - context: user data
+ *  @param[in,out] context             optional user data for modifyReplacement
  *  @return                            number of occurences
  *
  *  @version Oyjl: 1.0.0
- *  @date    2019/02/15
+ *  @date    2019/08/02
  *  @since   2019/02/15 (Oyjl: 1.0.0)
  */
 int        oyjlStrReplace            ( oyjl_str            text,
                                        const char        * search,
                                        const char        * replacement,
-                                       void             (* modifyReplacement)(const char * text, const char * start, const char * end, const char * search, const char ** replace) )
+                                       void             (* modifyReplacement)(const char * text, const char * start, const char * end, const char * search, const char ** replace, void * user_data),
+                                       void              * user_data )
 {
   struct oyjl_string_s * str = text;
   oyjl_str t = NULL;
@@ -950,7 +953,7 @@ int        oyjlStrReplace            ( oyjl_str            text,
     {
       if(!t) t = oyjlStrNew(10,0,0);
       oyjlStrAppendN( t, start, end-start );
-      if(modifyReplacement) modifyReplacement( oyjlStr(text), start, end, search, &replacement );
+      if(modifyReplacement) modifyReplacement( oyjlStr(text), start, end, search, &replacement, user_data );
       oyjlStrAppendN( t, replacement, strlen(replacement) );
       ++n;
       if(strlen(end) >= (size_t)s_len)
