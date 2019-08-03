@@ -262,6 +262,189 @@ int        oyjlStringReplace         ( char             ** text,
 
   return n;
 }
+struct oyjl_string_s
+{
+    char * s;                          /**< @brief UTF-8 text */
+    size_t len;                        /**< @brief string length. */
+    size_t alloc_len;                  /**< @brief last string allocation. */
+    void*(*alloc)(size_t);             /**< @brief custom allocator; optional, default is malloc */
+    void (*deAlloc)(void*);            /**< @brief custom deallocator; optional, default is free */
+    int    alloc_count;
+};
+oyjl_str   oyjlStrNew                ( size_t              length,
+                                       void*            (* alloc)(size_t),
+                                       void             (* deAlloc)(void*) )
+{
+  struct oyjl_string_s * string = NULL;
+  if(!alloc) alloc = malloc;
+  if(!deAlloc) deAlloc = free;
+
+  oyjlAllocHelper_m( string, struct oyjl_string_s, 1, alloc, return NULL );
+  string->len = 0;
+  if(length == 0)
+    length = 8;
+  oyjlAllocHelper_m( string->s, char, length, alloc, return NULL );
+  string->s[0] = '\000';
+  string->alloc_len = length;
+  string->alloc = alloc;
+  string->deAlloc = deAlloc;
+  string->alloc_count = 1;
+
+  return (oyjl_str) string;
+}
+int        oyjlStrAppendN            ( oyjl_str            string,
+                                       const char        * append,
+                                       int                 append_len )
+{
+  struct oyjl_string_s * str = string;
+  int error = 0;
+  if(append && append_len)
+  {
+    if((append_len + str->len) >= str->alloc_len)
+    {
+      int len = (append_len + str->len) * 2;
+      char * edit = str->s;
+      oyjlAllocHelper_m( str->s, char, len, str->alloc, return 1 );
+      str->alloc_len = len;
+      ++str->alloc_count;
+      memcpy(str->s, edit, str->len);
+      str->deAlloc(edit);
+    }
+    memcpy( &str->s[str->len], append, append_len );
+    str->len += append_len;
+    str->s[str->len] = '\000';
+  }
+  return error;
+}
+int        oyjlStrAdd                ( oyjl_str            string,
+                                       const char        * format,
+                                                           ... )
+{
+  struct oyjl_string_s * str = string;
+  char * text = 0;
+
+  void*(* allocate)(size_t size) = str->alloc;
+  void (* deAllocate)(void * data ) = str->deAlloc;
+
+  OYJL_CREATE_VA_STRING(format, text, allocate, return 1)
+
+  if(text)
+  {
+    oyjlStrAppendN( string, text, strlen(text) );
+    deAllocate( text );
+  }
+
+  return 0;
+}
+int        oyjlStrReplace            ( oyjl_str            text,
+                                       const char        * search,
+                                       const char        * replacement,
+                                       void             (* modifyReplacement)(const char * text, const char * start, const char * end, const char * search, const char ** replace, void * user_data),
+                                       void              * user_data )
+{
+  struct oyjl_string_s * str = text;
+  oyjl_str t = NULL;
+  const char * start, * end;
+  int n = 0;
+
+  if(!text)
+    return 0;
+
+  start = end = oyjlStr(text);
+
+  if(start && search && replacement)
+  {
+    int s_len = strlen(search);
+    while((end = strstr(start,search)) != 0)
+    {
+      if(!t) t = oyjlStrNew(10,0,0);
+      oyjlStrAppendN( t, start, end-start );
+      if(modifyReplacement) modifyReplacement( oyjlStr(text), start, end, search, &replacement, user_data );
+      oyjlStrAppendN( t, replacement, strlen(replacement) );
+      ++n;
+      if(strlen(end) >= (size_t)s_len)
+        start = end + s_len;
+      else
+      {
+        if(strstr(start,search) != 0)
+          oyjlStrAppendN( t, replacement, strlen(replacement) );
+        start = end = end + s_len;
+        break;
+      }
+    }
+    if(n && start && end == NULL)
+      oyjlStrAppendN( t, start, strlen(start) );
+  }
+
+  if(t)
+  {
+    void (* deAlloc)(void*) = str->deAlloc;
+    if(str->s && str->alloc_len) deAlloc(str->s);
+    str->len = str->alloc_len = 0;
+
+    deAlloc = t->deAlloc;
+    if(str->alloc == t->alloc)
+    {
+      str->s = t->s;
+      str->len = t->len;
+      str->alloc_len = t->alloc_len;
+      str->alloc_count = t->alloc_count;
+      deAlloc(t); t = NULL;
+    } else
+    {
+      int length = 8;
+      oyjlAllocHelper_m( str->s, char, length, str->alloc, return 0 );
+      str->s[0] = '\000';
+      str->alloc_len = length;
+      oyjlStrAppendN( str, oyjlStr(t), strlen(oyjlStr(t)) );
+      oyjlStrRelease( &t );
+    }
+  }
+
+  return n;
+}
+char *     oyjlStrPull               ( oyjl_str            str )
+{
+  struct oyjl_string_s * string;
+  char * t = NULL;
+  int length = 8;
+
+  if(!str) return t;
+
+  string = str;
+  t = string->s;
+  string->s = NULL;
+
+  string->len = 0;
+  oyjlAllocHelper_m( string->s, char, length, string->alloc, return NULL );
+  string->s[0] = '\000';
+  string->alloc_len = length;
+  string->alloc_count = 1;
+  
+  return t;
+}
+void       oyjlStrClear              ( oyjl_str            string )
+{
+  struct oyjl_string_s * str = string;
+  void (* deAlloc)(void*) = str->deAlloc;
+  char * s = oyjlStrPull( string );
+  if(s) deAlloc(s);
+}
+void       oyjlStrRelease            ( oyjl_str          * string_ptr )
+{
+  struct oyjl_string_s * str;
+  if(!string_ptr) return;
+  str = *string_ptr;
+  void (* deAlloc)(void*) = str->deAlloc;
+  if(str->s) deAlloc(str->s);
+  deAlloc(str);
+  *string_ptr = NULL;
+}
+
+const char*oyjlStr                   ( oyjl_str            string )
+{
+  return (const char*)string->s;
+}
 int      oyjlStringToLong            ( const char        * text,
                                        long              * value )
 {
@@ -983,11 +1166,11 @@ const char * oyjlOption_PrintArg     ( oyjlOption_s      * o,
     else
     {
       if(style & oyjlOPTIONSTYLE_MARKDOWN)
-        oyjlStringAdd( &text, malloc, free, " *%s*", o->value_name );
+        oyjlStringAdd( &text, malloc, free, "%s<em>%s</em>", (o->o != '@' && !(style & oyjlOPTIONSTYLE_STRING))?"=":" ", o->value_name ); /* allow for easier word wrap in table */
       else if(style & oyjlOPTIONSTYLE_OPTIONAL_INSIDE_GROUP)
         oyjlStringAdd( &text, malloc, free, "%s", oyjlTermColor(oyjlITALIC,o->value_name) );
       else
-        oyjlStringAdd( &text, malloc, free, " %s", oyjlTermColor(oyjlITALIC,o->value_name) );
+        oyjlStringAdd( &text, malloc, free, "%s%s", o->o != '@'?"=":"", oyjlTermColor(oyjlITALIC,o->value_name) );
     }
   }
   if(style & oyjlOPTIONSTYLE_OPTIONAL_END)
@@ -2588,13 +2771,42 @@ char *       oyjlUi_ToMan            ( oyjlUi_s          * ui,
   return text;
 }
 
+static void replaceOutsideHTML(const char * text OYJL_UNUSED, const char * start, const char * end, const char * search, const char ** replace, void * data)
+{
+  if(start < end)
+  {
+    const char * word = start;
+    int * insideTable = (int*) data;
+
+    if( insideTable[0] )
+      *replace = search;
+    else
+    {
+      if(strcmp(search,"`") == 0)
+        *replace = "\\`";
+      if(strcmp(search,"-") == 0)
+        *replace = "\\-";
+      if(strcmp(search,"_") == 0)
+        *replace = "\\_";
+    }
+
+    word = start;
+    while(word && (word = strstr(word+1,"<table")) != NULL && word < end)
+      ++insideTable[0];
+    word = start;
+    while(word && (word = strstr(word+1,"</table>")) != NULL && word < end)
+      --insideTable[0];
+
+  }
+}
+
 /** @brief    Return markdown formated text from options
  *  @memberof oyjlUi_s
  *
  *  @see oyjlUi_ToMan()
  *
  *  @version Oyjl: 1.0.0
- *  @date    2018/11/07
+ *  @date    2019/08/02
  *  @since   2018/11/07 (OpenICC: 0.1.1)
  */
 char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
@@ -2683,6 +2895,8 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
     {
       oyjlStringAdd( &text, malloc, free, "%s\n\n", g->help );
     }
+    if(d)
+      oyjlStringAdd( &text, malloc, free, "<table style='width:100%'>\n" );
     for(j = 0; j < d; ++j)
     {
       oyjlOption_s * o = oyjlOptions_GetOptionL( opts, &g->detail[j] );
@@ -2691,51 +2905,61 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
         fprintf(stderr, "\n%s: option not declared: %s\n", g->name, &g->detail[j]);
         exit(1);
       }
+#define OYJL_LEFT_TD_STYLE " style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'"
       switch(o->value_type)
       {
         case oyjlOPTIONTYPE_CHOICE:
           {
             int n = 0,l;
-            oyjlStringAdd( &text, malloc, free, "* %s", oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MARKDOWN) );
-            oyjlStringAdd( &text, malloc, free, "\t%s%s%s\n", o->description ? o->description:"", o->help?": ":"", o->help?o->help :"" );
+            oyjlStringAdd( &text, malloc, free, " <tr><td" OYJL_LEFT_TD_STYLE ">%s</td>", oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MARKDOWN) );
+            oyjlStringAdd( &text, malloc, free, " <td>%s%s%s", o->description ? o->description:"", o->help?"<br />":"", o->help?o->help :"" );
             if(o->flags & OYJL_OPTION_FLAG_EDITABLE)
               break;
             while(o->values.choices.list[n].nick && o->values.choices.list[n].nick[0] != '\000')
               ++n;
+            if(n) oyjlStringAdd( &text, malloc, free, "\n  <table>\n");
             for(l = 0; l < n; ++l)
-              oyjlStringAdd( &text, malloc, free, "   * <strong>-%c %s</strong>\t\t# %s\n", o->o, o->values.choices.list[l].nick, o->values.choices.list[l].name && o->values.choices.list[l].nick[0] ? o->values.choices.list[l].name : o->values.choices.list[l].description );
+              oyjlStringAdd( &text, malloc, free, "   <tr><td style='padding-left:0.5em'><strong>-%c %s</strong></td><td># %s</td></tr>\n", o->o, o->values.choices.list[l].nick, o->values.choices.list[l].name && o->values.choices.list[l].nick[0] ? o->values.choices.list[l].name : o->values.choices.list[l].description );
+            if(n) oyjlStringAdd( &text, malloc, free, "  </table>\n");
+            oyjlStringAdd( &text, malloc, free, "  </td>\n");
           }
           break;
         case oyjlOPTIONTYPE_FUNCTION:
           {
             int n = 0,l;
             oyjlOptionChoice_s * list;
-            oyjlStringAdd( &text, malloc, free, "* %s", oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MARKDOWN) );
-            oyjlStringAdd( &text, malloc, free, "\t%s%s%s\n", o->description ? o->description:"", o->help?": ":"", o->help?o->help :"" );
+            oyjlStringAdd( &text, malloc, free, " <tr><td" OYJL_LEFT_TD_STYLE ">%s</td>", oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MARKDOWN) );
+            oyjlStringAdd( &text, malloc, free, " <td>%s%s%s", o->description ? o->description:"", o->help?"<br />":"", o->help?o->help :"" );
             if(o->flags & OYJL_OPTION_FLAG_EDITABLE)
               break;
             list = oyjlOption_GetChoices_(o, NULL, opts );
             if(list)
               while(list[n].nick && list[n].nick[0] != '\000')
                 ++n;
+            if(n) oyjlStringAdd( &text, malloc, free, "\n  <table>\n");
             for(l = 0; l < n; ++l)
-              oyjlStringAdd( &text, malloc, free, "   * <strong>-%c %s</strong>\t\t# %s\n", o->o, list[l].nick, list[l].name && list[l].nick[0] ? list[l].name : list[l].description );
+              oyjlStringAdd( &text, malloc, free, "   <tr><td style='padding-left:0.5em'><strong>-%c %s</strong></td><td># %s</td></tr>\n", o->o, list[l].nick, list[l].name && list[l].nick[0] ? list[l].name : list[l].description );
+            if(n) oyjlStringAdd( &text, malloc, free, "  </table>\n");
+            oyjlStringAdd( &text, malloc, free, "  </td>\n");
             /* not possible, as the result of oyjlOption_GetChoices_() is cached - oyjlOptionChoice_Release( &list ); */
           }
           break;
         case oyjlOPTIONTYPE_DOUBLE:
-          oyjlStringAdd( &text, malloc, free, "* %s", oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MARKDOWN) );
-          oyjlStringAdd( &text, malloc, free, "\t%s%s%s (%s%s%g [≥%g ≤%g])\n", o->description ? o->description:"", o->help?": ":"", o->help?o->help :"", o->value_name?o->value_name:"", o->value_name?":":"", o->values.dbl.d, o->values.dbl.start, o->values.dbl.end );
+          oyjlStringAdd( &text, malloc, free, " <tr><td" OYJL_LEFT_TD_STYLE ">%s</td>", oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MARKDOWN) );
+          oyjlStringAdd( &text, malloc, free, " <td>%s%s%s (%s%s%g [≥%g ≤%g])</td>", o->description ? o->description:"", o->help?": ":"", o->help?o->help :"", o->value_name?o->value_name:"", o->value_name?":":"", o->values.dbl.d, o->values.dbl.start, o->values.dbl.end );
           break;
         case oyjlOPTIONTYPE_NONE:
-          oyjlStringAdd( &text, malloc, free, "* %s", oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MARKDOWN) );
-          oyjlStringAdd( &text, malloc, free, "\t%s%s%s\n", o->description ? o->description:"", o->help?": ":"", o->help?o->help :"" );
+          oyjlStringAdd( &text, malloc, free, " <tr><td" OYJL_LEFT_TD_STYLE ">%s</td>", oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MARKDOWN) );
+          oyjlStringAdd( &text, malloc, free, " <td>%s%s%s</td>", o->description ? o->description:"", o->help?"<br />":"", o->help?o->help :"" );
         break;
         case oyjlOPTIONTYPE_START: break;
         case oyjlOPTIONTYPE_END: break;
       }
+      oyjlStringAdd( &text, malloc, free, " </tr>\n" );
       while(g->detail[j] && g->detail[j] != ',') ++j;
     }
+    if(d)
+      oyjlStringAdd( &text, malloc, free, "</table>\n" );
     oyjlStringAdd( &text, malloc, free, "\n"  );
   }
 
@@ -2761,9 +2985,19 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
   else if(bugs)
     oyjlStringAdd( &text, malloc, free, "## %s\n[%s](%s)\n", _("BUGS"), bugs, bugs );
 
-  oyjlStringReplace( &text, "`", "\\`", malloc, free );
-  oyjlStringReplace( &text, "-", "\\-", malloc, free );
-  oyjlStringReplace( &text, "_", "\\_", malloc, free );
+  {
+    const char * t;
+    int insideTable[3] = {0,0,0};
+    oyjl_str tmp = oyjlStrNew(10,0,0);
+    oyjlStrAppendN( tmp, text, strlen(text) );
+    oyjlStrReplace( tmp, "`", "\\`", replaceOutsideHTML, insideTable );
+    oyjlStrReplace( tmp, "-", "\\-", replaceOutsideHTML, insideTable );
+    oyjlStrReplace( tmp, "_", "\\_", replaceOutsideHTML, insideTable );
+    t = oyjlStr(tmp);
+    text[0] = 0;
+    oyjlStringAdd( &text, malloc,free, "%s", t );
+    oyjlStrRelease( &tmp );
+  }
 
   return text;
 }

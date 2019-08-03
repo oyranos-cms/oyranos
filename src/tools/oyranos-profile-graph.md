@@ -3,104 +3,134 @@
 ## NAME
 oyranos\-profile\-graph v0.9.7 \- Oyranos Profile Graph
 ## SYNOPSIS
-**oyranos\-profile\-graph** [<strong>\-t</strong> *NUMBER*] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong> *NUMBER*] [<strong>\-o</strong> *\-|FILE*] [<strong>\-f</strong> *FORMAT*] [<strong>\-c</strong>] [<strong>\-x</strong>] [<strong>\-d</strong> *NUMBER*] [<strong>\-n</strong>] [<strong>\-2</strong>] [<strong>\-4</strong>] [<strong>\-r</strong>] [<strong>\-v</strong>] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
+**oyranos\-profile\-graph** [<strong>\-t</strong>=<em>NUMBER</em>] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMBER</em>] [<strong>\-o</strong>=<em>\-|FILE</em>] [<strong>\-f</strong>=<em>FORMAT</em>] [<strong>\-c</strong>] [<strong>\-x</strong>] [<strong>\-d</strong>=<em>NUMBER</em>] [<strong>\-n</strong>] [<strong>\-2</strong>] [<strong>\-4</strong>] [<strong>\-r</strong>] [<strong>\-v</strong>] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
 <br />
-**oyranos\-profile\-graph** <strong>\-S</strong> [<strong>\-t</strong> *NUMBER*] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong> *NUMBER*] [<strong>\-R</strong>] [<strong>\-o</strong> *\-|FILE*] [<strong>\-f</strong> *FORMAT*] [<strong>\-v</strong>]
+**oyranos\-profile\-graph** <strong>\-S</strong> [<strong>\-t</strong>=<em>NUMBER</em>] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMBER</em>] [<strong>\-R</strong>] [<strong>\-o</strong>=<em>\-|FILE</em>] [<strong>\-f</strong>=<em>FORMAT</em>] [<strong>\-v</strong>]
 <br />
-**oyranos\-profile\-graph** <strong>\-O</strong> [<strong>\-t</strong> *NUMBER*] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong> *NUMBER*] [<strong>\-R</strong>] [<strong>\-o</strong> *\-|FILE*] [<strong>\-f</strong> *FORMAT*] [<strong>\-v</strong>]
+**oyranos\-profile\-graph** <strong>\-O</strong> [<strong>\-t</strong>=<em>NUMBER</em>] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMBER</em>] [<strong>\-R</strong>] [<strong>\-o</strong>=<em>\-|FILE</em>] [<strong>\-f</strong>=<em>FORMAT</em>] [<strong>\-v</strong>]
 <br />
-**oyranos\-profile\-graph** <strong>\-k</strong> *NUMBER* [<strong>\-t</strong> *NUMBER*] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong> *NUMBER*] [<strong>\-R</strong>] [<strong>\-o</strong> *\-|FILE*] [<strong>\-f</strong> *FORMAT*] [<strong>\-v</strong>]
+**oyranos\-profile\-graph** <strong>\-k</strong>=<em>NUMBER</em> [<strong>\-t</strong>=<em>NUMBER</em>] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMBER</em>] [<strong>\-R</strong>] [<strong>\-o</strong>=<em>\-|FILE</em>] [<strong>\-f</strong>=<em>FORMAT</em>] [<strong>\-v</strong>]
 <br />
-**oyranos\-profile\-graph** <strong>\-i</strong> *STRING* [<strong>\-t</strong> *NUMBER*] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong> *NUMBER*] [<strong>\-R</strong>] [<strong>\-o</strong> *\-|FILE*] [<strong>\-f</strong> *FORMAT*] [<strong>\-v</strong>]
+**oyranos\-profile\-graph** <strong>\-i</strong>=<em>STRING</em> [<strong>\-t</strong>=<em>NUMBER</em>] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMBER</em>] [<strong>\-R</strong>] [<strong>\-o</strong>=<em>\-|FILE</em>] [<strong>\-f</strong>=<em>FORMAT</em>] [<strong>\-v</strong>]
 <br />
-**oyranos\-profile\-graph** <strong>\-s</strong> *FILE* <strong>\-p</strong> *FORMAT* <strong>\-z</strong> [<strong>\-t</strong> *NUMBER*] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong> *NUMBER*] [<strong>\-R</strong>] [<strong>\-P</strong> *STRING*] [<strong>\-o</strong> *\-|FILE*] [<strong>\-v</strong>]
+**oyranos\-profile\-graph** <strong>\-s</strong>=<em>FILE</em> <strong>\-p</strong>=<em>FORMAT</em> <strong>\-z</strong> [<strong>\-t</strong>=<em>NUMBER</em>] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMBER</em>] [<strong>\-R</strong>] [<strong>\-P</strong>=<em>STRING</em>] [<strong>\-o</strong>=<em>\-|FILE</em>] [<strong>\-v</strong>]
 <br />
-**oyranos\-profile\-graph** <strong>\-X</strong> *json|json+command|man|markdown* | <strong>\-h</strong> [<strong>\-v</strong>]
+**oyranos\-profile\-graph** <strong>\-X</strong>=<em>json|json+command|man|markdown</em> | <strong>\-h</strong> [<strong>\-v</strong>]
 ## DESCRIPTION
 The  oyranos\-profile\-graph programm converts ICC profiles or embedded ICC profiles from images to a graph image. By default the program shows the saturation line of the specified profiles and writes to stdout.
 ## OPTIONS
 ### 2D Graph from profiles
-&nbsp;&nbsp;**oyranos\-profile\-graph** [<strong>\-t</strong> *NUMBER*] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong> *NUMBER*] [<strong>\-o</strong> *\-|FILE*] [<strong>\-f</strong> *FORMAT*] [<strong>\-c</strong>] [<strong>\-x</strong>] [<strong>\-d</strong> *NUMBER*] [<strong>\-n</strong>] [<strong>\-2</strong>] [<strong>\-4</strong>] [<strong>\-r</strong>] [<strong>\-v</strong>] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
+&nbsp;&nbsp;**oyranos\-profile\-graph** [<strong>\-t</strong>=<em>NUMBER</em>] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMBER</em>] [<strong>\-o</strong>=<em>\-|FILE</em>] [<strong>\-f</strong>=<em>FORMAT</em>] [<strong>\-c</strong>] [<strong>\-x</strong>] [<strong>\-d</strong>=<em>NUMBER</em>] [<strong>\-n</strong>] [<strong>\-2</strong>] [<strong>\-4</strong>] [<strong>\-r</strong>] [<strong>\-v</strong>] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
 
 Create a 2D Graph containing the saturation line from a ICC Profile.
 
-*  *l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE*	ICC Profile
-* <strong>\-d</strong>|<strong>\-\-change\-thickness</strong> *NUMBER*	Specify increase of the thickness of the graph lines (NUMBER:0.7 [≥\-1000 ≤1000])
-* <strong>\-x</strong>|<strong>\-\-xyy</strong>	Use CIE*xyY *x*y plane for saturation line projection
-* <strong>\-c</strong>|<strong>\-\-no\-blackbody</strong>	Omit white line of lambert light emitters
-* <strong>\-n</strong>|<strong>\-\-no\-spectral\-line</strong>	Omit the spectral line
-* <strong>\-2</strong>|<strong>\-\-icc\-version\-2</strong>	Select ICC v2 Profiles
-* <strong>\-4</strong>|<strong>\-\-icc\-version\-4</strong>	Select ICC v4 Profiles
-* <strong>\-r</strong>|<strong>\-\-no\-repair</strong>	No Profile repair of ICC profile ID
+<table style='width:100%'>
+ <tr><td style='padding\-left:1em;padding-right:1em;vertical-align:top;width:25%'> <em>l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE</em></td> <td>ICC Profile </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-d</strong>|<strong>--change-thickness</strong> <em>NUMBER</em></td> <td>Specify increase of the thickness of the graph lines (NUMBER:0.7 [≥-1000 ≤1000])</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-x</strong>|<strong>--xyy</strong></td> <td>Use CIE*xyY *x*y plane for saturation line projection</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-c</strong>|<strong>--no-blackbody</strong></td> <td>Omit white line of lambert light emitters</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-n</strong>|<strong>--no-spectral-line</strong></td> <td>Omit the spectral line</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-2</strong>|<strong>--icc-version-2</strong></td> <td>Select ICC v2 Profiles</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-4</strong>|<strong>--icc-version-4</strong></td> <td>Select ICC v4 Profiles</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-r</strong>|<strong>--no-repair</strong></td> <td>No Profile repair of ICC profile ID</td> </tr>
+</table>
 
 ### Standard Observer 1931 2° Graph
-&nbsp;&nbsp;**oyranos\-profile\-graph** <strong>\-S</strong> [<strong>\-t</strong> *NUMBER*] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong> *NUMBER*] [<strong>\-R</strong>] [<strong>\-o</strong> *\-|FILE*] [<strong>\-f</strong> *FORMAT*] [<strong>\-v</strong>]
+&nbsp;&nbsp;**oyranos-profile\-graph** <strong>\-S</strong> [<strong>\-t</strong>=<em>NUMBER</em>] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMBER</em>] [<strong>\-R</strong>] [<strong>\-o</strong>=<em>\-|FILE</em>] [<strong>\-f</strong>=<em>FORMAT</em>] [<strong>\-v</strong>]
 
-* <strong>\-S</strong>|<strong>\-\-standard\-observer</strong>	CIE Standard Observer 1931 2°
+<table style='width:100%'>
+ <tr><td style='padding\-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-S</strong>|<strong>--standard-observer</strong></td> <td>CIE Standard Observer 1931 2°</td> </tr>
+</table>
 
 ### 1964 10° Observer Graph
-&nbsp;&nbsp;**oyranos\-profile\-graph** <strong>\-O</strong> [<strong>\-t</strong> *NUMBER*] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong> *NUMBER*] [<strong>\-R</strong>] [<strong>\-o</strong> *\-|FILE*] [<strong>\-f</strong> *FORMAT*] [<strong>\-v</strong>]
+&nbsp;&nbsp;**oyranos-profile\-graph** <strong>\-O</strong> [<strong>\-t</strong>=<em>NUMBER</em>] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMBER</em>] [<strong>\-R</strong>] [<strong>\-o</strong>=<em>\-|FILE</em>] [<strong>\-f</strong>=<em>FORMAT</em>] [<strong>\-v</strong>]
 
-* <strong>\-O</strong>|<strong>\-\-observer\-64</strong>	CIE Observer 1964 10°
+<table style='width:100%'>
+ <tr><td style='padding\-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-O</strong>|<strong>--observer-64</strong></td> <td>CIE Observer 1964 10°</td> </tr>
+</table>
 
 ### Blackbody Radiator Spectrum Graph
-&nbsp;&nbsp;**oyranos\-profile\-graph** <strong>\-k</strong> *NUMBER* [<strong>\-t</strong> *NUMBER*] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong> *NUMBER*] [<strong>\-R</strong>] [<strong>\-o</strong> *\-|FILE*] [<strong>\-f</strong> *FORMAT*] [<strong>\-v</strong>]
+&nbsp;&nbsp;**oyranos-profile\-graph** <strong>\-k</strong>=<em>NUMBER</em> [<strong>\-t</strong>=<em>NUMBER</em>] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMBER</em>] [<strong>\-R</strong>] [<strong>\-o</strong>=<em>\-|FILE</em>] [<strong>\-f</strong>=<em>FORMAT</em>] [<strong>\-v</strong>]
 
-* <strong>\-k</strong>|<strong>\-\-kelvin</strong> *NUMBER*	Blackbody Radiator (NUMBER:0 [≥0 ≤25000])
+<table style='width:100%'>
+ <tr><td style='padding\-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-k</strong>|<strong>--kelvin</strong> <em>NUMBER</em></td> <td>Blackbody Radiator (NUMBER:0 [≥0 ≤25000])</td> </tr>
+</table>
 
 ### Illuminant Spectrum Graph
-&nbsp;&nbsp;**oyranos\-profile\-graph** <strong>\-i</strong> *STRING* [<strong>\-t</strong> *NUMBER*] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong> *NUMBER*] [<strong>\-R</strong>] [<strong>\-o</strong> *\-|FILE*] [<strong>\-f</strong> *FORMAT*] [<strong>\-v</strong>]
+&nbsp;&nbsp;**oyranos-profile\-graph** <strong>\-i</strong>=<em>STRING</em> [<strong>\-t</strong>=<em>NUMBER</em>] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMBER</em>] [<strong>\-R</strong>] [<strong>\-o</strong>=<em>\-|FILE</em>] [<strong>\-f</strong>=<em>FORMAT</em>] [<strong>\-v</strong>]
 
-* <strong>\-i</strong>|<strong>\-\-illuminant</strong> *STRING*	Illuminant Spectrum
-   * <strong>\-i A</strong>		# Illuminant A
-   * <strong>\-i D50</strong>		# Illuminant D50
-   * <strong>\-i D55</strong>		# Illuminant D55
-   * <strong>\-i D65</strong>		# Illuminant D65
-   * <strong>\-i D65T</strong>		# Illuminant D65 T
-   * <strong>\-i D75</strong>		# Illuminant D75
-   * <strong>\-i D93</strong>		# Illuminant D93
+<table style='width:100%'>
+ <tr><td style='padding\-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-i</strong>|<strong>--illuminant</strong> <em>STRING</em></td> <td>Illuminant Spectrum
+  <table>
+   <tr><td style='padding-left:0.5em'><strong>-i A</strong></td><td># Illuminant A</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-i D50</strong></td><td># Illuminant D50</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-i D55</strong></td><td># Illuminant D55</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-i D65</strong></td><td># Illuminant D65</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-i D65T</strong></td><td># Illuminant D65 T</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-i D75</strong></td><td># Illuminant D75</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-i D93</strong></td><td># Illuminant D93</td></tr>
+  </table>
+  </td>
+ </tr>
+</table>
 
 ### Spectral Input Graph
-&nbsp;&nbsp;**oyranos\-profile\-graph** <strong>\-s</strong> *FILE* <strong>\-p</strong> *FORMAT* <strong>\-z</strong> [<strong>\-t</strong> *NUMBER*] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong> *NUMBER*] [<strong>\-R</strong>] [<strong>\-P</strong> *STRING*] [<strong>\-o</strong> *\-|FILE*] [<strong>\-v</strong>]
+&nbsp;&nbsp;**oyranos-profile\-graph** <strong>\-s</strong>=<em>FILE</em> <strong>\-p</strong>=<em>FORMAT</em> <strong>\-z</strong> [<strong>\-t</strong>=<em>NUMBER</em>] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMBER</em>] [<strong>\-R</strong>] [<strong>\-P</strong>=<em>STRING</em>] [<strong>\-o</strong>=<em>\-|FILE</em>] [<strong>\-v</strong>]
 
-* <strong>\-s</strong>|<strong>\-\-spectral</strong> *FILE*	Spectral Input
-* <strong>\-p</strong>|<strong>\-\-spectral\-format</strong> *FORMAT*	Specify spectral output file format
-   * <strong>\-p png</strong>		# PNG
-   * <strong>\-p svg</strong>		# SVG
-   * <strong>\-p csv</strong>		# CSV
-   * <strong>\-p ncc</strong>		# NCC
-   * <strong>\-p cgats</strong>		# CGATS
-   * <strong>\-p icc\-xml</strong>		# Icc XML
-   * <strong>\-p ppm</strong>		# PPM
-* <strong>\-P</strong>|<strong>\-\-pattern</strong> *STRING*	Filter of Color Names
-* <strong>\-z</strong>|<strong>\-\-scale</strong>	Scale the height of the spectrum graph
+<table style='width:100%'>
+ <tr><td style='padding\-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-s</strong>|<strong>--spectral</strong> <em>FILE</em></td> <td>Spectral Input </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-p</strong>|<strong>--spectral-format</strong> <em>FORMAT</em></td> <td>Specify spectral output file format
+  <table>
+   <tr><td style='padding-left:0.5em'><strong>-p png</strong></td><td># PNG</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-p svg</strong></td><td># SVG</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-p csv</strong></td><td># CSV</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-p ncc</strong></td><td># NCC</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-p cgats</strong></td><td># CGATS</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-p icc-xml</strong></td><td># Icc XML</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-p ppm</strong></td><td># PPM</td></tr>
+  </table>
+  </td>
+ </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-P</strong>|<strong>--pattern</strong> <em>STRING</em></td> <td>Filter of Color Names </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-z</strong>|<strong>--scale</strong></td> <td>Scale the height of the spectrum graph</td> </tr>
+</table>
 
 ### General options
-&nbsp;&nbsp;**oyranos\-profile\-graph** <strong>\-X</strong> *json|json+command|man|markdown* | <strong>\-h</strong> [<strong>\-v</strong>]
+&nbsp;&nbsp;**oyranos-profile\-graph** <strong>\-X</strong>=<em>json|json+command|man|markdown</em> | <strong>\-h</strong> [<strong>\-v</strong>]
 
-* <strong>\-t</strong>|<strong>\-\-thickness</strong> *NUMBER*	Specify the thickness of the graph lines (NUMBER:1 [≥0 ≤10])
-* <strong>\-b</strong>|<strong>\-\-no\-border</strong>	Omit border in graph
-* <strong>\-g</strong>|<strong>\-\-no\-color</strong>	Draw Gray
-* <strong>\-w</strong>|<strong>\-\-width</strong> *NUMBER*	Specify output image width in pixel (NUMBER:128 [≥64 ≤4096])
-* <strong>\-R</strong>|<strong>\-\-raster</strong>	Draw Raster
-* <strong>\-o</strong>|<strong>\-\-output</strong> *\-|FILE*	Specify output file name, default is stdout
-* <strong>\-f</strong>|<strong>\-\-format</strong> *FORMAT*	Specify output file format png or svg, default is png
-   * <strong>\-f png</strong>		# PNG
-   * <strong>\-f svg</strong>		# SVG
-* <strong>\-h</strong>|<strong>\-\-help</strong>	Help
-* <strong>\-X</strong>|<strong>\-\-export</strong> *json|json+command|man|markdown*	Export formated text: Get UI converted into text formats
-   * <strong>\-X man</strong>		# Man
-   * <strong>\-X markdown</strong>		# Markdown
-   * <strong>\-X json</strong>		# Json
-   * <strong>\-X json+command</strong>		# Json + Command
-   * <strong>\-X export</strong>		# Export
-* <strong>\-v</strong>|<strong>\-\-verbose</strong>	verbose
+<table style='width:100%'>
+ <tr><td style='padding\-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-t</strong>|<strong>--thickness</strong> <em>NUMBER</em></td> <td>Specify the thickness of the graph lines (NUMBER:1 [≥0 ≤10])</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-b</strong>|<strong>--no-border</strong></td> <td>Omit border in graph</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-g</strong>|<strong>--no-color</strong></td> <td>Draw Gray</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-w</strong>|<strong>--width</strong> <em>NUMBER</em></td> <td>Specify output image width in pixel (NUMBER:128 [≥64 ≤4096])</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-R</strong>|<strong>--raster</strong></td> <td>Draw Raster</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-o</strong>|<strong>--output</strong> <em>-|FILE</em></td> <td>Specify output file name, default is stdout </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-f</strong>|<strong>--format</strong> <em>FORMAT</em></td> <td>Specify output file format png or svg, default is png
+  <table>
+   <tr><td style='padding-left:0.5em'><strong>-f png</strong></td><td># PNG</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-f svg</strong></td><td># SVG</td></tr>
+  </table>
+  </td>
+ </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-h</strong>|<strong>--help</strong></td> <td>Help</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-X</strong>|<strong>--export</strong> <em>json|json+command|man|markdown</em></td> <td>Export formated text<br />Get UI converted into text formats
+  <table>
+   <tr><td style='padding-left:0.5em'><strong>-X man</strong></td><td># Man</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-X markdown</strong></td><td># Markdown</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-X json</strong></td><td># Json</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-X json+command</strong></td><td># Json + Command</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-X export</strong></td><td># Export</td></tr>
+  </table>
+  </td>
+ </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-v</strong>|<strong>--verbose</strong></td> <td>verbose</td> </tr>
+</table>
 
 ## ENVIRONMENT VARIABLES
 ### OY\_DEBUG
 &nbsp;&nbsp;set the Oyranos debug level.
   <br />
-&nbsp;&nbsp;Alternatively the \-v option can be used.
+&nbsp;&nbsp;Alternatively the -v option can be used.
   <br />
 &nbsp;&nbsp;Valid integer range is from 1\-20.
 ### XDG\_DATA\_HOME XDG\_DATA\_DIRS
@@ -115,7 +145,7 @@ Create a 2D Graph containing the saturation line from a ICC Profile.
 ## AUTHOR
 Kai\-Uwe Behrmann http://www.oyranos.org
 ## COPYRIGHT
-*Copyright 2018 Kai\-Uwe Behrmann*
+*© 2018\-2019 Kai\-Uwe Behrmann*
 
 
 ### License

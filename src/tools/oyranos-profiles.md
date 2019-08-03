@@ -3,73 +3,85 @@
 ## NAME
 oyranos\-profiles v0.9.7 \- Oyranos Profiles
 ## SYNOPSIS
-**oyranos\-profiles** <strong>\-l</strong> [<strong>\-f</strong>] [<strong>\-e</strong>] [<strong>\-a</strong>] [<strong>\-c</strong>] [<strong>\-d</strong>] [<strong>\-k</strong>] [<strong>\-n</strong>] [<strong>\-o</strong>] [<strong>\-i</strong>] [<strong>\-2</strong>] [<strong>\-4</strong>] [<strong>\-P</strong>] [<strong>\-T</strong> *KEY;VALUE*] [<strong>\-v</strong>]
+**oyranos\-profiles** <strong>\-l</strong> [<strong>\-f</strong>] [<strong>\-e</strong>] [<strong>\-a</strong>] [<strong>\-c</strong>] [<strong>\-d</strong>] [<strong>\-k</strong>] [<strong>\-n</strong>] [<strong>\-o</strong>] [<strong>\-i</strong>] [<strong>\-2</strong>] [<strong>\-4</strong>] [<strong>\-P</strong>] [<strong>\-T</strong>=<em>KEY;VALUE</em>] [<strong>\-v</strong>]
 <br />
 **oyranos\-profiles** <strong>\-p</strong> [<strong>\-u</strong>|<strong>\-s</strong>|<strong>\-y</strong>|<strong>\-m</strong>] [<strong>\-v</strong>]
 <br />
-**oyranos\-profiles** <strong>\-I</strong> *ICC\_PROFILE* | <strong>\-t</strong> *TAXI\_ID* [<strong>\-u</strong>|<strong>\-s</strong>|<strong>\-y</strong>|<strong>\-m</strong>] [<strong>\-g</strong>] [<strong>\-v</strong>]
+**oyranos\-profiles** <strong>\-I</strong>=<em>ICC\_PROFILE</em> | <strong>\-t</strong>=<em>TAXI\_ID</em> [<strong>\-u</strong>|<strong>\-s</strong>|<strong>\-y</strong>|<strong>\-m</strong>] [<strong>\-g</strong>] [<strong>\-v</strong>]
 <br />
-**oyranos\-profiles** <strong>\-h</strong> <strong>\-X</strong> *json|json+command|man|markdown*
+**oyranos\-profiles** <strong>\-h</strong> <strong>\-X</strong>=<em>json|json+command|man|markdown</em>
 ## DESCRIPTION
 The tool can list installed profiles, search paths and can help install a ICC color profile in a search path.
 ## OPTIONS
 ### List of available ICC color profiles
-&nbsp;&nbsp;**oyranos\-profiles** <strong>\-l</strong> [<strong>\-f</strong>] [<strong>\-e</strong>] [<strong>\-a</strong>] [<strong>\-c</strong>] [<strong>\-d</strong>] [<strong>\-k</strong>] [<strong>\-n</strong>] [<strong>\-o</strong>] [<strong>\-i</strong>] [<strong>\-2</strong>] [<strong>\-4</strong>] [<strong>\-P</strong>] [<strong>\-T</strong> *KEY;VALUE*] [<strong>\-v</strong>]
+&nbsp;&nbsp;**oyranos\-profiles** <strong>\-l</strong> [<strong>\-f</strong>] [<strong>\-e</strong>] [<strong>\-a</strong>] [<strong>\-c</strong>] [<strong>\-d</strong>] [<strong>\-k</strong>] [<strong>\-n</strong>] [<strong>\-o</strong>] [<strong>\-i</strong>] [<strong>\-2</strong>] [<strong>\-4</strong>] [<strong>\-P</strong>] [<strong>\-T</strong>=<em>KEY;VALUE</em>] [<strong>\-v</strong>]
 
-* <strong>\-l</strong>|<strong>\-\-list\-profiles</strong>	List Profiles
-* <strong>\-f</strong>|<strong>\-\-full\-names</strong>	List profile full names: Show path name and file name.
-* <strong>\-e</strong>|<strong>\-\-internal\-names</strong>	List profile internal names: The text string comes from the 'desc' tag.
-* <strong>\-a</strong>|<strong>\-\-abstract</strong>	Select Abstract profiles
-* <strong>\-c</strong>|<strong>\-\-color\-space</strong>	Select Color Space profiles
-* <strong>\-d</strong>|<strong>\-\-display</strong>	Select Monitor profiles
-* <strong>\-k</strong>|<strong>\-\-device\-link</strong>	Select Device Link profiles
-* <strong>\-n</strong>|<strong>\-\-named\-color</strong>	Select Named Color profiles
-* <strong>\-o</strong>|<strong>\-\-output</strong>	Select Output profiles
-* <strong>\-i</strong>|<strong>\-\-input</strong>	Select Input profiles
-* <strong>\-2</strong>|<strong>\-\-icc\-version\-2</strong>	Select ICC v2 Profiles
-* <strong>\-4</strong>|<strong>\-\-icc\-version\-4</strong>	Select ICC v4 Profiles
-* <strong>\-P</strong>|<strong>\-\-path</strong>	Show profiles containing a string as part of their full name: PATH\_SUB\_STRING
-* <strong>\-T</strong>|<strong>\-\-meta</strong> *KEY;VALUE*	Filter for meta tag key/value pair: Show profiles containing a certain key/value pair of their meta tag. VALUE can contain '*' to allow for substring matching.
-* <strong>\-D</strong>|<strong>\-\-duplicates</strong>	Show identical multiple installed profiles
+<table style='width:100%'>
+ <tr><td style='padding\-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-l</strong>|<strong>--list-profiles</strong></td> <td>List Profiles</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-f</strong>|<strong>--full-names</strong></td> <td>List profile full names<br />Show path name and file name.</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-e</strong>|<strong>--internal-names</strong></td> <td>List profile internal names<br />The text string comes from the 'desc' tag.</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-a</strong>|<strong>--abstract</strong></td> <td>Select Abstract profiles</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-c</strong>|<strong>--color-space</strong></td> <td>Select Color Space profiles</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-d</strong>|<strong>--display</strong></td> <td>Select Monitor profiles</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-k</strong>|<strong>--device-link</strong></td> <td>Select Device Link profiles</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-n</strong>|<strong>--named-color</strong></td> <td>Select Named Color profiles</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-o</strong>|<strong>--output</strong></td> <td>Select Output profiles</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-i</strong>|<strong>--input</strong></td> <td>Select Input profiles</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-2</strong>|<strong>--icc-version-2</strong></td> <td>Select ICC v2 Profiles</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-4</strong>|<strong>--icc-version-4</strong></td> <td>Select ICC v4 Profiles</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-P</strong>|<strong>--path</strong></td> <td>Show profiles containing a string as part of their full name<br />PATH\_SUB_STRING </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-T</strong>|<strong>--meta</strong> <em>KEY;VALUE</em></td> <td>Filter for meta tag key/value pair<br />Show profiles containing a certain key/value pair of their meta tag. VALUE can contain '*' to allow for substring matching. </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-D</strong>|<strong>--duplicates</strong></td> <td>Show identical multiple installed profiles</td> </tr>
+</table>
 
 ### List search paths
-&nbsp;&nbsp;**oyranos\-profiles** <strong>\-p</strong> [<strong>\-u</strong>|<strong>\-s</strong>|<strong>\-y</strong>|<strong>\-m</strong>] [<strong>\-v</strong>]
+&nbsp;&nbsp;**oyranos-profiles** <strong>\-p</strong> [<strong>\-u</strong>|<strong>\-s</strong>|<strong>\-y</strong>|<strong>\-m</strong>] [<strong>\-v</strong>]
 
-* <strong>\-p</strong>|<strong>\-\-list\-paths</strong>	List ICC Profile Paths
-* <strong>\-u</strong>|<strong>\-\-user</strong>	User path
-* <strong>\-s</strong>|<strong>\-\-system</strong>	System path
-* <strong>\-y</strong>|<strong>\-\-oyranos</strong>	Oyranos path
-* <strong>\-m</strong>|<strong>\-\-machine</strong>	Machine path
+<table style='width:100%'>
+ <tr><td style='padding\-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-p</strong>|<strong>--list-paths</strong></td> <td>List ICC Profile Paths</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-u</strong>|<strong>--user</strong></td> <td>User path</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-s</strong>|<strong>--system</strong></td> <td>System path</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-y</strong>|<strong>--oyranos</strong></td> <td>Oyranos path</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-m</strong>|<strong>--machine</strong></td> <td>Machine path</td> </tr>
+</table>
 
 ### Install Profile
-&nbsp;&nbsp;**oyranos\-profiles** <strong>\-I</strong> *ICC\_PROFILE* | <strong>\-t</strong> *TAXI\_ID* [<strong>\-u</strong>|<strong>\-s</strong>|<strong>\-y</strong>|<strong>\-m</strong>] [<strong>\-g</strong>] [<strong>\-v</strong>]
+&nbsp;&nbsp;**oyranos-profiles** <strong>\-I</strong>=<em>ICC_PROFILE</em> | <strong>\-t</strong>=<em>TAXI\_ID</em> [<strong>\-u</strong>|<strong>\-s</strong>|<strong>\-y</strong>|<strong>\-m</strong>] [<strong>\-g</strong>] [<strong>\-v</strong>]
 
-* <strong>\-I</strong>|<strong>\-\-install</strong> *ICC\_PROFILE*	Install Profile
-* <strong>\-t</strong>|<strong>\-\-taxi</strong> *TAXI\_ID*	ICC Taxi Profile DB
-* <strong>\-u</strong>|<strong>\-\-user</strong>	User path
-* <strong>\-s</strong>|<strong>\-\-system</strong>	System path
-* <strong>\-y</strong>|<strong>\-\-oyranos</strong>	Oyranos path
-* <strong>\-m</strong>|<strong>\-\-machine</strong>	Machine path
-* <strong>\-g</strong>|<strong>\-\-gui</strong>	Use Graphical User Interface
+<table style='width:100%'>
+ <tr><td style='padding\-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-I</strong>|<strong>--install</strong> <em>ICC\_PROFILE</em></td> <td>Install Profile </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-t</strong>|<strong>--taxi</strong> <em>TAXI_ID</em></td> <td>ICC Taxi Profile DB </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-u</strong>|<strong>--user</strong></td> <td>User path</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-s</strong>|<strong>--system</strong></td> <td>System path</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-y</strong>|<strong>--oyranos</strong></td> <td>Oyranos path</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-m</strong>|<strong>--machine</strong></td> <td>Machine path</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-g</strong>|<strong>--gui</strong></td> <td>Use Graphical User Interface</td> </tr>
+</table>
 
 ### General options
-&nbsp;&nbsp;**oyranos\-profiles** <strong>\-h</strong> <strong>\-X</strong> *json|json+command|man|markdown*
+&nbsp;&nbsp;**oyranos-profiles** <strong>\-h</strong> <strong>\-X</strong>=<em>json|json+command|man|markdown</em>
 
-* <strong>\-h</strong>|<strong>\-\-help</strong>	Help
-* <strong>\-X</strong>|<strong>\-\-export</strong> *json|json+command|man|markdown*	Export formated text: Get UI converted into text formats
-   * <strong>\-X man</strong>		# Man
-   * <strong>\-X markdown</strong>		# Markdown
-   * <strong>\-X json</strong>		# Json
-   * <strong>\-X json+command</strong>		# Json + Command
-   * <strong>\-X export</strong>		# Export
-* <strong>\-r</strong>|<strong>\-\-no\-repair</strong>	No Profile repair of ICC profile ID
-* <strong>\-v</strong>|<strong>\-\-verbose</strong>	verbose
+<table style='width:100%'>
+ <tr><td style='padding\-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-h</strong>|<strong>--help</strong></td> <td>Help</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-X</strong>|<strong>--export</strong> <em>json|json+command|man|markdown</em></td> <td>Export formated text<br />Get UI converted into text formats
+  <table>
+   <tr><td style='padding-left:0.5em'><strong>-X man</strong></td><td># Man</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-X markdown</strong></td><td># Markdown</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-X json</strong></td><td># Json</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-X json+command</strong></td><td># Json + Command</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-X export</strong></td><td># Export</td></tr>
+  </table>
+  </td>
+ </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-r</strong>|<strong>--no-repair</strong></td> <td>No Profile repair of ICC profile ID</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-v</strong>|<strong>--verbose</strong></td> <td>verbose</td> </tr>
+</table>
 
 ## ENVIRONMENT VARIABLES
-### OY\_DEBUG
+### OY_DEBUG
 &nbsp;&nbsp;set the Oyranos debug level.
   <br />
-&nbsp;&nbsp;Alternatively the \-v option can be used.
+&nbsp;&nbsp;Alternatively the -v option can be used.
   <br />
 &nbsp;&nbsp;Valid integer range is from 1\-20.
 ### XDG\_DATA\_HOME XDG\_DATA\_DIRS
@@ -90,7 +102,7 @@ The tool can list installed profiles, search paths and can help install a ICC co
 ## AUTHOR
 Kai\-Uwe Behrmann http://www.oyranos.org
 ## COPYRIGHT
-*Copyright 2018 Kai\-Uwe Behrmann*
+*© 2018\-2019 Kai\-Uwe Behrmann*
 
 
 ### License

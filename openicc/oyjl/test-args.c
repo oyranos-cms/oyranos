@@ -114,7 +114,7 @@ oyjlTESTRESULT_e testArgs()
   }
 
   const char * syn = oyjlOptions_PrintHelpSynopsis( ui->opts, &ui->opts->groups[0], oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MARKDOWN );
-  if(strcmp(syn,"**test-args** | [<strong>-o</strong> *0|1|2*] [<strong>-v</strong>]") == 0)
+  if(strcmp(syn,"**test-args** | [<strong>-o</strong>=<em>0|1|2</em>] [<strong>-v</strong>]") == 0)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "SynopsisMode1  #       o,v    o                " );
   } else
@@ -126,7 +126,7 @@ oyjlTESTRESULT_e testArgs()
     fprintf( zout, "SynopsisMode1: %s\n", syn );
 
   syn = oyjlOptions_PrintHelpSynopsis( ui->opts, &ui->opts->groups[1], oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MARKDOWN );
-  if(strcmp(syn,"**test-args** | [<strong>-o</strong> *0|1|2*] [<strong>-v</strong>]") == 0)
+  if(strcmp(syn,"**test-args** | [<strong>-o</strong>=<em>0|1|2</em>] [<strong>-v</strong>]") == 0)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "SynopsisMode2  #       o,v    #,o              " );
   } else
@@ -162,7 +162,7 @@ oyjlTESTRESULT_e testArgs()
     fprintf( zout, "SynopsisMode4: %s\n", syn );
 
   syn = oyjlOptions_PrintHelpSynopsis( ui->opts, &ui->opts->groups[4], oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MARKDOWN );
-  if(strcmp(syn,"**test-args** [<strong>-o</strong> *0|1|2*] [<strong>-v</strong>] FILENAME") == 0)
+  if(strcmp(syn,"**test-args** [<strong>-o</strong>=<em>0|1|2</em>] [<strong>-v</strong>] FILENAME") == 0)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "SynopsisMode5  @       o,v    @,o              " );
   } else
@@ -174,7 +174,7 @@ oyjlTESTRESULT_e testArgs()
     fprintf( zout, "SynopsisMode5: %s\n", syn );
 
   syn = oyjlOptions_PrintHelpSynopsis( ui->opts, &ui->opts->groups[5], oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MARKDOWN );
-  if(strcmp(syn,"**test-args** <strong>-i</strong> *FILENAME* [<strong>-o</strong> *0|1|2*] [<strong>-v</strong>]") == 0)
+  if(strcmp(syn,"**test-args** <strong>-i</strong>=<em>FILENAME</em> [<strong>-o</strong>=<em>0|1|2</em>] [<strong>-v</strong>]") == 0)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "SynopsisMode6  i       o,v    i,o              " );
   } else
@@ -186,7 +186,7 @@ oyjlTESTRESULT_e testArgs()
     fprintf( zout, "SynopsisMode6: %s\n", syn );
 
   syn = oyjlOptions_PrintHelpSynopsis( ui->opts, &ui->opts->groups[6], oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MARKDOWN );
-  if(strcmp(syn,"**test-args** <strong>-i</strong> *FILENAME* | <strong>-o</strong> *0|1|2* [<strong>-h</strong>|<strong>-v</strong>]") == 0)
+  if(strcmp(syn,"**test-args** <strong>-i</strong>=<em>FILENAME</em> | <strong>-o</strong>=<em>0|1|2</em> [<strong>-h</strong>|<strong>-v</strong>]") == 0)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "SynopsisMode7  i|o     h|v    i,o,h,v          " );
   } else
@@ -324,7 +324,7 @@ oyjlTESTRESULT_e testArgs()
   if(text) {free(text);} text = NULL;
 
   text = oyjlUi_ToMarkdown( ui, 0 );
-  if(text && strlen(text) == 1010)
+  if(text && strlen(text) == 1804)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlUi_ToMarkdown() %lu                       ", strlen(text) );
   } else

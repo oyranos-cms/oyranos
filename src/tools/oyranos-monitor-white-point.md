@@ -3,104 +3,144 @@
 ## NAME
 oyranos\-monitor\-white\-point v0.9.7 \- Night Manager
 ## SYNOPSIS
-**oyranos\-monitor\-white\-point** <strong>\-n</strong> *0|1|2|3|4|5|6|7* <strong>\-g</strong> *ICC\_PROFILE* [<strong>\-b</strong> *PERCENT*] [<strong>\-z</strong>] [<strong>\-v</strong>]
+**oyranos\-monitor\-white\-point** <strong>\-n</strong>=<em>0|1|2|3|4|5|6|7</em> <strong>\-g</strong>=<em>ICC\_PROFILE</em> [<strong>\-b</strong>=<em>PERCENT</em>] [<strong>\-z</strong>] [<strong>\-v</strong>]
 <br />
-**oyranos\-monitor\-white\-point** <strong>\-w</strong> *0|1|2|3|4|5|6|7* <strong>\-a</strong> *KELVIN* [<strong>\-z</strong>] [<strong>\-v</strong>]
+**oyranos\-monitor\-white\-point** <strong>\-w</strong>=<em>0|1|2|3|4|5|6|7</em> <strong>\-a</strong>=<em>KELVIN</em> [<strong>\-z</strong>] [<strong>\-v</strong>]
 <br />
-**oyranos\-monitor\-white\-point** <strong>\-s</strong> *0|1|2|3|4|5|6|7* <strong>\-e</strong> *ICC\_PROFILE* [<strong>\-z</strong>] [<strong>\-v</strong>]
+**oyranos\-monitor\-white\-point** <strong>\-s</strong>=<em>0|1|2|3|4|5|6|7</em> <strong>\-e</strong>=<em>ICC\_PROFILE</em> [<strong>\-z</strong>] [<strong>\-v</strong>]
 <br />
-**oyranos\-monitor\-white\-point** <strong>\-l</strong> | <strong>\-i</strong> *ANGLE\_IN\_DEGREE* <strong>\-o</strong> *ANGLE\_IN\_DEGREE* [<strong>\-t</strong> *ANGLE\_IN\_DEGREE|0:rise/set|\-6:civil|\-12:nautical|\-18:astronomical*] [<strong>\-z</strong>] [<strong>\-v</strong>]
+**oyranos\-monitor\-white\-point** <strong>\-l</strong> | <strong>\-i</strong>=<em>ANGLE\_IN\_DEGREE</em> <strong>\-o</strong>=<em>ANGLE\_IN\_DEGREE</em> [<strong>\-t</strong>=<em>ANGLE\_IN\_DEGREE|0:rise/set|\-6:civil|\-12:nautical|\-18:astronomical</em>] [<strong>\-z</strong>] [<strong>\-v</strong>]
 <br />
-**oyranos\-monitor\-white\-point** <strong>\-d</strong> *0|1|2* [<strong>\-v</strong>]
+**oyranos\-monitor\-white\-point** <strong>\-d</strong>=<em>0|1|2</em> [<strong>\-v</strong>]
 <br />
-**oyranos\-monitor\-white\-point** <strong>\-m</strong> | <strong>\-r</strong> | <strong>\-X</strong> *json|json+command|man|markdown* | <strong>\-h</strong> [<strong>\-v</strong>]
+**oyranos\-monitor\-white\-point** <strong>\-m</strong> | <strong>\-r</strong> | <strong>\-X</strong>=<em>json|json+command|man|markdown</em> | <strong>\-h</strong> [<strong>\-v</strong>]
 ## DESCRIPTION
 The tool can set the actual white point or set it by local day and night time. A additional effect profile can be selected.
 ## OPTIONS
 ### Nightly appearance
-&nbsp;&nbsp;**oyranos\-monitor\-white\-point** <strong>\-n</strong> *0|1|2|3|4|5|6|7* <strong>\-g</strong> *ICC\_PROFILE* [<strong>\-b</strong> *PERCENT*] [<strong>\-z</strong>] [<strong>\-v</strong>]
+&nbsp;&nbsp;**oyranos\-monitor\-white\-point** <strong>\-n</strong>=<em>0|1|2|3|4|5|6|7</em> <strong>\-g</strong>=<em>ICC\_PROFILE</em> [<strong>\-b</strong>=<em>PERCENT</em>] [<strong>\-z</strong>] [<strong>\-v</strong>]
 
 The Night white point mode shall allow to reduce influence of blue light during night time. A white point temperature of around 4000K and lower allows to get easier into sleep and is recommended along with warm room illumination in evening and night times.
 
-* <strong>\-n</strong>|<strong>\-\-night\-white\-point</strong> *0|1|2|3|4|5|6|7*	Set night time mode: A white point temperature of around 4000K and lower allows to get easier into sleep. Enable by setting this option to Automatic (\-n=1) and Temperature to 3000 (\-a=3000).
-   * <strong>\-n 0</strong>		# No
-   * <strong>\-n 1</strong>		# Automatic
-   * <strong>\-n 2</strong>		# Illuminant D50
-   * <strong>\-n 3</strong>		# Illuminant D55
-   * <strong>\-n 4</strong>		# Illuminant D65
-   * <strong>\-n 5</strong>		# Illuminant D75
-   * <strong>\-n 6</strong>		# Illuminant D93
-* <strong>\-g</strong>|<strong>\-\-night\-effect</strong> *ICC\_PROFILE*	Set night time effect: A ICC profile of class abstract. Ideally the effect profile works on 1D RGB curves only and is marked meta:EFFECT\_linear=yes .
-   * <strong>\-g \-</strong>		# [none]
-   * <strong>\-g Effect 1</strong>		# Example Effect 1
-   * <strong>\-g Effect 2</strong>		# Example Effect 2
-* <strong>\-b</strong>|<strong>\-\-night\-backlight</strong> *PERCENT*	Set Nightly Backlight: The option needs xbacklight installed and supporting your device for dimming the monitor lamp. (PERCENT:4 [≥0 ≤100])
+<table style='width:100%'>
+ <tr><td style='padding\-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-n</strong>|<strong>--night-white-point</strong> <em>0|1|2|3|4|5|6|7</em></td> <td>Set night time mode<br />A white point temperature of around 4000K and lower allows to get easier into sleep. Enable by setting this option to Automatic (-n=1) and Temperature to 3000 (-a=3000).
+  <table>
+   <tr><td style='padding-left:0.5em'><strong>-n 0</strong></td><td># No</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-n 1</strong></td><td># Automatic</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-n 2</strong></td><td># Illuminant D50</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-n 3</strong></td><td># Illuminant D55</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-n 4</strong></td><td># Illuminant D65</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-n 5</strong></td><td># Illuminant D75</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-n 6</strong></td><td># Illuminant D93</td></tr>
+  </table>
+  </td>
+ </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-g</strong>|<strong>--night-effect</strong> <em>ICC\_PROFILE</em></td> <td>Set night time effect<br />A ICC profile of class abstract. Ideally the effect profile works on 1D RGB curves only and is marked meta:EFFECT_linear=yes .
+  <table>
+   <tr><td style='padding-left:0.5em'><strong>-g -</strong></td><td># [none]</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-g Effect 1</strong></td><td># Example Effect 1</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-g Effect 2</strong></td><td># Example Effect 2</td></tr>
+  </table>
+  </td>
+ </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-b</strong>|<strong>--night-backlight</strong> <em>PERCENT</em></td> <td>Set Nightly Backlight: The option needs xbacklight installed and supporting your device for dimming the monitor lamp. (PERCENT:4 [≥0 ≤100])</td> </tr>
+</table>
 
 ### Actual mode
-&nbsp;&nbsp;**oyranos\-monitor\-white\-point** <strong>\-w</strong> *0|1|2|3|4|5|6|7* <strong>\-a</strong> *KELVIN* [<strong>\-z</strong>] [<strong>\-v</strong>]
+&nbsp;&nbsp;**oyranos-monitor\-white\-point** <strong>\-w</strong>=<em>0|1|2|3|4|5|6|7</em> <strong>\-a</strong>=<em>KELVIN</em> [<strong>\-z</strong>] [<strong>\-v</strong>]
 
-* <strong>\-w</strong>|<strong>\-\-white\-point</strong> *0|1|2|3|4|5|6|7*	Set white point mode
-   * <strong>\-w 0</strong>		# No
-   * <strong>\-w 1</strong>		# Automatic
-   * <strong>\-w 2</strong>		# Illuminant D50
-   * <strong>\-w 3</strong>		# Illuminant D55
-   * <strong>\-w 4</strong>		# Illuminant D65
-   * <strong>\-w 5</strong>		# Illuminant D75
-   * <strong>\-w 6</strong>		# Illuminant D93
-* <strong>\-a</strong>|<strong>\-\-automatic</strong> *KELVIN*	A value from 2700 till 8000 Kelvin is expected to show no artefacts (KELVIN:2800 [≥1100 ≤10100])
+<table style='width:100%'>
+ <tr><td style='padding\-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-w</strong>|<strong>--white-point</strong> <em>0|1|2|3|4|5|6|7</em></td> <td>Set white point mode
+  <table>
+   <tr><td style='padding-left:0.5em'><strong>-w 0</strong></td><td># No</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-w 1</strong></td><td># Automatic</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-w 2</strong></td><td># Illuminant D50</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-w 3</strong></td><td># Illuminant D55</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-w 4</strong></td><td># Illuminant D65</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-w 5</strong></td><td># Illuminant D75</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-w 6</strong></td><td># Illuminant D93</td></tr>
+  </table>
+  </td>
+ </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-a</strong>|<strong>--automatic</strong> <em>KELVIN</em></td> <td>A value from 2700 till 8000 Kelvin is expected to show no artefacts (KELVIN:2800 [≥1100 ≤10100])</td> </tr>
+</table>
 
 ### Sun light appearance
-&nbsp;&nbsp;**oyranos\-monitor\-white\-point** <strong>\-s</strong> *0|1|2|3|4|5|6|7* <strong>\-e</strong> *ICC\_PROFILE* [<strong>\-z</strong>] [<strong>\-v</strong>]
+&nbsp;&nbsp;**oyranos-monitor\-white\-point** <strong>\-s</strong>=<em>0|1|2|3|4|5|6|7</em> <strong>\-e</strong>=<em>ICC_PROFILE</em> [<strong>\-z</strong>] [<strong>\-v</strong>]
 
-* <strong>\-s</strong>|<strong>\-\-sun\-white\-point</strong> *0|1|2|3|4|5|6|7*	Set day time mode
-   * <strong>\-s 0</strong>		# No
-   * <strong>\-s 1</strong>		# Automatic
-   * <strong>\-s 2</strong>		# Illuminant D50
-   * <strong>\-s 3</strong>		# Illuminant D55
-   * <strong>\-s 4</strong>		# Illuminant D65
-   * <strong>\-s 5</strong>		# Illuminant D75
-   * <strong>\-s 6</strong>		# Illuminant D93
-* <strong>\-e</strong>|<strong>\-\-sunlight\-effect</strong> *ICC\_PROFILE*	Set day time effect: A ICC profile of class abstract. Ideally the effect profile works on 1D RGB curves only and is marked meta:EFFECT\_linear=yes .
-   * <strong>\-e \-</strong>		# [none]
-   * <strong>\-e Effect 1</strong>		# Example Effect 1
-   * <strong>\-e Effect 2</strong>		# Example Effect 2
+<table style='width:100%'>
+ <tr><td style='padding\-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-s</strong>|<strong>--sun-white-point</strong> <em>0|1|2|3|4|5|6|7</em></td> <td>Set day time mode
+  <table>
+   <tr><td style='padding-left:0.5em'><strong>-s 0</strong></td><td># No</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-s 1</strong></td><td># Automatic</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-s 2</strong></td><td># Illuminant D50</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-s 3</strong></td><td># Illuminant D55</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-s 4</strong></td><td># Illuminant D65</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-s 5</strong></td><td># Illuminant D75</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-s 6</strong></td><td># Illuminant D93</td></tr>
+  </table>
+  </td>
+ </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-e</strong>|<strong>--sunlight-effect</strong> <em>ICC\_PROFILE</em></td> <td>Set day time effect<br />A ICC profile of class abstract. Ideally the effect profile works on 1D RGB curves only and is marked meta:EFFECT_linear=yes .
+  <table>
+   <tr><td style='padding-left:0.5em'><strong>-e -</strong></td><td># [none]</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-e Effect 1</strong></td><td># Example Effect 1</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-e Effect 2</strong></td><td># Example Effect 2</td></tr>
+  </table>
+  </td>
+ </tr>
+</table>
 
 ### Location and Twilight
-&nbsp;&nbsp;**oyranos\-monitor\-white\-point** <strong>\-l</strong> | <strong>\-i</strong> *ANGLE\_IN\_DEGREE* <strong>\-o</strong> *ANGLE\_IN\_DEGREE* [<strong>\-t</strong> *ANGLE\_IN\_DEGREE|0:rise/set|\-6:civil|\-12:nautical|\-18:astronomical*] [<strong>\-z</strong>] [<strong>\-v</strong>]
+&nbsp;&nbsp;**oyranos-monitor\-white\-point** <strong>\-l</strong> | <strong>\-i</strong>=<em>ANGLE_IN\_DEGREE</em> <strong>\-o</strong>=<em>ANGLE\_IN\_DEGREE</em> [<strong>\-t</strong>=<em>ANGLE\_IN\_DEGREE|0:rise/set|\-6:civil|\-12:nautical|\-18:astronomical</em>] [<strong>\-z</strong>] [<strong>\-v</strong>]
 
-* <strong>\-l</strong>|<strong>\-\-location</strong>	Detect location by IP adress
-* <strong>\-i</strong>|<strong>\-\-latitude</strong> *ANGLE\_IN\_DEGREE*	Set Latitude (ANGLE\_IN\_DEGREE:0 [≥\-90 ≤90])
-* <strong>\-o</strong>|<strong>\-\-longitude</strong> *ANGLE\_IN\_DEGREE*	Set Longitude (ANGLE\_IN\_DEGREE:0 [≥\-180 ≤180])
-* <strong>\-t</strong>|<strong>\-\-twilight</strong> *ANGLE\_IN\_DEGREE|0:rise/set|\-6:civil|\-12:nautical|\-18:astronomical*	Set Twilight angle (ANGLE\_IN\_DEGREE|0:rise/set|\-6:civil|\-12:nautical|\-18:astronomical:0 [≥18 ≤\-18])
+<table style='width:100%'>
+ <tr><td style='padding\-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-l</strong>|<strong>--location</strong></td> <td>Detect location by IP adress</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-i</strong>|<strong>--latitude</strong> <em>ANGLE\_IN_DEGREE</em></td> <td>Set Latitude (ANGLE_IN_DEGREE:0 [≥-90 ≤90])</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-o</strong>|<strong>--longitude</strong> <em>ANGLE_IN_DEGREE</em></td> <td>Set Longitude (ANGLE_IN_DEGREE:0 [≥-180 ≤180])</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-t</strong>|<strong>--twilight</strong> <em>ANGLE_IN_DEGREE|0:rise/set|-6:civil|-12:nautical|-18:astronomical</em></td> <td>Set Twilight angle (ANGLE_IN_DEGREE|0:rise/set|-6:civil|-12:nautical|-18:astronomical:0 [≥18 ≤-18])</td> </tr>
+</table>
 
 ### Run sunset daemon
-&nbsp;&nbsp;**oyranos\-monitor\-white\-point** <strong>\-d</strong> *0|1|2* [<strong>\-v</strong>]
+&nbsp;&nbsp;**oyranos-monitor\-white\-point** <strong>\-d</strong>=<em>0|1|2</em> [<strong>\-v</strong>]
 
-* <strong>\-d</strong>|<strong>\-\-daemon</strong> *0|1|2*	Control user daemon
-   * <strong>\-d 0</strong>		# Deactivate
-   * <strong>\-d 1</strong>		# Autostart
-   * <strong>\-d 2</strong>		# Activate
+<table style='width:100%'>
+ <tr><td style='padding\-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-d</strong>|<strong>--daemon</strong> <em>0|1|2</em></td> <td>Control user daemon
+  <table>
+   <tr><td style='padding-left:0.5em'><strong>-d 0</strong></td><td># Deactivate</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-d 1</strong></td><td># Autostart</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-d 2</strong></td><td># Activate</td></tr>
+  </table>
+  </td>
+ </tr>
+</table>
 
 ### General options
-&nbsp;&nbsp;**oyranos\-monitor\-white\-point** <strong>\-m</strong> | <strong>\-r</strong> | <strong>\-X</strong> *json|json+command|man|markdown* | <strong>\-h</strong> [<strong>\-v</strong>]
+&nbsp;&nbsp;**oyranos-monitor\-white\-point** <strong>\-m</strong> | <strong>\-r</strong> | <strong>\-X</strong>=<em>json|json+command|man|markdown</em> | <strong>\-h</strong> [<strong>\-v</strong>]
 
-* <strong>\-h</strong>|<strong>\-\-help</strong>	Help
-* <strong>\-m</strong>|<strong>\-\-modes</strong>	Show white point modes
-* <strong>\-r</strong>|<strong>\-\-sunrise</strong>	Show local time, used geographical location, twilight height angles, sun rise and sun set times
-* <strong>\-X</strong>|<strong>\-\-export</strong> *json|json+command|man|markdown*	Export formated text: Get UI converted into text formats
-   * <strong>\-X man</strong>		# Man
-   * <strong>\-X markdown</strong>		# Markdown
-   * <strong>\-X json</strong>		# Json
-   * <strong>\-X json+command</strong>		# Json + Command
-   * <strong>\-X export</strong>		# Export
-* <strong>\-z</strong>|<strong>\-\-system\-wide</strong>	System wide DB setting
-* <strong>\-v</strong>|<strong>\-\-verbose</strong>	verbose
+<table style='width:100%'>
+ <tr><td style='padding\-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-h</strong>|<strong>--help</strong></td> <td>Help</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-m</strong>|<strong>--modes</strong></td> <td>Show white point modes</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-r</strong>|<strong>--sunrise</strong></td> <td>Show local time, used geographical location, twilight height angles, sun rise and sun set times</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-X</strong>|<strong>--export</strong> <em>json|json+command|man|markdown</em></td> <td>Export formated text<br />Get UI converted into text formats
+  <table>
+   <tr><td style='padding-left:0.5em'><strong>-X man</strong></td><td># Man</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-X markdown</strong></td><td># Markdown</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-X json</strong></td><td># Json</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-X json+command</strong></td><td># Json + Command</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-X export</strong></td><td># Export</td></tr>
+  </table>
+  </td>
+ </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-z</strong>|<strong>--system-wide</strong></td> <td>System wide DB setting</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-v</strong>|<strong>--verbose</strong></td> <td>verbose</td> </tr>
+</table>
 
 ## ENVIRONMENT VARIABLES
-### OY\_DEBUG
+### OY_DEBUG
 &nbsp;&nbsp;set the Oyranos debug level.
   <br />
-&nbsp;&nbsp;Alternatively the \-v option can be used.
+&nbsp;&nbsp;Alternatively the -v option can be used.
   <br />
 &nbsp;&nbsp;Valid integer range is from 1\-20.
 ### OY\_MODULE\_PATH
@@ -113,7 +153,7 @@ The Night white point mode shall allow to reduce influence of blue light during 
 ## AUTHOR
 Kai\-Uwe Behrmann http://www.oyranos.org
 ## COPYRIGHT
-*Copyright 2018 Kai\-Uwe Behrmann*
+*© 2018\-2019 Kai\-Uwe Behrmann*
 
 
 ### License
