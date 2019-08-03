@@ -51,7 +51,7 @@
     @endverbatim
     Affected are default profiles and some behaviour settings.
     - oyranos-profile - access profile information
-    - oyranos-profile-graph - draw a 2D graph from profiles
+    - @ref oyranosprofilegraph - draw a 2D graph from profiles
     - @ref oyranosprofiles - lookup profiles in the systems color paths, download and install
     - <a href="http://www.oyranos.org/wiki/index.php?title=Oyranos_Configuration_Dialog">oyranos-config-fltk</a> - a configuration UI application, using some functions      of the Oyranos APIs. If you have <a href="http://www.oyranos.org/wiki/index.php?title=ICC_Examin">ICC Examin</a> installed it can be called to
       show details of profiles. 
