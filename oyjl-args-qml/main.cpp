@@ -53,8 +53,8 @@ int main(int argc, const char *argv[])
   /* declare option groups, for better syntax checking and UI groups */
   oyjlOptionGroup_s groups_no_args[] = {
   /* type,   flags, name,      description,          help, mandatory, optional, detail */
-    {"oiwg", 0,     _("GUI"),  _("QML UI"),          NULL, "i",       "cov",    "ico" },/* parsed and checked with -i option */
-    {"oiwg", 0,     _("Misc"), _("General options"), NULL, "h",       "v",      "hvX" },/* just show in documentation */
+    {"oiwg", 0,     _("GUI"),  _("QML UI"),          NULL, "i",       "c,o,v",  "i,c,o" },/* parsed and checked with -i option */
+    {"oiwg", 0,     _("Misc"), _("General options"), NULL, "h",       "v",      "h,v,X" },/* just show in documentation */
     {"",0,0,0,0,0,0,0}
   };
 
