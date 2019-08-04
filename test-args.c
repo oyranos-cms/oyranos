@@ -17,6 +17,7 @@
 
 #define OYJL_TEST_MAIN_SETUP  printf("\n    Oyjl Args Test Program\n");
 #define OYJL_TEST_MAIN_FINISH printf("\n    Oyjl Args Test Program finished\n\n");
+#define OYJL_TEST_NAME "test-args"
 #include "oyjl_test_main.h"
 #include "oyjl.h"
 #include "oyjl_version.h"

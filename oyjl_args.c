@@ -2008,8 +2008,9 @@ void  oyjlOptions_PrintHelp          ( oyjlOptions_s     * opts,
   for(i = 0; i < ng; ++i)
   {
     oyjlOptionGroup_s * g = &opts->groups[i];
-    int d = oyjlStringDelimiterCount(g->detail, ",|"),
+    int d = 0,
         j,k;
+    char ** d_list = oyjlStringSplit2( g->detail, "|,", &d, NULL, malloc );
     fprintf( stdout, "  %s\n", g->description?oyjlTermColor(oyjlUNDERLINE,g->description):"" );
     if(g->mandatory && g->mandatory[0])
     {
@@ -2017,7 +2018,8 @@ void  oyjlOptions_PrintHelp          ( oyjlOptions_s     * opts,
     }
     for(j = 0; j < d; ++j)
     {
-      oyjlOption_s * o = oyjlOptions_GetOptionL( opts, &g->detail[j] );
+      const char * option = d_list[j];
+      oyjlOption_s * o = oyjlOptions_GetOptionL( opts, option );
       if(!o)
       {
         fprintf(stdout, "\n%s: option not declared: %s\n", g->name, &g->detail[j]);
@@ -2082,8 +2084,8 @@ void  oyjlOptions_PrintHelp          ( oyjlOptions_s     * opts,
         case oyjlOPTIONTYPE_START: break;
         case oyjlOPTIONTYPE_END: break;
       }
-      while(g->detail[j] && g->detail[j] != ',') ++j;
     }
+    oyjlStringListRelease( &d_list, d, free );
     if(d) fprintf( stdout, "\n" );
   }
   fprintf( stdout, "\n" );
@@ -2161,18 +2163,21 @@ oyjlOPTIONSTATE_e  oyjlUi_Check      ( oyjlUi_s          * ui,
         j;
     if(g->mandatory && g->mandatory[0])
     {
-      int n = strlen(g->mandatory);
+      int n = 0;
+      char ** list = oyjlStringSplit2( g->mandatory, "|,", &n, NULL, malloc );
       for( j = 0; j  < n; ++j )
       {
-        char o = g->mandatory[j];
-        if( !g->detail || (!strchr(g->detail, o) &&
-            o != '|' &&
-            o != '#'))
+        const char * option = list[j];
+        if( !g->detail ||
+            (!strstr(g->detail, option) &&
+             strcmp(option, "|") &&
+             strcmp(option, "#")) )
         {
-          fprintf(stderr, "\'%c\' not found in group->details\n", o);
+          fprintf(stderr, "\"%s\" not found in group->details\n", option );
           status = oyjlOPTION_MISSING_VALUE;
         }
       }
+      oyjlStringListRelease( &list, n, free );
     }
     for(j = 0; j < d; ++j)
     {
@@ -2668,8 +2673,9 @@ char *       oyjlUi_ToMan            ( oyjlUi_s          * ui,
   for(i = 0; i < ng; ++i)
   {
     oyjlOptionGroup_s * g = &opts->groups[i];
-    int dn = g->detail ? strlen(g->detail) : 0,
+    int dn = 0,
         j;
+    char ** d_list = oyjlStringSplit2( g->detail, "|,", &dn, NULL, malloc );
     if(g->description)
       oyjlStringAdd( &text, malloc, free, ".SS\n%s\n", g->description  );
     else
@@ -2686,10 +2692,11 @@ char *       oyjlUi_ToMan            ( oyjlUi_s          * ui,
     }
     for(j = 0; j < dn; ++j)
     {
-      oyjlOption_s * o = oyjlOptions_GetOptionL( opts, &g->detail[j] );
+      const char * option = d_list[j];
+      oyjlOption_s * o = oyjlOptions_GetOptionL( opts, option );
       if(!o)
       {
-        fprintf(stderr, "\n%s: option not declared: %s\n", g->name, &g->detail[j]);
+        fprintf(stderr, "\n%s: option not declared: %s\n", g->name, option);
         exit(1);
       }
       switch(o->value_type)
@@ -2742,8 +2749,8 @@ char *       oyjlUi_ToMan            ( oyjlUi_s          * ui,
         case oyjlOPTIONTYPE_START: break;
         case oyjlOPTIONTYPE_END: break;
       }
-      while(g->detail[j] && g->detail[j] != ',') ++j;
     }
+    oyjlStringListRelease( &d_list, dn, free );
   }
 
   tmp = oyjlExtraManSections( opts, oyjlOPTIONSTYLE_MAN );
@@ -2882,8 +2889,9 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
   for(i = 0; i < ng; ++i)
   {
     oyjlOptionGroup_s * g = &opts->groups[i];
-    int d = g->detail ? strlen(g->detail) : 0,
+    int d = 0,
         j;
+    char ** d_list = oyjlStringSplit2( g->detail, "|,", &d, NULL, malloc );
     if(g->description)
       oyjlStringAdd( &text, malloc, free, "### %s\n", g->description  );
     if(g->mandatory && g->mandatory[0])
@@ -2899,10 +2907,11 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
       oyjlStringAdd( &text, malloc, free, "<table style='width:100%'>\n" );
     for(j = 0; j < d; ++j)
     {
-      oyjlOption_s * o = oyjlOptions_GetOptionL( opts, &g->detail[j] );
+      const char * option = d_list[j];
+      oyjlOption_s * o = oyjlOptions_GetOptionL( opts, option );
       if(!o)
       {
-        fprintf(stderr, "\n%s: option not declared: %s\n", g->name, &g->detail[j]);
+        fprintf(stderr, "\n%s: option not declared: %s\n", g->name, option );
         exit(1);
       }
 #define OYJL_LEFT_TD_STYLE " style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'"
@@ -2956,8 +2965,8 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
         case oyjlOPTIONTYPE_END: break;
       }
       oyjlStringAdd( &text, malloc, free, " </tr>\n" );
-      while(g->detail[j] && g->detail[j] != ',') ++j;
     }
+    oyjlStringListRelease( &d_list, d, free );
     if(d)
       oyjlStringAdd( &text, malloc, free, "</table>\n" );
     oyjlStringAdd( &text, malloc, free, "\n"  );

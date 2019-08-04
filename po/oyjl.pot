@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: oyjl .\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2019-08-04 10:19+0200\n"
+"POT-Creation-Date: 2019-08-04 10:50+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -359,7 +359,7 @@ msgstr ""
 #: oyjl_args.c:1340 oyjl_args.c:1351 oyjl_args.c:1356 oyjl_args.c:1364
 #: oyjl_args.c:1449 oyjl_args.c:1470 oyjl_args.c:1496 oyjl_args.c:1510
 #: oyjl_args.c:1528 oyjl_args.c:1551 oyjl_args.c:1570 oyjl_args.c:1597
-#: oyjl_args.c:1689 oyjl_args.c:2195
+#: oyjl_args.c:1689 oyjl_args.c:2197
 msgid "Usage Error:"
 msgstr ""
 
@@ -368,7 +368,7 @@ msgid "Double occuring option"
 msgstr ""
 
 #: oyjl_args.c:1351 oyjl_args.c:1356 oyjl_args.c:1364 oyjl_args.c:1449
-#: oyjl_args.c:1510 oyjl_args.c:2195
+#: oyjl_args.c:1510 oyjl_args.c:2197
 msgid "Option not supported"
 msgstr ""
 
@@ -380,7 +380,7 @@ msgstr ""
 msgid "need a value_type"
 msgstr ""
 
-#: oyjl_args.c:1364 oyjl_args.c:2195
+#: oyjl_args.c:1364 oyjl_args.c:2197
 msgid "needs OYJL_OPTION_FLAG_EDITABLE or choices"
 msgstr ""
 
@@ -413,67 +413,67 @@ msgstr ""
 msgid "Synopsis"
 msgstr ""
 
-#: oyjl_args.c:2323
+#: oyjl_args.c:2325
 msgid "... try with --help|-h option for usage text. give up"
 msgstr ""
 
-#: oyjl_args.c:2375 oyjl_args.c:2763 oyjl_args.c:2980 oyjl_args_tree.c:995
+#: oyjl_args.c:2377 oyjl_args.c:2767 oyjl_args.c:2987 oyjl_args_tree.c:995
 msgid "License"
 msgstr ""
 
-#: oyjl_args.c:2376
+#: oyjl_args.c:2378
 msgid "Author"
 msgstr ""
 
-#: oyjl_args.c:2516
+#: oyjl_args.c:2518
 msgid "EXAMPLES"
 msgstr ""
 
-#: oyjl_args.c:2518
+#: oyjl_args.c:2520
 msgid "EXIT-STATE"
 msgstr ""
 
-#: oyjl_args.c:2520
+#: oyjl_args.c:2522
 msgid "ENVIRONMENT VARIABLES"
 msgstr ""
 
-#: oyjl_args.c:2522
+#: oyjl_args.c:2524
 msgid "HISTORY"
 msgstr ""
 
-#: oyjl_args.c:2524
+#: oyjl_args.c:2526
 msgid "FILES"
 msgstr ""
 
-#: oyjl_args.c:2526
+#: oyjl_args.c:2528
 msgid "SEE AS WELL"
 msgstr ""
 
-#: oyjl_args.c:2528
+#: oyjl_args.c:2530
 msgid "SEE ALSO"
 msgstr ""
 
-#: oyjl_args.c:2654 oyjl_args.c:2868
+#: oyjl_args.c:2656 oyjl_args.c:2872
 msgid "SYNOPSIS"
 msgstr ""
 
-#: oyjl_args.c:2665 oyjl_args.c:2879
+#: oyjl_args.c:2667 oyjl_args.c:2883
 msgid "DESCRIPTION"
 msgstr ""
 
-#: oyjl_args.c:2667 oyjl_args.c:2881
+#: oyjl_args.c:2669 oyjl_args.c:2885
 msgid "OPTIONS"
 msgstr ""
 
-#: oyjl_args.c:2757 oyjl_args.c:2974
+#: oyjl_args.c:2761 oyjl_args.c:2981
 msgid "AUTHOR"
 msgstr ""
 
-#: oyjl_args.c:2761 oyjl_args.c:2978
+#: oyjl_args.c:2765 oyjl_args.c:2985
 msgid "COPYRIGHT"
 msgstr ""
 
-#: oyjl_args.c:2767 oyjl_args.c:2769 oyjl_args.c:2984 oyjl_args.c:2986
+#: oyjl_args.c:2771 oyjl_args.c:2773 oyjl_args.c:2991 oyjl_args.c:2993
 msgid "BUGS"
 msgstr ""
 

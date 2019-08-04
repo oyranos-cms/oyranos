@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2019-08-04 10:10+0200\n"
+"POT-Creation-Date: 2019-08-04 10:50+0200\n"
 "PO-Revision-Date: 2015-02-20 17:32+0100\n"
 "Last-Translator: Kai-Uwe Behrmann <ku.b@gmx.de>\n"
 "Language-Team: russian <ru@li.org>\n"
@@ -21,11 +21,11 @@ msgstr ""
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Language: ru_RU\n"
 
-#: oyjl_args.c:2323
+#: oyjl_args.c:2325
 msgid "... try with --help|-h option for usage text. give up"
 msgstr ""
 
-#: oyjl_args.c:2757 oyjl_args.c:2974
+#: oyjl_args.c:2761 oyjl_args.c:2981
 msgid "AUTHOR"
 msgstr ""
 
@@ -49,15 +49,15 @@ msgstr ""
 msgid "Any arg mode"
 msgstr ""
 
-#: oyjl_args.c:2376
+#: oyjl_args.c:2378
 msgid "Author"
 msgstr ""
 
-#: oyjl_args.c:2767 oyjl_args.c:2769 oyjl_args.c:2984 oyjl_args.c:2986
+#: oyjl_args.c:2771 oyjl_args.c:2773 oyjl_args.c:2991 oyjl_args.c:2993
 msgid "BUGS"
 msgstr ""
 
-#: oyjl_args.c:2761 oyjl_args.c:2978
+#: oyjl_args.c:2765 oyjl_args.c:2985
 msgid "COPYRIGHT"
 msgstr ""
 
@@ -92,7 +92,7 @@ msgstr ""
 msgid "Copyright"
 msgstr ""
 
-#: oyjl_args.c:2665 oyjl_args.c:2879
+#: oyjl_args.c:2667 oyjl_args.c:2883
 msgid "DESCRIPTION"
 msgstr ""
 
@@ -120,15 +120,15 @@ msgstr ""
 msgid "Download"
 msgstr ""
 
-#: oyjl_args.c:2520
+#: oyjl_args.c:2522
 msgid "ENVIRONMENT VARIABLES"
 msgstr ""
 
-#: oyjl_args.c:2516
+#: oyjl_args.c:2518
 msgid "EXAMPLES"
 msgstr ""
 
-#: oyjl_args.c:2518
+#: oyjl_args.c:2520
 msgid "EXIT-STATE"
 msgstr ""
 
@@ -156,7 +156,7 @@ msgstr ""
 msgid "FILENAME"
 msgstr ""
 
-#: oyjl_args.c:2524
+#: oyjl_args.c:2526
 msgid "FILES"
 msgstr ""
 
@@ -219,7 +219,7 @@ msgstr ""
 msgid "Get formated text"
 msgstr ""
 
-#: oyjl_args.c:2522
+#: oyjl_args.c:2524
 msgid "HISTORY"
 msgstr ""
 
@@ -272,7 +272,7 @@ msgstr ""
 msgid "June 26, 2019"
 msgstr ""
 
-#: oyjl_args.c:2375 oyjl_args.c:2763 oyjl_args.c:2980 oyjl_args_tree.c:995
+#: oyjl_args.c:2377 oyjl_args.c:2767 oyjl_args.c:2987 oyjl_args_tree.c:995
 msgid "License"
 msgstr ""
 
@@ -356,7 +356,7 @@ msgstr ""
 msgid "No"
 msgstr ""
 
-#: oyjl_args.c:2667 oyjl_args.c:2881
+#: oyjl_args.c:2669 oyjl_args.c:2885
 msgid "OPTIONS"
 msgstr ""
 
@@ -377,7 +377,7 @@ msgid "Option needs a argument"
 msgstr ""
 
 #: oyjl_args.c:1351 oyjl_args.c:1356 oyjl_args.c:1364 oyjl_args.c:1449
-#: oyjl_args.c:1510 oyjl_args.c:2195
+#: oyjl_args.c:1510 oyjl_args.c:2197
 msgid "Option not supported"
 msgstr ""
 
@@ -434,15 +434,15 @@ msgstr ""
 msgid "Rendering Intent"
 msgstr ""
 
-#: oyjl_args.c:2528
+#: oyjl_args.c:2530
 msgid "SEE ALSO"
 msgstr ""
 
-#: oyjl_args.c:2526
+#: oyjl_args.c:2528
 msgid "SEE AS WELL"
 msgstr ""
 
-#: oyjl_args.c:2654 oyjl_args.c:2868
+#: oyjl_args.c:2656 oyjl_args.c:2872
 msgid "SYNOPSIS"
 msgstr ""
 
@@ -583,7 +583,7 @@ msgstr "по́льзование"
 #: oyjl_args.c:1340 oyjl_args.c:1351 oyjl_args.c:1356 oyjl_args.c:1364
 #: oyjl_args.c:1449 oyjl_args.c:1470 oyjl_args.c:1496 oyjl_args.c:1510
 #: oyjl_args.c:1528 oyjl_args.c:1551 oyjl_args.c:1570 oyjl_args.c:1597
-#: oyjl_args.c:1689 oyjl_args.c:2195
+#: oyjl_args.c:1689 oyjl_args.c:2197
 msgid "Usage Error:"
 msgstr ""
 
@@ -668,7 +668,7 @@ msgstr ""
 msgid "need range 0-9 or a-z or A-Z"
 msgstr ""
 
-#: oyjl_args.c:1364 oyjl_args.c:2195
+#: oyjl_args.c:1364 oyjl_args.c:2197
 msgid "needs OYJL_OPTION_FLAG_EDITABLE or choices"
 msgstr ""
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2019-08-04 10:10+0200\n"
+"POT-Creation-Date: 2019-08-04 10:50+0200\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -19,11 +19,11 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: vim 6.0\n"
 
-#: oyjl_args.c:2323
+#: oyjl_args.c:2325
 msgid "... try with --help|-h option for usage text. give up"
 msgstr "... versuche bitte die --help|-h Option für einen Hilfetext. Gebe auf"
 
-#: oyjl_args.c:2757 oyjl_args.c:2974
+#: oyjl_args.c:2761 oyjl_args.c:2981
 msgid "AUTHOR"
 msgstr "AUTOR"
 
@@ -47,15 +47,15 @@ msgstr ""
 msgid "Any arg mode"
 msgstr "Modus mit jedem Argument"
 
-#: oyjl_args.c:2376
+#: oyjl_args.c:2378
 msgid "Author"
 msgstr "Autor"
 
-#: oyjl_args.c:2767 oyjl_args.c:2769 oyjl_args.c:2984 oyjl_args.c:2986
+#: oyjl_args.c:2771 oyjl_args.c:2773 oyjl_args.c:2991 oyjl_args.c:2993
 msgid "BUGS"
 msgstr "FEHLER"
 
-#: oyjl_args.c:2761 oyjl_args.c:2978
+#: oyjl_args.c:2765 oyjl_args.c:2985
 msgid "COPYRIGHT"
 msgstr "KOPIERRECHT"
 
@@ -90,7 +90,7 @@ msgstr "Wandele UI JSON nach C Quelltext mit libOyjl"
 msgid "Copyright"
 msgstr "Kopierrecht"
 
-#: oyjl_args.c:2665 oyjl_args.c:2879
+#: oyjl_args.c:2667 oyjl_args.c:2883
 msgid "DESCRIPTION"
 msgstr "BESCHREIBUNG"
 
@@ -118,15 +118,15 @@ msgstr "Doppelte Option"
 msgid "Download"
 msgstr "Bezugsquelle"
 
-#: oyjl_args.c:2520
+#: oyjl_args.c:2522
 msgid "ENVIRONMENT VARIABLES"
 msgstr "UMGEBUNGSVARIABLEN"
 
-#: oyjl_args.c:2516
+#: oyjl_args.c:2518
 msgid "EXAMPLES"
 msgstr "BEISPIELE"
 
-#: oyjl_args.c:2518
+#: oyjl_args.c:2520
 msgid "EXIT-STATE"
 msgstr "EXIT-STATUS"
 
@@ -154,7 +154,7 @@ msgstr "Exportiere formatierten Text"
 msgid "FILENAME"
 msgstr "DATEINAME"
 
-#: oyjl_args.c:2524
+#: oyjl_args.c:2526
 msgid "FILES"
 msgstr "DATEIEN"
 
@@ -217,7 +217,7 @@ msgstr "Hole Unix Handbuchseite"
 msgid "Get formated text"
 msgstr "Hole formatierten Text"
 
-#: oyjl_args.c:2522
+#: oyjl_args.c:2524
 msgid "HISTORY"
 msgstr "GESCHICHTE"
 
@@ -270,7 +270,7 @@ msgstr "Json + Kommando"
 msgid "June 26, 2019"
 msgstr "26. Juni 2019"
 
-#: oyjl_args.c:2375 oyjl_args.c:2763 oyjl_args.c:2980 oyjl_args_tree.c:995
+#: oyjl_args.c:2377 oyjl_args.c:2767 oyjl_args.c:2987 oyjl_args_tree.c:995
 msgid "License"
 msgstr "Lizenz"
 
@@ -359,7 +359,7 @@ msgstr "Modul"
 msgid "No"
 msgstr "Nein"
 
-#: oyjl_args.c:2667 oyjl_args.c:2881
+#: oyjl_args.c:2669 oyjl_args.c:2885
 msgid "OPTIONS"
 msgstr "OPTIONEN"
 
@@ -380,7 +380,7 @@ msgid "Option needs a argument"
 msgstr "Die Option erwartet ein Argument"
 
 #: oyjl_args.c:1351 oyjl_args.c:1356 oyjl_args.c:1364 oyjl_args.c:1449
-#: oyjl_args.c:1510 oyjl_args.c:2195
+#: oyjl_args.c:1510 oyjl_args.c:2197
 msgid "Option not supported"
 msgstr "Die Option ist nicht unterstützt"
 
@@ -437,15 +437,15 @@ msgstr "Zeige:"
 msgid "Rendering Intent"
 msgstr "Übertragungsart"
 
-#: oyjl_args.c:2528
+#: oyjl_args.c:2530
 msgid "SEE ALSO"
 msgstr "SIEHE AUCH"
 
-#: oyjl_args.c:2526
+#: oyjl_args.c:2528
 msgid "SEE AS WELL"
 msgstr "SIEHE AUCH"
 
-#: oyjl_args.c:2654 oyjl_args.c:2868
+#: oyjl_args.c:2656 oyjl_args.c:2872
 msgid "SYNOPSIS"
 msgstr "ÜBERSICHT"
 
@@ -589,7 +589,7 @@ msgstr "Benutzung"
 #: oyjl_args.c:1340 oyjl_args.c:1351 oyjl_args.c:1356 oyjl_args.c:1364
 #: oyjl_args.c:1449 oyjl_args.c:1470 oyjl_args.c:1496 oyjl_args.c:1510
 #: oyjl_args.c:1528 oyjl_args.c:1551 oyjl_args.c:1570 oyjl_args.c:1597
-#: oyjl_args.c:1689 oyjl_args.c:2195
+#: oyjl_args.c:1689 oyjl_args.c:2197
 msgid "Usage Error:"
 msgstr "Benutzerfehler:"
 
@@ -676,7 +676,7 @@ msgstr "benötige einen value_type"
 msgid "need range 0-9 or a-z or A-Z"
 msgstr ""
 
-#: oyjl_args.c:1364 oyjl_args.c:2195
+#: oyjl_args.c:1364 oyjl_args.c:2197
 msgid "needs OYJL_OPTION_FLAG_EDITABLE or choices"
 msgstr "benötige OYJL_OPTION_FLAG_EDITABLE oder choices"
 
