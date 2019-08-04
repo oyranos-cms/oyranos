@@ -99,10 +99,13 @@ Das Werkzeug kann installierte Profile und Suchpfade anzeigen. Es kann ein Profi
 &nbsp;&nbsp;oyranos\-profiles \-\-install \-\-taxi=taxi\_id/0 \-\-gui \-d \-u
 ### Zeige Dateiinfos
 &nbsp;&nbsp;SAVEIFS=$IFS ; IFS=$'\n\b'; profiles=(\`oyranos\-profiles \-ldf\`); IFS=$SAVEIFS; for file in "${profiles[@]}"; do ls "$file"; done
+## SIEHE AUCH
+### oyranos\-profile\-graph(1) oyranos\-config(1) oyranos\-policy(1) oyranos(3)
+### http://www.oyranos.org
 ## AUTOR
 Kai\-Uwe Behrmann http://www.oyranos.org
 ## KOPIERRECHT
-*© 2018\-2019 Kai\-Uwe Behrmann*
+*© 2005\-2019 Kai\-Uwe Behrmann and others*
 
 
 ### Lizenz

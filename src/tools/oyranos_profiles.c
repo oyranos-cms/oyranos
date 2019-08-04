@@ -94,6 +94,9 @@ int main( int argc , char** argv )
                                     {_("Install a profile for the actual user and show error messages in a GUI"), "oyranos-profiles --install --taxi=taxi_id/0 --gui -d -u", "", ""},
                                     {_("Show file infos"),"SAVEIFS=$IFS ; IFS=$'\\n\\b'; profiles=(`oyranos-profiles -ldf`); IFS=$SAVEIFS; for file in \"${profiles[@]}\"; do ls \"$file\"; done", "", ""},
                                     {"","","",""}};
+  oyjlOptionChoice_s see_as_well[]={{"oyranos-profile-graph(1) oyranos-config(1) oyranos-policy(1) oyranos(3)", "", "", ""},
+                                    {"http://www.oyranos.org","","",""},
+                                    {"","","",""}};
   oyjlOptionChoice_s effect_meta[]={{"EFFECT_class;sepia","","",""},{"","","",""}};
   oyjlOption_s oarray[] = {
   /* type,   flags, o, option, key, name, description, help, value_name, value_type, values, var_type, variable */
@@ -130,6 +133,7 @@ int main( int argc , char** argv )
     /* blind options, useful only for man page generation */
     {"oiwi", 0, 'E', "man-environment_variables", NULL, "", "", NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)env_vars, sizeof(env_vars), 0 )}, oyjlNONE, {.i=NULL} },
     {"oiwi", 0, 'A', "man-examples", NULL, "", "", NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)examples, sizeof(examples), 0 )}, oyjlNONE, {.i=NULL} },
+    {"oiwi", 0, 'S', "man-see_as_well", NULL, "", "", NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)see_as_well, sizeof(see_as_well), 0 )}, oyjlNONE, {.i=NULL} },
     {"",0,0,0,0,0,0,0, NULL, oyjlOPTIONTYPE_END, {},0,{}}
   };
   opts->array = (oyjlOption_s*)oyjlStringAppendN( NULL, (const char*)oarray, sizeof(oarray), 0 );

@@ -286,6 +286,9 @@ int main( int argc , char** argv )
                                   {"icc-xml",_("Icc XML"),"",_("ICC Named Color Values")},
                                   {"ppm",_("PPM"),"",_("Spectral PAM Image")},
                                   {"","","",""}};
+  oyjlOptionChoice_s see_as_well[]={{"oyranos-profile(1) oyranos-config(1) oyranos-policy(1) oyranos(3)", "", "", ""},
+                                    {"http://www.oyranos.org","","",""},
+                                    {"","","",""}};
   oyjlOption_s oarray[] = {
   /* type,   flags, o, option, key, name, description, help, value_name, value_type, values, var_type, variable */
     {"oiwi", 0,                         '2', "icc-version-2", NULL, _("ICC Version 2"), _("Select ICC v2 Profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&v2} },
@@ -328,6 +331,7 @@ int main( int argc , char** argv )
     /* blind options, useful only for man page generation */
     {"oiwi", 0, 'E', "man-environment_variables", NULL, "", "", NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)env_vars, sizeof(env_vars), 0 )}, oyjlNONE, {.i=0} },
     {"oiwi", 0, 'A', "man-examples", NULL, "", "", NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)examples, sizeof(examples), 0 )}, oyjlNONE, {.i=0} },
+    {"oiwi", 0, 'W', "man-see_as_well", NULL, "", "", NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)see_as_well, sizeof(see_as_well), 0 )}, oyjlNONE, {.i=NULL} },
     {"",0,0,0,0,0,0,0, NULL, oyjlOPTIONTYPE_END, {},0,{}}
   };
   opts->array = (oyjlOption_s*)oyjlStringAppendN( NULL, (const char*)oarray, sizeof(oarray), 0 );

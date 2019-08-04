@@ -150,10 +150,13 @@ Der Nachtweißpunkmodus soll den Einfluß von blauen Licht auf das menschliche H
 &nbsp;&nbsp;oyranos\-monitor\-white\-point \-d 2 \-a 3000 \-n 1
 ### Schalte alle Tagesbeeinflussung aus, wie Weißpunkt und Effekt
 &nbsp;&nbsp;oyranos\-monitor\-white\-point \-s 0 \-e 0
+## SIEHE AUCH
+### oyranos\-monitor(1) oyranos\-config(1) oyranos(3)
+### http://www.oyranos.org
 ## AUTOR
 Kai\-Uwe Behrmann http://www.oyranos.org
 ## KOPIERRECHT
-*© 2018\-2019 Kai\-Uwe Behrmann*
+*© 2005\-2019 Kai\-Uwe Behrmann and others*
 
 
 ### Lizenz

@@ -150,10 +150,13 @@ The Night white point mode shall allow to reduce influence of blue light during 
 &nbsp;&nbsp;oyranos\-monitor\-white\-point \-d 2 \-a 3000 \-n 1
 ### Switch all day light intereference off such as white point and effect
 &nbsp;&nbsp;oyranos\-monitor\-white\-point \-s 0 \-e 0
+## SEE AS WELL
+### oyranos\-monitor(1) oyranos\-config(1) oyranos(3)
+### http://www.oyranos.org
 ## AUTHOR
 Kai\-Uwe Behrmann http://www.oyranos.org
 ## COPYRIGHT
-*© 2018\-2019 Kai\-Uwe Behrmann*
+*© 2005\-2019 Kai\-Uwe Behrmann and others*
 
 
 ### License

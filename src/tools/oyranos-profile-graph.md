@@ -142,10 +142,13 @@ Create a 2D Graph containing the saturation line from a ICC Profile.
 &nbsp;&nbsp;oyranos\-profile\-graph \-w 256 \-s \-t 3 sRGB.icc ProPhoto\-RGB.icc
 ### Show the standard observer spectral function as curves:
 &nbsp;&nbsp;oyranos\-profile\-graph \-\-standard\-observer \-o CIE\-StdObserver.png
+## SEE AS WELL
+### oyranos\-profile(1) oyranos\-config(1) oyranos\-policy(1) oyranos(3)
+### http://www.oyranos.org
 ## AUTHOR
 Kai\-Uwe Behrmann http://www.oyranos.org
 ## COPYRIGHT
-*© 2018\-2019 Kai\-Uwe Behrmann*
+*© 2005\-2019 Kai\-Uwe Behrmann and others*
 
 
 ### License

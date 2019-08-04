@@ -341,6 +341,9 @@ int main( int argc , char** argv )
   oyjlOptionChoice_s examples[]={{_("Enable the daemon, set night white point to 3000 Kelvin and use that in night mode"), "oyranos-monitor-white-point -d 2 -a 3000 -n 1", "", ""},
                                     {_("Switch all day light intereference off such as white point and effect"), "oyranos-monitor-white-point -s 0 -e 0", "", ""},
                                     {"","","",""}};
+  oyjlOptionChoice_s see_as_well[]={{"oyranos-monitor(1) oyranos-config(1) oyranos(3)", "", "", ""},
+                                    {"http://www.oyranos.org","","",""},
+                                    {"","","",""}};
   oyjlOption_s oarray[] = {
   /* type,   flags, o, option, key, name, description, help, value_name, value_type, values, var_type, variable */
     {"oiwi", 0, 'd', "daemon", NULL, _("daemon"), _("Control user daemon"), NULL, "0|1|2", oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)d_choices, sizeof(d_choices), 0 )}, oyjlINT, {.i=&daemon} },
@@ -376,6 +379,7 @@ int main( int argc , char** argv )
     /* blind options, useful only for man page generation */
     {"oiwi", 0, 'E', "man-environment_variables", NULL, "", "", NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)env_vars, sizeof(env_vars), 0 )}, oyjlNONE, {.i=NULL} },
     {"oiwi", 0, 'A', "man-examples", NULL, "", "", NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)examples, sizeof(examples), 0 )}, oyjlNONE, {.i=NULL} },
+    {"oiwi", 0, 'S', "man-see_as_well", NULL, "", "", NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)see_as_well, sizeof(see_as_well), 0 )}, oyjlNONE, {.i=NULL} },
     {"",0,0,0,0,0,0,0, NULL, oyjlOPTIONTYPE_END, {},0,{}}
   };
   opts->array = (oyjlOption_s*)oyjlStringAppendN( NULL, (const char*)oarray, sizeof(oarray), 0 );
