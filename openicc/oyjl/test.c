@@ -21,6 +21,7 @@
 
 #define OYJL_TEST_MAIN_SETUP  printf("\n    Oyjl Test Program\n");
 #define OYJL_TEST_MAIN_FINISH printf("\n    Oyjl Test Program finished\n\n");
+#define OYJL_TEST_NAME "test"
 #include "oyjl_test_main.h"
 #include "oyjl_version.h"
 #include "oyjl.h"
@@ -613,6 +614,7 @@ oyjlTESTRESULT_e testUiRoundtrip ()
     "oyjlUi_ExportToJson()                %lu", text?strlen(text):0 );
   }
   oyjlUi_Release( &ui);
+  OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlUi_ExportToJson", "txt" )
   if(verbose && text)
     fprintf( zout, "%s\n", text );
 
@@ -628,6 +630,7 @@ oyjlTESTRESULT_e testUiRoundtrip ()
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
     "oyjlUiJsonToCode()                   %lu", c_source?strlen(c_source):0 );
   }
+  OYJL_TEST_WRITE_RESULT( c_source, strlen(c_source), "oyjlUi_ExportToCode", "txt" )
   if(verbose && c_source)
     fprintf( zout, "%s\n", c_source );
   if(c_source) {free(c_source);} c_source = NULL;
