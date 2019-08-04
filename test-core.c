@@ -22,6 +22,7 @@
 
 #define OYJL_TEST_MAIN_SETUP  printf("\n    OyjlCore Test Program\n");
 #define OYJL_TEST_MAIN_FINISH printf("\n    OyjlCore Test Program finished\n\n");
+#define OYJL_TEST_NAME "test-core"
 #include "oyjl_test_main.h"
 #include "oyjl.h"
 #include "oyjl_version.h"
@@ -122,7 +123,7 @@ oyjlTESTRESULT_e testI18N()
 #define TEST_DOMAIN2 "org2/freedesktop2/openicc2/tests2"
 #define TEST_KEY "/test_key"
 
-static void replaceCb(const char * text, const char * start, const char * end, const char * search, const char ** replace, void * data)
+static void replaceCb(const char * text OYJL_UNUSED, const char * start, const char * end, const char * search, const char ** replace, void * data)
 {
   if(start < end)
   {
@@ -602,9 +603,7 @@ oyjlTESTRESULT_e testArgs()
   int size = 0;
   char * text = oyjlUi_ToJson( ui, 0 );
   if(text)
-    size = oyjlWriteFile( "test3.json",
-                           text,
-                           strlen(text) );
+    OYJL_TEST_WRITE_RESULT( text, strlen(text), "UiCreateNoArgs", "txt" )
   if(verbose)
     fprintf( zout, "%s\n", text );
   if(text && size) {free(text);} text = NULL;
@@ -709,16 +708,14 @@ oyjlTESTRESULT_e testArgs()
                                        sections, oarray, groups, NULL );
   size = 0;
   text = oyjlUi_ToJson( ui, 0 );
-  if(text && strlen(text) == 3390)
+  if(text && strlen(text) == 3348)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlUi_ToJson() %lu                           ", strlen(text) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "oyjlUi_ToJson() 3390 == %lu                   ", strlen(text) );
+    "oyjlUi_ToJson() 3348 == %lu                   ", strlen(text) );
   }
-  size = oyjlWriteFile( "test.json",
-                           text,
-                           strlen(text) );
+  OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlUi_ToJson", "txt" )
   if(verbose)
     fprintf( zout, "%s\n", text );
   if(text && size) {free(text);} text = NULL;
@@ -731,9 +728,7 @@ oyjlTESTRESULT_e testArgs()
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
     "oyjlUi_ToMan() 662 == %lu                     ", strlen(text) );
   }
-  size = oyjlWriteFile( "test.1",
-                           text,
-                           strlen(text) );
+  OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlUi_ToMan", "txt" )
   if(verbose)
     fprintf( zout, "%s\n", text );
   if(text) {free(text);} text = NULL;

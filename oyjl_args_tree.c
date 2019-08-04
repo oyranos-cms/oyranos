@@ -1051,11 +1051,12 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
       if(changed) free(changed);
       oyjlStringListRelease( &results, n, free );
     }
-    int d = g->detail ? strlen(g->detail) : 0;
+    int d = 0;
+    char ** d_list = oyjlStringSplit2( g->detail, "|,", &d, NULL, malloc );
     for(j = 0; j < d; ++j)
     {
-      char oc = g->detail[j];
-      oyjlOption_s * o = oyjlOptions_GetOption( opts, oc );
+      char * option = d_list[j];
+      oyjlOption_s * o = oyjlOptions_GetOptionL( opts, option );
       if(!o) continue;
       key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "key" );
       if(!o->key)
@@ -1206,6 +1207,7 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
         case oyjlOPTIONTYPE_END: break;
       }
     }
+    oyjlStringListRelease( &d_list, d, free );
   }
   i = 0;
   oyjlTreeToJson( root, &i, &t );
