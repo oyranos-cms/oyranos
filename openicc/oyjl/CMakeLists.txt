@@ -376,6 +376,10 @@ IF( ENABLE_TESTS_${PROJECT_UP_NAME} )
         OYJL_LOCALEDIR=${CMAKE_BINARY_DIR}/locale ./oyjl-test-test
         DEPENDS oyjl-test-test
         COMMENT "Test header only test framework" VERBATIM )
+  ADD_CUSTOM_TARGET(check-args
+        OYJL_LOCALEDIR=${CMAKE_BINARY_DIR}/locale ./oyjl-test-args
+        DEPENDS oyjl-test-args check-test
+        COMMENT "Test standalone Args API in oyjl-test-args" VERBATIM )
   ADD_CUSTOM_COMMAND(
         OUTPUT  oyjl-args-ui.c
         COMMAND ./oyjl-args -X export | ./oyjl-args -i - > oyjl-args-ui.c
@@ -387,15 +391,11 @@ IF( ENABLE_TESTS_${PROJECT_UP_NAME} )
   TARGET_LINK_LIBRARIES( oyjl-args-ui ${OYJL_TARGET_LIB} ${EXTRA_LIBS} )
   ADD_CUSTOM_TARGET( check-oyjl-args-ui
         ./oyjl-args-ui -h
-        DEPENDS oyjl-args-ui
+        DEPENDS oyjl-args-ui check-args
         COMMENT "Check Generated Program" VERBATIM )
-  ADD_CUSTOM_TARGET(check-args
-        OYJL_LOCALEDIR=${CMAKE_BINARY_DIR}/locale ./oyjl-test-args
-        DEPENDS oyjl-test-args check-test check-oyjl-args-ui
-        COMMENT "Test standalone Args API in oyjl-test-args" VERBATIM )
   ADD_CUSTOM_TARGET(check-core
         OYJL_LOCALEDIR=${CMAKE_BINARY_DIR}/locale ./oyjl-test-core-static
-        DEPENDS oyjl-test-core-static check-args
+        DEPENDS oyjl-test-core-static check-oyjl-args-ui
         COMMENT "Test libOyjlCore" VERBATIM )
   ADD_CUSTOM_TARGET(check
         ./oyjl-test-static
