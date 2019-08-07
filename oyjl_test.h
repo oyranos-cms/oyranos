@@ -356,7 +356,7 @@ int  oyjlWriteTestFile               ( const char        * filename,
  *  @param         hint                optional text to place inside the file name
  *  @param         suffix              file name suffix
  */
-#define OYJL_TEST_WRITE_RESULT( mem, size, hint, suffix ) { \
+#define OYJL_TEST_WRITE_RESULT( mem, size, hint, suffix ) if(mem) { \
   char * fn = malloc(64); \
   sprintf( fn, "%s-%d-%d-%s-%s.%s", OYJL_TEST_NAME, oyjl_test_number, oy_test_current_sub_count, hint?hint:"", oyjlTestResultToString(oy_test_last_result,0), suffix ); \
   oyjlWriteTestFile( fn, mem, size ); \
