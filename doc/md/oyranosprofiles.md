@@ -1,8 +1,10 @@
 # oyranos\-profiles v0.9.7 {#oyranosprofiles}
+[NAME](#name) [SYNOPSIS](#synopsis) [DESCRIPTION](#description) [OPTIONS](#options) [ENVIRONMENT VARIABLES](#environmentvariables) [EXAMPLES](#examples) [SEE AS WELL](#seeaswell) [AUTHOR](#author) [COPYRIGHT](#copyright) [BUGS](#bugs) 
+
 *"oyranos\-profiles"* *1* *"October 11, 2018"* "User Commands"
-## NAME
+## NAME <a name="name"></a>
 oyranos\-profiles v0.9.7 \- Oyranos Profiles
-## SYNOPSIS
+## SYNOPSIS <a name="synopsis"></a>
 **oyranos\-profiles** <strong>\-l</strong> [<strong>\-f</strong>] [<strong>\-e</strong>] [<strong>\-a</strong>] [<strong>\-c</strong>] [<strong>\-d</strong>] [<strong>\-k</strong>] [<strong>\-n</strong>] [<strong>\-o</strong>] [<strong>\-i</strong>] [<strong>\-2</strong>] [<strong>\-4</strong>] [<strong>\-P</strong>] [<strong>\-T</strong>=<em>KEY;VALUE</em>] [<strong>\-v</strong>]
 <br />
 **oyranos\-profiles** <strong>\-p</strong> [<strong>\-u</strong>|<strong>\-s</strong>|<strong>\-y</strong>|<strong>\-m</strong>] [<strong>\-v</strong>]
@@ -10,9 +12,9 @@ oyranos\-profiles v0.9.7 \- Oyranos Profiles
 **oyranos\-profiles** <strong>\-I</strong>=<em>ICC\_PROFILE</em> | <strong>\-t</strong>=<em>TAXI\_ID</em> [<strong>\-u</strong>|<strong>\-s</strong>|<strong>\-y</strong>|<strong>\-m</strong>] [<strong>\-g</strong>] [<strong>\-v</strong>]
 <br />
 **oyranos\-profiles** <strong>\-h</strong> <strong>\-X</strong>=<em>json|json+command|man|markdown</em>
-## DESCRIPTION
+## DESCRIPTION <a name="description"></a>
 The tool can list installed profiles, search paths and can help install a ICC color profile in a search path.
-## OPTIONS
+## OPTIONS <a name="options"></a>
 ### List of available ICC color profiles
 &nbsp;&nbsp;**oyranos\-profiles** <strong>\-l</strong> [<strong>\-f</strong>] [<strong>\-e</strong>] [<strong>\-a</strong>] [<strong>\-c</strong>] [<strong>\-d</strong>] [<strong>\-k</strong>] [<strong>\-n</strong>] [<strong>\-o</strong>] [<strong>\-i</strong>] [<strong>\-2</strong>] [<strong>\-4</strong>] [<strong>\-P</strong>] [<strong>\-T</strong>=<em>KEY;VALUE</em>] [<strong>\-v</strong>]
 
@@ -77,7 +79,7 @@ The tool can list installed profiles, search paths and can help install a ICC co
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-v</strong>|<strong>--verbose</strong></td> <td>verbose</td> </tr>
 </table>
 
-## ENVIRONMENT VARIABLES
+## ENVIRONMENT VARIABLES <a name="environmentvariables"></a>
 ### OY_DEBUG
 &nbsp;&nbsp;set the Oyranos debug level.
   <br />
@@ -86,7 +88,7 @@ The tool can list installed profiles, search paths and can help install a ICC co
 &nbsp;&nbsp;Valid integer range is from 1\-20.
 ### XDG\_DATA\_HOME XDG\_DATA\_DIRS
 &nbsp;&nbsp;route Oyranos to top directories containing resources. The derived paths for ICC profiles have a "color/icc" appended. http://www.oyranos.com/wiki/index.php?title=OpenIccDirectoryProposal
-## EXAMPLES
+## EXAMPLES <a name="examples"></a>
 ### List all installed profiles by internal name
 &nbsp;&nbsp;oyranos\-profiles \-le
 ### List all installed profiles of the display and output device classes
@@ -99,17 +101,17 @@ The tool can list installed profiles, search paths and can help install a ICC co
 &nbsp;&nbsp;oyranos\-profiles \-\-install \-\-taxi=taxi\_id/0 \-\-gui \-d \-u
 ### Show file infos
 &nbsp;&nbsp;SAVEIFS=$IFS ; IFS=$'\n\b'; profiles=(\`oyranos\-profiles \-ldf\`); IFS=$SAVEIFS; for file in "${profiles[@]}"; do ls "$file"; done
-## SEE AS WELL
+## SEE AS WELL <a name="seeaswell"></a>
 ###  [oyranos\-profile\-graph](oyranosprofilegraph.html)<a href="oyranosprofilegraph.md">(1)</a>  [oyranos\-config](oyranosconfig.html)<a href="oyranosconfig.md">(1)</a>  [oyranos\-policy](oyranospolicy.html)<a href="oyranospolicy.md">(1)</a>  [oyranos](oyranos.html)<a href="oyranos.md">(3)</a>
 ### http://www.oyranos.org
-## AUTHOR
+## AUTHOR <a name="author"></a>
 Kai\-Uwe Behrmann http://www.oyranos.org
-## COPYRIGHT
+## COPYRIGHT <a name="copyright"></a>
 *© 2005\-2019 Kai\-Uwe Behrmann and others*
 
 
-### License
+### License <a name="license"></a>
 newBSD
-## BUGS
+## BUGS <a name="bugs"></a>
 [https://www.github.com/oyranos\-cms/oyranos/issues](https://www.github.com/oyranos\-cms/oyranos/issues)
 

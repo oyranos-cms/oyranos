@@ -1,8 +1,10 @@
 # oyranos\-monitor\-white\-point v0.9.7 {#oyranosmonitorwhitepointde}
+[NAME](#name) [ÜBERSICHT](#synopsis) [BESCHREIBUNG](#description) [OPTIONEN](#options) [UMGEBUNGSVARIABLEN](#environmentvariables) [BEISPIELE](#examples) [SIEHE AUCH](#seeaswell) [AUTOR](#author) [KOPIERRECHT](#copyright) [FEHLER](#bugs) 
+
 *"oyranos\-monitor\-white\-point"* *1* *"October 11, 2018"* "User Commands"
-## NAME
+## NAME <a name="name"></a>
 oyranos\-monitor\-white\-point v0.9.7 \- Nacht Manager
-## ÜBERSICHT
+## ÜBERSICHT <a name="synopsis"></a>
 **oyranos\-monitor\-white\-point** <strong>\-n</strong>=<em>0|1|2|3|4|5|6|7</em> <strong>\-g</strong>=<em>ICC\_PROFIL</em> [<strong>\-b</strong>=<em>PROZENT</em>] [<strong>\-z</strong>] [<strong>\-v</strong>]
 <br />
 **oyranos\-monitor\-white\-point** <strong>\-w</strong>=<em>0|1|2|3|4|5|6|7</em> <strong>\-a</strong>=<em>KELVIN</em> [<strong>\-z</strong>] [<strong>\-v</strong>]
@@ -14,9 +16,9 @@ oyranos\-monitor\-white\-point v0.9.7 \- Nacht Manager
 **oyranos\-monitor\-white\-point** <strong>\-d</strong>=<em>0|1|2</em> [<strong>\-v</strong>]
 <br />
 **oyranos\-monitor\-white\-point** <strong>\-m</strong> | <strong>\-r</strong> | <strong>\-X</strong>=<em>json|json+command|man|markdown</em> | <strong>\-h</strong> [<strong>\-v</strong>]
-## BESCHREIBUNG
+## BESCHREIBUNG <a name="description"></a>
 Das Werkzeug kann den momentanen Weißpunkt setzen oder ihn abhängig von der Tages\- und Nachzeit festlegen. Ein zusätzliches Effektprofil kann eingestellt werden.
-## OPTIONEN
+## OPTIONEN <a name="options"></a>
 ### Nächtliche Anmutung
 &nbsp;&nbsp;**oyranos\-monitor\-white\-point** <strong>\-n</strong>=<em>0|1|2|3|4|5|6|7</em> <strong>\-g</strong>=<em>ICC\_PROFIL</em> [<strong>\-b</strong>=<em>PROZENT</em>] [<strong>\-z</strong>] [<strong>\-v</strong>]
 
@@ -136,7 +138,7 @@ Der Nachtweißpunkmodus soll den Einfluß von blauen Licht auf das menschliche H
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-v</strong>|<strong>--verbose</strong></td> <td>plaudernd</td> </tr>
 </table>
 
-## UMGEBUNGSVARIABLEN
+## UMGEBUNGSVARIABLEN <a name="environmentvariables"></a>
 ### OY_DEBUG
 &nbsp;&nbsp;Setze das Oyranos Fehlersuchniveau.
   <br />
@@ -145,22 +147,22 @@ Der Nachtweißpunkmodus soll den Einfluß von blauen Licht auf das menschliche H
 &nbsp;&nbsp;Der gültige Bereich ist 1\-20.
 ### OY\_MODULE\_PATH
 &nbsp;&nbsp;zeige Oyranos zusätzliche Verzeichnisse mit Modulen.
-## BEISPIELE
+## BEISPIELE <a name="examples"></a>
 ### Starte den Wächter, setze nächtlichen Weißpunkt zu 3000 Kelvin und benutze diesen im Nachtmodus
 &nbsp;&nbsp;oyranos\-monitor\-white\-point \-d 2 \-a 3000 \-n 1
 ### Schalte alle Tagesbeeinflussung aus, wie Weißpunkt und Effekt
 &nbsp;&nbsp;oyranos\-monitor\-white\-point \-s 0 \-e 0
-## SIEHE AUCH
+## SIEHE AUCH <a name="seeaswell"></a>
 ###  [oyranos\-monitor](oyranosmonitor.html)<a href="oyranosmonitor.md">(1)</a>  [oyranos\-config](oyranosconfig.html)<a href="oyranosconfig.md">(1)</a>  [oyranos](oyranos.html)<a href="oyranos.md">(3)</a>
 ### http://www.oyranos.org
-## AUTOR
+## AUTOR <a name="author"></a>
 Kai\-Uwe Behrmann http://www.oyranos.org
-## KOPIERRECHT
+## KOPIERRECHT <a name="copyright"></a>
 *© 2005\-2019 Kai\-Uwe Behrmann and others*
 
 
-### Lizenz
+### Lizenz <a name="license"></a>
 newBSD
-## FEHLER
+## FEHLER <a name="bugs"></a>
 [https://www.github.com/oyranos\-cms/oyranos/issues](https://www.github.com/oyranos\-cms/oyranos/issues)
 

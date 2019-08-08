@@ -1,8 +1,10 @@
 # oyranos\-profile\-graph v0.9.7 {#oyranosprofilegraphde}
+[NAME](#name) [ÜBERSICHT](#synopsis) [BESCHREIBUNG](#description) [OPTIONEN](#options) [UMGEBUNGSVARIABLEN](#environmentvariables) [BEISPIELE](#examples) [SIEHE AUCH](#seeaswell) [AUTOR](#author) [KOPIERRECHT](#copyright) [FEHLER](#bugs) 
+
 *"oyranos\-profile\-graph"* *1* *"March 24, 2019"* "User Commands"
-## NAME
+## NAME <a name="name"></a>
 oyranos\-profile\-graph v0.9.7 \- Oyranos Profile Zeichner
-## ÜBERSICHT
+## ÜBERSICHT <a name="synopsis"></a>
 **oyranos\-profile\-graph** [<strong>\-t</strong>=<em>NUMMER</em>] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMMER</em>] [<strong>\-o</strong>=<em>\-|DATEI</em>] [<strong>\-f</strong>=<em>FORMAT</em>] [<strong>\-c</strong>] [<strong>\-x</strong>] [<strong>\-d</strong>=<em>NUMMER</em>] [<strong>\-n</strong>] [<strong>\-2</strong>] [<strong>\-4</strong>] [<strong>\-r</strong>] [<strong>\-v</strong>] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
 <br />
 **oyranos\-profile\-graph** <strong>\-S</strong> [<strong>\-t</strong>=<em>NUMMER</em>] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMMER</em>] [<strong>\-R</strong>] [<strong>\-o</strong>=<em>\-|DATEI</em>] [<strong>\-f</strong>=<em>FORMAT</em>] [<strong>\-v</strong>]
@@ -16,9 +18,9 @@ oyranos\-profile\-graph v0.9.7 \- Oyranos Profile Zeichner
 **oyranos\-profile\-graph** <strong>\-s</strong>=<em>DATEI</em> <strong>\-p</strong>=<em>FORMAT</em> <strong>\-z</strong> [<strong>\-t</strong>=<em>NUMMER</em>] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMMER</em>] [<strong>\-R</strong>] [<strong>\-P</strong>=<em>WORT</em>] [<strong>\-o</strong>=<em>\-|DATEI</em>] [<strong>\-v</strong>]
 <br />
 **oyranos\-profile\-graph** <strong>\-X</strong>=<em>json|json+command|man|markdown</em> | <strong>\-h</strong> [<strong>\-v</strong>]
-## BESCHREIBUNG
+## BESCHREIBUNG <a name="description"></a>
 Das oyranos\-profile\-graph Programm erzeugt aus einem ICC Profil oder eingebetteten ICC Profil in eine Grafik. Vorgabemäßig malt es die Sättigungslinie eines anzugebenden ICC Profiles und schreibt die Grafik nach stdout.
-## OPTIONEN
+## OPTIONEN <a name="options"></a>
 ### 2D Zeichnung vom Farbprofil
 &nbsp;&nbsp;**oyranos\-profile\-graph** [<strong>\-t</strong>=<em>NUMMER</em>] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMMER</em>] [<strong>\-o</strong>=<em>\-|DATEI</em>] [<strong>\-f</strong>=<em>FORMAT</em>] [<strong>\-c</strong>] [<strong>\-x</strong>] [<strong>\-d</strong>=<em>NUMMER</em>] [<strong>\-n</strong>] [<strong>\-2</strong>] [<strong>\-4</strong>] [<strong>\-r</strong>] [<strong>\-v</strong>] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
 
@@ -126,7 +128,7 @@ Erzeuge aus einem ICC Profil eine Grafik mit seiner Sättigungslinie.
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-v</strong>|<strong>--verbose</strong></td> <td>plaudernd</td> </tr>
 </table>
 
-## UMGEBUNGSVARIABLEN
+## UMGEBUNGSVARIABLEN <a name="environmentvariables"></a>
 ### OY\_DEBUG
 &nbsp;&nbsp;Setze das Oyranos Fehlersuchniveau.
   <br />
@@ -135,24 +137,24 @@ Erzeuge aus einem ICC Profil eine Grafik mit seiner Sättigungslinie.
 &nbsp;&nbsp;Der gültige Bereich ist 1\-20.
 ### XDG\_DATA\_HOME XDG\_DATA\_DIRS
 &nbsp;&nbsp;route Oyranos to top directories containing resources. The derived paths for ICC profiles have a "color/icc" appended. http://www.oyranos.com/wiki/index.php?title=OpenIccDirectoryProposal
-## BEISPIELE
+## BEISPIELE <a name="examples"></a>
 ### Zeichne ICC Profil
 &nbsp;&nbsp;oyranos\-profile\-graph ICC\_PROFILE
 ### Zeige Sättigungslinien von zwei Profilen in CIE*ab 256 Bildpunkte breit, ohne Spectrallinie und mit dickeren Linien:
 &nbsp;&nbsp;oyranos\-profile\-graph \-w 256 \-s \-t 3 sRGB.icc ProPhoto\-RGB.icc
 ### Zeige die Standard Betrachter Spektralfunktion als Kurven:
 &nbsp;&nbsp;oyranos\-profile\-graph \-\-standard\-observer \-o CIE\-StdObserver.png
-## SIEHE AUCH
+## SIEHE AUCH <a name="seeaswell"></a>
 ###  [oyranos\-profile](oyranosprofile.html)<a href="oyranosprofile.md">(1)</a>  [oyranos\-config](oyranosconfig.html)<a href="oyranosconfig.md">(1)</a>  [oyranos\-policy](oyranospolicy.html)<a href="oyranospolicy.md">(1)</a>  [oyranos](oyranos.html)<a href="oyranos.md">(3)</a>
 ### http://www.oyranos.org
-## AUTOR
+## AUTOR <a name="author"></a>
 Kai\-Uwe Behrmann http://www.oyranos.org
-## KOPIERRECHT
+## KOPIERRECHT <a name="copyright"></a>
 *© 2005\-2019 Kai\-Uwe Behrmann and others*
 
 
-### Lizenz
+### Lizenz <a name="license"></a>
 newBSD
-## FEHLER
+## FEHLER <a name="bugs"></a>
 [https://www.github.com/oyranos\-cms/oyranos/issues](https://www.github.com/oyranos\-cms/oyranos/issues)
 

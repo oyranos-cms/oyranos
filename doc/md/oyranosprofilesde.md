@@ -1,8 +1,10 @@
 # oyranos\-profiles v0.9.7 {#oyranosprofilesde}
+[NAME](#name) [ÜBERSICHT](#synopsis) [BESCHREIBUNG](#description) [OPTIONEN](#options) [UMGEBUNGSVARIABLEN](#environmentvariables) [BEISPIELE](#examples) [SIEHE AUCH](#seeaswell) [AUTOR](#author) [KOPIERRECHT](#copyright) [FEHLER](#bugs) 
+
 *"oyranos\-profiles"* *1* *"October 11, 2018"* "User Commands"
-## NAME
+## NAME <a name="name"></a>
 oyranos\-profiles v0.9.7 \- Oyranos Profile
-## ÜBERSICHT
+## ÜBERSICHT <a name="synopsis"></a>
 **oyranos\-profiles** <strong>\-l</strong> [<strong>\-f</strong>] [<strong>\-e</strong>] [<strong>\-a</strong>] [<strong>\-c</strong>] [<strong>\-d</strong>] [<strong>\-k</strong>] [<strong>\-n</strong>] [<strong>\-o</strong>] [<strong>\-i</strong>] [<strong>\-2</strong>] [<strong>\-4</strong>] [<strong>\-P</strong>] [<strong>\-T</strong>=<em>SCHLÜSSEL;WERT</em>] [<strong>\-v</strong>]
 <br />
 **oyranos\-profiles** <strong>\-p</strong> [<strong>\-u</strong>|<strong>\-s</strong>|<strong>\-y</strong>|<strong>\-m</strong>] [<strong>\-v</strong>]
@@ -10,9 +12,9 @@ oyranos\-profiles v0.9.7 \- Oyranos Profile
 **oyranos\-profiles** <strong>\-I</strong>=<em>ICC\_PROFIL</em> | <strong>\-t</strong>=<em>TAXI\_ID</em> [<strong>\-u</strong>|<strong>\-s</strong>|<strong>\-y</strong>|<strong>\-m</strong>] [<strong>\-g</strong>] [<strong>\-v</strong>]
 <br />
 **oyranos\-profiles** <strong>\-h</strong> <strong>\-X</strong>=<em>json|json+command|man|markdown</em>
-## BESCHREIBUNG
+## BESCHREIBUNG <a name="description"></a>
 Das Werkzeug kann installierte Profile und Suchpfade anzeigen. Es kann ein Profil in einen Suchpfad installieren.
-## OPTIONEN
+## OPTIONEN <a name="options"></a>
 ### Liste der verfügbaren ICC Farbprofile
 &nbsp;&nbsp;**oyranos\-profiles** <strong>\-l</strong> [<strong>\-f</strong>] [<strong>\-e</strong>] [<strong>\-a</strong>] [<strong>\-c</strong>] [<strong>\-d</strong>] [<strong>\-k</strong>] [<strong>\-n</strong>] [<strong>\-o</strong>] [<strong>\-i</strong>] [<strong>\-2</strong>] [<strong>\-4</strong>] [<strong>\-P</strong>] [<strong>\-T</strong>=<em>SCHLÜSSEL;WERT</em>] [<strong>\-v</strong>]
 
@@ -77,7 +79,7 @@ Das Werkzeug kann installierte Profile und Suchpfade anzeigen. Es kann ein Profi
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-v</strong>|<strong>--verbose</strong></td> <td>plaudernd</td> </tr>
 </table>
 
-## UMGEBUNGSVARIABLEN
+## UMGEBUNGSVARIABLEN <a name="environmentvariables"></a>
 ### OY_DEBUG
 &nbsp;&nbsp;Setze das Oyranos Fehlersuchniveau.
   <br />
@@ -86,7 +88,7 @@ Das Werkzeug kann installierte Profile und Suchpfade anzeigen. Es kann ein Profi
 &nbsp;&nbsp;Der gültige Bereich ist 1\-20.
 ### XDG\_DATA\_HOME XDG\_DATA\_DIRS
 &nbsp;&nbsp;route Oyranos to top directories containing resources. The derived paths for ICC profiles have a "color/icc" appended. http://www.oyranos.com/wiki/index.php?title=OpenIccDirectoryProposal
-## BEISPIELE
+## BEISPIELE <a name="examples"></a>
 ### Liste alle installierten Profile mit internem Namen
 &nbsp;&nbsp;oyranos\-profiles \-le
 ### Liste alle installierten Profile mit Monitor\-und Ausgabeklasse
@@ -99,17 +101,17 @@ Das Werkzeug kann installierte Profile und Suchpfade anzeigen. Es kann ein Profi
 &nbsp;&nbsp;oyranos\-profiles \-\-install \-\-taxi=taxi\_id/0 \-\-gui \-d \-u
 ### Zeige Dateiinfos
 &nbsp;&nbsp;SAVEIFS=$IFS ; IFS=$'\n\b'; profiles=(\`oyranos\-profiles \-ldf\`); IFS=$SAVEIFS; for file in "${profiles[@]}"; do ls "$file"; done
-## SIEHE AUCH
+## SIEHE AUCH <a name="seeaswell"></a>
 ###  [oyranos\-profile\-graph](oyranosprofilegraph.html)<a href="oyranosprofilegraph.md">(1)</a>  [oyranos\-config](oyranosconfig.html)<a href="oyranosconfig.md">(1)</a>  [oyranos\-policy](oyranospolicy.html)<a href="oyranospolicy.md">(1)</a>  [oyranos](oyranos.html)<a href="oyranos.md">(3)</a>
 ### http://www.oyranos.org
-## AUTOR
+## AUTOR <a name="author"></a>
 Kai\-Uwe Behrmann http://www.oyranos.org
-## KOPIERRECHT
+## KOPIERRECHT <a name="copyright"></a>
 *© 2005\-2019 Kai\-Uwe Behrmann and others*
 
 
-### Lizenz
+### Lizenz <a name="license"></a>
 newBSD
-## FEHLER
+## FEHLER <a name="bugs"></a>
 [https://www.github.com/oyranos\-cms/oyranos/issues](https://www.github.com/oyranos\-cms/oyranos/issues)
 

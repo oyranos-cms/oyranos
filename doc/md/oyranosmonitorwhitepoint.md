@@ -1,8 +1,10 @@
 # oyranos\-monitor\-white\-point v0.9.7 {#oyranosmonitorwhitepoint}
+[NAME](#name) [SYNOPSIS](#synopsis) [DESCRIPTION](#description) [OPTIONS](#options) [ENVIRONMENT VARIABLES](#environmentvariables) [EXAMPLES](#examples) [SEE AS WELL](#seeaswell) [AUTHOR](#author) [COPYRIGHT](#copyright) [BUGS](#bugs) 
+
 *"oyranos\-monitor\-white\-point"* *1* *"October 11, 2018"* "User Commands"
-## NAME
+## NAME <a name="name"></a>
 oyranos\-monitor\-white\-point v0.9.7 \- Night Manager
-## SYNOPSIS
+## SYNOPSIS <a name="synopsis"></a>
 **oyranos\-monitor\-white\-point** <strong>\-n</strong>=<em>0|1|2|3|4|5|6|7</em> <strong>\-g</strong>=<em>ICC\_PROFILE</em> [<strong>\-b</strong>=<em>PERCENT</em>] [<strong>\-z</strong>] [<strong>\-v</strong>]
 <br />
 **oyranos\-monitor\-white\-point** <strong>\-w</strong>=<em>0|1|2|3|4|5|6|7</em> <strong>\-a</strong>=<em>KELVIN</em> [<strong>\-z</strong>] [<strong>\-v</strong>]
@@ -14,9 +16,9 @@ oyranos\-monitor\-white\-point v0.9.7 \- Night Manager
 **oyranos\-monitor\-white\-point** <strong>\-d</strong>=<em>0|1|2</em> [<strong>\-v</strong>]
 <br />
 **oyranos\-monitor\-white\-point** <strong>\-m</strong> | <strong>\-r</strong> | <strong>\-X</strong>=<em>json|json+command|man|markdown</em> | <strong>\-h</strong> [<strong>\-v</strong>]
-## DESCRIPTION
+## DESCRIPTION <a name="description"></a>
 The tool can set the actual white point or set it by local day and night time. A additional effect profile can be selected.
-## OPTIONS
+## OPTIONS <a name="options"></a>
 ### Nightly appearance
 &nbsp;&nbsp;**oyranos\-monitor\-white\-point** <strong>\-n</strong>=<em>0|1|2|3|4|5|6|7</em> <strong>\-g</strong>=<em>ICC\_PROFILE</em> [<strong>\-b</strong>=<em>PERCENT</em>] [<strong>\-z</strong>] [<strong>\-v</strong>]
 
@@ -136,7 +138,7 @@ The Night white point mode shall allow to reduce influence of blue light during 
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-v</strong>|<strong>--verbose</strong></td> <td>verbose</td> </tr>
 </table>
 
-## ENVIRONMENT VARIABLES
+## ENVIRONMENT VARIABLES <a name="environmentvariables"></a>
 ### OY_DEBUG
 &nbsp;&nbsp;set the Oyranos debug level.
   <br />
@@ -145,22 +147,22 @@ The Night white point mode shall allow to reduce influence of blue light during 
 &nbsp;&nbsp;Valid integer range is from 1\-20.
 ### OY\_MODULE\_PATH
 &nbsp;&nbsp;route Oyranos to additional directories containing modules.
-## EXAMPLES
+## EXAMPLES <a name="examples"></a>
 ### Enable the daemon, set night white point to 3000 Kelvin and use that in night mode
 &nbsp;&nbsp;oyranos\-monitor\-white\-point \-d 2 \-a 3000 \-n 1
 ### Switch all day light intereference off such as white point and effect
 &nbsp;&nbsp;oyranos\-monitor\-white\-point \-s 0 \-e 0
-## SEE AS WELL
+## SEE AS WELL <a name="seeaswell"></a>
 ###  [oyranos\-monitor](oyranosmonitor.html)<a href="oyranosmonitor.md">(1)</a>  [oyranos\-config](oyranosconfig.html)<a href="oyranosconfig.md">(1)</a>  [oyranos](oyranos.html)<a href="oyranos.md">(3)</a>
 ### http://www.oyranos.org
-## AUTHOR
+## AUTHOR <a name="author"></a>
 Kai\-Uwe Behrmann http://www.oyranos.org
-## COPYRIGHT
+## COPYRIGHT <a name="copyright"></a>
 *© 2005\-2019 Kai\-Uwe Behrmann and others*
 
 
-### License
+### License <a name="license"></a>
 newBSD
-## BUGS
+## BUGS <a name="bugs"></a>
 [https://www.github.com/oyranos\-cms/oyranos/issues](https://www.github.com/oyranos\-cms/oyranos/issues)
 
