@@ -71,14 +71,14 @@ oyjlTESTRESULT_e testArgs()
   /* declare options - the core information; use previously declared choices */
   oyjlOption_s oarray[] = {
   /* type,   flags, o,   option,    key,  name,         description,         help, value_name,    value_type,               values,                                                          variable_type, output variable */
-    {"oiwi", 0,     '#', "",        NULL, _("status"),  _("Show Status"),    NULL, NULL,          oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i = &show_status} },
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,'@',"",NULL,_("input"),_("Set Input"),NULL, _("FILENAME"), oyjlOPTIONTYPE_CHOICE, {}, oyjlINT, {.i = &file_count} },
-    {"oiwi", 0,     'i', "input",   NULL, _("input"),   _("Set Input"),      NULL, _("FILENAME"), oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)i_choices, sizeof(i_choices), malloc )}, oyjlSTRING, {.s = &file} },
-    {"oiwi", 0,     'o', "output",  NULL, _("output"),  _("Control Output"), NULL, "0|1|2",       oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)o_choices, sizeof(o_choices), malloc )}, oyjlINT, {.i = &output} },
-    {"oiwi", 0,     'h', "help",    NULL, _("help"),    _("Help"),           NULL, NULL,          oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i = &help} },
-    {"oiwi", 0,     'v', "verbose", NULL, _("verbose"), _("verbose"),        NULL, NULL,          oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i = &verbose_} },
-    {"oiwi", 0,     'b', NULL,      NULL, "blabla",     "BlaBla",            NULL, NULL,          oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i = &output} },
-    {"oiwi", 0,     '\000',"candle",NULL, "candel",     "Candel",            NULL, NULL,          oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i = &output} },
+    {"oiwi", 0,     "#", "",        NULL, _("status"),  _("Show Status"),    NULL, NULL,          oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i = &show_status} },
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,"@","",NULL,_("input"),_("Set Input"),NULL, _("FILENAME"), oyjlOPTIONTYPE_CHOICE, {}, oyjlINT, {.i = &file_count} },
+    {"oiwi", 0,     "i", "input",   NULL, _("input"),   _("Set Input"),      NULL, _("FILENAME"), oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)i_choices, sizeof(i_choices), malloc )}, oyjlSTRING, {.s = &file} },
+    {"oiwi", 0,     "o", "output",  NULL, _("output"),  _("Control Output"), NULL, "0|1|2",       oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)o_choices, sizeof(o_choices), malloc )}, oyjlINT, {.i = &output} },
+    {"oiwi", 0,     "h", "help",    NULL, _("help"),    _("Help"),           NULL, NULL,          oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i = &help} },
+    {"oiwi", 0,     "v", "verbose", NULL, _("verbose"), _("verbose"),        NULL, NULL,          oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i = &verbose_} },
+    {"oiwi", 0,     "b", NULL,      NULL, "blabla",     "BlaBla",            NULL, NULL,          oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i = &output} },
+    {"oiwi", 0,     NULL,"candle",NULL, "candel",     "Candel",            NULL, NULL,          oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i = &output} },
     {"",0,0,0,0,0,0,0, NULL, oyjlOPTIONTYPE_END, {},0,{}}
   };
 
@@ -228,7 +228,7 @@ oyjlTESTRESULT_e testArgs()
   }
   int count = 0, i;
   /* detect all anonymous arguments */
-  char ** results = oyjlOptions_ResultsToList( ui?ui->opts:NULL, '@', &count );
+  char ** results = oyjlOptions_ResultsToList( ui?ui->opts:NULL, "@", &count );
   if(count == 2 &&
      file_count == count &&
      strcmp(argv_anonymous[2],results[0]) == 0 &&
@@ -283,7 +283,7 @@ oyjlTESTRESULT_e testArgs()
   ui = oyjlUi_Create( argc, argv, /* argc+argv are required for parsing the command line options */
                                        "oiCR", "oyjl-config-read", _("Short example tool using libOyjl"), "logo",
                                        sections, oarray, groups, NULL );
-  if(ui && strcmp(file,"file-name.json") == 0)
+  if(ui && file && strcmp(file,"file-name.json") == 0)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "ui created - parse string                      " );
   } else
@@ -317,7 +317,7 @@ oyjlTESTRESULT_e testArgs()
     "oyjlUi_ToMan() %lu                            ", strlen(text) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "oyjlUi_ToMan() 672 == %lu                     ", strlen(text) );
+    "oyjlUi_ToMan() 672 == %lu                     ", text ? strlen(text) : 0 );
   }
   OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlUi_ToMan", "txt" )
   if(verbose)
@@ -330,20 +330,21 @@ oyjlTESTRESULT_e testArgs()
     "oyjlUi_ToMarkdown() %lu                       ", strlen(text) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "oyjlUi_ToMarkdown() %lu                       ", strlen(text) );
+    "oyjlUi_ToMarkdown() %lu                       ", text?strlen(text):0 );
   }
   OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlUi_ToMarkdown", "txt" )
   if(verbose)
     fprintf( zout, "%s\n", text );
   if(text) {free(text);} text = NULL;
 
-  text = oyjlOptions_ResultsToText( ui->opts );
+  if(ui)
+    text = oyjlOptions_ResultsToText( ui->opts );
   if(text && strlen(text) == 21)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlOptions_ResultsToText() %lu                 ", strlen(text) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "oyjlOptions_ResultsToText() %lu                 ", strlen(text) );
+    "oyjlOptions_ResultsToText() %lu                 ", text?strlen(text):0 );
   }
   if(verbose)
     fprintf( zout, "%s\n", text );

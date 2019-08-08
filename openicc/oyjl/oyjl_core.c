@@ -33,6 +33,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <wchar.h>  /* wcslen() */
 
 #include "oyjl.h"
 #include "oyjl_macros.h"
@@ -192,7 +193,7 @@ char **        oyjlStringSplitSpace  ( const char        * text,
   return list;
 }
 
-static const char * oyjlStringDelimiter ( const char * text, const char * delimiter, int * length )
+const char * oyjlStringDelimiter ( const char * text, const char * delimiter, int * length )
 {
   int i,j, dn = delimiter ? strlen(delimiter) : 0, len = text?strlen(text):0;
   for(j = 0; j < len; ++j)
@@ -757,6 +758,31 @@ int          oyjlStringsToDoubles    ( const char        * text,
 
   return error;
 }
+
+/** @brief   number of letters in a UTF-8 string
+ *
+ *  A convinience wrapper for wcslen().
+ *
+ *  @param[in]     text                source string
+ *  @return                            letters
+ *
+ *  @version Oyjl: 1.0.0
+ *  @date    2019/08/06
+ *  @since   2019/08/06 (Oyjl: 1.0.0)
+ */
+int        oyjlWStringLen            ( const char        * text )
+{
+  int len = strlen(text), wlen = 0;
+  wchar_t * wcs = (wchar_t*) calloc( len + 1, sizeof(wchar_t) );
+  if(wcs)
+  {
+    mbstowcs( wcs, text, len + 1 );
+    wlen = wcslen(wcs);
+    free(wcs);
+  }
+  return wlen;
+}
+
 
 /**
  *  A string representation with preallocation for faster memory

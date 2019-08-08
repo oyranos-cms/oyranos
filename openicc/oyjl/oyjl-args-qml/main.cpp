@@ -41,12 +41,12 @@ int main(int argc, const char *argv[])
   /* declare options - the core information; use previously declared choices */
   oyjlOption_s oarray[] = {
   /* type,   flags, o,   option,    key,  name,         description,         help, value_name,    value_type,               values,                                                          variable_type, output variable */
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, 'i', "input", NULL, NULL,_("JSON UI Description"), NULL, _("STRING"), oyjlOPTIONTYPE_CHOICE, {}, oyjlSTRING, {.s = &json} },
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, 'c', "command", NULL, NULL, _("JSON Command"), NULL, _("STRING"), oyjlOPTIONTYPE_CHOICE, {}, oyjlSTRING, {.s = &command} },
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, 'o', "output", NULL, NULL,_("Results JSON"), NULL, _("STRING"), oyjlOPTIONTYPE_CHOICE, {}, oyjlSTRING, {.s = &output} },
-    {"oiwi", 0,     'h', "help",    NULL, _("help"),    _("Help"),           NULL, NULL,          oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i = &help} },
-    {"oiwi", 0,     'v', "verbose", NULL, _("verbose"), _("verbose"),        NULL, NULL,          oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i = &verbose} },
-    {"oiwi", 0,     'X', "export",  NULL, NULL,         NULL,                NULL, NULL,          oyjlOPTIONTYPE_CHOICE, {}, oyjlSTRING, {.s = &exportX} },
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "i", "input", NULL, NULL,_("JSON UI Description"), NULL, _("STRING"), oyjlOPTIONTYPE_CHOICE, {}, oyjlSTRING, {.s = &json} },
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "c", "command", NULL, NULL, _("JSON Command"), NULL, _("STRING"), oyjlOPTIONTYPE_CHOICE, {}, oyjlSTRING, {.s = &command} },
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "o", "output", NULL, NULL,_("Results JSON"), NULL, _("STRING"), oyjlOPTIONTYPE_CHOICE, {}, oyjlSTRING, {.s = &output} },
+    {"oiwi", 0,     "h", "help",    NULL, _("help"),    _("Help"),           NULL, NULL,          oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i = &help} },
+    {"oiwi", 0,     "v", "verbose", NULL, _("verbose"), _("verbose"),        NULL, NULL,          oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i = &verbose} },
+    {"oiwi", 0,     "X", "export",  NULL, NULL,         NULL,                NULL, NULL,          oyjlOPTIONTYPE_CHOICE, {}, oyjlSTRING, {.s = &exportX} },
     {"",0,0,0,0,0,0,0, NULL, oyjlOPTIONTYPE_END, {},oyjlNONE,{}}
   };
 

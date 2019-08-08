@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2019-08-04 10:50+0200\n"
+"POT-Creation-Date: 2019-08-08 07:24+0200\n"
 "PO-Revision-Date: 2015-02-20 17:32+0100\n"
 "Last-Translator: Kai-Uwe Behrmann <ku.b@gmx.de>\n"
 "Language-Team: russian <ru@li.org>\n"
@@ -21,11 +21,11 @@ msgstr ""
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Language: ru_RU\n"
 
-#: oyjl_args.c:2325
+#: oyjl_args.c:2362
 msgid "... try with --help|-h option for usage text. give up"
 msgstr ""
 
-#: oyjl_args.c:2761 oyjl_args.c:2981
+#: oyjl_args.c:2799 oyjl_args.c:3018
 msgid "AUTHOR"
 msgstr ""
 
@@ -37,7 +37,7 @@ msgstr ""
 msgid "Add gettext translated keys to JSON:"
 msgstr ""
 
-#: oyjl_args.c:1210
+#: oyjl_args.c:1230
 msgid "All available data"
 msgstr ""
 
@@ -49,15 +49,15 @@ msgstr ""
 msgid "Any arg mode"
 msgstr ""
 
-#: oyjl_args.c:2378
+#: oyjl_args.c:2415
 msgid "Author"
 msgstr ""
 
-#: oyjl_args.c:2771 oyjl_args.c:2773 oyjl_args.c:2991 oyjl_args.c:2993
+#: oyjl_args.c:2809 oyjl_args.c:2811 oyjl_args.c:3028 oyjl_args.c:3030
 msgid "BUGS"
 msgstr ""
 
-#: oyjl_args.c:2765 oyjl_args.c:2985
+#: oyjl_args.c:2803 oyjl_args.c:3022
 msgid "COPYRIGHT"
 msgstr ""
 
@@ -66,12 +66,13 @@ msgid "Control Output"
 msgstr ""
 
 #. type,   flags, name,      description,          help, mandatory, optional, detail
-#: oyjl-args.c:66 oyjl-args_190704.134615.c:94 oyjl-args_190706.215129.c:613
+#: oyjl-args.c:56 oyjl-args_190704.134615.c:94 oyjl-args_190706.215129.c:613
 #: oyjl-args_190710.234216.c:987 oyjl-args_190711.191720.c:1160
 #: oyjl-args_190711.193024.c:1161 oyjl-args_190712.054341.c:1173
 #: oyjl-args_190712.064826.c:1173 oyjl-args_190714.103745.c:69
 #: oyjl-args_190714.231328.c:65 oyjl-args_190716.232108.c:65
-#: oyjl-args_190731.235536.c:65
+#: oyjl-args_190731.235536.c:65 oyjl-args_190801.220209.c:66
+#: oyjl-args_190802.195815.c:66
 msgid "Convert"
 msgstr ""
 
@@ -79,12 +80,13 @@ msgstr ""
 msgid "Convert JSON to gettext ready C strings:"
 msgstr ""
 
-#: oyjl-args.c:73 oyjl-args_190704.134615.c:101 oyjl-args_190706.215129.c:620
+#: oyjl-args.c:63 oyjl-args_190704.134615.c:101 oyjl-args_190706.215129.c:620
 #: oyjl-args_190710.234216.c:994 oyjl-args_190711.191720.c:1167
 #: oyjl-args_190711.193024.c:1168 oyjl-args_190712.054341.c:1180
 #: oyjl-args_190712.064826.c:1180 oyjl-args_190714.103745.c:76
 #: oyjl-args_190714.231328.c:72 oyjl-args_190716.232108.c:72
-#: oyjl-args_190731.235536.c:72
+#: oyjl-args_190731.235536.c:72 oyjl-args_190801.220209.c:73
+#: oyjl-args_190802.195815.c:73
 msgid "Convert UI JSON to C code using libOyjl"
 msgstr ""
 
@@ -92,7 +94,7 @@ msgstr ""
 msgid "Copyright"
 msgstr ""
 
-#: oyjl_args.c:2667 oyjl_args.c:2883
+#: oyjl_args.c:2705 oyjl_args.c:2921
 msgid "DESCRIPTION"
 msgstr ""
 
@@ -100,7 +102,7 @@ msgstr ""
 msgid "Date"
 msgstr ""
 
-#: oyjl_args.c:1998
+#: oyjl_args.c:2032
 msgid "Description"
 msgstr ""
 
@@ -112,7 +114,7 @@ msgstr ""
 msgid "Documentation"
 msgstr ""
 
-#: oyjl_args.c:1340
+#: oyjl_args.c:1371
 msgid "Double occuring option"
 msgstr ""
 
@@ -120,15 +122,15 @@ msgstr ""
 msgid "Download"
 msgstr ""
 
-#: oyjl_args.c:2522
+#: oyjl_args.c:2560
 msgid "ENVIRONMENT VARIABLES"
 msgstr ""
 
-#: oyjl_args.c:2518
+#: oyjl_args.c:2556
 msgid "EXAMPLES"
 msgstr ""
 
-#: oyjl_args.c:2520
+#: oyjl_args.c:2558
 msgid "EXIT-STATE"
 msgstr ""
 
@@ -136,48 +138,51 @@ msgstr ""
 msgid "Example"
 msgstr "приме́р"
 
-#: oyjl_args.c:1209
+#: oyjl_args.c:1229
 msgid "Export"
 msgstr ""
 
-#: oyjl_args.c:1230
+#: oyjl_args.c:1250
 msgid "Export formated text"
 msgstr ""
 
-#: oyjl-args.c:54 oyjl-args.c:55 oyjl-args_190704.134615.c:84
-#: oyjl-args_190706.215129.c:603 oyjl-args_190710.234216.c:977
-#: oyjl-args_190711.191720.c:1150 oyjl-args_190711.193024.c:1151
-#: oyjl-args_190712.054341.c:1163 oyjl-args_190712.064826.c:1163
-#: oyjl-args_190714.103745.c:57 oyjl-args_190714.103745.c:58
-#: oyjl-args_190714.231328.c:53 oyjl-args_190714.231328.c:54
-#: oyjl-args_190716.232108.c:53 oyjl-args_190716.232108.c:54
-#: oyjl-args_190731.235536.c:53 oyjl-args_190731.235536.c:54 test-args.c:75
-#: test-args.c:76 test-core.c:569 test-core.c:570 test.c:585 test.c:586
+#: oyjl-args.c:46 oyjl-args_190704.134615.c:84 oyjl-args_190706.215129.c:603
+#: oyjl-args_190710.234216.c:977 oyjl-args_190711.191720.c:1150
+#: oyjl-args_190711.193024.c:1151 oyjl-args_190712.054341.c:1163
+#: oyjl-args_190712.064826.c:1163 oyjl-args_190714.103745.c:57
+#: oyjl-args_190714.103745.c:58 oyjl-args_190714.231328.c:53
+#: oyjl-args_190714.231328.c:54 oyjl-args_190716.232108.c:53
+#: oyjl-args_190716.232108.c:54 oyjl-args_190731.235536.c:53
+#: oyjl-args_190731.235536.c:54 oyjl-args_190801.220209.c:54
+#: oyjl-args_190801.220209.c:55 oyjl-args_190802.195815.c:54
+#: oyjl-args_190802.195815.c:55 test-args.c:75 test-args.c:76 test-core.c:569
+#: test-core.c:570 test.c:585 test.c:586
 msgid "FILENAME"
 msgstr ""
 
-#: oyjl_args.c:2526
+#: oyjl_args.c:2564
 msgid "FILES"
 msgstr ""
 
-#: oyjl_args.c:1200
+#: oyjl_args.c:1220
 msgid "Formated text"
 msgstr ""
 
-#: oyjl_args.c:1204
+#: oyjl_args.c:1224
 msgid "GUI"
 msgstr ""
 
-#: oyjl_args.c:1207
+#: oyjl_args.c:1227
 msgid "GUI + Command"
 msgstr ""
 
-#: oyjl-args.c:67 oyjl-args_190704.134615.c:95 oyjl-args_190706.215129.c:614
+#: oyjl-args.c:57 oyjl-args_190704.134615.c:95 oyjl-args_190706.215129.c:614
 #: oyjl-args_190710.234216.c:988 oyjl-args_190711.191720.c:1161
 #: oyjl-args_190711.193024.c:1162 oyjl-args_190712.054341.c:1174
 #: oyjl-args_190712.064826.c:1174 oyjl-args_190714.103745.c:70
 #: oyjl-args_190714.231328.c:66 oyjl-args_190716.232108.c:66
-#: oyjl-args_190731.235536.c:66 test-args.c:96 test-args.c:251 test-core.c:583
+#: oyjl-args_190731.235536.c:66 oyjl-args_190801.220209.c:67
+#: oyjl-args_190802.195815.c:67 test-args.c:96 test-args.c:251 test-core.c:583
 #: test-core.c:647 test.c:599
 msgid "General options"
 msgstr ""
@@ -186,52 +191,54 @@ msgstr ""
 msgid "General options:"
 msgstr ""
 
-#: oyjl-args.c:66 oyjl-args_190704.134615.c:94 oyjl-args_190706.215129.c:613
+#: oyjl-args.c:56 oyjl-args_190704.134615.c:94 oyjl-args_190706.215129.c:613
 #: oyjl-args_190710.234216.c:987 oyjl-args_190711.191720.c:1160
 #: oyjl-args_190711.193024.c:1161 oyjl-args_190712.054341.c:1173
 #: oyjl-args_190712.064826.c:1173 oyjl-args_190714.103745.c:69
 #: oyjl-args_190714.231328.c:65 oyjl-args_190716.232108.c:65
-#: oyjl-args_190731.235536.c:65
+#: oyjl-args_190731.235536.c:65 oyjl-args_190801.220209.c:66
+#: oyjl-args_190802.195815.c:66
 msgid "Generate source code"
 msgstr ""
 
-#: oyjl_args.c:1208
+#: oyjl_args.c:1228
 msgid "Get Oyjl Json UI declaration incuding command"
 msgstr ""
 
-#: oyjl_args.c:1232
+#: oyjl_args.c:1252
 msgid "Get UI converted into text formats"
 msgstr ""
 
-#: oyjl_args.c:1211
+#: oyjl_args.c:1231
 msgid "Get UI data for developers"
 msgstr ""
 
-#: oyjl_args.c:1205
+#: oyjl_args.c:1225
 msgid "Get a Oyjl Json UI declaration"
 msgstr ""
 
-#: oyjl_args.c:1198
+#: oyjl_args.c:1218
 msgid "Get a unix man page"
 msgstr ""
 
-#: oyjl_args.c:1201
+#: oyjl_args.c:1221
 msgid "Get formated text"
 msgstr ""
 
-#: oyjl_args.c:2524
+#: oyjl_args.c:2562
 msgid "HISTORY"
 msgstr ""
 
-#: oyjl-args.c:56 oyjl-args.c:57 oyjl-args_190704.134615.c:85
-#: oyjl-args_190706.215129.c:604 oyjl-args_190710.234216.c:978
-#: oyjl-args_190711.191720.c:1151 oyjl-args_190711.193024.c:1152
-#: oyjl-args_190712.054341.c:1164 oyjl-args_190712.064826.c:1164
-#: oyjl-args_190714.103745.c:59 oyjl-args_190714.103745.c:60
-#: oyjl-args_190714.231328.c:55 oyjl-args_190714.231328.c:56
-#: oyjl-args_190716.232108.c:55 oyjl-args_190716.232108.c:56
-#: oyjl-args_190731.235536.c:55 oyjl-args_190731.235536.c:56 test-args.c:78
-#: test-core.c:572 test.c:588
+#: oyjl-args.c:47 oyjl-args_190704.134615.c:85 oyjl-args_190706.215129.c:604
+#: oyjl-args_190710.234216.c:978 oyjl-args_190711.191720.c:1151
+#: oyjl-args_190711.193024.c:1152 oyjl-args_190712.054341.c:1164
+#: oyjl-args_190712.064826.c:1164 oyjl-args_190714.103745.c:59
+#: oyjl-args_190714.103745.c:60 oyjl-args_190714.231328.c:55
+#: oyjl-args_190714.231328.c:56 oyjl-args_190716.232108.c:55
+#: oyjl-args_190716.232108.c:56 oyjl-args_190731.235536.c:55
+#: oyjl-args_190731.235536.c:56 oyjl-args_190801.220209.c:56
+#: oyjl-args_190801.220209.c:57 oyjl-args_190802.195815.c:56
+#: oyjl-args_190802.195815.c:57 test-args.c:78 test-core.c:572 test.c:588
 msgid "Help"
 msgstr "Справка"
 
@@ -243,11 +250,14 @@ msgstr "Справка"
 #. very long description and help lines for testing
 #. type,   flags, o,   option,    key,  name,         description,         help, value_name,    value_type,               values,                                                          variable_type, output variable
 #. very long description and help lines for testing
-#: oyjl-args.c:54 oyjl-args.c:55 oyjl-args_190714.103745.c:57
-#: oyjl-args_190714.103745.c:58 oyjl-args_190714.231328.c:53
-#: oyjl-args_190714.231328.c:54 oyjl-args_190716.232108.c:53
-#: oyjl-args_190716.232108.c:54 oyjl-args_190731.235536.c:53
-#: oyjl-args_190731.235536.c:54
+#. type,   flags, o,   option,    key,  name,         description,         help, value_name,    value_type,               values,                                                          variable_type, output variable
+#. very long description and help lines for testing
+#: oyjl-args_190714.103745.c:57 oyjl-args_190714.103745.c:58
+#: oyjl-args_190714.231328.c:53 oyjl-args_190714.231328.c:54
+#: oyjl-args_190716.232108.c:53 oyjl-args_190716.232108.c:54
+#: oyjl-args_190731.235536.c:53 oyjl-args_190731.235536.c:54
+#: oyjl-args_190801.220209.c:54 oyjl-args_190801.220209.c:55
+#: oyjl-args_190802.195815.c:54 oyjl-args_190802.195815.c:55
 msgid "Input"
 msgstr ""
 
@@ -255,24 +265,25 @@ msgstr ""
 msgid "JSON file"
 msgstr ""
 
-#: oyjl_args.c:1203
+#: oyjl_args.c:1223
 msgid "Json"
 msgstr ""
 
-#: oyjl_args.c:1206
+#: oyjl_args.c:1226
 msgid "Json + Command"
 msgstr ""
 
-#: oyjl-args.c:49 oyjl-args_190704.134615.c:78 oyjl-args_190706.215129.c:597
+#: oyjl-args.c:40 oyjl-args_190704.134615.c:78 oyjl-args_190706.215129.c:597
 #: oyjl-args_190710.234216.c:971 oyjl-args_190711.191720.c:1144
 #: oyjl-args_190711.193024.c:1145 oyjl-args_190712.054341.c:1157
 #: oyjl-args_190712.064826.c:1157 oyjl-args_190714.103745.c:51
 #: oyjl-args_190714.231328.c:48 oyjl-args_190716.232108.c:48
-#: oyjl-args_190731.235536.c:48
+#: oyjl-args_190731.235536.c:48 oyjl-args_190801.220209.c:49
+#: oyjl-args_190802.195815.c:49
 msgid "June 26, 2019"
 msgstr ""
 
-#: oyjl_args.c:2377 oyjl_args.c:2767 oyjl_args.c:2987 oyjl_args_tree.c:995
+#: oyjl_args.c:2414 oyjl_args.c:2805 oyjl_args.c:3024 oyjl_args_tree.c:995
 msgid "License"
 msgstr ""
 
@@ -280,7 +291,7 @@ msgstr ""
 msgid "Long"
 msgstr ""
 
-#: oyjl_args.c:1196
+#: oyjl_args.c:1216
 msgid "Man"
 msgstr ""
 
@@ -288,17 +299,18 @@ msgstr ""
 msgid "Manufacturer"
 msgstr ""
 
-#: oyjl_args.c:1199
+#: oyjl_args.c:1219
 msgid "Markdown"
 msgstr ""
 
 #. parsed and checked with -i option
-#: oyjl-args.c:67 oyjl-args_190704.134615.c:95 oyjl-args_190706.215129.c:614
+#: oyjl-args.c:57 oyjl-args_190704.134615.c:95 oyjl-args_190706.215129.c:614
 #: oyjl-args_190710.234216.c:988 oyjl-args_190711.191720.c:1161
 #: oyjl-args_190711.193024.c:1162 oyjl-args_190712.054341.c:1174
 #: oyjl-args_190712.064826.c:1174 oyjl-args_190714.103745.c:70
 #: oyjl-args_190714.231328.c:66 oyjl-args_190716.232108.c:66
-#: oyjl-args_190731.235536.c:66 test-args.c:96 test-args.c:251 test-core.c:583
+#: oyjl-args_190731.235536.c:66 oyjl-args_190801.220209.c:67
+#: oyjl-args_190802.195815.c:67 test-args.c:96 test-args.c:251 test-core.c:583
 #: test-core.c:647 test.c:599
 msgid "Misc"
 msgstr ""
@@ -356,7 +368,7 @@ msgstr ""
 msgid "No"
 msgstr ""
 
-#: oyjl_args.c:2669 oyjl_args.c:2885
+#: oyjl_args.c:2707 oyjl_args.c:2923
 msgid "OPTIONS"
 msgstr ""
 
@@ -364,24 +376,24 @@ msgstr ""
 msgid "October 10, 2018"
 msgstr ""
 
-#: oyjl_args.c:1689
+#: oyjl_args.c:1725
 msgid "Option has a different value range"
 msgstr ""
 
-#: oyjl_args.c:1496 oyjl_args.c:1551
+#: oyjl_args.c:1522 oyjl_args.c:1573
 msgid "Option has a unexpected argument"
 msgstr ""
 
-#: oyjl_args.c:1470 oyjl_args.c:1528
+#: oyjl_args.c:1500 oyjl_args.c:1554
 msgid "Option needs a argument"
 msgstr ""
 
-#: oyjl_args.c:1351 oyjl_args.c:1356 oyjl_args.c:1364 oyjl_args.c:1449
-#: oyjl_args.c:1510 oyjl_args.c:2197
+#: oyjl_args.c:1387 oyjl_args.c:1395 oyjl_args.c:1479 oyjl_args.c:1536
+#: oyjl_args.c:2234
 msgid "Option not supported"
 msgstr ""
 
-#: oyjl_args.c:1597
+#: oyjl_args.c:1617
 msgid ""
 "Optionless mode not supported. (That would need '#' option declaration.)"
 msgstr ""
@@ -434,30 +446,32 @@ msgstr ""
 msgid "Rendering Intent"
 msgstr ""
 
-#: oyjl_args.c:2530
+#: oyjl_args.c:2568
 msgid "SEE ALSO"
 msgstr ""
 
-#: oyjl_args.c:2528
+#: oyjl_args.c:2566
 msgid "SEE AS WELL"
 msgstr ""
 
-#: oyjl_args.c:2656 oyjl_args.c:2872
+#: oyjl_args.c:2694 oyjl_args.c:2910
 msgid "SYNOPSIS"
 msgstr ""
 
-#: oyjl-args.c:55 oyjl-args_190704.134615.c:84 oyjl-args_190706.215129.c:603
+#: oyjl-args.c:46 oyjl-args_190704.134615.c:84 oyjl-args_190706.215129.c:603
 #: oyjl-args_190710.234216.c:977 oyjl-args_190711.191720.c:1150
 #: oyjl-args_190711.193024.c:1151 oyjl-args_190712.054341.c:1163
 #: oyjl-args_190712.064826.c:1163 oyjl-args_190714.103745.c:57
 #: oyjl-args_190714.103745.c:58 oyjl-args_190714.231328.c:54
-#: oyjl-args_190716.232108.c:54 oyjl-args_190731.235536.c:54 test-args.c:75
+#: oyjl-args_190716.232108.c:54 oyjl-args_190731.235536.c:54
+#: oyjl-args_190801.220209.c:55 oyjl-args_190802.195815.c:55 test-args.c:75
 #: test-args.c:76 test-core.c:569 test-core.c:570 test.c:585 test.c:586
 msgid "Set Input"
 msgstr ""
 
-#: oyjl-args.c:54 oyjl-args_190714.231328.c:53 oyjl-args_190716.232108.c:53
-#: oyjl-args_190731.235536.c:53
+#: oyjl-args_190714.231328.c:53 oyjl-args_190716.232108.c:53
+#: oyjl-args_190731.235536.c:53 oyjl-args_190801.220209.c:54
+#: oyjl-args_190802.195815.c:54
 msgid ""
 "Set Input of the application. You can use a file or pipe into. The file "
 "should be realtive or absolute. The application performs __no__ file name "
@@ -494,7 +508,7 @@ msgstr ""
 msgid "Support"
 msgstr ""
 
-#: oyjl_args.c:2000
+#: oyjl_args.c:2034
 msgid "Synopsis"
 msgstr ""
 
@@ -506,11 +520,12 @@ msgstr ""
 msgid "The example tool demontrates the usage of the libOyjl API's."
 msgstr ""
 
-#: oyjl-args.c:54 oyjl-args.c:55 oyjl-args_190714.103745.c:57
-#: oyjl-args_190714.103745.c:58 oyjl-args_190714.231328.c:53
-#: oyjl-args_190714.231328.c:54 oyjl-args_190716.232108.c:53
-#: oyjl-args_190716.232108.c:54 oyjl-args_190731.235536.c:53
-#: oyjl-args_190731.235536.c:54
+#: oyjl-args_190714.103745.c:57 oyjl-args_190714.103745.c:58
+#: oyjl-args_190714.231328.c:53 oyjl-args_190714.231328.c:54
+#: oyjl-args_190716.232108.c:53 oyjl-args_190716.232108.c:54
+#: oyjl-args_190731.235536.c:53 oyjl-args_190731.235536.c:54
+#: oyjl-args_190801.220209.c:54 oyjl-args_190801.220209.c:55
+#: oyjl-args_190802.195815.c:54 oyjl-args_190802.195815.c:55
 msgid ""
 "The file format can be JSON from a tool generated by libOyjl with the -X "
 "export option. Or it can be plain text format Unix MAN page. Hint: do not "
@@ -518,8 +533,9 @@ msgid ""
 "So first process the man page by the unix man command."
 msgstr ""
 
-#: oyjl-args.c:66 oyjl-args_190714.103745.c:69 oyjl-args_190714.231328.c:65
+#: oyjl-args_190714.103745.c:69 oyjl-args_190714.231328.c:65
 #: oyjl-args_190716.232108.c:65 oyjl-args_190731.235536.c:65
+#: oyjl-args_190801.220209.c:66 oyjl-args_190802.195815.c:66
 msgid ""
 "The processing is two staged. First read in a MAN page and generate "
 "intermediate export JSON,  which could even be processed. The second stage "
@@ -536,38 +552,40 @@ msgstr ""
 #. Select from *version*, *manufacturer*, *copyright*, *license*, *url*,
 #. * *support*, *download*, *sources*, *oyjl_modules_author* and
 #. * *documentation* what you see fit. Add new ones as needed.
-#: oyjl-args.c:46 oyjl-args_190704.134615.c:77 oyjl-args_190706.215129.c:596
+#: oyjl-args.c:39 oyjl-args_190704.134615.c:77 oyjl-args_190706.215129.c:596
 #: oyjl-args_190710.234216.c:970 oyjl-args_190711.191720.c:1143
 #: oyjl-args_190711.193024.c:1144 oyjl-args_190712.054341.c:1156
 #: oyjl-args_190712.064826.c:1156 oyjl-args_190714.103745.c:50
 #: oyjl-args_190714.231328.c:45 oyjl-args_190716.232108.c:45
-#: oyjl-args_190731.235536.c:45
+#: oyjl-args_190731.235536.c:45 oyjl-args_190801.220209.c:46
+#: oyjl-args_190802.195815.c:46
 msgid "Tool to convert UI JSON description from *-X export* into source code."
 msgstr ""
 
 #. tell about the tool
 #. argc+argv are required for parsing the command line options
-#: oyjl-args.c:73 oyjl-args.c:88 oyjl-args_190714.231328.c:72
-#: oyjl-args_190714.231328.c:87 oyjl-args_190716.232108.c:72
-#: oyjl-args_190716.232108.c:87 oyjl-args_190731.235536.c:72
-#: oyjl-args_190731.235536.c:87
+#: oyjl-args_190714.231328.c:72 oyjl-args_190714.231328.c:87
+#: oyjl-args_190716.232108.c:72 oyjl-args_190716.232108.c:87
+#: oyjl-args_190731.235536.c:72 oyjl-args_190731.235536.c:87
+#: oyjl-args_190801.220209.c:73 oyjl-args_190801.220209.c:88
+#: oyjl-args_190802.195815.c:73 oyjl-args_190802.195815.c:88
 msgid "Ui description to source code"
 msgstr ""
 
 #. tell about the tool
 #. argc+argv are required for parsing the command line options
-#: oyjl-args_190704.134615.c:101 oyjl-args_190706.215129.c:620
+#: oyjl-args.c:63 oyjl-args_190704.134615.c:101 oyjl-args_190706.215129.c:620
 #: oyjl-args_190710.234216.c:994 oyjl-args_190711.191720.c:1167
 #: oyjl-args_190711.193024.c:1168 oyjl-args_190712.054341.c:1180
 #: oyjl-args_190712.064826.c:1180 oyjl-args_190714.103745.c:76
 msgid "Ui to source code"
 msgstr ""
 
-#: oyjl_args.c:1570
+#: oyjl_args.c:1590
 msgid "Unbound options are not supported"
 msgstr ""
 
-#: oyjl_args.c:1197
+#: oyjl_args.c:1217
 msgid "Unix Man page"
 msgstr ""
 
@@ -575,20 +593,21 @@ msgstr ""
 msgid "Url"
 msgstr ""
 
-#: oyjl.c:32 oyjl.c:45 oyjl.c:57 oyjl_args.c:2007 oyjl_translate.c:43
+#: oyjl.c:32 oyjl.c:45 oyjl.c:57 oyjl_args.c:2041 oyjl_translate.c:43
 #: oyjl_translate.c:152
 msgid "Usage"
 msgstr "по́льзование"
 
-#: oyjl_args.c:1340 oyjl_args.c:1351 oyjl_args.c:1356 oyjl_args.c:1364
-#: oyjl_args.c:1449 oyjl_args.c:1470 oyjl_args.c:1496 oyjl_args.c:1510
-#: oyjl_args.c:1528 oyjl_args.c:1551 oyjl_args.c:1570 oyjl_args.c:1597
-#: oyjl_args.c:1689 oyjl_args.c:2197
+#: oyjl_args.c:1371 oyjl_args.c:1387 oyjl_args.c:1395 oyjl_args.c:1479
+#: oyjl_args.c:1500 oyjl_args.c:1522 oyjl_args.c:1536 oyjl_args.c:1554
+#: oyjl_args.c:1573 oyjl_args.c:1590 oyjl_args.c:1617 oyjl_args.c:1725
+#: oyjl_args.c:2234
 msgid "Usage Error:"
 msgstr ""
 
-#: oyjl-args.c:58 oyjl-args_190714.103745.c:61 oyjl-args_190714.231328.c:57
+#: oyjl-args_190714.103745.c:61 oyjl-args_190714.231328.c:57
 #: oyjl-args_190716.232108.c:57 oyjl-args_190731.235536.c:57
+#: oyjl-args_190801.220209.c:58 oyjl-args_190802.195815.c:58
 msgid "Verbose"
 msgstr ""
 
@@ -596,8 +615,9 @@ msgstr ""
 msgid "Version"
 msgstr ""
 
-#: oyjl-args.c:56 oyjl-args_190714.103745.c:59 oyjl-args_190714.231328.c:55
+#: oyjl-args_190714.103745.c:59 oyjl-args_190714.231328.c:55
 #: oyjl-args_190716.232108.c:55 oyjl-args_190731.235536.c:55
+#: oyjl-args_190801.220209.c:56 oyjl-args_190802.195815.c:56
 msgid "Without arguments just show a help text."
 msgstr ""
 
@@ -605,24 +625,25 @@ msgstr ""
 msgid "Yes"
 msgstr ""
 
-#: oyjl_args.c:1227
+#: oyjl_args.c:1247
 msgid "export"
 msgstr ""
 
-#: oyjl-args.c:56 oyjl-args.c:57 oyjl-args_190704.134615.c:85
-#: oyjl-args_190706.215129.c:604 oyjl-args_190710.234216.c:978
-#: oyjl-args_190711.191720.c:1151 oyjl-args_190711.193024.c:1152
-#: oyjl-args_190712.054341.c:1164 oyjl-args_190712.064826.c:1164
-#: oyjl-args_190714.103745.c:59 oyjl-args_190714.103745.c:60
-#: oyjl-args_190714.231328.c:55 oyjl-args_190714.231328.c:56
-#: oyjl-args_190716.232108.c:55 oyjl-args_190716.232108.c:56
-#: oyjl-args_190731.235536.c:55 oyjl-args_190731.235536.c:56 test-args.c:78
-#: test-core.c:572 test.c:588
+#: oyjl-args.c:47 oyjl-args_190704.134615.c:85 oyjl-args_190706.215129.c:604
+#: oyjl-args_190710.234216.c:978 oyjl-args_190711.191720.c:1151
+#: oyjl-args_190711.193024.c:1152 oyjl-args_190712.054341.c:1164
+#: oyjl-args_190712.064826.c:1164 oyjl-args_190714.103745.c:59
+#: oyjl-args_190714.103745.c:60 oyjl-args_190714.231328.c:55
+#: oyjl-args_190714.231328.c:56 oyjl-args_190716.232108.c:55
+#: oyjl-args_190716.232108.c:56 oyjl-args_190731.235536.c:55
+#: oyjl-args_190731.235536.c:56 oyjl-args_190801.220209.c:56
+#: oyjl-args_190801.220209.c:57 oyjl-args_190802.195815.c:56
+#: oyjl-args_190802.195815.c:57 test-args.c:78 test-core.c:572 test.c:588
 msgid "help"
 msgstr ""
 
 #. type,   flags, o,   option,    key,  name,         description,         help, value_name,    value_type,               values,                                                          variable_type, output variable
-#: oyjl-args_190704.134615.c:84 oyjl-args_190706.215129.c:603
+#: oyjl-args.c:46 oyjl-args_190704.134615.c:84 oyjl-args_190706.215129.c:603
 #: oyjl-args_190710.234216.c:977 oyjl-args_190711.191720.c:1150
 #: oyjl-args_190711.193024.c:1151 oyjl-args_190712.054341.c:1163
 #: oyjl-args_190712.064826.c:1163 test-args.c:75 test-args.c:76 test-core.c:569
@@ -660,15 +681,11 @@ msgstr ""
 msgid "locales in a comma separated list"
 msgstr ""
 
-#: oyjl_args.c:1356
+#: oyjl_args.c:1387
 msgid "need a value_type"
 msgstr ""
 
-#: oyjl_args.c:1351
-msgid "need range 0-9 or a-z or A-Z"
-msgstr ""
-
-#: oyjl_args.c:1364 oyjl_args.c:2197
+#: oyjl_args.c:1395 oyjl_args.c:2234
 msgid "needs OYJL_OPTION_FLAG_EDITABLE or choices"
 msgstr ""
 
@@ -706,12 +723,13 @@ msgstr ""
 msgid "to be used key names in a comma separated list"
 msgstr ""
 
-#: oyjl-args.c:58 oyjl-args_190704.134615.c:86 oyjl-args_190706.215129.c:605
+#: oyjl-args.c:48 oyjl-args_190704.134615.c:86 oyjl-args_190706.215129.c:605
 #: oyjl-args_190710.234216.c:979 oyjl-args_190711.191720.c:1152
 #: oyjl-args_190711.193024.c:1153 oyjl-args_190712.054341.c:1165
 #: oyjl-args_190712.064826.c:1165 oyjl-args_190714.103745.c:61
 #: oyjl-args_190714.231328.c:57 oyjl-args_190716.232108.c:57
-#: oyjl-args_190731.235536.c:57 oyjl.c:74 oyjl_translate.c:62 test-args.c:79
+#: oyjl-args_190731.235536.c:57 oyjl-args_190801.220209.c:58
+#: oyjl-args_190802.195815.c:58 oyjl.c:74 oyjl_translate.c:62 test-args.c:79
 #: test-core.c:573 test.c:589
 msgid "verbose"
 msgstr ""

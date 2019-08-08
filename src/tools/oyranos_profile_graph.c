@@ -291,47 +291,47 @@ int main( int argc , char** argv )
                                     {"","","",""}};
   oyjlOption_s oarray[] = {
   /* type,   flags, o, option, key, name, description, help, value_name, value_type, values, var_type, variable */
-    {"oiwi", 0,                         '2', "icc-version-2", NULL, _("ICC Version 2"), _("Select ICC v2 Profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&v2} },
-    {"oiwi", 0,                         '4', "icc-version-4", NULL, _("ICC Version 4"), _("Select ICC v4 Profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&v4} },
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, '@', NULL,            NULL, _("Input"),         _("ICC Profile"),            NULL, "l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE", oyjlOPTIONTYPE_FUNCTION, {.getChoices = listProfiles}, oyjlINT, {.i=&profile_count} },
-    {"oiwi", 0, 'b', "no-border",     NULL, _("Omit border"),   _("Omit border in graph"),   NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&no_border} },
-    {"oiwi", 0, 'c', "no-blackbody",  NULL, _("No black body"), _("Omit white line of lambert light emitters"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&no_blackbody} },
-    {"oiwi", 0, 'd', "change-thickness",NULL,_("Thickness increase"),_("Specify increase of the thickness of the graph lines"), NULL, _("NUMBER"), oyjlOPTIONTYPE_DOUBLE,
+    {"oiwi", 0,                         "2", "icc-version-2", NULL, _("ICC Version 2"), _("Select ICC v2 Profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&v2} },
+    {"oiwi", 0,                         "4", "icc-version-4", NULL, _("ICC Version 4"), _("Select ICC v4 Profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&v4} },
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "@", NULL,            NULL, _("Input"),         _("ICC Profile"),            NULL, "l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE", oyjlOPTIONTYPE_FUNCTION, {.getChoices = listProfiles}, oyjlINT, {.i=&profile_count} },
+    {"oiwi", 0, "b", "no-border",     NULL, _("Omit border"),   _("Omit border in graph"),   NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&no_border} },
+    {"oiwi", 0, "c", "no-blackbody",  NULL, _("No black body"), _("Omit white line of lambert light emitters"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&no_blackbody} },
+    {"oiwi", 0, "d", "change-thickness",NULL,_("Thickness increase"),_("Specify increase of the thickness of the graph lines"), NULL, _("NUMBER"), oyjlOPTIONTYPE_DOUBLE,
       {.dbl.start = -1000.0, .dbl.end = 1000.0, .dbl.tick = 0.05, .dbl.d = 0.7}, oyjlDOUBLE, {.d=&change_thickness} },
-    {"oiwi", 0, 'f', "format",        NULL, _("Format"),        _("Specify output file format png or svg, default is png"), NULL, _("FORMAT"), oyjlOPTIONTYPE_CHOICE,
+    {"oiwi", 0, "f", "format",        NULL, _("Format"),        _("Specify output file format png or svg, default is png"), NULL, _("FORMAT"), oyjlOPTIONTYPE_CHOICE,
       {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)out_form, sizeof(out_form), 0 )}, oyjlSTRING, {.s=&format} },
-    {"oiwi", 0, 'g', "no-color",      NULL, _("Gray"),          _("Draw Gray"),              NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&no_color} },
-    {"oiwi", 0, 'i', "illuminant",    NULL, _("Illuminant"),    _("Illuminant Spectrum"),    NULL, _("STRING"), oyjlOPTIONTYPE_CHOICE,
+    {"oiwi", 0, "g", "no-color",      NULL, _("Gray"),          _("Draw Gray"),              NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&no_color} },
+    {"oiwi", 0, "i", "illuminant",    NULL, _("Illuminant"),    _("Illuminant Spectrum"),    NULL, _("STRING"), oyjlOPTIONTYPE_CHOICE,
       {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)illu_dxx, sizeof(illu_dxx), 0 )}, oyjlSTRING, {.s=&illuminant} },
-    {"oiwi", 0, 'k', "kelvin",        NULL, _("Kelvin"),        _("Blackbody Radiator"),     NULL, _("NUMBER"), oyjlOPTIONTYPE_DOUBLE,
+    {"oiwi", 0, "k", "kelvin",        NULL, _("Kelvin"),        _("Blackbody Radiator"),     NULL, _("NUMBER"), oyjlOPTIONTYPE_DOUBLE,
       {.dbl.start = 0.0, .dbl.end = 25000.0, .dbl.tick = 100, .dbl.d = 0.0}, oyjlDOUBLE, {.d=&kelvin} },
-    {"oiwi", 0, 'n', "no-spectral-line",NULL,_("No spectral"),  _("Omit the spectral line"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&no_spectral} },
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, 'o', "output",        NULL, _("Output"),        _("Specify output file name, default is stdout"), NULL, _("-|FILE"), oyjlOPTIONTYPE_CHOICE, {}, oyjlSTRING, {.s=&output} },
-    {"oiwi", 0, 'p', "spectral-format",NULL,_("Spectral Output"),_("Specify spectral output file format"), NULL, _("FORMAT"), oyjlOPTIONTYPE_CHOICE,
+    {"oiwi", 0, "n", "no-spectral-line",NULL,_("No spectral"),  _("Omit the spectral line"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&no_spectral} },
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "o", "output",        NULL, _("Output"),        _("Specify output file name, default is stdout"), NULL, _("-|FILE"), oyjlOPTIONTYPE_CHOICE, {}, oyjlSTRING, {.s=&output} },
+    {"oiwi", 0, "p", "spectral-format",NULL,_("Spectral Output"),_("Specify spectral output file format"), NULL, _("FORMAT"), oyjlOPTIONTYPE_CHOICE,
       {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)spe_form, sizeof(spe_form), 0 )}, oyjlSTRING, {.s=&sformat} },
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, 'P', "pattern",       NULL, _("Pattern"),       _("Filter of Color Names"),  NULL, _("STRING"), oyjlOPTIONTYPE_CHOICE, {}, oyjlSTRING, {.s=&pattern} },
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, 's', "spectral",      NULL, _("Spectral"),      _("Spectral Input"),         NULL, _("FILE"), oyjlOPTIONTYPE_CHOICE, {}, oyjlSTRING, {.s=&input} },
-    {"oiwi", 0, 'S', "standard-observer",NULL,_("Standard Observer"),_("CIE Standard Observer 1931 2°"), NULL,NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&standardobs} },
-    {"oiwi", 0, 'O', "observer-64",   NULL, _("10° Observer"),  _("CIE Observer 1964 10°"),  NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&observer64} },
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "P", "pattern",       NULL, _("Pattern"),       _("Filter of Color Names"),  NULL, _("STRING"), oyjlOPTIONTYPE_CHOICE, {}, oyjlSTRING, {.s=&pattern} },
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "s", "spectral",      NULL, _("Spectral"),      _("Spectral Input"),         NULL, _("FILE"), oyjlOPTIONTYPE_CHOICE, {}, oyjlSTRING, {.s=&input} },
+    {"oiwi", 0, "S", "standard-observer",NULL,_("Standard Observer"),_("CIE Standard Observer 1931 2°"), NULL,NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&standardobs} },
+    {"oiwi", 0, "O", "observer-64",   NULL, _("10° Observer"),  _("CIE Observer 1964 10°"),  NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&observer64} },
 
-    {"oiwi", 0, 'r', "no-repair",     NULL, _("No repair"),     _("No Profile repair of ICC profile ID"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&no_repair} },
-    {"oiwi", 0, 'R', "raster",        NULL, _("Raster"),        _("Draw Raster"),            NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&raster} },
-    {"oiwi", 0, 't', "thickness",     NULL, _("Thickness"),     _("Specify the thickness of the graph lines"), NULL, _("NUMBER"), oyjlOPTIONTYPE_DOUBLE,
+    {"oiwi", 0, "r", "no-repair",     NULL, _("No repair"),     _("No Profile repair of ICC profile ID"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&no_repair} },
+    {"oiwi", 0, "R", "raster",        NULL, _("Raster"),        _("Draw Raster"),            NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&raster} },
+    {"oiwi", 0, "t", "thickness",     NULL, _("Thickness"),     _("Specify the thickness of the graph lines"), NULL, _("NUMBER"), oyjlOPTIONTYPE_DOUBLE,
       {.dbl.start = 0.0, .dbl.end = 10.0, .dbl.tick = 0.05, .dbl.d = 1.0}, oyjlDOUBLE, {.d=&thickness} },
-    {"oiwi", 0, 'w', "width",         NULL, _("Width"),         _("Specify output image width in pixel"), NULL, _("NUMBER"), oyjlOPTIONTYPE_DOUBLE,
+    {"oiwi", 0, "w", "width",         NULL, _("Width"),         _("Specify output image width in pixel"), NULL, _("NUMBER"), oyjlOPTIONTYPE_DOUBLE,
       {.dbl.start = 64.0, .dbl.end = 4096.0, .dbl.tick = 1, .dbl.d = 128.0}, oyjlDOUBLE, {.d=&pixel_width} },
-    {"oiwi", 0, 'x', "xyy",           NULL, _("xyY"),           _("Use CIE*xyY *x*y plane for saturation line projection"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&xyy_plane} },
-    {"oiwi", 0, 'z', "scale",         NULL, _("Scale"),         _("Scale the height of the spectrum graph"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&scale_spectrum} },
+    {"oiwi", 0, "x", "xyy",           NULL, _("xyY"),           _("Use CIE*xyY *x*y plane for saturation line projection"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&xyy_plane} },
+    {"oiwi", 0, "z", "scale",         NULL, _("Scale"),         _("Scale the height of the spectrum graph"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&scale_spectrum} },
 
     /* default options -h and -v */
-    {"oiwi", 0, 'h', "help", NULL, _("help"), _("Help"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&help} },
-    {"oiwi", 0, 'v', "verbose", NULL, _("verbose"), _("verbose"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&verbose} },
+    {"oiwi", 0, "h", "help", NULL, _("help"), _("Help"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&help} },
+    {"oiwi", 0, "v", "verbose", NULL, _("verbose"), _("verbose"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&verbose} },
     /* default option template -X|--export */
-    {"oiwi", 0, 'X', "export", NULL, NULL, NULL, NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = NULL}, oyjlSTRING, {.s=&export} },
+    {"oiwi", 0, "X", "export", NULL, NULL, NULL, NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = NULL}, oyjlSTRING, {.s=&export} },
     /* blind options, useful only for man page generation */
-    {"oiwi", 0, 'E', "man-environment_variables", NULL, "", "", NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)env_vars, sizeof(env_vars), 0 )}, oyjlNONE, {.i=0} },
-    {"oiwi", 0, 'A', "man-examples", NULL, "", "", NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)examples, sizeof(examples), 0 )}, oyjlNONE, {.i=0} },
-    {"oiwi", 0, 'W', "man-see_as_well", NULL, "", "", NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)see_as_well, sizeof(see_as_well), 0 )}, oyjlNONE, {.i=NULL} },
+    {"oiwi", 0, "E", "man-environment_variables", NULL, "", "", NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)env_vars, sizeof(env_vars), 0 )}, oyjlNONE, {.i=0} },
+    {"oiwi", 0, "A", "man-examples", NULL, "", "", NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)examples, sizeof(examples), 0 )}, oyjlNONE, {.i=0} },
+    {"oiwi", 0, "W", "man-see_as_well", NULL, "", "", NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)see_as_well, sizeof(see_as_well), 0 )}, oyjlNONE, {.i=NULL} },
     {"",0,0,0,0,0,0,0, NULL, oyjlOPTIONTYPE_END, {},0,{}}
   };
   opts->array = (oyjlOption_s*)oyjlStringAppendN( NULL, (const char*)oarray, sizeof(oarray), 0 );
@@ -402,7 +402,7 @@ int main( int argc , char** argv )
   }
 
   /* detect all anonymous arguments for saturation */
-  profile_names = oyjlOptions_ResultsToList( ui->opts, '@', &profile_count );
+  profile_names = oyjlOptions_ResultsToList( ui->opts, "@", &profile_count );
   pixel_w = pixel_width+0.5;
   if(xyy_plane) proj = p_xyz;
   if(sformat) format = sformat;

@@ -44,8 +44,9 @@ int        oyjlTreePathsGetIndex     ( const char        * term,
                                        int               * index );
 
 typedef struct {
-  const char ** results; /* the vanilla args from main(argv[]) */
-  char * args; /* detected args */
+  char       ** options; /* detected vanilla args + probably "@" for anonymous args */
+  const char ** values; /* the vanilla args from main(argv[]) */
+  int           count; /* number of detected options */
 } oyjlOptsPrivate_s;
 
 
