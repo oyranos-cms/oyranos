@@ -2532,11 +2532,27 @@ char *       oyjlStringToUpper       ( const char        * t )
     text[i] = toupper(t[i]);
   return text;
 }
+char *       oyjlStringToLower       ( const char        * t )
+{
+  char * text = oyjlStringCopy(t, malloc);
+  int slen = strlen(t), i;
+  for(i = 0; i < slen; ++i)
+    text[i] = tolower(t[i]);
+  return text;
+}
+
+
+#define ADD_SECTION( sec, link, format, ... ) { \
+  oyjlStringAdd( &text, malloc, free, "## %s <a name=\"%s\"></a>\n" format, sec, link, __VA_ARGS__ ); \
+  oyjlStringListAddStaticString( sections, sn, sec, 0,0 ); \
+  oyjlStringListAddStaticString( sections, sn, link, 0,0 ); }
 
 static
 char *       oyjlExtraManSection     ( oyjlOptions_s     * opts,
                                        const char        * opt_name,
-                                       int                 flags )
+                                       int                 flags,
+                                       char            *** sections,
+                                       int               * sn )
 {
   oyjlOption_s * o = oyjlOptions_GetOptionL( opts, opt_name );
   char * text = NULL;
@@ -2567,14 +2583,20 @@ char *       oyjlExtraManSection     ( oyjlOptions_s     * opts,
         else if(strcmp(section,"SEE ALSO") == 0)
           section = _("SEE ALSO");
         if(flags & oyjlOPTIONSTYLE_MARKDOWN)
-          oyjlStringAdd( &text, malloc, free, "## %s\n", _(section) );
+        {
+          char * low = oyjlStringToLower( &opt_name[4] );
+          oyjlStringReplace( &low, "_", "", malloc, free );
+          ADD_SECTION( _(section), low, "", "" )
+          free(low);
+        }
         else
           oyjlStringAdd( &text, malloc, free, ".SH %s\n", _(section) );
         for(l = 0; l < n; ++l)
         {
           if(flags & oyjlOPTIONSTYLE_MARKDOWN)
           {
-            if(strcmp(up,"SEE AS WELL") == 0)
+            if( strcmp(up,"SEE AS WELL") == 0 ||
+                strcmp(up,"SEE ALSO") == 0 )
             {
               int li_n = 0, i;
               char ** li = oyjlStringSplit2( list[l].nick, 0, &li_n, NULL, malloc );
@@ -2633,7 +2655,7 @@ char *       oyjlExtraManSection     ( oyjlOptions_s     * opts,
 }
 
 static
-char *       oyjlExtraManSections ( oyjlOptions_s  * opts, int flags )
+char *       oyjlExtraManSections ( oyjlOptions_s  * opts, int flags, char *** sections, int * sn )
 {
   char * text = NULL;
   int nopts = oyjlOptions_Count( opts );
@@ -2645,7 +2667,7 @@ char *       oyjlExtraManSections ( oyjlOptions_s  * opts, int flags )
     int olen = option ? strlen(option) : 0;
     if(olen > 7 && option[0] == 'm' && option[1] == 'a' && option[2] == 'n' && option[3] == '-')
     {
-      char * tmp = oyjlExtraManSection(opts, option, flags);
+      char * tmp = oyjlExtraManSection(opts, option, flags, sections, sn);
       if(tmp)
       {
         oyjlStringAdd( &text, malloc, free, tmp );
@@ -2820,7 +2842,7 @@ char *       oyjlUi_ToMan            ( oyjlUi_s          * ui,
     oyjlStringListRelease( &d_list, dn, free );
   }
 
-  tmp = oyjlExtraManSections( opts, oyjlOPTIONSTYLE_MAN );
+  tmp = oyjlExtraManSections( opts, oyjlOPTIONSTYLE_MAN, NULL, NULL );
   if(tmp)
   {
     oyjlStringAdd( &text, malloc, free, "%s", tmp );
@@ -2896,6 +2918,8 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
              * country = NULL;
   int i,n,ng;
   oyjlOptions_s * opts;
+  char ** sections_ = NULL, *** sections = &sections_;
+  int sn_ = 0, * sn = &sn_;
 
   if( !ui ) return text;
 
@@ -2928,8 +2952,6 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
   oyjlStringAdd( &doxy_link, malloc, free, "{#%s%s}", ui->nick, country?country:"" );
   oyjlStringReplace( &doxy_link, "-", "", malloc, free );
 
-  oyjlStringAdd( &text, malloc, free, "# %s %s%s %s\n", ui->nick, vers?"v":"", vers?vers:"", doxy_link );
-
   if(ui->app_type && ui->app_type[0])
   {
     int tool = strcmp( ui->app_type, "tool" ) == 0;
@@ -2937,9 +2959,9 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
                    tool?1:7, date?date:"", tool?"User Commands":"Misc" );
   }
 
-  oyjlStringAdd( &text, malloc, free, "## NAME\n%s %s%s - %s\n", ui->nick, vers?"v":"", vers?vers:"", ui->name );
+  ADD_SECTION( _("NAME"), "name", "%s %s%s - %s\n", ui->nick, vers?"v":"", vers?vers:"", ui->name )
 
-  oyjlStringAdd( &text, malloc, free, "## %s\n", _("SYNOPSIS") );
+  ADD_SECTION( _("SYNOPSIS"), "synopsis", "", "" )
   for(i = 0; i < ng; ++i)
   {
     oyjlOptionGroup_s * g = &opts->groups[i];
@@ -2950,9 +2972,9 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
   }
 
   if(desc)
-    oyjlStringAdd( &text, malloc, free, "## %s\n%s\n", _("DESCRIPTION"), desc );
+    ADD_SECTION( _("DESCRIPTION"), "description", "%s\n", desc )
 
-  oyjlStringAdd( &text, malloc, free, "## %s\n", _("OPTIONS") );
+  ADD_SECTION( _("OPTIONS"), "options", "", "" )
   for(i = 0; i < ng; ++i)
   {
     oyjlOptionGroup_s * g = &opts->groups[i];
@@ -3039,7 +3061,7 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
     oyjlStringAdd( &text, malloc, free, "\n"  );
   }
 
-  tmp = oyjlExtraManSections( opts, oyjlOPTIONSTYLE_MARKDOWN );
+  tmp = oyjlExtraManSections( opts, oyjlOPTIONSTYLE_MARKDOWN, sections, sn );
   if(tmp)
   {
     oyjlStringAdd( &text, malloc, free, "%s", tmp );
@@ -3047,19 +3069,31 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
   }
 
   if(mnft)
-    oyjlStringAdd( &text, malloc, free, "## %s\n%s %s\n", _("AUTHOR"), mnft, mnft_url?mnft_url:"" );
+    ADD_SECTION( _("AUTHOR"), "author", "%s %s\n", mnft, mnft_url?mnft_url:"" )
 
   if(lice || copy)
   {
-    oyjlStringAdd( &text, malloc, free, "## %s\n*%s*\n", _("COPYRIGHT"), copy?copy:"" );
+    ADD_SECTION( _("COPYRIGHT"), "copyright", "*%s*\n", copy?copy:"" )
     if(lice)
-      oyjlStringAdd( &text, malloc, free, "\n\n### %s\n%s\n", _("License"), lice?lice:"" );
+      oyjlStringAdd( &text, malloc, free, "\n\n### %s <a name=\"license\"></a>\n%s\n", _("License"), lice?lice:"" );
   }
 
   if(bugs && bugs_url)
-    oyjlStringAdd( &text, malloc, free, "## %s\n%s [%s](%s)\n", _("BUGS"), bugs, bugs_url, bugs_url );
+    ADD_SECTION( _("BUGS"), "bugs", "%s [%s](%s)\n", bugs, bugs_url, bugs_url )
   else if(bugs)
-    oyjlStringAdd( &text, malloc, free, "## %s\n[%s](%s)\n", _("BUGS"), bugs, bugs );
+    ADD_SECTION( _("BUGS"), "bugs", "[%s](%s)\n", bugs, bugs )
+
+  {
+    char * txt = NULL;
+    int i;
+
+    oyjlStringAdd( &txt, malloc, free, "# %s %s%s %s\n", ui->nick, vers?"v":"", vers?vers:"", doxy_link );
+    for(i = 0; i < sn_/2; ++i)
+      oyjlStringAdd( &txt, malloc, free, "[%s](#%s) ", sections_[2*i+0], sections_[2*i+1] );
+    oyjlStringAdd( &txt, malloc, free, "\n\n%s", text );
+    free(text);
+    text = txt;
+  }
 
   {
     const char * t;
@@ -3077,9 +3111,9 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
 
   return text;
 }
-// TODO: link the SEE AS WELL references(1), allow for search paths of to be linked files
+// TODO: increase robustness
+// TODO: TOC in markdown like for HTML pages
 // TODO: make the qml renderer aware of mandatory options as part of sending a call to the tool; add action button to all manatory options except bool options; render mandatory switch as a button
-// TODO: the renderer keeps as simple as possible like the command line
 // TODO: MAN page synopsis logic ...
 // TODO: man page generator: /usr/share/man/man1/ftp.1.gz + http://man7.org/linux/man-pages/man7/groff_mdoc.7.html
 // TODO: synopsis syntax ideas: https://unix.stackexchange.com/questions/17833/understand-synopsis-in-manpage
