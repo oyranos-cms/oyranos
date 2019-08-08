@@ -448,6 +448,7 @@ static char *  oyjlUiGetVariableNameC( oyjl_val            val,
   char * t = oyjlUiGetVariableName( val, type );
   if(!t) return t;
   /* replace some reserved C names */
+  if('0' <= t[0] && t[0] <= '9') { char * name = NULL; oyjlStringAdd( &name, 0,0, "var_%s", t ); free(t); t = name; }
   if(strcmp(t,"break") == 0) { free(t); t = oyjlStringCopy("break_var",0); }
   if(strcmp(t,"case") == 0) { free(t); t = oyjlStringCopy("case_var",0); }
   if(strcmp(t,"char") == 0) { free(t); t = oyjlStringCopy("char_var",0); }
@@ -519,7 +520,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
   if(flags & OYJL_SOURCE_CODE_C)
   {
     oyjl_val val;
-    int i,n, export_found = 0, help_found = 0, verbose_found = 0, version_found = 0;
+    int i,n, X_found = 0, export_found = 0, help_found = 0, verbose_found = 0, version_found = 0;
 
     oyjlStrAdd( s, "#include \"oyjl.h\"\n" );
     oyjlStrAdd( s, "#ifndef _\n" );
@@ -552,6 +553,8 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
       if(type && t)
       {
         oyjlStrAdd( s, "  %s %s = 0;\n", type, t );
+        if(strcmp(t, "X") == 0)
+          X_found = 1;
         if(strcmp(t,"export") == 0)
           export_found = 1;
         if(strcmp(t,"help") == 0)
@@ -752,7 +755,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
       oyjlStrAddSpaced( s, flag_string, 0,                         28 );
       if(*oyjl_debug)
         fprintf( stderr, "o: \"%s\" / %s\n", o, option );
-      if(o)
+      if(o && o[0])
         oyjlStrAddSpaced( s, o,         OYJL_QUOTE,                4 );
       else
         oyjlStrAddSpaced( s, "NULL",    0,                         4 );
@@ -841,7 +844,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
       if(!version_found && !oyjlFindOption( root, 'V' ))
       oyjlStrAdd(s,"    {\"oiwi\", 0, \"V\", \"version\", NULL, _(\"version\"), _(\"Version\"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&version} },\n" );
       oyjlStrAdd(s,"    /* default option template -X|--export */\n" );
-      if(!export_found)
+      if(!export_found && !X_found)
       oyjlStrAdd(s,"    {\"oiwi\", 0, \"X\", \"export\", NULL, NULL, NULL, NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = NULL}, oyjlSTRING, {.s=&export} },\n" );
     }
     oyjlStrAdd( s, "    {\"\",0,0,NULL,NULL,NULL,NULL,NULL, NULL, oyjlOPTIONTYPE_END, {},0,{}}\n  };\n\n" );
