@@ -339,6 +339,9 @@ char **    oyjlStringSplit2          ( const char        * text,
                                        int               * count,
                                        int              ** index,
                                        void*            (* alloc)(size_t));
+const char * oyjlStringDelimiter     ( const char        * text,
+                                       const char        * delimiter,
+                                       int               * length );
 char *     oyjlStringCopy            ( const char        * string,
                                        void*            (* alloc)(size_t));
 int        oyjlStringAdd             ( char             ** string,
@@ -393,6 +396,7 @@ int        oyjlStringsToDoubles      ( const char        * text,
                                        int               * count,
                                        void*            (* alloc)(size_t),
                                        double           ** value );
+int        oyjlWStringLen            ( const char        * text );
 typedef struct oyjl_string_s * oyjl_str;
 oyjl_str   oyjlStrNew                ( size_t              length,
                                        void*            (* alloc)(size_t),
@@ -517,10 +521,13 @@ struct oyjlOption_s {
   unsigned int flags;                  /**< @brief rendering hint */
   /** '#' is used as default option like a command without any arguments.
    *  '@' together with value_name expects arbitrary arguments as described in oyjlOption_s::value_name.
-   *  The letter shall be in range A-Z,a-z,0-9.
-   *  If zero '\000' this short :o: option name is not enabled and a long :option: name shall be provided. */
-  char o;                              /**< @brief one letter option name */
-  const char * option;                 /**< @brief string without white space, "my-option"; optional if *o* is present */
+   *  Reserved letters are ,(comma), \'(quote), \"(double quote), :(double point), ;(semikolon), /(slash), \(backslash)
+   *  The letter shall return strlen(o) <= 1.
+   *  If zero '\000' terminated, this short :o: option name is not enabled and a long :option: name shall be provided.
+   */
+  const char * o;                      /**< @brief One letter UTF-8 option name; optional if *option* is present */
+  /** The same reserved letters apply as for the ::o member letter. */
+  const char * option;                 /**< @brief String without white space, "my-option"; optional if *o* is present */
   const char * key;                    /**< @brief DB key; optional */
   const char * name;                   /**< @brief i18n label string */
   const char * description;            /**< @brief i18n short sentence about the option */
@@ -562,9 +569,8 @@ struct oyjlOptions_s {
 };
 int    oyjlOptions_Count             ( oyjlOptions_s     * opts );
 int    oyjlOptions_CountGroups       ( oyjlOptions_s     * opts );
-oyjlOption_s * oyjlOptions_GetOption (
-                                       oyjlOptions_s     * opts,
-                                       char                oc );
+oyjlOption_s * oyjlOptions_GetOption ( oyjlOptions_s     * opts,
+                                       const char        * ol );
 oyjlOption_s * oyjlOptions_GetOptionL( oyjlOptions_s     * opts,
                                        const char        * ostring );
 /** @brief option state */
@@ -582,14 +588,14 @@ oyjlOptions_s *    oyjlOptions_New   ( int                 argc,
 oyjlOPTIONSTATE_e  oyjlOptions_Parse ( oyjlOptions_s     * opts );
 oyjlOPTIONSTATE_e  oyjlOptions_GetResult (
                                        oyjlOptions_s     * opts,
-                                       char                oc,
+                                       const char        * oc,
                                        const char       ** result_string,
                                        double            * result_dbl,
                                        int               * result_int );
 char *   oyjlOptions_ResultsToJson   ( oyjlOptions_s     * opts );
 char *   oyjlOptions_ResultsToText   ( oyjlOptions_s     * opts );
 char **  oyjlOptions_ResultsToList   ( oyjlOptions_s     * opts,
-                                       char                oc,
+                                       const char        * option,
                                        int               * count );
 typedef struct oyjlUi_s oyjlUi_s;
 void   oyjlOptions_PrintHelp         ( oyjlOptions_s     * opts,
