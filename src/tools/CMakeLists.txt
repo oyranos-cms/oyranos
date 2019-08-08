@@ -5,18 +5,20 @@ MACRO(OY_DOCUMENT_TOOL)
         DEPENDS ${TOOL} ${TOOL_SRC}
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   )
-  ADD_CUSTOM_TARGET( ${TOOL}.man ALL
+  ADD_CUSTOM_TARGET( ${TOOL}.1 ALL
         DEPENDS ${CMAKE_SOURCE_DIR}/doc/man/${TOOL}.1
 #        COMMENT "Extract manual page to ${TOOL}.1"
   )
-  ADD_CUSTOM_COMMAND( OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/${TOOL}.md
-        COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH} OY_MODULE_PATH=${CMAKE_BINARY_DIR}/src/modules XDG_DATA_HOME=${CMAKE_SOURCE_DIR} LANG=en DISPLAY="man_page" ${TOOL} -X markdown > ${CMAKE_CURRENT_SOURCE_DIR}/${TOOL}.md
+  STRING(REGEX REPLACE "-" "" TOOL_MD ${TOOL})
+  MESSAGE( "${TOOL_MD}: ${CMAKE_SOURCE_DIR}/doc/md/${TOOL_MD}.md" )
+  ADD_CUSTOM_COMMAND( OUTPUT ${CMAKE_SOURCE_DIR}/doc/md/${TOOL_MD}.md
+        COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH} OY_MODULE_PATH=${CMAKE_BINARY_DIR}/src/modules XDG_DATA_HOME=${CMAKE_SOURCE_DIR} LANG=en DISPLAY="man_page" ${TOOL} -X markdown > ${CMAKE_SOURCE_DIR}/doc/md/${TOOL_MD}.md
         DEPENDS ${TOOL} ${TOOL_SRC}
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   )
-  ADD_CUSTOM_TARGET( ${TOOL}.md ALL
-        DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${TOOL}.md
-#        COMMENT "Extract markdown formated manual page to ${TOOL}.md"
+  ADD_CUSTOM_TARGET( ${TOOL_MD}.md ALL
+        DEPENDS ${CMAKE_SOURCE_DIR}/doc/md/${TOOL_MD}.md
+#        COMMENT "Extract markdown formated manual page to ${TOOL_MD}.md"
   )
   IF( GETTEXT_FOUND )
     # add translations
@@ -35,14 +37,14 @@ MACRO(OY_DOCUMENT_TOOL)
 #        COMMENT "Extract ${_lang} manual page to ${CMAKE_SOURCE_DIR}/doc/man/${short_lang}/${TOOL}.1"
       )
 
-      ADD_CUSTOM_COMMAND( OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/${TOOL}-${short_lang}.md
-        COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH} LOCPATH=${CMAKE_BINARY_DIR}/locale OY_MODULE_PATH=${CMAKE_BINARY_DIR}/src/modules XDG_DATA_HOME=${CMAKE_SOURCE_DIR} LANG=${_lang} DISPLAY="man_page" ${TOOL} -X markdown > ${CMAKE_CURRENT_SOURCE_DIR}/${TOOL}-${short_lang}.md
+      ADD_CUSTOM_COMMAND( OUTPUT ${CMAKE_SOURCE_DIR}/doc/md/${TOOL_MD}${short_lang}.md
+        COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH} LOCPATH=${CMAKE_BINARY_DIR}/locale OY_MODULE_PATH=${CMAKE_BINARY_DIR}/src/modules XDG_DATA_HOME=${CMAKE_SOURCE_DIR} LANG=${_lang} DISPLAY="man_page" ${TOOL} -X markdown > ${CMAKE_SOURCE_DIR}/doc/md/${TOOL_MD}${short_lang}.md
         DEPENDS ${TOOL} ${TOOL_SRC}
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
       )
-      ADD_CUSTOM_TARGET( ${TOOL}-${short_lang}.md ALL
-        DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${TOOL}-${short_lang}.md
-#        COMMENT "Extract markdown formated ${_lang} manual page to ${TOOL}-${short_lang}.md"
+      ADD_CUSTOM_TARGET( ${TOOL_MD}${short_lang}.md ALL
+        DEPENDS ${CMAKE_SOURCE_DIR}/doc/md/${TOOL_MD}${short_lang}.md
+#        COMMENT "Extract markdown formated ${_lang} manual page to ${TOOL_MD}${short_lang}.md"
       )
 #    ENDFOREACH( _lang )
   ENDIF( GETTEXT_FOUND )

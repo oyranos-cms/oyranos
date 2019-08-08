@@ -2,7 +2,7 @@
 
 PROJECT_NUMBER         = @OYRANOS_VERSION@
 PROJECT_BRIEF          = "Oyranos is a full featured Color Management System"
-INPUT                  = @CMAKE_CURRENT_SOURCE_DIR@ @CMAKE_CURRENT_BINARY_DIR@ @CMAKE_SOURCE_DIR@/src/API_generated @CMAKE_BINARY_DIR@/src/include @CMAKE_SOURCE_DIR@/src/include @CMAKE_SOURCE_DIR@/src/include_private @CMAKE_SOURCE_DIR@/src/liboyranos @CMAKE_SOURCE_DIR@/src/liboyranos_core @CMAKE_SOURCE_DIR@/src/liboyranos_config @CMAKE_SOURCE_DIR@/src/liboyranos_modules @CMAKE_SOURCE_DIR@/src/liboyranos_object @CMAKE_SOURCE_DIR@/src/modules/color/modules/lcms2 @CMAKE_SOURCE_DIR@/src/modules/color/modules @CMAKE_SOURCE_DIR@/src/modules/color/modules/devices @CMAKE_SOURCE_DIR@/src/modules/oyranos-meta @CMAKE_SOURCE_DIR@/src/tools @CMAKE_SOURCE_DIR@/openicc/oyjl
+INPUT                  = @CMAKE_CURRENT_SOURCE_DIR@ @CMAKE_CURRENT_SOURCE_DIR@/md @CMAKE_CURRENT_BINARY_DIR@ @CMAKE_SOURCE_DIR@/src/API_generated @CMAKE_BINARY_DIR@/src/include @CMAKE_SOURCE_DIR@/src/include @CMAKE_SOURCE_DIR@/src/include_private @CMAKE_SOURCE_DIR@/src/liboyranos @CMAKE_SOURCE_DIR@/src/liboyranos_core @CMAKE_SOURCE_DIR@/src/liboyranos_config @CMAKE_SOURCE_DIR@/src/liboyranos_modules @CMAKE_SOURCE_DIR@/src/liboyranos_object @CMAKE_SOURCE_DIR@/src/modules/color/modules/lcms2 @CMAKE_SOURCE_DIR@/src/modules/color/modules @CMAKE_SOURCE_DIR@/src/modules/color/modules/devices @CMAKE_SOURCE_DIR@/src/modules/oyranos-meta @CMAKE_SOURCE_DIR@/src/tools @CMAKE_SOURCE_DIR@/openicc/oyjl
 PROJECT_LOGO           = @CMAKE_SOURCE_DIR@/extras/icons/oyranos_logo.png
 HTML_EXTRA_STYLESHEET  = @CMAKE_CURRENT_SOURCE_DIR@/layout.css
 

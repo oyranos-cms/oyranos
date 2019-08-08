@@ -100,7 +100,7 @@ Das Werkzeug kann installierte Profile und Suchpfade anzeigen. Es kann ein Profi
 ### Zeige Dateiinfos
 &nbsp;&nbsp;SAVEIFS=$IFS ; IFS=$'\n\b'; profiles=(\`oyranos\-profiles \-ldf\`); IFS=$SAVEIFS; for file in "${profiles[@]}"; do ls "$file"; done
 ## SIEHE AUCH
-### oyranos\-profile\-graph(1) oyranos\-config(1) oyranos\-policy(1) oyranos(3)
+###  [oyranos\-profile\-graph](oyranosprofilegraph.html)<a href="oyranosprofilegraph.md">(1)</a>  [oyranos\-config](oyranosconfig.html)<a href="oyranosconfig.md">(1)</a>  [oyranos\-policy](oyranospolicy.html)<a href="oyranospolicy.md">(1)</a>  [oyranos](oyranos.html)<a href="oyranos.md">(3)</a>
 ### http://www.oyranos.org
 ## AUTOR
 Kai\-Uwe Behrmann http://www.oyranos.org

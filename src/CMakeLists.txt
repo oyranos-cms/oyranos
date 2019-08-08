@@ -417,7 +417,7 @@ SET( DOC_SOURCES
 	${CMAKE_SOURCE_DIR}/src/modules/color/modules/devices/*.h
 	${CMAKE_SOURCE_DIR}/src/modules/oyranos-meta/*.c
 	${CMAKE_SOURCE_DIR}/src/modules/oyranos-meta/*.h
-  ${CMAKE_SOURCE_DIR}/src/tools/oyranos*.md
+  ${CMAKE_SOURCE_DIR}/doc/md/oyranos*.md
    )
 IF(NOT HAVE_OYJL)
   SET( DOC_SOURCES ${DOC_SOURCES}

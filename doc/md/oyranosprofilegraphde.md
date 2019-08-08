@@ -143,7 +143,7 @@ Erzeuge aus einem ICC Profil eine Grafik mit seiner Sättigungslinie.
 ### Zeige die Standard Betrachter Spektralfunktion als Kurven:
 &nbsp;&nbsp;oyranos\-profile\-graph \-\-standard\-observer \-o CIE\-StdObserver.png
 ## SIEHE AUCH
-### oyranos\-profile(1) oyranos\-config(1) oyranos\-policy(1) oyranos(3)
+###  [oyranos\-profile](oyranosprofile.html)<a href="oyranosprofile.md">(1)</a>  [oyranos\-config](oyranosconfig.html)<a href="oyranosconfig.md">(1)</a>  [oyranos\-policy](oyranospolicy.html)<a href="oyranospolicy.md">(1)</a>  [oyranos](oyranos.html)<a href="oyranos.md">(3)</a>
 ### http://www.oyranos.org
 ## AUTOR
 Kai\-Uwe Behrmann http://www.oyranos.org
