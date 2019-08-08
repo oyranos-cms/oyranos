@@ -2,6 +2,7 @@
 
 PROJECT_NUMBER         = git-devel
 INPUT                  = . doc doc/md src/API_generated src/include src/include_private src/liboyranos src/liboyranos_core src/liboyranos_object src/liboyranos_modules src/liboyranos_config src/modules/color/modules/lcms2 src/tools openicc/oyjl
+HTML_EXTRA_STYLESHEET  = doc/layout.css
 
 #---------------------------------------------------------------------------
 # Project related configuration options
