@@ -2574,6 +2574,38 @@ char *       oyjlExtraManSection     ( oyjlOptions_s     * opts,
         {
           if(flags & oyjlOPTIONSTYLE_MARKDOWN)
           {
+            if(strcmp(up,"SEE AS WELL") == 0)
+            {
+              int li_n = 0, i;
+              char ** li = oyjlStringSplit2( list[l].nick, 0, &li_n, NULL, malloc );
+              oyjlStringAdd( &text, malloc, free, "###" );
+              for(i = 0; i < li_n; ++i)
+              {
+                char * md = oyjlStringCopy( li[i], 0 );
+                int len = strlen(md), is_man_page = 0;
+                if(len > 3 && md[len-3] == '(' && md[len-1] == ')')
+                  ++is_man_page;
+                if(is_man_page)
+                {
+                  char * end = oyjlStringCopy( &md[len-3], malloc );
+                  char * t;
+                  md[len-3] = '\000';
+                  t = oyjlStringCopy( md, 0 );
+                  oyjlStringReplace( &md, "-", "", malloc, free );
+
+                  oyjlStringAdd( &text, malloc, free, "  [%s](%s.html)<a href=\"%s.md\">%s</a>", t, md, md, end );
+                  free( t );
+                  free( end );
+                }
+                else
+                  oyjlStringAdd( &text, malloc, free, " %s", md );
+
+                free( md );
+              }
+              oyjlStringAdd( &text, malloc, free, "\n" );
+              oyjlStringListRelease( &li, li_n, free );
+            }
+            else
             oyjlStringAdd( &text, malloc, free, "### %s\n", list[l].nick );
             if(list[l].name && list[l].name[0])
             oyjlStringAdd( &text, malloc, free, "&nbsp;&nbsp;%s\n", list[l].name );
