@@ -50,12 +50,16 @@
     oyranos-policy `oyranos-config --syscolordir`/`oyranos-config --settingsdirname`/office.policy.xml
     @endverbatim
     Affected are default profiles and some behaviour settings.
-    - oyranos-profile - access profile information
-    - @ref oyranosprofilegraph - draw a 2D graph from profiles
+    - @ref oyranosconfig - a command line tool for settings and to get compiler flags to using Oyranos in your own project.
+    - @ref oyranosconfigsynnefo - a GUI for policies, settings and information
+    - @ref oyranosconfigfltk - a configuration UI application, using some functions      of the Oyranos APIs. If you have <a href="http://www.oyranos.org/wiki/index.php?title=ICC_Examin">ICC Examin</a> installed it can be called too
+    - @ref oyranospolicy - a command line tool to list, set and dump color management settings groups
+    - @ref oyranosprofile - a command line tool to show internal profile information
     - @ref oyranosprofiles - lookup profiles in the systems color paths, download and install
-    - <a href="http://www.oyranos.org/wiki/index.php?title=Oyranos_Configuration_Dialog">oyranos-config-fltk</a> - a configuration UI application, using some functions      of the Oyranos APIs. If you have <a href="http://www.oyranos.org/wiki/index.php?title=ICC_Examin">ICC Examin</a> installed it can be called to
+    - @ref oyranosprofilegraph - draw a 2D graph from ICC profiles and spectral data
+    - @ref oyranosmonitor - a command line tool to handle monitor device ICC color profiles
+    - @ref oyranosmonitorwhitepoint - a command line tool to handle nightly red light monitor white point
       show details of profiles. 
-    - oyranos-config - a command line tool to get compiler flags to using Oyranos in your own project. Try  \a oyranos-config \a --help to see the appropriate options.
 
     @section user User API Documentation
     The basic Oyranos API gets included with oyranos.h. An application, which
