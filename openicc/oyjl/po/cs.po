@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cs\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2019-08-08 20:19+0200\n"
+"POT-Creation-Date: 2019-08-10 12:10+0200\n"
 "PO-Revision-Date: 2012-10-19 15:10+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -15,11 +15,11 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: oyjl_args.c:2362
+#: oyjl_args.c:2369
 msgid "... try with --help|-h option for usage text. give up"
 msgstr ""
 
-#: oyjl_args.c:2853 oyjl_args.c:3072
+#: oyjl_args.c:2863 oyjl_args.c:3084
 msgid "AUTHOR"
 msgstr ""
 
@@ -44,15 +44,15 @@ msgstr ""
 msgid "Any arg mode"
 msgstr ""
 
-#: oyjl_args.c:2415
+#: oyjl_args.c:2422
 msgid "Author"
 msgstr ""
 
-#: oyjl_args.c:2863 oyjl_args.c:2865 oyjl_args.c:3082 oyjl_args.c:3084
+#: oyjl_args.c:2873 oyjl_args.c:2875 oyjl_args.c:3094 oyjl_args.c:3096
 msgid "BUGS"
 msgstr ""
 
-#: oyjl_args.c:2857 oyjl_args.c:3076
+#: oyjl_args.c:2867 oyjl_args.c:3088
 msgid "COPYRIGHT"
 msgstr ""
 
@@ -87,15 +87,15 @@ msgstr ""
 msgid "Convert UI JSON to C code using libOyjl"
 msgstr ""
 
-#: oyjl_args_tree.c:997
+#: oyjl_args_tree.c:1004
 msgid "Copyright"
 msgstr "Copyright"
 
-#: oyjl_args.c:2759 oyjl_args.c:2975
+#: oyjl_args.c:2769 oyjl_args.c:2986
 msgid "DESCRIPTION"
 msgstr ""
 
-#: oyjl_args_tree.c:1006
+#: oyjl_args_tree.c:1013
 msgid "Date"
 msgstr "Datum"
 
@@ -104,11 +104,11 @@ msgstr "Datum"
 msgid "Description"
 msgstr "popis"
 
-#: oyjl_args_tree.c:1003
+#: oyjl_args_tree.c:1010
 msgid "Development"
 msgstr ""
 
-#: oyjl_args_tree.c:1005
+#: oyjl_args_tree.c:1012
 msgid "Documentation"
 msgstr "Dokumentace"
 
@@ -117,19 +117,19 @@ msgstr "Dokumentace"
 msgid "Double occuring option"
 msgstr "popis"
 
-#: oyjl_args_tree.c:1001
+#: oyjl_args_tree.c:1008
 msgid "Download"
 msgstr ""
 
-#: oyjl_args.c:2576
+#: oyjl_args.c:2586
 msgid "ENVIRONMENT VARIABLES"
 msgstr ""
 
-#: oyjl_args.c:2572
+#: oyjl_args.c:2582
 msgid "EXAMPLES"
 msgstr ""
 
-#: oyjl_args.c:2574
+#: oyjl_args.c:2584
 msgid "EXIT-STATE"
 msgstr ""
 
@@ -159,7 +159,7 @@ msgstr ""
 msgid "FILENAME"
 msgstr ""
 
-#: oyjl_args.c:2580
+#: oyjl_args.c:2590
 msgid "FILES"
 msgstr ""
 
@@ -227,7 +227,7 @@ msgstr "Unix a deriváty"
 msgid "Get formated text"
 msgstr ""
 
-#: oyjl_args.c:2578
+#: oyjl_args.c:2588
 msgid "HISTORY"
 msgstr ""
 
@@ -290,7 +290,7 @@ msgstr ""
 msgid "June 26, 2019"
 msgstr ""
 
-#: oyjl_args.c:2414 oyjl_args.c:2859 oyjl_args.c:3078 oyjl_args_tree.c:998
+#: oyjl_args.c:2421 oyjl_args.c:2869 oyjl_args.c:3090 oyjl_args_tree.c:1005
 msgid "License"
 msgstr "Licence"
 
@@ -303,7 +303,7 @@ msgstr ""
 msgid "Man"
 msgstr "Purpurová"
 
-#: oyjl_args_tree.c:996
+#: oyjl_args_tree.c:1003
 msgid "Manufacturer"
 msgstr "Výrobce"
 
@@ -377,20 +377,20 @@ msgstr "Model:"
 msgid "Mode8"
 msgstr "Model:"
 
-#: oyjl_args_tree.c:977
+#: oyjl_args_tree.c:984
 #, fuzzy
 msgid "Module"
 msgstr "Volby modulu:"
 
-#: oyjl_args.c:2962
+#: oyjl_args.c:2972
 msgid "NAME"
 msgstr ""
 
-#: oyjl_args_tree.c:1205
+#: oyjl_args_tree.c:1212
 msgid "No"
 msgstr "Ne"
 
-#: oyjl_args.c:2761 oyjl_args.c:2977
+#: oyjl_args.c:2771 oyjl_args.c:2989
 msgid "OPTIONS"
 msgstr ""
 
@@ -421,7 +421,7 @@ msgid ""
 "Optionless mode not supported. (That would need '#' option declaration.)"
 msgstr ""
 
-#: oyjl_args_tree.c:1004
+#: oyjl_args_tree.c:1011
 #, fuzzy
 msgid "Oyjl Module Author"
 msgstr "Moduly Oyranosu"
@@ -478,15 +478,15 @@ msgstr "Tiskárna"
 msgid "Rendering Intent"
 msgstr "Záměr transformace"
 
-#: oyjl_args.c:2584
+#: oyjl_args.c:2594
 msgid "SEE ALSO"
 msgstr ""
 
-#: oyjl_args.c:2582
+#: oyjl_args.c:2592
 msgid "SEE AS WELL"
 msgstr ""
 
-#: oyjl_args.c:2748 oyjl_args.c:2964
+#: oyjl_args.c:2758 oyjl_args.c:2975
 msgid "SYNOPSIS"
 msgstr ""
 
@@ -534,11 +534,11 @@ msgstr "Cesta"
 msgid "Simple mode"
 msgstr ""
 
-#: oyjl_args_tree.c:1002
+#: oyjl_args_tree.c:1009
 msgid "Sources"
 msgstr ""
 
-#: oyjl_args_tree.c:1000
+#: oyjl_args_tree.c:1007
 msgid "Support"
 msgstr ""
 
@@ -579,7 +579,7 @@ msgid ""
 "including the -h and -X options working."
 msgstr ""
 
-#: oyjl_args_tree.c:975
+#: oyjl_args_tree.c:982
 msgid "Tool"
 msgstr ""
 
@@ -627,7 +627,7 @@ msgstr "Volba nepodporovaného typu:"
 msgid "Unix Man page"
 msgstr "Unix a deriváty"
 
-#: oyjl_args_tree.c:999
+#: oyjl_args_tree.c:1006
 msgid "Url"
 msgstr ""
 
@@ -650,7 +650,7 @@ msgstr ""
 msgid "Verbose"
 msgstr "upovídaný výstup"
 
-#: oyjl_args_tree.c:1007
+#: oyjl_args_tree.c:1014
 #, fuzzy
 msgid "Version"
 msgstr "ICC Examin Verze"
@@ -661,7 +661,7 @@ msgstr "ICC Examin Verze"
 msgid "Without arguments just show a help text."
 msgstr ""
 
-#: oyjl_args_tree.c:1205
+#: oyjl_args_tree.c:1212
 msgid "Yes"
 msgstr "Ano"
 
