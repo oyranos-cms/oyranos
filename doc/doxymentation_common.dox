@@ -203,13 +203,13 @@
     - OpenICC: http://www.freedesktop.org/wiki/OpenIcc
     - Email list: https://lists.sourceforge.net/lists/listinfo/oyranos-devel
     - Bug reports: https://github.com/oyranos-cms/oyranos/issues
-    - Oyranos project page: http://www.oyranos.org/wiki/index.php?title=Oyranos
+    - Oyranos project page: http://www.oyranos.org/about
     - ColourWiki: http://www.oyranos.org/wiki
-    - Elektra, configuration engine used on Linux - http://freedesktop.org/wiki/Software/Elektra
+    - Elektra, configuration engine used on Linux - https://www.libelektra.org/home
     - littleCMS, color conversion engine - http://www.littlecms.com
-    - Xcalib, a vcgt to window server uploader - http://www.etg.e-technik.uni-erlangen.de/web/doe/xcalib/
-    - Directory paths for color profiles and other configuration data <a href="http://www.oyranos.org/wiki/index.php?title=OpenIccDirectoryProposal">OpenIccDirectoryProposal at ColourWiki</a>
-    - X11 Requirements http://www.oyranos.org/wiki/index.php?title=Oyranos_X11_Requirements
+    - Xcalib, a vcgt to window server uploader - https://github.com/OpenICC/xcalib
+    - Directory paths for color profiles and other configuration data <a href="https://www.openicc.org/wiki/index.php%3Ftitle=OpenIccDirectoryProposal.html">OpenIccDirectoryProposal at ColourWiki</a>
+    - X11 Requirements https://www.openicc.org/wiki/index.php%3Ftitle=Oyranos_X11_Requirements.html
  */
 
 /** @file oyranos.h
