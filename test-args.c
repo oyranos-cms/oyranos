@@ -313,7 +313,7 @@ oyjlTESTRESULT_e testArgs()
 
   text = oyjlUi_ToMan( ui, 0 );
   if( text && strlen(text) == 2183 &&
-      strstr(text, "\n\\-\\-candle    Candle"))
+      strstr(text, "\n\\-\\-candle\tCandle"))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlUi_ToMan() %lu                            ", strlen(text) );
   } else
