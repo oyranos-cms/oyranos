@@ -1,8 +1,8 @@
-# Oyranos  {#Oyranos}
+# oyranos  {#oyranos}
 [NAME](#name) [DESCRIPTION](#description) [SYNOPSIS](#synopsis) [API DESCRIPTION](#apidescription) [SEE ALSO](#seealso) [AUTHOR](#author) [BUGS](#bugs) 
 
 ## NAME <a name="name"></a>
-Oyranos  \- Oyranos color management system (CMS)
+oyranos  \- Oyranos color management system (CMS)
 ## DESCRIPTION <a name="description"></a>
 The Oyranos color management system (CMS) is designed as a entry point for color savy applications. In its current stage it configures profile paths, sets default profiles, maps devices to profiles, sets a monitor profile in X and uploads a vcgt tag. This means for instance all applications using Oyranos will use for incoming digital camera picture the same profile and watch it through the same monitor profile. For the future is planed to offer color conversions through a framework inside Oyranos. Installation and selection of CMM's will then happen transparently. Device profiles will be better supported. Options are planed for HDR imagery handling.
 ## SYNOPSIS <a name="synopsis"></a>
@@ -20,5 +20,5 @@ The Oyranos color management system (CMS) is designed as a entry point for color
 ## AUTHOR <a name="author"></a>
 Kai\-Uwe Behrmann (ku.b (at) gmx.de) 
 ## BUGS <a name="bugs"></a>
-at: [http://sourceforge.net/tracker/?group\_id=177017&atid=879553](http://sourceforge.net/tracker/?group\_id=177017&atid=879553)
+at: [https://github.com/oyranos\-cms/oyranos/issues](https://github.com/oyranos\-cms/oyranos/issues)
 
