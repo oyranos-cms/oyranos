@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: oyjl .\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2019-08-08 23:08+0200\n"
+"POT-Creation-Date: 2019-08-10 12:10+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -438,131 +438,131 @@ msgstr ""
 msgid "Synopsis"
 msgstr ""
 
-#: oyjl_args.c:2362
+#: oyjl_args.c:2369
 msgid "... try with --help|-h option for usage text. give up"
 msgstr ""
 
-#: oyjl_args.c:2414 oyjl_args.c:2859 oyjl_args.c:3078 oyjl_args_tree.c:998
+#: oyjl_args.c:2421 oyjl_args.c:2869 oyjl_args.c:3090 oyjl_args_tree.c:1005
 msgid "License"
 msgstr ""
 
-#: oyjl_args.c:2415
+#: oyjl_args.c:2422
 msgid "Author"
 msgstr ""
 
-#: oyjl_args.c:2572
+#: oyjl_args.c:2582
 msgid "EXAMPLES"
 msgstr ""
 
-#: oyjl_args.c:2574
+#: oyjl_args.c:2584
 msgid "EXIT-STATE"
 msgstr ""
 
-#: oyjl_args.c:2576
+#: oyjl_args.c:2586
 msgid "ENVIRONMENT VARIABLES"
 msgstr ""
 
-#: oyjl_args.c:2578
+#: oyjl_args.c:2588
 msgid "HISTORY"
 msgstr ""
 
-#: oyjl_args.c:2580
+#: oyjl_args.c:2590
 msgid "FILES"
 msgstr ""
 
-#: oyjl_args.c:2582
+#: oyjl_args.c:2592
 msgid "SEE AS WELL"
 msgstr ""
 
-#: oyjl_args.c:2584
+#: oyjl_args.c:2594
 msgid "SEE ALSO"
 msgstr ""
 
-#: oyjl_args.c:2748 oyjl_args.c:2964
+#: oyjl_args.c:2758 oyjl_args.c:2975
 msgid "SYNOPSIS"
 msgstr ""
 
-#: oyjl_args.c:2759 oyjl_args.c:2975
+#: oyjl_args.c:2769 oyjl_args.c:2986
 msgid "DESCRIPTION"
 msgstr ""
 
-#: oyjl_args.c:2761 oyjl_args.c:2977
+#: oyjl_args.c:2771 oyjl_args.c:2989
 msgid "OPTIONS"
 msgstr ""
 
-#: oyjl_args.c:2853 oyjl_args.c:3072
+#: oyjl_args.c:2863 oyjl_args.c:3084
 msgid "AUTHOR"
 msgstr ""
 
-#: oyjl_args.c:2857 oyjl_args.c:3076
+#: oyjl_args.c:2867 oyjl_args.c:3088
 msgid "COPYRIGHT"
 msgstr ""
 
-#: oyjl_args.c:2863 oyjl_args.c:2865 oyjl_args.c:3082 oyjl_args.c:3084
+#: oyjl_args.c:2873 oyjl_args.c:2875 oyjl_args.c:3094 oyjl_args.c:3096
 msgid "BUGS"
 msgstr ""
 
-#: oyjl_args.c:2962
+#: oyjl_args.c:2972
 msgid "NAME"
 msgstr ""
 
-#: oyjl_args_tree.c:975
+#: oyjl_args_tree.c:982
 msgid "Tool"
 msgstr ""
 
-#: oyjl_args_tree.c:977
+#: oyjl_args_tree.c:984
 msgid "Module"
 msgstr ""
 
-#: oyjl_args_tree.c:996
+#: oyjl_args_tree.c:1003
 msgid "Manufacturer"
 msgstr ""
 
-#: oyjl_args_tree.c:997
+#: oyjl_args_tree.c:1004
 msgid "Copyright"
 msgstr ""
 
-#: oyjl_args_tree.c:999
+#: oyjl_args_tree.c:1006
 msgid "Url"
 msgstr ""
 
-#: oyjl_args_tree.c:1000
+#: oyjl_args_tree.c:1007
 msgid "Support"
 msgstr ""
 
-#: oyjl_args_tree.c:1001
+#: oyjl_args_tree.c:1008
 msgid "Download"
 msgstr ""
 
-#: oyjl_args_tree.c:1002
+#: oyjl_args_tree.c:1009
 msgid "Sources"
 msgstr ""
 
-#: oyjl_args_tree.c:1003
+#: oyjl_args_tree.c:1010
 msgid "Development"
 msgstr ""
 
-#: oyjl_args_tree.c:1004
+#: oyjl_args_tree.c:1011
 msgid "Oyjl Module Author"
 msgstr ""
 
-#: oyjl_args_tree.c:1005
+#: oyjl_args_tree.c:1012
 msgid "Documentation"
 msgstr ""
 
-#: oyjl_args_tree.c:1006
+#: oyjl_args_tree.c:1013
 msgid "Date"
 msgstr ""
 
-#: oyjl_args_tree.c:1007
+#: oyjl_args_tree.c:1014
 msgid "Version"
 msgstr ""
 
-#: oyjl_args_tree.c:1205
+#: oyjl_args_tree.c:1212
 msgid "Yes"
 msgstr ""
 
-#: oyjl_args_tree.c:1205
+#: oyjl_args_tree.c:1212
 msgid "No"
 msgstr ""
 

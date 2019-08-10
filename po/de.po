@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2019-08-08 20:19+0200\n"
+"POT-Creation-Date: 2019-08-10 12:10+0200\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -19,11 +19,11 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: vim 6.0\n"
 
-#: oyjl_args.c:2362
+#: oyjl_args.c:2369
 msgid "... try with --help|-h option for usage text. give up"
 msgstr "... versuche bitte die --help|-h Option für einen Hilfetext. Gebe auf"
 
-#: oyjl_args.c:2853 oyjl_args.c:3072
+#: oyjl_args.c:2863 oyjl_args.c:3084
 msgid "AUTHOR"
 msgstr "AUTOR"
 
@@ -47,15 +47,15 @@ msgstr ""
 msgid "Any arg mode"
 msgstr "Modus mit jedem Argument"
 
-#: oyjl_args.c:2415
+#: oyjl_args.c:2422
 msgid "Author"
 msgstr "Autor"
 
-#: oyjl_args.c:2863 oyjl_args.c:2865 oyjl_args.c:3082 oyjl_args.c:3084
+#: oyjl_args.c:2873 oyjl_args.c:2875 oyjl_args.c:3094 oyjl_args.c:3096
 msgid "BUGS"
 msgstr "FEHLER"
 
-#: oyjl_args.c:2857 oyjl_args.c:3076
+#: oyjl_args.c:2867 oyjl_args.c:3088
 msgid "COPYRIGHT"
 msgstr "KOPIERRECHT"
 
@@ -88,15 +88,15 @@ msgstr "Wandle JSON in gettext lesbare C Texte:"
 msgid "Convert UI JSON to C code using libOyjl"
 msgstr "Wandele UI JSON nach C Quelltext mit libOyjl"
 
-#: oyjl_args_tree.c:997
+#: oyjl_args_tree.c:1004
 msgid "Copyright"
 msgstr "Kopierrecht"
 
-#: oyjl_args.c:2759 oyjl_args.c:2975
+#: oyjl_args.c:2769 oyjl_args.c:2986
 msgid "DESCRIPTION"
 msgstr "BESCHREIBUNG"
 
-#: oyjl_args_tree.c:1006
+#: oyjl_args_tree.c:1013
 msgid "Date"
 msgstr "Datum"
 
@@ -104,11 +104,11 @@ msgstr "Datum"
 msgid "Description"
 msgstr "Beschreibung"
 
-#: oyjl_args_tree.c:1003
+#: oyjl_args_tree.c:1010
 msgid "Development"
 msgstr "Entwicklung"
 
-#: oyjl_args_tree.c:1005
+#: oyjl_args_tree.c:1012
 msgid "Documentation"
 msgstr "Dokumente"
 
@@ -116,19 +116,19 @@ msgstr "Dokumente"
 msgid "Double occuring option"
 msgstr "Doppelte Option"
 
-#: oyjl_args_tree.c:1001
+#: oyjl_args_tree.c:1008
 msgid "Download"
 msgstr "Bezugsquelle"
 
-#: oyjl_args.c:2576
+#: oyjl_args.c:2586
 msgid "ENVIRONMENT VARIABLES"
 msgstr "UMGEBUNGSVARIABLEN"
 
-#: oyjl_args.c:2572
+#: oyjl_args.c:2582
 msgid "EXAMPLES"
 msgstr "BEISPIELE"
 
-#: oyjl_args.c:2574
+#: oyjl_args.c:2584
 msgid "EXIT-STATE"
 msgstr "EXIT-STATUS"
 
@@ -158,7 +158,7 @@ msgstr "Exportiere formatierten Text"
 msgid "FILENAME"
 msgstr "DATEINAME"
 
-#: oyjl_args.c:2580
+#: oyjl_args.c:2590
 msgid "FILES"
 msgstr "DATEIEN"
 
@@ -223,7 +223,7 @@ msgstr "Hole Unix Handbuchseite"
 msgid "Get formated text"
 msgstr "Hole formatierten Text"
 
-#: oyjl_args.c:2578
+#: oyjl_args.c:2588
 msgid "HISTORY"
 msgstr "GESCHICHTE"
 
@@ -285,7 +285,7 @@ msgstr "Json + Kommando"
 msgid "June 26, 2019"
 msgstr "26. Juni 2019"
 
-#: oyjl_args.c:2414 oyjl_args.c:2859 oyjl_args.c:3078 oyjl_args_tree.c:998
+#: oyjl_args.c:2421 oyjl_args.c:2869 oyjl_args.c:3090 oyjl_args_tree.c:1005
 msgid "License"
 msgstr "Lizenz"
 
@@ -297,7 +297,7 @@ msgstr ""
 msgid "Man"
 msgstr "Handbuch"
 
-#: oyjl_args_tree.c:996
+#: oyjl_args_tree.c:1003
 msgid "Manufacturer"
 msgstr "Hersteller"
 
@@ -367,19 +367,19 @@ msgstr "Modus"
 msgid "Mode8"
 msgstr "Modus"
 
-#: oyjl_args_tree.c:977
+#: oyjl_args_tree.c:984
 msgid "Module"
 msgstr "Modul"
 
-#: oyjl_args.c:2962
+#: oyjl_args.c:2972
 msgid "NAME"
 msgstr "NAME"
 
-#: oyjl_args_tree.c:1205
+#: oyjl_args_tree.c:1212
 msgid "No"
 msgstr "Nein"
 
-#: oyjl_args.c:2761 oyjl_args.c:2977
+#: oyjl_args.c:2771 oyjl_args.c:2989
 msgid "OPTIONS"
 msgstr "OPTIONEN"
 
@@ -409,7 +409,7 @@ msgid ""
 "Optionless mode not supported. (That would need '#' option declaration.)"
 msgstr "Ohne Optionen geht nicht. (Dies benötigte einen '#' Optionseintrag)"
 
-#: oyjl_args_tree.c:1004
+#: oyjl_args_tree.c:1011
 msgid "Oyjl Module Author"
 msgstr "Autor des Oyjl Modules"
 
@@ -457,15 +457,15 @@ msgstr "Zeige:"
 msgid "Rendering Intent"
 msgstr "Übertragungsart"
 
-#: oyjl_args.c:2584
+#: oyjl_args.c:2594
 msgid "SEE ALSO"
 msgstr "SIEHE AUCH"
 
-#: oyjl_args.c:2582
+#: oyjl_args.c:2592
 msgid "SEE AS WELL"
 msgstr "SIEHE AUCH"
 
-#: oyjl_args.c:2748 oyjl_args.c:2964
+#: oyjl_args.c:2758 oyjl_args.c:2975
 msgid "SYNOPSIS"
 msgstr "ÜBERSICHT"
 
@@ -511,11 +511,11 @@ msgstr "Zeige Status"
 msgid "Simple mode"
 msgstr "Einfacher Modus"
 
-#: oyjl_args_tree.c:1002
+#: oyjl_args_tree.c:1009
 msgid "Sources"
 msgstr "Quellen"
 
-#: oyjl_args_tree.c:1000
+#: oyjl_args_tree.c:1007
 msgid "Support"
 msgstr "Unterstützung"
 
@@ -556,7 +556,7 @@ msgid ""
 "including the -h and -X options working."
 msgstr ""
 
-#: oyjl_args_tree.c:975
+#: oyjl_args_tree.c:982
 msgid "Tool"
 msgstr "Werkzeug"
 
@@ -605,7 +605,7 @@ msgstr "Die Option ist nicht unterstützt"
 msgid "Unix Man page"
 msgstr "Unix Handbuchseite"
 
-#: oyjl_args_tree.c:999
+#: oyjl_args_tree.c:1006
 msgid "Url"
 msgstr "Url"
 
@@ -627,7 +627,7 @@ msgstr "Benutzerfehler:"
 msgid "Verbose"
 msgstr "Plaudernd"
 
-#: oyjl_args_tree.c:1007
+#: oyjl_args_tree.c:1014
 msgid "Version"
 msgstr "Version"
 
@@ -637,7 +637,7 @@ msgstr "Version"
 msgid "Without arguments just show a help text."
 msgstr ""
 
-#: oyjl_args_tree.c:1205
+#: oyjl_args_tree.c:1212
 msgid "Yes"
 msgstr "Ja"
 

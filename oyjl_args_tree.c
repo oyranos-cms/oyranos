@@ -520,8 +520,10 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
   if(flags & OYJL_SOURCE_CODE_C)
   {
     oyjl_val val;
+    char * app_type;
     int i,n, X_found = 0, export_found = 0, help_found = 0, verbose_found = 0, version_found = 0;
 
+    val = oyjlTreeGetValue( root, 0, OYJL_REG "/ui/app_type" ); app_type = OYJL_GET_STRING(val);
     oyjlStrAdd( s, "#include \"oyjl.h\"\n" );
     oyjlStrAdd( s, "#ifndef _\n" );
     oyjlStrAdd( s, "#define _(x) (x)\n" );
@@ -543,7 +545,10 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
     oyjlStrAdd( s, "\n" );
     oyjlStrAdd( s, "int main( int argc, char ** argv)\n" );
     oyjlStrAdd( s, "{\n" );
-    oyjlStrAdd( s, "  int state = 0;\n" );
+    if(!(app_type && strcmp(app_type,"tool") == 0))
+      oyjlStrAdd( s, "  int state = oyjlUI_STATE_NO_CHECKS;\n" );
+    else
+      oyjlStrAdd( s, "  int state = 0;\n" );
 
     n = oyjlValueCount( oyjlTreeGetValue( root, 0, "org/freedesktop/oyjl/ui/options/array" ) );
     for(i = 0; i < n; ++i)
@@ -903,6 +908,8 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
     else
       oyjlStrAdd( s, "NULL,\n" );
     oyjlStrAdd( s, "                                       sections, oarray, groups, &state );\n" );
+    if(!(app_type && strcmp(app_type,"tool") == 0))
+    oyjlStrAdd( s, "  if(ui) ui->app_type = \"%s\";\n", app_type ? app_type : "lib" );
     oyjlStrAdd( s, "  if( state & oyjlUI_STATE_EXPORT &&\n" );
     oyjlStrAdd( s, "      export &&\n" );
     oyjlStrAdd( s, "      strcmp(export,\"json+command\") != 0)\n" );
