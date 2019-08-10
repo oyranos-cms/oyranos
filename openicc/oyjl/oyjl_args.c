@@ -1166,7 +1166,7 @@ const char * oyjlOption_PrintArg     ( oyjlOption_s      * o,
   }
   if(style & oyjlOPTIONSTYLE_ONELETTER && OYJL_IS_O("#"))
     oyjlStringAdd( &text, malloc, free, "|" );
-  if(style & oyjlOPTIONSTYLE_ONELETTER && style & oyjlOPTIONSTYLE_STRING && OYJL_IS_NOT_O("@") && OYJL_IS_NOT_O("#") && o->option)
+  if(style & oyjlOPTIONSTYLE_ONELETTER && style & oyjlOPTIONSTYLE_STRING && OYJL_IS_NOT_O("@") && OYJL_IS_NOT_O("#") && o->o && o->o[0] && o->option)
     oyjlStringAdd( &text, malloc, free, "|" );
   if( o->option &&
       ( style & oyjlOPTIONSTYLE_STRING ||
@@ -2288,15 +2288,16 @@ oyjlOPTIONSTATE_e  oyjlUi_Check      ( oyjlUi_s          * ui,
  *                 syntax declaration and variable passing for setting results
  *  @param[in]     groups              the option grouping declares
  *                 dependencies of options and provides a UI layout
- *  @param[out]    state               inform about processing
+ *  @param[in,out] state               inform about processing
  *                                     - ::oyjlUI_STATE_HELP : help was detected, printed and oyjlUi_s was released
  *                                     - ::oyjlUI_STATE_EXPORT : export of json, man or markdown was detected, printed and oyjlUi_s was released
  *                                     - ::oyjlUI_STATE_VERBOSE : verbose was detected
  *                                     - ::oyjlUI_STATE_OPTION+ : error occured in option parser, message printed, ::oyjlOPTIONSTATE_e is placed in >> ::oyjlUI_STATE_OPTION and oyjlUi_s was released
+ *                                     -- ::oyjlUI_STATE_NO_CHECKS : skip any checks during creation; Only useful if part of the passed in data is omitted or needs to be passed through.
  *  @return                            UI object for later use
  *
  *  @version Oyjl: 1.0.0
- *  @date    2019/03/24
+ *  @date    2019/08/09
  *  @since   2018/08/20 (OpenICC: 0.1.1)
  */
 oyjlUi_s *  oyjlUi_Create            ( int                 argc,
@@ -2306,7 +2307,7 @@ oyjlUi_s *  oyjlUi_Create            ( int                 argc,
                                        const char        * description,
                                        const char        * logo,
                                        oyjlUiHeaderSection_s * info,
-                                       oyjlOption_s   * options,
+                                       oyjlOption_s      * options,
                                        oyjlOptionGroup_s * groups,
                                        int               * status )
 {
@@ -2314,6 +2315,8 @@ oyjlUi_s *  oyjlUi_Create            ( int                 argc,
   const char * export = NULL;
   oyjlOption_s * h, * v, * X, * V;
   oyjlOPTIONSTATE_e opt_state = oyjlOPTION_NONE;
+  int flags = 0;
+  char * t;
 
   int use_gettext = 0;
 #ifdef OYJL_USE_GETTEXT
@@ -2321,10 +2324,14 @@ oyjlUi_s *  oyjlUi_Create            ( int                 argc,
 #endif
   oyjlInitLanguageDebug( "Oyjl", "OYJL_DEBUG", oyjl_debug, use_gettext, "OYJL_LOCALEDIR", OYJL_LOCALEDIR, OYJL_DOMAIN, NULL );
 
+  if(status)
+    flags = *status;
+
   /* allocate options structure */
   oyjlUi_s * ui = oyjlUi_New( argc, argv ); /* argc+argv are required for parsing the command line options */
   /* tell about the tool */
-  ui->app_type = "tool";
+  if(!(flags & oyjlUI_STATE_NO_CHECKS))
+    ui->app_type = "tool";
   ui->nick = nick;
   ui->name = name;
   ui->description = description;
@@ -2354,7 +2361,7 @@ oyjlUi_s *  oyjlUi_Create            ( int                 argc,
       *status |= oyjlUI_STATE_HELP;
     return NULL;
   }
-  if(opt_state == oyjlOPTION_NONE)
+  if(opt_state == oyjlOPTION_NONE && !(flags & oyjlUI_STATE_NO_CHECKS))
     opt_state = oyjlUi_Check(ui, 0);
   /* ... and report detected errors */
   if(opt_state != oyjlOPTION_NONE)
@@ -2425,27 +2432,30 @@ oyjlUi_s *  oyjlUi_Create            ( int                 argc,
 #if defined(OYJL_INTERNAL)
     if(strcmp(export, "json") == 0)
     {
-      puts( oyjlUi_ToJson( ui, 0 ) );
+      t = oyjlUi_ToJson( ui, flags );
+      if(t) puts( t );
       oyjlUi_Release( &ui);
       return NULL;
     }
 #endif
     if(strcmp(export, "man") == 0)
     {
-      puts( oyjlUi_ToMan( ui, 0 ) );
+      t = oyjlUi_ToMan( ui, flags );
+      if(t) puts( t );
       oyjlUi_Release( &ui);
       return NULL;
     }
     if(strcmp(export, "markdown") == 0)
     {
-      puts( oyjlUi_ToMarkdown( ui, 0 ) );
+      t = oyjlUi_ToMarkdown( ui, flags );
+      if(t) puts( t );
       oyjlUi_Release( &ui);
       return NULL;
     }
 #if defined(OYJL_INTERNAL)
     if(strcmp(export, "export") == 0)
     {
-      puts( oyjlUi_ExportToJson( ui, 0 ) );
+      puts( oyjlUi_ExportToJson( ui, flags ) );
       oyjlUi_Release( &ui);
       return NULL;
     }
@@ -2906,7 +2916,7 @@ static void replaceOutsideHTML(const char * text OYJL_UNUSED, const char * start
  *  @since   2018/11/07 (OpenICC: 0.1.1)
  */
 char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
-                                       int                 flags OYJL_UNUSED )
+                                       int                 flags )
 {
   char * text = NULL, * tmp, * doxy_link = NULL;
   const char * date = NULL,
@@ -2943,7 +2953,7 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
   }
 
   ng = oyjlOptions_CountGroups(opts);
-  if(!ng) return NULL;
+  if(!ng && !(flags & oyjlUI_STATE_NO_CHECKS)) return NULL;
 
 #ifdef OYJL_HAVE_LANGINFO_H
   country = nl_langinfo( _NL_ADDRESS_LANG_AB );
@@ -2961,6 +2971,7 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
 
   ADD_SECTION( _("NAME"), "name", "%s %s%s - %s\n", ui->nick, vers?"v":"", vers?vers:"", ui->name )
 
+  if(ng)
   ADD_SECTION( _("SYNOPSIS"), "synopsis", "", "" )
   for(i = 0; i < ng; ++i)
   {
@@ -2974,6 +2985,7 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
   if(desc)
     ADD_SECTION( _("DESCRIPTION"), "description", "%s\n", desc )
 
+  if(ng)
   ADD_SECTION( _("OPTIONS"), "options", "", "" )
   for(i = 0; i < ng; ++i)
   {
