@@ -136,7 +136,7 @@ IF( HAVE_QT)
     IF (NOT ENABLE_STATIC_LIBS_${PROJECT_UP_NAME} AND NOT ENABLE_SHARED_LIBS_${PROJECT_UP_NAME})
       ADD_EXECUTABLE( ${PROJECT_NAME}
                     ${${PROJECT_NAME}_HEADERS}
-                    main.cpp
+                    main2.cpp
                     ${${PROJECT_NAME}_SOURCES}
                     ${${PROJECT_NAME}_QRC_SOURCES}
                   )

@@ -16,8 +16,8 @@
 // developed with Qt 5.7-5.12
 
 import QtQuick 2.7
-//import QtQml.Models 2.2
-import QtQuick.Controls 2.1
+import QtQml.Models 2.4
+import QtQuick.Controls 2.4
 import QtQuick.Controls.Styles 1.4
 
 import AppData 1.0
@@ -132,7 +132,9 @@ AppWindow {
             var arg = key
             if(command_set_option.length === 0)
             {
-                if(key.length > 1)
+                if(key === "#" || key === "@")
+                    arg = null;
+                else if(key.length > 1)
                     arg = "--" + key
                 else if(key.length === 1)
                     arg = "-" + key
@@ -145,7 +147,9 @@ AppWindow {
                     {
                         if(value.length !== 0)
                         {
-                            if(arg.length > 0)
+                            if(key === "#" || key === "@")
+                                arg = value
+                            else if(arg.length > 0)
                                 arg += command_set_delimiter + value
                             else
                                 arg += value
@@ -153,7 +157,9 @@ AppWindow {
                     }
                     else if(type === "bool" && value === "false")
                     {
-                        if(arg.length > 0)
+                        if(key === "#" || key === "@")
+                            arg = v
+                        else if(arg.length > 0)
                             arg += command_set_delimiter + v
                         else
                             arg += v
@@ -163,11 +169,15 @@ AppWindow {
             args = processSetArgs.slice()
             var count = args.length
             if(command_set_option.length === 0)
-                args[args.length] = arg
+            {
+                if(arg !== null)
+                    args[args.length] = arg
+            }
             else
             {
                 args[args.length] = command_set_option
-                args[args.length] = arg
+                if(arg !== null)
+                    args[args.length] = arg
             }
             if(app_debug)
                 statusText = "command_set: " + processSetCommand + " " + args
@@ -183,7 +193,8 @@ AppWindow {
                 if(arg.match(key))
                     continue
 
-                if(!(group.mandatory.match(arg) || group.optional.match(arg)))
+                if(!(group.mandatory.match(arg) ||
+                     (group.optional !== null && group.optional.match(arg))))
                     continue
 
                 // activate value using default from JSON
@@ -201,7 +212,9 @@ AppWindow {
 
                 if(command_set_option.length === 0)
                 {
-                    if(key.length > 1)
+                    if(opt.key === "#" || opt.key === "@")
+                        ;
+                    else if(opt.key.length > 1)
                         arg = "--" + opt.key
                     else if(key.length === 1)
                         arg = "-" + opt.key
@@ -539,6 +552,11 @@ AppWindow {
             }
 
             name = P.getTranslatedItem( opt, "name", loc );
+            var l = 0;
+            if(typeof name !== "undefined" && name !== null)
+                l = name.length;
+            if( l === 0 )
+              name = opt.key;
             var desc = P.getTranslatedItem( opt, "description", loc );
             var help = P.getTranslatedItem( opt, "help", loc );
             //if(typeof help === "undefined")
