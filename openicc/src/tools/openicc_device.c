@@ -106,39 +106,39 @@ int main(int argc, char ** argv)
   /* declare options - the core information; use previously declared choices */
   oyjlOption_s oarray[] = {
   /* type,   flags, o,  option,          key,  name,             description,         help, value_name,    value_type,        values, variable_type, result */
-    {"oiwi", 0,    'a', "add",           NULL, _("Add"),         _("Add Device to DB"),NULL,NULL,    oyjlOPTIONTYPE_NONE,     {}, oyjlINT,{.i=&add_device} },
-    {"oiwi", 0,    'b', "db-file",       NULL, _("DB File"),     _("DB File Name"),   _("File Name of OpenICC Device Data Base JSON"), _("FILENAME"), oyjlOPTIONTYPE_STRING, {.suggest = "OpenICC_device_config_DB.json"}, oyjlSTRING,{.s=&db_file} },
-    {"oiwi", 0,    'c', "device-class",  NULL, _("Device Class"),_("Device Class"),   NULL, "monitor|printer|camera|scanner", oyjlOPTIONTYPE_CHOICE, {.choices.list = openiccMemDup( c_choices, sizeof(c_choices) )}, oyjlSTRING, {.s = &device_class} },
-    {"oiwi", 0,    'd', "device",        NULL, _("Device"),      _("Device position"),NULL, _("NUMBER"), oyjlOPTIONTYPE_DOUBLE, {.dbl.tick=1,.dbl.start=0,.dbl.end=100}, oyjlINT,{.i=&list_pos} },
-    {"oiwi", 0,    'e', "erase-device",  NULL, _("Erase Device"),_("Erase Devices"),  NULL, NULL,    oyjlOPTIONTYPE_NONE,     {},      oyjlINT,   {.i=&erase_device} },
-    {"oiwi", 0,    'f', "file-name",     NULL, _("File Name"),   _("File Name"),      _("The File Name of the OpenICC Device in Json format."), _("FILENAME"), oyjlOPTIONTYPE_STRING, {.suggest = "device.json"}, oyjlSTRING,{.s=&file_name} },
-    {"oiwi", 0,    'j', "dump-json",     NULL, _("OpenICC Json"),_("Dump OpenICC JSON"),NULL,NULL,   oyjlOPTIONTYPE_NONE,     {},      oyjlINT,   {.i=&dump_json} },
-    {"oiwi", 0,    'h', "help",          NULL, _("Help"),        _("Help"),           NULL, NULL,    oyjlOPTIONTYPE_NONE,     {},      oyjlINT,   {.i=&help} },
-    {"oiwi", 0,    'l', "list-devices",  NULL, _("List Devices"),_("List Devices"),   NULL, NULL,    oyjlOPTIONTYPE_NONE,     {},      oyjlINT,   {.i=&list_devices} },
-    {"oiwi", 0,    'n', "long",          NULL, _("Long Format"), _("List all key/values pairs"),  NULL, NULL, oyjlOPTIONTYPE_NONE, {},oyjlINT, {.i=&list_long} },
-    {"oiwi", 0,    'p', "show-path",     NULL, _("Show Path"),   _("Show Path"),      NULL, NULL,    oyjlOPTIONTYPE_NONE,     {},      oyjlINT,   {.i=&show_path} },
-    {"oiwi", 0,    's', "scope",         NULL, _("Scope"),       _("System"),         NULL, NULL,    oyjlOPTIONTYPE_NONE,     {},      oyjlINT,   {.i=(int*)&scope} },
-    {"oiwi", 0,    'v', "verbose",       NULL, _("Verbose"),     _("verbose"),        NULL, NULL,    oyjlOPTIONTYPE_NONE,     {},      oyjlINT,   {.i=&verbose} },
+    {"oiwi", 0,    "a", "add",           NULL, _("Add"),         _("Add Device to DB"),NULL,NULL,    oyjlOPTIONTYPE_NONE,     {}, oyjlINT,{.i=&add_device} },
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,"b","db-file",NULL,_("DB File"),_("DB File Name"),_("File Name of OpenICC Device Data Base JSON"), _("FILENAME"), oyjlOPTIONTYPE_CHOICE, {}, oyjlSTRING,{.s=&db_file} },
+    {"oiwi", 0,    "c", "device-class",  NULL, _("Device Class"),_("Device Class"),   NULL, "monitor|printer|camera|scanner", oyjlOPTIONTYPE_CHOICE, {.choices.list = openiccMemDup( c_choices, sizeof(c_choices) )}, oyjlSTRING, {.s = &device_class} },
+    {"oiwi", 0,    "d", "device",        NULL, _("Device"),      _("Device position"),NULL, _("NUMBER"), oyjlOPTIONTYPE_DOUBLE, {.dbl.tick=1,.dbl.start=0,.dbl.end=100}, oyjlINT,{.i=&list_pos} },
+    {"oiwi", 0,    "e", "erase-device",  NULL, _("Erase Device"),_("Erase Devices"),  NULL, NULL,    oyjlOPTIONTYPE_NONE,     {},      oyjlINT,   {.i=&erase_device} },
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,"f","file-name",NULL,_("File Name"),   _("File Name"),      _("The File Name of the OpenICC Device in Json format."), _("FILENAME"), oyjlOPTIONTYPE_CHOICE, {}, oyjlSTRING,{.s=&file_name} },
+    {"oiwi", 0,    "j", "dump-json",     NULL, _("OpenICC Json"),_("Dump OpenICC JSON"),NULL,NULL,   oyjlOPTIONTYPE_NONE,     {},      oyjlINT,   {.i=&dump_json} },
+    {"oiwi", 0,    "h", "help",          NULL, _("Help"),        _("Help"),           NULL, NULL,    oyjlOPTIONTYPE_NONE,     {},      oyjlINT,   {.i=&help} },
+    {"oiwi", 0,    "l", "list-devices",  NULL, _("List Devices"),_("List Devices"),   NULL, NULL,    oyjlOPTIONTYPE_NONE,     {},      oyjlINT,   {.i=&list_devices} },
+    {"oiwi", 0,    "n", "long",          NULL, _("Long Format"), _("List all key/values pairs"),  NULL, NULL, oyjlOPTIONTYPE_NONE, {},oyjlINT, {.i=&list_long} },
+    {"oiwi", 0,    "p", "show-path",     NULL, _("Show Path"),   _("Show Path"),      NULL, NULL,    oyjlOPTIONTYPE_NONE,     {},      oyjlINT,   {.i=&show_path} },
+    {"oiwi", 0,    "s", "scope",         NULL, _("Scope"),       _("System"),         NULL, NULL,    oyjlOPTIONTYPE_NONE,     {},      oyjlINT,   {.i=(int*)&scope} },
+    {"oiwi", 0,    "v", "verbose",       NULL, _("Verbose"),     _("verbose"),        NULL, NULL,    oyjlOPTIONTYPE_NONE,     {},      oyjlINT,   {.i=&verbose} },
     /* default option template -X|--export */
-    {"oiwi", 0,    'X', "export",        NULL, NULL,             NULL,                NULL, NULL,    oyjlOPTIONTYPE_CHOICE,   {},      oyjlSTRING,{.s=&export} },
-    {"oiwi", 0,    'w', "write",         NULL, _("Write"),       _("Write DB File"),  NULL, NULL,    oyjlOPTIONTYPE_NONE,     {},      oyjlINT,   {.i=&write_db_file} },
+    {"oiwi", 0,    "X", "export",        NULL, NULL,             NULL,                NULL, NULL,    oyjlOPTIONTYPE_CHOICE,   {},      oyjlSTRING,{.s=&export} },
+    {"oiwi", 0,    "w", "write",         NULL, _("Write"),       _("Write DB File"),  NULL, NULL,    oyjlOPTIONTYPE_NONE,     {},      oyjlINT,   {.i=&write_db_file} },
     {"",0,0,0,0,0,0,0, NULL, 0,{},0,{}}
   };
 
   /* declare option groups, for better syntax checking and UI groups */
   oyjlOptionGroup_s groups[] = {
   /* type,   flags, name,              description,                          help, mandatory, optional, detail */
-    {"oiwg", 0,     _("List Devices"), _("Print the Devices in the DB"),     NULL, "l",       "djnbv",  "ldjnb" },
-    {"oiwg", 0,     _("Add Device"),   _("Add Device to DB"),                NULL, "af",      "bv",     "afb" },
-    {"oiwg", 0,     _("Erase Device"), _("Erase a Devices from the DB"),     NULL, "ed",      "bv",     "edb" },
-    {"oiwg", 0,     _("Show DB Path"), _("Show Filepath to the DB"),         NULL, "p",       "sv",     "ps" },
-    {"oiwg", 0,     _("Misc"),         _("General options"),                 NULL, "",        "",       "bXvh" },
+    {"oiwg", 0,     _("List Devices"), _("Print the Devices in the DB"),     NULL, "l",       "d,j,n,b,v","l,d,j,n,b" },
+    {"oiwg", 0,     _("Add Device"),   _("Add Device to DB"),                NULL, "a,f",     "b,v",    "a,f,b" },
+    {"oiwg", 0,     _("Erase Device"), _("Erase a Devices from the DB"),     NULL, "e,d",     "b,v",    "e,d,b" },
+    {"oiwg", 0,     _("Show DB Path"), _("Show Filepath to the DB"),         NULL, "p",       "s,v",    "p,s" },
+    {"oiwg", 0,     _("Misc"),         _("General options"),                 NULL, "",        "",       "b,X,v,h" },
     {"",0,0,0,0,0,0,0}
   };
 
 
   oyjlUiHeaderSection_s * info = oiUiInfo(_("Manipulation of OpenICC color management data base device entries."));
-  oyjlUi_s * ui = oyjlUi_Create( argc, argv,
+  oyjlUi_s * ui = oyjlUi_Create( argc, (const char**) argv,
       "openicc-device", "OpenICC Device", _("OpenICC devices handling tool"), "openicc-logo",
       info, oarray, groups, NULL );
   if(!ui) return 0;
