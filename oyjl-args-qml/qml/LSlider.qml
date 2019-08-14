@@ -12,7 +12,7 @@
  */
 
 import QtQuick 2.7
-import QtQuick.Controls 2.1
+import QtQuick.Controls 2.4
 
 Rectangle {
     id: all
