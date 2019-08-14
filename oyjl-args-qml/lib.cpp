@@ -63,7 +63,7 @@ int oyjlArgsQmlStart_                ( int                 argc,
 {
     Q_INIT_RESOURCE(app);
 
-    QApplication app(argc, (char**)argv);
+    QGuiApplication app(argc, (char**)argv);
     // a = &app; see comment above
 
     QTranslator translator;
