@@ -1070,7 +1070,7 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
       if(!o) continue;
       key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "key" );
       if(!o->key)
-        sprintf(num, "%s", OYJL_E(o->o));
+        sprintf(num, "%s", OYJL_E(option));
       oyjlValueSetString( key, o->key?o->key:num );
       key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "name" );
       oyjlValueSetString( key, o->name );
