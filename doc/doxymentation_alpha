@@ -3,7 +3,7 @@
 
     @section text_contents Descriptive Contents
     @ref intro |
-    @ref install |
+    @ref compile |
     @ref links\n
     @ref tools |
     @ref environment |

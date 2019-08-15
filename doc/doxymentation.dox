@@ -2,8 +2,8 @@
 
     @section text_contents Descriptive Contents
     @ref intro |
-    @ref install |
-    @ref links\n
+    @ref compile |
+    @ref links \n
     @ref tools |
     @ref environment |
     @ref user |
@@ -32,24 +32,8 @@
     same monitor profile with the same options for rendering intent, simulation
     and so on.
 
-    @section tools User Tools Documentation
+    @section tools Tools Documentation
     - oyranos-icc - access embedded profiles from images, color convert images
-    - oyranos-monitor - a commandline tool for calling from a setup script like
-      .xinitrc. It selects a profile for the current monitor and sets up the
-      X server at startup time. Usage:
-    @verbatim
-    # select a monitor profile, load the binary blob into X and fill the
-    # VideoCardGammaTable, if appropriate
-    oyranos-monitor
-    @endverbatim
-    - @ref oyranosmonitorwhitepoint - a tool for setting display white point.
-      It covers a geo location and time sensitive daemon for white point 
-      adaption to red night light. The daemon is called from oyranos-monitor.
-    - oyranos-policy - a tool to set a policy from a xml file. Use it like:
-    @verbatim
-    oyranos-policy `oyranos-config --syscolordir`/`oyranos-config --settingsdirname`/office.policy.xml
-    @endverbatim
-    Affected are default profiles and some behaviour settings.
     - @ref oyranosconfig - a command line tool for settings and to get compiler flags to using Oyranos in your own project.
     - @ref oyranosconfigsynnefo - a GUI for policies, settings and information
     - @ref oyranosconfigfltk - a configuration UI application, using some functions      of the Oyranos APIs. If you have <a href="http://www.oyranos.org/wiki/index.php?title=ICC_Examin">ICC Examin</a> installed it can be called too
@@ -57,9 +41,11 @@
     - @ref oyranosprofile - a command line tool to show internal profile information
     - @ref oyranosprofiles - lookup profiles in the systems color paths, download and install
     - @ref oyranosprofilegraph - draw a 2D graph from ICC profiles and spectral data
-    - @ref oyranosmonitor - a command line tool to handle monitor device ICC color profiles
+    - @ref oyranosmonitor - a command line tool to handle monitor device ICC color profiles.
+      Affected are default profiles and some behaviour settings.
     - @ref oyranosmonitorwhitepoint - a command line tool to handle nightly red light monitor white point
-      show details of profiles. 
+      It covers a geo location and time sensitive daemon for white point 
+      adaption to red night light. The daemon is called from oyranos-monitor.
 
     @section user User API Documentation
     The basic Oyranos API gets included with oyranos.h. An application, which

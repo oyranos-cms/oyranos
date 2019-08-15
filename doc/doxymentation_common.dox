@@ -1,6 +1,6 @@
 /** @page install_current Installation
 
-    @section install Installation
+    @section compile Compilation
     Oyranos depends on following libraries:\n
 
     <ul>
