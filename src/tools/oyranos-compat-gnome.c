@@ -25,6 +25,14 @@
 #define OY_LIB_SUFFIX ".so"
 #endif
 
+#if defined(__GNUC__)
+# define  OY_DBG_FORMAT_ "%s:%d %s() "
+# define  OY_DBG_ARGS_   strrchr(__FILE__,'/') ? strrchr(__FILE__,'/')+1 : __FILE__,__LINE__,__func__
+#else
+# define  OY_DBG_FORMAT_ "%s:%d "
+# define  OY_DBG_ARGS_   strrchr(__FILE__,'/') ? strrchr(__FILE__,'/')+1 : __FILE__,__LINE__
+#endif
+
 char *       oyReadFilepToMem_       ( FILE              * fp,
                                        size_t            * size )
 {
@@ -41,9 +49,9 @@ char *       oyReadFilepToMem_       ( FILE              * fp,
       {
         switch(errno)
         {
-          case EBADF:        fprintf(stderr, "Not a seekable stream\n"); break;
-          case EINVAL:       fprintf(stderr, "Wrong argument\n"); break;
-          default:           fprintf(stderr, "%s\n", strerror(errno)); break;
+          case EBADF:        fprintf(stderr, OY_DBG_FORMAT_ "Not a seekable stream\n", OY_DBG_ARGS_); break;
+          case EINVAL:       fprintf(stderr, OY_DBG_FORMAT_ "Wrong argument\n", OY_DBG_ARGS_); break;
+          default:           fprintf(stderr, OY_DBG_FORMAT_ "%s\n", OY_DBG_ARGS_, strerror(errno)); break;
         }
         *size = 0;
         return NULL;
@@ -109,7 +117,7 @@ oyReadFileToMem_(const char* name, size_t *size)
     {
       mem = oyReadFilepToMem_( fp, size );
     } else {
-      fprintf( stderr, "%s: %s\n", "Could not open file", filename?filename:"" );
+      fprintf( stderr, OY_DBG_FORMAT_ "%s: %s\n", OY_DBG_ARGS_, "Could not open file", filename?filename:"" );
     }
   }
  
@@ -190,6 +198,7 @@ int main(int argc, char **argv_)
 
   char ** argv = argv_;
   int verbose = 1;
+  int error = -1;
   if(argc > 1 && strcmp(argv[1],"-q") == 0)
   {
     verbose = 0;
@@ -201,7 +210,7 @@ int main(int argc, char **argv_)
   {
     const char * lib_name = "libcolordcompat.so";
     void * gnome_handle = dlopen(lib_name, RTLD_LAZY);
-    int error = 0, report = 0;
+    int report = 0;
 #define LOAD_FUNC( func, fallback_func ) l##func = dlsym(gnome_handle, #func ); \
                if(!l##func) \
                { \
@@ -213,7 +222,7 @@ int main(int argc, char **argv_)
                    error = 1; \
                  } \
                  report = 1; \
-                 if(verbose) fprintf( stderr, "dlsym failed: %s\n", \
+                 if(verbose) fprintf( stderr, OY_DBG_FORMAT_ "dlsym failed: %s\n", OY_DBG_ARGS_, \
                                        dlerror() ); \
                }
     char * type = argv[1],
@@ -227,7 +236,10 @@ int main(int argc, char **argv_)
     LOAD_FUNC( cd_edid_get_profile, 0 )
 
     if(report && verbose)
-      fprintf(stderr, "can not load symbols from libcolordcompat.so\n");
+    {
+      fprintf(stderr, OY_DBG_FORMAT_ "Can not load symbols from libcolordcompat.so\n", OY_DBG_ARGS_ );
+      fprintf(stderr, OY_DBG_FORMAT_ "Applications using the 'colord' API might be out of sync with X11\n", OY_DBG_ARGS_ );
+    }
 
     if(strcmp(edid_fn,"-") == 0)
       edid = oyReadStdinToMem_( &size );
@@ -269,7 +281,7 @@ int main(int argc, char **argv_)
         profile_fn = NULL;
         error = lcd_edid_get_profile( edid, size, &profile_fn );
         if(verbose)
-          fprintf( stdout, "profile to erase: %s\n", profile_fn );
+          fprintf( stdout, OY_DBG_FORMAT_ "profile to erase: %s\n", OY_DBG_ARGS_, profile_fn );
         if(profile_fn)
           error = lcd_edid_remove_profile( edid, size, profile_fn );
       } while (profile_fn);
@@ -280,15 +292,19 @@ int main(int argc, char **argv_)
     {
       error = lcd_edid_get_profile( edid, size, &profile_fn );
       if(verbose)
-        fprintf( stdout, "%s", profile_fn?profile_fn:"no profile file name" );
+        fprintf( stdout, OY_DBG_FORMAT_ "%s", OY_DBG_ARGS_, profile_fn?profile_fn:"no profile file name" );
       if(!error)
         return 0;
     } 
     if(verbose)
-      fprintf( stderr, "type: %s EDID_FILENAME: %s ICC_FILENAME: %s status: %s\n", type, edid_fn, profile_fn, getUcmmError(error));
+    {
+      fprintf( stderr, "\n" OY_DBG_FORMAT_ "Option: \"%s\" EDID_FILENAME: \"%s\" ICC_FILENAME: \"%s\" Status: \"%s\"\n", OY_DBG_ARGS_, type, edid_fn, profile_fn, getUcmmError(error));
+      if(error != UCMM_EDID_ERROR_OK)
+        fprintf(stderr, OY_DBG_FORMAT_ "Applications using the 'colord' API might be out of sync with X11\n", OY_DBG_ARGS_ );
+      }
   }
 
-  if(verbose)
+  if(verbose && (argc != 4 || argc != 6 || error != UCMM_EDID_ERROR_OK))
   {
     fprintf( stderr, "Synopsis:\n");
     fprintf( stderr, "\t%s [-q] -a [-i -| -i EDID_FILENAME] -p ICC_FILENAME\n", argv[0]);
@@ -302,7 +318,7 @@ int main(int argc, char **argv_)
     fprintf( stderr, "\t\t-i EDID_FILENAME\tread EDID blob from file\n");
     fprintf( stderr, "\t\t-i -\t\t\tread EDID blob from input stream\n");
     fprintf( stderr, "\t\t-q\t\t\tquiet mode\n");
-    fprintf( stderr, "Examples:\n\toyranos-monitor -d 0 -f edid | oyranos-compat-gnome -a -i - -p \"`oyranos-profile -l --path sRGB`\"\n" );
+    fprintf( stderr, "Examples:\n\toyranos-monitor -d 0 -f edid | oyranos-compat-gnome -a -i - -p \"`oyranos-monitor -l -d 0 --path`\"\n" );
     fprintf( stderr, "Note:\n\tArguments are order dependent\n");
   }
 
