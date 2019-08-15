@@ -290,18 +290,20 @@ int main(int argc, char **argv_)
 
   if(verbose)
   {
-    fprintf( stderr, "usage: %s [-q] -a [-i -| -i EDID_FILENAME] -p ICC_FILENAME\n", argv[0]);
-    fprintf( stderr, "usage: %s [-q] -e [-i -| -i EDID_FILENAME]\n", argv[0]);
-    fprintf( stderr, "usage: %s [-q] -l [-i -| -i EDID_FILENAME]\n", argv[0]);
+    fprintf( stderr, "Synopsis:\n");
+    fprintf( stderr, "\t%s [-q] -a [-i -| -i EDID_FILENAME] -p ICC_FILENAME\n", argv[0]);
+    fprintf( stderr, "\t%s [-q] -e [-i -| -i EDID_FILENAME]\n", argv[0]);
+    fprintf( stderr, "\t%s [-q] -l [-i -| -i EDID_FILENAME]\n", argv[0]);
+    fprintf( stderr, "Options:\n");
     fprintf( stderr, "\t-a\t\t\tadd a profile\n");
+    fprintf( stderr, "\t\t-p ICC_FILENAME\t\tthe file to handle\n");
     fprintf( stderr, "\t-e\t\t\tdelete all profiles\n");
     fprintf( stderr, "\t-l\t\t\tget a profile\n");
-    fprintf( stderr, "\t-p ICC_FILENAME\t\tthe file to handle\n");
-    fprintf( stderr, "\t-i EDID_FILENAME\tread EDID blob from file\n");
-    fprintf( stderr, "\t-i -\t\t\tread EDID blob from input stream\n");
+    fprintf( stderr, "\t\t-i EDID_FILENAME\tread EDID blob from file\n");
+    fprintf( stderr, "\t\t-i -\t\t\tread EDID blob from input stream\n");
     fprintf( stderr, "\t\t-q\t\t\tquiet mode\n");
-    fprintf( stderr, "example: oyranos-monitor -d 0 -f edid | oyranos-compat-gnome -a -i - -p \"`oyranos-profile -l --path sRGB`\"\n" );
-    fprintf( stderr, "note: arguments are order dependent\n");
+    fprintf( stderr, "Examples:\n\toyranos-monitor -d 0 -f edid | oyranos-compat-gnome -a -i - -p \"`oyranos-profile -l --path sRGB`\"\n" );
+    fprintf( stderr, "Note:\n\tArguments are order dependent\n");
   }
 
   return 0;
