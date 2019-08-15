@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eu\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2019-08-14 15:03+0200\n"
+"POT-Creation-Date: 2019-08-15 10:41+0200\n"
 "PO-Revision-Date: 2007-11-07 11:11+0100\n"
 "Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@zundan.com>\n"
 "Language-Team: Basque <itzulpena@euskalgnu.org>\n"
@@ -92,7 +92,7 @@ msgstr ""
 msgid "Convert UI JSON to C code using libOyjl"
 msgstr ""
 
-#: oyjl_args_tree.c:1004
+#: oyjl_args_tree.c:1008
 msgid "Copyright"
 msgstr "Copyright-a"
 
@@ -100,7 +100,7 @@ msgstr "Copyright-a"
 msgid "DESCRIPTION"
 msgstr ""
 
-#: oyjl_args_tree.c:1013
+#: oyjl_args_tree.c:1017
 #, fuzzy
 msgid "Date"
 msgstr "Data"
@@ -110,11 +110,11 @@ msgstr "Data"
 msgid "Description"
 msgstr "Azalpena"
 
-#: oyjl_args_tree.c:1010
+#: oyjl_args_tree.c:1014
 msgid "Development"
 msgstr ""
 
-#: oyjl_args_tree.c:1012
+#: oyjl_args_tree.c:1016
 msgid "Documentation"
 msgstr "Dokumentazioa"
 
@@ -123,7 +123,7 @@ msgstr "Dokumentazioa"
 msgid "Double occuring option"
 msgstr "Azalpena"
 
-#: oyjl_args_tree.c:1008
+#: oyjl_args_tree.c:1012
 msgid "Download"
 msgstr ""
 
@@ -309,7 +309,7 @@ msgstr ""
 msgid "June 26, 2019"
 msgstr ""
 
-#: oyjl_args.c:2421 oyjl_args.c:2869 oyjl_args.c:3090 oyjl_args_tree.c:1005
+#: oyjl_args.c:2421 oyjl_args.c:2869 oyjl_args.c:3090 oyjl_args_tree.c:1009
 msgid "License"
 msgstr "Lizentzia"
 
@@ -322,7 +322,7 @@ msgstr ""
 msgid "Man"
 msgstr "Magenta"
 
-#: oyjl_args_tree.c:1003
+#: oyjl_args_tree.c:1007
 #, fuzzy
 msgid "Manufacturer"
 msgstr "Hornitzailea:   "
@@ -398,7 +398,7 @@ msgstr "Modeloa:"
 msgid "Mode8"
 msgstr "Modeloa:"
 
-#: oyjl_args_tree.c:984
+#: oyjl_args_tree.c:988
 #, fuzzy
 msgid "Module"
 msgstr "Bereizketa"
@@ -407,7 +407,7 @@ msgstr "Bereizketa"
 msgid "NAME"
 msgstr ""
 
-#: oyjl_args_tree.c:1212
+#: oyjl_args_tree.c:1216
 msgid "No"
 msgstr ""
 
@@ -441,7 +441,7 @@ msgid ""
 "Optionless mode not supported. (That would need '#' option declaration.)"
 msgstr ""
 
-#: oyjl_args_tree.c:1011
+#: oyjl_args_tree.c:1015
 #, fuzzy
 msgid "Oyjl Module Author"
 msgstr "Oyranos-en ezarpenak"
@@ -555,11 +555,11 @@ msgstr ""
 msgid "Simple mode"
 msgstr ""
 
-#: oyjl_args_tree.c:1009
+#: oyjl_args_tree.c:1013
 msgid "Sources"
 msgstr ""
 
-#: oyjl_args_tree.c:1007
+#: oyjl_args_tree.c:1011
 msgid "Support"
 msgstr ""
 
@@ -603,7 +603,7 @@ msgid ""
 "including the -h and -X options working."
 msgstr ""
 
-#: oyjl_args_tree.c:982
+#: oyjl_args_tree.c:986
 msgid "Tool"
 msgstr ""
 
@@ -652,7 +652,7 @@ msgstr ""
 msgid "Unix Man page"
 msgstr ""
 
-#: oyjl_args_tree.c:1006
+#: oyjl_args_tree.c:1010
 msgid "Url"
 msgstr ""
 
@@ -675,7 +675,7 @@ msgstr ""
 msgid "Verbose"
 msgstr ""
 
-#: oyjl_args_tree.c:1014
+#: oyjl_args_tree.c:1018
 #, fuzzy
 msgid "Version"
 msgstr "ICC Examin-en bertsioa"
@@ -687,7 +687,7 @@ msgstr "ICC Examin-en bertsioa"
 msgid "Without arguments just show a help text."
 msgstr ""
 
-#: oyjl_args_tree.c:1212
+#: oyjl_args_tree.c:1216
 msgid "Yes"
 msgstr "Bai"
 

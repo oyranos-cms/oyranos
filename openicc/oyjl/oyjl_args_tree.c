@@ -748,7 +748,11 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
           }
         }
         else
+        {
           oyjlTreeSetStringF( val, OYJL_CREATE_NEW, "", "o" );
+          // get again as the old 'o' is overwritten by oyjlTreeSetStringF()
+          v = oyjlTreeGetValue( val, 0, "o" ); o = OYJL_GET_STRING(v);
+        }
       }
       v = oyjlTreeGetValue( val, 0, "key" ); key = OYJL_GET_STRING(v);
       v = oyjlTreeGetValue( val, 0, "description" ); desc = OYJL_GET_STRING(v);

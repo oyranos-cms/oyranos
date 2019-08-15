@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2019-08-14 15:03+0200\n"
+"POT-Creation-Date: 2019-08-15 10:41+0200\n"
 "PO-Revision-Date: 2006-06-29 19:31+0200\n"
 "Last-Translator: Pascal LACROIX <lacroixpascal at vfemail.net>\n"
 "Language-Team: <fr@li.org>\n"
@@ -89,7 +89,7 @@ msgstr ""
 msgid "Convert UI JSON to C code using libOyjl"
 msgstr ""
 
-#: oyjl_args_tree.c:1004
+#: oyjl_args_tree.c:1008
 msgid "Copyright"
 msgstr "Copyright"
 
@@ -97,7 +97,7 @@ msgstr "Copyright"
 msgid "DESCRIPTION"
 msgstr ""
 
-#: oyjl_args_tree.c:1013
+#: oyjl_args_tree.c:1017
 msgid "Date"
 msgstr ""
 
@@ -106,11 +106,11 @@ msgstr ""
 msgid "Description"
 msgstr "Description"
 
-#: oyjl_args_tree.c:1010
+#: oyjl_args_tree.c:1014
 msgid "Development"
 msgstr ""
 
-#: oyjl_args_tree.c:1012
+#: oyjl_args_tree.c:1016
 msgid "Documentation"
 msgstr ""
 
@@ -119,7 +119,7 @@ msgstr ""
 msgid "Double occuring option"
 msgstr "Description"
 
-#: oyjl_args_tree.c:1008
+#: oyjl_args_tree.c:1012
 msgid "Download"
 msgstr ""
 
@@ -304,7 +304,7 @@ msgstr ""
 msgid "June 26, 2019"
 msgstr ""
 
-#: oyjl_args.c:2421 oyjl_args.c:2869 oyjl_args.c:3090 oyjl_args_tree.c:1005
+#: oyjl_args.c:2421 oyjl_args.c:2869 oyjl_args.c:3090 oyjl_args_tree.c:1009
 msgid "License"
 msgstr ""
 
@@ -317,7 +317,7 @@ msgstr ""
 msgid "Man"
 msgstr "Magenta"
 
-#: oyjl_args_tree.c:1003
+#: oyjl_args_tree.c:1007
 #, fuzzy
 msgid "Manufacturer"
 msgstr "Fabricant:   "
@@ -393,7 +393,7 @@ msgstr "Model:"
 msgid "Mode8"
 msgstr "Model:"
 
-#: oyjl_args_tree.c:984
+#: oyjl_args_tree.c:988
 #, fuzzy
 msgid "Module"
 msgstr "Options"
@@ -402,7 +402,7 @@ msgstr "Options"
 msgid "NAME"
 msgstr ""
 
-#: oyjl_args_tree.c:1212
+#: oyjl_args_tree.c:1216
 msgid "No"
 msgstr ""
 
@@ -436,7 +436,7 @@ msgid ""
 "Optionless mode not supported. (That would need '#' option declaration.)"
 msgstr ""
 
-#: oyjl_args_tree.c:1011
+#: oyjl_args_tree.c:1015
 #, fuzzy
 msgid "Oyjl Module Author"
 msgstr "Oyranos Préférences"
@@ -546,11 +546,11 @@ msgstr ""
 msgid "Simple mode"
 msgstr ""
 
-#: oyjl_args_tree.c:1009
+#: oyjl_args_tree.c:1013
 msgid "Sources"
 msgstr ""
 
-#: oyjl_args_tree.c:1007
+#: oyjl_args_tree.c:1011
 msgid "Support"
 msgstr ""
 
@@ -594,7 +594,7 @@ msgid ""
 "including the -h and -X options working."
 msgstr ""
 
-#: oyjl_args_tree.c:982
+#: oyjl_args_tree.c:986
 msgid "Tool"
 msgstr ""
 
@@ -643,7 +643,7 @@ msgstr ""
 msgid "Unix Man page"
 msgstr ""
 
-#: oyjl_args_tree.c:1006
+#: oyjl_args_tree.c:1010
 msgid "Url"
 msgstr ""
 
@@ -666,7 +666,7 @@ msgstr ""
 msgid "Verbose"
 msgstr ""
 
-#: oyjl_args_tree.c:1014
+#: oyjl_args_tree.c:1018
 #, fuzzy
 msgid "Version"
 msgstr "ICC Examin Version"
@@ -678,7 +678,7 @@ msgstr "ICC Examin Version"
 msgid "Without arguments just show a help text."
 msgstr ""
 
-#: oyjl_args_tree.c:1212
+#: oyjl_args_tree.c:1216
 msgid "Yes"
 msgstr "Oui"
 
