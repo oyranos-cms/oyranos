@@ -474,12 +474,11 @@ void oyjlTreeToJson (oyjl_val v, int * level, char ** json)
 {
   oyjl_str string = oyjlStrNew(10, 0,0);
   oyjlTreeToJson21( v, level, string );
-  const char * result = oyjlStr(string);
-  char * text = NULL;
-  if(result && result[0])
-    text = oyjlStringCopy(result,0);
+  if(oyjlStr(string))
+    *json = oyjlStrPull(string);
+  else
+    *json = NULL;
   oyjlStrRelease( &string );
-  *json = text;;
 }
 
 void oyjlTreeToJson2 (oyjl_val v, int * level, char ** json)
