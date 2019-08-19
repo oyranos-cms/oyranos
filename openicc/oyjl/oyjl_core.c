@@ -1109,6 +1109,8 @@ const char*oyjlStr                   ( oyjl_str            string )
 }
 
 /** @brief read FILE into memory
+ *
+ *  allocators are malloc()/realloc()
  */
 char *     oyjlReadFileStreamToMem   ( FILE              * fp,
                                        int               * size )
@@ -1147,6 +1149,8 @@ char *     oyjlReadFileStreamToMem   ( FILE              * fp,
 #include <errno.h>
 #define WARNc_S(...) oyjlMessage_p( oyjlMSG_ERROR, 0, __VA_ARGS__ )
 /** @brief read local file into memory
+ *
+ *  uses malloc()
  */
 char *    oyjlReadFile( const char * file_name,
                         int        * size_ptr )

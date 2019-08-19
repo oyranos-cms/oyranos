@@ -20,8 +20,9 @@
   TEST_RUN( testTree, "Tree handling", 1 ); \
   TEST_RUN( testIO, "File handling", 1 );
 
+void oyjlLibRelease();
 #define OYJL_TEST_MAIN_SETUP  printf("\n    OyjlCore Test Program\n");
-#define OYJL_TEST_MAIN_FINISH printf("\n    OyjlCore Test Program finished\n\n");
+#define OYJL_TEST_MAIN_FINISH printf("\n    OyjlCore Test Program finished\n\n"); oyjlLibRelease();
 #define OYJL_TEST_NAME "test-core"
 #include "oyjl_test_main.h"
 #include "oyjl.h"
@@ -294,6 +295,7 @@ oyjlTESTRESULT_e testString ()
       fprintf(zout, " list[%d] \"%s\" index in text of delimiter: %d  delimiter:\'%c\'\n", i, list[i], index ? index[i] : -1, index && index[i] ? text[index[i]] : '0' );
   }
   oyjlStringListRelease( &list, list_n, myDeAllocFunc );
+  if(index) { myDeAllocFunc( index ); index = NULL; }
 
   list_n = 0;
   list = oyjlStringSplit( "org/domain/eins.lib;org/domain/zwei.txt;org/domain/drei.lib;net/welt/vier.lib;net/welt/vier.txt;/net/welt/fuenf;/net/welt/fuenf", ';', &list_n, myAllocFunc );
@@ -524,7 +526,6 @@ oyjlTESTRESULT_e testString ()
   return result;
 }
 
-
 oyjlTESTRESULT_e testArgs()
 {
   oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
@@ -600,13 +601,12 @@ oyjlTESTRESULT_e testArgs()
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
     "ui created - no args                           " );
   }
-  int size = 0;
   char * text = oyjlUi_ToJson( ui, 0 );
   if(text)
     OYJL_TEST_WRITE_RESULT( text, strlen(text), "UiCreateNoArgs", "txt" )
   if(verbose)
     fprintf( zout, "%s\n", text );
-  if(text && size) {free(text);} text = NULL;
+  if(text) {free(text);} text = NULL;
   oyjlUi_Release( &ui);
 
 
@@ -639,6 +639,7 @@ oyjlTESTRESULT_e testArgs()
   for(i = 0; i < count; ++i)
     fprintf( zout, "%s\n", results[i] );
   oyjlUi_Release( &ui);
+  oyjlStringListRelease( &results, count, 0 );
 
   /* declare option groups, for better syntax checking and UI groups */
   oyjlOptionGroup_s groups[] = {
@@ -706,7 +707,6 @@ oyjlTESTRESULT_e testArgs()
   ui = oyjlUi_Create( argc, argv, /* argc+argv are required for parsing the command line options */
                                        "oyjl-config-read", "Oyjl Config Reader", _("Short example tool using libOyjl"), "logo",
                                        sections, oarray, groups, NULL );
-  size = 0;
   text = oyjlUi_ToJson( ui, 0 );
   if(text && strlen(text) == 3348)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
@@ -716,9 +716,9 @@ oyjlTESTRESULT_e testArgs()
     "oyjlUi_ToJson() 3348 == %lu                   ", strlen(text) );
   }
   OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlUi_ToJson", "txt" )
-  if(verbose)
+  if(verbose && text)
     fprintf( zout, "%s\n", text );
-  if(text && size) {free(text);} text = NULL;
+  if(text) {free(text);} text = NULL;
 
   text = oyjlUi_ToMan( ui, 0 );
   if(text && strlen(text) == 692)
@@ -773,16 +773,17 @@ oyjlTESTRESULT_e testArgs()
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
     "oyjlUi_ExportToJson()       6180 == %lu         ", strlen(text) );
   }
-  if(verbose)
+  if(verbose && text)
     fprintf( zout, "%s\n", text );
+  if(text) { free(text); text = NULL; }
 
   oyjlUi_Release( &ui);
   char * wrong = "test";
   fprintf(stdout, "oyjlUi_Release(&\"test\") - should give a warning message:\n" );
   oyjlUi_Release( (oyjlUi_s **)&wrong);
 
-  free(oarray[0].values.choices.list);
-  free(oarray[1].values.choices.list);
+  free(oarray[2].values.choices.list);
+  free(oarray[3].values.choices.list);
 
   return result;
 }
@@ -927,6 +928,7 @@ oyjlTESTRESULT_e testTree ()
   fprintf( zout, "oyjTreeToJson()        \t1x %d            \t\%s\n", (int)strlen(rjson),
                  oyjlProfilingToString(1,clck/(double)CLOCKS_PER_SEC,"dump"));
   myDeAllocFunc( rjson ); rjson = NULL;
+  oyjlTreeFree( root );
 
   return result;
 }
