@@ -758,6 +758,8 @@ int oyjlIsFileFull_ (const char* fullFileName, const char * read_mode)
 
   return r;
 }
+static char * oyjl_nls_path_ = NULL;
+void oyjlLibRelease() { if(oyjl_nls_path_) { putenv("NLSPATH=C"); free(oyjl_nls_path_); } }
 #define OyjlToString2_M(t) OyjlToString_M(t)
 #define OyjlToString_M(t) #t
 int oyjlInitLanguageDebug            ( const char        * project_name,
@@ -788,7 +790,7 @@ int oyjlInitLanguageDebug            ( const char        * project_name,
   {
     if( use_gettext )
     {
-      char * var = NULL;
+      char * var = NULL, * tmp = NULL;
       const char * environment_locale_dir = NULL,
                  * locpath = NULL,
                  * path = NULL,
@@ -796,7 +798,8 @@ int oyjlInitLanguageDebug            ( const char        * project_name,
 
       if(getenv(env_var_locdir) && strlen(getenv(env_var_locdir)))
       {
-        environment_locale_dir = domain_path = strdup(getenv(env_var_locdir));
+        tmp = strdup(getenv(env_var_locdir));
+        environment_locale_dir = domain_path = tmp;
         if(*debug_variable)
           msg( oyjlMSG_INFO, 0,"found environment variable: %s=%s", env_var_locdir, domain_path );
       } else
@@ -815,8 +818,13 @@ int oyjlInitLanguageDebug            ( const char        * project_name,
         oyjlStringAdd( &var, 0,0, "NLSPATH=");
         oyjlStringAdd( &var, 0,0, domain_path ? domain_path : locpath);
       }
-      if(var)
+      if(var) /* do not release */
+      {
         putenv(var); /* Solaris */
+        if(oyjl_nls_path_)
+          free(oyjl_nls_path_);
+        oyjl_nls_path_ = var;
+      }
 
       /* LOCPATH appears to be ignored by bindtextdomain("domain", NULL),
        * so it is set here to bindtextdomain(). */
@@ -825,7 +833,7 @@ int oyjlInitLanguageDebug            ( const char        * project_name,
       bindtextdomain( loc_domain, path );
 #endif
       if(*debug_variable)
-      {\
+      {
         char * fn = NULL;
         int stat = -1;
         const char * gettext_call = OyjlToString2_M(_());
@@ -837,6 +845,8 @@ int oyjlInitLanguageDebug            ( const char        * project_name,
         msg( oyjlMSG_INFO, 0,"bindtextdomain(\"%s\") to %s\"%s\" %s for %s", loc_domain, locpath?"effectively ":"", path ? path : "", (stat > 0)?"Looks good":"Might fail", gettext_call );
         if(fn) free(fn);
       }
+      if(tmp)
+        free(tmp);
     }
   }
 #endif /* OYJL_USE_GETTEXT */
@@ -1147,12 +1157,11 @@ enum {
 };
 #define oyjlOPTIONSTYLE_OPTIONAL (oyjlOPTIONSTYLE_OPTIONAL_START | oyjlOPTIONSTYLE_OPTIONAL_END)
 static
-const char * oyjlOption_PrintArg     ( oyjlOption_s      * o,
+char *       oyjlOption_PrintArg     ( oyjlOption_s      * o,
                                        int                 style )
 {
-  static char * text = NULL;
-  if(text) text[0] = '\000';
-  if(!o) return "";
+  char * text = NULL;
+  if(!o) return oyjlStringCopy("", malloc);
   if(style & oyjlOPTIONSTYLE_OPTIONAL_START)
     oyjlStringAdd( &text, malloc, free, "[" );
   if(style & oyjlOPTIONSTYLE_ONELETTER && o->o && OYJL_IS_NOT_O("@") && OYJL_IS_NOT_O("#"))
@@ -1344,11 +1353,15 @@ oyjlOption_s * oyjlOptions_GetOptionL( oyjlOptions_s     * opts,
     if( (ol[0] && o->o && strcmp(o->o, ol) == 0) ||
         (!ol[0] && o->option && strcmp(o->option, str) == 0)
       )
+    {
+      free(str);
       return o;
+    }
     else
       o = NULL;
   }
   fprintf( stderr, "Option not found: %s\n", str );
+  free(str);
 
   return o;
 }
@@ -1843,10 +1856,10 @@ char * oyjlOptions_ResultsToText  ( oyjlOptions_s  * opts )
  *  @memberof oyjlOptions_s
  *
  *  @version Oyjl: 1.0.0
- *  @date    2018/08/14
+ *  @date    2019/08/19
  *  @since   2018/08/14 (OpenICC: 0.1.1)
  */
-static const char * oyjlOptions_PrintHelpSynopsis (
+char *       oyjlOptions_PrintHelpSynopsis (
                                        oyjlOptions_s  *    opts,
                                        oyjlOptionGroup_s * g,
                                        int                 style )
@@ -1856,14 +1869,12 @@ static const char * oyjlOptions_PrintHelpSynopsis (
   int * m_index = NULL, * on_index = NULL;
   int m = oyjlStringDelimiterCount(g->mandatory, ",|");
   int on = oyjlStringDelimiterCount(g->optional, ",|");
-  static char * text = NULL;
   int opt_group = 0;
   int gstyle = style;
   const char * prog = opts->argv[0];
+  char * text = NULL;
   if(prog && strchr(prog,'/'))
     prog = strrchr(prog,'/') + 1;
-
-  if(text) text[0] = 0;
 
   if( m || on )
   {
@@ -1889,7 +1900,11 @@ static const char * oyjlOptions_PrintHelpSynopsis (
       exit(1);
     }
     if(option[0] != '@' && !(option[0] == '#' && m+on == 1))
-      oyjlStringAdd( &text, malloc, free, " %s", oyjlOption_PrintArg(o, style) );
+    {
+      char * t = oyjlOption_PrintArg(o, style);
+      oyjlStringAdd( &text, malloc, free, " %s", t );
+      free(t);
+    }
     if(next_delimiter == '|')
       oyjlStringAdd( &text, malloc, free, " |" );
   }
@@ -1919,7 +1934,11 @@ static const char * oyjlOptions_PrintHelpSynopsis (
       fprintf(stderr, "\n%s: option not declared: %s\n", g->name, &g->optional[i]);
       exit(1);
     }
-    oyjlStringAdd( &text, malloc, free, "%s%s", gstyle & oyjlOPTIONSTYLE_OPTIONAL_START ? " ":"", oyjlOption_PrintArg(o, gstyle) );
+    {
+      char * t = oyjlOption_PrintArg(o, gstyle);
+      oyjlStringAdd( &text, malloc, free, "%s%s", gstyle & oyjlOPTIONSTYLE_OPTIONAL_START ? " ":"", t );
+      free(t);
+    }
     if(next_delimiter == '|')
     {
       oyjlStringAdd( &text, malloc, free, "|" );
@@ -2048,7 +2067,9 @@ void  oyjlOptions_PrintHelp          ( oyjlOptions_s     * opts,
     fprintf( stdout, "  %s\n", g->description?oyjlTermColor(oyjlUNDERLINE,g->description):"" );
     if(g->mandatory && g->mandatory[0])
     {
-      fprintf( stdout, "\t%s\n", oyjlOptions_PrintHelpSynopsis( opts, g, oyjlOPTIONSTYLE_ONELETTER ) );
+      char * t = oyjlOptions_PrintHelpSynopsis( opts, g, oyjlOPTIONSTYLE_ONELETTER );
+      fprintf( stdout, "\t%s\n", t );
+      free(t);
     }
     for(j = 0; j < d; ++j)
     {
@@ -2067,9 +2088,11 @@ void  oyjlOptions_PrintHelp          ( oyjlOptions_s     * opts,
             int n = 0,l;
             if(o->value_name)
             {
+              char * t = oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING);
               fprintf( stdout, "\t" );
-              fprintf( stdout, "%s", oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING) );
+              fprintf( stdout, "%s", t );
               fprintf( stdout, "\t%s%s%s\n", o->description ? o->description:"", o->help?": ":"", o->help?o->help :"" );
+              free(t);
             }
             if(o->flags & OYJL_OPTION_FLAG_EDITABLE)
               break;
@@ -2090,9 +2113,11 @@ void  oyjlOptions_PrintHelp          ( oyjlOptions_s     * opts,
             oyjlOptionChoice_s * list;
             if(o->value_name)
             {
+              char * t = oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING);
               fprintf( stdout, "\t" );
-              fprintf( stdout, "%s", oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING) );
+              fprintf( stdout, "%s", t );
               fprintf( stdout, "\t%s%s%s\n", o->description ? o->description:"", o->help?": ":"", o->help?o->help :"" );
+              free(t);
             }
             if(o->flags & OYJL_OPTION_FLAG_EDITABLE)
               break;
@@ -2106,14 +2131,22 @@ void  oyjlOptions_PrintHelp          ( oyjlOptions_s     * opts,
           }
           break;
         case oyjlOPTIONTYPE_DOUBLE:
-          fprintf( stdout, "\t" );
-          fprintf( stdout, "%s", oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING) );
-          fprintf( stdout, "\t%s%s%s (%s%s%g [≥%g ≤%g])\n", o->description ? o->description:"", o->help?": ":"", o->help?o->help :"", o->value_name?o->value_name:"", o->value_name?":":"", o->values.dbl.d, o->values.dbl.start, o->values.dbl.end );
+          {
+            char * t = oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING);
+            fprintf( stdout, "\t" );
+            fprintf( stdout, "%s", t );
+            fprintf( stdout, "\t%s%s%s (%s%s%g [≥%g ≤%g])\n", o->description ? o->description:"", o->help?": ":"", o->help?o->help :"", o->value_name?o->value_name:"", o->value_name?":":"", o->values.dbl.d, o->values.dbl.start, o->values.dbl.end );
+            free(t);
+          }
           break;
         case oyjlOPTIONTYPE_NONE:
-          fprintf( stdout, "\t" );
-          fprintf( stdout, "%s", oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING) );
-          fprintf( stdout, "\t%s%s%s\n", o->description ? o->description:"", o->help?": ":"", o->help?o->help :"" );
+          {
+            char * t = oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING);
+            fprintf( stdout, "\t" );
+            fprintf( stdout, "%s", t );
+            fprintf( stdout, "\t%s%s%s\n", o->description ? o->description:"", o->help?": ":"", o->help?o->help :"" );
+            free(t);
+          }
         break;
         case oyjlOPTIONTYPE_START: break;
         case oyjlOPTIONTYPE_END: break;
@@ -2489,6 +2522,7 @@ void           oyjlUi_Release     ( oyjlUi_s      ** ui )
   if((*ui)->opts->private_data)
   {
     results = (*ui)->opts->private_data;
+    oyjlStringListRelease( &results->options, results->count, free );
     results->count = 0;
     free(results->options);
     free(results->values);
@@ -2759,10 +2793,11 @@ char *       oyjlUi_ToMan            ( oyjlUi_s          * ui,
   for(i = 0; i < ng; ++i)
   {
     oyjlOptionGroup_s * g = &opts->groups[i];
-    const char * syn = oyjlOptions_PrintHelpSynopsis( opts, g,
+    char * syn = oyjlOptions_PrintHelpSynopsis( opts, g,
                          oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MAN );
     if(syn[0])
       oyjlStringAdd( &text, malloc, free, "%s\n%s", syn, (i < (ng-1)) ? ".br\n" : "" );
+    free(syn);
   }
 
   if(desc)
@@ -2783,7 +2818,11 @@ char *       oyjlUi_ToMan            ( oyjlUi_s          * ui,
     else
       oyjlStringAdd( &text, malloc, free, "\n"  );
     if(g->mandatory && g->mandatory[0])
-      oyjlStringAdd( &text, malloc, free, "%s\n", oyjlOptions_PrintHelpSynopsis( opts, g, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MAN ) );
+    {
+      char * t = oyjlOptions_PrintHelpSynopsis( opts, g, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MAN );
+      oyjlStringAdd( &text, malloc, free, "%s\n", t );
+      free(t);
+    }
     oyjlStringAdd( &text, malloc, free, ".br\n"  );
     if(g->help)
     {
@@ -2792,6 +2831,7 @@ char *       oyjlUi_ToMan            ( oyjlUi_s          * ui,
     for(j = 0; j < dn; ++j)
     {
       const char * option = d_list[j];
+      char * t;
       oyjlOption_s * o = oyjlOptions_GetOptionL( opts, option );
       if(!o)
       {
@@ -2803,7 +2843,9 @@ char *       oyjlUi_ToMan            ( oyjlUi_s          * ui,
         case oyjlOPTIONTYPE_CHOICE:
           {
             int n = 0,l;
-            oyjlStringAdd( &text, malloc, free, "%s", oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MAN) );
+            t = oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MAN);
+            oyjlStringAdd( &text, malloc, free, "%s", t );
+            free(t);
             if(o->name && !o->description)
               oyjlStringAdd( &text, malloc, free, "\t%s", o->name );
             oyjlStringAdd( &text, malloc, free, "\t%s%s%s%s", o->description ? o->description:"", o->help?"\n.RS\n":"", o->help?o->help:"", o->help?"\n.RE\n":"\n.br\n" );
@@ -2824,7 +2866,9 @@ char *       oyjlUi_ToMan            ( oyjlUi_s          * ui,
           {
             int n = 0,l;
             oyjlOptionChoice_s * list;
-            oyjlStringAdd( &text, malloc, free, "%s", oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MAN) );
+            t = oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MAN);
+            oyjlStringAdd( &text, malloc, free, "%s", t );
+            free(t);
             oyjlStringAdd( &text, malloc, free, "\t%s%s%s%s", o->description ? o->description:"", o->help && o->help[0]?"\n.RS\n":"", o->help?o->help:"", o->help?"\n.RE\n":"\n.br\n" );
             if(o->flags & OYJL_OPTION_FLAG_EDITABLE)
               break;
@@ -2838,12 +2882,20 @@ char *       oyjlUi_ToMan            ( oyjlUi_s          * ui,
           }
           break;
         case oyjlOPTIONTYPE_DOUBLE:
-          oyjlStringAdd( &text, malloc, free, "%s", oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MAN) );
-          oyjlStringAdd( &text, malloc, free, "\t%s (%s%s%g [≥%g ≤%g])%s%s%s", o->description ? o->description:"", o->value_name?o->value_name:"", o->value_name?":":"", o->values.dbl.d, o->values.dbl.start, o->values.dbl.end, o->help?"\n.RS\n":"", o->help?o->help:"", o->help?"\n.RE\n":"\n.br\n" );
+          {
+            t = oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MAN);
+            oyjlStringAdd( &text, malloc, free, "%s", t );
+            free(t);
+            oyjlStringAdd( &text, malloc, free, "\t%s (%s%s%g [≥%g ≤%g])%s%s%s", o->description ? o->description:"", o->value_name?o->value_name:"", o->value_name?":":"", o->values.dbl.d, o->values.dbl.start, o->values.dbl.end, o->help?"\n.RS\n":"", o->help?o->help:"", o->help?"\n.RE\n":"\n.br\n" );
+          }
           break;
         case oyjlOPTIONTYPE_NONE:
-          oyjlStringAdd( &text, malloc, free, "%s", oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MAN) );
-          oyjlStringAdd( &text, malloc, free, "\t%s%s%s%s", o->description ? o->description:"", o->help?"\n.RS\n":"", o->help?o->help:"", o->help?"\n.RE\n":"\n.br\n" );
+          {
+            t = oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MAN);
+            oyjlStringAdd( &text, malloc, free, "%s", t );
+            free(t);
+            oyjlStringAdd( &text, malloc, free, "\t%s%s%s%s", o->description ? o->description:"", o->help?"\n.RS\n":"", o->help?o->help:"", o->help?"\n.RE\n":"\n.br\n" );
+          }
         break;
         case oyjlOPTIONTYPE_START: break;
         case oyjlOPTIONTYPE_END: break;
@@ -2976,10 +3028,11 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
   for(i = 0; i < ng; ++i)
   {
     oyjlOptionGroup_s * g = &opts->groups[i];
-    const char * syn = oyjlOptions_PrintHelpSynopsis( opts, g,
+    char * syn = oyjlOptions_PrintHelpSynopsis( opts, g,
                          oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MARKDOWN );
     if(syn[0])
       oyjlStringAdd( &text, malloc, free, "%s\n%s", syn, (i < (ng-1)) ? "<br />\n" : "" );
+    free(syn);
   }
 
   if(desc)
@@ -2997,7 +3050,9 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
       oyjlStringAdd( &text, malloc, free, "### %s\n", g->description  );
     if(g->mandatory && g->mandatory[0])
     {
-      oyjlStringAdd( &text, malloc, free, "&nbsp;&nbsp;%s\n", oyjlOptions_PrintHelpSynopsis( opts, g, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MARKDOWN ) );
+      char * t = oyjlOptions_PrintHelpSynopsis( opts, g, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MARKDOWN );
+      oyjlStringAdd( &text, malloc, free, "&nbsp;&nbsp;%s\n", t );
+      free(t);
     }
     oyjlStringAdd( &text, malloc, free, "\n"  );
     if(g->help)
@@ -3120,6 +3175,9 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
     oyjlStringAdd( &text, malloc,free, "%s", t );
     oyjlStrRelease( &tmp );
   }
+
+  free(doxy_link);
+  free(sections_);
 
   return text;
 }
