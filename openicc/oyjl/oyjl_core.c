@@ -756,6 +756,8 @@ int          oyjlStringsToDoubles    ( const char        * text,
   if(count)
     *count = n;
 
+  oyjlStringListRelease(&list, n, free);
+
   return error;
 }
 
@@ -1473,7 +1475,8 @@ int  oyjlWriteFile                   ( const char        * filename,
 /** \addtogroup oyjl
  *  @{ *//* oyjl */
 
-
+static char * oyjl_nls_path_ = NULL;
+void oyjlLibRelease() { if(oyjl_nls_path_) { putenv("NLSPATH=C"); free(oyjl_nls_path_); } }
 #define OyjlToString2_M(t) OyjlToString_M(t)
 #define OyjlToString_M(t) #t
 /** @brief   init the libraries language; optionaly
@@ -1529,7 +1532,7 @@ int oyjlInitLanguageDebug            ( const char        * project_name,
   {
     if( use_gettext )
     {
-      char * var = NULL;
+      char * var = NULL, * tmp = NULL;
       const char * environment_locale_dir = NULL,
                  * locpath = NULL,
                  * path = NULL,
@@ -1537,7 +1540,8 @@ int oyjlInitLanguageDebug            ( const char        * project_name,
 
       if(getenv(env_var_locdir) && strlen(getenv(env_var_locdir)))
       {
-        environment_locale_dir = domain_path = strdup(getenv(env_var_locdir));
+        tmp = strdup(getenv(env_var_locdir));
+        environment_locale_dir = domain_path = tmp;
         if(*debug_variable)
           msg( oyjlMSG_INFO, 0,"found environment variable: %s=%s", env_var_locdir, domain_path );
       } else
@@ -1556,8 +1560,13 @@ int oyjlInitLanguageDebug            ( const char        * project_name,
         oyjlStringAdd( &var, 0,0, "NLSPATH=");
         oyjlStringAdd( &var, 0,0, domain_path ? domain_path : locpath);
       }
-      if(var)
+      if(var) /* do not release */
+      {
         putenv(var); /* Solaris */
+        if(oyjl_nls_path_)
+          free(oyjl_nls_path_);
+        oyjl_nls_path_ = var;
+      }
 
       /* LOCPATH appears to be ignored by bindtextdomain("domain", NULL),
        * so it is set here to bindtextdomain(). */
@@ -1566,7 +1575,7 @@ int oyjlInitLanguageDebug            ( const char        * project_name,
       bindtextdomain( loc_domain, path );
 #endif
       if(*debug_variable)
-      {\
+      {
         char * fn = NULL;
         int stat = -1;
         const char * gettext_call = OyjlToString2_M(_());
@@ -1578,6 +1587,8 @@ int oyjlInitLanguageDebug            ( const char        * project_name,
         msg( oyjlMSG_INFO, 0,"bindtextdomain(\"%s\") to %s\"%s\" %s for %s", loc_domain, locpath?"effectively ":"", path ? path : "", (stat > 0)?"Looks good":"Might fail", gettext_call );
         if(fn) free(fn);
       }
+      if(tmp)
+        free(tmp);
     }
   }
 #endif /* OYJL_USE_GETTEXT */
