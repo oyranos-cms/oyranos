@@ -545,6 +545,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
     oyjlStrAdd( s, "\n" );
     oyjlStrAdd( s, "int main( int argc, char ** argv)\n" );
     oyjlStrAdd( s, "{\n" );
+    oyjlStrAdd( s, "  int error = 0;\n" );
     if(!(app_type && strcmp(app_type,"tool") == 0))
       oyjlStrAdd( s, "  int state = oyjlUI_STATE_NO_CHECKS;\n" );
     else
@@ -839,9 +840,12 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
         else
           oyjlStringAdd( &t, 0,0, "{}" );
         oyjlStrAddSpaced( s, t,OYJL_LAST,                 2 );
+        if(t) free( t );
       }
       
       oyjlStrAdd( s, "},\n");
+      if(flag_string) free( flag_string );
+      if(tmp_name) free( tmp_name );
     }
     if(!(flags & OYJL_NO_DEFAULT_OPTIONS))
     {
@@ -917,11 +921,11 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
     oyjlStrAdd( s, "  if( state & oyjlUI_STATE_EXPORT &&\n" );
     oyjlStrAdd( s, "      export &&\n" );
     oyjlStrAdd( s, "      strcmp(export,\"json+command\") != 0)\n" );
-    oyjlStrAdd( s, "    return 0;\n");
+    oyjlStrAdd( s, "    goto clean_main;\n");
     oyjlStrAdd( s, "  if(state & oyjlUI_STATE_HELP)\n" );
     oyjlStrAdd( s, "  {\n" );
     oyjlStrAdd( s, "    fprintf( stderr, \"%%s\\n\\tman %s\\n\\n\", _(\"For more information read the man page:\") );\n", nick, nick );
-    oyjlStrAdd( s, "    return 0;\n" );
+    oyjlStrAdd( s, "    goto clean_main;\n" );
     oyjlStrAdd( s, "  }\n" );
     oyjlStrAdd( s, "\n" );
     oyjlStrAdd( s, "  if(verbose)\n" );
@@ -944,11 +948,24 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
     oyjlStrAdd( s, "    oyjlStringAdd( &json_commands, malloc, free, \"{\\n  \\\"command_set\\\": \\\"%s\\\",\" );\n", nick );
     oyjlStrAdd( s, "    oyjlStringAdd( &json_commands, malloc, free, \"%%s\", &json[1] );\n" );
     oyjlStrAdd( s, "    puts( json_commands );\n" );
-    oyjlStrAdd( s, "    exit(0);\n" );
+    oyjlStrAdd( s, "    goto clean_main;\n" );
     oyjlStrAdd( s, "  }\n" );
     oyjlStrAdd( s, "\n" );
-    oyjlStrAdd( s, "  if(!ui) return 1;\n" );
-    oyjlStrAdd( s, "\n  return 0;\n" );
+    oyjlStrAdd( s, "  if(!ui) error = 1;\n" );
+    oyjlStrAdd( s, "\n" );
+    oyjlStrAdd( s, "  clean_main:\n" );
+    oyjlStrAdd( s, "  {\n" );
+    oyjlStrAdd( s, "    int i = 0;\n" );
+    oyjlStrAdd( s, "    while(oarray[i].type[0])\n" );
+    oyjlStrAdd( s, "    {\n" );
+    oyjlStrAdd( s, "      if(oarray[i].value_type == oyjlOPTIONTYPE_CHOICE && oarray[i].values.choices.list)\n" );
+    oyjlStrAdd( s, "        free(oarray[i].values.choices.list);\n" );
+    oyjlStrAdd( s, "      ++i;\n" );
+    oyjlStrAdd( s, "    }\n" );
+    oyjlStrAdd( s, "  }\n" );
+    oyjlStrAdd( s, "  oyjlLibRelease();\n" );
+    oyjlStrAdd( s, "\n" );
+    oyjlStrAdd( s, "  return error;\n" );
     oyjlStrAdd( s, "}\n" );
   }
   else
