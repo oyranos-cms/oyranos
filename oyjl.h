@@ -433,6 +433,7 @@ int        oyjlIsFile                ( const char        * fullname,
                                        const char        * mode,
                                        char              * info,
                                        int                 info_len );
+void       oyjlLibRelease            ( );
 /** @} *//* oyjl_core */
 
 /** \addtogroup oyjl_args
