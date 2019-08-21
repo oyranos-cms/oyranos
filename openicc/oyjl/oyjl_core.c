@@ -510,7 +510,7 @@ char **    oyjlStringListCatList     ( const char       ** list,
 }
 
 /** @brief free a string list */
-void       oyjlStringListRelease  ( char            *** l,
+void       oyjlStringListRelease     ( char            *** l,
                                        int                 size,
                                        void             (* deAlloc)(void*) )
 {

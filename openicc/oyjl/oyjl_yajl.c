@@ -782,7 +782,6 @@ oyjl_val   oyjlTreeParseXml          ( const char        * xml,
   {
     jroot = oyjlTreeNew( NULL );
     oyjlParseXMLDoc_( doc, cur, flags, jroot );
-    xmlFreeDoc( doc );
   }
   else if(error_buffer)
     snprintf( error_buffer, error_buffer_size, "XML loading failed" );
@@ -791,10 +790,14 @@ oyjl_val   oyjlTreeParseXml          ( const char        * xml,
     oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "%s",
                          OYJL_DBG_ARGS, error_buffer );
 
+  if(doc)
+    xmlFreeDoc( doc );
+
   return jroot;
 }
 /** @} *//* oyjl_tree */
 #endif
+
 #if defined(OYJL_HAVE_YAML) || defined(DOXYGEN)
 #include <yaml.h>
 int oyjlYamlGetCount( yaml_node_t * n )
