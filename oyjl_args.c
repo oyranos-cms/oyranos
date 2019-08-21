@@ -1243,7 +1243,7 @@ void oyjlOptions_EnrichInbuild( oyjlOption_s * o )
       oyjl_X_choices[3].nick = "";
       oyjl_X_choices[4].nick = "";
 #endif
-      o->values.choices.list = oyjl_X_choices;
+      o->values.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)oyjl_X_choices, sizeof(oyjl_X_choices), malloc );
       if(o->value_name == NULL)
       {
 #if defined(OYJL_INTERNAL)
@@ -1872,7 +1872,7 @@ char *       oyjlOptions_PrintHelpSynopsis (
   int opt_group = 0;
   int gstyle = style;
   const char * prog = opts->argv[0];
-  char * text = NULL;
+  char * text = oyjlStringCopy( "", malloc );
   if(prog && strchr(prog,'/'))
     prog = strrchr(prog,'/') + 1;
 
@@ -2054,7 +2054,9 @@ void  oyjlOptions_PrintHelp          ( oyjlOptions_s     * opts,
   for(i = 0; i < ng; ++i)
   {
     oyjlOptionGroup_s * g = &opts->groups[i];
-    fprintf( stdout, "  %s\n", oyjlOptions_PrintHelpSynopsis( opts, g, oyjlOPTIONSTYLE_ONELETTER ) );
+    char * t = oyjlOptions_PrintHelpSynopsis( opts, g, oyjlOPTIONSTYLE_ONELETTER );
+    fprintf( stdout, "  %s\n", t );
+    free(t);
   }
 
   fprintf( stdout, "\n%s:\n", oyjlTermColor(oyjlBOLD,_("Usage"))  );
@@ -2795,7 +2797,7 @@ char *       oyjlUi_ToMan            ( oyjlUi_s          * ui,
     oyjlOptionGroup_s * g = &opts->groups[i];
     char * syn = oyjlOptions_PrintHelpSynopsis( opts, g,
                          oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MAN );
-    if(syn[0])
+    if(syn && syn[0])
       oyjlStringAdd( &text, malloc, free, "%s\n%s", syn, (i < (ng-1)) ? ".br\n" : "" );
     free(syn);
   }
@@ -3045,7 +3047,8 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
     oyjlOptionGroup_s * g = &opts->groups[i];
     int d = 0,
         j;
-    char ** d_list = oyjlStringSplit2( g->detail, "|,", &d, NULL, malloc );
+    char ** d_list = oyjlStringSplit2( g->detail, "|,", &d, NULL, malloc ),
+         * t;
     if(g->description)
       oyjlStringAdd( &text, malloc, free, "### %s\n", g->description  );
     if(g->mandatory && g->mandatory[0])
@@ -3076,7 +3079,9 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
         case oyjlOPTIONTYPE_CHOICE:
           {
             int n = 0,l;
-            oyjlStringAdd( &text, malloc, free, " <tr><td" OYJL_LEFT_TD_STYLE ">%s</td>", oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MARKDOWN) );
+            t = oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MARKDOWN);
+            oyjlStringAdd( &text, malloc, free, " <tr><td" OYJL_LEFT_TD_STYLE ">%s</td>", t );
+            free(t);
             oyjlStringAdd( &text, malloc, free, " <td>%s%s%s", o->description ? o->description:"", o->help?"<br />":"", o->help?o->help :"" );
             if(o->flags & OYJL_OPTION_FLAG_EDITABLE)
               break;
@@ -3093,7 +3098,9 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
           {
             int n = 0,l;
             oyjlOptionChoice_s * list;
-            oyjlStringAdd( &text, malloc, free, " <tr><td" OYJL_LEFT_TD_STYLE ">%s</td>", oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MARKDOWN) );
+            t = oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MARKDOWN);
+            oyjlStringAdd( &text, malloc, free, " <tr><td" OYJL_LEFT_TD_STYLE ">%s</td>", t );
+            free(t);
             oyjlStringAdd( &text, malloc, free, " <td>%s%s%s", o->description ? o->description:"", o->help?"<br />":"", o->help?o->help :"" );
             if(o->flags & OYJL_OPTION_FLAG_EDITABLE)
               break;
@@ -3110,11 +3117,15 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
           }
           break;
         case oyjlOPTIONTYPE_DOUBLE:
-          oyjlStringAdd( &text, malloc, free, " <tr><td" OYJL_LEFT_TD_STYLE ">%s</td>", oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MARKDOWN) );
+          t = oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MARKDOWN);
+          oyjlStringAdd( &text, malloc, free, " <tr><td" OYJL_LEFT_TD_STYLE ">%s</td>", t );
+          free(t);
           oyjlStringAdd( &text, malloc, free, " <td>%s%s%s (%s%s%g [≥%g ≤%g])</td>", o->description ? o->description:"", o->help?": ":"", o->help?o->help :"", o->value_name?o->value_name:"", o->value_name?":":"", o->values.dbl.d, o->values.dbl.start, o->values.dbl.end );
           break;
         case oyjlOPTIONTYPE_NONE:
-          oyjlStringAdd( &text, malloc, free, " <tr><td" OYJL_LEFT_TD_STYLE ">%s</td>", oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MARKDOWN) );
+          t = oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MARKDOWN);
+          oyjlStringAdd( &text, malloc, free, " <tr><td" OYJL_LEFT_TD_STYLE ">%s</td>", t );
+          free(t);
           oyjlStringAdd( &text, malloc, free, " <td>%s%s%s</td>", o->description ? o->description:"", o->help?"<br />":"", o->help?o->help :"" );
         break;
         case oyjlOPTIONTYPE_START: break;
@@ -3177,7 +3188,7 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
   }
 
   free(doxy_link);
-  free(sections_);
+  oyjlStringListRelease( sections, sn_, free );
 
   return text;
 }
