@@ -15,8 +15,9 @@
 #define TESTS_RUN \
   TEST_RUN( testArgs, "Options handling", 1 );
 
+void oyjlLibRelease();
 #define OYJL_TEST_MAIN_SETUP  printf("\n    Oyjl Args Test Program\n");
-#define OYJL_TEST_MAIN_FINISH printf("\n    Oyjl Args Test Program finished\n\n");
+#define OYJL_TEST_MAIN_FINISH printf("\n    Oyjl Args Test Program finished\n\n"); oyjlLibRelease();
 #define OYJL_TEST_NAME "test-args"
 #include "oyjl_test_main.h"
 #include "oyjl.h"
@@ -114,7 +115,7 @@ oyjlTESTRESULT_e testArgs()
     "ui created - no args                           " );
   }
 
-  const char * syn = oyjlOptions_PrintHelpSynopsis( ui->opts, &ui->opts->groups[0], oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MARKDOWN );
+  char * syn = oyjlOptions_PrintHelpSynopsis( ui->opts, &ui->opts->groups[0], oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MARKDOWN );
   if(strcmp(syn,"**test-args** | [<strong>-o</strong>=<em>0|1|2</em>] [<strong>-v</strong>]") == 0)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "SynopsisMode1  #       o,v    o                " );
@@ -125,6 +126,7 @@ oyjlTESTRESULT_e testArgs()
   OYJL_TEST_WRITE_RESULT( syn, strlen(syn), "SynopsisMode1", "txt" )
   if(oy_test_last_result == oyjlTESTRESULT_FAIL || verbose)
     fprintf( zout, "SynopsisMode1: %s\n", syn );
+  free(syn);
 
   syn = oyjlOptions_PrintHelpSynopsis( ui->opts, &ui->opts->groups[1], oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MARKDOWN );
   if(strcmp(syn,"**test-args** | [<strong>-o</strong>=<em>0|1|2</em>] [<strong>-v</strong>]") == 0)
@@ -137,6 +139,7 @@ oyjlTESTRESULT_e testArgs()
   OYJL_TEST_WRITE_RESULT( syn, strlen(syn), "SynopsisMode2", "txt" )
   if(oy_test_last_result == oyjlTESTRESULT_FAIL || verbose)
     fprintf( zout, "SynopsisMode2: %s\n", syn );
+  free(syn);
 
   syn = oyjlOptions_PrintHelpSynopsis( ui->opts, &ui->opts->groups[2], oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MARKDOWN );
   if(strcmp(syn,"**test-args**") == 0)
@@ -149,6 +152,7 @@ oyjlTESTRESULT_e testArgs()
   OYJL_TEST_WRITE_RESULT( syn, strlen(syn), "SynopsisMode3", "txt" )
   if(oy_test_last_result == oyjlTESTRESULT_FAIL || verbose)
     fprintf( zout, "SynopsisMode3: %s\n", syn );
+  free(syn);
 
   syn = oyjlOptions_PrintHelpSynopsis( ui->opts, &ui->opts->groups[3], oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MARKDOWN );
   if(strcmp(syn,"**test-args**") == 0)
@@ -161,6 +165,7 @@ oyjlTESTRESULT_e testArgs()
   OYJL_TEST_WRITE_RESULT( syn, strlen(syn), "SynopsisMode4", "txt" )
   if(oy_test_last_result == oyjlTESTRESULT_FAIL || verbose)
     fprintf( zout, "SynopsisMode4: %s\n", syn );
+  free(syn);
 
   syn = oyjlOptions_PrintHelpSynopsis( ui->opts, &ui->opts->groups[4], oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MARKDOWN );
   if(strcmp(syn,"**test-args** [<strong>-o</strong>=<em>0|1|2</em>] [<strong>-v</strong>] FILENAME") == 0)
@@ -173,6 +178,7 @@ oyjlTESTRESULT_e testArgs()
   OYJL_TEST_WRITE_RESULT( syn, strlen(syn), "SynopsisMode5", "txt" )
   if(oy_test_last_result == oyjlTESTRESULT_FAIL || verbose)
     fprintf( zout, "SynopsisMode5: %s\n", syn );
+  free(syn);
 
   syn = oyjlOptions_PrintHelpSynopsis( ui->opts, &ui->opts->groups[5], oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MARKDOWN );
   if(strcmp(syn,"**test-args** <strong>-i</strong>=<em>FILENAME</em> [<strong>-o</strong>=<em>0|1|2</em>] [<strong>-v</strong>]") == 0)
@@ -185,6 +191,7 @@ oyjlTESTRESULT_e testArgs()
   OYJL_TEST_WRITE_RESULT( syn, strlen(syn), "SynopsisMode6", "txt" )
   if(oy_test_last_result == oyjlTESTRESULT_FAIL || verbose)
     fprintf( zout, "SynopsisMode6: %s\n", syn );
+  free(syn);
 
   syn = oyjlOptions_PrintHelpSynopsis( ui->opts, &ui->opts->groups[6], oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MARKDOWN );
   if(strcmp(syn,"**test-args** <strong>-i</strong>=<em>FILENAME</em> | <strong>-o</strong>=<em>0|1|2</em> [<strong>-h</strong>|<strong>-v</strong>]") == 0)
@@ -197,6 +204,7 @@ oyjlTESTRESULT_e testArgs()
   OYJL_TEST_WRITE_RESULT( syn, strlen(syn), "SynopsisMode7", "txt" )
   if(oy_test_last_result == oyjlTESTRESULT_FAIL || verbose)
     fprintf( zout, "SynopsisMode7: %s\n", syn );
+  free(syn);
 
   syn = oyjlOptions_PrintHelpSynopsis( ui->opts, &ui->opts->groups[7], oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MARKDOWN );
   if(strcmp(syn,"**test-args** <strong>-b</strong> [<strong>--candle</strong>] [<strong>-v</strong>]") == 0)
@@ -209,6 +217,7 @@ oyjlTESTRESULT_e testArgs()
   OYJL_TEST_WRITE_RESULT( syn, strlen(syn), "SynopsisMode8", "txt" )
   if(oy_test_last_result == oyjlTESTRESULT_FAIL || verbose)
     fprintf( zout, "SynopsisMode8: %s\n", syn );
+  free(syn);
 
   oyjlUi_Release( &ui);
 
@@ -243,6 +252,7 @@ oyjlTESTRESULT_e testArgs()
   for(i = 0; i < count; ++i)
     fprintf( zout, "%s\n", results[i] );
   oyjlUi_Release( &ui);
+  oyjlStringListRelease( &results, count, 0 );
 
   /* declare option groups, for better syntax checking and UI groups */
   oyjlOptionGroup_s groups[] = {
@@ -321,7 +331,7 @@ oyjlTESTRESULT_e testArgs()
     "oyjlUi_ToMan() 2183 == %lu                    ", text ? strlen(text) : 0 );
   }
   OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlUi_ToMan", "txt" )
-  if(verbose)
+  if(verbose && text)
     fprintf( zout, "%s\n", text );
   if(text) {free(text);} text = NULL;
 
@@ -335,9 +345,9 @@ oyjlTESTRESULT_e testArgs()
     "oyjlUi_ToMarkdown() %lu                       ", text?strlen(text):0 );
   }
   OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlUi_ToMarkdown", "txt" )
-  if(verbose)
+  if(verbose && text)
     fprintf( zout, "%s\n", text );
-  if(text) {free(text);} text = NULL;
+  if(text) {free(text); text = NULL;}
 
   if(ui)
     text = oyjlOptions_ResultsToText( ui->opts );
@@ -348,7 +358,7 @@ oyjlTESTRESULT_e testArgs()
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
     "oyjlOptions_ResultsToText() %lu                 ", text?strlen(text):0 );
   }
-  if(verbose)
+  if(verbose && text)
     fprintf( zout, "%s\n", text );
   if(text) {free(text);} text = NULL;
 
@@ -364,8 +374,8 @@ oyjlTESTRESULT_e testArgs()
   fprintf(stdout, "oyjlUi_Release(&\"test\") - should give a warning message:\n" );
   oyjlUi_Release( (oyjlUi_s **)&wrong);
 
-  free(oarray[0].values.choices.list);
-  free(oarray[1].values.choices.list);
+  free(oarray[2].values.choices.list);
+  free(oarray[3].values.choices.list);
 
   return result;
 }

@@ -19,11 +19,18 @@
   TEST_RUN( testJsonRoundtrip, "Data Readers", 1 ); \
   TEST_RUN( testUiRoundtrip, "Ui Export", 1 );
 
+void oyjlLibRelease();
 #define OYJL_TEST_MAIN_SETUP  printf("\n    Oyjl Test Program\n");
-#define OYJL_TEST_MAIN_FINISH printf("\n    Oyjl Test Program finished\n\n");
+
+#include "oyjl_version.h"
+#ifdef OYJL_HAVE_LIBXML2
+#include <libxml/parser.h>
+# define OYJL_TEST_MAIN_FINISH printf("\n    Oyjl Test Program finished\n\n"); oyjlLibRelease(); xmlCleanupParser();
+#else
+# define OYJL_TEST_MAIN_FINISH printf("\n    Oyjl Test Program finished\n\n"); oyjlLibRelease();
+#endif
 #define OYJL_TEST_NAME "test"
 #include "oyjl_test_main.h"
-#include "oyjl_version.h"
 #include "oyjl.h"
 #ifdef OYJL_HAVE_LOCALE_H
 #include <locale.h>
@@ -623,7 +630,7 @@ oyjlTESTRESULT_e testUiRoundtrip ()
   if(text) {free(text);} text = NULL;
 
   char * c_source = oyjlUiJsonToCode( json, OYJL_SOURCE_CODE_C );
-  if(c_source && strlen(c_source) == 5988)
+  if(c_source && strlen(c_source) == 6276)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlUiJsonToCode()                   %lu", c_source?strlen(c_source):0 );
   } else
@@ -635,6 +642,10 @@ oyjlTESTRESULT_e testUiRoundtrip ()
     fprintf( zout, "%s\n", c_source );
   if(c_source) {free(c_source);} c_source = NULL;
 
+  oyjlTreeFree( json ); json = NULL;
+
+  free(oarray[2].values.choices.list);
+  free(oarray[3].values.choices.list);
 
   return result;
 }
