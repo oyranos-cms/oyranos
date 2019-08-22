@@ -1,10 +1,14 @@
 # Test for liboyranos_core
+FIND_PROGRAM(VALGRIND_EXECUTABLE valgrind)
+IF( VALGRIND_EXECUTABLE )
+  SET( MEMCHECK ${VALGRIND_EXECUTABLE} --leak-check=full --show-leak-kinds=all --num-callers=30 )
+ENDIF( VALGRIND_EXECUTABLE )
 LINK_DIRECTORIES( ${LINK_DIRECTORIES} "${CMAKE_BINARY_DIR}/src/liboyranos_core/" )
 IF(ENABLE_SHARED_LIBS_${PROJECT_UP_NAME})
   ADD_EXECUTABLE( test_core "${CMAKE_CURRENT_SOURCE_DIR}/test_core.c" )
   TARGET_LINK_LIBRARIES( test_core OyranosCore )
   ADD_CUSTOM_TARGET(test-core
-	COMMAND "${CMAKE_CURRENT_BINARY_DIR}/test_core"
+	COMMAND ${MEMCHECK} "${CMAKE_CURRENT_BINARY_DIR}/test_core"
         DEPENDS test_core
         COMMENT "Test basic linking against liboyranos_core." VERBATIM )
   SET( TEST2_DEPS ${TEST2_DEPS} test-core )
@@ -14,7 +18,7 @@ IF(ENABLE_STATIC_LIBS_${PROJECT_UP_NAME})
   ADD_EXECUTABLE( test_core-static "${CMAKE_CURRENT_SOURCE_DIR}/test_core.c" )
   TARGET_LINK_LIBRARIES( test_core-static oyranos_core-static )
   ADD_CUSTOM_TARGET(test-core-static
-	COMMAND "${CMAKE_CURRENT_BINARY_DIR}/test_core-static"
+	COMMAND ${MEMCHECK} "${CMAKE_CURRENT_BINARY_DIR}/test_core-static"
         DEPENDS test_core-static
         COMMENT "Test basic linking against liboyranos_core." VERBATIM )
   SET( TEST2_DEPS ${TEST2_DEPS} test-core-static )
@@ -26,7 +30,7 @@ IF(ENABLE_SHARED_LIBS_${PROJECT_UP_NAME})
   ADD_EXECUTABLE( test_object "${CMAKE_CURRENT_SOURCE_DIR}/test_object.c" )
   TARGET_LINK_LIBRARIES( test_object OyranosObject )
   ADD_CUSTOM_TARGET(test-object
-	COMMAND "${CMAKE_CURRENT_BINARY_DIR}/test_object"
+	COMMAND ${MEMCHECK} "${CMAKE_CURRENT_BINARY_DIR}/test_object"
         DEPENDS test_object test_core
         COMMENT "Test basic linking against liboyranos_object." VERBATIM )
   SET( TEST2_DEPS ${TEST2_DEPS} test-object )
@@ -36,7 +40,7 @@ IF(ENABLE_STATIC_LIBS_${PROJECT_UP_NAME})
   ADD_EXECUTABLE( test_object-static "${CMAKE_CURRENT_SOURCE_DIR}/test_object.c" )
   TARGET_LINK_LIBRARIES( test_object-static oyranos_object-static )
   ADD_CUSTOM_TARGET(test-object-static
-	COMMAND "${CMAKE_CURRENT_BINARY_DIR}/test_object-static"
+	COMMAND ${MEMCHECK} "${CMAKE_CURRENT_BINARY_DIR}/test_object-static"
         DEPENDS test_object-static test-core-static
         COMMENT "Test basic linking against liboyranos_object." VERBATIM )
   SET( TEST2_DEPS ${TEST2_DEPS} test-object-static )
@@ -48,7 +52,7 @@ IF(ENABLE_SHARED_LIBS_${PROJECT_UP_NAME})
   ADD_EXECUTABLE( test_modules "${CMAKE_CURRENT_SOURCE_DIR}/test_modules.c" )
   TARGET_LINK_LIBRARIES( test_modules OyranosModules )
   ADD_CUSTOM_TARGET(test-modules
-	COMMAND "${CMAKE_CURRENT_BINARY_DIR}/test_modules"
+	COMMAND ${MEMCHECK} "${CMAKE_CURRENT_BINARY_DIR}/test_modules"
         DEPENDS test_modules test_object
         COMMENT "Test basic linking against liboyranos_modules." VERBATIM )
   SET( TEST2_DEPS ${TEST2_DEPS} test_modules )
@@ -60,7 +64,7 @@ IF(ENABLE_SHARED_LIBS_${PROJECT_UP_NAME})
   ADD_EXECUTABLE( test_config "${CMAKE_CURRENT_SOURCE_DIR}/test_config.c" )
   TARGET_LINK_LIBRARIES( test_config OyranosConfig )
   ADD_CUSTOM_TARGET(test-config
-	COMMAND "${CMAKE_CURRENT_BINARY_DIR}/test_config"
+	COMMAND ${MEMCHECK} "${CMAKE_CURRENT_BINARY_DIR}/test_config"
         DEPENDS test_config test_modules
         COMMENT "Test basic linking against liboyranos_config." VERBATIM )
   SET( TEST2_DEPS ${TEST2_DEPS} test_config )
