@@ -35,7 +35,9 @@ openiccConfig_s *  openiccConfig_FromMem( const char       * data )
   openiccConfig_s * config = NULL;
   if(data && data[0])
   {
+    char * msg = NULL;
     oyjlAllocHelper_m(config, openiccConfig_s, 1, malloc, return config);
+    oyjlAllocHelper_m(msg, char, 1024, malloc, free(config); return NULL);
 
     config->type = openiccOBJECT_CONFIG;
     config->json_text = strdup( (char*)data );
@@ -46,16 +48,13 @@ openiccConfig_s *  openiccConfig_FromMem( const char       * data )
       free(config); config = NULL;
       return config;
     }
-    config->oyjl = oyjlTreeParse( data, NULL, 0 );
+    config->oyjl = oyjlTreeParse( data, msg, 1024 );
     if(!config->oyjl)
     {
-      char * msg = NULL;
-      oyjlAllocHelper_m(msg, char, 1024, malloc, );
-      config->oyjl = oyjlTreeParse( data, msg, 1024 );
       WARNcc_S( config, "%s\n", msg?msg:"" );
-      if( msg ) free(msg);
       openiccConfig_Release( &config );
     }
+    free(msg);
   }
 
   return config;
