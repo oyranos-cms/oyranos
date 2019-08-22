@@ -33,7 +33,12 @@
   TEST_RUN( testODB, "ODB", 1 ); \
   //TEST_RUN( testDB, "DB" );
 
+void oyjlLibRelease();
+#define OYJL_TEST_MAIN_SETUP  printf("\n    OpenICC Test Program\n");
+#define OYJL_TEST_MAIN_FINISH printf("\n    OpenICC Test Program finished\n\n"); oyjlLibRelease();
+#define OYJL_TEST_NAME "test-core"
 #include "oyjl_test.h"
+#include "oyjl_test_main.h"
 
 #define free_m_( ptr_ ) { if(ptr_) {free(ptr_); ptr_ = NULL;} }
 
@@ -982,8 +987,6 @@ oyjlTESTRESULT_e testODB()
 
 
 /* --- end actual tests --- */
-
-#include "oyjl_test_main.h"
 
 
 
