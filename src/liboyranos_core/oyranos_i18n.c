@@ -49,6 +49,7 @@ char *oy_country_ = 0;
 /* --- internal API definition --- */
 
 
+int oy_i18n_init_ = 0;
 /** @internal
  *  @brief  initialise internationalisation 
  *
@@ -57,53 +58,20 @@ char *oy_country_ = 0;
  */
 void oyI18NInit_()
 {
+  int use_gettext = 0;
   DBG_PROG_START
 
   oy_lang_ = oyStringCopy_("C", oyAllocateFunc_);
 
 #ifdef USE_GETTEXT
-  if(!oy_country_ || !oy_language_)
-  {
-    char * var = NULL, * temp = NULL;
-    const char * oi_localedir = NULL,
-               * locpath = NULL,
-               * path = NULL;
-
-    if(getenv("OY_LOCALEDIR") && strlen(getenv("OY_LOCALEDIR")))
-    {
-      oi_localedir = oy_domain_path = strdup(getenv("OY_LOCALEDIR"));
-      if(oy_debug)
-        WARNc1_S("found environment variable: OY_LOCALEDIR=%s", oy_domain_path );
-    } else
-      if(oi_localedir == NULL && getenv("LOCPATH") && strlen(getenv("LOCPATH")))
-    {
-      oy_domain_path = NULL;
-      locpath = getenv("LOCPATH");
-      if(oy_debug)
-        WARNc1_S("found environment variable: LOCPATH=%s", locpath );
-    } else
-      if(oy_debug)
-      WARNc1_S("no OY_LOCALEDIR or LOCPATH environment variable found; using default path: %s", oy_domain_path );
-
-    if(oy_domain_path || locpath)
-    {
-      STRING_ADD( var, "NLSPATH=");
-      STRING_ADD( var, oy_domain_path ? oy_domain_path : locpath);
-    }
-    if(var)
-      putenv(var); /* Solaris */
-#if 0
-    if(oy_debug_memory)
-      oyFree_m_(var);  /* putenv requires a static string ??? */
+  use_gettext = 1;
 #endif
 
-    /* LOCPATH appears to be ignored by bindtextdomain("domain", NULL),
-     * so it is set here to bindtextdomain(). */
-    path = oy_domain_path ? oy_domain_path : locpath;
-    if(oy_debug)
-      WARNc2_S("bindtextdomain( %s, %s )", oy_domain, path );
-    bindtextdomain( oy_domain, path );
-    DBG_NUM2_S("oy_domain_path %s %s", oy_domain, oy_domain_path)
+  if(!oy_i18n_init_)
+  {
+    char * var = NULL, * temp = NULL;
+    ++oy_i18n_init_;
+    oyjlInitLanguageDebug( "Oyranos", "OY_DEBUG", &oy_debug, use_gettext, "OY_LOCALEDIR", OY_LOCALEDIR, OY_TEXTDOMAIN, oyMessageFunc_p );
     if(oy_domain_codeset)
     {
       if(oy_debug)
@@ -135,24 +103,14 @@ void oyI18NInit_()
         tmp[2] = 0;
       oy_country_ = tmp; tmp = 0;
 
-      /*oy_country_ = oyStringCopy_(oyStrchr_(oy_lang_,'_')+1, oyAllocateFunc_);
-
-      if(!oy_country_)
-        return;*/
-
       tmp = oyStrchr_(oy_country_,'.');
       if(tmp)
         tmp[0] = 0;
-
       tmp = 0;
 
       oyAllocHelper_m_( tmp, char, len + 5, 0, DBG_PROG_ENDE; return );
       oySprintf_( tmp, "%s", oy_lang_ );
       oy_language_ = tmp; tmp = 0;
-
-      /*oy_language_ = oyStringCopy_(oy_lang_, oyAllocateFunc_);
-      if(!oy_language_)
-        return;*/
 
       tmp = oyStrchr_(oy_language_,'_');
       if(tmp)
@@ -162,7 +120,6 @@ void oyI18NInit_()
     }
     if(oy_debug_memory && temp) oyDeAllocateFunc_(temp);
   }
-#endif
 
   DBG_PROG_ENDE
 }
@@ -181,6 +138,7 @@ void oyI18NInit_()
  */
 void           oyI18Nreset_          ( void )
 {
+  oy_i18n_init_ = 0;
   if(oy_lang_)
     oyFree_m_( oy_lang_ );
   if(oy_language_)
