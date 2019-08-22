@@ -8,9 +8,13 @@ ADD_CUSTOM_TARGET(check
         DEPENDS test_openicc
         COMMENT "Test libOpenICC" VERBATIM )
 
+FIND_PROGRAM(VALGRIND_EXECUTABLE valgrind)
+IF( VALGRIND_EXECUTABLE )
+  SET( MEMCHECK ${VALGRIND_EXECUTABLE} --leak-check=full )
+ENDIF( VALGRIND_EXECUTABLE )
 ADD_CUSTOM_COMMAND( OUTPUT test_openicc
                     DEPENDS test-openicc-static
-                    COMMAND OI_LOCALEDIR=${CMAKE_BINARY_DIR}/locale OI_DEBUG=1 valgrind --leak-check=full ./test-openicc-static )
+                    COMMAND OI_LOCALEDIR=${CMAKE_BINARY_DIR}/locale OI_DEBUG=1 ${MEMCHECK} ./test-openicc-static )
 
 IF(USE_GCOV)
   MESSAGE("testing coverage using gcc's gcov; try target: coverage")
