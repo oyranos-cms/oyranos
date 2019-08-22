@@ -62,7 +62,7 @@ oyjlTESTRESULT_e testI18N()
   const char * lang = 0, * t = 0;
   oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
 
-  fprintf(stderr, "\n" );
+  fprintf(zout, "\n" );
 
   oyI18Nreset();
 
@@ -152,7 +152,7 @@ oyjlTESTRESULT_e testElektra()
 
   oyExportReset_(EXPORT_SETTING);
 
-  fprintf(stderr, "\n" );
+  fprintf(zout, "\n" );
 
   error = oySetPersistentString("sw/Oyranos/Tests/test_key", oySCOPE_USER,
                                  "NULLTestValue", "NULLTestComment" );
@@ -248,7 +248,7 @@ oyjlTESTRESULT_e testOption ()
 
   oyExportReset_(EXPORT_SETTING);
 
-  fprintf(stderr, "\n" );
+  fprintf(zout, "\n" );
 
   o = oyOption_FromRegistration( "blabla", 0 );
   if(!o)
@@ -325,7 +325,7 @@ oyjlTESTRESULT_e testSettings ()
 
   oyExportReset_(EXPORT_SETTING);
 
-  fprintf(stderr, "\n" );
+  fprintf(zout, "\n" );
 
   /* we check for out standard CMM */
   opts = oyOptions_ForFilter( "//" OY_TYPE_STD "/lcm2",
@@ -472,7 +472,7 @@ oyjlTESTRESULT_e testProfiles ()
 
   oyExportReset_(EXPORT_SETTING);
 
-  fprintf(stderr, "\n" );
+  fprintf(zout, "\n" );
 
   /* compare the usual conversion profiles with the total of profiles */
   profs = oyProfiles_ForStd( oyDEFAULT_PROFILE_START, 0, &current, 0 );
@@ -569,7 +569,7 @@ oyjlTESTRESULT_e testMonitor ()
   oyRectangle_s * r = 0;
 
   oyExportReset_(EXPORT_SETTING);
-  fprintf(stderr, "\n" );
+  fprintf(zout, "\n" );
 
   /* get all monitors */
   error = oyDevicesGet( 0, "monitor", 0, &devices );
@@ -822,7 +822,7 @@ oyjlTESTRESULT_e testRegistrationMatch ()
 {
   oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
 
-  fprintf(stderr, "\n" );
+  fprintf(zout, "\n" );
 
   if( oyFilterRegistrationMatch(OY_INTERNAL "/icc_color.lcms",
                                 "//" OY_TYPE_STD "/icc_color",
@@ -968,7 +968,7 @@ oyjlTESTRESULT_e testObserver ()
   oyOption_s * o = oyOption_FromRegistration( "a/b/c/d/my_key", 0 );
   oyFilterNode_s * node = oyFilterNode_NewWith( "//" OY_TYPE_STD "/icc_color", 0, 0 );
 
-  fprintf(stderr, "\n" );
+  fprintf(zout, "\n" );
 
   oyOption_SetFromString( o, "my_value", 0 );
 
