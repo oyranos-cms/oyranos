@@ -1,52 +1,53 @@
-SET( OY_LINGUAS_TOOL de_DE.UTF8 )
-MACRO(OY_DOCUMENT_TOOL)
-  ADD_CUSTOM_COMMAND( OUTPUT ${CMAKE_SOURCE_DIR}/doc/man/${TOOL}.1
-        COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH} OY_MODULE_PATH=${CMAKE_BINARY_DIR}/src/modules XDG_DATA_HOME=${CMAKE_SOURCE_DIR} LANG=en DISPLAY="man_page" ${TOOL} -X man > ${CMAKE_SOURCE_DIR}/doc/man/${TOOL}.1
-        DEPENDS ${TOOL} ${TOOL_SRC}
+SET(LANGS "de_DE.UTF8")
+MACRO(OY_DOCUMENT_TOOL _tool _tool_src _langs)
+  ADD_CUSTOM_COMMAND( OUTPUT ${CMAKE_SOURCE_DIR}/doc/man/${_tool}.1
+        COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH} OY_MODULE_PATH=${CMAKE_BINARY_DIR}/src/modules XDG_DATA_HOME=${CMAKE_SOURCE_DIR} LANG=en DISPLAY="man_page" ${_tool} -X man > ${CMAKE_SOURCE_DIR}/doc/man/${_tool}.1
+        DEPENDS ${_tool} ${_tool_src}
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   )
-  ADD_CUSTOM_TARGET( ${TOOL}.1 ALL
-        DEPENDS ${CMAKE_SOURCE_DIR}/doc/man/${TOOL}.1
-#        COMMENT "Extract manual page to ${TOOL}.1"
+  ADD_CUSTOM_TARGET( ${_tool}.1 ALL
+        DEPENDS ${CMAKE_SOURCE_DIR}/doc/man/${_tool}.1
+#        COMMENT "Extract manual page to ${_tool}.1"
   )
-  STRING(REGEX REPLACE "-" "" TOOL_MD ${TOOL})
-  MESSAGE( "${TOOL_MD}: ${CMAKE_SOURCE_DIR}/doc/md/${TOOL_MD}.md" )
-  ADD_CUSTOM_COMMAND( OUTPUT ${CMAKE_SOURCE_DIR}/doc/md/${TOOL_MD}.md
-        COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH} OY_MODULE_PATH=${CMAKE_BINARY_DIR}/src/modules XDG_DATA_HOME=${CMAKE_SOURCE_DIR} LANG=en DISPLAY="man_page" ${TOOL} -X markdown > ${CMAKE_SOURCE_DIR}/doc/md/${TOOL_MD}.md
-        DEPENDS ${TOOL} ${TOOL_SRC}
+  STRING(REGEX REPLACE "-" "" _tool_MD ${_tool})
+  MESSAGE( "${_tool_MD}: ${CMAKE_SOURCE_DIR}/doc/md/${_tool_MD}.md" )
+  ADD_CUSTOM_COMMAND( OUTPUT ${CMAKE_SOURCE_DIR}/doc/md/${_tool_MD}.md
+        COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH} OY_MODULE_PATH=${CMAKE_BINARY_DIR}/src/modules XDG_DATA_HOME=${CMAKE_SOURCE_DIR} LANG=en DISPLAY="man_page" ${_tool} -X markdown > ${CMAKE_SOURCE_DIR}/doc/md/${_tool_MD}.md
+        DEPENDS ${_tool} ${_tool_src}
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   )
-  ADD_CUSTOM_TARGET( ${TOOL_MD}.md ALL
-        DEPENDS ${CMAKE_SOURCE_DIR}/doc/md/${TOOL_MD}.md
-#        COMMENT "Extract markdown formated manual page to ${TOOL_MD}.md"
+  ADD_CUSTOM_TARGET( ${_tool_MD}.md ALL
+        DEPENDS ${CMAKE_SOURCE_DIR}/doc/md/${_tool_MD}.md
+#        COMMENT "Extract markdown formated manual page to ${_tool_MD}.md"
   )
   IF( GETTEXT_FOUND )
     # add translations
-#    FOREACH( _lang ${OY_LINGUAS_TOOL} )
-    SET( _lang de_DE.UTF8 )
-    SET( short_lang de )
-      ADD_CUSTOM_COMMAND( OUTPUT ${CMAKE_SOURCE_DIR}/doc/man/${short_lang}/${TOOL}.1
+    FOREACH( _lang ${_langs} )
+      SET( _lang "de_DE.UTF8" )
+      STRING(SUBSTRING ${_lang} 0 2 short_lang)
+#      MESSAGE( "add \"${_tool}\": \"" ${short_lang} "\" from ${_lang} / \"${_langs}\"" )
+      ADD_CUSTOM_COMMAND( OUTPUT ${CMAKE_SOURCE_DIR}/doc/man/${short_lang}/${_tool}.1
         COMMAND mkdir -p "${CMAKE_SOURCE_DIR}/doc/man/${short_lang}/"
         COMMAND cp -a ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LOCALEDIR}/${short_lang}/LC_MESSAGES/openicc.mo ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LOCALEDIR}/${short_lang}/LC_MESSAGES/oyjl.mo ${CMAKE_BINARY_DIR}/locale/${short_lang}/LC_MESSAGES/ || echo nothing to copy
-        COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH} LOCPATH=${CMAKE_BINARY_DIR}/locale OY_MODULE_PATH=${CMAKE_BINARY_DIR}/src/modules XDG_DATA_HOME=${CMAKE_SOURCE_DIR} LANG=${_lang} DISPLAY="man_page" ${TOOL} -X man > ${CMAKE_SOURCE_DIR}/doc/man/${short_lang}/${TOOL}.1
-        DEPENDS ${TOOL} ${TOOL_SRC}
+        COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH} LOCPATH=${CMAKE_BINARY_DIR}/locale OY_MODULE_PATH=${CMAKE_BINARY_DIR}/src/modules XDG_DATA_HOME=${CMAKE_SOURCE_DIR} LANG=${_lang} DISPLAY="man_page" ${_tool} -X man > ${CMAKE_SOURCE_DIR}/doc/man/${short_lang}/${_tool}.1
+        DEPENDS ${_tool} ${_tool_src}
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
       )
-      ADD_CUSTOM_TARGET( ${TOOL}-${short_lang}.1 ALL
-        DEPENDS ${CMAKE_SOURCE_DIR}/doc/man/${short_lang}/${TOOL}.1
-#        COMMENT "Extract ${_lang} manual page to ${CMAKE_SOURCE_DIR}/doc/man/${short_lang}/${TOOL}.1"
+      ADD_CUSTOM_TARGET( ${_tool}-${short_lang}.1 ALL
+        DEPENDS ${CMAKE_SOURCE_DIR}/doc/man/${short_lang}/${_tool}.1
+#        COMMENT "Extract ${_lang} manual page to ${CMAKE_SOURCE_DIR}/doc/man/${short_lang}/${_tool}.1"
       )
 
-      ADD_CUSTOM_COMMAND( OUTPUT ${CMAKE_SOURCE_DIR}/doc/md/${TOOL_MD}${short_lang}.md
-        COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH} LOCPATH=${CMAKE_BINARY_DIR}/locale OY_MODULE_PATH=${CMAKE_BINARY_DIR}/src/modules XDG_DATA_HOME=${CMAKE_SOURCE_DIR} LANG=${_lang} DISPLAY="man_page" ${TOOL} -X markdown > ${CMAKE_SOURCE_DIR}/doc/md/${TOOL_MD}${short_lang}.md
-        DEPENDS ${TOOL} ${TOOL_SRC}
+      ADD_CUSTOM_COMMAND( OUTPUT ${CMAKE_SOURCE_DIR}/doc/md/${_tool_MD}${short_lang}.md
+        COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH} LOCPATH=${CMAKE_BINARY_DIR}/locale OY_MODULE_PATH=${CMAKE_BINARY_DIR}/src/modules XDG_DATA_HOME=${CMAKE_SOURCE_DIR} LANG=${_lang} DISPLAY="man_page" ${_tool} -X markdown > ${CMAKE_SOURCE_DIR}/doc/md/${_tool_MD}${short_lang}.md
+        DEPENDS ${_tool} ${_tool_src}
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
       )
-      ADD_CUSTOM_TARGET( ${TOOL_MD}${short_lang}.md ALL
-        DEPENDS ${CMAKE_SOURCE_DIR}/doc/md/${TOOL_MD}${short_lang}.md
-#        COMMENT "Extract markdown formated ${_lang} manual page to ${TOOL_MD}${short_lang}.md"
+      ADD_CUSTOM_TARGET( ${_tool_MD}${short_lang}.md ALL
+        DEPENDS ${CMAKE_SOURCE_DIR}/doc/md/${_tool_MD}${short_lang}.md
+#        COMMENT "Extract markdown formated ${_lang} manual page to ${_tool_MD}${short_lang}.md"
       )
-#    ENDFOREACH( _lang )
+    ENDFOREACH( _lang ${_langs} )
   ENDIF( GETTEXT_FOUND )
 ENDMACRO(OY_DOCUMENT_TOOL)
 
@@ -57,7 +58,7 @@ SET( TOOL_SRC "${CMAKE_CURRENT_SOURCE_DIR}/oyranos_profiles.c" )
 ADD_EXECUTABLE( ${TOOL} ${TOOL_SRC} )
 TARGET_LINK_LIBRARIES( ${TOOL} ${TARGET_LIB} ${EXTRA_LIBS} )
 INSTALL (TARGETS ${TOOL} DESTINATION ${CMAKE_INSTALL_BINDIR})
-OY_DOCUMENT_TOOL()
+OY_DOCUMENT_TOOL( ${TOOL} ${TOOL_SRC} ${LANGS} )
 
 # ICC profile information and manipulations
 ADD_EXECUTABLE( oyranos-profile "${CMAKE_CURRENT_SOURCE_DIR}/oyranos_profile_tool.c" )
@@ -86,7 +87,7 @@ SET( TOOL_SRC "${CMAKE_CURRENT_SOURCE_DIR}/oyranos-monitor-white-point.c" )
 ADD_EXECUTABLE( ${TOOL} ${TOOL_SRC} )
 TARGET_LINK_LIBRARIES( ${TOOL} ${TARGET_LIB} ${EXTRA_LIBS} ${DBUS_LIBS} )
 INSTALL (TARGETS ${TOOL} DESTINATION ${CMAKE_INSTALL_BINDIR})
-OY_DOCUMENT_TOOL()
+OY_DOCUMENT_TOOL( ${TOOL} ${TOOL_SRC} ${LANGS} )
 
 # Device listing
 ADD_EXECUTABLE( oyranos-device "${CMAKE_CURRENT_SOURCE_DIR}/oyranos-device.c" )
@@ -102,7 +103,7 @@ IF( CAIRO_FOUND )
   TARGET_LINK_LIBRARIES ( ${TOOL} ${TARGET_LIB} ${EXTRA_LIBS}
                  ${CAIRO_LIBRARIES} )
   INSTALL (TARGETS ${TOOL} DESTINATION ${CMAKE_INSTALL_BINDIR})
-  OY_DOCUMENT_TOOL()
+  OY_DOCUMENT_TOOL( ${TOOL} ${TOOL_SRC} ${LANGS} )
 ENDIF()
 
 ADD_SUBDIRECTORY( oforms )
