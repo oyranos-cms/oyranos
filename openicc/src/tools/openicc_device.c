@@ -200,8 +200,7 @@ int main(int argc, char ** argv)
   {
     DBG( 0, "%s at \"%s\"", _("unable to open data base"), db_file);
     exit(0);
-  } else
-    oyjlOptions_PrintHelp( ui->opts, ui, verbose, NULL );
+  }
  
   {
     /* read JSON input file */
