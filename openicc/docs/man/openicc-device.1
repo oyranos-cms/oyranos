@@ -1,0 +1,109 @@
+.TH "openicc-device" 1 "" "User Commands"
+.SH NAME
+openicc-device v0.1.1 \- OpenICC Device
+.SH SYNOPSIS
+\fBopenicc-device\fR \-l [\-d \fINUMBER\fR] [\-j] [\-n] [\-b \fIFILENAME\fR] [\-v]
+.br
+\fBopenicc-device\fR \-a \-f \fIFILENAME\fR [\-b \fIFILENAME\fR] [\-v]
+.br
+\fBopenicc-device\fR \-e \-d \fINUMBER\fR [\-b \fIFILENAME\fR] [\-v]
+.br
+\fBopenicc-device\fR \-p [\-s] [\-v]
+.br
+.SH DESCRIPTION
+Manipulation of OpenICC color management data base device entries.
+.SH OPTIONS
+.SS
+Print the Devices in the DB
+\fBopenicc-device\fR \-l [\-d \fINUMBER\fR] [\-j] [\-n] [\-b \fIFILENAME\fR] [\-v]
+.br
+\-l|\-\-list-devices	List Devices
+.br
+\-d|\-\-device \fINUMBER\fR	Device position (NUMBER:0 [≥0 ≤100])
+.br
+\-j|\-\-dump-json	Dump OpenICC JSON
+.br
+\-n|\-\-long	List all key/values pairs
+.br
+\-b|\-\-db-file \fIFILENAME\fR	DB File Name
+.RS
+File Name of OpenICC Device Data Base JSON
+.RE
+.SS
+Add Device to DB
+\fBopenicc-device\fR \-a \-f \fIFILENAME\fR [\-b \fIFILENAME\fR] [\-v]
+.br
+\-a|\-\-add	Add Device to DB
+.br
+\-f|\-\-file-name \fIFILENAME\fR	File Name
+.RS
+The File Name of the OpenICC Device in Json format.
+.RE
+\-b|\-\-db-file \fIFILENAME\fR	DB File Name
+.RS
+File Name of OpenICC Device Data Base JSON
+.RE
+.SS
+Erase a Devices from the DB
+\fBopenicc-device\fR \-e \-d \fINUMBER\fR [\-b \fIFILENAME\fR] [\-v]
+.br
+\-e|\-\-erase-device	Erase Devices
+.br
+\-d|\-\-device \fINUMBER\fR	Device position (NUMBER:0 [≥0 ≤100])
+.br
+\-b|\-\-db-file \fIFILENAME\fR	DB File Name
+.RS
+File Name of OpenICC Device Data Base JSON
+.RE
+.SS
+Show Filepath to the DB
+\fBopenicc-device\fR \-p [\-s] [\-v]
+.br
+\-p|\-\-show-path	Show Path
+.br
+\-s|\-\-scope	System
+.br
+.SS
+General options
+.br
+\-b|\-\-db-file \fIFILENAME\fR	DB File Name
+.RS
+File Name of OpenICC Device Data Base JSON
+.RE
+\-X|\-\-export \fIjson|json+command|man|markdown\fR	Export formated text
+.RS
+Get UI converted into text formats
+.RE
+	\-X man		# Man 
+.br
+	 Get a unix man page
+.br
+	\-X markdown		# Markdown 
+.br
+	 Get formated text
+.br
+	\-X json		# Json 
+.br
+	 Get a Oyjl Json UI declaration
+.br
+	\-X json+command		# Json + Command 
+.br
+	 Get Oyjl Json UI declaration incuding command
+.br
+	\-X export		# Export 
+.br
+	 Get UI data for developers
+.br
+\-v|\-\-verbose	verbose
+.br
+\-h|\-\-help	Help
+.br
+.SH AUTHOR
+Kai-Uwe Behrmann http://www.openicc.org
+.SH COPYRIGHT
+Copyright 2018 Kai-Uwe Behrmann
+.br
+License: newBSD
+.SH BUGS
+https://www.github.com/OpenICC/config/issues 
+

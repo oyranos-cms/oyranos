@@ -1,0 +1,143 @@
+/**
+    @mainpage OpenICC Configuration API Documentation
+
+    @section text_contents Descriptive Contents
+    @ref intro |
+    @ref api |
+    @ref api_tutorial |
+    @ref links
+
+ *  @par License
+ *            MIT http://www.opensource.org/licenses/mit-license.php
+
+    @author Kai-Uwe Behrmann and others
+    @since  September 2011-2018
+
+    @par Development
+          https://github.com/OpenICC/config
+
+
+    @n@n
+    @section intro Introduction
+  
+    OpenICC Configuration API provides a platformindependent C interface to persistently store
+    settings across applications and services.
+
+    @section api API Documentation
+    The OpenICC Configuration API is declared in the openicc_config.h and openicc_db.h header files.
+    - @ref OpenICC_config - Configuration Access API
+    - @ref path_names - Configuration Location API
+
+    The following API is declared in openicc_core.h.
+    - @ref args - Argument API handles structured options and arguments for more than the command line.
+    - @ref misc
+
+    @section tools Tools Documentation
+    OpenICC comes with a few tools, which use the OpenICC API's.
+    - @ref openiccdevice - color device configuration
+    - oi-json - localisation helper tool
+
+    @subsection api_tutorial Programming Tutorial
+    Frist you have to put a
+    @code
+    #include <openicc_config.h> @endcode
+    in your source text, in order to use the OpenICC Configuration API. 
+    @code
+    int main( int argc, char ** argv ) {
+      int openicc_version = openiccVersion( );
+      return 0;
+    }@endcode
+
+    Then you can put OpenICC functions in your code and compile with:
+    @verbatim
+    cc `pkg-config --cflags --libs openicc`  @endverbatim
+    to link OpenICC into your application.
+
+    The following examples gives more details about parsing JSON and get
+    structured key/value device configurations.
+
+    @dontinclude openicc_config_read.c
+    First we init language:
+    @skip LC_ALL
+    @until openiccInit
+
+    Then we need to read the JSON by whatever is appropriate and start parsing JSON:
+    @skipline openiccConfig_FromMem
+
+    Providing debug infos is good behaviour and then the number of devices are available:
+    @skip openiccConfig_SetInfo
+    @until openiccConfig_DevicesCount
+
+    key/values pairs can be printed with openiccConfig_DeviceGet() or dumped again as JSON:
+    @skip print all
+    @until old_device_class
+
+    For a complete device class the JSON head and trail needs to be masked out appropriately:
+    @skip single device class
+    @until openiccConfig_Release
+
+    The complete code can be found in @ref openicc_config_read.c
+ */
+
+/**
+ *  @example openicc_config_read.c
+ *  This code sample will show how to handle device configurations from a JSON file.
+ */
+/**
+ *  @example test.c
+ *  This code is used for testing API and can show use cases at the same time.
+ *  Be careful to only use the publicly declared and cross referenced APIs.
+ *  Some APIs are internal only.
+ */
+
+/** \addtogroup OpenICC_config Configuration API
+ *
+ *  The Configuration API provides a way to store key/value pairs in a canonical way into JSON format DB files.
+ *
+ */
+
+
+/** @page links References
+    @section projects_links Links
+    - OpenICC: http://www.openicc.org
+    - ColourWiki: http://www.openicc.info/
+    - Code: https://github.com/OpenICC/config
+    - Configuration data <a href="http://www.openicc.info/wiki/index.php?title=OpenICC_Configuration_0.1">OpenICC Configuration at ColourWiki</a>
+    - Directory paths for colour profiles and other configuration data <a href="http://www.openicc.info/index.php?title=OpenIccDirectoryProposal">OpenIccDirectoryProposal at ColourWiki</a>
+    - Bug reports: https://github.com/OpenICC/config
+ */
+
+/** \addtogroup misc Miscellaneous
+ *
+ *  @{ */
+
+/** @enum    openiccMSG_e
+ *  @brief   message classes
+ *
+ *  @version OpenICC Config: 0.0.1
+ *  @date    2013/09/16
+ *  @since   2013/09/16 (OpenICC Config: 0.0.1)
+ */
+/** @} *//* misc */
+
+
+/** @struct  openiccConfig_s
+ *  @ingroup OpenICC_config
+ *  @brief   Low level Configuration Object
+ *
+ *  Hold a set of keys inside a text/json representation.
+ *
+ *  @version OpenICC Config: 0.0.1
+ *  @date    2013/09/17
+ *  @since   2013/09/17 (OpenICC Config: 0.0.1)
+ */
+/** @struct  openiccDB_s
+ *  @ingroup OpenICC_config
+ *  @brief   High level Configuration Object
+ *
+ *  Holds cascaded sets of keys inside a text/json representation.
+ *
+ *  @version OpenICC Config: 0.1.0
+ *  @date    2015/10/03
+ *  @since   2015/10/03 (OpenICC Config: 0.1.0)
+ */

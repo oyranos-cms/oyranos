@@ -1,4 +1,4 @@
 TOOLS
 =====
-* [openicc-device](openicc-device.md) [de](openicc-device-de.md) - color device configuration
+* [openicc-device](../../docs/md/openiccdevice.md) [de](../../docs/md/openiccdevicede.md) - color device configuration
 * oi-json - localisation helper tool

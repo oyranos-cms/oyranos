@@ -1,0 +1,109 @@
+.TH "openicc-device" 1 "" "User Commands"
+.SH NAME
+openicc-device v0.1.1 \- OpenICC Device
+.SH ÜBERSICHT
+\fBopenicc-device\fR \-l [\-d \fINUMMER\fR] [\-j] [\-n] [\-b \fIDATEINAME\fR] [\-v]
+.br
+\fBopenicc-device\fR \-a \-f \fIDATEINAME\fR [\-b \fIDATEINAME\fR] [\-v]
+.br
+\fBopenicc-device\fR \-e \-d \fINUMMER\fR [\-b \fIDATEINAME\fR] [\-v]
+.br
+\fBopenicc-device\fR \-p [\-s] [\-v]
+.br
+.SH BESCHREIBUNG
+Bearbeitung von Geräteeinträgen in der Datenbank für OpenICC Farbmanagement
+.SH OPTIONEN
+.SS
+Zeige die Geräte aus der DB
+\fBopenicc-device\fR \-l [\-d \fINUMMER\fR] [\-j] [\-n] [\-b \fIDATEINAME\fR] [\-v]
+.br
+\-l|\-\-list-devices	Zeige Geräte
+.br
+\-d|\-\-device \fINUMMER\fR	Gerätebeposition (NUMMER:0 [≥0 ≤100])
+.br
+\-j|\-\-dump-json	Schreibe OpenICC Json
+.br
+\-n|\-\-long	Zeige alle Schlüssel/Wertepaare
+.br
+\-b|\-\-db-file \fIDATEINAME\fR	DB Dateiname
+.RS
+Dateiname der OpenICC Json Gerätedatenbank
+.RE
+.SS
+Trage Gerät in die DB ein
+\fBopenicc-device\fR \-a \-f \fIDATEINAME\fR [\-b \fIDATEINAME\fR] [\-v]
+.br
+\-a|\-\-add	Trage Gerät in die DB ein
+.br
+\-f|\-\-file-name \fIDATEINAME\fR	Dateiname
+.RS
+Der Dateiname des OpenICC Gerätes im Json Format.
+.RE
+\-b|\-\-db-file \fIDATEINAME\fR	DB Dateiname
+.RS
+Dateiname der OpenICC Json Gerätedatenbank
+.RE
+.SS
+Lösche Gerät von der DB
+\fBopenicc-device\fR \-e \-d \fINUMMER\fR [\-b \fIDATEINAME\fR] [\-v]
+.br
+\-e|\-\-erase-device	Lösche Geräte
+.br
+\-d|\-\-device \fINUMMER\fR	Gerätebeposition (NUMMER:0 [≥0 ≤100])
+.br
+\-b|\-\-db-file \fIDATEINAME\fR	DB Dateiname
+.RS
+Dateiname der OpenICC Json Gerätedatenbank
+.RE
+.SS
+Zeige den Dateipfad zur DB
+\fBopenicc-device\fR \-p [\-s] [\-v]
+.br
+\-p|\-\-show-path	Zeige Pfad
+.br
+\-s|\-\-scope	System
+.br
+.SS
+Allgemeine Optionen
+.br
+\-b|\-\-db-file \fIDATEINAME\fR	DB Dateiname
+.RS
+Dateiname der OpenICC Json Gerätedatenbank
+.RE
+\-X|\-\-export \fIjson|json+command|man|markdown\fR	Exportiere formatierten Text
+.RS
+Hole Benutzerschnittstelle als Text
+.RE
+	\-X man		# Handbuch 
+.br
+	 Hole Unix Handbuchseite
+.br
+	\-X markdown		# Markdown 
+.br
+	 Hole formatierten Text
+.br
+	\-X json		# Json 
+.br
+	 Hole Oyjl Json Benutzerschnittstelle
+.br
+	\-X json+command		# Json + Kommando 
+.br
+	 Hole Oyjl Json Benutzerschnittstelle mit Kommando
+.br
+	\-X export		# Export 
+.br
+	 Erhalte Daten für Entwickler
+.br
+\-v|\-\-verbose	plaudernd
+.br
+\-h|\-\-help	Hilfe
+.br
+.SH AUTOR
+Kai-Uwe Behrmann http://www.openicc.org
+.SH KOPIERRECHT
+Copyright 2018 Kai-Uwe Behrmann
+.br
+Lizenz: newBSD
+.SH FEHLER
+https://www.github.com/OpenICC/config/issues 
+
