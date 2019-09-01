@@ -31,7 +31,9 @@
 #include <QObject>
 #include <QSysInfo>
 #include <QtGui/QScreen>
-
+#ifdef QT_DBUS_LIB
+#include <QtDBus>
+#endif
 
 #if defined(Q_OS_ANDROID)
 #include <android/log.h>
@@ -166,6 +168,16 @@ int main(int argc, char *argv[])
       QObject::connect( &mgr, SIGNAL(uriChanged(QVariant)), o, SIGNAL(fileChanged(QVariant)) );
       QObject::connect( &mgr, SIGNAL(outputChanged(QVariant)), o, SIGNAL(outputChanged(QVariant)) );
       QObject::connect( &mgr, SIGNAL(commandsChanged(QVariant)), o, SIGNAL(commandsChanged(QVariant)) );
+
+#if defined(QT_DBUS_LIB) && defined(OPENICC_LIB)
+      if( QDBusConnection::sessionBus().connect( QString(), "/org/libelektra/configuration", "org.libelektra", QString(),
+                                                 m, SLOT( setNightInfo( QDBusMessage ) )) )
+      {
+          QObject::connect( &mgr, SIGNAL(nightInfo(QVariant)), o, SIGNAL(nightInfo(QVariant)) );
+          LOG( QString("connect to /org/libelektra/configuration") );
+      }
+      emit mgr.nightInfo( mgr.isNight() ); // update QML
+#endif
 
       app_init = 1;
       if(app_debug)

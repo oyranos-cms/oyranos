@@ -404,13 +404,19 @@ AppWindow {
         HalfPage {
             id: twoPage
             objectName: "twoPage"
+            color: bg
 
-            Image {
-                id: logoImage
+            Rectangle {
                 width: parent.width
-                horizontalAlignment: Image.AlignHCenter
-                fillMode: Image.PreserveAspectFit
-                source: uiLogo
+                height: logoImage.height
+                color: myPalette.window
+                Image {
+                    id: logoImage
+                    width: parent.width
+                    horizontalAlignment: Image.AlignHCenter
+                    fillMode: Image.PreserveAspectFit
+                    source: uiLogo
+                }
             }
             Flickable {
                 y: logoImage.height
@@ -418,6 +424,7 @@ AppWindow {
                 height: twoPage.height - logoImage.height
                 flickableDirection: Flickable.VerticalFlick
                 clip: true
+
                 TextArea.flickable: TextArea { // our content
                     id: textArea
 
@@ -425,6 +432,7 @@ AppWindow {
                     //backgroundVisible: false // keep the area visually simple
                     //frameVisible: false      // keep the area visually simple
 
+                    color: fg
                     textFormat: Qt.RichText // Html
                     textMargin: font.pixelSize
                     readOnly: true // obviously no edits
@@ -457,6 +465,7 @@ AppWindow {
                 TextArea.flickable: TextArea {
                     id: textArea2
 
+                    color: fg
                     Accessible.name: "Text Area 2"
                     anchors.fill: parent
                     textFormat: text[0] !== '<' ? Qt.PlainText : Qt.RichText
