@@ -29,7 +29,6 @@
     - @ref path_names - Configuration Location API
 
     The following API is declared in openicc_core.h.
-    - @ref args - Argument API handles structured options and arguments for more than the command line.
     - @ref misc
 
     @section tools Tools Documentation
