@@ -100,17 +100,17 @@ ADD_CUSTOM_COMMAND( OUTPUT test-oyranos2
                     DEPENDS ${TEST2_DEPS}
                     COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_SOURCE_DIR}/RunTest2.cmake )
 
-IF(USE_GCOV)
+IF(USE_GCOV AND CMAKE_COMPILER_IS_GNUCC)
   MESSAGE("testing coverage using gcc's gcov; try target: coverage")
   INCLUDE(CodeCoverage)
   SETUP_TARGET_FOR_COVERAGE(
 				coverage  # Name for custom target.
-				test2         # Name of the test driver executable that runs the tests.
+				test2-static         # Name of the test driver executable that runs the tests.
 									# NOTE! This should always have a ZERO as exit code
 									# otherwise the coverage generation will not complete.
 				coverage            # Name of output directory.
 			)
-ENDIF(USE_GCOV)
+ENDIF(USE_GCOV AND CMAKE_COMPILER_IS_GNUCC)
 
 
 LINK_DIRECTORIES( ${LINK_DIRECTORIES} "${CMAKE_BINARY_DIR}/src/liboyranos/" )
