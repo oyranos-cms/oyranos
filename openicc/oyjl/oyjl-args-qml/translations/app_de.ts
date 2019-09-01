@@ -6,37 +6,37 @@
     <message>
         <location filename="../qml/About.qml" line="65"/>
         <source>Oyjl Options Renderer</source>
-        <translation type="unfinished"></translation>
+        <translation>Oyjl Optionen Betrachter</translation>
     </message>
     <message>
         <location filename="../qml/About.qml" line="67"/>
         <source>All Rights reserved.</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle Rechte reserviert</translation>
     </message>
     <message>
         <location filename="../qml/About.qml" line="71"/>
         <source>Platform</source>
-        <translation type="unfinished"></translation>
+        <translation>Plattform</translation>
     </message>
     <message>
         <location filename="../qml/About.qml" line="73"/>
         <source>System</source>
-        <translation type="unfinished"></translation>
+        <translation>System</translation>
     </message>
     <message>
         <location filename="../qml/About.qml" line="75"/>
         <source>Qt Version</source>
-        <translation type="unfinished"></translation>
+        <translation>Qt Version</translation>
     </message>
     <message>
         <location filename="../qml/About.qml" line="86"/>
         <source>Launched app for </source>
-        <translation type="unfinished"></translation>
+        <translation>Starte Programm für </translation>
     </message>
     <message>
         <location filename="../qml/About.qml" line="97"/>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>Ja</translation>
     </message>
 </context>
 <context>
@@ -44,23 +44,23 @@
     <message>
         <location filename="../src/app_data.cpp" line="76"/>
         <source>Json is invalid</source>
-        <translation type="unfinished"></translation>
+        <translation>Json is ungültig</translation>
     </message>
     <message>
         <location filename="../src/app_data.cpp" line="85"/>
         <source>finished loading</source>
-        <translation type="unfinished"></translation>
+        <translation>Laden beendet</translation>
     </message>
     <message>
         <location filename="../src/app_data.cpp" line="215"/>
         <location filename="../src/app_data.cpp" line="217"/>
         <source>%1 Version</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 Version</translation>
     </message>
     <message>
         <location filename="../src/app_data.cpp" line="222"/>
         <source>NONE</source>
-        <translation type="unfinished"></translation>
+        <translation>NICHTS</translation>
     </message>
     <message>
         <location filename="../src/app_data.cpp" line="239"/>
@@ -72,35 +72,45 @@
     <name>AppWindow</name>
     <message>
         <location filename="../qml/AppWindow.qml" line="122"/>
-        <location filename="../qml/AppWindow.qml" line="140"/>
+        <location filename="../qml/AppWindow.qml" line="162"/>
         <source>discharging</source>
-        <translation type="unfinished"></translation>
+        <translation>entladend</translation>
     </message>
     <message>
         <location filename="../qml/AppWindow.qml" line="122"/>
         <source>charging</source>
-        <translation type="unfinished"></translation>
+        <translation>aufladend</translation>
     </message>
     <message>
         <location filename="../qml/AppWindow.qml" line="122"/>
         <source>full</source>
-        <translation type="unfinished"></translation>
+        <translation>voll</translation>
     </message>
     <message>
         <location filename="../qml/AppWindow.qml" line="123"/>
-        <location filename="../qml/AppWindow.qml" line="140"/>
+        <location filename="../qml/AppWindow.qml" line="162"/>
         <source>Battery</source>
-        <translation type="unfinished"></translation>
+        <translation>Batterie</translation>
     </message>
     <message>
-        <location filename="../qml/AppWindow.qml" line="140"/>
+        <location filename="../qml/AppWindow.qml" line="142"/>
+        <source>Night</source>
+        <translation>Nacht</translation>
+    </message>
+    <message>
+        <location filename="../qml/AppWindow.qml" line="144"/>
+        <source>Day</source>
+        <translation>Tag</translation>
+    </message>
+    <message>
+        <location filename="../qml/AppWindow.qml" line="162"/>
         <source>not used</source>
-        <translation type="unfinished"></translation>
+        <translation>nicht benutzt</translation>
     </message>
     <message>
-        <location filename="../qml/AppWindow.qml" line="160"/>
+        <location filename="../qml/AppWindow.qml" line="182"/>
         <source>Busy</source>
-        <translation type="unfinished"></translation>
+        <translation>Beschäftigt</translation>
     </message>
 </context>
 <context>
@@ -108,7 +118,7 @@
     <message>
         <location filename="../qml/LSwitch.qml" line="83"/>
         <source>Ok</source>
-        <translation type="unfinished"></translation>
+        <translation>Ja</translation>
     </message>
 </context>
 <context>
@@ -120,14 +130,14 @@
         <location filename="../qml/OptionsList.qml" line="206"/>
         <location filename="../qml/OptionsList.qml" line="243"/>
         <source>selected</source>
-        <translation type="unfinished"></translation>
+        <translation>ausgewählt</translation>
     </message>
     <message>
         <location filename="../qml/OptionsList.qml" line="109"/>
         <location filename="../qml/OptionsList.qml" line="153"/>
         <location filename="../qml/OptionsList.qml" line="192"/>
         <source>new/old</source>
-        <translation type="unfinished"></translation>
+        <translation>alt/neu</translation>
     </message>
 </context>
 <context>
@@ -135,23 +145,23 @@
     <message>
         <location filename="../qml/main.qml" line="38"/>
         <source>Loaded</source>
-        <translation type="unfinished"></translation>
+        <translation>Geladen</translation>
     </message>
     <message>
         <location filename="../qml/main.qml" line="90"/>
         <source>commands enabled</source>
-        <translation type="unfinished"></translation>
+        <translation>Kommandos an</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="436"/>
-        <location filename="../qml/main.qml" line="468"/>
+        <location filename="../qml/main.qml" line="444"/>
+        <location filename="../qml/main.qml" line="477"/>
         <source>Launched app for </source>
-        <translation type="unfinished"></translation>
+        <translation>Starte Programm für </translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="609"/>
+        <location filename="../qml/main.qml" line="618"/>
         <source>Load failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Laden daneben</translation>
     </message>
 </context>
 </TS>
