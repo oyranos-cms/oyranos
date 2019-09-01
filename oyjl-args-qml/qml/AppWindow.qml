@@ -64,6 +64,7 @@ ApplicationWindow {
 
 
     property int theme: Material.System
+    property int prefered_theme: Material.System
     property int accent: Material.Orange
     property color bg: Material.background
     property color fg: Material.foreground
@@ -82,7 +83,7 @@ ApplicationWindow {
     Settings {
         objectName: "Settings"
         property alias app_debug: mainWindow.app_debug
-        property alias theme: mainWindow.theme
+        property alias prefered_theme: mainWindow.prefered_theme
         property alias accent: mainWindow.accent
     }
 
@@ -100,8 +101,7 @@ ApplicationWindow {
 
     // DEBUG
     property int app_debug: 0
-    onApp_debugChanged:
-        appData.setDebug( app_debug )
+    onApp_debugChanged: appData.setDebug( app_debug )
 
     Screen.onPrimaryOrientationChanged: {
         if(app_debug)
@@ -123,6 +123,28 @@ ApplicationWindow {
         statusText = qsTr("Battery") + ": " + qsTr(battery)
     }
 
+    onPrefered_themeChanged: checkTheme()
+    function checkTheme() {
+        if(prefered_theme === Material.System) {
+            if(isNight)
+                theme = Material.Dark
+            else
+                theme = Material.Light
+        }
+        else
+            theme = prefered_theme
+    }
+
+    signal nightInfo(var night)
+    property bool isNight: false
+    onNightInfo: {
+        if(night)
+            statusText = qsTr("Night")
+        else
+            statusText = qsTr("Day")
+        isNight = night
+        checkTheme()
+    }
 
     property alias appData: appData
     AppData {
