@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: openicc\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2019-01-22 09:07+0100\n"
+"POT-Creation-Date: 2019-09-01 08:05+0200\n"
 "PO-Revision-Date: 2006-06-29 19:31+0200\n"
 "Last-Translator: Pascal LACROIX <lacroixpascal at vfemail.net>\n"
 "Language-Team: <fr@li.org>\n"
@@ -38,37 +38,37 @@ msgstr ""
 msgid "Camera"
 msgstr ""
 
-#: libopenicc/openicc_db.c:60 libopenicc/openicc_db.c:180
-#: libopenicc/openicc_db.c:434
+#: libopenicc/openicc_db.c:60 libopenicc/openicc_db.c:190
+#: libopenicc/openicc_db.c:444
 #, fuzzy
 msgid "Could not alloc memory"
 msgstr "Ouvrir Profil"
 
-#: libopenicc/openicc_db.c:412
+#: libopenicc/openicc_db.c:422
 #, fuzzy
 msgid "Could not create a intermediate db object for"
 msgstr "Ouvrir Profil"
 
-#: libopenicc/openicc_db.c:500
+#: libopenicc/openicc_db.c:510
 #, fuzzy
 msgid "Could not create root JSON node for"
 msgstr "Ouvrir Profil"
 
-#: libopenicc/openicc_db.c:116 libopenicc/openicc_db.c:148
+#: libopenicc/openicc_db.c:125 libopenicc/openicc_db.c:158
 #, fuzzy
 msgid "Could not find config"
 msgstr "Ouvrir Profil"
 
-#: libopenicc/openicc_db.c:493
+#: libopenicc/openicc_db.c:503
 #, fuzzy
 msgid "Could not obtain JSON node for"
 msgstr "Ouvrir Profil"
 
-#: libopenicc/openicc_db.c:451
+#: libopenicc/openicc_db.c:461
 msgid "Could not set JSON string for"
 msgstr ""
 
-#: libopenicc/openicc_db.c:229
+#: libopenicc/openicc_db.c:239
 #, fuzzy
 msgid "Could not setup db objetc"
 msgstr "Ouvrir Profil"
@@ -153,6 +153,10 @@ msgstr "Oyranos Préférences"
 msgid "List all key/values pairs"
 msgstr ""
 
+#: tools/openicc_device.c:120
+msgid "Local System"
+msgstr ""
+
 #: tools/openicc_device.c:118
 msgid "Long Format"
 msgstr ""
@@ -174,11 +178,11 @@ msgstr "Écran Profil"
 msgid "NUMBER"
 msgstr ""
 
-#: libopenicc/openicc_db.c:476
+#: libopenicc/openicc_db.c:486
 msgid "No JSON content obtained for"
 msgstr ""
 
-#: libopenicc/openicc_db.c:485
+#: libopenicc/openicc_db.c:495
 msgid "No JSON obtained for"
 msgstr ""
 
@@ -191,7 +195,7 @@ msgstr "ICC Examin Version"
 msgid "OpenICC devices handling tool"
 msgstr ""
 
-#: libopenicc/openicc_db.c:153 tools/openicc_device.c:188
+#: libopenicc/openicc_db.c:163 tools/openicc_device.c:188
 msgid "Paths:"
 msgstr ""
 
@@ -207,10 +211,6 @@ msgstr ""
 #, fuzzy
 msgid "Scanner"
 msgstr "Oyranos Préférences"
-
-#: tools/openicc_device.c:120
-msgid "Scope"
-msgstr ""
 
 #: tools/openicc_device.c:134
 msgid "Show DB Path"
@@ -250,7 +250,7 @@ msgstr "Model:"
 msgid "Write DB File"
 msgstr "Ouvrir Profil"
 
-#: libopenicc/openicc_db.c:469
+#: libopenicc/openicc_db.c:479
 msgid "Writing failed for"
 msgstr ""
 

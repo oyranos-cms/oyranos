@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: openicc\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2019-01-22 09:07+0100\n"
+"POT-Creation-Date: 2019-09-01 08:05+0200\n"
 "PO-Revision-Date: 2012-10-19 15:10+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -38,37 +38,37 @@ msgstr ""
 msgid "Camera"
 msgstr "CameraRaw"
 
-#: libopenicc/openicc_db.c:60 libopenicc/openicc_db.c:180
-#: libopenicc/openicc_db.c:434
+#: libopenicc/openicc_db.c:60 libopenicc/openicc_db.c:190
+#: libopenicc/openicc_db.c:444
 #, fuzzy
 msgid "Could not alloc memory"
 msgstr "Nelze alokovat paměť pro:"
 
-#: libopenicc/openicc_db.c:412
+#: libopenicc/openicc_db.c:422
 #, fuzzy
 msgid "Could not create a intermediate db object for"
 msgstr "Nelze rozpoznat zařízení"
 
-#: libopenicc/openicc_db.c:500
+#: libopenicc/openicc_db.c:510
 #, fuzzy
 msgid "Could not create root JSON node for"
 msgstr "Nelze otevřít meta modul API"
 
-#: libopenicc/openicc_db.c:116 libopenicc/openicc_db.c:148
+#: libopenicc/openicc_db.c:125 libopenicc/openicc_db.c:158
 #, fuzzy
 msgid "Could not find config"
 msgstr "Nelze otevřít profil"
 
-#: libopenicc/openicc_db.c:493
+#: libopenicc/openicc_db.c:503
 #, fuzzy
 msgid "Could not obtain JSON node for"
 msgstr "Nelze otevřít meta modul API"
 
-#: libopenicc/openicc_db.c:451
+#: libopenicc/openicc_db.c:461
 msgid "Could not set JSON string for"
 msgstr ""
 
-#: libopenicc/openicc_db.c:229
+#: libopenicc/openicc_db.c:239
 #, fuzzy
 msgid "Could not setup db objetc"
 msgstr "Nelze rozpoznat zařízení"
@@ -155,6 +155,10 @@ msgstr "Vypsat zařízení:"
 msgid "List all key/values pairs"
 msgstr "nalezené key/value dvojice:"
 
+#: tools/openicc_device.c:120
+msgid "Local System"
+msgstr ""
+
 #: tools/openicc_device.c:118
 msgid "Long Format"
 msgstr ""
@@ -175,11 +179,11 @@ msgstr "Monitor"
 msgid "NUMBER"
 msgstr ""
 
-#: libopenicc/openicc_db.c:476
+#: libopenicc/openicc_db.c:486
 msgid "No JSON content obtained for"
 msgstr ""
 
-#: libopenicc/openicc_db.c:485
+#: libopenicc/openicc_db.c:495
 msgid "No JSON obtained for"
 msgstr ""
 
@@ -192,7 +196,7 @@ msgstr "ICC Examin Verze"
 msgid "OpenICC devices handling tool"
 msgstr ""
 
-#: libopenicc/openicc_db.c:153 tools/openicc_device.c:188
+#: libopenicc/openicc_db.c:163 tools/openicc_device.c:188
 #, fuzzy
 msgid "Paths:"
 msgstr "Cesty"
@@ -208,10 +212,6 @@ msgstr "Tiskárna"
 #: tools/openicc_device.c:102
 msgid "Scanner"
 msgstr "Skener"
-
-#: tools/openicc_device.c:120
-msgid "Scope"
-msgstr ""
 
 #: tools/openicc_device.c:134
 msgid "Show DB Path"
@@ -253,7 +253,7 @@ msgstr "Zapsat"
 msgid "Write DB File"
 msgstr "zapsat do souboru"
 
-#: libopenicc/openicc_db.c:469
+#: libopenicc/openicc_db.c:479
 msgid "Writing failed for"
 msgstr ""
 

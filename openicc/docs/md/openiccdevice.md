@@ -50,7 +50,7 @@ Manipulation of OpenICC color management data base device entries.
 
 <table style='width:100%'>
  <tr><td style='padding\-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-p</strong>|<strong>--show-path</strong></td> <td>Show Path</td> </tr>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-s</strong>|<strong>--scope</strong></td> <td>System</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-s</strong>|<strong>--system</strong></td> <td>Local System</td> </tr>
 </table>
 
 ### General options

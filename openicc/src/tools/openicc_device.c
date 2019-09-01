@@ -117,7 +117,7 @@ int main(int argc, char ** argv)
     {"oiwi", 0,    "l", "list-devices",  NULL, _("List Devices"),_("List Devices"),   NULL, NULL,    oyjlOPTIONTYPE_NONE,     {},      oyjlINT,   {.i=&list_devices} },
     {"oiwi", 0,    "n", "long",          NULL, _("Long Format"), _("List all key/values pairs"),  NULL, NULL, oyjlOPTIONTYPE_NONE, {},oyjlINT, {.i=&list_long} },
     {"oiwi", 0,    "p", "show-path",     NULL, _("Show Path"),   _("Show Path"),      NULL, NULL,    oyjlOPTIONTYPE_NONE,     {},      oyjlINT,   {.i=&show_path} },
-    {"oiwi", 0,    "s", "scope",         NULL, _("Scope"),       _("System"),         NULL, NULL,    oyjlOPTIONTYPE_NONE,     {},      oyjlINT,   {.i=(int*)&scope} },
+    {"oiwi", 0,    "s", "system",        NULL, _("System"),      _("Local System"),   NULL, NULL,    oyjlOPTIONTYPE_NONE,     {},      oyjlINT,   {.i=(int*)&scope} },
     {"oiwi", 0,    "v", "verbose",       NULL, _("Verbose"),     _("verbose"),        NULL, NULL,    oyjlOPTIONTYPE_NONE,     {},      oyjlINT,   {.i=&verbose} },
     /* default option template -X|--export */
     {"oiwi", 0,    "X", "export",        NULL, NULL,             NULL,                NULL, NULL,    oyjlOPTIONTYPE_CHOICE,   {},      oyjlSTRING,{.s=&export} },
@@ -172,7 +172,7 @@ int main(int argc, char ** argv)
       char **paths;
 
       if ((npaths = xdg_bds(&er, &paths, xdg_conf, xdg_write, 
-                            (scope == ucmm_local_system) ? xdg_local : xdg_user,
+                            (scope == ucmm_user) ? xdg_user : xdg_local,
                             config_file)) == 0)
       {
         return ucmm_open_config;

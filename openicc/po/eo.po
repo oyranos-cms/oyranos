@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eo\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2019-01-22 09:07+0100\n"
+"POT-Creation-Date: 2019-09-01 08:05+0200\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  <eo@li.org>\n"
@@ -41,32 +41,32 @@ msgstr ""
 msgid "Camera"
 msgstr ""
 
-#: libopenicc/openicc_db.c:60 libopenicc/openicc_db.c:180
-#: libopenicc/openicc_db.c:434
+#: libopenicc/openicc_db.c:60 libopenicc/openicc_db.c:190
+#: libopenicc/openicc_db.c:444
 msgid "Could not alloc memory"
 msgstr ""
 
-#: libopenicc/openicc_db.c:412
+#: libopenicc/openicc_db.c:422
 msgid "Could not create a intermediate db object for"
 msgstr ""
 
-#: libopenicc/openicc_db.c:500
+#: libopenicc/openicc_db.c:510
 msgid "Could not create root JSON node for"
 msgstr ""
 
-#: libopenicc/openicc_db.c:116 libopenicc/openicc_db.c:148
+#: libopenicc/openicc_db.c:125 libopenicc/openicc_db.c:158
 msgid "Could not find config"
 msgstr ""
 
-#: libopenicc/openicc_db.c:493
+#: libopenicc/openicc_db.c:503
 msgid "Could not obtain JSON node for"
 msgstr ""
 
-#: libopenicc/openicc_db.c:451
+#: libopenicc/openicc_db.c:461
 msgid "Could not set JSON string for"
 msgstr ""
 
-#: libopenicc/openicc_db.c:229
+#: libopenicc/openicc_db.c:239
 msgid "Could not setup db objetc"
 msgstr ""
 
@@ -148,6 +148,10 @@ msgstr "kolora"
 msgid "List all key/values pairs"
 msgstr ""
 
+#: tools/openicc_device.c:120
+msgid "Local System"
+msgstr ""
+
 #: tools/openicc_device.c:118
 msgid "Long Format"
 msgstr ""
@@ -168,11 +172,11 @@ msgstr ""
 msgid "NUMBER"
 msgstr ""
 
-#: libopenicc/openicc_db.c:476
+#: libopenicc/openicc_db.c:486
 msgid "No JSON content obtained for"
 msgstr ""
 
-#: libopenicc/openicc_db.c:485
+#: libopenicc/openicc_db.c:495
 msgid "No JSON obtained for"
 msgstr ""
 
@@ -184,7 +188,7 @@ msgstr ""
 msgid "OpenICC devices handling tool"
 msgstr ""
 
-#: libopenicc/openicc_db.c:153 tools/openicc_device.c:188
+#: libopenicc/openicc_db.c:163 tools/openicc_device.c:188
 msgid "Paths:"
 msgstr ""
 
@@ -199,10 +203,6 @@ msgstr "verda"
 
 #: tools/openicc_device.c:102
 msgid "Scanner"
-msgstr ""
-
-#: tools/openicc_device.c:120
-msgid "Scope"
 msgstr ""
 
 #: tools/openicc_device.c:134
@@ -241,7 +241,7 @@ msgstr ""
 msgid "Write DB File"
 msgstr ""
 
-#: libopenicc/openicc_db.c:469
+#: libopenicc/openicc_db.c:479
 msgid "Writing failed for"
 msgstr ""
 

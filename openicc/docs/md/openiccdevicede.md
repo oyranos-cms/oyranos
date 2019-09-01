@@ -50,7 +50,7 @@ Bearbeitung von Geräteeinträgen in der Datenbank für OpenICC Farbmanagement
 
 <table style='width:100%'>
  <tr><td style='padding\-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-p</strong>|<strong>--show-path</strong></td> <td>Zeige Pfad</td> </tr>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-s</strong>|<strong>--scope</strong></td> <td>System</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-s</strong>|<strong>--system</strong></td> <td>Local System</td> </tr>
 </table>
 
 ### Allgemeine Optionen
