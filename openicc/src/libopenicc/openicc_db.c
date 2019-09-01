@@ -97,7 +97,16 @@ const char * openiccScopeGetString   ( openiccSCOPE_e      scope )
 
   return txt;
 }
+/** \addtogroup path_names
+ *  @{
+ */
 
+/**
+ *  @brief    obtain path string of OpenICC DB
+ *
+ *  @param[in]     scope               specify to intended user or system scope
+ *  @return                            file path string
+ */
 char *        openiccDBGetJSONFile   ( openiccSCOPE_e      scope )
 {
   const char * config_file = OPENICC_DB_PREFIX OPENICC_SLASH OPENICC_DB;
@@ -122,6 +131,7 @@ char *        openiccDBGetJSONFile   ( openiccSCOPE_e      scope )
 
   return db_file;
 }
+/*  @} *//* path_names */
 
 /**
  *  @internal
@@ -388,9 +398,9 @@ const char * openiccGetShortKeyFromFullKeyPath( const char * key, char ** temp )
 /**
  *  @brief    set a key name to a value
  *
- *  @param[in]     keyName             a key name string
+ *  @param[in]     keyName             a key name string; e.g. "org/freedesktop/openicc/foo"
  *  @param[in]     scope               specify to intended user or system scope
- *  @param[in]     value               a value string
+ *  @param[out]    value               a value string; e.g. "bar"
  *  @param[in]     comment             a comment string;
  *                                     The keyName will be deleted with
  *                                     value=NULL and comment="delete".
