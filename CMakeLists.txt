@@ -91,6 +91,8 @@ IF(UNIX)
     SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${GLOBAL_PROFILE_SEARCH_PATH}")
     # coverage testing
     IF(USE_GCOV AND CMAKE_COMPILER_IS_GNUCC)
+      SET(ENABLE_SHARED_LIBS_${PROJECT_UP_NAME} OFF)
+      MESSAGE( "-- ENABLE_SHARED_LIBS_${PROJECT_UP_NAME}: ${ENABLE_SHARED_LIBS_${PROJECT_UP_NAME}} (USE_GCOV + GNUCC)" )
       SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -O0 -fprofile-arcs -ftest-coverage")
       SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -fprofile-arcs -ftest-coverage")
       SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -g -O0 -fprofile-arcs -ftest-coverage")
