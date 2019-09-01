@@ -3,7 +3,7 @@
  *  libOpenICC - OpenICC Colour Management Configuration
  *
  *  @par Copyright:
- *            2015-2016 (C) Kai-Uwe Behrmann
+ *            2015-2019 (C) Kai-Uwe Behrmann
  *
  *  @brief    OpenICC Colour Management configuration helpers
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
@@ -14,6 +14,8 @@
 
 #ifndef __OPENICC_DB_H__
 #define __OPENICC_DB_H__
+
+#include "openicc_config.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -54,6 +56,9 @@ char*    openiccDBSearchEmptyKeyname ( const char        * keyParentName,
                                        openiccSCOPE_e      scope );
 int      openiccDBEraseKey_          ( const char        * key_name,
                                        openiccSCOPE_e      scope );
+
+/* DB raw access */
+char *        openiccDBGetJSONFile   ( openiccSCOPE_e      scope );
 
 /** 
  *  @} *//*OpenICC_config
