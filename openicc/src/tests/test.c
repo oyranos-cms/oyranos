@@ -196,7 +196,7 @@ oyjlTESTRESULT_e testIO ()
   fprintf(stdout, "\n" );
 
   int error = 0;
-  int odo;
+  int odo = 0;
 
   char * t1 = NULL, *t2 = NULL, *t3 = NULL;
   const char * file_name = "/usr/share/color/icc/OpenICC/sRGB.icc";
@@ -496,7 +496,8 @@ oyjlTESTRESULT_e testConfig()
     "oyjlTreeGetValue(root,OYJL_CREATE_NEW,\"%s\")", base_key );
   }
   oyjlTreeFree( root ); root = NULL;
-  fprintf(zout, "%s\n", json );
+  if(verbose)
+    fprintf(zout, "%s\n", json );
   free_m_(json);
 
 
@@ -564,7 +565,8 @@ oyjlTESTRESULT_e testConfig()
     { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "openiccConfig_GetString()                      " );
     }
-    fprintf(zout, "\t%s:\t\"%s\"\n", (key_names && key_names[i])?key_names[i]:"????", t?t:"????" );
+    if(verbose)
+      fprintf(zout, "\t%s:\t\"%s\"\n", (key_names && key_names[i])?key_names[i]:"????", t?t:"????" );
     myDeAllocFunc( key_names[i] );
     if(values && values[i]) myDeAllocFunc(values[i]);
   }
@@ -599,7 +601,8 @@ oyjlTESTRESULT_e testConfig()
     "openiccConfig_GetKeyNames(\"org\",one level) 1 == %d", i );
   }
   i = 0;
-  fprintf(zout, "\t%s\n", (key_names && key_names[i])?key_names[i]:"????" );
+  if(verbose)
+    fprintf(zout, "\t%s\n", (key_names && key_names[i])?key_names[i]:"????" );
   while(key_names && key_names[i]) myDeAllocFunc( key_names[i++] );
   if( key_names ) { myDeAllocFunc(key_names); key_names = NULL; }
 
@@ -649,7 +652,8 @@ oyjlTESTRESULT_e testDeviceJSON ()
   free_m_(text);
   openiccConfig_SetInfo ( config, file_name );
   devices_n = openiccConfig_DevicesCount(config, NULL);
-  fprintf( zout, "Found %d devices.\n", devices_n );
+  if(verbose)
+    fprintf( zout, "Found %d devices.\n", devices_n );
   if( devices_n )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "openiccConfig_FromMem(\"%s\") %d ", file_name, devices_n );
@@ -666,21 +670,23 @@ oyjlTESTRESULT_e testDeviceJSON ()
     const char * d = openiccConfig_DeviceGet( config, NULL, i,
                                                &keys, &values, malloc,free );
 
-    if(i && *openicc_debug)
+    if(i && verbose)
       fprintf( zout,"\n");
 
     n = 0; if(keys) while(keys[n]) ++n;
-    fprintf( zout, "[%d] device class:\"%s\" with %d key/value pairs\n", i, d, n);
+    if(verbose)
+      fprintf( zout, "[%d] device class:\"%s\" with %d key/value pairs\n", i, d, n);
     for( j = 0; j < n; ++j )
     {
-      if(*openicc_debug)
-      fprintf(zout, "%s:\"%s\"\n", keys[j], values[j]);
+      if(verbose)
+        fprintf(zout, "%s:\"%s\"\n", keys[j], values[j]);
       free_m_(keys[j]);
       free_m_(values[j]);
     }
     free_m_(keys); free_m_(values);
   }
-  fprintf(zout, "\n" );
+  if(verbose)
+    fprintf(zout, "\n" );
 
   /* get a single JSON device */
   i = 2; /* select the second one, we start counting from zero */
@@ -769,11 +775,12 @@ oyjlTESTRESULT_e testXDG()
     return 1;
   }
 
-  if(*openicc_debug)
+  if(verbose)
+  {
     fprintf( zout, "%s\n", _("Paths:") );
-  for(i=0; i < npaths; ++i)
-    if(*openicc_debug)
+    for(i=0; i < npaths; ++i)
       fprintf( zout, "%s\n", paths[i]);
+  }
 
   xdg_free(paths, npaths);
 
@@ -793,11 +800,12 @@ oyjlTESTRESULT_e testXDG()
     ERRc_S("%s %d", _("Could not find config"), scope );
   }
 
-  if(*openicc_debug)
+  if(verbose)
+  {
     fprintf( zout, "%s\n", _("Paths:") );
-  for(i=0; i < npaths; ++i)
-    if(*openicc_debug)
+    for(i=0; i < npaths; ++i)
       fprintf( zout, "%s\n", paths[i]);
+  }
 
   xdg_free(paths, npaths);
 
@@ -927,9 +935,10 @@ oyjlTESTRESULT_e testODB()
     error = openiccDB_GetString( db, key_names[i], &t );
     if(error)
     { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "openiccConfig_GetString()                      " );
+    "openiccDB_GetString()                      " );
     }
-    fprintf(zout, "\t%s:\t\"%s\"\n", key_names[i]?key_names[i]:"????", t?t:"" );
+    if(verbose)
+      fprintf(zout, "\t%s:\t\"%s\"\n", key_names[i]?key_names[i]:"????", t?t:"" );
     myDeAllocFunc( key_names[i] );
   }
 
@@ -966,6 +975,18 @@ oyjlTESTRESULT_e testODB()
   { PRINT_SUB( oyjlTESTRESULT_XFAIL,
     "openiccDBSetString(%s)        %d", gkey, error );
   }
+
+  const char * value = NULL;
+  db = openiccDB_NewFrom( key, openiccSCOPE_USER_SYS );
+  error = openiccDB_GetString( db, gkey, &value );
+  if(error == 0 && value && strcmp(value, "my_test_value") == 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "openiccDB_GetString(%s)        %d", gkey, error, value );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "openiccDB_GetString(%s)        %d", gkey, error );
+  }
+  openiccDB_Release( &db );
 
   error = openiccDBSetString( gkey, openiccSCOPE_USER, NULL, "delete" );
   temp2 = openiccDBSearchEmptyKeyname( key, openiccSCOPE_USER );
