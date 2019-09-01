@@ -71,8 +71,8 @@ int main(int argc, char ** argv)
   /* declare option groups, for better syntax checking and UI groups */
   oyjlOptionGroup_s groups[] = {
   /* type,   flags, name,      description,          help, mandatory, optional, detail */
-    {"oiwg", 0,     _("Mode"), _("Actual mode"),     NULL, "i",       "ov",     "io" },
-    {"oiwg", 0,     _("Misc"), _("General options"), NULL, "",        "",       "Xvh" },
+    {"oiwg", 0,     _("Mode"), _("Actual mode"),     NULL, "i",       "o,v",    "i,o" },
+    {"oiwg", 0,     _("Misc"), _("General options"), NULL, "",        "",       "X,v,h" },
     {"",0,0,0,0,0,0,0}
   };
 
@@ -82,7 +82,7 @@ int main(int argc, char ** argv)
   oyjlUiHeaderSection_s sections[] = {
     /* type, nick,            label, name,      , description  */
     {"oihs", "version",       NULL,  "1.0",       NULL},
-    {"oihs", "documentation", NULL,  "",          _("The example tool demontrates the usage of the libOpenIcc config and options API's.")},
+    {"oihs", "documentation", NULL,  "",          _("The example tool demonstrates the usage of the libOpenIcc config and options API's.")},
     {"",0,0,0,0}};
 
   oyjlUi_s * ui = oyjlUi_Create( argc, (const char**) argv,
