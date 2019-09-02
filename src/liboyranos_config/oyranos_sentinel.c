@@ -97,6 +97,8 @@ void     oyFinish_                   ( int                 flags )
     oyAlphaFinish_( 0 );
   if(oy_debug_objects >= 0)
     oyObjectTreePrint( 0x01 | 0x02 );
+
+  oyLibCoreRelease();
 }
 
 #include "oyProfile_s_.h"

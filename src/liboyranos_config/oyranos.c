@@ -1156,7 +1156,13 @@ char *       oyGetInstallPath        ( oyPATH_TYPE_e       type,
 
 /** @} *//* i18n */
 
+extern oyOption_t_ * oy_option_;
+void oyLibConfigRelease              ( )
+{
+  oyFinish_(0);
 
+  oyFree_m_(oy_option_);
+}
 
 /** @} *//* misc */
 

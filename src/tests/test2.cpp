@@ -59,9 +59,9 @@
   TEST_RUN( testCache, "Cache", 1 ); \
   TEST_RUN( testPaths, "Paths", 1 );
 
-
+#include "oyranos.h"
 #define OYJL_TEST_MAIN_SETUP  printf("\n    Oyranos test2\n");
-#define OYJL_TEST_MAIN_FINISH printf("\n    Oyranos test2 finished\n\n");
+#define OYJL_TEST_MAIN_FINISH printf("\n    Oyranos test2 finished\n\n"); oyLibConfigRelease();
 #include <oyjl_test_main.h>
 
 #include <cmath>

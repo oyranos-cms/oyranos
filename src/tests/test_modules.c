@@ -73,6 +73,7 @@ int main( int argc OY_UNUSED, char ** argv OY_UNUSED)
               else
                 oyMessageFunc_p(oyMSG_ERROR,NULL,"[%d][%d]: no API info obtained from \"%s\"", i,j, files2[j]);
             }
+            oyjlStringListRelease( &files2, files2_n, free );
 
             if(!files2_n)
             {
@@ -100,6 +101,7 @@ int main( int argc OY_UNUSED, char ** argv OY_UNUSED)
       error = system("ls -R");
       oyMessageFunc_p(oyMSG_ERROR,NULL,"no  meta module (OY_MODULE_PATH=%s)", t?t:"");
     }
+    oyjlStringListRelease( &files, files_n, free );
   }
 
   return error;

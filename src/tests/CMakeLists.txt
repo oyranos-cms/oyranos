@@ -10,7 +10,7 @@ IF(ENABLE_SHARED_LIBS_${PROJECT_UP_NAME})
   ADD_CUSTOM_TARGET(test-core
 	COMMAND ${MEMCHECK} "${CMAKE_CURRENT_BINARY_DIR}/test_core"
         DEPENDS test_core
-        COMMENT "Test basic linking against liboyranos_core." VERBATIM )
+        COMMENT "Test basic linking against libOyranosCore." VERBATIM )
   SET( TEST2_DEPS ${TEST2_DEPS} test-core )
 ENDIF(ENABLE_SHARED_LIBS_${PROJECT_UP_NAME})
 
@@ -20,7 +20,7 @@ IF(ENABLE_STATIC_LIBS_${PROJECT_UP_NAME})
   ADD_CUSTOM_TARGET(test-core-static
 	COMMAND ${MEMCHECK} "${CMAKE_CURRENT_BINARY_DIR}/test_core-static"
         DEPENDS test_core-static
-        COMMENT "Test basic linking against liboyranos_core." VERBATIM )
+        COMMENT "Test basic linking against liboyranos_core-static." VERBATIM )
   SET( TEST2_DEPS ${TEST2_DEPS} test-core-static )
 ENDIF(ENABLE_STATIC_LIBS_${PROJECT_UP_NAME})
 
@@ -32,7 +32,7 @@ IF(ENABLE_SHARED_LIBS_${PROJECT_UP_NAME})
   ADD_CUSTOM_TARGET(test-object
 	COMMAND ${MEMCHECK} "${CMAKE_CURRENT_BINARY_DIR}/test_object"
         DEPENDS test_object test_core
-        COMMENT "Test basic linking against liboyranos_object." VERBATIM )
+        COMMENT "Test basic linking against libOyranosObject." VERBATIM )
   SET( TEST2_DEPS ${TEST2_DEPS} test-object )
 ENDIF(ENABLE_SHARED_LIBS_${PROJECT_UP_NAME})
 
@@ -42,7 +42,7 @@ IF(ENABLE_STATIC_LIBS_${PROJECT_UP_NAME})
   ADD_CUSTOM_TARGET(test-object-static
 	COMMAND ${MEMCHECK} "${CMAKE_CURRENT_BINARY_DIR}/test_object-static"
         DEPENDS test_object-static test-core-static
-        COMMENT "Test basic linking against liboyranos_object." VERBATIM )
+        COMMENT "Test basic linking against liboyranos_object-static." VERBATIM )
   SET( TEST2_DEPS ${TEST2_DEPS} test-object-static )
 ENDIF(ENABLE_STATIC_LIBS_${PROJECT_UP_NAME})
 
@@ -54,7 +54,7 @@ IF(ENABLE_SHARED_LIBS_${PROJECT_UP_NAME})
   ADD_CUSTOM_TARGET(test-modules
 	COMMAND ${MEMCHECK} "${CMAKE_CURRENT_BINARY_DIR}/test_modules"
         DEPENDS test_modules test_object
-        COMMENT "Test basic linking against liboyranos_modules." VERBATIM )
+        COMMENT "Test basic linking against libOyranosModules." VERBATIM )
   SET( TEST2_DEPS ${TEST2_DEPS} test_modules )
 ENDIF(ENABLE_SHARED_LIBS_${PROJECT_UP_NAME})
 
@@ -66,7 +66,7 @@ IF(ENABLE_SHARED_LIBS_${PROJECT_UP_NAME})
   ADD_CUSTOM_TARGET(test-config
 	COMMAND ${MEMCHECK} "${CMAKE_CURRENT_BINARY_DIR}/test_config"
         DEPENDS test_config test_modules
-        COMMENT "Test basic linking against liboyranos_config." VERBATIM )
+        COMMENT "Test basic linking against libOyranosConfig." VERBATIM )
   SET( TEST2_DEPS ${TEST2_DEPS} test_config )
 ENDIF(ENABLE_SHARED_LIBS_${PROJECT_UP_NAME})
 
