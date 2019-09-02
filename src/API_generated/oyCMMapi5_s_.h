@@ -73,6 +73,7 @@ oyObject_s           oy_;            /**< Features name and hash. Do not change 
   oyCMMapi_s     * next;               /**< the next CMM api */
 
   oyCMMInit_f      oyCMMInit;          /**< */
+  oyCMMReset_f     oyCMMReset;         /**< */
   oyCMMMessageFuncSet_f oyCMMMessageFuncSet; /**< */
 
   /** e.g. "sw/oyranos.org/color.tonemap.imaging/hydra.shiva.CPU.GPU" or "sw/oyranos.org/color/icc.lcms.CPU",

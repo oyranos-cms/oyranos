@@ -49,6 +49,15 @@ typedef struct oyCMMapi_s oyCMMapi_s;
 typedef int      (*oyCMMInit_f)      ( oyStruct_s        * filter );
 
 /**
+ *  typedef  oyCMMReset_f
+ *  @brief   optional CMM reset function
+ *  @ingroup module_api
+ *  @see oyCMMInit_f
+ *  @memberof oyCMMapi_s
+ */
+typedef int      (*oyCMMReset_f)     ( oyStruct_s        * filter );
+
+/**
  *  typedef oyCMMMessageFuncSet_f
  *  @brief   optionaly sets a CMM message function
  *  @ingroup module_api
