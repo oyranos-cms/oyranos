@@ -140,6 +140,7 @@ void               oyStringListRelease(char            *** l,
 char*              oyStringCopy      ( const char        * text,
                                        oyAlloc_f           allocateFunc );
 
+void               oyLibCoreRelease  ( );
 
 #ifdef __cplusplus
 } /* extern "C" */

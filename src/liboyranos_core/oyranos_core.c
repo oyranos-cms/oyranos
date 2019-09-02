@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2004-2018 (C) Kai-Uwe Behrmann
+ *            2004-2019 (C) Kai-Uwe Behrmann
  *
  *  @brief    public Oyranos API's
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
@@ -46,7 +46,7 @@
 #include "oyArray2d_s_.h"
 #include "oyRectangle_s_.h"
 
-static oyStruct_RegisterStaticMessageFunc_f * oy_static_msg_funcs_ = 0;
+static oyStruct_RegisterStaticMessageFunc_f * oy_static_msg_funcs_ = NULL;
 static int oy_msg_func_n_ = 0;
 
 /** Function oyStruct_RegisterStaticMessageFunc
@@ -100,7 +100,18 @@ int oyStruct_RegisterStaticMessageFunc (
 
   return error;
 }
-                                       
+
+void               oyLibCoreRelease  ( )
+{
+  if(oy_static_msg_funcs_)
+    oyDeAllocateFunc_(oy_static_msg_funcs_);
+  oy_static_msg_funcs_ = NULL;
+
+  oyI18Nreset_();
+
+  oyjlLibRelease();
+}
+
 /** Function oyStruct_GetInfo
  *  @memberof oyStruct_s
  *  @brief   get a additional string from a object

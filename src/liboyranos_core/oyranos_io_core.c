@@ -1889,6 +1889,7 @@ char**  oyLibPathsGet_( int             * count,
               oyFree_m_( fp );
             oyFree_m_( full_name );
           }
+          oyStringListRelease_( &tmp, tmp_n, oyDeAllocateFunc_ );
           tmp_neu = oyStringListAppend_( (const char**)paths, n,
                                          (const char**)full_paths, full_paths_n,
                                          &tmp_neu_n, oyAllocateFunc_ );

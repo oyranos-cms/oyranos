@@ -15,6 +15,8 @@ int main( int argc OY_UNUSED, char ** argv OY_UNUSED)
   oyOption_SetFromDouble( o, 0.25, 2, 0 );
   oyOption_Release( &o );
 
+  oyLibCoreRelease();
+
   return 0;
 }
 
