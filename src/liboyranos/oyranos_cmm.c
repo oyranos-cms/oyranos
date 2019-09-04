@@ -204,7 +204,7 @@ int oyDeviceCMMInit                  ( oyStruct_s        * filter,
                                        const char        * rank_file_pattern,
                                        int                 rank_optional )
 {
-  int error = !filter || !rank_file_pattern;
+  int error = !(filter && filter->type_ == oyOBJECT_CMM_API8_S) || !rank_file_pattern;
   char ** rank_name = NULL;
   const char * rfilter = rank_file_pattern;
   oyCMMapi8_s_ * s = (oyCMMapi8_s_*) filter;
@@ -278,7 +278,7 @@ int oyDeviceCMMInit                  ( oyStruct_s        * filter,
  */
 int oyDeviceCMMReset                 ( oyStruct_s        * filter )
 {
-  int error = !filter;
+  int error = !(filter && filter->type_ == oyOBJECT_CMM_API8_S);
   oyCMMapi8_s_ * s = (oyCMMapi8_s_*) filter;
 
   if(!error)
