@@ -58,6 +58,7 @@ int              oyCMMlibMatchesCMM  ( const char        * lib_name,
 int oyDeviceCMMInit                  ( oyStruct_s        * filter,
                                        const char        * rank_file_pattern,
                                        int                 rank_optional );
+int oyDeviceCMMReset                 ( oyStruct_s        * filter );
 
 /*oyPointer          oyCMMallocateFunc ( size_t              size );
 void               oyCMMdeallocateFunc(oyPointer           mem );*/

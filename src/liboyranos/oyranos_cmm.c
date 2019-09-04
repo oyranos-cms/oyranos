@@ -267,6 +267,26 @@ int oyDeviceCMMInit                  ( oyStruct_s        * filter,
   return error;
 }
 
+/** @brief   reset Rank Map from disk
+ *
+ *  @param[in]     filter              the oyCMMapi8_s device config filter
+ *  @return                            error
+ *
+ *  @version Oyranos: 0.9.7
+ *  @date    2019/09/03
+ *  @since   2019/09/03 (Oyranos: 0.9.7)
+ */
+int oyDeviceCMMReset                 ( oyStruct_s        * filter )
+{
+  int error = !filter;
+  oyCMMapi8_s_ * s = (oyCMMapi8_s_*) filter;
+
+  if(!error)
+    oyRankMapRelease( &s->rank_map, oyDeAllocateFunc_ );
+
+  return error;
+}
+
 /**
  *  This function implements oyCMMinfoGetText_f for modules shipped with
  *  Oyranos.
