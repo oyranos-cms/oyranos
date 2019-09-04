@@ -266,5 +266,39 @@ OYAPI void  OYEXPORT
   ((oyCMMinfo_s_*)info)->init = init;
 }
 
+/** Function  oyCMMinfo_GetResetF
+ *  @memberof oyCMMinfo_s
+ *  @brief    Get a reset function
+ *
+ *  Get a reset function for the actual oyCMMinfo_s.
+ *  @see oyCMMinfo_SetResetF
+ *
+ *  @version  Oyranos: 0.9.7
+ *  @date     2019/09/03
+ *  @since    2013/06/10 (Oyranos: 0.9.5)
+ */
+OYAPI oyCMMinfoReset_f  OYEXPORT
+                   oyCMMinfo_GetResetF(oyCMMinfo_s       * info )
+{
+  return ((oyCMMinfo_s_*)info)->reset;
+}
+/** Function  oyCMMinfo_SetResetF
+ *  @memberof oyCMMinfo_s
+ *  @brief    Set a reset function
+ *
+ *  Set a reset function for the actual oyCMMinfo_s.
+ *  @see oyCMMinfo_SetApi() oyCMMinfo_GetResetF()
+ *
+ *  @version  Oyranos: 0.9.7
+ *  @date     2019/09/03
+ *  @since    2013/06/10 (Oyranos: 0.9.5)
+ */
+OYAPI void  OYEXPORT
+                   oyCMMinfo_SetResetF(oyCMMinfo_s       * info,
+                                       oyCMMinfoReset_f    reset )
+{
+  ((oyCMMinfo_s_*)info)->reset = reset;
+}
+
 /* } Include "CMMinfo.public_methods_definitions.c" */
 

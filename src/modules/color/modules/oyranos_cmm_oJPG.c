@@ -61,6 +61,7 @@ oyMessage_f ojpg_msg = oyMessageFunc;
 #define AD oyAllocateFunc_, oyDeAllocateFunc_
 
 int  ojpgInit                        ( oyStruct_s        * module_info );
+int  ojpgReset                       ( oyStruct_s        * module_info );
 oyImage_s *  oyImage_FromJPEG        ( const char        * filename,
                                        int32_t             icc_profile_flags );
 int          oyImage_WriteJPEG       ( oyImage_s         * image,
@@ -105,6 +106,14 @@ int                ojpgCMMInit       ( oyStruct_s * s OY_UNUSED )
 {
   int error = 0;
   return error;
+}
+
+/** Function ojpgCMMReset
+ *  @brief API requirement
+ */
+int                ojpgCMMReset      ( oyStruct_s * s OY_UNUSED )
+{
+  return 0;
 }
 
 
@@ -175,7 +184,8 @@ oyCMM_s oJPG_cmm_module = {
 
   /** ::icon; module icon */
   &ojpg_icon,
-  ojpgInit
+  ojpgInit,
+  ojpgReset
 };
 
 
@@ -242,7 +252,7 @@ oyCMMapi_s * ojpgApi7CmmCreateRead   ( const char        * format,
   oyConnectorImaging_SetCapability( socket, oyCONNECTOR_IMAGING_CAP_CAN_NONPREMULTIPLIED_ALPHA, 1 );
   oyConnectorImaging_SetCapability( socket, oyCONNECTOR_IMAGING_CAP_ID, 1 );
 
-  oyCMMapi7_s * cmm7 = oyCMMapi7_Create( ojpgCMMInit, ojpgCMMMessageFuncSet,
+  oyCMMapi7_s * cmm7 = oyCMMapi7_Create( ojpgCMMInit, ojpgCMMReset, ojpgCMMMessageFuncSet,
                                        registration,
                                        cmm_version, module_api,
                                        NULL,
@@ -297,7 +307,7 @@ oyCMMapi_s * ojpgApi4CmmCreateRead   ( const char        * format )
   oyStringAddPrintf( &registration, AD,
                      OY_oJPG_FILTER_REGISTRATION_BASE"file_read.input_%s._" CMM_NICK "._CPU._ACCEL", format );
 
-  oyCMMapi4_s * cmm4 = oyCMMapi4_Create( ojpgCMMInit, ojpgCMMMessageFuncSet,
+  oyCMMapi4_s * cmm4 = oyCMMapi4_Create( ojpgCMMInit, ojpgCMMReset, ojpgCMMMessageFuncSet,
                                        registration,
                                        cmm_version, module_api,
                                        "",
@@ -866,7 +876,7 @@ oyCMMapi_s * ojpgApi7CmmCreateWrite  ( const char        * format,
   oyConnectorImaging_SetCapability( socket, oyCONNECTOR_IMAGING_CAP_CAN_NONPREMULTIPLIED_ALPHA, 1 );
   oyConnectorImaging_SetCapability( socket, oyCONNECTOR_IMAGING_CAP_ID, 1 );
 
-  oyCMMapi7_s * cmm7 = oyCMMapi7_Create( ojpgCMMInit, ojpgCMMMessageFuncSet,
+  oyCMMapi7_s * cmm7 = oyCMMapi7_Create( ojpgCMMInit, ojpgCMMReset, ojpgCMMMessageFuncSet,
                                        registration,
                                        cmm_version, module_api,
                                        NULL,
@@ -921,7 +931,7 @@ oyCMMapi_s * ojpgApi4CmmCreateWrite  ( const char        * format )
   oyStringAddPrintf( &registration, AD,
                      OY_oJPG_FILTER_REGISTRATION_BASE"file_write.write_%s._" CMM_NICK "._CPU._ACCEL", format );
 
-  oyCMMapi4_s * cmm4 = oyCMMapi4_Create( ojpgCMMInit, ojpgCMMMessageFuncSet,
+  oyCMMapi4_s * cmm4 = oyCMMapi4_Create( ojpgCMMInit, ojpgCMMReset, ojpgCMMMessageFuncSet,
                                        registration,
                                        cmm_version, module_api,
                                        "",
@@ -1349,12 +1359,17 @@ const char * ojpgApi4UiGetTextWrite  ( const char        * select,
 /* OY_oJPG_FILTER_REGISTRATION_WRITE ----------------------------------------*/
 
 extern oyCMM_s oJPG_cmm_module;
+static int ojpg_initialised = 0;
 int  ojpgInit                        ( oyStruct_s        * module_info )
 {
   oyCMMapi_s * a = 0,
              * a_tmp = 0,
              * m = 0;
   int i,n = 2;
+
+  if(ojpg_initialised)
+    return 0;
+  ++ojpg_initialised;
 
   if((oyStruct_s*)&oJPG_cmm_module != module_info)
     ojpg_msg( oyMSG_WARN, module_info, _DBG_FORMAT_ "wrong module info passed in", _DBG_ARGS_ );
@@ -1403,6 +1418,35 @@ int  ojpgInit                        ( oyStruct_s        * module_info )
         oyCMMapi_SetNext( a, m ); a = m;
       }
   }
+
+  return 0;
+}
+
+int  ojpgReset                       ( oyStruct_s        * module_info )
+{
+  oyCMMapi_s * a = oJPG_cmm_module.api,
+             * a_tmp = 0;
+
+  if(!ojpg_initialised)
+    return 0;
+
+  ojpg_initialised = 0;
+
+  if((oyStruct_s*)&oJPG_cmm_module != module_info)
+    ojpg_msg( oyMSG_WARN, module_info, _DBG_FORMAT_ "wrong module info passed in", _DBG_ARGS_ );
+
+  /* traverse all filters */
+  while(a && ((a_tmp = oyCMMapi_GetNext( a )) != 0))
+  {
+    oyCMMapi_s * r = a;
+    if(a->release)
+      a->release( (oyStruct_s**) &a );
+    else if(a_tmp->release)
+      oyCMMapi_SetNext( a, NULL );
+    a = a_tmp;
+  }
+  if(a && a->release)
+    a->release( (oyStruct_s**) &a );
 
   return 0;
 }

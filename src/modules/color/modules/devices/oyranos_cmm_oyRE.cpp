@@ -57,7 +57,10 @@ using namespace std;
 
 #define catCMMfunc(nick,func) nick ## func
 
-#define CMMInit                 catCMMfunc( oyRE , CMMInit )
+#define CMMinit                 catCMMfunc( oyRE , CMMinit )
+#define CMMreset                catCMMfunc( oyRE , CMMreset )
+#define CMMapiInit              catCMMfunc( oyRE , CMMapiInit )
+#define CMMapiReset             catCMMfunc( oyRE , CMMapiReset )
 #define CMMallocateFunc         catCMMfunc( oyRE , CMMallocateFunc )
 #define CMMdeallocateFunc       catCMMfunc( oyRE , CMMdeallocateFunc )
 #define CMMMessageFuncSet       catCMMfunc( oyRE , CMMMessageFuncSet )
@@ -102,7 +105,7 @@ int DeviceFromHandle_opt(oyConfig_s *device, oyOption_s *option);
 
 /* --- implementations --- */
 
-int CMMInit( oyStruct_s * filter )
+int CMMapiInit( oyStruct_s * filter )
 {
   int error = 0;
   const char * rfilter = "config.icc_profile.raw-image.oyRE";
@@ -112,6 +115,21 @@ int CMMInit( oyStruct_s * filter )
 
   return error;
 }
+int CMMapiReset( oyStruct_s * filter )
+{
+  int error = 0;
+
+  if(_initialised)
+  {
+    error = oyDeviceCMMReset( filter );
+    _initialised = 0;
+  }
+
+  return error;
+}
+
+int CMMinit( oyStruct_s * filter OY_UNUSED ) { return 0; }
+int CMMreset( oyStruct_s * filter OY_UNUSED ) { return 0; }
 
 oyPointer CMMallocateFunc(size_t size)
 {
@@ -1085,7 +1103,8 @@ oyCMMapi8_s_ oyRE_api8 = {
    oyOBJECT_CMM_API8_S,
    0, 0, 0,
    (oyCMMapi_s*) 0,                                                   /**< next */
-   CMMInit,                                                           /**< oyCMMInit_f      oyCMMInit */
+   CMMapiInit,                                                        /**< oyCMMInit_f      oyCMMInit */
+   CMMapiReset,                                                       /**< oyCMMreset_f     oyCMMReset */
    CMMMessageFuncSet,                                                 /**< oyCMMMessageFuncSet_f oyCMMMessageFuncSet */
    const_cast < char *>(CMM_BASE_REG),                                /**< registration */
    CMM_VERSION,                                                         /**< int32_t version[3] */
@@ -1172,7 +1191,8 @@ oyCMM_s _cmm_module = {
   /** ::icon; zero terminated list of a icon pyramid */
    &_api8_icon,
 
-  NULL                                 /**< init() */
+  CMMinit,             /**< init() */
+  CMMreset             /**< reset() */
 };
 
 /* Helper functions */

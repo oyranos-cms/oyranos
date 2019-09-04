@@ -81,6 +81,7 @@ oyMessage_f oiDB_msg = oyMessageFunc;
 
 int            oiDBMessageFuncSet ( oyMessage_f         oiDB_msg_func );
 int                oiDBInit       ( );
+int                oiDBReset      ( );
 char *   oiOyranosToOpenicc          ( const char        * key_name,
                                        oyAlloc_f           alloc );
 char *   oiOpeniccToOyranos          ( const char        * key_name,
@@ -321,6 +322,7 @@ int                oiDBInit       ( oyStruct_s        * filter OY_UNUSED )
   int error = 0;
   return error;
 }
+int                oiDBReset      ( oyStruct_s        * filter OY_UNUSED ) { int error = 0; return error; }
 
 const char*oiDBopeniccStaticMessageFunc (
                                        oyPointer           obj,
@@ -462,6 +464,7 @@ oyCMMapi10_s_    oiDB_api10_cmm = {
   (oyCMMapi_s*) NULL,
 
   oiDBInit,
+  oiDBReset,
   oiDBMessageFuncSet,
 
   OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
@@ -550,6 +553,7 @@ oyCMM_s oiDB_cmm_module = {
   (oyCMMapi_s*) & oiDB_api10_cmm,       /**< api */
 
   &oiDB_icon, /**< icon */
-  oiDBInit                          /**< oyCMMinfoInit_f */
+  oiDBInit,                         /**< oyCMMinfoInit_f */
+  oiDBReset                         /**< oyCMMinfoReset_f */
 };
 

@@ -363,6 +363,7 @@ oyCMMapi10_s_    oyra_api10_profile_graph2d_SaturationLine = {
   (oyCMMapi_s*) NULL,
 
   oyraCMMInit, /* oyCMMInit_f */
+  oyraCMMReset, /* oyCMMReset_f */
   oyraCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
 
   OY_PROFILE_GRAPH2D_SATURATION_LINE_REGISTRATION,

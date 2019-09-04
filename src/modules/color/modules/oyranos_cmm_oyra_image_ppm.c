@@ -334,6 +334,7 @@ oyCMMapi4_s_ oyra_api4_image_write_ppm = {
   (oyCMMapi_s*) & oyra_api7_image_write_ppm, /* oyCMMapi_s * next */
   
   oyraCMMInit, /* oyCMMInit_f */
+  oyraCMMReset, /* oyCMMReset_f */
   oyraCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
 
   /* registration */
@@ -380,6 +381,7 @@ oyCMMapi7_s_ oyra_api7_image_write_ppm = {
   (oyCMMapi_s*) & oyra_api4_image_input_ppm, /* oyCMMapi_s * next */
   
   oyraCMMInit, /* oyCMMInit_f */
+  oyraCMMReset, /* oyCMMReset_f */
   oyraCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
 
   /* registration */
@@ -1235,6 +1237,7 @@ oyCMMapi4_s_ oyra_api4_image_input_ppm = {
   (oyCMMapi_s*) & oyra_api7_image_input_ppm, /* oyCMMapi_s * next */
   
   oyraCMMInit, /* oyCMMInit_f */
+  oyraCMMReset, /* oyCMMReset_f */
   oyraCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
 
   /* registration */
@@ -1281,6 +1284,7 @@ oyCMMapi7_s_ oyra_api7_image_input_ppm = {
   (oyCMMapi_s*) & oyra_api4_image_load, /* oyCMMapi_s * next */
   
   oyraCMMInit, /* oyCMMInit_f */
+  oyraCMMReset, /* oyCMMReset_f */
   oyraCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
 
   /* registration */

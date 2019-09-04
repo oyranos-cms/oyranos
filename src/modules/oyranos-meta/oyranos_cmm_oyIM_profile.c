@@ -3128,6 +3128,7 @@ oyCMMapi3_s_  oyIM_api3 = {
   (oyCMMapi_s*) & oyIM_api5_meta_c,
   
   oyIMCMMInit,
+  oyIMCMMReset, /* oyCMMReset_f */
   oyIMCMMMessageFuncSet,
 
   CMM_BASE_REG CMM_NICK,     /**< registration */

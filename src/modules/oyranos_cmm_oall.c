@@ -45,54 +45,53 @@ extern oyCMM_s oyX1_cmm_module;
 typedef struct {
   const char * name;
   oyCMM_s * cmm;
-  int init;
 } oyStaticCMMs_s;
 
 static oyStaticCMMs_s cmms[] = {
-  { "oyIM_cmm_module-inbuild", &oyIM_cmm_module, 0 },
+  { "oyIM_cmm_module-inbuild", &oyIM_cmm_module },
 #ifdef HAVE_CUPS
-  { "CUPS_cmm_module-inbuild", &CUPS_cmm_module, 0 },
+  { "CUPS_cmm_module-inbuild", &CUPS_cmm_module },
 #endif
 #ifdef HAVE_ELEKTRA
-  { "elDB_cmm_module-inbuild", &elDB_cmm_module, 0 },
+  { "elDB_cmm_module-inbuild", &elDB_cmm_module },
 #endif
 #ifdef HAVE_LCMS2
-  { "lcm2_cmm_module-inbuild", &lcm2_cmm_module, 0 },
+  { "lcm2_cmm_module-inbuild", &lcm2_cmm_module },
 #endif
 #if defined( HAVE_LCMS ) && !defined( HAVE_LCMS2 )
-  { "lcms_cmm_module-inbuild", &lcms_cmm_module, 0 },
+  { "lcms_cmm_module-inbuild", &lcms_cmm_module },
 #endif
 #ifdef HAVE_LIBRAW_PLUGIN
-  { "lraw_cmm_module-inbuild", &lraw_cmm_module, 0 },
+  { "lraw_cmm_module-inbuild", &lraw_cmm_module },
 #endif
-  { "oicc_cmm_module-inbuild", &oicc_cmm_module, 0 },
+  { "oicc_cmm_module-inbuild", &oicc_cmm_module },
 #ifdef HAVE_OPENICC
-  { "oiDB_cmm_module-inbuild", &oiDB_cmm_module, 0 },
+  { "oiDB_cmm_module-inbuild", &oiDB_cmm_module },
 #endif
 #ifdef HAVE_JPEG
-  { "oJPG_cmm_module-inbuild", &oJPG_cmm_module, 0 },
+  { "oJPG_cmm_module-inbuild", &oJPG_cmm_module },
 #endif
 #ifdef HAVE_LIBPNG
-  { "oPNG_cmm_module-inbuild", &oPNG_cmm_module, 0 },
+  { "oPNG_cmm_module-inbuild", &oPNG_cmm_module },
 #endif
-  { "oydi_cmm_module-inbuild", &oydi_cmm_module, 0 },
-  { "oyra_cmm_module-inbuild", &oyra_cmm_module, 0 },
+  { "oydi_cmm_module-inbuild", &oydi_cmm_module },
+  { "oyra_cmm_module-inbuild", &oyra_cmm_module },
 #ifdef HAVE_LIBRAW_PLUGIN
-  { "oyRE_cmm_module-inbuild", &oyRE_cmm_module, 0 },
+  { "oyRE_cmm_module-inbuild", &oyRE_cmm_module },
 #endif
 #ifdef HAVE_X11
-  { "oyX1_cmm_module-inbuild", &oyX1_cmm_module, 0 },
+  { "oyX1_cmm_module-inbuild", &oyX1_cmm_module },
 #endif
 #ifdef APPLE
-  { "qarz_cmm_module-inbuild", &qarz_cmm_module, 0 },
+  { "qarz_cmm_module-inbuild", &qarz_cmm_module },
 #endif
 #ifdef HAVE_SANE
-  { "SANE_cmm_module-inbuild", &SANE_cmm_module, 0 },
+  { "SANE_cmm_module-inbuild", &SANE_cmm_module },
 #endif
 #ifdef HAVE_PTHREAD
-  { "trds_cmm_module-inbuild", &trds_cmm_module, 0 },
+  { "trds_cmm_module-inbuild", &trds_cmm_module },
 #endif
-  {NULL,NULL,0}
+  {NULL,NULL}
 };
 
 static int oy_cmms_n_ = sizeof(cmms) / sizeof(oyStaticCMMs_s) - 1;
@@ -126,10 +125,8 @@ oyCMMinfo_s* oyCMMinfoFromLibNameStatic (
   if(cmm_info)
   {
     oyCMMinfoInit_f init = oyCMMinfo_GetInitF((oyCMMinfo_s*) cmm_info);
-    if(cmms[i].init == 0)
     {
       int error = 0;
-      cmms[i].init = 1;
 
       if(init)
         error = init( (oyStruct_s*)cmm_info );
@@ -166,7 +163,6 @@ oyCMMinfo_s* oyCMMinfoFromLibNameStatic (
           DBG_NUM1_S("init failed: %s", lib_name);
         }
       }
-
     }
   }
 

@@ -73,6 +73,7 @@ oyMessage_f elDB_msg = oyMessageFunc;
 
 int            elDBMessageFuncSet ( oyMessage_f         elDB_msg_func );
 int                elDBInit       ( );
+int                elDBReset      ( oyStruct_s        * filter OY_UNUSED );
 
 
 /* implementation */
@@ -891,6 +892,19 @@ int                elDBInit       ( oyStruct_s        * filter OY_UNUSED )
   return error;
 }
 
+/** Function elDBReset
+ *  @brief   API requirement
+ *
+ *  @version Oyranos: 0.9.7
+ *  @date    2019/09/03
+ *  @since   2019/09/03 (Oyranos: 0.9.7)
+ */
+int                elDBReset      ( oyStruct_s        * filter OY_UNUSED )
+{
+  int error = 0;
+  return error;
+}
+
 
 
 /** Function elDBMessageFuncSet
@@ -1007,6 +1021,7 @@ oyCMMapi10_s_    elDB_api10_cmm = {
   (oyCMMapi_s*) NULL,
 
   elDBInit,
+  elDBReset,
   elDBMessageFuncSet,
 
   OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
@@ -1092,9 +1107,10 @@ oyCMM_s elDB_cmm_module = {
   (char**)elDB_texts,                  /**<texts; list of arguments to getText*/
   OYRANOS_VERSION,                     /**< oy_compatibility */
 
-  (oyCMMapi_s*) & elDB_api10_cmm,       /**< api */
+  (oyCMMapi_s*) & elDB_api10_cmm,      /**< api */
 
   &elDB_icon, /**< icon */
-  elDBInit                          /**< oyCMMinfoInit_f */
+  elDBInit,                            /**< oyCMMinfoInit_f */
+  elDBReset                            /**< oyCMMinfoReset_f */
 };
 

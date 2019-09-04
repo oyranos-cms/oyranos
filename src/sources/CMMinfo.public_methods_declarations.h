@@ -26,3 +26,8 @@ OYAPI oyCMMinfoInit_f  OYEXPORT
 OYAPI void  OYEXPORT
                    oyCMMinfo_SetInitF( oyCMMinfo_s       * info,
                                        oyCMMinfoInit_f     init );
+OYAPI oyCMMinfoReset_f  OYEXPORT
+                   oyCMMinfo_GetResetF(oyCMMinfo_s       * info );
+OYAPI void  OYEXPORT
+                   oyCMMinfo_SetResetF(oyCMMinfo_s       * info,
+                                       oyCMMinfoReset_f    reset );

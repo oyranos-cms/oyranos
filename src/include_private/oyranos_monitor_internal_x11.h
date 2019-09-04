@@ -32,7 +32,10 @@ extern oyMonitorHooks3_s* oyX1MonitorHooks3;
 extern oyCMMapi10_s_      oyX1_api10_set_xcm_region_handler;
 #define next_api (oyCMMapi_s*) & oyX1_api10_set_xcm_region_handler
 
-#define CMMInit                 catCMMfunc( oyX1, CMMInit )
+#define CMMinit                 catCMMfunc( oyX1, CMMinit )
+#define CMMreset                catCMMfunc( oyX1, CMMreset )
+#define CMMapiInit              catCMMfunc( oyX1, CMMapiInit )
+#define CMMapiReset             catCMMfunc( oyX1, CMMapiReset )
 #define _initialised            catCMMfunc( oyX1, _initialised )
 #define CMMMessageFuncSet       catCMMfunc( oyX1, CMMMessageFuncSet )
 #define _msg                    catCMMfunc( oyX1, _msg )
@@ -68,7 +71,10 @@ extern oyCMMapi10_s_      oyX1_api10_set_xcm_region_handler;
 #define GetMonitorProfile       catCMMstruct( oyX1, getProfile )
 #define MoveColorServerProfiles catCMMstruct( oyX1, moveColorServerProfiles )
 
-int                CMMInit           ( );
+int                CMMinit           ( );
+int                CMMreset          ( );
+int                CMMapiInit        ( );
+int                CMMapiReset       ( );
 int                CMMMessageFuncSet ( oyMessage_f         message_func );
 
 

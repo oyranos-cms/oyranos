@@ -254,6 +254,7 @@ oyCMMapi5_s_ oyIM_api5_meta_c = {
   0, /* oyCMMapi_s * next */
   
   oyIMCMMInit, /* oyCMMInit_f */
+  oyIMCMMReset, /* oyCMMReset_f */
   oyIMCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
 
   /* @todo registration: for what? */

@@ -88,6 +88,7 @@ oyMessage_f trds_msg = oyMessageFunc;
 
 int            trdsCMMMessageFuncSet ( oyMessage_f         trds_msg_func );
 int                trdsCMMInit       ( );
+int                trdsCMMReset      ( oyStruct_s        * filter );
 
 
 #include <unistd.h> /* usleep() */
@@ -576,6 +577,18 @@ int                trdsCMMInit       ( oyStruct_s        * filter OY_UNUSED )
   int error = 0;
   return error;
 }
+/** Function trdsCMMReset
+ *  @brief   API requirement
+ *
+ *  @version Oyranos: 0.9.7
+ *  @date    2019/09/03
+ *  @since   2019/09/03 (Oyranos: 0.9.7)
+ */
+int                trdsCMMReset      ( oyStruct_s        * filter OY_UNUSED )
+{
+  int error = 0;
+  return error;
+}
 
 
 
@@ -681,6 +694,7 @@ oyCMMapi10_s_    trds_api10_cmm = {
   (oyCMMapi_s*) NULL,
 
   trdsCMMInit,
+  trdsCMMReset,
   trdsCMMMessageFuncSet,
 
   OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
@@ -769,6 +783,7 @@ oyCMM_s trds_cmm_module = {
   (oyCMMapi_s*) & trds_api10_cmm,       /**< api */
 
   &trds_icon, /**< icon */
-  trdsCMMInit                          /**< oyCMMinfoInit_f */
+  trdsCMMInit,                         /**< oyCMMinfoInit_f */
+  trdsCMMReset                         /**< oyCMMinfoReset_f */
 };
 

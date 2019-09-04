@@ -80,7 +80,7 @@ const char * Api8UiGetText           ( const char        * select,
 
 /* --- implementations --- */
 
-int                CMMInit           ( oyStruct_s        * filter )
+int                CMMapiInit        ( oyStruct_s        * filter )
 {
   int error = 0;
   const char * rfilter = "config.icc_profile.monitor.oyX1.qarz";
@@ -104,6 +104,22 @@ int                CMMInit           ( oyStruct_s        * filter )
 
   return error;
 }
+
+int CMMapiReset( oyStruct_s * filter )
+{
+  int error = 0;
+
+  if(_initialised)
+  {
+    error = oyDeviceCMMReset( filter );
+    _initialised = 0;
+  }
+
+  return error;
+}
+
+int CMMinit( oyStruct_s * filter OY_UNUSED ) { return 0; }
+int CMMreset( oyStruct_s * filter OY_UNUSED ) { return 0; }
 
 
 /*
@@ -1395,7 +1411,8 @@ oyCMMapi8_s_ _api8 = {
   0,0,0,
   next_api,                  /**< next API */
 
-  CMMInit,                   /**< oyCMMInit_f      oyCMMInit */
+  CMMapiInit,
+  CMMapiReset,
   CMMMessageFuncSet,         /**< oyCMMMessageFuncSet_f oyCMMMessageFuncSet */
 
   MONITOR_REGISTRATION,      /**< registration */
@@ -1503,7 +1520,8 @@ oyCMM_s _cmm_module = {
 
   &_api8_icon,
 
-  NULL                                 /**< init() */
+  CMMinit,
+  CMMreset
 };
 
 /**  @} *//* monitor_device */

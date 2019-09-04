@@ -388,7 +388,7 @@ oyCMMapi_s * oyraApi7ImageScaleCreate(void)
   oyConnectorImaging_SetCapability( socket, oyCONNECTOR_IMAGING_CAP_CAN_NONPREMULTIPLIED_ALPHA, 1 );
   oyConnectorImaging_SetCapability( socket, oyCONNECTOR_IMAGING_CAP_ID, 1 );
 
-  scale7 = oyCMMapi7_Create (          oyraCMMInit, oyraCMMMessageFuncSet,
+  scale7 = oyCMMapi7_Create (          oyraCMMInit, oyraCMMReset, oyraCMMMessageFuncSet,
                                        OY_IMAGE_SCALE_REGISTRATION,
                                        cmm_version, module_api,
                                        NULL,
@@ -479,7 +479,7 @@ oyCMMapi_s * oyraApi4ImageScaleCreate(void)
   int32_t cmm_version[3] = {OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C},
           module_api[3]  = {OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C};
 
-  oyCMMapi4_s * scale4 = oyCMMapi4_Create( oyraCMMInit, oyraCMMMessageFuncSet,
+  oyCMMapi4_s * scale4 = oyCMMapi4_Create( oyraCMMInit, oyraCMMReset, oyraCMMMessageFuncSet,
                                        OY_IMAGE_SCALE_REGISTRATION,
                                        cmm_version, module_api,
                                        NULL,

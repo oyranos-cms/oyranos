@@ -57,6 +57,7 @@ struct oyCMM_s {
   oyIcon_s       * icon;               /*!< module icon */
 
   int (*init)(oyStruct_s * library);   /**< should be called before any access to members of oyCMMinfo_s */
+  int (*reset)(oyStruct_s * library);  /**< may be called after last access to members of oyCMMinfo_s */
 
 };
 

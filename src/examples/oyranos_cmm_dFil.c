@@ -68,6 +68,19 @@ int                dFilCMMInit       ( )
   return error;
 }
 
+/** Function dFilCMMReset
+ *  @brief   API requirement
+ *
+ *  @version Oyranos: 0.9.7
+ *  @date    2019/09/02
+ *  @since   2019/09/02 (Oyranos: 0.9.7)
+ */
+int                dFilCMMReset      ( )
+{
+  int error = 0;
+  return error;
+}
+
 
 
 /** Function dFilCMMMessageFuncSet
@@ -206,7 +219,8 @@ oyCMM_s dFil_cmm_module = {
   /** ::icon; zero terminated list of a icon pyramid */
   &dFil_icon,
 
-  NULL                                 /**< init() */
+  NULL,                                /**< init() */
+  NULL                                 /**< reset() */
 };
 
 
@@ -476,6 +490,7 @@ oyCMMapi4_s_ dFil_api4_my_filter = {
   (oyCMMapi_s*) & dFil_api7_my_filter, /* oyCMMapi_s * next */
   
   dFilCMMInit, /* oyCMMInit_f */
+  dFilCMMReset, /* oyCMMReset_f */
   dFilCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
 
   /* registration */
@@ -511,6 +526,7 @@ oyCMMapi7_s_ dFil_api7_my_filter = {
   (oyCMMapi_s*) & dFil_api10_my_handler, /* oyCMMapi_s * next */
   
   dFilCMMInit, /* oyCMMInit_f */
+  dFilCMMReset, /* oyCMMReset_f */
   dFilCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
 
   /* registration */
@@ -650,7 +666,8 @@ oyCMMapi10_s_    dFil_api10_my_handler = {
   0,0,0,
   (oyCMMapi_s*) NULL,
 
-  dFilCMMInit,
+  dFilCMMInit, /* oyCMMInit_f */
+  dFilCMMReset, /* oyCMMReset_f */
   dFilCMMMessageFuncSet,
 
   OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH

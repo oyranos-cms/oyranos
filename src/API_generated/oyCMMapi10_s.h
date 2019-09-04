@@ -141,7 +141,8 @@ typedef int  (*oyMOptions_Handle_f)  ( oyOptions_s       * options,
                                        oyOptions_s      ** result );
 #include "oyCMMapi_s.h"
 OYAPI oyCMMapi10_s*  OYEXPORT
-                   oyCMMapi10_Create  ( oyCMMInit_f         init,
+                  oyCMMapi10_Create  ( oyCMMInit_f         init,
+                                       oyCMMReset_f        reset,
                                        oyCMMMessageFuncSet_f msg_set,
                                        const char        * registration,
                                        int32_t             version[3],

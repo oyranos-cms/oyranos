@@ -401,7 +401,7 @@ oyCMMapi_s * oyraApi7ImageChannelCreate(void)
   oyConnectorImaging_SetCapability( socket, oyCONNECTOR_IMAGING_CAP_CAN_NONPREMULTIPLIED_ALPHA, 1 );
   oyConnectorImaging_SetCapability( socket, oyCONNECTOR_IMAGING_CAP_ID, 1 );
 
-  channel7 = oyCMMapi7_Create (          oyraCMMInit, oyraCMMMessageFuncSet,
+  channel7 = oyCMMapi7_Create (        oyraCMMInit, oyraCMMReset, oyraCMMMessageFuncSet,
                                        OY_IMAGE_CHANNEL_REGISTRATION,
                                        cmm_version, module_api,
                                        NULL,
@@ -469,7 +469,7 @@ oyCMMapi_s * oyraApi4ImageChannelCreate(void)
   int32_t cmm_version[3] = {OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C},
           module_api[3]  = {OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C};
 
-  oyCMMapi4_s * channel4 = oyCMMapi4_Create( oyraCMMInit, oyraCMMMessageFuncSet,
+  oyCMMapi4_s * channel4 = oyCMMapi4_Create( oyraCMMInit, oyraCMMReset, oyraCMMMessageFuncSet,
                                        OY_IMAGE_CHANNEL_REGISTRATION,
                                        cmm_version, module_api,
                                        NULL,

@@ -50,7 +50,10 @@
 
 #define catCMMfunc(nick,func) nick ## func
 
-#define CMMInit                 catCMMfunc( CUPS, CMMInit )
+#define CMMinit                 catCMMfunc( CUPS , CMMinit )
+#define CMMreset                catCMMfunc( CUPS , CMMreset )
+#define CMMapiInit              catCMMfunc( CUPS , CMMapiInit )
+#define CMMapiReset             catCMMfunc( CUPS , CMMapiReset )
 #define CMMallocateFunc         catCMMfunc( CUPS, CMMallocateFunc )
 #define CMMdeallocateFunc       catCMMfunc( CUPS, CMMdeallocateFunc )
 #define CMMMessageFuncSet       catCMMfunc( CUPS, CMMMessageFuncSet )
@@ -110,7 +113,7 @@ oyMessage_f CUPS_msg = 0;
 
 extern oyCMMapi8_s_ _api8;
 
-int CMMInit                          ( oyStruct_s        * filter )
+int CMMapiInit                       ( oyStruct_s        * filter )
 {
   int error = 0;
   const char * rfilter = "config.icc_profile.printer.CUPS";
@@ -120,6 +123,22 @@ int CMMInit                          ( oyStruct_s        * filter )
 
   return error;
 }
+
+int CMMapiReset( oyStruct_s * filter )
+{
+  int error = 0;
+
+  if(_initialised)
+  {
+    error = oyDeviceCMMReset( filter );
+    _initialised = 0;
+  }
+
+  return error;
+}
+
+int CMMinit( oyStruct_s * filter OY_UNUSED ) { return 0; }
+int CMMreset( oyStruct_s * filter OY_UNUSED ) { return 0; }
 
 oyPointer CMMallocateFunc ( size_t size )
 {
@@ -934,7 +953,8 @@ oyCMMapi8_s_ _api8 = {
   0,0,0,
   0,                         /**< next */
 
-  CMMInit,               /**< oyCMMInit_f      oyCMMInit */
+  CMMapiInit,            /**< oyCMMInit_f      oyCMMInit */
+  CMMapiReset,           /**< oyCMMreset_f     oyCMMReset */
   CMMMessageFuncSet,     /**< oyCMMMessageFuncSet_f oyCMMMessageFuncSet */
 
   CMM_BASE_REG,          /**< registration */
@@ -1036,7 +1056,8 @@ oyCMM_s _cmm_module = {
 
   &_api8_icon,
 
-  NULL                                 /**< init() */
+  CMMinit,             /**< init() */
+  CMMreset             /**< reset() */
 };
 
 /** @brief get for possible profiles eachs qualifier

@@ -2426,7 +2426,7 @@ lcm2UtfConversionResult lcm2ConvertUTF8toUTF16 (const UTF8** sourceStart, const 
       case 3: ch += *source++; ch <<= 6; OY_FALLTHROUGH
       case 2: ch += *source++; ch <<= 6; OY_FALLTHROUGH
       case 1: ch += *source++; ch <<= 6; OY_FALLTHROUGH
-      case 0: ch += *source++; OY_FALLTHROUGH
+      case 0: ch += *source++;
     }
     ch -= offsetsFromUTF8[extraBytesToRead];
 

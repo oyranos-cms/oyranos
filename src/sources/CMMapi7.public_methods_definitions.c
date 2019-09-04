@@ -3,6 +3,7 @@
  *  @brief    Create a oyCMMapi7_s filter object
  *
  *  @param         init                custom initialisation
+ *  @param         reset               custom deinitialisation
  *  @param         msg_set             message function setter
  *  @param         registration        the modules @ref registration string,
  *  @param         version             module version
@@ -34,12 +35,13 @@
  *
  *  @see     oyCMMapi_s::oyCMMapi_Set()
  *
- *  @version Oyranos: 0.9.5
+ *  @version Oyranos: 0.9.7
+ *  @date    2019/09/03
  *  @since   2013/07/11 (Oyranos: 0.9.5)
- *  @date    2013/07/11
  */
 OYAPI oyCMMapi7_s *  OYEXPORT
              oyCMMapi7_Create        ( oyCMMInit_f         init,
+                                       oyCMMReset_f        reset,
                                        oyCMMMessageFuncSet_f msg_set,
                                        const char        * registration,
                                        int32_t             version[3],
@@ -60,7 +62,7 @@ OYAPI oyCMMapi7_s *  OYEXPORT
 
   if(!s) return NULL;
 
-  oyCMMapi_Set( (oyCMMapi_s*) s, init, msg_set, registration,
+  oyCMMapi_Set( (oyCMMapi_s*) s, init, reset, msg_set, registration,
                 version, module_api );
 
   s->oyCMMFilterPlug_Run = run;

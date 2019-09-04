@@ -185,7 +185,8 @@ oyCMMapi10_s_    oyX1_api10_color_server_active_handler = {
   0,0,0,
   NULL,
 
-  CMMInit,
+  CMMapiInit,
+  CMMapiReset,
   CMMMessageFuncSet,
 
   OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
@@ -367,7 +368,8 @@ oyCMMapi10_s_    oyX1_api10_clean_profiles_handler = {
   0,0,0,
   (oyCMMapi_s*) &oyX1_api10_color_server_active_handler,
 
-  CMMInit,
+  CMMapiInit,
+  CMMapiReset,
   CMMMessageFuncSet,
 
   OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
@@ -559,7 +561,8 @@ oyCMMapi10_s_    oyX1_api10_move_color_server_profiles_handler = {
   0,0,0,
   (oyCMMapi_s*) &oyX1_api10_clean_profiles_handler,
 
-  CMMInit,
+  CMMapiInit,
+  CMMapiReset,
   CMMMessageFuncSet,
 
   OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
@@ -744,7 +747,8 @@ oyCMMapi10_s_    oyX1_api10_send_native_update_event_handler = {
   0,0,0,
   (oyCMMapi_s*) & oyX1_api10_move_color_server_profiles_handler,
 
-  CMMInit,
+  CMMapiInit,
+  CMMapiReset,
   CMMMessageFuncSet,
 
   OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
@@ -1011,7 +1015,8 @@ oyCMMapi10_s_    oyX1_api10_set_xcm_region_handler = {
   0,0,0,
   (oyCMMapi_s*) &oyX1_api10_send_native_update_event_handler,
 
-  CMMInit,
+  CMMapiInit,
+  CMMapiReset,
   CMMMessageFuncSet,
 
   OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH

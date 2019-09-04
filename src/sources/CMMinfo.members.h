@@ -13,3 +13,4 @@
   oyIcon_s       * icon;               /*!< module GUI icon */
 
   oyCMMinfoInit_f  init;      /**< should be called before any access to members of oyCMMinfo_s */
+  oyCMMinfoReset_f reset;     /**< should be called after last access to members of oyCMMinfo_s */

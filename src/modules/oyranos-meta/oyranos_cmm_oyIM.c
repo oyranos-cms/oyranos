@@ -54,6 +54,11 @@ int                oyIMCMMInit       ( oyStruct_s        * filter OY_UNUSED )
   int error = 0;
   return error;
 }
+int                oyIMCMMReset      ( oyStruct_s        * filter OY_UNUSED )
+{
+  int error = 0;
+  return error;
+}
 
 
 
@@ -167,6 +172,7 @@ oyCMM_s oyIM_cmm_module = {
 
   &oyIM_icon,
 
-  NULL                                 /**< init() */
+  NULL,                                /**< init() */
+  NULL                                 /**< reset() */
 };
 

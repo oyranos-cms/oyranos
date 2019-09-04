@@ -49,7 +49,10 @@
 
 #define catCMMfunc(nick,func) nick ## func
 
-#define CMMInit                 catCMMfunc( SANE , CMMInit )
+#define CMMinit                 catCMMfunc( SANE , CMMinit )
+#define CMMreset                catCMMfunc( SANE , CMMreset )
+#define CMMapiInit              catCMMfunc( SANE , CMMapiInit )
+#define CMMapiReset             catCMMfunc( SANE , CMMapiReset )
 #define CMMallocateFunc         catCMMfunc( SANE , CMMallocateFunc )
 #define CMMdeallocateFunc       catCMMfunc( SANE , CMMdeallocateFunc )
 #define CMMMessageFuncSet       catCMMfunc( SANE , CMMMessageFuncSet )
@@ -89,7 +92,7 @@ int check_driver_version(oyOptions_s *options, oyOption_s **version_opt_p, int *
 
 /* --- implementations --- */
 
-int CMMInit( oyStruct_s * filter )
+int CMMapiInit( oyStruct_s * filter )
 {
   int error = 0;
   const char * rfilter = "config.icc_profile.scanner.SANE";
@@ -99,6 +102,21 @@ int CMMInit( oyStruct_s * filter )
 
   return error;
 }
+int CMMapiReset( oyStruct_s * filter )
+{
+  int error = 0;
+
+  if(_initialised)
+  {
+    error = oyDeviceCMMReset( filter );
+    _initialised = 0;
+  }
+
+  return error;
+}
+
+int CMMinit( oyStruct_s * filter OY_UNUSED ) { return 0; }
+int CMMreset( oyStruct_s * filter OY_UNUSED ) { return 0; }
 
 oyPointer CMMallocateFunc(size_t size)
 {
@@ -850,7 +868,7 @@ const char * Api8UiGetText           ( const char        * select,
   }
   return 0;
 }
-const char * _api8_ui_texts[] = {"name", "help", "device_class", "icc_profile_class", "category", 0};
+static const char * _api8_ui_texts[] = {"name", "help", "device_class", "icc_profile_class", "category", 0};
 
 /** @brief    oydi oyCMMapi4_s::ui implementation
  *
@@ -894,7 +912,8 @@ oyCMMapi8_s_ SANE_api8 = {
    oyOBJECT_CMM_API8_S,
    0, 0, 0,
    0,                                                                 /**< next */
-   CMMInit,                                                           /**< oyCMMInit_f      oyCMMInit */
+   CMMapiInit,                                                        /**< oyCMMInit_f      oyCMMInit */
+   CMMapiReset,                                                       /**< oyCMMreset_f     oyCMMReset */
    CMMMessageFuncSet,                                                 /**< oyCMMMessageFuncSet_f oyCMMMessageFuncSet */
    CMM_BASE_REG,                                                      /**< registration */
    CMM_VERSION,                                                         /**< int32_t version[3] */
@@ -979,7 +998,8 @@ oyCMM_s _cmm_module = {
   /** ::icon; zero terminated list of a icon pyramid */
    &_api8_icon,
 
-   NULL                /**< init() */
+  CMMinit,             /**< init() */
+  CMMreset             /**< reset() */
 };
 
 /* Helper functions */

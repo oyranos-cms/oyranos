@@ -48,6 +48,15 @@ typedef struct oyCMMinfo_s oyCMMinfo_s;
  */
 typedef int      (*oyCMMinfoInit_f)  ( oyStruct_s        * library );
 
+/**
+ *  typedef oyCMMinfoReset_f
+ *  @brief   optional module reset function
+ *  @ingroup module_api
+ *  @memberof oyCMMinfo_s
+ *  @see oyCMMinfoInit_f
+ */
+typedef int      (*oyCMMinfoReset_f) ( oyStruct_s        * library );
+
 
 /* } Include "CMMinfo.public.h" */
 
@@ -136,6 +145,11 @@ OYAPI oyCMMinfoInit_f  OYEXPORT
 OYAPI void  OYEXPORT
                    oyCMMinfo_SetInitF( oyCMMinfo_s       * info,
                                        oyCMMinfoInit_f     init );
+OYAPI oyCMMinfoReset_f  OYEXPORT
+                   oyCMMinfo_GetResetF(oyCMMinfo_s       * info );
+OYAPI void  OYEXPORT
+                   oyCMMinfo_SetResetF(oyCMMinfo_s       * info,
+                                       oyCMMinfoReset_f    reset );
 
 /* } Include "CMMinfo.public_methods_declarations.h" */
 

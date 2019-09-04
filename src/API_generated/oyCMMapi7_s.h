@@ -144,6 +144,7 @@ OYAPI int OYEXPORT
 #include "oyCMMapi_s.h"
 OYAPI oyCMMapi7_s *  OYEXPORT
              oyCMMapi7_Create        ( oyCMMInit_f         init,
+                                       oyCMMReset_f        reset,
                                        oyCMMMessageFuncSet_f msg_set,
                                        const char        * registration,
                                        int32_t             version[3],

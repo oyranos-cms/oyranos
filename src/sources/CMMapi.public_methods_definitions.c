@@ -4,6 +4,7 @@
  *
  *  @param         api                 the struct
  *  @param         init                custom initialisation
+ *  @param         reset               custom deinitialisation
  *  @param         msg_set             message function setter
  *  @param         registration        the modules @ref registration string,
  *  @param         version             module version
@@ -15,12 +16,13 @@
  *  - 1: last minor Oyranos version during development time, e.g. 9
  *  - 2: last Oyranos patch version during development time, e.g. 5
  *
- *  @version Oyranos: 0.9.5
+ *  @version Oyranos: 0.9.7
+ *  @date    2019/09/03
  *  @since   2013/06/10 (Oyranos: 0.9.5)
- *  @date    2013/06/10
  */
 void               oyCMMapi_Set      ( oyCMMapi_s        * api,
                                        oyCMMInit_f         init,
+                                       oyCMMReset_f        reset,
                                        oyCMMMessageFuncSet_f msg_set,
                                        const char        * registration,
                                        int32_t             version[3],
@@ -30,6 +32,7 @@ void               oyCMMapi_Set      ( oyCMMapi_s        * api,
   int i;
 
   s->oyCMMInit = init;
+  s->oyCMMReset = reset;
   s->oyCMMMessageFuncSet = msg_set;
   s->registration = registration;
   for(i = 0; i < 3; i++)
@@ -86,6 +89,10 @@ oyCMMapi_s *       oyCMMapi_GetNext  ( oyCMMapi_s        * api )
 oyCMMInit_f        oyCMMapi_GetInitF ( oyCMMapi_s        * api )
 {
   return ((oyCMMapi_s_*)api)->oyCMMInit;
+}
+oyCMMReset_f       oyCMMapi_GetResetF( oyCMMapi_s        * api )
+{
+  return ((oyCMMapi_s_*)api)->oyCMMReset;
 }
 oyCMMMessageFuncSet_f
                    oyCMMapi_GetMessageFuncSetF

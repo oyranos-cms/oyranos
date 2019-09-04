@@ -38,6 +38,7 @@ extern oyMessage_f oyIM_msg;
 
 
 int                oyIMCMMInit       ( oyStruct_s        * filter );
+int                oyIMCMMReset      ( oyStruct_s        * filter );
 int                oyIMIconv         ( const char        * input,
                                        size_t              len,
                                        char              * output,

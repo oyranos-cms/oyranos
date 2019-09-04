@@ -82,6 +82,7 @@ int                lrawCMMInit       ( oyStruct_s        * filter OY_UNUSED )
   int error = 0;
   return error;
 }
+int                lrawCMMReset      ( oyStruct_s        * filter OY_UNUSED ) { return 0; }
 
 
 
@@ -262,7 +263,8 @@ oyCMM_s lraw_cmm_module = {
 
   &lraw_icon,
 
-  NULL                                 /**< init() */
+  NULL,                                /**< init() */
+  NULL                                 /**< reset() */
 };
 
 
@@ -908,6 +910,7 @@ oyCMMapi4_s_ lraw_api4_image_input_libraw = {
   (oyCMMapi_s*) & lraw_api7_image_input_libraw, /* oyCMMapi_s * next */
   
   lrawCMMInit, /* oyCMMInit_f */
+  lrawCMMReset, /* oyCMMReset_f */
   lrawCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
 
   /* registration */
@@ -955,6 +958,7 @@ oyCMMapi7_s_ lraw_api7_image_input_libraw = {
   (oyCMMapi_s*) 0, /* oyCMMapi_s * next */
   
   lrawCMMInit, /* oyCMMInit_f */
+  lrawCMMReset, /* oyCMMReset_f */
   lrawCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
 
   /* registration */

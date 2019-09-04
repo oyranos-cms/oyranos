@@ -3,6 +3,7 @@
  *  @brief      Custom CMMapi10 constructor
  *
  *  @param         init                custom initialisation
+ *  @param         reset               custom deinitialisation
  *  @param         msg_set             message function setter
  *  @param         registration        the modules @ref registration string,
  *  it shall contain the command name, so it can be selected
@@ -22,11 +23,12 @@
  *  @param         object              a optional object
  *
  *  @version Oyranos: 0.9.7
+ *  @date    2019/09/03
  *  @since   2019/02/07 (Oyranos: 0.9.7)
- *  @date    2019/02/07
  */
 OYAPI oyCMMapi10_s*  OYEXPORT
                    oyCMMapi10_Create ( oyCMMInit_f         init,
+                                       oyCMMReset_f        reset,
                                        oyCMMMessageFuncSet_f msg_set,
                                        const char        * registration,
                                        int32_t             version[3],
@@ -43,7 +45,7 @@ OYAPI oyCMMapi10_s*  OYEXPORT
     return NULL;
   }
 
-  oyCMMapi_Set( (oyCMMapi_s*) api10, init, msg_set, registration,
+  oyCMMapi_Set( (oyCMMapi_s*) api10, init, reset, msg_set, registration,
                 version, module_api );
 
   api10->getText = getText;

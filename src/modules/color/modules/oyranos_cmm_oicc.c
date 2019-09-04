@@ -53,6 +53,7 @@
 oyMessage_f oicc_msg = oyMessageFunc;
 int            oiccFilterMessageFuncSet( oyMessage_f       message_func );
 int                oiccFilterInit    ( oyStruct_s        * filter );
+int                oiccFilterReset   ( oyStruct_s        * filter );
 oyWIDGET_EVENT_e   oiccWidgetEvent   ( oyOptions_s       * options,
                                        oyWIDGET_EVENT_e    type,
                                        oyStruct_s        * event );
@@ -83,6 +84,7 @@ int                oiccFilterInit    ( oyStruct_s        * filter OY_UNUSED )
   int error = 0;
   return error;
 }
+int                oiccFilterReset   ( oyStruct_s        * filter OY_UNUSED ) { int error = 0; return error; }
 
 /** Function oiccInit
  *  @brief   API requirement
@@ -1124,6 +1126,7 @@ oyCMMapi9_s_  oicc_api9 = {
   0, /* oyCMMapi_s * next */
   
   oiccFilterInit, /* oyCMMInit_f */
+  oiccFilterReset, /* oyCMMReset_f */
   oiccFilterMessageFuncSet, /* oyCMMMessageFuncSet_f */
 
   /* registration */
@@ -1237,7 +1240,8 @@ oyCMM_s oicc_cmm_module = {
 
   &oicc_icon,
 
-  oiccInit
+  oiccInit,
+  NULL                                 /**< reset() */
 };
 
 /**  @} *//* oicc_policy */

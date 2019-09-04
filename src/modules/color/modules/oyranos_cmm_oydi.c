@@ -51,6 +51,7 @@
 /* OY_IMAGE_DISPLAY_REGISTRATION */
 
 int                oydiCMMInit       ( oyStruct_s        * filter );
+int                oydiCMMReset      ( oyStruct_s        * filter );
 int            oydiCMMMessageFuncSet ( oyMessage_f         message_func );
 oyMessage_f oydi_msg = 0;
 
@@ -1200,6 +1201,7 @@ oyCMMapi7_s_   oydi_api7_image_display = {
   (oyCMMapi_s*) 0, /* oyCMMapi_s * next */
   
   oydiCMMInit, /* oyCMMInit_f */
+  oydiCMMReset, /* oyCMMReset_f */
   oydiCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
 
   /* registration */
@@ -1289,6 +1291,7 @@ oyCMMapi4_s_   oydi_api4_image_display = {
   (oyCMMapi_s*) & oydi_api7_image_display, /* oyCMMapi_s * next */
   
   oydiCMMInit, /* oyCMMInit_f */
+  oydiCMMReset, /* oyCMMReset_f */
   oydiCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
 
   /* registration */
@@ -1319,6 +1322,15 @@ oyCMMapi4_s_   oydi_api4_image_display = {
  *  @date    2009/12/17
  */
 int                oydiCMMInit       ( oyStruct_s        * filter OY_UNUSED )
+{
+  int error = 0;
+  return error;
+}
+
+/** Function oydiCMMReset
+ *  @brief   API requirement
+ */
+int                oydiCMMReset      ( oyStruct_s        * filter OY_UNUSED )
 {
   int error = 0;
   return error;

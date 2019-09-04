@@ -186,6 +186,7 @@ OYAPI oyPointer_s * OYEXPORT
  *  @brief      Custom CMMapi4 constructor
  *
  *  @param         init                custom initialisation
+ *  @param         reset               custom deinitialisation
  *  @param         msg_set             message function setter
  *  @param         registration        the modules @ref registration string,
  *  @param         version             module version
@@ -209,12 +210,13 @@ OYAPI oyPointer_s * OYEXPORT
  *  argument shall cover at least "name" and "help"
  *  @param         object              a optional object
  *
- *  @version Oyranos: 0.9.5
+ *  @version Oyranos: 0.9.7
+ *  @date    2019/09/03
  *  @since   2013/06/09 (Oyranos: 0.9.5)
- *  @date    2013/06/09
  */
 OYAPI oyCMMapi4_s*  OYEXPORT
                    oyCMMapi4_Create  ( oyCMMInit_f         init,
+                                       oyCMMReset_f        reset,
                                        oyCMMMessageFuncSet_f msg_set,
                                        const char        * registration,
                                        int32_t             version[3],
@@ -232,7 +234,7 @@ OYAPI oyCMMapi4_s*  OYEXPORT
     return NULL;
   }
 
-  oyCMMapi_Set( (oyCMMapi_s*) api4, init, msg_set, registration,
+  oyCMMapi_Set( (oyCMMapi_s*) api4, init, reset, msg_set, registration,
                 version, module_api );
 
   if(context_type)

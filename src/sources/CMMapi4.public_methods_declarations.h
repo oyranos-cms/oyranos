@@ -51,6 +51,7 @@ typedef char *(*oyCMMFilterNode_GetText_f) (
 #include "oyCMMapi_s.h"
 OYAPI oyCMMapi4_s*  OYEXPORT
                    oyCMMapi4_Create  ( oyCMMInit_f         init,
+                                       oyCMMReset_f        reset,
                                        oyCMMMessageFuncSet_f msg_set,
                                        const char        * registration,
                                        int32_t             version[3],

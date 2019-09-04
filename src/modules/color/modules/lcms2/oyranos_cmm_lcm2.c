@@ -98,7 +98,10 @@ void l2cmsErrorHandlerFunction       ( cmsContext          ContextID,
                                        cmsUInt32Number     ErrorCode,
                                        const char        * ErrorText );
 int            l2cmsCMMMessageFuncSet( oyMessage_f         l2cms_msg_func );
-int                l2cmsCMMInit      ( );
+int                l2cmsCMMinit      ( );
+int                l2cmsCMMreset     ( );
+int                l2cmsCMMapiInit   ( ) { return 0; }
+int                l2cmsCMMapiReset  ( ) { return 0; }
 
 
 /** @struct l2cmsProfileWrap_s
@@ -287,7 +290,7 @@ static void (*l2cmsSetDeviceClass)(cmsHPROFILE hProfile, cmsProfileClassSignatur
 static void (*l2cmsSetColorSpace)(cmsHPROFILE hProfile, cmsColorSpaceSignature sig) = NULL;
 static void (*l2cmsSetPCS)(cmsHPROFILE hProfile, cmsColorSpaceSignature pcs) = NULL;
 static cmsToneCurve* (*l2cmsBuildGamma)(cmsContext ContextID, cmsFloat64Number Gamma) = NULL;
-static cmsToneCurve*(*l2cmsBuildSegmentedToneCurve)(cmsContext ContextID, cmsInt32Number nSegments, const cmsCurveSegment Segments[]) = NULL;
+static cmsToneCurve*(*l2cmsBuildSegmentedToneCurve)(cmsContext ContextID, cmsUInt32Number nSegments, const cmsCurveSegment Segments[]) = NULL;
 static cmsToneCurve*(*l2cmsBuildParametricToneCurve)(cmsContext ContextID, cmsInt32Number Type, const cmsFloat64Number Parameters[]) = NULL;
 static void (*l2cmsFreeToneCurve)(cmsToneCurve* Curve) = NULL;
 static cmsHANDLE         (*l2cmsCIECAM02Init)               (cmsContext ContextID, const cmsViewingConditions* pVC) = NULL;
@@ -356,7 +359,10 @@ static cmsUInt32Number   (*l2cmsIT8EnumProperties)(cmsHANDLE hIT8, char ***Prope
 static cmsUInt32Number   (*l2cmsIT8EnumPropertyMulti)(cmsHANDLE hIT8, const char* cProp, const char ***SubpropertyNames);
 
 #if !defined(COMPILE_STATIC)
-#define LOAD_FUNC( func, fallback_func ) l2##func = dlsym(l2cms_handle, #func ); \
+#define REGISTER_FUNC( func, fallback_func ) \
+  if(init) \
+  { \
+    l2##func = dlsym(l2cms_handle, #func ); \
                if(!l2##func) \
                { \
                  oyMSG_e type = oyMSG_ERROR; \
@@ -368,46 +374,177 @@ static cmsUInt32Number   (*l2cmsIT8EnumPropertyMulti)(cmsHANDLE hIT8, const char
                  { \
                    error = 1; \
                  } \
-                 report = 1; \
-                 l2cms_msg( type,0, OY_DBG_FORMAT_" " \
-                                      "dlsym failed: %s", \
-                                      OY_DBG_ARGS_, dlerror() ); \
-               }
-#else
-#define LOAD_FUNC( func, fallback_func ) l2##func = func; \
-               if(!l2##func) \
-               { \
-                 oyMSG_e type = oyMSG_ERROR; \
-                 if(#fallback_func != NULL) \
-                 { \
-                   l2##func = fallback_func; \
-                   type = oyMSG_WARN; \
-                 } else \
-                 { \
-                   error = 1; \
-                 } \
-                 report = 1; \
+                 if(!error) \
+                   error = -1; \
                  l2cms_msg( type,0, OY_DBG_FORMAT_" " \
                                       "dlsym failed: %s", \
                                       OY_DBG_ARGS_, dlerror() ); \
                } \
-               l2cms_handle = 0;
+  } \
+  else \
+  { \
+    l2##func = NULL; \
+  }
+#else
+#define REGISTER_FUNC( func, fallback_func ) \
+  if(init) \
+  { \
+    l2##func = func; \
+               if(!l2##func) \
+               { \
+                 oyMSG_e type = oyMSG_ERROR; \
+                 if(#fallback_func != NULL) \
+                 { \
+                   l2##func = fallback_func; \
+                   type = oyMSG_WARN; \
+                 } else \
+                 { \
+                   error = 1; \
+                 } \
+                 if(!error) \
+                   error = -1; \
+                 l2cms_msg( type,0, OY_DBG_FORMAT_" " \
+                                      "dlsym failed: %s", \
+                                      OY_DBG_ARGS_, dlerror() ); \
+               } \
+               l2cms_handle = 0; \
+  } \
+  else \
+  { \
+    l2##func = NULL; \
+  }
 #define dlerror() l2cms_handle = 0
 #endif
 
-/** Function l2cmsCMMInit
+int lcm2registerFuncs( int init, const char * fn )
+{
+  int error = 0;
+      REGISTER_FUNC( cmsSetLogErrorHandler, NULL );
+#if LCMS_VERSION >= 2060
+      REGISTER_FUNC( cmsSetLogErrorHandlerTHR, NULL );
+#endif
+      REGISTER_FUNC( cmsGetColorSpace, NULL );
+      REGISTER_FUNC( cmsGetPCS, NULL );
+      REGISTER_FUNC( cmsGetDeviceClass, NULL );
+      REGISTER_FUNC( cmsGetProfileInfoASCII, NULL );
+      REGISTER_FUNC( _cmsLCMScolorSpace, NULL );
+      REGISTER_FUNC( cmsChannelsOf, NULL );
+      REGISTER_FUNC( cmsIsTag, NULL );
+      REGISTER_FUNC( cmsCreateTransform, NULL );
+      REGISTER_FUNC( cmsCreateTransformTHR, NULL );
+      REGISTER_FUNC( cmsCreateProofingTransform, NULL );
+      REGISTER_FUNC( cmsCreateProofingTransformTHR, NULL );
+      REGISTER_FUNC( cmsCreateMultiprofileTransform, NULL );
+      REGISTER_FUNC( cmsCreateExtendedTransform, NULL );
+      REGISTER_FUNC( cmsDeleteTransform, NULL );
+      REGISTER_FUNC( cmsDoTransform, NULL );
+      REGISTER_FUNC( cmsOpenProfileFromFile, NULL );
+      REGISTER_FUNC( cmsSaveProfileToFile, NULL );
+      REGISTER_FUNC( cmsTransform2DeviceLink, NULL );
+      REGISTER_FUNC( cmsSaveProfileToMem, NULL );
+      REGISTER_FUNC( cmsOpenProfileFromMemTHR, NULL );
+#if LCMS_VERSION >= 2060
+      REGISTER_FUNC( cmsOpenProfileFromFileTHR, NULL );
+#endif
+      REGISTER_FUNC( cmsCloseProfile, NULL );
+      REGISTER_FUNC( cmsCreateProfilePlaceholder, NULL );
+      REGISTER_FUNC( cmsSetProfileVersion, NULL );
+      REGISTER_FUNC( cmsCreateLab4ProfileTHR, NULL );
+      REGISTER_FUNC( cmsCreateLab4Profile, NULL );
+      REGISTER_FUNC( cmsCreateXYZProfile, NULL );
+      REGISTER_FUNC( cmsCreate_sRGBProfile, NULL );
+      REGISTER_FUNC( cmsCreateRGBProfile, NULL );
+      REGISTER_FUNC( cmsCreateLinearizationDeviceLink, NULL );
+      REGISTER_FUNC( cmsSetDeviceClass, NULL );
+      REGISTER_FUNC( cmsSetColorSpace, NULL );
+      REGISTER_FUNC( cmsSetPCS, NULL );
+      REGISTER_FUNC( cmsBuildGamma, NULL );
+      REGISTER_FUNC( cmsBuildSegmentedToneCurve, NULL );
+      REGISTER_FUNC( cmsBuildParametricToneCurve, NULL );
+      REGISTER_FUNC( cmsFreeToneCurve, NULL );
+      REGISTER_FUNC( cmsCIECAM02Init, NULL );
+      REGISTER_FUNC( cmsCIECAM02Done, NULL );
+      REGISTER_FUNC( cmsCIECAM02Forward, NULL );
+      REGISTER_FUNC( cmsCIECAM02Reverse, NULL );
+      REGISTER_FUNC( cmsPipelineAlloc, NULL );
+      REGISTER_FUNC( cmsPipelineFree, NULL );
+      REGISTER_FUNC( cmsPipelineInsertStage, NULL );
+      REGISTER_FUNC( cmsPipelineGetPtrToFirstStage, NULL );
+      REGISTER_FUNC( cmsStageType, NULL );
+      REGISTER_FUNC( cmsStageNext, NULL );
+      REGISTER_FUNC( cmsStageInputChannels, NULL );
+      REGISTER_FUNC( cmsStageOutputChannels, NULL );
+      REGISTER_FUNC( cmsStageAllocCLut16bit, NULL );
+      REGISTER_FUNC( cmsStageAllocCLutFloat, NULL );
+      REGISTER_FUNC( cmsStageAllocMatrix, NULL );
+      REGISTER_FUNC( cmsStageSampleCLut16bit, NULL );
+      REGISTER_FUNC( cmsStageSampleCLutFloat, NULL );
+      REGISTER_FUNC( cmsStageAllocToneCurves, NULL );
+      REGISTER_FUNC( cmsReadTag, NULL );
+      REGISTER_FUNC( cmsWriteTag, NULL );
+      REGISTER_FUNC( cmsMLUalloc, NULL );
+      REGISTER_FUNC( cmsMLUsetASCII, NULL );
+      REGISTER_FUNC( cmsMLUsetWide, NULL );
+      REGISTER_FUNC( cmsMLUfree, NULL );
+      REGISTER_FUNC( cmsDictAlloc, NULL );
+      REGISTER_FUNC( cmsDictFree, NULL );
+      REGISTER_FUNC( cmsDictDup, NULL );
+      REGISTER_FUNC( cmsDictAddEntry, NULL );
+      REGISTER_FUNC( cmsDictGetEntryList, NULL );
+      REGISTER_FUNC( cmsDictNextEntry, NULL );
+      REGISTER_FUNC( cmsLabEncoded2Float, NULL );
+      REGISTER_FUNC( cmsFloat2LabEncoded, NULL );
+      REGISTER_FUNC( cmsD50_XYZ, NULL );
+      REGISTER_FUNC( cmsD50_xyY, NULL );
+      REGISTER_FUNC( cmsWhitePointFromTemp, NULL );
+      REGISTER_FUNC( cmsAdaptToIlluminant, NULL );
+      REGISTER_FUNC( cmsxyY2XYZ, NULL );
+      REGISTER_FUNC( cmsXYZ2Lab, NULL );
+      REGISTER_FUNC( cmsLab2XYZ, NULL );
+      REGISTER_FUNC( cmsDeltaE, NULL );
+      REGISTER_FUNC( cmsGetAlarmCodes, NULL );
+#if LCMS_VERSION >= 2060
+      REGISTER_FUNC( cmsCreateContext, dummyCreateContext ); /* available since lcms 2.6 */
+      REGISTER_FUNC( cmsGetContextUserData, dummyGetContextUserData ); /* available since lcms 2.6 */
+#else
+      l2cmsCreateContext = dummyCreateContext;
+      l2cmsGetContextUserData = dummyGetContextUserData;
+#endif
+      REGISTER_FUNC( cmsGetProfileContextID, NULL );
+      REGISTER_FUNC( cmsGetTransformContextID, NULL );
+#if LCMS_VERSION >= 2080
+      REGISTER_FUNC( cmsGetEncodedCMMversion, dummyGetEncodedCMMversion );
+#endif
+      if(l2cmsSetLogErrorHandler)
+        l2cmsSetLogErrorHandler( l2cmsErrorHandlerFunction );
+      else
+          l2cms_msg( oyMSG_WARN, (oyStruct_s*)NULL,
+                    OY_DBG_FORMAT_"can not set error handler %d %d",
+                    OY_DBG_ARGS_, l2cmsGetEncodedCMMversion, LCMS_VERSION );
+      if(l2cmsGetEncodedCMMversion() != LCMS_VERSION)
+          l2cms_msg( oyMSG_WARN, (oyStruct_s*)NULL,
+                    OY_DBG_FORMAT_" compile and run time version differ %d %d",
+                    OY_DBG_ARGS_, l2cmsGetEncodedCMMversion, LCMS_VERSION );
+      REGISTER_FUNC( cmsIT8LoadFromMem, NULL );
+      REGISTER_FUNC( cmsIT8EnumProperties, NULL );
+      REGISTER_FUNC( cmsIT8EnumPropertyMulti, NULL );
+          
+  return error;
+}
+
+/** Function l2cmsCMMinit
  *  @brief   API requirement
  *
  *  @version Oyranos: 0.9.5
  *  @date    2014/02/27
  *  @since   2007/12/11 (Oyranos: 0.1.8)
  */
-int                l2cmsCMMInit       ( oyStruct_s        * filter OY_UNUSED )
+int                l2cmsCMMinit       ( oyStruct_s        * filter OY_UNUSED )
 {
   int error = 0;
+  int init = 1;
   if(!l2cms_initialised)
   {
-    int report = 0;
     char * fn = oyLibNameCreate_( "lcms2", 2 );
 #if !defined(COMPILE_STATIC)
     l2cms_handle = dlopen(fn, RTLD_LAZY);
@@ -422,124 +559,16 @@ int                l2cmsCMMInit       ( oyStruct_s        * filter OY_UNUSED )
     } else
 #endif
     {
-      LOAD_FUNC( cmsSetLogErrorHandler, NULL );
-#if LCMS_VERSION >= 2060
-      LOAD_FUNC( cmsSetLogErrorHandlerTHR, NULL );
-#endif
-      LOAD_FUNC( cmsGetColorSpace, NULL );
-      LOAD_FUNC( cmsGetPCS, NULL );
-      LOAD_FUNC( cmsGetDeviceClass, NULL );
-      LOAD_FUNC( cmsGetProfileInfoASCII, NULL );
-      LOAD_FUNC( _cmsLCMScolorSpace, NULL );
-      LOAD_FUNC( cmsChannelsOf, NULL );
-      LOAD_FUNC( cmsIsTag, NULL );
-      LOAD_FUNC( cmsCreateTransform, NULL );
-      LOAD_FUNC( cmsCreateTransformTHR, NULL );
-      LOAD_FUNC( cmsCreateProofingTransform, NULL );
-      LOAD_FUNC( cmsCreateProofingTransformTHR, NULL );
-      LOAD_FUNC( cmsCreateMultiprofileTransform, NULL );
-      LOAD_FUNC( cmsCreateExtendedTransform, NULL );
-      LOAD_FUNC( cmsDeleteTransform, NULL );
-      LOAD_FUNC( cmsDoTransform, NULL );
-      LOAD_FUNC( cmsOpenProfileFromFile, NULL );
-      LOAD_FUNC( cmsSaveProfileToFile, NULL );
-      LOAD_FUNC( cmsTransform2DeviceLink, NULL );
-      LOAD_FUNC( cmsSaveProfileToMem, NULL );
-      LOAD_FUNC( cmsOpenProfileFromMemTHR, NULL );
-#if LCMS_VERSION >= 2060
-      LOAD_FUNC( cmsOpenProfileFromFileTHR, NULL );
-#endif
-      LOAD_FUNC( cmsCloseProfile, NULL );
-      LOAD_FUNC( cmsCreateProfilePlaceholder, NULL );
-      LOAD_FUNC( cmsSetProfileVersion, NULL );
-      LOAD_FUNC( cmsCreateLab4ProfileTHR, NULL );
-      LOAD_FUNC( cmsCreateLab4Profile, NULL );
-      LOAD_FUNC( cmsCreateXYZProfile, NULL );
-      LOAD_FUNC( cmsCreate_sRGBProfile, NULL );
-      LOAD_FUNC( cmsCreateRGBProfile, NULL );
-      LOAD_FUNC( cmsCreateLinearizationDeviceLink, NULL );
-      LOAD_FUNC( cmsSetDeviceClass, NULL );
-      LOAD_FUNC( cmsSetColorSpace, NULL );
-      LOAD_FUNC( cmsSetPCS, NULL );
-      LOAD_FUNC( cmsBuildGamma, NULL );
-      LOAD_FUNC( cmsBuildSegmentedToneCurve, NULL );
-      LOAD_FUNC( cmsBuildParametricToneCurve, NULL );
-      LOAD_FUNC( cmsFreeToneCurve, NULL );
-      LOAD_FUNC( cmsCIECAM02Init, NULL );
-      LOAD_FUNC( cmsCIECAM02Done, NULL );
-      LOAD_FUNC( cmsCIECAM02Forward, NULL );
-      LOAD_FUNC( cmsCIECAM02Reverse, NULL );
-      LOAD_FUNC( cmsPipelineAlloc, NULL );
-      LOAD_FUNC( cmsPipelineFree, NULL );
-      LOAD_FUNC( cmsPipelineInsertStage, NULL );
-      LOAD_FUNC( cmsPipelineGetPtrToFirstStage, NULL );
-      LOAD_FUNC( cmsStageType, NULL );
-      LOAD_FUNC( cmsStageNext, NULL );
-      LOAD_FUNC( cmsStageInputChannels, NULL );
-      LOAD_FUNC( cmsStageOutputChannels, NULL );
-      LOAD_FUNC( cmsStageAllocCLut16bit, NULL );
-      LOAD_FUNC( cmsStageAllocCLutFloat, NULL );
-      LOAD_FUNC( cmsStageAllocMatrix, NULL );
-      LOAD_FUNC( cmsStageSampleCLut16bit, NULL );
-      LOAD_FUNC( cmsStageSampleCLutFloat, NULL );
-      LOAD_FUNC( cmsStageAllocToneCurves, NULL );
-      LOAD_FUNC( cmsReadTag, NULL );
-      LOAD_FUNC( cmsWriteTag, NULL );
-      LOAD_FUNC( cmsMLUalloc, NULL );
-      LOAD_FUNC( cmsMLUsetASCII, NULL );
-      LOAD_FUNC( cmsMLUsetWide, NULL );
-      LOAD_FUNC( cmsMLUfree, NULL );
-      LOAD_FUNC( cmsDictAlloc, NULL );
-      LOAD_FUNC( cmsDictFree, NULL );
-      LOAD_FUNC( cmsDictDup, NULL );
-      LOAD_FUNC( cmsDictAddEntry, NULL );
-      LOAD_FUNC( cmsDictGetEntryList, NULL );
-      LOAD_FUNC( cmsDictNextEntry, NULL );
-      LOAD_FUNC( cmsLabEncoded2Float, NULL );
-      LOAD_FUNC( cmsFloat2LabEncoded, NULL );
-      LOAD_FUNC( cmsD50_XYZ, NULL );
-      LOAD_FUNC( cmsD50_xyY, NULL );
-      LOAD_FUNC( cmsWhitePointFromTemp, NULL );
-      LOAD_FUNC( cmsAdaptToIlluminant, NULL );
-      LOAD_FUNC( cmsxyY2XYZ, NULL );
-      LOAD_FUNC( cmsXYZ2Lab, NULL );
-      LOAD_FUNC( cmsLab2XYZ, NULL );
-      LOAD_FUNC( cmsDeltaE, NULL );
-      LOAD_FUNC( cmsGetAlarmCodes, NULL );
-#if LCMS_VERSION >= 2060
-      LOAD_FUNC( cmsCreateContext, dummyCreateContext ); /* available since lcms 2.6 */
-      LOAD_FUNC( cmsGetContextUserData, dummyGetContextUserData ); /* available since lcms 2.6 */
-#else
-      l2cmsCreateContext = dummyCreateContext;
-      l2cmsGetContextUserData = dummyGetContextUserData;
-#endif
-      LOAD_FUNC( cmsGetProfileContextID, NULL );
-      LOAD_FUNC( cmsGetTransformContextID, NULL );
-#if LCMS_VERSION >= 2080
-      LOAD_FUNC( cmsGetEncodedCMMversion, dummyGetEncodedCMMversion );
-#endif
-      if(l2cmsSetLogErrorHandler)
-        l2cmsSetLogErrorHandler( l2cmsErrorHandlerFunction );
-      else
-          l2cms_msg( oyMSG_WARN, (oyStruct_s*)NULL,
-                    OY_DBG_FORMAT_"can not set error handler %d %d",
-                    OY_DBG_ARGS_, l2cmsGetEncodedCMMversion, LCMS_VERSION );
-      if(l2cmsGetEncodedCMMversion() != LCMS_VERSION)
-          l2cms_msg( oyMSG_WARN, (oyStruct_s*)NULL,
-                    OY_DBG_FORMAT_" compile and run time version differ %d %d",
-                    OY_DBG_ARGS_, l2cmsGetEncodedCMMversion, LCMS_VERSION );
-      LOAD_FUNC( cmsIT8LoadFromMem, NULL );
-      LOAD_FUNC( cmsIT8EnumProperties, NULL );
-      LOAD_FUNC( cmsIT8EnumPropertyMulti, NULL );
+      error = lcm2registerFuncs( init, fn );
           
 #if !defined(COMPILE_STATIC)
-      if(error)
+      if(error > 0)
         l2cms_initialised = -1;
       else
 #endif
         l2cms_initialised = 1;
 
-      if(report)
+      if(error != 0)
         l2cms_msg( oyMSG_WARN,0, OY_DBG_FORMAT_" "
                "init \"%s\" issue(s): v%d",
                 OY_DBG_ARGS_, fn, l2cmsGetEncodedCMMversion() );
@@ -550,6 +579,31 @@ int                l2cmsCMMInit       ( oyStruct_s        * filter OY_UNUSED )
     error = 1;
   return error;
 }
+/** Function l2cmsCMMreset
+ *  @brief   API requirement
+ *
+ *  @version Oyranos: 0.9.7
+ *  @date    2019/09/02
+ *  @since   2019/09/02 (Oyranos: 0.9.7)
+ */
+int                l2cmsCMMreset      ( oyStruct_s        * filter OY_UNUSED )
+{
+  int error = 0;
+  int init = 0;
+
+  if(l2cms_initialised)
+  {
+    error = lcm2registerFuncs( init, NULL );
+
+    if(l2cms_handle) \
+      dlclose(l2cms_handle); \
+    l2cms_handle = NULL; \
+
+    l2cms_initialised = 0;
+  }
+  return error;
+}
+
 
 #define cmsSetLogErrorHandler l2cmsSetLogErrorHandler
 #define cmsSetLogErrorHandlerTHR l2cmsSetLogErrorHandlerTHR
@@ -3470,7 +3524,8 @@ oyCMMapi10_s_    l2cms_api10_cmm5 = {
   0,0,0,
   0,
 
-  l2cmsCMMInit,
+  l2cmsCMMapiInit,
+  l2cmsCMMapiReset,
   l2cmsCMMMessageFuncSet,
 
   OY_LCM2_PARSE_CGATS,
@@ -3740,7 +3795,8 @@ oyCMMapi10_s_    l2cms_api10_cmm4 = {
   0,0,0,
   0,//(oyCMMapi_s*) & l2cms_api10_cmm5,
 
-  l2cmsCMMInit,
+  l2cmsCMMapiInit,
+  l2cmsCMMapiReset,
   l2cmsCMMMessageFuncSet,
 
   OY_LCM2_CREATE_ABSTRACT_WHITE_POINT_BRADFORD_REGISTRATION,
@@ -3946,7 +4002,8 @@ oyCMMapi10_s_    l2cms_api10_cmm3 = {
   0,0,0,
   (oyCMMapi_s*) & l2cms_api10_cmm4,
 
-  l2cmsCMMInit,
+  l2cmsCMMapiInit,
+  l2cmsCMMapiReset,
   l2cmsCMMMessageFuncSet,
 
   OY_LCM2_CREATE_ABSTRACT_WHITE_POINT_LAB_REGISTRATION,
@@ -4236,7 +4293,8 @@ oyCMMapi10_s_    l2cms_api10_cmm2 = {
   0,0,0,
   (oyCMMapi_s*) & l2cms_api10_cmm3,
 
-  l2cmsCMMInit,
+  l2cmsCMMapiInit,
+  l2cmsCMMapiReset,
   l2cmsCMMMessageFuncSet,
 
   OY_LCM2_CREATE_ABSTRACT_PROOFING_REGISTRATION,
@@ -4452,7 +4510,8 @@ oyCMMapi10_s_    l2cms_api10_cmm = {
   0,0,0,
   (oyCMMapi_s*) & l2cms_api10_cmm2,
 
-  l2cmsCMMInit,
+  l2cmsCMMapiInit,
+  l2cmsCMMapiReset,
   l2cmsCMMMessageFuncSet,
 
   OY_LCM2_CREATE_MATRIX_REGISTRATION,
@@ -4505,7 +4564,8 @@ oyCMMapi6_s_ l2cms_api6_cmm = {
   0,0,0,
   (oyCMMapi_s*) & l2cms_api10_cmm,
 
-  l2cmsCMMInit,
+  l2cmsCMMapiInit,
+  l2cmsCMMapiReset,
   l2cmsCMMMessageFuncSet,
 
   OY_LCM2_DATA_CONVERT_REGISTRATION,
@@ -4539,7 +4599,8 @@ oyCMMapi7_s_ l2cms_api7_cmm = {
   0,0,0,
   (oyCMMapi_s*) & l2cms_api6_cmm,
 
-  l2cmsCMMInit,
+  l2cmsCMMapiInit,
+  l2cmsCMMapiReset,
   l2cmsCMMMessageFuncSet,
 
   OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
@@ -4652,7 +4713,8 @@ oyCMMapi4_s_ l2cms_api4_cmm = {
   0,0,0,
   (oyCMMapi_s*) & l2cms_api7_cmm,
 
-  l2cmsCMMInit,
+  l2cmsCMMapiInit,
+  l2cmsCMMapiReset,
   l2cmsCMMMessageFuncSet,
 
   OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
@@ -4744,6 +4806,7 @@ oyCMM_s lcm2_cmm_module = {
   (oyCMMapi_s*) & l2cms_api4_cmm,      /**< api */
 
   &l2cms_icon, /**< icon */
-  l2cmsCMMInit                         /**< oyCMMinfoInit_f */
+  l2cmsCMMinit,                        /**< oyCMMinfoInit_f */
+  l2cmsCMMreset                        /**< oyCMMinfoReset_f */
 };
 

@@ -92,7 +92,9 @@ oyMessage_f lcms_msg = oyMessageFunc;
 int lcmsErrorHandlerFunction(int ErrorCode, const char *ErrorText);
 int            lcmsCMMMessageFuncSet ( oyMessage_f         message_func );
 int                lcmsCMMInit       ( );
-
+int                lcmsCMMReset      ( );
+int                lcmsCMMapiInit    () { return 0; }
+int                lcmsCMMapiReset   () { return 0; }
 
 
 
@@ -255,10 +257,54 @@ static void (*lcmsFloat2LabEncoded)(WORD wLab[3], const cmsCIELab* Lab) = NULL;
 static double (*lcmsDeltaE)(LPcmsCIELab Lab1, LPcmsCIELab Lab2) = NULL;
 
 
-#define LOAD_FUNC( func ) l##func = dlsym(lcms_handle, #func ); \
-               if(!l##func) lcms_msg( oyMSG_ERROR,0, OY_DBG_FORMAT_" " \
-                                      "init failed: %s", \
-                                      OY_DBG_ARGS_, dlerror() );
+#define REGISTER_FUNC( func ) \
+  if(init) \
+  { \
+    l##func = dlsym(lcms_handle, #func ); \
+    if(!l##func) lcms_msg( oyMSG_ERROR,0, OY_DBG_FORMAT_" " \
+                           "init failed: %s", \
+                           OY_DBG_ARGS_, dlerror() ); \
+  } \
+  else \
+  { \
+    l##func = NULL; \
+  }
+
+#define REGISTER_FUNCS\
+      REGISTER_FUNC( cmsErrorAction ); \
+      REGISTER_FUNC( cmsSetErrorHandler );\
+      REGISTER_FUNC( cmsGetColorSpace );\
+      REGISTER_FUNC( cmsGetPCS );\
+      REGISTER_FUNC( cmsGetDeviceClass );\
+      REGISTER_FUNC( _cmsChannelsOf );\
+      REGISTER_FUNC( cmsSetCMYKPreservationStrategy );\
+      REGISTER_FUNC( cmsCreateTransform );\
+      REGISTER_FUNC( cmsCreateProofingTransform );\
+      REGISTER_FUNC( cmsCreateMultiprofileTransform );\
+      REGISTER_FUNC( cmsDeleteTransform );\
+      REGISTER_FUNC( cmsDoTransform );\
+      REGISTER_FUNC( cmsTransform2DeviceLink );\
+      REGISTER_FUNC( cmsAddTag );\
+      REGISTER_FUNC( _cmsSaveProfileToMem );\
+      REGISTER_FUNC( cmsOpenProfileFromMem );\
+      REGISTER_FUNC( cmsCloseProfile );\
+      REGISTER_FUNC( cmsAllocLUT );\
+      REGISTER_FUNC( cmsAlloc3DGrid );\
+      REGISTER_FUNC( cmsSample3DGrid );\
+      REGISTER_FUNC( cmsFreeLUT );\
+      REGISTER_FUNC( _cmsCreateProfilePlaceholder );\
+      REGISTER_FUNC( cmsSetDeviceClass );\
+      REGISTER_FUNC( cmsSetColorSpace );\
+      REGISTER_FUNC( cmsSetPCS );\
+      REGISTER_FUNC( cmsBuildGamma );\
+      REGISTER_FUNC( cmsFreeGamma );\
+      REGISTER_FUNC( cmsCreateRGBProfile );\
+      REGISTER_FUNC( cmsCreateLabProfile );\
+      REGISTER_FUNC( cmsD50_XYZ );\
+      REGISTER_FUNC( cmsD50_xyY );\
+      REGISTER_FUNC( cmsLabEncoded2Float );\
+      REGISTER_FUNC( cmsFloat2LabEncoded );\
+      REGISTER_FUNC( cmsDeltaE );
 
 /** Function lcmsCMMInit
  *  @brief   API requirement
@@ -270,6 +316,7 @@ static double (*lcmsDeltaE)(LPcmsCIELab Lab1, LPcmsCIELab Lab2) = NULL;
 int                lcmsCMMInit       ( oyStruct_s        * filter OY_UNUSED )
 {
   int error = 0;
+  int init = 1;
 
   if(!lcms_initialised)
   {
@@ -287,44 +334,36 @@ int                lcmsCMMInit       ( oyStruct_s        * filter OY_UNUSED )
       error = 1;
     } else
     {
-      LOAD_FUNC( cmsErrorAction );
-      LOAD_FUNC( cmsSetErrorHandler );
-      LOAD_FUNC( cmsGetColorSpace );
-      LOAD_FUNC( cmsGetPCS );
-      LOAD_FUNC( cmsGetDeviceClass );
-      LOAD_FUNC( _cmsChannelsOf );
-      LOAD_FUNC( cmsSetCMYKPreservationStrategy );
-      LOAD_FUNC( cmsCreateTransform );
-      LOAD_FUNC( cmsCreateProofingTransform );
-      LOAD_FUNC( cmsCreateMultiprofileTransform );
-      LOAD_FUNC( cmsDeleteTransform );
-      LOAD_FUNC( cmsDoTransform );
-      LOAD_FUNC( cmsTransform2DeviceLink );
-      LOAD_FUNC( cmsAddTag );
-      LOAD_FUNC( _cmsSaveProfileToMem );
-      LOAD_FUNC( cmsOpenProfileFromMem );
-      LOAD_FUNC( cmsCloseProfile );
-      LOAD_FUNC( cmsAllocLUT );
-      LOAD_FUNC( cmsAlloc3DGrid );
-      LOAD_FUNC( cmsSample3DGrid );
-      LOAD_FUNC( cmsFreeLUT );
-      LOAD_FUNC( _cmsCreateProfilePlaceholder );
-      LOAD_FUNC( cmsSetDeviceClass );
-      LOAD_FUNC( cmsSetColorSpace );
-      LOAD_FUNC( cmsSetPCS );
-      LOAD_FUNC( cmsBuildGamma );
-      LOAD_FUNC( cmsFreeGamma );
-      LOAD_FUNC( cmsCreateRGBProfile );
-      LOAD_FUNC( cmsCreateLabProfile );
-      LOAD_FUNC( cmsD50_XYZ );
-      LOAD_FUNC( cmsD50_xyY );
-      LOAD_FUNC( cmsLabEncoded2Float );
-      LOAD_FUNC( cmsFloat2LabEncoded );
-      LOAD_FUNC( cmsDeltaE );
+      REGISTER_FUNCS
 
       lcmsErrorAction( LCMS_ERROR_SHOW );
       lcmsSetErrorHandler( lcmsErrorHandlerFunction );
     }
+  }
+  return error;
+}
+
+/** Function lcmsCMMReset
+ *  @brief   API requirement
+ *
+ *  @version Oyranos: 0.9.7
+ *  @date    2019/09/02
+ *  @since   2019/09/02 (Oyranos: 0.9.7)
+ */
+int                lcmsCMMReset      ( oyStruct_s        * filter OY_UNUSED )
+{
+  int error = 0;
+  int init = 0;
+
+  if(lcms_initialised)
+  {
+    REGISTER_FUNCS
+
+    if(lcms_handle) \
+      dlclose(lcms_handle); \
+    lcms_handle = NULL; \
+
+    lcms_initialised = 0;
   }
   return error;
 }
@@ -2557,7 +2596,8 @@ oyCMMapi10_s_  lcms_api10_cmm2 = {
   0,0,0,
   0,
 
-  lcmsCMMInit,
+  lcmsCMMapiInit,
+  lcmsCMMapiReset,
   lcmsCMMMessageFuncSet,
 
   OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
@@ -2628,7 +2668,8 @@ oyCMMapi10_s_  lcms_api10_cmm = {
   0,0,0,
   (oyCMMapi_s*) & lcms_api10_cmm2,
 
-  lcmsCMMInit,
+  lcmsCMMapiInit,
+  lcmsCMMapiReset,
   lcmsCMMMessageFuncSet,
 
   OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
@@ -2661,7 +2702,8 @@ oyCMMapi6_s_ lcms_api6_cmm = {
   0,0,0,
   (oyCMMapi_s*) & lcms_api10_cmm,
 
-  lcmsCMMInit,
+  lcmsCMMapiInit,
+  lcmsCMMapiReset,
   lcmsCMMMessageFuncSet,
 
   OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
@@ -2693,7 +2735,8 @@ oyCMMapi7_s_ lcms_api7_cmm = {
   0,0,0,
   (oyCMMapi_s*) & lcms_api6_cmm,
 
-  lcmsCMMInit,
+  lcmsCMMapiInit,
+  lcmsCMMapiReset,
   lcmsCMMMessageFuncSet,
 
   OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
@@ -2797,7 +2840,8 @@ oyCMMapi4_s_ lcms_api4_cmm = {
   0,0,0,
   (oyCMMapi_s*) & lcms_api7_cmm,
 
-  lcmsCMMInit,
+  lcmsCMMapiInit,
+  lcmsCMMapiReset,
   lcmsCMMMessageFuncSet,
 
   OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH
@@ -2887,6 +2931,7 @@ oyCMM_s lcms_cmm_module = {
 
   &lcms_icon,                          /**< icon */
 
-  NULL                                 /**< init() */
+  lcmsCMMInit,                         /**< init() */
+  lcmsCMMReset                         /**< reset() */
 };
 

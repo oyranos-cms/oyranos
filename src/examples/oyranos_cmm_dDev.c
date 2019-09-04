@@ -44,6 +44,7 @@
 #define catCMMfunc(nick,func) nick ## func
 
 #define CMMInit                 catCMMfunc( dDev, CMMInit )
+#define CMMReset                catCMMfunc( dDev, CMMReset )
 #define CMMallocateFunc         catCMMfunc( dDev, CMMallocateFunc )
 #define CMMdeallocateFunc       catCMMfunc( dDev, CMMdeallocateFunc )
 #define CMMMessageFuncSet       catCMMfunc( dDev, CMMMessageFuncSet )
@@ -83,6 +84,12 @@ oyRankMap _rank_map[];
 /* --- implementations --- */
 
 int                CMMInit       ( )
+{
+  int error = 0;
+  return error;
+}
+
+int                CMMReset      ( )
 {
   int error = 0;
   return error;
@@ -777,6 +784,7 @@ oyCMMapi8_s_ _api8 = {
   0,                         /**< next */
 
   CMMInit,                   /**< oyCMMInit_f      oyCMMInit */
+  CMMReset,                  /* oyCMMReset_f       oyCMMReset */
   CMMMessageFuncSet,         /**< oyCMMMessageFuncSet_f oyCMMMessageFuncSet */
 
   CMM_BASE_REG,              /**< registration */
@@ -872,6 +880,7 @@ oyCMM_s _cmm_module = {
   /** ::icon; zero terminated list of a icon pyramid */
   &_api8_icon,
 
-  NULL                                 /**< init() */
+  NULL,                                /**< init() */
+  NULL                                 /**< reset() */
 };
 

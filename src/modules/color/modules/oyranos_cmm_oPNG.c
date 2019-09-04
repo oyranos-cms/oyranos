@@ -64,6 +64,8 @@ oyWIDGET_EVENT_e   oPNGWidgetEvent   ( oyOptions_s       * options OY_UNUSED,
 
 int                oPNGCMMInit       ( oyStruct_s        * filter OY_UNUSED )
 { int error = 0; return error; }
+int                oPNGCMMReset      ( oyStruct_s        * filter OY_UNUSED )
+{ int error = 0; return error; }
 
 /** Function oPNGCMMMessageFuncSet
  *  @brief API requirement
@@ -119,7 +121,8 @@ oyCMM_s oPNG_cmm_module = {
 
   &oPNG_icon,
 
-  NULL                                 /**< init() */
+  NULL,                                /**< init() */
+  NULL                                 /**< reset() */
 };
 
 static int oPNG_error = 0;
@@ -650,6 +653,7 @@ oyCMMapi4_s_ oPNG_api4_image_write_png = {
   (oyCMMapi_s*) & oPNG_api7_image_write_png, /* oyCMMapi_s * next */
   
   oPNGCMMInit, /* oyCMMInit_f */
+  oPNGCMMReset, /* oyCMMReset_f */
   oPNGCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
 
   /* registration */
@@ -696,6 +700,7 @@ oyCMMapi7_s_ oPNG_api7_image_write_png = {
   (oyCMMapi_s*) & oPNG_api4_image_input_png, /* oyCMMapi_s * next */
   
   oPNGCMMInit, /* oyCMMInit_f */
+  oPNGCMMReset, /* oyCMMReset_f */
   oPNGCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
 
   /* registration */
@@ -1273,6 +1278,7 @@ oyCMMapi4_s_ oPNG_api4_image_input_png = {
   (oyCMMapi_s*) & oPNG_api7_image_input_png, /* oyCMMapi_s * next */
   
   oPNGCMMInit, /* oyCMMInit_f */
+  oPNGCMMReset, /* oyCMMReset_f */
   oPNGCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
 
   /* registration */
@@ -1319,6 +1325,7 @@ oyCMMapi7_s_ oPNG_api7_image_input_png = {
   (oyCMMapi_s*) NULL, /* oyCMMapi_s * next */
   
   oPNGCMMInit, /* oyCMMInit_f */
+  oPNGCMMReset, /* oyCMMReset_f */
   oPNGCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
 
   /* registration */

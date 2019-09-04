@@ -56,6 +56,19 @@ int                oyraCMMInit       ( oyStruct_s        * filter OY_UNUSED )
   return error;
 }
 
+/** Function oyraCMMReset
+ *  @brief API requirement
+ *
+ *  @version Oyranos: 0.9.7
+ *  @since   2019/09/03 (Oyranos: 0.9.7)
+ *  @date    2019/09/03
+ */
+int                oyraCMMReset      ( oyStruct_s        * filter OY_UNUSED )
+{
+  int error = 0;
+  return error;
+}
+
 
 
 /** Function oyraIconv
@@ -150,11 +163,16 @@ const char * oyraGetText             ( const char        * select,
 const char *oyra_texts[4] = {"name","copyright","manufacturer",0};
 
 extern oyCMM_s oyra_cmm_module;
+static int oyra_initialised = 0;
 int  oyraInit                        ( oyStruct_s        * module_info OY_UNUSED )
 {
   oyCMMapi_s * a = 0,
              * a_tmp = 0,
              * m = 0;
+
+  if(oyra_initialised)
+    return 0;
+  ++oyra_initialised;
 
   /* search the last filter */
   a = oyCMMinfo_GetApi( (oyCMMinfo_s*) &oyra_cmm_module );
@@ -176,6 +194,34 @@ int  oyraInit                        ( oyStruct_s        * module_info OY_UNUSED
   oyCMMapi_SetNext( a, m ); a = m;
   m = oyraApi7ImageScaleCreate();
   oyCMMapi_SetNext( a, m ); a = m;
+
+  return 0;
+}
+int  oyraReset                       ( oyStruct_s        * module_info )
+{
+  oyCMMapi_s * a = oyCMMinfo_GetApi( (oyCMMinfo_s*) &oyra_cmm_module ),
+             * a_tmp = 0;
+
+  if(!oyra_initialised)
+    return 0;
+
+  oyra_initialised = 0;
+
+  if((oyStruct_s*)&oyra_cmm_module != module_info)
+    oyra_msg( oyMSG_WARN, module_info, OY_DBG_FORMAT_ "wrong module info passed in", OY_DBG_ARGS_ );
+
+  /* traverse all filters */
+  while(a && ((a_tmp = oyCMMapi_GetNext( a )) != 0))
+  {
+    oyCMMapi_s * r = a;
+    if(a->release)
+      a->release( (oyStruct_s**) &a );
+    else if(a_tmp->release)
+      oyCMMapi_SetNext( a, NULL );
+    a = a_tmp;
+  }
+  if(a && a->release)
+    a->release( (oyStruct_s**) &a );
 
   return 0;
 }
@@ -201,6 +247,7 @@ oyCMM_s oyra_cmm_module = {
   (oyCMMapi_s*) & oyra_api4_image_root,
 
   &oyra_icon,
-  oyraInit
+  oyraInit,
+  oyraReset
 };
 
