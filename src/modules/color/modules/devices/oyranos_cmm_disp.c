@@ -89,6 +89,7 @@ int                CMMapiInit        ( oyStruct_s        * filter )
 
   if(!_initialised)
     error = oyDeviceCMMInit( filter, rfilter, 1 );
+  ++_initialised;
 
   if(s->rank_map == NULL)
   {

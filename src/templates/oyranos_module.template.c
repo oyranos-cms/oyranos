@@ -1641,8 +1641,10 @@ int              oyCMMhandle_Release_( oyCMMhandle_s    ** obj )
 
   error = oyCMMdsoRelease_( s->lib_name );
 
-  s->dso_handle = 0;
-  s->info = 0;
+  s->dso_handle = NULL;
+  if(s->info && oyCMMinfo_GetResetF(s->info))
+    oyCMMinfo_GetResetF(s->info)( (oyStruct_s*) s->info );
+  s->info = NULL;
   oyFree_m_( s->lib_name );
 
 

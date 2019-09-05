@@ -112,6 +112,7 @@ int CMMapiInit( oyStruct_s * filter )
 
   if(!_initialised)
     error = oyDeviceCMMInit( filter, rfilter, 0 );
+  ++_initialised;
 
   return error;
 }
