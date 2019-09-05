@@ -2,7 +2,7 @@
  *
  *  Oyranos is an open source Color Management System 
  *
- *  Copyright (C) 2004-2018  Kai-Uwe Behrmann
+ *  Copyright (C) 2004-2019  Kai-Uwe Behrmann
  *
  *  @brief    Oyranos test suite
  *  @internal
@@ -60,7 +60,7 @@
   TEST_RUN( testPaths, "Paths", 1 );
 
 #include "oyranos.h"
-#define OYJL_TEST_MAIN_SETUP  printf("\n    Oyranos test2\n");
+#define OYJL_TEST_MAIN_SETUP  printf("\n    Oyranos test2\n"); if(getenv(OY_DEBUG)) oy_debug = atoi(getenv(OY_DEBUG));
 #define OYJL_TEST_MAIN_FINISH printf("\n    Oyranos test2 finished\n\n"); oyLibConfigRelease();
 #include <oyjl_test_main.h>
 
@@ -8328,7 +8328,7 @@ oyjlTESTRESULT_e testConfDomain ()
     fprintf( zout, "%d: %s\n", i, oyNoEmptyString_m_(domains[i]) );
   }
   if(verbose) fprintf( zout, "\n");
-  
+
   for(i = 0; i < (int)count; ++i)
   {
     int text_missed = 0;
