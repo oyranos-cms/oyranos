@@ -210,6 +210,9 @@ int oyDeviceCMMInit                  ( oyStruct_s        * filter,
   oyCMMapi8_s_ * s = (oyCMMapi8_s_*) filter;
   const char * rank_json = NULL;
 
+  if(oy_debug)
+    oyMessageFunc_p( oyMSG_DBG, filter, "%s() %s", __func__, rank_file_pattern );
+
   if(!error)
   {
     error = oyRankMapList( rfilter, NULL, &rank_name, oyAllocateFunc_ );
@@ -280,6 +283,9 @@ int oyDeviceCMMReset                 ( oyStruct_s        * filter )
 {
   int error = !(filter && filter->type_ == oyOBJECT_CMM_API8_S);
   oyCMMapi8_s_ * s = (oyCMMapi8_s_*) filter;
+
+  if(oy_debug)
+    oyMessageFunc_p( oyMSG_DBG, filter, "%s() %s", __func__, s->registration );
 
   if(!error)
     oyRankMapRelease( &s->rank_map, oyDeAllocateFunc_ );
