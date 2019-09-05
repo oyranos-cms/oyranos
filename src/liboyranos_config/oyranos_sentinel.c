@@ -24,6 +24,7 @@
 #include "oyranos_helper.h"
 #include "oyranos_i18n.h"
 #include "oyranos_internal.h"
+#include "oyranos_module_internal.h"
 #include "oyranos_sentinel.h"
 
 
@@ -116,7 +117,41 @@ void     oyAlphaFinish_              ( int                 unused OY_UNUSED )
 {
   oyProfiles_Release( &oy_profile_list_cache_ );
   oyStructList_Release( &oy_cmm_cache_ );
+  {
+    int n = oyStructList_Count( oy_cmm_infos_ ), i;
+    for(i = 0; i < n; ++i)
+    {
+      int error = 0;
+      oyCMMinfo_s * cmm_info = 0;
+      oyCMMhandle_s * cmmh = (oyCMMhandle_s *) oyStructList_GetType_(
+                                               (oyStructList_s_*)oy_cmm_infos_,
+                                               i,
+                                               oyOBJECT_CMM_HANDLE_S );
+
+      if(cmmh)
+        cmm_info = (oyCMMinfo_s*) cmmh->info;
+      else
+        continue;
+
+      oyCMMapi_s * api = oyCMMinfo_GetApi( (oyCMMinfo_s*) cmm_info );
+      while(api)
+      {
+        const char * registration = oyCMMapi_GetRegistration(api);
+        /* init */
+        oyCMMReset_f reset = oyCMMapi_GetResetF(api);
+        if(reset)
+          error = reset( (oyStruct_s*) api );
+        if(error > 0)
+        {
+          cmm_info = NULL;
+          DBG_NUM1_S("reset failed: %s", registration);
+        }
+        api = oyCMMapi_GetNext(api);
+      }
+    }
+  }
   oyStructList_Release( &oy_cmm_infos_ );
+
   oyStructList_Release( &oy_cmm_handles_ );
   oyStructList_Release_( &oy_profile_s_file_cache_ );
   oyOptions_Release( &oy_db_cache_ );
