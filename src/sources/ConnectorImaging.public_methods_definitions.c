@@ -24,7 +24,7 @@ OYAPI int  OYEXPORT
 
   oyCheckType__m( oyOBJECT_CONNECTOR_IMAGING_S, return 1 )
 
-  s->data_types = data_types;
+  s->data_types = (oyDATATYPE_e*) oyjlStringAppendN( NULL, (const char*)data_types, sizeof(oyDATATYPE_e) * data_types_n, 0 );
   s->data_types_n = data_types_n;
 
   return 0;
