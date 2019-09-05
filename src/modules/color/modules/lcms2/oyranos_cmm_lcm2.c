@@ -512,19 +512,22 @@ int lcm2registerFuncs( int init, const char * fn )
 #endif
       REGISTER_FUNC( cmsGetProfileContextID, NULL );
       REGISTER_FUNC( cmsGetTransformContextID, NULL );
-#if LCMS_VERSION >= 2080
-      REGISTER_FUNC( cmsGetEncodedCMMversion, dummyGetEncodedCMMversion );
-#endif
-      if(l2cmsSetLogErrorHandler)
-        l2cmsSetLogErrorHandler( l2cmsErrorHandlerFunction );
-      else
+      if(init)
+      {
+        if(l2cmsSetLogErrorHandler)
+          l2cmsSetLogErrorHandler( l2cmsErrorHandlerFunction );
+        else
           l2cms_msg( oyMSG_WARN, (oyStruct_s*)NULL,
                     OY_DBG_FORMAT_"can not set error handler %d %d",
                     OY_DBG_ARGS_, l2cmsGetEncodedCMMversion, LCMS_VERSION );
-      if(l2cmsGetEncodedCMMversion() != LCMS_VERSION)
+        if(l2cmsGetEncodedCMMversion && l2cmsGetEncodedCMMversion() != LCMS_VERSION)
           l2cms_msg( oyMSG_WARN, (oyStruct_s*)NULL,
                     OY_DBG_FORMAT_" compile and run time version differ %d %d",
                     OY_DBG_ARGS_, l2cmsGetEncodedCMMversion, LCMS_VERSION );
+      }
+#if LCMS_VERSION >= 2080
+      REGISTER_FUNC( cmsGetEncodedCMMversion, dummyGetEncodedCMMversion );
+#endif
       REGISTER_FUNC( cmsIT8LoadFromMem, NULL );
       REGISTER_FUNC( cmsIT8EnumProperties, NULL );
       REGISTER_FUNC( cmsIT8EnumPropertyMulti, NULL );
