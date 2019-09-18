@@ -15,7 +15,7 @@ cd grantlee-$version
 mkdir build
 cd build
 mkdir -p ../grantlee
-cmake -DCMAKE_INSTALL_PREFIX=../.. ..
+cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=../.. ..
 make -j 4 && make install
 cd ../../..
 echo `pwd`
