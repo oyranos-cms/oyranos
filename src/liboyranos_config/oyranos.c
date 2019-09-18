@@ -1161,7 +1161,8 @@ void oyLibConfigRelease              ( )
 {
   oyFinish_(0);
 
-  oyFree_m_(oy_option_);
+  if(oy_option_)
+    oyFree_m_(oy_option_);
 }
 
 /** @} *//* misc */
