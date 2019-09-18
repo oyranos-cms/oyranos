@@ -26,7 +26,7 @@
 #include "oyranos_internal.h"
 #include "oyranos_module_internal.h"
 #include "oyranos_sentinel.h"
-
+#include "oyCMMapi_s_.h"
 
 static int export_setting = 1;
 /* static int export_path = 1; */
@@ -139,6 +139,11 @@ void     oyAlphaFinish_              ( int                 unused OY_UNUSED )
         const char * registration = oyCMMapi_GetRegistration(api);
         /* init */
         oyCMMReset_f reset = oyCMMapi_GetResetF(api);
+        oyCMMapi_s_ * api_ = (oyCMMapi_s_*) api;
+
+        if(api_->id_)
+          oyFree_m_(api_->id_);
+
         if(reset)
           error = reset( (oyStruct_s*) api );
         if(error > 0)
@@ -146,6 +151,7 @@ void     oyAlphaFinish_              ( int                 unused OY_UNUSED )
           cmm_info = NULL;
           DBG_NUM1_S("reset failed: %s", registration);
         }
+
         api = oyCMMapi_GetNext(api);
       }
     }
