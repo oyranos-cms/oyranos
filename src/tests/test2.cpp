@@ -60,8 +60,9 @@
   TEST_RUN( testPaths, "Paths", 1 );
 
 #include "oyranos.h"
+extern "C" { char * oyAlphaPrint_(int); }
 #define OYJL_TEST_MAIN_SETUP  printf("\n    Oyranos test2\n"); if(getenv(OY_DEBUG)) oy_debug = atoi(getenv(OY_DEBUG));
-#define OYJL_TEST_MAIN_FINISH printf("\n    Oyranos test2 finished\n\n"); oyLibConfigRelease();
+#define OYJL_TEST_MAIN_FINISH printf("\n    Oyranos test2 finished\n\n"); if(verbose) { char * t = oyAlphaPrint_(0); puts(t); free(t); } oyLibConfigRelease();
 #include <oyjl_test_main.h>
 
 #include <cmath>
@@ -982,6 +983,7 @@ oyjlTESTRESULT_e testJson ()
   }
   if(verbose) fprintf( zout, "%s\n", rjson?rjson:"----" );
   oyjlTreeFree( root );
+  oyFree_m_(rjson);
 
   return result;
 }
@@ -1984,7 +1986,8 @@ oyjlTESTRESULT_e testOptionsType ()
   p = oyProfile_FromStd( oyASSUMED_WEB, 0,0 );
   oyOptions_MoveInStruct ( &opts, OY_STD "/display.abstract.icc_profile.gamma.automatic.oydi",
                            (oyStruct_s**)&p, OY_CREATE_NEW );
-  fprintf( zout, "opts: %s\n", oyOptions_GetText( opts, oyNAME_NICK ) );
+  if(verbose)
+    fprintf( zout, "opts: %s\n", oyOptions_GetText( opts, oyNAME_NICK ) );
   p = oyProfile_FromStd( oyASSUMED_WEB, 0,0 );
   oyOptions_MoveInStruct ( &opts, OY_STD "/display.abstract.icc_profile.environment.automatic.my_app.passive",
                            (oyStruct_s**)&p, OY_CREATE_NEW );
@@ -1997,7 +2000,8 @@ oyjlTESTRESULT_e testOptionsType ()
   oyjlStringReplace( &reg_mod, ".automatic", "", 0,0 );
   oyStringAdd_( &reg_mod, ".passive", 0,0 );
   oyOption_SetRegistration( o, reg_mod );
-  fprintf( zout, "%s -> %s :: %s\n", reg, reg_mod, oyOption_GetRegistration(o) );
+  if(verbose)
+    fprintf( zout, "%s -> %s :: %s\n", reg, reg_mod, oyOption_GetRegistration(o) );
 
   if(error == 0 &&
      strcmp(reg_mod, oyOption_GetRegistration(o)) == 0)
@@ -2019,15 +2023,17 @@ oyjlTESTRESULT_e testOptionsType ()
     if(error) PRINT_SUB( oyjlTESTRESULT_XFAIL, "oyOptions_GetType2() error: %d", error )
     reg = oyOption_GetRegistration( o );
     p = (oyProfile_s*) oyOption_GetStruct( o, oyOBJECT_PROFILE_S );
-    fprintf( zout, "display.abstract.icc_profile[%d]: %s:%s\n", i,
-             reg, oyProfile_GetText(p,oyNAME_DESCRIPTION) );
+    if(verbose)
+      fprintf( zout, "display.abstract.icc_profile[%d]: %s:%s\n", i,
+               reg, oyProfile_GetText(p,oyNAME_DESCRIPTION) );
     oyOption_Release( &o );
     oyProfile_Release( &p );
   }
 
-  fprintf( zout, "abstract: %d  white_point: %d\n",
-           oyOptions_CountType( opts, "abstract", oyOBJECT_PROFILE_S ),
-           oyOptions_CountType( opts, "white_point", oyOBJECT_PROFILE_S ) );
+  if(verbose)
+    fprintf( zout, "abstract: %d  white_point: %d\n",
+             oyOptions_CountType( opts, "abstract", oyOBJECT_PROFILE_S ),
+             oyOptions_CountType( opts, "white_point", oyOBJECT_PROFILE_S ) );
 
   oyOptions_Release( &opts );
 
