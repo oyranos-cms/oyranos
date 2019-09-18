@@ -2593,6 +2593,8 @@ int      oySetBehaviour_             ( oyBEHAVIOUR_e       type,
         snprintf(val, 64, "%d", choice);
       error = oySetPersistentString (key_name, scope, val, com);
       DBG_PROG4_S( "%s %d %s %s", key_name, type, val, com?com:"" )
+      if(com)
+        oyFree_m_(com);
     }
     else
       WARNc1_S( "type %d behaviour not possible", type);
