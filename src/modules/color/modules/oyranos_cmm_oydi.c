@@ -1421,6 +1421,7 @@ oyCMM_s oydi_cmm_module = {
 
   &oydi_icon,
 
-  NULL                                 /**< init() */
+  NULL,                                /**< init() */
+  NULL                                 /**< reset() */
 };
 

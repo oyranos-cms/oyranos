@@ -24,6 +24,7 @@
 #include "oyranos_debug.h"
 #include "oyranos_cache.h"
 #include "oyranos_config_internal.h"
+#include "oyranos_helper.h"
 
 extern oyCMM_s CUPS_cmm_module;
 extern oyCMM_s elDB_cmm_module;
@@ -114,15 +115,26 @@ void oyCMMinfoRegister()
 {
   oyCMM_s * cmm_info = NULL;
   oyCMMapi_s * api = 0;
-  int i, error = 0;
+  int i, error = 0,
+      init = 1; /* 0 - reset */
 
   if(oy_cmm_infos_initialised_)
-    return;
+  {
+    if(!oy_cmm_infos_)
+    {
+      init = 0; /* 0 - reset */
+      oy_cmm_infos_initialised_ = 0;
+    }
+    else
+      return;
+  } else
+  {
+    if(!oy_cmm_infos_)
+      oy_cmm_infos_ = oyStructList_Create( 0, "oy_cmm_infos_", 0 );
 
-  ++oy_cmm_infos_initialised_;
+    ++oy_cmm_infos_initialised_;
+  }
 
-  if(!oy_cmm_infos_)
-    oy_cmm_infos_ = oyStructList_Create( 0, "oy_cmm_infos_", 0 );
 
   for(i = 0; i < oy_cmms_n_; ++i)
   {
@@ -132,16 +144,20 @@ void oyCMMinfoRegister()
 
     if(cmm_info)
     {
-      oyCMMinfoInit_f init = oyCMMinfo_GetInitF((oyCMMinfo_s*) cmm_info);
+      oyCMMinfoInit_f initF = oyCMMinfo_GetInitF((oyCMMinfo_s*) cmm_info);
+      oyCMMinfoReset_f resetF = oyCMMinfo_GetResetF((oyCMMinfo_s*) cmm_info);
       {
         int error = 0;
 
-        if(init)
-          error = init( (oyStruct_s*)cmm_info );
+        if(init && initF)
+          error = initF( (oyStruct_s*)cmm_info );
+        else if(!init && resetF)
+          error = resetF( (oyStruct_s*)cmm_info );
+
         if(error > 0)
         {
-          oyMessageFunc_p( oyMSG_ERROR, (oyStruct_s*) cmm_info, "init returned with %d %s" ,
-		                       error, cmms[i].name );
+          oyMessageFunc_p( oyMSG_ERROR, (oyStruct_s*) cmm_info, "%s returned with %d %s" ,
+		                       init?"init":"reset", error, cmms[i].name );
           cmm_info = NULL;
         }
 
@@ -167,17 +183,25 @@ void oyCMMinfoRegister()
             const char * registration = oyCMMapi_GetRegistration(api);
             /* init */
             if(error <= 0)
-              error = oyCMMapi_GetInitF(api)( (oyStruct_s*) api );
+            {
+              if(init)
+                error = oyCMMapi_GetInitF(api)( (oyStruct_s*) api );
+              else
+                error = oyCMMapi_GetResetF(api)( (oyStruct_s*) api );
+            }
             if(error > 0)
             {
               cmm_info = NULL;
-              DBG_NUM2_S("init failed: %s %s", cmms[i].name, registration);
+              DBG_NUM3_S("%s failed: %s %s", init?"init":"reset", cmms[i].name, registration);
             }
             api = oyCMMapi_GetNext(api);
           }
         }
       }
     }
+
+    if(!init)
+      continue;
 
     cmm_handle = oyCMMhandle_New_(0);
 
@@ -186,6 +210,9 @@ void oyCMMinfoRegister()
     if(error <= 0)
       oyStructList_MoveIn(oy_cmm_infos_, (oyStruct_s**)&cmm_handle, -1, 0);
   }
+
+  if(!init)
+    oyCMMinfoRegister();
 }
 
 #include "oyCMMinfo_s.h"
@@ -193,7 +220,6 @@ oyCMMinfo_s* oyCMMinfoFromLibNameStatic (
                                        const char        * lib_name )
 {
   oyCMM_s * cmm_info = NULL;
-  oyCMMapi_s * api = 0;
   int i;
 
   oyCMMinfoRegister();

@@ -195,7 +195,7 @@ int          oyOptions_FromJSON      ( const char        * json_text,
     while(paths && paths[count]) ++count;
     for(i = 0; i < count; ++i)
     {
-      xpath = paths[i];
+      const char * xpath = paths[i];
       v = oyjlTreeGetValue( json, 0, xpath );
       val = oyjlValueText( v, oyAllocateFunc_ );
 
@@ -206,6 +206,7 @@ int          oyOptions_FromJSON      ( const char        * json_text,
       if(key) oyDeAllocateFunc_(key);
       if(val) oyDeAllocateFunc_(val);
     }
+    oyjlStringListRelease( &paths, count, NULL );
   }
 
   count = oyjlValueCount( xv );
@@ -1029,6 +1030,8 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
       oyFree_m_( text );
     oyFree_m_( sort );
   }
+
+  oyjlTreeFree( root );
 
   if(error <= 0)
     erg = oyObject_GetName( options->oy_, type );

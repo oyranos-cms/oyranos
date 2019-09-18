@@ -159,7 +159,6 @@ void oyCMMapi4_Release__Members( oyCMMapi4_s_ * cmmapi4 )
      */
 
     oyCMMui_Release( (oyCMMui_s**) &cmmapi4->ui );
-    oyCMMapiFilter_Release( (oyCMMapiFilter_s**)&cmmapi4 );
   }
 }
 
@@ -581,8 +580,16 @@ int oyCMMapi4_Release_( oyCMMapi4_s_ **cmmapi4 )
   }
 
   
-  if((oyObject_UnRef(s->oy_) - observer_refs) > 0)
-    return 0;
+  {
+    uint32_t ui_p = s->ui->parent ? 1 : 0;
+    int r OY_UNUSED = oyObject_UnRef(s->oy_);
+
+    /* references from members has to be substracted
+     * from this objects ref count */
+    if(oyObject_GetRefCount( s->oy_ ) > (int)(ui_p + observer_refs))
+      return 0;
+  }
+
   /* ---- end of common object destructor ------- */
 
   if(oy_debug_objects >= 0)

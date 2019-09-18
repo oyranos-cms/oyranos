@@ -19,8 +19,6 @@ void oyCMMui_Release__Members( oyCMMui_s_ * cmmui )
 {
   /* Deallocate members here
    */
-  if(cmmui->parent && cmmui->parent->release)
-    cmmui->parent->release( (oyStruct_s**) &cmmui->parent );
   cmmui->parent = NULL;
 
   if(cmmui->oy_->deallocateFunc_)

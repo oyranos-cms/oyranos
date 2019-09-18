@@ -100,8 +100,6 @@ void oyCMMui_Release__Members( oyCMMui_s_ * cmmui )
 {
   /* Deallocate members here
    */
-  if(cmmui->parent && cmmui->parent->release)
-    cmmui->parent->release( (oyStruct_s**) &cmmui->parent );
   cmmui->parent = NULL;
 
   if(cmmui->oy_->deallocateFunc_)
@@ -534,8 +532,16 @@ int oyCMMui_Release_( oyCMMui_s_ **cmmui )
   }
 
   
-  if((oyObject_UnRef(s->oy_) - observer_refs) > 0)
-    return 0;
+  {
+    uint32_t ui_p = s->parent ? 1 : 0;
+    int r OY_UNUSED = oyObject_UnRef(s->oy_);
+
+    /* references from members has to be substracted
+     * from this objects ref count */
+    if(oyObject_GetRefCount( s->oy_ ) > (int)(ui_p + observer_refs))
+      return 0;
+  }
+
   /* ---- end of common object destructor ------- */
 
   if(oy_debug_objects >= 0)

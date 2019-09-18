@@ -1015,7 +1015,7 @@ oyProfile_s_ *  oyProfile_FromFile_  ( const char        * name,
         if(s)
         {
           oyHash_Release_( &entry );
-          return s;
+          goto clean_oyProfile_FromFile_;
         }
       }
     }
@@ -1023,7 +1023,8 @@ oyProfile_s_ *  oyProfile_FromFile_  ( const char        * name,
 
   if(name && !s)
   {
-    file_name = oyFindProfile_( name, flags );
+    if(!file_name)
+      file_name = oyFindProfile_( name, flags );
     block = oyGetProfileBlock( file_name, &size, allocateFunc );
     if(!block || !size)
       error = 1;
@@ -1135,7 +1136,8 @@ oyProfile_s_ *  oyProfile_FromFile_  ( const char        * name,
     /* We expect a incomplete filename attached to s and try to correct this. */
     if(error <= 0 && !file_name && s && s->file_name_)
     {
-      file_name = oyFindProfile_( s->file_name_, flags );
+      if(!file_name)
+        file_name = oyFindProfile_( s->file_name_, flags );
       if(file_name && s->oy_->deallocateFunc_)
       {
         s->oy_->deallocateFunc_( s->file_name_ );
@@ -1144,10 +1146,7 @@ oyProfile_s_ *  oyProfile_FromFile_  ( const char        * name,
     }
 
     if(error <= 0 && file_name && s)
-    {
       s->file_name_ = oyStringCopy_( file_name, s->oy_->allocateFunc_ );
-      oyDeAllocateFunc_( file_name ); file_name = 0;
-    }
 
     if(error <= 0 && s && !s->file_name_)
       error = 1;
@@ -1178,6 +1177,11 @@ oyProfile_s_ *  oyProfile_FromFile_  ( const char        * name,
 
   oyHash_Release_( &entry );
   oyFree_m_( hash );
+
+clean_oyProfile_FromFile_:
+
+  if(file_name)
+    oyFree_m_( file_name );
 
   return s;
 }

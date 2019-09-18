@@ -32,7 +32,6 @@ void oyCMMapi4_Release__Members( oyCMMapi4_s_ * cmmapi4 )
      */
 
     oyCMMui_Release( (oyCMMui_s**) &cmmapi4->ui );
-    oyCMMapiFilter_Release( (oyCMMapiFilter_s**)&cmmapi4 );
   }
 }
 

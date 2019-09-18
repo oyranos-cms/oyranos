@@ -14,6 +14,7 @@
  */
 
 #include "oyCMM_s.h"
+#include "oyCMMinfo_s.h"
 #include "oyCMMapi4_s.h"
 #include "oyCMMapi7_s.h"
 #include "oyCMMapiFilter_s.h"
@@ -194,6 +195,7 @@ oyCMM_s oJPG_cmm_module = {
 /* OY_oJPG_FILTER_REGISTRATION_READ -----------------------------------------*/
 
 
+static char * oJPG_registration_7read = NULL;
 /** @brief    ojpg oyCMMapi7_s implementation
  *
  *  a filter providing a CMM filter
@@ -206,11 +208,10 @@ oyCMMapi_s * ojpgApi7CmmCreateRead   ( const char        * format,
                                        const char        * ext )
 {
   int32_t cmm_version[3] = {OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C},
-          module_api[3]  = {0,9,6};
+          module_api[3]  = {0,9,7};
   static oyDATATYPE_e data_types[7] = {oyUINT8, oyUINT16, oyUINT32,
                                        oyHALF, oyFLOAT, oyDOUBLE, (oyDATATYPE_e)0};
-  oyConnectorImaging_s * plug = oyConnectorImaging_New(0),
-                       * socket = oyConnectorImaging_New(0);
+  oyConnectorImaging_s * socket = oyConnectorImaging_New(0);
   static oyConnectorImaging_s * plugs[2] = {0,0},
                               * sockets[2] = {0,0};
   
@@ -224,15 +225,13 @@ oyCMMapi_s * ojpgApi7CmmCreateRead   ( const char        * format,
     0
   };
 
-  plugs[0] = plug;
   sockets[0] = socket;
-  char * registration = NULL;
 
-  oyStringAddPrintf( &registration, AD,
+  oyStringAddPrintf( &oJPG_registration_7read, AD,
                      OY_oJPG_FILTER_REGISTRATION_BASE"file_read.input_%s._%s._CPU._ACCEL", format, CMM_NICK );
 
   if(oy_debug >= 2) ojpg_msg(oyMSG_DBG, NULL, _DBG_FORMAT_ "registration:%s ojpg %s", _DBG_ARGS_,
-                             registration,
+                             oJPG_registration_7read,
                              ext );
 
 
@@ -253,7 +252,7 @@ oyCMMapi_s * ojpgApi7CmmCreateRead   ( const char        * format,
   oyConnectorImaging_SetCapability( socket, oyCONNECTOR_IMAGING_CAP_ID, 1 );
 
   oyCMMapi7_s * cmm7 = oyCMMapi7_Create( ojpgCMMInit, ojpgCMMReset, ojpgCMMMessageFuncSet,
-                                       registration,
+                                       oJPG_registration_7read,
                                        cmm_version, module_api,
                                        NULL,
                                        ojpgFilter_CmmRunRead,
@@ -278,6 +277,7 @@ const char ojpg_read_extra_options[] = {
   </" OY_TOP_SHARED ">\n"
 };
 
+static char * oJPG_registration_4read = NULL;
 /** @brief    ojpg oyCMMapi4_s implementation
  *
  *  a filter providing a CMM device link creator
@@ -289,9 +289,8 @@ const char ojpg_read_extra_options[] = {
 oyCMMapi_s * ojpgApi4CmmCreateRead   ( const char        * format )
 {
   int32_t cmm_version[3] = {OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C},
-          module_api[3]  = {0,9,6};
+          module_api[3]  = {0,9,7};
   oyPointer_s * backend_context = oyPointer_New(0);
-  char * registration = NULL;
   const char * category = ojpgApi4UiGetText2Read("category", oyNAME_NAME, format);
   oyCMMuiGet_f getOFORMS = ojpgGetOFORMS;
   oyCMMui_s * ui = oyCMMui_Create( category, ojpgApi4UiGetTextRead,
@@ -299,16 +298,16 @@ oyCMMapi_s * ojpgApi4CmmCreateRead   ( const char        * format )
   oyOptions_s * oy_opts = NULL;
   const char * oforms_options = ojpg_read_extra_options;
 
-  oyCMMui_SetUiOptions( ui, oyStringCopy( oforms_options, oyAllocateFunc_ ), getOFORMS ); 
+  oyCMMui_SetUiOptions( ui, oforms_options, getOFORMS ); 
 
   oyPointer_Set( backend_context, NULL, "ojpg_file_format", oyStringCopy(format, oyAllocateFunc_),
                  "char*", deAllocData );
 
-  oyStringAddPrintf( &registration, AD,
+  oyStringAddPrintf( &oJPG_registration_4read, AD,
                      OY_oJPG_FILTER_REGISTRATION_BASE"file_read.input_%s._" CMM_NICK "._CPU._ACCEL", format );
 
   oyCMMapi4_s * cmm4 = oyCMMapi4_Create( ojpgCMMInit, ojpgCMMReset, ojpgCMMMessageFuncSet,
-                                       registration,
+                                       oJPG_registration_4read,
                                        cmm_version, module_api,
                                        "",
                                        NULL,
@@ -317,6 +316,7 @@ oyCMMapi_s * ojpgApi4CmmCreateRead   ( const char        * format )
                                        NULL );
 
   oyCMMapi4_SetBackendContext( cmm4, backend_context );
+  oyPointer_Release( &backend_context );
   oyOptions_Release( &oy_opts );
 
   return (oyCMMapi_s*)cmm4;
@@ -744,11 +744,11 @@ ojpgFilter_CmmRunClean:
 }
 
 
+static char * oJPG_category = NULL;
 const char * ojpgApi4UiGetText2Read  ( const char        * select,
                                        oyNAME_e            type,
                                        const char        * format )
 {
-  static char * category = 0;
 
   if(strcmp(select,"name") == 0)
   {
@@ -769,19 +769,19 @@ const char * ojpgApi4UiGetText2Read  ( const char        * select,
   }
   else if(strcmp(select,"category") == 0)
   {
-    if(!category)
+    if(!oJPG_category)
     {
       /* The following strings must match the categories for a menu entry. */
       const char * i18n[] = {_("Files"),_("Read"),0};
       int len =  strlen(i18n[0]) + strlen(i18n[1]) + strlen(format);
 
-      category = (char*)malloc( len + 64 );
-      if(category)
+      oJPG_category = (char*)malloc( len + 64 );
+      if(oJPG_category)
       {
         char * t;
         /* Create a translation for ojpg_api4_ui_cmm_loader::category. */
-        sprintf( category,"%s/%s %s", i18n[0], i18n[1], format );
-        t = strstr(category, format);
+        sprintf( oJPG_category,"%s/%s %s", i18n[0], i18n[1], format );
+        t = strstr(oJPG_category, format);
         if(t) t[0] = toupper(t[0]);
       } else
         ojpg_msg(oyMSG_WARN, (oyStruct_s *) 0, _DBG_FORMAT_ "\n " "Could not allocate enough memory.", _DBG_ARGS_);
@@ -790,9 +790,9 @@ const char * ojpgApi4UiGetText2Read  ( const char        * select,
          if(type == oyNAME_NICK)
       return "category";
     else if(type == oyNAME_NAME)
-      return category;
+      return oJPG_category;
     else
-      return category;
+      return oJPG_category;
   }
   return 0;
 }
@@ -818,6 +818,7 @@ const char * ojpg_api4_ui_texts[] = {"name", "category", "help", NULL};
 
 /* OY_oJPG_FILTER_REGISTRATION_WRITE ----------------------------------------*/
 
+static char * oJPG_registration_7write = NULL;
 /** @brief    ojpg oyCMMapi7_s implementation
  *
  *  a filter providing a CMM filter
@@ -830,11 +831,10 @@ oyCMMapi_s * ojpgApi7CmmCreateWrite  ( const char        * format,
                                        const char        * ext )
 {
   int32_t cmm_version[3] = {OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C},
-          module_api[3]  = {0,9,6};
+          module_api[3]  = {0,9,7};
   static oyDATATYPE_e data_types[6] = {oyUINT8, oyUINT16, oyUINT32,
                                        oyFLOAT, oyDOUBLE, (oyDATATYPE_e)0};
-  oyConnectorImaging_s * plug = oyConnectorImaging_New(0),
-                       * socket = oyConnectorImaging_New(0);
+  oyConnectorImaging_s * socket = oyConnectorImaging_New(0);
   static oyConnectorImaging_s * plugs[2] = {0,0},
                               * sockets[2] = {0,0};
   
@@ -848,15 +848,13 @@ oyCMMapi_s * ojpgApi7CmmCreateWrite  ( const char        * format,
     0
   };
 
-  plugs[0] = plug;
   sockets[0] = socket;
-  char * registration = NULL;
 
-  oyStringAddPrintf( &registration, AD,
+  oyStringAddPrintf( &oJPG_registration_7write, AD,
                      OY_oJPG_FILTER_REGISTRATION_BASE"file_write.write_%s._%s._CPU._ACCEL", format, CMM_NICK );
 
   if(oy_debug >= 2) ojpg_msg(oyMSG_DBG, NULL, _DBG_FORMAT_ "registration:%s ojpg %s", _DBG_ARGS_,
-                             registration,
+                             oJPG_registration_7write,
                              ext );
 
 
@@ -877,7 +875,7 @@ oyCMMapi_s * ojpgApi7CmmCreateWrite  ( const char        * format,
   oyConnectorImaging_SetCapability( socket, oyCONNECTOR_IMAGING_CAP_ID, 1 );
 
   oyCMMapi7_s * cmm7 = oyCMMapi7_Create( ojpgCMMInit, ojpgCMMReset, ojpgCMMMessageFuncSet,
-                                       registration,
+                                       oJPG_registration_7write,
                                        cmm_version, module_api,
                                        NULL,
                                        ojpgFilter_CmmRunWrite,
@@ -902,6 +900,7 @@ const char ojpg_write_extra_options[] = {
   </" OY_TOP_SHARED ">\n"
 };
 
+static char * oJPG_registration_4write = NULL;
 /** @brief    ojpg oyCMMapi4_s implementation
  *
  *  a filter providing a CMM device link creator
@@ -913,9 +912,8 @@ const char ojpg_write_extra_options[] = {
 oyCMMapi_s * ojpgApi4CmmCreateWrite  ( const char        * format )
 {
   int32_t cmm_version[3] = {OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C},
-          module_api[3]  = {0,9,6};
+          module_api[3]  = {0,9,7};
   oyPointer_s * backend_context = oyPointer_New(0);
-  char * registration = NULL;
   const char * category = ojpgApi4UiGetText2Write("category", oyNAME_NAME, format);
   oyCMMuiGet_f getOFORMS = ojpgGetOFORMS;
   oyCMMui_s * ui = oyCMMui_Create( category, ojpgApi4UiGetTextWrite,
@@ -923,16 +921,16 @@ oyCMMapi_s * ojpgApi4CmmCreateWrite  ( const char        * format )
   oyOptions_s * oy_opts = NULL;
   const char * oforms_options = ojpg_write_extra_options;
 
-  oyCMMui_SetUiOptions( ui, oyStringCopy( oforms_options, oyAllocateFunc_ ), getOFORMS ); 
+  oyCMMui_SetUiOptions( ui, oforms_options, getOFORMS ); 
 
   oyPointer_Set( backend_context, NULL, "ojpg_file_format", oyStringCopy(format, oyAllocateFunc_),
                  "char*", deAllocData );
 
-  oyStringAddPrintf( &registration, AD,
+  oyStringAddPrintf( &oJPG_registration_4write, AD,
                      OY_oJPG_FILTER_REGISTRATION_BASE"file_write.write_%s._" CMM_NICK "._CPU._ACCEL", format );
 
   oyCMMapi4_s * cmm4 = oyCMMapi4_Create( ojpgCMMInit, ojpgCMMReset, ojpgCMMMessageFuncSet,
-                                       registration,
+                                       oJPG_registration_4write,
                                        cmm_version, module_api,
                                        "",
                                        NULL,
@@ -941,6 +939,7 @@ oyCMMapi_s * ojpgApi4CmmCreateWrite  ( const char        * format )
                                        NULL );
 
   oyCMMapi4_SetBackendContext( cmm4, backend_context );
+  oyPointer_Release( &backend_context );
   oyOptions_Release( &oy_opts );
 
   return (oyCMMapi_s*)cmm4;
@@ -1292,7 +1291,6 @@ const char * ojpgApi4UiGetText2Write ( const char        * select,
                                        oyNAME_e            type,
                                        const char        * format )
 {
-  static char * category = 0;
 
   if(strcmp(select,"name") == 0)
   {
@@ -1313,19 +1311,19 @@ const char * ojpgApi4UiGetText2Write ( const char        * select,
   }
   else if(strcmp(select,"category") == 0)
   {
-    if(!category)
+    if(!oJPG_category)
     {
       /* The following strings must match the categories for a menu entry. */
       const char * i18n[] = {_("Files"),_("Read"),0};
       int len =  strlen(i18n[0]) + strlen(i18n[1]) + strlen(format);
 
-      category = (char*)malloc( len + 64 );
-      if(category)
+      oJPG_category = (char*)malloc( len + 64 );
+      if(oJPG_category)
       {
         char * t;
         /* Create a translation for ojpg_api4_ui_cmm_loader::category. */
-        sprintf( category,"%s/%s %s", i18n[0], i18n[1], format );
-        t = strstr(category, format);
+        sprintf( oJPG_category,"%s/%s %s", i18n[0], i18n[1], format );
+        t = strstr(oJPG_category, format);
         if(t) t[0] = toupper(t[0]);
       } else
         ojpg_msg(oyMSG_WARN, (oyStruct_s *) 0, _DBG_FORMAT_ "\n " "Could not allocate enough memory.", _DBG_ARGS_);
@@ -1334,9 +1332,9 @@ const char * ojpgApi4UiGetText2Write ( const char        * select,
          if(type == oyNAME_NICK)
       return "category";
     else if(type == oyNAME_NAME)
-      return category;
+      return oJPG_category;
     else
-      return category;
+      return oJPG_category;
   }
   return 0;
 }
@@ -1424,29 +1422,44 @@ int  ojpgInit                        ( oyStruct_s        * module_info )
 
 int  ojpgReset                       ( oyStruct_s        * module_info )
 {
-  oyCMMapi_s * a = oJPG_cmm_module.api,
+  oyCMMapi_s * a = oyCMMinfo_GetApi( (oyCMMinfo_s*) module_info ),
              * a_tmp = 0;
 
   if(!ojpg_initialised)
     return 0;
 
   ojpg_initialised = 0;
+  if(oy_debug)
+    ojpg_msg( oyMSG_DBG, module_info, _DBG_FORMAT_, _DBG_ARGS_ );
 
   if((oyStruct_s*)&oJPG_cmm_module != module_info)
     ojpg_msg( oyMSG_WARN, module_info, _DBG_FORMAT_ "wrong module info passed in", _DBG_ARGS_ );
 
+  if(a->release)
+    oyCMMinfo_SetApi( (oyCMMinfo_s*) module_info, NULL );
+
   /* traverse all filters */
   while(a && ((a_tmp = oyCMMapi_GetNext( a )) != 0))
   {
-    oyCMMapi_s * r = a;
+    if(a_tmp->release)
+      oyCMMapi_SetNext( a, NULL );
+
     if(a->release)
       a->release( (oyStruct_s**) &a );
-    else if(a_tmp->release)
-      oyCMMapi_SetNext( a, NULL );
+
     a = a_tmp;
   }
   if(a && a->release)
     a->release( (oyStruct_s**) &a );
+
+  if(oJPG_category)
+    free(oJPG_category);
+  oJPG_category = NULL;
+
+  oyFree_m_(oJPG_registration_7write);
+  oyFree_m_(oJPG_registration_4write);
+  oyFree_m_(oJPG_registration_7read);
+  oyFree_m_(oJPG_registration_4read);
 
   return 0;
 }

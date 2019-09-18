@@ -435,6 +435,7 @@ char * oyGetScopeString              ( oySCOPE_e           scope,
   name = jsonToEl( key_name, oyAllocateFunc_ );
 
   oyStringAddPrintf( &full_elektra_key_reg, 0,0, "%s%s", has_scope?"":oyGetScopeString_(scope), name );
+  oyFree_m_( name );
 
   return full_elektra_key_reg;
 }

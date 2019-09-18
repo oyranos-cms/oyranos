@@ -422,14 +422,14 @@ oyProfile_s_ *  oyProfile_FromFile_  ( const char        * name,
     }
 
     if(error <= 0 && file_name && s)
-    {
       s->file_name_ = oyStringCopy_( file_name, s->oy_->allocateFunc_ );
-      oyDeAllocateFunc_( file_name ); file_name = 0;
-    }
 
     if(error <= 0 && s && !s->file_name_)
       error = 1;
   }
+
+  if(file_name)
+    oyFree_m_( file_name );
 
   if(error <= 0 && s && entry)
   {

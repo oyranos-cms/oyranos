@@ -164,7 +164,7 @@ void oyCMMapi7_Release__Members( oyCMMapi7_s_ * cmmapi7 )
     if(cmmapi7->plugs[i] && cmmapi7->plugs[i]->release)
       cmmapi7->plugs[i]->release( (oyStruct_s**)&cmmapi7->plugs[i] );
   }
-  for(i = 0; i < cmmapi7->plugs_n; ++i)
+  for(i = 0; i < cmmapi7->sockets_n; ++i)
   {
     if(cmmapi7->sockets[i] && cmmapi7->sockets[i]->release)
       cmmapi7->sockets[i]->release( (oyStruct_s**)&cmmapi7->sockets[i] );

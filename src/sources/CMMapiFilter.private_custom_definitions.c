@@ -23,13 +23,15 @@ void oyCMMapiFilter_Release__Members( oyCMMapiFilter_s_ * cmmapifilter )
 
   if(cmmapifilter->oy_->deallocateFunc_)
   {
-#if 0
     oyDeAlloc_f deallocateFunc = cmmapifilter->oy_->deallocateFunc_;
-#endif
 
     /* Deallocate members of basic type here
      * E.g.: deallocateFunc( cmmapifilter->member );
      */
+    if(cmmapifilter->runtime_context && cmmapifilter->runtime_context->release)
+      cmmapifilter->runtime_context->release( (oyStruct_s**)&cmmapifilter->runtime_context );
+    if(cmmapifilter->id_)
+    { deallocateFunc(cmmapifilter->id_); cmmapifilter->id_ = NULL; }
   }
 }
 
