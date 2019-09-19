@@ -63,6 +63,17 @@ static const char * oyCMMinfo_StaticMessageFunc_ (
       memset( text, 0, text_n );
   }
 
+  if( text == NULL || text_n == 0 )
+    return "Memory problem";
+
+  text[0] = '\000';
+
+  if(!(flags & 0x01))
+    sprintf(text, "%s%s", oyStructTypeToText( s->type_ ), type != oyNAME_NICK?" ":"");
+
+  
+
+  
   /* allocate enough space */
   if(text_n < 1000)
   {
@@ -95,10 +106,11 @@ static const char * oyCMMinfo_StaticMessageFunc_ (
   else
   if((int)type >= oyNAME_DESCRIPTION)
   {
-    sprintf( &text[strlen(text)], "%s %s %i",
+    sprintf( &text[strlen(text)], "%s %s %d",
              s->cmm, s->backend_version, s->oy_compatibility
            );
   }
+
 
   return text;
 }
