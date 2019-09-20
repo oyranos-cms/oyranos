@@ -97,6 +97,9 @@ OYAPI oyProfile_s * OYEXPORT oyProfile_FromStd (
 
   oyProfile_GetID( (oyProfile_s*)s );
 
+  if(name)
+    oyFree_m_( name );
+
   return (oyProfile_s*)s;
 }
 
