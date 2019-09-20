@@ -2014,6 +2014,7 @@ oyjlTESTRESULT_e testOptionsType ()
     "oyOptions_GetType2() + replace + SetRegistration   " );
   }
   oyOption_Release( &o );
+  oyFree_m_(reg_mod);
 
   int count = oyOptions_CountType( opts, "display.abstract.icc_profile", oyOBJECT_PROFILE_S );
   for(int i = 0; i < count; ++i)

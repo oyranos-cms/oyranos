@@ -1175,10 +1175,10 @@ oyProfile_s_ *  oyProfile_FromFile_  ( const char        * name,
   if(error >= 1 && s)
     oyProfile_Release( (oyProfile_s**)&s );
 
+clean_oyProfile_FromFile_:
+
   oyHash_Release_( &entry );
   oyFree_m_( hash );
-
-clean_oyProfile_FromFile_:
 
   if(file_name)
     oyFree_m_( file_name );
