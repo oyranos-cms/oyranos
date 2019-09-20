@@ -816,8 +816,8 @@ oyPointer      oyOption_GetData      ( oyOption_s        * option,
  *  @return                            error
  *
  *  @version Oyranos: 0.1.10
+ *  @date    2019/09/20
  *  @since   2009/01/24 (Oyranos: 0.1.10)
- *  @date    2009/01/24
  */
 int            oyOption_SetRegistration (
                                        oyOption_s        * option,
@@ -830,6 +830,14 @@ int            oyOption_SetRegistration (
     return error;
 
   oyCheckType__m( oyOBJECT_OPTION_S, return 1 )
+
+  if(s->registration)
+  {
+    oyDeAlloc_f dealloc = oyStruct_GetDeAllocator( (oyStruct_s*) option );
+    if(!dealloc) dealloc = oyDeAllocateFunc_;
+    dealloc( s->registration );
+    s->registration = NULL;
+  }
 
   if(registration)
     s->registration = oyStringCopy_( registration,
