@@ -61,15 +61,13 @@ void oyI18NInit_()
   int use_gettext = 0;
   DBG_PROG_START
 
-  oy_lang_ = oyStringCopy_("C", oyAllocateFunc_);
-
 #ifdef USE_GETTEXT
   use_gettext = 1;
 #endif
 
   if(!oy_i18n_init_)
   {
-    char * var = NULL, * temp = NULL;
+    char * var = NULL;
     ++oy_i18n_init_;
     oyjlInitLanguageDebug( "Oyranos", "OY_DEBUG", &oy_debug, use_gettext, "OY_LOCALEDIR", OY_LOCALEDIR, OY_TEXTDOMAIN, oyMessageFunc_p );
     if(oy_domain_codeset)
@@ -83,34 +81,31 @@ void oyI18NInit_()
     /* we use the posix setlocale interface;
      * the environmental LANG variable is flacky */
     if(setlocale(LC_MESSAGES, 0))
-    {
-      if(oy_lang_)
-        oyDeAllocateFunc_(oy_lang_);
-      temp = oyStringCopy_(setlocale(LC_MESSAGES, 0), oyAllocateFunc_);
-      oy_lang_ = temp;
-    }
+      oy_lang_ = oyStringCopy_(setlocale(LC_MESSAGES, 0), oyAllocateFunc_);
+    else
+      oy_lang_ = oyStringCopy_("C", oyAllocateFunc_);
 
     if(oy_lang_)
     {
     if(oyStrchr_(oy_lang_,'_'))
     {
-      char * tmp = 0;
+      char * tmp = NULL;
       int len = oyStrlen_(oy_lang_);
 
       oyAllocHelper_m_( tmp, char, len + 5, 0, DBG_PROG_ENDE; return );
       oySprintf_( tmp, "%s", oyStrchr_(oy_lang_,'_')+1 );
       if(oyStrlen_(tmp) > 2)
         tmp[2] = 0;
-      oy_country_ = tmp; tmp = 0;
+      oy_country_ = tmp; tmp = NULL;
 
       tmp = oyStrchr_(oy_country_,'.');
       if(tmp)
         tmp[0] = 0;
-      tmp = 0;
+      tmp = NULL;
 
       oyAllocHelper_m_( tmp, char, len + 5, 0, DBG_PROG_ENDE; return );
       oySprintf_( tmp, "%s", oy_lang_ );
-      oy_language_ = tmp; tmp = 0;
+      oy_language_ = tmp; tmp = NULL;
 
       tmp = oyStrchr_(oy_language_,'_');
       if(tmp)
@@ -118,7 +113,6 @@ void oyI18NInit_()
     } else
       oy_language_ = oyStringCopy_( oy_lang_, oyAllocateFunc_);
     }
-    if(oy_debug_memory && temp) oyDeAllocateFunc_(temp);
   }
 
   DBG_PROG_ENDE
