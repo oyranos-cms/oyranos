@@ -2036,7 +2036,7 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s_   * core,
         {
           char * api_pattern = NULL,
                * key_name = NULL;
-          int select_core = 1;
+          int select_core = 1, is_new = 0;
 
           opts_tmp = oyOptions_FromText( cmm_api9_->options, 0, object );
 
@@ -2047,13 +2047,18 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s_   * core,
           {
             o = oyOption_New( NULL );
             oyOption_SetRegistration( o, OY_DEFAULT_CMM_RENDERER );
+            is_new = 1;
           }
           api_pattern = cmm_api9_->oyCMMRegistrationToName(
                                  core->api4_->registration,
                                  oyNAME_PATTERN, 0, select_core, oyAllocateFunc_ );
           oyOption_SetFromString( o, api_pattern, 0 );
           oyFree_m_( api_pattern );
-          oyOptions_MoveIn( opts_tmp, &o, -1 );
+          if(is_new)
+            oyOptions_MoveIn( opts_tmp, &o, -1 );
+          else
+            oyOption_Release( &o );
+          is_new = 0;
 
           select_core = 0;
           if(node)
@@ -2071,10 +2076,15 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s_   * core,
           {
             o = oyOption_New( NULL );
             oyOption_SetRegistration( o, OY_DEFAULT_CMM_CONTEXT );
+            is_new = 1;
           }
           oyOption_SetFromString( o, api_pattern, 0 );
           oyFree_m_( api_pattern );
-          oyOptions_MoveIn( opts_tmp, &o, -1 );
+          if(is_new)
+            oyOptions_MoveIn( opts_tmp, &o, -1 );
+          else
+            oyOption_Release( &o );
+          is_new = 0;
 
           oyOptions_AppendOpts( s, opts_tmp );
           oyOptions_Release( &opts_tmp );
