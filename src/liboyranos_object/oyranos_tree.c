@@ -1151,11 +1151,12 @@ static int oyObjectIdListTraverseStructTrees_ (
 static oyStruct_s *  oyStruct_FromId ( int                 id )
 {
   const oyObject_s * obs;
+  int max_count = 0;
 
   if(id < 0 || oy_object_list_max_count_ < id) /* possibly static objects without oyObject part */
     return NULL;
 
-  obs = oyObjectGetList( NULL );
+  obs = oyObjectGetList( &max_count );
   if(obs && obs[id])
   {
     if(obs[id]->type_ != oyOBJECT_OBJECT_S)
