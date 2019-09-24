@@ -162,6 +162,7 @@ void     oyAlphaFinish_              ( int                 unused OY_UNUSED )
   oyStructList_Release_( &oy_profile_s_file_cache_ );
   oyOptions_Release( &oy_db_cache_ );
   *get_oy_db_cache_init_() = 0;
+  oyObjectGetList( 0 );
 }
 
 #include "oyranos_alpha.h"
