@@ -60,18 +60,17 @@
   TEST_RUN( testPaths, "Paths", 1 );
 
 #include "oyranos.h"
+#include "oyranos_string.h"
+oyObject_s testobj = NULL;
 extern "C" { char * oyAlphaPrint_(int); }
 #define OYJL_TEST_MAIN_SETUP  printf("\n    Oyranos test2\n"); if(getenv(OY_DEBUG)) oy_debug = atoi(getenv(OY_DEBUG));
-#define OYJL_TEST_MAIN_FINISH printf("\n    Oyranos test2 finished\n\n"); if(verbose) { char * t = oyAlphaPrint_(0); puts(t); free(t); } oyLibConfigRelease();
+#define OYJL_TEST_MAIN_FINISH printf("\n    Oyranos test2 finished\n\n"); if(testobj) testobj->release( &testobj ); if(verbose) { char * t = oyAlphaPrint_(0); puts(t); free(t); } oyLibConfigRelease();
 #include <oyjl_test_main.h>
 
 #include <cmath>
 
 double d[6] = {0.5,0.5,0.5,0,0,0};
 
-#include "oyranos.h"
-#include "oyranos_string.h"
-oyObject_s testobj = NULL;
 
 /* --- actual tests --- */
 
