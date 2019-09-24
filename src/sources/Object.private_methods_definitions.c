@@ -231,8 +231,12 @@ int *              oyObjectGetCurrentObjectIdList( void )
 }
 
 const oyObject_s * oyObjectGetList   ( int               * max_count )
-{ if(max_count) *max_count = MAX_OBJECTS_TRACKED;
-  return oy_obj_track_list; }
+{
+  if(max_count) *max_count = MAX_OBJECTS_TRACKED;
+  else if(oy_obj_track_list)
+    oyFree_m_(oy_obj_track_list);
+  return oy_obj_track_list;
+}
 
 int *              oyObjectFindNewIds( int               * old,
                                        int               * new )
