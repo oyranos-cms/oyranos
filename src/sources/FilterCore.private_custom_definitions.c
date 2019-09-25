@@ -35,6 +35,9 @@ void oyFilterCore_Release__Members( oyFilterCore_s_ * filtercore )
       deallocateFunc( filtercore->category_ );
       filtercore->category_ = 0;
     }
+
+    if(filtercore->api4_ && filtercore->api4_->release)
+      filtercore->api4_->release( (oyStruct_s**)&filtercore->api4_ );
   }
 }
 
