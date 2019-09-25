@@ -93,24 +93,25 @@ int oyOption_Copy__Members( oyOption_s_ * dst, oyOption_s_ * src)
 
   /* Copy each value of src to dst here */
 
-  if(dst->value_type == src->value_type &&
-      oyValueEqual( dst->value, src->value, dst->value_type, -1 ))
-     return -1;
+  if(! (dst->value_type == src->value_type &&
+        oyValueEqual( dst->value, src->value, dst->value_type, -1 )) )
+  {
+    /* oyOption_Clear does normally signal emitting; block that. */
+    oyStruct_DisableSignalSend( (oyStruct_s*)dst );
+    error = oyOption_Clear( (oyOption_s*)dst );
+    oyStruct_EnableSignalSend( (oyStruct_s*)dst );
 
-   /* oyOption_Clear does normally signal emitting; block that. */
-   oyStruct_DisableSignalSend( (oyStruct_s*)dst );
-   error = oyOption_Clear( (oyOption_s*)dst );
-   oyStruct_EnableSignalSend( (oyStruct_s*)dst );
+    dst->value_type = src->value_type;
+    dst->value = allocateFunc_(sizeof(oyValue_u));
+    memset(dst->value, 0, sizeof(oyValue_u));
+    oyValueCopy( dst->value, src->value, dst->value_type,
+                 allocateFunc_, deallocateFunc_ );
+  }
 
-   dst->registration = oyStringCopy_( src->registration, allocateFunc_ );
-   dst->value_type = src->value_type;
-   dst->value = allocateFunc_(sizeof(oyValue_u));
-   memset(dst->value, 0, sizeof(oyValue_u));
-   oyValueCopy( dst->value, src->value, dst->value_type,
-                allocateFunc_, deallocateFunc_ );
-   dst->source = src->source;
-   dst->flags = src->flags;
-   oyStruct_ObserverSignal( (oyStruct_s*)dst, oySIGNAL_DATA_CHANGED, 0 );
+  dst->registration = oyStringCopy_( src->registration, allocateFunc_ );
+  dst->source = src->source;
+  dst->flags = src->flags;
+  oyStruct_ObserverSignal( (oyStruct_s*)dst, oySIGNAL_DATA_CHANGED, 0 );
 
   return error;
 }
