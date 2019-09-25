@@ -129,47 +129,47 @@ oyOptions_s* oicc_defaultICCValidateOptions
  <xf:model> <xf:instance> - must be added in Oyranos to make the model complete
  */
 char oicc_default_color_icc_options[] = {
- "\n\
-  <" OY_TOP_SHARED ">\n\
-   <" OY_DOMAIN_STD ">\n\
-    <" OY_TYPE_STD ">\n\
-     <profile>\n\
-      <editing_rgb.front>eciRGB_v2.icc</editing_rgb.front>\n\
-      <editing_cmyk.front>ISOcoated_v2_bas.ICC</editing_cmyk.front>\n\
-      <editing_gray.front>Gray.icc</editing_gray.front>\n\
-      <editing_lab.front>LCMSLABI.ICM</editing_lab.front>\n\
-      <editing_xyz.front>LCMSXYZI.ICM</editing_xyz.front>\n\
-      <assumed_rgb.front>eciRGB_v2.icc</assumed_rgb.front>\n\
-      <assumed_cmyk.front>ISOcoated_v2_bas.ICC</assumed_cmyk.front>\n\
-      <assumed_gray.front>Gray.icc</assumed_gray.front>\n\
-      <assumed_lab.front>LCMSLABI.ICM</assumed_lab.front>\n\
-      <assumed_web.front>sRGB.icc</assumed_web.front>\n\
-      <assumed_xyz.front>LCMSXYZI.ICM</assumed_xyz.front>\n\
-      <proof.advanced.front>0</proof.advanced.front>\n\
-      <effect.advanced.front>0</effect.advanced.front>\n\
-     </profile>\n\
-     <behaviour>\n\
-      <action_untagged_assign.front>1</action_untagged_assign.front>\n\
-      <action_missmatch_cmyk.front>1</action_missmatch_cmyk.front>\n\
-      <action_missmatch_rgb.front>1</action_missmatch_rgb.front>\n\
-      <mixed_color_spaces_print_doc_convert.front>1</mixed_color_spaces_print_doc_convert.front>\n\
-      <mixed_color_spaces_screen_doc_convert.front>2</mixed_color_spaces_screen_doc_convert.front>\n\
-      <proof_hard.advanced>0</proof_hard.advanced>\n\
-      <proof_soft.advanced>0</proof_soft.advanced>\n\
-      <effect_switch>0</effect_switch>\n\
-      <display_white_point>0</display_white_point>\n\
-      <rendering_intent>0</rendering_intent>\n\
-      <rendering_bpc>1</rendering_bpc>\n\
-      <rendering_intent_proof.advanced>0</rendering_intent_proof.advanced>\n\
-      <rendering_gamut_warning.advanced>0</rendering_gamut_warning.advanced>\n\
-     </behaviour>\n\
-     <icc_color>\n\
-      <context.advanced>///icc_color.lcm2</context.advanced>\n\
-      <renderer.advanced>///icc_color.lcm2</renderer.advanced>\n\
-     </icc_color>\n\
-    </" OY_TYPE_STD ">\n\
-   </" OY_DOMAIN_STD ">\n\
-  </" OY_TOP_SHARED ">\n"
+"{\n\
+  \"" OY_TOP_SHARED "\": {\n\
+   \"" OY_DOMAIN_INTERNAL "\": {\n\
+    \"" OY_TYPE_STD "\": {\n\
+     \"" "profile" "\": {\n\
+      \"editing_rgb.front\": \"eciRGB_v2.icc\",\n\
+      \"editing_gray.front\": \"Gray.icc\",\n\
+      \"editing_lab.front\": \"LCMSLABI.ICM\",\n\
+      \"editing_xyz.front\": \"LCMSXYZI.ICM\",\n\
+      \"assumed_rgb.front\": \"eciRGB_v2.icc\",\n\
+      \"assumed_cmyk.front\": \"ISOcoated_v2_bas.ICC\",\n\
+      \"assumed_gray.front\": \"Gray.icc\",\n\
+      \"assumed_lab.front\": \"LCMSLABI.ICM\",\n\
+      \"assumed_web.front\": \"sRGB.icc\",\n\
+      \"assumed_xyz.front\": \"LCMSXYZI.ICM\",\n\
+      \"proof.advanced.front\": \"0\",\n\
+      \"effect.advanced.front\": \"0\"\n\
+     },\n\
+     \"" "behaviour" "\": {\n\
+      \"action_untagged_assign.front\": \"1\",\n\
+      \"action_missmatch_cmyk.front\": \"1\",\n\
+      \"action_missmatch_rgb.front\": \"1\",\n\
+      \"mixed_color_spaces_print_doc_convert.front\": \"1\",\n\
+      \"mixed_color_spaces_screen_doc_convert.front\": \"2\",\n\
+      \"proof_hard.advanced\": \"0\",\n\
+      \"proof_soft.advanced\": \"0\",\n\
+      \"effect_switch\": \"0\",\n\
+      \"display_white_point\": \"0\",\n\
+      \"rendering_intent\": \"0\",\n\
+      \"rendering_bpc\": \"1\",\n\
+      \"rendering_intent_proof.advanced\": \"0\",\n\
+      \"rendering_gamut_warning.advanced\": \"0\"\n\
+     },\n\
+     \"" "icc_color" "\": {\n\
+      \"context.advanced\": \"///icc_color.lcm2\",\n\
+      \"renderer.advanced\": \"///icc_color.lcm2\"\n\
+     }\n\
+    }\n\
+   }\n\
+  }\n\
+}\n"
 };
 
 #define A(long_text) STRING_ADD( tmp, long_text)
