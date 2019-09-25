@@ -164,11 +164,11 @@ oyjlTESTRESULT_e prog(); \
       for(i = argpos; i < argc; ++i) \
         if(strstr(text, argv[i]) != 0 || \
            atoi(argv[i]) == oyjl_test_number ) \
-          oyTestRun( prog, text, oyjl_test_number ); \
+          oyjlTestRun( prog, text, oyjl_test_number ); \
   } else if(list) \
     printf( "[%d] %s\n", oyjl_test_number, text); \
   else if(do_it) \
-    oyTestRun( prog, text, oyjl_test_number ); \
+    oyjlTestRun( prog, text, oyjl_test_number ); \
   ++oyjl_test_number; \
 }
 
@@ -197,7 +197,7 @@ int oy_test_current_sub_count;
  *  @param         test_name           short string for status line
  *  @param         number              internal test number
  */
-oyjlTESTRESULT_e oyTestRun           ( oyjlTESTRESULT_e  (*test)(void),
+oyjlTESTRESULT_e oyjlTestRun         ( oyjlTESTRESULT_e  (*test)(void),
                                        const char        * test_name,
                                        int                 number )
 {
