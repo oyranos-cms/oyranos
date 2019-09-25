@@ -1974,7 +1974,7 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s_   * core,
   oyOptions_s * s = 0,
               * opts_tmp = 0,
               * opts_tmp2 = 0;
-  oyOption_s * o = 0, * c, * r;
+  oyOption_s * o = NULL, * c = NULL, * r = NULL;
   int error = !core || !core->api4_;
   char * type_txt = NULL,
        * renderer = NULL,
@@ -2022,7 +2022,6 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s_   * core,
       oyFree_m_( klass );
 
       s = oyOptions_New( 0 );
-
       apis = oyCMMsGetFilterApis_( api_reg,
                                    oyOBJECT_CMM_API9_S,
                                    oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR,
@@ -2043,6 +2042,7 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s_   * core,
           /*  3.1. set the "context" and "renderer" options */
           key_name = oyGetFilterNodeKey( cmm_api9_->key_base, select_core );
           o = oyOptions_Find( opts_tmp, key_name, oyNAME_PATTERN );
+          oyFree_m_(key_name);
           if(!o)
           {
             o = oyOption_New( NULL );
@@ -2094,7 +2094,7 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s_   * core,
       }
       oyCMMapiFilters_Release( &apis );
       oyFree_m_( api_reg );
-      opts_tmp = s; s = 0;
+      opts_tmp = s; s = NULL;
     }
     /* requires step 2 */
 
@@ -2148,8 +2148,11 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s_   * core,
       oyFree_m_( renderer );
   }
 
+  oyOption_Release( &c );
+  oyOption_Release( &r );
+
   if(type_txt)
-    oyDeAllocateFunc_( type_txt );
+    oyFree_m_( type_txt );
 
   return s;
 }
@@ -2344,10 +2347,6 @@ int            oyOption_SetValueFromDB  ( oyOption_s        * option )
  *  @see oyOptions_Add
  *
  *  @param         opts                the options
- *  @param[in]     flags               for inbuild defaults |
- *                                     oyOPTIONSOURCE_FILTER;
- *                                     for options marked as advanced |
- *                                     oyOPTIONATTRIBUTE_ADVANCED;
  *  @param[in]     flags               select particular options:
  *                                     - for inbuild defaults
  *                                       @ref oyOPTIONSOURCE_FILTER
