@@ -732,7 +732,7 @@ void             oiccChangeNodeOption( oyOptions_s       * f_options,
 {
   oyOption_s * o, * db_o;
   const char * tmp = 0;
-  char * text = 0;
+  char * text = NULL, * db_text = NULL;
 
   o = oyOptions_Find( f_options, key, oyNAME_PATTERN );
   /** Set missing options and overwrite filter inbuild fallbacks.
@@ -752,9 +752,14 @@ void             oiccChangeNodeOption( oyOptions_s       * f_options,
                   }
                   else
                   {
-                    text = oyOption_GetValueText( db_o, oyAllocateFunc_ );
-                    oyOption_SetFromString( o, text, 0 );
-                    oyOption_SetFlags(o, oyOption_GetFlags(o) | oyOPTIONATTRIBUTE_AUTOMATIC);
+                    db_text = oyOption_GetValueText( db_o, oyAllocateFunc_ );
+                    text = oyOption_GetValueText( o, oyAllocateFunc_ );
+                    if(db_text && !(text && strcmp(text,db_text) == 0))
+                    {
+                      oyOption_SetFromString( o, db_text, 0 );
+                      oyOption_SetFlags(o, oyOption_GetFlags(o) | oyOPTIONATTRIBUTE_AUTOMATIC);
+                    }
+                    oyFree_m_( db_text );
                     oyFree_m_( text );
                   }
 
