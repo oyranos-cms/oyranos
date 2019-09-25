@@ -2027,6 +2027,7 @@ oyCMMapiFilter_s * oyGetCMM_         ( oyCMM_e             type,
   uint32_t * rank_list = 0;
   uint32_t apis_n = 0;
   oyCMMapiFilters_s * apis;
+  oyCMMapiFilter_s * filter = NULL;
   int i, n;
 
   oyOBJECT_e otype = oyOBJECT_CMM_API4_S;
@@ -2068,7 +2069,8 @@ oyCMMapiFilter_s * oyGetCMM_         ( oyCMM_e             type,
       if(found)
       {
         oyCMMapiFilters_Release( &apis );
-        return f;
+        filter = f;
+        goto clean_oyGetCMM_;
       }
 
       if(f->release)
@@ -2077,9 +2079,13 @@ oyCMMapiFilter_s * oyGetCMM_         ( oyCMM_e             type,
     } else
       WARNc1_S( "      no api obtained %d",i);
   }
+
+clean_oyGetCMM_:
+  if(rank_list)
+    oyFree_m_(rank_list);
   oyCMMapiFilters_Release( &apis );
 
-  return NULL;
+  return filter;
 }
 
 
