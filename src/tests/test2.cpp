@@ -1568,6 +1568,66 @@ oyjlTESTRESULT_e testOptionsCopy ()
     "oyOptions_Filter() oyBOOLEAN_INTERSECTION failed" );
   }
 
+  // Add similar options the crude way
+  oyOption_s * option = oyOption_FromRegistration(OY_STD"/behaviour/rendering_bpc", testobj);
+  oyOptions_MoveIn( setA, &option, -1 );
+  option = oyOption_FromRegistration(OY_STD"/behaviour/rendering_bpc", testobj);
+  oyOptions_MoveIn( setA, &option, -1 );
+  if(!error && oyOptions_Count( setA ) == 4)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyOptions_MoveIn()                                " );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    "oyOptions_MoveIn()                                " );
+  }
+
+  // Add sensible: skip existing option
+  count = oyOptions_Count( setA );
+  if(verbose)
+    fprintf( zout, "setA:%d\n", count );
+  option = oyOption_FromRegistration(OY_STD"/behaviour/rendering_bpc", testobj);
+  error = oyOptions_Add( setA, option, -1, testobj );
+  if(error == -2 && oyOptions_Count( setA ) == 4)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyOptions_Add(duplicates unfiltered)              " );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    "oyOptions_Add(duplicates unfiltered)              " );
+  }
+  oyOption_Release( &option );
+
+  option = oyOption_FromRegistration(OY_STD"/behaviour/not_seen_before", testobj);
+  error = oyOptions_Add( setA, option, -1, testobj );
+  if(error == 0 && oyOptions_Count( setA ) == count + 1)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyOptions_Add(unique)                             " );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    "oyOptions_Add(unique)                             " );
+  }
+  if(verbose)
+  {
+    const char * t = oyOptions_GetText( setA, (oyNAME_e) oyNAME_DESCRIPTION );
+    fprintf( zout, "setA:%u %d %d\n%s\n", t?strlen(t):0, error, oyOptions_Count( setA ), t?t:0 );
+  }
+
+  // Add many options the crude way
+  int countA = oyOptions_Count( setA );
+  error = oyOptions_Add( setB, option, -1, testobj );
+  int countB = oyOptions_Count( setB );
+  oyOptions_AppendOpts( setA, setB );
+  count = oyOptions_Count( setA );
+  if(countA == 5 && countB == 4 && count == countA + countB)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyOptions_AppendOpts(unique + duplicates unfiltered)" );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    "oyOptions_AppendOpts(unique + duplicates unfiltered)" );
+  }
+
+
+  oyOption_Release( &option );
+
   oyOptions_Release( &setA );
   oyOptions_Release( &setB );
   oyOptions_Release( &setC );
@@ -1708,6 +1768,23 @@ oyjlTESTRESULT_e testSettings ()
 
   fprintf(zout, "\n" );
 
+  opts = oyOptions_FromText( "{ \"org\": { \"oyranos\": { \"openicc\": { \"my_opt\": \"value\" } }, \"other\": { \"outside\": \"value2\" } } }", 0, testobj );
+  const char * reg = "org/oyranos/openicc/icc_color._lcm2._icc_version_2._icc_version_4._CPU._NOACCEL._effect";
+  char * type_txt  = oyFilterRegistrationToText( reg, oyFILTER_REG_TYPE, 0 );
+  error = oyOptions_DoFilter( opts, oyOPTIONATTRIBUTE_ADVANCED, type_txt );
+  count = oyOptions_Count( opts );
+  if(count == 1 && error == 0)
+  {
+    PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyOptions_DoFilter()                                  " );
+  } else
+  {
+    PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    "oyOptions_DoFilter()                                  " );
+  }
+  oyFree_m_(type_txt);
+  oyOptions_Release( &opts );
+
   /* we check for our standard CMM */
   opts = oyOptions_ForFilter( "//" OY_TYPE_STD "/lcm2",
                                             oyOPTIONATTRIBUTE_ADVANCED /* |
@@ -1727,7 +1804,8 @@ oyjlTESTRESULT_e testSettings ()
     {
       o = oyOptions_Get( opts, i );
       tmp = oyOption_GetValueText( o, 0 );
-      fprintf(zout, "%s:", tmp );
+      if(verbose)
+        fprintf(zout, "%s:", tmp );
       oyDeAllocateFunc_(tmp);
 
       tmp = oyFilterRegistrationToText( oyOption_GetText(o, oyNAME_DESCRIPTION),
@@ -1757,7 +1835,7 @@ oyjlTESTRESULT_e testSettings ()
   /*ptr = xmlSaveToBuffer( buf, 0, 0 );*/
 
 
-  text = oyStringCopy(oyOptions_GetText( opts, oyNAME_NAME ), oyAllocateFunc_);
+  text = oyStringCopy(oyOptions_GetText( opts, verbose ? oyNAME_NAME : (oyNAME_e)oyNAME_JSON ), oyAllocateFunc_);
 
   {
     if(!text || !strlen(text))
@@ -1770,7 +1848,7 @@ oyjlTESTRESULT_e testSettings ()
       "oyOptions_GetText() returned text               %d", (int)strlen(text) );
     }
   }
-  
+
 
   oyOptions_Release( &opts );
 
@@ -1817,29 +1895,34 @@ oyjlTESTRESULT_e testSettings ()
   oyStringAdd_( &text, "</a>", 0, 0 );
 
 #ifdef HAVE_LIBXML2
-  doc = xmlParseMemory( text, oyStrlen_( text ) );
-  error = !doc;
+  if(verbose)
   {
-    if(error)
+    doc = xmlParseMemory( text, oyStrlen_( text ) );
+    error = !doc;
     {
-      PRINT_SUB( oyjlTESTRESULT_FAIL, 
-      "libxml2::xmlParseMemory() returned could not parse the document" );
-    } else
-    {
-      PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-      "libxml2 returned document                        " );
+      if(error)
+      {
+        PRINT_SUB( oyjlTESTRESULT_FAIL, 
+        "libxml2::xmlParseMemory() returned could not parse the document" );
+      } else
+      {
+        PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+        "libxml2 returned document                        " );
+      }
     }
-  }
-  oyFree_m_( text );
+    oyFree_m_( text );
 
 #ifdef LIBXML_WRITER_ENABLED
-  xmlDocDumpFormatMemory( doc, (xmlChar**)&text, &i, 1 );
-  if(verbose)
-  fprintf(zout,"xmlDocDump: %s\n", text);
+    xmlDocDumpFormatMemory( doc, (xmlChar**)&text, &i, 1 );
+    if(verbose)
+      fprintf(zout,"xmlDocDump: %s\n", text);
 #endif
-  xmlFreeDoc( doc );
-  free(text);
-  /*xmlSaveDoc( ptr, doc );*/
+    xmlFreeDoc( doc );
+    free(text);
+    /*xmlSaveDoc( ptr, doc );*/
+  }
+  else
+    oyFree_m_( text );
 #endif
 
   oyOptions_Release( &opts );
@@ -1848,7 +1931,8 @@ oyjlTESTRESULT_e testSettings ()
                                             oyOPTIONATTRIBUTE_ADVANCED  |
                                             oyOPTIONATTRIBUTE_FRONT |
                                             OY_SELECT_COMMON, testobj );
-  fprintf(zout,"Show advanced common front end options:\n");
+  if(verbose)
+    fprintf(zout,"Show advanced common front end options:\n");
   countB = oyOptions_Count( opts );
   for( i = 0; i < countB; ++i)
   {

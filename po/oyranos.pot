@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Oyranos 0.9\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2019-09-17 20:46+0200\n"
+"POT-Creation-Date: 2019-09-25 16:38+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -32,8 +32,8 @@ msgstr ""
 #: API_generated/oyCMMapiFilters_s_.c:200
 #: API_generated/oyCMMapiFilters_s_.c:208 API_generated/oyCMMapi_s_.c:200
 #: API_generated/oyCMMapi_s_.c:208 API_generated/oyCMMapis_s_.c:200
-#: API_generated/oyCMMapis_s_.c:208 API_generated/oyCMMinfo_s_.c:241
-#: API_generated/oyCMMinfo_s_.c:249 API_generated/oyCMMobjectType_s_.c:197
+#: API_generated/oyCMMapis_s_.c:208 API_generated/oyCMMinfo_s_.c:253
+#: API_generated/oyCMMinfo_s_.c:261 API_generated/oyCMMobjectType_s_.c:197
 #: API_generated/oyCMMobjectType_s_.c:205 API_generated/oyCMMui_s_.c:210
 #: API_generated/oyCMMui_s_.c:218 API_generated/oyConfig_s_.c:242
 #: API_generated/oyConfig_s_.c:250 API_generated/oyConfigs_s_.c:200
@@ -41,7 +41,7 @@ msgstr ""
 #: API_generated/oyConnectorImaging_s_.c:270 API_generated/oyConnector_s_.c:206
 #: API_generated/oyConnector_s_.c:214 API_generated/oyConversion_s_.c:223
 #: API_generated/oyConversion_s_.c:231 API_generated/oyFilterCore_s.c:220
-#: API_generated/oyFilterCore_s_.c:230 API_generated/oyFilterCore_s_.c:238
+#: API_generated/oyFilterCore_s_.c:233 API_generated/oyFilterCore_s_.c:241
 #: API_generated/oyFilterGraph_s_.c:206 API_generated/oyFilterGraph_s_.c:214
 #: API_generated/oyFilterNode_s_.c:313 API_generated/oyFilterNode_s_.c:321
 #: API_generated/oyFilterNodes_s_.c:200 API_generated/oyFilterNodes_s_.c:208
@@ -55,8 +55,8 @@ msgstr ""
 #: API_generated/oyName_s_.c:47 API_generated/oyName_s_.c:55
 #: API_generated/oyNamedColor_s_.c:228 API_generated/oyNamedColor_s_.c:236
 #: API_generated/oyNamedColors_s_.c:191 API_generated/oyNamedColors_s_.c:199
-#: API_generated/oyObserver_s.c:50 API_generated/oyOption_s_.c:260
-#: API_generated/oyOption_s_.c:268 API_generated/oyOptions_s_.c:201
+#: API_generated/oyObserver_s.c:50 API_generated/oyOption_s_.c:261
+#: API_generated/oyOption_s_.c:269 API_generated/oyOptions_s_.c:201
 #: API_generated/oyOptions_s_.c:209 API_generated/oyPixelAccess_s_.c:230
 #: API_generated/oyPixelAccess_s_.c:238 API_generated/oyPointer_s_.c:280
 #: API_generated/oyPointer_s_.c:288 API_generated/oyProfileTag_s_.c:219
@@ -64,7 +64,7 @@ msgstr ""
 #: API_generated/oyProfile_s_.c:341 API_generated/oyProfiles_s_.c:200
 #: API_generated/oyProfiles_s_.c:208 API_generated/oyRectangle_s_.c:196
 #: API_generated/oyRectangle_s_.c:204 API_generated/oyStructList_s_.c:244
-#: API_generated/oyStructList_s_.c:252 API_generated/oyranos_devices.c:3589
+#: API_generated/oyStructList_s_.c:252 API_generated/oyranos_devices.c:3598
 #: API_generated/oyranos_module.c:1571 liboyranos/oyranos_alpha.c:312
 #: liboyranos_modules/oyranos_forms.c:57
 msgid "MEM Error."
@@ -102,8 +102,8 @@ msgid "Found no node in conversion. give up"
 msgstr ""
 
 #: API_generated/oyConversion_s.c:207 API_generated/oyFilterNode_s_.c:901
-#: API_generated/oyranos_devices.c:2604 API_generated/oyranos_devices.c:2616
-#: API_generated/oyranos_devices.c:2649 API_generated/oyranos_devices.c:3164
+#: API_generated/oyranos_devices.c:2613 API_generated/oyranos_devices.c:2625
+#: API_generated/oyranos_devices.c:2658 API_generated/oyranos_devices.c:3173
 #: API_generated/oyranos_module.c:2024
 msgid "error in module:"
 msgstr ""
@@ -190,28 +190,28 @@ msgstr ""
 msgid "install in the OpenIccDirectory icc path"
 msgstr ""
 
-#: API_generated/oyProfile_s.c:419 liboyranos_config/oyranos_io.c:205
+#: API_generated/oyProfile_s.c:422 liboyranos_config/oyranos_io.c:205
 msgid "profile not found:"
 msgstr ""
 
-#: API_generated/oyProfile_s.c:848
+#: API_generated/oyProfile_s.c:851
 msgid "Profile contains no description"
 msgstr ""
 
-#: API_generated/oyProfile_s.c:861 API_generated/oyProfile_s.c:867
+#: API_generated/oyProfile_s.c:864 API_generated/oyProfile_s.c:870
 #: tools/oyranos_profiles.c:502
 msgid "Profile already installed"
 msgstr ""
 
-#: API_generated/oyProfile_s.c:883 tools/oyranos_profile_tool.c:353
+#: API_generated/oyProfile_s.c:886 tools/oyranos_profile_tool.c:353
 msgid "Profile exists already"
 msgstr ""
 
-#: API_generated/oyProfile_s.c:896
+#: API_generated/oyProfile_s.c:899
 msgid "Can not write profile"
 msgstr ""
 
-#: API_generated/oyProfile_s.c:907 API_generated/oyranos_devices.c:962
+#: API_generated/oyProfile_s.c:910 API_generated/oyranos_devices.c:962
 #: liboyranos_core/oyranos_io_core.c:111 liboyranos_core/oyranos_io_core.c:279
 msgid "Could not open profile"
 msgstr ""
@@ -245,7 +245,7 @@ msgstr ""
 msgid "device_class not found:"
 msgstr ""
 
-#: API_generated/oyranos_devices.c:2509 API_generated/oyranos_devices.c:2520
+#: API_generated/oyranos_devices.c:2518 API_generated/oyranos_devices.c:2529
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:721
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:727
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:739
@@ -757,7 +757,7 @@ msgstr ""
 #: modules/color/modules/devices/oyranos_cmm_disp.c:1490
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1153
 #: modules/color/modules/oyranos_cmm_lraw.cpp:230
-#: modules/color/modules/oyranos_cmm_oicc.c:1199
+#: modules/color/modules/oyranos_cmm_oicc.c:1204
 #: modules/color/modules/oyranos_cmm_oydi.c:1378
 #: modules/color/modules/oyranos_cmm_oyra.c:151
 #: modules/color/modules/oyranos_cmm_trds.c:744
@@ -846,7 +846,7 @@ msgstr ""
 #: modules/color/modules/oyranos_cmm_elDB.c:1080
 #: modules/color/modules/oyranos_cmm_lraw.cpp:238
 #: modules/color/modules/oyranos_cmm_oiDB.c:522
-#: modules/color/modules/oyranos_cmm_oicc.c:1207
+#: modules/color/modules/oyranos_cmm_oicc.c:1212
 #: modules/color/modules/oyranos_cmm_oydi.c:1386
 #: modules/color/modules/oyranos_cmm_oyra.c:159
 #: modules/color/modules/oyranos_cmm_trds.c:752
@@ -3740,25 +3740,25 @@ msgstr ""
 msgid "ICC color profiles for color transformations"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oicc.c:1189
+#: modules/color/modules/oyranos_cmm_oicc.c:1194
 msgid "Oyranos ICC policy"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oicc.c:1191
+#: modules/color/modules/oyranos_cmm_oicc.c:1196
 msgid "Oyranos ICC policy module"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oicc.c:1205
+#: modules/color/modules/oyranos_cmm_oicc.c:1210
 msgid "Copyright (c) 2005-2016 Kai-Uwe Behrmann; newBSD"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oicc.c:1213
+#: modules/color/modules/oyranos_cmm_oicc.c:1218
 msgid ""
 "The filter provides policy settings. These settings can be applied to a "
 "graph through the user function oyConversion_Correct()."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oicc.c:1215
+#: modules/color/modules/oyranos_cmm_oicc.c:1220
 msgid ""
 "The module is responsible for many settings in the Oyranos color management "
 "settings panel. If applied the module care about rendering intents, "
