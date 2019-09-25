@@ -99,6 +99,10 @@ void     oyFinish_                   ( int                 flags )
   if(oy_debug_objects >= 0)
     oyObjectTreePrint( 0x01 | 0x02 );
 
+#ifdef HAVE_LIBXML2
+  xmlCleanupParser();
+#endif
+
   oyLibCoreRelease();
 }
 
