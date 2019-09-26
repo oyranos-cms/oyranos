@@ -77,6 +77,8 @@
 #define _help_setup             catCMMfunc( CUPS, _help_setup )
 #define _help_unset             catCMMfunc( CUPS, _help_unset )
 #define LoadDevice              catCMMfunc( CUPS, LoadDevice )
+#define _category               catCMMfunc( CUPS, _category )
+#define _help_desc              catCMMfunc( CUPS, _help_desc )
 
 #define _DBG_FORMAT_ "%s:%d %s()"
 #define _DBG_ARGS_ (strrchr(__FILE__,'/') ? strrchr(__FILE__,'/')+1 : __FILE__),__LINE__,__func__
@@ -112,6 +114,8 @@ int          LoadDevice              ( oyConfig_s        * device,
 oyMessage_f CUPS_msg = 0;
 
 extern oyCMMapi8_s_ _api8;
+static char * _category = NULL;
+static char * _help_desc = NULL;
 
 int CMMapiInit                       ( oyStruct_s        * filter )
 {
@@ -132,6 +136,8 @@ int CMMapiReset( oyStruct_s * filter )
   if(_initialised)
   {
     error = oyDeviceCMMReset( filter );
+    if(_category) oyFree_m_(_category);
+    if(_help_desc) oyFree_m_(_help_desc);
     _initialised = 0;
   }
 
@@ -868,7 +874,6 @@ const char * Api8UiGetText           ( const char        * select,
                                        oyNAME_e            type,
                                        oyStruct_s        * context )
 {
-  static char * category = 0;
   if(strcmp(select,"name") == 0 ||
      strcmp(select,"help") == 0)
   {
@@ -891,21 +896,21 @@ const char * Api8UiGetText           ( const char        * select,
     } 
   else if(strcmp(select,"category") == 0)
   {
-    if(!category)
+    if(!_category)
     {
-      STRING_ADD( category, _("Color") );
-      STRING_ADD( category, _("/") );
+      STRING_ADD( _category, _("Color") );
+      STRING_ADD( _category, _("/") );
       /* CMM: abbreviation for Color Matching Module */
-      STRING_ADD( category, _("Device") );
-      STRING_ADD( category, _("/") );
-      STRING_ADD( category, _("Printer CUPS") );
+      STRING_ADD( _category, _("Device") );
+      STRING_ADD( _category, _("/") );
+      STRING_ADD( _category, _("Printer CUPS") );
     }
          if(type == oyNAME_NICK)
       return "category";
     else if(type == oyNAME_NAME)
-      return category;
+      return _category;
     else
-      return category;
+      return _category;
   } 
   return 0;
 }
@@ -1015,22 +1020,21 @@ const char * GetText                 ( const char        * select,
     }
     else if(strcmp(select, "help")==0)
     {
-      static char * t = 0;
       if(type == oyNAME_NICK)
         return "help";
       else if(type == oyNAME_NAME)
         return _("The CUPS module supports the generic device protocol.");
       else
       {
-        if(!t)
+        if(!_help_desc)
         {
-          t = malloc( strlen(_help) + strlen(_help_list)
+          _help_desc = malloc( strlen(_help) + strlen(_help_list)
                     + strlen(_help_properties) + strlen(_help_setup) +
                     + strlen(_help_unset) + 2);
-          sprintf( t, "%s\n%s%s%s%s", _help, _help_list,
+          sprintf( _help_desc, "%s\n%s%s%s%s", _help, _help_list,
                  _help_properties, _help_setup, _help_unset );
         }
-        return t;
+        return _help_desc;
       }
     }
     return 0;

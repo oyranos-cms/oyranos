@@ -23,7 +23,7 @@
 #include <oyranos_color.h>
 #include <oyranos_cmm.h>
 #include "oyranos_devices.h"
-#include <oyranos_string.h>
+#include "oyranos_string.h"
 
 #include <string.h>
 #include <stdarg.h>
@@ -77,6 +77,7 @@ using namespace std;
 #define Api8UiGetText           catCMMfunc( oyRE, Api8UiGetText )
 #define _api8_ui_texts          catCMMfunc( oyRE, _api8_ui_texts )
 #define _api8_icon              catCMMfunc( oyRE, _api8_icon )
+#define _category               catCMMfunc( oyRE, _category )
 
 #define _DBG_FORMAT_ OY_DBG_FORMAT_
 #define _DBG_ARGS_ OY_DBG_ARGS_
@@ -97,6 +98,7 @@ oyMessage_f oyRE_msg = 0;
 
 static int _initialised = 0;
 extern oyCMMapi8_s_ _api8;
+static char * _category = NULL;
 
 
 bool is_raw( int id );
@@ -123,6 +125,7 @@ int CMMapiReset( oyStruct_s * filter )
   if(_initialised)
   {
     error = oyDeviceCMMReset( filter );
+    if(_category) oyFree_m_(_category);
     _initialised = 0;
   }
 
@@ -1017,7 +1020,6 @@ const char * Api8UiGetText           ( const char        * select,
                                        oyNAME_e            type,
                                        oyStruct_s        * context )
 {
-  static char * category = 0;
   if(strcmp(select,"name") == 0 ||
      strcmp(select,"help") == 0)
   {
@@ -1040,23 +1042,23 @@ const char * Api8UiGetText           ( const char        * select,
     } 
   else if(strcmp(select,"category") == 0)
   {
-    if(!category)
+    if(!_category)
     {
       /* The following strings must match the categories for a menu entry. */
       const char * i18n[] = {_("Color"),_("Device"),_("CameraRaw"),0};
       int len =  strlen(i18n[0]) + strlen(i18n[1]) + strlen(i18n[2]);
-      category = (char*)malloc( len + 64 );
-      if(category)
-        sprintf( category,"%s/%s/%s", i18n[0], i18n[1], i18n[2] );
+      _category = (char*)malloc( len + 64 );
+      if(_category)
+        sprintf( _category,"%s/%s/%s", i18n[0], i18n[1], i18n[2] );
       else
         oyRE_msg(oyMSG_WARN, (oyStruct_s *) 0, _DBG_FORMAT_ "\n " "Could not allocate enough memory.", _DBG_ARGS_);
     }
          if(type == oyNAME_NICK)
       return "category";
     else if(type == oyNAME_NAME)
-      return category;
+      return _category;
     else
-      return category;
+      return _category;
   }
   return 0;
 }

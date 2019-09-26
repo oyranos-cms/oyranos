@@ -62,6 +62,8 @@ extern oyMonitorHooks2_s * qarzMonitorHooks2;
 #define _api8                   catCMMfunc( qarz, _api8 )
 #define _cmm_module             catCMMfunc( qarz, _cmm_module )
 #define _texts                  catCMMfunc( qarz, _texts )
+#define _category               catCMMfunc( qarz, _category )
+#define _help_desc              catCMMfunc( qarz, _help_desc )
 #define GetMonitorInfo_lib      catCMMstruct( qarz, getInfo )
 #define GetAllScreenNames       catCMMstruct( qarz, getAllMonitorNames )
 #define SetupMonitorCalibration catCMMstruct( qarz, setupCalibration )

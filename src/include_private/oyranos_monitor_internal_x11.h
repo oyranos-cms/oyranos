@@ -60,6 +60,8 @@ extern oyCMMapi10_s_      oyX1_api10_set_xcm_region_handler;
 #define _api8                   catCMMfunc( oyX1, _api8 )
 #define _cmm_module             catCMMfunc( oyX1, _cmm_module )
 #define _texts                  catCMMfunc( oyX1, _texts )
+#define _category               catCMMfunc( oyX1, _category )
+#define _help_desc              catCMMfunc( oyX1, _help_desc )
 #define GetMonitorFromName      catCMMstruct( oyX1, getMonitor )
 #define FreeMonitor             catCMMstruct( oyX1, freeMonitor )
 #define GetMonitorInfo_lib      catCMMstruct( oyX1, getInfo )

@@ -22,6 +22,7 @@
 #include "oyCMM_s.h"
 #include "oyCMMapi8_s_.h"
 #include "oyCMMui_s_.h"
+#include "oyranos_string.h"
 
 #include <sane/sane.h>
 #ifdef HAVE_LCMS_never
@@ -70,6 +71,7 @@
 #define Api8UiGetText           catCMMfunc( SANE, Api8UiGetText )
 #define _api8_ui_texts          catCMMfunc( SANE, _api8_ui_texts )
 #define _api8_icon              catCMMfunc( SANE, _api8_icon )
+#define _category               catCMMfunc( SANE, _category )
 
 #define _DBG_FORMAT_ "%s:%d %s()"
 #define _DBG_ARGS_ __FILE__,__LINE__,__func__
@@ -85,6 +87,7 @@ const char * Api8UiGetText           ( const char        * select,
 oyMessage_f SANE_msg = 0;
 
 extern oyCMMapi8_s_ _api8;
+static char * _category = NULL;
 
 int ColorInfoFromHandle(const SANE_Handle device_handle, oyOptions_s **options);
 int sane_release_handle(oyPointer * handle_ptr);
@@ -110,6 +113,7 @@ int CMMapiReset( oyStruct_s * filter )
   if(_initialised)
   {
     error = oyDeviceCMMReset( filter );
+    if(_category) oyFree_m_(_category);
     _initialised = 0;
   }
 
@@ -822,7 +826,6 @@ const char * Api8UiGetText           ( const char        * select,
                                        oyNAME_e            type,
                                        oyStruct_s        * context )
 {
-  static char * category = 0;
   if(strcmp(select,"name") == 0 ||
      strcmp(select,"help") == 0)
   {
@@ -845,7 +848,7 @@ const char * Api8UiGetText           ( const char        * select,
     } 
   else if(strcmp(select,"category") == 0)
   {
-    if(!category)
+    if(!_category)
     {
       /* The following strings must match the categories for a menu entry. */
       const char * i18n[4] = {0,0,0,0};
@@ -854,18 +857,18 @@ const char * Api8UiGetText           ( const char        * select,
       i18n[1] = _("Device");
       i18n[2] = _("Scanner");
       len =  strlen(i18n[0]) + strlen(i18n[1]) + strlen(i18n[2]);
-      category = (char*)malloc( len + 64 );
-      if(category)
-        sprintf( category,"%s/%s/%s", i18n[0], i18n[1], i18n[2] );
+      _category = (char*)malloc( len + 64 );
+      if(_category)
+        sprintf( _category,"%s/%s/%s", i18n[0], i18n[1], i18n[2] );
       else
         SANE_msg(oyMSG_WARN, (oyStruct_s *) 0, _DBG_FORMAT_ "\n " "Could not allocate enough memory.", _DBG_ARGS_);
     }
          if(type == oyNAME_NICK)
       return "category";
     else if(type == oyNAME_NAME)
-      return category;
+      return _category;
     else
-      return category;
+      return _category;
   }
   return 0;
 }

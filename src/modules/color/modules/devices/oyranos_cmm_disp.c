@@ -64,6 +64,8 @@
 oyMessage_f _msg = 0;
 
 extern oyCMMapi8_s_  _api8;
+static char * _category = NULL;
+static char * _help_desc = NULL;
 static int _initialised = 0;
 
 int                DeviceFromName_   ( const char        * device_name,
@@ -113,6 +115,8 @@ int CMMapiReset( oyStruct_s * filter )
   if(_initialised)
   {
     error = oyDeviceCMMReset( filter );
+    if(_category) oyFree_m_(_category);
+    if(_help_desc) oyFree_m_(_help_desc);
     _initialised = 0;
   }
 
@@ -1319,7 +1323,6 @@ const char * Api8UiGetText           ( const char        * select,
                                        oyNAME_e            type,
                                        oyStruct_s        * context )
 {
-  static char * category = 0;
   if(strcmp(select,"name") == 0 ||
      strcmp(select,"help") == 0)
   {
@@ -1346,21 +1349,21 @@ const char * Api8UiGetText           ( const char        * select,
     } 
   else if(strcmp(select,"category") == 0)
   {
-    if(!category)
+    if(!_category)
     {
-      STRING_ADD( category, _("Color") );
-      STRING_ADD( category, _("/") );
+      STRING_ADD( _category, _("Color") );
+      STRING_ADD( _category, _("/") );
       /* CMM: abbreviation for Color Matching Module */
-      STRING_ADD( category, _("Device") );
-      STRING_ADD( category, _("/") );
-      STRING_ADD( category, _("Monitor") );
+      STRING_ADD( _category, _("Device") );
+      STRING_ADD( _category, _("/") );
+      STRING_ADD( _category, _("Monitor") );
     }
          if(type == oyNAME_NICK)
       return "category";
     else if(type == oyNAME_NAME)
-      return category;
+      return _category;
     else
-      return category;
+      return _category;
   } 
   return 0;
 }
@@ -1458,7 +1461,6 @@ const char * GetText                 ( const char        * select,
       return _("The window support module of Oyranos.");
   } else if(strcmp(select, "help")==0)
   {
-    static char * t = 0;
          if(type == oyNAME_NICK)
       return "help";
     else if(type == oyNAME_NAME)
@@ -1466,19 +1468,19 @@ const char * GetText                 ( const char        * select,
       return _("The " CMM_NICK " module supports the generic device protocol.");
     else
     {
-      if(!t)
+      if(!_help_desc)
       {
-        t = malloc( strlen(_help) + strlen(_help_list)
+        _help_desc = malloc( strlen(_help) + strlen(_help_list)
                     + strlen(_help_properties)
                     + strlen(_help_system_specific)
                     + strlen(_help_setup)
                     + strlen(_help_unset)
                     + strlen(_help_add_edid_to_icc) + 2);
-        sprintf( t, "%s\n%s%s%s%s%s%s", _help, _help_list,
+        sprintf( _help_desc, "%s\n%s%s%s%s%s%s", _help, _help_list,
                  _help_properties, _help_system_specific,  _help_setup,
                  _help_unset, _help_add_edid_to_icc );
       }
-      return t;
+      return _help_desc;
     }
   } else if(strcmp(select, "manufacturer")==0)
   {
