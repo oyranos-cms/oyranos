@@ -89,7 +89,8 @@ const char *   oyOption_GetText      ( oyOption_s        * obj,
   if(error <= 0)
   {
     v = s->value;
-    error = !v;
+    if(!v)
+      error = -1;
   }
 
   /** Iterate into oyOptions_s objects. */
