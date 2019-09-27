@@ -1528,6 +1528,12 @@ oyjlTESTRESULT_e testOptionsCopy ()
                                  OY_CREATE_NEW );
   if(error) PRINT_SUB( oyjlTESTRESULT_XFAIL, "oyOptions_SetFromString() error: %d", error )
 
+  if(verbose)
+  {
+    const char * t = oyOptions_GetText( resultA, (oyNAME_e) oyNAME_DESCRIPTION );
+    const char * a = oyOptions_GetText( setA, (oyNAME_e) oyNAME_DESCRIPTION );
+    fprintf( zout, "resultA/setA:\n----\n%s----\n%s----\n", t?t:"", a?a:"" );
+  }
   error = oyOptions_CopyFrom( &resultA, setA, oyBOOLEAN_UNION,
                               oyFILTER_REG_NONE,0 );
 
@@ -1539,6 +1545,12 @@ oyjlTESTRESULT_e testOptionsCopy ()
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
     "oyOptions_CopyFrom() oyBOOLEAN_UNION failed     " );
+  }
+  if(verbose)
+  {
+    const char * t = oyOptions_GetText( resultA, (oyNAME_e) oyNAME_DESCRIPTION );
+    const char * a = oyOptions_GetText( setA, (oyNAME_e) oyNAME_DESCRIPTION );
+    fprintf( zout, "resultA/setA:\n----\n%s----\n%s----\n", t?t:"", a?a:"" );
   }
 
   error = oyOptions_CopyFrom( &resultA, setB, oyBOOLEAN_DIFFERENZ,
@@ -1624,6 +1636,27 @@ oyjlTESTRESULT_e testOptionsCopy ()
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
     "oyOptions_AppendOpts(unique + duplicates unfiltered)" );
   }
+
+  oyOptions_Release( &resultA );
+  resultA = oyOptions_FromBoolean( setA, setC, oyBOOLEAN_UNION, testobj );
+  countA = oyOptions_Count( setA );
+  int countC = oyOptions_Count( setC );
+  count = oyOptions_Count( resultA );
+  if(countA == 9 && countC == 3 && count == 6)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyOptions_FromBoolean(oyBOOLEAN_UNION)             " );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    "oyOptions_FromBoolean(oyBOOLEAN_UNION)             " );
+  }
+  if(verbose)
+  {
+    const char * t = oyOptions_GetText( resultA, (oyNAME_e) oyNAME_DESCRIPTION );
+    const char * a = oyOptions_GetText( setA, (oyNAME_e) oyNAME_DESCRIPTION );
+    const char * c = oyOptions_GetText( setC, (oyNAME_e) oyNAME_DESCRIPTION );
+    fprintf( zout, "setA:%u %d\n----\n%s----\n%s----\n%s----\n", t?strlen(t):0, count, a?a:0, c?c:0, t?t:0 );
+  }
+  oyOptions_Release( &resultA );
 
 
   oyOption_Release( &option );
@@ -8353,7 +8386,6 @@ oyjlTESTRESULT_e testConfDomain ()
 
   int error = 0;
   oyConfDomain_s * a = 0, * b = 0;
-  oyObject_s object = oyObject_New();
   const char ** texts = 0;
   char       ** domains = 0;
   int i,j,n;
@@ -8377,7 +8409,7 @@ oyjlTESTRESULT_e testConfDomain ()
     "oyConfDomain_FromReg() failed                   " );
   }
 
-  b = oyConfDomain_Copy( a, object );
+  b = oyConfDomain_Copy( a, testobj );
 
   if(!error && b && b != a)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
@@ -8477,6 +8509,7 @@ oyjlTESTRESULT_e testConfDomain ()
     if(verbose) fprintf( zout, "----------\n");
   }
   oyStringListRelease_( &domains, count, free );
+  oyFree_m_( rank_list );
 
 
   return result;
