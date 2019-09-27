@@ -8409,6 +8409,8 @@ oyjlTESTRESULT_e testConfDomain ()
     "oyConfDomain_FromReg() failed                   " );
   }
 
+  if(!testobj)
+    testobj = oyObject_NewWithAllocators( myAllocFunc, myDeAllocFunc );
   b = oyConfDomain_Copy( a, testobj );
 
   if(!error && b && b != a)
