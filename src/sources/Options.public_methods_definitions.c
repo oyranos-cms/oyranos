@@ -3,18 +3,18 @@
 
 /** Function   oyOptions_FromBoolean
  *  @memberof  oyOptions_s
- *  @brief     boolean operations on two sets of option
+ *  @brief     boolean operations on two sets of options
  *
  *  @see oyOptions_Add
  *
  *  @param[in]     set_a               options set A
  *  @param[in]     set_b               options set B
- *  @param[in]     type                the operation to perform
+ *  @param[in]     type                the operation to perform; oyBOOLEAN_UNION is supported
  *  @param         object              the optional object
  *
- *  @version Oyranos: 0.1.8
+ *  @version Oyranos: 0.9.7
+ *  @date    2019/09/27
  *  @since   2008/06/28 (Oyranos: 0.1.8)
- *  @date    2008/06/28
  */
 oyOptions_s *  oyOptions_FromBoolean ( oyOptions_s       * set_a,
                                        oyOptions_s       * set_b,
@@ -24,6 +24,7 @@ oyOptions_s *  oyOptions_FromBoolean ( oyOptions_s       * set_a,
   int error = !set_a && !set_b;
   oyOptions_s * options = 0;
   oyOption_s * option_a = 0, * option_b = 0;
+  oyOption_s_ * a_ = NULL, * b_ = NULL;
   int set_an = oyOptions_Count( set_a ),
       set_bn = oyOptions_Count( set_b );
   int i, j,
@@ -35,13 +36,15 @@ oyOptions_s *  oyOptions_FromBoolean ( oyOptions_s       * set_a,
     for(i = 0; i < set_an; ++i)
     {
       option_a = oyOptions_Get( set_a, i );
-      txt_1 = oyFilterRegistrationToText( ((oyOption_s_*)option_a)->registration,
+      a_ = (oyOption_s_*) option_a;
+      txt_1 = oyFilterRegistrationToText( a_->registration,
                                           oyFILTER_REG_OPTION, 0);
 
       for(j = 0; j < set_bn; ++j)
       {
         option_b = oyOptions_Get( set_b, j );
-        txt_2 = oyFilterRegistrationToText( ((oyOption_s_*)option_b)->registration,
+        b_ = (oyOption_s_*) option_b;
+        txt_2 = oyFilterRegistrationToText( b_->registration,
                                             oyFILTER_REG_OPTION, 0);
 
         found = oyTextboolean_( txt_1, txt_2, type );
@@ -52,9 +55,7 @@ oyOptions_s *  oyOptions_FromBoolean ( oyOptions_s       * set_a,
           if(!options)
             options = oyOptions_New(0);
 
-          if(((oyOption_s_*)option_a)->value_type
-              !=
-             ((oyOption_s_*)option_b)->value_type)
+          if(found != 2 && a_->value_type != b_->value_type)
             found = 0;
 
           if(found)
