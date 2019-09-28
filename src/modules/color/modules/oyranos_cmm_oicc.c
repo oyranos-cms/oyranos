@@ -131,7 +131,7 @@ oyOptions_s* oicc_defaultICCValidateOptions
 char oicc_default_color_icc_options[] = {
 "{\n\
   \"" OY_TOP_SHARED "\": {\n\
-   \"" OY_DOMAIN_INTERNAL "\": {\n\
+   \"" OY_DOMAIN_STD "\": {\n\
     \"" OY_TYPE_STD "\": {\n\
      \"" "profile" "\": {\n\
       \"editing_rgb.front\": \"eciRGB_v2.icc\",\n\
