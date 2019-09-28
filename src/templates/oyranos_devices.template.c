@@ -2372,15 +2372,15 @@ int          oyOptions_DoFilter      ( oyOptions_s       * opts,
     for(i = 0; i < n; ++i)
     {
       int skip = 0;
+      const char * reg;
 
       o = oyOptions_Get( opts, i );
-
+      reg = oyOption_GetRegistration(o);
 
       /* usage/type range filter */
       if(filter_type)
       {
-        text = oyFilterRegistrationToText( oyOption_GetRegistration(o),
-                                           oyFILTER_REG_TYPE, 0);
+        text = oyFilterRegistrationToText( reg, oyFILTER_REG_TYPE, 0);
         if(oyStrcmp_( filter_type, text ) != 0)
           skip = 1;
 
@@ -2390,7 +2390,7 @@ int          oyOptions_DoFilter      ( oyOptions_s       * opts,
       /* front end options filter */
       if(!skip && !(flags & oyOPTIONATTRIBUTE_FRONT))
       {
-        text = oyStrrchr_( oyOption_GetRegistration(o), '/' );
+        text = oyStrrchr_( reg, '/' );
 
         if(text)
            text = oyStrchr_( text, '.' );
@@ -2402,7 +2402,7 @@ int          oyOptions_DoFilter      ( oyOptions_s       * opts,
       /* advanced options filter */
       if(!skip && !(flags & oyOPTIONATTRIBUTE_ADVANCED))
       {
-        text = oyStrrchr_( oyOption_GetRegistration(o), '/' );
+        text = oyStrrchr_( reg, '/' );
         if(text)
            text = oyStrchr_( text, '.' );
         if(text)
@@ -2413,9 +2413,10 @@ int          oyOptions_DoFilter      ( oyOptions_s       * opts,
       /* Elektra settings, modify value */
       if(!skip && !(flags & oyOPTIONSOURCE_FILTER))
       {
+        int oflags = oyOption_GetFlags(o);
         if((flags & oyOPTIONATTRIBUTE_EDIT) ||
            /* skip already edited options by default */
-           !(oyOption_GetFlags(o) & oyOPTIONATTRIBUTE_EDIT))
+           !(oflags & oyOPTIONATTRIBUTE_EDIT))
           /* remember the DB requests */
           oyStringListAddStaticString( &db_keys,
                                          &db_keys_n,
@@ -2443,14 +2444,16 @@ int          oyOptions_DoFilter      ( oyOptions_s       * opts,
     for( i = 0; i < db_keys_n && !error; ++i )
     {
       uint32_t flags;
-      oyOption_FromDB( db_keys[i], &db_opt, NULL );
-      o = oyOptions_Find( opts, oyOption_GetText( db_opt, oyNAME_DESCRIPTION ),
-                          oyNAME_PATTERN);
+      const char * db_key = db_keys[i], * db_opt_desc, * db_opt_val;
+      oyOption_FromDB( db_key, &db_opt, NULL );
+      db_opt_desc = oyOption_GetText( db_opt, oyNAME_DESCRIPTION );
+      o = oyOptions_Find( opts, db_opt_desc, oyNAME_PATTERN);
       oyOption_SetSource( o, oyOPTIONSOURCE_DATA );
       flags = oyOption_GetFlags(o);
-      oyOption_SetFromString( o, oyOption_GetValueString( db_opt,0 ), 0 );
+      db_opt_val = oyOption_GetValueString( db_opt,0 );
+      oyOption_SetFromString( o, db_opt_val, 0 );
       if(!(flags & oyOPTIONATTRIBUTE_EDIT))
-        oyOption_SetFlags(o, oyOption_GetFlags(o) & (~oyOPTIONATTRIBUTE_EDIT));
+        oyOption_SetFlags(o, flags & (~oyOPTIONATTRIBUTE_EDIT));
       oyOption_Release( &o );
       oyOption_Release( &db_opt );
     }
