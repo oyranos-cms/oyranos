@@ -8100,22 +8100,34 @@ oyjlTESTRESULT_e testCCorrectFlags( )
     int flags = oyOption_GetFlags( opt );
     const char * reg = oyOption_GetRegistration( opt );
     const char * val = oyOption_GetValueString( opt, 0 );
+    char * v = oyGetPersistentString( reg, 0, oySCOPE_USER_SYS, oyAllocateFunc_ );
+    int tested_key = 0;
     if(reg && oyFilterRegistrationMatch( reg, "rendering_intent", oyOBJECT_NONE ))
     {
       ++ri_count;
       if(flags & oyOPTIONATTRIBUTE_EDIT)
         ri_touched = 1;
+      tested_key = 1;
     }
     if( reg &&
         oyFilterRegistrationMatch( reg, "rendering_bpc", oyOBJECT_NONE ) &&
         flags & oyOPTIONATTRIBUTE_EDIT )
+    {
       bpc_touched = 1;
+      tested_key = 1;
+    }
     if(verbose)
     fprintf( zout, "%s:%s %s%s %d\n", reg, val,
              flags & oyOPTIONATTRIBUTE_EDIT ? " touched":"",
              flags & oyOPTIONATTRIBUTE_AUTOMATIC ? " auto":"",
              flags );
+    if(!tested_key && !(flags & oyOPTIONATTRIBUTE_EDIT) &&
+        val && strstr(reg,"advanced") == NULL && ((v && strcmp(val,v) || !v)))
+    {
+      PRINT_SUB( oyjlTESTRESULT_FAIL, "oyConversion_Correct() DB missmatch: %s %s/%s", verbose?"":reg, val, v?v:"----" );
+    }
     oyOption_Release( &opt );
+    if(v) oyFree_m_(v);
   }
   if(ri_count == 1)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
