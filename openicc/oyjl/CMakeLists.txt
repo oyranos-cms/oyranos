@@ -433,12 +433,17 @@ IF( GETTEXT_FOUND )
   #SET( _xgettext_option_list --language=C --keyword=_ --keyword=N_ --keyword=C_:1c,2 --keyword=NC_:1c,2 -s --package-name=${PROJECT_DOWN_NAME} --package-version=${${PROJECT_NAME}_MAJOR_VERSION}.${${PROJECT_NAME}_MINOR_VERSION} )
   SET( _xgettext_option_list --add-comments --keyword=gettext --flag=gettext:1:pass-c-format --keyword=_ --flag=_:1:pass-c-format --keyword=N_ --flag=N_:1:pass-c-format  --copyright-holder='Kai-Uwe Behrmann'  --msgid-bugs-address='ku.b@gmx.de' --from-code=utf-8 --package-name=${PROJECT_DOWN_NAME} --package-version=${${PROJECT_NAME}_MAJOR_VERSION}.${${PROJECT_NAME}_MINOR_VERSION} )
   SET( XGETTEXT_CMD xgettext )
-  FILE( GLOB ${PROJECT_UP_NAME}_SRC_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-        oyjl*.c
+  FILE( GLOB ${PROJECT_UP_NAME}_SRC_FILES_TEST RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
         test*.c
+      )
+  SET( ${PROJECT_UP_NAME}_SRC_FILES
+       oyjl-args.c
+       oyjl.c
+       oyjl_*.c
+       ${${PROJECT_UP_NAME}_SRC_FILES_TEST}
         xml2json.c
         yaml2json.c
-      )
+     )
 
   ADD_CUSTOM_COMMAND(OUTPUT ${_potFile}
     COMMAND ${XGETTEXT_CMD} ${_xgettext_option_list} -o ${_potFile} ${${PROJECT_UP_NAME}_SRC_FILES}
