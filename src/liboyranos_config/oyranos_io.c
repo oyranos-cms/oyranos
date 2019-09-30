@@ -374,6 +374,7 @@ int oyProfileListCb_ (oyFileList_s * data,
           oyAllocHelper_m_( l->names, char*, l->mem_count+l->hopp,
                             oyAllocateFunc_, return 1);
           memcpy(l->names, temp, sizeof(char*) * l->mem_count);
+          oyFree_m_( temp );
           l->mem_count += l->hopp;
         }
 
