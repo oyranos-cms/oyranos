@@ -907,6 +907,7 @@ OYAPI oyOption_s * OYEXPORT
 
   return o;
 }
+oyOptions_s * oy_config_options_dummy_ = NULL;
 /** Function  oyConfig_GetOptions
  *  @memberof oyConfig_s
  *  @brief    Get options from a source
@@ -946,18 +947,21 @@ OYAPI oyOptions_s ** OYEXPORT
                                        const char        * source )
 {
   oyConfig_s_ * s = (oyConfig_s_*)config;
-  static oyOptions_s * dummy = 0;
 
-  if(!dummy)
-    dummy = oyOptions_New( 0 );
+  if(!oy_config_options_dummy_)
+  {
+    oy_config_options_dummy_ = oyOptions_New( 0 );
+    if(oy_config_options_dummy_)
+      oyObject_SetName( oy_config_options_dummy_->oy_, "oy_config_options_dummy_", oyNAME_NICK );
+  }
 
   if(!s)
   {
-    oyOptions_Clear( dummy );
-    return &dummy;
+    oyOptions_Clear( oy_config_options_dummy_ );
+    return &oy_config_options_dummy_;
   }
 
-  oyCheckType__m( oyOBJECT_CONFIG_S, oyOptions_Clear( dummy ); return &dummy )
+  oyCheckType__m( oyOBJECT_CONFIG_S, oyOptions_Clear( oy_config_options_dummy_ ); return &oy_config_options_dummy_ )
 
   if(source && strcmp(source,"db") == 0)
   {
@@ -972,8 +976,8 @@ OYAPI oyOptions_s ** OYEXPORT
     return &s->data;
   }
 
-  oyOptions_Clear( dummy );
-  return &dummy;
+  oyOptions_Clear( oy_config_options_dummy_ );
+  return &oy_config_options_dummy_;
 }
 
 /** Function  oyConfig_FromJSON
