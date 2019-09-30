@@ -48,6 +48,8 @@
 
 static oyStruct_RegisterStaticMessageFunc_f * oy_static_msg_funcs_ = NULL;
 static int oy_msg_func_n_ = 0;
+char * oy_object_show_text_ = NULL;
+
 
 /** Function oyStruct_RegisterStaticMessageFunc
  *  @memberof oyStruct_s
@@ -106,6 +108,8 @@ void               oyLibCoreRelease  ( )
   if(oy_static_msg_funcs_)
     oyDeAllocateFunc_(oy_static_msg_funcs_);
   oy_static_msg_funcs_ = NULL;
+  if(oy_object_show_text_)
+    oyFree_m_( oy_object_show_text_ );
 
   oyI18Nreset_();
 
@@ -324,7 +328,6 @@ OYAPI const char * OYEXPORT  oyObject_Show (
 {
   struct oyObject_s_* obj = (struct oyObject_s_*)object;
   oyStruct_s * st = NULL;
-  static char * t = NULL;
   static int t_len = 1024;
 
   if(obj)
@@ -332,45 +335,45 @@ OYAPI const char * OYEXPORT  oyObject_Show (
 
   if(st)
   {
-    if(!t)
-      t = malloc(t_len);
+    if(!oy_object_show_text_)
+      oy_object_show_text_ = malloc(t_len);
 
-    if(t)
+    if(oy_object_show_text_)
     {
       const char * tmp = oyStruct_GetInfo(st,oyNAME_NAME,0);
       int len = tmp?strlen(tmp):0;
       if(len > t_len + 1)
       {
-        free(t);
-        t = malloc(len*2);
+        free(oy_object_show_text_);
+        oy_object_show_text_ = malloc(len*2);
       }
-      t[0] = 0;
-      sprintf( t, "\"%s\"[%d] refs: %d", tmp, obj->id_, obj->ref_);
+      oy_object_show_text_[0] = 0;
+      sprintf( oy_object_show_text_, "\"%s\"[%d] refs: %d", tmp, obj->id_, obj->ref_);
       switch(st->type_)
       {
       case oyOBJECT_ARRAY2D_S:
         {
           oyArray2d_s_ * s = (oyArray2d_s_ *)st;
-          sprintf( &t[strlen(t)], " %dx%d data_type: %d",
+          sprintf( &oy_object_show_text_[strlen(oy_object_show_text_)], " %dx%d data_type: %d",
                    s->width, s->height, s->t);
           break;
         }
       case oyOBJECT_RECTANGLE_S:
         {
           oyRectangle_s_ * s = (oyRectangle_s_ *)st;
-          sprintf( &t[strlen(t)], " %gx%g+%g+%g",
+          sprintf( &oy_object_show_text_[strlen(oy_object_show_text_)], " %gx%g+%g+%g",
                    s->width, s->height, s->x, s->y);
           break;
         }
       default:
           break;
       }
-      sprintf( &t[strlen(t)], "\n");
+      sprintf( &oy_object_show_text_[strlen(oy_object_show_text_)], "\n");
     }
   }
 
-  if(t && t[0])
-    return t;
+  if(oy_object_show_text_ && oy_object_show_text_[0])
+    return oy_object_show_text_;
   else
     return "----";
 }
