@@ -527,8 +527,7 @@ char **        oyProfileTag_GetText  ( oyProfileTag_s    * tag,
               if(name && lang && isalpha(lang[0]) && !implicite_i18n)
               {
                 /* string with i18n infos -> "de_DE:Licht" */
-                temp = oyStringAppend_(lang, ":", oyAllocateFunc_);
-                temp = oyStringAppend_(temp, text, oyAllocateFunc_);
+                oyjlStringAdd( &temp, oyAllocateFunc_, oyDeAllocateFunc_, "%s:%s", lang, text);
                 oyStringListAddString_( &texts, &texts_n, &temp,
                                             oyAllocateFunc_, oyDeAllocateFunc_);
 
