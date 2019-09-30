@@ -294,6 +294,7 @@ oyCMMapis_s_ * oyCMMapis_Copy__ ( oyCMMapis_s_ *cmmapis, oyObject_s object )
     
     
     
+    oyStructList_Release( &s->list_ );
     s->list_ = oyStructList_Copy( cmmapis->list_, s->oy_ );
 
   }

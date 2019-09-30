@@ -294,6 +294,7 @@ oyFilterNodes_s_ * oyFilterNodes_Copy__ ( oyFilterNodes_s_ *filternodes, oyObjec
     
     
     
+    oyStructList_Release( &s->list_ );
     s->list_ = oyStructList_Copy( filternodes->list_, s->oy_ );
 
   }

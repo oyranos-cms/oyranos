@@ -294,6 +294,7 @@ oyConfigs_s_ * oyConfigs_Copy__ ( oyConfigs_s_ *configs, oyObject_s object )
     
     
     
+    oyStructList_Release( &s->list_ );
     s->list_ = oyStructList_Copy( configs->list_, s->oy_ );
 
   }

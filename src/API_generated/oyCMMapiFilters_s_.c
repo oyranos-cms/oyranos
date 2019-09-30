@@ -294,6 +294,7 @@ oyCMMapiFilters_s_ * oyCMMapiFilters_Copy__ ( oyCMMapiFilters_s_ *cmmapifilters,
     
     
     
+    oyStructList_Release( &s->list_ );
     s->list_ = oyStructList_Copy( cmmapifilters->list_, s->oy_ );
 
   }

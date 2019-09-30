@@ -294,6 +294,7 @@ oyProfiles_s_ * oyProfiles_Copy__ ( oyProfiles_s_ *profiles, oyObject_s object )
     
     
     
+    oyStructList_Release( &s->list_ );
     s->list_ = oyStructList_Copy( profiles->list_, s->oy_ );
 
   }

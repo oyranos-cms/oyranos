@@ -5,6 +5,7 @@
 {% endblock customConstructor %}
 
 {% block copyConstructor %}
+    oyStructList_Release( &s->list_ );
     s->list_ = oyStructList_Copy( {{ class.baseName|lower }}->list_, s->oy_ );
 {% endblock copyConstructor %}
 

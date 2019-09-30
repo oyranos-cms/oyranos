@@ -294,6 +294,7 @@ oyFilterPlugs_s_ * oyFilterPlugs_Copy__ ( oyFilterPlugs_s_ *filterplugs, oyObjec
     
     
     
+    oyStructList_Release( &s->list_ );
     s->list_ = oyStructList_Copy( filterplugs->list_, s->oy_ );
 
   }

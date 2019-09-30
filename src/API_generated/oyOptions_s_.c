@@ -295,6 +295,7 @@ oyOptions_s_ * oyOptions_Copy__ ( oyOptions_s_ *options, oyObject_s object )
     
     
     
+    oyStructList_Release( &s->list_ );
     s->list_ = oyStructList_Copy( options->list_, s->oy_ );
 
   }
