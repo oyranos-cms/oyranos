@@ -2180,12 +2180,16 @@ oyjlTESTRESULT_e testProfile ()
     "No assumed WEB profile found                           " );
   } else
   {
+    const char * t = oyProfile_GetText(p_a, (oyNAME_e) oyNAME_JSON);
     PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "found oyASSUMED_WEB                                    " );
-    fprintf( zout, "oyNAME_NICK: %s\n", oyProfile_GetText(p_a, oyNAME_NICK) );
-    fprintf( zout, "oyNAME_NAME: %s\n", oyProfile_GetText(p_a, oyNAME_NAME) );
-    fprintf( zout, "oyNAME_DESCRIPTION: %s\n", oyProfile_GetText(p_a, oyNAME_DESCRIPTION) );
-    fprintf( zout, "oyNAME_JSON: %s\n", oyProfile_GetText(p_a, (oyNAME_e) oyNAME_JSON) );
+    if(verbose)
+    {
+      fprintf( zout, "oyNAME_NICK: %s\n", oyProfile_GetText(p_a, oyNAME_NICK) );
+      fprintf( zout, "oyNAME_NAME: %s\n", oyProfile_GetText(p_a, oyNAME_NAME) );
+      fprintf( zout, "oyNAME_DESCRIPTION: %s\n", oyProfile_GetText(p_a, oyNAME_DESCRIPTION) );
+      fprintf( zout, "oyNAME_JSON: %s\n", t );
+    }
   }
 
 
@@ -2211,6 +2215,11 @@ oyjlTESTRESULT_e testProfile ()
     PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "Loaded profile from memory of oyASSUMED_WEB            " );
   }
+  if(data)
+  {
+    free(data);
+    data = NULL; size = 0;
+  }
 
   if(!oyProfile_Equal( p_a, p_b ))
   {
@@ -2222,6 +2231,7 @@ oyjlTESTRESULT_e testProfile ()
     "oyASSUMED_WEB is equal to memory loaded oyProfile_s.   " );
   }
 
+  oyProfile_Release( &p_b );
   oyProfile_Release( &p_a );
   p_a = oyProfile_FromStd ( oyPROFILE_EFFECT, 0, testobj );
   char * name = oyGetDefaultProfileName ( oyPROFILE_EFFECT, oyAllocateFunc_ );
@@ -2236,6 +2246,8 @@ oyjlTESTRESULT_e testProfile ()
     PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "found oyPROFILE_EFFECT                                 " );
   }
+  oyProfile_Release( &p_a );
+  if(name) oyFree_m_( name );
 
   /* get D50 */
   double XYZ[3] = {-1.0, -1.0, -1.0};
@@ -2368,6 +2380,7 @@ oyjlTESTRESULT_e testProfile ()
     PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyCheckProfileMem( \"%d\")          ", (int)size );
   }
+  if(data) { free(data); data = NULL; }
 
   oyProfile_Release( &p );
 
@@ -2725,6 +2738,7 @@ oyjlTESTRESULT_e testProfileLists ()
   }
 
   clck = oyClock() - clck;
+  oyjlStringListRelease( &reference, ref_count, myDeAllocFunc );
 
 #ifdef __cplusplus
   std::cout << std::endl;
