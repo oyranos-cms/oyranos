@@ -29,8 +29,10 @@ extern oyStructList_s  * oy_cmm_handles_;
 extern oyConfigs_s     * oy_monitors_cache_;
 extern oyProfiles_s    * oy_profile_list_cache_;
 extern oyOptions_s     * oy_db_cache_;
+extern oyOptions_s     * oy_config_options_dummy_;
 
 int      oyObjectUsedByCache_        ( int                 id );
 int *    get_oy_db_cache_init_();
+void     oyDebugLevelCacheRelease();
 
 #endif /* OYRANOS_CACHE_H */

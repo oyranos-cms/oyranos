@@ -100,6 +100,7 @@ void     oyFinish_                   ( int                 flags )
     oyObjectTreePrint( 0x01 | 0x02 );
   /* clean object tracks after print */
   oyObjectGetList( 0 );
+  oyDebugLevelCacheRelease();
 
 #ifdef HAVE_LIBXML2
   xmlCleanupParser();
@@ -167,6 +168,7 @@ void     oyAlphaFinish_              ( int                 unused OY_UNUSED )
   oyStructList_Release( &oy_cmm_handles_ );
   oyStructList_Release_( &oy_profile_s_file_cache_ );
   oyOptions_Release( &oy_db_cache_ );
+  oyOptions_Release( &oy_config_options_dummy_ );
   *get_oy_db_cache_init_() = 0;
 }
 

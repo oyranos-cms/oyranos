@@ -547,14 +547,26 @@ int oyObjectGetThreadIdDummy() { return 0; }
 oyThreadId_f oyObjectGetThreadId = oyObjectGetThreadIdDummy;
 static const int oy_object_list_max_count_ = 1000000;
 oyLeave_s *** oy_debug_leave_cache_ = NULL;
+#define OY_DEBUG_LEVEL_CACHE_THREADS_MAX 1024
 oyLeave_s ** oyDebugLevelCacheGetForThread()
 {
   int thread_id = oyObjectGetThreadId();
   if(!oy_debug_leave_cache_)
-  { oy_debug_leave_cache_ = (oyLeave_s***) myCalloc_m( sizeof( oyLeave_s** ), 1024 ); }
+  { oy_debug_leave_cache_ = (oyLeave_s***) myCalloc_m( sizeof( oyLeave_s** ), OY_DEBUG_LEVEL_CACHE_THREADS_MAX ); }
   if(!oy_debug_leave_cache_[thread_id])
   { oy_debug_leave_cache_[thread_id] = (oyLeave_s**) myCalloc_m( sizeof( oyLeave_s* ), oy_object_list_max_count_ + 1 ); }
   return oy_debug_leave_cache_[thread_id];
+}
+void oyDebugLevelCacheRelease()
+{
+  int i;
+  if(!oy_debug_leave_cache_) return;
+  for(i = 0; i < OY_DEBUG_LEVEL_CACHE_THREADS_MAX; ++i)
+  {
+    if(oy_debug_leave_cache_[i])
+      oyFree_m_(oy_debug_leave_cache_[i]);
+  }
+  oyFree_m_(oy_debug_leave_cache_);
 }
 
 /* allocate object and oyLeave_s**children + oyStruct_s**obj arrays */
@@ -1303,11 +1315,11 @@ void               oyObjectTreePrint ( int                 flags )
         if(strstr( lines[i], "oyFilterPlug_s"))
           oyStringAddPrintf( &tmp, 0,0, "%s\n", lines[i] );
       oyStringAddPrintf( &tmp, 0,0, "\n%s", dot );
-      oyFree_m_(dot);
+      if(dot) oyFree_m_(dot);
 
       oyStringListRelease_( &lines, lines_n, 0 );
       lines = oyStringSplit_( tmp, '\n', &lines_n, 0 );
-      oyFree_m_(tmp);
+      if(tmp) oyFree_m_(tmp);
       for(i = 0; i < lines_n; ++i)
       {
         int pos = 0;
@@ -1317,7 +1329,7 @@ void               oyObjectTreePrint ( int                 flags )
       }
       oyStringListRelease_( &lines, lines_n, 0 );
       lines = oyStringSplit_( dot, '\n', &lines_n, 0 );
-      oyFree_m_(dot);
+      if(dot) oyFree_m_(dot);
       oyStringListFreeDoubles( lines, &lines_n, 0 );
       for(i = 0; i < lines_n; ++i)
       {
@@ -1334,7 +1346,7 @@ void               oyObjectTreePrint ( int                 flags )
       fprintf(stderr, "dot_edges has number of unique lines %d\n", lines_n);
       for(i = 0; i < lines_n; ++i)
         oyStringAddPrintf( &tmp, 0,0, "%s\n", lines[i] );
-      oyFree_m_(dot_edges);
+      if(dot_edges) oyFree_m_(dot_edges);
       oyStringListRelease_( &lines, lines_n, 0 );
       dot_edges = tmp; tmp = 0;
     }
@@ -1373,9 +1385,9 @@ bgcolor=\"transparent\"\n\
       else
         r = system("fdp -Tsvg oyranos_tree.dot -o oyranos_tree.svg && firefox oyranos_tree.svg &");
 
-      oyFree_m_( graph );
-      oyFree_m_( dot );
-      oyFree_m_( dot_edges );
+      if(graph) oyFree_m_( graph );
+      if(dot) oyFree_m_( dot );
+      if(dot_edges) oyFree_m_( dot_edges );
     }
     oy_debug_objects = old_oy_debug_objects;
   }
