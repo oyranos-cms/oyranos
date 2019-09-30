@@ -98,6 +98,8 @@ void     oyFinish_                   ( int                 flags )
     oyAlphaFinish_( 0 );
   if(oy_debug_objects >= 0)
     oyObjectTreePrint( 0x01 | 0x02 );
+  /* clean object tracks after print */
+  oyObjectGetList( 0 );
 
 #ifdef HAVE_LIBXML2
   xmlCleanupParser();
@@ -166,7 +168,6 @@ void     oyAlphaFinish_              ( int                 unused OY_UNUSED )
   oyStructList_Release_( &oy_profile_s_file_cache_ );
   oyOptions_Release( &oy_db_cache_ );
   *get_oy_db_cache_init_() = 0;
-  oyObjectGetList( 0 );
 }
 
 #include "oyranos_alpha.h"
