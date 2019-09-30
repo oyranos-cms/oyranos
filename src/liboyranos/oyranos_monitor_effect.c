@@ -787,8 +787,7 @@ int      oyDeviceSetup2              ( oyConfig_s        * device,
  *  @date    2018/02/23
  *  @since   2009/02/08 (Oyranos: 0.1.10)
  */
-OYAPI int  OYEXPORT
-           oyDeviceGetProfile        ( oyConfig_s        * device,
+OYAPI int OYEXPORT oyDeviceGetProfile( oyConfig_s        * device,
                                        oyOptions_s       * options,
                                        oyProfile_s      ** profile )
 {
@@ -814,7 +813,7 @@ OYAPI int  OYEXPORT
 
   /* The backend shows with the existence of the "icc_profile" response that it
    * can handle device profiles through the driver. */
-  if(error <= 0)
+  if(error <= 0 && !*profile)
     o = oyConfig_Find( device, "icc_profile" );
 
   p = (oyProfile_s*) oyOption_GetStruct( o, oyOBJECT_PROFILE_S );
@@ -822,9 +821,9 @@ OYAPI int  OYEXPORT
     *profile = p;
   else if(!error)
     error = -1;
-  p = 0;
+  p = NULL;
 
-  if(error <= 0) 
+  if(error <= 0 && !*profile) 
   { l_error = oyDeviceAskProfile2( device, options, profile ); OY_ERR }
 
   /** As a last means oyASSUMED_WEB is delivered. */
@@ -923,7 +922,7 @@ int      oyGetDisplayWhitePoint      ( int                 mode,
   {
     int pos = mode - 7;
     oyOptions_s * options = NULL;
-    oyConfigs_s * devices = oyGetMonitors( &options );
+    oyConfigs_s * devices = oyGetMonitors( &options ); /* cached in oy_monitors_cache_; do not release here */
     oyConfig_s * monitor = oyConfigs_Get( devices, pos );
     oyProfile_s* profile = NULL;
 
