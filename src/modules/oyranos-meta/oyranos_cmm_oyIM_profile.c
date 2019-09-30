@@ -640,7 +640,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
 {
   oyStructList_s * values = 0;
   icUInt32Number error = 0, len = 0, count = 0, entry_size = 0;
-  oyStructList_s * texts = 0, * temp = 0;
+  oyStructList_s * texts = 0;
   char * tmp = 0;
   char * mem = 0;
   char * pos = 0;
@@ -978,9 +978,8 @@ oyStructList_s * oyIMProfileTag_GetValues(
   }
 
   texts = oyStructList_New(0);
-  temp = oyStructList_New(0);
 
-  error = !texts || ! temp;
+  error = !texts;
 
   if(!error && oyProfileTag_GetStatus( (oyProfileTag_s*)tag ) == oyOK)
   {
@@ -1954,9 +1953,9 @@ oyStructList_s * oyIMProfileTag_GetValues(
                      oyStructList_AddName( texts, lt, i, oyNAME_LC );
 
                      oyFree_m_(lt);
-                     oyFree_m_(t);
                    }
                  }
+                 oyFree_m_(t);
                }
 
                if(i == count-1 && !error)
