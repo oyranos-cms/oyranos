@@ -666,16 +666,16 @@ OYAPI oyProfile_s * OYEXPORT oyProfile_FromMD5 (
         else
           equal = 1;
         if(equal == 0)
-          {
-            s = tmp;
-            break;
-          }
-
-          oyProfile_Release( &tmp );
+        {
+          s = tmp;
+          break;
         }
-      }
 
-      oyStringListRelease_( &names, count, oyDeAllocateFunc_ );
+        oyProfile_Release( &tmp );
+      }
+    }
+
+    oyStringListRelease_( &names, count, oyDeAllocateFunc_ );
   }
 
   return s;
@@ -1554,7 +1554,11 @@ OYAPI const oyChar* OYEXPORT oyProfile_GetText (
       }
       oyjlTreeToJson( root, &i, &json );
       if(json && strlen(json) < 1024)
+      {
         strcpy(temp, json);
+        free(json); json = NULL;
+      }
+      oyjlTreeFree( root );
     }
 
     if(!found)
