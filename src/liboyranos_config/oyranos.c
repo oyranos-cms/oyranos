@@ -25,6 +25,7 @@
 #include <string.h>
 
 #include "oyProfile_s.h" /* OY_ICC_VERSION_2 */
+#include "oyranos_cache.h" /* oyLibConfigRelease */
 #include "oyranos_config_internal.h"
 #include "oyranos_check.h"
 #include "oyranos_color.h"
@@ -803,9 +804,16 @@ char **  oyProfileListGet            ( const char        * colorsig,
 
   tmp = oyProfileListGet_(colorsig, 0, &n);
   names = oyStringListAppend_( (const char**)tmp, n, 0,0, &tmp_n,
-                               allocateFunc );
+                               oyAllocateFunc_ );
 
   oyStringListRelease_( &tmp, n, oyDeAllocateFunc_ );
+  if(allocateFunc != oyAllocateFunc_)
+  {
+    tmp = oyStringListAppend_( (const char**)names, n, 0,0, &tmp_n,
+                               allocateFunc );
+    oyStringListRelease_( &names, n, oyDeAllocateFunc_ );
+    names = tmp; tmp = NULL;
+  }
 
   *size = tmp_n;
 
@@ -1159,6 +1167,8 @@ char *       oyGetInstallPath        ( oyPATH_TYPE_e       type,
 extern oyOption_t_ * oy_option_;
 void oyLibConfigRelease              ( )
 {
+  oyConfigs_Release( &oy_monitors_cache_ );
+
   oyFinish_(0);
 
   if(oy_option_)
