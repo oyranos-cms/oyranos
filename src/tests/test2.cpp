@@ -2502,6 +2502,7 @@ oyjlTESTRESULT_e testProfiles ()
     {
       p = oyProfiles_Get( profs, current );
       tmp = oyProfile_GetText( p, oyNAME_DESCRIPTION );
+      oyProfile_Release( &p );
       PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
       "profiles found for oyPROFILE_e %d: %d \"%s\"", i, count, tmp ? tmp :"");
     }
@@ -2517,7 +2518,6 @@ oyjlTESTRESULT_e testProfiles ()
     PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "oyProfileListGet and oyPROFILE_e ok %u|%d", (unsigned int)size, countB );
   }
-
   oyProfile_s * pattern = oyProfile_FromFile( "sRGB", OY_NO_LOAD, testobj );
   oyProfiles_s* patterns = oyProfiles_New(testobj);
   oyProfiles_MoveIn( patterns, &pattern, -1 );
@@ -2641,6 +2641,7 @@ oyjlTESTRESULT_e testProfiles ()
       "oyProfiles_Rank( rgb )                          %d", n );
     }
     oyProfiles_Release( &p_list );
+    oyConfig_Release( &config );
   }
 
   {
@@ -4949,7 +4950,7 @@ oyjlTESTRESULT_e testCMMMonitorJSON ()
                    "//" OY_TYPE_STD "/config/icc_profile.x_color_region_target",
                           "yes", OY_CREATE_NEW );
     error = oyDeviceGetProfile( config, options, &p );
-    if( !error && p )
+    if( error <= 0 && p )
     { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
       "oyDeviceGetProfile(\"properties\") \"%s\"", oyProfile_GetText(p,oyNAME_DESCRIPTION) );
     } else
