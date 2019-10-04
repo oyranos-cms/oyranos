@@ -337,7 +337,6 @@ oyRectangle_s_ * oyRectangle_Copy_ ( oyRectangle_s_ *rectangle, oyObject_s objec
       {
         oyStruct_s ** parents = NULL;
         int n = oyStruct_GetParents( (oyStruct_s*)s, &parents );
-        if(n != s->oy_->ref_)
         {
           int i;
           const char * track_name = oyStructTypeToText(s->type_);
@@ -454,7 +453,6 @@ int oyRectangle_Release_( oyRectangle_s_ **rectangle )
     {
       oyStruct_s ** parents = NULL;
       int n = oyStruct_GetParents( (oyStruct_s*)s, &parents );
-      if(n != s->oy_->ref_)
       {
         int i;
 #ifdef HAVE_BACKTRACE

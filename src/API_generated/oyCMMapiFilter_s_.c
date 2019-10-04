@@ -356,7 +356,6 @@ oyCMMapiFilter_s_ * oyCMMapiFilter_Copy_ ( oyCMMapiFilter_s_ *cmmapifilter, oyOb
       {
         oyStruct_s ** parents = NULL;
         int n = oyStruct_GetParents( (oyStruct_s*)s, &parents );
-        if(n != s->oy_->ref_)
         {
           int i;
           const char * track_name = oyStructTypeToText(s->type_);
@@ -473,7 +472,6 @@ int oyCMMapiFilter_Release_( oyCMMapiFilter_s_ **cmmapifilter )
     {
       oyStruct_s ** parents = NULL;
       int n = oyStruct_GetParents( (oyStruct_s*)s, &parents );
-      if(n != s->oy_->ref_)
       {
         int i;
 #ifdef HAVE_BACKTRACE

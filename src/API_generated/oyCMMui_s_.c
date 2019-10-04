@@ -351,7 +351,6 @@ oyCMMui_s_ * oyCMMui_Copy_ ( oyCMMui_s_ *cmmui, oyObject_s object )
       {
         oyStruct_s ** parents = NULL;
         int n = oyStruct_GetParents( (oyStruct_s*)s, &parents );
-        if(n != s->oy_->ref_)
         {
           int i;
           const char * track_name = oyStructTypeToText(s->type_);
@@ -468,7 +467,6 @@ int oyCMMui_Release_( oyCMMui_s_ **cmmui )
     {
       oyStruct_s ** parents = NULL;
       int n = oyStruct_GetParents( (oyStruct_s*)s, &parents );
-      if(n != s->oy_->ref_)
       {
         int i;
 #ifdef HAVE_BACKTRACE

@@ -394,7 +394,6 @@ oyCMMinfo_s_ * oyCMMinfo_Copy_ ( oyCMMinfo_s_ *cmminfo, oyObject_s object )
       {
         oyStruct_s ** parents = NULL;
         int n = oyStruct_GetParents( (oyStruct_s*)s, &parents );
-        if(n != s->oy_->ref_)
         {
           int i;
           const char * track_name = oyStructTypeToText(s->type_);
@@ -511,7 +510,6 @@ int oyCMMinfo_Release_( oyCMMinfo_s_ **cmminfo )
     {
       oyStruct_s ** parents = NULL;
       int n = oyStruct_GetParents( (oyStruct_s*)s, &parents );
-      if(n != s->oy_->ref_)
       {
         int i;
 #ifdef HAVE_BACKTRACE

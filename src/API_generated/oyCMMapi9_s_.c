@@ -366,7 +366,6 @@ oyCMMapi9_s_ * oyCMMapi9_Copy_ ( oyCMMapi9_s_ *cmmapi9, oyObject_s object )
       {
         oyStruct_s ** parents = NULL;
         int n = oyStruct_GetParents( (oyStruct_s*)s, &parents );
-        if(n != s->oy_->ref_)
         {
           int i;
           const char * track_name = oyStructTypeToText(s->type_);
@@ -483,7 +482,6 @@ int oyCMMapi9_Release_( oyCMMapi9_s_ **cmmapi9 )
     {
       oyStruct_s ** parents = NULL;
       int n = oyStruct_GetParents( (oyStruct_s*)s, &parents );
-      if(n != s->oy_->ref_)
       {
         int i;
 #ifdef HAVE_BACKTRACE

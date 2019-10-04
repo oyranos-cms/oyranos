@@ -333,7 +333,6 @@ oyLis_s_ * oyLis_Copy_ ( oyLis_s_ *lis, oyObject_s object )
       {
         oyStruct_s ** parents = NULL;
         int n = oyStruct_GetParents( (oyStruct_s*)s, &parents );
-        if(n != s->oy_->ref_)
         {
           int i;
           const char * track_name = oyStructTypeToText(s->type_);
@@ -450,7 +449,6 @@ int oyLis_Release_( oyLis_s_ **lis )
     {
       oyStruct_s ** parents = NULL;
       int n = oyStruct_GetParents( (oyStruct_s*)s, &parents );
-      if(n != s->oy_->ref_)
       {
         int i;
 #ifdef HAVE_BACKTRACE

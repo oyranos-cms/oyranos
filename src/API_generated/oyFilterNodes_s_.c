@@ -344,7 +344,6 @@ oyFilterNodes_s_ * oyFilterNodes_Copy_ ( oyFilterNodes_s_ *filternodes, oyObject
       {
         oyStruct_s ** parents = NULL;
         int n = oyStruct_GetParents( (oyStruct_s*)s, &parents );
-        if(n != s->oy_->ref_)
         {
           int i;
           const char * track_name = oyStructTypeToText(s->type_);
@@ -461,7 +460,6 @@ int oyFilterNodes_Release_( oyFilterNodes_s_ **filternodes )
     {
       oyStruct_s ** parents = NULL;
       int n = oyStruct_GetParents( (oyStruct_s*)s, &parents );
-      if(n != s->oy_->ref_)
       {
         int i;
 #ifdef HAVE_BACKTRACE

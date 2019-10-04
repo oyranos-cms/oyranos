@@ -347,7 +347,6 @@ oyConnector_s_ * oyConnector_Copy_ ( oyConnector_s_ *connector, oyObject_s objec
       {
         oyStruct_s ** parents = NULL;
         int n = oyStruct_GetParents( (oyStruct_s*)s, &parents );
-        if(n != s->oy_->ref_)
         {
           int i;
           const char * track_name = oyStructTypeToText(s->type_);
@@ -464,7 +463,6 @@ int oyConnector_Release_( oyConnector_s_ **connector )
     {
       oyStruct_s ** parents = NULL;
       int n = oyStruct_GetParents( (oyStruct_s*)s, &parents );
-      if(n != s->oy_->ref_)
       {
         int i;
 #ifdef HAVE_BACKTRACE

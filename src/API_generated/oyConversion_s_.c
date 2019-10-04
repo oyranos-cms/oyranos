@@ -364,7 +364,6 @@ oyConversion_s_ * oyConversion_Copy_ ( oyConversion_s_ *conversion, oyObject_s o
       {
         oyStruct_s ** parents = NULL;
         int n = oyStruct_GetParents( (oyStruct_s*)s, &parents );
-        if(n != s->oy_->ref_)
         {
           int i;
           const char * track_name = oyStructTypeToText(s->type_);
@@ -481,7 +480,6 @@ int oyConversion_Release_( oyConversion_s_ **conversion )
     {
       oyStruct_s ** parents = NULL;
       int n = oyStruct_GetParents( (oyStruct_s*)s, &parents );
-      if(n != s->oy_->ref_)
       {
         int i;
 #ifdef HAVE_BACKTRACE
