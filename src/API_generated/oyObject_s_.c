@@ -209,6 +209,11 @@ int oyGetNewObjectID()
   return val;
 }
 
+#ifdef HAVE_BACKTRACE
+#include <execinfo.h>
+#define BT_BUF_SIZE 100
+#endif
+
 #define MAX_OBJECTS_TRACKED 1000000
 /* private tracking API's start */
 static oyObject_s * oy_obj_track_list = 0;
@@ -223,7 +228,10 @@ void               oyObject_Track    ( oyObject_s          obj )
   if(oy_obj_track_list && obj->id_ < MAX_OBJECTS_TRACKED)
     oy_obj_track_list[obj->id_] = obj;
   if(oy_debug_objects == 1 || oy_debug_objects == obj->id_)
+  {
+    OY_BACKTRACE_PRINT
     fprintf( stderr, "Object[%d] tracked\n", obj->id_);
+  }
 }
 void               oyObject_UnTrack    ( oyObject_s          obj )
 {

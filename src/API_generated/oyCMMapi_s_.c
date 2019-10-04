@@ -344,53 +344,7 @@ oyCMMapi_s_ * oyCMMapi_Copy_ ( oyCMMapi_s_ *cmmapi, oyObject_s object )
         {
           int i;
           const char * track_name = oyStructTypeToText(s->type_);
-#ifdef HAVE_BACKTRACE
-          int j, nptrs;
-          void *buffer[BT_BUF_SIZE];
-          char **strings;
-
-          nptrs = backtrace(buffer, BT_BUF_SIZE);
-
-          /* The call backtrace_symbols_fd(buffer, nptrs, STDOUT_FILENO)
-             would produce similar output to the following: */
-
-          strings = backtrace_symbols(buffer, nptrs);
-          if( strings == NULL )
-          {
-            perror("backtrace_symbols");
-          } else
-          {
-            int start = nptrs-1;
-            do { --start; } while( start >= 0 && (strstr(strings[start], "(main+") == NULL) );
-            fprintf(stderr, "\n");
-            for(j = start; j >= 0; j--)
-            {
-              if(oy_debug)
-                fprintf(stderr, "%s\n", strings[j]);
-              else
-              {
-                char * t = NULL, * txt = NULL;
-                const char * line = strings[j],
-                           * tmp = strchr( line, '(' );
-                if(tmp) t = oyStringCopy( &tmp[1], NULL );
-                else t = oyStringCopy( line, NULL );
-                txt = strchr( t, '+' );
-                if(txt) txt[0] = '\000';
-                if(j > 0 && (strstr(strings[j-1], t) != NULL) )
-                  oyFree_m_(t);
-                if(t)
-                {
-                  if(j==0)
-                    fprintf(stderr, "%s() ", t);
-                  else
-                    fprintf(stderr, "%s()->", t);
-                  oyFree_m_(t);
-                }
-              }
-            }
-            free(strings);
-          }
-#endif
+          OY_BACKTRACE_PRINT
           fprintf( stderr, "%s[%d] tracking refs: %d parents: %d\n",
                    track_name, s->oy_->id_, s->oy_->ref_, n );
           for(i = 0; i < n; ++i)
@@ -459,53 +413,7 @@ int oyCMMapi_Release_( oyCMMapi_s_ **cmmapi )
       int n = oyStruct_GetParents( (oyStruct_s*)s, &parents );
       {
         int i;
-#ifdef HAVE_BACKTRACE
-          int j, nptrs;
-          void *buffer[BT_BUF_SIZE];
-          char **strings;
-
-          nptrs = backtrace(buffer, BT_BUF_SIZE);
-
-          /* The call backtrace_symbols_fd(buffer, nptrs, STDOUT_FILENO)
-             would produce similar output to the following: */
-
-          strings = backtrace_symbols(buffer, nptrs);
-          if( strings == NULL )
-          {
-            perror("backtrace_symbols");
-          } else
-          {
-            int start = nptrs-1;
-            do { --start; } while( start >= 0 && (strstr(strings[start], "(main+") == NULL) );
-            fprintf(stderr, "\n");
-            for(j = start; j >= 0; j--)
-            {
-              if(oy_debug)
-                fprintf(stderr, "%s\n", strings[j]);
-              else
-              {
-                char * t = NULL, * txt = NULL;
-                const char * line = strings[j],
-                           * tmp = strchr( line, '(' );
-                if(tmp) t = oyStringCopy( &tmp[1], NULL );
-                else t = oyStringCopy( line, NULL );
-                txt = strchr( t, '+' );
-                if(txt) txt[0] = '\000';
-                if(j > 0 && (strstr(strings[j-1], t) != NULL) )
-                  oyFree_m_(t);
-                if(t)
-                {
-                  if(j==0)
-                    fprintf(stderr, "%s() ", t);
-                  else
-                    fprintf(stderr, "%s()->", t);
-                  oyFree_m_(t);
-                }
-              }
-            }
-            free(strings);
-          }
-#endif
+        OY_BACKTRACE_PRINT
         track_name = oyStructTypeToText(s->type_);
         fprintf( stderr, "%s[%d] unref with refs: %d observers: %d parents: %d\n",
                  track_name, s->oy_->id_, s->oy_->ref_, observer_refs, n );

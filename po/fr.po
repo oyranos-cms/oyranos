@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ICC Examin 0.41\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2019-09-27 12:44+0200\n"
+"POT-Creation-Date: 2019-10-04 06:50+0200\n"
 "PO-Revision-Date: 2006-06-29 19:31+0200\n"
 "Last-Translator: Pascal LACROIX <lacroixpascal at vfemail.net>\n"
 "Language-Team: <fr@li.org>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: liboyranos_core/oyranos_core.c:446 tools/oyranos-device.c:370
+#: liboyranos_core/oyranos_core.c:449 tools/oyranos-device.c:370
 #: tools/oyranos-device.c:386 tools/oyranos-device.c:401
 #: tools/oyranos-device.c:423 tools/oyranos-device.c:465
 #: tools/oyranos-device.c:828 tools/oyranos-device.c:1025
@@ -2977,7 +2977,7 @@ msgstr "Luv"
 #: API_generated/oyProfile_s_.c:341 API_generated/oyProfiles_s_.c:200
 #: API_generated/oyProfiles_s_.c:208 API_generated/oyRectangle_s_.c:196
 #: API_generated/oyRectangle_s_.c:204 API_generated/oyStructList_s_.c:244
-#: API_generated/oyStructList_s_.c:252 API_generated/oyranos_devices.c:3598
+#: API_generated/oyStructList_s_.c:252 API_generated/oyranos_devices.c:3601
 #: API_generated/oyranos_module.c:1571 liboyranos/oyranos_alpha.c:312
 #: liboyranos_modules/oyranos_forms.c:57
 msgid "MEM Error."
@@ -3435,7 +3435,7 @@ msgstr ""
 msgid "Option \"filename\", a valid filename of a existing image"
 msgstr ""
 
-#: liboyranos_config/oyranos.c:127 liboyranos_config/oyranos.c:157
+#: liboyranos_config/oyranos.c:128 liboyranos_config/oyranos.c:158
 msgid "Option not supported type:"
 msgstr ""
 
@@ -5550,7 +5550,7 @@ msgstr "Description"
 msgid "Viewing conditions description"
 msgstr "Description"
 
-#: liboyranos_core/oyranos_core.c:443 tools/oyranos-device.c:447
+#: liboyranos_core/oyranos_core.c:446 tools/oyranos-device.c:447
 #: tools/oyranos-device.c:450 tools/oyranos-device.c:456
 #: tools/qcmsevents/qcmsevents.cpp:330
 #, c-format
@@ -5807,8 +5807,8 @@ msgid "enable simple defaults"
 msgstr ""
 
 #: API_generated/oyConversion_s.c:207 API_generated/oyFilterNode_s_.c:901
-#: API_generated/oyranos_devices.c:2613 API_generated/oyranos_devices.c:2625
-#: API_generated/oyranos_devices.c:2658 API_generated/oyranos_devices.c:3173
+#: API_generated/oyranos_devices.c:2616 API_generated/oyranos_devices.c:2628
+#: API_generated/oyranos_devices.c:2661 API_generated/oyranos_devices.c:3176
 #: API_generated/oyranos_module.c:2024
 #, fuzzy
 msgid "error in module:"
@@ -5827,7 +5827,7 @@ msgstr ""
 msgid "failed!"
 msgstr ""
 
-#: API_generated/oyranos_devices.c:2518 API_generated/oyranos_devices.c:2529
+#: API_generated/oyranos_devices.c:2521 API_generated/oyranos_devices.c:2532
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:724
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:730
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:742
@@ -5842,7 +5842,7 @@ msgstr ""
 msgid "found issues"
 msgstr ""
 
-#: API_generated/oyConfig_s.c:1043 API_generated/oyConfig_s.c:1343
+#: API_generated/oyConfig_s.c:1047 API_generated/oyConfig_s.c:1347
 #: API_generated/oyOptions_s.c:481 API_generated/oyranos_devices.c:1347
 #: API_generated/oyranos_devices.c:1668 API_generated/oyranos_devices.c:1752
 #: examples/taxi.c:233 examples/taxi.c:334
@@ -6092,7 +6092,7 @@ msgstr ""
 msgid "not a profile:"
 msgstr "ICC Profils"
 
-#: API_generated/oyConfig_s.c:1059 API_generated/oyranos_devices.c:1373
+#: API_generated/oyConfig_s.c:1063 API_generated/oyranos_devices.c:1373
 #: liboyranos_config/oyranos_check.c:76
 #, fuzzy
 msgid "not found:"
@@ -6352,7 +6352,7 @@ msgstr ""
 msgid "w - fit to window width"
 msgstr ""
 
-#: liboyranos_config/oyranos.c:528
+#: liboyranos_config/oyranos.c:529
 #, fuzzy
 msgid "will overwrite policy file"
 msgstr "Ouvrir Profil"
@@ -6397,7 +6397,7 @@ msgstr "Ouvrir Profil"
 msgid "wrong argument to option:"
 msgstr ""
 
-#: liboyranos_config/oyranos.c:93
+#: liboyranos_config/oyranos.c:94
 msgid "wrong profile for static web color space selected, need sRGB"
 msgstr ""
 
