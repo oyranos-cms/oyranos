@@ -124,6 +124,8 @@ OYAPI oyProfiles_s * OYEXPORT
       oy_profile_list_cache_ = tmps;
       oyFree_m_(sort);
     }
+    else
+      oyProfiles_Release( &tmps );
 
     n = oyProfiles_Count( oy_profile_list_cache_ );
     if(oyProfiles_Count( oy_profile_list_cache_ ) != (int)names_n)
