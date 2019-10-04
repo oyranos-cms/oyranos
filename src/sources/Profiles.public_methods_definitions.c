@@ -584,6 +584,8 @@ OYAPI int OYEXPORT oyProfiles_Rank   ( oyProfiles_s      * list,
   if(old_db)
     d->db = old_db;
 
+  oyConfig_Release( &p_device );
+
   return error;
 }
 

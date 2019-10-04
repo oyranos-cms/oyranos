@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: oyranos\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2019-10-04 06:50+0200\n"
+"POT-Creation-Date: 2019-10-04 12:16+0200\n"
 "PO-Revision-Date: 2012-10-19 15:10+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -2221,7 +2221,7 @@ msgstr "profil ICC"
 msgid "ICC profile directory name"
 msgstr "jméno profilu"
 
-#: API_generated/oyProfile_s_.c:1132
+#: API_generated/oyProfile_s_.c:1038
 msgid "ICC profile id written"
 msgstr "ID profilu ICC zapsáno"
 
@@ -3377,7 +3377,7 @@ msgstr "Bílý bod média"
 msgid "No"
 msgstr "Ne"
 
-#: API_generated/oyProfile_s_.c:1117
+#: API_generated/oyProfile_s_.c:1023
 msgid "No ICC profile id detected"
 msgstr "Nedetekován žádný profil ICC"
 
@@ -4600,7 +4600,7 @@ msgstr ""
 msgid "Show white point modes"
 msgstr "Bílý bod média"
 
-#: API_generated/oyFilterNode_s_.c:1525 API_generated/oyObserver_s.c:361
+#: API_generated/oyFilterNode_s_.c:1431 API_generated/oyObserver_s.c:361
 #: API_generated/oyObserver_s.c:372 API_generated/oyObserver_s.c:573
 #: API_generated/oyObserver_s.c:651 API_generated/oyObserver_s_.c:53
 #: examples/image_display/oyranos_display_helper_classes_fltk.cpp:47
@@ -5916,7 +5916,7 @@ msgstr "Zapsat"
 msgid "Write to ICC profile:"
 msgstr "Zapsat do profilu ICC:"
 
-#: API_generated/oyProfile_s_.c:1109
+#: API_generated/oyProfile_s_.c:1015
 msgid "Wrong ICC profile id detected"
 msgstr "Zjištěno chybné ID profilu ICC"
 
@@ -6112,7 +6112,7 @@ msgstr ""
 msgid "enable simple defaults"
 msgstr "aktivovat jednoduché výchozí hodnoty"
 
-#: API_generated/oyConversion_s.c:207 API_generated/oyFilterNode_s_.c:901
+#: API_generated/oyConversion_s.c:207 API_generated/oyFilterNode_s_.c:807
 #: API_generated/oyranos_devices.c:2616 API_generated/oyranos_devices.c:2628
 #: API_generated/oyranos_devices.c:2661 API_generated/oyranos_devices.c:3176
 #: API_generated/oyranos_module.c:2024
