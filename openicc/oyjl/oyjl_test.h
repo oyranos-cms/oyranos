@@ -32,6 +32,10 @@
 #include <math.h>
 #endif
 
+#ifndef OYJL_CTEND
+#include "oyjl.h" /* oyjlCOLORTERM_e */
+#endif
+
 extern int * oyjl_debug;
 
 /** \addtogroup oyjl
@@ -92,14 +96,6 @@ typedef enum {
 #define OYJL_BLUE_B "\033[0;34m"
 /* switch back */
 #define OYJL_CTEND "\033[0m"
-typedef enum {
-  oyjlRED,
-  oyjlGREEN,
-  oyjlBLUE,
-  oyjlBOLD,
-  oyjlITALIC,
-  oyjlUNDERLINE
-} oyjlCOLORTERM_e;
 const char * colorterm = NULL;
 static const char * oyjlTermColor_( oyjlCOLORTERM_e rgb, const char * text) {
   int len = strlen(text);

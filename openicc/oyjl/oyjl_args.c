@@ -1058,16 +1058,8 @@ void oyjlOptionChoice_Release     ( oyjlOptionChoice_s**choices )
 #define OYJL_BLUE_B "\033[0;34m"
 /* switch back */
 #define OYJL_CTEND "\033[0m"
-typedef enum {
-  oyjlRED,
-  oyjlGREEN,
-  oyjlBLUE,
-  oyjlBOLD,
-  oyjlITALIC,
-  oyjlUNDERLINE
-} oyjlCOLORTERM_e;
 #endif
-static const char * oyjlTermColor( oyjlCOLORTERM_e rgb, const char * text) {
+const char * oyjlTermColor( oyjlCOLORTERM_e rgb, const char * text) {
   int len = strlen(text);
   static char t[256];
   static int colorterm_init = 0;

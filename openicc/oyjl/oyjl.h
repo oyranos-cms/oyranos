@@ -420,6 +420,16 @@ int        oyjlStrReplace            ( oyjl_str            text,
                                        const char        * replacement,
                                        void             (* modifyReplacement)(const char * text, const char * start, const char * end, const char * search, const char ** replace, void * user_data),
                                        void              * user_data );
+typedef enum {
+  oyjlRED,
+  oyjlGREEN,
+  oyjlBLUE,
+  oyjlBOLD,
+  oyjlITALIC,
+  oyjlUNDERLINE
+} oyjlCOLORTERM_e;
+const char * oyjlTermColor           ( oyjlCOLORTERM_e     rgb,
+                                       const char        * text );
 
 /* --- I/O helpers --- */
 char *     oyjlReadFileStreamToMem   ( FILE              * fp,
