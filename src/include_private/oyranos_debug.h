@@ -227,9 +227,29 @@ void oy_backtrace_();
                 fprintf(stderr, "%s\n", strings[j]); \
               else \
               { \
-                char * t = NULL, * txt = NULL; \
+                char * t = NULL, * txt = NULL, * line_number = NULL; \
                 const char * line = strings[j], \
-                           * tmp = strchr( line, '(' ); \
+                           * tmp = strchr( line, '(' ), \
+                           * addr = strchr( tmp, '[' ); \
+                if(addr) \
+                { \
+                  char * command = NULL; \
+                  size_t size = 0; \
+                  char * prog = oyjlStringCopy( line, 0 ); \
+                  char * addr2 = oyjlStringCopy( addr+1, 0 ); \
+                  addr2[strlen(addr2)-1] = '\000'; \
+                  txt = strchr( prog, '(' ); \
+                  if(txt) txt[0] = '\000'; \
+                  oyjlStringAdd( &command, 0,0, "addr2line -e %s %s -si", prog, addr2 ); \
+                  line_number = oyReadCmdToMem_( command, &size, "r", NULL ); \
+                  if(line_number) \
+                    line_number[strlen(line_number)-1] = '\000'; \
+                  txt = strchr( line_number, '(' ); \
+                  if(txt) txt[-1] = '\000'; \
+                  oyFree_m_(addr2); \
+                  oyFree_m_(command); \
+                  oyFree_m_(prog); \
+                } \
                 if(tmp) t = oyStringCopy( &tmp[1], NULL ); \
                 else t = oyStringCopy( line, NULL ); \
                 txt = strchr( t, '+' ); \
@@ -239,11 +259,18 @@ void oy_backtrace_();
                 if(t) \
                 { \
                   if(j==0) \
-                    fprintf(stderr, "%s() ", t); \
+                  { \
+                    fprintf(stderr, "%s", oyjlTermColor(oyjlBOLD, t)); \
+                    fprintf(stderr, "(%s) ", line_number ? oyjlTermColor(oyjlITALIC, line_number ) : ""); \
+                  } \
                   else \
-                    fprintf(stderr, "%s()->", t); \
+                  { \
+                    fprintf(stderr, "%s", oyjlTermColor(oyjlBOLD, t)); \
+                    fprintf(stderr, "(%s)->", line_number ? oyjlTermColor(oyjlITALIC, line_number ) : ""); \
+                  } \
                   oyFree_m_(t); \
                 } \
+                oyFree_m_(line_number); \
               } \
             } \
             free(strings); \
