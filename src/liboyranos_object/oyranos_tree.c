@@ -990,7 +990,7 @@ static const char * oyDotNodeGetColor( oyStruct_s        * current,
      current->type_ == oyOBJECT_PROFILE_TAG_S ||
      (current->type_ == oyOBJECT_STRUCT_LIST_S &&
      desc && strstr(desc,"ProfileTag") != NULL))
-    node = " fillcolor=\"SlateBlue\"";
+    node = " fillcolor=\"SlateBlue\" fontcolor=\"white\"";
   else
   if(current->type_ == oyOBJECT_IMAGE_S ||
      current->type_ == oyOBJECT_ARRAY2D_S)
