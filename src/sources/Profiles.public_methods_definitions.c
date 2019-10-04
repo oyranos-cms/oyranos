@@ -427,7 +427,7 @@ OYAPI oyProfiles_s * OYEXPORT oyProfiles_ForStd
          oyStrlen_( temp ) == oyStrlen_(default_p))
       {
         val = i;
-        break;
+        i = (int)size; /* break */
       }
 
       oyProfile_Release( &temp_prof );
