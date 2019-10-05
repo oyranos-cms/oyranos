@@ -791,11 +791,11 @@ oyjlTESTRESULT_e testJson ()
       oyjlTreeToJson( root, &level, &json );
       if(json && json[0] && strlen(json) == 210)
       { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-        "oyjlTreeToJson()                     %lu", (unsigned long)strlen(json) );
+        "oyjlTreeToJson()                               %lu", (unsigned long)strlen(json) );
         if(verbose) fprintf( zout, "%s\n", json );
       } else
       { PRINT_SUB( oyjlTESTRESULT_FAIL,
-        "oyjlTreeToJson()                                " );
+        "oyjlTreeToJson()                                  " );
       }
       oyFree_m_(json);
 
@@ -804,10 +804,10 @@ oyjlTESTRESULT_e testJson ()
       int count = 0; while(paths && paths[count]) ++count;
       if(count == 10)
       { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-        "oyjlTreeToPaths()                     %d", count );
+        "oyjlTreeToPaths()                               %d", count );
       } else
       { PRINT_SUB( oyjlTESTRESULT_FAIL,
-        "oyjlTreeToPaths()                     %d", count );
+        "oyjlTreeToPaths()                               %d", count );
       }
       if(paths && count)
         oyStringListRelease( &paths, count, free );
@@ -816,10 +816,10 @@ oyjlTESTRESULT_e testJson ()
       count = 0; while(paths && paths[count]) ++count;
       if(count == 6)
       { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-        "oyjlTreeToPaths( OYJL_KEY )           %d", count );
+        "oyjlTreeToPaths( OYJL_KEY )                      %d", count );
       } else
       { PRINT_SUB( oyjlTESTRESULT_FAIL,
-        "oyjlTreeToPaths( OYJL_KEY )           %d", count );
+        "oyjlTreeToPaths( OYJL_KEY )                      %d", count );
       }
       const char * match = NULL;
       const char * xpath = "org///s2key_d";
@@ -844,10 +844,10 @@ oyjlTESTRESULT_e testJson ()
       count = 0; while(paths && paths[count]) ++count;
       if(count == 4)
       { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-        "oyjlTreeToPaths( OYJL_PATH )          %d", count );
+        "oyjlTreeToPaths( OYJL_PATH )                     %d", count );
       } else
       { PRINT_SUB( oyjlTESTRESULT_FAIL,
-        "oyjlTreeToPaths( OYJL_PATH )          %d", count );
+        "oyjlTreeToPaths( OYJL_PATH )                     %d", count );
       }
       if(verbose)
         for(int j = 0; j < count; ++j)
@@ -895,10 +895,10 @@ oyjlTESTRESULT_e testJson ()
         success = 1;
       if(success)
       { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-        "oyjlTreeGetValue(flags=%d)            ", flags );
+        "oyjlTreeGetValue(flags=%d)                         ", flags );
       } else
       { PRINT_SUB( oyjlTESTRESULT_FAIL,
-        "oyjlTreeGetValue(flags=%d)            ", flags );
+        "oyjlTreeGetValue(flags=%d)                         ", flags );
       }
       if(verbose)
         fprintf( zout, "%s xpath \"%s\" %s\n", value?"found":"found not", xpath, success?"ok":"" );
@@ -926,10 +926,10 @@ oyjlTESTRESULT_e testJson ()
   root = oyjlTreeNew( NULL );
   if(root)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlTreeNew( NULL )                     " );
+    "oyjlTreeNew( NULL )                               " );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlTreeNew( NULL )                     " );
+    "oyjlTreeNew( NULL )                               " );
   }
   oyjlTreeFree( root );
 
@@ -939,10 +939,10 @@ oyjlTESTRESULT_e testJson ()
   size_t len = strlen(rjson);
   if(root && len == 56)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlTreeNew( \"new/tree/key\" )       %d", (int)len );
+    "oyjlTreeNew( \"new/tree/key\" )                   %d", (int)len );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlTreeNew( \"new/tree/key\" )       %d", (int)len );
+    "oyjlTreeNew( \"new/tree/key\" )                   %d", (int)len );
   }
   if(verbose) fprintf( zout, "%s\n", rjson );
   oyFree_m_( rjson );
@@ -952,10 +952,10 @@ oyjlTESTRESULT_e testJson ()
   oyjlTreeToJson( root, &i, &rjson ); i = 0;
   if(len < strlen(rjson))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlValueSetString( \"value\" )             %d", (int)strlen(rjson) );
+    "oyjlValueSetString( \"value\" )                   %d", (int)strlen(rjson) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlValueSetString( \"value\" )             %d", (int)strlen(rjson) );
+    "oyjlValueSetString( \"value\" )                   %d", (int)strlen(rjson) );
   }
   if(verbose) fprintf( zout, "%s\n", rjson );
   len = strlen(rjson);
@@ -964,10 +964,10 @@ oyjlTESTRESULT_e testJson ()
   char * v = oyjlValueText(value, oyAllocateFunc_);
   if(v && strlen(v) == 5)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlValueText( \"new/tree/key\" ) = \"%s\"", v );
+    "oyjlValueText( \"new/tree/key\" ) = \"%s\"         ", v );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlValueText( \"new/tree/key\" ) = \"value\"" );
+    "oyjlValueText( \"new/tree/key\" ) = \"value\"      " );
   }
   oyFree_m_(v)
 
@@ -975,10 +975,10 @@ oyjlTESTRESULT_e testJson ()
   oyjlTreeToJson( root, &i, &rjson ); i = 0;
   if(rjson && strcmp(rjson,"null") == 0)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlTreeClearValue( \"new/tree/key\" ) " );
+    "oyjlTreeClearValue( \"new/tree/key\" )              " );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlTreeClearValue( \"new/tree/key\" ) " );
+    "oyjlTreeClearValue( \"new/tree/key\" )              " );
   }
   if(verbose) fprintf( zout, "%s\n", rjson?rjson:"----" );
   oyjlTreeFree( root );
@@ -1809,11 +1809,11 @@ oyjlTESTRESULT_e testSettings ()
   if(count == 1 && error == 0)
   {
     PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyOptions_DoFilter()                                  " );
+    "oyOptions_DoFilter()                              " );
   } else
   {
     PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "oyOptions_DoFilter()                                  " );
+    "oyOptions_DoFilter()                              " );
   }
   oyFree_m_(type_txt);
   oyOptions_Release( &opts );
@@ -1853,7 +1853,7 @@ oyjlTESTRESULT_e testSettings ()
     if(!size)
     {
       PRINT_SUB( oyjlTESTRESULT_FAIL, 
-      "oyOptions_FindString() could not find option" );
+      "oyOptions_FindString() could not find option    " );
     } else
     if(size > 1)
     {
@@ -1862,7 +1862,7 @@ oyjlTESTRESULT_e testSettings ()
                        (unsigned int)size );
     } else
       PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-      "oyOptions_FindString() returned one option" );
+      "oyOptions_FindString() returned one option      " );
   }
 
   /*ptr = xmlSaveToBuffer( buf, 0, 0 );*/
@@ -2005,55 +2005,55 @@ oyjlTESTRESULT_e testInterpolation ()
   if(pol < ramp[3]/2.0)
   {
     PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "Interpolation is fine %f                     ", pol );
+    "Interpolation is fine %f                ", pol );
   } else
   {
     PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "Interpolation failed: %f < %f                          ", pol, ramp[3]/2.0 );
+    "Interpolation failed: %f < %f           ", pol, ramp[3]/2.0 );
   }
 
   pol = oyLinInterpolateRampU16( ramp, 4, 0.5 );
   if(pol == ramp[3]/2.0)
   {
     PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "Interpolation is fine.                                 " );
+    "Interpolation is fine.                            " );
   } else
   {
     PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "Interpolation failed: %f == %f                         ", pol, ramp[3]/2.0 );
+    "Interpolation failed: %f == %f                    ", pol, ramp[3]/2.0 );
   }
 
   pol = oyLinInterpolateRampU16( ramp, 4, 2.0/3.0 );
   if(pol == ramp[2])
   {
     PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "Interpolation is fine.                                 " );
+    "Interpolation is fine.                            " );
   } else
   {
     PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "Interpolation failed: %f == %u                         ", pol, ramp[2] );
+    "Interpolation failed: %f == %u                    ", pol, ramp[2] );
   }
 
   pol = oyLinInterpolateRampU16( ramp, 4, -1 );
   if(pol == 0.0)
   {
     PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "Interpolation is fine.                                 " );
+    "Interpolation is fine.                            " );
   } else
   {
     PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "Interpolation failed: %f == 0.0                        ", pol );
+    "Interpolation failed: %f == 0.0                   ", pol );
   }
 
   pol = oyLinInterpolateRampU16( ramp, 4, 1.1 );
   if(pol == ramp[3])
   {
     PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "Interpolation is fine.                                 " );
+    "Interpolation is fine.                            " );
   } else
   {
     PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "Interpolation failed: %f == %u                         ", pol, ramp[3] );
+    "Interpolation failed: %f == %u                    ", pol, ramp[3] );
   }
 
   uint16_t ramp3[12] = { 0,0,65535, 21845,21845,43690, 43690,43690,21845, 65535,65535,0 };
@@ -2062,21 +2062,21 @@ oyjlTESTRESULT_e testInterpolation ()
      oyLinInterpolateRampU16c( ramp3, 4, 0, 3, 2.0/3.0 ) == ramp3[2*3+0])
   {
     PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "Interpolation c1 is fine: %g == %u               ", pol, ramp3[2*3+1] );
+    "Interpolation c1 is fine: %g == %u          ", pol, ramp3[2*3+1] );
   } else
   {
     PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "Interpolation c failed: %f == %u                       ", pol, ramp3[2*3+1] );
+    "Interpolation c failed: %f == %u            ", pol, ramp3[2*3+1] );
   }
   pol = oyLinInterpolateRampU16c( ramp3, 4, 2, 3, 2.0/3.0 );
   if(pol == ramp3[2*3+2])
   {
     PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "Interpolation c2 is fine: %g == %u               ", pol, ramp3[2*3+2] );
+    "Interpolation c2 is fine: %g == %u          ", pol, ramp3[2*3+2] );
   } else
   {
     PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "Interpolation c failed: %f == %u                       ", pol, ramp3[2*3+2] );
+    "Interpolation c failed: %f == %u            ", pol, ramp3[2*3+2] );
   }
 
 
@@ -2177,12 +2177,12 @@ oyjlTESTRESULT_e testProfile ()
   if(!p_a)
   {
     PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "No assumed WEB profile found                           " );
+    "No assumed WEB profile found                      " );
   } else
   {
     const char * t = oyProfile_GetText(p_a, (oyNAME_e) oyNAME_JSON);
     PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "found oyASSUMED_WEB                                    " );
+    "found oyASSUMED_WEB                               " );
     if(verbose)
     {
       fprintf( zout, "oyNAME_NICK: %s\n", oyProfile_GetText(p_a, oyNAME_NICK) );
@@ -2198,22 +2198,22 @@ oyjlTESTRESULT_e testProfile ()
   if(!data || ! size)
   {
     PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "Could get memory from profile                          " );
+    "Could get memory from profile                     " );
   } else
   {
     PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "Obtained memory block from oyASSUMED_WEB:        %d    ", (int)size );
+    "Obtained memory block from oyASSUMED_WEB:      %d", (int)size );
   }
 
   p_b = oyProfile_FromMem( size, data, 0,testobj );
   if(!p_b)
   {
     PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "Could not load profile from memory.                    " );
+    "Could not load profile from memory.               " );
   } else
   {
     PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "Loaded profile from memory of oyASSUMED_WEB            " );
+    "Loaded profile from memory of oyASSUMED_WEB       " );
   }
   if(data)
   {
@@ -2228,7 +2228,7 @@ oyjlTESTRESULT_e testProfile ()
   } else
   {
     PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyASSUMED_WEB is equal to memory loaded oyProfile_s.   " );
+    "oyASSUMED_WEB is equal to memory loaded oyProfile_s." );
   }
 
   oyProfile_Release( &p_b );
@@ -2240,11 +2240,11 @@ oyjlTESTRESULT_e testProfile ()
   {
     if(name && name[0]) re = oyjlTESTRESULT_XFAIL; else re = oyjlTESTRESULT_SUCCESS;
     PRINT_SUB( re, 
-    "No default effect profile found                           " );
+    "No default effect profile found                   " );
   } else
   {
     PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "found oyPROFILE_EFFECT                                 " );
+    "found oyPROFILE_EFFECT                            " );
   }
   oyProfile_Release( &p_a );
   if(name) oyFree_m_( name );
@@ -2255,11 +2255,11 @@ oyjlTESTRESULT_e testProfile ()
   if(!error && XYZ[0] != -1.0 && XYZ[1] != -1.0 && XYZ[2] != -1.0)
   {
     PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyGetDisplayWhitePoint() = %g %g %g mode = 2    ", XYZ[0], XYZ[1], XYZ[2] );
+    "oyGetDisplayWhitePoint() %g %g %g mode[2]", XYZ[0], XYZ[1], XYZ[2] );
   } else
   {
     PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "oyGetDisplayWhitePoint() = %g %g %g mode = 2    ", XYZ[0], XYZ[1], XYZ[2] );
+    "oyGetDisplayWhitePoint() %g %g %g mode[2]", XYZ[0], XYZ[1], XYZ[2] );
   }
   XYZ[0] = XYZ[1] = XYZ[2] = -1.0;
 
@@ -2268,11 +2268,11 @@ oyjlTESTRESULT_e testProfile ()
   if(!error && XYZ[0] != -1.0 && XYZ[1] != -1.0 && XYZ[2] != -1.0)
   {
     PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyGetDisplayWhitePoint() = %g %g %g mode = 7  %d   ", XYZ[0], XYZ[1], XYZ[2], error );
+    "oyGetDisplayWhitePoint() %g %g %g mode[7] %d   ", XYZ[0], XYZ[1], XYZ[2], error );
   } else if( displayFail() == oyjlTESTRESULT_FAIL )
   {
     PRINT_SUB( oyjlTESTRESULT_XFAIL, 
-    "oyGetDisplayWhitePoint() = %g %g %g mode = 7  %d   ", XYZ[0], XYZ[1], XYZ[2], error );
+    "oyGetDisplayWhitePoint() %g %g %g mode[7] %d   ", XYZ[0], XYZ[1], XYZ[2], error );
   }
 
   /* set a custom white point */
@@ -2283,11 +2283,11 @@ oyjlTESTRESULT_e testProfile ()
   if(!error && XYZ[0] == 0.333 && XYZ[1] == 0.333 && XYZ[2] == 0.333)
   {
     PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyGetDisplayWhitePoint() = %g %g %g       mode = 1      ", XYZ[0], XYZ[1], XYZ[2] );
+    "oyGetDisplayWhitePoint() %g %g %g mode[1]", XYZ[0], XYZ[1], XYZ[2] );
   } else
   {
     PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "oyGetDisplayWhitePoint() = %g %g %g       mode = 1      ", XYZ[0], XYZ[1], XYZ[2] );
+    "oyGetDisplayWhitePoint() %g %g %g mode[1]", XYZ[0], XYZ[1], XYZ[2] );
   }
 
 
@@ -2331,11 +2331,11 @@ oyjlTESTRESULT_e testProfile ()
   if(!p )
   {
     PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "oyOptions_Handle( \"create_profile.icc_profile.color_matrix\") failed" );
+    "oyOptions_Handle( \"create_profile.icc_profile.color_matrix\")" );
   } else
   {
     PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyOptions_Handle( \"create_profile.icc_profile.color_matrix\")       " );
+    "oyOptions_Handle( \"create_profile.icc_profile.color_matrix\")" );
   }
 
   icSignature vs = (icUInt32Number) oyValueUInt32( (icUInt32Number) oyProfile_GetSignature( p, oySIGNATURE_VERSION ) );
@@ -2343,7 +2343,7 @@ oyjlTESTRESULT_e testProfile ()
   if( v[0] == 2 )
   {
     PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyOptions_Handle( \"create_profile.icc_profile.color_matrix\") version: %d.%d.%d", (int)v[0], (int)v[1]/16, (int)v[1]%16 );
+    "oyOptions_Handle( \"create_profile.icc_profile.color_matrix\") %d.%d.%d", (int)v[0], (int)v[1]/16, (int)v[1]%16 );
   } else
   {
     PRINT_SUB( oyjlTESTRESULT_FAIL,
@@ -2363,22 +2363,22 @@ oyjlTESTRESULT_e testProfile ()
   if(!error )
   {
     PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyWriteMemToFile_( \"%s\")          ", ICC_TEST_NAME".icc" );
+    "oyWriteMemToFile_( \"%s\")      ", ICC_TEST_NAME".icc" );
   } else
   {
     PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyWriteMemToFile_( \"%s\")  failed  ", ICC_TEST_NAME".icc" );
+    "oyWriteMemToFile_( \"%s\")     ", ICC_TEST_NAME".icc" );
   }
 
   if(size >= 128 &&
      oyCheckProfileMem( data, 128, 0 ) == 0)
   {
     PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyCheckProfileMem( \"%d\")          ", (int)size );
+    "oyCheckProfileMem( \"%d\")                       ", (int)size );
   } else
   {
     PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyCheckProfileMem( \"%d\")          ", (int)size );
+    "oyCheckProfileMem( \"%d\")                       ", (int)size );
   }
   if(data) { free(data); data = NULL; }
 
@@ -2388,11 +2388,11 @@ oyjlTESTRESULT_e testProfile ()
   if(!p )
   {
     PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyProfile_FromFile( OY_SKIP_NON_DEFAULT_PATH )       " );
+    "oyProfile_FromFile( OY_SKIP_NON_DEFAULT_PATH )    " );
   } else
   {
     PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyProfile_FromFile( OY_SKIP_NON_DEFAULT_PATH ) failed" );
+    "oyProfile_FromFile( OY_SKIP_NON_DEFAULT_PATH )    " );
   }
   oyProfile_Release( &p );
 
@@ -2410,11 +2410,11 @@ oyjlTESTRESULT_e testProfile ()
     if( p && v[0] == 2 )
     {
       PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-      "oyProfile_FromName( \"%s\") version: %d.%d.%d", names[i], (int)v[0], (int)v[1]/16, (int)v[1]%16 );
+      "oyProfile_FromName( \"%s\") version: %d.%d.%d    ", names[i], (int)v[0], (int)v[1]/16, (int)v[1]%16 );
     } else
     {
       PRINT_SUB( oyjlTESTRESULT_FAIL,
-      "oyProfile_FromName( \"%s\") version: %d.%d.%d", names[i], (int)v[0], (int)v[1]/16, (int)v[1]%16 );
+      "oyProfile_FromName( \"%s\") version: %d.%d.%d    ", names[i], (int)v[0], (int)v[1]/16, (int)v[1]%16 );
     }
 
     oyProfile_Release( &p );
@@ -2477,7 +2477,7 @@ oyjlTESTRESULT_e testProfiles ()
   } else if(count)
   {
     PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyProfileListGet and oyDEFAULT_PROFILE_START ok %u|%d", (unsigned int)size, count );
+    "oyProfileListGet and oyDEFAULT_PROFILE_START %u|%d", (unsigned int)size, count );
   } else
   {
     PRINT_SUB( oyjlTESTRESULT_FAIL,
@@ -2516,7 +2516,7 @@ oyjlTESTRESULT_e testProfiles ()
   } else
   {
     PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyProfileListGet and oyPROFILE_e ok %u|%d", (unsigned int)size, countB );
+    "oyProfileListGet and oyPROFILE_e ok %u|%d     ", (unsigned int)size, countB );
   }
   oyProfile_s * pattern = oyProfile_FromFile( "sRGB", OY_NO_LOAD, testobj );
   oyProfiles_s* patterns = oyProfiles_New(testobj);
@@ -2541,6 +2541,7 @@ oyjlTESTRESULT_e testProfiles ()
 
   char * text = oyGetInstallPath( oyPATH_ICC, oySCOPE_SYSTEM, oyAllocateFunc_ );
   pattern = oyProfile_FromFile( text, OY_NO_LOAD, testobj );
+  if(verbose)
   fprintf( zout, "oyPATH_ICC::oySCOPE_SYSTEM=%s\n", text );
   oyFree_m_(text);
   patterns = oyProfiles_New(testobj);
@@ -2698,7 +2699,7 @@ oyjlTESTRESULT_e testProfileLists ()
   if((int)ref_count)
   {
     PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyProfileListGet() returned profiles %d", (int)ref_count );
+    "oyProfileListGet() returned profiles %d        ", (int)ref_count );
   } else
   {
     PRINT_SUB( oyjlTESTRESULT_FAIL,
@@ -2745,11 +2746,11 @@ oyjlTESTRESULT_e testProfileLists ()
 
 #ifdef __cplusplus
   std::cout << std::endl;
-  std::cout << repeat << " + 1 calls to oyProfileListGet() "
+  std::cout << repeat << " + 1 calls to oyProfileListGet()    "
             << oyjlProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "calls")
             << std::endl;
 #else
-  fprintf(zout, "\n%d + 1 calls to oyProfileListGet() %s\n",
+  fprintf(zout, "\n%d + 1 calls to oyProfileListGet()         %s\n",
                 repeat,  oyjlProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "calls") );
 #endif
 
@@ -2788,7 +2789,7 @@ oyjlTESTRESULT_e testEffects ()
   if(abstract)
   {
     PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyOptions_Handle(\"create_profile\"): %s", text );
+    "oyOptions_Handle(\"create_profile\"): %s    ", text );
   } else if(error == -1)
   {
     PRINT_SUB( oyjlTESTRESULT_XFAIL,
@@ -2868,6 +2869,9 @@ oyjlTESTRESULT_e testEffects ()
     error = oyOptions_Handle( "//" OY_TYPE_STD "/create_profile.white_point_adjust.bradford",
                               opts,"create_profile.white_point_adjust.bradford.file_name",
                               &result_opts );
+    if(i+1 < count)
+      oyOptions_Release( &result_opts );
+    oyOptions_Release( &opts );
   }
   clck = oyClock() - clck;
   if(verbose) fprintf(zout,"white point XYZ %g %g %g -> %g %g %g\n", src_XYZ[0], src_XYZ[1], src_XYZ[2], dst_XYZ[0], dst_XYZ[1], dst_XYZ[2] );
@@ -2887,6 +2891,7 @@ oyjlTESTRESULT_e testEffects ()
     PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyOptions_Handle(\"create_profile.filename\") zero" );
   }
+  oyOptions_Release( &result_opts );
 
   clck = oyClock();
   count = 100;
@@ -2903,6 +2908,9 @@ oyjlTESTRESULT_e testEffects ()
     error = oyOptions_Handle( "//" OY_TYPE_STD "/create_profile.white_point_adjust.bradford",
                               opts,"create_profile.white_point_adjust.bradford",
                               &result_opts );
+    if(i+1 < count)
+      oyOptions_Release( &result_opts );
+    oyOptions_Release( &opts );
   }
   clck = oyClock() - clck;
   if(error) PRINT_SUB( oyjlTESTRESULT_XFAIL, "oyOptions_Handle() error: %d", error )
@@ -3067,7 +3075,7 @@ oyjlTESTRESULT_e testDeviceLinkProfile ()
   if(desc && strstr(desc,"pass through"))
   {
     PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "pass through created \"%s\"", desc );
+    "pass through created \"%s\"              ", desc );
   } else
   {
     PRINT_SUB( oyjlTESTRESULT_FAIL,
@@ -3885,10 +3893,10 @@ oyjlTESTRESULT_e testClut ()
   if( !(c[0] == pc.clut[r][g][b][0] || c[1] == pc.clut[r][g][b][1] || c[2] == pc.clut[r][g][b][2]) &&
       count > 1 && dl_count != dl_count2)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "cache difference                %d %d!=%d", count, dl_count, dl_count2 );
+    "cache difference                          %d %d!=%d", count, dl_count, dl_count2 );
   } else
   { PRINT_SUB( oyjlTESTRESULT_XFAIL,
-    "cache difference                %d %d!=%d", count, dl_count, dl_count2 );
+    "cache difference                          %d %d!=%d", count, dl_count, dl_count2 );
   }
 
 
@@ -3913,110 +3921,110 @@ oyjlTESTRESULT_e testRegistrationMatch ()
                                 "//" OY_TYPE_STD "/icc_color",
                                 oyOBJECT_CMM_API4_S ))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "simple CMM selection                  " );
+    "simple CMM selection                              " );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "simple CMM selection                  " );
+    "simple CMM selection                              " );
   }
 
   if(!oyFilterRegistrationMatch(OY_INTERNAL "/icc_color.lcms",
                                 "//" OY_TYPE_STD "/icc_color.octl",
                                 oyOBJECT_CMM_API4_S ))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "simple CMM selection no match         " );
+    "simple CMM selection no match                     " );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "simple CMM selection no match         " );
+    "simple CMM selection no match                     " );
   }
 
   if( oyFilterRegistrationMatch(OY_INTERNAL "/icc_color.lcms",
                                 "//" OY_TYPE_STD "/icc_color.4+lcms",
                                 oyOBJECT_CMM_API4_S ))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "special CMM selection                 " );
+    "special CMM selection                             " );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "special CMM selection                 " );
+    "special CMM selection                             " );
   }
 
   if(!oyFilterRegistrationMatch(OY_INTERNAL "/icc_color.lcms",
                                 "//" OY_TYPE_STD "/icc_color.4-lcms",
                                 oyOBJECT_CMM_API4_S ))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "special CMM avoiding                  " );
+    "special CMM avoiding                              " );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "special CMM avoiding                  " );
+    "special CMM avoiding                              " );
   }
 
   if( oyFilterRegistrationMatch(OY_INTERNAL "/icc_color.lcms",
                                 "//" OY_TYPE_STD "/icc_color.7-lcms",
                                 oyOBJECT_CMM_API4_S ))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "special CMM avoiding, other API       " );
+    "special CMM avoiding, other API                   " );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "special CMM avoiding, other API       " );
+    "special CMM avoiding, other API                   " );
   }
 
   if( oyFilterRegistrationMatch("org/freedesktop/openicc/device/monitor/manufacturer",
                                 "org/freedesktop/openicc/device/monitor/model",
                                 oyOBJECT_NONE ) == 0)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "device key mismatch                   " );
+    "device key mismatch                               " );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "device key mismatch                   " );
+    "device key mismatch                               " );
   }
 
   if( oyFilterRegistrationMatch("org/freedesktop/openicc/device/monitor/manufacturer",
                                 "org/freedesktop/openicc/device/monitor/manufacturer",
                                 oyOBJECT_NONE ))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "device key match                      " );
+    "device key match                                  " );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "device key match                      " );
+    "device key match                                  " );
   }
 
   if( oyFilterRegistrationMatch("org/freedesktop/openicc/device/monitor/manufacturer/short",
                                 "org/freedesktop/openicc/device/monitor/manufacturer/full",
                                 oyOBJECT_NONE ) == 0)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "long device key mismatch              " );
+    "long device key mismatch                          " );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "long device key mismatch              " );
+    "long device key mismatch                          " );
   }
 
   if( oyFilterRegistrationMatch("org/freedesktop/openicc/device/monitor/manufacturer/short",
                                 "org/freedesktop/openicc/device/monitor/manufacturer/short",
                                 oyOBJECT_NONE ))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "long device key match                 " );
+    "long device key match                             " );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "long device key match                 " );
+    "long device key match                             " );
   }
 
   if( oyFilterRegistrationMatch("org/freedesktop/openicc/icc_color/display.icc_profile.abstract.white_point.automatic.oy-monitor",
                                 "display.abstract.icc_profile",
                                 oyOBJECT_NONE ))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "changed key order match               " );
+    "changed key order match                           " );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "changed key order match               " );
+    "changed key order match                           " );
   }
 
   if( oyFilterStringMatch( "abc-def-ghi",
                            "+def._ghi.-jkl", oyOBJECT_NONE, '/', '.',
                            OY_MATCH_SUB_STRING ))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyFilterStringMatch(sub string match) " );
+    "oyFilterStringMatch(sub string match)             " );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyFilterStringMatch(sub string match) " );
+    "oyFilterStringMatch(sub string match)             " );
   }
 
   return result;
@@ -4032,64 +4040,64 @@ oyjlTESTRESULT_e test_oyTextIccDictMatch ()
   if( oyTextIccDictMatch("ABC",
                          "ABC", 0, '/', ','))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "simple text matching                  " );
+    "simple text matching                              " );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "simple text matching                  " );
+    "simple text matching                              " );
   }
 
   if(!oyTextIccDictMatch("ABC",
                          "ABCD", 0, '/', ','))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "simple text mismatching               " );
+    "simple text mismatching                           " );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "simple text mismatching               " );
+    "simple text mismatching                           " );
   }
 
   if( oyTextIccDictMatch("abcd,ABC,efgh",
                          "abcdef,12345,ABC", 0, '/', ','))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "multiple text matching                " );
+    "multiple text matching                            " );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "multiple text matching                " );
+    "multiple text matching                            " );
   }
 
   if( oyTextIccDictMatch("abcd,ABC,efgh,12345",
                          "abcdef,12345,ABCD", 0.0005, '/', ','))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "multiple integer matching             " );
+    "multiple integer matching                         " );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "multiple integer matching             " );
+    "multiple integer matching                         " );
   }
 
   if(!oyTextIccDictMatch("abcd,ABC,efgh,12345",
                          "abcdef,12345ABCD", 0.0005, '/', ','))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "multiple integer mismatching          " );
+    "multiple integer mismatching                      " );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "multiple integer mismatching          " );
+    "multiple integer mismatching                      " );
   }
 
   if( oyTextIccDictMatch("abcd,ABC,efgh,123.45001",
                          "abcdef,123.45,ABCD", 0.0005, '/', ','))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "multiple float matching               " );
+    "multiple float matching                           " );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "multiple float matching               " );
+    "multiple float matching                           " );
   }
 
   if(!oyTextIccDictMatch("abcd,ABC,efgh,123.45",
                          "abcdef,123", 0.0005, '/', ','))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "multiple float mismatching            " );
+    "multiple float mismatching                        " );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "multiple float mismatching            " );
+    "multiple float mismatching                        " );
   }
   return result;
 }
@@ -4126,10 +4134,10 @@ oyjlTESTRESULT_e testPolicy ()
 
   if( xml && xml[0] )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyPolicyToXML                         " );
+    "oyPolicyToXML                                     " );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyPolicyToXML                         " );
+    "oyPolicyToXML                                     " );
   }
 
   if(xml)
@@ -4141,10 +4149,10 @@ oyjlTESTRESULT_e testPolicy ()
 
     if( strcmp( data, xml ) == 0 )
     { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-      "Policy rereading                      " );
+      "Policy rereading                                  " );
     } else
     { PRINT_SUB( oyjlTESTRESULT_FAIL,
-      "Policy rereading                      " );
+      "Policy rereading                                  " );
     }
 
 #ifdef USE_NEW
@@ -4180,7 +4188,7 @@ oyjlTESTRESULT_e testWidgets ()
 
   if( name && tooltip )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyWidgetTitleGet \"%s\" %d\n\t%s %d", name, type, tooltip, flags );
+    "oyWidgetTitleGet \"%s\" %d\n %s %d", name, type, tooltip, flags );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyWidgetTitleGet                      " );
@@ -4195,10 +4203,10 @@ oyjlTESTRESULT_e testWidgets ()
 
   if( !error && choices && choices_string_list && current != -1 )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyOptionChoicesGet2 %d [%d]: %s", choices, current, choices_string_list[current] );
+    "oyOptionChoicesGet2 %d [%d]:            %s", choices, current, choices_string_list[current] );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyOptionChoicesGet2                   " );
+    "oyOptionChoicesGet2                               " );
   }
   const char * description = NULL;
   int choice = current;
@@ -4296,10 +4304,10 @@ oyjlTESTRESULT_e testCMMDevicesListing ()
 
   if( count )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyConfigDomainList Found CMM's %d     ", (int)count );
+    "oyConfigDomainList Found CMM's                 %d", (int)count );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyConfigDomainList Found CMM's %d     ", (int)count );
+    "oyConfigDomainList Found CMM's %d                 ", (int)count );
   }
   if(verbose) for( i = 0; texts && i < (int)count; ++i)
   {
@@ -4500,10 +4508,10 @@ oyjlTESTRESULT_e testCMMDevicesDetails ()
 
   if( count )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyConfigDomainList Found CMM's %d     ", (int)count );
+    "oyConfigDomainList Found CMM's                   %d", (int)count );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyConfigDomainList Found CMM's %d     ", (int)count );
+    "oyConfigDomainList Found CMM's %d                  ", (int)count );
   }
 
 
@@ -4609,10 +4617,10 @@ oyjlTESTRESULT_e testCMMDevicesDetails ()
 
   if( count > 0 )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyConfigs_FromDB() %d                  ", (int)count );
+    "oyConfigs_FromDB()                               %d", (int)count );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyConfigs_FromDB() failed %d           ", (int)count );
+    "oyConfigs_FromDB()                               %d", (int)count );
   }
 
 
@@ -4640,10 +4648,10 @@ oyjlTESTRESULT_e testCMMDevicesDetails ()
 
   if( count - i == 1 )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyConfig_EraseFromDB() %d/%d            ", (int)count,i );
+    "oyConfig_EraseFromDB()                         %d/%d", (int)count,i );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyConfig_EraseFromDB() failed %d/%d     ", (int)count,i );
+    "oyConfig_EraseFromDB()                         %d/%d", (int)count,i );
   }
 
   if(registration)
@@ -4684,10 +4692,10 @@ oyjlTESTRESULT_e testCMMRankMap ()
 
   if( count )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "monitor(s) found               %d (%d)", (int)count, error );
+    "monitor(s) found                            %d (%d)", (int)count, error );
   } else if(displayFail() == oyjlTESTRESULT_FAIL)
   { PRINT_SUB( displayFail(),
-    "no monitor found               %d (%d)", (int)count, error );
+    "no monitor found                            %d (%d)", (int)count, error );
   }
 
   for(i = 0; i < count; ++i)
@@ -4698,19 +4706,19 @@ oyjlTESTRESULT_e testCMMRankMap ()
 
     if( json_text && json_text[0] )
     { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "json from device [%d]         %d    ", i, (int)strlen(json_text) );
+    "json from device [%d]                          %d", i, (int)strlen(json_text) );
     } else
     { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "json from device failed for [%d]      ", i );
+    "json from device failed for [%d]                   ", i );
     }
 
     const oyRankMap * map = oyConfig_GetRankMap( device );
     if( map )
     { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "Map from device  [%d]                 ", i );
+    "Map from device  [%d]                              ", i );
     } else
     { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "Map from device failed for [%d]       ", i );
+    "Map from device failed for [%d]                   ", i );
     }
 
     char * rank_map_text = 0;
@@ -4718,10 +4726,10 @@ oyjlTESTRESULT_e testCMMRankMap ()
     if(error) PRINT_SUB( oyjlTESTRESULT_XFAIL, "oyRankMapToJSON() error: %d", error )
     if( rank_map_text )
     { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "JSON from Map    [%d]          %lu    ", i, (long unsigned int)strlen(rank_map_text) );
+    "JSON from Map    [%d]                           %lu", i, (long unsigned int)strlen(rank_map_text) );
     } else
     { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "JSON from Map failed  [%d]     %d     ", i, error );
+    "JSON from Map failed  [%d]                   %d    ", i, error );
     }
 
     oyRankMap * rank_map2 = 0;
@@ -4729,11 +4737,11 @@ oyjlTESTRESULT_e testCMMRankMap ()
     if(error) PRINT_SUB( oyjlTESTRESULT_XFAIL, "oyRankMapFromJSON() error: %d", error )
     if( rank_map2 )
     { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "Map from JSON    [%d]                 ", i );
+    "Map from JSON    [%d]                              ", i );
     oyRankMapRelease( &rank_map2, free );
     } else
     { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "Map from JSON failed [%d]      %d     ", i, error );
+    "Map from JSON failed [%d]      %d                  ", i, error );
     }
 
     oyFree_m_(rank_map_text);
@@ -4746,14 +4754,15 @@ oyjlTESTRESULT_e testCMMRankMap ()
 
     if( json_text && strlen(json_text) )
     { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "json from device [%d]         %d    ", i, (int)strlen(json_text) );
+    "json from device [%d]                          %d", i, (int)strlen(json_text) );
     } else
     { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "json from device failed for %d        ", i );
+    "json from device failed for %d                   ", i );
     }
 
     oyConfig_Release( &device );
     oyFree_m_(json_text);
+    if(verbose)
     fprintf( zout, "\n");
   }
   oyConfigs_Release( &devices );
@@ -4765,16 +4774,15 @@ oyjlTESTRESULT_e testCMMRankMap ()
   while( list && list[count]) ++count;
   if( count >= 3 )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "found installed rank maps       %d    ", count );
+    "found installed rank maps                        %d", count );
   } else
   { PRINT_SUB( oyjlTESTRESULT_XFAIL,
     "found too few installed rank m. %d %d ", count, error );
   }
 
+  if(verbose)
   for( i = 0; i < count; ++i )
-  {
     fprintf( zout, "%d: %s\n", i, list[i] );
-  }
 
   oyStringListRelease_( &list, count, oyDeAllocateFunc_ );
 
@@ -4788,12 +4796,13 @@ oyjlTESTRESULT_e testCMMRankMap ()
   while( list && list[count]) ++count;
   if( count >= 1 )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "found rank map paths            %d    ", count );
+    "found rank map paths                             %d", count );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "found too few rank map paths    %d %d ", count, error );
   }
 
+  if(verbose)
   for( i = 0; i < count; ++i )
   {
     fprintf( zout, "%d: %s\n", i, list[i] );
@@ -4833,19 +4842,19 @@ oyjlTESTRESULT_e testCMMMonitorJSON ()
   error = oyDevicesGet( 0, "monitor", options, &configs );
   if( error <= 0 && configs )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyDevicesGet(\"monitor\")           " );
+    "oyDevicesGet(\"monitor\")                         " );
   } else if(displayFail() == oyjlTESTRESULT_FAIL)
   { PRINT_SUB( displayFail(),
-    "oyDevicesGet(\"monitor\")           " );
+    "oyDevicesGet(\"monitor\")                         " );
   }
 
   devices_n = oyConfigs_Count( configs );
   if( error <= 0 && devices_n > 0 )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyDevicesGet(\"monitor\") count:   %d", devices_n );
+    "oyDevicesGet(\"monitor\")               devices:   %d", devices_n );
   } else if(displayFail() == oyjlTESTRESULT_FAIL)
   { PRINT_SUB( displayFail(),
-    "oyDevicesGet(\"monitor\") count:   %d", devices_n );
+    "oyDevicesGet(\"monitor\")               devices:   %d", devices_n );
   }
 
   clck = oyClock() - clck;
@@ -4860,32 +4869,32 @@ oyjlTESTRESULT_e testCMMMonitorJSON ()
     oyConfig_Release( &config );
     if( !error && json_text )
     { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-      "oyDeviceToJSON() \"monitor\"       " );
+      "oyDeviceToJSON() \"monitor\"                        " );
       if(i == 0)
         first_json = strdup(json_text);
     } else
     { PRINT_SUB( oyjlTESTRESULT_FAIL,
-      "oyDeviceToJSON() \"monitor\"      %d", error );
+      "oyDeviceToJSON() \"monitor\"                   %d", error );
     }
 
     if(i == 1)
     {
       if(strcmp(json_text,first_json) != 0)
       { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-        "found second unique monitor        " );
+        "found second unique monitor                   " );
       } else
       { PRINT_SUB( oyjlTESTRESULT_FAIL,
-        "first and second monitor are equal " );
+        "first and second monitor are equal            " );
       }
     }
 
     error = oyDeviceFromJSON( json_text, 0, &config );
     if( !error && config )
     { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-      "oyDeviceFromJSON() %d             ", oyConfig_Count(config) );
+      "oyDeviceFromJSON() %d                             ", oyConfig_Count(config) );
     } else
     { PRINT_SUB( oyjlTESTRESULT_FAIL,
-      "oyDeviceFromJSON() %d %d           ", oyConfig_Count(config), error );
+      "oyDeviceFromJSON() %d %d                          ", oyConfig_Count(config), error );
     }
 
  
@@ -4915,7 +4924,7 @@ oyjlTESTRESULT_e testCMMMonitorJSON ()
     oyProfile_s * list_profile = p; p = NULL;
 
 #   ifdef HAVE_X11
-    if(i == 0)
+    if(i == 0 && verbose)
     {
       int r OY_UNUSED;
       r = system("xprop -root -len 4 | grep _ICC");
@@ -4927,12 +4936,12 @@ oyjlTESTRESULT_e testCMMMonitorJSON ()
                           "yes", OY_CREATE_NEW );
     error = oyDeviceGetProfile( config, options, &p );
     if(error == -1)
-      PRINT_SUB( oyjlTESTRESULT_SUCCESS, "oyDeviceGetProfile(\"fallback\") error:       %d", error )
+      PRINT_SUB( oyjlTESTRESULT_SUCCESS, "oyDeviceGetProfile(\"fallback\") error:           %d", error )
     else
       PRINT_SUB( oyjlTESTRESULT_XFAIL, "oyDeviceGetProfile(\"fallback\") error:       %d", error )
     if( p )
     { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-      "oyDeviceGetProfile(\"fallback\") \"%s\"", oyProfile_GetText(p,oyNAME_DESCRIPTION) );
+      "oyDeviceGetProfile(\"fallb.\")\"%s\"", oyProfile_GetText(p,oyNAME_DESCRIPTION) );
     } else
     { PRINT_SUB( oyjlTESTRESULT_FAIL,
       "oyDeviceGetProfile(\"fallback\")    " );
@@ -4963,10 +4972,10 @@ oyjlTESTRESULT_e testCMMMonitorJSON ()
 
     if(oyProfile_Equal(p,list_profile))
     { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-      "\"list\" == \"properties\" profile" );
+      "\"list\" == \"properties\" profile                    " );
     } else
     { PRINT_SUB( oyjlTESTRESULT_FAIL,
-      "\"list\" == \"properties\" profile" );
+      "\"list\" == \"properties\" profile                    " );
     }
     oyProfile_Release( &p );
     oyProfile_Release( &list_profile );
@@ -4977,25 +4986,27 @@ oyjlTESTRESULT_e testCMMMonitorJSON ()
                           "yes", OY_CREATE_NEW );
     error = oyDeviceGetProfile( config, options, &p );
     if(error == -1)
-      PRINT_SUB( oyjlTESTRESULT_SUCCESS, "oyDeviceGetProfile(\"fallback\") error:       %d", error )
+      PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+      "oyDeviceGetProfile(\"fallback\") error:           %d", error )
     else
-      PRINT_SUB( oyjlTESTRESULT_XFAIL, "oyDeviceGetProfile(\"fallback\") error:       %d", error )
+      PRINT_SUB( oyjlTESTRESULT_XFAIL,
+      "oyDeviceGetProfile(\"fallback\") error:           %d", error )
     if( p )
     { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-      "oyDeviceGetProfile(\"fallback\") \"%s\"", oyProfile_GetText(p,oyNAME_DESCRIPTION) );
+      "oyDeviceGetProfile(\"fallb.\") \"%s\"", oyProfile_GetText(p,oyNAME_DESCRIPTION) );
     } else
     { PRINT_SUB( oyjlTESTRESULT_FAIL,
-      "oyDeviceGetProfile(\"fallback\")    " );
+      "oyDeviceGetProfile(\"fallb.\")    " );
     }
 
 
     oyProfileTag_s * tag = oyProfile_GetTagById( p, (icTagSignature)icSigMetaDataTag );
     if( tag )
     { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-      "oyProfile_GetTagById(icSigMetaDataTag)" );
+      "oyProfile_GetTagById(icSigMetaDataTag)            " );
     } else
     { PRINT_SUB( oyjlTESTRESULT_FAIL,
-      "oyProfile_GetTagById(icSigMetaDataTag)" );
+      "oyProfile_GetTagById(icSigMetaDataTag)            " );
     }
 
     int32_t texts_n = 0, tag_size = 0;
@@ -5021,10 +5032,10 @@ oyjlTESTRESULT_e testCMMMonitorJSON ()
     // there is key duplication
     if( edid_mnft_count == 1 )
     { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-      "Found EDID_mnft_id keys in meta tag: %d", edid_mnft_count );
+      "Found EDID_mnft_id keys in meta tag:              %d", edid_mnft_count );
     } else
     { PRINT_SUB( oyjlTESTRESULT_FAIL,
-      "Found EDID_mnft_id keys in meta tag: %d", edid_mnft_count );
+      "Found EDID_mnft_id keys in meta tag:              %d", edid_mnft_count );
     }
 
     oyConfig_Release( &config );
@@ -5113,6 +5124,7 @@ oyjlTESTRESULT_e testCMMMonitorListing ()
     oyConfig_Release( &config );
   }
   oyConfigs_Release( &configs );
+  if(verbose)
   fprintf( zout, "\n");
 
   error = oyDeviceGet( 0, "monitor", device_name, 0, &config );
@@ -5175,6 +5187,7 @@ oyjlTESTRESULT_e testCMMDBListing ()
       o = oyConfig_Get( config, k );
 
       val = oyOption_GetValueText( o, oyAllocateFunc_ );
+      if(verbose)
       fprintf(zout, "  %d::%d %s %s\n", j,k, oyOption_GetRegistration(o), val );
 
       if(val) { oyDeAllocateFunc_( val ); val = 0; }
@@ -5216,10 +5229,10 @@ oyjlTESTRESULT_e testCMMMonitorModule ()
 #endif
     )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyDevicesGet( \"//" OY_TYPE_STD "\", unset, ... ) = %d", error );
+    "oyDevicesGet( \"//" OY_TYPE_STD "\", unset, ... ) = %d       ", error );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyDevicesGet( \"//" OY_TYPE_STD "\", unset, ... ) = %d", error );
+    "oyDevicesGet( \"//" OY_TYPE_STD "\", unset, ... ) = %d       ", error );
   }
 
   return result;
@@ -5330,10 +5343,10 @@ oyjlTESTRESULT_e testCMMmonitorDBmatch ()
     int k_n = oyOptions_Count(db);
     if(k_n == 2)
     { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-      "oyConfig_s[%d] = %d                                           ", k, k_n);
+      "oyConfig_s[%d] = %d                                  ", k, k_n);
     } else
     { PRINT_SUB( oyjlTESTRESULT_FAIL,
-      "oyConfig_s[%d] = %d                                           ", k, k_n);
+      "oyConfig_s[%d] = %d                                  ", k, k_n);
     }
   }
 
@@ -5770,7 +5783,7 @@ oyjlTESTRESULT_e testCMMnmRun ()
   if( (!value && !value_db) ||
       (value && value_db && strcmp(value,value_db) == 0))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "DB and cached values are equal        ");
+    "DB and cached values are equal                     ");
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "DB and cached values are equal: \"%s\"/\"%s\"", value, value_db );
@@ -6982,7 +6995,7 @@ oyjlTESTRESULT_e testFilterNodeCMM( oyjlTESTRESULT_e result_,
   oyOptions_Release( &node_opts );
   if(o)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyOptions_Find( node_opts )  %s(%d)", oyOption_GetText(o, oyNAME_NICK), count );
+    "oyOptions_Find( node_opts )%s/%d", oyOption_GetText(o, oyNAME_NICK), count );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyOptions_Find( node_opts )  %s(%d)", oyOption_GetText(o, oyNAME_NICK), count );
@@ -7581,6 +7594,7 @@ oyjlTESTRESULT_e testCMMlists()
   char ** list = oyGetCMMs( oyCMM_CONTEXT, oyNAME_NAME, 0, malloc );
   int i = 0;
 
+  if(verbose)
   while(list && list[i])
   {
     fprintf(zout, "  %d: \"%s\" (%s)\n", i, list[i], oyCMMNameToRegistration( list[i], oyCMM_CONTEXT, oyNAME_NAME, 0, malloc ) );
@@ -7598,6 +7612,7 @@ oyjlTESTRESULT_e testCMMlists()
   list = oyGetCMMs( oyCMM_CONTEXT, oyNAME_REGISTRATION, 0, malloc );
   i = 0;
 
+  if(verbose)
   while(list && list[i])
   {
     fprintf(zout, "  %d: \"%s\" (%s)\n", i, list[i], oyCMMRegistrationToName(list[i], oyCMM_CONTEXT, oyNAME_NAME, 0, malloc) );
@@ -7606,7 +7621,7 @@ oyjlTESTRESULT_e testCMMlists()
 
   if(list)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyGetCMMs(oyCMM_CONTEXT, oyNAME_REGISTRATION,) fine %d", i );
+    "oyGetCMMs(oyCMM_CONTEXT, oyNAME_REGISTRATION,)   %d", i );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyGetCMMs(oyCMM_CONTEXT, oyNAME_REGISTRATION,) failed " );
@@ -7615,6 +7630,7 @@ oyjlTESTRESULT_e testCMMlists()
   list = oyGetCMMs( oyCMM_CONTEXT, oyNAME_NICK, 0, malloc );
   i = 0;
 
+  if(verbose)
   while(list && list[i])
   {
     fprintf(zout, "  %d: \"%s\" (%s)\n", i, list[i], oyCMMRegistrationToName(list[i], oyCMM_CONTEXT, oyNAME_PATTERN, 0, malloc) );
@@ -7623,10 +7639,10 @@ oyjlTESTRESULT_e testCMMlists()
 
   if(list)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyGetCMMs(oyCMM_CONTEXT, oyNAME_NICK,) fine %d        ", i );
+    "oyGetCMMs(oyCMM_CONTEXT, oyNAME_NICK,) fine %d     ", i );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyGetCMMs(oyCMM_CONTEXT, oyNAME_NICK,) failed         " );
+    "oyGetCMMs(oyCMM_CONTEXT, oyNAME_NICK,) failed      " );
   }
 
   char * default_cmm = oyGetCMMPattern( oyCMM_CONTEXT, oySOURCE_DATA, malloc );
@@ -8197,11 +8213,13 @@ oyjlTESTRESULT_e testCache()
   char * text = oyAlphaPrint_( verbose );
   if(text)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "Cache content: %s             ", text );
+    "Cache content:                                 %d", strlen(text) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyAlphaPrint_( ) failed                               " );
   }
+  if(verbose && text)
+    fprintf( zout, "Cache:\n%s\n", text);
 
   const char * hash_texts[] = {
     "A", "B", "AB", "ABC", "abc", "ABCDEF",
@@ -8214,6 +8232,7 @@ oyjlTESTRESULT_e testCache()
 
   int repeat = 20;
   int count = 1000;
+  if(verbose)
   fprintf(zout, "%d:\n", count );
   double clck = oyClock();
   int i;
@@ -8231,7 +8250,7 @@ oyjlTESTRESULT_e testCache()
 
   if( i == count )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyCacheListGetEntry_(unique long entry) %s",
+    "oyCacheListGetEntry_(unique long entry)  %s",
                           oyjlProfilingToString(i*repeat,clck/(double)CLOCKS_PER_SEC, "entries"));
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
@@ -8240,6 +8259,7 @@ oyjlTESTRESULT_e testCache()
 
   oyTestCacheListClear_();
   count = 100;
+  if(verbose)
   fprintf(zout, "%d:\n", count );
   clck = oyClock();
   for(int j = 0; j < repeat; ++j)
@@ -8256,7 +8276,7 @@ oyjlTESTRESULT_e testCache()
 
   if( i == count )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyCacheListGetEntry_(unique long entry) %s",
+    "oyCacheListGetEntry_(unique long entry)  %s",
                           oyjlProfilingToString(i*repeat,clck/(double)CLOCKS_PER_SEC, "entries"));
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
@@ -8266,6 +8286,7 @@ oyjlTESTRESULT_e testCache()
 
   oyTestCacheListClear_();
   count = 1000;
+  if(verbose)
   fprintf(zout, "%d:\n", count );
   clck = oyClock();
   for(int j = 0; j < repeat; ++j)
@@ -8291,6 +8312,7 @@ oyjlTESTRESULT_e testCache()
 
   oyTestCacheListClear_();
   count = 100;
+  if(verbose)
   fprintf(zout, "%d:\n", count );
   clck = oyClock();
   for(int j = 0; j < repeat; ++j)
@@ -8317,6 +8339,7 @@ oyjlTESTRESULT_e testCache()
 
   oyTestCacheListClear_();
   count = 1000;
+  if(verbose)
   fprintf(zout, "%d:\n", count );
   clck = oyClock();
   for(int j = 0; j < repeat; ++j)
@@ -8342,6 +8365,7 @@ oyjlTESTRESULT_e testCache()
 
   oyTestCacheListClear_();
   count = 100;
+  if(verbose)
   fprintf(zout, "%d:\n", count );
   clck = oyClock();
   for(int j = 0; j < repeat; ++j)
@@ -8476,10 +8500,9 @@ oyjlTESTRESULT_e testConfDomain ()
     "oyConfigDomainList \"%s\": %d               ", "//" OY_TYPE_STD "",
                                                     (int)count );
   }
+  if(verbose)
   for( i = 0; i < (int)count; ++i)
-  {
     fprintf( zout, "%d: %s\n", i, oyNoEmptyString_m_(domains[i]) );
-  }
   if(verbose) fprintf( zout, "\n");
 
   for(i = 0; i < (int)count; ++i)
@@ -8498,6 +8521,7 @@ oyjlTESTRESULT_e testConfDomain ()
       while(texts[j]) ++j;
 
     n = j;
+    if(verbose)
     for(j = 0; j < n; ++j)
     {
       t[oyNAME_NICK] = oyConfDomain_GetText( a, texts[j], oyNAME_NICK );
