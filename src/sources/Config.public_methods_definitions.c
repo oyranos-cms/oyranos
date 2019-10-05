@@ -493,7 +493,7 @@ OYAPI int OYEXPORT oyConfig_Match    ( oyConfig_s        * module_device,
               ++k;
             }
           }
-          break;
+          j = pattern_n; /* break */
         }
         /*
         rank += oyFilterRegistrationMatch( d->registration, p->registration,
@@ -972,6 +972,7 @@ OYAPI int OYEXPORT oyConfig_FromJSON ( const char        * registration,
     if(val) oyDeAllocateFunc_(val);
   }
 
+  if(json) oyjlTreeFree( json );
   *config = config_;
   config_ = NULL;
 
