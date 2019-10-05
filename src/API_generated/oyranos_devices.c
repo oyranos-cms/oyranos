@@ -3094,13 +3094,13 @@ char *       oyGetFilterNodeRegFromOptions(
   if(!base_pattern)
   {
     WARNc_S( "base_pattern arg is missed" );
-    return NULL;
+    goto clean_oyGetFilterNodeRegFromOptions;
   }
 
   module = oyOptions_FindString( options, key_name, NULL );
 
   if(!module)
-    return NULL;
+    goto clean_oyGetFilterNodeRegFromOptions;
   else if(strchr(module, '/') == NULL)
   {
     char * t = NULL;
@@ -3112,6 +3112,7 @@ char *       oyGetFilterNodeRegFromOptions(
   } else
     name = oyStringCopy( module, allocate_func );
 
+clean_oyGetFilterNodeRegFromOptions:
   oyFree_m_( key_name );
 
   return name;
@@ -3370,7 +3371,8 @@ uint32_t     oyICCProfileSelectionFlagsFromOptions (
     STRING_ADD( db_base_key_, db_base_key);
   STRING_ADD( db_base_key_, select_core?"context":"renderer" );
 
-  node = oyFilterNode_FromOptions( db_base_key, base_pattern, options, NULL );
+  node = oyFilterNode_FromOptions( db_base_key_, base_pattern, options, NULL );
+  oyFree_m_( db_base_key_ );
   reg = oyFilterNode_GetRegistration( node );
   icc_profile_flags = oyICCProfileSelectionFlagsFromRegistration( reg );
   oyFilterNode_Release( &node );
