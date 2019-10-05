@@ -2217,6 +2217,9 @@ OYAPI int OYEXPORT
         }
       }
     }
+    if(texts_n && texts)
+      oyStringListRelease_( &texts, texts_n, oyDeAllocateFunc_ );
+    oyProfileTag_Release( &tag );
   }
 
   if(!error)
@@ -2229,6 +2232,7 @@ OYAPI int OYEXPORT
                                                  "model", texts[0] );
     if(texts_n && texts)
       oyStringListRelease_( &texts, texts_n, oyDeAllocateFunc_ );
+    oyProfileTag_Release( &tag );
   }
 
   if(!error)
@@ -2241,6 +2245,7 @@ OYAPI int OYEXPORT
                                                  "manufacturer", texts[0] );
     if(texts_n && texts)
       oyStringListRelease_( &texts, texts_n, oyDeAllocateFunc_ );
+    oyProfileTag_Release( &tag );
   }
 
   l_error = oyOptions_SetSource( device_->backend_core,
