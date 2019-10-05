@@ -2577,6 +2577,7 @@ oyjlTESTRESULT_e testProfiles ()
     // ... and only profiles installed in system paths
     char * text = oyGetInstallPath( oyPATH_ICC, oySCOPE_SYSTEM, oyAllocateFunc_ );
     pattern = oyProfile_FromFile( text, OY_NO_LOAD, testobj );
+    oyFree_m_( text );
     oyProfiles_MoveIn( patterns, &pattern, -1 );
 
     profiles = oyProfiles_Create( patterns, icc_profile_flags, testobj );
@@ -2630,6 +2631,7 @@ oyjlTESTRESULT_e testProfiles ()
              oyProfile_GetFileName(temp_prof, 0));
       oyProfile_Release( &temp_prof );
     } // Done print
+    oyFree_m_( rank_list );
 
     if(n)
     {
