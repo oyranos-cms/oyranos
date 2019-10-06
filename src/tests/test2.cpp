@@ -2825,6 +2825,8 @@ oyjlTESTRESULT_e testEffects ()
                               &result_opts );
     abstract = (oyProfile_s*)oyOptions_GetType( result_opts, -1, "icc_profile",
                                                 oyOBJECT_PROFILE_S );
+    if(i+1 < count)
+      oyProfile_Release( &abstract );
   }
   clck = oyClock() - clck;
   if(verbose) fprintf(zout,"source white point cie_ab %g %g -> %g %g\n", cie_a, cie_b, dst_cie_a, dst_cie_b );
