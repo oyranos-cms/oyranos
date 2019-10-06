@@ -347,7 +347,9 @@ static void              (*l2cmsLab2XYZ)(const cmsCIEXYZ* WhitePoint, cmsCIEXYZ*
 static cmsFloat64Number (*l2cmsDeltaE)(const cmsCIELab* Lab1, const cmsCIELab* Lab2) = NULL;
 static void (*l2cmsGetAlarmCodes)(cmsUInt16Number NewAlarm[cmsMAXCHANNELS]) = NULL;
 static cmsContext (*l2cmsCreateContext)(void* Plugin, void* UserData) = NULL;
+static void              (*l2cmsDeleteContext)(cmsContext ContexID) = NULL;
 static cmsContext dummyCreateContext(void* Plugin OY_UNUSED, void* UserData OY_UNUSED) {return NULL;}
+static void       dummyDeleteContext(cmsContext ContexID OY_UNUSED) {};
 static void* (*l2cmsGetContextUserData)(cmsContext ContextID) = NULL;
 static void* dummyGetContextUserData(cmsContext ContextID OY_UNUSED) {return NULL;}
 static cmsContext (*l2cmsGetProfileContextID)(cmsHPROFILE hProfile) = NULL;
@@ -505,9 +507,11 @@ int lcm2registerFuncs( int init, const char * fn )
       REGISTER_FUNC( cmsGetAlarmCodes, NULL );
 #if LCMS_VERSION >= 2060
       REGISTER_FUNC( cmsCreateContext, dummyCreateContext ); /* available since lcms 2.6 */
+      REGISTER_FUNC( cmsDeleteContext, dummyDeleteContext ); /* available since lcms 2.6 */
       REGISTER_FUNC( cmsGetContextUserData, dummyGetContextUserData ); /* available since lcms 2.6 */
 #else
       l2cmsCreateContext = dummyCreateContext;
+      l2cmsDeleteContext = dummyDeleteContext;
       l2cmsGetContextUserData = dummyGetContextUserData;
 #endif
       REGISTER_FUNC( cmsGetProfileContextID, NULL );
@@ -689,6 +693,7 @@ int                l2cmsCMMreset      ( oyStruct_s        * filter OY_UNUSED )
 #define cmsDeltaE l2cmsDeltaE
 #define cmsGetAlarmCodes l2cmsGetAlarmCodes
 #define cmsCreateContext l2cmsCreateContext
+#define cmsDeleteContext l2cmsDeleteContext
 #define cmsGetContextUserData l2cmsGetContextUserData
 #define cmsGetProfileContextID l2cmsGetProfileContextID
 #define cmsGetTransformContextID l2cmsGetTransformContextID
@@ -788,8 +793,10 @@ int l2cmsCMMProfileReleaseWrap(oyPointer *p)
   if(!error)
   {
 #if LCMS_VERSION >= 2060
-    oyProfile_s * p = l2cmsGetContextUserData( l2cmsGetProfileContextID( s->l2cms ) );
+    cmsContext tc = l2cmsGetProfileContextID( s->l2cms );
+    oyProfile_s * p = l2cmsGetContextUserData( tc );
     oyProfile_Release ( &p );
+    l2cmsDeleteContext( tc );
 #endif
     CMMProfileRelease_M (s->l2cms);
     oyProfile_Release( &s->dbg_profile );
@@ -1314,12 +1321,14 @@ cmsHTRANSFORM  l2cmsCMMConversionContextCreate_ (
 #if LCMS_VERSION >= 2060
         for(i = 0; i < multi_profiles_n; ++i)
         {
-          oyProfile_s * p = l2cmsGetContextUserData( l2cmsGetProfileContextID( lps[i] ) );
+          cmsContext tc = l2cmsGetProfileContextID( lps[i] );
+          oyProfile_s * p = l2cmsGetContextUserData( tc );
           const char * fn = oyProfile_GetFileName( p, -1 );
           size_t size = 0;
           char * block = oyProfile_GetMem( p, &size, 0, oyAllocateFunc_ );
           oyFree_m_(block);
           fprintf( stdout, " -> \"%s\"[%lu]", fn?fn:"----", (long unsigned int)size );
+          l2cmsDeleteContext( tc );
         }
         fprintf(stdout, "\n");
 #endif
@@ -2673,8 +2682,10 @@ int  l2cmsModuleData_Convert          ( oyPointer_s       * data_in,
     }
     {
 #if LCMS_VERSION >= 2060
-      oyFilterNode_s * node = l2cmsGetContextUserData( l2cmsGetProfileContextID( lps[0] ) );
+      cmsContext tc = l2cmsGetProfileContextID( lps[0] );
+      oyFilterNode_s * node = l2cmsGetContextUserData( tc );
       oyFilterNode_Release( &node );
+      l2cmsDeleteContext( tc );
 #endif
       CMMProfileRelease_M (lps[0] );
     }
@@ -3698,6 +3709,7 @@ int          l2cmsMOptions_Handle4   ( oyOptions_s       * options,
         *result = oyOptions_New(0);
       oyOptions_SetFromString( result, OY_LCM2_CREATE_ABSTRACT_WHITE_POINT_BRADFORD_REGISTRATION ".file_name",
                                file_name, OY_CREATE_NEW );
+      if(file_name) free(file_name);
     } else
         l2cms_msg( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_
                    "effect name failed",
@@ -4155,7 +4167,9 @@ cmsHPROFILE  l2cmsGamutCheckAbstract  ( oyProfile_s       * proof,
 
   clean:
       if(hLab) { l2cmsCloseProfile( hLab ); hLab = 0; }
+      if(hproof) { l2cmsCloseProfile( hproof ); hproof = 0; }
       if(tr) { l2cmsDeleteTransform( tr ); tr = 0; }
+      l2cmsDeleteContext( tc );
 
   return gmt;
 }

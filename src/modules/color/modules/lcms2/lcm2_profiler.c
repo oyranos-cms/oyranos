@@ -2618,6 +2618,8 @@ void         lcm2AddMetaTexts        ( cmsHPROFILE         profile,
     dict = cmsDictAlloc( contextID );
   else
     lcm2msg_p( 300, NULL, "nothing to write %s", __func__ );
+  if(contextID)
+    cmsDeleteContext( contextID );
 
   if(!dict)
     return;
