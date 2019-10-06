@@ -1935,6 +1935,7 @@ oyPointer_s * oyPointer_LookUpFromText( const char        * text,
     }
 
     oyHash_Release( &entry );
+    oyFree_m_( hash_text );
   }
 
   return cmm_ptr;
