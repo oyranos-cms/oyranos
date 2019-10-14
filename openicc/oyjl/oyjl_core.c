@@ -1480,7 +1480,7 @@ int  oyjlWriteFile                   ( const char        * filename,
  *  @{ *//* oyjl */
 
 static char * oyjl_nls_path_ = NULL;
-void oyjlLibRelease() { if(oyjl_nls_path_) { putenv("NLSPATH=C"); free(oyjl_nls_path_); } }
+void oyjlLibRelease() { if(oyjl_nls_path_) { putenv("NLSPATH=C"); free(oyjl_nls_path_); oyjl_nls_path_ = NULL;} }
 #define OyjlToString2_M(t) OyjlToString_M(t)
 #define OyjlToString_M(t) #t
 /** @brief   init the libraries language; optionaly
