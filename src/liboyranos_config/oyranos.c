@@ -1165,11 +1165,15 @@ char *       oyGetInstallPath        ( oyPATH_TYPE_e       type,
 /** @} *//* i18n */
 
 extern oyOption_t_ * oy_option_;
-void oyLibConfigRelease              ( )
+/**
+ *
+ * params[in]      flags               0x04 - skip object track info release
+ */
+void oyLibConfigRelease              ( int                 flags )
 {
   oyConfigs_Release( &oy_monitors_cache_ );
 
-  oyFinish_(0);
+  oyFinish_(flags);
 
   if(oy_option_)
     oyFree_m_(oy_option_);

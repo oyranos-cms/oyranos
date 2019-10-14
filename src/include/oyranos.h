@@ -429,7 +429,7 @@ int      oySetMonitorProfile         ( const char        * display_name,
 int      oyActivateMonitorProfiles   ( const char        * display_name );
 
 
-void oyLibConfigRelease              ( );
+void oyLibConfigRelease              ( int                 flags );
 
 #ifdef __cplusplus
 } /* extern "C" */
