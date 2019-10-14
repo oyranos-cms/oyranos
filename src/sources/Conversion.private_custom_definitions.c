@@ -21,13 +21,15 @@ void oyConversion_Release__Members( oyConversion_s_ * conversion )
    * E.g: oyXXX_Release( &conversion->member );
    */
   oyFilterGraph_s * g = oyFilterGraph_New( 0 );
-  int i,n;
-  oyFilterGraph_SetFromNode( g, (oyFilterNode_s*)conversion->input, 0, 0 );
+  int i,n = 0;
 
-  oyFilterNode_Release( (oyFilterNode_s**)&conversion->input );
-  oyFilterNode_Release( (oyFilterNode_s**)&conversion->out_ );
+  if(conversion->input) 
+    oyFilterGraph_SetFromNode( g, (oyFilterNode_s*)conversion->input, 0, 0 );
 
-  n = oyFilterGraph_CountNodes( g, "", NULL );
+  if(conversion->input) oyFilterNode_Release( (oyFilterNode_s**)&conversion->input );
+  if(conversion->out_) oyFilterNode_Release( (oyFilterNode_s**)&conversion->out_ );
+
+  if(g) n = oyFilterGraph_CountNodes( g, "", NULL );
   for(i = 0; i < n; ++i)
   {
     oyFilterNode_s * node = oyFilterGraph_GetNode( g, i, "", NULL ),
