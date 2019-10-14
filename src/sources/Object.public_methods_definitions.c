@@ -91,7 +91,7 @@ oyObject_s         oyObject_NewWithAllocators (
   o->parent_types_ = o->allocateFunc_(sizeof(oyOBJECT_e)*2);
   memset(o->parent_types_,0,sizeof(oyOBJECT_e)*2);
 
-  if(oy_debug_objects >= 0)
+  if(oy_debug_objects >= 0 || oy_debug_objects == -2)
     oyObject_Track(o);
 
   return o;
@@ -183,7 +183,7 @@ int          oyObject_Release         ( oyObject_s      * obj )
     return 0;
   /* ---- end of common object destructor ------- */
 
-  if(oy_debug_objects >= 0)
+  if(oy_debug_objects >= 0 || oy_debug_objects == -2)
     oyObject_UnTrack( s );
 
   oyName_release_( &s->name_, s->deallocateFunc_ );
