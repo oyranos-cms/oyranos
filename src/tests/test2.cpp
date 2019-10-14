@@ -63,8 +63,8 @@
 #include "oyranos_string.h"
 oyObject_s testobj = NULL;
 extern "C" { char * oyAlphaPrint_(int); }
-#define OYJL_TEST_MAIN_SETUP  printf("\n    Oyranos test2\n"); if(getenv(OY_DEBUG)) oy_debug = atoi(getenv(OY_DEBUG)); oy_debug_objects = -1;
-#define OYJL_TEST_MAIN_FINISH printf("\n    Oyranos test2 finished\n\n"); if(testobj) testobj->release( &testobj ); if(verbose) { char * t = oyAlphaPrint_(0); puts(t); free(t); } oyLibConfigRelease();
+#define OYJL_TEST_MAIN_SETUP  printf("\n    Oyranos test2\n"); if(getenv(OY_DEBUG)) oy_debug = atoi(getenv(OY_DEBUG)); //oy_debug_objects = -1;
+#define OYJL_TEST_MAIN_FINISH printf("\n    Oyranos test2 finished\n\n"); if(testobj) testobj->release( &testobj ); if(verbose) { char * t = oyAlphaPrint_(0); puts(t); free(t); } oyLibConfigRelease(0);
 #include <oyjl_test_main.h>
 
 #include <cmath>
@@ -462,6 +462,11 @@ oyjlTESTRESULT_e testDB()
 
 oyjlTESTRESULT_e testDB2()
 {
+  int object_count = 0, oy_debug_objects_old = -9999;
+
+  if(oy_debug_objects < 0) oyLibConfigRelease(0);
+  if(oy_debug_objects == -1) { oy_debug_objects_old = -1; oy_debug_objects = -2; }
+
   oy_prefered_db_ = "//" OY_TYPE_STD "/db_handler.oiDB";
 
   oyDbHandlingReset();
@@ -473,7 +478,11 @@ oyjlTESTRESULT_e testDB2()
 
   fprintf(stdout, "%s\n", oyDbHandlingCurrent() );
 
-  return testDBDefault();
+  oyjlTESTRESULT_e result = testDBDefault();
+
+  if(oy_debug_objects >= 0 || oy_debug_objects == -2) { oyLibConfigRelease(FINISH_IGNORE_OBJECT_LIST); object_count = oyObjectCountCurrentObjectIdList(); if(object_count) { oyObjectTreePrint( 0x01 | 0x02 ); PRINT_SUB( oyjlTESTRESULT_FAIL, "objects:                                     %d", object_count); } else { PRINT_SUB( oyjlTESTRESULT_SUCCESS, "objects:                                     %d", object_count); } oyLibConfigRelease(0); } if(oy_debug_objects_old != -9999) { oy_debug_objects = oy_debug_objects_old; }
+
+  return result;
 }
 
 #ifdef __cplusplus
@@ -997,6 +1006,10 @@ oyjlTESTRESULT_e testOption ()
   const char * test_buffer = "test";
   size_t size = strlen(test_buffer);
   oyPointer ptr = oyAllocateFunc_( size );
+  int object_count = 0, oy_debug_objects_old = -9999;
+
+  if(oy_debug_objects < 0) oyLibConfigRelease(0);
+  if(oy_debug_objects == -1) { oy_debug_objects_old = -1; oy_debug_objects = -2; }
 
   oyExportReset_(EXPORT_SETTING);
 
@@ -1046,6 +1059,8 @@ oyjlTESTRESULT_e testOption ()
   oyOption_Release( &o );
   oyFree_m_(ptr);
 
+  if(oy_debug_objects >= 0 || oy_debug_objects == -2) { oyLibConfigRelease(FINISH_IGNORE_OBJECT_LIST); object_count = oyObjectCountCurrentObjectIdList(); if(object_count) { oyObjectTreePrint( 0x01 | 0x02 ); PRINT_SUB( oyjlTESTRESULT_FAIL, "objects:                                     %d", object_count); } else { PRINT_SUB( oyjlTESTRESULT_SUCCESS, "objects:                                      %d", object_count); } oyLibConfigRelease(0); } if(oy_debug_objects_old != -9999) { oy_debug_objects = oy_debug_objects_old; }
+
   return result;
 }
 
@@ -1059,6 +1074,10 @@ oyjlTESTRESULT_e testOptionInt ()
   oyOption_s * o = 0;
   oyOption_s_ * oi = 0;
   int32_t erg[4] = { -1,-1,-1,-1 };
+  int object_count = 0, oy_debug_objects_old = -9999;
+
+  if(oy_debug_objects < 0) oyLibConfigRelease(0);
+  if(oy_debug_objects == -1) { oy_debug_objects_old = -1; oy_debug_objects = -2; }
 
   oyExportReset_(EXPORT_SETTING);
 
@@ -1203,6 +1222,8 @@ oyjlTESTRESULT_e testOptionInt ()
 
   oyOption_Release( &o );
 
+  if(oy_debug_objects >= 0 || oy_debug_objects == -2) { oyLibConfigRelease(FINISH_IGNORE_OBJECT_LIST); object_count = oyObjectCountCurrentObjectIdList(); if(object_count) { oyObjectTreePrint( 0x01 | 0x02 ); PRINT_SUB( oyjlTESTRESULT_FAIL, "objects:                                     %d", object_count); } else { PRINT_SUB( oyjlTESTRESULT_SUCCESS, "objects:                                      %d", object_count); } oyLibConfigRelease(0); } if(oy_debug_objects_old != -9999) { oy_debug_objects = oy_debug_objects_old; }
+
   return result;
 }
 
@@ -1213,6 +1234,10 @@ oyjlTESTRESULT_e testOptionsSet ()
   int error = 0;
   oyOptions_s * setA = 0;
   const char * t = NULL;
+  int object_count = 0, oy_debug_objects_old = -9999;
+
+  if(oy_debug_objects < 0) oyLibConfigRelease(0);
+  if(oy_debug_objects == -1) { oy_debug_objects_old = -1; oy_debug_objects = -2; }
 
   fprintf(stdout, "\n" );
 
@@ -1467,6 +1492,8 @@ oyjlTESTRESULT_e testOptionsSet ()
   }
   oyOptions_Release( &options );
 
+  if(oy_debug_objects >= 0 || oy_debug_objects == -2) { oyLibConfigRelease(FINISH_IGNORE_OBJECT_LIST); object_count = oyObjectCountCurrentObjectIdList(); if(object_count) { oyObjectTreePrint( 0x01 | 0x02 ); PRINT_SUB( oyjlTESTRESULT_FAIL, "objects:                                     %d", object_count); } else { PRINT_SUB( oyjlTESTRESULT_SUCCESS, "objects:                                      %d", object_count); } oyLibConfigRelease(0); } if(oy_debug_objects_old != -9999) { oy_debug_objects = oy_debug_objects_old; }
+
   return result;
 }
 
@@ -1478,6 +1505,10 @@ oyjlTESTRESULT_e testOptionsCopy ()
   oyOptions_s * setA = 0, * setB = 0, * setC = 0,
               * resultA = 0, * resultB = 0;
   int32_t count = 0;
+  int object_count = 0, oy_debug_objects_old = -9999;
+
+  if(oy_debug_objects < 0) oyLibConfigRelease(0);
+  if(oy_debug_objects == -1) { oy_debug_objects_old = -1; oy_debug_objects = -2; }
 
   fprintf(stdout, "\n" );
 
@@ -1667,6 +1698,8 @@ oyjlTESTRESULT_e testOptionsCopy ()
   oyOptions_Release( &resultA );
   oyOptions_Release( &resultB );
 
+  if(oy_debug_objects >= 0 || oy_debug_objects == -2) { oyLibConfigRelease(FINISH_IGNORE_OBJECT_LIST); object_count = oyObjectCountCurrentObjectIdList(); if(object_count) { oyObjectTreePrint( 0x01 | 0x02 ); PRINT_SUB( oyjlTESTRESULT_FAIL, "objects:                                     %d", object_count); } else { PRINT_SUB( oyjlTESTRESULT_SUCCESS, "objects:                                      %d", object_count); } oyLibConfigRelease(0); } if(oy_debug_objects_old != -9999) { oy_debug_objects = oy_debug_objects_old; }
+
   return result;
 }
 
@@ -1682,6 +1715,10 @@ oyjlTESTRESULT_e testBlob ()
   const char static_ptr[16] = {0,1,0,1,0,1,0,1,  0,1,0,1,0,1,0,1};
   const char type[8] = "test";
   oyObject_s object = oyObject_New();
+  int object_count = 0, oy_debug_objects_old = -9999;
+
+  if(oy_debug_objects < 0) oyLibConfigRelease(0);
+  if(oy_debug_objects == -1) { oy_debug_objects_old = -1; oy_debug_objects = -2; }
 
   fprintf(stdout, "\n" );
 
@@ -1771,6 +1808,8 @@ oyjlTESTRESULT_e testBlob ()
   oyObject_Release( &object );
   free(ptr);
 
+  if(oy_debug_objects >= 0 || oy_debug_objects == -2) { oyLibConfigRelease(FINISH_IGNORE_OBJECT_LIST); object_count = oyObjectCountCurrentObjectIdList(); if(object_count) { oyObjectTreePrint( 0x01 | 0x02 ); PRINT_SUB( oyjlTESTRESULT_FAIL, "objects:                                     %d", object_count); } else { PRINT_SUB( oyjlTESTRESULT_SUCCESS, "objects:                                      %d", object_count); } oyLibConfigRelease(0); } if(oy_debug_objects_old != -9999) { oy_debug_objects = oy_debug_objects_old; }
+
   return result;
 }
 
@@ -1796,6 +1835,10 @@ oyjlTESTRESULT_e testSettings ()
 #ifdef HAVE_LIBXML2
   xmlDocPtr doc = 0;
 #endif
+  int object_count = 0, oy_debug_objects_old = -9999;
+
+  if(oy_debug_objects < 0) oyLibConfigRelease(0);
+  if(oy_debug_objects == -1) { oy_debug_objects_old = -1; oy_debug_objects = -2; }
 
   oyExportReset_(EXPORT_SETTING);
 
@@ -1987,6 +2030,8 @@ oyjlTESTRESULT_e testSettings ()
   }
   oyOptions_Release( &opts );
 
+  if(oy_debug_objects >= 0 || oy_debug_objects == -2) { oyLibConfigRelease(FINISH_IGNORE_OBJECT_LIST); object_count = oyObjectCountCurrentObjectIdList(); if(object_count) { oyObjectTreePrint( 0x01 | 0x02 ); PRINT_SUB( oyjlTESTRESULT_FAIL, "objects:                                     %d", object_count); } else { PRINT_SUB( oyjlTESTRESULT_SUCCESS, "objects:                                      %d", object_count); } oyLibConfigRelease(0); } if(oy_debug_objects_old != -9999) { oy_debug_objects = oy_debug_objects_old; }
+
 
   return result;
 }
@@ -2087,6 +2132,10 @@ oyjlTESTRESULT_e testInterpolation ()
 oyjlTESTRESULT_e testOptionsType ()
 {
   oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
+  int object_count = 0, oy_debug_objects_old = -9999;
+
+  if(oy_debug_objects < 0) oyLibConfigRelease(0);
+  if(oy_debug_objects == -1) { oy_debug_objects_old = -1; oy_debug_objects = -2; }
 
   int error = 0;
 
@@ -2154,6 +2203,8 @@ oyjlTESTRESULT_e testOptionsType ()
 
   oyOptions_Release( &opts );
 
+  if(oy_debug_objects >= 0 || oy_debug_objects == -2) { oyLibConfigRelease(FINISH_IGNORE_OBJECT_LIST); object_count = oyObjectCountCurrentObjectIdList(); if(object_count) { oyObjectTreePrint( 0x01 | 0x02 ); PRINT_SUB( oyjlTESTRESULT_FAIL, "objects:                                     %d", object_count); } else { PRINT_SUB( oyjlTESTRESULT_SUCCESS, "objects:                                      %d", object_count); } oyLibConfigRelease(0); } if(oy_debug_objects_old != -9999) { oy_debug_objects = oy_debug_objects_old; }
+
   return result;
 }
 
@@ -2168,6 +2219,10 @@ oyjlTESTRESULT_e testProfile ()
   oyProfile_s * p_a,
               * p_b;
   uint32_t icc_profile_flags = OY_ICC_VERSION_2;
+  int object_count = 0, oy_debug_objects_old = -9999;
+
+  if(oy_debug_objects < 0) oyLibConfigRelease(0);
+  if(oy_debug_objects == -1) { oy_debug_objects_old = -1; oy_debug_objects = -2; }
 
   oyExportReset_(EXPORT_SETTING);
 
@@ -2420,6 +2475,8 @@ oyjlTESTRESULT_e testProfile ()
     oyProfile_Release( &p );
   }
 
+  if(oy_debug_objects >= 0 || oy_debug_objects == -2) { oyLibConfigRelease(FINISH_IGNORE_OBJECT_LIST); object_count = oyObjectCountCurrentObjectIdList(); if(object_count) { oyObjectTreePrint( 0x01 | 0x02 ); PRINT_SUB( oyjlTESTRESULT_FAIL, "objects:                                     %d", object_count); } else { PRINT_SUB( oyjlTESTRESULT_SUCCESS, "objects:                                      %d", object_count); } oyLibConfigRelease(0); } if(oy_debug_objects_old != -9999) { oy_debug_objects = oy_debug_objects_old; }
+
   return result;
 }
 
@@ -2439,6 +2496,10 @@ oyjlTESTRESULT_e testProfiles ()
   const char * tmp = 0;
   oyProfiles_s * profs = 0;
   oyProfile_s * p;
+  int object_count = 0, oy_debug_objects_old = -9999;
+
+  if(oy_debug_objects < 0) oyLibConfigRelease(0);
+  if(oy_debug_objects == -1) { oy_debug_objects_old = -1; oy_debug_objects = -2; }
 
   oyExportReset_(EXPORT_SETTING);
 
@@ -2675,6 +2736,7 @@ oyjlTESTRESULT_e testProfiles ()
     oyProfiles_Release( &profiles );
   }
 
+  if(oy_debug_objects >= 0 || oy_debug_objects == -2) { oyLibConfigRelease(FINISH_IGNORE_OBJECT_LIST); object_count = oyObjectCountCurrentObjectIdList(); if(object_count) { oyObjectTreePrint( 0x01 | 0x02 ); PRINT_SUB( oyjlTESTRESULT_FAIL, "objects:                                     %d", object_count); } else { PRINT_SUB( oyjlTESTRESULT_SUCCESS, "objects:                                      %d", object_count); } oyLibConfigRelease(0); } if(oy_debug_objects_old != -9999) { oy_debug_objects = oy_debug_objects_old; }
 
   return result;
 }
@@ -2768,9 +2830,12 @@ oyjlTESTRESULT_e testEffects ()
   const char * text = 0;
   oyProfile_s * prof = oyProfile_FromStd( oyEDITING_CMYK, 0, testobj ),
               * abstract;
+  int object_count = 0, oy_debug_objects_old = -9999;
   int error;
 
   fprintf(stdout, "\n" );
+  if(oy_debug_objects < 0) oyLibConfigRelease(0);
+  if(oy_debug_objects == -1) { oy_debug_objects_old = -1; oy_debug_objects = -2; }
 
   error = oyOptions_MoveInStruct( &opts, "//" OY_TYPE_STD "/icc_profile.proofing_profile",
                                   (oyStruct_s**) &prof, OY_CREATE_NEW );
@@ -2945,6 +3010,8 @@ oyjlTESTRESULT_e testEffects ()
   oyProfile_ToFile_( (oyProfile_s_*)abstract, "test_wtpt_effect-bradford.icc" );
   oyProfile_Release( &abstract );
 
+  if(oy_debug_objects >= 0 || oy_debug_objects == -2) { oyLibConfigRelease(FINISH_IGNORE_OBJECT_LIST); object_count = oyObjectCountCurrentObjectIdList(); if(object_count) { oyObjectTreePrint( 0x01 | 0x02 ); PRINT_SUB( oyjlTESTRESULT_FAIL, "objects:                                     %d", object_count); } else { PRINT_SUB( oyjlTESTRESULT_SUCCESS, "objects:                                      %d", object_count); } oyLibConfigRelease(0); } if(oy_debug_objects_old != -9999) { oy_debug_objects = oy_debug_objects_old; }
+
   return result;
 }
 
@@ -2954,24 +3021,23 @@ oyjlTESTRESULT_e testEffects ()
 oyjlTESTRESULT_e testDeviceLinkProfile ()
 {
   oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
+  int object_count = 0, oy_debug_objects_old = -9999;
+
+  if(oy_debug_objects < 0) oyLibConfigRelease(0);
+  if(oy_debug_objects == -1) { oy_debug_objects_old = -1; oy_debug_objects = -2; }
 
   double buf[24];
   uint32_t icc_profile_flags =oyICCProfileSelectionFlagsFromOptions( OY_CMM_STD,
                                        "//" OY_TYPE_STD "/icc_color", NULL, 0 );
-  oyProfile_s * prof = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, testobj ), *dl = 0;
-  oyImage_s * in = oyImage_Create( 2, 2, buf, OY_TYPE_123_DBL, prof, testobj );
-  oyImage_s * out = oyImage_CreateForDisplay( 2, 2, buf, OY_TYPE_123_DBL, 0,
-                                              0,0, 12,12,
-                                              icc_profile_flags, testobj );
+  oyProfile_s * prof = NULL, *dl = NULL;
+  oyImage_s * in = NULL, * out = NULL;
   oyOptions_s * options = NULL;
-  oyOptions_SetFromString( &options, OY_CMM_STD"/context", "lcm2", OY_CREATE_NEW );
-  oyConversion_s *cc = oyConversion_CreateBasicPixels( in, out, options, testobj );
+  oyConversion_s * cc = NULL;
   oyFilterGraph_s * graph = NULL;
   oyFilterNode_s * node = NULL;
   oyBlob_s * blob = NULL;
   int error = 0;
-  const char * fn = NULL,
-             * prof_fn = oyProfile_GetFileName( prof, -1 );
+  const char * fn = NULL, * prof_fn = NULL;
   int i,n=0, len;
 
   fprintf(stdout, "\n" );
@@ -2982,8 +3048,92 @@ oyjlTESTRESULT_e testDeviceLinkProfile ()
 
   /*oyConversion_RunPixels( cc, 0 );*/
 
+  oyFilterNode_s * in_node = oyFilterNode_NewWith( "//" OY_TYPE_STD "/root", 0, testobj );
+  //oyFilterNode_SetData( in_node, (oyStruct_s*)input, 0, 0 );
+  oyFilterNode_s * out_node = oyFilterNode_NewWith( "//" OY_TYPE_STD "/output", 0, testobj );
+  /*oyFilterNode_SetData( out_node, (oyStruct_s*)output, 0, 0 );*/
+  error = oyFilterNode_Connect( in_node, "//" OY_TYPE_STD "/data",
+                                out_node, "//" OY_TYPE_STD "/data", 0 );
+  if(error == 0)
+  {
+    PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyFilterNode_Connect()                             " );
+  } else
+  {
+    PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyFilterNode_Connect()                            %d", error );
+  }
+  oyFilterNode_Release( &out_node );
+  oyFilterNode_Release( &in_node );
+  if(oy_debug_objects >= 0 || oy_debug_objects == -2) { oyLibConfigRelease(FINISH_IGNORE_OBJECT_LIST); object_count = oyObjectCountCurrentObjectIdList(); if(object_count) { oyObjectTreePrint( 0x01 | 0x02 ); PRINT_SUB( oyjlTESTRESULT_FAIL, "objects:                                     %d", object_count); } else { PRINT_SUB( oyjlTESTRESULT_SUCCESS, "objects:                                      %d", object_count); } oyLibConfigRelease(0); }
+
+  cc = oyConversion_New( NULL );
+  oyConversion_Set( cc, in_node, NULL );
+  oyConversion_Set( cc, 0, out_node );
+  if(oy_debug_objects >= 0 || oy_debug_objects == -2) { oyLibConfigRelease(FINISH_IGNORE_OBJECT_LIST); object_count = oyObjectCountCurrentObjectIdList(); if(object_count) { oyObjectTreePrint( 0x01 | 0x02 ); PRINT_SUB( oyjlTESTRESULT_XFAIL, "objects:                                    %d", object_count); } else { PRINT_SUB( oyjlTESTRESULT_SUCCESS, "objects:                                      %d", object_count); } oyLibConfigRelease(0); }
+  error = oyConversion_Release( &cc );
+
+
+  prof = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, testobj );
+  prof_fn = oyProfile_GetFileName( prof, -1 );
+  in = oyImage_Create( 2, 2, buf, OY_TYPE_123_DBL, prof, testobj );
+  out = oyImage_CreateForDisplay( 2, 2, buf, OY_TYPE_123_DBL, 0,
+                                              0,0, 12,12,
+                                              icc_profile_flags, testobj );
+  cc = oyConversion_CreateBasicPixels( in, out, NULL, NULL );
+  error = oyConversion_Release( &cc );
+  if(error == 0)
+  {
+    PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyConversion_Release() simple                      " );
+  } else
+  {
+    PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyConversion_Release() simple                     %d", error );
+  }
+  oyImage_Release( &in );
+  oyImage_Release( &out );
+  oyProfile_Release( &prof );
+  if(oy_debug_objects >= 0 || oy_debug_objects == -2) { oyLibConfigRelease(FINISH_IGNORE_OBJECT_LIST); object_count = oyObjectCountCurrentObjectIdList(); if(object_count) { oyObjectTreePrint( 0x01 | 0x02 ); PRINT_SUB( oyjlTESTRESULT_XFAIL, "objects:                                     %d", object_count); } else { PRINT_SUB( oyjlTESTRESULT_SUCCESS, "objects:                                     %d", object_count); } oyLibConfigRelease(0); }
+
+  prof = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, testobj );
+  prof_fn = oyProfile_GetFileName( prof, -1 );
+  in = oyImage_Create( 2, 2, buf, OY_TYPE_123_DBL, prof, testobj );
+  out = oyImage_CreateForDisplay( 2, 2, buf, OY_TYPE_123_DBL, 0,
+                                              0,0, 12,12,
+                                              icc_profile_flags, testobj );
+  cc = oyConversion_CreateBasicPixels( in, out, NULL, NULL );
+  oyFilterNode_s * inode = oyConversion_GetNode( cc, OY_INPUT);
+  oyOptions_s * opts =  oyFilterNode_GetOptions( inode, 0 );
+  error = oyConversion_Release( &cc );
+  if(error == 0)
+  {
+    PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyConversion_Release() GetOptions                  " );
+  } else
+  {
+    PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyConversion_Release() GetOptions                 %d", error );
+  }
+  oyOptions_Release( &opts );
+  oyFilterNode_Release( &inode );
+  oyImage_Release( &in );
+  oyImage_Release( &out );
+  oyProfile_Release( &prof );
+  if(oy_debug_objects >= 0 || oy_debug_objects == -2) { oyLibConfigRelease(FINISH_IGNORE_OBJECT_LIST); object_count = oyObjectCountCurrentObjectIdList(); if(object_count) { oyObjectTreePrint( 0x01 | 0x02 ); PRINT_SUB( oyjlTESTRESULT_XFAIL, "objects:                                     %d", object_count); } else { PRINT_SUB( oyjlTESTRESULT_SUCCESS, "objects:                                     %d", object_count); } oyLibConfigRelease(0); }
+  return result;
+
+  prof = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, testobj );
+  in = oyImage_Create( 2, 2, buf, OY_TYPE_123_DBL, prof, testobj );
+  out = oyImage_CreateForDisplay( 2, 2, buf, OY_TYPE_123_DBL, 0,
+                                              0,0, 12,12,
+                                              icc_profile_flags, testobj );
+  oyOptions_SetFromString( &options, OY_CMM_STD"/context", "lcm2", OY_CREATE_NEW );
+
+  cc = oyConversion_CreateBasicPixels( in, out, options, testobj );
   if(cc)
     graph = oyConversion_GetGraph( cc );
+  error = oyConversion_Release( &cc );
   if(graph)
     n = oyFilterGraph_CountEdges( graph );
   for(i = 0; i < n; ++i)
@@ -3012,6 +3162,7 @@ oyjlTESTRESULT_e testDeviceLinkProfile ()
     oyBlob_Release( &blob );
     oyFilterNode_Release( &node );
   }
+  oyFilterGraph_Release( &graph );
 
   fn = oyProfile_GetFileName( dl, 0 );
   if(fn && prof_fn && strcmp(fn,prof_fn) == 0)
@@ -3037,13 +3188,14 @@ oyjlTESTRESULT_e testDeviceLinkProfile ()
 
   fn = oyProfile_GetText( dl, oyNAME_NAME );
   if(verbose) fprintf(zout,"oyProfile_GetText( dl, oyNAME_NAME ): %s\n", fn );
+  oyProfile_Release( &dl );
 
-  error = oyConversion_Release( &cc );
 
   oyOptions_SetFromString( &options, OY_CMM_STD"/precalculation", "4", OY_CREATE_NEW );
   cc = oyConversion_CreateBasicPixels( in, out, options, testobj );
   if(cc)
     graph = oyConversion_GetGraph( cc );
+  oyConversion_Release( &cc );
   if(graph)
     n = oyFilterGraph_CountEdges( graph );
   for(i = 0; i < n; ++i)
@@ -3099,6 +3251,7 @@ oyjlTESTRESULT_e testDeviceLinkProfile ()
   error = oyFilterGraph_Release( &graph );
   if(error) PRINT_SUB( oyjlTESTRESULT_XFAIL, "oyFilterGraph_Release() error: %d", error )
 
+  if(oy_debug_objects_old != -9999) { oy_debug_objects = oy_debug_objects_old; }
 
   return result;
 }
@@ -3696,6 +3849,10 @@ static int     setupColourTable      ( PrivColorContext  * ccontext,
 oyjlTESTRESULT_e testClut ()
 {
   oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
+  int object_count = 0, oy_debug_objects_old = -9999;
+
+  if(oy_debug_objects < 0) oyLibConfigRelease(0);
+  if(oy_debug_objects == -1) { oy_debug_objects_old = -1; oy_debug_objects = -2; }
 
   fprintf(stdout, "\n" );
 
@@ -3909,6 +4066,9 @@ oyjlTESTRESULT_e testClut ()
     oySetPersistentString( OY_DEFAULT_DISPLAY_WHITE_POINT_DAEMON, oySCOPE_USER, old_daemon, NULL);
     oyFree_m_(old_daemon);
   }
+
+  if(oy_debug_objects >= 0 || oy_debug_objects == -2) { oyLibConfigRelease(FINISH_IGNORE_OBJECT_LIST); object_count = oyObjectCountCurrentObjectIdList(); if(object_count) { oyObjectTreePrint( 0x01 | 0x02 ); PRINT_SUB( oyjlTESTRESULT_XFAIL, "objects:                                     %d", object_count); } else { PRINT_SUB( oyjlTESTRESULT_SUCCESS, "objects:                                     %d", object_count); } oyLibConfigRelease(0); } if(oy_debug_objects_old != -9999) { oy_debug_objects = oy_debug_objects_old; }
+
   return result;
 }
 
@@ -4108,6 +4268,10 @@ oyjlTESTRESULT_e testPolicy ()
 {
   oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
   char *data = 0;
+  int object_count = 0, oy_debug_objects_old = -9999;
+
+  if(oy_debug_objects < 0) oyLibConfigRelease(0);
+  if(oy_debug_objects == -1) { oy_debug_objects_old = -1; oy_debug_objects = -2; }
 
   fprintf(stdout, "\n" );
 
@@ -4167,6 +4331,8 @@ oyjlTESTRESULT_e testPolicy ()
   }
 
 
+  if(oy_debug_objects >= 0 || oy_debug_objects == -2) { oyLibConfigRelease(FINISH_IGNORE_OBJECT_LIST); object_count = oyObjectCountCurrentObjectIdList(); if(object_count) { oyObjectTreePrint( 0x01 | 0x02 ); PRINT_SUB( oyjlTESTRESULT_XFAIL, "objects:                                     %d", object_count); } else { PRINT_SUB( oyjlTESTRESULT_SUCCESS, "objects:                                     %d", object_count); } oyLibConfigRelease(0); } if(oy_debug_objects_old != -9999) { oy_debug_objects = oy_debug_objects_old; }
+
   return result;
 }
 
@@ -4182,6 +4348,10 @@ oyjlTESTRESULT_e testWidgets ()
              * tooltip = NULL;
   int          flags = 0;
   const oyGROUP_e * categories = NULL;
+  int object_count = 0, oy_debug_objects_old = -9999;
+
+  if(oy_debug_objects < 0) oyLibConfigRelease(0);
+  if(oy_debug_objects == -1) { oy_debug_objects_old = -1; oy_debug_objects = -2; }
 
   oyWIDGET_e option = oyWIDGET_RENDERING_INTENT;
   oyWIDGET_TYPE_e type = oyWidgetTitleGet( option, 
@@ -4278,6 +4448,8 @@ oyjlTESTRESULT_e testWidgets ()
 
   fprintf( zout, "\n");
 
+  if(oy_debug_objects >= 0 || oy_debug_objects == -2) { oyLibConfigRelease(FINISH_IGNORE_OBJECT_LIST); object_count = oyObjectCountCurrentObjectIdList(); if(object_count) { oyObjectTreePrint( 0x01 | 0x02 ); PRINT_SUB( oyjlTESTRESULT_XFAIL, "objects:                                     %d", object_count); } else { PRINT_SUB( oyjlTESTRESULT_SUCCESS, "objects:                                    %d", object_count); } oyLibConfigRelease(0); } if(oy_debug_objects_old != -9999) { oy_debug_objects = oy_debug_objects_old; }
+
   return result;
 }
 
@@ -4286,6 +4458,10 @@ oyjlTESTRESULT_e testWidgets ()
 oyjlTESTRESULT_e testCMMDevicesListing ()
 {
   oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
+  int object_count = 0, oy_debug_objects_old = -9999;
+
+  if(oy_debug_objects < 0) oyLibConfigRelease(0);
+  if(oy_debug_objects == -1) { oy_debug_objects_old = -1; oy_debug_objects = -2; }
 
   fprintf(stdout, "\n" );
 
@@ -4478,12 +4654,18 @@ oyjlTESTRESULT_e testCMMDevicesListing ()
 
   fprintf( zout, "\n");
 
+  if(oy_debug_objects >= 0 || oy_debug_objects == -2) { oyLibConfigRelease(FINISH_IGNORE_OBJECT_LIST); object_count = oyObjectCountCurrentObjectIdList(); if(object_count) { oyObjectTreePrint( 0x01 | 0x02 ); PRINT_SUB( oyjlTESTRESULT_XFAIL, "objects:                                     %d", object_count); } else { PRINT_SUB( oyjlTESTRESULT_SUCCESS, "objects:                                     %d", object_count); } oyLibConfigRelease(0); } if(oy_debug_objects_old != -9999) { oy_debug_objects = oy_debug_objects_old; }
+
   return result;
 }
 
 oyjlTESTRESULT_e testCMMDevicesDetails ()
 {
   oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
+  int object_count = 0, oy_debug_objects_old = -9999;
+
+  if(oy_debug_objects < 0) oyLibConfigRelease(0);
+  if(oy_debug_objects == -1) { oy_debug_objects_old = -1; oy_debug_objects = -2; }
 
   fprintf(stdout, "\n" );
 
@@ -4661,12 +4843,18 @@ oyjlTESTRESULT_e testCMMDevicesDetails ()
 
   fprintf( zout, "\n");
 
+  if(oy_debug_objects >= 0 || oy_debug_objects == -2) { oyLibConfigRelease(FINISH_IGNORE_OBJECT_LIST); object_count = oyObjectCountCurrentObjectIdList(); if(object_count) { oyObjectTreePrint( 0x01 | 0x02 ); PRINT_SUB( oyjlTESTRESULT_XFAIL, "objects:                                     %d", object_count); } else { PRINT_SUB( oyjlTESTRESULT_SUCCESS, "objects:                                     %d", object_count); } oyLibConfigRelease(0); } if(oy_debug_objects_old != -9999) { oy_debug_objects = oy_debug_objects_old; }
+
   return result;
 }
 
 oyjlTESTRESULT_e testCMMRankMap ()
 {
   oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
+  int object_count = 0, oy_debug_objects_old = -9999;
+
+  if(oy_debug_objects < 0) oyLibConfigRelease(0);
+  if(oy_debug_objects == -1) { oy_debug_objects_old = -1; oy_debug_objects = -2; }
 
   fprintf(stdout, "\n" );
 
@@ -4813,12 +5001,18 @@ oyjlTESTRESULT_e testCMMRankMap ()
 
   fprintf( zout, "\n");
 
+  if(oy_debug_objects >= 0 || oy_debug_objects == -2) { oyLibConfigRelease(FINISH_IGNORE_OBJECT_LIST); object_count = oyObjectCountCurrentObjectIdList(); if(object_count) { oyObjectTreePrint( 0x01 | 0x02 ); PRINT_SUB( oyjlTESTRESULT_XFAIL, "objects:                                     %d", object_count); } else { PRINT_SUB( oyjlTESTRESULT_SUCCESS, "objects:                                     %d", object_count); } oyLibConfigRelease(0); } if(oy_debug_objects_old != -9999) { oy_debug_objects = oy_debug_objects_old; }
+
   return result;
 }
 
 oyjlTESTRESULT_e testCMMMonitorJSON ()
 {
   oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
+  int object_count = 0, oy_debug_objects_old = -9999;
+
+  if(oy_debug_objects < 0) oyLibConfigRelease(0);
+  if(oy_debug_objects == -1) { oy_debug_objects_old = -1; oy_debug_objects = -2; }
 
   fprintf(stdout, "\n" );
 
@@ -5051,6 +5245,8 @@ oyjlTESTRESULT_e testCMMMonitorJSON ()
   if(result == oyjlTESTRESULT_UNKNOWN && displayFail() == oyjlTESTRESULT_XFAIL)
     result = oyjlTESTRESULT_SUCCESS;
 
+  if(oy_debug_objects >= 0 || oy_debug_objects == -2) { oyLibConfigRelease(FINISH_IGNORE_OBJECT_LIST); object_count = oyObjectCountCurrentObjectIdList(); if(object_count) { oyObjectTreePrint( 0x01 | 0x02 ); PRINT_SUB( oyjlTESTRESULT_XFAIL, "objects:                                     %d", object_count); } else { PRINT_SUB( oyjlTESTRESULT_SUCCESS, "objects:                                    %d", object_count); } oyLibConfigRelease(0); } if(oy_debug_objects_old != -9999) { oy_debug_objects = oy_debug_objects_old; }
+
   return result;
 }
 
@@ -5058,6 +5254,10 @@ oyjlTESTRESULT_e testCMMMonitorJSON ()
 oyjlTESTRESULT_e testCMMMonitorListing ()
 {
   oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
+  int object_count = 0, oy_debug_objects_old = -9999;
+
+  if(oy_debug_objects < 0) oyLibConfigRelease(0);
+  if(oy_debug_objects == -1) { oy_debug_objects_old = -1; oy_debug_objects = -2; }
 
   fprintf(stdout, "\n" );
 
@@ -5154,12 +5354,18 @@ oyjlTESTRESULT_e testCMMMonitorListing ()
   fprintf( zout, "\n");
 
 
+  if(oy_debug_objects >= 0 || oy_debug_objects == -2) { oyLibConfigRelease(FINISH_IGNORE_OBJECT_LIST); object_count = oyObjectCountCurrentObjectIdList(); if(object_count) { oyObjectTreePrint( 0x01 | 0x02 ); PRINT_SUB( oyjlTESTRESULT_XFAIL, "objects:                                     %d", object_count); } else { PRINT_SUB( oyjlTESTRESULT_SUCCESS, "objects:                                     %d", object_count); } oyLibConfigRelease(0); } if(oy_debug_objects_old != -9999) { oy_debug_objects = oy_debug_objects_old; }
+
   return result;
 }
 
 oyjlTESTRESULT_e testCMMDBListing ()
 {
   oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
+  int object_count = 0, oy_debug_objects_old = -9999;
+
+  if(oy_debug_objects < 0) oyLibConfigRelease(0);
+  if(oy_debug_objects == -1) { oy_debug_objects_old = -1; oy_debug_objects = -2; }
 
   fprintf(stdout, "\n" );
 
@@ -5199,6 +5405,8 @@ oyjlTESTRESULT_e testCMMDBListing ()
     oyConfig_Release( &config );
   }
 
+  if(oy_debug_objects >= 0 || oy_debug_objects == -2) { oyLibConfigRelease(FINISH_IGNORE_OBJECT_LIST); object_count = oyObjectCountCurrentObjectIdList(); if(object_count) { oyObjectTreePrint( 0x01 | 0x02 ); PRINT_SUB( oyjlTESTRESULT_XFAIL, "objects:                                     %d", object_count); } else { PRINT_SUB( oyjlTESTRESULT_SUCCESS, "objects:                                     %d", object_count); } oyLibConfigRelease(0); } if(oy_debug_objects_old != -9999) { oy_debug_objects = oy_debug_objects_old; }
+
   return result;
 }
 
@@ -5209,6 +5417,10 @@ oyjlTESTRESULT_e testCMMMonitorModule ()
   oyOptions_s * options = 0;
   const char * t = ":0.100";
   int error = 0;
+  int object_count = 0, oy_debug_objects_old = -9999;
+
+  if(oy_debug_objects < 0) oyLibConfigRelease(0);
+  if(oy_debug_objects == -1) { oy_debug_objects_old = -1; oy_debug_objects = -2; }
 
   fprintf(stdout, "\n" );
 
@@ -5237,12 +5449,18 @@ oyjlTESTRESULT_e testCMMMonitorModule ()
     "oyDevicesGet( \"//" OY_TYPE_STD "\", unset, ... ) = %d       ", error );
   }
 
+  if(oy_debug_objects >= 0 || oy_debug_objects == -2) { oyLibConfigRelease(FINISH_IGNORE_OBJECT_LIST); object_count = oyObjectCountCurrentObjectIdList(); if(object_count) { oyObjectTreePrint( 0x01 | 0x02 ); PRINT_SUB( oyjlTESTRESULT_XFAIL, "objects:                                     %d", object_count); } else { PRINT_SUB( oyjlTESTRESULT_SUCCESS, "objects:                                     %d", object_count); } oyLibConfigRelease(0); } if(oy_debug_objects_old != -9999) { oy_debug_objects = oy_debug_objects_old; }
+
   return result;
 }
 
 oyjlTESTRESULT_e testCMMmonitorDBmatch ()
 {
   oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
+  int object_count = 0, oy_debug_objects_old = -9999;
+
+  if(oy_debug_objects < 0) oyLibConfigRelease(0);
+  if(oy_debug_objects == -1) { oy_debug_objects_old = -1; oy_debug_objects = -2; }
 
   fprintf(stdout, "\n" );
 
@@ -5355,6 +5573,8 @@ oyjlTESTRESULT_e testCMMmonitorDBmatch ()
   error = oyDBEraseKey( reg, oySCOPE_USER );
   if(error) PRINT_SUB( oyjlTESTRESULT_XFAIL, "oyDBEraseKey() error: %d", error )
 
+  if(oy_debug_objects >= 0 || oy_debug_objects == -2) { oyLibConfigRelease(FINISH_IGNORE_OBJECT_LIST); object_count = oyObjectCountCurrentObjectIdList(); if(object_count) { oyObjectTreePrint( 0x01 | 0x02 ); PRINT_SUB( oyjlTESTRESULT_XFAIL, "objects:                                     %d", object_count); } else { PRINT_SUB( oyjlTESTRESULT_SUCCESS, "objects:                                     %d", object_count); } oyLibConfigRelease(0); } if(oy_debug_objects_old != -9999) { oy_debug_objects = oy_debug_objects_old; }
+
   return result;
 }
 
@@ -5402,6 +5622,10 @@ oyjlTESTRESULT_e testCMMsShow ()
   oyCMMapi10_s_ * cmm_api10 = 0;
   oyCMMapi_s_ * tmp = 0;
   oyCMMapiFilter_s_ * cmm_filter = 0;
+  int object_count = 0, oy_debug_objects_old = -9999;
+
+  if(oy_debug_objects < 0) oyLibConfigRelease(0);
+  if(oy_debug_objects == -1) { oy_debug_objects_old = -1; oy_debug_objects = -2; }
 
 
   fprintf(zout, "\n" );
@@ -5691,6 +5915,8 @@ oyjlTESTRESULT_e testCMMsShow ()
   fprintf(zout, "Wrote %s\n", rfile?rfile:"test2_CMMs.xhtml" );
   free( rfile );
 
+  if(oy_debug_objects >= 0 || oy_debug_objects == -2) { oyLibConfigRelease(FINISH_IGNORE_OBJECT_LIST); object_count = oyObjectCountCurrentObjectIdList(); if(object_count) { oyObjectTreePrint( 0x01 | 0x02 ); PRINT_SUB( oyjlTESTRESULT_XFAIL, "objects:                                     %d", object_count); } else { PRINT_SUB( oyjlTESTRESULT_SUCCESS, "objects:                                     %d", object_count); } oyLibConfigRelease(0); } if(oy_debug_objects_old != -9999) { oy_debug_objects = oy_debug_objects_old; }
+
   return result;
 }
 
@@ -5703,6 +5929,10 @@ extern int oy_debug_image_read_array_count;
 oyjlTESTRESULT_e testCMMnmRun ()
 {
   oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
+  int object_count = 0, oy_debug_objects_old = -9999;
+
+  if(oy_debug_objects < 0) oyLibConfigRelease(0);
+  if(oy_debug_objects == -1) { oy_debug_objects_old = -1; oy_debug_objects = -2; }
   oyNamedColor_s * c = 0;
   uint32_t icc_profile_flags =oyICCProfileSelectionFlagsFromOptions( OY_CMM_STD,
                                        "//" OY_TYPE_STD "/icc_color", NULL, 0 );
@@ -6288,6 +6518,8 @@ oyjlTESTRESULT_e testCMMnmRun ()
   }
 
   
+  if(oy_debug_objects >= 0 || oy_debug_objects == -2) { oyLibConfigRelease(FINISH_IGNORE_OBJECT_LIST); object_count = oyObjectCountCurrentObjectIdList(); if(object_count) { oyObjectTreePrint( 0x01 | 0x02 ); PRINT_SUB( oyjlTESTRESULT_XFAIL, "objects:                                     %d", object_count); } else { PRINT_SUB( oyjlTESTRESULT_SUCCESS, "objects:                                     %d", object_count); } oyLibConfigRelease(0); } if(oy_debug_objects_old != -9999) { oy_debug_objects = oy_debug_objects_old; }
+
   return result;
 }
 
@@ -6296,6 +6528,10 @@ oyjlTESTRESULT_e testCMMnmRun ()
 oyjlTESTRESULT_e testImagePixel()
 {
   oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
+  int object_count = 0, oy_debug_objects_old = -9999;
+
+  if(oy_debug_objects < 0) oyLibConfigRelease(0);
+  if(oy_debug_objects == -1) { oy_debug_objects_old = -1; oy_debug_objects = -2; }
   uint32_t icc_profile_flags =oyICCProfileSelectionFlagsFromOptions( OY_CMM_STD,
                                        "//" OY_TYPE_STD "/icc_color", NULL, 0 );
   oyProfile_s * p_lab = oyProfile_FromStd( oyEDITING_LAB, icc_profile_flags, testobj );
@@ -6655,12 +6891,18 @@ oyjlTESTRESULT_e testImagePixel()
   oyImage_Release( &input );
   oyImage_Release( &output );
 
+  if(oy_debug_objects >= 0 || oy_debug_objects == -2) { oyLibConfigRelease(FINISH_IGNORE_OBJECT_LIST); object_count = oyObjectCountCurrentObjectIdList(); if(object_count) { oyObjectTreePrint( 0x01 | 0x02 ); PRINT_SUB( oyjlTESTRESULT_XFAIL, "objects:                                     %d", object_count); } else { PRINT_SUB( oyjlTESTRESULT_SUCCESS, "objects:                                     %d", object_count); } oyLibConfigRelease(0); } if(oy_debug_objects_old != -9999) { oy_debug_objects = oy_debug_objects_old; }
+
   return result;
 }
 
 oyjlTESTRESULT_e testRectangles()
 {
   oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
+  int object_count = 0, oy_debug_objects_old = -9999;
+
+  if(oy_debug_objects < 0) oyLibConfigRelease(0);
+  if(oy_debug_objects == -1) { oy_debug_objects_old = -1; oy_debug_objects = -2; }
   uint32_t icc_profile_flags =oyICCProfileSelectionFlagsFromOptions( OY_CMM_STD,
                                        "//" OY_TYPE_STD "/icc_color", NULL, 0 );
   oyProfile_s * p_web = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, testobj );
@@ -6775,6 +7017,8 @@ oyjlTESTRESULT_e testRectangles()
   oyRectangle_Release( &pixel_rectangle );
   oyRectangle_Release( &roi );
 
+  if(oy_debug_objects >= 0 || oy_debug_objects == -2) { oyLibConfigRelease(FINISH_IGNORE_OBJECT_LIST); object_count = oyObjectCountCurrentObjectIdList(); if(object_count) { oyObjectTreePrint( 0x01 | 0x02 ); PRINT_SUB( oyjlTESTRESULT_XFAIL, "objects:                                     %d", object_count); } else { PRINT_SUB( oyjlTESTRESULT_SUCCESS, "objects:                                     %d", object_count); } oyLibConfigRelease(0); } if(oy_debug_objects_old != -9999) { oy_debug_objects = oy_debug_objects_old; }
+
   return result;
 }
 
@@ -6782,6 +7026,10 @@ oyjlTESTRESULT_e testRectangles()
 oyjlTESTRESULT_e testScreenPixel()
 {
   oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
+  int object_count = 0, oy_debug_objects_old = -9999;
+
+  if(oy_debug_objects < 0) oyLibConfigRelease(0);
+  if(oy_debug_objects == -1) { oy_debug_objects_old = -1; oy_debug_objects = -2; }
   uint32_t icc_profile_flags =oyICCProfileSelectionFlagsFromOptions( OY_CMM_STD,
                                        "//" OY_TYPE_STD "/icc_color", NULL, 0 );
   oyProfile_s * p_rgb = oyProfile_FromStd( oyEDITING_RGB, icc_profile_flags, testobj );
@@ -6954,6 +7202,8 @@ oyjlTESTRESULT_e testScreenPixel()
   free(buf_16in);
   free(buf_16out);
 
+  if(oy_debug_objects >= 0 || oy_debug_objects == -2) { oyLibConfigRelease(FINISH_IGNORE_OBJECT_LIST); object_count = oyObjectCountCurrentObjectIdList(); if(object_count) { oyObjectTreePrint( 0x01 | 0x02 ); PRINT_SUB( oyjlTESTRESULT_XFAIL, "objects:                                     %d", object_count); } else { PRINT_SUB( oyjlTESTRESULT_SUCCESS, "objects:                                     %d", object_count); } oyLibConfigRelease(0); } if(oy_debug_objects_old != -9999) { oy_debug_objects = oy_debug_objects_old; }
+
   return result;
 }
 
@@ -6961,6 +7211,10 @@ oyjlTESTRESULT_e testFilterNodeCMM( oyjlTESTRESULT_e result_,
                                   const char * reg_pattern )
 {
   oyjlTESTRESULT_e result = result_;
+  int object_count = 0, oy_debug_objects_old = -9999;
+
+  if(oy_debug_objects < 0) oyLibConfigRelease(0);
+  if(oy_debug_objects == -1) { oy_debug_objects_old = -1; oy_debug_objects = -2; }
   uint32_t icc_profile_flags =oyICCProfileSelectionFlagsFromOptions( OY_CMM_STD,
                                        "//" OY_TYPE_STD "/icc_color", NULL, 0 );
   oyProfile_s * p_lab = oyProfile_FromFile( "compatibleWithAdobeRGB1998.icc", icc_profile_flags, testobj );
@@ -7143,12 +7397,18 @@ oyjlTESTRESULT_e testFilterNodeCMM( oyjlTESTRESULT_e result_,
   oyOptions_Release( &node_opts );
   oyConversion_Release( &cc );
 
+  if(oy_debug_objects >= 0 || oy_debug_objects == -2) { oyLibConfigRelease(FINISH_IGNORE_OBJECT_LIST); object_count = oyObjectCountCurrentObjectIdList(); if(object_count) { oyObjectTreePrint( 0x01 | 0x02 ); PRINT_SUB( oyjlTESTRESULT_XFAIL, "objects:                                     %d", object_count); } else { PRINT_SUB( oyjlTESTRESULT_SUCCESS, "objects:                                     %d", object_count); } oyLibConfigRelease(0); } if(oy_debug_objects_old != -9999) { oy_debug_objects = oy_debug_objects_old; }
+
   return result;
 }
 
 oyjlTESTRESULT_e testFilterNode()
 {
   oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
+  int object_count = 0, oy_debug_objects_old = -9999;
+
+  if(oy_debug_objects < 0) oyLibConfigRelease(0);
+  if(oy_debug_objects == -1) { oy_debug_objects_old = -1; oy_debug_objects = -2; }
 
   fprintf(stdout, "\n" );
 
@@ -7168,6 +7428,8 @@ oyjlTESTRESULT_e testFilterNode()
     fprintf(stdout, "\n" );
     ++i;
   }
+
+  if(oy_debug_objects >= 0 || oy_debug_objects == -2) { oyLibConfigRelease(FINISH_IGNORE_OBJECT_LIST); object_count = oyObjectCountCurrentObjectIdList(); if(object_count) { oyObjectTreePrint( 0x01 | 0x02 ); PRINT_SUB( oyjlTESTRESULT_XFAIL, "objects:                                     %d", object_count); } else { PRINT_SUB( oyjlTESTRESULT_SUCCESS, "objects:                                      %d", object_count); } oyLibConfigRelease(0); } if(oy_debug_objects_old != -9999) { oy_debug_objects = oy_debug_objects_old; }
 
   return result;
 }
@@ -7192,6 +7454,10 @@ int oyHasLcms()
 
 oyjlTESTRESULT_e testConversion()
 {
+  int object_count = 0, oy_debug_objects_old = -9999;
+
+  if(oy_debug_objects < 0) oyLibConfigRelease(0);
+  if(oy_debug_objects == -1) { oy_debug_objects_old = -1; oy_debug_objects = -2; }
   fprintf(stdout, "\n" );
 
   oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
@@ -7584,12 +7850,18 @@ oyjlTESTRESULT_e testConversion()
   oyImage_Release( &input );
   oyImage_Release( &output );
 
+  if(oy_debug_objects >= 0 || oy_debug_objects == -2) { oyLibConfigRelease(FINISH_IGNORE_OBJECT_LIST); object_count = oyObjectCountCurrentObjectIdList(); if(object_count) { oyObjectTreePrint( 0x01 | 0x02 ); PRINT_SUB( oyjlTESTRESULT_XFAIL, "objects:                                     %d", object_count); } else { PRINT_SUB( oyjlTESTRESULT_SUCCESS, "objects:                                     %d", object_count); } oyLibConfigRelease(0); } if(oy_debug_objects_old != -9999) { oy_debug_objects = oy_debug_objects_old; }
+
   return result;
 }
 
 oyjlTESTRESULT_e testCMMlists()
 {
   oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
+  int object_count = 0, oy_debug_objects_old = -9999;
+
+  if(oy_debug_objects < 0) oyLibConfigRelease(0);
+  if(oy_debug_objects == -1) { oy_debug_objects_old = -1; oy_debug_objects = -2; }
 
   fprintf(stdout, "\n" );
 
@@ -7701,6 +7973,8 @@ oyjlTESTRESULT_e testCMMlists()
   }
   if(default_cmm) free(default_cmm);
 
+  if(oy_debug_objects >= 0 || oy_debug_objects == -2) { oyLibConfigRelease(FINISH_IGNORE_OBJECT_LIST); object_count = oyObjectCountCurrentObjectIdList(); if(object_count) { oyObjectTreePrint( 0x01 | 0x02 ); PRINT_SUB( oyjlTESTRESULT_XFAIL, "objects:                                     %d", object_count); } else { PRINT_SUB( oyjlTESTRESULT_SUCCESS, "objects:                                     %d", object_count); } oyLibConfigRelease(0); } if(oy_debug_objects_old != -9999) { oy_debug_objects = oy_debug_objects_old; }
+
   return result;
 }
 
@@ -7778,6 +8052,10 @@ int      oyConversionColors          ( oyProfile_s       * p_in,
 oyjlTESTRESULT_e testICCsCheck()
 {
   oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
+  int object_count = 0, oy_debug_objects_old = -9999;
+
+  if(oy_debug_objects < 0) oyLibConfigRelease(0);
+  if(oy_debug_objects == -1) { oy_debug_objects_old = -1; oy_debug_objects = -2; }
 
   fprintf(stdout, "\n" );
 
@@ -8074,12 +8352,18 @@ oyjlTESTRESULT_e testICCsCheck()
     free(list);
   }
 
+  if(oy_debug_objects >= 0 || oy_debug_objects == -2) { oyLibConfigRelease(FINISH_IGNORE_OBJECT_LIST); object_count = oyObjectCountCurrentObjectIdList(); if(object_count) { oyObjectTreePrint( 0x01 | 0x02 ); PRINT_SUB( oyjlTESTRESULT_XFAIL, "objects:                                     %d", object_count); } else { PRINT_SUB( oyjlTESTRESULT_SUCCESS, "objects:                                     %d", object_count); } oyLibConfigRelease(0); } if(oy_debug_objects_old != -9999) { oy_debug_objects = oy_debug_objects_old; }
+
   return result;
 }
 
 oyjlTESTRESULT_e testCCorrectFlags( )
 {
   oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
+  int object_count = 0, oy_debug_objects_old = -9999;
+
+  if(oy_debug_objects < 0) oyLibConfigRelease(0);
+  if(oy_debug_objects == -1) { oy_debug_objects_old = -1; oy_debug_objects = -2; }
 
   fprintf(stdout, "\n" );
 
@@ -8194,6 +8478,8 @@ oyjlTESTRESULT_e testCCorrectFlags( )
   oyProfile_Release( &p_lab );
   oyProfile_Release( &p_web );
 
+  if(oy_debug_objects >= 0 || oy_debug_objects == -2) { oyLibConfigRelease(FINISH_IGNORE_OBJECT_LIST); object_count = oyObjectCountCurrentObjectIdList(); if(object_count) { oyObjectTreePrint( 0x01 | 0x02 ); PRINT_SUB( oyjlTESTRESULT_XFAIL, "objects:                                     %d", object_count); } else { PRINT_SUB( oyjlTESTRESULT_SUCCESS, "objects:                                     %d", object_count); } oyLibConfigRelease(0); } if(oy_debug_objects_old != -9999) { oy_debug_objects = oy_debug_objects_old; }
+
   return result;
 }
 
@@ -8209,6 +8495,10 @@ oyHash_s *   oyTestCacheListGetEntry_ ( const char        * hash_text)
 oyjlTESTRESULT_e testCache()
 {
   oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
+  int object_count = 0, oy_debug_objects_old = -9999;
+
+  if(oy_debug_objects < 0) oyLibConfigRelease(0);
+  if(oy_debug_objects == -1) { oy_debug_objects_old = -1; oy_debug_objects = -2; }
 
   fprintf(stdout, "\n" );
 
@@ -8393,12 +8683,18 @@ oyjlTESTRESULT_e testCache()
 
   oyTestCacheListClear_();
 
+  if(oy_debug_objects >= 0 || oy_debug_objects == -2) { oyLibConfigRelease(FINISH_IGNORE_OBJECT_LIST); object_count = oyObjectCountCurrentObjectIdList(); if(object_count) { oyObjectTreePrint( 0x01 | 0x02 ); PRINT_SUB( oyjlTESTRESULT_XFAIL, "objects:                                     %d", object_count); } else { PRINT_SUB( oyjlTESTRESULT_SUCCESS, "objects:                                     %d", object_count); } oyLibConfigRelease(0); } if(oy_debug_objects_old != -9999) { oy_debug_objects = oy_debug_objects_old; }
+
   return result;
 }
 
 oyjlTESTRESULT_e testPaths()
 {
   oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
+  int object_count = 0, oy_debug_objects_old = -9999;
+
+  if(oy_debug_objects < 0) oyLibConfigRelease(0);
+  if(oy_debug_objects == -1) { oy_debug_objects_old = -1; oy_debug_objects = -2; }
 
   fprintf(stdout, "\n" );
 
@@ -8431,6 +8727,8 @@ oyjlTESTRESULT_e testPaths()
   }
 
 
+  if(oy_debug_objects >= 0 || oy_debug_objects == -2) { oyLibConfigRelease(FINISH_IGNORE_OBJECT_LIST); object_count = oyObjectCountCurrentObjectIdList(); if(object_count) { oyObjectTreePrint( 0x01 | 0x02 ); PRINT_SUB( oyjlTESTRESULT_XFAIL, "objects:                                     %d", object_count); } else { PRINT_SUB( oyjlTESTRESULT_SUCCESS, "objects:                                     %d", object_count); } oyLibConfigRelease(0); } if(oy_debug_objects_old != -9999) { oy_debug_objects = oy_debug_objects_old; }
+
   return result;
 }
 
@@ -8446,6 +8744,10 @@ oyjlTESTRESULT_e testConfDomain ()
   int i,j,n;
   uint32_t count = 0,
          * rank_list = 0;
+  int object_count = 0, oy_debug_objects_old = -9999;
+
+  if(oy_debug_objects < 0) oyLibConfigRelease(0);
+  if(oy_debug_objects == -1) { oy_debug_objects_old = -1; oy_debug_objects = -2; }
 
   fprintf(stdout, "\n" );
 
@@ -8568,6 +8870,7 @@ oyjlTESTRESULT_e testConfDomain ()
   oyStringListRelease_( &domains, count, free );
   oyFree_m_( rank_list );
 
+  if(oy_debug_objects >= 0 || oy_debug_objects == -2) { oyLibConfigRelease(FINISH_IGNORE_OBJECT_LIST); object_count = oyObjectCountCurrentObjectIdList(); if(object_count) { oyObjectTreePrint( 0x01 | 0x02 ); PRINT_SUB( oyjlTESTRESULT_FAIL, "objects:                                     %d", object_count); } else { PRINT_SUB( oyjlTESTRESULT_SUCCESS, "objects:                                      %d", object_count); } oyLibConfigRelease(0); } if(oy_debug_objects_old != -9999) { oy_debug_objects = oy_debug_objects_old; }
 
   return result;
 }
