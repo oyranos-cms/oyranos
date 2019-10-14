@@ -108,6 +108,7 @@ void               oyLibCoreRelease  ( )
   if(oy_static_msg_funcs_)
     oyDeAllocateFunc_(oy_static_msg_funcs_);
   oy_static_msg_funcs_ = NULL;
+  oy_msg_func_n_ = 0;
   if(oy_object_show_text_)
     oyFree_m_( oy_object_show_text_ );
 
