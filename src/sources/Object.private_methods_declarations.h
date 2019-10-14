@@ -11,6 +11,7 @@ int          oyGetNewObjectID        ( );
 
 /* object tracking */
 int *              oyObjectGetCurrentObjectIdList( void );
+int                oyObjectCountCurrentObjectIdList( void );
 int *              oyObjectFindNewIds( int               * old_ids,
                                        int               * new_ids );
 void               oyObjectReleaseCurrentObjectIdList(

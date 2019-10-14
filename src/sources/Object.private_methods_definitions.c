@@ -190,7 +190,7 @@ int oyGetNewObjectID()
 
 #define MAX_OBJECTS_TRACKED 1000000
 /* private tracking API's start */
-static oyObject_s * oy_obj_track_list = 0;
+static oyObject_s * oy_obj_track_list = NULL;
 void               oyObject_Track    ( oyObject_s          obj )
 {
   if(!oy_obj_track_list)
@@ -206,6 +206,11 @@ void               oyObject_Track    ( oyObject_s          obj )
     OY_BACKTRACE_PRINT
     fprintf( stderr, "Object[%d] tracked\n", obj->id_);
   }
+  if(oy_debug_objects == -2)
+  {
+    //OY_BACKTRACE_PRINT
+    //fprintf( stderr, "Object[%d] tracked %s:%d %d\n", obj->id_, __FILE__,__LINE__, oy_debug_objects);
+  }
 }
 void               oyObject_UnTrack    ( oyObject_s          obj )
 {
@@ -219,6 +224,11 @@ void               oyObject_UnTrack    ( oyObject_s          obj )
     const char * type = obj->parent_?oyStructTypeToText(obj->parent_->type_):"";
     fprintf( stderr, "!!!ERROR: Object[%d] has unexpected reference counter: %d  %s\n", obj->id_, obj->ref_, type );
   }
+  if(oy_debug_objects == -2)
+  {
+    //OY_BACKTRACE_PRINT
+    //fprintf( stderr, "Object[%d] untracked %s:%d\n", obj->id_, __FILE__,__LINE__);
+  }
 }
 /* private tracking API's end */
 
@@ -226,6 +236,8 @@ int *              oyObjectGetCurrentObjectIdList( void )
 {
   int * id_list = oyAllocateFunc_( sizeof(int) * MAX_OBJECTS_TRACKED );
   int i;
+
+  memset(id_list, 0, sizeof(int) * MAX_OBJECTS_TRACKED );
 
   if(id_list)
     for(i = 0; i < MAX_OBJECTS_TRACKED; ++i)
@@ -290,6 +302,20 @@ int                oyObjectIdListShowDiffAndRelease (
   oyObjectReleaseCurrentObjectIdList( ids_old );
   oyObjectReleaseCurrentObjectIdList( &ids_new );
   oyObjectReleaseCurrentObjectIdList( &ids_remaining_new );
+
+  return count;
+}
+
+int                oyObjectCountCurrentObjectIdList( void )
+{
+  int * ids_new = oyObjectGetCurrentObjectIdList(),
+      max_count = MAX_OBJECTS_TRACKED,i, count = 0;
+
+  for(i = 0; i < max_count; ++i)
+    if(ids_new[i] != -1)
+      ++count;
+
+  oyObjectReleaseCurrentObjectIdList( &ids_new );
 
   return count;
 }
