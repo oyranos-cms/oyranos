@@ -2339,6 +2339,7 @@ oyStructList_s * oyIMProfileTag_GetValues(
                        tmp = oyStringCopy( name, 0 );
                    }
                    oyProfileTag_Release( &tmptag );
+                   oyStructList_Release( &desc_tmp );
                  }
 
                  if(size_ < offset + mluc_size)
