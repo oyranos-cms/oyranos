@@ -59,7 +59,7 @@ OYAPI int  OYEXPORT
           oyFilterNode_s * n = (oyFilterNode_s *)s_->node;
           s_->node = NULL;
           oyFilterNode_Release( &n );
-          oyFilterSocket_Release( &s );
+          //oyFilterSocket_Release( &s );
         }
         oyFilterPlugs_ReleaseAt( s_->requesting_plugs_, i );
         oyFilterSocket_Release( (oyFilterSocket_s**)&c_->remote_socket_ );
