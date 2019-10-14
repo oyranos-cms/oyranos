@@ -89,6 +89,7 @@ int oyExportReset_(int export_check)
 
 /* @param          flags               - 0x01 keep i18n
  *                                     - 0x02 keep caches
+ *                                     - 0x04 keep object list
  */
 void     oyFinish_                   ( int                 flags )
 {
@@ -99,7 +100,8 @@ void     oyFinish_                   ( int                 flags )
   if(oy_debug_objects >= 0)
     oyObjectTreePrint( 0x01 | 0x02 );
   /* clean object tracks after print */
-  oyObjectGetList( 0 );
+  if(!(flags & FINISH_IGNORE_OBJECT_LIST))
+    oyObjectGetList( 0 );
   oyDebugLevelCacheRelease();
 
 #ifdef HAVE_LIBXML2
