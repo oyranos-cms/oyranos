@@ -2363,6 +2363,7 @@ char * l2cmsImage_GetText            ( oyImage_s         * image,
     oySTRUCT_FREE_m( s, text );
   }
   text = 0;
+  oyProfile_Release( &profile );
 
   return hash_text;
 }
