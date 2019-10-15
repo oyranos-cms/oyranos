@@ -1224,7 +1224,7 @@ static oyStruct_s *  oyStruct_FromId ( int                 id )
  */
 void               oyObjectTreePrint ( int                 flags )
 {
-  if(oy_debug_objects >= 0)
+  if(oy_debug_objects >= 0 || oy_debug_objects == -2)
   {
     int skip_cmm_caches_flag = getenv("OY_DEBUG_OBJECTS_SKIP_CMM_CACHES") ? 0x04 : 0;
     int * ids_old = oyObjectGetCurrentObjectIdList( );
