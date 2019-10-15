@@ -275,8 +275,82 @@ void oy_backtrace_();
             } \
             free(strings); \
           }
+#define OY_BACKTRACE_STRING \
+          int j, nptrs; \
+          void *buffer[BT_BUF_SIZE]; \
+          char **strings; \
+\
+          nptrs = backtrace(buffer, BT_BUF_SIZE); \
+\
+          /* The call backtrace_symbols_fd(buffer, nptrs, STDOUT_FILENO) \
+             would produce similar output to the following: */ \
+\
+          strings = backtrace_symbols(buffer, nptrs); \
+          if( strings == NULL ) \
+          { \
+            perror("backtrace_symbols"); \
+          } else \
+          { \
+            int start = nptrs-1; \
+            do { --start; } while( start >= 0 && (strstr(strings[start], "(main+") == NULL) ); \
+            oyjlStringAdd( &text, 0,0, "\n" ); \
+            for(j = start; j >= 0; j--) \
+            { \
+              if(oy_debug) \
+                oyjlStringAdd( &text, 0,0, "%s\n", strings[j]); \
+              else \
+              { \
+                char * t = NULL, * txt = NULL, * line_number = NULL; \
+                const char * line = strings[j], \
+                           * tmp = strchr( line, '(' ), \
+                           * addr = strchr( tmp, '[' ); \
+                if(addr) \
+                { \
+                  char * command = NULL; \
+                  size_t size = 0; \
+                  char * prog = oyjlStringCopy( line, 0 ); \
+                  char * addr2 = oyjlStringCopy( addr+1, 0 ); \
+                  addr2[strlen(addr2)-1] = '\000'; \
+                  txt = strchr( prog, '(' ); \
+                  if(txt) txt[0] = '\000'; \
+                  oyjlStringAdd( &command, 0,0, "addr2line -e %s %s -si", prog, addr2 ); \
+                  line_number = oyReadCmdToMem_( command, &size, "r", NULL ); \
+                  if(line_number) \
+                    line_number[strlen(line_number)-1] = '\000'; \
+                  txt = strchr( line_number, '(' ); \
+                  if(txt) txt[-1] = '\000'; \
+                  oyFree_m_(addr2); \
+                  oyFree_m_(command); \
+                  oyFree_m_(prog); \
+                } \
+                if(tmp) t = oyStringCopy( &tmp[1], NULL ); \
+                else t = oyStringCopy( line, NULL ); \
+                txt = strchr( t, '+' ); \
+                if(txt) txt[0] = '\000'; \
+                if(j > 0 && (strstr(strings[j-1], t) != NULL) ) \
+                  oyFree_m_(t); \
+                if(t) \
+                { \
+                  if(j==0) \
+                  { \
+                    oyjlStringAdd( &text, 0,0, "%s", t ); \
+                    oyjlStringAdd( &text, 0,0, "(%s) ", line_number ? line_number : ""); \
+                  } \
+                  else \
+                  { \
+                    oyjlStringAdd( &text, 0,0, "%s", t); \
+                    oyjlStringAdd( &text, 0,0, "(%s)->", line_number ? line_number : ""); \
+                  } \
+                  oyFree_m_(t); \
+                } \
+                oyFree_m_(line_number); \
+              } \
+            } \
+            free(strings); \
+          }
 #else
 #define OY_BACKTRACE_PRINT
+#define OY_BACKTRACE_STRING
 #endif
 
 #ifdef __cplusplus
