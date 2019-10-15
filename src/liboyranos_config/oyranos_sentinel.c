@@ -87,6 +87,10 @@ int oyExportReset_(int export_check)
   return action;
 }
 
+#include "oyranos_cache.h"
+#ifdef HAVE_LIBXML2
+#include <libxml/parser.h>
+#endif
 /* @param          flags               - 0x01 keep i18n
  *                                     - 0x02 keep caches
  *                                     - 0x04 keep object list
@@ -114,7 +118,6 @@ void     oyFinish_                   ( int                 flags )
 #include "oyProfile_s_.h"
 #include "oyProfiles_s.h"
 #include "oyStructList_s_.h"
-#include "oyranos_cache.h"
 
 /** @internal
  *
