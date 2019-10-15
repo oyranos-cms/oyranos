@@ -904,8 +904,8 @@ int                oyObjectIdListTraverseStructTrees (
 int skip_ids[10] = {0,0,0,0,0, 0,0,0,0,0};
 typedef struct oyTreeData_s {
   oyLeave_s * l;
-  char * text;
-  char * text2;
+  char * text;  /* node text */
+  char * text2; /* top text */
   int flags;
 } oyTreeData_s;
 
@@ -1217,12 +1217,15 @@ static oyStruct_s *  oyStruct_FromId ( int                 id )
  *  @param        flags               - 0x01 show a graph
  *                                    - 0x02 include more object details
  *                                    - 0x04 skip cmm caches to show a more functional graph
+ *                                    - 0x08 include unconnected objects
+ *  @param        comment             a title comment for the graph; optional
  *
- *  @version  Oyranos: 0.9.6
- *  @date     2016/04/17
+ *  @version  Oyranos: 0.9.7
+ *  @date     2019/10/15
  *  @since    2016/04/16 (Oyranos: 0.9.6)
  */
-void               oyObjectTreePrint ( int                 flags )
+void               oyObjectTreePrint ( int                 flags,
+                                       const char        * comment )
 {
   if(oy_debug_objects >= 0 || oy_debug_objects == -2)
   {
@@ -1280,12 +1283,15 @@ void               oyObjectTreePrint ( int                 flags )
       }
       if(i == old_oy_debug_objects)
         fprintf(stderr, OY_DBG_FORMAT_ "ID: %d\n", OY_DBG_ARGS_, i);
-      if(trees[i].text)
+      if(trees[i].text || (trees[i].text2 && flags & 0x08))
       {
         if(flags & 0x01)
         {
           oyStringAddPrintf( &dot, 0,0, "    %s", trees[i].text2 );
-          oyStringAddPrintf( &dot_edges, 0,0, "    %s", trees[i].text );
+          if(trees[i].text)
+            oyStringAddPrintf( &dot_edges, 0,0, "    %s", trees[i].text );
+          else
+            oyStringAddPrintf( &dot_edges, 0,0, "    %d\n", i );
         } else
           fprintf(stderr, "%d: %s\n", i, trees[i].text);
         ++count;
@@ -1383,8 +1389,8 @@ bgcolor=\"transparent\"\n\
         oyStringAddPrintf( &graph,0,0, "%s\n", dot);
       oyStringAddPrintf( &graph,0,0,"\
   subgraph cluster_0 {\n\
-    label=\"Oyranos Object Trees Graph\"\n\
-    color=gray;\n");
+    label=\"%s\"\n\
+    color=gray;\n", comment?comment:"Oyranos Object Trees Graph");
       if(dot_edges)
         oyStringAddPrintf( &graph,0,0,"%s", dot_edges);
       oyStringAddPrintf( &graph,0,0,"  }\n");
@@ -1395,9 +1401,9 @@ bgcolor=\"transparent\"\n\
 
       /* generate a SVG and send to firefox */
       if(flags & 0x02)
-        r = system("dot -Tsvg oyranos_tree.dot -o oyranos_tree.svg && firefox oyranos_tree.svg &");
+        r = system("dot -Tsvg oyranos_tree.dot -o oyranos_tree.svg && firefox oyranos_tree.svg ; sleep 1 &");
       else
-        r = system("fdp -Tsvg oyranos_tree.dot -o oyranos_tree.svg && firefox oyranos_tree.svg &");
+        r = system("fdp -Tsvg oyranos_tree.dot -o oyranos_tree.svg && firefox oyranos_tree.svg ; sleep 1 &");
 
       if(graph) oyFree_m_( graph );
       if(dot) oyFree_m_( dot );

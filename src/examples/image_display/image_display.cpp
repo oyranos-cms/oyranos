@@ -670,7 +670,7 @@ void exit_cb ( Fl_Widget* w OY_UNUSED, void* daten OY_UNUSED )
   oyFilterNode_Release( &icc );
   delete oy_widget;
   if(oy_debug_objects >= 0)
-    oyObjectTreePrint( 0x01 | 0x02 );
+    oyObjectTreePrint( 0x01 | 0x02, NULL );
   exit(0);
 }
 

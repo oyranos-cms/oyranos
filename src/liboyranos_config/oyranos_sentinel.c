@@ -102,7 +102,7 @@ void     oyFinish_                   ( int                 flags )
   if(!(flags & FINISH_IGNORE_CACHES))
     oyAlphaFinish_( 0 );
   if(oy_debug_objects >= 0)
-    oyObjectTreePrint( 0x01 | 0x02 );
+    oyObjectTreePrint( 0x01 | 0x02, NULL );
   /* clean object tracks after print */
   if(!(flags & FINISH_IGNORE_OBJECT_LIST))
     oyObjectGetList( 0 );

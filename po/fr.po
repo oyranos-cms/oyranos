@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ICC Examin 0.41\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2019-10-11 23:33+0200\n"
+"POT-Creation-Date: 2019-10-15 15:23+0200\n"
 "PO-Revision-Date: 2006-06-29 19:31+0200\n"
 "Last-Translator: Pascal LACROIX <lacroixpascal at vfemail.net>\n"
 "Language-Team: <fr@li.org>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: liboyranos_core/oyranos_core.c:450 tools/oyranos-device.c:370
+#: liboyranos_core/oyranos_core.c:475 tools/oyranos-device.c:370
 #: tools/oyranos-device.c:386 tools/oyranos-device.c:401
 #: tools/oyranos-device.c:423 tools/oyranos-device.c:465
 #: tools/oyranos-device.c:828 tools/oyranos-device.c:1025
@@ -2196,7 +2196,7 @@ msgstr "ICC Profils"
 msgid "ICC profile directory name"
 msgstr "Fichier"
 
-#: API_generated/oyProfile_s_.c:1038
+#: API_generated/oyProfile_s_.c:1039
 #, fuzzy
 msgid "ICC profile id written"
 msgstr "ICC Profils"
@@ -3311,7 +3311,7 @@ msgstr "Model:"
 msgid "No"
 msgstr ""
 
-#: API_generated/oyProfile_s_.c:1023
+#: API_generated/oyProfile_s_.c:1024
 #, fuzzy
 msgid "No ICC profile id detected"
 msgstr "ICC Profils"
@@ -4524,7 +4524,7 @@ msgstr ""
 msgid "Show white point modes"
 msgstr "ICC Profils"
 
-#: API_generated/oyFilterNode_s_.c:1432 API_generated/oyObserver_s.c:361
+#: API_generated/oyFilterNode_s_.c:1433 API_generated/oyObserver_s.c:361
 #: API_generated/oyObserver_s.c:372 API_generated/oyObserver_s.c:573
 #: API_generated/oyObserver_s.c:651 API_generated/oyObserver_s_.c:53
 #: examples/image_display/oyranos_display_helper_classes_fltk.cpp:47
@@ -5550,7 +5550,7 @@ msgstr "Description"
 msgid "Viewing conditions description"
 msgstr "Description"
 
-#: liboyranos_core/oyranos_core.c:447 tools/oyranos-device.c:447
+#: liboyranos_core/oyranos_core.c:472 tools/oyranos-device.c:447
 #: tools/oyranos-device.c:450 tools/oyranos-device.c:456
 #: tools/qcmsevents/qcmsevents.cpp:330
 #, c-format
@@ -5609,7 +5609,7 @@ msgstr "Ouvrir Profil"
 msgid "Write to ICC profile:"
 msgstr "ICC Profils"
 
-#: API_generated/oyProfile_s_.c:1015
+#: API_generated/oyProfile_s_.c:1016
 #, fuzzy
 msgid "Wrong ICC profile id detected"
 msgstr "ICC Profils"
@@ -5806,7 +5806,7 @@ msgstr ""
 msgid "enable simple defaults"
 msgstr ""
 
-#: API_generated/oyConversion_s.c:207 API_generated/oyFilterNode_s_.c:808
+#: API_generated/oyConversion_s.c:207 API_generated/oyFilterNode_s_.c:809
 #: API_generated/oyranos_devices.c:2616 API_generated/oyranos_devices.c:2628
 #: API_generated/oyranos_devices.c:2661 API_generated/oyranos_devices.c:3177
 #: API_generated/oyranos_module.c:2025

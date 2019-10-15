@@ -116,7 +116,8 @@ int                oyObjectIdListTraverseStructTrees (
                                        oyObjectTreeCallback_f func,
                                        void              * user_data,
                                        int                 flags );
-void               oyObjectTreePrint ( int                 flags );
+void               oyObjectTreePrint ( int                 flags,
+                                       const char        * comment );
 int                oyStruct_GetChildren (
                                        oyStruct_s        * obj,
                                        oyStruct_s      *** list );
