@@ -267,7 +267,8 @@ oyProfileTag_s_ * oyProfileTag_New_ ( oyObject_s object )
   {
     oy_profiletag_init_ = 1;
     oyStruct_RegisterStaticMessageFunc( type,
-                                        oyProfileTag_StaticMessageFunc_ );
+                                        oyProfileTag_StaticMessageFunc_,
+                                        &oy_profiletag_init_ );
   }
 
   if(error)

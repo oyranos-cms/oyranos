@@ -245,7 +245,8 @@ oyCMMobjectType_s_ * oyCMMobjectType_New_ ( oyObject_s object )
   {
     oy_cmmobjecttype_init_ = 1;
     oyStruct_RegisterStaticMessageFunc( type,
-                                        oyCMMobjectType_StaticMessageFunc_ );
+                                        oyCMMobjectType_StaticMessageFunc_,
+                                        &oy_cmmobjecttype_init_ );
   }
 
   if(error)

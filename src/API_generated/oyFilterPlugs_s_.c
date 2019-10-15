@@ -249,7 +249,8 @@ oyFilterPlugs_s_ * oyFilterPlugs_New_ ( oyObject_s object )
   {
     oy_filterplugs_init_ = 1;
     oyStruct_RegisterStaticMessageFunc( type,
-                                        oyFilterPlugs_StaticMessageFunc_ );
+                                        oyFilterPlugs_StaticMessageFunc_,
+                                        &oy_filterplugs_init_ );
   }
 
   if(error)

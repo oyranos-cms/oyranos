@@ -240,7 +240,8 @@ oyLis_s_ * oyLis_New_ ( oyObject_s object )
   {
     oy_lis_init_ = 1;
     oyStruct_RegisterStaticMessageFunc( type,
-                                        oyLis_StaticMessageFunc_ );
+                                        oyLis_StaticMessageFunc_,
+                                        &oy_lis_init_ );
   }
 
   if(error)

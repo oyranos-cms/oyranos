@@ -249,7 +249,8 @@ oyProfiles_s_ * oyProfiles_New_ ( oyObject_s object )
   {
     oy_profiles_init_ = 1;
     oyStruct_RegisterStaticMessageFunc( type,
-                                        oyProfiles_StaticMessageFunc_ );
+                                        oyProfiles_StaticMessageFunc_,
+                                        &oy_profiles_init_ );
   }
 
   if(error)

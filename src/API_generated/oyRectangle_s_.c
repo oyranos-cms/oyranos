@@ -244,7 +244,8 @@ oyRectangle_s_ * oyRectangle_New_ ( oyObject_s object )
   {
     oy_rectangle_init_ = 1;
     oyStruct_RegisterStaticMessageFunc( type,
-                                        oyRectangle_StaticMessageFunc_ );
+                                        oyRectangle_StaticMessageFunc_,
+                                        &oy_rectangle_init_ );
   }
 
   if(error)

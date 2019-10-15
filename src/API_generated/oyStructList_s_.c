@@ -292,7 +292,8 @@ oyStructList_s_ * oyStructList_New_ ( oyObject_s object )
   {
     oy_structlist_init_ = 1;
     oyStruct_RegisterStaticMessageFunc( type,
-                                        oyStructList_StaticMessageFunc_ );
+                                        oyStructList_StaticMessageFunc_,
+                                        &oy_structlist_init_ );
   }
 
   if(error)

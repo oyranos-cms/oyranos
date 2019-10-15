@@ -254,7 +254,8 @@ oyFilterGraph_s_ * oyFilterGraph_New_ ( oyObject_s object )
   {
     oy_filtergraph_init_ = 1;
     oyStruct_RegisterStaticMessageFunc( type,
-                                        oyFilterGraph_StaticMessageFunc_ );
+                                        oyFilterGraph_StaticMessageFunc_,
+                                        &oy_filtergraph_init_ );
   }
 
   if(error)

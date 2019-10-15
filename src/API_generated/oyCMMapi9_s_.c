@@ -267,7 +267,8 @@ oyCMMapi9_s_ * oyCMMapi9_New_ ( oyObject_s object )
   {
     oy_cmmapi9_init_ = 1;
     oyStruct_RegisterStaticMessageFunc( type,
-                                        oyCMMapi9_StaticMessageFunc_ );
+                                        oyCMMapi9_StaticMessageFunc_,
+                                        &oy_cmmapi9_init_ );
   }
 
   if(error)

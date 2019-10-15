@@ -276,7 +276,8 @@ oyNamedColor_s_ * oyNamedColor_New_ ( oyObject_s object )
   {
     oy_namedcolor_init_ = 1;
     oyStruct_RegisterStaticMessageFunc( type,
-                                        oyNamedColor_StaticMessageFunc_ );
+                                        oyNamedColor_StaticMessageFunc_,
+                                        &oy_namedcolor_init_ );
   }
 
   if(error)

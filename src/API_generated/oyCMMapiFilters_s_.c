@@ -249,7 +249,8 @@ oyCMMapiFilters_s_ * oyCMMapiFilters_New_ ( oyObject_s object )
   {
     oy_cmmapifilters_init_ = 1;
     oyStruct_RegisterStaticMessageFunc( type,
-                                        oyCMMapiFilters_StaticMessageFunc_ );
+                                        oyCMMapiFilters_StaticMessageFunc_,
+                                        &oy_cmmapifilters_init_ );
   }
 
   if(error)

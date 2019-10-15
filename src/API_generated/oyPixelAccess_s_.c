@@ -278,7 +278,8 @@ oyPixelAccess_s_ * oyPixelAccess_New_ ( oyObject_s object )
   {
     oy_pixelaccess_init_ = 1;
     oyStruct_RegisterStaticMessageFunc( type,
-                                        oyPixelAccess_StaticMessageFunc_ );
+                                        oyPixelAccess_StaticMessageFunc_,
+                                        &oy_pixelaccess_init_ );
   }
 
   if(error)

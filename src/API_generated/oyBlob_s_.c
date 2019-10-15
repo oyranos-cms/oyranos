@@ -280,7 +280,8 @@ oyBlob_s_ * oyBlob_New_ ( oyObject_s object )
   {
     oy_blob_init_ = 1;
     oyStruct_RegisterStaticMessageFunc( type,
-                                        oyBlob_StaticMessageFunc_ );
+                                        oyBlob_StaticMessageFunc_,
+                                        &oy_blob_init_ );
   }
 
   if(error)

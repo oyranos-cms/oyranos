@@ -328,7 +328,8 @@ oyPointer_s_ * oyPointer_New_ ( oyObject_s object )
   {
     oy_pointer_init_ = 1;
     oyStruct_RegisterStaticMessageFunc( type,
-                                        oyPointer_StaticMessageFunc_ );
+                                        oyPointer_StaticMessageFunc_,
+                                        &oy_pointer_init_ );
   }
 
   if(error)

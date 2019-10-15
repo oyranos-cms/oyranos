@@ -250,7 +250,8 @@ oyOptions_s_ * oyOptions_New_ ( oyObject_s object )
   {
     oy_options_init_ = 1;
     oyStruct_RegisterStaticMessageFunc( type,
-                                        oyOptions_StaticMessageFunc_ );
+                                        oyOptions_StaticMessageFunc_,
+                                        &oy_options_init_ );
   }
 
   if(error)

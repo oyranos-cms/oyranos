@@ -290,7 +290,8 @@ oyConfig_s_ * oyConfig_New_ ( oyObject_s object )
   {
     oy_config_init_ = 1;
     oyStruct_RegisterStaticMessageFunc( type,
-                                        oyConfig_StaticMessageFunc_ );
+                                        oyConfig_StaticMessageFunc_,
+                                        &oy_config_init_ );
   }
 
   if(error)

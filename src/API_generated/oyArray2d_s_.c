@@ -268,7 +268,8 @@ oyArray2d_s_ * oyArray2d_New_ ( oyObject_s object )
   {
     oy_array2d_init_ = 1;
     oyStruct_RegisterStaticMessageFunc( type,
-                                        oyArray2d_StaticMessageFunc_ );
+                                        oyArray2d_StaticMessageFunc_,
+                                        &oy_array2d_init_ );
   }
 
   if(error)

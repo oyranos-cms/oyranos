@@ -357,9 +357,9 @@ int            oiDBMessageFuncSet ( oyMessage_f         message_func )
   oiDB_msg = message_func;
   openiccMessageFuncSet( message_func );
   oyStruct_RegisterStaticMessageFunc( openiccOBJECT_CONFIG,
-                                      oiDBopeniccStaticMessageFunc );
+                                      oiDBopeniccStaticMessageFunc, NULL );
   oyStruct_RegisterStaticMessageFunc( openiccOBJECT_DB,
-                                      oiDBopeniccStaticMessageFunc );
+                                      oiDBopeniccStaticMessageFunc, NULL );
   return 0;
 }
 

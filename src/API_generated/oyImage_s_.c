@@ -277,7 +277,8 @@ oyImage_s_ * oyImage_New_ ( oyObject_s object )
   {
     oy_image_init_ = 1;
     oyStruct_RegisterStaticMessageFunc( type,
-                                        oyImage_StaticMessageFunc_ );
+                                        oyImage_StaticMessageFunc_,
+                                        &oy_image_init_ );
   }
 
   if(error)

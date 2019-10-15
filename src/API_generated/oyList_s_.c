@@ -219,7 +219,8 @@ oyList_s_ * oyList_New_ ( oyObject_s object )
   {
     oy_list_init_ = 1;
     oyStruct_RegisterStaticMessageFunc( type,
-                                        oyList_StaticMessageFunc_ );
+                                        oyList_StaticMessageFunc_,
+                                        &oy_list_init_ );
   }
 
   if(error)

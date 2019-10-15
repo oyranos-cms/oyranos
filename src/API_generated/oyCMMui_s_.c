@@ -258,7 +258,8 @@ oyCMMui_s_ * oyCMMui_New_ ( oyObject_s object )
   {
     oy_cmmui_init_ = 1;
     oyStruct_RegisterStaticMessageFunc( type,
-                                        oyCMMui_StaticMessageFunc_ );
+                                        oyCMMui_StaticMessageFunc_,
+                                        &oy_cmmui_init_ );
   }
 
   if(error)

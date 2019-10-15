@@ -208,7 +208,8 @@ static const char * oy{{ class.baseName }}_StaticMessageFunc_ (
   {
     oy_{{ class.baseName|lower }}_init_ = 1;
     oyStruct_RegisterStaticMessageFunc( type,
-                                        oy{{ class.baseName }}_StaticMessageFunc_ );
+                                        oy{{ class.baseName }}_StaticMessageFunc_,
+                                        &oy_{{ class.baseName|lower }}_init_ );
   }
 
   if(error)

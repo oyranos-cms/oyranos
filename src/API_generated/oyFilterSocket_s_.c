@@ -277,7 +277,8 @@ oyFilterSocket_s_ * oyFilterSocket_New_ ( oyObject_s object )
   {
     oy_filtersocket_init_ = 1;
     oyStruct_RegisterStaticMessageFunc( type,
-                                        oyFilterSocket_StaticMessageFunc_ );
+                                        oyFilterSocket_StaticMessageFunc_,
+                                        &oy_filtersocket_init_ );
   }
 
   if(error)

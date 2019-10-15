@@ -361,7 +361,8 @@ oyFilterNode_s_ * oyFilterNode_New_ ( oyObject_s object )
   {
     oy_filternode_init_ = 1;
     oyStruct_RegisterStaticMessageFunc( type,
-                                        oyFilterNode_StaticMessageFunc_ );
+                                        oyFilterNode_StaticMessageFunc_,
+                                        &oy_filternode_init_ );
   }
 
   if(error)
@@ -721,7 +722,7 @@ int  oyFilterNode_AddToAdjacencyLst_ ( oyFilterNode_s_    * s,
           if(oyAdjacencyListAdd_( (oyFilterPlug_s*)p, (oyFilterNodes_s*)nodes, (oyFilterPlugs_s*)edges, mark, flags ))
             oyFilterNode_AddToAdjacencyLst_( (oyFilterNode_s_*)p->node,
                                              nodes, edges, mark, flags );
-          oyFilterPlug_Release( &p );
+          oyFilterPlug_Release( (oyFilterPlug_s**)&p );
         }
       }
     }

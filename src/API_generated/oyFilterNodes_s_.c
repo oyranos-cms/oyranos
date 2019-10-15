@@ -249,7 +249,8 @@ oyFilterNodes_s_ * oyFilterNodes_New_ ( oyObject_s object )
   {
     oy_filternodes_init_ = 1;
     oyStruct_RegisterStaticMessageFunc( type,
-                                        oyFilterNodes_StaticMessageFunc_ );
+                                        oyFilterNodes_StaticMessageFunc_,
+                                        &oy_filternodes_init_ );
   }
 
   if(error)

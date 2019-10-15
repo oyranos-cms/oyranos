@@ -316,7 +316,8 @@ oyConnectorImaging_s_ * oyConnectorImaging_New_ ( oyObject_s object )
   {
     oy_connectorimaging_init_ = 1;
     oyStruct_RegisterStaticMessageFunc( type,
-                                        oyConnectorImaging_StaticMessageFunc_ );
+                                        oyConnectorImaging_StaticMessageFunc_,
+                                        &oy_connectorimaging_init_ );
   }
 
   if(error)

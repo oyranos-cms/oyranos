@@ -249,7 +249,8 @@ oyCMMapis_s_ * oyCMMapis_New_ ( oyObject_s object )
   {
     oy_cmmapis_init_ = 1;
     oyStruct_RegisterStaticMessageFunc( type,
-                                        oyCMMapis_StaticMessageFunc_ );
+                                        oyCMMapis_StaticMessageFunc_,
+                                        &oy_cmmapis_init_ );
   }
 
   if(error)

@@ -83,7 +83,8 @@ typedef const char * (*oyStruct_RegisterStaticMessageFunc_f)
                                        int                 flags );
 int            oyStruct_RegisterStaticMessageFunc (
                                        int                 type,
-                                       oyStruct_RegisterStaticMessageFunc_f f);
+                                       oyStruct_RegisterStaticMessageFunc_f f,
+                                       int               * object_type_init_var );
 const char *   oyStruct_GetInfo      ( oyPointer           context,
                                        oyNAME_e            type,
                                        int                 flags );

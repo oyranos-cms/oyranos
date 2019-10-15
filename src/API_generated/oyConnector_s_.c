@@ -254,7 +254,8 @@ oyConnector_s_ * oyConnector_New_ ( oyObject_s object )
   {
     oy_connector_init_ = 1;
     oyStruct_RegisterStaticMessageFunc( type,
-                                        oyConnector_StaticMessageFunc_ );
+                                        oyConnector_StaticMessageFunc_,
+                                        &oy_connector_init_ );
   }
 
   if(error)

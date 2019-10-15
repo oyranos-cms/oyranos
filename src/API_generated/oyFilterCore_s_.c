@@ -281,7 +281,8 @@ oyFilterCore_s_ * oyFilterCore_New_ ( oyObject_s object )
   {
     oy_filtercore_init_ = 1;
     oyStruct_RegisterStaticMessageFunc( type,
-                                        oyFilterCore_StaticMessageFunc_ );
+                                        oyFilterCore_StaticMessageFunc_,
+                                        &oy_filtercore_init_ );
   }
 
   if(error)

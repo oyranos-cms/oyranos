@@ -309,7 +309,8 @@ oyOption_s_ * oyOption_New_ ( oyObject_s object )
   {
     oy_option_init_ = 1;
     oyStruct_RegisterStaticMessageFunc( type,
-                                        oyOption_StaticMessageFunc_ );
+                                        oyOption_StaticMessageFunc_,
+                                        &oy_option_init_ );
   }
 
   if(error)

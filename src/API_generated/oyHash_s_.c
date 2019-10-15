@@ -282,7 +282,8 @@ oyHash_s_ * oyHash_New_ ( oyObject_s object )
   {
     oy_hash_init_ = 1;
     oyStruct_RegisterStaticMessageFunc( type,
-                                        oyHash_StaticMessageFunc_ );
+                                        oyHash_StaticMessageFunc_,
+                                        &oy_hash_init_ );
   }
 
   if(error)

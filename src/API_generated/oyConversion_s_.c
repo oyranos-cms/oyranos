@@ -273,7 +273,8 @@ oyConversion_s_ * oyConversion_New_ ( oyObject_s object )
   {
     oy_conversion_init_ = 1;
     oyStruct_RegisterStaticMessageFunc( type,
-                                        oyConversion_StaticMessageFunc_ );
+                                        oyConversion_StaticMessageFunc_,
+                                        &oy_conversion_init_ );
   }
 
   if(error)
