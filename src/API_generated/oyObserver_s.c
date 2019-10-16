@@ -34,8 +34,8 @@
  *  @since   2009/10/26 (Oyranos: 0.1.10)
  *  @date    2009/10/26
  */
-OYAPI oyObserver_s * OYEXPORT
-           oyObserver_New            ( oyObject_s          object OY_UNUSED )
+OYAPI oyObserver_s * OYEXPORT oyObserver_New (
+                                       oyObject_s          object OY_UNUSED )
 {
   /* ---- start of common object constructor ----- */
   oyOBJECT_e type = oyOBJECT_OBSERVER_S;
@@ -78,8 +78,8 @@ OYAPI oyObserver_s * OYEXPORT
  *  @since   2009/10/26 (Oyranos: 0.1.10)
  *  @date    2009/10/26
  */
-OYAPI oyObserver_s * OYEXPORT
-           oyObserver_Copy           ( oyObserver_s      * obj,
+OYAPI oyObserver_s * OYEXPORT oyObserver_Copy (
+                                       oyObserver_s      * obj,
                                        oyObject_s          object )
 {
   oyObserver_s * s = obj;
@@ -101,8 +101,7 @@ OYAPI oyObserver_s * OYEXPORT
  *  @since   2009/10/26 (Oyranos: 0.1.10)
  *  @date    2009/10/26
  */
-OYAPI int  OYEXPORT
-           oyObserver_Release        ( oyObserver_s     ** obj )
+OYAPI int  OYEXPORT oyObserver_Release(oyObserver_s     ** obj )
 {
   /* ---- start of common object destructor ----- */
   oyObserver_s * s = 0;
@@ -148,8 +147,8 @@ OYAPI int  OYEXPORT
  *  @since   2009/10/26 (Oyranos: 0.1.10)
  *  @date    2010/04/07
  */
-OYAPI int  OYEXPORT
-           oyObserver_SignalSend     ( oyObserver_s      * observer,
+OYAPI int  OYEXPORT oyObserver_SignalSend (
+                                       oyObserver_s      * observer,
                                        oySIGNAL_e          signal_type,
                                        oyStruct_s        * signal_data )
 {
@@ -182,8 +181,8 @@ OYAPI int  OYEXPORT
  *  @since   2009/10/26 (Oyranos: 0.1.10)
  *  @date    2010/06/25
  */
-OYAPI int  OYEXPORT
-           oyStruct_ObserverAdd      ( oyStruct_s        * model,
+OYAPI int OYEXPORT oyStruct_ObserverAdd (
+                                       oyStruct_s        * model,
                                        oyStruct_s        * observer,
                                        oyStruct_s        * user_data,
                                        oyObserver_Signal_f signalFunc )
@@ -222,7 +221,7 @@ OYAPI int  OYEXPORT
       if(user_data)
         s->user_data = user_data->copy( user_data, 0 );
       s->signal = signalFunc;
-      if(oy_debug_objects >= 0)
+      if(oy_debug_objects >= 0 || oy_debug_objects == -2)
       {
         if(s->observer)
           oyObjectDebugMessage_( s->observer->oy_, __func__,
@@ -286,8 +285,8 @@ OYAPI int  OYEXPORT
  *  @since   2009/10/26 (Oyranos: 0.1.10)
  *  @date    2009/11/02
  */
-OYAPI int  OYEXPORT
-           oyStruct_ObserverRemove   ( oyStruct_s        * model,
+OYAPI int  OYEXPORT oyStruct_ObserverRemove (
+                                       oyStruct_s        * model,
                                        oyStruct_s        * observer,
                                        oyObserver_Signal_f signalFunc )
 {
@@ -323,8 +322,8 @@ OYAPI int  OYEXPORT
  *  @since   2009/10/27 (Oyranos: 0.1.10)
  *  @date    2009/10/27
  */
-OYAPI int  OYEXPORT
-           oyStruct_ObserverSignal   ( oyStruct_s        * model,
+OYAPI int  OYEXPORT oyStruct_ObserverSignal (
+                                       oyStruct_s        * model,
                                        oySIGNAL_e          signal_type,
                                        oyStruct_s        * signal_data )
 {
@@ -411,8 +410,8 @@ OYAPI int  OYEXPORT
  *  @since   2010/04/07 (Oyranos: 0.1.10)
  *  @date    2010/04/07
  */
-OYAPI int  OYEXPORT
-           oyStruct_DisableSignalSend( oyStruct_s        * model )
+OYAPI int  OYEXPORT oyStruct_DisableSignalSend(
+                                       oyStruct_s        * model )
 {
   oyObserver_s * obs = 0;
   int error = !model;
@@ -455,8 +454,8 @@ OYAPI int  OYEXPORT
  *  @since   2010/04/07 (Oyranos: 0.1.10)
  *  @date    2010/04/07
  */
-OYAPI int  OYEXPORT
-           oyStruct_EnableSignalSend ( oyStruct_s        * model )
+OYAPI int  OYEXPORT oyStruct_EnableSignalSend (
+                                       oyStruct_s        * model )
 {
   oyObserver_s * obs = 0;
   int error = !model;
@@ -512,8 +511,8 @@ OYAPI int  OYEXPORT
  *  @since   2009/11/02 (Oyranos: 0.1.10)
  *  @date    2009/11/02
  */
-OYAPI int  OYEXPORT
-           oyStruct_ObserversCopy    ( oyStruct_s        * object,
+OYAPI int  OYEXPORT oyStruct_ObserversCopy (
+                                       oyStruct_s        * object,
                                        oyStruct_s        * pattern,
                                        uint32_t            flags )
 {
@@ -543,8 +542,8 @@ OYAPI int  OYEXPORT
  *  @since   2009/11/02 (Oyranos: 0.1.10)
  *  @date    2009/11/02
  */
-OYAPI int  OYEXPORT
-           oyStruct_ObserverCopyModel( oyStruct_s        * model,
+OYAPI int  OYEXPORT oyStruct_ObserverCopyModel(
+                                       oyStruct_s        * model,
                                        oyStruct_s        * pattern,
                                        uint32_t            flags )
 {
@@ -620,8 +619,7 @@ OYAPI int  OYEXPORT
  *  @since   2009/11/02 (Oyranos: 0.1.10)
  *  @date    2009/11/02
  */
-OYAPI int  OYEXPORT
-           oyStruct_ObserverCopyObserver (
+OYAPI int  OYEXPORT oyStruct_ObserverCopyObserver (
                                        oyStruct_s        * observer,
                                        oyStruct_s        * pattern,
                                        uint32_t            flags )
@@ -697,8 +695,8 @@ OYAPI int  OYEXPORT
  *  @date    2009/10/28
  *  @since   2009/10/28 (Oyranos: 0.1.10)
  */
-OYAPI int  OYEXPORT
-           oyStruct_IsObserved       ( oyStruct_s        * model,
+OYAPI int  OYEXPORT oyStruct_IsObserved (
+                                       oyStruct_s        * model,
                                        oyStruct_s        * observer )
 {
   int observed = 0;
@@ -767,8 +765,8 @@ OYAPI int  OYEXPORT
  *  @date    2018/10/04
  *  @since   2018/09/29 (Oyranos: 0.9.7)
  */
-OYAPI int  OYEXPORT
-           oyStruct_ObservationCount ( oyStruct_s        * object,
+OYAPI int  OYEXPORT oyStruct_ObservationCount (
+                                       oyStruct_s        * object,
                                        uint32_t            flags )
 {
   int observed = 0;
@@ -808,6 +806,8 @@ OYAPI int  OYEXPORT
               ++observed;
           }
         }
+        if(models && models->release)
+          models->release( &models );
       }
     }
 
@@ -833,6 +833,8 @@ OYAPI int  OYEXPORT
               ++observed;
           }
         }
+        if(observers && observers->release)
+          observers->release( &observers );
       }
     }
   } 
@@ -882,8 +884,7 @@ uint32_t   oy_observer_flags = 0;
  *  @since   2009/10/26 (Oyranos: 0.1.10)
  *  @date    2009/10/26
  */
-OYAPI uint32_t OYEXPORT
-           oyObserverGetFlags        ( void )
+OYAPI uint32_t OYEXPORT oyObserverGetFlags ( void )
 {
   return oy_observer_flags;
 }
@@ -896,8 +897,7 @@ OYAPI uint32_t OYEXPORT
  *  @since   2009/10/26 (Oyranos: 0.1.10)
  *  @date    2009/10/26
  */
-OYAPI int  OYEXPORT
-           oyObserverSetFlags        ( uint32_t            flags )
+OYAPI int  OYEXPORT oyObserverSetFlags(uint32_t            flags )
 {
   oy_observer_flags = flags;
   return 0;

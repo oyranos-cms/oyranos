@@ -20,8 +20,8 @@
  *  @since   2009/10/26 (Oyranos: 0.1.10)
  *  @date    2009/10/26
  */
-OYAPI oyObserver_s * OYEXPORT
-           oyObserver_New            ( oyObject_s          object OY_UNUSED )
+OYAPI oyObserver_s * OYEXPORT oyObserver_New (
+                                       oyObject_s          object OY_UNUSED )
 {
   /* ---- start of common object constructor ----- */
   oyOBJECT_e type = oyOBJECT_OBSERVER_S;
@@ -64,8 +64,8 @@ OYAPI oyObserver_s * OYEXPORT
  *  @since   2009/10/26 (Oyranos: 0.1.10)
  *  @date    2009/10/26
  */
-OYAPI oyObserver_s * OYEXPORT
-           oyObserver_Copy           ( oyObserver_s      * obj,
+OYAPI oyObserver_s * OYEXPORT oyObserver_Copy (
+                                       oyObserver_s      * obj,
                                        oyObject_s          object )
 {
   oyObserver_s * s = obj;
@@ -87,8 +87,7 @@ OYAPI oyObserver_s * OYEXPORT
  *  @since   2009/10/26 (Oyranos: 0.1.10)
  *  @date    2009/10/26
  */
-OYAPI int  OYEXPORT
-           oyObserver_Release        ( oyObserver_s     ** obj )
+OYAPI int  OYEXPORT oyObserver_Release(oyObserver_s     ** obj )
 {
   /* ---- start of common object destructor ----- */
   oyObserver_s * s = 0;
