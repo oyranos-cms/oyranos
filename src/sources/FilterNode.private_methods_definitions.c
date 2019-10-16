@@ -57,7 +57,7 @@ int  oyFilterNode_AddToAdjacencyLst_ ( oyFilterNode_s_    * s,
           if(oyAdjacencyListAdd_( (oyFilterPlug_s*)p, (oyFilterNodes_s*)nodes, (oyFilterPlugs_s*)edges, mark, flags ))
             oyFilterNode_AddToAdjacencyLst_( (oyFilterNode_s_*)p->node,
                                              nodes, edges, mark, flags );
-          oyFilterPlug_Release( &p );
+          oyFilterPlug_Release( (oyFilterPlug_s**)&p );
         }
       }
     }

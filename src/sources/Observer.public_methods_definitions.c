@@ -45,8 +45,8 @@ OYAPI int  OYEXPORT oyObserver_SignalSend (
  *  @since   2009/10/26 (Oyranos: 0.1.10)
  *  @date    2010/06/25
  */
-OYAPI int  OYEXPORT oyStruct_ObserverAdd
-                                      ( oyStruct_s        * model,
+OYAPI int  OYEXPORT oyStruct_ObserverAdd (
+                                       oyStruct_s        * model,
                                        oyStruct_s        * observer,
                                        oyStruct_s        * user_data,
                                        oyObserver_Signal_f signalFunc )

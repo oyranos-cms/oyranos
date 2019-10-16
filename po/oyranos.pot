@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Oyranos 0.9\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2019-10-15 15:23+0200\n"
+"POT-Creation-Date: 2019-10-16 15:40+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -49,7 +49,7 @@ msgstr ""
 #: API_generated/oyFilterPlugs_s_.c:200 API_generated/oyFilterPlugs_s_.c:208
 #: API_generated/oyFilterSocket_s_.c:229 API_generated/oyFilterSocket_s_.c:237
 #: API_generated/oyHash_s_.c:234 API_generated/oyHash_s_.c:242
-#: API_generated/oyImage_s_.c:229 API_generated/oyImage_s_.c:237
+#: API_generated/oyImage_s_.c:230 API_generated/oyImage_s_.c:238
 #: API_generated/oyLis_s_.c:192 API_generated/oyLis_s_.c:200
 #: API_generated/oyList_s_.c:170 API_generated/oyList_s_.c:178
 #: API_generated/oyName_s_.c:47 API_generated/oyName_s_.c:55
@@ -128,9 +128,9 @@ msgstr ""
 msgid "Remote filter or plug not available."
 msgstr ""
 
-#: API_generated/oyFilterNode_s_.c:1433 API_generated/oyObserver_s.c:361
-#: API_generated/oyObserver_s.c:372 API_generated/oyObserver_s.c:573
-#: API_generated/oyObserver_s.c:651 API_generated/oyObserver_s_.c:53
+#: API_generated/oyFilterNode_s_.c:1433 API_generated/oyObserver_s.c:360
+#: API_generated/oyObserver_s.c:371 API_generated/oyObserver_s.c:572
+#: API_generated/oyObserver_s.c:649 API_generated/oyObserver_s_.c:53
 #: examples/image_display/oyranos_display_helper_classes_fltk.cpp:47
 msgid "Signal"
 msgstr ""
@@ -142,17 +142,17 @@ msgstr ""
 msgid "----"
 msgstr ""
 
-#: API_generated/oyObserver_s.c:383 API_generated/oyObserver_s.c:588
-#: API_generated/oyObserver_s.c:666
+#: API_generated/oyObserver_s.c:382 API_generated/oyObserver_s.c:587
+#: API_generated/oyObserver_s.c:664
 msgid "found observer of wrong type"
 msgstr ""
 
-#: API_generated/oyObserver_s.c:391 API_generated/oyObserver_s.c:596
-#: API_generated/oyObserver_s.c:674
+#: API_generated/oyObserver_s.c:390 API_generated/oyObserver_s.c:595
+#: API_generated/oyObserver_s.c:672
 msgid "found no observer"
 msgstr ""
 
-#: API_generated/oyObserver_s.c:489
+#: API_generated/oyObserver_s.c:488
 msgid "Already enabled"
 msgstr ""
 

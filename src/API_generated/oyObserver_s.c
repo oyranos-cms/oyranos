@@ -181,7 +181,7 @@ OYAPI int  OYEXPORT oyObserver_SignalSend (
  *  @since   2009/10/26 (Oyranos: 0.1.10)
  *  @date    2010/06/25
  */
-OYAPI int OYEXPORT oyStruct_ObserverAdd (
+OYAPI int  OYEXPORT oyStruct_ObserverAdd (
                                        oyStruct_s        * model,
                                        oyStruct_s        * observer,
                                        oyStruct_s        * user_data,
@@ -410,7 +410,7 @@ OYAPI int  OYEXPORT oyStruct_ObserverSignal (
  *  @since   2010/04/07 (Oyranos: 0.1.10)
  *  @date    2010/04/07
  */
-OYAPI int  OYEXPORT oyStruct_DisableSignalSend(
+OYAPI int  OYEXPORT oyStruct_DisableSignalSend (
                                        oyStruct_s        * model )
 {
   oyObserver_s * obs = 0;
@@ -542,7 +542,7 @@ OYAPI int  OYEXPORT oyStruct_ObserversCopy (
  *  @since   2009/11/02 (Oyranos: 0.1.10)
  *  @date    2009/11/02
  */
-OYAPI int  OYEXPORT oyStruct_ObserverCopyModel(
+OYAPI int  OYEXPORT oyStruct_ObserverCopyModel (
                                        oyStruct_s        * model,
                                        oyStruct_s        * pattern,
                                        uint32_t            flags )
@@ -897,7 +897,8 @@ OYAPI uint32_t OYEXPORT oyObserverGetFlags ( void )
  *  @since   2009/10/26 (Oyranos: 0.1.10)
  *  @date    2009/10/26
  */
-OYAPI int  OYEXPORT oyObserverSetFlags(uint32_t            flags )
+OYAPI int  OYEXPORT oyObserverSetFlags (
+                                       uint32_t            flags )
 {
   oy_observer_flags = flags;
   return 0;
