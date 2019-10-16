@@ -43,6 +43,7 @@ int   oyExportEnd_          (void);
 #define FINISH_IGNORE_I18N 0x01
 #define FINISH_IGNORE_CACHES 0x02
 #define FINISH_IGNORE_OBJECT_LIST 0x04
+#define FINISH_IGNORE_CORE 0x08
 void  oyFinish_             (int flags);
 
 #ifdef __cplusplus

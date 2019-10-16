@@ -94,6 +94,7 @@ int oyExportReset_(int export_check)
 /* @param          flags               - 0x01 keep i18n
  *                                     - 0x02 keep caches
  *                                     - 0x04 keep object list
+ *                                     - 0x08 keep core with object registration and i18n
  */
 void     oyFinish_                   ( int                 flags )
 {
@@ -112,7 +113,8 @@ void     oyFinish_                   ( int                 flags )
   xmlCleanupParser();
 #endif
 
-  oyLibCoreRelease();
+  if(!(flags & FINISH_IGNORE_CORE))
+    oyLibCoreRelease();
 }
 
 #include "oyProfile_s_.h"
