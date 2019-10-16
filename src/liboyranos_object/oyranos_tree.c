@@ -74,10 +74,17 @@ int                oyStruct_GetChildren (
   if(list) *list = c;
 
 #define CHECK_ASSIGN_OBJECT(struct_name) \
-         if(s->oy_->struct_name) { c[n++] = (oyStruct_s*)s->oy_->struct_name; \
+         if(s->oy_->struct_name) { \
+                              c[n++] = (oyStruct_s*)s->oy_->struct_name; \
                               if(((oyStruct_s*)s->oy_->struct_name)->type_ > oyOBJECT_MAX) \
                               { fprintf(stderr, "%s::%s failed\n", oyStruct_GetText( (oyStruct_s*)s, oyNAME_DESCRIPTION, 0 ), #struct_name); \
-                                goto gcassert; } }
+                                goto gcassert; } \
+                              if(oyStruct_GetText((oyStruct_s*)s->oy_->struct_name, oyNAME_DESCRIPTION, 2) == NULL && s->oy_) \
+                              { \
+                                char * t = NULL; oyjlStringAdd( &t, oyAllocateFunc_, oyDeAllocateFunc_, "parent: %s->oy_->" #struct_name, oyStructTypeToText(s->type_) );\
+                                oyObject_SetName( s->oy_->struct_name->oy_, t, oyNAME_DESCRIPTION ); oyFree_m_(t); \
+                              } \
+         }
   if(obj->oy_)
   {
     oyStruct_s * s = (oyStruct_s*)obj;
