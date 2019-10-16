@@ -124,6 +124,7 @@ void oyImage_Release__Members( oyImage_s_ * image )
 
   oyProfile_Release( &image->profile_ );
   oyOptions_Release( &image->tags );
+  oyRectangle_Release( &image->viewport );
 
 
   if(image->oy_->deallocateFunc_)

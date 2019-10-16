@@ -361,7 +361,8 @@ oyImage_s *    oyImage_CreateForDisplay ( int              width,
                                              display_width, display_height );
     }
     error = !display_rectangle;
-    
+    oyRectangle_Release( &display_rectangle );
+
     if(error <= 0 && display_name)
       error = oyOptions_SetFromString( &s->tags, "//imaging/output/display_name",
                                      display_name, OY_CREATE_NEW );
