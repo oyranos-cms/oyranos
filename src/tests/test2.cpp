@@ -63,7 +63,7 @@
 #include "oyranos_string.h"
 oyObject_s testobj = NULL;
 extern "C" { char * oyAlphaPrint_(int); }
-#define OYJL_TEST_MAIN_SETUP  printf("\n    Oyranos test2\n"); if(getenv(OY_DEBUG)) oy_debug = atoi(getenv(OY_DEBUG)); //oy_debug_objects = -1;
+#define OYJL_TEST_MAIN_SETUP  printf("\n    Oyranos test2\n"); if(getenv(OY_DEBUG)) oy_debug = atoi(getenv(OY_DEBUG)); oy_debug_objects = -1;
 #define OYJL_TEST_MAIN_FINISH printf("\n    Oyranos test2 finished\n\n"); if(testobj) testobj->release( &testobj ); if(verbose) { char * t = oyAlphaPrint_(0); puts(t); free(t); } oyLibConfigRelease(0);
 #include <oyjl_test_main.h>
 
@@ -85,7 +85,7 @@ double d[6] = {0.5,0.5,0.5,0,0,0};
 #define OBJECT_COUNT_PRINT( onfail, reset, stop ) \
   if(oy_debug_objects >= 0 || oy_debug_objects == -2) \
   { \
-    oyLibConfigRelease(FINISH_IGNORE_OBJECT_LIST); \
+    oyLibConfigRelease(FINISH_IGNORE_OBJECT_LIST | FINISH_IGNORE_CORE); \
     object_count = oyObjectCountCurrentObjectIdList(); \
     if(object_count) \
     { \
@@ -3098,6 +3098,14 @@ oyjlTESTRESULT_e testDeviceLinkProfile ()
   oyProfile_Release( &prof );
   OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 0 )
 
+  blob = oyBlob_New( testobj );
+  options = oyOptions_New( testobj );
+  error = oyOptions_ObserverAdd( options, (oyStruct_s*)blob,
+                                 0, NULL );
+  oyOptions_Release( &options );
+  oyBlob_Release( &blob );
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 0 )
+
   prof = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, testobj );
   prof_fn = oyProfile_GetFileName( prof, -1 );
   in = oyImage_Create( 2, 2, buf, OY_TYPE_123_DBL, prof, testobj );
@@ -3107,18 +3115,9 @@ oyjlTESTRESULT_e testDeviceLinkProfile ()
   cc = oyConversion_CreateBasicPixels( in, out, NULL, NULL );
   oyFilterNode_s * inode = oyConversion_GetNode( cc, OY_INPUT);
   oyOptions_s * opts =  oyFilterNode_GetOptions( inode, 0 );
-  error = oyConversion_Release( &cc );
-  if(error == 0)
-  {
-    PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyConversion_Release() GetOptions                  " );
-  } else
-  {
-    PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyConversion_Release() GetOptions                 %d", error );
-  }
-  oyOptions_Release( &opts );
   oyFilterNode_Release( &inode );
+  error = oyConversion_Release( &cc );
+  oyOptions_Release( &opts );
   oyImage_Release( &in );
   oyImage_Release( &out );
   oyProfile_Release( &prof );
