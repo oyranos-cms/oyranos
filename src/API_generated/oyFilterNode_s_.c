@@ -1423,11 +1423,11 @@ int      oyFilterNode_Observe_       ( oyObserver_s      * observer,
   int i,n;
   oyFilterSocket_s * socket = 0;
   oyFilterNode_s_ * node = 0;
-  oyObserver_s  * obs = observer;
+  oyObserver_s_  * obs = (oyObserver_s_*)observer;
 
-  if(observer && observer->model &&
-     observer->model->type_ == oyOBJECT_OPTIONS_S &&
-     observer->observer && observer->observer->type_== oyOBJECT_FILTER_NODE_S)
+  if(obs && obs->model &&
+     obs->model->type_ == oyOBJECT_OPTIONS_S &&
+     obs->observer && obs->observer->type_== oyOBJECT_FILTER_NODE_S)
   {
     if(oy_debug_signals)
       WARNc6_S( "\n\t%s %s: %s[%d]->%s[%d]", _("Signal"),
@@ -1437,7 +1437,7 @@ int      oyFilterNode_Observe_       ( oyObserver_s      * observer,
                     oyStruct_GetText( obs->observer, oyNAME_NAME, 1),
                     oyObject_GetId(   obs->observer->oy_) );
 
-    node = (oyFilterNode_s_*)observer->observer;
+    node = (oyFilterNode_s_*)obs->observer;
 
     /* invalidate the context */
     if(node->backend_data)

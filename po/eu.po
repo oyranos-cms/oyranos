@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cinepaint_icc-examin_eu\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2019-10-16 15:40+0200\n"
+"POT-Creation-Date: 2019-10-17 13:06+0200\n"
 "PO-Revision-Date: 2007-11-07 11:11+0100\n"
 "Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@zundan.com>\n"
 "Language-Team: Basque <itzulpena@euskalgnu.org>\n"
@@ -433,7 +433,7 @@ msgstr ""
 msgid "Allowed option values are -f openicc and -f xml. unknown format:"
 msgstr ""
 
-#: API_generated/oyObserver_s.c:488
+#: API_generated/oyObserver_s.c:460
 msgid "Already enabled"
 msgstr ""
 
@@ -2983,18 +2983,18 @@ msgstr "Luv"
 #: API_generated/oyName_s_.c:47 API_generated/oyName_s_.c:55
 #: API_generated/oyNamedColor_s_.c:228 API_generated/oyNamedColor_s_.c:236
 #: API_generated/oyNamedColors_s_.c:191 API_generated/oyNamedColors_s_.c:199
-#: API_generated/oyObserver_s.c:50 API_generated/oyOption_s_.c:261
-#: API_generated/oyOption_s_.c:269 API_generated/oyOptions_s_.c:201
-#: API_generated/oyOptions_s_.c:209 API_generated/oyPixelAccess_s_.c:230
-#: API_generated/oyPixelAccess_s_.c:238 API_generated/oyPointer_s_.c:280
-#: API_generated/oyPointer_s_.c:288 API_generated/oyProfileTag_s_.c:219
-#: API_generated/oyProfileTag_s_.c:227 API_generated/oyProfile_s_.c:333
-#: API_generated/oyProfile_s_.c:341 API_generated/oyProfiles_s_.c:200
-#: API_generated/oyProfiles_s_.c:208 API_generated/oyRectangle_s_.c:196
-#: API_generated/oyRectangle_s_.c:204 API_generated/oyStructList_s_.c:244
-#: API_generated/oyStructList_s_.c:252 API_generated/oyranos_devices.c:3603
-#: API_generated/oyranos_module.c:1571 liboyranos/oyranos_alpha.c:312
-#: liboyranos_modules/oyranos_forms.c:57
+#: API_generated/oyObserver_s_.c:210 API_generated/oyObserver_s_.c:218
+#: API_generated/oyOption_s_.c:261 API_generated/oyOption_s_.c:269
+#: API_generated/oyOptions_s_.c:201 API_generated/oyOptions_s_.c:209
+#: API_generated/oyPixelAccess_s_.c:230 API_generated/oyPixelAccess_s_.c:238
+#: API_generated/oyPointer_s_.c:280 API_generated/oyPointer_s_.c:288
+#: API_generated/oyProfileTag_s_.c:219 API_generated/oyProfileTag_s_.c:227
+#: API_generated/oyProfile_s_.c:333 API_generated/oyProfile_s_.c:341
+#: API_generated/oyProfiles_s_.c:200 API_generated/oyProfiles_s_.c:208
+#: API_generated/oyRectangle_s_.c:196 API_generated/oyRectangle_s_.c:204
+#: API_generated/oyStructList_s_.c:244 API_generated/oyStructList_s_.c:252
+#: API_generated/oyranos_devices.c:3603 API_generated/oyranos_module.c:1571
+#: liboyranos/oyranos_alpha.c:312 liboyranos_modules/oyranos_forms.c:57
 msgid "MEM Error."
 msgstr ""
 
@@ -4550,9 +4550,9 @@ msgstr ""
 msgid "Show white point modes"
 msgstr "Puntu-zuria euskarria"
 
-#: API_generated/oyFilterNode_s_.c:1433 API_generated/oyObserver_s.c:360
-#: API_generated/oyObserver_s.c:371 API_generated/oyObserver_s.c:572
-#: API_generated/oyObserver_s.c:649 API_generated/oyObserver_s_.c:53
+#: API_generated/oyFilterNode_s_.c:1433 API_generated/oyObserver_s.c:332
+#: API_generated/oyObserver_s.c:343 API_generated/oyObserver_s.c:544
+#: API_generated/oyObserver_s.c:621 API_generated/oyObserver_s_.c:535
 #: examples/image_display/oyranos_display_helper_classes_fltk.cpp:47
 msgid "Signal"
 msgstr ""
@@ -5881,18 +5881,18 @@ msgstr ""
 msgid "found issues parsing JSON"
 msgstr ""
 
-#: API_generated/oyObserver_s_.c:165
+#: API_generated/oyObserver_s_.c:597
 msgid "found list of wrong type"
 msgstr ""
 
-#: API_generated/oyObserver_s.c:390 API_generated/oyObserver_s.c:595
-#: API_generated/oyObserver_s.c:672
+#: API_generated/oyObserver_s.c:362 API_generated/oyObserver_s.c:567
+#: API_generated/oyObserver_s.c:644
 #, fuzzy
 msgid "found no observer"
 msgstr "ez da goibururik aurkitu"
 
-#: API_generated/oyObserver_s.c:382 API_generated/oyObserver_s.c:587
-#: API_generated/oyObserver_s.c:664
+#: API_generated/oyObserver_s.c:354 API_generated/oyObserver_s.c:559
+#: API_generated/oyObserver_s.c:636
 #, fuzzy
 msgid "found observer of wrong type"
 msgstr "ez da goibururik aurkitu"

@@ -1,8 +1,11 @@
-
 /** @file oyObserver_s.h
 
    [Template file inheritance graph]
-   +-- oyObserver_s.template.h
+   +-> oyObserver_s.template.h
+   |
+   +-> Base_s.h
+   |
+   +-- oyStruct_s.template.h
 
  *  Oyranos is an open source Color Management System
  *
@@ -15,6 +18,7 @@
  */
 
 
+
 #ifndef OY_OBSERVER_S_H
 #define OY_OBSERVER_S_H
 
@@ -24,18 +28,23 @@
 #endif /* __cplusplus */
 
 
+  
 #include <oyranos_object.h>
-#include <oyranos_definitions.h>
+
+typedef struct oyObserver_s oyObserver_s;
+
 
 #include "oyStruct_s.h"
 
+
+/* Include "Observer.public.h" { */
 #define OY_SIGNAL_BLOCK                0x01 /**< do not send new signals */
 #define oyToSignalBlock_m(r)           ((r)&1)
 #define OY_SIGNAL_OBSERVERS OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "oyStructList_s/observers"
 /*  The models list of a observing object is just a clone of the oyObserver_s
  *  object added to the model. */
 #define OY_SIGNAL_MODELS OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "oyStructList_s/models"
-
+ 
 /** @enum    oySIGNAL_e
  *  @brief   observer signals
  *  @ingroup objects_generic
@@ -62,7 +71,6 @@ typedef enum {
 
 const char *       oySignalToString  ( oySIGNAL_e          signal_type );
 
-typedef struct oyObserver_s oyObserver_s;
 
 /** @brief   signal handler type
  *
@@ -81,9 +89,13 @@ typedef  int      (*oyObserver_Signal_f) (
                                        oyStruct_s        * signal_data );
 
 
+/* } Include "Observer.public.h" */
+
+
 /* Include "Observer.dox" { */
 /** @struct   oyObserver_s
  *  @ingroup  objects_generic
+ *  @extends oyStruct_s
  *  @brief    Oyranos object observers
  *
  *  oyObserver_s is following the viewer/model design pattern. The relations of
@@ -100,48 +112,32 @@ typedef  int      (*oyObserver_Signal_f) (
  *  the oyObserver_s structure. For completeness the observed object shall
  *  always be included in the signal.
  *
- *  This class is a public members only class and does not
- *  belong to the oyranos object model, like all "Generic Objects".
- *
- *  @note New templates will not be created automaticly [notemplates]
- *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.9.7
+ *  @date    2019/10/19
  *  @since   2009/10/26 (Oyranos: 0.1.10)
- *  @date    2009/10/26
  */
 
 /* } Include "Observer.dox" */
 
 struct oyObserver_s {
-/* Include "Observer.members.h" { */
-  oyOBJECT_e           type_;          /**< @private internal struct type oyOBJECT_OBSERVER_S */
-  oyStruct_Copy_f      copy;           /**< copy function */
-  oyStruct_Release_f   release;        /**< release function */
-  oyPointer            dummy;          /**< keep to zero */
+/* Include "Struct.members.h" { */
+const  oyOBJECT_e    type_;          /**< The struct type tells Oyranos how to interprete hidden fields. @brief Type of object */
+oyStruct_Copy_f      copy;           /**< @brief Copy function */
+oyStruct_Release_f   release;        /**< @brief Release function */
+oyObject_s           oy_;            /**< Features name and hash. Do not change during object life time. @brief Oyranos internal object */
 
-  /** a reference to the observing object */
-  oyStruct_s         * observer;
-  /** a reference to the to be observed model */
-  oyStruct_s         * model;
-  /** optional data; If no other user data is available this data will be
-   *  passed with the signal. */
-  oyStruct_s         * user_data;
-  oyObserver_Signal_f  signal;         /**< observers signaling function */
-  int                  disable_ref;    /**< disable signals reference counter
-                                            == 0 -> enabled; otherwise not */
-
-/* } Include "Observer.members.h" */
+/* } Include "Struct.members.h" */
 };
 
-/* oyObserver_s common object functions { */
-OYAPI oyObserver_s * OYEXPORT
-           oyObserver_New            ( oyObject_s          object );
-OYAPI oyObserver_s * OYEXPORT
-           oyObserver_Copy           ( oyObserver_s      * obj,
-                                       oyObject_s          object);
-OYAPI int  OYEXPORT
-           oyObserver_Release        ( oyObserver_s     ** obj );
-/* } oyObserver_s common object functions */
+
+OYAPI oyObserver_s* OYEXPORT
+  oyObserver_New( oyObject_s object );
+OYAPI oyObserver_s* OYEXPORT
+  oyObserver_Copy( oyObserver_s *observer, oyObject_s obj );
+OYAPI int OYEXPORT
+  oyObserver_Release( oyObserver_s **observer );
+
+
 
 /* Include "Observer.public_methods_declarations.h" { */
 OYAPI int  OYEXPORT
@@ -190,6 +186,7 @@ OYAPI int  OYEXPORT
            oyObserverSetFlags        ( uint32_t            flags );
 
 /* } Include "Observer.public_methods_declarations.h" */
+
 
 #ifdef __cplusplus
 } /* extern "C" */

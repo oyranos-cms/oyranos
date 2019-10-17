@@ -1,3 +1,5 @@
+#include "oyOption_s_.h"
+
 /** Function  oyStructSignalForward_
  *  @memberof oyObserver_s
  *  @brief    Observe all list members
@@ -21,7 +23,7 @@ int      oyStructSignalForward_      ( oyObserver_s      * observer,
                                        oyStruct_s        * signal_data )
 {
   int handled = 0;
-  oyObserver_s * obs = observer;
+  oyObserver_s_ * obs = (oyObserver_s_ *)observer;
 
   if(oy_debug_signals)
     WARNc6_S( "\n\t%s %s: %s[%d]->%s[%d]", _("Signal"),
@@ -31,62 +33,12 @@ int      oyStructSignalForward_      ( oyObserver_s      * observer,
                     oyStruct_GetText( obs->observer, oyNAME_NAME, 1),
                     oyObject_GetId(   obs->observer->oy_) );
 
-  if(observer && observer->model &&
-     observer->observer && observer->observer->type_ > oyOBJECT_NONE)
-    handled = oyStruct_ObserverSignal( observer->observer,
+  if(obs && obs->model &&
+     obs->observer && obs->observer->type_ > oyOBJECT_NONE)
+    handled = oyStruct_ObserverSignal( obs->observer,
                                        signal_type, signal_data );
 
   return handled;
-}
-
-/** Function  oyObserver_Copy_
- *  @memberof oyObserver_s
- *  @brief    Real copy a Observer object
- *  @internal
- *
- *  @param[in]     obj                 struct object
- *  @param         object              the optional object
- *
- *  @version Oyranos: 0.1.10
- *  @since   2009/10/26 (Oyranos: 0.1.10)
- *  @date    2009/10/26
- */
-oyObserver_s * oyObserver_Copy_      ( oyObserver_s      * obj,
-                                       oyObject_s          object )
-{
-  oyObserver_s * s = 0;
-  int error = 0;
-
-  if(!obj || !object)
-    return s;
-
-  s = oyObserver_New( object );
-  error = !s;
-
-  if(!error)
-  {
-    s->observer = obj->observer->copy( obj->observer, object );
-    s->model = obj->model->copy( obj->model, object );
-    s->user_data = obj->user_data->copy( obj->user_data, object );
-    if(oy_debug_objects >= 0)
-    {
-      if(s->observer)
-        oyObjectDebugMessage_( s->observer->oy_, __func__,
-                               oyStructTypeToText(s->observer->type_) );
-      if(s->model)
-        oyObjectDebugMessage_( s->model->oy_, __func__,
-                               oyStructTypeToText(s->model->type_) );
-      if(s->user_data)
-        oyObjectDebugMessage_( s->user_data->oy_, __func__,
-                               oyStructTypeToText(s->user_data->type_) );
-    }
-    s->disable_ref = obj->disable_ref;
-  }
-
-  if(error)
-    oyObserver_Release( &s );
-
-  return s;
 }
 
 /** Function  oyStruct_ObserverListGet_
@@ -166,14 +118,14 @@ int        oyStruct_ObserverRemove_  ( oyStructList_s    * list,
                                        oyObserver_Signal_f signalFunc )
 {
   int error = 0;
-  oyObserver_s * obs = 0;
+  oyObserver_s_ * obs = 0;
   int n,i;
   if(list)
   {
     n = oyStructList_Count( list );
     for(i = n-1; i >= 0; --i)
     {
-      obs = (oyObserver_s*) oyStructList_GetType( list,
+      obs = (oyObserver_s_*) oyStructList_GetType( list,
                                                   i, oyOBJECT_OBSERVER_S );
 
       if(obs &&

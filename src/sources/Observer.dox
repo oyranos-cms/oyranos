@@ -1,5 +1,6 @@
 /** @struct   oyObserver_s
  *  @ingroup  objects_generic
+ *  @extends oyStruct_s
  *  @brief    Oyranos object observers
  *
  *  oyObserver_s is following the viewer/model design pattern. The relations of
@@ -16,12 +17,7 @@
  *  the oyObserver_s structure. For completeness the observed object shall
  *  always be included in the signal.
  *
- *  This class is a public members only class and does not
- *  belong to the oyranos object model, like all "Generic Objects".
- *
- *  @note New templates will not be created automaticly [notemplates]
- *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.9.7
+ *  @date    2019/10/19
  *  @since   2009/10/26 (Oyranos: 0.1.10)
- *  @date    2009/10/26
  */

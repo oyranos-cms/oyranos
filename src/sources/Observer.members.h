@@ -1,8 +1,3 @@
-  oyOBJECT_e           type_;          /**< @private internal struct type oyOBJECT_OBSERVER_S */
-  oyStruct_Copy_f      copy;           /**< copy function */
-  oyStruct_Release_f   release;        /**< release function */
-  oyPointer            dummy;          /**< keep to zero */
-
   /** a reference to the observing object */
   oyStruct_s         * observer;
   /** a reference to the to be observed model */

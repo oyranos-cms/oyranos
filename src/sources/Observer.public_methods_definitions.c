@@ -1,3 +1,7 @@
+#include "oyOption_s_.h"
+#include "oyOptions_s_.h"
+#include "oyStructList_s_.h"
+
 /** Function oyObserver_SignalSend
  *  @memberof oyObserver_s
  *  @brief   send a signal to a Observer object
@@ -16,7 +20,7 @@ OYAPI int  OYEXPORT oyObserver_SignalSend (
                                        oySIGNAL_e          signal_type,
                                        oyStruct_s        * signal_data )
 {
-  oyObserver_s * s = observer;
+  oyObserver_s_ * s = (oyObserver_s_ *)observer;
   int result = 0;
 
   oyCheckType__m( oyOBJECT_OBSERVER_S, return 0 )
@@ -24,8 +28,8 @@ OYAPI int  OYEXPORT oyObserver_SignalSend (
      /* global signal disabling */
   if(!oyToSignalBlock_m( oyObserverGetFlags() ) &&
      /* local signal disabling */
-     !observer->disable_ref )
-    result = observer->signal( observer, signal_type, signal_data );
+     !s->disable_ref )
+    result = s->signal( observer, signal_type, signal_data );
 
   return result;
 }
@@ -51,8 +55,8 @@ OYAPI int  OYEXPORT oyStruct_ObserverAdd (
                                        oyStruct_s        * user_data,
                                        oyObserver_Signal_f signalFunc )
 {
-  oyObserver_s * s = 0,
-               * obs = 0;
+  oyObserver_s_ * s = 0,
+                * obs = 0;
   int error = !model || !observer;
   oyStructList_s * list = 0;
   int n,i, found;
@@ -69,7 +73,7 @@ OYAPI int  OYEXPORT oyStruct_ObserverAdd (
     n = oyStructList_Count( list );
     for(i = 0; i < n; ++i)
     {
-      obs = (oyObserver_s*) oyStructList_GetType( list,
+      obs = (oyObserver_s_*) oyStructList_GetType( list,
                                                   i, oyOBJECT_OBSERVER_S );
       if(observer == obs->observer && obs->signal == signalFunc)
         ++found;
@@ -78,7 +82,7 @@ OYAPI int  OYEXPORT oyStruct_ObserverAdd (
     /* add new oyObserver_s */
     if(found == 0)
     {
-      s = oyObserver_New( 0 );
+      s = (oyObserver_s_*) oyObserver_New( 0 );
       if(observer)
         s->observer = observer->copy( observer, 0 );
       s->model = model->copy( model, 0 );
@@ -111,7 +115,7 @@ OYAPI int  OYEXPORT oyStruct_ObserverAdd (
     n = oyStructList_Count( list );
     for(i = 0; i < n; ++i)
     {
-      obs = (oyObserver_s*) oyStructList_GetType( list,
+      obs = (oyObserver_s_*) oyStructList_GetType( list,
                                                   i, oyOBJECT_OBSERVER_S );
       if(model == obs->model && obs->signal == signalFunc)
         ++found;
@@ -120,7 +124,7 @@ OYAPI int  OYEXPORT oyStruct_ObserverAdd (
     /* add oyObserver_s */
     if(found == 0 && !s)
     {
-      s = oyObserver_New( 0 );
+      s = (oyObserver_s_*)oyObserver_New( 0 );
       if(observer)
         s->observer = observer->copy( observer, 0 );
       s->model = model->copy( model, 0 );
@@ -191,7 +195,7 @@ OYAPI int  OYEXPORT oyStruct_ObserverSignal (
                                        oySIGNAL_e          signal_type,
                                        oyStruct_s        * signal_data )
 {
-  oyObserver_s * obs = 0;
+  oyObserver_s_ * obs = 0;
   int error = !model, t_err = 0;
   oyOption_s * o = 0;
   oyStructList_s * observers = 0;
@@ -213,7 +217,7 @@ OYAPI int  OYEXPORT oyStruct_ObserverSignal (
     n = oyStructList_Count( observers );
     for(i = 0; i < n; ++i)
     {
-      obs = (oyObserver_s*) oyStructList_GetType( observers,
+      obs = (oyObserver_s_*) oyStructList_GetType( observers,
                                                   i, oyOBJECT_OBSERVER_S );
       if(obs)
       {
@@ -228,7 +232,7 @@ OYAPI int  OYEXPORT oyStruct_ObserverSignal (
                     oyStruct_GetText( obs->observer, oyNAME_NAME, 1),
                     oyObject_GetId(   obs->observer->oy_) );
           }
-          t_err = oyObserver_SignalSend( obs, signal_type, signal_data );
+          t_err = oyObserver_SignalSend( (oyObserver_s *)obs, signal_type, signal_data );
           if(t_err)
           {
             DBG_NUM7_S( "oyObserver_SignalSend() returned %d\n\t%s %s: %s[%d]->%s[%d]",
@@ -277,7 +281,7 @@ OYAPI int  OYEXPORT oyStruct_ObserverSignal (
 OYAPI int  OYEXPORT oyStruct_DisableSignalSend (
                                        oyStruct_s        * model )
 {
-  oyObserver_s * obs = 0;
+  oyObserver_s_ * obs = 0;
   int error = !model;
   oyOption_s * o = 0;
   oyStructList_s * observers = 0;
@@ -296,7 +300,7 @@ OYAPI int  OYEXPORT oyStruct_DisableSignalSend (
     n = oyStructList_Count( observers );
     for(i = 0; i < n; ++i)
     {
-      obs = (oyObserver_s*) oyStructList_GetType( observers,
+      obs = (oyObserver_s_*) oyStructList_GetType( observers,
                                                   i, oyOBJECT_OBSERVER_S );
       if(obs)
         ++obs->disable_ref;
@@ -321,7 +325,7 @@ OYAPI int  OYEXPORT oyStruct_DisableSignalSend (
 OYAPI int  OYEXPORT oyStruct_EnableSignalSend (
                                        oyStruct_s        * model )
 {
-  oyObserver_s * obs = 0;
+  oyObserver_s_ * obs = 0;
   int error = !model;
   oyOption_s * o = 0;
   oyStructList_s * observers = 0;
@@ -341,7 +345,7 @@ OYAPI int  OYEXPORT oyStruct_EnableSignalSend (
     n = oyStructList_Count( observers );
     for(i = 0; i < n; ++i)
     {
-      obs = (oyObserver_s*) oyStructList_GetType( observers,
+      obs = (oyObserver_s_*) oyStructList_GetType( observers,
                                                   i, oyOBJECT_OBSERVER_S );
       if(obs)
         --obs->disable_ref;
@@ -411,7 +415,7 @@ OYAPI int  OYEXPORT oyStruct_ObserverCopyModel (
                                        oyStruct_s        * pattern,
                                        uint32_t            flags )
 {
-  oyObserver_s * obs = 0;
+  oyObserver_s_ * obs = 0;
   int error = !model;
   oyStructList_s * observers = 0;
   int n,i;
@@ -426,7 +430,7 @@ OYAPI int  OYEXPORT oyStruct_ObserverCopyModel (
     n = oyStructList_Count( observers );
     for(i = 0; i < n; ++i)
     {
-      obs = (oyObserver_s*) oyStructList_GetType( observers,
+      obs = (oyObserver_s_*) oyStructList_GetType( observers,
                                                   i, oyOBJECT_OBSERVER_S );
       if(obs &&
          (!(flags & 0x01) || obs->model == pattern))
@@ -488,7 +492,7 @@ OYAPI int  OYEXPORT oyStruct_ObserverCopyObserver (
                                        oyStruct_s        * pattern,
                                        uint32_t            flags )
 {
-  oyObserver_s * obs = 0;
+  oyObserver_s_ * obs = 0;
   int error = !observer;
   oyStructList_s * list = 0;
   int n,i;
@@ -503,7 +507,7 @@ OYAPI int  OYEXPORT oyStruct_ObserverCopyObserver (
     n = oyStructList_Count( list );
     for(i = 0; i < n; ++i)
     {
-      obs = (oyObserver_s*) oyStructList_GetType( list,
+      obs = (oyObserver_s_*) oyStructList_GetType( list,
                                                   i, oyOBJECT_OBSERVER_S );
       if(obs &&
          (!(flags & 0x01) || obs->observer == pattern))
@@ -589,8 +593,8 @@ OYAPI int  OYEXPORT oyStruct_IsObserved (
           j_n = oyStructList_Count( observers );
           for(j = 0; j < j_n; ++j)
           {
-            oyObserver_s * obs;
-            obs = (oyObserver_s*) oyStructList_GetType( observers,
+            oyObserver_s_ * obs;
+            obs = (oyObserver_s_*) oyStructList_GetType( observers,
                                                    j, oyOBJECT_OBSERVER_S );
             if(obs && obs->observer == observer)
             {
@@ -663,15 +667,15 @@ OYAPI int  OYEXPORT oyStruct_ObservationCount (
           j_n = oyStructList_Count( models );
           for(j = 0; j < j_n; ++j)
           {
-            oyObserver_s * obs;
-            obs = (oyObserver_s*) oyStructList_GetType( models,
+            oyObserver_s_ * obs;
+            obs = (oyObserver_s_*) oyStructList_GetType( models,
                                                    j, oyOBJECT_OBSERVER_S );
             if(obs && obs->observer == object)
               ++observed;
           }
         }
         if(models && models->release)
-          models->release( &models );
+          models->release( (oyStruct_s**)&models );
       }
     }
 
@@ -690,15 +694,15 @@ OYAPI int  OYEXPORT oyStruct_ObservationCount (
           j_n = oyStructList_Count( observers );
           for(j = 0; j < j_n; ++j)
           {
-            oyObserver_s * obs;
-            obs = (oyObserver_s*) oyStructList_GetType( observers,
+            oyObserver_s_ * obs;
+            obs = (oyObserver_s_*) oyStructList_GetType( observers,
                                                    j, oyOBJECT_OBSERVER_S );
             if(obs && obs->model == object)
               ++observed;
           }
         }
         if(observers && observers->release)
-          observers->release( &observers );
+          observers->release( (oyStruct_s**)&observers );
       }
     }
   } 
