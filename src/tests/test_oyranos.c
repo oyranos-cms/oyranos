@@ -887,6 +887,7 @@ oyjlTESTRESULT_e testRegistrationMatch ()
 }
 
 #include <oyranos_cmm.h>
+#include <oyObserver_s_.h>
 
 int myFilterSignalHandler            ( oyObserver_s      * observer,
                                        oySIGNAL_e          signal_type,
@@ -907,29 +908,32 @@ int myFilterSignalHandler            ( oyObserver_s      * observer,
        break;
   case oySIGNAL_DATA_CHANGED:               /**< call to update image views */
        fprintf(zout, "Signal: oySIGNAL_DATA_CHANGED\n" );
-       if(observer->observer->type_ == oyOBJECT_FILTER_NODE_S)
        {
-         oyPointer_s * node_context;
-         node = (oyFilterNode_s*) observer->observer;
-         node_context = oyFilterNode_GetContext( node );
-         if(node && node_context)
+         oyObserver_s_ * obs = (oyObserver_s_ *)observer;
+         if(obs->observer->type_ == oyOBJECT_FILTER_NODE_S)
          {
-           if(observer->model->type_ == oyOBJECT_OPTION_S)
+           oyPointer_s * node_context;
+           node = (oyFilterNode_s*) obs->observer;
+           node_context = oyFilterNode_GetContext( node );
+           if(node && node_context)
            {
-             fprintf( zout, "release context %s\n",
-                      oyStruct_TypeToText( observer->observer ) );
-             oyFilterNode_SetContext( node, 0 );
+             if(obs->model->type_ == oyOBJECT_OPTION_S)
+             {
+               fprintf( zout, "release context %s\n",
+                        oyStruct_TypeToText( obs->observer ) );
+               oyFilterNode_SetContext( node, 0 );
+             } else
+               fprintf( zout, "Model type not expected: %s\n",
+                        oyStruct_TypeToText( obs->model ) );
+             oyPointer_Release( &node_context );
            } else
-             fprintf( zout, "Model type not expected: %s\n",
-                      oyStruct_TypeToText( observer->model ) );
-           oyPointer_Release( &node_context );
-         } else
-           fprintf( zout, "no context %s\n",
-                    oyStruct_TypeToText( observer->observer ) );
+             fprintf( zout, "no context %s\n",
+                      oyStruct_TypeToText( obs->observer ) );
+        }
+         else
+           fprintf( zout, "wrong signal handler for %s\n",
+                    oyStruct_TypeToText( obs->observer ) );
        }
-       else
-         fprintf( zout, "wrong signal handler for %s\n",
-                  oyStruct_TypeToText( observer->observer ) );
        break;
   case oySIGNAL_STORAGE_CHANGED:            /**< new data accessors */
        fprintf(zout, "Signal: oySIGNAL_STORAGE_CHANGED\n" );

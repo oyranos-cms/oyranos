@@ -2,7 +2,7 @@
  *  Oyranos is an open source Color Management System 
  * 
  *  @par Copyright:
- *            2009-2012 (C) Kai-Uwe Behrmann
+ *            2009-2019 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
@@ -19,7 +19,7 @@
 
 #include "oyranos_display_helpers.c"
 #include "Oy_Widget.h"
-
+#include "oyObserver_s_.h"
 
 
 #include <FL/Fl.H>
@@ -35,10 +35,10 @@ int      conversionObserve           ( oyObserver_s      * observer,
                                        oyStruct_s        * signal_data OY_UNUSED )
 {
   int handled = 0;
-  oyObserver_s * obs = observer;
+  oyObserver_s_ * obs = (oyObserver_s_ *)observer;
 
-  if(observer && observer->model &&
-     observer->model->type_ == oyOBJECT_FILTER_NODE_S)
+  if(obs && obs->model &&
+     obs->model->type_ == oyOBJECT_FILTER_NODE_S)
   {
     if(oy_debug || oy_debug_signals)
       fprintf( stderr, "INFO: %s:%d \n\t%s %s: %s[%d]->%s[%d]"
@@ -56,11 +56,11 @@ int      conversionObserve           ( oyObserver_s      * observer,
                           oyOPTIONATTRIBUTE_ADVANCED, 0 );
 
     Oy_Widget * oy_widget = (Oy_Widget*) oyPointer_GetPointer(
-                                             (oyPointer_s*)observer->user_data);
+                                             (oyPointer_s*)obs->user_data);
     if(!oy_widget)
       fprintf( stderr, "INFO: %s:%d found no Oy_Widget object: %s\n",
                     strrchr(__FILE__,'/')?strrchr(__FILE__,'/')+1:__FILE__,
-                    __LINE__, oyPointer_GetResourceName( (oyPointer_s*)observer->user_data));
+                    __LINE__, oyPointer_GetResourceName( (oyPointer_s*)obs->user_data));
     Oy_Fl_Image_Widget * oy_image_widget = dynamic_cast<Oy_Fl_Image_Widget*>(oy_widget);
 
     if(!oy_image_widget)
