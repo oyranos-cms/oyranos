@@ -424,7 +424,7 @@ int                oyStruct_GetChildren (
     case oyOBJECT_CALLBACK_S:
     case oyOBJECT_OBSERVER_S:
        {
-         oyObserver_s * s = (oyObserver_s*)obj;
+         oyObserver_s_ * s = (oyObserver_s_*)obj;
          CHECK_ASSIGN_STRUCT( observer )
          CHECK_ASSIGN_STRUCT( model )
          CHECK_ASSIGN_STRUCT( user_data )
@@ -1118,15 +1118,15 @@ static void oyObjectTreeDotGraphCallback (
     if(i_id < 0)
       continue;
 
-#define IS_EDGE_TYPES( t1,t2 ) ((current->type_ == t1 && children[i]->type_ == t2) || (current->type_ == t2 && children[i]->type_ == t1))
+#define IS_EDGE_TYPES( t1,t2 ) ((current->type_ == t1 && children[i]->type_ == t2) || (current->type_ == t1 && t2 == oyOBJECT_NONE) || (current->type_ == t2 && children[i]->type_ == t1))
     if IS_EDGE_TYPES(oyOBJECT_PIXEL_ACCESS_S,oyOBJECT_FILTER_PLUG_S)
       edge = " [weight=\"3\" color=\"RoyalBlue4\" penwidth=\"3.0\"]"; else
     if IS_EDGE_TYPES(oyOBJECT_CONVERSION_S,oyOBJECT_FILTER_NODE_S)
       edge = " [color=\"RoyalBlue4\" penwidth=\"3.0\"]"; else
     if (current->type_ == oyOBJECT_FILTER_NODE_S && children[i]->type_ == oyOBJECT_FILTER_SOCKET_S)
-      edge = " [weight=\"5\" color=\"RoyalBlue4\" penwidth=\"3.0\"]";
+      edge = " [weight=\"5\" color=\"RoyalBlue4\" penwidth=\"3.0\"]"; else
     if (current->type_ == oyOBJECT_FILTER_SOCKET_S && children[i]->type_ == oyOBJECT_FILTER_NODE_S)
-      edge = " [weight=\"5\" color=\"orange\" penwidth=\"3.0\"]";
+      edge = " [weight=\"5\" color=\"orange\" penwidth=\"3.0\"]"; else
     if IS_EDGE_TYPES(oyOBJECT_FILTER_SOCKET_S,oyOBJECT_FILTER_PLUGS_S)
       edge = " [weight=\"5\" color=\"RoyalBlue4\" penwidth=\"3.0\"]"; else
     if IS_EDGE_TYPES(oyOBJECT_FILTER_SOCKET_S,oyOBJECT_FILTER_PLUG_S)
@@ -1138,9 +1138,11 @@ static void oyObjectTreeDotGraphCallback (
     if (IS_EDGE_TYPES(oyOBJECT_STRUCT_LIST_S,oyOBJECT_FILTER_PLUG_S) && parent && parent->type_ == oyOBJECT_FILTER_PLUGS_S && grandparent && grandparent->type_ == oyOBJECT_FILTER_SOCKET_S)
       edge = " [weight=\"5\" color=\"RoyalBlue4\" penwidth=\"3.0\"]"; else
     if (current->type_ == oyOBJECT_FILTER_NODE_S && children[i]->type_ == oyOBJECT_FILTER_PLUG_S)
-      edge = " [weight=\"5\" color=\"orange\" penwidth=\"3.0\"]";
+      edge = " [weight=\"5\" color=\"orange\" penwidth=\"3.0\"]"; else
     if (current->type_ == oyOBJECT_FILTER_PLUG_S && children[i]->type_ == oyOBJECT_FILTER_NODE_S)
-      edge = " [weight=\"5\" color=\"RoyalBlue4\" penwidth=\"3.0\"]";
+      edge = " [weight=\"5\" color=\"RoyalBlue4\" penwidth=\"3.0\"]"; else
+    if IS_EDGE_TYPES(oyOBJECT_OBSERVER_S,oyOBJECT_NONE)
+      edge = " [weight=\"-1\" color=\"DarkViolet\" penwidth=\"1.0\" style=\"dashed\"]";
     for(k = 0; k < level; ++k)
       oyStringAddPrintf( &graphs[top].text, 0,0, "- ");
     oyStringAddPrintf( &graphs[top].text, 0,0, "%d -> %d%s;\n",

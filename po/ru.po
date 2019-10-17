@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Oyranos 0.9\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2019-10-17 13:06+0200\n"
+"POT-Creation-Date: 2019-10-17 13:29+0200\n"
 "PO-Revision-Date: 2015-02-20 17:32+0100\n"
 "Last-Translator: Kai-Uwe Behrmann <ku.b@gmx.de>\n"
 "Language-Team: russian <ru@li.org>\n"
@@ -2796,7 +2796,7 @@ msgstr ""
 #: API_generated/oyName_s_.c:47 API_generated/oyName_s_.c:55
 #: API_generated/oyNamedColor_s_.c:228 API_generated/oyNamedColor_s_.c:236
 #: API_generated/oyNamedColors_s_.c:191 API_generated/oyNamedColors_s_.c:199
-#: API_generated/oyObserver_s_.c:210 API_generated/oyObserver_s_.c:218
+#: API_generated/oyObserver_s_.c:216 API_generated/oyObserver_s_.c:224
 #: API_generated/oyOption_s_.c:261 API_generated/oyOption_s_.c:269
 #: API_generated/oyOptions_s_.c:201 API_generated/oyOptions_s_.c:209
 #: API_generated/oyPixelAccess_s_.c:230 API_generated/oyPixelAccess_s_.c:238
@@ -4241,7 +4241,7 @@ msgstr ""
 
 #: API_generated/oyFilterNode_s_.c:1433 API_generated/oyObserver_s.c:332
 #: API_generated/oyObserver_s.c:343 API_generated/oyObserver_s.c:544
-#: API_generated/oyObserver_s.c:621 API_generated/oyObserver_s_.c:535
+#: API_generated/oyObserver_s.c:621 API_generated/oyObserver_s_.c:541
 #: examples/image_display/oyranos_display_helper_classes_fltk.cpp:47
 msgid "Signal"
 msgstr ""
@@ -5527,7 +5527,7 @@ msgstr ""
 msgid "found issues parsing JSON"
 msgstr ""
 
-#: API_generated/oyObserver_s_.c:597
+#: API_generated/oyObserver_s_.c:603
 msgid "found list of wrong type"
 msgstr ""
 
