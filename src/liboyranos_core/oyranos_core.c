@@ -47,7 +47,7 @@
 #include "oyRectangle_s_.h"
 
 static oyStruct_RegisterStaticMessageFunc_f * oy_static_msg_funcs_ = NULL;
-static int ** oy_object_type_init_vars_ = NULL;
+static oyStruct_RegisterStaticFreeFunc_f * oy_static_free_funcs_ = NULL;
 static int oy_msg_func_n_ = 0;
 char * oy_object_show_text_ = NULL;
 
@@ -67,15 +67,15 @@ char * oy_object_show_text_ = NULL;
  */
 int oyStruct_RegisterStaticMessageFunc (
                                        int                 type,
-                                       oyStruct_RegisterStaticMessageFunc_f f,
-                                       int               * object_type_init_var )
+                                       oyStruct_RegisterStaticMessageFunc_f msg,
+                                       oyStruct_RegisterStaticFreeFunc_f free_func )
 {
   int error = 0;
   if((int)type >= oy_msg_func_n_)
   {
     int n = oy_msg_func_n_;
     oyStruct_RegisterStaticMessageFunc_f * tmp = NULL;
-    int ** tmp_init = NULL;
+    oyStruct_RegisterStaticFreeFunc_f * tmp_free = NULL;
 
     if(oy_msg_func_n_)
       n = type * 2;
@@ -84,39 +84,39 @@ int oyStruct_RegisterStaticMessageFunc (
 
 
     tmp = oyAllocateFunc_(sizeof(oyStruct_RegisterStaticMessageFunc_f) * n);
-    tmp_init = oyAllocateFunc_(sizeof(int*) * n);
-    if(tmp && tmp_init)
+    tmp_free = oyAllocateFunc_(sizeof(oyStruct_RegisterStaticFreeFunc_f) * n);
+    if(tmp && tmp_free)
     {
       memset( tmp, 0, sizeof(oyStruct_RegisterStaticMessageFunc_f) * n );
-      memset( tmp_init, 0, sizeof(int*) * n );
+      memset( tmp_free, 0, sizeof(oyStruct_RegisterStaticFreeFunc_f) * n );
     }
 
-    if(tmp && tmp_init && oy_msg_func_n_)
+    if(tmp && tmp_free && oy_msg_func_n_)
     {
       memcpy( tmp, oy_static_msg_funcs_, sizeof(oyStruct_RegisterStaticMessageFunc_f) * oy_msg_func_n_ );
-      memcpy( tmp_init, oy_object_type_init_vars_, sizeof(int*) * oy_msg_func_n_ );
+      memcpy( tmp_free, oy_static_free_funcs_, sizeof(oyStruct_RegisterStaticFreeFunc_f) * oy_msg_func_n_ );
     }
-    else if(!tmp || !tmp_init)
+    else if(!tmp || !tmp_free)
     {
       error = 1;
       if(tmp) oyDeAllocateFunc_(tmp);
-      if(tmp_init) oyDeAllocateFunc_(tmp_init);
+      if(tmp_free) oyDeAllocateFunc_(tmp_free);
       return error;
     }
 
     if(oy_static_msg_funcs_)
       oyDeAllocateFunc_(oy_static_msg_funcs_);
-    if(oy_object_type_init_vars_)
-      oyDeAllocateFunc_(oy_object_type_init_vars_);
+    if(oy_static_free_funcs_)
+      oyDeAllocateFunc_(oy_static_free_funcs_);
     oy_static_msg_funcs_ = tmp;
-    oy_object_type_init_vars_ = tmp_init;
+    oy_static_free_funcs_ = tmp_free;
     tmp = NULL;
-    tmp_init = NULL;
+    tmp_free = NULL;
     oy_msg_func_n_ = n;
   }
 
-  oy_static_msg_funcs_[type] = f;
-  oy_object_type_init_vars_[type] = object_type_init_var;
+  oy_static_msg_funcs_[type] = msg;
+  oy_static_free_funcs_[type] = free_func;
 
   return error;
 }
@@ -128,11 +128,11 @@ void               oyLibCoreRelease  ( )
     oyDeAllocateFunc_(oy_static_msg_funcs_);
   oy_static_msg_funcs_ = NULL;
   for( i = 0; i < oy_msg_func_n_; ++i )
-    if(oy_object_type_init_vars_[i])
-      *oy_object_type_init_vars_[i] = 0;
-  if(oy_object_type_init_vars_)
-    oyDeAllocateFunc_(oy_object_type_init_vars_);
-  oy_object_type_init_vars_ = NULL;
+    if(oy_static_free_funcs_[i])
+      oy_static_free_funcs_[i]();
+  if(oy_static_free_funcs_)
+    oyDeAllocateFunc_(oy_static_free_funcs_);
+  oy_static_free_funcs_ = NULL;
   oy_msg_func_n_ = 0;
   if(oy_object_show_text_)
     oyFree_m_( oy_object_show_text_ );

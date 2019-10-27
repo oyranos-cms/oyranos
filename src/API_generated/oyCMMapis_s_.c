@@ -40,14 +40,14 @@
 
 
 static int oy_cmmapis_init_ = 0;
+static char * oy_cmmapis_msg_text_ = NULL;
+static int oy_cmmapis_msg_text_n_ = 0;
 static const char * oyCMMapis_StaticMessageFunc_ (
                                        oyPointer           obj,
                                        oyNAME_e            type,
                                        int                 flags )
 {
   oyCMMapis_s_ * s = (oyCMMapis_s_*) obj;
-  static char * text = 0;
-  static int text_n = 0;
   oyAlloc_f alloc = oyAllocateFunc_;
 
   /* silently fail */
@@ -57,26 +57,38 @@ static const char * oyCMMapis_StaticMessageFunc_ (
   if(s->oy_ && s->oy_->allocateFunc_)
     alloc = s->oy_->allocateFunc_;
 
-  if( text == NULL || text_n == 0 )
+  if( oy_cmmapis_msg_text_ == NULL || oy_cmmapis_msg_text_n_ == 0 )
   {
-    text_n = 512;
-    text = (char*) alloc( text_n );
-    if(text)
-      memset( text, 0, text_n );
+    oy_cmmapis_msg_text_n_ = 512;
+    oy_cmmapis_msg_text_ = (char*) alloc( oy_cmmapis_msg_text_n_ );
+    if(oy_cmmapis_msg_text_)
+      memset( oy_cmmapis_msg_text_, 0, oy_cmmapis_msg_text_n_ );
   }
 
-  if( text == NULL || text_n == 0 )
+  if( oy_cmmapis_msg_text_ == NULL || oy_cmmapis_msg_text_n_ == 0 )
     return "Memory problem";
 
-  text[0] = '\000';
+  oy_cmmapis_msg_text_[0] = '\000';
 
   if(!(flags & 0x01))
-    sprintf(text, "%s%s", oyStructTypeToText( s->type_ ), type != oyNAME_NICK?" ":"");
+    sprintf(oy_cmmapis_msg_text_, "%s%s", oyStructTypeToText( s->type_ ), type != oyNAME_NICK?" ":"");
 
   
   
 
-  return text;
+  return oy_cmmapis_msg_text_;
+}
+
+static void oyCMMapis_StaticFree_           ( void )
+{
+  if(oy_cmmapis_init_)
+  {
+    oy_cmmapis_init_ = 0;
+    if(oy_cmmapis_msg_text_)
+      oyFree_m_(oy_cmmapis_msg_text_);
+    if(oy_debug)
+      fprintf(stderr, "%s() freeing static \"%s\" memory\n", "oyCMMapis_StaticFree_", "oyCMMapis_s" );
+  }
 }
 
 
@@ -189,12 +201,57 @@ oyCMMapis_s_ * oyCMMapis_New_ ( oyObject_s object )
 {
   /* ---- start of common object constructor ----- */
   oyOBJECT_e type = oyOBJECT_CMM_APIS_S;
-  int error = 0;
+  int error = 0, id = 0;
   oyObject_s    s_obj = oyObject_NewFrom( object );
   oyCMMapis_s_ * s = 0;
 
   if(s_obj)
-    s = (oyCMMapis_s_*)s_obj->allocateFunc_(sizeof(oyCMMapis_s_));
+  {
+    id = s_obj->id_;
+    switch(id)
+    {
+      case 1: s = (oyCMMapis_s_*)s_obj->allocateFunc_(sizeof(oyCMMapis_s_)); break;
+      case 2: s = (oyCMMapis_s_*)s_obj->allocateFunc_(sizeof(oyCMMapis_s_)); break;
+      case 3: s = (oyCMMapis_s_*)s_obj->allocateFunc_(sizeof(oyCMMapis_s_)); break;
+      case 4: s = (oyCMMapis_s_*)s_obj->allocateFunc_(sizeof(oyCMMapis_s_)); break;
+      case 5: s = (oyCMMapis_s_*)s_obj->allocateFunc_(sizeof(oyCMMapis_s_)); break;
+      case 6: s = (oyCMMapis_s_*)s_obj->allocateFunc_(sizeof(oyCMMapis_s_)); break;
+      case 7: s = (oyCMMapis_s_*)s_obj->allocateFunc_(sizeof(oyCMMapis_s_)); break;
+      case 8: s = (oyCMMapis_s_*)s_obj->allocateFunc_(sizeof(oyCMMapis_s_)); break;
+      case 9: s = (oyCMMapis_s_*)s_obj->allocateFunc_(sizeof(oyCMMapis_s_)); break;
+      case 10: s = (oyCMMapis_s_*)s_obj->allocateFunc_(sizeof(oyCMMapis_s_)); break;
+      case 11: s = (oyCMMapis_s_*)s_obj->allocateFunc_(sizeof(oyCMMapis_s_)); break;
+      case 12: s = (oyCMMapis_s_*)s_obj->allocateFunc_(sizeof(oyCMMapis_s_)); break;
+      case 13: s = (oyCMMapis_s_*)s_obj->allocateFunc_(sizeof(oyCMMapis_s_)); break;
+      case 14: s = (oyCMMapis_s_*)s_obj->allocateFunc_(sizeof(oyCMMapis_s_)); break;
+      case 15: s = (oyCMMapis_s_*)s_obj->allocateFunc_(sizeof(oyCMMapis_s_)); break;
+      case 16: s = (oyCMMapis_s_*)s_obj->allocateFunc_(sizeof(oyCMMapis_s_)); break;
+      case 17: s = (oyCMMapis_s_*)s_obj->allocateFunc_(sizeof(oyCMMapis_s_)); break;
+      case 18: s = (oyCMMapis_s_*)s_obj->allocateFunc_(sizeof(oyCMMapis_s_)); break;
+      case 19: s = (oyCMMapis_s_*)s_obj->allocateFunc_(sizeof(oyCMMapis_s_)); break;
+      case 20: s = (oyCMMapis_s_*)s_obj->allocateFunc_(sizeof(oyCMMapis_s_)); break;
+      case 21: s = (oyCMMapis_s_*)s_obj->allocateFunc_(sizeof(oyCMMapis_s_)); break;
+      case 22: s = (oyCMMapis_s_*)s_obj->allocateFunc_(sizeof(oyCMMapis_s_)); break;
+      case 23: s = (oyCMMapis_s_*)s_obj->allocateFunc_(sizeof(oyCMMapis_s_)); break;
+      case 24: s = (oyCMMapis_s_*)s_obj->allocateFunc_(sizeof(oyCMMapis_s_)); break;
+      case 25: s = (oyCMMapis_s_*)s_obj->allocateFunc_(sizeof(oyCMMapis_s_)); break;
+      case 26: s = (oyCMMapis_s_*)s_obj->allocateFunc_(sizeof(oyCMMapis_s_)); break;
+      case 27: s = (oyCMMapis_s_*)s_obj->allocateFunc_(sizeof(oyCMMapis_s_)); break;
+      case 28: s = (oyCMMapis_s_*)s_obj->allocateFunc_(sizeof(oyCMMapis_s_)); break;
+      case 29: s = (oyCMMapis_s_*)s_obj->allocateFunc_(sizeof(oyCMMapis_s_)); break;
+      case 30: s = (oyCMMapis_s_*)s_obj->allocateFunc_(sizeof(oyCMMapis_s_)); break;
+      case 31: s = (oyCMMapis_s_*)s_obj->allocateFunc_(sizeof(oyCMMapis_s_)); break;
+      case 32: s = (oyCMMapis_s_*)s_obj->allocateFunc_(sizeof(oyCMMapis_s_)); break;
+      case 33: s = (oyCMMapis_s_*)s_obj->allocateFunc_(sizeof(oyCMMapis_s_)); break;
+      case 34: s = (oyCMMapis_s_*)s_obj->allocateFunc_(sizeof(oyCMMapis_s_)); break;
+      case 35: s = (oyCMMapis_s_*)s_obj->allocateFunc_(sizeof(oyCMMapis_s_)); break;
+      case 36: s = (oyCMMapis_s_*)s_obj->allocateFunc_(sizeof(oyCMMapis_s_)); break;
+      case 37: s = (oyCMMapis_s_*)s_obj->allocateFunc_(sizeof(oyCMMapis_s_)); break;
+      case 38: s = (oyCMMapis_s_*)s_obj->allocateFunc_(sizeof(oyCMMapis_s_)); break;
+      case 39: s = (oyCMMapis_s_*)s_obj->allocateFunc_(sizeof(oyCMMapis_s_)); break;
+      default: s = (oyCMMapis_s_*)s_obj->allocateFunc_(sizeof(oyCMMapis_s_));
+    }
+  }
   else
   {
     WARNc_S(_("MEM Error."));
@@ -250,7 +307,7 @@ oyCMMapis_s_ * oyCMMapis_New_ ( oyObject_s object )
     oy_cmmapis_init_ = 1;
     oyStruct_RegisterStaticMessageFunc( type,
                                         oyCMMapis_StaticMessageFunc_,
-                                        &oy_cmmapis_init_ );
+                                        oyCMMapis_StaticFree_ );
   }
 
   if(error)
@@ -377,13 +434,13 @@ oyCMMapis_s_ * oyCMMapis_Copy_ ( oyCMMapis_s_ *cmmapis, oyObject_s object )
  *  @param[in,out] cmmapis                 CMMapis struct object
  *
  *  @version Oyranos: 0.9.7
- *  @date    2018/10/03
+ *  @date    2019/10/23
  *  @since   2010/04/26 (Oyranos: 0.1.10)
  */
 int oyCMMapis_Release_( oyCMMapis_s_ **cmmapis )
 {
   const char * track_name = NULL;
-  int observer_refs = 0, i;
+  int observer_refs = 0, i, id = 0, refs = 0;
   /* ---- start of common object destructor ----- */
   oyCMMapis_s_ *s = 0;
 
@@ -394,6 +451,9 @@ int oyCMMapis_Release_( oyCMMapis_s_ **cmmapis )
   /* static object */
   if(!s->oy_)
     return 0;
+
+  id = s->oy_->id_;
+  refs = s->oy_->ref_;
 
   *cmmapis = 0;
 
@@ -432,7 +492,7 @@ int oyCMMapis_Release_( oyCMMapis_s_ **cmmapis )
   }
 
   
-  if((oyObject_UnRef(s->oy_) - observer_refs) > 0)
+  if((oyObject_UnRef(s->oy_) - observer_refs*2) > 0)
     return 0;
   /* ---- end of common object destructor ------- */
 
@@ -455,6 +515,23 @@ int oyCMMapis_Release_( oyCMMapis_s_ **cmmapis )
     }
   }
 
+  /* model and observer reference each other. So release the object two times.
+   * The models and and observers are released later inside the
+   * oyObject_s::handles. */
+  for(i = 0; i < observer_refs; ++i)
+  {
+    //oyObject_UnRef(s->oy_);
+    oyObject_UnRef(s->oy_);
+  }
+
+  refs = s->oy_->ref_;
+  if(refs < 0)
+  {
+    WARNc2_S( "node[%d]->object can not be untracked with refs: %d\n", id, refs );
+    //oyMessageFunc_p( oyMSG_WARN,0,OY_DBG_FORMAT_ "refs:%d", OY_DBG_ARGS_, refs);
+    return -1; /* issue */
+  }
+
   
   /* ---- start of custom CMMapis destructor ----- */
   oyCMMapis_Release__Members( s );
@@ -467,25 +544,24 @@ int oyCMMapis_Release_( oyCMMapis_s_ **cmmapis )
   oyStructList_Release( &s->list_ );
 
 
-  /* model and observer reference each other. So release the object two times.
-   * The models and and observers are released later inside the
-   * oyObject_s::handles. */
-  for(i = 0; i < observer_refs; ++i)
-  {
-    oyObject_UnRef(s->oy_);
-    oyObject_UnRef(s->oy_);
-  }
-
   if(s->oy_->deallocateFunc_)
   {
     oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
-    int id = s->oy_->id_;
-    int refs = s->oy_->ref_;
+    oyObject_s oy = s->oy_;
+
+    refs = s->oy_->ref_;
+
+    if(track_name)
+      fprintf( stderr, "%s[%d] destructing\n", track_name, id );
 
     if(refs > 1)
-      fprintf( stderr, "!!!ERROR: node[%d]->object can not be untracked with refs: %d\n", id, refs);
+      fprintf( stderr, "!!!ERROR:%d node[%d]->object can not be untracked with refs: %d\n", __LINE__, id, refs);
 
-    oyObject_Release( &s->oy_ );
+    for(i = 1; i < observer_refs; ++i) /* oyObject_Release(oy) will dereference one more time, so preserve here one ref for oyObject_Release(oy) */
+      oyObject_UnRef(oy);
+
+    s->oy_ = NULL;
+    oyObject_Release( &oy );
     if(track_name)
       fprintf( stderr, "%s[%d] destructed\n", track_name, id );
 

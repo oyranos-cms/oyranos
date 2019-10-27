@@ -31,14 +31,14 @@
 
 {% block GeneralPrivateMethodsDefinitions %}
 static int oy_{{ class.baseName|lower }}_init_ = 0;
+static char * oy_{{ class.baseName|lower }}_msg_text_ = NULL;
+static int oy_{{ class.baseName|lower }}_msg_text_n_ = 0;
 static const char * oy{{ class.baseName }}_StaticMessageFunc_ (
                                        oyPointer           obj,
                                        oyNAME_e            type,
                                        int                 flags )
 {
   {{ class.privName }} * s = ({{ class.privName }}*) obj;
-  static char * text = 0;
-  static int text_n = 0;
   oyAlloc_f alloc = oyAllocateFunc_;
 
   /* silently fail */
@@ -48,26 +48,38 @@ static const char * oy{{ class.baseName }}_StaticMessageFunc_ (
   if(s->oy_ && s->oy_->allocateFunc_)
     alloc = s->oy_->allocateFunc_;
 
-  if( text == NULL || text_n == 0 )
+  if( oy_{{ class.baseName|lower }}_msg_text_ == NULL || oy_{{ class.baseName|lower }}_msg_text_n_ == 0 )
   {
-    text_n = 512;
-    text = (char*) alloc( text_n );
-    if(text)
-      memset( text, 0, text_n );
+    oy_{{ class.baseName|lower }}_msg_text_n_ = 512;
+    oy_{{ class.baseName|lower }}_msg_text_ = (char*) alloc( oy_{{ class.baseName|lower }}_msg_text_n_ );
+    if(oy_{{ class.baseName|lower }}_msg_text_)
+      memset( oy_{{ class.baseName|lower }}_msg_text_, 0, oy_{{ class.baseName|lower }}_msg_text_n_ );
   }
 
-  if( text == NULL || text_n == 0 )
+  if( oy_{{ class.baseName|lower }}_msg_text_ == NULL || oy_{{ class.baseName|lower }}_msg_text_n_ == 0 )
     return "Memory problem";
 
-  text[0] = '\000';
+  oy_{{ class.baseName|lower }}_msg_text_[0] = '\000';
 
   if(!(flags & 0x01))
-    sprintf(text, "%s%s", oyStructTypeToText( s->type_ ), type != oyNAME_NICK?" ":"");
+    sprintf(oy_{{ class.baseName|lower }}_msg_text_, "%s%s", oyStructTypeToText( s->type_ ), type != oyNAME_NICK?" ":"");
 
   {% block customStaticMessage %}
   {% endblock customStaticMessage %}
 
-  return text;
+  return oy_{{ class.baseName|lower }}_msg_text_;
+}
+
+static void oy{{ class.baseName }}_StaticFree_           ( void )
+{
+  if(oy_{{ class.baseName|lower }}_init_)
+  {
+    oy_{{ class.baseName|lower }}_init_ = 0;
+    if(oy_{{ class.baseName|lower }}_msg_text_)
+      oyFree_m_(oy_{{ class.baseName|lower }}_msg_text_);
+    if(oy_debug)
+      fprintf(stderr, "%s() freeing static \"%s\" memory\n", "oy{{ class.baseName }}_StaticFree_", "{{ class.name }}" );
+  }
 }
 
 {% block CustomPrivateMethodsDefinitions %}
@@ -89,12 +101,57 @@ static const char * oy{{ class.baseName }}_StaticMessageFunc_ (
 {
   /* ---- start of common object constructor ----- */
   oyOBJECT_e type = oyOBJECT_{{ class.baseName|underscores|upper }}_S;
-  int error = 0;
+  int error = 0, id = 0;
   oyObject_s    s_obj = oyObject_NewFrom( object );
   {{ class.privName }} * s = 0;
 
   if(s_obj)
-    s = ({{ class.privName }}*)s_obj->allocateFunc_(sizeof({{ class.privName }}));
+  {
+    id = s_obj->id_;
+    switch(id)
+    {
+      case 1: s = ({{ class.privName }}*)s_obj->allocateFunc_(sizeof({{ class.privName }})); break;
+      case 2: s = ({{ class.privName }}*)s_obj->allocateFunc_(sizeof({{ class.privName }})); break;
+      case 3: s = ({{ class.privName }}*)s_obj->allocateFunc_(sizeof({{ class.privName }})); break;
+      case 4: s = ({{ class.privName }}*)s_obj->allocateFunc_(sizeof({{ class.privName }})); break;
+      case 5: s = ({{ class.privName }}*)s_obj->allocateFunc_(sizeof({{ class.privName }})); break;
+      case 6: s = ({{ class.privName }}*)s_obj->allocateFunc_(sizeof({{ class.privName }})); break;
+      case 7: s = ({{ class.privName }}*)s_obj->allocateFunc_(sizeof({{ class.privName }})); break;
+      case 8: s = ({{ class.privName }}*)s_obj->allocateFunc_(sizeof({{ class.privName }})); break;
+      case 9: s = ({{ class.privName }}*)s_obj->allocateFunc_(sizeof({{ class.privName }})); break;
+      case 10: s = ({{ class.privName }}*)s_obj->allocateFunc_(sizeof({{ class.privName }})); break;
+      case 11: s = ({{ class.privName }}*)s_obj->allocateFunc_(sizeof({{ class.privName }})); break;
+      case 12: s = ({{ class.privName }}*)s_obj->allocateFunc_(sizeof({{ class.privName }})); break;
+      case 13: s = ({{ class.privName }}*)s_obj->allocateFunc_(sizeof({{ class.privName }})); break;
+      case 14: s = ({{ class.privName }}*)s_obj->allocateFunc_(sizeof({{ class.privName }})); break;
+      case 15: s = ({{ class.privName }}*)s_obj->allocateFunc_(sizeof({{ class.privName }})); break;
+      case 16: s = ({{ class.privName }}*)s_obj->allocateFunc_(sizeof({{ class.privName }})); break;
+      case 17: s = ({{ class.privName }}*)s_obj->allocateFunc_(sizeof({{ class.privName }})); break;
+      case 18: s = ({{ class.privName }}*)s_obj->allocateFunc_(sizeof({{ class.privName }})); break;
+      case 19: s = ({{ class.privName }}*)s_obj->allocateFunc_(sizeof({{ class.privName }})); break;
+      case 20: s = ({{ class.privName }}*)s_obj->allocateFunc_(sizeof({{ class.privName }})); break;
+      case 21: s = ({{ class.privName }}*)s_obj->allocateFunc_(sizeof({{ class.privName }})); break;
+      case 22: s = ({{ class.privName }}*)s_obj->allocateFunc_(sizeof({{ class.privName }})); break;
+      case 23: s = ({{ class.privName }}*)s_obj->allocateFunc_(sizeof({{ class.privName }})); break;
+      case 24: s = ({{ class.privName }}*)s_obj->allocateFunc_(sizeof({{ class.privName }})); break;
+      case 25: s = ({{ class.privName }}*)s_obj->allocateFunc_(sizeof({{ class.privName }})); break;
+      case 26: s = ({{ class.privName }}*)s_obj->allocateFunc_(sizeof({{ class.privName }})); break;
+      case 27: s = ({{ class.privName }}*)s_obj->allocateFunc_(sizeof({{ class.privName }})); break;
+      case 28: s = ({{ class.privName }}*)s_obj->allocateFunc_(sizeof({{ class.privName }})); break;
+      case 29: s = ({{ class.privName }}*)s_obj->allocateFunc_(sizeof({{ class.privName }})); break;
+      case 30: s = ({{ class.privName }}*)s_obj->allocateFunc_(sizeof({{ class.privName }})); break;
+      case 31: s = ({{ class.privName }}*)s_obj->allocateFunc_(sizeof({{ class.privName }})); break;
+      case 32: s = ({{ class.privName }}*)s_obj->allocateFunc_(sizeof({{ class.privName }})); break;
+      case 33: s = ({{ class.privName }}*)s_obj->allocateFunc_(sizeof({{ class.privName }})); break;
+      case 34: s = ({{ class.privName }}*)s_obj->allocateFunc_(sizeof({{ class.privName }})); break;
+      case 35: s = ({{ class.privName }}*)s_obj->allocateFunc_(sizeof({{ class.privName }})); break;
+      case 36: s = ({{ class.privName }}*)s_obj->allocateFunc_(sizeof({{ class.privName }})); break;
+      case 37: s = ({{ class.privName }}*)s_obj->allocateFunc_(sizeof({{ class.privName }})); break;
+      case 38: s = ({{ class.privName }}*)s_obj->allocateFunc_(sizeof({{ class.privName }})); break;
+      case 39: s = ({{ class.privName }}*)s_obj->allocateFunc_(sizeof({{ class.privName }})); break;
+      default: s = ({{ class.privName }}*)s_obj->allocateFunc_(sizeof({{ class.privName }}));
+    }
+  }
   else
   {
     WARNc_S(_("MEM Error."));
@@ -209,7 +266,7 @@ static const char * oy{{ class.baseName }}_StaticMessageFunc_ (
     oy_{{ class.baseName|lower }}_init_ = 1;
     oyStruct_RegisterStaticMessageFunc( type,
                                         oy{{ class.baseName }}_StaticMessageFunc_,
-                                        &oy_{{ class.baseName|lower }}_init_ );
+                                        oy{{ class.baseName }}_StaticFree_ );
   }
 
   if(error)
@@ -364,13 +421,13 @@ static const char * oy{{ class.baseName }}_StaticMessageFunc_ (
  *  @param[in,out] {{ class.baseName|lower }}                 {{ class.baseName }} struct object
  *
  *  @version Oyranos: 0.9.7
- *  @date    2018/10/03
+ *  @date    2019/10/23
  *  @since   2010/04/26 (Oyranos: 0.1.10)
  */
 int oy{{ class.baseName }}_Release_( {{ class.privName }} **{{ class.baseName|lower }} )
 {
   const char * track_name = NULL;
-  int observer_refs = 0, i;
+  int observer_refs = 0, i, id = 0, refs = 0;
   /* ---- start of common object destructor ----- */
   {{ class.privName }} *s = 0;
 
@@ -381,6 +438,9 @@ int oy{{ class.baseName }}_Release_( {{ class.privName }} **{{ class.baseName|lo
   /* static object */
   if(!s->oy_)
     return 0;
+
+  id = s->oy_->id_;
+  refs = s->oy_->ref_;
 
   *{{ class.baseName|lower }} = 0;
 
@@ -419,7 +479,7 @@ int oy{{ class.baseName }}_Release_( {{ class.privName }} **{{ class.baseName|lo
   }
 
   {% block refCount %}
-  if((oyObject_UnRef(s->oy_) - observer_refs) > 0)
+  if((oyObject_UnRef(s->oy_) - observer_refs*2) > 0)
     return 0;{% endblock %}
   /* ---- end of common object destructor ------- */
 
@@ -440,6 +500,23 @@ int oy{{ class.baseName }}_Release_( {{ class.privName }} **{{ class.baseName|lo
       track_name = oyStructTypeToText(s->type_);
       fprintf( stderr, "%s[%d] destruct\n", track_name, s->oy_->id_);
     }
+  }
+
+  /* model and observer reference each other. So release the object two times.
+   * The models and and observers are released later inside the
+   * oyObject_s::handles. */
+  for(i = 0; i < observer_refs; ++i)
+  {
+    //oyObject_UnRef(s->oy_);
+    oyObject_UnRef(s->oy_);
+  }
+
+  refs = s->oy_->ref_;
+  if(refs < 0)
+  {
+    WARNc2_S( "node[%d]->object can not be untracked with refs: %d\n", id, refs );
+    //oyMessageFunc_p( oyMSG_WARN,0,OY_DBG_FORMAT_ "refs:%d", OY_DBG_ARGS_, refs);
+    return -1; /* issue */
   }
 
   {% ifequal class.parent.name "oyStruct_s" %}
@@ -483,25 +560,24 @@ int oy{{ class.baseName }}_Release_( {{ class.privName }} **{{ class.baseName|lo
 {% block customDestructor %}
 {% endblock customDestructor %}
 
-  /* model and observer reference each other. So release the object two times.
-   * The models and and observers are released later inside the
-   * oyObject_s::handles. */
-  for(i = 0; i < observer_refs; ++i)
-  {
-    oyObject_UnRef(s->oy_);
-    oyObject_UnRef(s->oy_);
-  }
-
   if(s->oy_->deallocateFunc_)
   {
     oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
-    int id = s->oy_->id_;
-    int refs = s->oy_->ref_;
+    oyObject_s oy = s->oy_;
+
+    refs = s->oy_->ref_;
+
+    if(track_name)
+      fprintf( stderr, "%s[%d] destructing\n", track_name, id );
 
     if(refs > 1)
-      fprintf( stderr, "!!!ERROR: node[%d]->object can not be untracked with refs: %d\n", id, refs);
+      fprintf( stderr, "!!!ERROR:%d node[%d]->object can not be untracked with refs: %d\n", __LINE__, id, refs);
 
-    oyObject_Release( &s->oy_ );
+    for(i = 1; i < observer_refs; ++i) /* oyObject_Release(oy) will dereference one more time, so preserve here one ref for oyObject_Release(oy) */
+      oyObject_UnRef(oy);
+
+    s->oy_ = NULL;
+    oyObject_Release( &oy );
     if(track_name)
       fprintf( stderr, "%s[%d] destructed\n", track_name, id );
 

@@ -38,14 +38,14 @@
 
 
 static int oy_filtersocket_init_ = 0;
+static char * oy_filtersocket_msg_text_ = NULL;
+static int oy_filtersocket_msg_text_n_ = 0;
 static const char * oyFilterSocket_StaticMessageFunc_ (
                                        oyPointer           obj,
                                        oyNAME_e            type,
                                        int                 flags )
 {
   oyFilterSocket_s_ * s = (oyFilterSocket_s_*) obj;
-  static char * text = 0;
-  static int text_n = 0;
   oyAlloc_f alloc = oyAllocateFunc_;
 
   /* silently fail */
@@ -55,30 +55,42 @@ static const char * oyFilterSocket_StaticMessageFunc_ (
   if(s->oy_ && s->oy_->allocateFunc_)
     alloc = s->oy_->allocateFunc_;
 
-  if( text == NULL || text_n == 0 )
+  if( oy_filtersocket_msg_text_ == NULL || oy_filtersocket_msg_text_n_ == 0 )
   {
-    text_n = 512;
-    text = (char*) alloc( text_n );
-    if(text)
-      memset( text, 0, text_n );
+    oy_filtersocket_msg_text_n_ = 512;
+    oy_filtersocket_msg_text_ = (char*) alloc( oy_filtersocket_msg_text_n_ );
+    if(oy_filtersocket_msg_text_)
+      memset( oy_filtersocket_msg_text_, 0, oy_filtersocket_msg_text_n_ );
   }
 
-  if( text == NULL || text_n == 0 )
+  if( oy_filtersocket_msg_text_ == NULL || oy_filtersocket_msg_text_n_ == 0 )
     return "Memory problem";
 
-  text[0] = '\000';
+  oy_filtersocket_msg_text_[0] = '\000';
 
   if(!(flags & 0x01))
-    sprintf(text, "%s%s", oyStructTypeToText( s->type_ ), type != oyNAME_NICK?" ":"");
+    sprintf(oy_filtersocket_msg_text_, "%s%s", oyStructTypeToText( s->type_ ), type != oyNAME_NICK?" ":"");
 
   
 
   
   if(type == oyNAME_DESCRIPTION)
-    sprintf( &text[strlen(text)], "%s", s->relatives_?s->relatives_:"" );
+    sprintf( &oy_filtersocket_msg_text_[strlen(oy_filtersocket_msg_text_)], "%s", s->relatives_?s->relatives_:"" );
 
 
-  return text;
+  return oy_filtersocket_msg_text_;
+}
+
+static void oyFilterSocket_StaticFree_           ( void )
+{
+  if(oy_filtersocket_init_)
+  {
+    oy_filtersocket_init_ = 0;
+    if(oy_filtersocket_msg_text_)
+      oyFree_m_(oy_filtersocket_msg_text_);
+    if(oy_debug)
+      fprintf(stderr, "%s() freeing static \"%s\" memory\n", "oyFilterSocket_StaticFree_", "oyFilterSocket_s" );
+  }
 }
 
 
@@ -218,12 +230,57 @@ oyFilterSocket_s_ * oyFilterSocket_New_ ( oyObject_s object )
 {
   /* ---- start of common object constructor ----- */
   oyOBJECT_e type = oyOBJECT_FILTER_SOCKET_S;
-  int error = 0;
+  int error = 0, id = 0;
   oyObject_s    s_obj = oyObject_NewFrom( object );
   oyFilterSocket_s_ * s = 0;
 
   if(s_obj)
-    s = (oyFilterSocket_s_*)s_obj->allocateFunc_(sizeof(oyFilterSocket_s_));
+  {
+    id = s_obj->id_;
+    switch(id)
+    {
+      case 1: s = (oyFilterSocket_s_*)s_obj->allocateFunc_(sizeof(oyFilterSocket_s_)); break;
+      case 2: s = (oyFilterSocket_s_*)s_obj->allocateFunc_(sizeof(oyFilterSocket_s_)); break;
+      case 3: s = (oyFilterSocket_s_*)s_obj->allocateFunc_(sizeof(oyFilterSocket_s_)); break;
+      case 4: s = (oyFilterSocket_s_*)s_obj->allocateFunc_(sizeof(oyFilterSocket_s_)); break;
+      case 5: s = (oyFilterSocket_s_*)s_obj->allocateFunc_(sizeof(oyFilterSocket_s_)); break;
+      case 6: s = (oyFilterSocket_s_*)s_obj->allocateFunc_(sizeof(oyFilterSocket_s_)); break;
+      case 7: s = (oyFilterSocket_s_*)s_obj->allocateFunc_(sizeof(oyFilterSocket_s_)); break;
+      case 8: s = (oyFilterSocket_s_*)s_obj->allocateFunc_(sizeof(oyFilterSocket_s_)); break;
+      case 9: s = (oyFilterSocket_s_*)s_obj->allocateFunc_(sizeof(oyFilterSocket_s_)); break;
+      case 10: s = (oyFilterSocket_s_*)s_obj->allocateFunc_(sizeof(oyFilterSocket_s_)); break;
+      case 11: s = (oyFilterSocket_s_*)s_obj->allocateFunc_(sizeof(oyFilterSocket_s_)); break;
+      case 12: s = (oyFilterSocket_s_*)s_obj->allocateFunc_(sizeof(oyFilterSocket_s_)); break;
+      case 13: s = (oyFilterSocket_s_*)s_obj->allocateFunc_(sizeof(oyFilterSocket_s_)); break;
+      case 14: s = (oyFilterSocket_s_*)s_obj->allocateFunc_(sizeof(oyFilterSocket_s_)); break;
+      case 15: s = (oyFilterSocket_s_*)s_obj->allocateFunc_(sizeof(oyFilterSocket_s_)); break;
+      case 16: s = (oyFilterSocket_s_*)s_obj->allocateFunc_(sizeof(oyFilterSocket_s_)); break;
+      case 17: s = (oyFilterSocket_s_*)s_obj->allocateFunc_(sizeof(oyFilterSocket_s_)); break;
+      case 18: s = (oyFilterSocket_s_*)s_obj->allocateFunc_(sizeof(oyFilterSocket_s_)); break;
+      case 19: s = (oyFilterSocket_s_*)s_obj->allocateFunc_(sizeof(oyFilterSocket_s_)); break;
+      case 20: s = (oyFilterSocket_s_*)s_obj->allocateFunc_(sizeof(oyFilterSocket_s_)); break;
+      case 21: s = (oyFilterSocket_s_*)s_obj->allocateFunc_(sizeof(oyFilterSocket_s_)); break;
+      case 22: s = (oyFilterSocket_s_*)s_obj->allocateFunc_(sizeof(oyFilterSocket_s_)); break;
+      case 23: s = (oyFilterSocket_s_*)s_obj->allocateFunc_(sizeof(oyFilterSocket_s_)); break;
+      case 24: s = (oyFilterSocket_s_*)s_obj->allocateFunc_(sizeof(oyFilterSocket_s_)); break;
+      case 25: s = (oyFilterSocket_s_*)s_obj->allocateFunc_(sizeof(oyFilterSocket_s_)); break;
+      case 26: s = (oyFilterSocket_s_*)s_obj->allocateFunc_(sizeof(oyFilterSocket_s_)); break;
+      case 27: s = (oyFilterSocket_s_*)s_obj->allocateFunc_(sizeof(oyFilterSocket_s_)); break;
+      case 28: s = (oyFilterSocket_s_*)s_obj->allocateFunc_(sizeof(oyFilterSocket_s_)); break;
+      case 29: s = (oyFilterSocket_s_*)s_obj->allocateFunc_(sizeof(oyFilterSocket_s_)); break;
+      case 30: s = (oyFilterSocket_s_*)s_obj->allocateFunc_(sizeof(oyFilterSocket_s_)); break;
+      case 31: s = (oyFilterSocket_s_*)s_obj->allocateFunc_(sizeof(oyFilterSocket_s_)); break;
+      case 32: s = (oyFilterSocket_s_*)s_obj->allocateFunc_(sizeof(oyFilterSocket_s_)); break;
+      case 33: s = (oyFilterSocket_s_*)s_obj->allocateFunc_(sizeof(oyFilterSocket_s_)); break;
+      case 34: s = (oyFilterSocket_s_*)s_obj->allocateFunc_(sizeof(oyFilterSocket_s_)); break;
+      case 35: s = (oyFilterSocket_s_*)s_obj->allocateFunc_(sizeof(oyFilterSocket_s_)); break;
+      case 36: s = (oyFilterSocket_s_*)s_obj->allocateFunc_(sizeof(oyFilterSocket_s_)); break;
+      case 37: s = (oyFilterSocket_s_*)s_obj->allocateFunc_(sizeof(oyFilterSocket_s_)); break;
+      case 38: s = (oyFilterSocket_s_*)s_obj->allocateFunc_(sizeof(oyFilterSocket_s_)); break;
+      case 39: s = (oyFilterSocket_s_*)s_obj->allocateFunc_(sizeof(oyFilterSocket_s_)); break;
+      default: s = (oyFilterSocket_s_*)s_obj->allocateFunc_(sizeof(oyFilterSocket_s_));
+    }
+  }
   else
   {
     WARNc_S(_("MEM Error."));
@@ -278,7 +335,7 @@ oyFilterSocket_s_ * oyFilterSocket_New_ ( oyObject_s object )
     oy_filtersocket_init_ = 1;
     oyStruct_RegisterStaticMessageFunc( type,
                                         oyFilterSocket_StaticMessageFunc_,
-                                        &oy_filtersocket_init_ );
+                                        oyFilterSocket_StaticFree_ );
   }
 
   if(error)
@@ -403,13 +460,13 @@ oyFilterSocket_s_ * oyFilterSocket_Copy_ ( oyFilterSocket_s_ *filtersocket, oyOb
  *  @param[in,out] filtersocket                 FilterSocket struct object
  *
  *  @version Oyranos: 0.9.7
- *  @date    2018/10/03
+ *  @date    2019/10/23
  *  @since   2010/04/26 (Oyranos: 0.1.10)
  */
 int oyFilterSocket_Release_( oyFilterSocket_s_ **filtersocket )
 {
   const char * track_name = NULL;
-  int observer_refs = 0, i;
+  int observer_refs = 0, i, id = 0, refs = 0;
   /* ---- start of common object destructor ----- */
   oyFilterSocket_s_ *s = 0;
 
@@ -420,6 +477,9 @@ int oyFilterSocket_Release_( oyFilterSocket_s_ **filtersocket )
   /* static object */
   if(!s->oy_)
     return 0;
+
+  id = s->oy_->id_;
+  refs = s->oy_->ref_;
 
   *filtersocket = 0;
 
@@ -503,6 +563,23 @@ int oyFilterSocket_Release_( oyFilterSocket_s_ **filtersocket )
     }
   }
 
+  /* model and observer reference each other. So release the object two times.
+   * The models and and observers are released later inside the
+   * oyObject_s::handles. */
+  for(i = 0; i < observer_refs; ++i)
+  {
+    //oyObject_UnRef(s->oy_);
+    oyObject_UnRef(s->oy_);
+  }
+
+  refs = s->oy_->ref_;
+  if(refs < 0)
+  {
+    WARNc2_S( "node[%d]->object can not be untracked with refs: %d\n", id, refs );
+    //oyMessageFunc_p( oyMSG_WARN,0,OY_DBG_FORMAT_ "refs:%d", OY_DBG_ARGS_, refs);
+    return -1; /* issue */
+  }
+
   
   /* ---- start of custom FilterSocket destructor ----- */
   oyFilterSocket_Release__Members( s );
@@ -516,25 +593,24 @@ int oyFilterSocket_Release_( oyFilterSocket_s_ **filtersocket )
   oyObject_UnRef(s->oy_);
 
 
-  /* model and observer reference each other. So release the object two times.
-   * The models and and observers are released later inside the
-   * oyObject_s::handles. */
-  for(i = 0; i < observer_refs; ++i)
-  {
-    oyObject_UnRef(s->oy_);
-    oyObject_UnRef(s->oy_);
-  }
-
   if(s->oy_->deallocateFunc_)
   {
     oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
-    int id = s->oy_->id_;
-    int refs = s->oy_->ref_;
+    oyObject_s oy = s->oy_;
+
+    refs = s->oy_->ref_;
+
+    if(track_name)
+      fprintf( stderr, "%s[%d] destructing\n", track_name, id );
 
     if(refs > 1)
-      fprintf( stderr, "!!!ERROR: node[%d]->object can not be untracked with refs: %d\n", id, refs);
+      fprintf( stderr, "!!!ERROR:%d node[%d]->object can not be untracked with refs: %d\n", __LINE__, id, refs);
 
-    oyObject_Release( &s->oy_ );
+    for(i = 1; i < observer_refs; ++i) /* oyObject_Release(oy) will dereference one more time, so preserve here one ref for oyObject_Release(oy) */
+      oyObject_UnRef(oy);
+
+    s->oy_ = NULL;
+    oyObject_Release( &oy );
     if(track_name)
       fprintf( stderr, "%s[%d] destructed\n", track_name, id );
 

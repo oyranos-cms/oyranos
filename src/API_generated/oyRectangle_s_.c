@@ -38,14 +38,14 @@
 
 
 static int oy_rectangle_init_ = 0;
+static char * oy_rectangle_msg_text_ = NULL;
+static int oy_rectangle_msg_text_n_ = 0;
 static const char * oyRectangle_StaticMessageFunc_ (
                                        oyPointer           obj,
                                        oyNAME_e            type,
                                        int                 flags )
 {
   oyRectangle_s_ * s = (oyRectangle_s_*) obj;
-  static char * text = 0;
-  static int text_n = 0;
   oyAlloc_f alloc = oyAllocateFunc_;
 
   /* silently fail */
@@ -55,30 +55,42 @@ static const char * oyRectangle_StaticMessageFunc_ (
   if(s->oy_ && s->oy_->allocateFunc_)
     alloc = s->oy_->allocateFunc_;
 
-  if( text == NULL || text_n == 0 )
+  if( oy_rectangle_msg_text_ == NULL || oy_rectangle_msg_text_n_ == 0 )
   {
-    text_n = 512;
-    text = (char*) alloc( text_n );
-    if(text)
-      memset( text, 0, text_n );
+    oy_rectangle_msg_text_n_ = 512;
+    oy_rectangle_msg_text_ = (char*) alloc( oy_rectangle_msg_text_n_ );
+    if(oy_rectangle_msg_text_)
+      memset( oy_rectangle_msg_text_, 0, oy_rectangle_msg_text_n_ );
   }
 
-  if( text == NULL || text_n == 0 )
+  if( oy_rectangle_msg_text_ == NULL || oy_rectangle_msg_text_n_ == 0 )
     return "Memory problem";
 
-  text[0] = '\000';
+  oy_rectangle_msg_text_[0] = '\000';
 
   if(!(flags & 0x01))
-    sprintf(text, "%s%s", oyStructTypeToText( s->type_ ), type != oyNAME_NICK?" ":"");
+    sprintf(oy_rectangle_msg_text_, "%s%s", oyStructTypeToText( s->type_ ), type != oyNAME_NICK?" ":"");
 
   
 
   
   if(type != oyNAME_NICK || (flags & 0x01))
-    sprintf( &text[strlen(text)], "%gx%g+%g+%g", s->width, s->height, s->x, s->y);
+    sprintf( &oy_rectangle_msg_text_[strlen(oy_rectangle_msg_text_)], "%gx%g+%g+%g", s->width, s->height, s->x, s->y);
 
 
-  return text;
+  return oy_rectangle_msg_text_;
+}
+
+static void oyRectangle_StaticFree_           ( void )
+{
+  if(oy_rectangle_init_)
+  {
+    oy_rectangle_init_ = 0;
+    if(oy_rectangle_msg_text_)
+      oyFree_m_(oy_rectangle_msg_text_);
+    if(oy_debug)
+      fprintf(stderr, "%s() freeing static \"%s\" memory\n", "oyRectangle_StaticFree_", "oyRectangle_s" );
+  }
 }
 
 
@@ -185,12 +197,57 @@ oyRectangle_s_ * oyRectangle_New_ ( oyObject_s object )
 {
   /* ---- start of common object constructor ----- */
   oyOBJECT_e type = oyOBJECT_RECTANGLE_S;
-  int error = 0;
+  int error = 0, id = 0;
   oyObject_s    s_obj = oyObject_NewFrom( object );
   oyRectangle_s_ * s = 0;
 
   if(s_obj)
-    s = (oyRectangle_s_*)s_obj->allocateFunc_(sizeof(oyRectangle_s_));
+  {
+    id = s_obj->id_;
+    switch(id)
+    {
+      case 1: s = (oyRectangle_s_*)s_obj->allocateFunc_(sizeof(oyRectangle_s_)); break;
+      case 2: s = (oyRectangle_s_*)s_obj->allocateFunc_(sizeof(oyRectangle_s_)); break;
+      case 3: s = (oyRectangle_s_*)s_obj->allocateFunc_(sizeof(oyRectangle_s_)); break;
+      case 4: s = (oyRectangle_s_*)s_obj->allocateFunc_(sizeof(oyRectangle_s_)); break;
+      case 5: s = (oyRectangle_s_*)s_obj->allocateFunc_(sizeof(oyRectangle_s_)); break;
+      case 6: s = (oyRectangle_s_*)s_obj->allocateFunc_(sizeof(oyRectangle_s_)); break;
+      case 7: s = (oyRectangle_s_*)s_obj->allocateFunc_(sizeof(oyRectangle_s_)); break;
+      case 8: s = (oyRectangle_s_*)s_obj->allocateFunc_(sizeof(oyRectangle_s_)); break;
+      case 9: s = (oyRectangle_s_*)s_obj->allocateFunc_(sizeof(oyRectangle_s_)); break;
+      case 10: s = (oyRectangle_s_*)s_obj->allocateFunc_(sizeof(oyRectangle_s_)); break;
+      case 11: s = (oyRectangle_s_*)s_obj->allocateFunc_(sizeof(oyRectangle_s_)); break;
+      case 12: s = (oyRectangle_s_*)s_obj->allocateFunc_(sizeof(oyRectangle_s_)); break;
+      case 13: s = (oyRectangle_s_*)s_obj->allocateFunc_(sizeof(oyRectangle_s_)); break;
+      case 14: s = (oyRectangle_s_*)s_obj->allocateFunc_(sizeof(oyRectangle_s_)); break;
+      case 15: s = (oyRectangle_s_*)s_obj->allocateFunc_(sizeof(oyRectangle_s_)); break;
+      case 16: s = (oyRectangle_s_*)s_obj->allocateFunc_(sizeof(oyRectangle_s_)); break;
+      case 17: s = (oyRectangle_s_*)s_obj->allocateFunc_(sizeof(oyRectangle_s_)); break;
+      case 18: s = (oyRectangle_s_*)s_obj->allocateFunc_(sizeof(oyRectangle_s_)); break;
+      case 19: s = (oyRectangle_s_*)s_obj->allocateFunc_(sizeof(oyRectangle_s_)); break;
+      case 20: s = (oyRectangle_s_*)s_obj->allocateFunc_(sizeof(oyRectangle_s_)); break;
+      case 21: s = (oyRectangle_s_*)s_obj->allocateFunc_(sizeof(oyRectangle_s_)); break;
+      case 22: s = (oyRectangle_s_*)s_obj->allocateFunc_(sizeof(oyRectangle_s_)); break;
+      case 23: s = (oyRectangle_s_*)s_obj->allocateFunc_(sizeof(oyRectangle_s_)); break;
+      case 24: s = (oyRectangle_s_*)s_obj->allocateFunc_(sizeof(oyRectangle_s_)); break;
+      case 25: s = (oyRectangle_s_*)s_obj->allocateFunc_(sizeof(oyRectangle_s_)); break;
+      case 26: s = (oyRectangle_s_*)s_obj->allocateFunc_(sizeof(oyRectangle_s_)); break;
+      case 27: s = (oyRectangle_s_*)s_obj->allocateFunc_(sizeof(oyRectangle_s_)); break;
+      case 28: s = (oyRectangle_s_*)s_obj->allocateFunc_(sizeof(oyRectangle_s_)); break;
+      case 29: s = (oyRectangle_s_*)s_obj->allocateFunc_(sizeof(oyRectangle_s_)); break;
+      case 30: s = (oyRectangle_s_*)s_obj->allocateFunc_(sizeof(oyRectangle_s_)); break;
+      case 31: s = (oyRectangle_s_*)s_obj->allocateFunc_(sizeof(oyRectangle_s_)); break;
+      case 32: s = (oyRectangle_s_*)s_obj->allocateFunc_(sizeof(oyRectangle_s_)); break;
+      case 33: s = (oyRectangle_s_*)s_obj->allocateFunc_(sizeof(oyRectangle_s_)); break;
+      case 34: s = (oyRectangle_s_*)s_obj->allocateFunc_(sizeof(oyRectangle_s_)); break;
+      case 35: s = (oyRectangle_s_*)s_obj->allocateFunc_(sizeof(oyRectangle_s_)); break;
+      case 36: s = (oyRectangle_s_*)s_obj->allocateFunc_(sizeof(oyRectangle_s_)); break;
+      case 37: s = (oyRectangle_s_*)s_obj->allocateFunc_(sizeof(oyRectangle_s_)); break;
+      case 38: s = (oyRectangle_s_*)s_obj->allocateFunc_(sizeof(oyRectangle_s_)); break;
+      case 39: s = (oyRectangle_s_*)s_obj->allocateFunc_(sizeof(oyRectangle_s_)); break;
+      default: s = (oyRectangle_s_*)s_obj->allocateFunc_(sizeof(oyRectangle_s_));
+    }
+  }
   else
   {
     WARNc_S(_("MEM Error."));
@@ -245,7 +302,7 @@ oyRectangle_s_ * oyRectangle_New_ ( oyObject_s object )
     oy_rectangle_init_ = 1;
     oyStruct_RegisterStaticMessageFunc( type,
                                         oyRectangle_StaticMessageFunc_,
-                                        &oy_rectangle_init_ );
+                                        oyRectangle_StaticFree_ );
   }
 
   if(error)
@@ -370,13 +427,13 @@ oyRectangle_s_ * oyRectangle_Copy_ ( oyRectangle_s_ *rectangle, oyObject_s objec
  *  @param[in,out] rectangle                 Rectangle struct object
  *
  *  @version Oyranos: 0.9.7
- *  @date    2018/10/03
+ *  @date    2019/10/23
  *  @since   2010/04/26 (Oyranos: 0.1.10)
  */
 int oyRectangle_Release_( oyRectangle_s_ **rectangle )
 {
   const char * track_name = NULL;
-  int observer_refs = 0, i;
+  int observer_refs = 0, i, id = 0, refs = 0;
   /* ---- start of common object destructor ----- */
   oyRectangle_s_ *s = 0;
 
@@ -387,6 +444,9 @@ int oyRectangle_Release_( oyRectangle_s_ **rectangle )
   /* static object */
   if(!s->oy_)
     return 0;
+
+  id = s->oy_->id_;
+  refs = s->oy_->ref_;
 
   *rectangle = 0;
 
@@ -425,7 +485,7 @@ int oyRectangle_Release_( oyRectangle_s_ **rectangle )
   }
 
   
-  if((oyObject_UnRef(s->oy_) - observer_refs) > 0)
+  if((oyObject_UnRef(s->oy_) - observer_refs*2) > 0)
     return 0;
   /* ---- end of common object destructor ------- */
 
@@ -448,6 +508,23 @@ int oyRectangle_Release_( oyRectangle_s_ **rectangle )
     }
   }
 
+  /* model and observer reference each other. So release the object two times.
+   * The models and and observers are released later inside the
+   * oyObject_s::handles. */
+  for(i = 0; i < observer_refs; ++i)
+  {
+    //oyObject_UnRef(s->oy_);
+    oyObject_UnRef(s->oy_);
+  }
+
+  refs = s->oy_->ref_;
+  if(refs < 0)
+  {
+    WARNc2_S( "node[%d]->object can not be untracked with refs: %d\n", id, refs );
+    //oyMessageFunc_p( oyMSG_WARN,0,OY_DBG_FORMAT_ "refs:%d", OY_DBG_ARGS_, refs);
+    return -1; /* issue */
+  }
+
   
   /* ---- start of custom Rectangle destructor ----- */
   oyRectangle_Release__Members( s );
@@ -459,25 +536,24 @@ int oyRectangle_Release_( oyRectangle_s_ **rectangle )
 
 
 
-  /* model and observer reference each other. So release the object two times.
-   * The models and and observers are released later inside the
-   * oyObject_s::handles. */
-  for(i = 0; i < observer_refs; ++i)
-  {
-    oyObject_UnRef(s->oy_);
-    oyObject_UnRef(s->oy_);
-  }
-
   if(s->oy_->deallocateFunc_)
   {
     oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
-    int id = s->oy_->id_;
-    int refs = s->oy_->ref_;
+    oyObject_s oy = s->oy_;
+
+    refs = s->oy_->ref_;
+
+    if(track_name)
+      fprintf( stderr, "%s[%d] destructing\n", track_name, id );
 
     if(refs > 1)
-      fprintf( stderr, "!!!ERROR: node[%d]->object can not be untracked with refs: %d\n", id, refs);
+      fprintf( stderr, "!!!ERROR:%d node[%d]->object can not be untracked with refs: %d\n", __LINE__, id, refs);
 
-    oyObject_Release( &s->oy_ );
+    for(i = 1; i < observer_refs; ++i) /* oyObject_Release(oy) will dereference one more time, so preserve here one ref for oyObject_Release(oy) */
+      oyObject_UnRef(oy);
+
+    s->oy_ = NULL;
+    oyObject_Release( &oy );
     if(track_name)
       fprintf( stderr, "%s[%d] destructed\n", track_name, id );
 

@@ -38,14 +38,14 @@
 
 
 static int oy_filtergraph_init_ = 0;
+static char * oy_filtergraph_msg_text_ = NULL;
+static int oy_filtergraph_msg_text_n_ = 0;
 static const char * oyFilterGraph_StaticMessageFunc_ (
                                        oyPointer           obj,
                                        oyNAME_e            type,
                                        int                 flags )
 {
   oyFilterGraph_s_ * s = (oyFilterGraph_s_*) obj;
-  static char * text = 0;
-  static int text_n = 0;
   oyAlloc_f alloc = oyAllocateFunc_;
 
   /* silently fail */
@@ -55,26 +55,38 @@ static const char * oyFilterGraph_StaticMessageFunc_ (
   if(s->oy_ && s->oy_->allocateFunc_)
     alloc = s->oy_->allocateFunc_;
 
-  if( text == NULL || text_n == 0 )
+  if( oy_filtergraph_msg_text_ == NULL || oy_filtergraph_msg_text_n_ == 0 )
   {
-    text_n = 512;
-    text = (char*) alloc( text_n );
-    if(text)
-      memset( text, 0, text_n );
+    oy_filtergraph_msg_text_n_ = 512;
+    oy_filtergraph_msg_text_ = (char*) alloc( oy_filtergraph_msg_text_n_ );
+    if(oy_filtergraph_msg_text_)
+      memset( oy_filtergraph_msg_text_, 0, oy_filtergraph_msg_text_n_ );
   }
 
-  if( text == NULL || text_n == 0 )
+  if( oy_filtergraph_msg_text_ == NULL || oy_filtergraph_msg_text_n_ == 0 )
     return "Memory problem";
 
-  text[0] = '\000';
+  oy_filtergraph_msg_text_[0] = '\000';
 
   if(!(flags & 0x01))
-    sprintf(text, "%s%s", oyStructTypeToText( s->type_ ), type != oyNAME_NICK?" ":"");
+    sprintf(oy_filtergraph_msg_text_, "%s%s", oyStructTypeToText( s->type_ ), type != oyNAME_NICK?" ":"");
 
   
   
 
-  return text;
+  return oy_filtergraph_msg_text_;
+}
+
+static void oyFilterGraph_StaticFree_           ( void )
+{
+  if(oy_filtergraph_init_)
+  {
+    oy_filtergraph_init_ = 0;
+    if(oy_filtergraph_msg_text_)
+      oyFree_m_(oy_filtergraph_msg_text_);
+    if(oy_debug)
+      fprintf(stderr, "%s() freeing static \"%s\" memory\n", "oyFilterGraph_StaticFree_", "oyFilterGraph_s" );
+  }
 }
 
 
@@ -195,12 +207,57 @@ oyFilterGraph_s_ * oyFilterGraph_New_ ( oyObject_s object )
 {
   /* ---- start of common object constructor ----- */
   oyOBJECT_e type = oyOBJECT_FILTER_GRAPH_S;
-  int error = 0;
+  int error = 0, id = 0;
   oyObject_s    s_obj = oyObject_NewFrom( object );
   oyFilterGraph_s_ * s = 0;
 
   if(s_obj)
-    s = (oyFilterGraph_s_*)s_obj->allocateFunc_(sizeof(oyFilterGraph_s_));
+  {
+    id = s_obj->id_;
+    switch(id)
+    {
+      case 1: s = (oyFilterGraph_s_*)s_obj->allocateFunc_(sizeof(oyFilterGraph_s_)); break;
+      case 2: s = (oyFilterGraph_s_*)s_obj->allocateFunc_(sizeof(oyFilterGraph_s_)); break;
+      case 3: s = (oyFilterGraph_s_*)s_obj->allocateFunc_(sizeof(oyFilterGraph_s_)); break;
+      case 4: s = (oyFilterGraph_s_*)s_obj->allocateFunc_(sizeof(oyFilterGraph_s_)); break;
+      case 5: s = (oyFilterGraph_s_*)s_obj->allocateFunc_(sizeof(oyFilterGraph_s_)); break;
+      case 6: s = (oyFilterGraph_s_*)s_obj->allocateFunc_(sizeof(oyFilterGraph_s_)); break;
+      case 7: s = (oyFilterGraph_s_*)s_obj->allocateFunc_(sizeof(oyFilterGraph_s_)); break;
+      case 8: s = (oyFilterGraph_s_*)s_obj->allocateFunc_(sizeof(oyFilterGraph_s_)); break;
+      case 9: s = (oyFilterGraph_s_*)s_obj->allocateFunc_(sizeof(oyFilterGraph_s_)); break;
+      case 10: s = (oyFilterGraph_s_*)s_obj->allocateFunc_(sizeof(oyFilterGraph_s_)); break;
+      case 11: s = (oyFilterGraph_s_*)s_obj->allocateFunc_(sizeof(oyFilterGraph_s_)); break;
+      case 12: s = (oyFilterGraph_s_*)s_obj->allocateFunc_(sizeof(oyFilterGraph_s_)); break;
+      case 13: s = (oyFilterGraph_s_*)s_obj->allocateFunc_(sizeof(oyFilterGraph_s_)); break;
+      case 14: s = (oyFilterGraph_s_*)s_obj->allocateFunc_(sizeof(oyFilterGraph_s_)); break;
+      case 15: s = (oyFilterGraph_s_*)s_obj->allocateFunc_(sizeof(oyFilterGraph_s_)); break;
+      case 16: s = (oyFilterGraph_s_*)s_obj->allocateFunc_(sizeof(oyFilterGraph_s_)); break;
+      case 17: s = (oyFilterGraph_s_*)s_obj->allocateFunc_(sizeof(oyFilterGraph_s_)); break;
+      case 18: s = (oyFilterGraph_s_*)s_obj->allocateFunc_(sizeof(oyFilterGraph_s_)); break;
+      case 19: s = (oyFilterGraph_s_*)s_obj->allocateFunc_(sizeof(oyFilterGraph_s_)); break;
+      case 20: s = (oyFilterGraph_s_*)s_obj->allocateFunc_(sizeof(oyFilterGraph_s_)); break;
+      case 21: s = (oyFilterGraph_s_*)s_obj->allocateFunc_(sizeof(oyFilterGraph_s_)); break;
+      case 22: s = (oyFilterGraph_s_*)s_obj->allocateFunc_(sizeof(oyFilterGraph_s_)); break;
+      case 23: s = (oyFilterGraph_s_*)s_obj->allocateFunc_(sizeof(oyFilterGraph_s_)); break;
+      case 24: s = (oyFilterGraph_s_*)s_obj->allocateFunc_(sizeof(oyFilterGraph_s_)); break;
+      case 25: s = (oyFilterGraph_s_*)s_obj->allocateFunc_(sizeof(oyFilterGraph_s_)); break;
+      case 26: s = (oyFilterGraph_s_*)s_obj->allocateFunc_(sizeof(oyFilterGraph_s_)); break;
+      case 27: s = (oyFilterGraph_s_*)s_obj->allocateFunc_(sizeof(oyFilterGraph_s_)); break;
+      case 28: s = (oyFilterGraph_s_*)s_obj->allocateFunc_(sizeof(oyFilterGraph_s_)); break;
+      case 29: s = (oyFilterGraph_s_*)s_obj->allocateFunc_(sizeof(oyFilterGraph_s_)); break;
+      case 30: s = (oyFilterGraph_s_*)s_obj->allocateFunc_(sizeof(oyFilterGraph_s_)); break;
+      case 31: s = (oyFilterGraph_s_*)s_obj->allocateFunc_(sizeof(oyFilterGraph_s_)); break;
+      case 32: s = (oyFilterGraph_s_*)s_obj->allocateFunc_(sizeof(oyFilterGraph_s_)); break;
+      case 33: s = (oyFilterGraph_s_*)s_obj->allocateFunc_(sizeof(oyFilterGraph_s_)); break;
+      case 34: s = (oyFilterGraph_s_*)s_obj->allocateFunc_(sizeof(oyFilterGraph_s_)); break;
+      case 35: s = (oyFilterGraph_s_*)s_obj->allocateFunc_(sizeof(oyFilterGraph_s_)); break;
+      case 36: s = (oyFilterGraph_s_*)s_obj->allocateFunc_(sizeof(oyFilterGraph_s_)); break;
+      case 37: s = (oyFilterGraph_s_*)s_obj->allocateFunc_(sizeof(oyFilterGraph_s_)); break;
+      case 38: s = (oyFilterGraph_s_*)s_obj->allocateFunc_(sizeof(oyFilterGraph_s_)); break;
+      case 39: s = (oyFilterGraph_s_*)s_obj->allocateFunc_(sizeof(oyFilterGraph_s_)); break;
+      default: s = (oyFilterGraph_s_*)s_obj->allocateFunc_(sizeof(oyFilterGraph_s_));
+    }
+  }
   else
   {
     WARNc_S(_("MEM Error."));
@@ -255,7 +312,7 @@ oyFilterGraph_s_ * oyFilterGraph_New_ ( oyObject_s object )
     oy_filtergraph_init_ = 1;
     oyStruct_RegisterStaticMessageFunc( type,
                                         oyFilterGraph_StaticMessageFunc_,
-                                        &oy_filtergraph_init_ );
+                                        oyFilterGraph_StaticFree_ );
   }
 
   if(error)
@@ -380,13 +437,13 @@ oyFilterGraph_s_ * oyFilterGraph_Copy_ ( oyFilterGraph_s_ *filtergraph, oyObject
  *  @param[in,out] filtergraph                 FilterGraph struct object
  *
  *  @version Oyranos: 0.9.7
- *  @date    2018/10/03
+ *  @date    2019/10/23
  *  @since   2010/04/26 (Oyranos: 0.1.10)
  */
 int oyFilterGraph_Release_( oyFilterGraph_s_ **filtergraph )
 {
   const char * track_name = NULL;
-  int observer_refs = 0, i;
+  int observer_refs = 0, i, id = 0, refs = 0;
   /* ---- start of common object destructor ----- */
   oyFilterGraph_s_ *s = 0;
 
@@ -397,6 +454,9 @@ int oyFilterGraph_Release_( oyFilterGraph_s_ **filtergraph )
   /* static object */
   if(!s->oy_)
     return 0;
+
+  id = s->oy_->id_;
+  refs = s->oy_->ref_;
 
   *filtergraph = 0;
 
@@ -435,7 +495,7 @@ int oyFilterGraph_Release_( oyFilterGraph_s_ **filtergraph )
   }
 
   
-  if((oyObject_UnRef(s->oy_) - observer_refs) > 0)
+  if((oyObject_UnRef(s->oy_) - observer_refs*2) > 0)
     return 0;
   /* ---- end of common object destructor ------- */
 
@@ -458,6 +518,23 @@ int oyFilterGraph_Release_( oyFilterGraph_s_ **filtergraph )
     }
   }
 
+  /* model and observer reference each other. So release the object two times.
+   * The models and and observers are released later inside the
+   * oyObject_s::handles. */
+  for(i = 0; i < observer_refs; ++i)
+  {
+    //oyObject_UnRef(s->oy_);
+    oyObject_UnRef(s->oy_);
+  }
+
+  refs = s->oy_->ref_;
+  if(refs < 0)
+  {
+    WARNc2_S( "node[%d]->object can not be untracked with refs: %d\n", id, refs );
+    //oyMessageFunc_p( oyMSG_WARN,0,OY_DBG_FORMAT_ "refs:%d", OY_DBG_ARGS_, refs);
+    return -1; /* issue */
+  }
+
   
   /* ---- start of custom FilterGraph destructor ----- */
   oyFilterGraph_Release__Members( s );
@@ -469,25 +546,24 @@ int oyFilterGraph_Release_( oyFilterGraph_s_ **filtergraph )
 
 
 
-  /* model and observer reference each other. So release the object two times.
-   * The models and and observers are released later inside the
-   * oyObject_s::handles. */
-  for(i = 0; i < observer_refs; ++i)
-  {
-    oyObject_UnRef(s->oy_);
-    oyObject_UnRef(s->oy_);
-  }
-
   if(s->oy_->deallocateFunc_)
   {
     oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
-    int id = s->oy_->id_;
-    int refs = s->oy_->ref_;
+    oyObject_s oy = s->oy_;
+
+    refs = s->oy_->ref_;
+
+    if(track_name)
+      fprintf( stderr, "%s[%d] destructing\n", track_name, id );
 
     if(refs > 1)
-      fprintf( stderr, "!!!ERROR: node[%d]->object can not be untracked with refs: %d\n", id, refs);
+      fprintf( stderr, "!!!ERROR:%d node[%d]->object can not be untracked with refs: %d\n", __LINE__, id, refs);
 
-    oyObject_Release( &s->oy_ );
+    for(i = 1; i < observer_refs; ++i) /* oyObject_Release(oy) will dereference one more time, so preserve here one ref for oyObject_Release(oy) */
+      oyObject_UnRef(oy);
+
+    s->oy_ = NULL;
+    oyObject_Release( &oy );
     if(track_name)
       fprintf( stderr, "%s[%d] destructed\n", track_name, id );
 

@@ -4,17 +4,17 @@
 {{ block.super }}
   if(type == oyNAME_NICK && (flags & 0x01))
   {
-    sprintf( &text[strlen(text)], "%s",
+    sprintf( &oy_{{ class.baseName|lower }}_msg_text_[strlen(oy_{{ class.baseName|lower }}_msg_text_)], "%s",
              s->type
            );
   } else
   if(type == oyNAME_NAME)
-    sprintf( &text[strlen(text)], "%s %lu",
+    sprintf( &oy_{{ class.baseName|lower }}_msg_text_[strlen(oy_{{ class.baseName|lower }}_msg_text_)], "%s %lu",
              s->type, (long unsigned int)s->size
            );
   else
   if((int)type >= oyNAME_DESCRIPTION)
-    sprintf( &text[strlen(text)], "type: %s size: %lu flags: %d",
+    sprintf( &oy_{{ class.baseName|lower }}_msg_text_[strlen(oy_{{ class.baseName|lower }}_msg_text_)], "type: %s size: %lu flags: %d",
              s->type, (long unsigned int)s->size, s->flags
            );
 {% endblock %}

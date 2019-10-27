@@ -71,8 +71,8 @@ int          oyObject_Ref            ( oyObject_s          obj )
 
   if( s->type_ != oyOBJECT_OBJECT_S)
   {
-    WARNc2_S("Attempt to manipulate a non oyObject_s object; type: %d ID: %d",
-             s->type_, s->id_)
+    WARNc2_S("Attempt to manipulate a non oyObject_s object: %s[%d]",
+             oyStructTypeToText( s->type_ ), s->id_)
     return 1;
   }
 
@@ -88,7 +88,7 @@ int          oyObject_Ref            ( oyObject_s          obj )
       oyObject_GetId( obj );
   }
 #   if DEBUG_OBJECT
-    WARNc3_S("%s   ID: %d refs: %d",
+    WARNc3_S("%s[%d] refs: %d",
              oyStructTypeToText( s->parent_types_[s->parent_types_[0]] ), s->id_, s->ref_)
 #   endif
 
@@ -248,7 +248,8 @@ void               oyObject_UnTrack    ( oyObject_s          obj )
   if(obj->ref_ < -1 && (oy_debug_objects >= 0 || oy_debug))
   {
     const char * type = obj->parent_?oyStructTypeToText(obj->parent_->type_):"";
-    fprintf( stderr, "!!!ERROR: Object[%d] has unexpected reference counter: %d  %s\n", obj->id_, obj->ref_, type );
+    fprintf( stderr, OY_DBG_FORMAT_ "!!!ERROR: Object[%d] has unexpected reference counter: %d  %s\n", OY_DBG_ARGS_, obj->id_, obj->ref_, type );
+    OY_BACKTRACE_PRINT
   }
   if(oy_debug_objects == -2)
   {

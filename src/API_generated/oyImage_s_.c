@@ -38,14 +38,14 @@
 
 
 static int oy_image_init_ = 0;
+static char * oy_image_msg_text_ = NULL;
+static int oy_image_msg_text_n_ = 0;
 static const char * oyImage_StaticMessageFunc_ (
                                        oyPointer           obj,
                                        oyNAME_e            type,
                                        int                 flags )
 {
   oyImage_s_ * s = (oyImage_s_*) obj;
-  static char * text = 0;
-  static int text_n = 0;
   oyAlloc_f alloc = oyAllocateFunc_;
 
   /* silently fail */
@@ -55,39 +55,51 @@ static const char * oyImage_StaticMessageFunc_ (
   if(s->oy_ && s->oy_->allocateFunc_)
     alloc = s->oy_->allocateFunc_;
 
-  if( text == NULL || text_n == 0 )
+  if( oy_image_msg_text_ == NULL || oy_image_msg_text_n_ == 0 )
   {
-    text_n = 512;
-    text = (char*) alloc( text_n );
-    if(text)
-      memset( text, 0, text_n );
+    oy_image_msg_text_n_ = 512;
+    oy_image_msg_text_ = (char*) alloc( oy_image_msg_text_n_ );
+    if(oy_image_msg_text_)
+      memset( oy_image_msg_text_, 0, oy_image_msg_text_n_ );
   }
 
-  if( text == NULL || text_n == 0 )
+  if( oy_image_msg_text_ == NULL || oy_image_msg_text_n_ == 0 )
     return "Memory problem";
 
-  text[0] = '\000';
+  oy_image_msg_text_[0] = '\000';
 
   if(!(flags & 0x01))
-    sprintf(text, "%s%s", oyStructTypeToText( s->type_ ), type != oyNAME_NICK?" ":"");
+    sprintf(oy_image_msg_text_, "%s%s", oyStructTypeToText( s->type_ ), type != oyNAME_NICK?" ":"");
 
   
 
   
   if(type == oyNAME_NICK && (flags & 0x01))
-    sprintf( &text[strlen(text)], "%dx%d", s->width, s->height);
+    sprintf( &oy_image_msg_text_[strlen(oy_image_msg_text_)], "%dx%d", s->width, s->height);
   else
   if(type == oyNAME_NAME)
-    sprintf( &text[strlen(text)], "(%dx%d)%dc", s->width, s->height,
+    sprintf( &oy_image_msg_text_[strlen(oy_image_msg_text_)], "(%dx%d)%dc", s->width, s->height,
              s->layout_[oyCHANS]);
   else
   if((int)type >= oyNAME_DESCRIPTION)
-    sprintf( &text[strlen(text)], "(%dx%d)%dc%s", s->width, s->height,
+    sprintf( &oy_image_msg_text_[strlen(oy_image_msg_text_)], "(%dx%d)%dc%s", s->width, s->height,
              s->layout_[oyCHANS],
              oyDataTypeToText( oyToDataType_m( s->layout_[oyLAYOUT] )));
 
 
-  return text;
+  return oy_image_msg_text_;
+}
+
+static void oyImage_StaticFree_           ( void )
+{
+  if(oy_image_init_)
+  {
+    oy_image_init_ = 0;
+    if(oy_image_msg_text_)
+      oyFree_m_(oy_image_msg_text_);
+    if(oy_debug)
+      fprintf(stderr, "%s() freeing static \"%s\" memory\n", "oyImage_StaticFree_", "oyImage_s" );
+  }
 }
 
 
@@ -219,12 +231,57 @@ oyImage_s_ * oyImage_New_ ( oyObject_s object )
 {
   /* ---- start of common object constructor ----- */
   oyOBJECT_e type = oyOBJECT_IMAGE_S;
-  int error = 0;
+  int error = 0, id = 0;
   oyObject_s    s_obj = oyObject_NewFrom( object );
   oyImage_s_ * s = 0;
 
   if(s_obj)
-    s = (oyImage_s_*)s_obj->allocateFunc_(sizeof(oyImage_s_));
+  {
+    id = s_obj->id_;
+    switch(id)
+    {
+      case 1: s = (oyImage_s_*)s_obj->allocateFunc_(sizeof(oyImage_s_)); break;
+      case 2: s = (oyImage_s_*)s_obj->allocateFunc_(sizeof(oyImage_s_)); break;
+      case 3: s = (oyImage_s_*)s_obj->allocateFunc_(sizeof(oyImage_s_)); break;
+      case 4: s = (oyImage_s_*)s_obj->allocateFunc_(sizeof(oyImage_s_)); break;
+      case 5: s = (oyImage_s_*)s_obj->allocateFunc_(sizeof(oyImage_s_)); break;
+      case 6: s = (oyImage_s_*)s_obj->allocateFunc_(sizeof(oyImage_s_)); break;
+      case 7: s = (oyImage_s_*)s_obj->allocateFunc_(sizeof(oyImage_s_)); break;
+      case 8: s = (oyImage_s_*)s_obj->allocateFunc_(sizeof(oyImage_s_)); break;
+      case 9: s = (oyImage_s_*)s_obj->allocateFunc_(sizeof(oyImage_s_)); break;
+      case 10: s = (oyImage_s_*)s_obj->allocateFunc_(sizeof(oyImage_s_)); break;
+      case 11: s = (oyImage_s_*)s_obj->allocateFunc_(sizeof(oyImage_s_)); break;
+      case 12: s = (oyImage_s_*)s_obj->allocateFunc_(sizeof(oyImage_s_)); break;
+      case 13: s = (oyImage_s_*)s_obj->allocateFunc_(sizeof(oyImage_s_)); break;
+      case 14: s = (oyImage_s_*)s_obj->allocateFunc_(sizeof(oyImage_s_)); break;
+      case 15: s = (oyImage_s_*)s_obj->allocateFunc_(sizeof(oyImage_s_)); break;
+      case 16: s = (oyImage_s_*)s_obj->allocateFunc_(sizeof(oyImage_s_)); break;
+      case 17: s = (oyImage_s_*)s_obj->allocateFunc_(sizeof(oyImage_s_)); break;
+      case 18: s = (oyImage_s_*)s_obj->allocateFunc_(sizeof(oyImage_s_)); break;
+      case 19: s = (oyImage_s_*)s_obj->allocateFunc_(sizeof(oyImage_s_)); break;
+      case 20: s = (oyImage_s_*)s_obj->allocateFunc_(sizeof(oyImage_s_)); break;
+      case 21: s = (oyImage_s_*)s_obj->allocateFunc_(sizeof(oyImage_s_)); break;
+      case 22: s = (oyImage_s_*)s_obj->allocateFunc_(sizeof(oyImage_s_)); break;
+      case 23: s = (oyImage_s_*)s_obj->allocateFunc_(sizeof(oyImage_s_)); break;
+      case 24: s = (oyImage_s_*)s_obj->allocateFunc_(sizeof(oyImage_s_)); break;
+      case 25: s = (oyImage_s_*)s_obj->allocateFunc_(sizeof(oyImage_s_)); break;
+      case 26: s = (oyImage_s_*)s_obj->allocateFunc_(sizeof(oyImage_s_)); break;
+      case 27: s = (oyImage_s_*)s_obj->allocateFunc_(sizeof(oyImage_s_)); break;
+      case 28: s = (oyImage_s_*)s_obj->allocateFunc_(sizeof(oyImage_s_)); break;
+      case 29: s = (oyImage_s_*)s_obj->allocateFunc_(sizeof(oyImage_s_)); break;
+      case 30: s = (oyImage_s_*)s_obj->allocateFunc_(sizeof(oyImage_s_)); break;
+      case 31: s = (oyImage_s_*)s_obj->allocateFunc_(sizeof(oyImage_s_)); break;
+      case 32: s = (oyImage_s_*)s_obj->allocateFunc_(sizeof(oyImage_s_)); break;
+      case 33: s = (oyImage_s_*)s_obj->allocateFunc_(sizeof(oyImage_s_)); break;
+      case 34: s = (oyImage_s_*)s_obj->allocateFunc_(sizeof(oyImage_s_)); break;
+      case 35: s = (oyImage_s_*)s_obj->allocateFunc_(sizeof(oyImage_s_)); break;
+      case 36: s = (oyImage_s_*)s_obj->allocateFunc_(sizeof(oyImage_s_)); break;
+      case 37: s = (oyImage_s_*)s_obj->allocateFunc_(sizeof(oyImage_s_)); break;
+      case 38: s = (oyImage_s_*)s_obj->allocateFunc_(sizeof(oyImage_s_)); break;
+      case 39: s = (oyImage_s_*)s_obj->allocateFunc_(sizeof(oyImage_s_)); break;
+      default: s = (oyImage_s_*)s_obj->allocateFunc_(sizeof(oyImage_s_));
+    }
+  }
   else
   {
     WARNc_S(_("MEM Error."));
@@ -279,7 +336,7 @@ oyImage_s_ * oyImage_New_ ( oyObject_s object )
     oy_image_init_ = 1;
     oyStruct_RegisterStaticMessageFunc( type,
                                         oyImage_StaticMessageFunc_,
-                                        &oy_image_init_ );
+                                        oyImage_StaticFree_ );
   }
 
   if(error)
@@ -404,13 +461,13 @@ oyImage_s_ * oyImage_Copy_ ( oyImage_s_ *image, oyObject_s object )
  *  @param[in,out] image                 Image struct object
  *
  *  @version Oyranos: 0.9.7
- *  @date    2018/10/03
+ *  @date    2019/10/23
  *  @since   2010/04/26 (Oyranos: 0.1.10)
  */
 int oyImage_Release_( oyImage_s_ **image )
 {
   const char * track_name = NULL;
-  int observer_refs = 0, i;
+  int observer_refs = 0, i, id = 0, refs = 0;
   /* ---- start of common object destructor ----- */
   oyImage_s_ *s = 0;
 
@@ -421,6 +478,9 @@ int oyImage_Release_( oyImage_s_ **image )
   /* static object */
   if(!s->oy_)
     return 0;
+
+  id = s->oy_->id_;
+  refs = s->oy_->ref_;
 
   *image = 0;
 
@@ -459,7 +519,7 @@ int oyImage_Release_( oyImage_s_ **image )
   }
 
   
-  if((oyObject_UnRef(s->oy_) - observer_refs) > 0)
+  if((oyObject_UnRef(s->oy_) - observer_refs*2) > 0)
     return 0;
   /* ---- end of common object destructor ------- */
 
@@ -482,6 +542,23 @@ int oyImage_Release_( oyImage_s_ **image )
     }
   }
 
+  /* model and observer reference each other. So release the object two times.
+   * The models and and observers are released later inside the
+   * oyObject_s::handles. */
+  for(i = 0; i < observer_refs; ++i)
+  {
+    //oyObject_UnRef(s->oy_);
+    oyObject_UnRef(s->oy_);
+  }
+
+  refs = s->oy_->ref_;
+  if(refs < 0)
+  {
+    WARNc2_S( "node[%d]->object can not be untracked with refs: %d\n", id, refs );
+    //oyMessageFunc_p( oyMSG_WARN,0,OY_DBG_FORMAT_ "refs:%d", OY_DBG_ARGS_, refs);
+    return -1; /* issue */
+  }
+
   
   /* ---- start of custom Image destructor ----- */
   oyImage_Release__Members( s );
@@ -493,25 +570,24 @@ int oyImage_Release_( oyImage_s_ **image )
 
 
 
-  /* model and observer reference each other. So release the object two times.
-   * The models and and observers are released later inside the
-   * oyObject_s::handles. */
-  for(i = 0; i < observer_refs; ++i)
-  {
-    oyObject_UnRef(s->oy_);
-    oyObject_UnRef(s->oy_);
-  }
-
   if(s->oy_->deallocateFunc_)
   {
     oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
-    int id = s->oy_->id_;
-    int refs = s->oy_->ref_;
+    oyObject_s oy = s->oy_;
+
+    refs = s->oy_->ref_;
+
+    if(track_name)
+      fprintf( stderr, "%s[%d] destructing\n", track_name, id );
 
     if(refs > 1)
-      fprintf( stderr, "!!!ERROR: node[%d]->object can not be untracked with refs: %d\n", id, refs);
+      fprintf( stderr, "!!!ERROR:%d node[%d]->object can not be untracked with refs: %d\n", __LINE__, id, refs);
 
-    oyObject_Release( &s->oy_ );
+    for(i = 1; i < observer_refs; ++i) /* oyObject_Release(oy) will dereference one more time, so preserve here one ref for oyObject_Release(oy) */
+      oyObject_UnRef(oy);
+
+    s->oy_ = NULL;
+    oyObject_Release( &oy );
     if(track_name)
       fprintf( stderr, "%s[%d] destructed\n", track_name, id );
 

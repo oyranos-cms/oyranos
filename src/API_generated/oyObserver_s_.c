@@ -38,14 +38,14 @@
 
 
 static int oy_observer_init_ = 0;
+static char * oy_observer_msg_text_ = NULL;
+static int oy_observer_msg_text_n_ = 0;
 static const char * oyObserver_StaticMessageFunc_ (
                                        oyPointer           obj,
                                        oyNAME_e            type,
                                        int                 flags )
 {
   oyObserver_s_ * s = (oyObserver_s_*) obj;
-  static char * text = 0;
-  static int text_n = 0;
   oyAlloc_f alloc = oyAllocateFunc_;
 
   /* silently fail */
@@ -55,26 +55,38 @@ static const char * oyObserver_StaticMessageFunc_ (
   if(s->oy_ && s->oy_->allocateFunc_)
     alloc = s->oy_->allocateFunc_;
 
-  if( text == NULL || text_n == 0 )
+  if( oy_observer_msg_text_ == NULL || oy_observer_msg_text_n_ == 0 )
   {
-    text_n = 512;
-    text = (char*) alloc( text_n );
-    if(text)
-      memset( text, 0, text_n );
+    oy_observer_msg_text_n_ = 512;
+    oy_observer_msg_text_ = (char*) alloc( oy_observer_msg_text_n_ );
+    if(oy_observer_msg_text_)
+      memset( oy_observer_msg_text_, 0, oy_observer_msg_text_n_ );
   }
 
-  if( text == NULL || text_n == 0 )
+  if( oy_observer_msg_text_ == NULL || oy_observer_msg_text_n_ == 0 )
     return "Memory problem";
 
-  text[0] = '\000';
+  oy_observer_msg_text_[0] = '\000';
 
   if(!(flags & 0x01))
-    sprintf(text, "%s%s", oyStructTypeToText( s->type_ ), type != oyNAME_NICK?" ":"");
+    sprintf(oy_observer_msg_text_, "%s%s", oyStructTypeToText( s->type_ ), type != oyNAME_NICK?" ":"");
 
   
   
 
-  return text;
+  return oy_observer_msg_text_;
+}
+
+static void oyObserver_StaticFree_           ( void )
+{
+  if(oy_observer_init_)
+  {
+    oy_observer_init_ = 0;
+    if(oy_observer_msg_text_)
+      oyFree_m_(oy_observer_msg_text_);
+    if(oy_debug)
+      fprintf(stderr, "%s() freeing static \"%s\" memory\n", "oyObserver_StaticFree_", "oyObserver_s" );
+  }
 }
 
 
@@ -101,10 +113,12 @@ void oyObserver_Release__Members( oyObserver_s_ * observer )
   /* Deallocate members here
    * E.g: oyXXX_Release( &observer->member );
    */
-  if(observer->observer)
+  oyStruct_ObserverRemove( observer->model && observer->model->oy_ ? observer->model : NULL, observer->observer && observer->observer->oy_ ? observer->observer : NULL, NULL );
+
+  /*if(observer->observer)
   { observer->observer->release( &observer->observer ); observer->observer = 0; }
   if(observer->model)
-  { observer->model->release( &observer->model ); observer->model = 0; }
+  { observer->model->release( &observer->model ); observer->model = 0; }*/
   if(observer->user_data)
   { observer->user_data->release( &observer->user_data ); observer->user_data = 0; }
 
@@ -205,12 +219,57 @@ oyObserver_s_ * oyObserver_New_ ( oyObject_s object )
 {
   /* ---- start of common object constructor ----- */
   oyOBJECT_e type = oyOBJECT_OBSERVER_S;
-  int error = 0;
+  int error = 0, id = 0;
   oyObject_s    s_obj = oyObject_NewFrom( object );
   oyObserver_s_ * s = 0;
 
   if(s_obj)
-    s = (oyObserver_s_*)s_obj->allocateFunc_(sizeof(oyObserver_s_));
+  {
+    id = s_obj->id_;
+    switch(id)
+    {
+      case 1: s = (oyObserver_s_*)s_obj->allocateFunc_(sizeof(oyObserver_s_)); break;
+      case 2: s = (oyObserver_s_*)s_obj->allocateFunc_(sizeof(oyObserver_s_)); break;
+      case 3: s = (oyObserver_s_*)s_obj->allocateFunc_(sizeof(oyObserver_s_)); break;
+      case 4: s = (oyObserver_s_*)s_obj->allocateFunc_(sizeof(oyObserver_s_)); break;
+      case 5: s = (oyObserver_s_*)s_obj->allocateFunc_(sizeof(oyObserver_s_)); break;
+      case 6: s = (oyObserver_s_*)s_obj->allocateFunc_(sizeof(oyObserver_s_)); break;
+      case 7: s = (oyObserver_s_*)s_obj->allocateFunc_(sizeof(oyObserver_s_)); break;
+      case 8: s = (oyObserver_s_*)s_obj->allocateFunc_(sizeof(oyObserver_s_)); break;
+      case 9: s = (oyObserver_s_*)s_obj->allocateFunc_(sizeof(oyObserver_s_)); break;
+      case 10: s = (oyObserver_s_*)s_obj->allocateFunc_(sizeof(oyObserver_s_)); break;
+      case 11: s = (oyObserver_s_*)s_obj->allocateFunc_(sizeof(oyObserver_s_)); break;
+      case 12: s = (oyObserver_s_*)s_obj->allocateFunc_(sizeof(oyObserver_s_)); break;
+      case 13: s = (oyObserver_s_*)s_obj->allocateFunc_(sizeof(oyObserver_s_)); break;
+      case 14: s = (oyObserver_s_*)s_obj->allocateFunc_(sizeof(oyObserver_s_)); break;
+      case 15: s = (oyObserver_s_*)s_obj->allocateFunc_(sizeof(oyObserver_s_)); break;
+      case 16: s = (oyObserver_s_*)s_obj->allocateFunc_(sizeof(oyObserver_s_)); break;
+      case 17: s = (oyObserver_s_*)s_obj->allocateFunc_(sizeof(oyObserver_s_)); break;
+      case 18: s = (oyObserver_s_*)s_obj->allocateFunc_(sizeof(oyObserver_s_)); break;
+      case 19: s = (oyObserver_s_*)s_obj->allocateFunc_(sizeof(oyObserver_s_)); break;
+      case 20: s = (oyObserver_s_*)s_obj->allocateFunc_(sizeof(oyObserver_s_)); break;
+      case 21: s = (oyObserver_s_*)s_obj->allocateFunc_(sizeof(oyObserver_s_)); break;
+      case 22: s = (oyObserver_s_*)s_obj->allocateFunc_(sizeof(oyObserver_s_)); break;
+      case 23: s = (oyObserver_s_*)s_obj->allocateFunc_(sizeof(oyObserver_s_)); break;
+      case 24: s = (oyObserver_s_*)s_obj->allocateFunc_(sizeof(oyObserver_s_)); break;
+      case 25: s = (oyObserver_s_*)s_obj->allocateFunc_(sizeof(oyObserver_s_)); break;
+      case 26: s = (oyObserver_s_*)s_obj->allocateFunc_(sizeof(oyObserver_s_)); break;
+      case 27: s = (oyObserver_s_*)s_obj->allocateFunc_(sizeof(oyObserver_s_)); break;
+      case 28: s = (oyObserver_s_*)s_obj->allocateFunc_(sizeof(oyObserver_s_)); break;
+      case 29: s = (oyObserver_s_*)s_obj->allocateFunc_(sizeof(oyObserver_s_)); break;
+      case 30: s = (oyObserver_s_*)s_obj->allocateFunc_(sizeof(oyObserver_s_)); break;
+      case 31: s = (oyObserver_s_*)s_obj->allocateFunc_(sizeof(oyObserver_s_)); break;
+      case 32: s = (oyObserver_s_*)s_obj->allocateFunc_(sizeof(oyObserver_s_)); break;
+      case 33: s = (oyObserver_s_*)s_obj->allocateFunc_(sizeof(oyObserver_s_)); break;
+      case 34: s = (oyObserver_s_*)s_obj->allocateFunc_(sizeof(oyObserver_s_)); break;
+      case 35: s = (oyObserver_s_*)s_obj->allocateFunc_(sizeof(oyObserver_s_)); break;
+      case 36: s = (oyObserver_s_*)s_obj->allocateFunc_(sizeof(oyObserver_s_)); break;
+      case 37: s = (oyObserver_s_*)s_obj->allocateFunc_(sizeof(oyObserver_s_)); break;
+      case 38: s = (oyObserver_s_*)s_obj->allocateFunc_(sizeof(oyObserver_s_)); break;
+      case 39: s = (oyObserver_s_*)s_obj->allocateFunc_(sizeof(oyObserver_s_)); break;
+      default: s = (oyObserver_s_*)s_obj->allocateFunc_(sizeof(oyObserver_s_));
+    }
+  }
   else
   {
     WARNc_S(_("MEM Error."));
@@ -265,7 +324,7 @@ oyObserver_s_ * oyObserver_New_ ( oyObject_s object )
     oy_observer_init_ = 1;
     oyStruct_RegisterStaticMessageFunc( type,
                                         oyObserver_StaticMessageFunc_,
-                                        &oy_observer_init_ );
+                                        oyObserver_StaticFree_ );
   }
 
   if(error)
@@ -390,13 +449,13 @@ oyObserver_s_ * oyObserver_Copy_ ( oyObserver_s_ *observer, oyObject_s object )
  *  @param[in,out] observer                 Observer struct object
  *
  *  @version Oyranos: 0.9.7
- *  @date    2018/10/03
+ *  @date    2019/10/23
  *  @since   2010/04/26 (Oyranos: 0.1.10)
  */
 int oyObserver_Release_( oyObserver_s_ **observer )
 {
   const char * track_name = NULL;
-  int observer_refs = 0, i;
+  int observer_refs = 0, i, id = 0, refs = 0;
   /* ---- start of common object destructor ----- */
   oyObserver_s_ *s = 0;
 
@@ -407,6 +466,9 @@ int oyObserver_Release_( oyObserver_s_ **observer )
   /* static object */
   if(!s->oy_)
     return 0;
+
+  id = s->oy_->id_;
+  refs = s->oy_->ref_;
 
   *observer = 0;
 
@@ -445,7 +507,7 @@ int oyObserver_Release_( oyObserver_s_ **observer )
   }
 
   
-  if((oyObject_UnRef(s->oy_) - observer_refs) > 0)
+  if((oyObject_UnRef(s->oy_) - observer_refs*2) > 0)
     return 0;
   /* ---- end of common object destructor ------- */
 
@@ -468,6 +530,23 @@ int oyObserver_Release_( oyObserver_s_ **observer )
     }
   }
 
+  /* model and observer reference each other. So release the object two times.
+   * The models and and observers are released later inside the
+   * oyObject_s::handles. */
+  for(i = 0; i < observer_refs; ++i)
+  {
+    //oyObject_UnRef(s->oy_);
+    oyObject_UnRef(s->oy_);
+  }
+
+  refs = s->oy_->ref_;
+  if(refs < 0)
+  {
+    WARNc2_S( "node[%d]->object can not be untracked with refs: %d\n", id, refs );
+    //oyMessageFunc_p( oyMSG_WARN,0,OY_DBG_FORMAT_ "refs:%d", OY_DBG_ARGS_, refs);
+    return -1; /* issue */
+  }
+
   
   /* ---- start of custom Observer destructor ----- */
   oyObserver_Release__Members( s );
@@ -479,25 +558,24 @@ int oyObserver_Release_( oyObserver_s_ **observer )
 
 
 
-  /* model and observer reference each other. So release the object two times.
-   * The models and and observers are released later inside the
-   * oyObject_s::handles. */
-  for(i = 0; i < observer_refs; ++i)
-  {
-    oyObject_UnRef(s->oy_);
-    oyObject_UnRef(s->oy_);
-  }
-
   if(s->oy_->deallocateFunc_)
   {
     oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
-    int id = s->oy_->id_;
-    int refs = s->oy_->ref_;
+    oyObject_s oy = s->oy_;
+
+    refs = s->oy_->ref_;
+
+    if(track_name)
+      fprintf( stderr, "%s[%d] destructing\n", track_name, id );
 
     if(refs > 1)
-      fprintf( stderr, "!!!ERROR: node[%d]->object can not be untracked with refs: %d\n", id, refs);
+      fprintf( stderr, "!!!ERROR:%d node[%d]->object can not be untracked with refs: %d\n", __LINE__, id, refs);
 
-    oyObject_Release( &s->oy_ );
+    for(i = 1; i < observer_refs; ++i) /* oyObject_Release(oy) will dereference one more time, so preserve here one ref for oyObject_Release(oy) */
+      oyObject_UnRef(oy);
+
+    s->oy_ = NULL;
+    oyObject_Release( &oy );
     if(track_name)
       fprintf( stderr, "%s[%d] destructed\n", track_name, id );
 

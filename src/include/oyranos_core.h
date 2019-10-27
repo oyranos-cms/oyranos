@@ -81,10 +81,12 @@ typedef const char * (*oyStruct_RegisterStaticMessageFunc_f)
                                      ( oyPointer           context,
                                        oyNAME_e            type,
                                        int                 flags );
+typedef void (*oyStruct_RegisterStaticFreeFunc_f)
+                                     (  );
 int            oyStruct_RegisterStaticMessageFunc (
                                        int                 type,
-                                       oyStruct_RegisterStaticMessageFunc_f f,
-                                       int               * object_type_init_var );
+                                       oyStruct_RegisterStaticMessageFunc_f msg,
+                                       oyStruct_RegisterStaticFreeFunc_f free );
 const char *   oyStruct_GetInfo      ( oyPointer           context,
                                        oyNAME_e            type,
                                        int                 flags );

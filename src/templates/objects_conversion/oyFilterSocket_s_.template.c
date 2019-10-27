@@ -34,5 +34,5 @@
 {% block customStaticMessage %}
 {{ block.super }}
   if(type == oyNAME_DESCRIPTION)
-    sprintf( &text[strlen(text)], "%s", s->relatives_?s->relatives_:"" );
+    sprintf( &oy_{{ class.baseName|lower }}_msg_text_[strlen(oy_{{ class.baseName|lower }}_msg_text_)], "%s", s->relatives_?s->relatives_:"" );
 {% endblock %}

@@ -47,6 +47,8 @@ oyObject_s         oyObject_NewWithAllocators (
   oyObject_s o = 0;
   int error = 0;
   int len = sizeof(struct oyObject_s_);
+  int id = oyGetNewObjectID();
+
 #if OY_USE_OBJECT_POOL_
   int old_obj = 0, i = 0;
 
@@ -61,7 +63,49 @@ oyObject_s         oyObject_NewWithAllocators (
 
   if(old_obj == 0)
 #endif
-    o = oyAllocateWrapFunc_( len, allocateFunc );
+  switch(id) /* give valgrind a glue, which object was created */
+  {
+    case 1: o = oyAllocateWrapFunc_( len, allocateFunc ); break;
+    case 2: o = oyAllocateWrapFunc_( len, allocateFunc ); break;
+    case 3: o = oyAllocateWrapFunc_( len, allocateFunc ); break;
+    case 4: o = oyAllocateWrapFunc_( len, allocateFunc ); break;
+    case 5: o = oyAllocateWrapFunc_( len, allocateFunc ); break;
+    case 6: o = oyAllocateWrapFunc_( len, allocateFunc ); break;
+    case 7: o = oyAllocateWrapFunc_( len, allocateFunc ); break;
+    case 8: o = oyAllocateWrapFunc_( len, allocateFunc ); break;
+    case 9: o = oyAllocateWrapFunc_( len, allocateFunc ); break;
+    case 10: o = oyAllocateWrapFunc_( len, allocateFunc ); break;
+    case 11: o = oyAllocateWrapFunc_( len, allocateFunc ); break;
+    case 12: o = oyAllocateWrapFunc_( len, allocateFunc ); break;
+    case 13: o = oyAllocateWrapFunc_( len, allocateFunc ); break;
+    case 14: o = oyAllocateWrapFunc_( len, allocateFunc ); break;
+    case 15: o = oyAllocateWrapFunc_( len, allocateFunc ); break;
+    case 16: o = oyAllocateWrapFunc_( len, allocateFunc ); break;
+    case 17: o = oyAllocateWrapFunc_( len, allocateFunc ); break;
+    case 18: o = oyAllocateWrapFunc_( len, allocateFunc ); break;
+    case 19: o = oyAllocateWrapFunc_( len, allocateFunc ); break;
+    case 20: o = oyAllocateWrapFunc_( len, allocateFunc ); break;
+    case 21: o = oyAllocateWrapFunc_( len, allocateFunc ); break;
+    case 22: o = oyAllocateWrapFunc_( len, allocateFunc ); break;
+    case 23: o = oyAllocateWrapFunc_( len, allocateFunc ); break;
+    case 24: o = oyAllocateWrapFunc_( len, allocateFunc ); break;
+    case 25: o = oyAllocateWrapFunc_( len, allocateFunc ); break;
+    case 26: o = oyAllocateWrapFunc_( len, allocateFunc ); break;
+    case 27: o = oyAllocateWrapFunc_( len, allocateFunc ); break;
+    case 28: o = oyAllocateWrapFunc_( len, allocateFunc ); break;
+    case 29: o = oyAllocateWrapFunc_( len, allocateFunc ); break;
+    case 30: o = oyAllocateWrapFunc_( len, allocateFunc ); break;
+    case 31: o = oyAllocateWrapFunc_( len, allocateFunc ); break;
+    case 32: o = oyAllocateWrapFunc_( len, allocateFunc ); break;
+    case 33: o = oyAllocateWrapFunc_( len, allocateFunc ); break;
+    case 34: o = oyAllocateWrapFunc_( len, allocateFunc ); break;
+    case 35: o = oyAllocateWrapFunc_( len, allocateFunc ); break;
+    case 36: o = oyAllocateWrapFunc_( len, allocateFunc ); break;
+    case 37: o = oyAllocateWrapFunc_( len, allocateFunc ); break;
+    case 38: o = oyAllocateWrapFunc_( len, allocateFunc ); break;
+    case 39: o = oyAllocateWrapFunc_( len, allocateFunc ); break;
+    default: o = oyAllocateWrapFunc_( len, allocateFunc );
+  }
 
   if(!o) return 0;
 
@@ -130,8 +174,8 @@ oyObject_NewFrom ( oyObject_s      object )
     error = oyObject_SetNames( o, object->name_->nick, object->name_->name,
                                object->name_->description );
 
-  if(error <= 0)
-    error = 1;
+  if(error)
+    WARNc1_S("error: %d", error )
 
   return o;
 }
@@ -183,9 +227,6 @@ int          oyObject_Release         ( oyObject_s      * obj )
     return 0;
   /* ---- end of common object destructor ------- */
 
-  if(oy_debug_objects >= 0 || oy_debug_objects == -2)
-    oyObject_UnTrack( s );
-
   oyName_release_( &s->name_, s->deallocateFunc_ );
 
 #if OY_USE_OBJECT_POOL_
@@ -203,6 +244,9 @@ int          oyObject_Release         ( oyObject_s      * obj )
     }
   }
 #endif
+
+  if(oy_debug_objects >= 0 || oy_debug_objects == -2)
+    oyObject_UnTrack( s );
 
   s->id_ = 0;
 
@@ -563,8 +607,8 @@ int          oyObject_UnRef          ( oyObject_s          obj )
   {
     oyObject_Lock( s, __FILE__, __LINE__ );
 
-    if(s->ref_ < 0 && (oy_debug_objects >= 0 || oy_debug))
-      WARNc3_S( "%s ID: %d refs: %d",
+    if(s->ref_ < 0 && (oy_debug_objects >= 0 || oy_debug_objects == -2 || oy_debug))
+      WARNc3_S( "%s[%d] refs: %d",
                 oyStructTypeToText( s->parent_types_[s->parent_types_[0]] ),
                 s->id_, s->ref_ )
 
@@ -583,7 +627,7 @@ int          oyObject_UnRef          ( oyObject_s          obj )
 #   else
     if(s->id_ == 247)
 #   endif
-      WARNc3_S( "%s ID: %d refs: %d",
+      WARNc3_S( "%s[%d] refs: %d",
                 oyStructTypeToText( s->parent_types_[s->parent_types_[0]] ),
                 s->id_, s->ref_ )
 

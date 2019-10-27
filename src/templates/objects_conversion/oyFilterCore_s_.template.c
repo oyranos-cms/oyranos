@@ -11,17 +11,17 @@
 {{ block.super }}
   if(type == oyNAME_NICK && (flags & 0x01) && s->category_)
   {
-    sprintf( &text[strlen(text)], "%s",
+    sprintf( &oy_{{ class.baseName|lower }}_msg_text_[strlen(oy_{{ class.baseName|lower }}_msg_text_)], "%s",
              s->category_
            );
   } else
   if(type == oyNAME_NAME && (s->category_ || s->registration_))
-    sprintf( &text[strlen(text)], "%s %s",
+    sprintf( &oy_{{ class.baseName|lower }}_msg_text_[strlen(oy_{{ class.baseName|lower }}_msg_text_)], "%s %s",
              s->category_?s->category_:"", s->registration_?s->registration_:""
            );
   else
   if((int)type >= oyNAME_DESCRIPTION && (s->category_ || s->registration_))
-    sprintf( &text[strlen(text)], "category: %s\nreg: %s",
+    sprintf( &oy_{{ class.baseName|lower }}_msg_text_[strlen(oy_{{ class.baseName|lower }}_msg_text_)], "category: %s\nreg: %s",
              s->category_?s->category_:"", s->registration_?s->registration_:""
            );
 {% endblock %}

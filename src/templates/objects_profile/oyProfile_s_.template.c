@@ -20,37 +20,37 @@
 {% block customStaticMessage %}
 {{ block.super }}
   /* allocate enough space */
-  if(text_n < 1000)
+  if(oy_{{ class.baseName|lower }}_msg_text_n_ < 1000)
   {
     oyDeAlloc_f dealloc = oyDeAllocateFunc_;
     if(s->oy_ && s->oy_->deallocateFunc_)
       dealloc = s->oy_->deallocateFunc_;
-    if(text && text_n)
-      dealloc( text );
-    text_n = 1024;
-    text = alloc(text_n);
-    if(text)
-      text[0] = '\000';
+    if(oy_{{ class.baseName|lower }}_msg_text_ && oy_{{ class.baseName|lower }}_msg_text_n_)
+      dealloc( oy_{{ class.baseName|lower }}_msg_text_ );
+    oy_{{ class.baseName|lower }}_msg_text_n_ = 1024;
+    oy_{{ class.baseName|lower }}_msg_text_ = alloc(oy_{{ class.baseName|lower }}_msg_text_n_);
+    if(oy_{{ class.baseName|lower }}_msg_text_)
+      oy_{{ class.baseName|lower }}_msg_text_[0] = '\000';
     else
       return "Memory Error";
 
     if(!(flags & 0x01))
-      sprintf(text, "%s%s", oyStructTypeToText( s->type_ ), type != oyNAME_NICK?" ":"");
+      sprintf(oy_{{ class.baseName|lower }}_msg_text_, "%s%s", oyStructTypeToText( s->type_ ), type != oyNAME_NICK?" ":"");
   }
 
   if((type == oyNAME_NICK && (flags & 0x01)) ||
       type == oyNAME_NAME)
   {
     if(s->file_name_)
-      sprintf( &text[strlen(text)], "%s",
+      sprintf( &oy_{{ class.baseName|lower }}_msg_text_[strlen(oy_{{ class.baseName|lower }}_msg_text_)], "%s",
                s->file_name_
              );
     else if(s->use_default_)
-      sprintf( &text[strlen(text)], "%d",
+      sprintf( &oy_{{ class.baseName|lower }}_msg_text_[strlen(oy_{{ class.baseName|lower }}_msg_text_)], "%d",
                s->use_default_
              );
     else
-      sprintf( &text[strlen(text)], "%lu",
+      sprintf( &oy_{{ class.baseName|lower }}_msg_text_[strlen(oy_{{ class.baseName|lower }}_msg_text_)], "%lu",
                (long unsigned int)s->size_
              );
   } else
@@ -60,16 +60,16 @@
     if(s->oy_)
       h = (uint32_t*)s->oy_->hash_ptr_;
     if(s->file_name_)
-      sprintf( &text[strlen(text)], "%s\n",
+      sprintf( &oy_{{ class.baseName|lower }}_msg_text_[strlen(oy_{{ class.baseName|lower }}_msg_text_)], "%s\n",
                s->file_name_
              );
     if(h)
-      oySprintf_( &text[strlen(text)], "%08x%08x%08x%08x", h[0], h[1], h[2], h[3]);
+      oySprintf_( &oy_{{ class.baseName|lower }}_msg_text_[strlen(oy_{{ class.baseName|lower }}_msg_text_)], "%08x%08x%08x%08x", h[0], h[1], h[2], h[3]);
     if(s->use_default_)
-      oySprintf_( &text[strlen(text)], " default: %d",
+      oySprintf_( &oy_{{ class.baseName|lower }}_msg_text_[strlen(oy_{{ class.baseName|lower }}_msg_text_)], " default: %d",
                   s->use_default_
                 );
-    oySprintf_( &text[strlen(text)], " %s channels: %d modified: %d",
+    oySprintf_( &oy_{{ class.baseName|lower }}_msg_text_[strlen(oy_{{ class.baseName|lower }}_msg_text_)], " %s channels: %d modified: %d",
                 oyICCColorSpaceGetName(s->sig_), s->channels_n_, s->tags_modified_
               );
   }

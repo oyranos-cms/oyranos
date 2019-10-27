@@ -76,17 +76,17 @@
 {{ block.super }}
   if(type == oyNAME_NICK && (flags & 0x01))
   {
-    sprintf( &text[strlen(text)], "%s",
+    sprintf( &oy_{{ class.baseName|lower }}_msg_text_[strlen(oy_{{ class.baseName|lower }}_msg_text_)], "%s",
              oyNoEmptyString_m_(s->api7_?s->api7_->registration:s->relatives_)
            );
   } else
   if(type == oyNAME_NAME)
-    sprintf( &text[strlen(text)], "%s %d/%d",
+    sprintf( &oy_{{ class.baseName|lower }}_msg_text_[strlen(oy_{{ class.baseName|lower }}_msg_text_)], "%s %d/%d",
              oyNoEmptyString_m_(s->api7_?s->api7_->registration:s->relatives_), s->plugs_n_, s->sockets_n_
            );
   else
   if((int)type >= oyNAME_DESCRIPTION)
-    sprintf( &text[strlen(text)], "reg: %s\nrelatives: %s\nplugs: %d sockets: %d context: %s",
+    sprintf( &oy_{{ class.baseName|lower }}_msg_text_[strlen(oy_{{ class.baseName|lower }}_msg_text_)], "reg: %s\nrelatives: %s\nplugs: %d sockets: %d context: %s",
              oyNoEmptyString_m_(s->api7_?s->api7_->registration:s->relatives_), s->relatives_,
              s->plugs_n_, s->sockets_n_, oyNoEmptyString_m_(s->api7_?s->api7_->context_type:"???")
            );
