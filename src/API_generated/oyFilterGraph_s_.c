@@ -214,7 +214,7 @@ oyFilterGraph_s_ * oyFilterGraph_New_ ( oyObject_s object )
   if(s_obj)
   {
     id = s_obj->id_;
-    switch(id)
+    switch(id) /* give valgrind a glue, which object was created */
     {
       case 1: s = (oyFilterGraph_s_*)s_obj->allocateFunc_(sizeof(oyFilterGraph_s_)); break;
       case 2: s = (oyFilterGraph_s_*)s_obj->allocateFunc_(sizeof(oyFilterGraph_s_)); break;

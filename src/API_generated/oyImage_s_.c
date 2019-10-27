@@ -238,7 +238,7 @@ oyImage_s_ * oyImage_New_ ( oyObject_s object )
   if(s_obj)
   {
     id = s_obj->id_;
-    switch(id)
+    switch(id) /* give valgrind a glue, which object was created */
     {
       case 1: s = (oyImage_s_*)s_obj->allocateFunc_(sizeof(oyImage_s_)); break;
       case 2: s = (oyImage_s_*)s_obj->allocateFunc_(sizeof(oyImage_s_)); break;

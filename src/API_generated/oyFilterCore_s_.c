@@ -241,7 +241,7 @@ oyFilterCore_s_ * oyFilterCore_New_ ( oyObject_s object )
   if(s_obj)
   {
     id = s_obj->id_;
-    switch(id)
+    switch(id) /* give valgrind a glue, which object was created */
     {
       case 1: s = (oyFilterCore_s_*)s_obj->allocateFunc_(sizeof(oyFilterCore_s_)); break;
       case 2: s = (oyFilterCore_s_*)s_obj->allocateFunc_(sizeof(oyFilterCore_s_)); break;

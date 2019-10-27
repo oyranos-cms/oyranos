@@ -215,7 +215,7 @@ oyCMMapi8_s_ * oyCMMapi8_New_ ( oyObject_s object )
   if(s_obj)
   {
     id = s_obj->id_;
-    switch(id)
+    switch(id) /* give valgrind a glue, which object was created */
     {
       case 1: s = (oyCMMapi8_s_*)s_obj->allocateFunc_(sizeof(oyCMMapi8_s_)); break;
       case 2: s = (oyCMMapi8_s_*)s_obj->allocateFunc_(sizeof(oyCMMapi8_s_)); break;

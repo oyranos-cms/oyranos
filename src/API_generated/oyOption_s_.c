@@ -269,7 +269,7 @@ oyOption_s_ * oyOption_New_ ( oyObject_s object )
   if(s_obj)
   {
     id = s_obj->id_;
-    switch(id)
+    switch(id) /* give valgrind a glue, which object was created */
     {
       case 1: s = (oyOption_s_*)s_obj->allocateFunc_(sizeof(oyOption_s_)); break;
       case 2: s = (oyOption_s_*)s_obj->allocateFunc_(sizeof(oyOption_s_)); break;

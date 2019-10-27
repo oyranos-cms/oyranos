@@ -214,7 +214,7 @@ oyCMMapiFilter_s_ * oyCMMapiFilter_New_ ( oyObject_s object )
   if(s_obj)
   {
     id = s_obj->id_;
-    switch(id)
+    switch(id) /* give valgrind a glue, which object was created */
     {
       case 1: s = (oyCMMapiFilter_s_*)s_obj->allocateFunc_(sizeof(oyCMMapiFilter_s_)); break;
       case 2: s = (oyCMMapiFilter_s_*)s_obj->allocateFunc_(sizeof(oyCMMapiFilter_s_)); break;

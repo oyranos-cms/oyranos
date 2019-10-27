@@ -178,7 +178,7 @@ oyList_s_ * oyList_New_ ( oyObject_s object )
   if(s_obj)
   {
     id = s_obj->id_;
-    switch(id)
+    switch(id) /* give valgrind a glue, which object was created */
     {
       case 1: s = (oyList_s_*)s_obj->allocateFunc_(sizeof(oyList_s_)); break;
       case 2: s = (oyList_s_*)s_obj->allocateFunc_(sizeof(oyList_s_)); break;

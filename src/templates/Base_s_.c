@@ -108,7 +108,7 @@ static void oy{{ class.baseName }}_StaticFree_           ( void )
   if(s_obj)
   {
     id = s_obj->id_;
-    switch(id)
+    switch(id) /* give valgrind a glue, which object was created */
     {
       case 1: s = ({{ class.privName }}*)s_obj->allocateFunc_(sizeof({{ class.privName }})); break;
       case 2: s = ({{ class.privName }}*)s_obj->allocateFunc_(sizeof({{ class.privName }})); break;

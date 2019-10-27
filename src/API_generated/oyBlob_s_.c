@@ -240,7 +240,7 @@ oyBlob_s_ * oyBlob_New_ ( oyObject_s object )
   if(s_obj)
   {
     id = s_obj->id_;
-    switch(id)
+    switch(id) /* give valgrind a glue, which object was created */
     {
       case 1: s = (oyBlob_s_*)s_obj->allocateFunc_(sizeof(oyBlob_s_)); break;
       case 2: s = (oyBlob_s_*)s_obj->allocateFunc_(sizeof(oyBlob_s_)); break;

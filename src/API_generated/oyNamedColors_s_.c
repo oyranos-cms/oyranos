@@ -199,7 +199,7 @@ oyNamedColors_s_ * oyNamedColors_New_ ( oyObject_s object )
   if(s_obj)
   {
     id = s_obj->id_;
-    switch(id)
+    switch(id) /* give valgrind a glue, which object was created */
     {
       case 1: s = (oyNamedColors_s_*)s_obj->allocateFunc_(sizeof(oyNamedColors_s_)); break;
       case 2: s = (oyNamedColors_s_*)s_obj->allocateFunc_(sizeof(oyNamedColors_s_)); break;

@@ -200,7 +200,7 @@ oyLis_s_ * oyLis_New_ ( oyObject_s object )
   if(s_obj)
   {
     id = s_obj->id_;
-    switch(id)
+    switch(id) /* give valgrind a glue, which object was created */
     {
       case 1: s = (oyLis_s_*)s_obj->allocateFunc_(sizeof(oyLis_s_)); break;
       case 2: s = (oyLis_s_*)s_obj->allocateFunc_(sizeof(oyLis_s_)); break;
