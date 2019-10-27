@@ -58,6 +58,11 @@
 #include "oyConfig_s_.h"
 #include "oyConfigs_s_.h"
 
+#ifdef HAVE_BACKTRACE
+#include <execinfo.h>
+#define BT_BUF_SIZE 100
+#endif
+
 #define PRINT_ID(id_)  ;//if(id_ == old_oy_debug_objects) fprintf(stderr, OY_DBG_FORMAT_ "ID: %d\n", OY_DBG_ARGS_, id_);
 int old_oy_debug_objects = -1; /* be more silent */
 
@@ -1206,7 +1211,8 @@ static oyStruct_s *  oyStruct_FromId ( int                 id )
     }
     if(obs[id]->parent_->type_ > oyOBJECT_MAX)
     {
-      fprintf(stderr, "oyStruct_FromId(%d) non reasonable type found: \"%s\"\n", id, oyStructTypeToText(obs[id]->parent_->type_) );
+      fprintf(stderr, "oyStruct_FromId(%d) non reasonable type found: \"%s\"\nbacktrace:" OY_DBG_FORMAT_, id, oyStructTypeToText(obs[id]->parent_->type_), OY_DBG_ARGS_ );
+      OY_BACKTRACE_PRINT
       return NULL;
     }
 
