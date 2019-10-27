@@ -26,6 +26,7 @@
 #include <time.h>
 
 #include "oyranos_config_internal.h"
+#include <oyjl.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -50,8 +51,8 @@ double   oyGetCurrentGMTHour         ( int               * gmt_to_local_time_dif
 const char *       oyPrintTime       ( );
 
 #if defined(__GNUC__)
-# define  OY_DBG_FORMAT_ "%s:%d %s() "
-# define  OY_DBG_ARGS_   strrchr(__FILE__,'/') ? strrchr(__FILE__,'/')+1 : __FILE__,__LINE__,__func__
+# define  OY_DBG_FORMAT_ "%s(%s:%d) "
+# define  OY_DBG_ARGS_   oyjlTermColor(oyjlBOLD, __func__), strrchr(__FILE__,'/') ? strrchr(__FILE__,'/')+1 : __FILE__,__LINE__
 #else
 # define  OY_DBG_FORMAT_ "%s:%d "
 # define  OY_DBG_ARGS_   strrchr(__FILE__,'/') ? strrchr(__FILE__,'/')+1 : __FILE__,__LINE__
@@ -220,7 +221,6 @@ void oy_backtrace_();
           { \
             int start = nptrs-1; \
             do { --start; } while( start >= 0 && (strstr(strings[start], "(main+") == NULL) ); \
-            fprintf(stderr, "\n"); \
             for(j = start; j >= 0; j--) \
             { \
               if(oy_debug) \
@@ -273,6 +273,7 @@ void oy_backtrace_();
                 oyFree_m_(line_number); \
               } \
             } \
+            fprintf(stderr, "\n"); \
             free(strings); \
           }
 #define OY_BACKTRACE_STRING \
