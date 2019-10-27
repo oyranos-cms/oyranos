@@ -23,12 +23,55 @@
   TEST_RUN( testRegistrationMatch,  "Registration matching", 1 );\
   TEST_RUN( testObserver,  "Generic Object Observation", 1 );
 
-#include <oyjl_test_main.h>
+#define OYJL_TEST_MAIN_SETUP  printf("\n    Oyranos test\n"); if(getenv(OY_DEBUG)) oy_debug = atoi(getenv(OY_DEBUG)); // oy_debug_objects = 9; oy_debug_signals = 1;
+#define OYJL_TEST_MAIN_FINISH printf("\n    Oyranos test finished\n\n"); if(testobj) testobj->release( &testobj ); if(verbose) { char * t = oyAlphaPrint_(0); puts(t); free(t); } oyLibConfigRelease(0);
+
 
 #include "oyranos.h"
+#include "oyranos_definitions.h"
 #include "oyranos_string.h"
 #include "oyranos_version.h"
 oyObject_s testobj = NULL;
+
+#include <oyjl_test_main.h>
+
+#ifdef HAVE_BACKTRACE
+#include <execinfo.h>
+#define BT_BUF_SIZE 100
+#endif
+#define OBJECT_COUNT_SETUP \
+  int object_count = 0, oy_debug_objects_old = -9999; \
+\
+  if(oy_debug_objects < 0) oyLibConfigRelease(0); \
+  if(oy_debug_objects == -1) { oy_debug_objects_old = -1; oy_debug_objects = -2; }
+
+#define OBJECT_COUNT_PRINT( onfail, reset, stop, msg ) \
+  if(oy_debug_objects >= 0 || oy_debug_objects == -2) \
+  { \
+    oyLibConfigRelease(FINISH_IGNORE_OBJECT_LIST | FINISH_IGNORE_CORE); \
+    object_count = oyObjectCountCurrentObjectIdList(); \
+    if(object_count) \
+    { \
+      if(onfail == oyjlTESTRESULT_FAIL) \
+      { \
+        char * text = NULL; \
+        OY_BACKTRACE_STRING \
+        oyObjectTreePrint( 0x01 | 0x02 | 0x08, text ? text : __func__ ); \
+        oyFree_m_( text ) \
+      } \
+      PRINT_SUB( onfail,                 "%s:                                     %d", msg?msg:"objects", object_count); \
+    } else \
+    { PRINT_SUB( oyjlTESTRESULT_SUCCESS, "%s:                                     %d", msg?msg:"objects", object_count); \
+    } \
+    oyLibConfigRelease(0); \
+  } \
+  if(oy_debug_objects_old != -9999 && reset) \
+  { \
+    oy_debug_objects = oy_debug_objects_old; \
+  } \
+  if( stop && object_count ) \
+    return result;
+
 
 /* --- actual tests --- */
 
@@ -969,6 +1012,7 @@ int myFilterSignalHandler            ( oyObserver_s      * observer,
 oyjlTESTRESULT_e testObserver ()
 {
   oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
+  OBJECT_COUNT_SETUP
   oyOption_s * o = oyOption_FromRegistration( "a/b/c/d/my_key", 0 );
   oyFilterNode_s * node = oyFilterNode_NewWith( "//" OY_TYPE_STD "/icc_color", 0, 0 );
 
@@ -979,10 +1023,10 @@ oyjlTESTRESULT_e testObserver ()
   if( !oyStruct_ObserverAdd( (oyStruct_s*)o, (oyStruct_s*)node, 0,
                              myFilterSignalHandler ) )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "Added Observer                        " );
+    "Added Observer                                     " );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "Added Observer                        " );
+    "Added Observer                                     " );
   }
 
   oyOption_SetFromString( o, "new_value", 0 );
@@ -990,15 +1034,17 @@ oyjlTESTRESULT_e testObserver ()
   if( !oyStruct_ObserverRemove( (oyStruct_s*)o, (oyStruct_s*)node,
                                 myFilterSignalHandler ))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "Removed Observer                      " );
+    "Removed Observer                                   " );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "Removed Observer                      " );
+    "Removed Observer                                   " );
   }
 
   oyOption_SetFromString( o, "other_value", 0 );
   oyOption_Release( &o );
   oyFilterNode_Release( &node );
+
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0, NULL )
 
   return result;
 }
