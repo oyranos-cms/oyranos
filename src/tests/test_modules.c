@@ -1,6 +1,7 @@
 #include "oyCMMapi6_s.h"
 #include "oyranos_module_internal.h"
 #include "oyCMMapi5_s_.h"
+#include <oyjl.h>
 
 int main( int argc OY_UNUSED, char ** argv OY_UNUSED)
 {
