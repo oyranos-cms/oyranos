@@ -25,6 +25,7 @@
   TEST_RUN( testOptionsCopy,  "Copy oyOptions_s", 1 ); \
   TEST_RUN( testOptionsType,  "Objects inside oyOptions_s", 1 ); \
   TEST_RUN( testBlob, "oyBlob_s", 1 ); \
+  TEST_RUN( testDAGbasic, "basic DAG", 1 ); \
   TEST_RUN( testSettings, "default oyOptions_s settings", 1 ); \
   TEST_RUN( testConfDomain, "oyConfDomain_s", 1 ); \
   TEST_RUN( testInterpolation, "Interpolation oyLinInterpolateRampU16", 1 ); \
@@ -63,7 +64,7 @@
 #include "oyranos_string.h"
 oyObject_s testobj = NULL;
 extern "C" { char * oyAlphaPrint_(int); }
-#define OYJL_TEST_MAIN_SETUP  printf("\n    Oyranos test2\n"); if(getenv(OY_DEBUG)) oy_debug = atoi(getenv(OY_DEBUG)); oy_debug_objects = -1;
+#define OYJL_TEST_MAIN_SETUP  printf("\n    Oyranos test2\n"); if(getenv(OY_DEBUG)) oy_debug = atoi(getenv(OY_DEBUG)); // oy_debug_objects = 9; oy_debug_signals = 1;
 #define OYJL_TEST_MAIN_FINISH printf("\n    Oyranos test2 finished\n\n"); if(testobj) testobj->release( &testobj ); if(verbose) { char * t = oyAlphaPrint_(0); puts(t); free(t); } oyLibConfigRelease(0);
 #include <oyjl_test_main.h>
 
@@ -82,7 +83,7 @@ double d[6] = {0.5,0.5,0.5,0,0,0};
   if(oy_debug_objects < 0) oyLibConfigRelease(0); \
   if(oy_debug_objects == -1) { oy_debug_objects_old = -1; oy_debug_objects = -2; }
 
-#define OBJECT_COUNT_PRINT( onfail, reset, stop ) \
+#define OBJECT_COUNT_PRINT( onfail, reset, stop, msg ) \
   if(oy_debug_objects >= 0 || oy_debug_objects == -2) \
   { \
     oyLibConfigRelease(FINISH_IGNORE_OBJECT_LIST | FINISH_IGNORE_CORE); \
@@ -96,9 +97,9 @@ double d[6] = {0.5,0.5,0.5,0,0,0};
         oyObjectTreePrint( 0x01 | 0x02 | 0x08, text ? text : __func__ ); \
         oyFree_m_( text ) \
       } \
-      PRINT_SUB( onfail,                 "objects:                                     %d", object_count); \
+      PRINT_SUB( onfail,                 "%s:                                     %d", msg?msg:"objects", object_count); \
     } else \
-    { PRINT_SUB( oyjlTESTRESULT_SUCCESS, "objects:                                     %d", object_count); \
+    { PRINT_SUB( oyjlTESTRESULT_SUCCESS, "%s:                                     %d", msg?msg:"objects", object_count); \
     } \
     oyLibConfigRelease(0); \
   } \
@@ -514,7 +515,7 @@ oyjlTESTRESULT_e testDB2()
 
   oyjlTESTRESULT_e result = testDBDefault();
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 0 )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 0, NULL )
 
   return result;
 }
@@ -1090,7 +1091,7 @@ oyjlTESTRESULT_e testOption ()
   oyOption_Release( &o );
   oyFree_m_(ptr);
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 0 )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 0, NULL )
 
   return result;
 }
@@ -1250,7 +1251,7 @@ oyjlTESTRESULT_e testOptionInt ()
 
   oyOption_Release( &o );
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 0 )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 0, NULL )
 
   return result;
 }
@@ -1517,7 +1518,7 @@ oyjlTESTRESULT_e testOptionsSet ()
   }
   oyOptions_Release( &options );
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 0 )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 0, NULL )
 
   return result;
 }
@@ -1720,7 +1721,7 @@ oyjlTESTRESULT_e testOptionsCopy ()
   oyOptions_Release( &resultA );
   oyOptions_Release( &resultB );
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 0 )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 0, NULL )
 
   return result;
 }
@@ -1827,7 +1828,73 @@ oyjlTESTRESULT_e testBlob ()
   oyObject_Release( &object );
   free(ptr);
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 0 )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 0, NULL )
+
+  return result;
+}
+
+#include "oyStructList_s.h"
+oyjlTESTRESULT_e testDAGbasic ()
+{
+  oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
+  OBJECT_COUNT_SETUP
+
+  fprintf(stdout, "\n" );
+
+  oyStructList_s * list1 = oyStructList_New( testobj ),
+                 * list2 = oyStructList_New( testobj ),
+                 * tmp = oyStructList_Copy( list2, NULL ),
+                 * tmp_list1 = list1; // do not use plain pointer assignment without oyXXX_Copy() referencing like above
+  oyStructList_MoveIn(list1, (oyStruct_s**)&tmp, -1, 0 );
+  tmp = oyStructList_Copy( list1, NULL );
+  oyStructList_MoveIn(list2, (oyStruct_s**)&tmp, -1, 0 );
+  oyStructList_Release( &list1 );
+  oyStructList_Release( &list2 );
+
+  if(oy_debug_objects >= 0 || oy_debug_objects == -2)
+  {
+    const char * msg = "Circular DAG";
+    oyLibConfigRelease(FINISH_IGNORE_OBJECT_LIST | FINISH_IGNORE_CORE);
+    object_count = oyObjectCountCurrentObjectIdList();
+    if(object_count != 2)
+    {
+      PRINT_SUB( oyjlTESTRESULT_XFAIL,   "%s:                                     %d", msg?msg:"objects", object_count);
+    } else
+    { PRINT_SUB( oyjlTESTRESULT_SUCCESS, "%s:                                     %d", msg?msg:"objects", object_count);
+    }
+
+    if(verbose)
+    {
+      char * text = NULL;
+      OY_BACKTRACE_STRING
+      oyObjectTreePrint( 0x01 | 0x02 | 0x08, text ? text : __func__ );
+      oyFree_m_( text )
+    }
+
+  }
+  oyStructList_Release( &tmp_list1 );
+  if(oy_debug_objects >= 0 || oy_debug_objects == -2)
+    oyLibConfigRelease(0);
+
+  oyBlob_s * blob = NULL;
+  oyOptions_s * options = 0;
+  int error = 0;
+
+  blob = oyBlob_New( testobj );
+  options = oyOptions_New( testobj );
+  error = oyOptions_ObserverAdd( options, (oyStruct_s*)blob,
+                                 0, NULL );
+  if(verbose)
+  {
+    char * text = NULL;
+    OY_BACKTRACE_STRING
+    oyObjectTreePrint( 0x01 | 0x02 | 0x08, text ? text : __func__ );
+    oyFree_m_( text )
+  }
+  oyOptions_Release( &options );
+  oyBlob_Release( &blob );
+
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 0, "Blob Observer" )
 
   return result;
 }
@@ -2046,7 +2113,7 @@ oyjlTESTRESULT_e testSettings ()
   }
   oyOptions_Release( &opts );
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 0 )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 0, NULL )
 
 
   return result;
@@ -2216,7 +2283,7 @@ oyjlTESTRESULT_e testOptionsType ()
 
   oyOptions_Release( &opts );
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 0 )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 0, NULL )
 
   return result;
 }
@@ -2485,7 +2552,7 @@ oyjlTESTRESULT_e testProfile ()
     oyProfile_Release( &p );
   }
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 0 )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 0, NULL )
 
   return result;
 }
@@ -2743,7 +2810,7 @@ oyjlTESTRESULT_e testProfiles ()
     oyProfiles_Release( &profiles );
   }
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 0 )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 0, NULL )
 
   return result;
 }
@@ -3015,7 +3082,7 @@ oyjlTESTRESULT_e testEffects ()
   oyProfile_ToFile_( (oyProfile_s_*)abstract, "test_wtpt_effect-bradford.icc" );
   oyProfile_Release( &abstract );
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 0 )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 0, NULL )
 
   return result;
 }
@@ -3029,8 +3096,7 @@ oyjlTESTRESULT_e testDeviceLinkProfile ()
   OBJECT_COUNT_SETUP
 
   double buf[24];
-  uint32_t icc_profile_flags =oyICCProfileSelectionFlagsFromOptions( OY_CMM_STD,
-                                       "//" OY_TYPE_STD "/icc_color", NULL, 0 );
+  uint32_t icc_profile_flags = 0;
   oyProfile_s * prof = NULL, *dl = NULL;
   oyImage_s * in = NULL, * out = NULL;
   oyOptions_s * options = NULL;
@@ -3050,6 +3116,8 @@ oyjlTESTRESULT_e testDeviceLinkProfile ()
 
   /*oyConversion_RunPixels( cc, 0 );*/
 
+  icc_profile_flags = oyICCProfileSelectionFlagsFromOptions( OY_CMM_STD,
+                                       "//" OY_TYPE_STD "/icc_color", NULL, 0 );
   oyFilterNode_s * in_node = oyFilterNode_NewWith( "//" OY_TYPE_STD "/root", 0, testobj );
   //oyFilterNode_SetData( in_node, (oyStruct_s*)input, 0, 0 );
   oyFilterNode_s * out_node = oyFilterNode_NewWith( "//" OY_TYPE_STD "/output", 0, testobj );
@@ -3067,13 +3135,13 @@ oyjlTESTRESULT_e testDeviceLinkProfile ()
   }
   oyFilterNode_Release( &out_node );
   oyFilterNode_Release( &in_node );
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 1 )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 1, NULL )
 
   cc = oyConversion_New( NULL );
   oyConversion_Set( cc, in_node, NULL );
   oyConversion_Set( cc, 0, out_node );
   error = oyConversion_Release( &cc );
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 1 )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 1, "Conversion" )
 
 
   prof = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, testobj );
@@ -3096,15 +3164,7 @@ oyjlTESTRESULT_e testDeviceLinkProfile ()
   oyImage_Release( &in );
   oyImage_Release( &out );
   oyProfile_Release( &prof );
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 0 )
-
-  blob = oyBlob_New( testobj );
-  options = oyOptions_New( testobj );
-  error = oyOptions_ObserverAdd( options, (oyStruct_s*)blob,
-                                 0, NULL );
-  oyOptions_Release( &options );
-  oyBlob_Release( &blob );
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 0 )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 0, NULL )
 
   prof = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, testobj );
   prof_fn = oyProfile_GetFileName( prof, -1 );
@@ -3121,7 +3181,7 @@ oyjlTESTRESULT_e testDeviceLinkProfile ()
   oyImage_Release( &in );
   oyImage_Release( &out );
   oyProfile_Release( &prof );
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 0 )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 0, "Node Opts" )
 
   prof = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, testobj );
   in = oyImage_Create( 2, 2, buf, OY_TYPE_123_DBL, prof, testobj );
@@ -3251,7 +3311,7 @@ oyjlTESTRESULT_e testDeviceLinkProfile ()
   error = oyFilterGraph_Release( &graph );
   if(error) PRINT_SUB( oyjlTESTRESULT_XFAIL, "oyFilterGraph_Release() error: %d", error )
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0 )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0, NULL )
 
   return result;
 }
@@ -4064,7 +4124,7 @@ oyjlTESTRESULT_e testClut ()
     oyFree_m_(old_daemon);
   }
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0 )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0, NULL )
 
   return result;
 }
@@ -4325,7 +4385,7 @@ oyjlTESTRESULT_e testPolicy ()
   }
 
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0 )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0, NULL )
 
   return result;
 }
@@ -4439,7 +4499,7 @@ oyjlTESTRESULT_e testWidgets ()
 
   fprintf( zout, "\n");
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0 )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0, NULL )
 
   return result;
 }
@@ -4642,7 +4702,7 @@ oyjlTESTRESULT_e testCMMDevicesListing ()
 
   fprintf( zout, "\n");
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0 )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0, NULL )
 
   return result;
 }
@@ -4828,7 +4888,7 @@ oyjlTESTRESULT_e testCMMDevicesDetails ()
 
   fprintf( zout, "\n");
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0 )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0, NULL )
 
   return result;
 }
@@ -4983,7 +5043,7 @@ oyjlTESTRESULT_e testCMMRankMap ()
 
   fprintf( zout, "\n");
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0 )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0, NULL )
 
   return result;
 }
@@ -5224,7 +5284,7 @@ oyjlTESTRESULT_e testCMMMonitorJSON ()
   if(result == oyjlTESTRESULT_UNKNOWN && displayFail() == oyjlTESTRESULT_XFAIL)
     result = oyjlTESTRESULT_SUCCESS;
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0 )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0, NULL )
 
   return result;
 }
@@ -5330,7 +5390,7 @@ oyjlTESTRESULT_e testCMMMonitorListing ()
   fprintf( zout, "\n");
 
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0 )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0, NULL )
 
   return result;
 }
@@ -5378,7 +5438,7 @@ oyjlTESTRESULT_e testCMMDBListing ()
     oyConfig_Release( &config );
   }
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0 )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0, NULL )
 
   return result;
 }
@@ -5419,7 +5479,7 @@ oyjlTESTRESULT_e testCMMMonitorModule ()
     "oyDevicesGet( \"//" OY_TYPE_STD "\", unset, ... ) = %d       ", error );
   }
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0 )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0, NULL )
 
   return result;
 }
@@ -5540,7 +5600,7 @@ oyjlTESTRESULT_e testCMMmonitorDBmatch ()
   error = oyDBEraseKey( reg, oySCOPE_USER );
   if(error) PRINT_SUB( oyjlTESTRESULT_XFAIL, "oyDBEraseKey() error: %d", error )
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0 )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0, NULL )
 
   return result;
 }
@@ -5879,7 +5939,7 @@ oyjlTESTRESULT_e testCMMsShow ()
   fprintf(zout, "Wrote %s\n", rfile?rfile:"test2_CMMs.xhtml" );
   free( rfile );
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0 )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0, NULL )
 
   return result;
 }
@@ -6479,7 +6539,7 @@ oyjlTESTRESULT_e testCMMnmRun ()
   }
 
   
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0 )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0, NULL )
 
   return result;
 }
@@ -6849,7 +6909,7 @@ oyjlTESTRESULT_e testImagePixel()
   oyImage_Release( &input );
   oyImage_Release( &output );
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0 )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0, NULL )
 
   return result;
 }
@@ -6972,7 +7032,7 @@ oyjlTESTRESULT_e testRectangles()
   oyRectangle_Release( &pixel_rectangle );
   oyRectangle_Release( &roi );
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0 )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0, NULL )
 
   return result;
 }
@@ -7154,7 +7214,7 @@ oyjlTESTRESULT_e testScreenPixel()
   free(buf_16in);
   free(buf_16out);
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0 )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0, NULL )
 
   return result;
 }
@@ -7346,7 +7406,7 @@ oyjlTESTRESULT_e testFilterNodeCMM( oyjlTESTRESULT_e result_,
   oyOptions_Release( &node_opts );
   oyConversion_Release( &cc );
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0 )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0, NULL )
 
   return result;
 }
@@ -7361,7 +7421,7 @@ oyjlTESTRESULT_e testFilterNode()
   char ** list = oyGetCMMs( oyCMM_CONTEXT, oyNAME_NAME, 0, malloc );
   int i = 0;
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 1 )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 1, "oyGetCMMs" )
 
   while(list && list[i])
   {
@@ -7795,7 +7855,7 @@ oyjlTESTRESULT_e testConversion()
   oyImage_Release( &input );
   oyImage_Release( &output );
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0 )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0, NULL )
 
   return result;
 }
@@ -7915,7 +7975,7 @@ oyjlTESTRESULT_e testCMMlists()
   }
   if(default_cmm) free(default_cmm);
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0 )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0, NULL )
 
   return result;
 }
@@ -8291,7 +8351,7 @@ oyjlTESTRESULT_e testICCsCheck()
     free(list);
   }
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0 )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0, NULL )
 
   return result;
 }
@@ -8414,7 +8474,7 @@ oyjlTESTRESULT_e testCCorrectFlags( )
   oyProfile_Release( &p_lab );
   oyProfile_Release( &p_web );
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0 )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0, NULL )
 
   return result;
 }
@@ -8616,7 +8676,7 @@ oyjlTESTRESULT_e testCache()
 
   oyTestCacheListClear_();
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0 )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0, NULL )
 
   return result;
 }
@@ -8657,7 +8717,7 @@ oyjlTESTRESULT_e testPaths()
   }
 
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0 )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0, NULL )
 
   return result;
 }
@@ -8797,7 +8857,7 @@ oyjlTESTRESULT_e testConfDomain ()
   oyStringListRelease_( &domains, count, free );
   oyFree_m_( rank_list );
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 0 )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 0, NULL )
 
   return result;
 }
