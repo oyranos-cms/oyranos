@@ -149,7 +149,13 @@ int main(int argc, char ** argv)
   }
 
   if(verbose)
-    fprintf(stderr, "i18n test:\t\"%s\" %s\n", _("Usage"), textdomain(NULL) );
+    fprintf(stderr, "i18n test:\t\"%s\" %s\n", _("Usage"),
+#ifdef OYJL_USE_GETTEXT
+        textdomain(NULL)
+#else
+        "----"
+#endif
+        );
 
   if(file_name)
     json = oyjlReadFile( file_name, &size );
@@ -221,8 +227,10 @@ int main(int argc, char ** argv)
       char ** list = oyjlStringSplit( key_list, ',', &n, malloc );
       char * dir;
 
+#ifdef OYJL_USE_GETTEXT
       if(verbose)
         fprintf(stderr, "use:\t%d langs - %s : %s\n", ln, ctextdomain, dgettext( ctextdomain, "Rendering Intent" ));
+#endif
       if(verbose)
         fprintf(stderr, "use:\t%d keys\n", n);
 
@@ -238,8 +246,10 @@ int main(int argc, char ** argv)
       if(!oyjl_domain_path && getenv(OYJL_LOCALE_VAR) && strlen(getenv(OYJL_LOCALE_VAR)))
         oyjl_domain_path = strdup(getenv(OYJL_LOCALE_VAR));
 
+#ifdef OYJL_USE_GETTEXT
       var = textdomain( ctextdomain );
       dir = bindtextdomain( ctextdomain, oyjl_domain_path );
+#endif
 
       if(*oyjl_debug)
         fprintf(stdout, "%s = bindtextdomain() to \"%s\"\ntextdomain: %s == %s\n", dir, oyjl_domain_path, ctextdomain, var );
@@ -274,7 +284,11 @@ int main(int argc, char ** argv)
               if(v)
                 t = OYJL_GET_STRING(v);
               if(t)
+#ifdef OYJL_USE_GETTEXT
                 tr = dgettext( ctextdomain, t );
+#else
+                tr = t;
+#endif
               if(verbose)
                 fprintf(stderr, "found:\t key: %s value[%s]: \"%s\"\n", path, ctextdomain, tr?tr:"----" );
               if(t != tr)
