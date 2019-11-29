@@ -25,7 +25,7 @@ add it.
 ### What is Oyranos?
 
 The Oyranos project is a colour management system (CMS). It is intended
-to work in a comparable fashion like KCMS, ICM or ColourSync except it
+to work in a comparable fashion like KCMS, ICM or ColorSync expect it
 is published with sources and is available for various platforms.
 
 ### What is the goal of Oyranos?
