@@ -289,7 +289,7 @@ oyjlTESTRESULT_e testJson ()
       }
       const char * match = NULL;
       const char * xpath = "org///s2key_d";
-      for(int j = 0; j < count; ++j)
+      for(j = 0; j < count; ++j)
       {
         if(oyjlPathMatch( paths[j], xpath, 0 ))
           match = paths[j];
@@ -321,7 +321,7 @@ oyjlTESTRESULT_e testJson ()
         "oyjlTreeToPaths( OYJL_PATH )          %d", count );
       }
       if(verbose)
-      for(int j = 0; j < count; ++j)
+      for(j = 0; j < count; ++j)
         fprintf( zout, "%d: %s\n", j, paths[j] );
 
       double clck = oyjlClock();
