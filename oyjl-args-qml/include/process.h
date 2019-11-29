@@ -7,6 +7,7 @@
 #include <oyjl.h>
 #include <oyjl_macros.h>
 #include <unistd.h>
+#include <errno.h>
 
 extern int (*processCallback_p)(int argc, const char ** argv);
 
