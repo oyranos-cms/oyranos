@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2019-10-04 12:16+0200\n"
+"POT-Creation-Date: 2019-11-28 18:01+0100\n"
 "PO-Revision-Date: 2006-06-29 19:31+0200\n"
 "Last-Translator: Pascal LACROIX <lacroixpascal at vfemail.net>\n"
 "Language-Team: <fr@li.org>\n"
@@ -390,7 +390,7 @@ msgstr ""
 msgid "Print:"
 msgstr ""
 
-#: oyjl_translate.c:225
+#: oyjl_translate.c:232
 #, fuzzy
 msgid "Rendering Intent"
 msgstr "Oyranos Préférences"

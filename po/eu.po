@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eu\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2019-10-04 12:16+0200\n"
+"POT-Creation-Date: 2019-11-28 18:01+0100\n"
 "PO-Revision-Date: 2007-11-07 11:11+0100\n"
 "Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@zundan.com>\n"
 "Language-Team: Basque <itzulpena@euskalgnu.org>\n"
@@ -399,7 +399,7 @@ msgstr ""
 msgid "Print:"
 msgstr "Puntua"
 
-#: oyjl_translate.c:225
+#: oyjl_translate.c:232
 #, fuzzy
 msgid "Rendering Intent"
 msgstr "Oyranos-en ezarpenak"
