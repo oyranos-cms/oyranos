@@ -1299,6 +1299,8 @@ int   oyjlIsFile                     ( const char        * fullname,
     mod_time += status.st_mtimespec.tv_nsec/1000000. ;
 #   elif defined(WIN32)
     mod_time = (double)status.st_mtime ;
+#   elif defined(__ANDROID__)
+    mod_time = status.st_mtime ;
 #   else
     mod_time = status.st_mtim.tv_sec ;
     mod_time += status.st_mtim.tv_nsec/1000000. ;
