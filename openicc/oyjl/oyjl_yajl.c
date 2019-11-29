@@ -295,7 +295,7 @@ static int context_add_value (context_t *ctx, oyjl_val v)
 static int handle_string (void *ctx,
                           const unsigned char *string, long unsigned int string_length)
 #else
-static int handle_number (void *ctx, const char *string, unsigned int string_length)
+static int handle_string (void *ctx, const char *string, unsigned int string_length)
 #endif
 {
     oyjl_val v;

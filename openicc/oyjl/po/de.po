@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2019-10-04 12:16+0200\n"
+"POT-Creation-Date: 2019-11-28 18:01+0100\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -376,7 +376,7 @@ msgstr "Zeige Pfad:"
 msgid "Print:"
 msgstr "Zeige:"
 
-#: oyjl_translate.c:225
+#: oyjl_translate.c:232
 msgid "Rendering Intent"
 msgstr "Übertragungsart"
 
