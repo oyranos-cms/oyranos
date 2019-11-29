@@ -502,10 +502,6 @@ typedef union oyjlVariable_u {
  *
  *  The type is declared inside the ::oyjlOPTIONTYPE_e enum range. */
 typedef union oyjlOption_u {
-  struct {
-    oyjlOptionChoice_s * list;         /**< used for oyjlOPTIONTYPE_CHOICE | oyjlOPTIONTYPE_EDIT */
-    int selected;                      /**< the currently selected choice */
-  } choices;                           /**< @brief oyjlOPTIONTYPE_CHOICE | oyjlOPTIONTYPE_EDIT */
   /** @brief oyjlOPTIONTYPE_FUNCTION
    *  @param[in]   opt                 the option context
    *  @param[out]  selected            show the default; optional
@@ -513,6 +509,10 @@ typedef union oyjlOption_u {
    *  @result                          the same as for the *choices::list* member; caller owns the memory
    */
   oyjlOptionChoice_s * (*getChoices)( oyjlOption_s * opt, int * selected, oyjlOptions_s * context );
+  struct {
+    oyjlOptionChoice_s * list;         /**< used for oyjlOPTIONTYPE_CHOICE | oyjlOPTIONTYPE_EDIT */
+    int selected;                      /**< the currently selected choice */
+  } choices;                           /**< @brief oyjlOPTIONTYPE_CHOICE | oyjlOPTIONTYPE_EDIT */
   struct {
     double d;                          /**< default / recommendation */
     double start;
