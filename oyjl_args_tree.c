@@ -47,7 +47,7 @@ oyjlOptionChoice_s * oyjlOption_GetChoices_ (
  *  @memberof oyjlOptions_s
  *
  *  @version Oyjl: 1.0.0
- *  @date    2018/08/14
+ *  @date    2019/12/01
  *  @since   2018/08/14 (OpenICC: 0.1.1)
  */
 char * oyjlOptions_ResultsToJson  ( oyjlOptions_s  * opts )
@@ -70,7 +70,7 @@ char * oyjlOptions_ResultsToJson  ( oyjlOptions_s  * opts )
   root = oyjlTreeNew( "" );
   for(i = 0; i < results->count; ++i)
   {
-    value = oyjlTreeGetValue( root, OYJL_CREATE_NEW, results->options[i] );
+    value = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, "%s/[%d]", results->options[i], i );
     oyjlValueSetString( value, results->values[i] );
   }
 

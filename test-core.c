@@ -541,7 +541,7 @@ oyjlTESTRESULT_e testArgs()
   int verbose_ = 0;
   int state = 0;
   int argc = 1;
-  const char * argv[] = {"test","-v","--input","file-name.json", "-z"};
+  const char * argv[] = {"test","-vvvvvv","--input","file-name.json", "-z"};
 
   /* handle options */
   /* Select from *version*, *manufacturer*, *copyright*, *license*, *url*,
@@ -708,7 +708,7 @@ oyjlTESTRESULT_e testArgs()
                                        "oyjl-config-read", "Oyjl Config Reader", _("Short example tool using libOyjl"), "logo",
                                        sections, oarray, groups, NULL );
   text = oyjlUi_ToJson( ui, 0 );
-  if(text && strlen(text) == 3348)
+  if(text && strlen(text) == 3358)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlUi_ToJson() %lu                           ", strlen(text) );
   } else
@@ -734,7 +734,7 @@ oyjlTESTRESULT_e testArgs()
   if(text) {free(text);} text = NULL;
 
   text = oyjlOptions_ResultsToJson( ui->opts );
-  if(text && strlen(text) == 39)
+  if(text && strlen(text) == 63)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlOptions_ResultsToJson() %lu                 ", strlen(text) );
   } else
@@ -747,7 +747,7 @@ oyjlTESTRESULT_e testArgs()
   setlocale(LC_ALL,"");
 
   text = oyjlOptions_ResultsToText( ui->opts );
-  if(text && strlen(text) == 21)
+  if(text && strlen(text) == 41)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlOptions_ResultsToText() %lu                 ", strlen(text) );
   } else
