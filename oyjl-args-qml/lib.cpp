@@ -84,7 +84,7 @@ int oyjlArgsQmlStart_                ( int                 argc,
     app.setApplicationDisplayName(QString("Oyjl"));
     app.setApplicationVersion("0.6");
     app.setOrganizationName(QString("oyranos.org"));
-    app.setWindowIcon(QIcon(":/images/logo-sw.svg"));
+    app.setWindowIcon(QIcon(":/images/logo"));
 
     app_debug = debug;
     if(app_debug)
