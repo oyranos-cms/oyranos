@@ -95,8 +95,8 @@ ApplicationWindow {
 
     property string logo;
     property string icon;
-    onIconChanged: {
-        appData.setWindowIcon( icon ) // set window icon
+    onIconChanged: { var i = icon
+        appData.setWindowIcon( i ) // set window icon
     }
 
     // DEBUG
