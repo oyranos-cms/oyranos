@@ -47,7 +47,7 @@ oyjlTESTRESULT_e testArgs()
   int verbose_ = 0;
   int state = 0;
   int argc = 1;
-  const char * argv[] = {"test-args","-v","--input","file-name.json", "-z"};
+  const char * argv[] = {"test-args","-vvv","--input","file-name.json", "-z"};
 
   /* handle options */
   /* Select from *version*, *manufacturer*, *copyright*, *license*, *url*,
@@ -351,7 +351,7 @@ oyjlTESTRESULT_e testArgs()
 
   if(ui)
     text = oyjlOptions_ResultsToText( ui->opts );
-  if(text && strlen(text) == 21)
+  if(text && strlen(text) == 29)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlOptions_ResultsToText() %lu                 ", strlen(text) );
   } else
