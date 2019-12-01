@@ -39,7 +39,7 @@ Rectangle {
             y: 10
             horizontalAlignment: Image.AlignHCenter
             fillMode: Image.PreserveAspectFit
-            source: "qrc:/images/logo.png"
+            source: "qrc:/images/logo-sw.svg"
             sourceSize.width: 350
             sourceSize.height: 350
             height: 175
