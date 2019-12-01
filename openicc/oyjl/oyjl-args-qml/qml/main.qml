@@ -90,7 +90,13 @@ AppWindow {
         statusText = qsTr("commands enabled") + " = " + url
     }
 
-    Process { id: processGet; onReadChannelFinished: { textArea2.text = readAll(); setDataText(textArea2.text);} }
+    Process { id: processGet;
+        onReadChannelFinished: {
+            var text = readAll();
+            textArea2.text = text;
+            setDataText(textArea2.text);
+        }
+    }
     property string processGetCommand: ""
     property var processGetArgs: [ ]
 
@@ -596,7 +602,7 @@ AppWindow {
 
     Process { id: logoProcess; onReadyRead: {uiLogo = readAll();
             var name = uiLogo
-            statusText = "found: " + name;
+            statusText = "found uiLogo(logoProcess): " + name;
             icon = name } }
     // get the whole bunch of CMM keys and filter the groups and other
     // major stuff
@@ -620,6 +626,7 @@ AppWindow {
 
         uiLogo = appData.findLogo( cmm.logo )
         var name = uiLogo
+        statusText = "found uiLogo(setDataText): " + name;
         icon = name
         // CMM head line - long
         introText = P.getTranslatedItem( cmm, "name", loc );
