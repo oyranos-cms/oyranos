@@ -1465,9 +1465,14 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
     for(i = 1; i < opts->argc; ++i)
     {
       const char * str = opts->argv[i];
-      int l = strlen(str);
       const char * long_arg = NULL;
       const char * value = NULL;
+      int l = 0;
+
+      if(str)
+          l = strlen(str);
+      else
+          continue;
 
       if(strstr(str,"-qmljsdebugger") != NULL) /* detect a QML option */
         continue;
