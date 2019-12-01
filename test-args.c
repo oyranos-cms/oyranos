@@ -362,6 +362,25 @@ oyjlTESTRESULT_e testArgs()
     fprintf( zout, "%s\n", text );
   if(text) {free(text);} text = NULL;
 
+  count = 0;
+  char ** text_array = oyjlOptions_ResultsToList( ui->opts, "v", &count );
+  if(text_array && count == 3)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyjlOptions_ResultsToList() %d                  ", count );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    "oyjlOptions_ResultsToList() %d                  ", count );
+  }
+  if(text_array)
+  {
+    if(verbose)
+      for(i = 0; i < count; ++i)
+        fprintf( stdout, "[%d]:\t%s\n", i, text_array[i] );
+    for(i = 0; i < count; ++i)
+      free(text_array[i]);
+    free(text_array); text_array = NULL;
+  }
+
   if(verbose)
   {
     fprintf(stdout, "Help text -> stderr:\n" );
