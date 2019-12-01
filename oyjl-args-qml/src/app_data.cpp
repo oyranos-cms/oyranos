@@ -189,6 +189,13 @@ QString AppData::findLogo(QString pattern)
         fn = findFile(pattern, oyjlSCOPE_SYSTEM);
     if(fn.length() == 0)
         fn = findFile(pattern, oyjlSCOPE_OYJL);
+    if(fn.length() == 0)
+    {
+        QString f = pattern;
+        QIcon i( f );
+        if(!i.isNull())
+            fn = f;
+    }
     return fn;
 }
 

@@ -52,18 +52,18 @@
         <translation>Laden beendet</translation>
     </message>
     <message>
-        <location filename="../src/app_data.cpp" line="215"/>
-        <location filename="../src/app_data.cpp" line="217"/>
+        <location filename="../src/app_data.cpp" line="222"/>
+        <location filename="../src/app_data.cpp" line="224"/>
         <source>%1 Version</source>
         <translation>%1 Version</translation>
     </message>
     <message>
-        <location filename="../src/app_data.cpp" line="222"/>
+        <location filename="../src/app_data.cpp" line="229"/>
         <source>NONE</source>
         <translation>NICHTS</translation>
     </message>
     <message>
-        <location filename="../src/app_data.cpp" line="239"/>
+        <location filename="../src/app_data.cpp" line="246"/>
         <source>%1:%2</source>
         <translation type="unfinished"></translation>
     </message>
@@ -153,13 +153,13 @@
         <translation>Kommandos an</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="444"/>
-        <location filename="../qml/main.qml" line="477"/>
+        <location filename="../qml/main.qml" line="451"/>
+        <location filename="../qml/main.qml" line="484"/>
         <source>Launched app for </source>
         <translation>Starte Programm für </translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="618"/>
+        <location filename="../qml/main.qml" line="625"/>
         <source>Load failed</source>
         <translation>Laden daneben</translation>
     </message>

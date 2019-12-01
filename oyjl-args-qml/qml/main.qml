@@ -273,8 +273,9 @@ AppWindow {
     }
 
     Component.onCompleted: {
-        icon = ":/images/logo-sw.svg"
-        logo = "qrc:/images/logo-sw.svg"
+        // icon is set in oyjlArgsQmlStart_() {app.setWindowIcon()}
+        //icon = ":/images/logo-sw" //do not use here, as it will block custom icon
+        logo = "/images/logo-sw"
     }
 
 
@@ -624,10 +625,16 @@ AppWindow {
             introText = qsTr("Load failed") + "<br />" + t
         var cmm = j.org.freedesktop.oyjl.modules[0];
 
-        uiLogo = appData.findLogo( cmm.logo )
-        var name = uiLogo
-        statusText = "found uiLogo(setDataText): " + name;
-        icon = name
+        var name = appData.findLogo( cmm.logo )
+        if(name !== "undefined")
+        {
+            statusText = "found uiLogo(setDataText): " + name;
+            icon = name
+        }
+        if(name.substr(0,1,":") === ":")
+            name = name.replace(/:/, 'qrc:')
+        if(name !== "undefined")
+            uiLogo = name
         // CMM head line - long
         introText = P.getTranslatedItem( cmm, "name", loc );
         appName = introText
