@@ -32,6 +32,7 @@
 #include <QtDBus>
 #endif
 
+#include <stdlib.h> // free()
 
 #if defined(Q_OS_ANDROID)
 #include <android/log.h>
@@ -141,7 +142,11 @@ int oyjlArgsQmlStart_                ( int                 argc,
     if( json && strlen( json ) )
       mgr.setUri( QString(json) );
     else
-      mgr.setUri( "-" );
+    {
+      json = oyjlUi_ToJson( ui, 0 );
+      mgr.setUri( QString(json) );
+      free((void*)json);
+    }
 
     if( commands )
       mgr.setCommands( commands );
