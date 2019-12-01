@@ -22,6 +22,7 @@
 #include <QByteArray>
 #include "oyjl.h"
 
+#include <QApplication>
 #include <QFile>
 #include <QDir>
 #include <QTimer>
@@ -46,9 +47,9 @@ class AppData : public QObject
                REVISION 1)
 private slots:
 public:
-    AppData(QObject * parent = 0)
+    AppData(QObject * parent = nullptr)
       : QObject(parent)
-      , m_model(0)
+      , m_model(nullptr)
     {
 #if !defined(Q_OS_ANDROID)
     // Linux polles the sysfs interface
@@ -74,6 +75,7 @@ public:
         emit logMessage();
     }
     Q_INVOKABLE void setWindowIcon(QString name) { QUrl url = name; QIcon icon(url.toLocalFile());
+                                                   if(icon.isNull()) { QIcon i(name); icon = i; }
                                                    if(icon.isNull()) { LOG( "Icon does not exist ??? " + name );
                                                    } else { LOG( "Set Icon: " + name ); a->setWindowIcon(icon); }}
 
