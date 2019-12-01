@@ -117,21 +117,6 @@ int testMain( int argc, const char ** argv )
   {
     int debug = 0;
     char * json = oyjlUi_ToJson( ui, 0 );
-    const char * jcommands = "{\n\
-  \"command_set\": \"dummy-callback-placeholder_needed-to-trigger-calling-Process-in-main.qml\",\n\
-  \"comment\": \"command_set_delimiter - build key:value; default is '=' key=value\",\n\
-  \"comment\": \"command_set_option - use \\\"-s\\\" \\\"key\\\"; skip \\\"--\\\" direct in front of key\"\n\
-}";
-    char * json_commands = strdup(jcommands);
-    json_commands[strlen(json_commands)-2] = ',';
-    json_commands[strlen(json_commands)-1] = '\000';
-    if(!json) return result;
-    oyjlStringAdd( &json_commands, malloc, free, "%s", &json[1] );
-    free(json);
-    json = json_commands;
-    size_t size = oyjlWriteFile( "test.json",
-                           json,
-                           strlen(json) );
     oyjlArgsQmlStart( 0, NULL, json, debug, ui, testMain );
   }
 

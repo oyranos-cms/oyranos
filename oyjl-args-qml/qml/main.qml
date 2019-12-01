@@ -133,6 +133,7 @@ AppWindow {
         if(group.mandatory.length && !group.mandatory.match(key))
             return
 
+        var sCb = processSetCommand
         if(processSetCommand.length && setOnly >= 0)
         {
             var arg = key
