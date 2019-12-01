@@ -1455,8 +1455,11 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
   /* parse the command line arguments */
   if(opts && !opts->private_data)
   {
-    int i, len = opts->argc + 1;
+    int i, len = 0;
     result = (oyjlOptsPrivate_s*) calloc( 1, sizeof(oyjlOptsPrivate_s) );
+    for(i = 1; i < opts->argc; ++i)
+      if(opts->argv[i])
+        len += strlen(opts->argv[i]);
     /* The first string contains the detected single char options */
     result->options = (char**) calloc( len + 1, sizeof(char*) );
     result->values = (const char**) calloc( len + 1, sizeof(char*) );
