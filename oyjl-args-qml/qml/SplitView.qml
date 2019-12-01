@@ -534,8 +534,8 @@ Item {
                 //property real defaultMargin: Private.Settings.hasTouchScreen ? Screen.pixelDensity * 3.5 : 2
                 anchors.leftMargin: (parent.width <= 1) ? -defaultMargin : 0
                 anchors.rightMargin: (parent.width <= 1) ? -defaultMargin : 0
-                anchors.topMargin: (parent.height <= 1) ? -defaultMargin : 0
-                anchors.bottomMargin: (parent.height <= 1) ? -defaultMargin : 0
+                anchors.topMargin: (parent.height <= 1) ? -defaultMargin : -dens * (Qt.platform.os === "android" ? 4 : 1)
+                anchors.bottomMargin: (parent.height <= 1) ? -defaultMargin : -dens * (Qt.platform.os === "android" ? 4 : 1)
                 //hoverEnabled: Private.Settings.hoverEnabled
                 drag.threshold: 0
                 drag.target: parent
