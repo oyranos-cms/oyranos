@@ -131,6 +131,11 @@ public Q_SLOTS:
     void setData()
     {
       char * cfn = oyjlStringCopy( tempName_.toUtf8().data(), malloc );
+      if(fm_cb == NULL)
+      {
+          fprintf(stderr, "no result in %s\n", cfn);
+          return;
+      }
       fflush(fm_cb);
       fflush(stdout); // stdout is bufferd
       fclose(fm_cb); fm_cb = NULL;
