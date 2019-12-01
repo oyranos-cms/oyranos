@@ -29,6 +29,7 @@
 #include <stddef.h>
 #include <ctype.h> /* toupper() */
 #include <wchar.h>  /* wcslen() */
+#include "oyjl.h"
 #ifdef OYJL_HAVE_LANGINFO_H
 #include <langinfo.h> /* nl_langinfo() */
 #endif
