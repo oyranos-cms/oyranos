@@ -163,7 +163,7 @@ ELSE(HAVE_OYJL)
   openicc/oyjl/oyjl_macros.h
   openicc/oyjl/oyjl_test.h
   openicc/oyjl/oyjl_test_main.h
-  openicc/oyjl/oyjl_version.h
+  ${CMAKE_BINARY_DIR}/openicc/oyjl/oyjl_version.h
   openicc/oyjl/oyjl.h
      )
   INSTALL (FILES ${CHEADERS_OYJL_PUBLIC} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/oyjl)
