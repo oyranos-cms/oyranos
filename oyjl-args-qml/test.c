@@ -94,10 +94,10 @@ int testMain( int argc, const char ** argv )
   /* declare option groups, for better syntax checking and UI groups */
   oyjlOptionGroup_s groups_no_args[] = {
   /* type,   flags, name,      description,          help, mandatory, optional, detail */
-    {"oiwg", 0,     _("Mode1"),_("Simple mode"),     NULL, "#",       "ov",     "o" }, /* accepted even if none of the mandatory options is set */
-    {"oiwg", 0,     _("Mode2"),_("Any arg mode"),    NULL, "@",       "ov",     "@o" },/* accepted if anonymous arguments are set */
-    {"oiwg", 0,     _("Mode3"),_("Actual mode"),     NULL, "i",       "gov",    "io" },/* parsed and checked with -i option */
-    {"oiwg", 0,     _("Misc"), _("General options"), NULL, "h",       "v",      "hv" },/* just show in documentation */
+    {"oiwg", 0,     _("Mode1"),_("Simple mode"),     NULL, "#",       "o,v",    "o" }, /* accepted even if none of the mandatory options is set */
+    {"oiwg", 0,     _("Mode2"),_("Any arg mode"),    NULL, "@",       "o,v",    "@,o" },/* accepted if anonymous arguments are set */
+    {"oiwg", 0,     _("Mode3"),_("Actual mode"),     NULL, "i",       "g,o,v",  "i,o" },/* parsed and checked with -i option */
+    {"oiwg", 0,     _("Misc"), _("General options"), NULL, "h",       "v",      "h,v" },/* just show in documentation */
     {"",0,0,0,0,0,0,0}
   };
 
