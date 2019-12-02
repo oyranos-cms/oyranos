@@ -17,6 +17,7 @@
 #cmakedefine OYJL_HAVE_YAML
 #cmakedefine OYJL_HAVE_LIBXML2
 
+#cmakedefine HAVE_DL
 #cmakedefine OYJL_HAVE_LANGINFO_H
 #cmakedefine OYJL_HAVE_LOCALE_H
 #cmakedefine OYJL_HAVE_LIBINTL_H
@@ -24,6 +25,9 @@
 #define OYJL_DOMAIN     "@PROJECT_DOWN_NAME@"
 #define OYJL_LOCALEDIR  "@OYJL_LOCALEDIR@"
 #define OYJL_DATADIR    "@CMAKE_INSTALL_FULL_DATAROOTDIR@"      /**< install variable */
+
+#define OYJL_LIB_PREFIX "@CMAKE_SHARED_LIBRARY_PREFIX@"
+#define OYJL_LIB_SUFFIX "@CMAKE_SHARED_LIBRARY_SUFFIX@"
 
 #endif /*OYJL_VERSION_H*/
 
