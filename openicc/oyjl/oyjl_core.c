@@ -1476,13 +1476,130 @@ int  oyjlWriteFile                   ( const char        * filename,
 
   return written_n;
 }
+
+#ifdef HAVE_DL
+#include <dlfcn.h>
+static void * oyjl_args_qml = NULL;
+static char*   oyjlLibNameCreate_        ( const char * lib_base_name,
+                                           int          version )
+{
+  char * fn = NULL;
+
+#ifdef __APPLE__
+    oyjlStringAdd( &fn, 0,0, "%s%s.%d%s", OYJL_LIB_PREFIX, lib_base_name, version, OYJL_LIB_SUFFIX );
+#elif defined(_WIN32)
+    oyjlStringAdd( &fn, 0,0, "%s%s-%d%s", OYJL_LIB_PREFIX, lib_base_name, version, OYJL_LIB_SUFFIX );
+#else
+    oyjlStringAdd( &fn, 0,0, "%s%s%s.%d", OYJL_LIB_PREFIX, lib_base_name, OYJL_LIB_SUFFIX, version );
+#endif
+  return fn;
+}
+
+#endif
+#ifndef COMPILE_STATIC
+#ifdef __cplusplus
+extern "C" { // "C" API wrapper 
+#endif
+typedef int (*oyjlArgsQmlStart_f)   ( int                 argc,
+                                      const char       ** argv,
+                                      const char        * json,
+                                      const char        * commands,
+                                      const char        * output,
+                                      int                 debug,
+                                      oyjlUi_s          * ui,
+                                      int               (*callback)(int argc, const char ** argv));
+static int (*oyjlArgsQmlStart_)      ( int                 argc,
+                                       const char       ** argv,
+                                       const char        * json,
+                                       const char        * commands,
+                                       const char        * output,
+                                       int                 debug,
+                                       oyjlUi_s          * ui,
+                                       int               (*callback)(int argc, const char ** argv)) = NULL;
+static int oyjl_args_qml_init = 0;
+void oyjlArgsQmlLoad()
+{
+  const char * name = "OyjlArgsQml";
+  if(!oyjl_args_qml_init)
+  {
+    char * fn = oyjlLibNameCreate_(name, 1);
+    ++oyjl_args_qml_init;
+
+#ifdef HAVE_DL
+    oyjl_args_qml = dlopen(fn, RTLD_LAZY);
+    if(!oyjl_args_qml)
+      oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "not existent: %s", OYJL_DBG_ARGS, fn );
+    else
+    {
+      name = "oyjlArgsQmlStart_";
+      oyjlArgsQmlStart_ = (oyjlArgsQmlStart_f)dlsym( oyjl_args_qml, name );
+      if(!oyjlArgsQmlStart_)
+        oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "%s: %s", OYJL_DBG_ARGS, name, dlerror() );
+    }
+#else
+    oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "no dlopen() API available for %s", OYJL_DBG_ARGS, fn );
+#endif
+    free(fn);
+  }
+}
+
+int oyjlArgsQmlStart2                ( int                 argc,
+                                       const char       ** argv,
+                                       const char        * json,
+                                       const char        * commands,
+                                       const char        * output,
+                                       int                 debug,
+                                       oyjlUi_s          * ui,
+                                       int               (*callback)(int argc, const char ** argv))
+{
+  int result = -1;
+  oyjlArgsQmlLoad();
+  if(oyjlArgsQmlStart_)
+    result = oyjlArgsQmlStart_(argc, argv, json, commands, output, debug, ui, callback );
+  fflush(stdout);
+  fflush(stderr);
+  return result;
+}
+
+int oyjlArgsQmlStart                 ( int                 argc,
+                                       const char       ** argv,
+                                       const char        * json,
+                                       int                 debug,
+                                       oyjlUi_s          * ui,
+                                       int               (*callback)(int argc, const char ** argv))
+{
+  int result;
+  oyjlArgsQmlLoad();
+  if(oyjlArgsQmlStart_)
+    result = oyjlArgsQmlStart_(argc, argv, json, NULL, NULL, debug, ui, callback );
+  fflush(stdout);
+  fflush(stderr);
+  return result;
+}
+#ifdef __cplusplus
+} /* extern "C" */
+#endif
+#endif /* COMPILE_STATIC */
+
 /** @} *//* oyjl_core */
 
 /** \addtogroup oyjl
  *  @{ *//* oyjl */
 
 static char * oyjl_nls_path_ = NULL;
-void oyjlLibRelease() { if(oyjl_nls_path_) { putenv("NLSPATH=C"); free(oyjl_nls_path_); oyjl_nls_path_ = NULL;} }
+void oyjlLibRelease() {
+  if(oyjl_nls_path_)
+  {
+    putenv("NLSPATH=C"); free(oyjl_nls_path_); oyjl_nls_path_ = NULL;
+  }
+#ifdef HAVE_DL
+  if(oyjl_args_qml)
+  {
+    dlclose(oyjl_args_qml); oyjl_args_qml = NULL; oyjl_args_qml_init = 0;
+  }
+#endif
+}
+
 #define OyjlToString2_M(t) OyjlToString_M(t)
 #define OyjlToString_M(t) #t
 /** @brief   init the libraries language; optionaly
