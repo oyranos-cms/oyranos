@@ -101,7 +101,7 @@ int myMain( int argc, const char ** argv )
   }
 
   /* GUI boilerplate */
-  if(gui)
+  if(ui && gui)
   {
     int debug = verbose;
     oyjlArgsQmlStart( argc, argv, NULL, debug, ui, myMain );
