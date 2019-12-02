@@ -56,7 +56,7 @@ void printObjectClassNames( QObject * o )
   }
 }
 
-int oyjlArgsQmlStart_                ( int                 argc,
+int oyjlArgsQmlStart__               ( int                 argc,
                                        const char       ** argv,
                                        const char        * json,
                                        const char        * commands,
@@ -166,7 +166,23 @@ int oyjlArgsQmlStart_                ( int                 argc,
     return r;
 }
 
-extern "C" { // "C" API wrapper 
+extern "C" { // "C" API wrapper
+// internal API entry for public API in libOyjlCore
+int oyjlArgsQmlStart_                ( int                 argc,
+                                       const char       ** argv,
+                                       const char        * json,
+                                       const char        * commands,
+                                       const char        * output,
+                                       int                 debug,
+                                       oyjlUi_s          * ui,
+                                       int               (*callback)(int argc, const char ** argv))
+{
+    int r = oyjlArgsQmlStart__(argc, argv, json, commands, output, debug, ui, callback );
+    return r;
+}
+
+#ifdef COMPILE_STATIC
+// public API for liboyjl-args-qml-static.a
 int oyjlArgsQmlStart2                ( int                 argc,
                                        const char       ** argv,
                                        const char        * json,
@@ -196,5 +212,6 @@ int oyjlArgsQmlStart                 ( int                 argc,
   fflush(stderr);
   return result;
 }
+#endif /* COMPILE_STATIC */
 } /* extern "C" */
 
