@@ -3,6 +3,7 @@ TEMPLATE = app
 QT += multimedia qml svg
 QTPLUGIN += qsvg
 
+
 android {
   QT += androidextras
   equals(ANDROID_TARGET_ARCH, armeabi-v7a) {
@@ -19,6 +20,7 @@ android {
   LIBS += -loyjl-core-static
   LIBS += -lm
   QMAKE_LFLAGS+=-fopenmp
+  SOURCES +=  src/app_data.cpp src/utils.cpp lib.cpp
 }
 unix:!macx:!android {
 QT += dbus
@@ -29,13 +31,25 @@ INCLUDEPATH+=/opt/local/include/
 LIBS+=-L/home/kuwe/.local/lib64
 LIBS+=-L/opt/local/lib64
 LIBS+=-fopenmp
-#LIBS+=-lOyjlArgsQml
 INCLUDEPATH+=/home/kuwe/.local/include/openicc
 DEFINES+=OPENICC_LIB
 DEFINES+=USE_GETTEXT
 LIBS+=-lopenicc-static
 LIBS+=-loyjl-static
-LIBS+=-loyjl-core-static
+CONFIG += LOCAL_ARGS # DYNAMIC_LIB_ARGS # STATIC_LIB_ARGS # LOCAL_ARGS
+DYNAMIC_LIB_ARGS { # dlopen libOyjlArgsQml
+  LIBS+=-lOyjlArgsQml
+  LIBS+=-lOyjlCore
+  LIBS+=-ldl
+} else:STATIC_LIB_ARGS { # link statically liboyjl-args-qml-static
+  DEFINES+=COMPILE_STATIC
+  LIBS += -loyjl-args-qml-static
+  LIBS += -loyjl-core-static
+} else:LOCAL_ARGS { # compile in all oyjlArgsQml symbols for QML debugging
+  DEFINES+=COMPILE_STATIC
+  SOURCES += src/app_data.cpp src/utils.cpp lib.cpp
+  LIBS += -loyjl-core-static
+}
 LIBS+=-lyaml
 LIBS+=-lyajl
 LIBS+=-lxml2
@@ -43,8 +57,7 @@ LIBS+=-lc
 QMAKE_LFLAGS+=-fopenmp
 }
 
-SOURCES +=  mini-app.c \
-            src/app_data.cpp src/utils.cpp lib.cpp
+SOURCES +=   mini-app.c
 
 RESOURCES += app.qrc
 
