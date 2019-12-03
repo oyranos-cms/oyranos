@@ -331,7 +331,7 @@ int            oyObject_GetId        ( oyObject_s          object )
     }
   } else if(obj && oy_debug_objects == obj->id_)
   {
-    fprintf( stderr, "id[%d] refs: %d\n", obj->id_, obj->ref_ );
+    fprintf( stderr, OY_DBG_FORMAT_ "id[%d] refs: %d\n", OY_DBG_ARGS_, obj->id_, obj->ref_ );
     fflush( stderr );
   }
 
