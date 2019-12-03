@@ -1,7 +1,7 @@
 SET(LANGS "de_DE.UTF8")
 MACRO(OY_DOCUMENT_TOOL _tool _tool_src _langs)
   ADD_CUSTOM_COMMAND( OUTPUT ${CMAKE_SOURCE_DIR}/doc/man/${_tool}.1
-        COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH} OY_MODULE_PATH=${CMAKE_BINARY_DIR}/src/modules XDG_DATA_HOME=${CMAKE_SOURCE_DIR} LANG=en DISPLAY="man_page" ${_tool} -X man > ${CMAKE_SOURCE_DIR}/doc/man/${_tool}.1
+        COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:$$LD_LIBRARY_PATH OY_MODULE_SKIP_FIX_PATH=1 OY_MODULE_PATH=${CMAKE_BINARY_DIR}/src/modules XDG_DATA_HOME=${CMAKE_SOURCE_DIR} LANG=en DISPLAY="man_page" ${_tool} -X man > ${CMAKE_SOURCE_DIR}/doc/man/${_tool}.1
         DEPENDS ${_tool} ${_tool_src}
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   )
@@ -12,7 +12,7 @@ MACRO(OY_DOCUMENT_TOOL _tool _tool_src _langs)
   STRING(REGEX REPLACE "-" "" _tool_MD ${_tool})
   MESSAGE( "${_tool_MD}: ${CMAKE_SOURCE_DIR}/doc/md/${_tool_MD}.md" )
   ADD_CUSTOM_COMMAND( OUTPUT ${CMAKE_SOURCE_DIR}/doc/md/${_tool_MD}.md
-        COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH} OY_MODULE_PATH=${CMAKE_BINARY_DIR}/src/modules XDG_DATA_HOME=${CMAKE_SOURCE_DIR} LANG=en DISPLAY="man_page" ${_tool} -X markdown > ${CMAKE_SOURCE_DIR}/doc/md/${_tool_MD}.md
+        COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:$$LD_LIBRARY_PATH OY_MODULE_SKIP_FIX_PATH=1 OY_MODULE_PATH=${CMAKE_BINARY_DIR}/src/modules XDG_DATA_HOME=${CMAKE_SOURCE_DIR} LANG=en DISPLAY="man_page" ${_tool} -X markdown > ${CMAKE_SOURCE_DIR}/doc/md/${_tool_MD}.md
         DEPENDS ${_tool} ${_tool_src}
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   )
@@ -29,7 +29,7 @@ MACRO(OY_DOCUMENT_TOOL _tool _tool_src _langs)
       ADD_CUSTOM_COMMAND( OUTPUT ${CMAKE_SOURCE_DIR}/doc/man/${short_lang}/${_tool}.1
         COMMAND mkdir -p "${CMAKE_SOURCE_DIR}/doc/man/${short_lang}/"
         COMMAND cp -a ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LOCALEDIR}/${short_lang}/LC_MESSAGES/openicc.mo ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LOCALEDIR}/${short_lang}/LC_MESSAGES/oyjl.mo ${CMAKE_BINARY_DIR}/locale/${short_lang}/LC_MESSAGES/ || echo nothing to copy
-        COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH} LOCPATH=${CMAKE_BINARY_DIR}/locale OY_MODULE_PATH=${CMAKE_BINARY_DIR}/src/modules XDG_DATA_HOME=${CMAKE_SOURCE_DIR} LANG=${_lang} DISPLAY="man_page" ${_tool} -X man > ${CMAKE_SOURCE_DIR}/doc/man/${short_lang}/${_tool}.1
+        COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:$$LD_LIBRARY_PATH OY_MODULE_SKIP_FIX_PATH=1 LOCPATH=${CMAKE_BINARY_DIR}/locale OY_MODULE_PATH=${CMAKE_BINARY_DIR}/src/modules XDG_DATA_HOME=${CMAKE_SOURCE_DIR} LANG=${_lang} DISPLAY="man_page" ${_tool} -X man > ${CMAKE_SOURCE_DIR}/doc/man/${short_lang}/${_tool}.1
         DEPENDS ${_tool} ${_tool_src}
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
       )
@@ -39,7 +39,7 @@ MACRO(OY_DOCUMENT_TOOL _tool _tool_src _langs)
       )
 
       ADD_CUSTOM_COMMAND( OUTPUT ${CMAKE_SOURCE_DIR}/doc/md/${_tool_MD}${short_lang}.md
-        COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH} LOCPATH=${CMAKE_BINARY_DIR}/locale OY_MODULE_PATH=${CMAKE_BINARY_DIR}/src/modules XDG_DATA_HOME=${CMAKE_SOURCE_DIR} LANG=${_lang} DISPLAY="man_page" ${_tool} -X markdown > ${CMAKE_SOURCE_DIR}/doc/md/${_tool_MD}${short_lang}.md
+        COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:$$LD_LIBRARY_PATH OY_MODULE_SKIP_FIX_PATH=1 LOCPATH=${CMAKE_BINARY_DIR}/locale OY_MODULE_PATH=${CMAKE_BINARY_DIR}/src/modules XDG_DATA_HOME=${CMAKE_SOURCE_DIR} LANG=${_lang} DISPLAY="man_page" ${_tool} -X markdown > ${CMAKE_SOURCE_DIR}/doc/md/${_tool_MD}${short_lang}.md
         DEPENDS ${_tool} ${_tool_src}
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
       )

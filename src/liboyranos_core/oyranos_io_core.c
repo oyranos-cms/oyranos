@@ -1790,6 +1790,8 @@ char **            oyGetFiles_       ( const char        * path,
 
 /* Oyranos text handling */
 
+static int oy_module_skip_fix_path = -1;
+
 /** @internal
  *  @brief query library paths
  *
@@ -1814,7 +1816,7 @@ char**  oyLibPathsGet_( int             * count,
   int     vars_n = 2;
   int     i,j;
   char  * fix_paths[5] = {0,0,0,0,0};
-  int     fix_paths_n = 2;
+  int     fix_paths_n = 0;
   char  * full_path = 0, * fp = NULL;
   const char * lib = "lib";
 
@@ -1822,45 +1824,63 @@ char**  oyLibPathsGet_( int             * count,
   if(strstr(OY_LIBDIR,"lib64") != NULL)
     lib = "lib64";
 
+  if(oy_module_skip_fix_path == -1)
+  {
+    const char * var = getenv("OY_MODULE_SKIP_FIX_PATH");
+    if(var)
+      oy_module_skip_fix_path = 1;
+    else
+      oy_module_skip_fix_path = 0;
+    fprintf(stderr, "OY_MODULE_SKIP_FIX_PATH: %d\n", oy_module_skip_fix_path);
+  }
+
   if(!subdir)
   {
     full_path = oyResolveDirFileName_( OY_LIBDIR OY_SLASH OY_METASUBPATH );
-    fix_paths[0] = full_path;
+    fix_paths[fix_paths_n++] = full_path;
     oyStringAddPrintf_( &fp, AD, "%s%s%s", OY_USER_PATH OY_SLASH, lib, OY_SLASH OY_METASUBPATH );
     full_path = oyResolveDirFileName_( fp );
-    fix_paths[1] = full_path;
+    fix_paths[fix_paths_n++] = full_path;
     oyFree_m_(fp);
 
     subdir = OY_METASUBPATH;
-  } else {
+  } else if(oy_module_skip_fix_path == 0)
+  {
     full_path = oyResolveDirFileName_( OY_LIBDIR OY_SLASH );
-    STRING_ADD( fix_paths[0], full_path );
+    STRING_ADD( fix_paths[fix_paths_n], full_path );
     oyFree_m_( full_path );
-    STRING_ADD( fix_paths[0], subdir );
+    STRING_ADD( fix_paths[fix_paths_n++], subdir );
 
     oyStringAddPrintf_( &fp, AD, "%s%s%s", OY_USER_PATH OY_SLASH, lib, OY_SLASH );
     full_path = oyResolveDirFileName_( fp );
     oyFree_m_(fp);
-    STRING_ADD( fix_paths[1], full_path );
+    STRING_ADD( fix_paths[fix_paths_n], full_path );
     oyFree_m_( full_path );
-    STRING_ADD( fix_paths[1], subdir );
+    STRING_ADD( fix_paths[fix_paths_n++], subdir );
   }
 
-  oyStringAddPrintf_( &fp, AD, "/usr/" "%s" OY_SLASH "%s", lib, subdir );
-  fix_paths[fix_paths_n++] = oyResolveDirFileName_( fp );
-  oyFree_m_(fp);
+  if(oy_module_skip_fix_path == 0)
+  {
+    oyStringAddPrintf_( &fp, AD, "/usr/" "%s" OY_SLASH "%s", lib, subdir );
+    fix_paths[fix_paths_n++] = oyResolveDirFileName_( fp );
+    oyFree_m_(fp);
 
-  oyStringAddPrintf_( &fp, AD, "/usr/local/" "%s" OY_SLASH "%s", lib, subdir );
-  fix_paths[fix_paths_n++] = oyResolveDirFileName_( fp );
-  oyFree_m_(fp);
+    oyStringAddPrintf_( &fp, AD, "/usr/local/" "%s" OY_SLASH "%s", lib, subdir );
+    fix_paths[fix_paths_n++] = oyResolveDirFileName_( fp );
+    oyFree_m_(fp);
+  }
+  fprintf(stderr, "fix_paths_n: %d\n", fix_paths_n);
 
-  oyStringListAdd( &paths, &n, (const char**)fix_paths, fix_paths_n,
-                    oyAllocateFunc_, oyDeAllocateFunc_ );
+  if(fix_paths_n)
+    oyStringListAdd( &paths, &n, (const char**)fix_paths, fix_paths_n,
+                     oyAllocateFunc_, oyDeAllocateFunc_ );
 
   for(i = 0; i < vars_n; ++i)
   {
     {
       const char * var = getenv(vars[i]);
+      if(oy_module_skip_fix_path == 1 && i > 0)
+        continue;
       if(var)
       {
 
