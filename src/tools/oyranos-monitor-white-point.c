@@ -53,8 +53,8 @@ int __sunriset__( int year, int month, int day, double lon, double lat,
                   double altit, int upper_limb, double *trise, double *tset );
 int findLocation(oySCOPE_e scope, int dry);
 int getLocation( double * lon, double * lat);
-double getSunHeight( double year, double month, double day, double gmt_hours, double lat, double lon );
-int getSunriseSunset( double * rise, double * set, int dry, char ** text );
+double getSunHeight( double year, double month, double day, double gmt_hours, double lat, double lon, int verbose );
+int getSunriseSunset( double * rise, double * set, int dry, char ** text, int verbose );
 int isNight(int dry);
 int runDaemon(int dmode);
 int setWtptMode( oySCOPE_e scope, int wtpt_mode, int dry );
@@ -276,7 +276,7 @@ void myOptionsRelease                ( oyjlOptions_s    ** opts )
 oySCOPE_e scope = oySCOPE_USER;
 double hour_ = -1.0; /* ignore this default value */
 
-int main( int argc , char** argv )
+int myMain( int argc , const char** argv )
 {
   unsigned i;
   int error = 0;
@@ -307,6 +307,7 @@ int main( int argc , char** argv )
   int state = 0;
   int worked = 0;
   oyjlOptions_s * opts;
+  int gui = 0;
   oyjlUi_s * ui;
   oyjlUiHeaderSection_s * info;
   const char * man_page = getenv("DISPLAY");
@@ -376,7 +377,9 @@ int main( int argc , char** argv )
     {"oiwi", 0, "z", "system-wide", NULL, _("system wide"), _("System wide DB setting"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&system_wide} },
     /* default option template -X|--export */
     {"oiwi", 0, "X", "export", NULL, NULL, NULL, NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = NULL}, oyjlSTRING, {.s=&export} },
-    {"oiwi", 0, "h", "help", NULL, _("help"), _("Help"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&help} },
+    /* The --gui option can be hidden and used only internally. */
+    {"oiwi", 0, "G", "gui",  NULL, _("gui"),  _("GUI"),  NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i = &gui} },
+    {"oiwi", 0, "h", "help", NULL, _("help"), _("Help"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&help} },
     {"oiwi", 0, "v", "verbose", NULL, _("verbose"), _("verbose"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&verbose} },
     {"oiwi", 0, "y", "dry-run", NULL, "dry run", "dry run", NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&dry} },
     {"oiwi", 0, "u", "hour", NULL, "hour", "hour", NULL, NULL, oyjlOPTIONTYPE_DOUBLE, {.dbl.start = 0, .dbl.end = 48, .dbl.tick = 1, .dbl.d = 0}, oyjlDOUBLE, {.d=&hour_} },
@@ -436,12 +439,21 @@ int main( int argc , char** argv )
   }
   if(!ui) return 1;
 
+  /* GUI boilerplate */
+  if(gui)
+  { 
+    int debug = verbose;
+    oyjlArgsQmlStart( argc, argv, NULL, debug, ui, myMain );
+    oyjlUi_Release( &ui);
+    return 0;
+  }
+
   if((export && strcmp(export,"json+command") == 0))
   {
     char * json = NULL,
          * json_commands = strdup(jcommands),
          * text = NULL;
-    error = getSunriseSunset( &rise, &set, dry, &text );
+    error = getSunriseSunset( &rise, &set, dry, &text, verbose );
     ui->opts->groups[3].help = text;
     json = oyjlUi_ToJson( ui, 0 ),
     json_commands[strlen(json_commands)-2] = ',';
@@ -632,7 +644,7 @@ int main( int argc , char** argv )
   if(sunrise)
   {
     char * text = NULL;
-    error = getSunriseSunset( &rise, &set, dry, &text );
+    error = getSunriseSunset( &rise, &set, dry, &text, verbose );
     puts(text);
     ++worked;
   }
@@ -657,6 +669,28 @@ int main( int argc , char** argv )
   if(oy_debug)
     fprintf(stderr, " %.06g %s\n", DBG_UHR_, oyPrintTime() );
   return error;
+}
+
+int main( int argc_, char ** argv_)
+{
+  int argc = argc_;
+  char ** argv = argv_;
+
+#ifdef __ANDROID__
+  setenv("COLORTERM", "1", 0); /* show rich text format on non GNU color extension environment */
+
+  argv = calloc( argc + 2, sizeof(char*) );
+  memcpy( argv, argv_, (argc + 2) * sizeof(char*) );
+  argv[argc++] = "--gui"; /* start QML */
+#endif
+
+  myMain(argc, (const char **)argv);
+
+#ifdef __ANDROID__
+  free( argv );
+#endif
+
+  return 0;
 }
 
 void pingNativeDisplay()
@@ -872,7 +906,7 @@ double oyNormaliseHour(double hour)
 }
 
 #define oyGetCurrentGMTHour_(arg) ((hour_ != -1.0) ? hour_ + oyGetCurrentGMTHour(arg)*0.0 : oyGetCurrentGMTHour(arg))
-int getSunriseSunset( double * rise, double * set, int dry, char ** text )
+int getSunriseSunset( double * rise, double * set, int dry, char ** text, int verbose )
 {
   double lat = 0.0,
          lon = 0.0;
@@ -925,7 +959,7 @@ int getSunriseSunset( double * rise, double * set, int dry, char ** text )
 
     oyGetCurrentGMTHour_( &gmt_diff_second );
     oySplitHour( oyGetCurrentLocalHour( oyGetCurrentGMTHour_(0), gmt_diff_second ), &hour, &minute, &second );
-    elevation = getSunHeight( year, month, day, oyGetCurrentGMTHour_(0), lat, lon );
+    elevation = getSunHeight( year, month, day, oyGetCurrentGMTHour_(0), lat, lon, verbose );
     if(text)
       oyjlStringAdd( text, malloc, free, "%d-%d-%d %d:%.2d:%.2d",
              year, month, day, hour, minute, second );
@@ -949,7 +983,7 @@ int isNight(int dry)
 
   dtime = oyGetCurrentGMTHour_(&diff);
 
-  if( getSunriseSunset( &rise, &set, dry, NULL ) == 0 )
+  if( getSunriseSunset( &rise, &set, dry, NULL, 0 ) == 0 )
   {
     if(rise < dtime && dtime <= set)
     /* day time */
@@ -1004,7 +1038,7 @@ int checkWtptState(int dry)
   }
 
   DBG_S_( oyPrintTime() );
-  if( choices_string_list && getSunriseSunset( &rise, &set, dry, NULL ) == 0 )
+  if( choices_string_list && getSunriseSunset( &rise, &set, dry, NULL, 0 ) == 0 )
   {
     int new_mode = -1;
     char * new_effect = NULL;
@@ -1656,7 +1690,8 @@ double GMST0( double d )
 /*  ---------------- 8< ------------------ */
 
 double getSunHeight( double year, double month, double day, double gmt_hours,
-                     double lat, double lon )
+                     double lat, double lon,
+                     int verbose )
 {
   double  d = days_since_2000_Jan_0(year,month,day) + 0.5 - lon/360.0,
       sr,         /* Solar distance, astronomical units */
@@ -1670,37 +1705,37 @@ double getSunHeight( double year, double month, double day, double gmt_hours,
 
   int hour,minute,second;
   oySplitHour( oyGetCurrentLocalHour( gmt_hours, 0 ), &hour, &minute, &second );
-  if(oy_debug)
+  if(verbose)
   fprintf( stdout, "GMT:\t%02d:%02d:%02d\n", hour,minute,second );
-  if(oy_debug)
+  if(verbose)
   fprintf( stdout, "JD (GMT 12:00):\t%fd\n", d + 2451545.0 + lon/360.0 );
-  if(oy_debug)
+  if(verbose)
   fprintf( stdout, "JD0 (GMT 12:00):\t%fd\n", d + lon/360.0 );
-  if(oy_debug)
+  if(verbose)
   fprintf( stdout, "LMST:\t%fd\n", d + gmt_hours/24.0*365.25/366.25 );
 
   /* Compute local sideral time of this moment */
   sidtime = revolution( GMST0(d) + 360.*gmt_hours/24.*365.25/366.25 + lon );
   oySplitHour( oyGetCurrentLocalHour( sidtime/15., 0 ), &hour, &minute, &second );
-  if(oy_debug)
+  if(verbose)
   fprintf( stdout, "Local Mean Sidereal Time:\t%02d:%02d:%02d\n", hour,minute,second );
 
   sun_RA_dec( d, &sRA, &sdec, &sr );
-  if(oy_debug)
+  if(verbose)
   fprintf( stdout, "Rectaszension:\t%g°\n", sRA);
-  if(oy_debug)
+  if(verbose)
   fprintf( stdout, "Declination:\t%g°\n", sdec);
   t = sidtime - sRA;
-  if(oy_debug)
+  if(verbose)
   fprintf( stdout, "Sun's Hourly Angle:\t%g° (%gh)\n", t, t/15.);
   A = atand( sind( t ) /
              ( cosd( t )*sind( lon ) - tand( sdec )*cosd( lon ) )
            );
-  if(oy_debug)
+  if(verbose)
   fprintf( stdout, "Sun's Azimut:\t%g°\n", revolution(A-180.0) );
   hs = cosd( sdec )*cosd( t )*cosd( lat ) + sind( sdec )*sind( lat );
   h = asind( hs );
-  if(oy_debug)
+  if(verbose)
   fprintf( stdout, "Sun's Height:\t%g° sin(%g)\n", h, hs );
 
   return h;
