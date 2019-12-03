@@ -274,7 +274,6 @@ IF(UNIX)
 ENDIF(UNIX)
 MESSAGE( "THREAD_LIBRARIES: ${THREAD_LIBRARIES}" )
 
-
 FIND_PACKAGE( GetText )
 MESSAGE( "GetText: ${GETTEXT_FOUND}" )
 IF( GETTEXT_FOUND AND HAVE_LIBINTL_H )
@@ -489,14 +488,16 @@ ENDIF()
 
 
 # code generation
+FIND_PACKAGE(Grantlee5 COMPONENTS Templates)
 ADD_CUSTOM_COMMAND( OUTPUT generator/oyAPIGenerator
-                COMMAND cd generator/ && CMAKE_PREFIX_PATH="${CMAKE_CURRENT_BINARY_DIR}/generator/grantlee/lib/cmake/grantlee/" cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS=-g -Wall ${CMAKE_CURRENT_SOURCE_DIR}/generator && make || echo "Did you run ${CMAKE_CURRENT_SOURCE_DIR}/generator/download_grantlee.sh in ${CMAKE_CURRENT_BINARY_DIR}/generator/ ?"
+		COMMAND test -d ${CMAKE_CURRENT_BINARY_DIR}/generator/ && echo "-- Reusing previous directory" || mkdir ${CMAKE_CURRENT_BINARY_DIR}/generator/
+		COMMAND cd generator/ && CMAKE_PREFIX_PATH="${CMAKE_CURRENT_BINARY_DIR}/generator/grantlee/lib/cmake/grantlee/" cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS=-g -Wall ${CMAKE_CURRENT_SOURCE_DIR}/generator && make || echo "Did you run ${CMAKE_CURRENT_SOURCE_DIR}/generator/download_grantlee.sh in ${CMAKE_CURRENT_BINARY_DIR}/generator/ or install grantlee5-devel?"
 		)
 
 ADD_CUSTOM_TARGET( generate
 		COMMAND cd ${CMAKE_CURRENT_BINARY_DIR}/generator/ && ./oyAPIGenerator ${CMAKE_CURRENT_SOURCE_DIR}/templates:${CMAKE_CURRENT_SOURCE_DIR}/sources:${CMAKE_CURRENT_SOURCE_DIR}/API_generated
 		COMMENT "Generate source code from templates"
 		VERBATIM
-                DEPENDS generator/oyAPIGenerator
+		DEPENDS generator/oyAPIGenerator
 		WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/generator" )
 

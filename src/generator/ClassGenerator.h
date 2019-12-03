@@ -3,7 +3,7 @@
 
 #include <QFileInfo>
 #include <QVariantList>
-#include <grantlee_core.h>
+#include <grantlee/engine.h>
 
 #include "ClassTemplates.h"
 

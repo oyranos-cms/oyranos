@@ -220,7 +220,7 @@ Grantlee::Engine* ClassGenerator::getEngine( const QStringList& tmplDirs )
   qDebug() << "";
 
   Grantlee::Engine *engine = new Grantlee::Engine();
-  GFSLoader::Ptr loader = GFSLoader::Ptr( new GFSLoader() );
+  auto loader = QSharedPointer<GFSLoader>::create();
   loader->setTemplateDirs( allTmplDirs );
 
   engine->addTemplateLoader( loader );

@@ -142,7 +142,7 @@ void ClassTemplates::createTemplates() const
           fileData.replace( QRegExp(catchBase),
                             "oy" + allClassesInfo.at(i)->parentBaseName() + "\\1" + ".template." + "\\2" );
 
-        newFile.write( fileData.toAscii() );
+        newFile.write( fileData.toLocal8Bit() );
 
         qDebug() << "  Creating file" << newFile.fileName() << "from" << oldFile.fileName();
       } else {

@@ -10,11 +10,7 @@ IF(BUILD_TESTS)
   ADD_SUBDIRECTORY(tests)
 ENDIF()
 
-#FIND_PACKAGE(Qt4 COMPONENTS QtCore REQUIRED)
-#INCLUDE(${QT_USE_FILE})
-FIND_PACKAGE(Grantlee REQUIRED)
-
-INCLUDE(${Grantlee_USE_FILE})
+FIND_PACKAGE(Grantlee5 COMPONENTS Templates REQUIRED)
 
 INCLUDE_DIRECTORIES(
   ${PROJECT_BINARY_DIR}
@@ -29,14 +25,12 @@ CONFIGURE_FILE(
 ADD_SUBDIRECTORY(grantlee_extensions)
 
 #Setup MOC
-set( MOC_HEADERS ClassInfo.h FuncInfo.h )
-qt4_wrap_cpp( MOC_SOURCES ${MOC_HEADERS} )
+SET(CMAKE_AUTOMOC ON)
 
 # ... Application sources etc.
 SET( GeneratorSrc "main.cc" "ClassTemplates.cc" "ClassInfo.cc" "FuncInfo.cc" "ClassGenerator.cc" )
 ADD_EXECUTABLE( oyAPIGenerator ${GeneratorSrc} ${MOC_SOURCES} )
 TARGET_LINK_LIBRARIES(
    oyAPIGenerator
-   ${QT_LIBRARIES}
-   ${Grantlee_CORE_LIBRARIES}
+   Grantlee5::Templates
 )

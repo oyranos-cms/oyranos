@@ -9,6 +9,7 @@ class GSoCPluginLibrary : public QObject, public Grantlee::TagLibraryInterface
 {
   Q_OBJECT
   Q_INTERFACES( Grantlee::TagLibraryInterface )
+  Q_PLUGIN_METADATA(IID "org.grantlee.gsoc_extensions")
 
   public:
     GSoCPluginLibrary( QObject *parent = 0 )
