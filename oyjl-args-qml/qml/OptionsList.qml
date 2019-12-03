@@ -268,11 +268,14 @@ Rectangle {
                 width: comboBox.width - comboBox.combo.width
                 height: itemRect.height
                 onClicked: {
-                    statusText = description
+                    helpText = "[-" + key + "] "
                     if( typeof help !== "undefined" )
-                        helpText = help
+                    {
+                        helpText += help
+                        statusText = description
+                    }
                     else
-                        helpText = ""
+                        helpText += description
                     itemRect.focus = true
                 }
             }
