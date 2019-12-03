@@ -1477,6 +1477,15 @@ int  oyjlWriteFile                   ( const char        * filename,
   return written_n;
 }
 
+#if !defined(COMPILE_STATIC) || !defined(HAVE_QT)
+#warning "compile dynamic section"
+#ifdef COMPILE_STATIC
+#warning "COMPILE_STATIC defined"
+#endif
+#ifdef HAVE_QT
+#warning "HAVE_QT defined"
+#endif
+
 #ifdef HAVE_DL
 #include <dlfcn.h>
 static void * oyjl_args_qml = NULL;
@@ -1494,9 +1503,10 @@ static char*   oyjlLibNameCreate_        ( const char * lib_base_name,
 #endif
   return fn;
 }
+#else
+#warning "HAVE_DL not defined (possibly dlfcn.h not found?): dynamic loading of libOyjlArgsQml will not be possible"
+#endif /* HAVE_DL */
 
-#endif
-#ifndef COMPILE_STATIC
 #ifdef __cplusplus
 extern "C" { // "C" API wrapper 
 #endif
@@ -1579,7 +1589,7 @@ int oyjlArgsQmlStart                 ( int                 argc,
 #ifdef __cplusplus
 } /* extern "C" */
 #endif
-#endif /* COMPILE_STATIC */
+#endif /* !COMPILE_STATIC || !HAVE_QT */
 
 /** @} *//* oyjl_core */
 
@@ -1592,7 +1602,7 @@ void oyjlLibRelease() {
   {
     putenv("NLSPATH=C"); free(oyjl_nls_path_); oyjl_nls_path_ = NULL;
   }
-#ifdef HAVE_DL
+#if defined(HAVE_DL) && (!defined(COMPILE_STATIC) || !defined(HAVE_QT))
   if(oyjl_args_qml)
   {
     dlclose(oyjl_args_qml); oyjl_args_qml = NULL; oyjl_args_qml_init = 0;
