@@ -1831,7 +1831,8 @@ char**  oyLibPathsGet_( int             * count,
       oy_module_skip_fix_path = 1;
     else
       oy_module_skip_fix_path = 0;
-    fprintf(stderr, "OY_MODULE_SKIP_FIX_PATH: %d\n", oy_module_skip_fix_path);
+    if(oy_module_skip_fix_path == 1 && oy_debug)
+      fprintf(stderr, "OY_MODULE_SKIP_FIX_PATH: %d\n", oy_module_skip_fix_path);
   }
 
   if(!subdir)
@@ -1869,7 +1870,6 @@ char**  oyLibPathsGet_( int             * count,
     fix_paths[fix_paths_n++] = oyResolveDirFileName_( fp );
     oyFree_m_(fp);
   }
-  fprintf(stderr, "fix_paths_n: %d\n", fix_paths_n);
 
   if(fix_paths_n)
     oyStringListAdd( &paths, &n, (const char**)fix_paths, fix_paths_n,
