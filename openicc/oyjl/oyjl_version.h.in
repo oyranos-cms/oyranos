@@ -18,6 +18,7 @@
 #cmakedefine OYJL_HAVE_LIBXML2
 
 #cmakedefine HAVE_DL
+#cmakedefine HAVE_QT
 #cmakedefine OYJL_HAVE_LANGINFO_H
 #cmakedefine OYJL_HAVE_LOCALE_H
 #cmakedefine OYJL_HAVE_LIBINTL_H
