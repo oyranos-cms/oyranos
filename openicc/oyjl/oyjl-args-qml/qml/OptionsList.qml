@@ -268,14 +268,44 @@ Rectangle {
                 width: comboBox.width - comboBox.combo.width
                 height: itemRect.height
                 onClicked: {
-                    helpText = "[-" + key + "] "
+                    var named_option = 0
+                    if(typeof key !== "undefined" && key !== "@" && key !== "#")
+                        named_option = 1
+                    if( named_option )
+                        helpText = "[-" + key + "] "
+                    else if(typeof key !== "undefined")
+                        helpText = "[" + key + "] "
+                    var found = 0
+                    if( typeof name !== "undefined" )
+                    {
+                        if(found === 1) helpText += " "; found = 0
+                        var n = name
+                        if( n.length !== 0 )
+                        {
+                            helpText += n
+                            found = 1
+                        }
+                    }
+                    if( typeof description !== "undefined" )
+                    {
+                        if(found === 1) helpText += "\n"; found = 0
+                        var d = description
+                        if( d.length !== 0 )
+                        {
+                            helpText += d
+                            found = 1
+                        }
+                    }
                     if( typeof help !== "undefined" )
                     {
-                        helpText += help
-                        statusText = description
+                        if(found === 1) helpText += "\n"; found = 0
+                        var h = help
+                        if( h.length !== 0 )
+                        {
+                            helpText += h
+                            found = 1;
+                        }
                     }
-                    else
-                        helpText += description
                     itemRect.focus = true
                 }
             }
