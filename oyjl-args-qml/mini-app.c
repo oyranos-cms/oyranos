@@ -41,6 +41,7 @@ int myMain( int argc, const char ** argv )
   int gui = 0;
   int help = 0;
   int verbose = 0;
+  int error = 0;
   int state = 0;
 
   /* handle options */
@@ -74,6 +75,7 @@ int myMain( int argc, const char ** argv )
     {"oiwi", 0,     "G", "gui",     NULL, _("gui"),     _("GUI"),            NULL, NULL,          oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i = &gui} },
     {"oiwi", 0,     "h", "help",    NULL, _("help"),    _("Help"),           _("Print help for command line style interface"), NULL,          oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i = &help} },
     {"oiwi", 0,     "v", "verbose", NULL, _("verbose"), NULL,                NULL, NULL,          oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i = &verbose} },
+    {"oiwi", 0,     "e", "error",   NULL, _("error"),   NULL,                NULL, NULL,          oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i = &error} },
     {"",0,0,0,0,0,0,0, NULL, oyjlOPTIONTYPE_END, {0},0,{0}}
   };
 
@@ -83,7 +85,7 @@ int myMain( int argc, const char ** argv )
     {"oiwg", 0,     _("Mode1"),_("Simple mode"),     NULL, "#",       "o,v",    "o" }, /* accepted even if none of the mandatory options is set */
     {"oiwg", 0,     _("Mode2"),_("Any arg mode"),    NULL, "@",       "o,v",    "@,o" },/* accepted if anonymous arguments are set */
     {"oiwg", 0,     _("Mode3"),_("Actual mode"),     NULL, "i",       "G,o,v",  "i,o" },/* parsed and checked with -i option */
-    {"oiwg", 0,     _("Misc"), _("General options"), NULL, "h",       "v",      "h,v" },/* just show in documentation */
+    {"oiwg", 0,     _("Misc"), _("General options"), NULL, "h,e",       "v",    "h,v,e" },/* just show in documentation */
     {"",0,0,0,0,0,0,0}
   };
 
@@ -124,6 +126,8 @@ int myMain( int argc, const char ** argv )
         for(int i = 0; i < n; ++i)
             fprintf( stdout, "[%d]:\t%s\n", i, input[i] );
     }
+    if(error)
+        fprintf( stderr, "send to stderr\n" );
   }
 
   oyjlUi_Release( &ui);
