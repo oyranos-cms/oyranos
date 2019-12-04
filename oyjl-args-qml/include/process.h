@@ -37,12 +37,12 @@ class Process : public QProcess {
     QString tempName_;
     QByteArray a_cb;
     FILE * fm_cb;
-    char * m_cb;
-    size_t m_size_cb;
+    FILE * fme_cb;
     int saved_stdout = -1;
+    int saved_stderr = -1;
 
 public:
-    Process(QObject *parent = 0) : QProcess(parent) { m_cb = NULL; m_size_cb = 0; fm_cb = NULL; }
+    Process(QObject *parent = 0) : QProcess(parent) { fm_cb = fme_cb = NULL; }
 
     Q_INVOKABLE void start(const QString &program, const QVariantList &arguments)
     {
@@ -69,6 +69,16 @@ public:
             if(dup2( mf_fd_cb, stdout_fd ) == -1)
             {
               fprintf(stderr, "mf_fd_cb: %d stdout_fd: %d %s\n", mf_fd_cb, stdout_fd, strerror(errno));
+            }
+
+            char * tefn = oyjlStringCopy( (tempName_ + "-err").toUtf8().data(), malloc );
+            fme_cb = fopen( tefn, "w+" );
+            int mfe_fd_cb = fileno(fme_cb);
+            int stderr_fd = fileno(stderr);
+            saved_stderr = dup(STDERR_FILENO);
+            if(dup2( mfe_fd_cb, stderr_fd ) == -1)
+            {
+              fprintf(stderr, "mfe_fd_cb: %d stderr_fd: %d %s\n", mfe_fd_cb, stderr_fd, strerror(errno));
             }
 
             int count = arguments.length();
@@ -139,6 +149,9 @@ public Q_SLOTS:
       fflush(fm_cb);
       fflush(stdout); // stdout is bufferd
       fclose(fm_cb); fm_cb = NULL;
+      fflush(fme_cb);
+      fflush(stderr); // stderr is bufferd
+      fclose(fme_cb); fme_cb = NULL;
       QFile f( tempName_ );
       f.open(QIODevice::ReadOnly|QIODevice::Unbuffered);
       qint64 size = f.size();
@@ -150,9 +163,21 @@ public Q_SLOTS:
       f.remove();
       //fprintf(stderr, OYJL_DBG_FORMAT "read: %s %d %d\n", OYJL_DBG_ARGS, cfn, (int)size, (int)a_cb.size() );
 
+      QFile fe( tempName_ + "-err" );
+      if(size == 0 && a_cb.size() == 0)
+      {
+          fe.open(QIODevice::ReadOnly|QIODevice::Unbuffered);
+          qint64 size = fe.size();
+          a_cb = fe.read(size);
+          fe.close();
+      }
+      fe.remove();
+
       // restore stdout
       if(saved_stdout >= 0)
         dup2(saved_stdout, STDOUT_FILENO);
+      if(saved_stderr >= 0)
+        dup2(saved_stderr, STDERR_FILENO);
       emit readChannelFinished();
       free(cfn);
     }
