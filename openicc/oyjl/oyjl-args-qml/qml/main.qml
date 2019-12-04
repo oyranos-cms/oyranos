@@ -604,7 +604,7 @@ AppWindow {
 
     Process { id: logoProcess; onReadyRead: {uiLogo = readAll();
             var name = uiLogo
-            statusText = "found uiLogo(logoProcess): " + name;
+            if(app_debug) statusText = "found uiLogo(logoProcess): " + name;
             icon = name } }
     // get the whole bunch of CMM keys and filter the groups and other
     // major stuff
@@ -629,7 +629,8 @@ AppWindow {
         var name = appData.findLogo( cmm.logo )
         if(name !== "undefined")
         {
-            statusText = "found uiLogo(setDataText): " + name;
+            if(app_debug)
+                statusText = "found uiLogo(setDataText): " + name;
             icon = name
         }
         if(name.substr(0,1,":") === ":")
