@@ -34,7 +34,7 @@ oyjlUiHeaderSection_s *    oyUiInfo  ( const char          * documentation,
     { "oihs", "download", NULL, "http://www.oyranos.org", NULL },
     { "oihs", "sources", NULL, "http://www.oyranos.org", NULL },
     { "oihs", "development", NULL, "https://github.com/oyranos-cms/oyranos", NULL },
-    { "oihs", "openicc_module_author", NULL, "Kai-Uwe Behrmann", "http://www.behrmann.name" },
+    { "oihs", "oyjl_module_author", NULL, "Kai-Uwe Behrmann", "http://www.behrmann.name" },
     { "oihs", "documentation", NULL, "http://www.openicc.info", documentation },
     { "", NULL, NULL, NULL, NULL }
   };
