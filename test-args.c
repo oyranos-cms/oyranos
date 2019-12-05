@@ -51,7 +51,7 @@ oyjlTESTRESULT_e testArgs()
 
   /* handle options */
   /* Select from *version*, *manufacturer*, *copyright*, *license*, *url*,
-   * *support*, *download*, *sources*, *oyjl_modules_author* and
+   * *support*, *download*, *sources*, *oyjl_module_author* and
    * *documentation* what you see fit. Add new ones as needed. */
   oyjlUiHeaderSection_s sections[] = {
     /* type, nick,            label, name,                  description  */

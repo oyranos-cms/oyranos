@@ -586,7 +586,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
     oyjlStrAdd( s, "\n" );
     oyjlStrAdd( s, "  /* handle options */\n" );
     oyjlStrAdd( s, "  /* Select a nick from *version*, *manufacturer*, *copyright*, *license*,\n" );
-    oyjlStrAdd( s, "   * *url*, *support*, *download*, *sources*, *oyjl_modules_author* and\n" );
+    oyjlStrAdd( s, "   * *url*, *support*, *download*, *sources*, *oyjl_module_author* and\n" );
     oyjlStrAdd( s, "   * *documentation*. Choose what you see fit. Add new ones as needed. */\n" );
     oyjlStrAdd( s, "  oyjlUiHeaderSection_s sections[] = {\n" );
     oyjlStrAdd( s, "    /* type, " );
