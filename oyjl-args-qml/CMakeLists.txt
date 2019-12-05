@@ -149,8 +149,10 @@ IF( HAVE_QT)
         TARGET_LINK_LIBRARIES( oyjl-test-args-qml-static ${PROJECT_LIB_STATIC} )
       ENDIF( ENABLE_TESTS_${PROJECT_UP_NAME} AND ENABLE_QT5_EXECUTABLE )
 
-      ADD_EXECUTABLE( mini-app-example-static mini-app.c )
-      TARGET_LINK_LIBRARIES( mini-app-example-static ${PROJECT_LIB_STATIC})
+      IF( ENABLE_QT5_EXECUTABLE )
+        ADD_EXECUTABLE( mini-app-example-static mini-app.c )
+        TARGET_LINK_LIBRARIES( mini-app-example-static ${PROJECT_LIB_STATIC})
+      ENDIF()
 
     ENDIF(ENABLE_STATIC_LIBS_${PROJECT_UP_NAME})
 
