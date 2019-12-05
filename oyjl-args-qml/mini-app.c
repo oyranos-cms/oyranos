@@ -121,9 +121,9 @@ int myMain( int argc, const char ** argv )
     if(file_count)
     {
         fprintf( stdout, "file_count:\t%d\n", file_count );
-        int n = 0;
+        int n = 0,i;
         char ** input = oyjlOptions_ResultsToList( ui->opts, "@", &n );
-        for(int i = 0; i < n; ++i)
+        for(i = 0; i < n; ++i)
             fprintf( stdout, "[%d]:\t%s\n", i, input[i] );
     }
     if(error)
