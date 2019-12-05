@@ -2,7 +2,21 @@ TEMPLATE = app
 
 QT += multimedia qml svg
 QTPLUGIN += qsvg
+CONFIG += STATIC_LIB_ARGS # DYNAMIC_LIB_ARGS # STATIC_LIB_ARGS # LOCAL_ARGS
 
+DYNAMIC_LIB_ARGS { # dlopen libOyjlArgsQml
+  LIBS += -lOyjlArgsQml
+  LIBS += -lOyjlCore
+  LIBS += -ldl
+} else:STATIC_LIB_ARGS { # link statically liboyjl-args-qml-static
+  DEFINES += COMPILE_STATIC
+  LIBS += -loyjl-args-qml-static
+  LIBS += -loyjl-core-static
+} else:LOCAL_ARGS { # compile in all oyjlArgsQml symbols for QML debugging
+  DEFINES += COMPILE_STATIC
+  SOURCES += src/app_data.cpp src/utils.cpp lib.cpp
+  LIBS += -loyjl-core-static
+}
 
 android {
   QT += androidextras
@@ -10,17 +24,15 @@ android {
     INCLUDEPATH+=/run/media/kuwe/KAI-DA/linux/arm-linux-androideabi-4.9/include/
     INCLUDEPATH+=/run/media/kuwe/KAI-DA/linux/arm-linux-androideabi-4.9/include/oyjl/
     LIBS += -L/run/media/kuwe/KAI-DA/linux/arm-linux-androideabi-4.9/lib/
+    ANDROID_EXTRA_LIBS += /run/media/kuwe/KAI-DA/linux/arm-linux-androideabi-4.9/lib/libOyjlArgsQml.so \
+                          /run/media/kuwe/KAI-DA/linux/arm-linux-androideabi-4.9/lib/libOyjlCore.so
   }
   equals(ANDROID_TARGET_ARCH, x86) {
     INCLUDEPATH+=/run/media/kuwe/KAI-DA/linux/x86-linux-androideabi-4.9/include/
     LIBS += -L/run/media/kuwe/KAI-DA/linux/x86-linux-androideabi-4.9/lib/
   }
-  LIBS += -loyjl-args-qml-static
-  LIBS += -loyjl-static
-  LIBS += -loyjl-core-static
-  LIBS += -lm
   QMAKE_LFLAGS+=-fopenmp
-  SOURCES +=  src/app_data.cpp src/utils.cpp lib.cpp
+  LIBS += -lm
 }
 unix:!macx:!android {
 QT += dbus
@@ -36,20 +48,6 @@ DEFINES+=OPENICC_LIB
 DEFINES+=USE_GETTEXT
 LIBS+=-lopenicc-static
 LIBS+=-loyjl-static
-CONFIG += LOCAL_ARGS # DYNAMIC_LIB_ARGS # STATIC_LIB_ARGS # LOCAL_ARGS
-DYNAMIC_LIB_ARGS { # dlopen libOyjlArgsQml
-  LIBS+=-lOyjlArgsQml
-  LIBS+=-lOyjlCore
-  LIBS+=-ldl
-} else:STATIC_LIB_ARGS { # link statically liboyjl-args-qml-static
-  DEFINES+=COMPILE_STATIC
-  LIBS += -loyjl-args-qml-static
-  LIBS += -loyjl-core-static
-} else:LOCAL_ARGS { # compile in all oyjlArgsQml symbols for QML debugging
-  DEFINES+=COMPILE_STATIC
-  SOURCES += src/app_data.cpp src/utils.cpp lib.cpp
-  LIBS += -loyjl-core-static
-}
 LIBS+=-lyaml
 LIBS+=-lyajl
 LIBS+=-lxml2
