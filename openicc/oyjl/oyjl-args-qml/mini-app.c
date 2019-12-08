@@ -91,7 +91,7 @@ int myMain( int argc, const char ** argv )
 
   /* tell about the tool */
   oyjlUi_s * ui = oyjlUi_Create( argc, argv, /* argc+argv are required for parsing the command line options */
-                                       "mApp", "mini App", _("mini OyjlArgsQml example"), ":/images/logo",
+                                       "miniApp", "mini App", _("mini OyjlArgsQml example"), ":/images/logo",
                                        sections, oarray, groups_no_args, &state );
   /* done with options handling */
 
