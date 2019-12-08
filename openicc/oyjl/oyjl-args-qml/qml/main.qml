@@ -399,7 +399,6 @@ AppWindow {
 
                         textFormat: Qt.RichText // Html
                         wrapMode: TextEdit.Wrap
-                        readOnly: true
                         text: helpText
 
                         color: fg
