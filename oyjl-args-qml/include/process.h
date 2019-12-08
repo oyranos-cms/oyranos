@@ -83,7 +83,7 @@ public:
 
             int count = arguments.length();
             char ** argv = (char**) calloc( count+2, sizeof(char*) );
-            argv[0] = oyjlStringCopy( "lib-call", malloc );
+            argv[0] = oyjlStringCopy( program.toUtf8().data(), malloc );
             for( int i = 0; i < count; ++i )
               argv[1+i] = oyjlStringCopy( args[i].toUtf8(), malloc );
 
