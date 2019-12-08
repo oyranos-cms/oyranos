@@ -190,6 +190,7 @@ IF( HAVE_QT)
                 ${EXTRA_LIBS}
                 ${QT5_DBUS_LIB}
                 ${OPENICC_LIBRARIES}
+                ${OYJL_LIB}
                 ${OYJL_CORE_LIB}
                 )
     ENDIF ()
