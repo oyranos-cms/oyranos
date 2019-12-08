@@ -153,13 +153,13 @@
         <translation>Kommandos an</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="452"/>
-        <location filename="../qml/main.qml" line="485"/>
+        <location filename="../qml/main.qml" line="451"/>
+        <location filename="../qml/main.qml" line="484"/>
         <source>Launched app for </source>
         <translation>Starte Programm für </translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="626"/>
+        <location filename="../qml/main.qml" line="625"/>
         <source>Load failed</source>
         <translation>Laden daneben</translation>
     </message>
