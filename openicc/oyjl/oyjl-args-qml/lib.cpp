@@ -151,7 +151,11 @@ int oyjlArgsQmlStart__               ( int                 argc,
     if( commands )
       mgr.setCommands( commands );
     else
-      mgr.setCommands("{\"command_set\": \"dummy-callback-placeholder_needed-to-trigger-calling-Process-in-main.qml\"}");
+    {
+      char * t = NULL; oyjlStringAdd( &t, 0,0, "{\"command_set\": \"%s\"}", ui->nick );
+      mgr.setCommands(t);
+      free(t);
+    }
 
     if( output )
       mgr.setOutput( output );
