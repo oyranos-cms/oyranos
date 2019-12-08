@@ -2,7 +2,7 @@ TEMPLATE = app
 
 QT += multimedia qml svg
 QTPLUGIN += qsvg
-CONFIG += STATIC_LIB_ARGS # DYNAMIC_LIB_ARGS # STATIC_LIB_ARGS # LOCAL_ARGS
+CONFIG += LOCAL_ARGS # DYNAMIC_LIB_ARGS # STATIC_LIB_ARGS # LOCAL_ARGS
 
 DYNAMIC_LIB_ARGS { # dlopen libOyjlArgsQml
   LIBS += -lOyjlArgsQml
@@ -11,11 +11,54 @@ DYNAMIC_LIB_ARGS { # dlopen libOyjlArgsQml
 } else:STATIC_LIB_ARGS { # link statically liboyjl-args-qml-static
   DEFINES += COMPILE_STATIC
   LIBS += -loyjl-args-qml-static
+  LIBS += -lopenicc-static
+  LIBS += -loyjl-static
   LIBS += -loyjl-core-static
+  LIBS += -lyaml
+  LIBS += -lyajl
+  LIBS += -lxml2
+  LIBS += -lc
 } else:LOCAL_ARGS { # compile in all oyjlArgsQml symbols for QML debugging
   DEFINES += COMPILE_STATIC
   SOURCES += src/app_data.cpp src/utils.cpp lib.cpp
   LIBS += -loyjl-core-static
+  DISTFILES += \
+    qml/About.qml \
+    qml/AppWindow.qml \
+    qml/HalfPage.qml \
+    qml/main.qml \
+    qml/process.js \
+    translations/app_de.ts \
+    qml/Combo.qml \
+    qml/LInput.qml \
+    qml/LSlider.qml \
+    qml/LSwitch.qml \
+    qml/OptionsList.qml \
+    qml/SplitView.qml
+  RESOURCES += app.qrc
+  INCLUDEPATH+=/home/kuwe/.local/include/openicc
+  DEFINES+=OPENICC_LIB
+  DEFINES+=USE_GETTEXT
+  LIBS+=-lopenicc-static
+  LIBS+=-loyjl-static
+  LIBS+=-loyjl-core-static
+  LIBS+=-lyaml
+  LIBS+=-lyajl
+  LIBS+=-lxml2
+  LIBS+=-lc
+  QMAKE_LFLAGS+=-fopenmp
+
+  HEADERS += \
+    include/app_data.h \
+    include/app_manager.h \
+    include/utils.h \
+    include/process.h
+
+  TRANSLATIONS = translations/app_de.ts
+
+  lupdate_only{
+    SOURCES += qml/About.qml qml/AppWindow.qml qml/Combo.qml qml/HalfPage.qml qml/LInput.qml qml/LSlider.qml qml/LSwitch.qml qml/main.qml qml/OptionsList.qml qml/SplitView.qml
+  }
 }
 
 android {
@@ -42,28 +85,10 @@ INCLUDEPATH+=..
 INCLUDEPATH+=/opt/local/include/
 LIBS+=-L/home/kuwe/.local/lib64
 LIBS+=-L/opt/local/lib64
-LIBS+=-fopenmp
-INCLUDEPATH+=/home/kuwe/.local/include/openicc
-DEFINES+=OPENICC_LIB
-DEFINES+=USE_GETTEXT
-LIBS+=-lopenicc-static
-LIBS+=-loyjl-static
-LIBS+=-lyaml
-LIBS+=-lyajl
-LIBS+=-lxml2
-LIBS+=-lc
-QMAKE_LFLAGS+=-fopenmp
 }
 
 SOURCES +=   mini-app.c
 
-RESOURCES += app.qrc
-
-TRANSLATIONS = translations/app_de.ts
-
-lupdate_only{
-SOURCES += qml/About.qml qml/AppWindow.qml qml/Combo.qml qml/HalfPage.qml qml/LInput.qml qml/LSlider.qml qml/LSwitch.qml qml/main.qml qml/OptionsList.qml qml/SplitView.qml
-}
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 # QML_IMPORT_PATH += /run/media/kuwe/KAI-DA/linux/Qt/5.12.2/gcc_64/qml/
@@ -71,13 +96,7 @@ SOURCES += qml/About.qml qml/AppWindow.qml qml/Combo.qml qml/HalfPage.qml qml/LI
 # Default rules for deployment.
 include(deployment.pri)
 
-HEADERS += \
-    include/app_data.h \
-    include/app_manager.h \
-    include/utils.h \
-    include/process.h
-
-ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
+#ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
 
 OTHER_FILES += \
     android/AndroidManifest.xml \
@@ -86,16 +105,4 @@ OTHER_FILES += \
 DISTFILES += \
     android/res/drawable-hdpi/icon.png \
     android/res/drawable-ldpi/icon.png \
-    android/res/drawable-mdpi/icon.png \
-    qml/About.qml \
-    qml/AppWindow.qml \
-    qml/HalfPage.qml \
-    qml/main.qml \
-    qml/process.js \
-    translations/app_de.ts \
-    qml/Combo.qml \
-    qml/LInput.qml \
-    qml/LSlider.qml \
-    qml/LSwitch.qml \
-    qml/OptionsList.qml \
-    qml/SplitView.qml
+    android/res/drawable-mdpi/icon.png
