@@ -114,13 +114,20 @@ AppWindow {
                 image.opacity = 1.0
             }
             else
+            {
+                if(command_key === "h")
+                    helpTextArea.font.family = "sans"
+                else
+                    helpTextArea.font.family = "monospace"
                 helpText = data;
+            }
         }
     }
     property string processSetCommand: ""
     property var processSetArgs: [ ]
     property string command_set_delimiter: "="
     property string command_set_option: ""
+    property string command_key: ""
 
 
     function interactiveCallback( key, value, type, group, setOnly )
@@ -134,6 +141,7 @@ AppWindow {
             return
 
         var sCb = processSetCommand
+        command_key = key
         if(processSetCommand.length && setOnly >= 0)
         {
             var arg = key
@@ -397,6 +405,7 @@ AppWindow {
 
                         Accessible.name: "Text Area Help"
 
+                        font.family: "monospace"
                         textFormat: Qt.RichText // Html
                         wrapMode: TextEdit.Wrap
                         text: helpText
