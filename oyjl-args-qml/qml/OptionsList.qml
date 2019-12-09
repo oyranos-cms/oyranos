@@ -234,18 +234,6 @@ Rectangle {
                     } else
                         visible = false
                 }
-                combo.onCurrentTextChanged: {
-                    var cV = currentValue
-                    var sv = combo.currentText
-                    var k = key;
-                    if(sv === cV || sv.length === 0 || init)
-                        return;
-                    statusText = k + ":" + cV + " " + sv + " " + qsTr("selected")
-                    cV = sv;
-                    appData.setOption(k, cV);
-                    value = cV
-                    callback( key, value, type, group, 1 )
-                }
                 combo.onAccepted: {
                     var i = combo
                     var t = i.editText
@@ -261,8 +249,6 @@ Rectangle {
                     value = t
                     callback( key, value, type, group, 1 )
                 }
-                //combo.onAcceptableInputChanged:  statusText = "AI: "+combo.currentText
-                //combo.onEditTextChanged: statusText = "ET: "+combo.editText
             }
             MouseArea {
                 width: comboBox.width - comboBox.combo.width
