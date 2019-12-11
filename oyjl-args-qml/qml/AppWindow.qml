@@ -408,6 +408,38 @@ ApplicationWindow {
     }
 
 
+    property string top_message: ""
+    onTop_messageChanged: topMessage.visible = 1
+    Rectangle {
+        id: topMessage
+        objectName: "topMessage"
+
+        width: parent.width
+        height: parent.height
+        visible: false
+        color: "gray"
+        TextArea {
+            id: topMessageTextArea
+            x: dens*2
+            y: dens*2
+            width: parent.width - dens*4
+            height: parent.height - font.pixelSize*2 - dens*6
+            text: top_message
+            textFormat: Qt.RichText
+            readOnly: true
+            color: fg
+            background: Rectangle { color: bg }
+        }
+        Button {
+            x: dens*2
+            y: topMessageTextArea.height + dens * 4
+            width: parent.width - dens * 4
+            height: font.pixelSize*2
+            text: qsTr("Ok");
+            onClicked: parent.visible = 0
+        }
+    }
+
     footer: Rectangle {
         id: mainStatusBar
         objectName: "mainStatusBar"
