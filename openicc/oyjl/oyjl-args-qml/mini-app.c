@@ -12,6 +12,7 @@
  */
 
 #include "oyjl.h"
+#include "oyjl_test.h"    /* oyjl_debug */
 #include "oyjl_version.h"
 
 #ifdef OYJL_HAVE_LOCALE_H
@@ -51,7 +52,7 @@ int myMain( int argc, const char ** argv )
   oyjlUiHeaderSection_s sections[] = {
     /* type, nick,            label, name,                  description  */
     {"oihs", "version",       NULL,  "1.0",                 NULL},
-    {"oihs", "documentation", NULL,  NULL,                  _("The example tool demontrates the usage of the libOyjl API's and links to libOyjlArgsQml.")},
+    {"oihs", "documentation", NULL,  NULL,                  _("The example tool demontrates the usage of the libOyjl API's and loads libOyjlArgsQml on demand.")},
     {"oihs", "date",          NULL,  "2019-11-28T12:00:00", _("November 28, 2019")},
     {"",0,0,0,0}};
 
@@ -99,7 +100,7 @@ int myMain( int argc, const char ** argv )
   if(verbose)
   {
     ++main_count;
-    fprintf(stderr, "started %s %d\n", __func__, main_count );
+    fprintf(stderr, "%s %s %d\n", _("started"), __func__, main_count );
   }
 
   /* GUI boilerplate */
@@ -134,7 +135,7 @@ int myMain( int argc, const char ** argv )
 
   if(verbose)
   {
-    fprintf(stderr, "finished %s %d\n", __func__, main_count );
+    fprintf(stderr, "%s %s %d\n", _("finished"), __func__, main_count );
     --main_count;
   }
 
@@ -152,11 +153,21 @@ int main( int argc_ OYJL_UNUSED, char**argv_ OYJL_UNUSED)
   argv[argc++] = "--gui"; /* start QML */
 #endif
 
-  fprintf(stderr, "started %s\n", __func__ );
+  /* language needs to be initialised before setup of data structures */
+  int use_gettext = 0;
+#ifdef OYJL_USE_GETTEXT
+  use_gettext = 1;
+#ifdef OYJL_HAVE_LOCALE_H
+  setlocale(LC_ALL,"");
+#endif
+#endif
+  oyjlInitLanguageDebug( "Oyjl", "OYJL_DEBUG", oyjl_debug, use_gettext, "OYJL_LOCALEDIR", OYJL_LOCALEDIR, OYJL_DOMAIN, NULL );
+
+  fprintf(stderr, "%s %s\n", _("started"), __func__ );
 
   myMain(argc, argv);
 
-  fprintf(stderr, "finished %s\n", __func__ );
+  fprintf(stderr, "%s %s\n", _("finished"), __func__ );
 
   return 0;
 }
