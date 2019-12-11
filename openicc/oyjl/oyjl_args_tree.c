@@ -1033,6 +1033,7 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
       else if(strcmp(s->nick, "documentation") == 0) oyjlValueSetString( key, _("Documentation") );
       else if(strcmp(s->nick, "date") == 0) oyjlValueSetString( key, _("Date") );
       else if(strcmp(s->nick, "version") == 0) oyjlValueSetString( key, _("Version") );
+      else if(strcmp(s->nick, "permissions") == 0) oyjlValueSetString( key, _("Permissions") );
       else oyjlValueSetString( key, _(s->nick) );
     }
     key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/information/[%d]/%s", i, "name" );
