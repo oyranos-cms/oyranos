@@ -487,8 +487,9 @@ IF( GETTEXT_FOUND )
        oyjl.c
        oyjl_*.c
        ${${PROJECT_UP_NAME}_SRC_FILES_TEST}
-        xml2json.c
-        yaml2json.c
+       xml2json.c
+       yaml2json.c
+       oyjl-args-qml/mini-app.c
      )
 
   ADD_CUSTOM_COMMAND(OUTPUT ${_potFile}
