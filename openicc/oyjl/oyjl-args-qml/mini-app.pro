@@ -4,6 +4,33 @@ QT += multimedia qml svg
 QTPLUGIN += qsvg
 CONFIG += LOCAL_ARGS # DYNAMIC_LIB_ARGS # STATIC_LIB_ARGS # LOCAL_ARGS
 
+android {
+  QT += androidextras
+  equals(ANDROID_TARGET_ARCH, armeabi-v7a) {
+    INCLUDEPATH+=/run/media/kuwe/KAI-DA/linux/arm-linux-androideabi-4.9/include/
+    INCLUDEPATH+=/run/media/kuwe/KAI-DA/linux/arm-linux-androideabi-4.9/include/oyjl/
+    LIBS += -L/run/media/kuwe/KAI-DA/linux/arm-linux-androideabi-4.9/lib/
+    #ANDROID_EXTRA_LIBS += /run/media/kuwe/KAI-DA/linux/arm-linux-androideabi-4.9/lib/libOyjlArgsQml.so \
+    #                      /run/media/kuwe/KAI-DA/linux/arm-linux-androideabi-4.9/lib/libOyjlCore.so
+  }
+  equals(ANDROID_TARGET_ARCH, x86) {
+    INCLUDEPATH+=/run/media/kuwe/KAI-DA/linux/x86-linux-androideabi-4.9/include/
+    LIBS += -L/run/media/kuwe/KAI-DA/linux/x86-linux-androideabi-4.9/lib/
+  }
+  QMAKE_LFLAGS+=-fopenmp
+  LIBS += -lm
+  LIBS += -ldl
+}
+unix:!macx:!android {
+QT += dbus
+INCLUDEPATH+=/home/kuwe/.local/include/
+INCLUDEPATH+=/home/kuwe/.local/include/oyjl
+INCLUDEPATH+=..
+INCLUDEPATH+=/opt/local/include/
+LIBS+=-L/home/kuwe/.local/lib64
+LIBS+=-L/opt/local/lib64
+}
+
 DYNAMIC_LIB_ARGS { # dlopen libOyjlArgsQml
   LIBS += -lOyjlArgsQml
   LIBS += -lOyjlCore
@@ -39,12 +66,13 @@ DYNAMIC_LIB_ARGS { # dlopen libOyjlArgsQml
   INCLUDEPATH+=/home/kuwe/.local/include/openicc
   DEFINES+=OPENICC_LIB
   DEFINES+=USE_GETTEXT
-  LIBS+=-lopenicc-static
-  LIBS+=-loyjl-static
-  LIBS+=-loyjl-core-static
-  LIBS+=-lyaml
-  LIBS+=-lyajl
-  LIBS+=-lxml2
+  unix:!macx:!android {
+    LIBS += -lopenicc-static
+    LIBS += -loyjl-static
+    LIBS += -lxml2
+    LIBS += -lyaml
+    LIBS += -lyajl
+  }
   LIBS+=-lc
   QMAKE_LFLAGS+=-fopenmp
 
@@ -61,32 +89,6 @@ DYNAMIC_LIB_ARGS { # dlopen libOyjlArgsQml
   }
 }
 
-android {
-  QT += androidextras
-  equals(ANDROID_TARGET_ARCH, armeabi-v7a) {
-    INCLUDEPATH+=/run/media/kuwe/KAI-DA/linux/arm-linux-androideabi-4.9/include/
-    INCLUDEPATH+=/run/media/kuwe/KAI-DA/linux/arm-linux-androideabi-4.9/include/oyjl/
-    LIBS += -L/run/media/kuwe/KAI-DA/linux/arm-linux-androideabi-4.9/lib/
-    ANDROID_EXTRA_LIBS += /run/media/kuwe/KAI-DA/linux/arm-linux-androideabi-4.9/lib/libOyjlArgsQml.so \
-                          /run/media/kuwe/KAI-DA/linux/arm-linux-androideabi-4.9/lib/libOyjlCore.so
-  }
-  equals(ANDROID_TARGET_ARCH, x86) {
-    INCLUDEPATH+=/run/media/kuwe/KAI-DA/linux/x86-linux-androideabi-4.9/include/
-    LIBS += -L/run/media/kuwe/KAI-DA/linux/x86-linux-androideabi-4.9/lib/
-  }
-  QMAKE_LFLAGS+=-fopenmp
-  LIBS += -lm
-}
-unix:!macx:!android {
-QT += dbus
-INCLUDEPATH+=/home/kuwe/.local/include/
-INCLUDEPATH+=/home/kuwe/.local/include/oyjl
-INCLUDEPATH+=..
-INCLUDEPATH+=/opt/local/include/
-LIBS+=-L/home/kuwe/.local/lib64
-LIBS+=-L/opt/local/lib64
-}
-
 SOURCES +=   mini-app.c
 
 
@@ -96,7 +98,7 @@ SOURCES +=   mini-app.c
 # Default rules for deployment.
 include(deployment.pri)
 
-#ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
+ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
 
 OTHER_FILES += \
     android/AndroidManifest.xml \
