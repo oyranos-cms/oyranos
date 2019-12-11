@@ -1705,7 +1705,9 @@ int oyjlInitLanguageDebug            ( const char        * project_name,
        * so it is set here to bindtextdomain(). */
       path = domain_path ? domain_path : locpath;
 # ifdef OYJL_HAVE_LIBINTL_H
-      bindtextdomain( loc_domain, path );
+      const char * dpath = bindtextdomain( loc_domain, path );
+      if(*debug_variable)
+        msg( oyjlMSG_INFO, 0,"bindtextdomain( \"%s\", \"%s\" ) = ", loc_domain, path, dpath );
 #endif
       if(*debug_variable)
       {
@@ -1717,7 +1719,7 @@ int oyjlInitLanguageDebug            ( const char        * project_name,
           oyjlStringAdd( &fn, 0,0, "%s/de/LC_MESSAGES/%s.mo", path ? path : "", loc_domain);
         if(fn)
           stat = oyjlIsFileFull_( fn, "r" );
-        msg( oyjlMSG_INFO, 0,"bindtextdomain(\"%s\") to %s\"%s\" %s for %s", loc_domain, locpath?"effectively ":"", path ? path : "", (stat > 0)?"Looks good":"Might fail", gettext_call );
+        msg( oyjlMSG_INFO, 0,"bindtextdomain(\"%s\") to %s\"%s\" %s for %s  test:%s", loc_domain, locpath?"effectively ":"", path ? path : "", (stat > 0)?"Looks good":"Might fail", gettext_call, _("Example") );
         if(fn) free(fn);
       }
       if(tmp)
