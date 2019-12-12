@@ -54,6 +54,8 @@ int myMain( int argc, const char ** argv )
     {"oihs", "version",       NULL,  "1.0",                 NULL},
     {"oihs", "documentation", NULL,  NULL,                  _("The example tool demontrates the usage of the libOyjl API's and loads libOyjlArgsQml on demand.")},
     {"oihs", "date",          NULL,  "2019-11-28T12:00:00", _("November 28, 2019")},
+    /* use newline separated permissions in name + write newline separated list in description; both lists need to match in count */
+    {"oihs", "permissions",   NULL,  "android.permission.READ_EXTERNAL_STORAGE\nandroid.permission.WRITE_EXTERNAL_STORAGE", _("Read external storage for global data access, like downloads, music ...\nWrite external storage to create and modify global data.")},
     {"",0,0,0,0}};
 
   /* declare some option choices */
@@ -86,7 +88,7 @@ int myMain( int argc, const char ** argv )
     {"oiwg", 0,     _("Mode1"),_("Simple mode"),     NULL, "#",       "o,v",    "o" }, /* accepted even if none of the mandatory options is set */
     {"oiwg", 0,     _("Mode2"),_("Any arg mode"),    NULL, "@",       "o,v",    "@,o" },/* accepted if anonymous arguments are set */
     {"oiwg", 0,     _("Mode3"),_("Actual mode"),     NULL, "i",       "G,o,v",  "i,o" },/* parsed and checked with -i option */
-    {"oiwg", 0,     _("Misc"), _("General options"), NULL, "h,e",       "v",    "h,v,e" },/* just show in documentation */
+    {"oiwg", 0,     _("Misc"), _("General options"), NULL, "h,e",     "v",      "h,v,e" },/* -v appears in documentation */
     {"",0,0,0,0,0,0,0}
   };
 
