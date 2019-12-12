@@ -409,7 +409,8 @@ ApplicationWindow {
 
 
     property string top_message: ""
-    onTop_messageChanged: topMessage.visible = 1
+    property alias top: topMessage
+    onTop_messageChanged: if(top_message !== "") topMessage.visible = 1
     Rectangle {
         id: topMessage
         objectName: "topMessage"
@@ -426,6 +427,7 @@ ApplicationWindow {
             height: parent.height - font.pixelSize*2 - dens*6
             text: top_message
             textFormat: Qt.RichText
+            wrapMode: TextEdit.Wrap
             readOnly: true
             color: fg
             background: Rectangle { color: bg }
