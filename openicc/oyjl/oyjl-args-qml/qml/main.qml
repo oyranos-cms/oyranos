@@ -30,31 +30,31 @@ AppWindow {
     id: mainWindow
     objectName: "mainWindow"
 
-    width: if( !fullscreen )
+    width: if( fullscreen === false )
                100*dens
 
-    signal fileChanged(var url) // Input
-    onFileChanged: { setDataText( appData.getJSON( url ) ); var fn = "---"; if(url[0] !== '{') fn = url;
+    signal fileChanged(var variable) // Input
+    onFileChanged: { setDataText( appData.getJSON( variable ) ); var fn = "---"; if(variable[0] !== '{') fn = variable;
         statusText = qsTr("Loaded") + " " + fn
         if(processSetCommand.length)
             processSet.start( processSetCommand, processSetArgs );
     }
 
-    signal outputChanged( var url ) // Output
+    signal outputChanged( var variable ) // Output
     property string outputJSON: ""
-    onOutputChanged: { outputJSON = url; statusText = "output = " + outputJSON }
+    onOutputChanged: { outputJSON = variable; statusText = "output = " + outputJSON }
 
-    signal commandsChanged( var url ) // Commands
+    signal commandsChanged( var variable ) // Commands
     property string commandsJSON: ""
     onCommandsChanged: {
-        if(url === "+")
+        if(variable === "+")
           commandsJSON = appDataJsonString
         else
         {
-          if(url[0] === '{')
-            commandsJSON = url;
+          if(variable[0] === '{')
+            commandsJSON = variable;
           else
-            commandsJSON = appData.readFile( url );
+            commandsJSON = appData.readFile( variable );
         }
         textArea2.text = commandsJSON
         if( commandsJSON.length )
@@ -87,7 +87,7 @@ AppWindow {
                 command_set_option = ""
         }
 
-        statusText = qsTr("commands enabled") + " = " + url
+        statusText = qsTr("commands enabled") + " = " + variable
     }
 
     Process { id: processGet;
@@ -287,6 +287,26 @@ AppWindow {
         logo = "/images/logo-sw"
     }
 
+    property var permission: []
+    property var permission_description: []
+    onPermissionChanged: // show description for single permission; skip granted and dont ask ones
+        if(permission.length > 0)
+        {
+            var desc = permission_description[0];
+            top_message = desc;
+        }
+    top.onVisibleChanged: {
+        var vis = top.visible
+        if(vis === false)
+        {
+            var reply = appData.requestPermission(permission[0]);
+            helpText = reply
+            permission_description.shift()
+            var p = permission
+            p.shift()
+            permission = p
+        }
+    }
 
     property string appDataJsonString: "someJSON"
     property bool showJson: false
@@ -668,6 +688,35 @@ AppWindow {
             if( typeof desc !== "undefined" && item.type === "documentation" )
                 cmmHelp = desc
             html += "</td></tr>"
+
+            if(item.type === "permissions")
+            {
+                var perm_arr = name.split("\n");
+                var perm_descs = desc.split("\n");
+                var newpa = []; // new permission array
+                var newpd = []; // new permission_description array
+                var pos = 0;
+                perm_arr.forEach(function(item, index, array) {
+                    if(item.substr(0,7) === "android" && Qt.platform.os === "android")
+                    {
+                        var has = appData.hasPermission(item);
+                        if(has !== 0) // filter granted-and dont ask permissions out
+                        {
+                            helpText += item + " " + (has === 1 ? qsTr("granted") : qsTr("denied")) // Android vocables
+                            if(has === -1)
+                                helpText += " - " + qsTr("Never ask again") // Android vocables
+                            helpText += "\n"
+                        } else
+                        {
+                            newpa[pos] = item;
+                            newpd[pos] = perm_descs[index];
+                            ++pos;
+                        }
+                    }
+                  });
+                permission_description = newpd
+                permission = newpa
+            }
         }
         html += "</table></p></body></html>";
 

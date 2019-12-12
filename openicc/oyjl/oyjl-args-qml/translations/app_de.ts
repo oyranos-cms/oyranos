@@ -42,30 +42,30 @@
 <context>
     <name>AppData</name>
     <message>
-        <location filename="../src/app_data.cpp" line="76"/>
+        <location filename="../src/app_data.cpp" line="79"/>
         <source>Json is invalid</source>
         <translation>Json is ungültig</translation>
     </message>
     <message>
-        <location filename="../src/app_data.cpp" line="85"/>
+        <location filename="../src/app_data.cpp" line="88"/>
         <source>finished loading</source>
         <translation>Laden beendet</translation>
     </message>
     <message>
-        <location filename="../src/app_data.cpp" line="222"/>
-        <location filename="../src/app_data.cpp" line="224"/>
+        <location filename="../src/app_data.cpp" line="225"/>
+        <location filename="../src/app_data.cpp" line="227"/>
         <source>%1 Version</source>
         <translation>%1 Version</translation>
     </message>
     <message>
-        <location filename="../src/app_data.cpp" line="229"/>
+        <location filename="../src/app_data.cpp" line="232"/>
         <source>NONE</source>
         <translation>NICHTS</translation>
     </message>
     <message>
-        <location filename="../src/app_data.cpp" line="246"/>
-        <source>%1:%2</source>
-        <translation type="unfinished"></translation>
+        <location filename="../src/app_data.cpp" line="303"/>
+        <source>Permission not granted: </source>
+        <translation>Berechtigung nicht gewährt: </translation>
     </message>
 </context>
 <context>
@@ -112,6 +112,11 @@
         <source>Busy</source>
         <translation>Beschäftigt</translation>
     </message>
+    <message>
+        <location filename="../qml/AppWindow.qml" line="440"/>
+        <source>Ok</source>
+        <translation>Ja</translation>
+    </message>
 </context>
 <context>
     <name>LSwitch</name>
@@ -128,7 +133,6 @@
         <location filename="../qml/OptionsList.qml" line="153"/>
         <location filename="../qml/OptionsList.qml" line="192"/>
         <location filename="../qml/OptionsList.qml" line="206"/>
-        <location filename="../qml/OptionsList.qml" line="243"/>
         <source>selected</source>
         <translation>ausgewählt</translation>
     </message>
@@ -153,15 +157,30 @@
         <translation>Kommandos an</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="451"/>
-        <location filename="../qml/main.qml" line="484"/>
+        <location filename="../qml/main.qml" line="480"/>
+        <location filename="../qml/main.qml" line="513"/>
         <source>Launched app for </source>
         <translation>Starte Programm für </translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="625"/>
+        <location filename="../qml/main.qml" line="654"/>
         <source>Load failed</source>
         <translation>Laden daneben</translation>
+    </message>
+    <message>
+        <location filename="../qml/main.qml" line="705"/>
+        <source>granted</source>
+        <translation>gewährt</translation>
+    </message>
+    <message>
+        <location filename="../qml/main.qml" line="705"/>
+        <source>denied</source>
+        <translation>abgelehnt</translation>
+    </message>
+    <message>
+        <location filename="../qml/main.qml" line="707"/>
+        <source>Never ask again</source>
+        <translation>Nicht mehr fragen</translation>
     </message>
 </context>
 </TS>
