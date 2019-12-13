@@ -1751,3 +1751,12 @@ int            oyjlVersion           ( int                 type )
 }
 
 /** @} *//* oyjl */
+
+/* additional i18n strings */
+void oyjlDummy_(void)
+{
+  char * t = oyjlStringCopy( _("Information"), 0 );
+  free(t);
+}
+
+

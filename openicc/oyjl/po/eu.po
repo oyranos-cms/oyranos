@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eu\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2019-12-11 14:24+0100\n"
+"POT-Creation-Date: 2019-12-12 19:38+0100\n"
 "PO-Revision-Date: 2007-11-07 11:11+0100\n"
 "Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@zundan.com>\n"
 "Language-Team: Basque <itzulpena@euskalgnu.org>\n"
@@ -28,7 +28,7 @@ msgid "AUTHOR"
 msgstr ""
 
 #: test-args.c:94 test-args.c:260 test-core.c:583 test-core.c:647 test.c:605
-#: oyjl-args-qml/mini-app.c:89
+#: oyjl-args-qml/mini-app.c:194
 msgid "Actual mode"
 msgstr ""
 
@@ -44,7 +44,7 @@ msgstr ""
 msgid "Alternate"
 msgstr ""
 
-#: test-args.c:93 test-core.c:582 test.c:604 oyjl-args-qml/mini-app.c:88
+#: test-args.c:93 test-core.c:582 test.c:604 oyjl-args-qml/mini-app.c:193
 msgid "Any arg mode"
 msgstr ""
 
@@ -60,7 +60,7 @@ msgstr ""
 msgid "COPYRIGHT"
 msgstr ""
 
-#: test-args.c:78 test-core.c:572 test.c:594 oyjl-args-qml/mini-app.c:75
+#: test-args.c:78 test-core.c:572 test.c:594 oyjl-args-qml/mini-app.c:180
 #, fuzzy
 msgid "Control Output"
 msgstr "Irteera"
@@ -139,8 +139,8 @@ msgid "Export formated text"
 msgstr ""
 
 #: oyjl-args.c:46 test-args.c:76 test-args.c:77 test-core.c:570 test-core.c:571
-#: test.c:592 test.c:593 oyjl-args-qml/mini-app.c:73
-#: oyjl-args-qml/mini-app.c:74
+#: test.c:592 test.c:593 oyjl-args-qml/mini-app.c:178
+#: oyjl-args-qml/mini-app.c:179
 msgid "FILENAME"
 msgstr ""
 
@@ -148,11 +148,16 @@ msgstr ""
 msgid "FILES"
 msgstr ""
 
+#: oyjl-args-qml/mini-app.c:179
+#, fuzzy
+msgid "File"
+msgstr "Fitxategia"
+
 #: oyjl_args.c:1222
 msgid "Formated text"
 msgstr ""
 
-#: oyjl_args.c:1226 oyjl-args-qml/mini-app.c:77
+#: oyjl_args.c:1226 oyjl-args-qml/mini-app.c:182
 #, fuzzy
 msgid "GUI"
 msgstr "SGI"
@@ -162,7 +167,7 @@ msgid "GUI + Command"
 msgstr ""
 
 #: oyjl-args.c:57 test-args.c:97 test-args.c:261 test-core.c:584
-#: test-core.c:648 test.c:606 oyjl-args-qml/mini-app.c:90
+#: test-core.c:648 test.c:606 oyjl-args-qml/mini-app.c:195
 #, fuzzy
 msgid "General options"
 msgstr "Bereizketa"
@@ -205,9 +210,14 @@ msgid "HISTORY"
 msgstr ""
 
 #: oyjl-args.c:47 test-args.c:79 test-core.c:573 test.c:595
-#: oyjl-args-qml/mini-app.c:78
+#: oyjl-args-qml/mini-app.c:183
 msgid "Help"
 msgstr ""
+
+#: oyjl_core.c:1758
+#, fuzzy
+msgid "Information"
+msgstr "Informazioa:"
 
 #: oyjl.c:67
 msgid "JSON file"
@@ -249,7 +259,7 @@ msgstr ""
 
 #. parsed and checked with -i option
 #: oyjl-args.c:57 test-args.c:97 test-args.c:261 test-core.c:584
-#: test-core.c:648 test.c:606 oyjl-args-qml/mini-app.c:90
+#: test-core.c:648 test.c:606 oyjl-args-qml/mini-app.c:195
 msgid "Misc"
 msgstr ""
 
@@ -260,20 +270,20 @@ msgid "Mode"
 msgstr "Modeloa:"
 
 #. type,   flags, name,      description,          help, mandatory, optional, detail
-#: test-args.c:89 test-core.c:581 test.c:603 oyjl-args-qml/mini-app.c:87
+#: test-args.c:89 test-core.c:581 test.c:603 oyjl-args-qml/mini-app.c:192
 #, fuzzy
 msgid "Mode1"
 msgstr "Modeloa:"
 
 #. accepted even if none of the mandatory options is set
-#: test-args.c:90 test-core.c:582 test.c:604 oyjl-args-qml/mini-app.c:88
+#: test-args.c:90 test-core.c:582 test.c:604 oyjl-args-qml/mini-app.c:193
 #, fuzzy
 msgid "Mode2"
 msgstr "Modeloa:"
 
 #. accepted even if none of the mandatory options is set
 #. accepted if anonymous arguments are set
-#: test-args.c:91 test-core.c:583 test.c:605 oyjl-args-qml/mini-app.c:89
+#: test-args.c:91 test-core.c:583 test.c:605 oyjl-args-qml/mini-app.c:194
 #, fuzzy
 msgid "Mode3"
 msgstr "Modeloa:"
@@ -320,7 +330,7 @@ msgstr ""
 msgid "No"
 msgstr ""
 
-#: oyjl-args-qml/mini-app.c:56
+#: oyjl-args-qml/mini-app.c:160
 msgid "November 28, 2019"
 msgstr ""
 
@@ -364,17 +374,17 @@ msgstr "Oyranos-en ezarpenak"
 msgid "Permissions"
 msgstr "ICC Examin-en bertsioa"
 
-#: test-args.c:67 test-core.c:561 test.c:583 oyjl-args-qml/mini-app.c:64
+#: test-args.c:67 test-core.c:561 test.c:583 oyjl-args-qml/mini-app.c:169
 #, fuzzy
 msgid "Print All"
 msgstr "Puntua"
 
-#: test-args.c:68 test-core.c:562 test.c:584 oyjl-args-qml/mini-app.c:65
+#: test-args.c:68 test-core.c:562 test.c:584 oyjl-args-qml/mini-app.c:170
 #, fuzzy
 msgid "Print Camera"
 msgstr "Fitxategi-izena"
 
-#: test-args.c:68 test-core.c:562 test.c:584 oyjl-args-qml/mini-app.c:65
+#: test-args.c:68 test-core.c:562 test.c:584 oyjl-args-qml/mini-app.c:170
 #, fuzzy
 msgid "Print Camera JSON"
 msgstr "Puntua"
@@ -384,7 +394,7 @@ msgstr "Puntua"
 msgid "Print JSON:"
 msgstr "Puntua"
 
-#: test-args.c:69 test-core.c:563 test.c:585 oyjl-args-qml/mini-app.c:66
+#: test-args.c:69 test-core.c:563 test.c:585 oyjl-args-qml/mini-app.c:171
 #, fuzzy
 msgid "Print None"
 msgstr "Puntua"
@@ -397,7 +407,7 @@ msgstr ""
 msgid "Print count:"
 msgstr ""
 
-#: oyjl-args-qml/mini-app.c:78
+#: oyjl-args-qml/mini-app.c:183
 msgid "Print help for command line style interface"
 msgstr ""
 
@@ -415,7 +425,8 @@ msgstr ""
 msgid "Print:"
 msgstr "Puntua"
 
-#: oyjl-args-qml/mini-app.c:57
+#. use newline separated permissions in name + write newline separated list in description; both lists need to match in count
+#: oyjl-args-qml/mini-app.c:162
 msgid ""
 "Read external storage for global data access, like downloads, music ...\n"
 "Write external storage to create and modify global data."
@@ -439,8 +450,8 @@ msgid "SYNOPSIS"
 msgstr ""
 
 #: oyjl-args.c:46 test-args.c:76 test-args.c:77 test-core.c:570 test-core.c:571
-#: test.c:592 test.c:593 oyjl-args-qml/mini-app.c:73
-#: oyjl-args-qml/mini-app.c:74
+#: test.c:592 test.c:593 oyjl-args-qml/mini-app.c:178
+#: oyjl-args-qml/mini-app.c:179
 #, fuzzy
 msgid "Set Input"
 msgstr "Sarrera"
@@ -458,12 +469,12 @@ msgstr ""
 msgid "Short example tool using libOyjl"
 msgstr ""
 
-#: test-args.c:75 test-core.c:569 test.c:591 oyjl-args-qml/mini-app.c:72
+#: test-args.c:75 test-core.c:569 test.c:591 oyjl-args-qml/mini-app.c:177
 msgid "Show Status"
 msgstr ""
 
 #: test-args.c:89 test-args.c:90 test-args.c:91 test-args.c:92 test-core.c:581
-#: test.c:603 oyjl-args-qml/mini-app.c:87
+#: test.c:603 oyjl-args-qml/mini-app.c:192
 msgid "Simple mode"
 msgstr ""
 
@@ -483,7 +494,7 @@ msgstr ""
 msgid "The example tool demonstrates the usage of the libOyjl API's."
 msgstr ""
 
-#: oyjl-args-qml/mini-app.c:55
+#: oyjl-args-qml/mini-app.c:159
 msgid ""
 "The example tool demontrates the usage of the libOyjl API's and loads "
 "libOyjlArgsQml on demand."
@@ -540,7 +551,7 @@ msgstr "ICC Examin-en bertsioa"
 msgid "Yes"
 msgstr "Bai"
 
-#: oyjl-args-qml/mini-app.c:80
+#: oyjl-args-qml/mini-app.c:185
 msgid "error"
 msgstr ""
 
@@ -548,25 +559,26 @@ msgstr ""
 msgid "export"
 msgstr ""
 
-#: oyjl-args-qml/mini-app.c:139 oyjl-args-qml/mini-app.c:171
+#: oyjl-args-qml/mini-app.c:244 oyjl-args-qml/mini-app.c:276
 msgid "finished"
 msgstr ""
 
 #. The --gui option can be hidden and used only internally.
-#: oyjl-args-qml/mini-app.c:77
+#: oyjl-args-qml/mini-app.c:182
 msgid "gui"
 msgstr ""
 
 #: oyjl-args.c:47 test-args.c:79 test-core.c:573 test.c:595
-#: oyjl-args-qml/mini-app.c:78
+#: oyjl-args-qml/mini-app.c:183
 #, fuzzy
 msgid "help"
 msgstr "Laguntza"
 
 #. type,   flags, o,   option,    key,  name,         description,         help, value_name,    value_type,               values,                                                          variable_type, output variable
+#. OYJL_OPTION_FLAG_EDITABLE
 #: oyjl-args.c:46 test-args.c:76 test-args.c:77 test-core.c:570 test-core.c:571
-#: test.c:592 test.c:593 oyjl-args-qml/mini-app.c:73
-#: oyjl-args-qml/mini-app.c:74
+#: test.c:592 test.c:593 oyjl-args-qml/mini-app.c:178
+#: oyjl-args-qml/mini-app.c:179
 #, fuzzy
 msgid "input"
 msgstr "Sarrera"
@@ -603,7 +615,7 @@ msgstr ""
 
 #. tell about the tool
 #. argc+argv are required for parsing the command line options
-#: oyjl-args-qml/mini-app.c:96
+#: oyjl-args-qml/mini-app.c:201
 msgid "mini OyjlArgsQml example"
 msgstr ""
 
@@ -616,7 +628,7 @@ msgid "needs OYJL_OPTION_FLAG_EDITABLE or choices"
 msgstr ""
 
 #: oyjl_translate.c:59 test-args.c:78 test-core.c:572 test.c:594
-#: oyjl-args-qml/mini-app.c:75
+#: oyjl-args-qml/mini-app.c:180
 #, fuzzy
 msgid "output"
 msgstr "Irteera"
@@ -626,11 +638,11 @@ msgid "output format string"
 msgstr ""
 
 #. declare some option choices
-#: test-args.c:64 test-core.c:558 test.c:580 oyjl-args-qml/mini-app.c:61
+#: test-args.c:64 test-core.c:558 test.c:580 oyjl-args-qml/mini-app.c:166
 msgid "oyjl.json"
 msgstr ""
 
-#: test-args.c:65 test-core.c:559 test.c:581 oyjl-args-qml/mini-app.c:62
+#: test-args.c:65 test-core.c:559 test.c:581 oyjl-args-qml/mini-app.c:167
 msgid "oyjl2.json"
 msgstr ""
 
@@ -638,13 +650,13 @@ msgstr ""
 msgid "specify JSON file"
 msgstr ""
 
-#: oyjl-args-qml/mini-app.c:104 oyjl-args-qml/mini-app.c:167
+#: oyjl-args-qml/mini-app.c:209 oyjl-args-qml/mini-app.c:272
 #, fuzzy
 msgid "started"
 msgstr "Izarra"
 
 #. type,   flags, o,   option,    key,  name,         description,         help, value_name,    value_type,               values,                                                          variable_type, output variable
-#: test-args.c:75 test-core.c:569 test.c:591 oyjl-args-qml/mini-app.c:72
+#: test-args.c:75 test-core.c:569 test.c:591 oyjl-args-qml/mini-app.c:177
 msgid "status"
 msgstr ""
 
@@ -657,7 +669,7 @@ msgid "to be used key names in a comma separated list"
 msgstr ""
 
 #: oyjl-args.c:48 oyjl.c:74 oyjl_translate.c:62 test-args.c:80 test-core.c:574
-#: test.c:596 oyjl-args-qml/mini-app.c:79
+#: test.c:596 oyjl-args-qml/mini-app.c:184
 msgid "verbose"
 msgstr ""
 
@@ -1319,10 +1331,6 @@ msgstr ""
 #~ msgstr "Cyana"
 
 #, fuzzy
-#~ msgid "DB File"
-#~ msgstr "Fitxategia"
-
-#, fuzzy
 #~ msgid "DB File Name"
 #~ msgstr "Fitxategi-izena:"
 
@@ -1725,10 +1733,6 @@ msgstr ""
 
 #~ msgid "Illustration"
 #~ msgstr "Ilustrazioa"
-
-#, fuzzy
-#~ msgid "Information"
-#~ msgstr "Informazioa:"
 
 #~ msgid "InkJet printer"
 #~ msgstr "Tintazko inprimagailua"
