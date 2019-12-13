@@ -116,10 +116,9 @@ AppWindow {
             else
             {
                 if(command_key === "h")
-                    helpTextArea.font.family = "sans"
+                    setHelpText( data, false )
                 else
-                    helpTextArea.font.family = "monospace"
-                helpText = data;
+                    setHelpText( data, true )
             }
         }
     }
@@ -300,7 +299,7 @@ AppWindow {
         if(vis === false)
         {
             var reply = appData.requestPermission(permission[0]);
-            helpText = reply
+            setHelpText( reply, false )
             permission_description.shift()
             var p = permission
             p.shift()
@@ -339,12 +338,21 @@ AppWindow {
             t = t.replace(/\n/g, "<br />")
             t = "<div style\"word-wrap:nowhere;font-family:monospace;\"" + t + "</div>"
             helpText = t
+            helpTextArea.font.family = "sans";
             helpTextArea.textFormat = Qt.RichText
         }
 
         helpTextChanging = false
         image.opacity = 0.01
         helpTextArea.opacity = 1.0
+    }
+    function setHelpText( text, is_mono )
+    {
+        if(is_mono === true)
+            helpTextArea.font.family = "monospace";
+        else
+            helpTextArea.font.family = "sans";
+        helpText = text;
     }
 
     property var groupDescriptions: []

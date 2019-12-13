@@ -47,7 +47,7 @@ Rectangle {
                 onClicked: {
                     var text = groupDescriptions[section]
                     if( typeof text !== "undefined" )
-                        helpText = text
+                        setHelpText( text, false )
                     else
                         helpText = ""
                     focus = true
@@ -254,6 +254,7 @@ Rectangle {
                 width: comboBox.width - comboBox.combo.width
                 height: itemRect.height
                 onClicked: {
+                    setHelpText( "", false )
                     var named_option = 0
                     if(typeof key !== "undefined" && key !== "@" && key !== "#")
                         named_option = 1
