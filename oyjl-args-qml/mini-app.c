@@ -18,6 +18,9 @@
 #ifdef OYJL_HAVE_LOCALE_H
 #include <locale.h>
 #endif
+#ifdef __USE_POSIX
+#define HAVE_POSIX 1
+#endif
 
 #ifdef OYJL_USE_GETTEXT
 # ifdef OYJL_HAVE_LIBINTL_H
@@ -28,6 +31,107 @@
 # define _(text) text
 #endif
 
+#include <dirent.h>
+// flags 0x01 - skip recursive
+void listFiles(const char * path, char *** list, int * count, const char * suffix, int flags)
+
+{
+  DIR * d = opendir(path);
+  if(d == NULL) return;
+  struct dirent * dir;
+  while ((dir = readdir(d)) != NULL)
+    {
+      if(dir->d_type != DT_DIR)
+      {
+        char * name = NULL;
+        if(strcmp(path,".") == 0)
+            oyjlStringAdd( &name, 0,0, "%s", dir->d_name);
+        else
+            oyjlStringAdd( &name, 0,0, "%s/%s", path, dir->d_name);
+        if(!suffix)
+            oyjlStringListAddStaticString( list, count, name, malloc, free );
+        else
+        {
+          char * end = &name[strlen(name) - strlen(suffix)];
+          if(strcasecmp(end, suffix) == 0)
+            oyjlStringListAddStaticString( list, count, name, malloc, free );
+        }
+        free(name);
+      }
+      else
+      if( dir->d_type == DT_DIR && strcmp(dir->d_name,".") != 0 &&
+          strcmp(dir->d_name,"..") != 0 )
+      {
+        char * d_path = NULL; oyjlStringAdd( &d_path, 0,0, "%s/%s", path, dir->d_name);
+        if(!(flags & 0x01))
+          listFiles(d_path, list, count, suffix, flags);
+        free(d_path);
+      }
+    }
+
+    closedir(d);
+}
+
+int oyjlLowerStrcmpInverseWrap_ (const void * a_, const void * b_)
+{
+  const char * a = *(const char **)b_,
+             * b = *(const char **)a_;
+#ifdef HAVE_POSIX
+  return strcasecmp(a,b);
+#else
+  return strcmp(a,b);
+#endif
+}
+
+oyjlOptionChoice_s * getFileChoices             ( oyjlOption_s      * o OYJL_UNUSED,
+                                                  int               * selected,
+                                                  oyjlOptions_s     * opts OYJL_UNUSED )
+{
+    int choices = 0, current = -1;
+    char ** choices_string_list = NULL;
+    int error = 0;
+
+    if(!error)
+    {
+      int i;
+      const char * man_page = getenv("DISPLAY");
+      int skip_real_info = man_page && strcmp(man_page,"man_page") == 0;
+      if(!skip_real_info)
+      {
+        const char * path =
+#ifdef __ANDROID__
+                "/storage/emulated/0/Downloads";
+#else
+                "/tmp";
+#endif
+        int flags = 0x01; // skip recursing into sub directories
+        listFiles(path, &choices_string_list, &choices, NULL, flags);
+        qsort( choices_string_list, choices, sizeof(char*), oyjlLowerStrcmpInverseWrap_ );
+      }
+      oyjlOptionChoice_s * c = calloc(choices+1, sizeof(oyjlOptionChoice_s));
+      if(c)
+      {
+        for(i = 0; i < choices; ++i)
+        {
+          char * v = malloc(12);
+
+          sprintf(v, "%d", i);
+          c[i].nick = strdup(choices_string_list[i]);
+          c[i].name = strdup(strrchr(c[i].nick, '/') + 1);
+          c[i].description = strdup("");
+          c[i].help = strdup("");
+        }
+        c[i].nick = malloc(4);
+        c[i].nick[0] = '\000';
+      }
+      oyjlStringListRelease( &choices_string_list, choices, free );
+      if(selected)
+        *selected = current;
+
+      return c;
+    } else
+      return NULL;
+}
 
 /* This function is called the
  * * first time for GUI generation and then
@@ -59,8 +163,8 @@ int myMain( int argc, const char ** argv )
     {"",0,0,0,0}};
 
   /* declare some option choices */
-  oyjlOptionChoice_s i_choices[] = {{"oyjl.json", _("oyjl.json"), _("oyjl.json"), ""},
-                                    {"oyjl2.json", _("oyjl2.json"), _("oyjl2.json"), ""},
+  oyjlOptionChoice_s i_choices[] = {{"oyjl.json", "oyjl.json", "oyjl.json", ""},
+                                    {"oyjl2.json", "oyjl2.json", "oyjl2.json", ""},
                                     {"","","",""}};
   oyjlOptionChoice_s o_choices[] = {{"0", _("Print All"), _("Print All"), ""},
                                     {"1", _("Print Camera"), _("Print Camera JSON"), ""},
@@ -71,8 +175,8 @@ int myMain( int argc, const char ** argv )
   oyjlOption_s oarray[] = {
   /* type,   flags, o,   option,    key,  name,         description,         help, value_name,    value_type,               values,                                                          variable_type, output variable */
     {"oiwi", 0,     "#", "",        NULL, _("status"),  _("Show Status"),    NULL, NULL,          oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i = &show_status} },
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,     "@", "",        NULL, _("input"),   _("Set Input"),      NULL, _("FILENAME"), oyjlOPTIONTYPE_CHOICE, {0}, oyjlINT, {.i = &file_count} },
-    {"oiwi", 0,     "i", "input",   NULL, _("input"),   _("Set Input"),      NULL, _("FILENAME"), oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)i_choices, sizeof(i_choices), malloc )}, oyjlSTRING, {.s = &file} },
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,     "@", "",       NULL, _("input"),   _("Set Input"),      NULL, _("FILENAME"), oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)i_choices, sizeof(i_choices), malloc )}, oyjlINT, {.i = &file_count} },
+    {"oiwi", 0/*OYJL_OPTION_FLAG_EDITABLE*/,     "i", "input",  NULL, _("input"),   _("Set Input"), _("File"), _("FILENAME"), oyjlOPTIONTYPE_FUNCTION, {.getChoices = getFileChoices}, oyjlSTRING, {.s=&file} },
     {"oiwi", 0,     "o", "output",  NULL, _("output"),  _("Control Output"), NULL, "0|1|2",       oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)o_choices, sizeof(o_choices), malloc )}, oyjlINT, {.i = &output} },
     /* The --gui option can be hidden and used only internally. */
     {"oiwi", 0,     "G", "gui",     NULL, _("gui"),     _("GUI"),            NULL, NULL,          oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i = &gui} },
