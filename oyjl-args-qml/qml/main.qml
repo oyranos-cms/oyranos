@@ -120,6 +120,7 @@ AppWindow {
                 else
                     setHelpText( data, true )
             }
+            unsetBusyTimer.start()
         }
     }
     property string processSetCommand: ""
@@ -270,6 +271,7 @@ AppWindow {
 
             statusText = JSON.stringify(args)
             processSet.start( processSetCommand, args )
+            setBusyTimer.start()
             processSet.waitForFinished()
         }
         if(processGetCommand.length && setOnly <= 0)
@@ -690,7 +692,8 @@ AppWindow {
             var label = P.getTranslatedItem( item, "label", loc );
             name = P.getTranslatedItem( item, "name", loc );
             var desc = P.getTranslatedItem( item, "description", loc );
-            html += "<tr><td align=\"right\" style=\"padding-right:10;word-wrap:break-word;\">" + label + ":</td><td style=\"font-weight:bold;\">" + name
+            if(!(name === null && item.type === "documentation"))
+                html += "<tr><td align=\"right\" style=\"padding-right:10;word-wrap:break-word;\">" + label + ":</td><td style=\"font-weight:bold;\">" + name
             if( typeof desc !== "undefined" && item.type !== "documentation" )
                 html += "<br /> " + desc
             if( typeof desc !== "undefined" && item.type === "documentation" )
