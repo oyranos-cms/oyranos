@@ -323,20 +323,16 @@ ApplicationWindow {
         for (i = 0; i < count; ++i)
         {
             var p = pagesModel.get(i)
-            // is not needed as visibility and focus are handled in swipe aware pages.onContentXChanged
-            /*if(i === page)
-                p.visible = true
-            else if(landscape)
+            // Not needed for all pages, as visibility and focus are handled in swipe aware pages.onContentXChanged
+            if(landscape)
             {
-                if(p.width < mainWindow.width && i >= page && page <= i + 1 ) // half page
+                if( i === 1 && pagesModel.get(0).visible && p.visible === false) // half page
+                {
                     p.visible = true
-                else
-                    p.visible = false
+                    if(app_debug)
+                        statusText = p.objectName + " " + i + " " + (p.visible?"+":"-") + " " + p.width  + "/" + mainWindow.width
+                }
             }
-            else
-                p.visible = false*/
-            if(app_debug)
-                statusText = p.objectName + " " + i + " " + (p.visible?"+":"-") + " " + p.width  + "/" + mainWindow.width
         }
     }
 
@@ -383,18 +379,28 @@ ApplicationWindow {
                 var x = Math.round(contentX)
                 if(start <= x && x < end)
                 {
-                    p.visible = true
-                    p.focus = true
+                    if(p.visible === false)
+                    {
+                        p.visible = true
+                        p.focus = true
+                        if(app_debug)
+                            statusText = p.objectName + " " + i + " " + (p.visible?"+":"-") + " " + p.width  + "/" + mainWindow.width + " " + start + " - " + end
+                    }
                 } else if(start - pages.width < x && x < end)
                 {
-                    p.visible = true
-                    p.focus = false
+                    if(p.visible === false)
+                    {
+                        p.visible = true
+                        p.focus = false
+                        if(app_debug)
+                            statusText = p.objectName + " " + i + " " + (p.visible?"+":"-") + " " + p.width  + "/" + mainWindow.width + " " + start + " - " + end
+                    }
                 } else {
                     p.visible = false
                     p.focus = false
+                    if(app_debug)
+                        statusText = p.objectName + " " + i + " " + (p.visible?"+":"-") + " " + p.width  + "/" + mainWindow.width + " " + start + " - " + end
                 }
-                if(app_debug)
-                    statusText = p.objectName + " " + i + " " + (p.visible?"+":"-") + " " + p.width  + "/" + mainWindow.width + " " + start + " - " + end
                 start += w
             }
         }
