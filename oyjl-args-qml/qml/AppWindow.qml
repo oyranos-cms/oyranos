@@ -236,10 +236,13 @@ ApplicationWindow {
         if(app_debug)
             statusText = "checkLand(): old index: " + pages.currentIndex + "/" + pagesContentIndex + " landscape: " + landscape + " indexAt(): " + pages.indexAt(1,1)
         var keyboard_factor = 1.2
+        var l;
         if(width > height * keyboard_factor) // virtual keyboard shall not interfere on mobile portrait mode
-            landscape = 1
+            l = 1
         else
-            landscape = 0
+            l = 0
+        if(l !== landscape)
+            landscape = l;
     }
     onLandscapeChanged: {
         if(app_debug)
@@ -364,6 +367,8 @@ ApplicationWindow {
         focus: true
 
         onContentXChanged: {
+            if(Qt.platform.os === "android") // contentX is not relyable on Android
+                return
             if(app_debug)
                 statusText = "onContentXChanged " + contentX
             var count = pagesModel.count
@@ -395,7 +400,7 @@ ApplicationWindow {
                         if(app_debug)
                             statusText = p.objectName + " " + i + " " + (p.visible?"+":"-") + " " + p.width  + "/" + mainWindow.width + " " + start + " - " + end
                     }
-                } else {
+                } else if(p.visible === true) {
                     p.visible = false
                     p.focus = false
                     if(app_debug)
