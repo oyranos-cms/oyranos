@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2019-12-12 19:38+0100\n"
+"POT-Creation-Date: 2019-12-14 09:36+0100\n"
 "PO-Revision-Date: 2015-02-20 17:32+0100\n"
 "Last-Translator: Kai-Uwe Behrmann <ku.b@gmx.de>\n"
 "Language-Team: russian <ru@li.org>\n"
@@ -527,7 +527,7 @@ msgstr ""
 msgid "export"
 msgstr ""
 
-#: oyjl-args-qml/mini-app.c:244 oyjl-args-qml/mini-app.c:276
+#: oyjl-args-qml/mini-app.c:247 oyjl-args-qml/mini-app.c:279
 msgid "finished"
 msgstr ""
 
@@ -603,11 +603,11 @@ msgid "output format string"
 msgstr ""
 
 #. declare some option choices
-#: test-args.c:64 test-core.c:558 test.c:580 oyjl-args-qml/mini-app.c:166
+#: test-args.c:64 test-core.c:558 test.c:580
 msgid "oyjl.json"
 msgstr ""
 
-#: test-args.c:65 test-core.c:559 test.c:581 oyjl-args-qml/mini-app.c:167
+#: test-args.c:65 test-core.c:559 test.c:581
 msgid "oyjl2.json"
 msgstr ""
 
@@ -615,7 +615,7 @@ msgstr ""
 msgid "specify JSON file"
 msgstr ""
 
-#: oyjl-args-qml/mini-app.c:209 oyjl-args-qml/mini-app.c:272
+#: oyjl-args-qml/mini-app.c:209 oyjl-args-qml/mini-app.c:275
 msgid "started"
 msgstr ""
 
