@@ -234,7 +234,10 @@ int myMain( int argc, const char ** argv )
             fprintf( stdout, "[%d]:\t%s\n", i, input[i] );
     }
     if(error)
+    {
         fprintf( stderr, "send to stderr\n" );
+        sleep(5);
+    }
   }
 
   oyjlUi_Release( &ui);
