@@ -179,7 +179,7 @@ ApplicationWindow {
             if(isbusy === false)
             {
                 timer_status_text_ = statusText
-                statusText = qsTr("Busy")
+                statusText = qsTr("Busy") + " (" + timer_status_text_ + ")"
                 isbusy = true
             }
         }
@@ -235,7 +235,8 @@ ApplicationWindow {
     {
         if(app_debug)
             statusText = "checkLand(): old index: " + pages.currentIndex + "/" + pagesContentIndex + " landscape: " + landscape + " indexAt(): " + pages.indexAt(1,1)
-        if(width > height)
+        var keyboard_factor = 1.2
+        if(width > height * keyboard_factor) // virtual keyboard shall not interfere on mobile portrait mode
             landscape = 1
         else
             landscape = 0
