@@ -67,6 +67,8 @@ int oyjlArgsQmlStart__               ( int                 argc,
 {
     Q_INIT_RESOURCE(app);
 
+    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+
     QGuiApplication app(argc, (char**)argv);
     // a = &app; see comment above
 
