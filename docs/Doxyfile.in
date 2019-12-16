@@ -1,7 +1,7 @@
 # Doxyfile 1.3.8
 
 PROJECT_NUMBER         = @OYJL_VERSION@
-INPUT                  = @CMAKE_SOURCE_DIR@ @CMAKE_CURRENT_SOURCE_DIR@ @CMAKE_BINARY_DIR@
+INPUT                  = @CMAKE_SOURCE_DIR@ @CMAKE_CURRENT_SOURCE_DIR@ @CMAKE_CURRENT_SOURCE_DIR@/md @CMAKE_BINARY_DIR@
 
 #---------------------------------------------------------------------------
 # Project related configuration options
@@ -184,6 +184,7 @@ INCLUDE_FILE_PATTERNS  =
 PREDEFINED             = DOXYGEN
 EXPAND_AS_DEFINED      = 
 SKIP_FUNCTION_MACROS   = YES
+MARKDOWN_SUPPORT       = YES
 #---------------------------------------------------------------------------
 # Configuration::additions related to external references   
 #---------------------------------------------------------------------------

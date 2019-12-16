@@ -7,6 +7,7 @@ IF(ENABLE_DOCU_${PROJECT_UP_NAME})
         ${CMAKE_SOURCE_DIR}/oyjl_tree.c
         ${CMAKE_SOURCE_DIR}/oyjl_yajl.c
         ${CMAKE_CURRENT_SOURCE_DIR}/doxymentation.dox
+        ${CMAKE_CURRENT_SOURCE_DIR}/md/*.md
      )
 ENDIF(ENABLE_DOCU_${PROJECT_UP_NAME})
 

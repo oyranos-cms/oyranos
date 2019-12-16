@@ -1,9 +1,7 @@
 # Json Ui renderer in Qt's QML+JavaScript
 SET( PROJECT_NAME oyjl-args-qml )
 
-IF( NOT HAVE_OYJL )
-  INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_SOURCE_DIR}/.. )
-ENDIF()
+INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_SOURCE_DIR}/.. )
 
 FIND_PACKAGE(Qt5 COMPONENTS Widgets Qml Quick Svg LinguistTools)
 IF(Qt5Qml_FOUND)
@@ -26,6 +24,8 @@ IF( HAVE_QT)
         SET( OPENICC_LIBRARY openicc-static )
         SET( OPENICC_LIBRARIES ${OPENICC_LIBRARY} )
       ENDIF()
+    ELSE()
+      INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_SOURCE_DIR}/../../src/include )
     ENDIF()
     SET( CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS}  ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS} )
 
@@ -166,6 +166,12 @@ IF( HAVE_QT)
     IF(ENABLE_SHARED_LIBS_${PROJECT_UP_NAME} AND ENABLE_QT5_EXECUTABLE)
       ADD_EXECUTABLE( ${PROJECT_NAME} main.cpp )
       TARGET_LINK_LIBRARIES( ${PROJECT_NAME} ${PROJECT_LIB_SHARED})
+      IF( NOT HAVE_OYJL )
+        INCLUDE( "${CMAKE_BINARY_DIR}/oyjl/cmake/OyjlConfig.cmake" )
+        UNSET( HAVE_OYJL )
+      ENDIF()
+      SET( LD_LIBRARY_PATH ${CMAKE_CURRENT_BINARY_DIR}/.. )
+      OYJL_DOCUMENT_TOOL( ${PROJECT_NAME} main.cpp "de_DE.UTF8" ${DOC_PATH} )
       ADD_EXECUTABLE( mini-app-example mini-app.c )
       TARGET_LINK_LIBRARIES( mini-app-example ${OYJL_CORE_LIB} ${EXTRA_CORE_LIBS} ) # OyjlArgsQML needs -ldl
     ENDIF ()
