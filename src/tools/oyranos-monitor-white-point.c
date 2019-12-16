@@ -439,6 +439,7 @@ int myMain( int argc , const char** argv )
   }
   if(!ui) return 1;
 
+#if !defined(NO_OYJL_ARGS_QML_START)
   /* GUI boilerplate */
   if(gui)
   { 
@@ -447,6 +448,7 @@ int myMain( int argc , const char** argv )
     oyjlUi_Release( &ui);
     return 0;
   }
+#endif
 
   if((export && strcmp(export,"json+command") == 0))
   {
