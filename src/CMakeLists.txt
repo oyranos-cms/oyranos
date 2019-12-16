@@ -426,9 +426,12 @@ IF(NOT HAVE_OYJL)
         ${CMAKE_SOURCE_DIR}/openicc/oyjl/oyjl.h
         ${CMAKE_SOURCE_DIR}/openicc/oyjl/oyjl_test.h
         ${CMAKE_SOURCE_DIR}/openicc/oyjl/oyjl_test_main.h
+        ${CMAKE_SOURCE_DIR}/openicc/oyjl/oyjl_args.c
+        ${CMAKE_SOURCE_DIR}/openicc/oyjl/oyjl_args_tree.c
         ${CMAKE_SOURCE_DIR}/openicc/oyjl/oyjl_core.c
         ${CMAKE_SOURCE_DIR}/openicc/oyjl/oyjl_tree.c
         ${CMAKE_SOURCE_DIR}/openicc/oyjl/oyjl_yajl.c
+        ${CMAKE_SOURCE_DIR}/doc/md/oyjl*.md
      )
 ENDIF(NOT HAVE_OYJL)
 SET( DOC_SOURCES ${DOC_SOURCES} PARENT_SCOPE )
