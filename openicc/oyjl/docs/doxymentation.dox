@@ -36,7 +36,7 @@
     Oyjl comes with a few tools, which use the Oyjl API's.
     - oyjl - JSON manipulation
     - oyjl-translate - localisation helper tool
-    - oyjl-args - code generation tool
+    - @ref oyjlargs - code generation tool
     - oyjl-args-qml - interactive option renderer written in Qt's QML
 
     @subsection api_tutorial Programming Tutorial
