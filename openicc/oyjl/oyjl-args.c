@@ -20,13 +20,18 @@
 #include "oyjl_i18n.h"
 
 
-int main( int argc, const char ** argv )
+/* This function is called the
+ * * first time for GUI generation and then
+ * * for executing the tool.
+ */
+int myMain( int argc, const char ** argv )
 {
 
   const char * file = NULL;
   const char * export = NULL;
   int help = 0;
   int verbose = 0;
+  int gui = 0;
   int state = 0;
 
   /* handle options */
@@ -47,6 +52,8 @@ int main( int argc, const char ** argv )
     {"oiwi", 0,     "h", "help",    NULL, _("help"),    _("Help"),           NULL, NULL,          oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i = &help} },
     {"oiwi", 0,     "v", "verbose", NULL, _("verbose"), _("verbose"),        NULL, NULL,          oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i = &verbose} },
     {"oiwi", 0,     "X", "export", NULL, NULL, NULL, NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = NULL}, oyjlSTRING, {.s=&export} },
+    /* The --gui option can be hidden and used only internally. */
+    {"oiwi", 0,     "G", "gui",     NULL, _("gui"),     _("GUI"),            NULL, NULL,          oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i = &gui} },
     {"",0,0,0,0,0,0,0, NULL, oyjlOPTIONTYPE_END, {},0,{}}
   };
 
@@ -60,7 +67,7 @@ int main( int argc, const char ** argv )
 
   /* tell about the tool */
   oyjlUi_s * ui = oyjlUi_Create( argc, argv, /* argc+argv are required for parsing the command line options */
-                                       "oyjl-args", _("Ui to source code"), _("Convert UI JSON to C code using libOyjl"), "logo",
+                                       "oyjl-args", _("Ui to source code"), _("Convert UI JSON to C code using libOyjl"), "oyjl",
                                        sections, oarray, groups, &state );
   /* done with options handling */
 
@@ -68,13 +75,20 @@ int main( int argc, const char ** argv )
     oyjlOptions_PrintHelp( ui->opts, ui, 4, "%s v%s - %s", argv[0],
                             "1.0", "Test Tool for testing" );
 
+#if !defined(NO_OYJL_ARGS_QML_START)
+  /* GUI boilerplate */
+  if(ui && gui)
+  {
+    int debug = verbose;
+    oyjlArgsQmlStart( argc, argv, NULL, debug, ui, myMain );
+  }
+#endif
   if(ui && !file)
   {
     const char * r = oyjlOptions_ResultsToJson(ui->opts);
     fprintf(stdout, "%s", r?r:"----");
   }
-
-  if(file)
+  else if(file)
   {
     FILE * fp;
     int size = 0;
@@ -101,6 +115,33 @@ int main( int argc, const char ** argv )
   oyjlUi_Release( &ui);
 
   fflush(stdout);
+
+  return 0;
+}
+
+extern int * oyjl_debug;
+int main( int argc_ OYJL_UNUSED, char**argv_ OYJL_UNUSED)
+{
+  int argc = argc_;
+  const char * argv[] = {"test",argc_>=2?argv_[1]:NULL,argc_>=3?argv_[2]:NULL,argc_>=4?argv_[3]:NULL,argc_>=5?argv_[4]:NULL, NULL};
+  if(argc > 4) argc = 4;
+
+#ifdef __ANDROID__
+  setenv("COLORTERM", "1", 0); /* show rich text format on non GNU color extension environment */
+  argv[argc++] = "--gui"; /* start QML */
+#endif
+
+  /* language needs to be initialised before setup of data structures */
+  int use_gettext = 0;
+#ifdef OYJL_USE_GETTEXT
+  use_gettext = 1;
+#ifdef OYJL_HAVE_LOCALE_H
+  setlocale(LC_ALL,"");
+#endif
+#endif
+  oyjlInitLanguageDebug( "Oyjl", "OYJL_DEBUG", oyjl_debug, use_gettext, "OYJL_LOCALEDIR", OYJL_LOCALEDIR, OYJL_DOMAIN, NULL );
+
+  myMain(argc, argv);
 
   return 0;
 }
