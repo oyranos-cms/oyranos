@@ -2,75 +2,75 @@
 .SH NAME
 openicc-device v0.1.1 \- OpenICC Device
 .SH SYNOPSIS
-\fBopenicc-device\fR \-l [\-d \fINUMBER\fR] [\-j] [\-n] [\-b \fIFILENAME\fR] [\-v]
+\fBopenicc-device\fR \fB\-l\fR [\fB\-d\fR \fINUMBER\fR] [\fB\-j\fR] [\fB\-n\fR] [\fB\-b\fR \fIFILENAME\fR] [\fB\-v\fR]
 .br
-\fBopenicc-device\fR \-a \-f \fIFILENAME\fR [\-b \fIFILENAME\fR] [\-v]
+\fBopenicc-device\fR \fB\-a\fR \fB\-f\fR \fIFILENAME\fR [\fB\-b\fR \fIFILENAME\fR] [\fB\-v\fR]
 .br
-\fBopenicc-device\fR \-e \-d \fINUMBER\fR [\-b \fIFILENAME\fR] [\-v]
+\fBopenicc-device\fR \fB\-e\fR \fB\-d\fR \fINUMBER\fR [\fB\-b\fR \fIFILENAME\fR] [\fB\-v\fR]
 .br
-\fBopenicc-device\fR \-p [\-s] [\-v]
+\fBopenicc-device\fR \fB\-p\fR [\fB\-s\fR] [\fB\-v\fR]
 .br
 .SH DESCRIPTION
 Manipulation of OpenICC color management data base device entries.
 .SH OPTIONS
 .SS
 Print the Devices in the DB
-\fBopenicc-device\fR \-l [\-d \fINUMBER\fR] [\-j] [\-n] [\-b \fIFILENAME\fR] [\-v]
+\fBopenicc-device\fR \fB\-l\fR [\fB\-d\fR \fINUMBER\fR] [\fB\-j\fR] [\fB\-n\fR] [\fB\-b\fR \fIFILENAME\fR] [\fB\-v\fR]
 .br
-\-l|\-\-list-devices	List Devices
+\fB\-l\fR|\fB\-\-list-devices\fR	List Devices
 .br
-\-d|\-\-device \fINUMBER\fR	Device position (NUMBER:0 [≥0 ≤100])
+\fB\-d\fR|\fB\-\-device\fR \fINUMBER\fR	Device position (NUMBER:0 [≥0 ≤100])
 .br
-\-j|\-\-dump-json	Dump OpenICC JSON
+\fB\-j\fR|\fB\-\-dump-json\fR	Dump OpenICC JSON
 .br
-\-n|\-\-long	List all key/values pairs
+\fB\-n\fR|\fB\-\-long\fR	List all key/values pairs
 .br
-\-b|\-\-db-file \fIFILENAME\fR	DB File Name
+\fB\-b\fR|\fB\-\-db-file\fR \fIFILENAME\fR	DB File Name
 .RS
 File Name of OpenICC Device Data Base JSON
 .RE
 .SS
 Add Device to DB
-\fBopenicc-device\fR \-a \-f \fIFILENAME\fR [\-b \fIFILENAME\fR] [\-v]
+\fBopenicc-device\fR \fB\-a\fR \fB\-f\fR \fIFILENAME\fR [\fB\-b\fR \fIFILENAME\fR] [\fB\-v\fR]
 .br
-\-a|\-\-add	Add Device to DB
+\fB\-a\fR|\fB\-\-add\fR	Add Device to DB
 .br
-\-f|\-\-file-name \fIFILENAME\fR	File Name
+\fB\-f\fR|\fB\-\-file-name\fR \fIFILENAME\fR	File Name
 .RS
 The File Name of the OpenICC Device in Json format.
 .RE
-\-b|\-\-db-file \fIFILENAME\fR	DB File Name
+\fB\-b\fR|\fB\-\-db-file\fR \fIFILENAME\fR	DB File Name
 .RS
 File Name of OpenICC Device Data Base JSON
 .RE
 .SS
 Erase a Devices from the DB
-\fBopenicc-device\fR \-e \-d \fINUMBER\fR [\-b \fIFILENAME\fR] [\-v]
+\fBopenicc-device\fR \fB\-e\fR \fB\-d\fR \fINUMBER\fR [\fB\-b\fR \fIFILENAME\fR] [\fB\-v\fR]
 .br
-\-e|\-\-erase-device	Erase Devices
+\fB\-e\fR|\fB\-\-erase-device\fR	Erase Devices
 .br
-\-d|\-\-device \fINUMBER\fR	Device position (NUMBER:0 [≥0 ≤100])
+\fB\-d\fR|\fB\-\-device\fR \fINUMBER\fR	Device position (NUMBER:0 [≥0 ≤100])
 .br
-\-b|\-\-db-file \fIFILENAME\fR	DB File Name
+\fB\-b\fR|\fB\-\-db-file\fR \fIFILENAME\fR	DB File Name
 .RS
 File Name of OpenICC Device Data Base JSON
 .RE
 .SS
 Show Filepath to the DB
-\fBopenicc-device\fR \-p [\-s] [\-v]
+\fBopenicc-device\fR \fB\-p\fR [\fB\-s\fR] [\fB\-v\fR]
 .br
-\-p|\-\-show-path	Show Path
+\fB\-p\fR|\fB\-\-show-path\fR	Show Path
 .br
-\-s|\-\-system	Local System
+\fB\-s\fR|\fB\-\-system\fR	Local System
 .br
 .SS
 General options
 .br
-\-b|\-\-db-file \fIFILENAME\fR	DB File Name
+\fB\-b\fR|\fB\-\-db-file\fR \fIFILENAME\fR	DB File Name
 .RS
 File Name of OpenICC Device Data Base JSON
 .RE
-\-X|\-\-export \fIjson|json+command|man|markdown\fR	Export formated text
+\fB\-X\fR|\fB\-\-export\fR \fIjson|json+command|man|markdown\fR	Export formated text
 .RS
 Get UI converted into text formats
 .RE
@@ -94,9 +94,9 @@ Get UI converted into text formats
 .br
 	 Get UI data for developers
 .br
-\-v|\-\-verbose	verbose
+\fB\-v\fR|\fB\-\-verbose\fR	verbose
 .br
-\-h|\-\-help	Help
+\fB\-h\fR|\fB\-\-help\fR	Help
 .br
 .SH AUTHOR
 Kai-Uwe Behrmann http://www.openicc.org

@@ -1160,11 +1160,11 @@ char *       oyjlOption_PrintArg     ( oyjlOption_s      * o,
   if(style & oyjlOPTIONSTYLE_ONELETTER && o->o && OYJL_IS_NOT_O("@") && OYJL_IS_NOT_O("#"))
   {
     if(style & oyjlOPTIONSTYLE_MAN)
-      oyjlStringAdd( &text, malloc, free, "\\-%s", o->o );
+      oyjlStringAdd( &text, malloc, free, "\\fB\\-%s\\fR", o->o );
     else if(style & oyjlOPTIONSTYLE_MARKDOWN)
       oyjlStringAdd( &text, malloc, free, "<strong>-%s</strong>", o->o );
     else
-      oyjlStringAdd( &text, malloc, free, "-%s", o->o );
+      oyjlStringAdd( &text, malloc, free, "-%s", oyjlTermColor( oyjlBOLD, o->o ) );
   }
   if(style & oyjlOPTIONSTYLE_ONELETTER && OYJL_IS_O("#"))
     oyjlStringAdd( &text, malloc, free, "|" );
@@ -1177,11 +1177,11 @@ char *       oyjlOption_PrintArg     ( oyjlOption_s      * o,
           OYJL_IS_NOT_O("#") )))
   {
     if(style & oyjlOPTIONSTYLE_MAN)
-      oyjlStringAdd( &text, malloc, free, "\\-\\-%s", o->option );
+      oyjlStringAdd( &text, malloc, free, "\\fB\\-\\-%s\\fR", o->option );
     else if(style & oyjlOPTIONSTYLE_MARKDOWN)
       oyjlStringAdd( &text, malloc, free, "<strong>--%s</strong>", o->option );
     else
-      oyjlStringAdd( &text, malloc, free, "--%s", o->option );
+      oyjlStringAdd( &text, malloc, free, "--%s", oyjlTermColor( oyjlBOLD, o->option ) );
   }
   if(o->value_name)
   {

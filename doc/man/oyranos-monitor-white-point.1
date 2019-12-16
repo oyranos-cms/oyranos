@@ -2,29 +2,29 @@
 .SH NAME
 oyranos-monitor-white-point v0.9.7 \- Night Manager
 .SH SYNOPSIS
-\fBoyranos-monitor-white-point\fR \-n \fI0|1|2|3|4|5|6|7\fR \-g \fIICC_PROFILE\fR [\-b \fIPERCENT\fR] [\-z] [\-v]
+\fBoyranos-monitor-white-point\fR \fB\-n\fR \fI0|1|2|3|4|5|6|7\fR \fB\-g\fR \fIICC_PROFILE\fR [\fB\-b\fR \fIPERCENT\fR] [\fB\-z\fR] [\fB\-v\fR]
 .br
-\fBoyranos-monitor-white-point\fR \-w \fI0|1|2|3|4|5|6|7\fR \-a \fIKELVIN\fR [\-z] [\-v]
+\fBoyranos-monitor-white-point\fR \fB\-w\fR \fI0|1|2|3|4|5|6|7\fR \fB\-a\fR \fIKELVIN\fR [\fB\-z\fR] [\fB\-v\fR]
 .br
-\fBoyranos-monitor-white-point\fR \-s \fI0|1|2|3|4|5|6|7\fR \-e \fIICC_PROFILE\fR [\-z] [\-v]
+\fBoyranos-monitor-white-point\fR \fB\-s\fR \fI0|1|2|3|4|5|6|7\fR \fB\-e\fR \fIICC_PROFILE\fR [\fB\-z\fR] [\fB\-v\fR]
 .br
-\fBoyranos-monitor-white-point\fR \-l | \-i \fIANGLE_IN_DEGREE\fR \-o \fIANGLE_IN_DEGREE\fR [\-t \fIANGLE_IN_DEGREE|0:rise/set|-6:civil|-12:nautical|-18:astronomical\fR] [\-z] [\-v]
+\fBoyranos-monitor-white-point\fR \fB\-l\fR | \fB\-i\fR \fIANGLE_IN_DEGREE\fR \fB\-o\fR \fIANGLE_IN_DEGREE\fR [\fB\-t\fR \fIANGLE_IN_DEGREE|0:rise/set|-6:civil|-12:nautical|-18:astronomical\fR] [\fB\-z\fR] [\fB\-v\fR]
 .br
-\fBoyranos-monitor-white-point\fR \-d \fI0|1|2\fR [\-v]
+\fBoyranos-monitor-white-point\fR \fB\-d\fR \fI0|1|2\fR [\fB\-v\fR]
 .br
-\fBoyranos-monitor-white-point\fR \-m | \-r | \-X \fIjson|json+command|man|markdown\fR | \-h [\-v]
+\fBoyranos-monitor-white-point\fR \fB\-m\fR | \fB\-r\fR | \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-h\fR [\fB\-v\fR]
 .SH DESCRIPTION
 The tool can set the actual white point or set it by local day and night time. A additional effect profile can be selected.
 .SH OPTIONS
 .SS
 Nightly appearance
-\fBoyranos-monitor-white-point\fR \-n \fI0|1|2|3|4|5|6|7\fR \-g \fIICC_PROFILE\fR [\-b \fIPERCENT\fR] [\-z] [\-v]
+\fBoyranos-monitor-white-point\fR \fB\-n\fR \fI0|1|2|3|4|5|6|7\fR \fB\-g\fR \fIICC_PROFILE\fR [\fB\-b\fR \fIPERCENT\fR] [\fB\-z\fR] [\fB\-v\fR]
 .br
 The Night white point mode shall allow to reduce influence of blue light during night time. A white point temperature of around 4000K and lower allows to get easier into sleep and is recommended along with warm room illumination in evening and night times.
 .br
 .sp
 .br
-\-n|\-\-night-white-point \fI0|1|2|3|4|5|6|7\fR	Set night time mode
+\fB\-n\fR|\fB\-\-night-white-point\fR \fI0|1|2|3|4|5|6|7\fR	Set night time mode
 .RS
 A white point temperature of around 4000K and lower allows to get easier into sleep. Enable by setting this option to Automatic (-n=1) and Temperature to 3000 (-a=3000).
 .RE
@@ -42,7 +42,7 @@ A white point temperature of around 4000K and lower allows to get easier into sl
 .br
 	\-n 6		# Illuminant D93
 .br
-\-g|\-\-night-effect \fIICC_PROFILE\fR	Set night time effect
+\fB\-g\fR|\fB\-\-night-effect\fR \fIICC_PROFILE\fR	Set night time effect
 .RS
 A ICC profile of class abstract. Ideally the effect profile works on 1D RGB curves only and is marked meta:EFFECT_linear=yes .
 .RE
@@ -52,15 +52,15 @@ A ICC profile of class abstract. Ideally the effect profile works on 1D RGB curv
 .br
 	\-g Effect 2		# Example Effect 2
 .br
-\-b|\-\-night-backlight \fIPERCENT\fR	Set Nightly Backlight (PERCENT:4 [≥0 ≤100])
+\fB\-b\fR|\fB\-\-night-backlight\fR \fIPERCENT\fR	Set Nightly Backlight (PERCENT:4 [≥0 ≤100])
 .RS
 The option needs xbacklight installed and supporting your device for dimming the monitor lamp.
 .RE
 .SS
 Actual mode
-\fBoyranos-monitor-white-point\fR \-w \fI0|1|2|3|4|5|6|7\fR \-a \fIKELVIN\fR [\-z] [\-v]
+\fBoyranos-monitor-white-point\fR \fB\-w\fR \fI0|1|2|3|4|5|6|7\fR \fB\-a\fR \fIKELVIN\fR [\fB\-z\fR] [\fB\-v\fR]
 .br
-\-w|\-\-white-point \fI0|1|2|3|4|5|6|7\fR	Set white point mode
+\fB\-w\fR|\fB\-\-white-point\fR \fI0|1|2|3|4|5|6|7\fR	Set white point mode
 .br
 	\-w 0		# No
 .br
@@ -76,13 +76,13 @@ Actual mode
 .br
 	\-w 6		# Illuminant D93
 .br
-\-a|\-\-automatic \fIKELVIN\fR	A value from 2700 till 8000 Kelvin is expected to show no artefacts (KELVIN:2800 [≥1100 ≤10100])
+\fB\-a\fR|\fB\-\-automatic\fR \fIKELVIN\fR	A value from 2700 till 8000 Kelvin is expected to show no artefacts (KELVIN:2800 [≥1100 ≤10100])
 .br
 .SS
 Sun light appearance
-\fBoyranos-monitor-white-point\fR \-s \fI0|1|2|3|4|5|6|7\fR \-e \fIICC_PROFILE\fR [\-z] [\-v]
+\fBoyranos-monitor-white-point\fR \fB\-s\fR \fI0|1|2|3|4|5|6|7\fR \fB\-e\fR \fIICC_PROFILE\fR [\fB\-z\fR] [\fB\-v\fR]
 .br
-\-s|\-\-sun-white-point \fI0|1|2|3|4|5|6|7\fR	Set day time mode
+\fB\-s\fR|\fB\-\-sun-white-point\fR \fI0|1|2|3|4|5|6|7\fR	Set day time mode
 .br
 	\-s 0		# No
 .br
@@ -98,7 +98,7 @@ Sun light appearance
 .br
 	\-s 6		# Illuminant D93
 .br
-\-e|\-\-sunlight-effect \fIICC_PROFILE\fR	Set day time effect
+\fB\-e\fR|\fB\-\-sunlight-effect\fR \fIICC_PROFILE\fR	Set day time effect
 .RS
 A ICC profile of class abstract. Ideally the effect profile works on 1D RGB curves only and is marked meta:EFFECT_linear=yes .
 .RE
@@ -110,21 +110,21 @@ A ICC profile of class abstract. Ideally the effect profile works on 1D RGB curv
 .br
 .SS
 Location and Twilight
-\fBoyranos-monitor-white-point\fR \-l | \-i \fIANGLE_IN_DEGREE\fR \-o \fIANGLE_IN_DEGREE\fR [\-t \fIANGLE_IN_DEGREE|0:rise/set|-6:civil|-12:nautical|-18:astronomical\fR] [\-z] [\-v]
+\fBoyranos-monitor-white-point\fR \fB\-l\fR | \fB\-i\fR \fIANGLE_IN_DEGREE\fR \fB\-o\fR \fIANGLE_IN_DEGREE\fR [\fB\-t\fR \fIANGLE_IN_DEGREE|0:rise/set|-6:civil|-12:nautical|-18:astronomical\fR] [\fB\-z\fR] [\fB\-v\fR]
 .br
-\-l|\-\-location	Detect location by IP adress
+\fB\-l\fR|\fB\-\-location\fR	Detect location by IP adress
 .br
-\-i|\-\-latitude \fIANGLE_IN_DEGREE\fR	Set Latitude (ANGLE_IN_DEGREE:0 [≥-90 ≤90])
+\fB\-i\fR|\fB\-\-latitude\fR \fIANGLE_IN_DEGREE\fR	Set Latitude (ANGLE_IN_DEGREE:0 [≥-90 ≤90])
 .br
-\-o|\-\-longitude \fIANGLE_IN_DEGREE\fR	Set Longitude (ANGLE_IN_DEGREE:0 [≥-180 ≤180])
+\fB\-o\fR|\fB\-\-longitude\fR \fIANGLE_IN_DEGREE\fR	Set Longitude (ANGLE_IN_DEGREE:0 [≥-180 ≤180])
 .br
-\-t|\-\-twilight \fIANGLE_IN_DEGREE|0:rise/set|-6:civil|-12:nautical|-18:astronomical\fR	Set Twilight angle (ANGLE_IN_DEGREE|0:rise/set|-6:civil|-12:nautical|-18:astronomical:0 [≥18 ≤-18])
+\fB\-t\fR|\fB\-\-twilight\fR \fIANGLE_IN_DEGREE|0:rise/set|-6:civil|-12:nautical|-18:astronomical\fR	Set Twilight angle (ANGLE_IN_DEGREE|0:rise/set|-6:civil|-12:nautical|-18:astronomical:0 [≥18 ≤-18])
 .br
 .SS
 Run sunset daemon
-\fBoyranos-monitor-white-point\fR \-d \fI0|1|2\fR [\-v]
+\fBoyranos-monitor-white-point\fR \fB\-d\fR \fI0|1|2\fR [\fB\-v\fR]
 .br
-\-d|\-\-daemon \fI0|1|2\fR	Control user daemon
+\fB\-d\fR|\fB\-\-daemon\fR \fI0|1|2\fR	Control user daemon
 .br
 	\-d 0		# Deactivate  
 .br
@@ -134,15 +134,15 @@ Run sunset daemon
 .br
 .SS
 General options
-\fBoyranos-monitor-white-point\fR \-m | \-r | \-X \fIjson|json+command|man|markdown\fR | \-h [\-v]
+\fBoyranos-monitor-white-point\fR \fB\-m\fR | \fB\-r\fR | \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-h\fR [\fB\-v\fR]
 .br
-\-h|\-\-help	Help
+\fB\-h\fR|\fB\-\-help\fR	Help
 .br
-\-m|\-\-modes	Show white point modes
+\fB\-m\fR|\fB\-\-modes\fR	Show white point modes
 .br
-\-r|\-\-sunrise	Show local time, used geographical location, twilight height angles, sun rise and sun set times
+\fB\-r\fR|\fB\-\-sunrise\fR	Show local time, used geographical location, twilight height angles, sun rise and sun set times
 .br
-\-X|\-\-export \fIjson|json+command|man|markdown\fR	Export formated text
+\fB\-X\fR|\fB\-\-export\fR \fIjson|json+command|man|markdown\fR	Export formated text
 .RS
 Get UI converted into text formats
 .RE
@@ -166,9 +166,9 @@ Get UI converted into text formats
 .br
 	 Get UI data for developers
 .br
-\-z|\-\-system-wide	System wide DB setting
+\fB\-z\fR|\fB\-\-system-wide\fR	System wide DB setting
 .br
-\-v|\-\-verbose	verbose
+\fB\-v\fR|\fB\-\-verbose\fR	verbose
 .br
 .SH ENVIRONMENT VARIABLES
 .TP

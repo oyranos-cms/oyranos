@@ -2,25 +2,25 @@
 .SH NAME
 oyranos-profile-graph v0.9.7 \- Oyranos Profile Graph
 .SH SYNOPSIS
-\fBoyranos-profile-graph\fR [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-o \fI-|FILE\fR] [\-f \fIFORMAT\fR] [\-c] [\-x] [\-d \fINUMBER\fR] [\-n] [\-2] [\-4] [\-r] [\-v] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
+\fBoyranos-profile-graph\fR [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-c\fR] [\fB\-x\fR] [\fB\-d\fR \fINUMBER\fR] [\fB\-n\fR] [\fB\-2\fR] [\fB\-4\fR] [\fB\-r\fR] [\fB\-v\fR] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
 .br
-\fBoyranos-profile-graph\fR \-S [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-R] [\-o \fI-|FILE\fR] [\-f \fIFORMAT\fR] [\-v]
+\fBoyranos-profile-graph\fR \fB\-S\fR [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-R\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-v\fR]
 .br
-\fBoyranos-profile-graph\fR \-O [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-R] [\-o \fI-|FILE\fR] [\-f \fIFORMAT\fR] [\-v]
+\fBoyranos-profile-graph\fR \fB\-O\fR [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-R\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-v\fR]
 .br
-\fBoyranos-profile-graph\fR \-k \fINUMBER\fR [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-R] [\-o \fI-|FILE\fR] [\-f \fIFORMAT\fR] [\-v]
+\fBoyranos-profile-graph\fR \fB\-k\fR \fINUMBER\fR [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-R\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-v\fR]
 .br
-\fBoyranos-profile-graph\fR \-i \fISTRING\fR [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-R] [\-o \fI-|FILE\fR] [\-f \fIFORMAT\fR] [\-v]
+\fBoyranos-profile-graph\fR \fB\-i\fR \fISTRING\fR [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-R\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-v\fR]
 .br
-\fBoyranos-profile-graph\fR \-s \fIFILE\fR \-p \fIFORMAT\fR \-z [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-R] [\-P \fISTRING\fR] [\-o \fI-|FILE\fR] [\-v]
+\fBoyranos-profile-graph\fR \fB\-s\fR \fIFILE\fR \fB\-p\fR \fIFORMAT\fR \fB\-z\fR [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-R\fR] [\fB\-P\fR \fISTRING\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-v\fR]
 .br
-\fBoyranos-profile-graph\fR \-X \fIjson|json+command|man|markdown\fR | \-h [\-v]
+\fBoyranos-profile-graph\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-h\fR [\fB\-v\fR]
 .SH DESCRIPTION
 The  oyranos-profile-graph programm converts ICC profiles or embedded ICC profiles from images to a graph image. By default the program shows the saturation line of the specified profiles and writes to stdout.
 .SH OPTIONS
 .SS
 2D Graph from profiles
-\fBoyranos-profile-graph\fR [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-o \fI-|FILE\fR] [\-f \fIFORMAT\fR] [\-c] [\-x] [\-d \fINUMBER\fR] [\-n] [\-2] [\-4] [\-r] [\-v] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
+\fBoyranos-profile-graph\fR [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-c\fR] [\fB\-x\fR] [\fB\-d\fR \fINUMBER\fR] [\fB\-n\fR] [\fB\-2\fR] [\fB\-4\fR] [\fB\-r\fR] [\fB\-v\fR] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
 .br
 Create a 2D Graph containing the saturation line from a ICC Profile.
 .br
@@ -28,43 +28,43 @@ Create a 2D Graph containing the saturation line from a ICC Profile.
 .br
 \fIl|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE\fR	ICC Profile
 .br
-\-d|\-\-change-thickness \fINUMBER\fR	Specify increase of the thickness of the graph lines (NUMBER:0.7 [≥-1000 ≤1000])
+\fB\-d\fR|\fB\-\-change-thickness\fR \fINUMBER\fR	Specify increase of the thickness of the graph lines (NUMBER:0.7 [≥-1000 ≤1000])
 .br
-\-x|\-\-xyy	Use CIE*xyY *x*y plane for saturation line projection
+\fB\-x\fR|\fB\-\-xyy\fR	Use CIE*xyY *x*y plane for saturation line projection
 .br
-\-c|\-\-no-blackbody	Omit white line of lambert light emitters
+\fB\-c\fR|\fB\-\-no-blackbody\fR	Omit white line of lambert light emitters
 .br
-\-n|\-\-no-spectral-line	Omit the spectral line
+\fB\-n\fR|\fB\-\-no-spectral-line\fR	Omit the spectral line
 .br
-\-2|\-\-icc-version-2	Select ICC v2 Profiles
+\fB\-2\fR|\fB\-\-icc-version-2\fR	Select ICC v2 Profiles
 .br
-\-4|\-\-icc-version-4	Select ICC v4 Profiles
+\fB\-4\fR|\fB\-\-icc-version-4\fR	Select ICC v4 Profiles
 .br
-\-r|\-\-no-repair	No Profile repair of ICC profile ID
+\fB\-r\fR|\fB\-\-no-repair\fR	No Profile repair of ICC profile ID
 .br
 .SS
 Standard Observer 1931 2° Graph
-\fBoyranos-profile-graph\fR \-S [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-R] [\-o \fI-|FILE\fR] [\-f \fIFORMAT\fR] [\-v]
+\fBoyranos-profile-graph\fR \fB\-S\fR [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-R\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-v\fR]
 .br
-\-S|\-\-standard-observer	CIE Standard Observer 1931 2°
+\fB\-S\fR|\fB\-\-standard-observer\fR	CIE Standard Observer 1931 2°
 .br
 .SS
 1964 10° Observer Graph
-\fBoyranos-profile-graph\fR \-O [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-R] [\-o \fI-|FILE\fR] [\-f \fIFORMAT\fR] [\-v]
+\fBoyranos-profile-graph\fR \fB\-O\fR [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-R\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-v\fR]
 .br
-\-O|\-\-observer-64	CIE Observer 1964 10°
+\fB\-O\fR|\fB\-\-observer-64\fR	CIE Observer 1964 10°
 .br
 .SS
 Blackbody Radiator Spectrum Graph
-\fBoyranos-profile-graph\fR \-k \fINUMBER\fR [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-R] [\-o \fI-|FILE\fR] [\-f \fIFORMAT\fR] [\-v]
+\fBoyranos-profile-graph\fR \fB\-k\fR \fINUMBER\fR [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-R\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-v\fR]
 .br
-\-k|\-\-kelvin \fINUMBER\fR	Blackbody Radiator (NUMBER:0 [≥0 ≤25000])
+\fB\-k\fR|\fB\-\-kelvin\fR \fINUMBER\fR	Blackbody Radiator (NUMBER:0 [≥0 ≤25000])
 .br
 .SS
 Illuminant Spectrum Graph
-\fBoyranos-profile-graph\fR \-i \fISTRING\fR [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-R] [\-o \fI-|FILE\fR] [\-f \fIFORMAT\fR] [\-v]
+\fBoyranos-profile-graph\fR \fB\-i\fR \fISTRING\fR [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-R\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-v\fR]
 .br
-\-i|\-\-illuminant \fISTRING\fR	Illuminant Spectrum
+\fB\-i\fR|\fB\-\-illuminant\fR \fISTRING\fR	Illuminant Spectrum
 .br
 	\-i A		# Illuminant A 
 .br
@@ -96,11 +96,11 @@ Illuminant Spectrum Graph
 .br
 .SS
 Spectral Input Graph
-\fBoyranos-profile-graph\fR \-s \fIFILE\fR \-p \fIFORMAT\fR \-z [\-t \fINUMBER\fR] [\-b] [\-g] [\-w \fINUMBER\fR] [\-R] [\-P \fISTRING\fR] [\-o \fI-|FILE\fR] [\-v]
+\fBoyranos-profile-graph\fR \fB\-s\fR \fIFILE\fR \fB\-p\fR \fIFORMAT\fR \fB\-z\fR [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-R\fR] [\fB\-P\fR \fISTRING\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-v\fR]
 .br
-\-s|\-\-spectral \fIFILE\fR	Spectral Input
+\fB\-s\fR|\fB\-\-spectral\fR \fIFILE\fR	Spectral Input
 .br
-\-p|\-\-spectral-format \fIFORMAT\fR	Specify spectral output file format
+\fB\-p\fR|\fB\-\-spectral-format\fR \fIFORMAT\fR	Specify spectral output file format
 .br
 	\-p png		# PNG 
 .br
@@ -130,27 +130,27 @@ Spectral Input Graph
 .br
 	 Spectral PAM Image
 .br
-\-P|\-\-pattern \fISTRING\fR	Filter of Color Names
+\fB\-P\fR|\fB\-\-pattern\fR \fISTRING\fR	Filter of Color Names
 .br
-\-z|\-\-scale	Scale the height of the spectrum graph
+\fB\-z\fR|\fB\-\-scale\fR	Scale the height of the spectrum graph
 .br
 .SS
 General options
-\fBoyranos-profile-graph\fR \-X \fIjson|json+command|man|markdown\fR | \-h [\-v]
+\fBoyranos-profile-graph\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-h\fR [\fB\-v\fR]
 .br
-\-t|\-\-thickness \fINUMBER\fR	Specify the thickness of the graph lines (NUMBER:1 [≥0 ≤10])
+\fB\-t\fR|\fB\-\-thickness\fR \fINUMBER\fR	Specify the thickness of the graph lines (NUMBER:1 [≥0 ≤10])
 .br
-\-b|\-\-no-border	Omit border in graph
+\fB\-b\fR|\fB\-\-no-border\fR	Omit border in graph
 .br
-\-g|\-\-no-color	Draw Gray
+\fB\-g\fR|\fB\-\-no-color\fR	Draw Gray
 .br
-\-w|\-\-width \fINUMBER\fR	Specify output image width in pixel (NUMBER:128 [≥64 ≤4096])
+\fB\-w\fR|\fB\-\-width\fR \fINUMBER\fR	Specify output image width in pixel (NUMBER:128 [≥64 ≤4096])
 .br
-\-R|\-\-raster	Draw Raster
+\fB\-R\fR|\fB\-\-raster\fR	Draw Raster
 .br
-\-o|\-\-output \fI-|FILE\fR	Specify output file name, default is stdout
+\fB\-o\fR|\fB\-\-output\fR \fI-|FILE\fR	Specify output file name, default is stdout
 .br
-\-f|\-\-format \fIFORMAT\fR	Specify output file format png or svg, default is png
+\fB\-f\fR|\fB\-\-format\fR \fIFORMAT\fR	Specify output file format png or svg, default is png
 .br
 	\-f png		# PNG 
 .br
@@ -160,9 +160,9 @@ General options
 .br
 	 SVG Vector
 .br
-\-h|\-\-help	Help
+\fB\-h\fR|\fB\-\-help\fR	Help
 .br
-\-X|\-\-export \fIjson|json+command|man|markdown\fR	Export formated text
+\fB\-X\fR|\fB\-\-export\fR \fIjson|json+command|man|markdown\fR	Export formated text
 .RS
 Get UI converted into text formats
 .RE
@@ -186,7 +186,7 @@ Get UI converted into text formats
 .br
 	 Get UI data for developers
 .br
-\-v|\-\-verbose	verbose
+\fB\-v\fR|\fB\-\-verbose\fR	verbose
 .br
 .SH ENVIRONMENT VARIABLES
 .TP

@@ -2,97 +2,97 @@
 .SH NAME
 oyranos-profiles v0.9.7 \- Oyranos Profile
 .SH ÜBERSICHT
-\fBoyranos-profiles\fR \-l [\-f] [\-e] [\-a] [\-c] [\-d] [\-k] [\-n] [\-o] [\-i] [\-2] [\-4] [\-P] [\-T \fISCHLÜSSEL;WERT\fR] [\-v]
+\fBoyranos-profiles\fR \fB\-l\fR [\fB\-f\fR] [\fB\-e\fR] [\fB\-a\fR] [\fB\-c\fR] [\fB\-d\fR] [\fB\-k\fR] [\fB\-n\fR] [\fB\-o\fR] [\fB\-i\fR] [\fB\-2\fR] [\fB\-4\fR] [\fB\-P\fR] [\fB\-T\fR \fISCHLÜSSEL;WERT\fR] [\fB\-v\fR]
 .br
-\fBoyranos-profiles\fR \-p [\-u|\-s|\-y|\-m] [\-v]
+\fBoyranos-profiles\fR \fB\-p\fR [\fB\-u\fR|\fB\-s\fR|\fB\-y\fR|\fB\-m\fR] [\fB\-v\fR]
 .br
-\fBoyranos-profiles\fR \-I \fIICC_PROFIL\fR | \-t \fITAXI_ID\fR [\-u|\-s|\-y|\-m] [\-g] [\-v]
+\fBoyranos-profiles\fR \fB\-I\fR \fIICC_PROFIL\fR | \fB\-t\fR \fITAXI_ID\fR [\fB\-u\fR|\fB\-s\fR|\fB\-y\fR|\fB\-m\fR] [\fB\-g\fR] [\fB\-v\fR]
 .br
-\fBoyranos-profiles\fR \-h \-X \fIjson|json+command|man|markdown\fR
+\fBoyranos-profiles\fR \fB\-h\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR
 .SH BESCHREIBUNG
 Das Werkzeug kann installierte Profile und Suchpfade anzeigen. Es kann ein Profil in einen Suchpfad installieren.
 .SH OPTIONEN
 .SS
 Liste der verfügbaren ICC Farbprofile
-\fBoyranos-profiles\fR \-l [\-f] [\-e] [\-a] [\-c] [\-d] [\-k] [\-n] [\-o] [\-i] [\-2] [\-4] [\-P] [\-T \fISCHLÜSSEL;WERT\fR] [\-v]
+\fBoyranos-profiles\fR \fB\-l\fR [\fB\-f\fR] [\fB\-e\fR] [\fB\-a\fR] [\fB\-c\fR] [\fB\-d\fR] [\fB\-k\fR] [\fB\-n\fR] [\fB\-o\fR] [\fB\-i\fR] [\fB\-2\fR] [\fB\-4\fR] [\fB\-P\fR] [\fB\-T\fR \fISCHLÜSSEL;WERT\fR] [\fB\-v\fR]
 .br
-\-l|\-\-list-profiles	Liste Profile
+\fB\-l\fR|\fB\-\-list-profiles\fR	Liste Profile
 .br
-\-f|\-\-full-names	Profildateiname
+\fB\-f\fR|\fB\-\-full-names\fR	Profildateiname
 .RS
 Zeige kompletten Pfad- und Dateinamen
 .RE
-\-e|\-\-internal-names	Interne Namen
+\fB\-e\fR|\fB\-\-internal-names\fR	Interne Namen
 .RS
 Der Text kommt vom 'desc' Profilelement.
 .RE
-\-a|\-\-abstract	Wähle abstrakte Profile
+\fB\-a\fR|\fB\-\-abstract\fR	Wähle abstrakte Profile
 .br
-\-c|\-\-color-space	Wähle Farbraumprofile
+\fB\-c\fR|\fB\-\-color-space\fR	Wähle Farbraumprofile
 .br
-\-d|\-\-display	Wähle Monitorprofile
+\fB\-d\fR|\fB\-\-display\fR	Wähle Monitorprofile
 .br
-\-k|\-\-device-link	Wähle Verknüpfungsprofil
+\fB\-k\fR|\fB\-\-device-link\fR	Wähle Verknüpfungsprofil
 .br
-\-n|\-\-named-color	Wähle Einzelfarbprofile
+\fB\-n\fR|\fB\-\-named-color\fR	Wähle Einzelfarbprofile
 .br
-\-o|\-\-output	Wähle Ausgabeprofil
+\fB\-o\fR|\fB\-\-output\fR	Wähle Ausgabeprofil
 .br
-\-i|\-\-input	Wähle Eingangsprofile
+\fB\-i\fR|\fB\-\-input\fR	Wähle Eingangsprofile
 .br
-\-2|\-\-icc-version-2	Wähle ICC V2 Profile
+\fB\-2\fR|\fB\-\-icc-version-2\fR	Wähle ICC V2 Profile
 .br
-\-4|\-\-icc-version-4	Wähle ICC V4 Profile
+\fB\-4\fR|\fB\-\-icc-version-4\fR	Wähle ICC V4 Profile
 .br
-\-P|\-\-path	Zeige Profile, welche ein Wort in ihrem Pfadnamen enthalten.
+\fB\-P\fR|\fB\-\-path\fR	Zeige Profile, welche ein Wort in ihrem Pfadnamen enthalten.
 .RS
 PFAD_WORT_TEIL
 .RE
-\-T|\-\-meta \fISCHLÜSSEL;WERT\fR	Suche nach Schlüssel/Werte Paar in Meta Element
+\fB\-T\fR|\fB\-\-meta\fR \fISCHLÜSSEL;WERT\fR	Suche nach Schlüssel/Werte Paar in Meta Element
 .RS
 Zeige Profile welche ein bestimmtes Schlüssel/Werte Paar im meta Tag enthalten. WERT kann '*' enthalten für das Filtern von Wortteilen.
 .RE
-\-D|\-\-duplicates	Zeige identische mehrfach installierte Profile an
+\fB\-D\fR|\fB\-\-duplicates\fR	Zeige identische mehrfach installierte Profile an
 .br
 .SS
 Zeige Suchpfade
-\fBoyranos-profiles\fR \-p [\-u|\-s|\-y|\-m] [\-v]
+\fBoyranos-profiles\fR \fB\-p\fR [\fB\-u\fR|\fB\-s\fR|\fB\-y\fR|\fB\-m\fR] [\fB\-v\fR]
 .br
-\-p|\-\-list-paths	Liste der ICC Farbprofilpfade
+\fB\-p\fR|\fB\-\-list-paths\fR	Liste der ICC Farbprofilpfade
 .br
-\-u|\-\-user	Benutzerpfad
+\fB\-u\fR|\fB\-\-user\fR	Benutzerpfad
 .br
-\-s|\-\-system	Systempfad
+\fB\-s\fR|\fB\-\-system\fR	Systempfad
 .br
-\-y|\-\-oyranos	Oyranospfad
+\fB\-y\fR|\fB\-\-oyranos\fR	Oyranospfad
 .br
-\-m|\-\-machine	Maschinenpfad
+\fB\-m\fR|\fB\-\-machine\fR	Maschinenpfad
 .br
 .SS
 Installiere Profil
-\fBoyranos-profiles\fR \-I \fIICC_PROFIL\fR | \-t \fITAXI_ID\fR [\-u|\-s|\-y|\-m] [\-g] [\-v]
+\fBoyranos-profiles\fR \fB\-I\fR \fIICC_PROFIL\fR | \fB\-t\fR \fITAXI_ID\fR [\fB\-u\fR|\fB\-s\fR|\fB\-y\fR|\fB\-m\fR] [\fB\-g\fR] [\fB\-v\fR]
 .br
-\-I|\-\-install \fIICC_PROFIL\fR	Installiere Profil
+\fB\-I\fR|\fB\-\-install\fR \fIICC_PROFIL\fR	Installiere Profil
 .br
-\-t|\-\-taxi \fITAXI_ID\fR	ICC Taxi Profile DB
+\fB\-t\fR|\fB\-\-taxi\fR \fITAXI_ID\fR	ICC Taxi Profile DB
 .br
-\-u|\-\-user	Benutzerpfad
+\fB\-u\fR|\fB\-\-user\fR	Benutzerpfad
 .br
-\-s|\-\-system	Systempfad
+\fB\-s\fR|\fB\-\-system\fR	Systempfad
 .br
-\-y|\-\-oyranos	Oyranospfad
+\fB\-y\fR|\fB\-\-oyranos\fR	Oyranospfad
 .br
-\-m|\-\-machine	Maschinenpfad
+\fB\-m\fR|\fB\-\-machine\fR	Maschinenpfad
 .br
-\-g|\-\-gui	Zeige Grafische Benutzerschnittstelle
+\fB\-g\fR|\fB\-\-gui\fR	Zeige Grafische Benutzerschnittstelle
 .br
 .SS
 Allgemeine Optionen
-\fBoyranos-profiles\fR \-h \-X \fIjson|json+command|man|markdown\fR
+\fBoyranos-profiles\fR \fB\-h\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR
 .br
-\-h|\-\-help	Hilfe
+\fB\-h\fR|\fB\-\-help\fR	Hilfe
 .br
-\-X|\-\-export \fIjson|json+command|man|markdown\fR	Exportiere formatierten Text
+\fB\-X\fR|\fB\-\-export\fR \fIjson|json+command|man|markdown\fR	Exportiere formatierten Text
 .RS
 Hole Benutzerschnittstelle als Text
 .RE
@@ -116,9 +116,9 @@ Hole Benutzerschnittstelle als Text
 .br
 	 Erhalte Daten für Entwickler
 .br
-\-r|\-\-no-repair	Lasse Reparatur der Profil ID weg
+\fB\-r\fR|\fB\-\-no-repair\fR	Lasse Reparatur der Profil ID weg
 .br
-\-v|\-\-verbose	plaudernd
+\fB\-v\fR|\fB\-\-verbose\fR	plaudernd
 .br
 .SH UMGEBUNGSVARIABLEN
 .TP

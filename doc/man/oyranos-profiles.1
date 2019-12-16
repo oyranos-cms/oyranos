@@ -2,97 +2,97 @@
 .SH NAME
 oyranos-profiles v0.9.7 \- Oyranos Profiles
 .SH SYNOPSIS
-\fBoyranos-profiles\fR \-l [\-f] [\-e] [\-a] [\-c] [\-d] [\-k] [\-n] [\-o] [\-i] [\-2] [\-4] [\-P] [\-T \fIKEY;VALUE\fR] [\-v]
+\fBoyranos-profiles\fR \fB\-l\fR [\fB\-f\fR] [\fB\-e\fR] [\fB\-a\fR] [\fB\-c\fR] [\fB\-d\fR] [\fB\-k\fR] [\fB\-n\fR] [\fB\-o\fR] [\fB\-i\fR] [\fB\-2\fR] [\fB\-4\fR] [\fB\-P\fR] [\fB\-T\fR \fIKEY;VALUE\fR] [\fB\-v\fR]
 .br
-\fBoyranos-profiles\fR \-p [\-u|\-s|\-y|\-m] [\-v]
+\fBoyranos-profiles\fR \fB\-p\fR [\fB\-u\fR|\fB\-s\fR|\fB\-y\fR|\fB\-m\fR] [\fB\-v\fR]
 .br
-\fBoyranos-profiles\fR \-I \fIICC_PROFILE\fR | \-t \fITAXI_ID\fR [\-u|\-s|\-y|\-m] [\-g] [\-v]
+\fBoyranos-profiles\fR \fB\-I\fR \fIICC_PROFILE\fR | \fB\-t\fR \fITAXI_ID\fR [\fB\-u\fR|\fB\-s\fR|\fB\-y\fR|\fB\-m\fR] [\fB\-g\fR] [\fB\-v\fR]
 .br
-\fBoyranos-profiles\fR \-h \-X \fIjson|json+command|man|markdown\fR
+\fBoyranos-profiles\fR \fB\-h\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR
 .SH DESCRIPTION
 The tool can list installed profiles, search paths and can help install a ICC color profile in a search path.
 .SH OPTIONS
 .SS
 List of available ICC color profiles
-\fBoyranos-profiles\fR \-l [\-f] [\-e] [\-a] [\-c] [\-d] [\-k] [\-n] [\-o] [\-i] [\-2] [\-4] [\-P] [\-T \fIKEY;VALUE\fR] [\-v]
+\fBoyranos-profiles\fR \fB\-l\fR [\fB\-f\fR] [\fB\-e\fR] [\fB\-a\fR] [\fB\-c\fR] [\fB\-d\fR] [\fB\-k\fR] [\fB\-n\fR] [\fB\-o\fR] [\fB\-i\fR] [\fB\-2\fR] [\fB\-4\fR] [\fB\-P\fR] [\fB\-T\fR \fIKEY;VALUE\fR] [\fB\-v\fR]
 .br
-\-l|\-\-list-profiles	List Profiles
+\fB\-l\fR|\fB\-\-list-profiles\fR	List Profiles
 .br
-\-f|\-\-full-names	List profile full names
+\fB\-f\fR|\fB\-\-full-names\fR	List profile full names
 .RS
 Show path name and file name.
 .RE
-\-e|\-\-internal-names	List profile internal names
+\fB\-e\fR|\fB\-\-internal-names\fR	List profile internal names
 .RS
 The text string comes from the 'desc' tag.
 .RE
-\-a|\-\-abstract	Select Abstract profiles
+\fB\-a\fR|\fB\-\-abstract\fR	Select Abstract profiles
 .br
-\-c|\-\-color-space	Select Color Space profiles
+\fB\-c\fR|\fB\-\-color-space\fR	Select Color Space profiles
 .br
-\-d|\-\-display	Select Monitor profiles
+\fB\-d\fR|\fB\-\-display\fR	Select Monitor profiles
 .br
-\-k|\-\-device-link	Select Device Link profiles
+\fB\-k\fR|\fB\-\-device-link\fR	Select Device Link profiles
 .br
-\-n|\-\-named-color	Select Named Color profiles
+\fB\-n\fR|\fB\-\-named-color\fR	Select Named Color profiles
 .br
-\-o|\-\-output	Select Output profiles
+\fB\-o\fR|\fB\-\-output\fR	Select Output profiles
 .br
-\-i|\-\-input	Select Input profiles
+\fB\-i\fR|\fB\-\-input\fR	Select Input profiles
 .br
-\-2|\-\-icc-version-2	Select ICC v2 Profiles
+\fB\-2\fR|\fB\-\-icc-version-2\fR	Select ICC v2 Profiles
 .br
-\-4|\-\-icc-version-4	Select ICC v4 Profiles
+\fB\-4\fR|\fB\-\-icc-version-4\fR	Select ICC v4 Profiles
 .br
-\-P|\-\-path	Show profiles containing a string as part of their full name
+\fB\-P\fR|\fB\-\-path\fR	Show profiles containing a string as part of their full name
 .RS
 PATH_SUB_STRING
 .RE
-\-T|\-\-meta \fIKEY;VALUE\fR	Filter for meta tag key/value pair
+\fB\-T\fR|\fB\-\-meta\fR \fIKEY;VALUE\fR	Filter for meta tag key/value pair
 .RS
 Show profiles containing a certain key/value pair of their meta tag. VALUE can contain '*' to allow for substring matching.
 .RE
-\-D|\-\-duplicates	Show identical multiple installed profiles
+\fB\-D\fR|\fB\-\-duplicates\fR	Show identical multiple installed profiles
 .br
 .SS
 List search paths
-\fBoyranos-profiles\fR \-p [\-u|\-s|\-y|\-m] [\-v]
+\fBoyranos-profiles\fR \fB\-p\fR [\fB\-u\fR|\fB\-s\fR|\fB\-y\fR|\fB\-m\fR] [\fB\-v\fR]
 .br
-\-p|\-\-list-paths	List ICC Profile Paths
+\fB\-p\fR|\fB\-\-list-paths\fR	List ICC Profile Paths
 .br
-\-u|\-\-user	User path
+\fB\-u\fR|\fB\-\-user\fR	User path
 .br
-\-s|\-\-system	System path
+\fB\-s\fR|\fB\-\-system\fR	System path
 .br
-\-y|\-\-oyranos	Oyranos path
+\fB\-y\fR|\fB\-\-oyranos\fR	Oyranos path
 .br
-\-m|\-\-machine	Machine path
+\fB\-m\fR|\fB\-\-machine\fR	Machine path
 .br
 .SS
 Install Profile
-\fBoyranos-profiles\fR \-I \fIICC_PROFILE\fR | \-t \fITAXI_ID\fR [\-u|\-s|\-y|\-m] [\-g] [\-v]
+\fBoyranos-profiles\fR \fB\-I\fR \fIICC_PROFILE\fR | \fB\-t\fR \fITAXI_ID\fR [\fB\-u\fR|\fB\-s\fR|\fB\-y\fR|\fB\-m\fR] [\fB\-g\fR] [\fB\-v\fR]
 .br
-\-I|\-\-install \fIICC_PROFILE\fR	Install Profile
+\fB\-I\fR|\fB\-\-install\fR \fIICC_PROFILE\fR	Install Profile
 .br
-\-t|\-\-taxi \fITAXI_ID\fR	ICC Taxi Profile DB
+\fB\-t\fR|\fB\-\-taxi\fR \fITAXI_ID\fR	ICC Taxi Profile DB
 .br
-\-u|\-\-user	User path
+\fB\-u\fR|\fB\-\-user\fR	User path
 .br
-\-s|\-\-system	System path
+\fB\-s\fR|\fB\-\-system\fR	System path
 .br
-\-y|\-\-oyranos	Oyranos path
+\fB\-y\fR|\fB\-\-oyranos\fR	Oyranos path
 .br
-\-m|\-\-machine	Machine path
+\fB\-m\fR|\fB\-\-machine\fR	Machine path
 .br
-\-g|\-\-gui	Use Graphical User Interface
+\fB\-g\fR|\fB\-\-gui\fR	Use Graphical User Interface
 .br
 .SS
 General options
-\fBoyranos-profiles\fR \-h \-X \fIjson|json+command|man|markdown\fR
+\fBoyranos-profiles\fR \fB\-h\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR
 .br
-\-h|\-\-help	Help
+\fB\-h\fR|\fB\-\-help\fR	Help
 .br
-\-X|\-\-export \fIjson|json+command|man|markdown\fR	Export formated text
+\fB\-X\fR|\fB\-\-export\fR \fIjson|json+command|man|markdown\fR	Export formated text
 .RS
 Get UI converted into text formats
 .RE
@@ -116,9 +116,9 @@ Get UI converted into text formats
 .br
 	 Get UI data for developers
 .br
-\-r|\-\-no-repair	No Profile repair of ICC profile ID
+\fB\-r\fR|\fB\-\-no-repair\fR	No Profile repair of ICC profile ID
 .br
-\-v|\-\-verbose	verbose
+\fB\-v\fR|\fB\-\-verbose\fR	verbose
 .br
 .SH ENVIRONMENT VARIABLES
 .TP
