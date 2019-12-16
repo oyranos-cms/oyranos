@@ -1476,6 +1476,7 @@ int  oyjlWriteFile                   ( const char        * filename,
 
   return written_n;
 }
+/** @} *//* oyjl_core */
 
 #if !defined(COMPILE_STATIC) || !defined(HAVE_QT)
 #warning "compile dynamic section"
@@ -1571,6 +1572,35 @@ int oyjlArgsQmlStart2                ( int                 argc,
   return result;
 }
 
+/** \addtogroup oyjl_args
+ *  @{ *//* oyjl_args */
+/** @brief Load GUI for graphical rendering options
+ *
+ *  The function version in libOyjlCore dynamicaly dlopen() s libOyjlArgsQml.
+ *  The function version in liboyjl-core-static needs as well
+ *  liboyjl-args-qml-static to work. You should check wich library is linked
+ *  and possibly guard the according code in case no QML library is available:
+ *  @code
+    #if !defined(NO_OYJL_ARGS_QML_START)
+    if(gui)
+      // code with oyjlArgsQmlStart() goes here
+    #endif
+    @endcode
+ *
+ *  @param[in]     argc                number of arguments from main()
+ *  @param[in]     argv                arguments from main()
+ *  @param[in]     json                JSON UI text; optional, can be generated from ui
+ *  @param[in]     debug               set debug level
+ *  @param[in,out] ui                  user interface structure
+ *  @param[in,out] callback            the function resembling main() to call into;
+ *                                     It will be used to parse args, show help texts,
+ *                                     all options handling and data processing
+ *  @return                            return value for main()
+ *
+ *  @version Oyjl: 1.0.0
+ *  @date    2019/12/14
+ *  @since   2019/12/14 (Oyjl: 1.0.0)
+ */
 int oyjlArgsQmlStart                 ( int                 argc,
                                        const char       ** argv,
                                        const char        * json,
@@ -1586,14 +1616,34 @@ int oyjlArgsQmlStart                 ( int                 argc,
   fflush(stderr);
   return result;
 }
+/** @} *//* oyjl_args */
 #ifdef __cplusplus
 } /* extern "C" */
 #endif
 #endif /* !COMPILE_STATIC || !HAVE_QT */
 
-/** @} *//* oyjl_core */
 
 /** \addtogroup oyjl
+    @section intro Introduction
+  
+    Oyjl API provides a platformindependent C interface for JSON I/O, conversion to and from
+    XML + YAML, string helpers, file reading, testing and argument handling.
+
+    The API's are quite independent. 
+
+    @section api API Documentation
+    The API of the @ref oyjl is declared in the oyjl.h header file.
+    - @ref oyjl_tree - JSON modeled C data structure with data I/O API: *libOyjlCore*, all parsers (JSON,YAML,XML) reside in *libOyjl*
+    - @ref oyjl_core - Core API: *libOyjlCore*
+    - @ref oyjl_test - Test API: header only implementation in *oyjl_test.h* and *oyjl_test_main.h*
+    - @ref oyjl_args - Argument Handling API: link to *libOyjlCore* or with slightly reduced functionality in the stand alone *oyjl_args.c* version
+
+    @section tools Tools Documentation
+    Oyjl comes with a few tools, which use the Oyjl API's.
+    - oyjl - JSON manipulation
+    - oyjl-translate - localisation helper tool
+    - @ref oyjlargs - code generation tool
+    - oyjl-args-qml - interactive option renderer written in Qt's QML
  *  @{ *//* oyjl */
 
 static char * oyjl_nls_path_ = NULL;
