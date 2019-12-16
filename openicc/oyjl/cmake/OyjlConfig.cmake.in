@@ -93,55 +93,61 @@ if (OYJL_FOUND)
   SET( OYJL_LIBRARY_DIRS @CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_LIBDIR@ )
 
   MACRO(OYJL_DOCUMENT_TOOL _tool _tool_src _langs _doc_path)
-    ADD_CUSTOM_COMMAND( OUTPUT ${_doc_path}/man/${_tool}.1
-        COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH} LANG=en DISPLAY="man_page" ${_tool} -X man > ${_doc_path}/man/${_tool}.1
-        DEPENDS ${_tool} ${_tool_src}
-        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-    )
-    ADD_CUSTOM_TARGET( ${_tool}.1 ALL
-        DEPENDS ${_doc_path}/man/${_tool}.1
-        COMMENT "Extract manual page to ${_tool}.1"
-    )
-    STRING(REGEX REPLACE "-" "" _tool_md ${_tool})
-    MESSAGE( "${_tool_md}: ${_doc_path}/md/${_tool_md}.md" )
-    ADD_CUSTOM_COMMAND( OUTPUT ${_doc_path}/md/${_tool_md}.md
-        COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH} LANG=en DISPLAY="man_page" ${_tool} -X markdown > ${_doc_path}/md/${_tool_md}.md
-        DEPENDS ${_tool} ${_tool_src}
-        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-    )
-    ADD_CUSTOM_TARGET( ${_tool_md}.md ALL
-        DEPENDS ${_doc_path}/md/${_tool_md}.md
-        COMMENT "Extract markdown formated manual page to ${_tool_md}.md"
-    )
-    IF( GETTEXT_FOUND )
-    # add translations
-      FOREACH( _lang ${_langs} )
-        SET( _lang "de_DE.UTF8" )
-        STRING(SUBSTRING ${_lang} 0 2 short_lang)
-        MESSAGE( "add \"${_tool}\": \"" ${short_lang} "\" from ${_lang} / \"${_langs}\"" )
-        ADD_CUSTOM_COMMAND( OUTPUT ${_doc_path}/man/${short_lang}/${_tool}.1
-          COMMAND mkdir -p "${_doc_path}/man/${short_lang}/"
-          COMMAND cp -a ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LOCALEDIR}/${short_lang}/LC_MESSAGES/openicc.mo ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LOCALEDIR}/${short_lang}/LC_MESSAGES/oyjl.mo ${CMAKE_BINARY_DIR}/locale/${short_lang}/LC_MESSAGES/ || echo nothing to copy
-          COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH} LOCPATH=${CMAKE_BINARY_DIR}/locale LANG=${_lang} DISPLAY="man_page" ${_tool} -X man > ${_doc_path}/man/${short_lang}/${_tool}.1
+    IF( CMAKE_CROSSCOMPILING )
+      MESSAGE( "-- Skipping ${_tool} docu: cross compiling; Hint: build first for local march to generate docu + i18n" )
+    ELSE( CMAKE_CROSSCOMPILING )
+      ADD_CUSTOM_COMMAND( OUTPUT ${_doc_path}/man/${_tool}.1
+          COMMAND mkdir -p "${_doc_path}/man/"
+          COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH} LANG=en DISPLAY="man_page" ${_tool} -X man > ${_doc_path}/man/${_tool}.1
           DEPENDS ${_tool} ${_tool_src}
           WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-        )
-        ADD_CUSTOM_TARGET( ${_tool}-${short_lang}.1 ALL
-          DEPENDS ${_doc_path}/man/${short_lang}/${_tool}.1
-          COMMENT "Extract ${_lang} manual page to ${_doc_path}/man/${short_lang}/${_tool}.1"
-        )
+      )
+      ADD_CUSTOM_TARGET( ${_tool}.1 ALL
+          DEPENDS ${_doc_path}/man/${_tool}.1
+          COMMENT "Extract manual page to ${_tool}.1"
+      )
+      STRING(REGEX REPLACE "-" "" _tool_md ${_tool})
+      MESSAGE( "${_tool_md}: ${_doc_path}/md/${_tool_md}.md" )
+      ADD_CUSTOM_COMMAND( OUTPUT ${_doc_path}/md/${_tool_md}.md
+          COMMAND mkdir -p "${_doc_path}/md/"
+          COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH} LANG=en DISPLAY="man_page" ${_tool} -X markdown > ${_doc_path}/md/${_tool_md}.md
+          DEPENDS ${_tool} ${_tool_src}
+          WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+      )
+      ADD_CUSTOM_TARGET( ${_tool_md}.md ALL
+          DEPENDS ${_doc_path}/md/${_tool_md}.md
+          COMMENT "Extract markdown formated manual page to ${_tool_md}.md"
+      )
+      IF( GETTEXT_FOUND )
+      # add translations
+        FOREACH( _lang ${_langs} )
+          SET( _lang "de_DE.UTF8" )
+          STRING(SUBSTRING ${_lang} 0 2 short_lang)
+          MESSAGE( "add \"${_tool}\": \"" ${short_lang} "\" from ${_lang} / \"${_langs}\"" )
+          ADD_CUSTOM_COMMAND( OUTPUT ${_doc_path}/man/${short_lang}/${_tool}.1
+            COMMAND mkdir -p "${_doc_path}/man/${short_lang}/"
+            COMMAND cp -a ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LOCALEDIR}/${short_lang}/LC_MESSAGES/openicc.mo ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LOCALEDIR}/${short_lang}/LC_MESSAGES/oyjl.mo ${CMAKE_BINARY_DIR}/locale/${short_lang}/LC_MESSAGES/ || echo nothing to copy
+            COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH} LOCPATH=${CMAKE_BINARY_DIR}/locale LANG=${_lang} DISPLAY="man_page" ${_tool} -X man > ${_doc_path}/man/${short_lang}/${_tool}.1
+            DEPENDS ${_tool} ${_tool_src}
+            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+          )
+          ADD_CUSTOM_TARGET( ${_tool}-${short_lang}.1 ALL
+            DEPENDS ${_doc_path}/man/${short_lang}/${_tool}.1
+            COMMENT "Extract ${_lang} manual page to ${_doc_path}/man/${short_lang}/${_tool}.1"
+          )
 
-        ADD_CUSTOM_COMMAND( OUTPUT ${_doc_path}/md/${_tool_md}${short_lang}.md
-          COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH} LOCPATH=${CMAKE_BINARY_DIR}/locale LANG=${_lang} DISPLAY="man_page" ${_tool} -X markdown > ${_doc_path}/md/${_tool_md}${short_lang}.md
-          DEPENDS ${_tool} ${_tool_src}
-          WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-        )
-        ADD_CUSTOM_TARGET( ${_tool_md}${short_lang}.md ALL
-          DEPENDS ${_doc_path}/md/${_tool_md}${short_lang}.md
-          COMMENT "Extract markdown formated ${_lang} manual page to ${_tool_md}${short_lang}.md"
-        )
-      ENDFOREACH( _lang ${_langs} )
-    ENDIF( GETTEXT_FOUND )
-  ENDMACRO(OYJL_DOCUMENT_TOOL)
+          ADD_CUSTOM_COMMAND( OUTPUT ${_doc_path}/md/${_tool_md}${short_lang}.md
+            COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH} LOCPATH=${CMAKE_BINARY_DIR}/locale LANG=${_lang} DISPLAY="man_page" ${_tool} -X markdown > ${_doc_path}/md/${_tool_md}${short_lang}.md
+            DEPENDS ${_tool} ${_tool_src}
+            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+          )
+          ADD_CUSTOM_TARGET( ${_tool_md}${short_lang}.md ALL
+            DEPENDS ${_doc_path}/md/${_tool_md}${short_lang}.md
+            COMMENT "Extract markdown formated ${_lang} manual page to ${_tool_md}${short_lang}.md"
+          )
+        ENDFOREACH( _lang ${_langs} )
+      ENDIF( GETTEXT_FOUND )
+    ENDIF( CMAKE_CROSSCOMPILING )
+  ENDMACRO(OYJL_DOCUMENT_TOOL _tool _tool_src _langs _doc_path)
 endif (OYJL_FOUND)
 
