@@ -60,7 +60,7 @@ int main(int argc, const char *argv[])
 
   /* tell about the tool */
   oyjlUi_s * ui = oyjlUi_Create( argc, argv, /* argc+argv are required for parsing the command line options */
-                                       "oiAQ", "oyjl-args-qml", _("Small JSON UI tool using libOyjl and QML"), "logo",
+                                       "oyjl-args-qml", _("Oyjl Args QML Viewer"), _("Small JSON UI tool using libOyjl and QML"), "logo",
                                        sections, oarray, groups_no_args, &state );
   if( state & oyjlUI_STATE_EXPORT &&
       exportX)
