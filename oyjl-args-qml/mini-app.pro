@@ -23,12 +23,16 @@ android {
 }
 unix:!macx:!android {
 QT += dbus
-INCLUDEPATH+=/home/kuwe/.local/include/
-INCLUDEPATH+=/home/kuwe/.local/include/oyjl
-INCLUDEPATH+=..
-INCLUDEPATH+=/opt/local/include/
-LIBS+=-L/home/kuwe/.local/lib64
-LIBS+=-L/opt/local/lib64
+INCLUDEPATH += /home/kuwe/.local/include/
+INCLUDEPATH += /home/kuwe/.local/include/oyjl
+INCLUDEPATH += /opt/local/include/
+INCLUDEPATH += /home/kuwe/.local/include/openicc
+INCLUDEPATH += ..
+INCLUDEPATH += ../../../build-oyjl
+INCLUDEPATH += ../../src/include # openicc src
+INCLUDEPATH += ../../../build-openicc/src/include
+LIBS += -L/home/kuwe/.local/lib64
+LIBS += -L/opt/local/lib64
 }
 
 DYNAMIC_LIB_ARGS { # dlopen libOyjlArgsQml
@@ -63,10 +67,11 @@ DYNAMIC_LIB_ARGS { # dlopen libOyjlArgsQml
     qml/OptionsList.qml \
     qml/SplitView.qml
   RESOURCES += app.qrc
-  INCLUDEPATH+=/home/kuwe/.local/include/openicc
-  DEFINES+=OPENICC_LIB
-  DEFINES+=USE_GETTEXT
   unix:!macx:!android {
+    LIBS += -L../../../build-oyjl
+    LIBS += -L../../../build-openicc/src/libopenicc
+    DEFINES += USE_GETTEXT
+    DEFINES += OPENICC_LIB
     LIBS += -lopenicc-static
     LIBS += -loyjl-static
     LIBS += -lxml2
