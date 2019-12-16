@@ -3,7 +3,7 @@
  *  libOyjl - JSON helper tool
  *
  *  @par Copyright:
- *            2018 (C) Kai-Uwe Behrmann
+ *            2018-2019 (C) Kai-Uwe Behrmann
  *
  *  @brief    Oyjl JSON translation helper
  *  @internal

@@ -521,12 +521,21 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
   {
     oyjl_val val;
     char * app_type;
-    int i,n, X_found = 0, export_found = 0, help_found = 0, verbose_found = 0, version_found = 0;
+    int i,n, X_found = 0, export_found = 0, help_found = 0, verbose_found = 0, version_found = 0, gui_found = 0;
 
     val = oyjlTreeGetValue( root, 0, OYJL_REG "/ui/app_type" ); app_type = OYJL_GET_STRING(val);
     oyjlStrAdd( s, "#include \"oyjl.h\"\n" );
-    oyjlStrAdd( s, "#ifndef _\n" );
-    oyjlStrAdd( s, "#define _(x) (x)\n" );
+    oyjlStrAdd( s, "#include \"oyjl_version.h\"\n" );
+    oyjlStrAdd( s, "#ifdef OYJL_HAVE_LOCALE_H\n" );
+    oyjlStrAdd( s, "#include <locale.h>\n" );
+    oyjlStrAdd( s, "#endif\n" );
+    oyjlStrAdd( s, "#ifdef OYJL_USE_GETTEXT\n" );
+    oyjlStrAdd( s, "# ifdef OYJL_HAVE_LIBINTL_H\n" );
+    oyjlStrAdd( s, "#  include <libintl.h> /* bindtextdomain() */\n" );
+    oyjlStrAdd( s, "# endif\n" );
+    oyjlStrAdd( s, "# define _(text) dgettext( OYJL_DOMAIN, text )\n" );
+    oyjlStrAdd( s, "#else\n" );
+    oyjlStrAdd( s, "# define _(text) text\n" );
     oyjlStrAdd( s, "#endif\n" );
     n = oyjlValueCount( oyjlTreeGetValue( root, 0, "org/freedesktop/oyjl/ui/options/array" ) );
     for(i = 0; i < n; ++i)
@@ -543,7 +552,11 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
       }
     }
     oyjlStrAdd( s, "\n" );
-    oyjlStrAdd( s, "int main( int argc, char ** argv)\n" );
+    oyjlStrAdd( s, "/* This function is called the\n" );
+    oyjlStrAdd( s, " * * first time for GUI generation and then\n" );
+    oyjlStrAdd( s, " * * for executing the tool.\n" );
+    oyjlStrAdd( s, " */\n" );
+    oyjlStrAdd( s, "int myMain( int argc, const char ** argv )\n" );
     oyjlStrAdd( s, "{\n" );
     oyjlStrAdd( s, "  int error = 0;\n" );
     if(!(app_type && strcmp(app_type,"tool") == 0))
@@ -569,6 +582,8 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
           verbose_found = 1;
         if(strcmp(t,"version") == 0)
           version_found = 1;
+        if(strcmp(t,"gui") == 0)
+          gui_found = 1;
       }
       if(t) free(t);
     }
@@ -580,6 +595,8 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
         oyjlStrAdd( s, "  int verbose = 0;\n" );
       if(!version_found)
         oyjlStrAdd( s, "  int version = 0;\n" );
+      if(!gui_found)
+        oyjlStrAdd( s, "  int gui = 0;\n" );
     }
     if(!export_found)
     oyjlStrAdd( s, "  const char * export = 0;\n" );
@@ -608,7 +625,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
 
       oyjlStrAddSpaced( s, nick,  OYJL_QUOTE,                17 );
       oyjlStrAddSpaced( s, label, OYJL_QUOTE|OYJL_TRANSLATE, 7 );
-      oyjlStrAddSpaced( s, name,  OYJL_QUOTE|OYJL_TRANSLATE, 26 );
+      oyjlStrAddSpaced( s, name&&name[0]?name:NULL,  OYJL_QUOTE|OYJL_TRANSLATE, 26 );
       oyjlStrAddSpaced( s, desc,  OYJL_QUOTE|OYJL_TRANSLATE|OYJL_LAST, 4 );
       oyjlStrAdd( s, "},\n");
     }
@@ -783,7 +800,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
         if(count)
           oyjlStrAdd( s,   "{.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)%s_choices, sizeof(%s_choices), malloc )}, ", o,o );
         else
-          oyjlStrAddSpaced(s,"{}",        0, 20 );
+          oyjlStrAddSpaced(s,"{0}",        0, 20 );
       } else
       if(value_type && strcmp(value_type, "oyjlOPTIONTYPE_FUNCTION") == 0)
       {
@@ -811,7 +828,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
       } else
       if(value_type && strcmp(value_type, "oyjlOPTIONTYPE_NONE") == 0)
       {
-        oyjlStrAddSpaced(s,"{}",        0, 20 );
+        oyjlStrAddSpaced(s,"{0}",        0, 20 );
       }
       oyjlStrAddSpaced( s, variable_type,0,                         15 );
       if(variable_type && strcmp(variable_type, "oyjlNONE") == 0)
@@ -838,7 +855,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
           if(vname) free(vname);
         }
         else
-          oyjlStringAdd( &t, 0,0, "{}" );
+          oyjlStringAdd( &t, 0,0, "{0}" );
         oyjlStrAddSpaced( s, t,OYJL_LAST,                 2 );
         if(t) free( t );
       }
@@ -849,18 +866,24 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
     }
     if(!(flags & OYJL_NO_DEFAULT_OPTIONS))
     {
+      if(!help_found && !oyjlFindOption( root, 'h' ))
       oyjlStrAdd(s,"    /* default options -h and -v */\n" );
       if(!help_found && !oyjlFindOption( root, 'h' ))
       oyjlStrAdd(s,"    {\"oiwi\", 0, \"h\", \"help\", NULL, _(\"help\"), _(\"Help\"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&help} },\n" );
       if(!verbose_found && !oyjlFindOption( root, 'v' ))
-      oyjlStrAdd(s,"    {\"oiwi\", 0, \"v\", \"verbose\", NULL, _(\"verbose\"), _(\"Verbose\"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&verbose} },\n" );
+      oyjlStrAdd(s,"    {\"oiwi\", 0, \"v\", \"verbose\", NULL, _(\"verbose\"), _(\"Verbose\"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&verbose} },\n" );
+      if(!gui_found && !oyjlFindOption( root, 'G' ))
+      {
+      oyjlStrAdd(s,"    /* The --gui option can be hidden and used only internally. */\n" );
+      oyjlStrAdd(s,"    {\"oiwi\", 0, \"G\", \"gui\",     NULL, _(\"gui\"),     _(\"GUI\"),     NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&gui} },\n" );
+      }
       if(!version_found && !oyjlFindOption( root, 'V' ))
-      oyjlStrAdd(s,"    {\"oiwi\", 0, \"V\", \"version\", NULL, _(\"version\"), _(\"Version\"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&version} },\n" );
+      oyjlStrAdd(s,"    {\"oiwi\", 0, \"V\", \"version\", NULL, _(\"version\"), _(\"Version\"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&version} },\n" );
       oyjlStrAdd(s,"    /* default option template -X|--export */\n" );
       if(!export_found && !X_found)
       oyjlStrAdd(s,"    {\"oiwi\", 0, \"X\", \"export\", NULL, NULL, NULL, NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = NULL}, oyjlSTRING, {.s=&export} },\n" );
     }
-    oyjlStrAdd( s, "    {\"\",0,0,NULL,NULL,NULL,NULL,NULL, NULL, oyjlOPTIONTYPE_END, {},0,{}}\n  };\n\n" );
+    oyjlStrAdd( s, "    {\"\",0,0,NULL,NULL,NULL,NULL,NULL, NULL, oyjlOPTIONTYPE_END, {0},0,{0}}\n  };\n\n" );
     oyjlStrAdd( s, "  /* declare option groups, for better syntax checking and UI groups */\n" );
     oyjlStrAdd( s, "  oyjlOptionGroup_s groups[] = {\n" );
     oyjlStrAdd( s, "  /* type,   " );
@@ -901,20 +924,24 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
     val = oyjlTreeGetValue( root, 0, OYJL_REG "/ui/name" ); name = OYJL_GET_STRING(val);
     val = oyjlTreeGetValue( root, 0, OYJL_REG "/ui/description" ); description = OYJL_GET_STRING(val);
     val = oyjlTreeGetValue( root, 0, OYJL_REG "/ui/logo" ); logo = OYJL_GET_STRING(val);
-    oyjlStrAdd( s, "  oyjlUi_s * ui = oyjlUi_Create( argc, (const char **)argv, /* argc+argv are required for parsing the command line options */\n" );
+    oyjlStrAdd( s, "  oyjlUi_s * ui = oyjlUi_Create( argc, argv, /* argc+argv are required for parsing the command line options */\n" );
     oyjlStrAdd( s, "                                       \"%s\", ", nick );
     if(name)
       oyjlStrAdd( s, "_(\"%s\"), ", name );
     else
       oyjlStrAdd( s, "NULL, " );
     if(description)
-      oyjlStrAdd( s, "_(\"%s\"), ", description );
-    else
-      oyjlStrAdd( s, "NULL, " );
-    if(logo)
-      oyjlStrAdd( s, "\"%s\",\n", logo );
+      oyjlStrAdd( s, "_(\"%s\"),\n", description );
     else
       oyjlStrAdd( s, "NULL,\n" );
+    oyjlStrAdd( s, "#ifdef __ANDROID__\n" );
+    oyjlStrAdd( s, "                                       \":/images/logo.svg\", // use qrc\n" );
+    oyjlStrAdd( s, "#else\n" );
+    if(logo)
+      oyjlStrAdd( s, "                                       \"%s\",\n", logo );
+    else
+      oyjlStrAdd( s, "                                       NULL,\n" );
+    oyjlStrAdd( s, "#endif\n" );
     oyjlStrAdd( s, "                                       sections, oarray, groups, &state );\n" );
     if(!(app_type && strcmp(app_type,"tool") == 0))
     oyjlStrAdd( s, "  if(ui) ui->app_type = \"%s\";\n", app_type ? app_type : "lib" );
@@ -951,7 +978,19 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
     oyjlStrAdd( s, "    goto clean_main;\n" );
     oyjlStrAdd( s, "  }\n" );
     oyjlStrAdd( s, "\n" );
-    oyjlStrAdd( s, "  if(!ui) error = 1;\n" );
+    oyjlStrAdd( s, "#if !defined(NO_OYJL_ARGS_QML_START)\n" );
+    oyjlStrAdd( s, "  /* GUI boilerplate */\n" );
+    oyjlStrAdd( s, "  if(ui && gui)\n" );
+    oyjlStrAdd( s, "  {\n" );
+    oyjlStrAdd( s, "    int debug = verbose;\n" );
+    oyjlStrAdd( s, "    oyjlArgsQmlStart( argc, argv, NULL, debug, ui, myMain );\n" );
+    oyjlStrAdd( s, "  } else\n" );
+    oyjlStrAdd( s, "#endif\n" );
+    oyjlStrAdd( s, "  if(ui)\n" );
+    oyjlStrAdd( s, "  {\n" );
+    oyjlStrAdd( s, "    /* ... working code goes here ... */\n" );
+    oyjlStrAdd( s, "  }\n" );
+    oyjlStrAdd( s, "  else error = 1;\n" );
     oyjlStrAdd( s, "\n" );
     oyjlStrAdd( s, "  clean_main:\n" );
     oyjlStrAdd( s, "  {\n" );
@@ -967,6 +1006,44 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
     oyjlStrAdd( s, "\n" );
     oyjlStrAdd( s, "  return error;\n" );
     oyjlStrAdd( s, "}\n" );
+    oyjlStrAdd( s, "\n" );
+    oyjlStrAdd( s, "extern int * oyjl_debug;\n" );
+    oyjlStrAdd( s, "char ** environment = NULL;\n" );
+    oyjlStrAdd( s, "int main( int argc_, char**argv_, char ** envv )\n" );
+    oyjlStrAdd( s, "{\n" );
+    oyjlStrAdd( s, "  int argc = argc_;\n" );
+    oyjlStrAdd( s, "  char ** argv = argv_;\n" );
+    oyjlStrAdd( s, "\n" );
+    oyjlStrAdd( s, "#ifdef __ANDROID__\n" );
+    oyjlStrAdd( s, "  setenv(\"COLORTERM\", \"1\", 0); /* show rich text format on non GNU color extension environment */\n" );
+    oyjlStrAdd( s, "\n" );
+    oyjlStrAdd( s, "  argv = calloc( argc + 2, sizeof(char*) );\n" );
+    oyjlStrAdd( s, "  memcpy( argv, argv_, (argc + 2) * sizeof(char*) );\n" );
+    oyjlStrAdd( s, "  argv[argc++] = \"--gui\"; /* start QML */\n" );
+    oyjlStrAdd( s, "  environment = environ;\n" );
+    oyjlStrAdd( s, "#else\n" );
+    oyjlStrAdd( s, "  environment = envv;\n" );
+    oyjlStrAdd( s, "#endif\n" );
+    oyjlStrAdd( s, "\n" );
+    oyjlStrAdd( s, "  /* language needs to be initialised before setup of data structures */\n" );
+    oyjlStrAdd( s, "  int use_gettext = 0;\n" );
+    oyjlStrAdd( s, "#ifdef OYJL_USE_GETTEXT\n" );
+    oyjlStrAdd( s, "  use_gettext = 1;\n" );
+    oyjlStrAdd( s, "#ifdef OYJL_HAVE_LOCALE_H\n" );
+    oyjlStrAdd( s, "  setlocale(LC_ALL,\"\");\n" );
+    oyjlStrAdd( s, "#endif\n" );
+    oyjlStrAdd( s, "#endif\n" );
+    oyjlStrAdd( s, "  oyjlInitLanguageDebug( \"Oyjl\", \"OYJL_DEBUG\", oyjl_debug, use_gettext, \"OYJL_LOCALEDIR\", OYJL_LOCALEDIR, OYJL_DOMAIN, NULL );\n" );
+    oyjlStrAdd( s, "\n" );
+    oyjlStrAdd( s, "  myMain(argc, (const char **)argv);\n" );
+    oyjlStrAdd( s, "\n" );
+    oyjlStrAdd( s, "#ifdef __ANDROID__\n" );
+    oyjlStrAdd( s, "  free( argv );\n" );
+    oyjlStrAdd( s, "#endif\n" );
+    oyjlStrAdd( s, "\n" );
+    oyjlStrAdd( s, "  return 0;\n" );
+    oyjlStrAdd( s, "}\n" );
+    oyjlStrAdd( s, "\n" );
   }
   else
     fputs( "can only generate C code. Try OYJL_SOURCE_CODE_C flag", stderr );
