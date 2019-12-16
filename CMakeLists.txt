@@ -43,6 +43,7 @@ OPTION(ENABLE_DOCU_${PROJECT_UP_NAME} "Build HTML documentation out of sources" 
 
 IF(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR})
   OPTION(ENABLE_INSTALL_${PROJECT_UP_NAME} "Install files" ON)
+  SET( DOC_PATH ${CMAKE_SOURCE_DIR}/doc )
 ELSE()
   MESSAGE( "-- ${PROJECT_NAME}: compile as subproject - skip install (ENABLE_INSTALL_${PROJECT_UP_NAME}=OFF)" )
   # disable install and build of shared libs for fallback subproject
