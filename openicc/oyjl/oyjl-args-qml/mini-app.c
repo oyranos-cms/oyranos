@@ -11,8 +11,9 @@
  *  @since    2019/11/28
  */
 
+#include <unistd.h> /* sleep() */
+
 #include "oyjl.h"
-#include "oyjl_test.h"    /* oyjl_debug */
 #include "oyjl_version.h"
 
 #ifdef OYJL_HAVE_LOCALE_H
@@ -251,6 +252,7 @@ int myMain( int argc, const char ** argv )
   return 0;
 }
 
+extern int *oyjl_debug;
 int main( int argc_ OYJL_UNUSED, char**argv_ OYJL_UNUSED)
 {
   int argc = argc_;
