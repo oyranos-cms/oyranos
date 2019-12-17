@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cs\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2019-12-17 06:23+0100\n"
+"POT-Creation-Date: 2019-12-17 09:30+0100\n"
 "PO-Revision-Date: 2012-10-19 15:10+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -128,7 +128,7 @@ msgstr ""
 msgid "ENVIRONMENT VARIABLES"
 msgstr ""
 
-#: oyjl_args.c:2619
+#: oyjl.c:114 oyjl_args.c:2619
 msgid "EXAMPLES"
 msgstr ""
 
@@ -162,6 +162,11 @@ msgstr ""
 #, fuzzy
 msgid "File"
 msgstr "Soubory"
+
+#: oyjl.c:110
+#, fuzzy
+msgid "File or Stream"
+msgstr "profil nenalezen:"
 
 #: oyjl.c:160
 #, fuzzy
@@ -221,7 +226,7 @@ msgid "Get formated text"
 msgstr ""
 
 #: oyjl.c:108
-msgid "Get node type."
+msgid "Get node type"
 msgstr ""
 
 #: oyjl_args.c:2625
@@ -293,15 +298,6 @@ msgstr "Licence new BSD: http://www.opensource.org/licenses/bsd-license.php"
 #, fuzzy
 msgid "Man"
 msgstr "Purpurová"
-
-#: oyjl.c:114
-#, fuzzy
-msgid "Man Examples"
-msgstr "Příklad"
-
-#: oyjl.c:116
-msgid "Man See_also"
-msgstr ""
 
 #: oyjl_args_tree.c:1102
 msgid "Manufacturer"
@@ -475,11 +471,7 @@ msgstr "Tiskárna CUPS"
 msgid "Print JSON"
 msgstr "Tiskárna CUPS"
 
-#: oyjl.c:94
-msgid "Print JSON to std output."
-msgstr ""
-
-#: oyjl.c:135
+#: oyjl.c:94 oyjl.c:135
 #, fuzzy
 msgid "Print JSON to stdout"
 msgstr "Tiskárna CUPS"
@@ -494,11 +486,7 @@ msgstr "Tiskárna CUPS"
 msgid "Print XML"
 msgstr "Tiskárna"
 
-#: oyjl.c:98
-msgid "Print XML to std output."
-msgstr ""
-
-#: oyjl.c:137
+#: oyjl.c:98 oyjl.c:137
 #, fuzzy
 msgid "Print XML to stdout"
 msgstr "Tiskárna"
@@ -508,11 +496,7 @@ msgstr "Tiskárna"
 msgid "Print YAML"
 msgstr "Tiskárna"
 
-#: oyjl.c:96
-msgid "Print YAML to std output."
-msgstr ""
-
-#: oyjl.c:136
+#: oyjl.c:96 oyjl.c:136
 #, fuzzy
 msgid "Print YAML to stdout"
 msgstr "Tiskárna"
@@ -521,12 +505,16 @@ msgstr "Tiskárna"
 msgid "Print a help text:"
 msgstr "Vytisknout nápovědu:"
 
-#: oyjl.c:104 oyjl.c:141
+#: oyjl.c:104
+msgid "Print all matching paths"
+msgstr ""
+
+#: oyjl.c:141
 msgid "Print all matching paths."
 msgstr ""
 
 #: oyjl.c:100
-msgid "Print count of leafs in node."
+msgid "Print count of leafs in node"
 msgstr ""
 
 #: oyjl-args-qml/mini-app.c:184
@@ -540,7 +528,7 @@ msgstr "Jméno ovladače:"
 
 #: oyjl.c:102
 #, fuzzy
-msgid "Print key name of node."
+msgid "Print key name of node"
 msgstr "Jméno ovladače:"
 
 #: oyjl.c:138
@@ -568,7 +556,7 @@ msgstr "Záměr transformace"
 msgid "Run command without arguments"
 msgstr ""
 
-#: oyjl_args.c:2631
+#: oyjl.c:116 oyjl_args.c:2631
 msgid "SEE ALSO"
 msgstr ""
 
@@ -597,7 +585,7 @@ msgid "Set Value"
 msgstr "Hodnota"
 
 #: oyjl.c:106
-msgid "Set a key name to a value."
+msgid "Set a key name to a value"
 msgstr ""
 
 #: oyjl.c:134
@@ -731,11 +719,6 @@ msgstr ""
 msgid "Yes"
 msgstr "Ano"
 
-#: oyjl.c:75
-#, fuzzy
-msgid "at:"
-msgstr "Data:"
-
 #: oyjl-args-qml/mini-app.c:186
 #, fuzzy
 msgid "error"
@@ -744,11 +727,6 @@ msgstr "Chyba"
 #: oyjl_args.c:1249
 msgid "export"
 msgstr ""
-
-#: oyjl.c:110
-#, fuzzy
-msgid "file or stream"
-msgstr "profil nenalezen:"
 
 #: oyjl-args-qml/mini-app.c:248 oyjl-args-qml/mini-app.c:281
 #, fuzzy
@@ -2699,6 +2677,10 @@ msgstr "ICC Examin Verze"
 #~ msgid "Magic:           "
 #~ msgstr "Datum:       "
 
+#, fuzzy
+#~ msgid "Man Examples"
+#~ msgstr "Příklad"
+
 #~ msgid "Manage Favorites"
 #~ msgstr "Organizovat oblibene"
 
@@ -4427,6 +4409,10 @@ msgstr "ICC Examin Verze"
 
 #~ msgid "allocation failed"
 #~ msgstr "alokace selhala"
+
+#, fuzzy
+#~ msgid "at:"
+#~ msgstr "Data:"
 
 #~ msgid "attempt to add a incomplete filter"
 #~ msgstr "pokus o přidání neúplného filtru"

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eu\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2019-12-17 06:23+0100\n"
+"POT-Creation-Date: 2019-12-17 09:30+0100\n"
 "PO-Revision-Date: 2007-11-07 11:11+0100\n"
 "Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@zundan.com>\n"
 "Language-Team: Basque <itzulpena@euskalgnu.org>\n"
@@ -131,7 +131,7 @@ msgstr ""
 msgid "ENVIRONMENT VARIABLES"
 msgstr ""
 
-#: oyjl_args.c:2619
+#: oyjl.c:114 oyjl_args.c:2619
 msgid "EXAMPLES"
 msgstr ""
 
@@ -165,6 +165,11 @@ msgstr ""
 #, fuzzy
 msgid "File"
 msgstr "Fitxategia"
+
+#: oyjl.c:110
+#, fuzzy
+msgid "File or Stream"
+msgstr "Profila-kolorea"
 
 #: oyjl.c:160
 msgid "For more information read the man page:"
@@ -223,7 +228,7 @@ msgid "Get formated text"
 msgstr ""
 
 #: oyjl.c:108
-msgid "Get node type."
+msgid "Get node type"
 msgstr ""
 
 #: oyjl_args.c:2625
@@ -293,14 +298,6 @@ msgstr ""
 #, fuzzy
 msgid "Man"
 msgstr "Magenta"
-
-#: oyjl.c:114
-msgid "Man Examples"
-msgstr ""
-
-#: oyjl.c:116
-msgid "Man See_also"
-msgstr ""
 
 #: oyjl_args_tree.c:1102
 #, fuzzy
@@ -474,11 +471,7 @@ msgstr "Puntua"
 msgid "Print JSON"
 msgstr "Puntua"
 
-#: oyjl.c:94
-msgid "Print JSON to std output."
-msgstr ""
-
-#: oyjl.c:135
+#: oyjl.c:94 oyjl.c:135
 #, fuzzy
 msgid "Print JSON to stdout"
 msgstr "Puntua"
@@ -493,11 +486,7 @@ msgstr "Puntua"
 msgid "Print XML"
 msgstr "Puntua"
 
-#: oyjl.c:98
-msgid "Print XML to std output."
-msgstr ""
-
-#: oyjl.c:137
+#: oyjl.c:98 oyjl.c:137
 #, fuzzy
 msgid "Print XML to stdout"
 msgstr "Puntua"
@@ -507,11 +496,7 @@ msgstr "Puntua"
 msgid "Print YAML"
 msgstr "Puntua"
 
-#: oyjl.c:96
-msgid "Print YAML to std output."
-msgstr ""
-
-#: oyjl.c:136
+#: oyjl.c:96 oyjl.c:136
 #, fuzzy
 msgid "Print YAML to stdout"
 msgstr "Puntua"
@@ -520,12 +505,16 @@ msgstr "Puntua"
 msgid "Print a help text:"
 msgstr ""
 
-#: oyjl.c:104 oyjl.c:141
+#: oyjl.c:104
+msgid "Print all matching paths"
+msgstr ""
+
+#: oyjl.c:141
 msgid "Print all matching paths."
 msgstr ""
 
 #: oyjl.c:100
-msgid "Print count of leafs in node."
+msgid "Print count of leafs in node"
 msgstr ""
 
 #: oyjl-args-qml/mini-app.c:184
@@ -539,7 +528,7 @@ msgstr "Fitxategi-izena"
 
 #: oyjl.c:102
 #, fuzzy
-msgid "Print key name of node."
+msgid "Print key name of node"
 msgstr "Fitxategi-izena"
 
 #: oyjl.c:138
@@ -568,7 +557,7 @@ msgstr "Oyranos-en ezarpenak"
 msgid "Run command without arguments"
 msgstr ""
 
-#: oyjl_args.c:2631
+#: oyjl.c:116 oyjl_args.c:2631
 msgid "SEE ALSO"
 msgstr ""
 
@@ -597,7 +586,7 @@ msgid "Set Value"
 msgstr "Balioa"
 
 #: oyjl.c:106
-msgid "Set a key name to a value."
+msgid "Set a key name to a value"
 msgstr ""
 
 #: oyjl.c:134
@@ -727,11 +716,6 @@ msgstr ""
 msgid "Yes"
 msgstr "Bai"
 
-#: oyjl.c:75
-#, fuzzy
-msgid "at:"
-msgstr "Data"
-
 #: oyjl-args-qml/mini-app.c:186
 msgid "error"
 msgstr ""
@@ -739,11 +723,6 @@ msgstr ""
 #: oyjl_args.c:1249
 msgid "export"
 msgstr ""
-
-#: oyjl.c:110
-#, fuzzy
-msgid "file or stream"
-msgstr "Profila-kolorea"
 
 #: oyjl-args-qml/mini-app.c:248 oyjl-args-qml/mini-app.c:281
 msgid "finished"
@@ -2986,6 +2965,10 @@ msgstr "ICC Examin-en bertsioa"
 #, fuzzy
 #~ msgid "allocation failed"
 #~ msgstr "Kalibrazio-data"
+
+#, fuzzy
+#~ msgid "at:"
+#~ msgstr "Data"
 
 #~ msgid "averaging deviations (dE CIE*Lab):<b> "
 #~ msgstr "batez besteko desbiderapena (dE CIE*Lab):<b> "

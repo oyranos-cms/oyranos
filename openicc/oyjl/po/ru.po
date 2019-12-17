@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2019-12-17 06:23+0100\n"
+"POT-Creation-Date: 2019-12-17 09:30+0100\n"
 "PO-Revision-Date: 2015-02-20 17:32+0100\n"
 "Last-Translator: Kai-Uwe Behrmann <ku.b@gmx.de>\n"
 "Language-Team: russian <ru@li.org>\n"
@@ -128,7 +128,7 @@ msgstr ""
 msgid "ENVIRONMENT VARIABLES"
 msgstr ""
 
-#: oyjl_args.c:2619
+#: oyjl.c:114 oyjl_args.c:2619
 msgid "EXAMPLES"
 msgstr ""
 
@@ -160,6 +160,10 @@ msgstr ""
 
 #: oyjl-args-qml/mini-app.c:180
 msgid "File"
+msgstr ""
+
+#: oyjl.c:110
+msgid "File or Stream"
 msgstr ""
 
 #: oyjl.c:160
@@ -216,7 +220,7 @@ msgid "Get formated text"
 msgstr ""
 
 #: oyjl.c:108
-msgid "Get node type."
+msgid "Get node type"
 msgstr ""
 
 #: oyjl_args.c:2625
@@ -281,15 +285,6 @@ msgstr ""
 
 #: oyjl_args.c:1218
 msgid "Man"
-msgstr ""
-
-#: oyjl.c:114
-#, fuzzy
-msgid "Man Examples"
-msgstr "приме́р"
-
-#: oyjl.c:116
-msgid "Man See_also"
 msgstr ""
 
 #: oyjl_args_tree.c:1102
@@ -446,11 +441,7 @@ msgstr ""
 msgid "Print JSON"
 msgstr ""
 
-#: oyjl.c:94
-msgid "Print JSON to std output."
-msgstr ""
-
-#: oyjl.c:135
+#: oyjl.c:94 oyjl.c:135
 msgid "Print JSON to stdout"
 msgstr ""
 
@@ -462,11 +453,7 @@ msgstr ""
 msgid "Print XML"
 msgstr ""
 
-#: oyjl.c:98
-msgid "Print XML to std output."
-msgstr ""
-
-#: oyjl.c:137
+#: oyjl.c:98 oyjl.c:137
 msgid "Print XML to stdout"
 msgstr ""
 
@@ -474,11 +461,7 @@ msgstr ""
 msgid "Print YAML"
 msgstr ""
 
-#: oyjl.c:96
-msgid "Print YAML to std output."
-msgstr ""
-
-#: oyjl.c:136
+#: oyjl.c:96 oyjl.c:136
 msgid "Print YAML to stdout"
 msgstr ""
 
@@ -486,12 +469,16 @@ msgstr ""
 msgid "Print a help text:"
 msgstr ""
 
-#: oyjl.c:104 oyjl.c:141
+#: oyjl.c:104
+msgid "Print all matching paths"
+msgstr ""
+
+#: oyjl.c:141
 msgid "Print all matching paths."
 msgstr ""
 
 #: oyjl.c:100
-msgid "Print count of leafs in node."
+msgid "Print count of leafs in node"
 msgstr ""
 
 #: oyjl-args-qml/mini-app.c:184
@@ -503,7 +490,7 @@ msgid "Print key name"
 msgstr ""
 
 #: oyjl.c:102
-msgid "Print key name of node."
+msgid "Print key name of node"
 msgstr ""
 
 #: oyjl.c:138
@@ -529,7 +516,7 @@ msgstr ""
 msgid "Run command without arguments"
 msgstr ""
 
-#: oyjl_args.c:2631
+#: oyjl.c:116 oyjl_args.c:2631
 msgid "SEE ALSO"
 msgstr ""
 
@@ -557,7 +544,7 @@ msgid "Set Value"
 msgstr "значе́ние"
 
 #: oyjl.c:106
-msgid "Set a key name to a value."
+msgid "Set a key name to a value"
 msgstr ""
 
 #: oyjl.c:134
@@ -685,20 +672,12 @@ msgstr ""
 msgid "Yes"
 msgstr ""
 
-#: oyjl.c:75
-msgid "at:"
-msgstr ""
-
 #: oyjl-args-qml/mini-app.c:186
 msgid "error"
 msgstr ""
 
 #: oyjl_args.c:1249
 msgid "export"
-msgstr ""
-
-#: oyjl.c:110
-msgid "file or stream"
 msgstr ""
 
 #: oyjl-args-qml/mini-app.c:248 oyjl-args-qml/mini-app.c:281
@@ -847,6 +826,10 @@ msgstr ""
 
 #~ msgid "ICC profiles"
 #~ msgstr "ICC-профили"
+
+#, fuzzy
+#~ msgid "Man Examples"
+#~ msgstr "приме́р"
 
 #~ msgid "Size"
 #~ msgstr "Размер"
