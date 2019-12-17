@@ -204,76 +204,76 @@ int myMain( int argc, const char ** argv )
     if(!json && !yaml && !xml && !paths && !key && !count && !type )
       json = 1;
 
-  if(i_filename)
-  {
-    FILE * fp;
-   
-    if(strcmp(i_filename,"-") == 0)
-      fp = stdin;
-    else
-      fp = fopen(i_filename,"rb");
-
-    if(fp)
+    if(i_filename)
     {
-      text = oyjlReadFileStreamToMem( fp, &size ); 
-      if(fp != stdin) fclose( fp );
+      FILE * fp;
+
+      if(strcmp(i_filename,"-") == 0)
+        fp = stdin;
+      else
+        fp = fopen(i_filename,"rb");
+
+      if(fp)
+      {
+        text = oyjlReadFileStreamToMem( fp, &size ); 
+        if(fp != stdin) fclose( fp );
+      }
     }
-  }
 
-  if(text)
-  {
-    char error_buffer[256] = {0};
-    if(verbose)
-      fprintf(stderr, "file read:\t\"%s\"\n", i_filename);
-    root = oyjlTreeParse( text, error_buffer, 256 );
-    if(error_buffer[0] != '\000')
-      fprintf(stderr, "ERROR:\t\"%s\"\n", error_buffer);
-    if(verbose)
-      fprintf(stderr, "file parsed:\t\"%s\"\n", i_filename);
-
-    if(xpath)
+    if(text)
     {
-      char ** path_list = NULL;
-      int count = 0, i;
+      char error_buffer[256] = {0};
+      if(verbose)
+        fprintf(stderr, "file read:\t\"%s\"\n", i_filename);
+      root = oyjlTreeParse( text, error_buffer, 256 );
+      if(error_buffer[0] != '\000')
+        fprintf(stderr, "ERROR:\t\"%s\"\n", error_buffer);
+      if(verbose)
+        fprintf(stderr, "file parsed:\t\"%s\"\n", i_filename);
 
-      oyjlTreeToPaths( root, 1000000, xpath, 0, &path_list );
-      while(path_list && path_list[count]) ++count;
+      if(xpath)
+      {
+        char ** path_list = NULL;
+        int count = 0, i;
 
-      if(paths)
-        for(i = 0; i < count; ++i)
-          fprintf(stdout,"%s\n", path_list[i]);
-      else if(key)
-        fprintf(stdout,"%s\n", (count && path_list[0] && strlen(strchr(path_list[0],'/'))) ? strrchr(path_list[0],'/') + 1 : "");
+        oyjlTreeToPaths( root, 1000000, xpath, 0, &path_list );
+        while(path_list && path_list[count]) ++count;
 
-      if(path_list || set)
-        value = oyjlTreeGetValue( root,
+        if(paths)
+          for(i = 0; i < count; ++i)
+            fprintf(stdout,"%s\n", path_list[i]);
+        else if(key)
+          fprintf(stdout,"%s\n", (count && path_list[0] && strlen(strchr(path_list[0],'/'))) ? strrchr(path_list[0],'/') + 1 : "");
+
+        if(path_list || set)
+          value = oyjlTreeGetValue( root,
                                      set ? OYJL_CREATE_NEW : 0,
                                      path_list?path_list[0]:xpath );
-      if(verbose)
-        fprintf(stderr, "%s xpath \"%s\"\n", value?"found":"found not", xpath);
+        if(verbose)
+          fprintf(stderr, "%s xpath \"%s\"\n", value?"found":"found not", xpath);
 
-      oyjlStringListRelease( &path_list, count, free );
+        oyjlStringListRelease( &path_list, count, free );
 
-      if(set)
-      {
-        if(value)
-          oyjlValueSetString( value, set );
-        else
-          oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "obtained no leaf for xpath \"%s\" from JSON:\t\"%s\"",
-                         OYJL_DBG_ARGS, xpath, i_filename );
+        if(set)
+        {
+          if(value)
+            oyjlValueSetString( value, set );
+          else
+            oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "obtained no leaf for xpath \"%s\" from JSON:\t\"%s\"",
+                           OYJL_DBG_ARGS, xpath, i_filename );
+        }
+
+        if(verbose)
+          fprintf(stderr, "processed:\t\"%s\"\n", i_filename);
       }
-
-      if(verbose)
-        fprintf(stderr, "processed:\t\"%s\"\n", i_filename);
+      else if(set)
+        oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "set argument needs as well a xpath argument", OYJL_DBG_ARGS );
+      else
+        value = root;
     }
-    else if(set)
-      oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "set argument needs as well a xpath argument", OYJL_DBG_ARGS );
-    else
-      value = root;
-  }
 
-  if(value)
-  {
+    if(value)
+    {
       if(json || yaml || xml)
       {
         char * text = NULL;
@@ -301,6 +301,7 @@ int myMain( int argc, const char ** argv )
           free(text);
         }
       }
+
       if(type)
       switch(value->type)
       {
@@ -313,41 +314,42 @@ int myMain( int argc, const char ** argv )
         case oyjl_t_null: puts( "null" ); break;
         case oyjl_t_any: puts( "any" ); break;
       }
+
       if(count)
       {
         char n[128] = {0};
         sprintf(n, "%d", oyjlValueCount(value));
         puts( n );
       }
+
       if(key)
       {
       if(!xpath && value->type == oyjl_t_object && oyjlValueCount(value) > index)
         puts( value->u.object.keys[index] );
       }
+
       if(paths)
       {
-      if(!xpath)
-      {
-        char ** paths = NULL;
-        int count = 0, i;
+        if(!xpath)
+        {
+          char ** paths = NULL;
+          int count = 0, i;
 
-        oyjlTreeToPaths( root, 1000000, NULL, 0, &paths );
-        if(verbose)
-          fprintf(stderr, "processed:\t\"%s\"\n", i_filename);
-        while(paths && paths[count]) ++count;
+          oyjlTreeToPaths( root, 1000000, NULL, 0, &paths );
+          if(verbose)
+            fprintf(stderr, "processed:\t\"%s\"\n", i_filename);
+          while(paths && paths[count]) ++count;
 
-        for(i = 0; i < count; ++i)
-          fprintf(stdout,"%s\n", paths[i]);
+          for(i = 0; i < count; ++i)
+            fprintf(stdout,"%s\n", paths[i]);
 
-        oyjlStringListRelease( &paths, count, free );
+          oyjlStringListRelease( &paths, count, free );
+        }
       }
-      }
-  }
+    }
 
-  if(root) oyjlTreeFree( root );
-  if(text) free(text);
-
-
+    if(root) oyjlTreeFree( root );
+    if(text) free(text);
   }
   else error = 1;
 
