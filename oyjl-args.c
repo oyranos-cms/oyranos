@@ -75,14 +75,16 @@ int myMain( int argc, const char ** argv )
     oyjlOptions_PrintHelp( ui->opts, ui, 4, "%s v%s - %s", argv[0],
                             "1.0", "Test Tool for testing" );
 
-#if !defined(NO_OYJL_ARGS_QML_START)
   /* GUI boilerplate */
   if(ui && gui)
   {
+#if !defined(NO_OYJL_ARGS_QML_START)
     int debug = verbose;
     oyjlArgsQmlStart( argc, argv, NULL, debug, ui, myMain );
-  }
+#else
+    fprintf( stderr, "No GUI support compiled in. Use a GUI use -X json and load into oyjl-args-qml viewer." );
 #endif
+  } else
   if(ui && !file)
   {
     const char * r = oyjlOptions_ResultsToJson(ui->opts);
