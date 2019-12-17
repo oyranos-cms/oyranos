@@ -320,6 +320,10 @@ AppWindow {
         if(helpTextChanging)
             return
         helpTextChanging = true
+        var start = helpText.substr(0,14);
+        if(start === '<?xml version=')
+            helpTextArea.textFormat = Qt.PlainText
+        else
         if(helpText.charAt(0) === '<') // assume rich text
             helpTextArea.textFormat = Qt.RichText
         else
