@@ -23,10 +23,13 @@
  *  param[in]    base       base name to search translations for
  *  param[in]    loc        desired locale string in language_country form;
  *                          e.g. "de_AT"
+ *  param[in]    catalog    org/freedektop/oyjl/translations {
+                              "de_CH": {"string": "text",
+                                        "string2": "text2"}}
  *  return                  nearest match for base.loc; e.g.:
  *                          base.de_AT or base.de_XX or base
  */
-function getTranslatedItem( item, base, loc )
+function getTranslatedItem( item, base, loc, catalog )
 {
     var language = "";
     if(loc.length)
@@ -62,6 +65,37 @@ function getTranslatedItem( item, base, loc )
         }
     }
 
+    // search in i18n catalog
+    if( text.length === 0 &&
+        typeof catalog === "object" )
+    {
+        var src = item[base]
+        var sub_cat = catalog[loc]
+        var tr;
+        if(typeof sub_cat === "object")
+            tr = catalog[loc][src]
+        type = typeof tr;
+        if(type !== "string")
+        {
+            sub_cat = catalog[language]
+            if(typeof sub_cat === "object")
+                tr = catalog[language][src]
+        }
+        type = typeof tr;
+        if(type !== "string")
+            for( i in catalog )
+            {
+                if(language.length)
+                    found = i.search(language);
+                if(found !== -1)
+                    tr = catalog[i][src];
+                if(typeof tr === "string")
+                    break;
+            }
+        if(typeof tr === "string")
+            text = tr
+    }
+
     if(text.length === 0)
         text = item[base];
 
@@ -93,7 +127,7 @@ function getTranslatedItem( item, base, loc )
  *                               e.g. "de_AT" for german language
  *                               and Austria region
  */
-function setComboItems( combo, choices, key, defaultValue, loc )
+function setComboItems( combo, choices, key, defaultValue, loc, catalog )
 {
     var current = -1;
     var model = combo.model
@@ -103,8 +137,8 @@ function setComboItems( combo, choices, key, defaultValue, loc )
             continue;
         var item = choices[index];
 
-        var name = getTranslatedItem( item, "name", loc );
-        var desc = getTranslatedItem( item, "description", loc );
+        var name = getTranslatedItem( item, "name", loc, catalog );
+        var desc = getTranslatedItem( item, "description", loc, catalog );
 
         var nick = item.nick;
         if(nick === defaultValue)

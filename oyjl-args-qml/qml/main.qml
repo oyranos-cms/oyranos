@@ -550,6 +550,7 @@ AppWindow {
     property var appJsonObject;
     property real deviceLabelWidth: 20;
     property string loc: "";
+    property var catalog: {"translations":""}
 
     function setOptions( group, groupName, groupDescription )
     {
@@ -610,14 +611,14 @@ AppWindow {
                     current = name;
             }
 
-            name = P.getTranslatedItem( opt, "name", loc );
+            name = P.getTranslatedItem( opt, "name", loc, catalog );
             var l = 0;
             if(typeof name !== "undefined" && name !== null)
                 l = name.length;
             if( l === 0 )
               name = opt.key;
-            var desc = P.getTranslatedItem( opt, "description", loc );
-            var help = P.getTranslatedItem( opt, "help", loc );
+            var desc = P.getTranslatedItem( opt, "description", loc, catalog );
+            var help = P.getTranslatedItem( opt, "help", loc, catalog );
             //if(typeof help === "undefined")
             //    help = ""
             var o = {
@@ -661,6 +662,12 @@ AppWindow {
         var j = appJsonObject;
         if(typeof j.LOCALE_info !== "undefined")
             loc = j.LOCALE_info;
+        if(typeof j.org !== "undefined" &&
+           typeof j.org.freedesktop !== "undefined" &&
+           typeof j.org.freedesktop.oyjl !== "undefined" &&
+           typeof j.org.freedesktop.oyjl.translations !== "undefined" )
+                catalog = j.org.freedesktop.oyjl.translations
+
         if(typeof j.org === "undefined" ||
            typeof j.org.freedesktop === "undefined" ||
            typeof j.org.freedesktop.oyjl === "undefined" ||
@@ -680,22 +687,22 @@ AppWindow {
         if(name !== "undefined")
             uiLogo = name
         // CMM head line - long
-        introText = P.getTranslatedItem( cmm, "name", loc );
+        introText = P.getTranslatedItem( cmm, "name", loc, catalog );
         appName = introText
         // extract CMM infos
         var html
         cmmHelp = ""
         html = "<html><body><p align=\"center\"><table border=\"0\" style=\"border-spacing:10px\">" +
-                "<tr><td align=\"right\" style=\"padding-right:10;\">" + P.getTranslatedItem( cmm, "label", loc ) + ":</td><td style=\"font-weight:bold;\">" + P.getTranslatedItem( cmm, "description", loc ) + "</td></tr>"
+                "<tr><td align=\"right\" style=\"padding-right:10;\">" + P.getTranslatedItem( cmm, "label", loc, catalog ) + ":</td><td style=\"font-weight:bold;\">" + P.getTranslatedItem( cmm, "description", loc, catalog ) + "</td></tr>"
         html += "<tr><td align=\"right\" style=\"padding-right:10;\">ID:</td><td style=\"font-weight:bold;\">" + cmm.nick + "</td>"
         for( var index in cmm.information )
         {
             var item = cmm.information[index]
             if(item.type === "date")
                 continue
-            var label = P.getTranslatedItem( item, "label", loc );
-            name = P.getTranslatedItem( item, "name", loc );
-            var desc = P.getTranslatedItem( item, "description", loc );
+            var label = P.getTranslatedItem( item, "label", loc, catalog );
+            name = P.getTranslatedItem( item, "name", loc, catalog );
+            var desc = P.getTranslatedItem( item, "description", loc, catalog );
             if(!(name === null && item.type === "documentation"))
                 html += "<tr><td align=\"right\" style=\"padding-right:10;word-wrap:break-word;\">" + label + ":</td><td style=\"font-weight:bold;\">" + name
             if( typeof desc !== "undefined" && item.type !== "documentation" )
@@ -748,25 +755,25 @@ AppWindow {
             var options= group.options;
             var mandatory = group.mandatory
             var optional  = group.optional
-            var groupName = P.getTranslatedItem( group, "name", loc );
-            var help = P.getTranslatedItem( group, "help", loc );
+            var groupName = P.getTranslatedItem( group, "name", loc, catalog );
+            var help = P.getTranslatedItem( group, "help", loc, catalog );
             if( typeof options === "undefined" )
                 for( var g2 in group.groups )
                 {
                     var g = group.groups[g2]
                     options = g.options
-                    var groupName2 = groupName + " : " + P.getTranslatedItem( g, "name", loc );
-                    desc = P.getTranslatedItem( g, "description", loc )
+                    var groupName2 = groupName + " : " + P.getTranslatedItem( g, "name", loc, catalog );
+                    desc = P.getTranslatedItem( g, "description", loc, catalog )
                     if(typeof desc !== "undefined")
                         groupName2 += " " + desc
                     var help2 = help
                     if(typeof groupName2 !== "undefined")
-                        help2 += " <i>" + P.getTranslatedItem( g, "help", loc ) + "</i>";
+                        help2 += " <i>" + P.getTranslatedItem( g, "help", loc, catalog ) + "</i>";
                     setOptions( group, groupName2, help2 )
                 }
             else
             {
-                desc = P.getTranslatedItem( group, "description", loc )
+                desc = P.getTranslatedItem( group, "description", loc, catalog )
                 if(typeof desc !== "undefined")
                     groupName = desc
                 setOptions( group, groupName, help )
