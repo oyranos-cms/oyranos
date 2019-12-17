@@ -48,8 +48,13 @@ public:
     {
         QStringList args;
 
+        fprintf(stderr, "%s ", program.toLocal8Bit().data() );
         for( int i = 0; i < arguments.length(); i++ )
+        {
+            fprintf(stderr, "%s ", arguments[i].toString().toLocal8Bit().data() );
             args << arguments[i].toString();
+        }
+        fprintf(stderr, "\n" );
 
         if(processCallback_p != NULL)
         {
