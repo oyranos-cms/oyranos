@@ -46,10 +46,11 @@ void printfHelp(int argc, char ** argv, int verbose_)
   fprintf( stderr, "        -f              %s\n", _("output format string"));
   fprintf( stderr, "\n");
   fprintf( stderr, "  %s\n",               _("Add gettext translated keys to JSON:"));
-  fprintf( stderr, "      %s -a [-v] -i FILE_NAME -o FILE_NAME -k name,description,help -d TEXTDOMAIN -p LOCALEDIR -l de,es [-w C]\n",        argv[0]);
+  fprintf( stderr, "      %s -a [-v] -i FILE_NAME -o FILE_NAME -k name,description,help -d TEXTDOMAIN -p LOCALEDIR -l de_DE,es_ES [-w C]\n",        argv[0]);
   fprintf( stderr, "        -d TEXTDOMAIN   %s\n", _("text domain of your project"));
   fprintf( stderr, "        -l locales      %s\n", _("locales in a comma separated list"));
   fprintf( stderr, "        -p LOCALEDIR    %s\n", _("locale directory containing the your-locale/LC_MESSAGES/your-textdomain.mo gettext translations"));
+  fprintf( stderr, "        -t              %s\n", _("translations only output"));
   fprintf( stderr, "\n");
   fprintf( stderr, "  %s\n",               _("Print a help text:"));
   fprintf( stderr, "      %s -h\n",        argv[0]);
@@ -73,6 +74,7 @@ int main(int argc, char ** argv)
   int add = 0;
   int extract = 0;
   int size = 0;
+  int translations_only = 0;
   const char * output = NULL,
              * file_name = NULL,
              * format = NULL,
@@ -112,6 +114,7 @@ int main(int argc, char ** argv)
               case 'l': OYJL_PARSE_STRING_ARG(lang_list); break;
               case 'o': OYJL_PARSE_STRING_ARG(output); break;
               case 'p': OYJL_PARSE_STRING_ARG(localedir); break;
+              case 't': translations_only = 1; break;
               case 'w': OYJL_PARSE_STRING_ARG(wrap); break;
               case 'v': ++verbose; ++*oyjl_debug; break;
               case 'h':
@@ -226,6 +229,7 @@ int main(int argc, char ** argv)
       const char * oyjl_domain_path = OYJL_LOCALEDIR;
       char ** list = oyjlStringSplit( key_list, ',', &n, malloc );
       char * dir;
+      oyjl_val new_translations = NULL;
 
 #ifdef OYJL_USE_GETTEXT
       if(verbose)
@@ -246,13 +250,16 @@ int main(int argc, char ** argv)
       if(!oyjl_domain_path && getenv(OYJL_LOCALE_VAR) && strlen(getenv(OYJL_LOCALE_VAR)))
         oyjl_domain_path = strdup(getenv(OYJL_LOCALE_VAR));
 
+      if(translations_only)
+        new_translations = oyjlTreeNew(0);
+
 #ifdef OYJL_USE_GETTEXT
       var = textdomain( ctextdomain );
       dir = bindtextdomain( ctextdomain, oyjl_domain_path );
 #endif
 
       if(*oyjl_debug)
-        fprintf(stdout, "%s = bindtextdomain() to \"%s\"\ntextdomain: %s == %s\n", dir, oyjl_domain_path, ctextdomain, var );
+        fprintf(stderr, "%s = bindtextdomain() to \"%s\"\ntextdomain: %s == %s\n", dir, oyjl_domain_path, ctextdomain, var );
       var = NULL;
 
       oyjlStringAdd( &var, 0,0, "NLSPATH=%s", oyjl_domain_path );
@@ -265,7 +272,10 @@ int main(int argc, char ** argv)
 
         const char * checklocale = setlocale( LC_MESSAGES, lang );
         if(*oyjl_debug)
-          fprintf(stdout, "setlocale(%s) == %s\n", lang, checklocale );
+          fprintf(stderr, "setlocale(%s) == %s\n", lang, checklocale );
+
+        if(!checklocale)
+          continue;
 
         for(j = 0; j < count; ++j)
         {
@@ -294,8 +304,8 @@ int main(int argc, char ** argv)
               if(t != tr)
               {
                 char * new_path = NULL;
-                oyjlStringAdd( &new_path, malloc, free, "%s.%s", path, lang );
-                v = oyjlTreeGetValue( root, OYJL_CREATE_NEW, new_path );
+                oyjlStringAdd( &new_path, malloc, free, "org/freedesktop/oyjl/translations/%s/%s", lang, t );
+                v = oyjlTreeGetValue( new_translations?new_translations:root, OYJL_CREATE_NEW, new_path );
                 oyjlValueSetString( v, tr );
                 oyjlStringAdd( &text, malloc, free, "%s\n", tr );
                 free(new_path);
@@ -310,7 +320,7 @@ int main(int argc, char ** argv)
       if(text) free(text);
       text = NULL;
       i = 0;
-      oyjlTreeToJson( root, &i, &text );
+      oyjlTreeToJson( new_translations?new_translations:root, &i, &text );
 
     } else
       for(i = 0; i < count; ++i)
