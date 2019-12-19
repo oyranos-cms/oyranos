@@ -347,6 +347,71 @@ AppWindow {
             helpTextArea.font.family = "sans";
             helpTextArea.textFormat = Qt.RichText
         }
+        else if(t.match(/{/)) // convert JSON to HTML markup
+        {
+            var odd = true;
+            var high = "";
+            for( var i = 0; i < t.length; ++i )
+            {
+                var item = t[i]
+                if(item === '"')
+                {
+                    if(odd)
+                        high += item + '<i>'
+                    else
+                        high += "</i>" + item
+                    odd = !odd
+                }
+                else
+                    high += item;
+            };
+            high = high.replace(/ /g, '&nbsp;')
+            high = high.replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;')
+            high = high.replace(/\n/g, "<br />")
+            helpText = high
+            helpTextArea.font.family = "sans";
+            helpTextArea.textFormat = Qt.RichText
+        }
+        else if(t.match(/---/)) // convert YAML to HTML markup
+        {
+            high = "";
+            for( i = 0; i < t.length; ++i )
+            {
+                item = t[i]
+                if(item === '\n')
+                    high += '</i></b>' + item + '<b>'
+                else if(item === ':')
+                    high += '</b>' + item + '<i>'
+                else
+                    high += item;
+            };
+            high = high.replace(/ /g, '&nbsp;')
+            high = high.replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;')
+            high = high.replace(/\n/g, "<br />")
+            helpText = high
+            helpTextArea.font.family = "sans";
+            helpTextArea.textFormat = Qt.RichText
+        }
+        else if(t.match(/</)) // convert XML to HTML markup
+        {
+            high = "";
+            for( i = 0; i < t.length; ++i )
+            {
+                item = t[i]
+                if(item === '<')
+                    high += '</i>&lt;<b>'
+                else if(item === '>')
+                    high += '</b>&gt;<i>'
+                else
+                    high += item;
+            };
+            high = high.replace(/ /g, '&nbsp;')
+            high = high.replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;')
+            high = high.replace(/\n/g, "<br />")
+            helpText = high
+            helpTextArea.font.family = "sans";
+            helpTextArea.textFormat = Qt.RichText
+        }
 
         helpTextChanging = false
         image.opacity = 0.01
