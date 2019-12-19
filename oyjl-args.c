@@ -71,9 +71,38 @@ int myMain( int argc, const char ** argv )
                                        sections, oarray, groups, &state );
   /* done with options handling */
 
-  if(ui && verbose)
-    oyjlOptions_PrintHelp( ui->opts, ui, 4, "%s v%s - %s", argv[0],
-                            "1.0", "Test Tool for testing" );
+  if( state & oyjlUI_STATE_EXPORT &&
+      export &&
+      strcmp(export,"json+command") != 0)
+    goto clean_main;
+  if(state & oyjlUI_STATE_HELP)
+  {
+    fprintf( stderr, "%s\n\tman oyjl\n\n", _("For more information read the man page:") );
+    goto clean_main;
+  }
+
+  if(verbose)
+  {
+    char * json = oyjlOptions_ResultsToJson( ui->opts );
+    if(json)
+      fputs( json, stderr );
+    fputs( "\n", stderr );
+
+    char * text = oyjlOptions_ResultsToText( ui->opts );
+    if(text)
+      fputs( text, stderr );
+    fputs( "\n", stderr );
+  }
+
+  if((export && strcmp(export,"json+command") == 0))
+  {
+    char * json = oyjlUi_ToJson( ui, 0 ),
+         * json_commands = NULL;
+    oyjlStringAdd( &json_commands, malloc, free, "{\n  \"command_set\": \"%s\",", argv[0] );
+    oyjlStringAdd( &json_commands, malloc, free, "%s", &json[1] );
+    puts( json_commands );
+    goto clean_main;
+  }
 
   /* GUI boilerplate */
   if(ui && gui)
@@ -118,19 +147,37 @@ int myMain( int argc, const char ** argv )
 
   fflush(stdout);
 
+  clean_main:
+  {
+    int i = 0;
+    while(oarray[i].type[0])
+    {
+      if(oarray[i].value_type == oyjlOPTIONTYPE_CHOICE && oarray[i].values.choices.list)
+        free(oarray[i].values.choices.list);
+      ++i;
+    }
+  }
+  oyjlLibRelease();
+
   return 0;
 }
 
 extern int * oyjl_debug;
-int main( int argc_ OYJL_UNUSED, char**argv_ OYJL_UNUSED)
+char ** environment = NULL;
+int main( int argc_, char**argv_, char ** envv )
 {
   int argc = argc_;
-  const char * argv[] = {"test",argc_>=2?argv_[1]:NULL,argc_>=3?argv_[2]:NULL,argc_>=4?argv_[3]:NULL,argc_>=5?argv_[4]:NULL, NULL};
-  if(argc > 4) argc = 4;
+  char ** argv = argv_;
 
 #ifdef __ANDROID__
   setenv("COLORTERM", "1", 0); /* show rich text format on non GNU color extension environment */
+
+  argv = calloc( argc + 2, sizeof(char*) );
+  memcpy( argv, argv_, (argc + 2) * sizeof(char*) );
   argv[argc++] = "--gui"; /* start QML */
+  environment = environ;
+#else
+  environment = envv;
 #endif
 
   /* language needs to be initialised before setup of data structures */
@@ -143,7 +190,7 @@ int main( int argc_ OYJL_UNUSED, char**argv_ OYJL_UNUSED)
 #endif
   oyjlInitLanguageDebug( "Oyjl", "OYJL_DEBUG", oyjl_debug, use_gettext, "OYJL_LOCALEDIR", OYJL_LOCALEDIR, OYJL_DOMAIN, NULL );
 
-  myMain(argc, argv);
+  myMain(argc, (const char **)argv);
 
   return 0;
 }
