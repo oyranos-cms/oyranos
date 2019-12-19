@@ -347,7 +347,7 @@ AppWindow {
             helpTextArea.font.family = "sans";
             helpTextArea.textFormat = Qt.RichText
         }
-        else if(t.match(/{/)) // convert JSON to HTML markup
+        else if(t.match(/^{/)) // convert JSON to HTML markup
         {
             var odd = true;
             var high = "";
@@ -372,7 +372,7 @@ AppWindow {
             helpTextArea.font.family = "sans";
             helpTextArea.textFormat = Qt.RichText
         }
-        else if(t.match(/---/)) // convert YAML to HTML markup
+        else if(t.match(/^---/)) // convert YAML to HTML markup
         {
             high = "";
             for( i = 0; i < t.length; ++i )
@@ -392,7 +392,7 @@ AppWindow {
             helpTextArea.font.family = "sans";
             helpTextArea.textFormat = Qt.RichText
         }
-        else if(t.match(/</)) // convert XML to HTML markup
+        else if(t.match(/^</)) // convert XML to HTML markup
         {
             high = "";
             for( i = 0; i < t.length; ++i )
