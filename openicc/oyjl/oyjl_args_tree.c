@@ -972,8 +972,8 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
     oyjlStrAdd( s, "  {\n" );
     oyjlStrAdd( s, "    char * json = oyjlUi_ToJson( ui, 0 ),\n" );
     oyjlStrAdd( s, "         * json_commands = NULL;\n" );
-    oyjlStrAdd( s, "    oyjlStringAdd( &json_commands, malloc, free, \"{\\n  \\\"command_set\\\": \\\"%s\\\",\" );\n", nick );
-    oyjlStrAdd( s, "    oyjlStringAdd( &json_commands, malloc, free, \"%%s\", &json[1] );\n" );
+    oyjlStrAdd( s, "    oyjlStringAdd( &json_commands, malloc, free, \"{\\n  \\\"command_set\\\": \\\"%%s\\\"\", argv[0] );\n" );
+    oyjlStrAdd( s, "    oyjlStringAdd( &json_commands, malloc, free, \"%%s\", &json[1] ); /* skip opening '{' */\n" );
     oyjlStrAdd( s, "    puts( json_commands );\n" );
     oyjlStrAdd( s, "    goto clean_main;\n" );
     oyjlStrAdd( s, "  }\n" );
