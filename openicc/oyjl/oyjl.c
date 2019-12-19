@@ -77,11 +77,11 @@ int myMain( int argc, const char ** argv )
     {"",0,0,0,0}};
 
   /* declare the option choices  *   nick,          name,               description,                  help */
-  oyjlOptionChoice_s A_choices[] = {{"Print a key value or sub tree",_("oyjl -i text.json -x ///[0]"),NULL,                         NULL},
-                                    {"Print the number of keys",_("oyjl -c -i text.json -x my/path/"),NULL,                         NULL},
-                                    {"Print a key name",_("oyjl -k -i text.json -x ///[0]"),NULL,                         NULL},
-                                    {"Print all matching xpaths",_("oyjl -p -i text.json -x //"),NULL,                         NULL},
-                                    {"Modify a key/value",_("oyjl -i text.json -x my/path/to/key -s value"),NULL,                         NULL},
+  oyjlOptionChoice_s A_choices[] = {{_("Print JSON to stdout"),_("oyjl -i text.json -x ///[0]"),NULL,                         NULL},
+                                    {_("Print count of leafs in node"),_("oyjl -c -i text.json -x my/path/"),NULL,                         NULL},
+                                    {_("Print key name of node"),_("oyjl -k -i text.json -x ///[0]"),NULL,                         NULL},
+                                    {_("Print all matching paths"),_("oyjl -p -i text.json -x //"),NULL,                         NULL},
+                                    {_("Set a key name to a value"),_("oyjl -i text.json -x my/path/to/key -s value"),NULL,                         NULL},
                                     {"","","",""}};
 
   oyjlOptionChoice_s S_choices[] = {{"https://codedocs.xyz/oyranos-cms/oyranos/group__oyjl.html",NULL,               NULL,                         NULL},
