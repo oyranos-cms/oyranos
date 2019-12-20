@@ -386,6 +386,7 @@ MACRO( BUILD_TOOL _NAME _SOURCES _DEPENDENCIES _LIBS _DOCUMENT _INSTALL )
   TARGET_LINK_LIBRARIES( ${TOOL} ${OYJL_TARGET_LIB} ${EXTRA_LIBS} ${_LIBS} )
   IF( ${_DOCUMENT} )
     OYJL_DOCUMENT_TOOL( ${TOOL} ${TOOL_SOURCES} "de_DE.UTF8" ${DOC_PATH} )
+    SET( TOOLS ${TOOLS} ${TOOL} )
   ENDIF( ${_DOCUMENT} )
   IF(ENABLE_INSTALL_${PROJECT_UP_NAME} AND ${_INSTALL})
     INSTALL (TARGETS ${TOOL} DESTINATION ${CMAKE_INSTALL_BINDIR})
@@ -403,7 +404,7 @@ BUILD_TOOL(   ${PACKAGE_NAME}-translate "${CMAKE_CURRENT_SOURCE_DIR}/oyjl_transl
 IF(ENABLE_TOOLS_${PROJECT_UP_NAME})
   INCLUDE( "${CMAKE_CURRENT_BINARY_DIR}/cmake/OyjlConfig.cmake" ) # OYJL_DOCUMENT_TOOL
 
-  BUILD_TOOL( ${PACKAGE_NAME} "${CMAKE_CURRENT_SOURCE_DIR}/oyjl.c"                     ""                       ""                   FALSE TRUE )
+  BUILD_TOOL( ${PACKAGE_NAME} "${CMAKE_CURRENT_SOURCE_DIR}/oyjl.c"                     ""                       ""                   TRUE  TRUE )
   BUILD_TOOL( ${PACKAGE_NAME}-args "${CMAKE_CURRENT_SOURCE_DIR}/oyjl-args.c"           ""                       ""                   TRUE  TRUE )
   BUILD_TOOL( jsontoyaml "${CMAKE_CURRENT_SOURCE_DIR}/oyjl.c"                          ""                       ""                   FALSE TRUE )
   BUILD_TOOL( jsontoxml "${CMAKE_CURRENT_SOURCE_DIR}/oyjl.c"                           ""                       ""                   FALSE TRUE )
@@ -455,8 +456,11 @@ IF( ENABLE_TESTS_${PROJECT_UP_NAME} )
         COMMENT "Export UI and generate C code" VERBATIM
         )
   INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_SOURCE_DIR} )
-  ADD_EXECUTABLE(oyjl-args-ui oyjl-args-ui.c )
-  TARGET_LINK_LIBRARIES( oyjl-args-ui ${OYJL_TARGET_LIB} ${EXTRA_LIBS} )
+  SET( TOOL oyjl-args-ui )
+  SET( TOOLS ${TOOLS} ${TOOL} )
+  ADD_EXECUTABLE( ${TOOL} oyjl-args-ui.c )
+  TARGET_LINK_LIBRARIES( ${TOOL} ${OYJL_TARGET_LIB} ${EXTRA_LIBS} )
+  UNSET( TOOL )
   ADD_CUSTOM_TARGET( check-oyjl-args-ui
         ${MEMCHECK} ./oyjl-args-ui -h
         DEPENDS oyjl-args-ui check-args
@@ -528,6 +532,16 @@ IF( GETTEXT_FOUND AND OYJL_USE_GETTEXT )
                     )
   ADD_CUSTOM_TARGET( ${PROJECT_DOWN_NAME}_gmo ALL
                      DEPENDS ${GETTEXT_TRANSLATIONS_TARGET_PREFIX}translations ${PROJECT_DOWN_NAME}_gmo-cp  )
+  SET( LOCALES cs_CZ,de_DE,eo,eu_ES,fr_FR,ru_RU )
+  FOREACH( TOOL ${TOOLS} )
+    ADD_CUSTOM_COMMAND( OUTPUT ${TOOL}.i18n.json
+      COMMAND ${TOOL} -X json > ${TOOL}.json
+      COMMAND oyjl-translate -a -i ${TOOL}.json -o ${CMAKE_CURRENT_SOURCE_DIR}/${TOOL}.i18n.json -k name,description,help -d "oyjl" -p "${CMAKE_BINARY_DIR}/locale/" -l ${LOCALES} -t
+      DEPENDS ${TOOL}
+      COMMENT "generate ${TOOL}.i18n.json" )
+    ADD_CUSTOM_TARGET( ${TOOL}_i18n ALL
+      DEPENDS ${GETTEXT_TRANSLATIONS_TARGET_PREFIX}translations ${TOOL}.i18n.json  )
+  ENDFOREACH()
 ENDIF()
 
 
