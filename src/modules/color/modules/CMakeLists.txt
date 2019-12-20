@@ -30,6 +30,7 @@ MACRO(OY_TRANSLATE_MODULE)
   ENDIF()
 
   IF( GETTEXT_FOUND )
+    MESSAGE( "-- OYJL_JSON_TOOL: " ${OYJL_JSON_TOOL} )
     ADD_CUSTOM_TARGET( ${OY_MODULE}-i18n.c
       COMMAND LANG=C PATH=$(PATH):${CMAKE_BINARY_DIR}/openicc/oyjl LD_LIBRARY_PATH=${CMAKE_BINARY_DIR}/openicc/oyjl:${OYJL_LIBRARY_DIRS} oyjl-translate -i ${CMM}.json -ek name,label,description,help -o ${CMAKE_SOURCE_DIR}/src/modules/${OY_MODULE}-i18n.c
       DEPENDS ${CMM}.json ${OYJL_JSON_TOOL}
