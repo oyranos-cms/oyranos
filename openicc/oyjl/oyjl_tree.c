@@ -369,6 +369,24 @@ static void oyjlJsonIndent ( char ** json, const char * before, int level, const
   *json = njson;
 }
 
+char * oyjlJsonEscape( const char * in )
+{
+  char * out = NULL;
+  const char * t = in;
+  oyjl_str tmp = oyjlStrNew(10,0,0);
+  oyjlStrAppendN( tmp, t, strlen(t) );
+  oyjlStrReplace( tmp, "\\", "\\\\", 0, NULL );
+  oyjlStrReplace( tmp, "\"", "\\\"", 0, NULL );
+  oyjlStrReplace( tmp, "\b", "\\b", 0, NULL );
+  oyjlStrReplace( tmp, "\f", "\\f", 0, NULL );
+  oyjlStrReplace( tmp, "\n", "\\n", 0, NULL );
+  oyjlStrReplace( tmp, "\r", "\\r", 0, NULL );
+  oyjlStrReplace( tmp, "\t", "\\t", 0, NULL );
+  out = oyjlStrPull(tmp); 
+  oyjlStrRelease( &tmp );
+  return out;
+}
+
 int  oyjlTreeToJson21 (oyjl_val v, int * level, oyjl_str json)
 {
   int error = 0;
@@ -387,21 +405,11 @@ int  oyjlTreeToJson21 (oyjl_val v, int * level, oyjl_str json)
          oyjlStrAppendN (json, "0", 1); break;
     case oyjl_t_string:
          {
-          const char * t = v->u.string;
-          oyjl_str tmp = oyjlStrNew(10,0,0);
-          oyjlStrAppendN( tmp, t, strlen(t) );
-          oyjlStrReplace( tmp, "\\", "\\\\", 0, NULL );
-          oyjlStrReplace( tmp, "\"", "\\\"", 0, NULL );
-          oyjlStrReplace( tmp, "\b", "\\b", 0, NULL );
-          oyjlStrReplace( tmp, "\f", "\\f", 0, NULL );
-          oyjlStrReplace( tmp, "\n", "\\n", 0, NULL );
-          oyjlStrReplace( tmp, "\r", "\\r", 0, NULL );
-          oyjlStrReplace( tmp, "\t", "\\t", 0, NULL );
-          t = oyjlStr(tmp); 
+          char * escaped = oyjlJsonEscape( v->u.string );
           oyjlStrAppendN( json, "\"", 1 );
-          oyjlStrAppendN( json, t, strlen(t) );
+          oyjlStrAppendN( json, escaped, strlen(escaped) );
           oyjlStrAppendN( json, "\"", 1 );
-          oyjlStrRelease( &tmp );
+          free( escaped );
          }
          break;
     case oyjl_t_array:
@@ -443,7 +451,11 @@ int  oyjlTreeToJson21 (oyjl_val v, int * level, oyjl_str json)
                return 1;
              }
              oyjlStrAppendN( json, "\"", 1 );
-             oyjlStrAppendN( json, v->u.object.keys[i], strlen(v->u.object.keys[i]) );
+             {
+              char * escaped = oyjlJsonEscape( v->u.object.keys[i] );
+              oyjlStrAppendN( json, escaped, strlen(escaped) );
+              free( escaped );
+             }
              oyjlStrAppendN( json, "\": ", 3 );
              error = oyjlTreeToJson21( v->u.object.values[i], level, json );
              if(error) return error;
