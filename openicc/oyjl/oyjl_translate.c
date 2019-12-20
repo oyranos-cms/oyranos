@@ -271,7 +271,7 @@ int main(int argc, char ** argv)
         int j;
 
         const char * checklocale = setlocale( LC_MESSAGES, lang );
-        if(*oyjl_debug)
+        if(*oyjl_debug || checklocale == NULL)
           fprintf(stderr, "setlocale(%s) == %s\n", lang, checklocale );
 
         if(!checklocale)
@@ -293,7 +293,7 @@ int main(int argc, char ** argv)
               v = oyjlTreeGetValue( root, 0, path );
               if(v)
                 t = OYJL_GET_STRING(v);
-              if(t)
+              if(t && t[0])
 #ifdef OYJL_USE_GETTEXT
                 tr = dgettext( ctextdomain, t );
 #else
