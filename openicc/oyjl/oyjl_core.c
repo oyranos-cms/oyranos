@@ -1640,10 +1640,10 @@ int oyjlArgsQmlStart                 ( int                 argc,
 
     @section tools Tools Documentation
     Oyjl comes with a few tools, which use the Oyjl API's.
-    - oyjl - JSON manipulation
+    - @ref oyjl - JSON manipulation
     - oyjl-translate - localisation helper tool
     - @ref oyjlargs - code generation tool
-    - oyjl-args-qml - interactive option renderer written in Qt's QML
+    - @ref oyjlargsqml - interactive option renderer written in Qt's QML
  *  @{ *//* oyjl */
 
 static char * oyjl_nls_path_ = NULL;

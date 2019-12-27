@@ -1,0 +1,66 @@
+.TH "oyjl-args-qml" 1 "May 23, 2019" "User Commands"
+.SH NAME
+oyjl-args-qml v1.0 \- Oyjl Args QML Viewer
+.SH SYNOPSIS
+\fBoyjl-args-qml\fR \fB\-i\fR \fISTRING\fR [\fB\-c\fR \fISTRING\fR] [\fB\-o\fR \fISTRING\fR] [\fB\-v\fR]
+.br
+\fBoyjl-args-qml\fR \fB\-h\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR [\fB\-v\fR]
+.SH DESCRIPTION
+The tool graphicaly renders Oyjl JSON UI files using QML.
+.SH OPTIONS
+.SS
+QML UI
+\fBoyjl-args-qml\fR \fB\-i\fR \fISTRING\fR [\fB\-c\fR \fISTRING\fR] [\fB\-o\fR \fISTRING\fR] [\fB\-v\fR]
+.br
+\fB\-i\fR|\fB\-\-input\fR \fISTRING\fR	JSON UI Description
+.br
+\fB\-c\fR|\fB\-\-command\fR \fISTRING\fR	JSON Command
+.br
+\fB\-o\fR|\fB\-\-output\fR \fISTRING\fR	Results JSON
+.br
+.SS
+General options
+\fBoyjl-args-qml\fR \fB\-h\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR [\fB\-v\fR]
+.br
+\fB\-h\fR|\fB\-\-help\fR	Help
+.br
+\fB\-v\fR|\fB\-\-verbose\fR	verbose
+.br
+\fB\-X\fR|\fB\-\-export\fR \fIjson|json+command|man|markdown\fR	Export formated text
+.RS
+Get UI converted into text formats
+.RE
+	\-X man		# Man 
+.br
+	 Get a unix man page
+.br
+	\-X markdown		# Markdown 
+.br
+	 Get formated text
+.br
+	\-X json		# Json 
+.br
+	 Get a Oyjl Json UI declaration
+.br
+	\-X json+command		# Json + Command 
+.br
+	 Get Oyjl Json UI declaration incuding command
+.br
+	\-X export		# Export 
+.br
+	 Get UI data for developers
+.br
+.SH EXAMPLES
+.TP
+Load a UI JSON declaration from file
+.br
+oyjl-args-qml -i oyjl-ui-text.json -c oyjl-command.json
+.TP
+Load a UI JSON declaration from tool
+.br
+oyjl -X json+command | oyjl-args-qml -i - -c +
+.SH SEE ALSO
+.TP
+oyjl(1) oyjl-args(1) oyjl-translate(1)
+.br
+
