@@ -526,6 +526,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
     val = oyjlTreeGetValue( root, 0, OYJL_REG "/ui/app_type" ); app_type = OYJL_GET_STRING(val);
     oyjlStrAdd( s, "#include \"oyjl.h\"\n" );
     oyjlStrAdd( s, "#include \"oyjl_version.h\"\n" );
+    oyjlStrAdd( s, "extern char **environ;\n" );
     oyjlStrAdd( s, "#ifdef OYJL_HAVE_LOCALE_H\n" );
     oyjlStrAdd( s, "#include <locale.h>\n" );
     oyjlStrAdd( s, "#endif\n" );
@@ -798,7 +799,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
       {
         int count = oyjlValueCount( oyjlTreeGetValue( val, 0, "values/choices/list" ) );
         if(count)
-          oyjlStrAdd( s,   "{.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)%s_choices, sizeof(%s_choices), malloc )}, ", o,o );
+          oyjlStrAdd( s,   "{.choices = {(oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)%s_choices, sizeof(%s_choices), malloc ), 0}}, ", o,o );
         else
           oyjlStrAddSpaced(s,"{0}",        0, 20 );
       } else
@@ -881,7 +882,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
       oyjlStrAdd(s,"    {\"oiwi\", 0, \"V\", \"version\", NULL, _(\"version\"), _(\"Version\"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&version} },\n" );
       oyjlStrAdd(s,"    /* default option template -X|--export */\n" );
       if(!export_found && !X_found)
-      oyjlStrAdd(s,"    {\"oiwi\", 0, \"X\", \"export\", NULL, NULL, NULL, NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = NULL}, oyjlSTRING, {.s=&export} },\n" );
+      oyjlStrAdd(s,"    {\"oiwi\", 0, \"X\", \"export\", NULL, NULL, NULL, NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices = {NULL, 0}}, oyjlSTRING, {.s=&export} },\n" );
     }
     oyjlStrAdd( s, "    {\"\",0,0,NULL,NULL,NULL,NULL,NULL, NULL, oyjlOPTIONTYPE_END, {0},0,{0}}\n  };\n\n" );
     oyjlStrAdd( s, "  /* declare option groups, for better syntax checking and UI groups */\n" );
