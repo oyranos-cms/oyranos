@@ -77,6 +77,24 @@ QString AppData::getJSON(QString url)
     if(jdoc.isNull())
     {
         LOG(QString("%1: %2\n%3").arg(tr("Json is invalid")).arg(url).arg(jui));
+        int size = 0;
+        const char * fn = url.toLocal8Bit().data();
+        char * json = oyjlReadFile(fn, &size);
+        if(!size)
+        {
+          char * error = NULL;
+          oyjlStringAdd( &error, 0,0, "{\"error\": \"%s\"}", oyjlJsonEscape(fn) );
+          LOG(QString("No size of: %1").arg(fn));
+          return QString(error);
+        }
+        else
+        {
+          char * error_buffer = (char*) calloc( 256, sizeof(char) );
+          oyjl_val root = oyjlTreeParse( json, error_buffer, 256 );
+          if(error_buffer[0])
+            LOG(QString(error_buffer));
+          oyjlTreeFree( root );
+        }
     }
     QJsonObject json;
     json = jdoc.object();
