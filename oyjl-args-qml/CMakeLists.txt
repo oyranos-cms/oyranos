@@ -77,10 +77,11 @@ IF( HAVE_QT)
                 Qt5::Widgets
                 Qt5::Qml
                 Qt5::Quick
-                ${EXTRA_LIBS}
                 ${QT5_DBUS_LIB}
                 ${OPENICC_LIBRARIES}
+                ${OYJL_TARGET_LIB}
                 ${OYJL_CORE_LIB}
+                ${EXTRA_LIBS}
                 )
       SET_TARGET_PROPERTIES( ${PROJECT_LIB_SHARED} PROPERTIES
       PRIVATE_HEADER ""
@@ -121,10 +122,11 @@ IF( HAVE_QT)
                 Qt5::Widgets
                 Qt5::Qml
                 Qt5::Quick
-                ${EXTRA_LIBS}
                 ${QT5_DBUS_LIB}
                 ${OPENICC_LIBRARIES}
+                ${OYJL_TARGET_LIB}
                 ${OYJL_CORE_LIB}
+                ${EXTRA_LIBS}
                 )
       SET_TARGET_PROPERTIES( ${PROJECT_LIB_STATIC} PROPERTIES
       PRIVATE_HEADER ""
@@ -151,6 +153,7 @@ IF( HAVE_QT)
 
       IF( ENABLE_QT5_EXECUTABLE )
         ADD_EXECUTABLE( mini-app-example-static mini-app.c )
+        MESSAGE( "OYJL_STATIC_LIBRARY: " ${OYJL_STATIC_LIBRARY} " OYJL_TARGET_LIB: " ${OYJL_TARGET_LIB} )
         TARGET_LINK_LIBRARIES( mini-app-example-static ${PROJECT_LIB_STATIC})
       ENDIF()
 
@@ -174,11 +177,13 @@ IF( HAVE_QT)
       OYJL_DOCUMENT_TOOL( ${PROJECT_NAME} main.cpp "de_DE.UTF8" ${DOC_PATH} )
       SET( TOOL mini-app-example )
       ADD_EXECUTABLE( ${TOOL} mini-app.c )
-      TARGET_LINK_LIBRARIES( mini-app-example ${OYJL_CORE_LIB} ${EXTRA_CORE_LIBS} ) # OyjlArgsQML needs -ldl
+      TARGET_LINK_LIBRARIES( mini-app-example ${OYJL_TARGET_LIB} ${EXTRA_LIBS}  ${OYJL_CORE_LIB} ${EXTRA_CORE_LIBS} ) # OyjlArgsQML needs -ldl
     ENDIF ()
     IF (ENABLE_STATIC_LIBS_${PROJECT_UP_NAME} AND NOT ENABLE_SHARED_LIBS_${PROJECT_UP_NAME} AND ENABLE_QT5_EXECUTABLE)
       ADD_EXECUTABLE( ${PROJECT_NAME} main.cpp )
       TARGET_LINK_LIBRARIES( ${PROJECT_NAME} ${PROJECT_LIB_STATIC})
+      SET( LD_LIBRARY_PATH ${CMAKE_CURRENT_BINARY_DIR}/.. )
+      OYJL_DOCUMENT_TOOL( ${PROJECT_NAME} main.cpp "de_DE.UTF8" ${DOC_PATH} )
     ENDIF ()
     IF (NOT ENABLE_STATIC_LIBS_${PROJECT_UP_NAME} AND NOT ENABLE_SHARED_LIBS_${PROJECT_UP_NAME} AND ENABLE_QT5_EXECUTABLE)
       ADD_EXECUTABLE( ${PROJECT_NAME}
@@ -194,12 +199,14 @@ IF( HAVE_QT)
                 Qt5::Svg
                 Qt5::QSvgPlugin
 #${QT5SVG_LIBRARIES}
-                ${EXTRA_LIBS}
                 ${QT5_DBUS_LIB}
                 ${OPENICC_LIBRARIES}
-                ${OYJL_LIB}
+                ${OYJL_TARGET_LIB}
                 ${OYJL_CORE_LIB}
+                ${EXTRA_LIBS}
                 )
+      SET( LD_LIBRARY_PATH ${CMAKE_CURRENT_BINARY_DIR}/.. )
+      OYJL_DOCUMENT_TOOL( ${PROJECT_NAME} main.cpp "de_DE.UTF8" ${DOC_PATH} )
     ENDIF ()
     IF( Qt5DBus_FOUND )
       SET_TARGET_PROPERTIES( ${PROJECT_NAME} PROPERTIES COMPILE_DEFINITIONS "QT_DBUS_LIB=1" )
