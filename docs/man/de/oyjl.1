@@ -1,0 +1,144 @@
+.TH "oyjl" 1 "12. November 2017" "User Commands"
+.SH NAME
+oyjl v1.0 \- Oyjl Json Bearbeitung
+.SH ÜBERSICHT
+\fBoyjl\fR \fB\-j\fR [\fB\-i\fR \fIDATEINAME\fR] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR]
+.br
+\fBoyjl\fR \fB\-y\fR [\fB\-i\fR \fIDATEINAME\fR] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR]
+.br
+\fBoyjl\fR \fB\-m\fR [\fB\-i\fR \fIDATEINAME\fR] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR]
+.br
+\fBoyjl\fR \fB\-c\fR [\fB\-i\fR \fIDATEINAME\fR] [\fB\-x\fR \fIPFAD\fR]
+.br
+\fBoyjl\fR \fB\-k\fR [\fB\-i\fR \fIDATEINAME\fR] [\fB\-x\fR \fIPFAD\fR]
+.br
+\fBoyjl\fR \fB\-t\fR [\fB\-i\fR \fIDATEINAME\fR] [\fB\-x\fR \fIPFAD\fR]
+.br
+\fBoyjl\fR \fB\-p\fR [\fB\-i\fR \fIDATEINAME\fR] [\fB\-x\fR \fIPFAD\fR]
+.br
+\fBoyjl\fR \fB\-h\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR [\fB\-v\fR]
+.SH BESCHREIBUNG
+Das oyjl Programm unterstütz Einlesen, Filtern von Untermengen, Wertauswahl und Wertveränderung in einem JSON Text.
+.SH OPTIONEN
+.SS
+Setze Eingangsdateiname und Pfad
+.br
+\fB\-i\fR|\fB\-\-input\fR \fIDATEINAME\fR	Datei oder Datenstrom
+.RS
+Ein JSON-Dateiname oder Eingangsdatenstrom wie "stdin"
+.RE
+\fB\-x\fR|\fB\-\-xpath\fR \fIPFAD\fR	Pfadangabe
+.RS
+Der Pfad besteht aus Namen, welche durch Schrägstrich '/' getrennt sind. Jeder Name kann ein Schlüsselname sein oder ein Index in eckigen Klammern. Ein leerer Name wird für die Suche innerhalb eines Baumes benutzt.
+.RE
+\fB\-s\fR|\fB\-\-set\fR \fITEXT\fR	Setze Wert des Schlüssels
+.br
+.SS
+Zeige JSON auf stdout
+\fBoyjl\fR \fB\-j\fR [\fB\-i\fR \fIDATEINAME\fR] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR]
+.br
+\fB\-j\fR|\fB\-\-json\fR	Zeige JSON auf stdout
+.br
+.SS
+Zeige YAML auf stdout
+\fBoyjl\fR \fB\-y\fR [\fB\-i\fR \fIDATEINAME\fR] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR]
+.br
+\fB\-y\fR|\fB\-\-yaml\fR	Zeige YAML auf stdout
+.br
+.SS
+Zeige XML auf stdout
+\fBoyjl\fR \fB\-m\fR [\fB\-i\fR \fIDATEINAME\fR] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR]
+.br
+\fB\-m\fR|\fB\-\-xml\fR	Zeige XML auf stdout
+.br
+.SS
+Zeige Knotenanzahl
+\fBoyjl\fR \fB\-c\fR [\fB\-i\fR \fIDATEINAME\fR] [\fB\-x\fR \fIPFAD\fR]
+.br
+\fB\-c\fR|\fB\-\-count\fR	Zeige Anzahl der Knotenzweige
+.br
+.SS
+Zeige Schlüsselname
+\fBoyjl\fR \fB\-k\fR [\fB\-i\fR \fIDATEINAME\fR] [\fB\-x\fR \fIPFAD\fR]
+.br
+\fB\-k\fR|\fB\-\-key\fR	Zeige Schlüsselname des Knotens
+.br
+.SS
+Zeige Typ
+\fBoyjl\fR \fB\-t\fR [\fB\-i\fR \fIDATEINAME\fR] [\fB\-x\fR \fIPFAD\fR]
+.br
+\fB\-t\fR|\fB\-\-type\fR	Hole Knotentyp
+.br
+.SS
+Zeige alle zutreffenden Pfade
+\fBoyjl\fR \fB\-p\fR [\fB\-i\fR \fIDATEINAME\fR] [\fB\-x\fR \fIPFAD\fR]
+.br
+\fB\-p\fR|\fB\-\-paths\fR	Zeige alle zutreffenden Pfade
+.br
+.SS
+Allgemeine Optionen
+\fBoyjl\fR \fB\-h\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR [\fB\-v\fR]
+.br
+\fB\-h\fR|\fB\-\-help\fR	Hilfe
+.br
+\fB\-v\fR|\fB\-\-verbose\fR	mehr Infos
+.br
+\fB\-X\fR|\fB\-\-export\fR \fIjson|json+command|man|markdown\fR	Exportiere formatierten Text
+.RS
+Hole Benutzerschnittstelle als Text
+.RE
+	\-X man		# Handbuch 
+.br
+	 Hole Unix Handbuchseite
+.br
+	\-X markdown		# Markdown 
+.br
+	 Hole formatierten Text
+.br
+	\-X json		# Json 
+.br
+	 Hole Oyjl Json Benutzerschnittstelle
+.br
+	\-X json+command		# Json + Kommando 
+.br
+	 Hole Oyjl Json Benutzerschnittstelle mit Kommando
+.br
+	\-X export		# Export 
+.br
+	 Erhalte Daten für Entwickler
+.br
+.SH BEISPIELE
+.TP
+Zeige JSON auf stdout
+.br
+oyjl -i text.json -x ///[0]
+.TP
+Zeige Anzahl der Knotenzweige
+.br
+oyjl -c -i text.json -x mein/Pfad/
+.TP
+Zeige Schlüsselname des Knotens
+.br
+oyjl -k -i text.json -x ///[0]
+.TP
+Zeige alle zutreffenden Pfade
+.br
+oyjl -p -i text.json -x //
+.TP
+Setze Wert des Schlüssels
+.br
+oyjl -i text.json -x mein/Pfad/zum/Schlüssel -s Wert
+.SH SIEHE AUCH
+.TP
+oyjl-args(1) oyjl-translate(1) oyjl-args-qml(1)
+.br
+https://codedocs.xyz/oyranos-cms/oyranos/group__oyjl.html
+.SH AUTOR
+Kai-Uwe Behrmann (ku.b (at) gmx.de) 
+.SH KOPIERRECHT
+(c) 2017, Kai-Uwe Behrmann und Andere
+.br
+Lizenz: MIT <http://www.opensource.org/licenses/MIT>
+.SH FEHLER
+ https://github.com/oyranos-cms/oyranos/issues
+

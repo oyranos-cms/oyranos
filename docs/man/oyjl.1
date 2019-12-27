@@ -1,0 +1,144 @@
+.TH "oyjl" 1 "November 12, 2017" "User Commands"
+.SH NAME
+oyjl v1.0 \- Oyjl Json Manipulation
+.SH SYNOPSIS
+\fBoyjl\fR \fB\-j\fR [\fB\-i\fR \fIFILENAME\fR] [\fB\-x\fR \fIPATH\fR] [\fB\-s\fR \fISTRING\fR]
+.br
+\fBoyjl\fR \fB\-y\fR [\fB\-i\fR \fIFILENAME\fR] [\fB\-x\fR \fIPATH\fR] [\fB\-s\fR \fISTRING\fR]
+.br
+\fBoyjl\fR \fB\-m\fR [\fB\-i\fR \fIFILENAME\fR] [\fB\-x\fR \fIPATH\fR] [\fB\-s\fR \fISTRING\fR]
+.br
+\fBoyjl\fR \fB\-c\fR [\fB\-i\fR \fIFILENAME\fR] [\fB\-x\fR \fIPATH\fR]
+.br
+\fBoyjl\fR \fB\-k\fR [\fB\-i\fR \fIFILENAME\fR] [\fB\-x\fR \fIPATH\fR]
+.br
+\fBoyjl\fR \fB\-t\fR [\fB\-i\fR \fIFILENAME\fR] [\fB\-x\fR \fIPATH\fR]
+.br
+\fBoyjl\fR \fB\-p\fR [\fB\-i\fR \fIFILENAME\fR] [\fB\-x\fR \fIPATH\fR]
+.br
+\fBoyjl\fR \fB\-h\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR [\fB\-v\fR]
+.SH DESCRIPTION
+The oyjl program can be used to parse, filter sub trees, select values and modify values in JSON texts.
+.SH OPTIONS
+.SS
+Set input file and pah
+.br
+\fB\-i\fR|\fB\-\-input\fR \fIFILENAME\fR	File or Stream
+.RS
+A JSON file name or a input stream like "stdin".
+.RE
+\fB\-x\fR|\fB\-\-xpath\fR \fIPATH\fR	Path specifier
+.RS
+The path consists of slash '/' separated terms. Each term can be a key name or a square bracketed index. A empty term is used for a search inside a tree.
+.RE
+\fB\-s\fR|\fB\-\-set\fR \fISTRING\fR	Set a key name to a value
+.br
+.SS
+Print JSON to stdout
+\fBoyjl\fR \fB\-j\fR [\fB\-i\fR \fIFILENAME\fR] [\fB\-x\fR \fIPATH\fR] [\fB\-s\fR \fISTRING\fR]
+.br
+\fB\-j\fR|\fB\-\-json\fR	Print JSON to stdout
+.br
+.SS
+Print YAML to stdout
+\fBoyjl\fR \fB\-y\fR [\fB\-i\fR \fIFILENAME\fR] [\fB\-x\fR \fIPATH\fR] [\fB\-s\fR \fISTRING\fR]
+.br
+\fB\-y\fR|\fB\-\-yaml\fR	Print YAML to stdout
+.br
+.SS
+Print XML to stdout
+\fBoyjl\fR \fB\-m\fR [\fB\-i\fR \fIFILENAME\fR] [\fB\-x\fR \fIPATH\fR] [\fB\-s\fR \fISTRING\fR]
+.br
+\fB\-m\fR|\fB\-\-xml\fR	Print XML to stdout
+.br
+.SS
+Print node count
+\fBoyjl\fR \fB\-c\fR [\fB\-i\fR \fIFILENAME\fR] [\fB\-x\fR \fIPATH\fR]
+.br
+\fB\-c\fR|\fB\-\-count\fR	Print count of leafs in node
+.br
+.SS
+Print key name
+\fBoyjl\fR \fB\-k\fR [\fB\-i\fR \fIFILENAME\fR] [\fB\-x\fR \fIPATH\fR]
+.br
+\fB\-k\fR|\fB\-\-key\fR	Print key name of node
+.br
+.SS
+Print type
+\fBoyjl\fR \fB\-t\fR [\fB\-i\fR \fIFILENAME\fR] [\fB\-x\fR \fIPATH\fR]
+.br
+\fB\-t\fR|\fB\-\-type\fR	Get node type
+.br
+.SS
+Print all matching paths.
+\fBoyjl\fR \fB\-p\fR [\fB\-i\fR \fIFILENAME\fR] [\fB\-x\fR \fIPATH\fR]
+.br
+\fB\-p\fR|\fB\-\-paths\fR	Print all matching paths
+.br
+.SS
+General options
+\fBoyjl\fR \fB\-h\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR [\fB\-v\fR]
+.br
+\fB\-h\fR|\fB\-\-help\fR	Help
+.br
+\fB\-v\fR|\fB\-\-verbose\fR	increase verbosity
+.br
+\fB\-X\fR|\fB\-\-export\fR \fIjson|json+command|man|markdown\fR	Export formated text
+.RS
+Get UI converted into text formats
+.RE
+	\-X man		# Man 
+.br
+	 Get a unix man page
+.br
+	\-X markdown		# Markdown 
+.br
+	 Get formated text
+.br
+	\-X json		# Json 
+.br
+	 Get a Oyjl Json UI declaration
+.br
+	\-X json+command		# Json + Command 
+.br
+	 Get Oyjl Json UI declaration incuding command
+.br
+	\-X export		# Export 
+.br
+	 Get UI data for developers
+.br
+.SH EXAMPLES
+.TP
+Print JSON to stdout
+.br
+oyjl -i text.json -x ///[0]
+.TP
+Print count of leafs in node
+.br
+oyjl -c -i text.json -x my/path/
+.TP
+Print key name of node
+.br
+oyjl -k -i text.json -x ///[0]
+.TP
+Print all matching paths
+.br
+oyjl -p -i text.json -x //
+.TP
+Set a key name to a value
+.br
+oyjl -i text.json -x my/path/to/key -s value
+.SH SEE ALSO
+.TP
+oyjl-args(1) oyjl-translate(1) oyjl-args-qml(1)
+.br
+https://codedocs.xyz/oyranos-cms/oyranos/group__oyjl.html
+.SH AUTHOR
+Kai-Uwe Behrmann (ku.b (at) gmx.de) 
+.SH COPYRIGHT
+(c) 2017, Kai-Uwe Behrmann and others
+.br
+License: MIT <http://www.opensource.org/licenses/MIT>
+.SH BUGS
+ https://github.com/oyranos-cms/oyranos/issues
+
