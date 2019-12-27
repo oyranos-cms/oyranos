@@ -7,6 +7,7 @@
         <file>qml/main.qml</file>
         <file>qml/linkify.js</file>
         <file>qml/process.js</file>
+        <file>qml/marked.js</file>
         <file>images/logo.png</file>
         <file>images/logo-sw.svg</file>
         <file>qml/Combo.qml</file>
