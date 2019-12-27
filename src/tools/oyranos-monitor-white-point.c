@@ -439,17 +439,6 @@ int myMain( int argc , const char** argv )
   }
   if(!ui) return 1;
 
-#if !defined(NO_OYJL_ARGS_QML_START)
-  /* GUI boilerplate */
-  if(gui)
-  { 
-    int debug = verbose;
-    oyjlArgsQmlStart( argc, argv, NULL, debug, ui, myMain );
-    oyjlUi_Release( &ui);
-    return 0;
-  }
-#endif
-
   if((export && strcmp(export,"json+command") == 0))
   {
     char * json = NULL,
@@ -464,10 +453,6 @@ int myMain( int argc , const char** argv )
     puts( json_commands );
     return 0;
   }
-
-  DBG_S_( oyPrintTime() );
-  if(verbose >= 1)
-    oy_debug += verbose;
 
   if(verbose)
   {
@@ -486,6 +471,21 @@ int myMain( int argc , const char** argv )
     fprintf( stderr, "  Oyranos v%s\n",
                   oyNoEmptyName_m_(oyVersionString(1,0)));
 
+
+#if !defined(NO_OYJL_ARGS_QML_START)
+  /* GUI boilerplate */
+  if(gui)
+  { 
+    int debug = verbose;
+    oyjlArgsQmlStart( argc, argv, NULL, debug, ui, myMain );
+    oyjlUi_Release( &ui);
+    return 0;
+  }
+#endif
+
+  DBG_S_( oyPrintTime() );
+  if(verbose >= 1)
+    oy_debug += verbose;
 
   if(system_wide)
     scope = oySCOPE_SYSTEM;
