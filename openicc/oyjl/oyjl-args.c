@@ -14,6 +14,7 @@
 
 #include "oyjl.h"
 #include "oyjl_version.h"
+extern char **environ;
 #ifdef OYJL_HAVE_LOCALE_H
 #include <locale.h>
 #endif
@@ -45,6 +46,9 @@ int myMain( int argc, const char ** argv )
     {"oihs", "date",          NULL,  "2019-6-26T12:00:00", _("June 26, 2019")},
     {"",0,0,0,0}};
 
+  /* declare the option choices  *   nick,          name,               description,                  help */
+  oyjlOptionChoice_s S_choices[] = {{"oyjl-args(1) oyjl-translate(1) oyjl-args-qml(1)","https://codedocs.xyz/oyranos-cms/oyranos/group__oyjl.html",               NULL,                         NULL},
+                                    {"","","",""}};
   /* declare options - the core information; use previously declared choices */
   oyjlOption_s oarray[] = {
   /* type,   flags, o,   option,    key,  name,         description,         help, value_name,    value_type,               values,                                                          variable_type, output variable */
@@ -52,6 +56,8 @@ int myMain( int argc, const char ** argv )
     {"oiwi", 0,     "h", "help",    NULL, _("help"),    _("Help"),           NULL, NULL,          oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i = &help} },
     {"oiwi", 0,     "v", "verbose", NULL, _("verbose"), _("verbose"),        NULL, NULL,          oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i = &verbose} },
     {"oiwi", 0,     "X", "export", NULL, NULL, NULL, NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = NULL}, oyjlSTRING, {.s=&export} },
+    {"oiwi", 0,                          "S","man-see_also",  NULL,     _("SEE ALSO"),NULL,                      NULL, NULL,
+        oyjlOPTIONTYPE_CHOICE,   {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)S_choices, sizeof(S_choices), malloc )}, oyjlNONE,      {}},
     /* The --gui option can be hidden and used only internally. */
     {"oiwi", 0,     "G", "gui",     NULL, _("gui"),     _("GUI"),            NULL, NULL,          oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i = &gui} },
     {"",0,0,0,0,0,0,0, NULL, oyjlOPTIONTYPE_END, {},0,{}}
