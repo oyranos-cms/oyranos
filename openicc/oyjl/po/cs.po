@@ -2,12 +2,11 @@
 # Copyright (c) 2008 Milan Knizek
 # This file is distributed under the BSD licence (http://www.opensource.org/licenses/bsd-license.php)
 # First translator Milan Knizek <knizek@volny.cz>, 2008
-#: oyjl.c:118
 msgid ""
 msgstr ""
 "Project-Id-Version: cs\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2019-12-19 11:53+0100\n"
+"POT-Creation-Date: 2019-12-27 11:04+0100\n"
 "PO-Revision-Date: 2012-10-19 15:10+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -16,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: oyjl.c:73
+#: oyjl.c:74
 #, fuzzy
 msgid "(c) 2017, Kai-Uwe Behrmann and others"
 msgstr "Copyright (c) 2005-2010 Kai-Uwe Behrmann; newBSD"
@@ -25,7 +24,7 @@ msgstr "Copyright (c) 2005-2010 Kai-Uwe Behrmann; newBSD"
 msgid "... try with --help|-h option for usage text. give up"
 msgstr ""
 
-#: oyjl.c:110
+#: oyjl.c:111
 msgid "A JSON file name or a input stream like \"stdin\"."
 msgstr ""
 
@@ -33,13 +32,13 @@ msgstr ""
 msgid "AUTHOR"
 msgstr ""
 
-#: test-args.c:94 test-args.c:260 test-core.c:583 test-core.c:647 test.c:605
+#: test-args.c:94 test-args.c:260 test-core.c:583 test-core.c:647 test.c:629
 #: oyjl-args-qml/mini-app.c:195
 msgid "Actual mode"
 msgstr ""
 
 #: oyjl_translate.c:48
-msgid "Add gettext translated keys to JSON:"
+msgid "Add gettext translated keys to JSON"
 msgstr ""
 
 #: oyjl_args.c:1232
@@ -51,7 +50,7 @@ msgstr "Dostupná zařízení"
 msgid "Alternate"
 msgstr ""
 
-#: test-args.c:93 test-core.c:582 test.c:604 oyjl-args-qml/mini-app.c:194
+#: test-args.c:93 test-core.c:582 test.c:628 oyjl-args-qml/mini-app.c:194
 msgid "Any arg mode"
 msgstr ""
 
@@ -67,30 +66,30 @@ msgstr ""
 msgid "COPYRIGHT"
 msgstr ""
 
-#: test-args.c:78 test-core.c:572 test.c:594 oyjl-args-qml/mini-app.c:181
+#: test-args.c:78 test-core.c:572 test.c:618 oyjl-args-qml/mini-app.c:181
 #, fuzzy
 msgid "Control Output"
 msgstr "Výstupní"
 
 #. type,   flags, name,      description,          help, mandatory, optional, detail
-#: oyjl-args.c:63
+#: oyjl-args.c:69
 #, fuzzy
 msgid "Convert"
 msgstr "ICC Examin Verze"
 
 #: oyjl_translate.c:44
-msgid "Convert JSON to gettext ready C strings:"
+msgid "Convert JSON to gettext ready C strings"
 msgstr ""
 
-#: oyjl-args.c:70
+#: oyjl-args.c:76
 msgid "Convert UI JSON to C code using libOyjl"
 msgstr ""
 
-#: oyjl_args_tree.c:1103
+#: oyjl_args_tree.c:1104
 msgid "Copyright"
 msgstr "Copyright"
 
-#: oyjl.c:100 oyjl.c:138
+#: oyjl.c:101 oyjl.c:139
 msgid "Count"
 msgstr ""
 
@@ -98,7 +97,7 @@ msgstr ""
 msgid "DESCRIPTION"
 msgstr ""
 
-#: oyjl_args_tree.c:1112
+#: oyjl_args_tree.c:1113
 msgid "Date"
 msgstr "Datum"
 
@@ -107,11 +106,11 @@ msgstr "Datum"
 msgid "Description"
 msgstr "popis"
 
-#: oyjl_args_tree.c:1109
+#: oyjl_args_tree.c:1110
 msgid "Development"
 msgstr ""
 
-#: oyjl_args_tree.c:1111
+#: oyjl_args_tree.c:1112
 msgid "Documentation"
 msgstr "Dokumentace"
 
@@ -120,7 +119,7 @@ msgstr "Dokumentace"
 msgid "Double occuring option"
 msgstr "popis"
 
-#: oyjl_args_tree.c:1107
+#: oyjl_args_tree.c:1108
 msgid "Download"
 msgstr ""
 
@@ -128,7 +127,7 @@ msgstr ""
 msgid "ENVIRONMENT VARIABLES"
 msgstr ""
 
-#: oyjl.c:114 oyjl_args.c:2619
+#: oyjl.c:115 oyjl_args.c:2619
 msgid "EXAMPLES"
 msgstr ""
 
@@ -148,8 +147,8 @@ msgstr ""
 msgid "Export formated text"
 msgstr ""
 
-#: oyjl-args.c:51 oyjl.c:110 test-args.c:76 test-args.c:77 test-core.c:570
-#: test-core.c:571 test.c:592 test.c:593 oyjl-args-qml/mini-app.c:179
+#: oyjl-args.c:55 oyjl.c:111 test-args.c:76 test-args.c:77 test-core.c:570
+#: test-core.c:571 test.c:616 test.c:617 oyjl-args-qml/mini-app.c:179
 #: oyjl-args-qml/mini-app.c:180
 msgid "FILENAME"
 msgstr ""
@@ -163,12 +162,12 @@ msgstr ""
 msgid "File"
 msgstr "Soubory"
 
-#: oyjl.c:110
+#: oyjl.c:111
 #, fuzzy
 msgid "File or Stream"
 msgstr "profil nenalezen:"
 
-#: oyjl-args.c:80 oyjl.c:160
+#: oyjl-args.c:86 oyjl.c:161
 #, fuzzy
 msgid "For more information read the man page:"
 msgstr "Pro více informací viz manuálová stránka:"
@@ -177,7 +176,7 @@ msgstr "Pro více informací viz manuálová stránka:"
 msgid "Formated text"
 msgstr ""
 
-#: oyjl-args.c:56 oyjl.c:124 oyjl_args.c:1226 oyjl-args-qml/mini-app.c:183
+#: oyjl-args.c:62 oyjl.c:125 oyjl_args.c:1226 oyjl-args-qml/mini-app.c:183
 #, fuzzy
 msgid "GUI"
 msgstr "SGI"
@@ -186,17 +185,17 @@ msgstr "SGI"
 msgid "GUI + Command"
 msgstr ""
 
-#: oyjl-args.c:64 oyjl.c:142 test-args.c:97 test-args.c:261 test-core.c:584
-#: test-core.c:648 test.c:606 oyjl-args-qml/mini-app.c:196
+#: oyjl-args.c:70 oyjl.c:143 test-args.c:97 test-args.c:261 test-core.c:584
+#: test-core.c:648 test.c:630 oyjl-args-qml/mini-app.c:196
 #, fuzzy
 msgid "General options"
 msgstr "Obecné volby:"
 
-#: oyjl_translate.c:58
+#: oyjl_translate.c:59
 msgid "General options:"
 msgstr "Obecné volby:"
 
-#: oyjl-args.c:63
+#: oyjl-args.c:69
 msgid "Generate source code"
 msgstr ""
 
@@ -225,7 +224,7 @@ msgstr "Unix a deriváty"
 msgid "Get formated text"
 msgstr ""
 
-#: oyjl.c:108
+#: oyjl.c:109
 msgid "Get node type"
 msgstr ""
 
@@ -233,7 +232,7 @@ msgstr ""
 msgid "HISTORY"
 msgstr ""
 
-#: oyjl-args.c:52 oyjl.c:121 test-args.c:79 test-core.c:573 test.c:595
+#: oyjl-args.c:56 oyjl.c:122 test-args.c:79 test-core.c:573 test.c:619
 #: oyjl-args-qml/mini-app.c:184
 msgid "Help"
 msgstr ""
@@ -244,14 +243,14 @@ msgid "Information"
 msgstr "Informace:"
 
 #. type,   flags, name,               description,                  help,               mandatory,     optional,      detail
-#: oyjl.c:110 oyjl.c:134
+#: oyjl.c:111 oyjl.c:135
 #, fuzzy
 msgid "Input"
 msgstr "Vstupní"
 
 #. type,   flags,                      o,  option,          key,      name,          description,                  help, value_name,
 #. value_type,              values,             variable_type, variable_name
-#: oyjl.c:94
+#: oyjl.c:95
 msgid "JSON"
 msgstr ""
 
@@ -263,25 +262,25 @@ msgstr ""
 msgid "Json + Command"
 msgstr ""
 
-#: oyjl-args.c:45
+#: oyjl-args.c:46
 msgid "June 26, 2019"
 msgstr ""
 
-#: oyjl.c:71 oyjl.c:72
+#: oyjl.c:72 oyjl.c:73
 #, fuzzy
 msgid "Kai-Uwe Behrmann (ku.b (at) gmx.de)"
 msgstr "Kai-Uwe Behrmann"
 
-#: oyjl.c:102 oyjl.c:139
+#: oyjl.c:103 oyjl.c:140
 #, fuzzy
 msgid "Key Name"
 msgstr "Mé jméno"
 
-#: oyjl_args.c:2457 oyjl_args.c:2924 oyjl_args.c:3157 oyjl_args_tree.c:1104
+#: oyjl_args.c:2457 oyjl_args.c:2924 oyjl_args.c:3157 oyjl_args_tree.c:1105
 msgid "License"
 msgstr "Licence"
 
-#: oyjl.c:147
+#: oyjl.c:148
 msgid "Light weight JSON parse and manipulation tool"
 msgstr ""
 
@@ -289,7 +288,7 @@ msgstr ""
 msgid "Long"
 msgstr ""
 
-#: oyjl.c:74
+#: oyjl.c:75
 #, fuzzy
 msgid "MIT <http://www.opensource.org/licenses/MIT>"
 msgstr "Licence new BSD: http://www.opensource.org/licenses/bsd-license.php"
@@ -299,7 +298,7 @@ msgstr "Licence new BSD: http://www.opensource.org/licenses/bsd-license.php"
 msgid "Man"
 msgstr "Purpurová"
 
-#: oyjl_args_tree.c:1102
+#: oyjl_args_tree.c:1103
 msgid "Manufacturer"
 msgstr "Výrobce"
 
@@ -308,8 +307,8 @@ msgid "Markdown"
 msgstr ""
 
 #. parsed and checked with -i option
-#: oyjl-args.c:64 oyjl.c:142 test-args.c:97 test-args.c:261 test-core.c:584
-#: test-core.c:648 test.c:606 oyjl-args-qml/mini-app.c:196
+#: oyjl-args.c:70 oyjl.c:143 test-args.c:97 test-args.c:261 test-core.c:584
+#: test-core.c:648 test.c:630 oyjl-args-qml/mini-app.c:196
 msgid "Misc"
 msgstr ""
 
@@ -320,20 +319,20 @@ msgid "Mode"
 msgstr "Model:"
 
 #. type,   flags, name,      description,          help, mandatory, optional, detail
-#: test-args.c:89 test-core.c:581 test.c:603 oyjl-args-qml/mini-app.c:193
+#: test-args.c:89 test-core.c:581 test.c:627 oyjl-args-qml/mini-app.c:193
 #, fuzzy
 msgid "Mode1"
 msgstr "Model:"
 
 #. accepted even if none of the mandatory options is set
-#: test-args.c:90 test-core.c:582 test.c:604 oyjl-args-qml/mini-app.c:194
+#: test-args.c:90 test-core.c:582 test.c:628 oyjl-args-qml/mini-app.c:194
 #, fuzzy
 msgid "Mode2"
 msgstr "Model:"
 
 #. accepted even if none of the mandatory options is set
 #. accepted if anonymous arguments are set
-#: test-args.c:91 test-core.c:583 test.c:605 oyjl-args-qml/mini-app.c:195
+#: test-args.c:91 test-core.c:583 test.c:629 oyjl-args-qml/mini-app.c:195
 #, fuzzy
 msgid "Mode3"
 msgstr "Model:"
@@ -367,7 +366,7 @@ msgstr "Model:"
 msgid "Mode8"
 msgstr "Model:"
 
-#: oyjl_args_tree.c:1083
+#: oyjl_args_tree.c:1084
 #, fuzzy
 msgid "Module"
 msgstr "Volby modulu:"
@@ -376,15 +375,15 @@ msgstr "Volby modulu:"
 msgid "NAME"
 msgstr ""
 
-#: oyjl_args_tree.c:1312
+#: oyjl_args_tree.c:1313
 msgid "No"
 msgstr "Ne"
 
-#: oyjl.c:118
+#: oyjl.c:119
 msgid "No args"
 msgstr ""
 
-#: oyjl.c:76
+#: oyjl.c:77
 msgid "November 12, 2017"
 msgstr ""
 
@@ -396,7 +395,7 @@ msgstr ""
 msgid "OPTIONS"
 msgstr ""
 
-#: test-args.c:60 test-core.c:554 test.c:576
+#: test-args.c:60 test-core.c:554 test.c:600
 msgid "October 10, 2018"
 msgstr ""
 
@@ -424,97 +423,97 @@ msgid ""
 msgstr ""
 
 #. argc+argv are required for parsing the command line options
-#: oyjl.c:147
+#: oyjl.c:148
 msgid "Oyjl Json Manipulation"
 msgstr ""
 
-#: oyjl_args_tree.c:1110
+#: oyjl_args_tree.c:1111
 #, fuzzy
 msgid "Oyjl Module Author"
 msgstr "Moduly Oyranosu"
 
-#: oyjl.c:112
+#: oyjl.c:113
 msgid "PATH"
 msgstr ""
 
-#: oyjl.c:112
+#: oyjl.c:113
 msgid "Path specifier"
 msgstr ""
 
-#: oyjl.c:104 oyjl.c:141
+#: oyjl.c:105 oyjl.c:142
 #, fuzzy
 msgid "Paths"
 msgstr "Cesty"
 
-#: oyjl_args_tree.c:1114
+#: oyjl_args_tree.c:1115
 #, fuzzy
 msgid "Permissions"
 msgstr "ICC Examin Verze"
 
-#: test-args.c:67 test-core.c:561 test.c:583 oyjl-args-qml/mini-app.c:170
+#: test-args.c:67 test-core.c:561 test.c:607 oyjl-args-qml/mini-app.c:170
 #, fuzzy
 msgid "Print All"
 msgstr "Tiskárna"
 
-#: test-args.c:68 test-core.c:562 test.c:584 oyjl-args-qml/mini-app.c:171
+#: test-args.c:68 test-core.c:562 test.c:608 oyjl-args-qml/mini-app.c:171
 #, fuzzy
 msgid "Print Camera"
 msgstr "Jméno ovladače:"
 
-#: test-args.c:68 test-core.c:562 test.c:584 oyjl-args-qml/mini-app.c:171
+#: test-args.c:68 test-core.c:562 test.c:608 oyjl-args-qml/mini-app.c:171
 #, fuzzy
 msgid "Print Camera JSON"
 msgstr "Tiskárna CUPS"
 
-#: oyjl.c:135
+#: oyjl.c:136
 #, fuzzy
 msgid "Print JSON"
 msgstr "Tiskárna CUPS"
 
 #. declare the option choices  *   nick,          name,               description,                  help
-#: oyjl.c:80 oyjl.c:94 oyjl.c:135
+#: oyjl.c:81 oyjl.c:95 oyjl.c:136
 #, fuzzy
 msgid "Print JSON to stdout"
 msgstr "Tiskárna CUPS"
 
-#: test-args.c:69 test-core.c:563 test.c:585 oyjl-args-qml/mini-app.c:172
+#: test-args.c:69 test-core.c:563 test.c:609 oyjl-args-qml/mini-app.c:172
 #, fuzzy
 msgid "Print None"
 msgstr "Tiskárna CUPS"
 
-#: oyjl.c:137
+#: oyjl.c:138
 #, fuzzy
 msgid "Print XML"
 msgstr "Tiskárna"
 
-#: oyjl.c:98 oyjl.c:137
+#: oyjl.c:99 oyjl.c:138
 #, fuzzy
 msgid "Print XML to stdout"
 msgstr "Tiskárna"
 
-#: oyjl.c:136
+#: oyjl.c:137
 #, fuzzy
 msgid "Print YAML"
 msgstr "Tiskárna"
 
-#: oyjl.c:96 oyjl.c:136
+#: oyjl.c:97 oyjl.c:137
 #, fuzzy
 msgid "Print YAML to stdout"
 msgstr "Tiskárna"
 
-#: oyjl_translate.c:55
+#: oyjl_translate.c:56
 msgid "Print a help text:"
 msgstr "Vytisknout nápovědu:"
 
-#: oyjl.c:83 oyjl.c:104
+#: oyjl.c:84 oyjl.c:105
 msgid "Print all matching paths"
 msgstr ""
 
-#: oyjl.c:141
+#: oyjl.c:142
 msgid "Print all matching paths."
 msgstr ""
 
-#: oyjl.c:81 oyjl.c:100
+#: oyjl.c:82 oyjl.c:101
 msgid "Print count of leafs in node"
 msgstr ""
 
@@ -522,22 +521,22 @@ msgstr ""
 msgid "Print help for command line style interface"
 msgstr ""
 
-#: oyjl.c:139
+#: oyjl.c:140
 #, fuzzy
 msgid "Print key name"
 msgstr "Jméno ovladače:"
 
-#: oyjl.c:82 oyjl.c:102
+#: oyjl.c:83 oyjl.c:103
 #, fuzzy
 msgid "Print key name of node"
 msgstr "Jméno ovladače:"
 
-#: oyjl.c:138
+#: oyjl.c:139
 #, fuzzy
 msgid "Print node count"
 msgstr "Tiskárna CUPS"
 
-#: oyjl.c:140
+#: oyjl.c:141
 #, fuzzy
 msgid "Print type"
 msgstr "Tiskárna CUPS"
@@ -549,15 +548,15 @@ msgid ""
 "Write external storage to create and modify global data."
 msgstr ""
 
-#: oyjl_translate.c:236
+#: oyjl_translate.c:239
 msgid "Rendering Intent"
 msgstr "Záměr transformace"
 
-#: oyjl.c:118
+#: oyjl.c:119
 msgid "Run command without arguments"
 msgstr ""
 
-#: oyjl.c:116 oyjl_args.c:2631
+#: oyjl-args.c:59 oyjl.c:117 oyjl_args.c:2631
 msgid "SEE ALSO"
 msgstr ""
 
@@ -565,7 +564,7 @@ msgstr ""
 msgid "SEE AS WELL"
 msgstr ""
 
-#: oyjl.c:106
+#: oyjl.c:107
 msgid "STRING"
 msgstr ""
 
@@ -573,23 +572,23 @@ msgstr ""
 msgid "SYNOPSIS"
 msgstr ""
 
-#: oyjl-args.c:51 test-args.c:76 test-args.c:77 test-core.c:570 test-core.c:571
-#: test.c:592 test.c:593 oyjl-args-qml/mini-app.c:179
+#: oyjl-args.c:55 test-args.c:76 test-args.c:77 test-core.c:570 test-core.c:571
+#: test.c:616 test.c:617 oyjl-args-qml/mini-app.c:179
 #: oyjl-args-qml/mini-app.c:180
 #, fuzzy
 msgid "Set Input"
 msgstr "Vstupní"
 
-#: oyjl.c:106
+#: oyjl.c:107
 #, fuzzy
 msgid "Set Value"
 msgstr "Hodnota"
 
-#: oyjl.c:84 oyjl.c:106
+#: oyjl.c:85 oyjl.c:107
 msgid "Set a key name to a value"
 msgstr ""
 
-#: oyjl.c:134
+#: oyjl.c:135
 msgid "Set input file and pah"
 msgstr ""
 
@@ -598,25 +597,25 @@ msgstr ""
 #: test-args.c:103 test-args.c:229 test-args.c:267 test-args.c:281
 #: test-args.c:294 test-args.c:307 test-args.c:321 test-core.c:590
 #: test-core.c:616 test-core.c:654 test-core.c:668 test-core.c:681
-#: test-core.c:694 test-core.c:708 test.c:613
+#: test-core.c:694 test-core.c:708 test.c:637
 msgid "Short example tool using libOyjl"
 msgstr ""
 
-#: test-args.c:75 test-core.c:569 test.c:591 oyjl-args-qml/mini-app.c:178
+#: test-args.c:75 test-core.c:569 test.c:615 oyjl-args-qml/mini-app.c:178
 #, fuzzy
 msgid "Show Status"
 msgstr "Cesta"
 
 #: test-args.c:89 test-args.c:90 test-args.c:91 test-args.c:92 test-core.c:581
-#: test.c:603 oyjl-args-qml/mini-app.c:193
+#: test.c:627 oyjl-args-qml/mini-app.c:193
 msgid "Simple mode"
 msgstr ""
 
-#: oyjl_args_tree.c:1108
+#: oyjl_args_tree.c:1109
 msgid "Sources"
 msgstr ""
 
-#: oyjl_args_tree.c:1106
+#: oyjl_args_tree.c:1107
 msgid "Support"
 msgstr ""
 
@@ -624,7 +623,7 @@ msgstr ""
 msgid "Synopsis"
 msgstr ""
 
-#: test.c:575
+#: test.c:599
 msgid "The example tool demonstrates the usage of the libOyjl API's."
 msgstr ""
 
@@ -638,33 +637,33 @@ msgstr ""
 msgid "The example tool demontrates the usage of the libOyjl API's."
 msgstr ""
 
-#: oyjl.c:70
+#: oyjl.c:71
 msgid ""
 "The oyjl program can be used to parse, filter sub trees, select values and "
 "modify values in JSON texts."
 msgstr ""
 
-#: oyjl.c:112
+#: oyjl.c:113
 msgid ""
 "The path consists of slash '/' separated terms. Each term can be a key name "
 "or a square bracketed index. A empty term is used for a search inside a tree."
 msgstr ""
 
-#: oyjl_args_tree.c:1081
+#: oyjl_args_tree.c:1082
 msgid "Tool"
 msgstr ""
 
-#: oyjl-args.c:44
+#: oyjl-args.c:45
 msgid "Tool to convert UI JSON description from *-X export* into source code."
 msgstr ""
 
-#: oyjl.c:108 oyjl.c:140
+#: oyjl.c:109 oyjl.c:141
 msgid "Type"
 msgstr "Typ"
 
 #. tell about the tool
 #. argc+argv are required for parsing the command line options
-#: oyjl-args.c:70
+#: oyjl-args.c:76
 msgid "Ui to source code"
 msgstr ""
 
@@ -678,11 +677,11 @@ msgstr "Volba nepodporovaného typu:"
 msgid "Unix Man page"
 msgstr "Unix a deriváty"
 
-#: oyjl_args_tree.c:1105
+#: oyjl_args_tree.c:1106
 msgid "Url"
 msgstr ""
 
-#: oyjl_args.c:2063 oyjl_translate.c:43 oyjl_translate.c:155
+#: oyjl_args.c:2063 oyjl_translate.c:43 oyjl_translate.c:158
 msgid "Usage"
 msgstr "Použití"
 
@@ -693,30 +692,30 @@ msgstr "Použití"
 msgid "Usage Error:"
 msgstr ""
 
-#: oyjl.c:122
+#: oyjl.c:123
 #, fuzzy
 msgid "Verbose"
 msgstr "upovídaný výstup"
 
-#: oyjl.c:125 oyjl_args_tree.c:1113
+#: oyjl.c:126 oyjl_args_tree.c:1114
 #, fuzzy
 msgid "Version"
 msgstr "ICC Examin Verze"
 
-#: oyjl.c:98
+#: oyjl.c:99
 msgid "XML"
 msgstr ""
 
-#: oyjl.c:112
+#: oyjl.c:113
 #, fuzzy
 msgid "XPath"
 msgstr "Cesty"
 
-#: oyjl.c:96
+#: oyjl.c:97
 msgid "YAML"
 msgstr ""
 
-#: oyjl_args_tree.c:1312
+#: oyjl_args_tree.c:1313
 msgid "Yes"
 msgstr "Ano"
 
@@ -735,28 +734,28 @@ msgid "finished"
 msgstr "nedokončeno"
 
 #. The --gui option can be hidden and used only internally.
-#: oyjl-args.c:56 oyjl.c:124 oyjl-args-qml/mini-app.c:183
+#: oyjl-args.c:62 oyjl.c:125 oyjl-args-qml/mini-app.c:183
 msgid "gui"
 msgstr ""
 
 #. default options -h and -v
-#: oyjl-args.c:52 oyjl.c:121 test-args.c:79 test-core.c:573 test.c:595
+#: oyjl-args.c:56 oyjl.c:122 test-args.c:79 test-core.c:573 test.c:619
 #: oyjl-args-qml/mini-app.c:184
 msgid "help"
 msgstr "nápověda"
 
-#: oyjl.c:75
+#: oyjl.c:76
 msgid "https://github.com/oyranos-cms/oyranos/issues"
 msgstr ""
 
-#: oyjl.c:122
+#: oyjl.c:123
 msgid "increase verbosity"
 msgstr ""
 
 #. type,   flags, o,   option,    key,  name,         description,         help, value_name,    value_type,               values,                                                          variable_type, output variable
 #. OYJL_OPTION_FLAG_EDITABLE
-#: oyjl-args.c:51 test-args.c:76 test-args.c:77 test-core.c:570 test-core.c:571
-#: test.c:592 test.c:593 oyjl-args-qml/mini-app.c:179
+#: oyjl-args.c:55 test-args.c:76 test-args.c:77 test-core.c:570 test-core.c:571
+#: test.c:616 test.c:617 oyjl-args-qml/mini-app.c:179
 #: oyjl-args-qml/mini-app.c:180
 #, fuzzy
 msgid "input"
@@ -766,9 +765,14 @@ msgstr "Vstupní"
 msgid "is a JSON helper tool"
 msgstr ""
 
-#: oyjl_translate.c:62
+#: oyjl_translate.c:63
 msgid "language specific wrap; -w C for C static char"
 msgstr ""
+
+#: oyjl_translate.c:54
+#, fuzzy
+msgid "list empty translations too"
+msgstr "je nástroj pro správu politik"
 
 #: oyjl_translate.c:52
 msgid ""
@@ -794,7 +798,7 @@ msgstr ""
 msgid "needs OYJL_OPTION_FLAG_EDITABLE or choices"
 msgstr ""
 
-#: oyjl_translate.c:60 test-args.c:78 test-core.c:572 test.c:594
+#: oyjl_translate.c:61 test-args.c:78 test-core.c:572 test.c:618
 #: oyjl-args-qml/mini-app.c:181
 #, fuzzy
 msgid "output"
@@ -804,36 +808,41 @@ msgstr "Výstupní"
 msgid "output format string"
 msgstr ""
 
-#: oyjl.c:81
+#: oyjl_translate.c:53
+#, fuzzy
+msgid "output only translations"
+msgstr "je nástroj pro správu politik"
+
+#: oyjl.c:82
 msgid "oyjl -c -i text.json -x my/path/"
 msgstr ""
 
-#: oyjl.c:80
+#: oyjl.c:81
 msgid "oyjl -i text.json -x ///[0]"
 msgstr ""
 
-#: oyjl.c:84
+#: oyjl.c:85
 msgid "oyjl -i text.json -x my/path/to/key -s value"
 msgstr ""
 
-#: oyjl.c:82
+#: oyjl.c:83
 msgid "oyjl -k -i text.json -x ///[0]"
 msgstr ""
 
-#: oyjl.c:83
+#: oyjl.c:84
 msgid "oyjl -p -i text.json -x //"
 msgstr ""
 
 #. declare some option choices
-#: test-args.c:64 test-core.c:558 test.c:580
+#: test-args.c:64 test-core.c:558 test.c:604
 msgid "oyjl.json"
 msgstr ""
 
-#: test-args.c:65 test-core.c:559 test.c:581
+#: test-args.c:65 test-core.c:559 test.c:605
 msgid "oyjl2.json"
 msgstr ""
 
-#: oyjl_translate.c:59
+#: oyjl_translate.c:60
 msgid "specify JSON file"
 msgstr ""
 
@@ -843,7 +852,7 @@ msgid "started"
 msgstr "Začátek"
 
 #. type,   flags, o,   option,    key,  name,         description,         help, value_name,    value_type,               values,                                                          variable_type, output variable
-#: test-args.c:75 test-core.c:569 test.c:591 oyjl-args-qml/mini-app.c:178
+#: test-args.c:75 test-core.c:569 test.c:615 oyjl-args-qml/mini-app.c:178
 msgid "status"
 msgstr ""
 
@@ -851,20 +860,16 @@ msgstr ""
 msgid "text domain of your project"
 msgstr ""
 
-#: oyjl_translate.c:61
+#: oyjl_translate.c:62
 msgid "to be used key names in a comma separated list"
 msgstr ""
 
-#: oyjl_translate.c:53
-msgid "translations only output"
-msgstr ""
-
-#: oyjl-args.c:53 oyjl_translate.c:63 test-args.c:80 test-core.c:574 test.c:596
+#: oyjl-args.c:57 oyjl_translate.c:64 test-args.c:80 test-core.c:574 test.c:620
 #: oyjl-args-qml/mini-app.c:185
 msgid "verbose"
 msgstr "upovídaný výstup"
 
-#: oyjl.c:125
+#: oyjl.c:126
 #, fuzzy
 msgid "version"
 msgstr "ICC Examin Verze"
@@ -4695,9 +4700,6 @@ msgstr "ICC Examin Verze"
 
 #~ msgid "is a color profile administration tool for monitors"
 #~ msgstr "je nástroj pro barvové profily monitorů"
-
-#~ msgid "is a policy administration tool"
-#~ msgstr "je nástroj pro správu politik"
 
 #~ msgid "is not valid for an"
 #~ msgstr "neni platna pro"
