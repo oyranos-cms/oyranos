@@ -373,7 +373,10 @@ char * oyjlJsonEscape( const char * in )
 {
   char * out = NULL;
   const char * t = in;
-  oyjl_str tmp = oyjlStrNew(10,0,0);
+  oyjl_str tmp;
+  if(!in) return NULL;
+
+  tmp = oyjlStrNew(10,0,0);
   oyjlStrAppendN( tmp, t, strlen(t) );
   oyjlStrReplace( tmp, "\\", "\\\\", 0, NULL );
   oyjlStrReplace( tmp, "\"", "\\\"", 0, NULL );
