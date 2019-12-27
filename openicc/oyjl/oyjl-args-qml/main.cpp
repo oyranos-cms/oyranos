@@ -38,23 +38,34 @@ int main(int argc, const char *argv[])
     {"oihs", "date",          NULL,  "2019-05-23T12:00:00", _("May 23, 2019")},
     {"",0,0,0,0}};
 
+  /* declare the option choices  *   nick,          name,               description,                  help */
+  oyjlOptionChoice_s A_choices[] = {{_("Load a UI JSON declaration from file"),_("oyjl-args-qml -i oyjl-ui-text.json -c oyjl-command.json"),NULL, NULL},
+                                    {_("Load a UI JSON declaration from tool"),_("oyjl -X json+command | oyjl-args-qml -i - -c +"),NULL, NULL},
+                                    {NULL,NULL,NULL,NULL}};
+
+  oyjlOptionChoice_s S_choices[] = {{oyjlStringCopy("oyjl(1) oyjl-args(1) oyjl-translate(1)",NULL),NULL,               NULL,                         NULL},
+                                    {NULL,NULL,NULL,NULL}};
   /* declare options - the core information; use previously declared choices */
   oyjlOption_s oarray[] = {
   /* type,   flags, o,   option,    key,  name,         description,         help, value_name,    value_type,               values,                                                          variable_type, output variable */
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "i", "input", NULL, NULL,_("JSON UI Description"), NULL, _("STRING"), oyjlOPTIONTYPE_CHOICE, {}, oyjlSTRING, {.s = &json} },
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "c", "command", NULL, NULL, _("JSON Command"), NULL, _("STRING"), oyjlOPTIONTYPE_CHOICE, {}, oyjlSTRING, {.s = &command} },
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "o", "output", NULL, NULL,_("Results JSON"), NULL, _("STRING"), oyjlOPTIONTYPE_CHOICE, {}, oyjlSTRING, {.s = &output} },
-    {"oiwi", 0,     "h", "help",    NULL, _("help"),    _("Help"),           NULL, NULL,          oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i = &help} },
-    {"oiwi", 0,     "v", "verbose", NULL, _("verbose"), _("verbose"),        NULL, NULL,          oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i = &verbose} },
-    {"oiwi", 0,     "X", "export",  NULL, NULL,         NULL,                NULL, NULL,          oyjlOPTIONTYPE_CHOICE, {}, oyjlSTRING, {.s = &exportX} },
-    {"",0,0,0,0,0,0,0, NULL, oyjlOPTIONTYPE_END, {},oyjlNONE,{}}
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "i", "input", NULL, NULL,_("JSON UI Description"), NULL, _("STRING"), oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s = &json} },
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "c", "command", NULL, NULL, _("JSON Command"), NULL, _("STRING"), oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s = &command} },
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "o", "output", NULL, NULL,_("Results JSON"), NULL, _("STRING"), oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s = &output} },
+    {"oiwi", 0,     "h", "help",    NULL, _("help"),    _("Help"),           NULL, NULL,          oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i = &help} },
+    {"oiwi", 0,     "v", "verbose", NULL, _("verbose"), _("verbose"),        NULL, NULL,          oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i = &verbose} },
+    {"oiwi", 0,     "X", "export",  NULL, NULL,         NULL,                NULL, NULL,          oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s = &exportX} },
+    {"oiwi", 0,     "A", "man-examples",NULL,_("EXAMPLES"),NULL,             NULL, NULL,
+        oyjlOPTIONTYPE_CHOICE,   {.choices={(oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)A_choices, sizeof(A_choices), malloc ), 0}}, oyjlNONE,      {0}},
+    {"oiwi", 0,     "S", "man-see_also",NULL,_("SEE ALSO"),NULL,             NULL, NULL,
+        oyjlOPTIONTYPE_CHOICE,   {.choices={(oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)S_choices, sizeof(S_choices), malloc ), 0}}, oyjlNONE,      {0}},
+    {"",0,0,0,0,0,0,0, NULL, oyjlOPTIONTYPE_END, {NULL},oyjlNONE,{NULL}}
   };
 
   /* declare option groups, for better syntax checking and UI groups */
   oyjlOptionGroup_s groups_no_args[] = {
   /* type,   flags, name,      description,          help, mandatory, optional, detail */
     {"oiwg", 0,     _("GUI"),  _("QML UI"),          NULL, "i",       "c,o,v",  "i,c,o" },/* parsed and checked with -i option */
-    {"oiwg", 0,     _("Misc"), _("General options"), NULL, "h",       "v",      "h,v,X" },/* just show in documentation */
+    {"oiwg", 0,     _("Misc"), _("General options"), NULL, "h,X",     "v",      "h,v,X" },/* just show in documentation */
     {"",0,0,0,0,0,0,0}
   };
 
@@ -81,6 +92,7 @@ int main(int argc, const char *argv[])
   oyjlArgsQmlStart2( argc, argv, json, command, output, debug, ui, NULL );
 
   oyjlUi_Release( &ui);
+  free(S_choices[0].nick);
 
   return 0;
 }
