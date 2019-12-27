@@ -17,6 +17,7 @@
 #include "oyjl_tree_internal.h"
 #include "oyjl_macros.h"
 #include "oyjl_version.h"
+extern char **environ;
 
 #ifdef OYJL_HAVE_LOCALE_H
 #include <locale.h>
@@ -84,7 +85,7 @@ int myMain( int argc, const char ** argv )
                                     {_("Set a key name to a value"),_("oyjl -i text.json -x my/path/to/key -s value"),NULL,                         NULL},
                                     {"","","",""}};
 
-  oyjlOptionChoice_s S_choices[] = {{"https://codedocs.xyz/oyranos-cms/oyranos/group__oyjl.html",NULL,               NULL,                         NULL},
+  oyjlOptionChoice_s S_choices[] = {{"oyjl-args(1) oyjl-translate(1) oyjl-args-qml(1)","https://codedocs.xyz/oyranos-cms/oyranos/group__oyjl.html",               NULL,                         NULL},
                                     {"","","",""}};
 
   /* declare options - the core information; use previously declared choices */
@@ -115,7 +116,7 @@ int myMain( int argc, const char ** argv )
         oyjlOPTIONTYPE_CHOICE,   {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)A_choices, sizeof(A_choices), malloc )}, oyjlNONE,      {}},
     {"oiwi", 0,                          "S","man-see_also",  NULL,     _("SEE ALSO"),NULL,                      NULL, NULL,
         oyjlOPTIONTYPE_CHOICE,   {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)S_choices, sizeof(S_choices), malloc )}, oyjlNONE,      {}},
-    {"oiwi", 0,                          "#","",              NULL,     _(""),         _("No args"),                 _("Run command without arguments"),NULL,
+    {"oiwi", 0,                          "#","",              NULL,     "",            _("No args"),                 _("Run command without arguments"),NULL,
         oyjlOPTIONTYPE_NONE,     {0},                oyjlNONE,      {}},
     /* default options -h and -v */
     {"oiwi", 0, "h", "help", NULL, _("help"), _("Help"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&help} },
@@ -178,7 +179,7 @@ int myMain( int argc, const char ** argv )
   {
     char * json = oyjlUi_ToJson( ui, 0 ),
          * json_commands = NULL;
-    oyjlStringAdd( &json_commands, malloc, free, "{\n  \"command_set\": \"./tool\"," );
+    oyjlStringAdd( &json_commands, malloc, free, "{\n  \"command_set\": \"%s\",", argv[0] );
     oyjlStringAdd( &json_commands, malloc, free, "%s", &json[1] );
     puts( json_commands );
     goto clean_main;
@@ -243,7 +244,7 @@ int myMain( int argc, const char ** argv )
           for(i = 0; i < count; ++i)
             fprintf(stdout,"%s\n", path_list[i]);
         else if(key)
-          fprintf(stdout,"%s\n", (count && path_list[0] && strlen(strchr(path_list[0],'/'))) ? strrchr(path_list[0],'/') + 1 : "");
+          fprintf(stdout,"%s\n", (count && path_list[0]) ? strchr(path_list[0],'/') ? strrchr(path_list[0],'/') + 1 : path_list[0] : "");
 
         if(path_list || set)
           value = oyjlTreeGetValue( root,
