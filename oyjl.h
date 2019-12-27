@@ -279,6 +279,7 @@ int        oyjlPathMatch             ( const char        * path,
                                        int                 flags );
 
 int        oyjlDataFormat            ( const char        * text );
+char *     oyjlJsonEscape            ( const char        * in );
 /** @} *//* oyjl_tree */
 
 /* --- Core --- */
