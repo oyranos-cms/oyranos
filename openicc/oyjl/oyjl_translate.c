@@ -41,16 +41,17 @@ void printfHelp(int argc, char ** argv, int verbose_)
                   OYJL_VERSION_NAME );
   fprintf( stderr, "\n");
   fprintf( stderr, "%s\n",                 _("Usage"));
-  fprintf( stderr, "  %s\n",               _("Convert JSON to gettext ready C strings:"));
+  fprintf( stderr, "  %s\n",               _("Convert JSON to gettext ready C strings"));
   fprintf( stderr, "      %s -e [-v] -i FILE_NAME -o FILE_NAME -f '_(\\\"%%s\\\"); ' -k name,description,help\n",        argv[0]);
   fprintf( stderr, "        -f              %s\n", _("output format string"));
   fprintf( stderr, "\n");
-  fprintf( stderr, "  %s\n",               _("Add gettext translated keys to JSON:"));
+  fprintf( stderr, "  %s\n",               _("Add gettext translated keys to JSON"));
   fprintf( stderr, "      %s -a [-v] -i FILE_NAME -o FILE_NAME -k name,description,help -d TEXTDOMAIN -p LOCALEDIR -l de_DE,es_ES [-w C]\n",        argv[0]);
   fprintf( stderr, "        -d TEXTDOMAIN   %s\n", _("text domain of your project"));
   fprintf( stderr, "        -l locales      %s\n", _("locales in a comma separated list"));
   fprintf( stderr, "        -p LOCALEDIR    %s\n", _("locale directory containing the your-locale/LC_MESSAGES/your-textdomain.mo gettext translations"));
-  fprintf( stderr, "        -t              %s\n", _("translations only output"));
+  fprintf( stderr, "        -t              %s\n", _("output only translations"));
+  fprintf( stderr, "        -n              %s\n", _("list empty translations too"));
   fprintf( stderr, "\n");
   fprintf( stderr, "  %s\n",               _("Print a help text:"));
   fprintf( stderr, "      %s -h\n",        argv[0]);
@@ -72,6 +73,7 @@ int main(int argc, char ** argv)
   int verbose = 0;
   int error = 0;
   int add = 0;
+  int list_empty = 0;
   int extract = 0;
   int size = 0;
   int translations_only = 0;
@@ -112,6 +114,7 @@ int main(int argc, char ** argv)
               case 'i': OYJL_PARSE_STRING_ARG(file_name); break;
               case 'k': OYJL_PARSE_STRING_ARG(key_list); break;
               case 'l': OYJL_PARSE_STRING_ARG(lang_list); break;
+              case 'n': list_empty = 1; break;
               case 'o': OYJL_PARSE_STRING_ARG(output); break;
               case 'p': OYJL_PARSE_STRING_ARG(localedir); break;
               case 't': translations_only = 1; break;
@@ -301,12 +304,20 @@ int main(int argc, char ** argv)
 #endif
               if(verbose)
                 fprintf(stderr, "found:\t key: %s value[%s]: \"%s\"\n", path, ctextdomain, tr?tr:"----" );
-              if(t != tr)
+              if(t != tr || list_empty)
               {
-                char * new_path = NULL;
-                oyjlStringAdd( &new_path, malloc, free, "org/freedesktop/oyjl/translations/%s/%s", lang, t );
+                char * new_path = NULL, * new_key = oyjlStringCopy( t, NULL ), * tmp;
+                oyjlStringReplace( &new_key, "/", "%37", NULL,NULL );
+                tmp = oyjlJsonEscape( new_key );
+                free(new_key); new_key = tmp; tmp = NULL;
+                oyjlStringAdd( &new_path, malloc, free, "org/freedesktop/oyjl/translations/%s/%s", lang, new_key );
                 v = oyjlTreeGetValue( new_translations?new_translations:root, OYJL_CREATE_NEW, new_path );
-                oyjlValueSetString( v, tr );
+                tmp = oyjlJsonEscape( tr );
+                if(tmp)
+                {
+                  oyjlValueSetString( v, t != tr ? tmp : "" );
+                  free(tmp);
+                }
                 oyjlStringAdd( &text, malloc, free, "%s\n", tr );
                 free(new_path);
               }
