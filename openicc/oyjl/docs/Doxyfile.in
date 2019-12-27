@@ -2,6 +2,7 @@
 
 PROJECT_NUMBER         = @OYJL_VERSION@
 INPUT                  = @CMAKE_SOURCE_DIR@ @CMAKE_CURRENT_SOURCE_DIR@ @CMAKE_CURRENT_SOURCE_DIR@/md @CMAKE_BINARY_DIR@
+HTML_EXTRA_STYLESHEET  = @CMAKE_CURRENT_SOURCE_DIR@/layout.css
 
 #---------------------------------------------------------------------------
 # Project related configuration options

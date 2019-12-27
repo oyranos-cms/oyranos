@@ -26,7 +26,7 @@ FIND_PACKAGE( Doxygen )
 IF( DOXYGEN_FOUND )
 
   ADD_CUSTOM_COMMAND( OUTPUT html
-	  COMMAND cat ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile.files | grep ^FILE_PATTERNS | sed 's%\;% %g' >> Doxyfile.dox \; doxygen Doxyfile.dox \; cp ${CMAKE_SOURCE_DIR}/oyjl-args-qml/images/logo-sw.svg html/ \; cp ${CMAKE_CURRENT_SOURCE_DIR}/customdoxygen.css html/
+	  COMMAND cat ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile.files | grep ^FILE_PATTERNS | sed 's%\;% %g' >> Doxyfile.dox \; doxygen Doxyfile.dox \; cp ${CMAKE_SOURCE_DIR}/oyjl-args-qml/images/logo-sw.svg html/ \; cp ${CMAKE_CURRENT_SOURCE_DIR}/customdoxygen.css html/\; cp ${CMAKE_CURRENT_SOURCE_DIR}/layout.css html/
                     )
 
   ADD_CUSTOM_TARGET( docu ALL
