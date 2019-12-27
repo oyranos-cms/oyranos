@@ -141,13 +141,70 @@ int oyjlArgsQmlStart__               ( int                 argc,
     app_init = 1;
 
 
+    oyjl_val root = NULL;
+    char error_buffer[256] = {0};
+    int r = 0;
     if( json && strlen( json ) )
+    {
+      r = oyjlIsFile( json, "r", NULL, 0 );
+      if(!r && oyjlDataFormat(json) == 7)
+      {
+        root = oyjlTreeParse( json, error_buffer, 256 );
+        if(error_buffer[0] != '\000')
+        {
+          fprintf(stderr, "ERROR:\t\"%s\"\n", error_buffer);
+          char * error = NULL;
+          oyjlStringAdd( &error, 0,0, "{\"error\": \"%s\"}", json );
+          json = error;
+          r = -1;
+        }
+      }
+    }
+
+    if( (root && oyjlTreeGetValue(root, 0, "org/freedesktop/oyjl/modules")) || // use UI JSON
+        (!root && json && strlen(json)) ) // assume JSON filename
+    {
+      if(!root && json && strlen(json))
+      {
+        if(r)
+          LOG( QString("Found file name: ") + json );
+        else
+          LOG( QString("Assume file name or stream: ") + json );
+      } else
+        LOG( QString("Found Json org/freedesktop/oyjl/modules: ") + QString::number(strlen(json)) );
       mgr.setUri( QString(json) );
+    }
     else
     {
-      json = oyjlUi_ToJson( ui, 0 );
-      mgr.setUri( QString(json) );
-      free((void*)json);
+      json = oyjlUi_ToJson( ui, 0 ); // generate JSON from ui data struct
+      char * merged = NULL;
+      LOG( QString("oyjlUi_ToJson(): ") + QString::number(json?strlen(json):0) );
+      if(root && json)
+      {
+        oyjl_val module = oyjlTreeParse( json, error_buffer, 256 );
+        oyjl_val rv = oyjlTreeGetValue(root, 0, "org/freedesktop/oyjl/translations");
+        oyjl_val mv = oyjlTreeGetValue(module, OYJL_CREATE_NEW, "org/freedesktop/oyjl/translations");
+        if(rv && mv) // merge in translations
+        {
+          size_t size = sizeof(*rv);
+          memcpy( mv, rv, size );
+          memset( rv, 0, size );
+          int level = 0;
+          oyjlTreeToJson( module, &level, &merged );
+          LOG( QString("merge UI JSON with translation") );
+        } else
+          LOG( QString("expected translation is missing") );
+        oyjlTreeFree( module );
+      }
+      if(!merged && json)
+      {
+        merged = oyjlStringCopy( json, NULL );
+        LOG( QString("use generated UI JSON") );
+      }
+      oyjlTreeFree( root );
+      mgr.setUri( QString(merged) );
+      if(merged)
+        free(merged);
     }
 
     if( commands )
@@ -168,8 +225,8 @@ int oyjlArgsQmlStart__               ( int                 argc,
     ctxt->setContextProperty("QtRuntimeVersion", QVariant::fromValue( QString(qVersion()) ));
     ctxt->setContextProperty("QtCompileVersion", QVariant::fromValue( QString(QT_VERSION_STR) ));
 
-    int r = app.exec();
-    return r;
+    int result = app.exec();
+    return result;
 }
 
 extern "C" { // "C" API wrapper
