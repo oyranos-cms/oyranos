@@ -388,6 +388,30 @@ oyjlTESTRESULT_e testJson ()
         fprintf( zout, "%d %s\n", i, rjson?rjson:"---" );
       if(rjson) myDeAllocFunc(rjson);
       rjson = NULL;
+      if(i == 4)
+      {
+        const char * new_tree = "{ \"root\": {\"embedded_key\": \"val\" } }";
+        oyjl_val new_sub = oyjlTreeParse( new_tree, error_buffer, 128 );
+        oyjl_val rv = oyjlTreeGetValue( root, OYJL_CREATE_NEW, xpath );
+        oyjl_val nv = oyjlTreeGetValue( new_sub, 0, "root" );
+        size_t size = sizeof( * rv );
+        memcpy( rv, nv, size );
+        memset( nv, 0, size );
+        oyjlTreeToJson( root, &level, &rjson );
+        if( strlen( rjson ) == 291 )
+        { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+          "copy node                             " );
+        } else
+        { PRINT_SUB( oyjlTESTRESULT_FAIL,
+          "copy node                          %lu", rjson?(unsigned long)strlen(rjson):0 );
+        }
+        if(verbose)
+        fprintf( zout, "%s xpath \"%s\" %s\n", value?"found":"found not", xpath, success?"ok":"" );
+        if(verbose)
+          fprintf( zout, "%d %s\n", i, rjson?rjson:"---" );
+        if(rjson) myDeAllocFunc(rjson);
+        rjson = NULL;
+      }
       if(!root) oyjlTreeFree( value );
     }
 
@@ -630,7 +654,7 @@ oyjlTESTRESULT_e testUiRoundtrip ()
   if(text) {free(text);} text = NULL;
 
   char * c_source = oyjlUiJsonToCode( json, OYJL_SOURCE_CODE_C );
-  if(c_source && strlen(c_source) == 8083)
+  if(c_source && strlen(c_source) == 8228)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlUiJsonToCode()                   %lu", c_source?strlen(c_source):0 );
   } else
