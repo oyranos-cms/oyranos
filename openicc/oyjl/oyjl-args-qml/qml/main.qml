@@ -25,6 +25,7 @@ import Process 1.0
 import "qrc:/qml"
 import "process.js" as P
 import "linkify.js" as Link
+import "marked.js" as Mark
 
 AppWindow {
     id: mainWindow
@@ -316,6 +317,7 @@ AppWindow {
     property string cmmHelp: ""
     property string helpText: ""
     property bool helpTextChanging: false
+    property real initialHelpTextFontPointSize: 0
     onHelpTextChanged: {
         if(helpTextChanging)
             return
@@ -412,6 +414,14 @@ AppWindow {
             helpTextArea.font.family = "sans";
             helpTextArea.textFormat = Qt.RichText
         }
+        else if(t.match(/^#/) && !t.match(/^#include/)) // try markdown
+        {
+            var m = Mark.mark(this)
+            high = m.parse(t)
+            helpText = high;
+            helpTextArea.font.family = "sans";
+            helpTextArea.textFormat = Qt.RichText
+        }
 
         helpTextChanging = false
         image.opacity = 0.01
@@ -419,6 +429,16 @@ AppWindow {
     }
     function setHelpText( text, is_mono )
     {
+        if(initialHelpTextFontPointSize === 0)
+        {
+            var n = helpTextArea.font.pointSize * 1.0;
+            initialHelpTextFontPointSize = n;
+        }
+
+        helpTextArea.readOnly = true // deselect selection and it's font attributes
+        helpTextArea.font.pointSize = initialHelpTextFontPointSize; // reset font size
+        helpTextArea.readOnly = false
+
         if(is_mono === true)
             helpTextArea.font.family = "monospace";
         else
@@ -511,6 +531,16 @@ AppWindow {
 
                         color: fg
                         background: Rectangle { color: bg }
+
+                        onLinkActivated: {
+                            setBusyTimer.start()
+                            if(Qt.openUrlExternally(link))
+                                statusText = qsTr("Launched app for ") + link
+                            else
+                                statusText = "Launching external app failed"
+                            unsetBusyTimer.start()
+                        }
+                        onLinkHovered: (Qt.platform.os === "android") ? Qt.openUrlExternally(link) : statusText = link
                     }
                     ScrollBar.vertical: ScrollBar { }
                 }
