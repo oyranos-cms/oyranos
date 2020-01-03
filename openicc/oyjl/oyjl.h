@@ -480,7 +480,7 @@ typedef enum oyjlVARIABLETYPE_e {
 /** @brief Choice item */
 typedef struct oyjlOptionChoice_s {
   char * nick;                         /**< @brief nick / ID as argument for a option */
-  char * name;                         /**< @brief i18n short name for labels */
+  char * name;                         /**< @brief i18n short name for labels; In a MAN section and when starting with "http" this string is marked as link. */
   char * description;                  /**< @brief i18n description sentence; can be "" */
   char * help;                         /**< @brief i18n longer help text; can be "" */
 } oyjlOptionChoice_s;
