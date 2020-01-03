@@ -72,7 +72,7 @@ int myMain( int argc, const char ** argv )
     {"oihs", "manufacturer",  NULL,  _("Kai-Uwe Behrmann (ku.b (at) gmx.de)"),NULL},
     {"oihs", "oyjl_module_author",NULL,  _("Kai-Uwe Behrmann (ku.b (at) gmx.de)"),NULL},
     {"oihs", "copyright",     NULL,  _("(c) 2017, Kai-Uwe Behrmann and others"),NULL},
-    {"oihs", "license",       NULL,  _("MIT <http://www.opensource.org/licenses/MIT>"),NULL},
+    {"oihs", "license",       NULL,  _("MIT"),                 _("http://www.opensource.org/licenses/MIT")},
     {"oihs", "support",       NULL,  "",                       _("https://github.com/oyranos-cms/oyranos/issues")},
     {"oihs", "date",          NULL,  "2017-11-12T12:00:00",    _("November 12, 2017")},
     {"",0,0,0,0}};
