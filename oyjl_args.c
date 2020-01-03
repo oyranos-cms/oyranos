@@ -2676,7 +2676,12 @@ char *       oyjlExtraManSection     ( oyjlOptions_s     * opts,
             else
             oyjlStringAdd( &text, malloc, free, "### %s\n", list[l].nick );
             if(list[l].name && list[l].name[0])
-            oyjlStringAdd( &text, malloc, free, "&nbsp;&nbsp;%s\n", list[l].name );
+            {
+              if(strlen(list[l].name) > 5 && memcmp(list[l].name,"http",4) == 0)
+                oyjlStringAdd( &text, malloc, free, "&nbsp;&nbsp;[%s](%s)\n", list[l].name, list[l].name );
+              else
+                oyjlStringAdd( &text, malloc, free, "&nbsp;&nbsp;%s\n", list[l].name );
+            }
             if(list[l].description && list[l].description[0])
             oyjlStringAdd( &text, malloc, free, "  <br />\n&nbsp;&nbsp;%s\n", list[l].description );
             if(list[l].help && list[l].help[0])

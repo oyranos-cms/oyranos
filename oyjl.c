@@ -53,9 +53,9 @@ int myMain( int argc, const char ** argv )
   int count = 0;
   int type = 0;
   const char * set = 0;
-  int verbose = 0;
   const char * i_filename = 0;
   const char * xpath = 0;
+  int verbose = 0;
   int help = 0;
   int version = 0;
   int gui = 0;
