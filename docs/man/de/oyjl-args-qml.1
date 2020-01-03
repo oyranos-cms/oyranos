@@ -1,13 +1,13 @@
 .TH "oyjl-args-qml" 1 "May 23, 2019" "User Commands"
 .SH NAME
 oyjl-args-qml v1.0 \- Oyjl Args QML Viewer
-.SH SYNOPSIS
+.SH ÜBERSICHT
 \fBoyjl-args-qml\fR \fB\-i\fR \fISTRING\fR [\fB\-c\fR \fISTRING\fR] [\fB\-o\fR \fISTRING\fR] [\fB\-v\fR]
 .br
 \fBoyjl-args-qml\fR \fB\-h\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR [\fB\-v\fR]
-.SH DESCRIPTION
+.SH BESCHREIBUNG
 The tool graphicaly renders Oyjl JSON UI files using QML.
-.SH OPTIONS
+.SH OPTIONEN
 .SS
 QML UI
 \fBoyjl-args-qml\fR \fB\-i\fR \fISTRING\fR [\fB\-c\fR \fISTRING\fR] [\fB\-o\fR \fISTRING\fR] [\fB\-v\fR]
@@ -26,31 +26,31 @@ General options
 .br
 \fB\-v\fR|\fB\-\-verbose\fR	verbose
 .br
-\fB\-X\fR|\fB\-\-export\fR \fIjson|json+command|man|markdown\fR	Export formated text
+\fB\-X\fR|\fB\-\-export\fR \fIjson|json+command|man|markdown\fR	Exportiere formatierten Text
 .RS
-Get UI converted into text formats
+Hole Benutzerschnittstelle als Text
 .RE
-	\-X man		# Man 
+	\-X man		# Handbuch 
 .br
-	 Get a unix man page
+	 Hole Unix Handbuchseite
 .br
 	\-X markdown		# Markdown 
 .br
-	 Get formated text
+	 Hole formatierten Text
 .br
 	\-X json		# Json 
 .br
-	 Get a Oyjl Json UI declaration
+	 Hole Oyjl Json Benutzerschnittstelle
 .br
-	\-X json+command		# Json + Command 
+	\-X json+command		# Json + Kommando 
 .br
-	 Get Oyjl Json UI declaration incuding command
+	 Hole Oyjl Json Benutzerschnittstelle mit Kommando
 .br
 	\-X export		# Export 
 .br
-	 Get UI data for developers
+	 Erhalte Daten für Entwickler
 .br
-.SH EXAMPLES
+.SH BEISPIELE
 .TP
 Load a UI JSON declaration from file
 .br
@@ -59,7 +59,7 @@ oyjl-args-qml -i oyjl-ui-text.json -c oyjl-command.json
 Load a UI JSON declaration from tool
 .br
 oyjl -X json+command | oyjl-args-qml -i - -c +
-.SH SEE ALSO
+.SH SIEHE AUCH
 .TP
 oyjl(1) oyjl-args(1) oyjl-translate(1)
 .br
