@@ -47,7 +47,7 @@ int myMain( int argc, const char ** argv )
     {"",0,0,0,0}};
 
   /* declare the option choices  *   nick,          name,               description,                  help */
-  oyjlOptionChoice_s S_choices[] = {{"oyjl-args(1) oyjl-translate(1) oyjl-args-qml(1)","https://codedocs.xyz/oyranos-cms/oyranos/group__oyjl.html",               NULL,                         NULL},
+  oyjlOptionChoice_s S_choices[] = {{"oyjl(1) oyjl-translate(1) oyjl-args-qml(1)","https://codedocs.xyz/oyranos-cms/oyranos/group__oyjl.html",               NULL,                         NULL},
                                     {"","","",""}};
   /* declare options - the core information; use previously declared choices */
   oyjlOption_s oarray[] = {
