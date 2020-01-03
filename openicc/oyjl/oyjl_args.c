@@ -2595,7 +2595,7 @@ char *       oyjlStringToLower       ( const char        * t )
 
 
 #define ADD_SECTION( sec, link, format, ... ) { \
-  oyjlStringAdd( &text, malloc, free, "\n<a name=\"%s\"></a>\n## %s\n" format, link, sec, __VA_ARGS__ ); \
+  oyjlStringAdd( &text, malloc, free, "\n<h2>%s <a href=\"#toc\" name=\"%s\">&uarr;</a></h2>\n\n" format, sec, link, __VA_ARGS__ ); \
   oyjlStringListAddStaticString( sections, sn, sec, 0,0 ); \
   oyjlStringListAddStaticString( sections, sn, link, 0,0 ); }
 
@@ -2952,9 +2952,19 @@ static void replaceOutsideHTML(const char * text OYJL_UNUSED, const char * start
   if(start < end)
   {
     const char * word = start;
-    int * insideTable = (int*) data;
+    int * insideTable = (int*) data,
+          inside_table = insideTable[0],
+          inside_xml;
 
-    if( insideTable[0] )
+    word = start;
+    while(word && (word = strstr(word+1,"<")) != NULL && word < end)
+      ++insideTable[1];
+    word = start;
+    while(word && (word = strstr(word+1,">")) != NULL && word < end)
+      --insideTable[1];
+    inside_xml = insideTable[1];
+
+    if( inside_table || inside_xml )
       *replace = search;
     else
     {
@@ -3180,23 +3190,21 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
   }
 
   if(bugs && bugs_url)
-    ADD_SECTION( _("BUGS"), "bugs", "%s [%s](%s)\n", bugs, bugs_url, bugs_url )
+    ADD_SECTION( _("BUGS"), "bugs", "%s <a href=\"%s\">%s</a>\n", bugs, bugs_url, bugs_url )
   else if(bugs)
-    ADD_SECTION( _("BUGS"), "bugs", "[%s](%s)\n", bugs, bugs )
+    ADD_SECTION( _("BUGS"), "bugs", "<a href=\"%s\">%s</a>\n", bugs, bugs )
 
   {
     char * txt = NULL;
     int i;
 
-    oyjlStringAdd( &txt, malloc, free, "# %s %s%s %s\n", ui->nick, vers?"v":"", vers?vers:"", doxy_link );
+    oyjlStringAdd( &txt, malloc, free, "# %s %s%s %s\n<a name=\"toc\"></a>\n", ui->nick, vers?"v":"", vers?vers:"", doxy_link );
     for(i = 0; i < sn_/2; ++i)
       oyjlStringAdd( &txt, malloc, free, "[%s](#%s) ", sections_[2*i+0], sections_[2*i+1] );
     oyjlStringAdd( &txt, malloc, free, "\n\n%s", text );
     free(text);
     text = txt;
   }
-
-  oyjlStringAdd( &text, malloc, free, "\n\n<a href=\"#name\">%s</a>", _("Top") );
 
   {
     const char * t;
