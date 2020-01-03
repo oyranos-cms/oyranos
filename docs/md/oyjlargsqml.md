@@ -2,15 +2,23 @@
 [NAME](#name) [SYNOPSIS](#synopsis) [DESCRIPTION](#description) [OPTIONS](#options) [EXAMPLES](#examples) [SEE ALSO](#seealso) 
 
 *"oyjl\-args\-qml"* *1* *"May 23, 2019"* "User Commands"
-## NAME <a name="name"></a>
+
+<a name="name"></a>
+## NAME
 oyjl\-args\-qml v1.0 \- Oyjl Args QML Viewer
-## SYNOPSIS <a name="synopsis"></a>
+
+<a name="synopsis"></a>
+## SYNOPSIS
 **oyjl\-args\-qml** <strong>\-i</strong>=<em>STRING</em> [<strong>\-c</strong>=<em>STRING</em>] [<strong>\-o</strong>=<em>STRING</em>] [<strong>\-v</strong>]
 <br />
 **oyjl\-args\-qml** <strong>\-h</strong> <strong>\-X</strong>=<em>json|json+command|man|markdown</em> [<strong>\-v</strong>]
-## DESCRIPTION <a name="description"></a>
+
+<a name="description"></a>
+## DESCRIPTION
 The tool graphicaly renders Oyjl JSON UI files using QML.
-## OPTIONS <a name="options"></a>
+
+<a name="options"></a>
+## OPTIONS
 ### QML UI
 &nbsp;&nbsp;**oyjl\-args\-qml** <strong>\-i</strong>=<em>STRING</em> [<strong>\-c</strong>=<em>STRING</em>] [<strong>\-o</strong>=<em>STRING</em>] [<strong>\-v</strong>]
 
@@ -38,11 +46,16 @@ The tool graphicaly renders Oyjl JSON UI files using QML.
  </tr>
 </table>
 
-## EXAMPLES <a name="examples"></a>
+
+<a name="examples"></a>
+## EXAMPLES
 ### Load a UI JSON declaration from file
 &nbsp;&nbsp;oyjl-args\-qml \-i oyjl\-ui\-text.json \-c oyjl\-command.json
 ### Load a UI JSON declaration from tool
 &nbsp;&nbsp;oyjl \-X json+command | oyjl\-args\-qml \-i \- \-c +
-## SEE ALSO <a name="seealso"></a>
-###  [oyjl](oyjl.html)<a href="oyjl.md">(1)</a>  [oyjl\-args](oyjlargs.html)<a href="oyjlargs.md">(1)</a>  [oyjl\-translate](oyjltranslate.html)<a href="oyjltranslate.md">(1)</a>
+
+<a name="seealso"></a>
+## SEE ALSO
+&nbsp;&nbsp;[oyjl](oyjl.html)<a href="oyjl.md">(1)</a>&nbsp;&nbsp;[oyjl\-args](oyjlargs.html)<a href="oyjlargs.md">(1)</a>&nbsp;&nbsp;[oyjl\-translate](oyjltranslate.html)<a href="oyjltranslate.md">(1)</a>
+
 

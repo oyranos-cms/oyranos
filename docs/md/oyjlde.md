@@ -2,9 +2,13 @@
 [NAME](#name) [ÜBERSICHT](#synopsis) [BESCHREIBUNG](#description) [OPTIONEN](#options) [BEISPIELE](#examples) [SIEHE AUCH](#seealso) [AUTOR](#author) [KOPIERRECHT](#copyright) [FEHLER](#bugs) 
 
 *"oyjl"* *1* *"12. November 2017"* "User Commands"
-## NAME <a name="name"></a>
+
+<a name="name"></a>
+## NAME
 oyjl v1.0 \- Oyjl Json Bearbeitung
-## ÜBERSICHT <a name="synopsis"></a>
+
+<a name="synopsis"></a>
+## ÜBERSICHT
 **oyjl** <strong>\-j</strong> [<strong>\-i</strong>=<em>DATEINAME</em>] [<strong>\-x</strong>=<em>PFAD</em>] [<strong>\-s</strong>=<em>TEXT</em>]
 <br />
 **oyjl** <strong>\-y</strong> [<strong>\-i</strong>=<em>DATEINAME</em>] [<strong>\-x</strong>=<em>PFAD</em>] [<strong>\-s</strong>=<em>TEXT</em>]
@@ -20,9 +24,13 @@ oyjl v1.0 \- Oyjl Json Bearbeitung
 **oyjl** <strong>\-p</strong> [<strong>\-i</strong>=<em>DATEINAME</em>] [<strong>\-x</strong>=<em>PFAD</em>]
 <br />
 **oyjl** <strong>\-h</strong> <strong>\-X</strong>=<em>json|json+command|man|markdown</em> [<strong>\-v</strong>]
-## BESCHREIBUNG <a name="description"></a>
+
+<a name="description"></a>
+## BESCHREIBUNG
 Das oyjl Programm unterstütz Einlesen, Filtern von Untermengen, Wertauswahl und Wertveränderung in einem JSON Text.
-## OPTIONEN <a name="options"></a>
+
+<a name="options"></a>
+## OPTIONEN
 ### Setze Eingangsdateiname und Pfad
 
 <table style='width:100%'>
@@ -98,7 +106,9 @@ Das oyjl Programm unterstütz Einlesen, Filtern von Untermengen, Wertauswahl und
  </tr>
 </table>
 
-## BEISPIELE <a name="examples"></a>
+
+<a name="examples"></a>
+## BEISPIELE
 ### Zeige JSON auf stdout
 &nbsp;&nbsp;oyjl -i text.json \-x ///[0]
 ### Zeige Anzahl der Knotenzweige
@@ -109,17 +119,27 @@ Das oyjl Programm unterstütz Einlesen, Filtern von Untermengen, Wertauswahl und
 &nbsp;&nbsp;oyjl \-p \-i text.json \-x //
 ### Setze Wert des Schlüssels
 &nbsp;&nbsp;oyjl \-i text.json \-x mein/Pfad/zum/Schlüssel \-s Wert
-## SIEHE AUCH <a name="seealso"></a>
-###  [oyjl\-args](oyjlargs.html)<a href="oyjlargs.md">(1)</a>  [oyjl\-translate](oyjltranslate.html)<a href="oyjltranslate.md">(1)</a>  [oyjl\-args\-qml](oyjlargsqml.html)<a href="oyjlargsqml.md">(1)</a>
-&nbsp;&nbsp;https://codedocs.xyz/oyranos\-cms/oyranos/group\_\_oyjl.html
-## AUTOR <a name="author"></a>
+
+<a name="seealso"></a>
+## SIEHE AUCH
+&nbsp;&nbsp;[oyjl\-args](oyjlargs.html)<a href="oyjlargs.md">(1)</a>&nbsp;&nbsp;[oyjl\-translate](oyjltranslate.html)<a href="oyjltranslate.md">(1)</a>&nbsp;&nbsp;[oyjl\-args\-qml](oyjlargsqml.html)<a href="oyjlargsqml.md">(1)</a>
+
+&nbsp;&nbsp;[https://codedocs.xyz/oyranos\-cms/oyranos/group\_\_oyjl.html](https://codedocs.xyz/oyranos\-cms/oyranos/group\_\_oyjl.html)
+
+<a name="author"></a>
+## AUTOR
 Kai\-Uwe Behrmann (ku.b (at) gmx.de) 
-## KOPIERRECHT <a name="copyright"></a>
+
+<a name="copyright"></a>
+## KOPIERRECHT
 *(c) 2017, Kai\-Uwe Behrmann und Andere*
 
 
-### Lizenz <a name="license"></a>
+<a name="license"></a>
+### Lizenz
 MIT <http://www.opensource.org/licenses/MIT>
-## FEHLER <a name="bugs"></a>
+
+<a name="bugs"></a>
+## FEHLER
  [https://github.com/oyranos\-cms/oyranos/issues](https://github.com/oyranos\-cms/oyranos/issues)
 

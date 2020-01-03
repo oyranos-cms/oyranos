@@ -2,9 +2,13 @@
 [NAME](#name) [SYNOPSIS](#synopsis) [DESCRIPTION](#description) [OPTIONS](#options) [EXAMPLES](#examples) [SEE ALSO](#seealso) [AUTHOR](#author) [COPYRIGHT](#copyright) [BUGS](#bugs) 
 
 *"oyjl"* *1* *"November 12, 2017"* "User Commands"
-## NAME <a name="name"></a>
+
+<a name="name"></a>
+## NAME
 oyjl v1.0 \- Oyjl Json Manipulation
-## SYNOPSIS <a name="synopsis"></a>
+
+<a name="synopsis"></a>
+## SYNOPSIS
 **oyjl** <strong>\-j</strong> [<strong>\-i</strong>=<em>FILENAME</em>] [<strong>\-x</strong>=<em>PATH</em>] [<strong>\-s</strong>=<em>STRING</em>]
 <br />
 **oyjl** <strong>\-y</strong> [<strong>\-i</strong>=<em>FILENAME</em>] [<strong>\-x</strong>=<em>PATH</em>] [<strong>\-s</strong>=<em>STRING</em>]
@@ -20,9 +24,13 @@ oyjl v1.0 \- Oyjl Json Manipulation
 **oyjl** <strong>\-p</strong> [<strong>\-i</strong>=<em>FILENAME</em>] [<strong>\-x</strong>=<em>PATH</em>]
 <br />
 **oyjl** <strong>\-h</strong> <strong>\-X</strong>=<em>json|json+command|man|markdown</em> [<strong>\-v</strong>]
-## DESCRIPTION <a name="description"></a>
+
+<a name="description"></a>
+## DESCRIPTION
 The oyjl program can be used to parse, filter sub trees, select values and modify values in JSON texts.
-## OPTIONS <a name="options"></a>
+
+<a name="options"></a>
+## OPTIONS
 ### Set input file and pah
 
 <table style='width:100%'>
@@ -98,7 +106,9 @@ The oyjl program can be used to parse, filter sub trees, select values and modif
  </tr>
 </table>
 
-## EXAMPLES <a name="examples"></a>
+
+<a name="examples"></a>
+## EXAMPLES
 ### Print JSON to stdout
 &nbsp;&nbsp;oyjl -i text.json \-x ///[0]
 ### Print count of leafs in node
@@ -109,17 +119,27 @@ The oyjl program can be used to parse, filter sub trees, select values and modif
 &nbsp;&nbsp;oyjl \-p \-i text.json \-x //
 ### Set a key name to a value
 &nbsp;&nbsp;oyjl \-i text.json \-x my/path/to/key \-s value
-## SEE ALSO <a name="seealso"></a>
-###  [oyjl\-args](oyjlargs.html)<a href="oyjlargs.md">(1)</a>  [oyjl\-translate](oyjltranslate.html)<a href="oyjltranslate.md">(1)</a>  [oyjl\-args\-qml](oyjlargsqml.html)<a href="oyjlargsqml.md">(1)</a>
-&nbsp;&nbsp;https://codedocs.xyz/oyranos\-cms/oyranos/group\_\_oyjl.html
-## AUTHOR <a name="author"></a>
+
+<a name="seealso"></a>
+## SEE ALSO
+&nbsp;&nbsp;[oyjl\-args](oyjlargs.html)<a href="oyjlargs.md">(1)</a>&nbsp;&nbsp;[oyjl\-translate](oyjltranslate.html)<a href="oyjltranslate.md">(1)</a>&nbsp;&nbsp;[oyjl\-args\-qml](oyjlargsqml.html)<a href="oyjlargsqml.md">(1)</a>
+
+&nbsp;&nbsp;[https://codedocs.xyz/oyranos\-cms/oyranos/group\_\_oyjl.html](https://codedocs.xyz/oyranos\-cms/oyranos/group\_\_oyjl.html)
+
+<a name="author"></a>
+## AUTHOR
 Kai\-Uwe Behrmann (ku.b (at) gmx.de) 
-## COPYRIGHT <a name="copyright"></a>
+
+<a name="copyright"></a>
+## COPYRIGHT
 *(c) 2017, Kai\-Uwe Behrmann and others*
 
 
-### License <a name="license"></a>
+<a name="license"></a>
+### License
 MIT <http://www.opensource.org/licenses/MIT>
-## BUGS <a name="bugs"></a>
+
+<a name="bugs"></a>
+## BUGS
  [https://github.com/oyranos\-cms/oyranos/issues](https://github.com/oyranos\-cms/oyranos/issues)
 

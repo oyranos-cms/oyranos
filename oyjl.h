@@ -569,6 +569,10 @@ typedef struct oyjlOptionGroup_s {
 
 /**
  *   @brief Main command line, options and groups
+ *
+ *  Man sections can be added by using the "man-"man_name identifier/name scheme, e.g. "man-see_also" in oyjlOption_s::option.
+ *
+ *  @see oyjlUi_ToMan()
  */
 struct oyjlOptions_s {
   char type [8];                       /**< @brief must be 'oiws' */

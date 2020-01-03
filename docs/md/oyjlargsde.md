@@ -2,15 +2,23 @@
 [NAME](#name) [ÜBERSICHT](#synopsis) [BESCHREIBUNG](#description) [OPTIONEN](#options) [SIEHE AUCH](#seealso) 
 
 *"oyjl\-args"* *1* *"26. Juni 2019"* "User Commands"
-## NAME <a name="name"></a>
+
+<a name="name"></a>
+## NAME
 oyjl\-args v1.0 \- Benutzerschnittstellen nach Quelltext
-## ÜBERSICHT <a name="synopsis"></a>
+
+<a name="synopsis"></a>
+## ÜBERSICHT
 **oyjl\-args** <strong>\-i</strong>=<em>DATEINAME</em> [<strong>\-v</strong>]
 <br />
 **oyjl\-args** <strong>\-h</strong> [<strong>\-v</strong>]
-## BESCHREIBUNG <a name="description"></a>
+
+<a name="description"></a>
+## BESCHREIBUNG
 Werkzeug um Benutzerschnittstellen in JSON von *\-X export* nach Quelltext zu übertragen.
-## OPTIONEN <a name="options"></a>
+
+<a name="options"></a>
+## OPTIONEN
 ### Erzeuge Quelltext
 &nbsp;&nbsp;**oyjl\-args** <strong>\-i</strong>=<em>DATEINAME</em> [<strong>\-v</strong>]
 
@@ -26,7 +34,10 @@ Werkzeug um Benutzerschnittstellen in JSON von *\-X export* nach Quelltext zu ü
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-v</strong>|<strong>--verbose</strong></td> <td>plaudernd</td> </tr>
 </table>
 
-## SIEHE AUCH <a name="seealso"></a>
-###  [oyjl-args](oyjlargs.html)<a href="oyjlargs.md">(1)</a>  [oyjl\-translate](oyjltranslate.html)<a href="oyjltranslate.md">(1)</a>  [oyjl\-args\-qml](oyjlargsqml.html)<a href="oyjlargsqml.md">(1)</a>
-&nbsp;&nbsp;https://codedocs.xyz/oyranos\-cms/oyranos/group\_\_oyjl.html
+
+<a name="seealso"></a>
+## SIEHE AUCH
+&nbsp;&nbsp;[oyjl-args](oyjlargs.html)<a href="oyjlargs.md">(1)</a>&nbsp;&nbsp;[oyjl\-translate](oyjltranslate.html)<a href="oyjltranslate.md">(1)</a>&nbsp;&nbsp;[oyjl\-args\-qml](oyjlargsqml.html)<a href="oyjlargsqml.md">(1)</a>
+
+&nbsp;&nbsp;[https://codedocs.xyz/oyranos\-cms/oyranos/group\_\_oyjl.html](https://codedocs.xyz/oyranos\-cms/oyranos/group\_\_oyjl.html)
 
