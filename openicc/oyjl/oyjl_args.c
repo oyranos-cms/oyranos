@@ -2590,7 +2590,7 @@ char *       oyjlStringToLower       ( const char        * t )
 
 
 #define ADD_SECTION( sec, link, format, ... ) { \
-  oyjlStringAdd( &text, malloc, free, "## %s <a name=\"%s\"></a>\n" format, sec, link, __VA_ARGS__ ); \
+  oyjlStringAdd( &text, malloc, free, "\n<a name=\"%s\"></a>\n## %s\n" format, link, sec, __VA_ARGS__ ); \
   oyjlStringListAddStaticString( sections, sn, sec, 0,0 ); \
   oyjlStringListAddStaticString( sections, sn, link, 0,0 ); }
 
@@ -2647,7 +2647,6 @@ char *       oyjlExtraManSection     ( oyjlOptions_s     * opts,
             {
               int li_n = 0, i;
               char ** li = oyjlStringSplit2( list[l].nick, 0, &li_n, NULL, malloc );
-              oyjlStringAdd( &text, malloc, free, "###" );
               for(i = 0; i < li_n; ++i)
               {
                 char * md = oyjlStringCopy( li[i], 0 );
@@ -2662,7 +2661,7 @@ char *       oyjlExtraManSection     ( oyjlOptions_s     * opts,
                   t = oyjlStringCopy( md, 0 );
                   oyjlStringReplace( &md, "-", "", malloc, free );
 
-                  oyjlStringAdd( &text, malloc, free, "  [%s](%s.html)<a href=\"%s.md\">%s</a>", t, md, md, end );
+                  oyjlStringAdd( &text, malloc, free, "&nbsp;&nbsp;[%s](%s.html)<a href=\"%s.md\">%s</a>", t, md, md, end );
                   free( t );
                   free( end );
                 }
@@ -2671,7 +2670,7 @@ char *       oyjlExtraManSection     ( oyjlOptions_s     * opts,
 
                 free( md );
               }
-              oyjlStringAdd( &text, malloc, free, "\n" );
+              oyjlStringAdd( &text, malloc, free, "\n\n" );
               oyjlStringListRelease( &li, li_n, free );
             }
             else
@@ -3154,7 +3153,7 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
   {
     ADD_SECTION( _("COPYRIGHT"), "copyright", "*%s*\n", copy?copy:"" )
     if(lice)
-      oyjlStringAdd( &text, malloc, free, "\n\n### %s <a name=\"license\"></a>\n%s\n", _("License"), lice?lice:"" );
+      oyjlStringAdd( &text, malloc, free, "\n\n<a name=\"license\"></a>\n### %s\n%s\n", _("License"), lice?lice:"" );
   }
 
   if(bugs && bugs_url)
