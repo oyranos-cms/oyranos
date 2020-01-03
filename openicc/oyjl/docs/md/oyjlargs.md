@@ -2,15 +2,23 @@
 [NAME](#name) [SYNOPSIS](#synopsis) [DESCRIPTION](#description) [OPTIONS](#options) [SEE ALSO](#seealso) 
 
 *"oyjl\-args"* *1* *"June 26, 2019"* "User Commands"
-## NAME <a name="name"></a>
+
+<a name="name"></a>
+## NAME
 oyjl\-args v1.0 \- Ui to source code
-## SYNOPSIS <a name="synopsis"></a>
+
+<a name="synopsis"></a>
+## SYNOPSIS
 **oyjl\-args** <strong>\-i</strong>=<em>FILENAME</em> [<strong>\-v</strong>]
 <br />
 **oyjl\-args** <strong>\-h</strong> [<strong>\-v</strong>]
-## DESCRIPTION <a name="description"></a>
+
+<a name="description"></a>
+## DESCRIPTION
 Tool to convert UI JSON description from *\-X export* into source code.
-## OPTIONS <a name="options"></a>
+
+<a name="options"></a>
+## OPTIONS
 ### Generate source code
 &nbsp;&nbsp;**oyjl\-args** <strong>\-i</strong>=<em>FILENAME</em> [<strong>\-v</strong>]
 
@@ -26,7 +34,10 @@ Tool to convert UI JSON description from *\-X export* into source code.
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-v</strong>|<strong>--verbose</strong></td> <td>verbose</td> </tr>
 </table>
 
-## SEE ALSO <a name="seealso"></a>
-###  [oyjl-args](oyjlargs.html)<a href="oyjlargs.md">(1)</a>  [oyjl\-translate](oyjltranslate.html)<a href="oyjltranslate.md">(1)</a>  [oyjl\-args\-qml](oyjlargsqml.html)<a href="oyjlargsqml.md">(1)</a>
-&nbsp;&nbsp;https://codedocs.xyz/oyranos\-cms/oyranos/group\_\_oyjl.html
+
+<a name="seealso"></a>
+## SEE ALSO
+&nbsp;&nbsp;[oyjl-args](oyjlargs.html)<a href="oyjlargs.md">(1)</a>&nbsp;&nbsp;[oyjl\-translate](oyjltranslate.html)<a href="oyjltranslate.md">(1)</a>&nbsp;&nbsp;[oyjl\-args\-qml](oyjlargsqml.html)<a href="oyjlargsqml.md">(1)</a>
+
+&nbsp;&nbsp;[https://codedocs.xyz/oyranos\-cms/oyranos/group\_\_oyjl.html](https://codedocs.xyz/oyranos\-cms/oyranos/group\_\_oyjl.html)
 

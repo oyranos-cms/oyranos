@@ -2729,21 +2729,27 @@ char *       oyjlExtraManSections ( oyjlOptions_s  * opts, int flags, char *** s
   return text;
 }
 
-/** @brief    Return a man page from options
+/** @brief    Return a MAN page from options
  *  @memberof oyjlUi_s
  *
- *  Some man pages might contain some additional sections.
- *  They are supported as options. To generate a custom man page section,
+ *  Some manual pages (MAN pages) might contain some additional sections.
+ *  They are supported as options. To generate a custom MAN page section,
  *  add a blind option to your options list and set the oyjlOption_s::o
  *  char to something non interupting like, dot '.' or similar.
  *  The oyjlOption_s::option string
- *  contains "man-section_head", with "section-head" being adapted to your
- *  needs. The "man-" part will be cut off and 
+ *  contains "man-section_head", with "section_head" being adapted to your
+ *  needs. The "man-" identifier part will be cut off and 
  *  "section_head" will become uppercase and underline '_' become empty
- *  space: "SECTION HEAD".
+ *  space, e.g.: "SECTION HEAD".
  *  Use oyjlOption_s::value_type=oyjlOPTIONTYPE_CHOICE
- *  and place your string list into oyjlOptionChoice_s::nick by filling all
- *  members. Translated section heads are "EXAMPLES, "SEE AS WELL", "HISTORY",
+ *  and place your string list into oyjlOptionChoice_s by filling it's
+ *  members. Each choice is shown as own subsection.
+ *  oyjlOptionChoice_s::nick is handled as a subsection headline and
+ *  oyjlOptionChoice_s::name is shown as link or normal text.
+ *  A "man-see_also" section oyjlOptionChoice_s::nick is scanned for
+ *  MAN page cross references, e.g: "oyjl(1) oyjl(args(1)" and links are
+ *  created appropriately.
+ *  Translated section heads are "EXAMPLES, "SEE AS WELL", "HISTORY",
  *  "ENVIRONMENT VARIABLES", "EXIT-STATE" and "FILES".
  *
  *  @version Oyjl: 1.0.0
@@ -2968,6 +2974,7 @@ static void replaceOutsideHTML(const char * text OYJL_UNUSED, const char * start
 /** @brief    Return markdown formated text from options
  *  @memberof oyjlUi_s
  *
+ *  This function supports extra sections in MAN page style.
  *  @see oyjlUi_ToMan()
  *
  *  @version Oyjl: 1.0.0
