@@ -124,7 +124,7 @@ The oyjl program can be used to parse, filter sub trees, select values and modif
 ## SEE ALSO
 &nbsp;&nbsp;[oyjl\-args](oyjlargs.html)<a href="oyjlargs.md">(1)</a>&nbsp;&nbsp;[oyjl\-translate](oyjltranslate.html)<a href="oyjltranslate.md">(1)</a>&nbsp;&nbsp;[oyjl\-args\-qml](oyjlargsqml.html)<a href="oyjlargsqml.md">(1)</a>
 
-&nbsp;&nbsp;[https://codedocs.xyz/oyranos\-cms/oyranos/group\_\_oyjl.html](https://codedocs.xyz/oyranos\-cms/oyranos/group\_\_oyjl.html)
+&nbsp;&nbsp;<a href="https://codedocs.xyz/oyranos\-cms/oyranos/group\_\_oyjl.html">https://codedocs.xyz/oyranos\-cms/oyranos/group\_\_oyjl.html</a>
 
 <a name="author"></a>
 ## AUTHOR
@@ -137,9 +137,11 @@ Kai\-Uwe Behrmann (ku.b (at) gmx.de)
 
 <a name="license"></a>
 ### License
-MIT <http://www.opensource.org/licenses/MIT>
+MIT <a href="http://www.opensource.org/licenses/MIT">http://www.opensource.org/licenses/MIT</a>
 
 <a name="bugs"></a>
 ## BUGS
  [https://github.com/oyranos\-cms/oyranos/issues](https://github.com/oyranos\-cms/oyranos/issues)
 
+
+<a href="#name">Top</a>

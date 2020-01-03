@@ -2422,6 +2422,11 @@ oyjlUi_s *  oyjlUi_Create            ( int                 argc,
     verbose = *v->variable.i;
     if(status && verbose)
       *status |= oyjlUI_STATE_VERBOSE;
+    if(verbose)
+    {
+      flags |= oyjlUI_STATE_VERBOSE;
+      fprintf( stderr, "verbose\n" );
+    }
   }
   if(help)
   {
@@ -2678,8 +2683,8 @@ char *       oyjlExtraManSection     ( oyjlOptions_s     * opts,
             if(list[l].name && list[l].name[0])
             {
               if(strlen(list[l].name) > 5 && memcmp(list[l].name,"http",4) == 0)
-                oyjlStringAdd( &text, malloc, free, "&nbsp;&nbsp;[%s](%s)\n", list[l].name, list[l].name );
-              else
+                oyjlStringAdd( &text, malloc, free, "&nbsp;&nbsp;<a href=\"%s\">%s</a>\n", list[l].name, list[l].name );
+               else
                 oyjlStringAdd( &text, malloc, free, "&nbsp;&nbsp;%s\n", list[l].name );
             }
             if(list[l].description && list[l].description[0])
@@ -2763,7 +2768,7 @@ char *       oyjlUi_ToMan            ( oyjlUi_s          * ui,
   const char * date = NULL,
              * desc = NULL,
              * mnft = NULL, * mnft_url = NULL,
-             * copy = NULL, * lice = NULL,
+             * copy = NULL, * lice = NULL, * lice_url = NULL,
              * bugs = NULL, * bugs_url = NULL,
              * vers = NULL;
   int i,n,ng;
@@ -2778,7 +2783,7 @@ char *       oyjlUi_ToMan            ( oyjlUi_s          * ui,
     oyjlUiHeaderSection_s * s = &ui->sections[i];
     if(strcmp(s->nick, "manufacturer") == 0) { mnft = s->name; mnft_url = s->description; }
     else if(strcmp(s->nick, "copyright") == 0) copy = s->name;
-    else if(strcmp(s->nick, "license") == 0) lice = s->name;
+    else if(strcmp(s->nick, "license") == 0) { lice = s->name; lice_url = s->description; }
     else if(strcmp(s->nick, "url") == 0) continue;
     else if(strcmp(s->nick, "support") == 0) { bugs = s->name; bugs_url = s->description; }
     else if(strcmp(s->nick, "download") == 0) continue;
@@ -2931,7 +2936,7 @@ char *       oyjlUi_ToMan            ( oyjlUi_s          * ui,
   {
     oyjlStringAdd( &text, malloc, free, ".SH %s\n%s\n", _("COPYRIGHT"), copy?copy:"" );
     if(lice)
-      oyjlStringAdd( &text, malloc, free, ".br\n%s: %s\n", _("License"), lice?lice:"" );
+      oyjlStringAdd( &text, malloc, free, ".br\n%s: %s %s\n", _("License"), lice?lice:"", lice_url?lice_url:"" );
   }
 
   if(bugs)
@@ -2988,7 +2993,7 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
   const char * date = NULL,
              * desc = NULL,
              * mnft = NULL, * mnft_url = NULL,
-             * copy = NULL, * lice = NULL,
+             * copy = NULL, * lice = NULL, * lice_url = NULL,
              * bugs = NULL, * bugs_url = NULL,
              * vers = NULL,
              * country = NULL;
@@ -3006,7 +3011,7 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
     oyjlUiHeaderSection_s * s = &ui->sections[i];
     if(strcmp(s->nick, "manufacturer") == 0) { mnft = s->name; mnft_url = s->description; }
     else if(strcmp(s->nick, "copyright") == 0) copy = s->name;
-    else if(strcmp(s->nick, "license") == 0) lice = s->name;
+    else if(strcmp(s->nick, "license") == 0) { lice = s->name; lice_url = s->description; }
     else if(strcmp(s->nick, "url") == 0) continue;
     else if(strcmp(s->nick, "support") == 0) { bugs = s->name; bugs_url = s->description; }
     else if(strcmp(s->nick, "download") == 0) continue;
@@ -3024,6 +3029,8 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
 #ifdef OYJL_HAVE_LANGINFO_H
   country = nl_langinfo( _NL_ADDRESS_LANG_AB );
 #endif
+  if(flags & oyjlUI_STATE_VERBOSE)
+    fprintf(stderr, "country: %s\n", country?country:"");
 
   oyjlStringAdd( &doxy_link, malloc, free, "{#%s%s}", ui->nick, country?country:"" );
   oyjlStringReplace( &doxy_link, "-", "", malloc, free );
@@ -3165,7 +3172,11 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
   {
     ADD_SECTION( _("COPYRIGHT"), "copyright", "*%s*\n", copy?copy:"" )
     if(lice)
-      oyjlStringAdd( &text, malloc, free, "\n\n<a name=\"license\"></a>\n### %s\n%s\n", _("License"), lice?lice:"" );
+      oyjlStringAdd( &text, malloc, free, "\n\n<a name=\"license\"></a>\n### %s\n%s", _("License"), lice?lice:"" );
+    if(lice_url)
+      oyjlStringAdd( &text, malloc, free, " <a href=\"%s\">%s</a>", lice_url, lice_url );
+    if(lice || lice_url)
+      oyjlStringAdd( &text, malloc, free, "\n" );
   }
 
   if(bugs && bugs_url)
@@ -3184,6 +3195,8 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
     free(text);
     text = txt;
   }
+
+  oyjlStringAdd( &text, malloc, free, "\n\n<a href=\"#name\">%s</a>", _("Top") );
 
   {
     const char * t;
@@ -3224,7 +3237,7 @@ oyjlUiHeaderSection_s * oyjlUiInfo   ( const char          * documentation )
     /* type,  nick,      label,name,                 description */
     { "oihs", "version", NULL, OYJL_VERSION_NAME, NULL },
     { "oihs", "manufacturer", NULL, "Kai-Uwe Behrmann", "http://www.oyranos.org" },
-    { "oihs", "copyright", NULL, "Copyright © 2018-2019 Kai-Uwe Behrmann", NULL },
+    { "oihs", "copyright", NULL, "Copyright © 2018-2020 Kai-Uwe Behrmann", NULL },
     { "oihs", "license", NULL, "newBSD", "http://www.oyranos.org" },
     { "oihs", "url", NULL, "http://www.oyranos.org", NULL },
     { "oihs", "support", NULL, "https://www.github.com/oyranos-cms/oyranos/issues", NULL },

@@ -39,5 +39,7 @@ Werkzeug um Benutzerschnittstellen in JSON von *\-X export* nach Quelltext zu ü
 ## SIEHE AUCH
 &nbsp;&nbsp;[oyjl-args](oyjlargs.html)<a href="oyjlargs.md">(1)</a>&nbsp;&nbsp;[oyjl\-translate](oyjltranslate.html)<a href="oyjltranslate.md">(1)</a>&nbsp;&nbsp;[oyjl\-args\-qml](oyjlargsqml.html)<a href="oyjlargsqml.md">(1)</a>
 
-&nbsp;&nbsp;[https://codedocs.xyz/oyranos\-cms/oyranos/group\_\_oyjl.html](https://codedocs.xyz/oyranos\-cms/oyranos/group\_\_oyjl.html)
+&nbsp;&nbsp;<a href="https://codedocs.xyz/oyranos\-cms/oyranos/group\_\_oyjl.html">https://codedocs.xyz/oyranos\-cms/oyranos/group\_\_oyjl.html</a>
 
+
+<a href="#name">Top</a>
