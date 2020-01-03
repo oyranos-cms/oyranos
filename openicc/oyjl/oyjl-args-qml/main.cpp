@@ -27,6 +27,10 @@ int main(int argc, const char *argv[])
   int state = 0;
   const char * exportX = NULL;
 
+#ifdef OYJL_HAVE_LOCALE_H
+  setlocale(LC_ALL,"");
+#endif
+
   /* handle options */
   /* Select from *version*, *manufacturer*, *copyright*, *license*, *url*,
    * *support*, *download*, *sources*, *oyjl_modules_author* and
