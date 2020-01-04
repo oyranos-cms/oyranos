@@ -32,7 +32,7 @@ Das oyjl Programm unterstütz Einlesen, Filtern von Untermengen, Wertauswahl und
 
 <h2>OPTIONEN <a href="#toc" name="options">&uarr;</a></h2>
 
-### Setze Eingangsdateiname und Pfad
+#### Setze Eingangsdateiname und Pfad
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-i</strong>|<strong>--input</strong> <em>DATEINAME</em></td> <td>Datei oder Datenstrom<br />Ein JSON-Dateiname oder Eingangsdatenstrom wie "stdin" </tr>
@@ -40,56 +40,56 @@ Das oyjl Programm unterstütz Einlesen, Filtern von Untermengen, Wertauswahl und
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-s</strong>|<strong>--set</strong> <em>TEXT</em></td> <td>Setze Wert des Schlüssels </tr>
 </table>
 
-### Zeige JSON auf stdout
+#### Zeige JSON auf stdout
 &nbsp;&nbsp;**oyjl** <strong>-j</strong> [<strong>\-i</strong>=<em>DATEINAME</em>] [<strong>\-x</strong>=<em>PFAD</em>] [<strong>\-s</strong>=<em>TEXT</em>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-j</strong>|<strong>--json</strong></td> <td>Zeige JSON auf stdout</td> </tr>
 </table>
 
-### Zeige YAML auf stdout
+#### Zeige YAML auf stdout
 &nbsp;&nbsp;**oyjl** <strong>-y</strong> [<strong>\-i</strong>=<em>DATEINAME</em>] [<strong>\-x</strong>=<em>PFAD</em>] [<strong>\-s</strong>=<em>TEXT</em>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-y</strong>|<strong>--yaml</strong></td> <td>Zeige YAML auf stdout</td> </tr>
 </table>
 
-### Zeige XML auf stdout
+#### Zeige XML auf stdout
 &nbsp;&nbsp;**oyjl** <strong>-m</strong> [<strong>\-i</strong>=<em>DATEINAME</em>] [<strong>\-x</strong>=<em>PFAD</em>] [<strong>\-s</strong>=<em>TEXT</em>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-m</strong>|<strong>--xml</strong></td> <td>Zeige XML auf stdout</td> </tr>
 </table>
 
-### Zeige Knotenanzahl
+#### Zeige Knotenanzahl
 &nbsp;&nbsp;**oyjl** <strong>-c</strong> [<strong>\-i</strong>=<em>DATEINAME</em>] [<strong>\-x</strong>=<em>PFAD</em>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-c</strong>|<strong>--count</strong></td> <td>Zeige Anzahl der Knotenzweige</td> </tr>
 </table>
 
-### Zeige Schlüsselname
+#### Zeige Schlüsselname
 &nbsp;&nbsp;**oyjl** <strong>-k</strong> [<strong>\-i</strong>=<em>DATEINAME</em>] [<strong>\-x</strong>=<em>PFAD</em>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-k</strong>|<strong>--key</strong></td> <td>Zeige Schlüsselname des Knotens</td> </tr>
 </table>
 
-### Zeige Typ
+#### Zeige Typ
 &nbsp;&nbsp;**oyjl** <strong>-t</strong> [<strong>\-i</strong>=<em>DATEINAME</em>] [<strong>\-x</strong>=<em>PFAD</em>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-t</strong>|<strong>--type</strong></td> <td>Hole Knotentyp</td> </tr>
 </table>
 
-### Zeige alle zutreffenden Pfade
+#### Zeige alle zutreffenden Pfade
 &nbsp;&nbsp;**oyjl** <strong>-p</strong> [<strong>\-i</strong>=<em>DATEINAME</em>] [<strong>\-x</strong>=<em>PFAD</em>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-p</strong>|<strong>--paths</strong></td> <td>Zeige alle zutreffenden Pfade</td> </tr>
 </table>
 
-### Allgemeine Optionen
+#### Allgemeine Optionen
 &nbsp;&nbsp;**oyjl** <strong>-h</strong> <strong>\-X</strong>=<em>json|json+command|man|markdown</em> [<strong>\-v</strong>]
 
 <table style='width:100%'>
@@ -110,15 +110,15 @@ Das oyjl Programm unterstütz Einlesen, Filtern von Untermengen, Wertauswahl und
 
 <h2>BEISPIELE <a href="#toc" name="examples">&uarr;</a></h2>
 
-### Zeige JSON auf stdout
+#### Zeige JSON auf stdout
 &nbsp;&nbsp;oyjl -i text.json \-x ///[0]
-### Zeige Anzahl der Knotenzweige
+#### Zeige Anzahl der Knotenzweige
 &nbsp;&nbsp;oyjl \-c \-i text.json \-x mein/Pfad/
-### Zeige Schlüsselname des Knotens
+#### Zeige Schlüsselname des Knotens
 &nbsp;&nbsp;oyjl \-k \-i text.json \-x ///[0]
-### Zeige alle zutreffenden Pfade
+#### Zeige alle zutreffenden Pfade
 &nbsp;&nbsp;oyjl \-p \-i text.json \-x //
-### Setze Wert des Schlüssels
+#### Setze Wert des Schlüssels
 &nbsp;&nbsp;oyjl \-i text.json \-x mein/Pfad/zum/Schlüssel \-s Wert
 
 <h2>SIEHE AUCH <a href="#toc" name="seealso">&uarr;</a></h2>
