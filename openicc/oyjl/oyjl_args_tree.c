@@ -266,7 +266,7 @@ static void oyjlStrAddSpaced( oyjl_str s, const char * text, int flags, int spac
 
   if(len)
   {
-    if(flags & OYJL_TRANSLATE)
+    if(flags & OYJL_TRANSLATE && text && text[0])
       oyjlStrAdd( s, "_(" );
     if(flags & OYJL_QUOTE)
       oyjlStrAdd( s, "\"" );
@@ -294,7 +294,7 @@ static void oyjlStrAddSpaced( oyjl_str s, const char * text, int flags, int spac
       oyjlStrAdd( s, "'" );
     if(flags & OYJL_QUOTE)
       oyjlStrAdd( s, "\"" );
-    if(flags & OYJL_TRANSLATE)
+    if(flags & OYJL_TRANSLATE && text && text[0])
       oyjlStrAdd( s, ")" );
   } else
   {
