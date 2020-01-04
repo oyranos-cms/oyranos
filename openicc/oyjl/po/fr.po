@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2020-01-04 08:58+0100\n"
+"POT-Creation-Date: 2020-01-04 09:28+0100\n"
 "PO-Revision-Date: 2006-06-29 19:31+0200\n"
 "Last-Translator: Pascal LACROIX <lacroixpascal at vfemail.net>\n"
 "Language-Team: <fr@li.org>\n"
@@ -46,7 +46,7 @@ msgstr ""
 msgid "Actual mode"
 msgstr ""
 
-#: oyjl_translate.c:97 oyjl_translate.c:140
+#: oyjl_translate.c:97 oyjl_translate.c:138
 msgid "Add"
 msgstr ""
 
@@ -54,7 +54,7 @@ msgstr ""
 msgid "Add Translation"
 msgstr ""
 
-#: oyjl_translate.c:80 oyjl_translate.c:97 oyjl_translate.c:140
+#: oyjl_translate.c:80 oyjl_translate.c:97 oyjl_translate.c:138
 msgid "Add gettext translated keys to JSON"
 msgstr ""
 
@@ -88,7 +88,7 @@ msgid "COPYRIGHT"
 msgstr ""
 
 #. type,   flags, name,               description,                  help,               mandatory,     optional,      detail
-#: oyjl_translate.c:138
+#: oyjl_translate.c:136
 #, fuzzy
 msgid "Common Options"
 msgstr "Options"
@@ -104,7 +104,7 @@ msgstr "Sortie"
 msgid "Convert"
 msgstr "ICC Examin Version"
 
-#: oyjl_translate.c:79 oyjl_translate.c:111 oyjl_translate.c:139
+#: oyjl_translate.c:79 oyjl_translate.c:111 oyjl_translate.c:137
 msgid "Convert JSON to gettext ready C strings"
 msgstr ""
 
@@ -127,7 +127,7 @@ msgstr ""
 msgid "Copyright"
 msgstr "Copyright"
 
-#: oyjl.c:89 oyjl.c:127
+#: oyjl.c:89 oyjl.c:125
 msgid "Count"
 msgstr ""
 
@@ -193,7 +193,7 @@ msgstr ""
 msgid "Export formated text"
 msgstr ""
 
-#: oyjl_translate.c:111 oyjl_translate.c:139
+#: oyjl_translate.c:111 oyjl_translate.c:137
 #, fuzzy
 msgid "Extract"
 msgstr "Soustraction"
@@ -222,7 +222,7 @@ msgstr "Fichier"
 msgid "File or Stream"
 msgstr "Fichier"
 
-#: oyjl-args.c:80 oyjl.c:149 oyjl_translate.c:159
+#: oyjl-args.c:80 oyjl.c:147 oyjl_translate.c:157
 msgid "For more information read the man page:"
 msgstr ""
 
@@ -238,7 +238,7 @@ msgstr ""
 msgid "Formated text"
 msgstr ""
 
-#: oyjl-args.c:56 oyjl.c:113 oyjl_args.c:1226 oyjl_translate.c:125
+#: oyjl-args.c:56 oyjl.c:111 oyjl_args.c:1226 oyjl_translate.c:123
 #: oyjl-args-qml/mini-app.c:183
 msgid "GUI"
 msgstr ""
@@ -247,7 +247,7 @@ msgstr ""
 msgid "GUI + Command"
 msgstr ""
 
-#: oyjl-args.c:64 oyjl.c:131 oyjl_translate.c:141 test-args.c:97
+#: oyjl-args.c:64 oyjl.c:129 oyjl_translate.c:139 test-args.c:97
 #: test-args.c:261 test-core.c:584 test-core.c:648 test.c:630
 #: oyjl-args-qml/mini-app.c:196
 #, fuzzy
@@ -290,7 +290,7 @@ msgstr ""
 msgid "HISTORY"
 msgstr ""
 
-#: oyjl-args.c:50 oyjl.c:110 oyjl_translate.c:121 test-args.c:79
+#: oyjl-args.c:50 oyjl.c:108 oyjl_translate.c:119 test-args.c:79
 #: test-core.c:573 test.c:619 oyjl-args-qml/mini-app.c:184
 msgid "Help"
 msgstr ""
@@ -303,7 +303,7 @@ msgstr "Description"
 #. type,   flags, name,               description,                  help,               mandatory,     optional,      detail
 #. type,   flags,                      o,  option,          key,      name,          description,                  help, value_name,
 #. value_type,              values,             variable_type, variable_name
-#: oyjl.c:99 oyjl.c:123 oyjl_translate.c:91
+#: oyjl.c:99 oyjl.c:121 oyjl_translate.c:91
 #, fuzzy
 msgid "Input"
 msgstr "Entrée"
@@ -330,7 +330,7 @@ msgstr ""
 msgid "June 26, 2019"
 msgstr ""
 
-#: oyjl.c:91 oyjl.c:128
+#: oyjl.c:91 oyjl.c:126
 #, fuzzy
 msgid "Key Name"
 msgstr "Nom"
@@ -353,7 +353,7 @@ msgstr ""
 msgid "License"
 msgstr ""
 
-#: oyjl.c:136
+#: oyjl.c:134
 msgid "Light weight JSON parse and manipulation tool"
 msgstr ""
 
@@ -397,7 +397,7 @@ msgid "Markdown"
 msgstr ""
 
 #. parsed and checked with -i option
-#: oyjl-args.c:64 oyjl.c:131 oyjl_translate.c:141 test-args.c:97
+#: oyjl-args.c:64 oyjl.c:129 oyjl_translate.c:139 test-args.c:97
 #: test-args.c:261 test-core.c:584 test-core.c:648 test.c:630
 #: oyjl-args-qml/mini-app.c:196
 msgid "Misc"
@@ -470,10 +470,6 @@ msgstr ""
 msgid "No"
 msgstr ""
 
-#: oyjl.c:107 oyjl_translate.c:119
-msgid "No args"
-msgstr ""
-
 #: oyjl.c:66
 msgid "November 12, 2017"
 msgstr ""
@@ -523,7 +519,7 @@ msgid "Output"
 msgstr "Sortie"
 
 #. argc+argv are required for parsing the command line options
-#: oyjl.c:136
+#: oyjl.c:134
 msgid "Oyjl Json Manipulation"
 msgstr ""
 
@@ -533,12 +529,12 @@ msgid "Oyjl Module Author"
 msgstr "Oyranos Préférences"
 
 #. argc+argv are required for parsing the command line options
-#: oyjl_translate.c:146
+#: oyjl_translate.c:144
 #, fuzzy
 msgid "Oyjl Translation"
 msgstr "Oyranos Préférences"
 
-#: oyjl_translate.c:146
+#: oyjl_translate.c:144
 #, fuzzy
 msgid "Oyjl UI JSON Translation tool"
 msgstr "Oyranos Préférences"
@@ -551,7 +547,7 @@ msgstr ""
 msgid "Path specifier"
 msgstr ""
 
-#: oyjl.c:93 oyjl.c:130
+#: oyjl.c:93 oyjl.c:128
 msgid "Paths"
 msgstr ""
 
@@ -573,13 +569,13 @@ msgstr "Fichier"
 msgid "Print Camera JSON"
 msgstr ""
 
-#: oyjl.c:124
+#: oyjl.c:122
 #, fuzzy
 msgid "Print JSON"
 msgstr "Fichier"
 
 #. declare the option choices  *   nick,          name,               description,                  help
-#: oyjl.c:69 oyjl.c:83 oyjl.c:124
+#: oyjl.c:69 oyjl.c:83 oyjl.c:122
 #, fuzzy
 msgid "Print JSON to stdout"
 msgstr "Fichier"
@@ -589,22 +585,22 @@ msgstr "Fichier"
 msgid "Print None"
 msgstr "Fichier"
 
-#: oyjl.c:126
+#: oyjl.c:124
 #, fuzzy
 msgid "Print XML"
 msgstr "Fichier"
 
-#: oyjl.c:87 oyjl.c:126
+#: oyjl.c:87 oyjl.c:124
 #, fuzzy
 msgid "Print XML to stdout"
 msgstr "Fichier"
 
-#: oyjl.c:125
+#: oyjl.c:123
 #, fuzzy
 msgid "Print YAML"
 msgstr "Fichier"
 
-#: oyjl.c:85 oyjl.c:125
+#: oyjl.c:85 oyjl.c:123
 #, fuzzy
 msgid "Print YAML to stdout"
 msgstr "Fichier"
@@ -613,7 +609,7 @@ msgstr "Fichier"
 msgid "Print all matching paths"
 msgstr ""
 
-#: oyjl.c:130
+#: oyjl.c:128
 msgid "Print all matching paths."
 msgstr ""
 
@@ -625,7 +621,7 @@ msgstr ""
 msgid "Print help for command line style interface"
 msgstr ""
 
-#: oyjl.c:128
+#: oyjl.c:126
 #, fuzzy
 msgid "Print key name"
 msgstr "Fichier"
@@ -635,12 +631,12 @@ msgstr "Fichier"
 msgid "Print key name of node"
 msgstr "Fichier"
 
-#: oyjl.c:127
+#: oyjl.c:125
 #, fuzzy
 msgid "Print node count"
 msgstr "Fichier"
 
-#: oyjl.c:129
+#: oyjl.c:127
 #, fuzzy
 msgid "Print type"
 msgstr "Fichier"
@@ -652,14 +648,10 @@ msgid ""
 "Write external storage to create and modify global data."
 msgstr ""
 
-#: oyjl_translate.c:292
+#: oyjl_translate.c:296
 #, fuzzy
 msgid "Rendering Intent"
 msgstr "Oyranos Préférences"
-
-#: oyjl.c:107 oyjl_translate.c:119
-msgid "Run command without arguments"
-msgstr ""
 
 #: oyjl-args.c:53 oyjl.c:105 oyjl_args.c:2636 oyjl_translate.c:117
 msgid "SEE ALSO"
@@ -693,11 +685,11 @@ msgstr "Valeur"
 msgid "Set a key name to a value"
 msgstr ""
 
-#: oyjl_translate.c:138
+#: oyjl_translate.c:136
 msgid "Set basic parameters"
 msgstr ""
 
-#: oyjl.c:123
+#: oyjl.c:121
 msgid "Set input file and pah"
 msgstr ""
 
@@ -783,7 +775,7 @@ msgstr ""
 msgid "Translations only"
 msgstr ""
 
-#: oyjl.c:97 oyjl.c:129
+#: oyjl.c:97 oyjl.c:127
 msgid "Type"
 msgstr "Type"
 
@@ -805,7 +797,7 @@ msgstr ""
 msgid "Url"
 msgstr ""
 
-#: oyjl_args.c:2063 oyjl_translate.c:175
+#: oyjl_args.c:2063 oyjl_translate.c:173
 msgid "Usage"
 msgstr ""
 
@@ -816,11 +808,11 @@ msgstr ""
 msgid "Usage Error:"
 msgstr ""
 
-#: oyjl.c:111 oyjl_translate.c:123
+#: oyjl.c:109 oyjl_translate.c:121
 msgid "Verbose"
 msgstr ""
 
-#: oyjl.c:114 oyjl_args_tree.c:1114 oyjl_translate.c:127
+#: oyjl.c:112 oyjl_args_tree.c:1114 oyjl_translate.c:125
 #, fuzzy
 msgid "Version"
 msgstr "ICC Examin Version"
@@ -867,18 +859,18 @@ msgid "finished"
 msgstr ""
 
 #. The --gui option can be hidden and used only internally.
-#: oyjl-args.c:56 oyjl.c:113 oyjl_translate.c:125 oyjl-args-qml/mini-app.c:183
+#: oyjl-args.c:56 oyjl.c:111 oyjl_translate.c:123 oyjl-args-qml/mini-app.c:183
 msgid "gui"
 msgstr ""
 
 #. default options -h and -v
-#: oyjl-args.c:50 oyjl.c:110 oyjl_translate.c:121 test-args.c:79
+#: oyjl-args.c:50 oyjl.c:108 oyjl_translate.c:119 test-args.c:79
 #: test-core.c:573 test.c:619 oyjl-args-qml/mini-app.c:184
 #, fuzzy
 msgid "help"
 msgstr "Aide"
 
-#: oyjl.c:111 oyjl_translate.c:123
+#: oyjl.c:109 oyjl_translate.c:121
 msgid "increase verbosity"
 msgstr ""
 
@@ -1007,7 +999,7 @@ msgstr ""
 msgid "verbose"
 msgstr ""
 
-#: oyjl.c:114 oyjl_translate.c:127
+#: oyjl.c:112 oyjl_translate.c:125
 #, fuzzy
 msgid "version"
 msgstr "ICC Examin Version"

@@ -104,8 +104,6 @@ int myMain( int argc, const char ** argv )
         oyjlOPTIONTYPE_CHOICE,   {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)A_choices, sizeof(A_choices), malloc )}, oyjlNONE,      {}},
     {"oiwi", 0,                          "S","man-see_also",  NULL,     _("SEE ALSO"),NULL,                      NULL, NULL,
         oyjlOPTIONTYPE_CHOICE,   {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)S_choices, sizeof(S_choices), malloc )}, oyjlNONE,      {}},
-    {"oiwi", 0,                          "#","",              NULL,     "",            _("No args"),                 _("Run command without arguments"),NULL,
-        oyjlOPTIONTYPE_NONE,     {0},                oyjlNONE,      {}},
     /* default options -h and -v */
     {"oiwi", 0, "h", "help", NULL, _("help"), _("Help"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&help} },
     {"oiwi", 0, "v","verbose",NULL,_("Verbose"),_("increase verbosity"), NULL, NULL, oyjlOPTIONTYPE_NONE,{0},oyjlINT,{.i=&verbose}},
