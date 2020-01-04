@@ -3226,7 +3226,6 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
   return text;
 }
 // TODO: increase robustness
-// TODO: TOC in markdown like for HTML pages
 // TODO: make the qml renderer aware of mandatory options as part of sending a call to the tool; add action button to all manatory options except bool options; render mandatory switch as a button
 // TODO: MAN page synopsis logic ...
 // TODO: man page generator: /usr/share/man/man1/ftp.1.gz + http://man7.org/linux/man-pages/man7/groff_mdoc.7.html
@@ -3239,13 +3238,15 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
 
 /* private stuff */
 
-oyjlUiHeaderSection_s * oyjlUiInfo   ( const char          * documentation )
+oyjlUiHeaderSection_s * oyjlUiInfo   ( const char          * documentation,
+                                       const char          * date_name,
+                                       const char          * date_description )
 {
   oyjlUiHeaderSection_s s[] = {
     /* type,  nick,      label,name,                 description */
     { "oihs", "version", NULL, OYJL_VERSION_NAME, NULL },
     { "oihs", "manufacturer", NULL, "Kai-Uwe Behrmann", "http://www.oyranos.org" },
-    { "oihs", "copyright", NULL, "Copyright © 2018-2020 Kai-Uwe Behrmann", NULL },
+    { "oihs", "copyright", NULL, "Copyright © 2017-2020 Kai-Uwe Behrmann", NULL },
     { "oihs", "license", NULL, "newBSD", "http://www.oyranos.org" },
     { "oihs", "url", NULL, "http://www.oyranos.org", NULL },
     { "oihs", "support", NULL, "https://www.github.com/oyranos-cms/oyranos/issues", NULL },
@@ -3254,7 +3255,7 @@ oyjlUiHeaderSection_s * oyjlUiInfo   ( const char          * documentation )
     { "oihs", "development", NULL, "https://github.com/oyranos-cms/oyranos", NULL },
     { "oihs", "oyjl_module_author", NULL, "Kai-Uwe Behrmann", "http://www.behrmann.name" },
     { "oihs", "documentation", NULL, "http://www.oyranos.org", documentation },
-    { "oihs", "date", NULL, "1970-01-01T12:00:00", "" },
+    { "oihs", "date", NULL, date_name, date_description },
     { "", NULL, NULL, NULL, NULL }
   };
   return (oyjlUiHeaderSection_s*) oyjlStringAppendN( NULL, (const char*)s, sizeof(s), malloc );
