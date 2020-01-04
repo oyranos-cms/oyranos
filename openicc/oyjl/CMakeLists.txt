@@ -399,10 +399,11 @@ ENDMACRO( BUILD_TOOL )
 IF( OYJL_USE_GETTEXT )
   SET( TGMO_${PROJECT_UP_NAME} ${PROJECT_DOWN_NAME}_gmo )
 ENDIF()
-BUILD_TOOL(   ${PACKAGE_NAME}-translate "${CMAKE_CURRENT_SOURCE_DIR}/oyjl_translate.c" "${TGMO_${PROJECT_UP_NAME}}" ""               FALSE TRUE )
+
+INCLUDE( "${CMAKE_CURRENT_BINARY_DIR}/cmake/OyjlConfig.cmake" ) # OYJL_DOCUMENT_TOOL
+BUILD_TOOL(   ${PACKAGE_NAME}-translate "${CMAKE_CURRENT_SOURCE_DIR}/oyjl_translate.c" "${TGMO_${PROJECT_UP_NAME}}" ""               TRUE  TRUE )
 
 IF(ENABLE_TOOLS_${PROJECT_UP_NAME})
-  INCLUDE( "${CMAKE_CURRENT_BINARY_DIR}/cmake/OyjlConfig.cmake" ) # OYJL_DOCUMENT_TOOL
 
   BUILD_TOOL( ${PACKAGE_NAME} "${CMAKE_CURRENT_SOURCE_DIR}/oyjl.c"                     ""                       ""                   TRUE  TRUE )
   BUILD_TOOL( ${PACKAGE_NAME}-args "${CMAKE_CURRENT_SOURCE_DIR}/oyjl-args.c"           ""                       ""                   TRUE  TRUE )
