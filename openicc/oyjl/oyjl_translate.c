@@ -50,9 +50,9 @@ int myMain( int argc, const char ** argv )
              * input = NULL,
              * format = NULL,
              * wrap = NULL,
-             * key_list = NULL,
-             * locales = NULL,
-             * localedir = NULL,
+             * key_list = "name,description,help",
+             * locales = "cs_CZ,de_DE,eo_EO,eu_ES,fr_FR,ru_RU",
+             * localedir = OYJL_LOCALEDIR,
              * domain = OYJL_DOMAIN;
   char * json = NULL;
   oyjl_val root = NULL,v;
@@ -78,6 +78,7 @@ int myMain( int argc, const char ** argv )
                                     {"","","",""}};
   oyjlOptionChoice_s A_choices[] = {{_("Convert JSON to gettext ready C strings"),_("oyjl-translate -e [-v] -i oyjl-ui.json -o result.json -f '_(\\\"%%s\\\"); ' -k name,description,help"),NULL,                         NULL},
                                     {_("Add gettext translated keys to JSON"),_("oyjl-translate -a -i oyjl-ui.json -o result.json -k name,description,help -d TEXTDOMAIN -p LOCALEDIR -l de_DE,es_ES"),NULL,                         NULL},
+                                    {_("View MAN page"),_("oyjl-translate -X man | groff -T utf8 -man -"), NULL,NULL},
                                     {"","","",""}};
 
   oyjlOptionChoice_s S_choices[] = {{"oyjl(1) oyjl-args(1) oyjl-args-qml(1)","https://codedocs.xyz/oyranos-cms/oyranos/group__oyjl.html",               NULL,                         NULL},
@@ -410,7 +411,7 @@ int myMain( int argc, const char ** argv )
           free(text); text = tmp; tmp = NULL;
         }
 
-        if(!output || strcmp(output,"-") == 0)
+        if(!output || (strcmp(output,"-") == 0 || strcmp(output,"stdout") == 0))
           fputs( text, stdout );
         else
           oyjlWriteFile( output, text, strlen(text) );
