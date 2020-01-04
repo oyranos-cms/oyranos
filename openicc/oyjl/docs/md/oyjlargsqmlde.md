@@ -20,7 +20,7 @@ The tool graphicaly renders Oyjl JSON UI files using QML.
 
 <h2>OPTIONEN <a href="#toc" name="options">&uarr;</a></h2>
 
-### QML UI
+#### QML UI
 &nbsp;&nbsp;**oyjl\-args\-qml** <strong>\-i</strong>=<em>STRING</em> [<strong>\-c</strong>=<em>STRING</em>] [<strong>\-o</strong>=<em>STRING</em>] [<strong>\-v</strong>]
 
 <table style='width:100%'>
@@ -29,7 +29,7 @@ The tool graphicaly renders Oyjl JSON UI files using QML.
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-o</strong>|<strong>--output</strong> <em>STRING</em></td> <td>Results JSON </tr>
 </table>
 
-### General options
+#### General options
 &nbsp;&nbsp;**oyjl-args\-qml** <strong>\-h</strong> <strong>\-X</strong>=<em>json|json+command|man|markdown</em> [<strong>\-v</strong>]
 
 <table style='width:100%'>
@@ -50,9 +50,9 @@ The tool graphicaly renders Oyjl JSON UI files using QML.
 
 <h2>BEISPIELE <a href="#toc" name="examples">&uarr;</a></h2>
 
-### Load a UI JSON declaration from file
+#### Load a UI JSON declaration from file
 &nbsp;&nbsp;oyjl-args\-qml \-i oyjl\-ui\-text.json \-c oyjl\-command.json
-### Load a UI JSON declaration from tool
+#### Load a UI JSON declaration from tool
 &nbsp;&nbsp;oyjl \-X json+command | oyjl\-args\-qml \-i \- \-c +
 
 <h2>SIEHE AUCH <a href="#toc" name="seealso">&uarr;</a></h2>

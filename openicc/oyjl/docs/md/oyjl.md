@@ -32,7 +32,7 @@ The oyjl program can be used to parse, filter sub trees, select values and modif
 
 <h2>OPTIONS <a href="#toc" name="options">&uarr;</a></h2>
 
-### Set input file and pah
+#### Set input file and pah
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-i</strong>|<strong>--input</strong> <em>FILENAME</em></td> <td>File or Stream<br />A JSON file name or a input stream like "stdin". </tr>
@@ -40,56 +40,56 @@ The oyjl program can be used to parse, filter sub trees, select values and modif
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-s</strong>|<strong>--set</strong> <em>STRING</em></td> <td>Set a key name to a value </tr>
 </table>
 
-### Print JSON to stdout
+#### Print JSON to stdout
 &nbsp;&nbsp;**oyjl** <strong>-j</strong> [<strong>\-i</strong>=<em>FILENAME</em>] [<strong>\-x</strong>=<em>PATH</em>] [<strong>\-s</strong>=<em>STRING</em>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-j</strong>|<strong>--json</strong></td> <td>Print JSON to stdout</td> </tr>
 </table>
 
-### Print YAML to stdout
+#### Print YAML to stdout
 &nbsp;&nbsp;**oyjl** <strong>-y</strong> [<strong>\-i</strong>=<em>FILENAME</em>] [<strong>\-x</strong>=<em>PATH</em>] [<strong>\-s</strong>=<em>STRING</em>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-y</strong>|<strong>--yaml</strong></td> <td>Print YAML to stdout</td> </tr>
 </table>
 
-### Print XML to stdout
+#### Print XML to stdout
 &nbsp;&nbsp;**oyjl** <strong>-m</strong> [<strong>\-i</strong>=<em>FILENAME</em>] [<strong>\-x</strong>=<em>PATH</em>] [<strong>\-s</strong>=<em>STRING</em>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-m</strong>|<strong>--xml</strong></td> <td>Print XML to stdout</td> </tr>
 </table>
 
-### Print node count
+#### Print node count
 &nbsp;&nbsp;**oyjl** <strong>-c</strong> [<strong>\-i</strong>=<em>FILENAME</em>] [<strong>\-x</strong>=<em>PATH</em>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-c</strong>|<strong>--count</strong></td> <td>Print count of leafs in node</td> </tr>
 </table>
 
-### Print key name
+#### Print key name
 &nbsp;&nbsp;**oyjl** <strong>-k</strong> [<strong>\-i</strong>=<em>FILENAME</em>] [<strong>\-x</strong>=<em>PATH</em>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-k</strong>|<strong>--key</strong></td> <td>Print key name of node</td> </tr>
 </table>
 
-### Print type
+#### Print type
 &nbsp;&nbsp;**oyjl** <strong>-t</strong> [<strong>\-i</strong>=<em>FILENAME</em>] [<strong>\-x</strong>=<em>PATH</em>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-t</strong>|<strong>--type</strong></td> <td>Get node type</td> </tr>
 </table>
 
-### Print all matching paths.
+#### Print all matching paths.
 &nbsp;&nbsp;**oyjl** <strong>-p</strong> [<strong>\-i</strong>=<em>FILENAME</em>] [<strong>\-x</strong>=<em>PATH</em>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-p</strong>|<strong>--paths</strong></td> <td>Print all matching paths</td> </tr>
 </table>
 
-### General options
+#### General options
 &nbsp;&nbsp;**oyjl** <strong>-h</strong> <strong>\-X</strong>=<em>json|json+command|man|markdown</em> [<strong>\-v</strong>]
 
 <table style='width:100%'>
@@ -110,15 +110,15 @@ The oyjl program can be used to parse, filter sub trees, select values and modif
 
 <h2>EXAMPLES <a href="#toc" name="examples">&uarr;</a></h2>
 
-### Print JSON to stdout
+#### Print JSON to stdout
 &nbsp;&nbsp;oyjl -i text.json \-x ///[0]
-### Print count of leafs in node
+#### Print count of leafs in node
 &nbsp;&nbsp;oyjl \-c \-i text.json \-x my/path/
-### Print key name of node
+#### Print key name of node
 &nbsp;&nbsp;oyjl \-k \-i text.json \-x ///[0]
-### Print all matching paths
+#### Print all matching paths
 &nbsp;&nbsp;oyjl \-p \-i text.json \-x //
-### Set a key name to a value
+#### Set a key name to a value
 &nbsp;&nbsp;oyjl \-i text.json \-x my/path/to/key \-s value
 
 <h2>SEE ALSO <a href="#toc" name="seealso">&uarr;</a></h2>

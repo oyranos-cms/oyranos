@@ -2679,7 +2679,7 @@ char *       oyjlExtraManSection     ( oyjlOptions_s     * opts,
               oyjlStringListRelease( &li, li_n, free );
             }
             else
-            oyjlStringAdd( &text, malloc, free, "### %s\n", list[l].nick );
+            oyjlStringAdd( &text, malloc, free, "#### %s\n", list[l].nick );
             if(list[l].name && list[l].name[0])
             {
               if(strlen(list[l].name) > 5 && memcmp(list[l].name,"http",4) == 0)
@@ -3079,7 +3079,7 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
     char ** d_list = oyjlStringSplit2( g->detail, "|,", &d, NULL, malloc ),
          * t;
     if(g->description)
-      oyjlStringAdd( &text, malloc, free, "### %s\n", g->description  );
+      oyjlStringAdd( &text, malloc, free, "#### %s\n", g->description  );
     if(g->mandatory && g->mandatory[0])
     {
       char * t = oyjlOptions_PrintHelpSynopsis( opts, g, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MARKDOWN );
