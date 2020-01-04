@@ -20,6 +20,7 @@ extern char **environ;
 #endif
 #include "oyjl_i18n.h"
 
+#include "oyjl_tree_internal.h"
 
 /* This function is called the
  * * first time for GUI generation and then
@@ -36,15 +37,8 @@ int myMain( int argc, const char ** argv )
   int state = 0;
 
   /* handle options */
-  /* Select from *version*, *manufacturer*, *copyright*, *license*, *url*,
-   * *support*, *download*, *sources*, *oyjl_module_author* and
-   * *documentation* what you see fit. Add new ones as needed. */
-  oyjlUiHeaderSection_s sections[] = {
-    /* type, nick,            label, name,                  description  */
-    {"oihs", "version",       NULL,  "1.0",                 NULL},
-    {"oihs", "documentation", NULL,  "",                    _("Tool to convert UI JSON description from *-X export* into source code.")},
-    {"oihs", "date",          NULL,  "2019-6-26T12:00:00", _("June 26, 2019")},
-    {"",0,0,0,0}};
+  oyjlUiHeaderSection_s * sections = oyjlUiInfo( _("Tool to convert UI JSON description from *-X export* into source code."),
+                                                 "2019-6-26T12:00:00", _("June 26, 2019") );
 
   /* declare the option choices  *   nick,          name,               description,                  help */
   oyjlOptionChoice_s S_choices[] = {{"oyjl(1) oyjl-translate(1) oyjl-args-qml(1)","https://codedocs.xyz/oyranos-cms/oyranos/group__oyjl.html",               NULL,                         NULL},

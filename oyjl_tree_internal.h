@@ -49,6 +49,9 @@ typedef struct {
   int           count; /* number of detected options */
 } oyjlOptsPrivate_s;
 
+oyjlUiHeaderSection_s * oyjlUiInfo   ( const char          * documentation,
+                                       const char          * date_name,
+                                       const char          * date_description );
 
 #ifdef __cplusplus
 }

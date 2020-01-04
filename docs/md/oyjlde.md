@@ -1,4 +1,4 @@
-# oyjl v1.0 {#oyjlde}
+# oyjl v1.0.0 {#oyjlde}
 <a name="toc"></a>
 [NAME](#name) [ÜBERSICHT](#synopsis) [BESCHREIBUNG](#description) [OPTIONEN](#options) [BEISPIELE](#examples) [SIEHE AUCH](#seealso) [AUTOR](#author) [KOPIERRECHT](#copyright) [FEHLER](#bugs) 
 
@@ -6,7 +6,7 @@
 
 <h2>NAME <a href="#toc" name="name">&uarr;</a></h2>
 
-oyjl v1.0 \- Oyjl Json Bearbeitung
+oyjl v1.0.0 \- Oyjl Json Bearbeitung
 
 <h2>ÜBERSICHT <a href="#toc" name="synopsis">&uarr;</a></h2>
 
@@ -129,18 +129,18 @@ Das oyjl Programm unterstütz Einlesen, Filtern von Untermengen, Wertauswahl und
 
 <h2>AUTOR <a href="#toc" name="author">&uarr;</a></h2>
 
-Kai\-Uwe Behrmann (ku.b (at) gmx.de) 
+Kai\-Uwe Behrmann http://www.oyranos.org
 
 <h2>KOPIERRECHT <a href="#toc" name="copyright">&uarr;</a></h2>
 
-*(c) 2017, Kai\-Uwe Behrmann und Andere*
+*Copyright © 2017\-2020 Kai\-Uwe Behrmann*
 
 
 <a name="license"></a>
 ### Lizenz
-MIT <a href="http://www.opensource.org/licenses/MIT">http://www.opensource.org/licenses/MIT</a>
+newBSD <a href="http://www.oyranos.org">http://www.oyranos.org</a>
 
 <h2>FEHLER <a href="#toc" name="bugs">&uarr;</a></h2>
 
- <a href="https://github.com/oyranos-cms/oyranos/issues">https://github.com/oyranos\-cms/oyranos/issues</a>
+<a href="https://www.github.com/oyranos-cms/oyranos/issues">https://www.github.com/oyranos\-cms/oyranos/issues</a>
 

@@ -70,17 +70,8 @@ int myMain( int argc, const char ** argv )
   /* Select a nick from *version*, *manufacturer*, *copyright*, *license*,
    * *url*, *support*, *download*, *sources*, *oyjl_module_author* and
    * *documentation*. Choose what you see fit. Add new ones as needed. */
-  oyjlUiHeaderSection_s sections[] = {
-    /* type, nick,            label, name,                     description */
-    {"oihs", "version",       NULL,  _("1.0"),                 NULL},
-    {"oihs", "documentation", NULL,  NULL,                     _("Convert Oyjl UI JSON to C translatable strings for use with gettext tools and translate a tools UI using the programs own text domain. The resulting Oyjl UI JSON can be used for translated rendering.")},
-    {"oihs", "manufacturer",  NULL,  _("Kai-Uwe Behrmann (ku.b (at) gmx.de)"),NULL},
-    {"oihs", "oyjl_module_author",NULL,  _("Kai-Uwe Behrmann (ku.b (at) gmx.de)"),NULL},
-    {"oihs", "copyright",     NULL,  _("(c) 2018, Kai-Uwe Behrmann and others"),NULL},
-    {"oihs", "license",       NULL,  _("MIT <http://www.opensource.org/licenses/MIT>"),NULL},
-    {"oihs", "support",       NULL,  NULL,                     _("https://github.com/oyranos-cms/oyranos/issues")},
-    {"oihs", "date",          NULL,  _("2020-01-02T12:00:00"), _("January 2, 2020")},
-    {"",0,0,0,0}};
+  oyjlUiHeaderSection_s * sections = oyjlUiInfo( _("Convert Oyjl UI JSON to C translatable strings for use with gettext tools and translate a tools UI using the programs own text domain. The resulting Oyjl UI JSON can be used for translated rendering."),
+                                                 "2020-01-02T12:00:00", _("January 2, 2020") );
 
   /* declare the option choices  *   nick,          name,               description,                  help */
   oyjlOptionChoice_s w_choices[] = {{"C",           _("C static char"), NULL,                         NULL},
