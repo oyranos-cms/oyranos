@@ -23,138 +23,160 @@
 #include "oyjl_i18n.h"
 #include "oyjl_tree_internal.h"
 
+#ifdef OYJL_HAVE_LOCALE_H
+#include <locale.h>
+#endif
 #ifdef OYJL_USE_GETTEXT
-int use_gettext = 1;
+# ifdef OYJL_HAVE_LIBINTL_H
+#  include <libintl.h> /* bindtextdomain() */
+# endif
+# define _(text) dgettext( OYJL_DOMAIN, text )
 #else
-int use_gettext = 0;
+# define _(text) text
 #endif
 
-void printfHelp(int argc, char ** argv, int verbose_)
+/* This function is called the
+ * * first time for GUI generation and then
+ * * for executing the tool.
+ */
+int myMain( int argc, const char ** argv )
 {
-  int pos = 0;
-  while(pos < argc && verbose_)
-    fprintf( stderr, "%s ", argv[pos++]);
-  fprintf( stderr, "\n");
-  fprintf( stderr, "%s %s\n",   argv[0],
-                                _("is a JSON helper tool"));
-  fprintf( stderr, "  v%s\n",
-                  OYJL_VERSION_NAME );
-  fprintf( stderr, "\n");
-  fprintf( stderr, "%s\n",                 _("Usage"));
-  fprintf( stderr, "  %s\n",               _("Convert JSON to gettext ready C strings"));
-  fprintf( stderr, "      %s -e [-v] -i FILE_NAME -o FILE_NAME -f '_(\\\"%%s\\\"); ' -k name,description,help\n",        argv[0]);
-  fprintf( stderr, "        -f              %s\n", _("output format string"));
-  fprintf( stderr, "\n");
-  fprintf( stderr, "  %s\n",               _("Add gettext translated keys to JSON"));
-  fprintf( stderr, "      %s -a [-v] -i FILE_NAME -o FILE_NAME -k name,description,help -d TEXTDOMAIN -p LOCALEDIR -l de_DE,es_ES [-w C]\n",        argv[0]);
-  fprintf( stderr, "        -d TEXTDOMAIN   %s\n", _("text domain of your project"));
-  fprintf( stderr, "        -l locales      %s\n", _("locales in a comma separated list"));
-  fprintf( stderr, "        -p LOCALEDIR    %s\n", _("locale directory containing the your-locale/LC_MESSAGES/your-textdomain.mo gettext translations"));
-  fprintf( stderr, "        -t              %s\n", _("output only translations"));
-  fprintf( stderr, "        -n              %s\n", _("list empty translations too"));
-  fprintf( stderr, "\n");
-  fprintf( stderr, "  %s\n",               _("Print a help text:"));
-  fprintf( stderr, "      %s -h\n",        argv[0]);
-  fprintf( stderr, "\n");
-  fprintf( stderr, "  %s\n",               _("General options:"));
-  fprintf( stderr, "        -i FILE_NAME    %s\n", _("specify JSON file"));
-  fprintf( stderr, "        -o              %s\n", _("output"));
-  fprintf( stderr, "        -k STRING_LIST  %s\n", _("to be used key names in a comma separated list"));
-  fprintf( stderr, "        -w TYPE         %s\n", _("language specific wrap; -w C for C static char"));
-  fprintf( stderr, "        -v              %s\n", _("verbose"));
-  fprintf( stderr, "\n");
-  fprintf( stderr, "\n");
-}
-
-#define WARNc_S(...) oyjlMessage_p( oyjlMSG_ERROR, 0, __VA_ARGS__ )
-
-int main(int argc, char ** argv)
-{
-  int verbose = 0;
-  int error = 0;
   int add = 0;
   int list_empty = 0;
   int extract = 0;
   int size = 0;
   int translations_only = 0;
   const char * output = NULL,
-             * file_name = NULL,
+             * input = NULL,
              * format = NULL,
              * wrap = NULL,
              * key_list = NULL,
-             * lang_list = NULL,
+             * locales = NULL,
              * localedir = NULL,
-             * ctextdomain = OYJL_DOMAIN;
+             * domain = OYJL_DOMAIN;
   char * json = NULL;
   oyjl_val root = NULL,v;
   char * text = NULL;
 
-#ifdef OYJL_USE_GETTEXT
-  setlocale(LC_ALL,"");
-#endif
-  oyjlInitLanguageDebug( "Oyjl", OYJL_DEBUG, oyjl_debug, use_gettext, OYJL_LOCALE_VAR, OYJL_LOCALEDIR, OYJL_DOMAIN, NULL );
+  int error = 0;
+  int state = 0;
+  int verbose = 0;
+  int help = 0;
+  int version = 0;
+  int gui = 0;
+  const char * export = 0;
 
-  if(argc >= 2)
+  /* handle options */
+  /* Select a nick from *version*, *manufacturer*, *copyright*, *license*,
+   * *url*, *support*, *download*, *sources*, *oyjl_module_author* and
+   * *documentation*. Choose what you see fit. Add new ones as needed. */
+  oyjlUiHeaderSection_s sections[] = {
+    /* type, nick,            label, name,                     description */
+    {"oihs", "version",       NULL,  "1.0",                    NULL},
+    {"oihs", "documentation", NULL,  NULL,                     _("Convert Oyjl UI JSON to C translatable strings for use with gettext tools and translate a tools UI using the programs own text domain. The resulting Oyjl UI JSON can be used for translated rendering.")},
+    {"oihs", "manufacturer",  NULL,  _("Kai-Uwe Behrmann (ku.b (at) gmx.de)"),NULL},
+    {"oihs", "oyjl_module_author",NULL,  _("Kai-Uwe Behrmann (ku.b (at) gmx.de)"),NULL},
+    {"oihs", "copyright",     NULL,  _("(c) 2018, Kai-Uwe Behrmann and others"),NULL},
+    {"oihs", "license",       NULL,  _("MIT <http://www.opensource.org/licenses/MIT>"),NULL},
+    {"oihs", "support",       NULL,  "",                       _("https://github.com/oyranos-cms/oyranos/issues")},
+    {"oihs", "date",          NULL,  "2020-01-02T12:00:00",    _("January 2, 2020")},
+    {"",0,0,0,0}};
+
+  /* declare the option choices  *   nick,          name,               description,                  help */
+  oyjlOptionChoice_s w_choices[] = {{"C",          _("C static char"),  NULL,                         NULL},
+                                    {"","","",""}};
+  oyjlOptionChoice_s A_choices[] = {{_("Convert JSON to gettext ready C strings"),_("oyjl-translate -e [-v] -i oyjl-ui.json -o result.json -f '_(\\\"%%s\\\"); ' -k name,description,help"),NULL,                         NULL},
+                                    {_("Add gettext translated keys to JSON"),_("oyjl-translate -a -i oyjl-ui.json -o result.json -k name,description,help -d TEXTDOMAIN -p LOCALEDIR -l de_DE,es_ES"),NULL,                         NULL},
+                                    {"","","",""}};
+
+  oyjlOptionChoice_s S_choices[] = {{"oyjl(1) oyjl-args(1) oyjl-args-qml(1)","https://codedocs.xyz/oyranos-cms/oyranos/group__oyjl.html",               NULL,                         NULL},
+                                    {"","","",""}};
+
+  /* declare options - the core information; use previously declared choices */
+  oyjlOption_s oarray[] = {
+  /* type,   flags,                      o,  option,          key,      name,          description,                  help, value_name,         
+        value_type,              values,             variable_type, variable_name */
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "i","input",         NULL,     _("Input"),    _("File or Stream"),_("A JSON file name or a input stream like \"stdin\"."),_("FILENAME"),
+        oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&input}},
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "o","output",        NULL,     _("Output"),   _("File or Stream"),_("A JSON file name or a output stream like \"stdout\"."),_("FILENAME"),
+        oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&output}},
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "f","format",        NULL,     _("Format"),   _("Format string"),_("A output format string."),"'_(\\\"%s\\\"); '",
+        oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&format}},
+    {"oiwi", 0,  "a","add",        NULL,     _("Add"),   _("Add Translation"),_("Add gettext translated keys to JSON"),NULL,
+        oyjlOPTIONTYPE_NONE,   {0},                oyjlINT,    {.i=&add}},
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "d","domain",        NULL,     _("Domain"),   _("Text Domain"),_("text domain of your project"),_("TEXTDOMAIN"),
+        oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&domain}},
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "k","key-list",        NULL,     _("Key Names"),   _("Key Name List"),_("to be used key names in a comma separated list"),_("name,description,help"),
+        oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&key_list}},
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "l","locales",        NULL,     _("Locales"),   _("Locales List"),_("locales in a comma separated list"),_("de_DE,es_ES"),
+        oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&locales}},
+    {"oiwi", 0,  "n","list-empty",        NULL,     _("List empty"),   _("List not translated"),_("list empty translations too"),NULL,
+        oyjlOPTIONTYPE_NONE,   {0},                oyjlINT,    {.i=&list_empty}},
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "p","localedir",        NULL,     _("Directory"),   _("Locale Directory"),_("locale directory containing the your-locale/LC_MESSAGES/your-textdomain.mo gettext translations"),_("LOCALEDIR"),
+        oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&localedir}},
+    {"oiwi", 0,  "t","translations-only",        NULL,     _("Translations only"),   _("Only Translations"),_("output only translations"),NULL,
+        oyjlOPTIONTYPE_NONE,   {0},                oyjlINT,    {.i=&translations_only}},
+    {"oiwi", 0,  "e","extract",        NULL,     _("Extract"),   _("Extract translatable Messages"),_("Convert JSON to gettext ready C strings"),NULL,
+        oyjlOPTIONTYPE_NONE,   {0},                oyjlINT,    {.i=&extract}},
+    {"oiwi", 0,  "w","wrap",        NULL,     _("Wrap Type"),   _("language specific wrap"),NULL,_("TYPE"),
+        oyjlOPTIONTYPE_CHOICE,   {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)w_choices, sizeof(w_choices), malloc )},                oyjlSTRING,    {.s=&wrap}},
+    {"oiwi", 0,                          "A","man-examples",  NULL,     _("EXAMPLES"),NULL,                      NULL, NULL,
+        oyjlOPTIONTYPE_CHOICE,   {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)A_choices, sizeof(A_choices), malloc )}, oyjlNONE,      {}},
+    {"oiwi", 0,                          "S","man-see_also",  NULL,     _("SEE ALSO"),NULL,                      NULL, NULL,
+        oyjlOPTIONTYPE_CHOICE,   {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)S_choices, sizeof(S_choices), malloc )}, oyjlNONE,      {}},
+    {"oiwi", 0,                          "#","",              NULL,     "",            _("No args"),                 _("Run command without arguments"),NULL,
+        oyjlOPTIONTYPE_NONE,     {0},                oyjlNONE,      {}},
+    /* default options -h and -v */
+    {"oiwi", 0, "h", "help", NULL, _("help"), _("Help"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&help} },
+    {"oiwi", 0, "v","verbose",NULL,_("Verbose"),_("increase verbosity"), NULL, NULL, oyjlOPTIONTYPE_NONE,{0},oyjlINT,{.i=&verbose}},
+    /* The --gui option can be hidden and used only internally. */
+    {"oiwi", 0, "G", "gui",     NULL, _("gui"),     _("GUI"),     NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&gui} },
+    {"oiwi", 0, "V", "version", NULL, _("version"), _("Version"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&version} },
+    /* default option template -X|--export */
+    {"oiwi", 0, "X", "export", NULL, NULL, NULL, NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = NULL}, oyjlSTRING, {.s=&export} },
+    {"",0,0,NULL,NULL,NULL,NULL,NULL, NULL, oyjlOPTIONTYPE_END, {0},0,{0}}
+  };
+
+  /* declare option groups, for better syntax checking and UI groups */
+  oyjlOptionGroup_s groups[] = {
+  /* type,   flags, name,               description,                  help,               mandatory,     optional,      detail */
+    {"oiwg", 0,     _("Common Options"),_("Set basic parameters"),    NULL,               "",            "",            "i,o"},
+    {"oiwg", 0,     _("Extract"),       _("Convert JSON to gettext ready C strings"),  NULL,               "e,k",       "i,o,f,v",            "e,f,k"},
+    {"oiwg", 0,     _("Add"),           _("Add gettext translated keys to JSON"),  NULL,               "a,d,k",       "i,o,l,p,w,t,n,v",            "a,d,l,p,k,w,t,n"},
+    {"oiwg", 0,     _("Misc"),          _("General options"),         NULL,               "h,X",         "v",           "h,v,X" },/* just show in documentation */
+    {"",0,0,0,0,0,0,0}
+  };
+
+  oyjlUi_s * ui = oyjlUi_Create( argc, argv, /* argc+argv are required for parsing the command line options */
+                                       "oyjl-translate", _("Oyjl Translation"), _("Oyjl UI JSON Translation tool"),
+#ifdef __ANDROID__
+                                       ":/images/logo.svg", // use qrc
+#else
+                                       NULL,
+#endif
+                                       sections, oarray, groups, &state );
+  if( state & oyjlUI_STATE_EXPORT &&
+      export &&
+      strcmp(export,"json+command") != 0)
+    goto clean_main;
+  if(state & oyjlUI_STATE_HELP)
   {
-    int pos = 1;
-    unsigned i;
-    char *wrong_arg = 0;
-    while(pos < argc)
-    {
-      switch(argv[pos][0])
-      {
-        case '-':
-            for(i = 1; pos < argc && i < strlen(argv[pos]); ++i)
-            switch (argv[pos][i])
-            {
-              case 'a': add = 1; break;
-              case 'd': OYJL_PARSE_STRING_ARG(ctextdomain); break;
-              case 'e': extract = 1; break;
-              case 'f': OYJL_PARSE_STRING_ARG(format); break;
-              case 'i': OYJL_PARSE_STRING_ARG(file_name); break;
-              case 'k': OYJL_PARSE_STRING_ARG(key_list); break;
-              case 'l': OYJL_PARSE_STRING_ARG(lang_list); break;
-              case 'n': list_empty = 1; break;
-              case 'o': OYJL_PARSE_STRING_ARG(output); break;
-              case 'p': OYJL_PARSE_STRING_ARG(localedir); break;
-              case 't': translations_only = 1; break;
-              case 'w': OYJL_PARSE_STRING_ARG(wrap); break;
-              case 'v': ++verbose; ++*oyjl_debug; break;
-              case 'h':
-              case '-':
-                        if(i == 1)
-                        {
-                             if(OYJL_IS_ARG("verbose"))
-                        { ++*oyjl_debug; ++verbose; i=100; break; }
-                        } OYJL_FALLTHROUGH
-              default:
-                        WARNc_S( "%s %s", "wrong option:", argv[pos]);
-                        printfHelp(argc, argv, verbose);
-                        exit (0);
-                        break;
-            }
-            break;
-        default:
-                        WARNc_S( "%s %s", "wrong option:", argv[pos]);
-                        printfHelp(argc, argv, verbose);
-                        exit (0);
-                        break;
-      }
-      if( wrong_arg )
-      {
-       WARNc_S( "%s %s", "wrong argument to option:", wrong_arg);
-       printfHelp(argc, argv, verbose);
-       exit(1);
-      }
-      ++pos;
-    }
-  } else
-  {
-                        printfHelp(argc, argv, verbose);
-                        exit (0);
+    fprintf( stderr, "%s\n\tman oyjl-translate\n\n", _("For more information read the man page:") );
+    goto clean_main;
   }
 
   if(verbose)
+  {
+    char * json = oyjlOptions_ResultsToJson( ui->opts );
+    if(json)
+      fputs( json, stderr );
+    fputs( "\n", stderr );
+
+    char * text = oyjlOptions_ResultsToText( ui->opts );
+    if(text)
+      fputs( text, stderr );
+    fputs( "\n", stderr );
+
     fprintf(stderr, "i18n test:\t\"%s\" %s\n", _("Usage"),
 #ifdef OYJL_USE_GETTEXT
         textdomain(NULL)
@@ -162,9 +184,45 @@ int main(int argc, char ** argv)
         "----"
 #endif
         );
+  }
 
-  if(file_name)
-    json = oyjlReadFile( file_name, &size );
+  if((export && strcmp(export,"json+command") == 0))
+  {
+    char * json = oyjlUi_ToJson( ui, 0 ),
+         * json_commands = NULL;
+    oyjlStringAdd( &json_commands, malloc, free, "{\n  \"command_set\": \"%s\",", argv[0] );
+    oyjlStringAdd( &json_commands, malloc, free, "%s", &json[1] );
+    puts( json_commands );
+    goto clean_main;
+  }
+
+  /* GUI boilerplate */
+  if(ui && gui)
+  {
+#if !defined(NO_OYJL_ARGS_QML_START)
+    int debug = verbose;
+    oyjlArgsQmlStart( argc, argv, NULL, debug, ui, myMain );
+#else
+    fprintf( stderr, "No GUI support compiled in. For a GUI use -X json and load into oyjl-args-qml viewer." );
+#endif
+  }
+  else if(ui)
+  {
+    /* ... working code goes here ... */
+  if(input)
+  {
+    json = oyjlReadFile( input, &size );
+    if(!json && verbose)
+    {
+      if(oyjlIsFile(input, "r", NULL, 0))
+        fprintf(stderr, "File does exist: %s\n", input);
+      else
+      {
+        fprintf(stderr, "File does not exist: %s\n", input);
+        system("pwd; ls");
+      }
+    }
+  }
 
   if(json)
   {
@@ -176,7 +234,7 @@ int main(int argc, char ** argv)
     root = oyjlTreeParse( json, text, 256 );
     if(text[0])
     {
-      fprintf( stderr, "ERROR: %s\n%s\n", file_name, text );
+      fprintf( stderr, "ERROR: %s\n%s\n", input, text );
     }
   }
 
@@ -187,7 +245,7 @@ int main(int argc, char ** argv)
 
     oyjlTreeToPaths( root, 1000000, NULL, 0, &paths );
     if(verbose)
-      fprintf(stderr, "processed:\t\"%s\"\n", file_name);
+      fprintf(stderr, "processed:\t\"%s\"\n", input);
     while(paths && paths[count]) ++count;
 
     if(extract)
@@ -218,7 +276,7 @@ int main(int argc, char ** argv)
                 oyjlStringAdd( &text, malloc, free, format, t );
               else
                 oyjlStringAdd( &text, malloc, free, "// %s:%s\n{ const char * t = _(\"%s\"); }\n\n",
-                                 file_name, path, t );
+                                 input, path, t );
             }
           }
         }
@@ -227,7 +285,7 @@ int main(int argc, char ** argv)
     } else if(add)
     {
       int ln = 0, n = 0;
-      char ** langs = oyjlStringSplit( lang_list, ',', &ln, malloc );
+      char ** langs = oyjlStringSplit( locales, ',', &ln, malloc );
       char * var = NULL;
       const char * oyjl_domain_path = OYJL_LOCALEDIR;
       char ** list = oyjlStringSplit( key_list, ',', &n, malloc );
@@ -236,7 +294,7 @@ int main(int argc, char ** argv)
 
 #ifdef OYJL_USE_GETTEXT
       if(verbose)
-        fprintf(stderr, "use:\t%d langs - %s : %s\n", ln, ctextdomain, dgettext( ctextdomain, "Rendering Intent" ));
+        fprintf(stderr, "use:\t%d langs - %s : %s\n", ln, domain, dgettext( domain, "Rendering Intent" ));
 #endif
       if(verbose)
         fprintf(stderr, "use:\t%d keys\n", n);
@@ -257,12 +315,12 @@ int main(int argc, char ** argv)
         new_translations = oyjlTreeNew(0);
 
 #ifdef OYJL_USE_GETTEXT
-      var = textdomain( ctextdomain );
-      dir = bindtextdomain( ctextdomain, oyjl_domain_path );
+      var = textdomain( domain );
+      dir = bindtextdomain( domain, oyjl_domain_path );
 #endif
 
       if(*oyjl_debug)
-        fprintf(stderr, "%s = bindtextdomain() to \"%s\"\ntextdomain: %s == %s\n", dir, oyjl_domain_path, ctextdomain, var );
+        fprintf(stderr, "%s = bindtextdomain() to \"%s\"\ntextdomain: %s == %s\n", dir, oyjl_domain_path, domain, var );
       var = NULL;
 
       oyjlStringAdd( &var, 0,0, "NLSPATH=%s", oyjl_domain_path );
@@ -298,12 +356,12 @@ int main(int argc, char ** argv)
                 t = OYJL_GET_STRING(v);
               if(t && t[0])
 #ifdef OYJL_USE_GETTEXT
-                tr = dgettext( ctextdomain, t );
+                tr = dgettext( domain, t );
 #else
                 tr = t;
 #endif
               if(verbose)
-                fprintf(stderr, "found:\t key: %s value[%s]: \"%s\"\n", path, ctextdomain, tr?tr:"----" );
+                fprintf(stderr, "found:\t key: %s value[%s]: \"%s\"\n", path, domain, tr?tr:"----" );
               if(t != tr || list_empty)
               {
                 char * new_path = NULL, * new_key = oyjlStringCopy( t, NULL ), * tmp;
@@ -344,7 +402,7 @@ int main(int argc, char ** argv)
       if(wrap)
       {
         char * tmp = NULL;
-        char * sname = strdup(ctextdomain);
+        char * sname = strdup(domain);
         if(strcmp(wrap,"C") != 0)
         {
           fprintf(stderr,"ERROR: Only -w C is supported.\n");
@@ -364,7 +422,59 @@ int main(int argc, char ** argv)
         oyjlWriteFile( output, text, strlen(text) );
     }
   }
+  }
+  else error = 1;
+
+  clean_main:
+  {
+    int i = 0;
+    while(oarray[i].type[0])
+    {
+      if(oarray[i].value_type == oyjlOPTIONTYPE_CHOICE && oarray[i].values.choices.list)
+        free(oarray[i].values.choices.list);
+      ++i;
+    }
+  }
+  oyjlLibRelease();
 
   return error;
 }
+
+extern int * oyjl_debug;
+char ** environment = NULL;
+int main( int argc_, char**argv_, char ** envv )
+{
+  int argc = argc_;
+  char ** argv = argv_;
+
+#ifdef __ANDROID__
+  setenv("COLORTERM", "1", 0); /* show rich text format on non GNU color extension environment */
+
+  argv = calloc( argc + 2, sizeof(char*) );
+  memcpy( argv, argv_, (argc + 2) * sizeof(char*) );
+  argv[argc++] = "--gui"; /* start QML */
+  environment = environ;
+#else
+  environment = envv;
+#endif
+
+  /* language needs to be initialised before setup of data structures */
+  int use_gettext = 0;
+#ifdef OYJL_USE_GETTEXT
+  use_gettext = 1;
+#ifdef OYJL_HAVE_LOCALE_H
+  setlocale(LC_ALL,"");
+#endif
+#endif
+  oyjlInitLanguageDebug( "Oyjl", "OYJL_DEBUG", oyjl_debug, use_gettext, "OYJL_LOCALEDIR", OYJL_LOCALEDIR, OYJL_DOMAIN, NULL );
+
+  myMain(argc, (const char **)argv);
+
+#ifdef __ANDROID__
+  free( argv );
+#endif
+
+  return 0;
+}
+
 
