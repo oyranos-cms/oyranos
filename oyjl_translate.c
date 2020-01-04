@@ -116,8 +116,6 @@ int myMain( int argc, const char ** argv )
         oyjlOPTIONTYPE_CHOICE,   {.choices = {(oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)A_choices, sizeof(A_choices), malloc ), 0}}, oyjlNONE,      {}},
     {"oiwi", 0,                          "S","man-see_also",  NULL,     _("SEE ALSO"), NULL,                         NULL, NULL,               
         oyjlOPTIONTYPE_CHOICE,   {.choices = {(oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)S_choices, sizeof(S_choices), malloc ), 0}}, oyjlNONE,      {}},
-    {"oiwi", 0,                          "#","",              NULL,     "",            _("No args"),                 _("Run command without arguments"),NULL,               
-        oyjlOPTIONTYPE_NONE,     {0},                oyjlNONE,      {}},
     {"oiwi", 0,                          "h","help",          NULL,     _("help"),     _("Help"),                    NULL, NULL,               
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&help}},
     {"oiwi", 0,                          "v","verbose",       NULL,     _("Verbose"),  _("increase verbosity"),      NULL, NULL,               
@@ -204,6 +202,12 @@ int myMain( int argc, const char ** argv )
   else if(ui)
   {
     /* ... working code goes here ... */
+    if( (!input && (add || extract)) ||
+        (strcmp(input,"-") == 0 || strcmp(input,"stdin") == 0) )
+    {
+      json = oyjlReadFileStreamToMem( stdin, &size );
+    }
+    else
     if(input)
     {
       json = oyjlReadFile( input, &size );
