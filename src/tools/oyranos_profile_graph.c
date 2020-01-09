@@ -174,7 +174,11 @@ const char * jcommands = "{\n\
   \"comment\": \"command_set_delimiter - build key:value; default is '=' key=value\",\n\
   \"comment\": \"command_set_option - use \\\"-s\\\" \\\"key\\\"; skip \\\"--\\\" direct in front of key\"\n\
 }";
-int main( int argc , char** argv )
+/* This function is called the
+ * * first time for GUI generation and then
+ * * for executing the tool.
+ */
+int myMain( int argc, const char ** argv )
 {
   /* the functional switches */
   const char * format = NULL;
@@ -251,6 +255,7 @@ int main( int argc , char** argv )
   oyI18NInit_();
 
   oyjlOptions_s * opts;
+  int gui = 0;
   oyjlUi_s * ui;
   oyjlUiHeaderSection_s * info;
   const char * export = NULL;
@@ -323,6 +328,8 @@ int main( int argc , char** argv )
     {"oiwi", 0, "x", "xyy",           NULL, _("xyY"),           _("Use CIE*xyY *x*y plane for saturation line projection"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&xyy_plane} },
     {"oiwi", 0, "z", "scale",         NULL, _("Scale"),         _("Scale the height of the spectrum graph"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&scale_spectrum} },
 
+    /* The --gui option can be hidden and used only internally. */
+    {"oiwi", 0, "G", "gui",  NULL, _("gui"),  _("GUI"),  NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i = &gui} },
     /* default options -h and -v */
     {"oiwi", 0, "h", "help", NULL, _("help"), _("Help"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&help} },
     {"oiwi", 0, "v", "verbose", NULL, _("verbose"), _("verbose"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&verbose} },
@@ -361,7 +368,7 @@ int main( int argc , char** argv )
     return 0;
   if(!ui) return 1;
 
-  if(!export && !input && !profile_count && !standardobs && !observer64 && !kelvin && !illuminant)
+  if(!export && !input && !profile_count && !standardobs && !observer64 && !kelvin && !illuminant && !gui)
   {
     oyjlUiHeaderSection_s * version = oyjlUi_GetHeaderSection( ui,
                                                                "version" );
@@ -400,6 +407,17 @@ int main( int argc , char** argv )
     puts( json_commands );
     exit(0);
   }
+
+#if !defined(NO_OYJL_ARGS_QML_START)
+  /* GUI boilerplate */
+  if(gui)
+  { 
+    int debug = verbose;
+    oyjlArgsQmlStart( argc, argv, NULL, debug, ui, myMain );
+    oyjlUi_Release( &ui);
+    return 0;
+  }
+#endif
 
   /* detect all anonymous arguments for saturation */
   profile_names = oyjlOptions_ResultsToList( ui->opts, "@", &profile_count );
@@ -1192,6 +1210,44 @@ int main( int argc , char** argv )
   return 0;
 }
 #undef flags
+
+extern int * oyjl_debug;
+char ** environment = NULL;
+int main( int argc_, char**argv_, char ** envv )
+{
+  int argc = argc_;
+  char ** argv = argv_;
+
+#ifdef __ANDROID__
+  setenv("COLORTERM", "1", 0); /* show rich text format on non GNU color extension environment */
+
+  argv = calloc( argc + 2, sizeof(char*) );
+  memcpy( argv, argv_, (argc + 2) * sizeof(char*) );
+  argv[argc++] = "--gui"; /* start QML */
+  environment = environ;
+#else
+  environment = envv;
+#endif
+
+  /* language needs to be initialised before setup of data structures */
+  int use_gettext = 0;
+#ifdef OYJL_USE_GETTEXT
+  use_gettext = 1;
+#ifdef OYJL_HAVE_LOCALE_H
+  setlocale(LC_ALL,"");
+#endif
+#endif
+  oyjlInitLanguageDebug( "Oyjl", "OYJL_DEBUG", oyjl_debug, use_gettext, "OYJL_LOCALEDIR", OYJL_LOCALEDIR, OYJL_DOMAIN, NULL );
+
+  myMain(argc, (const char **)argv);
+
+#ifdef __ANDROID__
+  free( argv );
+#endif
+
+  return 0;
+}
+
 
 double * getSaturationLine_(oyProfile_s * profile, int intent, size_t * size_, oyProfile_s * outspace)
 {
