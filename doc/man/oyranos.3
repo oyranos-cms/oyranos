@@ -22,6 +22,53 @@ is planed to offer color conversions through a framework inside Oyranos. Install
 A html documentation should come with your installation. Try otherwise
 .sp
 http://www.oyranos.org/doc/index.html
+.SH ENVIRONMENT VARIABLES
+.TP
+OY_MODULE_PATH
+.br
+route Oyranos to additional directories containing modules.
+.TP
+OY_DEBUG
+.br
+set the Oyranos debug level.
+.br
+influences the internal oy_debug integer variable. Its value changes the output level. See as well oyranos_debug.[h,c] . The configure switch –enable-debug enables most of the available output.
+.nr
+Valid integer range is from 1-20.
+.TP
+OY_DEBUG_MEMORY
+.br
+sets the internal ::oy_debug_memory integer variable on and helps somewhat in detecting memory leaks. This variable is dangerous and should not to be run for production use.
+.TP
+OY_DEBUG_DB_MODULE
+.br
+can explicitely specify a module registration string for testing.
+.TP
+OY_DEBUG_OBJECTS
+.br
+is used to frequently print infos about objects on stderr. The value of OY_DEBUG_OBJECTS can be a
+.br
+  Object ID or a
+.br
+  type name like "oyImage_s","Image" to track all oyImage_s type objects or
+.br
+  "1" to print track informations about all trackable objects.
+.br
+  "-1" to omit printing track informations.
+.TP
+OY_DEBUG_OBJECTS_SKIP_CMM_CACHES
+.br
+together with OY_DEBUG_OBJECTS for a cleaner graph
+.TP
+OY_DEBUG_SIGNALS
+.br
+sets the internal ::oy_debug_signals integer variable on and helps in tracing signals. This variable is dangerous and should not to be run for production use.
+.TP
+OY_DEBUG_WRITE
+.br
+together with OY_DEBUG is used to tell, that a file output is appreciated. Writing files will usually slow down debugging.
+.TP
+OY_BACKTRACE can be set to a debug message string and will then place a backtrace text from gdb into the console. That needs the debug message to be visible. 
 .SH AUTHOR
 Kai-Uwe Behrmann (ku.b (at) gmx.de)
 .SH "SEE ALSO"

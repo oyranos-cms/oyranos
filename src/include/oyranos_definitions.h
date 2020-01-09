@@ -47,6 +47,13 @@
  *
  *  @see @ref debug_vars
  *
+ *  @since 0.9.7
+ */
+#define OY_DEBUG_WRITE                 "OY_DEBUG_WRITE"
+/** @brief Oyranos debug environment variable
+ *
+ *  @see @ref debug_vars
+ *
  *  @since 0.9.0
  */
 #define OY_DEBUG_MEMORY                "OY_DEBUG_MEMORY"
@@ -57,6 +64,13 @@
  *  @since 0.9.6
  */
 #define OY_DEBUG_OBJECTS               "OY_DEBUG_OBJECTS"
+/** @brief Oyranos debug environment variable
+ *
+ *  @see @ref debug_vars
+ *
+ *  @since 0.9.7
+ */
+#define OY_DEBUG_OBJECTS_SKIP_CMM_CACHES "OY_DEBUG_OBJECTS_SKIP_CMM_CACHES"
 /** @brief Oyranos debug environment variable
  *
  *  @see @ref debug_vars
