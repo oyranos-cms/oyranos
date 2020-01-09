@@ -192,21 +192,20 @@
             \"Little CMS 2\": \"Little CMS 2\",\n\
             \"Little Color Management System\": \"Little Color Management System\",\n\
             \"Manufacturer\": \"Hersteller\",\n\
-            \"http:\": [{\n\
-                \"www.littlecms.com\": [\"http://www.littlecms.com\"],\n\
-                \"www.behrmann.name\": \"http://www.behrmann.name\",\n\
-                \"www.openicc.info\": \"http://www.openicc.info\"\n\
-              }],\n\
+            \"http:%37%37www.littlecms.com\": \"http://www.littlecms.com\",\n\
             \"Copyright\": \"Kopierrecht\",\n\
             \"Copyright 2018 Marti Maria\": \"Kopierrecht 2018 Marti Maria\",\n\
             \"License\": \"Lizenz\",\n\
             \"MIT\": \"MIT\",\n\
             \"Support\": \"Unterstützung\",\n\
+            \"http:%37%37www.littlecms.com%37\": \"http://www.littlecms.com\",\n\
             \"Download\": \"Bezugsquelle\",\n\
             \"Sources\": \"Quellen\",\n\
             \"Development\": \"Entwicklung\",\n\
             \"OpenICC CMM Author\": \"OpenICC CMM Autor\",\n\
+            \"http:%37%37www.behrmann.name\": \"http://www.behrmann.name\",\n\
             \"Documentation\": \"Dokumente\",\n\
+            \"http:%37%37www.openicc.info\": \"http://www.openicc.info\",\n\
             \"Extended Options\": \"Erweiterte Optionen\",\n\
             \"Additional options.\": \"Zusätzliche Optionen.\",\n\
             \"Options\": \"Optionen\",\n\
