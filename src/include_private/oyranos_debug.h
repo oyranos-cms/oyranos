@@ -203,7 +203,7 @@ void oy_backtrace_();
     oyObjectIdListShowDiffAndRelease( &ids_old, t );
 
 #ifdef HAVE_BACKTRACE
-#define OY_BACKTRACE_PRINT \
+#define OY_BACKTRACE_PRINT { \
           int j, nptrs; \
           void *buffer[BT_BUF_SIZE]; \
           char **strings; \
@@ -275,8 +275,9 @@ void oy_backtrace_();
             } \
             fprintf(stderr, "\n"); \
             free(strings); \
-          }
-#define OY_BACKTRACE_STRING \
+          } \
+}
+#define OY_BACKTRACE_STRING(count) { \
           int j, nptrs; \
           void *buffer[BT_BUF_SIZE]; \
           char **strings; \
@@ -297,6 +298,13 @@ void oy_backtrace_();
             oyjlStringAdd( &text, 0,0, "\n" ); \
             for(j = start; j >= 0; j--) \
             { \
+              if(count > 0) \
+              { \
+                if(j == count) \
+                  oyjlStringAdd( &text, 0,0, "(...)->"); \
+                else if(j > count) \
+                  continue; \
+              } \
               if(oy_debug) \
                 oyjlStringAdd( &text, 0,0, "%s\n", strings[j]); \
               else \
@@ -348,7 +356,8 @@ void oy_backtrace_();
               } \
             } \
             free(strings); \
-          }
+          } \
+}
 #else
 #define OY_BACKTRACE_PRINT
 #define OY_BACKTRACE_STRING
