@@ -411,6 +411,7 @@ oyjlTESTRESULT_e testJson ()
           fprintf( zout, "%d %s\n", i, rjson?rjson:"---" );
         if(rjson) myDeAllocFunc(rjson);
         rjson = NULL;
+        oyjlTreeFree(new_sub);
       }
       if(!root) oyjlTreeFree( value );
     }
