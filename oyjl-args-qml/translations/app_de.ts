@@ -47,23 +47,23 @@
         <translation>Json is ungültig</translation>
     </message>
     <message>
-        <location filename="../src/app_data.cpp" line="88"/>
+        <location filename="../src/app_data.cpp" line="106"/>
         <source>finished loading</source>
         <translation>Laden beendet</translation>
     </message>
     <message>
-        <location filename="../src/app_data.cpp" line="225"/>
-        <location filename="../src/app_data.cpp" line="227"/>
+        <location filename="../src/app_data.cpp" line="243"/>
+        <location filename="../src/app_data.cpp" line="245"/>
         <source>%1 Version</source>
         <translation>%1 Version</translation>
     </message>
     <message>
-        <location filename="../src/app_data.cpp" line="232"/>
+        <location filename="../src/app_data.cpp" line="250"/>
         <source>NONE</source>
         <translation>NICHTS</translation>
     </message>
     <message>
-        <location filename="../src/app_data.cpp" line="303"/>
+        <location filename="../src/app_data.cpp" line="321"/>
         <source>Permission not granted: </source>
         <translation>Berechtigung nicht gewährt: </translation>
     </message>
@@ -147,38 +147,39 @@
 <context>
     <name>main</name>
     <message>
-        <location filename="../qml/main.qml" line="38"/>
+        <location filename="../qml/main.qml" line="39"/>
         <source>Loaded</source>
         <translation>Geladen</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="90"/>
+        <location filename="../qml/main.qml" line="91"/>
         <source>commands enabled</source>
         <translation>Kommandos an</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="559"/>
-        <location filename="../qml/main.qml" line="592"/>
+        <location filename="../qml/main.qml" line="562"/>
+        <location filename="../qml/main.qml" line="613"/>
+        <location filename="../qml/main.qml" line="646"/>
         <source>Launched app for </source>
         <translation>Starte Programm für </translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="740"/>
+        <location filename="../qml/main.qml" line="794"/>
         <source>Load failed</source>
         <translation>Laden daneben</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="792"/>
+        <location filename="../qml/main.qml" line="846"/>
         <source>granted</source>
         <translation>gewährt</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="792"/>
+        <location filename="../qml/main.qml" line="846"/>
         <source>denied</source>
         <translation>abgelehnt</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="794"/>
+        <location filename="../qml/main.qml" line="848"/>
         <source>Never ask again</source>
         <translation>Nicht mehr fragen</translation>
     </message>
