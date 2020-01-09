@@ -82,7 +82,7 @@ int                oyStruct_GetChildren (
          if(s->oy_->struct_name) { \
                               c[n++] = (oyStruct_s*)s->oy_->struct_name; \
                               if(((oyStruct_s*)s->oy_->struct_name)->type_ > oyOBJECT_MAX) \
-                              { fprintf(stderr, "%s::%s failed\n", oyStruct_GetText( (oyStruct_s*)s, oyNAME_DESCRIPTION, 0 ), #struct_name); \
+                              { fprintf(stderr, OY_DBG_FORMAT_ "%s::%s failed\n", OY_DBG_ARGS_, oyStruct_GetText( (oyStruct_s*)s, oyNAME_DESCRIPTION, 0 ), #struct_name); \
                                 goto gcassert; } \
                               if(oyStruct_GetText((oyStruct_s*)s->oy_->struct_name, oyNAME_DESCRIPTION, 2) == NULL && s->oy_) \
                               { \
@@ -99,7 +99,7 @@ int                oyStruct_GetChildren (
 #define CHECK_ASSIGN_STRUCT(struct_name) \
          if(s->struct_name) { c[n++] = (oyStruct_s*)s->struct_name; \
                               if(((oyStruct_s*)s->struct_name)->type_ > oyOBJECT_MAX) \
-                              { fprintf(stderr, "%s::%s failed\n", oyStruct_GetText( (oyStruct_s*)s, oyNAME_DESCRIPTION, 0 ), #struct_name); \
+                              { fprintf(stderr, OY_DBG_FORMAT_ "%s::%s [%d] failed\n", OY_DBG_ARGS_, oyStruct_GetText( (oyStruct_s*)s, oyNAME_DESCRIPTION, 0 ), #struct_name, s->oy_?s->oy_->id_:-1); \
                                 goto gcassert; } }
   switch(obj->type_)
   {
@@ -1242,7 +1242,7 @@ static oyStruct_s *  oyStruct_FromId ( int                 id )
 void               oyObjectTreePrint ( int                 flags,
                                        const char        * comment )
 {
-  if(oy_debug_objects >= 0 || oy_debug_objects == -2)
+  if(oy_debug_objects >= 0 || oy_debug_objects <= -2)
   {
     int skip_cmm_caches_flag = getenv("OY_DEBUG_OBJECTS_SKIP_CMM_CACHES") ? 0x04 : 0;
     int * ids_old = oyObjectGetCurrentObjectIdList( );
