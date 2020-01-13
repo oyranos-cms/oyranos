@@ -136,7 +136,7 @@ int                oyStruct_GetChildren (
     case oyOBJECT_OPTION_S:
        {
          oyOption_s_ * s = (oyOption_s_*)obj;
-         if(s->value_type == oyVAL_STRUCT && s->value)
+         if(s->value_type == oyVAL_STRUCT && s->value && s->value->oy_struct)
            c[n++] = (oyStruct_s*)s->value->oy_struct;
        }
        break;
