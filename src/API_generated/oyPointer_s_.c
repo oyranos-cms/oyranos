@@ -8,7 +8,7 @@
  *  Oyranos is an open source Color Management System
  *
  *  @par Copyright:
- *            2004-2019 (C) Kai-Uwe Behrmann
+ *            2004-2020 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
@@ -52,9 +52,6 @@ static const char * oyPointer_StaticMessageFunc_ (
   if(!s)
    return "";
 
-  if(s->oy_ && s->oy_->allocateFunc_)
-    alloc = s->oy_->allocateFunc_;
-
   if( oy_pointer_msg_text_ == NULL || oy_pointer_msg_text_n_ == 0 )
   {
     oy_pointer_msg_text_n_ = 512;
@@ -78,8 +75,6 @@ static const char * oyPointer_StaticMessageFunc_ (
   if(oy_pointer_msg_text_n_ < 1000)
   {
     oyDeAlloc_f dealloc = oyDeAllocateFunc_;
-    if(s->oy_ && s->oy_->deallocateFunc_)
-      dealloc = s->oy_->deallocateFunc_;
     if(oy_pointer_msg_text_ && oy_pointer_msg_text_n_)
       dealloc( oy_pointer_msg_text_ );
     oy_pointer_msg_text_n_ = 1024;
@@ -517,7 +512,7 @@ oyPointer_s_ * oyPointer_Copy_ ( oyPointer_s_ *pointer, oyObject_s object )
 int oyPointer_Release_( oyPointer_s_ **pointer )
 {
   const char * track_name = NULL;
-  int observer_refs = 0, i, id = 0, refs = 0;
+  int observer_refs = 0, id = 0, refs = 0, parent_refs = 0;
   /* ---- start of common object destructor ----- */
   oyPointer_s_ *s = 0;
 
@@ -531,6 +526,9 @@ int oyPointer_Release_( oyPointer_s_ **pointer )
 
   id = s->oy_->id_;
   refs = s->oy_->ref_;
+
+  if(refs <= 0) /* avoid circular or double dereferencing */
+    return 0;
 
   *pointer = 0;
 
@@ -569,7 +567,7 @@ int oyPointer_Release_( oyPointer_s_ **pointer )
   }
 
   
-  if((oyObject_UnRef(s->oy_) - observer_refs*2) > 0)
+  if((oyObject_UnRef(s->oy_) - parent_refs - 2*observer_refs) > 0)
     return 0;
   /* ---- end of common object destructor ------- */
 
@@ -592,19 +590,10 @@ int oyPointer_Release_( oyPointer_s_ **pointer )
     }
   }
 
-  /* model and observer reference each other. So release the object two times.
-   * The models and and observers are released later inside the
-   * oyObject_s::handles. */
-  for(i = 0; i < observer_refs; ++i)
-  {
-    //oyObject_UnRef(s->oy_);
-    oyObject_UnRef(s->oy_);
-  }
-
   refs = s->oy_->ref_;
   if(refs < 0)
   {
-    WARNc2_S( "node[%d]->object can not be untracked with refs: %d\n", id, refs );
+    WARNc2_S( "[%d]->object can not be untracked with refs: %d\n", id, refs );
     //oyMessageFunc_p( oyMSG_WARN,0,OY_DBG_FORMAT_ "refs:%d", OY_DBG_ARGS_, refs);
     return -1; /* issue */
   }
@@ -620,6 +609,9 @@ int oyPointer_Release_( oyPointer_s_ **pointer )
 
 
 
+  /* remove observer edges */
+  oyOptions_Release( &s->oy_->handles_ );
+
   if(s->oy_->deallocateFunc_)
   {
     oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
@@ -631,10 +623,7 @@ int oyPointer_Release_( oyPointer_s_ **pointer )
       fprintf( stderr, "%s[%d] destructing\n", track_name, id );
 
     if(refs > 1)
-      fprintf( stderr, "!!!ERROR:%d node[%d]->object can not be untracked with refs: %d\n", __LINE__, id, refs);
-
-    for(i = 1; i < observer_refs; ++i) /* oyObject_Release(oy) will dereference one more time, so preserve here one ref for oyObject_Release(oy) */
-      oyObject_UnRef(oy);
+      fprintf( stderr, "!!!ERROR:%d [%d]->object can not be untracked with refs: %d\n", __LINE__, id, refs);
 
     s->oy_ = NULL;
     oyObject_Release( &oy );

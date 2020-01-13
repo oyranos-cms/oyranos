@@ -10,7 +10,7 @@
  *  Oyranos is an open source Color Management System
  *
  *  @par Copyright:
- *            2004-2019 (C) Kai-Uwe Behrmann
+ *            2004-2020 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
@@ -92,24 +92,24 @@ OYAPI int  OYEXPORT
                                        int                 pos,
                                        uint32_t            flags );
 OYAPI oyStruct_s *  OYEXPORT
-                oyStructList_GetRef ( oyStructList_s    * list,
+                oyStructList_GetRef  ( oyStructList_s    * list,
                                        int                 pos );
 OYAPI oyStruct_s *  OYEXPORT
-                oyStructList_GetRefType( oyStructList_s * list,
-                                          int              pos,
-                                          oyOBJECT_e       type );
+               oyStructList_GetRefType(oyStructList_s    * list,
+                                       int                 pos,
+                                       oyOBJECT_e          type );
 OYAPI int  OYEXPORT
-                 oyStructList_ReleaseAt( oyStructList_s  * list,
-                                         int               pos );
+               oyStructList_ReleaseAt( oyStructList_s    * list,
+                                       int                 pos );
 OYAPI int  OYEXPORT
-                 oyStructList_Count  ( oyStructList_s    * list );
+               oyStructList_Count    ( oyStructList_s    * list );
 OYAPI const char *  OYEXPORT
                 oyStructList_GetText( oyStructList_s    * list,
                                        oyNAME_e            name_type,
                                        int                 intent_spaces,
                                        uint32_t            flags );
 OYAPI const char *  OYEXPORT
-                oyStructList_GetID  ( oyStructList_s    * list,
+                oyStructList_GetID   ( oyStructList_s    * list,
                                        int                 intent_spaces,
                                        uint32_t            flags );
 OYAPI int  OYEXPORT

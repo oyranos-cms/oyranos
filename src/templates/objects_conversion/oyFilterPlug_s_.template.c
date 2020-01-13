@@ -17,7 +17,7 @@
 
   /* referenences from members has to be substracted
    * from this objects ref count */
-  if(oyObject_GetRefCount( s->oy_ ) >= (int)(n + observer_refs) && r > 0)
+  if(oyObject_GetRefCount( s->oy_ ) >= (int)(parent_refs + n + observer_refs*2) && r > 0)
      return 0;
 
   /* ref before oyXXX_Release__Members(), so the

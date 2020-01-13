@@ -6,7 +6,7 @@
  *  Oyranos is an open source Color Management System
  *
  *  @par Copyright:
- *            2004-2019 (C) Kai-Uwe Behrmann
+ *            2004-2020 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
@@ -52,6 +52,11 @@ oyObject_s   oyObject_SetAllocators_  ( oyObject_s        object,
   return object;
 }
 
+#ifdef HAVE_BACKTRACE
+#include <execinfo.h>
+#define BT_BUF_SIZE 100
+#endif
+
 /**
  *  @internal
  *  Function oyObject_Ref
@@ -83,6 +88,8 @@ int          oyObject_Ref            ( oyObject_s          obj )
   {
     ++s->ref_;
 
+    if(oy_debug_objects == 1 || oy_debug_objects == s->id_)
+      OY_BACKTRACE_PRINT
     if(oy_debug_objects >= 0)
       /* track object */
       oyObject_GetId( obj );
@@ -209,11 +216,6 @@ int oyGetNewObjectID()
   return val;
 }
 
-#ifdef HAVE_BACKTRACE
-#include <execinfo.h>
-#define BT_BUF_SIZE 100
-#endif
-
 #define MAX_OBJECTS_TRACKED 1000000
 /* private tracking API's start */
 static oyObject_s * oy_obj_track_list = NULL;
@@ -232,7 +234,7 @@ void               oyObject_Track    ( oyObject_s          obj )
     OY_BACKTRACE_PRINT
     fprintf( stderr, "Object[%d] tracked\n", obj->id_);
   }
-  if(oy_debug_objects == -2)
+  if(oy_debug_objects <= -2)
   {
     //OY_BACKTRACE_PRINT
     //fprintf( stderr, "Object[%d] tracked %s:%d %d\n", obj->id_, __FILE__,__LINE__, oy_debug_objects);
@@ -251,7 +253,7 @@ void               oyObject_UnTrack    ( oyObject_s          obj )
     fprintf( stderr, OY_DBG_FORMAT_ "!!!ERROR: Object[%d] has unexpected reference counter: %d  %s\n", OY_DBG_ARGS_, obj->id_, obj->ref_, type );
     OY_BACKTRACE_PRINT
   }
-  if(oy_debug_objects == -2)
+  if(oy_debug_objects <= -2)
   {
     //OY_BACKTRACE_PRINT
     //fprintf( stderr, "Object[%d] untracked %s:%d\n", obj->id_, __FILE__,__LINE__);

@@ -8,7 +8,7 @@
  *  Oyranos is an open source Color Management System
  *
  *  @par Copyright:
- *            2004-2019 (C) Kai-Uwe Behrmann
+ *            2004-2020 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
@@ -51,9 +51,6 @@ static const char * oyFilterPlug_StaticMessageFunc_ (
   /* silently fail */
   if(!s)
    return "";
-
-  if(s->oy_ && s->oy_->allocateFunc_)
-    alloc = s->oy_->allocateFunc_;
 
   if( oy_filterplug_msg_text_ == NULL || oy_filterplug_msg_text_n_ == 0 )
   {
@@ -447,7 +444,7 @@ oyFilterPlug_s_ * oyFilterPlug_Copy_ ( oyFilterPlug_s_ *filterplug, oyObject_s o
 int oyFilterPlug_Release_( oyFilterPlug_s_ **filterplug )
 {
   const char * track_name = NULL;
-  int observer_refs = 0, i, id = 0, refs = 0;
+  int observer_refs = 0, id = 0, refs = 0, parent_refs = 0;
   /* ---- start of common object destructor ----- */
   oyFilterPlug_s_ *s = 0;
 
@@ -461,6 +458,9 @@ int oyFilterPlug_Release_( oyFilterPlug_s_ **filterplug )
 
   id = s->oy_->id_;
   refs = s->oy_->ref_;
+
+  if(refs <= 0) /* avoid circular or double dereferencing */
+    return 0;
 
   *filterplug = 0;
 
@@ -515,7 +515,7 @@ int oyFilterPlug_Release_( oyFilterPlug_s_ **filterplug )
 
   /* referenences from members has to be substracted
    * from this objects ref count */
-  if(oyObject_GetRefCount( s->oy_ ) >= (int)(n + observer_refs) && r > 0)
+  if(oyObject_GetRefCount( s->oy_ ) >= (int)(parent_refs + n + observer_refs*2) && r > 0)
      return 0;
 
   /* ref before oyXXX_Release__Members(), so the
@@ -544,19 +544,10 @@ int oyFilterPlug_Release_( oyFilterPlug_s_ **filterplug )
     }
   }
 
-  /* model and observer reference each other. So release the object two times.
-   * The models and and observers are released later inside the
-   * oyObject_s::handles. */
-  for(i = 0; i < observer_refs; ++i)
-  {
-    //oyObject_UnRef(s->oy_);
-    oyObject_UnRef(s->oy_);
-  }
-
   refs = s->oy_->ref_;
   if(refs < 0)
   {
-    WARNc2_S( "node[%d]->object can not be untracked with refs: %d\n", id, refs );
+    WARNc2_S( "[%d]->object can not be untracked with refs: %d\n", id, refs );
     //oyMessageFunc_p( oyMSG_WARN,0,OY_DBG_FORMAT_ "refs:%d", OY_DBG_ARGS_, refs);
     return -1; /* issue */
   }
@@ -574,6 +565,9 @@ int oyFilterPlug_Release_( oyFilterPlug_s_ **filterplug )
   oyObject_UnRef(s->oy_);
 
 
+  /* remove observer edges */
+  oyOptions_Release( &s->oy_->handles_ );
+
   if(s->oy_->deallocateFunc_)
   {
     oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
@@ -585,10 +579,7 @@ int oyFilterPlug_Release_( oyFilterPlug_s_ **filterplug )
       fprintf( stderr, "%s[%d] destructing\n", track_name, id );
 
     if(refs > 1)
-      fprintf( stderr, "!!!ERROR:%d node[%d]->object can not be untracked with refs: %d\n", __LINE__, id, refs);
-
-    for(i = 1; i < observer_refs; ++i) /* oyObject_Release(oy) will dereference one more time, so preserve here one ref for oyObject_Release(oy) */
-      oyObject_UnRef(oy);
+      fprintf( stderr, "!!!ERROR:%d [%d]->object can not be untracked with refs: %d\n", __LINE__, id, refs);
 
     s->oy_ = NULL;
     oyObject_Release( &oy );

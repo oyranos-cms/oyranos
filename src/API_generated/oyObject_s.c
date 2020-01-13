@@ -6,7 +6,7 @@
  *  Oyranos is an open source Color Management System
  *
  *  @par Copyright:
- *            2004-2019 (C) Kai-Uwe Behrmann
+ *            2004-2020 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
@@ -39,6 +39,12 @@ static oyObject_s oy_object_pool_[100] = {
 0,0,0,0,0, 0,0,0,0,0,
 0,0,0,0,0, 0,0,0,0,0
 };
+#endif
+
+#include "oyranos_config_internal.h"
+#ifdef HAVE_BACKTRACE
+#include <execinfo.h>
+#define BT_BUF_SIZE 100
 #endif
 
 /* oyObject common object Functions { */
@@ -160,7 +166,7 @@ oyObject_s         oyObject_NewWithAllocators (
   o->parent_types_ = o->allocateFunc_(sizeof(oyOBJECT_e)*2);
   memset(o->parent_types_,0,sizeof(oyOBJECT_e)*2);
 
-  if(oy_debug_objects >= 0 || oy_debug_objects == -2)
+  if(oy_debug_objects >= 0 || oy_debug_objects <= -2)
     oyObject_Track(o);
 
   return o;
@@ -270,10 +276,18 @@ int          oyObject_Release         ( oyObject_s      * obj )
   }
 #endif
 
-  if(oy_debug_objects >= 0 || oy_debug_objects == -2)
+  if(oy_debug_objects >= 0 || oy_debug_objects <= -2)
     oyObject_UnTrack( s );
 
-  s->id_ = 0;
+  if(oy_debug_objects == -3) /* animate the history of object releases */
+  {
+    char * text = NULL;
+    OY_BACKTRACE_STRING(7)
+    oyObjectTreePrint( 0x01 | 0x02 | 0x08, text ? text : __func__ );
+    fprintf( stderr, "%s\n", text ? text : __func__ );
+    oyFree_m_( text )
+  }
+  //s->id_ = 0;
 
   if(s->deallocateFunc_)
   {
@@ -632,7 +646,7 @@ int          oyObject_UnRef          ( oyObject_s          obj )
   {
     oyObject_Lock( s, __FILE__, __LINE__ );
 
-    if(s->ref_ < 0 && (oy_debug_objects >= 0 || oy_debug_objects == -2 || oy_debug))
+    if(s->ref_ < 0 && (oy_debug_objects >= 0 || oy_debug_objects <= -2 || oy_debug))
       WARNc3_S( "%s[%d] refs: %d",
                 oyStructTypeToText( s->parent_types_[s->parent_types_[0]] ),
                 s->id_, s->ref_ )
@@ -643,6 +657,8 @@ int          oyObject_UnRef          ( oyObject_s          obj )
     if(error <= 0 && --s->ref_ > 0)
       ref = s->ref_;
 
+    if(oy_debug_objects == 1 || oy_debug_objects == s->id_)
+      OY_BACKTRACE_PRINT
     if(oy_debug_objects >= 0 && s->id_ > 0)
       /* track object */
       oyObject_GetId( obj );

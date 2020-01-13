@@ -8,7 +8,7 @@
  *  Oyranos is an open source Color Management System
  *
  *  @par Copyright:
- *            2004-2019 (C) Kai-Uwe Behrmann
+ *            2004-2020 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
@@ -51,9 +51,6 @@ static const char * oyNamedColor_StaticMessageFunc_ (
   /* silently fail */
   if(!s)
    return "";
-
-  if(s->oy_ && s->oy_->allocateFunc_)
-    alloc = s->oy_->allocateFunc_;
 
   if( oy_namedcolor_msg_text_ == NULL || oy_namedcolor_msg_text_n_ == 0 )
   {
@@ -465,7 +462,7 @@ oyNamedColor_s_ * oyNamedColor_Copy_ ( oyNamedColor_s_ *namedcolor, oyObject_s o
 int oyNamedColor_Release_( oyNamedColor_s_ **namedcolor )
 {
   const char * track_name = NULL;
-  int observer_refs = 0, i, id = 0, refs = 0;
+  int observer_refs = 0, id = 0, refs = 0, parent_refs = 0;
   /* ---- start of common object destructor ----- */
   oyNamedColor_s_ *s = 0;
 
@@ -479,6 +476,9 @@ int oyNamedColor_Release_( oyNamedColor_s_ **namedcolor )
 
   id = s->oy_->id_;
   refs = s->oy_->ref_;
+
+  if(refs <= 0) /* avoid circular or double dereferencing */
+    return 0;
 
   *namedcolor = 0;
 
@@ -517,7 +517,7 @@ int oyNamedColor_Release_( oyNamedColor_s_ **namedcolor )
   }
 
   
-  if((oyObject_UnRef(s->oy_) - observer_refs*2) > 0)
+  if((oyObject_UnRef(s->oy_) - parent_refs - 2*observer_refs) > 0)
     return 0;
   /* ---- end of common object destructor ------- */
 
@@ -540,19 +540,10 @@ int oyNamedColor_Release_( oyNamedColor_s_ **namedcolor )
     }
   }
 
-  /* model and observer reference each other. So release the object two times.
-   * The models and and observers are released later inside the
-   * oyObject_s::handles. */
-  for(i = 0; i < observer_refs; ++i)
-  {
-    //oyObject_UnRef(s->oy_);
-    oyObject_UnRef(s->oy_);
-  }
-
   refs = s->oy_->ref_;
   if(refs < 0)
   {
-    WARNc2_S( "node[%d]->object can not be untracked with refs: %d\n", id, refs );
+    WARNc2_S( "[%d]->object can not be untracked with refs: %d\n", id, refs );
     //oyMessageFunc_p( oyMSG_WARN,0,OY_DBG_FORMAT_ "refs:%d", OY_DBG_ARGS_, refs);
     return -1; /* issue */
   }
@@ -568,6 +559,9 @@ int oyNamedColor_Release_( oyNamedColor_s_ **namedcolor )
 
 
 
+  /* remove observer edges */
+  oyOptions_Release( &s->oy_->handles_ );
+
   if(s->oy_->deallocateFunc_)
   {
     oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
@@ -579,10 +573,7 @@ int oyNamedColor_Release_( oyNamedColor_s_ **namedcolor )
       fprintf( stderr, "%s[%d] destructing\n", track_name, id );
 
     if(refs > 1)
-      fprintf( stderr, "!!!ERROR:%d node[%d]->object can not be untracked with refs: %d\n", __LINE__, id, refs);
-
-    for(i = 1; i < observer_refs; ++i) /* oyObject_Release(oy) will dereference one more time, so preserve here one ref for oyObject_Release(oy) */
-      oyObject_UnRef(oy);
+      fprintf( stderr, "!!!ERROR:%d [%d]->object can not be untracked with refs: %d\n", __LINE__, id, refs);
 
     s->oy_ = NULL;
     oyObject_Release( &oy );

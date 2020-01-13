@@ -8,7 +8,7 @@
  *  Oyranos is an open source Color Management System
  *
  *  @par Copyright:
- *            2004-2019 (C) Kai-Uwe Behrmann
+ *            2004-2020 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
@@ -51,9 +51,6 @@ static const char * oyObserver_StaticMessageFunc_ (
   /* silently fail */
   if(!s)
    return "";
-
-  if(s->oy_ && s->oy_->allocateFunc_)
-    alloc = s->oy_->allocateFunc_;
 
   if( oy_observer_msg_text_ == NULL || oy_observer_msg_text_n_ == 0 )
   {
@@ -110,17 +107,48 @@ static void oyObserver_StaticFree_           ( void )
  */
 void oyObserver_Release__Members( oyObserver_s_ * observer )
 {
+  int error = 0;
   /* Deallocate members here
    * E.g: oyXXX_Release( &observer->member );
    */
-  oyStruct_ObserverRemove( observer->model && observer->model->oy_ ? observer->model : NULL, observer->observer && observer->observer->oy_ ? observer->observer : NULL, NULL );
+  if((observer->model || observer->observer))
+  {
+    if(observer->model == NULL || observer->model->oy_ == NULL)
+      WARNcc_S(observer->model, "incomplete")
+    if(observer->observer == NULL || observer->observer->oy_ == NULL)
+      WARNcc_S(observer->observer, "incomplete")
+  }
+  error = oyStruct_ObserverRemove( observer->model && observer->model->oy_ ? observer->model : NULL, observer->observer && observer->observer->oy_ ? observer->observer : NULL, NULL );
+  if(error)
+  {
+    fprintf( stderr, OY_DBG_FORMAT_ "!!!ERROR: Observer[%d] gives error: %d  model: %s observer: %s\n", OY_DBG_ARGS_, observer->oy_->id_, error, observer->model && observer->model->oy_ ? "yes" : "----", observer->observer && observer->observer->oy_ ? "yes" : "----" );
+    if(oy_debug_objects != -1 || oy_debug)
+      OY_BACKTRACE_PRINT
+  }
 
-  /*if(observer->observer)
-  { observer->observer->release( &observer->observer ); observer->observer = 0; }
+  if(observer->observer)
+  {
+    oyObject_UnRef( observer->observer->oy_ );
+    /*observer->observer->release( &observer->observer );*/
+    observer->observer = NULL;
+  }
   if(observer->model)
-  { observer->model->release( &observer->model ); observer->model = 0; }*/
+  {
+    oyObject_UnRef( observer->model->oy_ );
+    /*observer->model->release( &observer->model );*/
+    observer->model = NULL;
+  }
   if(observer->user_data)
   { observer->user_data->release( &observer->user_data ); observer->user_data = 0; }
+
+  if(oy_debug_objects == -3)
+  {
+    char * text = NULL;
+    OY_BACKTRACE_STRING(7)
+    oyObjectTreePrint( 0x01 | 0x02 | 0x08, text ? text : __func__ );
+    fprintf( stderr, "%s\n", text ? text : __func__ );
+    oyFree_m_( text )
+  }
 
   if(observer->oy_->deallocateFunc_)
   {
@@ -455,7 +483,7 @@ oyObserver_s_ * oyObserver_Copy_ ( oyObserver_s_ *observer, oyObject_s object )
 int oyObserver_Release_( oyObserver_s_ **observer )
 {
   const char * track_name = NULL;
-  int observer_refs = 0, i, id = 0, refs = 0;
+  int observer_refs = 0, id = 0, refs = 0, parent_refs = 0;
   /* ---- start of common object destructor ----- */
   oyObserver_s_ *s = 0;
 
@@ -469,6 +497,9 @@ int oyObserver_Release_( oyObserver_s_ **observer )
 
   id = s->oy_->id_;
   refs = s->oy_->ref_;
+
+  if(refs <= 0) /* avoid circular or double dereferencing */
+    return 0;
 
   *observer = 0;
 
@@ -507,7 +538,7 @@ int oyObserver_Release_( oyObserver_s_ **observer )
   }
 
   
-  if((oyObject_UnRef(s->oy_) - observer_refs*2) > 0)
+  if((oyObject_UnRef(s->oy_) - parent_refs - 2*observer_refs) > 0)
     return 0;
   /* ---- end of common object destructor ------- */
 
@@ -530,19 +561,10 @@ int oyObserver_Release_( oyObserver_s_ **observer )
     }
   }
 
-  /* model and observer reference each other. So release the object two times.
-   * The models and and observers are released later inside the
-   * oyObject_s::handles. */
-  for(i = 0; i < observer_refs; ++i)
-  {
-    //oyObject_UnRef(s->oy_);
-    oyObject_UnRef(s->oy_);
-  }
-
   refs = s->oy_->ref_;
   if(refs < 0)
   {
-    WARNc2_S( "node[%d]->object can not be untracked with refs: %d\n", id, refs );
+    WARNc2_S( "[%d]->object can not be untracked with refs: %d\n", id, refs );
     //oyMessageFunc_p( oyMSG_WARN,0,OY_DBG_FORMAT_ "refs:%d", OY_DBG_ARGS_, refs);
     return -1; /* issue */
   }
@@ -558,6 +580,9 @@ int oyObserver_Release_( oyObserver_s_ **observer )
 
 
 
+  /* remove observer edges */
+  oyOptions_Release( &s->oy_->handles_ );
+
   if(s->oy_->deallocateFunc_)
   {
     oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
@@ -569,10 +594,7 @@ int oyObserver_Release_( oyObserver_s_ **observer )
       fprintf( stderr, "%s[%d] destructing\n", track_name, id );
 
     if(refs > 1)
-      fprintf( stderr, "!!!ERROR:%d node[%d]->object can not be untracked with refs: %d\n", __LINE__, id, refs);
-
-    for(i = 1; i < observer_refs; ++i) /* oyObject_Release(oy) will dereference one more time, so preserve here one ref for oyObject_Release(oy) */
-      oyObject_UnRef(oy);
+      fprintf( stderr, "!!!ERROR:%d [%d]->object can not be untracked with refs: %d\n", __LINE__, id, refs);
 
     s->oy_ = NULL;
     oyObject_Release( &oy );
@@ -589,6 +611,7 @@ int oyObserver_Release_( oyObserver_s_ **observer )
 
 /* Include "Observer.private_methods_definitions.c" { */
 #include "oyOption_s_.h"
+#include "oyStructList_s_.h"
 
 /** Function  oyStructSignalForward_
  *  @memberof oyObserver_s
@@ -688,6 +711,7 @@ oyStructList_s * oyStruct_ObserverListGet_(
   return list;
 }
 
+
 /** Function  oyStruct_ObserverRemove_
  *  @memberof oyObserver_s
  *  @brief    Remove a observer from the observer or model internal list
@@ -716,13 +740,13 @@ int        oyStruct_ObserverRemove_  ( oyStructList_s    * list,
     for(i = n-1; i >= 0; --i)
     {
       obs = (oyObserver_s_*) oyStructList_GetType( list,
-                                                  i, oyOBJECT_OBSERVER_S );
+                                                   i, oyOBJECT_OBSERVER_S );
 
       if(obs &&
          ((observer && obj == obs->observer) ||
           (!observer && obj == obs->model)) &&
           (!signalFunc || obs->signal == signalFunc))
-        oyStructList_ReleaseAt( list, i );
+        oyStructList_ReleaseAt( /*(oyStructList_s_*)*/list, i );//, OY_STRUCT_LIST_UNREF_AND_SHRINK );
     }
   }
   return error;

@@ -8,7 +8,7 @@
  *  Oyranos is an open source Color Management System
  *
  *  @par Copyright:
- *            2004-2019 (C) Kai-Uwe Behrmann
+ *            2004-2020 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
@@ -52,9 +52,6 @@ static const char * oyCMMui_StaticMessageFunc_ (
   if(!s)
    return "";
 
-  if(s->oy_ && s->oy_->allocateFunc_)
-    alloc = s->oy_->allocateFunc_;
-
   if( oy_cmmui_msg_text_ == NULL || oy_cmmui_msg_text_n_ == 0 )
   {
     oy_cmmui_msg_text_n_ = 512;
@@ -72,7 +69,45 @@ static const char * oyCMMui_StaticMessageFunc_ (
     sprintf(oy_cmmui_msg_text_, "%s%s", oyStructTypeToText( s->type_ ), type != oyNAME_NICK?" ":"");
 
   
+
   
+  /* allocate enough space */
+  int l = 0;
+  if(s->options)
+    l = strlen(s->options);
+  if(oy_cmmui_msg_text_n_ < l+80)
+  {
+    oyDeAlloc_f dealloc = oyDeAllocateFunc_;
+    if(oy_cmmui_msg_text_ && oy_cmmui_msg_text_n_)
+      dealloc( oy_cmmui_msg_text_ );
+    oy_cmmui_msg_text_n_ = l+80;
+    oy_cmmui_msg_text_ = alloc(oy_cmmui_msg_text_n_);
+    if(oy_cmmui_msg_text_)
+      oy_cmmui_msg_text_[0] = '\000';
+    else
+      return "Memory Error";
+
+    if(!(flags & 0x01))
+      sprintf(oy_cmmui_msg_text_, "%s%s", oyStructTypeToText( s->type_ ), type != oyNAME_NICK?" ":"");
+  }
+
+  if(type == oyNAME_NICK && (flags & 0x01))
+  {
+    sprintf( &oy_cmmui_msg_text_[strlen(oy_cmmui_msg_text_)], "%s",
+             s->category
+           );
+  } else
+  if(type == oyNAME_NAME)
+    sprintf( &oy_cmmui_msg_text_[strlen(oy_cmmui_msg_text_)], "category: %s",
+             s->category
+           );
+  else
+  if((int)type >= oyNAME_DESCRIPTION)
+    sprintf( &oy_cmmui_msg_text_[strlen(oy_cmmui_msg_text_)], "category: %s options:\n%s",
+             s->category,
+             s->options
+           );
+
 
   return oy_cmmui_msg_text_;
 }
@@ -447,7 +482,7 @@ oyCMMui_s_ * oyCMMui_Copy_ ( oyCMMui_s_ *cmmui, oyObject_s object )
 int oyCMMui_Release_( oyCMMui_s_ **cmmui )
 {
   const char * track_name = NULL;
-  int observer_refs = 0, i, id = 0, refs = 0;
+  int observer_refs = 0, id = 0, refs = 0, parent_refs = 0;
   /* ---- start of common object destructor ----- */
   oyCMMui_s_ *s = 0;
 
@@ -461,6 +496,9 @@ int oyCMMui_Release_( oyCMMui_s_ **cmmui )
 
   id = s->oy_->id_;
   refs = s->oy_->ref_;
+
+  if(refs <= 0) /* avoid circular or double dereferencing */
+    return 0;
 
   *cmmui = 0;
 
@@ -505,7 +543,7 @@ int oyCMMui_Release_( oyCMMui_s_ **cmmui )
 
     /* references from members has to be substracted
      * from this objects ref count */
-    if(oyObject_GetRefCount( s->oy_ ) > (int)(ui_p + observer_refs))
+    if(oyObject_GetRefCount( s->oy_ ) > (int)(parent_refs + ui_p + observer_refs*2))
       return 0;
   }
 
@@ -530,19 +568,10 @@ int oyCMMui_Release_( oyCMMui_s_ **cmmui )
     }
   }
 
-  /* model and observer reference each other. So release the object two times.
-   * The models and and observers are released later inside the
-   * oyObject_s::handles. */
-  for(i = 0; i < observer_refs; ++i)
-  {
-    //oyObject_UnRef(s->oy_);
-    oyObject_UnRef(s->oy_);
-  }
-
   refs = s->oy_->ref_;
   if(refs < 0)
   {
-    WARNc2_S( "node[%d]->object can not be untracked with refs: %d\n", id, refs );
+    WARNc2_S( "[%d]->object can not be untracked with refs: %d\n", id, refs );
     //oyMessageFunc_p( oyMSG_WARN,0,OY_DBG_FORMAT_ "refs:%d", OY_DBG_ARGS_, refs);
     return -1; /* issue */
   }
@@ -558,6 +587,9 @@ int oyCMMui_Release_( oyCMMui_s_ **cmmui )
 
 
 
+  /* remove observer edges */
+  oyOptions_Release( &s->oy_->handles_ );
+
   if(s->oy_->deallocateFunc_)
   {
     oyDeAlloc_f deallocateFunc = s->oy_->deallocateFunc_;
@@ -569,10 +601,7 @@ int oyCMMui_Release_( oyCMMui_s_ **cmmui )
       fprintf( stderr, "%s[%d] destructing\n", track_name, id );
 
     if(refs > 1)
-      fprintf( stderr, "!!!ERROR:%d node[%d]->object can not be untracked with refs: %d\n", __LINE__, id, refs);
-
-    for(i = 1; i < observer_refs; ++i) /* oyObject_Release(oy) will dereference one more time, so preserve here one ref for oyObject_Release(oy) */
-      oyObject_UnRef(oy);
+      fprintf( stderr, "!!!ERROR:%d [%d]->object can not be untracked with refs: %d\n", __LINE__, id, refs);
 
     s->oy_ = NULL;
     oyObject_Release( &oy );
