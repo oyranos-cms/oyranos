@@ -16,8 +16,6 @@
   if(oy_{{ class.baseName|lower }}_msg_text_n_ < l)
   {
     oyDeAlloc_f dealloc = oyDeAllocateFunc_;
-    if(s->oy_ && s->oy_->deallocateFunc_)
-      dealloc = s->oy_->deallocateFunc_;
     if(oy_{{ class.baseName|lower }}_msg_text_ && oy_{{ class.baseName|lower }}_msg_text_n_)
       dealloc( oy_{{ class.baseName|lower }}_msg_text_ );
     oy_{{ class.baseName|lower }}_msg_text_n_ = l;

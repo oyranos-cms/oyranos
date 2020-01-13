@@ -6,8 +6,6 @@
   if(oy_{{ class.baseName|lower }}_msg_text_n_ < 1000)
   {
     oyDeAlloc_f dealloc = oyDeAllocateFunc_;
-    if(s->oy_ && s->oy_->deallocateFunc_)
-      dealloc = s->oy_->deallocateFunc_;
     if(oy_{{ class.baseName|lower }}_msg_text_ && oy_{{ class.baseName|lower }}_msg_text_n_)
       dealloc( oy_{{ class.baseName|lower }}_msg_text_ );
     oy_{{ class.baseName|lower }}_msg_text_n_ = 1000;
@@ -45,7 +43,7 @@
 
     /* references from members has to be substracted
      * from this objects ref count */
-    if(oyObject_GetRefCount( s->oy_ ) > (int)(ui_p + observer_refs))
+    if(oyObject_GetRefCount( s->oy_ ) > (int)(parent_refs + ui_p + observer_refs*2))
       return 0;
   }
 {% endblock %}

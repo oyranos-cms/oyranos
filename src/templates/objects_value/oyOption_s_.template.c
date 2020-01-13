@@ -5,7 +5,6 @@
   {
     const char * t = "";
     oyDeAlloc_f dealloc = oyDeAllocateFunc_;
-    if(s->oy_ && s->oy_->deallocateFunc_) dealloc = s->oy_->deallocateFunc_;
 #define AD alloc,dealloc
     if(!(flags & 0x01))
       oyStringAddPrintf( &oy_{{ class.baseName|lower }}_msg_text_, AD, "%s%s", oyStructTypeToText( s->type_ ), type != oyNAME_NICK?" ":"");
