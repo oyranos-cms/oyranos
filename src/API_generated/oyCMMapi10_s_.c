@@ -536,7 +536,7 @@ int oyCMMapi10_Release_( oyCMMapi10_s_ **cmmapi10 )
   refs = s->oy_->ref_;
   if(refs < 0)
   {
-    WARNc2_S( "[%d]->object can not be untracked with refs: %d\n", id, refs );
+    WARNc2_S( "oyCMMapi10_s[%d]->object can not be untracked with refs: %d\n", id, refs );
     //oyMessageFunc_p( oyMSG_WARN,0,OY_DBG_FORMAT_ "refs:%d", OY_DBG_ARGS_, refs);
     return -1; /* issue */
   }
@@ -572,7 +572,7 @@ int oyCMMapi10_Release_( oyCMMapi10_s_ **cmmapi10 )
       fprintf( stderr, "%s[%d] destructing\n", track_name, id );
 
     if(refs > 1)
-      fprintf( stderr, "!!!ERROR:%d [%d]->object can not be untracked with refs: %d\n", __LINE__, id, refs);
+      fprintf( stderr, "!!!ERROR:%d oyCMMapi10_s[%d]->object can not be untracked with refs: %d\n", __LINE__, id, refs);
 
     s->oy_ = NULL;
     oyObject_Release( &oy );
