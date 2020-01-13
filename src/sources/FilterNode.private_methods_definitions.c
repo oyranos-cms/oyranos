@@ -358,6 +358,7 @@ int          oyFilterNode_SetContext_( oyFilterNode_s_    * node,
                 ptr = oyFilterNode_ContextToMem_( node, &size, oyAllocateFunc_);
                 oyBlob_SetFromData( (oyBlob_s*)blob, ptr, size,
                                     core_->api4_->context_type );
+                oyFree_m_(ptr);
                 if(oy_debug)
                 error = oyOptions_SetFromString( &node->tags, "////verbose",
                                                "false", 0 );
