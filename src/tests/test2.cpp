@@ -64,12 +64,13 @@
 #include "oyranos_string.h"
 oyObject_s testobj = NULL;
 extern "C" { char * oyAlphaPrint_(int); }
-#define OYJL_TEST_MAIN_SETUP  printf("\n    Oyranos test2\n"); if(getenv(OY_DEBUG)) oy_debug = atoi(getenv(OY_DEBUG)); // oy_debug_objects = 9; oy_debug_signals = 1;
+#define OYJL_TEST_MAIN_SETUP  printf("\n    Oyranos test2\n"); if(getenv(OY_DEBUG)) oy_debug = atoi(getenv(OY_DEBUG)); if(getenv(OY_DEBUG_OBJECTS)) oy_debug_objects = atoi(getenv(OY_DEBUG_OBJECTS)); //else  oy_debug_objects = -3;  // oy_debug_signals = 1;
 #define OYJL_TEST_MAIN_FINISH printf("\n    Oyranos test2 finished\n\n"); if(testobj) testobj->release( &testobj ); if(verbose) { char * t = oyAlphaPrint_(0); puts(t); free(t); } oyLibConfigRelease(0);
 #include <oyjl_test_main.h>
 
 #include <cmath>
 
+#include "oyranos_debug.h" // OY_BACKTRACE_STRING
 #ifdef HAVE_BACKTRACE
 #include <execinfo.h>
 #define BT_BUF_SIZE 100
@@ -83,8 +84,8 @@ double d[6] = {0.5,0.5,0.5,0,0,0};
   if(oy_debug_objects < 0) oyLibConfigRelease(0); \
   if(oy_debug_objects == -1) { oy_debug_objects_old = -1; oy_debug_objects = -2; }
 
-#define OBJECT_COUNT_PRINT( onfail, reset, stop, msg ) \
-  if(oy_debug_objects >= 0 || oy_debug_objects == -2) \
+#define OBJECT_COUNT_PRINT( onfail, reset, stop, msg ) { \
+  if(oy_debug_objects >= 0 || oy_debug_objects <= -2) \
   { \
     oyLibConfigRelease(FINISH_IGNORE_OBJECT_LIST | FINISH_IGNORE_CORE); \
     object_count = oyObjectCountCurrentObjectIdList(); \
@@ -93,7 +94,7 @@ double d[6] = {0.5,0.5,0.5,0,0,0};
       if(onfail == oyjlTESTRESULT_FAIL) \
       { \
         char * text = NULL; \
-        OY_BACKTRACE_STRING \
+        OY_BACKTRACE_STRING(0) \
         oyObjectTreePrint( 0x01 | 0x02 | 0x08, text ? text : __func__ ); \
         oyFree_m_( text ) \
       } \
@@ -108,7 +109,8 @@ double d[6] = {0.5,0.5,0.5,0,0,0};
     oy_debug_objects = oy_debug_objects_old; \
   } \
   if( stop && object_count ) \
-    return result;
+    return result; \
+}
 
 /* --- actual tests --- */
 
@@ -1851,7 +1853,7 @@ oyjlTESTRESULT_e testDAGbasic ()
   oyStructList_Release( &list1 );
   oyStructList_Release( &list2 );
 
-  if(oy_debug_objects >= 0 || oy_debug_objects == -2)
+  if(oy_debug_objects >= 0 || oy_debug_objects <= -2)
   {
     const char * msg = "Circular DAG";
     oyLibConfigRelease(FINISH_IGNORE_OBJECT_LIST | FINISH_IGNORE_CORE);
@@ -1866,14 +1868,13 @@ oyjlTESTRESULT_e testDAGbasic ()
     if(verbose)
     {
       char * text = NULL;
-      OY_BACKTRACE_STRING
+      OY_BACKTRACE_STRING(0)
       oyObjectTreePrint( 0x01 | 0x02 | 0x08, text ? text : __func__ );
       oyFree_m_( text )
     }
-
   }
   oyStructList_Release( &tmp_list1 );
-  if(oy_debug_objects >= 0 || oy_debug_objects == -2)
+  if(oy_debug_objects >= 0 || oy_debug_objects <= -2)
     oyLibConfigRelease(0);
 
   oyBlob_s * blob = NULL;
@@ -1887,7 +1888,7 @@ oyjlTESTRESULT_e testDAGbasic ()
   if(verbose)
   {
     char * text = NULL;
-    OY_BACKTRACE_STRING
+    OY_BACKTRACE_STRING(0)
     oyObjectTreePrint( 0x01 | 0x02 | 0x08, text ? text : __func__ );
     oyFree_m_( text )
   }
@@ -3135,7 +3136,7 @@ oyjlTESTRESULT_e testDeviceLinkProfile ()
   }
   oyFilterNode_Release( &out_node );
   oyFilterNode_Release( &in_node );
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 1, NULL )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 1, "Node Connect" )
 
   cc = oyConversion_New( NULL );
   oyConversion_Set( cc, in_node, NULL );
@@ -3918,8 +3919,8 @@ oyjlTESTRESULT_e testClut ()
   uint32_t icc_profile_flags =oyICCProfileSelectionFlagsFromOptions( OY_CMM_STD,
                                        "//" OY_TYPE_STD "/icc_color", NULL, 0 );
   PrivColorContext pc = {
-    oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, NULL ), /* the data profile or device link */
-    oyProfile_FromFile( "compatibleWithAdobeRGB1998.icc", icc_profile_flags, NULL ), /* the monitor profile or none */
+    oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, NULL ), /* src_profile: the data profile or device link */
+    oyProfile_FromFile( "compatibleWithAdobeRGB1998.icc", icc_profile_flags, NULL ), /* dst_profile: the monitor profile or none */
     oyStringCopy( "*TEST*", oyAllocateFunc_ ), /* the intented output device */
     {{{0}}},
     0,

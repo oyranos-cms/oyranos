@@ -55,7 +55,7 @@ oyObject_s testobj = NULL;
       if(onfail == oyjlTESTRESULT_FAIL) \
       { \
         char * text = NULL; \
-        OY_BACKTRACE_STRING \
+        OY_BACKTRACE_STRING(0) \
         oyObjectTreePrint( 0x01 | 0x02 | 0x08, text ? text : __func__ ); \
         oyFree_m_( text ) \
       } \
