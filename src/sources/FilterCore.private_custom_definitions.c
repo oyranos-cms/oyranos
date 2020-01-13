@@ -20,6 +20,7 @@ void oyFilterCore_Release__Members( oyFilterCore_s_ * filtercore )
   /* Deallocate members here
    * E.g: oyXXX_Release( &filtercore->member );
    */
+  oyOptions_Release( &filtercore->options_ );
 
   if(filtercore->oy_->deallocateFunc_)
   {
