@@ -89,7 +89,7 @@ OYAPI int  OYEXPORT oyStruct_ObserverAdd (
       if(user_data)
         s->user_data = user_data->copy( user_data, 0 );
       s->signal = signalFunc;
-      if(oy_debug_objects >= 0 || oy_debug_objects == -2)
+      if(oy_debug_objects >= 0 || oy_debug_objects <= -2)
       {
         if(s->observer)
           oyObjectDebugMessage_( s->observer->oy_, __func__,
@@ -161,12 +161,12 @@ OYAPI int  OYEXPORT oyStruct_ObserverRemove (
   int error = !model || !observer;
   oyStructList_s * list = 0;
 
-  if(!error)
+  if(!error && model->oy_->handles_) /* do not create a new observer list */
   {
     list = oyStruct_ObserverListGet_( model, OY_SIGNAL_OBSERVERS );
     error = oyStruct_ObserverRemove_( list, observer, 1, signalFunc );
   }
-  if(!error)
+  if(!error && observer->oy_->handles_) /* do not create a new observer list */
   {
     list = oyStruct_ObserverListGet_( observer, OY_SIGNAL_MODELS );
     error = oyStruct_ObserverRemove_( list, model, 0, signalFunc );

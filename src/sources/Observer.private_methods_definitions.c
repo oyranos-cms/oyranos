@@ -1,4 +1,5 @@
 #include "oyOption_s_.h"
+#include "oyStructList_s_.h"
 
 /** Function  oyStructSignalForward_
  *  @memberof oyObserver_s
@@ -98,6 +99,7 @@ oyStructList_s * oyStruct_ObserverListGet_(
   return list;
 }
 
+
 /** Function  oyStruct_ObserverRemove_
  *  @memberof oyObserver_s
  *  @brief    Remove a observer from the observer or model internal list
@@ -126,13 +128,13 @@ int        oyStruct_ObserverRemove_  ( oyStructList_s    * list,
     for(i = n-1; i >= 0; --i)
     {
       obs = (oyObserver_s_*) oyStructList_GetType( list,
-                                                  i, oyOBJECT_OBSERVER_S );
+                                                   i, oyOBJECT_OBSERVER_S );
 
       if(obs &&
          ((observer && obj == obs->observer) ||
           (!observer && obj == obs->model)) &&
           (!signalFunc || obs->signal == signalFunc))
-        oyStructList_ReleaseAt( list, i );
+        oyStructList_ReleaseAt( /*(oyStructList_s_*)*/list, i );//, OY_STRUCT_LIST_UNREF_AND_SHRINK );
     }
   }
   return error;
