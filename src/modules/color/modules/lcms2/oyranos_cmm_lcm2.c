@@ -418,7 +418,7 @@ static cmsUInt32Number   (*l2cmsIT8EnumPropertyMulti)(cmsHANDLE hIT8, const char
 #define dlerror() l2cms_handle = 0
 #endif
 
-int lcm2registerFuncs( int init, const char * fn )
+int lcm2registerFuncs( int init, const char * fn OY_UNUSED )
 {
   int error = 0;
       REGISTER_FUNC( cmsSetLogErrorHandler, NULL );
@@ -1438,7 +1438,11 @@ oyPointer  l2cmsCMMColorConversion_ToMem_ (
         free(pseq);
     }
 #endif
-    data = lcm2WriteProfileToMem( dl, size, allocateFunc );
+    if(dl)
+    {
+      data = lcm2WriteProfileToMem( dl, size, allocateFunc );
+      l2cmsCloseProfile( dl );
+    }
   }
 
   return data;
