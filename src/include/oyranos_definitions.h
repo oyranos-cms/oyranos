@@ -38,6 +38,8 @@
 #define OY_SYS_PATH2                    "/usr/local"
 /** @brief Oyranos debug environment variable
  *
+ *  Maps to ::oy_debug variable.
+ *
  *  @see @ref debug_vars
  *
  *  @since 0.9.0
@@ -52,12 +54,16 @@
 #define OY_DEBUG_WRITE                 "OY_DEBUG_WRITE"
 /** @brief Oyranos debug environment variable
  *
+ *  Maps to ::oy_debug_memory variable.
+ *
  *  @see @ref debug_vars
  *
  *  @since 0.9.0
  */
 #define OY_DEBUG_MEMORY                "OY_DEBUG_MEMORY"
 /** @brief Oyranos debug environment variable
+ *
+ *  Maps to ::oy_debug_objects variable.
  *
  *  @see @ref debug_vars
  *
@@ -72,6 +78,8 @@
  */
 #define OY_DEBUG_OBJECTS_SKIP_CMM_CACHES "OY_DEBUG_OBJECTS_SKIP_CMM_CACHES"
 /** @brief Oyranos debug environment variable
+ *
+ *  Maps to ::oy_debug_signals variable.
  *
  *  @see @ref debug_vars
  *

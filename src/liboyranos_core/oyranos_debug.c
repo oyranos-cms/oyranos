@@ -64,8 +64,12 @@ int gettimeofday(struct timeval * tp, struct timezone * tzp)
 
 int level_PROG = 0;
 clock_t oyranos_clock_ = 0;
-/** Variable  oy_debug
- *  @brief    Set debug level
+/** @brief    Set debug level
+ *
+ *  Maps to ::OY_DEBUG environment variable.
+ *  The usefull value range is 1-20.
+ *
+ *  @see @ref debug_vars
  *
  *  @version  Oyranos: 0.0.1
  *  @date     2005/02/01

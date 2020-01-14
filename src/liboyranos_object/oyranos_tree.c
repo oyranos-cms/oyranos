@@ -1227,9 +1227,10 @@ static oyStruct_s *  oyStruct_FromId ( int                 id )
  *  @ingroup  objects_generic
  * 
  *  Probably the most simple and still useful function from the Object tree debug APIs.
- *  It prints to stderr with OY_DEBUG_OBJECTS set.
+ *  It prints to stderr with ::OY_DEBUG_OBJECTS/::oy_debug_objects set.
  *
- *  @param        flags               - 0x01 show a graph
+ *  @param        flags               use 15 for all flags
+ *                                    - 0x01 show a graph
  *                                    - 0x02 include more object details
  *                                    - 0x04 skip cmm caches to show a more functional graph
  *                                    - 0x08 include unconnected objects

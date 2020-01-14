@@ -1,5 +1,4 @@
-/** @internal
- *  @file oyranos_helper.c
+/** @file oyranos_helper.c
  *
  *  Oyranos is an open source Color Management System 
  *
@@ -31,14 +30,26 @@ intptr_t oy_observe_pointer_ = 0;
 /* --- internal API definition --- */
 static int oy_allocs_count_ = 0;
 /** @brief    Aktivate memory debugging
+ *
+ *  Maps to ::OY_DEBUG_MEMORY environment variable.
+ *
+ *  @see @ref debug_vars
  */
 int oy_debug_memory = 0;
 /** @brief    Activate object debugging
  *
  *  select object id
+ *
+ *  Maps to ::OY_DEBUG_OBJECTS environment variable.
+ *
+ *  @see @ref debug_vars
  */
 signed int oy_debug_objects = -1;
 /** @brief    Aktivate signal debugging
+ *
+ *  Maps to ::OY_DEBUG_SIGNALS environment variable.
+ *
+ *  @see @ref debug_vars
  */
 int oy_debug_signals = 0;
 const char * oy_backtrace = 0;

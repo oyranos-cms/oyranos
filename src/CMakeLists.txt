@@ -394,6 +394,7 @@ SET( DOC_SOURCES
         ${CMAKE_SOURCE_DIR}/src/include/*.h
         ${CMAKE_BINARY_DIR}/src/include/*.h
         oyranos_monitor_hooks.h
+	      ${CMAKE_SOURCE_DIR}/src/liboyranos_core/oyranos_helper.c
 	${CFILES_CORE_PUBLIC}
 	${CHEADERS_CORE_PUBLIC}
 	${CFILES_OBJECT_PUBLIC}
