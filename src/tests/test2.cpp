@@ -3185,6 +3185,7 @@ oyjlTESTRESULT_e testDeviceLinkProfile ()
   OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 0, "Node Opts" )
 
   prof = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, testobj );
+  prof_fn = oyProfile_GetFileName( prof, -1 );
   in = oyImage_Create( 2, 2, buf, OY_TYPE_123_DBL, prof, testobj );
   out = oyImage_CreateForDisplay( 2, 2, buf, OY_TYPE_123_DBL, 0,
                                               0,0, 12,12,
