@@ -64,7 +64,7 @@
 #include "oyranos_string.h"
 oyObject_s testobj = NULL;
 extern "C" { char * oyAlphaPrint_(int); }
-#define OYJL_TEST_MAIN_SETUP  printf("\n    Oyranos test2\n"); if(getenv(OY_DEBUG)) oy_debug = atoi(getenv(OY_DEBUG)); if(getenv(OY_DEBUG_OBJECTS)) oy_debug_objects = atoi(getenv(OY_DEBUG_OBJECTS)); //else  oy_debug_objects = -3;  // oy_debug_signals = 1;
+#define OYJL_TEST_MAIN_SETUP  printf("\n    Oyranos test2\n"); if(getenv(OY_DEBUG)) oy_debug = atoi(getenv(OY_DEBUG));  if(getenv(OY_DEBUG_SIGNALS)) oy_debug_signals = atoi(getenv(OY_DEBUG_SIGNALS)); if(getenv(OY_DEBUG_OBJECTS)) oy_debug_objects = atoi(getenv(OY_DEBUG_OBJECTS)); else  oy_debug_objects = 11;  // oy_debug_signals = 1;
 #define OYJL_TEST_MAIN_FINISH printf("\n    Oyranos test2 finished\n\n"); if(testobj) testobj->release( &testobj ); if(verbose) { char * t = oyAlphaPrint_(0); puts(t); free(t); } oyLibConfigRelease(0);
 #include <oyjl_test_main.h>
 
@@ -1835,6 +1835,17 @@ oyjlTESTRESULT_e testBlob ()
   return result;
 }
 
+int mySignal( oyObserver_s *observer, oySIGNAL_e signal_type, oyStruct_s *signal_data )
+{
+  if(verbose || oy_debug_signals)
+  {
+    const char * desc = oyStruct_GetText(signal_data, oyNAME_NAME, 0);
+    fprintf( zout, "%s - %s\n", oySignalToString(signal_type),
+                                oyNoEmptyString_m_(desc) );
+  }
+  return 0;
+}
+
 #include "oyStructList_s.h"
 oyjlTESTRESULT_e testDAGbasic ()
 {
@@ -1843,6 +1854,10 @@ oyjlTESTRESULT_e testDAGbasic ()
 
   fprintf(stdout, "\n" );
 
+  oyBlob_s * blob = NULL;
+  oyOptions_s * options = NULL;
+  int error = 0;
+#if 0
   oyStructList_s * list1 = oyStructList_New( testobj ),
                  * list2 = oyStructList_New( testobj ),
                  * tmp = oyStructList_Copy( list2, NULL ),
@@ -1877,10 +1892,6 @@ oyjlTESTRESULT_e testDAGbasic ()
   if(oy_debug_objects >= 0 || oy_debug_objects <= -2)
     oyLibConfigRelease(0);
 
-  oyBlob_s * blob = NULL;
-  oyOptions_s * options = 0;
-  int error = 0;
-
   blob = oyBlob_New( testobj );
   options = oyOptions_New( testobj );
   error = oyOptions_ObserverAdd( options, (oyStruct_s*)blob,
@@ -1895,7 +1906,26 @@ oyjlTESTRESULT_e testDAGbasic ()
   oyOptions_Release( &options );
   oyBlob_Release( &blob );
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 0, "Blob Observer" )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 1, "Blob Observer" )
+#endif
+  blob = oyBlob_New( testobj );
+  oyOptions_SetFromString( &options, "//" OY_TYPE_STD "/config/var1", "1",
+                           OY_CREATE_NEW );
+  oyOptions_SetFromString( &options, "//" OY_TYPE_STD "/config/var2", "2",
+                           OY_CREATE_NEW );
+  error = oyOptions_ObserverAdd( options, (oyStruct_s*)blob,
+                                 (oyStruct_s*)blob, mySignal );
+  if(verbose)
+  {
+    char * text = NULL;
+    OY_BACKTRACE_STRING(0)
+    oyObjectTreePrint( 0x01 | 0x02 | 0x08, text ? text : __func__ );
+    oyFree_m_( text )
+  }
+  oyBlob_Release( &blob );
+  oyOptions_Release( &options );
+
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 1, "Blob Observer for Options" )
 
   return result;
 }
@@ -3104,6 +3134,8 @@ oyjlTESTRESULT_e testDeviceLinkProfile ()
   oyConversion_s * cc = NULL;
   oyFilterGraph_s * graph = NULL;
   oyFilterNode_s * node = NULL;
+  oyFilterNode_s * inode = NULL;
+  oyOptions_s * opts =  NULL;
   oyBlob_s * blob = NULL;
   int error = 0;
   const char * fn = NULL, * prof_fn = NULL;
@@ -3116,7 +3148,7 @@ oyjlTESTRESULT_e testDeviceLinkProfile ()
   memset( buf, 0, sizeof(double)*24);
 
   /*oyConversion_RunPixels( cc, 0 );*/
-
+#if 0
   icc_profile_flags = oyICCProfileSelectionFlagsFromOptions( OY_CMM_STD,
                                        "//" OY_TYPE_STD "/icc_color", NULL, 0 );
   oyFilterNode_s * in_node = oyFilterNode_NewWith( "//" OY_TYPE_STD "/root", 0, testobj );
@@ -3166,6 +3198,26 @@ oyjlTESTRESULT_e testDeviceLinkProfile ()
   oyImage_Release( &out );
   oyProfile_Release( &prof );
   OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 0, NULL )
+#endif
+  prof = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, testobj );
+  prof_fn = oyProfile_GetFileName( prof, -1 );
+  in = oyImage_Create( 2, 2, buf, OY_TYPE_123_DBL, prof, testobj );
+  out = oyImage_CreateForDisplay( 2, 2, buf, OY_TYPE_123_DBL, 0,
+                                              0,0, 12,12,
+                                              icc_profile_flags, testobj );
+  cc = oyConversion_CreateBasicPixels( in, out, options, NULL );
+  node = oyConversion_GetNode( cc, OY_OUTPUT);
+  inode = oyFilterNode_GetPlugNode( node, 0 );
+  opts =  oyFilterNode_GetOptions( inode, 0 );
+  oyFilterNode_Release( &node );
+  oyFilterNode_Release( &inode );
+  oyImage_Release( &in );
+  oyImage_Release( &out );
+  oyProfile_Release( &prof );
+  error = oyConversion_Release( &cc );
+  oyOptions_Release( &opts );
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 0, "Node Opts" )
+  return result;
 
   prof = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, testobj );
   prof_fn = oyProfile_GetFileName( prof, -1 );
@@ -3173,16 +3225,42 @@ oyjlTESTRESULT_e testDeviceLinkProfile ()
   out = oyImage_CreateForDisplay( 2, 2, buf, OY_TYPE_123_DBL, 0,
                                               0,0, 12,12,
                                               icc_profile_flags, testobj );
-  cc = oyConversion_CreateBasicPixels( in, out, NULL, NULL );
-  oyFilterNode_s * inode = oyConversion_GetNode( cc, OY_INPUT);
-  oyOptions_s * opts =  oyFilterNode_GetOptions( inode, 0 );
+  cc = oyConversion_CreateBasicPixels( in, out, options, NULL );
+  node = oyConversion_GetNode( cc, OY_OUTPUT);
+  inode = oyFilterNode_GetPlugNode( node, 0 );
+  opts =  oyFilterNode_GetOptions( inode, 0 );
+  oyFilterNode_Release( &node );
+  const char * hash = oyFilterNode_GetText( inode, oyNAME_NAME );
+  oyFilterNode_Release( &inode );
+  oyImage_Release( &in );
+  oyImage_Release( &out );
+  oyProfile_Release( &prof );
+  error = oyConversion_Release( &cc );
+  oyOptions_Release( &opts );
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 0, "Node Hash" )
+  return result;
+
+  prof = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, testobj );
+  prof_fn = oyProfile_GetFileName( prof, -1 );
+  in = oyImage_Create( 2, 2, buf, OY_TYPE_123_DBL, prof, testobj );
+  out = oyImage_CreateForDisplay( 2, 2, buf, OY_TYPE_123_DBL, 0,
+                                              0,0, 12,12,
+                                              icc_profile_flags, testobj );
+  cc = oyConversion_CreateBasicPixels( in, out, options, NULL );
+  node = oyConversion_GetNode( cc, OY_OUTPUT);
+  opts =  oyFilterNode_GetOptions( inode, 0 );
+  inode = oyFilterNode_GetPlugNode( node, 0 );
+  oyFilterNode_Release( &node );
+  blob = oyFilterNode_ToBlob( inode, NULL );
+  oyBlob_Release( &blob );
   oyFilterNode_Release( &inode );
   error = oyConversion_Release( &cc );
   oyOptions_Release( &opts );
   oyImage_Release( &in );
   oyImage_Release( &out );
   oyProfile_Release( &prof );
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 0, "Node Opts" )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 0, "Node Hash" )
+  return result;
 
   prof = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, testobj );
   prof_fn = oyProfile_GetFileName( prof, -1 );
@@ -3225,6 +3303,13 @@ oyjlTESTRESULT_e testDeviceLinkProfile ()
     oyFilterNode_Release( &node );
   }
   oyFilterGraph_Release( &graph );
+  error = oyConversion_Release( &cc );
+  oyImage_Release( &in );
+  oyImage_Release( &out );
+  oyProfile_Release( &prof );
+  oyProfile_Release( &dl );
+  oyOptions_Release( &options );
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 0, "Node Context" )
 
   fn = oyProfile_GetFileName( dl, 0 );
   if(fn && prof_fn && strcmp(fn,prof_fn) == 0)
