@@ -217,14 +217,17 @@ const char *   oyOption_GetText      ( oyOption_s        * obj,
     if(type == oyNAME_DESCRIPTION)
     {
       char * text = oyStringCopy_(((oyOption_s_*)obj)->registration, oyAllocateFunc_),
-           * tmp = oyStrrchr_(text, '/');
-      if(oyStrchr_(tmp, '.'))
+           * tmp = text ? oyStrrchr_(text, '/') : NULL;
+      if(tmp && oyStrchr_(tmp, '.'))
       {
         tmp = oyStrchr_(tmp, '.');
         *tmp = 0;
       }
-      error = oyObject_SetName( obj->oy_, text, type );
-      oyFree_m_(text);
+      if(text)
+      {
+        error = oyObject_SetName( obj->oy_, text, type );
+        oyFree_m_(text);
+      }
     }
 
   if(error <= 0 &&
