@@ -1140,6 +1140,9 @@ const char * oyFilterNode_GetText    ( oyFilterNode_s    * node,
 
   hash_text = (oyChar*) oyObject_GetName( s->oy_, oyNAME_NICK );
 
+  if(in_datas && in_datas->release)   in_datas->release ( (oyStruct_s**)&in_datas );
+  if(out_datas && out_datas->release) out_datas->release( (oyStruct_s**)&out_datas );
+
   return hash_text;
 }
 
