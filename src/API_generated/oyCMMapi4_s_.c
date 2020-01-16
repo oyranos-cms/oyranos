@@ -455,7 +455,6 @@ oyCMMapi4_s_ * oyCMMapi4_Copy_ ( oyCMMapi4_s_ *cmmapi4, oyObject_s object )
         {
           int i;
           const char * track_name = oyStructTypeToText(s->type_);
-          OY_BACKTRACE_PRINT
           fprintf( stderr, "%s[%d] tracking refs: %d parents: %d\n",
                    track_name, s->oy_->id_, s->oy_->ref_, n );
           for(i = 0; i < n; ++i)
@@ -530,7 +529,6 @@ int oyCMMapi4_Release_( oyCMMapi4_s_ **cmmapi4 )
       int n = oyStruct_GetParents( (oyStruct_s*)s, &parents );
       {
         int i;
-        OY_BACKTRACE_PRINT
         track_name = oyStructTypeToText(s->type_);
         fprintf( stderr, "%s[%d] unref with refs: %d observers: %d parents: %d\n",
                  track_name, s->oy_->id_, s->oy_->ref_, observer_refs, n );

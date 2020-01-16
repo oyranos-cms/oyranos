@@ -512,7 +512,6 @@ oyFilterNode_s_ * oyFilterNode_Copy_ ( oyFilterNode_s_ *filternode, oyObject_s o
         {
           int i;
           const char * track_name = oyStructTypeToText(s->type_);
-          OY_BACKTRACE_PRINT
           fprintf( stderr, "%s[%d] tracking refs: %d parents: %d\n",
                    track_name, s->oy_->id_, s->oy_->ref_, n );
           for(i = 0; i < n; ++i)
@@ -587,7 +586,6 @@ int oyFilterNode_Release_( oyFilterNode_s_ **filternode )
       int n = oyStruct_GetParents( (oyStruct_s*)s, &parents );
       {
         int i;
-        OY_BACKTRACE_PRINT
         track_name = oyStructTypeToText(s->type_);
         fprintf( stderr, "%s[%d] unref with refs: %d observers: %d parents: %d\n",
                  track_name, s->oy_->id_, s->oy_->ref_, observer_refs, n );
