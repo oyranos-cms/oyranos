@@ -146,11 +146,11 @@ l2cmsTransformWrap_s * l2cmsTransformWrap_Set_ (
                                        oyPointer_s       * oy );
 int      l2cmsCMMTransform_GetWrap_  ( oyPointer_s       * cmm_ptr,
                                        l2cmsTransformWrap_s ** s );
-int l2cmsCMMDeleteTransformWrap      ( oyPointer         * wrap );
+int l2cmsCMMDeleteTransformWrap      ( l2cmsTransformWrap_s ** wrap);
 
 l2cmsProfileWrap_s * l2cmsCMMProfile_GetWrap_(
                                        oyPointer_s       * cmm_ptr );
-int l2cmsCMMProfileReleaseWrap       ( oyPointer         * p );
+int l2cmsCMMProfileReleaseWrap       ( l2cmsProfileWrap_s**p );
 
 int                l2cmsCMMCheckPointer(oyPointer_s       * cmm_ptr,
                                        const char        * resource );
@@ -769,7 +769,7 @@ int      l2cmsCMMTransform_GetWrap_   ( oyPointer_s       * cmm_ptr,
  *  @date    2007/12/20
  *  @since   2007/12/20 (Oyranos: 0.1.8)
  */
-int l2cmsCMMProfileReleaseWrap(oyPointer *p)
+int l2cmsCMMProfileReleaseWrap       ( l2cmsProfileWrap_s**p )
 {
   int error = !p;
   l2cmsProfileWrap_s * s = 0;
@@ -779,7 +779,7 @@ int l2cmsCMMProfileReleaseWrap(oyPointer *p)
   char s_type[4];
 
   if(!error && *p)
-    s = (l2cmsProfileWrap_s*) *p;
+    s = *p;
 
   if(!error)
     error = !s;
@@ -870,8 +870,8 @@ int          l2cmsCMMData_Open        ( oyStruct_s        * data,
       l2cms_msg( oyMSG_WARN, (oyStruct_s*)data,
              OY_DBG_FORMAT_" %s() failed", OY_DBG_ARGS_, "CMMProfileOpen_M" );
     error = oyPointer_Set( oy, 0,
-                          l2cmsPROFILE, s, CMMToString_M(CMMProfileOpen_M),
-                          l2cmsCMMProfileReleaseWrap );
+                           l2cmsPROFILE, s, CMMToString_M(CMMProfileOpen_M),
+                           (int (*)(oyPointer *))l2cmsCMMProfileReleaseWrap );
     if(error)
       l2cms_msg( oyMSG_WARN, (oyStruct_s*)data,
              OY_DBG_FORMAT_" oyPointer_Set() failed", OY_DBG_ARGS_ );
@@ -978,12 +978,12 @@ int        oyPixelToLcm2PixelLayout_ ( oyPixel_t           pixel_layout,
  *  @since   2007/12/00 (Oyranos: 0.1.8)
  *  @date    2007/12/00
  */
-int l2cmsCMMDeleteTransformWrap(oyPointer * wrap)
+int l2cmsCMMDeleteTransformWrap(l2cmsTransformWrap_s ** wrap)
 {
   
   if(wrap && *wrap)
   {
-    l2cmsTransformWrap_s * s = (l2cmsTransformWrap_s*) *wrap;
+    l2cmsTransformWrap_s * s = *wrap;
 
     l2cmsDeleteTransform (s->l2cms);
     s->l2cms = 0;
@@ -1040,7 +1040,7 @@ l2cmsTransformWrap_s * l2cmsTransformWrap_Set_ (
 
   if(!error)
     oyPointer_Set( oy, 0, 0, s,
-                  "l2cmsCMMDeleteTransformWrap", l2cmsCMMDeleteTransformWrap );
+                   "l2cmsCMMDeleteTransformWrap", (int (*)(oyPointer *)) l2cmsCMMDeleteTransformWrap );
 
   return s;
 }
@@ -1222,7 +1222,7 @@ cmsHTRANSFORM  l2cmsCMMConversionContextCreate_ (
 
       o_txt = oyOptions_FindString  ( opts, "adaption_state", 0 );
       if(o_txt && oyStrlen_(o_txt))
-        oyStringToDouble( o_txt, &adaption_state );
+        oyjlStringToDouble( o_txt, &adaption_state );
 
   if(!error)
   {
@@ -1629,8 +1629,8 @@ l2cmsProfileWrap_s*l2cmsAddProofProfile( oyProfile_s     * proof,
     }
 #endif
     error = oyPointer_Set( oy, 0,
-                          l2cmsPROFILE, s, CMMToString_M(CMMProfileOpen_M),
-                          l2cmsCMMProfileReleaseWrap );
+                           l2cmsPROFILE, s, CMMToString_M(CMMProfileOpen_M),
+                           (int (*)(oyPointer *))l2cmsCMMProfileReleaseWrap );
   }
 
   if(!error)
@@ -2363,7 +2363,7 @@ char * l2cmsImage_GetText            ( oyImage_s         * image,
   if(allocateFunc != oyStruct_GetAllocator((oyStruct_s*)s))
   {
     text = hash_text;
-    hash_text = oyStringCopy_( text, allocateFunc );
+    hash_text = oyjlStringCopy( text, allocateFunc );
     oySTRUCT_FREE_m( s, text );
   }
   text = 0;
@@ -2387,7 +2387,7 @@ char * l2cmsFilterNode_GetText       ( oyFilterNode_s    * node,
                                        oyAlloc_f           allocateFunc )
 {
 #ifdef NO_OPT
-  return oyStringCopy_( oyFilterNode_GetText( node, type ), allocateFunc );
+  return oyjlStringCopy( oyFilterNode_GetText( node, type ), allocateFunc );
 #else
   const char * model = 0;
   char * hash_text = 0,
@@ -2542,7 +2542,7 @@ char * l2cmsFilterNode_GetText       ( oyFilterNode_s    * node,
   oyImage_Release( &in_image );
   oyImage_Release( &out_image );
 
-  return oyStringCopy_( hash_text, allocateFunc );
+  return oyjlStringCopy( hash_text, allocateFunc );
 #endif
 }
 
@@ -2649,7 +2649,7 @@ int  l2cmsModuleData_Convert          ( oyPointer_s       * data_in,
       oyProfile_s *p = oyProfile_FromMem( oyPointer_GetSize( cmm_ptr_in),
                                           oyPointer_GetPointer(cmm_ptr_in),0,0);
       uint32_t id[8]={0,0,0,0,0,0,0,0};
-      char * hash_text = oyStringCopy_( l2cmsTRANSFORM":", oyAllocateFunc_ );
+      char * hash_text = oyjlStringCopy( l2cmsTRANSFORM":", oyAllocateFunc_ );
 
       char * t = l2cmsFilterNode_GetText( node, oyNAME_NICK, oyAllocateFunc_ );
       STRING_ADD( hash_text, t );
@@ -2657,13 +2657,13 @@ int  l2cmsModuleData_Convert          ( oyPointer_s       * data_in,
 
       oyMiscBlobGetHash_((void*)hash_text, oyStrlen_(hash_text), 0,
                          (unsigned char*)id);
-      oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
+      oyjlStringAdd( &t, oyAllocateFunc_, oyDeAllocateFunc_,
                           "node: %d hash: %08x%08x%08x%08x",
                           oyStruct_GetId((oyStruct_s*)node),
                           id[0],id[1],id[2],id[3] );
 
       oyProfile_GetMD5( p, OY_COMPUTE, id );
-      oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
+      oyjlStringAdd( &t, oyAllocateFunc_, oyDeAllocateFunc_,
                           " oyDL: %08x%08x%08x%08x", id[0],id[1],id[2],id[3] );
       
       if(oy_debug >= 1)
@@ -2851,7 +2851,7 @@ int      l2cmsFilterPlug_CmmIccRun   ( oyFilterPlug_s    * requestor_plug,
     {
       int msg_type = oyMSG_DBG;
       uint32_t id[8]={0,0,0,0,0,0,0,0};
-      char * hash_text = oyStringCopy_( l2cmsTRANSFORM":", oyAllocateFunc_ );
+      char * hash_text = oyjlStringCopy( l2cmsTRANSFORM":", oyAllocateFunc_ );
 
       char * t = 0;
       t = l2cmsFilterNode_GetText( node, oyNAME_NICK, oyAllocateFunc_ );
@@ -2860,7 +2860,7 @@ int      l2cmsFilterPlug_CmmIccRun   ( oyFilterPlug_s    * requestor_plug,
 
       oyMiscBlobGetHash_((void*)hash_text, oyStrlen_(hash_text), 0,
                          (unsigned char*)id);
-      oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
+      oyjlStringAdd( &t, oyAllocateFunc_, oyDeAllocateFunc_,
                           "hash: %08x%08x%08x%08x",
                           id[0],id[1],id[2],id[3] );
 
@@ -3077,19 +3077,19 @@ int      l2cmsFilterPlug_CmmIccRun   ( oyFilterPlug_s    * requestor_plug,
 
     if(getenv("OY_DEBUG_WRITE"))
     {
-      char * t = 0; oyStringAddPrintf( &t, 0,0,
+      char * t = 0; oyjlStringAdd( &t, 0,0,
       "%04d-%s-array_in[%d].ppm", ++oy_debug_write_id,CMM_NICK,oyStruct_GetId((oyStruct_s*)array_in));
       oyArray2d_ToPPM_( (oyArray2d_s_*)array_in, t );
       l2cms_msg( oyMSG_DBG, (oyStruct_s*)ticket,
                  OY_DBG_FORMAT_ "wrote debug image to: %s",
                  OY_DBG_ARGS_, t );
-      t[0] = '\000'; oyStringAddPrintf( &t, 0,0,
+      t[0] = '\000'; oyjlStringAdd( &t, 0,0,
       "%04d-%s-array_out[%d].ppm", oy_debug_write_id,CMM_NICK,oyStruct_GetId((oyStruct_s*)array_out));
       oyArray2d_ToPPM_( (oyArray2d_s_*)array_out, t );
       l2cms_msg( oyMSG_DBG, (oyStruct_s*)ticket,
                  OY_DBG_FORMAT_ "wrote debug image to: %s",
                  OY_DBG_ARGS_, t );
-      t[0] = '\000'; oyStringAddPrintf( &t, 0,0,
+      t[0] = '\000'; oyjlStringAdd( &t, 0,0,
       "%04d-%s-node[%d]-array_out[%d]%dc.ppm", oy_debug_write_id,CMM_NICK,oyStruct_GetId((oyStruct_s*)node),oyStruct_GetId((oyStruct_s*)array_out),channels_out);
       {
         oyProfile_s * p = oyImage_GetProfile( image_output );
@@ -3226,7 +3226,7 @@ int l2cmsGetOptionsUI                ( oyCMMapiFilter_s   * module OY_UNUSED,
   char * tmp = 0;
 
 #if 0
-  tmp = oyStringCopy_( "\
+  tmp = oyjlStringCopy( "\
   <xf:group type=\"frame\">\
     <xf:label>little CMS 2 ", oyAllocateFunc_ );
 
@@ -3367,13 +3367,13 @@ int l2cmsGetOptionsUI                ( oyCMMapiFilter_s   * module OY_UNUSED,
 
   if(allocateFunc && tmp)
   {
-    char * t = oyStringCopy_( tmp, allocateFunc );
+    char * t = oyjlStringCopy( tmp, allocateFunc );
     oyFree_m_( tmp );
     tmp = t; t = 0;
   } else
     return 1;
 #else
-  tmp = oyStringCopy( oyranos_json, allocateFunc );
+  tmp = oyjlStringCopy( oyranos_json, allocateFunc );
 #endif
 
   *ui_text = tmp;
@@ -3634,7 +3634,7 @@ oyProfile_s* lcm2AbstractWhitePointBradford (
 
   if(oy_debug && getenv("OY_DEBUG_WRITE"))
   {
-      char * t = 0; oyStringAddPrintf( &t, 0,0,
+      char * t = 0; oyjlStringAdd( &t, 0,0,
       "%04d-%s-abstract-wtptB[%d]", ++oy_debug_write_id,CMM_NICK,oyStruct_GetId((oyStruct_s*)prof));
       lcm2WriteProfileToFile( abs, t, NULL,NULL );
       oyFree_m_(t);
@@ -3889,7 +3889,7 @@ oyProfile_s* lcm2AbstractWhitePoint  ( double              cie_a,
 
   if(oy_debug && getenv("OY_DEBUG_WRITE"))
   {
-      char * t = 0; oyStringAddPrintf( &t, 0,0,
+      char * t = 0; oyjlStringAdd( &t, 0,0,
       "%04d-%s-abstract-wtptL[%d]", ++oy_debug_write_id,CMM_NICK,oyStruct_GetId((oyStruct_s*)prof));
       lcm2WriteProfileToFile( abs, t, NULL,NULL );
       oyFree_m_(t);
@@ -4164,7 +4164,7 @@ cmsHPROFILE  l2cmsGamutCheckAbstract  ( oyProfile_s       * proof,
 
   if(oy_debug && getenv("OY_DEBUG_WRITE"))
   {
-      char * t = 0; oyStringAddPrintf( &t, 0,0,
+      char * t = 0; oyjlStringAdd( &t, 0,0,
       "%04d-%s-abstract-proof[%d]", ++oy_debug_write_id,CMM_NICK,oyStruct_GetId((oyStruct_s*)proof));
       lcm2WriteProfileToFile( gmt, t, NULL,NULL );
       oyFree_m_(t);
