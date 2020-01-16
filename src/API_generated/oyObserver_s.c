@@ -363,7 +363,10 @@ OYAPI int  OYEXPORT oyStruct_ObserverSignal (
                     oySignalToString(signal_type),
                     oyStruct_TypeToText((oyStruct_s*)observers) );
     }
+    oyStructList_Release( &observers );
   }
+
+  oyOption_Release( &o );
 
   if(result)
     return result;
