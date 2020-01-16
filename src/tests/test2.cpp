@@ -1857,7 +1857,7 @@ oyjlTESTRESULT_e testDAGbasic ()
   oyBlob_s * blob = NULL;
   oyOptions_s * options = NULL;
   int error = 0;
-#if 0
+
   oyStructList_s * list1 = oyStructList_New( testobj ),
                  * list2 = oyStructList_New( testobj ),
                  * tmp = oyStructList_Copy( list2, NULL ),
@@ -1907,12 +1907,12 @@ oyjlTESTRESULT_e testDAGbasic ()
   oyBlob_Release( &blob );
 
   OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 1, "Blob Observer" )
-#endif
+
   blob = oyBlob_New( testobj );
   oyOptions_SetFromString( &options, "//" OY_TYPE_STD "/config/var1", "1",
                            OY_CREATE_NEW );
-  /*oyOptions_SetFromString( &options, "//" OY_TYPE_STD "/config/var2", "2",
-                           OY_CREATE_NEW );*/
+  oyOptions_SetFromString( &options, "//" OY_TYPE_STD "/config/var2", "2",
+                           OY_CREATE_NEW );
   error = oyOptions_ObserverAdd( options, (oyStruct_s*)blob,
                                  (oyStruct_s*)blob, mySignal );
   if(verbose)
@@ -1925,7 +1925,7 @@ oyjlTESTRESULT_e testDAGbasic ()
   oyBlob_Release( &blob );
   oyOptions_Release( &options );
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 1, "Blob Observer for Options" )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 1, "Blob Options" )
 
   return result;
 }
@@ -3148,7 +3148,7 @@ oyjlTESTRESULT_e testDeviceLinkProfile ()
   memset( buf, 0, sizeof(double)*24);
 
   /*oyConversion_RunPixels( cc, 0 );*/
-#if 0
+
   icc_profile_flags = oyICCProfileSelectionFlagsFromOptions( OY_CMM_STD,
                                        "//" OY_TYPE_STD "/icc_color", NULL, 0 );
   oyFilterNode_s * in_node = oyFilterNode_NewWith( "//" OY_TYPE_STD "/root", 0, testobj );
@@ -3198,7 +3198,7 @@ oyjlTESTRESULT_e testDeviceLinkProfile ()
   oyImage_Release( &out );
   oyProfile_Release( &prof );
   OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 0, NULL )
-#endif
+
   prof = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, testobj );
   prof_fn = oyProfile_GetFileName( prof, -1 );
   in = oyImage_Create( 2, 2, buf, OY_TYPE_123_DBL, prof, testobj );
@@ -3217,7 +3217,6 @@ oyjlTESTRESULT_e testDeviceLinkProfile ()
   error = oyConversion_Release( &cc );
   oyOptions_Release( &opts );
   OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 0, "Node Opts" )
-  return result;
 
   prof = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, testobj );
   prof_fn = oyProfile_GetFileName( prof, -1 );
@@ -3238,7 +3237,6 @@ oyjlTESTRESULT_e testDeviceLinkProfile ()
   error = oyConversion_Release( &cc );
   oyOptions_Release( &opts );
   OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 0, "Node Hash" )
-  return result;
 
   prof = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, testobj );
   prof_fn = oyProfile_GetFileName( prof, -1 );
@@ -3259,8 +3257,7 @@ oyjlTESTRESULT_e testDeviceLinkProfile ()
   oyImage_Release( &in );
   oyImage_Release( &out );
   oyProfile_Release( &prof );
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 0, "Node Hash" )
-  return result;
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 0, "Node Context" )
 
   prof = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, testobj );
   prof_fn = oyProfile_GetFileName( prof, -1 );
@@ -3309,7 +3306,7 @@ oyjlTESTRESULT_e testDeviceLinkProfile ()
   oyProfile_Release( &prof );
   oyProfile_Release( &dl );
   oyOptions_Release( &options );
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 0, "Node Context" )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 0, "Node Graph" )
 
   fn = oyProfile_GetFileName( dl, 0 );
   if(fn && prof_fn && strcmp(fn,prof_fn) == 0)
