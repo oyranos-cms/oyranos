@@ -19,7 +19,7 @@
   /* ---- start of common object constructor ----- */
   oyOBJECT_e type = oyOBJECT_{{ class.baseName|underscores|upper }}_S;
   int error = 0;
-  oyObject_s s_obj = oyObject_NewFrom( object );
+  oyObject_s s_obj = oyObject_NewFrom( object, "oy{{ class.baseName }}_s" );
   {{ struct.name }} s = 0;
 
   if(s_obj)

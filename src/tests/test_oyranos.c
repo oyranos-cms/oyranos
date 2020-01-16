@@ -91,7 +91,7 @@ oyjlTESTRESULT_e testVersion()
   else
     result = oyjlTESTRESULT_FAIL;
 
-  testobj = oyObject_NewWithAllocators( myAllocFunc, myDeAllocFunc );
+  testobj = oyObject_NewWithAllocators( myAllocFunc, myDeAllocFunc, "testobj" );
 
   return result;
 }

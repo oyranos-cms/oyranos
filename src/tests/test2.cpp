@@ -64,7 +64,7 @@
 #include "oyranos_string.h"
 oyObject_s testobj = NULL;
 extern "C" { char * oyAlphaPrint_(int); }
-#define OYJL_TEST_MAIN_SETUP  printf("\n    Oyranos test2\n"); if(getenv(OY_DEBUG)) oy_debug = atoi(getenv(OY_DEBUG));  if(getenv(OY_DEBUG_SIGNALS)) oy_debug_signals = atoi(getenv(OY_DEBUG_SIGNALS)); if(getenv(OY_DEBUG_OBJECTS)) oy_debug_objects = atoi(getenv(OY_DEBUG_OBJECTS)); else  oy_debug_objects = 11;  // oy_debug_signals = 1;
+#define OYJL_TEST_MAIN_SETUP  printf("\n    Oyranos test2\n"); if(getenv(OY_DEBUG)) oy_debug = atoi(getenv(OY_DEBUG));  if(getenv(OY_DEBUG_SIGNALS)) oy_debug_signals = atoi(getenv(OY_DEBUG_SIGNALS)); if(getenv(OY_DEBUG_OBJECTS)) oy_debug_objects = atoi(getenv(OY_DEBUG_OBJECTS)); // else  oy_debug_objects = 11;  // oy_debug_signals = 1;
 #define OYJL_TEST_MAIN_FINISH printf("\n    Oyranos test2 finished\n\n"); if(testobj) testobj->release( &testobj ); if(verbose) { char * t = oyAlphaPrint_(0); puts(t); free(t); } oyLibConfigRelease(0);
 #include <oyjl_test_main.h>
 
@@ -130,7 +130,7 @@ oyjlTESTRESULT_e testVersion()
   else
     result = oyjlTESTRESULT_FAIL;
 
-  testobj = oyObject_NewWithAllocators( myAllocFunc, myDeAllocFunc );
+  testobj = oyObject_NewWithAllocators( myAllocFunc, myDeAllocFunc, "testobj" );
 
   return result;
 }
@@ -1739,7 +1739,7 @@ oyjlTESTRESULT_e testBlob ()
   oyPointer ptr = 0;
   const char static_ptr[16] = {0,1,0,1,0,1,0,1,  0,1,0,1,0,1,0,1};
   const char type[8] = "test";
-  oyObject_s object = oyObject_New();
+  oyObject_s object = oyObject_New("testBlobobject");
   OBJECT_COUNT_SETUP
 
   fprintf(stdout, "\n" );
@@ -1911,8 +1911,8 @@ oyjlTESTRESULT_e testDAGbasic ()
   blob = oyBlob_New( testobj );
   oyOptions_SetFromString( &options, "//" OY_TYPE_STD "/config/var1", "1",
                            OY_CREATE_NEW );
-  oyOptions_SetFromString( &options, "//" OY_TYPE_STD "/config/var2", "2",
-                           OY_CREATE_NEW );
+  /*oyOptions_SetFromString( &options, "//" OY_TYPE_STD "/config/var2", "2",
+                           OY_CREATE_NEW );*/
   error = oyOptions_ObserverAdd( options, (oyStruct_s*)blob,
                                  (oyStruct_s*)blob, mySignal );
   if(verbose)
@@ -8841,7 +8841,7 @@ oyjlTESTRESULT_e testConfDomain ()
   }
 
   if(!testobj)
-    testobj = oyObject_NewWithAllocators( myAllocFunc, myDeAllocFunc );
+    testobj = oyObject_NewWithAllocators( myAllocFunc, myDeAllocFunc, "testobj" );
   b = oyConfDomain_Copy( a, testobj );
 
   if(!error && b && b != a)

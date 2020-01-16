@@ -229,7 +229,7 @@ oyPixelAccess_s_ * oyPixelAccess_New_ ( oyObject_s object )
   /* ---- start of common object constructor ----- */
   oyOBJECT_e type = oyOBJECT_PIXEL_ACCESS_S;
   int error = 0, id = 0;
-  oyObject_s    s_obj = oyObject_NewFrom( object );
+  oyObject_s    s_obj = oyObject_NewFrom( object, "oyPixelAccess_s" );
   oyPixelAccess_s_ * s = 0;
 
   if(s_obj)

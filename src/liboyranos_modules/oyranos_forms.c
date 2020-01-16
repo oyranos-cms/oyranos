@@ -45,7 +45,7 @@ OYAPI oyFormsArgs_s * OYEXPORT
   oyOBJECT_e type = oyOBJECT_FORMS_ARGS_S;
 # define STRUCT_TYPE oyFormsArgs_s
   int error = 0;
-  oyObject_s    s_obj = oyObject_NewFrom( object );
+  oyObject_s    s_obj = oyObject_NewFrom( object, "oyFormsArgs_s" );
   STRUCT_TYPE * s = NULL;
 
   if(s_obj)

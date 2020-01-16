@@ -205,7 +205,7 @@ oyConnector_s_ * oyConnector_New_ ( oyObject_s object )
   /* ---- start of common object constructor ----- */
   oyOBJECT_e type = oyOBJECT_CONNECTOR_S;
   int error = 0, id = 0;
-  oyObject_s    s_obj = oyObject_NewFrom( object );
+  oyObject_s    s_obj = oyObject_NewFrom( object, "oyConnector_s" );
   oyConnector_s_ * s = 0;
 
   if(s_obj)

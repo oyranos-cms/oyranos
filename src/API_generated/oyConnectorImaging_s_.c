@@ -261,7 +261,7 @@ oyConnectorImaging_s_ * oyConnectorImaging_New_ ( oyObject_s object )
   /* ---- start of common object constructor ----- */
   oyOBJECT_e type = oyOBJECT_CONNECTOR_IMAGING_S;
   int error = 0, id = 0;
-  oyObject_s    s_obj = oyObject_NewFrom( object );
+  oyObject_s    s_obj = oyObject_NewFrom( object, "oyConnectorImaging_s" );
   oyConnectorImaging_s_ * s = 0;
 
   if(s_obj)

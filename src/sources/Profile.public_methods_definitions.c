@@ -1134,7 +1134,7 @@ oyProfile_GetChannelNames           ( oyProfile_s   * profile )
       s->names_chan_[ n ] = NULL;
       for( ; i < n; ++i )
       {
-        s->names_chan_[i] = oyObject_NewFrom( s->oy_ );
+        s->names_chan_[i] = oyObject_NewFrom( s->oy_, "oyProfile_s::names_chan_" );
         if(!s->names_chan_[i])
           error = 1;
         else

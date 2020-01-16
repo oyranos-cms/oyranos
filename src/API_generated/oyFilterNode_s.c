@@ -1206,7 +1206,7 @@ OYAPI oyConnector_s * OYEXPORT
      !(*node_)->api7_)
     return 0;
 
-  object = oyObject_New ();
+  object = oyObject_New ("oyFilterNode_ShowConnector-dummy");
 
   if(is_plug)
   {

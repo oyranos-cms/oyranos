@@ -301,7 +301,7 @@ OYAPI oyCallback_s * OYEXPORT
   oyOBJECT_e type = oyOBJECT_CALLBACK_S;
 # define STRUCT_TYPE oyCallback_s
   int error = 0;
-  oyObject_s    s_obj = oyObject_NewFrom( object );
+  oyObject_s    s_obj = oyObject_NewFrom( object, "oyCallback_s" );
   STRUCT_TYPE * s = 0;
 
   if(s_obj)

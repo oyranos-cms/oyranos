@@ -3591,7 +3591,7 @@ oyConfDomain_s_ * oyConfDomain_New_  ( oyObject_s          object )
   oyOBJECT_e type = oyOBJECT_CONF_DOMAIN_S;
 # define STRUCT_TYPE oyConfDomain_s_
   int error = 0;
-  oyObject_s    s_obj = oyObject_NewFrom( object );
+  oyObject_s    s_obj = oyObject_NewFrom( object, "oyConfDomain_s" );
   STRUCT_TYPE * s = NULL;
 
   if(s_obj)

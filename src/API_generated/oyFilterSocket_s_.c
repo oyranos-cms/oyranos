@@ -228,7 +228,7 @@ oyFilterSocket_s_ * oyFilterSocket_New_ ( oyObject_s object )
   /* ---- start of common object constructor ----- */
   oyOBJECT_e type = oyOBJECT_FILTER_SOCKET_S;
   int error = 0, id = 0;
-  oyObject_s    s_obj = oyObject_NewFrom( object );
+  oyObject_s    s_obj = oyObject_NewFrom( object, "oyFilterSocket_s" );
   oyFilterSocket_s_ * s = 0;
 
   if(s_obj)

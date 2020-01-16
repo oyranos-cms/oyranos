@@ -227,7 +227,7 @@ oyNamedColor_s_ * oyNamedColor_New_ ( oyObject_s object )
   /* ---- start of common object constructor ----- */
   oyOBJECT_e type = oyOBJECT_NAMED_COLOR_S;
   int error = 0, id = 0;
-  oyObject_s    s_obj = oyObject_NewFrom( object );
+  oyObject_s    s_obj = oyObject_NewFrom( object, "oyNamedColor_s" );
   oyNamedColor_s_ * s = 0;
 
   if(s_obj)

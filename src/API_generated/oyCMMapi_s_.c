@@ -200,7 +200,7 @@ oyCMMapi_s_ * oyCMMapi_New_ ( oyObject_s object )
   /* ---- start of common object constructor ----- */
   oyOBJECT_e type = oyOBJECT_CMM_API_S;
   int error = 0, id = 0;
-  oyObject_s    s_obj = oyObject_NewFrom( object );
+  oyObject_s    s_obj = oyObject_NewFrom( object, "oyCMMapi_s" );
   oyCMMapi_s_ * s = 0;
 
   if(s_obj)

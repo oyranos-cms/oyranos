@@ -84,7 +84,7 @@ oyNamedColor_s *   oyNamedColor_CreateWithName (
 {
   int error = 0;
   oyNamedColor_s_ * s = NULL;
-  oyObject_s    s_obj = oyObject_NewFrom( object );
+  oyObject_s    s_obj = oyObject_NewFrom( object, "oyNamedColor_s" );
 
   error = !s_obj;
 

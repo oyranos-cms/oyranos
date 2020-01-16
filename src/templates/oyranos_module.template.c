@@ -89,7 +89,7 @@ oyCMMapiFilters_s * oyCMMsGetFilterApis_(const char        * registration,
   oyCMMapiFilter_s_ ** api2_ = (oyCMMapiFilter_s_**)&api2;
   uint32_t * rank_list_ = 0, * rank_list2_ = 0;
   int rank_list_n = 5, count_ = 0;
-  oyObject_s object = oyObject_New();
+  oyObject_s object = oyObject_New( "oyCMMsGetFilterApis_-dummy" );
   oyHash_s * entry = 0;
 
   if(!rank_list)
@@ -1546,7 +1546,7 @@ oyCMMhandle_s *    oyCMMhandle_New_    ( oyObject_s        object )
   oyOBJECT_e type = oyOBJECT_CMM_HANDLE_S;
 # define STRUCT_TYPE oyCMMhandle_s
   int error = 0;
-  oyObject_s    s_obj = oyObject_NewFrom( object );
+  oyObject_s    s_obj = oyObject_NewFrom( object, "oyCMMhandle_s" );
   STRUCT_TYPE * s = 0;
   
   if(s_obj)

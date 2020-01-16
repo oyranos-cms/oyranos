@@ -56,12 +56,13 @@ static oyObject_s oy_object_pool_[100] = {
  *  @since   2007/11/00 (Oyranos: 0.1.8)
  *  @date    2009/06/02
  */
-oyObject_s         oyObject_New      ( void )
+oyObject_s         oyObject_New      ( const char        * name )
 {
-  return oyObject_NewWithAllocators( oyAllocateFunc_, oyDeAllocateFunc_ );
+  return oyObject_NewWithAllocators( oyAllocateFunc_, oyDeAllocateFunc_, name );
 }
 
-void               oyObject_Track    ( oyObject_s          obj );
+void               oyObject_Track    ( oyObject_s          obj,
+                                       const char        * name );
 void               oyObject_UnTrack    ( oyObject_s          obj );
 
 /** @brief   object management 
@@ -73,7 +74,8 @@ void               oyObject_UnTrack    ( oyObject_s          obj );
  */
 oyObject_s         oyObject_NewWithAllocators (
                                        oyAlloc_f           allocateFunc,
-                                       oyDeAlloc_f         deallocateFunc )
+                                       oyDeAlloc_f         deallocateFunc,
+                                       const char        * name )
 {
   oyObject_s o = 0;
   int error = 0;
@@ -167,7 +169,7 @@ oyObject_s         oyObject_NewWithAllocators (
   memset(o->parent_types_,0,sizeof(oyOBJECT_e)*2);
 
   if(oy_debug_objects >= 0 || oy_debug_objects <= -2)
-    oyObject_Track(o);
+    oyObject_Track(o, name);
 
   return o;
 }
@@ -176,12 +178,14 @@ oyObject_s         oyObject_NewWithAllocators (
  *  @ingroup  objects_generic
  *
  *  @param[in]     object              the object
+ *  @param[in]     name                a debug string containing the parent class
  *
- *  @since Oyranos: version 0.1.8
- *  @date  17 december 2007 (API 0.1.8)
+ *  @version Oyranos: 0.9.7
+ *  @since   2007/12/17 (Oyranos: 0.1.8)
+ *  @date    2020/01/16
  */
-oyObject_s
-oyObject_NewFrom ( oyObject_s      object )
+oyObject_s   oyObject_NewFrom        ( oyObject_s          object,
+                                       const char        * name )
 {
   oyObject_s o = 0;
   int error = 0;
@@ -194,9 +198,10 @@ oyObject_NewFrom ( oyObject_s      object )
 
   if(object)
     o = oyObject_NewWithAllocators( object->allocateFunc_,
-                                    object->deallocateFunc_ );
+                                    object->deallocateFunc_,
+                                    name );
   else
-    o = oyObject_New( );
+    o = oyObject_New( name );
 
   if(!o)
     error = 1;

@@ -229,7 +229,7 @@ oyImage_s_ * oyImage_New_ ( oyObject_s object )
   /* ---- start of common object constructor ----- */
   oyOBJECT_e type = oyOBJECT_IMAGE_S;
   int error = 0, id = 0;
-  oyObject_s    s_obj = oyObject_NewFrom( object );
+  oyObject_s    s_obj = oyObject_NewFrom( object, "oyImage_s" );
   oyImage_s_ * s = 0;
 
   if(s_obj)

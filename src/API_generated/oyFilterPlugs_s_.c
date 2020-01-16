@@ -199,7 +199,7 @@ oyFilterPlugs_s_ * oyFilterPlugs_New_ ( oyObject_s object )
   /* ---- start of common object constructor ----- */
   oyOBJECT_e type = oyOBJECT_FILTER_PLUGS_S;
   int error = 0, id = 0;
-  oyObject_s    s_obj = oyObject_NewFrom( object );
+  oyObject_s    s_obj = oyObject_NewFrom( object, "oyFilterPlugs_s" );
   oyFilterPlugs_s_ * s = 0;
 
   if(s_obj)

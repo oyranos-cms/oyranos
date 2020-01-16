@@ -193,7 +193,8 @@ int oyGetNewObjectID()
 #define MAX_OBJECTS_TRACKED 1000000
 /* private tracking API's start */
 static oyObject_s * oy_obj_track_list = NULL;
-void               oyObject_Track    ( oyObject_s          obj )
+void               oyObject_Track    ( oyObject_s          obj,
+                                       const char        * name )
 {
   if(!oy_obj_track_list)
   {
@@ -206,7 +207,7 @@ void               oyObject_Track    ( oyObject_s          obj )
   if(oy_debug_objects == 1 || oy_debug_objects == obj->id_)
   {
     OY_BACKTRACE_PRINT
-    fprintf( stderr, "Object[%d] tracked\n", obj->id_);
+    fprintf( stderr, "%s[%d] tracked\n", name, obj->id_ );
   }
   if(oy_debug_objects <= -2)
   {

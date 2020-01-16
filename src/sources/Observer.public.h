@@ -11,6 +11,8 @@
  *
  *  The signal types are similiar to the graph event enum oyCONNECTOR_EVENT_e.
  *
+ *  @see oySignalToString()
+ *
  *  @version Oyranos: 0.1.10
  *  @since   2009/10/26 (Oyranos: 0.1.10)
  *  @date    2009/10/26

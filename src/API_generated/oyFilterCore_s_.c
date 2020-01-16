@@ -233,7 +233,7 @@ oyFilterCore_s_ * oyFilterCore_New_ ( oyObject_s object )
   /* ---- start of common object constructor ----- */
   oyOBJECT_e type = oyOBJECT_FILTER_CORE_S;
   int error = 0, id = 0;
-  oyObject_s    s_obj = oyObject_NewFrom( object );
+  oyObject_s    s_obj = oyObject_NewFrom( object, "oyFilterCore_s" );
   oyFilterCore_s_ * s = 0;
 
   if(s_obj)

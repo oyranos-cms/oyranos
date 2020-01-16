@@ -99,7 +99,7 @@ static void oy{{ class.baseName }}_StaticFree_           ( void )
   /* ---- start of common object constructor ----- */
   oyOBJECT_e type = oyOBJECT_{{ class.baseName|underscores|upper }}_S;
   int error = 0, id = 0;
-  oyObject_s    s_obj = oyObject_NewFrom( object );
+  oyObject_s    s_obj = oyObject_NewFrom( object, "oy{{ class.baseName }}_s" );
   {{ class.privName }} * s = 0;
 
   if(s_obj)

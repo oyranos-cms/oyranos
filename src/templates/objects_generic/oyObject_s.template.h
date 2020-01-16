@@ -17,12 +17,14 @@
 
 {% block GeneralPublicMethodsDeclarations %}
 /* oyObject_s common object functions { */
-oyObject_s   oyObject_New             ( void );
-oyObject_s   oyObject_NewWithAllocators(oyAlloc_f         allocateFunc,
-                                        oyDeAlloc_f       deallocateFunc );
-oyObject_s   oyObject_NewFrom         ( oyObject_s        object );
-oyObject_s   oyObject_Copy            ( oyObject_s        object );
-int          oyObject_Release         ( oyObject_s      * oy );
+oyObject_s   oyObject_New            ( const char        * name );
+oyObject_s   oyObject_NewWithAllocators(oyAlloc_f          allocateFunc,
+                                       oyDeAlloc_f         deallocateFunc,
+                                       const char        * name );
+oyObject_s   oyObject_NewFrom        ( oyObject_s          object,
+                                       const char        * name );
+oyObject_s   oyObject_Copy           ( oyObject_s          object );
+int          oyObject_Release        ( oyObject_s        * oy );
 /* } oyObject_s common object functions */
 {% endblock %}
 
