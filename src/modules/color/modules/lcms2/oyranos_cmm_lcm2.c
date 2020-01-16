@@ -1257,6 +1257,9 @@ cmsHTRANSFORM  l2cmsCMMConversionContextCreate_ (
                                           intents, adaption_states, NULL, 0,
                                           l2cms_pixel_layout_in,
                                           l2cms_pixel_layout_out, flags | cmsFLAGS_KEEP_SEQUENCE );
+      oyFree_m_(intents);
+      oyFree_m_(bpc);
+      oyFree_m_(adaption_states);
     }
     else
     {
@@ -1311,6 +1314,9 @@ cmsHTRANSFORM  l2cmsCMMConversionContextCreate_ (
                                           intents, adaption_states, NULL, 0,
                                           l2cms_pixel_layout_in,
                                           l2cms_pixel_layout_out, flags | cmsFLAGS_KEEP_SEQUENCE );
+      oyFree_m_(intents);
+      oyFree_m_(bpc);
+      oyFree_m_(adaption_states);
       if(oy_debug >= 2)
       {
         int i;
@@ -2389,9 +2395,9 @@ char * l2cmsFilterNode_GetText       ( oyFilterNode_s    * node,
 #ifdef NO_OPT
   return oyjlStringCopy( oyFilterNode_GetText( node, type ), allocateFunc );
 #else
-  const char * model = 0;
-  char * hash_text = 0,
-       * temp = 0;
+  const char * model = NULL;
+  char * hash_text = NULL,
+       * temp = NULL;
   oyFilterNode_s * s = node;
 
   oyImage_s * in_image = 0,
@@ -2514,11 +2520,13 @@ char * l2cmsFilterNode_GetText       ( oyFilterNode_s    * node,
     {
       temp = l2cmsImage_GetText( out_image, type, oyAllocateFunc_ );
       hashTextAdd_m( temp );
+      oyFree_m_(temp);
     }
     hashTextAdd_m( "\n}\n" );
   }
 
   /* add hash in the first line */
+  if(hash_text)
   {
     oyjl_val root = oyJsonParse( hash_text );
     unsigned char hash[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
@@ -2529,8 +2537,14 @@ char * l2cmsFilterNode_GetText       ( oyFilterNode_s    * node,
     oySprintf_( hash_text, "%08x%08x%08x%08x\n", h[0], h[1], h[2], h[3] );
     hashTextAdd_m( temp );
 
-    oyDeAllocateFunc_(temp); temp = 0;
+    oyFree_m_(temp);
     oyjlTreeFree( root );
+    if(allocateFunc != oyAllocateFunc_)
+    {
+      temp = hash_text;
+      hash_text = oyjlStringCopy( temp, allocateFunc );
+      oyFree_m_(temp);
+    }
   }
 
   oyOptions_Release( &node_opts );
@@ -2542,7 +2556,7 @@ char * l2cmsFilterNode_GetText       ( oyFilterNode_s    * node,
   oyImage_Release( &in_image );
   oyImage_Release( &out_image );
 
-  return oyjlStringCopy( hash_text, allocateFunc );
+  return hash_text;
 #endif
 }
 
