@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: oyranos\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2020-01-14 10:12+0100\n"
+"POT-Creation-Date: 2020-01-16 09:00+0100\n"
 "PO-Revision-Date: 2012-10-19 15:10+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -75,8 +75,8 @@ msgstr ""
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:905
 #: modules/color/modules/devices/oyranos_cmm_disp.c:1355
 #: modules/color/modules/devices/oyranos_cmm_disp.c:1358
-#: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4672
-#: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4675
+#: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4673
+#: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4676
 #: modules/color/modules/oyranos_cmm_lcms.c:2786
 #: modules/color/modules/oyranos_cmm_lcms.c:2789
 #: modules/color/modules/oyranos_cmm_oPNG.c:588
@@ -407,7 +407,7 @@ msgstr "Všechny ty malé detaily pro používání tohoto modulu."
 msgid "Allowed option values are -f openicc and -f xml. unknown format:"
 msgstr ""
 
-#: API_generated/oyObserver_s.c:460
+#: API_generated/oyObserver_s.c:463
 msgid "Already enabled"
 msgstr "Již aktivováno"
 
@@ -783,7 +783,7 @@ msgstr ""
 #. oyranos_cmm_lcms.json:org/freedesktop/openicc/modules/[0]/label
 #. oyranos_cmm_lcms.json:org/freedesktop/openicc/modules/[0]/groups/[0]/groups/[0]/name
 #: API_generated/oyranos_profile.c:37 liboyranos_config/oyranos_texts.c:273
-#: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4674
+#: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4675
 #: modules/color/modules/oyranos_cmm_lcms.c:2788 modules/lcm2-i18n.c:2
 #: modules/lcm2-i18n.c:92 modules/lcms-i18n.c:2 modules/lcms-i18n.c:92
 msgid "CMM"
@@ -879,8 +879,8 @@ msgstr "Kanály"
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:3506
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:3779
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:3986
-#: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4276
-#: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4494
+#: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4277
+#: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4495
 #: modules/color/modules/oyranos_cmm_elDB.c:989
 #: modules/color/modules/oyranos_cmm_lcms.c:2563
 #: modules/color/modules/oyranos_cmm_lcms.c:2636
@@ -973,7 +973,7 @@ msgstr "Sbírky nastavení Oyranosu"
 #: modules/color/modules/devices/oyranos_cmm_SANE.c:856
 #: modules/color/modules/devices/oyranos_cmm_disp.c:1354
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1048
-#: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4671
+#: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4672
 #: modules/color/modules/oyranos_cmm_lcms.c:2785
 msgid "Color"
 msgstr "Barva"
@@ -1199,7 +1199,7 @@ msgstr "Copyright (c) 1998-2013 Marti Maria Saguer; MIT"
 msgid "Copyright (c) 1998-2008 Marti Maria Saguer; MIT"
 msgstr "Copyright (c) 1998-2013 Marti Maria Saguer; MIT"
 
-#: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4794
+#: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4795
 #, fuzzy
 msgid "Copyright (c) 1998-2016 Marti Maria Saguer; MIT"
 msgstr "Copyright (c) 1998-2013 Marti Maria Saguer; MIT"
@@ -1366,7 +1366,7 @@ msgstr "Vytvořit 3D CLUT"
 msgid "Create a 2D Graph containing the saturation line from a ICC Profile."
 msgstr ""
 
-#: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4282
+#: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4283
 #: modules/color/modules/oyranos_cmm_lcms.c:2569
 msgid "Create a ICC abstract proofing profile."
 msgstr "Vytvořit abstraktní profil ICC pro simulaci."
@@ -1377,14 +1377,14 @@ msgstr "Vytvořit abstraktní profil ICC pro simulaci."
 msgid "Create a ICC abstract white point effect profile."
 msgstr "Vytvořit abstraktní profil ICC pro simulaci."
 
-#: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4500
-#: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4508
+#: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4501
+#: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4509
 #: modules/color/modules/oyranos_cmm_lcms.c:2642
 #: modules/color/modules/oyranos_cmm_lcms.c:2650
 msgid "Create a ICC matrix profile."
 msgstr "Vytvořit maticový profil ICC."
 
-#: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4290
+#: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4291
 #: modules/color/modules/oyranos_cmm_lcms.c:2577
 msgid "Create a ICC proofing profile."
 msgstr "Vytvořit profil simulace."
@@ -2222,7 +2222,7 @@ msgstr "profil ICC"
 msgid "ICC profile directory name"
 msgstr "jméno profilu"
 
-#: API_generated/oyProfile_s_.c:1104
+#: API_generated/oyProfile_s_.c:1102
 msgid "ICC profile id written"
 msgstr "ID profilu ICC zapsáno"
 
@@ -2837,7 +2837,7 @@ msgstr "Little CMS"
 
 #. oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/name
 #. oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/groups/[0]/name
-#: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4778 modules/lcm2-i18n.c:5
+#: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4779 modules/lcm2-i18n.c:5
 #: modules/lcm2-i18n.c:83
 msgid "Little CMS 2"
 msgstr "Little CMS 2"
@@ -2888,7 +2888,7 @@ msgstr ""
 msgid "Little Color Management System"
 msgstr ""
 
-#: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4780
+#: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4781
 msgid ""
 "LittleCMS 2 is a CMM, a color management engine; it implements fast "
 "transforms between ICC profiles. \"Little\" stands for its small overhead. "
@@ -3059,7 +3059,7 @@ msgstr "MIT"
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:1019
 #: modules/color/modules/devices/oyranos_cmm_SANE.c:970
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1162
-#: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4796
+#: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4797
 #: modules/color/modules/oyranos_cmm_lcms.c:2899
 msgid "MIT license: http://www.opensource.org/licenses/mit-license.php"
 msgstr "Licence MIT: http://www.opensource.org/licenses/mit-license.php"
@@ -3378,7 +3378,7 @@ msgstr "Bílý bod média"
 msgid "No"
 msgstr "Ne"
 
-#: API_generated/oyProfile_s_.c:1089
+#: API_generated/oyProfile_s_.c:1087
 msgid "No ICC profile id detected"
 msgstr "Nedetekován žádný profil ICC"
 
@@ -4601,9 +4601,9 @@ msgstr ""
 msgid "Show white point modes"
 msgstr "Bílý bod média"
 
-#: API_generated/oyFilterNode_s_.c:1501 API_generated/oyObserver_s.c:332
-#: API_generated/oyObserver_s.c:343 API_generated/oyObserver_s.c:544
-#: API_generated/oyObserver_s.c:621 API_generated/oyObserver_s_.c:642
+#: API_generated/oyFilterNode_s_.c:1505 API_generated/oyObserver_s.c:332
+#: API_generated/oyObserver_s.c:343 API_generated/oyObserver_s.c:547
+#: API_generated/oyObserver_s.c:624 API_generated/oyObserver_s_.c:640
 #: examples/image_display/oyranos_display_helper_classes_fltk.cpp:47
 msgid "Signal"
 msgstr "Signál"
@@ -5170,7 +5170,7 @@ msgid ""
 "socket."
 msgstr ""
 
-#: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4804
+#: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4805
 #, fuzzy
 msgid ""
 "The following options are available to create color contexts:\n"
@@ -5255,7 +5255,7 @@ msgstr ""
 "Adaptační část filtru transformuje barvový kontext Oyranosu, který je "
 "založen na tzv. spojovacích profilech ICC, do interního formátu lcms."
 
-#: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4802
+#: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4803
 #, fuzzy
 msgid ""
 "The lcms \"color_icc\" filter is a one dimensional color conversion filter. "
@@ -5286,7 +5286,7 @@ msgstr ""
 "Adaptační část filtru transformuje barvový kontext Oyranosu, který je "
 "založen na tzv. spojovacích profilech ICC, do interního formátu lcms."
 
-#: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4510
+#: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4511
 #: modules/color/modules/oyranos_cmm_lcms.c:2652
 msgid ""
 "The littleCMS \"create_profile.color_matrix\" command lets you create ICC "
@@ -5296,7 +5296,7 @@ msgstr ""
 "Příkaz Little CMS \"create_profile.color_matrix\" umožňuje vytvořit profily "
 "ICC z určených kolorimetrických souřadnic. Viz položka \"create_profile\"."
 
-#: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4502
+#: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4503
 msgid ""
 "The littleCMS \"create_profile.color_matrix\" command lets you create ICC "
 "profiles from some given colorimetric coordinates. The filter expects a "
@@ -5353,7 +5353,7 @@ msgstr ""
 "\"icc_profile\" s dodatečnými atributy \"create_profile.proofing_effect\" "
 "jako objekt oyProfile_s."
 
-#: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4284
+#: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4285
 #, fuzzy
 msgid ""
 "The littleCMS \"create_profile.proofing_effect\" command lets you create ICC "
@@ -5376,7 +5376,7 @@ msgstr ""
 "dodatečnými atributy \"create_profile.proofing_effect\" jako objekt "
 "oyProfile_s."
 
-#: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4292
+#: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4293
 #, fuzzy
 msgid ""
 "The littleCMS \"create_profile.proofing_effect\" command lets you create ICC "
@@ -5917,7 +5917,7 @@ msgstr "Zapsat"
 msgid "Write to ICC profile:"
 msgstr "Zapsat do profilu ICC:"
 
-#: API_generated/oyProfile_s_.c:1081
+#: API_generated/oyProfile_s_.c:1079
 msgid "Wrong ICC profile id detected"
 msgstr "Zjištěno chybné ID profilu ICC"
 
@@ -6022,8 +6022,8 @@ msgstr ""
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:3504
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:3777
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:3984
-#: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4274
-#: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4492
+#: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4275
+#: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4493
 #: modules/color/modules/oyranos_cmm_elDB.c:987
 #: modules/color/modules/oyranos_cmm_lcms.c:2561
 #: modules/color/modules/oyranos_cmm_lcms.c:2634
@@ -6113,7 +6113,7 @@ msgstr ""
 msgid "enable simple defaults"
 msgstr "aktivovat jednoduché výchozí hodnoty"
 
-#: API_generated/oyConversion_s.c:207 API_generated/oyFilterNode_s_.c:876
+#: API_generated/oyConversion_s.c:207 API_generated/oyFilterNode_s_.c:874
 #: API_generated/oyranos_devices.c:2616 API_generated/oyranos_devices.c:2628
 #: API_generated/oyranos_devices.c:2661 API_generated/oyranos_devices.c:3177
 #: API_generated/oyranos_module.c:2025
@@ -6137,7 +6137,7 @@ msgstr "selhalo!"
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:724
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:730
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:742
-#: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4381
+#: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4382
 #: modules/color/modules/oyranos_cmm_lcms.c:2453
 #: modules/color/modules/oyranos_cmm_oPNG.c:991
 #: modules/color/modules/oyranos_cmm_oyra_image_expose.c:141
@@ -6159,17 +6159,17 @@ msgstr "nalezené problémy"
 msgid "found issues parsing JSON"
 msgstr "zjištěny problémy při analýze JSON"
 
-#: API_generated/oyObserver_s_.c:704
+#: API_generated/oyObserver_s_.c:702
 msgid "found list of wrong type"
 msgstr "zjištěn seznam chybného typu"
 
-#: API_generated/oyObserver_s.c:362 API_generated/oyObserver_s.c:567
-#: API_generated/oyObserver_s.c:644
+#: API_generated/oyObserver_s.c:362 API_generated/oyObserver_s.c:570
+#: API_generated/oyObserver_s.c:647
 msgid "found no observer"
 msgstr "nenalezen žádný pozorovatel"
 
-#: API_generated/oyObserver_s.c:354 API_generated/oyObserver_s.c:559
-#: API_generated/oyObserver_s.c:636
+#: API_generated/oyObserver_s.c:354 API_generated/oyObserver_s.c:562
+#: API_generated/oyObserver_s.c:639
 msgid "found observer of wrong type"
 msgstr "zjištěn pozorovatel chybného typu"
 
@@ -6325,12 +6325,12 @@ msgstr "rozumné jsou úrovně od 4 - 16"
 msgid "libraw input filter"
 msgstr "vstupní filtr libraw"
 
-#: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4676
+#: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4677
 #: modules/color/modules/oyranos_cmm_lcms.c:2790
 msgid "littleCMS"
 msgstr "littleCMS"
 
-#: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4788
+#: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4789
 msgid ""
 "littleCMS 2 project; www: http://www.littlecms.com; support/email: "
 "support@littlecms.com; sources: http://www.littlecms.com/downloads.htm; "

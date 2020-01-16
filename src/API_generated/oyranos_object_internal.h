@@ -37,8 +37,8 @@
 
 
 #define hashTextAdd_m( text_ ) \
-  oyStringAdd_( &hash_text, text_, s->oy_->allocateFunc_, \
-                            s->oy_->deallocateFunc_ )
+  oyjlStringAdd( &hash_text, s->oy_->allocateFunc_, \
+                             s->oy_->deallocateFunc_, text_ )
 
 int oyCheckType_( oyOBJECT_e type1, oyOBJECT_e type2 );
 
