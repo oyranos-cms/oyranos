@@ -3303,10 +3303,7 @@ oyjlTESTRESULT_e testDeviceLinkProfile ()
   error = oyConversion_Release( &cc );
   oyImage_Release( &in );
   oyImage_Release( &out );
-  oyProfile_Release( &prof );
-  oyProfile_Release( &dl );
   oyOptions_Release( &options );
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 0, "Node Graph" )
 
   fn = oyProfile_GetFileName( dl, 0 );
   if(fn && prof_fn && strcmp(fn,prof_fn) == 0)
@@ -3332,9 +3329,18 @@ oyjlTESTRESULT_e testDeviceLinkProfile ()
 
   fn = oyProfile_GetText( dl, oyNAME_NAME );
   if(verbose) fprintf(zout,"oyProfile_GetText( dl, oyNAME_NAME ): %s\n", fn );
+  oyProfile_Release( &prof );
   oyProfile_Release( &dl );
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 0, "Node Graph" )
 
 
+  prof = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, testobj );
+  prof_fn = oyProfile_GetFileName( prof, -1 );
+  in = oyImage_Create( 2, 2, buf, OY_TYPE_123_DBL, prof, testobj );
+  out = oyImage_CreateForDisplay( 2, 2, buf, OY_TYPE_123_DBL, 0,
+                                              0,0, 12,12,
+                                              icc_profile_flags, testobj );
+  oyOptions_SetFromString( &options, OY_CMM_STD"/context", "lcm2", OY_CREATE_NEW );
   oyOptions_SetFromString( &options, OY_CMM_STD"/precalculation", "4", OY_CREATE_NEW );
   cc = oyConversion_CreateBasicPixels( in, out, options, testobj );
   if(cc)

@@ -243,16 +243,16 @@ int          oyFilterNode_SetContext_( oyFilterNode_s_    * node,
 {
   int error = 0;
   oyFilterCore_s_ * core_ = node->core;
+  oyHash_s * hash4 = 0,          /* public context provider */
+           * hash7 = 0;          /* data processor part */
+
 
   if(error <= 0)
   {
           size_t size = 0;
-          oyHash_s * hash4 = 0,          /* public context provider */
-                   * hash7 = 0;          /* data processor part */
           oyPointer ptr = 0;
           oyPointer_s * cmm_ptr4 = 0,
                       * cmm_ptr7 = 0;
-
 
           /*  Cache Search
            *  1.     hash from input
@@ -367,6 +367,7 @@ int          oyFilterNode_SetContext_( oyFilterNode_s_    * node,
               }
 
               /* 2. query in cache for api4 */
+              oyHash_Release( &hash4 );
               hash4 = oyFilterNode_GetHash_(node, 4);
               cmm_ptr4 = (oyPointer_s*) oyHash_GetPointer( hash4,
                                                         oyOBJECT_POINTER_S);
@@ -434,10 +435,12 @@ int          oyFilterNode_SetContext_( oyFilterNode_s_    * node,
                 if(!error)
                 {
                   /* 3b.1. update the hash as the CMM can change options */
+                  oyHash_Release( &hash4 );
                   hash4 = oyFilterNode_GetHash_( node, 4 );
                   oyPointer_Release( &cmm_ptr4 );
                   cmm_ptr4 = (oyPointer_s*) oyHash_GetPointer( hash4,
                                                         oyOBJECT_POINTER_S);
+                  oyHash_Release( &hash7 );
                   hash7 = oyFilterNode_GetHash_( node, 7 );
 
                   if(!cmm_ptr4)
@@ -496,6 +499,9 @@ int          oyFilterNode_SetContext_( oyFilterNode_s_    * node,
   }
 
   clean:
+    oyHash_Release( &hash4 );
+    oyHash_Release( &hash7 );
+
   return error;
 }
 
