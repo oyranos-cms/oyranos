@@ -288,7 +288,7 @@ oyProfile_s_ *  oyProfile_FromFile_  ( const char        * name,
           if((flags & OY_ICC_VERSION_2 || flags & OY_ICC_VERSION_4) &&
              !((flags & OY_ICC_VERSION_2 && v[0] == 2) ||
                (flags & OY_ICC_VERSION_4 && v[0] == 4)))
-            s = NULL;
+            oyProfile_Release( (oyProfile_s**)&s );
         }
         if(s)
         {
