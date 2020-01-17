@@ -233,7 +233,7 @@ void               oyObject_Track    ( oyObject_s          obj,
   if(oy_debug_objects == 1 || oy_debug_objects == obj->id_)
   {
     OY_BACKTRACE_PRINT
-    fprintf( stderr, "%s[%d] tracked\n", name, obj->id_ );
+    fprintf( stderr, "%s[%d] tracked\n", (oy_debug_objects == obj->id_)?oyjlTermColor(oyjlGREEN, name):name, obj->id_ );
   }
   if(oy_debug_objects <= -2)
   {

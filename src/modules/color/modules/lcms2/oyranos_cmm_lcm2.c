@@ -1314,9 +1314,7 @@ cmsHTRANSFORM  l2cmsCMMConversionContextCreate_ (
                                           intents, adaption_states, NULL, 0,
                                           l2cms_pixel_layout_in,
                                           l2cms_pixel_layout_out, flags | cmsFLAGS_KEEP_SEQUENCE );
-      oyFree_m_(intents);
-      oyFree_m_(bpc);
-      oyFree_m_(adaption_states);
+
       if(oy_debug >= 2)
       {
         int i;
@@ -1351,7 +1349,6 @@ cmsHTRANSFORM  l2cmsCMMConversionContextCreate_ (
       oyFree_m_( bpc );
       oyFree_m_( adaption_states );
     }
-    if(intents) free(intents);
   }
 
   if(!xform || oy_debug > 2)

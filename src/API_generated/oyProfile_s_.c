@@ -531,7 +531,7 @@ oyProfile_s_ * oyProfile_Copy_ ( oyProfile_s_ *profile, oyObject_s object )
           int i;
           const char * track_name = oyStructTypeToText(s->type_);
           fprintf( stderr, "%s[%d] tracking refs: %d parents: %d\n",
-                   track_name, s->oy_->id_, s->oy_->ref_, n );
+                   (s->oy_->id_ == id_)?oyjlTermColor(oyjlGREEN, track_name):track_name, s->oy_->id_, s->oy_->ref_, n );
           for(i = 0; i < n; ++i)
           {
             track_name = oyStructTypeToText(parents[i]->type_);
@@ -606,7 +606,7 @@ int oyProfile_Release_( oyProfile_s_ **profile )
         int i;
         track_name = oyStructTypeToText(s->type_);
         fprintf( stderr, "%s[%d] unref with refs: %d observers: %d parents: %d\n",
-                 track_name, s->oy_->id_, s->oy_->ref_, observer_refs, n );
+                 (s->oy_->id_ == id_)?oyjlTermColor(oyjlRED, track_name):track_name, s->oy_->id_, s->oy_->ref_, observer_refs, n );
         for(i = 0; i < n; ++i)
         {
           track_name = oyStructTypeToText(parents[i]->type_);
@@ -637,7 +637,7 @@ int oyProfile_Release_( oyProfile_s_ **profile )
        id_ == 1)
     {
       track_name = oyStructTypeToText(s->type_);
-      fprintf( stderr, "%s[%d] destruct\n", track_name, s->oy_->id_);
+      fprintf( stderr, "%s[%d] destruct\n", (s->oy_->id_ == id_)?oyjlTermColor(oyjlRED, track_name):track_name, s->oy_->id_);
     }
   }
 
@@ -671,7 +671,7 @@ int oyProfile_Release_( oyProfile_s_ **profile )
     refs = s->oy_->ref_;
 
     if(track_name)
-      fprintf( stderr, "%s[%d] destructing\n", track_name, id );
+      fprintf( stderr, "%s[%d] destructing\n", (s->oy_->id_ == oy_debug_objects)?oyjlTermColor(oyjlRED, track_name):track_name, id );
 
     if(refs > 1)
       fprintf( stderr, "!!!ERROR:%d oyProfile_s[%d]->object can not be untracked with refs: %d\n", __LINE__, id, refs);
@@ -679,7 +679,7 @@ int oyProfile_Release_( oyProfile_s_ **profile )
     s->oy_ = NULL;
     oyObject_Release( &oy );
     if(track_name)
-      fprintf( stderr, "%s[%d] destructed\n", track_name, id );
+      fprintf( stderr, "%s[%d] destructed\n", (id == oy_debug_objects)?oyjlTermColor(oyjlRED, track_name):track_name, id );
 
     deallocateFunc( s );
   }
@@ -980,7 +980,7 @@ oyProfile_s_ *  oyProfile_FromFile_  ( const char        * name,
           if((flags & OY_ICC_VERSION_2 || flags & OY_ICC_VERSION_4) &&
              !((flags & OY_ICC_VERSION_2 && v[0] == 2) ||
                (flags & OY_ICC_VERSION_4 && v[0] == 4)))
-            s = NULL;
+            oyProfile_Release( (oyProfile_s**)&s );
         }
         if(s)
         {
