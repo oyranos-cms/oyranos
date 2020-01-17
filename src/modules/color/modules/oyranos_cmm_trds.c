@@ -541,9 +541,9 @@ void               oyJobResult_      ( void )
   {
     if(msg->cb_progress)
     {
-      if(msg->cb_progress_context && msg->cb_progress_context->copy)
-        msg->cb_progress_context = msg->cb_progress_context->copy(msg->cb_progress_context, 0);
       msg->cb_progress( msg->progress_zero_till_one, msg->status_text, msg->thread_id_, msg->job_id, msg->cb_progress_context );
+      if(msg->cb_progress_context && msg->cb_progress_context->release)
+        msg->cb_progress_context = msg->cb_progress_context->release( &msg->cb_progress_context );
     }
 
     if(msg->status_text)
