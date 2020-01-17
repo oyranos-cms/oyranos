@@ -64,7 +64,7 @@
 #include "oyranos_string.h"
 oyObject_s testobj = NULL;
 extern "C" { char * oyAlphaPrint_(int); }
-#define OYJL_TEST_MAIN_SETUP  printf("\n    Oyranos test2\n"); if(getenv(OY_DEBUG)) oy_debug = atoi(getenv(OY_DEBUG));  if(getenv(OY_DEBUG_SIGNALS)) oy_debug_signals = atoi(getenv(OY_DEBUG_SIGNALS)); if(getenv(OY_DEBUG_OBJECTS)) oy_debug_objects = atoi(getenv(OY_DEBUG_OBJECTS)); //else  oy_debug_objects = 439;  // oy_debug_signals = 1;
+#define OYJL_TEST_MAIN_SETUP  printf("\n    Oyranos test2\n"); if(getenv(OY_DEBUG)) oy_debug = atoi(getenv(OY_DEBUG));  if(getenv(OY_DEBUG_SIGNALS)) oy_debug_signals = atoi(getenv(OY_DEBUG_SIGNALS)); if(getenv(OY_DEBUG_OBJECTS)) oy_debug_objects = atoi(getenv(OY_DEBUG_OBJECTS)); //else  oy_debug_objects = 5467;  // oy_debug_signals = 1;
 #define OYJL_TEST_MAIN_FINISH printf("\n    Oyranos test2 finished\n\n"); if(testobj) testobj->release( &testobj ); if(verbose) { char * t = oyAlphaPrint_(0); puts(t); free(t); } oyLibConfigRelease(0);
 #include <oyjl_test_main.h>
 
@@ -3731,7 +3731,6 @@ static void          runColourClut   ( PrivColorContext  * ccontext,
   int id = entry->oy_->id_;
 
   fillColourClut( ccontext );
-  printf("\nHash ID: %d refs: %d\n\n", id, entry->oy_->ref_);
 
         clut = oyArray2d_Create( NULL, GRIDPOINTS*3, GRIDPOINTS*GRIDPOINTS,
                                  oyUINT16, NULL );
@@ -3942,6 +3941,7 @@ static int     setupColourTable      ( PrivColorContext  * ccontext,
           dl_count = j;
           fprintf( zout, " %d\n", dl_count );
           if(oy_debug) fprintf( zout, "%s\n", oyOptions_GetText( node_opts, oyNAME_NAME ) );
+          oyProfile_Release( &dl );
         }
 
         DBG_S_( oyPrintTime() );
@@ -3996,6 +3996,8 @@ static int     setupColourTable      ( PrivColorContext  * ccontext,
       oyImage_Release( &image_in );
       oyImage_Release( &image_out );
       oyConversion_Release( &cc );
+      oyArray2d_Release( &clut );
+      oyHash_Release( &entry );
 
       cdCreateTexture( ccontext );
 
@@ -4116,6 +4118,7 @@ oyjlTESTRESULT_e testClut ()
   {
     hash = getColourHash( icc, &hash_text );
     free(hash_text); hash_text = NULL;
+    oyHash_Release( &hash );
   }
   clck = oyClock() - clck;
   oyFilterNode_Release( &icc );
@@ -4142,6 +4145,7 @@ oyjlTESTRESULT_e testClut ()
   fprintf( zout, "fillColourClut()      \t%d\t%s\n",i,
                  oyjlProfilingToString(i,clck/(double)CLOCKS_PER_SEC,"fill"));
 
+  oyArray2d_Release( &clut );
   clut = oyArray2d_Create( NULL, 3, GRIDPOINTS*GRIDPOINTS*GRIDPOINTS,
                                  oyUINT16, NULL );
   clck = oyClock();
@@ -4207,6 +4211,7 @@ oyjlTESTRESULT_e testClut ()
   free(hash_text); hash_text = NULL;
   oyFilterNode_Release( &icc );
   oyConversion_Release( &cc );
+  oyProfile_Release( &pc.src_profile );
   oyProfile_Release( &pc.dst_profile );
   oyArray2d_Release( &clut );
 
@@ -4253,6 +4258,8 @@ oyjlTESTRESULT_e testClut ()
     oySetPersistentString( OY_DEFAULT_DISPLAY_WHITE_POINT_DAEMON, oySCOPE_USER, old_daemon, NULL);
     oyFree_m_(old_daemon);
   }
+  
+  oyStructList_Release( &oy_test_cache_ );
 
   OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 0, NULL )
 
