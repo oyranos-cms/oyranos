@@ -1334,6 +1334,8 @@ int          oyOptionChoicesGetWtPtN_( )
   int devices_n = oyConfigs_Count( devices );
   choice_list_n += devices_n;
 
+  oyOptions_Release( &options );
+
   return choice_list_n;
 }
 
