@@ -724,7 +724,7 @@ int            Configs_Modify        ( oyConfigs_s       * devices,
   oyConfig_s * device = 0;
   oyOption_s * o = 0, * o_tmp = 0;
   oyRectangle_s * rect = 0;
-  const oyRectangle_s * r = 0;
+  oyRectangle_s * r = 0;
   oyProfile_s * prof = 0;
   char * text = 0;
   int n = 0, i,
@@ -1100,6 +1100,7 @@ int            Configs_Modify        ( oyConfigs_s       * devices,
           tmp = oyRectangle_Show( (oyRectangle_s*)r );
           STRING_ADD( text, tmp );
           oyOption_Release( &o );
+          oyRectangle_Release( &r );
 
           o = oyOptions_Find( *oyConfig_GetOptions(device,"data"), "icc_profile",
                               oyNAME_PATTERN );
