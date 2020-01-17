@@ -367,14 +367,16 @@ OYAPI const char * OYEXPORT  oyObject_Show (
     if(oy_object_show_text_)
     {
       const char * tmp = oyStruct_GetInfo(st,oyNAME_NAME,0);
-      int len = tmp?strlen(tmp):0;
+      int silen = tmp?strlen(tmp):0, len = 64 + silen;
       if(len > t_len + 1)
       {
         free(oy_object_show_text_);
         oy_object_show_text_ = malloc(len*2);
       }
       oy_object_show_text_[0] = 0;
-      sprintf( oy_object_show_text_, "\"%s\"[%d] refs: %d", tmp, obj->id_, obj->ref_);
+      snprintf( oy_object_show_text_, silen > 64 ? 64 : silen, "\"%s", tmp );
+      if(silen > 64) sprintf( &oy_object_show_text_[strlen(oy_object_show_text_)], " ..." );
+      sprintf( &oy_object_show_text_[strlen(oy_object_show_text_)], "\"[%d] refs: %d", obj->id_, obj->ref_ );
       switch(st->type_)
       {
       case oyOBJECT_ARRAY2D_S:
