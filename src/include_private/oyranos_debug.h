@@ -221,6 +221,7 @@ void oy_backtrace_();
           { \
             int start = nptrs-1; \
             do { --start; } while( start >= 0 && (strstr(strings[start], "(main+") == NULL) ); \
+            if(start < 0) start = nptrs-1; /* handle threads */ \
             for(j = start; j >= 0; j--) \
             { \
               if(oy_debug) \
@@ -254,6 +255,18 @@ void oy_backtrace_();
                 else t = oyStringCopy( line, NULL ); \
                 txt = strchr( t, '+' ); \
                 if(txt) txt[0] = '\000'; \
+                if(!t || !t[0]) \
+                { /* fall back to adress */ \
+                  if(tmp) txt = strstr( tmp, "(+" ); \
+                  if(txt) t = oyStringCopy( &txt[1], NULL ); \
+                  if(t) txt = strchr(t,')'); \
+                  if(txt) txt[0] = '\000'; \
+                } \
+                if(strstr(t,addr)) \
+                { \
+                  oyFree_m_(t); \
+                  t = oyStringCopy( addr, NULL ); \
+                } \
                 if(j > 0 && (strstr(strings[j-1], t) != NULL) ) \
                   oyFree_m_(t); \
                 if(t) \
