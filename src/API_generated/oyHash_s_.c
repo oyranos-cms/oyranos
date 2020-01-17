@@ -412,9 +412,6 @@ oyHash_s_ * oyHash_Copy_ ( oyHash_s_ *hash, oyObject_s object )
   {
     s = hash;
     
-    //if(s->entry && s->entry->copy)
-      //s->entry = s->entry->copy( s->entry, 0 );
-
     if(oy_debug_objects >= 0 && s->oy_)
     {
       const char * t = getenv(OY_DEBUG_OBJECTS);

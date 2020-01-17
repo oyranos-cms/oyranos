@@ -88,7 +88,11 @@ oyStruct_s *       oyHash_GetPointer_( oyHash_s_         * hash,
                                        oyOBJECT_e          type )
 {
   if(oyHash_IsOf_( hash, type))
+  {
+    if(hash->entry && hash->entry->copy)
+      hash->entry = hash->entry->copy( hash->entry, 0 );
     return hash->entry;
+  }
   else
     return 0;
 }
