@@ -420,15 +420,13 @@ oyObserver_s_ * oyObserver_Copy__ ( oyObserver_s_ *observer, oyObject_s object )
  */
 oyObserver_s_ * oyObserver_Copy_ ( oyObserver_s_ *observer, oyObject_s object )
 {
-  oyObserver_s_ *s = observer;
+  oyObserver_s_ * s = observer;
 
   if(!observer)
     return 0;
 
   if(observer && !object)
   {
-    s = observer;
-    
     if(oy_debug_objects >= 0 && s->oy_)
     {
       const char * t = getenv(OY_DEBUG_OBJECTS);

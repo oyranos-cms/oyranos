@@ -388,15 +388,13 @@ oyProfileTag_s_ * oyProfileTag_Copy__ ( oyProfileTag_s_ *profiletag, oyObject_s 
  */
 oyProfileTag_s_ * oyProfileTag_Copy_ ( oyProfileTag_s_ *profiletag, oyObject_s object )
 {
-  oyProfileTag_s_ *s = profiletag;
+  oyProfileTag_s_ * s = profiletag;
 
   if(!profiletag)
     return 0;
 
   if(profiletag && !object)
   {
-    s = profiletag;
-    
     if(oy_debug_objects >= 0 && s->oy_)
     {
       const char * t = getenv(OY_DEBUG_OBJECTS);

@@ -396,15 +396,13 @@ oyCMMapi6_s_ * oyCMMapi6_Copy__ ( oyCMMapi6_s_ *cmmapi6, oyObject_s object )
  */
 oyCMMapi6_s_ * oyCMMapi6_Copy_ ( oyCMMapi6_s_ *cmmapi6, oyObject_s object )
 {
-  oyCMMapi6_s_ *s = cmmapi6;
+  oyCMMapi6_s_ * s = cmmapi6;
 
   if(!cmmapi6)
     return 0;
 
   if(cmmapi6 && !object)
   {
-    s = cmmapi6;
-    
     if(oy_debug_objects >= 0 && s->oy_)
     {
       const char * t = getenv(OY_DEBUG_OBJECTS);

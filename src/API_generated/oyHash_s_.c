@@ -403,15 +403,13 @@ oyHash_s_ * oyHash_Copy__ ( oyHash_s_ *hash, oyObject_s object )
  */
 oyHash_s_ * oyHash_Copy_ ( oyHash_s_ *hash, oyObject_s object )
 {
-  oyHash_s_ *s = hash;
+  oyHash_s_ * s = hash;
 
   if(!hash)
     return 0;
 
   if(hash && !object)
   {
-    s = hash;
-    
     if(oy_debug_objects >= 0 && s->oy_)
     {
       const char * t = getenv(OY_DEBUG_OBJECTS);

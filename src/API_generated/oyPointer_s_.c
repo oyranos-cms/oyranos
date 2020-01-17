@@ -449,15 +449,13 @@ oyPointer_s_ * oyPointer_Copy__ ( oyPointer_s_ *pointer, oyObject_s object )
  */
 oyPointer_s_ * oyPointer_Copy_ ( oyPointer_s_ *pointer, oyObject_s object )
 {
-  oyPointer_s_ *s = pointer;
+  oyPointer_s_ * s = pointer;
 
   if(!pointer)
     return 0;
 
   if(pointer && !object)
   {
-    s = pointer;
-    
     if(oy_debug_objects >= 0 && s->oy_)
     {
       const char * t = getenv(OY_DEBUG_OBJECTS);

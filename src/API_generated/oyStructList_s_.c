@@ -413,15 +413,13 @@ oyStructList_s_ * oyStructList_Copy__ ( oyStructList_s_ *structlist, oyObject_s 
  */
 oyStructList_s_ * oyStructList_Copy_ ( oyStructList_s_ *structlist, oyObject_s object )
 {
-  oyStructList_s_ *s = structlist;
+  oyStructList_s_ * s = structlist;
 
   if(!structlist)
     return 0;
 
   if(structlist && !object)
   {
-    s = structlist;
-    
     if(oy_debug_objects >= 0 && s->oy_)
     {
       const char * t = getenv(OY_DEBUG_OBJECTS);

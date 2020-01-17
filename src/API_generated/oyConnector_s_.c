@@ -377,15 +377,13 @@ oyConnector_s_ * oyConnector_Copy__ ( oyConnector_s_ *connector, oyObject_s obje
  */
 oyConnector_s_ * oyConnector_Copy_ ( oyConnector_s_ *connector, oyObject_s object )
 {
-  oyConnector_s_ *s = connector;
+  oyConnector_s_ * s = connector;
 
   if(!connector)
     return 0;
 
   if(connector && !object)
   {
-    s = connector;
-    
     if(oy_debug_objects >= 0 && s->oy_)
     {
       const char * t = getenv(OY_DEBUG_OBJECTS);

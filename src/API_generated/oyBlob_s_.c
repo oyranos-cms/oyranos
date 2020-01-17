@@ -403,15 +403,13 @@ oyBlob_s_ * oyBlob_Copy__ ( oyBlob_s_ *blob, oyObject_s object )
  */
 oyBlob_s_ * oyBlob_Copy_ ( oyBlob_s_ *blob, oyObject_s object )
 {
-  oyBlob_s_ *s = blob;
+  oyBlob_s_ * s = blob;
 
   if(!blob)
     return 0;
 
   if(blob && !object)
   {
-    s = blob;
-    
     if(oy_debug_objects >= 0 && s->oy_)
     {
       const char * t = getenv(OY_DEBUG_OBJECTS);

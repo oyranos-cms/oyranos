@@ -399,15 +399,13 @@ oyNamedColor_s_ * oyNamedColor_Copy__ ( oyNamedColor_s_ *namedcolor, oyObject_s 
  */
 oyNamedColor_s_ * oyNamedColor_Copy_ ( oyNamedColor_s_ *namedcolor, oyObject_s object )
 {
-  oyNamedColor_s_ *s = namedcolor;
+  oyNamedColor_s_ * s = namedcolor;
 
   if(!namedcolor)
     return 0;
 
   if(namedcolor && !object)
   {
-    s = namedcolor;
-    
     if(oy_debug_objects >= 0 && s->oy_)
     {
       const char * t = getenv(OY_DEBUG_OBJECTS);

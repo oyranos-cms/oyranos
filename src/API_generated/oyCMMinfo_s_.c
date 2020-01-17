@@ -422,15 +422,13 @@ oyCMMinfo_s_ * oyCMMinfo_Copy__ ( oyCMMinfo_s_ *cmminfo, oyObject_s object )
  */
 oyCMMinfo_s_ * oyCMMinfo_Copy_ ( oyCMMinfo_s_ *cmminfo, oyObject_s object )
 {
-  oyCMMinfo_s_ *s = cmminfo;
+  oyCMMinfo_s_ * s = cmminfo;
 
   if(!cmminfo)
     return 0;
 
   if(cmminfo && !object)
   {
-    s = cmminfo;
-    
     if(oy_debug_objects >= 0 && s->oy_)
     {
       const char * t = getenv(OY_DEBUG_OBJECTS);

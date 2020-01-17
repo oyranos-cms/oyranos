@@ -484,15 +484,13 @@ oyFilterNode_s_ * oyFilterNode_Copy__ ( oyFilterNode_s_ *filternode, oyObject_s 
  */
 oyFilterNode_s_ * oyFilterNode_Copy_ ( oyFilterNode_s_ *filternode, oyObject_s object )
 {
-  oyFilterNode_s_ *s = filternode;
+  oyFilterNode_s_ * s = filternode;
 
   if(!filternode)
     return 0;
 
   if(filternode && !object)
   {
-    s = filternode;
-    
     if(oy_debug_objects >= 0 && s->oy_)
     {
       const char * t = getenv(OY_DEBUG_OBJECTS);

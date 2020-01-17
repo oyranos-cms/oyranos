@@ -363,15 +363,13 @@ oyLis_s_ * oyLis_Copy__ ( oyLis_s_ *lis, oyObject_s object )
  */
 oyLis_s_ * oyLis_Copy_ ( oyLis_s_ *lis, oyObject_s object )
 {
-  oyLis_s_ *s = lis;
+  oyLis_s_ * s = lis;
 
   if(!lis)
     return 0;
 
   if(lis && !object)
   {
-    s = lis;
-    
     if(oy_debug_objects >= 0 && s->oy_)
     {
       const char * t = getenv(OY_DEBUG_OBJECTS);

@@ -377,15 +377,13 @@ oyFilterGraph_s_ * oyFilterGraph_Copy__ ( oyFilterGraph_s_ *filtergraph, oyObjec
  */
 oyFilterGraph_s_ * oyFilterGraph_Copy_ ( oyFilterGraph_s_ *filtergraph, oyObject_s object )
 {
-  oyFilterGraph_s_ *s = filtergraph;
+  oyFilterGraph_s_ * s = filtergraph;
 
   if(!filtergraph)
     return 0;
 
   if(filtergraph && !object)
   {
-    s = filtergraph;
-    
     if(oy_debug_objects >= 0 && s->oy_)
     {
       const char * t = getenv(OY_DEBUG_OBJECTS);

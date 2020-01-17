@@ -374,15 +374,13 @@ oyCMMapiFilters_s_ * oyCMMapiFilters_Copy__ ( oyCMMapiFilters_s_ *cmmapifilters,
  */
 oyCMMapiFilters_s_ * oyCMMapiFilters_Copy_ ( oyCMMapiFilters_s_ *cmmapifilters, oyObject_s object )
 {
-  oyCMMapiFilters_s_ *s = cmmapifilters;
+  oyCMMapiFilters_s_ * s = cmmapifilters;
 
   if(!cmmapifilters)
     return 0;
 
   if(cmmapifilters && !object)
   {
-    s = cmmapifilters;
-    
     if(oy_debug_objects >= 0 && s->oy_)
     {
       const char * t = getenv(OY_DEBUG_OBJECTS);

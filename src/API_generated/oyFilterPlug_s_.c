@@ -381,15 +381,13 @@ oyFilterPlug_s_ * oyFilterPlug_Copy__ ( oyFilterPlug_s_ *filterplug, oyObject_s 
  */
 oyFilterPlug_s_ * oyFilterPlug_Copy_ ( oyFilterPlug_s_ *filterplug, oyObject_s object )
 {
-  oyFilterPlug_s_ *s = filterplug;
+  oyFilterPlug_s_ * s = filterplug;
 
   if(!filterplug)
     return 0;
 
   if(filterplug && !object)
   {
-    s = filterplug;
-    
     if(oy_debug_objects >= 0 && s->oy_)
     {
       const char * t = getenv(OY_DEBUG_OBJECTS);

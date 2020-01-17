@@ -391,15 +391,13 @@ oyArray2d_s_ * oyArray2d_Copy__ ( oyArray2d_s_ *array2d, oyObject_s object )
  */
 oyArray2d_s_ * oyArray2d_Copy_ ( oyArray2d_s_ *array2d, oyObject_s object )
 {
-  oyArray2d_s_ *s = array2d;
+  oyArray2d_s_ * s = array2d;
 
   if(!array2d)
     return 0;
 
   if(array2d && !object)
   {
-    s = array2d;
-    
     if(oy_debug_objects >= 0 && s->oy_)
     {
       const char * t = getenv(OY_DEBUG_OBJECTS);

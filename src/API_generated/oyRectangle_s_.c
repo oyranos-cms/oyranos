@@ -367,15 +367,13 @@ oyRectangle_s_ * oyRectangle_Copy__ ( oyRectangle_s_ *rectangle, oyObject_s obje
  */
 oyRectangle_s_ * oyRectangle_Copy_ ( oyRectangle_s_ *rectangle, oyObject_s object )
 {
-  oyRectangle_s_ *s = rectangle;
+  oyRectangle_s_ * s = rectangle;
 
   if(!rectangle)
     return 0;
 
   if(rectangle && !object)
   {
-    s = rectangle;
-    
     if(oy_debug_objects >= 0 && s->oy_)
     {
       const char * t = getenv(OY_DEBUG_OBJECTS);

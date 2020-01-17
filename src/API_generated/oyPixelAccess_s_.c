@@ -401,15 +401,13 @@ oyPixelAccess_s_ * oyPixelAccess_Copy__ ( oyPixelAccess_s_ *pixelaccess, oyObjec
  */
 oyPixelAccess_s_ * oyPixelAccess_Copy_ ( oyPixelAccess_s_ *pixelaccess, oyObject_s object )
 {
-  oyPixelAccess_s_ *s = pixelaccess;
+  oyPixelAccess_s_ * s = pixelaccess;
 
   if(!pixelaccess)
     return 0;
 
   if(pixelaccess && !object)
   {
-    s = pixelaccess;
-    
     if(oy_debug_objects >= 0 && s->oy_)
     {
       const char * t = getenv(OY_DEBUG_OBJECTS);

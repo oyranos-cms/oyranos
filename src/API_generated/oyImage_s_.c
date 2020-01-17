@@ -401,15 +401,13 @@ oyImage_s_ * oyImage_Copy__ ( oyImage_s_ *image, oyObject_s object )
  */
 oyImage_s_ * oyImage_Copy_ ( oyImage_s_ *image, oyObject_s object )
 {
-  oyImage_s_ *s = image;
+  oyImage_s_ * s = image;
 
   if(!image)
     return 0;
 
   if(image && !object)
   {
-    s = image;
-    
     if(oy_debug_objects >= 0 && s->oy_)
     {
       const char * t = getenv(OY_DEBUG_OBJECTS);

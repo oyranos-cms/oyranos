@@ -400,15 +400,13 @@ oyFilterSocket_s_ * oyFilterSocket_Copy__ ( oyFilterSocket_s_ *filtersocket, oyO
  */
 oyFilterSocket_s_ * oyFilterSocket_Copy_ ( oyFilterSocket_s_ *filtersocket, oyObject_s object )
 {
-  oyFilterSocket_s_ *s = filtersocket;
+  oyFilterSocket_s_ * s = filtersocket;
 
   if(!filtersocket)
     return 0;
 
   if(filtersocket && !object)
   {
-    s = filtersocket;
-    
     if(oy_debug_objects >= 0 && s->oy_)
     {
       const char * t = getenv(OY_DEBUG_OBJECTS);

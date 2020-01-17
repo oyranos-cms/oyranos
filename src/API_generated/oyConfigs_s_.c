@@ -374,15 +374,13 @@ oyConfigs_s_ * oyConfigs_Copy__ ( oyConfigs_s_ *configs, oyObject_s object )
  */
 oyConfigs_s_ * oyConfigs_Copy_ ( oyConfigs_s_ *configs, oyObject_s object )
 {
-  oyConfigs_s_ *s = configs;
+  oyConfigs_s_ * s = configs;
 
   if(!configs)
     return 0;
 
   if(configs && !object)
   {
-    s = configs;
-    
     if(oy_debug_objects >= 0 && s->oy_)
     {
       const char * t = getenv(OY_DEBUG_OBJECTS);

@@ -502,15 +502,13 @@ oyProfile_s_ * oyProfile_Copy__ ( oyProfile_s_ *profile, oyObject_s object )
  */
 oyProfile_s_ * oyProfile_Copy_ ( oyProfile_s_ *profile, oyObject_s object )
 {
-  oyProfile_s_ *s = profile;
+  oyProfile_s_ * s = profile;
 
   if(!profile)
     return 0;
 
   if(profile && !object)
   {
-    s = profile;
-    
     if(oy_debug_objects >= 0 && s->oy_)
     {
       const char * t = getenv(OY_DEBUG_OBJECTS);

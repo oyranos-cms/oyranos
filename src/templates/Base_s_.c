@@ -361,15 +361,13 @@ static void oy{{ class.baseName }}_StaticFree_           ( void )
  */
 {{ class.privName }} * oy{{ class.baseName }}_Copy_ ( {{ class.privName }} *{{ class.baseName|lower }}, oyObject_s object )
 {
-  {{ class.privName }} *s = {{ class.baseName|lower }};
+  {{ class.privName }} * s = {{ class.baseName|lower }};
 
   if(!{{ class.baseName|lower }})
     return 0;
 
   if({{ class.baseName|lower }} && !object)
   {
-    s = {{ class.baseName|lower }};
-    {% block oyClass_Copy_notObject %}{% endblock %}
     if(oy_debug_objects >= 0 && s->oy_)
     {
       const char * t = getenv(OY_DEBUG_OBJECTS);

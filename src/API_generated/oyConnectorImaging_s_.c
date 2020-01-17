@@ -442,15 +442,13 @@ oyConnectorImaging_s_ * oyConnectorImaging_Copy__ ( oyConnectorImaging_s_ *conne
  */
 oyConnectorImaging_s_ * oyConnectorImaging_Copy_ ( oyConnectorImaging_s_ *connectorimaging, oyObject_s object )
 {
-  oyConnectorImaging_s_ *s = connectorimaging;
+  oyConnectorImaging_s_ * s = connectorimaging;
 
   if(!connectorimaging)
     return 0;
 
   if(connectorimaging && !object)
   {
-    s = connectorimaging;
-    
     if(oy_debug_objects >= 0 && s->oy_)
     {
       const char * t = getenv(OY_DEBUG_OBJECTS);

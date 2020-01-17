@@ -405,15 +405,13 @@ oyFilterCore_s_ * oyFilterCore_Copy__ ( oyFilterCore_s_ *filtercore, oyObject_s 
  */
 oyFilterCore_s_ * oyFilterCore_Copy_ ( oyFilterCore_s_ *filtercore, oyObject_s object )
 {
-  oyFilterCore_s_ *s = filtercore;
+  oyFilterCore_s_ * s = filtercore;
 
   if(!filtercore)
     return 0;
 
   if(filtercore && !object)
   {
-    s = filtercore;
-    
     if(oy_debug_objects >= 0 && s->oy_)
     {
       const char * t = getenv(OY_DEBUG_OBJECTS);

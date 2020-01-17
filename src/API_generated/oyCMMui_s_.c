@@ -419,15 +419,13 @@ oyCMMui_s_ * oyCMMui_Copy__ ( oyCMMui_s_ *cmmui, oyObject_s object )
  */
 oyCMMui_s_ * oyCMMui_Copy_ ( oyCMMui_s_ *cmmui, oyObject_s object )
 {
-  oyCMMui_s_ *s = cmmui;
+  oyCMMui_s_ * s = cmmui;
 
   if(!cmmui)
     return 0;
 
   if(cmmui && !object)
   {
-    s = cmmui;
-    
     if(oy_debug_objects >= 0 && s->oy_)
     {
       const char * t = getenv(OY_DEBUG_OBJECTS);

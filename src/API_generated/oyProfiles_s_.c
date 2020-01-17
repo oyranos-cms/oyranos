@@ -374,15 +374,13 @@ oyProfiles_s_ * oyProfiles_Copy__ ( oyProfiles_s_ *profiles, oyObject_s object )
  */
 oyProfiles_s_ * oyProfiles_Copy_ ( oyProfiles_s_ *profiles, oyObject_s object )
 {
-  oyProfiles_s_ *s = profiles;
+  oyProfiles_s_ * s = profiles;
 
   if(!profiles)
     return 0;
 
   if(profiles && !object)
   {
-    s = profiles;
-    
     if(oy_debug_objects >= 0 && s->oy_)
     {
       const char * t = getenv(OY_DEBUG_OBJECTS);

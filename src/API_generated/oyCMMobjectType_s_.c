@@ -368,15 +368,13 @@ oyCMMobjectType_s_ * oyCMMobjectType_Copy__ ( oyCMMobjectType_s_ *cmmobjecttype,
  */
 oyCMMobjectType_s_ * oyCMMobjectType_Copy_ ( oyCMMobjectType_s_ *cmmobjecttype, oyObject_s object )
 {
-  oyCMMobjectType_s_ *s = cmmobjecttype;
+  oyCMMobjectType_s_ * s = cmmobjecttype;
 
   if(!cmmobjecttype)
     return 0;
 
   if(cmmobjecttype && !object)
   {
-    s = cmmobjecttype;
-    
     if(oy_debug_objects >= 0 && s->oy_)
     {
       const char * t = getenv(OY_DEBUG_OBJECTS);

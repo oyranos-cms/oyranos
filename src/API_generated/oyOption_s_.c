@@ -431,15 +431,13 @@ oyOption_s_ * oyOption_Copy__ ( oyOption_s_ *option, oyObject_s object )
  */
 oyOption_s_ * oyOption_Copy_ ( oyOption_s_ *option, oyObject_s object )
 {
-  oyOption_s_ *s = option;
+  oyOption_s_ * s = option;
 
   if(!option)
     return 0;
 
   if(option && !object)
   {
-    s = option;
-    
     if(oy_debug_objects >= 0 && s->oy_)
     {
       const char * t = getenv(OY_DEBUG_OBJECTS);

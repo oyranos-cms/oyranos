@@ -396,15 +396,13 @@ oyConversion_s_ * oyConversion_Copy__ ( oyConversion_s_ *conversion, oyObject_s 
  */
 oyConversion_s_ * oyConversion_Copy_ ( oyConversion_s_ *conversion, oyObject_s object )
 {
-  oyConversion_s_ *s = conversion;
+  oyConversion_s_ * s = conversion;
 
   if(!conversion)
     return 0;
 
   if(conversion && !object)
   {
-    s = conversion;
-    
     if(oy_debug_objects >= 0 && s->oy_)
     {
       const char * t = getenv(OY_DEBUG_OBJECTS);

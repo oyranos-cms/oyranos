@@ -454,15 +454,13 @@ oyCMMapi7_s_ * oyCMMapi7_Copy__ ( oyCMMapi7_s_ *cmmapi7, oyObject_s object )
  */
 oyCMMapi7_s_ * oyCMMapi7_Copy_ ( oyCMMapi7_s_ *cmmapi7, oyObject_s object )
 {
-  oyCMMapi7_s_ *s = cmmapi7;
+  oyCMMapi7_s_ * s = cmmapi7;
 
   if(!cmmapi7)
     return 0;
 
   if(cmmapi7 && !object)
   {
-    s = cmmapi7;
-    
     if(oy_debug_objects >= 0 && s->oy_)
     {
       const char * t = getenv(OY_DEBUG_OBJECTS);
