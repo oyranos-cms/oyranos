@@ -64,7 +64,7 @@
 #include "oyranos_string.h"
 oyObject_s testobj = NULL;
 extern "C" { char * oyAlphaPrint_(int); }
-#define OYJL_TEST_MAIN_SETUP  printf("\n    Oyranos test2\n"); if(getenv(OY_DEBUG)) oy_debug = atoi(getenv(OY_DEBUG));  if(getenv(OY_DEBUG_SIGNALS)) oy_debug_signals = atoi(getenv(OY_DEBUG_SIGNALS)); if(getenv(OY_DEBUG_OBJECTS)) oy_debug_objects = atoi(getenv(OY_DEBUG_OBJECTS)); // else  oy_debug_objects = 11;  // oy_debug_signals = 1;
+#define OYJL_TEST_MAIN_SETUP  printf("\n    Oyranos test2\n"); if(getenv(OY_DEBUG)) oy_debug = atoi(getenv(OY_DEBUG));  if(getenv(OY_DEBUG_SIGNALS)) oy_debug_signals = atoi(getenv(OY_DEBUG_SIGNALS)); if(getenv(OY_DEBUG_OBJECTS)) oy_debug_objects = atoi(getenv(OY_DEBUG_OBJECTS)); //else  oy_debug_objects = 439;  // oy_debug_signals = 1;
 #define OYJL_TEST_MAIN_FINISH printf("\n    Oyranos test2 finished\n\n"); if(testobj) testobj->release( &testobj ); if(verbose) { char * t = oyAlphaPrint_(0); puts(t); free(t); } oyLibConfigRelease(0);
 #include <oyjl_test_main.h>
 
@@ -3447,6 +3447,7 @@ typedef struct {
 } PrivColorContext;
 typedef void CompScreen;
 typedef struct pcc_s {
+  char * id;
   oyConversion_s * cc;
   oyArray2d_s * clut;
   char * hash_text;
@@ -3474,8 +3475,20 @@ static void iccProgressCallback (    double              progress_zero_till_one,
   if(progress_zero_till_one >= 1.0)
   {
     setupColourTable_cb( pcontext );
-    free(pcontext);
   }
+}
+static int privateClutContextRelease( oyPointer * data )
+{
+  pcc_t ** context = (pcc_t **) data;
+  pcc_t * pcc   = *context;
+  oyConversion_Release( &pcc->cc );
+  oyArray2d_Release( &pcc->clut );
+  oyFree_m_( pcc->hash_text );
+  oyHash_Release( &pcc->hash );
+  fprintf(zout, DBG_STRING "%s\n", DBG_ARGS, pcc->id );
+  free(pcc->id);
+  oyFree_m_( pcc );
+  return 0;
 }
 
 #include <oyranos_threads.h>
@@ -3538,8 +3551,6 @@ static oyConversion_s * setupColourConversion (
                                  ptr[0], pixel_layout, src_profile, 0 );
       image_out= oyImage_Create( GRIDPOINTS,GRIDPOINTS*GRIDPOINTS,
                                  ptr[0], pixel_layout, dst_profile, 0 );
-
-      oyProfile_Release( &src_profile );
 
       cc = oyConversion_CreateBasicPixels( image_in, image_out, options, 0 );
       if (cc == NULL)
@@ -3672,6 +3683,13 @@ static int computeClut( oyJob_s * job )
   fprintf(zout, DBG_STRING "hash_text: %s %s %s\n", DBG_ARGS, verbose?pcontext->hash_text:"use -v (verbose) to see;", oyArray2d_Show(pcontext->clut, 3), clut==NULL?"newly computed":"already there" );
   return 0;
 }
+int clut_finished = 0;
+static int finishClut( oyJob_s * job )
+{ 
+  fprintf(zout, DBG_STRING "\n", DBG_ARGS );
+  clut_finished = 1;
+  return 0;
+}
 static oyJob_s *   setupColourJob    ( oyConversion_s   ** cc,
                                        char             ** hash_text,
                                        oyHash_s         ** hash,
@@ -3681,6 +3699,7 @@ static oyJob_s *   setupColourJob    ( oyConversion_s   ** cc,
       job->cb_progress = iccProgressCallback;
       oyPointer_s * oy_ptr = oyPointer_New(0);
       pcc_t * pcc   = (pcc_t*)calloc( sizeof(pcc_t), 1 );
+      oyjlStringAdd( &pcc->id, 0,0, "setupColourJob[%d]", job->id_ );
       pcc->cc = *cc;
       *cc = NULL;
       pcc->hash_text = *hash_text;
@@ -3692,11 +3711,12 @@ static oyJob_s *   setupColourJob    ( oyConversion_s   ** cc,
       oyPointer_Set( oy_ptr,
                      __FILE__,
                      "struct pcc_s*",
-                     pcc, 0, 0 );
+                     pcc, "privateClutContextRelease", privateClutContextRelease );
       job->cb_progress_context = (oyStruct_s*) oyPointer_Copy( oy_ptr, 0 );
       job->context = (oyStruct_s*) oyPointer_Copy( oy_ptr, 0 );
       job->work = computeClut;
-      job->finish = NULL; /* optionally call from main thread, e.g. for texture creation in updateOutputConfiguration() */
+      job->finish = finishClut; /* optionally call from main thread, e.g. for texture creation in updateOutputConfiguration() */
+      oyPointer_Release( &oy_ptr );
       return job;
 }
 static void          runColourClut   ( PrivColorContext  * ccontext,
@@ -3708,8 +3728,10 @@ static void          runColourClut   ( PrivColorContext  * ccontext,
   oyArray2d_s * clut;
   int error = 0;
   int ** ptr;
+  int id = entry->oy_->id_;
 
   fillColourClut( ccontext );
+  printf("\nHash ID: %d refs: %d\n\n", id, entry->oy_->ref_);
 
         clut = oyArray2d_Create( NULL, GRIDPOINTS*3, GRIDPOINTS*GRIDPOINTS,
                                  oyUINT16, NULL );
@@ -3735,6 +3757,7 @@ clean_runColourClut:
   if(hash_text)
   { cicc_free(hash_text); hash_text = 0; }
   oyFilterNode_Release( &icc );
+  oyHash_Release( &entry );
 }
 static int     setupColourTable      ( PrivColorContext  * ccontext,
                                        int                 advanced )
@@ -3759,7 +3782,7 @@ static int     setupColourTable      ( PrivColorContext  * ccontext,
       int flags = 0;
       int ** ptr;
 
-      oyProfile_s * src_profile = ccontext->src_profile;
+      oyProfile_s * src_profile = oyProfile_Copy( ccontext->src_profile, 0 );
       oyOptions_s * options = 0;
 
       oyPixel_t pixel_layout = OY_TYPE_123_16;
@@ -3908,6 +3931,7 @@ static int     setupColourTable      ( PrivColorContext  * ccontext,
           DBG_S_( oyPrintTime() );
           dl = oyProfile_FromMem( oyBlob_GetSize( blob ),
                                   oyBlob_GetPointer( blob ), 0,testobj );
+          oyBlob_Release( &blob );
           const char * fn;
           int j = 0;
           while((fn = oyProfile_GetFileName( dl, j )) != NULL)
@@ -4005,6 +4029,7 @@ oyjlTESTRESULT_e testClut ()
 
   oyTestCacheListClear_();
 
+  oyConversion_s * cc = NULL;
   uint32_t icc_profile_flags =oyICCProfileSelectionFlagsFromOptions( OY_CMM_STD,
                                        "//" OY_TYPE_STD "/icc_color", NULL, 0 );
   PrivColorContext pc = {
@@ -4053,14 +4078,17 @@ oyjlTESTRESULT_e testClut ()
                                  oyUINT16, NULL );
   clck = oyClock();
   for(i = 0; i < 10; ++i)
-    setupColourConversion( pc.dst_profile, pc.src_profile, 0, pc.output_name, clut );
+  {
+    cc = setupColourConversion( pc.dst_profile, pc.src_profile, 0, pc.output_name, clut );
+    oyConversion_Release( &cc );
+  }
   clck = oyClock() - clck;
   fprintf( zout, "setupColourConversion()\t10\t\%s\n",
                  oyjlProfilingToString(10,clck/(double)CLOCKS_PER_SEC,"node"));
 
   oyProfile_Release( &pc.dst_profile );
   pc.dst_profile = oyProfile_FromName( "Lab.icc", icc_profile_flags, NULL );
-  oyConversion_s * cc = setupColourConversion( pc.dst_profile, pc.src_profile, 0, pc.output_name, clut );
+  cc = setupColourConversion( pc.dst_profile, pc.src_profile, 0, pc.output_name, clut );
   clck = oyClock();
   for(i = 0; i < 10; ++i)
   {
@@ -4093,6 +4121,17 @@ oyjlTESTRESULT_e testClut ()
   oyFilterNode_Release( &icc );
   fprintf( zout, "getColourHash()       \t%d\t%s\n",i,
                  oyjlProfilingToString(i,clck/(double)CLOCKS_PER_SEC,"hash"));
+
+  for( i = 0; i < 10; ++i )
+  {
+    oyJobResult();
+    if(clut_finished)
+      break;
+    else
+      sleep(1); // wait for the job to finish
+  }
+  if(clut_finished == 0)
+    fprintf( zout, "Job did not finish: expecting problems\n" );
 
   clck = oyClock();
   for(i = 0; i < 10; ++i)
@@ -4161,6 +4200,7 @@ oyjlTESTRESULT_e testClut ()
   hash = getColourHash( icc, &hash_text );
   oyHash_SetPointer( hash, (oyStruct_s*) clut );
   clck = oyClock() - clck;
+  oyHash_Release( &hash );
   fprintf( zout, "oyHash_SetPointer(PP) \t%d\t%s\n",i,
                  oyjlProfilingToString(i,clck/(double)CLOCKS_PER_SEC,"hash"));
 
@@ -4214,7 +4254,7 @@ oyjlTESTRESULT_e testClut ()
     oyFree_m_(old_daemon);
   }
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0, NULL )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 0, NULL )
 
   return result;
 }
