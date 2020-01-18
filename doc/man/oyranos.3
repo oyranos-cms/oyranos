@@ -70,7 +70,13 @@ OY_DEBUG_WRITE
 .br
 together with OY_DEBUG is used to tell, that a file output is appreciated. Writing files will usually slow down debugging.
 .TP
-OY_BACKTRACE can be set to a debug message string and will then place a backtrace text from gdb into the console. That needs the debug message to be visible. 
+OY_BACKTRACE 
+.br
+can be set to a debug message string and will then place a backtrace text from gdb into the console. That needs the debug message to be visible. 
+.TP
+OY_DEBUG_THREADS
+.br
+can be set to a integer like OY_DEBUG in order to print thread handling
 .SH AUTHOR
 Kai-Uwe Behrmann (ku.b (at) gmx.de)
 .SH "SEE ALSO"

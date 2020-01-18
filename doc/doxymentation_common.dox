@@ -72,6 +72,8 @@
     ::OY_BACKTRACE can be set to a debug message string and will then place
     a backtrace text from gdb into the console. That needs the debug message
     to be visible.
+    ::OY_DEBUG_THREADS can be set to a integer like ::OY_DEBUG in order to print
+    thread handling
  */
 
 /** @page extending_oyranos Extending Oyranos

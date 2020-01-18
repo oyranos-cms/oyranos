@@ -31,6 +31,11 @@
 #include "oyranos_string.h"
 #include "oyranos_threads.h"
 
+#ifdef HAVE_BACKTRACE
+#include <execinfo.h>
+#define BT_BUF_SIZE 100
+#endif
+
 /*
 oyCMM_s         trds_cmm_module;
 oyCMMapi10_s    trds_api10_cmm;
@@ -104,6 +109,8 @@ extern "C" {
 
 
 oyStructList_s * oy_threads_ = NULL;
+int trds_debug = 0;
+int trds_reset = 0;
 
 /**
  *  @brief   start a thread with a given function
@@ -166,8 +173,11 @@ void       oyLockRelease_              ( oyPointer         lock,
 {
   oyMutex_s * ms = (oyMutex_s*)lock;
   if(ms->ref != 0)
+  {
     WARNc3_S("%s %d ref counter=%d", marker, line, ms->ref);
-    
+    OY_BACKTRACE_PRINT
+  }
+
   oyMutexDestroy_m( &ms->m );
   /* paranoid */
   ms->ref = -10000;
@@ -270,11 +280,18 @@ void oyThreadsInit_( int flags )
   if(!oy_job_list_)
   {
     oyBlob_s * blob;
+    if(getenv("OY_DEBUG_THREADS"))
+      trds_debug = atoi(getenv("OY_DEBUG_THREADS"));
+
     /* check threading */
     if(!oyThreadLockingReady())
       /* initialise our locking */
       oyThreadLockingSet( oyStruct_LockCreate_, oyLockRelease_,
                           oyLock_, oyUnLock_ );
+
+
+    if(trds_debug)
+      trds_msg( oy_debug?oyMSG_DBG:oyMSG_WARN, 0, OY_DBG_FORMAT_ "flags: %d", OY_DBG_ARGS_, flags );
 
     oy_job_list_ = oyStructList_Create( oyOBJECT_NONE, "oy_job_list_", NULL );
     oy_job_message_list_ = oyStructList_Create( oyOBJECT_NONE,
@@ -311,8 +328,8 @@ void oyThreadsInit_( int flags )
       oyOption_SetFromInt( o, i+1, 0, 0 );
 
       oyThreadCreate( oyJobWorker, (oyPointer)o, &background_thread );
-      if(oy_debug)
-        trds_msg( oyMSG_DBG, 0, "thread created [%ld]\n", background_thread);
+      if(oy_debug || trds_debug)
+        trds_msg( oy_debug?oyMSG_DBG:oyMSG_WARN, 0, "thread created [%ld]\n", background_thread);
 
       blob = oyBlob_New(0);
       oyBlob_SetFromStatic( blob, (oyPointer)background_thread, 0, "oyThread_t" );
@@ -423,6 +440,24 @@ int                oyJob_Get_        ( oyJob_s          ** job,
     pthread_cond_wait( &m->cond, &m->mutex );
   }
 #endif
+  if(trds_reset && finished == 0)
+  {
+    oyMutex_s * ms = (oyMutex_s*) oy_job_list_->oy_->lock_;
+    if(oy_debug || trds_debug)
+    {
+      trds_msg( oy_debug?oyMSG_DBG:oyMSG_WARN, 0, OY_DBG_FORMAT_ "thread[%d] is going to stop - job list refs: %d", OY_DBG_ARGS_, oyThreadIdTrds(), ms->ref );
+      OY_BACKTRACE_PRINT
+    }
+    if(ms->ref == 1)
+    {
+      if(oy_debug || trds_debug)
+        trds_msg( oy_debug?oyMSG_DBG:oyMSG_WARN, 0, OY_DBG_FORMAT_ "thread[%d] release job list: %d", OY_DBG_ARGS_, oyThreadIdTrds(), ms->ref );
+      oyObject_UnLock( oy_job_list_->oy_, __func__, __LINE__ );
+      oyStructList_Release( &oy_job_list_ );
+    } else
+      oyObject_UnLock( oy_job_list_->oy_, __func__, __LINE__ );
+    return -1;
+  }
 
   if(oy_debug >= 2)
   {
@@ -502,11 +537,12 @@ void *             oyJobWorker       ( void              * data )
   int thread_id = oyOption_GetValueInt(o,0);
   oyOption_Release( &o );
 
-  while(1)
+  while(!trds_reset)
   {
     int flags = 0;
     oyJob_s * job = NULL;
     oyJob_Get_( &job, 0 );
+    if(!oy_threads_) break;
     if(job)
     {
       int finished = 1;
@@ -543,7 +579,7 @@ void               oyJobResult_      ( void )
     {
       msg->cb_progress( msg->progress_zero_till_one, msg->status_text, msg->thread_id_, msg->job_id, msg->cb_progress_context );
       if(msg->cb_progress_context && msg->cb_progress_context->release)
-        msg->cb_progress_context = msg->cb_progress_context->release( &msg->cb_progress_context );
+        msg->cb_progress_context->release( &msg->cb_progress_context );
     }
 
     if(msg->status_text)
@@ -575,6 +611,7 @@ void               oyJobResult_      ( void )
 int                trdsCMMInit       ( oyStruct_s        * filter OY_UNUSED )
 {
   int error = 0;
+  trds_reset = 0;
   return error;
 }
 /** Function trdsCMMReset
@@ -587,6 +624,44 @@ int                trdsCMMInit       ( oyStruct_s        * filter OY_UNUSED )
 int                trdsCMMReset      ( oyStruct_s        * filter OY_UNUSED )
 {
   int error = 0;
+  int count = oyStructList_Count( oy_threads_ ), i;
+
+  if(oy_debug || trds_debug)
+  {
+    trds_msg( oy_debug?oyMSG_DBG:oyMSG_WARN, 0, OY_DBG_FORMAT_ "%s", OY_DBG_ARGS_, !trds_reset ? "start reset" : "nothing to be done" );
+    OY_BACKTRACE_PRINT
+  }
+
+  if(trds_reset) return 0;
+
+  trds_reset = 1;
+
+  if(oy_job_list_)
+  {
+    oyMutex_t * m = (oyMutex_t*) oy_job_list_->oy_->lock_;
+#if defined(_WIN32) && !defined(__GNU__)
+#else
+    for( i = 0; i < count ; ++i )
+    {
+      if(oy_debug || trds_debug)
+        trds_msg( oy_debug?oyMSG_DBG:oyMSG_WARN, 0, OY_DBG_FORMAT_ "signal condition to thread", OY_DBG_ARGS_ );
+      pthread_cond_signal( &m->cond );
+    }
+#endif
+  }
+  oySleep(0.1);
+
+  if((oy_debug || trds_debug) && oy_job_message_list_)
+    trds_msg( oy_debug?oyMSG_DBG:oyMSG_WARN, 0, OY_DBG_FORMAT_ "release message queue", OY_DBG_ARGS_ );
+  oyStructList_Release( &oy_job_message_list_ );
+
+  if((oy_debug || trds_debug) && oy_threads_)
+  {
+    trds_msg( oy_debug?oyMSG_DBG:oyMSG_WARN, 0, OY_DBG_FORMAT_ "%s %d", OY_DBG_ARGS_, "release thread list", count );
+    OY_BACKTRACE_PRINT
+  }
+  oyStructList_Release( &oy_threads_ );
+
   return error;
 }
 
