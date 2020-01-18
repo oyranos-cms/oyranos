@@ -783,6 +783,7 @@ void             oiccChangeNodeOption( oyOptions_s       * f_options,
                                  strrchr(__FILE__,'/') + 1 : __FILE__ ,__LINE__,
                          key, tmp?tmp:"????");
               }
+  oyOption_Release( &o );
 }
 
 void     oiccFilterGraph_CountNodes  ( oyFilterGraph_s   * g,
