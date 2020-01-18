@@ -2096,7 +2096,6 @@ oyPointer l2cmsFilterNode_CmmIccContextToMem (
                  OY_DBG_ARGS_, i, reg, oyProfile_GetText(p,oyNAME_DESCRIPTION) );
     oyOption_Release( &o );
     lps[ profiles_n++ ] = l2cmsAddProfile( p );
-    p = oyProfile_Copy( p, 0 );
     error = oyProfiles_MoveIn( profs, &p, -1 );
   }
 
