@@ -64,7 +64,7 @@
 #include "oyranos_string.h"
 oyObject_s testobj = NULL;
 extern "C" { char * oyAlphaPrint_(int); }
-#define OYJL_TEST_MAIN_SETUP  printf("\n    Oyranos test2\n"); if(getenv(OY_DEBUG)) oy_debug = atoi(getenv(OY_DEBUG));  if(getenv(OY_DEBUG_SIGNALS)) oy_debug_signals = atoi(getenv(OY_DEBUG_SIGNALS)); if(getenv(OY_DEBUG_OBJECTS)) oy_debug_objects = atoi(getenv(OY_DEBUG_OBJECTS)); //else  oy_debug_objects = 5467;  // oy_debug_signals = 1;
+#define OYJL_TEST_MAIN_SETUP  printf("\n    Oyranos test2\n"); if(getenv(OY_DEBUG)) oy_debug = atoi(getenv(OY_DEBUG));  if(getenv(OY_DEBUG_SIGNALS)) oy_debug_signals = atoi(getenv(OY_DEBUG_SIGNALS)); if(getenv(OY_DEBUG_OBJECTS)) oy_debug_objects = atoi(getenv(OY_DEBUG_OBJECTS)); //else  oy_debug_objects = 4217;  // oy_debug_signals = 1;
 #define OYJL_TEST_MAIN_FINISH printf("\n    Oyranos test2 finished\n\n"); if(testobj) testobj->release( &testobj ); if(verbose) { char * t = oyAlphaPrint_(0); puts(t); free(t); } oyLibConfigRelease(0);
 #include <oyjl_test_main.h>
 
@@ -3942,6 +3942,7 @@ static int     setupColourTable      ( PrivColorContext  * ccontext,
           fprintf( zout, " %d\n", dl_count );
           if(oy_debug) fprintf( zout, "%s\n", oyOptions_GetText( node_opts, oyNAME_NAME ) );
           oyProfile_Release( &dl );
+          oyOptions_Release( &node_opts );
         }
 
         DBG_S_( oyPrintTime() );
@@ -4249,6 +4250,7 @@ oyjlTESTRESULT_e testClut ()
   { PRINT_SUB( oyjlTESTRESULT_XFAIL,
     "cache difference                          %d %d!=%d", count, dl_count, dl_count2 );
   }
+  oyProfile_Release( &pc.dst_profile );
 
 
   // reset to old value
