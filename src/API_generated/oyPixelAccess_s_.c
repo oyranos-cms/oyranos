@@ -114,6 +114,7 @@ void oyPixelAccess_Release__Members( oyPixelAccess_s_ * pixelaccess )
   oyRectangle_Release( (oyRectangle_s**)&pixelaccess->output_array_roi );
   oyImage_Release( &pixelaccess->output_image );
   oyFilterGraph_Release( (oyFilterGraph_s**)&pixelaccess->graph );
+  oyOptions_Release( &pixelaccess->request_queue );
 
   if(pixelaccess->oy_->deallocateFunc_)
   {

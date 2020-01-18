@@ -344,7 +344,6 @@ int                oyPixelAccess_SetArrayFocus (
         oyImage_PixelsToSamples( image, r, r_samples );
         /* finally set the focus for simple plug-ins */
         error = oyArray2d_SetFocus( array, r_samples );
-        oyRectangle_Release( &r_samples );
         ((oyPixelAccess_s_*)pixel_access)->output_array_is_focussed = 1;
 
         if(oy_debug >=3 || error > 0)
@@ -384,6 +383,7 @@ int                oyPixelAccess_SetArrayFocus (
                            OY_DBG_FORMAT_ "%cunset focus to: %s", OY_DBG_ARGS_,
                            error == -1?'*':' ', oyRectangle_Show(r) );
       }
+      oyRectangle_Release( &r_samples );
     }
 
     oyArray2d_Release( &array );
