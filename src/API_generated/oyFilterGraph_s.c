@@ -336,6 +336,7 @@ OYAPI int  OYEXPORT
   /* clean the graph */
   o = oyOptions_Find( s->options, "dirty", oyNAME_PATTERN );
   oyOption_SetFromString( o, "false", 0 );
+  oyOption_Release( &o );
 
   return 0;
 }
