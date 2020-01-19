@@ -1,5 +1,11 @@
 #include "oyranos_image_internal.h"
 
+#ifdef HAVE_BACKTRACE
+#include <execinfo.h>
+#define BT_BUF_SIZE 100
+#endif
+
+
 /** Function  oyArray2d_Create
  *  @memberof oyArray2d_s
  *  @brief    Allocate and initialise a oyArray2d_s object
@@ -136,7 +142,7 @@ OYAPI oyPointer  OYEXPORT
   if(!s)
     return 0;
 
-  oyCheckType__m( oyOBJECT_ARRAY2D_S, return 0 )
+  oyCheckType__m( oyOBJECT_ARRAY2D_S, OY_BACKTRACE_PRINT; return 0 )
 
   return s->array2d;
 }
@@ -165,7 +171,7 @@ OYAPI int  OYEXPORT
   if(!s)
     return 0;
 
-  oyCheckType__m( oyOBJECT_ARRAY2D_S, return 1 )
+  oyCheckType__m( oyOBJECT_ARRAY2D_S, OY_BACKTRACE_PRINT; return 1 )
 
   {
     int y_len = sizeof(unsigned char *) * (s->height + 1),
@@ -215,7 +221,7 @@ OYAPI int  OYEXPORT
   if(!s)
     return 0;
 
-  oyCheckType__m( oyOBJECT_ARRAY2D_S, return 1 )
+  oyCheckType__m( oyOBJECT_ARRAY2D_S, OY_BACKTRACE_PRINT; return 1 )
 
   {
     int y_len = sizeof(unsigned char *) * (s->height + 1),
@@ -364,7 +370,7 @@ OYAPI int OYEXPORT
   if(!s)
     return 0;
 
-  oyCheckType__m( oyOBJECT_ARRAY2D_S, return 1 )
+  oyCheckType__m( oyOBJECT_ARRAY2D_S, OY_BACKTRACE_PRINT; return 1 )
 
   if(!width || !height)
     return 1;
