@@ -1224,6 +1224,7 @@ int          oyFilterNode_SetContext_( oyFilterNode_s_    * node,
               node->backend_data = cmm_ptr7;
 
           }
+          oyPointer_Release( &cmm_ptr4 );
   }
 
   clean:
