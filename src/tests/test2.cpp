@@ -3485,7 +3485,7 @@ static int privateClutContextRelease( oyPointer * data )
   oyArray2d_Release( &pcc->clut );
   oyFree_m_( pcc->hash_text );
   oyHash_Release( &pcc->hash );
-  fprintf(zout, DBG_STRING "%s\n", DBG_ARGS, pcc->id );
+  if(verbose) fprintf(zout, DBG_STRING "%s\n", DBG_ARGS, pcc->id );
   free(pcc->id);
   oyFree_m_( pcc );
   return 0;
@@ -3686,7 +3686,7 @@ static int computeClut( oyJob_s * job )
 int clut_finished = 0;
 static int finishClut( oyJob_s * job )
 { 
-  fprintf(zout, DBG_STRING "\n", DBG_ARGS );
+  if(getenv("OY_DEBUG_THREADS") || verbose) fprintf(zout, DBG_STRING "\n", DBG_ARGS );
   clut_finished = 1;
   return 0;
 }
@@ -3707,7 +3707,7 @@ static oyJob_s *   setupColourJob    ( oyConversion_s   ** cc,
       pcc->hash = *hash;
       *hash = NULL;
       pcc->clut = *clut;
-      clut = NULL;
+      *clut = NULL;
       oyPointer_Set( oy_ptr,
                      __FILE__,
                      "struct pcc_s*",
@@ -3729,7 +3729,6 @@ static void          runColourClut   ( PrivColorContext  * ccontext,
   int error = 0;
   int ** ptr;
   int id = entry->oy_->id_;
-
   fillColourClut( ccontext );
 
         clut = oyArray2d_Create( NULL, GRIDPOINTS*3, GRIDPOINTS*GRIDPOINTS,
@@ -3757,6 +3756,7 @@ clean_runColourClut:
   { cicc_free(hash_text); hash_text = 0; }
   oyFilterNode_Release( &icc );
   oyHash_Release( &entry );
+  oyArray2d_Release( &clut );
 }
 static int     setupColourTable      ( PrivColorContext  * ccontext,
                                        int                 advanced )
@@ -4031,6 +4031,7 @@ oyjlTESTRESULT_e testClut ()
   fprintf(stdout, "\n" );
 
   oyTestCacheListClear_();
+  //oyThreadId(); // possibly initialise threading early for proper cache locks
 
   oyConversion_s * cc = NULL;
   uint32_t icc_profile_flags =oyICCProfileSelectionFlagsFromOptions( OY_CMM_STD,
@@ -4104,10 +4105,13 @@ oyjlTESTRESULT_e testClut ()
   fprintf( zout, "getColourNode()+options\t10\t%s\n",
                  oyjlProfilingToString(10,clck/(double)CLOCKS_PER_SEC,"node"));
 
-  oyFilterNode_s * icc = getColourNode( cc );
-  clck = oyClock();
+  oyFilterNode_s * icc = NULL;
+  oyHash_s * hash = NULL;
   char * hash_text = NULL;
-  oyHash_s * hash = getColourHash( icc, &hash_text );
+
+  icc = getColourNode( cc );
+  clck = oyClock();
+  hash = getColourHash( icc, &hash_text );
   oyJob_s * job = setupColourJob( &cc, &hash_text, &hash, &clut );
   oyJob_Add( &job, 0, 0 );
   clck = oyClock() - clck;
@@ -4146,9 +4150,10 @@ oyjlTESTRESULT_e testClut ()
   fprintf( zout, "fillColourClut()      \t%d\t%s\n",i,
                  oyjlProfilingToString(i,clck/(double)CLOCKS_PER_SEC,"fill"));
 
-  oyArray2d_Release( &clut );
-  clut = oyArray2d_Create( NULL, 3, GRIDPOINTS*GRIDPOINTS*GRIDPOINTS,
+  oyArray2d_s * clut2 = oyArray2d_Create( NULL, 3, GRIDPOINTS*GRIDPOINTS*GRIDPOINTS,
                                  oyUINT16, NULL );
+  oyArray2d_Release( &clut );
+  clut = clut2; clut2 = NULL;
   clck = oyClock();
   int n;
   for(i = 0; i < 10; ++i)
