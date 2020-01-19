@@ -394,7 +394,7 @@ int                oyStruct_GetChildren (
     case oyOBJECT_HASH_S:
        {
          oyHash_s_ * s = (oyHash_s_*)obj;
-         CHECK_ASSIGN_STRUCT( entry )
+         CHECK_ASSIGN_STRUCT( oy_struct )
        }
        break;
     case oyOBJECT_STRUCT_LIST_S:

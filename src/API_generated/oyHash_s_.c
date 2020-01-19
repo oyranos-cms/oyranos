@@ -147,8 +147,8 @@ void oyHash_Release__Members( oyHash_s_ * hash )
    */
 
   /* should not happen */
-  if(hash->entry && hash->entry->release)
-    hash->entry->release( &hash->entry );
+  if(hash->oy_struct && hash->oy_struct->release)
+    hash->oy_struct->release( &hash->oy_struct );
 
   if(hash->oy_->deallocateFunc_)
   {
@@ -636,7 +636,7 @@ oyHash_s_ *         oyHash_Get_       ( const char        * hash_text,
 int                oyHash_IsOf_      ( oyHash_s_         * hash,
                                        oyOBJECT_e          type )
 {
-  return (hash && hash->entry && hash->entry->type_ == type);
+  return (hash && hash->oy_struct && hash->oy_struct->type_ == type);
 }
 
 /** @internal
@@ -656,13 +656,15 @@ int                oyHash_SetPointer_( oyHash_s_         * hash,
 {
   if(hash)
   {
+    if(hash->oy_struct && hash->oy_struct->release)
+      hash->oy_struct->release( &hash->oy_struct );
     if(obj && obj->copy)
     {
-      hash->entry = obj->copy( obj, 0 );
+      hash->oy_struct = obj->copy( obj, 0 );
       if(oy_debug_objects >= 0)
         oyObjectDebugMessage_( obj?obj->oy_:NULL, __func__, oyStructTypeToText(obj->type_) );
     } else
-      hash->entry = obj;
+      hash->oy_struct = obj;
     return 0;
   } else
     return 1;
@@ -680,9 +682,9 @@ oyStruct_s *       oyHash_GetPointer_( oyHash_s_         * hash,
 {
   if(oyHash_IsOf_( hash, type))
   {
-    if(hash->entry && hash->entry->copy)
-      hash->entry = hash->entry->copy( hash->entry, 0 );
-    return hash->entry;
+    if(hash->oy_struct && hash->oy_struct->copy)
+      hash->oy_struct = hash->oy_struct->copy( hash->oy_struct, 0 );
+    return hash->oy_struct;
   }
   else
     return 0;

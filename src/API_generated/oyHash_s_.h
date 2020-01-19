@@ -58,7 +58,7 @@ oyObject_s           oy_;            /**< Features name and hash. Do not change 
 
 
 /* Include "Hash.members.h" { */
-  oyStruct_s         * entry;          /**< holds a pointer to something */
+  oyStruct_s         * oy_struct;      /**< holds a pointer to something */
 
 /* } Include "Hash.members.h" */
 

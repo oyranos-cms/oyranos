@@ -126,8 +126,8 @@ oyHash_s *         oyHash_Create      ( const char        * hash_text,
 oyOBJECT_e         oyHash_GetType    ( oyHash_s          * hash )
 {
   oyHash_s_ * s = (oyHash_s_*)hash;
-  if(s && s->entry)
-    return s->entry->type_;
+  if(s && s->oy_struct)
+    return s->oy_struct->type_;
   else
     return oyOBJECT_NONE;
 }

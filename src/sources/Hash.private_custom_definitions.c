@@ -22,8 +22,8 @@ void oyHash_Release__Members( oyHash_s_ * hash )
    */
 
   /* should not happen */
-  if(hash->entry && hash->entry->release)
-    hash->entry->release( &hash->entry );
+  if(hash->oy_struct && hash->oy_struct->release)
+    hash->oy_struct->release( &hash->oy_struct );
 
   if(hash->oy_->deallocateFunc_)
   {
