@@ -208,6 +208,7 @@ int      oyProfileAddWhitePointEffect( oyProfile_s       * monitor_profile,
       wtpt = oyProfile_FromFile( cache_path, 0,0 );
       DBG_S_( oyPrintTime() );
     }
+    oyFree_m_(cache_path);
   }
 
   if(!error && wtpt)
