@@ -153,11 +153,15 @@ void oyOption_Release__Members( oyOption_s_ * option )
 
   if(option->oy_->deallocateFunc_)
   {
-    /*oyDeAlloc_f deallocateFunc = option->oy_->deallocateFunc_;*/
+    oyDeAlloc_f deallocateFunc = option->oy_->deallocateFunc_;
 
     /* Deallocate members of basic type here
      * E.g.: deallocateFunc( option->member );
      */
+
+    if(option->registration)
+      deallocateFunc(option->registration);
+    option->registration = NULL;
 
     oyOption_Clear( (oyOption_s*) option );
   }

@@ -662,7 +662,7 @@ int            oyOption_Clear        ( oyOption_s        * obj )
 
     if(s->registration)
       deallocateFunc( s->registration );
-    s->registration = 0;
+    s->registration = NULL;
   }
 
   oyStruct_ObserverSignal( (oyStruct_s*)s, oySIGNAL_DATA_CHANGED, 0 );
@@ -1335,6 +1335,7 @@ void           oyValueClear          ( oyValue_u         * v,
   case oyVAL_NONE:
   case oyVAL_MAX: break;
   }
+  memset( v, 0, sizeof(oyValue_u) );
 }
 /** Function oyValueRelease
  *  @memberof oyValue_u

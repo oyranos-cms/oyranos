@@ -60,7 +60,8 @@ typedef enum {
 /** @enum    oyVALUETYPE_e
  *  @brief   a value type
  *
-    @see     oyValue_u
+ *  @see     oyValue_u
+ *  @see     oyValueTypeText()
  *
  *  @version Oyranos: 0.9.6
  *  @date    2016/05/04
