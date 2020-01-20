@@ -883,7 +883,10 @@ void           oyI18Nreset           ( void )
 
 /** \addtogroup string Strings
  *  @brief String handling.
-
+ *
+ *  These functions prefere Oyranos oyAllocateFunc_ and oyDeAllocateFunc_ over
+ *  plain malloc/free. They are wrappers around the libOyjlCore equivalents.
+ *
  *  @{ *//* string */
 
 #undef oyStringAddPrintf
