@@ -101,6 +101,13 @@
  *
  *  @see @ref debug_vars
  *
+ *  @since 0.9.7
+ */
+#define OY_DEBUG_THREADS               "OY_DEBUG_THREADS"
+/** @brief Oyranos debug environment variable
+ *
+ *  @see @ref debug_vars
+ *
  *  @since 0.9.0
  */
 #define OY_BACKTRACE                   "OY_BACKTRACE"
