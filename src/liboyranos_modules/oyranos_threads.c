@@ -91,6 +91,9 @@
  *  oyJob_s::finish() callback. oyJobResult() is as well responsible to call 
  *  oyJob_s::finish() from the managing/UI thread for that.
  *
+ *  @subsection threads_debugging Debugging
+ *  See @ref environment .
+ *
  *  @{ *//* threads */
 
 static const char * oy_thread_api_nick = "dumy";
