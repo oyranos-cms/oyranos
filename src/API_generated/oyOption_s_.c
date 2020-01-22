@@ -238,6 +238,8 @@ int oyOption_Copy__Members( oyOption_s_ * dst, oyOption_s_ * src)
                  allocateFunc_, deallocateFunc_ );
   }
 
+  if(dst->registration)
+    deallocateFunc_(dst->registration);
   dst->registration = oyStringCopy_( src->registration, allocateFunc_ );
   dst->source = src->source;
   dst->flags = src->flags;
