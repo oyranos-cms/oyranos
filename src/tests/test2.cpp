@@ -489,6 +489,30 @@ oyjlTESTRESULT_e testDBDefault()
   oyFree_m_( value );
   // reset to old value
   oySetBehaviour( oyBEHAVIOUR_EFFECT, oySCOPE_USER, old_effect_switch );
+
+  // test outside DB change
+  char * old_daemon = oyGetPersistentString(OY_DEFAULT_DISPLAY_WHITE_POINT_DAEMON, 0, oySCOPE_USER_SYS, 0);
+  int old_display_white_point = oyGetBehaviour( oyBEHAVIOUR_DISPLAY_WHITE_POINT );
+  oyStringAddPrintf( &value, oyAllocateFunc_, oyDeAllocateFunc_,
+                     "%d", old_display_white_point != 0 ? 0 : 7 );
+  oyDBSetString( OY_DEFAULT_DISPLAY_WHITE_POINT_DAEMON, oySCOPE_USER,
+                 old_daemon ? NULL : "oyranos-monitor-white-point",
+                 "testing");
+  oyDBSetString( OY_DEFAULT_DISPLAY_WHITE_POINT, oySCOPE_USER, value,
+                 "testing");
+  /* clear the DB cache */
+  oyGetPersistentStrings( NULL );
+  int display_white_point = oyGetBehaviour( oyBEHAVIOUR_DISPLAY_WHITE_POINT );
+  if(verbose) fprintf(zout, "old_value: %d -> setting oyBEHAVIOUR_DISPLAY_WHITE_POINT: %s  check %d\n", old_display_white_point, value, display_white_point );
+  oyFree_m_( value );
+
+  // reset to old value
+  oySetBehaviour( oyBEHAVIOUR_DISPLAY_WHITE_POINT, oySCOPE_USER, old_display_white_point );
+  if(old_daemon)
+  {
+    oySetPersistentString( OY_DEFAULT_DISPLAY_WHITE_POINT_DAEMON, oySCOPE_USER, old_daemon, NULL);
+    oyFree_m_(old_daemon);
+  }
   
   return result;
 }
@@ -4242,7 +4266,6 @@ oyjlTESTRESULT_e testClut ()
   if(verbose) fprintf(zout, "old_value: %d -> setting oyBEHAVIOUR_DISPLAY_WHITE_POINT: %s  check %d\n", old_display_white_point, value, display_white_point );
   oyFree_m_( value );
 
-
   pc.dst_profile = oyProfile_FromFile( "LStar-RGB.icc", icc_profile_flags, testobj );
   int dl_count2 = setupColourTable( &pc, 0 ); 
   if(verbose) fprintf(zout, "LStar-RGB.icc %d,%d,%d\n", pc.clut[r][g][b][0],pc.clut[r][g][b][1],pc.clut[r][g][b][2]);
@@ -4257,7 +4280,6 @@ oyjlTESTRESULT_e testClut ()
   }
   oyProfile_Release( &pc.dst_profile );
 
-
   // reset to old value
   oySetBehaviour( oyBEHAVIOUR_DISPLAY_WHITE_POINT, oySCOPE_USER, old_display_white_point );
   if(old_daemon)
@@ -4267,6 +4289,7 @@ oyjlTESTRESULT_e testClut ()
   }
   
   oyStructList_Release( &oy_test_cache_ );
+  free(pc.output_name);
 
   OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 0, NULL )
 
