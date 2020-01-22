@@ -547,7 +547,7 @@ int                Configs_FromPattern (
       }
 
       if(error <= 0)
-        *s = devices;
+        *s = oyConfigs_Copy( devices, 0 );
 
       oyStringListRelease_( &texts, texts_n, free );
 
@@ -684,7 +684,7 @@ int                Configs_FromPattern (
           oyConfig_SetRankMap(device, _api8.rank_map );
         oyConfigs_MoveIn( devices, &device, -1 );
         if(error <= 0)
-          *s = devices;
+          *s = oyConfigs_Copy( devices, 0 );
 
         oyOptions_Release( &opts );
       }
@@ -705,6 +705,7 @@ int                Configs_FromPattern (
   cleanup:
   if(device_name_temp)
     oyFree_m_( device_name_temp );
+  oyConfigs_Release( &devices );
 
 
   return error;
