@@ -2059,6 +2059,7 @@ int          oyPointer_ConvertData   ( oyPointer_s       * cmm_ptr,
     api6 = (oyCMMapi6_s*) oyCMMsGetFilterApi_( reg, oyOBJECT_CMM_API6_S );
 
     error = !api6;
+    oyFree_m_( reg );
   }
 
   if(error <= 0 && oyCMMapi6_GetConvertF(api6))
