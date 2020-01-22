@@ -4563,7 +4563,7 @@ oyjlTESTRESULT_e testPolicy ()
   }
 
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0, NULL )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 0, NULL )
 
   return result;
 }
@@ -4677,7 +4677,7 @@ oyjlTESTRESULT_e testWidgets ()
 
   fprintf( zout, "\n");
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0, NULL )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 0, NULL )
 
   return result;
 }
@@ -4880,7 +4880,7 @@ oyjlTESTRESULT_e testCMMDevicesListing ()
 
   fprintf( zout, "\n");
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0, NULL )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 0, NULL )
 
   return result;
 }
@@ -5066,7 +5066,7 @@ oyjlTESTRESULT_e testCMMDevicesDetails ()
 
   fprintf( zout, "\n");
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0, NULL )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 0, NULL )
 
   return result;
 }
@@ -5221,7 +5221,7 @@ oyjlTESTRESULT_e testCMMRankMap ()
 
   fprintf( zout, "\n");
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0, NULL )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 0, NULL )
 
   return result;
 }
@@ -5462,7 +5462,7 @@ oyjlTESTRESULT_e testCMMMonitorJSON ()
   if(result == oyjlTESTRESULT_UNKNOWN && displayFail() == oyjlTESTRESULT_XFAIL)
     result = oyjlTESTRESULT_SUCCESS;
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0, NULL )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 0, NULL )
 
   return result;
 }
