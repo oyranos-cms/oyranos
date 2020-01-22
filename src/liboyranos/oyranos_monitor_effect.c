@@ -47,7 +47,7 @@
 int      oyAddLinearDisplayEffect    ( oyOptions_s      ** module_options )
 {
   /* 2. get display effect profile and decide if it can be embedded into a VGCT tag */
-  const char * fn = oyGetPersistentString( OY_DEFAULT_DISPLAY_EFFECT_PROFILE, 0, oySCOPE_USER_SYS, oyAllocateFunc_ );
+  char * fn = oyGetPersistentString( OY_DEFAULT_DISPLAY_EFFECT_PROFILE, 0, oySCOPE_USER_SYS, oyAllocateFunc_ );
   oyProfile_s * effect = (fn && fn[0]) ? oyProfile_FromName ( fn, 0, NULL ) : NULL;
   int is_linear = effect ? oyProfile_FindMeta( effect, "EFFECT_linear", "yes" ) != NULL : 0;
   int error = (is_linear == 0 && effect) ? 1 : 0;
@@ -60,6 +60,8 @@ int      oyAddLinearDisplayEffect    ( oyOptions_s      ** module_options )
                           (oyStruct_s**) &effect, OY_CREATE_NEW );
   else
     oyProfile_Release( &effect );
+
+  oyFree_m_( fn );
 
   return error;
 }
