@@ -193,6 +193,7 @@ int                oyConversion_Correct (
     apis = oyCMMsGetFilterApis_( api_reg, oyOBJECT_CMM_API9_S,
                                  oyFILTER_REG_MODE_STRIP_IMPLEMENTATION_ATTR,
                                  0,0 );
+    oyFree_m_( api_reg );
     apis_n = oyCMMapiFilters_Count( apis );
     for(i = 0; i < apis_n; ++i)
     {
