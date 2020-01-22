@@ -2496,6 +2496,7 @@ int                oyProfile_AddDevice(oyProfile_s       * profile,
     }
     if(reg) oyDeAllocateFunc_(reg);
     if(val) oyDeAllocateFunc_(val);
+    oyOption_Release( &o );
   }
 
   /* collect data */
