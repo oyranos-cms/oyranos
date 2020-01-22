@@ -64,7 +64,7 @@
 #include "oyranos_string.h"
 oyObject_s testobj = NULL;
 extern "C" { char * oyAlphaPrint_(int); }
-#define OYJL_TEST_MAIN_SETUP  printf("\n    Oyranos test2\n"); if(getenv(OY_DEBUG)) oy_debug = atoi(getenv(OY_DEBUG));  if(getenv(OY_DEBUG_SIGNALS)) oy_debug_signals = atoi(getenv(OY_DEBUG_SIGNALS)); if(getenv(OY_DEBUG_OBJECTS)) oy_debug_objects = atoi(getenv(OY_DEBUG_OBJECTS)); //else  oy_debug_objects = 4217;  // oy_debug_signals = 1;
+#define OYJL_TEST_MAIN_SETUP  printf("\n    Oyranos test2\n"); if(getenv(OY_DEBUG)) oy_debug = atoi(getenv(OY_DEBUG));  if(getenv(OY_DEBUG_SIGNALS)) oy_debug_signals = atoi(getenv(OY_DEBUG_SIGNALS)); if(getenv(OY_DEBUG_OBJECTS)) oy_debug_objects = atoi(getenv(OY_DEBUG_OBJECTS)); //else  oy_debug_objects = 549;  // oy_debug_signals = 1;
 #define OYJL_TEST_MAIN_FINISH printf("\n    Oyranos test2 finished\n\n"); if(testobj) testobj->release( &testobj ); if(verbose) { char * t = oyAlphaPrint_(0); puts(t); free(t); } oyLibConfigRelease(0);
 #include <oyjl_test_main.h>
 
@@ -1696,6 +1696,11 @@ oyjlTESTRESULT_e testOptionsCopy ()
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
     "oyOptions_Add(duplicates unfiltered)              " );
+  }
+  if(verbose)
+  {
+    const char * t = oyOptions_GetText( setA, (oyNAME_e) oyNAME_DESCRIPTION );
+    fprintf( zout, "setA:%u %d %d\n%s\n", t?strlen(t):0, error, oyOptions_Count( setA ), t?t:0 );
   }
   oyOption_Release( &option );
 
@@ -4726,6 +4731,21 @@ oyjlTESTRESULT_e testCMMDevicesListing ()
   oyOption_s_ * oi = 0;
   oyProfile_s * p = 0;
 
+  config = oyConfig_New( testobj );
+  error = oyOptions_SetFromString( oyConfig_GetOptions( config,"backend_core"),
+                                     "//" OY_TYPE_STD "/config/test",
+                                     "testA", OY_CREATE_NEW );
+  error = oyOptions_SetFromString( oyConfig_GetOptions( config,"db"),
+                                     "//" OY_TYPE_STD "/config/test",
+                                     "testB", OY_CREATE_NEW );
+  error = oyOptions_SetFromString( oyConfig_GetOptions( config,"data"),
+                                     "//" OY_TYPE_STD "/config/test",
+                                     "testC", OY_CREATE_NEW );
+  o = oyConfig_Find( config, "test" );
+  oyOption_Release( &o );
+  oyConfig_Release( &config );
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 1, "MultiConfig" )
+
   /* send a empty query to one module to obtain instructions in a message */
   if(texts && count)
   error = oyConfigs_FromDomain( texts[0], 0, &configs, testobj );
@@ -5415,7 +5435,7 @@ oyjlTESTRESULT_e testCMMMonitorJSON ()
 
     oyProfileTag_s * tag = oyProfile_GetTagById( p, (icTagSignature)icSigMetaDataTag );
     if( tag )
-    { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
       "oyProfile_GetTagById(icSigMetaDataTag)            " );
     } else
     { PRINT_SUB( oyjlTESTRESULT_FAIL,
@@ -5644,6 +5664,7 @@ oyjlTESTRESULT_e testCMMMonitorModule ()
   if(error) PRINT_SUB( oyjlTESTRESULT_XFAIL, "(oyOptions_SetFromString) error: %d", error )
   error = oyDevicesGet( OY_TYPE_STD, "monitor", options, &devices );
   oyConfigs_Release( &devices );
+  oyOptions_Release( &options );
 
   if( error == -1
 #ifdef __APPLE__
