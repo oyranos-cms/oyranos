@@ -1063,7 +1063,7 @@ oyjlTESTRESULT_e testOption ()
   oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
 
   int error = 0;
-  oyOption_s * o;
+  oyOption_s * o, * copy;
   const char * test_buffer = "test";
   size_t size = strlen(test_buffer);
   oyPointer ptr = oyAllocateFunc_( size );
@@ -1114,8 +1114,19 @@ oyjlTESTRESULT_e testOption ()
     "oyOption_GetData() failed                         " );
   }
 
+  oyFree_m_(ptr); ptr = NULL;
+
+  copy = oyOption_Copy( o, testobj );
+  if(oyStruct_GetId((oyStruct_s*)o) != oyStruct_GetId((oyStruct_s*)copy))
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyOption_Copy()                                   " );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    "oyOption_Copy()                                   " );
+  }
+
   oyOption_Release( &o );
-  oyFree_m_(ptr);
+  oyOption_Release( &copy );
 
   OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 0, NULL )
 
