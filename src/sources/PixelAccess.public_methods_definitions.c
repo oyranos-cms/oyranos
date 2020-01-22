@@ -407,15 +407,17 @@ int                oyPixelAccess_SetArrayFocus (
  */
 const char *       oyPixelAccess_Show( oyPixelAccess_s   * pixel_access )
 {
-  int error = 0;
-  static char * t = NULL;
+  char * t = NULL;
+  const char * text = NULL;
+  oyAlloc_f alloc;
+  oyDeAlloc_f dealloc;
 
-  if(!t) t = malloc(1024);
+  if(!pixel_access)
+    return "";
 
-  if(!pixel_access || !t)
-    error = 1;
+  alloc = oyObject_GetAlloc( pixel_access->oy_ );
+  dealloc = oyObject_GetDeAlloc( pixel_access->oy_ );
 
-  if(!error)
   {
     oyPixelAccess_s * ticket = pixel_access;
     oyImage_s * image = oyPixelAccess_GetOutputImage( ticket );
@@ -438,7 +440,7 @@ const char *       oyPixelAccess_Show( oyPixelAccess_s   * pixel_access )
 
     oyRectangle_SetByRectangle( roi, ticket_array_roi );
     oyRectangle_Scale( roi, a_width?a_width:image_width );
-    oySprintf_( t,
+    oyStringAddPrintf( &t, alloc,dealloc,
                 "ticket[%d] start_xy %g|%g %s[%d](%dx%d)%dc ROI: %s %c%s",
                 oyStruct_GetId((oyStruct_s*)ticket),
                 start_x_pixel, start_y_pixel, _("Image"),
@@ -446,12 +448,16 @@ const char *       oyPixelAccess_Show( oyPixelAccess_s   * pixel_access )
                 oyRectangle_Show( roi ),
                 a_is_focussed?' ':'~', oyArray2d_Show( a, channels ) );
 
+    oyObject_SetName( pixel_access->oy_, t, oyNAME_NAME );
+    if(t) dealloc(t);
+    text = oyObject_GetName( pixel_access->oy_, oyNAME_NAME );
+
     oyImage_Release( &image );
     oyArray2d_Release( &a );
     oyRectangle_Release( &ticket_array_roi );
   }
 
-  return t?t:"----";
+  return (text&&text[0])?text:"----";
 }
 
 /** Function  oyPixelAccess_GetArrayROI

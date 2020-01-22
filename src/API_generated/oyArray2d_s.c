@@ -103,6 +103,7 @@ OYAPI int OYEXPORT
 
 /* Include "Array2d.public_methods_definitions.c" { */
 #include "oyranos_image_internal.h"
+#include "oyranos_core.h"
 
 #ifdef HAVE_BACKTRACE
 #include <execinfo.h>
@@ -597,16 +598,14 @@ OYAPI const char* OYEXPORT oyArray2d_Show (
                                        int                 channels )
 {
   int error = 0;
-  static char * t = NULL;
+  char * t = NULL;
+  const char * text = NULL;
   oyArray2d_s_ * a = (oyArray2d_s_*) array;
   double c = channels;
+  oyAlloc_f alloc;
+  oyDeAlloc_f dealloc;
 
-  if(!t) t = malloc(1024);
-
-  if(t)
-    t[0] = 0;
-
-  if(!array || !t)
+  if(!array)
     error = 1;
 
   if(c == 0)
@@ -616,7 +615,10 @@ OYAPI const char* OYEXPORT oyArray2d_Show (
   {
     const char * key = "///channels";
 
-    sprintf( t, "a[%d](%gx%g+%g+%g(%gx%d)%dc",
+    alloc = oyObject_GetAlloc( array->oy_ );
+    dealloc = oyObject_GetDeAlloc( array->oy_ );
+
+    oyStringAddPrintf( &t, alloc,dealloc, "a[%d](%gx%g+%g+%g(%gx%d)%dc",
              oyStruct_GetId((oyStruct_s*)a),
              a->data_area.width / c, a->data_area.height,
              a->data_area.x / c, a->data_area.y,
@@ -627,9 +629,12 @@ OYAPI const char* OYEXPORT oyArray2d_Show (
     error = oyOptions_SetFromInt( &a->oy_->handles_,
                                   key,
                                   channels, 0, OY_CREATE_NEW );
+    oyObject_SetName( array->oy_, t, oyNAME_NAME );
+    if(t) dealloc(t);
+    text = oyObject_GetName( array->oy_, oyNAME_NAME );
   }
 
-  return (t&&t[0])?t:"----";
+  return (text&&text[0])?text:"----";
 }
 
 

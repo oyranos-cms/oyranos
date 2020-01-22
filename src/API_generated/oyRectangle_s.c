@@ -492,23 +492,26 @@ OYAPI double *  OYEXPORT
  */
 const char*    oyRectangle_Show      ( oyRectangle_s     * rect )
 {
-  static char *text = 0;
+  char *t = NULL;
+  const char * text = NULL;
   oyRectangle_s_ * s = (oyRectangle_s_*)rect;
+  oyAlloc_f alloc;
+  oyDeAlloc_f dealloc;
 
   if(!s)
     return "";
 
-  if(!text)
-    text = oyAllocateFunc_(sizeof(char) * 512);
+  alloc = oyObject_GetAlloc( rect->oy_ );
+  dealloc = oyObject_GetDeAlloc( rect->oy_ );
 
-  if(text)
-    oySprintf_(text, "%gx%g%s%g%s%g", s->width,s->height,
+  oyStringAddPrintf( &t, alloc,dealloc, "%gx%g%s%g%s%g", s->width,s->height,
                      s->x<0?"":"+", s->x, s->y<0?"":"+", s->y);
-  else
-    return "failed allocation";
 
-  return text;
+  oyObject_SetName( rect->oy_, t, oyNAME_NAME );
+  if(t) dealloc(t);
+  text = oyObject_GetName( rect->oy_, oyNAME_NAME );
 
+  return (text&&text[0])?text:"----";
 }
 
 /** Function  oyRectangle_Trim
