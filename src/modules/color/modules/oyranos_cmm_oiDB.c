@@ -322,7 +322,7 @@ int                oiDBInit       ( oyStruct_s        * filter OY_UNUSED )
   int error = 0;
   return error;
 }
-int                oiDBReset      ( oyStruct_s        * filter OY_UNUSED ) { int error = 0; return error; }
+int                oiDBReset      ( oyStruct_s        * filter OY_UNUSED ) { int error = 0; openiccLibRelease(); return error; }
 
 const char*oiDBopeniccStaticMessageFunc (
                                        oyPointer           obj,
