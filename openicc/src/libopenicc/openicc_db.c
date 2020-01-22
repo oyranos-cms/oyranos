@@ -75,28 +75,36 @@ int      openiccArray_Push           ( openiccArray_s    * array )
   return openiccArray_Add( array, 1 );
 }
 
+
+static char * openicc_scope_txt = NULL;
 const char * openiccScopeGetString   ( openiccSCOPE_e      scope )
 {
-  static char * txt = NULL;
 
-  if(!txt)
-    txt = malloc(128);
+  if(!openicc_scope_txt)
+    openicc_scope_txt = malloc(128);
 
-  if(!txt)
+  if(!openicc_scope_txt)
   {
     WARNcc_S( 0, "Out of memory", "" );
     return "----";
   }
 
-  sprintf( txt, "%s%s%s%s%s",
+  sprintf( openicc_scope_txt, "%s%s%s%s%s",
            scope == openiccSCOPE_USER_SYS ? "all" : "",
            scope & openiccSCOPE_USER ? (((scope & openiccSCOPE_USER) == scope)?"user":"user ") : "",
            scope & openiccSCOPE_SYSTEM ? (((scope & openiccSCOPE_SYSTEM) == scope)?"system":"system ") : "",
            scope & openiccSCOPE_OPENICC ? (((scope & openiccSCOPE_OPENICC) == scope)?"openicc":"openicc ") : "",
            scope & openiccSCOPE_MACHINE ? "machine" : "" );
 
-  return txt;
+  return openicc_scope_txt;
 }
+void           openiccLibRelease     ( void )
+{
+  if(openicc_scope_txt)
+    free(openicc_scope_txt);
+  openicc_scope_txt = NULL;
+}
+
 /** \addtogroup path_names
  *  @{
  */

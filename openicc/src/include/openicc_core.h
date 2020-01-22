@@ -79,6 +79,7 @@ int            openiccReadFileSToMem ( FILE              * fp,
                                        int               * size);
 void *         openiccMemDup         ( const void        * src,
                                        size_t              size );
+void           openiccLibRelease     ( void );
 /** 
  *  @} *//* misc
  */

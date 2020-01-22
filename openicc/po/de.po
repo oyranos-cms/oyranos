@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2019-09-01 08:05+0200\n"
+"POT-Creation-Date: 2020-01-21 22:41+0100\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -40,32 +40,32 @@ msgstr "Trage Gerät in die DB ein"
 msgid "Camera"
 msgstr "Kamera"
 
-#: libopenicc/openicc_db.c:60 libopenicc/openicc_db.c:190
-#: libopenicc/openicc_db.c:444
+#: libopenicc/openicc_db.c:60 libopenicc/openicc_db.c:198
+#: libopenicc/openicc_db.c:452
 msgid "Could not alloc memory"
 msgstr "Kann keinen Speicher reservieren"
 
-#: libopenicc/openicc_db.c:422
+#: libopenicc/openicc_db.c:430
 msgid "Could not create a intermediate db object for"
 msgstr "Konnte temporäres DB Objekt nicht erstellen für"
 
-#: libopenicc/openicc_db.c:510
+#: libopenicc/openicc_db.c:518
 msgid "Could not create root JSON node for"
 msgstr "Konnte kein JSON Wurzelknoten erzeugen für"
 
-#: libopenicc/openicc_db.c:125 libopenicc/openicc_db.c:158
+#: libopenicc/openicc_db.c:133 libopenicc/openicc_db.c:166
 msgid "Could not find config"
 msgstr "Konnte Konfiguration nicht finden"
 
-#: libopenicc/openicc_db.c:503
+#: libopenicc/openicc_db.c:511
 msgid "Could not obtain JSON node for"
 msgstr "Konnte kein JSON Knoten erhalten für"
 
-#: libopenicc/openicc_db.c:461
+#: libopenicc/openicc_db.c:469
 msgid "Could not set JSON string for"
 msgstr "Konnte keinen JSON Text setzen für"
 
-#: libopenicc/openicc_db.c:239
+#: libopenicc/openicc_db.c:247
 msgid "Could not setup db objetc"
 msgstr "Konnte DB Objekt nicht erstellen"
 
@@ -164,11 +164,11 @@ msgstr "Bildschirm"
 msgid "NUMBER"
 msgstr "NUMMER"
 
-#: libopenicc/openicc_db.c:486
+#: libopenicc/openicc_db.c:494
 msgid "No JSON content obtained for"
 msgstr "Kein JSON Inhalt erhalten für"
 
-#: libopenicc/openicc_db.c:495
+#: libopenicc/openicc_db.c:503
 msgid "No JSON obtained for"
 msgstr "Kein JSON erhalten für"
 
@@ -180,7 +180,7 @@ msgstr "OpenICC Json"
 msgid "OpenICC devices handling tool"
 msgstr "OpenICC Gerätebearbeitungswerkzeug"
 
-#: libopenicc/openicc_db.c:163 tools/openicc_device.c:188
+#: libopenicc/openicc_db.c:171 tools/openicc_device.c:188
 msgid "Paths:"
 msgstr "Pfade:"
 
@@ -232,7 +232,7 @@ msgstr "Schreibe"
 msgid "Write DB File"
 msgstr "Schreibe DB Datei"
 
-#: libopenicc/openicc_db.c:479
+#: libopenicc/openicc_db.c:487
 msgid "Writing failed for"
 msgstr "Schreiben mislungen für"
 
