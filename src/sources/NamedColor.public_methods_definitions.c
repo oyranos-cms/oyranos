@@ -341,8 +341,10 @@ int               oyNamedColor_SetColorStd ( oyNamedColor_s * color,
     error = oyColorConvert_( p_in, p_out,
                               channels, s->XYZ_,
                               channels_type , oyDOUBLE, options, 1 );
-    oyProfile_Release ( &p_out );
   }
+
+  oyProfile_Release ( &p_in );
+  oyProfile_Release ( &p_out );
 
   return error;
 }
