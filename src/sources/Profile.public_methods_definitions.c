@@ -2448,6 +2448,7 @@ int                oyProfile_AddDevice(oyProfile_s       * profile,
     }
     if(key) { oyDeAllocateFunc_( key ); key = 0; }
     if(val) { oyDeAllocateFunc_(val); val = 0; }
+    oyOption_Release( &o );
   }
 
   count = pos;
