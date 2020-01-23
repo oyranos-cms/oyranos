@@ -64,7 +64,7 @@
 #include "oyranos_string.h"
 oyObject_s testobj = NULL;
 extern "C" { char * oyAlphaPrint_(int); }
-#define OYJL_TEST_MAIN_SETUP  printf("\n    Oyranos test2\n"); if(getenv(OY_DEBUG)) oy_debug = atoi(getenv(OY_DEBUG));  if(getenv(OY_DEBUG_SIGNALS)) oy_debug_signals = atoi(getenv(OY_DEBUG_SIGNALS)); if(getenv(OY_DEBUG_OBJECTS)) oy_debug_objects = atoi(getenv(OY_DEBUG_OBJECTS)); //else  oy_debug_objects = 39;  // oy_debug_signals = 1;
+#define OYJL_TEST_MAIN_SETUP  printf("\n    Oyranos test2\n"); if(getenv(OY_DEBUG)) oy_debug = atoi(getenv(OY_DEBUG));  if(getenv(OY_DEBUG_SIGNALS)) oy_debug_signals = atoi(getenv(OY_DEBUG_SIGNALS)); if(getenv(OY_DEBUG_OBJECTS)) oy_debug_objects = atoi(getenv(OY_DEBUG_OBJECTS)); //else  oy_debug_objects = 403089;  // oy_debug_signals = 1;
 #define OYJL_TEST_MAIN_FINISH printf("\n    Oyranos test2 finished\n\n"); if(testobj) testobj->release( &testobj ); if(verbose) { char * t = oyAlphaPrint_(0); puts(t); free(t); } oyLibConfigRelease(0);
 #include <oyjl_test_main.h>
 
@@ -1116,6 +1116,8 @@ oyjlTESTRESULT_e testOption ()
 
   oyFree_m_(ptr); ptr = NULL;
 
+  if(!testobj)
+    testobj = oyObject_NewWithAllocators( myAllocFunc, myDeAllocFunc, "testobj" );
   copy = oyOption_Copy( o, testobj );
   if(oyStruct_GetId((oyStruct_s*)o) != oyStruct_GetId((oyStruct_s*)copy))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
@@ -3441,7 +3443,7 @@ oyjlTESTRESULT_e testDeviceLinkProfile ()
   error = oyFilterGraph_Release( &graph );
   if(error) PRINT_SUB( oyjlTESTRESULT_XFAIL, "oyFilterGraph_Release() error: %d", error )
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0, NULL )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 0, NULL )
 
   return result;
 }
@@ -5637,8 +5639,9 @@ oyjlTESTRESULT_e testCMMDBListing ()
 
     oyConfig_Release( &config );
   }
+  oyConfigs_Release( &configs );
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0, NULL )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 0, NULL )
 
   return result;
 }
@@ -5680,7 +5683,7 @@ oyjlTESTRESULT_e testCMMMonitorModule ()
     "oyDevicesGet( \"//" OY_TYPE_STD "\", unset, ... ) = %d       ", error );
   }
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0, NULL )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 0, NULL )
 
   return result;
 }
@@ -5796,12 +5799,15 @@ oyjlTESTRESULT_e testCMMmonitorDBmatch ()
     { PRINT_SUB( oyjlTESTRESULT_FAIL,
       "oyConfig_s[%d] = %d                                  ", k, k_n);
     }
+    oyConfig_Release( &device );
   }
+
+  oyConfigs_Release( &configs );
 
   error = oyDBEraseKey( reg, oySCOPE_USER );
   if(error) PRINT_SUB( oyjlTESTRESULT_XFAIL, "oyDBEraseKey() error: %d", error )
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0, NULL )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 0, NULL )
 
   return result;
 }
@@ -6141,7 +6147,7 @@ oyjlTESTRESULT_e testCMMsShow ()
   fprintf(zout, "Wrote %s\n", rfile?rfile:"test2_CMMs.xhtml" );
   free( rfile );
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0, NULL )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 0, NULL )
 
   return result;
 }
@@ -6161,7 +6167,7 @@ oyjlTESTRESULT_e testCMMnmRun ()
                                        "//" OY_TYPE_STD "/icc_color", NULL, 0 );
   oyProfile_s * prof = oyProfile_FromStd( oyEDITING_XYZ, icc_profile_flags, testobj );
   int error = 0, l_error = 0,
-      i,n = 10;
+      i,n = 10, bign = 10000;
 
   fprintf(stdout, "\n" );
 
@@ -6169,7 +6175,7 @@ oyjlTESTRESULT_e testCMMnmRun ()
   oyAlphaFinish_(0);
 
   double clck = oyClock();
-  for(i = 0; i < n*10000; ++i)
+  for(i = 0; i < n*bign; ++i)
   {
     c = oyNamedColor_Create( NULL, NULL,0, prof, testobj );
     oyNamedColor_Release( &c );
@@ -6327,7 +6333,7 @@ oyjlTESTRESULT_e testCMMnmRun ()
 
   oyOptions_s * options = oyOptions_New(0);
   clck = oyClock();
-  for(i = 0; i < n*10000; ++i)
+  for(i = 0; i < n*bign; ++i)
   {
     oyFilterCore_s * core = oyFilterCore_NewWith( "//" OY_TYPE_STD "/root",
                                                   options, testobj );
@@ -6348,7 +6354,7 @@ oyjlTESTRESULT_e testCMMnmRun ()
 
   clck = oyClock();
   const char * registration = "//" OY_TYPE_STD "/root";
-  for(i = 0; i < n*10000; ++i)
+  for(i = 0; i < n*bign; ++i)
   {
     oyCMMapi4_s_ * api4 = 0;
     api4 = (oyCMMapi4_s_*) oyCMMsGetFilterApi_(
@@ -6430,6 +6436,7 @@ oyjlTESTRESULT_e testCMMnmRun ()
                          p_out,
                          testobj );
 
+  oyProfile_Release( &p_out );
   #define OY_ERR if(l_error != 0) error = l_error;
 
   s = oyConversion_CreateBasicPixels( input,output, 0, testobj );
@@ -6443,12 +6450,13 @@ oyjlTESTRESULT_e testCMMnmRun ()
   oyPixelAccess_s * pixel_access = oyPixelAccess_Create( 0,0, plug,
                                        oyPIXEL_ACCESS_IMAGE, testobj );
   oyFilterPlug_Release( &plug );
+  oyFilterNode_Release( &out );
 
   oy_debug_image_read_array_count = 0;
   clck = oyClock();
-  for(i = 0; i < n*1000; ++i)
-  if(error <= 0)
-    error  = oyConversion_RunPixels( s, pixel_access );
+  for(i = 0; i < n*bign/10; ++i)
+    if(error <= 0)
+      error  = oyConversion_RunPixels( s, pixel_access );
   clck = oyClock() - clck;
 
   if( !error )
@@ -6469,7 +6477,7 @@ oyjlTESTRESULT_e testCMMnmRun ()
   if(array != pdata) // should be typical the case
     oyPixelAccess_SetArray( pixel_access, (oyArray2d_s*)pdata, 0 );
   clck = oyClock();
-  for(i = 0; i < n*1000; ++i)
+  for(i = 0; i < n*bign/10; ++i)
   if(error <= 0)
     error  = oyConversion_RunPixels( s, pixel_access );
   clck = oyClock() - clck;
@@ -6530,6 +6538,11 @@ oyjlTESTRESULT_e testCMMnmRun ()
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyNamedColor_SetColorStd() oyASSUMED_WEB         " );
   }
+
+  oyProfile_Release( &p_in );
+  oyProfile_Release( &p_out );
+  oyImage_Release( &input );
+  oyImage_Release( &output );
 
   p_in = oyProfile_FromStd ( oyASSUMED_WEB, icc_profile_flags, testobj );
   p_out = oyProfile_FromStd ( oyEDITING_XYZ, icc_profile_flags, testobj );
@@ -6605,7 +6618,7 @@ oyjlTESTRESULT_e testCMMnmRun ()
 
   clck = oyClock();
   if(pixel_access)
-  for(i = 0; i < n*1000; ++i)
+  for(i = 0; i < n*bign/10; ++i)
   {
     if(!error)
       error  = oyConversion_RunPixels( conv, pixel_access );
@@ -6627,7 +6640,7 @@ oyjlTESTRESULT_e testCMMnmRun ()
   d[0] = d[1] = d[2] = 1.0;
   d[3] = d[4] = d[5] = 0.0;
   if(pixel_access)
-  for(i = 0; i < n*1000; ++i)
+  for(i = 0; i < n*bign/10; ++i)
   {
     if(!error)
       error = oyConversion_GetOnePixel( conv, 0,0, pixel_access );
@@ -6658,8 +6671,7 @@ oyjlTESTRESULT_e testCMMnmRun ()
   if(error) PRINT_SUB( oyjlTESTRESULT_XFAIL, "oyFilterNode_Connect() error: %d", error )
   oyConversion_Set( conv, 0, out_node );
   oyConversion_GetNode( conv, OY_OUTPUT );
-  plug = oyFilterNode_GetPlug( out, 0 );
-  oyFilterNode_Release (&out );
+  plug = oyFilterNode_GetPlug( out_node, 0 );
 
   /* create a very simple pixel iterator as job ticket */
   if(plug)
@@ -6668,7 +6680,7 @@ oyjlTESTRESULT_e testCMMnmRun ()
   error  = oyConversion_RunPixels( conv, pixel_access );
 
   clck = oyClock();
-  for(i = 0; i < n*1000; ++i)
+  for(i = 0; i < n*bign/10; ++i)
   {
     if(!error)
       error = oyConversion_RunPixels( conv, pixel_access );
@@ -6710,7 +6722,7 @@ oyjlTESTRESULT_e testCMMnmRun ()
   if(p_cmyk)
   {
     clck = oyClock();
-    for( i = 0; i < 10*100; ++i )
+    for( i = 0; i < bign/10; ++i )
     {
       char name[12];
       double lab[3], device[4] = {0.2,0.2,0.1,0.5};
@@ -6740,8 +6752,23 @@ oyjlTESTRESULT_e testCMMnmRun ()
     }
   }
 
+  oyNamedColor_Release( &c );
+  oyNamedColors_Release( &colors );
+  oyProfile_Release( &prof );
+  oyProfile_Release( &p_in );
+  oyProfile_Release( &p_out );
+  oyProfile_Release( &p_cmyk );
+  oyOption_Release( &option );
+  oyOptions_Release( &options );
+  oyImage_Release( &output_image );
+  oyArray2d_Release( &pdata );
+  oyArray2d_Release( &array );
+  //oyFilterNode_Release( &in_node );
+  oyFilterNode_Release( &out_node );
+
+
   
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0, NULL )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 0, NULL )
 
   return result;
 }
