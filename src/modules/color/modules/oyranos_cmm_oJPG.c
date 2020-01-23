@@ -259,7 +259,7 @@ oyCMMapi_s * ojpgApi7CmmCreateRead   ( const char        * format,
                                        (oyConnector_s**)plugs, 0, 0,
                                        (oyConnector_s**)sockets, 1, 0,
                                        properties, 0 );
-  //oyFree_m_( registration );
+  oyFree_m_(oJPG_registration_7read);
   return (oyCMMapi_s*) cmm7;
 }
 
@@ -314,6 +314,8 @@ oyCMMapi_s * ojpgApi4CmmCreateRead   ( const char        * format )
                                        ojpgFilterNode_GetText,
                                        ui,
                                        NULL );
+  oyFree_m_(oJPG_registration_4read);
+
 
   oyCMMapi4_SetBackendContext( cmm4, backend_context );
   oyPointer_Release( &backend_context );
@@ -882,7 +884,7 @@ oyCMMapi_s * ojpgApi7CmmCreateWrite  ( const char        * format,
                                        (oyConnector_s**)plugs, 0, 0,
                                        (oyConnector_s**)sockets, 1, 0,
                                        properties, 0 );
-  //oyFree_m_( registration );
+  oyFree_m_(oJPG_registration_7write);
   return (oyCMMapi_s*) cmm7;
 }
 
@@ -937,6 +939,7 @@ oyCMMapi_s * ojpgApi4CmmCreateWrite  ( const char        * format )
                                        ojpgFilterNode_GetText,
                                        ui,
                                        NULL );
+  oyFree_m_(oJPG_registration_4write);
 
   oyCMMapi4_SetBackendContext( cmm4, backend_context );
   oyPointer_Release( &backend_context );
@@ -1455,11 +1458,6 @@ int  ojpgReset                       ( oyStruct_s        * module_info )
   if(oJPG_category)
     free(oJPG_category);
   oJPG_category = NULL;
-
-  oyFree_m_(oJPG_registration_7write);
-  oyFree_m_(oJPG_registration_4write);
-  oyFree_m_(oJPG_registration_7read);
-  oyFree_m_(oJPG_registration_4read);
 
   return 0;
 }

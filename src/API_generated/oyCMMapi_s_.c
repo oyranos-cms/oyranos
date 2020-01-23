@@ -124,6 +124,9 @@ void oyCMMapi_Release__Members( oyCMMapi_s_ * cmmapi )
     if(cmmapi->id_)
       deallocateFunc( cmmapi->id_ );
     cmmapi->id_ = NULL;
+    if(cmmapi->registration)
+      deallocateFunc( cmmapi->registration );
+    cmmapi->registration = NULL;
   }
 }
 

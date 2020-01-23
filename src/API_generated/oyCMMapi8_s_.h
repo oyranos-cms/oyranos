@@ -142,7 +142,7 @@ oyObject_s           oy_;            /**< Features name and hash. Do not change 
 
   /** e.g. "sw/oyranos.org/color.tonemap.imaging/hydra.shiva.CPU.GPU" or "sw/oyranos.org/color/icc.lcms.CPU",
       see as well @ref registration */
-  const char     * registration;
+  char           * registration;
 
   /** 0: major - should be stable for the live time of a filter, \n
       1: minor - mark new features, \n

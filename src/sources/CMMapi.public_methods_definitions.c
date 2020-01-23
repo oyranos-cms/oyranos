@@ -34,7 +34,7 @@ void               oyCMMapi_Set      ( oyCMMapi_s        * api,
   s->oyCMMInit = init;
   s->oyCMMReset = reset;
   s->oyCMMMessageFuncSet = msg_set;
-  s->registration = registration;
+  s->registration = oyjlStringCopy( registration, oyStruct_GetAllocator((oyStruct_s*)api) );
   for(i = 0; i < 3; i++)
   {
     if(version)
