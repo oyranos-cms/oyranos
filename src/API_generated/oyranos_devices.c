@@ -114,6 +114,7 @@ OYAPI int  OYEXPORT
                                        oyConfigs_s      ** devices )
 {
   int error = !device_class || !device_class[0];
+  oyOptions_s * tmp = NULL;
 
   if(error > 0)
   {
@@ -128,6 +129,7 @@ OYAPI int  OYEXPORT
     error = oyOptions_SetDeviceTextKey_( &options, device_type,
                                              device_class,
                                              "command", "list" );
+    tmp = options;
   }
 
   /** 1.2 ask each module */
@@ -135,6 +137,7 @@ OYAPI int  OYEXPORT
     error = oyConfigs_FromDeviceClass( device_type, device_class,
                                            options, devices, 0 );
 
+  oyOptions_Release( &tmp );
 
   return error;
 }
@@ -182,6 +185,7 @@ OYAPI int  OYEXPORT
               !device_class || !device_class[0];
   oyConfigs_s * devices = 0;
   oyConfig_s * s = 0;
+  oyOptions_s * tmp = NULL;
 
   if(error > 0)
   {
@@ -200,6 +204,7 @@ OYAPI int  OYEXPORT
     error = oyOptions_SetDeviceTextKey_( &options, device_type,
                                              device_class,
                                              "command", "list" );
+    tmp = options;
   }
 
   /** 1.1.2 set device filter */
@@ -226,6 +231,8 @@ OYAPI int  OYEXPORT
     *device = s;
   else
     oyConfig_Release( &s );
+
+  oyOptions_Release( &tmp );
 
   return error;
 }
@@ -1150,6 +1157,8 @@ OYAPI int OYEXPORT oyDeviceProfileFromDB
 
   } else
     WARNc_S( "missed argument(s)" );
+
+  oyOption_Release( &o );
 
   return error;
 }
