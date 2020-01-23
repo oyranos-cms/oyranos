@@ -64,7 +64,7 @@
 #include "oyranos_string.h"
 oyObject_s testobj = NULL;
 extern "C" { char * oyAlphaPrint_(int); }
-#define OYJL_TEST_MAIN_SETUP  printf("\n    Oyranos test2\n"); if(getenv(OY_DEBUG)) oy_debug = atoi(getenv(OY_DEBUG));  if(getenv(OY_DEBUG_SIGNALS)) oy_debug_signals = atoi(getenv(OY_DEBUG_SIGNALS)); if(getenv(OY_DEBUG_OBJECTS)) oy_debug_objects = atoi(getenv(OY_DEBUG_OBJECTS)); //else  oy_debug_objects = 549;  // oy_debug_signals = 1;
+#define OYJL_TEST_MAIN_SETUP  printf("\n    Oyranos test2\n"); if(getenv(OY_DEBUG)) oy_debug = atoi(getenv(OY_DEBUG));  if(getenv(OY_DEBUG_SIGNALS)) oy_debug_signals = atoi(getenv(OY_DEBUG_SIGNALS)); if(getenv(OY_DEBUG_OBJECTS)) oy_debug_objects = atoi(getenv(OY_DEBUG_OBJECTS)); //else  oy_debug_objects = 39;  // oy_debug_signals = 1;
 #define OYJL_TEST_MAIN_FINISH printf("\n    Oyranos test2 finished\n\n"); if(testobj) testobj->release( &testobj ); if(verbose) { char * t = oyAlphaPrint_(0); puts(t); free(t); } oyLibConfigRelease(0);
 #include <oyjl_test_main.h>
 
@@ -5435,7 +5435,7 @@ oyjlTESTRESULT_e testCMMMonitorJSON ()
 
     oyProfileTag_s * tag = oyProfile_GetTagById( p, (icTagSignature)icSigMetaDataTag );
     if( tag )
-  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
       "oyProfile_GetTagById(icSigMetaDataTag)            " );
     } else
     { PRINT_SUB( oyjlTESTRESULT_FAIL,
@@ -5473,6 +5473,8 @@ oyjlTESTRESULT_e testCMMMonitorJSON ()
 
     oyConfig_Release( &config );
     oyOptions_Release( &options );
+    oyProfileTag_Release( &tag );
+    oyProfile_Release( &p );
     oyFree_m_( json_text );
   }
 
@@ -5588,7 +5590,7 @@ oyjlTESTRESULT_e testCMMMonitorListing ()
   fprintf( zout, "\n");
 
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0, NULL )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 0, NULL )
 
   return result;
 }
@@ -6094,7 +6096,8 @@ oyjlTESTRESULT_e testCMMsShow ()
                   }
 
                   STRING_ADD( text, "\n" );
-                  //oyCMMapiFilter_Release( &api );
+                  if(api->release)
+                    api->release( (oyStruct_s**)&api );
                 }
                 oyCMMapiFilters_Release( &apis );
               }
