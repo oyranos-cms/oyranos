@@ -141,10 +141,7 @@ OYAPI int  OYEXPORT oyConfigs_FromDeviceClass (
 
   /** 1.) obtain detailed and expensive device informations */
   if(options)
-  {
-    options = oyOptions_Copy( options, 0 );
     device_name = oyOptions_FindString( options, "device_name", 0 );
-  }
 
   /** 1.1.) build a device class registration string */
   if(error <= 0)
@@ -231,8 +228,6 @@ OYAPI int  OYEXPORT oyConfigs_FromDeviceClass (
 
     oyConfig_Release( &device );
   }
-
-  oyOptions_Release( &options );
 
   return error;
 }
