@@ -676,6 +676,7 @@ char * oyGetTempFileName_            ( const char        * name,
      !(flags & OY_FILE_APPEND) && !(flags & OY_FILE_NAME_SEARCH))
   {
     WARNc2_S( "%s: %s", _("File exists"), full_name );
+    oyFree_m_(full_name);
     return NULL;
   }
 
@@ -690,7 +691,7 @@ char * oyGetTempFileName_            ( const char        * name,
 
     if(!format) return NULL;
     /* allocate memory */
-    oyAllocHelper_m_( tmp, char, strlen(full_name)+12, oyAllocateFunc_, free(format); return NULL);
+    oyAllocHelper_m_( tmp, char, strlen(full_name)+12, oyAllocateFunc_, oyFree_m_(format); return NULL);
 
     oySprintf_( tmp, "%s", full_name );
     ext = end = oyStrrchr_( tmp, '.' );
@@ -738,6 +739,7 @@ char * oyGetTempFileName_            ( const char        * name,
   }
 
   if(tmp) oyFree_m_(tmp)
+  oyFree_m_(full_name);
 
   return result;
 }

@@ -362,11 +362,16 @@ oyCMMapiFilters_s * oyCMMsGetFilterApis_(const char        * registration,
       }
 
       if(rank_list)
+      {
         *rank_list = rank_list2_;
+        rank_list2_ = NULL;
+      }
       else
         oyFree_m_(rank_list2_);
+
       if(rank_list_)
         oyFree_m_(rank_list_);
+
       if(count)
         *count = k;
     }
@@ -384,6 +389,7 @@ oyCMMapiFilters_s * oyCMMsGetFilterApis_(const char        * registration,
     oyObject_Release( &object );
     oyHash_Release( &entry );
     oyCMMapiFilters_Release( &apis );
+    if(rank_list2_) oyFree_m_(rank_list2_);
 
   return apis2;
 }
