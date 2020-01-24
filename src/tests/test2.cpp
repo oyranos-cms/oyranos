@@ -5458,7 +5458,8 @@ oyjlTESTRESULT_e testCMMMonitorJSON ()
     int edid_mnft_count = 0;
     for(int j = 0; j < texts_n; ++j)
     {
-      //fprintf( zout, "%s\n", texts[j] );
+      if(verbose)
+        fprintf( zout, "%s\n", texts[j] );
       if(strstr(texts[j],"EDID_mnft_id") != NULL)
         ++edid_mnft_count;
     }
@@ -5473,6 +5474,7 @@ oyjlTESTRESULT_e testCMMMonitorJSON ()
       "Found EDID_mnft_id keys in meta tag:              %d", edid_mnft_count );
     }
 
+    oyjlStringListRelease( &texts, texts_n, oyDeAllocateFunc_ );
     oyConfig_Release( &config );
     oyOptions_Release( &options );
     oyProfileTag_Release( &tag );
@@ -5480,6 +5482,7 @@ oyjlTESTRESULT_e testCMMMonitorJSON ()
     oyFree_m_( json_text );
   }
 
+  oyFree_m_( first_json );
   oyConfigs_Release( &configs );
   fprintf( zout, "\n");
 
@@ -5589,6 +5592,7 @@ oyjlTESTRESULT_e testCMMMonitorListing ()
     }
   oyConfig_Release( &config );
   oyConfigs_Release( &configs );
+  oyFree_m_( device_name );
   fprintf( zout, "\n");
 
 
@@ -6106,6 +6110,7 @@ oyjlTESTRESULT_e testCMMsShow ()
                     api->release( (oyStruct_s**)&api );
                 }
                 oyCMMapiFilters_Release( &apis );
+                if( rank_list ) oyFree_m_( rank_list );
               }
               oyFree_m_(api_reg);
             }
@@ -6126,8 +6131,10 @@ oyjlTESTRESULT_e testCMMsShow ()
     if(verbose)
       fprintf(zout,"%d: \"%s\": %s\n\n", i, texts[i], text );
 
+    oyFree_m_(text);
   }
   oyStringListRelease_( &texts, count, free );
+  if(text) oyFree_m_( text );
 
   if( count )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
@@ -6145,7 +6152,8 @@ oyjlTESTRESULT_e testCMMsShow ()
   oyWriteMemToFile2_( "test2_CMMs.xhtml", t, strlen(t),0/*OY_FILE_NAME_SEARCH*/,
                       &rfile, malloc );
   fprintf(zout, "Wrote %s\n", rfile?rfile:"test2_CMMs.xhtml" );
-  free( rfile );
+  oyFree_m_( rfile );
+  oyFree_m_( t );
 
   OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 0, NULL )
 
