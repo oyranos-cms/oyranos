@@ -198,6 +198,9 @@ void oyFilterNode_Release__Members( oyFilterNode_s_ * filternode )
       }
   }
 
+  if( filternode->backend_data && filternode->backend_data->release )
+    filternode->backend_data->release( (oyStruct_s**) & filternode->backend_data );
+  filternode->backend_data = 0;
   oyFilterCore_Release( (oyFilterCore_s**)&filternode->core );
 
   if(filternode->oy_->deallocateFunc_)
