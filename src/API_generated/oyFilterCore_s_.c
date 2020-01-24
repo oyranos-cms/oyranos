@@ -431,7 +431,7 @@ oyFilterCore_s_ * oyFilterCore_Copy_ ( oyFilterCore_s_ *filtercore, oyObject_s o
         {
           int i;
           const char * track_name = oyStructTypeToText(s->type_);
-          fprintf( stderr, "%s[%d] tracking refs: %d parents: %d\n",
+          fprintf( stderr, "%s[%d] tracking refs: %d++ parents: %d\n",
                    (s->oy_->id_ == id_)?oyjlTermColor(oyjlGREEN, track_name):track_name, s->oy_->id_, s->oy_->ref_, n );
           for(i = 0; i < n; ++i)
           {
@@ -506,7 +506,7 @@ int oyFilterCore_Release_( oyFilterCore_s_ **filtercore )
       {
         int i;
         track_name = oyStructTypeToText(s->type_);
-        fprintf( stderr, "%s[%d] unref with refs: %d observers: %d parents: %d\n",
+        fprintf( stderr, "%s[%d] unref with refs: %d-- observers: %d parents: %d\n",
                  (s->oy_->id_ == id_)?oyjlTermColor(oyjlRED, track_name):track_name, s->oy_->id_, s->oy_->ref_, observer_refs, n );
         for(i = 0; i < n; ++i)
         {

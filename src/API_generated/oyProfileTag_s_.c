@@ -414,7 +414,7 @@ oyProfileTag_s_ * oyProfileTag_Copy_ ( oyProfileTag_s_ *profiletag, oyObject_s o
         {
           int i;
           const char * track_name = oyStructTypeToText(s->type_);
-          fprintf( stderr, "%s[%d] tracking refs: %d parents: %d\n",
+          fprintf( stderr, "%s[%d] tracking refs: %d++ parents: %d\n",
                    (s->oy_->id_ == id_)?oyjlTermColor(oyjlGREEN, track_name):track_name, s->oy_->id_, s->oy_->ref_, n );
           for(i = 0; i < n; ++i)
           {
@@ -489,7 +489,7 @@ int oyProfileTag_Release_( oyProfileTag_s_ **profiletag )
       {
         int i;
         track_name = oyStructTypeToText(s->type_);
-        fprintf( stderr, "%s[%d] unref with refs: %d observers: %d parents: %d\n",
+        fprintf( stderr, "%s[%d] unref with refs: %d-- observers: %d parents: %d\n",
                  (s->oy_->id_ == id_)?oyjlTermColor(oyjlRED, track_name):track_name, s->oy_->id_, s->oy_->ref_, observer_refs, n );
         for(i = 0; i < n; ++i)
         {

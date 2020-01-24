@@ -368,10 +368,8 @@ oyCMMapiFilters_s * oyCMMsGetFilterApis_(const char        * registration,
       }
       else
         oyFree_m_(rank_list2_);
-
       if(rank_list_)
         oyFree_m_(rank_list_);
-
       if(count)
         *count = k;
     }

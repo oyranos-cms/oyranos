@@ -399,7 +399,7 @@ oyNamedColors_s_ * oyNamedColors_Copy_ ( oyNamedColors_s_ *namedcolors, oyObject
         {
           int i;
           const char * track_name = oyStructTypeToText(s->type_);
-          fprintf( stderr, "%s[%d] tracking refs: %d parents: %d\n",
+          fprintf( stderr, "%s[%d] tracking refs: %d++ parents: %d\n",
                    (s->oy_->id_ == id_)?oyjlTermColor(oyjlGREEN, track_name):track_name, s->oy_->id_, s->oy_->ref_, n );
           for(i = 0; i < n; ++i)
           {
@@ -474,7 +474,7 @@ int oyNamedColors_Release_( oyNamedColors_s_ **namedcolors )
       {
         int i;
         track_name = oyStructTypeToText(s->type_);
-        fprintf( stderr, "%s[%d] unref with refs: %d observers: %d parents: %d\n",
+        fprintf( stderr, "%s[%d] unref with refs: %d-- observers: %d parents: %d\n",
                  (s->oy_->id_ == id_)?oyjlTermColor(oyjlRED, track_name):track_name, s->oy_->id_, s->oy_->ref_, observer_refs, n );
         for(i = 0; i < n; ++i)
         {
