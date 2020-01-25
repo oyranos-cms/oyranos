@@ -6175,7 +6175,22 @@ oyjlTESTRESULT_e testCMMnmRun ()
                                        "//" OY_TYPE_STD "/icc_color", NULL, 0 );
   oyProfile_s * prof = oyProfile_FromStd( oyEDITING_XYZ, icc_profile_flags, testobj );
   int error = 0, l_error = 0,
-      i,n = 10, bign = 10000;
+      i,n = 10, bign = 1;
+  oyOptions_s * options = NULL;
+  oyConversion_s * s = 0;
+  oyConversion_s * conv   = NULL;
+  oyImage_s * input  = NULL,
+            * output = NULL;
+  double * buf_in = &d[0],
+         * buf_out = &d[3];
+  oyDATATYPE_e buf_type_in = oyDOUBLE,
+               buf_type_out = oyDOUBLE;
+  oyProfile_s * p_in =  NULL,
+              * p_out = NULL;
+  oyFilterPlug_s * plug = NULL;
+  oyFilterNode_s * out = NULL;
+  oyPixelAccess_s * pixel_access = NULL;
+
 
   fprintf(stdout, "\n" );
 
@@ -6189,17 +6204,9 @@ oyjlTESTRESULT_e testCMMnmRun ()
     oyNamedColor_Release( &c );
   }
   clck = oyClock() - clck;
+  oyProfile_Release( &prof );
 
-  c = oyNamedColor_Create( NULL, NULL,0, prof, testobj );
-  if( c )
-  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyNamedColor_Create( )             %s",
-                   oyjlProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Obj."));
-  } else
-  { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyNamedColor_Create( )                            " );
-  }
-
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 1, "nm" )
 
   const char * key_domain = OY_STD"/behaviour";
   const char * key_name = OY_STD"/behaviour/rendering_bpc";
@@ -6246,6 +6253,8 @@ oyjlTESTRESULT_e testCMMnmRun ()
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyDB_getString_(%s)", key_name );
   }
+
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 1, "db" )
 
 
   char * value = oyGetPersistentString( key_name, 0, oySCOPE_USER_SYS,0 );
@@ -6296,6 +6305,7 @@ oyjlTESTRESULT_e testCMMnmRun ()
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyOption_SetValueFromDB(%s)", oyOption_GetText(option, oyNAME_NICK) );
   }
+  oyOption_Release( &option );
 
   clck = oyClock();
   for(i = 0; i < 1; ++i)
@@ -6337,9 +6347,10 @@ oyjlTESTRESULT_e testCMMnmRun ()
     "oyOptions_ForFilter()                             " );
   }
 
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 1, "opts" )
 
 
-  oyOptions_s * options = oyOptions_New(0);
+  options = oyOptions_New(0);
   clck = oyClock();
   for(i = 0; i < n*bign; ++i)
   {
@@ -6349,6 +6360,7 @@ oyjlTESTRESULT_e testCMMnmRun ()
     oyFilterCore_Release( &core );
   }
   clck = oyClock() - clck;
+  oyOptions_Release( &options );
 
   if( i )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
@@ -6382,16 +6394,15 @@ oyjlTESTRESULT_e testCMMnmRun ()
     "oyFilterCore_New() oyCMMapi4_s                     " );
   }
 
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 1, "filts" )
 
-  oyConversion_s * s = 0;
-  oyImage_s * input  = NULL,
-            * output = NULL;
-  double * buf_in = &d[0],
-         * buf_out = &d[3];
-  oyDATATYPE_e buf_type_in = oyDOUBLE,
-               buf_type_out = oyDOUBLE;
-  oyProfile_s * p_in = prof,
-              * p_out = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, testobj );
+
+  buf_in = &d[0];
+  buf_out = &d[3];
+  buf_type_in = oyDOUBLE;
+  buf_type_out = oyDOUBLE;
+  p_in =  oyProfile_FromStd( oyEDITING_XYZ, icc_profile_flags, testobj );
+  p_out = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, testobj );
 
   input =oyImage_Create( 1,1, 
                          buf_in ,
@@ -6407,6 +6418,7 @@ oyjlTESTRESULT_e testCMMnmRun ()
                          0 );
   error = !input || !output;
 
+  options = oyOptions_New(0);
 
   clck = oyClock();
   for(i = 0; i < n; ++i)
@@ -6444,18 +6456,19 @@ oyjlTESTRESULT_e testCMMnmRun ()
                          p_out,
                          testobj );
 
+  oyProfile_Release( &p_in );
   oyProfile_Release( &p_out );
+
   #define OY_ERR if(l_error != 0) error = l_error;
 
   s = oyConversion_CreateBasicPixels( input,output, 0, testobj );
   // create a basic job ticket for faster repeats of oyConversion_RunPixels()
-  oyFilterPlug_s * plug = 0;
-  oyFilterNode_s * out = oyConversion_GetNode( s, OY_OUTPUT );
+  out = oyConversion_GetNode( s, OY_OUTPUT );
   if(s && out)
     plug = oyFilterNode_GetPlug( out, 0 );
   else
     error = 1;
-  oyPixelAccess_s * pixel_access = oyPixelAccess_Create( 0,0, plug,
+  pixel_access = oyPixelAccess_Create( 0,0, plug,
                                        oyPIXEL_ACCESS_IMAGE, testobj );
   oyFilterPlug_Release( &plug );
   oyFilterNode_Release( &out );
@@ -6489,6 +6502,8 @@ oyjlTESTRESULT_e testCMMnmRun ()
   if(error <= 0)
     error  = oyConversion_RunPixels( s, pixel_access );
   clck = oyClock() - clck;
+  oyArray2d_Release( &pdata );
+  oyArray2d_Release( &array );
 
   if( !oy_debug_image_read_array_count )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
@@ -6500,11 +6515,14 @@ oyjlTESTRESULT_e testCMMnmRun ()
                           oyjlProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Pixel"));
   }
 
+  oyImage_Release( &output_image );
   oyConversion_Release ( &s );
   oyPixelAccess_Release( &pixel_access );
 
 
   s = oyConversion_CreateBasicPixels( input,output, options, testobj );
+  oyImage_Release( &input );
+  oyImage_Release( &output );
   clck = oyClock();
   for(i = 0; i < n; ++i)
   if(error <= 0)
@@ -6524,7 +6542,23 @@ oyjlTESTRESULT_e testCMMnmRun ()
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyConversion_RunPixels()                         " );
   }
+  oyOptions_Release( &options );
 
+
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 1, "convs" )
+
+
+  prof = oyProfile_FromStd( oyEDITING_XYZ, icc_profile_flags, testobj );
+  c = oyNamedColor_Create( NULL, NULL,0, prof, testobj );
+  oyProfile_Release( &prof );
+  if( c )
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyNamedColor_Create( )             %s",
+                   oyjlProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Obj."));
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyNamedColor_Create( )                            " );
+  }
 
 
   clck = oyClock();
@@ -6537,6 +6571,7 @@ oyjlTESTRESULT_e testCMMnmRun ()
       error = l_error;
   }
   clck = oyClock() - clck;
+  oyNamedColor_Release( &c );
 
   if( !error )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
@@ -6547,10 +6582,7 @@ oyjlTESTRESULT_e testCMMnmRun ()
     "oyNamedColor_SetColorStd() oyASSUMED_WEB         " );
   }
 
-  oyProfile_Release( &p_in );
-  oyProfile_Release( &p_out );
-  oyImage_Release( &input );
-  oyImage_Release( &output );
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 1, "nm++" )
 
   p_in = oyProfile_FromStd ( oyASSUMED_WEB, icc_profile_flags, testobj );
   p_out = oyProfile_FromStd ( oyEDITING_XYZ, icc_profile_flags, testobj );
@@ -6586,6 +6618,8 @@ oyjlTESTRESULT_e testCMMnmRun ()
   }
   clck = oyClock() - clck;
 
+  oyProfile_Release( &p_in );
+  oyProfile_Release( &p_out );
 
   if( !error )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
@@ -6596,7 +6630,11 @@ oyjlTESTRESULT_e testCMMnmRun ()
     "oyColorConvert_()                                 " );
   }
 
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 1, "cc" )
 
+
+  p_in = oyProfile_FromStd ( oyASSUMED_WEB, icc_profile_flags, testobj );
+  p_out = oyProfile_FromStd ( oyEDITING_XYZ, icc_profile_flags, testobj );
   input  = oyImage_Create( 1,1, 
                          buf_in ,
                          oyChannels_m(oyProfile_GetChannelsCount(p_in)) |
@@ -6609,7 +6647,12 @@ oyjlTESTRESULT_e testCMMnmRun ()
                           oyDataType_m(buf_type_out),
                          p_out,
                          testobj );
-  oyConversion_s * conv   = oyConversion_CreateBasicPixels( input,output, 0,testobj );
+  oyProfile_Release( &p_in );
+  oyProfile_Release( &p_out );
+
+  conv = oyConversion_CreateBasicPixels( input,output, 0,testobj );
+  oyImage_Release( &input );
+  oyImage_Release( &output );
 
   out = oyConversion_GetNode( conv, OY_OUTPUT );
 
@@ -6622,6 +6665,7 @@ oyjlTESTRESULT_e testCMMnmRun ()
   if(plug)
     pixel_access = oyPixelAccess_Create( 0,0, plug,
                                            oyPIXEL_ACCESS_IMAGE, testobj );
+  oyFilterPlug_Release( &plug );
   error  = oyConversion_RunPixels( conv, pixel_access );
 
   clck = oyClock();
@@ -6654,8 +6698,6 @@ oyjlTESTRESULT_e testCMMnmRun ()
       error = oyConversion_GetOnePixel( conv, 0,0, pixel_access );
   }
   clck = oyClock() - clck;
-  oyConversion_Release( &conv );
-  oyPixelAccess_Release( &pixel_access );
 
   if( !error  && d[3] != 0.0 )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
@@ -6666,25 +6708,40 @@ oyjlTESTRESULT_e testCMMnmRun ()
     "oyConversion_GetOnePixel( oyPix. )  %s %.02g %.02g %.02g" ,
                           oyjlProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "Pixel"), d[3], d[4], d[5]);
   }
+  oyPixelAccess_Release( &pixel_access );
+  oyConversion_Release( &conv );
+
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 0, 1, "conv" )
 
 
   conv = oyConversion_New( testobj );
   oyFilterNode_s * in_node = oyFilterNode_NewWith( "//" OY_TYPE_STD "/root", 0, testobj );
   oyConversion_Set( conv, in_node, 0 );
+  p_in = oyProfile_FromStd ( oyASSUMED_WEB, icc_profile_flags, testobj );
+  input  = oyImage_Create( 1,1, 
+                         buf_in ,
+                         oyChannels_m(oyProfile_GetChannelsCount(p_in)) |
+                          oyDataType_m(buf_type_in),
+                         p_in,
+                         testobj );
+  oyProfile_Release( &p_in );
   oyFilterNode_SetData( in_node, (oyStruct_s*)input, 0, 0 );
+  oyImage_Release( &input );
   oyFilterNode_s * out_node = oyFilterNode_NewWith( "//" OY_TYPE_STD "/output", 0, testobj );
   /*oyFilterNode_SetData( out_node, (oyStruct_s*)output, 0, 0 );*/
   error = oyFilterNode_Connect( in_node, "//" OY_TYPE_STD "/data",
                                 out_node, "//" OY_TYPE_STD "/data", 0 );
   if(error) PRINT_SUB( oyjlTESTRESULT_XFAIL, "oyFilterNode_Connect() error: %d", error )
   oyConversion_Set( conv, 0, out_node );
-  oyConversion_GetNode( conv, OY_OUTPUT );
+  //oyConversion_GetNode( conv, OY_OUTPUT );
   plug = oyFilterNode_GetPlug( out_node, 0 );
+  //oyFilterNode_Release( &out_node );
 
   /* create a very simple pixel iterator as job ticket */
   if(plug)
     pixel_access = oyPixelAccess_Create( 0,0, plug,
                                          oyPIXEL_ACCESS_IMAGE, testobj );
+  oyFilterPlug_Release( &plug );
   error  = oyConversion_RunPixels( conv, pixel_access );
 
   clck = oyClock();
@@ -6695,11 +6752,12 @@ oyjlTESTRESULT_e testCMMnmRun ()
   }
   clck = oyClock() - clck;
 
-  oyImage_Release( &input );
-  oyImage_Release( &output );
 
   oyPixelAccess_Release( &pixel_access );
   oyConversion_Release( &conv );
+
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 1, "2pix" )
+
 
 
   if( !error )
@@ -6711,7 +6769,8 @@ oyjlTESTRESULT_e testCMMnmRun ()
     "oyConversion_RunPixels (2 nodes)                   " );
   }
 
-
+  p_in = oyProfile_FromStd ( oyASSUMED_WEB, icc_profile_flags, testobj );
+  p_out = oyProfile_FromStd ( oyEDITING_XYZ, icc_profile_flags, testobj );
   conv = oyConversion_CreateBasicPixelsFromBuffers(
                                         p_in, buf_in, oyDataType_m(buf_type_in),
                                         p_out, buf_out, oyDataType_m(buf_type_out),
@@ -6760,19 +6819,12 @@ oyjlTESTRESULT_e testCMMnmRun ()
     }
   }
 
-  oyNamedColor_Release( &c );
   oyNamedColors_Release( &colors );
-  oyProfile_Release( &prof );
   oyProfile_Release( &p_in );
   oyProfile_Release( &p_out );
   oyProfile_Release( &p_cmyk );
-  oyOption_Release( &option );
   oyOptions_Release( &options );
-  oyImage_Release( &output_image );
-  oyArray2d_Release( &pdata );
-  oyArray2d_Release( &array );
   //oyFilterNode_Release( &in_node );
-  oyFilterNode_Release( &out_node );
 
 
   
@@ -6828,9 +6880,10 @@ oyjlTESTRESULT_e testImagePixel()
   cc = oyConversion_CreateBasicPixels( input,output, 0, testobj );
   oyFilterNode_s * out = oyConversion_GetNode( cc, OY_OUTPUT );
   if(cc && out)
-    plug = oyFilterNode_GetPlug( oyConversion_GetNode( cc, OY_OUTPUT), 0 );
+    plug = oyFilterNode_GetPlug( out, 0 );
   else
     error = 1;
+  oyFilterNode_Release( &out );
   pixel_access = oyPixelAccess_Create( 0,0, plug,
                                            oyPIXEL_ACCESS_IMAGE, testobj );
   oyFilterPlug_Release( &plug );
@@ -7146,7 +7199,7 @@ oyjlTESTRESULT_e testImagePixel()
   oyImage_Release( &input );
   oyImage_Release( &output );
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0, NULL )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 0, NULL )
 
   return result;
 }
