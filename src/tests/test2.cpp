@@ -6846,7 +6846,7 @@ oyjlTESTRESULT_e testImagePixel()
   oyProfile_s /** p_cmyk = oyProfile_FromStd( oyEDITING_CMYK, NULL ),*/
               * p_in, * p_out;
   int error = 0,
-      i,n = 1;
+      i,n = 1, bign = 1000;
   uint16_t buf_16in2x2[12] = {
   20000,20000,20000, 10000,10000,10000,
   0,0,0,             65535,65535,65535
@@ -6892,7 +6892,7 @@ oyjlTESTRESULT_e testImagePixel()
   error  = oyConversion_RunPixels( cc, pixel_access );
   clck1 = oyClock() - clck1;
   clck = oyClock();
-  for(i = 0; i < n*1000; ++i)
+  for(i = 0; i < n*bign; ++i)
   if(error <= 0)
   {
     error  = oyConversion_RunPixels( cc, pixel_access );
@@ -6955,9 +6955,10 @@ oyjlTESTRESULT_e testImagePixel()
     (*oyRectangle_SetGeo1(r,2)) *= 0.5;
     (*oyRectangle_SetGeo1(r,3)) *= 0.5;
     oyPixelAccess_ChangeRectangle( pixel_access, 0.5,0.5, r );
+    oyRectangle_Release( &r );
   }
   clck = oyClock();
-  for(i = 0; i < n*1000; ++i)
+  for(i = 0; i < n*bign; ++i)
   if(error <= 0)
   {
     error  = oyConversion_RunPixels( cc, pixel_access );
@@ -7007,9 +7008,10 @@ oyjlTESTRESULT_e testImagePixel()
     oyRectangle_s * r = oyPixelAccess_GetArrayROI( pixel_access );
     oyRectangle_SetGeo(r, 0.5,0.5, 0.5,0.5);
     oyPixelAccess_ChangeRectangle( pixel_access, 0.5,0.5, r );
+    oyRectangle_Release( &r );
   }
   clck = oyClock();
-  for(i = 0; i < n*1000; ++i)
+  for(i = 0; i < n*bign; ++i)
   if(error <= 0)
   {
     error  = oyConversion_RunPixels( cc, pixel_access );
@@ -7322,7 +7324,7 @@ oyjlTESTRESULT_e testRectangles()
   oyRectangle_Release( &pixel_rectangle );
   oyRectangle_Release( &roi );
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0, NULL )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 0, NULL )
 
   return result;
 }
