@@ -396,18 +396,17 @@ oyFilterNodes_s_ * oyFilterNodes_Copy_ ( oyFilterNodes_s_ *filternodes, oyObject
          id_ == 1)
       {
         oyStruct_s ** parents = NULL;
-        int n = oyStruct_GetParents( (oyStruct_s*)s, &parents );
+        int n = oyStruct_GetParents( (oyStruct_s*)s, &parents ),
+            observer_refs = oyStruct_ObservationCount( (oyStruct_s*)s, 0 ),
+            i;
+        const char * track_name = oyStructTypeToText(s->type_);
+        fprintf( stderr, "%s[%d] tracking refs: %d++ observers: %d parents: %d\n",
+                 (s->oy_->id_ == id_)?oyjlTermColor(oyjlGREEN, track_name):track_name, s->oy_->id_, s->oy_->ref_, observer_refs, n );
+        for(i = 0; i < n; ++i)
         {
-          int i;
-          const char * track_name = oyStructTypeToText(s->type_);
-          fprintf( stderr, "%s[%d] tracking refs: %d++ parents: %d\n",
-                   (s->oy_->id_ == id_)?oyjlTermColor(oyjlGREEN, track_name):track_name, s->oy_->id_, s->oy_->ref_, n );
-          for(i = 0; i < n; ++i)
-          {
-            track_name = oyStructTypeToText(parents[i]->type_);
-            fprintf( stderr, "parent[%d]: %s[%d]\n", i,
-                     track_name, parents[i]->oy_->id_ );
-          }
+          track_name = oyStructTypeToText(parents[i]->type_);
+          fprintf( stderr, "parent[%d]: %s[%d]\n", i,
+                   track_name, parents[i]->oy_->id_ );
         }
       }
     }
