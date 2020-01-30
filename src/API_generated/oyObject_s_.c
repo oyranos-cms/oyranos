@@ -89,7 +89,17 @@ int          oyObject_Ref            ( oyObject_s          obj )
     ++s->ref_;
 
     if(oy_debug_objects == 1 || oy_debug_objects == s->id_)
+    {
+      if(oy_debug_objects == s->id_)
+      {
+        int i;
+        int n = oyStruct_GetParents( s->parent_, NULL );
+        int observer_refs = oyStruct_ObservationCount( s->parent_, 0 );
+        for( i = 0; i < s->ref_ - observer_refs - n; ++i)
+          fprintf( stderr, "  " );
+      }
       OY_BACKTRACE_PRINT
+    }
     if(oy_debug_objects >= 0)
       /* track object */
       oyObject_GetId( obj );

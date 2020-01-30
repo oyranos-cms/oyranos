@@ -389,11 +389,20 @@ oyLis_s_ * oyLis_Copy_ ( oyLis_s_ *lis, oyObject_s object )
             observer_refs = oyStruct_ObservationCount( (oyStruct_s*)s, 0 ),
             i;
         const char * track_name = oyStructTypeToText(s->type_);
+        if(s->oy_->id_ == id_)
+          for( i = 0; i < s->oy_->ref_ - observer_refs - n; ++i)
+            fprintf( stderr, "  " );
         fprintf( stderr, "%s[%d] tracking refs: %d++ observers: %d parents: %d\n",
                  (s->oy_->id_ == id_)?oyjlTermColor(oyjlGREEN, track_name):track_name, s->oy_->id_, s->oy_->ref_, observer_refs, n );
         for(i = 0; i < n; ++i)
         {
           track_name = oyStructTypeToText(parents[i]->type_);
+          if(s->oy_->id_ == id_)
+          {
+            int i;
+            for( i = 0; i < s->oy_->ref_ - observer_refs - n; ++i)
+              fprintf( stderr, "  " );
+          }
           fprintf( stderr, "parent[%d]: %s[%d]\n", i,
                    track_name, parents[i]->oy_->id_ );
         }
@@ -463,11 +472,20 @@ int oyLis_Release_( oyLis_s_ **lis )
       {
         int i;
         track_name = oyStructTypeToText(s->type_);
+        if(s->oy_->id_ == id_)
+          for( i = 0; i < s->oy_->ref_ - observer_refs - n; ++i)
+            fprintf( stderr, "  " );
         fprintf( stderr, "%s[%d] unref with refs: %d-- observers: %d parents: %d\n",
                  (s->oy_->id_ == id_)?oyjlTermColor(oyjlRED, track_name):track_name, s->oy_->id_, s->oy_->ref_, observer_refs, n );
         for(i = 0; i < n; ++i)
         {
           track_name = oyStructTypeToText(parents[i]->type_);
+          if(s->oy_->id_ == id_)
+          {
+            int i;
+            for( i = 0; i < s->oy_->ref_ - observer_refs - n; ++i)
+              fprintf( stderr, "  " );
+          }
           fprintf( stderr, "parent[%d]: %s[%d]\n", i,
                    track_name, parents[i]->oy_->id_ );
         }
