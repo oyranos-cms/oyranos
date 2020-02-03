@@ -64,6 +64,8 @@
 
     ::OY_DEBUG_OBJECTS_SKIP_CMM_CACHES together with ::OY_DEBUG_OBJECTS for a
     cleaner graph \n
+    ::OY_DEBUG_OBJECTS_SHOW_NEW together with ::OY_DEBUG_OBJECTS for a
+    list of newly allocated objects from a scope - currently CMMapi7 modules \n
     ::OY_DEBUG_SIGNALS sets the internal ::oy_debug_signals integer variable on and
     helps in tracing signals. This variable is dangerous and 
     should not to be run for production use. \n

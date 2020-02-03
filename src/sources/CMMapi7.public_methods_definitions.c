@@ -103,7 +103,7 @@ OYAPI int OYEXPORT
     return error;
   }
 
-  OY_TRACE_START_
+  if(getenv(OY_DEBUG_OBJECTS_SHOW_NEW)) OY_TRACE_START_
   if(oy_debug)
   {
     DBGs_NUM2_S( ticket,"CALLING %s[%s]->oyCMMFilterPlug_Run()",
@@ -112,7 +112,7 @@ OYAPI int OYEXPORT
 
   error = s->oyCMMFilterPlug_Run( plug, ticket );
 
-  OY_TRACE_END_(s->registration)
+  if(getenv(OY_DEBUG_OBJECTS_SHOW_NEW)) OY_TRACE_END_(s->registration)
   if(oy_debug)
   {
     DBGs_NUM2_S( ticket,"DONE %s[%s]->oyCMMFilterPlug_Run()",
