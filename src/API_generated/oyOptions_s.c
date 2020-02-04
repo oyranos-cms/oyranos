@@ -1856,6 +1856,7 @@ int            oyOptions_SetFromDouble(oyOptions_s      ** obj,
  *  @param[out]    option              the belonging option; optional
  *  @return                            error
  *
+ *  @see oyOptions_CountType()
  *
  *  @version Oyranos: 0.9.7
  *  @date    2017/07/04
@@ -1930,6 +1931,8 @@ int            oyOptions_GetType2    ( oyOptions_s       * options,
 /** Function oyOptions_GetType
  *  @memberof oyOptions_s
  *  @brief   select from options with special attribute
+ *
+ *  @see oyOptions_CountType()
  *
  *  @version Oyranos: 0.1.10
  *  @since   2009/03/04 (Oyranos: 0.1.10)
