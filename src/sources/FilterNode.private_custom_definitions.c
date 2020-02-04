@@ -80,7 +80,18 @@ void oyFilterNode_Release__Members( oyFilterNode_s_ * filternode )
         oyFilterNode_Disconnect( (oyFilterNode_s*)filternode, i );
         if((oy_debug || oy_debug_objects >= 0) &&
             oyObject_GetRefCount(filternode->plugs[i]->oy_) > 2)
+        {
+          oyStruct_s ** parents = NULL;
+          int ps = oyStruct_GetParents( (oyStruct_s*)filternode->plugs[i], &parents ), j;
           fprintf(stderr, "!!!ERROR: node[%d]->plug[%d] can not be released with refs: %d\n", cid, filternode->plugs[i]->oy_->id_, oyObject_GetRefCount(filternode->plugs[i]->oy_));
+          for(j = 0; j < ps; ++j)
+          {
+            const char * track_name = oyStructTypeToText(parents[j]->type_);
+            fprintf( stderr, "[%d]: parent[%d]: %s[%d]\n",
+                     filternode->plugs[i]->oy_->id_, j,
+                     track_name, parents[j]->oy_->id_ );
+          }
+        }
         oyFilterPlug_Release( (oyFilterPlug_s **)&filternode->plugs[i] );
       }
   }
