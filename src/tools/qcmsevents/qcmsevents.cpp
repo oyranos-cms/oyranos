@@ -21,6 +21,11 @@
 
 #include <X11/Xcm/Xcm.h>
 
+#ifdef None
+// is defined in X11 as 0L, which collides with various "enum class None" declarations in Qt
+#undef None
+#endif
+
 #include <QAction>
 #include <QActionGroup>
 #include <QVBoxLayout>
