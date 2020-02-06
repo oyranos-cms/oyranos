@@ -216,9 +216,6 @@ char *   oyBT                        ( int                 stack_limit );
 \
           nptrs = backtrace(buffer, BT_BUF_SIZE); \
 \
-          /* The call backtrace_symbols_fd(buffer, nptrs, STDOUT_FILENO) \
-             would produce similar output to the following: */ \
-\
           strings = backtrace_symbols(buffer, nptrs); \
           if( strings == NULL ) \
           { \
