@@ -203,92 +203,11 @@ void oy_backtrace_();
     oyObjectIdListShowDiffAndRelease( &ids_old, t );
 
 #ifdef HAVE_BACKTRACE
+char *   oyBT                        ( int                 stack_limit );
 #define OY_BACKTRACE_PRINT { \
-          int j, nptrs; \
-          void *buffer[BT_BUF_SIZE]; \
-          char **strings; \
-\
-          nptrs = backtrace(buffer, BT_BUF_SIZE); \
-\
-          /* The call backtrace_symbols_fd(buffer, nptrs, STDOUT_FILENO) \
-             would produce similar output to the following: */ \
-\
-          strings = backtrace_symbols(buffer, nptrs); \
-          if( strings == NULL ) \
-          { \
-            perror("backtrace_symbols"); \
-          } else \
-          { \
-            int start = nptrs-1; \
-            do { --start; } while( start >= 0 && (strstr(strings[start], "(main+") == NULL) ); \
-            if(start < 0) start = nptrs-1; /* handle threads */ \
-            for(j = start; j >= 0; j--) \
-            { \
-              if(oy_debug) \
-                fprintf(stderr, "%s\n", strings[j]); \
-              else \
-              { \
-                char * t = NULL, * txt = NULL, * line_number = NULL; \
-                const char * line = strings[j], \
-                           * tmp = strchr( line, '(' ), \
-                           * addr = strchr( tmp, '[' ); \
-                if(addr) \
-                { \
-                  char * command = NULL; \
-                  size_t size = 0; \
-                  char * prog = oyjlStringCopy( line, 0 ); \
-                  char * addr2 = oyjlStringCopy( addr+1, 0 ); \
-                  addr2[strlen(addr2)-1] = '\000'; \
-                  txt = strchr( prog, '(' ); \
-                  if(txt) txt[0] = '\000'; \
-                  oyjlStringAdd( &command, 0,0, "addr2line -e %s %s -si", prog, addr2 ); \
-                  line_number = oyReadCmdToMem_( command, &size, "r", NULL ); \
-                  if(line_number) \
-                    line_number[strlen(line_number)-1] = '\000'; \
-                  txt = strchr( line_number, '(' ); \
-                  if(txt) txt[-1] = '\000'; \
-                  oyFree_m_(addr2); \
-                  oyFree_m_(command); \
-                  oyFree_m_(prog); \
-                } \
-                if(tmp) t = oyStringCopy( &tmp[1], NULL ); \
-                else t = oyStringCopy( line, NULL ); \
-                txt = strchr( t, '+' ); \
-                if(txt) txt[0] = '\000'; \
-                if(!t || !t[0]) \
-                { /* fall back to adress */ \
-                  if(tmp) txt = strstr( tmp, "(+" ); \
-                  if(txt) t = oyStringCopy( &txt[1], NULL ); \
-                  if(t) txt = strchr(t,')'); \
-                  if(txt) txt[0] = '\000'; \
-                } \
-                if(strstr(t,addr)) \
-                { \
-                  oyFree_m_(t); \
-                  t = oyStringCopy( addr, NULL ); \
-                } \
-                if(j > 0 && (strstr(strings[j-1], t) != NULL) ) \
-                  oyFree_m_(t); \
-                if(t) \
-                { \
-                  if(j==0) \
-                  { \
-                    fprintf(stderr, "%s", oyjlTermColor(oyjlBOLD, t)); \
-                    fprintf(stderr, "(%s) ", line_number ? oyjlTermColor(oyjlITALIC, line_number ) : ""); \
-                  } \
-                  else \
-                  { \
-                    fprintf(stderr, "%s", oyjlTermColor(oyjlBOLD, t)); \
-                    fprintf(stderr, "(%s)->", line_number ? oyjlTermColor(oyjlITALIC, line_number ) : ""); \
-                  } \
-                  oyFree_m_(t); \
-                } \
-                oyFree_m_(line_number); \
-              } \
-            } \
-            fprintf(stderr, "\n"); \
-            free(strings); \
-          } \
+  char * text = oyBT(0); \
+  fprintf( stderr, "%s\n", text ); \
+  free(text); \
 }
 #define OY_BACKTRACE_STRING(count) { \
           int j, nptrs; \

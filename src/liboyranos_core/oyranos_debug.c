@@ -99,6 +99,131 @@ void oy_backtrace_()
       fprintf( stderr, "could not open "TMP_FILE "\n" );
 }
 
+#ifdef HAVE_BACKTRACE
+#include <execinfo.h>
+#define BT_BUF_SIZE 100
+
+#include "oyranos_helper.h"
+#include "oyranos_i18n.h"
+char *   oyBT                        ( int                 stack_limit )
+{
+  char * text = NULL;
+          int j, nptrs;
+          void *buffer[BT_BUF_SIZE];
+          char **strings;
+
+          nptrs = backtrace(buffer, BT_BUF_SIZE);
+
+          /* The call backtrace_symbols_fd(buffer, nptrs, STDOUT_FILENO)
+             would produce similar output to the following: */
+
+          strings = backtrace_symbols(buffer, nptrs);
+          if( strings == NULL )
+          {
+            perror("backtrace_symbols");
+          } else
+          {
+            int start = nptrs-1;
+            do { --start; } while( start >= 0 && (strstr(strings[start], "(main+") == NULL) );
+            if(start < 0) start = nptrs-1; /* handle threads */
+            for(j = start; j >= 0; j--)
+            {
+              if(oy_debug)
+                fprintf(stderr, "%s\n", strings[j]);
+              {
+                char * t = NULL, * txt = NULL, * addr_info = NULL, * line_number = NULL , * func_name = NULL, * discriminator = NULL;
+                const char * line = strings[j],
+                           * tmp = strchr( line, '(' ),
+                           * addr = strchr( tmp, '[' );
+                if(addr)
+                {
+                  char * command = NULL;
+                  size_t size = 0;
+                  char * prog = oyjlStringCopy( line, 0 );
+                  char * addr2 = oyjlStringCopy( addr+1, 0 );
+                  addr2[strlen(addr2)-1] = '\000';
+                  txt = strchr( prog, '(' );
+                  if(txt) txt[0] = '\000';
+                  oyStringAddPrintf( &command, 0,0, "addr2line -spifCe %s %s", prog, addr2 );
+                  addr_info = oyReadCmdToMem_( command, &size, "r", NULL );
+                  if(addr_info)
+                  {
+                    addr_info[strlen(addr_info)-1] = '\000';
+
+                    if( addr_info[strlen(addr_info)-1] == ')' &&
+                        strrchr( addr_info, '(' ) )
+                    {
+                      txt = strrchr( addr_info, '(' );
+                      discriminator = oyStringCopy( txt, NULL );
+                      txt[-1] = '\000';
+                    } 
+                  }
+
+                  txt = strrchr( addr_info, ' ' );
+                  if(txt && strrchr( txt, ' '))
+                  {
+                    func_name = oyStringCopy( addr_info, NULL );
+                    txt = strrchr( func_name, ' ' );
+                    txt = strrchr( txt, ' ' );
+                    txt[0] = '\000';
+                    txt = strrchr( func_name, ' ' ); /* at */
+                    txt[0] = '\000';
+
+                    txt = strrchr( addr_info, ' ' ) + 1;
+                    line_number = oyStringCopy( txt, NULL );
+                  } else
+                  {
+                    txt = strchr( addr_info, '(' );
+                    if(txt) txt[-1] = '\000';
+                  }
+                  oyFree_m_(addr2);
+                  oyFree_m_(command);
+                  oyFree_m_(prog);
+                }
+                if(func_name) t = oyStringCopy( func_name, NULL );
+                else if(tmp) t = oyStringCopy( &tmp[1], NULL );
+                else t = oyStringCopy( line, NULL );
+                txt = strchr( t, '+' );
+                if(txt) txt[0] = '\000';
+                if(!t || !t[0])
+                { /* fall back to adress */
+                  if(tmp) txt = strstr( tmp, "(+" );
+                  if(txt) t = oyStringCopy( &txt[1], NULL );
+                  if(t) txt = strchr(t,')');
+                  if(txt) txt[0] = '\000';
+                }
+                if(strstr(t,addr))
+                {
+                  oyFree_m_(t);
+                  t = oyStringCopy( addr, NULL );
+                }
+                if(t)
+                {
+                  if(j==0)
+                  {
+                    oyStringAddPrintf( &text, 0,0, "%s", oyjlTermColor(oyjlBOLD, t) );
+                    oyStringAddPrintf( &text, 0,0, "(%s) ", line_number ? oyjlTermColor(oyjlITALIC, line_number ) : "");
+                  }
+                  else
+                  {
+                    oyStringAddPrintf( &text, 0,0, "%s", oyjlTermColor(oyjlBOLD, t) );
+                    oyStringAddPrintf( &text, 0,0, "(%s)->", line_number ? oyjlTermColor(oyjlITALIC, line_number ) : "");
+                  }
+                  oyFree_m_(t);
+                }
+                oyFree_m_(addr_info);
+                oyFree_m_(line_number);
+                if(func_name) oyFree_m_(func_name);
+                if(discriminator) oyFree_m_(discriminator);
+              }
+            }
+            oyStringAddPrintf( &text, 0,0, "\n" );
+            free(strings);
+          }
+  return text;
+}
+#endif
+
 time_t             oyTime            ( )
 {
   time_t time_;
