@@ -1168,6 +1168,7 @@ oyCMMinfo_s *    oyCMMOpen_          ( const char        * lib_name )
         } else
         {
           cmm_info = NULL;
+          oyCMMhandle_Release_( &cmm_handle );
           DBG_NUM1_S("api check failed: %s", lib_name);
         }
       }
@@ -1182,6 +1183,7 @@ oyCMMinfo_s *    oyCMMOpen_          ( const char        * lib_name )
         if(error > 0)
         {
           cmm_info = NULL;
+          oyCMMhandle_Release_( &cmm_handle );
           DBG_NUM1_S("init failed: %s", lib_name);
         }
       }
@@ -1663,7 +1665,7 @@ int              oyCMMhandle_Release_( oyCMMhandle_s    ** obj )
   if(s->info && oyCMMinfo_GetResetF(s->info))
     oyCMMinfo_GetResetF(s->info)( (oyStruct_s*) s->info );
   s->info = NULL;
-  oyFree_m_( s->lib_name );
+  if( s->lib_name ) oyFree_m_( s->lib_name );
 
 
   if(s->oy_->deallocateFunc_)
