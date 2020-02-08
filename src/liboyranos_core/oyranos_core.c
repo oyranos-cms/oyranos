@@ -988,6 +988,10 @@ int            oyVersion             ( int                 type )
 }
 
 #include "config.log.h"
+#include "oyranos_git_version.h"
+#ifndef OY_GIT_VERSION
+#define OY_GIT_VERSION ""
+#endif
 /** @brief  give the configure options for Oyranos
  *
  *  @param[in] type
@@ -1007,7 +1011,7 @@ char *       oyVersionString         ( int                 type,
 {
   char * text = 0, * tmp = 0;
   char temp[24];
-  char * git = "";
+  char * git = OY_GIT_VERSION;
 
   if(!allocateFunc)
     allocateFunc = oyAllocateFunc_;
@@ -1016,6 +1020,7 @@ char *       oyVersionString         ( int                 type,
     return oyStringCopy_(OYRANOS_VERSION_NAME, allocateFunc);
   if(type == 2)
   {
+    if(oy_debug) fprintf( stderr, "OY_GIT_VERSION: %s\n", OY_GIT_VERSION );
     if(git[0])
       return oyStringCopy_(git, allocateFunc);
     else
