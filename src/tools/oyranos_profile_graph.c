@@ -261,6 +261,7 @@ int myMain( int argc, const char ** argv )
   const char * export = NULL;
   int help = 0;
   int verbose = 0;
+  int version = 0;
   int state = 0;
 
   opts = oyjlOptions_New( argc, (const char**)argv );
@@ -332,7 +333,8 @@ int myMain( int argc, const char ** argv )
     {"oiwi", 0, "G", "gui",  NULL, _("gui"),  _("GUI"),  NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i = &gui} },
     /* default options -h and -v */
     {"oiwi", 0, "h", "help", NULL, _("help"), _("Help"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&help} },
-    {"oiwi", 0, "v", "verbose", NULL, _("verbose"), _("verbose"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&verbose} },
+    {"oiwi", 0, "v", "verbose", NULL, _("verbose"), _("verbose"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&verbose} },
+    {"oiwi", 0, "V", "version", NULL, _("version"), _("Version"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&version} },
     /* default option template -X|--export */
     {"oiwi", 0, "X", "export", NULL, NULL, NULL, NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = NULL}, oyjlSTRING, {.s=&export} },
     /* blind options, useful only for man page generation */

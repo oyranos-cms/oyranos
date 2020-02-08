@@ -304,6 +304,7 @@ int myMain( int argc , const char** argv )
   int check = 0;
   int help = 0;
   int verbose = 0;
+  int version = 0;
   int state = 0;
   int worked = 0;
   oyjlOptions_s * opts;
@@ -380,7 +381,8 @@ int myMain( int argc , const char** argv )
     /* The --gui option can be hidden and used only internally. */
     {"oiwi", 0, "G", "gui",  NULL, _("gui"),  _("GUI"),  NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i = &gui} },
     {"oiwi", 0, "h", "help", NULL, _("help"), _("Help"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&help} },
-    {"oiwi", 0, "v", "verbose", NULL, _("verbose"), _("verbose"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&verbose} },
+    {"oiwi", 0, "v", "verbose", NULL, _("verbose"), _("verbose"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&verbose} },
+    {"oiwi", 0, "V", "version", NULL, _("version"), _("Version"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&version} },
     {"oiwi", 0, "y", "dry-run", NULL, "dry run", "dry run", NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&dry} },
     {"oiwi", 0, "u", "hour", NULL, "hour", "hour", NULL, NULL, oyjlOPTIONTYPE_DOUBLE, {.dbl.start = 0, .dbl.end = 48, .dbl.tick = 1, .dbl.d = 0}, oyjlDOUBLE, {.d=&hour_} },
     {"oiwi", 0, "c", "check", NULL, "check", "check", NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&check} },
