@@ -61,7 +61,7 @@ int      oyAddLinearDisplayEffect    ( oyOptions_s      ** module_options )
   else
     oyProfile_Release( &effect );
 
-  oyFree_m_( fn );
+  if(fn) oyFree_m_( fn );
 
   return error;
 }
