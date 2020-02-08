@@ -2035,6 +2035,8 @@ void  oyjlOptions_PrintHelp          ( oyjlOptions_s     * opts,
     fprintf( stdout, "%s v%s - %s", oyjlTermColor( oyjlBOLD, opts->argv[0] ),
                               version && version->name ? version->name : "",
                               ui->description ? ui->description : ui->name ? ui->name : "" );
+    if(version && version->name && version->description && *oyjl_debug)
+      fprintf( stdout, "\n  %s", version->description );
   }
   else
   {
@@ -2384,14 +2386,7 @@ oyjlUi_s *  oyjlUi_Create            ( int                 argc,
   opt_state = oyjlOptions_Parse( ui->opts );
   if(opt_state == oyjlOPTIONS_MISSING)
   {
-    oyjlUiHeaderSection_s * version = oyjlUi_GetHeaderSection( ui,
-                                                               "version" );
-    const char * prog = argv[0];
-    if(!verbose && prog && strchr(prog,'/'))
-      prog = strrchr(prog,'/') + 1;
-    oyjlOptions_PrintHelp( ui->opts, ui, verbose, "%s v%s - %s", prog,
-                              version && version->name ? version->name : "",
-                              ui->description ? ui->description : "" );
+    oyjlOptions_PrintHelp( ui->opts, ui, verbose, NULL );
     oyjlUi_Release( &ui);
     if(status)
       *status |= oyjlUI_STATE_HELP;
@@ -2430,14 +2425,7 @@ oyjlUi_s *  oyjlUi_Create            ( int                 argc,
   }
   if(help)
   {
-    oyjlUiHeaderSection_s * version = oyjlUi_GetHeaderSection( ui,
-                                                               "version" );
-    const char * prog = argv[0];
-    if(!verbose && prog && strchr(prog,'/'))
-      prog = strrchr(prog,'/') + 1;
-    oyjlOptions_PrintHelp( ui->opts, ui, verbose, "%s v%s - %s", prog,
-                              version && version->name ? version->name : "",
-                              ui->description ? ui->description : "" );
+    oyjlOptions_PrintHelp( ui->opts, ui, verbose, NULL );
     oyjlUi_Release( &ui);
     if(status)
       *status |= oyjlUI_STATE_HELP;
@@ -2455,8 +2443,11 @@ oyjlUi_s *  oyjlUi_Create            ( int                 argc,
     const char * prog = argv[0];
     if(!verbose && prog && strchr(prog,'/'))
       prog = strrchr(prog,'/') + 1;
-    fprintf( stdout, "%s v%s - %s\n%s\n%s%s%s\n%s%s%s\n\n", prog,
+    fprintf( stdout, "%s v%s%s%s%s - %s\n%s\n%s%s%s\n%s%s%s\n\n", prog,
                                       version && version->name ? version->name : "",
+                                      version && version->description ? "(" : "",
+                                      version && version->description ? version->description : "",
+                                      version && version->description ? ")" : "",
                                       ui->description ? ui->description : ui->name ? ui->name : "",
                                       copyright && copyright->name ? copyright->name : "",
                                       license ? _("License"):"", license?":\t":"", license && license->name ? license->name : "",
