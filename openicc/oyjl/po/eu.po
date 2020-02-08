@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eu\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2020-01-06 12:02+0100\n"
+"POT-Creation-Date: 2020-02-08 00:52+0100\n"
 "PO-Revision-Date: 2007-11-07 11:11+0100\n"
 "Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@zundan.com>\n"
 "Language-Team: Basque <itzulpena@euskalgnu.org>\n"
@@ -24,7 +24,7 @@ msgstr ""
 msgid "'_(\\\"%s\\\"); '"
 msgstr ""
 
-#: oyjl_args.c:2405
+#: oyjl_args.c:2400
 msgid "... try with --help|-h option for usage text. give up"
 msgstr ""
 
@@ -40,7 +40,7 @@ msgstr ""
 msgid "A output format string."
 msgstr ""
 
-#: oyjl_args.c:2933 oyjl_args.c:3179
+#: oyjl_args.c:2924 oyjl_args.c:3170
 msgid "AUTHOR"
 msgstr ""
 
@@ -73,11 +73,11 @@ msgstr ""
 msgid "Any arg mode"
 msgstr ""
 
-#: oyjl_args.c:2463
+#: oyjl_args.c:2454
 msgid "Author"
 msgstr ""
 
-#: oyjl_args.c:2943 oyjl_args.c:2945 oyjl_args.c:3193 oyjl_args.c:3195
+#: oyjl_args.c:2934 oyjl_args.c:2936 oyjl_args.c:3184 oyjl_args.c:3186
 msgid "BUGS"
 msgstr ""
 
@@ -86,7 +86,7 @@ msgstr ""
 msgid "C static char"
 msgstr ""
 
-#: oyjl_args.c:2937 oyjl_args.c:3183
+#: oyjl_args.c:2928 oyjl_args.c:3174
 msgid "COPYRIGHT"
 msgstr ""
 
@@ -134,7 +134,7 @@ msgstr "Copyright-a"
 msgid "Count"
 msgstr ""
 
-#: oyjl_args.c:2822 oyjl_args.c:3070
+#: oyjl_args.c:2813 oyjl_args.c:3061
 msgid "DESCRIPTION"
 msgstr ""
 
@@ -143,7 +143,7 @@ msgstr ""
 msgid "Date"
 msgstr "Data"
 
-#: oyjl_args.c:2052
+#: oyjl_args.c:2054
 #, fuzzy
 msgid "Description"
 msgstr "Azalpena"
@@ -174,15 +174,15 @@ msgstr "Azalpena"
 msgid "Download"
 msgstr ""
 
-#: oyjl_args.c:2628
+#: oyjl_args.c:2619
 msgid "ENVIRONMENT VARIABLES"
 msgstr ""
 
-#: oyjl.c:103 oyjl_args.c:2624 oyjl_translate.c:115
+#: oyjl.c:103 oyjl_args.c:2615 oyjl_translate.c:115
 msgid "EXAMPLES"
 msgstr ""
 
-#: oyjl_args.c:2626
+#: oyjl_args.c:2617
 msgid "EXIT-STATE"
 msgstr ""
 
@@ -213,7 +213,7 @@ msgstr ""
 msgid "FILENAME"
 msgstr ""
 
-#: oyjl_args.c:2632
+#: oyjl_args.c:2623
 msgid "FILES"
 msgstr ""
 
@@ -292,7 +292,7 @@ msgstr ""
 msgid "Get node type"
 msgstr ""
 
-#: oyjl_args.c:2630
+#: oyjl_args.c:2621
 msgid "HISTORY"
 msgstr ""
 
@@ -355,7 +355,7 @@ msgstr "Izena"
 msgid "LOCALEDIR"
 msgstr ""
 
-#: oyjl_args.c:2462 oyjl_args.c:2939 oyjl_args.c:3185 oyjl_args_tree.c:1105
+#: oyjl_args.c:2453 oyjl_args.c:2930 oyjl_args.c:3176 oyjl_args_tree.c:1105
 msgid "License"
 msgstr "Lizentzia"
 
@@ -470,7 +470,7 @@ msgstr "Modeloa:"
 msgid "Module"
 msgstr "Bereizketa"
 
-#: oyjl_args.c:3055
+#: oyjl_args.c:3046
 msgid "NAME"
 msgstr ""
 
@@ -486,7 +486,7 @@ msgstr ""
 msgid "November 28, 2019"
 msgstr ""
 
-#: oyjl_args.c:2824 oyjl_args.c:3073
+#: oyjl_args.c:2815 oyjl_args.c:3064
 msgid "OPTIONS"
 msgstr ""
 
@@ -512,7 +512,7 @@ msgid "Option needs a argument"
 msgstr ""
 
 #: oyjl_args.c:1393 oyjl_args.c:1401 oyjl_args.c:1493 oyjl_args.c:1550
-#: oyjl_args.c:2270
+#: oyjl_args.c:2272
 msgid "Option not supported"
 msgstr ""
 
@@ -664,11 +664,11 @@ msgstr ""
 msgid "Rendering Intent"
 msgstr "Oyranos-en ezarpenak"
 
-#: oyjl-args.c:53 oyjl.c:105 oyjl_args.c:2636 oyjl_translate.c:117
+#: oyjl-args.c:53 oyjl.c:105 oyjl_args.c:2627 oyjl_translate.c:117
 msgid "SEE ALSO"
 msgstr ""
 
-#: oyjl_args.c:2634
+#: oyjl_args.c:2625
 msgid "SEE AS WELL"
 msgstr ""
 
@@ -676,7 +676,7 @@ msgstr ""
 msgid "STRING"
 msgstr ""
 
-#: oyjl_args.c:2810 oyjl_args.c:3058
+#: oyjl_args.c:2801 oyjl_args.c:3049
 msgid "SYNOPSIS"
 msgstr ""
 
@@ -731,7 +731,7 @@ msgstr ""
 msgid "Support"
 msgstr ""
 
-#: oyjl_args.c:2054
+#: oyjl_args.c:2056
 msgid "Synopsis"
 msgstr ""
 
@@ -809,14 +809,14 @@ msgstr ""
 msgid "Url"
 msgstr ""
 
-#: oyjl_args.c:2063 oyjl_translate.c:173
+#: oyjl_args.c:2065 oyjl_translate.c:173
 msgid "Usage"
 msgstr ""
 
 #: oyjl_args.c:1377 oyjl_args.c:1393 oyjl_args.c:1401 oyjl_args.c:1493
 #: oyjl_args.c:1514 oyjl_args.c:1536 oyjl_args.c:1550 oyjl_args.c:1568
 #: oyjl_args.c:1587 oyjl_args.c:1604 oyjl_args.c:1631 oyjl_args.c:1739
-#: oyjl_args.c:2270
+#: oyjl_args.c:2272
 msgid "Usage Error:"
 msgstr ""
 
@@ -929,7 +929,7 @@ msgstr "Azalpena"
 msgid "need a value_type"
 msgstr ""
 
-#: oyjl_args.c:1401 oyjl_args.c:2270
+#: oyjl_args.c:1401 oyjl_args.c:2272
 msgid "needs OYJL_OPTION_FLAG_EDITABLE or choices"
 msgstr ""
 
