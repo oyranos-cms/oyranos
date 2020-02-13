@@ -130,7 +130,13 @@ OYAPI int  OYEXPORT
 
   oyFilterPlug_s_ * c_ = (oyFilterPlug_s_*)c;
 
-  if(e != oyCONNECTOR_EVENT_OK && oy_debug_signals)
+  if( e != oyCONNECTOR_EVENT_OK &&
+      ( oy_debug_signals ||
+        ( oy_debug_objects > 0 &&
+          ( oy_debug_objects == oyStruct_GetId( (oyStruct_s*)c_->node ) ||
+            oy_debug_objects == oyStruct_GetId( (oyStruct_s*)c_->remote_socket_ ) ||
+            oy_debug_objects == oyStruct_GetId( (oyStruct_s*)c_ )
+          ) ) ) )
   {
     WARNc5_S("\n  oyFilterNode_s[%d]->oyFilterSocket_s[%d]\n"
              "  event: \"%s\" plug[%d/node%d]",
