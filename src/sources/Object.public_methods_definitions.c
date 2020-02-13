@@ -686,7 +686,7 @@ int          oyObject_UnRef          ( oyObject_s          obj )
 OYAPI oyAlloc_f  OYEXPORT
                  oyObject_GetAlloc   ( oyObject_s        object )
 {
-  oyAlloc_f f = 0;
+  oyAlloc_f f = oyAllocateFunc_;
   if(object) f = object->allocateFunc_;
   return f;
 }
@@ -705,7 +705,7 @@ OYAPI oyAlloc_f  OYEXPORT
 OYAPI oyDeAlloc_f  OYEXPORT
                  oyObject_GetDeAlloc ( oyObject_s        object )
 {
-  oyDeAlloc_f f = 0;
+  oyDeAlloc_f f = oyDeAllocateFunc_;
   if(object) f = object->deallocateFunc_;
   return f;
 }
