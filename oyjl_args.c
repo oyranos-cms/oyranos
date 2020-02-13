@@ -1013,9 +1013,11 @@ typedef struct {
  *
  *  @subsection args_developer Developer Support
  *  The oyjlUi_ExportToJson() API allows to dump all data toward a JSON
- *  representation. The function is contained in *libOyjlCore*.
+ *  representation. The function is contained
+ *  in *libOyjlCore*. Look for the *-X export* option.
  *  The oyjlUiJsonToCode() API converts a JSON UI data representation to
- *  source code. It is used inside the *oyjl-args* tool.
+ *  source code. This function is used inside the @ref oyjlargs tool and
+ *  needs *libOyjl* for JSON parsing.
  *
  *  @{ */
 
