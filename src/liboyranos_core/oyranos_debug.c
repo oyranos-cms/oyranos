@@ -185,10 +185,10 @@ char *   oyBT                        ( int                 stack_limit )
                   {
                     func_name = oyStringCopy( addr_info, NULL );
                     txt = strrchr( func_name, ' ' );
-                    txt = strrchr( txt, ' ' );
-                    txt[0] = '\000';
+                    if(txt) txt = strrchr( txt, ' ' );
+                    if(txt) txt[0] = '\000';
                     txt = strrchr( func_name, ' ' ); /* at */
-                    txt[0] = '\000';
+                    if(txt) txt[0] = '\000';
 
                     txt = strrchr( addr_info, ' ' ) + 1;
                     line_number = oyStringCopy( txt, NULL );
