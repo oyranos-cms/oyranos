@@ -403,6 +403,7 @@ int  oyMoveColorServerProfiles       ( const char        * display_name,
   oyProfile_s * monitor_icc = NULL;
   const char * monitor_icc_dscr = NULL;
   int active = oyX1ColorServerActive( oySOURCE_DATA );
+  const char * filename = NULL;
 
   if(!disp)
   {
@@ -419,6 +420,7 @@ int  oyMoveColorServerProfiles       ( const char        * display_name,
               "//"OY_TYPE_STD"/config/icc_profile.x_color_region_target", "yes", OY_CREATE_NEW );
   oyDeviceGetProfile( monitor, options, &monitor_icc );
   oyOptions_Release( &options );
+  filename = oyProfile_GetFileName( monitor_icc, -1 );
   dev_prof = oyProfile_GetMem( monitor_icc, &dev_prof_size, 0,0 );
   // get the profiles internal name
   monitor_icc_dscr = oyProfile_GetText( monitor_icc, oyNAME_DESCRIPTION );
@@ -442,11 +444,11 @@ int  oyMoveColorServerProfiles       ( const char        * display_name,
     oyX1Monitor_setProperty_( disp, XCM_ICC_V0_3_TARGET_PROFILE_IN_X_BASE, docp, size );
     oyFree_m_( docp );
 
+    SetupMonitorCalibration( disp, filename, NULL, 0 );
     oyX1Monitor_setCompatibility( disp, NULL );
   }
   else
   {
-    const char * filename = oyProfile_GetFileName( monitor_icc, -1 );
     oyX1Monitor_setProperty_( disp, XCM_ICC_COLOUR_SERVER_TARGET_PROFILE_IN_X_BASE, NULL, 0 );
     oyX1Monitor_setProperty_( disp, XCM_ICC_V0_3_TARGET_PROFILE_IN_X_BASE, dev_prof, dev_prof_size );
     oyDevicesGet( NULL, "monitor", NULL, &devices );
