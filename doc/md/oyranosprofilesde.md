@@ -128,7 +128,7 @@ Kai\-Uwe Behrmann http://www.oyranos.org
 
 <h2>KOPIERRECHT <a href="#toc" name="copyright">&uarr;</a></h2>
 
-*© 2005\-2019 Kai\-Uwe Behrmann and others*
+*© 2005\-2020 Kai\-Uwe Behrmann and others*
 
 
 <a name="license"></a>

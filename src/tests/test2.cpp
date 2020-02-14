@@ -64,7 +64,7 @@
 #include "oyranos_string.h"
 oyObject_s testobj = NULL;
 extern "C" { char * oyAlphaPrint_(int); }
-#define OYJL_TEST_MAIN_SETUP  printf("\n    Oyranos test2\n"); if(getenv(OY_DEBUG)) oy_debug = atoi(getenv(OY_DEBUG));  if(getenv(OY_DEBUG_SIGNALS)) oy_debug_signals = atoi(getenv(OY_DEBUG_SIGNALS)); if(getenv(OY_DEBUG_OBJECTS)) oy_debug_objects = atoi(getenv(OY_DEBUG_OBJECTS)); //else  oy_debug_objects = 403089;  // oy_debug_signals = 1;
+#define OYJL_TEST_MAIN_SETUP  printf("\n    Oyranos test2\n"); if(getenv(OY_DEBUG)) oy_debug = atoi(getenv(OY_DEBUG));  if(getenv(OY_DEBUG_SIGNALS)) oy_debug_signals = atoi(getenv(OY_DEBUG_SIGNALS)); if(getenv(OY_DEBUG_OBJECTS)) oy_debug_objects = atoi(getenv(OY_DEBUG_OBJECTS)); //else  oy_debug_objects = 1003;  // oy_debug_signals = 1;
 #define OYJL_TEST_MAIN_FINISH printf("\n    Oyranos test2 finished\n\n"); if(testobj) testobj->release( &testobj ); if(verbose) { char * t = oyAlphaPrint_(0); puts(t); free(t); } oyLibConfigRelease(0);
 #include <oyjl_test_main.h>
 
@@ -3212,6 +3212,25 @@ oyjlTESTRESULT_e testDeviceLinkProfile ()
   oyFilterNode_Release( &in_node );
   OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 1, "Node Connect" )
 
+  in_node = oyFilterNode_NewWith( "//" OY_TYPE_STD "/root", 0, testobj );
+  out_node = oyFilterNode_NewWith( "//" OY_TYPE_STD "/output", 0, testobj );
+  error = oyFilterNode_Connect( in_node, "//" OY_TYPE_STD "/data",
+                                out_node, "//" OY_TYPE_STD "/data", 0 );
+  n = oyFilterNode_EdgeCount( out_node, 1, 0 ); // count plugs
+  error = oyFilterNode_Disconnect( out_node, 0 ); // release plug connection
+  if(n && error == 0)
+  {
+    PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyFilterNode_Disconnect() %d                       ", n );
+  } else
+  {
+    PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyFilterNode_Disconnect() %d                       ", n );
+  }
+  oyFilterNode_Release( &out_node );
+  oyFilterNode_Release( &in_node );
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 1, "Node Connect" )
+
   cc = oyConversion_New( NULL );
   oyConversion_Set( cc, in_node, NULL );
   oyConversion_Set( cc, 0, out_node );
@@ -3270,6 +3289,38 @@ oyjlTESTRESULT_e testDeviceLinkProfile ()
   node = oyConversion_GetNode( cc, OY_OUTPUT);
   inode = oyFilterNode_GetPlugNode( node, 0 );
   opts =  oyFilterNode_GetOptions( inode, 0 );
+  oyFilterNode_s * rectangles = oyFilterNode_NewWith( "//" OY_TYPE_STD "/rectangles", 0, 0 );
+  /* mark the new node as belonging to this node */
+  oyOptions_s * rectangles_tags = oyFilterNode_GetTags( rectangles ),
+              * node_options = oyFilterNode_GetOptions( node, 0 );
+  oyOptions_SetFromString( &rectangles_tags, "some/key", "true", OY_CREATE_NEW );
+  oyOptions_Release( &rectangles_tags );
+  oyOptions_Release( &node_options );
+  /* insert "rectangles" between "display" and its input_node */
+  oyFilterNode_Disconnect( node, 0 );
+  error = oyFilterNode_Connect( inode, "//" OY_TYPE_STD "/data",
+                                rectangles, "//" OY_TYPE_STD "/data",0 );
+  error = oyFilterNode_Connect( rectangles, "//" OY_TYPE_STD "/data",
+                                node, "//" OY_TYPE_STD "/data",0 );
+  oyFilterNode_Release( &node );
+  oyFilterNode_Release( &inode );
+  oyImage_Release( &in );
+  oyImage_Release( &out );
+  oyProfile_Release( &prof );
+  error = oyConversion_Release( &cc );
+  oyOptions_Release( &opts );
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 0, "Node Insert" )
+
+  prof = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, testobj );
+  prof_fn = oyProfile_GetFileName( prof, -1 );
+  in = oyImage_Create( 2, 2, buf, OY_TYPE_123_DBL, prof, testobj );
+  out = oyImage_CreateForDisplay( 2, 2, buf, OY_TYPE_123_DBL, 0,
+                                              0,0, 12,12,
+                                              icc_profile_flags, testobj );
+  cc = oyConversion_CreateBasicPixels( in, out, options, NULL );
+  node = oyConversion_GetNode( cc, OY_OUTPUT);
+  inode = oyFilterNode_GetPlugNode( node, 0 );
+  opts =  oyFilterNode_GetOptions( inode, 0 );
   oyFilterNode_Release( &node );
   const char * hash = oyFilterNode_GetText( inode, oyNAME_NAME );
   oyFilterNode_Release( &inode );
@@ -3288,8 +3339,8 @@ oyjlTESTRESULT_e testDeviceLinkProfile ()
                                               icc_profile_flags, testobj );
   cc = oyConversion_CreateBasicPixels( in, out, options, NULL );
   node = oyConversion_GetNode( cc, OY_OUTPUT);
-  opts =  oyFilterNode_GetOptions( inode, 0 );
   inode = oyFilterNode_GetPlugNode( node, 0 );
+  opts =  oyFilterNode_GetOptions( inode, 0 );
   oyFilterNode_Release( &node );
   blob = oyFilterNode_ToBlob( inode, NULL );
   oyBlob_Release( &blob );
@@ -3341,8 +3392,8 @@ oyjlTESTRESULT_e testDeviceLinkProfile ()
     oyBlob_Release( &blob );
     oyFilterNode_Release( &node );
   }
-  oyFilterGraph_Release( &graph );
   error = oyConversion_Release( &cc );
+  oyFilterGraph_Release( &graph );
   oyImage_Release( &in );
   oyImage_Release( &out );
   oyOptions_Release( &options );
@@ -7330,6 +7381,7 @@ oyjlTESTRESULT_e testRectangles()
 }
 
 #include "../examples/image_display/oyranos_display_helpers.h"
+
 oyjlTESTRESULT_e testScreenPixel()
 {
   oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
@@ -7338,7 +7390,7 @@ oyjlTESTRESULT_e testScreenPixel()
                                        "//" OY_TYPE_STD "/icc_color", NULL, 0 );
   oyProfile_s * p_rgb = oyProfile_FromStd( oyEDITING_RGB, icc_profile_flags, testobj );
   oyProfile_s * p_web = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, testobj );
-  oyProfile_s * p_in, * p_out;
+  oyProfile_s * p_in = NULL, * p_out = NULL;
   int error = 0,
       i = 2,n = 10;
   const int src_width  = 4 * 1024,
@@ -7351,7 +7403,7 @@ oyjlTESTRESULT_e testScreenPixel()
   uint16_t * buf_16out = (uint16_t*) calloc(sizeof(uint16_t), dst_width * dst_height * channels);
   oyDATATYPE_e buf_type_in = oyUINT16,
                data_type_request = oyUINT16;
-  oyImage_s *input, *output;
+  oyImage_s *input = NULL, *output = NULL;
 
   fprintf(stdout, "\n" );
 
@@ -7390,9 +7442,9 @@ oyjlTESTRESULT_e testScreenPixel()
     oyImage_WritePPM( input, fn, "test2::screen source image" );
   }
 
-  oyFilterPlug_s * plug = 0;
-  oyPixelAccess_s * pixel_access = 0;
-  oyConversion_s * cc;
+  oyFilterPlug_s * plug = NULL;
+  oyPixelAccess_s * pixel_access = NULL;
+  oyConversion_s * cc = NULL;
   oyFilterNode_s * icc = NULL;
   memset( buf_16out, 0, sizeof(*buf_16out) );
   clck = oyClock();
@@ -7405,9 +7457,10 @@ oyjlTESTRESULT_e testScreenPixel()
 
   oyFilterNode_s * out = oyConversion_GetNode( cc, OY_OUTPUT );
   if(cc && out)
-    plug = oyFilterNode_GetPlug( oyConversion_GetNode( cc, OY_OUTPUT), 0 );
+    plug = oyFilterNode_GetPlug( out, 0 );
   else
     error = 1;
+  oyFilterNode_Release( &out );
   pixel_access = oyPixelAccess_Create( 0,0, plug,
                                            oyPIXEL_ACCESS_IMAGE, testobj );
   oyFilterPlug_Release( &plug );
@@ -7425,6 +7478,7 @@ oyjlTESTRESULT_e testScreenPixel()
                                 NULL, NULL, dirty,
                                 output );
   clck = oyClock() - clck;
+
   fprintf( zout, "First draw finished               %s\n",
                  oyjlProfilingToString(1,clck/(double)CLOCKS_PER_SEC, "draw"));
 
@@ -7497,14 +7551,14 @@ oyjlTESTRESULT_e testScreenPixel()
 
 
 
-  oyConversion_Release ( &cc );
   oyPixelAccess_Release( &pixel_access );
+  oyConversion_Release ( &cc );
   oyProfile_Release( &p_rgb );
   oyProfile_Release( &p_web );
   oyImage_Release( &input );
   oyImage_Release( &output );
-  free(buf_16in);
-  free(buf_16out);
+  oyFree_m_(buf_16in);
+  oyFree_m_(buf_16out);
 
   OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0, NULL )
 
