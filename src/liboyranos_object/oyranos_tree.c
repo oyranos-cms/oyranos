@@ -1097,7 +1097,8 @@ static void oyObjectTreeDotGraphCallback (
       { /* keep essential object types */
         if( keep )
         {
-          fprintf(stderr, "keep %s[%d] %s\n", oyStructTypeToText(current->type_), id, desc?desc:"----" );
+          if(oy_debug)
+            fprintf(stderr, "keep %s[%d] %s\n", oyStructTypeToText(current->type_), id, desc?desc:"----" );
           break;
         }
         else
@@ -1317,7 +1318,8 @@ void               oyObjectTreePrint ( int                 flags,
       if(trees[i].text2)
         oyFree_m_(trees[i].text2);
     }
-    fprintf( stderr, "found/printed trees: %d/%d\n", n, count);
+    if(oy_debug)
+      fprintf( stderr, "found/printed trees: %d/%d\n", n, count);
 
     oyFree_m_(trees);
     oyObjectReleaseCurrentObjectIdList( &ids_old );
@@ -1329,7 +1331,8 @@ void               oyObjectTreePrint ( int                 flags,
       int lines_n = 0;
       char ** lines = oyStringSplit_( dot, '\n', &lines_n, 0 );
       char * tmp = 0;
-      fprintf(stderr, "dot has number of lines %d\n", lines_n);
+      if(oy_debug)
+        fprintf(stderr, "dot has number of lines %d\n", lines_n);
       oyStringListSetHeadingWhiteSpace( lines, lines_n, 4, 0,0 );
 
       /* give some item priority by moving the nodes up */
@@ -1371,15 +1374,18 @@ void               oyObjectTreePrint ( int                 flags,
       {
         oyStringAddPrintf( &dot, 0,0, "%s\n", lines[i] );
       }
-      fprintf(stderr, "dot has number of unique lines %d\n", lines_n);
+      if(oy_debug)
+        fprintf(stderr, "dot has number of unique lines %d\n", lines_n);
       oyStringListRelease_( &lines, lines_n, 0 );
 
       lines_n = 0;
       lines = oyStringSplit_( dot_edges, '\n', &lines_n, 0 );
-      fprintf(stderr, "dot_edges has number of lines %d\n", lines_n);
+      if(oy_debug)
+        fprintf(stderr, "dot_edges has number of lines %d\n", lines_n);
       oyStringListSetHeadingWhiteSpace( lines, lines_n, 4, 0,0 );
       oyStringListFreeDoubles( lines, &lines_n, 0 );
-      fprintf(stderr, "dot_edges has number of unique lines %d\n", lines_n);
+      if(oy_debug)
+        fprintf(stderr, "dot_edges has number of unique lines %d\n", lines_n);
       for(i = 0; i < lines_n; ++i)
         oyStringAddPrintf( &tmp, 0,0, "%s\n", lines[i] );
       if(dot_edges) oyFree_m_(dot_edges);
