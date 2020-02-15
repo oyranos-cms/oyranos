@@ -195,7 +195,7 @@ oyConversion_s * oyConversion_FromImageForDisplay_ (
   oyOptions_Release( &options );
 
   if(cc_node)
-    *cc_node = icc;
+    *cc_node = oyFilterNode_Copy( icc, NULL );
 
   return conversion;
 }
