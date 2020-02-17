@@ -51,6 +51,7 @@
   TEST_RUN( testCMMnmRun, "CMM named color run", 1 ); \
   TEST_RUN( testImagePixel, "CMM Image Pixel run", 1 ); \
   TEST_RUN( testRectangles, "Image Rectangles", 1 ); \
+  TEST_RUN( testDAG2, "screen DAG", 1 ); \
   TEST_RUN( testScreenPixel, "Draw Screen Pixel run", 1 ); \
   TEST_RUN( testFilterNode, "FilterNode Options", 1 ); \
   TEST_RUN( testConversion, "CMM selection", 1 ); \
@@ -3302,6 +3303,8 @@ oyjlTESTRESULT_e testDeviceLinkProfile ()
                                 rectangles, "//" OY_TYPE_STD "/data",0 );
   error = oyFilterNode_Connect( rectangles, "//" OY_TYPE_STD "/data",
                                 node, "//" OY_TYPE_STD "/data",0 );
+  if(verbose)
+    oyObjectTreePrint( 0x01 | 0x02 | 0x04 | 0x08, "Node Insert" );
   oyFilterNode_Release( &node );
   oyFilterNode_Release( &inode );
   oyImage_Release( &in );
@@ -7381,6 +7384,102 @@ oyjlTESTRESULT_e testRectangles()
 }
 
 #include "../examples/image_display/oyranos_display_helpers.h"
+oyjlTESTRESULT_e testDAG2()
+{
+  oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
+  OBJECT_COUNT_SETUP
+  uint32_t icc_profile_flags =oyICCProfileSelectionFlagsFromOptions( OY_CMM_STD,
+                                       "//" OY_TYPE_STD "/icc_color", NULL, 0 );
+  oyProfile_s * p_in = NULL, * p_out = NULL;
+  int error = 0,
+      i = 2,n = 10;
+  const int src_width  = 4 * 1024,
+      src_height =     512,
+      dst_width  = 2 * 1024,
+      dst_height =     256,
+      channels = 4;
+  int x,y;
+  uint16_t * buf_16in  = (uint16_t*) calloc(sizeof(uint16_t), src_width * src_height * channels);
+  uint16_t * buf_16out = (uint16_t*) calloc(sizeof(uint16_t), dst_width * dst_height * channels);
+  oyDATATYPE_e buf_type_in = oyUINT16,
+               data_type_request = oyUINT16;
+  oyImage_s *input = NULL, *output = NULL;
+  oyConversion_s * cc = NULL;
+  oyFilterNode_s * icc = NULL, * rectangles = NULL, * node = NULL, * input_node = NULL;
+
+  fprintf(stdout, "\n" );
+
+  for(y = 0; y < src_height; ++y)
+    for(x = 0; x < src_width; ++x)
+    {
+      buf_16in[y*src_width*channels + x*channels + 0] = (y / (double)(src_height-1)) * 65535;
+      buf_16in[y*src_width*channels + x*channels + 1] = (1.0 - (y / (double)(src_height-1))) * 65535;
+      buf_16in[y*src_width*channels + x*channels + 2] = y;
+      buf_16in[y*src_width*channels + x*channels + 3] = x;
+    }
+
+  p_in = oyProfile_FromStd( oyEDITING_RGB, icc_profile_flags, testobj );
+  p_out = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, testobj );
+  input =oyImage_Create( src_width,src_height, 
+                         buf_16in,
+                         oyChannels_m(oyProfile_GetChannelsCount(p_in)+1) |
+                          oyDataType_m(buf_type_in),
+                         p_in,
+                         testobj );
+  output=oyImage_Create( dst_width,dst_height, 
+                         buf_16out,
+                         oyChannels_m(oyProfile_GetChannelsCount(p_out)+1) |
+                          oyDataType_m(data_type_request),
+                         p_out,
+                         testobj );
+
+  cc = oyConversion_FromImageForDisplay( input, output,
+                                         &icc, oyOPTIONATTRIBUTE_ADVANCED,
+                                         oyUINT16, NULL, testobj );
+  if(verbose)
+    oyObjectTreePrint( 0x01 | 0x02 | 0x04 | 0x08, "display graph" );
+
+  node = oyFilterNode_Copy( icc, 0 );
+  input_node = oyFilterNode_GetPlugNode( node, 0 );
+
+  /* insert a "rectangles" filter to handle multiple monitors */
+  rectangles = oyFilterNode_NewWith( "//" OY_TYPE_STD "/rectangles", 0, 0 );
+  /* insert "rectangles" between "display" and its input_node */
+  fprintf( zout, "%s -> %s\n", oyFilterNode_GetRegistration( input_node ), oyFilterNode_GetRegistration( node ) );
+  oyFilterNode_Disconnect( node, 0 );
+  error = oyFilterNode_Connect( input_node, "//" OY_TYPE_STD "/data",
+                                rectangles, "//" OY_TYPE_STD "/data",0 );
+  error = oyFilterNode_Connect( rectangles, "//" OY_TYPE_STD "/data",
+                                node, "//" OY_TYPE_STD "/data",0 );
+  oyFilterNode_Release( &node );
+  oyFilterNode_Release( &input_node );
+  if(verbose)
+    oyObjectTreePrint( 0x01 | 0x02 | 0x04 | 0x08, "rectangles connected" );
+
+  if( !error )
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyDrawScreenImage                                  " );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyDrawScreenImage                                  " );
+  }
+
+
+  oyProfile_Release( &p_in );
+  oyProfile_Release( &p_out );
+  oyImage_Release( &input );
+  oyImage_Release( &output );
+  oyFilterNode_Release( &icc );
+
+  oyConversion_Release ( &cc );
+
+  oyFree_m_(buf_16in);
+  oyFree_m_(buf_16out);
+
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 0, NULL )
+
+  return result;
+}
 
 oyjlTESTRESULT_e testScreenPixel()
 {
@@ -7454,6 +7553,7 @@ oyjlTESTRESULT_e testScreenPixel()
   clck = oyClock() - clck;
   fprintf( zout, "Preparation finished                 %s\n",
                  oyjlProfilingToString(1,clck/(double)CLOCKS_PER_SEC, "context"));
+  oyFilterNode_Release( &icc );
 
   oyFilterNode_s * out = oyConversion_GetNode( cc, OY_OUTPUT );
   if(cc && out)
@@ -7560,7 +7660,7 @@ oyjlTESTRESULT_e testScreenPixel()
   oyFree_m_(buf_16in);
   oyFree_m_(buf_16out);
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0, NULL )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 0, NULL )
 
   return result;
 }
