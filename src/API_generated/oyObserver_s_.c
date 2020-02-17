@@ -130,12 +130,16 @@ void oyObserver_Release__Members( oyObserver_s_ * observer )
   {
     oyObject_UnRef( observer->observer->oy_ );
     /*observer->observer->release( &observer->observer );*/
+    if(oy_debug_objects == observer->observer->oy_->id_)
+      fprintf( stderr, OY_DBG_FORMAT_ "stop observation: %d <- %d\n", OY_DBG_ARGS_, observer->observer->oy_->id_, observer->oy_->id_ );
     observer->observer = NULL;
   }
   if(observer->model)
   {
     oyObject_UnRef( observer->model->oy_ );
     /*observer->model->release( &observer->model );*/
+    if(oy_debug_objects == observer->model->oy_->id_)
+      fprintf( stderr, OY_DBG_FORMAT_ "stop observing model: %d <- %d\n", OY_DBG_ARGS_, observer->model->oy_->id_, observer->oy_->id_ );
     observer->model = NULL;
   }
   if(observer->user_data)
