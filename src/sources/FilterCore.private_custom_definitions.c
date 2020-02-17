@@ -99,7 +99,10 @@ int oyFilterCore_Copy__Members( oyFilterCore_s_ * dst, oyFilterCore_s_ * src)
   dst->registration_ = oyStringCopy_( src->registration_, allocateFunc_ );
   dst->category_ = oyStringCopy_( src->category_, allocateFunc_ );
   dst->options_ = oyOptions_Copy( src->options_, dst->oy_ );
-  dst->api4_ = src->api4_;
+  if(src->api4_ && src->api4_->copy)
+    dst->api4_ = (oyCMMapi4_s_*) src->api4_->copy( (oyStruct_s*)src->api4_, NULL );
+  else
+    dst->api4_ = src->api4_;
 
   return error;
 }
