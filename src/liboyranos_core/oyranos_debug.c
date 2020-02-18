@@ -105,6 +105,9 @@ void oy_backtrace_()
 
 #include "oyranos_helper.h"
 #include "oyranos_i18n.h"
+/* @param[in]      stack_limit         set limit of stack depth
+ *                                     - -1 : omit color/emphasize
+ */
 char *   oyBT                        ( int                 stack_limit )
 {
   char * text = NULL;
@@ -204,13 +207,13 @@ char *   oyBT                        ( int                 stack_limit )
                 {
                   if(j == lines_n-(oy_debug ? 2 : 3))
                   {
-                    oyStringAddPrintf( &text, 0,0, "%s", oyjlTermColor(oyjlBOLD, t) );
-                    oyStringAddPrintf( &text, 0,0, "(%s) ", line_number ? oyjlTermColor(oyjlITALIC, line_number ) : "");
+                    oyStringAddPrintf( &text, 0,0, "%s", stack_limit >= 0 ? oyjlTermColor(oyjlBOLD, t) : t );
+                    oyStringAddPrintf( &text, 0,0, "(%s) ", line_number ? stack_limit >= 0 ? oyjlTermColor(oyjlITALIC, line_number ) : line_number : "");
                   }
                   else
                   {
-                    oyStringAddPrintf( &text, 0,0, "%s", oyjlTermColor(oyjlBOLD, t) );
-                    oyStringAddPrintf( &text, 0,0, "(%s)->", line_number ? oyjlTermColor(oyjlITALIC, line_number ) : "");
+                    oyStringAddPrintf( &text, 0,0, "%s", stack_limit >= 0 ? oyjlTermColor(oyjlBOLD, t) : t );
+                    oyStringAddPrintf( &text, 0,0, "(%s)->", line_number ? stack_limit >= 0 ? oyjlTermColor(oyjlITALIC, line_number ) : line_number  : "");
                   }
                   oyFree_m_(t);
                 }
