@@ -205,6 +205,11 @@ OYAPI int  OYEXPORT
   oyFilterGraph_s * graph = 0;
 
   oyFilterSocket_s_ ** c_ = (oyFilterSocket_s_**)&c;
+  if(!c)
+  {
+    WARNc_S("socket argument is missing\n");
+    return 0;
+  }
 
   switch(e)
   {
@@ -220,7 +225,8 @@ OYAPI int  OYEXPORT
          sig = (oySIGNAL_e) e; break;
   }
 
-  handled = oyStruct_ObserverSignal( (oyStruct_s*) (*c_)->node, sig, 0 );
+  if(*c_ && (*c_)->node)
+    handled = oyStruct_ObserverSignal( (oyStruct_s*) (*c_)->node, sig, 0 );
   if(handled)
     return handled;
 
@@ -240,7 +246,8 @@ OYAPI int  OYEXPORT
   for(i = 0; i < n; ++i)
   {
     p = oyFilterPlugs_Get( (*c_)->requesting_plugs_, i );
-    handled = oyStruct_ObserverSignal( (oyStruct_s*) oyFilterPlugPriv_m(p)->node, sig, 0 );
+    if(oyFilterPlugPriv_m(p)->node)
+      handled = oyStruct_ObserverSignal( (oyStruct_s*) oyFilterPlugPriv_m(p)->node, sig, 0 );
 
     /* get all nodes in the output direction */
     graph = oyFilterGraph_FromNode( (oyFilterNode_s*)oyFilterPlugPriv_m(p)->node, OY_INPUT );
@@ -260,6 +267,8 @@ OYAPI int  OYEXPORT
         oyFilterSocket_Callback( sp, e );
         oyFilterPlug_Release( &sp );
       }
+
+      handled = oyStruct_ObserverSignal( (oyStruct_s*) node, sig, 0 );
 
       oyFilterNode_Release( &node );
       if(handled)
