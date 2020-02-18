@@ -94,8 +94,7 @@ double d[6] = {0.5,0.5,0.5,0,0,0};
     { \
       if(onfail == oyjlTESTRESULT_FAIL) \
       { \
-        char * text = NULL; \
-        OY_BACKTRACE_STRING(0) \
+        char * text = oyBT(-1); \
         oyObjectTreePrint( 0x01 | 0x02 | 0x08, text ? text : __func__ ); \
         oyFree_m_( text ) \
       } \
@@ -7383,6 +7382,24 @@ oyjlTESTRESULT_e testRectangles()
   return result;
 }
 
+int myNodeSignal( oyObserver_s *observer, oySIGNAL_e signal_type, oyStruct_s *signal_data )
+{
+  int count = oyOption_GetValueInt( (oyOption_s*) signal_data, -1 );
+  if(signal_data && signal_data->type_ == oyOBJECT_OPTION_S)
+  {
+    ++count;
+    oyOption_SetFromInt( (oyOption_s*) signal_data, count, 0, 0 );
+  }
+
+  if(verbose || oy_debug_signals)
+  {
+    const char * desc = oyStruct_GetText(signal_data, oyNAME_NAME, 0);
+    fprintf( zout, "%s - %s\n", oySignalToString(signal_type),
+                                oyNoEmptyString_m_(desc) );
+  }
+  return 0;
+}
+
 #include "../examples/image_display/oyranos_display_helpers.h"
 oyjlTESTRESULT_e testDAG2()
 {
@@ -7406,6 +7423,8 @@ oyjlTESTRESULT_e testDAG2()
   oyImage_s *input = NULL, *output = NULL;
   oyConversion_s * cc = NULL;
   oyFilterNode_s * icc = NULL, * rectangles = NULL, * node = NULL, * input_node = NULL;
+  oyFilterSocket_s * socket = NULL;
+  oyOption_s * option = NULL;
 
   fprintf(stdout, "\n" );
 
@@ -7458,10 +7477,10 @@ oyjlTESTRESULT_e testDAG2()
 
   if( !error )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyDrawScreenImage                                  " );
+    "insert node                                        " );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyDrawScreenImage                                  " );
+    "insert node                                        " );
   }
 
 
@@ -7470,6 +7489,27 @@ oyjlTESTRESULT_e testDAG2()
   oyImage_Release( &input );
   oyImage_Release( &output );
   oyFilterNode_Release( &icc );
+
+  input_node = oyConversion_GetNode( cc, OY_INPUT );
+  node = oyConversion_GetNode( cc, OY_OUTPUT );
+  option = oyOption_FromRegistration( OY_STD "/node/count", testobj );
+  error = oyStruct_ObserverAdd( (oyStruct_s*)node, (oyStruct_s*)node,
+                                (oyStruct_s*)option, myNodeSignal );
+  socket = oyFilterNode_GetSocket( input_node, 0 );
+  oyFilterSocket_SignalToGraph( socket, oyCONNECTOR_EVENT_DATA_CHANGED );
+
+  n = oyOption_GetValueInt( option, -1 );
+  if( n > 0 )
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyConversion_s input is connected to output %d     ", n );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyConversion_s input is connected to output %d     ", n );
+  }
+  oyFilterNode_Release( &node );
+  oyFilterNode_Release( &input_node );
+  oyFilterSocket_Release( &socket );
+  oyOption_Release( &option );
 
   oyConversion_Release ( &cc );
 
