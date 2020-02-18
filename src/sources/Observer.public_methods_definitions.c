@@ -29,7 +29,7 @@ OYAPI int  OYEXPORT oyObserver_SignalSend (
   if(!oyToSignalBlock_m( oyObserverGetFlags() ) &&
      /* local signal disabling */
      !s->disable_ref )
-    result = s->signal( observer, signal_type, signal_data );
+    result = s->signal( observer, signal_type, signal_data ? signal_data : s->user_data );
 
   return result;
 }
