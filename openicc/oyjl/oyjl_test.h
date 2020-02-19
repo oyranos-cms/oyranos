@@ -96,12 +96,48 @@ typedef enum {
 #define OYJL_BLUE_B "\033[0;34m"
 /* switch back */
 #define OYJL_CTEND "\033[0m"
-const char * colorterm = NULL;
-static const char * oyjlTermColor_( oyjlCOLORTERM_e rgb, const char * text) {
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <time.h>
+#include <stdio.h>
+#include <stdlib.h>
+static int oyjlTermColorCheck__()
+{
+  struct stat sout, serr;
+  int color_term = 0;
+
+  if( fstat( fileno(stdout), &sout ) == -1 )
+    return 0;
+
+  if( fstat( fileno(stderr), &serr ) == -1 )
+    return color_term;
+
+  if( S_ISCHR( sout.st_mode ) &&
+      S_ISCHR( serr.st_mode ) )
+    color_term = 1;
+  fprintf(stderr, "color_term: %d\n", color_term );
+
+  return color_term;
+}
+const char * oyjlTermColor_( oyjlCOLORTERM_e rgb, const char * text) {
   int len = strlen(text);
   static char t[256];
-  int truecolor = colorterm && strcmp(colorterm,"truecolor") == 0;
-  int color = colorterm != NULL ? 1 : 0;
+  static int colorterm_init = 0;
+  static const char * oyjl_colorterm = NULL;
+  static int truecolor = 0,
+             color = 0;
+  if(!colorterm_init)
+  {
+    colorterm_init = 1;
+    oyjl_colorterm = getenv("COLORTERM");
+    color = oyjl_colorterm != NULL ? 1 : 0;
+    if(!oyjl_colorterm) oyjl_colorterm = getenv("TERM");
+    truecolor = oyjl_colorterm && strcmp(oyjl_colorterm,"truecolor") == 0;
+    if(!oyjlTermColorCheck__())
+      truecolor = color = 0;
+    if( getenv("FORCE_COLORTERM") )
+      truecolor = color = 1;
+  }
   if(len < 200)
   {
     switch(rgb)
@@ -109,7 +145,9 @@ static const char * oyjlTermColor_( oyjlCOLORTERM_e rgb, const char * text) {
       case oyjlRED: sprintf( t, "%s%s%s", truecolor ? OYJL_RED_TC : color ? OYJL_RED_B : "", text, OYJL_CTEND ); break;
       case oyjlGREEN: sprintf( t, "%s%s%s", truecolor ? OYJL_GREEN_TC : color ? OYJL_GREEN_B : "", text, OYJL_CTEND ); break;
       case oyjlBLUE: sprintf( t, "%s%s%s", truecolor ? OYJL_BLUE_TC : color ? OYJL_BLUE_B : "", text, OYJL_CTEND ); break;
-      default: sprintf( t, "%s", text ); break;
+      case oyjlBOLD: sprintf( t, "%s%s%s", truecolor || color ? OYJL_BOLD : "", text, truecolor || color ? OYJL_CTEND : "" ); break;
+      case oyjlITALIC: sprintf( t, "%s%s%s", truecolor || color ? OYJL_ITALIC : "", text, truecolor || color ? OYJL_CTEND : "" ); break;
+      case oyjlUNDERLINE: sprintf( t, "%s%s%s", truecolor || color ? OYJL_UNDERLINE : "", text, truecolor || color ? OYJL_CTEND : "" ); break;
     }
     return t;
   } else

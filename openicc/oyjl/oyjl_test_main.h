@@ -80,9 +80,6 @@ int main(int argc, char** argv)
     list = 1;
   }
 
-  colorterm = getenv("COLORTERM");
-  if(!colorterm) colorterm = getenv("TERM");
-
   i = 1; while(i < argc) if( strcmp(argv[i++],"--silent") == 0 )
   { ++argpos;
     zout = stderr;
@@ -116,18 +113,14 @@ int main(int argc, char** argv)
   /* give a summary */
   if(!list)
   {
-    const char * colorterm_ = colorterm;
-
     fprintf( stdout, "\n################################################################\n" );
     fprintf( stdout, "#                                                              #\n" );
     fprintf( stdout, "#                     Results                                  #\n" );
     fprintf( stdout, "    Total of Sub Tests:         %d\n", oy_test_sub_count );
     for(i = 0; i <= oyjlTESTRESULT_UNKNOWN; ++i)
     {
-      if(!results[i]) colorterm = NULL;
       fprintf( stdout, "    Tests with status %s:\t%d\n",
-                       oyjlTestResultToString( (oyjlTESTRESULT_e)i, 1 ), results[i] );
-      colorterm = colorterm_;
+                       oyjlTestResultToString( (oyjlTESTRESULT_e)i, results[i] ), results[i] );
     }
 
     error = (results[oyjlTESTRESULT_FAIL] ||

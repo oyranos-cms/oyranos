@@ -65,6 +65,8 @@ int oyjlArgsQmlStart__               ( int                 argc,
                                        oyjlUi_s          * ui,
                                        int               (*callback)(int argc, const char ** argv))
 {
+    setenv("FORCE_COLORTERM", "1", 0); /* show rich text format on non GNU color extension environment */
+
     Q_INIT_RESOURCE(app);
 
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
