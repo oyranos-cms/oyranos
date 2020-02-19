@@ -1047,6 +1047,56 @@ void oyjlOptionChoice_Release     ( oyjlOptionChoice_s**choices )
   free(*choices);
 }
 
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <time.h>
+#include <stdio.h>
+#include <stdlib.h>
+static int oyjlTermColorCheck_()
+{
+  struct stat sout, serr;
+  int color_term = 0;
+
+  if( fstat( fileno(stdout), &sout ) == -1 )
+    return 0;
+
+  //if(*oyjl_debug)
+  switch( sout.st_mode & S_IFMT )
+  {
+    case S_IFBLK:  fprintf(stderr, "block device\n");            break;
+    case S_IFCHR:  fprintf(stderr, "character device\n");        break;
+    case S_IFDIR:  fprintf(stderr, "directory\n");               break;
+    case S_IFIFO:  fprintf(stderr, "FIFO/pipe\n");               break;
+    case S_IFLNK:  fprintf(stderr, "symlink\n");                 break;
+    case S_IFREG:  fprintf(stderr, "regular file\n");            break;
+    case S_IFSOCK: fprintf(stderr, "socket\n");                  break;
+    default:       fprintf(stderr, "unknown?\n");                break;
+  }
+
+  if( fstat( fileno(stderr), &serr ) == -1 )
+    return color_term;
+
+  //if(*oyjl_debug)
+  switch( serr.st_mode & S_IFMT )
+  {
+    case S_IFBLK:  fprintf(stderr, "block device\n");            break;
+    case S_IFCHR:  fprintf(stderr, "character device\n");        break;
+    case S_IFDIR:  fprintf(stderr, "directory\n");               break;
+    case S_IFIFO:  fprintf(stderr, "FIFO/pipe\n");               break;
+    case S_IFLNK:  fprintf(stderr, "symlink\n");                 break;
+    case S_IFREG:  fprintf(stderr, "regular file\n");            break;
+    case S_IFSOCK: fprintf(stderr, "socket\n");                  break;
+    default:       fprintf(stderr, "unknown?\n");                break;
+  }
+
+  if( S_ISCHR( sout.st_mode ) &&
+      S_ISCHR( serr.st_mode ) )
+    color_term = 1;
+  fprintf(stderr, "color_term: %d\n", color_term );
+
+  return color_term;
+}
+
 #ifndef OYJL_CTEND
 /* true color codes */
 #define OYJL_RED_TC "\033[38;2;240;0;0m"
@@ -1076,6 +1126,10 @@ const char * oyjlTermColor( oyjlCOLORTERM_e rgb, const char * text) {
     color = oyjl_colorterm != NULL ? 1 : 0;
     if(!oyjl_colorterm) oyjl_colorterm = getenv("TERM");
     truecolor = oyjl_colorterm && strcmp(oyjl_colorterm,"truecolor") == 0;
+    if(!oyjlTermColorCheck_())
+      truecolor = color = 0;
+    if( getenv("FORCE_COLORTERM") )
+      truecolor = color = 1;
   }
   if(len < 200)
   {

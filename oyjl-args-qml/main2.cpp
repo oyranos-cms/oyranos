@@ -59,6 +59,8 @@ void printObjectClassNames( QObject * o )
 
 int main(int argc, char *argv[])
 {
+    setenv("FORCE_COLORTERM", "1", 0); /* show rich text format on non GNU color extension environment */
+
     Q_INIT_RESOURCE(app);
 
     QGuiApplication app(argc, argv);

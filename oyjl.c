@@ -144,7 +144,7 @@ int myMain( int argc, const char ** argv )
     goto clean_main;
   if(state & oyjlUI_STATE_HELP)
   {
-    fprintf( stderr, "%s\n\tman oyjl\n\n", _("For more information read the man page:") );
+    fprintf( stdout, "%s\n\tman oyjl\n\n", _("For more information read the man page:") );
     goto clean_main;
   }
 
