@@ -837,8 +837,8 @@ OYAPI oyFilterPlug_s * OYEXPORT oyFilterNode_GetPlug (
  *  @param         ticket              the job ticket
  *  @return                            error
  *
- *  @version  Oyranos: 0.5.0
- *  @date     2012/09/24
+ *  @version  Oyranos: 0.9.7
+ *  @date     2020/02/20
  *  @since    2012/09/24 (Oyranos: 0.5.0)
  */
 OYAPI int  OYEXPORT
@@ -870,6 +870,7 @@ OYAPI int  OYEXPORT
 #endif
 
   error = oyCMMapi7_Run( (oyCMMapi7_s*) s->api7_, plug, ticket );
+  oyStruct_ObserverSignal( (oyStruct_s*) node, oySIGNAL_DATA_CHANGED, (oyStruct_s*) ticket );
 
   return error;
 }
