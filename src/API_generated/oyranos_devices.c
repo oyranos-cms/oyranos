@@ -2522,6 +2522,7 @@ oyOptions_s* oyFilterNode_GetOptions ( oyFilterNode_s    * node,
     if(!node_->core->options_)
     {
       node_->core->options_ = options;
+      options = NULL;
     } else if(options)
       error = oyOptions_Filter( &node_->core->options_, 0, 0,
                                 oyBOOLEAN_UNION,
@@ -2530,6 +2531,7 @@ oyOptions_s* oyFilterNode_GetOptions ( oyFilterNode_s    * node,
       WARNc2_S("%s %d", _("found issues"),error);
     if(!node_->core->options_)
       node_->core->options_ = oyOptions_New( 0 );
+    oyOptions_Release( &options );
   }
 
   options = oyOptions_Copy( node_->core->options_, 0 );
