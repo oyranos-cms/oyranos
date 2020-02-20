@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: oyranos\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2020-02-13 15:15+0100\n"
+"POT-Creation-Date: 2020-02-19 14:04+0100\n"
 "PO-Revision-Date: 2012-10-19 15:10+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -1230,7 +1230,7 @@ msgid "Copyright (c) 2009 Kai-Uwe Behrmann; MIT"
 msgstr "Copyright (c) 2009 Kai-Uwe Behrmann; MIT"
 
 #: modules/color/modules/oyranos_cmm_lraw.cpp:236
-#: modules/color/modules/oyranos_cmm_oydi.c:1374
+#: modules/color/modules/oyranos_cmm_oydi.c:1370
 msgid "Copyright (c) 2009 Kai-Uwe Behrmann; newBSD"
 msgstr "Copyright (c) 2009 Kai-Uwe Behrmann; newBSD"
 
@@ -2376,7 +2376,7 @@ msgstr "Osvetleni:   "
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:2821
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:2826
 #: modules/color/modules/oyranos_cmm_oPNG.c:1146
-#: modules/color/modules/oyranos_cmm_oydi.c:934
+#: modules/color/modules/oyranos_cmm_oydi.c:930
 msgid "Image"
 msgstr "Obrázek"
 
@@ -3018,9 +3018,9 @@ msgstr "Luv"
 #: API_generated/oyConnectorImaging_s_.c:324 API_generated/oyConnector_s_.c:260
 #: API_generated/oyConnector_s_.c:268 API_generated/oyConversion_s_.c:279
 #: API_generated/oyConversion_s_.c:287 API_generated/oyFilterCore_s.c:223
-#: API_generated/oyFilterCore_s_.c:288 API_generated/oyFilterCore_s_.c:296
+#: API_generated/oyFilterCore_s_.c:291 API_generated/oyFilterCore_s_.c:299
 #: API_generated/oyFilterGraph_s_.c:260 API_generated/oyFilterGraph_s_.c:268
-#: API_generated/oyFilterNode_s_.c:382 API_generated/oyFilterNode_s_.c:390
+#: API_generated/oyFilterNode_s_.c:385 API_generated/oyFilterNode_s_.c:393
 #: API_generated/oyFilterNodes_s_.c:254 API_generated/oyFilterNodes_s_.c:262
 #: API_generated/oyFilterPlug_s_.c:264 API_generated/oyFilterPlug_s_.c:272
 #: API_generated/oyFilterPlugs_s_.c:254 API_generated/oyFilterPlugs_s_.c:262
@@ -3650,7 +3650,7 @@ msgstr ""
 msgid "Oyranos allows to fine tune handling of ICC color management."
 msgstr "Nastavení Oyranosu umožňují doladit chování správy barev."
 
-#: modules/color/modules/oyranos_cmm_oydi.c:1358
+#: modules/color/modules/oyranos_cmm_oydi.c:1354
 msgid "Oyranos display filter"
 msgstr "Filter Oyranosu pro displej"
 
@@ -3701,7 +3701,7 @@ msgstr "Oyranos X11"
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1155
 #: modules/color/modules/oyranos_cmm_lraw.cpp:230
 #: modules/color/modules/oyranos_cmm_oicc.c:1205
-#: modules/color/modules/oyranos_cmm_oydi.c:1368
+#: modules/color/modules/oyranos_cmm_oydi.c:1364
 #: modules/color/modules/oyranos_cmm_oyra.c:151
 #: modules/color/modules/oyranos_cmm_trds.c:819
 msgid ""
@@ -4166,7 +4166,7 @@ msgstr ""
 msgid "Relative Colorimetric"
 msgstr "Relativní kolorimetrický"
 
-#: API_generated/oyFilterNode_s.c:1054
+#: API_generated/oyFilterNode_s.c:1055
 #, fuzzy
 msgid "Remote filter or plug not available."
 msgstr "RGB vysledek neni k dispozici"
@@ -4601,7 +4601,7 @@ msgstr ""
 msgid "Show white point modes"
 msgstr "Bílý bod média"
 
-#: API_generated/oyFilterNode_s_.c:1536 API_generated/oyObserver_s.c:332
+#: API_generated/oyFilterNode_s_.c:1539 API_generated/oyObserver_s.c:332
 #: API_generated/oyObserver_s.c:343 API_generated/oyObserver_s.c:547
 #: API_generated/oyObserver_s.c:624 API_generated/oyObserver_s_.c:659
 #: examples/image_display/oyranos_display_helper_classes_fltk.cpp:47
@@ -4837,7 +4837,7 @@ msgid ""
 "saturation line of the specified profiles and writes to stdout."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oydi.c:1382
+#: modules/color/modules/oyranos_cmm_oydi.c:1378
 msgid ""
 "The \"display\" filter supports applications to show image content on single "
 "and multi monitor displays. It cares about the server communication in "
@@ -4976,7 +4976,7 @@ msgstr ""
 "Adaptační stav by měl být mezi 0 a 1.0 a týká se absolutního "
 "kolorimetrického záměru."
 
-#: modules/color/modules/oyranos_cmm_oydi.c:1360
+#: modules/color/modules/oyranos_cmm_oydi.c:1356
 #, fuzzy
 msgid "The client side window data handler of Oyranos."
 msgstr "The client side window data handler of Oyranos."
@@ -5079,7 +5079,7 @@ msgstr "The filter is a possible pixel target in a graph."
 msgid "The filter is used to reduce pixels."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oydi.c:1384
+#: modules/color/modules/oyranos_cmm_oydi.c:1380
 #, fuzzy
 msgid ""
 "The filter needs some informations attached to the output image tags of the "
@@ -6114,7 +6114,7 @@ msgstr ""
 msgid "enable simple defaults"
 msgstr "aktivovat jednoduché výchozí hodnoty"
 
-#: API_generated/oyConversion_s.c:208 API_generated/oyFilterNode_s_.c:904
+#: API_generated/oyConversion_s.c:208 API_generated/oyFilterNode_s_.c:907
 #: API_generated/oyranos_devices.c:2625 API_generated/oyranos_devices.c:2637
 #: API_generated/oyranos_devices.c:2670 API_generated/oyranos_devices.c:3186
 #: API_generated/oyranos_module.c:2031
@@ -6378,7 +6378,7 @@ msgstr "jméno delší než"
 #: modules/color/modules/oyranos_cmm_lraw.cpp:238
 #: modules/color/modules/oyranos_cmm_oiDB.c:522
 #: modules/color/modules/oyranos_cmm_oicc.c:1213
-#: modules/color/modules/oyranos_cmm_oydi.c:1376
+#: modules/color/modules/oyranos_cmm_oydi.c:1372
 #: modules/color/modules/oyranos_cmm_oyra.c:159
 #: modules/color/modules/oyranos_cmm_trds.c:827
 msgid "new BSD license: http://www.opensource.org/licenses/BSD-3-Clause"

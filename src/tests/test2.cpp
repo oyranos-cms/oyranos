@@ -1924,8 +1924,7 @@ oyjlTESTRESULT_e testDAGbasic ()
 
     if(verbose)
     {
-      char * text = NULL;
-      OY_BACKTRACE_STRING(0)
+      char * text = oyBT(-1);
       oyObjectTreePrint( 0x01 | 0x02 | 0x08, text ? text : __func__ );
       oyFree_m_( text )
     }
@@ -1940,8 +1939,7 @@ oyjlTESTRESULT_e testDAGbasic ()
                                  0, NULL );
   if(verbose)
   {
-    char * text = NULL;
-    OY_BACKTRACE_STRING(0)
+    char * text = oyBT(-1);
     oyObjectTreePrint( 0x01 | 0x02 | 0x08, text ? text : __func__ );
     oyFree_m_( text )
   }
@@ -1959,8 +1957,7 @@ oyjlTESTRESULT_e testDAGbasic ()
                                  (oyStruct_s*)blob, mySignal );
   if(verbose)
   {
-    char * text = NULL;
-    OY_BACKTRACE_STRING(0)
+    char * text = oyBT(-1);
     oyObjectTreePrint( 0x01 | 0x02 | 0x08, text ? text : __func__ );
     oyFree_m_( text )
   }
@@ -7489,14 +7486,86 @@ oyjlTESTRESULT_e testDAG2()
   oyImage_Release( &input );
   oyImage_Release( &output );
   oyFilterNode_Release( &icc );
+  oyConversion_Release ( &cc );
+
+
+  p_in = oyProfile_FromStd( oyEDITING_RGB, icc_profile_flags, testobj );
+  p_out = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, testobj );
+  input =oyImage_Create( src_width,src_height, 
+                         buf_16in,
+                         oyChannels_m(oyProfile_GetChannelsCount(p_in)+1) |
+                          oyDataType_m(buf_type_in),
+                         p_in,
+                         testobj );
+  output=oyImage_Create( dst_width,dst_height, 
+                         buf_16out,
+                         oyChannels_m(oyProfile_GetChannelsCount(p_out)+1) |
+                          oyDataType_m(data_type_request),
+                         p_out,
+                         testobj );
+
+  cc = oyConversion_FromImageForDisplay( input, output,
+                                         &icc, oyOPTIONATTRIBUTE_ADVANCED,
+                                         oyUINT16, NULL, testobj );
+  const char * hash = oyFilterNode_GetText( icc, oyNAME_NAME );
+
+  if( hash )
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "hashed node                                        " );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "hashed node                                        " );
+  }
+
+  oyProfile_Release( &p_in );
+  oyProfile_Release( &p_out );
+  oyImage_Release( &input );
+  oyImage_Release( &output );
+  oyFilterNode_Release( &icc );
+  oyConversion_Release ( &cc );
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 1, "hashed" )
+
+
+  p_in = oyProfile_FromStd( oyEDITING_RGB, icc_profile_flags, testobj );
+  p_out = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, testobj );
+  input =oyImage_Create( src_width,src_height, 
+                         buf_16in,
+                         oyChannels_m(oyProfile_GetChannelsCount(p_in)+1) |
+                          oyDataType_m(buf_type_in),
+                         p_in,
+                         testobj );
+  output=oyImage_Create( dst_width,dst_height, 
+                         buf_16out,
+                         oyChannels_m(oyProfile_GetChannelsCount(p_out)+1) |
+                          oyDataType_m(data_type_request),
+                         p_out,
+                         testobj );
+
+  cc = oyConversion_FromImageForDisplay( input, output,
+                                         &icc, oyOPTIONATTRIBUTE_ADVANCED,
+                                         oyUINT16, NULL, testobj );
+  oyProfile_Release( &p_in );
+  oyProfile_Release( &p_out );
+  oyImage_Release( &input );
+  oyImage_Release( &output );
+  oyFilterNode_Release( &icc );
 
   input_node = oyConversion_GetNode( cc, OY_INPUT );
   node = oyConversion_GetNode( cc, OY_OUTPUT );
   option = oyOption_FromRegistration( OY_STD "/node/count", testobj );
   error = oyStruct_ObserverAdd( (oyStruct_s*)node, (oyStruct_s*)node,
                                 (oyStruct_s*)option, myNodeSignal );
+
+  //{ char * text = oyBT(-1); oyObjectTreePrint( 0x01 | 0x02 | 0x04 | 0x08, text ? text : __func__ ); oyFree_m_( text ) }
+#if 0
+  /* graph broadcast */
   socket = oyFilterNode_GetSocket( input_node, 0 );
   oyFilterSocket_SignalToGraph( socket, oyCONNECTOR_EVENT_DATA_CHANGED );
+#else
+  /* let oyFilterNode_Run() emit a signal on filter call and observe the ticket */
+  oyConversion_RunPixels( cc, NULL );
+#endif
+  //{ char * text = oyBT(-1); oyObjectTreePrint( 0x01 | 0x02 | 0x04 | 0x08, text ? text : __func__ ); oyFree_m_( text ) }
 
   n = oyOption_GetValueInt( option, -1 );
   if( n > 0 )
