@@ -1008,6 +1008,7 @@ int          oyFilterNode_SetContext_( oyFilterNode_s_    * node,
   oyFilterCore_s_ * core_ = node->core;
   oyHash_s * hash4 = 0,          /* public context provider */
            * hash7 = 0;          /* data processor part */
+  oyOption_s * ct = NULL;        /* context module option */
 
 
   if(error <= 0)
@@ -1041,8 +1042,7 @@ int          oyFilterNode_SetContext_( oyFilterNode_s_    * node,
           if(error <= 0)
           {
             /* select the module by option */
-            oyOption_s * ct = oyOptions_Find( node->core->options_,
-                                                       "////context",
+            ct = oyOptions_Find( node->core->options_, "////context",
                                                        oyNAME_PATTERN );
             const char * pattern = oyOption_GetValueString( ct, 0 );
             if(pattern &&
@@ -1265,6 +1265,7 @@ int          oyFilterNode_SetContext_( oyFilterNode_s_    * node,
   clean:
     oyHash_Release( &hash4 );
     oyHash_Release( &hash7 );
+    oyOption_Release( &ct );
 
   return error;
 }
