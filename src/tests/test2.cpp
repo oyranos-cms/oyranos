@@ -6256,7 +6256,7 @@ oyjlTESTRESULT_e testCMMnmRun ()
   clck = oyClock() - clck;
   oyProfile_Release( &prof );
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 1, "nm" )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 1, "objects nm" )
 
   const char * key_domain = OY_STD"/behaviour";
   const char * key_name = OY_STD"/behaviour/rendering_bpc";
@@ -6304,7 +6304,7 @@ oyjlTESTRESULT_e testCMMnmRun ()
     "oyDB_getString_(%s)", key_name );
   }
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 1, "db" )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 1, "objects db" )
 
 
   char * value = oyGetPersistentString( key_name, 0, oySCOPE_USER_SYS,0 );
@@ -6397,7 +6397,7 @@ oyjlTESTRESULT_e testCMMnmRun ()
     "oyOptions_ForFilter()                             " );
   }
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 1, "opts" )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 1, "objects opts" )
 
 
   options = oyOptions_New(0);
@@ -6444,7 +6444,7 @@ oyjlTESTRESULT_e testCMMnmRun ()
     "oyFilterCore_New() oyCMMapi4_s                     " );
   }
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 1, "filts" )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 1, "objects filts" )
 
 
   buf_in = &d[0];
@@ -6595,7 +6595,7 @@ oyjlTESTRESULT_e testCMMnmRun ()
   oyOptions_Release( &options );
 
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 1, "convs" )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 1, "objects convs" )
 
 
   prof = oyProfile_FromStd( oyEDITING_XYZ, icc_profile_flags, testobj );
@@ -6632,7 +6632,7 @@ oyjlTESTRESULT_e testCMMnmRun ()
     "oyNamedColor_SetColorStd() oyASSUMED_WEB         " );
   }
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 1, "nm++" )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 1, "objects nm++" )
 
   p_in = oyProfile_FromStd ( oyASSUMED_WEB, icc_profile_flags, testobj );
   p_out = oyProfile_FromStd ( oyEDITING_XYZ, icc_profile_flags, testobj );
@@ -6680,7 +6680,7 @@ oyjlTESTRESULT_e testCMMnmRun ()
     "oyColorConvert_()                                 " );
   }
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 1, "cc" )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 1, "objects cc" )
 
 
   p_in = oyProfile_FromStd ( oyASSUMED_WEB, icc_profile_flags, testobj );
@@ -6761,7 +6761,7 @@ oyjlTESTRESULT_e testCMMnmRun ()
   oyPixelAccess_Release( &pixel_access );
   oyConversion_Release( &conv );
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 0, 1, "conv" )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 0, 1, "objects conv" )
 
 
   conv = oyConversion_New( testobj );
@@ -6806,7 +6806,7 @@ oyjlTESTRESULT_e testCMMnmRun ()
   oyPixelAccess_Release( &pixel_access );
   oyConversion_Release( &conv );
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 1, "2pix" )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 1, "objects 2pix" )
 
 
 
@@ -7523,7 +7523,7 @@ oyjlTESTRESULT_e testDAG2()
   oyImage_Release( &output );
   oyFilterNode_Release( &icc );
   oyConversion_Release ( &cc );
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 1, "hashed" )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 1, "objects hashed" )
 
 
   p_in = oyProfile_FromStd( oyEDITING_RGB, icc_profile_flags, testobj );
@@ -8414,7 +8414,7 @@ oyjlTESTRESULT_e testConversion()
   oyImage_Release( &input );
   oyImage_Release( &output );
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0, NULL )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 0, NULL )
 
   return result;
 }
