@@ -1092,7 +1092,8 @@ static int oyjlTermColorCheck_()
   if( S_ISCHR( sout.st_mode ) &&
       S_ISCHR( serr.st_mode ) )
     color_term = 1;
-  fprintf(stderr, "color_term: %d\n", color_term );
+  if(*oyjl_debug)
+    fprintf(stderr, "color_term: %d\n", color_term );
 
   return color_term;
 }
