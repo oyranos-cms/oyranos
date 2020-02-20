@@ -7809,6 +7809,7 @@ oyjlTESTRESULT_e testFilterNodeCMM( oyjlTESTRESULT_e result_,
 
   oyFilterGraph_s * cc_graph = oyConversion_GetGraph( cc );
   oyFilterNode_s * icc = oyFilterGraph_GetNode( cc_graph, -1, "///icc_color", 0 );
+  oyFilterGraph_Release( &cc_graph );
   oyOptions_s * node_opts = oyFilterNode_GetOptions( icc, oyOPTIONATTRIBUTE_ADVANCED );
   int count = oyOptions_Count( node_opts );
   oyOption_s * o = oyOptions_Find( node_opts, "rendering_intent", oyNAME_PATTERN );
@@ -7959,9 +7960,12 @@ oyjlTESTRESULT_e testFilterNodeCMM( oyjlTESTRESULT_e result_,
 
   oyOptions_Release( &options );
   oyOptions_Release( &node_opts );
+  oyProfile_Release( &p_lab );
+  oyProfile_Release( &p_web );
+  oyFilterNode_Release( &icc );
   oyConversion_Release( &cc );
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0, NULL )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 0, NULL )
 
   return result;
 }
