@@ -1060,7 +1060,7 @@ static int oyjlTermColorCheck_()
   if( fstat( fileno(stdout), &sout ) == -1 )
     return 0;
 
-  //if(*oyjl_debug)
+  if(*oyjl_debug)
   switch( sout.st_mode & S_IFMT )
   {
     case S_IFBLK:  fprintf(stderr, "block device\n");            break;
@@ -1076,7 +1076,7 @@ static int oyjlTermColorCheck_()
   if( fstat( fileno(stderr), &serr ) == -1 )
     return color_term;
 
-  //if(*oyjl_debug)
+  if(*oyjl_debug)
   switch( serr.st_mode & S_IFMT )
   {
     case S_IFBLK:  fprintf(stderr, "block device\n");            break;
@@ -1135,9 +1135,9 @@ const char * oyjlTermColor( oyjlCOLORTERM_e rgb, const char * text) {
   {
     switch(rgb)
     {
-      case oyjlRED: sprintf( t, "%s%s%s", truecolor ? OYJL_RED_TC : color ? OYJL_RED_B : "", text, OYJL_CTEND ); break;
-      case oyjlGREEN: sprintf( t, "%s%s%s", truecolor ? OYJL_GREEN_TC : color ? OYJL_GREEN_B : "", text, OYJL_CTEND ); break;
-      case oyjlBLUE: sprintf( t, "%s%s%s", truecolor ? OYJL_BLUE_TC : color ? OYJL_BLUE_B : "", text, OYJL_CTEND ); break;
+      case oyjlRED: sprintf( t, "%s%s%s", truecolor ? OYJL_RED_TC : color ? OYJL_RED_B : "", text, truecolor || color ? OYJL_CTEND : "" ); break;
+      case oyjlGREEN: sprintf( t, "%s%s%s", truecolor ? OYJL_GREEN_TC : color ? OYJL_GREEN_B : "", text, truecolor || color ? OYJL_CTEND : "" ); break;
+      case oyjlBLUE: sprintf( t, "%s%s%s", truecolor ? OYJL_BLUE_TC : color ? OYJL_BLUE_B : "", text, truecolor || color ? OYJL_CTEND : "" ); break;
       case oyjlBOLD: sprintf( t, "%s%s%s", truecolor || color ? OYJL_BOLD : "", text, truecolor || color ? OYJL_CTEND : "" ); break;
       case oyjlITALIC: sprintf( t, "%s%s%s", truecolor || color ? OYJL_ITALIC : "", text, truecolor || color ? OYJL_CTEND : "" ); break;
       case oyjlUNDERLINE: sprintf( t, "%s%s%s", truecolor || color ? OYJL_UNDERLINE : "", text, truecolor || color ? OYJL_CTEND : "" ); break;
