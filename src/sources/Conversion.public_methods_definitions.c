@@ -147,7 +147,7 @@ oyConversion_s   * oyConversion_CreateBasicPixels (
 {
   oyConversion_s * s = 0;
   int error = !input || !output;
-  oyFilterNode_s * in = 0, * out = 0;
+  oyFilterNode_s * in = 0, * out = 0, * a[3] = {NULL,NULL,NULL};
 
   if(error <= 0)
   {
@@ -155,14 +155,14 @@ oyConversion_s   * oyConversion_CreateBasicPixels (
     error = !s;
 
     if(error <= 0)
-      in = oyFilterNode_NewWith( "//" OY_TYPE_STD "/root", options, 0 );
+      a[0] = in = oyFilterNode_NewWith( "//" OY_TYPE_STD "/root", options, 0 );
     if(error <= 0)
       error = oyConversion_Set( s, in, 0 );
     if(error <= 0)
       error = oyFilterNode_SetData( in, (oyStruct_s*)input, 0, 0 );
 
     if(error <= 0)
-      out = oyFilterNode_FromOptions( OY_CMM_STD, "//" OY_TYPE_STD "/icc_color", options, object );
+      a[2] = out = oyFilterNode_FromOptions( OY_CMM_STD, "//" OY_TYPE_STD "/icc_color", options, object );
     if(error <= 0)
       error = oyFilterNode_SetData( out, (oyStruct_s*)output, 0, 0 );
     if(error <= 0)
@@ -172,7 +172,7 @@ oyConversion_s   * oyConversion_CreateBasicPixels (
     in = out; out = 0;
 
     if(error <= 0)
-      out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/output", options, 0 );
+      a[2] = out = oyFilterNode_NewWith( "//" OY_TYPE_STD "/output", options, 0 );
     if(error <= 0)
     {
       error = oyFilterNode_Connect( in, "//" OY_TYPE_STD "/data",
@@ -185,7 +185,12 @@ oyConversion_s   * oyConversion_CreateBasicPixels (
   }
 
   if(error)
+  {
+    int i;
+    for( i = 2; i >= 0; --i )
+      oyFilterNode_Release( &a[i] );
     oyConversion_Release ( &s );
+  }
 
   return s;
 }
