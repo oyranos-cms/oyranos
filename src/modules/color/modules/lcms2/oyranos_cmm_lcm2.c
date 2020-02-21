@@ -82,7 +82,7 @@ void  oyDeAllocateFunc_         (void *        data);
 #define CMMProfileRelease_M l2cmsCloseProfile
 #define CMMToString_M(text) #text
 #define CMMMaxChannels_M 16
-#define l2cmsPROFILE "lcP2"
+#define l2cmsPROFILE   "lcP2"
 #define l2cmsTRANSFORM "lcC2"
 /** The proofing LUTs grid size may improove the sharpness of out of color 
  *  marking, but at the prise of lost speed and increased memory consumption.
@@ -91,6 +91,12 @@ void  oyDeAllocateFunc_         (void *        data);
 /*#define ENABLE_MPE 1*/
 
 #define CMM_VERSION {0,1,1}
+
+typedef enum {
+  l2cmsOBJECT_NONE,
+  l2cmsOBJECT_PROFILE = 320,
+  l2cmsOBJECT_TRANSFORM
+} l2cmOBJECT_e;
 
 oyMessage_f l2cms_msg = oyMessageFunc;
 
@@ -112,12 +118,17 @@ int                l2cmsCMMapiReset  ( ) { return 0; }
  *  @since   2007/12/10 (Oyranos: 0.1.8)
  */
 typedef struct l2cmsProfileWrap_s_ {
-  uint32_t     type;                   /**< shall be l2cmsPROFILE */
+  l2cmOBJECT_e type;                   /**< shall be l2cmsOBJECT_PROFILE */
+  oyStruct_Copy_f      copy;           /**< @brief Copy function */
+  oyStruct_Release_f   release;        /**< @brief Release function */
+  oyObject_s           oy_;            /**< Features name and hash. Do not change during object life time. @brief Oyranos internal object */
+
   size_t       size;                   /**< size of block */
   oyPointer    block;                  /**< profile data */
   oyPointer    l2cms;                  /**< cmsHPROFILE struct */
   icColorSpaceSignature sig;           /**< ICC profile signature */
   oyProfile_s *dbg_profile;            /**< only for debugging */
+  int          id;                     /**< oy ID */
 } l2cmsProfileWrap_s;
 
 /** @struct  l2cmsTransformWrap_s
@@ -128,7 +139,7 @@ typedef struct l2cmsProfileWrap_s_ {
  *  @since   2007/12/20 (Oyranos: 0.1.8)
  */
 typedef struct l2cmsTransformWrap_s_ {
-  uint32_t     type;                   /**< shall be l2cmsTRANSFORM */
+  l2cmOBJECT_e type;                   /**< shall be l2cmsOBJECT_TRANSFORM */
   oyPointer    l2cms;                  /**< cmsHPROFILE struct */
   icColorSpaceSignature sig_in;        /**< ICC profile signature */
   icColorSpaceSignature sig_out;       /**< ICC profile signature */
@@ -152,7 +163,7 @@ l2cmsProfileWrap_s * l2cmsCMMProfile_GetWrap_(
                                        oyPointer_s       * cmm_ptr );
 int l2cmsCMMProfileWrap_Release      ( l2cmsProfileWrap_s**p );
 
-int                l2cmsCMMCheckPointer(oyPointer_s       * cmm_ptr,
+int        l2cmsCMMCheckPointer      ( oyPointer_s       * cmm_ptr,
                                        const char        * resource );
 int        oyPixelToLcm2PixelLayout_ ( oyPixel_t           pixel_layout,
                                        icColorSpaceSignature color_space );
@@ -539,6 +550,46 @@ int lcm2registerFuncs( int init, const char * fn OY_UNUSED )
   return error;
 }
 
+static char * lcm2_message_text_ = NULL;
+static const char * lcm2StaticMessageFunc (
+                                       oyPointer           obj,
+                                       oyNAME_e            type OY_UNUSED,
+                                       int                 flags OY_UNUSED )
+{
+  typedef struct {
+    unsigned type;
+  } data_struct;
+  data_struct * o = (data_struct *) obj;
+
+  if(obj)
+  {
+    if(o->type == l2cmsOBJECT_PROFILE)
+    {
+      l2cmsProfileWrap_s * s = (l2cmsProfileWrap_s*) obj;
+      if(!lcm2_message_text_)
+        lcm2_message_text_ = calloc(sizeof(char), 512 );
+
+      sprintf( lcm2_message_text_, "l2cms oyProfile_s[%d]", s->id );
+    }
+    else
+    if(o->type == l2cmsOBJECT_TRANSFORM)
+      return "l2cmsTransformWrap_s";
+  }
+  else
+    sprintf( lcm2_message_text_, "unknown" );
+  return lcm2_message_text_;
+}
+static void l2cmsProfileWrap_StaticFree_           ( void )
+{
+  if(lcm2_message_text_)
+  {
+    free(lcm2_message_text_);
+    lcm2_message_text_ = NULL;
+  }
+  if(oy_debug)
+    fprintf(stderr, "%s() freeing static \"%s\" memory\n", "l2cmsProfileWrap_StaticFree_", "l2cmsProfileWrap_s" );
+}
+
 /** Function l2cmsCMMinit
  *  @brief   API requirement
  *
@@ -579,6 +630,13 @@ int                l2cmsCMMinit       ( oyStruct_s        * filter OY_UNUSED )
         l2cms_msg( oyMSG_WARN,0, OY_DBG_FORMAT_" "
                "init \"%s\" issue(s): v%d",
                 OY_DBG_ARGS_, fn, l2cmsGetEncodedCMMversion() );
+
+      {
+        oyStruct_RegisterStaticMessageFunc( l2cmsOBJECT_PROFILE,
+                                      lcm2StaticMessageFunc, l2cmsProfileWrap_StaticFree_ );
+        oyStruct_RegisterStaticMessageFunc( l2cmsOBJECT_TRANSFORM,
+                                      lcm2StaticMessageFunc, NULL );
+      }
     }
     oyFree_m_( fn );
 
@@ -715,14 +773,11 @@ l2cmsProfileWrap_s * l2cmsCMMProfile_GetWrap_( oyPointer_s* cmm_ptr )
 {
   l2cmsProfileWrap_s * s = NULL;
 
-  char * type_ = l2cmsPROFILE;
-  unsigned type = *((uint32_t*)type_);
-
   if(cmm_ptr && !l2cmsCMMCheckPointer( cmm_ptr, l2cmsPROFILE ) &&
      oyPointer_GetPointer(cmm_ptr))
     s = (l2cmsProfileWrap_s*) oyPointer_GetPointer(cmm_ptr);
 
-  if(s && s->type != type)
+  if(s && s->type != l2cmsOBJECT_PROFILE)
     s = NULL;
 
   if(s && oy_debug >= 2)
@@ -732,6 +787,9 @@ l2cmsProfileWrap_s * l2cmsCMMProfile_GetWrap_( oyPointer_s* cmm_ptr )
               OY_DBG_ARGS_, s->size, s->dbg_profile?oyNoEmptyString_m_(oyProfile_GetFileName( s->dbg_profile,-1 )):"????",
               oyStruct_GetId((oyStruct_s*)cmm_ptr) );
   }
+
+  if(s)
+    oyObject_Ref(s->oy_);
 
   return s;
 }
@@ -746,14 +804,11 @@ l2cmsProfileWrap_s * l2cmsCMMProfile_GetWrap_( oyPointer_s* cmm_ptr )
 int      l2cmsCMMTransform_GetWrap_   ( oyPointer_s       * cmm_ptr,
                                        l2cmsTransformWrap_s ** s )
 {
-  char * type_ = l2cmsTRANSFORM;
-  unsigned type = *((uint32_t*)type_);
-
   if(cmm_ptr && !l2cmsCMMCheckPointer( cmm_ptr, l2cmsTRANSFORM ) &&
      oyPointer_GetPointer(cmm_ptr))
     *s = (l2cmsTransformWrap_s*) oyPointer_GetPointer(cmm_ptr);
 
-  if(*s && ((*s)->type != type || !(*s)->l2cms))
+  if(*s && ((*s)->type != l2cmsOBJECT_TRANSFORM || !(*s)->l2cms))
   {
     *s = 0;
     return 1;
@@ -774,20 +829,13 @@ int l2cmsCMMProfileWrap_Release          ( l2cmsProfileWrap_s**p )
   int error = !p;
   l2cmsProfileWrap_s * s = 0;
   
-  char * type_ = l2cmsPROFILE;
-  unsigned type = *((uint32_t*)type_);
-  char s_type[4];
-
   if(!error && *p)
     s = *p;
 
   if(!error)
     error = !s;
 
-  if(!error)
-    memcpy(s_type, &s->type, 4);
-
-  if(!error && s->type != type)
+  if(!error && s->type != l2cmsOBJECT_PROFILE)
     error = 1;
 
   if(!error)
@@ -802,6 +850,7 @@ int l2cmsCMMProfileWrap_Release          ( l2cmsProfileWrap_s**p )
     oyProfile_Release( &s->dbg_profile );
 
     s->l2cms = 0;
+    oyObject_Release( &s->oy_ );
     s->type = 0;
     if(s->block && s->size)
       free(s->block);
@@ -833,8 +882,6 @@ int          l2cmsCMMProfileWrap_Create (
 
   if(!error)
   {
-    char * type_ = l2cmsPROFILE;
-    int type = *((int32_t*)type_);
     size_t size = 0;
     oyPointer block = 0;
     oyProfile_s * p = NULL;
@@ -846,7 +893,9 @@ int          l2cmsCMMProfileWrap_Create (
       block = oyProfile_GetMem( p, &size, 0, malloc );
     }
 
-    s->type = type;
+    s->type = l2cmsOBJECT_PROFILE;
+    s->oy_ = oyObject_NewFrom( NULL, "l2cmsProfileWrap_s" );
+    oyObject_SetParent( s->oy_, l2cmsOBJECT_PROFILE, (oyPointer)s );
     s->size = size;
     s->block = block;
     if(oy_debug >= 2)
@@ -867,6 +916,7 @@ int          l2cmsCMMProfileWrap_Create (
       s->l2cms = CMMProfileOpen_M( tc, block, size );
     }
 #endif
+    s->id = oyStruct_GetId( (oyStruct_s*)p );
     if(!s->l2cms)
       l2cms_msg( oyMSG_WARN, (oyStruct_s*)data,
              OY_DBG_FORMAT_" %s() failed", OY_DBG_ARGS_, "CMMProfileOpen_M" );
@@ -890,11 +940,11 @@ int          l2cmsCMMProfileWrap_Create (
 /** Function l2cmsCMMCheckPointer
  *  @brief   
  *
- *  @version Oyranos: 0.1.8
- *  @date    2007/11/12
+ *  @version Oyranos: 0.9.7
+ *  @date    2020/02/21
  *  @since   2007/11/12 (Oyranos: 0.1.8)
  */
-int                l2cmsCMMCheckPointer(oyPointer_s       * cmm_ptr,
+int        l2cmsCMMCheckPointer      ( oyPointer_s       * cmm_ptr,
                                        const char        * resource )
 {
   int error = !cmm_ptr;
@@ -1019,11 +1069,9 @@ l2cmsTransformWrap_s * l2cmsTransformWrap_Set_ (
   
   if(!error)
   {
-    char * type_ = l2cmsTRANSFORM;
-    int type = *((int32_t*)type_);
     l2cmsTransformWrap_s * ltw = calloc(sizeof(l2cmsTransformWrap_s), 1);
 
-    ltw->type = type;
+    ltw->type = l2cmsOBJECT_TRANSFORM;
 
     ltw->l2cms = xform; xform = 0;
 
@@ -1279,7 +1327,15 @@ cmsHTRANSFORM  l2cmsCMMConversionContextCreate_ (
           l2cmsProfileWrap_s * wrap = l2cmsAddProofProfile( 
                                              oyProfiles_Get(simulation,i),flags,
                                              intent, intent_proof, 0);
-          merge[profiles_n-1 + i] = wrap->l2cms;
+          if(!wrap)
+          {
+            error = 1;
+            break;
+          }
+          else
+            merge[profiles_n-1 + i] = wrap->l2cms;
+
+          oyObject_UnRef( wrap->oy_ ); wrap = NULL;
         }
 
         merge[profiles_n + proof_n -1] = lps[profiles_n - 1];
@@ -1594,8 +1650,6 @@ l2cmsProfileWrap_s*l2cmsAddProofProfile( oyProfile_s     * proof,
   {
     oyPointer_s * oy = cmm_ptr;
 
-    char * type_ = l2cmsPROFILE;
-    uint32_t type = *((uint32_t*)type_);
     size_t size = 0;
     oyPointer block = 0;
     l2cmsProfileWrap_s * s = calloc(sizeof(l2cmsProfileWrap_s), 1);
@@ -1617,9 +1671,12 @@ l2cmsProfileWrap_s*l2cmsAddProofProfile( oyProfile_s     * proof,
       l2cmsCloseProfile( hp ); hp = 0;
     }
 
-    s->type = type;
+    s->type = l2cmsOBJECT_PROFILE;
+    s->oy_ = oyObject_NewFrom( NULL, "l2cmsProfileWrap_s" );
+    oyObject_SetParent( s->oy_, l2cmsOBJECT_PROFILE, (oyPointer)s );
     s->size = size;
     s->block = block;
+    s->id = oyStruct_GetId( (oyStruct_s*)proof );
 
     /* reopen */
 #if LCMS_VERSION < 2060
@@ -1715,7 +1772,10 @@ cmsHPROFILE  l2cmsAddProfile          ( oyProfile_s       * p )
   }
 
   if(!error)
+  {
     hp = s->l2cms;
+    oyObject_UnRef( s->oy_ ); s = NULL;
+  }
 
   oyPointer_Release( &cmm_ptr );
 
@@ -2660,7 +2720,7 @@ int  l2cmsModuleData_Convert          ( oyPointer_s       * data_in,
       oyProfile_s *p = oyProfile_FromMem( oyPointer_GetSize( cmm_ptr_in),
                                           oyPointer_GetPointer(cmm_ptr_in),0,0);
       uint32_t id[8]={0,0,0,0,0,0,0,0};
-      char * hash_text = oyjlStringCopy( l2cmsTRANSFORM":", oyAllocateFunc_ );
+      char * hash_text = oyjlStringCopy( l2cmsTRANSFORM ":", oyAllocateFunc_ );
 
       char * t = l2cmsFilterNode_GetText( node, oyNAME_NICK, oyAllocateFunc_ );
       STRING_ADD( hash_text, t );
@@ -2862,7 +2922,7 @@ int      l2cmsFilterPlug_CmmIccRun   ( oyFilterPlug_s    * requestor_plug,
     {
       int msg_type = oyMSG_DBG;
       uint32_t id[8]={0,0,0,0,0,0,0,0};
-      char * hash_text = oyjlStringCopy( l2cmsTRANSFORM":", oyAllocateFunc_ );
+      char * hash_text = oyjlStringCopy( l2cmsTRANSFORM ":", oyAllocateFunc_ );
 
       char * t = 0;
       t = l2cmsFilterNode_GetText( node, oyNAME_NICK, oyAllocateFunc_ );
@@ -4249,8 +4309,11 @@ int          l2cmsMOptions_Handle2    ( oyOptions_s       * options,
       l2cmsProfileWrap_s * wrap = l2cmsAddProofProfile( p, flags | cmsFLAGS_SOFTPROOFING,
                                             intent, intent_proof, icc_profile_flags );
       oyProfile_Release( &p );
+      if(!wrap)
+        return 1;
 
       prof = oyProfile_FromMem( wrap->size, wrap->block, 0, 0 );
+      oyObject_UnRef( wrap->oy_ ); wrap = NULL;
 
       o = oyOption_FromRegistration( OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "icc_profile.create_profile.proofing_effect._" CMM_NICK,
                         0 );
@@ -4609,9 +4672,9 @@ oyCMMapi6_s_ l2cms_api6_cmm = {
   0,   /* api5_; keep empty */
   0,   /* runtime_context */
   
-  oyCOLOR_ICC_DEVICE_LINK,  /* data_type_in, "oyDL" */
-  l2cmsTRANSFORM,             /* data_type_out, l2cmsTRANSFORM */
-  l2cmsModuleData_Convert     /* oyModuleData_Convert_f oyModuleData_Convert */
+  oyCOLOR_ICC_DEVICE_LINK,             /* data_type_in, "oyDL" */
+  l2cmsTRANSFORM,                      /* data_type_out, l2cmsTRANSFORM */
+  l2cmsModuleData_Convert              /* oyModuleData_Convert_f oyModuleData_Convert */
 };
 
 
