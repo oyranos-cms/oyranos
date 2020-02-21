@@ -73,7 +73,7 @@ int oyStruct_RegisterStaticMessageFunc (
   int error = 0;
   if((int)type >= oy_msg_func_n_)
   {
-    int n = oy_msg_func_n_;
+    int n = oy_msg_func_n_, size = sizeof(oyStruct_RegisterStaticMessageFunc_f);
     oyStruct_RegisterStaticMessageFunc_f * tmp = NULL;
     oyStruct_RegisterStaticFreeFunc_f * tmp_free = NULL;
 
@@ -83,18 +83,18 @@ int oyStruct_RegisterStaticMessageFunc (
       n = (int) oyOBJECT_MAX;
 
 
-    tmp = oyAllocateFunc_(sizeof(oyStruct_RegisterStaticMessageFunc_f) * n);
-    tmp_free = oyAllocateFunc_(sizeof(oyStruct_RegisterStaticFreeFunc_f) * n);
+    tmp = oyAllocateFunc_(size * n);
+    tmp_free = oyAllocateFunc_(size * n);
     if(tmp && tmp_free)
     {
-      memset( tmp, 0, sizeof(oyStruct_RegisterStaticMessageFunc_f) * n );
-      memset( tmp_free, 0, sizeof(oyStruct_RegisterStaticFreeFunc_f) * n );
+      memset( tmp, 0, size * n );
+      memset( tmp_free, 0, size * n );
     }
 
     if(tmp && tmp_free && oy_msg_func_n_)
     {
-      memcpy( tmp, oy_static_msg_funcs_, sizeof(oyStruct_RegisterStaticMessageFunc_f) * oy_msg_func_n_ );
-      memcpy( tmp_free, oy_static_free_funcs_, sizeof(oyStruct_RegisterStaticFreeFunc_f) * oy_msg_func_n_ );
+      memcpy( tmp, oy_static_msg_funcs_, size * oy_msg_func_n_ );
+      memcpy( tmp_free, oy_static_free_funcs_, size * oy_msg_func_n_ );
     }
     else if(!tmp || !tmp_free)
     {
@@ -374,7 +374,7 @@ OYAPI const char * OYEXPORT  oyObject_Show (
         oy_object_show_text_ = malloc(len*2);
       }
       oy_object_show_text_[0] = 0;
-      snprintf( oy_object_show_text_, silen > 64 ? 64 : silen, "\"%s", tmp );
+      snprintf( oy_object_show_text_, 64, "\"%s", tmp );
       if(silen > 64) sprintf( &oy_object_show_text_[strlen(oy_object_show_text_)], " ..." );
       sprintf( &oy_object_show_text_[strlen(oy_object_show_text_)], "\"[%d] refs: %d", obj->id_, obj->ref_ );
       switch(st->type_)
