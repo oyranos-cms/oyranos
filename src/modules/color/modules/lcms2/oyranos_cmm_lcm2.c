@@ -150,7 +150,7 @@ int l2cmsCMMDeleteTransformWrap      ( l2cmsTransformWrap_s ** wrap);
 
 l2cmsProfileWrap_s * l2cmsCMMProfile_GetWrap_(
                                        oyPointer_s       * cmm_ptr );
-int l2cmsCMMProfileReleaseWrap       ( l2cmsProfileWrap_s**p );
+int l2cmsCMMProfileWrap_Release      ( l2cmsProfileWrap_s**p );
 
 int                l2cmsCMMCheckPointer(oyPointer_s       * cmm_ptr,
                                        const char        * resource );
@@ -762,14 +762,14 @@ int      l2cmsCMMTransform_GetWrap_   ( oyPointer_s       * cmm_ptr,
   return 0;
 }
 
-/** Function l2cmsCMMProfileReleaseWrap
+/** Function l2cmsCMMProfileWrap_Release
  *  @brief   release a l2cms profile wrapper struct
  *
  *  @version Oyranos: 0.1.8
  *  @date    2007/12/20
  *  @since   2007/12/20 (Oyranos: 0.1.8)
  */
-int l2cmsCMMProfileReleaseWrap       ( l2cmsProfileWrap_s**p )
+int l2cmsCMMProfileWrap_Release          ( l2cmsProfileWrap_s**p )
 {
   int error = !p;
   l2cmsProfileWrap_s * s = 0;
@@ -824,7 +824,8 @@ int l2cmsCMMProfileReleaseWrap       ( l2cmsProfileWrap_s**p )
  *  @since   2007/11/12 (Oyranos: 0.1.8)
  *  @date    2007/12/27
  */
-int          l2cmsCMMData_Open        ( oyStruct_s        * data,
+int          l2cmsCMMProfileWrap_Create (
+                                       oyStruct_s        * data,
                                        oyPointer_s       * oy )
 {
   oyPointer_s * s = 0;
@@ -871,7 +872,7 @@ int          l2cmsCMMData_Open        ( oyStruct_s        * data,
              OY_DBG_FORMAT_" %s() failed", OY_DBG_ARGS_, "CMMProfileOpen_M" );
     error = oyPointer_Set( oy, 0,
                            l2cmsPROFILE, s, CMMToString_M(CMMProfileOpen_M),
-                           (int (*)(oyPointer *))l2cmsCMMProfileReleaseWrap );
+                           (int (*)(oyPointer *))l2cmsCMMProfileWrap_Release );
     if(error)
       l2cms_msg( oyMSG_WARN, (oyStruct_s*)data,
              OY_DBG_FORMAT_" oyPointer_Set() failed", OY_DBG_ARGS_ );
@@ -1633,7 +1634,7 @@ l2cmsProfileWrap_s*l2cmsAddProofProfile( oyProfile_s     * proof,
 #endif
     error = oyPointer_Set( oy, 0,
                            l2cmsPROFILE, s, CMMToString_M(CMMProfileOpen_M),
-                           (int (*)(oyPointer *))l2cmsCMMProfileReleaseWrap );
+                           (int (*)(oyPointer *))l2cmsCMMProfileWrap_Release );
   }
 
   if(!error)
@@ -1698,12 +1699,12 @@ cmsHPROFILE  l2cmsAddProfile          ( oyProfile_s       * p )
   oyPointer_Set( cmm_ptr, CMM_NICK, 0,0,0,0 );
 
   if(!oyPointer_GetPointer(cmm_ptr))
-    error = l2cmsCMMData_Open( (oyStruct_s*)p, cmm_ptr );
+    error = l2cmsCMMProfileWrap_Create( (oyStruct_s*)p, cmm_ptr );
 
   if(error)
   {
     l2cms_msg( oyMSG_WARN, (oyStruct_s*)p,
-             OY_DBG_FORMAT_" l2cmsCMMData_Open() failed", OY_DBG_ARGS_ );
+             OY_DBG_FORMAT_" l2cmsCMMProfileWrap_Create() failed", OY_DBG_ARGS_ );
   } else
   {
     s = l2cmsCMMProfile_GetWrap_( cmm_ptr );
