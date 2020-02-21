@@ -546,6 +546,7 @@ int  oiccGetDefaultColorIccOptionsUI ( oyCMMapiFilter_s  * module OY_UNUSED,
     return 1;
 
   *ui_text = tmp;
+  oyOptions_Release( &defaults );
 
   return 0;
 }
