@@ -6761,7 +6761,7 @@ oyjlTESTRESULT_e testCMMnmRun ()
   oyPixelAccess_Release( &pixel_access );
   oyConversion_Release( &conv );
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 0, 1, "objects conv" )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 1, "objects conv" )
 
 
   conv = oyConversion_New( testobj );
@@ -8534,7 +8534,7 @@ oyjlTESTRESULT_e testCMMlists()
   }
   if(default_cmm) free(default_cmm);
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0, NULL )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 0, NULL )
 
   return result;
 }
@@ -8704,7 +8704,6 @@ oyjlTESTRESULT_e testICCsCheck()
     }
 
 
-    /*oyImage_Release( &input );*/
     oyImage_Release( &output );
     oyConversion_Release( &cc );
 
@@ -8819,6 +8818,7 @@ oyjlTESTRESULT_e testICCsCheck()
     cc = oyConversion_CreateFromImage (
                                 input, options,
                                 p_out, oyUINT16, 0, 0 );
+    oyImage_Release( &input );
     oyBlob_s * blob = getDL( cc, reg_nick, show_details?i:-1 );
     if(!show_details)
       oyWriteMemToFile_( "test-getDL-non-verbose.icc", oyBlob_GetPointer( blob ), oyBlob_GetSize( blob) );
@@ -8910,7 +8910,7 @@ oyjlTESTRESULT_e testICCsCheck()
     free(list);
   }
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0, NULL )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 0, NULL )
 
   return result;
 }
@@ -9033,7 +9033,7 @@ oyjlTESTRESULT_e testCCorrectFlags( )
   oyProfile_Release( &p_lab );
   oyProfile_Release( &p_web );
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0, NULL )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 0, NULL )
 
   return result;
 }
@@ -9235,7 +9235,7 @@ oyjlTESTRESULT_e testCache()
 
   oyTestCacheListClear_();
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0, NULL )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 0, NULL )
 
   return result;
 }
@@ -9276,7 +9276,7 @@ oyjlTESTRESULT_e testPaths()
   }
 
 
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_XFAIL, 1, 0, NULL )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 0, NULL )
 
   return result;
 }
