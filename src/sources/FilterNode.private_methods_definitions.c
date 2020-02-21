@@ -101,8 +101,8 @@ oyHash_s *   oyFilterNode_GetHash_   ( oyFilterNode_s_   * node,
                      OY_DBG_ARGS_,
                      api, hash_text );
 
-  if(hash_temp) oyDeAllocateFunc_(hash_temp);
-  if(hash_text) oyDeAllocateFunc_(hash_text);
+  if(hash_temp) oySTRUCT_FREE_m(core_, hash_temp);
+  if(hash_text) oySTRUCT_FREE_m(core_, hash_text);
 
   return hash;
 }

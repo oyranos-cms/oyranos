@@ -985,7 +985,7 @@ const char * oyFilterNode_GetText    ( oyFilterNode_s    * node,
     {
       oyObject_SetName( s->oy_, hash_text, oyNAME_NAME );
 
-      oyDeAllocateFunc_( hash_text );
+      oySTRUCT_FREE_m( s, hash_text );
       hash_text = 0;
 
       hash_text = (oyChar*) oyObject_GetName( s->oy_, oyNAME_NAME );

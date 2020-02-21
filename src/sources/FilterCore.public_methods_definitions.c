@@ -109,7 +109,7 @@ const char * oyFilterCore_GetText    ( oyFilterCore_s    * filter,
     if(error <= 0)
     {
       error = oyObject_SetName( s->oy_, text, name_type );
-      oyFree_m_(text);
+      oySTRUCT_FREE_m( s, text );
     }
 
     if(error)
