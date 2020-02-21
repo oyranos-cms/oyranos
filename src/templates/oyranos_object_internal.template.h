@@ -26,26 +26,29 @@ int oyCheckType_( oyOBJECT_e type1, oyOBJECT_e type2 );
 
 #define oyCheckType_m( typ, action ) \
   if( !s || oyCheckType_(s->type_, typ)) \
-  { \
-    WARNc3_S( "%s %s(%s)", _("Unexpected object type:"), \
+  { char * text = oyBT(0); \
+    WARNc4_S( "%s %s(%s)\n%s", _("Unexpected object type:"), \
               oyStructTypeToText( s ? s->type : oyOBJECT_NONE ), \
-              oyStructTypeToText( typ )) \
+              oyStructTypeToText( typ ), text?text:"" ) \
+    oyFree_m_(text); \
     action; \
   }
 #define oyCheckType__m( type, action ) \
   if( !s || oyCheckType_( s->type_, type )) \
-  { \
-    WARNc3_S( "%s %s(%s)", _("Unexpected object type:"), \
+  { char * text = oyBT(0); \
+    WARNc4_S( "%s %s(%s)\n%s", _("Unexpected object type:"), \
               oyStructTypeToText( s ? s->type_ : oyOBJECT_NONE ), \
-              oyStructTypeToText( type )) \
+              oyStructTypeToText( type ), text?text:"") \
+    oyFree_m_(text); \
     action; \
   }
 #define oyCheckTypeRange_m( type1, type2, action ) \
   if( !s || ( s->type_ < type1 || s->type_ > type2 )) \
-  { \
-    WARNc4_S( "%s %s(%s-%s)", _("Unexpected object type:"), \
+  { char * text = oyBT(0); \
+    WARNc5_S( "%s %s(%s-%s)\n%s", _("Unexpected object type:"), \
               oyStructTypeToText( s ? s->type_ : oyOBJECT_NONE ), \
-              oyStructTypeToText( type1 ), oyStructTypeToText( type2 )) \
+              oyStructTypeToText( type1 ), oyStructTypeToText( type2 ), text?text:"") \
+    oyFree_m_(text); \
     action; \
   }
 
