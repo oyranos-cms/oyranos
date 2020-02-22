@@ -56,8 +56,21 @@ char * oy_object_show_text_ = NULL;
  *  @memberof oyStruct_s
  *  @brief   register a function for verbosity
  *
- *  @param[in]     type                the object oyOBJECT_e type 
- *  @param[in]     f                   the object string function
+ *  Hint: for custom object types, you should use a type of above oyOBJECT_MAX
+ *
+ *  @param[in]     type                the object oyOBJECT_e type id;
+ *                                     keep lower than ::oyOBJECT_MAX_CUSTOM,
+ *                                     as this number
+ *                                     will allocate a array of that length
+ *  @param[in]     f                   the object string function;
+ *                                     A custom type should consider to add
+ *                                     - oyNAME_NICK : one word object name,
+ *                                         e.g. "myIdCustom_s"
+ *                                     - oyNAME_JSON+2 : ' ' space separated
+ *                                         list of child object id's from
+ *                                         oyObject_s::id_
+ *                                     Internal defined types below oyOBJECT_MAX
+ *                                     handle type enums by internal functions.
  *  @param[in]     object_type_init_var the object type initialisation variable address
  *  @return                            0 - success; >= 1 - error
  *
@@ -446,7 +459,7 @@ int                oyMessageFormat   ( char             ** message_text,
   if(c && oyOBJECT_NONE < c->type_)
   {
     type_name = oyStructTypeToText( c->type_ );
-    if(c->type_ < oyOBJECT_MAX)
+    if(c->type_ < oyOBJECT_MAX_CUSTOM)
       id = oyObject_GetId( c->oy_ );
     id_text = oyStruct_GetInfo( (oyStruct_s*)c, oyNAME_NAME, 0x01 );
     if(id_text)
