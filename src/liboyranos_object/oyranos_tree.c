@@ -65,6 +65,7 @@
 
 #define PRINT_ID(id_)  ;//if(id_ == old_oy_debug_objects) fprintf(stderr, OY_DBG_FORMAT_ "ID: %d\n", OY_DBG_ARGS_, id_);
 int old_oy_debug_objects = -1; /* be more silent */
+static oyStruct_s *  oyStruct_FromId ( int                 id );
 
 /* get a objects directly owned references */
 int                oyStruct_GetChildren (
@@ -81,7 +82,7 @@ int                oyStruct_GetChildren (
 #define CHECK_ASSIGN_OBJECT(struct_name) \
          if(s->oy_->struct_name) { \
                               c[n++] = (oyStruct_s*)s->oy_->struct_name; \
-                              if(((oyStruct_s*)s->oy_->struct_name)->type_ > oyOBJECT_MAX) \
+                              if(((oyStruct_s*)s->oy_->struct_name)->type_ > oyOBJECT_MAX_CUSTOM) \
                               { fprintf(stderr, OY_DBG_FORMAT_ "%s::%s failed\n", OY_DBG_ARGS_, oyStruct_GetText( (oyStruct_s*)s, oyNAME_DESCRIPTION, 0 ), #struct_name); \
                                 goto gcassert; } \
                               if(oyStruct_GetText((oyStruct_s*)s->oy_->struct_name, oyNAME_DESCRIPTION, 2) == NULL && s->oy_) \
@@ -448,6 +449,24 @@ int                oyStruct_GetChildren (
   }
 #undef CHECK_ASSIGN_STRUCT 
   c[n] = NULL;
+  if(oyOBJECT_MAX < obj->type_ && obj->type_ < oyOBJECT_MAX_CUSTOM)
+  {
+    const char * ids = oyStruct_GetInfo( obj, oyNAME_JSON+2, 0x01 );
+    char ** list;
+    n = 0;
+    list = oyStringSplit( ids, ' ', &n, oyAllocateFunc_ );
+    for(i = 0; i < n; ++i)
+    {
+      int id = atoi( list[i] );
+      oyStruct_s * s = oyStruct_FromId( id );
+      if(s)
+        c[i] = s;
+      else
+        fprintf( stderr, "Could not find struct for id: %s\n", list[i] );
+    }
+    oyStringListRelease( &list, n, oyDeAllocateFunc_ );
+    c[n] = NULL;
+  }
 
   {
     int i = 0;
@@ -863,7 +882,7 @@ static oyLeave_s * oyObjectIdListGetStructTree (
     for(i = 0; i < l->n; ++i)
     {
       int i_id = -1;
-      if(l->list[i] && oyOBJECT_NONE < l->list[i]->type_ && l->list[i]->type_ < oyOBJECT_MAX && l->list[i]->oy_)
+      if(l->list[i] && oyOBJECT_NONE < l->list[i]->type_ && l->list[i]->type_ < oyOBJECT_MAX_CUSTOM && l->list[i]->oy_)
         i_id = l->list[i]->oy_->id_;
 
       PRINT_ID(i_id)
@@ -1031,8 +1050,11 @@ static void  oyDotNodeAppend         ( char             ** text,
 {
   /* emphasise with color */
   const char * node = oyDotNodeGetColor( current, desc );
+  const char * nick = oyStructTypeToText( current->type_ );
+  if(!(nick && nick[0]))
+    nick = oyStruct_GetInfo( current, oyNAME_NICK, 1 );
   oyStringAddPrintf( text, 0,0, "%d [label=\"%s id=%d refs=%d%s%s\"%s];\n",
-                     id, oyStructTypeToText( current->type_ ), id, oyObject_GetRefCount(current->oy_), desc?"\\n":"", desc?desc:"", node );
+                     id, nick, id, oyObject_GetRefCount(current->oy_), desc?"\\n":"", desc?desc:"", node );
   if(old_oy_debug_objects == id)
     printf("append: %d\n", id);
 }
@@ -1210,11 +1232,16 @@ static oyStruct_s *  oyStruct_FromId ( int                 id )
       fprintf(stderr, "oyStruct_FromId(%d) no parent found\n", id );
       return NULL;
     }
-    if(obs[id]->parent_->type_ > oyOBJECT_MAX)
+    if(oyOBJECT_MAX < obs[id]->parent_->type_ && obs[id]->parent_->type_ < oyOBJECT_MAX_CUSTOM)
     {
-      fprintf(stderr, "oyStruct_FromId(%d) non reasonable type found: \"%s\"\nbacktrace:" OY_DBG_FORMAT_, id, oyStructTypeToText(obs[id]->parent_->type_), OY_DBG_ARGS_ );
-      OY_BACKTRACE_PRINT
-      return NULL;
+      const char * nick = oyStructTypeToText(obs[id]->parent_->type_);
+      if(!(nick && nick[0])) nick = oyStruct_GetInfo( obs[id]->parent_, oyNAME_NICK, 1 );
+      if(!(nick && nick[0]))
+      {
+        fprintf(stderr, "oyStruct_FromId(%d) non reasonable type found: \"%s\"\nbacktrace:" OY_DBG_FORMAT_, id, nick, OY_DBG_ARGS_ );
+        OY_BACKTRACE_PRINT
+        return NULL;
+      }
     }
 
     return obs[id]->parent_;
@@ -1353,8 +1380,11 @@ void               oyObjectTreePrint ( int                 flags,
       for(i = 0; i < lines_n; ++i)
         if(strstr( lines[i], "oyFilterPlug_s"))
           oyStringAddPrintf( &tmp, 0,0, "%s\n", lines[i] );
-      oyStringAddPrintf( &tmp, 0,0, "\n%s", dot );
-      if(dot) oyFree_m_(dot);
+      if(dot)
+      {
+        oyStringAddPrintf( &tmp, 0,0, "\n%s", dot );
+        oyFree_m_(dot);
+      }
 
       oyStringListRelease_( &lines, lines_n, 0 );
       lines = oyStringSplit_( tmp, '\n', &lines_n, 0 );
@@ -1393,7 +1423,7 @@ void               oyObjectTreePrint ( int                 flags,
       dot_edges = tmp; tmp = 0;
     }
 
-    if(flags & 0x01)
+    if(flags & 0x01 && dot)
     {
       int r OY_UNUSED;
       char * graph = 0;
@@ -1430,7 +1460,9 @@ bgcolor=\"transparent\"\n\
       if(graph) oyFree_m_( graph );
       if(dot) oyFree_m_( dot );
       if(dot_edges) oyFree_m_( dot_edges );
-    }
+    } else
+    if(flags & 0x01 && !dot)
+      WARNc_S( "dot is empty" );
     oy_debug_objects = old_oy_debug_objects;
   }
 }

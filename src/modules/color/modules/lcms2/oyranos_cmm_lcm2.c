@@ -569,7 +569,12 @@ static const char * lcm2StaticMessageFunc (
       if(!lcm2_message_text_)
         lcm2_message_text_ = calloc(sizeof(char), 512 );
 
-      sprintf( lcm2_message_text_, "l2cms oyProfile_s[%d]", s->id );
+      if(type == oyNAME_NICK)
+        sprintf( lcm2_message_text_, "l2cmsProfileWrap_s" );
+      else if(type == oyNAME_JSON+2)
+        sprintf( lcm2_message_text_, "%d", s->id );
+      else
+        sprintf( lcm2_message_text_, "l2cms oyProfile_s[%d]", s->id );
     }
     else
     if(o->type == l2cmsOBJECT_TRANSFORM)
