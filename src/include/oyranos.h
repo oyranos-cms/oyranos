@@ -151,7 +151,7 @@ int          oySetCMMPattern         ( oyCMM_e             type,
 #define oyNAME_REGISTRATION 5
 /** @brief a logical name for registration search */
 #define oyNAME_PATTERN 6
-/** @brief a logical name for registration search */
+/** @brief a hashable description in JSON format */
 #define oyNAME_JSON 7
 /** @brief use inbuild values */
 #define oySOURCE_FILTER 0x02
