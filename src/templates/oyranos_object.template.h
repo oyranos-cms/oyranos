@@ -163,6 +163,15 @@ typedef enum {
   oyOBJECT_MONITOR_HOOKS3_S  = 123,   /**< oyMonitorHooks3_s */
   oyOBJECT_MAX
 } oyOBJECT_e;
+/** @ingroup objects_generic
+ *
+ *  keep a custom object type below this number
+ *
+ *  @version Oyranos: 0.9.7
+ *  @date    2020/02/22
+ *  @since   2020/02/22 (Oyranos: 0.9.7)
+ */
+#define oyOBJECT_MAX_CUSTOM 1024 
 #endif
 const char *     oyStructTypeToText  ( oyOBJECT_e          type );
 
