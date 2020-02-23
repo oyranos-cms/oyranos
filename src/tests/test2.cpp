@@ -65,7 +65,7 @@
 #include "oyranos_string.h"
 oyObject_s testobj = NULL;
 extern "C" { char * oyAlphaPrint_(int); }
-#define OYJL_TEST_MAIN_SETUP  printf("\n    Oyranos test2\n"); if(getenv(OY_DEBUG)) oy_debug = atoi(getenv(OY_DEBUG));  if(getenv(OY_DEBUG_SIGNALS)) oy_debug_signals = atoi(getenv(OY_DEBUG_SIGNALS)); if(getenv(OY_DEBUG_OBJECTS)) oy_debug_objects = atoi(getenv(OY_DEBUG_OBJECTS)); //else  oy_debug_objects = 1003;  // oy_debug_signals = 1;
+#define OYJL_TEST_MAIN_SETUP  printf("\n    Oyranos test2\n"); if(getenv(OY_DEBUG)) oy_debug = atoi(getenv(OY_DEBUG));  if(getenv(OY_DEBUG_SIGNALS)) oy_debug_signals = atoi(getenv(OY_DEBUG_SIGNALS)); if(getenv(OY_DEBUG_OBJECTS)) oy_debug_objects = atoi(getenv(OY_DEBUG_OBJECTS)); //else  oy_debug_objects = 2851;  // oy_debug_signals = 1;
 #define OYJL_TEST_MAIN_FINISH printf("\n    Oyranos test2 finished\n\n"); if(testobj) testobj->release( &testobj ); if(verbose) { char * t = oyAlphaPrint_(0); puts(t); free(t); } oyLibConfigRelease(0);
 #include <oyjl_test_main.h>
 
@@ -8665,6 +8665,7 @@ oyjlTESTRESULT_e testICCsCheck()
                           oyDataType_m(buf_type_out),
                          p_out,
                          testobj );
+    oyProfile_Release( &p_in );
     oyOptions_Release( &options );
     oyOptions_SetFromString( &options, OY_DEFAULT_CMM_CONTEXT, reg_pattern, OY_CREATE_NEW );
     oyOptions_SetFromString( &options, OY_DEFAULT_RENDERING_INTENT, "1", OY_CREATE_NEW );
@@ -8714,10 +8715,12 @@ oyjlTESTRESULT_e testICCsCheck()
     for(j = 3; j < 12; ++j) buf_f32in2x2[j] = buf_16in2x2[j]/65535.0f;
     buf_type_in = oyFLOAT;
     buf_type_out = oyFLOAT;
+    p_in = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, testobj );
     cc = oyConversion_CreateBasicPixelsFromBuffers(
                               p_in, buf_f32in2x2, oyDataType_m(buf_type_in),
                               p_out, buf_f32out2x2, oyDataType_m(buf_type_out),
                                                     options, 4 );
+    oyProfile_Release( &p_in );
     error = oyConversion_RunPixels( cc, NULL );
     double equal = 0, max = 0;
     for(j = 0; j < 12; ++j)
@@ -8766,10 +8769,12 @@ oyjlTESTRESULT_e testICCsCheck()
     oyOptions_SetFromString( &options, OY_DEFAULT_CMM_CONTEXT, reg_pattern, OY_CREATE_NEW );
     oyOptions_SetFromString( &options, OY_DEFAULT_RENDERING_INTENT, "1", OY_CREATE_NEW );
     oyOptions_SetFromString( &options, OY_DEFAULT_PROOF_SOFT, "1", OY_CREATE_NEW );
+    p_in = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, testobj );
     cc = oyConversion_CreateBasicPixelsFromBuffers(
                               p_in, buf_f32in2x2, oyDataType_m(buf_type_in),
                               p_out, buf_f32out2x2, oyDataType_m(buf_type_out),
                                                     options, 4 );
+    oyProfile_Release( &p_in );
     error = oyOptions_SetFromString( &options,
                                      "//" OY_TYPE_STD "/config/display_mode", "1",
                                      OY_CREATE_NEW );
@@ -8849,8 +8854,10 @@ oyjlTESTRESULT_e testICCsCheck()
       { PRINT_SUB( oyjlTESTRESULT_XFAIL,
         "dl psid texts = %d (1+5*nProfiles) but announced psid profiles: %d", texts_n, j );
       }
+      oyProfileTag_Release( &psid );
     }
     oyBlob_Release( &blob );
+    oyProfile_Release( &dl );
 
     if(!error && j == 3)
     { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
