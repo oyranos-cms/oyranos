@@ -532,8 +532,8 @@ OYAPI oyProfiles_s * OYEXPORT oyProfiles_ForStd
     char  * temp = 0,
           * text = 0;
     uint32_t size = 0;
-    oyProfiles_s * iccs = 0, * patterns = oyProfiles_New( object );
-    oyProfile_s * profile = 0, * temp_prof = 0;
+    oyProfiles_s * iccs = NULL, * patterns = NULL;
+    oyProfile_s * profile = NULL, * temp_prof = NULL;
     icSignature csp;
 
     if(type == oyASSUMED_WEB)
@@ -564,6 +564,8 @@ OYAPI oyProfiles_s * OYEXPORT oyProfiles_ForStd
        type == oyEDITING_GRAY ||
        type == oyASSUMED_GRAY)
       default_p = oyGetDefaultProfileName( (oyPROFILE_e)type, oyAllocateFunc_);
+
+    patterns = oyProfiles_New( object );
 
     /* prepare the patterns according to the profile type */
     if(type == oyEDITING_XYZ ||
