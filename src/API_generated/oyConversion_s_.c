@@ -422,6 +422,8 @@ oyConversion_s_ * oyConversion_Copy_ ( oyConversion_s_ *conversion, oyObject_s o
             observer_refs = oyStruct_ObservationCount( (oyStruct_s*)s, 0 ),
             i;
         const char * track_name = oyStructTypeToText(s->type_);
+        if(!(track_name && track_name[0]))
+          track_name = oyStruct_GetInfo( s, oyNAME_NICK, 0x01 );
         if(s->oy_->id_ == id_)
           for( i = 0; i < s->oy_->ref_ - observer_refs - n; ++i)
             fprintf( stderr, "  " );
@@ -430,6 +432,8 @@ oyConversion_s_ * oyConversion_Copy_ ( oyConversion_s_ *conversion, oyObject_s o
         for(i = 0; i < n; ++i)
         {
           track_name = oyStructTypeToText(parents[i]->type_);
+          if(!(track_name && track_name[0]))
+            track_name = oyStruct_GetInfo( parents[i], oyNAME_NICK, 0x01 );
           if(s->oy_->id_ == id_)
           {
             int i;
@@ -505,6 +509,8 @@ int oyConversion_Release_( oyConversion_s_ **conversion )
       {
         int i;
         track_name = oyStructTypeToText(s->type_);
+        if(!(track_name && track_name[0]))
+          track_name = oyStruct_GetInfo( s, oyNAME_NICK, 0x01 );
         if(s->oy_->id_ == id_)
           for( i = 0; i < s->oy_->ref_ - observer_refs - n; ++i)
             fprintf( stderr, "  " );
@@ -513,6 +519,8 @@ int oyConversion_Release_( oyConversion_s_ **conversion )
         for(i = 0; i < n; ++i)
         {
           track_name = oyStructTypeToText(parents[i]->type_);
+          if(!(track_name && track_name[0]))
+            track_name = oyStruct_GetInfo( parents[i], oyNAME_NICK, 0x01 );
           if(s->oy_->id_ == id_)
           {
             int i;
@@ -546,6 +554,8 @@ int oyConversion_Release_( oyConversion_s_ **conversion )
        id_ == 1)
     {
       track_name = oyStructTypeToText(s->type_);
+      if(!(track_name && track_name[0]))
+        track_name = oyStruct_GetInfo( s, oyNAME_NICK, 0x01 );
       fprintf( stderr, "%s[%d] destruct\n", (s->oy_->id_ == id_)?oyjlTermColor(oyjlRED, track_name):track_name, s->oy_->id_);
     }
   }

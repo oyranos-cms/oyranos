@@ -87,6 +87,8 @@ void oyFilterNode_Release__Members( oyFilterNode_s_ * filternode )
           for(j = 0; j < ps; ++j)
           {
             const char * track_name = oyStructTypeToText(parents[j]->type_);
+            if(!(track_name && track_name[0]))
+              track_name = oyStruct_GetInfo( parents[i], oyNAME_NICK, 0x01 );
             fprintf( stderr, "[%d]: parent[%d]: %s[%d]\n",
                      filternode->plugs[i]->oy_->id_, j,
                      track_name, parents[j]->oy_->id_ );

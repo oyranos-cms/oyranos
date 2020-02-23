@@ -200,6 +200,8 @@ void oyFilterNode_Release__Members( oyFilterNode_s_ * filternode )
           for(j = 0; j < ps; ++j)
           {
             const char * track_name = oyStructTypeToText(parents[j]->type_);
+            if(!(track_name && track_name[0]))
+              track_name = oyStruct_GetInfo( parents[i], oyNAME_NICK, 0x01 );
             fprintf( stderr, "[%d]: parent[%d]: %s[%d]\n",
                      filternode->plugs[i]->oy_->id_, j,
                      track_name, parents[j]->oy_->id_ );
@@ -528,6 +530,8 @@ oyFilterNode_s_ * oyFilterNode_Copy_ ( oyFilterNode_s_ *filternode, oyObject_s o
             observer_refs = oyStruct_ObservationCount( (oyStruct_s*)s, 0 ),
             i;
         const char * track_name = oyStructTypeToText(s->type_);
+        if(!(track_name && track_name[0]))
+          track_name = oyStruct_GetInfo( s, oyNAME_NICK, 0x01 );
         if(s->oy_->id_ == id_)
           for( i = 0; i < s->oy_->ref_ - observer_refs - n; ++i)
             fprintf( stderr, "  " );
@@ -536,6 +540,8 @@ oyFilterNode_s_ * oyFilterNode_Copy_ ( oyFilterNode_s_ *filternode, oyObject_s o
         for(i = 0; i < n; ++i)
         {
           track_name = oyStructTypeToText(parents[i]->type_);
+          if(!(track_name && track_name[0]))
+            track_name = oyStruct_GetInfo( parents[i], oyNAME_NICK, 0x01 );
           if(s->oy_->id_ == id_)
           {
             int i;
@@ -611,6 +617,8 @@ int oyFilterNode_Release_( oyFilterNode_s_ **filternode )
       {
         int i;
         track_name = oyStructTypeToText(s->type_);
+        if(!(track_name && track_name[0]))
+          track_name = oyStruct_GetInfo( s, oyNAME_NICK, 0x01 );
         if(s->oy_->id_ == id_)
           for( i = 0; i < s->oy_->ref_ - observer_refs - n; ++i)
             fprintf( stderr, "  " );
@@ -619,6 +627,8 @@ int oyFilterNode_Release_( oyFilterNode_s_ **filternode )
         for(i = 0; i < n; ++i)
         {
           track_name = oyStructTypeToText(parents[i]->type_);
+          if(!(track_name && track_name[0]))
+            track_name = oyStruct_GetInfo( parents[i], oyNAME_NICK, 0x01 );
           if(s->oy_->id_ == id_)
           {
             int i;
@@ -706,6 +716,8 @@ int oyFilterNode_Release_( oyFilterNode_s_ **filternode )
        id_ == 1)
     {
       track_name = oyStructTypeToText(s->type_);
+      if(!(track_name && track_name[0]))
+        track_name = oyStruct_GetInfo( s, oyNAME_NICK, 0x01 );
       fprintf( stderr, "%s[%d] destruct\n", (s->oy_->id_ == id_)?oyjlTermColor(oyjlRED, track_name):track_name, s->oy_->id_);
     }
   }

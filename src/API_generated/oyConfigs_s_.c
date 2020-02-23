@@ -400,6 +400,8 @@ oyConfigs_s_ * oyConfigs_Copy_ ( oyConfigs_s_ *configs, oyObject_s object )
             observer_refs = oyStruct_ObservationCount( (oyStruct_s*)s, 0 ),
             i;
         const char * track_name = oyStructTypeToText(s->type_);
+        if(!(track_name && track_name[0]))
+          track_name = oyStruct_GetInfo( s, oyNAME_NICK, 0x01 );
         if(s->oy_->id_ == id_)
           for( i = 0; i < s->oy_->ref_ - observer_refs - n; ++i)
             fprintf( stderr, "  " );
@@ -408,6 +410,8 @@ oyConfigs_s_ * oyConfigs_Copy_ ( oyConfigs_s_ *configs, oyObject_s object )
         for(i = 0; i < n; ++i)
         {
           track_name = oyStructTypeToText(parents[i]->type_);
+          if(!(track_name && track_name[0]))
+            track_name = oyStruct_GetInfo( parents[i], oyNAME_NICK, 0x01 );
           if(s->oy_->id_ == id_)
           {
             int i;
@@ -483,6 +487,8 @@ int oyConfigs_Release_( oyConfigs_s_ **configs )
       {
         int i;
         track_name = oyStructTypeToText(s->type_);
+        if(!(track_name && track_name[0]))
+          track_name = oyStruct_GetInfo( s, oyNAME_NICK, 0x01 );
         if(s->oy_->id_ == id_)
           for( i = 0; i < s->oy_->ref_ - observer_refs - n; ++i)
             fprintf( stderr, "  " );
@@ -491,6 +497,8 @@ int oyConfigs_Release_( oyConfigs_s_ **configs )
         for(i = 0; i < n; ++i)
         {
           track_name = oyStructTypeToText(parents[i]->type_);
+          if(!(track_name && track_name[0]))
+            track_name = oyStruct_GetInfo( parents[i], oyNAME_NICK, 0x01 );
           if(s->oy_->id_ == id_)
           {
             int i;
@@ -524,6 +532,8 @@ int oyConfigs_Release_( oyConfigs_s_ **configs )
        id_ == 1)
     {
       track_name = oyStructTypeToText(s->type_);
+      if(!(track_name && track_name[0]))
+        track_name = oyStruct_GetInfo( s, oyNAME_NICK, 0x01 );
       fprintf( stderr, "%s[%d] destruct\n", (s->oy_->id_ == id_)?oyjlTermColor(oyjlRED, track_name):track_name, s->oy_->id_);
     }
   }
