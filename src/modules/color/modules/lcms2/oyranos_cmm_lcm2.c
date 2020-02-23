@@ -1329,9 +1329,11 @@ cmsHTRANSFORM  l2cmsCMMConversionContextCreate_ (
 
         for(i = 0; i < proof_n; ++i)
         {
+          oyProfile_s * p = oyProfiles_Get(simulation,i);
           l2cmsProfileWrap_s * wrap = l2cmsAddProofProfile( 
-                                             oyProfiles_Get(simulation,i),flags,
+                                             p, flags,
                                              intent, intent_proof, 0);
+          oyProfile_Release( &p );
           if(!wrap)
           {
             error = 1;
