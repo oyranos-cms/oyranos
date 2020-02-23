@@ -36,6 +36,11 @@ int      conversionObserve           ( oyObserver_s      * observer,
 {
   int handled = 0;
   oyObserver_s_ * obs = (oyObserver_s_ *)observer;
+  static int is_in_action = 0;
+
+  if(is_in_action)
+    return handled;
+  is_in_action = 1;
 
   if(obs && obs->model &&
      obs->model->type_ == oyOBJECT_FILTER_NODE_S)
@@ -71,6 +76,7 @@ int      conversionObserve           ( oyObserver_s      * observer,
       oy_image_widget->damage( FL_DAMAGE_USER1 );
   }
 
+  is_in_action = 0;
   return handled;
 }
 }
