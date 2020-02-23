@@ -345,6 +345,7 @@ oyConversion_s * oyConversion_CreateFromImage (
   profile_in = oyImage_GetProfile( image_in );
   chan_in     = oyToChannels_m( oyImage_GetPixelLayout(image_in, oyLAYOUT ) );
   cchan_in = oyProfile_GetChannelsCount( profile_in );
+  oyProfile_Release( &profile_in );
 
   if(!chan_in && cchan_in)
     chan_in = cchan_in;
@@ -359,6 +360,7 @@ oyConversion_s * oyConversion_CreateFromImage (
                          layout_out,
                          output_profile,
                          0 );
+  oyProfile_Release( &output_profile );
 
   /* swap in and out */
   in = out;
