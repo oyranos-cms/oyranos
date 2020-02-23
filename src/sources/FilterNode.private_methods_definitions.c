@@ -363,6 +363,7 @@ int          oyFilterNode_SetContext_( oyFilterNode_s_    * node,
                 error = oyOptions_SetFromString( &node->tags, "////verbose",
                                                "false", 0 );
 
+                oyPointer_Release( &cmm_ptr7 );
                 goto clean;
               }
 
