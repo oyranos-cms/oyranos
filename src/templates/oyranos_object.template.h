@@ -171,7 +171,16 @@ typedef enum {
  *  @date    2020/02/22
  *  @since   2020/02/22 (Oyranos: 0.9.7)
  */
-#define oyOBJECT_MAX_CUSTOM 1024 
+#define oyOBJECT_MAX_CUSTOM 1024
+/** @ingroup objects_generic
+ *
+ *  keep a custom object type below this number
+ *
+ *  @version Oyranos: 0.9.7
+ *  @date    2020/02/23
+ *  @since   2020/02/23 (Oyranos: 0.9.7)
+ */
+#define oyOBJECT_MAX_STRUCT 300
 #endif
 const char *     oyStructTypeToText  ( oyOBJECT_e          type );
 

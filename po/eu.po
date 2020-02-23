@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cinepaint_icc-examin_eu\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2020-02-22 06:39+0100\n"
+"POT-Creation-Date: 2020-02-22 21:28+0100\n"
 "PO-Revision-Date: 2007-11-07 11:11+0100\n"
 "Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@zundan.com>\n"
 "Language-Team: Basque <itzulpena@euskalgnu.org>\n"
@@ -19,7 +19,7 @@ msgstr ""
 "X-Generator: KBabel 1.11.4\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: liboyranos_core/oyranos_core.c:490 tools/oyranos-device.c:370
+#: liboyranos_core/oyranos_core.c:491 tools/oyranos-device.c:370
 #: tools/oyranos-device.c:386 tools/oyranos-device.c:401
 #: tools/oyranos-device.c:423 tools/oyranos-device.c:465
 #: tools/oyranos-device.c:828 tools/oyranos-device.c:1025
@@ -5578,7 +5578,7 @@ msgstr "Ikuspegiaren baldintzak"
 msgid "Viewing conditions description"
 msgstr "Ikuspegiaren baldintzen azalpena"
 
-#: liboyranos_core/oyranos_core.c:487 tools/oyranos-device.c:447
+#: liboyranos_core/oyranos_core.c:488 tools/oyranos-device.c:447
 #: tools/oyranos-device.c:450 tools/oyranos-device.c:456
 #: tools/qcmsevents/qcmsevents.cpp:335
 #, c-format

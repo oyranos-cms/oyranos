@@ -60,7 +60,8 @@ char * oy_object_show_text_ = NULL;
  *
  *  @param[in]     type                the object oyOBJECT_e type id;
  *                                     keep lower than ::oyOBJECT_MAX_CUSTOM,
- *                                     as this number
+ *                                     as this number; oyStruct_s derived
+ *                                     objects shall be lower than ::oyOBJECT_MAX_STRUCT
  *                                     will allocate a array of that length
  *  @param[in]     f                   the object string function;
  *                                     A custom type should consider to add
@@ -459,7 +460,7 @@ int                oyMessageFormat   ( char             ** message_text,
   if(c && oyOBJECT_NONE < c->type_)
   {
     type_name = oyStructTypeToText( c->type_ );
-    if(c->type_ < oyOBJECT_MAX_CUSTOM)
+    if(c->type_ < oyOBJECT_MAX_STRUCT)
       id = oyObject_GetId( c->oy_ );
     id_text = oyStruct_GetInfo( (oyStruct_s*)c, oyNAME_NAME, 0x01 );
     if(id_text)

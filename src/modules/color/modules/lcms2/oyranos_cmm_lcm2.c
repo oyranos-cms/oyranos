@@ -94,7 +94,7 @@ void  oyDeAllocateFunc_         (void *        data);
 
 typedef enum {
   l2cmsOBJECT_NONE,
-  l2cmsOBJECT_PROFILE = 320,
+  l2cmsOBJECT_PROFILE = 220,
   l2cmsOBJECT_TRANSFORM
 } l2cmOBJECT_e;
 
