@@ -69,7 +69,7 @@ private:
     if(conversion())
     {
       int i, height = 0, is_allocated = 0;
-      oyPointer image_data = 0;
+      uint8_t * image_data = 0;
       oyPixel_t pt;
       int channels = 0;
       oyImage_s * image = 0;
@@ -82,15 +82,19 @@ private:
 
       /* get the data and draw the image */
       if(image)
-      for(i = 0; i < oyImage_GetHeight( image ); ++i)
       {
-        image_data = oyImage_GetLineF(image)( image, i, &height, -1, &is_allocated );
+        int iheight = oyImage_GetHeight( image ),
+            iwidth = oyImage_GetWidth( image );
+        for(i = 0; i < iheight; ++i)
+        {
+          image_data = (uint8_t*) oyImage_GetLineF(image)( image, i, &height, -1, &is_allocated );
 
-        /* on osX it uses sRGB without alternative */
-        fl_draw_image( (const uchar*)image_data, 0, i, oyImage_GetWidth( image ), 1,
-                       channels, Oy_Fl_Image_Widget::w()*channels);
-        if(is_allocated)
-          free( image_data );
+          /* on osX it uses sRGB without alternative */
+          fl_draw_image( (const uchar*)image_data, 0, i, iwidth, 1,
+                         channels, Oy_Fl_Image_Widget::w()*channels);
+          if(is_allocated)
+            free( image_data );
+        }
       }
 
       oyImage_Release( &image );

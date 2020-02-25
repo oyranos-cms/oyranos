@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2020-02-23 18:08+0100\n"
+"POT-Creation-Date: 2020-02-25 06:57+0100\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -1184,7 +1184,7 @@ msgid "Copyright (c) 2009 Kai-Uwe Behrmann; MIT"
 msgstr ""
 
 #: modules/color/modules/oyranos_cmm_lraw.cpp:236
-#: modules/color/modules/oyranos_cmm_oydi.c:1370
+#: modules/color/modules/oyranos_cmm_oydi.c:1372
 msgid "Copyright (c) 2009 Kai-Uwe Behrmann; newBSD"
 msgstr ""
 
@@ -1414,7 +1414,7 @@ msgstr "Tagesmodus"
 msgid "Deactivate"
 msgstr "Deaktiviere"
 
-#: examples/image_display/image_display.cpp:1257
+#: examples/image_display/image_display.cpp:1275
 msgid "Debug"
 msgstr "Fehlersuche"
 
@@ -1614,7 +1614,7 @@ msgstr "EBU Tech.3213-E"
 msgid "EFI CMM"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:1251
+#: examples/image_display/image_display.cpp:1269
 msgid "Edit Options ..."
 msgstr "Editiere Optionen ..."
 
@@ -1730,11 +1730,11 @@ msgstr "Eingabetaste - nächste Seite"
 msgid "Erase profile:"
 msgstr "Melde Profil ab:"
 
-#: examples/image_display/image_display.cpp:1255
+#: examples/image_display/image_display.cpp:1273
 msgid "Examine ICC Conversion ..."
 msgstr "Untersuche ICC Übertragung ..."
 
-#: examples/image_display/image_display.cpp:1253
+#: examples/image_display/image_display.cpp:1271
 msgid "Examine ICC Profile ..."
 msgstr "Untersuche ICC Profil ..."
 
@@ -2043,7 +2043,7 @@ msgstr "Kopf"
 msgid "Heidelberg CMM"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:1264
+#: examples/image_display/image_display.cpp:1282
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:163
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:345
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:537
@@ -2054,7 +2054,7 @@ msgstr ""
 msgid "Help"
 msgstr "Hilfe"
 
-#: examples/image_display/image_display.cpp:1262
+#: examples/image_display/image_display.cpp:1280
 msgid "Help Shortcuts"
 msgstr "Hilfe zur Tastatur"
 
@@ -2275,7 +2275,7 @@ msgstr "Beleuchtung:     "
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:2889
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:2894
 #: modules/color/modules/oyranos_cmm_oPNG.c:1146
-#: modules/color/modules/oyranos_cmm_oydi.c:930
+#: modules/color/modules/oyranos_cmm_oydi.c:932
 msgid "Image"
 msgstr "Bild"
 
@@ -3438,7 +3438,7 @@ msgstr ""
 msgid "Oyranos allows to fine tune handling of ICC color management."
 msgstr "Oyranos erlaubt detailierte ICC Farbmanagementeinstellungen."
 
-#: modules/color/modules/oyranos_cmm_oydi.c:1354
+#: modules/color/modules/oyranos_cmm_oydi.c:1356
 msgid "Oyranos display filter"
 msgstr "Oyranos Monitor Modul"
 
@@ -3485,7 +3485,7 @@ msgstr "Oyranospfad"
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1155
 #: modules/color/modules/oyranos_cmm_lraw.cpp:230
 #: modules/color/modules/oyranos_cmm_oicc.c:1206
-#: modules/color/modules/oyranos_cmm_oydi.c:1364
+#: modules/color/modules/oyranos_cmm_oydi.c:1366
 #: modules/color/modules/oyranos_cmm_oyra.c:151
 #: modules/color/modules/oyranos_cmm_trds.c:819
 msgid ""
@@ -3841,7 +3841,7 @@ msgstr ""
 "Simulationseinstellungen erlauben die Simulation eines zusätzlichen "
 "Farbraumes."
 
-#: examples/image_display/image_display.cpp:1266
+#: examples/image_display/image_display.cpp:1284
 msgid "Quit"
 msgstr "Beenden"
 
@@ -4216,7 +4216,7 @@ msgstr "Zeige DB Dateipfad"
 msgid "Show Help:"
 msgstr "Zeige Hilfe:"
 
-#: examples/image_display/image_display.cpp:1259
+#: examples/image_display/image_display.cpp:1277
 msgid "Show Infos"
 msgstr "Zeige Infos"
 
@@ -4537,7 +4537,7 @@ msgstr ""
 "Sättigungslinie eines anzugebenden ICC Profiles und schreibt die Grafik nach "
 "stdout."
 
-#: modules/color/modules/oyranos_cmm_oydi.c:1378
+#: modules/color/modules/oyranos_cmm_oydi.c:1380
 msgid ""
 "The \"display\" filter supports applications to show image content on single "
 "and multi monitor displays. It cares about the server communication in "
@@ -4686,7 +4686,7 @@ msgstr ""
 "Der Farbanpassungsgrad sollte zwischen 0 und 1.0 liegen und wird auf die "
 "absolut farbmetrische Übertragung angewendet."
 
-#: modules/color/modules/oyranos_cmm_oydi.c:1356
+#: modules/color/modules/oyranos_cmm_oydi.c:1358
 msgid "The client side window data handler of Oyranos."
 msgstr "Die benutzerseitige Fensterdatenagent von Oyranos."
 
@@ -4789,7 +4789,7 @@ msgstr "Der Filter ist ein mögliches Rasterbildziel in einem Graphen."
 msgid "The filter is used to reduce pixels."
 msgstr "Der Filter verringert die Pixelanzahl."
 
-#: modules/color/modules/oyranos_cmm_oydi.c:1380
+#: modules/color/modules/oyranos_cmm_oydi.c:1382
 msgid ""
 "The filter needs some informations attached to the output image tags of the "
 "\"output\" image filter. The following list describes the X11/Xorg "
@@ -6074,7 +6074,7 @@ msgstr "Name ist länger als"
 #: modules/color/modules/oyranos_cmm_lraw.cpp:238
 #: modules/color/modules/oyranos_cmm_oiDB.c:522
 #: modules/color/modules/oyranos_cmm_oicc.c:1214
-#: modules/color/modules/oyranos_cmm_oydi.c:1372
+#: modules/color/modules/oyranos_cmm_oydi.c:1374
 #: modules/color/modules/oyranos_cmm_oyra.c:159
 #: modules/color/modules/oyranos_cmm_trds.c:827
 msgid "new BSD license: http://www.opensource.org/licenses/BSD-3-Clause"

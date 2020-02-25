@@ -968,13 +968,31 @@ event_handler(int e)
     {
       int k = Fl::event_key();
       double expose = 1.0;
-      if(Fl::event_key() == FL_Escape)
+      switch( k )
       {
-        exit(0);
-        found = 1;
+        case FL_Escape: found = 1; exit(0); break;
+        case FL_F + 11: setFullscreen(); break;
+        case FL_Right: // The right arrow key.
+          found = 1;
+          oy_widget->px += 10;
+          oy_widget->damage( FL_DAMAGE_USER1 );
+          break;
+        case FL_Left: // The left arrow key.
+          found = 1;
+          oy_widget->px -= 10;
+          oy_widget->damage( FL_DAMAGE_USER1 );
+          break;
+        case FL_Up: // The up arrow key.
+          found = 1;
+          oy_widget->py -= 10;
+          oy_widget->damage( FL_DAMAGE_USER1 );
+          break;
+        case FL_Down: // The down arrow key.
+          found = 1;
+          oy_widget->py += 10;
+          oy_widget->damage( FL_DAMAGE_USER1 );
+          break;
       }
-      if(k == FL_F + 11)
-        setFullscreen();
  
       if(Fl::event_state() & FL_ALT ||
          Fl::event_state() & FL_META)

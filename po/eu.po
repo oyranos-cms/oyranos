@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cinepaint_icc-examin_eu\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2020-02-23 18:08+0100\n"
+"POT-Creation-Date: 2020-02-25 06:57+0100\n"
 "PO-Revision-Date: 2007-11-07 11:11+0100\n"
 "Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@zundan.com>\n"
 "Language-Team: Basque <itzulpena@euskalgnu.org>\n"
@@ -1215,7 +1215,7 @@ msgid "Copyright (c) 2009 Kai-Uwe Behrmann; MIT"
 msgstr ""
 
 #: modules/color/modules/oyranos_cmm_lraw.cpp:236
-#: modules/color/modules/oyranos_cmm_oydi.c:1370
+#: modules/color/modules/oyranos_cmm_oydi.c:1372
 msgid "Copyright (c) 2009 Kai-Uwe Behrmann; newBSD"
 msgstr ""
 
@@ -1478,7 +1478,7 @@ msgstr "Modeloa:"
 msgid "Deactivate"
 msgstr "profilik ez"
 
-#: examples/image_display/image_display.cpp:1257
+#: examples/image_display/image_display.cpp:1275
 msgid "Debug"
 msgstr ""
 
@@ -1685,7 +1685,7 @@ msgstr "EBU Tech.3213-E"
 msgid "EFI CMM"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:1251
+#: examples/image_display/image_display.cpp:1269
 #, fuzzy
 msgid "Edit Options ..."
 msgstr "Bereizketa"
@@ -1800,12 +1800,12 @@ msgstr ""
 msgid "Erase profile:"
 msgstr "profilik ez"
 
-#: examples/image_display/image_display.cpp:1255
+#: examples/image_display/image_display.cpp:1273
 #, fuzzy
 msgid "Examine ICC Conversion ..."
 msgstr "Zein ICC profila?"
 
-#: examples/image_display/image_display.cpp:1253
+#: examples/image_display/image_display.cpp:1271
 #, fuzzy
 msgid "Examine ICC Profile ..."
 msgstr "Zein ICC profila?"
@@ -2126,7 +2126,7 @@ msgstr ""
 msgid "Heidelberg CMM"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:1264
+#: examples/image_display/image_display.cpp:1282
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:163
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:345
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:537
@@ -2137,7 +2137,7 @@ msgstr ""
 msgid "Help"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:1262
+#: examples/image_display/image_display.cpp:1280
 msgid "Help Shortcuts"
 msgstr ""
 
@@ -2363,7 +2363,7 @@ msgstr "Iluminatzailea: "
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:2889
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:2894
 #: modules/color/modules/oyranos_cmm_oPNG.c:1146
-#: modules/color/modules/oyranos_cmm_oydi.c:930
+#: modules/color/modules/oyranos_cmm_oydi.c:932
 msgid "Image"
 msgstr ""
 
@@ -3604,7 +3604,7 @@ msgstr ""
 msgid "Oyranos allows to fine tune handling of ICC color management."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oydi.c:1354
+#: modules/color/modules/oyranos_cmm_oydi.c:1356
 #, fuzzy
 msgid "Oyranos display filter"
 msgstr "huts egin du X pantaila irekitzean"
@@ -3652,7 +3652,7 @@ msgstr "Oyranos-en ezarpenak"
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1155
 #: modules/color/modules/oyranos_cmm_lraw.cpp:230
 #: modules/color/modules/oyranos_cmm_oicc.c:1206
-#: modules/color/modules/oyranos_cmm_oydi.c:1364
+#: modules/color/modules/oyranos_cmm_oydi.c:1366
 #: modules/color/modules/oyranos_cmm_oyra.c:151
 #: modules/color/modules/oyranos_cmm_trds.c:819
 msgid ""
@@ -4040,7 +4040,7 @@ msgid ""
 "Proofing Settings allows one to decide about the simulation color space."
 msgstr ""
 
-#: examples/image_display/image_display.cpp:1266
+#: examples/image_display/image_display.cpp:1284
 msgid "Quit"
 msgstr "Irten"
 
@@ -4449,7 +4449,7 @@ msgstr "Zein ICC profila?"
 msgid "Show Help:"
 msgstr "Modeloa:"
 
-#: examples/image_display/image_display.cpp:1259
+#: examples/image_display/image_display.cpp:1277
 #, fuzzy
 msgid "Show Infos"
 msgstr "Oyranos-en ezarpenak"
@@ -4783,7 +4783,7 @@ msgid ""
 "saturation line of the specified profiles and writes to stdout."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oydi.c:1378
+#: modules/color/modules/oyranos_cmm_oydi.c:1380
 msgid ""
 "The \"display\" filter supports applications to show image content on single "
 "and multi monitor displays. It cares about the server communication in "
@@ -4892,7 +4892,7 @@ msgid ""
 "absolute colorimetric intent."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oydi.c:1356
+#: modules/color/modules/oyranos_cmm_oydi.c:1358
 msgid "The client side window data handler of Oyranos."
 msgstr ""
 
@@ -4969,7 +4969,7 @@ msgstr ""
 msgid "The filter is used to reduce pixels."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oydi.c:1380
+#: modules/color/modules/oyranos_cmm_oydi.c:1382
 msgid ""
 "The filter needs some informations attached to the output image tags of the "
 "\"output\" image filter. The following list describes the X11/Xorg "
@@ -6106,7 +6106,7 @@ msgstr "Kolore izendunen izenak"
 #: modules/color/modules/oyranos_cmm_lraw.cpp:238
 #: modules/color/modules/oyranos_cmm_oiDB.c:522
 #: modules/color/modules/oyranos_cmm_oicc.c:1214
-#: modules/color/modules/oyranos_cmm_oydi.c:1372
+#: modules/color/modules/oyranos_cmm_oydi.c:1374
 #: modules/color/modules/oyranos_cmm_oyra.c:159
 #: modules/color/modules/oyranos_cmm_trds.c:827
 msgid "new BSD license: http://www.opensource.org/licenses/BSD-3-Clause"

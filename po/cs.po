@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: oyranos\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2020-02-23 18:08+0100\n"
+"POT-Creation-Date: 2020-02-25 06:57+0100\n"
 "PO-Revision-Date: 2012-10-19 15:10+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -1230,7 +1230,7 @@ msgid "Copyright (c) 2009 Kai-Uwe Behrmann; MIT"
 msgstr "Copyright (c) 2009 Kai-Uwe Behrmann; MIT"
 
 #: modules/color/modules/oyranos_cmm_lraw.cpp:236
-#: modules/color/modules/oyranos_cmm_oydi.c:1370
+#: modules/color/modules/oyranos_cmm_oydi.c:1372
 msgid "Copyright (c) 2009 Kai-Uwe Behrmann; newBSD"
 msgstr "Copyright (c) 2009 Kai-Uwe Behrmann; newBSD"
 
@@ -1481,7 +1481,7 @@ msgstr "Model:"
 msgid "Deactivate"
 msgstr "Aktivovat profily:"
 
-#: examples/image_display/image_display.cpp:1257
+#: examples/image_display/image_display.cpp:1275
 msgid "Debug"
 msgstr "Ladění"
 
@@ -1689,7 +1689,7 @@ msgstr "EBU Tech.3213-E"
 msgid "EFI CMM"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:1251
+#: examples/image_display/image_display.cpp:1269
 msgid "Edit Options ..."
 msgstr "Upravit volby ..."
 
@@ -1805,12 +1805,12 @@ msgstr ""
 msgid "Erase profile:"
 msgstr "Smazat profil:"
 
-#: examples/image_display/image_display.cpp:1255
+#: examples/image_display/image_display.cpp:1273
 #, fuzzy
 msgid "Examine ICC Conversion ..."
 msgstr "Prozkoumat profil ICC ..."
 
-#: examples/image_display/image_display.cpp:1253
+#: examples/image_display/image_display.cpp:1271
 msgid "Examine ICC Profile ..."
 msgstr "Prozkoumat profil ICC ..."
 
@@ -2130,7 +2130,7 @@ msgstr ""
 msgid "Heidelberg CMM"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:1264
+#: examples/image_display/image_display.cpp:1282
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:163
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:345
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:537
@@ -2141,7 +2141,7 @@ msgstr ""
 msgid "Help"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:1262
+#: examples/image_display/image_display.cpp:1280
 msgid "Help Shortcuts"
 msgstr ""
 
@@ -2376,7 +2376,7 @@ msgstr "Osvetleni:   "
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:2889
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:2894
 #: modules/color/modules/oyranos_cmm_oPNG.c:1146
-#: modules/color/modules/oyranos_cmm_oydi.c:930
+#: modules/color/modules/oyranos_cmm_oydi.c:932
 msgid "Image"
 msgstr "Obrázek"
 
@@ -3650,7 +3650,7 @@ msgstr ""
 msgid "Oyranos allows to fine tune handling of ICC color management."
 msgstr "Nastavení Oyranosu umožňují doladit chování správy barev."
 
-#: modules/color/modules/oyranos_cmm_oydi.c:1354
+#: modules/color/modules/oyranos_cmm_oydi.c:1356
 msgid "Oyranos display filter"
 msgstr "Filter Oyranosu pro displej"
 
@@ -3701,7 +3701,7 @@ msgstr "Oyranos X11"
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1155
 #: modules/color/modules/oyranos_cmm_lraw.cpp:230
 #: modules/color/modules/oyranos_cmm_oicc.c:1206
-#: modules/color/modules/oyranos_cmm_oydi.c:1364
+#: modules/color/modules/oyranos_cmm_oydi.c:1366
 #: modules/color/modules/oyranos_cmm_oyra.c:151
 #: modules/color/modules/oyranos_cmm_trds.c:819
 msgid ""
@@ -4085,7 +4085,7 @@ msgstr ""
 "Nastavení simulace umožňují stanovit barvový prostor pro napodobení jiného "
 "zařízení."
 
-#: examples/image_display/image_display.cpp:1266
+#: examples/image_display/image_display.cpp:1284
 msgid "Quit"
 msgstr "Ukončit"
 
@@ -4498,7 +4498,7 @@ msgstr "Získat profil ICC"
 msgid "Show Help:"
 msgstr "Ukázat model:"
 
-#: examples/image_display/image_display.cpp:1259
+#: examples/image_display/image_display.cpp:1277
 #, fuzzy
 msgid "Show Infos"
 msgstr "Ukázat volby"
@@ -4837,7 +4837,7 @@ msgid ""
 "saturation line of the specified profiles and writes to stdout."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oydi.c:1378
+#: modules/color/modules/oyranos_cmm_oydi.c:1380
 msgid ""
 "The \"display\" filter supports applications to show image content on single "
 "and multi monitor displays. It cares about the server communication in "
@@ -4976,7 +4976,7 @@ msgstr ""
 "Adaptační stav by měl být mezi 0 a 1.0 a týká se absolutního "
 "kolorimetrického záměru."
 
-#: modules/color/modules/oyranos_cmm_oydi.c:1356
+#: modules/color/modules/oyranos_cmm_oydi.c:1358
 #, fuzzy
 msgid "The client side window data handler of Oyranos."
 msgstr "The client side window data handler of Oyranos."
@@ -5079,7 +5079,7 @@ msgstr "The filter is a possible pixel target in a graph."
 msgid "The filter is used to reduce pixels."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oydi.c:1380
+#: modules/color/modules/oyranos_cmm_oydi.c:1382
 #, fuzzy
 msgid ""
 "The filter needs some informations attached to the output image tags of the "
@@ -6378,7 +6378,7 @@ msgstr "jméno delší než"
 #: modules/color/modules/oyranos_cmm_lraw.cpp:238
 #: modules/color/modules/oyranos_cmm_oiDB.c:522
 #: modules/color/modules/oyranos_cmm_oicc.c:1214
-#: modules/color/modules/oyranos_cmm_oydi.c:1372
+#: modules/color/modules/oyranos_cmm_oydi.c:1374
 #: modules/color/modules/oyranos_cmm_oyra.c:159
 #: modules/color/modules/oyranos_cmm_trds.c:827
 msgid "new BSD license: http://www.opensource.org/licenses/BSD-3-Clause"
