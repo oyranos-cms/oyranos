@@ -146,7 +146,7 @@ char *   oyBT                        ( int                 stack_limit )
             {
               const char * line = strings[j],
                          * tmp = strchr( line, '(' ),
-                         * addr = strchr( tmp, '[' );
+                         * addr = strchr( tmp?tmp:line, '[' );
               if(addr)
               {
                 char * addr2 = oyStringCopy( addr+1, NULL );

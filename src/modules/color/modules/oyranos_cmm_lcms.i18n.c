@@ -139,29 +139,23 @@
             \"Little CMS\": \"Little CMS\",\n\
             \"Little Color Management System\": \"Little Color Management System\",\n\
             \"Manufacturer\": \"Hersteller\",\n\
-            \"http:\": [{\n\
-                \"www.littlecms.com\": {\n\
-                  \"downloads.htm\": \"http://www.littlecms.com/downloads.htm\"\n\
-                },\n\
-                \"www.opensource.org\": {\n\
-                  \"licenses\": {\n\
-                    \"mit-license.php\": \"http://www.opensource.org/licenses/mit-license.php\"\n\
-                  }\n\
-                },\n\
-                \"www.behrmann.name\": \"http://www.behrmann.name\",\n\
-                \"www.openicc.info\": \"http://www.openicc.info\"\n\
-              }],\n\
+            \"http:%37%37www.littlecms.com\": \"http://www.littlecms.com\",\n\
             \"Copyright\": \"Kopierrecht\",\n\
             \"Copyright (c) 1998-2008 Marti Maria Saguer\": \"Kopierrecht (c) 1998-2008 Marti Maria Saguer\",\n\
             \"License\": \"Lizenz\",\n\
             \"MIT\": \"MIT\",\n\
+            \"http:%37%37www.opensource.org%37licenses%37mit-license.php\": \"http://www.opensource.org/licenses/mit-license.php\",\n\
             \"Support\": \"Unterstützung\",\n\
+            \"http:%37%37www.littlecms.com%37\": \"http://www.littlecms.com\",\n\
             \"Download\": \"Bezugsquelle\",\n\
             \"Sources\": \"Quellen\",\n\
+            \"http:%37%37www.littlecms.com%37downloads.htm\": \"http://www.littlecms.com/downloads.htm\",\n\
             \"Development\": \"Entwicklung\",\n\
             \"stalled\": \"nicht aktiv\",\n\
             \"OpenICC CMM Author\": \"OpenICC CMM Autor\",\n\
+            \"http:%37%37www.behrmann.name\": \"http://www.behrmann.name\",\n\
             \"Documentation\": \"Dokumente\",\n\
+            \"http:%37%37www.openicc.info\": \"http://www.openicc.info\",\n\
             \"The lcms filter is a one by one color conversion filter. It can both create a color conversion context, some precalculated for processing speed up, and the color conversion with the help of that context. The adaption part of this filter transforms the Oyranos color context, which is ICC device link based, to the internal lcms format.\": \"Das lcms Modul kann eindimensional Farben übertragen. Die CMM, Farbübertragungsmodul, berechnet die Farbübertragungsdaten vor und kann Farben mit deren Hilfe auch übertragen. Es gibt einen Anpassungsteil im Modul, welcher die interne lcms Farbübertragungsdaten an das Oyranos' Format anpasst, welches auf ICC Geräteverknüpfungen, engl. device links, beruht.\",\n\
             \"Extended Options\": \"Erweiterte Optionen\",\n\
             \"Additional options.\": \"Zusätzliche Optionen.\",\n\
