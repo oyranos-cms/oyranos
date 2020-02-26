@@ -812,12 +812,14 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
                                                oyOBJECT_CONFIGS_S );
 
     n = oyConfigs_Count( devices );
-    int count = oyOptions_CountType( rectangles_options, "rectangles_options", oyOBJECT_RECTANGLE_S );
+    int count = oyOptions_CountType( rectangles_options, "///rectangles/rectangle", oyOBJECT_RECTANGLE_S );
     if(!n || count < n)
     {
       dirty = 1;
       goto clean2;
     }
+
+    rectangles = oyFilterNode_GetPlugNode(node,0);
 
     /* process all display rectangles */
     if(error <= 0)
@@ -863,8 +865,8 @@ int      oydiFilterPlug_ImageDisplayRun(oyFilterPlug_s   * requestor_plug,
       roi_pix.y -= display_pos_y;
       if(oy_debug)
         oydi_msg( oyMSG_DBG, (oyStruct_s*)ticket,
-            OY_DBG_FORMAT_"image %d: roi_pix:%s", OY_DBG_ARGS_,
-            i, oyRectangle_Show((oyRectangle_s*)&roi_pix));
+            OY_DBG_FORMAT_"image %d: roi_pix:%s ticket: %s", OY_DBG_ARGS_,
+            i, oyRectangle_Show((oyRectangle_s*)&roi_pix), oyPixelAccess_Show( ticket ));
 
       /* the rectangles are in pixel dimension */
       width = oyImage_GetWidth(image);
