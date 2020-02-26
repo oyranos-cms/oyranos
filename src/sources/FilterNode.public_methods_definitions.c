@@ -751,7 +751,7 @@ OYAPI int  OYEXPORT
 #endif
 
   error = oyCMMapi7_Run( (oyCMMapi7_s*) s->api7_, plug, ticket );
-  oyStruct_ObserverSignal( (oyStruct_s*) node, oySIGNAL_DATA_CHANGED, (oyStruct_s*) ticket );
+  oyStruct_ObserverSignal( (oyStruct_s*) node, oySIGNAL_VISITED, (oyStruct_s*) ticket );
 
   return error;
 }
