@@ -420,6 +420,8 @@ const char *       oyPixelAccess_Show( oyPixelAccess_s   * pixel_access )
 
   {
     oyPixelAccess_s * ticket = pixel_access;
+    oyFilterGraph_s * ticket_graph = oyPixelAccess_GetGraph( ticket );
+    oyOptions_s * ticket_graph_opts = oyFilterGraph_GetOptions( ticket_graph );
     oyImage_s * image = oyPixelAccess_GetOutputImage( ticket );
     int image_width = oyImage_GetWidth( image );
     oyRectangle_s * ticket_array_roi = oyPixelAccess_GetArrayROI( ticket );
@@ -427,6 +429,10 @@ const char *       oyPixelAccess_Show( oyPixelAccess_s   * pixel_access )
     int a_is_focussed = oyPixelAccess_ArrayIsFocussed( ticket );
     oyRectangle_s_  r = {oyOBJECT_RECTANGLE_S, 0,0,0, 0,0,0,0};
     oyRectangle_s * roi = (oyRectangle_s*)&r;
+
+    int dirty = oyOptions_FindString( ticket_graph_opts, "dirty", "true")  ? 1 : 0;
+    oyFilterGraph_Release( &ticket_graph );
+    oyOptions_Release( &ticket_graph_opts );
 
     /* start_xy is defined relative to the tickets output image width */
     double start_x_pixel = oyPixelAccess_GetStart( ticket, 0 ) * (double)image_width,
@@ -441,12 +447,12 @@ const char *       oyPixelAccess_Show( oyPixelAccess_s   * pixel_access )
     oyRectangle_SetByRectangle( roi, ticket_array_roi );
     oyRectangle_Scale( roi, a_width?a_width:image_width );
     oyStringAddPrintf( &t, alloc,dealloc,
-                "ticket[%d] start_xy %g|%g %s[%d](%dx%d)%dc ROI: %s %c%s",
+                "ticket[%d] start_xy %g|%g %s[%d](%dx%d)%dc ROI: %s %c%s dirty: %d",
                 oyStruct_GetId((oyStruct_s*)ticket),
                 start_x_pixel, start_y_pixel, _("Image"),
                 oyStruct_GetId((oyStruct_s*)image),image_width,oyImage_GetHeight(image),channels,
                 oyRectangle_Show( roi ),
-                a_is_focussed?' ':'~', oyArray2d_Show( a, channels ) );
+                a_is_focussed?' ':'~', oyArray2d_Show( a, channels ), dirty );
 
     oyObject_SetName( pixel_access->oy_, t, oyNAME_NAME );
     if(t) dealloc(t);
