@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2020-02-25 06:57+0100\n"
+"POT-Creation-Date: 2020-02-26 21:29+0100\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -1165,7 +1165,7 @@ msgstr "Kopierrecht (c) 1998-2016 Marti Maria Saguer; MIT"
 msgid "Copyright (c) 2005-2010 Kai-Uwe Behrmann; newBSD"
 msgstr ""
 
-#: liboyranos/oyranos_cmm.c:329
+#: liboyranos/oyranos_cmm.c:330
 msgid "Copyright (c) 2005-2014 Kai-Uwe Behrmann; newBSD"
 msgstr ""
 
@@ -1348,7 +1348,7 @@ msgstr "Datum:           "
 msgid "Creation Time in UTC"
 msgstr "Erstelldatum in UTC"
 
-#: liboyranos/oyranos_cmm.c:255
+#: liboyranos/oyranos_cmm.c:256
 #: modules/color/modules/devices/oyranos_cmm_disp.c:103
 #: tools/oyranos-device.c:447 tools/oyranos-device.c:450
 #: tools/oyranos-device.c:456
@@ -1414,7 +1414,7 @@ msgstr "Tagesmodus"
 msgid "Deactivate"
 msgstr "Deaktiviere"
 
-#: examples/image_display/image_display.cpp:1275
+#: examples/image_display/image_display.cpp:1281
 msgid "Debug"
 msgstr "Fehlersuche"
 
@@ -1614,7 +1614,7 @@ msgstr "EBU Tech.3213-E"
 msgid "EFI CMM"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:1269
+#: examples/image_display/image_display.cpp:1275
 msgid "Edit Options ..."
 msgstr "Editiere Optionen ..."
 
@@ -1730,11 +1730,11 @@ msgstr "Eingabetaste - nächste Seite"
 msgid "Erase profile:"
 msgstr "Melde Profil ab:"
 
-#: examples/image_display/image_display.cpp:1273
+#: examples/image_display/image_display.cpp:1279
 msgid "Examine ICC Conversion ..."
 msgstr "Untersuche ICC Übertragung ..."
 
-#: examples/image_display/image_display.cpp:1271
+#: examples/image_display/image_display.cpp:1277
 msgid "Examine ICC Profile ..."
 msgstr "Untersuche ICC Profil ..."
 
@@ -1807,7 +1807,7 @@ msgstr "Dateisignatur"
 msgid "File exists"
 msgstr "Datei existiert"
 
-#: liboyranos/oyranos_cmm.c:247 tools/oyranos-device.c:274
+#: liboyranos/oyranos_cmm.c:248 tools/oyranos-device.c:274
 msgid "File not loaded!"
 msgstr "Datei nicht geladen!"
 
@@ -2043,7 +2043,7 @@ msgstr "Kopf"
 msgid "Heidelberg CMM"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:1282
+#: examples/image_display/image_display.cpp:1288
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:163
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:345
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:537
@@ -2054,7 +2054,7 @@ msgstr ""
 msgid "Help"
 msgstr "Hilfe"
 
-#: examples/image_display/image_display.cpp:1280
+#: examples/image_display/image_display.cpp:1286
 msgid "Help Shortcuts"
 msgstr "Hilfe zur Tastatur"
 
@@ -2270,8 +2270,8 @@ msgstr "Lichtart mit ausgeglichener Energie E"
 msgid "Illuminant:      "
 msgstr "Beleuchtung:     "
 
-#: API_generated/oyPixelAccess_s.c:555 liboyranos/oyranos_cmm.c:151
-#: liboyranos/oyranos_cmm.c:354 liboyranos/oyranos_cmm.c:378
+#: API_generated/oyPixelAccess_s.c:561 liboyranos/oyranos_cmm.c:152
+#: liboyranos/oyranos_cmm.c:355 liboyranos/oyranos_cmm.c:379
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:2889
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:2894
 #: modules/color/modules/oyranos_cmm_oPNG.c:1146
@@ -2283,11 +2283,11 @@ msgstr "Bild"
 msgid "Image PNG Socket"
 msgstr "PNG Bilddose"
 
-#: liboyranos/oyranos_cmm.c:356
+#: liboyranos/oyranos_cmm.c:357
 msgid "Image Plug"
 msgstr "Bildstecker"
 
-#: liboyranos/oyranos_cmm.c:380
+#: liboyranos/oyranos_cmm.c:381
 msgid "Image Socket"
 msgstr "Bilddose"
 
@@ -2349,7 +2349,7 @@ msgstr "Bild[write_png]"
 msgid "Image[write_ppm]"
 msgstr "Bild[write_ppm]"
 
-#: liboyranos/oyranos_cmm.c:352 liboyranos/oyranos_cmm.c:376
+#: liboyranos/oyranos_cmm.c:353 liboyranos/oyranos_cmm.c:377
 #: modules/color/modules/oyranos_cmm_oPNG.c:1144
 msgid "Img"
 msgstr "Bild"
@@ -3216,7 +3216,7 @@ msgstr "Keine Reparatur"
 msgid "No spectral"
 msgstr "Lasse Spektrallinie fort"
 
-#: liboyranos/oyranos_cmm.c:311
+#: liboyranos/oyranos_cmm.c:312
 msgid "NoNo"
 msgstr "NeinNein"
 
@@ -3470,7 +3470,7 @@ msgstr "Oyranos lokaler Quelltextpfad"
 msgid "Oyranos meta module directory name"
 msgstr "Oyranos Metamodulpfad"
 
-#: liboyranos/oyranos_cmm.c:313 modules/color/modules/oyranos_cmm_oyra.c:141
+#: liboyranos/oyranos_cmm.c:314 modules/color/modules/oyranos_cmm_oyra.c:141
 msgid "Oyranos modules"
 msgstr "Oyranos Module"
 
@@ -3495,7 +3495,7 @@ msgstr ""
 "Oyranos Projekt: www: http://www.oyranos.com; Support/email: ku.b@gmx.de; "
 "Quellen: http://www.oyranos.com/wiki/index.php?title=Oyranos/Download"
 
-#: liboyranos/oyranos_cmm.c:323
+#: liboyranos/oyranos_cmm.c:324
 msgid ""
 "Oyranos project; www: http://www.oyranos.org; support/email: ku.b@gmx.de; "
 "sources: http://www.oyranos.org/downloads/"
@@ -3517,7 +3517,7 @@ msgstr ""
 "Rechner zu konfigurieren. Die Einstellungen erfolgen für den Benutzer und "
 "für das System."
 
-#: liboyranos/oyranos_cmm.c:315 modules/color/modules/oyranos_cmm_oyra.c:143
+#: liboyranos/oyranos_cmm.c:316 modules/color/modules/oyranos_cmm_oyra.c:143
 msgid "Oyranos supplied modules"
 msgstr "Oyranos mitgelieferte Module"
 
@@ -3841,7 +3841,7 @@ msgstr ""
 "Simulationseinstellungen erlauben die Simulation eines zusätzlichen "
 "Farbraumes."
 
-#: examples/image_display/image_display.cpp:1284
+#: examples/image_display/image_display.cpp:1290
 msgid "Quit"
 msgstr "Beenden"
 
@@ -4216,7 +4216,7 @@ msgstr "Zeige DB Dateipfad"
 msgid "Show Help:"
 msgstr "Zeige Hilfe:"
 
-#: examples/image_display/image_display.cpp:1277
+#: examples/image_display/image_display.cpp:1283
 msgid "Show Infos"
 msgstr "Zeige Infos"
 
@@ -4320,7 +4320,8 @@ msgstr "Zeige Weißpunktmodus"
 #: API_generated/oyFilterNode_s_.c:1553 API_generated/oyObserver_s.c:332
 #: API_generated/oyObserver_s.c:343 API_generated/oyObserver_s.c:547
 #: API_generated/oyObserver_s.c:624 API_generated/oyObserver_s_.c:669
-#: examples/image_display/oyranos_display_helper_classes_fltk.cpp:52
+#: examples/image_display/.oyranos_display_helper_classes_fltk.cpp.swp:19
+#: examples/image_display/oyranos_display_helper_classes_fltk.cpp:51
 msgid "Signal"
 msgstr "Signal"
 
@@ -6068,7 +6069,7 @@ msgstr "Modulname"
 msgid "name longer than"
 msgstr "Name ist länger als"
 
-#: examples/oyranos_cmm_dFil.c:177 liboyranos/oyranos_cmm.c:331
+#: examples/oyranos_cmm_dFil.c:177 liboyranos/oyranos_cmm.c:332
 #: modules/color/modules/devices/oyranos_cmm_disp.c:1502
 #: modules/color/modules/oyranos_cmm_elDB.c:1080
 #: modules/color/modules/oyranos_cmm_lraw.cpp:238

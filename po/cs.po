@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: oyranos\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2020-02-25 06:57+0100\n"
+"POT-Creation-Date: 2020-02-26 21:29+0100\n"
 "PO-Revision-Date: 2012-10-19 15:10+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -1209,7 +1209,7 @@ msgstr "Copyright (c) 1998-2013 Marti Maria Saguer; MIT"
 msgid "Copyright (c) 2005-2010 Kai-Uwe Behrmann; newBSD"
 msgstr "Copyright (c) 2005-2010 Kai-Uwe Behrmann; newBSD"
 
-#: liboyranos/oyranos_cmm.c:329
+#: liboyranos/oyranos_cmm.c:330
 #, fuzzy
 msgid "Copyright (c) 2005-2014 Kai-Uwe Behrmann; newBSD"
 msgstr "Copyright (c) 2005-2010 Kai-Uwe Behrmann; newBSD"
@@ -1408,7 +1408,7 @@ msgstr "Datum kalibrace"
 msgid "Creation Time in UTC"
 msgstr "Datum kalibrace"
 
-#: liboyranos/oyranos_cmm.c:255
+#: liboyranos/oyranos_cmm.c:256
 #: modules/color/modules/devices/oyranos_cmm_disp.c:103
 #: tools/oyranos-device.c:447 tools/oyranos-device.c:450
 #: tools/oyranos-device.c:456
@@ -1481,7 +1481,7 @@ msgstr "Model:"
 msgid "Deactivate"
 msgstr "Aktivovat profily:"
 
-#: examples/image_display/image_display.cpp:1275
+#: examples/image_display/image_display.cpp:1281
 msgid "Debug"
 msgstr "Ladění"
 
@@ -1689,7 +1689,7 @@ msgstr "EBU Tech.3213-E"
 msgid "EFI CMM"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:1269
+#: examples/image_display/image_display.cpp:1275
 msgid "Edit Options ..."
 msgstr "Upravit volby ..."
 
@@ -1805,12 +1805,12 @@ msgstr ""
 msgid "Erase profile:"
 msgstr "Smazat profil:"
 
-#: examples/image_display/image_display.cpp:1273
+#: examples/image_display/image_display.cpp:1279
 #, fuzzy
 msgid "Examine ICC Conversion ..."
 msgstr "Prozkoumat profil ICC ..."
 
-#: examples/image_display/image_display.cpp:1271
+#: examples/image_display/image_display.cpp:1277
 msgid "Examine ICC Profile ..."
 msgstr "Prozkoumat profil ICC ..."
 
@@ -1884,7 +1884,7 @@ msgstr ""
 msgid "File exists"
 msgstr "Soubor existuje"
 
-#: liboyranos/oyranos_cmm.c:247 tools/oyranos-device.c:274
+#: liboyranos/oyranos_cmm.c:248 tools/oyranos-device.c:274
 msgid "File not loaded!"
 msgstr "Soubor nenacten!"
 
@@ -2130,7 +2130,7 @@ msgstr ""
 msgid "Heidelberg CMM"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:1282
+#: examples/image_display/image_display.cpp:1288
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:163
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:345
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:537
@@ -2141,7 +2141,7 @@ msgstr ""
 msgid "Help"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:1280
+#: examples/image_display/image_display.cpp:1286
 msgid "Help Shortcuts"
 msgstr ""
 
@@ -2371,8 +2371,8 @@ msgstr "Iluminant s rovnoměrnou energií E"
 msgid "Illuminant:      "
 msgstr "Osvetleni:   "
 
-#: API_generated/oyPixelAccess_s.c:555 liboyranos/oyranos_cmm.c:151
-#: liboyranos/oyranos_cmm.c:354 liboyranos/oyranos_cmm.c:378
+#: API_generated/oyPixelAccess_s.c:561 liboyranos/oyranos_cmm.c:152
+#: liboyranos/oyranos_cmm.c:355 liboyranos/oyranos_cmm.c:379
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:2889
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:2894
 #: modules/color/modules/oyranos_cmm_oPNG.c:1146
@@ -2385,12 +2385,12 @@ msgstr "Obrázek"
 msgid "Image PNG Socket"
 msgstr "Image[out]"
 
-#: liboyranos/oyranos_cmm.c:356
+#: liboyranos/oyranos_cmm.c:357
 #, fuzzy
 msgid "Image Plug"
 msgstr "Obrázek"
 
-#: liboyranos/oyranos_cmm.c:380
+#: liboyranos/oyranos_cmm.c:381
 #, fuzzy
 msgid "Image Socket"
 msgstr "Image[out]"
@@ -2466,7 +2466,7 @@ msgstr "Image[write_png]"
 msgid "Image[write_ppm]"
 msgstr "Image[write_ppm]"
 
-#: liboyranos/oyranos_cmm.c:352 liboyranos/oyranos_cmm.c:376
+#: liboyranos/oyranos_cmm.c:353 liboyranos/oyranos_cmm.c:377
 #: modules/color/modules/oyranos_cmm_oPNG.c:1144
 msgid "Img"
 msgstr "Img"
@@ -3409,7 +3409,7 @@ msgstr ""
 msgid "No spectral"
 msgstr "vynechat spektrální linii"
 
-#: liboyranos/oyranos_cmm.c:311
+#: liboyranos/oyranos_cmm.c:312
 msgid "NoNo"
 msgstr ""
 
@@ -3685,7 +3685,7 @@ msgstr "Skupina nastavení Oyranosu"
 msgid "Oyranos meta module directory name"
 msgstr "Skupina nastavení Oyranosu"
 
-#: liboyranos/oyranos_cmm.c:313 modules/color/modules/oyranos_cmm_oyra.c:141
+#: liboyranos/oyranos_cmm.c:314 modules/color/modules/oyranos_cmm_oyra.c:141
 msgid "Oyranos modules"
 msgstr "Moduly Oyranosu"
 
@@ -3712,7 +3712,7 @@ msgstr ""
 "zdrojové soubory: http://www.oyranos.com/wiki/index.php?title=Oyranos/"
 "Download"
 
-#: liboyranos/oyranos_cmm.c:323
+#: liboyranos/oyranos_cmm.c:324
 #, fuzzy
 msgid ""
 "Oyranos project; www: http://www.oyranos.org; support/email: ku.b@gmx.de; "
@@ -3736,7 +3736,7 @@ msgstr ""
 "Nastavení Oyranosu umožňuje konfiguraci správy barev dle ICC pro místní "
 "počítač. Nastavení mohou být zvlášť pro uživatele a pro systém."
 
-#: liboyranos/oyranos_cmm.c:315 modules/color/modules/oyranos_cmm_oyra.c:143
+#: liboyranos/oyranos_cmm.c:316 modules/color/modules/oyranos_cmm_oyra.c:143
 msgid "Oyranos supplied modules"
 msgstr "Moduly poskytované Oyranosem"
 
@@ -4085,7 +4085,7 @@ msgstr ""
 "Nastavení simulace umožňují stanovit barvový prostor pro napodobení jiného "
 "zařízení."
 
-#: examples/image_display/image_display.cpp:1284
+#: examples/image_display/image_display.cpp:1290
 msgid "Quit"
 msgstr "Ukončit"
 
@@ -4498,7 +4498,7 @@ msgstr "Získat profil ICC"
 msgid "Show Help:"
 msgstr "Ukázat model:"
 
-#: examples/image_display/image_display.cpp:1277
+#: examples/image_display/image_display.cpp:1283
 #, fuzzy
 msgid "Show Infos"
 msgstr "Ukázat volby"
@@ -4604,7 +4604,8 @@ msgstr "Bílý bod média"
 #: API_generated/oyFilterNode_s_.c:1553 API_generated/oyObserver_s.c:332
 #: API_generated/oyObserver_s.c:343 API_generated/oyObserver_s.c:547
 #: API_generated/oyObserver_s.c:624 API_generated/oyObserver_s_.c:669
-#: examples/image_display/oyranos_display_helper_classes_fltk.cpp:52
+#: examples/image_display/.oyranos_display_helper_classes_fltk.cpp.swp:19
+#: examples/image_display/oyranos_display_helper_classes_fltk.cpp:51
 msgid "Signal"
 msgstr "Signál"
 
@@ -6372,7 +6373,7 @@ msgstr "jméno modulu"
 msgid "name longer than"
 msgstr "jméno delší než"
 
-#: examples/oyranos_cmm_dFil.c:177 liboyranos/oyranos_cmm.c:331
+#: examples/oyranos_cmm_dFil.c:177 liboyranos/oyranos_cmm.c:332
 #: modules/color/modules/devices/oyranos_cmm_disp.c:1502
 #: modules/color/modules/oyranos_cmm_elDB.c:1080
 #: modules/color/modules/oyranos_cmm_lraw.cpp:238

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ICC Examin 0.41\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2020-02-25 06:57+0100\n"
+"POT-Creation-Date: 2020-02-26 21:29+0100\n"
 "PO-Revision-Date: 2006-06-29 19:31+0200\n"
 "Last-Translator: Pascal LACROIX <lacroixpascal at vfemail.net>\n"
 "Language-Team: <fr@li.org>\n"
@@ -1179,7 +1179,7 @@ msgstr ""
 msgid "Copyright (c) 2005-2010 Kai-Uwe Behrmann; newBSD"
 msgstr ""
 
-#: liboyranos/oyranos_cmm.c:329
+#: liboyranos/oyranos_cmm.c:330
 msgid "Copyright (c) 2005-2014 Kai-Uwe Behrmann; newBSD"
 msgstr ""
 
@@ -1383,7 +1383,7 @@ msgstr ""
 msgid "Creation Time in UTC"
 msgstr ""
 
-#: liboyranos/oyranos_cmm.c:255
+#: liboyranos/oyranos_cmm.c:256
 #: modules/color/modules/devices/oyranos_cmm_disp.c:103
 #: tools/oyranos-device.c:447 tools/oyranos-device.c:450
 #: tools/oyranos-device.c:456
@@ -1455,7 +1455,7 @@ msgstr "Model:"
 msgid "Deactivate"
 msgstr "Ouvrir Profil"
 
-#: examples/image_display/image_display.cpp:1275
+#: examples/image_display/image_display.cpp:1281
 msgid "Debug"
 msgstr ""
 
@@ -1665,7 +1665,7 @@ msgstr ""
 msgid "EFI CMM"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:1269
+#: examples/image_display/image_display.cpp:1275
 #, fuzzy
 msgid "Edit Options ..."
 msgstr "Options"
@@ -1780,12 +1780,12 @@ msgstr ""
 msgid "Erase profile:"
 msgstr "Ouvrir Profil"
 
-#: examples/image_display/image_display.cpp:1273
+#: examples/image_display/image_display.cpp:1279
 #, fuzzy
 msgid "Examine ICC Conversion ..."
 msgstr "ICC Profils"
 
-#: examples/image_display/image_display.cpp:1271
+#: examples/image_display/image_display.cpp:1277
 #, fuzzy
 msgid "Examine ICC Profile ..."
 msgstr "ICC Profils"
@@ -1866,7 +1866,7 @@ msgstr ""
 msgid "File exists"
 msgstr "Fichier"
 
-#: liboyranos/oyranos_cmm.c:247 tools/oyranos-device.c:274
+#: liboyranos/oyranos_cmm.c:248 tools/oyranos-device.c:274
 msgid "File not loaded!"
 msgstr ""
 
@@ -2106,7 +2106,7 @@ msgstr ""
 msgid "Heidelberg CMM"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:1282
+#: examples/image_display/image_display.cpp:1288
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:163
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:345
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:537
@@ -2117,7 +2117,7 @@ msgstr ""
 msgid "Help"
 msgstr ""
 
-#: examples/image_display/image_display.cpp:1280
+#: examples/image_display/image_display.cpp:1286
 msgid "Help Shortcuts"
 msgstr ""
 
@@ -2346,8 +2346,8 @@ msgstr ""
 msgid "Illuminant:      "
 msgstr "Luminance Y"
 
-#: API_generated/oyPixelAccess_s.c:555 liboyranos/oyranos_cmm.c:151
-#: liboyranos/oyranos_cmm.c:354 liboyranos/oyranos_cmm.c:378
+#: API_generated/oyPixelAccess_s.c:561 liboyranos/oyranos_cmm.c:152
+#: liboyranos/oyranos_cmm.c:355 liboyranos/oyranos_cmm.c:379
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:2889
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:2894
 #: modules/color/modules/oyranos_cmm_oPNG.c:1146
@@ -2359,11 +2359,11 @@ msgstr ""
 msgid "Image PNG Socket"
 msgstr ""
 
-#: liboyranos/oyranos_cmm.c:356
+#: liboyranos/oyranos_cmm.c:357
 msgid "Image Plug"
 msgstr ""
 
-#: liboyranos/oyranos_cmm.c:380
+#: liboyranos/oyranos_cmm.c:381
 msgid "Image Socket"
 msgstr ""
 
@@ -2424,7 +2424,7 @@ msgstr ""
 msgid "Image[write_ppm]"
 msgstr ""
 
-#: liboyranos/oyranos_cmm.c:352 liboyranos/oyranos_cmm.c:376
+#: liboyranos/oyranos_cmm.c:353 liboyranos/oyranos_cmm.c:377
 #: modules/color/modules/oyranos_cmm_oPNG.c:1144
 msgid "Img"
 msgstr ""
@@ -3344,7 +3344,7 @@ msgstr ""
 msgid "No spectral"
 msgstr ""
 
-#: liboyranos/oyranos_cmm.c:311
+#: liboyranos/oyranos_cmm.c:312
 msgid "NoNo"
 msgstr ""
 
@@ -3616,7 +3616,7 @@ msgstr "Oyranos Préférences"
 msgid "Oyranos meta module directory name"
 msgstr "Oyranos Préférences"
 
-#: liboyranos/oyranos_cmm.c:313 modules/color/modules/oyranos_cmm_oyra.c:141
+#: liboyranos/oyranos_cmm.c:314 modules/color/modules/oyranos_cmm_oyra.c:141
 #, fuzzy
 msgid "Oyranos modules"
 msgstr "Oyranos Préférences"
@@ -3641,7 +3641,7 @@ msgid ""
 "sources: http://www.oyranos.com/wiki/index.php?title=Oyranos/Download"
 msgstr ""
 
-#: liboyranos/oyranos_cmm.c:323
+#: liboyranos/oyranos_cmm.c:324
 msgid ""
 "Oyranos project; www: http://www.oyranos.org; support/email: ku.b@gmx.de; "
 "sources: http://www.oyranos.org/downloads/"
@@ -3659,7 +3659,7 @@ msgid ""
 "local computer. The settings can be per user and per system."
 msgstr ""
 
-#: liboyranos/oyranos_cmm.c:315 modules/color/modules/oyranos_cmm_oyra.c:143
+#: liboyranos/oyranos_cmm.c:316 modules/color/modules/oyranos_cmm_oyra.c:143
 #, fuzzy
 msgid "Oyranos supplied modules"
 msgstr "Oyranos Préférences"
@@ -4019,7 +4019,7 @@ msgid ""
 "Proofing Settings allows one to decide about the simulation color space."
 msgstr ""
 
-#: examples/image_display/image_display.cpp:1284
+#: examples/image_display/image_display.cpp:1290
 msgid "Quit"
 msgstr "Quitter"
 
@@ -4423,7 +4423,7 @@ msgstr "ICC Profils"
 msgid "Show Help:"
 msgstr "Model:"
 
-#: examples/image_display/image_display.cpp:1277
+#: examples/image_display/image_display.cpp:1283
 #, fuzzy
 msgid "Show Infos"
 msgstr "Oyranos Préférences"
@@ -4528,7 +4528,8 @@ msgstr "ICC Profils"
 #: API_generated/oyFilterNode_s_.c:1553 API_generated/oyObserver_s.c:332
 #: API_generated/oyObserver_s.c:343 API_generated/oyObserver_s.c:547
 #: API_generated/oyObserver_s.c:624 API_generated/oyObserver_s_.c:669
-#: examples/image_display/oyranos_display_helper_classes_fltk.cpp:52
+#: examples/image_display/.oyranos_display_helper_classes_fltk.cpp.swp:19
+#: examples/image_display/oyranos_display_helper_classes_fltk.cpp:51
 msgid "Signal"
 msgstr ""
 
@@ -6062,7 +6063,7 @@ msgstr "Fichier"
 msgid "name longer than"
 msgstr "Couleur désignée 2"
 
-#: examples/oyranos_cmm_dFil.c:177 liboyranos/oyranos_cmm.c:331
+#: examples/oyranos_cmm_dFil.c:177 liboyranos/oyranos_cmm.c:332
 #: modules/color/modules/devices/oyranos_cmm_disp.c:1502
 #: modules/color/modules/oyranos_cmm_elDB.c:1080
 #: modules/color/modules/oyranos_cmm_lraw.cpp:238
