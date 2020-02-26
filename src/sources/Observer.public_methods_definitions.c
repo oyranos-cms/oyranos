@@ -735,6 +735,10 @@ const char *       oySignalToString  ( oySIGNAL_e          signal_type )
        text = "oySIGNAL_INCOMPATIBLE_OPTION: can not handle option"; break;
   case oySIGNAL_INCOMPATIBLE_CONTEXT:  /**< can not handle profile */
        text = "oySIGNAL_INCOMPATIBLE_CONTEXT: can not handle context"; break;
+  case oySIGNAL_INCOMPLETE_GRAPH:      /**< can not completely process */
+       text = "oySIGNAL_INCOMPLETE_GRAPH: can not completely process"; break;
+  case oySIGNAL_VISITED:               /**< just accessed */
+       text = "oySIGNAL_VISITED: just accessed"; break;
   case oySIGNAL_USER1:
        text = "oySIGNAL_USER1"; break;
   case oySIGNAL_USER2:

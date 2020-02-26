@@ -66,7 +66,9 @@ typedef enum {
   oySIGNAL_INCOMPATIBLE_DATA,          /**< can not process image */
   oySIGNAL_INCOMPATIBLE_OPTION,        /**< can not handle option */
   oySIGNAL_INCOMPATIBLE_CONTEXT,       /**< can not handle profile */
-  oySIGNAL_USER1,                      /**< user signal type */
+  oySIGNAL_INCOMPLETE_GRAPH,           /**< can not completely process */
+  oySIGNAL_VISITED,                    /**< just accessed */
+  oySIGNAL_USER1 = 20,                 /**< user signal type */
   oySIGNAL_USER2,                      /**< user signal type */
   oySIGNAL_USER3                       /**< more signal types are possible */
 } oySIGNAL_e;
