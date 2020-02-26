@@ -28,10 +28,12 @@ int oy_display_verbose = 0;
 #ifdef __cplusplus
 #include <cstdio>
 #include <cstring>
+#include <ctime>
 extern "C" {
 #else
 #include <stdio.h>
 #include <string.h>
+#include <time.h>
 #endif /* __cplusplus */
 int oyWriteMemToFile_(const char* name, const void* mem, size_t size);
 #ifdef __cplusplus
@@ -300,6 +302,10 @@ int  oyDrawScreenImage               ( oyConversion_s    * context,
         return -1;
 
       image_tags = oyImage_GetTags( image );
+      if(oy_debug)
+        oyMessageFunc_p( oyMSG_DBG, (oyStruct_s*)ticket,
+            _DBG_FORMAT_ "image %d: ticket: %s", _DBG_ARGS_,
+            oyStruct_GetId((oyStruct_s*)image), oyPixelAccess_Show( ticket ));
 
       if(window && strcmp("X11", system_type) == 0)
       {

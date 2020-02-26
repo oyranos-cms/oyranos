@@ -303,6 +303,10 @@ public:
       printf( _DBG_FORMAT_"new display rectangle: %s +%d+%d +%d+%d\n",
               _DBG_ARGS_,
               oyRectangle_Show(display_rectangle), x(), y(), px, py );
+      else if(oy_debug)
+      printf( _DBG_FORMAT_"ticket: %s px/py: %d %d\n",
+              _DBG_ARGS_,
+              oyPixelAccess_Show( ticket() ), px, py );
 #endif
 
       if(ticket())

@@ -993,6 +993,12 @@ event_handler(int e)
           oy_widget->damage( FL_DAMAGE_USER1 );
           break;
       }
+      if(found)
+      {
+        if(oy_debug)
+          fprintf(stderr, _DBG_FORMAT_ "px|py: %d|%d\n", _DBG_ARGS_, oy_widget->px, oy_widget->py );
+        return found;
+      }
  
       if(Fl::event_state() & FL_ALT ||
          Fl::event_state() & FL_META)
