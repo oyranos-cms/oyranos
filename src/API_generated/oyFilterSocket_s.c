@@ -125,7 +125,7 @@ OYAPI int  OYEXPORT
                                        oyCONNECTOR_EVENT_e e )
 {
   int n, i;
-  oyFilterSocket_s_ * s_;
+  oyFilterSocket_s_ * s_, *s;
   oyFilterPlug_s * p;
 
   oyFilterPlug_s_ * c_ = (oyFilterPlug_s_*)c;
@@ -153,10 +153,12 @@ OYAPI int  OYEXPORT
   if(!c)
     return 1;
 
-  s_ = (oyFilterSocket_s_*) c_->remote_socket_;
+  s = s_ = (oyFilterSocket_s_*) c_->remote_socket_;
 
   if(!s_)
     return 0;
+
+  oyCheckType__m( oyOBJECT_FILTER_SOCKET_S, return 1 )
 
   n = oyFilterPlugs_Count( s_->requesting_plugs_ );
 

@@ -390,6 +390,11 @@ int            oyFilterNode_Disconnect(oyFilterNode_s    * node,
   if(!edge)
     return 1;
 
+  {
+    oyFilterPlug_s_ * s = edge;
+    oyCheckType__m( oyOBJECT_FILTER_PLUG_S, fprintf(stderr, "id:%d\n",s->oy_->id_);return 1 );
+  }
+
   oyFilterSocket_Callback( (oyFilterPlug_s*)edge, oyCONNECTOR_EVENT_RELEASED );
   oyFilterPlug_Callback( (oyFilterPlug_s*)edge, oyCONNECTOR_EVENT_RELEASED );
   return 0;
