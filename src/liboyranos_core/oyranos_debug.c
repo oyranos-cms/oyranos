@@ -126,52 +126,67 @@ char *   oyBT                        ( int                 stack_limit )
           {
             char * command = NULL;
             size_t size = 0;
-            char * prog;
+            char * prog,
+                 * main_prog = NULL;
             char * addr_infos = NULL;
-            char ** lines = NULL;
-            int lines_n = 0;
             char * txt = NULL;
 
             int start = nptrs-1;
             do { --start; } while( start >= 0 && (strstr(strings[start], "(main+") == NULL) );
             if(start < 0) start = nptrs-1; /* handle threads */
 
-            prog = oyStringCopy( strings[start], NULL );
-            txt = strchr( prog, '(' );
-            if(txt) txt[0] = '\000';
-
-            oyStringAddPrintf( &command, 0,0, "addr2line -spifCe %s", prog );
-
-            for(j = start; j >= 0; j--)
+            for(j = start; j >= (oy_debug?0:1); j--)
             {
               const char * line = strings[j],
                          * tmp = strchr( line, '(' ),
                          * addr = strchr( tmp?tmp:line, '[' );
-              if(addr)
+
+              prog = oyStringCopy( line, NULL );
+              txt = strchr( prog, '(' );
+              if(txt) txt[0] = '\000';
+
+              if(j == start) main_prog = oyStringCopy( prog, 0 );
+
+
+              if( main_prog && prog && strcmp(prog, main_prog) != 0)
+              {
+                char * addr2 = NULL;
+                txt = strchr( tmp?tmp:line, '(' );
+                if(txt) addr2 = oyStringCopy( txt+1, NULL );
+                if(addr2) txt = strchr( addr2, ')' );
+                if(txt) txt[0] = '\000';
+                if(addr2)
+                {
+                  oyStringAddPrintf( &command, 0,0, "eu-addr2line -s --pretty-print -i -f -C -e %s %s", prog, addr2 );
+                  oyFree_m_(addr2);
+                  addr_infos = oyReadCmdToMem_( command, &size, "r", NULL );
+                  if(addr_infos)
+                  {
+                    txt = strrchr(addr_infos, ':');
+                    if(txt) txt[0] = '\000';
+                  }
+                }
+              }
+              else if(addr)
               {
                 char * addr2 = oyStringCopy( addr+1, NULL );
                 addr2[strlen(addr2)-1] = '\000';
-                oyStringAddPrintf( &command, 0,0, " %s", addr2 );
+                oyStringAddPrintf( &command, 0,0, "addr2line -spifCe %s %s", prog, addr2 );
                 oyFree_m_(addr2);
+                addr_infos = oyReadCmdToMem_( command, &size, "r", NULL );
               }
-            }
-            addr_infos = oyReadCmdToMem_( command, &size, "r", NULL );
-            if(addr_infos)
-              lines = oyStringSplit( addr_infos, '\n', &lines_n, 0 );
-            oyFree_m_( addr_infos );
-            oyFree_m_( prog );
-            oyFree_m_( command );
 
-            for(j = 0; j < lines_n - (oy_debug ? 1 : 2); j++) /* hide this function from backtrace */
-            {
               if(oy_debug)
-                fprintf(stderr, "%s\n", strings[j]);
+                fprintf(stderr, "%s\n", line);
+
               {
                 char * t = NULL, * txt = NULL, * addr_info = NULL, * line_number = NULL , * func_name = NULL, * discriminator = NULL;
-                const char * line = lines[j];
-                if(line)
+                if(addr_infos)
                 {
-                  addr_info = oyStringCopy( line, NULL );
+                  addr_info = oyStringCopy( addr_infos, NULL );
+
+                  if(addr_info[strlen(addr_info)-1] == '\n') addr_info[strlen(addr_info)-1] = '\000';
+
                   if(addr_info)
                   {
                     if( addr_info[strlen(addr_info)-1] == ')' &&
@@ -192,9 +207,10 @@ char *   oyBT                        ( int                 stack_limit )
                     if(txt) txt[0] = '\000';
                     txt = strrchr( func_name, ' ' ); /* at */
                     if(txt) txt[0] = '\000';
+                    else oyFree_m_(func_name);
 
-                    txt = strrchr( addr_info, ' ' ) + 1;
-                    line_number = oyStringCopy( txt, NULL );
+                    if(func_name) txt = strrchr( addr_info, ' ' ) + 1;
+                    if(txt) line_number = oyStringCopy( txt, NULL );
                   } else
                   {
                     txt = strchr( addr_info, '(' );
@@ -202,10 +218,20 @@ char *   oyBT                        ( int                 stack_limit )
                   }
                 }
                 if(func_name) t = oyStringCopy( func_name, NULL );
-                else t = oyStringCopy( line, NULL );
+                else
+                {
+                  if(tmp)
+                  {
+                    t = oyStringCopy( tmp[0] == '(' ? &tmp[1] : tmp, NULL );
+                    txt = strchr(t, '+');
+                    if(txt) txt[0] = '\000';
+                  }
+                  else
+                    t = oyStringCopy( addr_infos, NULL );
+                }
                 if(t)
                 {
-                  if(j == lines_n-(oy_debug ? 2 : 3))
+                  if(j == (oy_debug ? 0 : 1))
                   {
                     oyStringAddPrintf( &text, 0,0, "%s", stack_limit >= 0 ? oyjlTermColor(oyjlBOLD, t) : t );
                     oyStringAddPrintf( &text, 0,0, "(%s) ", line_number ? stack_limit >= 0 ? oyjlTermColor(oyjlITALIC, line_number ) : line_number : "");
@@ -218,14 +244,17 @@ char *   oyBT                        ( int                 stack_limit )
                   oyFree_m_(t);
                 }
                 oyFree_m_(addr_info);
-                oyFree_m_(line_number);
+                if(line_number) oyFree_m_(line_number);
                 if(func_name) oyFree_m_(func_name);
                 if(discriminator) oyFree_m_(discriminator);
               }
+              oyFree_m_( addr_infos );
+              oyFree_m_( prog );
+              oyFree_m_( command );
             }
-            if(lines) oyStringListRelease( &lines, lines_n, NULL );
             oyStringAddPrintf( &text, 0,0, "\n" );
             free(strings);
+            oyFree_m_( main_prog );
           }
   return text;
 }

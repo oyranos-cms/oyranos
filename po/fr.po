@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ICC Examin 0.41\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2020-02-26 21:29+0100\n"
+"POT-Creation-Date: 2020-02-26 22:22+0100\n"
 "PO-Revision-Date: 2006-06-29 19:31+0200\n"
 "Last-Translator: Pascal LACROIX <lacroixpascal at vfemail.net>\n"
 "Language-Team: <fr@li.org>\n"
@@ -4096,7 +4096,7 @@ msgstr ""
 msgid "Relative Colorimetric"
 msgstr "Colorimétrie relative"
 
-#: API_generated/oyFilterNode_s.c:1055
+#: API_generated/oyFilterNode_s.c:1060
 msgid "Remote filter or plug not available."
 msgstr ""
 
@@ -4528,7 +4528,6 @@ msgstr "ICC Profils"
 #: API_generated/oyFilterNode_s_.c:1553 API_generated/oyObserver_s.c:332
 #: API_generated/oyObserver_s.c:343 API_generated/oyObserver_s.c:547
 #: API_generated/oyObserver_s.c:624 API_generated/oyObserver_s_.c:669
-#: examples/image_display/.oyranos_display_helper_classes_fltk.cpp.swp:19
 #: examples/image_display/oyranos_display_helper_classes_fltk.cpp:51
 msgid "Signal"
 msgstr ""
