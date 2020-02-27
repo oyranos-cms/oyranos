@@ -105,6 +105,7 @@ void oy_backtrace_()
 
 #include "oyranos_helper.h"
 #include "oyranos_i18n.h"
+#include "oyranos_io.h" /* oyFindApplication() */
 /* @param[in]      stack_limit         set limit of stack depth
  *                                     - -1 : omit color/emphasize
  */
@@ -145,10 +146,27 @@ char *   oyBT                        ( int                 stack_limit )
               txt = strchr( prog, '(' );
               if(txt) txt[0] = '\000';
 
-              if(j == start) main_prog = oyStringCopy( prog, 0 );
+              if(j == start)
+              {
+                main_prog = oyStringCopy( prog, 0 );
+                if(!oyIsFile_(main_prog))
+                {
+                  char *app = NULL;
+                  if((app = oyFindApplication( main_prog )) != NULL &&
+                      oyIsFile_(app))
+                  {
+                    oyFree_m_( main_prog );
+                    main_prog = app;
+                    app = NULL;
+                  }
+                  if(app) oyFree_m_( app );
+                }
+                if(oy_debug)
+                  fprintf(stderr, "prog = %s main_prog = %s\n", prog, main_prog );
+              }
 
 
-              if( main_prog && prog && strcmp(prog, main_prog) != 0)
+              if( main_prog && prog && strstr(main_prog, prog) == NULL)
               {
                 char * addr2 = NULL;
                 txt = strchr( tmp?tmp:line, '(' );
@@ -171,7 +189,7 @@ char *   oyBT                        ( int                 stack_limit )
               {
                 char * addr2 = oyStringCopy( addr+1, NULL );
                 addr2[strlen(addr2)-1] = '\000';
-                oyStringAddPrintf( &command, 0,0, "addr2line -spifCe %s %s", prog, addr2 );
+                oyStringAddPrintf( &command, 0,0, "addr2line -spifCe %s %s", main_prog ? main_prog : prog, addr2 );
                 oyFree_m_(addr2);
                 addr_infos = oyReadCmdToMem_( command, &size, "r", NULL );
               }
