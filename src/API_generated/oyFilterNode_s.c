@@ -828,6 +828,7 @@ OYAPI oyFilterPlug_s * OYEXPORT oyFilterNode_GetPlug (
     }
 
     s = node_->plugs[pos];
+    oyCheckType__m( oyOBJECT_FILTER_PLUG_S, return NULL )
   }
 
   return oyFilterPlug_Copy( (oyFilterPlug_s*)s, 0 ); /* reference for giving to outside */
@@ -1051,10 +1052,14 @@ OYAPI oyFilterNode_s * OYEXPORT
   if(!node)
     return 0;
 
-  oyCheckType__m( oyOBJECT_FILTER_NODE_S, return 0 )
+  oyCheckType__m( oyOBJECT_FILTER_NODE_S, return NULL )
 
   if(s->plugs[pos] && s->plugs[pos]->remote_socket_)
-    remote = s->plugs[pos]->remote_socket_->node;
+  {
+    oyFilterPlug_s_ * s = ((oyFilterNode_s_*)node)->plugs[pos];
+    oyCheckType__m( oyOBJECT_FILTER_PLUG_S, return NULL )
+    remote = s->remote_socket_->node;
+  }
   else
     WARNcc3_S( node, "%s: %s  plug: %d", oyFilterNode_GetRegistration( node ),
       _("Remote filter or plug not available."), pos );

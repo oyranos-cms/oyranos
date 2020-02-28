@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ICC Examin 0.41\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2020-02-26 22:22+0100\n"
+"POT-Creation-Date: 2020-02-27 18:54+0100\n"
 "PO-Revision-Date: 2006-06-29 19:31+0200\n"
 "Last-Translator: Pascal LACROIX <lacroixpascal at vfemail.net>\n"
 "Language-Team: <fr@li.org>\n"
@@ -4096,7 +4096,7 @@ msgstr ""
 msgid "Relative Colorimetric"
 msgstr "Colorimétrie relative"
 
-#: API_generated/oyFilterNode_s.c:1060
+#: API_generated/oyFilterNode_s.c:1065
 msgid "Remote filter or plug not available."
 msgstr ""
 
