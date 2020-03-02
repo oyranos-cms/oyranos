@@ -7523,7 +7523,7 @@ oyjlTESTRESULT_e testDAG2()
   oyImage_Release( &output );
   oyFilterNode_Release( &icc );
   oyConversion_Release ( &cc );
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 1, "objects hashed" )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 1, "objects hash" )
 
 
   p_in = oyProfile_FromStd( oyEDITING_RGB, icc_profile_flags, testobj );
@@ -7581,9 +7581,70 @@ oyjlTESTRESULT_e testDAG2()
   oyOption_Release( &option );
 
   oyConversion_Release ( &cc );
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 1, "objects run" )
+
+
+  p_in = oyProfile_FromStd( oyEDITING_RGB, icc_profile_flags, testobj );
+  p_out = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, testobj );
+  input =oyImage_Create( src_width,src_height, 
+                         buf_16in,
+                         oyChannels_m(oyProfile_GetChannelsCount(p_in)+1) |
+                          oyDataType_m(buf_type_in),
+                         p_in,
+                         testobj );
+  output=oyImage_Create( dst_width,dst_height, 
+                         buf_16out,
+                         oyChannels_m(oyProfile_GetChannelsCount(p_out)+1) |
+                          oyDataType_m(data_type_request),
+                         p_out,
+                         testobj );
+
+  cc = oyConversion_FromImageForDisplay( input, output,
+                                         &icc, oyOPTIONATTRIBUTE_ADVANCED,
+                                         oyUINT16, NULL, testobj );
+  oyProfile_Release( &p_in );
+  oyProfile_Release( &p_out );
+  oyImage_Release( &input );
+  oyImage_Release( &output );
+
+  socket = oyFilterNode_GetSocket( icc, 0 );
+  oyFilterSocket_Release( &socket );
+  oyFilterNode_Release( &icc );
+
+  input_node = oyConversion_GetNode( cc, OY_INPUT );
+  socket = oyFilterNode_GetSocket( input_node, 0 );
+  oyFilterSocket_Release( &socket );
+  oyFilterNode_Release( &input_node );
+  oyConversion_Release ( &cc );
 
   oyFree_m_(buf_16in);
   oyFree_m_(buf_16out);
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 1, "objects release" )
+
+
+  oyImage_s * image = NULL;
+  error = oyImage_FromFile( OY_SOURCEDIR "not_existing.png", 0, &image, 0 );
+  if( !image )
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyImage_FromFile( \"not_existing.png\" )             " );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyImage_FromFile( \"not_existing.png\" )             " );
+  }
+  oyImage_Release( &image );
+
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 1, "objects noimg" )
+
+
+  error = oyImage_FromFile( OY_SOURCEDIR "/extras/icons/oyranos.png", 0, &image, 0 );
+  if( image )
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyImage_FromFile( \"oyranos.png\" )  = %dx%d       ", oyImage_GetWidth(image ), oyImage_GetHeight( image ) );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyImage_FromFile()                                 " );
+  }
+  oyImage_Release( &image );
 
   OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 0, NULL )
 
