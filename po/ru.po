@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Oyranos 0.9\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2020-02-27 18:54+0100\n"
+"POT-Creation-Date: 2020-02-28 10:29+0100\n"
 "PO-Revision-Date: 2015-02-20 17:32+0100\n"
 "Last-Translator: Kai-Uwe Behrmann <ku.b@gmx.de>\n"
 "Language-Team: russian <ru@li.org>\n"
@@ -4240,7 +4240,7 @@ msgstr ""
 msgid "Show white point modes"
 msgstr ""
 
-#: API_generated/oyFilterNode_s_.c:1553 API_generated/oyObserver_s.c:332
+#: API_generated/oyFilterNode_s_.c:1558 API_generated/oyObserver_s.c:332
 #: API_generated/oyObserver_s.c:343 API_generated/oyObserver_s.c:547
 #: API_generated/oyObserver_s.c:624 API_generated/oyObserver_s_.c:669
 #: examples/image_display/oyranos_display_helper_classes_fltk.cpp:51
@@ -5141,9 +5141,9 @@ msgid "Under Color Removal (UCR)"
 msgstr ""
 
 #: API_generated/oyConnectorImaging_s.c:37 API_generated/oyConnector_s.c:35
-#: API_generated/oyranos_object_internal.h:48
-#: API_generated/oyranos_object_internal.h:57
-#: API_generated/oyranos_object_internal.h:66
+#: API_generated/oyranos_object_internal.h:49
+#: API_generated/oyranos_object_internal.h:59
+#: API_generated/oyranos_object_internal.h:69
 msgid "Unexpected object type:"
 msgstr ""
 
@@ -5483,7 +5483,7 @@ msgstr ""
 msgid "enable simple defaults"
 msgstr ""
 
-#: API_generated/oyConversion_s.c:208 API_generated/oyFilterNode_s_.c:919
+#: API_generated/oyConversion_s.c:208 API_generated/oyFilterNode_s_.c:924
 #: API_generated/oyranos_devices.c:2627 API_generated/oyranos_devices.c:2639
 #: API_generated/oyranos_devices.c:2672 API_generated/oyranos_devices.c:3188
 #: API_generated/oyranos_module.c:2031

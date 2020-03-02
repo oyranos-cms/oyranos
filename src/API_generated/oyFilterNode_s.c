@@ -929,7 +929,7 @@ OYAPI oyFilterSocket_s * OYEXPORT
     s = node_->sockets[pos];
   }
 
-  return oyFilterSocket_Copy( (oyFilterSocket_s*)node_->sockets[pos], 0 );
+  return oyFilterSocket_Copy( (oyFilterSocket_s*)s, 0 );
 }
 
 /** Function  oyFilterNode_GetSocketNode
