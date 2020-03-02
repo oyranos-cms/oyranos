@@ -943,6 +943,7 @@ oyImage_s *  oyImage_FromPNG         ( const char        * filename,
 
   /* create the image */
   image_in = oyImage_Create( width, height, NULL, pixel_layout, prof, 0 );
+  oyProfile_Release( &prof );
   if(image_in)
   {
     oyArray2d_s * a = oyArray2d_Create( NULL,
@@ -1047,7 +1048,7 @@ int      oPNGFilterPlug_ImageInputPNGRun (
   {
     error = oyFilterPlug_ImageRootRun( requestor_plug, ticket );
 
-    return error;
+    goto png_input_clean;
 
   } else if(requestor_plug->type_ == oyOBJECT_FILTER_SOCKET_S)
   {
@@ -1076,7 +1077,7 @@ int      oPNGFilterPlug_ImageInputPNGRun (
     oPNG_msg( oyMSG_WARN, (oyStruct_s*)node,
              OY_DBG_FORMAT_ " failed: %s",
              OY_DBG_ARGS_, oyNoEmptyString_m_( filename ) );
-    return error;
+    goto png_input_clean;
   }
 
   if(error <= 0)
@@ -1099,6 +1100,7 @@ int      oPNGFilterPlug_ImageInputPNGRun (
                          oyImage_GetHeight( image_in ) );
   }
 
+  png_input_clean:
   oyImage_Release( &image_in );
   oyImage_Release( &output_image );
   oyFilterNode_Release( &node );
