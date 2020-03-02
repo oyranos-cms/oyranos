@@ -26,6 +26,11 @@ int  oyFilterNode_AddToAdjacencyLst_ ( oyFilterNode_s_    * s,
   int n, i, j, p_n;
   oyFilterPlug_s_ * p = 0;
 
+  if(!s)
+    return 0;
+
+  oyCheckType__m( oyOBJECT_FILTER_NODE_S, return 0 );
+
   /* Scan the input/plug side for unknown nodes, add these and continue in
    * the direction of previous unknown edges...
    */
@@ -34,9 +39,9 @@ int  oyFilterNode_AddToAdjacencyLst_ ( oyFilterNode_s_    * s,
     n = oyFilterNode_EdgeCount( (oyFilterNode_s*)s, 1, 0 );
     for( i = 0; i < n; ++i )
     {
-      if( s->plugs[i] && ((oyFilterPlug_s_*)s->plugs[i])->remote_socket_ )
+      if( s->plugs[i] && s->plugs[i]->remote_socket_ )
         if(oyAdjacencyListAdd_( (oyFilterPlug_s*)s->plugs[i], (oyFilterNodes_s*)nodes, (oyFilterPlugs_s*)edges, mark, flags ))
-          oyFilterNode_AddToAdjacencyLst_( ((oyFilterSocket_s_*)((oyFilterPlug_s_*)s->plugs[i])->remote_socket_)->node,
+          oyFilterNode_AddToAdjacencyLst_( ((oyFilterSocket_s_*)s->plugs[i]->remote_socket_)->node,
                                            nodes, edges, mark, flags );
     }
   }
@@ -47,12 +52,12 @@ int  oyFilterNode_AddToAdjacencyLst_ ( oyFilterNode_s_    * s,
     n = oyFilterNode_EdgeCount( (oyFilterNode_s*)s, 0, 0 );
     for( i = 0; i < n; ++i )
     {
-      if( s->sockets[i] && ((oyFilterSocket_s_*)s->sockets[i])->requesting_plugs_ )
+      if( s->sockets[i] && s->sockets[i]->requesting_plugs_ )
       {
-        p_n = oyFilterPlugs_Count( ((oyFilterSocket_s_*)s->sockets[i])->requesting_plugs_ );
+        p_n = oyFilterPlugs_Count( s->sockets[i]->requesting_plugs_ );
         for( j = 0; j < p_n; ++j )
         {
-          p = (oyFilterPlug_s_*)oyFilterPlugs_Get( ((oyFilterSocket_s_*)s->sockets[i])->requesting_plugs_, j );
+          p = (oyFilterPlug_s_*)oyFilterPlugs_Get( s->sockets[i]->requesting_plugs_, j );
 
           if(oyAdjacencyListAdd_( (oyFilterPlug_s*)p, (oyFilterNodes_s*)nodes, (oyFilterPlugs_s*)edges, mark, flags ))
             oyFilterNode_AddToAdjacencyLst_( (oyFilterNode_s_*)p->node,
