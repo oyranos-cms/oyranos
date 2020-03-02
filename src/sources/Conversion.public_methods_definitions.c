@@ -437,16 +437,22 @@ oyImage_s        * oyConversion_GetImage (
   {
     if(oyToInput_m(flags))
     {
-      sock = (oyFilterSocket_s_*) oyFilterNode_GetSocket( 
+      sock = (oyFilterSocket_s_*) oyFilterNode_GetSocket(
                                                  (oyFilterNode_s*)s->input, 0 );
       if(sock)
       {
         image = oyImage_Copy( (oyImage_s*) sock->data, 0 );
 
-        if(!sock->data)
+        if(!image)
         {
-          /* TODO: remove the following hack; the socket->plug cast is ugly */
-          s->input->api7_->oyCMMFilterPlug_Run( (oyFilterPlug_s*) sock, 0 );
+          plug = (oyFilterPlug_s_*)oyFilterNode_GetPlug((oyFilterNode_s*)s->out_,0);
+          pixel_access = oyPixelAccess_Create( 0,0, (oyFilterPlug_s*)plug,
+                                               oyPIXEL_ACCESS_IMAGE, 0 );
+          s->out_->api7_->oyCMMFilterPlug_Run( (oyFilterPlug_s*) plug,
+                                               pixel_access );
+          oyPixelAccess_Release( &pixel_access );
+          oyFilterPlug_Release( (oyFilterPlug_s**)&plug );
+
           image = oyImage_Copy( (oyImage_s*) sock->data, 0 );
         }
       }
@@ -465,12 +471,25 @@ oyImage_s        * oyConversion_GetImage (
           oyFilterPlug_Release( (oyFilterPlug_s**)&plug );
           /* Run the graph to set up processing image data. */
           plug = (oyFilterPlug_s_*) oyFilterNode_GetPlug(
-                                                  (oyFilterNode_s*)s->out_, 0 );
+                                               (oyFilterNode_s*)s->out_, 0 );
           pixel_access = oyPixelAccess_Create( 0,0, (oyFilterPlug_s*)plug,
                                                oyPIXEL_ACCESS_IMAGE, 0 );
           s->out_->api7_->oyCMMFilterPlug_Run( (oyFilterPlug_s*)plug,
                                                pixel_access );
 
+          {
+            oyFilterPlug_s * root_plug = oyFilterNode_GetPlug(
+                                               (oyFilterNode_s*)s->input, 0 );
+            oyFilterNode_s * reader = oyFilterPlug_GetRemoteNode( root_plug );
+            if(reader)
+            {
+              oyObject_UnRef( s->input->oy_ );
+              oyFilterNode_Copy( reader, NULL );
+              s->input = (oyFilterNode_s_*) reader;
+            }
+            oyFilterPlug_Release( &root_plug );
+            oyFilterNode_Release( &reader );
+          }
           /* Link the tickets image. It should be real copied in a plug-in. */
           /* error = oyFilterNode_SetData( s->out_,
                                         (oyStruct_s*)pixel_access->output_image,
