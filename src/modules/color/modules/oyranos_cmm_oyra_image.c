@@ -498,14 +498,14 @@ int      oyraFilterPlug_ImageLoadRun (
                                        oyPixelAccess_s   * ticket )
 {
   int result = 0, error = 0;
-  oyFilterSocket_s * socket = NULL;
+  oyFilterSocket_s * socket = NULL, * socket_tmp = NULL;
   oyFilterNode_s * node = NULL;
   oyImage_s * image = NULL;
   oyCMMapiFilter_s * api = 0;
   oyCMMapiFilters_s * apis = 0;
 
   if(requestor_plug->type_ == oyOBJECT_FILTER_PLUG_S)
-    socket = oyFilterPlug_GetSocket( requestor_plug );
+    socket = socket_tmp = oyFilterPlug_GetSocket( requestor_plug );
   else if(requestor_plug->type_ == oyOBJECT_FILTER_SOCKET_S)
     socket = (oyFilterSocket_s*) requestor_plug;
 
@@ -593,21 +593,29 @@ int      oyraFilterPlug_ImageLoadRun (
         {
           DBGs_PROG2_S( ticket, "%s={%s}", "Run ticket through api7",
                         api7->registration );
-
-          oyOptions_s * opts = oyFilterNode_GetOptions( node, 0 );
-          oyFilterNode_s * format = oyFilterNode_NewWith( api7->registration, opts, 0 );
-          oyOptions_Release( &opts );
-
-          /* set the proper plug->socket, for detecting the calling node inside the filter's _Run method */
-          error = oyFilterNode_Connect( format, "//" OY_TYPE_STD "/data",
-                                        node, "//" OY_TYPE_STD "/data", 0 );
-          if(error)
-            WARNc1_S( "could not add  filter: %s\n", api7->registration );
           oyFilterPlug_s * plug = oyFilterNode_GetPlug( node, 0 );
-          result = api7->oyCMMFilterPlug_Run( plug, ticket );
+          oyFilterSocket_s * sock = oyFilterPlug_GetSocket( plug );
+          oyFilterNode_s * format = NULL, * tmp_node = NULL;
+
+          if(!sock)
+          {
+            oyOptions_s * opts = oyFilterNode_GetOptions( node, 0 );
+            format = oyFilterNode_NewWith( api7->registration, opts, 0 );
+            oyOptions_Release( &opts );
+
+            /* set the proper plug->socket, for detecting the calling node inside the filter's _Run method */
+            error = oyFilterNode_Connect( format, "//" OY_TYPE_STD "/data",
+                                          node, "//" OY_TYPE_STD "/data", 0 );
+            if(error)
+              WARNc1_S( "could not add  filter: %s\n", api7->registration );
+          } else
+            format = tmp_node = oyFilterSocket_GetNode( sock );
+
+          result = oyFilterNode_Run( format, plug, ticket );
 
           /* move the image to the old requestor_plug, as it is expected there */
-          oyFilterSocket_s * sock = oyFilterPlug_GetSocket( plug );
+          if(!sock)
+            sock = oyFilterPlug_GetSocket( plug );
           image = (oyImage_s*) oyFilterSocket_GetData( sock );
           if(image)
             oyFilterSocket_SetData( socket, (oyStruct_s*)image );
@@ -615,6 +623,7 @@ int      oyraFilterPlug_ImageLoadRun (
           oyFilterPlug_Release( &plug );
           oyFilterSocket_Release( &sock );
           oyImage_Release( &image );
+          oyFilterNode_Release( &tmp_node );
           i = n;
         } else
           DBG_PROG2_S( "%s={%s}", "api7 not fitting",
@@ -649,7 +658,7 @@ int      oyraFilterPlug_ImageLoadRun (
 
   oyImage_Release( &image );
   oyFilterNode_Release( &node );
-  oyFilterSocket_Release( &socket );
+  oyFilterSocket_Release( &socket_tmp );
 
   return result;
 }
@@ -1300,7 +1309,37 @@ int      oyraFilterPlug_ImageRootRun ( oyFilterPlug_s    * requestor_plug,
 }
 
 
-oyConnectorImaging_s_ oyra_imageRoot_connector = {
+oyConnectorImaging_s_ oyra_imageRoot_plug = {
+  oyOBJECT_CONNECTOR_IMAGING_S,0,0,
+                               (oyObject_s)&oy_connector_imaging_static_object,
+  oyCMMgetImageConnectorPlugText, /* getText */
+  oy_image_connector_texts, /* texts */
+  "//" OY_TYPE_STD "/image.data", /* connector_type */
+  oyFilterSocket_MatchImagingPlug, /* filterSocket_MatchPlug */
+  1, /* is_plug == oyFilterPlug_s */
+  oyra_image_data_types, /* data_types */
+  6, /* data_types_n; elements in data_types array */
+  -1, /* max_color_offset */
+  1, /* min_channels_count; */
+  255, /* max_channels_count; */
+  1, /* min_color_count; */
+  255, /* max_color_count; */
+  0, /* can_planar; can read separated channels */
+  1, /* can_interwoven; can read continuous channels */
+  0, /* can_swap; can swap color channels (BGR)*/
+  0, /* can_swap_bytes; non host byte order */
+  0, /* can_revert; revert 1 -> 0 and 0 -> 1 */
+  1, /* can_premultiplied_alpha; */
+  1, /* can_nonpremultiplied_alpha; */
+  0, /* can_subpixel; understand subpixel order */
+  0, /* oyCHANNELTYPE_e    * channel_types; */
+  0, /* count in channel_types */
+  1, /* id; relative to oyFilter_s, e.g. 1 */
+  0  /* is_mandatory; mandatory flag */
+};
+oyConnectorImaging_s_ * oyra_imageRoot_plugs[2] = {&oyra_imageRoot_plug,0};
+
+oyConnectorImaging_s_ oyra_imageRoot_socket = {
   oyOBJECT_CONNECTOR_IMAGING_S,0,0,
                                (oyObject_s)&oy_connector_imaging_static_object,
   oyCMMgetImageConnectorSocketText, /* getText */
@@ -1328,7 +1367,7 @@ oyConnectorImaging_s_ oyra_imageRoot_connector = {
   1, /* id; relative to oyFilter_s, e.g. 1 */
   0  /* is_mandatory; mandatory flag */
 };
-oyConnectorImaging_s_ * oyra_imageRoot_connectors[2] = {&oyra_imageRoot_connector,0};
+oyConnectorImaging_s_ * oyra_imageRoot_sockets[2] = {&oyra_imageRoot_socket,0};
 
 
 /** @brief registration string for \b oyra CMM */
@@ -1370,10 +1409,10 @@ oyCMMapi7_s_   oyra_api7_image_root = {
   oyraFilterPlug_ImageRootRun, /* oyCMMFilterPlug_Run_f */
   {0}, /* char data_type[8] */
 
-  0,   /* plugs */
-  0,   /* plugs_n */
+  (oyConnector_s**) oyra_imageRoot_plugs,   /* plugs */
+  1,   /* plugs_n */
   0,   /* plugs_last_add */
-  (oyConnector_s**) oyra_imageRoot_connectors,   /* sockets */
+  (oyConnector_s**) oyra_imageRoot_sockets,   /* sockets */
   1,   /* sockets_n */
   0,   /* sockets_last_add */
   NULL /* char ** properties */
