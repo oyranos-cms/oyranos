@@ -215,6 +215,7 @@ int oyGetNewObjectID()
   oyUnLockFunc_(oy_object_id_mutex_,__FILE__,__LINE__);
   return val;
 }
+void oyObjectIdRelease() { if(oy_object_id_mutex_) oyLockReleaseFunc_( oy_object_id_mutex_, __FILE__,__LINE__ ); oy_object_id_mutex_ = NULL; }
 
 #include <stddef.h>           /* size_t ptrdiff_t */
 #define MAX_OBJECTS_TRACKED 1000000
