@@ -138,18 +138,24 @@ int oyStruct_RegisterStaticMessageFunc (
 void               oyLibCoreRelease  ( )
 {
   int i;
+
   if(oy_static_msg_funcs_)
     oyDeAllocateFunc_(oy_static_msg_funcs_);
   oy_static_msg_funcs_ = NULL;
+
   for( i = 0; i < oy_msg_func_n_; ++i )
     if(oy_static_free_funcs_[i])
       oy_static_free_funcs_[i]();
+
   if(oy_static_free_funcs_)
     oyDeAllocateFunc_(oy_static_free_funcs_);
   oy_static_free_funcs_ = NULL;
   oy_msg_func_n_ = 0;
+
   if(oy_object_show_text_)
     oyFree_m_( oy_object_show_text_ );
+
+  oyObjectIdRelease();
 
   oyI18Nreset_();
 
