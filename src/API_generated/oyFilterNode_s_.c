@@ -854,6 +854,8 @@ oyHash_s *   oyFilterNode_GetHash_   ( oyFilterNode_s_   * node,
   char * hash_text = 0,
        * hash_temp = 0;
   oyHash_s * hash = 0;
+  oyAlloc_f alloc = oyStruct_GetAllocator( (oyStruct_s*)  node ) ? oyStruct_GetAllocator( (oyStruct_s*)  node ) : oyAllocateFunc_;
+  oyDeAlloc_f dealloc = oyStruct_GetDeAllocator( (oyStruct_s*)  node ) ? oyStruct_GetDeAllocator( (oyStruct_s*)  node ) : oyDeAllocateFunc_;
 
   /* create hash text */
   if(core_->api4_->oyCMMFilterNode_GetText)
@@ -866,10 +868,10 @@ oyHash_s *   oyFilterNode_GetHash_   ( oyFilterNode_s_   * node,
     hash_text_ =oyFilterNode_GetText((oyFilterNode_s*)node,oyNAME_NICK);
 
   if(api == 7)
-    oyStringAddPrintf_( &hash_text, oyAllocateFunc_, oyDeAllocateFunc_,
+    oyStringAddPrintf_( &hash_text, alloc, dealloc,
                         "%s:%s", node->api7_->context_type, hash_text_ );
   if(api == 4)
-    oyStringAddPrintf_( &hash_text, oyAllocateFunc_, oyDeAllocateFunc_,
+    oyStringAddPrintf_( &hash_text, alloc, dealloc,
                         "%s:%s", core_->api4_->context_type, hash_text_ );
 
   /* query in cache for api7 */
