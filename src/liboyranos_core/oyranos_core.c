@@ -155,8 +155,6 @@ void               oyLibCoreRelease  ( )
   if(oy_object_show_text_)
     oyFree_m_( oy_object_show_text_ );
 
-  oyObjectIdRelease();
-
   oyI18Nreset_();
 
   oyjlLibRelease();

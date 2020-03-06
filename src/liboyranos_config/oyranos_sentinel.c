@@ -129,6 +129,9 @@ void     oyFinish_                   ( int                 flags )
  */
 void     oyAlphaFinish_              ( int                 unused OY_UNUSED )
 {
+  /* before releasing all modules, the threads module should be used to close the mutex */
+  oyObjectIdRelease();
+
   oyProfiles_Release( &oy_profile_list_cache_ );
   oyStructList_Release( &oy_cmm_cache_ );
   {
@@ -176,6 +179,7 @@ void     oyAlphaFinish_              ( int                 unused OY_UNUSED )
   oyStructList_Release_( &oy_profile_s_file_cache_ );
   oyOptions_Release( &oy_db_cache_ );
   oyOptions_Release( &oy_config_options_dummy_ );
+
   *get_oy_db_cache_init_() = 0;
 }
 

@@ -160,7 +160,7 @@ oyObject_s         oyObject_NewWithAllocators (
     return o;
 #endif
 
-  o->id_ = oyGetNewObjectID();
+  o->id_ = id;
   o->type_ = oyOBJECT_OBJECT_S;
   o->version_ = oyVersion(0);
   o->hash_ptr_ = 0;
