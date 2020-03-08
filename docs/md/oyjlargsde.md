@@ -1,6 +1,6 @@
 # oyjl\-args v1.0.0 {#oyjlargsde}
 <a name="toc"></a>
-[NAME](#name) [ÜBERSICHT](#synopsis) [BESCHREIBUNG](#description) [OPTIONEN](#options) [SIEHE AUCH](#seealso) [AUTOR](#author) [KOPIERRECHT](#copyright) [FEHLER](#bugs) 
+[NAME](#name) [ÜBERSICHT](#synopsis) [BESCHREIBUNG](#description) [OPTIONEN](#options) [BEISPIELE](#examples) [SIEHE AUCH](#seealso) [AUTOR](#author) [KOPIERRECHT](#copyright) [FEHLER](#bugs) 
 
 *"oyjl\-args"* *1* *"26. Juni 2019"* "User Commands"
 
@@ -36,9 +36,14 @@ Werkzeug um Benutzerschnittstellen in JSON von *\-X export* nach Quelltext zu ü
 </table>
 
 
+<h2>BEISPIELE <a href="#toc" name="examples">&uarr;</a></h2>
+
+#### Wandle EntwicklerJSON nach C Quelltext
+&nbsp;&nbsp;oyjl-args \-X export | oyjl\-args \-i \-
+
 <h2>SIEHE AUCH <a href="#toc" name="seealso">&uarr;</a></h2>
 
-&nbsp;&nbsp;[oyjl](oyjl.html)<a href="oyjl.md">(1)</a>&nbsp;&nbsp;[oyjl-translate](oyjltranslate.html)<a href="oyjltranslate.md">(1)</a>&nbsp;&nbsp;[oyjl\-args\-qml](oyjlargsqml.html)<a href="oyjlargsqml.md">(1)</a>
+&nbsp;&nbsp;[oyjl](oyjl.html)<a href="oyjl.md">(1)</a>&nbsp;&nbsp;[oyjl\-translate](oyjltranslate.html)<a href="oyjltranslate.md">(1)</a>&nbsp;&nbsp;[oyjl\-args\-qml](oyjlargsqml.html)<a href="oyjlargsqml.md">(1)</a>
 
 &nbsp;&nbsp;<a href="https://codedocs.xyz/oyranos-cms/oyranos/group__oyjl.html">https://codedocs.xyz/oyranos\-cms/oyranos/group\_\_oyjl.html</a>
 
