@@ -334,7 +334,7 @@ QString AppData::requestPermission( QString name )
     return msg;
 }
 
-int AppData::hasPermission( QString name )
+int AppData::hasPermission( QString name OYJL_UNUSED )
 {
     int has = 1;
 #if defined(Q_OS_ANDROID)
