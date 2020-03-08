@@ -1,6 +1,6 @@
 # oyjl\-args v1.0.0 {#oyjlargs}
 <a name="toc"></a>
-[NAME](#name) [SYNOPSIS](#synopsis) [DESCRIPTION](#description) [OPTIONS](#options) [SEE ALSO](#seealso) [AUTHOR](#author) [COPYRIGHT](#copyright) [BUGS](#bugs) 
+[NAME](#name) [SYNOPSIS](#synopsis) [DESCRIPTION](#description) [OPTIONS](#options) [EXAMPLES](#examples) [SEE ALSO](#seealso) [AUTHOR](#author) [COPYRIGHT](#copyright) [BUGS](#bugs) 
 
 *"oyjl\-args"* *1* *"June 26, 2019"* "User Commands"
 
@@ -36,9 +36,14 @@ Tool to convert UI JSON description from *\-X export* into source code.
 </table>
 
 
+<h2>EXAMPLES <a href="#toc" name="examples">&uarr;</a></h2>
+
+#### Convert eXported developer JSON to C source
+&nbsp;&nbsp;oyjl-args \-X export | oyjl\-args \-i \-
+
 <h2>SEE ALSO <a href="#toc" name="seealso">&uarr;</a></h2>
 
-&nbsp;&nbsp;[oyjl](oyjl.html)<a href="oyjl.md">(1)</a>&nbsp;&nbsp;[oyjl-translate](oyjltranslate.html)<a href="oyjltranslate.md">(1)</a>&nbsp;&nbsp;[oyjl\-args\-qml](oyjlargsqml.html)<a href="oyjlargsqml.md">(1)</a>
+&nbsp;&nbsp;[oyjl](oyjl.html)<a href="oyjl.md">(1)</a>&nbsp;&nbsp;[oyjl\-translate](oyjltranslate.html)<a href="oyjltranslate.md">(1)</a>&nbsp;&nbsp;[oyjl\-args\-qml](oyjlargsqml.html)<a href="oyjlargsqml.md">(1)</a>
 
 &nbsp;&nbsp;<a href="https://codedocs.xyz/oyranos-cms/oyranos/group__oyjl.html">https://codedocs.xyz/oyranos\-cms/oyranos/group\_\_oyjl.html</a>
 
