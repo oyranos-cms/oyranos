@@ -4,6 +4,7 @@
 #  OPENICC_FOUND        - True if OpenICC found.
 #  OPENICC_INCLUDE_DIRS - where to find openicc.h, etc.
 #  OPENICC_LIBRARIES    - List of libraries when using OpenICC.
+#  OPENICC_LIBRARIES_STATIC - List of static libraries when using OpenICC.
 #
 #  OPENICC_VERSION       - The version of openicc (x.y.z)
 #  OPENICC_VERSION_MAJOR - The major version of openicc (x)
@@ -23,7 +24,11 @@ MARK_AS_ADVANCED(OPENICC_INCLUDE_DIR)
 
 # Set path to the library.
 FIND_LIBRARY(OPENICC_LIBRARY
-	NAMES OpenICC openicc-static
+	NAMES OpenICC
+	PATHS @CMAKE_INSTALL_FULL_LIBDIR@
+)
+FIND_LIBRARY(OPENICC_LIBRARY_STATIC
+	NAMES openicc-static
 	PATHS @CMAKE_INSTALL_FULL_LIBDIR@
 )
 MARK_AS_ADVANCED(OPENICC_LIBRARY)
