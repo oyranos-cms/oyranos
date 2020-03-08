@@ -144,7 +144,7 @@ int myMain( int argc, const char ** argv )
   const char * file = NULL;
   int file_count = 0;
   int show_status = 0;
-  int gui = 0;
+  const char * render = NULL;
   int help = 0;
   int verbose = 0;
   int error = 0;
@@ -179,8 +179,8 @@ int myMain( int argc, const char ** argv )
     {"oiwi", OYJL_OPTION_FLAG_EDITABLE,     "@", "",       NULL, _("input"),   _("Set Input"),      NULL, _("FILENAME"), oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)i_choices, sizeof(i_choices), malloc )}, oyjlINT, {.i = &file_count} },
     {"oiwi", 0/*OYJL_OPTION_FLAG_EDITABLE*/,     "i", "input",  NULL, _("input"),   _("Set Input"), _("File"), _("FILENAME"), oyjlOPTIONTYPE_FUNCTION, {.getChoices = getFileChoices}, oyjlSTRING, {.s=&file} },
     {"oiwi", 0,     "o", "output",  NULL, _("output"),  _("Control Output"), NULL, "0|1|2",       oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)o_choices, sizeof(o_choices), malloc )}, oyjlINT, {.i = &output} },
-    /* The --gui option can be hidden and used only internally. */
-    {"oiwi", 0,     "G", "gui",     NULL, _("gui"),     _("GUI"),            NULL, NULL,          oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i = &gui} },
+    /* The --render option can be hidden and used only internally. */
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,     "R", "render", NULL, _("render"),  _("Render"),         NULL, NULL,          oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s = &render} },
     {"oiwi", 0,     "h", "help",    NULL, _("help"),    _("Help"),           _("Print help for command line style interface"), NULL,          oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i = &help} },
     {"oiwi", 0,     "v", "verbose", NULL, _("verbose"), NULL,                NULL, NULL,          oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i = &verbose} },
     {"oiwi", 0,     "e", "error",   NULL, _("error"),   NULL,                NULL, NULL,          oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i = &error} },
@@ -192,7 +192,7 @@ int myMain( int argc, const char ** argv )
   /* type,   flags, name,      description,          help, mandatory, optional, detail */
     {"oiwg", 0,     _("Mode1"),_("Simple mode"),     NULL, "#",       "o,v",    "o" }, /* accepted even if none of the mandatory options is set */
     {"oiwg", 0,     _("Mode2"),_("Any arg mode"),    NULL, "@",       "o,v",    "@,o" },/* accepted if anonymous arguments are set */
-    {"oiwg", 0,     _("Mode3"),_("Actual mode"),     NULL, "i",       "G,o,v",  "i,o" },/* parsed and checked with -i option */
+    {"oiwg", 0,     _("Mode3"),_("Actual mode"),     NULL, "i",       "R,o,v",  "i,o" },/* parsed and checked with -i option */
     {"oiwg", 0,     _("Misc"), _("General options"), NULL, "h,e",     "v",      "h,v,e" },/* -v appears in documentation */
     {"",0,0,0,0,0,0,0}
   };
@@ -210,11 +210,11 @@ int myMain( int argc, const char ** argv )
     fprintf(stderr, "%s %s %d\n", _("started"), __func__, main_count );
   }
 
-  /* GUI boilerplate */
-  if(ui && gui)
+  /* Render boilerplate */
+  if(ui && render)
   {
     int debug = verbose;
-    oyjlArgsQmlStart( argc, argv, NULL, debug, ui, myMain );
+    oyjlArgsRender( argc, argv, NULL, NULL,NULL, debug, ui, myMain );
   }
   else if(ui)
   {
@@ -261,7 +261,7 @@ int main( int argc_ OYJL_UNUSED, char**argv_ OYJL_UNUSED)
 
 #ifdef __ANDROID__
   setenv("COLORTERM", "1", 0); /* show rich text format on non GNU color extension environment */
-  argv[argc++] = "--gui"; /* start QML */
+  argv[argc++] = "--render=gui"; /* start QML */
 #endif
 
   /* language needs to be initialised before setup of data structures */

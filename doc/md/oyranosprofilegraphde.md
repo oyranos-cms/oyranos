@@ -12,15 +12,15 @@ oyranos\-profile\-graph v0.9.7 \- Oyranos Profile Zeichner
 
 **oyranos\-profile\-graph** [<strong>\-t</strong>=<em>NUMMER</em>] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMMER</em>] [<strong>\-o</strong>=<em>\-|DATEI</em>] [<strong>\-f</strong>=<em>FORMAT</em>] [<strong>\-c</strong>] [<strong>\-x</strong>] [<strong>\-d</strong>=<em>NUMMER</em>] [<strong>\-n</strong>] [<strong>\-2</strong>] [<strong>\-4</strong>] [<strong>\-r</strong>] [<strong>\-v</strong>] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
 <br />
-**oyranos\-profile\-graph** <strong>\-S</strong> [<strong>\-t</strong>=<em>NUMMER</em>] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMMER</em>] [<strong>\-R</strong>] [<strong>\-o</strong>=<em>\-|DATEI</em>] [<strong>\-f</strong>=<em>FORMAT</em>] [<strong>\-v</strong>]
+**oyranos\-profile\-graph** <strong>\-S</strong> [<strong>\-t</strong>=<em>NUMMER</em>] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMMER</em>] [<strong>\-T</strong>] [<strong>\-o</strong>=<em>\-|DATEI</em>] [<strong>\-f</strong>=<em>FORMAT</em>] [<strong>\-v</strong>]
 <br />
-**oyranos\-profile\-graph** <strong>\-O</strong> [<strong>\-t</strong>=<em>NUMMER</em>] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMMER</em>] [<strong>\-R</strong>] [<strong>\-o</strong>=<em>\-|DATEI</em>] [<strong>\-f</strong>=<em>FORMAT</em>] [<strong>\-v</strong>]
+**oyranos\-profile\-graph** <strong>\-O</strong> [<strong>\-t</strong>=<em>NUMMER</em>] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMMER</em>] [<strong>\-T</strong>] [<strong>\-o</strong>=<em>\-|DATEI</em>] [<strong>\-f</strong>=<em>FORMAT</em>] [<strong>\-v</strong>]
 <br />
-**oyranos\-profile\-graph** <strong>\-k</strong>=<em>NUMMER</em> [<strong>\-t</strong>=<em>NUMMER</em>] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMMER</em>] [<strong>\-R</strong>] [<strong>\-o</strong>=<em>\-|DATEI</em>] [<strong>\-f</strong>=<em>FORMAT</em>] [<strong>\-v</strong>]
+**oyranos\-profile\-graph** <strong>\-k</strong>=<em>NUMMER</em> [<strong>\-t</strong>=<em>NUMMER</em>] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMMER</em>] [<strong>\-T</strong>] [<strong>\-o</strong>=<em>\-|DATEI</em>] [<strong>\-f</strong>=<em>FORMAT</em>] [<strong>\-v</strong>]
 <br />
-**oyranos\-profile\-graph** <strong>\-i</strong>=<em>WORT</em> [<strong>\-t</strong>=<em>NUMMER</em>] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMMER</em>] [<strong>\-R</strong>] [<strong>\-o</strong>=<em>\-|DATEI</em>] [<strong>\-f</strong>=<em>FORMAT</em>] [<strong>\-v</strong>]
+**oyranos\-profile\-graph** <strong>\-i</strong>=<em>WORT</em> [<strong>\-t</strong>=<em>NUMMER</em>] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMMER</em>] [<strong>\-T</strong>] [<strong>\-o</strong>=<em>\-|DATEI</em>] [<strong>\-f</strong>=<em>FORMAT</em>] [<strong>\-v</strong>]
 <br />
-**oyranos\-profile\-graph** <strong>\-s</strong>=<em>DATEI</em> <strong>\-p</strong>=<em>FORMAT</em> <strong>\-z</strong> [<strong>\-t</strong>=<em>NUMMER</em>] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMMER</em>] [<strong>\-R</strong>] [<strong>\-P</strong>=<em>WORT</em>] [<strong>\-o</strong>=<em>\-|DATEI</em>] [<strong>\-v</strong>]
+**oyranos\-profile\-graph** <strong>\-s</strong>=<em>DATEI</em> <strong>\-p</strong>=<em>FORMAT</em> <strong>\-z</strong> [<strong>\-t</strong>=<em>NUMMER</em>] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMMER</em>] [<strong>\-T</strong>] [<strong>\-P</strong>=<em>WORT</em>] [<strong>\-o</strong>=<em>\-|DATEI</em>] [<strong>\-v</strong>]
 <br />
 **oyranos\-profile\-graph** <strong>\-X</strong>=<em>json|json+command|man|markdown</em> | <strong>\-h</strong> [<strong>\-v</strong>]
 
@@ -47,28 +47,28 @@ Erzeuge aus einem ICC Profil eine Grafik mit seiner Sättigungslinie.
 </table>
 
 #### Standard Betrachter 1931 2° Zeichnung
-&nbsp;&nbsp;**oyranos-profile\-graph** <strong>\-S</strong> [<strong>\-t</strong>=<em>NUMMER</em>] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMMER</em>] [<strong>\-R</strong>] [<strong>\-o</strong>=<em>\-|DATEI</em>] [<strong>\-f</strong>=<em>FORMAT</em>] [<strong>\-v</strong>]
+&nbsp;&nbsp;**oyranos-profile\-graph** <strong>\-S</strong> [<strong>\-t</strong>=<em>NUMMER</em>] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMMER</em>] [<strong>\-T</strong>] [<strong>\-o</strong>=<em>\-|DATEI</em>] [<strong>\-f</strong>=<em>FORMAT</em>] [<strong>\-v</strong>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-S</strong>|<strong>--standard-observer</strong></td> <td>CIE Standard Betrachter 1931 2°</td> </tr>
 </table>
 
 #### 1964 10° Betrachter Zeichnung
-&nbsp;&nbsp;**oyranos-profile\-graph** <strong>\-O</strong> [<strong>\-t</strong>=<em>NUMMER</em>] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMMER</em>] [<strong>\-R</strong>] [<strong>\-o</strong>=<em>\-|DATEI</em>] [<strong>\-f</strong>=<em>FORMAT</em>] [<strong>\-v</strong>]
+&nbsp;&nbsp;**oyranos-profile\-graph** <strong>\-O</strong> [<strong>\-t</strong>=<em>NUMMER</em>] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMMER</em>] [<strong>\-T</strong>] [<strong>\-o</strong>=<em>\-|DATEI</em>] [<strong>\-f</strong>=<em>FORMAT</em>] [<strong>\-v</strong>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-O</strong>|<strong>--observer-64</strong></td> <td>CIE Betrachter 1064 10°</td> </tr>
 </table>
 
 #### Spektrumgraph eines Lambertstrahlers
-&nbsp;&nbsp;**oyranos-profile\-graph** <strong>\-k</strong>=<em>NUMMER</em> [<strong>\-t</strong>=<em>NUMMER</em>] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMMER</em>] [<strong>\-R</strong>] [<strong>\-o</strong>=<em>\-|DATEI</em>] [<strong>\-f</strong>=<em>FORMAT</em>] [<strong>\-v</strong>]
+&nbsp;&nbsp;**oyranos-profile\-graph** <strong>\-k</strong>=<em>NUMMER</em> [<strong>\-t</strong>=<em>NUMMER</em>] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMMER</em>] [<strong>\-T</strong>] [<strong>\-o</strong>=<em>\-|DATEI</em>] [<strong>\-f</strong>=<em>FORMAT</em>] [<strong>\-v</strong>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-k</strong>|<strong>--kelvin</strong> <em>NUMMER</em></td> <td>Lambertstrahler (NUMMER:0 [≥0 ≤25000])</td> </tr>
 </table>
 
 #### Beleuchtungsspektrumzeichnung
-&nbsp;&nbsp;**oyranos-profile\-graph** <strong>\-i</strong>=<em>WORT</em> [<strong>\-t</strong>=<em>NUMMER</em>] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMMER</em>] [<strong>\-R</strong>] [<strong>\-o</strong>=<em>\-|DATEI</em>] [<strong>\-f</strong>=<em>FORMAT</em>] [<strong>\-v</strong>]
+&nbsp;&nbsp;**oyranos-profile\-graph** <strong>\-i</strong>=<em>WORT</em> [<strong>\-t</strong>=<em>NUMMER</em>] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMMER</em>] [<strong>\-T</strong>] [<strong>\-o</strong>=<em>\-|DATEI</em>] [<strong>\-f</strong>=<em>FORMAT</em>] [<strong>\-v</strong>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-i</strong>|<strong>--illuminant</strong> <em>WORT</em></td> <td>Beleuchtungsspektrum
@@ -86,7 +86,7 @@ Erzeuge aus einem ICC Profil eine Grafik mit seiner Sättigungslinie.
 </table>
 
 #### Spektrumgraph
-&nbsp;&nbsp;**oyranos-profile\-graph** <strong>\-s</strong>=<em>DATEI</em> <strong>\-p</strong>=<em>FORMAT</em> <strong>\-z</strong> [<strong>\-t</strong>=<em>NUMMER</em>] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMMER</em>] [<strong>\-R</strong>] [<strong>\-P</strong>=<em>WORT</em>] [<strong>\-o</strong>=<em>\-|DATEI</em>] [<strong>\-v</strong>]
+&nbsp;&nbsp;**oyranos-profile\-graph** <strong>\-s</strong>=<em>DATEI</em> <strong>\-p</strong>=<em>FORMAT</em> <strong>\-z</strong> [<strong>\-t</strong>=<em>NUMMER</em>] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMMER</em>] [<strong>\-T</strong>] [<strong>\-P</strong>=<em>WORT</em>] [<strong>\-o</strong>=<em>\-|DATEI</em>] [<strong>\-v</strong>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-s</strong>|<strong>--spectral</strong> <em>DATEI</em></td> <td>Spektrale Eingabe </tr>
@@ -114,7 +114,7 @@ Erzeuge aus einem ICC Profil eine Grafik mit seiner Sättigungslinie.
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-b</strong>|<strong>--no-border</strong></td> <td>Lasse Rand aus in Zeichnung</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-g</strong>|<strong>--no-color</strong></td> <td>Zeichne grau</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-w</strong>|<strong>--width</strong> <em>NUMMER</em></td> <td>Gib Ausgabebildbreite in Pixel an (NUMMER:128 [≥64 ≤4096])</td> </tr>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-R</strong>|<strong>--raster</strong></td> <td>Zeichne Gitter</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-T</strong>|<strong>--raster</strong></td> <td>Zeichne Gitter</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-o</strong>|<strong>--output</strong> <em>-|DATEI</em></td> <td>Gib Ausgabedateiname an, voreingestellt ist stdout </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-f</strong>|<strong>--format</strong> <em>FORMAT</em></td> <td>Gib Ausgabeformat PNG oder SVG an, voreingestellt ist PNG
   <table>

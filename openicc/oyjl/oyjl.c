@@ -52,14 +52,14 @@ int myMain( int argc, const char ** argv )
   int key = 0;
   int count = 0;
   int type = 0;
-  const char * set = 0;
-  const char * i_filename = 0;
-  const char * xpath = 0;
+  const char * set = NULL;
+  const char * i_filename = NULL;
+  const char * xpath = NULL;
   int verbose = 0;
   int help = 0;
   int version = 0;
-  int gui = 0;
-  const char * export = 0;
+  const char * render = NULL;
+  const char * export = NULL;
 
   /* handle options */
   oyjlUiHeaderSection_s * sections = oyjlUiInfo( _("The oyjl program can be used to parse, filter sub trees, select values and modify values in JSON texts."),
@@ -105,10 +105,11 @@ int myMain( int argc, const char ** argv )
     {"oiwi", 0,                          "S","man-see_also",  NULL,     _("SEE ALSO"),NULL,                      NULL, NULL,
         oyjlOPTIONTYPE_CHOICE,   {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)S_choices, sizeof(S_choices), malloc )}, oyjlNONE,      {}},
     /* default options -h and -v */
-    {"oiwi", 0, "h", "help", NULL, _("help"), _("Help"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&help} },
+    {"oiwi", 0, "h", "help", NULL, _("help"), _("Help"),      NULL,     NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&help} },
     {"oiwi", 0, "v","verbose",NULL,_("Verbose"),_("increase verbosity"), NULL, NULL, oyjlOPTIONTYPE_NONE,{0},oyjlINT,{.i=&verbose}},
-    /* The --gui option can be hidden and used only internally. */
-    {"oiwi", 0, "G", "gui",     NULL, _("gui"),     _("GUI"),     NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&gui} },
+    /* The --render option can be hidden and used only internally. */
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,   "R","render",       NULL,     _("render"),   _("Render"),         NULL, NULL,
+        oyjlOPTIONTYPE_CHOICE, {0},                  oyjlSTRING,    {.s=&render}},
     {"oiwi", 0, "V", "version", NULL, _("version"), _("Version"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&version} },
     /* default option template -X|--export */
     {"oiwi", 0, "X", "export", NULL, NULL, NULL, NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = NULL}, oyjlSTRING, {.s=&export} },
@@ -171,14 +172,14 @@ int myMain( int argc, const char ** argv )
     goto clean_main;
   }
 
-  /* GUI boilerplate */
-  if(ui && gui)
+  /* Render boilerplate */
+  if(ui && render)
   {
-#if !defined(NO_OYJL_ARGS_QML_START)
+#if !defined(NO_OYJL_ARGS_RENDER)
     int debug = verbose;
-    oyjlArgsQmlStart( argc, argv, NULL, debug, ui, myMain );
+    oyjlArgsRender( argc, argv, NULL, NULL,NULL, debug, ui, myMain );
 #else
-    fprintf( stderr, "No GUI support compiled in. For a GUI use -X json and load into oyjl-args-qml viewer." );
+    fprintf( stderr, "No render support compiled in. For a GUI use -X json and load into oyjl-args-qml viewer." );
 #endif
   }
   else if(ui)
@@ -367,7 +368,7 @@ int main( int argc_, char**argv_, char ** envv )
 
   argv = calloc( argc + 2, sizeof(char*) );
   memcpy( argv, argv_, (argc + 2) * sizeof(char*) );
-  argv[argc++] = "--gui"; /* start QML */
+  argv[argc++] = "--render=gui"; /* start QML */
   environment = environ;
 #else
   environment = envv;

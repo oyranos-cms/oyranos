@@ -308,7 +308,7 @@ int myMain( int argc , const char** argv )
   int state = 0;
   int worked = 0;
   oyjlOptions_s * opts;
-  int gui = 0;
+  const char * render = NULL;
   oyjlUi_s * ui;
   oyjlUiHeaderSection_s * info;
   const char * man_page = getenv("DISPLAY");
@@ -378,8 +378,8 @@ int myMain( int argc , const char** argv )
     {"oiwi", 0, "z", "system-wide", NULL, _("system wide"), _("System wide DB setting"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&system_wide} },
     /* default option template -X|--export */
     {"oiwi", 0, "X", "export", NULL, NULL, NULL, NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = NULL}, oyjlSTRING, {.s=&export} },
-    /* The --gui option can be hidden and used only internally. */
-    {"oiwi", 0, "G", "gui",  NULL, _("gui"),  _("GUI"),  NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i = &gui} },
+    /* The --render option can be hidden and used only internally. */
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "R", "render",  NULL, _("render"),  _("Render"),  NULL, NULL, oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.i = &render} },
     {"oiwi", 0, "h", "help", NULL, _("help"), _("Help"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&help} },
     {"oiwi", 0, "v", "verbose", NULL, _("verbose"), _("verbose"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&verbose} },
     {"oiwi", 0, "V", "version", NULL, _("version"), _("Version"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&version} },
@@ -474,12 +474,12 @@ int myMain( int argc , const char** argv )
                   oyNoEmptyName_m_(oyVersionString(1,0)));
 
 
-#if !defined(NO_OYJL_ARGS_QML_START)
-  /* GUI boilerplate */
-  if(gui)
+#if !defined(NO_OYJL_ARGS_RENDER)
+  /* Render boilerplate */
+  if(render)
   { 
     int debug = verbose;
-    oyjlArgsQmlStart( argc, argv, NULL, debug, ui, myMain );
+    oyjlArgsRender( argc, argv, NULL, NULL,NULL, debug, ui, myMain );
     oyjlUi_Release( &ui);
     return 0;
   }
@@ -685,7 +685,7 @@ int main( int argc_, char ** argv_)
 
   argv = calloc( argc + 2, sizeof(char*) );
   memcpy( argv, argv_, (argc + 2) * sizeof(char*) );
-  argv[argc++] = "--gui"; /* start QML */
+  argv[argc++] = "--render=gui"; /* start QML */
 #endif
 
   myMain(argc, (const char **)argv);

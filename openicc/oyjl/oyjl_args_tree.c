@@ -521,7 +521,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
   {
     oyjl_val val;
     char * app_type;
-    int i,n, X_found = 0, export_found = 0, help_found = 0, verbose_found = 0, version_found = 0, gui_found = 0;
+    int i,n, X_found = 0, export_found = 0, help_found = 0, verbose_found = 0, version_found = 0, render_found = 0;
 
     val = oyjlTreeGetValue( root, 0, OYJL_REG "/ui/app_type" ); app_type = OYJL_GET_STRING(val);
     oyjlStrAdd( s, "#include \"oyjl.h\"\n" );
@@ -583,8 +583,8 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
           verbose_found = 1;
         if(strcmp(t,"version") == 0)
           version_found = 1;
-        if(strcmp(t,"gui") == 0)
-          gui_found = 1;
+        if(strcmp(t,"render") == 0)
+          render_found = 1;
       }
       if(t) free(t);
     }
@@ -596,8 +596,8 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
         oyjlStrAdd( s, "  int verbose = 0;\n" );
       if(!version_found)
         oyjlStrAdd( s, "  int version = 0;\n" );
-      if(!gui_found)
-        oyjlStrAdd( s, "  int gui = 0;\n" );
+      if(!render_found)
+        oyjlStrAdd( s, "  const char * render = NULL;\n" );
     }
     if(!export_found)
     oyjlStrAdd( s, "  const char * export = 0;\n" );
@@ -873,10 +873,10 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
       oyjlStrAdd(s,"    {\"oiwi\", 0, \"h\", \"help\", NULL, _(\"help\"), _(\"Help\"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&help} },\n" );
       if(!verbose_found && !oyjlFindOption( root, 'v' ))
       oyjlStrAdd(s,"    {\"oiwi\", 0, \"v\", \"verbose\", NULL, _(\"verbose\"), _(\"Verbose\"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&verbose} },\n" );
-      if(!gui_found && !oyjlFindOption( root, 'G' ))
+      if(!render_found && !oyjlFindOption( root, 'R' ))
       {
-      oyjlStrAdd(s,"    /* The --gui option can be hidden and used only internally. */\n" );
-      oyjlStrAdd(s,"    {\"oiwi\", 0, \"G\", \"gui\",     NULL, _(\"gui\"),     _(\"GUI\"),     NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&gui} },\n" );
+      oyjlStrAdd(s,"    /* The --render option can be hidden and used only internally. */\n" );
+      oyjlStrAdd(s,"    {\"oiwi\", OYJL_OPTION_FLAG_EDITABLE, \"R\", \"render\",  NULL, _(\"render\"),  _(\"Render\"),  NULL, NULL, oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s=&render} },\n" );
       }
       if(!version_found && !oyjlFindOption( root, 'V' ))
       oyjlStrAdd(s,"    {\"oiwi\", 0, \"V\", \"version\", NULL, _(\"version\"), _(\"Version\"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&version} },\n" );
@@ -956,7 +956,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
     oyjlStrAdd( s, "    goto clean_main;\n" );
     oyjlStrAdd( s, "  }\n" );
     oyjlStrAdd( s, "\n" );
-    oyjlStrAdd( s, "  if(verbose)\n" );
+    oyjlStrAdd( s, "  if(ui && verbose)\n" );
     oyjlStrAdd( s, "  {\n" );
     oyjlStrAdd( s, "    char * json = oyjlOptions_ResultsToJson( ui->opts );\n" );
     oyjlStrAdd( s, "    if(json)\n" );
@@ -969,7 +969,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
     oyjlStrAdd( s, "    fputs( \"\\n\", stderr );\n" );
     oyjlStrAdd( s, "  }\n" );
     oyjlStrAdd( s, "\n" );
-    oyjlStrAdd( s, "  if((export && strcmp(export,\"json+command\") == 0))\n" );
+    oyjlStrAdd( s, "  if(ui && (export && strcmp(export,\"json+command\") == 0))\n" );
     oyjlStrAdd( s, "  {\n" );
     oyjlStrAdd( s, "    char * json = oyjlUi_ToJson( ui, 0 ),\n" );
     oyjlStrAdd( s, "         * json_commands = NULL;\n" );
@@ -979,14 +979,14 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
     oyjlStrAdd( s, "    goto clean_main;\n" );
     oyjlStrAdd( s, "  }\n" );
     oyjlStrAdd( s, "\n" );
-    oyjlStrAdd( s, "  /* GUI boilerplate */\n" );
-    oyjlStrAdd( s, "  if(ui && gui)\n" );
+    oyjlStrAdd( s, "  /* Render boilerplate */\n" );
+    oyjlStrAdd( s, "  if(ui && render)\n" );
     oyjlStrAdd( s, "  {\n" );
-    oyjlStrAdd( s, "#if !defined(NO_OYJL_ARGS_QML_START)\n" );
+    oyjlStrAdd( s, "#if !defined(NO_OYJL_ARGS_RENDER)\n" );
     oyjlStrAdd( s, "    int debug = verbose;\n" );
-    oyjlStrAdd( s, "    oyjlArgsQmlStart( argc, argv, NULL, debug, ui, myMain );\n" );
+    oyjlStrAdd( s, "    oyjlArgsRender( argc, argv, NULL, NULL,NULL, debug, ui, myMain );\n" );
     oyjlStrAdd( s, "#else\n" );
-    oyjlStrAdd( s, "    fprintf( stderr, \"No gui support compiled in. For a GUI use -X json and load into oyjl-args-qml viewer.\" );\n" );
+    oyjlStrAdd( s, "    fprintf( stderr, \"No render support compiled in. For a GUI use -X json and load into oyjl-args-render viewer.\" );\n" );
     oyjlStrAdd( s, "#endif\n" );
     oyjlStrAdd( s, "  } else if(ui)\n" );
     oyjlStrAdd( s, "  {\n" );
@@ -1021,7 +1021,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
     oyjlStrAdd( s, "\n" );
     oyjlStrAdd( s, "  argv = calloc( argc + 2, sizeof(char*) );\n" );
     oyjlStrAdd( s, "  memcpy( argv, argv_, (argc + 2) * sizeof(char*) );\n" );
-    oyjlStrAdd( s, "  argv[argc++] = \"--gui\"; /* start QML */\n" );
+    oyjlStrAdd( s, "  argv[argc++] = \"--render=gui\"; /* start Renderer (e.g. QML) */\n" );
     oyjlStrAdd( s, "  environment = environ;\n" );
     oyjlStrAdd( s, "#else\n" );
     oyjlStrAdd( s, "  environment = envv;\n" );

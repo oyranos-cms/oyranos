@@ -53,6 +53,9 @@ oyjlUiHeaderSection_s * oyjlUiInfo   ( const char          * documentation,
                                        const char          * date_name,
                                        const char          * date_description );
 
+char *       oyjlStringToLower       ( const char        * t );
+char *       oyjlStringToUpper       ( const char        * t );
+
 #ifdef __cplusplus
 }
 #endif

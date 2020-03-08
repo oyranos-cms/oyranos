@@ -233,7 +233,7 @@ int oyjlArgsQmlStart__               ( int                 argc,
 
 extern "C" { // "C" API wrapper
 // internal API entry for public API in libOyjlCore
-int oyjlArgsQmlStart_                ( int                 argc,
+int oyjlArgsQml_                     ( int                 argc,
                                        const char       ** argv,
                                        const char        * json,
                                        const char        * commands,
@@ -247,8 +247,76 @@ int oyjlArgsQmlStart_                ( int                 argc,
 }
 
 #ifdef COMPILE_STATIC
+#include "oyjl_tree_internal.h" /* oyjlStringToLower() */
+static int oyjlArgsRendererSelect   (  oyjlUi_s          * ui )
+{
+  const char * arg = NULL, * name = NULL;
+  oyjlOption_s * R;
+  int error = -1;
+
+  if( !ui )
+  {
+    oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "no \"ui\" argument passed in", OYJL_DBG_ARGS );
+    return 1;
+  }
+
+  R = oyjlOptions_GetOptionL( ui->opts, "R" );
+  if(!R)
+  {
+    oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "no \"-R|--render\" argument found: Can not select", OYJL_DBG_ARGS );
+    return 1;
+  }
+
+  if(R->variable_type != oyjlSTRING)
+  {
+    oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "no \"-R|--render\" oyjlSTRING variable declared", OYJL_DBG_ARGS );
+    return 1;
+  }
+
+  arg = oyjlStringCopy( *R->variable.s, NULL );
+  if(!arg)
+  {
+    oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "no \"-R|--render\" oyjlSTRING variable found", OYJL_DBG_ARGS );
+    return 1;
+  }
+  else
+  {
+    if(arg[0])
+    {
+      char * low = oyjlStringToLower( arg );
+      if(low)
+      {
+        if(strlen(low) >= strlen("gui") && memcmp("gui",low,strlen("gui")) == 0)
+          name = "OyjlArgsQml";
+        else
+        if(strlen(low) >= strlen("qml") && memcmp("qml",low,strlen("qml")) == 0)
+          name = "OyjlArgsQml";
+        else
+        if(strlen(low) >= strlen("web") && memcmp("web",low,strlen("web")) == 0)
+          name = "OyjlArgsWeb";
+        if(!name)
+        {
+          oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "\"-R|--render\" not supported: %s|%s", OYJL_DBG_ARGS, arg,low );
+          free(low);
+          return 1;
+        }
+        if(strcmp(name,"OyjlArgsQml") == 0)
+          error = 0;
+        else
+          oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "\"-R|--render\" not supported: %s|%s", OYJL_DBG_ARGS, arg,low );
+        free(low);
+      }
+    }
+    else /* report all available renderers */
+    {
+      oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "OyjlArgsQml available - option -R=\"gui\"", OYJL_DBG_ARGS );
+    }
+  }
+
+  return error;
+}
 // public API for liboyjl-args-qml-static.a
-int oyjlArgsQmlStart2                ( int                 argc,
+int oyjlArgsRender                   ( int                 argc,
                                        const char       ** argv,
                                        const char        * json,
                                        const char        * commands,
@@ -257,22 +325,9 @@ int oyjlArgsQmlStart2                ( int                 argc,
                                        oyjlUi_s          * ui,
                                        int               (*callback)(int argc, const char ** argv))
 {
-  int result;
-  result = oyjlArgsQmlStart_(argc, argv, json, commands, output, debug, ui, callback );
-  fflush(stdout);
-  fflush(stderr);
-  return result;
-}
-
-int oyjlArgsQmlStart                 ( int                 argc,
-                                       const char       ** argv,
-                                       const char        * json,
-                                       int                 debug,
-                                       oyjlUi_s          * ui,
-                                       int               (*callback)(int argc, const char ** argv))
-{
-  int result;
-  result = oyjlArgsQmlStart_(argc, argv, json, NULL, NULL, debug, ui, callback );
+  int result = 1;
+  if(oyjlArgsRendererSelect(ui) == 0)
+    result = oyjlArgsQml_(argc, argv, json, commands, output, debug, ui, callback );
   fflush(stdout);
   fflush(stderr);
   return result;

@@ -255,7 +255,7 @@ int myMain( int argc, const char ** argv )
   oyI18NInit_();
 
   oyjlOptions_s * opts;
-  int gui = 0;
+  const char * render = NULL;
   oyjlUi_s * ui;
   oyjlUiHeaderSection_s * info;
   const char * export = NULL;
@@ -321,7 +321,7 @@ int myMain( int argc, const char ** argv )
     {"oiwi", 0, "O", "observer-64",   NULL, _("10° Observer"),  _("CIE Observer 1964 10°"),  NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&observer64} },
 
     {"oiwi", 0, "r", "no-repair",     NULL, _("No repair"),     _("No Profile repair of ICC profile ID"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&no_repair} },
-    {"oiwi", 0, "R", "raster",        NULL, _("Raster"),        _("Draw Raster"),            NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&raster} },
+    {"oiwi", 0, "T", "raster",        NULL, _("Raster"),        _("Draw Raster"),            NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&raster} },
     {"oiwi", 0, "t", "thickness",     NULL, _("Thickness"),     _("Specify the thickness of the graph lines"), NULL, _("NUMBER"), oyjlOPTIONTYPE_DOUBLE,
       {.dbl.start = 0.0, .dbl.end = 10.0, .dbl.tick = 0.05, .dbl.d = 1.0}, oyjlDOUBLE, {.d=&thickness} },
     {"oiwi", 0, "w", "width",         NULL, _("Width"),         _("Specify output image width in pixel"), NULL, _("NUMBER"), oyjlOPTIONTYPE_DOUBLE,
@@ -329,8 +329,8 @@ int myMain( int argc, const char ** argv )
     {"oiwi", 0, "x", "xyy",           NULL, _("xyY"),           _("Use CIE*xyY *x*y plane for saturation line projection"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&xyy_plane} },
     {"oiwi", 0, "z", "scale",         NULL, _("Scale"),         _("Scale the height of the spectrum graph"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&scale_spectrum} },
 
-    /* The --gui option can be hidden and used only internally. */
-    {"oiwi", 0, "G", "gui",  NULL, _("gui"),  _("GUI"),  NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i = &gui} },
+    /* The --render option can be hidden and used only internally. */
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "R", "render",  NULL, _("render"),  _("Render"),  NULL, NULL, oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s = &render} },
     /* default options -h and -v */
     {"oiwi", 0, "h", "help", NULL, _("help"), _("Help"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&help} },
     {"oiwi", 0, "v", "verbose", NULL, _("verbose"), _("verbose"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&verbose} },
@@ -348,12 +348,12 @@ int myMain( int argc, const char ** argv )
   oyjlOptionGroup_s groups[] = {
   /* type,   flags, name, description, help, mandatory, optional, detail */
     {"oiwg", 0, _("Saturation"), _("2D Graph from profiles"), _("Create a 2D Graph containing the saturation line from a ICC Profile."), "@", "t,b,g,w,o,f,c,x,d,n,2,4,r,v", "@,d,x,c,n,2,4,r" },
-    {"oiwg", 0, _("StdObs2°"), _("Standard Observer 1931 2° Graph"), NULL, "S", "t,b,g,w,R,o,f,v", "S" },
-    {"oiwg", 0, _("Obs10°"), _("1964 10° Observer Graph"), NULL, "O", "t,b,g,w,R,o,f,v", "O" },
-    {"oiwg", 0, _("Blackbody Radiator"), _("Blackbody Radiator Spectrum Graph"), NULL, "k", "t,b,g,w,R,o,f,v", "k" },
-    {"oiwg", 0, _("Illuminant Spectrum"), _("Illuminant Spectrum Graph"), NULL, "i", "t,b,g,w,R,o,f,v", "i" },
-    {"oiwg", 0, _("Spectral Input"), _("Spectral Input Graph"), NULL, "s,p,z", "t,b,g,w,R,P,o,v", "s,p,P,z" },
-    {"oiwg", 0, _("Misc"), _("General options"), NULL, "X|h", "v", "t,b,g,w,R,o,f,h,X,v" },
+    {"oiwg", 0, _("StdObs2°"), _("Standard Observer 1931 2° Graph"), NULL, "S", "t,b,g,w,T,o,f,v", "S" },
+    {"oiwg", 0, _("Obs10°"), _("1964 10° Observer Graph"), NULL, "O", "t,b,g,w,T,o,f,v", "O" },
+    {"oiwg", 0, _("Blackbody Radiator"), _("Blackbody Radiator Spectrum Graph"), NULL, "k", "t,b,g,w,T,o,f,v", "k" },
+    {"oiwg", 0, _("Illuminant Spectrum"), _("Illuminant Spectrum Graph"), NULL, "i", "t,b,g,w,T,o,f,v", "i" },
+    {"oiwg", 0, _("Spectral Input"), _("Spectral Input Graph"), NULL, "s,p,z", "t,b,g,w,T,P,o,v", "s,p,P,z" },
+    {"oiwg", 0, _("Misc"), _("General options"), NULL, "X|h", "v", "t,b,g,w,T,o,f,h,X,v" },
     {"",0,0,0,0,0,0,0}
   };
   opts->groups = (oyjlOptionGroup_s*)oyjlStringAppendN( NULL, (const char*)groups, sizeof(groups), 0);
@@ -370,7 +370,7 @@ int myMain( int argc, const char ** argv )
     return 0;
   if(!ui) return 1;
 
-  if(!export && !input && !profile_count && !standardobs && !observer64 && !kelvin && !illuminant && !gui)
+  if(!export && !input && !profile_count && !standardobs && !observer64 && !kelvin && !illuminant && !render)
   {
     oyjlUiHeaderSection_s * version = oyjlUi_GetHeaderSection( ui,
                                                                "version" );
@@ -410,12 +410,12 @@ int myMain( int argc, const char ** argv )
     exit(0);
   }
 
-#if !defined(NO_OYJL_ARGS_QML_START)
-  /* GUI boilerplate */
-  if(gui)
+#if !defined(NO_OYJL_ARGS_RENDER)
+  /* Render boilerplate */
+  if(render)
   { 
     int debug = verbose;
-    oyjlArgsQmlStart( argc, argv, NULL, debug, ui, myMain );
+    oyjlArgsRender( argc, argv, NULL, NULL,NULL, debug, ui, myMain );
     oyjlUi_Release( &ui);
     return 0;
   }
@@ -1225,7 +1225,7 @@ int main( int argc_, char**argv_, char ** envv )
 
   argv = calloc( argc + 2, sizeof(char*) );
   memcpy( argv, argv_, (argc + 2) * sizeof(char*) );
-  argv[argc++] = "--gui"; /* start QML */
+  argv[argc++] = "--render=gui"; /* start QML */
   environment = environ;
 #else
   environment = envv;

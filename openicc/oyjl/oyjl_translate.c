@@ -63,8 +63,8 @@ int myMain( int argc, const char ** argv )
   int verbose = 0;
   int help = 0;
   int version = 0;
-  int gui = 0;
-  const char * export = 0;
+  const char * render = NULL;
+  const char * export = NULL;
 
   /* handle options */
   /* Select a nick from *version*, *manufacturer*, *copyright*, *license*,
@@ -120,8 +120,8 @@ int myMain( int argc, const char ** argv )
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&help}},
     {"oiwi", 0,                          "v","verbose",       NULL,     _("Verbose"),  _("increase verbosity"),      NULL, NULL,               
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&verbose}},
-    {"oiwi", 0,                          "G","gui",           NULL,     _("gui"),      _("GUI"),                     NULL, NULL,               
-        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&gui}},
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "R","render",        NULL,     _("render"),   _("Render"),                  NULL, NULL,               
+        oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&render}},
     {"oiwi", 0,                          "V","version",       NULL,     _("version"),  _("Version"),                 NULL, NULL,               
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&version}},
     /* default option template -X|--export */
@@ -189,14 +189,14 @@ int myMain( int argc, const char ** argv )
     goto clean_main;
   }
 
-  /* GUI boilerplate */
-  if(ui && gui)
+  /* Render boilerplate */
+  if(ui && render)
   {
-#if !defined(NO_OYJL_ARGS_QML_START)
+#if !defined(NO_OYJL_ARGS_RENDER)
     int debug = verbose;
-    oyjlArgsQmlStart( argc, argv, NULL, debug, ui, myMain );
+    oyjlArgsRender( argc, argv, NULL, NULL,NULL, debug, ui, myMain );
 #else
-    fprintf( stderr, "No GUI support compiled in. For a GUI use -X json and load into oyjl-args-qml viewer." );
+    fprintf( stderr, "No render support compiled in. For a GUI use -X json and load into oyjl-args-qml viewer." );
 #endif
   }
   else if(ui)
@@ -451,7 +451,7 @@ int main( int argc_, char**argv_, char ** envv )
 
   argv = calloc( argc + 2, sizeof(char*) );
   memcpy( argv, argv_, (argc + 2) * sizeof(char*) );
-  argv[argc++] = "--gui"; /* start QML */
+  argv[argc++] = "--render=\"gui\""; /* start QML */
   environment = environ;
 #else
   environment = envv;

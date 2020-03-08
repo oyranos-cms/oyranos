@@ -4,15 +4,15 @@ oyranos-profile-graph v0.9.7 \- Oyranos Profile Zeichner
 .SH ÜBERSICHT
 \fBoyranos-profile-graph\fR [\fB\-t\fR \fINUMMER\fR] [\fB\-b\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMMER\fR] [\fB\-o\fR \fI-|DATEI\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-c\fR] [\fB\-x\fR] [\fB\-d\fR \fINUMMER\fR] [\fB\-n\fR] [\fB\-2\fR] [\fB\-4\fR] [\fB\-r\fR] [\fB\-v\fR] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
 .br
-\fBoyranos-profile-graph\fR \fB\-S\fR [\fB\-t\fR \fINUMMER\fR] [\fB\-b\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMMER\fR] [\fB\-R\fR] [\fB\-o\fR \fI-|DATEI\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-v\fR]
+\fBoyranos-profile-graph\fR \fB\-S\fR [\fB\-t\fR \fINUMMER\fR] [\fB\-b\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMMER\fR] [\fB\-T\fR] [\fB\-o\fR \fI-|DATEI\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-v\fR]
 .br
-\fBoyranos-profile-graph\fR \fB\-O\fR [\fB\-t\fR \fINUMMER\fR] [\fB\-b\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMMER\fR] [\fB\-R\fR] [\fB\-o\fR \fI-|DATEI\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-v\fR]
+\fBoyranos-profile-graph\fR \fB\-O\fR [\fB\-t\fR \fINUMMER\fR] [\fB\-b\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMMER\fR] [\fB\-T\fR] [\fB\-o\fR \fI-|DATEI\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-v\fR]
 .br
-\fBoyranos-profile-graph\fR \fB\-k\fR \fINUMMER\fR [\fB\-t\fR \fINUMMER\fR] [\fB\-b\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMMER\fR] [\fB\-R\fR] [\fB\-o\fR \fI-|DATEI\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-v\fR]
+\fBoyranos-profile-graph\fR \fB\-k\fR \fINUMMER\fR [\fB\-t\fR \fINUMMER\fR] [\fB\-b\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMMER\fR] [\fB\-T\fR] [\fB\-o\fR \fI-|DATEI\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-v\fR]
 .br
-\fBoyranos-profile-graph\fR \fB\-i\fR \fIWORT\fR [\fB\-t\fR \fINUMMER\fR] [\fB\-b\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMMER\fR] [\fB\-R\fR] [\fB\-o\fR \fI-|DATEI\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-v\fR]
+\fBoyranos-profile-graph\fR \fB\-i\fR \fIWORT\fR [\fB\-t\fR \fINUMMER\fR] [\fB\-b\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMMER\fR] [\fB\-T\fR] [\fB\-o\fR \fI-|DATEI\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-v\fR]
 .br
-\fBoyranos-profile-graph\fR \fB\-s\fR \fIDATEI\fR \fB\-p\fR \fIFORMAT\fR \fB\-z\fR [\fB\-t\fR \fINUMMER\fR] [\fB\-b\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMMER\fR] [\fB\-R\fR] [\fB\-P\fR \fIWORT\fR] [\fB\-o\fR \fI-|DATEI\fR] [\fB\-v\fR]
+\fBoyranos-profile-graph\fR \fB\-s\fR \fIDATEI\fR \fB\-p\fR \fIFORMAT\fR \fB\-z\fR [\fB\-t\fR \fINUMMER\fR] [\fB\-b\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMMER\fR] [\fB\-T\fR] [\fB\-P\fR \fIWORT\fR] [\fB\-o\fR \fI-|DATEI\fR] [\fB\-v\fR]
 .br
 \fBoyranos-profile-graph\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-h\fR [\fB\-v\fR]
 .SH BESCHREIBUNG
@@ -44,25 +44,25 @@ Erzeuge aus einem ICC Profil eine Grafik mit seiner Sättigungslinie.
 .br
 .SS
 Standard Betrachter 1931 2° Zeichnung
-\fBoyranos-profile-graph\fR \fB\-S\fR [\fB\-t\fR \fINUMMER\fR] [\fB\-b\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMMER\fR] [\fB\-R\fR] [\fB\-o\fR \fI-|DATEI\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-v\fR]
+\fBoyranos-profile-graph\fR \fB\-S\fR [\fB\-t\fR \fINUMMER\fR] [\fB\-b\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMMER\fR] [\fB\-T\fR] [\fB\-o\fR \fI-|DATEI\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-v\fR]
 .br
 \fB\-S\fR|\fB\-\-standard-observer\fR	CIE Standard Betrachter 1931 2°
 .br
 .SS
 1964 10° Betrachter Zeichnung
-\fBoyranos-profile-graph\fR \fB\-O\fR [\fB\-t\fR \fINUMMER\fR] [\fB\-b\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMMER\fR] [\fB\-R\fR] [\fB\-o\fR \fI-|DATEI\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-v\fR]
+\fBoyranos-profile-graph\fR \fB\-O\fR [\fB\-t\fR \fINUMMER\fR] [\fB\-b\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMMER\fR] [\fB\-T\fR] [\fB\-o\fR \fI-|DATEI\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-v\fR]
 .br
 \fB\-O\fR|\fB\-\-observer-64\fR	CIE Betrachter 1064 10°
 .br
 .SS
 Spektrumgraph eines Lambertstrahlers
-\fBoyranos-profile-graph\fR \fB\-k\fR \fINUMMER\fR [\fB\-t\fR \fINUMMER\fR] [\fB\-b\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMMER\fR] [\fB\-R\fR] [\fB\-o\fR \fI-|DATEI\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-v\fR]
+\fBoyranos-profile-graph\fR \fB\-k\fR \fINUMMER\fR [\fB\-t\fR \fINUMMER\fR] [\fB\-b\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMMER\fR] [\fB\-T\fR] [\fB\-o\fR \fI-|DATEI\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-v\fR]
 .br
 \fB\-k\fR|\fB\-\-kelvin\fR \fINUMMER\fR	Lambertstrahler (NUMMER:0 [≥0 ≤25000])
 .br
 .SS
 Beleuchtungsspektrumzeichnung
-\fBoyranos-profile-graph\fR \fB\-i\fR \fIWORT\fR [\fB\-t\fR \fINUMMER\fR] [\fB\-b\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMMER\fR] [\fB\-R\fR] [\fB\-o\fR \fI-|DATEI\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-v\fR]
+\fBoyranos-profile-graph\fR \fB\-i\fR \fIWORT\fR [\fB\-t\fR \fINUMMER\fR] [\fB\-b\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMMER\fR] [\fB\-T\fR] [\fB\-o\fR \fI-|DATEI\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-v\fR]
 .br
 \fB\-i\fR|\fB\-\-illuminant\fR \fIWORT\fR	Beleuchtungsspektrum
 .br
@@ -96,7 +96,7 @@ Beleuchtungsspektrumzeichnung
 .br
 .SS
 Spektrumgraph
-\fBoyranos-profile-graph\fR \fB\-s\fR \fIDATEI\fR \fB\-p\fR \fIFORMAT\fR \fB\-z\fR [\fB\-t\fR \fINUMMER\fR] [\fB\-b\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMMER\fR] [\fB\-R\fR] [\fB\-P\fR \fIWORT\fR] [\fB\-o\fR \fI-|DATEI\fR] [\fB\-v\fR]
+\fBoyranos-profile-graph\fR \fB\-s\fR \fIDATEI\fR \fB\-p\fR \fIFORMAT\fR \fB\-z\fR [\fB\-t\fR \fINUMMER\fR] [\fB\-b\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMMER\fR] [\fB\-T\fR] [\fB\-P\fR \fIWORT\fR] [\fB\-o\fR \fI-|DATEI\fR] [\fB\-v\fR]
 .br
 \fB\-s\fR|\fB\-\-spectral\fR \fIDATEI\fR	Spektrale Eingabe
 .br
@@ -146,7 +146,7 @@ Allgemeine Optionen
 .br
 \fB\-w\fR|\fB\-\-width\fR \fINUMMER\fR	Gib Ausgabebildbreite in Pixel an (NUMMER:128 [≥64 ≤4096])
 .br
-\fB\-R\fR|\fB\-\-raster\fR	Zeichne Gitter
+\fB\-T\fR|\fB\-\-raster\fR	Zeichne Gitter
 .br
 \fB\-o\fR|\fB\-\-output\fR \fI-|DATEI\fR	Gib Ausgabedateiname an, voreingestellt ist stdout
 .br

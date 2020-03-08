@@ -4,15 +4,15 @@ oyranos-profile-graph v0.9.7 \- Oyranos Profile Graph
 .SH SYNOPSIS
 \fBoyranos-profile-graph\fR [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-c\fR] [\fB\-x\fR] [\fB\-d\fR \fINUMBER\fR] [\fB\-n\fR] [\fB\-2\fR] [\fB\-4\fR] [\fB\-r\fR] [\fB\-v\fR] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
 .br
-\fBoyranos-profile-graph\fR \fB\-S\fR [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-R\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-v\fR]
+\fBoyranos-profile-graph\fR \fB\-S\fR [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-T\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-v\fR]
 .br
-\fBoyranos-profile-graph\fR \fB\-O\fR [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-R\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-v\fR]
+\fBoyranos-profile-graph\fR \fB\-O\fR [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-T\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-v\fR]
 .br
-\fBoyranos-profile-graph\fR \fB\-k\fR \fINUMBER\fR [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-R\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-v\fR]
+\fBoyranos-profile-graph\fR \fB\-k\fR \fINUMBER\fR [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-T\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-v\fR]
 .br
-\fBoyranos-profile-graph\fR \fB\-i\fR \fISTRING\fR [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-R\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-v\fR]
+\fBoyranos-profile-graph\fR \fB\-i\fR \fISTRING\fR [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-T\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-v\fR]
 .br
-\fBoyranos-profile-graph\fR \fB\-s\fR \fIFILE\fR \fB\-p\fR \fIFORMAT\fR \fB\-z\fR [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-R\fR] [\fB\-P\fR \fISTRING\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-v\fR]
+\fBoyranos-profile-graph\fR \fB\-s\fR \fIFILE\fR \fB\-p\fR \fIFORMAT\fR \fB\-z\fR [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-T\fR] [\fB\-P\fR \fISTRING\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-v\fR]
 .br
 \fBoyranos-profile-graph\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-h\fR [\fB\-v\fR]
 .SH DESCRIPTION
@@ -44,25 +44,25 @@ Create a 2D Graph containing the saturation line from a ICC Profile.
 .br
 .SS
 Standard Observer 1931 2° Graph
-\fBoyranos-profile-graph\fR \fB\-S\fR [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-R\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-v\fR]
+\fBoyranos-profile-graph\fR \fB\-S\fR [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-T\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-v\fR]
 .br
 \fB\-S\fR|\fB\-\-standard-observer\fR	CIE Standard Observer 1931 2°
 .br
 .SS
 1964 10° Observer Graph
-\fBoyranos-profile-graph\fR \fB\-O\fR [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-R\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-v\fR]
+\fBoyranos-profile-graph\fR \fB\-O\fR [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-T\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-v\fR]
 .br
 \fB\-O\fR|\fB\-\-observer-64\fR	CIE Observer 1964 10°
 .br
 .SS
 Blackbody Radiator Spectrum Graph
-\fBoyranos-profile-graph\fR \fB\-k\fR \fINUMBER\fR [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-R\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-v\fR]
+\fBoyranos-profile-graph\fR \fB\-k\fR \fINUMBER\fR [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-T\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-v\fR]
 .br
 \fB\-k\fR|\fB\-\-kelvin\fR \fINUMBER\fR	Blackbody Radiator (NUMBER:0 [≥0 ≤25000])
 .br
 .SS
 Illuminant Spectrum Graph
-\fBoyranos-profile-graph\fR \fB\-i\fR \fISTRING\fR [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-R\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-v\fR]
+\fBoyranos-profile-graph\fR \fB\-i\fR \fISTRING\fR [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-T\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-v\fR]
 .br
 \fB\-i\fR|\fB\-\-illuminant\fR \fISTRING\fR	Illuminant Spectrum
 .br
@@ -96,7 +96,7 @@ Illuminant Spectrum Graph
 .br
 .SS
 Spectral Input Graph
-\fBoyranos-profile-graph\fR \fB\-s\fR \fIFILE\fR \fB\-p\fR \fIFORMAT\fR \fB\-z\fR [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-R\fR] [\fB\-P\fR \fISTRING\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-v\fR]
+\fBoyranos-profile-graph\fR \fB\-s\fR \fIFILE\fR \fB\-p\fR \fIFORMAT\fR \fB\-z\fR [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-T\fR] [\fB\-P\fR \fISTRING\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-v\fR]
 .br
 \fB\-s\fR|\fB\-\-spectral\fR \fIFILE\fR	Spectral Input
 .br
@@ -146,7 +146,7 @@ General options
 .br
 \fB\-w\fR|\fB\-\-width\fR \fINUMBER\fR	Specify output image width in pixel (NUMBER:128 [≥64 ≤4096])
 .br
-\fB\-R\fR|\fB\-\-raster\fR	Draw Raster
+\fB\-T\fR|\fB\-\-raster\fR	Draw Raster
 .br
 \fB\-o\fR|\fB\-\-output\fR \fI-|FILE\fR	Specify output file name, default is stdout
 .br

@@ -25,7 +25,7 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include <ctype.h>   /* isspace() */
+#include <ctype.h>   /* isspace() tolower() */
 #include <math.h>    /* NAN */
 #include <stdarg.h>  /* va_list */
 #include <stddef.h>  /* ptrdiff_t size_t */
@@ -1489,9 +1489,9 @@ int  oyjlWriteFile                   ( const char        * filename,
 
 #ifdef HAVE_DL
 #include <dlfcn.h>
-static void * oyjl_args_qml = NULL;
-static char*   oyjlLibNameCreate_        ( const char * lib_base_name,
-                                           int          version )
+static void *  oyjl_args_render_lib = NULL;
+static char *  oyjlLibNameCreate_    ( const char        * lib_base_name,
+                                       int                 version )
 {
   char * fn = NULL;
 
@@ -1504,6 +1504,18 @@ static char*   oyjlLibNameCreate_        ( const char * lib_base_name,
 #endif
   return fn;
 }
+static char *  oyjlFuncNameCreate_   ( const char        * base_name )
+{
+  char * func = NULL;
+
+  func = oyjlStringCopy( base_name, NULL );
+  if(func)
+  {
+    func[0] = tolower(func[0]);
+    oyjlStringAdd( &func, 0,0, "_" );
+  }
+  return func;
+}
 #else
 #warning "HAVE_DL not defined (possibly dlfcn.h not found?): dynamic loading of libOyjlArgsQml will not be possible"
 #endif /* HAVE_DL */
@@ -1511,7 +1523,7 @@ static char*   oyjlLibNameCreate_        ( const char * lib_base_name,
 #ifdef __cplusplus
 extern "C" { // "C" API wrapper 
 #endif
-typedef int (*oyjlArgsQmlStart_f)   ( int                 argc,
+typedef int (*oyjlArgsRender_f)     ( int                 argc,
                                       const char       ** argv,
                                       const char        * json,
                                       const char        * commands,
@@ -1519,7 +1531,7 @@ typedef int (*oyjlArgsQmlStart_f)   ( int                 argc,
                                       int                 debug,
                                       oyjlUi_s          * ui,
                                       int               (*callback)(int argc, const char ** argv));
-static int (*oyjlArgsQmlStart_)      ( int                 argc,
+static int (*oyjlArgsRender_p)       ( int                 argc,
                                        const char       ** argv,
                                        const char        * json,
                                        const char        * commands,
@@ -1527,34 +1539,156 @@ static int (*oyjlArgsQmlStart_)      ( int                 argc,
                                        int                 debug,
                                        oyjlUi_s          * ui,
                                        int               (*callback)(int argc, const char ** argv)) = NULL;
-static int oyjl_args_qml_init = 0;
-void oyjlArgsQmlLoad()
+static int oyjl_args_render_init = 0;
+int oyjlArgsRendererLoad( const char * render_lib )
 {
-  const char * name = "OyjlArgsQml";
-  if(!oyjl_args_qml_init)
-  {
-    char * fn = oyjlLibNameCreate_(name, 1);
-    ++oyjl_args_qml_init;
+  const char * name = render_lib;
+  char * fn = oyjlLibNameCreate_(name, 1), * func = NULL;
+  int error = -1;
 
 #ifdef HAVE_DL
-    oyjl_args_qml = dlopen(fn, RTLD_LAZY);
-    if(!oyjl_args_qml)
-      oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "not existent: %s", OYJL_DBG_ARGS, fn );
+  if(oyjl_args_render_lib)
+    dlclose( oyjl_args_render_lib );
+  oyjl_args_render_lib = NULL;
+  oyjlArgsRender_p = NULL;
+  oyjl_args_render_lib = dlopen(fn, RTLD_LAZY);
+  if(!oyjl_args_render_lib)
+  {
+    oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "not existent: %s", OYJL_DBG_ARGS, fn );
+    error = 1;
+  }
+  else
+  {
+    func = oyjlFuncNameCreate_(name);
+    oyjlArgsRender_p = (oyjlArgsRender_f)dlsym( oyjl_args_render_lib, func );
+    if(oyjlArgsRender_p)
+      error = 0; /* found */
     else
+      oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "%s: %s", OYJL_DBG_ARGS, func, dlerror() );
+  }
+#else
+  oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "no dlopen() API available for %s", OYJL_DBG_ARGS, fn );
+  error = 1;
+#endif
+  free(fn);
+
+  return error;
+}
+
+static int oyjlArgsRendererSelect   (  oyjlUi_s          * ui )
+{
+  const char * arg = NULL, * name = NULL;
+  oyjlOption_s * R;
+  int error = 0;
+
+  if( !ui )
+  {
+    oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "no \"ui\" argument passed in", OYJL_DBG_ARGS );
+    return 1;
+  }
+
+  R = oyjlOptions_GetOptionL( ui->opts, "R" );
+  if(!R)
+  {
+    oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "no \"-R|--render\" argument found: Can not select", OYJL_DBG_ARGS );
+    return 1;
+  }
+
+  if(R->variable_type != oyjlSTRING)
+  {
+    oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "no \"-R|--render\" oyjlSTRING variable declared", OYJL_DBG_ARGS );
+    return 1;
+  }
+
+  arg = oyjlStringCopy( *R->variable.s, NULL );
+  if(!arg)
+  {
+    oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "no \"-R|--render\" oyjlSTRING variable found", OYJL_DBG_ARGS );
+    return 1;
+  }
+  else
+  {
+    if(arg[0])
     {
-      name = "oyjlArgsQmlStart_";
-      oyjlArgsQmlStart_ = (oyjlArgsQmlStart_f)dlsym( oyjl_args_qml, name );
-      if(!oyjlArgsQmlStart_)
-        oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "%s: %s", OYJL_DBG_ARGS, name, dlerror() );
+      char * low = oyjlStringToLower( arg );
+      if(low)
+      {
+        if(strlen(low) >= strlen("gui") && memcmp("gui",low,strlen("gui")) == 0)
+          name = "OyjlArgsQml";
+        else
+        if(strlen(low) >= strlen("qml") && memcmp("qml",low,strlen("qml")) == 0)
+          name = "OyjlArgsQml";
+        else
+        if(strlen(low) >= strlen("web") && memcmp("web",low,strlen("web")) == 0)
+          name = "OyjlArgsWeb";
+        if(!name)
+        {
+          oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "\"-R|--render\" not supported: %s|%s", OYJL_DBG_ARGS, arg,oyjlTermColor(oyjlBOLD,low) );
+          free(low);
+          return 1;
+        }
+        free(low);
+        error = oyjlArgsRendererLoad( name );
+      }
     }
+    else /* report all available renderers */
+    {
+      if(oyjlArgsRendererLoad( "OyjlArgsQml" ) == 0)
+        oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "OyjlArgsQml found - option -R=\"gui\"", OYJL_DBG_ARGS );
+      if(oyjlArgsRendererLoad( "OyjlArgsWeb" ) == 0)
+        oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "OyjlArgsWeb found - option -R=\"web\"", OYJL_DBG_ARGS );
+    }
+  }
+
+  if(!oyjl_args_render_init)
+  {
+    char * fn = oyjlLibNameCreate_(name, 1);
+    ++oyjl_args_render_init;
+
+#ifdef HAVE_DL
 #else
     oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "no dlopen() API available for %s", OYJL_DBG_ARGS, fn );
 #endif
+
     free(fn);
   }
+
+  return error;
 }
 
-int oyjlArgsQmlStart2                ( int                 argc,
+
+/** \addtogroup oyjl_args
+ *  @{ *//* oyjl_args */
+/** @brief Load renderer for graphical rendering options
+ *
+ *  The function version in libOyjlCore dynamicaly dlopen() s libOyjlArgsQml.
+ *  The function version in liboyjl-core-static needs as well
+ *  liboyjl-args-qml-static to work. You should check wich library is linked
+ *  and possibly guard the according code in case no QML library is available:
+ *  @code
+    #if !defined(NO_OYJL_ARGS_RENDER)
+    if(render && ui)
+      // code with oyjlArgsRender() goes here
+    #endif
+    @endcode
+ *
+ *  @param[in]     argc                number of arguments from main()
+ *  @param[in]     argv                arguments from main()
+ *  @param[in]     json                JSON UI text; optional, can be generated from ui
+ *  @param[in]     commands            JSON commands/config text; optional, can be generated from ui or passed in as --render="XXX" option
+ *  @param[in]     output              write ui interaction results; optional
+ *  @param[in]     debug               set debug level
+ *  @param[in]     ui                  user interface structure
+ *  @param[in,out] callback            the function resembling main() to call into;
+ *                                     It will be used to parse args, show help texts,
+ *                                     all options handling and data processing
+ *  @return                            return value for main()
+ *
+ *  @version Oyjl: 1.0.0
+ *  @date    2020/03/05
+ *  @since   2019/12/14 (Oyjl: 1.0.0)
+ */
+int oyjlArgsRender                   ( int                 argc,
                                        const char       ** argv,
                                        const char        * json,
                                        const char        * commands,
@@ -1564,54 +1698,9 @@ int oyjlArgsQmlStart2                ( int                 argc,
                                        int               (*callback)(int argc, const char ** argv))
 {
   int result = -1;
-  oyjlArgsQmlLoad();
-  if(oyjlArgsQmlStart_)
-    result = oyjlArgsQmlStart_(argc, argv, json, commands, output, debug, ui, callback );
-  fflush(stdout);
-  fflush(stderr);
-  return result;
-}
-
-/** \addtogroup oyjl_args
- *  @{ *//* oyjl_args */
-/** @brief Load GUI for graphical rendering options
- *
- *  The function version in libOyjlCore dynamicaly dlopen() s libOyjlArgsQml.
- *  The function version in liboyjl-core-static needs as well
- *  liboyjl-args-qml-static to work. You should check wich library is linked
- *  and possibly guard the according code in case no QML library is available:
- *  @code
-    #if !defined(NO_OYJL_ARGS_QML_START)
-    if(gui)
-      // code with oyjlArgsQmlStart() goes here
-    #endif
-    @endcode
- *
- *  @param[in]     argc                number of arguments from main()
- *  @param[in]     argv                arguments from main()
- *  @param[in]     json                JSON UI text; optional, can be generated from ui
- *  @param[in]     debug               set debug level
- *  @param[in,out] ui                  user interface structure
- *  @param[in,out] callback            the function resembling main() to call into;
- *                                     It will be used to parse args, show help texts,
- *                                     all options handling and data processing
- *  @return                            return value for main()
- *
- *  @version Oyjl: 1.0.0
- *  @date    2019/12/14
- *  @since   2019/12/14 (Oyjl: 1.0.0)
- */
-int oyjlArgsQmlStart                 ( int                 argc,
-                                       const char       ** argv,
-                                       const char        * json,
-                                       int                 debug,
-                                       oyjlUi_s          * ui,
-                                       int               (*callback)(int argc, const char ** argv))
-{
-  int result;
-  oyjlArgsQmlLoad();
-  if(oyjlArgsQmlStart_)
-    result = oyjlArgsQmlStart_(argc, argv, json, NULL, NULL, debug, ui, callback );
+  oyjlArgsRendererSelect(ui);
+  if(oyjlArgsRender_p)
+    result = oyjlArgsRender_p(argc, argv, json, commands, output, debug, ui, callback );
   fflush(stdout);
   fflush(stderr);
   return result;
@@ -1653,9 +1742,9 @@ void oyjlLibRelease() {
     putenv("NLSPATH=C"); free(oyjl_nls_path_); oyjl_nls_path_ = NULL;
   }
 #if defined(HAVE_DL) && (!defined(COMPILE_STATIC) || !defined(HAVE_QT))
-  if(oyjl_args_qml)
+  if(oyjl_args_render_lib)
   {
-    dlclose(oyjl_args_qml); oyjl_args_qml = NULL; oyjl_args_qml_init = 0;
+    dlclose(oyjl_args_render_lib); oyjl_args_render_lib = NULL; oyjl_args_render_init = 0;
   }
 #endif
 }
