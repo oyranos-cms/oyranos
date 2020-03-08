@@ -123,9 +123,9 @@ IF( HAVE_QT)
                 Qt5::Qml
                 Qt5::Quick
                 ${QT5_DBUS_LIB}
-                ${OPENICC_LIBRARIES}
-                ${OYJL_TARGET_LIB}
-                ${OYJL_CORE_LIB}
+                ${OPENICC_LIBRARY_STATIC}
+                ${OYJL_TARGET_LIB_STATIC}
+                ${OYJL_CORE_LIB_STATIC}
                 ${EXTRA_LIBS}
                 )
       SET_TARGET_PROPERTIES( ${PROJECT_LIB_STATIC} PROPERTIES
