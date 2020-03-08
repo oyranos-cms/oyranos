@@ -771,12 +771,12 @@ oyjlTESTRESULT_e testArgs()
   }
 
   text = oyjlUi_ExportToJson( ui, 0 );
-  if(text && strlen(text) == 6180)
+  if(text && strlen(text) == 6660)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlUi_ExportToJson()       %lu                 ", strlen(text) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "oyjlUi_ExportToJson()       6180 == %lu         ", strlen(text) );
+    "oyjlUi_ExportToJson()       6660 == %lu         ", strlen(text) );
   }
   if(verbose && text)
     fprintf( zout, "%s\n", text );

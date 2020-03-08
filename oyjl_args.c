@@ -1019,6 +1019,64 @@ typedef struct {
  *  source code. This function is used inside the @ref oyjlargs tool and
  *  needs *libOyjl* for JSON parsing.
  *
+ *
+ *  @section args_special Special Options
+ *  There are options used to tell about the options syntax.
+ *  - empty option mark "#" needs to be specified, when a group
+ *    needs no mandatory option(s).
+ *  - at option mark "@" tells, a group can have free style options,
+ *    without any "-" or "--" designator.
+ *
+ *  Some options are handled inside the core implementation: \n
+ *  *-h, -v, -V, -X man, -X markdown, -X json* and *-X export*
+ *  need no client code.
+ *
+ *  @subsection args_internal Default Options
+ *  Some options are widely used. Try to stick to them in your client
+ *  declarations:
+    @code
+    // default options -h, -v and -V
+    {"oiwi", 0, "h", "help", NULL, _("help"), _("Help"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&help} },
+    {"oiwi", 0, "v", "verbose", NULL, _("verbose"), _("verbose"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&verbose} },
+    {"oiwi", 0, "V", "version", NULL, _("version"), _("Version"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&version} },
+    @endcode
+ *  These options are supported internally and are rendered by default
+ *  from the supplied oyjlUi_s declarations. Like any option, they need
+ *  to be declared, otherwise they are not supported by the clients
+ *  decission.
+ *
+ *  @subsection args_auto Automatic internal Options
+ *  Some options need little declaration and are enriched automatically
+ *  during options parsing. Those are:
+ *  - *X* for exporting UI
+ *  - *R* for rendering
+ *
+ *  They are declared without choice list, which is filled automatically:
+    @code
+    // default option template -X|--export
+    {"oiwi", 0, "X", "export", NULL, NULL, NULL, NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = NULL}, oyjlSTRING, {.s=&export} },
+    {"oiwi", 0, "R", "render", NULL, NULL, NULL, NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = NULL}, oyjlSTRING, {.s=&render} }
+    @endcode
+ *  These template declarations need in parts client code.
+ *  For the *-R* option see oyjlArgsRender().
+ *  The *-X json+command* argument needs custom boilerplate:
+ *  @code
+    if(ui && (export && strcmp(export,"json+command") == 0))
+    {
+      char * json = oyjlUi_ToJson( ui, 0 ),
+           * json_commands = NULL;
+      oyjlStringAdd( &json_commands, malloc, free, "{\n  \"command_set\": \"%s\"", argv[0] );
+      oyjlStringAdd( &json_commands, malloc, free, "%s", &json[1] ); // skip opening '{'
+      puts( json_commands );
+      goto clean_main;
+    }
+    @endcode
+ *  
+ *
+ *  @section args_misc Miscellaneous
+ *  The args API can use exit() for a few development related API misuses.
+ *  Use setenv("OYJL_NO_EXIT", "1", 0) in order to avoid this behaviour.
+ *
  *  @{ */
 
 /** @brief    Release dynamic structure
@@ -1266,6 +1324,11 @@ oyjlOptionChoice_s oyjl_X_choices[] = {
                                     {"json+command", "", "", ""},
                                     {"export", "", "", ""},
                                     {"","","",""}};
+oyjlOptionChoice_s oyjl_R_choices[] = {
+                                    {"gui", "", "", ""},
+                                    {"web", "", "", ""},
+                                    {"-","","",""},
+                                    {"","","",""}};
 void oyjlOptions_EnrichInbuild( oyjlOption_s * o )
 {
   if(strcmp(o->o, "X") == 0)
@@ -1314,6 +1377,37 @@ void oyjlOptions_EnrichInbuild( oyjlOption_s * o )
       }
     }
   }
+  if(strcmp(o->o, "R") == 0)
+  {
+    if(o->value_type == oyjlOPTIONTYPE_CHOICE && o->values.choices.list == NULL)
+    {
+#if defined(OYJL_INTERNAL)
+      oyjl_R_choices[0].name = _("Gui");
+      oyjl_R_choices[0].description = _("Show UI");
+      oyjl_R_choices[0].help = _("Display a interactive graphical User Interface.");
+      oyjl_R_choices[1].name = _("Web");
+      oyjl_R_choices[1].description = _("Start Web Server");
+      oyjl_R_choices[1].help = _("Start a local Web Service to connect a Webbrowser with.");
+#endif
+      o->values.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)oyjl_R_choices, sizeof(oyjl_R_choices), malloc );
+      if(o->value_name == NULL)
+      {
+#if defined(OYJL_INTERNAL)
+        o->value_name = "gui|web|";
+#endif
+        if(o->name == NULL)
+        {
+          o->name = _("render");
+          if(o->description == NULL)
+          {
+            o->description = _("Select Renderer");
+            if(o->help == NULL)
+              o->help = _("Select and possibly configure Renderer. -R=\"gui\" will just launch a graphical UI. -R=\"port_number:api_path:TLS_private_key:TLS_CA_certificate:style.css\" will launsch a local Web Server, which listens on local port.");
+          }
+        }
+      }
+    }
+  }
 }
 
 static int oyjlStringDelimiterCount ( const char * text, const char * delimiter )
@@ -1349,6 +1443,8 @@ oyjlOption_s * oyjlOptions_GetOption ( oyjlOptions_s     * opts,
     if(o->o && strcmp(o->o, ol) == 0)
     {
       if(strcmp(ol, "X") == 0 && o->value_type == oyjlOPTIONTYPE_CHOICE && o->values.choices.list == NULL)
+        oyjlOptions_EnrichInbuild(o);
+      if(strcmp(ol, "R") == 0 && o->value_type == oyjlOPTIONTYPE_CHOICE && o->values.choices.list == NULL)
         oyjlOptions_EnrichInbuild(o);
 
       return o;
@@ -1404,7 +1500,12 @@ oyjlOption_s * oyjlOptions_GetOptionL( oyjlOptions_s     * opts,
         (!ol[0] && o->option && strcmp(o->option, str) == 0)
       )
     {
+      if(strcmp(str, "export") == 0 && o->value_type == oyjlOPTIONTYPE_CHOICE && o->values.choices.list == NULL)
+        oyjlOptions_EnrichInbuild(o);
+      if(strcmp(str, "render") == 0 && o->value_type == oyjlOPTIONTYPE_CHOICE && o->values.choices.list == NULL)
+        oyjlOptions_EnrichInbuild(o);
       free(str);
+
       return o;
     }
     else
@@ -1447,15 +1548,16 @@ oyjlOPTIONSTATE_e oyjlOptions_Check (
     }*/
     if(OYJL_IS_NOT_O("#") && o->value_name && o->value_name[0] && o->value_type == oyjlOPTIONTYPE_NONE)
     {
-      fprintf( stderr, "%s %s \'%s\': %s\n", _("Usage Error:"), _("Option not supported"), o->o, _("need a value_type") );
+      fprintf( stderr, "%s %s \'%s\': %s\n", _("Usage Error:"), _("Option not supported"), oyjlTermColor(oyjlBOLD,o->o), _("need a value_type") );
       return oyjlOPTION_NOT_SUPPORTED;
     }
     if( OYJL_IS_NOT_O("#") &&
         OYJL_IS_NOT_O("X") &&
+        OYJL_IS_NOT_O("R") &&
         o->value_type == oyjlOPTIONTYPE_CHOICE &&
         !((o->flags & OYJL_OPTION_FLAG_EDITABLE) || o->values.choices.list))
     {
-      fprintf( stderr, "%s %s \'%s\' %s\n", _("Usage Error:"), _("Option not supported"), o->o, _("needs OYJL_OPTION_FLAG_EDITABLE or choices") );
+      fprintf( stderr, "%s %s \'%s\' %s\n", _("Usage Error:"), _("Option not supported"), oyjlTermColor(oyjlBOLD,o->o), _("needs OYJL_OPTION_FLAG_EDITABLE or choices") );
       return oyjlOPTION_NOT_SUPPORTED;
     }
   }
@@ -1547,7 +1649,7 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
           o = oyjlOptions_GetOption( opts, arg );
           if(!o)
           {
-            fprintf( stderr, "%s %s \'%s\'\n", _("Usage Error:"), _("Option not supported"), arg );
+            fprintf( stderr, "%s %s \'%s\'\n", _("Usage Error:"), _("Option not supported"), oyjlTermColor(oyjlBOLD,arg) );
             state = oyjlOPTION_NOT_SUPPORTED;
             break;
           }
@@ -1568,7 +1670,9 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
             }
             else
             {
-              fprintf( stderr, "%s %s \'%s\'\n", _("Usage Error:"), _("Option needs a argument"), arg );
+              char * t = oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING);
+              fprintf( stderr, "%s %s \'%s\' (%s)\n", _("Usage Error:"), _("Option needs a argument"), oyjlTermColor(oyjlBOLD,arg), t );
+              free(t);
               state = oyjlOPTION_MISSING_VALUE;
             }
             if(value)
@@ -1586,11 +1690,13 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
           }
           else
           {
+            char * t = oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING);
             int i;
             for(i = 0; i < opts->argc; ++i)
               fprintf( stderr, "\'%s\' ", opts->argv[i]);
             fprintf( stderr, "\n");
-            fprintf( stderr, "%s %s \'%s\'\n", _("Usage Error:"), _("Option has a unexpected argument"), arg );
+            fprintf( stderr, "%s %s \'%s\' (%s)\n", _("Usage Error:"), _("Option has a unexpected argument"), arg, t );
+            free(t);
             state = oyjlOPTION_UNEXPECTED_VALUE;
             j = l;
           }
@@ -1604,7 +1710,7 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
         o = oyjlOptions_GetOptionL( opts, long_arg );
         if(!o)
         {
-          fprintf( stderr, "%s %s \'%s\'\n", _("Usage Error:"), _("Option not supported"), long_arg );
+          fprintf( stderr, "%s %s \'%s\'\n", _("Usage Error:"), _("Option not supported"), oyjlTermColor(oyjlBOLD,long_arg) );
           state = oyjlOPTION_NOT_SUPPORTED;
           goto clean_parse;
         }
@@ -1622,7 +1728,9 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
           }
           else
           {
-            fprintf( stderr, "%s %s \'%s\'\n", _("Usage Error:"), _("Option needs a argument"), long_arg );
+            char * t = oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING);
+            fprintf( stderr, "%s %s \'%s\' (%s)\n", _("Usage Error:"), _("Option needs a argument"), oyjlTermColor(oyjlBOLD,long_arg), t );
+            free(t);
             state = oyjlOPTION_MISSING_VALUE;
           }
 
@@ -1641,7 +1749,9 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
             ++result->count;
           } else
           {
-            fprintf( stderr, "%s %s \'%s\'\n", _("Usage Error:"), _("Option has a unexpected argument"), opts->argv[i+1] );
+            char * t = oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING);
+            fprintf( stderr, "%s %s \'%s\' (%s)\n", _("Usage Error:"), _("Option has a unexpected argument"), opts->argv[i+1], t );
+            free(t);
             state = oyjlOPTION_UNEXPECTED_VALUE;
           }
         }
@@ -1658,7 +1768,7 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
           result->values[result->count] = value;
         } else
         {
-          fprintf( stderr, "%s %s: \"%s\"\n", _("Usage Error:"), _("Unbound options are not supported"), opts->argv[i] );
+          fprintf( stderr, "%s %s: \"%s\"\n", _("Usage Error:"), _("Unbound options are not supported"), oyjlTermColor(oyjlBOLD,opts->argv[i]) );
           state = oyjlOPTION_NOT_SUPPORTED;
           goto clean_parse;
         }
@@ -1954,8 +2064,8 @@ char *       oyjlOptions_PrintHelpSynopsis (
     char next_delimiter = g->mandatory[m_index[i]];
     if(!o)
     {
-      fprintf(stderr, "\n%s: option not declared: %s\n", g->name, option);
-      exit(1);
+      fprintf(stdout, "\n%s: option not declared: %s\n", g->name, option);
+      if(!getenv("OYJL_NO_EXIT")) exit(1);
     }
     if(option[0] != '@' && !(option[0] == '#' && m+on == 1))
     {
@@ -1989,8 +2099,8 @@ char *       oyjlOptions_PrintHelpSynopsis (
     }
     else if(!o)
     {
-      fprintf(stderr, "\n%s: option not declared: %s\n", g->name, &g->optional[i]);
-      exit(1);
+      fprintf(stdout, "\n%s: option not declared: %s\n", g->name, &g->optional[i]);
+      if(!getenv("OYJL_NO_EXIT")) exit(1);
     }
     {
       char * t = oyjlOption_PrintArg(o, gstyle);
@@ -2009,8 +2119,8 @@ char *       oyjlOptions_PrintHelpSynopsis (
     char next_delimiter = g->mandatory[m_index[i]];
     if(next_delimiter != '|' && !o)
     {
-      fprintf(stderr, "\n%s: option not declared: %s\n", g->name, option);
-      exit(1);
+      fprintf(stdout, "\n%s: option not declared: %s\n", g->name, option);
+      if(!getenv("OYJL_NO_EXIT")) exit(1);
     }
     if(strcmp(option, "@") == 0)
       oyjlStringAdd( &text, malloc, free, " %s", o->value_name?o->value_name:"..." );
@@ -2140,7 +2250,7 @@ void  oyjlOptions_PrintHelp          ( oyjlOptions_s     * opts,
       if(!o)
       {
         fprintf(stdout, "\n%s: option not declared: %s\n", g->name, &g->detail[j]);
-        exit(1);
+        if(!getenv("OYJL_NO_EXIT")) exit(1);
       }
       for(k = 0; k < indent; ++k) fprintf( stdout, " " );
       switch(o->value_type)
@@ -2313,8 +2423,8 @@ oyjlOPTIONSTATE_e  oyjlUi_Check      ( oyjlUi_s          * ui,
       oyjlOption_s * o = oyjlOptions_GetOptionL( opts, &g->detail[j] );
       if(!o)
       {
-        fprintf(stderr, "\n%s: option not declared: %s\n", g->name, &g->detail[j]);
-        exit(1);
+        fprintf(stdout, "\n%s: option not declared: %s\n", g->name, &g->detail[j]);
+        if(!getenv("OYJL_NO_EXIT")) exit(1);
       }
       switch(o->value_type)
       {
@@ -2324,9 +2434,9 @@ oyjlOPTIONSTATE_e  oyjlUi_Check      ( oyjlUi_s          * ui,
             while(o->values.choices.list && o->values.choices.list[n].nick && o->values.choices.list[n].nick[0] != '\000')
               ++n;
             if( !n && !(o->flags & OYJL_OPTION_FLAG_EDITABLE) &&
-                strcmp(o->o, "X") != 0)
+                strcmp(o->o, "X") != 0 && strcmp(o->o, "X") != 0 )
             {
-              fprintf( stderr, "%s %s \'%s\' %s\n", _("Usage Error:"), _("Option not supported"), o->o, _("needs OYJL_OPTION_FLAG_EDITABLE or choices") );
+              fprintf( stderr, "%s %s \'%s\' %s\n", _("Usage Error:"), _("Option not supported"), oyjlTermColor(oyjlBOLD,o->o), _("needs OYJL_OPTION_FLAG_EDITABLE or choices") );
               status = oyjlOPTION_NOT_SUPPORTED;
             }
           }
@@ -2901,8 +3011,8 @@ char *       oyjlUi_ToMan            ( oyjlUi_s          * ui,
       oyjlOption_s * o = oyjlOptions_GetOptionL( opts, option );
       if(!o)
       {
-        fprintf(stderr, "\n%s: option not declared: %s\n", g->name, option);
-        exit(1);
+        fprintf(stdout, "\n%s: option not declared: %s\n", g->name, option);
+        if(!getenv("OYJL_NO_EXIT")) exit(1);
       }
       switch(o->value_type)
       {
@@ -3147,8 +3257,8 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
       oyjlOption_s * o = oyjlOptions_GetOptionL( opts, option );
       if(!o)
       {
-        fprintf(stderr, "\n%s: option not declared: %s\n", g->name, option );
-        exit(1);
+        fprintf(stdout, "\n%s: option not declared: %s\n", g->name, option );
+        if(!getenv("OYJL_NO_EXIT")) exit(1);
       }
 #define OYJL_LEFT_TD_STYLE " style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'"
       switch(o->value_type)
@@ -3275,6 +3385,24 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
 }
 // TODO: increase robustness
 // TODO: make the qml renderer aware of mandatory options as part of sending a call to the tool; add action button to all manatory options except bool options; render mandatory switch as a button
+/* TODO
+* renderers
+  * Web viewer for intranet and internet
+    * use commans or embedded infos from ui json file to specify css/port/TSL/...
+    * (add new renderer function, much like old oyjlArgsQmlStart2() API)
+      * (add new list return value, e.g. when no options are passed into new oyjlArgsRender())
+    * embedd options into automatic generated ones
+      * -R|--render="web:port_number:api_path:TLS_private_key:TLS_CA_certificate:style.css"
+      * the help text should give a hint about the JSON key/values and the -W option arguments
+    * Use cases:
+      * standalone web viewer
+      * option in tools much like the -G|--gui option but with extra args
+      * RESTful API for web services
+        * conventions for session management/caching duration/size_limit/...
+  * (integrate QML -G|--gui option)
+    * (-R|--render="gui" or explicitely -R="QML")
+  * (harmonise library name and function call libOyjlArgsQml.so -> oyjlArgsQml_)
+*/
 // TODO: MAN page synopsis logic ...
 // TODO: man page generator: /usr/share/man/man1/ftp.1.gz + http://man7.org/linux/man-pages/man7/groff_mdoc.7.html
 // TODO: synopsis syntax ideas: https://unix.stackexchange.com/questions/17833/understand-synopsis-in-manpage

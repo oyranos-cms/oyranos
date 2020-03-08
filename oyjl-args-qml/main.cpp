@@ -26,6 +26,7 @@ int main(int argc, const char *argv[])
   int verbose = 0;
   int state = 0;
   const char * exportX = NULL;
+  const char * render = "gui";
 
 #ifdef OYJL_HAVE_LOCALE_H
   setlocale(LC_ALL,"");
@@ -52,12 +53,14 @@ int main(int argc, const char *argv[])
   /* declare options - the core information; use previously declared choices */
   oyjlOption_s oarray[] = {
   /* type,   flags, o,   option,    key,  name,         description,         help, value_name,    value_type,               values,                                                          variable_type, output variable */
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "i", "input", NULL, NULL,_("JSON UI Description"), NULL, _("STRING"), oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s = &json} },
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "c", "command", NULL, NULL, _("JSON Command"), NULL, _("STRING"), oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s = &command} },
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "o", "output", NULL, NULL,_("Results JSON"), NULL, _("STRING"), oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s = &output} },
-    {"oiwi", 0,     "h", "help",    NULL, _("help"),    _("Help"),           NULL, NULL,          oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i = &help} },
-    {"oiwi", 0,     "v", "verbose", NULL, _("verbose"), _("verbose"),        NULL, NULL,          oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i = &verbose} },
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "i", "input", _("Input"), NULL,_("JSON UI Description"), NULL, _("STRING"), oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s = &json} },
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "c", "command", _("Command"), NULL, _("JSON Command"), NULL, _("STRING"), oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s = &command} },
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "o", "output", _("Output"), NULL,_("Results JSON"), NULL, _("STRING"), oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s = &output} },
+    {"oiwi", 0,     "h", "help",    NULL, _("Help"),    _("Help"),           NULL, NULL,          oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i = &help} },
+    {"oiwi", 0,     "v", "verbose", NULL, _("Verbose"), _("verbose"),        NULL, NULL,          oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i = &verbose} },
     {"oiwi", 0,     "X", "export",  NULL, NULL,         NULL,                NULL, NULL,          oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s = &exportX} },
+    /* The --render option can be hidden and used only internally. */
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "R", "render", NULL, _("Render"), _("Render"), NULL, NULL, oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s = &render} },
     {"oiwi", 0,     "A", "man-examples",NULL,_("EXAMPLES"),NULL,             NULL, NULL,
         oyjlOPTIONTYPE_CHOICE,   {.choices={(oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)A_choices, sizeof(A_choices), malloc ), 0}}, oyjlNONE,      {0}},
     {"oiwi", 0,     "S", "man-see_also",NULL,_("SEE ALSO"),NULL,             NULL, NULL,
@@ -93,7 +96,7 @@ int main(int argc, const char *argv[])
                             "1.0", "Test Tool for testing" );
 
   int debug = 0;
-  oyjlArgsQmlStart2( argc, argv, json, command, output, debug, ui, NULL );
+  oyjlArgsRender( argc, argv, json, command, output, debug, ui, NULL );
 
   oyjlUi_Release( &ui);
   free(S_choices[0].nick);

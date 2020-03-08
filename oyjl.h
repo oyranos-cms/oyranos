@@ -679,14 +679,11 @@ char *             oyjlUi_ExportToJson(oyjlUi_s          * ui,
 char *             oyjlUiJsonToCode  ( oyjl_val            root,
                                        int                 flags );
 
-/** link with libOyjlArgsQml and use oyjl-args-qml renderer as library @see oyjlUi_ToJson() */
-int                oyjlArgsQmlStart  ( int                 argc,
-                                       const char       ** argv,
-                                       const char        * json,
-                                       int                 debug,
-                                       oyjlUi_s          * ui,
-                                       int               (*callback)(int argc, const char ** argv) );
-int                oyjlArgsQmlStart2 ( int                 argc,
+/** link with libOyjlArgsWeb and use microhttps WWW renderer as library
+ *  link with libOyjlArgsQml and use Qt's QML to render in a GUI
+ *  @see oyjlUi_ToJson()i
+ */
+int                oyjlArgsRender    ( int                 argc,
                                        const char       ** argv,
                                        const char        * json,
                                        const char        * commands,

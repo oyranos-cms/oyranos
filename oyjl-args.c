@@ -2,7 +2,7 @@
  *
  *  Oyranos is an open source Color Management System
  *
- *  Copyright (C) 2019  Kai-Uwe Behrmann
+ *  Copyright (C) 2019-2020  Kai-Uwe Behrmann
  *
  *  @brief    Oyjl Args Tool
  *  @internal
@@ -33,7 +33,8 @@ int myMain( int argc, const char ** argv )
   const char * export = NULL;
   int help = 0;
   int verbose = 0;
-  int gui = 0;
+  int version = 0;
+  const char * render = NULL;
   int state = 0;
 
   /* handle options */
@@ -41,19 +42,25 @@ int myMain( int argc, const char ** argv )
                                                  "2019-6-26T12:00:00", _("June 26, 2019") );
 
   /* declare the option choices  *   nick,          name,               description,                  help */
+  oyjlOptionChoice_s A_choices[] = {{_("Convert eXported developer JSON to C source"),_("oyjl-args -X export | oyjl-args -i -"),NULL,                         NULL},
+                                    {"","","",""}};
+
   oyjlOptionChoice_s S_choices[] = {{"oyjl(1) oyjl-translate(1) oyjl-args-qml(1)","https://codedocs.xyz/oyranos-cms/oyranos/group__oyjl.html",               NULL,                         NULL},
                                     {"","","",""}};
   /* declare options - the core information; use previously declared choices */
   oyjlOption_s oarray[] = {
   /* type,   flags, o,   option,    key,  name,         description,         help, value_name,    value_type,               values,                                                          variable_type, output variable */
     {"oiwi", OYJL_OPTION_FLAG_EDITABLE,     "i", "input",   NULL, _("input"),   _("Set Input"),      NULL, _("FILENAME"), oyjlOPTIONTYPE_CHOICE, {}, oyjlSTRING, {.s = &file} },
-    {"oiwi", 0,     "h", "help",    NULL, _("help"),    _("Help"),           NULL, NULL,          oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i = &help} },
-    {"oiwi", 0,     "v", "verbose", NULL, _("verbose"), _("verbose"),        NULL, NULL,          oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i = &verbose} },
+    {"oiwi", 0,     "h", "help",    NULL, _("help"),    _("Help"),           NULL, NULL,          oyjlOPTIONTYPE_NONE, {0},oyjlINT, {.i = &help} },
+    {"oiwi", 0,     "v", "verbose", NULL, _("verbose"), _("verbose"),        NULL, NULL,          oyjlOPTIONTYPE_NONE, {0},oyjlINT, {.i = &verbose} },
+    {"oiwi", 0,     "V", "version", NULL, _("version"), _("Version"),        NULL, NULL,          oyjlOPTIONTYPE_NONE, {0},oyjlINT, {.i = &version} },
     {"oiwi", 0,     "X", "export", NULL, NULL, NULL, NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = NULL}, oyjlSTRING, {.s=&export} },
+    {"oiwi", 0,                          "A","man-examples",  NULL,     _("EXAMPLES"), NULL,                         NULL, NULL,               
+        oyjlOPTIONTYPE_CHOICE,   {.choices = {(oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)A_choices, sizeof(A_choices), malloc ), 0}}, oyjlNONE,      {}},
     {"oiwi", 0,                          "S","man-see_also",  NULL,     _("SEE ALSO"),NULL,                      NULL, NULL,
         oyjlOPTIONTYPE_CHOICE,   {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)S_choices, sizeof(S_choices), malloc )}, oyjlNONE,      {}},
-    /* The --gui option can be hidden and used only internally. */
-    {"oiwi", 0,     "G", "gui",     NULL, _("gui"),     _("GUI"),            NULL, NULL,          oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i = &gui} },
+    /* The --render option can be hidden and used only internally. */
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,     "R", "render",  NULL, NULL,  NULL,         NULL, NULL,          oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s = &render} },
     {"",0,0,0,0,0,0,0, NULL, oyjlOPTIONTYPE_END, {},0,{}}
   };
 
@@ -77,11 +84,11 @@ int myMain( int argc, const char ** argv )
     goto clean_main;
   if(state & oyjlUI_STATE_HELP)
   {
-    fprintf( stderr, "%s\n\tman oyjl\n\n", _("For more information read the man page:") );
+    fprintf( stderr, "%s\n\tman oyjl-args\n\n", _("For more information read the man page:") );
     goto clean_main;
   }
 
-  if(verbose)
+  if(ui && verbose)
   {
     char * json = oyjlOptions_ResultsToJson( ui->opts );
     if(json)
@@ -94,7 +101,7 @@ int myMain( int argc, const char ** argv )
     fputs( "\n", stderr );
   }
 
-  if((export && strcmp(export,"json+command") == 0))
+  if(ui && (export && strcmp(export,"json+command") == 0))
   {
     char * json = oyjlUi_ToJson( ui, 0 ),
          * json_commands = NULL;
@@ -104,14 +111,14 @@ int myMain( int argc, const char ** argv )
     goto clean_main;
   }
 
-  /* GUI boilerplate */
-  if(ui && gui)
+  /* Render boilerplate */
+  if(ui && render)
   {
-#if !defined(NO_OYJL_ARGS_QML_START)
+#if !defined(NO_OYJL_ARGS_RENDER)
     int debug = verbose;
-    oyjlArgsQmlStart( argc, argv, NULL, debug, ui, myMain );
+    oyjlArgsRender( argc, argv, NULL, NULL,NULL, debug, ui, myMain );
 #else
-    fprintf( stderr, "No GUI support compiled in. Use a GUI use -X json and load into oyjl-args-qml viewer." );
+    fprintf( stderr, "No render support compiled in. Use a GUI use -X json and load into oyjl-args-qml viewer." );
 #endif
   } else
   if(ui && !file)
@@ -174,7 +181,7 @@ int main( int argc_, char**argv_, char ** envv )
 
   argv = calloc( argc + 2, sizeof(char*) );
   memcpy( argv, argv_, (argc + 2) * sizeof(char*) );
-  argv[argc++] = "--gui"; /* start QML */
+  argv[argc++] = "--render=gui"; /* start QML */
   environment = environ;
 #else
   environment = envv;
