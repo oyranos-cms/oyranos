@@ -118,9 +118,9 @@ static int oyjlTermColorCheck__()
 
   return color_term;
 }
-const char * oyjlTermColor_( oyjlCOLORTERM_e rgb, const char * text) {
-  int len = strlen(text);
-  static char t[256];
+int oyjlTermColorCheck()
+{
+  int color_env = 0;
   static int colorterm_init = 0;
   static const char * oyjl_colorterm = NULL;
   static int truecolor = 0,
@@ -136,7 +136,18 @@ const char * oyjlTermColor_( oyjlCOLORTERM_e rgb, const char * text) {
       truecolor = color = 0;
     if( getenv("FORCE_COLORTERM") )
       truecolor = color = 1;
+    if(verbose)
+      fprintf(stdout, "color: %d truecolor: %d oyjl_colorterm: %s\n", color, truecolor, oyjl_colorterm );
   }
+  color_env = (color ? 0x01 : 0x00) | (truecolor ? 0x02 : 0x00);
+  return color_env;
+}
+const char * oyjlTermColor_( oyjlCOLORTERM_e rgb, const char * text) {
+  int len = strlen(text);
+  static char t[256];
+  int color_env = oyjlTermColorCheck(),
+      color = color_env & 0x01,
+      truecolor = color_env & 0x02;
   if(len < 200)
   {
     switch(rgb)
