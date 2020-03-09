@@ -120,13 +120,13 @@ int myMain( int argc, const char ** argv )
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&help}},
     {"oiwi", 0,                          "v","verbose",       NULL,     _("Verbose"),  _("increase verbosity"),      NULL, NULL,               
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&verbose}},
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "R","render",        NULL,     _("render"),   _("Render"),                  NULL, NULL,               
-        oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&render}},
     {"oiwi", 0,                          "V","version",       NULL,     _("version"),  _("Version"),                 NULL, NULL,               
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&version}},
     /* default option template -X|--export */
     {"oiwi", 0,                          "X","export",        NULL,     NULL,          NULL,                         NULL, NULL,
         oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&export}},
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "R","render",        NULL,     NULL,          NULL,                         NULL, NULL,               
+        oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&render}},
     {"",0,0,NULL,NULL,NULL,NULL,NULL, NULL, oyjlOPTIONTYPE_END, {0},0,{0}}
   };
 
