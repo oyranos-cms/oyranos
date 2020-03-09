@@ -3,7 +3,7 @@
  *  oyjl - UI helpers
  *
  *  @par Copyright:
- *            2018-2019 (C) Kai-Uwe Behrmann
+ *            2018-2020 (C) Kai-Uwe Behrmann
  *
  *  @brief    Oyjl argument handling
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
@@ -866,217 +866,7 @@ typedef struct {
 #include <langinfo.h> /* nl_langinfo() */
 #endif
 
-/** \addtogroup oyjl_args Options Handling
- *  @brief   Structured Options and Arguments for many aspects on command line and more in a single file
- *
- *  @section args_intro Introduction
- *  Oyjl argument handling uses a compact, table like creation syntax.
- *  oyjlUi_Create() is a high level API for tools to feed only the
- *  declarations and obtain the results in one call. On a lower level parsing
- *  with oyjlOptions_Parse() detects conflicts during programming and
- *  on run time. The arguments can be printed as a typical command line tool
- *  help text with oyjlOptions_PrintHelp(). The Oyjl JSON
- *  output from oyjlUi_ToJson() is useable for automatical generated
- *  (G)UI's and further processing. oyjlUi_ToMan() creates unix manual pages.
- *  oyjlUi_ToMarkdown() lets you produce a man page for your web page.
- *  Generation of other formats is simple. The implementation in *oyjl_args.c*
- *  can simply be included or use oyjl.h and link to *libOyjlCore*.
- *  Translations are supported by *oyjl-tanslate* tool through gettext.
- *
- *  Command line options support single letter in oyjlOption_s::o and
- *  long options in oyjlOption_s::option without
- *  and with empty space and equal sign style single argument.
- *  @verbatim
-    > myProgramm -o --option -w=1 --with-argument 1
-    @endverbatim
- *
- *  @section args_tut Tutorial
- *  from @ref test-core.c :
-    @dontinclude test-core.c
-    @skip handle options
-    @until done with options handling
- *
- *  @section args_orga Option Organisation - Groups
- *  Options can be read pure informational or express constraints.
- *  A **action** is a way to place the affected option(s) into the result, where
- *  the **result** can be the return of a textual structure or a executed
- *  command line call.
- *  The oyjlOptionGroup_s declares the layout and a simple syntax.
- *  In case the oyjlOptionGroup_s::mandatory or
- *  oyjlOptionGroup_s::optional members contain options, a action should be
- *  displayed inside the group. In absence of oyjlOptionGroup_s::mandatory
- *  options, the oyjlOptionGroup_s::optional options are handled like a
- *  single group and a widget for starting a action is needed.
- *  The oyjlOptionGroup_s::detail simply
- *  tells about displaying of a option inside a group.
- *  All oyjlOptionGroup_s::mandatory options shall be inside the
- *  oyjlOptionGroup_s::detail array for simplicity of man page generation.
- *
- *  @subsection args_single_call One Action Group
- *  Very simple tools might have few optional arguments. It makes
- *  sense to have no constraints in groups. So there is no mandatory
- *  option at all needed. All options shall be applied at once. Example:
- *  @verbatim
-    tool [-a] [-b] [-c] [-v]
-    @endverbatim
- @code
-    oyjlOptionGroup_s groups[] = {
-    // type,   flags, name,     description,help, mandatory,  optional, detail
-      // place here the action widget; all optional options [a+b+c+v] are in this action group
-      {"oiwg", 0,     "Group1", 0,0,              "",         "a,b,c,v","a,b" },
-      // only description; no action
-      {"oiwg", 0,     "Group2", 0,0,              "",         "",       "c" },
-      // only description; no action
-      {"oiwg", 0,     "Common", 0,0,              "",         "",       "v" },
-      {0,0,0,0,0,0,0,0}
-    } // note: no mandatory option is named
- @endcode
- *  The GUI should show one over all action widget, e.g. press button, in the
- *  group(s) with optional options.
- *  This mode implies the empty option mark '#' needs to be specified, as the
- *  tool needs no mandatory option(s).
- *
- *  @subsection args_group_modes Grouped Modes
- *  More complex tools might have different modes, in order to do one
- *  task. The 'tar' tool is organised to do belonging tasks as a task.
- *  Each group is introduced by a mandatory option and might be followed
- *  by some more optional options. Options can be expluced from groups.
- *  Some more options can by applied to all groups. Example:
- *  @verbatim
-    tool -a -b [-c] [-v]
-    tool -h [-v]
-    @endverbatim
- @code
-    oyjlOptionGroup_s groups[] = {
-    // type,   flags, name,     description,help, mandatory,  optional, detail
-      // a separate action widget is needed, so 'a' and 'b' can be set before action; a+b+c+[v] are in this action group
-      {"oiwg", 0,     "Group1", 0,0,              "a,b",      "c,v",    "a,b,c" },
-      // the 'h' option could be handled as the action widget; h+[v] are in this action group
-      {"oiwg", 0,     "Group2", 0,0,              "h",        "v",      "h" },
-      // only description; no action
-      {"oiwg", 0,     "Common", 0,0,              "",         "",       "v" },
-      {0,0,0,0,0,0,0,0}
-    }
- @endcode
- *  The GUI should show one action widget, e.g. press button, per group.
- *
- *  @subsection args_group_independence Independent Options
- *  Each option is independent. However it is possible to group them
- *  in a pure informational way. E.g.
- *  @verbatim
-    tool -a|-b [-v]
-    tool -h [-v]
-    @endverbatim
- *  The above example knows three basic modes: a, b and h. The -v
- *  option might be applied to all of them. Each of a,b,h is called
- *  independently and that means the GUI reacts instantly on any changed state
- *  in them. A group object might look like:
- @code
-    oyjlOptionGroup_s groups[] = {
-    // type,   flags, name,     description,help, mandatory,  optional, detail
-      // 'a' and 'b' can be action widgets, as they are independent; a+[v] or b+[v] are in this action group
-      {"oiwg", 0,     "Group1", 0,0,              "a|b",      "v",      "a,b" },
-      // 'h' can be action widget; h+[v] are in this action group
-      {"oiwg", 0,     "Group2", 0,0,              "h",        "v",      "h" },
-      // only description; no action
-      {"oiwg", 0,     "Common", 0,0,              "",         "",       "v" },
-      {0,0,0,0,0,0,0,0}
-    } // note: all manatory options are ored '|' or single in the group
- @endcode
- *  The GUI should show one action widget, e.g. press button, per option.
- *  All options in oyjlOptionGroup_s::mandatory should be or'ed with '|',
- *  otherwise the individial actions make no sense.
- *
- *  @section args_renderer Viewers
- *  The option tables allow for different views. Those can be pure
- *  informational, like man pages created with the *cli -X man* command.
- *  Or a view can be interactive and call the command with the options.
- *
- *  @subsection args_interactive Interactive Viewers
- *  A example of a interactive viewer is the included *oyjl-args-qml* renderer.
- *  Tools have to be more careful, in case they want to be displayed by
- *  a interactive viewer. They should declare, in which order options
- *  apply and add command line information for the *-X json+command* option.
- *
- *  A GUI renderer might display the result of a command immediately. The
- *  simplest form is plain text output. The text font should eventually be
- *  a monotyped on, like typical for interactive shells. This builds as well
- *  a command like aesthetic. Some tools return graphics in multiline
- *  ASCII or use color codes.
- *  The tool might output HTML and should be displayed formatted. Some tools
- *  stream their result as image to stdout. A oyjl-args-qml viewer supports
- *  PNG image output.
- *
- *  The *-X json* and *-X json+command* options are only available with
- *  *libOyjlCore* and **not** in the stand alone version with *oyjl_args.c*
- *  inclusion.
- *
- *  @subsection args_developer Developer Support
- *  The oyjlUi_ExportToJson() API allows to dump all data toward a JSON
- *  representation. The function is contained
- *  in *libOyjlCore*. Look for the *-X export* option.
- *  The oyjlUiJsonToCode() API converts a JSON UI data representation to
- *  source code. This function is used inside the @ref oyjlargs tool and
- *  needs *libOyjl* for JSON parsing.
- *
- *
- *  @section args_special Special Options
- *  There are options used to tell about the options syntax.
- *  - empty option mark "#" needs to be specified, when a group
- *    needs no mandatory option(s).
- *  - at option mark "@" tells, a group can have free style options,
- *    without any "-" or "--" designator.
- *
- *  Some options are handled inside the core implementation: \n
- *  *-h, -v, -V, -X man, -X markdown, -X json* and *-X export*
- *  need no client code.
- *
- *  @subsection args_internal Default Options
- *  Some options are widely used. Try to stick to them in your client
- *  declarations:
-    @code
-    // default options -h, -v and -V
-    {"oiwi", 0, "h", "help", NULL, _("help"), _("Help"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&help} },
-    {"oiwi", 0, "v", "verbose", NULL, _("verbose"), _("verbose"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&verbose} },
-    {"oiwi", 0, "V", "version", NULL, _("version"), _("Version"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&version} },
-    @endcode
- *  These options are supported internally and are rendered by default
- *  from the supplied oyjlUi_s declarations. Like any option, they need
- *  to be declared, otherwise they are not supported by the clients
- *  decission.
- *
- *  @subsection args_auto Automatic internal Options
- *  Some options need little declaration and are enriched automatically
- *  during options parsing. Those are:
- *  - *X* for exporting UI
- *  - *R* for rendering
- *
- *  They are declared without choice list, which is filled automatically:
-    @code
-    // default option template -X|--export
-    {"oiwi", 0, "X", "export", NULL, NULL, NULL, NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = NULL}, oyjlSTRING, {.s=&export} },
-    {"oiwi", 0, "R", "render", NULL, NULL, NULL, NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = NULL}, oyjlSTRING, {.s=&render} }
-    @endcode
- *  These template declarations need in parts client code.
- *  For the *-R* option see oyjlArgsRender().
- *  The *-X json+command* argument needs custom boilerplate:
- *  @code
-    if(ui && (export && strcmp(export,"json+command") == 0))
-    {
-      char * json = oyjlUi_ToJson( ui, 0 ),
-           * json_commands = NULL;
-      oyjlStringAdd( &json_commands, malloc, free, "{\n  \"command_set\": \"%s\"", argv[0] );
-      oyjlStringAdd( &json_commands, malloc, free, "%s", &json[1] ); // skip opening '{'
-      puts( json_commands );
-      goto clean_main;
-    }
-    @endcode
- *  
- *
- *  @section args_misc Miscellaneous
- *  The args API can use exit() for a few development related API misuses.
- *  Use setenv("OYJL_NO_EXIT", "1", 0) in order to avoid this behaviour.
- *
+/** \addtogroup oyjl_args
  *  @{ */
 
 /** @brief    Release dynamic structure
@@ -1402,7 +1192,7 @@ void oyjlOptions_EnrichInbuild( oyjlOption_s * o )
           {
             o->description = _("Select Renderer");
             if(o->help == NULL)
-              o->help = _("Select and possibly configure Renderer. -R=\"gui\" will just launch a graphical UI. -R=\"port_number:api_path:TLS_private_key:TLS_CA_certificate:style.css\" will launsch a local Web Server, which listens on local port.");
+              o->help = _("Select and possibly configure Renderer. -R=\"gui\" will just launch a graphical UI. -R=\"port_number:api_path:TLS_private_key:TLS_CA_certificate:style.css\" will launch a local Web Server, which listens on local port.");
           }
         }
       }
@@ -3383,29 +3173,6 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
 
   return text;
 }
-// TODO: increase robustness
-// TODO: make the qml renderer aware of mandatory options as part of sending a call to the tool; add action button to all manatory options except bool options; render mandatory switch as a button
-/* TODO
-* renderers
-  * Web viewer for intranet and internet
-    * use commans or embedded infos from ui json file to specify css/port/TSL/...
-    * (add new renderer function, much like old oyjlArgsQmlStart2() API)
-      * (add new list return value, e.g. when no options are passed into new oyjlArgsRender())
-    * embedd options into automatic generated ones
-      * -R|--render="web:port_number:api_path:TLS_private_key:TLS_CA_certificate:style.css"
-      * the help text should give a hint about the JSON key/values and the -W option arguments
-    * Use cases:
-      * standalone web viewer
-      * option in tools much like the -G|--gui option but with extra args
-      * RESTful API for web services
-        * conventions for session management/caching duration/size_limit/...
-  * (integrate QML -G|--gui option)
-    * (-R|--render="gui" or explicitely -R="QML")
-  * (harmonise library name and function call libOyjlArgsQml.so -> oyjlArgsQml_)
-*/
-// TODO: MAN page synopsis logic ...
-// TODO: man page generator: /usr/share/man/man1/ftp.1.gz + http://man7.org/linux/man-pages/man7/groff_mdoc.7.html
-// TODO: synopsis syntax ideas: https://unix.stackexchange.com/questions/17833/understand-synopsis-in-manpage
 
 
 /** 
