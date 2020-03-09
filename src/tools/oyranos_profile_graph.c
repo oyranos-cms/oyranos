@@ -255,10 +255,10 @@ int myMain( int argc, const char ** argv )
   oyI18NInit_();
 
   oyjlOptions_s * opts;
-  const char * render = NULL;
   oyjlUi_s * ui;
   oyjlUiHeaderSection_s * info;
   const char * export = NULL;
+  const char * render = NULL;
   int help = 0;
   int verbose = 0;
   int version = 0;
@@ -329,14 +329,14 @@ int myMain( int argc, const char ** argv )
     {"oiwi", 0, "x", "xyy",           NULL, _("xyY"),           _("Use CIE*xyY *x*y plane for saturation line projection"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&xyy_plane} },
     {"oiwi", 0, "z", "scale",         NULL, _("Scale"),         _("Scale the height of the spectrum graph"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&scale_spectrum} },
 
-    /* The --render option can be hidden and used only internally. */
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "R", "render",  NULL, _("render"),  _("Render"),  NULL, NULL, oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s = &render} },
-    /* default options -h and -v */
-    {"oiwi", 0, "h", "help", NULL, _("help"), _("Help"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&help} },
+    /* default options -h, -v and -V */
+    {"oiwi", 0, "h", "help", NULL, _("help"), _("Help"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&help} },
     {"oiwi", 0, "v", "verbose", NULL, _("verbose"), _("verbose"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&verbose} },
     {"oiwi", 0, "V", "version", NULL, _("version"), _("Version"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&version} },
     /* default option template -X|--export */
     {"oiwi", 0, "X", "export", NULL, NULL, NULL, NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = NULL}, oyjlSTRING, {.s=&export} },
+    /* The --render option can be hidden and used only internally. */
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "R", "render", NULL, NULL,  NULL,  NULL, NULL, oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s=&render} },
     /* blind options, useful only for man page generation */
     {"oiwi", 0, "E", "man-environment_variables", NULL, "", "", NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)env_vars, sizeof(env_vars), 0 )}, oyjlNONE, {.i=0} },
     {"oiwi", 0, "A", "man-examples", NULL, "", "", NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)examples, sizeof(examples), 0 )}, oyjlNONE, {.i=0} },

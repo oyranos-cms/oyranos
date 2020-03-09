@@ -31,10 +31,10 @@ int myMain( int argc, const char ** argv )
 
   const char * file = NULL;
   const char * export = NULL;
+  const char * render = NULL;
   int help = 0;
   int verbose = 0;
   int version = 0;
-  const char * render = NULL;
   int state = 0;
 
   /* handle options */
