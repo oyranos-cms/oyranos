@@ -469,11 +469,12 @@ IF( ENABLE_TESTS_${PROJECT_UP_NAME} )
         DEPENDS oyjl-args-ui check-args
         COMMENT "Check Generated Program" VERBATIM )
   ADD_CUSTOM_TARGET(check-core
-        OYJL_LOCALEDIR=${CMAKE_BINARY_DIR}/locale ${MEMCHECK} ./oyjl-test-core-static
+        COMMAND OYJL_LOCALEDIR=${CMAKE_BINARY_DIR}/locale ${MEMCHECK} ./oyjl-test-core-static
+        COMMAND LOCPATH=${CMAKE_BINARY_DIR}/locale ./oyjl-test-core-static
         DEPENDS oyjl-test-core-static check-oyjl-args-ui
         COMMENT "Test libOyjlCore" VERBATIM )
   ADD_CUSTOM_TARGET(check
-        ${MEMCHECK} ./oyjl-test-static
+        LOCPATH=${CMAKE_BINARY_DIR}/locale ${MEMCHECK} ./oyjl-test-static
         DEPENDS oyjl-test-static check-core
         COMMENT "Test libOyjl" VERBATIM )
   FILE( GLOB ${PROJECT_UP_NAME}_TEST_EXTRA_SRC_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} test-extra*.c )
@@ -531,7 +532,7 @@ IF( GETTEXT_FOUND AND OYJL_USE_GETTEXT )
 
   ADD_CUSTOM_COMMAND( OUTPUT ${PROJECT_DOWN_NAME}_gmo-cp
     COMMAND for lang in ${${PROJECT_UP_NAME}_LINGUAS_SHORT}\; do mkdir -p "${CMAKE_BINARY_DIR}/locale/$$lang/LC_MESSAGES/" \; cp "${CMAKE_CURRENT_BINARY_DIR}/$$lang.gmo" "${CMAKE_BINARY_DIR}/locale/$$lang/LC_MESSAGES/${PROJECT_DOWN_NAME}.mo" \; done
-    COMMENT "put ${PROJECT_DOWN_NAME}.mo files into ${CMAKE_BINARY_DIR}/locale/lang/LC_MESSAGES/ path for testing with LOCDIR"
+    COMMENT "put ${PROJECT_DOWN_NAME}.mo files into ${CMAKE_BINARY_DIR}/locale/lang/LC_MESSAGES/ path for testing with LOCPATH"
                     )
   ADD_CUSTOM_TARGET( ${PROJECT_DOWN_NAME}_gmo ALL
                      DEPENDS ${GETTEXT_TRANSLATIONS_TARGET_PREFIX}translations ${PROJECT_DOWN_NAME}_gmo-cp  )
