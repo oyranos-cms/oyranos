@@ -37,6 +37,7 @@
 #endif
 
 extern int * oyjl_debug;
+extern int verbose;
 
 /** \addtogroup oyjl
  *  @{ *//* oyjl */
