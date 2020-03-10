@@ -40,19 +40,20 @@ IF(ENABLE_STATIC_LIBS_${PROJECT_UP_NAME})
   ADD_EXECUTABLE( test_object-static "${CMAKE_CURRENT_SOURCE_DIR}/test_object.c" )
   TARGET_LINK_LIBRARIES( test_object-static oyranos_object-static )
   ADD_CUSTOM_TARGET(test-object-static
-	COMMAND ${MEMCHECK} "${CMAKE_CURRENT_BINARY_DIR}/test_object-static"
+        COMMAND ${MEMCHECK} "${CMAKE_CURRENT_BINARY_DIR}/test_object-static"
         DEPENDS test_object-static test-core-static
         COMMENT "Test basic linking against liboyranos_object-static." VERBATIM )
   SET( TEST2_DEPS ${TEST2_DEPS} test-object-static )
 ENDIF(ENABLE_STATIC_LIBS_${PROJECT_UP_NAME})
 
+SET( MEMCHECK_SMALL ${VALGRIND_EXECUTABLE} --num-callers=30 )
 
 LINK_DIRECTORIES( ${LINK_DIRECTORIES} "${CMAKE_BINARY_DIR}/src/liboyranos_modules/" )
 IF(ENABLE_SHARED_LIBS_${PROJECT_UP_NAME})
   ADD_EXECUTABLE( test_modules "${CMAKE_CURRENT_SOURCE_DIR}/test_modules.c" )
   TARGET_LINK_LIBRARIES( test_modules OyranosModules )
   ADD_CUSTOM_TARGET(test-modules
-	COMMAND ${MEMCHECK} "${CMAKE_CURRENT_BINARY_DIR}/test_modules"
+        COMMAND OY_MODULE_PATH=${CMAKE_BINARY_DIR}/src/modules ${MEMCHECK_SMALL} "${CMAKE_CURRENT_BINARY_DIR}/test_modules"
         DEPENDS test_modules test_object
         COMMENT "Test basic linking against libOyranosModules." VERBATIM )
   SET( TEST2_DEPS ${TEST2_DEPS} test_modules )
@@ -68,6 +69,14 @@ IF(ENABLE_SHARED_LIBS_${PROJECT_UP_NAME})
         DEPENDS test_config test_modules
         COMMENT "Test basic linking against libOyranosConfig." VERBATIM )
   SET( TEST2_DEPS ${TEST2_DEPS} test_config )
+  ADD_CUSTOM_TARGET(test
+	      COMMAND ${MEMCHECK_SMALL} "${CMAKE_CURRENT_BINARY_DIR}/test_core"
+	      COMMAND ${MEMCHECK_SMALL} "${CMAKE_CURRENT_BINARY_DIR}/test_object"
+	      COMMAND OY_MODULE_PATH=${CMAKE_BINARY_DIR}/src/modules ${MEMCHECK_SMALL} "${CMAKE_CURRENT_BINARY_DIR}/test_modules"
+	      COMMAND OY_MODULE_PATH=${CMAKE_BINARY_DIR}/src/modules ${MEMCHECK_SMALL} "${CMAKE_CURRENT_BINARY_DIR}/test_config"
+	      COMMAND LOCPATH=${CMAKE_BINARY_DIR}/locale OY_MODULE_PATH=${CMAKE_BINARY_DIR}/src/modules ${MEMCHECK_SMALL} "${CMAKE_CURRENT_BINARY_DIR}/test_oyranos"
+        DEPENDS test_oyranos test_config test_modules test_object test_core
+        COMMENT "Test basics." VERBATIM )
 ENDIF(ENABLE_SHARED_LIBS_${PROJECT_UP_NAME})
 
 
@@ -92,13 +101,22 @@ IF(ENABLE_STATIC_LIBS_${PROJECT_UP_NAME})
   SET( TEST2_STATIC test2-static )
   SET( TEST2_DEPS ${TEST2_DEPS} test2-static )
 ENDIF(ENABLE_STATIC_LIBS_${PROJECT_UP_NAME})
-ADD_CUSTOM_TARGET(test-2
+ADD_CUSTOM_TARGET(test-3
 	"echo"
 	DEPENDS test-oyranos2 ${TEST2} ${TEST2_STATIC}
         COMMENT "Test liboyranos extensive." VERBATIM )
 ADD_CUSTOM_COMMAND( OUTPUT test-oyranos2
                     DEPENDS ${TEST2_DEPS}
                     COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_SOURCE_DIR}/RunTest2.cmake )
+ADD_CUSTOM_TARGET(test-2
+	      COMMAND ${MEMCHECK_SMALL} "${CMAKE_CURRENT_BINARY_DIR}/test_core"
+	      COMMAND ${MEMCHECK_SMALL} "${CMAKE_CURRENT_BINARY_DIR}/test_object"
+	      COMMAND OY_MODULE_PATH=${CMAKE_BINARY_DIR}/src/modules ${MEMCHECK_SMALL} "${CMAKE_CURRENT_BINARY_DIR}/test_modules"
+	      COMMAND OY_MODULE_PATH=${CMAKE_BINARY_DIR}/src/modules ${MEMCHECK_SMALL} "${CMAKE_CURRENT_BINARY_DIR}/test_config"
+	      COMMAND LOCPATH=${CMAKE_BINARY_DIR}/locale OY_MODULE_PATH=${CMAKE_BINARY_DIR}/src/modules ${MEMCHECK_SMALL} "${CMAKE_CURRENT_BINARY_DIR}/test_oyranos"
+	      COMMAND LOCPATH=${CMAKE_BINARY_DIR}/locale OY_MODULE_PATH=${CMAKE_BINARY_DIR}/src/modules ${MEMCHECK_SMALL} "${CMAKE_CURRENT_BINARY_DIR}/test2"
+        DEPENDS test2 test_oyranos test_config test_modules test_object test_core
+        COMMENT "Test libOyranos extensive." VERBATIM )
 
 IF(USE_GCOV AND CMAKE_COMPILER_IS_GNUCC)
   MESSAGE("testing coverage using gcc's gcov; try target: coverage")
