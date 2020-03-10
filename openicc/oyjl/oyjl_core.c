@@ -1756,7 +1756,7 @@ void oyjlLibRelease() {
  *  Additionally use setlocale() somewhere in your application.
  *  The message catalog search path is detected from the project specific
  *  environment variable specified in \em env_var_locdir and
- *  the LOCPATH environment variables. If those are not present
+ *  the \em LOCPATH environment variables. If those are not present
  *  a expected fall back directory from \em default_locdir is used.
  *
  *  @param         project_name        project name display string; e.g. "MyProject"
