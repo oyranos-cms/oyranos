@@ -95,12 +95,12 @@ static oyjlOptionChoice_s * getLinearEffectProfileChoices (
         /* example profile choices */
         c[++i].nick = strdup("Effect 1");
         c[i].name = strdup("Example Effect 1");
-        c[i].description = strdup("example.effect.1.icc");
+        c[i].description = strdup("ICC profile of class abstract, wich affects gamma");
         c[i].help = strdup("");
 
         c[++i].nick = strdup("Effect 2");
         c[i].name = strdup("Example Effect 2");
-        c[i].description = strdup("example.effect.2.icc");
+        c[i].description = strdup("ICC profile of class abstract, wich affects gamma");
         c[i].help = strdup("");
 
         /* empty choice for end of list */
@@ -160,7 +160,7 @@ static oyjlOptionChoice_s * getLinearEffectProfileChoices (
 
           c[i+1].nick = strdup(nick);
           c[i+1].name = strdup(oyProfile_GetText( p, oyNAME_DESCRIPTION ));
-          c[i+1].description = strdup(oyProfile_GetFileName( p, 0));
+          c[i+1].description = strdup("");
           c[i+1].help = strdup("");
 
           if(selected && value && strcmp(value, nick) == 0)

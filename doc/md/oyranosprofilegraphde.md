@@ -12,6 +12,8 @@ oyranos\-profile\-graph v0.9.7 \- Oyranos Profile Zeichner
 
 **oyranos\-profile\-graph** [<strong>\-t</strong>=<em>NUMMER</em>] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMMER</em>] [<strong>\-o</strong>=<em>\-|DATEI</em>] [<strong>\-f</strong>=<em>FORMAT</em>] [<strong>\-c</strong>] [<strong>\-x</strong>] [<strong>\-d</strong>=<em>NUMMER</em>] [<strong>\-n</strong>] [<strong>\-2</strong>] [<strong>\-4</strong>] [<strong>\-r</strong>] [<strong>\-v</strong>] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
 <br />
+**oyranos\-profile\-graph** <strong>\-l</strong>=<em>NUMMER</em> [ <em>l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE</em>] [<strong>\-t</strong>=<em>NUMMER</em>] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMMER</em>] [<strong>\-o</strong>=<em>\-|DATEI</em>] [<strong>\-f</strong>=<em>FORMAT</em>] [<strong>\-2</strong>] [<strong>\-4</strong>] [<strong>\-r</strong>] [<strong>\-v</strong>]
+<br />
 **oyranos\-profile\-graph** <strong>\-S</strong> [<strong>\-t</strong>=<em>NUMMER</em>] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMMER</em>] [<strong>\-T</strong>] [<strong>\-o</strong>=<em>\-|DATEI</em>] [<strong>\-f</strong>=<em>FORMAT</em>] [<strong>\-v</strong>]
 <br />
 **oyranos\-profile\-graph** <strong>\-O</strong> [<strong>\-t</strong>=<em>NUMMER</em>] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMMER</em>] [<strong>\-T</strong>] [<strong>\-o</strong>=<em>\-|DATEI</em>] [<strong>\-f</strong>=<em>FORMAT</em>] [<strong>\-v</strong>]
@@ -41,6 +43,19 @@ Erzeuge aus einem ICC Profil eine Grafik mit seiner Sättigungslinie.
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-x</strong>|<strong>--xyy</strong></td> <td>Benutze CIE*xyY *x*y Ebene für Projektion</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-c</strong>|<strong>--no-blackbody</strong></td> <td>Lasse Weißlinie von Lambertstrahlern fort</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-n</strong>|<strong>--no-spectral-line</strong></td> <td>Lasse Spektrallinie fort</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-2</strong>|<strong>--icc-version-2</strong></td> <td>Wähle ICC V2 Profile</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-4</strong>|<strong>--icc-version-4</strong></td> <td>Wähle ICC V4 Profile</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-r</strong>|<strong>--no-repair</strong></td> <td>Lasse Reparatur der Profil ID weg</td> </tr>
+</table>
+
+#### Color Patches Graph from profiles
+&nbsp;&nbsp;**oyranos-profile\-graph** <strong>\-l</strong>=<em>NUMMER</em> [ <em>l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE</em>] [<strong>\-t</strong>=<em>NUMMER</em>] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMMER</em>] [<strong>\-o</strong>=<em>\-|DATEI</em>] [<strong>\-f</strong>=<em>FORMAT</em>] [<strong>\-2</strong>] [<strong>\-4</strong>] [<strong>\-r</strong>] [<strong>\-v</strong>]
+
+Create a 2D Graph containing the possible color patches inside the ICC Profile gamut.
+
+<table style='width:100%'>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-l</strong>|<strong>--hlc</strong> <em>NUMMER</em></td> <td>HLC Color Atlas: Specify the number of Hue in the HLC color atlas in degrees and which are inside the profiles gamut. -l=365 will output all hues. (NUMMER:0 [≥0 ≤365])</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'> <em>l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE</em></td> <td>ICC Profil </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-2</strong>|<strong>--icc-version-2</strong></td> <td>Wähle ICC V2 Profile</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-4</strong>|<strong>--icc-version-4</strong></td> <td>Wähle ICC V4 Profile</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-r</strong>|<strong>--no-repair</strong></td> <td>Lasse Reparatur der Profil ID weg</td> </tr>
@@ -157,6 +172,8 @@ Erzeuge aus einem ICC Profil eine Grafik mit seiner Sättigungslinie.
 &nbsp;&nbsp;oyranos\-profile\-graph \-w 256 \-s \-t 3 sRGB.icc ProPhoto\-RGB.icc
 #### Zeige die Standard Betrachter Spektralfunktion als Kurven:
 &nbsp;&nbsp;oyranos\-profile\-graph \-\-standard\-observer \-o CIE\-StdObserver.png
+#### Show the 
+&nbsp;&nbsp;oyranos\-profile\-graph \-c \-o CIE\-StdObserver.png
 
 <h2>SIEHE AUCH <a href="#toc" name="seeaswell">&uarr;</a></h2>
 

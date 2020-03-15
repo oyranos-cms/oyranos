@@ -4,6 +4,8 @@ oyranos-profile-graph v0.9.7 \- Oyranos Profile Graph
 .SH SYNOPSIS
 \fBoyranos-profile-graph\fR [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-c\fR] [\fB\-x\fR] [\fB\-d\fR \fINUMBER\fR] [\fB\-n\fR] [\fB\-2\fR] [\fB\-4\fR] [\fB\-r\fR] [\fB\-v\fR] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
 .br
+\fBoyranos-profile-graph\fR \fB\-l\fR \fINUMBER\fR [\fIl|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE\fR] [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-2\fR] [\fB\-4\fR] [\fB\-r\fR] [\fB\-v\fR]
+.br
 \fBoyranos-profile-graph\fR \fB\-S\fR [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-T\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-v\fR]
 .br
 \fBoyranos-profile-graph\fR \fB\-O\fR [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-T\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-v\fR]
@@ -43,6 +45,26 @@ Create a 2D Graph containing the saturation line from a ICC Profile.
 \fB\-r\fR|\fB\-\-no-repair\fR	No Profile repair of ICC profile ID
 .br
 .SS
+Color Patches Graph from profiles
+\fBoyranos-profile-graph\fR \fB\-l\fR \fINUMBER\fR [\fIl|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE\fR] [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-2\fR] [\fB\-4\fR] [\fB\-r\fR] [\fB\-v\fR]
+.br
+Create a 2D Graph containing the possible color patches inside the ICC Profile gamut.
+.br
+.sp
+.br
+\fB\-l\fR|\fB\-\-hlc\fR \fINUMBER\fR	HLC Color Atlas (NUMBER:0 [≥0 ≤365])
+.RS
+Specify the number of Hue in the HLC color atlas in degrees and which are inside the profiles gamut. -l=365 will output all hues.
+.RE
+\fIl|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE\fR	ICC Profile
+.br
+\fB\-2\fR|\fB\-\-icc-version-2\fR	Select ICC v2 Profiles
+.br
+\fB\-4\fR|\fB\-\-icc-version-4\fR	Select ICC v4 Profiles
+.br
+\fB\-r\fR|\fB\-\-no-repair\fR	No Profile repair of ICC profile ID
+.br
+.SS
 Standard Observer 1931 2° Graph
 \fBoyranos-profile-graph\fR \fB\-S\fR [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-T\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-v\fR]
 .br
@@ -66,33 +88,19 @@ Illuminant Spectrum Graph
 .br
 \fB\-i\fR|\fB\-\-illuminant\fR \fISTRING\fR	Illuminant Spectrum
 .br
-	\-i A		# Illuminant A 
+	\-i A		# Illuminant A - CIE A spectral power distribution
 .br
-	 CIE A spectral power distribution
+	\-i D50		# Illuminant D50 - CIE D50 spectral power distribution (computed)
 .br
-	\-i D50		# Illuminant D50 
+	\-i D55		# Illuminant D55 - CIE D55 spectral power distribution (computed)
 .br
-	 CIE D50 spectral power distribution (computed)
+	\-i D65		# Illuminant D65 - CIE D65 spectral power distribution (computed)
 .br
-	\-i D55		# Illuminant D55 
+	\-i D65T		# Illuminant D65 T - CIE D65 spectral power distribution
 .br
-	 CIE D55 spectral power distribution (computed)
+	\-i D75		# Illuminant D75 - CIE D75 spectral power distribution (computed)
 .br
-	\-i D65		# Illuminant D65 
-.br
-	 CIE D65 spectral power distribution (computed)
-.br
-	\-i D65T		# Illuminant D65 T 
-.br
-	 CIE D65 spectral power distribution
-.br
-	\-i D75		# Illuminant D75 
-.br
-	 CIE D75 spectral power distribution (computed)
-.br
-	\-i D93		# Illuminant D93 
-.br
-	 CIE D93 spectral power distribution (computed)
+	\-i D93		# Illuminant D93 - CIE D93 spectral power distribution (computed)
 .br
 .SS
 Spectral Input Graph
@@ -102,33 +110,19 @@ Spectral Input Graph
 .br
 \fB\-p\fR|\fB\-\-spectral-format\fR \fIFORMAT\fR	Specify spectral output file format
 .br
-	\-p png		# PNG 
+	\-p png		# PNG - PNG Raster
 .br
-	 PNG Raster
+	\-p svg		# SVG - SVG Vector
 .br
-	\-p svg		# SVG 
+	\-p csv		# CSV - CSV Values
 .br
-	 SVG Vector
+	\-p ncc		# NCC - Named Color Collection
 .br
-	\-p csv		# CSV 
+	\-p cgats		# CGATS - CGATS Values
 .br
-	 CSV Values
+	\-p icc-xml		# Icc XML - ICC Named Color Values
 .br
-	\-p ncc		# NCC 
-.br
-	 Named Color Collection
-.br
-	\-p cgats		# CGATS 
-.br
-	 CGATS Values
-.br
-	\-p icc-xml		# Icc XML 
-.br
-	 ICC Named Color Values
-.br
-	\-p ppm		# PPM 
-.br
-	 Spectral PAM Image
+	\-p ppm		# PPM - Spectral PAM Image
 .br
 \fB\-P\fR|\fB\-\-pattern\fR \fISTRING\fR	Filter of Color Names
 .br
@@ -152,13 +146,9 @@ General options
 .br
 \fB\-f\fR|\fB\-\-format\fR \fIFORMAT\fR	Specify output file format png or svg, default is png
 .br
-	\-f png		# PNG 
+	\-f png		# PNG - PNG Raster
 .br
-	 PNG Raster
-.br
-	\-f svg		# SVG 
-.br
-	 SVG Vector
+	\-f svg		# SVG - SVG Vector
 .br
 \fB\-h\fR|\fB\-\-help\fR	Help
 .br
@@ -166,25 +156,15 @@ General options
 .RS
 Get UI converted into text formats
 .RE
-	\-X man		# Man 
+	\-X man		# Man - Get a unix man page
 .br
-	 Get a unix man page
+	\-X markdown		# Markdown - Get formated text
 .br
-	\-X markdown		# Markdown 
+	\-X json		# Json - Get a Oyjl Json UI declaration
 .br
-	 Get formated text
+	\-X json+command		# Json + Command - Get Oyjl Json UI declaration incuding command
 .br
-	\-X json		# Json 
-.br
-	 Get a Oyjl Json UI declaration
-.br
-	\-X json+command		# Json + Command 
-.br
-	 Get Oyjl Json UI declaration incuding command
-.br
-	\-X export		# Export 
-.br
-	 Get UI data for developers
+	\-X export		# Export - Get UI data for developers
 .br
 \fB\-v\fR|\fB\-\-verbose\fR	verbose
 .br
@@ -214,6 +194,10 @@ oyranos-profile-graph -w 256 -s -t 3 sRGB.icc ProPhoto-RGB.icc
 Show the standard observer spectral function as curves:
 .br
 oyranos-profile-graph --standard-observer -o CIE-StdObserver.png
+.TP
+Show the 
+.br
+oyranos-profile-graph -c -o CIE-StdObserver.png
 .SH SEE AS WELL
 .TP
 oyranos-profile(1) oyranos-config(1) oyranos-policy(1) oyranos(3)

@@ -48,9 +48,9 @@ A ICC profile of class abstract. Ideally the effect profile works on 1D RGB curv
 .RE
 	\-g -		# [none]
 .br
-	\-g Effect 1		# Example Effect 1
+	\-g Effect 1		# Example Effect 1 - ICC profile of class abstract, wich affects gamma
 .br
-	\-g Effect 2		# Example Effect 2
+	\-g Effect 2		# Example Effect 2 - ICC profile of class abstract, wich affects gamma
 .br
 \fB\-b\fR|\fB\-\-night-backlight\fR \fIPERCENT\fR	Set Nightly Backlight (PERCENT:4 [≥0 ≤100])
 .RS
@@ -104,9 +104,9 @@ A ICC profile of class abstract. Ideally the effect profile works on 1D RGB curv
 .RE
 	\-e -		# [none]
 .br
-	\-e Effect 1		# Example Effect 1
+	\-e Effect 1		# Example Effect 1 - ICC profile of class abstract, wich affects gamma
 .br
-	\-e Effect 2		# Example Effect 2
+	\-e Effect 2		# Example Effect 2 - ICC profile of class abstract, wich affects gamma
 .br
 .SS
 Location and Twilight
@@ -126,11 +126,11 @@ Run sunset daemon
 .br
 \fB\-d\fR|\fB\-\-daemon\fR \fI0|1|2\fR	Control user daemon
 .br
-	\-d 0		# Deactivate  
+	\-d 0		# Deactivate
 .br
-	\-d 1		# Autostart  
+	\-d 1		# Autostart
 .br
-	\-d 2		# Activate  
+	\-d 2		# Activate
 .br
 .SS
 General options
@@ -146,25 +146,15 @@ General options
 .RS
 Get UI converted into text formats
 .RE
-	\-X man		# Man 
+	\-X man		# Man - Get a unix man page
 .br
-	 Get a unix man page
+	\-X markdown		# Markdown - Get formated text
 .br
-	\-X markdown		# Markdown 
+	\-X json		# Json - Get a Oyjl Json UI declaration
 .br
-	 Get formated text
+	\-X json+command		# Json + Command - Get Oyjl Json UI declaration incuding command
 .br
-	\-X json		# Json 
-.br
-	 Get a Oyjl Json UI declaration
-.br
-	\-X json+command		# Json + Command 
-.br
-	 Get Oyjl Json UI declaration incuding command
-.br
-	\-X export		# Export 
-.br
-	 Get UI data for developers
+	\-X export		# Export - Get UI data for developers
 .br
 \fB\-z\fR|\fB\-\-system-wide\fR	System wide DB setting
 .br

@@ -12,6 +12,8 @@ oyranos\-profile\-graph v0.9.7 \- Oyranos Profile Graph
 
 **oyranos\-profile\-graph** [<strong>\-t</strong>=<em>NUMBER</em>] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMBER</em>] [<strong>\-o</strong>=<em>\-|FILE</em>] [<strong>\-f</strong>=<em>FORMAT</em>] [<strong>\-c</strong>] [<strong>\-x</strong>] [<strong>\-d</strong>=<em>NUMBER</em>] [<strong>\-n</strong>] [<strong>\-2</strong>] [<strong>\-4</strong>] [<strong>\-r</strong>] [<strong>\-v</strong>] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
 <br />
+**oyranos\-profile\-graph** <strong>\-l</strong>=<em>NUMBER</em> [ <em>l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE</em>] [<strong>\-t</strong>=<em>NUMBER</em>] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMBER</em>] [<strong>\-o</strong>=<em>\-|FILE</em>] [<strong>\-f</strong>=<em>FORMAT</em>] [<strong>\-2</strong>] [<strong>\-4</strong>] [<strong>\-r</strong>] [<strong>\-v</strong>]
+<br />
 **oyranos\-profile\-graph** <strong>\-S</strong> [<strong>\-t</strong>=<em>NUMBER</em>] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMBER</em>] [<strong>\-T</strong>] [<strong>\-o</strong>=<em>\-|FILE</em>] [<strong>\-f</strong>=<em>FORMAT</em>] [<strong>\-v</strong>]
 <br />
 **oyranos\-profile\-graph** <strong>\-O</strong> [<strong>\-t</strong>=<em>NUMBER</em>] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMBER</em>] [<strong>\-T</strong>] [<strong>\-o</strong>=<em>\-|FILE</em>] [<strong>\-f</strong>=<em>FORMAT</em>] [<strong>\-v</strong>]
@@ -41,6 +43,19 @@ Create a 2D Graph containing the saturation line from a ICC Profile.
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-x</strong>|<strong>--xyy</strong></td> <td>Use CIE*xyY *x*y plane for saturation line projection</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-c</strong>|<strong>--no-blackbody</strong></td> <td>Omit white line of lambert light emitters</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-n</strong>|<strong>--no-spectral-line</strong></td> <td>Omit the spectral line</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-2</strong>|<strong>--icc-version-2</strong></td> <td>Select ICC v2 Profiles</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-4</strong>|<strong>--icc-version-4</strong></td> <td>Select ICC v4 Profiles</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-r</strong>|<strong>--no-repair</strong></td> <td>No Profile repair of ICC profile ID</td> </tr>
+</table>
+
+#### Color Patches Graph from profiles
+&nbsp;&nbsp;**oyranos-profile\-graph** <strong>\-l</strong>=<em>NUMBER</em> [ <em>l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE</em>] [<strong>\-t</strong>=<em>NUMBER</em>] [<strong>\-b</strong>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMBER</em>] [<strong>\-o</strong>=<em>\-|FILE</em>] [<strong>\-f</strong>=<em>FORMAT</em>] [<strong>\-2</strong>] [<strong>\-4</strong>] [<strong>\-r</strong>] [<strong>\-v</strong>]
+
+Create a 2D Graph containing the possible color patches inside the ICC Profile gamut.
+
+<table style='width:100%'>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-l</strong>|<strong>--hlc</strong> <em>NUMBER</em></td> <td>HLC Color Atlas: Specify the number of Hue in the HLC color atlas in degrees and which are inside the profiles gamut. -l=365 will output all hues. (NUMBER:0 [≥0 ≤365])</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'> <em>l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE</em></td> <td>ICC Profile </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-2</strong>|<strong>--icc-version-2</strong></td> <td>Select ICC v2 Profiles</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-4</strong>|<strong>--icc-version-4</strong></td> <td>Select ICC v4 Profiles</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-r</strong>|<strong>--no-repair</strong></td> <td>No Profile repair of ICC profile ID</td> </tr>
@@ -157,6 +172,8 @@ Create a 2D Graph containing the saturation line from a ICC Profile.
 &nbsp;&nbsp;oyranos\-profile\-graph \-w 256 \-s \-t 3 sRGB.icc ProPhoto\-RGB.icc
 #### Show the standard observer spectral function as curves:
 &nbsp;&nbsp;oyranos\-profile\-graph \-\-standard\-observer \-o CIE\-StdObserver.png
+#### Show the 
+&nbsp;&nbsp;oyranos\-profile\-graph \-c \-o CIE\-StdObserver.png
 
 <h2>SEE AS WELL <a href="#toc" name="seeaswell">&uarr;</a></h2>
 

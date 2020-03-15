@@ -48,9 +48,9 @@ Ein ICC Farbprofil der Klasse Abstrakter Farbraum. Günstig wäre ein Effektprof
 .RE
 	\-g -		# [kein]
 .br
-	\-g Effect 1		# Example Effect 1
+	\-g Effect 1		# Example Effect 1 - ICC profile of class abstract, wich affects gamma
 .br
-	\-g Effect 2		# Example Effect 2
+	\-g Effect 2		# Example Effect 2 - ICC profile of class abstract, wich affects gamma
 .br
 \fB\-b\fR|\fB\-\-night-backlight\fR \fIPROZENT\fR	Setze Nächtiches Monitorlicht (PROZENT:4 [≥0 ≤100])
 .RS
@@ -104,9 +104,9 @@ Ein ICC Farbprofil der Klasse Abstrakter Farbraum. Günstig wäre ein Effektprof
 .RE
 	\-e -		# [kein]
 .br
-	\-e Effect 1		# Example Effect 1
+	\-e Effect 1		# Example Effect 1 - ICC profile of class abstract, wich affects gamma
 .br
-	\-e Effect 2		# Example Effect 2
+	\-e Effect 2		# Example Effect 2 - ICC profile of class abstract, wich affects gamma
 .br
 .SS
 Ort und Dämmerung
@@ -126,11 +126,11 @@ Setze Sonnenuntergangsdienst
 .br
 \fB\-d\fR|\fB\-\-daemon\fR \fI0|1|2\fR	Setze Sonnenuntergangsdienst
 .br
-	\-d 0		# Deaktiviere  
+	\-d 0		# Deaktiviere
 .br
-	\-d 1		# Automatischer Start  
+	\-d 1		# Automatischer Start
 .br
-	\-d 2		# Aktiviere  
+	\-d 2		# Aktiviere
 .br
 .SS
 Allgemeine Optionen
@@ -146,25 +146,15 @@ Allgemeine Optionen
 .RS
 Hole Benutzerschnittstelle als Text
 .RE
-	\-X man		# Handbuch 
+	\-X man		# Handbuch - Hole Unix Handbuchseite
 .br
-	 Hole Unix Handbuchseite
+	\-X markdown		# Markdown - Hole formatierten Text
 .br
-	\-X markdown		# Markdown 
+	\-X json		# Json - Hole Oyjl Json Benutzerschnittstelle
 .br
-	 Hole formatierten Text
+	\-X json+command		# Json + Kommando - Hole Oyjl Json Benutzerschnittstelle mit Kommando
 .br
-	\-X json		# Json 
-.br
-	 Hole Oyjl Json Benutzerschnittstelle
-.br
-	\-X json+command		# Json + Kommando 
-.br
-	 Hole Oyjl Json Benutzerschnittstelle mit Kommando
-.br
-	\-X export		# Export 
-.br
-	 Erhalte Daten für Entwickler
+	\-X export		# Export - Erhalte Daten für Entwickler
 .br
 \fB\-z\fR|\fB\-\-system-wide\fR	Einstellung in der systemweiten DB
 .br
