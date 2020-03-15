@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2020-03-09 10:29+0100\n"
+"POT-Creation-Date: 2020-03-14 11:52+0100\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -24,7 +24,7 @@ msgstr ""
 msgid "'_(\\\"%s\\\"); '"
 msgstr "'_(\\\"%s\\\"); '"
 
-#: oyjl_args.c:2357
+#: oyjl_args.c:2370
 msgid "... try with --help|-h option for usage text. give up"
 msgstr "... versuche bitte die --help|-h Option für einen Hilfetext. Gebe auf"
 
@@ -40,7 +40,7 @@ msgstr "Ein JSON-Dateiname oder Ausgangsdatenstrom wie \"stdout\""
 msgid "A output format string."
 msgstr "Ausgabeformat"
 
-#: oyjl_args.c:2881 oyjl_args.c:3127
+#: oyjl_args.c:2900 oyjl_args.c:3146
 msgid "AUTHOR"
 msgstr "AUTOR"
 
@@ -73,11 +73,11 @@ msgstr "Alternative"
 msgid "Any arg mode"
 msgstr "Modus mit jedem Argument"
 
-#: oyjl_args.c:2411
+#: oyjl_args.c:2424
 msgid "Author"
 msgstr "Autor"
 
-#: oyjl_args.c:2891 oyjl_args.c:2893 oyjl_args.c:3141 oyjl_args.c:3143
+#: oyjl_args.c:2910 oyjl_args.c:2912 oyjl_args.c:3160 oyjl_args.c:3162
 msgid "BUGS"
 msgstr "FEHLER"
 
@@ -86,7 +86,7 @@ msgstr "FEHLER"
 msgid "C static char"
 msgstr "C static char"
 
-#: oyjl_args.c:2885 oyjl_args.c:3131
+#: oyjl_args.c:2904 oyjl_args.c:3150
 msgid "COPYRIGHT"
 msgstr "KOPIERRECHT"
 
@@ -140,7 +140,7 @@ msgstr "Kopierrecht"
 msgid "Count"
 msgstr "Anzahl"
 
-#: oyjl_args.c:2770 oyjl_args.c:3018
+#: oyjl_args.c:2783 oyjl_args.c:3037
 msgid "DESCRIPTION"
 msgstr "BESCHREIBUNG"
 
@@ -148,7 +148,7 @@ msgstr "BESCHREIBUNG"
 msgid "Date"
 msgstr "Datum"
 
-#: oyjl_args.c:2011
+#: oyjl_args.c:2014
 msgid "Description"
 msgstr "Beschreibung"
 
@@ -180,16 +180,16 @@ msgstr "Doppelte Option"
 msgid "Download"
 msgstr "Bezugsquelle"
 
-#: oyjl_args.c:2576
+#: oyjl_args.c:2589
 msgid "ENVIRONMENT VARIABLES"
 msgstr "UMGEBUNGSVARIABLEN"
 
-#: oyjl-args.c:58 oyjl.c:103 oyjl_args.c:2572 oyjl_translate.c:115
+#: oyjl-args.c:58 oyjl.c:103 oyjl_args.c:2585 oyjl_translate.c:115
 #: oyjl_web.c:83
 msgid "EXAMPLES"
 msgstr "BEISPIELE"
 
-#: oyjl_args.c:2574
+#: oyjl_args.c:2587
 msgid "EXIT-STATE"
 msgstr "EXIT-STATUS"
 
@@ -219,7 +219,7 @@ msgstr "Auszug übersetzbarer Nachrichten"
 msgid "FILENAME"
 msgstr "DATEINAME"
 
-#: oyjl_args.c:2580
+#: oyjl_args.c:2593
 msgid "FILES"
 msgstr "DATEIEN"
 
@@ -298,7 +298,7 @@ msgstr "Hole Knotentyp"
 msgid "Gui"
 msgstr "Gui"
 
-#: oyjl_args.c:2578
+#: oyjl_args.c:2591
 msgid "HISTORY"
 msgstr "GESCHICHTE"
 
@@ -365,7 +365,7 @@ msgstr "Schlüsselnamen"
 msgid "LOCALEDIR"
 msgstr "LOCALEPFAD"
 
-#: oyjl_args.c:2410 oyjl_args.c:2887 oyjl_args.c:3133 oyjl_args_tree.c:1105
+#: oyjl_args.c:2423 oyjl_args.c:2906 oyjl_args.c:3152 oyjl_args_tree.c:1105
 msgid "License"
 msgstr "Lizenz"
 
@@ -478,7 +478,7 @@ msgstr "Modus8"
 msgid "Module"
 msgstr "Modul"
 
-#: oyjl_args.c:3003
+#: oyjl_args.c:3022
 msgid "NAME"
 msgstr "NAME"
 
@@ -494,7 +494,7 @@ msgstr "12. November 2017"
 msgid "November 28, 2019"
 msgstr "28. November 2019"
 
-#: oyjl_args.c:2772 oyjl_args.c:3021
+#: oyjl_args.c:2785 oyjl_args.c:3040
 msgid "OPTIONS"
 msgstr "OPTIONEN"
 
@@ -519,7 +519,7 @@ msgid "Option needs a argument"
 msgstr "Die Option erwartet ein Argument"
 
 #: oyjl_args.c:1341 oyjl_args.c:1350 oyjl_args.c:1442 oyjl_args.c:1503
-#: oyjl_args.c:2229
+#: oyjl_args.c:2242
 msgid "Option not supported"
 msgstr "Die Option ist nicht unterstützt"
 
@@ -670,12 +670,12 @@ msgstr "Übertragungsart"
 msgid "Results JSON"
 msgstr "Ergebnis JSON"
 
-#: oyjl-args.c:60 oyjl.c:105 oyjl_args.c:2584 oyjl_translate.c:117
+#: oyjl-args.c:60 oyjl.c:105 oyjl_args.c:2597 oyjl_translate.c:117
 #: oyjl_web.c:85
 msgid "SEE ALSO"
 msgstr "SIEHE AUCH"
 
-#: oyjl_args.c:2582
+#: oyjl_args.c:2595
 msgid "SEE AS WELL"
 msgstr "SIEHE AUCH"
 
@@ -683,7 +683,7 @@ msgstr "SIEHE AUCH"
 msgid "STRING"
 msgstr "TEXT"
 
-#: oyjl_args.c:2758 oyjl_args.c:3006
+#: oyjl_args.c:2771 oyjl_args.c:3025
 msgid "SYNOPSIS"
 msgstr "ÜBERSICHT"
 
@@ -767,7 +767,7 @@ msgstr "Starte lokalen Web Service für die Darstellung in einem Webbrowser"
 msgid "Support"
 msgstr "Unterstützung"
 
-#: oyjl_args.c:2013
+#: oyjl_args.c:2016
 msgid "Synopsis"
 msgstr "Übersicht"
 
@@ -858,14 +858,14 @@ msgstr "Unix Handbuchseite"
 msgid "Url"
 msgstr "Url"
 
-#: oyjl_args.c:2022 oyjl_translate.c:173
+#: oyjl_args.c:2025 oyjl_translate.c:173
 msgid "Usage"
 msgstr "Benutzung"
 
 #: oyjl_args.c:1325 oyjl_args.c:1341 oyjl_args.c:1350 oyjl_args.c:1442
 #: oyjl_args.c:1464 oyjl_args.c:1488 oyjl_args.c:1503 oyjl_args.c:1522
 #: oyjl_args.c:1543 oyjl_args.c:1561 oyjl_args.c:1588 oyjl_args.c:1696
-#: oyjl_args.c:2229
+#: oyjl_args.c:2242
 msgid "Usage Error:"
 msgstr "Benutzerfehler:"
 
@@ -975,7 +975,7 @@ msgstr "name,description,help"
 msgid "need a value_type"
 msgstr "benötige einen value_type"
 
-#: oyjl_args.c:1350 oyjl_args.c:2229
+#: oyjl_args.c:1350 oyjl_args.c:2242
 msgid "needs OYJL_OPTION_FLAG_EDITABLE or choices"
 msgstr "benötige OYJL_OPTION_FLAG_EDITABLE oder choices"
 
