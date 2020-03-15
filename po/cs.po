@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cs\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2020-03-09 10:29+0100\n"
+"POT-Creation-Date: 2020-03-14 11:52+0100\n"
 "PO-Revision-Date: 2012-10-19 15:10+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -20,7 +20,7 @@ msgstr ""
 msgid "'_(\\\"%s\\\"); '"
 msgstr ""
 
-#: oyjl_args.c:2357
+#: oyjl_args.c:2370
 msgid "... try with --help|-h option for usage text. give up"
 msgstr ""
 
@@ -36,7 +36,7 @@ msgstr ""
 msgid "A output format string."
 msgstr ""
 
-#: oyjl_args.c:2881 oyjl_args.c:3127
+#: oyjl_args.c:2900 oyjl_args.c:3146
 msgid "AUTHOR"
 msgstr ""
 
@@ -70,11 +70,11 @@ msgstr ""
 msgid "Any arg mode"
 msgstr ""
 
-#: oyjl_args.c:2411
+#: oyjl_args.c:2424
 msgid "Author"
 msgstr ""
 
-#: oyjl_args.c:2891 oyjl_args.c:2893 oyjl_args.c:3141 oyjl_args.c:3143
+#: oyjl_args.c:2910 oyjl_args.c:2912 oyjl_args.c:3160 oyjl_args.c:3162
 msgid "BUGS"
 msgstr ""
 
@@ -83,7 +83,7 @@ msgstr ""
 msgid "C static char"
 msgstr ""
 
-#: oyjl_args.c:2885 oyjl_args.c:3131
+#: oyjl_args.c:2904 oyjl_args.c:3150
 msgid "COPYRIGHT"
 msgstr ""
 
@@ -136,7 +136,7 @@ msgstr "Copyright"
 msgid "Count"
 msgstr ""
 
-#: oyjl_args.c:2770 oyjl_args.c:3018
+#: oyjl_args.c:2783 oyjl_args.c:3037
 msgid "DESCRIPTION"
 msgstr ""
 
@@ -144,7 +144,7 @@ msgstr ""
 msgid "Date"
 msgstr "Datum"
 
-#: oyjl_args.c:2011
+#: oyjl_args.c:2014
 #, fuzzy
 msgid "Description"
 msgstr "popis"
@@ -179,16 +179,16 @@ msgstr "popis"
 msgid "Download"
 msgstr ""
 
-#: oyjl_args.c:2576
+#: oyjl_args.c:2589
 msgid "ENVIRONMENT VARIABLES"
 msgstr ""
 
-#: oyjl-args.c:58 oyjl.c:103 oyjl_args.c:2572 oyjl_translate.c:115
+#: oyjl-args.c:58 oyjl.c:103 oyjl_args.c:2585 oyjl_translate.c:115
 #: oyjl_web.c:83
 msgid "EXAMPLES"
 msgstr ""
 
-#: oyjl_args.c:2574
+#: oyjl_args.c:2587
 msgid "EXIT-STATE"
 msgstr ""
 
@@ -219,7 +219,7 @@ msgstr ""
 msgid "FILENAME"
 msgstr ""
 
-#: oyjl_args.c:2580
+#: oyjl_args.c:2593
 msgid "FILES"
 msgstr ""
 
@@ -304,7 +304,7 @@ msgstr ""
 msgid "Gui"
 msgstr ""
 
-#: oyjl_args.c:2578
+#: oyjl_args.c:2591
 msgid "HISTORY"
 msgstr ""
 
@@ -377,7 +377,7 @@ msgstr "Mé jméno"
 msgid "LOCALEDIR"
 msgstr ""
 
-#: oyjl_args.c:2410 oyjl_args.c:2887 oyjl_args.c:3133 oyjl_args_tree.c:1105
+#: oyjl_args.c:2423 oyjl_args.c:2906 oyjl_args.c:3152 oyjl_args_tree.c:1105
 msgid "License"
 msgstr "Licence"
 
@@ -506,7 +506,7 @@ msgstr "Model:"
 msgid "Module"
 msgstr "Volby modulu:"
 
-#: oyjl_args.c:3003
+#: oyjl_args.c:3022
 msgid "NAME"
 msgstr ""
 
@@ -522,7 +522,7 @@ msgstr ""
 msgid "November 28, 2019"
 msgstr ""
 
-#: oyjl_args.c:2772 oyjl_args.c:3021
+#: oyjl_args.c:2785 oyjl_args.c:3040
 msgid "OPTIONS"
 msgstr ""
 
@@ -548,7 +548,7 @@ msgid "Option needs a argument"
 msgstr ""
 
 #: oyjl_args.c:1341 oyjl_args.c:1350 oyjl_args.c:1442 oyjl_args.c:1503
-#: oyjl_args.c:2229
+#: oyjl_args.c:2242
 #, fuzzy
 msgid "Option not supported"
 msgstr "Volba nepodporovaného typu:"
@@ -721,12 +721,12 @@ msgstr "Záměr transformace"
 msgid "Results JSON"
 msgstr ""
 
-#: oyjl-args.c:60 oyjl.c:105 oyjl_args.c:2584 oyjl_translate.c:117
+#: oyjl-args.c:60 oyjl.c:105 oyjl_args.c:2597 oyjl_translate.c:117
 #: oyjl_web.c:85
 msgid "SEE ALSO"
 msgstr ""
 
-#: oyjl_args.c:2582
+#: oyjl_args.c:2595
 msgid "SEE AS WELL"
 msgstr ""
 
@@ -734,7 +734,7 @@ msgstr ""
 msgid "STRING"
 msgstr ""
 
-#: oyjl_args.c:2758 oyjl_args.c:3006
+#: oyjl_args.c:2771 oyjl_args.c:3025
 msgid "SYNOPSIS"
 msgstr ""
 
@@ -819,7 +819,7 @@ msgstr ""
 msgid "Support"
 msgstr ""
 
-#: oyjl_args.c:2013
+#: oyjl_args.c:2016
 msgid "Synopsis"
 msgstr ""
 
@@ -903,14 +903,14 @@ msgstr "Unix a deriváty"
 msgid "Url"
 msgstr ""
 
-#: oyjl_args.c:2022 oyjl_translate.c:173
+#: oyjl_args.c:2025 oyjl_translate.c:173
 msgid "Usage"
 msgstr "Použití"
 
 #: oyjl_args.c:1325 oyjl_args.c:1341 oyjl_args.c:1350 oyjl_args.c:1442
 #: oyjl_args.c:1464 oyjl_args.c:1488 oyjl_args.c:1503 oyjl_args.c:1522
 #: oyjl_args.c:1543 oyjl_args.c:1561 oyjl_args.c:1588 oyjl_args.c:1696
-#: oyjl_args.c:2229
+#: oyjl_args.c:2242
 msgid "Usage Error:"
 msgstr ""
 
@@ -1029,7 +1029,7 @@ msgstr "popis"
 msgid "need a value_type"
 msgstr ""
 
-#: oyjl_args.c:1350 oyjl_args.c:2229
+#: oyjl_args.c:1350 oyjl_args.c:2242
 msgid "needs OYJL_OPTION_FLAG_EDITABLE or choices"
 msgstr ""
 

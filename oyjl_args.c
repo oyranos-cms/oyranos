@@ -1953,7 +1953,11 @@ oyjlOptionChoice_s * oyjlOption_GetChoices_ (
   return oyjl_get_choices_list_[pos];
 }
 
-
+#define OYJL_HELP_SUBSECTION "  "
+#define OYJL_HELP_COMMAND    "    "
+#define OYJL_HELP_OPTION     "      "
+#define OYJL_HELP_ARG        "        "
+#define OYJL_HELP_HELP       "          "
 #include <stdarg.h> /* va_list */
 /** @brief    Print help text to stderr
  *  @memberof oyjlOptions_s
@@ -1975,7 +1979,6 @@ void  oyjlOptions_PrintHelp          ( oyjlOptions_s     * opts,
 {
   int i,ng;
   va_list list;
-  int indent = 2;
   oyjlUiHeaderSection_s * section = NULL;
   fprintf( stdout, "\n");
   if(verbose)
@@ -2008,14 +2011,14 @@ void  oyjlOptions_PrintHelp          ( oyjlOptions_s     * opts,
 
   if( ui && (section = oyjlUi_GetHeaderSection(ui, "documentation")) != NULL &&
       section->description )
-    fprintf( stdout, "\n%s:\n  %s\n", oyjlTermColor(oyjlBOLD,_("Description")), section->description );
+    fprintf( stdout, "\n%s:\n" OYJL_HELP_SUBSECTION "%s\n", oyjlTermColor(oyjlBOLD,_("Description")), section->description );
 
   fprintf( stdout, "\n%s:\n", oyjlTermColor(oyjlBOLD,_("Synopsis")) );
   for(i = 0; i < ng; ++i)
   {
     oyjlOptionGroup_s * g = &opts->groups[i];
     char * t = oyjlOptions_PrintHelpSynopsis( opts, g, oyjlOPTIONSTYLE_ONELETTER );
-    fprintf( stdout, "  %s\n", t );
+    fprintf( stdout, OYJL_HELP_SUBSECTION "%s\n", t );
     free(t);
   }
 
@@ -2024,15 +2027,20 @@ void  oyjlOptions_PrintHelp          ( oyjlOptions_s     * opts,
   {
     oyjlOptionGroup_s * g = &opts->groups[i];
     int d = 0,
-        j,k;
+        j;
     char ** d_list = oyjlStringSplit2( g->detail, "|,", &d, NULL, malloc );
-    fprintf( stdout, "  %s\n", g->description?oyjlTermColor(oyjlUNDERLINE,g->description):"" );
+    fprintf( stdout, OYJL_HELP_SUBSECTION "%s\n", g->description?oyjlTermColor(oyjlUNDERLINE,g->description):"" );
     if(g->mandatory && g->mandatory[0])
     {
       char * t = oyjlOptions_PrintHelpSynopsis( opts, g, oyjlOPTIONSTYLE_ONELETTER );
-      fprintf( stdout, "\t%s\n", t );
+      fprintf( stdout, OYJL_HELP_COMMAND "%s\n", t );
       free(t);
     }
+    if(g->help)
+    {
+      fprintf( stdout, OYJL_HELP_COMMAND "%s\n", g->help );
+    }
+    fprintf( stdout, "\n" );
     for(j = 0; j < d; ++j)
     {
       const char * option = d_list[j];
@@ -2042,7 +2050,6 @@ void  oyjlOptions_PrintHelp          ( oyjlOptions_s     * opts,
         fprintf(stdout, "\n%s: option not declared: %s\n", g->name, &g->detail[j]);
         if(!getenv("OYJL_NO_EXIT")) exit(1);
       }
-      for(k = 0; k < indent; ++k) fprintf( stdout, " " );
       switch(o->value_type)
       {
         case oyjlOPTIONTYPE_CHOICE:
@@ -2051,9 +2058,11 @@ void  oyjlOptions_PrintHelp          ( oyjlOptions_s     * opts,
             if(o->value_name)
             {
               char * t = oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING);
-              fprintf( stdout, "\t" );
+              fprintf( stdout, OYJL_HELP_OPTION );
               fprintf( stdout, "%s", t );
-              fprintf( stdout, "\t%s%s%s\n", o->description ? o->description:"", o->help?": ":"", o->help?o->help :"" );
+              fprintf( stdout, "\t%s\n", o->description ? o->description:"" );
+              if(o->help)
+                fprintf(stdout,OYJL_HELP_HELP "%s\n", o->help );
               free(t);
             }
             if(o->flags & OYJL_OPTION_FLAG_EDITABLE)
@@ -2061,7 +2070,7 @@ void  oyjlOptions_PrintHelp          ( oyjlOptions_s     * opts,
             while(o->values.choices.list && o->values.choices.list[n].nick && o->values.choices.list[n].nick[0] != '\000')
               ++n;
             for(l = 0; l < n; ++l)
-              fprintf( stdout, "\t\t-%s %s\t\t# %s%s%s\n",
+              fprintf( stdout, OYJL_HELP_ARG "  -%s %s\t\t# %s%s%s\n",
                   o->o,
                   o->values.choices.list[l].nick,
                   o->values.choices.list[l].name && o->values.choices.list[l].nick[0] ? o->values.choices.list[l].name : o->values.choices.list[l].description,
@@ -2076,7 +2085,7 @@ void  oyjlOptions_PrintHelp          ( oyjlOptions_s     * opts,
             if(o->value_name)
             {
               char * t = oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING);
-              fprintf( stdout, "\t" );
+              fprintf( stdout, OYJL_HELP_OPTION );
               fprintf( stdout, "%s", t );
               fprintf( stdout, "\t%s%s%s\n", o->description ? o->description:"", o->help?": ":"", o->help?o->help :"" );
               free(t);
@@ -2088,25 +2097,29 @@ void  oyjlOptions_PrintHelp          ( oyjlOptions_s     * opts,
               while(list[n].nick && list[n].nick[0] != '\000')
                 ++n;
             for(l = 0; l < n; ++l)
-              fprintf( stdout, "\t  -%s %s\t\t# %s\n", o->o, list[l].nick, list[l].name && list[l].nick[0] ? list[l].name : list[l].description );
+              fprintf( stdout, OYJL_HELP_ARG "-%s %s\t\t# %s\n", o->o, list[l].nick, list[l].name && list[l].nick[0] ? list[l].name : list[l].description );
             /* not possible, as the result of oyjlOption_GetChoices_() is cached - oyjlOptionChoice_Release( &list ); */
           }
           break;
         case oyjlOPTIONTYPE_DOUBLE:
           {
             char * t = oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING);
-            fprintf( stdout, "\t" );
+            fprintf( stdout, OYJL_HELP_OPTION );
             fprintf( stdout, "%s", t );
-            fprintf( stdout, "\t%s%s%s (%s%s%g [≥%g ≤%g])\n", o->description ? o->description:"", o->help?": ":"", o->help?o->help :"", o->value_name?o->value_name:"", o->value_name?":":"", o->values.dbl.d, o->values.dbl.start, o->values.dbl.end );
+            fprintf( stdout, "\t%s (%s%s%g [≥%g ≤%g])\n", o->description ? o->description:"", o->value_name?o->value_name:"", o->value_name?":":"", o->values.dbl.d, o->values.dbl.start, o->values.dbl.end );
+            if(o->help)
+              fprintf(stdout,OYJL_HELP_HELP "%s\n", o->help );
             free(t);
           }
           break;
         case oyjlOPTIONTYPE_NONE:
           {
             char * t = oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING);
-            fprintf( stdout, "\t" );
+            fprintf( stdout, OYJL_HELP_OPTION );
             fprintf( stdout, "%s", t );
-            fprintf( stdout, "\t%s%s%s\n", o->description ? o->description:"", o->help?": ":"", o->help?o->help :"" );
+            fprintf( stdout, "\t%s\n", o->description ? o->description:"" );
+            if(o->help)
+              fprintf(stdout,OYJL_HELP_HELP "%s\n", o->help );
             free(t);
           }
         break;
@@ -2820,11 +2833,11 @@ char *       oyjlUi_ToMan            ( oyjlUi_s          * ui,
             while(o->values.choices.list[n].nick && o->values.choices.list[n].nick[0] != '\000')
               ++n;
             for(l = 0; l < n; ++l)
-              oyjlStringAdd( &text, malloc, free, "\t\\-%s %s\t\t# %s %s %s\n.br\n",
+              oyjlStringAdd( &text, malloc, free, "\t\\-%s %s\t\t# %s%s%s\n.br\n",
                   o->o,
                   o->values.choices.list[l].nick,
-                  o->values.choices.list[l].name && o->values.choices.list[l].nick[0] ? o->values.choices.list[l].name : o->values.choices.list[l].description,
-                  o->values.choices.list[l].help&&o->values.choices.list[l].help[0]?"\n.br\n\t":"",
+                  o->values.choices.list[l].name && o->values.choices.list[l].name[0] ? o->values.choices.list[l].name : o->values.choices.list[l].description,
+                  o->values.choices.list[l].help&&o->values.choices.list[l].help[0]?" - ":"",
                   o->values.choices.list[l].help?o->values.choices.list[l].help:"" );
           }
           break;
@@ -2843,7 +2856,13 @@ char *       oyjlUi_ToMan            ( oyjlUi_s          * ui,
               while(list[n].nick && list[n].nick[0] != '\000')
                 ++n;
             for(l = 0; l < n; ++l)
-              oyjlStringAdd( &text, malloc, free, "\t\\-%s %s\t\t# %s\n.br\n", o->o, list[l].nick, list[l].name && list[l].nick[0] ? list[l].name : list[l].description );
+              oyjlStringAdd( &text, malloc, free, "\t\\-%s %s\t\t# %s%s%s\n.br\n",
+                  o->o,
+                  list[l].nick,
+                  list[l].name && list[l].name[0] ? list[l].name : list[l].description,
+                  (list[l].name && list[l].name[0] && list[l].description && list[l].description[0]) ? " - " : "",
+                  (list[l].name && list[l].name[0] && list[l].description && list[l].description[0]) ? list[l].description : ""
+                );
             /* not possible, as the result of oyjlOption_GetChoices_() is cached - oyjlOptionChoice_Release( &list ); */
           }
           break;
