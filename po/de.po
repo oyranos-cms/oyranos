@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2020-03-14 11:52+0100\n"
+"POT-Creation-Date: 2020-03-15 19:30+0100\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -40,7 +40,7 @@ msgstr "Ein JSON-Dateiname oder Ausgangsdatenstrom wie \"stdout\""
 msgid "A output format string."
 msgstr "Ausgabeformat"
 
-#: oyjl_args.c:2900 oyjl_args.c:3146
+#: oyjl_args.c:2904 oyjl_args.c:3150
 msgid "AUTHOR"
 msgstr "AUTOR"
 
@@ -73,11 +73,11 @@ msgstr "Alternative"
 msgid "Any arg mode"
 msgstr "Modus mit jedem Argument"
 
-#: oyjl_args.c:2424
+#: oyjl_args.c:2426
 msgid "Author"
 msgstr "Autor"
 
-#: oyjl_args.c:2910 oyjl_args.c:2912 oyjl_args.c:3160 oyjl_args.c:3162
+#: oyjl_args.c:2914 oyjl_args.c:2916 oyjl_args.c:3164 oyjl_args.c:3166
 msgid "BUGS"
 msgstr "FEHLER"
 
@@ -86,7 +86,7 @@ msgstr "FEHLER"
 msgid "C static char"
 msgstr "C static char"
 
-#: oyjl_args.c:2904 oyjl_args.c:3150
+#: oyjl_args.c:2908 oyjl_args.c:3154
 msgid "COPYRIGHT"
 msgstr "KOPIERRECHT"
 
@@ -140,7 +140,7 @@ msgstr "Kopierrecht"
 msgid "Count"
 msgstr "Anzahl"
 
-#: oyjl_args.c:2783 oyjl_args.c:3037
+#: oyjl_args.c:2787 oyjl_args.c:3041
 msgid "DESCRIPTION"
 msgstr "BESCHREIBUNG"
 
@@ -180,16 +180,16 @@ msgstr "Doppelte Option"
 msgid "Download"
 msgstr "Bezugsquelle"
 
-#: oyjl_args.c:2589
+#: oyjl_args.c:2593
 msgid "ENVIRONMENT VARIABLES"
 msgstr "UMGEBUNGSVARIABLEN"
 
-#: oyjl-args.c:58 oyjl.c:103 oyjl_args.c:2585 oyjl_translate.c:115
+#: oyjl-args.c:58 oyjl.c:103 oyjl_args.c:2589 oyjl_translate.c:115
 #: oyjl_web.c:83
 msgid "EXAMPLES"
 msgstr "BEISPIELE"
 
-#: oyjl_args.c:2587
+#: oyjl_args.c:2591
 msgid "EXIT-STATE"
 msgstr "EXIT-STATUS"
 
@@ -219,7 +219,7 @@ msgstr "Auszug übersetzbarer Nachrichten"
 msgid "FILENAME"
 msgstr "DATEINAME"
 
-#: oyjl_args.c:2593
+#: oyjl_args.c:2597
 msgid "FILES"
 msgstr "DATEIEN"
 
@@ -298,7 +298,7 @@ msgstr "Hole Knotentyp"
 msgid "Gui"
 msgstr "Gui"
 
-#: oyjl_args.c:2591
+#: oyjl_args.c:2595
 msgid "HISTORY"
 msgstr "GESCHICHTE"
 
@@ -365,7 +365,7 @@ msgstr "Schlüsselnamen"
 msgid "LOCALEDIR"
 msgstr "LOCALEPFAD"
 
-#: oyjl_args.c:2423 oyjl_args.c:2906 oyjl_args.c:3152 oyjl_args_tree.c:1105
+#: oyjl_args.c:2425 oyjl_args.c:2910 oyjl_args.c:3156 oyjl_args_tree.c:1105
 msgid "License"
 msgstr "Lizenz"
 
@@ -478,7 +478,7 @@ msgstr "Modus8"
 msgid "Module"
 msgstr "Modul"
 
-#: oyjl_args.c:3022
+#: oyjl_args.c:3026
 msgid "NAME"
 msgstr "NAME"
 
@@ -494,7 +494,7 @@ msgstr "12. November 2017"
 msgid "November 28, 2019"
 msgstr "28. November 2019"
 
-#: oyjl_args.c:2785 oyjl_args.c:3040
+#: oyjl_args.c:2789 oyjl_args.c:3044
 msgid "OPTIONS"
 msgstr "OPTIONEN"
 
@@ -670,12 +670,12 @@ msgstr "Übertragungsart"
 msgid "Results JSON"
 msgstr "Ergebnis JSON"
 
-#: oyjl-args.c:60 oyjl.c:105 oyjl_args.c:2597 oyjl_translate.c:117
+#: oyjl-args.c:60 oyjl.c:105 oyjl_args.c:2601 oyjl_translate.c:117
 #: oyjl_web.c:85
 msgid "SEE ALSO"
 msgstr "SIEHE AUCH"
 
-#: oyjl_args.c:2595
+#: oyjl_args.c:2599
 msgid "SEE AS WELL"
 msgstr "SIEHE AUCH"
 
@@ -683,7 +683,7 @@ msgstr "SIEHE AUCH"
 msgid "STRING"
 msgstr "TEXT"
 
-#: oyjl_args.c:2771 oyjl_args.c:3025
+#: oyjl_args.c:2775 oyjl_args.c:3029
 msgid "SYNOPSIS"
 msgstr "ÜBERSICHT"
 

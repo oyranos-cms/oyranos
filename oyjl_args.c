@@ -2410,11 +2410,13 @@ oyjlUi_s *  oyjlUi_Create            ( int                 argc,
     oyjlUiHeaderSection_s * author = oyjlUi_GetHeaderSection( ui, "manufacturer" );
     oyjlUiHeaderSection_s * copyright = oyjlUi_GetHeaderSection( ui, "copyright" );
     oyjlUiHeaderSection_s * license = oyjlUi_GetHeaderSection( ui, "license" );
-    const char * prog = argv[0];
+    char * prog = oyjlStringCopy( oyjlTermColor( oyjlBOLD, argv[0] ), NULL );
+    char * v = version && version->name ? oyjlStringCopy( oyjlTermColor( oyjlITALIC, version->name ), NULL ) : NULL;
+
     if(!verbose && prog && strchr(prog,'/'))
       prog = strrchr(prog,'/') + 1;
     fprintf( stdout, "%s v%s%s%s%s - %s\n%s\n%s%s%s\n%s%s%s\n\n", prog,
-                                      version && version->name ? version->name : "",
+                                      v ? v : "",
                                       version && version->description ? "(" : "",
                                       version && version->description ? version->description : "",
                                       version && version->description ? ")" : "",
@@ -2423,6 +2425,8 @@ oyjlUi_s *  oyjlUi_Create            ( int                 argc,
                                       license ? _("License"):"", license?":\t":"", license && license->name ? license->name : "",
                                       author ? _("Author"):"", author?": \t":"", author && author->name ? author->name : "" );
     oyjlUi_Release( &ui);
+    free(prog);
+    if(v) free(v);
     if(status)
       *status |= oyjlUI_STATE_HELP;
     return NULL;
