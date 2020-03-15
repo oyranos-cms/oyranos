@@ -245,7 +245,9 @@ AppWindow {
                             if(opt.value.length &&
                                 !(opt.type === "bool" && opt.value === "false"))
                             {
-                                if(arg.length > 0)
+                                if(opt.key === "#" || opt.key === "@")
+                                    arg = opt.value
+                                else if(arg.length > 0)
                                     arg += command_set_delimiter + opt.value
                                 else
                                     arg += opt.value
