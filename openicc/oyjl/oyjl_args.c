@@ -1383,6 +1383,15 @@ void       oyjlStringListStaticAdd   ( const char      *** list,
   *list = nlist;
 }
 
+void oyjlOptions_Print               ( oyjlOptions_s     * opts,
+                                       int                 pos )
+{
+  int i;
+  for(i = 0; i < opts->argc; ++i)
+    fprintf( stderr, "%s ", i == pos ? oyjlTermColor( oyjlBOLD, opts->argv[i] ) : opts->argv[i] );
+  fprintf( stderr, "\n" );
+}
+
 /** @brief    Parse the options into a private data structure
  *  @memberof oyjlOptions_s
  *
@@ -1439,6 +1448,7 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
           o = oyjlOptions_GetOption( opts, arg );
           if(!o)
           {
+            oyjlOptions_Print( opts, i );
             fprintf( stderr, "%s %s \'%s\'\n", _("Usage Error:"), _("Option not supported"), oyjlTermColor(oyjlBOLD,arg) );
             state = oyjlOPTION_NOT_SUPPORTED;
             break;
@@ -1461,6 +1471,7 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
             else
             {
               char * t = oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING);
+              oyjlOptions_Print( opts, i );
               fprintf( stderr, "%s %s \'%s\' (%s)\n", _("Usage Error:"), _("Option needs a argument"), oyjlTermColor(oyjlBOLD,arg), t );
               free(t);
               state = oyjlOPTION_MISSING_VALUE;
@@ -1481,10 +1492,7 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
           else
           {
             char * t = oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING);
-            int i;
-            for(i = 0; i < opts->argc; ++i)
-              fprintf( stderr, "\'%s\' ", opts->argv[i]);
-            fprintf( stderr, "\n");
+            oyjlOptions_Print( opts, i );
             fprintf( stderr, "%s %s \'%s\' (%s)\n", _("Usage Error:"), _("Option has a unexpected argument"), arg, t );
             free(t);
             state = oyjlOPTION_UNEXPECTED_VALUE;
@@ -1500,6 +1508,7 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
         o = oyjlOptions_GetOptionL( opts, long_arg );
         if(!o)
         {
+          oyjlOptions_Print( opts, i );
           fprintf( stderr, "%s %s \'%s\'\n", _("Usage Error:"), _("Option not supported"), oyjlTermColor(oyjlBOLD,long_arg) );
           state = oyjlOPTION_NOT_SUPPORTED;
           goto clean_parse;
@@ -1519,6 +1528,7 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
           else
           {
             char * t = oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING);
+            oyjlOptions_Print( opts, i );
             fprintf( stderr, "%s %s \'%s\' (%s)\n", _("Usage Error:"), _("Option needs a argument"), oyjlTermColor(oyjlBOLD,long_arg), t );
             free(t);
             state = oyjlOPTION_MISSING_VALUE;
@@ -1540,6 +1550,7 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
           } else
           {
             char * t = oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING);
+            oyjlOptions_Print( opts, i );
             fprintf( stderr, "%s %s \'%s\' (%s)\n", _("Usage Error:"), _("Option has a unexpected argument"), opts->argv[i+1], t );
             free(t);
             state = oyjlOPTION_UNEXPECTED_VALUE;
@@ -1558,6 +1569,7 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
           result->values[result->count] = value;
         } else
         {
+          oyjlOptions_Print( opts, i );
           fprintf( stderr, "%s %s: \"%s\"\n", _("Usage Error:"), _("Unbound options are not supported"), oyjlTermColor(oyjlBOLD,opts->argv[i]) );
           state = oyjlOPTION_NOT_SUPPORTED;
           goto clean_parse;
@@ -1585,6 +1597,7 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
     o = oyjlOptions_GetOption( opts, "#" );
     if(opts->argc == 1 && !o)
     {
+      oyjlOptions_Print( opts, 0 );
       fprintf( stderr, "%s %s\n", _("Usage Error:"), _("Optionless mode not supported. (That would need '#' option declaration.)") );
       state = oyjlOPTIONS_MISSING;
       return state;

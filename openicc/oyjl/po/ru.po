@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2020-03-15 19:30+0100\n"
+"POT-Creation-Date: 2020-03-15 19:42+0100\n"
 "PO-Revision-Date: 2015-02-20 17:32+0100\n"
 "Last-Translator: Kai-Uwe Behrmann <ku.b@gmx.de>\n"
 "Language-Team: russian <ru@li.org>\n"
@@ -26,7 +26,7 @@ msgstr ""
 msgid "'_(\\\"%s\\\"); '"
 msgstr ""
 
-#: oyjl_args.c:2370
+#: oyjl_args.c:2383
 msgid "... try with --help|-h option for usage text. give up"
 msgstr ""
 
@@ -42,7 +42,7 @@ msgstr ""
 msgid "A output format string."
 msgstr ""
 
-#: oyjl_args.c:2904 oyjl_args.c:3150
+#: oyjl_args.c:2917 oyjl_args.c:3163
 msgid "AUTHOR"
 msgstr ""
 
@@ -75,11 +75,11 @@ msgstr ""
 msgid "Any arg mode"
 msgstr ""
 
-#: oyjl_args.c:2426
+#: oyjl_args.c:2439
 msgid "Author"
 msgstr ""
 
-#: oyjl_args.c:2914 oyjl_args.c:2916 oyjl_args.c:3164 oyjl_args.c:3166
+#: oyjl_args.c:2927 oyjl_args.c:2929 oyjl_args.c:3177 oyjl_args.c:3179
 msgid "BUGS"
 msgstr ""
 
@@ -88,7 +88,7 @@ msgstr ""
 msgid "C static char"
 msgstr ""
 
-#: oyjl_args.c:2908 oyjl_args.c:3154
+#: oyjl_args.c:2921 oyjl_args.c:3167
 msgid "COPYRIGHT"
 msgstr ""
 
@@ -138,7 +138,7 @@ msgstr ""
 msgid "Count"
 msgstr ""
 
-#: oyjl_args.c:2787 oyjl_args.c:3041
+#: oyjl_args.c:2800 oyjl_args.c:3054
 msgid "DESCRIPTION"
 msgstr ""
 
@@ -146,7 +146,7 @@ msgstr ""
 msgid "Date"
 msgstr ""
 
-#: oyjl_args.c:2014
+#: oyjl_args.c:2027
 msgid "Description"
 msgstr ""
 
@@ -178,16 +178,16 @@ msgstr ""
 msgid "Download"
 msgstr ""
 
-#: oyjl_args.c:2593
+#: oyjl_args.c:2606
 msgid "ENVIRONMENT VARIABLES"
 msgstr ""
 
-#: oyjl-args.c:58 oyjl.c:103 oyjl_args.c:2589 oyjl_translate.c:115
+#: oyjl-args.c:58 oyjl.c:103 oyjl_args.c:2602 oyjl_translate.c:115
 #: oyjl_web.c:83
 msgid "EXAMPLES"
 msgstr ""
 
-#: oyjl_args.c:2591
+#: oyjl_args.c:2604
 msgid "EXIT-STATE"
 msgstr ""
 
@@ -217,7 +217,7 @@ msgstr ""
 msgid "FILENAME"
 msgstr ""
 
-#: oyjl_args.c:2597
+#: oyjl_args.c:2610
 msgid "FILES"
 msgstr ""
 
@@ -296,7 +296,7 @@ msgstr ""
 msgid "Gui"
 msgstr ""
 
-#: oyjl_args.c:2595
+#: oyjl_args.c:2608
 msgid "HISTORY"
 msgstr ""
 
@@ -363,7 +363,7 @@ msgstr ""
 msgid "LOCALEDIR"
 msgstr ""
 
-#: oyjl_args.c:2425 oyjl_args.c:2910 oyjl_args.c:3156 oyjl_args_tree.c:1105
+#: oyjl_args.c:2438 oyjl_args.c:2923 oyjl_args.c:3169 oyjl_args_tree.c:1105
 msgid "License"
 msgstr ""
 
@@ -476,7 +476,7 @@ msgstr ""
 msgid "Module"
 msgstr ""
 
-#: oyjl_args.c:3026
+#: oyjl_args.c:3039
 msgid "NAME"
 msgstr ""
 
@@ -492,7 +492,7 @@ msgstr ""
 msgid "November 28, 2019"
 msgstr ""
 
-#: oyjl_args.c:2789 oyjl_args.c:3044
+#: oyjl_args.c:2802 oyjl_args.c:3057
 msgid "OPTIONS"
 msgstr ""
 
@@ -504,24 +504,24 @@ msgstr ""
 msgid "Only Translations"
 msgstr ""
 
-#: oyjl_args.c:1696
+#: oyjl_args.c:1709
 msgid "Option has a different value range"
 msgstr ""
 
-#: oyjl_args.c:1488 oyjl_args.c:1543
+#: oyjl_args.c:1496 oyjl_args.c:1554
 msgid "Option has a unexpected argument"
 msgstr ""
 
-#: oyjl_args.c:1464 oyjl_args.c:1522
+#: oyjl_args.c:1475 oyjl_args.c:1532
 msgid "Option needs a argument"
 msgstr ""
 
-#: oyjl_args.c:1341 oyjl_args.c:1350 oyjl_args.c:1442 oyjl_args.c:1503
-#: oyjl_args.c:2242
+#: oyjl_args.c:1341 oyjl_args.c:1350 oyjl_args.c:1452 oyjl_args.c:1512
+#: oyjl_args.c:2255
 msgid "Option not supported"
 msgstr ""
 
-#: oyjl_args.c:1588
+#: oyjl_args.c:1601
 msgid ""
 "Optionless mode not supported. (That would need '#' option declaration.)"
 msgstr ""
@@ -666,12 +666,12 @@ msgstr ""
 msgid "Results JSON"
 msgstr ""
 
-#: oyjl-args.c:60 oyjl.c:105 oyjl_args.c:2601 oyjl_translate.c:117
+#: oyjl-args.c:60 oyjl.c:105 oyjl_args.c:2614 oyjl_translate.c:117
 #: oyjl_web.c:85
 msgid "SEE ALSO"
 msgstr ""
 
-#: oyjl_args.c:2599
+#: oyjl_args.c:2612
 msgid "SEE AS WELL"
 msgstr ""
 
@@ -679,7 +679,7 @@ msgstr ""
 msgid "STRING"
 msgstr ""
 
-#: oyjl_args.c:2775 oyjl_args.c:3029
+#: oyjl_args.c:2788 oyjl_args.c:3042
 msgid "SYNOPSIS"
 msgstr ""
 
@@ -759,7 +759,7 @@ msgstr ""
 msgid "Support"
 msgstr ""
 
-#: oyjl_args.c:2016
+#: oyjl_args.c:2029
 msgid "Synopsis"
 msgstr ""
 
@@ -829,7 +829,7 @@ msgstr ""
 msgid "Ui to source code"
 msgstr ""
 
-#: oyjl_args.c:1561
+#: oyjl_args.c:1573
 msgid "Unbound options are not supported"
 msgstr ""
 
@@ -841,14 +841,14 @@ msgstr ""
 msgid "Url"
 msgstr ""
 
-#: oyjl_args.c:2025 oyjl_translate.c:173
+#: oyjl_args.c:2038 oyjl_translate.c:173
 msgid "Usage"
 msgstr "по́льзование"
 
-#: oyjl_args.c:1325 oyjl_args.c:1341 oyjl_args.c:1350 oyjl_args.c:1442
-#: oyjl_args.c:1464 oyjl_args.c:1488 oyjl_args.c:1503 oyjl_args.c:1522
-#: oyjl_args.c:1543 oyjl_args.c:1561 oyjl_args.c:1588 oyjl_args.c:1696
-#: oyjl_args.c:2242
+#: oyjl_args.c:1325 oyjl_args.c:1341 oyjl_args.c:1350 oyjl_args.c:1452
+#: oyjl_args.c:1475 oyjl_args.c:1496 oyjl_args.c:1512 oyjl_args.c:1532
+#: oyjl_args.c:1554 oyjl_args.c:1573 oyjl_args.c:1601 oyjl_args.c:1709
+#: oyjl_args.c:2255
 msgid "Usage Error:"
 msgstr ""
 
@@ -956,7 +956,7 @@ msgstr ""
 msgid "need a value_type"
 msgstr ""
 
-#: oyjl_args.c:1350 oyjl_args.c:2242
+#: oyjl_args.c:1350 oyjl_args.c:2255
 msgid "needs OYJL_OPTION_FLAG_EDITABLE or choices"
 msgstr ""
 
