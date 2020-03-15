@@ -24,8 +24,22 @@
 extern "C" {
 #endif /* __cplusplus */
 
-void                    oyLab2XYZ       (const double * CIElab, double * XYZ);
-void                    oyXYZ2Lab       (const double * XYZ, double * CIElab);
+void         oyLab2XYZ               ( const double      * CIElab,
+                                             double      * XYZ);
+void         oyXYZ2Lab               ( const double      * XYZ,
+                                             double      * CIElab);
+void         oyCIE2IccLab            ( const double        i[],
+                                             double        o[],
+                                       void              * data );
+void         oyIcc2CIELab            ( const double        i[],
+                                             double        o[],
+                                       void              * data );
+void         oyIcc2CIELabFloat       ( const float         i[],
+                                             float         o[],
+                                       void              * data );
+void         oyCIE2IccLabFloat       ( const float         i[],
+                                             float         o[],
+                                       void              * data );
 void         oyCIEabsXYZ2ICCrelXYZ   ( const double      * CIEXYZ,
                                        double            * ICCXYZ,
                                        const double      * XYZmin,

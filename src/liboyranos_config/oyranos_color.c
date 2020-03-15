@@ -110,6 +110,54 @@ void     oyXYZ2Lab                   ( const double      * XYZ,
       lab[1] = (500.0*( XYZ_[0] -  XYZ_[1]));
       lab[2] = (200.0*( XYZ_[1] -  XYZ_[2]));
 }
+/** @brief ICC Lab to CIE * Lab encoding
+ *
+ *  position independent function for in place conversions
+ */
+void         oyIcc2CIELab            ( const double        i[],
+                                             double        o[],
+                                       void              * data OY_UNUSED)
+{
+  o[0] = i[0] * 100.0;
+  o[1] = i[1] * 256.0 - 128.0;
+  o[2] = i[2] * 256.0 - 128.0;
+}
+/** @brief CIE * Lab to ICC Lab encoding
+ *
+ *  position independent function for in place conversions
+ */
+void         oyCIE2IccLab            ( const double        i[],
+                                             double        o[],
+                                       void              * data OY_UNUSED)
+{
+  o[0] = i[0] / 100.0;
+  o[1] = (i[1] + 128.0) / 256.0;
+  o[2] = (i[2] + 128.0) / 256.0;
+}
+/** @brief ICC Lab to CIE * Lab encoding
+ *
+ *  position independent function for in place conversions
+ */
+void         oyIcc2CIELabFloat       ( const float         i[],
+                                             float         o[],
+                                       void              * data OY_UNUSED)
+{
+  o[0] = i[0] * 100.0;
+  o[1] = i[1] * 256.0 - 128.0;
+  o[2] = i[2] * 256.0 - 128.0;
+}
+/** @brief CIE * Lab to ICC Lab encoding
+ *
+ *  position independent function for in place conversions
+ */
+void         oyCIE2IccLabFloat       ( const float         i[],
+                                             float         o[],
+                                       void              * data OY_UNUSED)
+{
+  o[0] = i[0] / 100.0;
+  o[1] = (i[1] + 128.0) / 256.0;
+  o[2] = (i[2] + 128.0) / 256.0;
+}
 
 /** Function oyCIEabsXYZ2ICCrelXYZ
  *  @brief CIE absolute colorimetric to ICC relative colorimetric
