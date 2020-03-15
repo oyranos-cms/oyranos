@@ -442,7 +442,8 @@ static int handle_null (void *ctx)
  * Public functions
  */
 
-/** @{ *//* oyjl_tree */
+/** \addtogroup oyjl_tree
+ *  @{ *//* oyjl_tree */
 
 oyjl_val oyjlTreeParse   (const char *input,
                           char *error_buffer, size_t error_buffer_size)
@@ -744,7 +745,8 @@ void             oyjlParseXMLDoc_    ( xmlDocPtr           doc,
   }
 }
 
-/** @{ *//* oyjl_tree */
+/** \addtogroup oyjl_tree
+ *  @{ *//* oyjl_tree */
 /** @brief read a XML text string into a C data structure (libOyjl)
  *
  *  XML attributes are prefixed with the at '@' char. Inner strings are placed
@@ -895,7 +897,8 @@ static int oyjlYamlReadNode( yaml_document_t * doc, yaml_node_t * node, int flag
   return error;
 }
 
-/** @{ *//* oyjl_tree */
+/** \addtogroup oyjl_tree
+ *  @{ *//* oyjl_tree */
 /** @brief read a YAML text string into a C data structure (libOyjl)
  *
  *  This function needs linking to libOyjl.

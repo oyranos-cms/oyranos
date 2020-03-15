@@ -679,7 +679,7 @@ char *             oyjlUi_ExportToJson(oyjlUi_s          * ui,
 char *             oyjlUiJsonToCode  ( oyjl_val            root,
                                        int                 flags );
 
-/** link with libOyjlArgsWeb and use microhttps WWW renderer as library
+/** link with libOyjlArgsWeb and use microhttps WWW renderer as library \n
  *  link with libOyjlArgsQml and use Qt's QML to render in a GUI
  *  @see oyjlUi_ToJson()i
  */
