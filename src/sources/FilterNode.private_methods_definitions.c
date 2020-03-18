@@ -85,12 +85,12 @@ oyHash_s *   oyFilterNode_GetHash_   ( oyFilterNode_s_   * node,
   /* create hash text */
   if(core_->api4_->oyCMMFilterNode_GetText)
   {
-    hash_temp = core_->api4_->oyCMMFilterNode_GetText(
-                                             (oyFilterNode_s*)node, oyNAME_NICK,
+    hash_temp = core_->api4_->oyCMMFilterNode_GetText( (oyFilterNode_s*)node,
+                                 api == 4 ? oyNAME_NICK : oyNAME_DESCRIPTION,
                                                        oyAllocateFunc_ );
     hash_text_ = hash_temp;
   } else
-    hash_text_ =oyFilterNode_GetText((oyFilterNode_s*)node,oyNAME_NICK);
+    hash_text_ = oyFilterNode_GetText((oyFilterNode_s*)node,oyNAME_NICK);
 
   if(api == 7)
     oyStringAddPrintf_( &hash_text, alloc, dealloc,
@@ -103,10 +103,12 @@ oyHash_s *   oyFilterNode_GetHash_   ( oyFilterNode_s_   * node,
   hash = oyCMMCacheListGetEntry_( hash_text );
 
   if(oy_debug >= 2)
+  {
     oyMessageFunc_p( oyMSG_DBG, (oyStruct_s*) node,
                      OY_DBG_FORMAT_ "api: %d hash_text: \"%s\"",
                      OY_DBG_ARGS_,
                      api, hash_text );
+  }
 
   if(hash_temp) oySTRUCT_FREE_m(core_, hash_temp);
   if(hash_text) oySTRUCT_FREE_m(core_, hash_text);

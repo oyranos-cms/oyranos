@@ -1243,7 +1243,7 @@ cmsHTRANSFORM  l2cmsCMMConversionContextCreate_ (
   if(!lps || !profiles_n || !oy_pixel_layout_in || !oy_pixel_layout_out)
     return 0;
 
-      flags = proof ?         flags | cmsFLAGS_SOFTPROOFING :
+  flags = proof ?             flags | cmsFLAGS_SOFTPROOFING :
                               flags & (~cmsFLAGS_SOFTPROOFING);
 
   if(!error && lps[0] && lps[profiles_n-1])
@@ -1266,17 +1266,17 @@ cmsHTRANSFORM  l2cmsCMMConversionContextCreate_ (
   l2cms_pixel_layout_out = oyPixelToLcm2PixelLayout_(oy_pixel_layout_out,
                                                    color_out);
 
-      o_txt = oyOptions_FindString  ( opts, "cmyk_cmyk_black_preservation", 0 );
-      if(o_txt && oyStrlen_(o_txt))
-        cmyk_cmyk_black_preservation = atoi( o_txt );
+  o_txt = oyOptions_FindString  ( opts, "cmyk_cmyk_black_preservation", 0 );
+  if(o_txt && oyStrlen_(o_txt))
+    cmyk_cmyk_black_preservation = atoi( o_txt );
 
-      intent = cmyk_cmyk_black_preservation ? intent + 10 : intent;
-      if(cmyk_cmyk_black_preservation == 2)
-        intent += 13;
+  intent = cmyk_cmyk_black_preservation ? intent + 10 : intent;
+  if(cmyk_cmyk_black_preservation == 2)
+    intent += 13;
 
-      o_txt = oyOptions_FindString  ( opts, "adaption_state", 0 );
-      if(o_txt && oyStrlen_(o_txt))
-        oyjlStringToDouble( o_txt, &adaption_state );
+  o_txt = oyOptions_FindString  ( opts, "adaption_state", 0 );
+  if(o_txt && oyStrlen_(o_txt))
+    oyjlStringToDouble( o_txt, &adaption_state );
 
   if(!error)
   {
@@ -1355,17 +1355,17 @@ cmsHTRANSFORM  l2cmsCMMConversionContextCreate_ (
       if(flags & cmsFLAGS_GAMUTCHECK)
         flags |= cmsFLAGS_GRIDPOINTS(l2cmsPROOF_LUT_GRID_RASTER);
 
-    if(oy_debug > 2)
-    {
-    uint32_t f = l2cms_pixel_layout_in;
-    printf ("%s:%d %s() float:%d optimised:%d colorspace:%d extra:%d channels:%d lcms_bytes %d \n", __FILE__,__LINE__,__func__, T_FLOAT(f), T_OPTIMIZED(f), T_COLORSPACE(f), T_EXTRA(f), T_CHANNELS(f), T_BYTES(f) );
-    f = l2cms_pixel_layout_out;
-    printf ("%s:%d %s() float:%d optimised:%d colorspace:%d extra:%d channels:%d lcms_bytes %d \n", __FILE__,__LINE__,__func__, T_FLOAT(f), T_OPTIMIZED(f), T_COLORSPACE(f), T_EXTRA(f), T_CHANNELS(f), T_BYTES(f) );
-      printf("multi_profiles_n: %d intent: %d adaption: %g flags: %d \"%s\" l1 %d, l2 %d\n",
+      if(oy_debug > 2)
+      {
+        uint32_t f = l2cms_pixel_layout_in;
+        printf ("%s:%d %s() float:%d optimised:%d colorspace:%d extra:%d channels:%d lcms_bytes %d \n", __FILE__,__LINE__,__func__, T_FLOAT(f), T_OPTIMIZED(f), T_COLORSPACE(f), T_EXTRA(f), T_CHANNELS(f), T_BYTES(f) );
+        f = l2cms_pixel_layout_out;
+        printf ("%s:%d %s() float:%d optimised:%d colorspace:%d extra:%d channels:%d lcms_bytes %d \n", __FILE__,__LINE__,__func__, T_FLOAT(f), T_OPTIMIZED(f), T_COLORSPACE(f), T_EXTRA(f), T_CHANNELS(f), T_BYTES(f) );
+        printf("multi_profiles_n: %d intent: %d adaption: %g flags: %d \"%s\" l1 %d, l2 %d\n",
               multi_profiles_n, intent, adaption_state, flags,
               l2cmsFlagsToText(flags),
               l2cms_pixel_layout_in, l2cms_pixel_layout_out);
-    }
+      }
 
 #define SET_ARR(arr,val,n) for(i = 0; i < n; ++i) arr[i] = val;
       oyAllocHelper_m_( intents, cmsUInt32Number, multi_profiles_n,0, goto end);
@@ -1384,7 +1384,7 @@ cmsHTRANSFORM  l2cmsCMMConversionContextCreate_ (
         int i;
         l2cms_msg( oyMSG_DBG, (oyStruct_s*)opts,
                 OY_DBG_FORMAT_"l2cmsCreateExtendedTransform(multi_profiles_n %d)"
-                " xform: "OY_PRINT_POINTER,
+                " xform: " OY_PRINT_POINTER,
                 OY_DBG_ARGS_, multi_profiles_n, xform, ltw );
 #if LCMS_VERSION >= 2060
         for(i = 0; i < multi_profiles_n; ++i)
@@ -1396,7 +1396,6 @@ cmsHTRANSFORM  l2cmsCMMConversionContextCreate_ (
           char * block = oyProfile_GetMem( p, &size, 0, oyAllocateFunc_ );
           oyFree_m_(block);
           fprintf( stdout, " -> \"%s\"[%lu]", fn?fn:"----", (long unsigned int)size );
-          l2cmsDeleteContext( tc );
         }
         fprintf(stdout, "\n");
 #endif
@@ -1450,8 +1449,7 @@ cmsHTRANSFORM  l2cmsCMMConversionContextCreate_ (
   } else
   if(oy_debug || verbose)
     l2cms_msg( oy_debug?oyMSG_DBG:oyMSG_WARN,(oyStruct_s*)node, OY_DBG_FORMAT_"\n"
-             "  finished",
-             OY_DBG_ARGS_ );
+               "  opened xform: " OY_PRINT_POINTER, OY_DBG_ARGS_, xform );
 
   if(!error && ltw && oy)
     *ltw= l2cmsTransformWrap_Set_( xform, color_in, color_out,
@@ -1675,6 +1673,9 @@ l2cmsProfileWrap_s*l2cmsAddProofProfile( oyProfile_s     * proof,
     {
       /* save to memory */
       block = lcm2WriteProfileToMem( hp, &size, malloc );
+      if(oy_debug >= 2)
+        l2cms_msg( oyMSG_DBG, (oyStruct_s*)proof, OY_DBG_FORMAT_
+                   " wrote to mem and close: " OY_PRINT_POINTER, OY_DBG_ARGS_, hp );
       l2cmsCloseProfile( hp ); hp = 0;
     }
 
@@ -1781,6 +1782,9 @@ cmsHPROFILE  l2cmsAddProfile          ( oyProfile_s       * p )
   if(!error)
   {
     hp = s->l2cms;
+    if(oy_debug >= 2)
+      l2cms_msg( oyMSG_DBG, (oyStruct_s*)p, OY_DBG_FORMAT_
+              " opened profile: " OY_PRINT_POINTER, OY_DBG_ARGS_, hp );
     oyObject_UnRef( s->oy_ ); s = NULL;
   }
 
@@ -2268,7 +2272,7 @@ oyPointer l2cmsFilterNode_CmmIccContextToMem (
   }
 
   /* additional tags for debugging */
-  if(!error && (oy_debug || verbose))
+  if(!error && (oy_debug || verbose || getenv("OY_DEBUG_WRITE")))
   {
     if(!error)
     {
@@ -2347,6 +2351,13 @@ oyPointer l2cmsFilterNode_CmmIccContextToMem (
       { oyDeAllocateFunc_( block ); block = 0; size_ = 0; }
 
       block = oyProfile_GetMem( prof, &size_, 0, allocateFunc );
+      if(getenv("OY_DEBUG_WRITE"))
+      {
+        char * t = 0; oyjlStringAdd( &t, 0,0,
+        "%04d-%s-dl[%d].icc", ++oy_debug_write_id,CMM_NICK,oyStruct_GetId((oyStruct_s*)node));
+        printf("wrote %d to %s\n", oyjlWriteFile( t, block, size_ ), t );
+        oyFree_m_(t);
+      }
 
       *size = size_;
       oyProfile_Release( &prof );
@@ -2445,8 +2456,9 @@ char * l2cmsImage_GetText            ( oyImage_s         * image,
 /** Function l2cmsFilterNode_GetText
  *  @brief   implement oyCMMFilterNode_GetText_f()
  *
- *  param type oyNAME_NAME, oyNAME_NICK suitable for hash ID;
- *             oyNAME_DESCRIPTION more details
+ *  param type oyNAME_NAME
+ *             - oyNAME_NICK suitable for api4 hash ID;
+ *             - oyNAME_DESCRIPTION more details for api7 hash ID
  *
  *  @version Oyranos: 0.9.7
  *  @date    2018/08/03
@@ -2729,7 +2741,7 @@ int  l2cmsModuleData_Convert          ( oyPointer_s       * data_in,
       uint32_t id[8]={0,0,0,0,0,0,0,0};
       char * hash_text = oyjlStringCopy( l2cmsTRANSFORM ":", oyAllocateFunc_ );
 
-      char * t = l2cmsFilterNode_GetText( node, oyNAME_NICK, oyAllocateFunc_ );
+      char * t = l2cmsFilterNode_GetText( node, oyNAME_DESCRIPTION, oyAllocateFunc_ );
       STRING_ADD( hash_text, t );
       oyFree_m_(t);
 
@@ -2919,8 +2931,8 @@ int      l2cmsFilterPlug_CmmIccRun   ( oyFilterPlug_s    * requestor_plug,
     error = l2cmsCMMTransform_GetWrap_( backend_data, &ltw );
     if(oy_debug >= 2 && ltw)
       l2cms_msg( oyMSG_DBG, NULL, OY_DBG_FORMAT_
-             " xform: "OY_PRINT_POINTER
-             " ltw: "OY_PRINT_POINTER
+             " xform: " OY_PRINT_POINTER
+             " ltw: " OY_PRINT_POINTER
              " backend_data: %d",
              OY_DBG_ARGS_, ltw->l2cms, ltw, oyStruct_GetId((oyStruct_s*)backend_data) );
 
@@ -2932,7 +2944,7 @@ int      l2cmsFilterPlug_CmmIccRun   ( oyFilterPlug_s    * requestor_plug,
       char * hash_text = oyjlStringCopy( l2cmsTRANSFORM ":", oyAllocateFunc_ );
 
       char * t = 0;
-      t = l2cmsFilterNode_GetText( node, oyNAME_NICK, oyAllocateFunc_ );
+      t = l2cmsFilterNode_GetText( node, oyNAME_DESCRIPTION, oyAllocateFunc_ );
       STRING_ADD( hash_text, t );
       oyFree_m_(t);
 
@@ -3010,14 +3022,19 @@ int      l2cmsFilterPlug_CmmIccRun   ( oyFilterPlug_s    * requestor_plug,
     n = OY_MIN(w_in/channels_in, w_out/channels_out);
 
     if(oy_debug)
+    {
+      char * tmp = oyjlStringCopy( oyArray2d_Show(array_in,channels_in), NULL );
       l2cms_msg( oyMSG_DBG,(oyStruct_s*)ticket, OY_DBG_FORMAT_
-             " %s[%d]=\"%s\" threads_n: %d %s "OY_PRINT_POINTER
-             " -> %s "OY_PRINT_POINTER" convert pixel: %d",
+             " %s[%d]=\"%s\" threads_n: %d %s: " OY_PRINT_POINTER
+             " -> %s: " OY_PRINT_POINTER " convert pixel: %d xform: " OY_PRINT_POINTER,
              OY_DBG_ARGS_,
              _("Node"),oyStruct_GetId((oyStruct_s*)node),oyStruct_GetInfo((oyStruct_s*)node,0,0),
              threads_n,
-             oyArray2d_Show(array_in,channels_in),array_in_data,
-             oyArray2d_Show(array_out,channels_out),array_out_data,n );
+             tmp,array_in_data,
+             oyArray2d_Show(array_out,channels_out),array_out_data,n,
+             ltw->l2cms );
+      oyFree_m_(tmp);
+    }
 
     if(!(data_type_in == oyUINT8 ||
          data_type_in == oyUINT16 ||
@@ -3153,7 +3170,7 @@ int      l2cmsFilterPlug_CmmIccRun   ( oyFilterPlug_s    * requestor_plug,
     if(array_in_tmp)
       oyDeAllocateFunc_( array_in_tmp );
 
-    if(getenv("OY_DEBUG_WRITE"))
+    if(oy_debug && getenv("OY_DEBUG_WRITE"))
     {
       char * t = 0; oyjlStringAdd( &t, 0,0,
       "%04d-%s-array_in[%d].ppm", ++oy_debug_write_id,CMM_NICK,oyStruct_GetId((oyStruct_s*)array_in));
