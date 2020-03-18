@@ -841,7 +841,7 @@ int            oyImage_FillArray     ( oyImage_s         * image,
       if(error) break;
     }
 
-    if(getenv("OY_DEBUG_WRITE"))
+    if(oy_debug && getenv("OY_DEBUG_WRITE"))
     {
       char * t = 0; oyStringAddPrintf( &t, 0,0,
       "%04d-oyImage_FillArray-array[%d].ppm", ++oy_debug_write_id, oyStruct_GetId((oyStruct_s*) a) );
@@ -1005,7 +1005,7 @@ int            oyImage_ReadArray     ( oyImage_s         * image,
 
     ++oy_debug_image_read_array_count;
 
-    if(getenv("OY_DEBUG_WRITE"))
+    if(oy_debug && getenv("OY_DEBUG_WRITE"))
     {
       char * t = 0; oyStringAddPrintf( &t, 0,0,
       "%04d-oyImage_ReadArray-array[%d].ppm", ++oy_debug_write_id,oyStruct_GetId((oyStruct_s*)array));
