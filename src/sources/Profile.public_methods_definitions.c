@@ -1298,8 +1298,7 @@ OYAPI int OYEXPORT
   return equal;
 }
 
-/** Function  oyProfile_GetText
- *  @memberof oyProfile_s
+/** @memberof oyProfile_s
  *  @brief    Get a presentable name
  *
  *  The type argument should select the following string in return: \n
@@ -1307,10 +1306,10 @@ OYAPI int OYEXPORT
  *  - oyNAME_NICK - the hash ID
  *  - oyNAME_DESCRIPTION - profile internal name (icSigProfileDescriptionTag)
  *  - oyNAME_JSON - contains non expensive "id", internal "name" + "hash" keys,
- *    "id" can be use type, file name and ICC hash if already present
+ *    "id" can use type, file name and ICC hash if already present
  *
  *  @version Oyranos: 0.9.7
- *  @date    2019/06/02
+ *  @date    2020/03/20
  *  @since   2007/11/26 (Oyranos: 0.1.8)
  */
 OYAPI const oyChar* OYEXPORT oyProfile_GetText (
@@ -1411,8 +1410,7 @@ OYAPI const oyChar* OYEXPORT oyProfile_GetText (
       if(file_name) { free(file_name); file_name = 0; }
       found = 1;
     }
-
-    if(type == oyNAME_JSON)
+    else if(type == oyNAME_JSON)
     {
       oyjl_val root = oyjlTreeNew(""), val;
       const char * name = oyProfile_GetText( profile, oyNAME_DESCRIPTION );
@@ -1430,6 +1428,8 @@ OYAPI const oyChar* OYEXPORT oyProfile_GetText (
         val = oyjlTreeGetValue( root, OYJL_CREATE_NEW, "name" );
         oyjlValueSetString( val, name );
       }
+      if(id || name)
+        found = 1;
       if(h)
       {
         char * hash = NULL;
