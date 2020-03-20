@@ -66,8 +66,8 @@
                          memcmp(&argv[pos][2],arg, strlen(arg)) == 0)
 
 #if defined(__GNUC__)
-# define  OYJL_DBG_FORMAT "%s:%d %s() "
-# define  OYJL_DBG_ARGS   strrchr(__FILE__,'/') ? strrchr(__FILE__,'/')+1 : __FILE__,__LINE__,__func__
+# define  OYJL_DBG_FORMAT "%s(%s:%d) "
+# define  OYJL_DBG_ARGS   oyjlTermColor(oyjlBOLD, __func__), strrchr(__FILE__,'/') ? strrchr(__FILE__,'/')+1 : __FILE__,__LINE__
 #else
 # define  OYJL_DBG_FORMAT "%s:%d "
 # define  OYJL_DBG_ARGS   strrchr(__FILE__,'/') ? strrchr(__FILE__,'/')+1 : __FILE__,__LINE__
