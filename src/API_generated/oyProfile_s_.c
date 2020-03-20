@@ -84,6 +84,9 @@ static const char * oyProfile_StaticMessageFunc_ (
   
 
   
+  if(!(type == oyNAME_NICK || type == oyNAME_NAME || type == oyNAME_DESCRIPTION))
+    return oyProfile_GetText(obj, type);
+
   /* allocate enough space */
   if(oy_profile_msg_text_n_ < 1000)
   {

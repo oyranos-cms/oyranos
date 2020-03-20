@@ -19,6 +19,9 @@
 
 {% block customStaticMessage %}
 {{ block.super }}
+  if(!(type == oyNAME_NICK || type == oyNAME_NAME || type == oyNAME_DESCRIPTION))
+    return oyProfile_GetText(obj, type);
+
   /* allocate enough space */
   if(oy_{{ class.baseName|lower }}_msg_text_n_ < 1000)
   {
