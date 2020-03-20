@@ -402,16 +402,16 @@ int  oyjlWriteTestFile               ( const char        * filename,
  *  @param         suffix              file name suffix
  */
 #define OYJL_TEST_WRITE_RESULT( mem, size, hint, suffix ) if(mem) { \
-  char * fn = malloc(64); \
+  char * fn = (char*)malloc(64); \
   sprintf( fn, "%s-%d-%d-%s-%s.%s", OYJL_TEST_NAME, oyjl_test_number, oy_test_current_sub_count, hint?hint:"", oyjlTestResultToString(oy_test_last_result,0), suffix ); \
   oyjlWriteTestFile( fn, mem, size ); \
   if(verbose) fprintf(zout, "%s\n", fn); \
   if(oy_test_last_result == oyjlTESTRESULT_FAIL) { \
-    char * fns = malloc(64); \
+    char * fns = (char*)malloc(64); \
     sprintf( fns, "%s-%d-%d-%s-%s.%s", OYJL_TEST_NAME, oyjl_test_number, oy_test_current_sub_count, hint?hint:"", oyjlTestResultToString(oyjlTESTRESULT_SUCCESS,0), suffix ); \
     FILE * fp = fopen(fns, "r"); \
     if(fp && strcmp(suffix, "txt") == 0) { \
-      char * diff = malloc(128); \
+      char * diff = (char*)malloc(128); \
       sprintf( diff, "diff -aur %s %s", fns, fn ); \
       system(diff); \
       free(diff); \
