@@ -726,12 +726,12 @@ oyjlTESTRESULT_e testArgs()
   if(text) {free(text);} text = NULL;
 
   text = oyjlUi_ToMan( ui, 0 );
-  if(text && strlen(text) == 788)
+  if(text && strlen(text) == 778)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlUi_ToMan() %lu                            ", strlen(text) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "oyjlUi_ToMan() 788 == %lu                     ", strlen(text) );
+    "oyjlUi_ToMan() 778 == %lu                     ", strlen(text) );
   }
   OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlUi_ToMan", "txt" )
   if(verbose)
