@@ -26,6 +26,19 @@
 #include "oyranos_config_internal.h"
 #include "oyranos_helper.h"
 
+/* defined in sources/Struct.public_methods_definitions.c */
+/** @internal
+ *  @brief    get descriptions for object types
+ *
+ *  @version  Oyranos: 0.9.5
+ *  @date     2013/0/0
+ *  @since    2012/0/0 (Oyranos: 0.9.x)
+ */
+extern const char * (*oyStruct_GetTextFromModule_p) (
+                                       oyStruct_s        * obj,
+                                       oyNAME_e            name_type,
+                                       uint32_t            flags );
+
 extern oyCMM_s CUPS_cmm_module;
 extern oyCMM_s elDB_cmm_module;
 extern oyCMM_s lcm2_cmm_module;
@@ -131,6 +144,10 @@ void oyCMMinfoRegister()
   {
     if(!oy_cmm_infos_)
       oy_cmm_infos_ = oyStructList_Create( 0, "oy_cmm_infos_", 0 );
+
+    /* initialise module type lookup */
+    if(!oyStruct_GetTextFromModule_p)
+      oyStruct_GetTextFromModule_p = oyStruct_GetTextFromModule;
 
     ++oy_cmm_infos_initialised_;
   }
