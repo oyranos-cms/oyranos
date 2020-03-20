@@ -906,7 +906,6 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
           val = oyOption_GetText( o, type );
           if(oyjlDataFormat(val) == oyNAME_JSON)
           {
-            char * t = NULL;
             oyjl_val opt_root = oyJsonParse( val );
             if(!opt_root)
               WARNc1_S("could not parse:\n%s", val);
