@@ -1101,15 +1101,14 @@ int            oyOptions_Filter      ( oyOptions_s      ** add_list,
   return error;
 }
 
-/** Function oyOptions_GetText
- *  @memberof oyOptions_s
+/** @memberof oyOptions_s
  *  @brief   dump options to text
  *
  *  The type argument should select the following string in return: \n
  *  - oyNAME_NAME - a readable XFORMS data model
  *  - oyNAME_NICK - the hash ID
  *  - oyNAME_DESCRIPTION - option registration name with key and without value
- *  - oyNAME_JSON - readable JSON
+ *  - oyNAME_JSON - readable JSON supporting nested JSON
  *
  *  @todo streamline output and group, avoid writing all levels for each key
  *
@@ -1118,7 +1117,7 @@ int            oyOptions_Filter      ( oyOptions_s      ** add_list,
  *  @return                            the text
  *
  *  @version Oyranos: 0.9.7
- *  @date    2018/01/18
+ *  @date    2020/03/20
  *  @since   2008/11/25 (Oyranos: 0.1.9)
  */
 const char *   oyOptions_GetText     ( oyOptions_s       * options,
@@ -1202,12 +1201,47 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
         char * tmp = NULL;
 
         if( o_->value_type == oyVAL_STRUCT )
-          val = oyOption_GetText( o, oyNAME_NAME );
+        {
+          val = oyOption_GetText( o, type );
+          if(oyjlDataFormat(val) == oyNAME_JSON)
+          {
+            char * t = NULL;
+            oyjl_val opt_root = oyJsonParse( val );
+            if(!opt_root)
+              WARNc1_S("could not parse:\n%s", val);
+
+            char ** paths = NULL;
+            int count = 0;
+
+            oyjlTreeToPaths( opt_root, 1000000, NULL, OYJL_KEY, &paths );
+            while(paths && paths[count]) ++count;
+
+            for(k = 0; k < count; ++k)
+            {
+              const char * xpath = paths[k];
+              char * val;
+              v = oyjlTreeGetValue( opt_root, 0, xpath );
+              val = oyjlValueText( v, oyAllocateFunc_ );
+              v = oyjlTreeGetValue( root, OYJL_CREATE_NEW, xpath );
+
+              /* ignore empty keys or values */
+              if(val)
+                oyjlValueSetString( v, val );
+
+              if(val) oyDeAllocateFunc_(val);
+            }
+
+            oyjlStringListRelease( &paths, count, free );
+            oyjlTreeFree( opt_root );
+          }
+        }
         else
+        {
           val = tmp = oyOption_GetValueText( o, oyAllocateFunc_ );
 
-        v = oyjlTreeGetValue( root, OYJL_CREATE_NEW, key );
-        oyjlValueSetString( v, val );
+          v = oyjlTreeGetValue( root, OYJL_CREATE_NEW, key );
+          oyjlValueSetString( v, val );
+        }
 
         if( tmp ) oyFree_m_( tmp );
       }
@@ -1321,6 +1355,7 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
       oyFree_m_(text);
       i = 0;
       oyjlTreeToJson( root, &i, &text );
+      oyjlStringReplace( &text, "\n", "", oyStruct_GetAllocator((oyStruct_s*)options), oyStruct_GetDeAllocator((oyStruct_s*)options) );
       error = oyObject_SetName( options->oy_, text, type );
       if(text) { free(text); text = NULL; }
     } else

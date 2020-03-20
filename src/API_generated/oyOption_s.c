@@ -164,8 +164,7 @@ int            oyOption_GetId        ( oyOption_s        * obj )
   return oyOption_GetId_( s );
 }
 
-/** Function oyOption_GetText
- *  @memberof oyOption_s
+/** @memberof oyOption_s
  *  @brief   get a text dump
  *
  *  Only oyOption_s::value is written.
