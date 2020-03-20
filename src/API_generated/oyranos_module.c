@@ -1465,7 +1465,7 @@ const char * oyStruct_GetTextFromModule (
   const char * text = 0;
 
   if(!error)
-    text = oyObject_GetName( obj->oy_, oyNAME_NICK );
+    text = oyObject_GetName( obj->oy_, name_type );
 
   if(!error && !text)
   {
