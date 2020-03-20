@@ -212,10 +212,12 @@ int myMain( int argc, const char ** argv )
     {
       char error_buffer[256] = {0};
       if(verbose)
-        fprintf(stderr, "file read:\t\"%s\"\n", i_filename);
+        fprintf(stderr, "file read:\t\"%s\" %d\n", i_filename, size);
       root = oyjlTreeParse( text, error_buffer, 256 );
       if(error_buffer[0] != '\000')
         fprintf(stderr, "ERROR:\t\"%s\"\n", error_buffer);
+      else if(!root)
+        fprintf(stderr, "ERROR:\tparsing \"%s\":\n%s", i_filename, text);
       if(verbose)
         fprintf(stderr, "file parsed:\t\"%s\"\n", i_filename);
 
