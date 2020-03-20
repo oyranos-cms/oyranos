@@ -175,14 +175,15 @@ int            oyOption_GetId        ( oyOption_s        * obj )
  *  - oyNAME_NICK - the hash ID
  *  - oyNAME_DESCRIPTION - option registration name with key and without
  *                         key attributes or value
+ *  - oyNAME_JSON - JSON formatted string supporting nested JSON
  *
  *  @param[in,out] obj                 the option
  *  @param         type                oyNAME_NICK is equal to an ID
  *  @return                            the text
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.9.7
+ *  @date    2020/03/20
  *  @since   2008/11/02 (Oyranos: 0.1.8)
- *  @date    2009/08/30
  */
 const char *   oyOption_GetText      ( oyOption_s        * obj,
                                        oyNAME_e            type )
@@ -231,7 +232,7 @@ const char *   oyOption_GetText      ( oyOption_s        * obj,
     }
 
   if(error <= 0 &&
-     ( type == oyNAME_NICK || type == oyNAME_NAME ))
+     ( type == oyNAME_NICK || type == oyNAME_NAME  || type == oyNAME_JSON))
   {
     int n = 1, i = 0, j;
     char * tmp = 0,
@@ -263,11 +264,40 @@ const char *   oyOption_GetText      ( oyOption_s        * obj,
       }
 
       oyStringListRelease_( &list, n, oyDeAllocateFunc_ );
+    } else if(type == oyNAME_JSON)
+    {
+      list = oyStringSplit_( oyObject_GetName( obj->oy_, oyNAME_DESCRIPTION ),
+                             '/', &n, oyAllocateFunc_);
+      for( i = 0; i < n; ++i )
+      {
+        for(j = 0; j < i; ++j)
+          STRING_ADD ( text, " " );
+        if(!text) /* opening bracket */
+          STRING_ADD ( text, "{ \"" );
+        else
+          STRING_ADD ( text, " \"" );
+        STRING_ADD ( text, list[i] );
+        STRING_ADD ( text, "\": {" );
+      }
+
+      oyStringListRelease_( &list, n, oyDeAllocateFunc_ );
     }
 
     if( s->value_type == oyVAL_STRUCT &&
         s->value->oy_struct)
-      STRING_ADD ( text, oyStruct_GetText( s->value->oy_struct, type, 0 ) );
+    {
+      const char * t = oyStruct_GetText( s->value->oy_struct, type, 0 );
+      int pos = 0;
+      while(t && isspace(t[pos])) ++pos;
+      if(t && t[pos] == '{')
+      {
+        t = &t[pos+1];
+        STRING_ADD ( text, t );
+        text[strlen(text)-1] = '\000';
+      }
+      else
+        STRING_ADD ( text, t );
+    }
     else
     {
       tmp = oyOption_GetValueText( obj, oyAllocateFunc_ );
@@ -290,6 +320,23 @@ const char *   oyOption_GetText      ( oyOption_s        * obj,
         else
           STRING_ADD ( text, ">" );
       }
+
+      oyStringListRelease_( &list, n, oyDeAllocateFunc_ );
+    } else
+    if(type == oyNAME_JSON)
+    {
+      list = oyStringSplit_( oyObject_GetName( obj->oy_, oyNAME_DESCRIPTION ),
+                             '/', &n, oyAllocateFunc_);
+      for( i = n-1; i >= 0; --i )
+      {
+        if(i+1 < n)
+        {
+          for(j = 0; j < i; ++j)
+            STRING_ADD ( text, " " );
+        }
+        STRING_ADD ( text, "}" );
+      }
+      STRING_ADD ( text, "}" ); /* closing bracket */
 
       oyStringListRelease_( &list, n, oyDeAllocateFunc_ );
     }
