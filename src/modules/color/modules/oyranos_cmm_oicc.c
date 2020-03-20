@@ -588,10 +588,11 @@ const char * oiccProfileGetText      ( oyStruct_s        * obj,
  *  - oyNAME_NAME - a readable XML element
  *  - oyNAME_NICK - the hash ID
  *  - oyNAME_DESCRIPTION - profiles internal name (icSigProfileDescriptionTag)
+ *  - oyNAME_JSON - JSON formatted string supporting nested JSON
  *
- *  @version Oyranos: 0.3.3
+ *  @version Oyranos: 0.9.7
+ *  @date    2020/03/20
  *  @since   2011/10/31 (Oyranos: 0.3.3)
- *  @date    2011/10/31
  */
 const char * oiccProfilesGetText     ( oyStruct_s        * obj,
                                        oyNAME_e            type,
@@ -617,7 +618,9 @@ const char * oiccProfilesGetText     ( oyStruct_s        * obj,
        obj->type_ == oyOBJECT_PROFILES_S)
     {
       if(type == oyNAME_NAME)
-        STRING_ADD( tmp, "<oyProfiles_s>\n" );
+        STRING_ADD( tmp, "<profiles>\n" );
+      else if((int)type == oyNAME_JSON)
+        STRING_ADD( tmp, "{ \"profiles\": [\n" );
       profiles = (oyProfiles_s*)obj;
       n = oyProfiles_Count( profiles );
       for(i = 0; i < n; ++i)
@@ -629,10 +632,15 @@ const char * oiccProfilesGetText     ( oyStruct_s        * obj,
                               "  %s\n", t );
         else
           STRING_ADD( tmp,    "  no info available\n" );
+        if((int)type == oyNAME_JSON && i < n-1)
+          oyStringAddPrintf_( &tmp, oyAllocateFunc_, oyDeAllocateFunc_,
+                              ",\n", t );
         oyProfile_Release( &p );
       }
       if(type == oyNAME_NAME)
-        STRING_ADD( tmp, "</oyProfiles_s>" );
+        STRING_ADD( tmp, "</profiles>" );
+      else if( (int)type == oyNAME_JSON)
+        STRING_ADD( tmp, "\n] }" );
 
       if(tmp && error <= 0)
         error = oyObject_SetName( profiles->oy_, tmp, type );
@@ -1035,7 +1043,7 @@ int           oiccConversion_Correct ( oyConversion_s    * conversion,
                                  strrchr(__FILE__,'/') + 1 : __FILE__ ,__LINE__,
                            val?val:"empty profile text", 
                            display_mode ? "for displaying" : "for hard copy",
-                           oyStruct_GetInfo( (oyStruct_s*)f_options, oyNAME_NAME, 0 ),
+                           oyStruct_GetInfo( (oyStruct_s*)f_options, oyNAME_JSON, 0 ),
                            oyObject_GetId( f_options->oy_ ));
               } else if(verbose)
                 oicc_msg( oyMSG_DBG,(oyStruct_s*)node,
