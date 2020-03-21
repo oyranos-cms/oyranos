@@ -956,19 +956,13 @@ int myMain( int argc, const char ** argv )
         ccount = c_max/(double)dist + 1;
     int count = lcount * ccount;
     double ratio = lcount / (double)ccount;
-    int * inside = calloc( count, sizeof(int) );
+    int * outside = calloc( count, sizeof(int) );
     double * lab = calloc( count, sizeof(double) * 3 );
-    oyProfiles_s * proofing = oyProfiles_New(0);
-    int error = !inside || !lab;
+    oyProfiles_s * proofing = NULL;
+    int error = !outside || !lab;
     if(error) return error;
     if(verbose)
       fprintf(stderr, "ccount: %d c_max: %d  lcount: %d\n", ccount, c_max, lcount );
-    for(i = 0; i < profile_count; ++i)
-    {
-      const char * filename = profile_names[i];
-      oyProfile_s * p = oyProfile_FromName( filename, flags, NULL );
-      oyProfiles_MoveIn( proofing, &p, -1 );
-    }
     for(c = 0; c < ccount; ++c)
     {
       for(l = 0; l < lcount; ++l)
@@ -977,7 +971,24 @@ int myMain( int argc, const char ** argv )
         oyLCh2Lab( LCh, &lab[ (c + l * ccount) * 3 ], NULL );
       }
     }
-    error = oyLabGamutCheck( lab, count, proofing, inside, NULL );
+
+    if(profile_count)
+    {
+      for(i = 0; i < profile_count; ++i)
+      {
+        const char * filename = profile_names[i];
+        oyProfile_s * p = oyProfile_FromName( filename, flags, NULL );
+        if(verbose)
+          fprintf(stderr, "proofing: %s\n", filename);
+        proofing = oyProfiles_New(0);
+        oyProfiles_MoveIn( proofing, &p, -1 );
+        error = oyLabGamutCheck( lab, count, proofing, outside, NULL );
+        oyProfiles_Release( &proofing );
+      }
+    }
+    else
+      error = oyLabGamutCheck( lab, count, NULL, outside, NULL );
+
     double Lab[3];
     double XYZ[3];
     double off = frame/20.0;
@@ -1026,7 +1037,7 @@ int myMain( int argc, const char ** argv )
         oyXYZ2sRGB( rgb );
         if(verbose) fprintf(stderr, "RGB: %.5f %.5f %.5f\n", rgb[0], rgb[1], rgb[2] );
 
-        if(inside[pos])
+        if(!outside[pos])
         {
           cairo_new_path(cr);
           cairo_move_to(cr, xToImage((double)(c  )/(double)ccount) + off, yToImage((double)(l  )/(double)lcount * ratio + (1-ratio) / 2.0) - off);
@@ -1494,20 +1505,26 @@ int  oyIsInRange                     ( const double        i,
   if(fabs(reference - i) < delta) return 1;
   return 0;
 }
-int  oyColorIsProofingMarker         ( const double        i[] )
+int  oyColorIsProofingMarker         ( const double        i[],
+                                       double              delta )
 { 
-  if( oyIsInRange(i[0], 0.5, 0.01) &&
-      oyIsInRange(i[1], 0.5, 0.01) &&
-      oyIsInRange(i[2], 0.5, 0.01) )
+  if( oyIsInRange(i[0], 0.5, delta) &&
+      oyIsInRange(i[1], 0.5, delta) &&
+      oyIsInRange(i[2], 0.5, delta) )
     return 1;
   return 0;
 }
 /** @brief   Lab in PCS*Lab range -> ICC profile -> inGamutTest
  *
+ *  While it is possible to add multiple proofing profiles at once,
+ *  the results will be washed out. It is much more precise to run
+ *  this function for each proofing profile separately.
+ *
  *  @param[in]     lab                 input Lab values
  *  @param[in]     count               count of 'lab' values
  *  @param[in]     space               color space for gamut boundary check; optional
- *  @param[out]    is_in_gamut         array with result of in gamut test
+ *  @param[in,out] is_outside_gamut    array with result of out of gamut test
+ *  @param[in,out] lab_tested          the resulting colors
  *
  *  @version Oyranos: 0.9.7
  *  @date    2020/03/21
@@ -1516,26 +1533,30 @@ int  oyColorIsProofingMarker         ( const double        i[] )
 int      oyLabGamutCheck             ( double            * lab,
                                        int                 count,
                                        oyProfiles_s      * proofing,
-                                       int               * is_in_gamut,
+                                       int               * is_outside_gamut,
                                        double            * lab_tested )
 {
   int error = -1;
   int icc_profile_flags = 0, i;
   oyProfile_s * pLab = oyProfile_FromStd( oyASSUMED_LAB, icc_profile_flags, 0 );
-  double * tmp = lab_tested ? NULL : calloc( 3*count, sizeof(double) );
+  double * tmp = lab_tested ? NULL : calloc( 3*count, sizeof(double) ),
+         delta = 0.01;
   oyOptions_s * module_options = NULL;
   oyProfiles_s * profs = oyProfiles_Copy( proofing, NULL );
   if(!lab_tested) lab_tested = tmp;
   if(!lab_tested) return error;
-  oyOptions_MoveInStruct( &module_options,
+  oyOptions_SetFromString( &module_options, OY_DEFAULT_RENDERING_INTENT, "1", OY_CREATE_NEW );
+  oyOptions_SetFromString( &module_options, OY_DEFAULT_RENDERING_BPC, "0", OY_CREATE_NEW );
+  if(oyProfiles_Count(proofing))
+  {
+    oyOptions_MoveInStruct( &module_options,
                                        OY_PROFILES_SIMULATION,
                                        (oyStruct_s**) &profs,
                                        OY_CREATE_NEW );
-  oyOptions_SetFromString( &module_options, OY_DEFAULT_PROOF_SOFT, "1", OY_CREATE_NEW );
-  oyOptions_SetFromString( &module_options, OY_DEFAULT_RENDERING_INTENT, "1", OY_CREATE_NEW );
-  oyOptions_SetFromString( &module_options, OY_DEFAULT_RENDERING_INTENT_PROOF, "1", OY_CREATE_NEW );
-  oyOptions_SetFromString( &module_options, OY_DEFAULT_RENDERING_BPC, "0", OY_CREATE_NEW );
-  oyOptions_SetFromString( &module_options, OY_DEFAULT_RENDERING_GAMUT_WARNING, "1", OY_CREATE_NEW );
+    oyOptions_SetFromString( &module_options, OY_DEFAULT_PROOF_SOFT, "1", OY_CREATE_NEW );
+    oyOptions_SetFromString( &module_options, OY_DEFAULT_RENDERING_GAMUT_WARNING, "1", OY_CREATE_NEW );
+    oyOptions_SetFromString( &module_options, OY_DEFAULT_RENDERING_INTENT_PROOF, "3", OY_CREATE_NEW );
+  }
   oyConversion_s * cc = oyConversion_CreateBasicPixelsFromBuffers (
                                        pLab, lab, oyDataType_m(oyDOUBLE),
                                        pLab, lab_tested, oyDataType_m(oyDOUBLE),
@@ -1544,10 +1565,14 @@ int      oyLabGamutCheck             ( double            * lab,
   oyConversion_RunPixels( cc, 0 );
 
   for(i = 0; i < count; ++i)
-    if(fabs(lab[i*3+0]-0.5) < 0.05 && fabs(lab[i*3+1]-0.5) < 0.05 && fabs(lab[i*3+2]-0.5) < 0.05) /* test source in greater range */
-      is_in_gamut[i] = 1;
+  {
+    int is_outside = is_outside_gamut[i];
+    if(is_outside) continue;
+    if(oyColorIsProofingMarker( &lab[i*3], delta + 0.02 )) /* test source in greater range */
+      is_outside_gamut[i] = 0;
     else
-      is_in_gamut[i] = !oyColorIsProofingMarker(&lab_tested[i*3]);
+      is_outside_gamut[i] = oyColorIsProofingMarker(&lab_tested[i*3], delta);
+  }
 
   oyProfile_Release( &pLab );
   oyOptions_Release( &module_options );
