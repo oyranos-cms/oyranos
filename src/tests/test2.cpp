@@ -2,7 +2,7 @@
  *
  *  Oyranos is an open source Color Management System 
  *
- *  Copyright (C) 2004-2019  Kai-Uwe Behrmann
+ *  Copyright (C) 2004-2020  Kai-Uwe Behrmann
  *
  *  @brief    Oyranos test suite
  *  @internal
@@ -65,6 +65,7 @@
 #include "oyranos_string.h"
 oyObject_s testobj = NULL;
 extern "C" { char * oyAlphaPrint_(int); }
+#define OYJL_TEST_NAME "test2"
 #define OYJL_TEST_MAIN_SETUP  printf("\n    Oyranos test2\n"); if(getenv(OY_DEBUG)) oy_debug = atoi(getenv(OY_DEBUG));  if(getenv(OY_DEBUG_SIGNALS)) oy_debug_signals = atoi(getenv(OY_DEBUG_SIGNALS)); if(getenv(OY_DEBUG_OBJECTS)) oy_debug_objects = atoi(getenv(OY_DEBUG_OBJECTS)); //else  oy_debug_objects = 2851;  // oy_debug_signals = 1;
 #define OYJL_TEST_MAIN_FINISH printf("\n    Oyranos test2 finished\n\n"); if(testobj) testobj->release( &testobj ); if(verbose) { char * t = oyAlphaPrint_(0); puts(t); free(t); } oyLibConfigRelease(0);
 #include <oyjl_test_main.h>
@@ -1344,6 +1345,7 @@ oyjlTESTRESULT_e testOptionsSet ()
   if(t && t[0])
   {
     oyOption_s * opt = oyOptions_Get( setA, 3 );
+    OYJL_TEST_WRITE_RESULT( t, strlen(t), "oyOptions_GetText_oyNAME_NAME", "txt" )
     if(verbose) fprintf( zout, "%s\n", t );
     if(verbose) fprintf( zout, "fourth option\n" );
     char * t = oyOption_GetValueText(opt, malloc );
@@ -1357,6 +1359,7 @@ oyjlTESTRESULT_e testOptionsSet ()
     { PRINT_SUB( oyjlTESTRESULT_FAIL, 
     "oyOptions_GetText(oyNAME_NICK) %d %s         failed", (int)strlen(text), text );
     }
+    OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyOptions_GetText_oyNAME_NICK", "txt" )
     if(verbose) fprintf( zout, "NICK: %s\n", text );
     text = oyOption_GetText(opt, oyNAME_NAME);
     if(strlen(text) == 126)
@@ -1366,6 +1369,7 @@ oyjlTESTRESULT_e testOptionsSet ()
     { PRINT_SUB( oyjlTESTRESULT_FAIL, 
     "oyOptions_GetText(oyNAME_NAME) %d %s         failed", (int)strlen(text), text );
     }
+    OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyOptions_GetText_oyNAME_NAME", "txt" )
     if(verbose) fprintf( zout, "NAME: %s\n", text );
     text = oyOption_GetText(opt, oyNAME_DESCRIPTION);
     if(strlen(text) == 35)
@@ -1375,6 +1379,7 @@ oyjlTESTRESULT_e testOptionsSet ()
     { PRINT_SUB( oyjlTESTRESULT_FAIL, 
     "oyOptions_GetText(oyNAME_DESCRIPTION) %d %s  failed", (int)strlen(text), text );
     }
+    OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyOptions_GetText_oyNAME_DESCRIPTION", "txt" )
     if(verbose) fprintf( zout, "DESCRIPTION: %s\n", text );
 
     oyOption_Release( &opt );
@@ -1463,6 +1468,7 @@ oyjlTESTRESULT_e testOptionsSet ()
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyOptions_FromJSON() simple second              %d", count );
   }
+  OYJL_TEST_WRITE_RESULT( t, strlen(t), "oyOptions_FromJSON-simple-second", "txt" )
 
   const char * json3 = "{\"org\":{\"free\":[{\"s1key_a\":\"val_a\",\"s1key_b\":\"val_b\"},{\"s2key_c\":\"val_c\",\"s2key_d\":\"val_d\"}],\"key_e\":\"val_e_yyy\",\"key_f\":\"val_f\"}}";
   error = oyOptions_FromJSON( json3, options, &setA, "org" );
@@ -1477,6 +1483,7 @@ oyjlTESTRESULT_e testOptionsSet ()
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyOptions_FromJSON() simple thierd              %d", count );
   }
+  OYJL_TEST_WRITE_RESULT( t, strlen(t), "oyOptions_FromJSON-simple-thierd", "txt" )
 
   oyOptions_SetFromString( &options, OY_STD "/key_path", 
                                    "org/host/path", OY_CREATE_NEW);
@@ -1492,18 +1499,20 @@ oyjlTESTRESULT_e testOptionsSet ()
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyOptions_FromJSON() key_path                   %d", count );
   }
+  OYJL_TEST_WRITE_RESULT( t, strlen(t), "oyOptions_FromJSON-key_path", "txt" )
   t = oyOptions_GetText( setA, (oyNAME_e) oyNAME_JSON );
   if(verbose) fprintf( zout, "%s\n", t?t:0 );
 
   char error_buffer[128] = {0};
   oyjl_val root = oyjlTreeParse( t, error_buffer, 128 );
-  if(root && strlen(t) == 165)
+  if(root && strlen(t) == 154)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyOptions_GetText(oyNAME_JSON)                   " );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyOptions_GetText(oyNAME_JSON) %d              %s", t?(int)strlen(t):-1, error_buffer );
   }
+  OYJL_TEST_WRITE_RESULT( t, strlen(t), "oyOptions_GetText-JSON", "txt" )
   oyjlTreeFree( root );
 
   oyOptions_SetFromString( &options, OY_STD "/key_path", 
@@ -1517,7 +1526,7 @@ oyjlTESTRESULT_e testOptionsSet ()
   t = oyOptions_GetText( setA, (oyNAME_e) oyNAME_JSON );
   oyOptions_Release( &options );
   count = oyOptions_Count(setA);
-  if(count == 8 && t && strlen(t) == 334)
+  if(count == 8 && t && strlen(t) == 315)
   {
     PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyOptions_FromJSON() key_paths               %d %d", count, (int)strlen(t) );
@@ -1526,11 +1535,12 @@ oyjlTESTRESULT_e testOptionsSet ()
     "oyOptions_FromJSON() key_paths               %d %d", count, (int)(t?strlen(t):0));
     fprintf( zout, "%s\n", t?t:0 );
   }
+  OYJL_TEST_WRITE_RESULT( t, strlen(t), "oyOptions_FromJSON-key_paths", "txt" )
 
   error = oyOptions_FromJSON( t, NULL, &options, "org" );
   if(error) PRINT_SUB( oyjlTESTRESULT_XFAIL, "oyOptions_FromJSON() error: %d", error )
   t = oyOptions_GetText( options, (oyNAME_e) oyNAME_JSON );
-  if(!error && t && t && strlen(t) == 65)
+  if(!error && t && t && strlen(t) == 60)
   {
     PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyOptions_FromJSON() validity                   %d", (int)(t?strlen(t):0) );
@@ -1539,6 +1549,7 @@ oyjlTESTRESULT_e testOptionsSet ()
     "oyOptions_FromJSON() validity                   %d", (int)(t?strlen(t):0) );
     fprintf( zout, "%s\n", t?t:0 );
   }
+  OYJL_TEST_WRITE_RESULT( t, strlen(t), "oyOptions_FromJSON-validity", "txt" )
 
   oyOptions_Release( &options );
 
@@ -1555,6 +1566,7 @@ oyjlTESTRESULT_e testOptionsSet ()
     "oyOptions_FromText( json ) roundtrip              " );
     fprintf( zout, "%s\n", t?t:0 );
   }
+  OYJL_TEST_WRITE_RESULT( t, strlen(t), "oyOptions_FromText-roundtrip", "txt" )
   oyOptions_Release( &options );
 
   OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 0, NULL )
@@ -8671,6 +8683,100 @@ int      oyConversionColors          ( oyProfile_s       * p_in,
   return error;
 }
 
+oyConversion_s * oy_xyz_srgb = NULL;
+int oyXYZ2sRGB ( double * rgb )
+{
+  int error = 0;
+  int icc_profile_flags = 0, i;
+  static double rgb_[3];
+
+  if(!oy_xyz_srgb)
+  {
+    oyProfile_s * pXYZ = oyProfile_FromStd( oyASSUMED_XYZ, icc_profile_flags, 0 ),
+                * sRGB = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, 0 );
+    oyOptions_s * options = NULL;
+    oyOptions_SetFromString( &options, OY_DEFAULT_RENDERING_INTENT, "1", OY_CREATE_NEW );
+    oy_xyz_srgb = oyConversion_CreateBasicPixelsFromBuffers (
+                                       pXYZ, rgb_, oyDataType_m(oyDOUBLE),
+                                       sRGB, rgb_, oyDataType_m(oyDOUBLE),
+                                       options, 1 );
+    oyProfile_Release( &sRGB );
+    oyProfile_Release( &pXYZ );
+    oyOptions_Release( &options );
+  }
+  error = !oy_xyz_srgb;
+
+  for(i = 0; i < 3; ++i) rgb_[i] = rgb[i];
+  oyConversion_RunPixels( oy_xyz_srgb, 0 );
+  for(i = 0; i < 3; ++i) rgb[i] = rgb_[i];
+  rgb[3] = 1.0;
+
+  return error;
+}
+int  oyIsInRange                     ( const double        i,
+                                       const double        reference,
+                                       const double        delta )
+{ 
+  if(fabs(reference - i) < delta) return 1;
+  return 0;
+}
+int  oyColorIsProofingMarker         ( const double        i[] )
+{ 
+  if( oyIsInRange(i[0], 0.5, 0.01) &&
+      oyIsInRange(i[1], 0.5, 0.01) &&
+      oyIsInRange(i[2], 0.5, 0.01) )
+    return 1;
+  return 0;
+}
+int      oyLabGamutCheck             ( double            * lab,
+                                       int                 count,
+                                       oyProfiles_s      * proofing,
+                                       int               * is_in_gamut,
+                                       double            * lab_tested )
+{
+  int error = -1;
+  int icc_profile_flags = 0, i;
+  oyProfile_s * pLab = oyProfile_FromStd( oyASSUMED_LAB, icc_profile_flags, 0 );
+  double * tmp = lab_tested ? NULL : (double*)calloc( 3*count, sizeof(double) );
+  oyOptions_s * module_options = NULL;
+  oyProfiles_s * profs = oyProfiles_Copy( proofing, NULL );
+  if(!lab_tested) lab_tested = tmp;
+  if(!lab_tested) return error;
+  if(proofing)
+  {
+    oyOptions_MoveInStruct( &module_options,
+                                       OY_PROFILES_SIMULATION,
+                                       (oyStruct_s**) &profs,
+                                       OY_CREATE_NEW );
+  }
+  oyOptions_SetFromString( &module_options, OY_DEFAULT_PROOF_SOFT, "1", OY_CREATE_NEW );
+  oyOptions_SetFromString( &module_options, OY_DEFAULT_RENDERING_INTENT, "1", OY_CREATE_NEW );
+  oyOptions_SetFromString( &module_options, OY_DEFAULT_RENDERING_INTENT_PROOF, "1", OY_CREATE_NEW );
+  oyOptions_SetFromString( &module_options, OY_DEFAULT_RENDERING_BPC, "0", OY_CREATE_NEW );
+  oyOptions_SetFromString( &module_options, OY_DEFAULT_RENDERING_GAMUT_WARNING, "1", OY_CREATE_NEW );
+  oyConversion_s * cc = oyConversion_CreateBasicPixelsFromBuffers (
+                                       pLab, lab, oyDataType_m(oyDOUBLE),
+                                       pLab, lab_tested, oyDataType_m(oyDOUBLE),
+                                       module_options, count );
+  error = !cc;
+  oyConversion_RunPixels( cc, 0 );
+
+  for(i = 0; i < count; ++i)
+    if(oyColorIsProofingMarker(&lab[i*3]))
+      is_in_gamut[i] = 1;
+    else
+      is_in_gamut[i] = !oyColorIsProofingMarker(&lab_tested[i*3]);
+
+  oyProfile_Release( &pLab );
+  oyOptions_Release( &module_options );
+  oyConversion_Release( &cc );
+  if(tmp)
+    free(tmp);
+
+  return error;
+}
+
+
 oyjlTESTRESULT_e testICCsCheck()
 {
   oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
@@ -8679,7 +8785,7 @@ oyjlTESTRESULT_e testICCsCheck()
   fprintf(stdout, "\n" );
 
   char ** list = oyGetCMMs( oyCMM_CONTEXT, oyNAME_NAME, 0, malloc );
-  int i = 0;
+  int i = 0, j;
 
   while(list && list[i])
   {
@@ -8695,22 +8801,210 @@ oyjlTESTRESULT_e testICCsCheck()
       "oyGetCMMs(oyCMM_CONTEXT) failed   " );
     }
 
-
+    oyDATATYPE_e buf_type_in = oyDOUBLE,
+                 buf_type_out = oyDOUBLE;
     oyOptions_s * options = NULL;
+    oyProfile_s * p_in, * p_out;
+    oyProfiles_s * proofing;
+    uint32_t icc_profile_flags = 0;
+    oyConversion_s * cc = NULL, * cc_xyz_rgb = NULL; 
+    int show_details = verbose;
+    int error = 0;
+    double delta = 0.001;
+
+
+
+    double buf_f64in2x2[12], 
+           buf_f64out2x2[12] = {0,0,0, 0,0,0, 0,0,0, 0,0,0};
+
+#define USE_XYZsRGB_FUNC 1
+#if !defined(USE_XYZsRGB_FUNC)
+    buf_f64in2x2[0] = 0.5; buf_f64in2x2[1]  = buf_f64in2x2[2]  = 0.5;
+    buf_f64in2x2[3] = 0.2; buf_f64in2x2[4]  = buf_f64in2x2[5]  = 0.5;
+    buf_f64in2x2[6] = 0.0; buf_f64in2x2[7]  = buf_f64in2x2[8]  = 0.5;
+    buf_f64in2x2[9] = 1.0; buf_f64in2x2[10] = buf_f64in2x2[11] = 0.5;
+    for(j = 0; j < 4; ++j)
+    {
+      oyIcc2CIELab( &buf_f64in2x2[j*3], &buf_f64in2x2[j*3], NULL );
+      oyLab2XYZ(    &buf_f64in2x2[j*3], &buf_f64in2x2[j*3] );
+    }
+
+    p_in = oyProfile_FromStd( oyASSUMED_XYZ, icc_profile_flags, testobj );
+    p_out = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, testobj );
+
     oyOptions_SetFromString( &options, OY_DEFAULT_CMM_CONTEXT, reg_pattern, OY_CREATE_NEW );
-    uint32_t icc_profile_flags = oyICCProfileSelectionFlagsFromOptions( OY_CMM_STD,
+    cc_xyz_rgb = oyConversion_CreateBasicPixelsFromBuffers(
+                              p_in, buf_f64in2x2, oyDataType_m(buf_type_in),
+                              p_out, buf_f64out2x2, oyDataType_m(buf_type_out),
+                                                    options, 4 );
+    oyOptions_Release( &options );
+    oyProfile_Release( &p_in );
+    oyProfile_Release( &p_out );
+
+    error = oyConversion_RunPixels( cc_xyz_rgb, 0 );
+    //oyConversion_Release( &cc_xyz_rgb );
+    if(!error &&
+        fabs(1.0 - buf_f64out2x2[9]) < delta &&
+        fabs(1.0 - buf_f64out2x2[10]) < delta &&
+        fabs(1.0 - buf_f64out2x2[11]) < delta
+      )
+#else
+    double lightness = 50.0; // percent Lab
+    double Lab[3] = { lightness, 0.0, 0.0 }, rgb[3];
+    oyLab2XYZ( Lab, rgb );
+    if(verbose) fprintf(stderr, "Background Lab: %.2f %.2f %.2f XYZ: %.2f %.2f %.2f\n", Lab[0], Lab[1], Lab[2], rgb[0], rgb[1], rgb[2] );
+    oyXYZ2sRGB( rgb );
+
+    if(!error &&
+        fabs(0.4664 - rgb[0]) < delta &&
+        fabs(0.4664 - rgb[1]) < delta &&
+        fabs(0.4664 - rgb[2]) < delta
+      )
+#endif
+    { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+      "check XYZ -> Web                                    " );
+    } else
+    { PRINT_SUB( oyjlTESTRESULT_XFAIL,
+      "check XYZ -> Web                                    " );
+      show_details = 1;
+    }
+    if(show_details)
+    {
+#if !defined(USE_XYZsRGB_FUNC)
+      for(j = 0; j < 4; ++j)
+      {
+        fprintf( zout, "buf_f64in  %g %g %g -> ",
+                 buf_f64in2x2[j*3+0], buf_f64in2x2[j*3+1], buf_f64in2x2[j*3+2]);
+        fprintf( zout, "buf_f64_out %g %g %g\n",
+                 buf_f64out2x2[j*3+0], buf_f64out2x2[j*3+1], buf_f64out2x2[j*3+2]);
+      }
+#else
+      fprintf(stderr, "RGB: %.5f %.5f %.5f\n", rgb[0], rgb[1], rgb[2] );
+#endif
+    } show_details = verbose;
+
+
+
+    p_in = oyProfile_FromStd( oyASSUMED_LAB, icc_profile_flags, testobj );
+    p_out = oyProfile_FromStd( oyASSUMED_LAB, icc_profile_flags, testobj );
+
+    buf_f64in2x2[0] = 0.5; buf_f64in2x2[1] = buf_f64in2x2[2] = 0.5;
+    buf_f64in2x2[3] = 0.2; buf_f64in2x2[4] = buf_f64in2x2[5] = 0.5;
+    buf_f64in2x2[6] = 0.0; buf_f64in2x2[7] = buf_f64in2x2[8] = 0.5;
+    buf_f64in2x2[9] = 1.0; buf_f64in2x2[10] = buf_f64in2x2[11] = 0.5;
+#if !defined(USE_XYZsRGB_FUNC)
+    oyOptions_SetFromString( &options, OY_DEFAULT_CMM_CONTEXT, reg_pattern, OY_CREATE_NEW );
+    cc = oyConversion_CreateBasicPixelsFromBuffers(
+                              p_in, buf_f64in2x2, oyDataType_m(buf_type_in),
+                              p_out, buf_f64out2x2, oyDataType_m(buf_type_out),
+                                                    options, 4 );
+    error = oyConversion_RunPixels( cc, 0 );
+    if(!error &&
+        fabs(buf_f64in2x2[0] - buf_f64out2x2[0]) < delta &&
+        fabs(buf_f64in2x2[1] - buf_f64out2x2[1]) < delta &&
+        fabs(buf_f64in2x2[2] - buf_f64out2x2[2]) < delta
+      )
+#else
+    int inside[4] = {0,0,0,0};
+    proofing = oyProfiles_New(NULL);
+    error = oyLabGamutCheck( buf_f64in2x2, 4, proofing, inside, buf_f64out2x2 );
+    if(!error &&
+        ( inside[0] == 1 && inside[1] == 1 && inside[2] == 1 && inside[3] == 1 )
+      )
+#endif
+    { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+      "check Lab -> Lab                                    " );
+    } else
+    { PRINT_SUB( oyjlTESTRESULT_XFAIL,
+      "check Lab -> Lab                                    " );
+      show_details = 1;
+    }
+    if(show_details)
+    {
+      for(j = 0; j < 4; ++j)
+      {
+        fprintf( zout, "buf_f64in  %g %g %g -> ",
+                 buf_f64in2x2[j*3+0],  buf_f64in2x2[j*3+1],  buf_f64in2x2[j*3+2]);
+        fprintf( zout, "buf_f64_out %g %g %g\n",
+                 buf_f64out2x2[j*3+0], buf_f64out2x2[j*3+1], buf_f64out2x2[j*3+2]);
+      }
+    } show_details = verbose;
+
+    oyProfiles_Release( &proofing );
+    oyOptions_Release( &options );
+    oyConversion_Release( &cc );
+    oyProfile_Release( &p_in );
+    oyProfile_Release( &p_out );
+
+
+#if !defined(USE_XYZsRGB_FUNC)
+    buf_f64in2x2[0] = 0.5; buf_f64in2x2[1] = buf_f64in2x2[2] = 0.5;
+    buf_f64in2x2[3] = 0.2; buf_f64in2x2[4] = buf_f64in2x2[5] = 0.5;
+    buf_f64in2x2[6] = 0.0; buf_f64in2x2[7] = buf_f64in2x2[8] = 0.5;
+    buf_f64in2x2[9] = 1.0; buf_f64in2x2[10] = buf_f64in2x2[11] = 0.5;
+    for(j = 0; j < 4; ++j)
+    {
+      oyIcc2CIELab( &buf_f64in2x2[j*3], &buf_f64in2x2[j*3], NULL );
+      oyLab2XYZ(    &buf_f64in2x2[j*3], &buf_f64in2x2[j*3] );
+    }
+    error = oyConversion_RunPixels( cc_xyz_rgb, 0 );
+    if(!error &&
+        fabs(1.0 - buf_f64out2x2[9]) < delta &&
+        fabs(1.0 - buf_f64out2x2[10]) < delta &&
+        fabs(1.0 - buf_f64out2x2[11]) < delta
+      )
+#else
+    double rgb4[4];
+    Lab[0] = 0.67; Lab[1] = Lab[2] = 0.5;
+    oyIcc2CIELab( Lab, Lab, NULL );
+    oyLab2XYZ( Lab, rgb4 );
+    if(verbose) fprintf(stderr, "Background Lab: %.2f %.2f %.2f XYZ: %.2f %.2f %.2f\n", Lab[0], Lab[1], Lab[2], rgb4[0], rgb4[1], rgb4[2] );
+    oyXYZ2sRGB( rgb4 );
+
+    if(!error &&
+        fabs(0.6393 - rgb4[0]) < delta &&
+        fabs(0.6393 - rgb4[1]) < delta &&
+        fabs(0.6393 - rgb4[2]) < delta
+      )
+#endif
+    { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+      "check XYZ -> Web                                    " );
+    } else
+    { PRINT_SUB( oyjlTESTRESULT_XFAIL,
+      "check XYZ -> Web                                    " );
+      show_details = 1;
+    }
+    if(show_details)
+    {
+#if !defined(USE_XYZsRGB_FUNC)
+      for(j = 0; j < 4; ++j)
+      {
+        fprintf( zout, "buf_f64in  %g %g %g -> ",
+                 buf_f64in2x2[j*3+0], buf_f64in2x2[j*3+1], buf_f64in2x2[j*3+2]);
+        fprintf( zout, "buf_f64_out %g %g %g\n",
+                 buf_f64out2x2[j*3+0], buf_f64out2x2[j*3+1], buf_f64out2x2[j*3+2]);
+      }
+#else
+      fprintf(stderr, "RGB: %.5f %.5f %.5f\n", rgb4[0], rgb4[1], rgb4[2] );
+#endif
+    } show_details = verbose;
+    oyConversion_Release( &cc_xyz_rgb );
+    oyConversion_Release( &oy_xyz_srgb );
+
+
+    icc_profile_flags = oyICCProfileSelectionFlagsFromOptions( OY_CMM_STD,
                                        "//" OY_TYPE_STD "/icc_color", options, 0 );
-    oyProfile_s /** p_cmyk = oyProfile_FromStd( oyEDITING_CMYK, NULL ),*/
-                * p_in = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, testobj ),
-                * p_out = oyProfile_FromFile( "compatibleWithAdobeRGB1998.icc", icc_profile_flags, testobj );
+    oyOptions_SetFromString( &options, OY_DEFAULT_CMM_CONTEXT, reg_pattern, OY_CREATE_NEW );
+    p_in = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, testobj );
+    p_out = oyProfile_FromFile( "compatibleWithAdobeRGB1998.icc", icc_profile_flags, testobj );
     uint16_t buf_16in2x2[12] = {
     32767,32767,32767, 10000,10000,10000,
     0,0,0,             65535,65535,65535
     };
     uint16_t buf_16out2x2[12];
-    oyDATATYPE_e buf_type_in = oyUINT16,
-                 buf_type_out = oyUINT16;
     oyImage_s *input, *output;
+    buf_type_in = oyUINT16;
+    buf_type_out = oyUINT16;
 
     //fprintf(stdout, "\n" );
 
@@ -8730,7 +9024,7 @@ oyjlTESTRESULT_e testICCsCheck()
     oyOptions_Release( &options );
     oyOptions_SetFromString( &options, OY_DEFAULT_CMM_CONTEXT, reg_pattern, OY_CREATE_NEW );
     oyOptions_SetFromString( &options, OY_DEFAULT_RENDERING_INTENT, "1", OY_CREATE_NEW );
-    oyConversion_s * cc = oyConversion_CreateBasicPixels( input,output, options, testobj );
+    cc = oyConversion_CreateBasicPixels( input,output, options, testobj );
     oyFilterGraph_s * cc_graph = oyConversion_GetGraph( cc );
     oyFilterNode_s * icc = oyFilterGraph_GetNode( cc_graph, -1, "///icc_color", 0 );
     const char * node_reg = oyFilterNode_GetRegistration( icc );
@@ -8744,9 +9038,8 @@ oyjlTESTRESULT_e testICCsCheck()
       "\"context\"=\"%s\"                                   ", oyNoEmptyString_m_(node_reg) );
     }
 
-    int error = oyConversion_RunPixels( cc, NULL );
-    double delta = 0.001,
-           da = u16TripleEqual(buf_16out2x2[0], buf_16out2x2[1], buf_16out2x2[2]),
+    error = oyConversion_RunPixels( cc, NULL );
+    double da = u16TripleEqual(buf_16out2x2[0], buf_16out2x2[1], buf_16out2x2[2]),
            db = u16TripleEqual(buf_16out2x2[3], buf_16out2x2[4], buf_16out2x2[5]),
            dc = u16TripleEqual(buf_16out2x2[6], buf_16out2x2[7], buf_16out2x2[8]),
            dd = u16TripleEqual(buf_16out2x2[9], buf_16out2x2[10], buf_16out2x2[11]);
@@ -8758,12 +9051,16 @@ oyjlTESTRESULT_e testICCsCheck()
     } else
     { PRINT_SUB( oyjlTESTRESULT_XFAIL,
       "relative colorimetric intent, equal channels      %3.5f[%g] %%", OY_MAX(da,OY_MAX(db,OY_MAX(dc,dd)))*100.0, delta*100.0 );
+      show_details = 1;
+    }
+    if(show_details)
+    {
       fprintf( zout, "%d %d %d   %d %d %d\n%d %d %d   %d %d %d\n",
                buf_16out2x2[0], buf_16out2x2[1], buf_16out2x2[2],
                buf_16out2x2[3], buf_16out2x2[4], buf_16out2x2[5],
                buf_16out2x2[6], buf_16out2x2[7], buf_16out2x2[8],
                buf_16out2x2[9], buf_16out2x2[10], buf_16out2x2[11]);
-    }
+    } show_details = verbose;
 
 
     oyImage_Release( &output );
@@ -8787,7 +9084,6 @@ oyjlTESTRESULT_e testICCsCheck()
     for(j = 0; j < 12; ++j)
       if((equal = u16Equal((int)(buf_f32out2x2[j]*65535.0f), buf_16out2x2[j])) > max)
         max = equal;
-    int show_details = 0;
     /* Is the float conversion ~ equal to the integer math? */
     if(!error && (max <= delta))
     { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
@@ -8815,7 +9111,7 @@ oyjlTESTRESULT_e testICCsCheck()
       oyBlob_Release( &b );
 
       fprintf( zout, "options where: %s\n", oyOptions_GetText( options, oyNAME_NICK ) );
-    }
+    } show_details = verbose;
 
     buf_f32in2x2[0] = 0.0;
     buf_f32in2x2[1] = 0.0;
@@ -8850,7 +9146,6 @@ oyjlTESTRESULT_e testICCsCheck()
                   blue[2] != buf_f32out2x2[2]    ))
     { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
       "relative colorimetric intent, simulation blue  %g %g %g -> %g %g %g", blue[0], blue[1], blue[2], buf_f32out2x2[0], buf_f32out2x2[1], buf_f32out2x2[2] );
-      show_details = 0;
     } else
     { PRINT_SUB( oyjlTESTRESULT_XFAIL,
       "relative colorimetric intent, simulation blue  %g %g", blue[0], buf_f32out2x2[0] );
@@ -8865,7 +9160,7 @@ oyjlTESTRESULT_e testICCsCheck()
                blue[0], blue[1], blue[2]);
       fprintf( zout, "simulation %g %g %g\n",
                buf_f32out2x2[0], buf_f32out2x2[1], buf_f32out2x2[2]);
-    }
+    } show_details = verbose;
     oyOptions_Release( &options );
     oyConversion_Release( &cc );
 
@@ -8875,7 +9170,7 @@ oyjlTESTRESULT_e testICCsCheck()
     oyOptions_SetFromString( &options, OY_DEFAULT_RENDERING_INTENT, "0", OY_CREATE_NEW );
     oyOptions_SetFromString( &options, OY_DEFAULT_PROOF_SOFT, "1", OY_CREATE_NEW );
     oyProfile_s * p_cmyk = oyProfile_FromStd( oyEDITING_CMYK, icc_profile_flags, NULL );
-    oyProfiles_s * proofing = oyProfiles_New(NULL);
+    proofing = oyProfiles_New(NULL);
     oyProfiles_MoveIn( proofing, &p_cmyk, -1 );
     error = oyOptions_MoveInStruct ( &options,
                                      OY_PROFILES_SIMULATION,
