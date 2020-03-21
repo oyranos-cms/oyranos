@@ -81,7 +81,15 @@
 double * getSaturationLine_(oyProfile_s * profile, int intent, size_t * size_, oyProfile_s * outspace);
 double   bb_spectrum( double wavelength, double bbTemp );
 int      oyDXXCIEfromTemperature( double kelvin, float ** SPD );
-int      oyXYZtoSRGB ( double * rgb );
+int      oyXYZ2sRGB ( double * rgb );
+void     oyLCh2Lab                   ( const double        i[],
+                                       double              o[],
+                                       void              * none OY_UNUSED );
+int      oyLabGamutCheck             ( double            * lab,
+                                       int                 count,
+                                       oyProfiles_s      * proofing,
+                                       int               * is_in_gamut,
+                                       double            * lab_tested );
 
 typedef struct { /* oyF3 three floats */
   float f[3];
@@ -194,6 +202,8 @@ int myMain( int argc, const char ** argv )
   int standardobs = 0, observer64 = 0;
   double kelvin = 0.0;
   const char * illuminant = NULL;
+  double hlc = -1.0;
+  double lightness = -1;
   int no_color = 0;
   int flags = 0;
   int v2 = 0, v4 = 0, no_repair = 0;
@@ -272,6 +282,7 @@ int myMain( int argc, const char ** argv )
   oyjlOptionChoice_s examples[]={ {_("Show graph of a ICC profile"), "oyranos-profile-graph ICC_PROFILE", "", ""},
                                   {_("Show the saturation lines of two profiles in CIE*ab 256 pixel width, without spectral line and with thicker lines:"), "oyranos-profile-graph -w 256 -s -t 3 sRGB.icc ProPhoto-RGB.icc", "", ""},
                                   {_("Show the standard observer spectral function as curves:"),"oyranos-profile-graph --standard-observer -o CIE-StdObserver.png","", ""},
+                                  {_("Show the "),"oyranos-profile-graph -c -o CIE-StdObserver.png","", ""},
                                   {"","","",""}};
   oyjlOptionChoice_s illu_dxx[]={ {"A",  _("Illuminant A"),  "", _("CIE A spectral power distribution")},
                                   {"D50",_("Illuminant D50"),"", _("CIE D50 spectral power distribution (computed)")},
@@ -307,6 +318,10 @@ int myMain( int argc, const char ** argv )
     {"oiwi", 0, "f", "format",        NULL, _("Format"),        _("Specify output file format png or svg, default is png"), NULL, _("FORMAT"), oyjlOPTIONTYPE_CHOICE,
       {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)out_form, sizeof(out_form), 0 )}, oyjlSTRING, {.s=&format} },
     {"oiwi", 0, "g", "no-color",      NULL, _("Gray"),          _("Draw Gray"),              NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&no_color} },
+    {"oiwi", 0, "H", "hlc",           NULL, _("HLC"),           _("HLC Color Atlas"),   _("Specify the number of Hue in the HLC color atlas in degrees and which are inside the profiles gamut. -H=365 will output all hues."), _("NUMBER"), oyjlOPTIONTYPE_DOUBLE,
+      {.dbl.start = 0.0, .dbl.end = 365.0, .dbl.tick = 5, .dbl.d = 0.0}, oyjlDOUBLE, {.d=&hlc} },
+    {"oiwi", 0, "l", "lightness",     NULL, _("Lightness"),     _("Background Lightness"),   NULL, _("NUMBER"), oyjlOPTIONTYPE_DOUBLE,
+      {.dbl.start = -1.0, .dbl.end = 100.0, .dbl.tick = 1.0, .dbl.d = -1.0}, oyjlDOUBLE, {.d=&lightness} },
     {"oiwi", 0, "i", "illuminant",    NULL, _("Illuminant"),    _("Illuminant Spectrum"),    NULL, _("STRING"), oyjlOPTIONTYPE_CHOICE,
       {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)illu_dxx, sizeof(illu_dxx), 0 )}, oyjlSTRING, {.s=&illuminant} },
     {"oiwi", 0, "k", "kelvin",        NULL, _("Kelvin"),        _("Blackbody Radiator"),     NULL, _("NUMBER"), oyjlOPTIONTYPE_DOUBLE,
@@ -347,13 +362,14 @@ int myMain( int argc, const char ** argv )
 
   oyjlOptionGroup_s groups[] = {
   /* type,   flags, name, description, help, mandatory, optional, detail */
-    {"oiwg", 0, _("Saturation"), _("2D Graph from profiles"), _("Create a 2D Graph containing the saturation line from a ICC Profile."), "@", "t,b,g,w,o,f,c,x,d,n,2,4,r,v", "@,d,x,c,n,2,4,r" },
-    {"oiwg", 0, _("StdObs2°"), _("Standard Observer 1931 2° Graph"), NULL, "S", "t,b,g,w,T,o,f,v", "S" },
-    {"oiwg", 0, _("Obs10°"), _("1964 10° Observer Graph"), NULL, "O", "t,b,g,w,T,o,f,v", "O" },
-    {"oiwg", 0, _("Blackbody Radiator"), _("Blackbody Radiator Spectrum Graph"), NULL, "k", "t,b,g,w,T,o,f,v", "k" },
-    {"oiwg", 0, _("Illuminant Spectrum"), _("Illuminant Spectrum Graph"), NULL, "i", "t,b,g,w,T,o,f,v", "i" },
-    {"oiwg", 0, _("Spectral Input"), _("Spectral Input Graph"), NULL, "s,p,z", "t,b,g,w,T,P,o,v", "s,p,P,z" },
-    {"oiwg", 0, _("Misc"), _("General options"), NULL, "X|h", "v", "t,b,g,w,T,o,f,h,X,v" },
+    {"oiwg", 0, _("Saturation"), _("2D Graph from profiles"), _("Create a 2D Graph containing the saturation line from a ICC Profile."), "@", "t,b,l,g,w,o,f,c,x,d,n,2,4,r,v", "@,d,x,c,n,2,4,r" },
+    {"oiwg", 0, _("HSL"), _("Color Patches Graph from profiles"), _("Create a 2D Graph containing the possible color patches inside the ICC Profile gamut."), "H", "@,t,b,l,g,w,o,f,2,4,r,v", "H,@" },
+    {"oiwg", 0, _("StdObs2°"), _("Standard Observer 1931 2° Graph"), NULL, "S", "t,b,l,g,w,T,o,f,v", "S" },
+    {"oiwg", 0, _("Obs10°"), _("1964 10° Observer Graph"), NULL, "O", "t,b,l,g,w,T,o,f,v", "O" },
+    {"oiwg", 0, _("Blackbody Radiator"), _("Blackbody Radiator Spectrum Graph"), NULL, "k", "t,b,l,g,w,T,o,f,v", "k" },
+    {"oiwg", 0, _("Illuminant Spectrum"), _("Illuminant Spectrum Graph"), NULL, "i", "t,b,l,g,w,T,o,f,v", "i" },
+    {"oiwg", 0, _("Spectral Input"), _("Spectral Input Graph"), NULL, "s,p,z", "t,b,l,g,w,T,P,o,v", "s,p,P,z" },
+    {"oiwg", 0, _("Misc"), _("General options"), NULL, "X|h", "v", "t,b,l,g,w,T,o,f,h,X,v" },
     {"",0,0,0,0,0,0,0}
   };
   opts->groups = (oyjlOptionGroup_s*)oyjlStringAppendN( NULL, (const char*)groups, sizeof(groups), 0);
@@ -370,7 +386,7 @@ int myMain( int argc, const char ** argv )
     return 0;
   if(!ui) return 1;
 
-  if(!export && !input && !profile_count && !standardobs && !observer64 && !kelvin && !illuminant && !render)
+  if(!export && !input && !profile_count && !standardobs && !observer64 && !kelvin && !illuminant && !render && hlc == -1.0)
   {
     oyjlUiHeaderSection_s * version = oyjlUi_GetHeaderSection( ui,
                                                                "version" );
@@ -420,6 +436,20 @@ int myMain( int argc, const char ** argv )
     return 0;
   }
 #endif
+
+  if(verbose > 1)
+    oy_debug = verbose - 1;
+
+  {
+    double Lab[3] = { lightness == -1.0 ? 70 : lightness, 0.0, 0.0 }, rgb[3];
+    oyLab2XYZ( Lab, rgb );
+    if(verbose) fprintf(stderr, "Background Lab: %.2f %.2f %.2f XYZ: %.2f %.2f %.2f ", Lab[0], Lab[1], Lab[2], rgb[0], rgb[1], rgb[2] );
+    oyXYZ2sRGB( rgb );
+    if(verbose) fprintf(stderr, "RGB: %.2f %.2f %.2f\n", rgb[0], rgb[1], rgb[2] );
+    bg_rgba[0] = rgb[0]; bg_rgba[1] = rgb[1]; bg_rgba[2] = rgb[2];
+    if(lightness >= 0.0)
+      bg_rgba[3] = 1.0;
+  }
 
   /* detect all anonymous arguments for saturation */
   profile_names = oyjlOptions_ResultsToList( ui->opts, "@", &profile_count );
@@ -600,7 +630,7 @@ int myMain( int argc, const char ** argv )
           const char * name = OYJL_GET_STRING(v);
           if(!name) name = "";
 
-          oyXYZtoSRGB( rgb );
+          oyXYZ2sRGB( rgb );
           {
             double D50[3] = { 0.964294, 1.000000, 0.825104 }; /* D65[3] = { 0.9505, 1.000, 1.0888 } */
             double computedLab[3];
@@ -755,8 +785,9 @@ int myMain( int argc, const char ** argv )
   height_=(float)(pixel_h- 2*y - 2*tab_border_y - lower_text_border); /* height of diagram */
   height = MAX( 0, height_ );
 
+  /* draw spectral gamut line */
   cairo_set_line_width (cr, thickness);
-  if(profile_count && no_spectral == 0)
+  if(profile_count && no_spectral == 0 && hlc == -1.0)
   {
     cairo_set_source_rgba( cr, .0, .0, .0, 1.0);
     if(proj == p_xyz)
@@ -791,8 +822,9 @@ int myMain( int argc, const char ** argv )
     cairo_stroke(cr);
   }
 
+  /* draw white point line */
   cairo_set_line_width (cr, 0.5*thickness);
-  if(profile_count && no_blackbody == 0 && proj == p_xyz)
+  if(profile_count && no_blackbody == 0 && proj == p_xyz && hlc == -1.0)
   {
     cairo_set_source_rgba( cr, .0, .0, .0, 1.0);
     if(proj == p_xyz)
@@ -831,7 +863,7 @@ int myMain( int argc, const char ** argv )
   cairo_rectangle( cr, x - frame, y - frame,
                          w*scale + 2*frame, h*scale + 2*frame);
   cairo_stroke(cr);
-  if(profile_count && no_border == 0 && proj == p_lab)
+  if(profile_count && no_border == 0 && proj == p_lab && hlc == -1.0 )
   {
     /* draw cross */
     cairo_move_to(cr, xToImage(.0), yToImage(.5));
@@ -847,7 +879,7 @@ int myMain( int argc, const char ** argv )
   cairo_stroke( cr );
 #endif
 
-  if(profile_count)
+  if(profile_count && hlc == -1.0)
   {
     float t = thickness;
 
@@ -867,14 +899,15 @@ int myMain( int argc, const char ** argv )
         p = oyImage_GetProfile( image );
       }
 
-      saturation = getSaturationLine_( p, 3, &size, p_lab );
+      if(hlc == -1.0)
+        saturation = getSaturationLine_( p, 3, &size, p_lab );
 
       t = pow( change_thickness, j ) * thickness;
       cairo_set_line_width (cr, 3.*t);
 
-      cairo_new_path(cr);
       if(saturation)
       {
+        cairo_new_path(cr);
         i = 0;
         if(proj == p_lab)
           cairo_move_to(cr, xToImage(saturation[i*3+1]/1.0),
@@ -907,14 +940,142 @@ int myMain( int argc, const char ** argv )
                               yToImage(XYZ[1]/(XYZ[0]+XYZ[1]+XYZ[2])*ys_xyz));
           }
         }
+        cairo_close_path(cr);
       }
-      cairo_close_path(cr);
       cairo_set_source_rgba( cr, 1., 1., 1., 1.0);
       cairo_stroke(cr);
 
       oyProfile_Release( &p );
     }
+  } else
+    /* draw HLC color atlas sheed: page with all lightness and saturations for a selected hue */
+  if(hlc >= 0.0)
+  {
+    int dist = 5, l,c, c_max = dist==10 ? 130 : 125;
+    int lcount = (100-2)/(double)dist + 2,
+        ccount = c_max/(double)dist + 1;
+    int count = lcount * ccount;
+    double ratio = lcount / (double)ccount;
+    int * inside = calloc( count, sizeof(int) );
+    double * lab = calloc( count, sizeof(double) * 3 );
+    oyProfiles_s * proofing = oyProfiles_New(0);
+    int error = !inside || !lab;
+    if(error) return error;
+    if(verbose)
+      fprintf(stderr, "ccount: %d c_max: %d  lcount: %d\n", ccount, c_max, lcount );
+    for(i = 0; i < profile_count; ++i)
+    {
+      const char * filename = profile_names[i];
+      oyProfile_s * p = oyProfile_FromName( filename, flags, NULL );
+      oyProfiles_MoveIn( proofing, &p, -1 );
+    }
+    for(c = 0; c < ccount; ++c)
+    {
+      for(l = 0; l < lcount; ++l)
+      {
+        double LCh[3] = { l/(double)lcount, c/(double)ccount*c_max/128.0, hlc/360.0 };
+        oyLCh2Lab( LCh, &lab[ (c + l * ccount) * 3 ], NULL );
+      }
+    }
+    error = oyLabGamutCheck( lab, count, proofing, inside, NULL );
+    double Lab[3];
+    double XYZ[3];
+    double off = frame/20.0;
+    cairo_set_line_width (cr, off * 2.0);
+    char utf8[64] = {0};
+    cairo_select_font_face(cr, "Sans",
+                           CAIRO_FONT_SLANT_NORMAL,
+                           CAIRO_FONT_WEIGHT_NORMAL);
+    cairo_set_font_size (cr, frame);
+    c = 0; l = lcount;
+    sprintf( utf8, "L" );
+    cairo_move_to (cr, xToImage(0) - frame * 0.8,
+                       yToImage((double)(l  )/(double)lcount * ratio + (1-ratio) / 2.0 + 0.01) - off);
+    cairo_show_text (cr, utf8);
+    c = ccount - 1;
+    sprintf( utf8, "H%03d", (int)hlc );
+    cairo_move_to (cr, xToImage(1.0) - frame * 2.5,
+                       yToImage((double)(l  )/(double)lcount * ratio + (1-ratio) / 2.0 + 0.01) - off);
+    cairo_show_text (cr, utf8);
+    c = l = 0;
+    sprintf( utf8, "C" );
+    cairo_move_to (cr, xToImage(0) - frame * 0.8,
+                       yToImage((double)(l  )/(double)lcount * ratio + (1-ratio) / 2.0 - 0.05) - off);
+    cairo_show_text (cr, utf8);
+
+    cairo_set_font_size (cr, frame/2.0);
+    sprintf( utf8, "*a" );
+    cairo_move_to (cr, xToImage(0) - frame * 0.8,
+                       yToImage((double)(l  )/(double)lcount * ratio + (1-ratio) / 2.0 - 0.07) - off);
+    cairo_show_text (cr, utf8);
+    sprintf( utf8, "*b" );
+    cairo_move_to (cr, xToImage(0) - frame * 0.8, yToImage((double)(l  )/(double)lcount * ratio + (1-ratio) / 2.0 - 0.09) - off);
+    cairo_show_text (cr, utf8);
+    for(c = 0; c < ccount; ++c)
+    {
+      for(l = 0; l < lcount; ++l)
+      {
+        double LCh[3] = { l/(double)(lcount-1), c/(double)(ccount-1)*c_max/128.0, hlc/360.0 };
+        int pos = c + l * ccount;
+
+        oyLCh2Lab(LCh, Lab, NULL);
+        oyIcc2CIELab( Lab, Lab, NULL );
+        oyLab2XYZ( Lab, XYZ );
+        double rgb[4] = { XYZ[0], XYZ[1], XYZ[2], 1.0 };
+        if(verbose) fprintf(stderr, "Lab: %.2f %.2f %.2f XYZ: %.2f %.2f %.2f\n", Lab[0], Lab[1], Lab[2], rgb[0], rgb[1], rgb[2] );
+        oyXYZ2sRGB( rgb );
+        if(verbose) fprintf(stderr, "RGB: %.5f %.5f %.5f\n", rgb[0], rgb[1], rgb[2] );
+
+        if(inside[pos])
+        {
+          cairo_new_path(cr);
+          cairo_move_to(cr, xToImage((double)(c  )/(double)ccount) + off, yToImage((double)(l  )/(double)lcount * ratio + (1-ratio) / 2.0) - off);
+          cairo_line_to(cr, xToImage((double)(c+1)/(double)ccount) - off, yToImage((double)(l  )/(double)lcount * ratio + (1-ratio) / 2.0) - off);
+          cairo_line_to(cr, xToImage((double)(c+1)/(double)ccount) - off, yToImage((double)(l+1)/(double)lcount * ratio + (1-ratio) / 2.0) + off);
+          cairo_line_to(cr, xToImage((double)(c  )/(double)ccount) + off, yToImage((double)(l+1)/(double)lcount * ratio + (1-ratio) / 2.0) + off);
+          cairo_close_path(cr);
+          cairo_set_source_rgba( cr, rgb[0], rgb[1], rgb[2], 1.0);
+          cairo_fill(cr);
+
+          if(raster)
+          {
+            /* draw frame */
+            cairo_new_path(cr);
+            cairo_move_to(cr, xToImage((double)(c  )/(double)ccount), yToImage((double)(l  )/(double)lcount * ratio + (1-ratio) / 2.0));
+            cairo_line_to(cr, xToImage((double)(c+1)/(double)ccount), yToImage((double)(l  )/(double)lcount * ratio + (1-ratio) / 2.0));
+            cairo_line_to(cr, xToImage((double)(c+1)/(double)ccount), yToImage((double)(l+1)/(double)lcount * ratio + (1-ratio) / 2.0));
+            cairo_line_to(cr, xToImage((double)(c  )/(double)ccount), yToImage((double)(l+1)/(double)lcount * ratio + (1-ratio) / 2.0));
+            cairo_close_path(cr);
+            cairo_set_source_rgba( cr, rgba[0], rgba[1], rgba[2], 1.0 );
+            cairo_stroke(cr);
+          }
+        }
+
+        cairo_set_source_rgba( cr, 0, 0, 0, 1.0 );
+        if(l == 0)
+        {
+          sprintf( utf8, "%.0f", LCh[1] * 128.0 );
+          cairo_move_to (cr, xToImage((((double)c)+0.5)/(double)ccount) - 0.6*frame, yToImage((double)(l  )/(double)lcount * ratio + (1-ratio) / 2.0 - 0.05) - off);
+          cairo_show_text (cr, utf8);
+          sprintf( utf8, "%.1f", Lab[1] );
+          cairo_move_to (cr, xToImage((((double)c)+0.5)/(double)ccount) - 0.6*frame, yToImage((double)(l  )/(double)lcount * ratio + (1-ratio) / 2.0 - 0.07) - off);
+          cairo_show_text (cr, utf8);
+          sprintf( utf8, "%.1f", Lab[2] );
+          cairo_move_to (cr, xToImage((((double)c)+0.5)/(double)ccount) - 0.6*frame, yToImage((double)(l  )/(double)lcount * ratio + (1-ratio) / 2.0 - 0.09) - off);
+          cairo_show_text (cr, utf8);
+        }
+        if(c == 0)
+        {
+          sprintf( utf8, "%.0f", Lab[0] );
+          cairo_move_to (cr, xToImage(0) - frame * 0.8,
+                             yToImage((double)(l  )/(double)lcount * ratio + (1-ratio) / 2.0 + 0.01) - off);
+          cairo_show_text (cr, utf8);
+        }
+      }
+    }
+    cairo_set_source_rgba( cr, 1, 1, 1, 1.0);
   }
+
   if(image) /* support first line RGB and draw each channel */
   {
     float t = thickness;
@@ -929,7 +1090,7 @@ int myMain( int argc, const char ** argv )
     char * pixels = oyImage_GetLineF(image)( image, 0, &iheight, -1, &is_allocated );
     uint16_t * line16 = (uint16_t*) pixels;
     uint8_t * line8 = (uint8_t*) pixels;
-    printf("byteps: %d\n", (int)byteps);
+    fprintf(stderr, "byteps: %d\n", (int)byteps);
     for( j=0; j < channels; ++j )
     {
       cairo_new_path(cr);
@@ -977,7 +1138,7 @@ int myMain( int argc, const char ** argv )
   {
     /* draw some coordinate system hints */
     cairo_set_line_width (cr, 0.35*thickness);
-    cairo_set_source_rgba( cr, bg_rgba[0], bg_rgba[1], bg_rgba[2], bg_rgba[3]);
+    cairo_set_source_rgba( cr, rgba[0], rgba[1], rgba[2], 1.0 );
     /* 25 nm */
     for(i = 300; i < max_x; i += 25)
     {
@@ -988,12 +1149,21 @@ int myMain( int argc, const char ** argv )
     cairo_stroke(cr);
 
     /* 100 nm */
+    char utf8[8];
+    cairo_select_font_face(cr, "Sans",
+                           CAIRO_FONT_SLANT_NORMAL,
+                           CAIRO_FONT_WEIGHT_NORMAL);
+    cairo_set_font_size (cr, frame);
     cairo_set_line_width (cr, 0.7*thickness);
     for(i = 300; i < max_x; i += 100)
     {
       if(i < min_x) continue;
       cairo_move_to(cr, xToImage(i), yToImage(min_y));
       cairo_line_to(cr, xToImage(i), yToImage(max_y));
+      sprintf( utf8, "%d", i );
+      cairo_move_to (cr, xToImage(i) - frame * 0.8,
+                         yToImage(max_y + 0.0025));
+      cairo_show_text (cr, utf8);
     }
     cairo_stroke(cr);
 
@@ -1003,6 +1173,10 @@ int myMain( int argc, const char ** argv )
       cairo_move_to(cr, xToImage(min_x), yToImage(0.0));
       cairo_line_to(cr, xToImage(max_x), yToImage(0.0));
       cairo_stroke(cr);
+      sprintf( utf8, "%d", 0 );
+      cairo_move_to (cr, xToImage(min_x) - frame * 0.8,
+                         yToImage(max_y + 0.0025));
+      cairo_show_text (cr, utf8);
     }
   }
 
@@ -1169,7 +1343,7 @@ int myMain( int argc, const char ** argv )
     for(j = 0; j < spectral_count; ++j)
     {
       double rgb[4] = { spectra_XYZ[j].f[0]/white.f[0]/CIE_Y_max, spectra_XYZ[j].f[1]/white.f[0]/CIE_Y_max, spectra_XYZ[j].f[2]/white.f[0]/CIE_Y_max, 1.0 };
-      oyXYZtoSRGB( rgb );
+      oyXYZ2sRGB( rgb );
       drawIlluminant( cr,
                       spectra, j,
                       xO, yO, width, height,
@@ -1290,6 +1464,98 @@ double * getSaturationLine_(oyProfile_s * profile, int intent, size_t * size_, o
   } else
     fprintf( stderr, "saturation_line contains no lines: %d\n", size );
   return NULL;
+}
+
+/** @brief    CIE*LCh -> CIE*Lab, all in PCS*Lab range
+ *
+ *  @param[in]     i                   input LCh triple in normalised range of 0.0 ... 1.0 each channel
+ *  @param[out]    o                   output Lab triple in normalised range of 0.0 ... 1.0 each channel
+ *  @param         none                unused
+ *
+ *  @version Oyranos: 0.9.7
+ *  @date    2017/12/05
+ *  @since   2016/13/13 (Oyranos: 0.9.6)
+ */
+void         oyLCh2Lab               ( const double        i[],
+                                       double              o[],
+                                       void              * none OY_UNUSED )
+{
+  /* CIE*L */
+  o[0] = i[0];
+  /* CIE*a = C * cos(h) */
+  o[1] = i[1] * cos(M_PI*2.0*i[2])/2.0 + 0.5;
+  /* CIE*b = C * sin(h) */
+  o[2] = i[1] * sin(M_PI*2.0*i[2])/2.0 + 0.5;
+}
+int  oyIsInRange                     ( const double        i,
+                                       const double        reference,
+                                       const double        delta )
+{ 
+  if(fabs(reference - i) < delta) return 1;
+  return 0;
+}
+int  oyColorIsProofingMarker         ( const double        i[] )
+{ 
+  if( oyIsInRange(i[0], 0.5, 0.01) &&
+      oyIsInRange(i[1], 0.5, 0.01) &&
+      oyIsInRange(i[2], 0.5, 0.01) )
+    return 1;
+  return 0;
+}
+/** @brief   Lab in PCS*Lab range -> ICC profile -> inGamutTest
+ *
+ *  @param[in]     lab                 input Lab values
+ *  @param[in]     count               count of 'lab' values
+ *  @param[in]     space               color space for gamut boundary check; optional
+ *  @param[out]    is_in_gamut         array with result of in gamut test
+ *
+ *  @version Oyranos: 0.9.7
+ *  @date    2020/03/21
+ *  @since   2020/03/11 (Oyranos: 0.9.7)
+ */
+int      oyLabGamutCheck             ( double            * lab,
+                                       int                 count,
+                                       oyProfiles_s      * proofing,
+                                       int               * is_in_gamut,
+                                       double            * lab_tested )
+{
+  int error = -1;
+  int icc_profile_flags = 0, i;
+  oyProfile_s * pLab = oyProfile_FromStd( oyASSUMED_LAB, icc_profile_flags, 0 );
+  double * tmp = lab_tested ? NULL : calloc( 3*count, sizeof(double) );
+  oyOptions_s * module_options = NULL;
+  oyProfiles_s * profs = oyProfiles_Copy( proofing, NULL );
+  if(!lab_tested) lab_tested = tmp;
+  if(!lab_tested) return error;
+  oyOptions_MoveInStruct( &module_options,
+                                       OY_PROFILES_SIMULATION,
+                                       (oyStruct_s**) &profs,
+                                       OY_CREATE_NEW );
+  oyOptions_SetFromString( &module_options, OY_DEFAULT_PROOF_SOFT, "1", OY_CREATE_NEW );
+  oyOptions_SetFromString( &module_options, OY_DEFAULT_RENDERING_INTENT, "1", OY_CREATE_NEW );
+  oyOptions_SetFromString( &module_options, OY_DEFAULT_RENDERING_INTENT_PROOF, "1", OY_CREATE_NEW );
+  oyOptions_SetFromString( &module_options, OY_DEFAULT_RENDERING_BPC, "0", OY_CREATE_NEW );
+  oyOptions_SetFromString( &module_options, OY_DEFAULT_RENDERING_GAMUT_WARNING, "1", OY_CREATE_NEW );
+  oyConversion_s * cc = oyConversion_CreateBasicPixelsFromBuffers (
+                                       pLab, lab, oyDataType_m(oyDOUBLE),
+                                       pLab, lab_tested, oyDataType_m(oyDOUBLE),
+                                       module_options, count );
+  error = !cc;
+  oyConversion_RunPixels( cc, 0 );
+
+  for(i = 0; i < count; ++i)
+    if(fabs(lab[i*3+0]-0.5) < 0.05 && fabs(lab[i*3+1]-0.5) < 0.05 && fabs(lab[i*3+2]-0.5) < 0.05) /* test source in greater range */
+      is_in_gamut[i] = 1;
+    else
+      is_in_gamut[i] = !oyColorIsProofingMarker(&lab_tested[i*3]);
+
+  oyProfile_Release( &pLab );
+  oyOptions_Release( &module_options );
+  oyConversion_Release( &cc );
+  if(tmp)
+    free(tmp);
+
+  return error;
 }
 
 const char* oySpectrumGetString ( oyImage_s * spec, oySPECTRUM_PARAM_e mode )
@@ -1569,11 +1835,12 @@ int         oySpectrumComputeXYZ( oyImage_s * spectra, int index, float * illu_3
 }
 
 oyConversion_s * oy_xyz_srgb = NULL;
-int oyXYZtoSRGB ( double * rgb )
+int oyXYZ2sRGB ( double * rgb )
 {
   int error = 0;
-  int icc_profile_flags = 0;
-
+  int icc_profile_flags = 0, i;
+  static double rgb_[3];
+ 
   if(!oy_xyz_srgb)
   {
     oyProfile_s * pXYZ = oyProfile_FromStd( oyASSUMED_XYZ, icc_profile_flags, 0 ),
@@ -1581,16 +1848,20 @@ int oyXYZtoSRGB ( double * rgb )
     oyOptions_s * options = NULL;
     oyOptions_SetFromString( &options, OY_DEFAULT_RENDERING_INTENT, "1", OY_CREATE_NEW );
     oy_xyz_srgb = oyConversion_CreateBasicPixelsFromBuffers (
-                                       pXYZ, rgb, oyDataType_m(oyDOUBLE),
-                                       sRGB, rgb, oyDataType_m(oyDOUBLE),
+                                       pXYZ, rgb_, oyDataType_m(oyDOUBLE),
+                                       sRGB, rgb_, oyDataType_m(oyDOUBLE),
                                        options, 1 );
     oyProfile_Release( &sRGB );
     oyProfile_Release( &pXYZ );
     oyOptions_Release( &options );
   }
   error = !oy_xyz_srgb;
-  rgb[3] = 1.0;
+
+  for(i = 0; i < 3; ++i) rgb_[i] = rgb[i];
   oyConversion_RunPixels( oy_xyz_srgb, 0 );
+  for(i = 0; i < 3; ++i) rgb[i] = rgb_[i];
+  rgb[3] = 1.0;
+
   return error;
 }
 
