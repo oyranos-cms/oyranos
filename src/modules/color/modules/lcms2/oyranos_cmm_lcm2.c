@@ -1493,6 +1493,9 @@ oyPointer  l2cmsCMMColorConversion_ToMem_ (
   oyPointer data = 0;
   int flags = l2cmsFlagsFromOptions( opts );
 
+  if(flags & cmsFLAGS_GAMUTCHECK)
+    flags |= cmsFLAGS_GRIDPOINTS(l2cmsPROOF_LUT_GRID_RASTER);
+
   if(!error)
   {
     cmsHPROFILE dl= l2cmsTransform2DeviceLink( xform, 4.3,
@@ -2371,7 +2374,8 @@ oyPointer l2cmsFilterNode_CmmIccContextToMem (
       {
         char * t = 0; oyjlStringAdd( &t, 0,0,
         "%04d-%s-dl[%d].icc", ++oy_debug_write_id,CMM_NICK,oyStruct_GetId((oyStruct_s*)node));
-        printf("wrote %d to %s\n", oyjlWriteFile( t, block, size_ ), t );
+        l2cms_msg( oy_debug?oyMSG_DBG:oyMSG_WARN, (oyStruct_s*)prof, OY_DBG_FORMAT_
+                  "wrote %d to %s", OY_DBG_ARGS_, oyjlWriteFile( t, block, size_ ), t );
         oyFree_m_(t);
       }
 
