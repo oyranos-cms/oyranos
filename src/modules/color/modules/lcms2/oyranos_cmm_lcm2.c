@@ -1297,6 +1297,22 @@ cmsHTRANSFORM  l2cmsCMMConversionContextCreate_ (
                                      0, l2cms_pixel_layout_out,
                                      (intent > 3)?0:intent,
                                      flags | cmsFLAGS_KEEP_SEQUENCE );
+        if(oy_debug || verbose)
+        {
+          int level = oy_debug?oyMSG_DBG:oyMSG_WARN, f;
+          l2cms_msg( level,(oyStruct_s*)node, OY_DBG_FORMAT_"\n"
+               "  created xform: " OY_PRINT_POINTER " %s", OY_DBG_ARGS_, xform, l2cmsFlagsToText(flags) );
+          f = l2cms_pixel_layout_in;
+          l2cms_msg( level, (oyStruct_s*)opts, OY_DBG_FORMAT_
+              "float:%d optimised:%d colorspace:%d extra:%d channels:%d lcms_bytes %d",
+              OY_DBG_ARGS_,
+              T_FLOAT(f), T_OPTIMIZED(f), T_COLORSPACE(f), T_EXTRA(f), T_CHANNELS(f), T_BYTES(f) );
+          f = l2cms_pixel_layout_out;
+          l2cms_msg( level, (oyStruct_s*)opts, OY_DBG_FORMAT_
+              "float:%d optimised:%d colorspace:%d extra:%d channels:%d lcms_bytes %d",
+              OY_DBG_ARGS_,
+              T_FLOAT(f), T_OPTIMIZED(f), T_COLORSPACE(f), T_EXTRA(f), T_CHANNELS(f), T_BYTES(f) );
+        }
     }
     else if(profiles_n == 2 && (!proof_n || (!proof && !gamut_warning)))
     {
@@ -1419,7 +1435,7 @@ cmsHTRANSFORM  l2cmsCMMConversionContextCreate_ (
     int level = oyMSG_DBG;
     uint32_t f = l2cms_pixel_layout_in, i;
 
-    if(!xform)
+    if(!xform || !oy_debug)
     {
       level = oyMSG_WARN;
       error = 1;
@@ -2456,12 +2472,14 @@ char * l2cmsImage_GetText            ( oyImage_s         * image,
 /** Function l2cmsFilterNode_GetText
  *  @brief   implement oyCMMFilterNode_GetText_f()
  *
+ *  provides a description in JSON format
+ *
  *  param type oyNAME_NAME
  *             - oyNAME_NICK suitable for api4 hash ID;
  *             - oyNAME_DESCRIPTION more details for api7 hash ID
  *
  *  @version Oyranos: 0.9.7
- *  @date    2018/08/03
+ *  @date    2020/03/21
  *  @since   2008/12/27 (Oyranos: 0.1.10)
  */
 char * l2cmsFilterNode_GetText       ( oyFilterNode_s    * node,
