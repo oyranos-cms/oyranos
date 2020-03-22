@@ -597,15 +597,15 @@ int myMain( int argc, const char ** argv )
 
           double rgb[4] = { computedXYZ[0], computedXYZ[1], computedXYZ[2], 1.0 },
                  lab[3], XYZ[3] = {-1,-1,-1}, Lab[3], srgb[3] = {-1,-1,-1};
-          char * L = oyjlValueText( oyjlTreeGetValueF( specT, 0, "collection/[0]/colors/[%d]/lab/data/[%d]", j, 0 ), 0 ),
-               * a = oyjlValueText( oyjlTreeGetValueF( specT, 0, "collection/[0]/colors/[%d]/lab/data/[%d]", j, 1 ), 0 ),
-               * b = oyjlValueText( oyjlTreeGetValueF( specT, 0, "collection/[0]/colors/[%d]/lab/data/[%d]", j, 2 ), 0 ),
-               * R = oyjlValueText( oyjlTreeGetValueF( specT, 0, "collection/[0]/colors/[%d]/rgb/data/[%d]", j, 0 ), 0 ),
-               * G = oyjlValueText( oyjlTreeGetValueF( specT, 0, "collection/[0]/colors/[%d]/rgb/data/[%d]", j, 1 ), 0 ),
-               * B = oyjlValueText( oyjlTreeGetValueF( specT, 0, "collection/[0]/colors/[%d]/rgb/data/[%d]", j, 2 ), 0 ),
-               * X = oyjlValueText( oyjlTreeGetValueF( specT, 0, "collection/[0]/colors/[%d]/xyz/data/[%d]", j, 0 ), 0 ),
-               * Y = oyjlValueText( oyjlTreeGetValueF( specT, 0, "collection/[0]/colors/[%d]/xyz/data/[%d]", j, 1 ), 0 ),
-               * Z = oyjlValueText( oyjlTreeGetValueF( specT, 0, "collection/[0]/colors/[%d]/xyz/data/[%d]", j, 2 ), 0 );
+          char * L = oyjlValueText( oyjlTreeGetValueF( specT, 0, "collection/[0]/colors/[%d]/lab/[0]/data/[%d]", j, 0 ), 0 ),
+               * a = oyjlValueText( oyjlTreeGetValueF( specT, 0, "collection/[0]/colors/[%d]/lab/[0]/data/[%d]", j, 1 ), 0 ),
+               * b = oyjlValueText( oyjlTreeGetValueF( specT, 0, "collection/[0]/colors/[%d]/lab/[0]/data/[%d]", j, 2 ), 0 ),
+               * R = oyjlValueText( oyjlTreeGetValueF( specT, 0, "collection/[0]/colors/[%d]/rgb/[0]/data/[%d]", j, 0 ), 0 ),
+               * G = oyjlValueText( oyjlTreeGetValueF( specT, 0, "collection/[0]/colors/[%d]/rgb/[0]/data/[%d]", j, 1 ), 0 ),
+               * B = oyjlValueText( oyjlTreeGetValueF( specT, 0, "collection/[0]/colors/[%d]/rgb/[0]/data/[%d]", j, 2 ), 0 ),
+               * X = oyjlValueText( oyjlTreeGetValueF( specT, 0, "collection/[0]/colors/[%d]/xyz/[0]/data/[%d]", j, 0 ), 0 ),
+               * Y = oyjlValueText( oyjlTreeGetValueF( specT, 0, "collection/[0]/colors/[%d]/xyz/[0]/data/[%d]", j, 1 ), 0 ),
+               * Z = oyjlValueText( oyjlTreeGetValueF( specT, 0, "collection/[0]/colors/[%d]/xyz/[0]/data/[%d]", j, 2 ), 0 );
           int r = -10;
           if(L) r = oyStringToDouble( L, &lab[0] );
           if(a) r = oyStringToDouble( a, &lab[1] );
@@ -637,9 +637,9 @@ int myMain( int argc, const char ** argv )
             oyXYZ2Lab( computedXYZ, computedLab ); /* no white point -> D50 conversion, as that is already our state */
             if(!L && !a && !b)
             {
-              oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, computedLab[0]/100.0,     "collection/[0]/colors/[%d]/lab/data/[0]", j );
-              oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, computedLab[1]/256.0+0.5, "collection/[0]/colors/[%d]/lab/data/[1]", j );
-              oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, computedLab[2]/256.0+0.5, "collection/[0]/colors/[%d]/lab/data/[2]", j );
+              oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, computedLab[0]/100.0,     "collection/[0]/colors/[%d]/lab/[0]/data/[0]", j );
+              oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, computedLab[1]/256.0+0.5, "collection/[0]/colors/[%d]/lab/[0]/data/[1]", j );
+              oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, computedLab[2]/256.0+0.5, "collection/[0]/colors/[%d]/lab/[0]/data/[2]", j );
             }
             if(j < 10)
             {
@@ -2521,11 +2521,11 @@ oyjl_val    oyTreeFromCxf( const char * text )
       y = oyjlValueText( oyjlTreeGetValueFilteredF( xyz, 0, "cc:", "cc:Y" ), 0 );
       z = oyjlValueText( oyjlTreeGetValueFilteredF( xyz, 0, "cc:", "cc:Z" ), 0 );
       if(x) r = oyStringToDouble( x, &d );
-      if(r <= 0) oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, d/100.0, "collection/[0]/colors/[%d]/xyz/data/[0]", i );
+      if(r <= 0) oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, d/100.0, "collection/[0]/colors/[%d]/xyz/[0]/data/[0]", i );
       if(y) r = oyStringToDouble( y, &d );
-      if(r <= 0) oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, d/100.0, "collection/[0]/colors/[%d]/xyz/data/[1]", i );
+      if(r <= 0) oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, d/100.0, "collection/[0]/colors/[%d]/xyz/[0]/data/[1]", i );
       if(z) r = oyStringToDouble( z, &d );
-      if(r <= 0) oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, d/100.0, "collection/[0]/colors/[%d]/xyz/data/[2]", i );
+      if(r <= 0) oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, d/100.0, "collection/[0]/colors/[%d]/xyz/[0]/data/[2]", i );
     }
     if(lab)
     {
@@ -2533,11 +2533,11 @@ oyjl_val    oyTreeFromCxf( const char * text )
       a = oyjlValueText( oyjlTreeGetValueFilteredF( lab, 0, "cc:", "cc:A" ), 0 );
       b = oyjlValueText( oyjlTreeGetValueFilteredF( lab, 0, "cc:", "cc:B" ), 0 );
       if(L) r = oyStringToDouble( L, &d );
-      if(r <= 0) oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, d/100.0, "collection/[0]/colors/[%d]/lab/data/[0]", i );
+      if(r <= 0) oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, d/100.0,       "collection/[0]/colors/[%d]/lab/[0]/data/[0]", i );
       if(a) r = oyStringToDouble( a, &d );
-      if(r <= 0) oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, d/255.0 + 0.5, "collection/[0]/colors/[%d]/lab/data/[1]", i );
+      if(r <= 0) oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, d/255.0 + 0.5, "collection/[0]/colors/[%d]/lab/[0]/data/[1]", i );
       if(b) r = oyStringToDouble( b, &d );
-      if(r <= 0) oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, d/255.0 + 0.5, "collection/[0]/colors/[%d]/lab/data/[2]", i );
+      if(r <= 0) oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, d/255.0 + 0.5, "collection/[0]/colors/[%d]/lab/[0]/data/[2]", i );
     }
     if(rgb)
     {
@@ -2545,11 +2545,11 @@ oyjl_val    oyTreeFromCxf( const char * text )
       G = oyjlValueText( oyjlTreeGetValueFilteredF( rgb, 0, "cc:", "cc:G" ), 0 );
       B = oyjlValueText( oyjlTreeGetValueFilteredF( rgb, 0, "cc:", "cc:B" ), 0 );
       if(R) r = oyStringToDouble( R, &d );
-      if(r <= 0) oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, d/255.0, "collection/[0]/colors/[%d]/rgb/data/[0]", i );
+      if(r <= 0) oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, d/255.0, "collection/[0]/colors/[%d]/rgb/[0]/data/[0]", i );
       if(G) r = oyStringToDouble( G, &d );
-      if(r <= 0) oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, d/255.0, "collection/[0]/colors/[%d]/rgb/data/[1]", i );
+      if(r <= 0) oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, d/255.0, "collection/[0]/colors/[%d]/rgb/[0]/data/[1]", i );
       if(B) r = oyStringToDouble( B, &d );
-      if(r <= 0) oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, d/255.0, "collection/[0]/colors/[%d]/rgb/data/[2]", i );
+      if(r <= 0) oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, d/255.0, "collection/[0]/colors/[%d]/rgb/[0]/data/[2]", i );
     }
     if(cmyk)
     {
@@ -2558,13 +2558,13 @@ oyjl_val    oyTreeFromCxf( const char * text )
       Y = oyjlValueText( oyjlTreeGetValueFilteredF( cmyk, 0, "cc:", "cc:Y" ), 0 );
       K = oyjlValueText( oyjlTreeGetValueFilteredF( cmyk, 0, "cc:", "cc:K" ), 0 );
       if(C) r = oyStringToDouble( C, &d );
-      if(r <= 0) oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, d/100.0, "collection/[0]/colors/[%d]/cmyk/data/[0]", i );
+      if(r <= 0) oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, d/100.0, "collection/[0]/colors/[%d]/cmyk/[0]/data/[0]", i );
       if(M) r = oyStringToDouble( M, &d );
-      if(r <= 0) oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, d/100.0, "collection/[0]/colors/[%d]/cmyk/data/[1]", i );
+      if(r <= 0) oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, d/100.0, "collection/[0]/colors/[%d]/cmyk/[0]/data/[1]", i );
       if(Y) r = oyStringToDouble( Y, &d );
-      if(r <= 0) oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, d/100.0, "collection/[0]/colors/[%d]/cmyk/data/[2]", i );
+      if(r <= 0) oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, d/100.0, "collection/[0]/colors/[%d]/cmyk/[0]/data/[2]", i );
       if(K) r = oyStringToDouble( K, &d );
-      if(r <= 0) oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, d/100.0, "collection/[0]/colors/[%d]/cmyk/data/[3]", i );
+      if(r <= 0) oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, d/100.0, "collection/[0]/colors/[%d]/cmyk/[0]/data/[3]", i );
     }
   }
   endNM = startNM + lambda * n_max;
@@ -2751,7 +2751,7 @@ int oyTreeToCgats( oyjl_val root, int * level OYJL_UNUSED, char ** text )
     else
       oyjlStringAdd( &tmp, 0,0, "\nNUMBER_OF_FIELDS %d\nBEGIN_DATA_FORMAT\nSAMPLE_ID", 1 + samples );
 
-    v = oyjlTreeGetValueF( data, 0, "[0]/lab/data" );
+    v = oyjlTreeGetValueF( data, 0, "[0]/lab/[0]/data" );
     if(v)
     {
       oyjlStringAdd( &tmp, 0,0, "\tLAB_L" );
@@ -2759,7 +2759,7 @@ int oyTreeToCgats( oyjl_val root, int * level OYJL_UNUSED, char ** text )
       oyjlStringAdd( &tmp, 0,0, "\tLAB_B" );
     }
 
-    v = oyjlTreeGetValueF( data, 0, "[0]/rgb/data" );
+    v = oyjlTreeGetValueF( data, 0, "[0]/rgb/[0]/data" );
     if(v)
     {
       oyjlStringAdd( &tmp, 0,0, "\tRGB_R" );
@@ -2790,12 +2790,12 @@ int oyTreeToCgats( oyjl_val root, int * level OYJL_UNUSED, char ** text )
         oyjlStrAppendN( t, "\"", 1 );
       }
 
-      v = oyjlTreeGetValueF( data, 0, "[%d]/lab/data", index );
+      v = oyjlTreeGetValueF( data, 0, "[%d]/lab/[0]/data", index );
       if(v)
       {
         for(i = 0; i < 3; ++i)
         {
-          v = oyjlTreeGetValueF( data, 0, "[%d]/lab/data/[%d]", index, i );
+          v = oyjlTreeGetValueF( data, 0, "[%d]/lab/[0]/data/[%d]", index, i );
           if(!v)
           {
             fprintf(stderr, "ERROR with i = %d index = %d (spp = %d pixels = %d)\n", i, index, 3, pixels);
@@ -2811,12 +2811,12 @@ int oyTreeToCgats( oyjl_val root, int * level OYJL_UNUSED, char ** text )
         }
       }
 
-      v = oyjlTreeGetValueF( data, 0, "[%d]/rgb/data", index );
+      v = oyjlTreeGetValueF( data, 0, "[%d]/rgb/[0]/data", index );
       if(v)
       {
         for(i = 0; i < 3; ++i)
         {
-          v = oyjlTreeGetValueF( data, 0, "[%d]/rgb/data/[%d]", index, i );
+          v = oyjlTreeGetValueF( data, 0, "[%d]/rgb/[0]/data/[%d]", index, i );
           if(!v)
           {
             fprintf(stderr, "ERROR with i = %d index = %d (spp = %d pixels = %d)\n", i, index, 3, pixels);
@@ -3052,14 +3052,14 @@ int         oyTreeToIccXml( oyjl_val root, int * level OYJL_UNUSED, char ** text
 
 
       oyjlTreeSetStringF( nmcl, OYJL_CREATE_NEW, "pcs ",        "[%d]/MemberTags/float16NumberType/[0]/TagSignature", index );
-      v = oyjlTreeGetValueF( data, 0, "[%d]/lab/data", index );
+      v = oyjlTreeGetValueF( data, 0, "[%d]/lab/[0]/data", index );
       if(v)
       {
         char * pcs = NULL;
         int j;
         for(j = 0; j < 3; ++j)
         {
-          v = oyjlTreeGetValueF( data, 0, "[%d]/lab/data/[%d]", index, j );
+          v = oyjlTreeGetValueF( data, 0, "[%d]/lab/[0]/data/[%d]", index, j );
           d = OYJL_GET_DOUBLE(v);
           if(j)
             oyjlStringAdd( &pcs, 0,0, "\t" );
