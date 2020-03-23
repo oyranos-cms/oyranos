@@ -1106,6 +1106,25 @@ char *       oyjlOption_PrintArg     ( oyjlOption_s      * o,
     oyjlStringAdd( &text, malloc, free, "]" );
   return text;
 }
+#define oyjlHELP 0x01
+#define oyjlDESCRIPTION 0x02
+/**
+ * 
+ * @param[in]      flags               modifier
+ *                                     - oyjlDESCRIPTION
+ *                                     - oyjlHELP
+ */
+static
+char * oyjlOption_PrintArgDouble     ( oyjlOption_s      * o,
+                                       int                 flags )
+{
+  char * text = NULL;
+  oyjlStringAdd( &text, malloc, free, "%s%s%s (%s%s%g [≥%g ≤%g])",
+      (o->description && flags & oyjlDESCRIPTION) ? o->description:"",
+      (o->help && flags & oyjlHELP)?": ":"", (o->help && flags & oyjlHELP)?o->help :"",
+      o->value_name?o->value_name:"", o->value_name?":":"", o->values.dbl.d, o->values.dbl.start, o->values.dbl.end );
+  return text;
+}
 
 oyjlOptionChoice_s oyjl_X_choices[] = {
                                     {"man", "", "", ""},
@@ -1706,7 +1725,13 @@ oyjlOPTIONSTATE_e oyjlOptions_GetResult (
         ( o->values.dbl.start > *result_dbl ||
           o->values.dbl.end < *result_dbl) )
     {
-      fprintf( stderr, "%s %s \'%s\' %s %g->%g !: %g\n", _("Usage Error:"), _("Option has a different value range"), opt, o->name, o->values.dbl.start, o->values.dbl.end, *result_dbl  );
+      char * t = oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING);
+      char * desc = oyjlOption_PrintArgDouble( o, 0 );
+      i = pos + 1;
+      oyjlOptions_Print( opts, i );
+      fprintf( stderr, "%s %s: \"%s\" %s %s !: %g\n", _("Usage Error:"), _("Option has a different value range"), oyjlTermColor(oyjlBOLD,opts->argv[i]), t, desc, *result_dbl );
+      free( t );
+      free( desc );
     }
   }
   if(result_int)
@@ -2117,11 +2142,10 @@ void  oyjlOptions_PrintHelp          ( oyjlOptions_s     * opts,
         case oyjlOPTIONTYPE_DOUBLE:
           {
             char * t = oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING);
+            
             fprintf( stdout, OYJL_HELP_OPTION );
             fprintf( stdout, "%s", t );
-            fprintf( stdout, "\t%s (%s%s%g [≥%g ≤%g])\n", o->description ? o->description:"", o->value_name?o->value_name:"", o->value_name?":":"", o->values.dbl.d, o->values.dbl.start, o->values.dbl.end );
-            if(o->help)
-              fprintf(stdout,OYJL_HELP_HELP "%s\n", o->help );
+            { char * desc = oyjlOption_PrintArgDouble( o, oyjlDESCRIPTION | oyjlHELP ); fprintf( stdout, "\t%s\n", desc ); free(desc); }
             free(t);
           }
           break;
@@ -2885,10 +2909,12 @@ char *       oyjlUi_ToMan            ( oyjlUi_s          * ui,
           break;
         case oyjlOPTIONTYPE_DOUBLE:
           {
+            char * desc = oyjlOption_PrintArgDouble( o, oyjlDESCRIPTION );
             t = oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MAN);
             oyjlStringAdd( &text, malloc, free, "%s", t );
             free(t);
-            oyjlStringAdd( &text, malloc, free, "\t%s (%s%s%g [≥%g ≤%g])%s%s%s", o->description ? o->description:"", o->value_name?o->value_name:"", o->value_name?":":"", o->values.dbl.d, o->values.dbl.start, o->values.dbl.end, o->help?"\n.RS\n":"", o->help?o->help:"", o->help?"\n.RE\n":"\n.br\n" );
+            oyjlStringAdd( &text, malloc, free, "\t%s%s%s%s", desc, o->help?"\n.RS\n":"", o->help?o->help:"", o->help?"\n.RE\n":"\n.br\n" );
+            free(desc);
           }
           break;
         case oyjlOPTIONTYPE_NONE:
@@ -3073,7 +3099,7 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
     oyjlStringAdd( &text, malloc, free, "\n"  );
     if(g->help)
     {
-      oyjlStringAdd( &text, malloc, free, "%s\n\n", g->help );
+      oyjlStringAdd( &text, malloc, free, "&nbsp;&nbsp;%s\n\n", g->help );
     }
     if(d)
       oyjlStringAdd( &text, malloc, free, "<table style='width:100%'>\n" );
@@ -3130,10 +3156,14 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
           }
           break;
         case oyjlOPTIONTYPE_DOUBLE:
-          t = oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MARKDOWN);
-          oyjlStringAdd( &text, malloc, free, " <tr><td" OYJL_LEFT_TD_STYLE ">%s</td>", t );
-          free(t);
-          oyjlStringAdd( &text, malloc, free, " <td>%s%s%s (%s%s%g [≥%g ≤%g])</td>", o->description ? o->description:"", o->help?": ":"", o->help?o->help :"", o->value_name?o->value_name:"", o->value_name?":":"", o->values.dbl.d, o->values.dbl.start, o->values.dbl.end );
+          {
+            char * desc = oyjlOption_PrintArgDouble( o, oyjlDESCRIPTION | oyjlHELP );
+            t = oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MARKDOWN);
+            oyjlStringAdd( &text, malloc, free, " <tr><td" OYJL_LEFT_TD_STYLE ">%s</td>", t );
+            free(t);
+            oyjlStringAdd( &text, malloc, free, " <td>%s</td>", desc );
+            free( desc );
+          }
           break;
         case oyjlOPTIONTYPE_NONE:
           t = oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MARKDOWN);
