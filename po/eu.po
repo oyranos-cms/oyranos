@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eu\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2020-03-23 12:50+0100\n"
+"POT-Creation-Date: 2020-03-24 17:38+0100\n"
 "PO-Revision-Date: 2007-11-07 11:11+0100\n"
 "Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@zundan.com>\n"
 "Language-Team: Basque <itzulpena@euskalgnu.org>\n"
@@ -865,6 +865,14 @@ msgstr ""
 
 #: oyjl_web.c:61
 msgid "The tool renders Oyjl JSON UI files."
+msgstr ""
+
+#: test-args.c:96
+msgid "This Group handles Long options"
+msgstr ""
+
+#: test-args.c:82
+msgid "This options explanation text."
 msgstr ""
 
 #: oyjl_args_tree.c:1082
