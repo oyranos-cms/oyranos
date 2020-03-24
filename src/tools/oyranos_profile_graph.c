@@ -666,6 +666,88 @@ int myMain( int argc, const char ** argv )
 
   thickness *= pixel_w/128.0;
 
+#define HLC_PARAM_SETUP \
+    int dist = 5, l,c, c_max = dist==10 ? 130 : 125; \
+    int lcount = (100-2)/(double)dist + 2, \
+        ccount = c_max/(double)dist + 1;
+  if(hlc != -1.0)
+  {
+    HLC_PARAM_SETUP
+    int h = 0;
+    char * t = NULL;
+    time_t cutime;         /* Time since epoch */
+    struct tm * gmt;
+
+    specT = oyjlTreeNew("");
+    oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, "ncc1", "type" );
+    oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, "Named Color Collection v1", "comment" );
+
+    if(hlc == 365)
+      oyjlStringAdd( &t, 0,0, "HLC ALL" );
+    else
+      oyjlStringAdd( &t, 0,0, "HLC H%03d", (int)hlc );
+    oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, t, "description" );
+    free( t ); t = NULL;
+
+    oyjlStringAdd( &t, 0,0, "oyranos-profile-create" );
+    oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, t, "creator" );
+    free( t ); t = NULL;
+
+    t = calloc(48,sizeof(char));
+    cutime = time(NULL); /* time right NOW */
+    gmt = localtime( &cutime );
+    strftime( t, 48, "%FT%H:%M:%S%z", gmt );
+    oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, t, "date" );
+    free( t ); t = NULL;
+
+    for(h = 0; h < 360; h += dist)
+    {
+      if(hlc != 365)
+        h = hlc;
+      for(l = 0; l < lcount; ++l)
+      {
+        for(c = 0; c < ccount; ++c)
+        {
+          double LCh[3] = { l/(double)(lcount-1), c/(double)(ccount-1)*c_max/128.0, h/360.0 };
+          double Lab[3], XYZ[3];
+          int page_start_index = h/dist * ccount * lcount;
+          int index = (hlc == 365 ? page_start_index : 0) + l * ccount + c;
+          char id[24];
+          int error;
+          sprintf( id, "H%03d_L%02d_C%03d", (int)(LCh[2]*360.0+0.5), (int)(LCh[0]*100.0+0.5), (int)(LCh[1]*128.0+0.5) );
+          error = oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, id,     "collection/[0]/colors/[%d]/id", index );
+          if(error) fprintf( stderr, "trouble with: HLC: %s\n", id );
+          error = oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, index,     "collection/[0]/colors/[%d]/index", index );
+          if(error) fprintf( stderr, "trouble with: HLC: %s\n", id );
+
+          oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, "HLC",  "collection/[0]/colors/[%d]/lch/[0]/id", index );
+          oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, LCh[0], "collection/[0]/colors/[%d]/lch/[0]/data/[0]", index );
+          oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, LCh[1], "collection/[0]/colors/[%d]/lch/[0]/data/[1]", index );
+          oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, LCh[2], "collection/[0]/colors/[%d]/lch/[0]/data/[2]", index );
+          oyLCh2Lab(LCh, Lab, NULL);
+          oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, Lab[0], "collection/[0]/colors/[%d]/lab/[0]/data/[0]", index );
+          oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, Lab[1], "collection/[0]/colors/[%d]/lab/[0]/data/[1]", index );
+          oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, Lab[2], "collection/[0]/colors/[%d]/lab/[0]/data/[2]", index );
+          oyIcc2CIELab( Lab, Lab, NULL );
+          oyLab2XYZ( Lab, XYZ );
+          double rgb[4] = { XYZ[0], XYZ[1], XYZ[2], 1.0 };
+          if(verbose) fprintf(stderr, "%d %s: HLC: %.2f %.2f %.2f Lab: %.2f %.2f %.2f XYZ: %.2f %.2f %.2f ", index, id, LCh[2], LCh[0], LCh[1], Lab[0], Lab[1], Lab[2], rgb[0], rgb[1], rgb[2] );
+          oyXYZ2sRGB( rgb );
+          if(verbose) fprintf(stderr, "RGB: %.5f %.5f %.5f\n", rgb[0], rgb[1], rgb[2] );
+          oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, XYZ[0], "collection/[0]/colors/[%d]/xyz/[0]/data/[0]", index );
+          oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, XYZ[1], "collection/[0]/colors/[%d]/xyz/[0]/data/[1]", index );
+          oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, XYZ[2], "collection/[0]/colors/[%d]/xyz/[0]/data/[2]", index );
+          oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, "sRGB", "collection/[0]/colors/[%d]/rgb/[0]/id", index );
+          oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, rgb[0], "collection/[0]/colors/[%d]/rgb/[0]/data/[0]", index );
+          oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, rgb[1], "collection/[0]/colors/[%d]/rgb/[0]/data/[1]", index );
+          oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, rgb[2], "collection/[0]/colors/[%d]/rgb/[0]/data/[2]", index );
+        }
+      }
+      if(hlc != 365)
+        break;
+    }
+  }
+
   /* create a surface to place our images on */
   if(format == NULL || oyStringCaseCmp_(format, "png") == 0)
     surface = cairo_image_surface_create( CAIRO_FORMAT_ARGB32, pixel_w,pixel_h);
@@ -752,6 +834,8 @@ int myMain( int argc, const char ** argv )
       } else
         oyMessageFunc_p(oyMSG_ERROR,NULL,"no input tree found");
     }
+    else if(format)
+      oyMessageFunc_p( oyMSG_ERROR, NULL, "export format not supported: %s", format );
 
     oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
 
@@ -951,18 +1035,9 @@ int myMain( int argc, const char ** argv )
     /* draw HLC color atlas sheed: page with all lightness and saturations for a selected hue */
   if(hlc >= 0.0)
   {
-    int dist = 5, l,c, c_max = dist==10 ? 130 : 125;
-    int lcount = (100-2)/(double)dist + 2,
-        ccount = c_max/(double)dist + 1;
+    HLC_PARAM_SETUP
     int count = lcount * ccount;
-    double ratio = lcount / (double)ccount;
-    int * outside = calloc( count, sizeof(int) );
     double * lab = calloc( count, sizeof(double) * 3 );
-    oyProfiles_s * proofing = NULL;
-    int error = !outside || !lab;
-    if(error) return error;
-    if(verbose)
-      fprintf(stderr, "ccount: %d c_max: %d  lcount: %d\n", ccount, c_max, lcount );
     for(c = 0; c < ccount; ++c)
     {
       for(l = 0; l < lcount; ++l)
@@ -971,6 +1046,13 @@ int myMain( int argc, const char ** argv )
         oyLCh2Lab( LCh, &lab[ (c + l * ccount) * 3 ], NULL );
       }
     }
+    double ratio = lcount / (double)ccount;
+    int * outside = calloc( count, sizeof(int) );
+    oyProfiles_s * proofing = NULL;
+    int error = !outside || !lab;
+    if(error) return error;
+    if(verbose)
+      fprintf(stderr, "ccount: %d c_max: %d  lcount: %d\n", ccount, c_max, lcount );
 
     if(profile_count)
     {
@@ -1027,7 +1109,7 @@ int myMain( int argc, const char ** argv )
       for(l = 0; l < lcount; ++l)
       {
         double LCh[3] = { l/(double)(lcount-1), c/(double)(ccount-1)*c_max/128.0, hlc/360.0 };
-        int pos = c + l * ccount;
+        int index = c + l * ccount;
 
         oyLCh2Lab(LCh, Lab, NULL);
         oyIcc2CIELab( Lab, Lab, NULL );
@@ -1037,7 +1119,7 @@ int myMain( int argc, const char ** argv )
         oyXYZ2sRGB( rgb );
         if(verbose) fprintf(stderr, "RGB: %.5f %.5f %.5f\n", rgb[0], rgb[1], rgb[2] );
 
-        if(!outside[pos])
+        if(!outside[index])
         {
           cairo_new_path(cr);
           cairo_move_to(cr, xToImage((double)(c  )/(double)ccount) + off, yToImage((double)(l  )/(double)lcount * ratio + (1-ratio) / 2.0) - off);
