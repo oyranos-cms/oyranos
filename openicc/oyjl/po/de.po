@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2020-03-23 12:50+0100\n"
+"POT-Creation-Date: 2020-03-24 17:38+0100\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -820,6 +820,14 @@ msgstr ""
 #: oyjl_web.c:61
 msgid "The tool renders Oyjl JSON UI files."
 msgstr "Das Werkzeug zeigt Oyjl JSON UI Dateien an."
+
+#: test-args.c:96
+msgid "This Group handles Long options"
+msgstr ""
+
+#: test-args.c:82
+msgid "This options explanation text."
+msgstr ""
 
 #: oyjl_args_tree.c:1082
 msgid "Tool"
