@@ -1416,13 +1416,14 @@ OYAPI int OYEXPORT
  *
  *  The type argument should select the following string in return: \n
  *  - oyNAME_NAME - a readable XML element
- *  - oyNAME_NICK - the hash ID
+ *  - oyNAME_NICK - the file name and hash ID
  *  - oyNAME_DESCRIPTION - profile internal name (icSigProfileDescriptionTag)
+ *  - oyNAME_REGISTRATION - ICC MD5 hash sum in a string with 32 chars
  *  - oyNAME_JSON - contains non expensive "id", internal "name" + "hash" keys,
  *    "id" can use type, file name and ICC hash if already present
  *
  *  @version Oyranos: 0.9.7
- *  @date    2020/03/20
+ *  @date    2020/03/24
  *  @since   2007/11/26 (Oyranos: 0.1.8)
  */
 OYAPI const oyChar* OYEXPORT oyProfile_GetText (
@@ -1559,6 +1560,19 @@ OYAPI const oyChar* OYEXPORT oyProfile_GetText (
         free(json); json = NULL;
       }
       oyjlTreeFree( root );
+    }
+    else if(type == oyNAME_REGISTRATION)
+    {
+      uint32_t * h = (uint32_t*)s->oy_->hash_ptr_;
+      if(h)
+      {
+        char * hash = NULL;
+        oyFree_m_( temp );
+        oyjlStringAdd( &hash, 0,0, "%08x%08x%08x%08x",
+             h[0], h[1], h[2], h[3] );
+        text = temp = hash;
+        found = 1;
+      }
     }
 
     if(!found)
