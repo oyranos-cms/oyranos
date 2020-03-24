@@ -2620,8 +2620,11 @@ oyjlTESTRESULT_e testProfile ()
 
     icSignature vs = (icUInt32Number) oyValueUInt32( (icUInt32Number) oyProfile_GetSignature( p, oySIGNATURE_VERSION ) );
     char * v = (char*)&vs;
+    const char * hash = NULL;
 
-    if( p && v[0] == 2 )
+    if(i == 2)
+      hash = oyProfile_GetText( p, (oyNAME_e)oyNAME_REGISTRATION );
+    if( p && v[0] == 2 && !(i == 2 && strcmp(names[2], hash) != 0))
     {
       PRINT_SUB( oyjlTESTRESULT_SUCCESS,
       "oyProfile_FromName( \"%s\") version: %d.%d.%d    ", names[i], (int)v[0], (int)v[1]/16, (int)v[1]%16 );
