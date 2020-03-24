@@ -1104,67 +1104,75 @@ int myMain( int argc, const char ** argv )
     sprintf( utf8, "*b" );
     cairo_move_to (cr, xToImage(0) - frame * 0.8, yToImage((double)(l  )/(double)lcount * ratio + (1-ratio) / 2.0 - 0.09) - off);
     cairo_show_text (cr, utf8);
-    for(c = 0; c < ccount; ++c)
+    for(h = 0; h < 360; h += dist)
     {
-      for(l = 0; l < lcount; ++l)
+      if(hlc != 365)
+        h = hlc;
+      for(c = 0; c < ccount; ++c)
       {
-        double LCh[3] = { l/(double)(lcount-1), c/(double)(ccount-1)*c_max/128.0, hlc/360.0 };
-        int index = c + l * ccount;
-
-        oyLCh2Lab(LCh, Lab, NULL);
-        oyIcc2CIELab( Lab, Lab, NULL );
-        oyLab2XYZ( Lab, XYZ );
-        double rgb[4] = { XYZ[0], XYZ[1], XYZ[2], 1.0 };
-        if(verbose) fprintf(stderr, "Lab: %.2f %.2f %.2f XYZ: %.2f %.2f %.2f\n", Lab[0], Lab[1], Lab[2], rgb[0], rgb[1], rgb[2] );
-        oyXYZ2sRGB( rgb );
-        if(verbose) fprintf(stderr, "RGB: %.5f %.5f %.5f\n", rgb[0], rgb[1], rgb[2] );
-
-        if(!outside[index])
+        for(l = 0; l < lcount; ++l)
         {
-          cairo_new_path(cr);
-          cairo_move_to(cr, xToImage((double)(c  )/(double)ccount) + off, yToImage((double)(l  )/(double)lcount * ratio + (1-ratio) / 2.0) - off);
-          cairo_line_to(cr, xToImage((double)(c+1)/(double)ccount) - off, yToImage((double)(l  )/(double)lcount * ratio + (1-ratio) / 2.0) - off);
-          cairo_line_to(cr, xToImage((double)(c+1)/(double)ccount) - off, yToImage((double)(l+1)/(double)lcount * ratio + (1-ratio) / 2.0) + off);
-          cairo_line_to(cr, xToImage((double)(c  )/(double)ccount) + off, yToImage((double)(l+1)/(double)lcount * ratio + (1-ratio) / 2.0) + off);
-          cairo_close_path(cr);
-          cairo_set_source_rgba( cr, rgb[0], rgb[1], rgb[2], 1.0);
-          cairo_fill(cr);
+          double LCh[3] = { l/(double)(lcount-1), c/(double)(ccount-1)*c_max/128.0, hlc/360.0 };
+          int page_start_index = h/dist * ccount * lcount;
+          int index = (hlc == 365 ? page_start_index : 0) + l * ccount + c;
 
-          if(raster)
+          oyLCh2Lab(LCh, Lab, NULL);
+          oyIcc2CIELab( Lab, Lab, NULL );
+          oyLab2XYZ( Lab, XYZ );
+          double rgb[4] = { XYZ[0], XYZ[1], XYZ[2], 1.0 };
+          if(verbose) fprintf(stderr, "Lab: %.2f %.2f %.2f XYZ: %.2f %.2f %.2f\n", Lab[0], Lab[1], Lab[2], rgb[0], rgb[1], rgb[2] );
+          oyXYZ2sRGB( rgb );
+          if(verbose) fprintf(stderr, "RGB: %.5f %.5f %.5f\n", rgb[0], rgb[1], rgb[2] );
+
+          if(!outside[index])
           {
-            /* draw frame */
             cairo_new_path(cr);
-            cairo_move_to(cr, xToImage((double)(c  )/(double)ccount), yToImage((double)(l  )/(double)lcount * ratio + (1-ratio) / 2.0));
-            cairo_line_to(cr, xToImage((double)(c+1)/(double)ccount), yToImage((double)(l  )/(double)lcount * ratio + (1-ratio) / 2.0));
-            cairo_line_to(cr, xToImage((double)(c+1)/(double)ccount), yToImage((double)(l+1)/(double)lcount * ratio + (1-ratio) / 2.0));
-            cairo_line_to(cr, xToImage((double)(c  )/(double)ccount), yToImage((double)(l+1)/(double)lcount * ratio + (1-ratio) / 2.0));
+            cairo_move_to(cr, xToImage((double)(c  )/(double)ccount) + off, yToImage((double)(l  )/(double)lcount * ratio + (1-ratio) / 2.0) - off);
+            cairo_line_to(cr, xToImage((double)(c+1)/(double)ccount) - off, yToImage((double)(l  )/(double)lcount * ratio + (1-ratio) / 2.0) - off);
+            cairo_line_to(cr, xToImage((double)(c+1)/(double)ccount) - off, yToImage((double)(l+1)/(double)lcount * ratio + (1-ratio) / 2.0) + off);
+            cairo_line_to(cr, xToImage((double)(c  )/(double)ccount) + off, yToImage((double)(l+1)/(double)lcount * ratio + (1-ratio) / 2.0) + off);
             cairo_close_path(cr);
-            cairo_set_source_rgba( cr, rgba[0], rgba[1], rgba[2], 1.0 );
-            cairo_stroke(cr);
+            cairo_set_source_rgba( cr, rgb[0], rgb[1], rgb[2], 1.0);
+            cairo_fill(cr);
+
+            if(raster)
+            {
+              /* draw frame */
+              cairo_new_path(cr);
+              cairo_move_to(cr, xToImage((double)(c  )/(double)ccount), yToImage((double)(l  )/(double)lcount * ratio + (1-ratio) / 2.0));
+              cairo_line_to(cr, xToImage((double)(c+1)/(double)ccount), yToImage((double)(l  )/(double)lcount * ratio + (1-ratio) / 2.0));
+              cairo_line_to(cr, xToImage((double)(c+1)/(double)ccount), yToImage((double)(l+1)/(double)lcount * ratio + (1-ratio) / 2.0));
+              cairo_line_to(cr, xToImage((double)(c  )/(double)ccount), yToImage((double)(l+1)/(double)lcount * ratio + (1-ratio) / 2.0));
+              cairo_close_path(cr);
+              cairo_set_source_rgba( cr, rgba[0], rgba[1], rgba[2], 1.0 );
+              cairo_stroke(cr);
+            }
+          }
+
+          cairo_set_source_rgba( cr, 0, 0, 0, 1.0 );
+          if(l == 0)
+          {
+            sprintf( utf8, "%.0f", LCh[1] * 128.0 );
+            cairo_move_to (cr, xToImage((((double)c)+0.5)/(double)ccount) - 0.6*frame, yToImage((double)(l  )/(double)lcount * ratio + (1-ratio) / 2.0 - 0.05) - off);
+            cairo_show_text (cr, utf8);
+            sprintf( utf8, "%.1f", Lab[1] );
+            cairo_move_to (cr, xToImage((((double)c)+0.5)/(double)ccount) - 0.6*frame, yToImage((double)(l  )/(double)lcount * ratio + (1-ratio) / 2.0 - 0.07) - off);
+            cairo_show_text (cr, utf8);
+            sprintf( utf8, "%.1f", Lab[2] );
+            cairo_move_to (cr, xToImage((((double)c)+0.5)/(double)ccount) - 0.6*frame, yToImage((double)(l  )/(double)lcount * ratio + (1-ratio) / 2.0 - 0.09) - off);
+            cairo_show_text (cr, utf8);
+          }
+          if(c == 0)
+          {
+            sprintf( utf8, "%.0f", Lab[0] );
+            cairo_move_to (cr, xToImage(0) - frame * 0.8,
+                               yToImage((double)(l  )/(double)lcount * ratio + (1-ratio) / 2.0 + 0.01) - off);
+            cairo_show_text (cr, utf8);
           }
         }
-
-        cairo_set_source_rgba( cr, 0, 0, 0, 1.0 );
-        if(l == 0)
-        {
-          sprintf( utf8, "%.0f", LCh[1] * 128.0 );
-          cairo_move_to (cr, xToImage((((double)c)+0.5)/(double)ccount) - 0.6*frame, yToImage((double)(l  )/(double)lcount * ratio + (1-ratio) / 2.0 - 0.05) - off);
-          cairo_show_text (cr, utf8);
-          sprintf( utf8, "%.1f", Lab[1] );
-          cairo_move_to (cr, xToImage((((double)c)+0.5)/(double)ccount) - 0.6*frame, yToImage((double)(l  )/(double)lcount * ratio + (1-ratio) / 2.0 - 0.07) - off);
-          cairo_show_text (cr, utf8);
-          sprintf( utf8, "%.1f", Lab[2] );
-          cairo_move_to (cr, xToImage((((double)c)+0.5)/(double)ccount) - 0.6*frame, yToImage((double)(l  )/(double)lcount * ratio + (1-ratio) / 2.0 - 0.09) - off);
-          cairo_show_text (cr, utf8);
-        }
-        if(c == 0)
-        {
-          sprintf( utf8, "%.0f", Lab[0] );
-          cairo_move_to (cr, xToImage(0) - frame * 0.8,
-                             yToImage((double)(l  )/(double)lcount * ratio + (1-ratio) / 2.0 + 0.01) - off);
-          cairo_show_text (cr, utf8);
-        }
       }
+      if(hlc != 365)
+        break;
     }
     cairo_set_source_rgba( cr, 1, 1, 1, 1.0);
   }
