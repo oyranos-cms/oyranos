@@ -922,16 +922,17 @@ oyjlTESTRESULT_e testTree ()
   oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "arr3a", "one/[%d]/data/[0]", 1 );
   oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "arr3b", "one/[%d]/data/[1]", 1 );
   oyjlTreeToJson( root, &i, &rjson ); i = 0;
-  if( rjson && strlen( rjson ) == 20 )
+  if( rjson && strlen( rjson ) == 215 )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "add array                              " );
+    "add array                                      %ld", strlen(rjson) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "add array                              " );
+    "add array                                      %ld", strlen(rjson) );
   }
   if(verbose)
     puts( rjson );
   myDeAllocFunc( rjson ); rjson = NULL;
+  oyjlTreeFree( root );
 
   double clck = oyjlClock();
   root = oyjlTreeNew("");
