@@ -4,7 +4,7 @@ oyranos-profile-graph v0.9.7 \- Oyranos Profile Zeichner
 .SH ÜBERSICHT
 \fBoyranos-profile-graph\fR [\fB\-t\fR \fINUMMER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMMER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMMER\fR] [\fB\-o\fR \fI-|DATEI\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-c\fR] [\fB\-x\fR] [\fB\-d\fR \fINUMMER\fR] [\fB\-n\fR] [\fB\-2\fR] [\fB\-4\fR] [\fB\-r\fR] [\fB\-v\fR] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
 .br
-\fBoyranos-profile-graph\fR \fB\-H\fR \fINUMMER\fR [\fIl|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE\fR] [\fB\-t\fR \fINUMMER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMMER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMMER\fR] [\fB\-o\fR \fI-|DATEI\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-2\fR] [\fB\-4\fR] [\fB\-r\fR] [\fB\-v\fR]
+\fBoyranos-profile-graph\fR \fB\-H\fR \fINUMMER\fR [\fIl|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE\fR] [\fB\-t\fR \fINUMMER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMMER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMMER\fR] [\fB\-m\fR \fIFORMAT\fR] [\fB\-o\fR \fI-|DATEI\fR] [\fB\-p\fR \fIFORMAT\fR] [\fB\-2\fR] [\fB\-4\fR] [\fB\-r\fR] [\fB\-v\fR]
 .br
 \fBoyranos-profile-graph\fR \fB\-S\fR [\fB\-t\fR \fINUMMER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMMER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMMER\fR] [\fB\-T\fR] [\fB\-o\fR \fI-|DATEI\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-v\fR]
 .br
@@ -45,18 +45,26 @@ Erzeuge aus einem ICC Profil eine Grafik mit seiner Sättigungslinie.
 \fB\-r\fR|\fB\-\-no-repair\fR	Lasse Reparatur der Profil ID weg
 .br
 .SS
-Color Patches Graph from profiles
-\fBoyranos-profile-graph\fR \fB\-H\fR \fINUMMER\fR [\fIl|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE\fR] [\fB\-t\fR \fINUMMER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMMER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMMER\fR] [\fB\-o\fR \fI-|DATEI\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-2\fR] [\fB\-4\fR] [\fB\-r\fR] [\fB\-v\fR]
+Farbpalette vom Farbprofil
+\fBoyranos-profile-graph\fR \fB\-H\fR \fINUMMER\fR [\fIl|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE\fR] [\fB\-t\fR \fINUMMER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMMER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMMER\fR] [\fB\-m\fR \fIFORMAT\fR] [\fB\-o\fR \fI-|DATEI\fR] [\fB\-p\fR \fIFORMAT\fR] [\fB\-2\fR] [\fB\-4\fR] [\fB\-r\fR] [\fB\-v\fR]
 .br
-Create a 2D Graph containing the possible color patches inside the ICC Profile gamut.
+Erzeuge ein 2D Farbpalette mit allen möglichen Farben innerhalb des Farbumfanges des ICC Fabprofiles.
 .br
 .sp
 .br
-\fB\-H\fR|\fB\-\-hlc\fR \fINUMMER\fR	HLC Color Atlas (NUMMER:0 [≥0 ≤365])
+\fB\-H\fR|\fB\-\-hlc\fR \fINUMMER\fR	HLC Farbatlas (NUMMER:0 [≥0 ≤365])
 .RS
-Specify the number of Hue in the HLC color atlas in degrees and which are inside the profiles gamut. -H=365 will output all hues.
+Wähle ein Seite des HLC Farbatlas mit dem Farbton. -H=365 wählt all Farben.
 .RE
 \fIl|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE\fR	ICC Profil
+.br
+\fB\-m\fR|\fB\-\-swatch-format\fR \fIFORMAT\fR	Gib Ausgabeformat an
+.br
+	\-m png		# PNG - PNG Raster
+.br
+	\-m svg		# SVG - SVG Vektor
+.br
+	\-m ncc		# NCC - Einzelfarbsammlung (NCC)
 .br
 .SS
 Standard Betrachter 1931 2° Zeichnung
@@ -102,7 +110,7 @@ Spektrumgraph
 .br
 \fB\-s\fR|\fB\-\-spectral\fR \fIDATEI\fR	Spektrale Eingabe
 .br
-\fB\-p\fR|\fB\-\-spectral-format\fR \fIFORMAT\fR	Gib spektrales Ausgabeformat an
+\fB\-p\fR|\fB\-\-spectral-format\fR \fIFORMAT\fR	Specify spectral output file format
 .br
 	\-p png		# PNG - PNG Raster
 .br
@@ -130,7 +138,7 @@ Allgemeine Optionen
 .br
 \fB\-b\fR|\fB\-\-no-border\fR	Lasse Rand aus in Zeichnung
 .br
-\fB\-l\fR|\fB\-\-lightness\fR \fINUMMER\fR	Background Lightness (NUMMER:-1 [≥-1 ≤100])
+\fB\-l\fR|\fB\-\-lightness\fR \fINUMMER\fR	Hintergrund Helligkeit (NUMMER:-1 [≥-1 ≤100])
 .br
 \fB\-g\fR|\fB\-\-no-color\fR	Zeichne grau
 .br
@@ -187,13 +195,15 @@ Zeige Sättigungslinien von zwei Profilen in CIE*ab 256 Bildpunkte breit, ohne S
 .br
 oyranos-profile-graph -w 256 -s -t 3 sRGB.icc ProPhoto-RGB.icc
 .TP
+Show HLC Color Atlas patches
+.br
+oyranos-profile-graph -H=90 -o HLC_H090.png cmyk web
+.br
+Color pathes are only shown, if they are in gamut of the default CMYK and web profile.
+.TP
 Zeige die Standard Betrachter Spektralfunktion als Kurven:
 .br
 oyranos-profile-graph --standard-observer -o CIE-StdObserver.png
-.TP
-Show the 
-.br
-oyranos-profile-graph -c -o CIE-StdObserver.png
 .SH SIEHE AUCH
 .TP
 oyranos-profile(1) oyranos-config(1) oyranos-policy(1) oyranos(3)

@@ -190,7 +190,6 @@ int myMain( int argc, const char ** argv )
 {
   /* the functional switches */
   const char * format = NULL;
-  const char * sformat = NULL;
   const char * output = NULL;
   const char * input = NULL;
   int no_spectral = 0;
@@ -281,8 +280,8 @@ int myMain( int argc, const char ** argv )
                                   {"","","",""}};
   oyjlOptionChoice_s examples[]={ {_("Show graph of a ICC profile"), "oyranos-profile-graph ICC_PROFILE", "", ""},
                                   {_("Show the saturation lines of two profiles in CIE*ab 256 pixel width, without spectral line and with thicker lines:"), "oyranos-profile-graph -w 256 -s -t 3 sRGB.icc ProPhoto-RGB.icc", "", ""},
+                                  {_("Show HLC Color Atlas patches"),"oyranos-profile-graph -H=90 -o HLC_H090.png cmyk web",_("Color pathes are only shown, if they are in gamut of the default CMYK and web profile."), ""},
                                   {_("Show the standard observer spectral function as curves:"),"oyranos-profile-graph --standard-observer -o CIE-StdObserver.png","", ""},
-                                  {_("Show the "),"oyranos-profile-graph -c -o CIE-StdObserver.png","", ""},
                                   {"","","",""}};
   oyjlOptionChoice_s illu_dxx[]={ {"A",  _("Illuminant A"),  "", _("CIE A spectral power distribution")},
                                   {"D50",_("Illuminant D50"),"", _("CIE D50 spectral power distribution (computed)")},
@@ -303,6 +302,10 @@ int myMain( int argc, const char ** argv )
                                   {"icc-xml",_("Icc XML"),"",_("ICC Named Color Values")},
                                   {"ppm",_("PPM"),"",_("Spectral PAM Image")},
                                   {"","","",""}};
+  oyjlOptionChoice_s p_format[]={ {"png",_("PNG"),"",_("PNG Raster")},
+                                  {"svg",_("SVG"),"",_("SVG Vector")},
+                                  {"ncc",_("NCC"),"",_("Named Color Collection")},
+                                  {"","","",""}};
   oyjlOptionChoice_s see_as_well[]={{"oyranos-profile(1) oyranos-config(1) oyranos-policy(1) oyranos(3)", "", "", ""},
                                     {"http://www.oyranos.org","","",""},
                                     {"","","",""}};
@@ -318,7 +321,7 @@ int myMain( int argc, const char ** argv )
     {"oiwi", 0, "f", "format",        NULL, _("Format"),        _("Specify output file format png or svg, default is png"), NULL, _("FORMAT"), oyjlOPTIONTYPE_CHOICE,
       {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)out_form, sizeof(out_form), 0 )}, oyjlSTRING, {.s=&format} },
     {"oiwi", 0, "g", "no-color",      NULL, _("Gray"),          _("Draw Gray"),              NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&no_color} },
-    {"oiwi", 0, "H", "hlc",           NULL, _("HLC"),           _("HLC Color Atlas"),   _("Specify the number of Hue in the HLC color atlas in degrees and which are inside the profiles gamut. -H=365 will output all hues."), _("NUMBER"), oyjlOPTIONTYPE_DOUBLE,
+    {"oiwi", 0, "H", "hlc",           NULL, _("HLC"),           _("HLC Color Atlas"),   _("Select a page by hue in the HLC Color Atlas. -H=365 will output all hues."), _("NUMBER"), oyjlOPTIONTYPE_DOUBLE,
       {.dbl.start = 0.0, .dbl.end = 365.0, .dbl.tick = 5, .dbl.d = 0.0}, oyjlDOUBLE, {.d=&hlc} },
     {"oiwi", 0, "l", "lightness",     NULL, _("Lightness"),     _("Background Lightness"),   NULL, _("NUMBER"), oyjlOPTIONTYPE_DOUBLE,
       {.dbl.start = -1.0, .dbl.end = 100.0, .dbl.tick = 1.0, .dbl.d = -1.0}, oyjlDOUBLE, {.d=&lightness} },
@@ -329,7 +332,9 @@ int myMain( int argc, const char ** argv )
     {"oiwi", 0, "n", "no-spectral-line",NULL,_("No spectral"),  _("Omit the spectral line"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&no_spectral} },
     {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "o", "output",        NULL, _("Output"),        _("Specify output file name, default is stdout"), NULL, _("-|FILE"), oyjlOPTIONTYPE_CHOICE, {}, oyjlSTRING, {.s=&output} },
     {"oiwi", 0, "p", "spectral-format",NULL,_("Spectral Output"),_("Specify spectral output file format"), NULL, _("FORMAT"), oyjlOPTIONTYPE_CHOICE,
-      {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)spe_form, sizeof(spe_form), 0 )}, oyjlSTRING, {.s=&sformat} },
+      {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)spe_form, sizeof(spe_form), 0 )}, oyjlSTRING, {.s=&format} },
+    {"oiwi", 0, "m", "swatch-format", NULL, _("Format"),      _("Specify output file format"), NULL, _("FORMAT"), oyjlOPTIONTYPE_CHOICE,
+      {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)p_format, sizeof(p_format), 0 )}, oyjlSTRING, {.s=&format} },
     {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "P", "pattern",       NULL, _("Pattern"),       _("Filter of Color Names"),  NULL, _("STRING"), oyjlOPTIONTYPE_CHOICE, {}, oyjlSTRING, {.s=&pattern} },
     {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "s", "spectral",      NULL, _("Spectral"),      _("Spectral Input"),         NULL, _("FILE"), oyjlOPTIONTYPE_CHOICE, {}, oyjlSTRING, {.s=&input} },
     {"oiwi", 0, "S", "standard-observer",NULL,_("Standard Observer"),_("CIE Standard Observer 1931 2°"), NULL,NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&standardobs} },
@@ -363,7 +368,7 @@ int myMain( int argc, const char ** argv )
   oyjlOptionGroup_s groups[] = {
   /* type,   flags, name, description, help, mandatory, optional, detail */
     {"oiwg", 0, _("Saturation"), _("2D Graph from profiles"), _("Create a 2D Graph containing the saturation line from a ICC Profile."), "@", "t,b,l,g,w,o,f,c,x,d,n,2,4,r,v", "@,d,x,c,n,2,4,r" },
-    {"oiwg", 0, _("HSL"), _("Color Patches Graph from profiles"), _("Create a 2D Graph containing the possible color patches inside the ICC Profile gamut."), "H", "@,t,b,l,g,w,o,f,2,4,r,v", "H,@" },
+    {"oiwg", 0, _("HLC"), _("Color Patches Graph from profiles"), _("Create a 2D Graph containing the possible color patches inside the ICC Profile gamut."), "H", "@,t,b,l,g,w,m,o,p,2,4,r,v", "H,@,m" },
     {"oiwg", 0, _("StdObs2°"), _("Standard Observer 1931 2° Graph"), NULL, "S", "t,b,l,g,w,T,o,f,v", "S" },
     {"oiwg", 0, _("Obs10°"), _("1964 10° Observer Graph"), NULL, "O", "t,b,l,g,w,T,o,f,v", "O" },
     {"oiwg", 0, _("Blackbody Radiator"), _("Blackbody Radiator Spectrum Graph"), NULL, "k", "t,b,l,g,w,T,o,f,v", "k" },
@@ -455,7 +460,6 @@ int myMain( int argc, const char ** argv )
   profile_names = oyjlOptions_ResultsToList( ui->opts, "@", &profile_count );
   pixel_w = pixel_width+0.5;
   if(xyy_plane) proj = p_xyz;
-  if(sformat) format = sformat;
 
   if(profile_count && profile_names && profile_names[0] && profile_names[0][0] == 'l' && profile_names[0][1] == '\000')
   {
@@ -677,6 +681,15 @@ int myMain( int argc, const char ** argv )
     char * t = NULL;
     time_t cutime;         /* Time since epoch */
     struct tm * gmt;
+    oyStructList_s * ccs = oyStructList_New(0); /* color conversions */
+    oyProfiles_s * ps = oyProfiles_New(0);
+    oyProfile_s * pLab = oyProfile_FromStd( oyASSUMED_LAB, 0, 0 );
+    double color[16];
+    int * outside = NULL, index = 0;
+    oyOptions_s * module_options = NULL;
+
+    oyOptions_SetFromString( &module_options, OY_DEFAULT_RENDERING_INTENT, "1", OY_CREATE_NEW );
+    oyOptions_SetFromString( &module_options, OY_DEFAULT_RENDERING_BPC, "0", OY_CREATE_NEW );
 
     specT = oyjlTreeNew("");
     oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, "ncc1", "type" );
@@ -689,7 +702,7 @@ int myMain( int argc, const char ** argv )
     oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, t, "description" );
     free( t ); t = NULL;
 
-    oyjlStringAdd( &t, 0,0, "oyranos-profile-create" );
+    oyjlStringAdd( &t, 0,0, "Oyranos CMS" );
     oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, t, "creator" );
     free( t ); t = NULL;
 
@@ -700,21 +713,100 @@ int myMain( int argc, const char ** argv )
     oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, t, "date" );
     free( t ); t = NULL;
 
+    if(profile_count)
+    {
+      int count = lcount * ccount;
+      double * lab = calloc( count, sizeof(double) * 3 );
+      for(c = 0; c < ccount; ++c)
+      {
+        for(l = 0; l < lcount; ++l)
+        {
+          double LCh[3] = { l/(double)lcount, c/(double)ccount*c_max/128.0, hlc/360.0 };
+          oyLCh2Lab( LCh, &lab[ (c + l * ccount) * 3 ], NULL );
+        }
+      }
+      outside = calloc( count, sizeof(int) );
+      oyProfiles_s * proofing = NULL;
+      int error = !outside || !lab;
+      if(error) return error;
+      if(verbose)
+        fprintf(stderr, "ccount: %d c_max: %d  lcount: %d\n", ccount, c_max, lcount );
+
+      if(profile_count)
+      {
+        for(i = 0; i < profile_count; ++i)
+        {
+          const char * filename = profile_names[i];
+          oyProfile_s * p = oyProfile_FromName( filename, flags, NULL );
+          if(verbose)
+            fprintf(stderr, "proofing: %s\n", filename);
+          proofing = oyProfiles_New(0);
+          oyProfiles_MoveIn( proofing, &p, -1 );
+          error = oyLabGamutCheck( lab, count, proofing, outside, NULL );
+          oyProfiles_Release( &proofing );
+        }
+      }
+
+      for(i = 0; i < profile_count; ++i)
+      {
+        const char * filename = profile_names[i];
+        oyProfile_s * p = oyProfile_FromName( filename, flags, NULL );
+        oyConversion_s * cc;
+        const char * desc = oyProfile_GetText( p, oyNAME_DESCRIPTION );
+        const char * fn = oyProfile_GetFileName(p, -1);
+        const char * hash = oyProfile_GetText( p, oyNAME_REGISTRATION );
+        int error = 0;
+        oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, desc, "collection/[0]/profiles/[%d]/id", i );
+        oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, fn,   "collection/[0]/profiles/[%d]/filename", i );
+        oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, hash, "collection/[0]/profiles/[%d]/hash", i );
+        cc = oyConversion_CreateBasicPixelsFromBuffers (
+                                       pLab, color, oyDataType_m(oyDOUBLE),
+                                       p,    color, oyDataType_m(oyDOUBLE),
+                                       module_options, 1 );
+        error = !cc;
+        if(error)
+          fprintf( stderr, "No color conversion for profile: %s\n", filename );
+
+        error = oyStructList_MoveIn( ccs, (oyStruct_s**)&cc, i, 0 );
+        if(error)
+          oyMessageFunc_p( oyMSG_ERROR, NULL, "in oyStructList_MoveIn( cc ): %s", oyProfile_GetFileName( p, -1 ) );
+        oyProfiles_MoveIn( ps, &p, i );
+      }
+    }
+    oyOptions_Release( &module_options );
+    oyProfile_Release( &pLab );
+
+    /* allocate color leave before pages */
+    oyjlTreeGetValue( specT, OYJL_CREATE_NEW, "collection/[0]/colors" );
     for(h = 0; h < 360; h += dist)
     {
+      char page_id[8];
       if(hlc != 365)
         h = hlc;
-      for(l = 0; l < lcount; ++l)
+      sprintf( page_id, "H%03d", h );
+      oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, h/dist,  "collection/[0]/pages/%s/index", page_id );
+      oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, "The page consists of a array of rows, each containing a array of columns. Each column references a color id or null for no color at this position in the row.",  "collection/[0]/pages/%s/comment", page_id );
+      for(l = lcount - 1; l >= 0; --l)
       {
+        char row_id[8];
+        sprintf( row_id, "L%03d", (int)(l/(double)(lcount-1)*100) );
         for(c = 0; c < ccount; ++c)
         {
           double LCh[3] = { l/(double)(lcount-1), c/(double)(ccount-1)*c_max/128.0, h/360.0 };
           double Lab[3], XYZ[3];
           int page_start_index = h/dist * ccount * lcount;
-          int index = (hlc == 365 ? page_start_index : 0) + l * ccount + c;
           char id[24];
           int error;
-          sprintf( id, "H%03d_L%02d_C%03d", (int)(LCh[2]*360.0+0.5), (int)(LCh[0]*100.0+0.5), (int)(LCh[1]*128.0+0.5) );
+
+          i = (hlc == 365 ? page_start_index : 0) + l * ccount + c;
+
+          if(outside && outside[i])
+          {
+            oyjlTreeGetValueF( specT, OYJL_CREATE_NEW, "collection/[0]/pages/%s/%s/[%d]", page_id, row_id, c );
+            continue;
+          }
+
+          sprintf( id, "H%03d_L%03d_C%03d", (int)(LCh[2]*360.0+0.5), (int)(LCh[0]*100.0+0.5), (int)(LCh[1]*128.0+0.5) );
           error = oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, id,     "collection/[0]/colors/[%d]/id", index );
           if(error) fprintf( stderr, "trouble with: HLC: %s\n", id );
           error = oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, index,     "collection/[0]/colors/[%d]/index", index );
@@ -741,11 +833,61 @@ int myMain( int argc, const char ** argv )
           oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, rgb[0], "collection/[0]/colors/[%d]/rgb/[0]/data/[0]", index );
           oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, rgb[1], "collection/[0]/colors/[%d]/rgb/[0]/data/[1]", index );
           oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, rgb[2], "collection/[0]/colors/[%d]/rgb/[0]/data/[2]", index );
+          if(profile_count)
+          {
+            for(i = 0; i < profile_count; ++i)
+            {
+              oyProfile_s * p = oyProfiles_Get( ps, i );
+              int channel_count = oyProfile_GetChannelsCount( p ), j, pos;
+              icColorSpaceSignature csp = (icColorSpaceSignature) oyProfile_GetSignature( p, oySIGNATURE_COLOR_SPACE);
+              const char * desc = oyProfile_GetText( p, oyNAME_DESCRIPTION );
+              oyConversion_s * cc = (oyConversion_s*) oyStructList_GetRefType( ccs, i, oyOBJECT_CONVERSION_S );
+              if(!p)
+              {
+                oyMessageFunc_p( oyMSG_ERROR, NULL, "no profile: %d", i );
+                return 1;
+              }
+              if(!cc)
+              {
+                oyMessageFunc_p( oyMSG_ERROR, NULL, "no color conversion for profile: %s", oyProfile_GetFileName( p, -1 ) );
+                return 1;
+              }
+              oyLCh2Lab( LCh, color, NULL );
+              const char * json_cn = NULL;
+              switch(csp)
+              {
+                case icSigLabData:    json_cn = "lab"; break;
+                case icSigXYZData:    json_cn = "xyz"; break;
+                case icSigRgbData:    json_cn = "rgb"; break;
+                case icSigCmykData:   json_cn = "cmyk"; break;
+                case icSigYCbCrData:  json_cn = "ycbcr"; break;
+                default:              json_cn = "color"; break;
+              }
+              oyConversion_RunPixels( cc, 0 );
+              oyConversion_Release( &cc );
+              oyProfile_Release( &p );
+
+              {
+                oyjl_val v = oyjlTreeGetValueF(specT, 0, "collection/[0]/colors/[%d]/%s", index, json_cn );
+                pos = oyjlValueCount( v );
+              }
+              oyjlTreeSetStringF(   specT, OYJL_CREATE_NEW, desc,     "collection/[0]/colors/[%d]/%s/[%d]/id",        index, json_cn, pos );
+              for(j = 0; j < channel_count; ++j)
+                oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, color[j], "collection/[0]/colors/[%d]/%s/[%d]/data/[%d]", index, json_cn, pos, j );
+            }
+          }
+
+          oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, id, "collection/[0]/pages/%s/%s/[%d]", page_id, row_id, c );
+
+          ++index;
         }
       }
       if(hlc != 365)
         break;
     }
+
+    oyStructList_Release( &ccs );
+    oyProfiles_Release( &ps );
   }
 
   /* create a surface to place our images on */

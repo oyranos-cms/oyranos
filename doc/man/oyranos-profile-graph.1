@@ -4,7 +4,7 @@ oyranos-profile-graph v0.9.7 \- Oyranos Profile Graph
 .SH SYNOPSIS
 \fBoyranos-profile-graph\fR [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMBER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-c\fR] [\fB\-x\fR] [\fB\-d\fR \fINUMBER\fR] [\fB\-n\fR] [\fB\-2\fR] [\fB\-4\fR] [\fB\-r\fR] [\fB\-v\fR] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
 .br
-\fBoyranos-profile-graph\fR \fB\-H\fR \fINUMBER\fR [\fIl|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE\fR] [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMBER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-2\fR] [\fB\-4\fR] [\fB\-r\fR] [\fB\-v\fR]
+\fBoyranos-profile-graph\fR \fB\-H\fR \fINUMBER\fR [\fIl|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE\fR] [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMBER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-m\fR \fIFORMAT\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-p\fR \fIFORMAT\fR] [\fB\-2\fR] [\fB\-4\fR] [\fB\-r\fR] [\fB\-v\fR]
 .br
 \fBoyranos-profile-graph\fR \fB\-S\fR [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMBER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-T\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-v\fR]
 .br
@@ -46,7 +46,7 @@ Create a 2D Graph containing the saturation line from a ICC Profile.
 .br
 .SS
 Color Patches Graph from profiles
-\fBoyranos-profile-graph\fR \fB\-H\fR \fINUMBER\fR [\fIl|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE\fR] [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMBER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-2\fR] [\fB\-4\fR] [\fB\-r\fR] [\fB\-v\fR]
+\fBoyranos-profile-graph\fR \fB\-H\fR \fINUMBER\fR [\fIl|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE\fR] [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMBER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-m\fR \fIFORMAT\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-p\fR \fIFORMAT\fR] [\fB\-2\fR] [\fB\-4\fR] [\fB\-r\fR] [\fB\-v\fR]
 .br
 Create a 2D Graph containing the possible color patches inside the ICC Profile gamut.
 .br
@@ -54,9 +54,17 @@ Create a 2D Graph containing the possible color patches inside the ICC Profile g
 .br
 \fB\-H\fR|\fB\-\-hlc\fR \fINUMBER\fR	HLC Color Atlas (NUMBER:0 [≥0 ≤365])
 .RS
-Specify the number of Hue in the HLC color atlas in degrees and which are inside the profiles gamut. -H=365 will output all hues.
+Select a page by hue in the HLC Color Atlas. -H=365 will output all hues.
 .RE
 \fIl|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE\fR	ICC Profile
+.br
+\fB\-m\fR|\fB\-\-swatch-format\fR \fIFORMAT\fR	Specify output file format
+.br
+	\-m png		# PNG - PNG Raster
+.br
+	\-m svg		# SVG - SVG Vector
+.br
+	\-m ncc		# NCC - Named Color Collection
 .br
 .SS
 Standard Observer 1931 2° Graph
@@ -187,13 +195,15 @@ Show the saturation lines of two profiles in CIE*ab 256 pixel width, without spe
 .br
 oyranos-profile-graph -w 256 -s -t 3 sRGB.icc ProPhoto-RGB.icc
 .TP
+Show HLC Color Atlas patches
+.br
+oyranos-profile-graph -H=90 -o HLC_H090.png cmyk web
+.br
+Color pathes are only shown, if they are in gamut of the default CMYK and web profile.
+.TP
 Show the standard observer spectral function as curves:
 .br
 oyranos-profile-graph --standard-observer -o CIE-StdObserver.png
-.TP
-Show the 
-.br
-oyranos-profile-graph -c -o CIE-StdObserver.png
 .SH SEE AS WELL
 .TP
 oyranos-profile(1) oyranos-config(1) oyranos-policy(1) oyranos(3)
