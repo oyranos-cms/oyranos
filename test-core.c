@@ -909,6 +909,29 @@ oyjlTESTRESULT_e testTree ()
     "oyjlTreeClearValue( \"new/tree/key\" ) " );
   }
   oyjlTreeFree( root );
+  myDeAllocFunc( rjson ); rjson = NULL;
+
+  root = oyjlTreeNew( "one" );
+  oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "value", "one/[%d]/key1", 0 );
+  oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "arr1a", "one/[%d]/data/[0]", 0 );
+  oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "arr1b", "one/[%d]/data/[1]", 0 );
+  oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "value", "two/[%d]/key2", 0 );
+  oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "arr2a", "two/[%d]/data/[0]", 0 );
+  oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "arr2b", "two/[%d]/data/[1]", 0 );
+  oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "value", "one/[%d]/key3", 1 );
+  oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "arr3a", "one/[%d]/data/[0]", 1 );
+  oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "arr3b", "one/[%d]/data/[1]", 1 );
+  oyjlTreeToJson( root, &i, &rjson ); i = 0;
+  if( rjson && strlen( rjson ) == 20 )
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "add array                              " );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "add array                              " );
+  }
+  if(verbose)
+    puts( rjson );
+  myDeAllocFunc( rjson ); rjson = NULL;
 
   double clck = oyjlClock();
   root = oyjlTreeNew("");
@@ -916,21 +939,21 @@ oyjlTESTRESULT_e testTree ()
   for(i = 0; i < n; ++i)
     oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "value", "data/key-%d", i );
   clck = oyjlClock() - clck;
-  fprintf( zout, "oyjTreeSetStringF()\t%dx              \t\%s\n", n,
+  fprintf( zout, "oyjlTreeSetStringF()\t%dx              \t\%s\n", n,
                  oyjlProfilingToString(n,clck/(double)CLOCKS_PER_SEC,"node"));
   i = 0;
 
   clck = oyjlClock();
   oyjlTreeToJson2( root, &i, &rjson ); i = 0;
   clck = oyjlClock() - clck;
-  fprintf( zout, "oyjTreeToJson2()       \t1x %d            \t\%s\n", (int)strlen(rjson),
+  fprintf( zout, "oyjlTreeToJson2()       \t1x %d            \t\%s\n", (int)strlen(rjson),
                  oyjlProfilingToString(1,clck/(double)CLOCKS_PER_SEC,"dump"));
   myDeAllocFunc( rjson ); rjson = NULL;
 
   clck = oyjlClock();
   oyjlTreeToJson( root, &i, &rjson ); i = 0;
   clck = oyjlClock() - clck;
-  fprintf( zout, "oyjTreeToJson()        \t1x %d            \t\%s\n", (int)strlen(rjson),
+  fprintf( zout, "oyjlTreeToJson()        \t1x %d            \t\%s\n", (int)strlen(rjson),
                  oyjlProfilingToString(1,clck/(double)CLOCKS_PER_SEC,"dump"));
   myDeAllocFunc( rjson ); rjson = NULL;
   oyjlTreeFree( root );
