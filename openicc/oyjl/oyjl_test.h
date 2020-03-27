@@ -33,7 +33,7 @@
 #endif
 
 #ifndef OYJL_CTEND
-#include "oyjl.h" /* oyjlCOLORTERM_e */
+#include "oyjl.h" /* oyjlTEXTMARK_e */
 #endif
 
 extern int * oyjl_debug;
@@ -143,7 +143,7 @@ int oyjlTermColorCheck()
   color_env = (color ? 0x01 : 0x00) | (truecolor ? 0x02 : 0x00);
   return color_env;
 }
-const char * oyjlTermColor_( oyjlCOLORTERM_e rgb, const char * text) {
+const char * oyjlTermColor_( oyjlTEXTMARK_e rgb, const char * text) {
   int len = strlen(text);
   static char t[256];
   int color_env = oyjlTermColorCheck(),
