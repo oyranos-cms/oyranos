@@ -428,8 +428,8 @@ typedef enum {
   oyjlBOLD,
   oyjlITALIC,
   oyjlUNDERLINE
-} oyjlCOLORTERM_e;
-const char * oyjlTermColor           ( oyjlCOLORTERM_e     rgb,
+} oyjlTEXTMARK_e;
+const char * oyjlTermColor           ( oyjlTEXTMARK_e      mark,
                                        const char        * text );
 
 /* --- I/O helpers --- */

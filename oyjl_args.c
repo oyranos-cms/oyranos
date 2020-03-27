@@ -961,7 +961,7 @@ static int oyjlTermColorCheck_()
 /* switch back */
 #define OYJL_CTEND "\033[0m"
 #endif
-const char * oyjlTermColor( oyjlCOLORTERM_e rgb, const char * text) {
+const char * oyjlTermColor( oyjlTEXTMARK_e rgb, const char * text) {
   int len = strlen(text);
   static char t[256];
   static int colorterm_init = 0;
