@@ -3,7 +3,7 @@
  *  oyjl - Yajl tree extension
  *
  *  @par Copyright:
- *            2016-2019 (C) Kai-Uwe Behrmann
+ *            2016-2020 (C) Kai-Uwe Behrmann
  *
  *  @brief    Oyjl tree functions
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
@@ -81,6 +81,7 @@ int          oyjlDataFormat          ( const char        * text )
     return 0;
 }
 
+#define Florian_Forster_SOURCE_GUARD
 static oyjl_val oyjlValueAlloc (oyjl_type type)
 {
     oyjl_val v;
@@ -159,6 +160,7 @@ oyjl_val oyjlTreeGet(oyjl_val n, const char ** path, oyjl_type type)
     if (n && type != oyjl_t_any && type != n->type) n = NULL;
     return n;
 }
+#undef Florian_Forster_SOURCE_GUARD
 
 int        oyjlPathTermGetIndex      ( const char        * term,
                                        int               * index );
@@ -1444,6 +1446,7 @@ int        oyjlValueSetString        ( oyjl_val            v,
   return error;
 }
 
+#define Florian_Forster_SOURCE_GUARD
 /** @brief release all childs recursively */
 void oyjlValueClear          (oyjl_val v)
 {
@@ -1462,6 +1465,7 @@ void oyjlValueClear          (oyjl_val v)
 
     v->type = oyjl_t_null;
 }
+#undef Florian_Forster_SOURCE_GUARD
 
 /** @brief release a specific node and all its childs
  *
