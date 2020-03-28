@@ -20,9 +20,11 @@ oyranos\-profile\-graph v0.9.7 \- Oyranos Profile Graph
 <br />
 **oyranos\-profile\-graph** <strong>\-k</strong>=<em>NUMBER</em> [<strong>\-t</strong>=<em>NUMBER</em>] [<strong>\-b</strong>] [<strong>\-l</strong>=<em>NUMBER</em>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMBER</em>] [<strong>\-T</strong>] [<strong>\-o</strong>=<em>\-|FILE</em>] [<strong>\-f</strong>=<em>FORMAT</em>] [<strong>\-v</strong>]
 <br />
-**oyranos\-profile\-graph** <strong>\-i</strong>=<em>STRING</em> [<strong>\-t</strong>=<em>NUMBER</em>] [<strong>\-b</strong>] [<strong>\-l</strong>=<em>NUMBER</em>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMBER</em>] [<strong>\-T</strong>] [<strong>\-o</strong>=<em>\-|FILE</em>] [<strong>\-f</strong>=<em>FORMAT</em>] [<strong>\-v</strong>]
+**oyranos\-profile\-graph** <strong>\-u</strong>=<em>STRING</em> [<strong>\-t</strong>=<em>NUMBER</em>] [<strong>\-b</strong>] [<strong>\-l</strong>=<em>NUMBER</em>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMBER</em>] [<strong>\-T</strong>] [<strong>\-o</strong>=<em>\-|FILE</em>] [<strong>\-f</strong>=<em>FORMAT</em>] [<strong>\-v</strong>]
 <br />
 **oyranos\-profile\-graph** <strong>\-s</strong>=<em>FILE</em> <strong>\-p</strong>=<em>FORMAT</em> <strong>\-z</strong> [<strong>\-t</strong>=<em>NUMBER</em>] [<strong>\-b</strong>] [<strong>\-l</strong>=<em>NUMBER</em>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMBER</em>] [<strong>\-T</strong>] [<strong>\-P</strong>=<em>STRING</em>] [<strong>\-o</strong>=<em>\-|FILE</em>] [<strong>\-v</strong>]
+<br />
+**oyranos\-profile\-graph** <strong>\-i</strong>=<em>FILE</em> [<strong>\-t</strong>=<em>NUMBER</em>] [<strong>\-b</strong>] [<strong>\-l</strong>=<em>NUMBER</em>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMBER</em>] [<strong>\-T</strong>] [<strong>\-f</strong>=<em>FORMAT</em>] [<strong>\-o</strong>=<em>\-|FILE</em>] [<strong>\-v</strong>]
 <br />
 **oyranos\-profile\-graph** <strong>\-X</strong>=<em>json|json+command|man|markdown</em> | <strong>\-h</strong> [<strong>\-v</strong>]
 
@@ -88,18 +90,18 @@ The  oyranos\-profile\-graph programm converts ICC profiles or embedded ICC prof
 </table>
 
 #### Illuminant Spectrum Graph
-&nbsp;&nbsp;**oyranos-profile\-graph** <strong>\-i</strong>=<em>STRING</em> [<strong>\-t</strong>=<em>NUMBER</em>] [<strong>\-b</strong>] [<strong>\-l</strong>=<em>NUMBER</em>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMBER</em>] [<strong>\-T</strong>] [<strong>\-o</strong>=<em>\-|FILE</em>] [<strong>\-f</strong>=<em>FORMAT</em>] [<strong>\-v</strong>]
+&nbsp;&nbsp;**oyranos-profile\-graph** <strong>\-u</strong>=<em>STRING</em> [<strong>\-t</strong>=<em>NUMBER</em>] [<strong>\-b</strong>] [<strong>\-l</strong>=<em>NUMBER</em>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMBER</em>] [<strong>\-T</strong>] [<strong>\-o</strong>=<em>\-|FILE</em>] [<strong>\-f</strong>=<em>FORMAT</em>] [<strong>\-v</strong>]
 
 <table style='width:100%'>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-i</strong>|<strong>--illuminant</strong> <em>STRING</em></td> <td>Illuminant Spectrum
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-u</strong>|<strong>--illuminant</strong> <em>STRING</em></td> <td>Illuminant Spectrum
   <table>
-   <tr><td style='padding-left:0.5em'><strong>-i A</strong></td><td># Illuminant A</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-i D50</strong></td><td># Illuminant D50</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-i D55</strong></td><td># Illuminant D55</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-i D65</strong></td><td># Illuminant D65</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-i D65T</strong></td><td># Illuminant D65 T</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-i D75</strong></td><td># Illuminant D75</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-i D93</strong></td><td># Illuminant D93</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-u A</strong></td><td># Illuminant A</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-u D50</strong></td><td># Illuminant D50</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-u D55</strong></td><td># Illuminant D55</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-u D65</strong></td><td># Illuminant D65</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-u D65T</strong></td><td># Illuminant D65 T</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-u D75</strong></td><td># Illuminant D75</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-u D93</strong></td><td># Illuminant D93</td></tr>
   </table>
   </td>
  </tr>
@@ -124,6 +126,13 @@ The  oyranos\-profile\-graph programm converts ICC profiles or embedded ICC prof
  </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-P</strong>|<strong>--pattern</strong> <em>STRING</em></td> <td>Filter of Color Names </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-z</strong>|<strong>--scale</strong></td> <td>Scale the height of the spectrum graph</td> </tr>
+</table>
+
+#### Render Color Page
+&nbsp;&nbsp;**oyranos-profile\-graph** <strong>\-i</strong>=<em>FILE</em> [<strong>\-t</strong>=<em>NUMBER</em>] [<strong>\-b</strong>] [<strong>\-l</strong>=<em>NUMBER</em>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMBER</em>] [<strong>\-T</strong>] [<strong>\-f</strong>=<em>FORMAT</em>] [<strong>\-o</strong>=<em>\-|FILE</em>] [<strong>\-v</strong>]
+
+<table style='width:100%'>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-i</strong>|<strong>--import</strong> <em>FILE</em></td> <td>Color Page Input<br />Supported is a color page in NCC format, which contains pages layout with referenced rgb values. Those are placed on a sheed. Such pages are created by e.g. oyranos-profile-graph --hlc=NUMBER -f ncc </tr>
 </table>
 
 #### General options

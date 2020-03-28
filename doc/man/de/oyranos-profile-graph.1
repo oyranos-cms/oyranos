@@ -12,9 +12,11 @@ oyranos-profile-graph v0.9.7 \- Oyranos Profile Zeichner
 .br
 \fBoyranos-profile-graph\fR \fB\-k\fR \fINUMMER\fR [\fB\-t\fR \fINUMMER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMMER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMMER\fR] [\fB\-T\fR] [\fB\-o\fR \fI-|DATEI\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-v\fR]
 .br
-\fBoyranos-profile-graph\fR \fB\-i\fR \fIWORT\fR [\fB\-t\fR \fINUMMER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMMER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMMER\fR] [\fB\-T\fR] [\fB\-o\fR \fI-|DATEI\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-v\fR]
+\fBoyranos-profile-graph\fR \fB\-u\fR \fIWORT\fR [\fB\-t\fR \fINUMMER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMMER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMMER\fR] [\fB\-T\fR] [\fB\-o\fR \fI-|DATEI\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-v\fR]
 .br
 \fBoyranos-profile-graph\fR \fB\-s\fR \fIDATEI\fR \fB\-p\fR \fIFORMAT\fR \fB\-z\fR [\fB\-t\fR \fINUMMER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMMER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMMER\fR] [\fB\-T\fR] [\fB\-P\fR \fIWORT\fR] [\fB\-o\fR \fI-|DATEI\fR] [\fB\-v\fR]
+.br
+\fBoyranos-profile-graph\fR \fB\-i\fR \fIDATEI\fR [\fB\-t\fR \fINUMMER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMMER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMMER\fR] [\fB\-T\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-o\fR \fI-|DATEI\fR] [\fB\-v\fR]
 .br
 \fBoyranos-profile-graph\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-h\fR [\fB\-v\fR]
 .SH BESCHREIBUNG
@@ -86,23 +88,23 @@ Spektrumgraph eines Lambertstrahlers
 .br
 .SS
 Beleuchtungsspektrumzeichnung
-\fBoyranos-profile-graph\fR \fB\-i\fR \fIWORT\fR [\fB\-t\fR \fINUMMER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMMER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMMER\fR] [\fB\-T\fR] [\fB\-o\fR \fI-|DATEI\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-v\fR]
+\fBoyranos-profile-graph\fR \fB\-u\fR \fIWORT\fR [\fB\-t\fR \fINUMMER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMMER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMMER\fR] [\fB\-T\fR] [\fB\-o\fR \fI-|DATEI\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-v\fR]
 .br
-\fB\-i\fR|\fB\-\-illuminant\fR \fIWORT\fR	Beleuchtungsspektrum
+\fB\-u\fR|\fB\-\-illuminant\fR \fIWORT\fR	Beleuchtungsspektrum
 .br
-	\-i A		# Lichtart A - CIE A Strahlungsverteilung
+	\-u A		# Lichtart A - CIE A Strahlungsverteilung
 .br
-	\-i D50		# Lichtart D50 - CIE D50 Strahlungsverteilung (berechnet)
+	\-u D50		# Lichtart D50 - CIE D50 Strahlungsverteilung (berechnet)
 .br
-	\-i D55		# Lichtart D55 - CIE D55 Strahlungsverteilung (berechnet)
+	\-u D55		# Lichtart D55 - CIE D55 Strahlungsverteilung (berechnet)
 .br
-	\-i D65		# Lichtart D65 - CIE D65 Strahlungsverteilung (berechnet)
+	\-u D65		# Lichtart D65 - CIE D65 Strahlungsverteilung (berechnet)
 .br
-	\-i D65T		# Lichtart D65 T - CIE D65 Strahlungsverteilung
+	\-u D65T		# Lichtart D65 T - CIE D65 Strahlungsverteilung
 .br
-	\-i D75		# Lichtart D75 - CIE D75 Strahlungsverteilung (berechnet)
+	\-u D75		# Lichtart D75 - CIE D75 Strahlungsverteilung (berechnet)
 .br
-	\-i D93		# Lichtart D93 - CIE D93 Strahlungsverteilung (berechnet)
+	\-u D93		# Lichtart D93 - CIE D93 Strahlungsverteilung (berechnet)
 .br
 .SS
 Spektrumgraph
@@ -130,6 +132,14 @@ Spektrumgraph
 .br
 \fB\-z\fR|\fB\-\-scale\fR	Skaliere die Höhe der Spektrumkurve
 .br
+.SS
+Render Color Page
+\fBoyranos-profile-graph\fR \fB\-i\fR \fIDATEI\fR [\fB\-t\fR \fINUMMER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMMER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMMER\fR] [\fB\-T\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-o\fR \fI-|DATEI\fR] [\fB\-v\fR]
+.br
+\fB\-i\fR|\fB\-\-import\fR \fIDATEI\fR	Color Page Input
+.RS
+Supported is a color page in NCC format, which contains pages layout with referenced rgb values. Those are placed on a sheed. Such pages are created by e.g. oyranos-profile-graph --hlc=NUMBER -f ncc
+.RE
 .SS
 Allgemeine Optionen
 \fBoyranos-profile-graph\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-h\fR [\fB\-v\fR]

@@ -325,7 +325,8 @@ int myMain( int argc, const char ** argv )
       {.dbl.start = 0.0, .dbl.end = 365.0, .dbl.tick = 5, .dbl.d = 0.0}, oyjlDOUBLE, {.d=&hlc} },
     {"oiwi", 0, "l", "lightness",     NULL, _("Lightness"),     _("Background Lightness"),   NULL, _("NUMBER"), oyjlOPTIONTYPE_DOUBLE,
       {.dbl.start = -1.0, .dbl.end = 100.0, .dbl.tick = 1.0, .dbl.d = -1.0}, oyjlDOUBLE, {.d=&lightness} },
-    {"oiwi", 0, "i", "illuminant",    NULL, _("Illuminant"),    _("Illuminant Spectrum"),    NULL, _("STRING"), oyjlOPTIONTYPE_CHOICE,
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "i", "import",         NULL, _("Input"),        _("Color Page Input"),       _("Supported is a color page in NCC format, which contains pages layout with referenced rgb values. Those are placed on a sheed. Such pages are created by e.g. oyranos-profile-graph --hlc=NUMBER -f ncc"), _("FILE"), oyjlOPTIONTYPE_CHOICE, {}, oyjlSTRING, {.s=&input} },
+    {"oiwi", 0, "u", "illuminant",    NULL, _("Illuminant"),    _("Illuminant Spectrum"),    NULL, _("STRING"), oyjlOPTIONTYPE_CHOICE,
       {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)illu_dxx, sizeof(illu_dxx), 0 )}, oyjlSTRING, {.s=&illuminant} },
     {"oiwi", 0, "k", "kelvin",        NULL, _("Kelvin"),        _("Blackbody Radiator"),     NULL, _("NUMBER"), oyjlOPTIONTYPE_DOUBLE,
       {.dbl.start = 0.0, .dbl.end = 25000.0, .dbl.tick = 100, .dbl.d = 0.0}, oyjlDOUBLE, {.d=&kelvin} },
@@ -372,8 +373,9 @@ int myMain( int argc, const char ** argv )
     {"oiwg", 0, _("StdObs2°"), _("Standard Observer 1931 2° Graph"), NULL, "S", "t,b,l,g,w,T,o,f,v", "S" },
     {"oiwg", 0, _("Obs10°"), _("1964 10° Observer Graph"), NULL, "O", "t,b,l,g,w,T,o,f,v", "O" },
     {"oiwg", 0, _("Blackbody Radiator"), _("Blackbody Radiator Spectrum Graph"), NULL, "k", "t,b,l,g,w,T,o,f,v", "k" },
-    {"oiwg", 0, _("Illuminant Spectrum"), _("Illuminant Spectrum Graph"), NULL, "i", "t,b,l,g,w,T,o,f,v", "i" },
+    {"oiwg", 0, _("Illuminant Spectrum"), _("Illuminant Spectrum Graph"), NULL, "u", "t,b,l,g,w,T,o,f,v", "u" },
     {"oiwg", 0, _("Spectral Input"), _("Spectral Input Graph"), NULL, "s,p,z", "t,b,l,g,w,T,P,o,v", "s,p,P,z" },
+    {"oiwg", 0, _("Color Page"), _("Render Color Page"), NULL, "i", "t,b,l,g,w,T,f,o,v", "i" },
     {"oiwg", 0, _("Misc"), _("General options"), NULL, "X|h", "v", "t,b,l,g,w,T,o,f,h,X,v" },
     {"",0,0,0,0,0,0,0}
   };
@@ -474,7 +476,7 @@ int myMain( int argc, const char ** argv )
 
 
 
-#define flags (v2?OY_ICC_VERSION_2:0 | v4?OY_ICC_VERSION_4:0 | no_repair?OY_NO_REPAIR:0)
+#define pflags (v2?OY_ICC_VERSION_2:0 | v4?OY_ICC_VERSION_4:0 | no_repair?OY_NO_REPAIR:0)
 
   if(input)
   {
@@ -523,8 +525,8 @@ int myMain( int argc, const char ** argv )
       if(verbose && spectra) fprintf( stderr, "CGATS parsed\n" );
       if(oy_debug) fprintf( stderr, "%s", oyStruct_GetText((oyStruct_s*)spectra, oyNAME_NAME, 0));
     }
-    if(!spectra && text)
-      oyImage_FromFile( fn, flags, &image, NULL );
+    if(!spectra && text && data_format != oyNAME_JSON)
+      oyImage_FromFile( fn, pflags, &image, NULL );
 
     if(spectra)
     {
@@ -737,7 +739,7 @@ int myMain( int argc, const char ** argv )
         for(i = 0; i < profile_count; ++i)
         {
           const char * filename = profile_names[i];
-          oyProfile_s * p = oyProfile_FromName( filename, flags, NULL );
+          oyProfile_s * p = oyProfile_FromName( filename, pflags, NULL );
           if(verbose)
             fprintf(stderr, "proofing: %s\n", filename);
           proofing = oyProfiles_New(0);
@@ -750,7 +752,7 @@ int myMain( int argc, const char ** argv )
       for(i = 0; i < profile_count; ++i)
       {
         const char * filename = profile_names[i];
-        oyProfile_s * p = oyProfile_FromName( filename, flags, NULL );
+        oyProfile_s * p = oyProfile_FromName( filename, pflags, NULL );
         oyConversion_s * cc;
         const char * desc = oyProfile_GetText( p, oyNAME_DESCRIPTION );
         const char * fn = oyProfile_GetFileName(p, -1);
@@ -781,11 +783,29 @@ int myMain( int argc, const char ** argv )
     for(h = 0; h < 360; h += dist)
     {
       char page_id[8];
+      char id[24];
       if(hlc != 365)
         h = hlc;
       sprintf( page_id, "H%03d", h );
       oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, h/dist,  "collection/[0]/pages/%s/index", page_id );
-      oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, "The page consists of a array of rows, each containing a array of columns. Each column references a color id or null for no color at this position in the row.",  "collection/[0]/pages/%s/comment", page_id );
+      oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, "The page consists of a array of rows, each containing a array of columns. Each column references a color index number or null for no color at this position in the row.",  "collection/[0]/pages/%s/comment", page_id );
+      /* provide axis texts */
+      oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, "L",  "collection/[0]/pages/%s/rows_marker", page_id );
+      for(l = 0; l < lcount; ++l)
+      {
+        sprintf( id, "%03d", (int)(l/(double)(lcount-1)*100) );
+        oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, id,  "collection/[0]/pages/%s/rows_markers/[%d]", page_id, l );
+      }
+      oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, "C",  "collection/[0]/pages/%s/columns_marker", page_id );
+      for(c = 0; c < ccount; ++c)
+      {
+        sprintf( id, "%03d", (int)(c/(double)(ccount-1)*c_max) );
+        oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, id,  "collection/[0]/pages/%s/columns_markers/[%d]", page_id, c );
+      }
+      oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, "a*",  "collection/[0]/pages/%s/columns_marker2", page_id );
+      oyjlTreeGetValueF( specT, OYJL_CREATE_NEW,         "collection/[0]/pages/%s/columns_markers2/[%d]", page_id, 0 );
+      oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, "b*",  "collection/[0]/pages/%s/columns_marker3", page_id );
+      oyjlTreeGetValueF( specT, OYJL_CREATE_NEW,         "collection/[0]/pages/%s/columns_markers3/[%d]", page_id, 0 );
       for(l = lcount - 1; l >= 0; --l)
       {
         char row_id[8];
@@ -795,14 +815,23 @@ int myMain( int argc, const char ** argv )
           double LCh[3] = { l/(double)(lcount-1), c/(double)(ccount-1)*c_max/128.0, h/360.0 };
           double Lab[3], XYZ[3];
           int page_start_index = h/dist * ccount * lcount;
-          char id[24];
           int error;
 
           i = (hlc == 365 ? page_start_index : 0) + l * ccount + c;
 
+          oyLCh2Lab(LCh, Lab, NULL);
+
+          if(l == 0)
+          {
+            sprintf( id, "%.1f", Lab[1]*256.0-128.0 );
+            oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, id,  "collection/[0]/pages/%s/columns_markers2/[%d]", page_id, c );
+            sprintf( id, "%.1f", Lab[2]*256.0-128.0 );
+            oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, id,  "collection/[0]/pages/%s/columns_markers3/[%d]", page_id, c );
+          }
+
           if(outside && outside[i])
           {
-            oyjlTreeGetValueF( specT, OYJL_CREATE_NEW, "collection/[0]/pages/%s/%s/[%d]", page_id, row_id, c );
+            oyjlTreeGetValueF( specT, OYJL_CREATE_NEW, "collection/[0]/pages/%s/rows/%s/[%d]", page_id, row_id, c );
             continue;
           }
 
@@ -816,7 +845,6 @@ int myMain( int argc, const char ** argv )
           oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, LCh[0], "collection/[0]/colors/[%d]/lch/[0]/data/[0]", index );
           oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, LCh[1], "collection/[0]/colors/[%d]/lch/[0]/data/[1]", index );
           oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, LCh[2], "collection/[0]/colors/[%d]/lch/[0]/data/[2]", index );
-          oyLCh2Lab(LCh, Lab, NULL);
           oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, Lab[0], "collection/[0]/colors/[%d]/lab/[0]/data/[0]", index );
           oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, Lab[1], "collection/[0]/colors/[%d]/lab/[0]/data/[1]", index );
           oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, Lab[2], "collection/[0]/colors/[%d]/lab/[0]/data/[2]", index );
@@ -833,6 +861,7 @@ int myMain( int argc, const char ** argv )
           oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, rgb[0], "collection/[0]/colors/[%d]/rgb/[0]/data/[0]", index );
           oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, rgb[1], "collection/[0]/colors/[%d]/rgb/[0]/data/[1]", index );
           oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, rgb[2], "collection/[0]/colors/[%d]/rgb/[0]/data/[2]", index );
+
           if(profile_count)
           {
             for(i = 0; i < profile_count; ++i)
@@ -877,7 +906,8 @@ int myMain( int argc, const char ** argv )
             }
           }
 
-          oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, id, "collection/[0]/pages/%s/%s/[%d]", page_id, row_id, c );
+          /* position in colors array */
+          oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, index, "collection/[0]/pages/%s/rows/%s/[%d]", page_id, row_id, c );
 
           ++index;
         }
@@ -1115,13 +1145,13 @@ int myMain( int argc, const char ** argv )
       const char * filename = profile_names[j];
       size_t size = 0;
 
-      oyProfile_s * p = oyProfile_FromName( filename, flags, NULL );
+      oyProfile_s * p = oyProfile_FromName( filename, pflags, NULL );
       double * saturation;
 
       if(!p)
       {
         oyImage_s * image = 0;
-        oyImage_FromFile( filename, flags, &image, NULL );
+        oyImage_FromFile( filename, pflags, &image, NULL );
         p = oyImage_GetProfile( image );
       }
 
@@ -1174,6 +1204,153 @@ int myMain( int argc, const char ** argv )
       oyProfile_Release( &p );
     }
   } else
+  /* expect a page to draw */
+  if(oyjlTreeGetValue( specT, 0, "collection/[0]/pages/[0]/" ))
+  {
+    int rows = 0, columns = 0, x,y;
+    oyjl_val v = oyjlTreeGetValue( specT, 0, "collection/[0]/pages/[0]/[0]" );
+    char * pt = oyjlTreeGetPath( specT, v );
+    if(pt && strrchr( pt, '/' ))
+      strrchr( pt, '/' )[0] = '\000';
+
+    v = oyjlTreeGetValue( specT, 0, "collection/[0]/pages/[0]/rows" );
+    rows = oyjlValueCount( v );
+    v = oyjlTreeGetValue( specT, 0, "collection/[0]/pages/[0]/rows/" );
+    columns = oyjlValueCount( v );
+    fprintf( stderr, "page_title: %s (%s) %dx%d\n", pt && strrchr(pt,'/') ? &strrchr(pt,'/')[1] : "----", pt, rows, columns );
+
+    double ratio = rows / (double)columns;
+    double off = frame/20.0;
+    cairo_set_line_width (cr, off * 2.0);
+    char * utf8 = NULL;
+    const char * t;
+    cairo_select_font_face(cr, "Sans",
+                           CAIRO_FONT_SLANT_NORMAL,
+                           CAIRO_FONT_WEIGHT_NORMAL);
+    cairo_set_font_size (cr, frame);
+    x = 0; y = rows;
+    if((t = OYJL_GET_STRING(oyjlTreeGetValue( specT, 0, "collection/[0]/pages/[0]/rows_marker" ))) != NULL)
+    {
+      oyjlStringAdd( &utf8, 0,0, t );
+      cairo_move_to (cr, xToImage(0) - frame * 0.8,
+                         yToImage((double)(y  )/(double)rows * ratio + (1-ratio) / 2.0 + 0.01) - off);
+      cairo_show_text (cr, utf8);
+      free(utf8); utf8 = NULL;
+    }
+    cairo_set_font_size (cr, frame/2.0);
+    for(y = 0; y < rows; ++y)
+      if((t = OYJL_GET_STRING(oyjlTreeGetValueF( specT, 0, "collection/[0]/pages/[0]/rows_markers/[%d]", y ))) != NULL)
+      {
+        oyjlStringAdd( &utf8, 0,0, t );
+        cairo_move_to (cr, xToImage(0) - frame * 0.8,
+                           yToImage((double)(y  )/(double)rows * ratio + (1-ratio) / 2.0 + 0.01) - off);
+        cairo_show_text (cr, utf8);
+        free(utf8); utf8 = NULL;
+      }
+
+    x = columns - 1;
+    cairo_set_font_size (cr, frame);
+    oyjlStringAdd( &utf8, 0,0, "%s", pt && strrchr(pt,'/') ? &strrchr(pt,'/')[1] : "----" );
+    cairo_move_to (cr, xToImage(1.0) - frame * 2.5,
+                       yToImage((double)(y  )/(double)rows * ratio + (1-ratio) / 2.0 + 0.01) - off);
+    cairo_show_text (cr, utf8);
+    free(utf8); utf8 = NULL;
+
+    x = y = 0;
+    cairo_set_font_size (cr, frame);
+    if((t = OYJL_GET_STRING(oyjlTreeGetValue( specT, 0, "collection/[0]/pages/[0]/columns_marker" ))) != NULL)
+    {
+      oyjlStringAdd( &utf8, 0,0, t );
+      cairo_move_to (cr, xToImage(0) - frame * 0.8,
+                         yToImage((double)(y  )/(double)rows * ratio + (1-ratio) / 2.0 - 0.05) - off);
+      cairo_show_text (cr, utf8);
+      free(utf8); utf8 = NULL;
+    }
+
+    cairo_set_font_size (cr, frame/2.0);
+    if((t = OYJL_GET_STRING(oyjlTreeGetValue( specT, 0, "collection/[0]/pages/[0]/columns_marker2" ))) != NULL)
+    {
+      oyjlStringAdd( &utf8, 0,0, t );
+      cairo_move_to (cr, xToImage(0) - frame * 0.8,
+                         yToImage((double)(y  )/(double)rows * ratio + (1-ratio) / 2.0 - 0.07) - off);
+      cairo_show_text (cr, utf8);
+      free(utf8); utf8 = NULL;
+    }
+
+    if((t = OYJL_GET_STRING(oyjlTreeGetValue( specT, 0, "collection/[0]/pages/[0]/columns_marker3" ))) != NULL)
+    {
+      oyjlStringAdd( &utf8, 0,0, t );
+      cairo_move_to (cr, xToImage(0) - frame * 0.8, yToImage((double)(y  )/(double)rows * ratio + (1-ratio) / 2.0 - 0.09) - off);
+      cairo_show_text (cr, utf8);
+      free(utf8); utf8 = NULL;
+    }
+
+    cairo_set_font_size (cr, frame/2.0);
+    for(x = 0; x < columns; ++x)
+    {
+      if((t = OYJL_GET_STRING(oyjlTreeGetValueF( specT, 0, "collection/[0]/pages/[0]/columns_markers/[%d]", x ))) != NULL)
+      {
+        oyjlStringAdd( &utf8, 0,0, t );
+        cairo_move_to (cr, xToImage((((double)x)+0.5)/(double)columns) - 0.6*frame, yToImage((double)(y  )/(double)rows * ratio + (1-ratio) / 2.0 - 0.05) - off);
+        cairo_show_text (cr, utf8);
+        free(utf8); utf8 = NULL;
+      }
+      if((t = OYJL_GET_STRING(oyjlTreeGetValueF( specT, 0, "collection/[0]/pages/[0]/columns_markers2/[%d]", x ))) != NULL)
+      {
+        oyjlStringAdd( &utf8, 0,0, t );
+        cairo_move_to (cr, xToImage((((double)x)+0.5)/(double)columns) - 0.6*frame, yToImage((double)(y  )/(double)rows * ratio + (1-ratio) / 2.0 - 0.07) - off);
+        cairo_show_text (cr, utf8);
+        free(utf8); utf8 = NULL;
+      }
+      if((t = OYJL_GET_STRING(oyjlTreeGetValueF( specT, 0, "collection/[0]/pages/[0]/columns_markers3/[%d]", x ))) != NULL)
+      {
+        oyjlStringAdd( &utf8, 0,0, t );
+        cairo_move_to (cr, xToImage((((double)x)+0.5)/(double)columns) - 0.6*frame, yToImage((double)(y  )/(double)rows * ratio + (1-ratio) / 2.0 - 0.09) - off);
+        cairo_show_text (cr, utf8);
+        free(utf8); utf8 = NULL;
+      }
+    }
+
+    for(x = 0; x < columns; ++x)
+    {
+      for(y = 0; y < rows; ++y)
+      {
+        int found = 0;
+        double rgb[4] = { 1, 1, 1, 1.0 };
+        double d;
+        int index = 0, i;
+        v = oyjlTreeGetValueF( specT, 0, "collection/[0]/pages/[0]/rows/[%d]/[%d]", y, x );
+        if(OYJL_IS_DOUBLE(v))
+        {
+          d = OYJL_GET_DOUBLE(v);
+          index = (int)(d+0.5);
+          for(i = 0; i < 3; ++i)
+          {
+            v = oyjlTreeGetValueF( specT, 0, "collection/[0]/colors/[%d]/rgb/[0]/data/[%d]", index, i );
+            if(OYJL_IS_DOUBLE(v))
+              rgb[i] = OYJL_GET_DOUBLE(v);
+          }
+          found = 1;
+        }
+
+        if(found)
+        {
+          cairo_new_path(cr);
+          cairo_move_to(cr, xToImage((double)(x  )/(double)columns) + off, yToImage((double)(rows-1-y  )/(double)rows * ratio + (1-ratio) / 2.0) - off);
+          cairo_line_to(cr, xToImage((double)(x+1)/(double)columns) - off, yToImage((double)(rows-1-y  )/(double)rows * ratio + (1-ratio) / 2.0) - off);
+          cairo_line_to(cr, xToImage((double)(x+1)/(double)columns) - off, yToImage((double)(rows-1-y+1)/(double)rows * ratio + (1-ratio) / 2.0) + off);
+          cairo_line_to(cr, xToImage((double)(x  )/(double)columns) + off, yToImage((double)(rows-1-y+1)/(double)rows * ratio + (1-ratio) / 2.0) + off);
+          cairo_close_path(cr);
+          cairo_set_source_rgba( cr, rgb[0], rgb[1], rgb[2], 1.0);
+          cairo_fill(cr);
+        }
+
+        cairo_set_source_rgba( cr, 0, 0, 0, 1.0 );
+      }
+    }
+    cairo_set_source_rgba( cr, 1, 1, 1, 1.0);
+
+  } else
     /* draw HLC color atlas sheed: page with all lightness and saturations for a selected hue */
   if(hlc >= 0.0)
   {
@@ -1201,7 +1378,7 @@ int myMain( int argc, const char ** argv )
       for(i = 0; i < profile_count; ++i)
       {
         const char * filename = profile_names[i];
-        oyProfile_s * p = oyProfile_FromName( filename, flags, NULL );
+        oyProfile_s * p = oyProfile_FromName( filename, pflags, NULL );
         if(verbose)
           fprintf(stderr, "proofing: %s\n", filename);
         proofing = oyProfiles_New(0);
@@ -1432,7 +1609,7 @@ int myMain( int argc, const char ** argv )
                       xO, yO, width, height, \
                       min_x, max_x,  min_y < 0 ? min_y : 0.0, max, \
                       no_color ? COLOR_GRAY : COLOR_COLOR, rgba, \
-                      flags, id ); \
+                      pflags, id ); \
     }
   cairo_set_line_width (cr, 3.*thickness);
   if(standardobs)
@@ -1480,7 +1657,7 @@ int myMain( int argc, const char ** argv )
                       xO, yO, width, height,
                       min_x, max_x,  min_y < 0 ? min_y : 0.0, max,
                       no_color ? COLOR_GRAY : COLOR_SPECTRAL, rgba,
-                      flags, "kelvin" );
+                      pflags, "kelvin" );
     oyImage_Release( &a );
   }
 #define ILLUMINANT( DXX ) \
@@ -1498,7 +1675,7 @@ int myMain( int argc, const char ** argv )
       drawIlluminant( cr, a, 0, xO, yO, width, height, \
                       min_x, max_x,  min_y < 0 ? min_y : 0.0, max, \
                       no_color ? COLOR_GRAY : COLOR_SPECTRAL, rgba, \
-                      flags, "D" #DXX ); \
+                      pflags, "D" #DXX ); \
       oyImage_Release( &a ); \
     } else
   if(illuminant != 0)
@@ -1514,7 +1691,7 @@ int myMain( int argc, const char ** argv )
                       xO, yO, width, height,
                       min_x, max_x,  min_y < 0 ? min_y : 0.0, max,
                       no_color ? COLOR_GRAY : COLOR_SPECTRAL, rgba,
-                      flags, "A" );
+                      pflags, "A" );
       oyImage_Release( &a );
     } else
     if(oyStringCaseCmp_(illuminant,"D65T") == 0)
@@ -1528,7 +1705,7 @@ int myMain( int argc, const char ** argv )
                       xO, yO, width, height,
                       min_x, max_x,  min_y < 0 ? min_y : 0.0, max,
                       no_color ? COLOR_GRAY : COLOR_SPECTRAL, rgba,
-                      flags, "A" );
+                      pflags, "A" );
       oyImage_Release( &a );
     } else
     if(oyStringCaseCmp_(illuminant,"SPD") == 0)
@@ -1540,15 +1717,15 @@ int myMain( int argc, const char ** argv )
       drawIlluminant( cr, a, 0, xO, yO, width, height,
                       min_x, max_x,  min_y < 0 ? min_y : 0.0, max,
                       no_color ? COLOR_GRAY : COLOR_SPECTRAL, rgba,
-                      flags, "S1" );
+                      pflags, "S1" );
       drawIlluminant( cr, a, 1, xO, yO, width, height,
                       min_x, max_x,  min_y < 0 ? min_y : 0.0, max,
                       no_color ? COLOR_GRAY : COLOR_SPECTRAL, rgba,
-                      flags, "S2" );
+                      pflags, "S2" );
       drawIlluminant( cr, a, 2, xO, yO, width, height,
                       min_x, max_x,  min_y < 0 ? min_y : 0.0, max,
                       no_color ? COLOR_GRAY : COLOR_SPECTRAL, rgba,
-                      flags, "S3" );
+                      pflags, "S3" );
       oyImage_Release( &a );
     } else
     ILLUMINANT( 50 )
@@ -1556,6 +1733,12 @@ int myMain( int argc, const char ** argv )
     ILLUMINANT( 65 )
     ILLUMINANT( 75 )
     ILLUMINANT( 93 )
+    /* else */ if(illuminant)
+    {
+      oyMessageFunc_p( oyMSG_ERROR, 0, "illuminant not supported: %s", oyjlTermColor( oyjlBOLD, illuminant ));
+      exit(0);
+    }
+
     {
     long kelvin = 0, err;
     if((err = oyjlStringToLong(illuminant,&kelvin)) == 0)
@@ -1574,7 +1757,7 @@ int myMain( int argc, const char ** argv )
       drawIlluminant( cr, a, 0, xO, yO, width, height,
                       min_x, max_x,  min_y < 0 ? min_y : 0.0, max,
                       no_color ? COLOR_GRAY : COLOR_SPECTRAL, rgba,
-                      flags, "D50" );
+                      pflags, "D50" );
       oyImage_Release( &a );
       if(spd_5) free(spd_5);
     }
@@ -1592,7 +1775,7 @@ int myMain( int argc, const char ** argv )
                       xO, yO, width, height,
                       min_x, max_x, min_y < 0 ? min_y : 0.0, max_y,
                       no_color ? COLOR_GRAY : spectral_count == 1 ? COLOR_SPECTRAL : COLOR_COLOR, rgb,
-                      flags, input );
+                      pflags, input );
     }
     oyImage_Release( &spectra );
 
@@ -1628,7 +1811,7 @@ int myMain( int argc, const char ** argv )
 
   return 0;
 }
-#undef flags
+#undef pflags
 
 extern int * oyjl_debug;
 char ** environment = NULL;
