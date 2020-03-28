@@ -246,6 +246,8 @@ void       oyjlTreeToPaths           ( oyjl_val            v,
                                        const char        * xpath,
                                        int                 flags,
                                        char            *** paths );
+char *     oyjlTreeGetPath           ( oyjl_val            v,
+                                       oyjl_val            node );
 #define    OYJL_CREATE_NEW             0x02   /**< @brief  flag to allocate a new tree node, in case it is not inside */
 oyjl_val   oyjlTreeGetValue          ( oyjl_val            v,
                                        int                 flags,
