@@ -1267,6 +1267,51 @@ oyjl_val   oyjlTreeNew               ( const char        * path )
     return oyjlValueAlloc( oyjl_t_null );
 }
 
+/** @brief   get a full path string from a child node
+ *
+ *  This function is the reverse from oyjlTreeGetValue().
+ *  Use this function to get parent names and resolve xpath
+ *  expressions to full paths.
+ *
+ *  @param[in]     v                   the oyjl node
+ *  @param[in]     value               the node to search for inside the v tree
+ *  @return                            the path or zero
+ *
+ *  @version Oyranos: 0.9.7
+ *  @date    2020/03/27
+ *  @since   2020/03/27 (Oyranos: 0.9.7)
+ */
+char *     oyjlTreeGetPath           ( oyjl_val            v,
+                                       oyjl_val            node )
+{
+  char * path = NULL;
+  char ** paths = NULL;
+  int count, i;
+  oyjl_val test = NULL;
+
+  oyjlTreeToPaths( v, 10000000, NULL, OYJL_KEY, &paths );
+  count = 0; while(paths && paths[count]) ++count;
+
+  for(i = 0; i < count; ++i)
+  {
+    path = paths[i];
+    test = oyjlTreeGetValue( v, 0, path );
+    if(test == node)
+    {
+      paths[i] = NULL;
+      break;
+    }
+  }
+
+  if(paths && count)
+    oyjlStringListRelease( &paths, count, free );
+
+  if(i == count)
+    path = NULL;
+
+  return path;
+}
+
 /** @brief obtain a node by a path expression
  *
  *  @see oyjlTreeGetValueF() */

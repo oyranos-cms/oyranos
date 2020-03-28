@@ -899,6 +899,16 @@ oyjlTESTRESULT_e testTree ()
   }
   myDeAllocFunc(v);
 
+  v = oyjlTreeGetPath( root, value );
+  if(v && strcmp(v,"new/tree/key") == 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlTreeGetPath(value) resolved to \"new/tree/key\"" );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlTreeGetPath(value) resolved to \"new/tree/key\"" );
+  }
+  myDeAllocFunc(v);
+
   oyjlTreeClearValue( root,"new/tree/key" );
   oyjlTreeToJson( root, &i, &rjson ); i = 0;
   if(!rjson || strcmp(rjson, "null") == 0)
