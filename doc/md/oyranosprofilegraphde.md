@@ -188,7 +188,7 @@ Das oyranos\-profile\-graph Programm erzeugt aus einem ICC Profil oder eingebett
 #### Show HLC Color Atlas patches
 &nbsp;&nbsp;oyranos\-profile\-graph \-H=90 \-o HLC\_H090.png cmyk web
   <br />
-&nbsp;&nbsp;Color pathes are only shown, if they are in gamut of the default CMYK and web profile.
+&nbsp;&nbsp;Color patches are only shown, if they are in gamut of the default CMYK and web profile.
 #### Zeige die Standard Betrachter Spektralfunktion als Kurven:
 &nbsp;&nbsp;oyranos\-profile\-graph \-\-standard\-observer \-o CIE\-StdObserver.png
 

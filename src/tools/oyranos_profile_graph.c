@@ -280,7 +280,7 @@ int myMain( int argc, const char ** argv )
                                   {"","","",""}};
   oyjlOptionChoice_s examples[]={ {_("Show graph of a ICC profile"), "oyranos-profile-graph ICC_PROFILE", "", ""},
                                   {_("Show the saturation lines of two profiles in CIE*ab 256 pixel width, without spectral line and with thicker lines:"), "oyranos-profile-graph -w 256 -s -t 3 sRGB.icc ProPhoto-RGB.icc", "", ""},
-                                  {_("Show HLC Color Atlas patches"),"oyranos-profile-graph -H=90 -o HLC_H090.png cmyk web",_("Color pathes are only shown, if they are in gamut of the default CMYK and web profile."), ""},
+                                  {_("Show HLC Color Atlas patches"),"oyranos-profile-graph -H=90 -o HLC_H090.png cmyk web",_("Color patches are only shown, if they are in gamut of the default CMYK and web profile."), ""},
                                   {_("Show the standard observer spectral function as curves:"),"oyranos-profile-graph --standard-observer -o CIE-StdObserver.png","", ""},
                                   {"","","",""}};
   oyjlOptionChoice_s illu_dxx[]={ {"A",  _("Illuminant A"),  "", _("CIE A spectral power distribution")},

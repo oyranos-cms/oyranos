@@ -188,7 +188,7 @@ The  oyranos\-profile\-graph programm converts ICC profiles or embedded ICC prof
 #### Show HLC Color Atlas patches
 &nbsp;&nbsp;oyranos\-profile\-graph \-H=90 \-o HLC\_H090.png cmyk web
   <br />
-&nbsp;&nbsp;Color pathes are only shown, if they are in gamut of the default CMYK and web profile.
+&nbsp;&nbsp;Color patches are only shown, if they are in gamut of the default CMYK and web profile.
 #### Show the standard observer spectral function as curves:
 &nbsp;&nbsp;oyranos\-profile\-graph \-\-standard\-observer \-o CIE\-StdObserver.png
 
