@@ -24,7 +24,7 @@ oyranos\-profile\-graph v0.9.7 \- Oyranos Profile Zeichner
 <br />
 **oyranos\-profile\-graph** <strong>\-s</strong>=<em>DATEI</em> <strong>\-p</strong>=<em>FORMAT</em> <strong>\-z</strong> [<strong>\-t</strong>=<em>NUMMER</em>] [<strong>\-b</strong>] [<strong>\-l</strong>=<em>NUMMER</em>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMMER</em>] [<strong>\-T</strong>] [<strong>\-P</strong>=<em>WORT</em>] [<strong>\-o</strong>=<em>\-|DATEI</em>] [<strong>\-v</strong>]
 <br />
-**oyranos\-profile\-graph** <strong>\-i</strong>=<em>DATEI</em> [<strong>\-t</strong>=<em>NUMMER</em>] [<strong>\-b</strong>] [<strong>\-l</strong>=<em>NUMMER</em>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMMER</em>] [<strong>\-T</strong>] [<strong>\-f</strong>=<em>FORMAT</em>] [<strong>\-o</strong>=<em>\-|DATEI</em>] [<strong>\-v</strong>]
+**oyranos\-profile\-graph** <strong>\-i</strong>=<em>DATEI</em> [<strong>\-I</strong>=<em>SEITE</em>] [<strong>\-t</strong>=<em>NUMMER</em>] [<strong>\-b</strong>] [<strong>\-l</strong>=<em>NUMMER</em>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMMER</em>] [<strong>\-T</strong>] [<strong>\-f</strong>=<em>FORMAT</em>] [<strong>\-o</strong>=<em>\-|DATEI</em>] [<strong>\-v</strong>]
 <br />
 **oyranos\-profile\-graph** <strong>\-X</strong>=<em>json|json+command|man|markdown</em> | <strong>\-h</strong> [<strong>\-v</strong>]
 
@@ -112,7 +112,7 @@ Das oyranos\-profile\-graph Programm erzeugt aus einem ICC Profil oder eingebett
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-s</strong>|<strong>--spectral</strong> <em>DATEI</em></td> <td>Spektrale Eingabe </tr>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-p</strong>|<strong>--spectral-format</strong> <em>FORMAT</em></td> <td>Specify spectral output file format
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-p</strong>|<strong>--spectral-format</strong> <em>FORMAT</em></td> <td>Gib spektrales Ausgabeformat an
   <table>
    <tr><td style='padding-left:0.5em'><strong>-p png</strong></td><td># PNG</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-p svg</strong></td><td># SVG</td></tr>
@@ -128,11 +128,12 @@ Das oyranos\-profile\-graph Programm erzeugt aus einem ICC Profil oder eingebett
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-z</strong>|<strong>--scale</strong></td> <td>Skaliere die Höhe der Spektrumkurve</td> </tr>
 </table>
 
-#### Render Color Page
-&nbsp;&nbsp;**oyranos-profile\-graph** <strong>\-i</strong>=<em>DATEI</em> [<strong>\-t</strong>=<em>NUMMER</em>] [<strong>\-b</strong>] [<strong>\-l</strong>=<em>NUMMER</em>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMMER</em>] [<strong>\-T</strong>] [<strong>\-f</strong>=<em>FORMAT</em>] [<strong>\-o</strong>=<em>\-|DATEI</em>] [<strong>\-v</strong>]
+#### Zeige Farbseite
+&nbsp;&nbsp;**oyranos-profile\-graph** <strong>\-i</strong>=<em>DATEI</em> [<strong>\-I</strong>=<em>SEITE</em>] [<strong>\-t</strong>=<em>NUMMER</em>] [<strong>\-b</strong>] [<strong>\-l</strong>=<em>NUMMER</em>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMMER</em>] [<strong>\-T</strong>] [<strong>\-f</strong>=<em>FORMAT</em>] [<strong>\-o</strong>=<em>\-|DATEI</em>] [<strong>\-v</strong>]
 
 <table style='width:100%'>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-i</strong>|<strong>--import</strong> <em>DATEI</em></td> <td>Color Page Input<br />Supported is a color page in NCC format, which contains pages layout with referenced rgb values. Those are placed on a sheed. Such pages are created by e.g. oyranos-profile-graph --hlc=NUMBER -f ncc </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-i</strong>|<strong>--import</strong> <em>DATEI</em></td> <td>Farbseiten Eingabe<br />Unterstützt werden Farbseiten im NCC Format, welche ein Seiten layout mit referenzierten rgb Werten. Diese werden auf eine Seite platziert. Solche Seiten können erzeugt werden z.B. mit oyranos-profile-graph --hlc=NUMMER -f ncc </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-I</strong>|<strong>--index</strong> <em>SEITE</em></td> <td>Seitenauswahl<br />Specify a page name as string or page index as number. -1 will list all page names of the imported file. </tr>
 </table>
 
 #### Allgemeine Optionen
@@ -177,7 +178,7 @@ Das oyranos\-profile\-graph Programm erzeugt aus einem ICC Profil oder eingebett
   <br />
 &nbsp;&nbsp;Der gültige Bereich ist 1\-20.
 #### XDG\_DATA\_HOME XDG\_DATA\_DIRS
-&nbsp;&nbsp;route Oyranos to top directories containing resources. The derived paths for ICC profiles have a "color/icc" appended. http://www.oyranos.com/wiki/index.php?title=OpenIccDirectoryProposal
+&nbsp;&nbsp;richte Oyranos auf obere Verzeichnisse, welche Resourcen enthalten. An die Pfade für ICC Farbprofile wird "color/icc" angehangen. http://www.oyranos.com/wiki/index.php?title=OpenIccDirectoryProposal
 
 <h2>BEISPIELE <a href="#toc" name="examples">&uarr;</a></h2>
 
@@ -185,10 +186,10 @@ Das oyranos\-profile\-graph Programm erzeugt aus einem ICC Profil oder eingebett
 &nbsp;&nbsp;oyranos\-profile\-graph ICC\_PROFILE
 #### Zeige Sättigungslinien von zwei Profilen in CIE*ab 256 Bildpunkte breit, ohne Spectrallinie und mit dickeren Linien:
 &nbsp;&nbsp;oyranos\-profile\-graph \-w 256 \-s \-t 3 sRGB.icc ProPhoto\-RGB.icc
-#### Show HLC Color Atlas patches
+#### Zeige HLC Farbatlas Muster
 &nbsp;&nbsp;oyranos\-profile\-graph \-H=90 \-o HLC\_H090.png cmyk web
   <br />
-&nbsp;&nbsp;Color patches are only shown, if they are in gamut of the default CMYK and web profile.
+&nbsp;&nbsp;Farbmuster werden nur angezeigt, wenn sie im Farbraum von sowohl CMYK und dem web Farbprofil enthalten sind.
 #### Zeige die Standard Betrachter Spektralfunktion als Kurven:
 &nbsp;&nbsp;oyranos\-profile\-graph \-\-standard\-observer \-o CIE\-StdObserver.png
 

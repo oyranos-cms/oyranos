@@ -192,6 +192,7 @@ int myMain( int argc, const char ** argv )
   const char * format = NULL;
   const char * output = NULL;
   const char * input = NULL;
+  const char * page = NULL;
   int no_spectral = 0;
   int no_blackbody = 0;
   double thickness = 1.0;
@@ -326,6 +327,7 @@ int myMain( int argc, const char ** argv )
     {"oiwi", 0, "l", "lightness",     NULL, _("Lightness"),     _("Background Lightness"),   NULL, _("NUMBER"), oyjlOPTIONTYPE_DOUBLE,
       {.dbl.start = -1.0, .dbl.end = 100.0, .dbl.tick = 1.0, .dbl.d = -1.0}, oyjlDOUBLE, {.d=&lightness} },
     {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "i", "import",         NULL, _("Input"),        _("Color Page Input"),       _("Supported is a color page in NCC format, which contains pages layout with referenced rgb values. Those are placed on a sheed. Such pages are created by e.g. oyranos-profile-graph --hlc=NUMBER -f ncc"), _("FILE"), oyjlOPTIONTYPE_CHOICE, {}, oyjlSTRING, {.s=&input} },
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "I", "index",          NULL, _("Index"),        _("Page Selection"),         _("Specify a page name as string or page index as number. -1 will list all page names of the imported file."), _("PAGE"), oyjlOPTIONTYPE_CHOICE, {}, oyjlSTRING, {.s=&page} },
     {"oiwi", 0, "u", "illuminant",    NULL, _("Illuminant"),    _("Illuminant Spectrum"),    NULL, _("STRING"), oyjlOPTIONTYPE_CHOICE,
       {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)illu_dxx, sizeof(illu_dxx), 0 )}, oyjlSTRING, {.s=&illuminant} },
     {"oiwi", 0, "k", "kelvin",        NULL, _("Kelvin"),        _("Blackbody Radiator"),     NULL, _("NUMBER"), oyjlOPTIONTYPE_DOUBLE,
@@ -375,7 +377,7 @@ int myMain( int argc, const char ** argv )
     {"oiwg", 0, _("Blackbody Radiator"), _("Blackbody Radiator Spectrum Graph"), NULL, "k", "t,b,l,g,w,T,o,f,v", "k" },
     {"oiwg", 0, _("Illuminant Spectrum"), _("Illuminant Spectrum Graph"), NULL, "u", "t,b,l,g,w,T,o,f,v", "u" },
     {"oiwg", 0, _("Spectral Input"), _("Spectral Input Graph"), NULL, "s,p,z", "t,b,l,g,w,T,P,o,v", "s,p,P,z" },
-    {"oiwg", 0, _("Color Page"), _("Render Color Page"), NULL, "i", "t,b,l,g,w,T,f,o,v", "i" },
+    {"oiwg", 0, _("Color Page"), _("Render Color Page"), NULL, "i", "I,t,b,l,g,w,T,f,o,v", "i,I" },
     {"oiwg", 0, _("Misc"), _("General options"), NULL, "X|h", "v", "t,b,l,g,w,T,o,f,h,X,v" },
     {"",0,0,0,0,0,0,0}
   };
@@ -430,7 +432,7 @@ int myMain( int argc, const char ** argv )
     json_commands[strlen(json_commands)-1] = '\000';
     oyjlStringAdd( &json_commands, malloc, free, "%s", &json[1] );
     puts( json_commands );
-    exit(0);
+    return 0;
   }
 
 #if !defined(NO_OYJL_ARGS_RENDER)
@@ -466,7 +468,7 @@ int myMain( int argc, const char ** argv )
   if(profile_count && profile_names && profile_names[0] && profile_names[0][0] == 'l' && profile_names[0][1] == '\000')
   {
     system("oyranos-profiles -le");
-    exit(0);
+    return 0;
   }
 
 
@@ -1215,17 +1217,56 @@ int myMain( int argc, const char ** argv )
   /* expect a page to draw */
   if(oyjlTreeGetValue( specT, 0, "collection/[0]/pages/[0]/" ))
   {
-    int rows = 0, columns = 0, x,y;
+    int pages = 0, rows = 0, columns = 0, x,y;
     oyjl_val v = oyjlTreeGetValue( specT, 0, "collection/[0]/pages/[0]/[0]" );
-    char * pt = oyjlTreeGetPath( specT, v );
-    if(pt && strrchr( pt, '/' ))
-      strrchr( pt, '/' )[0] = '\000';
+    char * page_id = NULL;
+    char * pt = NULL;
 
-    v = oyjlTreeGetValue( specT, 0, "collection/[0]/pages/[0]/rows" );
+    pages = oyjlValueCount( oyjlTreeGetValue( specT, 0, "collection/[0]/pages" ) );
+    if(page)
+    {
+      long pos = 0;
+      if(oyjlStringToLong( page, &pos ) == 0 && pos == -1)
+      {
+        int i;
+        char ** paths = NULL;
+        oyjlTreeToPaths( oyjlTreeGetValue( specT, 0, "collection/[0]/pages" ), 1, NULL, OYJL_PATH, &paths );
+        pages = 0; while(paths && paths[pages]) ++pages;
+        for(i = 0; i < pages; ++i)
+          fprintf( stdout, "%s\n", paths[i] );
+        return 0;
+      }
+      v = oyjlTreeGetValueF( specT, 0, "collection/[0]/pages/%s/[0]", page );
+      if(v)
+        page_id = oyjlStringCopy( page, 0 );
+      if(!page_id && oyjlStringToLong( page, &pos ) == 0)
+      {
+        v = oyjlTreeGetValueF( specT, 0, "collection/[0]/pages/[%ld]/[0]", pos );
+        page_id = oyjlTreeGetPath( oyjlTreeGetValue( specT, 0, "collection/[0]/pages" ), v );
+        if(page_id && strchr(page_id, '/'))
+        {
+          pt = strchr(page_id,'/');
+          pt[0] = '\000';
+          pt = NULL;
+        }
+      }
+    }
+    else
+    {
+      pt = oyjlTreeGetPath( specT, v );
+      if(pt && strrchr( pt, '/' ))
+      {
+        strrchr( pt, '/' )[0] = '\000';
+        if(strrchr(pt,'/'))
+          page_id = oyjlStringCopy( &strrchr(pt,'/')[1], 0 );
+      }
+    }
+
+    v = oyjlTreeGetValueF( specT, 0, "collection/[0]/pages/%s/rows", page_id );
     rows = oyjlValueCount( v );
-    v = oyjlTreeGetValue( specT, 0, "collection/[0]/pages/[0]/rows/" );
+    v = oyjlTreeGetValueF( specT, 0, "collection/[0]/pages/%s/rows/", page_id );
     columns = oyjlValueCount( v );
-    fprintf( stderr, "page_title: %s (%s) %dx%d\n", pt && strrchr(pt,'/') ? &strrchr(pt,'/')[1] : "----", pt, rows, columns );
+    fprintf( stderr, "page_title: %s (%s) %d x %dx%d\n", page_id ? page_id : "----", pt?pt:"----", pages, rows, columns );
 
     double ratio = rows / (double)columns;
     double off = frame/20.0;
@@ -1237,7 +1278,7 @@ int myMain( int argc, const char ** argv )
                            CAIRO_FONT_WEIGHT_NORMAL);
     cairo_set_font_size (cr, frame);
     x = 0; y = rows;
-    if((t = OYJL_GET_STRING(oyjlTreeGetValue( specT, 0, "collection/[0]/pages/[0]/rows_marker" ))) != NULL)
+    if((t = OYJL_GET_STRING(oyjlTreeGetValueF( specT, 0, "collection/[0]/pages/%s/rows_marker", page_id ))) != NULL)
     {
       oyjlStringAdd( &utf8, 0,0, t );
       cairo_move_to (cr, xToImage(0) - frame * 0.8,
@@ -1247,7 +1288,7 @@ int myMain( int argc, const char ** argv )
     }
     cairo_set_font_size (cr, frame/2.0);
     for(y = 0; y < rows; ++y)
-      if((t = OYJL_GET_STRING(oyjlTreeGetValueF( specT, 0, "collection/[0]/pages/[0]/rows_markers/[%d]", y ))) != NULL)
+      if((t = OYJL_GET_STRING(oyjlTreeGetValueF( specT, 0, "collection/[0]/pages/%s/rows_markers/[%d]", page_id, y ))) != NULL)
       {
         oyjlStringAdd( &utf8, 0,0, t );
         cairo_move_to (cr, xToImage(0) - frame * 0.8,
@@ -1258,7 +1299,7 @@ int myMain( int argc, const char ** argv )
 
     x = columns - 1;
     cairo_set_font_size (cr, frame);
-    oyjlStringAdd( &utf8, 0,0, "%s", pt && strrchr(pt,'/') ? &strrchr(pt,'/')[1] : "----" );
+    oyjlStringAdd( &utf8, 0,0, "%s", page_id ? page_id : "----" );
     cairo_move_to (cr, xToImage(1.0) - frame * 2.5,
                        yToImage((double)(y  )/(double)rows * ratio + (1-ratio) / 2.0 + 0.01) - off);
     cairo_show_text (cr, utf8);
@@ -1266,7 +1307,7 @@ int myMain( int argc, const char ** argv )
 
     x = y = 0;
     cairo_set_font_size (cr, frame);
-    if((t = OYJL_GET_STRING(oyjlTreeGetValue( specT, 0, "collection/[0]/pages/[0]/columns_marker" ))) != NULL)
+    if((t = OYJL_GET_STRING(oyjlTreeGetValueF( specT, 0, "collection/[0]/pages/%s/columns_marker", page_id ))) != NULL)
     {
       oyjlStringAdd( &utf8, 0,0, t );
       cairo_move_to (cr, xToImage(0) - frame * 0.8,
@@ -1276,7 +1317,7 @@ int myMain( int argc, const char ** argv )
     }
 
     cairo_set_font_size (cr, frame/2.0);
-    if((t = OYJL_GET_STRING(oyjlTreeGetValue( specT, 0, "collection/[0]/pages/[0]/columns_marker2" ))) != NULL)
+    if((t = OYJL_GET_STRING(oyjlTreeGetValueF( specT, 0, "collection/[0]/pages/%s/columns_marker2", page_id ))) != NULL)
     {
       oyjlStringAdd( &utf8, 0,0, t );
       cairo_move_to (cr, xToImage(0) - frame * 0.8,
@@ -1285,7 +1326,7 @@ int myMain( int argc, const char ** argv )
       free(utf8); utf8 = NULL;
     }
 
-    if((t = OYJL_GET_STRING(oyjlTreeGetValue( specT, 0, "collection/[0]/pages/[0]/columns_marker3" ))) != NULL)
+    if((t = OYJL_GET_STRING(oyjlTreeGetValueF( specT, 0, "collection/[0]/pages/%s/columns_marker3", page_id ))) != NULL)
     {
       oyjlStringAdd( &utf8, 0,0, t );
       cairo_move_to (cr, xToImage(0) - frame * 0.8, yToImage((double)(y  )/(double)rows * ratio + (1-ratio) / 2.0 - 0.09) - off);
@@ -1296,21 +1337,21 @@ int myMain( int argc, const char ** argv )
     cairo_set_font_size (cr, frame/2.0);
     for(x = 0; x < columns; ++x)
     {
-      if((t = OYJL_GET_STRING(oyjlTreeGetValueF( specT, 0, "collection/[0]/pages/[0]/columns_markers/[%d]", x ))) != NULL)
+      if((t = OYJL_GET_STRING(oyjlTreeGetValueF( specT, 0, "collection/[0]/pages/%s/columns_markers/[%d]", page_id, x ))) != NULL)
       {
         oyjlStringAdd( &utf8, 0,0, t );
         cairo_move_to (cr, xToImage((((double)x)+0.5)/(double)columns) - 0.6*frame, yToImage((double)(y  )/(double)rows * ratio + (1-ratio) / 2.0 - 0.05) - off);
         cairo_show_text (cr, utf8);
         free(utf8); utf8 = NULL;
       }
-      if((t = OYJL_GET_STRING(oyjlTreeGetValueF( specT, 0, "collection/[0]/pages/[0]/columns_markers2/[%d]", x ))) != NULL)
+      if((t = OYJL_GET_STRING(oyjlTreeGetValueF( specT, 0, "collection/[0]/pages/%s/columns_markers2/[%d]", page_id, x ))) != NULL)
       {
         oyjlStringAdd( &utf8, 0,0, t );
         cairo_move_to (cr, xToImage((((double)x)+0.5)/(double)columns) - 0.6*frame, yToImage((double)(y  )/(double)rows * ratio + (1-ratio) / 2.0 - 0.07) - off);
         cairo_show_text (cr, utf8);
         free(utf8); utf8 = NULL;
       }
-      if((t = OYJL_GET_STRING(oyjlTreeGetValueF( specT, 0, "collection/[0]/pages/[0]/columns_markers3/[%d]", x ))) != NULL)
+      if((t = OYJL_GET_STRING(oyjlTreeGetValueF( specT, 0, "collection/[0]/pages/%s/columns_markers3/[%d]", page_id, x ))) != NULL)
       {
         oyjlStringAdd( &utf8, 0,0, t );
         cairo_move_to (cr, xToImage((((double)x)+0.5)/(double)columns) - 0.6*frame, yToImage((double)(y  )/(double)rows * ratio + (1-ratio) / 2.0 - 0.09) - off);
@@ -1327,7 +1368,7 @@ int myMain( int argc, const char ** argv )
         double rgb[4] = { 1, 1, 1, 1.0 };
         double d;
         int index = 0, i;
-        v = oyjlTreeGetValueF( specT, 0, "collection/[0]/pages/[0]/rows/[%d]/[%d]", y, x );
+        v = oyjlTreeGetValueF( specT, 0, "collection/[0]/pages/%s/rows/[%d]/[%d]", page_id, y, x );
         if(OYJL_IS_DOUBLE(v))
         {
           d = OYJL_GET_DOUBLE(v);
@@ -1744,7 +1785,7 @@ int myMain( int argc, const char ** argv )
     /* else */ if(illuminant)
     {
       oyMessageFunc_p( oyMSG_ERROR, 0, "illuminant not supported: %s", oyjlTermColor( oyjlBOLD, illuminant ));
-      exit(0);
+      return 0;
     }
 
     {
