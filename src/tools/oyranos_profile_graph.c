@@ -688,6 +688,8 @@ int myMain( int argc, const char ** argv )
     oyProfile_s * pLab = oyProfile_FromStd( oyASSUMED_LAB, 0, 0 );
     double color[16];
     int * outside = NULL, index = 0;
+    double * lab = NULL;
+    int count = lcount * ccount;
     oyOptions_s * module_options = NULL;
 
     oyOptions_SetFromString( &module_options, OY_DEFAULT_RENDERING_INTENT, "1", OY_CREATE_NEW );
@@ -717,8 +719,7 @@ int myMain( int argc, const char ** argv )
 
     if(profile_count)
     {
-      int count = lcount * ccount;
-      double * lab = calloc( count, sizeof(double) * 3 );
+      lab = calloc( count, sizeof(double) * 3 );
       for(c = 0; c < ccount; ++c)
       {
         for(l = 0; l < lcount; ++l)
@@ -728,26 +729,10 @@ int myMain( int argc, const char ** argv )
         }
       }
       outside = calloc( count, sizeof(int) );
-      oyProfiles_s * proofing = NULL;
       int error = !outside || !lab;
       if(error) return error;
       if(verbose)
         fprintf(stderr, "ccount: %d c_max: %d  lcount: %d\n", ccount, c_max, lcount );
-
-      if(profile_count)
-      {
-        for(i = 0; i < profile_count; ++i)
-        {
-          const char * filename = profile_names[i];
-          oyProfile_s * p = oyProfile_FromName( filename, pflags, NULL );
-          if(verbose)
-            fprintf(stderr, "proofing: %s\n", filename);
-          proofing = oyProfiles_New(0);
-          oyProfiles_MoveIn( proofing, &p, -1 );
-          error = oyLabGamutCheck( lab, count, proofing, outside, NULL );
-          oyProfiles_Release( &proofing );
-        }
-      }
 
       for(i = 0; i < profile_count; ++i)
       {
@@ -788,7 +773,28 @@ int myMain( int argc, const char ** argv )
         h = hlc;
       sprintf( page_id, "H%03d", h );
       oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, h/dist,  "collection/[0]/pages/%s/index", page_id );
-      oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, "The page consists of a array of rows, each containing a array of columns. Each column references a color index number or null for no color at this position in the row.",  "collection/[0]/pages/%s/comment", page_id );
+
+      if(profile_count)
+      {
+        memset( outside, 0, sizeof(int) * count );
+        for(i = 0; i < profile_count; ++i)
+        {
+          const char * filename = profile_names[i];
+          oyProfile_s * p = oyProfile_FromName( filename, pflags, NULL );
+          oyProfiles_s * proofing = oyProfiles_New(0);
+          int error;
+          if(verbose)
+            fprintf(stderr, "proofing: %s\n", filename);
+          oyProfiles_MoveIn( proofing, &p, -1 );
+          error = oyLabGamutCheck( lab, count, proofing, outside, NULL );
+          if(error)
+            oyMessageFunc_p( oyMSG_ERROR, NULL, "in oyLabGamutCheck( ): %s", oyProfile_GetFileName( p, -1 ) );
+          oyProfiles_Release( &proofing );
+        }
+      }
+
+      if(h == 0 || h == hlc)
+        oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, "The page consists of a array of rows, each containing a array of columns. Each column references a color index number or null for no color at this position in the row.",  "collection/[0]/pages/%s/comment", page_id );
       /* provide axis texts */
       oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, "L",  "collection/[0]/pages/%s/rows_marker", page_id );
       for(l = 0; l < lcount; ++l)
@@ -814,10 +820,7 @@ int myMain( int argc, const char ** argv )
         {
           double LCh[3] = { l/(double)(lcount-1), c/(double)(ccount-1)*c_max/128.0, h/360.0 };
           double Lab[3], XYZ[3];
-          int page_start_index = h/dist * ccount * lcount;
           int error;
-
-          i = (hlc == 365 ? page_start_index : 0) + l * ccount + c;
 
           oyLCh2Lab(LCh, Lab, NULL);
 
@@ -829,6 +832,7 @@ int myMain( int argc, const char ** argv )
             oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, id,  "collection/[0]/pages/%s/columns_markers3/[%d]", page_id, c );
           }
 
+          i = l * ccount + c;
           if(outside && outside[i])
           {
             oyjlTreeGetValueF( specT, OYJL_CREATE_NEW, "collection/[0]/pages/%s/rows/%s/[%d]", page_id, row_id, c );
@@ -892,7 +896,9 @@ int myMain( int argc, const char ** argv )
                 case icSigYCbCrData:  json_cn = "ycbcr"; break;
                 default:              json_cn = "color"; break;
               }
-              oyConversion_RunPixels( cc, 0 );
+              error = oyConversion_RunPixels( cc, 0 );
+              if(error) fprintf( stderr, "error in oyConversion_RunPixels() HLC: %s\n", id );
+              else if(verbose) fprintf( stderr, "fine oyConversion_RunPixels() HLC: %s\n", id );
               oyConversion_Release( &cc );
               oyProfile_Release( &p );
 
@@ -918,6 +924,8 @@ int myMain( int argc, const char ** argv )
 
     oyStructList_Release( &ccs );
     oyProfiles_Release( &ps );
+    if(lab) free(lab);
+    if(outside) free(outside);
   }
 
   /* create a surface to place our images on */
