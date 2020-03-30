@@ -3148,7 +3148,8 @@ int oyTreeToCgats( oyjl_val root, int * level OYJL_UNUSED, char ** text )
   int i,index;
 
   int pixels = 0,
-      samples = 0;
+      samples = 0,
+      channels = 0;
   oyjl_val v, data;
   double  start, end, lambda;
   char * name, * creator, *creation_date, * description;
@@ -3209,11 +3210,15 @@ int oyTreeToCgats( oyjl_val root, int * level OYJL_UNUSED, char ** text )
     if(device_class)
       oyjlStringAdd( &tmp, 0,0, "KEYWORD \"DEVICE_CLASS\"\nDEVICE_CLASS \"%s\"\n", device_class );
 
+    if(oyjlTreeGetValueF( data, 0, "[0]/lab/[0]/data" )) channels += 3;
+    if(oyjlTreeGetValueF( data, 0, "[0]/rgb/[0]/data" )) channels += 3;
+    if(oyjlTreeGetValueF( data, 0, "[0]/cmyk/[0]/data" )) channels += 4;
+
     if(start)
       oyjlStringAdd( &tmp, 0,0, "SPECTRAL_BANDS \"%d\"\nSPECTRAL_START_NM \"%f\"\nSPECTRAL_END_NM \"%f\"\nSPECTRAL_NORM \"%f\"\n\nNUMBER_OF_FIELDS %d\nBEGIN_DATA_FORMAT\nSAMPLE_ID",
-      samples, start, end, lambda, 1 + samples );
+      samples, start, end, lambda, 1 + samples + channels );
     else
-      oyjlStringAdd( &tmp, 0,0, "\nNUMBER_OF_FIELDS %d\nBEGIN_DATA_FORMAT\nSAMPLE_ID", 1 + samples );
+      oyjlStringAdd( &tmp, 0,0, "\nNUMBER_OF_FIELDS %d\nBEGIN_DATA_FORMAT\nSAMPLE_ID", 1 + samples + channels );
 
     v = oyjlTreeGetValueF( data, 0, "[0]/lab/[0]/data" );
     if(v)
@@ -3231,6 +3236,15 @@ int oyTreeToCgats( oyjl_val root, int * level OYJL_UNUSED, char ** text )
       oyjlStringAdd( &tmp, 0,0, "\tRGB_B" );
     }
 
+    v = oyjlTreeGetValueF( data, 0, "[0]/cmyk/[0]/data" );
+    if(v)
+    {
+      oyjlStringAdd( &tmp, 0,0, "\tCMYK_C" );
+      oyjlStringAdd( &tmp, 0,0, "\tCMYK_M" );
+      oyjlStringAdd( &tmp, 0,0, "\tCMYK_Y" );
+      oyjlStringAdd( &tmp, 0,0, "\tCMYK_K" );
+    }
+
     for(i = 0; i < samples; ++i)
     {
       int nm = start + i*lambda;
@@ -3246,6 +3260,8 @@ int oyTreeToCgats( oyjl_val root, int * level OYJL_UNUSED, char ** text )
     {
       char f[32];
       v = oyjlTreeGetValueF( data, 0, "[%d]/name", index );
+      if(!v)
+        v = oyjlTreeGetValueF( data, 0, "[%d]/id", index );
       name = OYJL_GET_STRING(v);
       if(name)
       {
@@ -3289,6 +3305,24 @@ int oyTreeToCgats( oyjl_val root, int * level OYJL_UNUSED, char ** text )
             d = OYJL_GET_DOUBLE(v);
           oyjlStrAppendN( t, "\t", 1 );
           sprintf(f, "%f", d*255.0);
+          oyjlStrAppendN( t, f, strlen(f) );
+        }
+      }
+
+      v = oyjlTreeGetValueF( data, 0, "[%d]/cmyk/[0]/data", index );
+      if(v)
+      {
+        for(i = 0; i < 4; ++i)
+        {
+          v = oyjlTreeGetValueF( data, 0, "[%d]/cmyk/[0]/data/[%d]", index, i );
+          if(!v)
+          {
+            fprintf(stderr, "ERROR with i = %d index = %d (spp = %d pixels = %d)\n", i, index, 3, pixels);
+            d = NAN;
+          } else
+            d = OYJL_GET_DOUBLE(v);
+          oyjlStrAppendN( t, "\t", 1 );
+          sprintf(f, "%f", d*100.0);
           oyjlStrAppendN( t, f, strlen(f) );
         }
       }

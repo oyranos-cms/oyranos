@@ -4560,9 +4560,9 @@ msgid ""
 "by e.g. oyranos-profile-graph --hlc=NUMBER -f ncc"
 msgstr ""
 "Unterstützt werden Farbseiten im NCC Format, welche ein Seiten layout mit "
-"referenzierten rgb Werten. Diese werden auf eine Seite platziert. Solche "
-"Seiten können erzeugt werden z.B. mit oyranos-profile-graph --hlc=NUMMER -f "
-"ncc"
+"referenzierten rgb Werten besitzen. Diese werden auf eine Seite platziert. "
+"Solche Seiten können erzeugt werden z.B. mit oyranos-profile-graph "
+"--hlc=NUMMER -f ncc"
 
 #: tools/oyranos-monitor-white-point.c:349
 msgid "Switch all day light intereference off such as white point and effect"
