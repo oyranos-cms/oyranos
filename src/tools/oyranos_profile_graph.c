@@ -177,10 +177,52 @@ static oyjlOptionChoice_s * listProfiles ( oyjlOption_s * x OYJL_UNUSED, int * y
   return cs;
 }
 
+oyjlOptionGroup_s **groups_ = NULL;
+static oyjlOptionChoice_s * listPages ( oyjlOption_s * x OYJL_UNUSED, int * y OYJL_UNUSED, oyjlOptions_s * opts OYJL_UNUSED )
+{
+  oyjlOption_s * import = oyjlOptions_GetOptionL( opts, "import" );
+  const char * input = *import->variable.s;
+  oyjlOptionChoice_s * cs = NULL;
+
+  if(input)
+  {
+    char * fn = oyMakeFullFileDirName_( input );
+    size_t size = 0;
+    char * text = oyReadFileToMem_( fn, &size, NULL );
+    int data_format = oyjlDataFormat( text );
+    char error_buffer[128];
+    size_t error_buffer_size = 128;
+    oyjl_val specT = NULL;
+    if(data_format == oyNAME_JSON)
+    {
+      specT = oyjlTreeParse( text, error_buffer, error_buffer_size );
+      if(specT)
+      {
+        int i, pages;
+        char ** paths = NULL;
+        oyjlTreeToPaths( oyjlTreeGetValue( specT, 0, "collection/[0]/pages" ), 1, NULL, OYJL_PATH, &paths );
+        pages = 0; while(paths && paths[pages]) ++pages;
+        cs = (oyjlOptionChoice_s*) calloc( pages+1, sizeof(oyjlOptionChoice_s) );
+        for(i = 0; i < pages; ++i)
+        {
+          cs[i].name = oyjlStringCopy( paths[i], 0 );
+          cs[i].nick = oyjlStringCopy( paths[i], 0 );
+        }
+        oyjlTreeFree(specT);
+      }
+    }
+    if(text) free(text);
+    if(fn) free(fn);
+  }
+  return cs;
+}
+
 const char * jcommands = "{\n\
   \"command_set\": \"oyranos-profile-graph\",\n\
   \"comment\": \"command_set_delimiter - build key:value; default is '=' key=value\",\n\
   \"comment\": \"command_set_option - use \\\"-s\\\" \\\"key\\\"; skip \\\"--\\\" direct in front of key\"\n\
+  \"command_get\": \"oyranos-profile-graph\",\n\
+  \"command_get_args\": [\"-X\",\"json\"]\n\
 }";
 /* This function is called the
  * * first time for GUI generation and then
@@ -327,7 +369,7 @@ int myMain( int argc, const char ** argv )
     {"oiwi", 0, "l", "lightness",     NULL, _("Lightness"),     _("Background Lightness"),   NULL, _("NUMBER"), oyjlOPTIONTYPE_DOUBLE,
       {.dbl.start = -1.0, .dbl.end = 100.0, .dbl.tick = 1.0, .dbl.d = -1.0}, oyjlDOUBLE, {.d=&lightness} },
     {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "i", "import",         NULL, _("Input"),        _("Color Page Input"),       _("Supported is a color page in NCC format, which contains pages layout with referenced rgb values. Those are placed on a sheed. Such pages are created by e.g. oyranos-profile-graph --hlc=NUMBER -f ncc"), _("FILE"), oyjlOPTIONTYPE_CHOICE, {}, oyjlSTRING, {.s=&input} },
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "I", "index",          NULL, _("Index"),        _("Page Selection"),         _("Specify a page name as string or page index as number. -1 will list all page names of the imported file."), _("PAGE"), oyjlOPTIONTYPE_CHOICE, {}, oyjlSTRING, {.s=&page} },
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "I", "index",          NULL, _("Index"),        _("Page Selection"),         _("Specify a page name as string or page index as number. -1 will list all page names of the imported file."), _("PAGE"), oyjlOPTIONTYPE_FUNCTION, {.getChoices = listPages}, oyjlSTRING, {.s=&page} },
     {"oiwi", 0, "u", "illuminant",    NULL, _("Illuminant"),    _("Illuminant Spectrum"),    NULL, _("STRING"), oyjlOPTIONTYPE_CHOICE,
       {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)illu_dxx, sizeof(illu_dxx), 0 )}, oyjlSTRING, {.s=&illuminant} },
     {"oiwi", 0, "k", "kelvin",        NULL, _("Kelvin"),        _("Blackbody Radiator"),     NULL, _("NUMBER"), oyjlOPTIONTYPE_DOUBLE,
@@ -377,7 +419,7 @@ int myMain( int argc, const char ** argv )
     {"oiwg", 0, _("Blackbody Radiator"), _("Blackbody Radiator Spectrum Graph"), NULL, "k", "t,b,l,g,w,T,o,f,v", "k" },
     {"oiwg", 0, _("Illuminant Spectrum"), _("Illuminant Spectrum Graph"), NULL, "u", "t,b,l,g,w,T,o,f,v", "u" },
     {"oiwg", 0, _("Spectral Input"), _("Spectral Input Graph"), NULL, "s,p,z", "t,b,l,g,w,T,P,o,v", "s,p,P,z" },
-    {"oiwg", 0, _("Color Page"), _("Render Color Page"), NULL, "i", "I,t,b,l,g,w,T,f,o,v", "i,I" },
+    {"oiwg", 0, _("Color Page"), _("Render Color Page"), NULL, "i,I", "t,b,l,g,w,T,f,o,v", "i,I" },
     {"oiwg", 0, _("Misc"), _("General options"), NULL, "X|h", "v", "t,b,l,g,w,T,o,f,h,X,v" },
     {"",0,0,0,0,0,0,0}
   };
@@ -426,8 +468,9 @@ int myMain( int argc, const char ** argv )
 
   if(export && strcmp(export,"json+command") == 0)
   {
-    char * json = oyjlUi_ToJson( ui, 0 ),
+    char * json = NULL,
          * json_commands = strdup(jcommands);
+    json = oyjlUi_ToJson( ui, 0 );
     json_commands[strlen(json_commands)-2] = ',';
     json_commands[strlen(json_commands)-1] = '\000';
     oyjlStringAdd( &json_commands, malloc, free, "%s", &json[1] );
@@ -722,14 +765,6 @@ int myMain( int argc, const char ** argv )
     if(profile_count)
     {
       lab = calloc( count, sizeof(double) * 3 );
-      for(c = 0; c < ccount; ++c)
-      {
-        for(l = 0; l < lcount; ++l)
-        {
-          double LCh[3] = { l/(double)lcount, c/(double)ccount*c_max/128.0, hlc/360.0 };
-          oyLCh2Lab( LCh, &lab[ (c + l * ccount) * 3 ], NULL );
-        }
-      }
       outside = calloc( count, sizeof(int) );
       int error = !outside || !lab;
       if(error) return error;
@@ -779,6 +814,14 @@ int myMain( int argc, const char ** argv )
       if(profile_count)
       {
         memset( outside, 0, sizeof(int) * count );
+        for(c = 0; c < ccount; ++c)
+        {
+          for(l = 0; l < lcount; ++l)
+          {
+            double LCh[3] = { l/(double)lcount, c/(double)ccount*c_max/128.0, h/360.0 };
+            oyLCh2Lab( LCh, &lab[ (c + l * ccount) * 3 ], NULL );
+          }
+        }
         for(i = 0; i < profile_count; ++i)
         {
           const char * filename = profile_names[i];
