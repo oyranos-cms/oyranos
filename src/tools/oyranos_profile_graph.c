@@ -1296,12 +1296,12 @@ int myMain( int argc, const char ** argv )
     }
     else
     {
-      pt = oyjlTreeGetPath( specT, v );
-      if(pt && strrchr( pt, '/' ))
+      page_id = oyjlTreeGetPath( oyjlTreeGetValue( specT, 0, "collection/[0]/pages" ), v );
+      if(page_id && strchr(page_id, '/'))
       {
-        strrchr( pt, '/' )[0] = '\000';
-        if(strrchr(pt,'/'))
-          page_id = oyjlStringCopy( &strrchr(pt,'/')[1], 0 );
+        pt = strchr(page_id,'/');
+        pt[0] = '\000';
+        pt = NULL;
       }
     }
 
