@@ -4,7 +4,7 @@ oyjl-args v1.0.0 \- Ui to source code
 .SH SYNOPSIS
 \fBoyjl-args\fR \fB\-i\fR \fIFILENAME\fR [\fB\-v\fR]
 .br
-\fBoyjl-args\fR \fB\-h\fR [\fB\-v\fR]
+\fBoyjl-args\fR \fB\-h\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR \fB\-V\fR [\fB\-v\fR]
 .SH DESCRIPTION
 Tool to convert UI JSON description from *-X export* into source code.
 .SH OPTIONS
@@ -16,9 +16,25 @@ Generate source code
 .br
 .SS
 General options
-\fBoyjl-args\fR \fB\-h\fR [\fB\-v\fR]
+\fBoyjl-args\fR \fB\-h\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR \fB\-V\fR [\fB\-v\fR]
 .br
 \fB\-h\fR|\fB\-\-help\fR	Help
+.br
+\fB\-X\fR|\fB\-\-export\fR \fIjson|json+command|man|markdown\fR	Export formated text
+.RS
+Get UI converted into text formats
+.RE
+	\-X man		# Man - Get a unix man page
+.br
+	\-X markdown		# Markdown - Get formated text
+.br
+	\-X json		# Json - Get a Oyjl Json UI declaration
+.br
+	\-X json+command		# Json + Command - Get Oyjl Json UI declaration incuding command
+.br
+	\-X export		# Export - Get UI data for developers
+.br
+\fB\-V\fR|\fB\-\-version\fR	Version
 .br
 \fB\-v\fR|\fB\-\-verbose\fR	verbose
 .br

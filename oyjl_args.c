@@ -859,6 +859,7 @@ typedef struct {
   char       ** options; /* detected vanilla args + probably "@" for anonymous args */
   const char ** values; /* the vanilla args from main(argv[]) */
   int           count; /* number of detected options */
+  int           group; /* detected group */
 } oyjlOptsPrivate_s;
 #endif /* OYJL_INTERNAL */
 
@@ -1341,7 +1342,7 @@ oyjlOPTIONSTATE_e oyjlOptions_Check (
       b = &opts->array[j];
       if(o->o && b->o && strcmp(o->o, b->o) == 0)
       {
-        fprintf( stderr, "%s %s \'%s\'\n", _("Usage Error:"), _("Double occuring option"), b->o );
+        fprintf( stderr, "%s %s \'%s\'\n", oyjlTermColor(oyjlRED,_("Usage Error:")), _("Double occuring option"), b->o );
         return oyjlOPTION_DOUBLE_OCCURENCE;
       }
 
@@ -1357,7 +1358,8 @@ oyjlOPTIONSTATE_e oyjlOptions_Check (
     }*/
     if(OYJL_IS_NOT_O("#") && o->value_name && o->value_name[0] && o->value_type == oyjlOPTIONTYPE_NONE)
     {
-      fprintf( stderr, "%s %s \'%s\': %s\n", _("Usage Error:"), _("Option not supported"), oyjlTermColor(oyjlBOLD,o->o), _("need a value_type") );
+      fputs( oyjlTermColor(oyjlRED,_("Usage Error:")), stderr ); fputs( " ", stderr );
+      fprintf( stderr, "%s \'%s\': %s\n", _("Option not supported"), oyjlTermColor(oyjlBOLD,o->o), _("need a value_type") );
       return oyjlOPTION_NOT_SUPPORTED;
     }
     if( OYJL_IS_NOT_O("#") &&
@@ -1366,7 +1368,8 @@ oyjlOPTIONSTATE_e oyjlOptions_Check (
         o->value_type == oyjlOPTIONTYPE_CHOICE &&
         !((o->flags & OYJL_OPTION_FLAG_EDITABLE) || o->values.choices.list))
     {
-      fprintf( stderr, "%s %s \'%s\' %s\n", _("Usage Error:"), _("Option not supported"), oyjlTermColor(oyjlBOLD,o->o), _("needs OYJL_OPTION_FLAG_EDITABLE or choices") );
+      fputs( oyjlTermColor(oyjlRED,_("Usage Error:")), stderr ); fputs( " ", stderr );
+      fprintf( stderr, "%s \'%s\' %s\n", _("Option not supported"), oyjlTermColor(oyjlBOLD,o->o), _("needs OYJL_OPTION_FLAG_EDITABLE or choices") );
       return oyjlOPTION_NOT_SUPPORTED;
     }
   }
@@ -1420,7 +1423,7 @@ void oyjlOptions_Print               ( oyjlOptions_s     * opts,
  *  will be set too.
  *
  *  @version Oyjl: 1.0.0
- *  @date    2019/08/06
+ *  @date    2020/04/05
  *  @since   2018/08/14 (OpenICC: 0.1.1)
  */
 oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
@@ -1428,6 +1431,7 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
   oyjlOPTIONSTATE_e state = oyjlOPTION_NONE;
   oyjlOption_s * o;
   oyjlOptsPrivate_s * result;
+  int help = 0;
 
   /* parse the command line arguments */
   if(opts && !opts->private_data)
@@ -1440,6 +1444,7 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
     /* The first string contains the detected single char options */
     result->options = (char**) calloc( len + 1, sizeof(char*) );
     result->values = (const char**) calloc( len + 1, sizeof(char*) );
+    result->group = -1;
     if((state = oyjlOptions_Check(opts)) != oyjlOPTION_NONE)
       goto clean_parse;
     for(i = 1; i < opts->argc; ++i)
@@ -1468,10 +1473,13 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
           if(!o)
           {
             oyjlOptions_Print( opts, i );
-            fprintf( stderr, "%s %s \'%s\'\n", _("Usage Error:"), _("Option not supported"), oyjlTermColor(oyjlBOLD,arg) );
+            fputs( oyjlTermColor(oyjlRED,_("Usage Error:")), stderr ); fputs( " ", stderr );
+            fprintf( stderr, "%s \'%s\'\n", _("Option not supported"), oyjlTermColor(oyjlBOLD,arg) );
             state = oyjlOPTION_NOT_SUPPORTED;
             break;
           }
+          if(o->o && strcmp(o->o,"h") == 0)
+            ++help;
           require_value = o->value_type != oyjlOPTIONTYPE_NONE;
           if( require_value )
           {
@@ -1489,18 +1497,20 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
             }
             else
             {
-              char * t = oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING);
-              oyjlOptions_Print( opts, i );
-              fprintf( stderr, "%s %s \'%s\' (%s)\n", _("Usage Error:"), _("Option needs a argument"), oyjlTermColor(oyjlBOLD,arg), t );
-              free(t);
+              if(!help)
+              {
+                char * t = oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING);
+                oyjlOptions_Print( opts, i );
+                fputs( oyjlTermColor(oyjlRED,_("Usage Error:")), stderr ); fputs( " ", stderr );
+                fprintf( stderr, "%s \'%s\' (%s)\n", _("Option needs a argument"), oyjlTermColor(oyjlBOLD,arg), t );
+                free(t);
+              }
               state = oyjlOPTION_MISSING_VALUE;
             }
-            if(value)
-            {
-              result->options[result->count] = strdup(o->o?o->o:o->option);
-              result->values[result->count] = value;
-              ++result->count;
-            }
+
+            result->options[result->count] = strdup(o->o?o->o:o->option);
+            result->values[result->count] = value;
+            ++result->count;
           }
           else if(!require_value && !(j < l-1 && str[j+1] == '='))
           {
@@ -1512,7 +1522,8 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
           {
             char * t = oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING);
             oyjlOptions_Print( opts, i );
-            fprintf( stderr, "%s %s \'%s\' (%s)\n", _("Usage Error:"), _("Option has a unexpected argument"), arg, t );
+            fputs( oyjlTermColor(oyjlRED,_("Usage Error:")), stderr ); fputs( " ", stderr );
+            fprintf( stderr, "%s \'%s\' (%s)\n", _("Option has a unexpected argument"), arg, t );
             free(t);
             state = oyjlOPTION_UNEXPECTED_VALUE;
             j = l;
@@ -1528,10 +1539,13 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
         if(!o)
         {
           oyjlOptions_Print( opts, i );
-          fprintf( stderr, "%s %s \'%s\'\n", _("Usage Error:"), _("Option not supported"), oyjlTermColor(oyjlBOLD,long_arg) );
+          fputs( oyjlTermColor(oyjlRED,_("Usage Error:")), stderr ); fputs( " ", stderr );
+          fprintf( stderr, "%s \'%s\'\n", _("Option not supported"), oyjlTermColor(oyjlBOLD,long_arg) );
           state = oyjlOPTION_NOT_SUPPORTED;
           goto clean_parse;
         }
+        if(o->o && strcmp(o->o,"h") == 0)
+          ++help;
         require_value = o->value_type != oyjlOPTIONTYPE_NONE;
         if( require_value )
         {
@@ -1546,19 +1560,20 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
           }
           else
           {
-            char * t = oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING);
-            oyjlOptions_Print( opts, i );
-            fprintf( stderr, "%s %s \'%s\' (%s)\n", _("Usage Error:"), _("Option needs a argument"), oyjlTermColor(oyjlBOLD,long_arg), t );
-            free(t);
+            if(!help)
+            {
+              char * t = oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING);
+              oyjlOptions_Print( opts, i );
+              fputs( oyjlTermColor(oyjlRED,_("Usage Error:")), stderr ); fputs( " ", stderr );
+              fprintf( stderr, "%s \'%s\' (%s)\n", _("Option needs a argument"), oyjlTermColor(oyjlBOLD,long_arg), t );
+              free(t);
+            }
             state = oyjlOPTION_MISSING_VALUE;
           }
 
-          if(value)
-          {
-            result->options[result->count] = strdup(o->o?o->o:o->option);
-            result->values[result->count] = value;
-            ++result->count;
-          }
+          result->options[result->count] = strdup(o->o?o->o:o->option);
+          result->values[result->count] = value;
+          ++result->count;
         } else
         {
           if(!( strchr(str, '=') != NULL || (opts->argc > i+1 && opts->argv[i+1][0] != '-') ))
@@ -1570,7 +1585,7 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
           {
             char * t = oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING);
             oyjlOptions_Print( opts, i );
-            fprintf( stderr, "%s %s \'%s\' (%s)\n", _("Usage Error:"), _("Option has a unexpected argument"), opts->argv[i+1], t );
+            fprintf( stderr, "%s %s \'%s\' (%s)\n", oyjlTermColor(oyjlRED,_("Usage Error:")), _("Option has a unexpected argument"), opts->argv[i+1], t );
             free(t);
             state = oyjlOPTION_UNEXPECTED_VALUE;
           }
@@ -1589,7 +1604,8 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
         } else
         {
           oyjlOptions_Print( opts, i );
-          fprintf( stderr, "%s %s: \"%s\"\n", _("Usage Error:"), _("Unbound options are not supported"), oyjlTermColor(oyjlBOLD,opts->argv[i]) );
+          fputs( oyjlTermColor(oyjlRED,_("Usage Error:")), stderr ); fputs( " ", stderr );
+          fprintf( stderr, "%s: \"%s\"\n", _("Unbound options are not supported"), oyjlTermColor(oyjlBOLD,opts->argv[i]) );
           state = oyjlOPTION_NOT_SUPPORTED;
           goto clean_parse;
         }
@@ -1617,7 +1633,7 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
     if(opts->argc == 1 && !o)
     {
       oyjlOptions_Print( opts, 0 );
-      fprintf( stderr, "%s %s\n", _("Usage Error:"), _("Optionless mode not supported. (That would need '#' option declaration.)") );
+      fprintf( stderr, "%s %s\n", oyjlTermColor(oyjlRED,_("Usage Error:")), _("Optionless mode not supported. (That would need '#' option declaration.)") );
       state = oyjlOPTIONS_MISSING;
       return state;
     }
@@ -1680,6 +1696,8 @@ oyjlOPTIONSTATE_e oyjlOptions_GetResult (
     return state;
 
   results = opts->private_data;
+  if(!results)
+    return state;
   if(opt == NULL && results->count)
   {
     if(result_int)
@@ -1729,7 +1747,8 @@ oyjlOPTIONSTATE_e oyjlOptions_GetResult (
       char * desc = oyjlOption_PrintArgDouble( o, 0 );
       i = pos + 1;
       oyjlOptions_Print( opts, i );
-      fprintf( stderr, "%s %s: \"%s\" %s %s !: %g\n", _("Usage Error:"), _("Option has a different value range"), oyjlTermColor(oyjlBOLD,opts->argv[i]), t, desc, *result_dbl );
+      fputs( oyjlTermColor(oyjlRED,_("Usage Error:")), stderr ); fputs( " ", stderr );
+      fprintf( stderr, "%s: \"%s\" %s %s !: %g\n", _("Option has a different value range"), oyjlTermColor(oyjlBOLD,opts->argv[i]), t, desc, *result_dbl );
       free( t );
       free( desc );
     }
@@ -1739,7 +1758,7 @@ oyjlOPTIONSTATE_e oyjlOptions_GetResult (
     if(o->value_type == oyjlOPTIONTYPE_NONE)
     {
       *result_int = hits;
-    } else
+    } else if(t)
     {
       long lo = 0;
       if(oyjlStringToLong( t, &lo ) == 0)
@@ -2003,10 +2022,12 @@ oyjlOptionChoice_s * oyjlOption_GetChoices_ (
  *  @param   opts                      options to print
  *  @param   ui                        more info for e.g. from the documentation section for the description block; optional
  *  @param   verbose                   gives debug output
+ *                                     - -1 : print help only for detected group
+ *                                     - -2 : print only Synopsis 
  *  @param   motto_format              prints a customised intoduction line
  *
  *  @version Oyjl: 1.0.0
- *  @date    2019/05/06
+ *  @date    2020/04/05
  *  @since   2018/08/14 (OpenICC: 0.1.1)
  */
 void  oyjlOptions_PrintHelp          ( oyjlOptions_s     * opts,
@@ -2018,74 +2039,87 @@ void  oyjlOptions_PrintHelp          ( oyjlOptions_s     * opts,
   int i,ng;
   va_list list;
   oyjlUiHeaderSection_s * section = NULL;
-  fprintf( stdout, "\n");
-  if(verbose)
+  oyjlOptsPrivate_s * results = ui->opts->private_data;
+  FILE * zout = verbose >= 0 ? stdout : stderr;
+
+  if(verbose >= 0)
+    fprintf( zout, "\n");
+  if(verbose > 0)
   {
     for(i = 0; i < opts->argc; ++i)
-      fprintf( stdout, "\'%s\' ", oyjlTermColor( oyjlITALIC, opts->argv[i] ));
-    fprintf( stdout, "\n");
+      fprintf( zout, "\'%s\' ", oyjlTermColor( oyjlITALIC, opts->argv[i] ));
+    fprintf( zout, "\n");
   }
 
-  if(!motto_format)
+  if(!(verbose == -1 && results && results->group > -1) && verbose >= 0)
   {
-    oyjlUiHeaderSection_s * version = oyjlUi_GetHeaderSection( ui,
-                                                               "version" );
-    fprintf( stdout, "%s v%s - %s", oyjlTermColor( oyjlBOLD, opts->argv[0] ),
+    if(!motto_format)
+    {
+      oyjlUiHeaderSection_s * version = oyjlUi_GetHeaderSection( ui,
+                                                                 "version" );
+      fprintf( zout, "%s v%s - %s", oyjlTermColor( oyjlBOLD, opts->argv[0] ),
                               version && version->name ? version->name : "",
                               ui->description ? ui->description : ui->name ? ui->name : "" );
-    if(version && version->name && version->description && *oyjl_debug)
-      fprintf( stdout, "\n  %s", version->description );
+      if(version && version->name && version->description && *oyjl_debug)
+        fprintf( zout, "\n  %s", version->description );
+    }
+    else
+    {
+      va_start( list, motto_format );
+      vfprintf( zout, motto_format, list );
+      va_end  ( list );
+    }
+    fprintf( zout, "\n");
   }
-  else
-  {
-    va_start( list, motto_format );
-    vfprintf( stdout, motto_format, list );
-    va_end  ( list );
-  }
-  fprintf( stdout, "\n");
 
   ng = oyjlOptions_CountGroups(opts);
   if(!ng) return;
 
   if( ui && (section = oyjlUi_GetHeaderSection(ui, "documentation")) != NULL &&
-      section->description )
-    fprintf( stdout, "\n%s:\n" OYJL_HELP_SUBSECTION "%s\n", oyjlTermColor(oyjlBOLD,_("Description")), section->description );
+      section->description &&
+      !(verbose == -1 && results && results->group > -1) &&
+      verbose >= 0
+    )
+    fprintf( zout, "\n%s:\n" OYJL_HELP_SUBSECTION "%s\n", oyjlTermColor(oyjlBOLD,_("Description")), section->description );
 
-  fprintf( stdout, "\n%s:\n", oyjlTermColor(oyjlBOLD,_("Synopsis")) );
-  for(i = 0; i < ng; ++i)
+  fprintf( zout, "\n%s:\n", oyjlTermColor(oyjlBOLD,_("Synopsis")) );
+  for(i = (verbose == -1 && results && results->group > -1) ? results->group : 0 ; i < ng; ++i)
   {
     oyjlOptionGroup_s * g = &opts->groups[i];
     char * t = oyjlOptions_PrintHelpSynopsis( opts, g, oyjlOPTIONSTYLE_ONELETTER );
-    fprintf( stdout, OYJL_HELP_SUBSECTION "%s\n", t );
+    fprintf( zout, OYJL_HELP_SUBSECTION "%s\n", t );
     free(t);
+    if(verbose == -1 && results && results->group > -1) break;
   }
+  if(verbose == -2)
+    return;
 
-  fprintf( stdout, "\n%s:\n", oyjlTermColor(oyjlBOLD,_("Usage"))  );
-  for(i = 0; i < ng; ++i)
+  fprintf( zout, "\n%s:\n", oyjlTermColor(oyjlBOLD,_("Usage"))  );
+  for(i = (verbose == -1 && results && results->group > -1) ? results->group : 0 ; i < ng; ++i)
   {
     oyjlOptionGroup_s * g = &opts->groups[i];
     int d = 0,
         j;
     char ** d_list = oyjlStringSplit2( g->detail, "|,", &d, NULL, malloc );
-    fprintf( stdout, OYJL_HELP_SUBSECTION "%s\n", g->description?oyjlTermColor(oyjlUNDERLINE,g->description):"" );
+    fprintf( zout, OYJL_HELP_SUBSECTION "%s\n", g->description?oyjlTermColor(oyjlUNDERLINE,g->description):"" );
     if(g->mandatory && g->mandatory[0])
     {
       char * t = oyjlOptions_PrintHelpSynopsis( opts, g, oyjlOPTIONSTYLE_ONELETTER );
-      fprintf( stdout, OYJL_HELP_COMMAND "%s\n", t );
+      fprintf( zout, OYJL_HELP_COMMAND "%s\n", t );
       free(t);
     }
     if(g->help)
     {
-      fprintf( stdout, OYJL_HELP_COMMAND "%s\n", g->help );
+      fprintf( zout, OYJL_HELP_COMMAND "%s\n", g->help );
     }
-    fprintf( stdout, "\n" );
+    fprintf( zout, "\n" );
     for(j = 0; j < d; ++j)
     {
       const char * option = d_list[j];
       oyjlOption_s * o = oyjlOptions_GetOptionL( opts, option );
       if(!o)
       {
-        fprintf(stdout, "\n%s: option not declared: %s\n", g->name, &g->detail[j]);
+        fprintf(zout, "\n%s: option not declared: %s\n", g->name, &g->detail[j]);
         if(!getenv("OYJL_NO_EXIT")) exit(1);
       }
       switch(o->value_type)
@@ -2096,11 +2130,11 @@ void  oyjlOptions_PrintHelp          ( oyjlOptions_s     * opts,
             if(o->value_name)
             {
               char * t = oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING);
-              fprintf( stdout, OYJL_HELP_OPTION );
-              fprintf( stdout, "%s", t );
-              fprintf( stdout, "\t%s\n", o->description ? o->description:"" );
+              fprintf( zout, OYJL_HELP_OPTION );
+              fprintf( zout, "%s", t );
+              fprintf( zout, "\t%s\n", o->description ? o->description:"" );
               if(o->help)
-                fprintf(stdout,OYJL_HELP_HELP "%s\n", o->help );
+                fprintf(zout,OYJL_HELP_HELP "%s\n", o->help );
               free(t);
             }
             if(o->flags & OYJL_OPTION_FLAG_EDITABLE)
@@ -2108,7 +2142,7 @@ void  oyjlOptions_PrintHelp          ( oyjlOptions_s     * opts,
             while(o->values.choices.list && o->values.choices.list[n].nick && o->values.choices.list[n].nick[0] != '\000')
               ++n;
             for(l = 0; l < n; ++l)
-              fprintf( stdout, OYJL_HELP_ARG "  -%s %s\t\t# %s%s%s\n",
+              fprintf( zout, OYJL_HELP_ARG "  -%s %s\t\t# %s%s%s\n",
                   o->o,
                   o->values.choices.list[l].nick,
                   o->values.choices.list[l].name && o->values.choices.list[l].nick[0] ? o->values.choices.list[l].name : o->values.choices.list[l].description,
@@ -2123,9 +2157,9 @@ void  oyjlOptions_PrintHelp          ( oyjlOptions_s     * opts,
             if(o->value_name)
             {
               char * t = oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING);
-              fprintf( stdout, OYJL_HELP_OPTION );
-              fprintf( stdout, "%s", t );
-              fprintf( stdout, "\t%s%s%s\n", o->description ? o->description:"", o->help?": ":"", o->help?o->help :"" );
+              fprintf( zout, OYJL_HELP_OPTION );
+              fprintf( zout, "%s", t );
+              fprintf( zout, "\t%s%s%s\n", o->description ? o->description:"", o->help?": ":"", o->help?o->help :"" );
               free(t);
             }
             if(o->flags & OYJL_OPTION_FLAG_EDITABLE)
@@ -2135,7 +2169,7 @@ void  oyjlOptions_PrintHelp          ( oyjlOptions_s     * opts,
               while(list[n].nick && list[n].nick[0] != '\000')
                 ++n;
             for(l = 0; l < n; ++l)
-              fprintf( stdout, OYJL_HELP_ARG "-%s %s\t\t# %s\n", o->o, list[l].nick, list[l].name && list[l].nick[0] ? list[l].name : list[l].description );
+              fprintf( zout, OYJL_HELP_ARG "-%s %s\t\t# %s\n", o->o, list[l].nick, list[l].name && list[l].nick[0] ? list[l].name : list[l].description );
             /* not possible, as the result of oyjlOption_GetChoices_() is cached - oyjlOptionChoice_Release( &list ); */
           }
           break;
@@ -2143,20 +2177,20 @@ void  oyjlOptions_PrintHelp          ( oyjlOptions_s     * opts,
           {
             char * t = oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING);
             
-            fprintf( stdout, OYJL_HELP_OPTION );
-            fprintf( stdout, "%s", t );
-            { char * desc = oyjlOption_PrintArgDouble( o, oyjlDESCRIPTION | oyjlHELP ); fprintf( stdout, "\t%s\n", desc ); free(desc); }
+            fprintf( zout, OYJL_HELP_OPTION );
+            fprintf( zout, "%s", t );
+            { char * desc = oyjlOption_PrintArgDouble( o, oyjlDESCRIPTION | oyjlHELP ); fprintf( zout, "\t%s\n", desc ); free(desc); }
             free(t);
           }
           break;
         case oyjlOPTIONTYPE_NONE:
           {
             char * t = oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING);
-            fprintf( stdout, OYJL_HELP_OPTION );
-            fprintf( stdout, "%s", t );
-            fprintf( stdout, "\t%s\n", o->description ? o->description:"" );
+            fprintf( zout, OYJL_HELP_OPTION );
+            fprintf( zout, "%s", t );
+            fprintf( zout, "\t%s\n", o->description ? o->description:"" );
             if(o->help)
-              fprintf(stdout,OYJL_HELP_HELP "%s\n", o->help );
+              fprintf(zout,OYJL_HELP_HELP "%s\n", o->help );
             free(t);
           }
         break;
@@ -2165,9 +2199,10 @@ void  oyjlOptions_PrintHelp          ( oyjlOptions_s     * opts,
       }
     }
     oyjlStringListRelease( &d_list, d, free );
-    if(d) fprintf( stdout, "\n" );
+    if(d) fprintf( zout, "\n" );
+    if(verbose == -1 && results && results->group > -1) break;
   }
-  fprintf( stdout, "\n" );
+  fprintf( zout, "\n" );
 }
 
 /** @brief    Allocate a new options structure
@@ -2276,7 +2311,8 @@ oyjlOPTIONSTATE_e  oyjlUi_Check      ( oyjlUi_s          * ui,
             if( !n && !(o->flags & OYJL_OPTION_FLAG_EDITABLE) &&
                 strcmp(o->o, "X") != 0 && strcmp(o->o, "X") != 0 )
             {
-              fprintf( stderr, "%s %s \'%s\' %s\n", _("Usage Error:"), _("Option not supported"), oyjlTermColor(oyjlBOLD,o->o), _("needs OYJL_OPTION_FLAG_EDITABLE or choices") );
+              fputs( oyjlTermColor(oyjlRED,_("Usage Error:")), stderr ); fputs( " ", stderr );
+              fprintf( stderr, "%s \'%s\' %s\n", _("Option not supported"), oyjlTermColor(oyjlBOLD,o->o), _("needs OYJL_OPTION_FLAG_EDITABLE or choices") );
               status = oyjlOPTION_NOT_SUPPORTED;
             }
           }
@@ -2297,6 +2333,21 @@ oyjlOPTIONSTATE_e  oyjlUi_Check      ( oyjlUi_s          * ui,
   return status;
 }
 
+const char * oyjlOPTIONSTATE_toString( oyjlOPTIONSTATE_e i )
+{
+  switch(i)
+  {
+    case oyjlOPTION_NONE: return "oyjlOPTION_NONE";
+    case oyjlOPTION_USER_CHANGED: return "oyjlOPTION_USER_CHANGED";
+    case oyjlOPTION_MISSING_VALUE: return "oyjlOPTION_MISSING_VALUE";
+    case oyjlOPTION_UNEXPECTED_VALUE: return "oyjlOPTION_UNEXPECTED_VALUE";
+    case oyjlOPTION_NOT_SUPPORTED: return "oyjlOPTION_NOT_SUPPORTED";
+    case oyjlOPTION_DOUBLE_OCCURENCE: return "oyjlOPTION_DOUBLE_OCCURENCE";
+    case oyjlOPTIONS_MISSING: return "oyjlOPTIONS_MISSING";
+    case oyjlOPTION_NO_GROUP_FOUND: return "oyjlOPTION_NO_GROUP_FOUND";
+  }
+  return "";
+}
 /** @brief    Create a new UI structure
  *  @memberof oyjlUi_s
  *
@@ -2342,7 +2393,7 @@ oyjlOPTIONSTATE_e  oyjlUi_Check      ( oyjlUi_s          * ui,
  *  @return                            UI object for later use
  *
  *  @version Oyjl: 1.0.0
- *  @date    2019/08/09
+ *  @date    2020/04/05
  *  @since   2018/08/20 (OpenICC: 0.1.1)
  */
 oyjlUi_s *  oyjlUi_Create            ( int                 argc,
@@ -2356,11 +2407,13 @@ oyjlUi_s *  oyjlUi_Create            ( int                 argc,
                                        oyjlOptionGroup_s * groups,
                                        int               * status )
 {
-  int help = 0, verbose = 0, version = 0;
+  int help = 0, verbose = 0, version = 0, i,ng, * rank_list = 0, max = -1;
   const char * export = NULL;
   oyjlOption_s * h, * v, * X, * V;
+  oyjlOptionGroup_s * g = NULL;
   oyjlOPTIONSTATE_e opt_state = oyjlOPTION_NONE;
-  int flags = 0;
+  oyjlOptsPrivate_s * results;
+  int flags = 0, optionless = 0;//, anonymous = 0;
   char * t;
 
   int use_gettext = 0;
@@ -2391,26 +2444,7 @@ oyjlUi_s *  oyjlUi_Create            ( int                 argc,
 
   /* get results and check syntax ... */
   opt_state = oyjlOptions_Parse( ui->opts );
-  if(opt_state == oyjlOPTIONS_MISSING)
-  {
-    oyjlOptions_PrintHelp( ui->opts, ui, verbose, NULL );
-    oyjlUi_Release( &ui);
-    if(status)
-      *status |= oyjlUI_STATE_HELP;
-    return NULL;
-  }
-  if(opt_state == oyjlOPTION_NONE && !(flags & oyjlUI_STATE_NO_CHECKS))
-    opt_state = oyjlUi_Check(ui, 0);
-  /* ... and report detected errors */
-  if(opt_state != oyjlOPTION_NONE)
-  {
-    fputs( _("... try with --help|-h option for usage text. give up"), stderr );
-    fputs( "\n", stderr );
-    oyjlUi_Release( &ui);
-    if(status)
-      *status = opt_state << oyjlUI_STATE_OPTION;
-    return NULL;
-  }
+  results = ui->opts->private_data;
 
   X = oyjlOptions_GetOption( ui->opts, "X" );
   if(X && X->variable_type == oyjlSTRING && X->variable.s)
@@ -2430,9 +2464,93 @@ oyjlUi_s *  oyjlUi_Create            ( int                 argc,
       fprintf( stderr, "verbose\n" );
     }
   }
-  if(help)
+
+  /* detect valid group match(es) and report missing mandatory one */
+  ng = oyjlOptions_CountGroups(ui->opts);
+  if(ng)
+    oyjlAllocHelper_m( rank_list, int, ng, malloc, return NULL );
+
+  for(i = 0; i < ng; ++i)
   {
-    oyjlOptions_PrintHelp( ui->opts, ui, verbose, NULL );
+    g = &ui->opts->groups[i];
+    /* test mandatory options for correct numbers */
+    if(g->mandatory && g->mandatory[0])
+    {
+      const char * mandatory = g->mandatory;
+      int n = 0, j,k, found = 0;
+      char ** list = oyjlStringSplit2( mandatory, "|,", &n, NULL, malloc );
+
+      if( strchr(mandatory,'#') != NULL &&
+          results ? (results->count == 0) : 0 )
+        optionless = 1;
+
+      for( j = 0; j  < n; ++j )
+      {
+        const char * moption = list[j];
+        for( k = 0; k  < (results?results->count:0); ++k )
+        {
+          const char * roption = results->options[k];
+          if( strcmp(moption, roption) == 0 &&
+              roption[0] != 'h')
+            ++found;
+        }
+      }
+      oyjlStringListRelease( &list, n, free );
+      rank_list[i] = found;
+      if(found && max < found)
+        max = found;
+    }
+  }
+
+  if(max > -1)
+  {
+    for(i = 0; i < ng; ++i)
+      if(rank_list[i] == max)
+      {
+        g = &ui->opts->groups[i];
+        if(results)
+          results->group = i;
+        break;
+      }
+  }
+  else if(!optionless && opt_state != oyjlOPTION_NOT_SUPPORTED && !help)
+  {
+    if(opt_state == oyjlOPTION_NONE)
+      oyjlOptions_Print( ui->opts, 0 );
+    fputs( oyjlTermColor(oyjlRED,_("Usage Error:")), stderr ); fputs( " ", stderr );
+    fputs( _("Missing mandatory option. No usage mode in synopsis lines found."), stderr );
+    fputs( "\n", stderr );
+
+    if(opt_state == oyjlOPTION_NONE)
+      opt_state = oyjlOPTION_NO_GROUP_FOUND;
+
+    if(opt_state != oyjlOPTIONS_MISSING)
+      oyjlOptions_PrintHelp( ui->opts, ui, -2, NULL );
+  }
+  free(rank_list);
+
+  if(opt_state != oyjlOPTION_NONE && *oyjl_debug)
+  {
+    fputs( oyjlOPTIONSTATE_toString( opt_state ), stderr );
+    fputs( "\n", stderr );
+  }
+
+  if( opt_state == oyjlOPTIONS_MISSING ||
+      (opt_state == oyjlOPTION_MISSING_VALUE && results && results->group >= 0) )
+  {
+    oyjlOptions_PrintHelp( ui->opts, ui, -1, NULL );
+    oyjlUi_Release( &ui);
+    if(status)
+      *status |= oyjlUI_STATE_HELP;
+    return NULL;
+  }
+  if(opt_state == oyjlOPTION_NONE && !(flags & oyjlUI_STATE_NO_CHECKS))
+    opt_state = oyjlUi_Check(ui, 0);
+
+  if( help &&
+      (opt_state == oyjlOPTION_NONE || opt_state == oyjlOPTION_MISSING_VALUE) )
+  {
+    oyjlOptions_PrintHelp( ui->opts, ui, (results && results->group >= 0) ? -1 : verbose, NULL );
     oyjlUi_Release( &ui);
     if(status)
       *status |= oyjlUI_STATE_HELP;
@@ -2506,6 +2624,18 @@ oyjlUi_s *  oyjlUi_Create            ( int                 argc,
   }
   /* done with options handling */
 
+  /* ... and report detected errors */
+  if(!export && !version && opt_state != oyjlOPTION_NONE)
+  {
+    fputs( "\n", stderr );
+    fputs( _("... try with --help|-h option for usage text. give up"), stderr );
+    fputs( "\n", stderr );
+    oyjlUi_Release( &ui);
+    if(status)
+      *status = opt_state << oyjlUI_STATE_OPTION;
+    return NULL;
+  }
+
   return ui;
 }
 
@@ -2520,7 +2650,6 @@ oyjlUi_s *  oyjlUi_Create            ( int                 argc,
  */
 void           oyjlUi_Release     ( oyjlUi_s      ** ui )
 {
-  oyjlOptsPrivate_s * results;
   if(!ui || !*ui) return;
   if( *(oyjlOBJECT_e*)*ui != oyjlOBJECT_UI)
   {
@@ -2531,12 +2660,15 @@ void           oyjlUi_Release     ( oyjlUi_s      ** ui )
   }
   if((*ui)->opts->private_data)
   {
-    results = (*ui)->opts->private_data;
-    oyjlStringListRelease( &results->options, results->count, free );
-    results->count = 0;
-    free(results->options);
-    free(results->values);
-    free((*ui)->opts->private_data);
+    oyjlOptsPrivate_s * results = (*ui)->opts->private_data;
+    if(results)
+    {
+      oyjlStringListRelease( &results->options, results->count, free );
+      results->count = 0;
+      free(results->options);
+      free(results->values);
+      free((*ui)->opts->private_data);
+    }
   }
   if((*ui)->opts) free((*ui)->opts);
   free((*ui));

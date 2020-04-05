@@ -94,6 +94,7 @@ oyjlTESTRESULT_e testArgs()
     {"oiwg", 0,     _("Mode6"),_("Actual mode"),     NULL, "i",       "o,v",    "i,o" },/* parsed and checked with -i option */
     {"oiwg", 0,     _("Mode7"),_("Alternate"),       NULL, "i|o",     "h|v",    "i,o,h,v" },
     {"oiwg", 0,     _("Mode8"),_("Long"),            _("This Group handles Long options"), "b",       "candle,v","b,candle,v" },
+    {"oiwg", 0,     _("Mode9"),_("Double mandatory"),_("This Group checks correct constraints."), "b,candle",  "v","b,candle,v" },
     {"oiwg", 0,     _("Misc"), _("General options"), NULL, "",        "",       "v,h" },/* just show in documentation */
     {"",0,0,0,0,0,0,0}
   };
@@ -115,8 +116,8 @@ oyjlTESTRESULT_e testArgs()
     "ui created - no args                           " );
   }
 
-  char * syn = oyjlOptions_PrintHelpSynopsis( ui->opts, &ui->opts->groups[0], oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MARKDOWN );
-  if(strcmp(syn,"**test-args** | [<strong>-o</strong>=<em>0|1|2</em>] [<strong>-v</strong>]") == 0)
+  char * syn = ui ? oyjlOptions_PrintHelpSynopsis( ui->opts, &ui->opts->groups[0], oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MARKDOWN ) : NULL;
+  if(syn && strcmp(syn,"**test-args** | [<strong>-o</strong>=<em>0|1|2</em>] [<strong>-v</strong>]") == 0)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "SynopsisMode1  #       o,v    o                " );
   } else
@@ -128,8 +129,8 @@ oyjlTESTRESULT_e testArgs()
     fprintf( zout, "SynopsisMode1: %s\n", syn );
   free(syn);
 
-  syn = oyjlOptions_PrintHelpSynopsis( ui->opts, &ui->opts->groups[1], oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MARKDOWN );
-  if(strcmp(syn,"**test-args** | [<strong>-o</strong>=<em>0|1|2</em>] [<strong>-v</strong>]") == 0)
+  syn = ui ? oyjlOptions_PrintHelpSynopsis( ui->opts, &ui->opts->groups[1], oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MARKDOWN ) : NULL;
+  if(syn && strcmp(syn,"**test-args** | [<strong>-o</strong>=<em>0|1|2</em>] [<strong>-v</strong>]") == 0)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "SynopsisMode2  #       o,v    #,o              " );
   } else
@@ -141,8 +142,8 @@ oyjlTESTRESULT_e testArgs()
     fprintf( zout, "SynopsisMode2: %s\n", syn );
   free(syn);
 
-  syn = oyjlOptions_PrintHelpSynopsis( ui->opts, &ui->opts->groups[2], oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MARKDOWN );
-  if(strcmp(syn,"**test-args**") == 0)
+  syn = ui ? oyjlOptions_PrintHelpSynopsis( ui->opts, &ui->opts->groups[2], oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MARKDOWN ) : NULL;
+  if(syn && strcmp(syn,"**test-args**") == 0)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "SynopsisMode3  #              #                " );
   } else
@@ -154,8 +155,8 @@ oyjlTESTRESULT_e testArgs()
     fprintf( zout, "SynopsisMode3: %s\n", syn );
   free(syn);
 
-  syn = oyjlOptions_PrintHelpSynopsis( ui->opts, &ui->opts->groups[3], oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MARKDOWN );
-  if(strcmp(syn,"**test-args**") == 0)
+  syn = ui ? oyjlOptions_PrintHelpSynopsis( ui->opts, &ui->opts->groups[3], oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MARKDOWN ) : NULL;
+  if(syn && strcmp(syn,"**test-args**") == 0)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "SynopsisMode4  #                               " );
   } else
@@ -167,8 +168,8 @@ oyjlTESTRESULT_e testArgs()
     fprintf( zout, "SynopsisMode4: %s\n", syn );
   free(syn);
 
-  syn = oyjlOptions_PrintHelpSynopsis( ui->opts, &ui->opts->groups[4], oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MARKDOWN );
-  if(strcmp(syn,"**test-args** [<strong>-o</strong>=<em>0|1|2</em>] [<strong>-v</strong>] FILENAME") == 0)
+  syn = ui ? oyjlOptions_PrintHelpSynopsis( ui->opts, &ui->opts->groups[4], oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MARKDOWN ) : NULL;
+  if(syn && strcmp(syn,"**test-args** [<strong>-o</strong>=<em>0|1|2</em>] [<strong>-v</strong>] FILENAME") == 0)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "SynopsisMode5  @       o,v    @,o              " );
   } else
@@ -180,8 +181,8 @@ oyjlTESTRESULT_e testArgs()
     fprintf( zout, "SynopsisMode5: %s\n", syn );
   free(syn);
 
-  syn = oyjlOptions_PrintHelpSynopsis( ui->opts, &ui->opts->groups[5], oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MARKDOWN );
-  if(strcmp(syn,"**test-args** <strong>-i</strong>=<em>FILENAME</em> [<strong>-o</strong>=<em>0|1|2</em>] [<strong>-v</strong>]") == 0)
+  syn = ui ? oyjlOptions_PrintHelpSynopsis( ui->opts, &ui->opts->groups[5], oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MARKDOWN ) : NULL;
+  if(syn && strcmp(syn,"**test-args** <strong>-i</strong>=<em>FILENAME</em> [<strong>-o</strong>=<em>0|1|2</em>] [<strong>-v</strong>]") == 0)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "SynopsisMode6  i       o,v    i,o              " );
   } else
@@ -193,8 +194,8 @@ oyjlTESTRESULT_e testArgs()
     fprintf( zout, "SynopsisMode6: %s\n", syn );
   free(syn);
 
-  syn = oyjlOptions_PrintHelpSynopsis( ui->opts, &ui->opts->groups[6], oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MARKDOWN );
-  if(strcmp(syn,"**test-args** <strong>-i</strong>=<em>FILENAME</em> | <strong>-o</strong>=<em>0|1|2</em> [<strong>-h</strong>|<strong>-v</strong>]") == 0)
+  syn = ui ? oyjlOptions_PrintHelpSynopsis( ui->opts, &ui->opts->groups[6], oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MARKDOWN ) : NULL;
+  if(syn && strcmp(syn,"**test-args** <strong>-i</strong>=<em>FILENAME</em> | <strong>-o</strong>=<em>0|1|2</em> [<strong>-h</strong>|<strong>-v</strong>]") == 0)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "SynopsisMode7  i|o     h|v    i,o,h,v          " );
   } else
@@ -206,8 +207,8 @@ oyjlTESTRESULT_e testArgs()
     fprintf( zout, "SynopsisMode7: %s\n", syn );
   free(syn);
 
-  syn = oyjlOptions_PrintHelpSynopsis( ui->opts, &ui->opts->groups[7], oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MARKDOWN );
-  if(strcmp(syn,"**test-args** <strong>-b</strong> [<strong>--candle</strong>] [<strong>-v</strong>]") == 0)
+  syn = ui ? oyjlOptions_PrintHelpSynopsis( ui->opts, &ui->opts->groups[7], oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MARKDOWN ) : NULL;
+  if(syn && strcmp(syn,"**test-args** <strong>-b</strong> [<strong>--candle</strong>] [<strong>-v</strong>]") == 0)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "SynopsisMode8  b,      candle, b,candle,v      " );
   } else
@@ -219,6 +220,46 @@ oyjlTESTRESULT_e testArgs()
     fprintf( zout, "SynopsisMode8: %s\n", syn );
   free(syn);
 
+  syn = ui ? oyjlOptions_PrintHelpSynopsis( ui->opts, &ui->opts->groups[8], oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MARKDOWN ) : NULL;
+  if(syn && strcmp(syn,"**test-args** <strong>-b</strong> <strong>--candle</strong> [<strong>-v</strong>]") == 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "SynopsisMode9  b,candle       b,candle,v      " );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    "SynopsisMode9  b,      candle, b,candle,v      " );
+  }
+  OYJL_TEST_WRITE_RESULT( syn, strlen(syn), "SynopsisMode9", "txt" )
+  if(oy_test_last_result == oyjlTESTRESULT_FAIL || verbose)
+    fprintf( zout, "SynopsisMode9: %s\n", syn );
+  free(syn);
+
+  oyjlUi_Release( &ui);
+
+  const char * argv_multiple_mandatory[] = {"test","-b","--candle"};
+  int argc_multiple_mandatory = 2;
+  ui = oyjlUi_Create( argc_multiple_mandatory, argv_multiple_mandatory, /* argc+argv are required for parsing the command line options */
+                                       "oiCR", "oyjl-config-read", _("Short example tool using libOyjl"), "logo",
+                                       sections, oarray, groups_no_args, NULL );
+  if(ui)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "ui created - multiple mandatory args; argc = %d ", argc_multiple_mandatory );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    "ui created - multiple mandatory args; argc = %d ", argc_multiple_mandatory );
+  }
+  oyjlUi_Release( &ui);
+
+  ++argc_multiple_mandatory;
+  ui = oyjlUi_Create( argc_multiple_mandatory, argv_multiple_mandatory, /* argc+argv are required for parsing the command line options */
+                                       "oiCR", "oyjl-config-read", _("Short example tool using libOyjl"), "logo",
+                                       sections, oarray, groups_no_args, NULL );
+  if(ui)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "ui created - multiple mandatory args; argc = %d ", argc_multiple_mandatory );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    "ui created - multiple mandatory args; argc = %d ", argc_multiple_mandatory );
+  }
   oyjlUi_Release( &ui);
 
 
@@ -267,12 +308,12 @@ oyjlTESTRESULT_e testArgs()
                                        "oiCR", "oyjl-config-read", _("Short example tool using libOyjl"), "logo",
                                        sections, oarray, groups, NULL );
 
-  if(ui)
+  if(!ui)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "ui created - correct args                      " );
+    "ui not created - missing mandatory option      " );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "ui created - correct args                      " );
+    "ui not created - missing mandatory option      " );
   }
   oyjlUi_Release( &ui);
 
@@ -322,13 +363,13 @@ oyjlTESTRESULT_e testArgs()
                                        sections, oarray, groups_no_args, NULL );
 
   text = oyjlUi_ToMan( ui, 0 );
-  if( text && strlen(text) == 2590 &&
+  if( text && strlen(text) == 2904 &&
       strstr(text, "\n\\fB\\-\\-candle\\fR\tCandle"))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlUi_ToMan() %lu                            ", strlen(text) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "oyjlUi_ToMan() 2511 == %lu                    ", text ? strlen(text) : 0 );
+    "oyjlUi_ToMan() 2904 == %lu                    ", text ? strlen(text) : 0 );
   }
   OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlUi_ToMan", "txt" )
   if(verbose && text)
@@ -336,7 +377,7 @@ oyjlTESTRESULT_e testArgs()
   if(text) {free(text);} text = NULL;
 
   text = oyjlUi_ToMarkdown( ui, 0 );
-  if( text && strlen(text) == 7073 &&
+  if( text && strlen(text) == 7827 &&
       strstr(text, "><strong>--candle</strong><") )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlUi_ToMarkdown() %lu                       ", strlen(text) );

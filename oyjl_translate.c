@@ -160,12 +160,12 @@ int myMain( int argc, const char ** argv )
 
   if(verbose)
   {
-    char * json = oyjlOptions_ResultsToJson( ui->opts );
+    char * json = ui ? oyjlOptions_ResultsToJson( ui->opts ) : NULL;
     if(json)
       fputs( json, stderr );
     fputs( "\n", stderr );
 
-    char * text = oyjlOptions_ResultsToText( ui->opts );
+    char * text = ui ? oyjlOptions_ResultsToText( ui->opts ) : NULL;
     if(text)
       fputs( text, stderr );
     fputs( "\n", stderr );
