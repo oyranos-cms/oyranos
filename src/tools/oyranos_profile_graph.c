@@ -220,9 +220,9 @@ static oyjlOptionChoice_s * listPages ( oyjlOption_s * x OYJL_UNUSED, int * y OY
 const char * jcommands = "{\n\
   \"command_set\": \"oyranos-profile-graph\",\n\
   \"comment\": \"command_set_delimiter - build key:value; default is '=' key=value\",\n\
-  \"comment\": \"command_set_option - use \\\"-s\\\" \\\"key\\\"; skip \\\"--\\\" direct in front of key\"\n\
+  \"comment\": \"command_set_option - use \\\"-s\\\" \\\"key\\\"; skip \\\"--\\\" direct in front of key\",\n\
   \"command_get\": \"oyranos-profile-graph\",\n\
-  \"command_get_args\": [\"-X\",\"json\"]\n\
+  \"command_get_args\": [\"-X\",\"json+command\"]\n\
 }";
 /* This function is called the
  * * first time for GUI generation and then
@@ -322,7 +322,7 @@ int myMain( int argc, const char ** argv )
                                   {"XDG_DATA_HOME XDG_DATA_DIRS", _("route Oyranos to top directories containing resources. The derived paths for ICC profiles have a \"color/icc\" appended. http://www.oyranos.com/wiki/index.php?title=OpenIccDirectoryProposal"), "", ""},
                                   {"","","",""}};
   oyjlOptionChoice_s examples[]={ {_("Show graph of a ICC profile"), "oyranos-profile-graph ICC_PROFILE", "", ""},
-                                  {_("Show the saturation lines of two profiles in CIE*ab 256 pixel width, without spectral line and with thicker lines:"), "oyranos-profile-graph -w 256 -s -t 3 sRGB.icc ProPhoto-RGB.icc", "", ""},
+                                  {_("Show the saturation lines of two profiles in CIE*ab 256 pixel width, without spectral line and with thicker lines:"), "oyranos-profile-graph -w 256 -n -t 3 sRGB.icc ProPhoto-RGB.icc", "", ""},
                                   {_("Show HLC Color Atlas patches"),"oyranos-profile-graph -H=90 -o HLC_H090.png cmyk web",_("Color patches are only shown, if they are in gamut of the default CMYK and web profile."), ""},
                                   {_("Show the standard observer spectral function as curves:"),"oyranos-profile-graph --standard-observer -o CIE-StdObserver.png","", ""},
                                   {"","","",""}};
@@ -483,7 +483,7 @@ int myMain( int argc, const char ** argv )
   if(render)
   { 
     int debug = verbose;
-    oyjlArgsRender( argc, argv, NULL, NULL,NULL, debug, ui, myMain );
+    oyjlArgsRender( argc, argv, NULL, jcommands,NULL, debug, ui, myMain );
     oyjlUi_Release( &ui);
     return 0;
   }
