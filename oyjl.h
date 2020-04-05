@@ -564,7 +564,7 @@ typedef struct oyjlOptionGroup_s {
   const char * name;                   /**< @brief i18n label string */
   const char * description;            /**< @brief i18n short sentence about the option */
   const char * help;                   /**< @brief i18n longer text to explain what the option does; optional */
-  const char * mandatory;              /**< @brief list of mandatory options from a oyjlOption_s::o or oyjlOption_s::option for this group of associated options */
+  const char * mandatory;              /**< @brief list of mandatory options from a oyjlOption_s::o or oyjlOption_s::option for this group of associated options; one single option here makes a subcommand and is usualy easier to understand */
   const char * optional;               /**< @brief list of non mandatory options from a oyjlOption_s::o or oyjlOption_s::option for this group of associated options */
   const char * detail;                 /**< @brief list of options from a oyjlOption_s::o or oyjlOption_s::option for this group of associated options to display */
 } oyjlOptionGroup_s;
