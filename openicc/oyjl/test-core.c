@@ -659,12 +659,12 @@ oyjlTESTRESULT_e testArgs()
                                        "oiCR", "oyjl-config-read", _("Short example tool using libOyjl"), "logo",
                                        sections, oarray, groups, NULL );
 
-  if(ui)
+  if(!ui)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "ui created - correct args                      " );
+    "ui not created - missing mandatory option      " );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "ui created - correct args                      " );
+    "ui not created - missing mandatory option      " );
   }
   oyjlUi_Release( &ui);
 

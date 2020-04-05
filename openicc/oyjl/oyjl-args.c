@@ -67,8 +67,8 @@ int myMain( int argc, const char ** argv )
   /* declare option groups, for better syntax checking and UI groups */
   oyjlOptionGroup_s groups[] = {
   /* type,   flags, name,      description,          help, mandatory, optional, detail */
-    {"oiwg", 0,     _("Convert"),_("Generate source code"),NULL, "i", "v",      "i" },/* parsed and checked with -i option */
-    {"oiwg", 0,     _("Misc"), _("General options"), NULL, "h",       "v",      "h,v" },/* just show in documentation */
+    {"oiwg", 0,     _("Convert"),_("Generate source code"),NULL, "i", "v",      "i" }, /* parsed and checked with -i option */
+    {"oiwg", 0,     _("Misc"), _("General options"), NULL, "h,X,V",   "v",      "h,X,V,v" }, /* just show in documentation */
     {"",0,0,0,0,0,0,0}
   };
 

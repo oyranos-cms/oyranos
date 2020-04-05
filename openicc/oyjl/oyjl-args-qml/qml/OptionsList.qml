@@ -247,7 +247,7 @@ Rectangle {
                     }
                     statusText = k + ":" + t
                     value = t
-                    callback( key, value, type, group, 1 )
+                    callback( key, value, type, group, 0 )
                 }
             }
             MouseArea {

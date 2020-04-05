@@ -149,7 +149,7 @@ int myMain( int argc, const char ** argv )
     goto clean_main;
   }
 
-  if(verbose)
+  if(ui && verbose)
   {
     char * json = oyjlOptions_ResultsToJson( ui->opts );
     if(json)
@@ -162,7 +162,7 @@ int myMain( int argc, const char ** argv )
     fputs( "\n", stderr );
   }
 
-  if((export && strcmp(export,"json+command") == 0))
+  if(ui && (export && strcmp(export,"json+command") == 0))
   {
     char * json = oyjlUi_ToJson( ui, 0 ),
          * json_commands = NULL;
