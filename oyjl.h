@@ -599,7 +599,8 @@ typedef enum {
   oyjlOPTION_UNEXPECTED_VALUE,         /**< user error */
   oyjlOPTION_NOT_SUPPORTED,            /**< user error */
   oyjlOPTION_DOUBLE_OCCURENCE,         /**< user error; except '@' is specified */
-  oyjlOPTIONS_MISSING                  /**< user error; except '#' is specified */
+  oyjlOPTIONS_MISSING,                 /**< user error; except '#' is specified */
+  oyjlOPTION_NO_GROUP_FOUND            /**< user error */
 } oyjlOPTIONSTATE_e;
 oyjlOptions_s *    oyjlOptions_New   ( int                 argc,
                                        const char       ** argv );
