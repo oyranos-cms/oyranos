@@ -2,17 +2,17 @@
 <a name="toc"></a>
 [NAME](#name) [ÜBERSICHT](#synopsis) [BESCHREIBUNG](#description) [OPTIONEN](#options) [BEISPIELE](#examples) [SIEHE AUCH](#seealso) 
 
-*"oyjl\-args\-qml"* *1* *"May 23, 2019"* "User Commands"
+<strong>"oyjl-args-qml"</strong> *1* <em>"May 23, 2019"</em> "User Commands"
 
 <h2>NAME <a href="#toc" name="name">&uarr;</a></h2>
 
-oyjl\-args\-qml v1.0 \- Oyjl Args QML Viewer
+oyjl-args-qml v1.0 - Oyjl Args QML Viewer
 
 <h2>ÜBERSICHT <a href="#toc" name="synopsis">&uarr;</a></h2>
 
-<strong>oyjl\-args\-qml</strong> <a href="#input"><strong>\-i</strong>=<em>STRING</em></a> [<strong>\-c</strong>=<em>STRING</em>] [<strong>\-o</strong>=<em>STRING</em>] [<strong>\-v</strong>]
+<strong>oyjl-args-qml</strong> <a href="#input"><strong>-i</strong>=<em>STRING</em></a> [<strong>-c</strong>=<em>STRING</em>] [<strong>-o</strong>=<em>STRING</em>] [<strong>-v</strong>]
 <br />
-<strong>oyjl\-args\-qml</strong> <a href="#help"><strong>\-h</strong><em>[=synopsis|...]</em></a> <strong>\-X</strong>=<em>json|json+command|man|markdown</em> [<strong>\-v</strong>]
+<strong>oyjl-args-qml</strong> <a href="#help"><strong>-h</strong><em>[=synopsis|...]</em></a> <strong>-X</strong>=<em>json|json+command|man|markdown</em> [<strong>-v</strong>]
 
 <h2>BESCHREIBUNG <a href="#toc" name="description">&uarr;</a></h2>
 
@@ -21,7 +21,7 @@ The tool graphicaly renders Oyjl JSON UI files using QML.
 <h2>OPTIONEN <a href="#toc" name="options">&uarr;</a></h2>
 
  <h4 id="input">QML UI</h4>
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl\-args\-qml</strong></a> <strong>\-i</strong>=<em>STRING</em> [<strong>\-c</strong>=<em>STRING</em>] [<strong>\-o</strong>=<em>STRING</em>] [<strong>\-v</strong>]
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl-args-qml</strong></a> <strong>-i</strong>=<em>STRING</em> [<strong>-c</strong>=<em>STRING</em>] [<strong>-o</strong>=<em>STRING</em>] [<strong>-v</strong>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-i</strong>|<strong>--input</strong> <em>STRING</em></td> <td>JSON UI Description </tr>
@@ -30,7 +30,7 @@ The tool graphicaly renders Oyjl JSON UI files using QML.
 </table>
 
  <h4 id="help">General options</h4>
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl-args\-qml</strong></a> <strong>\-h</strong><em>[=synopsis|...]</em> <strong>\-X</strong>=<em>json|json+command|man|markdown</em> [<strong>\-v</strong>]
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl-args-qml</strong></a> <strong>-h</strong><em>[=synopsis|...]</em> <strong>-X</strong>=<em>json|json+command|man|markdown</em> [<strong>-v</strong>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-h</strong>|<strong>--help</strong><em>[ synopsis|...]</em></td> <td>Zeige Hilfetext an<br />Zeige Benutzungsinformationen und Hinweise für das Werkzeug.
@@ -59,12 +59,12 @@ The tool graphicaly renders Oyjl JSON UI files using QML.
 <h2>BEISPIELE <a href="#toc" name="examples">&uarr;</a></h2>
 
 #### Load a UI JSON declaration from file
-&nbsp;&nbsp;oyjl-args\-qml \-i oyjl\-ui\-text.json \-c oyjl\-command.json
+&nbsp;&nbsp;oyjl-args-qml -i oyjl-ui-text.json -c oyjl-command.json
 #### Load a UI JSON declaration from tool
-&nbsp;&nbsp;oyjl \-X json+command | oyjl\-args\-qml \-i \- \-c +
+&nbsp;&nbsp;oyjl -X json+command | oyjl-args-qml -i - -c +
 
 <h2>SIEHE AUCH <a href="#toc" name="seealso">&uarr;</a></h2>
 
-&nbsp;&nbsp;[oyjl](oyjl.html)<a href="oyjl.md">(1)</a>&nbsp;&nbsp;[oyjl\-args](oyjlargs.html)<a href="oyjlargs.md">(1)</a>&nbsp;&nbsp;[oyjl\-translate](oyjltranslate.html)<a href="oyjltranslate.md">(1)</a>
+&nbsp;&nbsp;[oyjl](oyjl.html)<a href="oyjl.md">(1)</a>&nbsp;&nbsp;[oyjl-args](oyjlargs.html)<a href="oyjlargs.md">(1)</a>&nbsp;&nbsp;[oyjl-translate](oyjltranslate.html)<a href="oyjltranslate.md">(1)</a>
 
 

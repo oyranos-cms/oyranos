@@ -3419,17 +3419,29 @@ static void replaceOutsideHTML(const char * text OYJL_UNUSED, const char * start
   if(start < end)
   {
     const char * word = start;
-    int * insideTable = (int*) data,
-          inside_table = insideTable[0],
+    int * insideXML = (int*) data,
+          inside_table = 0,
           inside_xml;
 
     word = start;
     while(word && (word = strstr(word+1,"<")) != NULL && word < end)
-      ++insideTable[1];
+      ++insideXML[1];
     word = start;
     while(word && (word = strstr(word+1,">")) != NULL && word < end)
-      --insideTable[1];
-    inside_xml = insideTable[1];
+      --insideXML[1];
+    inside_xml = insideXML[1];
+
+    if(!inside_xml)
+    {
+      word = start;
+      while(word && (word = strstr(word+1,"<")) != NULL && word && word[0] != '/' && word < end)
+        ++insideXML[0];
+      word = start;
+      while(word && (word = strstr(word+1,"</")) != NULL && word < end)
+        --insideXML[0];
+      inside_table = insideXML[0];
+    }
+
 
     if( inside_table || inside_xml )
       *replace = search;
@@ -3442,13 +3454,6 @@ static void replaceOutsideHTML(const char * text OYJL_UNUSED, const char * start
       if(strcmp(search,"_") == 0)
         *replace = "\\_";
     }
-
-    word = start;
-    while(word && (word = strstr(word+1,"<table")) != NULL && word < end)
-      ++insideTable[0];
-    word = start;
-    while(word && (word = strstr(word+1,"</table>")) != NULL && word < end)
-      --insideTable[0];
 
   }
 }
@@ -3515,7 +3520,7 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
   if(ui->app_type && ui->app_type[0])
   {
     int tool = strcmp( ui->app_type, "tool" ) == 0;
-    oyjlStringAdd( &text, malloc, free, "*\"%s\"* *%d* *\"%s\"* \"%s\"\n", ui->nick,
+    oyjlStringAdd( &text, malloc, free, "<strong>\"%s\"</strong> *%d* <em>\"%s\"</em> \"%s\"\n", ui->nick,
                    tool?1:7, date?date:"", tool?"User Commands":"Misc" );
   }
 
@@ -3689,12 +3694,12 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
 
   {
     const char * t;
-    int insideTable[3] = {0,0,0};
+    int insideXML[3] = {0,0,0};
     oyjl_str tmp = oyjlStrNew(10,0,0);
     oyjlStrAppendN( tmp, text, strlen(text) );
-    oyjlStrReplace( tmp, "`", "\\`", replaceOutsideHTML, insideTable );
-    oyjlStrReplace( tmp, "-", "\\-", replaceOutsideHTML, insideTable );
-    oyjlStrReplace( tmp, "_", "\\_", replaceOutsideHTML, insideTable );
+    oyjlStrReplace( tmp, "`", "\\`", replaceOutsideHTML, insideXML );
+    oyjlStrReplace( tmp, "-", "\\-", replaceOutsideHTML, insideXML );
+    oyjlStrReplace( tmp, "_", "\\_", replaceOutsideHTML, insideXML );
     t = oyjlStr(tmp);
     text[0] = 0;
     oyjlStringAdd( &text, malloc,free, "%s", t );
