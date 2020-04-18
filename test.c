@@ -655,7 +655,7 @@ oyjlTESTRESULT_e testUiRoundtrip ()
   if(text) {free(text);} text = NULL;
 
   char * c_source = oyjlUiJsonToCode( json, OYJL_SOURCE_CODE_C );
-  if(c_source && strlen(c_source) == 8316)
+  if(c_source && strlen(c_source) == 8345)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlUiJsonToCode()                   %lu", c_source?strlen(c_source):0 );
   } else
