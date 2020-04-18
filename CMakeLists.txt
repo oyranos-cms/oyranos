@@ -508,10 +508,13 @@ IF( GETTEXT_FOUND AND OYJL_USE_GETTEXT )
   FILE( GLOB ${PROJECT_UP_NAME}_SRC_FILES_TEST RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
         test*.c
       )
+  FILE( GLOB ${PROJECT_UP_NAME}_SRC_FILES_CORE RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+        oyjl_*.c
+      )
   SET( ${PROJECT_UP_NAME}_SRC_FILES
        oyjl-args.c
        oyjl.c
-       oyjl_*.c
+       ${${PROJECT_UP_NAME}_SRC_FILES_CORE}
        ${${PROJECT_UP_NAME}_SRC_FILES_TEST}
        xml2json.c
        yaml2json.c
