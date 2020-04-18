@@ -10,7 +10,7 @@
  *  @par License:
  *            MIT <http://www.opensource.org/licenses/mit-license.php>
  *
- * Copyright (c) 2018-2019  Kai-Uwe Behrmann  <ku.b@gmx.de>
+ * Copyright (c) 2018-2020  Kai-Uwe Behrmann  <ku.b@gmx.de>
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -1055,6 +1055,8 @@ enum {
   oyjlOPTIONSTYLE_MARKDOWN = 0x40
 };
 #define oyjlOPTIONSTYLE_OPTIONAL (oyjlOPTIONSTYLE_OPTIONAL_START | oyjlOPTIONSTYLE_OPTIONAL_END)
+#define oyjlOPTIONSTYLE_LINK_GROUP     0x100
+#define oyjlOPTIONSTYLE_LINK_SYNOPSIS  0x200
 static
 char *       oyjlOption_PrintArg     ( oyjlOption_s      * o,
                                        int                 style )
@@ -1987,6 +1989,35 @@ char * oyjlOptions_ResultsToText  ( oyjlOptions_s  * opts )
 }
 
 /** @internal
+ *  @brief   provide identifier string for a group
+ *  @memberof oyjlOptions_s
+ *
+ *  @version Oyjl: 1.0.0
+ *  @date    2020/04/18
+ *  @since   2020/04/18 (Oyjl: 1.0.0)
+ */
+const char * oyjlOptions_GetGroupId  ( oyjlOptions_s  *    opts,
+                                       oyjlOptionGroup_s * g )
+{
+  char ** m_list = NULL;
+  const char * group_id = NULL;
+  int m = 0;
+
+  m_list = oyjlStringSplit2( g->mandatory, "|,", &m, NULL, malloc );
+
+  if(m_list && m)
+  {
+    const char * option = m_list[0];
+    oyjlOption_s * o = oyjlOptions_GetOptionL( opts, option );
+    if(option[0] != '@' && !(option[0] == '#' && m) && o)
+      group_id = o->option;
+  }
+
+  oyjlStringListRelease( &m_list, m, free );
+  return group_id;
+}
+            
+/** @internal
  *  @brief    Print synopsis of a option group to stderr
  *  @memberof oyjlOptions_s
  *
@@ -2018,7 +2049,13 @@ char *       oyjlOptions_PrintHelpSynopsis (
     if(style & oyjlOPTIONSTYLE_MAN)
       oyjlStringAdd( &text, malloc, free, "\\fB%s\\fR", prog );
     else if(style & oyjlOPTIONSTYLE_MARKDOWN)
-      oyjlStringAdd( &text, malloc, free, "**%s**", prog );
+    {
+      if(style & oyjlOPTIONSTYLE_LINK_SYNOPSIS)
+        oyjlStringAdd( &text, malloc, free, " <a href=\"#synopsis\">" );
+      oyjlStringAdd( &text, malloc, free, "<strong>%s</strong>", prog );
+      if(style & oyjlOPTIONSTYLE_LINK_SYNOPSIS)
+        oyjlStringAdd( &text, malloc, free, "</a>" );
+    }
     else
       oyjlStringAdd( &text, malloc, free, "%s", oyjlTermColor(oyjlBOLD,prog) );
   }
@@ -2039,7 +2076,11 @@ char *       oyjlOptions_PrintHelpSynopsis (
     if(option[0] != '@' && !(option[0] == '#' && m+on == 1))
     {
       char * t = oyjlOption_PrintArg(o, style);
-      oyjlStringAdd( &text, malloc, free, " %s", t );
+      const char * group_id = oyjlOptions_GetGroupId( opts, g );
+      if(i == 0 && o->option && style & oyjlOPTIONSTYLE_MARKDOWN && style & oyjlOPTIONSTYLE_LINK_GROUP && group_id)
+        oyjlStringAdd( &text, malloc, free, " <a href=\"#%s\">%s</a>", group_id, t );
+      else
+        oyjlStringAdd( &text, malloc, free, " %s", t );
       free(t);
     }
     if(next_delimiter == '|')
@@ -3486,7 +3527,7 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
   {
     oyjlOptionGroup_s * g = &opts->groups[i];
     char * syn = oyjlOptions_PrintHelpSynopsis( opts, g,
-                         oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MARKDOWN );
+                         oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MARKDOWN | oyjlOPTIONSTYLE_LINK_GROUP );
     if(syn[0])
       oyjlStringAdd( &text, malloc, free, "%s\n%s", syn, (i < (ng-1)) ? "<br />\n" : "" );
     free(syn);
@@ -3505,10 +3546,16 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
     char ** d_list = oyjlStringSplit2( g->detail, "|,", &d, NULL, malloc ),
          * t;
     if(g->description)
-      oyjlStringAdd( &text, malloc, free, "#### %s\n", g->description  );
+    {
+      const char * group_id = oyjlOptions_GetGroupId( opts, g );
+      if(group_id)
+        oyjlStringAdd( &text, malloc, free, " <h4 id=\"%s\">%s</h4>\n", group_id, g->description );
+      else
+        oyjlStringAdd( &text, malloc, free, " <h4>%s</h4>\n", g->description );
+    }
     if(g->mandatory && g->mandatory[0])
     {
-      char * t = oyjlOptions_PrintHelpSynopsis( opts, g, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MARKDOWN );
+      char * t = oyjlOptions_PrintHelpSynopsis( opts, g, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MARKDOWN | oyjlOPTIONSTYLE_LINK_SYNOPSIS );
       oyjlStringAdd( &text, malloc, free, "&nbsp;&nbsp;%s\n", t );
       free(t);
     }
