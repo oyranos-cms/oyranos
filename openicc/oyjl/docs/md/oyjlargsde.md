@@ -2,33 +2,33 @@
 <a name="toc"></a>
 [NAME](#name) [ÜBERSICHT](#synopsis) [BESCHREIBUNG](#description) [OPTIONEN](#options) [BEISPIELE](#examples) [SIEHE AUCH](#seealso) [AUTOR](#author) [KOPIERRECHT](#copyright) [FEHLER](#bugs) 
 
-*"oyjl\-args"* *1* *"26. Juni 2019"* "User Commands"
+<strong>"oyjl-args"</strong> *1* <em>"26. Juni 2019"</em> "User Commands"
 
 <h2>NAME <a href="#toc" name="name">&uarr;</a></h2>
 
-oyjl\-args v1.0.0 \- Benutzerschnittstellen nach Quelltext
+oyjl-args v1.0.0 - Benutzerschnittstellen nach Quelltext
 
 <h2>ÜBERSICHT <a href="#toc" name="synopsis">&uarr;</a></h2>
 
-<strong>oyjl\-args</strong> <a href="#input"><strong>\-i</strong>=<em>DATEINAME</em></a> [<strong>\-v</strong>]
+<strong>oyjl-args</strong> <a href="#input"><strong>-i</strong>=<em>DATEINAME</em></a> [<strong>-v</strong>]
 <br />
-<strong>oyjl\-args</strong> <a href="#help"><strong>\-h</strong><em>[=synopsis|...]</em></a> <strong>\-X</strong>=<em>json|json+command|man|markdown</em> <strong>\-V</strong> [<strong>\-v</strong>]
+<strong>oyjl-args</strong> <a href="#help"><strong>-h</strong><em>[=synopsis|...]</em></a> <strong>-X</strong>=<em>json|json+command|man|markdown</em> <strong>-V</strong> [<strong>-v</strong>]
 
 <h2>BESCHREIBUNG <a href="#toc" name="description">&uarr;</a></h2>
 
-Werkzeug um Benutzerschnittstellen in JSON von *\-X export* nach Quelltext zu übertragen.
+Werkzeug um Benutzerschnittstellen in JSON von *-X export* nach Quelltext zu übertragen.
 
 <h2>OPTIONEN <a href="#toc" name="options">&uarr;</a></h2>
 
  <h4 id="input">Erzeuge Quelltext</h4>
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl\-args</strong></a> <strong>\-i</strong>=<em>DATEINAME</em> [<strong>\-v</strong>]
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl-args</strong></a> <strong>-i</strong>=<em>DATEINAME</em> [<strong>-v</strong>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-i</strong>|<strong>--input</strong> <em>DATEINAME</em></td> <td>Setze Eingabe </tr>
 </table>
 
  <h4 id="help">Allgemeine Optionen</h4>
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl-args</strong></a> <strong>\-h</strong><em>[=synopsis|...]</em> <strong>\-X</strong>=<em>json|json+command|man|markdown</em> <strong>\-V</strong> [<strong>\-v</strong>]
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl-args</strong></a> <strong>-h</strong><em>[=synopsis|...]</em> <strong>-X</strong>=<em>json|json+command|man|markdown</em> <strong>-V</strong> [<strong>-v</strong>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-h</strong>|<strong>--help</strong><em>[ synopsis|...]</em></td> <td>Zeige Hilfetext an<br />Zeige Benutzungsinformationen und Hinweise für das Werkzeug.
@@ -58,21 +58,21 @@ Werkzeug um Benutzerschnittstellen in JSON von *\-X export* nach Quelltext zu ü
 <h2>BEISPIELE <a href="#toc" name="examples">&uarr;</a></h2>
 
 #### Wandle EntwicklerJSON nach C Quelltext
-&nbsp;&nbsp;oyjl-args \-X export | oyjl\-args \-i \-
+&nbsp;&nbsp;oyjl-args -X export | oyjl-args -i -
 
 <h2>SIEHE AUCH <a href="#toc" name="seealso">&uarr;</a></h2>
 
-&nbsp;&nbsp;[oyjl](oyjl.html)<a href="oyjl.md">(1)</a>&nbsp;&nbsp;[oyjl\-translate](oyjltranslate.html)<a href="oyjltranslate.md">(1)</a>&nbsp;&nbsp;[oyjl\-args\-qml](oyjlargsqml.html)<a href="oyjlargsqml.md">(1)</a>
+&nbsp;&nbsp;[oyjl](oyjl.html)<a href="oyjl.md">(1)</a>&nbsp;&nbsp;[oyjl-translate](oyjltranslate.html)<a href="oyjltranslate.md">(1)</a>&nbsp;&nbsp;[oyjl-args-qml](oyjlargsqml.html)<a href="oyjlargsqml.md">(1)</a>
 
-&nbsp;&nbsp;<a href="https://codedocs.xyz/oyranos-cms/oyranos/group__oyjl.html">https://codedocs.xyz/oyranos\-cms/oyranos/group\_\_oyjl.html</a>
+&nbsp;&nbsp;<a href="https://codedocs.xyz/oyranos-cms/oyranos/group__oyjl.html">https://codedocs.xyz/oyranos-cms/oyranos/group__oyjl.html</a>
 
 <h2>AUTOR <a href="#toc" name="author">&uarr;</a></h2>
 
-Kai\-Uwe Behrmann http://www.oyranos.org
+Kai-Uwe Behrmann http://www.oyranos.org
 
 <h2>KOPIERRECHT <a href="#toc" name="copyright">&uarr;</a></h2>
 
-*Copyright © 2017\-2020 Kai\-Uwe Behrmann*
+*Copyright © 2017-2020 Kai-Uwe Behrmann*
 
 
 <a name="license"></a>
@@ -81,5 +81,5 @@ newBSD <a href="http://www.oyranos.org">http://www.oyranos.org</a>
 
 <h2>FEHLER <a href="#toc" name="bugs">&uarr;</a></h2>
 
-<a href="https://www.github.com/oyranos-cms/oyranos/issues">https://www.github.com/oyranos\-cms/oyranos/issues</a>
+<a href="https://www.github.com/oyranos-cms/oyranos/issues">https://www.github.com/oyranos-cms/oyranos/issues</a>
 

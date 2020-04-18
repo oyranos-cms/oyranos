@@ -1,22 +1,22 @@
-# oyranos\-profiles v0.9.7 {#oyranosprofiles}
+# oyranos-profiles v0.9.7 {#oyranosprofiles}
 <a name="toc"></a>
 [NAME](#name) [SYNOPSIS](#synopsis) [DESCRIPTION](#description) [OPTIONS](#options) [ENVIRONMENT VARIABLES](#environmentvariables) [EXAMPLES](#examples) [SEE AS WELL](#seeaswell) [AUTHOR](#author) [COPYRIGHT](#copyright) [BUGS](#bugs) 
 
-*"oyranos\-profiles"* *1* *"October 11, 2018"* "User Commands"
+<strong>"oyranos-profiles"</strong> *1* <em>"October 11, 2018"</em> "User Commands"
 
 <h2>NAME <a href="#toc" name="name">&uarr;</a></h2>
 
-oyranos\-profiles v0.9.7 \- Oyranos Profiles
+oyranos-profiles v0.9.7 - Oyranos Profiles
 
 <h2>SYNOPSIS <a href="#toc" name="synopsis">&uarr;</a></h2>
 
-<strong>oyranos\-profiles</strong> <a href="#list-profiles"><strong>\-l</strong></a> [<strong>\-f</strong>] [<strong>\-e</strong>] [<strong>\-a</strong>] [<strong>\-c</strong>] [<strong>\-d</strong>] [<strong>\-k</strong>] [<strong>\-n</strong>] [<strong>\-o</strong>] [<strong>\-i</strong>] [<strong>\-2</strong>] [<strong>\-4</strong>] [<strong>\-P</strong>] [<strong>\-T</strong>=<em>KEY;VALUE</em>] [<strong>\-v</strong>]
+<strong>oyranos-profiles</strong> <a href="#list-profiles"><strong>-l</strong></a> [<strong>-f</strong>] [<strong>-e</strong>] [<strong>-a</strong>] [<strong>-c</strong>] [<strong>-d</strong>] [<strong>-k</strong>] [<strong>-n</strong>] [<strong>-o</strong>] [<strong>-i</strong>] [<strong>-2</strong>] [<strong>-4</strong>] [<strong>-P</strong>] [<strong>-T</strong>=<em>KEY;VALUE</em>] [<strong>-v</strong>]
 <br />
-<strong>oyranos\-profiles</strong> <a href="#list-paths"><strong>\-p</strong></a> [<strong>\-u</strong>|<strong>\-s</strong>|<strong>\-y</strong>|<strong>\-m</strong>] [<strong>\-v</strong>]
+<strong>oyranos-profiles</strong> <a href="#list-paths"><strong>-p</strong></a> [<strong>-u</strong>|<strong>-s</strong>|<strong>-y</strong>|<strong>-m</strong>] [<strong>-v</strong>]
 <br />
-<strong>oyranos\-profiles</strong> <a href="#install"><strong>\-I</strong>=<em>ICC\_PROFILE</em></a> | <strong>\-t</strong>=<em>TAXI\_ID</em> [<strong>\-u</strong>|<strong>\-s</strong>|<strong>\-y</strong>|<strong>\-m</strong>] [<strong>\-g</strong>] [<strong>\-v</strong>]
+<strong>oyranos-profiles</strong> <a href="#install"><strong>-I</strong>=<em>ICC_PROFILE</em></a> | <strong>-t</strong>=<em>TAXI_ID</em> [<strong>-u</strong>|<strong>-s</strong>|<strong>-y</strong>|<strong>-m</strong>] [<strong>-g</strong>] [<strong>-v</strong>]
 <br />
-<strong>oyranos\-profiles</strong> <a href="#help"><strong>\-h</strong></a> <strong>\-X</strong>=<em>json|json+command|man|markdown</em>
+<strong>oyranos-profiles</strong> <a href="#help"><strong>-h</strong></a> <strong>-X</strong>=<em>json|json+command|man|markdown</em>
 
 <h2>DESCRIPTION <a href="#toc" name="description">&uarr;</a></h2>
 
@@ -25,7 +25,7 @@ The tool can list installed profiles, search paths and can help install a ICC co
 <h2>OPTIONS <a href="#toc" name="options">&uarr;</a></h2>
 
  <h4 id="list-profiles">List of available ICC color profiles</h4>
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos\-profiles</strong></a> <strong>\-l</strong> [<strong>\-f</strong>] [<strong>\-e</strong>] [<strong>\-a</strong>] [<strong>\-c</strong>] [<strong>\-d</strong>] [<strong>\-k</strong>] [<strong>\-n</strong>] [<strong>\-o</strong>] [<strong>\-i</strong>] [<strong>\-2</strong>] [<strong>\-4</strong>] [<strong>\-P</strong>] [<strong>\-T</strong>=<em>KEY;VALUE</em>] [<strong>\-v</strong>]
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-profiles</strong></a> <strong>-l</strong> [<strong>-f</strong>] [<strong>-e</strong>] [<strong>-a</strong>] [<strong>-c</strong>] [<strong>-d</strong>] [<strong>-k</strong>] [<strong>-n</strong>] [<strong>-o</strong>] [<strong>-i</strong>] [<strong>-2</strong>] [<strong>-4</strong>] [<strong>-P</strong>] [<strong>-T</strong>=<em>KEY;VALUE</em>] [<strong>-v</strong>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-l</strong>|<strong>--list-profiles</strong></td> <td>List Profiles</td> </tr>
@@ -40,13 +40,13 @@ The tool can list installed profiles, search paths and can help install a ICC co
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-i</strong>|<strong>--input</strong></td> <td>Select Input profiles</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-2</strong>|<strong>--icc-version-2</strong></td> <td>Select ICC v2 Profiles</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-4</strong>|<strong>--icc-version-4</strong></td> <td>Select ICC v4 Profiles</td> </tr>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-P</strong>|<strong>--path</strong></td> <td>Show profiles containing a string as part of their full name<br />PATH\_SUB_STRING </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-P</strong>|<strong>--path</strong></td> <td>Show profiles containing a string as part of their full name<br />PATH_SUB_STRING </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-T</strong>|<strong>--meta</strong> <em>KEY;VALUE</em></td> <td>Filter for meta tag key/value pair<br />Show profiles containing a certain key/value pair of their meta tag. VALUE can contain '*' to allow for substring matching. </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-D</strong>|<strong>--duplicates</strong></td> <td>Show identical multiple installed profiles</td> </tr>
 </table>
 
  <h4 id="list-paths">List search paths</h4>
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos\-profiles</strong></a> <strong>\-p</strong> [<strong>\-u</strong>|<strong>\-s</strong>|<strong>\-y</strong>|<strong>\-m</strong>] [<strong>\-v</strong>]
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-profiles</strong></a> <strong>-p</strong> [<strong>-u</strong>|<strong>-s</strong>|<strong>-y</strong>|<strong>-m</strong>] [<strong>-v</strong>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-p</strong>|<strong>--list-paths</strong></td> <td>List ICC Profile Paths</td> </tr>
@@ -57,10 +57,10 @@ The tool can list installed profiles, search paths and can help install a ICC co
 </table>
 
  <h4 id="install">Install Profile</h4>
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-profiles</strong></a> <strong>\-I</strong>=<em>ICC_PROFILE</em> | <strong>\-t</strong>=<em>TAXI\_ID</em> [<strong>\-u</strong>|<strong>\-s</strong>|<strong>\-y</strong>|<strong>\-m</strong>] [<strong>\-g</strong>] [<strong>\-v</strong>]
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-profiles</strong></a> <strong>-I</strong>=<em>ICC_PROFILE</em> | <strong>-t</strong>=<em>TAXI_ID</em> [<strong>-u</strong>|<strong>-s</strong>|<strong>-y</strong>|<strong>-m</strong>] [<strong>-g</strong>] [<strong>-v</strong>]
 
 <table style='width:100%'>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-I</strong>|<strong>--install</strong> <em>ICC\_PROFILE</em></td> <td>Install Profile </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-I</strong>|<strong>--install</strong> <em>ICC_PROFILE</em></td> <td>Install Profile </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-t</strong>|<strong>--taxi</strong> <em>TAXI_ID</em></td> <td>ICC Taxi Profile DB </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-u</strong>|<strong>--user</strong></td> <td>User path</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-s</strong>|<strong>--system</strong></td> <td>System path</td> </tr>
@@ -70,7 +70,7 @@ The tool can list installed profiles, search paths and can help install a ICC co
 </table>
 
  <h4 id="help">General options</h4>
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-profiles</strong></a> <strong>\-h</strong> <strong>\-X</strong>=<em>json|json+command|man|markdown</em>
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-profiles</strong></a> <strong>-h</strong> <strong>-X</strong>=<em>json|json+command|man|markdown</em>
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-h</strong>|<strong>--help</strong></td> <td>Help</td> </tr>
@@ -96,39 +96,39 @@ The tool can list installed profiles, search paths and can help install a ICC co
   <br />
 &nbsp;&nbsp;Alternatively the -v option can be used.
   <br />
-&nbsp;&nbsp;Valid integer range is from 1\-20.
-#### XDG\_DATA\_HOME XDG\_DATA\_DIRS
+&nbsp;&nbsp;Valid integer range is from 1-20.
+#### XDG_DATA_HOME XDG_DATA_DIRS
 &nbsp;&nbsp;route Oyranos to top directories containing resources. The derived paths for ICC profiles have a "color/icc" appended. http://www.oyranos.com/wiki/index.php?title=OpenIccDirectoryProposal
 
 <h2>EXAMPLES <a href="#toc" name="examples">&uarr;</a></h2>
 
 #### List all installed profiles by internal name
-&nbsp;&nbsp;oyranos\-profiles \-le
+&nbsp;&nbsp;oyranos-profiles -le
 #### List all installed profiles of the display and output device classes
-&nbsp;&nbsp;oyranos\-profiles \-l \-od
+&nbsp;&nbsp;oyranos-profiles -l -od
 #### List all installed profiles in user path
-&nbsp;&nbsp;oyranos\-profiles \-lfu
+&nbsp;&nbsp;oyranos-profiles -lfu
 #### Install a profile for the actual user and show error messages in a GUI
-&nbsp;&nbsp;oyranos\-profiles \-\-install profilename \-u \-\-gui
+&nbsp;&nbsp;oyranos-profiles --install profilename -u --gui
 #### Install a profile for the actual user and show error messages in a GUI
-&nbsp;&nbsp;oyranos\-profiles \-\-install \-\-taxi=taxi\_id/0 \-\-gui \-d \-u
+&nbsp;&nbsp;oyranos-profiles --install --taxi=taxi_id/0 --gui -d -u
 #### Show file infos
-&nbsp;&nbsp;SAVEIFS=$IFS ; IFS=$'\n\b'; profiles=(\`oyranos\-profiles \-ldf\`); IFS=$SAVEIFS; for file in "${profiles[@]}"; do ls "$file"; done
+&nbsp;&nbsp;SAVEIFS=$IFS ; IFS=$'\n\b'; profiles=(`oyranos-profiles -ldf`); IFS=$SAVEIFS; for file in "${profiles[@]}"; do ls "$file"; done
 
 <h2>SEE AS WELL <a href="#toc" name="seeaswell">&uarr;</a></h2>
 
-&nbsp;&nbsp;[oyranos\-profile\-graph](oyranosprofilegraph.html)<a href="oyranosprofilegraph.md">(1)</a>&nbsp;&nbsp;[oyranos\-config](oyranosconfig.html)<a href="oyranosconfig.md">(1)</a>&nbsp;&nbsp;[oyranos\-policy](oyranospolicy.html)<a href="oyranospolicy.md">(1)</a>&nbsp;&nbsp;[oyranos](oyranos.html)<a href="oyranos.md">(3)</a>
+&nbsp;&nbsp;[oyranos-profile-graph](oyranosprofilegraph.html)<a href="oyranosprofilegraph.md">(1)</a>&nbsp;&nbsp;[oyranos-config](oyranosconfig.html)<a href="oyranosconfig.md">(1)</a>&nbsp;&nbsp;[oyranos-policy](oyranospolicy.html)<a href="oyranospolicy.md">(1)</a>&nbsp;&nbsp;[oyranos](oyranos.html)<a href="oyranos.md">(3)</a>
 
  http://www.oyranos.org
 
 
 <h2>AUTHOR <a href="#toc" name="author">&uarr;</a></h2>
 
-Kai\-Uwe Behrmann http://www.oyranos.org
+Kai-Uwe Behrmann http://www.oyranos.org
 
 <h2>COPYRIGHT <a href="#toc" name="copyright">&uarr;</a></h2>
 
-*© 2005\-2020 Kai\-Uwe Behrmann and others*
+*© 2005-2020 Kai-Uwe Behrmann and others*
 
 
 <a name="license"></a>
@@ -137,5 +137,5 @@ newBSD <a href="http://www.oyranos.org">http://www.oyranos.org</a>
 
 <h2>BUGS <a href="#toc" name="bugs">&uarr;</a></h2>
 
-<a href="https://www.github.com/oyranos-cms/oyranos/issues">https://www.github.com/oyranos\-cms/oyranos/issues</a>
+<a href="https://www.github.com/oyranos-cms/oyranos/issues">https://www.github.com/oyranos-cms/oyranos/issues</a>
 

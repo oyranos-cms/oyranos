@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cs\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2020-04-18 13:49+0200\n"
+"POT-Creation-Date: 2020-04-18 21:01+0200\n"
 "PO-Revision-Date: 2012-10-19 15:10+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -36,7 +36,7 @@ msgstr ""
 msgid "A output format string."
 msgstr ""
 
-#: oyjl_args.c:3400 oyjl_args.c:3660
+#: oyjl_args.c:3400 oyjl_args.c:3665
 msgid "AUTHOR"
 msgstr ""
 
@@ -74,7 +74,7 @@ msgstr ""
 msgid "Author"
 msgstr ""
 
-#: oyjl_args.c:3410 oyjl_args.c:3412 oyjl_args.c:3674 oyjl_args.c:3676
+#: oyjl_args.c:3410 oyjl_args.c:3412 oyjl_args.c:3679 oyjl_args.c:3681
 msgid "BUGS"
 msgstr ""
 
@@ -83,7 +83,7 @@ msgstr ""
 msgid "C static char"
 msgstr ""
 
-#: oyjl_args.c:3404 oyjl_args.c:3664
+#: oyjl_args.c:3404 oyjl_args.c:3669
 msgid "COPYRIGHT"
 msgstr ""
 
@@ -137,7 +137,7 @@ msgstr "Copyright"
 msgid "Count"
 msgstr ""
 
-#: oyjl_args.c:3277 oyjl_args.c:3537
+#: oyjl_args.c:3277 oyjl_args.c:3542
 msgid "DESCRIPTION"
 msgstr ""
 
@@ -387,7 +387,7 @@ msgstr "Mé jméno"
 msgid "LOCALEDIR"
 msgstr ""
 
-#: oyjl_args.c:2901 oyjl_args.c:3406 oyjl_args.c:3666 oyjl_args_tree.c:1116
+#: oyjl_args.c:2901 oyjl_args.c:3406 oyjl_args.c:3671 oyjl_args_tree.c:1116
 msgid "License"
 msgstr "Licence"
 
@@ -530,7 +530,7 @@ msgstr "Model:"
 msgid "Module"
 msgstr "Volby modulu:"
 
-#: oyjl_args.c:3522
+#: oyjl_args.c:3527
 msgid "NAME"
 msgstr ""
 
@@ -546,7 +546,7 @@ msgstr ""
 msgid "November 28, 2019"
 msgstr ""
 
-#: oyjl_args.c:3279 oyjl_args.c:3540
+#: oyjl_args.c:3279 oyjl_args.c:3545
 msgid "OPTIONS"
 msgstr ""
 
@@ -773,7 +773,7 @@ msgstr ""
 msgid "STRING"
 msgstr ""
 
-#: oyjl_args.c:3265 oyjl_args.c:3525
+#: oyjl_args.c:3265 oyjl_args.c:3530
 msgid "SYNOPSIS"
 msgstr ""
 

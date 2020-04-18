@@ -2,36 +2,36 @@
 <a name="toc"></a>
 [NAME](#name) [ÜBERSICHT](#synopsis) [BESCHREIBUNG](#description) [OPTIONEN](#options) [UMGEBUNGSVARIABLEN](#environmentvariables) [BEISPIELE](#examples) [SIEHE AUCH](#seeaswell) [AUTOR](#author) [KOPIERRECHT](#copyright) [FEHLER](#bugs) 
 
-*"oyranos\-monitor\-white\-point"* *1* *"October 11, 2018"* "User Commands"
+<strong>"oyranos-monitor-white-point"</strong> *1* <em>"October 11, 2018"</em> "User Commands"
 
 <h2>NAME <a href="#toc" name="name">&uarr;</a></h2>
 
-oyranos\-monitor\-white\-point v0.9.7 \- Nacht Manager
+oyranos-monitor-white-point v0.9.7 - Nacht Manager
 
 <h2>ÜBERSICHT <a href="#toc" name="synopsis">&uarr;</a></h2>
 
-<strong>oyranos\-monitor\-white\-point</strong> <a href="#night-white-point"><strong>\-n</strong>=<em>0|1|2|3|4|5|6|7</em></a> <strong>\-g</strong>=<em>ICC_PROFIL</em> [<strong>\-b</strong>=<em>PROZENT</em>] [<strong>\-z</strong>] [<strong>\-v</strong>]
+<strong>oyranos-monitor-white-point</strong> <a href="#night-white-point"><strong>-n</strong>=<em>0|1|2|3|4|5|6|7</em></a> <strong>-g</strong>=<em>ICC_PROFIL</em> [<strong>-b</strong>=<em>PROZENT</em>] [<strong>-z</strong>] [<strong>-v</strong>]
 <br />
-<strong>oyranos\-monitor\-white\-point</strong> <a href="#white-point"><strong>\-w</strong>=<em>0|1|2|3|4|5|6|7</em></a> <strong>\-a</strong>=<em>KELVIN</em> [<strong>\-z</strong>] [<strong>\-v</strong>]
+<strong>oyranos-monitor-white-point</strong> <a href="#white-point"><strong>-w</strong>=<em>0|1|2|3|4|5|6|7</em></a> <strong>-a</strong>=<em>KELVIN</em> [<strong>-z</strong>] [<strong>-v</strong>]
 <br />
-<strong>oyranos\-monitor\-white\-point</strong> <a href="#sun-white-point"><strong>\-s</strong>=<em>0|1|2|3|4|5|6|7</em></a> <strong>\-e</strong>=<em>ICC_PROFIL</em> [<strong>\-z</strong>] [<strong>\-v</strong>]
+<strong>oyranos-monitor-white-point</strong> <a href="#sun-white-point"><strong>-s</strong>=<em>0|1|2|3|4|5|6|7</em></a> <strong>-e</strong>=<em>ICC_PROFIL</em> [<strong>-z</strong>] [<strong>-v</strong>]
 <br />
-<strong>oyranos\-monitor\-white\-point</strong> <a href="#location"><strong>\-l</strong></a> | <strong>\-i</strong>=<em>WINKEL_IN_GRAD</em> <strong>\-o</strong>=<em>WINKEL_IN_GRAD</em> [<strong>\-t</strong>=<em>WINKEL_IN_GRAD|0:Auf\-/Untergang|\-6:zivil|\-12:nautisch|\-18:astronomisch</em>] [<strong>\-z</strong>] [<strong>\-v</strong>]
+<strong>oyranos-monitor-white-point</strong> <a href="#location"><strong>-l</strong></a> | <strong>-i</strong>=<em>WINKEL_IN_GRAD</em> <strong>-o</strong>=<em>WINKEL_IN_GRAD</em> [<strong>-t</strong>=<em>WINKEL_IN_GRAD|0:Auf-/Untergang|-6:zivil|-12:nautisch|-18:astronomisch</em>] [<strong>-z</strong>] [<strong>-v</strong>]
 <br />
-<strong>oyranos\-monitor\-white\-point</strong> <a href="#daemon"><strong>\-d</strong>=<em>0|1|2</em></a> [<strong>\-v</strong>]
+<strong>oyranos-monitor-white-point</strong> <a href="#daemon"><strong>-d</strong>=<em>0|1|2</em></a> [<strong>-v</strong>]
 <br />
-<strong>oyranos\-monitor\-white\-point</strong> <a href="#modes"><strong>\-m</strong></a> | <strong>\-r</strong> | <strong>\-X</strong>=<em>json|json+command|man|markdown</em> | <strong>\-h</strong> [<strong>\-v</strong>]
+<strong>oyranos-monitor-white-point</strong> <a href="#modes"><strong>-m</strong></a> | <strong>-r</strong> | <strong>-X</strong>=<em>json|json+command|man|markdown</em> | <strong>-h</strong> [<strong>-v</strong>]
 
 <h2>BESCHREIBUNG <a href="#toc" name="description">&uarr;</a></h2>
 
-Das Werkzeug kann den momentanen Weißpunkt setzen oder ihn abhängig von der Tages\- und Nachzeit festlegen. Ein zusätzliches Effektprofil kann eingestellt werden.
+Das Werkzeug kann den momentanen Weißpunkt setzen oder ihn abhängig von der Tages- und Nachzeit festlegen. Ein zusätzliches Effektprofil kann eingestellt werden.
 
 <h2>OPTIONEN <a href="#toc" name="options">&uarr;</a></h2>
 
  <h4 id="night-white-point">Nächtliche Anmutung</h4>
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos\-monitor\-white\-point</strong></a> <strong>\-n</strong>=<em>0|1|2|3|4|5|6|7</em> <strong>\-g</strong>=<em>ICC_PROFIL</em> [<strong>\-b</strong>=<em>PROZENT</em>] [<strong>\-z</strong>] [<strong>\-v</strong>]
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-monitor-white-point</strong></a> <strong>-n</strong>=<em>0|1|2|3|4|5|6|7</em> <strong>-g</strong>=<em>ICC_PROFIL</em> [<strong>-b</strong>=<em>PROZENT</em>] [<strong>-z</strong>] [<strong>-v</strong>]
 
-&nbsp;&nbsp;Der Nachtweißpunkmodus soll den Einfluß von blauen Licht auf das menschliche Hormonsystem reduzieren. Ein Weißpunkt mit einer Strahlungstemperatur von 4000 Kelvin und weniger erleichtert den natürlichen Schlafrhytmus zu finden. Dieser wird zusammen mit einem warmen Lichtton für die allgemeine Zimmerbeleuchtung wärend der Abend\-und Nachtstunden empfohlen.
+&nbsp;&nbsp;Der Nachtweißpunkmodus soll den Einfluß von blauen Licht auf das menschliche Hormonsystem reduzieren. Ein Weißpunkt mit einer Strahlungstemperatur von 4000 Kelvin und weniger erleichtert den natürlichen Schlafrhytmus zu finden. Dieser wird zusammen mit einem warmen Lichtton für die allgemeine Zimmerbeleuchtung wärend der Abend-und Nachtstunden empfohlen.
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-n</strong>|<strong>--night-white-point</strong> <em>0|1|2|3|4|5|6|7</em></td> <td>Setze den Nachtmodus<br />Ein Weißpunkt mit einer Strahlungstemperatur von 4000 Kelvin und weniger erleichtert den natürlichen Schlafrhytmus zu finden. Dazu wird diese Einstellung auf Automatisch (-n=1) und die Temperatur auf 3000 (-a=3000) gestellt.
@@ -61,7 +61,7 @@ Das Werkzeug kann den momentanen Weißpunkt setzen oder ihn abhängig von der Ta
 &nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-monitor-white-point</strong></a> <strong>-w</strong>=<em>0|1|2|3|4|5|6|7</em> <strong>-a</strong>=<em>KELVIN</em> [<strong>-z</strong>] [<strong>-v</strong>]
 
 <table style='width:100%'>
- <tr><td style='padding\-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-w</strong>|<strong>--white-point</strong> <em>0|1|2|3|4|5|6|7</em></td> <td>Setze Weißpunktmodus
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-w</strong>|<strong>--white-point</strong> <em>0|1|2|3|4|5|6|7</em></td> <td>Setze Weißpunktmodus
   <table>
    <tr><td style='padding-left:0.5em'><strong>-w 0</strong></td><td># Nein</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-w 1</strong></td><td># Automatisch</td></tr>
@@ -76,11 +76,11 @@ Das Werkzeug kann den momentanen Weißpunkt setzen oder ihn abhängig von der Ta
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-a</strong>|<strong>--automatic</strong> <em>KELVIN</em></td> <td>Werte zwischen 2700 bis 8000 Kelvin sollten keine Darstellungsfehler hervorrufen (KELVIN:2800 [≥1100 ≤10100])</td> </tr>
 </table>
 
- <h4 id="sun-white\-point">Setze Tagesmodus</h4>
+ <h4 id="sun-white-point">Setze Tagesmodus</h4>
 &nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-monitor-white-point</strong></a> <strong>-s</strong>=<em>0|1|2|3|4|5|6|7</em> <strong>-e</strong>=<em>ICC_PROFIL</em> [<strong>-z</strong>] [<strong>-v</strong>]
 
 <table style='width:100%'>
- <tr><td style='padding\-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-s</strong>|<strong>--sun-white-point</strong> <em>0|1|2|3|4|5|6|7</em></td> <td>Setze den Tagesmodus
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-s</strong>|<strong>--sun-white-point</strong> <em>0|1|2|3|4|5|6|7</em></td> <td>Setze den Tagesmodus
   <table>
    <tr><td style='padding-left:0.5em'><strong>-s 0</strong></td><td># Nein</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-s 1</strong></td><td># Automatisch</td></tr>

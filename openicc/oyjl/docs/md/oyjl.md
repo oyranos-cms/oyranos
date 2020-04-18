@@ -2,29 +2,29 @@
 <a name="toc"></a>
 [NAME](#name) [SYNOPSIS](#synopsis) [DESCRIPTION](#description) [OPTIONS](#options) [EXAMPLES](#examples) [SEE ALSO](#seealso) [AUTHOR](#author) [COPYRIGHT](#copyright) [BUGS](#bugs) 
 
-*"oyjl"* *1* *"November 12, 2017"* "User Commands"
+<strong>"oyjl"</strong> *1* <em>"November 12, 2017"</em> "User Commands"
 
 <h2>NAME <a href="#toc" name="name">&uarr;</a></h2>
 
-oyjl v1.0.0 \- Oyjl Json Manipulation
+oyjl v1.0.0 - Oyjl Json Manipulation
 
 <h2>SYNOPSIS <a href="#toc" name="synopsis">&uarr;</a></h2>
 
-<strong>oyjl</strong> <a href="#json"><strong>json</strong></a> [<strong>\-i</strong>=<em>FILENAME</em>] [<strong>\-x</strong>=<em>PATH</em>] [<strong>\-s</strong>=<em>STRING</em>]
+<strong>oyjl</strong> <a href="#json"><strong>json</strong></a> [<strong>-i</strong>=<em>FILENAME</em>] [<strong>-x</strong>=<em>PATH</em>] [<strong>-s</strong>=<em>STRING</em>]
 <br />
-<strong>oyjl</strong> <a href="#yaml"><strong>yaml</strong></a> [<strong>\-i</strong>=<em>FILENAME</em>] [<strong>\-x</strong>=<em>PATH</em>] [<strong>\-s</strong>=<em>STRING</em>]
+<strong>oyjl</strong> <a href="#yaml"><strong>yaml</strong></a> [<strong>-i</strong>=<em>FILENAME</em>] [<strong>-x</strong>=<em>PATH</em>] [<strong>-s</strong>=<em>STRING</em>]
 <br />
-<strong>oyjl</strong> <a href="#xml"><strong>xml</strong></a> [<strong>\-i</strong>=<em>FILENAME</em>] [<strong>\-x</strong>=<em>PATH</em>] [<strong>\-s</strong>=<em>STRING</em>]
+<strong>oyjl</strong> <a href="#xml"><strong>xml</strong></a> [<strong>-i</strong>=<em>FILENAME</em>] [<strong>-x</strong>=<em>PATH</em>] [<strong>-s</strong>=<em>STRING</em>]
 <br />
-<strong>oyjl</strong> <a href="#count"><strong>count</strong></a> [<strong>\-i</strong>=<em>FILENAME</em>] [<strong>\-x</strong>=<em>PATH</em>]
+<strong>oyjl</strong> <a href="#count"><strong>count</strong></a> [<strong>-i</strong>=<em>FILENAME</em>] [<strong>-x</strong>=<em>PATH</em>]
 <br />
-<strong>oyjl</strong> <a href="#key"><strong>key</strong></a> [<strong>\-i</strong>=<em>FILENAME</em>] [<strong>\-x</strong>=<em>PATH</em>]
+<strong>oyjl</strong> <a href="#key"><strong>key</strong></a> [<strong>-i</strong>=<em>FILENAME</em>] [<strong>-x</strong>=<em>PATH</em>]
 <br />
-<strong>oyjl</strong> <a href="#type"><strong>type</strong></a> [<strong>\-i</strong>=<em>FILENAME</em>] [<strong>\-x</strong>=<em>PATH</em>]
+<strong>oyjl</strong> <a href="#type"><strong>type</strong></a> [<strong>-i</strong>=<em>FILENAME</em>] [<strong>-x</strong>=<em>PATH</em>]
 <br />
-<strong>oyjl</strong> <a href="#paths"><strong>paths</strong></a> [<strong>\-i</strong>=<em>FILENAME</em>] [<strong>\-x</strong>=<em>PATH</em>]
+<strong>oyjl</strong> <a href="#paths"><strong>paths</strong></a> [<strong>-i</strong>=<em>FILENAME</em>] [<strong>-x</strong>=<em>PATH</em>]
 <br />
-<strong>oyjl</strong> <a href="#help"><strong>\-h</strong><em>[=synopsis|...]</em></a> <strong>\-X</strong>=<em>json|json+command|man|markdown</em> [<strong>\-v</strong>]
+<strong>oyjl</strong> <a href="#help"><strong>-h</strong><em>[=synopsis|...]</em></a> <strong>-X</strong>=<em>json|json+command|man|markdown</em> [<strong>-v</strong>]
 
 <h2>DESCRIPTION <a href="#toc" name="description">&uarr;</a></h2>
 
@@ -41,56 +41,56 @@ The oyjl program can be used to parse, filter sub trees, select values and modif
 </table>
 
  <h4 id="json">Print JSON to stdout</h4>
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>json</strong> [<strong>-i</strong>=<em>FILENAME</em>] [<strong>\-x</strong>=<em>PATH</em>] [<strong>\-s</strong>=<em>STRING</em>]
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>json</strong> [<strong>-i</strong>=<em>FILENAME</em>] [<strong>-x</strong>=<em>PATH</em>] [<strong>-s</strong>=<em>STRING</em>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>json</strong></td> <td>Print JSON to stdout</td> </tr>
 </table>
 
  <h4 id="yaml">Print YAML to stdout</h4>
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>yaml</strong> [<strong>-i</strong>=<em>FILENAME</em>] [<strong>\-x</strong>=<em>PATH</em>] [<strong>\-s</strong>=<em>STRING</em>]
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>yaml</strong> [<strong>-i</strong>=<em>FILENAME</em>] [<strong>-x</strong>=<em>PATH</em>] [<strong>-s</strong>=<em>STRING</em>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>yaml</strong></td> <td>Print YAML to stdout</td> </tr>
 </table>
 
  <h4 id="xml">Print XML to stdout</h4>
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>xml</strong> [<strong>-i</strong>=<em>FILENAME</em>] [<strong>\-x</strong>=<em>PATH</em>] [<strong>\-s</strong>=<em>STRING</em>]
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>xml</strong> [<strong>-i</strong>=<em>FILENAME</em>] [<strong>-x</strong>=<em>PATH</em>] [<strong>-s</strong>=<em>STRING</em>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>xml</strong></td> <td>Print XML to stdout</td> </tr>
 </table>
 
  <h4 id="count">Print node count</h4>
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>count</strong> [<strong>-i</strong>=<em>FILENAME</em>] [<strong>\-x</strong>=<em>PATH</em>]
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>count</strong> [<strong>-i</strong>=<em>FILENAME</em>] [<strong>-x</strong>=<em>PATH</em>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>count</strong></td> <td>Print count of leafs in node</td> </tr>
 </table>
 
  <h4 id="key">Print key name</h4>
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>key</strong> [<strong>-i</strong>=<em>FILENAME</em>] [<strong>\-x</strong>=<em>PATH</em>]
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>key</strong> [<strong>-i</strong>=<em>FILENAME</em>] [<strong>-x</strong>=<em>PATH</em>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>key</strong></td> <td>Print key name of node</td> </tr>
 </table>
 
  <h4 id="type">Print type</h4>
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>type</strong> [<strong>-i</strong>=<em>FILENAME</em>] [<strong>\-x</strong>=<em>PATH</em>]
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>type</strong> [<strong>-i</strong>=<em>FILENAME</em>] [<strong>-x</strong>=<em>PATH</em>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>type</strong></td> <td>Get node type</td> </tr>
 </table>
 
  <h4 id="paths">Print all matching paths.</h4>
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>paths</strong> [<strong>-i</strong>=<em>FILENAME</em>] [<strong>\-x</strong>=<em>PATH</em>]
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>paths</strong> [<strong>-i</strong>=<em>FILENAME</em>] [<strong>-x</strong>=<em>PATH</em>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>paths</strong></td> <td>Print all matching paths</td> </tr>
 </table>
 
  <h4 id="help">General options</h4>
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>-h</strong><em>[=synopsis|...]</em> <strong>\-X</strong>=<em>json|json+command|man|markdown</em> [<strong>\-v</strong>]
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>-h</strong><em>[=synopsis|...]</em> <strong>-X</strong>=<em>json|json+command|man|markdown</em> [<strong>-v</strong>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-h</strong>|<strong>--help</strong><em>[ synopsis|...]</em></td> <td>Print help text<br />Show usage information and hints for the tool.
@@ -124,29 +124,29 @@ The oyjl program can be used to parse, filter sub trees, select values and modif
 <h2>EXAMPLES <a href="#toc" name="examples">&uarr;</a></h2>
 
 #### Print JSON to stdout
-&nbsp;&nbsp;oyjl -i text.json \-x ///[0]
+&nbsp;&nbsp;oyjl -i text.json -x ///[0]
 #### Print count of leafs in node
-&nbsp;&nbsp;oyjl \-c \-i text.json \-x my/path/
+&nbsp;&nbsp;oyjl -c -i text.json -x my/path/
 #### Print key name of node
-&nbsp;&nbsp;oyjl \-k \-i text.json \-x ///[0]
+&nbsp;&nbsp;oyjl -k -i text.json -x ///[0]
 #### Print all matching paths
-&nbsp;&nbsp;oyjl \-p \-i text.json \-x //
+&nbsp;&nbsp;oyjl -p -i text.json -x //
 #### Set a key name to a value
-&nbsp;&nbsp;oyjl \-i text.json \-x my/path/to/key \-s value
+&nbsp;&nbsp;oyjl -i text.json -x my/path/to/key -s value
 
 <h2>SEE ALSO <a href="#toc" name="seealso">&uarr;</a></h2>
 
-&nbsp;&nbsp;[oyjl\-args](oyjlargs.html)<a href="oyjlargs.md">(1)</a>&nbsp;&nbsp;[oyjl\-translate](oyjltranslate.html)<a href="oyjltranslate.md">(1)</a>&nbsp;&nbsp;[oyjl\-args\-qml](oyjlargsqml.html)<a href="oyjlargsqml.md">(1)</a>
+&nbsp;&nbsp;[oyjl-args](oyjlargs.html)<a href="oyjlargs.md">(1)</a>&nbsp;&nbsp;[oyjl-translate](oyjltranslate.html)<a href="oyjltranslate.md">(1)</a>&nbsp;&nbsp;[oyjl-args-qml](oyjlargsqml.html)<a href="oyjlargsqml.md">(1)</a>
 
-&nbsp;&nbsp;<a href="https://codedocs.xyz/oyranos-cms/oyranos/group__oyjl.html">https://codedocs.xyz/oyranos\-cms/oyranos/group\_\_oyjl.html</a>
+&nbsp;&nbsp;<a href="https://codedocs.xyz/oyranos-cms/oyranos/group__oyjl.html">https://codedocs.xyz/oyranos-cms/oyranos/group__oyjl.html</a>
 
 <h2>AUTHOR <a href="#toc" name="author">&uarr;</a></h2>
 
-Kai\-Uwe Behrmann http://www.oyranos.org
+Kai-Uwe Behrmann http://www.oyranos.org
 
 <h2>COPYRIGHT <a href="#toc" name="copyright">&uarr;</a></h2>
 
-*Copyright © 2017\-2020 Kai\-Uwe Behrmann*
+*Copyright © 2017-2020 Kai-Uwe Behrmann*
 
 
 <a name="license"></a>
@@ -155,5 +155,5 @@ newBSD <a href="http://www.oyranos.org">http://www.oyranos.org</a>
 
 <h2>BUGS <a href="#toc" name="bugs">&uarr;</a></h2>
 
-<a href="https://www.github.com/oyranos-cms/oyranos/issues">https://www.github.com/oyranos\-cms/oyranos/issues</a>
+<a href="https://www.github.com/oyranos-cms/oyranos/issues">https://www.github.com/oyranos-cms/oyranos/issues</a>
 

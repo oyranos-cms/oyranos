@@ -2,25 +2,25 @@
 <a name="toc"></a>
 [NAME](#name) [SYNOPSIS](#synopsis) [DESCRIPTION](#description) [OPTIONS](#options) [ENVIRONMENT VARIABLES](#environmentvariables) [EXAMPLES](#examples) [SEE AS WELL](#seeaswell) [AUTHOR](#author) [COPYRIGHT](#copyright) [BUGS](#bugs) 
 
-*"oyranos\-monitor\-white\-point"* *1* *"October 11, 2018"* "User Commands"
+<strong>"oyranos-monitor-white-point"</strong> *1* <em>"October 11, 2018"</em> "User Commands"
 
 <h2>NAME <a href="#toc" name="name">&uarr;</a></h2>
 
-oyranos\-monitor\-white\-point v0.9.7 \- Night Manager
+oyranos-monitor-white-point v0.9.7 - Night Manager
 
 <h2>SYNOPSIS <a href="#toc" name="synopsis">&uarr;</a></h2>
 
-<strong>oyranos\-monitor\-white\-point</strong> <a href="#night-white-point"><strong>\-n</strong>=<em>0|1|2|3|4|5|6|7</em></a> <strong>\-g</strong>=<em>ICC_PROFILE</em> [<strong>\-b</strong>=<em>PERCENT</em>] [<strong>\-z</strong>] [<strong>\-v</strong>]
+<strong>oyranos-monitor-white-point</strong> <a href="#night-white-point"><strong>-n</strong>=<em>0|1|2|3|4|5|6|7</em></a> <strong>-g</strong>=<em>ICC_PROFILE</em> [<strong>-b</strong>=<em>PERCENT</em>] [<strong>-z</strong>] [<strong>-v</strong>]
 <br />
-<strong>oyranos\-monitor\-white\-point</strong> <a href="#white-point"><strong>\-w</strong>=<em>0|1|2|3|4|5|6|7</em></a> <strong>\-a</strong>=<em>KELVIN</em> [<strong>\-z</strong>] [<strong>\-v</strong>]
+<strong>oyranos-monitor-white-point</strong> <a href="#white-point"><strong>-w</strong>=<em>0|1|2|3|4|5|6|7</em></a> <strong>-a</strong>=<em>KELVIN</em> [<strong>-z</strong>] [<strong>-v</strong>]
 <br />
-<strong>oyranos\-monitor\-white\-point</strong> <a href="#sun-white-point"><strong>\-s</strong>=<em>0|1|2|3|4|5|6|7</em></a> <strong>\-e</strong>=<em>ICC_PROFILE</em> [<strong>\-z</strong>] [<strong>\-v</strong>]
+<strong>oyranos-monitor-white-point</strong> <a href="#sun-white-point"><strong>-s</strong>=<em>0|1|2|3|4|5|6|7</em></a> <strong>-e</strong>=<em>ICC_PROFILE</em> [<strong>-z</strong>] [<strong>-v</strong>]
 <br />
-<strong>oyranos\-monitor\-white\-point</strong> <a href="#location"><strong>\-l</strong></a> | <strong>\-i</strong>=<em>ANGLE_IN_DEGREE</em> <strong>\-o</strong>=<em>ANGLE_IN_DEGREE</em> [<strong>\-t</strong>=<em>ANGLE_IN_DEGREE|0:rise/set|\-6:civil|\-12:nautical|\-18:astronomical</em>] [<strong>\-z</strong>] [<strong>\-v</strong>]
+<strong>oyranos-monitor-white-point</strong> <a href="#location"><strong>-l</strong></a> | <strong>-i</strong>=<em>ANGLE_IN_DEGREE</em> <strong>-o</strong>=<em>ANGLE_IN_DEGREE</em> [<strong>-t</strong>=<em>ANGLE_IN_DEGREE|0:rise/set|-6:civil|-12:nautical|-18:astronomical</em>] [<strong>-z</strong>] [<strong>-v</strong>]
 <br />
-<strong>oyranos\-monitor\-white\-point</strong> <a href="#daemon"><strong>\-d</strong>=<em>0|1|2</em></a> [<strong>\-v</strong>]
+<strong>oyranos-monitor-white-point</strong> <a href="#daemon"><strong>-d</strong>=<em>0|1|2</em></a> [<strong>-v</strong>]
 <br />
-<strong>oyranos\-monitor\-white\-point</strong> <a href="#modes"><strong>\-m</strong></a> | <strong>\-r</strong> | <strong>\-X</strong>=<em>json|json+command|man|markdown</em> | <strong>\-h</strong> [<strong>\-v</strong>]
+<strong>oyranos-monitor-white-point</strong> <a href="#modes"><strong>-m</strong></a> | <strong>-r</strong> | <strong>-X</strong>=<em>json|json+command|man|markdown</em> | <strong>-h</strong> [<strong>-v</strong>]
 
 <h2>DESCRIPTION <a href="#toc" name="description">&uarr;</a></h2>
 
@@ -29,7 +29,7 @@ The tool can set the actual white point or set it by local day and night time. A
 <h2>OPTIONS <a href="#toc" name="options">&uarr;</a></h2>
 
  <h4 id="night-white-point">Nightly appearance</h4>
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos\-monitor\-white\-point</strong></a> <strong>\-n</strong>=<em>0|1|2|3|4|5|6|7</em> <strong>\-g</strong>=<em>ICC_PROFILE</em> [<strong>\-b</strong>=<em>PERCENT</em>] [<strong>\-z</strong>] [<strong>\-v</strong>]
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-monitor-white-point</strong></a> <strong>-n</strong>=<em>0|1|2|3|4|5|6|7</em> <strong>-g</strong>=<em>ICC_PROFILE</em> [<strong>-b</strong>=<em>PERCENT</em>] [<strong>-z</strong>] [<strong>-v</strong>]
 
 &nbsp;&nbsp;The Night white point mode shall allow to reduce influence of blue light during night time. A white point temperature of around 4000K and lower allows to get easier into sleep and is recommended along with warm room illumination in evening and night times.
 
@@ -61,7 +61,7 @@ The tool can set the actual white point or set it by local day and night time. A
 &nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-monitor-white-point</strong></a> <strong>-w</strong>=<em>0|1|2|3|4|5|6|7</em> <strong>-a</strong>=<em>KELVIN</em> [<strong>-z</strong>] [<strong>-v</strong>]
 
 <table style='width:100%'>
- <tr><td style='padding\-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-w</strong>|<strong>--white-point</strong> <em>0|1|2|3|4|5|6|7</em></td> <td>Set white point mode
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-w</strong>|<strong>--white-point</strong> <em>0|1|2|3|4|5|6|7</em></td> <td>Set white point mode
   <table>
    <tr><td style='padding-left:0.5em'><strong>-w 0</strong></td><td># No</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-w 1</strong></td><td># Automatic</td></tr>
@@ -76,11 +76,11 @@ The tool can set the actual white point or set it by local day and night time. A
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-a</strong>|<strong>--automatic</strong> <em>KELVIN</em></td> <td>A value from 2700 till 8000 Kelvin is expected to show no artefacts (KELVIN:2800 [≥1100 ≤10100])</td> </tr>
 </table>
 
- <h4 id="sun-white\-point">Sun light appearance</h4>
+ <h4 id="sun-white-point">Sun light appearance</h4>
 &nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-monitor-white-point</strong></a> <strong>-s</strong>=<em>0|1|2|3|4|5|6|7</em> <strong>-e</strong>=<em>ICC_PROFILE</em> [<strong>-z</strong>] [<strong>-v</strong>]
 
 <table style='width:100%'>
- <tr><td style='padding\-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-s</strong>|<strong>--sun-white-point</strong> <em>0|1|2|3|4|5|6|7</em></td> <td>Set day time mode
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-s</strong>|<strong>--sun-white-point</strong> <em>0|1|2|3|4|5|6|7</em></td> <td>Set day time mode
   <table>
    <tr><td style='padding-left:0.5em'><strong>-s 0</strong></td><td># No</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-s 1</strong></td><td># Automatic</td></tr>

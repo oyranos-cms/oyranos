@@ -2,40 +2,40 @@
 <a name="toc"></a>
 [NAME](#name) [ÜBERSICHT](#synopsis) [BESCHREIBUNG](#description) [OPTIONEN](#options) [UMGEBUNGSVARIABLEN](#environmentvariables) [BEISPIELE](#examples) [SIEHE AUCH](#seeaswell) [AUTOR](#author) [KOPIERRECHT](#copyright) [FEHLER](#bugs) 
 
-*"oyranos\-profile\-graph"* *1* *"March 24, 2019"* "User Commands"
+<strong>"oyranos-profile-graph"</strong> *1* <em>"March 24, 2019"</em> "User Commands"
 
 <h2>NAME <a href="#toc" name="name">&uarr;</a></h2>
 
-oyranos\-profile\-graph v0.9.7 \- Oyranos Profile Zeichner
+oyranos-profile-graph v0.9.7 - Oyranos Profile Zeichner
 
 <h2>ÜBERSICHT <a href="#toc" name="synopsis">&uarr;</a></h2>
 
-<strong>oyranos\-profile\-graph</strong> [<strong>\-t</strong>=<em>NUMMER</em>] [<strong>\-b</strong>] [<strong>\-l</strong>=<em>NUMMER</em>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMMER</em>] [<strong>\-o</strong>=<em>\-|DATEI</em>] [<strong>\-f</strong>=<em>FORMAT</em>] [<strong>\-c</strong>] [<strong>\-x</strong>] [<strong>\-d</strong>=<em>NUMMER</em>] [<strong>\-n</strong>] [<strong>\-2</strong>] [<strong>\-4</strong>] [<strong>\-r</strong>] [<strong>\-v</strong>] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
+<strong>oyranos-profile-graph</strong> [<strong>-t</strong>=<em>NUMMER</em>] [<strong>-b</strong>] [<strong>-l</strong>=<em>NUMMER</em>] [<strong>-g</strong>] [<strong>-w</strong>=<em>NUMMER</em>] [<strong>-o</strong>=<em>-|DATEI</em>] [<strong>-f</strong>=<em>FORMAT</em>] [<strong>-c</strong>] [<strong>-x</strong>] [<strong>-d</strong>=<em>NUMMER</em>] [<strong>-n</strong>] [<strong>-2</strong>] [<strong>-4</strong>] [<strong>-r</strong>] [<strong>-v</strong>] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
 <br />
-<strong>oyranos\-profile\-graph</strong> <a href="#hlc"><strong>\-H</strong>=<em>NUMMER</em></a> [ <em>l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE</em>] [<strong>\-t</strong>=<em>NUMMER</em>] [<strong>\-b</strong>] [<strong>\-l</strong>=<em>NUMMER</em>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMMER</em>] [<strong>\-m</strong>=<em>FORMAT</em>] [<strong>\-o</strong>=<em>\-|DATEI</em>] [<strong>\-p</strong>=<em>FORMAT</em>] [<strong>\-2</strong>] [<strong>\-4</strong>] [<strong>\-r</strong>] [<strong>\-v</strong>]
+<strong>oyranos-profile-graph</strong> <a href="#hlc"><strong>-H</strong>=<em>NUMMER</em></a> [ <em>l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE</em>] [<strong>-t</strong>=<em>NUMMER</em>] [<strong>-b</strong>] [<strong>-l</strong>=<em>NUMMER</em>] [<strong>-g</strong>] [<strong>-w</strong>=<em>NUMMER</em>] [<strong>-m</strong>=<em>FORMAT</em>] [<strong>-o</strong>=<em>-|DATEI</em>] [<strong>-p</strong>=<em>FORMAT</em>] [<strong>-2</strong>] [<strong>-4</strong>] [<strong>-r</strong>] [<strong>-v</strong>]
 <br />
-<strong>oyranos\-profile\-graph</strong> <a href="#standard-observer"><strong>\-S</strong></a> [<strong>\-t</strong>=<em>NUMMER</em>] [<strong>\-b</strong>] [<strong>\-l</strong>=<em>NUMMER</em>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMMER</em>] [<strong>\-T</strong>] [<strong>\-o</strong>=<em>\-|DATEI</em>] [<strong>\-f</strong>=<em>FORMAT</em>] [<strong>\-v</strong>]
+<strong>oyranos-profile-graph</strong> <a href="#standard-observer"><strong>-S</strong></a> [<strong>-t</strong>=<em>NUMMER</em>] [<strong>-b</strong>] [<strong>-l</strong>=<em>NUMMER</em>] [<strong>-g</strong>] [<strong>-w</strong>=<em>NUMMER</em>] [<strong>-T</strong>] [<strong>-o</strong>=<em>-|DATEI</em>] [<strong>-f</strong>=<em>FORMAT</em>] [<strong>-v</strong>]
 <br />
-<strong>oyranos\-profile\-graph</strong> <a href="#observer-64"><strong>\-O</strong></a> [<strong>\-t</strong>=<em>NUMMER</em>] [<strong>\-b</strong>] [<strong>\-l</strong>=<em>NUMMER</em>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMMER</em>] [<strong>\-T</strong>] [<strong>\-o</strong>=<em>\-|DATEI</em>] [<strong>\-f</strong>=<em>FORMAT</em>] [<strong>\-v</strong>]
+<strong>oyranos-profile-graph</strong> <a href="#observer-64"><strong>-O</strong></a> [<strong>-t</strong>=<em>NUMMER</em>] [<strong>-b</strong>] [<strong>-l</strong>=<em>NUMMER</em>] [<strong>-g</strong>] [<strong>-w</strong>=<em>NUMMER</em>] [<strong>-T</strong>] [<strong>-o</strong>=<em>-|DATEI</em>] [<strong>-f</strong>=<em>FORMAT</em>] [<strong>-v</strong>]
 <br />
-<strong>oyranos\-profile\-graph</strong> <a href="#kelvin"><strong>\-k</strong>=<em>NUMMER</em></a> [<strong>\-t</strong>=<em>NUMMER</em>] [<strong>\-b</strong>] [<strong>\-l</strong>=<em>NUMMER</em>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMMER</em>] [<strong>\-T</strong>] [<strong>\-o</strong>=<em>\-|DATEI</em>] [<strong>\-f</strong>=<em>FORMAT</em>] [<strong>\-v</strong>]
+<strong>oyranos-profile-graph</strong> <a href="#kelvin"><strong>-k</strong>=<em>NUMMER</em></a> [<strong>-t</strong>=<em>NUMMER</em>] [<strong>-b</strong>] [<strong>-l</strong>=<em>NUMMER</em>] [<strong>-g</strong>] [<strong>-w</strong>=<em>NUMMER</em>] [<strong>-T</strong>] [<strong>-o</strong>=<em>-|DATEI</em>] [<strong>-f</strong>=<em>FORMAT</em>] [<strong>-v</strong>]
 <br />
-<strong>oyranos\-profile\-graph</strong> <a href="#illuminant"><strong>\-u</strong>=<em>WORT</em></a> [<strong>\-t</strong>=<em>NUMMER</em>] [<strong>\-b</strong>] [<strong>\-l</strong>=<em>NUMMER</em>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMMER</em>] [<strong>\-T</strong>] [<strong>\-o</strong>=<em>\-|DATEI</em>] [<strong>\-f</strong>=<em>FORMAT</em>] [<strong>\-v</strong>]
+<strong>oyranos-profile-graph</strong> <a href="#illuminant"><strong>-u</strong>=<em>WORT</em></a> [<strong>-t</strong>=<em>NUMMER</em>] [<strong>-b</strong>] [<strong>-l</strong>=<em>NUMMER</em>] [<strong>-g</strong>] [<strong>-w</strong>=<em>NUMMER</em>] [<strong>-T</strong>] [<strong>-o</strong>=<em>-|DATEI</em>] [<strong>-f</strong>=<em>FORMAT</em>] [<strong>-v</strong>]
 <br />
-<strong>oyranos\-profile\-graph</strong> <a href="#spectral"><strong>\-s</strong>=<em>DATEI</em></a> <strong>\-p</strong>=<em>FORMAT</em> <strong>\-z</strong> [<strong>\-t</strong>=<em>NUMMER</em>] [<strong>\-b</strong>] [<strong>\-l</strong>=<em>NUMMER</em>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMMER</em>] [<strong>\-T</strong>] [<strong>\-P</strong>=<em>WORT</em>] [<strong>\-o</strong>=<em>\-|DATEI</em>] [<strong>\-v</strong>]
+<strong>oyranos-profile-graph</strong> <a href="#spectral"><strong>-s</strong>=<em>DATEI</em></a> <strong>-p</strong>=<em>FORMAT</em> <strong>-z</strong> [<strong>-t</strong>=<em>NUMMER</em>] [<strong>-b</strong>] [<strong>-l</strong>=<em>NUMMER</em>] [<strong>-g</strong>] [<strong>-w</strong>=<em>NUMMER</em>] [<strong>-T</strong>] [<strong>-P</strong>=<em>WORT</em>] [<strong>-o</strong>=<em>-|DATEI</em>] [<strong>-v</strong>]
 <br />
-<strong>oyranos\-profile\-graph</strong> <a href="#import"><strong>\-i</strong>=<em>DATEI</em></a> <strong>\-I</strong>=<em>SEITE</em> [<strong>\-t</strong>=<em>NUMMER</em>] [<strong>\-b</strong>] [<strong>\-l</strong>=<em>NUMMER</em>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMMER</em>] [<strong>\-T</strong>] [<strong>\-f</strong>=<em>FORMAT</em>] [<strong>\-o</strong>=<em>\-|DATEI</em>] [<strong>\-v</strong>]
+<strong>oyranos-profile-graph</strong> <a href="#import"><strong>-i</strong>=<em>DATEI</em></a> <strong>-I</strong>=<em>SEITE</em> [<strong>-t</strong>=<em>NUMMER</em>] [<strong>-b</strong>] [<strong>-l</strong>=<em>NUMMER</em>] [<strong>-g</strong>] [<strong>-w</strong>=<em>NUMMER</em>] [<strong>-T</strong>] [<strong>-f</strong>=<em>FORMAT</em>] [<strong>-o</strong>=<em>-|DATEI</em>] [<strong>-v</strong>]
 <br />
-<strong>oyranos\-profile\-graph</strong> <a href="#export"><strong>\-X</strong>=<em>json|json+command|man|markdown</em></a> | <strong>\-h</strong> [<strong>\-v</strong>]
+<strong>oyranos-profile-graph</strong> <a href="#export"><strong>-X</strong>=<em>json|json+command|man|markdown</em></a> | <strong>-h</strong> [<strong>-v</strong>]
 
 <h2>BESCHREIBUNG <a href="#toc" name="description">&uarr;</a></h2>
 
-Das oyranos\-profile\-graph Programm erzeugt aus einem ICC Profil oder eingebetteten ICC Profil in eine Grafik. Vorgabemäßig malt es die Sättigungslinie eines anzugebenden ICC Profiles und schreibt die Grafik nach stdout.
+Das oyranos-profile-graph Programm erzeugt aus einem ICC Profil oder eingebetteten ICC Profil in eine Grafik. Vorgabemäßig malt es die Sättigungslinie eines anzugebenden ICC Profiles und schreibt die Grafik nach stdout.
 
 <h2>OPTIONEN <a href="#toc" name="options">&uarr;</a></h2>
 
  <h4>2D Zeichnung vom Farbprofil</h4>
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos\-profile\-graph</strong></a> [<strong>\-t</strong>=<em>NUMMER</em>] [<strong>\-b</strong>] [<strong>\-l</strong>=<em>NUMMER</em>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMMER</em>] [<strong>\-o</strong>=<em>\-|DATEI</em>] [<strong>\-f</strong>=<em>FORMAT</em>] [<strong>\-c</strong>] [<strong>\-x</strong>] [<strong>\-d</strong>=<em>NUMMER</em>] [<strong>\-n</strong>] [<strong>\-2</strong>] [<strong>\-4</strong>] [<strong>\-r</strong>] [<strong>\-v</strong>] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-profile-graph</strong></a> [<strong>-t</strong>=<em>NUMMER</em>] [<strong>-b</strong>] [<strong>-l</strong>=<em>NUMMER</em>] [<strong>-g</strong>] [<strong>-w</strong>=<em>NUMMER</em>] [<strong>-o</strong>=<em>-|DATEI</em>] [<strong>-f</strong>=<em>FORMAT</em>] [<strong>-c</strong>] [<strong>-x</strong>] [<strong>-d</strong>=<em>NUMMER</em>] [<strong>-n</strong>] [<strong>-2</strong>] [<strong>-4</strong>] [<strong>-r</strong>] [<strong>-v</strong>] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
 
 &nbsp;&nbsp;Erzeuge aus einem ICC Profil eine Grafik mit seiner Sättigungslinie.
 
@@ -51,7 +51,7 @@ Das oyranos\-profile\-graph Programm erzeugt aus einem ICC Profil oder eingebett
 </table>
 
  <h4 id="hlc">Farbpalette vom Farbprofil</h4>
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-profile\-graph</strong></a> <strong>\-H</strong>=<em>NUMMER</em> [ <em>l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE</em>] [<strong>\-t</strong>=<em>NUMMER</em>] [<strong>\-b</strong>] [<strong>\-l</strong>=<em>NUMMER</em>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMMER</em>] [<strong>\-m</strong>=<em>FORMAT</em>] [<strong>\-o</strong>=<em>\-|DATEI</em>] [<strong>\-p</strong>=<em>FORMAT</em>] [<strong>\-2</strong>] [<strong>\-4</strong>] [<strong>\-r</strong>] [<strong>\-v</strong>]
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-profile-graph</strong></a> <strong>-H</strong>=<em>NUMMER</em> [ <em>l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE</em>] [<strong>-t</strong>=<em>NUMMER</em>] [<strong>-b</strong>] [<strong>-l</strong>=<em>NUMMER</em>] [<strong>-g</strong>] [<strong>-w</strong>=<em>NUMMER</em>] [<strong>-m</strong>=<em>FORMAT</em>] [<strong>-o</strong>=<em>-|DATEI</em>] [<strong>-p</strong>=<em>FORMAT</em>] [<strong>-2</strong>] [<strong>-4</strong>] [<strong>-r</strong>] [<strong>-v</strong>]
 
 &nbsp;&nbsp;Erzeuge ein 2D Farbpalette mit allen möglichen Farben innerhalb des Farbumfanges des ICC Fabprofiles.
 
@@ -69,28 +69,28 @@ Das oyranos\-profile\-graph Programm erzeugt aus einem ICC Profil oder eingebett
 </table>
 
  <h4 id="standard-observer">Standard Betrachter 1931 2° Zeichnung</h4>
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos\-profile\-graph</strong></a> <strong>\-S</strong> [<strong>\-t</strong>=<em>NUMMER</em>] [<strong>\-b</strong>] [<strong>\-l</strong>=<em>NUMMER</em>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMMER</em>] [<strong>\-T</strong>] [<strong>\-o</strong>=<em>\-|DATEI</em>] [<strong>\-f</strong>=<em>FORMAT</em>] [<strong>\-v</strong>]
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-profile-graph</strong></a> <strong>-S</strong> [<strong>-t</strong>=<em>NUMMER</em>] [<strong>-b</strong>] [<strong>-l</strong>=<em>NUMMER</em>] [<strong>-g</strong>] [<strong>-w</strong>=<em>NUMMER</em>] [<strong>-T</strong>] [<strong>-o</strong>=<em>-|DATEI</em>] [<strong>-f</strong>=<em>FORMAT</em>] [<strong>-v</strong>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-S</strong>|<strong>--standard-observer</strong></td> <td>CIE Standard Betrachter 1931 2°</td> </tr>
 </table>
 
  <h4 id="observer-64">1964 10° Betrachter Zeichnung</h4>
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos\-profile\-graph</strong></a> <strong>\-O</strong> [<strong>\-t</strong>=<em>NUMMER</em>] [<strong>\-b</strong>] [<strong>\-l</strong>=<em>NUMMER</em>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMMER</em>] [<strong>\-T</strong>] [<strong>\-o</strong>=<em>\-|DATEI</em>] [<strong>\-f</strong>=<em>FORMAT</em>] [<strong>\-v</strong>]
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-profile-graph</strong></a> <strong>-O</strong> [<strong>-t</strong>=<em>NUMMER</em>] [<strong>-b</strong>] [<strong>-l</strong>=<em>NUMMER</em>] [<strong>-g</strong>] [<strong>-w</strong>=<em>NUMMER</em>] [<strong>-T</strong>] [<strong>-o</strong>=<em>-|DATEI</em>] [<strong>-f</strong>=<em>FORMAT</em>] [<strong>-v</strong>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-O</strong>|<strong>--observer-64</strong></td> <td>CIE Betrachter 1064 10°</td> </tr>
 </table>
 
  <h4 id="kelvin">Spektrumgraph eines Lambertstrahlers</h4>
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-profile\-graph</strong></a> <strong>\-k</strong>=<em>NUMMER</em> [<strong>\-t</strong>=<em>NUMMER</em>] [<strong>\-b</strong>] [<strong>\-l</strong>=<em>NUMMER</em>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMMER</em>] [<strong>\-T</strong>] [<strong>\-o</strong>=<em>\-|DATEI</em>] [<strong>\-f</strong>=<em>FORMAT</em>] [<strong>\-v</strong>]
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-profile-graph</strong></a> <strong>-k</strong>=<em>NUMMER</em> [<strong>-t</strong>=<em>NUMMER</em>] [<strong>-b</strong>] [<strong>-l</strong>=<em>NUMMER</em>] [<strong>-g</strong>] [<strong>-w</strong>=<em>NUMMER</em>] [<strong>-T</strong>] [<strong>-o</strong>=<em>-|DATEI</em>] [<strong>-f</strong>=<em>FORMAT</em>] [<strong>-v</strong>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-k</strong>|<strong>--kelvin</strong> <em>NUMMER</em></td> <td>Lambertstrahler (NUMMER:0 [≥0 ≤25000])</td> </tr>
 </table>
 
  <h4 id="illuminant">Beleuchtungsspektrumzeichnung</h4>
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-profile\-graph</strong></a> <strong>\-u</strong>=<em>WORT</em> [<strong>\-t</strong>=<em>NUMMER</em>] [<strong>\-b</strong>] [<strong>\-l</strong>=<em>NUMMER</em>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMMER</em>] [<strong>\-T</strong>] [<strong>\-o</strong>=<em>\-|DATEI</em>] [<strong>\-f</strong>=<em>FORMAT</em>] [<strong>\-v</strong>]
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-profile-graph</strong></a> <strong>-u</strong>=<em>WORT</em> [<strong>-t</strong>=<em>NUMMER</em>] [<strong>-b</strong>] [<strong>-l</strong>=<em>NUMMER</em>] [<strong>-g</strong>] [<strong>-w</strong>=<em>NUMMER</em>] [<strong>-T</strong>] [<strong>-o</strong>=<em>-|DATEI</em>] [<strong>-f</strong>=<em>FORMAT</em>] [<strong>-v</strong>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-u</strong>|<strong>--illuminant</strong> <em>WORT</em></td> <td>Beleuchtungsspektrum
@@ -108,7 +108,7 @@ Das oyranos\-profile\-graph Programm erzeugt aus einem ICC Profil oder eingebett
 </table>
 
  <h4 id="spectral">Spektrumgraph</h4>
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-profile\-graph</strong></a> <strong>\-s</strong>=<em>DATEI</em> <strong>\-p</strong>=<em>FORMAT</em> <strong>\-z</strong> [<strong>\-t</strong>=<em>NUMMER</em>] [<strong>\-b</strong>] [<strong>\-l</strong>=<em>NUMMER</em>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMMER</em>] [<strong>\-T</strong>] [<strong>\-P</strong>=<em>WORT</em>] [<strong>\-o</strong>=<em>\-|DATEI</em>] [<strong>\-v</strong>]
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-profile-graph</strong></a> <strong>-s</strong>=<em>DATEI</em> <strong>-p</strong>=<em>FORMAT</em> <strong>-z</strong> [<strong>-t</strong>=<em>NUMMER</em>] [<strong>-b</strong>] [<strong>-l</strong>=<em>NUMMER</em>] [<strong>-g</strong>] [<strong>-w</strong>=<em>NUMMER</em>] [<strong>-T</strong>] [<strong>-P</strong>=<em>WORT</em>] [<strong>-o</strong>=<em>-|DATEI</em>] [<strong>-v</strong>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-s</strong>|<strong>--spectral</strong> <em>DATEI</em></td> <td>Spektrale Eingabe </tr>
@@ -129,7 +129,7 @@ Das oyranos\-profile\-graph Programm erzeugt aus einem ICC Profil oder eingebett
 </table>
 
  <h4 id="import">Zeige Farbseite</h4>
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-profile\-graph</strong></a> <strong>\-i</strong>=<em>DATEI</em> <strong>\-I</strong>=<em>SEITE</em> [<strong>\-t</strong>=<em>NUMMER</em>] [<strong>\-b</strong>] [<strong>\-l</strong>=<em>NUMMER</em>] [<strong>\-g</strong>] [<strong>\-w</strong>=<em>NUMMER</em>] [<strong>\-T</strong>] [<strong>\-f</strong>=<em>FORMAT</em>] [<strong>\-o</strong>=<em>\-|DATEI</em>] [<strong>\-v</strong>]
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-profile-graph</strong></a> <strong>-i</strong>=<em>DATEI</em> <strong>-I</strong>=<em>SEITE</em> [<strong>-t</strong>=<em>NUMMER</em>] [<strong>-b</strong>] [<strong>-l</strong>=<em>NUMMER</em>] [<strong>-g</strong>] [<strong>-w</strong>=<em>NUMMER</em>] [<strong>-T</strong>] [<strong>-f</strong>=<em>FORMAT</em>] [<strong>-o</strong>=<em>-|DATEI</em>] [<strong>-v</strong>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-i</strong>|<strong>--import</strong> <em>DATEI</em></td> <td>Farbseiten Eingabe<br />Unterstützt werden Farbseiten im NCC Format, welche ein Seiten layout mit referenzierten rgb Werten besitzen. Diese werden auf eine Seite platziert. Solche Seiten können erzeugt werden z.B. mit oyranos-profile-graph --hlc=NUMMER -f ncc </tr>
@@ -137,7 +137,7 @@ Das oyranos\-profile\-graph Programm erzeugt aus einem ICC Profil oder eingebett
 </table>
 
  <h4 id="export">Allgemeine Optionen</h4>
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-profile\-graph</strong></a> <strong>\-X</strong>=<em>json|json+command|man|markdown</em> | <strong>\-h</strong> [<strong>\-v</strong>]
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-profile-graph</strong></a> <strong>-X</strong>=<em>json|json+command|man|markdown</em> | <strong>-h</strong> [<strong>-v</strong>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-t</strong>|<strong>--thickness</strong> <em>NUMMER</em></td> <td>Gib die Liniendicke an (NUMMER:1 [≥0 ≤10])</td> </tr>
@@ -171,42 +171,42 @@ Das oyranos\-profile\-graph Programm erzeugt aus einem ICC Profil oder eingebett
 
 <h2>UMGEBUNGSVARIABLEN <a href="#toc" name="environmentvariables">&uarr;</a></h2>
 
-#### OY\_DEBUG
+#### OY_DEBUG
 &nbsp;&nbsp;Setze das Oyranos Fehlersuchniveau.
   <br />
 &nbsp;&nbsp;Die -v Option kann alternativ benutzt werden.
   <br />
-&nbsp;&nbsp;Der gültige Bereich ist 1\-20.
-#### XDG\_DATA\_HOME XDG\_DATA\_DIRS
+&nbsp;&nbsp;Der gültige Bereich ist 1-20.
+#### XDG_DATA_HOME XDG_DATA_DIRS
 &nbsp;&nbsp;richte Oyranos auf obere Verzeichnisse, welche Resourcen enthalten. An die Pfade für ICC Farbprofile wird "color/icc" angehangen. http://www.oyranos.com/wiki/index.php?title=OpenIccDirectoryProposal
 
 <h2>BEISPIELE <a href="#toc" name="examples">&uarr;</a></h2>
 
 #### Zeichne ICC Profil
-&nbsp;&nbsp;oyranos\-profile\-graph ICC\_PROFILE
+&nbsp;&nbsp;oyranos-profile-graph ICC_PROFILE
 #### Zeige Sättigungslinien von zwei Profilen in CIE*ab 256 Bildpunkte breit, ohne Spectrallinie und mit dickeren Linien:
-&nbsp;&nbsp;oyranos\-profile\-graph \-w 256 \-n \-t 3 sRGB.icc ProPhoto\-RGB.icc
+&nbsp;&nbsp;oyranos-profile-graph -w 256 -n -t 3 sRGB.icc ProPhoto-RGB.icc
 #### Zeige HLC Farbatlas Muster
-&nbsp;&nbsp;oyranos\-profile\-graph \-H=90 \-o HLC\_H090.png cmyk web
+&nbsp;&nbsp;oyranos-profile-graph -H=90 -o HLC_H090.png cmyk web
   <br />
 &nbsp;&nbsp;Farbmuster werden nur angezeigt, wenn sie im Farbraum von sowohl CMYK und dem web Farbprofil enthalten sind.
 #### Zeige die Standard Betrachter Spektralfunktion als Kurven:
-&nbsp;&nbsp;oyranos\-profile\-graph \-\-standard\-observer \-o CIE\-StdObserver.png
+&nbsp;&nbsp;oyranos-profile-graph --standard-observer -o CIE-StdObserver.png
 
 <h2>SIEHE AUCH <a href="#toc" name="seeaswell">&uarr;</a></h2>
 
-&nbsp;&nbsp;[oyranos\-profile](oyranosprofile.html)<a href="oyranosprofile.md">(1)</a>&nbsp;&nbsp;[oyranos\-config](oyranosconfig.html)<a href="oyranosconfig.md">(1)</a>&nbsp;&nbsp;[oyranos\-policy](oyranospolicy.html)<a href="oyranospolicy.md">(1)</a>&nbsp;&nbsp;[oyranos](oyranos.html)<a href="oyranos.md">(3)</a>
+&nbsp;&nbsp;[oyranos-profile](oyranosprofile.html)<a href="oyranosprofile.md">(1)</a>&nbsp;&nbsp;[oyranos-config](oyranosconfig.html)<a href="oyranosconfig.md">(1)</a>&nbsp;&nbsp;[oyranos-policy](oyranospolicy.html)<a href="oyranospolicy.md">(1)</a>&nbsp;&nbsp;[oyranos](oyranos.html)<a href="oyranos.md">(3)</a>
 
  http://www.oyranos.org
 
 
 <h2>AUTOR <a href="#toc" name="author">&uarr;</a></h2>
 
-Kai\-Uwe Behrmann http://www.oyranos.org
+Kai-Uwe Behrmann http://www.oyranos.org
 
 <h2>KOPIERRECHT <a href="#toc" name="copyright">&uarr;</a></h2>
 
-*© 2005\-2020 Kai\-Uwe Behrmann and others*
+*© 2005-2020 Kai-Uwe Behrmann and others*
 
 
 <a name="license"></a>
@@ -215,5 +215,5 @@ newBSD <a href="http://www.oyranos.org">http://www.oyranos.org</a>
 
 <h2>FEHLER <a href="#toc" name="bugs">&uarr;</a></h2>
 
-<a href="https://www.github.com/oyranos-cms/oyranos/issues">https://www.github.com/oyranos\-cms/oyranos/issues</a>
+<a href="https://www.github.com/oyranos-cms/oyranos/issues">https://www.github.com/oyranos-cms/oyranos/issues</a>
 
