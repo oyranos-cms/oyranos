@@ -3,7 +3,7 @@
  *  libOyjl - JSON helper tool
  *
  *  @par Copyright:
- *            2018-2019 (C) Kai-Uwe Behrmann
+ *            2018-2020 (C) Kai-Uwe Behrmann
  *
  *  @brief    Oyjl JSON translation helper
  *  @internal
@@ -61,7 +61,7 @@ int myMain( int argc, const char ** argv )
   int error = 0;
   int state = 0;
   int verbose = 0;
-  int help = 0;
+  const char * help = NULL;
   int version = 0;
   const char * render = NULL;
   const char * export = NULL;
@@ -116,8 +116,10 @@ int myMain( int argc, const char ** argv )
         oyjlOPTIONTYPE_CHOICE,   {.choices = {(oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)A_choices, sizeof(A_choices), malloc ), 0}}, oyjlNONE,      {}},
     {"oiwi", 0,                          "S","man-see_also",  NULL,     _("SEE ALSO"), NULL,                         NULL, NULL,               
         oyjlOPTIONTYPE_CHOICE,   {.choices = {(oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)S_choices, sizeof(S_choices), malloc ), 0}}, oyjlNONE,      {}},
-    {"oiwi", 0,                          "h","help",          NULL,     _("help"),     _("Help"),                    NULL, NULL,               
-        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&help}},
+    {"oiwi", OYJL_OPTION_FLAG_ACCEPT_NO_ARG, "h","help",      NULL,     NULL,          NULL,                         NULL, NULL,               
+        oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&help}},
+    {"oiwi", 0,                        NULL, "synopsis",      NULL,     NULL,          NULL,                         NULL, NULL,
+        oyjlOPTIONTYPE_NONE,     {0},                oyjlNONE,      {0} },
     {"oiwi", 0,                          "v","verbose",       NULL,     _("Verbose"),  _("increase verbosity"),      NULL, NULL,               
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&verbose}},
     {"oiwi", 0,                          "V","version",       NULL,     _("version"),  _("Version"),                 NULL, NULL,               

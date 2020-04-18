@@ -3,7 +3,7 @@
  *  oyjl - Yajl tree extension
  *
  *  @par Copyright:
- *            2016-2019 (C) Kai-Uwe Behrmann
+ *            2016-2020 (C) Kai-Uwe Behrmann
  *
  *  @brief    Oyjl command line
  *  @internal
@@ -56,7 +56,7 @@ int myMain( int argc, const char ** argv )
   const char * i_filename = NULL;
   const char * xpath = NULL;
   int verbose = 0;
-  int help = 0;
+  const char * help = NULL;
   int version = 0;
   const char * render = NULL;
   const char * export = NULL;
@@ -90,7 +90,7 @@ int myMain( int argc, const char ** argv )
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&count}},
     {"oiwi", 0,                          "k","key",           NULL,     _("Key Name"), _("Print key name of node"), NULL,NULL,
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&key}},
-    {"oiwi", 0,                          "p","paths",         NULL,     _("Paths"),    _("Print all matching paths"),NULL,NULL,
+    {"oiwi", 0,                          NULL,"paths",        NULL,     _("Paths"),    _("Print all matching paths"),NULL,NULL,
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&paths}},
     {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "s","set",           NULL,     _("Set Value"),_("Set a key name to a value"),NULL,_("STRING"),
         oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&set}},
@@ -105,10 +105,11 @@ int myMain( int argc, const char ** argv )
     {"oiwi", 0,                          "S","man-see_also",  NULL,     _("SEE ALSO"),NULL,                      NULL, NULL,
         oyjlOPTIONTYPE_CHOICE,   {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)S_choices, sizeof(S_choices), malloc )}, oyjlNONE,      {}},
     /* default options -h and -v */
-    {"oiwi", 0, "h", "help", NULL, _("help"), _("Help"),      NULL,     NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&help} },
+    {"oiwi", OYJL_OPTION_FLAG_ACCEPT_NO_ARG, "h", "help", NULL, NULL, NULL,      NULL,     NULL, oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s=&help} },
+    {"oiwi", 0, NULL, "synopsis", NULL, NULL, NULL,      NULL,     NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlNONE, {0} },
     {"oiwi", 0, "v","verbose",NULL,_("Verbose"),_("increase verbosity"), NULL, NULL, oyjlOPTIONTYPE_NONE,{0},oyjlINT,{.i=&verbose}},
     /* The --render option can be hidden and used only internally. */
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,   "R","render",       NULL,     _("render"),   _("Render"),         NULL, NULL,
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE|OYJL_OPTION_FLAG_MAINTENANCE,   "R","render",       NULL,     _("render"),   _("Render"),         NULL, NULL,
         oyjlOPTIONTYPE_CHOICE, {0},                  oyjlSTRING,    {.s=&render}},
     {"oiwi", 0, "V", "version", NULL, _("version"), _("Version"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&version} },
     /* default option template -X|--export */
@@ -119,14 +120,14 @@ int myMain( int argc, const char ** argv )
   /* declare option groups, for better syntax checking and UI groups */
   oyjlOptionGroup_s groups[] = {
   /* type,   flags, name,               description,                  help,               mandatory,     optional,      detail */
-    {"oiwg", 0,     _("Input"),         _("Set input file and pah"),  NULL,               "",            "",            "i,x,s"},
-    {"oiwg", 0,     _("Print JSON"),    _("Print JSON to stdout"),    NULL,               "j",           "i,x,s",       "j"},
-    {"oiwg", 0,     _("Print YAML"),    _("Print YAML to stdout"),    NULL,               "y",           "i,x,s",       "y"},
-    {"oiwg", 0,     _("Print XML"),     _("Print XML to stdout"),     NULL,               "m",           "i,x,s",       "m"},
-    {"oiwg", 0,     _("Count"),         _("Print node count"),        NULL,               "c",           "i,x",         "c"},
-    {"oiwg", 0,     _("Key Name"),      _("Print key name"),          NULL,               "k",           "i,x",         "k"},
-    {"oiwg", 0,     _("Type"),          _("Print type"),              NULL,               "t",           "i,x",         "t"},
-    {"oiwg", 0,     _("Paths"),         _("Print all matching paths."),NULL,              "p",           "i,x",         "p"},
+    {"oiwg", 0,     _("Input"),         _("Set input file and path"), NULL,               "",            "",            "i,x,s"},
+    {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Print JSON"), _("Print JSON to stdout"),NULL,  "j",           "i,x,s",       "j"},
+    {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Print YAML"), _("Print YAML to stdout"),NULL,  "y",           "i,x,s",       "y"},
+    {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Print XML"),  _("Print XML to stdout"), NULL,  "m",           "i,x,s",       "m"},
+    {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Count"),      _("Print node count"),    NULL,  "c",           "i,x",         "c"},
+    {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Key Name"),   _("Print key name"),      NULL,  "k",           "i,x",         "k"},
+    {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Type"),       _("Print type"),          NULL,  "t",           "i,x",         "t"},
+    {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Paths"), _("Print all matching paths."),NULL,  "paths",       "i,x",         "paths"},
     {"oiwg", 0,     _("Misc"),          _("General options"),         NULL,               "h,X",         "v",           "h,v,X" },/* just show in documentation */
     {"",0,0,0,0,0,0,0}
   };

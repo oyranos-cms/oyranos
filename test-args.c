@@ -2,7 +2,7 @@
  *
  *  Oyranos is an open source Color Management System
  *
- *  Copyright (C) 2019  Kai-Uwe Behrmann
+ *  Copyright (C) 2019-2020  Kai-Uwe Behrmann
  *
  *  @brief    Oyranos test suite
  *  @internal
@@ -29,6 +29,8 @@ void oyjlLibRelease();
 
 #include "oyjl_args.c"
 
+char *    oyjlReadFile( const char * file_name,
+                        int        * size_ptr );
 /* --- actual tests --- */
 
 
@@ -90,7 +92,7 @@ oyjlTESTRESULT_e testArgs()
     {"oiwg", 0,     _("Mode2"),_("Simple mode"),     NULL, "#",       "o,v",    "#,o" }, /* accepted even if none of the mandatory options is set */
     {"oiwg", 0,     _("Mode3"),_("Simple mode"),     NULL, "#",       "",       "#" }, /* accepted even if none of the mandatory options is set */
     {"oiwg", 0,     _("Mode4"),_("Simple mode"),     NULL, "#",       "",       "" }, /* accepted even if none of the mandatory options is set */
-    {"oiwg", OYJL_OPTION_FLAG_EDITABLE,_("Mode5"),_("Any arg mode"),NULL,"@","o,v","@,o"},/* accepted if anonymous arguments are set */
+    {"oiwg", 0,     _("Mode5"),_("Any arg mode"),    NULL, "@",       "o,v",    "@,o"},/* accepted if anonymous arguments are set */
     {"oiwg", 0,     _("Mode6"),_("Actual mode"),     NULL, "i",       "o,v",    "i,o" },/* parsed and checked with -i option */
     {"oiwg", 0,     _("Mode7"),_("Alternate"),       NULL, "i|o",     "h|v",    "i,o,h,v" },
     {"oiwg", 0,     _("Mode8"),_("Long"),            _("This Group handles Long options"), "b",       "candle,v","b,candle,v" },
@@ -434,8 +436,129 @@ oyjlTESTRESULT_e testArgs()
   fprintf(stdout, "oyjlUi_Release(&\"test\") - should give a warning message:\n" );
   oyjlUi_Release( (oyjlUi_s **)&wrong);
 
+  verbose_ = 0;
+  const char * helpstr = NULL;
+  oyjlOption_s oarray2[] = {
+  /* type,   flags, o,   option,    key,  name,         description,         help, value_name,    value_type,               values,                                                          variable_type, output variable */
+    {"oiwi", 0,     "i", "input",   NULL, _("input"),   _("Set Input"),      NULL, _("FILENAME"), oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)i_choices, sizeof(i_choices), malloc )}, oyjlSTRING, {.s = &file} },
+    {"oiwi", 0,     "o", "output",  NULL, _("output"),  _("Control Output"), NULL, "0|1|2",       oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)o_choices, sizeof(o_choices), malloc )}, oyjlINT, {.i = &output} },
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,     "h", "help",    NULL, _("help"),    _("Help"),           NULL, NULL,          oyjlOPTIONTYPE_CHOICE, {}, oyjlSTRING, {.s = &helpstr} },
+    {"oiwi", 0,     "v", "verbose", NULL, _("verbose"), _("verbose"),        NULL, NULL,          oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i = &verbose_} },
+    {"",0,0,0,0,0,0,0, NULL, oyjlOPTIONTYPE_END, {},0,{}}
+  };
+
+  /* declare option groups, for better syntax checking and UI groups */
+  oyjlOptionGroup_s groups2[] = {
+  /* type,   flags, name,      description,          help, mandatory, optional, detail */
+    {"oiwg", 0,     _("Mode"), _("Actual mode"),     NULL, "i",       "o,v",    "i,o" },
+    {"oiwg", 0,     _("Misc"), _("General options"), NULL, "",        "",       "v,h" },
+    {"",0,0,0,0,0,0,0}
+  };
+  argc = 3;
+  const char * argv2[] = {"test-args","help","input"};
+  ui = oyjlUi_Create( argc, argv2, /* argc+argv are required for parsing the command line options */
+                                       "oiCR", "oyjl-config-read", _("Short example tool using libOyjl"), "logo",
+                                       sections, oarray2, groups2, NULL );
+  if(!ui)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "ui not created - sub command followed by undeclared unbound" );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    "ui not created - sub command followed by undeclared unbound" );
+  }
+  oyjlUi_Release( &ui);
+  help = 0;
+
+  oarray2[2].flags = OYJL_OPTION_FLAG_EDITABLE | OYJL_OPTION_FLAG_ACCEPT_NO_ARG;
+  const char * fn = "test-args-0-help.txt"; remove(fn);
+  oyjl_help_zout = fopen(fn, "w");
+  ui = oyjlUi_Create( argc, argv2, /* argc+argv are required for parsing the command line options */
+                                       "oiCR", "oyjl-config-read", _("Short example tool using libOyjl"), "logo",
+                                       sections, oarray2, groups2, NULL );
+  fclose(oyjl_help_zout); oyjl_help_zout = NULL;
+  int size = 0;
+  text = oyjlReadFile( fn , &size );
+  if(!ui && size == 416)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "help - sub command followed by unbound    %d  ", size );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    "help - sub command followed by unbound    %d  ", size );
+  }
+  oyjlUi_Release( &ui);
+  OYJL_TEST_WRITE_RESULT( text, strlen(text), "help-subCommandFollowedByUnbound", "txt" )
+  help = 0; size = 0;
+  free(text); text = NULL;
+
+  groups2[1].mandatory = "h";
+  remove(fn); oyjl_help_zout = fopen(fn, "w");
+  ui = oyjlUi_Create( argc, argv2, /* argc+argv are required for parsing the command line options */
+                                       "oiCR", "oyjl-config-read", _("Short example tool using libOyjl"), "logo",
+                                       sections, oarray2, groups2, NULL );
+  fclose(oyjl_help_zout); oyjl_help_zout = NULL;
+  size = 0;
+  text = oyjlReadFile( fn , &size );
+  if(!ui && size == 416)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "help - mandatory sub command followed by unbound" );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    "help - mandatory sub command followed by unbound" );
+  }
+  oyjlUi_Release( &ui);
+  OYJL_TEST_WRITE_RESULT( text, strlen(text), "help-mandatorySubCommandFollowedByUnbound", "txt" )
+  help = 0; size = 0;
+  free(text); text = NULL;
+
+  oarray2[2].flags = OYJL_OPTION_FLAG_ACCEPT_NO_ARG;
+  oarray2[2].value_type = oyjlOPTIONTYPE_NONE;
+  oarray2[2].value_name = NULL;
+  oarray2[2].variable_type = oyjlINT;
+  oarray2[2].variable.i = &help;
+  remove(fn); oyjl_help_zout = fopen(fn, "w");
+  ui = oyjlUi_Create( argc, argv2, /* argc+argv are required for parsing the command line options */
+                                       "oiCR", "oyjl-config-read", _("Short example tool using libOyjl"), "logo",
+                                       sections, oarray2, groups2, NULL );
+  fclose(oyjl_help_zout); oyjl_help_zout = NULL;
+  size = 0;
+  text = oyjlReadFile( fn , &size );
+  if(!ui && size == 416)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "help - mandatory integer sub command followed by unbound" );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    "help - mandatory integer sub command followed by unbound %d 0x%tx", size, (ptrdiff_t)ui );
+  }
+  oyjlUi_Release( &ui);
+  OYJL_TEST_WRITE_RESULT( text, strlen(text), "help-mandatoryIntegerSubCommandFollowedByUnbound", "txt" )
+  help = 0; size = 0;
+  free(text); text = NULL;
+
+  argc = 2;
+  remove(fn); oyjl_help_zout = fopen(fn, "w");
+  ui = oyjlUi_Create( argc, argv2, /* argc+argv are required for parsing the command line options */
+                                       "oiCR", "oyjl-config-read", _("Short example tool using libOyjl"), "logo",
+                                       sections, oarray2, groups2, NULL );
+  fclose(oyjl_help_zout); oyjl_help_zout = NULL;
+  size = 0;
+  text = oyjlReadFile( fn , &size );
+  if(!ui && size == 839)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "help - mandatory integer sub command      %d  ", size );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    "help - mandatory integer sub command      %d  ", size );
+  }
+  oyjlUi_Release( &ui);
+  OYJL_TEST_WRITE_RESULT( text, strlen(text), "help-mandatoryIntegerSubCommand", "txt" )
+  help = 0; size = 0;
+  free(text); text = NULL;
+
   free(oarray[2].values.choices.list);
   free(oarray[3].values.choices.list);
+  free(oarray2[0].values.choices.list);
+  free(oarray2[1].values.choices.list);
+  free(oarray2[2].values.choices.list);
 
   return result;
 }
@@ -443,4 +566,57 @@ oyjlTESTRESULT_e testArgs()
 
 /* --- end actual tests --- */
 
+
+char *    oyjlReadFile( const char * file_name,
+                        int        * size_ptr )
+{
+  FILE * fp = NULL;
+  int size = 0, s = 0;
+  char * text = NULL;
+
+  if(file_name)
+  {
+    fp = fopen(file_name,"rb");
+    if(fp)
+    {
+      fseek( fp, 0L, SEEK_END );
+      size = ftell( fp );
+      if(size == -1)
+      {
+        switch(errno)
+        {
+          case EBADF:        WARNc_S("Not a seekable stream %d", errno); break;
+          case EINVAL:       WARNc_S("Wrong argument %d", errno); break;
+          default:           WARNc_S("%s", strerror(errno)); break;
+        }
+        if(size_ptr)
+          *size_ptr = size;
+        fclose( fp );
+        return NULL;
+      }
+      rewind(fp);
+      text = malloc(size+1);
+      if(text == NULL)
+      {
+        WARNc_S( "Error: Could allocate memory: %lu", (long unsigned int)size);
+        fclose( fp );
+        return NULL;
+      }
+      s = fread(text, sizeof(char), size, fp);
+      text[size] = '\000';
+      if(s != size)
+        WARNc_S( "Error: fread %lu but should read %lu",
+                (long unsigned int) s, (long unsigned int)size);
+      fclose( fp );
+    } else
+    {
+      WARNc_S( "Error: Could not open file - \"%s\"", file_name);
+    }
+  }
+
+  if(size_ptr)
+    *size_ptr = size;
+
+  return text;
+}
 

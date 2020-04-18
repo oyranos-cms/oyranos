@@ -3,7 +3,7 @@
  *  oyjl - Basic helper C API's
  *
  *  @par Copyright:
- *            2010-2019 (C) Kai-Uwe Behrmann
+ *            2010-2020 (C) Kai-Uwe Behrmann
  *
  *  @brief    Oyjl API provides a platformindependent C interface for JSON I/O, conversion to and from
  *            XML + YAML, string helpers, file reading, testing and argument handling.
@@ -525,14 +525,20 @@ typedef union oyjlOption_u {
 } oyjlOption_u;
 
 #define OYJL_OPTION_FLAG_EDITABLE      0x01 /**< @brief The oyjlOption_s choices are merely a hint. Let users fill other strings too. */
+#define OYJL_OPTION_FLAG_ACCEPT_NO_ARG 0x02 /**< @brief Accept as well no arg */
+#define OYJL_OPTION_FLAG_MAINTENANCE   0x04 /**< @brief Maintenance option; can be invisible */
 /** @brief abstract UI option
  *
  *  A oyjlOption_s::o is inside of oyjlOptionGroup_s::detail to be displayed and oyjlOptionGroup_s::mandatory/optional for syntax checking.
  */
 struct oyjlOption_s {
   char type[8];                        /**< @brief must be 'oiwi' */
-  /** - ::OYJL_OPTION_FLAG_EDITABLE : flag for oyjlOPTIONTYPE_CHOICE and oyjlOPTIONTYPE_FUNCTION. Hints a not closely specified intput. The content is typically not useful for a overview in a help or man page. These can print a overview with oyjlOption_s::value_type. This flag is intented for convinience suggestions or very verbose dictionaries used in scrollable pull down GUI elements. */
-  unsigned int flags;                  /**< @brief rendering hint */
+  /** - ::OYJL_OPTION_FLAG_EDITABLE : flag for oyjlOPTIONTYPE_CHOICE and oyjlOPTIONTYPE_FUNCTION. Hints a not closely specified intput. The content is typically not useful for a overview in a help or man page. These can print a overview with oyjlOption_s::value_type. This flag is intented for convinience suggestions or very verbose dictionaries used in scrollable pull down GUI elements.
+   *  - ::OYJL_OPTION_FLAG_ACCEPT_NO_ARG : the flagged option can accept as well no argument without error.
+   *    - oyjlSTRING will be set to empty string ("")
+   *    - oyjlDOUBLE and oyjlINT will be set to 1
+   */
+  unsigned int flags;                  /**< @brief parsing and rendering hints */
   /** '#' is used as default option like a command without any arguments.
    *  '@' together with value_name expects arbitrary arguments as described in oyjlOption_s::value_name.
    *  Reserved letters are ,(comma), \'(quote), \"(double quote), :(double point), ;(semikolon), /(slash), \(backslash)
@@ -553,6 +559,7 @@ struct oyjlOption_s {
   oyjlVariable_u variable;             /**< @brief automatically filled variable depending on *value_type* */
 };
 
+#define OYJL_GROUP_FLAG_SUBCOMMAND     0x80 /**< @brief The oyjlOptionGroup_s requires one single mandatory option with oyjlOPTIONTYPE_NONE. */
 /**
  *  @brief Info to compile a Syntax line and check missing arguments
  *
@@ -560,7 +567,8 @@ struct oyjlOption_s {
  */
 typedef struct oyjlOptionGroup_s {
   char type [8];                       /**< @brief must be 'oiwg' */
-  unsigned int flags;                  /**< unused */
+  /** - ::OYJL_GROUP_FLAG_SUBCOMMAND : flag inhibits --style mandatory option. */
+  unsigned int flags;                  /**< @brief parsing and rendering hints */
   const char * name;                   /**< @brief i18n label string */
   const char * description;            /**< @brief i18n short sentence about the option */
   const char * help;                   /**< @brief i18n longer text to explain what the option does; optional */
@@ -600,7 +608,9 @@ typedef enum {
   oyjlOPTION_NOT_SUPPORTED,            /**< user error */
   oyjlOPTION_DOUBLE_OCCURENCE,         /**< user error; except '@' is specified */
   oyjlOPTIONS_MISSING,                 /**< user error; except '#' is specified */
-  oyjlOPTION_NO_GROUP_FOUND            /**< user error */
+  oyjlOPTION_NO_GROUP_FOUND,           /**< user error */
+  oyjlOPTION_SUBCOMMAND,               /**< category */
+  oyjlOPTION_NOT_ALLOWED_AS_SUBCOMMAND /**< user error */
 } oyjlOPTIONSTATE_e;
 oyjlOptions_s *    oyjlOptions_New   ( int                 argc,
                                        const char       ** argv );

@@ -2,21 +2,21 @@
 .SH NAME
 oyjl v1.0.0 \- Oyjl Json Bearbeitung
 .SH ÜBERSICHT
-\fBoyjl\fR \fB\-j\fR [\fB\-i\fR \fIDATEINAME\fR] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR]
+\fBoyjl\fR \fBjson\fR [\fB\-i\fR \fIDATEINAME\fR] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR]
 .br
-\fBoyjl\fR \fB\-y\fR [\fB\-i\fR \fIDATEINAME\fR] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR]
+\fBoyjl\fR \fByaml\fR [\fB\-i\fR \fIDATEINAME\fR] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR]
 .br
-\fBoyjl\fR \fB\-m\fR [\fB\-i\fR \fIDATEINAME\fR] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR]
+\fBoyjl\fR \fBxml\fR [\fB\-i\fR \fIDATEINAME\fR] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR]
 .br
-\fBoyjl\fR \fB\-c\fR [\fB\-i\fR \fIDATEINAME\fR] [\fB\-x\fR \fIPFAD\fR]
+\fBoyjl\fR \fBcount\fR [\fB\-i\fR \fIDATEINAME\fR] [\fB\-x\fR \fIPFAD\fR]
 .br
-\fBoyjl\fR \fB\-k\fR [\fB\-i\fR \fIDATEINAME\fR] [\fB\-x\fR \fIPFAD\fR]
+\fBoyjl\fR \fBkey\fR [\fB\-i\fR \fIDATEINAME\fR] [\fB\-x\fR \fIPFAD\fR]
 .br
-\fBoyjl\fR \fB\-t\fR [\fB\-i\fR \fIDATEINAME\fR] [\fB\-x\fR \fIPFAD\fR]
+\fBoyjl\fR \fBtype\fR [\fB\-i\fR \fIDATEINAME\fR] [\fB\-x\fR \fIPFAD\fR]
 .br
-\fBoyjl\fR \fB\-p\fR [\fB\-i\fR \fIDATEINAME\fR] [\fB\-x\fR \fIPFAD\fR]
+\fBoyjl\fR \fBpaths\fR [\fB\-i\fR \fIDATEINAME\fR] [\fB\-x\fR \fIPFAD\fR]
 .br
-\fBoyjl\fR \fB\-h\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR [\fB\-v\fR]
+\fBoyjl\fR \fB\-h\fR \fI|synopsis|...\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR [\fB\-v\fR]
 .SH BESCHREIBUNG
 Das oyjl Programm unterstütz Einlesen, Filtern von Untermengen, Wertauswahl und Wertveränderung in einem JSON Text.
 .SH OPTIONEN
@@ -35,51 +35,71 @@ Der Pfad besteht aus Namen, welche durch Schrägstrich '/' getrennt sind. Jeder 
 .br
 .SS
 Zeige JSON auf stdout
-\fBoyjl\fR \fB\-j\fR [\fB\-i\fR \fIDATEINAME\fR] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR]
+\fBoyjl\fR \fBjson\fR [\fB\-i\fR \fIDATEINAME\fR] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR]
 .br
-\fB\-j\fR|\fB\-\-json\fR	Zeige JSON auf stdout
+\fBjson\fR	Zeige JSON auf stdout
 .br
 .SS
 Zeige YAML auf stdout
-\fBoyjl\fR \fB\-y\fR [\fB\-i\fR \fIDATEINAME\fR] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR]
+\fBoyjl\fR \fByaml\fR [\fB\-i\fR \fIDATEINAME\fR] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR]
 .br
-\fB\-y\fR|\fB\-\-yaml\fR	Zeige YAML auf stdout
+\fByaml\fR	Zeige YAML auf stdout
 .br
 .SS
 Zeige XML auf stdout
-\fBoyjl\fR \fB\-m\fR [\fB\-i\fR \fIDATEINAME\fR] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR]
+\fBoyjl\fR \fBxml\fR [\fB\-i\fR \fIDATEINAME\fR] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR]
 .br
-\fB\-m\fR|\fB\-\-xml\fR	Zeige XML auf stdout
+\fBxml\fR	Zeige XML auf stdout
 .br
 .SS
 Zeige Knotenanzahl
-\fBoyjl\fR \fB\-c\fR [\fB\-i\fR \fIDATEINAME\fR] [\fB\-x\fR \fIPFAD\fR]
+\fBoyjl\fR \fBcount\fR [\fB\-i\fR \fIDATEINAME\fR] [\fB\-x\fR \fIPFAD\fR]
 .br
-\fB\-c\fR|\fB\-\-count\fR	Zeige Anzahl der Knotenzweige
+\fBcount\fR	Zeige Anzahl der Knotenzweige
 .br
 .SS
 Zeige Schlüsselname
-\fBoyjl\fR \fB\-k\fR [\fB\-i\fR \fIDATEINAME\fR] [\fB\-x\fR \fIPFAD\fR]
+\fBoyjl\fR \fBkey\fR [\fB\-i\fR \fIDATEINAME\fR] [\fB\-x\fR \fIPFAD\fR]
 .br
-\fB\-k\fR|\fB\-\-key\fR	Zeige Schlüsselname des Knotens
+\fBkey\fR	Zeige Schlüsselname des Knotens
 .br
 .SS
 Zeige Typ
-\fBoyjl\fR \fB\-t\fR [\fB\-i\fR \fIDATEINAME\fR] [\fB\-x\fR \fIPFAD\fR]
+\fBoyjl\fR \fBtype\fR [\fB\-i\fR \fIDATEINAME\fR] [\fB\-x\fR \fIPFAD\fR]
 .br
-\fB\-t\fR|\fB\-\-type\fR	Hole Knotentyp
+\fBtype\fR	Hole Knotentyp
 .br
 .SS
 Zeige alle zutreffenden Pfade
-\fBoyjl\fR \fB\-p\fR [\fB\-i\fR \fIDATEINAME\fR] [\fB\-x\fR \fIPFAD\fR]
+\fBoyjl\fR \fBpaths\fR [\fB\-i\fR \fIDATEINAME\fR] [\fB\-x\fR \fIPFAD\fR]
 .br
-\fB\-p\fR|\fB\-\-paths\fR	Zeige alle zutreffenden Pfade
+\fBpaths\fR	Zeige alle zutreffenden Pfade
 .br
 .SS
 Allgemeine Optionen
-\fBoyjl\fR \fB\-h\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR [\fB\-v\fR]
+\fBoyjl\fR \fB\-h\fR \fI|synopsis|...\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR [\fB\-v\fR]
 .br
-\fB\-h\fR|\fB\-\-help\fR	Hilfe
+\fB\-h\fR|\fB\-\-help\fR \fI|synopsis|...\fR	Zeige Hilfetext an
+.RS
+Zeige Benutzungsinformationen und Hinweise für das Werkzeug.
+.RE
+	\-h 1		# Vollständige Hilfe
+.br
+	\-h synopsis		# Übersicht - Zeige alle Gruppen mit Syntax
+.br
+	\-h json		# JSON
+.br
+	\-h yaml		# YAML
+.br
+	\-h xml		# XML
+.br
+	\-h count		# Anzahl
+.br
+	\-h key		# Schlüsselname
+.br
+	\-h type		# Typ
+.br
+	\-h export		# exportiere - Hole Benutzerschnittstelle als Text
 .br
 \fB\-v\fR|\fB\-\-verbose\fR	mehr Infos
 .br

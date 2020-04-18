@@ -2,26 +2,26 @@
 .SH NAME
 oyjl v1.0.0 \- Oyjl Json Manipulation
 .SH SYNOPSIS
-\fBoyjl\fR \fB\-j\fR [\fB\-i\fR \fIFILENAME\fR] [\fB\-x\fR \fIPATH\fR] [\fB\-s\fR \fISTRING\fR]
+\fBoyjl\fR \fBjson\fR [\fB\-i\fR \fIFILENAME\fR] [\fB\-x\fR \fIPATH\fR] [\fB\-s\fR \fISTRING\fR]
 .br
-\fBoyjl\fR \fB\-y\fR [\fB\-i\fR \fIFILENAME\fR] [\fB\-x\fR \fIPATH\fR] [\fB\-s\fR \fISTRING\fR]
+\fBoyjl\fR \fByaml\fR [\fB\-i\fR \fIFILENAME\fR] [\fB\-x\fR \fIPATH\fR] [\fB\-s\fR \fISTRING\fR]
 .br
-\fBoyjl\fR \fB\-m\fR [\fB\-i\fR \fIFILENAME\fR] [\fB\-x\fR \fIPATH\fR] [\fB\-s\fR \fISTRING\fR]
+\fBoyjl\fR \fBxml\fR [\fB\-i\fR \fIFILENAME\fR] [\fB\-x\fR \fIPATH\fR] [\fB\-s\fR \fISTRING\fR]
 .br
-\fBoyjl\fR \fB\-c\fR [\fB\-i\fR \fIFILENAME\fR] [\fB\-x\fR \fIPATH\fR]
+\fBoyjl\fR \fBcount\fR [\fB\-i\fR \fIFILENAME\fR] [\fB\-x\fR \fIPATH\fR]
 .br
-\fBoyjl\fR \fB\-k\fR [\fB\-i\fR \fIFILENAME\fR] [\fB\-x\fR \fIPATH\fR]
+\fBoyjl\fR \fBkey\fR [\fB\-i\fR \fIFILENAME\fR] [\fB\-x\fR \fIPATH\fR]
 .br
-\fBoyjl\fR \fB\-t\fR [\fB\-i\fR \fIFILENAME\fR] [\fB\-x\fR \fIPATH\fR]
+\fBoyjl\fR \fBtype\fR [\fB\-i\fR \fIFILENAME\fR] [\fB\-x\fR \fIPATH\fR]
 .br
-\fBoyjl\fR \fB\-p\fR [\fB\-i\fR \fIFILENAME\fR] [\fB\-x\fR \fIPATH\fR]
+\fBoyjl\fR \fBpaths\fR [\fB\-i\fR \fIFILENAME\fR] [\fB\-x\fR \fIPATH\fR]
 .br
-\fBoyjl\fR \fB\-h\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR [\fB\-v\fR]
+\fBoyjl\fR \fB\-h\fR \fI|synopsis|...\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR [\fB\-v\fR]
 .SH DESCRIPTION
 The oyjl program can be used to parse, filter sub trees, select values and modify values in JSON texts.
 .SH OPTIONS
 .SS
-Set input file and pah
+Set input file and path
 .br
 \fB\-i\fR|\fB\-\-input\fR \fIFILENAME\fR	File or Stream
 .RS
@@ -35,51 +35,71 @@ The path consists of slash '/' separated terms. Each term can be a key name or a
 .br
 .SS
 Print JSON to stdout
-\fBoyjl\fR \fB\-j\fR [\fB\-i\fR \fIFILENAME\fR] [\fB\-x\fR \fIPATH\fR] [\fB\-s\fR \fISTRING\fR]
+\fBoyjl\fR \fBjson\fR [\fB\-i\fR \fIFILENAME\fR] [\fB\-x\fR \fIPATH\fR] [\fB\-s\fR \fISTRING\fR]
 .br
-\fB\-j\fR|\fB\-\-json\fR	Print JSON to stdout
+\fBjson\fR	Print JSON to stdout
 .br
 .SS
 Print YAML to stdout
-\fBoyjl\fR \fB\-y\fR [\fB\-i\fR \fIFILENAME\fR] [\fB\-x\fR \fIPATH\fR] [\fB\-s\fR \fISTRING\fR]
+\fBoyjl\fR \fByaml\fR [\fB\-i\fR \fIFILENAME\fR] [\fB\-x\fR \fIPATH\fR] [\fB\-s\fR \fISTRING\fR]
 .br
-\fB\-y\fR|\fB\-\-yaml\fR	Print YAML to stdout
+\fByaml\fR	Print YAML to stdout
 .br
 .SS
 Print XML to stdout
-\fBoyjl\fR \fB\-m\fR [\fB\-i\fR \fIFILENAME\fR] [\fB\-x\fR \fIPATH\fR] [\fB\-s\fR \fISTRING\fR]
+\fBoyjl\fR \fBxml\fR [\fB\-i\fR \fIFILENAME\fR] [\fB\-x\fR \fIPATH\fR] [\fB\-s\fR \fISTRING\fR]
 .br
-\fB\-m\fR|\fB\-\-xml\fR	Print XML to stdout
+\fBxml\fR	Print XML to stdout
 .br
 .SS
 Print node count
-\fBoyjl\fR \fB\-c\fR [\fB\-i\fR \fIFILENAME\fR] [\fB\-x\fR \fIPATH\fR]
+\fBoyjl\fR \fBcount\fR [\fB\-i\fR \fIFILENAME\fR] [\fB\-x\fR \fIPATH\fR]
 .br
-\fB\-c\fR|\fB\-\-count\fR	Print count of leafs in node
+\fBcount\fR	Print count of leafs in node
 .br
 .SS
 Print key name
-\fBoyjl\fR \fB\-k\fR [\fB\-i\fR \fIFILENAME\fR] [\fB\-x\fR \fIPATH\fR]
+\fBoyjl\fR \fBkey\fR [\fB\-i\fR \fIFILENAME\fR] [\fB\-x\fR \fIPATH\fR]
 .br
-\fB\-k\fR|\fB\-\-key\fR	Print key name of node
+\fBkey\fR	Print key name of node
 .br
 .SS
 Print type
-\fBoyjl\fR \fB\-t\fR [\fB\-i\fR \fIFILENAME\fR] [\fB\-x\fR \fIPATH\fR]
+\fBoyjl\fR \fBtype\fR [\fB\-i\fR \fIFILENAME\fR] [\fB\-x\fR \fIPATH\fR]
 .br
-\fB\-t\fR|\fB\-\-type\fR	Get node type
+\fBtype\fR	Get node type
 .br
 .SS
 Print all matching paths.
-\fBoyjl\fR \fB\-p\fR [\fB\-i\fR \fIFILENAME\fR] [\fB\-x\fR \fIPATH\fR]
+\fBoyjl\fR \fBpaths\fR [\fB\-i\fR \fIFILENAME\fR] [\fB\-x\fR \fIPATH\fR]
 .br
-\fB\-p\fR|\fB\-\-paths\fR	Print all matching paths
+\fBpaths\fR	Print all matching paths
 .br
 .SS
 General options
-\fBoyjl\fR \fB\-h\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR [\fB\-v\fR]
+\fBoyjl\fR \fB\-h\fR \fI|synopsis|...\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR [\fB\-v\fR]
 .br
-\fB\-h\fR|\fB\-\-help\fR	Help
+\fB\-h\fR|\fB\-\-help\fR \fI|synopsis|...\fR	Print help text
+.RS
+Show usage information and hints for the tool.
+.RE
+	\-h 1		# Full Help
+.br
+	\-h synopsis		# Synopsis - Show all groups including syntax
+.br
+	\-h json		# JSON
+.br
+	\-h yaml		# YAML
+.br
+	\-h xml		# XML
+.br
+	\-h count		# Count
+.br
+	\-h key		# Key Name
+.br
+	\-h type		# Type
+.br
+	\-h export		# export - Get UI converted into text formats
 .br
 \fB\-v\fR|\fB\-\-verbose\fR	increase verbosity
 .br

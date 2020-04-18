@@ -10,21 +10,21 @@ oyjl v1.0.0 \- Oyjl Json Bearbeitung
 
 <h2>ÜBERSICHT <a href="#toc" name="synopsis">&uarr;</a></h2>
 
-**oyjl** <strong>\-j</strong> [<strong>\-i</strong>=<em>DATEINAME</em>] [<strong>\-x</strong>=<em>PFAD</em>] [<strong>\-s</strong>=<em>TEXT</em>]
+**oyjl** <strong>json</strong> [<strong>\-i</strong>=<em>DATEINAME</em>] [<strong>\-x</strong>=<em>PFAD</em>] [<strong>\-s</strong>=<em>TEXT</em>]
 <br />
-**oyjl** <strong>\-y</strong> [<strong>\-i</strong>=<em>DATEINAME</em>] [<strong>\-x</strong>=<em>PFAD</em>] [<strong>\-s</strong>=<em>TEXT</em>]
+**oyjl** <strong>yaml</strong> [<strong>\-i</strong>=<em>DATEINAME</em>] [<strong>\-x</strong>=<em>PFAD</em>] [<strong>\-s</strong>=<em>TEXT</em>]
 <br />
-**oyjl** <strong>\-m</strong> [<strong>\-i</strong>=<em>DATEINAME</em>] [<strong>\-x</strong>=<em>PFAD</em>] [<strong>\-s</strong>=<em>TEXT</em>]
+**oyjl** <strong>xml</strong> [<strong>\-i</strong>=<em>DATEINAME</em>] [<strong>\-x</strong>=<em>PFAD</em>] [<strong>\-s</strong>=<em>TEXT</em>]
 <br />
-**oyjl** <strong>\-c</strong> [<strong>\-i</strong>=<em>DATEINAME</em>] [<strong>\-x</strong>=<em>PFAD</em>]
+**oyjl** <strong>count</strong> [<strong>\-i</strong>=<em>DATEINAME</em>] [<strong>\-x</strong>=<em>PFAD</em>]
 <br />
-**oyjl** <strong>\-k</strong> [<strong>\-i</strong>=<em>DATEINAME</em>] [<strong>\-x</strong>=<em>PFAD</em>]
+**oyjl** <strong>key</strong> [<strong>\-i</strong>=<em>DATEINAME</em>] [<strong>\-x</strong>=<em>PFAD</em>]
 <br />
-**oyjl** <strong>\-t</strong> [<strong>\-i</strong>=<em>DATEINAME</em>] [<strong>\-x</strong>=<em>PFAD</em>]
+**oyjl** <strong>type</strong> [<strong>\-i</strong>=<em>DATEINAME</em>] [<strong>\-x</strong>=<em>PFAD</em>]
 <br />
-**oyjl** <strong>\-p</strong> [<strong>\-i</strong>=<em>DATEINAME</em>] [<strong>\-x</strong>=<em>PFAD</em>]
+**oyjl** <strong>paths</strong> [<strong>\-i</strong>=<em>DATEINAME</em>] [<strong>\-x</strong>=<em>PFAD</em>]
 <br />
-**oyjl** <strong>\-h</strong> <strong>\-X</strong>=<em>json|json+command|man|markdown</em> [<strong>\-v</strong>]
+**oyjl** <strong>\-h</strong>=<em>|synopsis|...</em> <strong>\-X</strong>=<em>json|json+command|man|markdown</em> [<strong>\-v</strong>]
 
 <h2>BESCHREIBUNG <a href="#toc" name="description">&uarr;</a></h2>
 
@@ -41,59 +41,72 @@ Das oyjl Programm unterstütz Einlesen, Filtern von Untermengen, Wertauswahl und
 </table>
 
 #### Zeige JSON auf stdout
-&nbsp;&nbsp;**oyjl** <strong>-j</strong> [<strong>\-i</strong>=<em>DATEINAME</em>] [<strong>\-x</strong>=<em>PFAD</em>] [<strong>\-s</strong>=<em>TEXT</em>]
+&nbsp;&nbsp;**oyjl** <strong>json</strong> [<strong>-i</strong>=<em>DATEINAME</em>] [<strong>\-x</strong>=<em>PFAD</em>] [<strong>\-s</strong>=<em>TEXT</em>]
 
 <table style='width:100%'>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-j</strong>|<strong>--json</strong></td> <td>Zeige JSON auf stdout</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>json</strong></td> <td>Zeige JSON auf stdout</td> </tr>
 </table>
 
 #### Zeige YAML auf stdout
-&nbsp;&nbsp;**oyjl** <strong>-y</strong> [<strong>\-i</strong>=<em>DATEINAME</em>] [<strong>\-x</strong>=<em>PFAD</em>] [<strong>\-s</strong>=<em>TEXT</em>]
+&nbsp;&nbsp;**oyjl** <strong>yaml</strong> [<strong>-i</strong>=<em>DATEINAME</em>] [<strong>\-x</strong>=<em>PFAD</em>] [<strong>\-s</strong>=<em>TEXT</em>]
 
 <table style='width:100%'>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-y</strong>|<strong>--yaml</strong></td> <td>Zeige YAML auf stdout</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>yaml</strong></td> <td>Zeige YAML auf stdout</td> </tr>
 </table>
 
 #### Zeige XML auf stdout
-&nbsp;&nbsp;**oyjl** <strong>-m</strong> [<strong>\-i</strong>=<em>DATEINAME</em>] [<strong>\-x</strong>=<em>PFAD</em>] [<strong>\-s</strong>=<em>TEXT</em>]
+&nbsp;&nbsp;**oyjl** <strong>xml</strong> [<strong>-i</strong>=<em>DATEINAME</em>] [<strong>\-x</strong>=<em>PFAD</em>] [<strong>\-s</strong>=<em>TEXT</em>]
 
 <table style='width:100%'>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-m</strong>|<strong>--xml</strong></td> <td>Zeige XML auf stdout</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>xml</strong></td> <td>Zeige XML auf stdout</td> </tr>
 </table>
 
 #### Zeige Knotenanzahl
-&nbsp;&nbsp;**oyjl** <strong>-c</strong> [<strong>\-i</strong>=<em>DATEINAME</em>] [<strong>\-x</strong>=<em>PFAD</em>]
+&nbsp;&nbsp;**oyjl** <strong>count</strong> [<strong>-i</strong>=<em>DATEINAME</em>] [<strong>\-x</strong>=<em>PFAD</em>]
 
 <table style='width:100%'>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-c</strong>|<strong>--count</strong></td> <td>Zeige Anzahl der Knotenzweige</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>count</strong></td> <td>Zeige Anzahl der Knotenzweige</td> </tr>
 </table>
 
 #### Zeige Schlüsselname
-&nbsp;&nbsp;**oyjl** <strong>-k</strong> [<strong>\-i</strong>=<em>DATEINAME</em>] [<strong>\-x</strong>=<em>PFAD</em>]
+&nbsp;&nbsp;**oyjl** <strong>key</strong> [<strong>-i</strong>=<em>DATEINAME</em>] [<strong>\-x</strong>=<em>PFAD</em>]
 
 <table style='width:100%'>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-k</strong>|<strong>--key</strong></td> <td>Zeige Schlüsselname des Knotens</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>key</strong></td> <td>Zeige Schlüsselname des Knotens</td> </tr>
 </table>
 
 #### Zeige Typ
-&nbsp;&nbsp;**oyjl** <strong>-t</strong> [<strong>\-i</strong>=<em>DATEINAME</em>] [<strong>\-x</strong>=<em>PFAD</em>]
+&nbsp;&nbsp;**oyjl** <strong>type</strong> [<strong>-i</strong>=<em>DATEINAME</em>] [<strong>\-x</strong>=<em>PFAD</em>]
 
 <table style='width:100%'>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-t</strong>|<strong>--type</strong></td> <td>Hole Knotentyp</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>type</strong></td> <td>Hole Knotentyp</td> </tr>
 </table>
 
 #### Zeige alle zutreffenden Pfade
-&nbsp;&nbsp;**oyjl** <strong>-p</strong> [<strong>\-i</strong>=<em>DATEINAME</em>] [<strong>\-x</strong>=<em>PFAD</em>]
+&nbsp;&nbsp;**oyjl** <strong>paths</strong> [<strong>-i</strong>=<em>DATEINAME</em>] [<strong>\-x</strong>=<em>PFAD</em>]
 
 <table style='width:100%'>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-p</strong>|<strong>--paths</strong></td> <td>Zeige alle zutreffenden Pfade</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>paths</strong></td> <td>Zeige alle zutreffenden Pfade</td> </tr>
 </table>
 
 #### Allgemeine Optionen
-&nbsp;&nbsp;**oyjl** <strong>-h</strong> <strong>\-X</strong>=<em>json|json+command|man|markdown</em> [<strong>\-v</strong>]
+&nbsp;&nbsp;**oyjl** <strong>-h</strong>=<em>|synopsis|...</em> <strong>\-X</strong>=<em>json|json+command|man|markdown</em> [<strong>\-v</strong>]
 
 <table style='width:100%'>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-h</strong>|<strong>--help</strong></td> <td>Hilfe</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-h</strong>|<strong>--help</strong> <em>|synopsis|...</em></td> <td>Zeige Hilfetext an<br />Zeige Benutzungsinformationen und Hinweise für das Werkzeug.
+  <table>
+   <tr><td style='padding-left:0.5em'><strong>-h 1</strong></td><td># Vollständige Hilfe</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h synopsis</strong></td><td># Übersicht</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h json</strong></td><td># JSON</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h yaml</strong></td><td># YAML</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h xml</strong></td><td># XML</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h count</strong></td><td># Anzahl</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h key</strong></td><td># Schlüsselname</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h type</strong></td><td># Typ</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h export</strong></td><td># exportiere</td></tr>
+  </table>
+  </td>
+ </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-v</strong>|<strong>--verbose</strong></td> <td>mehr Infos</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-X</strong>|<strong>--export</strong> <em>json|json+command|man|markdown</em></td> <td>Exportiere formatierten Text<br />Hole Benutzerschnittstelle als Text
   <table>

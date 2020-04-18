@@ -746,6 +746,7 @@ oyjlTESTRESULT_e testArgs()
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
     "oyjlOptions_ResultsToJson() %lu                 ", strlen(text) );
   }
+  OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlOptions_ResultsToJson", "txt" )
   if(verbose)
     fprintf( zout, "%s\n", text );
   if(text) {free(text);} text = NULL;
@@ -759,6 +760,7 @@ oyjlTESTRESULT_e testArgs()
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
     "oyjlOptions_ResultsToText() %lu                 ", strlen(text) );
   }
+  OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlOptions_ResultsToText", "txt" )
   if(verbose)
     fprintf( zout, "%s\n", text );
   if(text) {free(text);} text = NULL;
@@ -771,13 +773,14 @@ oyjlTESTRESULT_e testArgs()
   }
 
   text = oyjlUi_ExportToJson( ui, 0 );
-  if(text && strlen(text) == 6660)
+  if(text && strlen(text) == 6716)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlUi_ExportToJson()       %lu                 ", strlen(text) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "oyjlUi_ExportToJson()       6660 == %lu         ", strlen(text) );
+    "oyjlUi_ExportToJson()       6716 == %lu         ", strlen(text) );
   }
+  OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlUi_ExportToJson", "txt" )
   if(verbose && text)
     fprintf( zout, "%s\n", text );
   if(text) { free(text); text = NULL; }
