@@ -638,7 +638,7 @@ oyjlTESTRESULT_e testUiRoundtrip ()
                                        "oiCR", "oyjl-config-read", _("Short example tool using libOyjl"), "logo",
                                        sections, oarray, groups_no_args, NULL );
   char * text = oyjlUi_ExportToJson( ui, 0 );
-  if(text && strlen(text) == 6686)
+  if(text && strlen(text) == 6798)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlUi_ExportToJson()                %lu", text?strlen(text):0 );
   } else

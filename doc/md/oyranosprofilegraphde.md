@@ -185,7 +185,7 @@ Das oyranos\-profile\-graph Programm erzeugt aus einem ICC Profil oder eingebett
 #### Zeichne ICC Profil
 &nbsp;&nbsp;oyranos\-profile\-graph ICC\_PROFILE
 #### Zeige Sättigungslinien von zwei Profilen in CIE*ab 256 Bildpunkte breit, ohne Spectrallinie und mit dickeren Linien:
-&nbsp;&nbsp;oyranos\-profile\-graph \-w 256 \-s \-t 3 sRGB.icc ProPhoto\-RGB.icc
+&nbsp;&nbsp;oyranos\-profile\-graph \-w 256 \-n \-t 3 sRGB.icc ProPhoto\-RGB.icc
 #### Zeige HLC Farbatlas Muster
 &nbsp;&nbsp;oyranos\-profile\-graph \-H=90 \-o HLC\_H090.png cmyk web
   <br />

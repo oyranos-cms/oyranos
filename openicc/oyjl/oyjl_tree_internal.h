@@ -5,7 +5,7 @@
  *  oyjl - convinient tree JSON APIs
  *
  *  @par Copyright:
- *            2011-2016 (C) Kai-Uwe Behrmann
+ *            2011-2020 (C) Kai-Uwe Behrmann
  *
  *  @brief    tree based JSON API
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
@@ -53,6 +53,8 @@ typedef struct {
 oyjlUiHeaderSection_s * oyjlUiInfo   ( const char          * documentation,
                                        const char          * date_name,
                                        const char          * date_description );
+int oyjlOptionMandatoryIndex         ( oyjlOption_s      * opt,
+                                       oyjlOptionGroup_s * g );
 
 char *       oyjlStringToLower       ( const char        * t );
 char *       oyjlStringToUpper       ( const char        * t );

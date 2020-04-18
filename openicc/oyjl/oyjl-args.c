@@ -32,7 +32,7 @@ int myMain( int argc, const char ** argv )
   const char * file = NULL;
   const char * export = NULL;
   const char * render = NULL;
-  int help = 0;
+  const char * help = NULL;
   int verbose = 0;
   int version = 0;
   int state = 0;
@@ -50,8 +50,9 @@ int myMain( int argc, const char ** argv )
   /* declare options - the core information; use previously declared choices */
   oyjlOption_s oarray[] = {
   /* type,   flags, o,   option,    key,  name,         description,         help, value_name,    value_type,               values,                                                          variable_type, output variable */
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,     "i", "input",   NULL, _("input"),   _("Set Input"),      NULL, _("FILENAME"), oyjlOPTIONTYPE_CHOICE, {}, oyjlSTRING, {.s = &file} },
-    {"oiwi", 0,     "h", "help",    NULL, _("help"),    _("Help"),           NULL, NULL,          oyjlOPTIONTYPE_NONE, {0},oyjlINT, {.i = &help} },
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,     "i", "input",   NULL, _("input"),   _("Set Input"),      NULL, _("FILENAME"), oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s = &file} },
+    {"oiwi", OYJL_OPTION_FLAG_ACCEPT_NO_ARG,"h", "help", NULL, NULL, NULL, NULL, NULL, oyjlOPTIONTYPE_CHOICE,{0}, oyjlSTRING, {.s = &help} },
+    {"oiwi", 0,    NULL, "synopsis",NULL, NULL,         NULL,                NULL, NULL,          oyjlOPTIONTYPE_NONE, {0},oyjlNONE, {0} },
     {"oiwi", 0,     "v", "verbose", NULL, _("verbose"), _("verbose"),        NULL, NULL,          oyjlOPTIONTYPE_NONE, {0},oyjlINT, {.i = &verbose} },
     {"oiwi", 0,     "V", "version", NULL, _("version"), _("Version"),        NULL, NULL,          oyjlOPTIONTYPE_NONE, {0},oyjlINT, {.i = &version} },
     {"oiwi", 0,     "X", "export", NULL, NULL, NULL, NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = NULL}, oyjlSTRING, {.s=&export} },

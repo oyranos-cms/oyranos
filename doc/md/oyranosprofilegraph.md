@@ -185,7 +185,7 @@ The  oyranos\-profile\-graph programm converts ICC profiles or embedded ICC prof
 #### Show graph of a ICC profile
 &nbsp;&nbsp;oyranos\-profile\-graph ICC\_PROFILE
 #### Show the saturation lines of two profiles in CIE*ab 256 pixel width, without spectral line and with thicker lines:
-&nbsp;&nbsp;oyranos\-profile\-graph \-w 256 \-s \-t 3 sRGB.icc ProPhoto\-RGB.icc
+&nbsp;&nbsp;oyranos\-profile\-graph \-w 256 \-n \-t 3 sRGB.icc ProPhoto\-RGB.icc
 #### Show HLC Color Atlas patches
 &nbsp;&nbsp;oyranos\-profile\-graph \-H=90 \-o HLC\_H090.png cmyk web
   <br />

@@ -12,7 +12,7 @@ oyjl\-args v1.0.0 \- Benutzerschnittstellen nach Quelltext
 
 **oyjl\-args** <strong>\-i</strong>=<em>DATEINAME</em> [<strong>\-v</strong>]
 <br />
-**oyjl\-args** <strong>\-h</strong> <strong>\-X</strong>=<em>json|json+command|man|markdown</em> <strong>\-V</strong> [<strong>\-v</strong>]
+**oyjl\-args** <strong>\-h</strong>=<em>|synopsis|...</em> <strong>\-X</strong>=<em>json|json+command|man|markdown</em> <strong>\-V</strong> [<strong>\-v</strong>]
 
 <h2>BESCHREIBUNG <a href="#toc" name="description">&uarr;</a></h2>
 
@@ -28,10 +28,18 @@ Werkzeug um Benutzerschnittstellen in JSON von *\-X export* nach Quelltext zu ü
 </table>
 
 #### Allgemeine Optionen
-&nbsp;&nbsp;**oyjl-args** <strong>\-h</strong> <strong>\-X</strong>=<em>json|json+command|man|markdown</em> <strong>\-V</strong> [<strong>\-v</strong>]
+&nbsp;&nbsp;**oyjl-args** <strong>\-h</strong>=<em>|synopsis|...</em> <strong>\-X</strong>=<em>json|json+command|man|markdown</em> <strong>\-V</strong> [<strong>\-v</strong>]
 
 <table style='width:100%'>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-h</strong>|<strong>--help</strong></td> <td>Hilfe</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-h</strong>|<strong>--help</strong> <em>|synopsis|...</em></td> <td>Zeige Hilfetext an<br />Zeige Benutzungsinformationen und Hinweise für das Werkzeug.
+  <table>
+   <tr><td style='padding-left:0.5em'><strong>-h 1</strong></td><td># Vollständige Hilfe</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h synopsis</strong></td><td># Übersicht</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h input</strong></td><td># Eingabe</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h export</strong></td><td># exportiere</td></tr>
+  </table>
+  </td>
+ </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-X</strong>|<strong>--export</strong> <em>json|json+command|man|markdown</em></td> <td>Exportiere formatierten Text<br />Hole Benutzerschnittstelle als Text
   <table>
    <tr><td style='padding-left:0.5em'><strong>-X man</strong></td><td># Handbuch</td></tr>

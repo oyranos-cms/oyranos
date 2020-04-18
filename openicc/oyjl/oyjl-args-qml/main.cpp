@@ -56,7 +56,7 @@ int main(int argc, const char *argv[])
     {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "i", "input", _("Input"), NULL,_("JSON UI Description"), NULL, _("STRING"), oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s = &json} },
     {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "c", "command", _("Command"), NULL, _("JSON Command"), NULL, _("STRING"), oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s = &command} },
     {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "o", "output", _("Output"), NULL,_("Results JSON"), NULL, _("STRING"), oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s = &output} },
-    {"oiwi", 0,     "h", "help",    NULL, _("Help"),    _("Help"),           NULL, NULL,          oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i = &help} },
+    {"oiwi", OYJL_OPTION_FLAG_ACCEPT_NO_ARG,"h", "help", NULL, NULL, NULL, NULL, NULL, oyjlOPTIONTYPE_CHOICE,{0}, oyjlSTRING, {.i = &help} },
     {"oiwi", 0,     "v", "verbose", NULL, _("Verbose"), _("verbose"),        NULL, NULL,          oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i = &verbose} },
     {"oiwi", 0,     "X", "export",  NULL, NULL,         NULL,                NULL, NULL,          oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s = &exportX} },
     /* The --render option can be hidden and used only internally. */

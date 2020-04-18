@@ -10,7 +10,7 @@
  *  @par License:
  *            MIT <http://www.opensource.org/licenses/mit-license.php>
  *
- * Copyright (c) 2018-2019  Kai-Uwe Behrmann  <ku.b@gmx.de>
+ *  Copyright (c) 2018-2020  Kai-Uwe Behrmann  <ku.b@gmx.de>
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -236,6 +236,7 @@ char *             oyjlUi_ExportToJson(oyjlUi_s          * ui,
   {
     oyjlOptionGroup_s * g = &ui->opts->groups[i];
     oyjlTreeSetStringF( root, OYJL_CREATE_NEW, g->type, OYJL_REG "/ui/options/groups/[%d]/%s", i, "type" );
+    oyjlTreeSetDoubleF( root, OYJL_CREATE_NEW, g->flags, OYJL_REG "/ui/options/groups/[%d]/%s", i, "flags" );
     oyjlTreeSetStringF( root, OYJL_CREATE_NEW, g->name, OYJL_REG "/ui/options/groups/[%d]/%s", i, "name" );
     oyjlTreeSetStringF( root, OYJL_CREATE_NEW, g->description, OYJL_REG "/ui/options/groups/[%d]/%s", i, "description" );
     oyjlTreeSetStringF( root, OYJL_CREATE_NEW, g->help, OYJL_REG "/ui/options/groups/[%d]/%s", i, "help" );
@@ -591,7 +592,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
     if(!(flags & OYJL_NO_DEFAULT_OPTIONS))
     {
       if(!help_found)
-        oyjlStrAdd( s, "  int help = 0;\n" );
+        oyjlStrAdd( s, "  const char * help = NULL;\n" );
       if(!verbose_found)
         oyjlStrAdd( s, "  int verbose = 0;\n" );
       if(!version_found)
@@ -705,7 +706,9 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
       v = oyjlTreeGetValue( val, 0, "flags" ); flg = OYJL_IS_INTEGER(v) ? OYJL_GET_INTEGER(v) : 0;
       if(flg & OYJL_OPTION_FLAG_EDITABLE)
         oyjlStringAdd( &flag_string, 0,0, "%s", "OYJL_OPTION_FLAG_EDITABLE" );
-      else
+      if(flg & OYJL_OPTION_FLAG_ACCEPT_NO_ARG)
+        oyjlStringAdd( &flag_string, 0,0, "%s", "OYJL_OPTION_FLAG_ACCEPT_NO_ARG" );
+      if(!flag_string)
         flag_string = oyjlStringCopy("0",0);
       v = oyjlTreeGetValue( val, 0, "option" ); option_fallback = option = OYJL_GET_STRING(v); /* "option" is needed as fallback for "name" */
       v = oyjlTreeGetValue( val, 0, "variable_name" ); variable_name = OYJL_GET_STRING(v); /* "variable_name" is needed as fallback for "option" */
@@ -870,13 +873,13 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
       if(!help_found && !oyjlFindOption( root, 'h' ))
       oyjlStrAdd(s,"    /* default options -h and -v */\n" );
       if(!help_found && !oyjlFindOption( root, 'h' ))
-      oyjlStrAdd(s,"    {\"oiwi\", 0, \"h\", \"help\", NULL, _(\"help\"), _(\"Help\"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&help} },\n" );
+      oyjlStrAdd(s,"    {\"oiwi\", OYJL_OPTION_FLAG_ACCEPT_NO_ARG, \"h\", \"help\", NULL, NULL, NULL, NULL, NULL, oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s=&help} },\n" );
       if(!verbose_found && !oyjlFindOption( root, 'v' ))
       oyjlStrAdd(s,"    {\"oiwi\", 0, \"v\", \"verbose\", NULL, _(\"verbose\"), _(\"Verbose\"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&verbose} },\n" );
       if(!render_found && !oyjlFindOption( root, 'R' ))
       {
       oyjlStrAdd(s,"    /* The --render option can be hidden and used only internally. */\n" );
-      oyjlStrAdd(s,"    {\"oiwi\", OYJL_OPTION_FLAG_EDITABLE, \"R\", \"render\",  NULL, _(\"render\"),  _(\"Render\"),  NULL, NULL, oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s=&render} },\n" );
+      oyjlStrAdd(s,"    {\"oiwi\", OYJL_OPTION_FLAG_EDITABLE|OYJL_OPTION_FLAG_MAINTENANCE, \"R\", \"render\",  NULL, _(\"render\"),  _(\"Render\"),  NULL, NULL, oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s=&render} },\n" );
       }
       if(!version_found && !oyjlFindOption( root, 'V' ))
       oyjlStrAdd(s,"    {\"oiwi\", 0, \"V\", \"version\", NULL, _(\"version\"), _(\"Version\"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&version} },\n" );
@@ -901,6 +904,8 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
     {
       oyjl_val v;
       const char *name, *desc, *help, *mandatory, *optional, *detail;
+      char * flag_string = NULL;
+      int flg;
       val = oyjlTreeGetValueF( root, 0, "org/freedesktop/oyjl/ui/options/groups/[%d]", i );
       v = oyjlTreeGetValue( val, 0, "name" ); name = OYJL_GET_STRING(v);
       v = oyjlTreeGetValue( val, 0, "description" ); desc = OYJL_GET_STRING(v);
@@ -909,7 +914,12 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
       v = oyjlTreeGetValue( val, 0, "optional" ); optional = OYJL_GET_STRING(v);
       v = oyjlTreeGetValue( val, 0, "detail" ); detail = OYJL_GET_STRING(v);
       oyjlStrAdd( s, "    {\"oiwg\", ");
-      oyjlStrAddSpaced( s, "0",         0,                         7 );
+      v = oyjlTreeGetValue( val, 0, "flags" ); flg = OYJL_IS_INTEGER(v) ? OYJL_GET_INTEGER(v) : 0;
+      if(flg & OYJL_GROUP_FLAG_SUBCOMMAND)
+        oyjlStringAdd( &flag_string, 0,0, "%s", "OYJL_GROUP_FLAG_SUBCOMMAND" );
+      if(!flag_string)
+        flag_string = oyjlStringCopy("0",0);
+      oyjlStrAddSpaced( s, flag_string, 0,                         7 );
       oyjlStrAddSpaced( s, name,        OYJL_QUOTE|OYJL_TRANSLATE, 20 );
       oyjlStrAddSpaced( s, desc,        OYJL_QUOTE|OYJL_TRANSLATE, 30 );
       oyjlStrAddSpaced( s, help,        OYJL_QUOTE|OYJL_TRANSLATE, 20 );
@@ -917,6 +927,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
       oyjlStrAddSpaced( s, optional,    OYJL_QUOTE,                15 );
       oyjlStrAddSpaced( s, detail,      OYJL_QUOTE|OYJL_LAST,      4 );
       oyjlStrAdd( s, "},\n");
+      if(flag_string) free( flag_string );
     }
     oyjlStrAdd( s, "    {\"\",0,0,0,0,0,0,0}\n" );
     oyjlStrAdd( s, "  };\n\n");
@@ -1061,7 +1072,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
  *  The JSON data shall be useable with oyjl-args-qml options renderer.
  *
  *  @version Oyjl: 1.0.0
- *  @date    2019/05/30
+ *  @date    2020/04/15
  *  @since   2018/08/14 (OpenICC: 0.1.1)
  */
 char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
@@ -1129,10 +1140,13 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
   {
     oyjlOptionGroup_s * g = &ui->opts->groups[i];
     oyjlOptions_s * opts = ui->opts;
+    int sub_command;
+    oyjlOption_s * o;
 
     if(!(g->detail && g->detail[0]))
       continue;
 
+    sub_command = (g->flags & OYJL_GROUP_FLAG_SUBCOMMAND) ? OYJL_GROUP_FLAG_SUBCOMMAND : 0;
     key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/%s", i, "name" );
     oyjlValueSetString( key, g->name );
     key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/%s", i, "description" );
@@ -1143,9 +1157,20 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
       oyjlValueSetString( key, g->help );
         fprintf(stderr, "found help: %s\n", g->help);
     }
-
+    if(sub_command)
+    {
+      key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/%s", i, "style" );
+      oyjlValueSetString( key, "sub_command" );
+    }
     key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/%s", i, "mandatory" );
-    oyjlValueSetString( key, g->mandatory );
+    if(sub_command)
+    {
+      /* assume the first option is the sub command name */
+      o = oyjlOptions_GetOptionL( opts, g->mandatory );
+      oyjlValueSetString( key, o->option );
+    }
+    else
+      oyjlValueSetString( key, g->mandatory );
     key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/%s", i, "optional" );
     oyjlValueSetString( key, g->optional );
     {
@@ -1168,11 +1193,18 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
     {
       char * option = d_list[j];
       oyjlOption_s * o = oyjlOptions_GetOptionL( opts, option );
+      int mandatory_index;
       if(!o) continue;
+      mandatory_index = oyjlOptionMandatoryIndex( o, g );
+      num[0] = '\000';
       key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "key" );
       if(!o->key)
         sprintf(num, "%s", OYJL_E(option));
-      oyjlValueSetString( key, o->key?o->key:num );
+      if(sub_command && mandatory_index == 0)
+        sprintf(num, "%s", OYJL_E(o->option));
+      if(*oyjl_debug)
+        fprintf( stderr, "%d %d %s\n", sub_command, mandatory_index, num );
+      oyjlValueSetString( key, num[0] ? num : o->key );
       key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "name" );
       oyjlValueSetString( key, o->name );
       key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "description" );
