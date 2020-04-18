@@ -10,9 +10,9 @@ oyjl\-args v1.0.0 \- Benutzerschnittstellen nach Quelltext
 
 <h2>ÜBERSICHT <a href="#toc" name="synopsis">&uarr;</a></h2>
 
-**oyjl\-args** <strong>\-i</strong>=<em>DATEINAME</em> [<strong>\-v</strong>]
+<strong>oyjl\-args</strong> <a href="#input"><strong>\-i</strong>=<em>DATEINAME</em></a> [<strong>\-v</strong>]
 <br />
-**oyjl\-args** <strong>\-h</strong><em>[=synopsis|...]</em> <strong>\-X</strong>=<em>json|json+command|man|markdown</em> <strong>\-V</strong> [<strong>\-v</strong>]
+<strong>oyjl\-args</strong> <a href="#help"><strong>\-h</strong><em>[=synopsis|...]</em></a> <strong>\-X</strong>=<em>json|json+command|man|markdown</em> <strong>\-V</strong> [<strong>\-v</strong>]
 
 <h2>BESCHREIBUNG <a href="#toc" name="description">&uarr;</a></h2>
 
@@ -20,15 +20,15 @@ Werkzeug um Benutzerschnittstellen in JSON von *\-X export* nach Quelltext zu ü
 
 <h2>OPTIONEN <a href="#toc" name="options">&uarr;</a></h2>
 
-#### Erzeuge Quelltext
-&nbsp;&nbsp;**oyjl\-args** <strong>\-i</strong>=<em>DATEINAME</em> [<strong>\-v</strong>]
+ <h4 id="input">Erzeuge Quelltext</h4>
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl\-args</strong></a> <strong>\-i</strong>=<em>DATEINAME</em> [<strong>\-v</strong>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-i</strong>|<strong>--input</strong> <em>DATEINAME</em></td> <td>Setze Eingabe </tr>
 </table>
 
-#### Allgemeine Optionen
-&nbsp;&nbsp;**oyjl-args** <strong>\-h</strong><em>[=synopsis|...]</em> <strong>\-X</strong>=<em>json|json+command|man|markdown</em> <strong>\-V</strong> [<strong>\-v</strong>]
+ <h4 id="help">Allgemeine Optionen</h4>
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl-args</strong></a> <strong>\-h</strong><em>[=synopsis|...]</em> <strong>\-X</strong>=<em>json|json+command|man|markdown</em> <strong>\-V</strong> [<strong>\-v</strong>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-h</strong>|<strong>--help</strong><em>[ synopsis|...]</em></td> <td>Zeige Hilfetext an<br />Zeige Benutzungsinformationen und Hinweise für das Werkzeug.

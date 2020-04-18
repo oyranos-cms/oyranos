@@ -10,9 +10,9 @@ oyjl\-args v1.0.0 \- Ui to source code
 
 <h2>SYNOPSIS <a href="#toc" name="synopsis">&uarr;</a></h2>
 
-**oyjl\-args** <strong>\-i</strong>=<em>FILENAME</em> [<strong>\-v</strong>]
+<strong>oyjl\-args</strong> <a href="#input"><strong>\-i</strong>=<em>FILENAME</em></a> [<strong>\-v</strong>]
 <br />
-**oyjl\-args** <strong>\-h</strong><em>[=synopsis|...]</em> <strong>\-X</strong>=<em>json|json+command|man|markdown</em> <strong>\-V</strong> [<strong>\-v</strong>]
+<strong>oyjl\-args</strong> <a href="#help"><strong>\-h</strong><em>[=synopsis|...]</em></a> <strong>\-X</strong>=<em>json|json+command|man|markdown</em> <strong>\-V</strong> [<strong>\-v</strong>]
 
 <h2>DESCRIPTION <a href="#toc" name="description">&uarr;</a></h2>
 
@@ -20,15 +20,15 @@ Tool to convert UI JSON description from *\-X export* into source code.
 
 <h2>OPTIONS <a href="#toc" name="options">&uarr;</a></h2>
 
-#### Generate source code
-&nbsp;&nbsp;**oyjl\-args** <strong>\-i</strong>=<em>FILENAME</em> [<strong>\-v</strong>]
+ <h4 id="input">Generate source code</h4>
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl\-args</strong></a> <strong>\-i</strong>=<em>FILENAME</em> [<strong>\-v</strong>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-i</strong>|<strong>--input</strong> <em>FILENAME</em></td> <td>Set Input </tr>
 </table>
 
-#### General options
-&nbsp;&nbsp;**oyjl-args** <strong>\-h</strong><em>[=synopsis|...]</em> <strong>\-X</strong>=<em>json|json+command|man|markdown</em> <strong>\-V</strong> [<strong>\-v</strong>]
+ <h4 id="help">General options</h4>
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl-args</strong></a> <strong>\-h</strong><em>[=synopsis|...]</em> <strong>\-X</strong>=<em>json|json+command|man|markdown</em> <strong>\-V</strong> [<strong>\-v</strong>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-h</strong>|<strong>--help</strong><em>[ synopsis|...]</em></td> <td>Print help text<br />Show usage information and hints for the tool.
