@@ -24,7 +24,7 @@ oyjl v1.0.0 \- Oyjl Json Bearbeitung
 <br />
 **oyjl** <strong>paths</strong> [<strong>\-i</strong>=<em>DATEINAME</em>] [<strong>\-x</strong>=<em>PFAD</em>]
 <br />
-**oyjl** <strong>\-h</strong>=<em>|synopsis|...</em> <strong>\-X</strong>=<em>json|json+command|man|markdown</em> [<strong>\-v</strong>]
+**oyjl** <strong>\-h</strong><em>[=synopsis|...]</em> <strong>\-X</strong>=<em>json|json+command|man|markdown</em> [<strong>\-v</strong>]
 
 <h2>BESCHREIBUNG <a href="#toc" name="description">&uarr;</a></h2>
 
@@ -90,10 +90,10 @@ Das oyjl Programm unterstütz Einlesen, Filtern von Untermengen, Wertauswahl und
 </table>
 
 #### Allgemeine Optionen
-&nbsp;&nbsp;**oyjl** <strong>-h</strong>=<em>|synopsis|...</em> <strong>\-X</strong>=<em>json|json+command|man|markdown</em> [<strong>\-v</strong>]
+&nbsp;&nbsp;**oyjl** <strong>-h</strong><em>[=synopsis|...]</em> <strong>\-X</strong>=<em>json|json+command|man|markdown</em> [<strong>\-v</strong>]
 
 <table style='width:100%'>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-h</strong>|<strong>--help</strong> <em>|synopsis|...</em></td> <td>Zeige Hilfetext an<br />Zeige Benutzungsinformationen und Hinweise für das Werkzeug.
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-h</strong>|<strong>--help</strong><em>[ synopsis|...]</em></td> <td>Zeige Hilfetext an<br />Zeige Benutzungsinformationen und Hinweise für das Werkzeug.
   <table>
    <tr><td style='padding-left:0.5em'><strong>-h 1</strong></td><td># Vollständige Hilfe</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-h synopsis</strong></td><td># Übersicht</td></tr>

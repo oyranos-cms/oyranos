@@ -12,7 +12,7 @@ oyjl\-args v1.0.0 \- Ui to source code
 
 **oyjl\-args** <strong>\-i</strong>=<em>FILENAME</em> [<strong>\-v</strong>]
 <br />
-**oyjl\-args** <strong>\-h</strong>=<em>|synopsis|...</em> <strong>\-X</strong>=<em>json|json+command|man|markdown</em> <strong>\-V</strong> [<strong>\-v</strong>]
+**oyjl\-args** <strong>\-h</strong><em>[=synopsis|...]</em> <strong>\-X</strong>=<em>json|json+command|man|markdown</em> <strong>\-V</strong> [<strong>\-v</strong>]
 
 <h2>DESCRIPTION <a href="#toc" name="description">&uarr;</a></h2>
 
@@ -28,10 +28,10 @@ Tool to convert UI JSON description from *\-X export* into source code.
 </table>
 
 #### General options
-&nbsp;&nbsp;**oyjl-args** <strong>\-h</strong>=<em>|synopsis|...</em> <strong>\-X</strong>=<em>json|json+command|man|markdown</em> <strong>\-V</strong> [<strong>\-v</strong>]
+&nbsp;&nbsp;**oyjl-args** <strong>\-h</strong><em>[=synopsis|...]</em> <strong>\-X</strong>=<em>json|json+command|man|markdown</em> <strong>\-V</strong> [<strong>\-v</strong>]
 
 <table style='width:100%'>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-h</strong>|<strong>--help</strong> <em>|synopsis|...</em></td> <td>Print help text<br />Show usage information and hints for the tool.
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-h</strong>|<strong>--help</strong><em>[ synopsis|...]</em></td> <td>Print help text<br />Show usage information and hints for the tool.
   <table>
    <tr><td style='padding-left:0.5em'><strong>-h 1</strong></td><td># Full Help</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-h synopsis</strong></td><td># Synopsis</td></tr>

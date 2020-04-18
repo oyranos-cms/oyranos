@@ -24,7 +24,7 @@ oyjl v1.0.0 \- Oyjl Json Manipulation
 <br />
 **oyjl** <strong>paths</strong> [<strong>\-i</strong>=<em>FILENAME</em>] [<strong>\-x</strong>=<em>PATH</em>]
 <br />
-**oyjl** <strong>\-h</strong>=<em>|synopsis|...</em> <strong>\-X</strong>=<em>json|json+command|man|markdown</em> [<strong>\-v</strong>]
+**oyjl** <strong>\-h</strong><em>[=synopsis|...]</em> <strong>\-X</strong>=<em>json|json+command|man|markdown</em> [<strong>\-v</strong>]
 
 <h2>DESCRIPTION <a href="#toc" name="description">&uarr;</a></h2>
 
@@ -90,10 +90,10 @@ The oyjl program can be used to parse, filter sub trees, select values and modif
 </table>
 
 #### General options
-&nbsp;&nbsp;**oyjl** <strong>-h</strong>=<em>|synopsis|...</em> <strong>\-X</strong>=<em>json|json+command|man|markdown</em> [<strong>\-v</strong>]
+&nbsp;&nbsp;**oyjl** <strong>-h</strong><em>[=synopsis|...]</em> <strong>\-X</strong>=<em>json|json+command|man|markdown</em> [<strong>\-v</strong>]
 
 <table style='width:100%'>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-h</strong>|<strong>--help</strong> <em>|synopsis|...</em></td> <td>Print help text<br />Show usage information and hints for the tool.
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-h</strong>|<strong>--help</strong><em>[ synopsis|...]</em></td> <td>Print help text<br />Show usage information and hints for the tool.
   <table>
    <tr><td style='padding-left:0.5em'><strong>-h 1</strong></td><td># Full Help</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-h synopsis</strong></td><td># Synopsis</td></tr>
