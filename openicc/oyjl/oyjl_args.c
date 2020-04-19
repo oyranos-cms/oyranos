@@ -1739,7 +1739,7 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
     i = 0;
     while(result->options[i])
     {
-      oyjlOption_s * o = oyjlOptions_GetOption( opts, result->options[i] );
+      oyjlOption_s * o = oyjlOptions_GetOptionL( opts, result->options[i] );
       if(o)
       switch(o->variable_type)
       {
@@ -3554,9 +3554,10 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
     {
       const char * group_id = oyjlOptions_GetGroupId( opts, g );
       if(group_id)
-        oyjlStringAdd( &text, malloc, free, " <h4 id=\"%s\">%s</h4>\n", group_id, g->description );
+        oyjlStringAdd( &text, malloc, free, "<h3 id=\"%s\">%s</h3>\n", group_id, g->description );
       else
-        oyjlStringAdd( &text, malloc, free, " <h4>%s</h4>\n", g->description );
+        oyjlStringAdd( &text, malloc, free, "<h3>%s</h3>\n", g->description );
+      oyjlStringAdd( &text, malloc, free, "\n"  );
     }
     if(g->mandatory && g->mandatory[0])
     {

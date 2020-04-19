@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cs\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2020-04-18 21:01+0200\n"
+"POT-Creation-Date: 2020-04-19 07:33+0200\n"
 "PO-Revision-Date: 2012-10-19 15:10+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -36,7 +36,7 @@ msgstr ""
 msgid "A output format string."
 msgstr ""
 
-#: oyjl_args.c:3400 oyjl_args.c:3665
+#: oyjl_args.c:3400 oyjl_args.c:3666
 msgid "AUTHOR"
 msgstr ""
 
@@ -74,7 +74,7 @@ msgstr ""
 msgid "Author"
 msgstr ""
 
-#: oyjl_args.c:3410 oyjl_args.c:3412 oyjl_args.c:3679 oyjl_args.c:3681
+#: oyjl_args.c:3410 oyjl_args.c:3412 oyjl_args.c:3680 oyjl_args.c:3682
 msgid "BUGS"
 msgstr ""
 
@@ -83,7 +83,7 @@ msgstr ""
 msgid "C static char"
 msgstr ""
 
-#: oyjl_args.c:3404 oyjl_args.c:3669
+#: oyjl_args.c:3404 oyjl_args.c:3670
 msgid "COPYRIGHT"
 msgstr ""
 
@@ -387,7 +387,7 @@ msgstr "Mé jméno"
 msgid "LOCALEDIR"
 msgstr ""
 
-#: oyjl_args.c:2901 oyjl_args.c:3406 oyjl_args.c:3671 oyjl_args_tree.c:1116
+#: oyjl_args.c:2901 oyjl_args.c:3406 oyjl_args.c:3672 oyjl_args_tree.c:1116
 msgid "License"
 msgstr "Licence"
 

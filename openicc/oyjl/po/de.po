@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2020-04-18 21:01+0200\n"
+"POT-Creation-Date: 2020-04-19 07:33+0200\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -40,7 +40,7 @@ msgstr "Ein JSON-Dateiname oder Ausgangsdatenstrom wie \"stdout\""
 msgid "A output format string."
 msgstr "Ausgabeformat"
 
-#: oyjl_args.c:3400 oyjl_args.c:3665
+#: oyjl_args.c:3400 oyjl_args.c:3666
 msgid "AUTHOR"
 msgstr "AUTOR"
 
@@ -77,7 +77,7 @@ msgstr "Modus mit jedem Argument"
 msgid "Author"
 msgstr "Autor"
 
-#: oyjl_args.c:3410 oyjl_args.c:3412 oyjl_args.c:3679 oyjl_args.c:3681
+#: oyjl_args.c:3410 oyjl_args.c:3412 oyjl_args.c:3680 oyjl_args.c:3682
 msgid "BUGS"
 msgstr "FEHLER"
 
@@ -86,7 +86,7 @@ msgstr "FEHLER"
 msgid "C static char"
 msgstr "C static char"
 
-#: oyjl_args.c:3404 oyjl_args.c:3669
+#: oyjl_args.c:3404 oyjl_args.c:3670
 msgid "COPYRIGHT"
 msgstr "KOPIERRECHT"
 
@@ -375,7 +375,7 @@ msgstr "Schlüsselnamen"
 msgid "LOCALEDIR"
 msgstr "LOCALEPFAD"
 
-#: oyjl_args.c:2901 oyjl_args.c:3406 oyjl_args.c:3671 oyjl_args_tree.c:1116
+#: oyjl_args.c:2901 oyjl_args.c:3406 oyjl_args.c:3672 oyjl_args_tree.c:1116
 msgid "License"
 msgstr "Lizenz"
 
