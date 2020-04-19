@@ -261,7 +261,8 @@ int myMain( int argc, const char ** argv )
         oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "set argument needs as well a xpath argument", OYJL_DBG_ARGS );
       else
         value = root;
-    }
+    } else
+      oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "no data input", OYJL_DBG_ARGS );
 
     if(value)
     {
