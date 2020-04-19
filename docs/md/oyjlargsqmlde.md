@@ -20,7 +20,8 @@ The tool graphicaly renders Oyjl JSON UI files using QML.
 
 <h2>OPTIONEN <a href="#toc" name="options">&uarr;</a></h2>
 
- <h4 id="input">QML UI</h4>
+<h3 id="input">QML UI</h3>
+
 &nbsp;&nbsp; <a href="#synopsis"><strong>oyjl-args-qml</strong></a> <strong>-i</strong>=<em>STRING</em> [<strong>-c</strong>=<em>STRING</em>] [<strong>-o</strong>=<em>STRING</em>] [<strong>-v</strong>]
 
 <table style='width:100%'>
@@ -29,7 +30,8 @@ The tool graphicaly renders Oyjl JSON UI files using QML.
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-o</strong>|<strong>--output</strong> <em>STRING</em></td> <td>Results JSON </tr>
 </table>
 
- <h4 id="help">General options</h4>
+<h3 id="help">General options</h3>
+
 &nbsp;&nbsp; <a href="#synopsis"><strong>oyjl-args-qml</strong></a> <strong>-h</strong><em>[=synopsis|...]</em> <strong>-X</strong>=<em>json|json+command|man|markdown</em> [<strong>-v</strong>]
 
 <table style='width:100%'>

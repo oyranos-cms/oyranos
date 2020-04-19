@@ -20,14 +20,16 @@ Werkzeug um Benutzerschnittstellen in JSON von *-X export* nach Quelltext zu üb
 
 <h2>OPTIONEN <a href="#toc" name="options">&uarr;</a></h2>
 
- <h4 id="input">Erzeuge Quelltext</h4>
+<h3 id="input">Erzeuge Quelltext</h3>
+
 &nbsp;&nbsp; <a href="#synopsis"><strong>oyjl-args</strong></a> <strong>-i</strong>=<em>DATEINAME</em> [<strong>-v</strong>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-i</strong>|<strong>--input</strong> <em>DATEINAME</em></td> <td>Setze Eingabe </tr>
 </table>
 
- <h4 id="help">Allgemeine Optionen</h4>
+<h3 id="help">Allgemeine Optionen</h3>
+
 &nbsp;&nbsp; <a href="#synopsis"><strong>oyjl-args</strong></a> <strong>-h</strong><em>[=synopsis|...]</em> <strong>-X</strong>=<em>json|json+command|man|markdown</em> <strong>-V</strong> [<strong>-v</strong>]
 
 <table style='width:100%'>

@@ -32,7 +32,8 @@ Das oyjl Programm unterstütz Einlesen, Filtern von Untermengen, Wertauswahl und
 
 <h2>OPTIONEN <a href="#toc" name="options">&uarr;</a></h2>
 
- <h4>Setze Eingangsdateiname und Pfad</h4>
+<h3>Setze Eingangsdateiname und Pfad</h3>
+
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-i</strong>|<strong>--input</strong> <em>DATEINAME</em></td> <td>Datei oder Datenstrom<br />Ein JSON-Dateiname oder Eingangsdatenstrom wie "stdin" </tr>
@@ -40,56 +41,64 @@ Das oyjl Programm unterstütz Einlesen, Filtern von Untermengen, Wertauswahl und
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-s</strong>|<strong>--set</strong> <em>TEXT</em></td> <td>Setze Wert des Schlüssels </tr>
 </table>
 
- <h4 id="json">Zeige JSON auf stdout</h4>
+<h3 id="json">Zeige JSON auf stdout</h3>
+
 &nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>json</strong> [<strong>-i</strong>=<em>DATEINAME</em>] [<strong>-x</strong>=<em>PFAD</em>] [<strong>-s</strong>=<em>TEXT</em>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>json</strong></td> <td>Zeige JSON auf stdout</td> </tr>
 </table>
 
- <h4 id="yaml">Zeige YAML auf stdout</h4>
+<h3 id="yaml">Zeige YAML auf stdout</h3>
+
 &nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>yaml</strong> [<strong>-i</strong>=<em>DATEINAME</em>] [<strong>-x</strong>=<em>PFAD</em>] [<strong>-s</strong>=<em>TEXT</em>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>yaml</strong></td> <td>Zeige YAML auf stdout</td> </tr>
 </table>
 
- <h4 id="xml">Zeige XML auf stdout</h4>
+<h3 id="xml">Zeige XML auf stdout</h3>
+
 &nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>xml</strong> [<strong>-i</strong>=<em>DATEINAME</em>] [<strong>-x</strong>=<em>PFAD</em>] [<strong>-s</strong>=<em>TEXT</em>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>xml</strong></td> <td>Zeige XML auf stdout</td> </tr>
 </table>
 
- <h4 id="count">Zeige Knotenanzahl</h4>
+<h3 id="count">Zeige Knotenanzahl</h3>
+
 &nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>count</strong> [<strong>-i</strong>=<em>DATEINAME</em>] [<strong>-x</strong>=<em>PFAD</em>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>count</strong></td> <td>Zeige Anzahl der Knotenzweige</td> </tr>
 </table>
 
- <h4 id="key">Zeige Schlüsselname</h4>
+<h3 id="key">Zeige Schlüsselname</h3>
+
 &nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>key</strong> [<strong>-i</strong>=<em>DATEINAME</em>] [<strong>-x</strong>=<em>PFAD</em>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>key</strong></td> <td>Zeige Schlüsselname des Knotens</td> </tr>
 </table>
 
- <h4 id="type">Zeige Typ</h4>
+<h3 id="type">Zeige Typ</h3>
+
 &nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>type</strong> [<strong>-i</strong>=<em>DATEINAME</em>] [<strong>-x</strong>=<em>PFAD</em>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>type</strong></td> <td>Hole Knotentyp</td> </tr>
 </table>
 
- <h4 id="paths">Zeige alle zutreffenden Pfade</h4>
+<h3 id="paths">Zeige alle zutreffenden Pfade</h3>
+
 &nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>paths</strong> [<strong>-i</strong>=<em>DATEINAME</em>] [<strong>-x</strong>=<em>PFAD</em>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>paths</strong></td> <td>Zeige alle zutreffenden Pfade</td> </tr>
 </table>
 
- <h4 id="help">Allgemeine Optionen</h4>
+<h3 id="help">Allgemeine Optionen</h3>
+
 &nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>-h</strong><em>[=synopsis|...]</em> <strong>-X</strong>=<em>json|json+command|man|markdown</em> [<strong>-v</strong>]
 
 <table style='width:100%'>

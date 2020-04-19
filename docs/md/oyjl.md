@@ -32,7 +32,8 @@ The oyjl program can be used to parse, filter sub trees, select values and modif
 
 <h2>OPTIONS <a href="#toc" name="options">&uarr;</a></h2>
 
- <h4>Set input file and path</h4>
+<h3>Set input file and path</h3>
+
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-i</strong>|<strong>--input</strong> <em>FILENAME</em></td> <td>File or Stream<br />A JSON file name or a input stream like "stdin". </tr>
@@ -40,56 +41,64 @@ The oyjl program can be used to parse, filter sub trees, select values and modif
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-s</strong>|<strong>--set</strong> <em>STRING</em></td> <td>Set a key name to a value </tr>
 </table>
 
- <h4 id="json">Print JSON to stdout</h4>
+<h3 id="json">Print JSON to stdout</h3>
+
 &nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>json</strong> [<strong>-i</strong>=<em>FILENAME</em>] [<strong>-x</strong>=<em>PATH</em>] [<strong>-s</strong>=<em>STRING</em>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>json</strong></td> <td>Print JSON to stdout</td> </tr>
 </table>
 
- <h4 id="yaml">Print YAML to stdout</h4>
+<h3 id="yaml">Print YAML to stdout</h3>
+
 &nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>yaml</strong> [<strong>-i</strong>=<em>FILENAME</em>] [<strong>-x</strong>=<em>PATH</em>] [<strong>-s</strong>=<em>STRING</em>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>yaml</strong></td> <td>Print YAML to stdout</td> </tr>
 </table>
 
- <h4 id="xml">Print XML to stdout</h4>
+<h3 id="xml">Print XML to stdout</h3>
+
 &nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>xml</strong> [<strong>-i</strong>=<em>FILENAME</em>] [<strong>-x</strong>=<em>PATH</em>] [<strong>-s</strong>=<em>STRING</em>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>xml</strong></td> <td>Print XML to stdout</td> </tr>
 </table>
 
- <h4 id="count">Print node count</h4>
+<h3 id="count">Print node count</h3>
+
 &nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>count</strong> [<strong>-i</strong>=<em>FILENAME</em>] [<strong>-x</strong>=<em>PATH</em>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>count</strong></td> <td>Print count of leafs in node</td> </tr>
 </table>
 
- <h4 id="key">Print key name</h4>
+<h3 id="key">Print key name</h3>
+
 &nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>key</strong> [<strong>-i</strong>=<em>FILENAME</em>] [<strong>-x</strong>=<em>PATH</em>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>key</strong></td> <td>Print key name of node</td> </tr>
 </table>
 
- <h4 id="type">Print type</h4>
+<h3 id="type">Print type</h3>
+
 &nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>type</strong> [<strong>-i</strong>=<em>FILENAME</em>] [<strong>-x</strong>=<em>PATH</em>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>type</strong></td> <td>Get node type</td> </tr>
 </table>
 
- <h4 id="paths">Print all matching paths.</h4>
+<h3 id="paths">Print all matching paths.</h3>
+
 &nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>paths</strong> [<strong>-i</strong>=<em>FILENAME</em>] [<strong>-x</strong>=<em>PATH</em>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>paths</strong></td> <td>Print all matching paths</td> </tr>
 </table>
 
- <h4 id="help">General options</h4>
+<h3 id="help">General options</h3>
+
 &nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>-h</strong><em>[=synopsis|...]</em> <strong>-X</strong>=<em>json|json+command|man|markdown</em> [<strong>-v</strong>]
 
 <table style='width:100%'>
