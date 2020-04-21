@@ -1,54 +1,58 @@
 SET(LANGS "de_DE.UTF8")
 MACRO(OY_DOCUMENT_TOOL _tool _tool_src _langs)
-  ADD_CUSTOM_COMMAND( OUTPUT ${CMAKE_SOURCE_DIR}/doc/man/${_tool}.1
+  IF( CMAKE_CROSSCOMPILING )
+      MESSAGE( "-- Skipping ${_tool} docu: cross compiling; Hint: build first for local march to generate docu + i18n" )
+  ELSE( CMAKE_CROSSCOMPILING )
+    ADD_CUSTOM_COMMAND( OUTPUT ${CMAKE_SOURCE_DIR}/doc/man/${_tool}.1
         COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:$$LD_LIBRARY_PATH OY_MODULE_SKIP_FIX_PATH=1 OY_MODULE_PATH=${CMAKE_BINARY_DIR}/src/modules XDG_DATA_HOME=${CMAKE_SOURCE_DIR} LANG=en DISPLAY="man_page" ${_tool} -X man > ${CMAKE_SOURCE_DIR}/doc/man/${_tool}.1
         DEPENDS ${_tool} ${_tool_src}
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-  )
-  ADD_CUSTOM_TARGET( ${_tool}.1 ALL
+    )
+    ADD_CUSTOM_TARGET( ${_tool}.1 ALL
         DEPENDS ${CMAKE_SOURCE_DIR}/doc/man/${_tool}.1
 #        COMMENT "Extract manual page to ${_tool}.1"
-  )
-  STRING(REGEX REPLACE "-" "" _tool_MD ${_tool})
-  MESSAGE( "${_tool_MD}: ${CMAKE_SOURCE_DIR}/doc/md/${_tool_MD}.md" )
-  ADD_CUSTOM_COMMAND( OUTPUT ${CMAKE_SOURCE_DIR}/doc/md/${_tool_MD}.md
+    )
+    STRING(REGEX REPLACE "-" "" _tool_MD ${_tool})
+    MESSAGE( "${_tool_MD}: ${CMAKE_SOURCE_DIR}/doc/md/${_tool_MD}.md" )
+    ADD_CUSTOM_COMMAND( OUTPUT ${CMAKE_SOURCE_DIR}/doc/md/${_tool_MD}.md
         COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:$$LD_LIBRARY_PATH OY_MODULE_SKIP_FIX_PATH=1 OY_MODULE_PATH=${CMAKE_BINARY_DIR}/src/modules XDG_DATA_HOME=${CMAKE_SOURCE_DIR} LANG=en DISPLAY="man_page" ${_tool} -X markdown > ${CMAKE_SOURCE_DIR}/doc/md/${_tool_MD}.md
         DEPENDS ${_tool} ${_tool_src}
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-  )
-  ADD_CUSTOM_TARGET( ${_tool_MD}.md ALL
+    )
+    ADD_CUSTOM_TARGET( ${_tool_MD}.md ALL
         DEPENDS ${CMAKE_SOURCE_DIR}/doc/md/${_tool_MD}.md
 #        COMMENT "Extract markdown formated manual page to ${_tool_MD}.md"
-  )
-  IF( GETTEXT_FOUND )
-    # add translations
-    FOREACH( _lang ${_langs} )
-      SET( _lang "de_DE.UTF8" )
-      STRING(SUBSTRING ${_lang} 0 2 short_lang)
+    )
+    IF( USE_GETTEXT )
+      # add translations
+      FOREACH( _lang ${_langs} )
+        SET( _lang "de_DE.UTF8" )
+        STRING(SUBSTRING ${_lang} 0 2 short_lang)
 #      MESSAGE( "add \"${_tool}\": \"" ${short_lang} "\" from ${_lang} / \"${_langs}\"" )
-      ADD_CUSTOM_COMMAND( OUTPUT ${CMAKE_SOURCE_DIR}/doc/man/${short_lang}/${_tool}.1
-        COMMAND mkdir -p "${CMAKE_SOURCE_DIR}/doc/man/${short_lang}/"
-        COMMAND cp -a ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LOCALEDIR}/${short_lang}/LC_MESSAGES/openicc.mo ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LOCALEDIR}/${short_lang}/LC_MESSAGES/oyjl.mo ${CMAKE_BINARY_DIR}/locale/${short_lang}/LC_MESSAGES/ || echo nothing to copy
-        COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:$$LD_LIBRARY_PATH OY_MODULE_SKIP_FIX_PATH=1 LOCPATH=${CMAKE_BINARY_DIR}/locale OY_MODULE_PATH=${CMAKE_BINARY_DIR}/src/modules XDG_DATA_HOME=${CMAKE_SOURCE_DIR} LANG=${_lang} DISPLAY="man_page" ${_tool} -X man > ${CMAKE_SOURCE_DIR}/doc/man/${short_lang}/${_tool}.1
-        DEPENDS ${_tool} ${_tool_src}
-        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-      )
-      ADD_CUSTOM_TARGET( ${_tool}-${short_lang}.1 ALL
-        DEPENDS ${CMAKE_SOURCE_DIR}/doc/man/${short_lang}/${_tool}.1
+        ADD_CUSTOM_COMMAND( OUTPUT ${CMAKE_SOURCE_DIR}/doc/man/${short_lang}/${_tool}.1
+          COMMAND mkdir -p "${CMAKE_SOURCE_DIR}/doc/man/${short_lang}/"
+          COMMAND cp -a ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LOCALEDIR}/${short_lang}/LC_MESSAGES/openicc.mo ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LOCALEDIR}/${short_lang}/LC_MESSAGES/oyjl.mo ${CMAKE_BINARY_DIR}/locale/${short_lang}/LC_MESSAGES/ || echo nothing to copy
+          COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:$$LD_LIBRARY_PATH OY_MODULE_SKIP_FIX_PATH=1 LOCPATH=${CMAKE_BINARY_DIR}/locale OY_MODULE_PATH=${CMAKE_BINARY_DIR}/src/modules XDG_DATA_HOME=${CMAKE_SOURCE_DIR} LANG=${_lang} DISPLAY="man_page" ${_tool} -X man > ${CMAKE_SOURCE_DIR}/doc/man/${short_lang}/${_tool}.1
+          DEPENDS ${_tool} ${_tool_src}
+          WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+        )
+        ADD_CUSTOM_TARGET( ${_tool}-${short_lang}.1 ALL
+          DEPENDS ${CMAKE_SOURCE_DIR}/doc/man/${short_lang}/${_tool}.1
 #        COMMENT "Extract ${_lang} manual page to ${CMAKE_SOURCE_DIR}/doc/man/${short_lang}/${_tool}.1"
-      )
+        )
 
-      ADD_CUSTOM_COMMAND( OUTPUT ${CMAKE_SOURCE_DIR}/doc/md/${_tool_MD}${short_lang}.md
-        COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:$$LD_LIBRARY_PATH OY_MODULE_SKIP_FIX_PATH=1 LOCPATH=${CMAKE_BINARY_DIR}/locale OY_MODULE_PATH=${CMAKE_BINARY_DIR}/src/modules XDG_DATA_HOME=${CMAKE_SOURCE_DIR} LANG=${_lang} DISPLAY="man_page" ${_tool} -X markdown > ${CMAKE_SOURCE_DIR}/doc/md/${_tool_MD}${short_lang}.md
-        DEPENDS ${_tool} ${_tool_src}
-        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-      )
-      ADD_CUSTOM_TARGET( ${_tool_MD}${short_lang}.md ALL
-        DEPENDS ${CMAKE_SOURCE_DIR}/doc/md/${_tool_MD}${short_lang}.md
+        ADD_CUSTOM_COMMAND( OUTPUT ${CMAKE_SOURCE_DIR}/doc/md/${_tool_MD}${short_lang}.md
+          COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:$$LD_LIBRARY_PATH OY_MODULE_SKIP_FIX_PATH=1 LOCPATH=${CMAKE_BINARY_DIR}/locale OY_MODULE_PATH=${CMAKE_BINARY_DIR}/src/modules XDG_DATA_HOME=${CMAKE_SOURCE_DIR} LANG=${_lang} DISPLAY="man_page" ${_tool} -X markdown > ${CMAKE_SOURCE_DIR}/doc/md/${_tool_MD}${short_lang}.md
+          DEPENDS ${_tool} ${_tool_src}
+          WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+        )
+        ADD_CUSTOM_TARGET( ${_tool_MD}${short_lang}.md ALL
+          DEPENDS ${CMAKE_SOURCE_DIR}/doc/md/${_tool_MD}${short_lang}.md
 #        COMMENT "Extract markdown formated ${_lang} manual page to ${_tool_MD}${short_lang}.md"
-      )
-    ENDFOREACH( _lang ${_langs} )
-  ENDIF( GETTEXT_FOUND )
+        )
+      ENDFOREACH( _lang ${_langs} )
+    ENDIF( USE_GETTEXT )
+  ENDIF( CMAKE_CROSSCOMPILING )
 ENDMACRO(OY_DOCUMENT_TOOL)
 
 SET( LD_LIBRARY_PATH "${CMAKE_BINARY_DIR}:${CMAKE_BINARY_DIR}/src/liboyranos:${CMAKE_BINARY_DIR}/src/liboyranos_config:${CMAKE_BINARY_DIR}/src/liboyranos_modules:${CMAKE_BINARY_DIR}/src/liboyranos_object:${CMAKE_BINARY_DIR}/src/liboyranos_core" )

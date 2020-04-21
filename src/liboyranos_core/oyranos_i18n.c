@@ -70,6 +70,7 @@ void oyI18NInit_()
     char * var = NULL;
     ++oy_i18n_init_;
     oyjlInitLanguageDebug( "Oyranos", "OY_DEBUG", &oy_debug, use_gettext, "OY_LOCALEDIR", OY_LOCALEDIR, OY_TEXTDOMAIN, oyMessageFunc_p );
+#ifdef USE_GETTEXT
     if(oy_domain_codeset)
     {
       if(oy_debug)
@@ -77,6 +78,7 @@ void oyI18NInit_()
       bind_textdomain_codeset(oy_domain, oy_domain_codeset);
     }
     DBG_NUM2_S("oy_domain_codeset %s %s", oy_domain, oyNoEmptyString_m(oy_domain_codeset))
+#endif
 
     /* we use the posix setlocale interface;
      * the environmental LANG variable is flacky */
