@@ -276,6 +276,11 @@ char *   oyBT                        ( int                 stack_limit )
           }
   return text;
 }
+#else
+char *   oyBT                        ( int                 stack_limit OY_UNUSED )
+{
+  return NULL;
+}
 #endif
 
 time_t             oyTime            ( )
