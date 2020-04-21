@@ -55,6 +55,7 @@ int main(int argc, char ** argv)
 
   int help = 0;
   int verbose = 0;
+  int version = 0;
   const char * export = NULL;
   int list_devices = 0,
       list_long = 0;
@@ -114,11 +115,13 @@ int main(int argc, char ** argv)
     {"oiwi", OYJL_OPTION_FLAG_EDITABLE,"f","file-name",NULL,_("File Name"),   _("File Name"),      _("The File Name of the OpenICC Device in Json format."), _("FILENAME"), oyjlOPTIONTYPE_CHOICE, {}, oyjlSTRING,{.s=&file_name} },
     {"oiwi", 0,    "j", "dump-json",     NULL, _("OpenICC Json"),_("Dump OpenICC JSON"),NULL,NULL,   oyjlOPTIONTYPE_NONE,     {},      oyjlINT,   {.i=&dump_json} },
     {"oiwi", 0,    "h", "help",          NULL, _("Help"),        _("Help"),           NULL, NULL,    oyjlOPTIONTYPE_NONE,     {},      oyjlINT,   {.i=&help} },
+    {"oiwi", 0,   NULL, "synopsis",      NULL, NULL,             NULL,                NULL, NULL,    oyjlOPTIONTYPE_NONE,     {0},     oyjlNONE,  {0} },
     {"oiwi", 0,    "l", "list-devices",  NULL, _("List Devices"),_("List Devices"),   NULL, NULL,    oyjlOPTIONTYPE_NONE,     {},      oyjlINT,   {.i=&list_devices} },
     {"oiwi", 0,    "n", "long",          NULL, _("Long Format"), _("List all key/values pairs"),  NULL, NULL, oyjlOPTIONTYPE_NONE, {},oyjlINT, {.i=&list_long} },
     {"oiwi", 0,    "p", "show-path",     NULL, _("Show Path"),   _("Show Path"),      NULL, NULL,    oyjlOPTIONTYPE_NONE,     {},      oyjlINT,   {.i=&show_path} },
     {"oiwi", 0,    "s", "system",        NULL, _("System"),      _("Local System"),   NULL, NULL,    oyjlOPTIONTYPE_NONE,     {},      oyjlINT,   {.i=(int*)&scope} },
     {"oiwi", 0,    "v", "verbose",       NULL, _("Verbose"),     _("verbose"),        NULL, NULL,    oyjlOPTIONTYPE_NONE,     {},      oyjlINT,   {.i=&verbose} },
+    {"oiwi", 0,    "V", "version",       NULL, _("version"),     _("Version"),        NULL, NULL,    oyjlOPTIONTYPE_NONE,     {0},     oyjlINT,   {.i=&version} },
     /* default option template -X|--export */
     {"oiwi", 0,    "X", "export",        NULL, NULL,             NULL,                NULL, NULL,    oyjlOPTIONTYPE_CHOICE,   {},      oyjlSTRING,{.s=&export} },
     {"oiwi", 0,    "w", "write",         NULL, _("Write"),       _("Write DB File"),  NULL, NULL,    oyjlOPTIONTYPE_NONE,     {},      oyjlINT,   {.i=&write_db_file} },
@@ -132,7 +135,7 @@ int main(int argc, char ** argv)
     {"oiwg", 0,     _("Add Device"),   _("Add Device to DB"),                NULL, "a,f",     "b,v",    "a,f,b" },
     {"oiwg", 0,     _("Erase Device"), _("Erase a Devices from the DB"),     NULL, "e,d",     "b,v",    "e,d,b" },
     {"oiwg", 0,     _("Show DB Path"), _("Show Filepath to the DB"),         NULL, "p",       "s,v",    "p,s" },
-    {"oiwg", 0,     _("Misc"),         _("General options"),                 NULL, "",        "",       "b,X,v,h" },
+    {"oiwg", 0,     _("Misc"),         _("General options"),                 NULL, "h,X",     "v",       "b,X,v,h" },
     {"",0,0,0,0,0,0,0}
   };
 
