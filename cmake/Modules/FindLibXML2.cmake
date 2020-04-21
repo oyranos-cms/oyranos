@@ -55,7 +55,7 @@ endif()
 # handle the QUIETLY and REQUIRED arguments and set LIBXML2_FOUND to TRUE if
 # all listed variables are TRUE
 INCLUDE(FindPackageHandleStandardArgs)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(LibXml2
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(LibXML2
                                   REQUIRED_VARS LIBXML2_LIBRARIES LIBXML2_INCLUDE_DIR
                                   VERSION_VAR LIBXML2_VERSION_STRING)
 
