@@ -28,7 +28,8 @@ The tool can set the actual white point or set it by local day and night time. A
 
 <h2>OPTIONS <a href="#toc" name="options">&uarr;</a></h2>
 
- <h4 id="night-white-point">Nightly appearance</h4>
+<h3 id="night-white-point">Nightly appearance</h3>
+
 &nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-monitor-white-point</strong></a> <strong>-n</strong>=<em>0|1|2|3|4|5|6|7</em> <strong>-g</strong>=<em>ICC_PROFILE</em> [<strong>-b</strong>=<em>PERCENT</em>] [<strong>-z</strong>] [<strong>-v</strong>]
 
 &nbsp;&nbsp;The Night white point mode shall allow to reduce influence of blue light during night time. A white point temperature of around 4000K and lower allows to get easier into sleep and is recommended along with warm room illumination in evening and night times.
@@ -57,7 +58,8 @@ The tool can set the actual white point or set it by local day and night time. A
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-b</strong>|<strong>--night-backlight</strong> <em>PERCENT</em></td> <td>Set Nightly Backlight: The option needs xbacklight installed and supporting your device for dimming the monitor lamp. (PERCENT:4 [≥0 ≤100])</td> </tr>
 </table>
 
- <h4 id="white-point">Actual mode</h4>
+<h3 id="white-point">Actual mode</h3>
+
 &nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-monitor-white-point</strong></a> <strong>-w</strong>=<em>0|1|2|3|4|5|6|7</em> <strong>-a</strong>=<em>KELVIN</em> [<strong>-z</strong>] [<strong>-v</strong>]
 
 <table style='width:100%'>
@@ -76,7 +78,8 @@ The tool can set the actual white point or set it by local day and night time. A
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-a</strong>|<strong>--automatic</strong> <em>KELVIN</em></td> <td>A value from 2700 till 8000 Kelvin is expected to show no artefacts (KELVIN:2800 [≥1100 ≤10100])</td> </tr>
 </table>
 
- <h4 id="sun-white-point">Sun light appearance</h4>
+<h3 id="sun-white-point">Sun light appearance</h3>
+
 &nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-monitor-white-point</strong></a> <strong>-s</strong>=<em>0|1|2|3|4|5|6|7</em> <strong>-e</strong>=<em>ICC_PROFILE</em> [<strong>-z</strong>] [<strong>-v</strong>]
 
 <table style='width:100%'>
@@ -102,7 +105,8 @@ The tool can set the actual white point or set it by local day and night time. A
  </tr>
 </table>
 
- <h4 id="location">Location and Twilight</h4>
+<h3 id="location">Location and Twilight</h3>
+
 &nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-monitor-white-point</strong></a> <strong>-l</strong> | <strong>-i</strong>=<em>ANGLE_IN_DEGREE</em> <strong>-o</strong>=<em>ANGLE_IN_DEGREE</em> [<strong>-t</strong>=<em>ANGLE_IN_DEGREE|0:rise/set|-6:civil|-12:nautical|-18:astronomical</em>] [<strong>-z</strong>] [<strong>-v</strong>]
 
 <table style='width:100%'>
@@ -112,7 +116,8 @@ The tool can set the actual white point or set it by local day and night time. A
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-t</strong>|<strong>--twilight</strong> <em>ANGLE_IN_DEGREE|0:rise/set|-6:civil|-12:nautical|-18:astronomical</em></td> <td>Set Twilight angle (ANGLE_IN_DEGREE|0:rise/set|-6:civil|-12:nautical|-18:astronomical:0 [≥18 ≤-18])</td> </tr>
 </table>
 
- <h4 id="daemon">Run sunset daemon</h4>
+<h3 id="daemon">Run sunset daemon</h3>
+
 &nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-monitor-white-point</strong></a> <strong>-d</strong>=<em>0|1|2</em> [<strong>-v</strong>]
 
 <table style='width:100%'>
@@ -126,7 +131,8 @@ The tool can set the actual white point or set it by local day and night time. A
  </tr>
 </table>
 
- <h4 id="modes">General options</h4>
+<h3 id="modes">General options</h3>
+
 &nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-monitor-white-point</strong></a> <strong>-m</strong> | <strong>-r</strong> | <strong>-X</strong>=<em>json|json+command|man|markdown</em> | <strong>-h</strong> [<strong>-v</strong>]
 
 <table style='width:100%'>

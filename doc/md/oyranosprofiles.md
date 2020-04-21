@@ -24,7 +24,8 @@ The tool can list installed profiles, search paths and can help install a ICC co
 
 <h2>OPTIONS <a href="#toc" name="options">&uarr;</a></h2>
 
- <h4 id="list-profiles">List of available ICC color profiles</h4>
+<h3 id="list-profiles">List of available ICC color profiles</h3>
+
 &nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-profiles</strong></a> <strong>-l</strong> [<strong>-f</strong>] [<strong>-e</strong>] [<strong>-a</strong>] [<strong>-c</strong>] [<strong>-d</strong>] [<strong>-k</strong>] [<strong>-n</strong>] [<strong>-o</strong>] [<strong>-i</strong>] [<strong>-2</strong>] [<strong>-4</strong>] [<strong>-P</strong>] [<strong>-T</strong>=<em>KEY;VALUE</em>] [<strong>-v</strong>]
 
 <table style='width:100%'>
@@ -45,7 +46,8 @@ The tool can list installed profiles, search paths and can help install a ICC co
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-D</strong>|<strong>--duplicates</strong></td> <td>Show identical multiple installed profiles</td> </tr>
 </table>
 
- <h4 id="list-paths">List search paths</h4>
+<h3 id="list-paths">List search paths</h3>
+
 &nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-profiles</strong></a> <strong>-p</strong> [<strong>-u</strong>|<strong>-s</strong>|<strong>-y</strong>|<strong>-m</strong>] [<strong>-v</strong>]
 
 <table style='width:100%'>
@@ -56,7 +58,8 @@ The tool can list installed profiles, search paths and can help install a ICC co
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-m</strong>|<strong>--machine</strong></td> <td>Machine path</td> </tr>
 </table>
 
- <h4 id="install">Install Profile</h4>
+<h3 id="install">Install Profile</h3>
+
 &nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-profiles</strong></a> <strong>-I</strong>=<em>ICC_PROFILE</em> | <strong>-t</strong>=<em>TAXI_ID</em> [<strong>-u</strong>|<strong>-s</strong>|<strong>-y</strong>|<strong>-m</strong>] [<strong>-g</strong>] [<strong>-v</strong>]
 
 <table style='width:100%'>
@@ -69,7 +72,8 @@ The tool can list installed profiles, search paths and can help install a ICC co
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-g</strong>|<strong>--gui</strong></td> <td>Use Graphical User Interface</td> </tr>
 </table>
 
- <h4 id="help">General options</h4>
+<h3 id="help">General options</h3>
+
 &nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-profiles</strong></a> <strong>-h</strong> <strong>-X</strong>=<em>json|json+command|man|markdown</em>
 
 <table style='width:100%'>
