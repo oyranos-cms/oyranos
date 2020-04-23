@@ -18,7 +18,7 @@ oyranos-profile-graph v0.9.7 \- Oyranos Profile Graph
 .br
 \fBoyranos-profile-graph\fR \fB\-i\fR \fIFILE\fR \fB\-I\fR \fIPAGE\fR [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMBER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-T\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-v\fR]
 .br
-\fBoyranos-profile-graph\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-h\fR [\fB\-v\fR]
+\fBoyranos-profile-graph\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-h\fR | \fB\-V\fR [\fB\-v\fR]
 .SH DESCRIPTION
 The  oyranos-profile-graph programm converts ICC profiles or embedded ICC profiles from images to a graph image. By default the program shows the saturation line of the specified profiles and writes to stdout.
 .SH OPTIONS
@@ -146,7 +146,7 @@ Specify a page name as string or page index as number. -1 will list all page nam
 .RE
 .SS
 General options
-\fBoyranos-profile-graph\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-h\fR [\fB\-v\fR]
+\fBoyranos-profile-graph\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-h\fR | \fB\-V\fR [\fB\-v\fR]
 .br
 \fB\-t\fR|\fB\-\-thickness\fR \fINUMBER\fR	Specify the thickness of the graph lines (NUMBER:1 [≥0 ≤10])
 .br
@@ -183,6 +183,8 @@ Get UI converted into text formats
 	\-X json+command		# Json + Command - Get Oyjl Json UI declaration incuding command
 .br
 	\-X export		# Export - Get UI data for developers
+.br
+\fB\-V\fR|\fB\-\-version\fR	Version
 .br
 \fB\-v\fR|\fB\-\-verbose\fR	verbose
 .br

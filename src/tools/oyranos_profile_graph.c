@@ -421,7 +421,7 @@ int myMain( int argc, const char ** argv )
     {"oiwg", 0, _("Illuminant Spectrum"), _("Illuminant Spectrum Graph"), NULL, "u", "t,b,l,g,w,T,o,f,v", "u" },
     {"oiwg", 0, _("Spectral Input"), _("Spectral Input Graph"), NULL, "s,p,z", "t,b,l,g,w,T,P,o,v", "s,p,P,z" },
     {"oiwg", 0, _("Color Page"), _("Render Color Page"), NULL, "i,I", "t,b,l,g,w,T,f,o,v", "i,I" },
-    {"oiwg", 0, _("Misc"), _("General options"), NULL, "X|h", "v", "t,b,l,g,w,T,o,f,h,X,v" },
+    {"oiwg", 0, _("Misc"), _("General options"), NULL, "X|h|V", "v", "t,b,l,g,w,T,o,f,h,X,V,v" },
     {"",0,0,0,0,0,0,0}
   };
   opts->groups = (oyjlOptionGroup_s*)oyjlStringAppendN( NULL, (const char*)groups, sizeof(groups), 0);

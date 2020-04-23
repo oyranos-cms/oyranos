@@ -47,7 +47,11 @@ const char * jcommands = "{\n\
   \"comment\": \"command_set_option - use \\\"-s\\\" \\\"key\\\"; skip \\\"--\\\" direct in front of key\"\n\
 }";
 
-int main( int argc , char** argv )
+/* This function is called the
+ * * first time for GUI generation and then
+ * * for executing the tool.
+ */
+int myMain( int argc, const char ** argv )
 {
   int error = 0;
   int list_profiles = 0, 
@@ -67,11 +71,6 @@ int main( int argc , char** argv )
   const char * taxi_id = NULL,
              * path = NULL,
              * meta = NULL;
-
-#ifdef USE_GETTEXT
-  setlocale(LC_ALL,"");
-#endif
-  oyExportStart_(EXPORT_CHECK_NO);
 
   oyjlOptions_s * opts;
   oyjlOption_s * o;
@@ -100,6 +99,7 @@ int main( int argc , char** argv )
                                     {"http://www.oyranos.org","","",""},
                                     {"","","",""}};
   oyjlOptionChoice_s effect_meta[]={{"EFFECT_class;sepia","","",""},{"","","",""}};
+  /* declare options - the core information; use previously declared choices */
   oyjlOption_s oarray[] = {
   /* type,   flags, o, option, key, name, description, help, value_name, value_type, values, var_type, variable */
     {"oiwi", 0, "2", "icc-version-2", NULL, _("ICC Version 2"), _("Select ICC v2 Profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&v2} },
@@ -135,7 +135,7 @@ int main( int argc , char** argv )
     /* default option template -X|--export */
     {"oiwi", 0, "X", "export", NULL, NULL, NULL, NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = NULL}, oyjlSTRING, {.s=&export} },
     /* The --render option can be hidden and used only internally. */
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "R", "render", NULL, NULL,  NULL,  NULL, NULL, oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s=&render} },
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE|OYJL_OPTION_FLAG_MAINTENANCE, "R", "render", NULL, NULL,  NULL,  NULL, NULL, oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s=&render} },
     /* blind options, useful only for man page generation */
     {"oiwi", 0, "E", "man-environment_variables", NULL, "", "", NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)env_vars, sizeof(env_vars), 0 )}, oyjlNONE, {.i=NULL} },
     {"oiwi", 0, "A", "man-examples", NULL, "", "", NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)examples, sizeof(examples), 0 )}, oyjlNONE, {.i=NULL} },
@@ -145,31 +145,34 @@ int main( int argc , char** argv )
   opts->array = (oyjlOption_s*)oyjlStringAppendN( NULL, (const char*)oarray, sizeof(oarray), 0 );
 
   oyjlOptionGroup_s groups[] = {
-  /* type,   flags, name, description, help, mandatory, optional, detail */
+  /* type,   flags, name,               description,                  help,               mandatory,     optional,      detail */
     {"oiwg", 0, _("List"), _("List of available ICC color profiles"), NULL, "l", "f,e,a,c,d,k,n,o,i,2,4,P,T,v", "l,f,e,a,c,d,k,n,o,i,2,4,P,T,D" },
-    {"oiwg", 0, _("Paths"), _("List search paths"), NULL, "p", "u|s|y|m,v", "p,u,s,y,m" },
-    {"oiwg", 0, _("Install"), _("Install Profile"), NULL, "I|t", "u|s|y|m,g,v", "I,t,u,s,y,m,g" },
-    {"oiwg", 0, _("Misc"), _("General options"), NULL, "h,X", "", "h,X,r,v" },
+    {"oiwg", 0,     _("Paths"),         _("List search paths"),       NULL,               "p",           "u|s|y|m,v",   "p,u,s,y,m"},
+    {"oiwg", 0,     _("Install"),       _("Install Profile"),         NULL,               "I|t",         "u|s|y|m,g,v", "I,t,u,s,y,m,g"},
+    {"oiwg", 0,     _("Misc"),          _("General options"),         NULL,               "h,X,V",       "",            "h,X,V,r,v"},
     {"",0,0,0,0,0,0,0}
   };
   opts->groups = (oyjlOptionGroup_s*)oyjlStringAppendN( NULL, (const char*)groups, sizeof(groups), 0);
 
   info = oyUiInfo(_("The tool can list installed profiles, search paths and can help install a ICC color profile in a search path."),
                   "2018-10-11T12:00:00", "October 11, 2018");
-  ui = oyjlUi_Create( argc, (const char**)argv,
-      "oyranos-profiles", _("Oyranos Profiles"), _("The Tool gives information around installed ICC color profiles."),
-      "oyranos_logo",
-      info, opts->array, opts->groups, &state );
+  ui = oyjlUi_Create( argc, argv, /* argc+argv are required for parsing the command line options */
+                                       "oyranos-profiles", _("Oyranos Profiles"), _("The Tool gives information around installed ICC color profiles."),
+#ifdef __ANDROID__
+                                       ":/images/logo.svg", // use qrc
+#else
+                                       "oyranos_logo",
+#endif
+                                       info, opts->array, opts->groups, &state );
   if( state & oyjlUI_STATE_EXPORT &&
       export &&
       strcmp(export,"json+command") != 0)
-    return 0;
+    goto clean_main;
   if(state & oyjlUI_STATE_HELP)
   {
     fprintf( stderr, "%s\n\tman oyranos-profiles\n\n", _("For more information read the man page:"));
-    return 0;
+    goto clean_main;
   }
-  if(!ui) return 1;
 
   {
     int n = 0,i;
@@ -230,7 +233,18 @@ int main( int argc , char** argv )
 
 
 #define flags (v2?OY_ICC_VERSION_2:0 | v4?OY_ICC_VERSION_4:0 | no_repair?OY_NO_REPAIR:0 | duplicates?OY_ALLOW_DUPLICATES:0)
-  if(list_profiles || list_paths || install || taxi_id)
+
+  /* Render boilerplate */
+  if(ui && render)
+  {
+#if !defined(NO_OYJL_ARGS_RENDER)
+    int debug = verbose;
+    oyjlArgsRender( argc, argv, NULL, NULL,NULL, debug, ui, myMain );
+#else
+    fprintf( stderr, "No render support compiled in. For a GUI use -X json and load into oyjl-args-render viewer." );
+#endif
+  } else if(ui &&
+    (list_profiles || list_paths || install || taxi_id))
   {
     oyProfile_s * p = 0;
     oyProfiles_s * ps = 0;
@@ -472,17 +486,65 @@ int main( int argc , char** argv )
 
     if(names)
       oyStringListRelease_(&names, count, oyDeAllocateFunc_);
-  }
-  else
+  } else
+    if(ui)
     oyjlOptions_PrintHelp( opts, ui, verbose, NULL );
 #undef flags
 
+  clean_main:
+  {
+    int i = 0;
+    while(oarray[i].type[0])
+    {
+      if(oarray[i].value_type == oyjlOPTIONTYPE_CHOICE && oarray[i].values.choices.list)
+        free(oarray[i].values.choices.list);
+      ++i;
+    }
+  }
+  oyjlLibRelease();
 
   oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
 
   return error;
 }
 
+char ** environment = NULL;
+int main( int argc_, char**argv_, char ** envv )
+{
+  int argc = argc_;
+  char ** argv = argv_;
+
+  oyExportStart_(EXPORT_CHECK_NO);
+
+#ifdef __ANDROID__
+  setenv("COLORTERM", "1", 0); /* show rich text format on non GNU color extension environment */
+
+  argv = calloc( argc + 2, sizeof(char*) );
+  memcpy( argv, argv_, (argc + 2) * sizeof(char*) );
+  argv[argc++] = "--render=gui"; /* start QML */
+  environment = environ;
+#else
+  environment = envv;
+#endif
+
+  /* language needs to be initialised before setup of data structures */
+  int use_gettext = 0;
+#ifdef USE_GETTEXT
+  use_gettext = 1;
+#ifdef HAVE_LOCALE_H
+  setlocale(LC_ALL,"");
+#endif
+#endif
+  oyjlInitLanguageDebug( "Oyranos", "OY_DEBUG", &oy_debug, use_gettext, "OY_LOCALEDIR", OY_LOCALEDIR, OY_DOMAIN_INTERNAL, NULL );
+
+  myMain(argc, (const char **)argv);
+
+#ifdef __ANDROID__
+  free( argv );
+#endif
+
+  return 0;
+}
 
 int    installProfile                ( oyProfile_s       * ip,
                                        const char        * path,

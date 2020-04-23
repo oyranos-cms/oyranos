@@ -16,7 +16,7 @@ oyranos-profiles v0.9.7 - Oyranos Profiles
 <br />
 <strong>oyranos-profiles</strong> <a href="#install"><strong>-I</strong>=<em>ICC_PROFILE</em></a> | <strong>-t</strong>=<em>TAXI_ID</em> [<strong>-u</strong>|<strong>-s</strong>|<strong>-y</strong>|<strong>-m</strong>] [<strong>-g</strong>] [<strong>-v</strong>]
 <br />
-<strong>oyranos-profiles</strong> <a href="#help"><strong>-h</strong></a> <strong>-X</strong>=<em>json|json+command|man|markdown</em>
+<strong>oyranos-profiles</strong> <a href="#help"><strong>-h</strong></a> <strong>-X</strong>=<em>json|json+command|man|markdown</em> <strong>-V</strong>
 
 <h2>DESCRIPTION <a href="#toc" name="description">&uarr;</a></h2>
 
@@ -74,7 +74,7 @@ The tool can list installed profiles, search paths and can help install a ICC co
 
 <h3 id="help">General options</h3>
 
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-profiles</strong></a> <strong>-h</strong> <strong>-X</strong>=<em>json|json+command|man|markdown</em>
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-profiles</strong></a> <strong>-h</strong> <strong>-X</strong>=<em>json|json+command|man|markdown</em> <strong>-V</strong>
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-h</strong>|<strong>--help</strong></td> <td>Help</td> </tr>
@@ -88,6 +88,7 @@ The tool can list installed profiles, search paths and can help install a ICC co
   </table>
   </td>
  </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-V</strong>|<strong>--version</strong></td> <td>Version</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-r</strong>|<strong>--no-repair</strong></td> <td>No Profile repair of ICC profile ID</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-v</strong>|<strong>--verbose</strong></td> <td>verbose</td> </tr>
 </table>
