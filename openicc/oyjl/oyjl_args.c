@@ -265,18 +265,6 @@ int        oyjlStringReplace         ( char             ** text,
   return n;
 }
 
-int        oyjlWStringLen            ( const char        * text )
-{
-  int len = strlen(text), wlen = 0;
-  wchar_t * wcs = (wchar_t*) calloc( len + 1, sizeof(wchar_t) );
-  if(wcs)
-  {
-    mbstowcs( wcs, text, len + 1 );
-    wlen = wcslen(wcs);
-    free(wcs);
-  }
-  return wlen;
-}
 
 struct oyjl_string_s
 {
@@ -689,6 +677,51 @@ char **        oyjlStringSplit2      ( const char        * text,
 
   return list;
 }
+/*
+* Index into the table below with the first byte of a UTF-8 sequence to
+* get the number of trailing bytes that are supposed to follow it.
+* Note that *legal* UTF-8 values can't have 4 or 5-bytes. The table is
+* left as-is for anyone who may want to do such conversion, which was
+* allowed in earlier algorithms.
+*/
+static const char trailingBytesForUTF8[256] = {
+  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1, 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+  2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2, 3,3,3,3,3,3,3,3,4,4,4,4,5,5,5,5
+};
+int        oyjlStringSplitUTF8       ( const char        * text,
+                                       char            *** mbchars,
+                                       void*            (* alloc)(size_t) )
+{
+  int len = strlen(text), wlen = 0;
+  int pos = 0;
+  if(mbchars)
+    oyjlAllocHelper_m( *mbchars, char*, len + 1, alloc, return -2);
+  while(pos < len && text[pos])
+  {
+    const char * ctext = &text[pos];
+    int c = (unsigned char)ctext[0];
+    int trailing_bytes = trailingBytesForUTF8[c];
+    if(trailing_bytes > 3)
+      break;
+    if(mbchars)
+    {
+      oyjlAllocHelper_m( (*mbchars)[wlen], char, 4 + 1, alloc, return -2);
+      memcpy((*mbchars)[wlen], ctext, trailing_bytes + 1);
+    }
+    pos += trailing_bytes;
+    /*fprintf( stderr, "WString: current char: %d  next letter: %s trailing bytes: %d\n", c, &text[pos+1], trailing_bytes );*/
+    ++pos;
+    ++wlen;
+  }
+  return wlen;
+}
+
 void       oyjlStringListRelease  ( char            *** l,
                                        int                 size,
                                        void             (* deAlloc)(void*) )
@@ -1347,7 +1380,7 @@ oyjlOption_s * oyjlOptions_GetOptionL( oyjlOptions_s     * opts,
       if(l > 0)
         str[l] = '\000';
 
-      if(oyjlWStringLen(str) == 1)
+      if(oyjlStringSplitUTF8(str,NULL,0) == 1)
         strcpy( ol, str );
     }
   }
@@ -1518,9 +1551,11 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
            if(l > 1 && str[0] == '-' && str[1] != '-')
       {
         int j;
+        char ** multi_byte_letters = NULL;
+        l = oyjlStringSplitUTF8(str, &multi_byte_letters, malloc);
         for(j = 1; j < l; ++j)
         {
-          char arg[8] = {str[j],0,0,0,0,0,0,0};
+          const char * arg = multi_byte_letters[j];
           o = oyjlOptions_GetOption( opts, arg );
           if(!o)
           {
@@ -1588,6 +1623,7 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
             j = l;
           }
         }
+        oyjlStringListRelease( &multi_byte_letters, l, free );
       }
       /* parse --arg | --arg value | --arg=value */
       else if(l > 2 && str[0] == '-' && str[1] == '-')
@@ -2886,7 +2922,7 @@ oyjlUi_s *  oyjlUi_Create            ( int                 argc,
     oyjlUiHeaderSection_s * author = oyjlUi_GetHeaderSection( ui, "manufacturer" );
     oyjlUiHeaderSection_s * copyright = oyjlUi_GetHeaderSection( ui, "copyright" );
     oyjlUiHeaderSection_s * license = oyjlUi_GetHeaderSection( ui, "license" );
-    char * prog = oyjlStringCopy( oyjlTermColor( oyjlBOLD, argv[0] ), NULL );
+    char * prog = oyjlStringCopy( oyjlTermColor( oyjlBOLD, argv[0] ), NULL ), * tmp = prog;
     char * v = version && version->name ? oyjlStringCopy( oyjlTermColor( oyjlITALIC, version->name ), NULL ) : NULL;
 
     if(!verbose && prog && strchr(prog,'/'))
@@ -2901,7 +2937,7 @@ oyjlUi_s *  oyjlUi_Create            ( int                 argc,
                                       license ? _("License"):"", license?":\t":"", license && license->name ? license->name : "",
                                       author ? _("Author"):"", author?": \t":"", author && author->name ? author->name : "" );
     oyjlUi_Release( &ui);
-    free(prog);
+    free(tmp);
     if(v) free(v);
     if(status)
       *status |= oyjlUI_STATE_HELP;
