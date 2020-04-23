@@ -165,10 +165,10 @@ oyjlTESTRESULT_e testString ()
   if( strstr(test_out, TEST_DOMAIN2 ) != NULL &&
       strlen(test_out) == 59 )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlStringReplace(start) %d 59 == %d                  ", n, (int)strlen(test_out) );
+    "oyjlStringReplace(start) %d 59 == %d                 ", n, (int)strlen(test_out) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlStringReplace(start) %d 59 == %d                  ", n, (int)strlen(test_out) );
+    "oyjlStringReplace(start) %d 59 == %d                 ", n, (int)strlen(test_out) );
   }
   myDeAllocFunc(test_out);
 
@@ -180,10 +180,10 @@ oyjlTESTRESULT_e testString ()
       strlen(test_out) == 51 &&
       n == 1 )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlStringReplace(middle) 51 == %d                   ", (int)strlen(test_out) );
+    "oyjlStringReplace(middle) 51 == %d                  ", (int)strlen(test_out) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlStringReplace(middle) 51 == %d                   ", (int)strlen(test_out) );
+    "oyjlStringReplace(middle) 51 == %d                  ", (int)strlen(test_out) );
   }
   myDeAllocFunc(test_out);
 
@@ -196,10 +196,10 @@ oyjlTESTRESULT_e testString ()
       strlen(test_out) == 46 &&
       n == 1 )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlStringReplace(end)    46 == %d                   ", (int)strlen(test_out) );
+    "oyjlStringReplace(end)    46 == %d                  ", (int)strlen(test_out) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlStringReplace(end)    46 == %d                   ", (int)strlen(test_out) );
+    "oyjlStringReplace(end)    46 == %d                  ", (int)strlen(test_out) );
   }
   if(verbose)
     fprintf( stderr, "%s \"display_name\"->\"bar\" %s\n", test, test_out );
@@ -214,10 +214,10 @@ oyjlTESTRESULT_e testString ()
       strlen(test_out) == 6 &&
       n == 1 )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlStringReplace(end)      6 == %d                   ", (int)strlen(test_out) );
+    "oyjlStringReplace(end)      6 == %d                  ", (int)strlen(test_out) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlStringReplace(end)      6 == %d                   ", (int)strlen(test_out) );
+    "oyjlStringReplace(end)      6 == %d                  ", (int)strlen(test_out) );
   }
   if(verbose)
     fprintf( stderr, "\"%s\" \"]\"->\" ] \" \"%s\"\n", "abc]", test_out );
@@ -232,10 +232,10 @@ oyjlTESTRESULT_e testString ()
       n == 0 &&
       strcmp(compare,test) == 0 )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlStringReplace(none)                              " );
+    "oyjlStringReplace(none)                             " );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlStringReplace(none)                              " );
+    "oyjlStringReplace(none)                             " );
   }
   myDeAllocFunc(test_out);
 
@@ -247,10 +247,10 @@ oyjlTESTRESULT_e testString ()
       strlen(test_out) == 49 &&
       n == 2 )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlStringReplace(shorter) 49 == %d                  ", (int)strlen(test_out) );
+    "oyjlStringReplace(shorter) 49 == %d                 ", (int)strlen(test_out) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlStringReplace(shorter) 49 == %d                  ", (int)strlen(test_out) );
+    "oyjlStringReplace(shorter) 49 == %d                 ", (int)strlen(test_out) );
   }
   myDeAllocFunc(test_out);
 
@@ -262,10 +262,10 @@ oyjlTESTRESULT_e testString ()
       strlen(test_out) == 61 &&
       n == 2 )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlStringReplace(longer) 61 == %d                   ", (int)strlen(test_out) );
+    "oyjlStringReplace(longer) 61 == %d                  ", (int)strlen(test_out) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlStringReplace(longer) 61 == %d                   ", (int)strlen(test_out) );
+    "oyjlStringReplace(longer) 61 == %d                  ", (int)strlen(test_out) );
   }
   myDeAllocFunc(test_out);
 
@@ -283,10 +283,10 @@ oyjlTESTRESULT_e testString ()
       (index && text[index[5]] == ';')
     )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlStringSplit2()                                   " );
+    "oyjlStringSplit2()                                  " );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlStringSplit2()                                   " );
+    "oyjlStringSplit2()                                  " );
   }
   if(oy_test_last_result == oyjlTESTRESULT_FAIL || verbose)
   {
@@ -303,10 +303,10 @@ oyjlTESTRESULT_e testString ()
   oyjlStringListFreeDoubles( list, &list_n, myDeAllocFunc );
   if( list_n == 6 )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlStringListFreeDoubles()                          " );
+    "oyjlStringListFreeDoubles()                         " );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlStringListFreeDoubles()                          " );
+    "oyjlStringListFreeDoubles()                         " );
     for(i = 0; i < list_n; ++i)
       fprintf(zout, " list[%d] \"%s\"\n", i, list[i] );
   }
@@ -316,10 +316,10 @@ oyjlTESTRESULT_e testString ()
   list = oyjlStringSplit( "a a b c\td\ne", 0, &list_n, myAllocFunc );
   if(list_n == 6)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlStringSplit(0)                                   " );
+    "oyjlStringSplit(0)                                  " );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlStringSplit(0)                                   " );
+    "oyjlStringSplit(0)                                  " );
   }
   if(oy_test_last_result == oyjlTESTRESULT_FAIL || verbose)
   {
@@ -333,10 +333,10 @@ oyjlTESTRESULT_e testString ()
   if( !error &&
       d == 0.2)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlStringToDouble(\"0.2\") = %g                      ", d );
+    "oyjlStringToDouble(\"0.2\") = %g                     ", d );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlStringToDouble(\"0.2\") = %g  error = %d            ", d, error );
+    "oyjlStringToDouble(\"0.2\") = %g  error = %d           ", d, error );
   }
 
   double * doubles = NULL;
@@ -348,10 +348,10 @@ oyjlTESTRESULT_e testString ()
       doubles[2] == 3.5 &&
       count == 3)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlStringsToDoubles(\"0.2 1 3.5\") error = %d          ", error );
+    "oyjlStringsToDoubles(\"0.2 1 3.5\") error = %d         ", error );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlStringsToDoubles(\"0.2 1 3.5\") error = %d          ", error );
+    "oyjlStringsToDoubles(\"0.2 1 3.5\") error = %d         ", error );
   }
   if(doubles) { free(doubles); } doubles = NULL;
 
@@ -360,10 +360,10 @@ oyjlTESTRESULT_e testString ()
       doubles[0] == 0.2 &&
       count == 1)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlStringsToDoubles(\"0.2\") error = %d                ", error );
+    "oyjlStringsToDoubles(\"0.2\") error = %d               ", error );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlStringsToDoubles(\"0.2\") error = %d                ", error );
+    "oyjlStringsToDoubles(\"0.2\") error = %d               ", error );
   }
   if(doubles) { free(doubles); } doubles = NULL;
 
@@ -374,10 +374,10 @@ oyjlTESTRESULT_e testString ()
       doubles[2] == 3.5 &&
       count == 3)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlStringsToDoubles(\"0.2;1;3.5\") error = %d          ", error );
+    "oyjlStringsToDoubles(\"0.2;1;3.5\") error = %d         ", error );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlStringsToDoubles(\"0.2;1;3.5\") error = %d          ", error );
+    "oyjlStringsToDoubles(\"0.2;1;3.5\") error = %d         ", error );
   }
   if(doubles) { free(doubles); } doubles = NULL;
 
@@ -387,10 +387,10 @@ oyjlTESTRESULT_e testString ()
       doubles[2] == 3.5 &&
       count == 3)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlStringsToDoubles(\"0.2 ; 1; 3.5 cm\") error = %d   ", error );
+    "oyjlStringsToDoubles(\"0.2 ; 1; 3.5 cm\") error = %d  ", error );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlStringsToDoubles(\"0.2 ; 1; 3.5 cm\") error = %d   ", error );
+    "oyjlStringsToDoubles(\"0.2 ; 1; 3.5 cm\") error = %d  ", error );
   }
   if(doubles) { free(doubles); } doubles = NULL;
 
@@ -401,10 +401,10 @@ oyjlTESTRESULT_e testString ()
       doubles[2] == 3.5 &&
       count == 3)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlStringsToDoubles(\"0.2,1,3.5\") error = %d          ", error );
+    "oyjlStringsToDoubles(\"0.2,1,3.5\") error = %d         ", error );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlStringsToDoubles(\"0.2,1,3.5\") error = %d          ", error );
+    "oyjlStringsToDoubles(\"0.2,1,3.5\") error = %d         ", error );
   }
   if(doubles) { free(doubles); } doubles = NULL;
 
@@ -415,10 +415,10 @@ oyjlTESTRESULT_e testString ()
       doubles[2] == 27 &&
       count == 3)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlStringsToDoubles(\"2\\t1.2\\t 27\") error = %d ", error );
+    "oyjlStringsToDoubles(\"2\\t1.2\\t 27\") error = %d       ", error );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlStringsToDoubles(\"2\\t1.2\\t 27\") error = %d ", error );
+    "oyjlStringsToDoubles(\"2\\t1.2\\t 27\") error = %d       ", error );
   }
   if(verbose)
   {
@@ -435,10 +435,10 @@ oyjlTESTRESULT_e testString ()
       doubles[2] == 27 &&
       count == 3)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlStringsToDoubles(\"\\n \\t2\\t 1.2\\t 27\\t\\n\") error = %d ", error );
+    "oyjlStringsToDoubles(\"\\n \\t2\\t 1.2\\t 27\\t\\n\") er = %d", error );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlStringsToDoubles(\"\\n \\t2\\t 1.2\\t 27\\t\\n\") error = %d ", error );
+    "oyjlStringsToDoubles(\"\\n \\t2\\t 1.2\\t 27\\t\\n\") er = %d", error );
   }
   if(verbose)
   {
@@ -452,10 +452,10 @@ oyjlTESTRESULT_e testString ()
   if( error > 0 &&
       count == 3)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlStringsToDoubles(\"x=0.2:,one dot five,\") error = %d ", error );
+    "oyjlStringsToDoubles(\"x=0.2:,one dot five,\") err = %d", error );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlStringsToDoubles(\"x=0.2:,one dot five,\") error = %d ", error );
+    "oyjlStringsToDoubles(\"x=0.2:,one dot five,\") err = %d", error );
   }
   if(doubles) { free(doubles); } doubles = NULL;
 
@@ -515,13 +515,35 @@ oyjlTESTRESULT_e testString ()
   const char * tmp = oyjlStr(string);
   if(strstr(tmp, "/more\\/and/more"))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlStrReplace(callback,user_data)                   " );
+    "oyjlStrReplace(callback,user_data)                  " );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlStrReplace(callback,user_data)                   " );
+    "oyjlStrReplace(callback,user_data)                  " );
   }
   oyjlStrRelease( &string );
 
+  const char * wstring = "反差";
+  int wlen = oyjlStringSplitUTF8( wstring, NULL, 0 );
+  if(wlen == 2)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlStringSplitUTF8( %s ) = count                %d", wstring, wlen );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlStringSplitUTF8( %s ) = count                %d", wstring, wlen );
+  }
+
+  list = NULL; len = 0;
+  wlen = oyjlStringSplitUTF8(wstring, &list, myAllocFunc);
+  if(wlen && list)
+    len = strlen(list[0]);
+  if(wlen == 2 && len == 3)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlStringSplitUTF8( \"%s\" , \"%s\" )               %d %d", list[0], list[1], (int)strlen(list[0]), (int)strlen(list[1]) );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlStringSplitUTF8( )                              %d", len );
+  }
+  oyjlStringListRelease( &list, wlen, myDeAllocFunc );
 
   return result;
 }
