@@ -33,6 +33,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <errno.h>
 #include <wchar.h>  /* wcslen() */
 
 #include "oyjl.h"
@@ -761,28 +762,115 @@ int          oyjlStringsToDoubles    ( const char        * text,
   return error;
 }
 
+#define WARNc_S(...) oyjlMessage_p( oyjlMSG_ERROR, 0, __VA_ARGS__ )
+/*
+* Index into the table below with the first byte of a UTF-8 sequence to
+* get the number of trailing bytes that are supposed to follow it.
+* Note that *legal* UTF-8 values can't have 4 or 5-bytes. The table is
+* left as-is for anyone who may want to do such conversion, which was
+* allowed in earlier algorithms.
+*/
+static const char trailingBytesForUTF8[256] = {
+  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1, 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+  2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2, 3,3,3,3,3,3,3,3,4,4,4,4,5,5,5,5
+};
+
 /** @brief   number of letters in a UTF-8 string
  *
  *  A convinience wrapper for wcslen().
+ *  setlocale() might be needed before.
  *
  *  @param[in]     text                source string
  *  @return                            letters
  *
  *  @version Oyjl: 1.0.0
- *  @date    2019/08/06
+ *  @date    2020/04/22
  *  @since   2019/08/06 (Oyjl: 1.0.0)
  */
 int        oyjlWStringLen            ( const char        * text )
 {
   int len = strlen(text), wlen = 0;
   wchar_t * wcs = (wchar_t*) calloc( len + 1, sizeof(wchar_t) );
+  int error = 0;
+
   if(wcs)
   {
-    mbstowcs( wcs, text, len + 1 );
-    wlen = wcslen(wcs);
+    size_t size = mbstowcs( wcs, text, (len + 1) * sizeof(wchar_t) );
+    if(len && size == 0)
+    {
+      WARNc_S( "Could not convert WString: %s %d %s", text, len, strerror(errno) );
+      error = 1;
+    }
+    else if(len && size == (size_t) -1)
+    {
+      WARNc_S( "Invalid WString: %s %d %s", text, len, strerror(errno) );
+      error = 1;
+    }
+    if(!error)
+      wlen = wcslen(wcs);
     free(wcs);
   }
   return wlen;
+}
+
+/** @brief   split letters of a UTF-8 string
+ *
+ *  @param[in]     text                source string in UTF-8 format
+ *  @param[out]    mbchars             NULL terminated array of count letters in UTF-8 format; optional
+ *  @param[in]     alloc               custom allocator; optional, default is malloc
+ *  @return                            count of letters
+ *
+ *  @version Oyjl: 1.0.0
+ *  @date    2020/04/23
+ *  @since   2020/04/23 (Oyjl: 1.0.0)
+ */
+int        oyjlStringSplitUTF8       ( const char        * text,
+                                       char            *** mbchars,
+                                       void*            (* alloc)(size_t) )
+{
+  int len = strlen(text), wlen = 0;
+  int pos = 0;
+  if(mbchars)
+    oyjlAllocHelper_m( *mbchars, char*, len + 1, alloc, return -2);
+  while(pos < len && text[pos])
+  {
+    const char * ctext = &text[pos];
+    int c = (unsigned char)ctext[0];
+    int trailing_bytes = trailingBytesForUTF8[c];
+    if(trailing_bytes > 3)
+      break;
+    if(mbchars)
+    {
+      oyjlAllocHelper_m( (*mbchars)[wlen], char, 4 + 1, alloc, return -2);
+      memcpy((*mbchars)[wlen], ctext, trailing_bytes + 1);
+    }
+    pos += trailing_bytes;
+    /*fprintf( stderr, "WString: current char: %d  next letter: %s trailing bytes: %d\n", c, &text[pos+1], trailing_bytes );*/
+    ++pos;
+    ++wlen;
+  }
+  return wlen;
+}
+
+const char * oyjlWStringLetter       ( const char        * text )
+{
+  static char oyjl_w_string_letter[8];
+  int c = (unsigned char)text[0];
+  int trailing_bytes = trailingBytesForUTF8[c];
+  const char * ptr = &oyjl_w_string_letter[0];
+  if(trailing_bytes > 3)
+    return ptr;
+
+  memset(oyjl_w_string_letter, 0, 8);
+  memcpy(oyjl_w_string_letter, text, trailing_bytes + 1);
+
+  return ptr;
 }
 
 
@@ -1147,7 +1235,6 @@ char *     oyjlReadFileStreamToMem   ( FILE              * fp,
 }
 
 #include <errno.h>
-#define WARNc_S(...) oyjlMessage_p( oyjlMSG_ERROR, 0, __VA_ARGS__ )
 /** @brief read local file into memory
  *
  *  uses malloc()
