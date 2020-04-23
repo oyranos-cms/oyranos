@@ -138,7 +138,7 @@ int myMain( int argc, const char ** argv )
     {"oiwg", 0,     _("Common Options"),_("Set basic parameters"),    NULL,               "",            "",            "i,o"},
     {"oiwg", 0,     _("Extract"),       _("Convert JSON to gettext ready C strings"),NULL,"e,k",         "i,o,f,v",     "e,f,k"},
     {"oiwg", 0,     _("Add"),           _("Add gettext translated keys to JSON"), NULL,   "a,d,k",       "i,o,l,p,w,t,n,v",            "a,d,l,p,k,w,t,n"},
-    {"oiwg", 0,     _("Misc"),          _("General options"),         NULL,               "h,X",         "v",           "h,v,X" },/* just show in documentation */
+    {"oiwg", 0,     _("Misc"),          _("General options"),         NULL,               "h,X,V",       "v",           "h,X,V,v" },/* just show in documentation */
     {"",0,0,0,0,0,0,0}
   };
 

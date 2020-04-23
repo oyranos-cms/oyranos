@@ -4,7 +4,7 @@ oyjl-args-qml v1.0 \- Oyjl Args QML Viewer
 .SH ÜBERSICHT
 \fBoyjl-args-qml\fR \fB\-i\fR \fISTRING\fR [\fB\-c\fR \fISTRING\fR] [\fB\-o\fR \fISTRING\fR] [\fB\-v\fR]
 .br
-\fBoyjl-args-qml\fR \fB\-h\fR \fI[synopsis|...]\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR [\fB\-v\fR]
+\fBoyjl-args-qml\fR \fB\-h\fR \fI[synopsis|...]\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR \fB\-V\fR [\fB\-v\fR]
 .SH BESCHREIBUNG
 The tool graphicaly renders Oyjl JSON UI files using QML.
 .SH OPTIONEN
@@ -20,7 +20,7 @@ QML UI
 .br
 .SS
 General options
-\fBoyjl-args-qml\fR \fB\-h\fR \fI[synopsis|...]\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR [\fB\-v\fR]
+\fBoyjl-args-qml\fR \fB\-h\fR \fI[synopsis|...]\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR \fB\-V\fR [\fB\-v\fR]
 .br
 \fB\-h\fR|\fB\-\-help\fR \fI[synopsis|...]\fR	Zeige Hilfetext an
 .RS
@@ -33,8 +33,6 @@ Zeige Benutzungsinformationen und Hinweise für das Werkzeug.
 	\-h input		# JSON UI Description
 .br
 	\-h export		# exportiere - Hole Benutzerschnittstelle als Text
-.br
-\fB\-v\fR|\fB\-\-verbose\fR	verbose
 .br
 \fB\-X\fR|\fB\-\-export\fR \fIjson|json+command|man|markdown\fR	Exportiere formatierten Text
 .RS
@@ -49,6 +47,10 @@ Hole Benutzerschnittstelle als Text
 	\-X json+command		# Json + Kommando - Hole Oyjl Json Benutzerschnittstelle mit Kommando
 .br
 	\-X export		# Export - Erhalte Daten für Entwickler
+.br
+\fB\-V\fR|\fB\-\-version\fR	Version
+.br
+\fB\-v\fR|\fB\-\-verbose\fR	verbose
 .br
 .SH BEISPIELE
 .TP

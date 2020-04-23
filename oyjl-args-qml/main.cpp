@@ -25,6 +25,7 @@ int main(int argc, const char *argv[])
   int help = 0;
   int verbose = 0;
   int state = 0;
+  int version = 0;
   const char * exportX = NULL;
   const char * render = "gui";
 
@@ -59,6 +60,8 @@ int main(int argc, const char *argv[])
     {"oiwi", OYJL_OPTION_FLAG_ACCEPT_NO_ARG,"h", "help", NULL, NULL, NULL, NULL, NULL, oyjlOPTIONTYPE_CHOICE,{0}, oyjlSTRING, {.i = &help} },
     {"oiwi", 0,     "v", "verbose", NULL, _("Verbose"), _("verbose"),        NULL, NULL,          oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i = &verbose} },
     {"oiwi", 0,     "X", "export",  NULL, NULL,         NULL,                NULL, NULL,          oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s = &exportX} },
+    {"oiwi", 0,                          "V","version",       NULL,     _("version"),  _("Version"),                 NULL, NULL,               
+        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&version}},
     /* The --render option can be hidden and used only internally. */
     {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "R", "render", NULL, _("Render"), _("Render"), NULL, NULL, oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s = &render} },
     {"oiwi", 0,     "A", "man-examples",NULL,_("EXAMPLES"),NULL,             NULL, NULL,
@@ -72,7 +75,7 @@ int main(int argc, const char *argv[])
   oyjlOptionGroup_s groups_no_args[] = {
   /* type,   flags, name,      description,          help, mandatory, optional, detail */
     {"oiwg", 0,     _("GUI"),  _("QML UI"),          NULL, "i",       "c,o,v",  "i,c,o" },/* parsed and checked with -i option */
-    {"oiwg", 0,     _("Misc"), _("General options"), NULL, "h,X",     "v",      "h,v,X" },/* just show in documentation */
+    {"oiwg", 0,     _("Misc"), _("General options"), NULL, "h,X,V",   "v",      "h,X,V,v" },/* just show in documentation */
     {"",0,0,0,0,0,0,0}
   };
 
