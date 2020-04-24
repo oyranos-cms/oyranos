@@ -1194,6 +1194,7 @@ oyjlOptionChoice_s oyjl_R_choices[] = {
                                     {"","","",""}};
 void oyjlOptions_EnrichInbuild( oyjlOption_s * o )
 {
+  /* enrich inbuild variables */
   if(strcmp(o->o, "h") == 0)
   {
     if(o->value_type == oyjlOPTIONTYPE_CHOICE && o->values.choices.list == NULL)
@@ -2569,6 +2570,7 @@ oyjlOPTIONSTATE_e  oyjlUi_Check      ( oyjlUi_s          * ui,
 
 void oyjlUi_EnrichInbuild( oyjlUi_s * ui )
 {
+  /* enrich inbuild variables */
   int nopts = oyjlOptions_Count( ui->opts ), i;
   oyjlOption_s * o = NULL;
 
@@ -2796,6 +2798,8 @@ oyjlUi_s *  oyjlUi_Create            ( int                 argc,
       fprintf( stderr, "verbose\n" );
     }
   }
+  /* enrich inbuild */
+  oyjlOptions_GetOption( ui->opts, "R" );
 
   /* detect valid group match(es) and report missing mandatory one */
   ng = oyjlOptions_CountGroups(ui->opts);
