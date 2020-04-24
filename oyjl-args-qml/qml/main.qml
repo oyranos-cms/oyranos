@@ -385,7 +385,7 @@ AppWindow {
             t = t.replace(/\033\[01;36m/g, "<font color=cyan>")
 
             t = "<div style\"word-wrap:nowhere;\"" + t + "</div>"
-            helpText = t
+            helpText = Link.linkify( t );
             helpTextArea.font.family = "sans";
             helpTextArea.textFormat = Qt.RichText
         }
@@ -410,7 +410,7 @@ AppWindow {
             high = high.replace(/ /g, '&nbsp;')
             high = high.replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;')
             high = high.replace(/\n/g, "<br />")
-            helpText = high
+            helpText = Link.linkify( high );
             helpTextArea.font.family = "sans";
             helpTextArea.textFormat = Qt.RichText
         }
@@ -430,7 +430,7 @@ AppWindow {
             high = high.replace(/ /g, '&nbsp;')
             high = high.replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;')
             high = high.replace(/\n/g, "<br />")
-            helpText = high
+            helpText = Link.linkify( high );
             helpTextArea.font.family = "sans";
             helpTextArea.textFormat = Qt.RichText
         }
@@ -461,6 +461,20 @@ AppWindow {
             helpText = high;
             helpTextArea.font.family = "sans";
             helpTextArea.textFormat = Qt.RichText
+        } else
+        {
+            var text = Link.linkify( t );
+            if(text.length !== helpText.length)
+            {
+                t = t.replace(/</g, '&lt;')
+                t = t.replace(/>/g, '&gt;')
+                t = t.replace(/ /g, '&nbsp;')
+                t = t.replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;')
+                t = t.replace(/\n/g, "<br />")
+                text = Link.linkify( t );
+                helpTextArea.textFormat = Qt.RichText
+            }
+            helpText = text;
         }
 
         helpTextChanging = false
