@@ -414,14 +414,14 @@ int myMain( int argc, const char ** argv )
   oyjlOptionGroup_s groups[] = {
   /* type,   flags, name, description, help, mandatory, optional, detail */
     {"oiwg", 0, _("Saturation"), _("2D Graph from profiles"), _("Create a 2D Graph containing the saturation line from a ICC Profile."), "@", "t,b,l,g,w,o,f,c,x,d,n,2,4,r,v", "@,d,x,c,n,2,4,r" },
-    {"oiwg", 0, _("HLC"), _("Color Patches Graph from profiles"), _("Create a 2D Graph containing the possible color patches inside the ICC Profile gamut."), "H", "@,t,b,l,g,w,m,o,p,2,4,r,v", "H,@,m" },
+    {"oiwg", 0, _("HLC"), _("HLC Color Atlas Pages"), _("Create a 2D Graph containing the possible color patches inside the ICC Profile gamut. More information about HLC Color Atlas can be found on www.freiefarbe.de"), "H", "@,t,b,l,g,w,m,o,p,2,4,r,v", "H,@,m" },
     {"oiwg", 0, _("StdObs2°"), _("Standard Observer 1931 2° Graph"), NULL, "S", "t,b,l,g,w,T,o,f,v", "S" },
     {"oiwg", 0, _("Obs10°"), _("1964 10° Observer Graph"), NULL, "O", "t,b,l,g,w,T,o,f,v", "O" },
     {"oiwg", 0, _("Blackbody Radiator"), _("Blackbody Radiator Spectrum Graph"), NULL, "k", "t,b,l,g,w,T,o,f,v", "k" },
     {"oiwg", 0, _("Illuminant Spectrum"), _("Illuminant Spectrum Graph"), NULL, "u", "t,b,l,g,w,T,o,f,v", "u" },
     {"oiwg", 0, _("Spectral Input"), _("Spectral Input Graph"), NULL, "s,p,z", "t,b,l,g,w,T,P,o,v", "s,p,P,z" },
     {"oiwg", 0, _("Color Page"), _("Render Color Page"), NULL, "i,I", "t,b,l,g,w,T,f,o,v", "i,I" },
-    {"oiwg", 0, _("Misc"), _("General options"), NULL, "X|h|V", "v", "t,b,l,g,w,T,o,f,h,X,V,v" },
+    {"oiwg", 0, _("Misc"), _("General options"), NULL, "X|h|V|R", "v", "t,b,l,g,w,T,o,f,h,X,R,V,v" },
     {"",0,0,0,0,0,0,0}
   };
   opts->groups = (oyjlOptionGroup_s*)oyjlStringAppendN( NULL, (const char*)groups, sizeof(groups), 0);
@@ -436,9 +436,8 @@ int myMain( int argc, const char ** argv )
       export &&
       strcmp(export,"json+command") != 0)
     return 0;
-  if(!ui) return 1;
 
-  if(!export && !input && !profile_count && !standardobs && !observer64 && !kelvin && !illuminant && !render && hlc == -1.0)
+  if(ui && (!export && !input && !profile_count && !standardobs && !observer64 && !kelvin && !illuminant && !render && hlc == -1.0))
   {
     oyjlUiHeaderSection_s * version = oyjlUi_GetHeaderSection( ui,
                                                                "version" );
@@ -453,6 +452,7 @@ int myMain( int argc, const char ** argv )
     fprintf( stderr, "%s\n\tman oyranos-profile-graph\n\n", _("For more information read the man page:"));
     return 0;
   }
+  if(!ui) return 1;
 
   if(verbose)
   {
