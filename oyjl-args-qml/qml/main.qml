@@ -210,7 +210,7 @@ AppWindow {
                 if(arg.match(key))
                     continue
 
-                var arr = group.mandatory.split([",","|"])
+                var arr = group.mandatory.split(new RegExp('[,|]', 'g'))
                 var arrn = arr.length
                 var j
                 for( j = 0; j < arrn; ++j )
@@ -218,7 +218,7 @@ AppWindow {
                         found = 1
                 if(group.optional !== null)
                 {
-                    arr = group.optional.split([","])
+                    arr = group.optional.split(new RegExp('[,|]', 'g'))
                     arrn = arr.length
                     for( j = 0; j < arrn; ++j )
                         if(arr[j] === arg)
